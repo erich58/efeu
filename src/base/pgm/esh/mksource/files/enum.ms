@@ -54,7 +54,7 @@ void Enum(str ename, str label, IO def, bool glob = true)
 		fprintf(hdr, "\n/*\t%s\n*/\n\n", label);
 
 	fprintf(src, "\n/*\t%s\n*/\n\n", label);
-	fprintf(src, "static char *%sTab[] = {\n", ename);
+	fprintf(src, "static Label_t %sTab[] = {\n", ename);
 
 	for (n = 0; getline(def, name, desc); n++)
 	{
@@ -69,11 +69,11 @@ void Enum(str ename, str label, IO def, bool glob = true)
 			name = substr(name, 1);
 
 		Enum_macro(io, ename, name, n, desc);
-		fprintf(src, "\t%#s,\t/* %s */\n", name, desc);
+		fprintf(src, "\t{ %#s, %#s },\n", name, desc);
 	}
 
 	if	(n == 0)
-		fprintf(src, "\t%#s,\t/* %s */\n", NULL, "Dummyeintrag");
+		fprintf(src, "\t{ %#s, %#s },\n", NULL, "Dummyeintrag");
 
 	fprintf(io, "\n#define\t%sDim\t%d\t/* Zahl der Ausprägungen */\n\n",
 		ename, n);
@@ -84,62 +84,13 @@ void Enum(str ename, str label, IO def, bool glob = true)
 	f.line("register int i;");
 	f.line();
 	f.line("for (i = 0; i < $1Dim; i++)");
-	f.line("\tif (mstrcmp(name, $1Tab[i]) == 0) return i;");
+	f.line("\tif (mstrcmp(name, $1Tab[i].name) == 0) return i;");
 	f.line();
 	f.line("return 0;");
 	f.write(glob);
 
 	f = Function("char *$1Label", "unsigned n", ename);
-	f.line("return $1Tab[n < $1Dim ? n : 0];");
-	f.write(glob);
-}
-
-void ListEnum (str ename, str label, bool glob, ...)
-{
-	str name, desc;
-	Function f;
-	int n;
-	IO io = glob ? hdr : src;
-
-	if	(glob)
-		fprintf(hdr, "\n/*\t%s\n*/\n\n", label);
-
-	fprintf(src, "\n/*\t%s\n*/\n\n", label);
-	fprintf(src, "static char *%sTab[] = {\n", ename);
-#if	1
-	fprintf(src, "\t%#s,", NULL);
-	n = 1;
-#else
-	n = 0;
-#endif
-
-	for (name in va_list)
-	{
-		Enum_macro(io, ename, name, n);
-
-		if	(n % 4 == 0)
-			src << "\n";
-
-		fprintf(src, "\t%#s,", name);
-		n++;
-	}
-
-	src << "\n};\n";
-
-	fprintf(io, "\n#define\t%sDim\t%d\t/* Zahl der Ausprägungen */\n\n",
-		ename, n);
-
-	f = Function("unsigned $1Index", "const char *name", ename);
-	f.line("register int i;");
-	f.line();
-	f.line("for (i = 1; i < $1Dim; i++)");
-	f.line("\tif (mstrcmp(name, $1Tab[i]) == 0) return i;");
-	f.line();
-	f.line("return 0;");
-	f.write(glob);
-
-	f = Function("char *$1Label", "unsigned n", ename);
-	f.line("return $1Tab[n < $1Dim ? n : 0];");
+	f.line("return $1Tab[n < $1Dim ? n : 0].name;");
 	f.write(glob);
 }
 

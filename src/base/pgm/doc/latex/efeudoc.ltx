@@ -87,23 +87,29 @@
 \newcommand{\EDappendix}{\cleardoublepage\appendix
 	\setcounter{secnumdepth}{-1}}
 
-\newenvironment{EDmanpage}[2][1]{%
-	\cleardoublepage
-	\markright{#2(#1)}%
-	\addcontentsline{toc}{section}{#2(#1)}%
-	}{}
-
 \newcommand{\EDmanchapter}[2][1]{\cleardoublepage
 	\addcontentsline{toc}{chapter}{#2}%
 	\markright{#2}%
 	\chapter*{#2}
 	\clearpage}
 
+\def\EDcaptionname{NAME}
+
 \newcommand{\EDmanhead}[2][0]{\par{\hskip-\leftmargin \bf #2\par
 	\vspace{-\parsep}}}
 
 \newcommand{\EDmansubhead}[2][0]{\par{\hskip-\leftmargin \bf #2\par
 	\vspace{-\parsep}}}
+
+\def\EDcaption{\secdef\EDxcaption\EDscaption}
+
+\def\EDscaption#1{\EDmanhead{\EDcaptionname}#1\newline}
+
+\def\EDxcaption[#1]#2{\EDmanhead{\EDcaptionname}%
+	\addcontentsline{toc}{section}{#1}#2\newline}
+
+\newenvironment{EDmanpage}[2][1]{\cleardoublepage
+	\markright{#2(#1)}\let\caption\EDcaption}{}
 
 \def\atpoint#1{\hbox to 0pt{\vbox to 0pt{\vss #1}\hss}\ignorespaces}%
 

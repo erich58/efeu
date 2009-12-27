@@ -25,6 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/refdata.h>
 #include <EFEU/io.h>
 #include <EFEU/parsub.h>
+#include <EFEU/Debug.h>
 
 #define	ERR	"fatal error in %s: use of a deleted object (%lx).\n"
 
@@ -61,54 +62,73 @@ static refdata_t *rd_check (const void *data, const char *name)
 
 static int debug_depth = 0;
 
-static void debug_id (const refdata_t *rd, const char *cmd)
+static void debug_id (io_t *log, const refdata_t *rd, const char *cmd)
 {
-	io_nputc('\t', ioerr, debug_depth);
-	io_printf(ioerr, "%s(", cmd);
+	io_nputc('\t', log, debug_depth);
+	io_printf(log, "%s(", cmd);
 
 	if	(rd->reftype->label)
-		io_printf(ioerr, "%s ", rd->reftype->label);
+		io_printf(log, "%s ", rd->reftype->label);
 
-	io_printf(ioerr, "%#lx)", (ulong_t) rd);
+	io_printf(log, "%#lx)", (ulong_t) rd);
+}
+
+static io_t *debug_log (const refdata_t *rd)
+{
+	reftype_t *type = (reftype_t *) rd->reftype;
+
+	if	(type->sync < DebugChangeCount)
+	{
+		type->sync = DebugChangeCount;
+		io_printf(type->log, "STOP debugging %s\n", type->label);
+		rd_deref(type->log);
+		type->log = rd_refer(LogOut(type->label, DBG_DEBUG));
+		io_printf(type->log, "START debugging %s\n", type->label);
+	}
+
+	return type->log;
 }
 
 static void std_debug (const refdata_t *rd, const char *cmd)
 {
-	if	(rd->reftype && rd->reftype->debug)
+	io_t *log = debug_log(rd);
+
+	if	(log)
 	{
 		char *ident = rd_ident(rd);
 
-		debug_id(rd, cmd);
+		debug_id(log, rd, cmd);
 
 		if	(ident)
 		{
-			io_printf(ioerr, " %s", ident);
+			io_printf(log, " %s", ident);
 			memfree(ident);
 		}
 
-		io_putc('\n', ioerr);
+		io_putc('\n', log);
 	}
 }
 
 void rd_debug (const void *data, const char *fmt, ...)
 {
 	const refdata_t *rd = data;
+	io_t *log = rd ? debug_log(rd) : NULL;
 
-	if	(rd && rd->reftype && rd->reftype->debug)
+	if	(log)
 	{
-		debug_id(rd, KEY_DEBUG);
+		debug_id(log, rd, KEY_DEBUG);
 
 		if	(fmt)
 		{
 			va_list args;
 
 			va_start(args, fmt);
-			io_putc(' ', ioerr);
-			io_vprintf(ioerr, fmt, args);
+			io_putc(' ', log);
+			io_vprintf(log, fmt, args);
 			va_end(args);
 		}
 			
-		io_putc('\n', ioerr);
+		io_putc('\n', log);
 	}
 }
 
@@ -195,10 +215,12 @@ void rd_deref (void *data)
 	}
 	else
 	{
+		int indent = rd->reftype->log ? 1 : 0;
+
 		std_debug(rd, KEY_CLEAN);
 		rd->refcount = 0;
 
-		debug_depth++;
+		debug_depth += indent;
 
 		if	(rd->reftype == NULL)
 			;
@@ -207,6 +229,6 @@ void rd_deref (void *data)
 		else if	(rd->reftype->admin)
 			rd->reftype->admin(data, NULL);
 
-		debug_depth--;
+		debug_depth -= indent;
 	}
 }

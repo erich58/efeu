@@ -118,5 +118,5 @@ void SetLangType (const char *name)
 $SeeAlso
 \mref{LangType(7)}.\br
 \mref{getenv(3)},
-\mref{setlocale(3)} im @PRM.
+\mref{setlocale(3)} @PRM.
 */

@@ -2,7 +2,7 @@
 :*:	select part of data cube
 :de:	Teilmatrix selektieren
 
-Copyright (C) 1997, 2001 Erich Frühstück
+$Copyright (C) 1997, 2001 Erich Frühstück
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -24,13 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 PrintListDelim = "\t";
 
 pconfig !
-#if	Lang == "de"
-Ident = "Teilmatrix selektieren"
-#else
-Ident = "select part of data cube"
-#endif
-Version = "2"
-Copyright = "(c) 1997, 2001 Erich Frühstück"
+Version = "$Id: mdselect.esh,v 1.8 2001-10-18 12:11:21 ef Exp $"
 PrintMode = true
 Reduce = false
 

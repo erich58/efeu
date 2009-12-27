@@ -28,21 +28,21 @@ If not, write to the Free Software Foundation, Inc.,
 #define	ERR_OUT		io_popen("efeudoc -Tterm - 1>&2", "w")
 #define	FMT_IDENT	"$! -- $(Ident:%s)\n"
 #define	FMT_USAGE	"|$!|\n"
-#define	FMT_NAME	"\\dhead\t$!(1)\n\\mpage[1] $!\n"
+#define	FMT_HEAD	"\\dhead\t$!(1)\n\\mpage[1] $!\n"
 
 #define	HLP_PFX	"help"
 #define	HLP_SFX	"hlp"
 
 char *UsageFmt = "\\Synopsis\n@synopsis\n";
 
-char *HelpFmt = "\\manpage[1]{$!}\n\
-\\Name\n@ident\n\
-\\Synopsis\n@synopsis\n\
+char *HelpFmt = "\\mpage[1] $!\n\\Name\n@ident\n\
+@synopsis -h\n\
 \\Description\n@arglist 10\n\
 ";
 
-static void s_name (io_t *io, const char *arg);
+static void s_head (io_t *io, const char *arg);
 static void s_ident (io_t *io, const char *arg);
+static void s_name (io_t *io, const char *arg);
 static void s_eval (io_t *io, const char *arg);
 static void s_synopsis (io_t *io, const char *arg);
 static void s_arglist (io_t *io, const char *arg);
@@ -64,8 +64,9 @@ struct {
 	char *name;
 	void (*eval) (io_t *io, const char *arg);
 } usage_cmd[] = {
-	{ "name",	s_name },
+	{ "head",	s_head },
 	{ "ident",	s_ident },
+	{ "name",	s_name },
 	{ "eval",	s_eval },
 	{ "synopsis",	s_synopsis },
 	{ "arglist",	s_arglist },
@@ -296,11 +297,17 @@ static void list_pdef (io_t *io, vecbuf_t *vb, const char *arg)
 
 static void s_environ(io_t *io, const char *arg)
 {
-	list_pdef(io, &PgmDefTab.env, arg);
+	if	(arg && strchr(arg, 'h'))
+		io_puts("\\Environment\n", io);
+
+	list_pdef(io, &PgmDefTab.env, NULL);
 }
 
 static void s_arglist(io_t *io, const char *arg)
 {
+	if	(arg && strchr(arg, 'h'))
+		io_puts("\\Description\n", io);
+
 	show_pdef(io, &PgmDefTab.opt, usage_long);
 	show_pdef(io, &PgmDefTab.arg, usage_long);
 	/*
@@ -375,13 +382,20 @@ static void s_arg(io_t *io, const char *arg)
 	list_pdef(io, &PgmDefTab.arg, arg);
 }
 
-static void s_name(io_t *io, const char *arg)
+static void s_head(io_t *io, const char *arg)
 {
-	io_psub(io, FMT_NAME);
+	io_psub(io, FMT_HEAD);
 }
 
 static void s_ident(io_t *io, const char *arg)
 {
+	io_psub(io, FMT_IDENT);
+}
+
+static void s_name(io_t *io, const char *arg)
+{
+	io_psub(io, FMT_HEAD);
+	io_puts("\\Name\n", io);
 	io_psub(io, FMT_IDENT);
 }
 
@@ -393,15 +407,11 @@ static void s_eval(io_t *io, const char *arg)
 
 static void s_synopsis(io_t *io, const char *arg)
 {
+	if	(arg && strchr(arg, 'h'))
+		io_puts("\\Synopsis\n", io);
+
 	io_puts("\\hang\n", io);
 	io_psub(io, FMT_USAGE);
-
-	if	(arg)
-	{
-		io_puts(arg, io);
-		io_putc('\n', io);
-	}
-
 	show_pdef(io, &PgmDefTab.opt, usage_short);
 	io_puts("\\[~|--|~]\n", io);
 	show_pdef(io, &PgmDefTab.arg, usage_short);

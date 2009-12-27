@@ -274,14 +274,14 @@ io_t *PG_open (PG_t *pg, const char *name, const char *mode)
 
 /*
 $SeeAlso
-io_getc(3),
-io_gets(3),
-io_puts(3),
-io_printf(3),
-PG(3),
-PG_exec(3),
-PG_query(3),
-SetupPG(3),
-io(7), PG(7).\br
+\mref{io_getc(3)},
+\mref{io_gets(3)},
+\mref{io_puts(3)},
+\mref{io_printf(3)},
+\mref{PG(3)},
+\mref{PG_exec(3)},
+\mref{PG_query(3)},
+\mref{SetupPG(3)},
+\mref{io(7)}, \mref{PG(7)}.\br
 PostgreSQL Programmer's Guide.
 */

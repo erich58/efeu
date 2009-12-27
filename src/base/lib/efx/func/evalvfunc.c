@@ -188,13 +188,7 @@ Obj_t *EvalVirFunc(VirFunc_t *vtab, const ObjList_t *list)
 		else	return NULL;
 	}
 
-/*	Argumente auflisten
-*/
-	if	(FuncDebugFlag)
-	{
-		ListFunc(ioerr, func);
-		io_putc('\n', ioerr);
-	}
+	FuncDebug(func, "eval");
 
 /*	Funktion ausführen
 */

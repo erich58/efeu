@@ -22,6 +22,8 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <stdio.h>
+#include <string.h>
+#include <unistd.h>
 
 #define LEN	60
 
@@ -34,6 +36,21 @@ If not, write to the Free Software Foundation, Inc.,
 #define	NOREAD	"%s: file %s not readable.\n"
 #define	NOWRITE	"%s: file %s not writeable.\n"
 
+/*
+$pconfig
+:in |
+	:*:input file
+	:de:Eingabefile
+:out |
+	:*:output file
+	:de:Ausgabefile
+*/
+
+static void usage (const char *name, const char *arg)
+{
+	execlp("efeuman", "efeuman", "--", __FILE__, arg, NULL);
+	fprintf(stderr, AUFRUF, name);
+}
 
 /*	Ausgabe eines Zeichens
 */
@@ -113,9 +130,17 @@ int main (int narg, char **arg)
 	int c;		/* gelesenes Zeichen */
 	int k = 0;	/* Laenge der aktuellen Zeile */
 
+	if	(narg > 1)
+	{
+		if	(strcmp("-?", arg[1]) == 0)
+			usage(arg[0], arg[1]);
+		if	(strncmp("--help", arg[1], 6) == 0)
+			usage(arg[0], arg[1]);
+	}
+
 	if	(narg != 3)
 	{
-		fprintf(stderr, AUFRUF, arg[0]);
+		usage(arg[0], "-?");
 		return 1;
 	}
 

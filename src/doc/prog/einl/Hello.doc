@@ -51,11 +51,7 @@ dem Befehl |chmod| geändert werden:
 Alternativ dazu können diese Schritte mit dem Hilfsprogramm
 |efeuscript| durchgeführt werden. Es dient zur Installation
 eines Skriptfiles und wird in der Regel in Makefiles verwendet.
-Der Aufruf von |efeuscript -h| liefert die Syntax des Kommandos:
-
----- verbatim | sh
-efeuscript -h
-----
+Eine genaue Beschreibung des Kommandos findet sich im Anhang.
 
 Ein Esh-Skript wird mit den Optionen |-e -c esh| installiert.
 Falls das Sourcefile den Filezusatz <"|.esh|"> enthält,

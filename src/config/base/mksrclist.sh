@@ -2,7 +2,7 @@
 # :*:create source list
 # :de:Sourecliste generieren
 #
-# Copyright (C) 2000 Erich Frühstück
+# $Copyright (C) 2000 Erich Frühstück
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -20,18 +20,33 @@
 # If not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
+# $pconfig
+# f|
+#	:*:force creation of output file
+#	:de:Forcierte Neugenerierung der Ausgabedatei
+# :top|
+#	:*:top directory of sources
+#	:de:Hauptbibliothek der Sourcen
+# ::name|
+#	:*:name of output file
+#	:de:Name der Ausgabedatei
+
+# $SeeAlso
+# dir2make(1).
+
+usage ()
+{
+	efeuman -- $0 $1 || echo "usage: $0 [-f] top [name]"
+}
+
+case "$1" in
+-\?|--help*)	usage $1; exit 0;;
+esac
+
 # message formats
 
 : ${LANG:=en}
 
-fmt_usage="
-usage: $0 [-hf] top [name]
-
--h	show this message
--f	force creation of output file
-top	top directory of sources
-name	name of output file
-"
 fmt_keep="$0: %s keeped unchanged\n"
 fmt_modify="$0: %s was modified\n"
 fmt_create="create sourcelist %s\n"
@@ -39,14 +54,6 @@ fmt_nosrc="source directory %s does not exist\n"
 
 case $LANG in
 de*)
-	fmt_usage="
-Aufruf: $0 [-hf] top [name]
-
--h	Hilfetext ausgeben
--f	Forcierte Neugenerierung der Ausgabedatei
-top	Hauptbibliothek der Sourcen
-name	Name der Ausgabedatei
-"
 	fmt_keep="$0: %s wurde nicht verändert\n"
 	fmt_modify="$0: %s wurde verändert\n"
 	fmt_create="Sourceliste %s wird generiert\n"
@@ -69,8 +76,7 @@ do
 	case $opt in
 	f)	force=1;;
 	o)	name=$OPTARG;;
-	h)	echo "$fmt_usage"; exit 0;;
-	\?)	echo "$fmt_usage" >&2; exit 1;;
+	\?)	usage; exit 1;;
 	esac
 done
 
@@ -111,7 +117,7 @@ elif
 then
 	ofile=""
 else
-	usage | sed -e '/^$/q'
+	usage
 	exit 1
 fi
 

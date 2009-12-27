@@ -106,17 +106,17 @@ static int f_message (CmdPar_t *cpar, CmdParVar_t *var,
 static int f_set (CmdPar_t *cpar, CmdParVar_t *var,
 	const char *par, const char *arg)
 {
+	char *p = CmdPar_psub(cpar, par, arg);
 	memfree(var->value);
-	var->value = CmdPar_psub(cpar, par, arg);
+	var->value = p;
 	return 0;
 }
 
 static int f_lset (CmdPar_t *cpar, CmdParVar_t *var,
 	const char *par, const char *arg)
 {
-	char *p;
+	char *p = CmdPar_psub(cpar, par, arg);
 	memfree(var->value);
-	p = CmdPar_psub(cpar, par, arg);
 	var->value = mlangcpy(p, NULL);
 	memfree(p);
 	return 0;
@@ -153,14 +153,19 @@ static int f_usage (CmdPar_t *cpar, CmdParVar_t *var,
 static int f_manpage (CmdPar_t *cpar, CmdParVar_t *var,
 	const char *par, const char *arg)
 {
-	char *name;
-	io_t *io;
+	if	(arg && *arg == '@')
+	{
+		CmdPar_usage(cpar, iostd, arg);
+	}
+	else
+	{
+		char *name = CmdPar_psub(cpar, par, arg);
+		io_t *io = io_fileopen(name, "w");
+		memfree(name);
+		CmdPar_manpage(cpar, io);
+		io_close(io);
+	}
 
-	name = CmdPar_psub(cpar, par, arg);
-	io = io_fileopen(name, "w");
-	memfree(name);
-	CmdPar_manpage(cpar, io);
-	io_close(io);
 	return 0;
 }
 
@@ -174,7 +179,7 @@ static int f_config (CmdPar_t *cpar, CmdParVar_t *var,
 
 	if	((io = io_applfile(name, APPL_CNF)) != NULL)
 	{
-		CmdPar_read (cpar, io, EOF);
+		CmdPar_read (cpar, io, EOF, 0);
 		io_close(io);
 	}
 	else	message(NULL, MSG_EFM, 22, 1, name);

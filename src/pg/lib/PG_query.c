@@ -129,10 +129,10 @@ char *PG_value (PG_t *pg, int tuple, int field)
 
 /*
 $SeeAlso
-PG(3),
-PG_exec(3),
-PG_open(3),
-SetupPG(3),
-PG(7).\br
+\mref{PG(3)},
+\mref{PG_exec(3)},
+\mref{PG_open(3)},
+\mref{SetupPG(3)},
+\mref{PG(7)}.\br
 PostgreSQL Programmer's Guide.
 */

@@ -24,8 +24,6 @@ If not, write to the Free Software Foundation, Inc.,
 
 HelpFmt = string !
 @name
-\Name
-@ident
 \Synopsis
 @synopsis
 \Description
@@ -60,34 +58,23 @@ PgmEnv("MessageHandler", "MessageHandler=#1", string !
 :de:definiert das Kommando zur Ausgabe von Fehlermeldungen.
 !);
 
-str help_command = "help_$1 ? eval(help_$1) : usage(NULL, NULL)";
-str help_raw = "usage(NULL, iostd)";
-str help_plain = "usage(NULL, \"|efeudoc -T - -\")";
-str help_term = "usage(NULL, \"|efeudoc -T term - | less -r\")";
-str help_test = "usage(NULL, \"|efeudoc -T test -\")";
-str help_sgml = "usage(NULL, \"|efeudoc -T sgml -\")";
-str help_html = "usage(NULL, \"|efeudoc -T html -\")";
-str help_cgi = "usage(NULL, \"|efeudoc -T cgi -\")";
-str help_roff = "usage(NULL, \"|efeudoc -T man -\")";
-str help_tex = "usage(NULL, \"|efeudoc -T SynTeX -\")";
-str help_man = "usage(NULL, \"|efeudoc --man -\")";
-str help_lp = "usage(NULL, \"|efeudoc --lp -\")";
-
 PgmOpt("?", "usage(UsageFmt, ioerr); exit(0)", NULL);
-PgmOpt("-help", "eval(help_term); exit(0)", NULL);
-PgmOpt("-help=type", "eval(psub(help_command)); exit(0)", string !
+PgmOpt("-help", "usage(NULL, getres(\".help.term\")); exit(0)", NULL);
+PgmOpt("-help=type", "usage(NULL, getres(\".help.\" + arg)); exit(0)", string !
 :*:
 print usage of command. The optional parameter <type>
 determines the formatting and output of the description.
 [term]	display on terminal (default)
-[raw]	raw data for |efeudoc|
+[raw]	output raw data for |efeudoc|
+[man]	output nroff/troff source for |man|
 [lp]	send to printer
 :de:
-gibt eine Beschreibung des Kommandos aus.
+generiert eine Beschreibung des Kommandos aus.
 Der zusätzliche Parameter <type> bestimmt die Formatierung und
 die Ausgabe der Beschreibung.
 [term]	Terminalausgabe (default)
 [raw]	Rohformat für |efeudoc|
+[man]	nroff/troff Sourcen für |man|
 [lp]	Ausgabe zum Drucker
 !);
 
@@ -110,7 +97,7 @@ PgmOpt("-version", "usage(VersionFmt, ioerr); exit(0)", string !
 
 PgmOpt("-debug=mode", "setres(\"Debug\", #1)", string !
 :*:sets debug level for command
-:de:Setzt den Debug-Level für das Kommando.
+:de:setzt den Debug-Level für das Kommando.
 Folgende Angaben sind möglich:
 [none]	Keine Meldungen ausgeben;
 [err]	Fehlermeldungen ausgeben;
@@ -122,6 +109,6 @@ Folgende Angaben sind möglich:
 
 PgmOpt("-verbose", "setres(\"Debug\", \"stat\")", string !
 :*:sets debug level to |stat|.
-:de:Setzt den Debug-Level auf |stat|.
+:de:setzt den Debug-Level auf |stat|.
 !);
 

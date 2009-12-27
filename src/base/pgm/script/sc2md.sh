@@ -2,7 +2,7 @@
 # :*:transforms sc representation of data cube to binary form
 # :de:Konvertiert sc Darstellung einer Datenmatrix in Binärformat
 #
-# Copyright (C) 2001 Erich Frühstück
+# $Copyright (C) 2001 Erich Frühstück
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -20,14 +20,25 @@
 # If not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-usage="usage: $0 [-r] input output"
+# $pconfig
+# r |
+# 	:*:remove singulary axis
+# 	:de:Entfernen von singulären Achsen
+#:input |
+#	:*:input file
+#	:de:Name der Eingabedatei
+#:output |
+#	:*:output file
+#	:de:Name der Ausgabedatei
+	
+usage ()
+{
+	efeuman -- $0 $1 || echo "usage: $0 [-r] input output"
+}
 
-case ${LANG:=en} in
-de*)
-	usage="Aufruf: $0 [-r] ein aus"
-	;;
+case "$1" in
+-\?|--help*)	usage $1; exit 0;;
 esac
-
 
 flags=
 
@@ -41,7 +52,7 @@ fi
 if
 	test $# -ne 2
 then
-	echo "$usage"
+	usage -?
 	exit 1
 fi
 

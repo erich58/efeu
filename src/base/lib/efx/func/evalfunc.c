@@ -128,11 +128,7 @@ Obj_t *EvalFunc(Func_t *func, const ObjList_t *list)
 		return NULL;
 	}
 
-	if	(FuncDebugFlag)
-	{
-		ListFunc(ioerr, func);
-		io_putc('\n', ioerr);
-	}
+	FuncDebug(func, "eval");
 	
 	if	(func->dim == 0)
 	{

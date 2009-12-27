@@ -37,6 +37,14 @@ static void val_error(int pos, int num, const uchar_t *ptr)
 	exit(EXIT_FAILURE);
 }
 
+/*	Datenoffset
+*/
+
+uchar_t *db_offset (const uchar_t *buf, int pos, int len)
+{
+	return (uchar_t *) buf + pos - 1;
+}
+
 /*	Test auf Leerfeld
 */
 
@@ -131,6 +139,36 @@ unsigned db_xcval (const uchar_t *buf, int pos, int len)
 }
 
 
+static uchar_t cval_tab[10] = {
+	DIGIT_0, DIGIT_1, DIGIT_2, DIGIT_3, DIGIT_4,
+	DIGIT_5, DIGIT_6, DIGIT_7, DIGIT_8, DIGIT_9,
+};
+
+void set_cval (uchar_t *buf, int pos, int len, unsigned val)
+{
+	buf += pos - 1;
+
+	while (len-- > 0)
+	{
+		buf[len] = cval_tab[val % 10];
+		val /= 10;
+	}
+}
+
+void set_scval (uchar_t *buf, int pos, int len, unsigned val)
+{
+	buf += pos - 1;
+
+	while (len-- > 0)
+	{
+		if	(val)
+		{
+			buf[len] = cval_tab[val % 10];
+			val /= 10;
+		}
+		else	buf[len] = SPACE;
+	}
+}
 
 /*	Zahlenwerte in gepackter Form
 */
@@ -186,6 +224,22 @@ unsigned db_pval(const uchar_t *buf, int pos, int len)
 	}
 
 	return val;
+}
+
+void set_pval (uchar_t *buf, int pos, int len, unsigned val)
+{
+	buf += pos - 1;
+	len--;
+
+	buf[len] = ((val % 10) << 4) + 0xC;
+
+	while (len-- > 0)
+	{
+		val /= 10;
+		buf[len] = (val % 10);
+		val /= 10;
+		buf[len] += ((val % 10) << 4);
+	}
 }
 
 /*	Zahlenwerte in BCD-Verschlüsselung
@@ -290,6 +344,16 @@ unsigned db_a37l(const uchar_t *buf, int pos, int len)
 unsigned db_char(const uchar_t *buf, int pos, int len)
 {
 	return ebcdic2ascii(buf[pos - 1]);
+}
+
+void set_char (uchar_t *buf, int pos, int len, unsigned val)
+{
+	buf[pos - 1] = ascii2ebcdic(val);
+}
+
+void set_blank (uchar_t *buf, int pos, int len)
+{
+	memset(buf + pos - 1, SPACE, len);
 }
 
 static strbuf_t buf_str = SB_DATA(64);

@@ -31,6 +31,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/database.h>
 #include <EFEU/Random.h>
 #include <EFEU/Pixmap.h>
+#include <EFEU/Debug.h>
 #include <Math/TimeSeries.h>
 #include <Math/pnom.h>
 #include <Math/mdmath.h>
@@ -66,11 +67,13 @@ int main(int narg, char **arg)
 	SetupDebug();
 
 	par = CmdPar_alloc(ProgName);
-	CmdPar_load(par, "efm");
-	CmdPar_load(par, par->name);
+	CmdPar_load(par, "efm", 0);
+	CmdPar_load(par, par->name, 1);
 
 	if	(CmdPar_eval(par, &narg, arg, 1) <= 0)
 		exit(EXIT_FAILURE);
+
+	DebugMode(CmdPar_getval(par, "Debug", NULL));
 
 	pconfig_init();
 	applfile(EFMAIN, APPL_APP);
@@ -100,7 +103,11 @@ int main(int narg, char **arg)
 		while ((c = io_getc(in)) != EOF)
 			io_putc(c, iomsg);
 	}
-	else	CmdEval(in, iomsg);
+	else
+	{
+		EshIdent(in);
+		CmdEval(in, iomsg);
+	}
 
 	io_close(in);
 	return 0;

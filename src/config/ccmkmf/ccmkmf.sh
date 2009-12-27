@@ -2,7 +2,7 @@
 # :*:create Makefile from Imakefile, cpp version
 # :de:Makefile aus Imakefile generieren
 #
-# Copyright (C) 1999 Erich Frühstück
+# $Copyright (C) 1999 Erich Frühstück
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -21,49 +21,87 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #	A-3423 St. Andrä/Wördern, Südtirolergasse 17-21/5
 
+# $pconfig
+# n |
+#	:*:no filter
+#	:de:Keinen Ausgabefilter
+# p |
+#	:*:plain filter
+#	:de:Plain-Filter
+# g |
+#	:*:use GNU - preprocessor (ANSI)
+#	:de:GNU - Preprozessor (ANSI) verwenden
+# G |
+#	:*:use GNU - preprocessor (traditional)
+#	:de:GNU - Preprozessor (traditionell) verwenden
+# c:name |
+#	:*:configuration file
+#	:de:Konfigurationsdatei
+# d:target |
+#	:*:create dependence rule for target
+#	:de:Abhängigkeitsregel für target generieren
+# I:dir |
+#	:*:expand include path with dir
+#	:de:Suchpfad um dir erweitern
+# U:name |
+#	:*:delete macro name
+#	:de:Makro name löschen
+# D:name=val |
+#	:*:define macro name
+#	:de:Makro name definieren
+# :src |
+#	:*:source file (default Imakefile)
+#	:de:Definitionsfile (default Imakefile)
+# :tg |
+#	:*:target file (default Makefile)
+#	:de:Zieldatei (default Makefile)
+
+usage ()
+{
+	efeuman -- $0 $1 || cat << EOF
+usage: $0 [-npgG] [-c cfg] [-d target] [-I dir]
+	[-U name] [-D name[=val]] file
+EOF
+}
+
+case "$1" in
+-\?|--help*)	usage $1; exit 0;;
+esac
+
+# $Description
+# :*:
+# The command |$1| creates a Makefile from Imakefile similar to
+# |xmkmf| (X11 development).
+# This version uses |cpp| as preprocessor and |ppfilter| as post filter.
+# The following options and arguments are accepted from command |$!|:
+# :de:
+# Das Kommando |$!| generiert ein Makefile aus einem Imakefile analog zu
+# xmkmf (X11 development).
+# Diese Version benutzt |cpp| als Präprozessor und |ppfilter| als
+# Postfilter.
+# Folgende Optionen und Argumente werden vom Kommando |$!| akzeptiert:
+#
+# @arglist
+#
+# :*:
+# For normal use, |mkmf| is called without arguments.
+# Most of the flags are only used for compatibility checks.
+# :de:
+# Im Normalfall benötigt |mkmf| keine Optionen.
+# Die meisten Flags dienen Kompatiblitätstests.
+
+# $SeeAlso
+# dir2make(1), ppfilter(1), pp2dep(1).
+
 # message formats
 
 : ${LANG:=en}
 
-fmt_usage="
-usage: $0 [-hnpgG] [-c cfg] [-d target] [-I dir]
-	[-U name] [-D name[=val]] file
-
--h		this output
--n		no filter
--p		plain filter
--g		use GNU - preprocessor (ANSI)
--G		use GNU - preprocessor (traditional)
--c name		configuration file
--d target	create dependence rule for target
--I dir		expand include path with dir
--U name		delete macro name
--D name=[val]	deine macro name
-src		source file (default Imakefile)
-tg		target file (default Makefile)
-"
 fmt_nodef="$0: file %s not readable\n"
 fmt_hdr="$0: insert header %s.\n"
 
 case $LANG in
 de*)
-	fmt_usage="
-Aufruf: $0 [-hnpgG] [-c cfg] [-d target] [-I dir]
-	[-U name] [-D name[=val]] src tg
-
--h		Dieser Text
--n		Keinen Ausgabefilter
--p		Plain-Filter
--g		GNU - Preprozessor (ANSI) verwenden
--G		GNU - Preprozessor (traditionell) verwenden
--c name		Konfigurationsdatei
--d target	Abhängigkeitsregel für target generieren
--I dir		Suchpfad um dir erweitern
--U name		Makro name löschen
--D name=[val]	Makro name definieren
-src		Definitionsfile (default Imakefile)
-tg		Zieldatei (default Makefile)
-"
 	fmt_nodef="$0: Definitionsfile %s nicht lesbar\n"
 	fmt_hdr="$0: Headerdatei %s eingefügt.\n"
 	;;
@@ -132,10 +170,9 @@ filter=mkdep
 
 # parse command args
 
-while getopts hnpgGc:d:I:D:U: opt
+while getopts npgGc:d:I:D:U: opt
 do
 	case $opt in
-	h)	echo "$fmt_usage"; exit 0;;
 	n)	filter="cat";;
 	p)	filter="plain";;
 	g)	CC="gcc";;
@@ -164,14 +201,14 @@ do
 
 	D)	flags="$flags -D$OPTARG";;
 	U)	flags="$flags -U$OPTARG";;
-	\?)	echo "$fmt_usage" >&2; exit 1;;
+	\?)	usage; exit 1;;
 	esac
 done
 
 shift `expr $OPTIND - 1`
 
 if [ $# -gt 2 ]; then
-	echo "$fmt_usage"
+	usage
 	exit 1
 fi
 

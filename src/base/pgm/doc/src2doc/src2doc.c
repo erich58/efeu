@@ -62,6 +62,7 @@ int main (int narg, char **arg)
 	char *Mode;
 	S2DEval_t eval;
 
+	SetVersion("$Id: src2doc.c,v 1.11 2001-11-06 13:21:20 ef Exp $");
 	SetProgName(arg[0]);
 	SetupStd();
 	SetupReadline();

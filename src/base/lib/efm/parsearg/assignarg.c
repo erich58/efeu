@@ -30,59 +30,83 @@ assignarg_t *assignarg (const char *arg, char **ptr, const char *delim)
 {
 	assignarg_t *x;
 	char *p;
-	size_t n;
+	size_t n, po, pe, pa;
+	int depth;
 
-	if	(ptr)	*ptr = (char *) arg;
+	if	(ptr)	*ptr = NULL;
 
 	if	(arg == NULL)	return NULL;
 
 	while (isspace(*arg))
 		arg++;
 
-	if	(arg[0] == 0 || (arg[0] == '-' && arg[1] == 0))
-		return NULL;
+	depth = 0;
+	po = pe = pa = 0;
 
-	n = sizeof(assignarg_t) + strlen(arg) + 1;
-	x = (assignarg_t *) memalloc(n);
-	p = strcpy((char *) (x + 1), arg);
-	x->name = p;
-	x->opt = NULL;
-	x->arg = NULL;
-
-	while (*p != 0)
+	for (n = 0; arg[n] != 0; n++)
 	{
-		if	(*p == '[')
+		if	(depth)
 		{
-			int depth = 0;
-
-			*p = 0;
-			p++;
-			x->opt = p;
-
-			for (; *p != 0; p++)
+			if	(arg[n] == '[')
 			{
-				if	(*p == ']')
-				{
-					if	(!depth)
-					{
-						*p = 0;
-						p++;
-						break;
-					}
-					else	depth--;
-				}
-				else if	(*p == '[')	depth++;
+				depth++;
+			}
+			else if	(arg[n] == ']')
+			{
+				depth--;
+
+				if	(depth == 0)	pe = n;
 			}
 		}
-		else if	(*p == '=')
+		else if	(delim && strchr(delim, arg[n]))
 		{
-			*p = 0;
-			p++;
-			x->arg = p;
+			if	(ptr)
+			{
+				*ptr = (char *) arg + n;
+
+				while (**ptr == ' ')
+					(*ptr)++;
+
+				if	(**ptr && strchr(delim, **ptr))
+					(*ptr)++;
+			}
+
 			break;
 		}
-		else	p++;
+		else if	(pa)
+		{
+			;
+		}
+		else if	(arg[n] == '[')
+		{
+			po = n + 1;
+			depth = 1;
+		}
+		else if	(arg[n] == '=')
+		{
+			pa = n + 1;
+		}
 	}
+
+	x = (assignarg_t *) memalloc(sizeof(assignarg_t) + n + 1);
+	p = strncpy((char *) (x + 1), arg, n);
+	p[n] = 0;
+	x->name = p;
+
+	if	(po)
+	{
+		p[po - 1] = 0;
+		p[pe] = 0;
+		x->opt = p + po;
+	}
+	else	x->opt = NULL;
+
+	if	(pa)
+	{
+		p[pa - 1] = 0;
+		x->arg = p + pa;
+	}
+	else	x->arg = NULL;
 
 	return x;
 }

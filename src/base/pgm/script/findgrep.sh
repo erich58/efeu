@@ -1,8 +1,8 @@
 #!/bin/sh
-# :*:grep for files of directories
-# :de:grep für Dateien in Verzeichnisse
+# :*:search pattern in files of directories
+# :de:Dateien eines Verzeichnisses nach Mustern durchsuchen.
 #
-# Copyright (C) 2001 Erich Frühstück
+# $Copyright (C) 2001 Erich Frühstück
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -20,53 +20,57 @@
 # If not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-#	command usage
+# $pconfig
+# ::"grep-options"|
+#	:*:any grep option
+#	:de:beliebige grep - Option
+# ::"<=<pat>~\|~|-e|~<pat>~\|~|-f|~<file>=>"|
+#	:*:search pattern or file
+#	:de:Suchmuster oder Datei
+# :dir|
+#	:*:directories
+#	:de:Verzeichnisse
+# ::"find-optons"|
+#	:*:any find option
+#	:de:beliebige find - Option
 
 usage ()
 {
-	case ${LANG:=en} in
-	de*)
-		cat <<!
-BEZEICHNUNG
-	$0 - Dateien eines Verzeichnisses nach Mustern durchsuchen.
-
-SYNTAX
-	$0 [grep-Optionen] Muster Verzeichnis(se) [find-Optionen]
-
-BESCHREIBUNG
-	Das Kommando $0 stellt mit find eine Liste von Dateien
-	zusammen, die anschließend mit grep nach dem Muster <Muster>
-	durchsucht werden.
-
-	Die grep-Optionen werden nicht geprüft, sondern nur durchgeschleußt.
-	Die Optionen "-e" und "-f" müssen als letztes angegeben werden.
-	Find wird automatisch mit den Flags "-type f" und "-print" aufgerufen.
-
-SIEHE AUCH
-	grep(1), find(1).
-!
-		;;
-	*)
-		cat <<!
-NAME
-	$0 - search pattern in files of directories
-
-SYNOPSIS
-	$0 [grep-options] pattern directories [find-options]
-
-DESCRIPTION
-	The command $0 search patterns with grep in a list
-	of files collected by find.
-
-	Find is called with the flags "-type f" and "-print".
-	If supported, "-print" is replaced by "-print0".
-
-SEE ALSO
-	grep(1), find(1).
-!
-		;;
-	esac
+	efeuman -- $0 $1 || cat << EOF
+usage: $0 [grep-options] pattern
+	directories [find-options]
+EOF
 }
+
+case "$1" in
+-\?|--help*)	usage $1; exit 0;;
+esac
+
+# $Description
+# :*:
+# The command |\$!| search patterns with |grep| in a list
+# of files collected by |find|. To avoid environment space overflow
+# |xargs| is used to execute |grep|.
+# The grep options are passed through and not checked.
+# :de:
+# Das Kommando |\$!| stellt mit |find| eine Liste von Dateien
+# zusammen, die anschließend mit |grep| nach dem Muster <Muster>
+# durchsucht werden. Damit der Umgebungspeicher nicht überläuft, wird
+# |xargs| zum Aufruf von |grep| verwendet.
+# Die grep-Optionen werden nicht geprüft, sondern nur durchgeschleußt.
+#
+# :*:
+# Find is called with the flags |-type f| and |-print|.
+# If supported, |-print| is replaced by |-print0|.
+# This allows to handle files with special characters like spaces.
+# :de:
+# Find wird automatisch mit den Flags |-type f| und |-print| aufgerufen.
+# Falls find |-print0| ünterstützt, wird diese Option anstelle von |-print|
+# verwendet. Daduch können auch Dateien mit Leerzeichen und anderen
+# Sonderzeichen im Namen verarbeitet werden.
+
+# $SeeAlso
+# grep(1), find(1), xargs(1).
 
 #	parse grep options
 
@@ -83,7 +87,7 @@ done
 #	check number of arguments
 
 if [ $# -lt 2 ]; then
-	usage
+	usage -?
 	exit 1
 fi
 
@@ -92,8 +96,8 @@ fi
 pat="$1"
 shift
 
-#	check if find supports -print0. This allows copying of files
-#	with special characters like spaces
+#	check if find supports -print0. This allows to handle files
+#	with special characters like spaces.
 
 PFLAG="-print"
 XFLAG=""

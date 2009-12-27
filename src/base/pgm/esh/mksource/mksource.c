@@ -373,6 +373,7 @@ int main(int narg, char **arg)
 	char *bootstrap;
 	int i;
 
+	SetVersion("$Id: mksource.c,v 1.6 2001-11-06 13:52:10 ef Exp $");
 	SetProgName(arg[0]);
 	bootstrap = listcat(" ", arg, narg);
 

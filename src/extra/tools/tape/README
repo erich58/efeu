@@ -1,0 +1,4 @@
+The commands in this directory could be compiled independend of EFEU
+but without his documentation standard.
+To distingush between compilation mode, the macro _EFEU_TOP (defined
+by efeucc) is checked.

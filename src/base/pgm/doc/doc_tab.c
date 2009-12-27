@@ -83,7 +83,9 @@ static void tabline (Doc_t *doc, io_t *in)
 	if	(c == '\n' || c == EOF)
 	{
 		io_getc(in);
+		/*
 		io_ctrl(doc->out, DOC_CMD, DOC_CMD_TEX, "\\emptyline\n");
+		*/
 		return;
 	}
 

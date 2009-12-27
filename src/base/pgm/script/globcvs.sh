@@ -2,7 +2,7 @@
 # :*:call cvs for a list of repositories
 # :de:cvs - Aufruf für mehrere Arbeitskopien
 #
-# Copyright (C) 2001 Erich Frühstück
+# $Copyright (C) 2001 Erich Frühstück
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -23,46 +23,42 @@
 : ${EFEUTOP:=~}
 : ${GLOBCVS:=$EFEUTOP/src}
 
-#	command usage
+# $pconfig
+# *"|--ls| <=\\|=> cvs parameter" |
+#	:*:any cvs option or argument
+#	:de:beliegige cvs Option oder Argument
 
 usage ()
 {
-	case ${LANG:=en} in
-	de*)
-		cat <<!
-Aufruf: $0 --ls | cvs Parameter
+	efeuman -v "glob=$GLOBCVS" -- $0 $1 || \
+		echo "usage: $0 --ls | cvs parameter"
+}
 
-Das Kommando `basename $0` führt ein cvs-Kommando für alle
-Arbeitskopien unterhalb der durch die Umgebungsvariable GLOBCVS
-definierten Verzeichnisliste durch. Falls GLOBCVS nicht definiert
-ist, wird \$EFEUTOP/src genommen.
+case "$1" in
+-\?|--help*)	usage $1; exit 0;;
+esac
 
-Die aktuelle Setzung von GLOBCVS ist "$GLOBCVS".
+# $Description
+# :*:The command |\$!| calls cvs for all working directories specified
+# under the list of directories, specified by de Environment GLOBCVS.
+# If |GLOBCVS| is not defined, |\$EFEUTOP/src| is used, if |EFEUTOP| is
+# not defined, |\$HOME/src| is used.
+# :de:Das Kommando |\$!| führt ein cvs-Kommando für alle
+# Arbeitskopien unterhalb der durch die Umgebungsvariable |GLOBCVS|
+# definierten Verzeichnisliste durch. Falls |GLOBCVS| nicht definiert
+# ist, wird |\$EFEUTOP/src| genommen, falls auch |EFEUTOP| nicht definiert
+# ist, wird |\$HOME/src| verwendet.
+#
+# :*:The current setting of |GLOBCVS| is |@{glob}|.
+# :de:Die aktuelle Setzung von |GLOBCVS| ist |@{glob}|.
+#
+# :*:The option |--ls| lists all directories, where a separate call of
+# cvs is executed.
+# :de:Die Option |--ls| listet alle Verzeichnisse auf, für die ein eigenes
+# cvs-Kommando abgesetzt wird.
 
-Die Option --ls listet alle Verzeichnisse auf, für die ein eigenes
-cvs-Kommando abgesetzt wird.
-
-!
-		;;
-	*)
-		cat <<!
-usage: $0 --ls | cvs parameter
-
-The command `basename $0` calls cvs for all working directories speified
-under the list of directories, specified by de Environment GLOBCVS.
-If GLOBCVS is not defined, \$EFEUTOP/src is used, if EFEUTOP is not
-defined, \$HOME is used.
-
-The current setting of GLOBCVS is "$GLOBCVS".
-
-The option --ls lists all directories, where a separate call of cvs is
-executed.
-
-!
-		;;
-	esac
-}  
-
+# $SeeAlso
+# cvs(1).
 
 if	[ $# -lt 1 ]; then
 	usage

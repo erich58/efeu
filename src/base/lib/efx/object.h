@@ -201,7 +201,7 @@ Type_t *GetType (const char *name);
 
 Var_t *GetStruct (io_t *io, int delim);
 Type_t *FindStruct (Var_t *list, size_t size);
-Type_t *MakeStruct (char *name, Type_t *base, Var_t *list);
+Type_t *MakeStruct (char *name, Var_t *base, Var_t *list);
 
 Obj_t *LvalObj (Lval_t *lval, Type_t *type, ...);
 Obj_t *NewObj (Type_t *type, void *data);
@@ -588,6 +588,8 @@ void SetFunc (unsigned flags, Type_t *type, const char *fmt, FuncEval_t eval);
 
 int ListFunc (io_t *io, Func_t *func);
 int FuncComp (const void *a, const void *b);
+void FuncDebug (Func_t *func, const char *pfx);
+extern int FuncDebugLock;
 
 
 Func_t *GetFunc (Type_t *type, VirFunc_t *tab, int narg, ...);
@@ -619,8 +621,6 @@ void AddFuncDef (FuncDef_t *def, size_t dim);
 
 /*	Funktionen auswerten
 */
-
-extern int FuncDebugFlag;
 
 void Func_inline (Func_t *func, void *rval, void **arg);
 void Func_func (Func_t *func, void *rval, void **arg);

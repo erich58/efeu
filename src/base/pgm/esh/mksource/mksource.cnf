@@ -1,5 +1,5 @@
-# :*:configuration file for mksource
-# :de:Konfigurationsdatei für Programmgenerierung
+# :*:program generator
+# :de:Programmgenerierung
 # 
 # $Copyright (C) 1994 Erich Frühstück
 # This file is part of EFEU.
@@ -19,10 +19,6 @@
 # If not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-Ident:lset ":*:c source generator:de:Sourcefilegenerierung"
-Version = "1.0"
-Copyright = "(c) 1995 Erich Frühstück"
-
 :eval 'IncPath = paste(PATHSEP, IncPath, EFEUTOP + "/lib/mksource")'
 :eval 'IncPath = paste(PATHSEP, IncPath, getenv("ESHPATH"))'
 :eval 'fmt_str = "%*s"'
@@ -30,9 +26,9 @@ Copyright = "(c) 1995 Erich Frühstück"
 
 I:dir | :eval 'IncPath = paste(PATHSEP, "{}", IncPath)'
 	:*:appends <dir> to the search path for scripts.
-	default value is "$(IncPath)"
+	The default value is <"|$(IncPath)|">
 	:de:erweitert den Suchpfad für Skriptfiles um <dir>,
-	der Startwert ist "$(IncPath)"
+	der Startwert ist <"|$(IncPath)|">
 
 s | :eval 'VerboseMode = 0'
 	:*:silent execution
@@ -59,7 +55,7 @@ r | :eval 'MakeRule = true'
 	:de:Makefileregeln generieren
 
 x | :eval 'AllTarget = NULL; CleanTarget = NULL; DependTarget = NULL'
-	:*:no pseude targets for make
+	:*:no pseudo targets for make
 	:de:Keine Pseudoziele für Makefileregeln
 
 -all:name | :eval 'AllTarget = "{}"'
@@ -87,7 +83,7 @@ d | :eval 'MakeDep = true'
 	:de:Abhängigkeitsregeln generieren
 
 D name | :eval 'DependName = "{}"; MakeDep = true'
-	:*:make dependenve for target <name>
+	:*:make dependence for target <name>
 	:de:Abhängigkeitsregel für <name> generieren
 
 n name | :eval 'config name = "{}"'

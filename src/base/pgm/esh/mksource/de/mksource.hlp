@@ -21,10 +21,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 @name
-\Name
-@ident
-\Synopsis
-@synopsis
+@synopsis -h
 \Description
 Das Kommando |$!|
 dient zur Generierung von C-Sourcefiles mithilfe
@@ -57,12 +54,11 @@ Folgende Optionen und Argumente werden vom Kommando |$!| akzeptiert:
 @arglist
 
 \SeeAlso
-esh(1),\br
-function(7)
+\mref{esh(1)},\br
+\mref{function(7)}.
 \Notes
 Die Generierung von Dokumentationen wird derzeit von
 \LaTeX; auf |efeudoc| umgestellt und kann daher nur begrenzt
 verwendet werden.
-\head	AUTOR
-Erich Frühstück\br
-A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+
+@copyright -h

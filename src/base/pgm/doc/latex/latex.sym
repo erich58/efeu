@@ -21,7 +21,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 nbsp	\strut~
-shy	"-
+shy	\protect"-
 _sbr	""
 amp	\\&
 lt	<

@@ -131,8 +131,8 @@ auf <pos>.
 int sb_setpos (strbuf_t *sb, int pos)
 {
 	if	(!sb)			return 0;
-	else if	(pos < 0)		sb->pos = 0;
-	else if	(pos < sb_size(sb))	sb->pos = pos;
+	else if	(pos <= 0)		sb->pos = 0;
+	else if	(pos <= sb_size(sb))	sb->pos = pos;
 	else				sb->pos = sb_size(sb);
 	
 	return sb->pos;

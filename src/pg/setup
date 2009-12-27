@@ -22,7 +22,12 @@
 
 # configuration parameters
 
-incpath="/usr/include /usr/local/include"
+incpath="/usr/include"
+
+for x in /usr/local/include
+do
+	if [ -d $x ]; then incpath="$incpath $x"; fi
+done
 
 # get top directory (absolut path needed)
 

@@ -62,7 +62,9 @@ static void f_manpage (Func_t *func, void *rval, void **arg)
 
 static void f_read (Func_t *func, void *rval, void **arg)
 {
-	CmdPar_read (Val_ptr(arg[0]), Val_io(arg[1]), EOF);
+	CmdPar_t *par = rd_refer(Val_ptr(arg[0]));
+	CmdPar_read (par, Val_io(arg[1]), EOF, Val_bool(arg[2]));
+	Val_ptr(rval) = par;
 }
 
 static void f_write (Func_t *func, void *rval, void **arg)
@@ -72,7 +74,8 @@ static void f_write (Func_t *func, void *rval, void **arg)
 
 static void f_load (Func_t *func, void *rval, void **arg)
 {
-	CmdPar_load (Val_ptr(arg[0]), Val_str(arg[1]));
+	CmdPar_load (Val_ptr(arg[0]), Val_str(arg[1]), 
+		Val_bool(arg[2]));
 }
 
 static ObjList_t *do_eval (CmdPar_t *par, ObjList_t *arglist, int flag)
@@ -147,6 +150,11 @@ static void f_flagres (Func_t *func, void *rval, void **arg)
 	Val_int(rval) = GetFlagResource(Val_str(arg[0]));
 }
 
+static void f_getfmt (Func_t *func, void *rval, void **arg)
+{
+	Val_str(rval) = mstrcpy(GetFormat(Val_str(arg[0])));
+}
+
 static ObjList_t *listres (CmdPar_t *par, RegExp_t *expr)
 {
 	ObjList_t *list, **ptr;
@@ -173,6 +181,7 @@ static void f_list (Func_t *func, void *rval, void **arg)
 {
 	Val_list(rval) = listres(Val_ptr(arg[0]), Val_ptr(arg[1]));
 }
+
 
 static void f_psub (Func_t *func, void *rval, void **arg)
 {
@@ -254,9 +263,9 @@ static FuncDef_t func_cpar[] = {
 	{ FUNC_VIRTUAL, &Type_void,
 		"CmdPar::usage (IO out, IO def)", f_iousage },
 	{ 0, &Type_void, "CmdPar::manpage (IO out = NULL)", f_manpage },
-	{ 0, &Type_void, "CmdPar::read (IO def)", f_read },
+	{ 0, &Type_cpar, "CmdPar::read (IO def, bool flag = false)", f_read },
 	{ 0, &Type_void, "CmdPar::write (IO def)", f_write },
-	{ 0, &Type_void, "CmdPar::load (str name)", f_load },
+	{ 0, &Type_void, "CmdPar::load (str name, bool flag = false)", f_load },
 	{ 0, &Type_list, "CmdPar::eval (List_t list)", f_eval },
 	{ 0, &Type_list, "CmdPar::xeval (List_t list)", f_xeval },
 	{ 0, &Type_str, "CmdPar::get (str name, str def = NULL)", f_get },
@@ -267,6 +276,7 @@ static FuncDef_t func_cpar[] = {
 	{ 0, &Type_str, "getres (str name, str def = NULL)", f_getres },
 	{ 0, &Type_bool, "flagres (str name)", f_flagres },
 	{ 0, &Type_list, "listres (regex_t select = NULL)", f_listres },
+	{ 0, &Type_str, "getfmt (str def)", f_getfmt },
 
 	{ FUNC_RESTRICTED, &Type_argl, "_Ptr_ ()", f_null },
 	{ FUNC_RESTRICTED, &Type_argl, "str ()", f_argl_str },

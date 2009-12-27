@@ -2,7 +2,7 @@
 # :*:setting up EFEU
 # :de:Basisinitialisierung von EFEU
 #
-# Copyright (C) 2001 Erich Frühstück
+# $Copyright (C) 2001 Erich Frühstück
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -29,7 +29,7 @@ else
 fi
 
 top=`(cd $top; pwd)`
-gen_note="Do not edit, file created by "`pwd`"/setup"
+call_name=`pwd`"/setup"
 
 # create bin directory
 
@@ -43,19 +43,73 @@ fi
 
 for x in mksrclist efeubuild efeugen efeuscript
 do
-	cp base/$x.sh $bin/$x || exit 1
-	chmod a+x $bin/$x
+	if
+		cmp -s base/$x.sh $bin/$x
+	then
+#		echo "$bin/$x is up to date"
+		:
+	else
+#		echo "cp base/$x.sh $bin/$x"
+		cp base/$x.sh $bin/$x || exit 1
+		chmod a+x $bin/$x
+	fi
 done
+
+mkscript ()
+{
+	tmp=${TMPDIR:-/tmp}/x$$
+	cat > $tmp << EOF
+#!/bin/sh
+##Do not edit, file created by $call_name
+
+call_name=\$0
+
+usage ()
+{
+	efeuman -- \$call_name \$1 || echo "usage: \$call_name $2"
+}
+
+case "\$1" in
+-\\?|--help*)	usage \$1; exit 0;;
+esac
+
+EOF
+	cat >> $tmp
+	cat >> $tmp << EOF
+
+# \$Note
+# :*:This command was created by |$call_name| on installing EFEU.
+# :de:Dieses Kommando wurde mit |$call_name| bei der Installation
+# von EFEU generiert.
+EOF
+	if
+		cmp -s $tmp $1
+	then
+		echo "$1 is up to date"
+		rm $tmp
+	else
+		echo "new version of $1 created"
+		mv $tmp $1
+		chmod a+x $1
+	fi
+}
 
 # create efeutop command
 
-cat > $top/bin/efeutop << !
-#!/bin/sh
-# $gen_note
-echo $top
-!
+mkscript $top/bin/efeutop << EOF
+# :*:display top directory of efeu
+# :de:gibt Hauptverzeichnis von efeu aus
 
-chmod a+x $top/bin/efeutop
+# \$Description
+# :*:The command |\\\$1| displays the top directory of efeu.
+# It is used in scripts to determine the installation point of efeu.
+# :*:Das Kommando |\\\$1| zeigt das Hauptverzeichnis der
+# EFEU-Implementation an. 
+# Es wird in Skripts zur Bestimmung des Installationsortes von EFEU
+# verwendet.
+
+echo $top
+EOF
 
 # determine C compiler
 
@@ -102,12 +156,30 @@ rm -f $tmp $tmp.c
 
 # create efeucc command
 
-cat > $top/bin/efeucc << !
-#!/bin/sh
-# $gen_note
+mkscript $top/bin/efeucc "[cc options and arguments]" << EOF
+# :*:run C compiler with efeu specific parameters
+# :de:EFEU spezifische Implementation des C-Kompilers
+
+# \$Description
+# :*:The command |\\\$1| sets some default compiler options
+# for cc and expands the include path and |LD_RUN_PATH|
+# according to the EFEU top directory. Just have a look to
+# the command |$top/bin/efeucc| to see the settings.
+# |\\\$1| defines the macro |_EFEU_TOP| with the top directory
+# of the EFEU-implementation. It allows programms to determine the
+# installation place of efeu.
+# :de:Das Kommando |\\\$1| setzt einige default Optionen für
+# def C-Kompiler und erweitert die Suchpfade für Einbindedateien
+# und Bibliotheken entsprechend dem Hauptverzeichnis von EFEU.
+# Die aktuelle Setzung kann direkt dem Kommando |$top/bin/efeucc|
+# entnommen werden.
+# |\\\$1| definiert den Makro |_EFEU_TOP| mit der Hauptbibliothek
+# der EFEU-Implementation. Damit kann in Programmen der installationsort
+# von Dateien ermittelt werden.
+# \$SeeAlso
+# cc(1).
+
 LD_RUN_PATH="\$LD_RUN_PATH:$top/lib"; export LD_RUN_PATH
 exec $CC -D_EFEU_TOP=$top -I$top/include -L$top/lib \$@
-!
-
-chmod a+x $top/bin/efeucc
+EOF
 

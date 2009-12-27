@@ -1,5 +1,6 @@
 /*
-Befehle zur Unterteilung
+:*:document structuring
+:de:Befehle zur Unterteilung
 
 $Copyright (C) 1999 Erich Frühstück
 This file is part of EFEU.
@@ -20,107 +21,132 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-Horizontaler Modus
+:*:start paragraph, horizontal mode
+	$1
+:de:Absatz beginnen, Horizontaler Modus
+	$1
 
-Der Befehl $1 beginnt einen Absatz, falls noch keiner angefangen wurde.
+:*:The command $1 starts a new paragraph, if none is opened.
+:de:Der Befehl $1 beginnt einen Absatz, falls noch keiner angefangen wurde.
 
 \def\hmode	mode('h');
 
-Vertikaler Modus
+:*:end paragraph, vertical mode
+	$1
+:de:Absatz beenden, vertikaler Modus
+	$1
 
-Der Befehl $1 beendet einen Absatz.
+:*:The command $1 finishes the current paragraph.
+:de:Der Befehl $1 beendet einen Absatz.
 
 \def\par	mode('v');
 
-Teilabschnitt
-	$1 |[|<Kurzform>|]| <Abschnittstitel>
+:*:part
+	$1 |[|<toc entry>|]| <title>\br
+	~~~~&ldots;
+:de:Teilabschnitt
+	$1 |[|<Kurzform>|]| <Abschnittstitel>\br
+	~~~~&ldots;
 
-Der Befehl $1 beginnt einen neuen Teilabschnitt.
+:de:Der Befehl $1 beginnt einen neuen Teilabschnitt.
 
 \def\part	section('P', ParseOpt(cin, true), ParseLine(cin, true));
 
-Kapitel
-	$1 |[|<Kurzform>|]| <Kapiteltitel>
+:*:chapter
+	$1 |[|<toc entry>|]| <title>\br
+	~~~~&ldots;
+:de:Kapitel
+	$1 |[|<Kurzform>|]| <Kapiteltitel>\br
+	~~~~&ldots;
 
-Der Befehl $1 beginnt ein neues Kapitel.
+:de:Der Befehl $1 beginnt ein neues Kapitel.
 
 \def\chap	section('C', ParseOpt(cin, true), ParseLine(cin, true));
 
-Handbuchkapitel
-	$1 |[|<Nummer>|]| <Kapiteltitel>
+:*:manpage chapter
+	$1 |[|<number>|]| <title>\br
+	~~~~&ldots;
+:de:Handbuchkapitel
+	$1 |[|<Nummer>|]| <Kapiteltitel>\br
+	~~~~&ldots;
 
-Der Befehl $1 beginnt ein neues Handbuchkapitel.
+:de:Der Befehl $1 beginnt ein neues Handbuchkapitel.
 
 \def\mchap	section('c', ParseOpt(cin, true), ParseLine(cin, true));
 
-Bereich
-	$1 |[|<Kurzform>|]| <Bereichstitel>
+:*:section
+	$1 |[|<toc entry>|]| <title>\br
+	~~~~&ldots;
+:de:Bereich
+	$1 |[|<Kurzform>|]| <Bereichstitel>\br
+	~~~~&ldots;
 
-Der Befehl $1 beginnt einen neuen Bereich.
+:de:Der Befehl $1 beginnt einen neuen Bereich.
 
 \def\sec	section('S', ParseOpt(cin, true), ParseLine(cin, true));
 
-Zwischentitel
-	$1 |[|<Kurzform>|]| <Zwischentitel>
+:*:subsection
+	$1 |[|<toc entry>|]| <title>\br
+	~~~~&ldots;
+:de:Zwischentitel
+	$1 |[|<Kurzform>|]| <Zwischentitel>\br
+	~~~~&ldots;
 
-Der Befehl $1 setzt einen Zwischentitel und beginnt einen neuen Teilbereich.
+:de:Der Befehl $1 setzt einen Zwischentitel und beginnt einen neuen Teilbereich.
 
 \def\ssec	section('s', ParseOpt(cin, true), ParseLine(cin, true));
 
-Hauptüberschrift
-	$1 |[|<Kurzform>|]| <Hauptüberschrift>
+:*:headline in manual pages
+	$1 |[|<toc entry>|]| <title>\br
+	~~~~&ldots;
+:de:Hauptüberschrift in Handbucheinträgen
+	$1 |[|<Kurzform>|]| <Hauptüberschrift>\br
+	~~~~&ldots;
 
-Der Befehl $1 setzt eine Hauptüberschift.
+:de:Der Befehl $1 setzt eine Hauptüberschift.
 
 \def\head	section('H', ParseOpt(cin, true), ParseLine(cin, true));
 
-Nebenüberschrift
-	$1 |[|<Kurzform>|]| <Nebenüberschrift>
+:*:subheadline in manual pages
+	$1 |[|<toc entry>|]| <title>\br
+	~~~~&ldots;
+:de:Nebenüberschrift in Handbucheinträgen
+	$1 |[|<Kurzform>|]| <Nebenüberschrift>\br
+	~~~~&ldots;
 
-Der Befehl $1 setzt eine Nebenüberschrift.
+:de:Der Befehl $1 setzt eine Nebenüberschrift.
 
 \def\shead	section('h', ParseOpt(cin, true), ParseLine(cin, true));
 
-Paragraph
-	$1 |[|<Kurzform>|]| <Paragraph>
+:*:paragraph
+:de:Paragraph
+	$1 |[|<Kurzform>|]| <Paragraph>\br
+	~~~~&ldots;
 
-Der Befehl $1 setzt einen Pargraphen.
+:de:Der Befehl $1 setzt einen Pargraphen.
 
 \def\para	section('p', ParseOpt(cin, true), ParseLine(cin, true));
 
-Handbucheintrag
-	$1 |[|<num>|]| <name>
-
-Der Befehl $1 beginnt einen neuen Handbucheintrag mit Namen <name> zum
-Handbuchkapitel <num>. Dieser Befehl wird automatisch zu Beginn einer
-Datei eingefügt, dessen Filezusatz mit einer Ziffer beginnt.
-
-//\def\mpage	section('M', ParseOpt(cin, true), ParseLine(cin));
-\def\mpage newenv('m', expand(ParseOpt(cin, true)), expand(ParseLine(cin)));
-
-Randnotiz
+:*:marginal note
+	$1 |[|<vertical offset>|]| <note>\br
+	~~~~&ldots;
+:de:Randnotiz
 	$1 |[|<Verschiebung>|]| <Randnotiz>\br
 	~~~~&ldots;
 
-Der Befehl $1 setzt eine Randnotiz.
+:de:Der Befehl $1 setzt eine Randnotiz.
 
 \def\margin	section('m', ParseOpt(cin, true), ParseLine(cin, true));
 
-Anmerkung/Zitat
-	$1 |[|<Verschiebung>|]| <Anmerkung>\br
+:*:footnote
+	$1 |[|<mark>|]| <note>\br
+	~~~~&ldots;
+:de:Fußnote
+	$1 |[|<Marke>|]| <Anmerkung>\br
 	~~~~&ldots;
 
-Der Befehl $1 setzt eine Anmerkung am aüßersten Rand der Seite.
+:de:Der Befehl $1 setzt eine Fußnote.
 Eingerückte Zeilen nach dem Befehl gelten als Fortsetzungszeilen.
 
 \def\note	section('N', ParseOpt(cin, true), ParseLine(cin, true));
-
-Tabellenanmerkung
-	$1 |[|<Breite>|]| <Anmerkung>\br
-	~~~~&ldots;
-
-Der Befehl $1 setzt eine Anmerkung mit vorgegebener Breite.
-Eingerückte Zeilen nach dem Befehl gelten als Fortsetzungszeilen.
-
-\def\fignote	section('n', ParseOpt(cin, true), ParseLine(cin, true));
 

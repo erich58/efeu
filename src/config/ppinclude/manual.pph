@@ -32,28 +32,43 @@ Concat(html_,name)
 #define	HTMLDir(dir,name)	\
 PathName(PathName(dir,html),name)
 
+#define	DocSrcLink(dir,name)	\
+PathName(PathName(dir,src),name)
+
 /*
-Der Makro |$1| generiert Dokumentationen in verschiedenen
-Datenformaten unter der Bibliothek <dir> mit Namen <name>. 
-Das Argument <base> verweist auf die Hauptbibliothek der
-Dekumentationssourcen.
+Der Makro |$1| sorgt für die Einrichtung der Verzeichnisse
+zur Installation von Dokumenten unter <dir>.
 */
 
-#define	DocTarget(dir,name,base,flags) \
+#define	ProvideDocDir(dir) \
+ProvideDir(PathName(dir,src)) \
 ProvideDir(PathName(dir,ps)) \
+ProvideDir(PathName(dir,html))
+
+/*
+Der Makro |$1| generiert Dokumentationen in verschiedenen
+Datenformaten unter dem Verzeichnis <dir> mit Namen <name>. 
+Das Argument <base> verweist auf die Hauptbibliothek der
+Dokumentationssourcen.
+*/
+
+#define	DocTarget(dir,name,base,cmd) \
+AllTarget(DocSrcLink(dir,name)) \
+@;DocSrcLink(dir,name): base \
+@;@+ln -fs base $@ \
+@;\
 AllTarget(PSDocName(dir,name)) \
 @;@;PSDocName(dir,name): \
-@;@+efeudoc flags -p PathName(base,main.doc) | gzip > $@ \
+@;@+cmd -p PathName(base,main.doc) | gzip > $@ \
 @;@;depend:: \
-@;@+efeudoc flags -d -p -o PSDocName(dir,name) PathName(base,main.doc) >> MAKEFILE \
+@;@+cmd -d -p -o PSDocName(dir,name) PathName(base,main.doc) >> MAKEFILE \
 @;\
-ProvideDir(PathName(dir,html)) \
 @;all:: HTMLTask(name) \
 @;@+(cd PathName(dir,html); htmlindex ) \
 @;@;clean:: \
 @;@+rm -rf HTMLDir(dir,name) \
 @;@;depend:: \
-@;@+efeudoc flags -h -r HTMLTask(name) -o HTMLDir(dir,name) \
+@;@+cmd -h -r HTMLTask(name) -o HTMLDir(dir,name) \
 PathName(base,main.doc) >> MAKEFILE \
 @;
 

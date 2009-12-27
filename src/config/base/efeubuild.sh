@@ -2,7 +2,7 @@
 # :*:create main Makefile for EFEU-projects
 # :de:Hauptmakefile für EFEU-Projekte generieren
 #
-# Copyright (C) 2000 Erich Frühstück
+# $Copyright (C) 2000 Erich Frühstück
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -19,8 +19,6 @@
 # License along with EFEU; see the file COPYING.
 # If not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-
-top=${EFEUTOP:=~}
 
 # message formats
 
@@ -56,19 +54,27 @@ de*)
 	;;
 esac
 
+# $pconfig
+# :top|
+#	:*:TOP-directory for EFEU-projects
+#	:de:Hauptverzeichnis der EFEU-Projekte
+
+usage ()
+{
+	efeuman -- $0 $1 || printf "$msg1"
+}
+
+case "$1" in
+-\?|--help*)	usage $1; exit 0;;
+esac
+
+top=${EFEUTOP:=~}
+
 # parse command args
 
-while getopts h opt
-do
-	case $opt in
-	h)	printf "$msg1"; exit 0;;
-	\?)	printf "$msg1"; exit 1;;
-	esac
-done
-
-shift `expr $OPTIND - 1`
-
-if [ $# -eq 1 ]; then
+if [ $# -gt 1 ]; then
+	usage; exit 1
+elif [ $# -eq 1 ]; then
 	top=$1
 fi
 

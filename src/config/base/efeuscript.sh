@@ -2,7 +2,7 @@
 # :*:install script file
 # :de:Installation von Scripts
 #
-# Copyright (C) 2001 Erich Frühstück
+# $Copyright (C) 2001 Erich Frühstück
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -20,49 +20,58 @@
 # If not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
+# $pconfig
+# u|
+#	:*:only user gets exec permission
+#	:de:Nur Eigentümer erhält Ausführungsrechte
+# g|
+#	:*:only user and group gets exec permission
+#	:de:Nur Eigentümer und Gruppe erhalten Ausführungsrechte
+# e|
+#	:*:use /usr/bin/env to start interpreter
+#	:de:/usr/bin/env zum Start des Interpreters verwenden
+# r|
+#	:*:use exec to start interpreter
+#	:de:exec zum Start des Interpreters verwenden
+# c:name|
+#	:*:name of interpreter, default $cmd
+#	:de:Name des Befehlsinterpreters, Vorgabe $cmd
+
+# $Description
+# :*:
+# The command completes a script with a interpreter key (#!).
+# The complete path of the interpreter is discoverd.
+# :de:
+# Das Kommando ergänzt ein Skript mit einer Interpreterkennung.
+# Dabei wird der vollständige Pfad des Interpreters automatisch
+# ermittelt.
+# 
+# :*:
+# If the script contains already an interpreter key, it is
+# only checked and not modified.
+# :de:
+# Falls bereits eine Interpreterkennung vorhanden ist, wird diese
+# nur geprüft und nicht verändert.
+
+usage ()
+{
+	efeuman -- $0 $1 || echo "usage: $0 [-h] [-uger] [-c cmd] src target"
+}
+
+case "$1" in
+-\?|--help*)	usage $1; exit 0;;
+esac
+
 # message formats
 
 : ${LANG:=en}
 
-fmt_usage="
-usage: $0 [-h] [-uger] [-c cmd] src target
-
--h	this output
--u	only user gets exec permission
--g	only user and group gets exec permission
--e	use /usr/bin/env to start interpreter
--r	use exec to start interpreter
--c name	name of interpreter, default $cmd
-
-The command completes a script with a interpreter key (#!).
-The complete path of the interpreter is discoverd.
-
-If the script contains already an interpreter key, it is
-only checked and not modified.
-"
 fmt_nosrc="$0: file %s does not exist!\n"
 fmt_nocmd="$0: command %s not found!\n"
 fmt_notin="\tnot in %s\n"
 
 case $LANG in
 de*)
-	fmt_usage="
-Aufruf: $0 [-h] [-uger] [-c cmd] src target
-
--h	Dieser Text
--u	Nur Eigentümer erhält Ausführungsrechte
--g	Nur Eigentümer und Gruppe erhalten Ausführungsrechte
--e	/usr/bin/env zum Start des Interpreters verwenden
--r	exec zum Start des Interpreters verwenden
--c name	Name des Befehlsinterpreters, Vorgabe $cmd
-
-Das Kommando ergänzt ein Skript mit einer Interpreterkennung.
-Dabei wird der vollständige Pfad des Interpreters automatisch
-ermittelt.
-
-Falls bereits eine Interpreterkennung vorhanden ist, wird diese
-nur geprüft und nicht verändert.
-"
 	fmt_nosrc="$0: Datei %s existiert nicht!\n"
 	fmt_nocmd="$0: Kommando %s nicht gefunden!\n"
 	fmt_notin="\tNicht in %s\n"
@@ -96,15 +105,14 @@ do
 	e)	use_env=1;;
 	r)	use_exec=1;;
 	c)	cmd="$OPTARG"; check_ext=0;;
-	h)	echo "$fmt_usage"; exit 0;;
-	\?)	echo "$fmt_usage" >&2; exit 1;;
+	\?)	usage; exit 1;;
 	esac
 done
 
 shift `expr $OPTIND - 1`
 
 if [ $# -ne 2 ]; then
-	echo "$fmt_usage"
+	usage
 	exit 1
 elif [ ! -f $1 ]; then
 	printf "$fmt_nosrc" $1 >&2

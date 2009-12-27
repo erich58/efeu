@@ -1,5 +1,6 @@
 /*
-Befehle zur Makefilegenerierung
+:*:commands to create Makefiles
+:de:Befehle zur Makefilegenerierung
 
 $Copyright (C) 2000 Erich Frühstück
 This file is part of EFEU.
@@ -20,10 +21,14 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-Makefile generieren und einbinden
-	$1 <Datei>
+:*:create makefile and insert
+	$1 <imakefile>
+:de:Makefile generieren und einbinden
+	$1 <Imakefile>
 
-Der Befehl $1 wendet |mkmf| auf das angegebene Imakefile
+:*:The command $1 calls |mkmf|  with the given Imakefile
+and inserts the created Makefile in verbatim mode.
+:de:Der Befehl $1 wendet |mkmf| auf das angegebene Imakefile
 an und bindet das Makefile wortwörtlich ein.
 
 \def\mkmf {{

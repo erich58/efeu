@@ -8,11 +8,10 @@ OBJ=	efeudoc.o skip.o parse.o p_reg.o p_block.o copy.o docsym.o \
 	tab_info.o tab_load.o tab.o tab_mac.o \
 	test.o \
 	DocDrv.o \
-	sgml.o sgml_putc.o sgml_cmd.o sgml_env.o \
 	html.o html_open.o html_putc.o html_cmd.o html_env.o \
 	LaTeX.o latex.o latex_putc.o latex_cmd.o latex_env.o \
-	mroff.o mroff_putc.o mroff_cmd.o mroff_env.o \
-	term.o term_putc.o term_cmd.o term_env.o \
+	mroff.o mroff_par.o mroff_var.o mroff_putc.o mroff_cmd.o mroff_env.o \
+	term.o term_var.o term_putc.o term_cmd.o term_env.o \
 	Doc.o docout.o \
 	listarg.o f_section.o setup.o
 

@@ -171,9 +171,6 @@ static FuncDef_t pdef[] = {
 };
 
 static VarDef_t vardef[] = {
-	{ "mddebug", &Type_bool, &md_reftype.debug,
-		":*:flag to control debuging of mdmat-structures\n"
-		":de:Flag zum Debuggen von mdmat-Strukturen\n" },
 	{ "MdClassListFormat", &Type_str, &MdClassListFormat,
 		":*:parameter for displaying count classes\n"
 		":de:Parameter zur Darstellung von Zählklassen\n" },

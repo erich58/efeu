@@ -106,6 +106,18 @@ int HTML_env (HTML_t *html, int flag, va_list list)
 		else	io_putc('\n', html->out);
 
 		break;
+	case DOC_PAR_TAG:
+		if	(flag)
+		{
+			io_puts(html->enditem, html->out);
+			io_puts("<DT>", html->out);
+		}
+		else
+		{
+			io_puts("</DT><DD>", html->out);
+			html->enditem = "</DD>";
+		}
+		break;
 
 	case DOC_QUOTE_SGL:
 		io_puts(flag ? "`" : "'", html->out);
@@ -182,18 +194,6 @@ int HTML_env (HTML_t *html, int flag, va_list list)
 		html->put = (DocDrvPut_t) (flag ? HTML_plain : HTML_putc);
 		break;
 	case DOC_ENV_FORMULA:
-		break;
-	case DOC_ENV_TAG:
-		if	(flag)
-		{
-			io_puts(html->enditem, html->out);
-			io_puts("<DT>", html->out);
-		}
-		else
-		{
-			io_puts("</DT><DD>", html->out);
-			html->enditem = "</DD>";
-		}
 		break;
 	case DOC_ENV_TAB:
 		put_env(html, flag, "TABLE", 1);

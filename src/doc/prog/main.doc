@@ -11,8 +11,8 @@ Programmentwicklung mit EFEU
 \include gkurs/main.doc
 \include pconfig/main.doc
 \appendix
-//\mchap[1]	Kommandos
-//\pipe	bkprog --help=raw
+\mchap[1]	Kommandos
+\pipe	efeuscript --help=raw
 \include Literatur.doc
 \printindex
 @Impressum(2001)

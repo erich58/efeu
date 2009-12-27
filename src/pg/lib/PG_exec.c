@@ -151,10 +151,10 @@ The functions |PG_exec| and |PG_command| returns 1 on success
 and 0 on failure.
 
 $SeeAlso
-PG(3),
-PG_open(3),
-PG_query(3),
-SetupPG(3),
-PG(7).\br
+\mref{PG(3)},
+\mref{PG_open(3)},
+\mref{PG_query(3)},
+\mref{SetupPG(3)},
+\mref{PG(7)}.\br
 PostgreSQL Programmer's Guide.
 */

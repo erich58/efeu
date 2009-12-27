@@ -2,7 +2,7 @@
 # :*:edit data cube using vi
 # :de:Datenmatrix mit vi editieren
 #
-# Copyright (C) 1997 Erich Frühstück
+# $Copyright (C) 1997 Erich Frühstück
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -19,6 +19,39 @@
 # License along with EFEU; see the file COPYING.
 # If not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+: ${LANG:=en}
+
+# $pconfig
+# file |
+#	name of file
+# :mdprint options |
+#	mdprint options
+
+usage ()
+{
+	efeuman -- $0 $1 || echo "usage: $0 file [mdprint options]"
+}
+
+case "$1" in
+-\?|--help*)	usage $1; exit 0;;
+esac
+
+# $Description
+# :*:
+# The command allows to edit the data cube <file> with vi.
+# Depending on the mdprint options, the data cube may be changed.
+# You should edit carefully, a incorrect syntax may result in
+# data loss.
+# :de:
+# Das Programm erlaubt die Manipulation der Datenamtrix <file>
+# mit dem Editor vi. Je nach Art der mdprint-Optionen, ist eine
+# Änderung der Datenmatrix möglich.  Die Änderungen an der Datenmatrix
+# sollten mit Vorsicht durchgeführt werden, ein Fehler in der Syntax kann
+# zu Datenverlusten führen.
+
+# $SeeAlso
+# mdprint(1), mdread(1), msc(1).
 
 #	message formats
 
@@ -56,7 +89,7 @@ esac
 if
 	test $# -lt 1
 then
-	printf "$msg1" 1>&2
+	usage -?
 	exit 1
 fi
 

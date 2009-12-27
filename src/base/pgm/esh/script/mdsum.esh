@@ -2,7 +2,7 @@
 :*:	accumulate axis of data cube
 :de:	Achsen einer Datenmatrix aufsummieren
 
-Copyright (C) 1997, 2001 Erich Frühstück
+$Copyright (C) 1997, 2001 Erich Frühstück
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -22,13 +22,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 pconfig !
-#if	Lang == "de"
-Ident = "Achsen einer Datenmatrix aufsummieren"
-#else
-Ident = "accumulate axis of data cube"
-#endif
-Version = "2"
-Copyright = "(c) 1997, 2001 Erich Frühstück"
+Version = "$Id: mdsum.esh,v 1.8 2001-11-12 07:49:38 ef Exp $"
 
 r | Reduce = true
 	:*:remove singulary axis
@@ -49,7 +43,7 @@ T:title | Title
 	:*:selection parameter
 	:de:Selektionsparameter
 *name(s) | 
-	:*:name of axis to cummulate
+	:*:name of axis to cumulate
 	:de:Achsenbezeichner
 !
 

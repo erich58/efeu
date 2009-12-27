@@ -543,12 +543,6 @@ static MemberDef_t var_sc[] = {
 /*	Initialisieren
 */
 
-static VarDef_t sc_var[] = {
-	{ "SC_Debug", &Type_bool, &sc_reftype.debug,
-		":*:flag to control debuging of SC-structures\n"
-		":de:Flag zum Debuggen von SC-Strukturen\n" },
-};
-
 static ParseDef_t sc_pdef[] = {
 	{ "SC_DATA", PFunc_int, (void *) SC_DATA },
 	{ "SC_EXPR", PFunc_int, (void *) SC_EXPR },
@@ -584,7 +578,6 @@ void SetupSC(void)
 		AddParseDef(sc_pdef, tabsize(sc_pdef));
 		AddType(&Type_SC);
 		AddFuncDef(sc_func, tabsize(sc_func));
-		AddVarDef(NULL, sc_var, tabsize(sc_var));
 		AddMember(Type_SC.vtab, var_sc, tabsize(var_sc));
 		need_init = 0;
 	}

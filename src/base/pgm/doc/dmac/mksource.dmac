@@ -1,5 +1,6 @@
 /*
-Befehle zur Sourcefilegenerierung
+:*:commands  to include created source files
+:de:Befehle zur Sourcefilegenerierung
 
 $Copyright (C) 2000 Erich Frühstück
 This file is part of EFEU.
@@ -20,10 +21,14 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-Sourcefile generieren
+:*:create sourcefile
+	$1 <file>
+:de:Sourcefile generieren
 	$1 <Datei>
 
-Der Befehl $1 wendet |mksource| auf die angegebene Skriptdatei
+:*:The command $1 calls |mksource| with the given script
+and includes the created files in verbatim mode.
+:de:Der Befehl $1 wendet |mksource| auf die angegebene Skriptdatei
 an und bindet die Ergebnisdateien wortwörtlich ein.
 
 \def\mksource {{
@@ -52,10 +57,15 @@ if	(fname)
 }
 }}
 
-Beispiel einbinden
+:*:include mksource example
+	$1 |(|<name>,<text>|)|
+:de:mksource Beispiel einbinden
 	$1 |(|<name>,<text>|)|
 
-Der Makro bindet ein Beispielskript und sein Ergebnis ein.
+:*:The makro $1 includes a |mksource| example script and
+the target file(s), where <name> is the name of the script and
+<text> is the separating text between source and target file(s).
+:de:Der Makro bindet ein Beispielskript und sein Ergebnis ein.
 Dabei ist <name> der Name des Skripts und <text> der Trenntext
 zwischen Skriptfile und den Ergebnisdateien.
 

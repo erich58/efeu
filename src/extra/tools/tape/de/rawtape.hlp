@@ -1,0 +1,12 @@
+@name
+@synopsis -h
+\Description
+Das Kommando |$!| liest Daten von der Magnetbandeinheit <dev>
+und schreibt sie in die Datei <file>. Fehlt <file> wird nur die
+Verarbeitungsstatistik ausgegeben.
+
+Die folgenden Optionen und Argumente werden vom Kommando akzeptiert:
+
+@arglist
+
+@copyright -h

@@ -2,7 +2,7 @@
 # :*:convert TeX-document to PostScript
 # :de:TeX-Formatierung
 #
-# Copyright (C) 1993, 2001 Erich Frühstück
+# $Copyright (C) 1993, 2001 Erich Frühstück
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -20,51 +20,49 @@
 # If not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
+# $pconfig
+# q |
+#	:*:landscape
+#	:de:Landscape
+# n:count |
+#	:*:number of formatting runs
+#	:de:Zahl der Formatierungsläufe
+# r:res |
+#	:*:resolution
+#	:de:Auflösung
+# :src |
+#	:*:source
+#	:de:Ausgabefile
+# ::ps |
+#	:*:target
+#	:de:Definitionsfile
+
+usage ()
+{
+	efeuman -- $0 $1 || cat << EOF
+usage: $0 [-q] [-n count] [-r res] src [ps]
+EOF
+}
+
+case "$1" in
+-\?|--help*)	usage $1; exit 0;;
+esac
+
+#	parse command line
+
 name=TeX$$
 texfile=$name.tex
 dvifile=$name.dvi
 psfile=$name.ps
 count=1
 
-usage ()
-{
-	case ${LANG:=en} in
-	de*)	cat <<!
-Aufruf: $0 [-h] [-q] [-n count] [-r res] src [ps]
-
-	-h	Dieser Text
-	-q	Landscape
-	-n	Zahl der Formatierungsläufe
-	-r	Auflösung
-	src	Definitionsfile
-	ps	Ausgabefile
-
-!
-		;;
-	*)	cat <<!
-usage: $0 [-h] [-q] [-n count] [-r res] src [ps]
-
-	-h	this output
-	-q	landscape
-	-n	nummber of formatting runs
-	-r	resolution
-	src	source
-	ps	target
-!
-		;;
-	esac
-}
-
-#	parse command line
-
-while getopts hn:qr: opt
+while getopts n:qr: opt
 do
 	case $opt in
 	n)	count=$OPTARG;;
 	q)	psflags="$psflags -t landscape";;
 	r)	psflags="$psflags -D$OPTARG";;
-	h)	usage; exit 0;;
-	\?)	usage | sed -e '/^$/q'; exit 1;;
+	\?)	usage -?; exit 1;;
 	esac
 done
 
@@ -73,7 +71,7 @@ shift `expr $OPTIND - 1`
 if
 	test $# -lt 1
 then
-	usage
+	usage -?
 	exit 1
 fi
 

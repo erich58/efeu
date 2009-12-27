@@ -2,7 +2,7 @@
 :*:	data cube function
 :de:	Funktion auf Datenmatrix anwenden
 
-Copyright (C) 1997, 2001 Erich Frühstück
+$Copyright (C) 1997, 2001 Erich Frühstück
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -26,13 +26,7 @@ Type_t Type = NULL;
 PrintListDelim = "\t";
 
 pconfig !
-#if	Lang == "de"
-Ident = "Funktion auf Datenmatrix anwenden"
-#else
-Ident = "data cube function"
-#endif
-Version = "2"
-Copyright = "(c) 1997, 2001 Erich Frühstück"
+Version = "$Id: mdfunc.esh,v 1.6 2001-10-18 12:11:20 ef Exp $"
 PrintMode = true
 Mark = "#-1"
 

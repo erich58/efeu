@@ -117,11 +117,14 @@ static ENV env_spage = { "spage", "os",
 static ENV env_bib = { "bib", "s",
 	"\\begin{thebibliography}{$1}", "\\end{thebibliography}", };
 
+static ENV env_table = { "table", "o",
+	"\\begin{table}$1", "\\end{table}", };
+
 static ENV env_fig = { "fig", "o",
 	"\\begin{figure}$1", "\\end{figure}", };
 
 static ENV env_tabular = { "tabular", "os",
-	"\\begin{tabular}$1{$2}", "\\end{tabular}" };
+	"\\begin{tabular}$1{$2}", "\\end{tabular}\n" };
 
 static ENV env_multicol = { "multicol", "sd",
 	"\\multicolumn{$2}{$1}{", "}" };
@@ -132,7 +135,7 @@ static ENV *env_tab[] = {
 	&env_code, &env_hang, &env_quote, &env_intro,
 	&env_verbatim, &env_manpage,
 	&env_spage, &env_bib,
-	&env_fig, &env_tabular, &env_multicol,
+	&env_table, &env_fig, &env_tabular, &env_multicol,
 };
 
 
@@ -340,6 +343,30 @@ int LaTeX_env (LaTeX_t *ltx, int flag, va_list list)
 		if	(flag)	ltx->ignorespace = 0;
 
 		break;
+	case DOC_PAR_TAG:
+		LaTeX_newline(ltx);
+
+		if	(flag)
+		{
+			io_puts("\\item[{", ltx->out);
+			/*
+			ltx->put = (DocDrvPut_t) LaTeX_xputc;
+			*/
+			ltx->last = 0;
+			ltx->ignorespace = 1;
+		}
+		else
+		{
+			io_puts("}]\n", ltx->out);
+			/*
+			ltx->put = (DocDrvPut_t) LaTeX_putc;
+			*/
+			ltx->last = '\n';
+			ltx->space = 0;
+			ltx->ignorespace = 0;
+		}
+
+		break;
 	case DOC_SEC_PART:
 		put_xsec(ltx, flag, sec_part, list);
 		break;
@@ -404,7 +431,7 @@ int LaTeX_env (LaTeX_t *ltx, int flag, va_list list)
 	case DOC_MODE_PLAIN:
 		ltx->put = flag ? DocDrv_plain : (DocDrvPut_t) LaTeX_putc;
 		break;
-	case DOC_MODE_SGML:
+	case DOC_MODE_HTML:
 	case DOC_MODE_MAN:
 		LaTeX_env (ltx, flag, list);
 		break;
@@ -420,30 +447,6 @@ int LaTeX_env (LaTeX_t *ltx, int flag, va_list list)
 		break;
 	case DOC_LIST_DESC:
 		put_xenv(ltx, flag, &list_desc, list);
-		break;
-	case DOC_ENV_TAG:
-		LaTeX_newline(ltx);
-
-		if	(flag)
-		{
-			io_puts("\\item[{", ltx->out);
-			/*
-			ltx->put = (DocDrvPut_t) LaTeX_xputc;
-			*/
-			ltx->last = 0;
-			ltx->ignorespace = 1;
-		}
-		else
-		{
-			io_puts("}]\n", ltx->out);
-			/*
-			ltx->put = (DocDrvPut_t) LaTeX_putc;
-			*/
-			ltx->last = '\n';
-			ltx->space = 0;
-			ltx->ignorespace = 0;
-		}
-
 		break;
 	case DOC_ENV_CODE:
 		put_xenv(ltx, flag, &env_code, list);
@@ -465,6 +468,9 @@ int LaTeX_env (LaTeX_t *ltx, int flag, va_list list)
 		break;
 	case DOC_ENV_SPAGE:
 		put_xenv(ltx, flag, &env_spage, list);
+		break;
+	case DOC_ENV_TABLE:
+		put_xenv(ltx, flag, &env_table, list);
 		break;
 	case DOC_ENV_FIG:
 		put_xenv(ltx, flag, &env_fig, list);

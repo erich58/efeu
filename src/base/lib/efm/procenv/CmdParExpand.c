@@ -27,6 +27,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/ftools.h>
 #include <EFEU/Info.h>
 #include <EFEU/appl.h>
+#include <ctype.h>
 
 #define	FMT_HEAD	"\\dhead\t$1(1)\n\\mpage[1] $1\n"
 
@@ -34,7 +35,9 @@ static KEYTAB(ExpandTab, 32);
 static void setup_builtin (void);
 
 /*
-Die Funktion |$1| liefert die durch <name> definierte
+:*:The function |$1| returns a pointer to the expansion definition <name>
+or a NULL pointer if not defined.
+:de:Die Funktion |$1| liefert die durch <name> definierte
 Expansionsfunktion für Beschreibungstexte.
 */
 
@@ -45,7 +48,9 @@ CmdParExpand_t *CmdParExpand_get (const char *name)
 }
 
 /*
-Die Funktion |$1| erweitert die Expansionsfunktionen für
+:*:The function |$1| enhances the list of expansion definition
+with <eval>.
+:de:Die Funktion |$1| erweitert die Expansionsfunktionen für
 Beschreibungstexte mit <def>.
 */
 
@@ -56,7 +61,9 @@ void CmdParExpand_add (CmdParExpand_t *eval)
 }
 
 /*
-Die Funktion |$1| listet die Expansionsfunktionen für
+:*:The function |$1| writes a list of expansion definations to
+the output <io>.
+:de:Die Funktion |$1| listet die Expansionsfunktionen für
 Beschreibungstexte auf.
 */
 
@@ -69,18 +76,47 @@ void CmdParExpand_show (io_t *io, const char *fmt)
 
 	for (n = ExpandTab.used, p = ExpandTab.data; n-- > 0; p++)
 	{
+		char *desc = mlangcpy((*p)->desc, NULL);
+			
 		if	(fmt)
 		{
 			reg_cpy(1, (*p)->name);
-			reg_cpy(2, (*p)->desc);
+			reg_set(2, desc);
 			io_psub(io, fmt);
 		}
-		else	io_printf(io, "[%s] %#s\n", (*p)->name, (*p)->desc);
+		else
+		{
+			io_printf(io, "[%s] %#s\n", (*p)->name, desc);
+			memfree(desc);
+		}
 	}
 }
 
+/*	auxiliary functions
+*/
 
-/*	Eingebaute Funktionen
+static int testflag (const char *arg, int key)
+{
+	int flag;
+
+	if	(arg == NULL)	return 0;
+
+	for (flag = 0; *arg != 0; arg++)
+	{
+		if	(*arg == '-')	flag = 1;
+		else if	(isspace(*arg))	flag = 0;
+		else if (*arg == key)	return 1;
+	}
+
+	return 0;
+}
+
+static void putvar (CmdPar_t *par, io_t *io, const char *name)
+{
+	CmdPar_psubout(par, io, CmdPar_getval(par, name, NULL), NULL);
+}
+
+/*	Builtin functions
 */
 
 static void f_head (CmdPar_t *par, io_t *io, const char *arg)
@@ -91,23 +127,73 @@ static void f_head (CmdPar_t *par, io_t *io, const char *arg)
 
 static void f_ident (CmdPar_t *par, io_t *io, const char *arg)
 {
-	io_printf(io, "%s -- %s\n", par->name,
-		CmdPar_getval(par, "Ident", par->name));
+	io_puts(par->name, io);
+	io_puts(" -- ", io);
+	CmdPar_psubout(par, io, CmdPar_getval(par, "Ident", par->name), NULL);
+	io_putc('\n', io);
+}
+
+static void f_name (CmdPar_t *par, io_t *io, const char *arg)
+{
+	f_head(par, io, arg);
+	io_puts("\\Name\n", io);
+	f_ident(par, io, arg);
 }
 
 static void f_synopsis (CmdPar_t *par, io_t *io, const char *arg)
 {
+	if	(testflag(arg, 'h'))
+		putvar(par, io, ".synopsis.head");
+
+	if	(testflag(arg, 'i'))
+		putvar(par, io, ".synopsis.intro");
+
 	CmdPar_synopsis(par, io);
 }
 
 static void f_arglist (CmdPar_t *par, io_t *io, const char *arg)
 {
+	if	(testflag(arg, 'h'))
+		putvar(par, io, ".arglist.head");
+
+	if	(testflag(arg, 'i'))
+		putvar(par, io, ".arglist.intro");
+
 	CmdPar_arglist(par, io);
 }
 
 static void f_environ (CmdPar_t *par, io_t *io, const char *arg)
 {
+	if	(testflag(arg, 'h'))
+		putvar(par, io, ".environ.head");
+
 	CmdPar_environ(par, io);
+}
+
+static void f_version (CmdPar_t *par, io_t *io, const char *arg)
+{
+	char *p = CmdPar_getval(par, "Version", NULL);
+
+	if	(p == NULL)	return;
+
+	if	(testflag(arg, 'h'))
+		putvar(par, io, ".version.head");
+
+	io_puts(p, io);
+	io_putc('\n', io);
+}
+
+static void f_copyright (CmdPar_t *par, io_t *io, const char *arg)
+{
+	char *p = CmdPar_getval(par, "Copyright", NULL);
+
+	if	(p == NULL)	return;
+
+	if	(testflag(arg, 'h'))
+		putvar(par, io, ".copyright.head");
+
+	io_puts(p, io);
+	io_putc('\n', io);
 }
 
 static void f_varlist (CmdPar_t *par, io_t *io, const char *arg)
@@ -116,13 +202,16 @@ static void f_varlist (CmdPar_t *par, io_t *io, const char *arg)
 }
 
 static CmdParExpand_t builtin[] = {
-	{ "head",	"Handbuchkopf", f_head },
-	{ "name",	"Handbuchkopf", f_head },
-	{ "ident",	"Überschrift", f_ident },
-	{ "synopsis",	"Übersicht", f_synopsis },
-	{ "arglist",	"Programmparameter", f_arglist },
-	{ "environ",	"Umgebungsvariablen", f_environ },
-	{ "varlist",	"Variablenliste", f_varlist },
+	{ "head", ":*:manpage head:de:Handbuchkopf", f_head },
+	{ "ident", ":*:caption:de:Überschrift", f_ident },
+	{ "name", ":*:manpage head with caption"
+		":de:Handbuchkopf mit Überschrift", f_name },
+	{ "synopsis", ":*:Synopsis:de:Übersicht", f_synopsis },
+	{ "arglist", ":*:command parameters:de:Programmparameter", f_arglist },
+	{ "environ", ":*:Environment:de:Umgebungsvariablen", f_environ },
+	{ "varlist", ":*:List of variables:de:Variablenliste", f_varlist },
+	{ "version", ":*:version number:de:Versionsnummer", f_version },
+	{ "copyright", ":*:Copyright information:de:Copyright", f_copyright },
 };
 
 

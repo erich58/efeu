@@ -1,4 +1,6 @@
-/*	Deutscher Handbucheintrag für esh
+/*
+:*:german manpage for esh
+:de:Deutscher Handbucheintrag für esh
 
 $Copyright (C) 1995 Erich Frühstück
 This file is part of EFEU.
@@ -20,360 +22,355 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 @name
-\Name
-@ident
-\Synopsis
-@synopsis file
+@synopsis -h
 \Description
 Das Programm |$!|
 interpretiert Skriptfiles in der Syntax des EFEU - Befehlsinterpreters.
+Die Syntax der Sprache ist ähnlich zu C/C++. Wer damit vertraut ist,
+sollte keine Schwierigkeiten haben, diese Sprache zu lernen.
 
-Das Eingabefile wird durch einen Präprozessor gefiltert und kann
-Kommentare enthalten. Präprozessorzeilen werden durch ein "#"
-gekennzeichnet. Kommentare können wie in C++ Programmen wahlweise
-durch |/*| ... |*/| oder |//| ... <Newline> gekapselt werden.
-Die Eigenschaften des Präprozessors werden
-weiter unten beschrieben.
+Das Kommando |$!| akzepiert Kommentare im Stil von C/C++ und verwendet
+einen Präprozessor ähnlich zu C/C++. Dieser wird weiter unten
+beschrieben. Eine Zeile, die mit |#!| startet, wird nicht von |$!|
+interpretiert. Sie dient primär dazu, den Interpreter für die
+Ausführung des Skripts zu definieren. Die Interpreterkennung
+hat die Form
+	|#!|<vollständiger Pfadname von $!>
+Damit ein Skript unabhängig vom
+Installationsort von |$!| ist, kann auch folgende Interpreterdefinition
+verwendet werden:
+	|#!/usr/bin/env esh|
+
+Ausdrücke im EFEU-Befehlsinterpreter werden entweder durch einen
+Strichpunkt oder einen Zeilenvorschub beendet. Tabulatoren und
+Leerzeichen werden überlesen. Ein Ausdruck wird ebenfalls beendet,
+wenn einem Term kein rechter Operator mehr nachfolgt. Falls in
+diesem Fall ein Punktierungszeichen dem Term folgt, wird dieses als
+Abschlußzeichen genommen, ansonsten ein Leerzeichen.
+An manchen Stellen, z.B. innerhalb einer Argumentliste einer Funktion,
+wird ein Zeilenvorschub nicht als Abschlußzeichen, sondern nur wie
+ein gewöhnliches Leerzeichen behandelt.
+
+Im äußersten Modus (außerhalb eines Blocks oder eines Funktionsrumpfes)
+wird jeder Ausdruck sofort nach dem Lesen ausgewertet. Falls der
+Ausdruck nicht durch einen Strichpunkt abgeschlossen wurde und ein
+Ergebnis liefert, wird dieses, gefolgt vom Abschlußzeichen, ausgegeben.
+
+Zum Beispiel wird die Zeile
+	|3 * 5 4 + 7 $$ 2 - 1; 4 + 1|
+in die 4 Ausdrücke
+	|3 * 5| mit einem Leerzeichen als Abschluß,\br
+	|4 + 7| mit einem |$$| als Abschlußzeichen,\br
+	|2 - 1| mit einem |;| als Abschlußzeichen und\br
+	|4 + 1| mit einem Zeilenvorschub als Abschluß
+aufgespalten und die Ausgabe ist
+	|${3 * 5 4 + 7 $$ 2 - 1; 4 + 1}|
+im äußersten Modus.
+
+Falls |$!| ohne Skriptnamen aufgerufen wird, oder falls anstelle
+des Skriptnamens ein einzelnes Minus steht, werden die Befehlszeilen
+von der Standardeingabe gelesen. Falls die Standardeingabe und die
+Standardausgabe mit einem Terminal verbunden sind, läuft |$!|
+interaktiv und |readline| wird für die Eingabe vom Terminal verwendet.
+Die Steuerzeichen von |readline| sind aktiv und ein Rufzeichen |!|
+zu Beginn einer Zeile erlaubt die Eingabe von History-Befehlen und
+Systemaufrufen.
+
+Die Verwendung von |readline| im interaktiven Modus und die
+automatische Ausgabe von Resultaten machen |$!| zu einem komfortablen
+Tischrechner.
+
+Der EFEU-Befehlsinterpreter ist mit C-Bibliotheksfunktionen implementiert,
+|$!| ist ein einfaches Programm, das diese Funktionen nutzt. Der
+Interpreter kann Datenpointer gemeinsam mit C-Funktionen nutzen
+und mit eigenen Funktionen und Datentypen erweitert werden.
+Er eignet sich zur Verarbeitung von
+Konfigurationsdateien und zum Testen von Funktionen.
+
+Falls EFEU für gemeinsam genutzte Bibliotheken kompiliert wurde,
+kann |$!| zur Laufzeit erweitert werden. Falls ein dynamisches Linken
+von Funktionen nicht möglich ist, können die Erweiterungen in einer
+Kopie von |esh.c| eingebaut werden.
 
 \shead	Optionen
-Falls als erstes Argument ein Skriptfile angegeben wird, bestimmt dieses
-die Syntax der Optionen und Argumente.
-Die im Skriptfile festgelegte Syntax kann mit den Optionen
-|-?| oder |-help| abgefragt werden.
+Optionen und Argumente nach dem Skriptnamen werden vom Skript selbst
+interpretiert. Der Interpreter |$!| selbst akzeptiert die folgenden
+Optionen und Argumente:
 
-Falls kein Argument, oder das erste Argument/Option mit einem Minus
-beginnt, gelten die im folgenden aufgelisteten Optionen und Argumente.
-
-@arglist 14
+@arglist
 
 \head	PRÄPROZESSOR
+
 Der verwendete Präprozessor hat eine ähnliche Syntax wie der C-Präprozessor.
 Es gibt jedoch einen wesentlichen Unterschied:
+Der Präprozessor wird nicht zur Vorverarbeitung der gesamten Datei
+verwendet, sondern ist zeilenweise implementiert und arbeitet direkt
+mit dem Befehlsinterpreter zusammen. Insbesonders kann durch Verändern
+von Variablen im äußeren Modus auch die Verarbeitung nachfolgender
+Präprozessorzeilen beeinflußt werden.
 
-Der Präprozesser wird nicht zur Vorverarbeitung der gesamten Datei verwendet,
-sondern ist zeilenweise implementiert und arbeitet direkt mit dem Befehlsinterpreter
-zusammen. Insbesonders kann durch verändern von Variablen im Befehlsmodus
-auch die Verarbeitung nachfolgender Präprozessorzeilen beeinflußt werden.
+Eine Direktive (Präprozessoranweisung) wird mit einem Gittersymbol
+|#| eingeleitet. Danach folgt der Name der Direktive und die zugehörigen
+Argumente.
 
 Eine Präprozessorzeile, bei der nach dem
-Startzeichen "#" ein Sonderzeichen folgt, wird ebenfalls als
-Kommentarzeile betrachtet. Insbesonders gilt das auch für die
-Zeile
+Startzeichen (|#|) ein Sonderzeichen folgt, wird ignoriert.
+Insbesonders gilt das für die Interpreterkennung |#!|.
 
-\code
-	#!$(EFEUTOP:%s)/bin/$!
-\end
+\shead	Einbinden von Dateien
 
-Durch Einfügen dieser Zeile zu Beginn der Datei, kann ein Templatefile
-ausführbar gemacht werden. Falls $! in einer anderen Bibliothek
-installiert wurde, ist der Pfad entsprechend abzuändern.
-
-Die folgenden Präprozessordirektiven können verwendet werden:
+Dateien werden mit der |#include| Direktive eingebunden.
+Zunächst werden im Argument der Direktive alle Makros expandiert.
+Anschließend bleiben drei mögliche Fälle:
 
 \item	|#include <|<file>|>|
-	Einbinden der Datei <file> Die Suche erfolgt in den durch die
-	Option |-I| definierten Bibliotheken.
+	Die Suche nach der Datei <file> erfolgt in den durch die
+	Variable |IncPath| (Kann mit der Umgebungsvariablen |ESHPATH|
+	und der Option |-I| erweitert werden) definierten Verzeichnissen.
+
+\item	|#include| <expr>
+	Zunächst wird <expr> ausgewertet und in einen String
+	konvertiert. Falls der resultierende String nicht mit |<|
+	beginnt, wird die Datei zunächst im aktuellen Verzeichnis
+	gesucht und erst anschließend in den durch |IncPath|
+	definierten Verzeichnis.
 
 \item	|#include "|<file>|"|
-	Wie oben, jedoch zusätzliche Suche in der aktuellen Bibliothek, falls
-	diese nicht im Suchpfad enthalten ist.
+	Das ist nur ein Spezialfall der zweiten Variante.
+	Die Datei <name> wird zuerst im aktuellen Verzeichnis gesucht.
 
-\item	|#if| <expr>
-	Falls der Ausdruck <expr> logisch wahr liefert, werden die nachfolgenden
-	Zeilen interpretiert, ansonsten übersprungen.
+In |$!| sind die folgenden Konstruktionen erlaubt:
+---- verbatim
+str header = paste("/", "SubDir", "MyHeader");
+#include "<" + header + ">"
+----
 
-\item	|#elif| <expr>
-	Falls kein vorangegangener Ausdruck einer |#if| oder |#elif|
-	Anweisung logisch wahr war und <expr> einen logisch wahren
-	Ausdruck liefert, werden die nachfolgenden Statements ausgeführt.
+\shead	Bedingte Verarbeitung
 
-\item	|#else|
-	Falls kein vorangegangener Ausdruck einer |#if| oder |#elif|
-	Anweisung logisch wahr war, werden die nachfolgenden Statements
-	ausgeführt.
+Eine bedingte Verarbeitung beginnt mit einer der Direktiven |#if|,
+|#ifdef| oder |#ifndef| und endet mit |#endif|. Innerhalb der
+bedingten Verarbeitung können beliebig viele |#elif| Anweisungen
+und eine |#else| Anweisung enthalten sein.
+Bereiche mit bedingter Verarbeitung können beliebig geschachtelt werden.
 
-\item	|#endif|
-	Ende eines Abfrageblockes.
+Die Direktiven
+	|#ifdef| <name>\br
+	|#ifndef| <name>\br
+dienen zum Testen, ob der Makro mit Namen <name> definiert (bzw. nicht
+definiert) ist. Auf diese Direktiven wird keine Makrosubstitution angewendet.
+
+Die einfachste Form eines bedingten Ausdrucks hat die Form:
+
+	|#if| <expr>\br
+	Zeilen werden verarbeitet, falls <expr> wahr ist.\br
+	|#endif|
+
+Ein etwas komplexerer Ausdruck könnte etwa so aussehen:
+
+	|#if| <expr1>\br
+	Zeilen werden verarbeitet, falls <expr1> wahr ist.\br
+	|#elif| <expr2>\br
+	Zeilen werden verarbeitet, falls <expr2> wahr und <expr1>
+	falsch ist.\br
+	|#else|\br
+	Zeilen werden verarbeitet, falls weder <expr1> noch
+	<expr2> wahr ist.\br
+	|#endif|
+
+Wie bereits im Abschnitt <"Einbinden von Dateien"> erwähnt, können in
+<expr> beliebige Variablen oder Funktionen, die vor der bedingten
+Verarbeitung erklärt wurden, verwendet werden.
+
+\shead	Makros
+
+Makros werden mit der |#define| Direktive definiert. Es gibt zwei
+Formen:
 
 \item	|#define| <name> <repl>
-	Definiert einen Makro <name> der durch <repl> ersetzt wird.
+	definiert einen Makro <name> der durch <repl> ersetzt wird.
 
 \item	|#define|  <name>(<arglist>) <repl>
-	Definiert einen Makro <name> mit Argumenten. Die öffnende Klammer
+	definiert einen Makro <name> mit Argumenten. Die öffnende Klammer
 	muß unmittelbar nach dem Namen folgen.
 
-\item	|#undef| <name>
-	Löscht die Definition des Makros <name>
+Der Name eines Makros muß mit einem Buchstaben oder einem
+Unterstreichungszeichen beginnen und darf nur Buchstaben, Ziffern oder
+Unterstreichungszeichen enthalten.
 
-\item	|#ifdef| <name>
-	Testet, ob der angegebene Makro definiert ist.
+In |$!| werden Makros nur selten verwendet. In fast allen Fällen sind
+Variablen und Funktionen die bessere Lösung. Normalerweise werden
+Makros nur zum Absichern von Headerdateien gegen mehrfache Einbindung
+verwendet.
 
-\item	|#ifndef| <name>
-	Testet, ob der angegebene Makro nicht definiert ist.
+Ein Makrodefinition kann mit der |#undef| Direktive gelöscht werden.
 
-\item	|#error| <Text>
-	Liefert eine Fehlermeldung.
+\head	AUSDRÜCKE
 
-\head	BEFEHLSINTERPRETER
-Der Befehlsinterpreter hat eine C ähnliche Syntax, mit
-gewissen C++ Erweiterungen. Es gibt jedoch keine Pointer.
-Hier werden nur die wichtigsten Syntaxregeln für den Interpreter angeführt.
+Konstanten und Variablen können mit Operatoren zu einfachen
+Ausdrücken verknüpft werden.
 
-\shead	Datentypen
-Die folgenden Datentypen stehen zur Verfügung:
+Die nachfolgenden Tabellen zeigen die verfügbaren Operatoren von |$!|,
+sie sind absteigend nach Priorität aufgelistet. Operatoren, die
+nicht durch eine horizontale Linie voneinander getrennt sind, haben
+die gleiche Priorität.
 
-\ttitem	bool
-	Boolscher Wert, hat die Ausprägungen <true> oder <false>.
-\ttitem	char
-	Zeichenkonstante, immer positiv.
-\ttitem	short
-	Kurzer Ganzzahlwert (2 Byte).
-\ttitem	long
-	Langer Ganzzahlwert
-\ttitem	int
-	Normaler Ganzzahlwert
-\ttitem	float
-	Kurzer Gleitkommawert (4 Byte).
-\ttitem	double
-	Langer Gleitkommawert (8 Byte).
-\ttitem	str
-	Zeichenkette (String).
-\ttitem	IO
-	Ein/Ausgabestruktur.
-\ttitem	Object
-	Beliebiges Objekt.
-\ttitem	Vec_t
-	Beliebiger Vektor.
-\ttitem	List_t
-	Liste von Objekten.
-\ttitem	Func_t
-	Funktion (Tabelle mit allen Überladungen).
-\ttitem	_ObjFunc_
-	Objektgebundene Funktion (Überladungstabelle und Objekt).
-\ttitem	_NULL_
-	Datentype für universellen Nullpointer. Ein Nullpointer wird mit
-	dem Schlüsselword |NULL| eingerichtet. Strings, IO-Strukturen
-	und Funktionen können mit einem Nullpointer initialisiert werden.
-\ttitem	mdmat_t
-	Mehrdimensionale Datenmatrix.
-\ttitem	mdaxis_t
-	Achsendefinition einer mehrdimensionalen Datenmatrix.
-\ttitem	mdidx_t
-	Index einer Achse einer mehrdimensionalen Datenmatrix.
+\tab	|l|l|l|
+[-]
+#3|c| <*Linke Operatoren*>
+[--]
+<|::|> | global | <|::|><name>
+<|++|> | pre increment | <|++|><lvalue>
+<|--|> | pre decrement | <|--|><lvalue>
+<|\~|> | complement | <|\~|><expr>
+<|!|> | not | <|!|><expr>
+<|-|> | unary minus | <|-|><expr>
+<|+|> | unary plus | <|+|><expr>
+<|\{|> | list grouping | <|{|> <expr> [<|,|> <expr> ] <|}|>
+<|(|> | grouping | <|(|> <expr> <|)|>
+<|()|> | cast (type conversion) | <|(|><type><|)|> <expr>
+[-]
 
-\shead	Abgeleitete Datentypen
+Der <"list grouping"> Operator generiert eine Liste von Werten.
+Im Genensatz zu C/C++ ist dieser Operator nicht auf die
+Initialisierung von Variablen in Deklarationen beschränkt.
 
-Neben den Basistypen gibt es noch abgeleitete Datentypen.
-Dazu gehören Vektortypen und Strukturen.
+\tab	|l|l|l|
+[-]
+#3|c| <*Rechte Operatoren*>
+[--]
+<|++|> | post increment | <lvalue><|++|>
+<|--|> | post decrement | <lvalue><|--|>
+<|::|> | scope resolution | <type><|::|><name>
+<|::|> | variable selection | <vartab><|::|><name>
+<|.|> | member selection | <expr><|.|><name>
+<|[]|> | subscripting | <expr><|[|><expr><|]|>
+<|()|> | function call | <expr><|(|><list><|)|>
+[-]
 
-Ein Vektortype wird durch
+In |$!| kann auf die Variablentabellen direkt zugegriffen werden und
+es können eigene Variablentabellen generiert werden. Mithilfe des
+<"scope resolution"> Operators kann auf ein Element der Tabelle
+zugegriffen werden. Dieser Operator kann auf jeden Datentyp
+angewendet werden, der sich in eine Variablentabelle
+(Type |VarTab|) konvertieren läßt.
 
-\code
-	<type>[<dim>]
-\end
+\tab	|l|l|l|
+[-]
+#3|c| <*Arithmetische Operatoren*>
+[--]
+<|*|> | multiply | <expr> <|*|> <expr>
+<|/|> | division | <expr> <|/|> <expr>
+<|%|> | modulo (remainder) | <expr> <|%|> <expr>
+[-]
+<|+|> | add (plus) | <expr> <|+|> <expr>
+<|-|> | subtract | <expr> <|-|> <expr>
+[-]
+<|\<\<|> | shift left | <expr> <|\<\<|> <expr>
+<|\>\>|> | shift right | <expr> <|\>\>|> <expr>
+[-]
 
-repräsentiert. Sobald das erstemal anstelle eines Datentypes die obige
-Definition verwendet wird, wird der Datentype eingerichtet (Es gibt noch
-andere Situationen, die die Einrichtung eines Vektortypes erfordern).
+\tab	|l|l|l|
+[-]
+#3|c| <*Vergleichsoperatoren*>
+[--]
+<|\<|> | less than | <expr> <|\<|> <expr>
+<|\<=|> | less than or equal | <expr> <|\<=|> <expr>
+<|\>|> | greater than | <expr> <|\>|> <expr>
+<|\>=|> | greater than or equal | <expr> <|\>=|> <expr>
+[-]
+<|==|> | equal | <expr> <|==|> <expr>
+<|!=|> | not equal | <expr> <|!=|> <expr>
+[-]
 
-Strukturen werden analog wie in C definiert:
+\tab	|l|l|l|
+[-]
+#3|c| <*Bitoperatoren*>
+[--]
+<|\&|> | bitwise AND | <expr> <|\&|> <expr>
+[-]
+<|^|> | bitwise exclusive OR | <expr> <|^|> <expr>
+[-]
+<|\||> | bitwise inclusive OR | <expr> <|\||> <expr>
+[-]
 
-\code
-	struct <name> { <type> <name>; ... }
-\end
+\tab	|l|l|l|
+[-]
+#3|c| <*Logische Operatoren*>
+[--]
+<|\&\&|> | logical AND | <expr> <|\&\&|> <expr>
+[-]
+<|\|\||> | logical OR | <expr> <|\|\||> <expr>
+[-]
 
-Der Strukturname <name> ist zwar optional, sollte jedoch immer
-angegeben werden. Der Strukturname kann als Datentype eingesetzt werden.
+Der rechte Operand eines logischen Operators wird nur ausgewertet,
+wenn das Resultat nicht bereits vom linken Operanden determiniert
+wird.
+So wird in
+	|false &&| <expr>\br
+	|true ||||| <expr>\br
+der rechte Operand <expr> niemals ausgewertet.
 
-Eine Struktur kann auch Vektoren enthalten. Diese können
-wahlweise durch
+\tab	|l|l|l|
+[-]
+#3|c| <*Bedingter Ausdruck und Bereichsoperator*>
+[--]
+<|? :|> | conditional operator | <cond> <|?|> <expr1> <|:|> <expr2>
+[-]
+<|: :|> | range operator | <start> <|:|> <end> \[ <|:|> <step> \]
+[-]
 
-\code
-	<type>[<dim>] <name>
-\end
+Es gibt keinen Bereichsoperator in C/C++. Der Vorgabewert für
+<step> ist 1 (-1 falls <end> |<| <start>). Normalerweise wird dieser
+Operator mit Ganzzahl- und Gleitkommawerten verwendet.
 
-oder
+\tab	|l|l|l|
+[-]
+#3|c| <*Zuweisungsoperatoren*>
+[--]
+<|=|> | simple assignment | <lvalue> <|=|> <expr>
+<|*=|> | multiply and assign | <lvalue> <|*=|> <expr>
+<|/=|> | divide and assign | <lvalue> <|/=|> <expr>
+<|%=|> | modulo and assign | <lvalue> <|%=|> <expr>
+<|+=|> | add and assign | <lvalue> <|+=|> <expr>
+<|-=|> | subtract and assign | <lvalue> <|-=|> <expr>
+<|\<\<=|> | shift left and assign | <lvalue> <|\<\<=|> <expr>
+<|\>\>=|> | shift right and assign | <lvalue> <|\>\>=|> <expr>
+<|\&=|> | AND and assign | <lvalue> <|\&=|> <expr>
+<|^=|> | exclusive OR and assign | <lvalue> <|^=|> <expr>
+<|\|=|> | inclusive OR and assign | <lvalue> <|\|=|> <expr>
+[-]
 
-\code
-	<type> <name>[<dim>]
-\end
+Zuweisungsoperatoren sind rechtsassoziativ.
 
-deklariert werden.
-In beiden Fällen wird ein Vektortype generiert.
+\tab	|l|l|l|
+[-]
+#3|c| <*Listentrenner*>
+[--]
+<|,|> | list separator | <expr> <|,|> <expr>
+[-]
 
-Falls eine Struktur die gleichen Komponenten (Typen und Namen)
-wie eine bereits definierte Struktur auweist, wird nur ein Aliasname
-generiert.
+Das Komma |,| wird von |$!| so wie von |python| als Listentrenner und nicht
+als Komma-Operator wie in C/C++ verwendet.
+Der Ausdruck <a>, <b>, ..., <n>
+liefert eine Liste mit den Elementen <a>, <b>, ..., <n>.
 
-Eine Aliasname für einen Datentype kann durch
+Falls der Rückgabewert des Komma-Operators nicht verwendet wird (die
+übliche Anwendung), gibt es keinen Unterschied im Verhalten zum
+Listentrenner.
 
-\code
-	typedef <type> <name>
-	typedef <type> <name>[<dim>]
-	typedef <type>[<dim>] <name>
-\end
-
-eingerichtet werden. Die zwei letzten Formen sind gleichwertig.
-Bei mehreren Dimensionen ist darauf zu achten, daß die Dimensionsparameter
-nach einem Datentype in umgekehrter Reihenfolge angegeben
-werden als nach einem Namen.
-
-Der Datentype |int| ist als Aliasname
-auf |long| bzw |short| implementiert.
-
-\shead	Konstanten
-Eine <Konstante> ist entweder ein Ganzzahlwert, ein Gleitkommawert
-(enthält Dezimalpunkt oder Exponent) eine logische Konstante (Schlüsselword
-<true> oder <false>) eine Zeichenkonstante (Zeichen unter einfacher
-Anführung) oder ein String (Zeichenfolge unter doppelter Anführung, oder das
-Schlüsselword |NULL|).
-
-\shead	Variablen
-Variablen müssen deklariert werden, bevor sie verwendet werden können.
-Dies erfolgt durch eine der folgenden Befehlszeilen:
-
-\item	<type> <name> = <defval>
-Definiert eine Variable mit zugehörigen Vorgabewert. Kann an beliebiger
-Stelle eine Ausdruckes vorkommen. Der Vorgabewert ist optional.
-
-\item	<type> <name1>, <name2> = <defval>
-Definiert zwei Variablen des Datentypes <type>. Nur die zweite
-Variable wird mit <defval> initialisiert.
-
-\item	<type> <name>[<dim>] = { <x1>, <x2>, ...}
-Definiert einen Vektor. <dim> kann weggelassen werden, falls eine
-Liste von Initialisierungswerten angegeben wird.
-\endlist
-
-Es können auch mehrdimensionale Vektoren generiert werden.
-Die Implementierung der zweiten und weiteren Dimensionen
-erfolgt über Vektortypen.
-
-Eine Variablendefinition liefert als Ergebnis den Wert
-der definierten Variablen.
-
-Variablen werden in einer Hierarchie von Variablentabellen gespeichert.
-An oberster Stelle steht die globale Variablentabelle, an unterster Stelle
-die lokale oder aktuelle Variablentabelle. Neue Variablen werden in der
-lokalen Variablentabelle generiert. Die Suche von Variablen
-erfolgt von unten nach oben.
-Funktionen (außer typegebundene Funktionen)
-stehen immer in der globalen Variablentabelle.
-
-\shead	Terme
-Konstanten und Variablen können mit Operatoren zu Termen verknüpft
-werden. Die folgenden Operatoren stehen zur Verfügung:
-
-\code
-	[]  ()  {}  .  !  \~  #  ++  --
-	*  /  %  +  -  <<  >>  <  <=  >  >=  ==  !=  &  ^  |  &&  ||  ?
-	=  *=  /=  %=  +=  -=  <<=  >>=  &=  ^=  |=  ,
-\end
-
-Der "#" - Operator ist ein Prefixoperator, der angewand auf
-ein Ganzzahlobjekt zur Abfrage von Stringregistern dient.
-Diese werden bei Abfrage von Aufrufargumenten, bei der
-Parametersubstitution und bei der Ausgabe
-von Fehlermeldungen belegt.
-
-Operatoren werden entsprechend ihrer Priorität abgearbeitet.
-Linke Operatoren und Zuweisungsoperatoren werden von rechts nach links,
-die anderen Operatoren von links nach rechts abgearbeitet.
-Bei den Operatoren && und || wird der rechte Operand nicht mehr ausgewertet,
-falls das Resultat bereits durch den linken Operanden determiniert wird.
-Einzelne Terme können geklammert werden.
-
-Die folgenden Operatoren haben eine abweichende Syntax:
-
-\ttitem	<term>[<idx>]
-	Indexoperator.
-
-\ttitem	<term> (<arg1>,<arg2>, ... )
-	Funktionsaufruf
-
-\ttitem	<cond> ? <term1> : <term2>
-	Bedingter Ausdruck. Falls <cond> wahr ist liefert er <term1>,
-	ansonsten <term2>.
-
-\ttitem	{{<arg1>,<arg2>, ... }}
-	Definiert eine Indexliste. Diese kann jedoch nicht zu Beginn
-	einer Befehlszeile stehen (wird sonst als Befehlsblock interpretiert).
-	Steht üblicherweise auf der rechten Seite einer Initialisierung
-	eines Vektors.
-
-Operatoren werden intern wie Funktionen behandelt. Mit dem Schlüsselwort
-|operator| kann ein Operatorname direkt angesprochen werden.
-Folgende Schreibweisen sind zulässig:
-
-\code
-	operator <op>
-	operator \"<op>\"
-\end
-
-Bei der ersten Schreibweise muß nach <op> ein Leerzeichen folgen.
-
-Damit linke Operatoren von rechten unterscheidbar sind, werden sie
-intern mit dem Zusatz "()" versehen (z.B: "-()" für die Negation.
-Dies ist bei der Definition von Funktionen zu beachten.
-
-Folgende Terme sind gleichwertig:
-
-\code
-	a + b
-	operator+ (a, b)
-\end
-
-Ein Datentype, der von runden Klammern eingeschlossen ist,
+Ein Datentyp, der von runden Klammern eingeschlossen ist,
 bildet einen Cast-Operator, der eine Umwandlung des nachfolgenden
-Terms auf den gewünschten Datentype erzwingt.
+Terms auf den gewünschten Datentyp erzwingt.
 
-\shead	Befehlszeilen
-Die einfachste Form einer Befehlszeile ist ein Term.
-Eine Variablendefinition (siehe oben) stellt eine weitere Form von Befehlszeile dar.
-Folgende Konstruktionen für Befehlszeilen sind definiert:
+\shead	Schleifen
 
-\ttitem	void <cmd>
-	Ergebnis des Ausdrucks <cmd> ignorieren.
-
-\ttitem	const <cmd>
-	Ausdruck <cmd> sofort auswerten.
-
-\ttitem	static <cmd>
-	Ausdruck <cmd> sofort auswerten und Ergebnis ignorieren.
-	Wird in Blöcken zur Definition statischer Variablen verwendet
-
-\ttitem	global <cmd>
-	Ausdruck <cmd> sofort auswerten und Ergebnis ignorieren, wobei
-	während der Auswertung die globale Variablentabelle als
-	unterste Variablentabelle zur verfügung steht. Mit dem
-	Schlüsselword |global| werden daher Variablen global
-	definiert.
-
-\item	{{ <cmdlist> }}
-	definiert einen Block von Befehlszeilen. Variablen, die
-	innerhalb eines Blocks definiert wurden, gelten nur innerhalb
-	des Blocks.  Dabei wird zwischen statischen Variablen (werden
-	bereits beim Lesen des Blocks generiert) und dynamischen
-	Variablen (werden bei der Ausführung eines Blocks generiert)
-	unterschieden.  Statische Variablen werden durch das
-	Schlüsselword <static> eingerichtet.
-
-Während der Abarbeitung eines Blocks werden zwei neu Variablentabellen
-generiert. Die erste steht bereits beim Lesen der Befehlszeilen zur
-Verfügung (statische Variablen), die zweite wird bei Ausführung des
-Blocks definiert. Bei Funktionsdefinitionen enthält diese auch
-die Funktionsargumente.
-
-Der Rückgabewert eines Blockes kann mit |return| definiert werden
-(Bei Funktionsrümpfen).
-Bei Schleifen kann ein Block vorzeitig mit |br| verlassen,
-oder mit <continue> ein neuer Zyklus gestartet werden.
-
-\ttitem	while (<cond>) <cmd>\br do <cmd> while (<cond>)
+\ttitem	while (<cond>) <cmd>
 	Definiert eine Schleife. Der Ausdruck <cmd> wird solange ausgeführt,
 	wie <cond> logisch wahr ist. Bei <cmd> handelt es sich entweder um
-	eine einfache Befehlszeile oder einen Block. Bei der zweiten Form wird
-	<cmd> zumindest einmal ausgeführt.
+	eine einfache Befehlszeile oder einen Block.
+
+\ttitem do <cmd> while (<cond>)
+	Bei der zweiten Form wird <cmd> zumindest einmal ausgeführt.
 
 \ttitem	for (<a>; <cond>; <b>) <cmd>
 	Zu Beginn der Verarbeitung wird <a> ausgeführt.
@@ -385,232 +382,540 @@ oder mit <continue> ein neuer Zyklus gestartet werden.
 	ausgeführt. <Name> ist der Name einer temporäre Variablen,
 	die das aktuelle Element der Liste enthält.
 	Anstelle von <list> kann auch ein einzelnes Objekt stehen,
-	das in eine Liste konvertierbar ist (z.B: ein Vektor).
+	das in eine Liste konvertierbar ist (z.B: ein Datenfeld).
+
+Bei Schleifen kann ein Block vorzeitig mit der |break| Anweisung
+verlassen werden. Die |continue| Anweisung startet einen neuen Zyklus.
+
+\shead	Bedingungen
 
 \ttitem	if (<cond>) <cmd1>
-	~
+	Falls die Bedingung <cond> wahr ist, wird <cmd1> ausgeführt.
 \ttitem if (<cond>) <cmd1> else <cmd2>
 	Falls die Bedingung <cond> wahr ist, wird <cmd1> ausgeführt,
-	ansonsten wird, falls das Schlüsselword |else| angegeben ist,
-	<cmd2> ausgeführt.
+	ansonsten wird <cmd2> ausgeführt.
 
-\shead	Funktionen
-Für den Befehlsinterpreter sind Funktionen eine Klasse von Funktionen
-mit gleichem Namen, aber unterschiedlichen Argumenten (Überladungen).
-Bei einem Funktionsaufruf wird dann jene Funktion ausgewählt, die
-am besten zu den aktuellen Argumenten paßt (die geringste Konvertierungsdistanz
-der Datentypen aufweist).
+\shead	Switch-Anweisung
 
-Funktionen werden in globale Funktionen und typegebundene Funktionen
-eingeteilt. Letztere sind an ein Objekt des entsprechenden Types gebunden und
-werden in der Form
+Die Syntax der Switch-Anweisung lautet:
 
 \code
-	<Objekt>.<name>(<arg1>, ... )
+switch (<expr>)\br
+{\br
+<label>:\br
+~~~~~~~~<cmdlist>\br
+<label>:\br
+~~~~~~~~<cmdlist>\br
+...\br
+}\br
 \end
 
-aufgerufen.
-Bei der Deklaration wird als Name <type>.<name> eingesetzt.
-Operatoren werden wie globale Funktionen behandelt.
+wobei <label> wahlweise |case|~<val> oder |default| sein kann.
+Der Ausdruck <val> wird dabei bereits beim Einlesen der Anweisung
+ausgewertet. Der Wert von <expr> wird mit den einzelnen Werten der
+Labels in der Reihenfolge des Auftretens verglichen.
+Falls der Vergleich wahr liefert, werden alle nachfolgenden
+Anweisungen bis zum Erreichen eines der Anweisungen
+|break|, |continue|, |return| oder dem Ende des Switch-Blocks
+ausgeführt. Falls keiner der Labels mit <expr> übereinstimmt,
+werden die Anweisungen nach |default| (falls vorhanden) ausgeführt.
 
-Eine Funktionsdefinition beginnt mit dem Schlüsselword
-|function| oder |inline|. Danach folgt der Funktionsprototyp
-und der Funktionsrumpf (wahlweise Befehlszeile oder Block).
-Der Unterschied zwischen den beiden Deklarationen liegt darin, daß
-bei |inline| die lokalen Variablen des aktuellen Blocks sichtbar
-bleiben, während bei |function| nur auf die globalen Variablen
-zugegriffen werden kann.
+Im Gegensatz zu C kann jeder Datentyp, für den der Vergleichsoperator |==|
+definiert ist, für Switch-Anweisungen verwendet werden.
+Insbesonders können Zeichenketten in Switch-Anweisungen verwendet werden.
 
-Funktionsargumente sind entweder Konstanten oder L-Werte (Objekte an denen
-etwas zugewiesen werden kann).
-Falls eine Funktion einen L-Wert als Argument braucht,
-wird dies durch ein |&| nach dem Datentype signalisiert.
+\shead	Blockbildung
 
-Eine Ausnahme bildet der Datentype |Vec_t| als Träger für Vektoren,
-da die entsprechenden Vektorwerte immer L-Werte sind.
-Die Deklaration des Datentypes |Vec_t| als L-Wert ist notwendig,
-wenn die Vektorinformation, nicht die Datenwerte, verändert werden sollen.
+Mithilfe von geschwungenen Klammern lassen sich einzelne Ausdrücke zu
+einem Block zusammenfassen. Bei der Ausführung eines Blocks werden zwei
+zusätzliche Variablentabellen aktiviert. Die weniger sichtbare wird
+bereits beim Lesen der Befehlszeilen, die zweite bei der
+Ausführung (und bei einer Schleife jedesmal neu) eingerichtet.
+Jeder Ausdruck nach dem Schlüsselwort |static| wird bereits beim
+Lesen der Befehlszeilen ausgewertet. Damit können Variablen in der
+inneren (oder statischen) Variablentabelle eingerichtet werden.
+Die Verwendung von |static| ist aber nicht auf Variablendeklarationen
+beschränkt.
 
-Ein Prototype besteht aus dem Datentype des Rückgabewertes
-(oder dem Schlüsselword |void|, falls
-keiner generiert werden soll), einen optionalen |&| (Falls der
-Rückgabewert ein L-Wert ist), den Namen
-der Funktion, gefolgt von der Argumentliste.
+\head	VARIABLEN UND KONSTANTEN
 
-Bei typegebundenen Funktionen steht zwischen Funktionsname und Argumentliste
-ein |&|, falls die Bindung an einen L-Wert erfolgt.
-Im Funktionsrumpf kann auf das Objekt unter dem Namen |this| zugegriffen
-werden.
+Im Gegensatz zu anderen Interpretersprachen müssen in |$!| Variablen
+wie in C/C++ vor ihrer Verwendung deklariert werden. Die Deklaration
+kann an beliebiger Stelle (mit Berücksichtigung der aktuellen Hierarchie
+der Variablentabellen) im Skript erfolgen. Eine Deklaration liefert
+als Rückgabewert den Initialisierungswert der deklarierten Variablen.
 
-Ein Argument in der Argumentliste wurd durch den Datentype (mit eventuell
-vorhandenem Flag für einen L-Wert), gefolgt von einem optionalen Namen und
-von einer optionalen Vorgabewert. Falls für ein Argument, und allen nachfolgenden
-ein Vorgabewert zugewiesen wird, kann das Argument beim Funktionsaufruf
-entfallen und der Vorgabewert wird stellvertretend eingesetzt.
-In der Argumentliste kann anstelle eines Datentypes ein Punkt stehen,
-in diesem Fall kann ein beliebiges Objekt an dieser Stelle eingesetzt werden.
+Zum Beispiel deklariert
+---- verbatim
+int x;
+double a, b;
+x = (int y = 5);
+----
+zunächst die Ganzzahlvariable <x> und die Gleitkommavariablen <a> und
+<b>. Anschließend wird die Gaanzzahlvariable <y> mit dem
+Initialisierungswert 5 eingerichtet und der Rückgabewert (der Wert 5)
+der Variablen <x> zugewiesen.
 
-Falls anstelle des letztes Argument eine Tilde "..." steht, hat die Funktion
-eine variable Argumentzahl.
-Im Funktionsrumpf stehen alle zusätzlichen Argumente als Objektliste
-unter dem Namen |va_list| zur Verfügung. Falls beim Funktionsaufruf
-als einziges zusätzliches Argument bereits eine Objektliste übergeben wird,
-wird diese nicht nocheinmal in eine Liste gepackt, sondern direkt übergeben.
+Variablen werden in einer Hierarchie von Variablentabellen gespeichert.
+An oberster Stelle steht die globale Variablentabelle, an unterster Stelle
+die lokale oder aktuelle Variablentabelle. Neue Variablen werden in der
+lokalen Variablentabelle generiert. Die Suche von Variablen
+erfolgt von unten nach oben. Im äußersten Verarbeitungsmodus stimmt die
+lokale Variablentabelle mit der globalen Variablentabelle überein.
 
-Der Funktionsrumpf besteht entweder aus einer einzelnen Befehlszeile oder
-einem Block. Bei einem Block wird der Rückgabewert durch eine |return|
-Anweisung definiert.
+Zu jedem vordefinierten Datentyp im EFEU-Interpreter gibt es einen
+zugehörigen Datentyp in C. Der Interpreter kennt keine Pointer, aber
+manche Datentypen werden durch Pointer auf C-Datentypen repräsentiert.
 
-\shead	Standardfunktionen
-Im folgenden werden die wichtigsten Funktionen aufgezählt, die im Befehlsinterpreter
-integeriert sind.
+Der Interpreter unterscheidet zwischen L-Werten und Konstanten. Ein
+L-Wert ist alles, was auf der linken Seite einer Zuweisung stehen
+darf. Typische L-Werte sind Variablen. Das Resultat eines Terms oder
+eines Funktionsaufwertes kann ein L-Wert sein.
 
-@proto call
-	Ruft eine Funktion mit der angegebenen Argumentliste auf.
+\shead	Ganzzahltypen
 
-@proto sizeof
-	Liefert die Bytegröße eines Objektes/Datentypes.
+Wie in C/C++ gibt es eine Reihe von Ganzzahldatentypen. Die folgende
+Tabelle listet die Ganzzahltypen und ihre Äquivalente in C auf.
 
-@proto typeof
-	Liefert den Datentype eines Objektes.
+\tab	|l|l|
+[-]
+<*esh Type*> | <*C Type*>
+[-]
+byte | signed char
+short | short int
+bool | int
+int | int
+unsigned | unsigned int
+long | long int
+size_t | long unsigned int
+[-]
 
-@proto idx
-	Berechnet Indexwerte in Prozent (100 * (<a> / <b>)).
+Die Schlüsselwörter |short|, |unsigned| und |long| sind Datentypnamen und
+keine Typqualifikatoren wie in C.
+Der Datentyp |int| ist eine Unterklasse von |bool|, daher kann |int|
+immer auch dort verwendet werden, wo |bool| erwartet wird.
 
-@proto rate
-	Berechnet Zuwachsraten in Prozent (100 * (<a> - <b>) / <b>)).
+Die Syntax von Ganzzahlkonstanten ist wie in C/C++.
+Die Schlüsselworter |true| (Ganzzahlwert~0) und |false|
+(Ganzzahlwert~1) werden für boolsche Werte verwendet.
 
-@proto #()
-@proto getreg
-	Ruft ein Stringregister ab.
+\shead	Gleitkommatypen
 
-@proto setreg
-	Setzt ein Stringregister.
+Der EFEU-Befehlsinterpreter verwendet die Gleitkommatypen |float| und
+|double| wie in C/C++. Alle Gleitkommakonstanten sind vom Type |double|.
+Die gesamte Arithmetik wird mit |double| durchgeführt, |float|
+wurde nur aus Gründen der Vollständigkeit und für große Datenfelder,
+wo die Genauigkeit der Werte nicht so wichtig ist, eingerichtet.
 
-@proto exit
-	Abbruch des Programms.
+\shead	Zeichen und Zeichenketten
 
-@proto system
-	Betriebssystembefehl absetzen.
+Ein Zeichen in |$!| ist vom Type |char| und sein Kodewert wird als
+vorzeichenlos interpretiert (Wertebereich 0 ... 255).
 
-@proto psub
-	Parametersubstitution durchführen.
+Zeichenketten (Strings) werden in |$!| völlig anders als in C implementiert.
+Sie werden nicht als Felder vom Type |char| eingerichtet, sondern
+haben den Datentyp |str|, der über einen |char| Pointer eingerichtet
+wird. Falls einem String ein Wert zugeordnet wird, wird die gesamte
+Zeichenkette und nicht die Adresse kopiert. Stringkopien erfolgen immer
+mit dynamischer Speicherzuweisung und es gibt eine
+Speicherbereinigung (Garbage-Collection) für Strings und generell für
+alle Objekte mit dynamisch zugewiesenem Speicherbereich.
 
-@proto expr
-	String als Term auswerten.
+Zeichenkonstanten werden von einfachen,
+Stringkonstanten von doppelten Hochkommas begrenzt.
+Der Gegenschrägstrich wird wie in C als Fluchtsymbol verwendet.
 
-@proto eval
-	Befehlszeilen in String/Datei interpretieren.
+Für lange Stringkonstanten gibt es das Schlüsselwort |string|, welches
+in der folgenden Form verwendet wird:
 
-@proto load
-	Befehlszeilen aus Datei laden. Falls die Datei nicht gefunden wurde,
-	liefert die Funktion false, ansonsten true.
+	|string !|\br
+	Inhalt des Strings\br
+	|!|
 
-@proto getenv
-	Umgebungsvariable abfragen.
+unmittelbar nach |!| muß ein Zeilenvorschub stehen und |!| muss
+das erste Zeichen der letzten Zeile sein. Eine so definierte
+Zeichenkonstante enthält immer einen Zeilenvorschub am Ende.
+Der Gegenschrägstrich wird nur mehr zum Schutz eines |!| am Anfang
+einer Zeile verwendet. Diese Konstruktion kann an beliebiger Stelle
+innerhalb eines Ausdrucks stehen.
 
-@proto errmsg
-	Fehlermeldung ausgeben.
+Innerhalb solcher Stringdefinitionen werden Kommentare im C/C++-Style
+überlesen und Präprozessor-Direktiven interpretiert.
 
-@proto error
-	Fehlermeldung ausgeben und Programm abbrechen.
+So kann zum Beispiel mit
 
-@proto fsearch
-	Datei suchen.
+	|str s = string !|\br
+	|#include "|<file>|"|\br
+	|!;|
 
-@proto cat
-	Strings zusammenhängen.
+der Inhalt der Datei <file> in den String <s> geladen werden.
+Aber Achtung: Die Datei <file> wird vom Präprozessor überarbeitet.
 
-@proto paste
-	Zwei Strings zusammenhängen, Trennzeichen wird nur eingefügt,
-	wenn beide Strings verschieden von NULL sind.
+<*ANMERKUNG:*> In EFEU (und damit auch in |$!|) können NULL-Strings
+(Zeichenpointer auf NULL) wie gewöhnliche Strings verwendet werden.
+Nullstrings werden jedoch anders als Leerstrings (Zeichenketten, die
+nur aus der Abschlußnull bestehen) behandelt. Die EFEU-Bibliotheken
+beinhalten eine Reihe von Hilfsfunktionen zur Handhabung von
+Zeichenketten mit dynamisch zugewiesenem Speicher. Auch können sie mit
+Stringkonstanten gemischt werden. Die Speicherverwaltungsfunktionen
+von EFEU wissen, ob der Speicher eines Strings freigegeben werden
+kann.
 
-@proto patcmp
-	Mustervergleich, siehe \mref{patcmp(3)}
+\shead	Pointertypen
 
-@proto split
-	String in Teile aufspalten.
+Datentypen, die über Pointer implementiert werden, kopieren bei einer
+Zuweisung nur die Adresse und nicht die Daten (Zeichenketten sind
+eine Ausnahme). Aber sie benutzen einen Referenzzähler für
+die Speicherbereinigung, der beim kopieren erhöht wird.
+Alle diese Datentypen sind von der Basisklasse |_Ref_| abgeleitet.
 
-@proto substr
-	Teilstring generieren.
+Der Datentyp |_Ref_| und alle anderen Datentypen mit
+Pointerrepräsentation (wie |str|) sind wiederum vom Datentyp |_Ptr_|
+abgeleitet, dieser ist auch der Type der Konstanten |NULL|.
 
-@proto open
-	Neue IO-Struktur öffnen. Argumente wie bei der
-	C-Bibliotheksfunktion <fopen>.  Ein Nullstring als Filename
-	öffnet Standardeingabe (bzw. Standardausgabe bei
-	Schreibzugriff).
+Datentypen mit einem Unterstreichungszeichen am Anfang und Ende des
+Namens sind für die interne Verwendung reserviert. Normalerweise
+werden keine Variablen dieser Typen deklariert. Aber sie können in
+Argumentlisten von virtuellen Funktionen auftreten, etwa um zwischen
+der Konstanten |NULL| (vom Type |_Ptr_|) und einer Zeichenkette,
+die mit |NULL| initialisiert wurde, zu unterscheiden.
 
-@proto close
-	IO-Struktur schließen.
+\shead	Listen
 
-@proto remove
-	Datei löschen.
+Listen sind geordnete Mengen von Objekten beliebiger Datentypen.
+Sie haben den Type |List_t|. Es gibt drei Methoden, um Listen zu
+erzeugen:
+#	Mit dem Gruppierungsoperator: |{ 3, 5 }|. Er kann nicht zu
+	Beginn eines Ausdrucks verwendet werden, da |{| ... |}| auch
+	für Blöcke verwendet wird.
+#	Mit dem Listenoperator: |3, 5|. Beachte die niedrige Priorität
+	des Operators. In Termen muß er geklammert werden.  Es können
+	nur Listen mit mindestens zwei Elementen erzeugt werden.
+#	Mit dem Bereichsoperator: |3 : 5 : 2|. Alle Mitglieder haben
+	den gleichen Datentyp.
 
-@proto print
-	Unformatierte Ausgabe von Objekten, liefert die Zahl der
-	ausgegebenen Zeichen.  Trennzeichen müssen explizit (als
-	String oder Zeichen) übergeben werden.  Formatierung erfolgt
-	mit Standardvorgaben.
+Jedes Objekt vom Type |List_t| hat die folgenden Komponenten:
+\ttitem	obj
+	liefert den ersten Eintrag der Liste oder |NULL| bei leeren
+	Listen.
+\ttitem	next
+	liefert die Teilliste, die beim zweiten Element startet oder
+	eine leere Liste, falls keine Elemente mehr existieren.
 
-@proto printf
-	Formatierte Ausgabe von Objekten. Der Formatstring hat die gleiche
-	Syntax wie eine Formatangabe der C-Bibliotheksfunktion <printf(3S)>.
+\shead	Datenfelder
 
-@proto sprintf
-	Formatierte Ausgabe von Objekten in einen String.
+Datenfelder können auf zwei Arten deklariert werden:
 
-@proto Prior
-	Priorität eines binären Operators abfragen.
+[<type> <name>|[|<dim>|]|]
+	deklariert <name> als Datenfeld vom Type <type>.
+[<type>|[|<dim>|]| <name>]
+	deklariert <name> als Skalar vom Type <type>|[|<dim>|]|.
 
-@proto RightOp
-	Rechten Operator definieren.
+Im ersten Fall, und falls das Datenfeld mit einer Liste von Werten
+initialisiert wird, kann <dim> entfallen und die Größe des Datenfeldes
+wird durch die Zahl der Elemente der Liste bestimmt.
+Im zweiten Fall wird implizit ein neuer Datentyp eingerichtet.
+Die Größenangabe kann nicht entfallen.
 
-@proto LeftOp
-	Linken Operator definieren.
+Falls mehr als eine Dimension benötigt wird, wird eine Deklaration der
+Form:
+	<type> <name>|[|<n0>|][|<n1>|]...[|<nk>|];|
+in
+	<type>|[|<nk>|]...[|<n1>|]| <name>|[|<n0>|];|
 
-@proto BinOp
-	Binären Operator definieren. Falls als drittes Argument |true|
-	übergeben wird, ist der Operator Rechtsassoziativ, ansonsten
-	Linksassoziativ.
+konvertiert, da Datenfelder nur eindimensional sein können, aber es
+keine Beschränkungen bei der Konstruktion von Vektordatentypen gibt.
+Es ist klar, dass nur <n0> weggelassen werden kann.
 
-\shead	Globale Variablen
-Die folgenden globalen Variablen stehen zur Verfügung
-(ohne Formatierungsparameter, die kommen später):
+Datenfelder werden bei der Verwendung immer in ein Objekt vom Type
+|Vec_t| gepackt.
+Ein Datenfeld kann in eine Liste konvertiert werden und die Werte
+eines Datenfeldes können durch Zuweisung einer Liste verändert werden.
+Falls eine Liste weniger Elemente enthält, als das Datenfeld auf der
+linken Seite, werden nur die zugehörigen Elemente verändert.
 
-\ttitem	IO iostd
-	Standard Ein/Ausgabestruktur.
-\ttitem	IO iomsg
-	Ausgabestruktur für Nachrichten.
-\ttitem	IO ioerr
-	Ausgabestruktur für Fehlermeldungen.
+Neben den gewöhnlichen Datenfeldern stehen in EFEU noch die folgenden
+Datentypen für ein mächtigeres Hantieren mit Daten zur Verfügung:
 
-\head	FORMATIERUNGSPARAMETER
+\ttitem	DataBase
+	ist ein dynamisches Datenfeld mit einer optionalen
+	Sortierordnung. Einträge können eingefügt, gesucht und
+	gelöscht werden.
+\ttitem TimeSeries
+	sind dynamische Datenfelder vom Type |double| mit einem
+	Zeitindex.
+\ttitem	mdmat
+	verwaltet einen Datenwürfel beliebigen Types und beliebiger
+	Zahl an Dimensionen. Seine Größe wird nur durch den verfügbaren
+	Speicher begrenzt. EFEU enthält eine Reihe von Hilfswerkzeugen
+	zur Manipulation solcher Datenwürfel.
 
-Die Darstelluung von Zahlenwerten und anderen Ergebnissen kann
-durch eine Reihe von Formatierungsparametern beeinflußt werden.
+\shead	Abgeleitete Datentypen
 
-\ttitem	str <field_width>
-	Feldbreite zur Wertausgabe, Vorgabe $(field_width).
-\ttitem	str <float_prec>
-	Genauigkeit von Gleitkommazahlen.  Vorgabe $(float_prec).
-\ttitem	str <fmt_str>
-	Formatdefinition für Zeichenketten, Vorgabe $(fmt_str:%#s).
-\ttitem	str <PrintListBegin>
-	Startzeichen bei der Ausgabe einer Liste von Objekten,
-	Vorgabe $(PrintListDelim:%#s).
-\ttitem	str <PrintListDelim>
-	Trennzeichen bei der Ausgabe einer Liste von Objekten,
-	Vorgabe $(PrintListDelim:%#s).
-\ttitem	str <PrintListEnd>
-	Abschlußzeichen bei der Ausgabe einer Liste von Objekten,
-	Vorgabe $(PrintListDelim:%#s).
+Der einfachste Weg um einen neuen Datentyp einzurichten, ist
+|typedef|, z.B:
+	|typedef int myint;|
 
-\Environment
-@environ 14
+Der neue Datentyp |myint| wird
+von |int| als Basisklasse abgeleitet (Vererbung).
+Damit kann |myint| wie |int| verwendet werden. Es handelt
+sich aber nicht nur um einen neuen Namen für |int|.
+
+Strukturen werden mit der |struct| Anweisung erzeugt. Die Syntax ist
+	|struct| <type> [|:| <base> [ <name> ]] |{| Deklarationen |}|
+analog zu C++. Fals <base> definiert ist, wird <type> von <base> abgeleitet.
+Nur ein Basistype kann angegeben werden.
+
+Die folgenden zwei Datentypen
+
+---- verbatim
+struct T1 {
+	int a;
+	int b;
+}
+
+struct T2 : int a {
+	int b;
+}
+----
+haben gleiche Komponenten, aber nur |T2| kann stellvertretend für ein
+|int| verwendet werden.
+
+Jeder zuvor definierte Datentyp kann bei der Definition einer
+Datenstruktur verwendet werden. Es gibt aber keine
+Vorwärtsdeklaration.
+
+Jedes Objekt mit einem Strukturdatentype kann in eine Liste
+umgewandelt werden und jede Liste läßt sich in ein Strukturobjekt
+konvertieren.
+
+Beispiel für eine etwas komplexere Struktur:
+
+---- verbatim
+struct MyDataType {
+	int i;
+	double d;
+	str s;
+	int v[10];
+};
+----
+
+\head	FUNKTIONEN
+
+Eine Funktionsdefinition in |$!| hat die allgemeine Form
+	<type> <name> |(| <arglist> |)|\br
+	~~~~~~~~<expr>
+
+Normalerweise ist <expr> ein Block von Ausdrücken, in |$!| kann aber
+auch ein einzelner (nicht leerer) Ausdruck stehen. Falls die Funktion
+keinen Wert zurückliefern soll, ist als Datentyp |void| zu verwenden.
+
+Die folgenden Funktionsdefinitionen sind gleichwertig:
+
+---- verbatim
+int f (int x) x + 1;
+int f (int x) return x + 1;
+inline int f (int x) { return x + 1; }
+----
+
+Im EFEU-Befehlsinterpreter hat das Schlüsselwort |inline|
+primär etwas mit Sichtbarkeit zu tun. Eine inline Funktion sieht alle
+Variablentabellen, die auch in der Zeile mit dem Funktionsaufruf
+sichtbar waren. Alle Funktionen, die nur aus einem einzelnen Ausdruck
+bestehen, gelten als inline Funktionen.
+
+Das folgende Beispiel zeigt die Notwendigkeit von inline Funktionen:
+
+---- verbatim
+inline str f (str fmt)
+{
+	return psub(fmt);
+}
+
+{
+	str x = "foo";
+	f("x = $$(x)");
+}
+----
+
+Die Funktion |psub| substituiert Parameter entsprechend einem
+Formatstring.
+Falls |f| nicht inline ist, ist die Variable |x| für |fpsub|
+unsichtbar und die Substitution |$$(x)| schlägt fehl.
+
+Funktionen haben den Datentyp |Func| und jede Funktion kann
+auch als Variable (Funktionsname ohne Argumentliste) angesprochen werden.
+Die Standarddarstellung einer Funktion (z.B: Eingabe des
+Funktionsnamens im äußersten Modus) ist der Prototype der Funktion.
+
+Wie in C++ können Funktionsargumente Vorgabewerte besitzen. Diese
+müssen dann beim Aufruf nicht angegeben werden.
+Die allgemeine Form eines Funktionsarguments ist:
+	<type> [ |&| ] <name> [ |=| <value> ]
+
+Das |&| zeigt an, dass das Argument ein gültiger L-Wert sein muss.
+Eine Tilde |...| anstelle des
+Funktionsarguments steht für eine variable Argumentliste. Auf sie kann
+innerhalb der Funktion unter dem Namen |va_list| zugegriffen werden.
+
+\shead	Virtuelle Funktionen
+
+Wie in C++ können Funktionen mit verschiedenen Argumentlisten
+überladen werden. Überladene Funktionen werden mit dem Schlüsselwort
+|virtual| deklariert. Der Datentyp solcher Funktionen ist |VirFunc|.
+Jede Funktion kann in eine virtuelle Funktion konvertiert werden.
+
+Eine virtuelle Funktion kann auch in eine gewöhnliche Funktion
+umgewandelt werden. Dies gechieht mit einem Prototype-Cast wie im
+folgendem Beispiel:
+
+---- verbatim
+Func f = operator+ (int a, int b);;
+----
+
+Nun kann f zur Addition von zwei Ganzzahlwerten verwendet werden.
+Beachte die zwei Strichpunkte am Ende der Zuweisung: Der erste gehört
+zum Prototype (und unterscheidet ihn von einer Funktionsdefinition,
+der zweite schließt den Ausdruck ab.
+
+\shead	Typgebundene Funktionen
+
+Funktionen können auch an einen Datentyp gebunden werden. Sie haben
+die allgemeine Form:
+
+	<type> <btype>::<name> [ |&| ] |(| <arglist> |)|\br
+	~~~~~~~~<expr>
+
+Falls nach dem Funktionsnamen ein |&| steht, kann die Funktion nur
+für L-Werte verwendet werden.
+Eine gebundene Funktion wird folgend aufgerufen:
+
+	<obj>|.|<name>(<args>)
+
+Dabei ist <obj> ein Objekt vom Type <btype>.
+Der Datentyp einer typgebundenen Funktion ist |ObjFunc|. Dabei
+kann es sich sowohl um eine virtuelle, als auch um eine gewöhnliche
+Funktion handeln.
+
+In gebundenen Funktionen kann mit dem Schlüsselwort |this| auf
+das zugehörige Datenobjekt zugegriffen werden.
+
+\shead	Operatoren
+
+Operatoren werden intern wie Funktionen behandelt. Mit dem Schlüsselwort
+|operator| kann ein Operatorname direkt angesprochen werden.
+Folgende Schreibweisen sind zulässig:
+
+\code
+	operator <op>\br
+	operator \"<op>\"
+\end
+
+Bei der ersten Schreibweise muß nach <op> ein Leerzeichen folgen,
+vor <op> kann ein Leerzeichen stehen.
+
+Damit linke Operatoren von rechten unterscheidbar sind, werden sie
+intern mit dem Zusatz |()| versehen (z.B: |-()| für die Negation.
+Dies ist bei der Definition von Funktionen zu beachten.
+
+Folgende Terme sind gleichwertig:
+
+\code
+	a + b\br
+	operator+ (a, b)
+\end
+
+Operatoren sind in der Regel virtuelle Funktionen.
+Alle Zuweisungsoperatoren sind gebundene, virtuelle Funktionen.
+
+\shead	Spezielle Funktionen
+
+Funktionen, die den gleichen Namen wie ein zuvor definierter Datentyp
+haben, definieren Konstruktoren und Konverter. Konverter werden meist
+indirekt bei Zuweisungen, der Wertübergabe bei Funktionsaufrufen oder durch
+explizite Typumwandlungen (casts) aufgerufen.
+
+Konstruktoren haben die Form
+	virtual <type> <type> |(| <arglist> |)|
+
+Die spezielle Form
+	<type> <type> |()|
+wird Copy-Konstruktor genannt. Ist er definiert, wird er jedesmal beim
+Kopieren eines Datenelementes aufgerufen.
+
+Im Gegensatz dazu ist
+	<type> <type> |(void)|
+ein gewöhnlicher Konstruktor ohne Argumente.
+
+Konverter haben die Form
+	<tg_type> <src_type> |()|
+mit einer leeren Argumentliste.
+
+Die Ausgangsdaten werden unter dem Namen |this| referiert.
+Falls der Zieldatentype |void| ist, definiert die Funktion
+den Destruktor für den Datentyp, der jedesmal aufgerufen wird,
+wenn ein Objekt diesen Types gelöscht wird.
+
+Copy-Konstruktor und Destruktor können als Spezalfall eines Konverters
+gesehen werden.
+Wegen der internen Speicherbereinigung werden sie
+kaum benötigt. Bei ihrer Definition
+ist besondere Vorsicht notwendig: Sobald ein Objekt dieses Types
+kopiert wird (z.B. bei der Weitergabe an eine andere Funktion),
+führt der Aufruf dieser Funktion zu einer endlosen Rekursion.
 
 \Notes
-Der Handbucheintrag ist veraltet.
 
-\head	AUTOR
-Erich Frühstück\br
-1090 Wien, Währinger Straße 64/6.
+Dieser Handbucheintrag kann nur eine verkürzte Darstellung des
+Interpreters liefern. An einem entsprechend umfangreichen Buch wird
+gearbeitet. Einzelne Kapitel dieses Buches sind bereits in den Dokumentationen
+zu EFEU enthalten.
+
+Zusätzliche Informationen können mit |$!| selbst abgerufen werden.
+Die Optionen |--info| und |--dump|
+liefern eine Schnittstelle zu eingebauten Informationen.
+Im Interpreter kann auf diese Informationen mit den Funktionen |Info()| bzw.
+|InfoDump()| zugegriffen werden.
+Die komfortabelste Nutzung dieser Schnittstelle ist |eis|. Dazu muss
+nur |eis -p $!| aufgerufen werden.
+
+Die Nutzung der eingebauten Informationen hat den Vorteil, dass sie
+immer vollständig und aktuell sind. Allerdings sind die zugehörigen
+Erläuterungen (wenn es welche gibt) sehr knapp gehalten.
+
+Falls die Verwendung einer Funktion nicht klar ist: Durch Eingabe des
+Funktionsnamens wird der Prototype (bei virtuellen Funktionen auch alle
+Überladungen) angezeigt.
+
+Informationen zu einem Datentyp werden durch Eingabe des Datentypes
+ausgegeben. So liefert z.B. die Eingabe von |int| die Ausgabe:
+
+---- eval verbatim
+int
+----
+
+Diese Form der Darstellung erfolgt im äußeren Modus. Innerhalb eines
+Blocks oder einer Funktion kann die gleiche Ausgabe mit |print| oder
+|fprint| erzeugt werden:
+	|print(|<fname>|)|\br
+	|fprint(iostd,| <type>|)|
+
+Weitere nützliche Variablen und Funktionen:
+
+\ttitem	global
+	ist die Tabelle der globalen Variablen (sehr umfangreich).
+\ttitem	local
+	ist die Tabelle der lokalen Variablen.
+	Im äußeren Modus stimmt |local| mit |global| überein.
+@proto whatis
+	liefert Informationen zu dem Argument.
+@proto typeof
+	liefert den Datentyp des Arguments.
+@proto vtabstack
+	zeigt die aktuelle Hierarchie der Variablentabellen.
+@proto typelist
+	liefert eine Liste aller definierten Datentypen.
+
+@environ -h
+
+@copyright -h

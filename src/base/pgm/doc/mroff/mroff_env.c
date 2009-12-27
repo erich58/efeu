@@ -30,21 +30,19 @@ If not, write to the Free Software Foundation, Inc.,
 /*	Ausgabefunktionen
 */
 
-#if	0
-static void sec_beg (mroff_t *mr, char *secnum)
-{
-	mroff_newline(mr);
-	pushstack(&mr->stack, secnum);
-	io_puts(".TH ", mr->out);
-}
-#endif
+static char *Name = "NAME";
+static char *FigName = "figure";
+static char *TabName = "table";
 
-static void sec_end (mroff_t *mr)
+static VarDef_t envpar[] = {
+	{ "Name", &Type_str, &Name },
+	{ "FigName", &Type_str, &FigName },
+	{ "TabName", &Type_str, &TabName },
+};
+
+extern void mroff_envpar (VarTab_t *tab)
 {
-	char *p = popstack(&mr->stack, 0);
-	io_putc(' ', mr->out);
-	mroff_cmdend(mr, p);
-	memfree(p);
+	AddVarDef(tab, envpar, tabsize(envpar));
 }
 
 
@@ -73,6 +71,15 @@ static void put_att (mroff_t *mr, int flag, char *att)
 	mr->att = att;
 }
 
+static void man_caption (mroff_t *mr, int flag)
+{
+	if	(flag)
+	{
+		mroff_newline(mr);
+		io_puts(".SH ", mr->out);
+		mroff_cmdend(mr, Name);
+	}
+}
 
 /*	Umgebung beginnen/beenden
 */
@@ -91,6 +98,11 @@ int mroff_env (mroff_t *mr, int flag, va_list list)
 			mroff_cmdline(mr, mr->nextpar);
 
 		mr->nextpar = NULL;
+		break;
+	case DOC_PAR_TAG:
+		if	(flag)
+			mroff_cmdline(mr, ".TP");
+		mr->item = flag;
 		break;
 
 /*	Gliederungsbefehle
@@ -116,8 +128,10 @@ int mroff_env (mroff_t *mr, int flag, va_list list)
 			io_puts(va_arg(list, char *), mr->out);
 			io_putc(' ', mr->out);
 			mroff_cmdend(mr, num);
-			sec_end(mr);
+			mroff_push(mr);
+			mr->var.caption = man_caption;
 		}
+		else	mroff_pop(mr);
 
 		break;
 
@@ -127,8 +141,12 @@ int mroff_env (mroff_t *mr, int flag, va_list list)
 		put_env(mr, flag, ".SH ");
 		break;
 	case DOC_SEC_SHEAD:
-	case DOC_SEC_CAPT:
 		put_env(mr, flag, ".SS ");
+		break;
+	case DOC_SEC_CAPT:
+		if	(mr->var.caption)
+			mr->var.caption(mr, flag);
+		else	put_env(mr, flag, ".SS ");
 		break;
 	case DOC_SEC_SCAPT:
 	case DOC_SEC_MARG:
@@ -163,7 +181,7 @@ int mroff_env (mroff_t *mr, int flag, va_list list)
 		mr->put = flag ? DocDrv_plain : (DocDrvPut_t) mroff_putc;
 		break;
 	case DOC_MODE_TEX:
-	case DOC_MODE_SGML:
+	case DOC_MODE_HTML:
 		mroff_env (mr, flag, list);
 		break;
 	case DOC_MODE_VERB:
@@ -195,13 +213,12 @@ int mroff_env (mroff_t *mr, int flag, va_list list)
 		break;
 	case DOC_ENV_FORMULA:
 		break;
-	case DOC_ENV_TAG:
-		if	(flag)
-			mroff_cmdline(mr, ".TP");
-		mr->item = flag;
+	case DOC_ENV_TABLE:
+		mroff_cmdline(mr, ".SS Table");
+		mr->skip = flag;
 		break;
 	case DOC_ENV_FIG:
-		mroff_cmdline(mr, ".SS Tabelle");
+		mroff_cmdline(mr, ".SS Figure");
 		mr->skip = flag;
 		break;
 	default:

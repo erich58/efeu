@@ -111,7 +111,7 @@ static void list_item (Doc_t *doc)
 
 	if	(doc->env.item)
 	{
-		Doc_stdpar(doc, DOC_ENV_TAG);
+		Doc_stdpar(doc, DOC_PAR_TAG);
 		Doc_hmode(doc);
 		Doc_scopy(doc, doc->env.item);
 		Doc_par(doc);

@@ -54,12 +54,6 @@ static void f_rdround(Func_t *func, void *rval, void **arg)
 		Val_double(arg[1]));
 }
 
-static VarDef_t vdef[] = {
-	{ "Rand48Debug", &Type_bool, &Rand48_reftype.debug,
-		":*:flag to control debuging of Rand48-structures\n"
-		":de:Flag zum Debuggen von Rand48-Strukturen\n" },
-};
-
 static FuncDef_t fdef[] = {
 	{ 0, &Type_Rand48, "Rand48 (int seed = 0)", f_newrand },
 	{ 0, &Type_Rand48, "Rand48::copy ()", f_copy },
@@ -80,6 +74,5 @@ static FuncDef_t fdef[] = {
 void SetupRand48()
 {
 	AddType(&Type_Rand48);
-	AddVarDef(NULL, vdef, tabsize(vdef));
 	AddFuncDef(fdef, tabsize(fdef));
 }

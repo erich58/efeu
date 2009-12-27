@@ -23,6 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/Debug.h>
 #include <EFEU/mstring.h>
 #include <EFEU/CmdPar.h>
+#include <EFEU/Resource.h>
 
 /*
 Die Funktion |$1| gibt eine Fehlermeldung <fmt> vom Level <mode> für
@@ -35,7 +36,7 @@ void Message (const char *class, int level, const char *fmt, ArgList_t *args)
 	io_t *io = LogOut(class, level);
 
 	if	(io)
-		CmdPar_psubout(NULL, io, fmt, args);
+		CmdPar_psubout(NULL, io, GetFormat(fmt), args);
 
 	rd_deref(args);
 }
@@ -65,7 +66,7 @@ void VMessage (const char *class, int level, const char *fmt, int narg, ...)
 			args.data[i] = va_arg(list, char *);
 
 		va_end(list);
-		CmdPar_psubout(NULL, io, fmt, &args);
+		CmdPar_psubout(NULL, io, GetFormat(fmt), &args);
 		memfree(args.data);
 	}
 }

@@ -76,8 +76,6 @@ int tst_data (alloctab_t *tab, void *data);
 void check_data (alloctab_t *tab);
 void *admin_data (alloctab_t *tab, void *tg, const void *src);
 
-extern int alloctab_debug_flag;
-
 #define	ALLOCSIZE(size)		sizealign(size, sizeof(chain_t))
 
 /*

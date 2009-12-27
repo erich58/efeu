@@ -246,13 +246,6 @@ char *DocParseExpr (io_t *in)
 
 		sb_clear(&parse_buf);
 		copy_brace(in, &parse_buf);
-		
-		do	c = io_getc(in);
-		while	(c == ' ' || c == '\t');
-
-		if	(c != '\n')
-			io_ungetc(c, in);
-
 		return parse_data();
 	case '\n':
 		return DocParsePar(in);

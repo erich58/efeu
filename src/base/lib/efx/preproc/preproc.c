@@ -680,7 +680,6 @@ static void cmd_include(pp_t *pp)
 {
 	io_t *io;
 	int flag;
-	int c;
 	io_t *tmp;
 	char *name;
 
@@ -689,20 +688,29 @@ static void cmd_include(pp_t *pp)
 	io_macsub(io, tmp, "\n");
 	io_rewind(tmp);
 
-	c = io_getc(tmp);
-	flag = 0;
+	flag = 1;
 
-	if	(c == '<')
+	if	(io_peek(tmp) == '<')
 	{
+		io_getc(tmp);
 		name = io_mgets(tmp, ">");
 		flag = 0;
 	}
-	else if	(c == '"')
+	else
 	{
-		name = io_mgets(tmp, "\"");
-		flag = 1;
+		Obj2Data(Parse_term(tmp, 0), &Type_str, &name);
+
+		if	(name && *name == '<')
+		{
+			int i;
+
+			for (i = 1; name[i] != 0 && name[i] != '>'; i++)
+				name[i - 1] = name[i];
+
+			name[i - 1] = 0;
+			flag = 0;
+		}
 	}
-	else	name = NULL;
 
 	io_close(tmp);
 

@@ -39,15 +39,18 @@ Obj_t *PFunc_struct(io_t *io, void *data)
 	Var_t *st;
 	void *p;
 	char *prompt;
+	char *bname;
 	int c;
 
 	p = io_getname(io);
 	c = io_eat(io, "%s");
+	bname = NULL;
 
 	if	(c == ':')
 	{
 		io_getc(io);
 		base = Parse_type(io, NULL);
+		bname = io_getname(io);
 		c = io_eat(io, "%s");
 	}
 	else	base = NULL;
@@ -68,7 +71,15 @@ Obj_t *PFunc_struct(io_t *io, void *data)
 
 	io_getc(io);
 
-	type = MakeStruct(p, base, st);
+	if	(base)
+	{
+		Var_t *bvar = NewVar(base, NULL, 0);
+		bvar->name = bname;
+		bvar->member = StructMember;
+		type = MakeStruct(p, bvar, st);
+	}
+	else	type = MakeStruct(p, NULL, st);
+
 	return type2Obj(type);
 }
 
@@ -79,7 +90,7 @@ static void ExpandKonv (Func_t *func, void *rval, void **arg)
 }
 
 
-Type_t *MakeStruct(char *name, Type_t *base, Var_t *list)
+Type_t *MakeStruct(char *name, Var_t *base, Var_t *list)
 {
 	Type_t *type;
 	Var_t *st;
@@ -99,9 +110,8 @@ Type_t *MakeStruct(char *name, Type_t *base, Var_t *list)
 
 	if	(base)
 	{
-		st = NewVar(base, NULL, 0);
-		st->next = list;
-		list = st;
+		base->next = list;
+		list = base;
 	}
 
 	for (st = list; st != NULL; st = st->next)
@@ -157,7 +167,7 @@ Type_t *MakeStruct(char *name, Type_t *base, Var_t *list)
 	type->clean = clean;
 	type->copy = copy;
 	type->list = list;
-	type->base = base;
+	type->base = base ? base->type : NULL;
 	type->vtab = VarTab(mstrcpy(name), 0);
 
 	for (st = list; st != NULL; st = st->next)
@@ -171,9 +181,9 @@ Type_t *MakeStruct(char *name, Type_t *base, Var_t *list)
 	SetFunc(0, type, p, List2Struct);
 	memfree(p);
 
-	if	(base)
+	if	(type->base)
 	{
-		p = msprintf("%s (%s)", type->name, base->name);
+		p = msprintf("%s (%s)", type->name, type->base->name);
 		SetFunc(0, type, p, ExpandKonv);
 		memfree(p);
 	}

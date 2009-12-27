@@ -38,8 +38,10 @@ If not, write to the Free Software Foundation, Inc.,
 
 extern void ParseCommand (int *argc, char **argv);
 extern void SetResource (const char *name, const char *val);
+extern void SetVersion (const char *val);
 extern char *GetResource (const char *name, const char *defval);
 extern int GetIntResource (const char *name, int val);
 extern int GetFlagResource (const char *name);
+extern char *GetFormat (const char *def);
 
 #endif	/* EFEU/Resource.h */

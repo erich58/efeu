@@ -48,9 +48,9 @@ int term_cmd (term_t *trm, va_list list)
 		break;
 	case DOC_CMD_ITEM:
 		term_newline(trm, 0);
-		trm->margin -= TERM_INDENT;
+		trm->var.margin -= TERM_INDENT;
 		term_putc(trm, '*');
-		trm->margin += TERM_INDENT;
+		trm->var.margin += TERM_INDENT;
 		break;
 	default:
 		return EOF;

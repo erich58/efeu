@@ -22,38 +22,20 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/efwin.h>
 
-#if	__linux__
-
 WINDOW *StippleBackground(void)
 {
 	WINDOW *win;
+	int y, my, x, mx;
 
 	win = NewWindow(NULL);
-	touchwin(win);
+	my = getmaxy(win);
+	mx = getmaxx(win);
 
-	wrefresh(win);
-	return win;
-}
-
-#else
-
-WINDOW *StippleBackground(void)
-{
-	WINDOW *win;
-	int x, y;
-
-	win = NewWindow(NULL);
-
-	for (y = 0; y < win->_maxy; y++)
-	{
-		for (x = 0; x < win->_maxx; x++)
-		{
-			win->_y[y][x] = ((x + y) % 2) ? '-' : '|';
-		}
-	}
+	for (y = 0; y < my; y++)
+		for (x = 0; x < mx; x++)
+			mvwaddch(win, y, x, ((x + y) % 2) ? '-' : '|');
 
 	touchwin(win);
 	wrefresh(win);
 	return win;
 }
-#endif

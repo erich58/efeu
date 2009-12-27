@@ -74,7 +74,6 @@ void LaTeX_setup (void)
 		io_close(in);
 
 		PopVarTab();
-
+		need_setup = 0;
 	}
-	else	need_setup = 0;
 }

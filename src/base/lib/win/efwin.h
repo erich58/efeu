@@ -98,4 +98,12 @@ void WinSystem (const char *cmd);
 void DrawBox (WINDOW *win);
 void OverlayWindow (WINDOW *child, WINDOW *parent);
 
+#ifndef	getmaxx
+#define getmaxx(win)		((win)?((win)->_maxx + 1):ERR)
+#endif
+
+#ifndef	getmaxy
+#define getmaxy(win)		((win)?((win)->_maxy + 1):ERR)
+#endif
+
 #endif	/* EFWIN_H */

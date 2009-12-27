@@ -1,5 +1,6 @@
 /*
-Kommandoparameter aus Datei laden
+:*:load command configuration from file
+:de:Kommandoparameter aus Datei laden
 
 $Copyright (C) 2001 Erich Frühstück
 This file is part of EFEU.
@@ -26,7 +27,65 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/ftools.h>
 #include <EFEU/procenv.h>
 #include <EFEU/appl.h>
+#include <ctype.h>
 
+static void skipline (io_t *io)
+{
+	int c;
+
+	do	c = io_getc(io);
+	while	(c != EOF && c != '\n');
+}
+
+static void addline (io_t *io, strbuf_t *buf, int end)
+{
+	int c;
+
+	while ((c = io_getc(io)) != EOF)
+	{
+		if	(c == '\n')	break;
+
+		sb_putc(c, buf);
+	}
+
+	sb_putc(end, buf);
+}
+
+static void buf2var(CmdPar_t *par, const char *name, strbuf_t *buf)
+{
+	io_t *io;
+	CmdParVar_t *var;
+	strbuf_t *vbuf;
+	int c;
+
+	vbuf = new_strbuf(0);
+	sb_setpos(buf, 0);
+	io = langfilter(io_strbuf(buf), NULL);
+
+	while ((c = io_getc(io)) != EOF)
+		sb_putc(c, vbuf);
+
+	io_close(io);
+
+	var = CmdPar_var(par, name, 1);
+	memfree(var->value);
+	var->value = sb2str(vbuf);
+	sb_clear(buf);
+}
+
+static void langsub (strbuf_t *sb)
+{
+	io_t *io;
+	int c;
+
+	io = langfilter(io_mstr(sb_strcpy(sb)), NULL);
+	sb_begin(sb);
+
+	while ((c = io_getc(io)) != EOF)
+		sb_putc(c, sb);
+
+	io_close(io);
+}
 
 /*	Beschreibungstext kopieren
 */
@@ -54,29 +113,40 @@ static char *copy_desc (io_t *io, strbuf_t *sb)
 			break;
 		}
 
+		io_protect(io, 1);
+
 		while ((c = io_getc(io)) != EOF)
 		{
+			if	(c == '\\')
+			{
+				int c2 = io_getc(io);
+
+				if	(c2 == '\n')	break;
+
+				switch (c2)
+				{
+				case 'n':	sb_putc('\n', sb); continue;
+				case 't':	c = '\t'; break;
+				case '0':	c = 0; break;
+				case EOF:	c = '\\'; break;
+				default:	io_ungetc(c2, io); break;
+				}
+			}
+
 			sb_putc(c, sb);
 
 			if	(c == '\n')	break;
 			if	(c == ':')	flag = 1;
 		}
+
+		io_protect(io, 0);
 	}
 
 	if	(flag)
-	{
-		io = langfilter(io_mstr(sb_strcpy(sb)), NULL);
-		sb_begin(sb);
-
-		while ((c = io_getc(io)) != EOF)
-			sb_putc(c, sb);
-
-		io_close(io);
-	}
+		langsub(sb);
 
 	return sb_strcpy(sb);
 }
-
 
 /*	Regulären Ausdruck kopieren
 */
@@ -167,16 +237,45 @@ static CmdParKey_t *create_key (CmdParKey_t *buf, strbuf_t *sb)
 	return key;
 }
 
-/*	Test auf NULL-Stringkennung in Stringbuffer
+/*	Zuweisungswert bestimmen
 */
 
-static int test_null (strbuf_t *sb)
+static char *getval (strbuf_t *sb, int flag)
 {
-	if	(sb_getpos(sb) == 0)	return 1;
-	if	(sb_getpos(sb) != 4)	return 0;
-	if	(strncmp("NULL", (char *) sb->data, 4) == 0)	return 1;
+	char *p;
 
-	return 0;
+	if	(sb->pos == 0)
+		return NULL;
+
+	if	(sb->data[0] == ':')
+	{
+		langsub(sb);
+	}
+	else if	(sb->data[0] == '$' && sb->pos > 1 
+		&& sb->data[sb->pos - 1] == '$')
+	{
+		int i;
+
+		do	sb->pos--;
+		while	(isspace(sb->data[sb->pos - 1]));
+
+		sb->pos--;
+
+		for (i = 0; i < sb->pos; i++)
+			sb->data[i] = sb->data[i + 1];
+
+		sb_sync(sb);
+	}
+
+	p = sb_strcpy(sb);
+
+	if	(flag && mstrcmp(p, "NULL") == 0)
+	{
+		memfree(p);
+		p = NULL;
+	}
+
+	return p;
 }
 
 static void key2call (CmdParCall_t *call, CmdParKey_t *key,
@@ -192,15 +291,7 @@ static void key2call (CmdParCall_t *call, CmdParKey_t *key,
 	}
 	else if	(key->argtype == ARGTYPE_VALUE)
 	{
-		if	(flag)
-		{
-			call->par = test_null(sb) ? NULL : sb_strcpy(sb);
-		}
-		else
-		{
-			sb_putc(0, sb);
-			call->par = sb_memcpy(sb);
-		}
+		call->par = getval(sb, flag);
 	}
 	else if	(sb_getpos(sb))
 	{
@@ -429,12 +520,18 @@ static void parse_line (CmdPar_t *par, io_t *io, strbuf_t *sb)
 
 
 /*
-Die Funktion |$1| liest Kommandoparameter aus der IO-Struktur <io>.
+:*:The function |$1| loads command configurations from IO-structure <io>.
+If <flag> is set, ident and copyright informations are extracted
+from comment head.
+:de:Die Funktion |$1| liest Kommandoparameter aus der IO-Struktur <io>.
+Falls <flag> gesetzt ist, wird Bezeichnung und Kopierrechtsinformat
+aus dem Kommentarkopf extrahiert.
 */
 
-void CmdPar_read (CmdPar_t *par, io_t *io, int end)
+void CmdPar_read (CmdPar_t *par, io_t *io, int end, int flag)
 {
 	strbuf_t *sb;
+	strbuf_t *cbuf;
 	int c;
 
 	if	(io == NULL)	return;
@@ -442,23 +539,61 @@ void CmdPar_read (CmdPar_t *par, io_t *io, int end)
 	par = CmdPar_ptr(par);
 	sb = new_strbuf(0);
 	io = io_lnum(io_refer(io));
+	cbuf = flag ? sb : NULL;
 
 	while ((c = io_getc(io)) != EOF && c != end)
 	{
+		if	(flag && c == '#')
+		{
+			do	c = io_getc(io);
+			while	(c == ' ' || c == '\t');
+
+			if	(cbuf)
+			{
+				if	(c == '\n')
+				{
+					buf2var(par, "Ident", cbuf);
+					cbuf = NULL;
+				}
+				else
+				{
+					sb_putc(c, cbuf);
+					addline(io, cbuf, '\n');
+				}
+			}
+			else if	(c == '$')
+			{
+				addline(io, sb, 0);
+
+				if	(sb->data[0] == 'C')
+					buf2var(par, "Copyright", sb);
+				
+				sb_clear(sb);
+			}
+			else	skipline(io);
+
+			continue;
+		}
+
+		if	(cbuf)
+		{
+			buf2var(par, "Ident", cbuf);
+			cbuf = NULL;
+		}
+
 		switch (c)
 		{
 		case '\n':
 			break;
-		case '#':
 		case '\t':
 		case '=':
-			do	c = io_getc(io);
-			while	(c != EOF && c != '\n');
-
+		case '#':
+			skipline(io);
 			break;
 		default:
 			io_ungetc(c, io);
 			parse_line(par, io, sb);
+			flag = 0;
 			break;
 		}
 	}
@@ -469,13 +604,18 @@ void CmdPar_read (CmdPar_t *par, io_t *io, int end)
 
 
 /*
-Die Funktion |$1| ladet Kommandoparameter zu dem Kommandonamen <name>.
+:*:The function |$1| loads command configurations for
+the name <name>. If <flag> is set, ident and copyright informations
+are extracted from comment head.
+:de:Die Funktion |$1| ladet Kommandoparameter zu dem Kommandonamen <name>.
+Falls <flag> gesetzt ist, wird Bezeichnung und Kopierrechtsinformat
+aus dem Kommentarkopf extrahiert.
 */
 
-void CmdPar_load (CmdPar_t *par, const char *name)
+void CmdPar_load (CmdPar_t *par, const char *name, int flag)
 {
 	io_t *io = io_applfile(name, APPL_CNF);
-	CmdPar_read (par, io, EOF);
+	CmdPar_read (par, io, EOF, flag);
 	io_close(io);
 }
 

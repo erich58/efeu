@@ -1,0 +1,110 @@
+/*	efeudoc manpage
+
+$Copyright (C) 2001 Erich Frühstück
+This file is part of EFEU.
+
+EFEU is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+EFEU is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with EFEU; see the file COPYING.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+*/
+
+@name
+@synopsis -h
+\Description
+
+The command |$!| is a document generator with different output
+formats (LaTeX, HTML, roff, ...). The EFEU interpreter language
+(see \mref{esh(1)}) is used in commands, so you can directly
+integrate data evaluation or create tables from data cubes directly
+in your document.
+
+\_example= {{
+	ParseLine(cin);
+	str x = ParseBlock(cin, 1, NULL, "_end");
+	cout << "The code\n\n"
+	cout << "---- verbatim\n" << x << "----\n\n";
+	cout << "creates the output:\n\n" << x << "\n";
+}}
+
+The document prozessor |$!| uses a ascii input format that allows you
+to write the document similar to the desired output and tries to use
+controls as less as possible.
+
+To demonstrate this, the following example shows you the
+construction of a bullet list:
+
+\_example
+Text before list.
+*	List entry with a paragraph containing
+	more than one line of text to show the behavior
+	of indentation.
+*	Another list entry
+
+	This is the second paragraph of this entry.
+Text after list.
+\_end
+
+\shead	Options
+
+The following options and arguments are accepted by |$!|:
+
+@arglist
+
+\head	DOCUMENT SYNTAX
+
+<*This section needs to be written*>
+
+\head	COMMANDS
+
+This sections contains a list of all predefined
+commands of |$!|.
+
+The following notation is used in command syntax:
+*	If there are different methods of parameter handling,
+	all of them are given. Every calling variant starts with
+	the command name.
+*	Any argument in brackets like |[|<arg>|]| or braces
+	like |{|<arg>|}| is optional and may be omitted.
+	The brackets and braces are part of the syntax.
+*	Any argument without braces in the same line as the command
+	name is terminated by the next linefeed.
+*	Indented dots in a line means that the
+	argument of the previous line may be continued
+	with indented lines.
+*	Any argument in its own line is ended by the next
+	empty line.
+
+---- eval
+for (x in maclist())
+	if (x[0] == '\\' && x[1] != '_')
+		showmac(x, cout, 1);
+----
+
+\head	MACROS
+
+This sections contains a list of all predefined
+macros of |$!|.
+
+---- eval
+for (x in maclist())
+	if (x[0] == '@@' && x[1] != '_')
+		showmac(x, cout, 1);
+----
+
+@environ -h
+
+\SeeAlso
+\mref{esh(1)}.
+
+@copyright -h

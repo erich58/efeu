@@ -33,7 +33,6 @@ typedef struct {
 	char *par;
 } DocType_t;
 
-extern io_t *DocOut_sgml (io_t *io);
 extern io_t *DocOut_html (io_t *io);
 extern io_t *DocOut_test (io_t *io);
 extern io_t *DocOut_latex (io_t *io);

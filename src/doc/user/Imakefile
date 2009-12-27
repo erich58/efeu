@@ -1,0 +1,8 @@
+DE_DOC=	_EFEU_TOP/doc/de
+EN_DOC=	_EFEU_TOP/doc/en
+
+ProvideDocDir($(DE_DOC))
+ProvideDocDir($(EN_DOC))
+
+DocTarget($(DE_DOC),user,$(SRCTOP),LANG=de efeudoc)
+DocTarget($(EN_DOC),user,$(SRCTOP),LANG=en efeudoc)

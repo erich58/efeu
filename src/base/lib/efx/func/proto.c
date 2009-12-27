@@ -24,7 +24,6 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/Op.h>
 #include <ctype.h>
 
-int func_lval_debug = 0;
 
 static int do_copy (io_t *io, io_t *tmp);
 
@@ -280,12 +279,6 @@ Func_t *MakePrototype(io_t *io, Type_t *type, Name_t *nptr, unsigned flags)
 	io_rewind(tmp);
 	io_read(tmp, func->arg, n * sizeof(FuncArg_t));
 	io_close(tmp);
-
-	if	(func_lval_debug && func->lretval)
-	{
-		ListFunc(ioerr, func);
-		io_puts(";\n", ioerr);
-	}
 
 	if	(rflag && (func->type != func->arg[0].type))
 	{

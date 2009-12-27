@@ -457,6 +457,8 @@ static FuncDef_t fdef_obj[] = {
 	{ FUNC_VIRTUAL, &Type_list, "operator+ (List_t, List_t)", list_binary },
 	{ FUNC_VIRTUAL, &Type_list, "operator- (List_t, List_t)", list_binary },
 	{ FUNC_VIRTUAL, &Type_list, "operator* (List_t, List_t)", list_binary },
+	{ FUNC_VIRTUAL, &Type_list, "operator/ (List_t, List_t)", list_binary },
+	{ FUNC_VIRTUAL, &Type_list, "operator% (List_t, List_t)", list_binary },
 
 	{ FUNC_VIRTUAL, &Type_int, "cmp (List_t, List_t)", list_cmp },
 	{ FUNC_VIRTUAL, &Type_bool, "operator< (List_t, List_t)", list_lt },

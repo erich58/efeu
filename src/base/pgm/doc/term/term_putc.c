@@ -46,7 +46,7 @@ void term_newline (term_t *trm, int flag)
 
 	if	(trm->hang)
 	{
-		trm->margin += trm->hang;
+		trm->var.margin += trm->hang;
 		trm->hang = 0;
 	}
 
@@ -60,8 +60,8 @@ void term_newline (term_t *trm, int flag)
 
 void term_hmode (term_t *trm)
 {
-	if	(trm->col < trm->margin)
-		trm->col += io_nputc(' ', trm->out, trm->margin - trm->col);
+	if	(trm->col < trm->var.margin)
+		trm->col += io_nputc(' ', trm->out, trm->var.margin - trm->col);
 	else if	(trm->space)
 		trm->col += io_nputc(' ', trm->out, 1);
 

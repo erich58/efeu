@@ -23,20 +23,22 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <d2m.cfg>
 
-DOCDIR = _EFEU_TOP/doc
-
-#define DE_Doc(name,desc,src)	\
-SubMakeRule(Concat(de-,name),desc,src,NullArg,\
-dir2make -n -D $(DOCDIR)/de -p --lang=de -d name)
+#undef	SubMake
+#define	SubMake(name,label) \
+SubMakeRule(name,label,name,NullArg,dir2make)
 
 #if	LANG_de
-DE_Doc(make,"make und co",make)
-DE_Doc(prog,"EFEU Programmierhandbuch",prog)
-DE_Doc(mdmat,"Handbuch zu den Datenmatrizen",mdmat)
-DE_Doc(efeudoc,"Handbuch zum Dokumentkonverter",efeudoc)
+SubMake(make,"make und co")
+SubMake(prog,"EFEU Programmierhandbuch")
+SubMake(mdmat,"Handbuch zu den Datenmatrizen")
+SubMake(efeudoc,"Handbuch zum Dokumentkonverter")
+SubMake(user,"Benutzerhandbuch")
+SubMake(man1,"Handbucheinträge zu Kommandos")
 #else
-DE_Doc(make,"german documentation about mkmf",make)
-DE_Doc(prog,"german documentation about EFEU programming",prog)
-DE_Doc(mdmat,"german documentation about data cubes",mdmat)
-DE_Doc(efeudoc,"german documentation about efeudoc",efeudoc)
+SubMake(make,"german documentation about mkmf")
+SubMake(prog,"german documentation about EFEU programming")
+SubMake(mdmat,"german documentation about data cubes")
+SubMake(efeudoc,"german documentation about efeudoc")
+SubMake(user,"user reference manual")
+SubMake(man1,"manpages for commands")
 #endif

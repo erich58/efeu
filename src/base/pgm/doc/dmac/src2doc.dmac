@@ -1,5 +1,6 @@
 /*
-Handbucheinträge aus Sourcefiles generieren
+:*:create manual pages from source
+:de:Handbucheinträge aus Sourcefiles generieren
 
 $Copyright (C) 2000 Erich Frühstück
 This file is part of EFEU.
@@ -35,10 +36,12 @@ int SourceListComp(SourceListEntry a, SourceListEntry b)
 DataBase SourceList = DataBase(SourceListEntry, SourceListComp);
 }
 
-Liste der Programmsourcen um Dateien in Bibliothek erweitern
+:*:expand source list with files of directory tree
+	$1 <dir>
+:de:Liste der Programmsourcen um Dateien in Bibliothek erweitern
 	$1 <dir>
 
-Der Befehl $1 erweitert die Liste der Programmsourcen zur Konstruktion von
+:de:Der Befehl $1 erweitert die Liste der Programmsourcen zur Konstruktion von
 Handbucheinträgen mit allen Dateien aus der Bibliothek <dir>.
 Fehlt die Angabe von <dir>, wird der Bibliotheksname der aktuellen
 Eingabedatei genommen.
@@ -55,10 +58,12 @@ for (x in split(filter("mksrclist " + path)))
 		SourceList += { basename(x), x };
 }}
 
-Liste der Programmsourcen um Einzeldatei erweitern
+:*:expand source list with single file
+	$1 <file>
+:de:Liste der Programmsourcen um Einzeldatei erweitern
 	$1 <name>
 
-Der Befehl $1 erweitert die Liste der Programmsourcen mit der
+:de:Der Befehl $1 erweitert die Liste der Programmsourcen mit der
 Datei <name>.
 
 \def\addsrc {{
@@ -69,10 +74,12 @@ if	(x)
 }}
 
 
-Aktuelle Liste der Programmsourcen ausgeben
+:*:print source list
+	$1 <fmt>
+:de:Aktuelle Liste der Programmsourcen ausgeben
 	$1 <fmt>
 
-Der Befehl $1 gibt die aktuelle Liste der Programmsourcen aus.
+:de:Der Befehl $1 gibt die aktuelle Liste der Programmsourcen aus.
 
 \def\printsrclist {{
 	str fmt = ParseLine(cin);
@@ -82,10 +89,12 @@ Der Befehl $1 gibt die aktuelle Liste der Programmsourcen aus.
 		fpsub(cout, fmt, x.name, x.path);
 }}
 
-Dateien aus der Liste der Programmsourcen löschen
+:*:remove files from source list
+	$1 <pattern>
+:de:Dateien aus der Liste der Programmsourcen löschen
 	$1 <list>
 
-Der Befehl $1 löscht alle Dateien aus der Liste der Programmsourcen,
+:de:Der Befehl $1 löscht alle Dateien aus der Liste der Programmsourcen,
 die der Musterliste <list> entsprechen. Eine leere Liste löcht alle
 Einträge.
 
@@ -101,10 +110,12 @@ Einträge.
 	}
 }}
 
-Handbucheinträge aus Programmsourcen generieren
-	$1 |[|<flags>|]| <list>
+:*:create manual page from source
+	$1 |[|<flags>|]| <pattern list>
+:de:Handbucheinträge aus Programmsourcen generieren
+	$1 |[|<flags>|]| <Musterliste>
 
-Das Argument <list> gibt eine Liste von Selektionsmustern an.
+:de:Das Argument <Musterliste> gibt eine Liste von Selektionsmustern an.
 Der Optionale Parameter <flags> erlaubt die Übergabe von Optionen
 an das Kommando |src2doc|.
 
@@ -117,10 +128,12 @@ for (x in SourceList)
 		MakeDepend ? depend(x.path) : cout << filter(cmd + x.path);
 }}
 
-Dateien der Sourceliste einbinden
-	$1 <list>
+:*:include files of source list
+	$1 <pattern list>
+:de:Dateien der Sourceliste einbinden
+	$1 <Musterliste>
 
-Das Argument <list> gibt eine Liste von Selektionsmustern zur
+:de:Das Argument <list> gibt eine Liste von Selektionsmustern zur
 Auswahl der Dateien an.
 
 \def\srcinclude {{
@@ -133,10 +146,12 @@ for (x in SourceList)
 		include(NULL, x.path);
 }}
 
-Dateien der Sourceliste einbinden
+:*:insert files of source list
+	$1 |[|<cmd>|]| <pattern list>
+:de:Dateien der Sourceliste einbinden
 	$1 |[|<cmd>|]| <list>
 
-Das Argument <list> gibt eine Liste von Selektionsmustern zur
+:de:Das Argument <list> gibt eine Liste von Selektionsmustern zur
 Auswahl der Dateien an.
 Der optionale Parameter <cmd> bestimmt das Filterprogramm zur
 Aufbereitung des Datenfiles.

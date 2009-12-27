@@ -25,6 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/io.h>
 #include <ctype.h>
+#include "DocBuf.h"
 
 typedef void (*S2DEval_t) (const char *name, io_t *ein, io_t *aus);
 
@@ -51,7 +52,6 @@ extern char *parse_block (io_t *io, int beg, int end);
 
 extern void copy_block (io_t *ein, io_t *aus, int end);
 extern void ppcopy (io_t *ein, strbuf_t *val, strbuf_t *com);
-extern void copy_protect (const char *str, io_t *io);
 
 /*	Sourcefileanalyse
 */
@@ -63,40 +63,22 @@ typedef struct {
 	void (*eval) (SrcData_t *data, const char *name);
 } SrcCmd_t;
 
-#define	BUF_DESC	0
-#define	BUF_EX		1
-#define	BUF_SEE		2
-#define	BUF_DIAG	3
-#define	BUF_NOTE	4
-#define	BUF_WARN	5
-#define	BUF_ERR		6
-#define	BUF_DIM		7
-
-#define	VAR_NAME	0
-#define	VAR_SEC		1
-#define	VAR_TITLE	2
-#define	VAR_HEAD	3
-#define	VAR_COPYRIGHT	4
-#define	VAR_DIM		5
 
 struct SrcData_s {
 	int hdr;	/* Flag für Header */
 	io_t *ein;	/* Eingabestruktur */
-	io_t *aus;	/* Ausgabestruktur */
 	strbuf_t *buf;	/* Stringbuffer */
-	strbuf_t *synopsis;	/* Übersicht */
-	strbuf_t *tab[BUF_DIM];	/* Stringbuffertabelle */
-	char *var[VAR_DIM];	 /* Variablentabelle */
+	DocBuf_t doc;	/* Dokumentbuffer */
 	SrcCmd_t *ppdef;	/* Preprozessordefinitionen */
 	size_t ppdim;	/* Zahl der Preprozessdefinitionen */
 	unsigned mask;	/* Maske für Deklarationen */
 };
 
-extern void SrcData_init (SrcData_t *data, io_t *ein, io_t *aus);
+extern void SrcData_init (SrcData_t *data, io_t *ein);
 extern void SrcData_head (SrcData_t *data, const char *name, int sec);
 extern void SrcData_eval (SrcData_t *data);
-extern void SrcData_clean (SrcData_t *data);
 extern void SrcData_copy (SrcData_t *data, strbuf_t *buf);
+extern void SrcData_write (SrcData_t *data, io_t *io);
 
 #define	DECL_VAR	01	/* Variable */
 #define	DECL_FUNC	02	/* Funktion */

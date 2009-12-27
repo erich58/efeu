@@ -51,7 +51,7 @@ mit |RegExp_exec| abgefragt werden können.
 
 #define	REGEXP_MAXSUB	32
 
-extern reftype_t RexExp_reftype;
+extern reftype_t RegExp_reftype;
 extern char *RegExp_error;
 
 RegExp_t *RegExp (const char *str, int flags);

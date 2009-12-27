@@ -249,13 +249,6 @@ static MemberDef_t type_member[] = {
 /*	Komponenten von Referenzen
 */
 
-static Obj_t *ref_debug (const Var_t *st, const Obj_t *obj)
-{
-	refdata_t *rd = Val_ptr(obj->data);
-	return rd ? LvalObj(&Lval_ptr, &Type_bool,
-		(int *) &rd->reftype->debug) : NULL;
-}
-
 static Obj_t *ref_refcount (const Var_t *st, const Obj_t *obj)
 {
 	refdata_t *rd = Val_ptr(obj->data);
@@ -269,7 +262,6 @@ static Obj_t *ref_ident (const Var_t *st, const Obj_t *obj)
 
 static MemberDef_t ref_member[] = {
 	{ "ident", &Type_str, ref_ident, NULL },
-	{ "debug", &Type_bool, ref_debug, NULL },
 	{ "refcount", &Type_int, ref_refcount, NULL },
 };
 
@@ -349,51 +341,28 @@ static void f_proto (CmdPar_t *par, io_t *io, const char *arg)
 
 	for (i = 0; i < tab->tab.used; i++)
 	{
+		if	(i > 0)	io_puts("\\br\n", io);
+
 		io_puts("<|", io);
 		ListFunc(io, ftab[i]);
-		io_puts("|>\n", io);
+		io_puts("|>", io);
 	}
+
+	io_putc('\n', io);
 }
 
 static CmdParExpand_t cexp_proto = { "proto", "Prototype ausgeben", f_proto };
 
-extern int ObjDebugFlag;
 extern int float_align;
 
 char *PS1 = "$!: ";
 char *PS2 = "> ";
 extern char *MessageHandler;
 
-extern int func_lval_debug;
-
 static VarDef_t vardef[] = {
 	{ "MakeDepend",	&Type_bool, &MakeDepend,
 		":*:flag for creating dependence lists\n"
 		":de:Flag zur Generierung von Abhängigkeitslisten\n" },
-	{ "iodebug",	&Type_bool, &io_reftype.debug,
-		":*:flag to control debuging of IO-structures\n"
-		":de:Flag zum Debuggen von IO-Strukturen\n" },
-	{ "fdebug",	&Type_int, &FuncDebugFlag,
-		":*:flag to control debuging of function calls\n"
-		":de:Flag zum Debuggen von Funktionsaufrufen\n" },
-	{ "filedebug",	&Type_bool, &filedebugflag,
-		":*:flag to control debuging of files\n"
-		":de:Flag zum Debuggen von Filehändlings\n" },
-	{ "FuncDebug",	&Type_bool, &FuncRefType.debug,
-		":*:flag to control debuging of function administration\n"
-		":de:Flag zum Debuggen der Funktionsverwaltung\n" },
-	{ "_lval_debug",	&Type_bool, &func_lval_debug,
-		":*:flag to control debuging of lvalues\n"
-		":de:Flag zum Debuggen von L-Werten\n" },
-	{ "VirFuncDebug",	&Type_bool, &VirFuncRefType.debug,
-		":*:flag to control debuging of virtual functions\n"
-		":de:Flag zum Debuggen der virtuellen Funktionen\n" },
-	{ "VarTabDebug",	&Type_bool, &VarTabRefType.debug, 
-		":*:flag to control debuging of var tables\n"
-		":de:Flag zum Debuggen von Variablentabellen\n" },
-	{ "odebug",	&Type_bool, &ObjDebugFlag,
-		":*:flag to control debuging of object administration\n"
-		":de:Flag zum Debuggen der Objektverwaltung\n" },
 	{ "ProgIdent",	&Type_str, &ProgIdent,
 		":*:identification of command\n"
 		":de:Identifikation des Kommandos\n" },
@@ -430,9 +399,6 @@ static VarDef_t vardef[] = {
 	{ "context",	&Type_vtab, &ContextVar,
 		":*:context variable tab\n"
 		":de:Kontextvariablentabelle\n" },
-	{ "_allocdebug",	&Type_bool, &alloctab_debug_flag,
-		":*:flag to control debuging of memory allocation\n"
-		":de:Flag zum Debuggen der Speicherverwaltung\n" },
 	{ "Lang", &Type_str, &LangType.language,
 		":*:language code of LANG environment\n"
 		":de:Sprachkode der Umgebungsvariable LANG\n" },
@@ -455,13 +421,6 @@ void SetupStd(void)
 	if	(init_done)	return;
 
 	init_done = 1;
-
-#if	0
-	{
-		char *p = getenv("LRETVAL_DEBUG");
-		func_lval_debug = p ? atoi(p) : 0; 
-	}
-#endif
 
 	GlobalVar = VarTab("global", 64);
 	LocalVar = RefVarTab(GlobalVar);

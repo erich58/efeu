@@ -1,8 +1,8 @@
 #!/bin/sh
 # :*:edit binary file using mkdump and vi
-# :de:binäre Dateien mit mkdumpo und vi editieren
+# :de:binäre Dateien mit mkdump und vi editieren
 #
-# Copyright (C) 1991 Erich Frühstück
+# $Copyright (C) 1991 Erich Frühstück
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -19,6 +19,33 @@
 # License along with EFEU; see the file COPYING.
 # If not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+# $pconfig
+# :file |
+#	:*:file to edit
+#	:de:Datei zum editieren
+
+usage ()
+{
+	efeuman -- $0 $1 || echo "usage: $0 file"
+}
+
+case "$1" in
+-\?|--help*)	usage $1; exit 0;;
+esac
+
+# $Description
+# :en:The command transforms the binary file <file> into a temporary
+# ascii representation and starts |vi| to edit.\par
+# The following options and arguments are accepted:
+# :de:Das Programm formt die Binärdatei <file> in eine temporäre
+# Datei um und startet den vi zum editieren.\par
+# Die folgenden Optionen und Argumente werden akzeptiert:
+#
+# @arglist
+#
+# $SeeAlso
+# mkdump(1), undump(1).
 
 #	message formats
 
@@ -51,7 +78,7 @@ esac
 if
 	test $# -ne 1
 then
-	printf "$msg1" 1>&2
+	usage -?
 	exit 1
 elif
 	test ! -r $1

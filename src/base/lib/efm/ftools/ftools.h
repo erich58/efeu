@@ -71,8 +71,6 @@ extern void filenotice (const char *name, const char *mode,
 	FILE *file, int (*close) (FILE *file));
 extern FILE *filerefer (FILE *file);
 
-extern int filedebugflag;
-
 /*	Binäre Ein/Ausgabe von Datenfiles
 */
 

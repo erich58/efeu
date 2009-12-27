@@ -22,7 +22,7 @@
 # :*:predefined resources
 # :de:Vordefinierte Resourcen
 
-Ident: lset ":*:command:de:Kommando:_: $!"
+Ident = ":*:command:de:Kommando:_: $!"
 	:*:short description of command
 	:de:Kurzbeschreibung des Kommandos
 Version = NULL
@@ -40,33 +40,12 @@ Debug = note
 
 @APPLPATH|
 	:*:path for configuration files.
-	:de:Suchpfad für Konfigurationsdateien.
+	:de:definiert zusätzliche Verzeichnisse für Konfigurationsdateien.
 @LANG|
 	:*:locale information
-	:de:Sprachanpassung
+	:de:bestimmt die Sprache für Meldungen und Hilfetexte.
 
-# :*:document production
-# :de:Handbuchgenerierung
-
-.help.term = "|efeudoc -T term - | less -r"
-.help.man = "|efeudoc -T man -"
-.help.lp = "|efeudoc -T LaTeX - | tex2ps - | lpr"
-.help.raw = NULL
-
--help::type[term]|:manpage {.help.{}}; :exit 0
-	:*:
-	print usage of command. The optional parameter <type>
-	determines the formatting and output of the description.
-	[term]	display on terminal (default)
-	[raw]	raw data for |efeudoc|
-	[lp]	send to printer
-	:de:
-	gibt eine Beschreibung des Kommandos aus.
-	Der zusätzliche Parameter <type> bestimmt die Formatierung und
-	die Ausgabe der Beschreibung.
-	[term]	Terminalausgabe (default)
-	[raw]	Rohformat für |efeudoc|
-	[lp]	Ausgabe zum Drucker
+:config help
 
 # :*:eis interface
 # :de:eis - Schnittstelle
@@ -85,27 +64,28 @@ Debug = note
 # :*:version information
 # :de:Versionsausgabe
 
-.version.fmt = "\\hang @! - @{Ident}\\br\n@{Version}\\br\n@{Copyright}"
+.version.fmt = "@ident\n\n@version\n\n@copyright\n"
 
 -version|:usage {.version.fmt}; :exit 0
-	:*:shows version information
+	:*:show version information
 	:de:gibt die Versionsnummer des Kommandos aus.
 
 # :*:debug-level
 # :de:Debug-Modus
 
 -debug::mode[debug]|Debug
-	:*:sets debug level for command
+	:*:set debug level for command
 	:de:Setzt den Debug-Level für das Kommando.
 #	Folgende Angaben sind möglich:
 #	[none]	Keine Meldungen ausgeben;
 #	[err]	Fehlermeldungen ausgeben;
 #	[note]	Anmerkungen ausgeben;
+#	[info]	Verarbeitungsinformationen ausgeben;
 #	[stat]	Verarbeitungsstatistiken ausgeben;
 #	[trace]	Ablaufinformationen ausgeben;
 #	[debug]	Debugginginformationen ausgeben (default);
 
 -verbose|Debug = stat
-	:*:sets debug level to |stat|.
+	:*:set debug level to |stat|.
 	:de:Setzt den Debug-Level auf |stat|.
 

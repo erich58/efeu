@@ -308,9 +308,9 @@ mdmat_t *PG_mdmat (PG_t *pg, const Type_t *type,
 
 /*
 $SeeAlso
-PG(3),
-PG_query(3),
-SetupPG(3),
-PG(7), mdmat(7).\br
+\mref{PG(3)},
+\mref{PG_query(3)},
+\mref{SetupPG(3)},
+\mref{PG(7)}, \mref{mdmat(7)}.\br
 PostgreSQL Programmer's Guide.
 */

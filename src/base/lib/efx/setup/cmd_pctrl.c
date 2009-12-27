@@ -26,7 +26,6 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/cmdsetup.h>
 #include <time.h>
 
-
 #define	RVSTR	Val_str(rval)
 #define	STR(n)	Val_str(arg[n])
 #define	INT(n)	Val_int(arg[n])

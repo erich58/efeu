@@ -1,0 +1,59 @@
+# :*:options controlling command description output
+# :de:Steuerflag zur Handbuchgenerierung
+
+# Copyright (C) 2001 Erich Frühstück
+# This file is part of EFEU.
+# 
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Library General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+# 
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU Library General Public License for more details.
+# 
+# You should have received a copy of the GNU Library General Public
+# License along with this library; see the file COPYING.Library.
+# If not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+.help.term = "|efeudoc -T term - | less -r"
+.help.man = "|efeudoc -T man -"
+.help.tex = "|efeudoc -T LaTeX - "
+.help.ps = "|efeudoc -T LaTeX - | tex2ps - "
+.help.lp = "|efeudoc -T LaTeX - | tex2ps - | lpr"
+.help.raw = NULL
+
+-help::type[term]|:manpage {.help.{}}; :exit 0
+	:*:
+	create command usage. The optional parameter <type>
+	determines the formatting and output of the description.
+	[term]	display on terminal (default)
+	[raw]	output raw data for |efeudoc|
+	[man]	output nroff/troff source for |man|
+	[lp]	send postscript data to |lpr|
+	:de:
+	generiert eine Beschreibung des Kommandos.
+	Der zusätzliche Parameter <type> bestimmt die Formatierung und
+	die Ausgabe der Beschreibung.
+	[term]	Terminalausgabe (default)
+	[raw]	Rohformat für |efeudoc|
+	[man]	nroff/troff Sourcen für |man|
+	[lp]	Ausgabe zum Drucker
+
+# :*:format definitions for manpage creation
+# :de:Formatdefinitionen zur Handbuchgenerierung
+
+.synopsis.head = "\\Synopsis\n"
+.synopsis.intro = ":*:usage:\n:de:Aufruf:\n"
+.arglist.head = "\\Description\n"
+.arglist.intro = \
+	:*:The following options and arguments are accepted \
+	from command "|$!|":\n\
+	:de:Die folgenden Optionen und Argumente werden \
+	vom Kommando "|$!|" akzeptiert:\n
+.environ.head = "\\Environment\n"
+.copyright.head = "\\Copyright\n"
+

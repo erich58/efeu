@@ -78,5 +78,5 @@ $Notes
 Das Speicherfeld für den Rückgabewert wird mit |memalloc| eingerichtet.
 $SeeAlso
 \mref{memalloc(3)}.\br
-\mref{string(3C)} im @PRM.
+\mref{string(3C)} @PRM.
 */

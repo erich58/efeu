@@ -44,14 +44,28 @@ void EBCDICMacro(str sname, str label, int recl, IO def, bool glob = true)
 		if	(strlen(key) == 1)
 			func += "val";
 
-		fprintf(io, "#define\t%s_%s(x)\t", sname, name);
-		fprintf(io, "db_%s(x, %d, %d)\n", func, pos, len);
+		fprintf(io, "#define\t%s_%s(x)\tdb_%s", sname, name, func);
+
+		if	(recl)
+			fprintf(io, "((x), %d, %d)\n", pos, len);
+		else	fprintf(io, "((x)->buf, %d, %d)\n", pos - 4, len);
+
 		fprintf(info, "%s\t%s\t%d\t%d\t%s\n", name, key, pos, len, desc)
 	}
 
-	fpsub(io, "\ntypedef uchar_t $1_t;\n", sname);
-	fprintf(io, "\n#define\t%s_recl\t%s\n", sname, recl);
-	fprintf(io, "#define\t%s_size\t%s\n\n", sname, recl);
+	if	(recl)
+	{
+		fpsub(io, "\ntypedef uchar_t $1_t;\n", sname);
+		fprintf(io, "\n#define\t%s_recl\t%s\n", sname, recl);
+		fprintf(io, "#define\t%s_size\t%s\n\n", sname, recl);
+	}
+	else
+	{
+		fpsub(io, "\ntypedef VRData_t $1_t;\n", sname);
+		fprintf(io, "\n#define\t%s_recl\tVRData_recl\n", sname);
+		fprintf(io, "#define\t%s_size\tVRData_size\n\n", sname);
+	}
+
 	info << '\n';
 }
 

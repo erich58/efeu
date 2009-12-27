@@ -180,9 +180,9 @@ extern int CmdParDef_eval (CmdPar_t *par, CmdParDef_t *def, const char *arg);
 */
 
 extern void CmdPar_add (CmdPar_t *par, CmdParDef_t *def);
-extern void CmdPar_read (CmdPar_t *par, io_t *io, int end);
+extern void CmdPar_read (CmdPar_t *par, io_t *io, int end, int flag);
 extern void CmdPar_write (CmdPar_t *par, io_t *io);
-extern void CmdPar_load (CmdPar_t *par, const char *name);
+extern void CmdPar_load (CmdPar_t *par, const char *name, int flag);
 extern int CmdPar_eval (CmdPar_t *par, int *narg, char **arg, int flag);
 
 extern char *CmdPar_psub (CmdPar_t *par, const char *fmt, const char *arg);

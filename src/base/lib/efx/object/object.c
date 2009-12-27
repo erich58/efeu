@@ -22,6 +22,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/object.h>
 #include <EFEU/refdata.h>
+#include <EFEU/Debug.h>
 
 #define	DEBUG_FLAG	1
 
@@ -34,9 +35,11 @@ If not, write to the Free Software Foundation, Inc.,
 extern char *ProgIdent;
 
 #if	DEBUG_FLAG
-int ObjDebugFlag = 0;
-static int depth = 0;
-static int delflag = 0;
+
+static int odebug_depth = 0;
+static int odebug_flag = 0;
+static int odebug_sync = 0;
+static io_t *odebug_log = NULL;
 
 static void do_debug (int flag, char *fmt, const Obj_t *obj);
 #else
@@ -227,51 +230,60 @@ static void do_debug(int flag, char *fmt, const Obj_t *obj)
 {
 	int i;
 
-	if	(!ObjDebugFlag)	return;
+	if	(odebug_sync < DebugChangeCount)
+	{
+		odebug_sync = DebugChangeCount;
+		io_puts("STOP Object debugging\n", odebug_log);
+		rd_deref(odebug_log);
+		odebug_log = rd_refer(LogOut("Obj", DBG_DEBUG));
+		io_puts("START Object debugging\n", odebug_log);
+	}
+
+	if	(!odebug_log)	return;
 
 	if	(flag == 2)
 	{
-		if	(!delflag)
+		if	(!odebug_flag)
 		{
-			depth--;
-			io_nputc('\t', ioerr, depth);
-			io_puts("}", ioerr);
+			odebug_depth--;
+			io_nputc('\t', odebug_log, odebug_depth);
+			io_puts("}", odebug_log);
 		}
 	}
-	else if	(delflag)
+	else if	(odebug_flag)
 	{
-		io_puts(" {\n", ioerr);
-		depth++;
+		io_puts(" {\n", odebug_log);
+		odebug_depth++;
 	}
 
 	if	(flag != 2)
 	{
-		io_nputc('\t', ioerr, depth);
-		io_printf(ioerr, fmt, obj->refcount);
-		io_puts(obj->type ? obj->type->name : "NULL", ioerr);
+		io_nputc('\t', odebug_log, odebug_depth);
+		io_printf(odebug_log, fmt, obj->refcount);
+		io_puts(obj->type ? obj->type->name : "NULL", odebug_log);
 	}
 
 	if	(flag != 1)
 	{
-		io_printf(ioerr, " (%lx)", (ulong_t) obj);
+		io_printf(odebug_log, " (%lx)", (ulong_t) obj);
 
 		if	(obj->type)
 		{
-			io_puts(" = 0x", ioerr);
+			io_puts(" = 0x", odebug_log);
 
 			for (i = 0; i < obj->type->size; i++)
-				io_printf(ioerr, "%02x", ((uchar_t *) obj->data)[i]);
+				io_printf(odebug_log, "%02x",
+					((uchar_t *) obj->data)[i]);
 
 			if	(obj->type == &Type_str)
-			{
-				io_printf(ioerr, "(%#s)", Val_str(obj->data));
-			}
+				io_printf(odebug_log, "(%#s)",
+					Val_str(obj->data));
 		}
 
-		io_putc('\n', ioerr);
-		delflag = 0;
+		io_putc('\n', odebug_log);
+		odebug_flag = 0;
 	}
-	else	delflag = 1;
+	else	odebug_flag = 1;
 }
 
 #endif

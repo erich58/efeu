@@ -28,6 +28,15 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/ftools.h>
 #include <EFEU/KeyTab.h>
 
+/*
+:de:
+Die Variable |$1| wird bei jeder Änderung des Debug-Modus
+um 1 erhöht. Damit können Funktionen testen, ob Log-Dateien
+noch aktuell sind oder neu abgefragt werden müssen.
+*/
+
+int DebugChangeCount = 0;
+
 typedef struct {
 	char *name;
 	FILE *file;
@@ -96,7 +105,7 @@ Debugklasse keine  spezielle Regel gefunden wurde.
 \par
 Die Debugklassen sind frei gewählte Namen bei den Debug-Aufrufen
 der einzelnen Bibliotheksfunktionen. Ob und welche Debugklasse eine
-Bibliotheksfubnktion verwendet, kann am besten in den entsprechenden
+Bibliotheksfunktion verwendet, kann am besten in den entsprechenden
 Handbuch zu der Funktion, oder in den entsprechenden Sourcen
 nachgeschlagen werden.
 \par
@@ -111,15 +120,6 @@ auch die Ausgabe aller Meldungen vom Type |err| und |note|.
 Mit |none| werden sämtliche Fehlermeldungen unterdrückt.
 \par
 Eine Kennung <key> ohne Zuweisungszeichen ist äquivalent zu |all=|<key>.
-
-$ERROR
-:*:
-A great number of messages is currently not controlled by the debugmode.
-The adaptation is in progress.
-:de:
-Die Steuerung der Fehlermeldungen ist neu. Eine große Zahl an Meldungen
-wird derzeit nicht über den Debugmodus kontrolliert. Die Umstellung
-ist aber im gang.
 */
 
 void DebugMode (const char *def)
@@ -139,6 +139,8 @@ void DebugMode (const char *def)
 		atexit(cleanup);
 		cleanup_registered = 1;
 	}
+
+	if	(def == NULL)	return;
 
 	n = strsplit(def, " \t\n;:", &list);
 
@@ -180,6 +182,7 @@ void DebugMode (const char *def)
 	}
 
 	memfree(list);
+	DebugChangeCount++;
 }
 
 
@@ -196,7 +199,7 @@ static LOGDEF *LogDef (const char *class, int level)
 
 	log = &log_all;
 
-	if	(log_tab.used)
+	if	(class && log_tab.used)
 	{
 		LOGDEF key;
 		key.name = (char *) class;

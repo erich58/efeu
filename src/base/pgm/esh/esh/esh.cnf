@@ -1,6 +1,7 @@
-# configuration file for esh
+# :*:EFEU command interpreter
+# :de:EFEU Befehlsinterpreter
 #
-# Copyright (C) 2001 Erich Frühstück
+# $Copyright (C) 1994, 2001 Erich Frühstück
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -18,32 +19,28 @@
 # If not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-Ident = "EFEU--Shell"
 Version = "Version 1.0"
-Copyright = "(c) 2001 Erich Frühstück"
-
 CmdType = "esh"
 
-@ESHPATH|I:dir|IncPath:eval 'IncPath = paste(PATHSEP, IncPath, "{}")'
-	:*:appends <dir> to the search path for scripts.
-	The default setting is "{IncPath}".
+@ESHPATH|IncPath:eval 'IncPath = paste(PATHSEP, IncPath, "{}")'
+	:*:define extra directories for searching script headers.
+	:de:erweitert den Suchpfad für Skriptfiles.
+I:dir|IncPath:eval 'IncPath = paste(PATHSEP, IncPath, "{}")'
+	:*:append <dir> to the search path for script headers.
+	The default setting is "$(IncPath:%s)".
 	:de:erweitert den Suchpfad für Skriptfiles um <dir>.
-	Die Vorgabe für den Suchpfad ist "{IncPath}".
+	Die Vorgabe für den Suchpfad ist "$(IncPath:%s)".
 D:"name|=|val"|:eval 'copy(preproc("#define " + strsub("{}", "=", " ")), NULL);'
-	:*:defines macro <name> with value <val>
+	:*:define macro <name> with value <val>
 	:de:definiert den Makro <name> mit Wert <value>
--noeval|PPOnly = 1
-	:*:preprozess only, do not evaluate commands.
-	:de:Es wird nur der Preprozessor verwendet, das Skriptfile wird nicht
+E|PPOnly = 1
+	:*:preprocess only, do not evaluate commands.
+	:de:es wird nur der Präprozessor verwendet, das Skriptfile wird nicht
 	verarbeitet.
--depend|:eval "MakeDepend=true"
-	:*:create dependend list, do not create output files.
-	:de:Es wird eine Abhängigkeitsliste zusammengestellt.
-	Zieldateien werden nicht generiert.
-::file|
-	:*:name of the script
-	:de:ist der Name des Skriptfiles, daß vom Interpreter
-	verarbeitet werden soll
-*arg(s)|
-	:*:command parameter for script
-	:de:sind Argumente und Optionen, die vom Skriptfile verarbeitet werden.
+#-depend|:eval "MakeDepend=true"
+#	:*:create dependend list only, do not create output files.
+#	:de:Es wird eine Abhängigkeitsliste zusammengestellt.
+#	Zieldateien werden nicht generiert.
+*file~<=\[=>~args(s)~<=\]=>|
+	:*:name of the script file and script parameters
+	:de:ist der Name des Skriptfiles und Skriptparameter.

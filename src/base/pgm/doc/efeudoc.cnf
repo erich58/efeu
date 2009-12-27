@@ -1,4 +1,7 @@
-# Copyright (C) 1999 Erich Frühstück
+# :*:document generator
+# :de:EFEU-Dokumentkonverter
+
+# $Copyright (C) 1999 Erich Frühstück
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -16,17 +19,10 @@
 # If not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-Ident: lset ":*:document generator:de:EFEU-Dokumentkonverter"
-Version = "1.0"
-Copyright = "(C) 1999 Erich Frühstück"
-
 Type = NULL
 Config = NULL
 Bootstrap = NULL
 
--lang:Lang|:eval 'setlang("{}")'
-	:*:set language
-	:de:Sprache setzen
 T:type|Type:
 	:*:document type
 	:de:Ausgabetype
@@ -34,7 +30,7 @@ C:cfg|Config:
 	:*:configuration file
 	:de:Konfigurationsfile
 H:hdr|Head; Bootstrap: set '{Bootstrap} -H "{}"'
-	:*:evaluates <hdr> befor any input file.
+	:*:evaluates <hdr> before any input file.
 	:de:Wertet den String <hdr> vor den Eingabedateien aus.
 	Damit können Dokumentmakros definiert werden.
 0|NoHead = 1; Bootstrap: append " -0"

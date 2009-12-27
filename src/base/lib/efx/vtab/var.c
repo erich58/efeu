@@ -27,9 +27,12 @@ static ALLOCTAB(deftab, 0, sizeof(Var_t));
 
 static void data_clean (Var_t *var)
 {
-	if	(var->dim)
-		CleanVecData(var->type, var->dim, var->data);
-	else	CleanData(var->type, var->data);
+	if	(var->type && var->data)
+	{
+		if	(var->dim)
+			CleanVecData(var->type, var->dim, var->data);
+		else	CleanData(var->type, var->data);
+	}
 
 	memfree(var->data);
 	memfree((char *) var->name);

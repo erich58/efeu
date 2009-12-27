@@ -2,7 +2,7 @@
 # :*:create system specific parameters in headerfiles
 # :de:Systemspezifische Parameter für Headerdateien generieren
 #
-# Copyright (C) 1999 Erich Frühstück
+# $Copyright (C) 1999 Erich Frühstück
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or modify
@@ -22,11 +22,11 @@
 
 #	message formats
 
-msg1="usage: $0 [-hv] [-c name] [-f flgs] cmd arg(s)"
+msg1="usage: $0 [-hv] [-c name] [-f flgs] cmd arg(s)\n"
 
 case ${LANG:=en} in
 de*)
-	msg1="Aufruf: $0 [-hv] [-c name] [-f flgs] cmd arg(s)"
+	msg1="Aufruf: $0 [-hv] [-c name] [-f flgs] cmd arg(s)\n"
 	;;
 esac
 
@@ -47,7 +47,7 @@ usage ()
 
 	case $LANG in
 	de*)
-	cat <<!
+	cat << EOF
 
 	-h	Dieser Text
 	-v 	Fehlermeldungen ausgeben
@@ -65,10 +65,10 @@ usage ()
 		auf 1 oder 0 gesetzt.
 	proto <proto>
 		Testet die Kompatiblität des Prototypes <proto>.
-!
+EOF
 		;;
 *)
-		cat <<!
+		cat << EOF
 	-h	display this help and exit
 	-v 	dosplay error notes
 	-c name	C-Compiler
@@ -84,7 +84,7 @@ usage ()
 		byteorder of the system.
 	proto <proto>
 		check compatibility of prototype <proto>.
-!
+EOF
 		;;
 	esac
 	exit 0

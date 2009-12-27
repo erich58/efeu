@@ -28,9 +28,6 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/Debug.h>
 
 
-int filedebugflag = 0;
-
-
 typedef struct {
 	FILE *file;
 	char *name;
@@ -54,7 +51,7 @@ static void file_debug (const char *type, FileTab_t *tab)
 
 	if	(!tab)	return;
 
-	io = filedebugflag ? ioerr : LogOut("file", DBG_TRACE);
+	io = LogOut("file", DBG_TRACE);
 
 	if	(!io)	return;
 

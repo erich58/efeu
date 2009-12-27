@@ -37,6 +37,9 @@ static VarDef_t term_var[] = {
 	{ "it", &Type_str, &TermPar.it },
 	{ "bf", &Type_str, &TermPar.bf },
 	{ "tt", &Type_str, &TermPar.tt },
+	{ "Name", &Type_str, &TermPar.Name },
+	{ "FigName", &Type_str, &TermPar.FigName },
+	{ "TabName", &Type_str, &TermPar.TabName },
 };
 
 void TermPar_init(void)
@@ -94,7 +97,7 @@ io_t *DocOut_term (io_t *io)
 {
 	term_t *trm = DocDrv_alloc(NAME, sizeof(term_t));
 	trm->out = io;
-	trm->margin = 2 * TERM_INDENT;
+	trm->var.margin = 2 * TERM_INDENT;
 	trm->symtab = DocSym(SYMTAB);
 	trm->sym = (DocDrvSym_t) term_sym;
 	trm->put = (DocDrvPut_t) term_putc;
@@ -102,7 +105,7 @@ io_t *DocOut_term (io_t *io)
 	trm->cmd = (DocDrvCmd_t) term_cmd;
 	trm->env = (DocDrvEnv_t) term_env;
 	AddVarDef(trm->vartab, term_var, tabsize(term_var));
-	DocDrv_var(trm, &Type_int, "margin", &trm->margin);
+	DocDrv_var(trm, &Type_int, "margin", &trm->var.margin);
 	TermPar_init();
 	return DocDrv_io(trm);
 }

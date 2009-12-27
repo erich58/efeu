@@ -22,6 +22,38 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <term.h>
 
+static void term_sec (term_t *trm, int flag)
+{
+	if	(flag)
+	{
+		term_newline(trm, 1);
+		term_push(trm);
+		trm->var.margin = 0;
+		term_att(trm, 1, TermPar.bf);
+	}
+	else
+	{
+		term_att(trm, 1, TermPar.rm);
+		term_pop(trm);
+		term_newline(trm, 0);
+	}
+}
+
+static void man_caption (term_t *trm, int flag)
+{
+	if	(flag)
+	{
+		unsigned save = trm->var.margin;
+		term_newline(trm, 1);
+		trm->var.margin = 0;
+		term_att(trm, 1, TermPar.bf);
+		term_string(trm, TermPar.Name);
+		term_att(trm, 1, TermPar.rm);
+		trm->var.margin = save;
+		term_newline(trm, 0);
+	}
+}
+
 int term_env (term_t *trm, int flag, va_list list)
 {
 	int cmd = va_arg(list, int);
@@ -39,7 +71,7 @@ int term_env (term_t *trm, int flag, va_list list)
 		else
 		{
 			term_newline(trm, 1);
-			trm->margin -= trm->hangpar ? TERM_INDENT : 0;
+			trm->var.margin -= trm->hangpar ? TERM_INDENT : 0;
 		}
 
 		break;
@@ -54,27 +86,19 @@ int term_env (term_t *trm, int flag, va_list list)
 	case DOC_SEC_HEAD:
 	case DOC_SEC_PARA:
 	case DOC_SEC_SHEAD:
-	case DOC_SEC_CAPT:
-	case DOC_SEC_SCAPT:
 	case DOC_SEC_MARG:
 	case DOC_SEC_NOTE:
+		term_sec(trm, flag);
+		break;
+	case DOC_SEC_CAPT:
 
-		if	(flag)
-		{
-			term_newline(trm, 1);
-			pushstack(&trm->stack, (void *) (size_t) trm->margin);
-			term_att(trm, 1, TermPar.bf);
-			trm->margin = 0;
-		}
-		else
-		{
-			term_att(trm, 1, TermPar.rm);
-			trm->margin = (int) (size_t) popstack(&trm->stack, NULL);
-			term_newline(trm, 0);
-		}
+		if	(trm->var.caption)
+			trm->var.caption(trm, flag);
+		else	term_sec(trm, flag);
 
 		break;
-
+	case DOC_SEC_SCAPT:
+		break;
 	case DOC_ENV_MPAGE:
 
 		if	(flag)
@@ -86,7 +110,10 @@ int term_env (term_t *trm, int flag, va_list list)
 			term_string(trm, num);
 			trm->put((DocDrv_t *) trm, ')');
 			term_newline(trm, 1);
+			term_push(trm);
+			trm->var.caption = man_caption;
 		}
+		else	term_pop(trm);
 
 		break;
 /*	Attribute und Anführungen
@@ -113,7 +140,7 @@ int term_env (term_t *trm, int flag, va_list list)
 	case DOC_MODE_SKIP:
 	case DOC_MODE_MAN:
 	case DOC_MODE_TEX:
-	case DOC_MODE_SGML:
+	case DOC_MODE_HTML:
 		trm->skip = flag;
 		break;
 
@@ -123,7 +150,7 @@ int term_env (term_t *trm, int flag, va_list list)
 	case DOC_LIST_ENUM:
 	case DOC_LIST_DESC:
 		term_newline(trm, 0);
-		trm->margin += flag ? TERM_INDENT : -TERM_INDENT;
+		trm->var.margin += flag ? TERM_INDENT : -TERM_INDENT;
 		break;
 		
 /*	Sonstige Umgebungen
@@ -140,7 +167,7 @@ int term_env (term_t *trm, int flag, va_list list)
 		break;
 	case DOC_ENV_QUOTE:
 		term_newline(trm, 0);
-		trm->margin += flag ? TERM_INDENT : -TERM_INDENT;
+		trm->var.margin += flag ? TERM_INDENT : -TERM_INDENT;
 		break;
 	case DOC_ENV_HANG:
 		trm->hangpar = flag;
@@ -150,22 +177,23 @@ int term_env (term_t *trm, int flag, va_list list)
 		break;
 	case DOC_ENV_FORMULA:
 		break;
-	case DOC_ENV_TAG:
+	case DOC_PAR_TAG:
 		if	(flag)
 		{
 			term_newline(trm, 0);
 			term_att(trm, 1, TermPar.bf);
-			trm->margin -= TERM_INDENT;
+			trm->var.margin -= TERM_INDENT;
 		}
 		else
 		{
 			term_att(trm, 0, TermPar.bf);
-			trm->margin += TERM_INDENT;
+			trm->var.margin += TERM_INDENT;
 
-			if	(trm->col >= trm->margin)
+			if	(trm->col >= trm->var.margin)
 				term_newline(trm, 0);
 		}
 		break;
+	case DOC_ENV_TABLE:
 	case DOC_ENV_FIG:
 		trm->skip = flag;
 		break;

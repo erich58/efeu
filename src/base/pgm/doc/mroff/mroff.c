@@ -28,27 +28,15 @@ If not, write to the Free Software Foundation, Inc.,
 #define	HDRCFG	"mroff"	/* Kopfkonfiguration */
 #define	SYMTAB	"mroff"	/* Sonderzeichentabelle */
 
-
-static void mr_hdr (mroff_t *mr, int mode)
-{
-	mroff_newline(mr);
-
-	if	(mode)
-	{
-		DocDrv_eval(mr, HDRCFG);
-		mr->nlignore = 1;
-	}
-}
-
-
 io_t *DocOut_mroff (io_t *io)
 {
 	mroff_t *mr = DocDrv_alloc(NAME, sizeof(mroff_t));
+	mroff_setup();
 	mr->out = io;
 	mr->last = '\n';
 	mr->symtab = DocSym(SYMTAB);
 	mr->put = (DocDrvPut_t) mroff_putc;
-	mr->hdr = (DocDrvHdr_t) mr_hdr;
+	mr->hdr = (DocDrvHdr_t) mroff_hdr;
 	mr->rem = (DocDrvRem_t) mroff_rem;
 	mr->cmd = (DocDrvCmd_t) mroff_cmd;
 	mr->env = (DocDrvEnv_t) mroff_env;

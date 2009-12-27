@@ -1,0 +1,106 @@
+/*
+:*:disk usage
+:de:Festplattenverwendung
+
+$Copyright (C) 2001 Erich Frühstück
+This file is part of EFEU.
+
+EFEU is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+EFEU is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with EFEU; see the file COPYING.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+*/
+
+pconfig !
+Version = "$Id: edf.esh,v 1.5 2001-11-06 13:51:43 ef Exp $"
+Unit = 1000
+LBL_DEV = Filesystem
+LBL_SIZE = :*:size:de:Größe MB
+LBL_USED = :*:used:de:Verbraucht
+LBL_AVAIL = :*:available:de:Verfügbar
+LBL_MOUNT = :*:mount point:de:Mountpunkt
+LBL_GES = :*:total:de:Insgesamt
+
+m | Unit = 1024
+	:*:use powers of 1024 instead of 1000
+	:de:Verwende 1024 anstelle von 1000 als einheit
+!
+
+struct DATA {
+	str dev;
+	str mount;
+	double size;
+	double used;
+	double free;
+};
+
+virtual void DATA::operator+= & (DATA b)
+{
+	size += b.size;
+	used += b.used;
+	free += b.free;
+}
+
+str fmt_hdr = "%-14s %10s %13s %13s  %s\n";
+str fmt_dat = "%-16s %8.2f %8.2f %3.0f%% %8.2f %3.0f%%  %s\n";
+
+virtual int fprint(IO io, DATA x)
+{
+	return fprintf(io, fmt_dat, x.dev, scale * x.size,
+		scale * x.used, idx(x.used, x.size),
+		scale * x.free, idx(x.free, x.size),
+		x.mount);
+}
+
+str UNAME = filter("uname");
+
+DATA str ()
+{
+	str x[] = split(this);
+	double size = x[1];
+
+#if	UNAME == "Linux"
+	double free = x[3];
+	double used = x[2];
+#else
+	double free = x[2];
+	double used = size - free;
+#endif
+	return (DATA) { x[0], x[dim(x) - 1], size, used, free };
+}
+
+double scale = Unit;
+scale = 1024. / (scale * scale);
+printf(fmt_hdr, LBL_DEV, LBL_SIZE, LBL_USED, LBL_AVAIL, LBL_MOUNT);
+
+#if	UNAME == "Linux"
+IO io = open("|df -P", "r");
+#else
+IO io = open("|df", "r");
+#endif
+
+str line;
+DATA ges = { LBL_GES, NULL };
+
+while (getline(io, line))
+{
+	if	(regexec("^File", line))
+		continue;
+
+	DATA x = line;
+	iostd << x;
+	ges += x;
+}
+
+iostd << ges;
+

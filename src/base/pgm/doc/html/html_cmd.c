@@ -47,12 +47,19 @@ int HTML_cmd (HTML_t *html, va_list list)
 #endif
 	case DOC_CMD_TOC:
 		io_puts("<P><A HREF=\"toc.html\">", html->out);
-		io_puts("Inhalt", html->out);
+		io_langputs(":*:contents:de:Inhalt", html->out);
 		io_puts("</A><BR>\n", html->out);
 		break;
 	case DOC_CMD_LOF:
 		io_puts("<P><A HREF=\"lof.html\">", html->out);
-		io_puts("Verzeichnis der Übersichten", html->out);
+		io_langputs(":*:list of figures"
+			":de:Verzeichnis der Übersichten", html->out);
+		io_puts("</A><BR>\n", html->out);
+		break;
+	case DOC_CMD_LOT:
+		io_puts("<P><A HREF=\"lof.html\">", html->out);
+		io_langputs(":*:list of tables"
+			":de:Verzeichnis der Tabellen", html->out);
 		io_puts("</A><BR>\n", html->out);
 		break;
 	case DOC_CMD_ITEM:

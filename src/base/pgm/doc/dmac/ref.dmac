@@ -1,5 +1,6 @@
 /*
-Befehle für Marken und Referenzen
+:*:labels and references
+:de:Befehle für Marken und Referenzen
 
 $Copyright (C) 1999 Erich Frühstück
 This file is part of EFEU.
@@ -23,91 +24,56 @@ If not, write to the Free Software Foundation, Inc.,
 /*	Interne Referenzen
 */
 
-Label
+:*:set label
+	$1 |{|<name>|}|
+:de:Label
 	$1 |{|<Name>|}|
 
-Der Befehl $1 setzt einen Label an der aktuellen Position.
+:de:Der Befehl $1 setzt einen Label an der aktuellen Position.
 
 \def\label	label('l', ParseArg(cin));
 
-Referenz
+:*:refer label
+:de:Referenz
 	$1 |{|<Name>|}|
 
-Der Befehl $1 referenziert den Wert eines Labels.
+:de:Der Befehl $1 referenziert den Wert eines Labels.
 
 \def\ref	label('r', ParseArg(cin));
 
-Seitenreferenz
+:*:page ref
+:de:Seitenreferenz
 	$1 |{|<Name>|}|
 
-Der Befehl $1 referenziert die Seite eines Labels.
+:de:Der Befehl $1 referenziert die Seite eines Labels.
 
 \def\pref	label('p', ParseArg(cin));
 
-Kombinierte Referenz
+:*:combinated reference (page and value)
+:de:Kombinierte Referenz
 	$1 |{|<Name>|}|
 
-Der Befehl $1 referenziert Wert und Seite eines Labels.
+:de:Der Befehl $1 referenziert Wert und Seite eines Labels.
 
 \def\vref	label('v', ParseArg(cin));
-
-/*	Begriffserläuterung
-*/
-
-\eval	DataBase btab = DataBase(str, cmp);
-
-Begriffsname
-	$1 <Name>
-
-Der Befehl $1 definiert den Namen eines Begriffs in einer
-Begriffsbeschreibungsdatei.
-
-\def\name	cout << "<*" << ParseLine(cin) << "*>\\br\n";
-
-Stichwortreferenz
-	$1 |[|<Name>|]|\br
-	$1 |{|<Name>|}|
-
-Der Befehl $1 referenziert den Begriff <Name>. Steht der Name in
-eckigen Klammern, bleibt er im laufenden Text unsichtbar, ansonsten
-wird er dargestellt.
-
-\def\bref	{{
-	str name = ParseOpt(cin, true);
-
-	if	(name)	btab += name;
-
-	name = ParseArg(cin);
-
-	if	(name)
-	{
-		btab += name;
-		cout << name;
-	}
-}}
-
-Begriffsliste
-
-Der Befehl $1 generiert eine Begriffsliste
-
-\def\blist	{
-for (x in btab)
-	fprintf(cout, "*\t%s\n", x);
-}
 
 /*	Externe Referenzen
 */
 
-Referenz auf einen Handbucheintrag.
+:*:manual page reference
+	$1 |{|<arg>|}|
+:de:Referenz auf einen Handbucheintrag.
 	$1 |{|<arg>|}|
 
-Der Befehl $1 generiert eine Referenz auf einen Handbucheintrag.
+:de:Der Befehl $1 generiert eine Referenz auf einen Handbucheintrag.
 
 \def\mref	label('m', xexpand(ParseArg(cin)));
 
-Referenz auf einen Hyperlink.
+:*:reference to uniform resource locator
+	$1 |[|<url>|] {|<label>|}|
+:de:Referenz auf einen Hyperlink.
 	$1 |[|<url>|] {|<Bezeichnung>|}|
 
-Der Befehl $1 generiert einen Hyperlink.
+:de:Der Befehl $1 generiert einen Hyperlink.
 
 \def\url	url(ParseOpt(cin, true), xexpand(ParseArg(cin)));

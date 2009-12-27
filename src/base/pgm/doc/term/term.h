@@ -38,6 +38,9 @@ typedef struct {
 	char *it;	/* Wechsel zu Italic */
 	char *tt;	/* Wechsel zu Schreibmascinenschrift */
 	char *bf;	/* Wechsel zu Fettschrift */
+	char *Name;	/* Name im Handbucheintrag */
+	char *TabName;	/* Name in der Tabellenüberschrift */
+	char *FigName;	/* Name in der Abbildungsüberschrift */
 } TermPar_t;
 
 #define	TERM_INDENT	4	/* Einrücktiefe */
@@ -45,20 +48,31 @@ typedef struct {
 extern TermPar_t TermPar;
 void TermPar_init(void);
 
-typedef struct {
+typedef struct term_s term_t;
+typedef struct TermVar_s TermVar_t;
+
+struct TermVar_s {
+	TermVar_t *next;
+	unsigned margin;
+	void (*caption) (term_t *trm, int flag);
+};
+
+struct term_s {
 	DOCDRV_VAR;		/* Standardausgabevariablen */
-	unsigned margin;	/* Linker Rand */
 	unsigned col;		/* Aktuelle Spalte */
 	unsigned space;		/* Leerzeichen ausgeben */
 	unsigned mode;		/* Leerzeichenmodus */
 	unsigned hangpar;	/* Hängende Absätze */
 	unsigned hang;		/* Einrücktiefe nach Umbruch */
-	stack_t *stack;		/* Stack für Umgebungasparameter */
+	TermVar_t var;		/* Umgebungsvariablen */
 	stack_t *s_att;		/* Stack mit Attributen */
 	char *att;		/* Aktuelles Attribut */
-} term_t;
+};
 
 extern io_t *DocOut_term (io_t *io);
+
+extern void term_push (term_t *trm);
+extern void term_pop (term_t *trm);
 
 extern void term_att (term_t *trm, int flag, char *att);
 extern int term_putc (term_t *mr, int c);

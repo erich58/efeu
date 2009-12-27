@@ -51,12 +51,6 @@ CEXPR(f_normal, Val_double(rval) = NormalRandom(RAND(0)))
 CEXPR(f_prand, Val_int(rval) = PoissonRandom(RAND(0), DBL(1)))
 CEXPR(f_rdround, Val_int(rval) = RoundRandom(RAND(0), DBL(1)))
 
-static VarDef_t vdef[] = {
-	{ "RandomDebug", &Type_bool, &Random_reftype.debug,
-		":*:flag to control debuging of random number generators\n"
-		":de:Flag zum Debuggen von Zufallszahlengeneratoren\n" },
-};
-
 static FuncDef_t fdef[] = {
 	{ FUNC_RESTRICTED, &Type_Random, "str ()", f_str2rand },
 	{ 0, &Type_Random, "Random (int seed = 1, str type = NULL)", f_newrand },
@@ -93,7 +87,6 @@ void SetupRandom()
 
 	GetRandomType(NULL);
 	AddType(&Type_Random);
-	AddVarDef(NULL, vdef, tabsize(vdef));
 	AddFuncDef(fdef, tabsize(fdef));
 	AddInfo(NULL, "RNG", LBL_RNG, type_info, NULL);
 }

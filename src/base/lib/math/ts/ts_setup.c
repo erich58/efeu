@@ -25,20 +25,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <Math/TimeSeries.h>
 
 
-/*	Funktionen
+/*	Initialisieren
 */
-
-/*	Initialisieren
-*/
-
-static VarDef_t var[] = {
-	{ "TimeSeriesDebug", &Type_bool, &TimeSeries_reftype.debug,
-		":*:flag to control debuging of TimeSeries structures\n"
-		":de:Flag zum Debuggen von Zeitreihenstrukturen\n" },
-	{ "OLSParDebug", &Type_bool, &OLSPar_reftype.debug,
-		":*:flag to control debuging of OLS parameters\n"
-		":de:Flag zum Debuggen von OLS Parametern\n" },
-};
 
 #if	0
 static ParseDef_t pdef[] = {
@@ -62,7 +50,6 @@ void SetupTimeSeries (void)
 	CmdSetup_TimeSeries();
 	CmdSetup_OLSKoef();
 	CmdSetup_OLSPar();
-	AddVarDef(NULL, var, tabsize(var));
 #if	0
 	AddFuncDef(ts_func, tabsize(ts_func));
 	AddParseDef(pdef, tabsize(pdef));

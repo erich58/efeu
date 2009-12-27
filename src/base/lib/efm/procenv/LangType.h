@@ -49,7 +49,7 @@ extern LangType_t LangType;
 /*
 $SeeAlso
 \mref{LangType(3)}.\br
-\mref{setlocale(3)} im @PRM.
+\mref{setlocale(3)} @PRM.
 */
 
 #endif	/* EFEU/LangType.h */

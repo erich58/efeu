@@ -230,11 +230,14 @@ static void f_cmd (Func_t *func, void *rval, void **arg)
 	case 'a':
 		io_ctrl(doc->out, DOC_CMD, DOC_CMD_APP, ListArg_str(list, 0));
 		break;
-	case 't':
+	case 'c':
 		io_ctrl(doc->out, DOC_CMD, DOC_CMD_TOC);
 		break;
 	case 'f':
 		io_ctrl(doc->out, DOC_CMD, DOC_CMD_LOF);
+		break;
+	case 't':
+		io_ctrl(doc->out, DOC_CMD, DOC_CMD_LOT);
 		break;
 	case 'm':
 		io_ctrl(doc->out, DOC_CMD, DOC_CMD_MARK, ListArg_int(list, 0));
@@ -335,6 +338,7 @@ static void f_newenv (Func_t *func, void *rval, void **arg)
 	case 'i':	Doc_newenv(doc, 0, DOC_ENV_INTRO); break;
 	case 's':	Doc_newenv(doc, 0, DOC_ENV_SLOPPY); break;
 	case '$':
+		Doc_hmode(doc);
 		io_ctrl(doc->out, DOC_BEG, DOC_ENV_FORMULA);
 		break;
 	case 'm':
@@ -352,6 +356,10 @@ static void f_newenv (Func_t *func, void *rval, void **arg)
 	case 'f':
 		Doc_endall(doc, 1);
 		Doc_newenv(doc, 0, DOC_ENV_FIG, ListArg_str(list, 0));
+		break;
+	case 't':
+		Doc_endall(doc, 1);
+		Doc_newenv(doc, 0, DOC_ENV_TABLE, ListArg_str(list, 0));
 		break;
 	case 'b':
 		Doc_endall(doc, 0);

@@ -1,5 +1,6 @@
 /*
-Überschriften für Handbucheinträge
+:*:headlines for manpages
+:de:Überschriften für Handbucheinträge
 
 $Copyright (C) 1999 Erich Frühstück
 This file is part of EFEU.
@@ -25,73 +26,118 @@ If not, write to the Free Software Foundation, Inc.,
 		section('H', NULL, fgets(langfilter(name), EOF));
 }
 
-Hauptüberschrift BEZEICHNUNG
+:*:manual page entry
+	$1 |[|<num>|]| <name>\br
+:de:Handbucheintrag
+	$1 |[|<num>|]| <name>\br
 
-\def\Name	mansection(":*:NAME:de:BEZEICHNUNG");
+:*:The command $1 starts a new manpage with name <name> for section <num>.
+This command is automatic inserted in every file
+witch prefix starts with a digit.
+:de:Der Befehl $1 beginnt einen neuen Handbucheintrag mit Namen <name> zum
+Handbuchkapitel <num>. Dieser Befehl wird automatisch zu Beginn einer
+Datei eingefügt, dessen Filezusatz mit einer Ziffer beginnt.
 
-Hauptüberschrift ÜBERSICHT
+\def\mpage newenv('m', expand(ParseOpt(cin, true)), expand(ParseLine(cin)));
+
+:*:Name section of manpage
+	$1 |[|toc entry|]| <title>\br
+	~~~~....
+	$1 |[|toc entry|]|\br
+	<one line title>
+:de:Namensabschnitt einer Handbuchseite
+	$1 |[|Kurzform|]| <Titel>\br
+	~~~~....
+	$1 |[|Kurzform|]|\br
+	<Einzeiliger Titel>
+
+\def\Name	{{
+	str opt = ParseOpt(cin, true);
+	str title = ParseLine(cin, true);
+
+	if	(!title)
+		title = ParseLine(cin, true);
+
+	section('F', opt, title);
+}}
+
+:*:caption SYNOPSIS
+:de:Hauptüberschrift ÜBERSICHT
 
 \def\Synopsis	mansection(":*:SYNOPSIS:de:ÜBERSICHT");
 
-Hauptüberschrift BESCHREIBUNG
+:*:caption DESCRIPTION
+:de:Hauptüberschrift BESCHREIBUNG
 
 \def\Description	mansection(":*:DESCRIPTION:de:BESCHREIBUNG");
 
-Hauptüberschrift BEISPIEL
+:*:caption EXAMPLE
+:de:Hauptüberschrift BEISPIEL
 
 \def\Example	mansection(":*:EXAMPLE:de:BEISPIEL");
 
-Hauptüberschrift BEISPIELE
+:*:caption EXAMPLES
+:de:Hauptüberschrift BEISPIELE
 
 \def\Examples	mansection(":*:EXAMPLES:de:BEISPIELE");
 
-Hauptüberschrift DATEIEN
+:*:caption FILES
+:de:Hauptüberschrift DATEIEN
 
 \def\Files	mansection(":*:FILES:de:DATEIEN");
 
-Hauptüberschrift UMGEBUNGSVARIABLEN
+:*:caption ENVIRONMENT
+:de:Hauptüberschrift UMGEBUNGSVARIABLEN
 
 \def\Environment	mansection(":*:ENVIRONMENT:de:UMGEBUNGSVARIABLEN");
 
-Hauptüberschrift SIEHE AUCH
+:*:caption SEE ALSO
+:de:Hauptüberschrift SIEHE AUCH
 
 \def\SeeAlso	mansection(":*:SEE ALSO:de:SIEHE AUCH");
 
-Hauptüberschrift DIAGNOSE
+:*:caption DIAGNOSTICS
+:de:Hauptüberschrift DIAGNOSE
 
 \def\Diagnostics	mansection(":*:DIAGNOSTICS:de:DIAGNOSE");
 
-Hauptüberschrift BEMERKUNGEN
+:*:caption NOTES
+:de:Hauptüberschrift BEMERKUNGEN
 
 \def\Notes	mansection(":*:NOTES:de:BEMERKUNGEN");
 
-Hauptüberschrift WARNUNGEN
+:*:caption WARNINGS
+:de:Hauptüberschrift WARNUNGEN
 
 \def\Warnings	mansection(":*:WARNINGS:de:WARNUNGEN");
 
-Hauptüberschrift FEHLER
+:*:caption ERRORS
+:de:Hauptüberschrift FEHLER
 
 \def\Errors	mansection(":*:ERRORS:de:FEHLER");
 
-Hauptüberschrift COPYRIGHT
+:*:caption COPYRIGHT
+:de:Hauptüberschrift COPYRIGHT
 
 \def\Copyright	mansection("COPYRIGHT");
 
-Handbuch des Programmierers
+:*:reference to the <Programmer''s Reference Manual>
+:de*:Verweis auf das Handbuch des Programmierers
 
-\def@PRM	<Programmer''s Reference Manual>
-
-Handbuch des Systemadministrators
-
-\def@SARM	<System Administrator''s Reference Manual>
+\def@PRM	@if(Lang=="de",im,in the) <Programmer''s Reference Manual>
 
 /*	Hilfsfunktionen
 */
 
-Funktionsprototype
+:*:function prototype
+	$1 <prototype>
+:de:Funktionsprototype
 	$1 <Prototype>
 
-Die Funktion $1 dient zur Ausgabe eines Funktionsprototypes
+:*:The command $1 shows the prototype of a function of the EFEU
+interpreter language.
+:de:Die Funktion $1 dient zur Ausgabe eines Funktionsprototypes
+der EFEU INterpretersprache
 
 \def\proto	fprintf(cout, "<|%s|>\\br\n", ParseLine(cin, true));
 

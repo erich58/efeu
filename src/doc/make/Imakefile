@@ -1,0 +1,1 @@
+DocTarget(_EFEU_TOP/doc/de,make,$(SRCTOP),LANG=de efeudoc)

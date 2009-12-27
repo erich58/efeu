@@ -87,7 +87,7 @@ sowie ein einzelner Zeilenvorschub entfernt.
 $SeeAlso
 \mref{LangType(7)}.\br
 \mref{getenv(3)},
-\mref{setlocale(3)} :de:im:*:in the:_: @PRM.
+\mref{setlocale(3)} @PRM.
 */
 
 io_t *langfilter (io_t *io, const char *lang)
@@ -255,6 +255,8 @@ static int lf_fill (LFPAR *lf)
 				sb_putc(c, lf->buf);
 
 			c = io_getc(lf->io);
+
+			if	(c == EOF)	break;
 		}
 		else if	(c == LANG_BEG)
 		{

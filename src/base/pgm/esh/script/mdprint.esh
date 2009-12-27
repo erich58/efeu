@@ -2,7 +2,7 @@
 :*:	print data cube
 :de:	Datenmatrix ausgeben
 
-Copyright (C) 1997, 2001 Erich Frühstück
+$Copyright (C) 1997, 2001 Erich Frühstück
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -26,13 +26,7 @@ fmt_long = "%*li";
 fmt_float = "%*.*f";
 
 pconfig !
-#if	Lang == "de"
-Ident = "Datenmatrix ausgeben"
-#else
-Ident = "print data cube"
-#endif
-Version = "2"
-Copyright = "(c) 1997, 2001 Erich Frühstück"
+Version = "$Id: mdprint.esh,v 1.9 2001-11-12 07:49:38 ef Exp $"
 Mark = "#-1"
 mode = "std"
 Locale = "en"
@@ -66,7 +60,7 @@ M:mode | mode
 	:*:print only data values
 	:de:Nur Datenwerte ausgeben
 -sc | mode = "sc"; Locale = "en"
-	:*:ouput sc spreadsheed
+	:*:output sc spreadsheed
 	:de:Aufbereitung für sc-Spreadsheet
 -std | :eval 'PrintListDelim=" "; field_width = 7'; \
 	Flags: set "{Flags} mode=std title label=8"
@@ -133,7 +127,7 @@ x:list | Mark
 	:*:mark axis as column
 	:de:Achsenliste für Spalten
 s:list | SumList
-	:*:accummulate list of axis
+	:*:accumulate list of axis
 	:de:Achsen aufsummieren
 r | Reduce = true
 	:*:remove singulary axis

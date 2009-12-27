@@ -1,0 +1,9 @@
+LDIR=	_EFEU_TOP/src/base/lib
+DE_DOC=	_EFEU_TOP/doc/de
+EN_DOC=	_EFEU_TOP/doc/de
+
+ProvideDocDir($(DE_DOC))
+
+DocTarget($(DE_DOC),efm,$(LDIR)/efm,LANG=de efeudoc)
+DocTarget($(DE_DOC),iorl,$(LDIR)/iorl,LANG=de efeudoc)
+DocTarget($(DE_DOC),md,$(LDIR)/md,LANG=de efeudoc)

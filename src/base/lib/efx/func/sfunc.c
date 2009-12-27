@@ -22,9 +22,41 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/object.h>
 #include <EFEU/konvobj.h>
+#include <EFEU/Debug.h>
 
-int FuncDebugFlag = 0;
+int FuncDebugLock = 0;
 
+static io_t *FuncDebugLog = NULL;
+static int FuncDebugSync = 0;
+
+static int debug_mode (void)
+{
+	if	(FuncDebugLock)	return 0;
+
+	if	(FuncDebugSync < DebugChangeCount)
+	{
+		FuncDebugSync = DebugChangeCount;
+		rd_deref(FuncDebugLog);
+		FuncDebugLog = rd_refer(LogOut("func", DBG_DEBUG));
+	}
+
+	return (FuncDebugLog != NULL);
+}
+
+void FuncDebug (Func_t *func, const char *pfx)
+{
+	if	(func && debug_mode())
+	{
+		if	(pfx)
+		{
+			io_puts(pfx, FuncDebugLog);
+			io_putc('\t', FuncDebugLog);
+		}
+
+		ListFunc(FuncDebugLog, func);
+		io_putc('\n', FuncDebugLog);
+	}
+}
 
 static int test_base(const Type_t *old, const Type_t *new)
 {
@@ -39,29 +71,21 @@ static void show_dist(io_t *io, Func_t *func, int dist,
 	ArgKonv_t *konv, size_t dim)
 {
 	int i;
-	int save;
 
-	if	(FuncDebugFlag < 1)	return;
-	if	(func == NULL)		return;
-
-	save = FuncDebugFlag;
-	FuncDebugFlag = 0;
+	FuncDebugLock++;
 	io_printf(io, "%#.2x\t", dist);
 	ListFunc(io, func);
 	io_putc('\n', io);
 
-	if	(FuncDebugFlag >= 2)
+	for (i = 0; i < dim; i++)
 	{
-		for (i = 0; i < dim; i++)
-		{
-			io_printf(io, "%d:\t%#.2x\t%s\t", i, konv[i].dist,
-				konv[i].type ? konv[i].type->name : ".");
-			ListFunc(io, konv[i].func);
-			io_putc('\n', io);
-		}
+		io_printf(io, "%d:\t%#.2x\t%s\t", i, konv[i].dist,
+			konv[i].type ? konv[i].type->name : ".");
+		ListFunc(io, konv[i].func);
+		io_putc('\n', io);
 	}
 
-	FuncDebugFlag = save;
+	FuncDebugLock--;
 }
 
 static int get_konvdef(Func_t *func, size_t narg,
@@ -100,7 +124,9 @@ Func_t *SearchFunc(VirFunc_t *vtab, FuncArg_t *arg,
 	{
 		curfunc = ftab[i];
 		curdist = get_konvdef(curfunc, narg, arg, curkonv);
-		show_dist(iostd, curfunc, curdist, curkonv, narg);
+
+		if	(func && debug_mode())
+			show_dist(iostd, curfunc, curdist, curkonv, narg);
 
 		switch (curdist)
 		{

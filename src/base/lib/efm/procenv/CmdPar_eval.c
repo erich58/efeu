@@ -27,6 +27,9 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/RegExp.h>
 #include <EFEU/parsub.h>
 
+#define	MATCH_PART	1
+#define	MATCH_FULL	2
+
 static char *get_arg (const char *arg)
 {
 	if	(arg == NULL)
@@ -53,7 +56,7 @@ static int cmp_key (const char *a, const char *b, const char **ptr)
 	while	(*a && *b && *b != '=');
 
 	*ptr = *b ? b : NULL;
-	return 1;
+	return (*a || (*b && *b != '=')) ? MATCH_PART : MATCH_FULL;
 }
 
 static CmdParKey_t *get_key (CmdPar_t *par, const char *name, const char **ptr)
@@ -66,8 +69,11 @@ static CmdParKey_t *get_key (CmdPar_t *par, const char *name, const char **ptr)
 
 	for (n = par->opt.used, kp = par->opt.data; n-- > 0; kp++)
 	{
-		if	(cmp_key((*kp)->key, name, ptr))
+		switch	(cmp_key((*kp)->key, name, ptr))
 		{
+		case MATCH_FULL:
+			return *kp;
+		case MATCH_PART:
 			if	(key)
 			{
 				message(NULL, MSG_EFM, 33, 3,
@@ -76,6 +82,8 @@ static CmdParKey_t *get_key (CmdPar_t *par, const char *name, const char **ptr)
 			}
 
 			key = *kp;
+		default:
+			break;
 		}
 	}
 

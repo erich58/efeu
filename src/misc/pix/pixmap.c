@@ -78,14 +78,6 @@ Color_t Buf_Color = { 0 };
 #define	RVPIX		Val_OldPixMap(rval)
 
 
-/*	Variablen
-*/
-
-static VarDef_t vardef[] = {
-	{ "pixdebug", &Type_bool, &OldPixMap_reftype.debug },
-};
-
-
 /*	Basisfunktionen
 */
 
@@ -112,7 +104,7 @@ static void PF_rule (Func_t *func, void *rval, void **arg)
 
 	if	(x0 >= pix->cols || y0 >= pix->rows)
 	{
-		Val_OldPixMap(rval) = arg[0];
+		RVPIX = pix;
 		return;
 	}
 
@@ -133,7 +125,7 @@ static void PF_rule (Func_t *func, void *rval, void **arg)
 		for (j = x0; j < n; j++)
 			pix->pixel[i * pix->cols + j] = color;
 
-	RVPIX = arg[0];
+	RVPIX = pix;
 }
 
 static void PF_cprint (Func_t *func, void *rval, void **arg)
@@ -362,7 +354,6 @@ void SetupOldPixMap(void)
 	AddType(&Type_OldPixMap);
 	AddFuncDef(fdef, tabsize(fdef));
 	AddParseDef(pdef, tabsize(pdef));
-	AddVarDef(NULL, vardef, tabsize(vardef));
 	AddMember(Type_OldPixMap.vtab, var_OldPixMap, tabsize(var_OldPixMap));
 	/*
 	AddParseDef(konv, tabsize(konv));

@@ -163,19 +163,8 @@ static FuncDef_t fdef[] = {
 };
 
 
-/*	Variablen
-*/
-
-static VarDef_t vardef[] = {
-	{ "pndebug", &Type_bool, &pnreftype.debug,
-		":*:flag to control debuging of polynoms\n"
-		":de:Flag zum Debuggen von Polynomen\n" },
-};
-
-
 void SetupPnom(void)
 {
 	AddType(&Type_pnom);
 	AddFuncDef(fdef, tabsize(fdef));
-	AddVarDef(NULL, vardef, tabsize(vardef));
 }

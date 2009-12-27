@@ -69,6 +69,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	PUNCT_DP	0x4B	/* Dezimalpunkt */
 
-int ebcdic2ascii(int c);
+extern int ebcdic2ascii (int c);
+extern int ascii2ebcdic (int c);
 
 #endif	/* EFEU/ebcdic.h */

@@ -2,7 +2,7 @@
 :*:	diagonalisation of data cube
 :de:	Datenmatrix diagonalisieren
 
-Copyright (C) 1997, 2001 Erich Frühstück
+$Copyright (C) 1997, 2001 Erich Frühstück
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -24,13 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 PrintListDelim = "\t";
 
 pconfig !
-#if	Lang == "de"
-Ident = "Datenmatrix diagonalisieren"
-#else
-Ident = "diagonalisation of data cube"
-#endif
-Version = "2"
-Copyright = "(c) 1997, 2001 Erich Frühstück"
+Version = "$Id: mddiag.esh,v 1.7 2001-10-18 12:11:20 ef Exp $"
 PrintMode = true
 Axis = "#1"
 

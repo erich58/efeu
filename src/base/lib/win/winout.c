@@ -75,8 +75,8 @@ static int win_ctrl(WINDOW *win, int req, va_list list)
 {
 	switch (req)
 	{
-	case IO_COLUMNS:	return win->_maxx;
-	case IO_LINES:		return win->_maxy;
+	case IO_COLUMNS:	return getmaxx(win);
+	case IO_LINES:		return getmaxy(win);
 	case IO_BOLD_FONT:	wattrset(win, A_STANDOUT); return 0;
 	case IO_ITALIC_FONT:	wattrset(win, A_UNDERLINE); return 0;
 	case IO_ROMAN_FONT:	wattrset(win, 0); return 0;

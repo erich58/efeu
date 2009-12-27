@@ -40,10 +40,9 @@ void ParseCommand (int *argc, char **argv)
 {
 	CmdPar_t *par;
 
-	par = CmdPar_ptr(NULL);
-
 	SetProgName(argv[0]);
-	CmdPar_load(par, par->name);
+	par = CmdPar_ptr(NULL);
+	CmdPar_load(par, par->name, 1);
 	CmdPar_info(par, NULL);
 
 	if	(CmdPar_eval(par, argc, argv, 0) <= 0)
@@ -59,6 +58,38 @@ Die Funktion |$1| setzt die Resource <name> auf den Wert <val>.
 void SetResource (const char *name, const char *val)
 {
 	CmdPar_setval(NULL, name, mstrcpy(val));
+}
+
+static char *vcopy (const char *val)
+{
+	size_t s, e;
+
+	if	(val == NULL)	return NULL;
+	if	(*val != '$')	return mstrcpy(val);
+
+	s = 1;
+
+	while (val[s] == ' ' || val[s] == '\t')
+		s++;
+
+	for (e = s + 1; val[e] != '$'; e++)
+		if (val[e] == 0) return mstrcpy(val);
+
+	do	e--;
+	while	(val[e] == ' ' || val[e] == '\t');
+
+	return (s <= e) ? mstrncpy(val + s, e - s + 1) : mstrcpy(val);
+}
+
+/*
+Die Funktion |$1| setzt die Resource |Version| auf den Wert <val>.
+Falls <val> mit einem |$| Zeichen beginnt und endet, werden diese
+Begrenzer mit eventuell angrenzenden Leerzeichen entfernt.
+*/
+
+void SetVersion (const char *val)
+{
+	CmdPar_setval(NULL, "Version", vcopy(val));
 }
 
 /*

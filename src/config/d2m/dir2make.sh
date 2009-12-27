@@ -1,7 +1,7 @@
-# :*:create Imakefile from source tree
+# :*:create Makefile from source tree
 # :de:Imakefile aus Sourcebibliothek generieren
 #
-# Copyright (C) 2000 Erich Frühstück
+# $Copyright (C) 2000 Erich Frühstück
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -19,36 +19,91 @@
 # If not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-# message formats
-
 : ${LANG:=en}
 
-fmt_usage="
-usage: $name [-r] [-hfxn] [-H dir] [-A dir] [-B dir] [-L dir]
+# $pconfig
+# r |
+#	:*:call make if Makefile has changed. Must be the first option!
+#	:de:Aufruf von make, wenn sich Makefile geändert hat.
+#	Muß als erste Option angegeben werden!
+# f |
+#	:*:force creation of files
+#	:de:Erneuerung aller Dateien forcieren
+# x |
+#	:*:create source with mksource
+#	:de:Sourcen mit mksource generieren
+# n |
+#	:*:do not use standard rules
+#	:de:Keine Standardregeln verwenden
+# H:dir |
+#	:*:directory to install header files
+#	:de:Installationsverzeichnis für Include-Dateien
+# A:dir |
+#	:*:directory to install application files.
+#	:de:Installationsverzeichnis für Applikationsfiles.
+# B:dir |
+#	:*:directory to install executables.
+#	:de:Installationsverzeichnis für Kommandos.
+# L:dir |
+#	:*:directory to install libraries.
+#	:de:Installationsverzeichnis für Programmbibliothek.
+# D:dir |
+#	:*:directory to install documents.
+#	:de:Installationsverzeichnis für Dokumente.
+# d:name |
+#	:*:name of documentation
+#	:de:Name der Dokumentationsbibliothek
+# l:name |
+#	:*:name of library
+#	:de:Name der Programmbibliothek
+# i:name |
+#	:*:name of Imakefile, default |Imakefile|
+#	:de:Name des Imakefiles, Vorgabe |Imakefile|
+# m:name |
+#	:*:name of Makefiles, default |Makefile|
+#	:de:Name des Makefiles, Vorgabe |Makefile|
+# s:name |
+#	:*:name of source list, default |SourceList|
+#	:de:Name der Sourceliste, Vorgabe |SourceList|
+# p:flag |
+#	:*:flags for creating documents
+#	:de:Generierungsflags für Dokumente
+# dir |
+#	:de:Bibliothek mit Sourcefiles
+#	:*:top directory of source files
+
+# :*:The default directories for installing files is <"|.|">.
+# :de:Die Standardvorgabe für die Installationsverzeichnisse ist <"|.|">.
+
+# $SeeAlso
+# mkmf(1), mksrclist(1).
+
+cmdname=$0
+
+usage ()
+{
+	efeuman -- $cmdname $1 || cat << EOF
+usage: $cmdname [-r] [-hfxn] [-H dir] [-A dir] [-B dir] [-L dir]
 	[-l name] [-i name] [-m name] [-s name] [-D dir] [-d name]
 	[-p flag] dir
+EOF
+}
 
--r	call make, if Makefile has changed, must be the first Option!
--h	Show this text
--f	force creation of files
--x	create source with mksource
--n	do not use standard rules
--H dir	directory to install header files, default $HDR
--A dir	directory to install application files, default $APP
--B dir	directory to install executables, default $BIN
--L dir	directory to install Libraries, default $LDIR
--D dir	directory to install documents, default $DDIR
--d name	name of documentation
--l name	name of library
--i name	name of Imakefile, default $imakefile
--m name	name of Makefiles, default $makefile
--s name	name of source list, default $srclist
--p flag	flags for creating documents
-dir	top directory of source files
-"
+case "$1" in
+-\?|--help*)	usage $1; exit 0;;
+esac
+
+# $Description
+# :*:The following options and arguments are accepted from command |$!|:
+# :de:Folgende Optionen und Argumente werden vom Kommando |$!| akzeptiert:
+#
+# @arglist
+
+# message formats
+
 fmt_new="%s is newer than %s\n"
 fmt_create="%s was created\n"
-fmt_head="@!\tDo not edit, file created by $0\n"
+fmt_head="@!	Do not edit, file created by $0"
 fmt_mobj="The following oject files are multiple definied:\n\n"
 fmt_rmobj="The following object files are removed:\n"
 fmt_rmlib="Library %s was removed\n"
@@ -58,33 +113,9 @@ fmt_mupdate="\n*** %s has changed ***\n\n"
 
 case $LANG in
 de*)
-	fmt_usage="
-Aufruf: $name [-r] [-hfxn] [-H dir] [-A dir] [-B dir] [-L dir]
-	[-l name] [-i name] [-m name] [-s name] [-D dir] [-d name]
-	[-p flag] dir
-
--r	Aufruf von make, wenn sich Makefile geändert hat.
-	Muß als erste Option angegeben werden!
--h	Hilfetext ausgeben
--f	Erneuerung aller Dateien forcieren
--x	Sourcen mit mksource generieren
--n	Keine Standardregeln verwenden
--H dir	Installationsverzeichnis für Include-Dateien, Vorgabe $HDR
--A dir	Installationsverzeichnis für Applikationsfiles, Vorgabe $APP
--B dir	Installationsverzeichnis für Kommandos, Vorgabe $BIN
--L dir	Installationsverzeichnis für Programmbibliothek, Vorgabe $LDIR
--D dir	Installationsverzeichnis für Dokumente, Vorgabe $DDIR
--d name	Name der Dokumentationsbibliothek
--l name	Name der Programmbibliothek
--i name	Name des Imakefiles, Vorgabe $imakefile
--m name	Name des Makefiles, Vorgabe $makefile
--s name	Name der Sourceliste, Vorgabe $srclist
--p flag	Generierungsflags für Dokumente
-dir	Bibliothek mit Sourcefiles
-"
 	fmt_new="%s ist neuer als %s\n"
 	fmt_create="%s wird generiert\n"
-	fmt_head="@!\tNicht editieren, Datei wurde mit $0 generiert\n"
+	fmt_head="@!	Nicht editieren, Datei wurde mit $0 generiert"
 	fmt_mobj="Die folgenden Objektfiles sind mehrfach definiert:\n\n"
 	fmt_rmobj="Die folgenden Objektfiles wurden entfernt:\n"
 	fmt_rmlib="Programmbibliothek %s wurde entfernt\n"
@@ -93,6 +124,8 @@ dir	Bibliothek mit Sourcefiles
 	fmt_mupdate="\n*** %s wurde verändert ***\n\n"
 	;;
 esac
+
+# command usage
 
 tmp=/usr/tmp/s2i$$
 trap "rm -f $tmp*" 0
@@ -117,6 +150,7 @@ LDIR=.
 LIB=
 DDIR=.
 DOC=
+langlist="de"
 srclist=SourceList
 imakefile=Imakefile
 makefile=Makefile
@@ -127,10 +161,9 @@ pflag=NullArg
 
 # parse command args
 
-while getopts "hfnxH:A:B:I:L:D:l:d:i:m:s:p:" opt
+while getopts "fnxH:A:B:I:L:D:l:d:i:m:s:p:" opt
 do
 	case $opt in
-	h)	echo "$fmt_usage"; exit 0;;
 	f)	slflag="-f";;
 	n)	norule=1;;
 	x)	mkflag=1;;
@@ -145,13 +178,13 @@ do
 	m)	makefile=$OPTARG;;
 	s)	srclist=$OPTARG;;
 	p)	pflag=$OPTARG;;
-	\?)	echo "$fmt_usage" | sed -e '/^$/q'; exit 1;;
+	\?)	usage | sed -e '/^$/q'; exit 1;;
 	esac
 done
 
 shift `expr $OPTIND - 1`
 
-test $# -ne 1 && { echo "$fmt_usage" | sed -e '/^$/q'; exit 1; }
+test $# -ne 1 && { usage | sed -e '/^$/q'; exit 1; }
 	
 src=`(cd $1 || exit 1; pwd)` || exit 1
 
@@ -172,7 +205,7 @@ fi
 
 printf "$fmt_create" $imakefile
 
-cat > $imakefile << !
+cat > $imakefile << EOF
 $fmt_head
 
 BOOTSTRAP= $bootstrap
@@ -205,7 +238,7 @@ $makefile: $srclist $imakefile
 	mkmf IMAKEFILE MAKEFILE
 	
 EFEUTOP=	_EFEU_TOP
-MAXMEM=		_MAXMEM
+SRCTOP=		$src
 STDLIBDIR=	\$(EFEUTOP)/lib
 
 Destination(EFEULIB,\$(EFEUTOP)/lib/efeu)
@@ -241,34 +274,34 @@ SYSLIBS=
 
 ESH=	\$(EFEUTOP)/bin/esh
 
-!
+EOF
 
-cat > $tmp.rules <<!
+cat > $tmp.rules << EOF
 c	DF	Object(%s,%s)
 sh	DFXF	ShellScript(%s,%s.%s,%s)
 esh	DFXF	EshScript(%s,%s.%s,%s)
-!
+EOF
 
 # header files
 
 if [ "$HDR" != "." ] ; then
-	cat >> $imakefile <<!
+	cat >> $imakefile << EOF
 Destination(INCDIR,$HDR)
 
 #define	GenHeader(name)	InstallGenFile(name,\$(INCDIR),name)
 
-!
-	cat >> $tmp.rules << !
+EOF
+	cat >> $tmp.rules << EOF
 h	DFXFX	InstallFile(%s/%s.%s,\$(INCDIR),%s.%s)
-!
+EOF
 else
-	cat >> $imakefile <<!
+	cat >> $imakefile << EOF
 #define	GenHeader(name)
 
-!
-	cat >> $tmp.rules << !
+EOF
+	cat >> $tmp.rules << EOF
 h	DFXFX	InstallFile(%s/%s.%s,.,%s.%s)
-!
+EOF
 fi
 
 if [ $norule -ne 0 ]; then
@@ -278,23 +311,29 @@ fi
 # application files
 
 if [ "$APP" != "." ] ; then
-	cat >> $imakefile <<!
+	cat >> $imakefile << EOF
 Destination(APPDIR,$APP/app-defaults)
 Destination(CNFDIR,$APP/config)
 Destination(INFODIR,$APP/info)
 Destination(HLPDIR,$APP/help)
 Destination(MSGDIR,$APP/messages)
 
-ProvideDir($APP/de/app-defaults)
-ProvideDir($APP/de/config)
-ProvideDir($APP/de/info)
-ProvideDir($APP/de/help)
-ProvideDir($APP/de/messages)
-
 #define	GenInfo(name)	InstallGenFile(name,\$(INFODIR),name)
 
-!
-	cat >> $tmp.rules << !
+EOF
+	for lang in $langlist
+	do
+		cat >> $imakefile << EOF
+ProvideDir($APP/$lang/app-defaults)
+ProvideDir($APP/$lang/config)
+ProvideDir($APP/$lang/info)
+ProvideDir($APP/$lang/help)
+ProvideDir($APP/$lang/messages)
+EOF
+
+	done
+
+	cat >> $tmp.rules << EOF
 \/de,,app	DFXFX	InstallFile(%s/%s.%s,$APP/de/app-defaults,%s.%s)
 \/de,,cnf	DFXFX	InstallFile(%s/%s.%s,$APP/de/config,%s.%s)
 \/de,,hlp	DFXFX	InstallFile(%s/%s.%s,$APP/de/help,%s.%s)
@@ -303,12 +342,12 @@ app	DFXFX	InstallFile(%s/%s.%s,\$(APPDIR),%s.%s)
 cnf	DFXFX	InstallFile(%s/%s.%s,\$(CNFDIR),%s.%s)
 hlp	DFXFX	InstallFile(%s/%s.%s,\$(HLPDIR),%s.%s)
 msg	DFXFX	InstallFile(%s/%s.%s,\$(MSGDIR),%s.%s)
-!
+EOF
 else
-	cat >> $imakefile <<!
+	cat >> $imakefile <<EOF
 #define	GenInfo(name)
 
-!
+EOF
 fi
 
 # documentations
@@ -446,33 +485,32 @@ rm -f $tmp.obj $tmp.lst
 
 if	test $LIB
 then
-	cat >> $imakefile << !
+	cat >> $imakefile << EOF
 LibTarget(\$(LIBDIR),$LIB,\$(OBJLIST),\$(XLIBS))
 
-!
+EOF
 fi
 
 # :de:Dokumentregel anhängen
 
 if	[ "$DOC" -a -f $src/main.doc ]
 then
-	cat >> $imakefile << !
-Destination(DOCSRC,\$(DOCDIR)/src)
-SymLink(\$(DOCSRC)/$DOC,$src)
-DocTarget(\$(DOCDIR),$DOC,$src,$pflag)
+	cat >> $imakefile << EOF
+ProvideDocDir(\$(DOCDIR))
+DocTarget(\$(DOCDIR),$DOC,$src,efeudoc $pflag)
 
-!
+EOF
 fi
 
 # :de:Aufräumregel: Läßt nur das Makefile ohne Abhängigkeiten zurück
 
-cat >> $imakefile << !
+cat >> $imakefile << EOF
 
 clean::
 	mkmf $imakefile $makefile
 	rm -f $imakefile $srclist
 
-!
+EOF
 
 # :*:create Makefile
 # :de:Makefile generieren

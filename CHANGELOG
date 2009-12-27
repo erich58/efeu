@@ -1,0 +1,47 @@
+Version 1.1
+
+*	Added scripts |dircpy| and |dircmp| to distribution.
+*	Enhancements for manpage tools.
+*	Manpages for all commands.
+*	New command |efeuman|: creates manpage from script or source comments.
+*	Added fixes for FreeBSD.
+*	Removed . from InfoPath.
+*	Formatted |CHANGELOG| for processing with |efeudoc|.
+*	Added command |rawtape| to distribution.
+*	New function |GetFormat()| to get/replace message formats.
+
+Version 1.0-5
+
+*	|efeudoc|: added missing |io_close()| to |Doc_input()| (no more
+	zombies on processing the user reference manual).
+*	Description of findgrep reworked.
+
+Version 1.0-4
+
+*	New documentation: user reference manual
+*	|efeudoc|: adapted some formats for HTML output to get
+	correct english documents,
+	append language setting to bootstrap resource to
+	get html-documents created in the correct language.
+
+Version 1.0-3
+
+*	Allow the use of a long option name which is uniq to the
+	first characters of another long option name (needed to
+	make |mdprint| compatible to the old command configuration).
+
+Version 1.0-2
+
+*	Added |CHANGELOG| to distribution.
+*	Fixed a bug in |src/base/lib/efm/procenv/CmdParEval.c| to
+	allow the use of a resource variable by redefining itself.
+
+Version 1.0-1
+
+*	Fixed a bug in |src/base/lib/efx/vtab/var.c|: |DelVar()| must check
+	if some other function clears the data buffer of |Var_t|.
+*	Added header |<string.h>| to some files (needed by some libc versions).
+
+Version 1.0
+
+*	First release of efeu.

@@ -51,5 +51,5 @@ void memswap(void *ap, void *bp, size_t n)
 /*
 $SeeAlso
 \mref{alloctab(3)}, \mref{memalloc(3)}.\br
-\mref{malloc(3S)} im @PRM.
+\mref{malloc(3S)} @PRM.
 */

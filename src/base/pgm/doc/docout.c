@@ -56,34 +56,28 @@ static io_t *post_open (const char *name, const char *par)
 /*	Tabelle mit Ausgabefunktionen
 */
 
-
 static DocType_t TypeTab[] = {
-	{ "test", "Testausgabe",
+	{ "test", ":*:test output"
+		":de:Testausgabe",
 		DocOut_test, NULL, NULL },
-	{ "term", "Terminalausgabe",
+	{ "term", ":*:terminal output"
+		":de:Terminalausgabe",
 		DocOut_term, NULL, NULL },
-	{ "LaTeX", "LaTeX-Dokument",
+	{ "LaTeX", ":*:LaTeX source"
+		":de:LaTeX-Dokument",
 		DocOut_latex, NULL, NULL },
-	{ "tex2ps", "PostScript-Dokument über LaTeX",
+	{ "tex2ps", ":*:PostScript over LaTeX"
+		":de:PostScript-Dokument über LaTeX",
 		DocOut_latex, post_open, "tex2ps -n3 -" },
-	{ "man", "Handbuchsource",
+	{ "man", ":*:man source"
+		":de:Handbuchsource",
 		DocOut_mroff, NULL },
-	{ "nroff", "Nroff-formatiertes Handbuch",
+	{ "nroff", ":*:nroff formatted manpage"
+		":de:Nroff-formatiertes Handbuch",
 		DocOut_mroff, post_open, "groff -Tlatin1 -t -man" },
-	{ "html", "HTML-Dokument",
+	{ "html", ":*:HTML output"
+		":de:HTML Ausgabe",
 		DocOut_html, html_open, NULL },
-	{ "sgml", "SGML-Ausgabe",
-		DocOut_sgml, NULL, NULL },
-	{ "txt", "Textausgabe mit Attributen",
-		DocOut_sgml, post_open, "efeudoc_sgml -t txt -" },
-	{ "filter", "Textausgabe ohne Attribute",
-		DocOut_sgml, post_open, "efeudoc_sgml -t filter -" },
-	{ "latex", "LaTeX-Dokument über SGML",
-		DocOut_sgml, post_open, "efeudoc_sgml -t latex -" },
-	{ "ps", "Postscript-Dokument über SGML",
-		DocOut_sgml, post_open, "efeudoc_sgml -t ps -" },
-	{ "cgi", "HTML-Dokument mit CGI-Kopf",
-		DocOut_sgml, post_open, "efeudoc_sgml -t cgi -" },
 };
 
 
@@ -106,7 +100,12 @@ static void print_type (io_t *io, InfoNode_t *base)
 	int i;
 
 	for (i = 0; i < tabsize(TypeTab); i++)
-		io_printf(io, "%s\t%s\n", TypeTab[i].name, TypeTab[i].desc);
+	{
+		io_puts(TypeTab[i].name, io);
+		io_putc('\t', io);
+		io_langputs(TypeTab[i].desc, io);
+		io_putc('\n', io);
+	}
 }
 
 void DocOutInfo (const char *name, const char *desc)

@@ -2,7 +2,7 @@
 :*:	show structure of data cube
 :de:	Informationen zu einer Datenmatrix ausgeben
 
-Copyright (C) 1997, 2001 Erich Frühstück
+$Copyright (C) 1997, 2001 Erich Frühstück
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -22,13 +22,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 pconfig !
-#if	Lang == "de"
-Ident = "Informationen zu einer Datenmatrix ausgeben"
-#else
-Ident = "show structure of data cube"
-#endif
-Version = "2"
-Copyright = "(c) 1997, 2001 Erich Frühstück"
+Version = "$Id: mdfile.esh,v 1.6 2001-10-18 12:11:20 ef Exp $"
 AllStat = false
 ListAxis = false
 

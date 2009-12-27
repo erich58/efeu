@@ -198,19 +198,22 @@ Folgende Angaben sind möglich:
 	Es kann nicht mit anderen Flags kombiniert werden.
 [|eval|]
 	Die Datei wird mit zunächst mit dem esh-Interpreter ausgewertet.
+[|geval|]
+	Wie |eval|, aber neue Variablen und Funktionen werden global
+	eingerichtet.
 [|verbatim|]
 	Der Inhalt wird wortwörtlich in Schreibmaschinenschrift
 	dargestellt.
 [|latex|]
 	Die Datei enthält LaTeX-Code.
-[|sgml|]
-	Die Datei enthält SGML-Code.
+[|html|]
+	Die Datei enthält HTML-Code.
 [|man|]
 	Die Datei enthält nroff-Code für Handbucheinträge.
 [|ignore|]
 	Der Inhalt der Datei wird ignoriert.
 
-Die Flags |latex|, |sgml| und |man| werden in der Regel mit
+Die Flags |latex|, |html| und |man| werden in der Regel mit
 |verbatim| oder |ignore| kombiniert. Fals der Ausgabetreiber
 die Datei nicht verarbeiten kann, wird auf die Alternative
 zugegriffen.

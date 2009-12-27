@@ -1,5 +1,6 @@
 /*
-Steuerbefehle
+:*:control commands
+:de:Steuerbefehle
 
 $Copyright (C) 1999 Erich Frühstück
 This file is part of EFEU.
@@ -20,34 +21,53 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-Zeilenumbruch
+:*:line break
+:de:Zeilenumbruch
 
-Der Befehl $1 bewirkt einen Zeilenumbruch.
+:*:The command $1 causes a line break.
+:de:Der Befehl $1 bewirkt einen Zeilenumbruch.
 
 \def\br	cmd('\n')
 
-Seitenumbruch
+:*:page break
+:de:Seitenumbruch
 
-Der Befehl $1 bewirkt einen Seitenumbruch.
+:*:The command $1 causes a page break.
+:de:Der Befehl $1 bewirkt einen Seitenumbruch.
 
 \def\newpage	cmd('\f')
 
-Inhaltsverzeichnis
+:*:table of contents
+:de:Inhaltsverzeichnis
 
-Der Befehl $1 generiert ein Inhaltsverzeichnis.
+:*:The command $1 creates a table of contents.
+:de:Der Befehl $1 generiert ein Inhaltsverzeichnis.
 
-\def\toc	endenv('a'); cmd('t');
+\def\toc	endenv('a'); cmd('c');
 
-Verzeichnis der Übersichten
+:*:list of tables
+:de:Verzeichnis der Tabellen
 
-Der Befehl $1 generiert eine Liste der Übersichten
+:*:The command $1 creates a list of figures.
+:de:Der Befehl $1 generiert ein Tabellenverzeichnis.
+
+\def\lot	endenv('a'); cmd('t');
+
+:*:list of figures
+:de:Verzeichnis der Abbildungen
+
+:*:The command $1 creates a list of tables.
+:de:Der Befehl $1 generiert ein Tabellenverzeichnis.
 
 \def\lof	endenv('a'); cmd('f');
 
-Anhang
-	$1 |[|<Kopfzeile>|]| <Bezeichnung>
+:*:appendix
+	$1 |[|<short form>|]| <title>
+:de:Anhang
+	$1 |[|<Kurzform>|]| <Bezeichnung>
 
-Der Befehl $1 beginnt einen neuen Anhangteil.
+:*:The command $1 starts a new appendix.
+:de:Der Befehl $1 beginnt einen neuen Anhangteil.
 
 \def\appendix	{{
 	endenv('a');
@@ -59,35 +79,56 @@ Der Befehl $1 beginnt einen neuen Anhangteil.
 	if	(arg)	section('C', opt, arg);
 }}
 
-Stichwortverzeichnis
+:*:index
+:de:Stichwortverzeichnis
 
-Der Befehl $1 generiert das Stichwortverzeichnis.
+:*:The command $1 creates the index.
+:de:Der Befehl $1 generiert das Stichwortverzeichnis.
 
 \def\printindex	{ endenv('a'); cmd('a'); plaintex("\\printindex\n"); }
 
-Fußnotenmarke
+:*:footnote mark
+:de:Fußnotenmarke
 	$1 |{|<num>|}|
 
-Der Befehl $1 generiert eine Fußnotenmarke.
+:*:The command $1 creates a footnote mark.
+:de:Der Befehl $1 generiert eine Fußnotenmarke.
 
 \def\mark	cmd('m', xexpand(ParseArg(cin)));
-\def\fn	cmd('m', xexpand(ParseArg(cin)));
 
-Literaturmarke
+:*:bibliographical reference
+:de:Literaturmarke
 	$1 |{|<name>|}|
 
-Der Befehl $1 generiert eine Literaturmarke.
+:*:The command $1 creates a bibliography mark.
+:de:Der Befehl $1 generiert eine Literaturmarke.
 
 \def\lmark	cout << "<=[" << ParseArg(cin) << "]=>";
 
-Vertikale Verschiebung
-	$1 <num>
+:*:vertical adjustment
+	$1 <offset>
+:de:Vertikale Verschiebung
+	$1 <offset>
 
-Der Befehl $1 beendet den laufenden Absatz und generiert eine
-vertikale Verschiebung um <num> Zeilen.
+:*:The command $1 closes the current paragraph and performs a
+vertical shift of <offset> lines.
+:de:Der Befehl $1 beendet den laufenden Absatz und generiert eine
+vertikale Verschiebung um <offset> Zeilen.
 
 \def\vspace	{
 	mode('v');
-	plaintex(sprintf("\\vspace{%d\\baselineskip}\n",
+	plaintex(sprintf("\\vspace{%s\\baselineskip}\n",
 		xexpand(ParseLine(cin))));
 }
+
+:*:language dependent paragraph
+	$1\br
+	<par>
+:de:Sprachabhängiger Absatz
+	$1\br
+	<par>
+
+:*:Experimental, may be changed.
+:de:Experimentell, könnte geändert werden.
+
+\def\langpar	ParseLine(cin); mode('v'); cout << langcpy(ParsePar(cin));

@@ -34,6 +34,7 @@ static char *cmd_break = "\\\\";
 static char *cmd_newpage = "\\newpage";
 static char *cmd_toc = "\\tableofcontents";
 static char *cmd_lof = "\\listoffigures";
+static char *cmd_lot = "\\listoftables";
 static char *cmd_appendix = "\\appendix";
 static char *cmd_item = "\\item";
 static char *cmd_mark = "\\footnotemark[$1]";
@@ -55,6 +56,7 @@ static VarDef_t cmd_tab[] = {
 	{ "newpage", &Type_str, &cmd_newpage },
 	{ "tableofcontents", &Type_str, &cmd_toc },
 	{ "listoffigures", &Type_str, &cmd_lof },
+	{ "listoftables", &Type_str, &cmd_lot },
 	{ "appendix", &Type_str, &cmd_appendix },
 	{ "item", &Type_str, &cmd_item },
 	{ "mark",	&Type_str, &cmd_mark },
@@ -175,6 +177,9 @@ int LaTeX_cmd (LaTeX_t *ltx, va_list list)
 		break;
 	case DOC_CMD_LOF:
 		line_cmd(ltx, cmd_lof);
+		break;
+	case DOC_CMD_LOT:
+		line_cmd(ltx, cmd_lot);
 		break;
 	case DOC_CMD_APP:
 		reg_cpy(1, va_arg(list, char *));

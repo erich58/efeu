@@ -1,5 +1,11 @@
+DOCBUF=	DocBuf.o DocBuf_copy.o
+
 S2DOBJ= src2doc.o s2d_skip.o s2d_decl.o s2d_parse.o \
 	s2d_data.o s2d_eval.o s2d_copy.o \
-	s2d.o s2d_std.o s2d_src.o
+	s2d.o s2d_std.o s2d_src.o $(DOCBUF)
+
+EMOBJ=	efeuman.o $(DOCBUF)
 
 Program($(BINDIR),src2doc,$(S2DOBJ),$(DEP),$(LIB))
+Program($(BINDIR),efeuman,$(EMOBJ),$(DEP),$(LIB))
+

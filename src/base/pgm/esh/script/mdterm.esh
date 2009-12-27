@@ -2,7 +2,7 @@
 :*:	evaluate data cube expression
 :de:	Zwei Datenmatrizen verknüpfen
 
-Copyright (C) 1997, 2001 Erich Frühstück
+$Copyright (C) 1997, 2001 Erich Frühstück
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -26,13 +26,7 @@ Type_t Type = NULL;
 PrintListDelim = "\t";
 
 pconfig !
-#if	Lang == "de"
-Ident = "Zwei Datenmatrizen verknüpfen"
-#else
-Ident = "evaluate data cube expression"
-#endif
-Version = "2"
-Copyright = "(c) 1997, 2001 Erich Frühstück"
+Version = "$Id: mdterm.esh,v 1.7 2001-11-12 07:49:38 ef Exp $"
 PrintMode = true
 
 F:file | :eval 'gload(IncPath, "{}")'
@@ -48,7 +42,7 @@ E:expr | :eval 'geval("{}")'
 	:*:cell by cell subtraction
 	:de:Punktweise Subtraktion
 -mul | :eval 'Function = operator"*"'
-	:*:cell by cell multiplikation
+	:*:cell by cell multiplication
 	:de:Punktweise Multiplikation
 -div | :eval 'Function = operator"/"'
 	:*:cell by cell division

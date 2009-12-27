@@ -14,8 +14,8 @@ Zur Zeit können die folgenden Textformate generiert werden:
 *	Planer Latin1-Text ohne Steuerinformationen,
 *	Terminalausgabe mit Attributen,
 *	\LaTeX-Datei im Synthesis-Standard,
-*	|man|-Kompatible Handbuchsourcen,
-*	\index{SGML-Hypertext} auf Basis von linuxdoc DTD.
+*	|man|-kompatible Handbuchsourcen,
+*	HTML Dateien
 
 Der Dokumentgenerator |efeudoc| erlaubt auf einfache Weise das Einbinden
 externer Dateien. Weiters können andere Prozesse gestartet und deren

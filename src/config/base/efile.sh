@@ -2,7 +2,7 @@
 # :*:file command with efeu extensions
 # :de:file Kommando mit EFEU-Anpassung
 #
-# Copyright (C) 2001 Erich Frühstück
+# $Copyright (C) 2001 Erich Frühstück
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -19,6 +19,32 @@
 # License along with EFEU; see the file COPYING.
 # If not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+# $pconfig
+# :file(s)|
+#	:*:list of files to determine file types
+#	:de:Liste der Dateien zur Bestimmung des Dateitypes
+
+usage ()
+{
+	efeuman -- $0 $1 || echo "usage: $0 file(s)"
+}
+
+case "$1" in
+""|-\?|--help*)	usage $1; exit 0;;
+esac
+
+# $Description
+# :*:|$!| implements the |file| command in a efeu specific environment.
+# It uses <EFEUTOP>|/etc/magic| as magic file. For files with suffix |.gz|
+# the first Block is uncompressed and analysed by |file|.
+# :de:|$!| implementiert das Kommando |file| mit efeu-spezifischen
+# Erweiterungen. So wird als magic-File <EFEUTOP>|/etc/magic| verwendet.
+# Bei Dateien mit Filezusatz |.gz| wird der erste Block der Datei entpackt
+# und von |file| ausgewertet.
+
+# $SeeAlso
+# efeu-magic(1), file(1), magic(5).
 
 top=`efeutop`
 magic=$top/etc/magic

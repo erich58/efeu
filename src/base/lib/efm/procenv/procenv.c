@@ -124,7 +124,7 @@ void SetProgName (const char *name)
 
 		if	(need_config)
 		{
-			CmdPar_load(par, "efm");
+			CmdPar_load(par, "efm", 0);
 			need_config = 0;
 		}
 	}
@@ -140,5 +140,5 @@ einzelnen Variablen einiges ändern.  Dies sollte keine Kompatiblitätsprobleme
 aufwerfen, da die Variablen nur Bibliotheksintern verwendung finden.
 
 $SeeAlso
-\mref{getenv(3)} im @PRM.
+\mref{getenv(3)} @PRM.
 */

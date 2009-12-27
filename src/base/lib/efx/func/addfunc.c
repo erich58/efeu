@@ -197,12 +197,7 @@ void AddFunc(Func_t *func)
 {
 	if	(func == NULL)	return;
 
-	if	(FuncDebugFlag)
-	{
-		io_puts("new\t", ioerr);
-		ListFunc(ioerr, func);
-		io_putc('\n', ioerr);
-	}
+	FuncDebug(func, "new");
 
 	if	(func->bound)
 	{

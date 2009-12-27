@@ -2,7 +2,7 @@
 :*:	show differences of data cubes
 :de:	Zwei Datenmatrizen vergleichen
 
-Copyright (C) 1998, 2001 Erich Frühstück
+$Copyright (C) 1998, 2001 Erich Frühstück
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -24,13 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 PrintListDelim = "\t";
 
 pconfig !
-#if	Lang == "de"
-Ident = "Zwei Datenmatrizen vergleichen"
-#else
-Ident =	"show differences of data cubes"
-#endif
-Version = "2"
-Copyright = "(c) 1998 Erich Frühstück"
+Version = "$Id: mddiff.esh,v 1.8 2001-10-18 12:11:20 ef Exp $"
 
 r | Reduce = true
 	:*:remove singulary axis

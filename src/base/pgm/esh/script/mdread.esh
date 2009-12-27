@@ -2,7 +2,7 @@
 :*:	read data cube
 :de:	Datenmatrix lesen
 
-Copyright (C) 1997, 2001 Erich Frühstück
+$Copyright (C) 1997, 2001 Erich Frühstück
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -24,13 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 PrintListDelim = "\t";
 
 pconfig !
-#if	Lang == "de"
-Ident = "Datenmatrix lesen"
-#else
-Ident = "read data cube"
-#endif
-Version = "2"
-Copyright = "(c) 1997, 2001 Erich Frühstück"
+Version = "$Id: mdread.esh,v 1.9 2001-11-12 07:49:38 ef Exp $"
 PrintMode = true
 
 x:name | Flags: set "{Flags} x={}"
@@ -49,7 +43,7 @@ L:loc | -locale:loc | Locale
 	:*:set locale for number format to <loc>
 	:de:Lokale für Zahlendarstellung auf <loc> setzen
 -sc | SCFlag = true
-	:*:konvert sc spreadsheet
+	:*:convert sc spreadsheet
 	:de:SC-Spreadsheet konvertieren
 
 r | Reduce = true

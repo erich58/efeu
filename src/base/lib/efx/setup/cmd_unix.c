@@ -20,6 +20,12 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#if	defined(__FreeBSD__)
+#define	EMULATE_FTW	1
+#else
+#define	EMULATE_FTW	0
+#endif
+
 #include <EFEU/object.h>
 #include <EFEU/cmdsetup.h>
 #include <EFEU/refdata.h>
@@ -28,7 +34,63 @@ If not, write to the Free Software Foundation, Inc.,
 #include <time.h>
 #include <pwd.h>
 #include <sys/stat.h>
+
+#if	EMULATE_FTW
+
+#ifndef	PATH_MAX
+#define	PATH_MAX	4096
+#endif
+
+#define FTW_F	1
+#define FTW_D	2
+#define FTW_DNR	3
+#define FTW_NS	4
+#define FTW_SL	5
+
+typedef int (*ftw_func_t) (const char *name, const struct stat *sb, int flag);
+
+static int ftw (const char *dir, ftw_func_t func, int depth)
+{
+	char *p;
+	int rval, flag;
+	char buf[PATH_MAX];
+	struct stat sb;
+	FILE *file;
+
+	p = msprintf("|find %s -print", dir);
+	file = fileopen(p, "r");
+	memfree(p);
+	rval = 0;
+
+	while (rval == 0 && fgets(buf, PATH_MAX, file) != NULL)
+	{
+		if	((p = strchr(buf, '\n')) == NULL)
+			continue;
+
+		*p = 0;
+
+		if	(stat(buf, &sb) != EOF)
+		{
+			if	(S_ISDIR(sb.st_mode))
+			{
+				flag = FTW_D;
+			}
+			else	flag = FTW_F;
+		}
+		else	flag = FTW_NS;
+
+		rval = func(buf, &sb, flag);
+	}
+
+	fileclose(file);
+	return rval;
+}
+
+#else
+
 #include <ftw.h>
+
+#endif
 
 /*	Filestatus
 */
@@ -254,9 +316,10 @@ static int ftw_eval (const char *name, const struct stat *sb, int flag)
 
 static void f_ftw (Func_t *func, void *rval, void **arg)
 {
+	char *dir = Val_str(arg[0]);
 	Obj_t *save = ftw_expr;
 	ftw_expr = Val_obj(arg[1]);
-	Val_int(rval) = ftw(Val_str(arg[0]), ftw_eval, Val_int(arg[2]));
+	Val_int(rval) = ftw(dir ? dir : ".", ftw_eval, Val_int(arg[2]));
 	ftw_expr = save;
 }
 
@@ -290,10 +353,11 @@ static int flist_eval (const char *name, const struct stat *sb, int flag)
 
 static void f_flist (Func_t *func, void *rval, void **arg)
 {
+	char *dir = Val_str(arg[0]);
 	flist_ptr = (ObjList_t **) rval;
 	*flist_ptr = NULL;
 	flist_pat = Val_str(arg[1]);
-	ftw(Val_str(arg[0]), flist_eval, Val_int(arg[2]));
+	ftw(dir ? dir : ".", flist_eval, Val_int(arg[2]));
 }
 
 /*	Funktionstabelle

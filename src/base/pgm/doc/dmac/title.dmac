@@ -1,5 +1,6 @@
 /*
-Befehle für die Titelseite
+:*:title page
+:de:Befehle für die Titelseite
 
 $Copyright (C) 1999 Erich Frühstück
 This file is part of EFEU.
@@ -32,26 +33,35 @@ If not, write to the Free Software Foundation, Inc.,
 	DataBase setup = DataBase(str);
 }
 
-Dokumentart
+:*:document style
+:de:Dokumentart
 	$1 <Stil>
 
-Der Befehl $1 setzt die Dokumentart.
+:*:The command $2 sets the style of the document.
+:de:Der Befehl $1 setzt die Dokumentart.
 
 \def\style	DocStyle = xexpand(ParseLine(cin));
 
-Dokumentflags
+:*:document flags
+:de:Dokumentflags
 	$1 <flags>
 
-Der Befehl $1 erweitert die Flags zur Dokumentverarbeitung.
+:*:The command $1 expands the flags for document processing.
+The interpretation of the flags depends of the actual output
+driver.
+:de:Der Befehl $1 erweitert die Flags zur Dokumentverarbeitung.
 Inwieweit einzelne Flags bei der Formatierung berücksichtigt werden,
 hängt vom jeweiligem Ausgabetreiber ab.
 
 \def\addflag	for (x in split(ParseLine(cin), ",")) docflags += xexpand(x);
 
-LaTeX-Pakete
+:*:LaTeX packages
+:de:LaTeX-Pakete
 	$1[<opt>] <name>
 
-Der Befehl $1 generiert für LaTeX die Definitionszeile
+:*:The command $1 loades the LaTeX package <name> if the LaTeX driver
+is used.
+:de:Der Befehl $1 generiert für LaTeX die Definitionszeile
 <|\\usepackage[<opt>]{<name>}|>. Damit werden Zusatzpakete geladen.
 
 \def\package	{{
@@ -63,25 +73,36 @@ Der Befehl $1 generiert für LaTeX die Definitionszeile
 	latex::preamble += sprintf("\\usepackage%s{%s}\n", opt, name);
 }}
 
-Datum setzen
+:*:set date
+:de:Datum setzen
 	$1 <Datum>
 
-Der Befehl $1 setzt das Datum des Dokuments.
+:*:The command $1 sets the date for the document.
+:de:Der Befehl $1 setzt das Datum des Dokuments.
 
 \def\date	date = expand(ParseLine(cin));
 
-Datum abfragen
+:*:get date
+:de:Datum abfragen
 	$1
 
-Der Befehl $1 ruft das Dokumentdatum ab.
+:*:The command $1 fetches the actual setting of the date.
+:de:Der Befehl $1 ruft das Dokumentdatum ab.
 
 \def\thedate	plain(date);
 
-Titel
+:*:document title
+	$1 |[|<toc entry>|]| <title>\br
+	<subtitle>
+:de:Titel
 	$1 |[|<Kurzform>|]| <Titel>\br
 	<Untertitel>
 
-Falls das Dokument noch nicht begonnen wurde, setzt der Befehl $1
+:*:If the document is not startet, the command sets the document
+title, else it starts a new chapter. The optional argument <toc entry>
+is only used in the later case. The <subtitle> is ignored in the
+later case.
+:de:Falls das Dokument noch nicht begonnen wurde, setzt der Befehl $1
 Titel und Untertitel des Dokuments. Ansonsten wird ein neues Kapitel
 begonnen, wobei die Kurzform für den Eintrag ins Inhaltsverzeichnis
 verwendet wird.
@@ -95,58 +116,66 @@ verwendet wird.
 	else		title = expand(main), subtitle = expand(sub);
 }}
 
-Dokumentkopf
+:*:document head
+:de:Dokumentkopf
 	$1 <Dokumentkopf>
 
-Der Befehl $1 setzt den Dokumentkopf
+:de:Der Befehl $1 setzt den Dokumentkopf
 
 \def\dhead	dochead = expand(ParseLine(cin));
 
-Dokumentanmerkung
+:*:document note on title page
+:de:Dokumentanmerkung
 	$1 <Dokumentanmerkung>
 
-Der Befehl $1 setzt die Dokumentanmerkung für die Titelseite.
+:de:Der Befehl $1 setzt die Dokumentanmerkung für die Titelseite.
 
 \def\dnote	docnote = expand(ParseLine(cin));
 
-Autorenliste
+:*:list of authors
+:de:Autorenliste
 	$1 <Autorenliste>\br
 	~~~~&ldots;
 
-Der Befehl $1 definiert die Autorenliste für die Titelseite.
+:de:Der Befehl $1 definiert die Autorenliste für die Titelseite.
 
 \def\author	author = expand(strsub(ParseLine(cin, true), "\n", "\\br\n"));
 
-Adressblock
+:*:address block for title page
+:de:Adressblock
 	$1 <Adresse>\br
 	$1\br
 	<Adresse>
 
-Der Befehl $1 definiert den Adressenblock für die Titelseite.
+:de:Der Befehl $1 definiert den Adressenblock für die Titelseite.
 
 \def\addr	{
 addr = ParseLine(cin);
 addr = expand(addr ? addr : ParsePar(cin), false);
 }
 
-Vorwort/Einführung
+:*:introduction
+:de:Vorwort/Einführung
 
-Der Befehl $1 beginnt das Vorwort
+:*:The command $1 starts the introduction
+:de:Der Befehl $1 beginnt das Vorwort
 
 \def\intro	newenv('i');
 
-Literaturverzeichnis
+:*:start bibliography
+:de:Literaturverzeichnis
 
-Der Befehl $1 beginnt das Literaturverzeichnis
+:de:Der Befehl $1 beginnt das Literaturverzeichnis
 
 \def\bibliography	{{
 	str mark = ParseLine(cin);
 	newenv('b', expand(mark ? mark : "99"));
 }}
 
-Eintrag ins Literaturverzeichnis
+:*:bibliography entry
+:de:Eintrag ins Literaturverzeichnis
 
-Der Befehl $1 beginnt einen Eintrag ins Literaturverzeichnis
+:de:Der Befehl $1 beginnt einen Eintrag ins Literaturverzeichnis
 
 \def\bibitem	{{
 	str opt = xexpand(ParseOpt(cin, true));
@@ -157,9 +186,10 @@ Der Befehl $1 beginnt einen Eintrag ins Literaturverzeichnis
 	plaintex(sprintf("\\bibitem%s{%s}\n", opt, name));
 }}
 
-Abruf eines Literatureintrages
+:*:cite bibliography entry
+:de:Abruf eines Literatureintrages
 
-Der Befehl $1 ruft einen Literatureintrag ab.
+:de:Der Befehl $1 ruft einen Literatureintrag ab.
 
 \def\cite	{{
 	str opt = xexpand(ParseOpt(cin, true));

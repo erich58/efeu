@@ -30,12 +30,13 @@ If not, write to the Free Software Foundation, Inc.,
 #define	HLP_PFX	"help"
 #define	HLP_SFX	"hlp"
 
-#define	USAGE_FMT	"\\Synopsis\n@synopsis\n"
+#define	USAGE_FMT	"@synopsis -h\n"
 
-#define	HLP_FMT	"@head\n\\Name\n@ident\n\
-\\Synopsis\n@synopsis usage:\n\
-\\Description\n@arglist\n\
-\\Environment\n@environ\n"
+#define	HLP_FMT	"@name\n\
+@synopsis -h\n\
+@arglist -hi\n\
+@environ -h\n\
+@copyright -h\n"
 
 #define	STD_OUT		io_popen("efeudoc -t -", "w")
 #define	ERR_OUT		io_popen("efeudoc -Tterm - 1>&2", "w")

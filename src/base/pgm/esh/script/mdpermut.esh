@@ -2,7 +2,7 @@
 :*:	reorder axis of data cube
 :de:	Achsen einer Datenmatrix permutieren
 
-Copyright (C) 1997, 2001 Erich Frühstück
+$Copyright (C) 1997, 2001 Erich Frühstück
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -24,13 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 PrintListDelim = "\t";
 
 pconfig !
-#if	Lang == "de"
-Ident = "Achsen einer Datenmatrix permutieren"
-#else
-Ident = "reorder axis of data cube"
-#endif
-Version = "2"
-Copyright = "(c) 1997, 2001 Erich Frühstück"
+Version = "$Id: mdpermut.esh,v 1.7 2001-10-18 12:11:21 ef Exp $"
 
 r | Reduce = true
 	:*:remove singulary axis

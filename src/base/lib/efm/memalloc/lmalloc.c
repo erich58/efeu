@@ -170,5 +170,5 @@ ebenfalls zu einem Programmabsturz führen.
 Die Funktionen |memalloc| und |memfree| sind diesbezüglich robust.
 $SeeAlso
 \mref{alloctab(3)}, \mref{memalloc(3)}.\br
-\mref{malloc(3S)} im @PRM.
+\mref{malloc(3S)} @PRM.
 */

@@ -137,5 +137,6 @@ char *ExpandPath (const char *name);
 */
 
 int EshConfig (int *narg, char **arg);
+void EshIdent (io_t *in);
 
 #endif	/* EFEU_PCONFIG_T */

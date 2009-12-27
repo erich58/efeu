@@ -28,6 +28,29 @@ If not, write to the Free Software Foundation, Inc.,
 #include <mroff.h>
 #include <efeudoc.h>
 
+static char *dochead = NULL;
+
+static VarDef_t vardef[] = {
+	{ "dochead", &Type_str, &dochead },
+};
+
+extern void mroff_cmdpar (VarTab_t *tab)
+{
+	AddVarDef(tab, vardef, tabsize(vardef));
+}
+
+void mroff_hdr (mroff_t *mr, int mode)
+{
+	mroff_newline(mr);
+
+	if	(mode)
+	{
+		io_psub(mr->out, dochead);
+		mr->nlignore = 1;
+	}
+}
+
+
 int mroff_cmd (mroff_t *mr, va_list list)
 {
 	int cmd;

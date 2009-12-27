@@ -75,6 +75,12 @@ static void var_clean (CmdParVar_t *var)
 	memfree(var->desc);
 }
 
+/**/
+static void def_clean (CmdParDef_t **def)
+{
+	CmdParDef_free(*def);
+}
+
 /*
 Die Funktion |$1| initialisiert die Kommandoparameterstruktur <par>.
 */
@@ -104,7 +110,7 @@ void CmdPar_clean (CmdPar_t *par)
 	par->name = NULL;
 	vb_clean(&par->var, (clean_t) var_clean);
 	vb_free(&par->var);
-	vb_clean(&par->def, (clean_t) CmdParDef_free);
+	vb_clean(&par->def, (clean_t) def_clean);
 	vb_free(&par->def);
 	vb_free(&par->env);
 	vb_free(&par->opt);

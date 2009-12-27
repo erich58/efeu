@@ -27,7 +27,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/mactools.h>
 #include <math.h>
 
-#if	_GNU_SOURCE
+#ifdef	NAN
 #define	HAS_NAN	1
 #endif
 

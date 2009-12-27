@@ -49,7 +49,8 @@ static VirFunc_t *virfunc_admin(VirFunc_t *tg, const VirFunc_t *src)
 
 static char *virfunc_ident(VirFunc_t *func)
 {
-	return func->tab.used ? rd_ident(func->tab.data) : NULL;
+	return func->tab.used ?
+		rd_ident(((Func_t **) func->tab.data)[0]) : NULL;
 }
 
 ADMINREFTYPE(VirFuncRefType, "VirFunc", virfunc_ident, virfunc_admin);

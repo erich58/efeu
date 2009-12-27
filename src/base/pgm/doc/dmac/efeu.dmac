@@ -1,5 +1,6 @@
 /*
-EFEU-Handbuchformat
+:*:EFEU manpage configuration
+:de:EFEU-Handbuchformat
 
 $Copyright (C) 2001 Erich Frühstück
 This file is part of EFEU.
@@ -31,7 +32,7 @@ Telefon (02242) 310 99
 !, false);
 
 	latex::preamble += string !
-%% EFEU - Anpassung
+%% EFEU - adaption
 
 \voffset=-1in
 \topmargin=1.5cm
@@ -78,30 +79,68 @@ Telefon (02242) 310 99
 	\vfill
 	\strut
 	\clearpage}}
-%% ENDE
+%% END
 !;
 	latex::margin = "EDmanhead";
 	latex::it = "\\it\\color{Red}";
 	latex::tt = "\\tt\\color{Blue}";
+	latex::rm = "\\rm\\color{Black}";
 	latex::code = "\\begin{code}\\color{Blue}%"
 }
 
-Impressum
+:*:impressum
+	$1 |(|<year>|)|
+:de:Impressum
 	$1 |(|<Ersheinungsjahr>|)|
 
-Der Makro $1 setzt das Impressum für ein EFEU-Handbuch.
+:de:Der Makro $1 setzt das Impressum für ein EFEU-Handbuch.
+
+\def@Copyright
+\eval{mode('h')}
+\latex{\thispagestyle{empty}
+\setcounter{page}{0}
+\strut
+\vfill
+}
+Copyright (C) $1 Erich Frühstück.\br
+This documentation is part of EFEU.
+\par
+EFEU is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+\par
+EFEU is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+\par
+You should have received a copy of the GNU General Public
+License along with EFEU; see the file COPYING.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+\newpage
 
 \def@Impressum
 \appendix	Impressum
 Eigentümer und Verleger:\br
 Erich Frühstück\br
 Südtirolergasse 17--21/5\br
-A\-3423 St.Andrä/Wördern\par
+A\-3423 St.Andrä/Wördern
+\par
 Für den Inhalt verantwortlich:\br
-Erich Frühstück\par
+Erich Frühstück
+\par
 Herstellung und Redaktion:\br
-Erich Frühstück\par
+Erich Frühstück
+\par
 Wördern $1
 
+:*:note for incomplete paragraph
+:de:Anmerkung für unvollständigen Abschnitt
+
 \def@TODO
-<*Dieser Abschnitt muß noch geschrieben werden.*>\par
+\langpar
+:*:<*This paragraph is not completed.*>
+:de:<*Dieser Abschnitt muß noch vervollständigt werden.*>
+:_:\par

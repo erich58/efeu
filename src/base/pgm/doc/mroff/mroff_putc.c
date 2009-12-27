@@ -27,7 +27,7 @@ If not, write to the Free Software Foundation, Inc.,
 static int mr_ignore (mroff_t *mr, int c)
 {
 	int flag = (c == '\n' && mr->nlignore);
-	mr->nlignore = 0;
+	mr->nlignore = flag;
 	return flag;
 }
 
@@ -89,6 +89,13 @@ void mroff_cend (mroff_t *mr, int flag)
 		mr->last = '\n';
 		mr->nlignore = 1;
 	}
+}
+
+void mroff_psub (mroff_t *mr, const char *name)
+{
+	char *fmt = mroff_par(name);
+	io_psub(mr->out, fmt);
+	memfree(fmt);
 }
 
 void mroff_string (mroff_t *mr, const char *str)

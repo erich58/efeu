@@ -24,9 +24,17 @@ If not, write to the Free Software Foundation, Inc.,
 
 static void mac_add (InfoNode_t *info, DocMac_t *mac)
 {
-	AddInfo(info, mac->name, mac->desc, NULL,
+	InfoNode_t *x = AddInfo(info, mac->name, NULL, NULL,
 		msprintf("%s\n---- verbatim\n%s//END\n----\n",
 			mac->desc, mac->fmt));
+
+	if	(mac->desc)
+	{
+		char *p = strchr(mac->desc, '\n');
+
+		if	(p)
+			x->label = mstrncpy(mac->desc, p - mac->desc);
+	}
 }
 
 static void mac_load (InfoNode_t *info)

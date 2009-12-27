@@ -22,14 +22,14 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/efwin.h>
 
-#if	__linux__
-
 void DrawBox(WINDOW *win)
 {
-	box(win, '|', '-');
+	box(win, 0, 0);
 }
 
-#else
+#if	0
+/*	Old, non portable stuff
+*/
 
 void DrawBox (WINDOW *win)
 {
@@ -54,4 +54,5 @@ void DrawBox (WINDOW *win)
 	win->_y[win->_maxy - 1][win->_maxx - 1] = box_chars_1[4]  | A_ALTCHARSET;
 	touchwin(win);
 }
+
 #endif

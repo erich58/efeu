@@ -30,10 +30,11 @@ If not, write to the Free Software Foundation, Inc.,
 
 typedef struct {
 	char *label;		/* Bezeichnung */
-	int debug;		/* Debugflag */
 	ident_t ident;		/* Identifikation */
 	clean_t clean;		/* Löschfunktion */
 	admin_t admin;		/* Speicheradministration */
+	int sync;		/* Debug - Synchronisation */
+	void *log;		/* Log - File */
 } reftype_t;
 
 /*
@@ -44,8 +45,8 @@ Identifikationsfunktion <ident> und Speicheradministrationsfunktion
 */
 
 #define	ADMINREFTYPE(name, label, ident, admin)	\
-	reftype_t name = { label, 0, (ident_t) ident, \
-		NULL, (admin_t) admin }
+	reftype_t name = { label, (ident_t) ident, \
+		NULL, (admin_t) admin, 0, NULL }
 
 /*
 :de:
@@ -54,8 +55,8 @@ Identifikationsfunktion <ident> und Aufräumfunktion <clean>.
 */
 
 #define	REFTYPE(name, label, ident, clean)	\
-	reftype_t name = { label, 0, (ident_t) ident, \
-		(clean_t) clean, NULL }
+	reftype_t name = { label, (ident_t) ident, \
+		(clean_t) clean, NULL, 0, NULL }
 
 /*
 :de:

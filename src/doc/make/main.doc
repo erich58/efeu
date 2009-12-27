@@ -60,7 +60,9 @@ Ein neues Kapitel wurde begonnen.
 \addsrclist
 \addsrclist	\eval{EFEUTOP}/ppinclude
 \mchap[1]	Kommandos
-\srcinclude	*.1
+\pipe	mkmf --help=raw
+\pipe	pp2dep --help=raw
+\pipe	ppfilter --help=raw
 \mchap[7]	Makropakete und Konventionen
 \src2doc[-g -m hdr]	*.cfg *.pph *.tpl
 \printindex

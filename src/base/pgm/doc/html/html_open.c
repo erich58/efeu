@@ -27,6 +27,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/MakeDepend.h>
 #include <EFEU/pconfig.h>
 #include <EFEU/patcmp.h>
+#include <EFEU/LangType.h>
 #include <HTML.h>
 #include <DocCtrl.h>
 #include <ctype.h>
@@ -145,7 +146,7 @@ static void hpost_open (HPOST *hpost, const char *name, const char *title)
 
 		io_puts(title, hpost->io);
 	}
-	else	io_puts("Artikel", hpost->io);
+	else	io_langputs(":*:article:de:Artikel", hpost->io);
 
 	io_puts("</TITLE>\n</HEAD>\n<BODY>\n", hpost->io);
 }
@@ -155,18 +156,25 @@ static void hpost_close (HPOST *hpost)
 	if	(!hpost->io)	return;
 
 	io_puts("\n<P><HR><P>\n", hpost->io);
-	io_puts("Gehe zum\n", hpost->io);
+	io_langputs(":*:go to\n:de:Gehe zum\n", hpost->io);
 
 	if	(hpost->ref->pos)
 	{
 		sb_putc(0, hpost->ref);
 		io_puts((char *) hpost->ref->data, hpost->io);
-		io_puts(" Abschnitt,\n", hpost->io);
+		io_langputs(" :*:section:de:Abschnitt", hpost->io);
+		io_puts(",\n", hpost->io);
 	}
 
-	io_puts("<A HREF=\"main.html\">Dokumentanfang</A>,\n", hpost->io);
-	io_puts("<A HREF=\"toc.html\">Inhalt,</A>\n", hpost->io);
-	io_puts("<A HREF=\"index.html\">Index</A>.\n", hpost->io);
+	io_puts("<A HREF=\"main.html\">", hpost->io);
+	io_langputs(":*:start of document:de:Dokumentanfang", hpost->io);
+	io_puts("</A>,\n", hpost->io);
+	io_puts("<A HREF=\"toc.html\">", hpost->io);
+	io_langputs(":*:contents:de:Inhalt", hpost->io);
+	io_puts("</A>,\n", hpost->io);
+	io_puts("<A HREF=\"index.html\">", hpost->io);
+	io_langputs(":*:index:de:Index", hpost->io);
+	io_puts("</A>\n", hpost->io);
 	io_puts("</BODY>\n", hpost->io);
 	io_puts("</HTML>\n", hpost->io);
 	io_close(hpost->io);
@@ -177,9 +185,19 @@ static void hpost_close (HPOST *hpost)
 static void hpost_next (HPOST *hpost)
 {
 	char *name, *title;
+	char *fmt_prev, *fmt_next;
 	int c;
 
 	name = io_mgets(hpost->tmp, "%s");
+
+	fmt_prev = "<A HREF=%#s>previous</A>";
+	fmt_next = "<A HREF=%#s>next</A>";
+
+	if	(mstrcmp(LangType.language, "de") == 0)
+	{
+		fmt_prev = "<A HREF=%#s>nächsten</A>";
+		fmt_next = "<A HREF=%#s>vorigen</A>";
+	}
 
 	do	c = io_getc(hpost->tmp);
 	while	(c == ' ' || c == '\t');
@@ -196,11 +214,9 @@ static void hpost_next (HPOST *hpost)
 		if	(hpost->ref->pos)
 			sb_puts(", ", hpost->ref);
 
-		sb_printf(hpost->ref, "<A HREF=%#s>nächsten</A>",
-			name);
+		sb_printf(hpost->ref, fmt_prev, name);
 		hpost_close(hpost);
-		sb_printf(hpost->ref, "<A HREF=%#s>vorigen</A>",
-			hpost->fname);
+		sb_printf(hpost->ref, fmt_next, hpost->fname);
 	}
 
 	hpost_open (hpost, name, title);
@@ -320,23 +336,35 @@ static void hpost_sec (HPOST *hpost, const char *label, int type)
 static void hpost_create (HPOST *hpost)
 {
 	HIDX *idx;
+	char *lbl_toc, *lbl_lof, *lbl_index;
 	size_t n;
+
+	lbl_toc = "table of contents";
+	lbl_lof = "list of figures";
+	lbl_index = "index";
+
+	if	(mstrcmp(LangType.language, "de") == 0)
+	{
+		lbl_toc = "Inhalt";
+		lbl_lof = "Abbildungsverzeichnis";
+		lbl_index = "Index";
+	}
 
 	io_rewind(hpost->tmp);
 	hpost_copy(hpost);
 	hpost_close(hpost);
 	io_close(hpost->tmp);
 
-	hpost_open(hpost, "toc.html", "Inhalt");
+	hpost_open(hpost, "toc.html", lbl_toc);
 	io_puts((char *) hpost->toc->data, hpost->io);
 	hpost_close(hpost);
 
-	hpost_open(hpost, "lof.html", "Inhalt");
+	hpost_open(hpost, "lof.html", lbl_lof);
 	io_puts((char *) hpost->lof->data, hpost->io);
 	hpost_close(hpost);
 
 	vb_qsort(&hpost->idx, (comp_t) hidx_cmp);
-	hpost_open(hpost, "index.html", "Index");
+	hpost_open(hpost, "index.html", lbl_index);
 
 	for (idx = hpost->idx.data, n = hpost->idx.used; n-- > 0; idx++)
 	{

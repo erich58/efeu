@@ -58,6 +58,7 @@ void Doc_input (Doc_t *doc, const char *opt, io_t *in)
 	if	(!opt)
 	{
 		Doc_copy(doc, in);
+		io_close(in);
 		return;
 	}
 
@@ -80,8 +81,6 @@ void Doc_input (Doc_t *doc, const char *opt, io_t *in)
 			base = alt, alt = DOC_MODE_VERB;
 		else if	(testkey("ignore", &opt))
 			base = alt, alt = DOC_MODE_SKIP;
-		else if	(testkey("sgml", &opt))
-			base = alt, alt = DOC_MODE_SGML;
 		else if	(testkey("html", &opt))
 			base = alt, alt = DOC_MODE_HTML;
 		else if	(testkey("latex", &opt))
@@ -94,6 +93,8 @@ void Doc_input (Doc_t *doc, const char *opt, io_t *in)
 			cfg = 1;
 		else if	(testkey("eval", &opt))
 			eval = 1;
+		else if	(testkey("geval", &opt))
+			eval = 2;
 		else
 		{
 			message(NULL, MSG_DOC, 11, 1, opt);
@@ -122,8 +123,16 @@ void Doc_input (Doc_t *doc, const char *opt, io_t *in)
 		if	(eval)
 		{
 			Doc_pushvar(doc);
+
+			if	(eval > 1)
+				PushVarTab(RefVarTab(GlobalVar), NULL);
+
 			in = io_cmdpreproc(in);
 			CmdEvalFunc(in, buf, 0);
+
+			if	(eval > 1)
+				PopVarTab();
+
 			Doc_popvar(doc);
 		}
 		else	io_copy(in, buf);
@@ -228,8 +237,10 @@ io_t *Doc_open (const char *path, const char *name, int flag)
 		fname_t *fname = strtofn(DocName);
 
 		if	(fname && fname->type && isdigit(*fname->type))
+		{
 			io_push(in, io_mstr(msprintf("\\mpage[%s] %s\n",
 				fname->type, fname->name)));
+		}
 
 		memfree(fname);
 	}

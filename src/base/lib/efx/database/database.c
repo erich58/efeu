@@ -369,12 +369,6 @@ static void DB2List (Func_t *func, void *rval, void **arg)
 /*	Initialisieren
 */
 
-static VarDef_t db_var[] = {
-	{ "DataBaseDebug", &Type_bool, &DB_reftype.debug,
-		":*:flag to control debuging of DataBase objects\n"
-		":de:Flag zum Debuggen von DataBase Objekte\n" },
-};
-
 static FuncDef_t db_func[] = {
 	{ FUNC_RESTRICTED, &Type_list, "DataBase ()", DB2List },
 	{ 0, &Type_DB, "DataBase (Type_t, VirFunc cmp = NULL, int bs = 0)",
@@ -402,6 +396,5 @@ VirFunc	test = NULL, str list = NULL)", f_db_fsave },
 void SetupDataBase(void)
 {
 	AddType(&Type_DB);
-	AddVarDef(NULL, db_var, tabsize(db_var));
 	AddFuncDef(db_func, tabsize(db_func));
 }

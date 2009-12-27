@@ -31,10 +31,11 @@ If not, write to the Free Software Foundation, Inc.,
 #define	DBG_NONE	0	/* Keine Meldungen */
 #define	DBG_ERR		1	/* Fehlermeldungen */
 #define	DBG_NOTE	2	/* Anmerkungen */
-#define	DBG_STAT	3	/* Verarbeitungsstatistik */
-#define	DBG_TRACE	4	/* Ablaufprotokoll */
+#define	DBG_INFO	3	/* Verarbeitungsinformationen */
+#define	DBG_STAT	4	/* Verarbeitungsstatistik */
 #define	DBG_DEBUG	5	/* Debug-Informationen */
-#define	DBG_DIM		6	/* Zahl der Debug-Level */
+#define	DBG_TRACE	6	/* Ablaufprotokoll */
+#define	DBG_DIM		7	/* Zahl der Debug-Level */
 
 extern int DebugKey (const char *name);
 extern char *DebugLabel (int type);
@@ -48,6 +49,8 @@ extern void Message (const char *class, int level,
 	const char *fmt, ArgList_t *args);
 extern void VMessage (const char *class, int level,
 	const char *fmt, int narg, ...);
+
+extern int DebugChangeCount;
 
 /*
 $SeeAlso

@@ -226,6 +226,7 @@ int main (int narg, char **arg)
 
 /*	Argumente bestimmen
 */
+	SetVersion("$Id: eis-cgi.c,v 1.6 2001-11-06 13:47:54 ef Exp $");
 	ParseCommand(&narg, arg);
 
 	parse_arg(narg - 1, arg + 1);

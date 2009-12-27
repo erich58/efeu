@@ -2,7 +2,7 @@
 # :*:run make in global building directory
 # :de:make in globaler Generierungsbibliothek aufrufen
 #
-# Copyright (C) 1999 Erich Frühstück
+# $Copyright (C) 1999 Erich Frühstück
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -20,67 +20,72 @@
 # If not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-# message formats
+# $pconfig
+# n|
+#	:*:show rules, do not execute
+#	:de:Regeln nur anzeigen
+# d:dir|
+#	:*:run make in <dir>
+#	:de:make im Verzeichnis dir aufrufen
+# s:sub|
+#	:*:run make in subdirectory <sub>.d
+#	:de:make im Unterverzeichnis sub.d aufrufen
 
 : ${LANG:=en}
+top=${EFEUTOP:=$HOME}
+gendir=${EFEUGEN:=$top/build}
 
-fmt_usage="
-usage: $0 [-hn] [-d dir] [-s sub] [target(s)]
+usage ()
+{
+	efeuman -v "gen=$gendir" -- $0 $1 || \
+		echo "usage: $0 [-n] [-d dir] [-s sub]"
+}
 
--h	this output
--n	show rules, do not execute
--d dir	run make in <dir>
--s sub	run make in subdirectory <sub>.d
+case "$1" in
+-\?|--help*)	usage $1; exit 0;;
+esac
 
-The command runs make in a global directory. This directory
-is defined by the environment EFEUGEN. If EFEUGEN is not set,
-\$EFEUTOP/build is used. If EFEUTOP is not set, \$HOME is substituted.
-The current setting of EFEUGEN is \"$EFEUGEN\".
+# $Description
+# :*:
+# The command runs make in a global directory. This directory
+# is defined by the environment |EFEUGEN|. If |EFEUGEN| is not set,
+# |$\$EFEUTOP/build| is used. If |EFEUTOP| is not set, |$\$HOME| is
+# substituted. The actual setting of |EFEUGEN| is |@{gen}|.
+# :de:
+# Das Kommando wechselt in das durch die Umgebungsvariable |EFEUGEN|
+# definierte Verzeichnis und ruft make mit den angegebenen Argumenten
+# auf.  Falls |EFEUGEN| nicht definiert ist, wird |$\$EFEUTOP/build|
+# genommen.  Falls |EFEUTOP| nicht gesetzt ist, wird |$\$HOME|
+# substituiert. Der aktuelle Wert für |EFEUGEN| ist |@{gen}|. 
+#
+# :*:
+# The option |-s| could be used more than once. A subdirectory name of
+# |a.b| is replaced by |a.d/b.d| (|-s a.b| is equivalent to |-s a -s b|).
+# :de:
+# Die Option |-s| kann mehrfach verwendet werden. Ein Unterverzeichnis
+# der Form |a.b| wird in |a.d/b.d| konvertiert (|-s a.b| ist damit
+# äquivalent zu |-s a -s b|).
 
-The option '-s' could be used more than once. A subdirectory name of
-'a.b' is replaced by 'a.d/b.d' ('-s a.b' is equivalent to '-s a -s b').
-"
+# message formats
+
 fmt_norule="$0: missing Makefile in %s.\n"
 
 case $LANG in
 de*)
-	fmt_usage="
-Aufruf: $0 [-hn] [-d dir] [-s sub] [Ziele(e)]
-
--h	Dieser Text
--n	Regeln nur anzeigen
--d dir	make im Verzeichnis dir aufrufen
--s sub	make im Unterverzeichnis sub.d aufrufen
-
-Das Kommando wechselt in das durch die Umgebungsvariable EFEUGEN
-definierte Verzeichnis und ruft make
-mit den angegebenen Argumenten auf.
-Falls EFEUGEN nicht definiert ist, wird \$EFEUTOP/build genommen.
-
-Die aktuelle Setzung von EFEUGEN ist \"$EFEUGEN\".
-
-Die Option \"-s\" kann mehrfach verwendet
-werden. Ein Unterverzeichnis der Form \"a.b\" wird in \"a.d/b.d\" konvertiert
-(\"-s a.b\" ist damit äquivalent zu \"-s a -s b\").
-"
-	fmt_norule="$0: Kein Makefile in %s vorhanden.\n"
-	;;
+	fmt_norule="$0: Kein Makefile in %s vorhanden.\n";;
 esac
 
 # parse command args
 
-top=${EFEUTOP:=$HOME}
-gendir=${EFEUGEN:=$top/build}
 flags=
 
-while getopts d:s:nh opt
+while getopts d:s:n opt
 do
 	case $opt in
 	d)	gendir=$OPTARG;;
 	s)	gendir="$gendir/"`echo $OPTARG | sed -e 's/\./\.d\//g'`".d";;
 	n)	flags="$flags -n";;
-	h)	echo "$fmt_usage"; exit 0;;
-	\?)	echo "$fmt_usage" >&2; exit 1;;
+	\?)	usage; exit 1;;
 	esac
 done
 

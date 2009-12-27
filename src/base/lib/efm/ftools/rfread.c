@@ -94,5 +94,5 @@ Die Funktionen sind, abgesehen von der Bytereihenfolge eines Datensatzes,
 mit |fread| und |fwrite| kompatibel.
 
 $SeeAlso
-\mref{fread(3S)} im @PRM.
+\mref{fread(3S)} @PRM.
 */

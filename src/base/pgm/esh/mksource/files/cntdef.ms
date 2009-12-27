@@ -143,11 +143,13 @@ void CntDef::ctab(str name, str fmt = NULL, str pext = NULL, str xdesc = NULL)
 
 void CntDef::setup(str name, str lblpfx = NULL, ...)
 {
+	Function add = Function("void $1_addclass",
+		"xtab_t *class, int n", name);
 	Function f = Function("void $1_setup",
 		"xtab_t *count, xtab_t *class, int n", name);
 
 	for (x in ini)
-		f.fline("%s_setup(count, class, n);", x);
+		f.line(x);
 
 	if	(dim(cnt))
 	{
@@ -169,15 +171,26 @@ void CntDef::setup(str name, str lblpfx = NULL, ...)
 		cnt.delete(0, dim(cnt));
 	}
 
-	if	(dim(class))
+	int n = dim(class);
+
+	if	(n)
 	{
 		str xdesc = va_list.pop();
 		str ext = strcut(xdesc, "%s");
 		str fmt = paste(".", lblpfx, "$1");
 		str lbl = paste(".", fmt, ext == "." ? NULL : ext);
+		str cname = name + "_class";
 
-		f.line("XAPPEND(class, $1_class, XS_ENTER);", name);
-		ctab("$1_class", lbl, var_dim ? var_name : NULL, xdesc);
+		f.line("$1_addclass(class, 0);", name);
+		psub(NULL, cname, 0);
+		ctab("$1$2", lbl, var_dim ? var_name : NULL, xdesc);
+
+		if	(var_dim > 1)
+		{
+			f.line();
+			f.line("while\t(n-- > 1)");
+			f.line("\t$1_addclass(class, n);", name);
+		}
 
 		for (int i = 1; i < var_dim; i++)
 		{
@@ -188,14 +201,28 @@ void CntDef::setup(str name, str lblpfx = NULL, ...)
 				lbl = paste(".", fmt, ext);
 			else	lbl = sprintf("%s.%d", fmt, i + 1);
 
-			f.line("if\t(n <= $2)\treturn;", name, i);
-			f.line("XAPPEND(class, $1_class$2, XS_ENTER);");
-			ctab("$1_class$2", lbl, var_name + " + $2", xdesc);
+			psub(NULL, cname, i);
+			ctab("$1$2", lbl, var_name + " + $2", xdesc);
 		}
+
+		fprintf(src, "#define %s_size %d\n\n", cname, n);
+		fprintf(src, "static %s *%s[] = {\n", ctype, cname);
+		fprintf(src, "\t%s0,\n", cname);
+
+		for (i = 1; i < var_dim; i++)
+			fprintf(src, "\t%s%d,\n", cname, i);
+
+		src << "};\n\n";
+
+		add.fline("if\t(n < %d)", var_dim ? var_dim : 1);
+		add.line("\txappend(class, $1[n], $1_size,", cname);
+		add.line("\t\tsizeof($1), XS_ENTER);", ctype);
 
 		class.delete(0, dim(class));
 	}
+	else	add.line(";");
 
+	add.write(glob);
 	f.write(glob);
 }
 
@@ -216,7 +243,16 @@ void CntDef::add_class(str name, str desc)
 void CntDef::use(...)
 {
 	for (x in va_list)
-		ini += x;
+	{
+		str n = x;
+		str name = strcut(n, "[");
+
+		if	(n)
+		{
+			ini += psub("$1_addclass(class, $2);", name, (int) n);
+		}
+		else	ini += psub("$1_setup(count, class, n);", name);
+	}
 }
 
 /*	Zählobjekt definieren

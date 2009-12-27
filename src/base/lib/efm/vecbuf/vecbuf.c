@@ -31,6 +31,8 @@ mit Blockgröße <blk> und Datengröße <size>.
 
 void vb_init (vecbuf_t *buf, size_t blk, size_t size)
 {
+	if	(!buf)	return;
+
 	buf->data = NULL;
 	buf->blksize = blk;
 	buf->elsize = size;
@@ -46,6 +48,8 @@ die Komponente |used| auf 0.
 
 void vb_clean (vecbuf_t *buf, clean_t clean)
 {
+	if	(!buf)	return;
+
 	if	(clean)
 	{
 		while (buf->used-- > 0)
@@ -63,6 +67,8 @@ Vektorbuffer verwendete Speicherfeld frei. Die Komponenten
 
 void vb_free (vecbuf_t *buf)
 {
+	if	(!buf)	return;
+
 	if	(buf->blksize)
 	{
 		lfree(buf->data);
@@ -82,6 +88,8 @@ Bei Bedarf wird der Buffer vergrößert.
 
 void *vb_next (vecbuf_t *buf)
 {
+	if	(!buf)	return NULL;
+
 	if	(buf->used >= buf->size)
 		vb_realloc(buf, buf->used + 1);
 
@@ -96,7 +104,7 @@ Die Funktion |$1| liefert das Element an Position <pos> des Vektorbuffers
 
 void *vb_data (vecbuf_t *buf, size_t pos)
 {
-	if	(pos >= buf->used)	return NULL;
+	if	(!buf || pos >= buf->used)	return NULL;
 
 	return ((char *) buf->data + buf->elsize * pos);
 }

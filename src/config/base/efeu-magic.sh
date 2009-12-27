@@ -1,8 +1,8 @@
 #!/bin/sh
-# :*: update magic for efile
+# :*: update magic file for efile
 # :de: Magic-File für efile erneuern
 #
-# Copyright (C) 2000 Erich Frühstück
+# $Copyright (C) 2000 Erich Frühstück
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -20,14 +20,21 @@
 # If not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
+case "$1" in
+-\?|--help*)	efeuman -- $0 $1; exit 0;;
+esac
+
+# $SeeAlso
+# efile(1), file(1), magic(5).
+
 top=`efeutop`
 cd $top/etc || exit 1
 
-cat > magic <<!
+cat > magic <<EOF
 # magic data for file command.
 # Format is described in magic(5).
 # This file was collected by $0.
-!
+EOF
 
 if [ ! -w magic ]; then
 	exit 1
@@ -38,12 +45,12 @@ add_magic ()
 	while
 		read name
 	do
-		cat - $name <<!
+		cat - $name <<EOF
 
 # ---------------------------------------------------------------------
 # $name
 #
-!
+EOF
 	done
 }
 

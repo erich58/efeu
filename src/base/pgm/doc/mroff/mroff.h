@@ -32,21 +32,40 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 #include <DocDrv.h>
 
+extern void mroff_setup (void);
+extern char *mroff_par (const char *name);
+extern void mroff_addpar (VarDef_t *def, size_t dim);
+extern void mroff_cmdpar (VarTab_t *tab);
+extern void mroff_envpar (VarTab_t *tab);
 
-typedef struct {
+
+typedef struct mroff_s mroff_t;
+typedef struct mroff_var_s mroff_var_t;
+
+struct mroff_var_s {
+	mroff_var_t *next;
+	void (*caption) (mroff_t *mr, int flag);
+};
+
+struct mroff_s {
 	DOCDRV_VAR;		/* Standardausgabevariablen */
+	char *dochead;		/* Dokumentkopf */
 	char *nextpar;		/* Nächster Absatz */
 	unsigned copy : 1;	/* Kopiermodus */
 	unsigned space : 1;	/* Leerzeichen wird benötigt */
 	unsigned nlignore : 1;	/* Nächsten Zeilenvorschub ignorieren */
 	unsigned item : 1;	/* Flag für item */
-	stack_t *stack;		/* Stack für Umgebungen */
+	mroff_var_t var;	/* Umgebungsvariablen */
 	stack_t *s_att;	/* Stack mit Attributen */
-	char *att;	/* Aktuelles Attribute */
-} mroff_t;
+	char *att;	/* Aktuelles Attribut */
+};
 
 extern io_t *DocOut_mroff (io_t *io);
 
+extern void mroff_push (mroff_t *mr);
+extern void mroff_pop (mroff_t *mr);
+
+extern void mroff_hdr (mroff_t *mr, int mode);
 extern int mroff_putc (mroff_t *mr, int c);
 extern int mroff_plain (mroff_t *mr, int c);
 extern int mroff_protect (mroff_t *mr, int c);
@@ -54,6 +73,7 @@ extern int mroff_protect (mroff_t *mr, int c);
 extern void mroff_cbeg (mroff_t *mr, const char *pfx);
 extern void mroff_cend (mroff_t *mr, int flag);
 
+extern void mroff_psub (mroff_t *mr, const char *name);
 extern void mroff_string (mroff_t *mr, const char *str);
 extern void mroff_newline (mroff_t *mr);
 extern void mroff_rem (mroff_t *mr, const char *rem);

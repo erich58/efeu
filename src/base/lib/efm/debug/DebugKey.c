@@ -1,5 +1,6 @@
 /*
-Kennungen für Debuglevel
+:*:	debug level keys
+:de:	Kennungen für Debuglevel
 
 $Copyright (C) 2001 Erich Frühstück
 This file is part of EFEU.
@@ -27,14 +28,19 @@ static char *debug_key[DBG_DIM] = {
 	"none",
 	"err",
 	"note",
+	"info",
 	"stat",
-	"trace",
 	"debug",
+	"trace",
 };
 
 /*
+:*:
+The function |$1| converts a debug key into a debug level.
+The following keys are defined: none, err, note, stat, debug, trace.
+:de:
 Die Funktion |$1| konvertiert eine Debug-Kennung in einen Debug-Level.
-Folgende Kennungen sind definiert: none, err, note, stat, trace, debug.
+Folgende Kennungen sind definiert: none, err, note, stat, debug, trace.
 */
 
 int DebugKey (const char *name)
@@ -49,7 +55,8 @@ int DebugKey (const char *name)
 }
 
 /*
-Die Funktion |$1| liefert die Kennung eines Debug-Levels.
+:*:	The function |$1| returns the debug key to a given debug level.
+:de:	Die Funktion |$1| liefert die Kennung eines Debug-Levels.
 */
 
 char *DebugLabel (int type)

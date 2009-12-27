@@ -93,16 +93,11 @@ int PrintVecData(io_t *io, const Type_t *type, const void *data, size_t dim)
 int PrintData(io_t *io, const Type_t *type, const void *data)
 {
 	Func_t *func;
-	int save;
 
-	save = FuncDebugFlag;
-	FuncDebugFlag = 0;
+	FuncDebugLock++;
 	func = GetPrintFunc(type);
-	FuncDebugFlag = save;
+	FuncDebugLock--;
 
-	/*
-	if	((func = GetPrintFunc(type)) != NULL)
-	*/
 	if	(func != NULL)
 	{
 		int n = 0;

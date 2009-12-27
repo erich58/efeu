@@ -109,6 +109,7 @@ static void show_arg (CmdParKey_t *key, io_t *io)
 	switch (key->argtype)
 	{
 	case ARGTYPE_OPT:
+	case ARGTYPE_VA0:
 		io_puts(CmdPar_docmode ? "\\[~" : "[ ", io);
 		argkey(key, io);
 		io_puts(CmdPar_docmode ? "~]" : " ]", io);

@@ -73,7 +73,7 @@ void Obj_free (Obj_t *obj, size_t size)
 }
 
 #define	STAT_1	"%s: Size %3ld +%3ld: %5ld used, %5ld free, %5ld byte (%ldx%ldx%ld)\n"
-#define	STAT_L	"%s: Large objects:  %5ld used, %5ld requests\n"
+#define	STAT_L	"%s: Large objects: %5ld used, %5ld requests\n"
 
 static void show_alloc(alloctab_t *tab, const char *prompt)
 {

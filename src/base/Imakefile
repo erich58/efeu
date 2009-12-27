@@ -13,28 +13,8 @@ DOCDIR = $(TOPDIR)/doc
 
 DIR2MAKE = dir2make -B $(BINDIR) -L $(LIBDIR) -A $(APPDIR) -D $(DOCDIR)
 
-#define DE_Doc(name,desc,src,dep)	\
-SubMakeRule(Concat(de-,name),desc,src,dep,\
-dir2make -n -D $(DOCDIR)/de -p --lang=de -d name)
-
 BaseInc = -H $(TOPDIR)/include/EFEU
 MathInc = -H $(TOPDIR)/include/Math
-
-#if	__linux__
-#if	LANG_de
-SubMake(Linux,"Linux spezifische Programme",arch/Linux,NullArg,NullArg)
-#else
-SubMake(Linux,"Linux specific commands",arch/Linux,NullArg,NullArg)
-#endif
-#endif
-
-#if	_AIX
-#if	LANG_de
-SubMake(aix,"AIX spezifische Programme",arch/aix,NullArg,NullArg)
-#else
-SubMake(aix,"AIX specific commands",arch/aix,NullArg,NullArg)
-#endif
-#endif
 
 #if	LANG_de
 SubMake(script,"Shell-Scripts",pgm/script,NullArg,NullArg)
@@ -65,19 +45,11 @@ SubMake(tools,"Einfache Hilfsprogramme",pgm/tools,NullArg,$(BASELIB))
 SubMake(esh,"esh, mksource und Scripts",pgm/esh,NullArg,$(BASELIB))
 SubMake(eis,"EFEU-Informationssystem",pgm/eis,NullArg,$(BASELIB))
 SubMake(doc,"Dokumentgenerator",pgm/doc,NullArg,$(BASELIB))
+SubMakeRule(man,"Handbücher zu den Programmbiblitheken",man,doc,dir2make)
 #else
 SubMake(tools,"simple tools",pgm/tools,NullArg,$(BASELIB))
 SubMake(esh,"esh, mksource and scripts",pgm/esh,NullArg,$(BASELIB))
 SubMake(eis,"EFEU-information system",pgm/eis,NullArg,$(BASELIB))
 SubMake(doc,"document generator",pgm/doc,NullArg,$(BASELIB))
-#endif
-
-#if	LANG_de
-DE_Doc(efm,"Handbuch zur efm-Programmbibliothek",lib/efm,doc)
-DE_Doc(iorl,"Handbuch zur Readline-Schnittstelle",lib/iorl,doc)
-DE_Doc(md,"Handbuch zur md-Programmbibliothek",lib/md,doc)
-#else
-DE_Doc(efm,"german documentation to efm library",lib/efm,doc)
-DE_Doc(iorl,"german documentation to readline interface",lib/iorl,doc)
-DE_Doc(md,"german documentation to md library",lib/md,doc)
+SubMakeRule(man,"manpages to the libraries",man,doc,dir2make)
 #endif

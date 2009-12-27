@@ -55,25 +55,37 @@ static void cmd_load (DocTab_t *tab, io_t *in, strbuf_t *desc)
 	memfree(p);
 }
 
+static char *get_desc (strbuf_t *buf)
+{
+	io_t *io;
+	strbuf_t *desc;
+	int c;
+
+	sb_setpos(buf, 0);
+	io = langfilter(io_strbuf(buf), NULL);
+	desc = new_strbuf(0);
+
+	while ((c = io_getc(io)) != EOF)
+		sb_putc(c, desc);
+
+	io_close(io);
+	return sb2str(desc);
+}
+
 void DocTab_def (DocTab_t *tab, io_t *in, strbuf_t *buf)
 {
-	char *name, *desc;
-	int c;
+	char *name;
 	
-	desc = buf->pos ? mstrncpy((char *) buf->data, buf->pos) : NULL;
-	c = DocSkipSpace(in, 0);
-
-	switch (c)
+	switch (DocSkipSpace(in, 0))
 	{
 	case '@':
 	case '\\':
 		name = mstrcpy(DocParseName(in, io_getc(in)));
-		DocTab_setmac(tab, name, desc, DocParseExpr(in));
+		DocTab_setmac(tab, name, get_desc(buf), DocParseExpr(in));
 		break;
 	default:
 		io_message(in, MSG_DOC, 21, 0);
 		memfree(DocParseLine(in, 0));
-		memfree(desc);
 		break;
 	}
 }

@@ -1,7 +1,7 @@
 # :*:awk script for system specific parameters in headerfiles
 # :de:AWK-Skript zum Einbau systemspezifischer Parameter in Headerdateien
 #
-# Copyright (C) 1999 Erich Frühstück
+# $Copyright (C) 1999 Erich Frühstück
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or modify

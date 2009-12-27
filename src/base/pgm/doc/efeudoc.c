@@ -23,6 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/Resource.h>
 #include <EFEU/Readline.h>
 #include <EFEU/calendar.h>
+#include <EFEU/LangType.h>
 #include "efeudoc.h"
 #include <ctype.h>
 #include <sys/stat.h>
@@ -32,6 +33,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/pconfig.h>
 #include <EFEU/MakeDepend.h>
 #include "LaTeX.h"
+#include "mroff.h"
 
 #define	CFNAME	"efeudoc"
 #define	HNAME	"~/.doc_history"
@@ -79,17 +81,19 @@ int main (int narg, char **arg)
 	char *p;
 	int i;
 
+	SetVersion("$Id: efeudoc.c,v 1.18 2001-11-06 13:18:49 ef Exp $");
 	SetProgName(arg[0]);
 	SetupDoc();
 	SetupReadline();
 	SetupDebug();
 	AddVarDef(NULL, globvar, tabsize(globvar));
+	DocTab_fload(GlobalDocTab, CFNAME);
+	DocMacInfo("DocMac", ":*:document macros:de:Makrodefinitionen");
+	DocOutInfo("DocOut", ":*:document drivers:de:Dokumentausgabefilter");
+	LaTeX_setup();
+	mroff_setup();
 	ParseCommand(&narg, arg);
 	MakeDepend = GetFlagResource("MakeDepend");
-	LaTeX_setup();
-	DocTab_fload(GlobalDocTab, CFNAME);
-	DocOutInfo("DocOut", "Dokumentausgabefilter");
-	DocMacInfo("DocMac", "Makrodefinitionen");
 
 #if	0
 	if	(getuid() == 0)
@@ -133,6 +137,9 @@ int main (int narg, char **arg)
 	if	(p && Output)
 	{
 		strbuf_t *sb = new_strbuf(0);
+
+		if	(LangType.langdef)
+			sb_printf(sb, "LANG=%#s ", LangType.langdef);
 
 		sb_puts(arg[0], sb);
 		sb_puts(GetResource("Bootstrap", NULL), sb);

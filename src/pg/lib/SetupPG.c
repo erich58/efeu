@@ -297,11 +297,11 @@ void _init (void)
 
 /*
 $SeeAlso
-refdata(3),
-PG(3),
-PG_exec(3),
-PG_open(3),
-PG_query(3),
-PG(7).\br
+\mref{refdata(3)},
+\mref{PG(3)},
+\mref{PG_exec(3)},
+\mref{PG_open(3)},
+\mref{PG_query(3)},
+\mref{PG(7)}.\br
 PostgreSQL Programmer's Guide.
 */

@@ -126,7 +126,7 @@ static Obj_t *pf_pconfig (io_t *io, void *data)
 		do	c = io_getc(io);
 		while	(c != EOF && c != '\n');
 
-		CmdPar_read(NULL, io, '!');
+		CmdPar_read(NULL, io, '!', 0);
 	}
 
 	CmdPar_info(NULL, NULL);

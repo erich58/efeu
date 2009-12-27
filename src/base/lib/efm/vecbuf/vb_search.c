@@ -178,5 +178,5 @@ void *vb_bsearch (vecbuf_t *buf, const void *key, comp_t comp)
 /*
 $SeeAlso
 \mref{vecbuf(7)}, \mref{types(7)}.\br
-\mref{bsearch(3C)}, \mref{qsort(3C)} im @PRM
+\mref{bsearch(3C)}, \mref{qsort(3C)} @PRM
 */

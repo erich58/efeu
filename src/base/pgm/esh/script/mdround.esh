@@ -2,7 +2,7 @@
 :*:	round values of data cube
 :de:	Zahlenwerte einer Datenmatrix runden
 
-Copyright (C) 1997, 2001 Erich Frühstück
+$Copyright (C) 1997, 2001 Erich Frühstück
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -25,13 +25,7 @@ double Value = 1.;
 PrintListDelim = "\t";
 
 pconfig !
-#if	Lang == "de"
-Ident = "Zahlenwerte einer Datenmatrix runden"
-#else
-Ident = "round values of data cube"
-#endif
-Version = "2"
-Copyright = "(c) 1997, 2001 Erich Frühstück"
+Version = "$Id: mdround.esh,v 1.8 2001-11-12 07:49:38 ef Exp $"
 PrintMode = true
 
 r | Reduce = true
@@ -45,10 +39,10 @@ T:title | Title
 	:de:Titel der Ausgabedatei setzen
 s:val | :eval Value = {}; Adjust = true
 	:*:adjust data sum to value <val>
-	:de:Matrixsumme
+	:de:adjustieren auf Matrixsumme <val>
 m:val | :eval Value = {}
-	:*:multiplay by value <val>
-	:de:Multiplikator
+	:*:scalar multiplication with value <val>
+	:de:Skalare Multiplikatcwion mit <val>
 :file | Input
 	:*:input file
 	:de:Name der Eingabedatei

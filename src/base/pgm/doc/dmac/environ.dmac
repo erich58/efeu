@@ -1,5 +1,6 @@
 /*
-Umgebungen
+:*:environments
+:de:Umgebungen
 
 $Copyright (C) 1999 Erich Frühstück
 This file is part of EFEU.
@@ -20,81 +21,107 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-Kodeumgebung
+:*:code environment
+:de:Kodeumgebung
 
-Der Befehl $1 wechselt in die Code-Umgebung. Innerhalb dieser
+:*:The command $1 starts the code environment. Inside this
+environment, the default font is typewriter.
+:de:Der Befehl $1 wechselt in die Code-Umgebung. Innerhalb dieser
 Umgebung wird der Text in Schreibmaschine gesetzt.
 
 \def\code	newenv('c');
 
-Hängende Absätze
+:*:hanging paragraphs
+:de:Hängende Absätze
 
-Der Befehl $1 beginnt eine Umgebung mit hängenden Absätzen.
+:*:The command $1 starts a region with hanging paragraphs.
+:de:Der Befehl $1 beginnt eine Umgebung mit hängenden Absätzen.
 
 \def\hang	newenv('h');
 
-Einrückung
+:*:quoting
+:de:Einrückung
 
-Der Befehl $1 wechselt in die quote-Umgebung.
+:*:The command $1 starts a region with quoted (indented) text.
+:de:Der Befehl $1 wechselt in die quote-Umgebung.
 Innerhalb dieser Umgebung wird der Text eingerückt.
 
 \def\quote	newenv('q');
 
-Aktuelle Umgebung beenden
+:*:end current environment
+:de:Aktuelle Umgebung beenden
 
-Der Befehl $1 schließt die aktuelle Umgebung ab.
+:*:The command $1 closes the current environment.
+:de:Der Befehl $1 schließt die aktuelle Umgebung ab.
 
 \def\end	endenv(0);
 
-Alle Umgebungen beenden
+:*:end all environments
+:de:Alle Umgebungen beenden
 
-Der Befehl $1 schließt alle Umgebungen ab.
+:*:The command $1 closes all open environments.
+:de:Der Befehl $1 schließt alle Umgebungen ab.
 
 \def\endall	endenv('a');
 
 /*	Listen
 */
 
-Liste beenden
+:*:end list
+:de:Liste beenden
 
-Der Befehl $1 schließt die aktuelle Liste ab.
+:*:The command $1 closes the current list environment.
+:de:Der Befehl $1 schließt die aktuelle Liste ab.
 
 \def\endlist	endenv('l');
 
-Beschreibungsmarke in Standardschrift
+:*:roman item
+	$1 <tag>
+:de:Beschreibungsmarke in Standardschrift
 	$1 <Marke>
 
-Der Befehl $1 setzt eine Beschreibungsmarke in Standardschrift.
+:*:The command starts a new description item with a roman tag.
+:de:Der Befehl $1 setzt eine Beschreibungsmarke in Standardschrift.
 
 \def\item	newline(); cout << "[<=" << ParseLine(cin) << "=>]\n";
 
-Beschreibungsmarke in Kursivschrift
+:*:italic item
+	$1 <tag>
+:de:Beschreibungsmarke in Kursivschrift
 	$1 <Marke>
 
-Der Befehl $1 setzt eine Beschreibungsmarke in Kursivschrift.
+:*:The command starts a new description entry with a italic item <tag>.
+:de:Der Befehl $1 setzt eine Beschreibungsmarke in Kursivschrift.
 
 \def\ititem	newline(); cout << "[</" << ParseLine(cin) << "/>]\n";
 
-Beschreibungsmarke in Fettschrift
+:*:boldface item
+	$1 <tag>
+:de:Beschreibungsmarke in Fettschrift
 	$1 <Marke>
 
-Der Befehl $1 setzt eine Beschreibungsmarke in Fettschrift.
+:*:The command starts a new description entry with a bold face item <tag>.
+:de:Der Befehl $1 setzt eine Beschreibungsmarke in Fettschrift.
 
 \def\bfitem	newline(); cout << "[" << ParseLine(cin) << "]\n";
 
-Listeneintrag in Schreibmaschinenschrift
+:*:typewriter item
+:de:Listeneintrag in Schreibmaschinenschrift
 	$1 <Marke>
 
-Der Befehl $1 setzt eine Beschreibungsmarke in
+:*:The command starts a new description entry with a typewriter item <tag>.
+:de:Der Befehl $1 setzt eine Beschreibungsmarke in
 Schreibmaschinenschrift.
 
 \def\ttitem	newline(); cout << "[<|" << ParseLine(cin) << "|>]\n";
 
-Teilseite
+:*:partial page
+	$1 |[|<margin>|]| <flags>
+:de:Teilseite
 	$1 |[|<margin>|]| <flags>
 
-Der Befehl beginnt eine Teilseite. Der Parameter <margin>
-bestimmt den neuen Rand.
+:*:The command $1 starts a partial page, obsolete.
+:de:Der Befehl $1 beginnt eine neue Teilseite, veraltet.
 
 \def\spage	{{
 	str pos = xexpand(ParseOpt(cin, true));
@@ -102,6 +129,10 @@ bestimmt den neuen Rand.
 	newenv('p', pos, flags);
 }}
 
-Formelsatz
+:*:mathematic typesetting
+	$1 <formular>
+:de:Mathematischer Formelsatz
+	$1 <Formel>
 
 \def\math	newenv('$'); cout << ParseArg(cin) << "\\eval{endenv('$')}";
+

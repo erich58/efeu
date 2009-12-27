@@ -42,12 +42,13 @@ If not, write to the Free Software Foundation, Inc.,
 #define	DOC_CMD_NPAGE	0x02	/* Neue Seite */
 #define	DOC_CMD_TITLE	0x03	/* Titelblatt */
 #define	DOC_CMD_TOC	0x04	/* Inhaltsverzeichnis */
-#define	DOC_CMD_LOF	0x05	/* Verzeichnis der Übersichten */
-#define	DOC_CMD_ITEM	0x06	/* Neuer Listeneintrag */
-#define	DOC_CMD_APP	0x07	/* Beginn des Anhangs */
-#define	DOC_CMD_IDX	0x08	/* Indexeintrag */
-#define	DOC_CMD_MARK	0x09	/* Fußnotenmarke */
-#define	DOC_CMD_TEX	0x0a	/* TeX-Kommando */
+#define	DOC_CMD_LOF	0x05	/* Verzeichnis der Bilder */
+#define	DOC_CMD_LOT	0x06	/* Verzeichnis der Tabellen */
+#define	DOC_CMD_ITEM	0x07	/* Neuer Listeneintrag */
+#define	DOC_CMD_APP	0x08	/* Beginn des Anhangs */
+#define	DOC_CMD_IDX	0x09	/* Indexeintrag */
+#define	DOC_CMD_MARK	0x0a	/* Fußnotenmarke */
+#define	DOC_CMD_TEX	0x0b	/* TeX-Kommando */
 
 /*	Referenzen
 */
@@ -84,6 +85,7 @@ If not, write to the Free Software Foundation, Inc.,
 #define	DOC_PAR_CTRL	0x00			/* Kennung */
 #define	DOC_PAR_STD	(DOC_PAR_CTRL|0x0)	/* Gewöhnlicher Absatz */
 #define	DOC_PAR_ITEM	(DOC_PAR_CTRL|0x1)	/* Listeneintrag */
+#define	DOC_PAR_TAG	(DOC_PAR_CTRL|0x2)	/* Beschreibungslabel */
 
 /*	Gliederungsbefehle
 */
@@ -135,12 +137,11 @@ If not, write to the Free Software Foundation, Inc.,
 #define	DOC_MODE_CTRL	0x50			/* Kennung */
 #define	DOC_MODE_SKIP	(DOC_MODE_CTRL|0x0)	/* Ignorieren */
 #define	DOC_MODE_COPY	(DOC_MODE_CTRL|0x1)	/* Kopiermodus */
-#define	DOC_MODE_MAN	(DOC_MODE_CTRL|0x2)	/* Handbuchsource */
-#define	DOC_MODE_TEX	(DOC_MODE_CTRL|0x3)	/* TeX-Source */
-#define	DOC_MODE_HTML	(DOC_MODE_CTRL|0x4)	/* HTML-Source */
-#define	DOC_MODE_SGML	(DOC_MODE_CTRL|0x5)	/* SGML-Source */
-#define	DOC_MODE_VERB	(DOC_MODE_CTRL|0x6)	/* Verbatim */
-#define	DOC_MODE_PLAIN	(DOC_MODE_CTRL|0x7)	/* Rohausgabe */
+#define	DOC_MODE_PLAIN	(DOC_MODE_CTRL|0x2)	/* Rohausgabe */
+#define	DOC_MODE_VERB	(DOC_MODE_CTRL|0x3)	/* Verbatim */
+#define	DOC_MODE_MAN	(DOC_MODE_CTRL|0x4)	/* Handbuchsource */
+#define	DOC_MODE_TEX	(DOC_MODE_CTRL|0x5)	/* TeX-Source */
+#define	DOC_MODE_HTML	(DOC_MODE_CTRL|0x6)	/* HTML-Source */
 
 /*	Sonstige Umgebungen
 */
@@ -150,8 +151,8 @@ If not, write to the Free Software Foundation, Inc.,
 #define	DOC_ENV_INTRO	(DOC_ENV_CTRL|0x1)	/* Einleitung */
 #define	DOC_ENV_QUOTE	(DOC_ENV_CTRL|0x2)	/* Einrückung */
 #define	DOC_ENV_FORMULA	(DOC_ENV_CTRL|0x4)	/* Formelsatz */
-#define	DOC_ENV_TAG	(DOC_ENV_CTRL|0x5)	/* Beschreibungslabel */
-#define	DOC_ENV_FIG	(DOC_ENV_CTRL|0x6)	/* Tabellenumgebung */
+#define	DOC_ENV_TABLE	(DOC_ENV_CTRL|0x5)	/* Tabellenumgebung */
+#define	DOC_ENV_FIG	(DOC_ENV_CTRL|0x6)	/* Bildumgebung */
 #define	DOC_ENV_TAB	(DOC_ENV_CTRL|0x7)	/* Tabelle */
 #define	DOC_ENV_URL	(DOC_ENV_CTRL|0x8)	/* URL */
 #define	DOC_ENV_CODE	(DOC_ENV_CTRL|0x9)	/* Befehlszeilen */

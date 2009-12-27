@@ -1,5 +1,6 @@
 /*
-Übersichten
+:*:figures and tables
+:de:Abbildungen und Tabellen
 
 $Copyright (C) 1999 Erich Frühstück
 This file is part of EFEU.
@@ -20,25 +21,48 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-Übersicht
+:*:figure
+	$1 |[|<pos>|]|
+:de:Abbildung
 	$1 |[|<pos>|]|
 
-Der Befehl $1 beginnt eine gleitende Übersicht.
+:*:The command $1 starts a new figure environment.
+:de:Der Befehl $1 beginnt eine gleitende Abbildung.
 
 \def\fig	newenv('f', xexpand(ParseOpt(cin, true)));
 
-Über- und Unterschriften für Übersichten
+:*:table
+	$1 |[|<pos>|]|
+:de:Tabelle
+	$1 |[|<pos>|]|
+
+:*:The command $1 starts a new table environment.
+:de:Der Befehl $1 beginnt eine gleitende Tabelle.
+
+\def\table	newenv('t', xexpand(ParseOpt(cin, true)));
+
+:*:figure or table caption
+	$1 |[|<short form>|]| <title>
+:de:Über- und Unterschriften für Übersichten
 	$1 |[|<Kurzform>|]| <Überschrift>
 
-Der Befehl $1 setzt eine Über- bzw. Unterschrift in einer gleitenden
+:*:The command sets the title for a figure or table.
+:de:Der Befehl $1 setzt eine Über- bzw. Unterschrift in einer gleitenden
 Übersicht.
 
 \def\caption	section('F', ParseOpt(cin, true), ParseLine(cin, true));
 
-Tabelle
-	$1 |[|<pos>|]| <fmt>
+:*:tabular
+	$1 |[|<pos>|]| <fmt>\br
+	<tab lines>
+:de:Tabellensatz
+	$1 |[|<pos>|]| <fmt>\br
+	<Tabellenzeilen>
 
-Der Befehl $1 beginnt eine Tabelle mit vertiklarer Ausruchtung <pos>
-und Spaltenformartierung <fmt>.
+:*:The command $1 starts a tabular with vertikal adjustment <pos>
+and column format <fmt>. The tabular ends by the first empty line.
+:de:Der Befehl $1 beginnt eine Tabelle mit vertiklarer Ausrichtung <pos>
+und Spaltenformartierung <fmt>. Die Tabellendefinition endet
+bei der ersten Leerzeile.
 
 \def\tab	tab(ParseOpt(cin, true), ParseLine(cin));

@@ -133,11 +133,11 @@ static void keyline (SrcData_t *data, int c)
 	{
 		reg_set(1, mstrncpy(decl->def + decl->start,
 			decl->end - decl->start));
-		aus = io_strbuf(data->synopsis);
+		aus = io_strbuf(data->doc.synopsis);
 		Decl_print(decl, aus);
 		io_close(aus);
-		sb_printf(data->tab[BUF_DESC], "\n/* %s */\n", reg_get(1));
-		SrcData_copy(data, data->tab[BUF_DESC]);
+		sb_printf(data->doc.tab[BUF_DESC], "\n/* %s */\n", reg_get(1));
+		SrcData_copy(data, data->doc.tab[BUF_DESC]);
 	}
 	else	SrcData_copy(data, NULL);
 
@@ -176,8 +176,8 @@ void SrcData_eval (SrcData_t *data)
 	{
 		strbuf_t *buf = new_strbuf(0);
 		SrcData_copy(data, buf);
-		memfree(data->var[VAR_TITLE]);
-		data->var[VAR_TITLE] = get_title(buf);
+		memfree(data->doc.var[VAR_TITLE]);
+		data->doc.var[VAR_TITLE] = get_title(buf);
 	}
 
 	while ((c = skip_space(data->ein, data->buf)) != EOF)

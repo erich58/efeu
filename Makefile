@@ -21,4 +21,4 @@ all:: config
 	($(SETENV); cd build; make all)
 
 clean::
-	rm -rf include ppinclude build lib bin doc
+	rm -rf include ppinclude build lib bin doc man

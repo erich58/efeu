@@ -40,7 +40,7 @@ static void pp_include (SrcData_t *data, const char *name)
 {
 	SrcData_copy(data, NULL);
 
-	if	(!data->var[VAR_HEAD])
+	if	(!data->doc.var[VAR_HEAD])
 	{
 		sb_puts("$header ", data->buf);
 		ppcopy(data->ein, data->buf, NULL);
@@ -58,21 +58,21 @@ static void pp_define (SrcData_t *data, const char *name)
 	if	(sb_getpos(data->buf) && *p != '_')
 	{
 		reg_cpy(1, p);
-		sb_puts("\\index[", data->synopsis);
-		sb_puts(p, data->synopsis);
-		sb_puts("]\n", data->synopsis);
-		sb_puts(p, data->synopsis);
+		sb_puts("\\index[", data->doc.synopsis);
+		sb_puts(p, data->doc.synopsis);
+		sb_puts("]\n", data->doc.synopsis);
+		sb_puts(p, data->doc.synopsis);
 
 		if	(io_peek(data->ein) == '(')
 		{
-			io_t *aus = io_strbuf(data->synopsis);
-			sb_putc(io_getc(data->ein), data->synopsis);
+			io_t *aus = io_strbuf(data->doc.synopsis);
+			sb_putc(io_getc(data->ein), data->doc.synopsis);
 			copy_block(data->ein, aus, ')');
 			io_close(aus);
 		}
 
-		sb_puts("\n\n", data->synopsis);
-		SrcData_copy(data, data->tab[BUF_DESC]);
+		sb_puts("\n\n", data->doc.synopsis);
+		SrcData_copy(data, data->doc.tab[BUF_DESC]);
 	}
 	else	SrcData_copy(data, NULL);
 
@@ -90,17 +90,17 @@ void s2d_hdr (const char *name, io_t *ein, io_t *aus)
 {
 	SrcData_t data;
 
-	SrcData_init(&data, ein, aus);
-	data.var[VAR_NAME] = bname(name);
-	data.var[VAR_HEAD] = msprintf(IncFmt ? IncFmt : "%#s", name);
+	SrcData_init(&data, ein);
+	data.doc.var[VAR_NAME] = bname(name);
+	data.doc.var[VAR_HEAD] = msprintf(IncFmt ? IncFmt : "%#s", name);
 	data.ppdef = hdr_ppdef;
 	data.ppdim = tabsize(hdr_ppdef);
 	data.mask = DECL_TYPE|DECL_STRUCT;
 	io_printf(aus, "\\mpage[%s] %s\n", Secnum ? Secnum : "7",
-		data.var[VAR_NAME]);
+		data.doc.var[VAR_NAME]);
 	reg_cpy(1, name);
 	SrcData_eval(&data);
-	SrcData_clean(&data);
+	SrcData_write(&data, aus);
 }
 
 
@@ -115,14 +115,14 @@ void s2d_src (const char *name, io_t *ein, io_t *aus)
 {
 	SrcData_t data;
 
-	SrcData_init(&data, ein, aus);
-	data.var[VAR_NAME] = bname(name);
+	SrcData_init(&data, ein);
+	data.doc.var[VAR_NAME] = bname(name);
 	data.ppdef = src_ppdef;
 	data.ppdim = tabsize(src_ppdef);
 	data.mask = DECL_VAR|DECL_FUNC;
 	io_printf(aus, "\\mpage[%s] %s\n", Secnum ? Secnum : "3",
-		data.var[VAR_NAME]);
+		data.doc.var[VAR_NAME]);
 	reg_cpy(1, name);
 	SrcData_eval(&data);
-	SrcData_clean(&data);
+	SrcData_write(&data, aus);
 }

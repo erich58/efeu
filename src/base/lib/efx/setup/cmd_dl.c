@@ -97,7 +97,7 @@ static void f_loadlib (Func_t *func, void *rval, void **arg)
 
 static void f_loadlib(Func_t *func, void *rval, void **arg)
 {
-	io_printf(ioerr, "loadlib: not implementet\n");
+	io_printf(ioerr, "loadlib: not implemented\n");
 }
 
 #endif

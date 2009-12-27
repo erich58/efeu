@@ -202,5 +202,5 @@ void memcheck (void)
 /*
 $SeeAlso
 \mref{alloctab(3)}, \mref{lmalloc(3)}.\br
-\mref{malloc(3S)}, \mref{stdio(3S)} im @PRM.
+\mref{malloc(3S)}, \mref{stdio(3S)} @PRM.
 */

@@ -50,19 +50,30 @@ void SetInfoPath (const char *path)
 
 /*	Basispfade
 */
+#if	0
 	sb_putc('.', sb);
+#endif
 
-	if	(path)	sb_putc(':', sb), sb_puts(path, sb);
+	if	(path)
+	{
+		if	(sb_getpos(sb))	sb_putc(':', sb);
+
+		sb_puts(path, sb);
+	}
 
 /*	Systemsuchpfade
 */
 	if	(LangType.language != NULL)
 	{
-		sb_printf(sb, ":%s/lib/eis/%s", TOP, LangType.language);
+		if	(sb_getpos(sb))	sb_putc(':', sb);
+
+		sb_printf(sb, "%s/lib/eis/%s", TOP, LangType.language);
 		sb_printf(sb, ":%s/lib/efeu/%s/info", TOP, LangType.language);
 	}
 
-	sb_printf(sb, ":%s/lib/eis", TOP);
+	if	(sb_getpos(sb))	sb_putc(':', sb);
+
+	sb_printf(sb, "%s/lib/eis", TOP);
 	sb_printf(sb, ":%s/lib/efeu/info", TOP);
 
 	memfree(InfoPath);

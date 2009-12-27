@@ -193,7 +193,7 @@ von Feldern an Funktionen wie |qsort| und |bsearch|.
 /*
 $SeeAlso
 \mref{vbsearch(3)}, \mref{config(5)}, \mref{admin(5)}.\br
-\mref{bsearch(3C)}, \mref{qsort(3C)} im @PRM.
+\mref{bsearch(3C)}, \mref{qsort(3C)} @PRM.
 */
 
 #endif	/* EFEU/types.h */
