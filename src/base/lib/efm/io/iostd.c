@@ -26,7 +26,7 @@ If not, write to the Free Software Foundation, Inc.,
 /*	Lesen von Standardeingabe
 */
 
-static int std_get (void *ptr)
+static int std_get (IO *io)
 {
 	return getchar();
 }
@@ -35,7 +35,7 @@ static int std_get (void *ptr)
 /*	Zeichen nach Standardausgabe schreiben
 */
 
-static int std_put (int c, void *ptr)
+static int std_put (int c, IO *io)
 {
 	return putchar(c);
 }
@@ -44,12 +44,12 @@ static int std_put (int c, void *ptr)
 /*	Zeichen nach Standardfehler schreiben
 */
 
-static int err_put (int c, void *ptr)
+static int err_put (int c, IO *io)
 {
 	return putc(c, stderr);
 }
 
-static int std_ctrl (void *ptr, int c, va_list list)
+static int std_ctrl (IO *io, int c, va_list list)
 {
 	switch (c)
 	{
@@ -57,19 +57,19 @@ static int std_ctrl (void *ptr, int c, va_list list)
 	case IO_FDOUT:	return fileno(stdout);
 	case IO_FLUSH:	return fflush(stdout);
 	case IO_CLOSE:	return 0;
-	case IO_IDENT:	*va_arg(list, char **) = ptr; return 0;
+	case IO_IDENT:	*va_arg(list, char **) = io->data; return 0;
 	default:	return EOF;
 	}
 }
 
-static int err_ctrl (void *ptr, int c, va_list list)
+static int err_ctrl (IO *io, int c, va_list list)
 {
 	switch (c)
 	{
 	case IO_FDOUT:	return fileno(stderr);
 	case IO_FLUSH:	return fflush(stderr);
 	case IO_CLOSE:	return 0;
-	case IO_IDENT:	*va_arg(list, char **) = ptr; return 0;
+	case IO_IDENT:	*va_arg(list, char **) = io->data; return 0;
 	default:	return EOF;
 	}
 }

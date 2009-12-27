@@ -89,9 +89,9 @@ extern int DocDrv_plain (void *ptr, int c)
 /*	Ausgabestruktur
 */
 
-static int drv_put (int c, void *ptr)
+static int drv_put (int c, IO *io)
 {
-	DocDrv *drv = ptr;
+	DocDrv *drv = io->data;
 
 	if	(drv->skip)	return c;
 
@@ -120,9 +120,9 @@ static int drv_sym (DocDrv *drv, const char *name)
 	return 0;
 }
 
-static int drv_ctrl (void *ptr, int req, va_list list)
+static int drv_ctrl (IO *io, int req, va_list list)
 {
-	DocDrv *drv = ptr;
+	DocDrv *drv = io->data;
 	int stat;
 
 	switch (req)

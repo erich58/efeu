@@ -63,12 +63,6 @@ char *ExpandPath (const char *name);
 void proc_clean (void (*clean) (void *par), void *par);
 void proc_doclean (void);
 
-/*	Fehlermeldungen
-*/
-
-void dbg_note (const char *cl, const char *fmt, const char *argdef, ...);
-void dbg_error (const char *cl, const char *fmt, const char *argdef, ...);
-
 /*	shared objects
 */
 

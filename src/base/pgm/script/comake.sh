@@ -21,7 +21,7 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 # $pconfig
-# Version="$Id: comake.sh,v 1.1 2008-06-29 20:25:47 ef Exp $"
+# Version="$Id: comake.sh,v 1.2 2009-10-16 20:43:35 ef Exp $"
 # t|
 #	:*:run make in top directory
 #	:de:make im Hauptverzeichnis aufrufen
@@ -96,7 +96,7 @@ if [ -n "$use_top" ]; then
 	:
 elif [ -n "$subdir" ]; then
 	top=$top/build/$subdir
-else
+elif [ "$list" != " " ]; then
 	top=$top/build
 
 	for x in $list
@@ -107,6 +107,8 @@ else
 			top=$top/$x.d
 		fi
 	done
+elif [ -f $top/build/Makefile ]; then
+	top=$top/build
 fi
 
 cd $top || exit 1

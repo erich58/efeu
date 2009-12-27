@@ -41,9 +41,9 @@ typedef struct {
 /*	Zeichen lesen
 */
 
-static int subio_get (void *ptr)
+static int subio_get (IO *io)
 {
-	SUBIO *subio = ptr;
+	SUBIO *subio = io->data;
 	int c;
 
 	switch (subio->save)
@@ -98,9 +98,9 @@ static int subio_get (void *ptr)
 /*	Kontrollfunktion
 */
 
-static int subio_ctrl (void *ptr, int req, va_list list)
+static int subio_ctrl (IO *io, int req, va_list list)
 {
-	SUBIO *subio = ptr;
+	SUBIO *subio = io->data;
 	int stat;
 
 	switch (req)

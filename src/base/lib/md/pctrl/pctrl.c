@@ -27,8 +27,8 @@ If not, write to the Free Software Foundation, Inc.,
 int pctrl_fsize = 10;
 char *pctrl_pgfmt = "a4";
 
-static int pf_put (int c, void *pf);
-static int pf_ctrl (void *data, int req, va_list list);
+static int pf_put (int c, IO *io);
+static int pf_ctrl (IO *io, int req, va_list list);
 
 typedef struct {
 	char *name;	/* Name */
@@ -95,9 +95,9 @@ IO *io_pctrl(IO *io, const char *name)
 /*	Zeichen ausgeben
 */
 
-static int pf_put (int c, void *data)
+static int pf_put (int c, IO *io)
 {
-	PCTRL *pf = data;
+	PCTRL *pf = io->data;
 	return pf->put ? pf->put(c, pf) : 0;
 }
 
@@ -105,9 +105,9 @@ static int pf_put (int c, void *data)
 /*	Kontrollfunktion
 */
 
-static int pf_ctrl (void *data, int req, va_list list)
+static int pf_ctrl (IO *io, int req, va_list list)
 {
-	PCTRL *pf = data;
+	PCTRL *pf = io->data;
 
 	if	(req == IO_CLOSE)
 	{

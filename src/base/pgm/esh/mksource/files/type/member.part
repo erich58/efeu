@@ -13,6 +13,6 @@ void TypeDef::member (str name, str desc, str body)
 	f.body(body, t_name);
 	f.write(false);
 
-	s_mtab += psub("\t{ $2%#s, NULL, m_$1_$2, NULL, $4%#s },\n",
+	s_mtab += psub("\t{ $[2;%#s], NULL, m_$1_$2, NULL, $[4;%#s] },\n",
 		t_name, name, type, desc);
 }

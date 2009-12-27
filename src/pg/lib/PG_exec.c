@@ -53,7 +53,7 @@ int PG_exec (PG *pg, const char *cmd, ExecStatusType stat)
 
 	if	(pg->lock)
 	{
-		dbg_note("PG", M_LOCK, NULL);
+		PG_info(pg, M_LOCK, NULL);
 		return 0;
 	}
 
@@ -67,7 +67,7 @@ int PG_exec (PG *pg, const char *cmd, ExecStatusType stat)
 
 	if	(pg->res == NULL)
 	{
-		dbg_note("PG", M_NOMEM, NULL);
+		PG_info(pg, M_NOMEM, NULL);
 		return 0;
 	}
 
@@ -78,8 +78,8 @@ int PG_exec (PG *pg, const char *cmd, ExecStatusType stat)
 	case PGRES_BAD_RESPONSE:
 	case PGRES_NONFATAL_ERROR:
 	case PGRES_FATAL_ERROR:
-		dbg_note("PG", M_EXEC, "s", PQresultErrorMessage(pg->res));
-		dbg_note("PG", M_CMD, "s", cmd);
+		PG_info(pg, M_EXEC, "s", PQresultErrorMessage(pg->res));
+		PG_info(pg, M_CMD, "s", cmd);
 		PG_clear(pg);
 		return 0;
 		break;
@@ -89,9 +89,9 @@ int PG_exec (PG *pg, const char *cmd, ExecStatusType stat)
 	
 	if	(stat != PGRES_EMPTY_QUERY && res != stat)
 	{
-		dbg_note("PG", M_STAT,
+		PG_info(pg, M_STAT,
 			"ss", PQresStatus(res), PQresStatus(stat));
-		dbg_note("PG", M_CMD, "s", cmd);
+		PG_info(pg, M_CMD, "s", cmd);
 		PG_clear(pg);
 		return 0;
 	}

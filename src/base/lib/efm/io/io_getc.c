@@ -38,7 +38,7 @@ int io_getc (IO *io)
 	{
 		int c;
 
-		if	((c = (*io->get)(io->data)) != EOF)
+		if	((c = (*io->get)(io)) != EOF)
 			return c;
 
 		if	(io_ctrl(io, IO_RESTORE, io, NULL) != EOF)
@@ -68,7 +68,7 @@ int io_peek (IO *io)
 
 	if	(io->get)
 	{
-		if	((c = (*io->get)(io->data)) != EOF)
+		if	((c = (*io->get)(io)) != EOF)
 			return io->save_buf[io->nsave++] = (unsigned char) c;
 
 		if	(io_ctrl(io, IO_RESTORE, io, NULL) != EOF)

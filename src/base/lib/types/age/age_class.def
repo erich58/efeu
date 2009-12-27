@@ -47,7 +47,7 @@ return i + 1;
 !, ID, BaseName);
 
 StdFunc("static void $1_create",
-	"EfiClassArg *def, const char *opt, const char *arg",
+	"EfiClassArg *def, const char *opt, const char *arg, void *pptr",
 	string !
 EfiObjList *list;
 EfiType *type;
@@ -91,7 +91,7 @@ def->par = par;
 
 fpsub(src, string !
 static EfiClass $1_class = EFI_CLASS(NULL,
-	"cut", "=list", $1_create,
+	"cut", "=list", $1_create, NULL,
 	"split among threshold values");
 !, ID, BaseName);
 
@@ -119,7 +119,7 @@ virtual promotion void TypeDef::test(str name, str desc,
 	f.write(false);
 	fpsub(src, string !
 static EfiClassDef $1_$2_vardef = {
-	$2%#s, $3%#s,
+	$[2;%#s], $[3;%#s],
 	$1_$2_dim, $1_$2_tab, $1_$2_idx, NULL,
 };
 !, t_name, name, desc);

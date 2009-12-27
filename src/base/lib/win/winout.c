@@ -23,9 +23,9 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/efwin.h>
 #include <EFEU/ioctrl.h>
 
-static int win_put (int c, void *ptr);
-static int win_ctrl (void *ptr, int req, va_list list);
-static int win_cctrl (void *ptr, int req, va_list list);
+static int win_put (int c, IO *io);
+static int win_ctrl (IO *io, int req, va_list list);
+static int win_cctrl (IO *io, int req, va_list list);
 
 
 IO *io_winopen(WinSize *ws)
@@ -60,9 +60,9 @@ IO *io_winout(WINDOW *win)
 /*	Zeichen ausgeben
 */
 
-static int win_put(int c, void *ptr)
+static int win_put(int c, IO *io)
 {
-	WINDOW *win = ptr;
+	WINDOW *win = io->data;
 	waddch(win, c);
 	wrefresh(win);
 	return 1;
@@ -72,9 +72,9 @@ static int win_put(int c, void *ptr)
 /*	Kontrollfunktion
 */
 
-static int win_ctrl(void *ptr, int req, va_list list)
+static int win_ctrl(IO *io, int req, va_list list)
 {
-	WINDOW *win = ptr;
+	WINDOW *win = io->data;
 
 	switch (req)
 	{
@@ -87,14 +87,12 @@ static int win_ctrl(void *ptr, int req, va_list list)
 	}
 }
 
-static int win_cctrl(void *ptr, int req, va_list list)
+static int win_cctrl(IO *io, int req, va_list list)
 {
-	WINDOW *win = ptr;
-
 	if	(req == IO_CLOSE)
 	{
-		DelWindow(win);
+		DelWindow(io->data);
 		return 0;
 	}
-	else	return win_ctrl(win, req, list);
+	else	return win_ctrl(io, req, list);
 }

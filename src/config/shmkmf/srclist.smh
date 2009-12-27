@@ -30,6 +30,9 @@ _tmplist=$TMP/.tmplist
 
 # $alias
 # $pconfig !
+# r |
+#	:*:create relative path names
+#	:de:relative Pfadnamen erzeugen 
 # c:cmd |
 #	:*:determines the command <cmd> to collect source files. The default
 #	value is |find|.
@@ -91,6 +94,7 @@ _tmplist=$TMP/.tmplist
 mf_srclist ()
 {
 	_srclist=SourceList
+	_srclist_rel=
 	_srclist_cmd=find
 	_srclist_top="$SRC"
 	_srclist_post="-type f -name \"[!.]*[!~]\" -print | sort"
@@ -98,6 +102,7 @@ mf_srclist ()
 	while [ -n "$1" ]
 	do
 		case "$1" in
+		-r)	_srclist_rel=1; shift 1;;
 		-c)	_srclist_cmd="$2"; _srclist_post=""; shift 2;;
 		-p)	_srclist_post="$_srclist_post $2"; shift 2;;
 		-n)	_srclist_cmd="find";
@@ -114,6 +119,12 @@ mf_srclist ()
 	1)	_srclist_top="$1";;
 	*)	shmkmf_warg mf_srclist;;
 	esac
+
+	if	[ "$_srclist_rel" ]; then
+		_srclist_cmd="(cd $_srclist_top; $_srclist_cmd";
+		_srclist_top="."
+		_srclist_post="$_srclist_post)";
+	fi
 
 	eval $_srclist_cmd $_srclist_top $_srclist_post > $_srclist
 

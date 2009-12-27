@@ -83,7 +83,7 @@ void AddType (EfiType *type)
 		type->order = TypeTabChangeCount;
 
 	if	(nkt_insert(&TypeTab, type->name, type))
-		dbg_note(NULL, "[efmain:157]", "s", type->name);
+		log_note(NULL, "[efmain:157]", "s", type->name);
 }
 
 EfiType *GetType (const char *name)

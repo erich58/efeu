@@ -65,6 +65,9 @@ static struct {
 	{ 'a',  "gz",	"GZIP",	"|gzip $2 -c >> $1" },
 	{ 'r',  "bz2",	NULL,	"|bzip2 -cd $1" },
 	{ 'w',  "bz2",	NULL,	"|bzip2 -c > $1" },
+	{ 'r',  "GZ",	NULL,	"|gzip -cdf $1" },
+	{ 'w',  "GZ",	"GZIP", "|gzip $2 -c > $1" },
+	{ 'a',  "GZ",	"GZIP",	"|gzip $2 -c >> $1" },
 };
 
 #define	zcmp(x,m,e)	((x).mode == (m) && strcmp((x).ext, (e)) == 0)
@@ -101,7 +104,7 @@ static FILE *open_pipe (const char *name, int mode)
 	FILE *file = popen((char *) name + 1, ptype[mode]);
 	
 	if	(file == NULL)
-		dbg_error(NULL, FMT_2, "ss", name + 1, ptype[mode]);
+		log_error(NULL, FMT_2, "ss", name + 1, ptype[mode]);
 
 	filenotice(name, ptype[mode], file, pclose);
 	return file;
@@ -115,7 +118,7 @@ static FILE *open_file (const char *name, int mode)
 	FILE *file = fopen(name, ftype[mode]);
 	
 	if	(file == NULL)
-		dbg_error(NULL, FMT_3, "ss", name, ftype[mode]);
+		log_error(NULL, FMT_3, "ss", name, ftype[mode]);
 
 	filenotice(name, ftype[mode], file, fclose);
 	return file;
@@ -139,7 +142,7 @@ FILE *fileopen (const char *name, const char *mode)
 	case 'w':	omode = MODE_WRITE; break;
 	case 'a':	omode = MODE_APPEND; break;
 	default:
-		dbg_error(NULL, FMT_1, "ss", name, mode);
+		log_error(NULL, FMT_1, "ss", name, mode);
 		return NULL;
 	}
 
@@ -165,7 +168,7 @@ FILE *fileopen (const char *name, const char *mode)
 	if	(*name == '|')
 	{
 		if	(pipe_lock)
-			dbg_error(NULL, FMT_4, "ss", name, omode);
+			log_error(NULL, FMT_4, "ss", name, omode);
 
 		return open_pipe(name, omode);
 	}

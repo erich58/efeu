@@ -28,9 +28,12 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/Debug.h>
 #include <EFEU/CmdPar.h>
 
+static LogControl err_log = LOG_CONTROL("IO", LOGLEVEL_ERR);
+static LogControl note_log = LOG_CONTROL("IO", LOGLEVEL_NOTE);
+
 /*
 Die Funktion |$1| gibt eine Meldung zur Fehlerklasse |IO| vom Level
-|DBG_NOTE| aus. Der Parameter 0 enthält wird mit |io_ident()|
+|DBG_NOTE| aus. Der Parameter 0 wird mit |io_ident()|
 auf die Kennung der IO-Struktur <io> gesetzt.
 */
 
@@ -39,7 +42,7 @@ void io_note (IO *io, const char *fmt, const char *def, ...)
 	va_list list;
 
 	va_start(list, def);
-	dbg_vpsub("IO", DBG_NOTE, fmt, rd_ident(io), def, list);
+	log_psubvarg(&note_log, fmt, rd_ident(io), def, list);
 	va_end(list);
 }
 
@@ -57,7 +60,7 @@ void io_error (IO *io, const char *fmt, const char *def, ...)
 	va_list list;
 
 	va_start(list, def);
-	dbg_vpsub("IO", DBG_ERR, fmt, rd_ident(io), def, list);
+	log_psubvarg(&err_log, fmt, rd_ident(io), def, list);
 	va_end(list);
 
 	if	(io_ctrl(io, IO_ERROR) == EOF)

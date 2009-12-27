@@ -15,7 +15,7 @@ static mdaxis *make_axis(StrPool *sbuf, mdaxis *x1, mdaxis *x2, unsigned mask)
 	{
 		if	(cmp_axis(x1, x2, MDXCMP_DIM) != 0)
 		{
-			dbg_note(NULL, "[mdmat:92]", "ss",
+			log_note(NULL, "[mdmat:92]", "ss",
 				StrPool_get(x1->sbuf, x1->i_name),
 				StrPool_get(x2->sbuf, x2->i_name));
 			*ptr = cpy_axis(sbuf, x1->dim >= x2->dim ? x1 : x2, mask);
@@ -111,7 +111,7 @@ mdmat *md_assign (const char *name, mdmat *m1, mdmat *m2)
 
 	if	(func == NULL)
 	{
-		dbg_note(NULL, "[mdmat:94]", "s", name); 
+		log_note(NULL, "[mdmat:94]", "s", name); 
 	}
 	else if	(m2)
 	{
@@ -140,13 +140,13 @@ mdmat *md_term (EfiVirFunc *virfunc, mdmat *m1, mdmat *m2)
 
 	if	(func == NULL)
 	{
-		dbg_note(NULL, "[mdmat:91]", NULL); 
+		log_note(NULL, "[mdmat:91]", NULL); 
 		return rd_refer(m1);
 	}
 
 	if	(func->type == NULL)
 	{
-		dbg_note(NULL, "[mdmat:93]", "s", func->name); 
+		log_note(NULL, "[mdmat:93]", "s", func->name); 
 		return rd_refer(m1);
 	}
 

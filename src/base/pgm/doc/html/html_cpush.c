@@ -29,7 +29,7 @@ typedef struct {
 	void *data;
 } ENTRY;
 
-static ALLOCTAB(entry_tab, 32, sizeof(ENTRY));
+static ALLOCTAB(entry_tab, "HTMLCmd-Stack", 32, sizeof(ENTRY));
 
 void HTMLCMD_note (HTML *html, void *data)
 {

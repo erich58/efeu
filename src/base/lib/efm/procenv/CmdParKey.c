@@ -25,7 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/mstring.h>
 #include <EFEU/memalloc.h>
 
-static ALLOCTAB(keytab, 1024, sizeof(CmdParKey));
+static ALLOCTAB(keytab, "CmdParKey", 30, sizeof(CmdParKey));
 
 /*
 Die Funktion |$1| liefert eine neue Parameterkennung

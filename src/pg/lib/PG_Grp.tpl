@@ -42,7 +42,7 @@ void ParFunc (str name, str expr)
 		"$1 *grp, char *arg", NAME, name);
 	f.body(expr);
 	f.write(false);
-	ptab += psub("\t{ $2%#s, $1_par_$2 },\n", NAME, name);
+	ptab += psub("\t{ $[2;%#s], $1_par_$2 },\n", NAME, name);
 }
 
 ParFunc("label", "grp->label = arg;");

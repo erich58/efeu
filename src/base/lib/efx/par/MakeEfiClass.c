@@ -66,7 +66,7 @@ int MakeEfiClass (EfiType *type, const char *name, const char *def)
 	else if	(cl->create)
 	{
 		EfiClassArg arg;
-		cl->create(&arg, x->opt, x->arg);
+		cl->create(&arg, type, x->opt, x->arg, cl->par);
 		AddEfiClass(type->vtab, name, mstrcpy(def),
 			arg.type, arg.update, arg.par);
 		stat = 1;

@@ -25,7 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/mstring.h>
 #include <EFEU/memalloc.h>
 
-static ALLOCTAB(deftab, 1024, sizeof(CmdParDef));
+static ALLOCTAB(deftab, "CmdParDef", 30, sizeof(CmdParDef));
 
 /*
 Die Funktion |$1| liefert eine neue Parameterdefinition.

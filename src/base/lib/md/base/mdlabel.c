@@ -10,7 +10,7 @@ typedef struct {
 	int idx;
 } KEY;
 
-static ALLOCTAB(label_tab, 32, sizeof(MdAxisLabel));
+static ALLOCTAB(label_tab, "MdAxisLabel", 32, sizeof(MdAxisLabel));
 
 static void del_key (void *ptr);
 static int get_idx (VecBuf *tab, const char *name);

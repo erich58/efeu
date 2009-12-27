@@ -37,7 +37,7 @@ mdmat *md_prod (mdmat *base)
 	
 	if	(par.mul == NULL)
 	{
-		dbg_error(NULL, "[mdmat:64]", "mm",
+		log_error(NULL, "[mdmat:64]", "mm",
 			type2str(base->type), type2str(base->type));
 		return NULL;
 	}

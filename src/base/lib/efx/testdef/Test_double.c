@@ -27,6 +27,8 @@ If not, write to the Free Software Foundation, Inc.,
 #define	NOTE	"[TestDef:fcmp]WARNING: " \
 	"Comparsion with float value may be unpredictable.\n"
 
+static LogControl note_ctrl = LOG_CONTROL("TestPar", LOGLEVEL_NOTE);
+
 typedef struct {
 	int (*test) (double a, double b, double val);
 	double a;
@@ -119,7 +121,7 @@ static void *make_par (const char *opt, const char *arg, void *ptr)
 	}
 	else
 	{
-		dbg_note("TestPar", NOTE, NULL);
+		log_note(&note_ctrl, NOTE, NULL);
 		par->test = nflag ? test_ne : test_eq;
 	}
 

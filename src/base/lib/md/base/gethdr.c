@@ -171,7 +171,7 @@ mdmat *md_gethdr(IO *io, int flag)
 	if	(md->type->recl != recl)
 	{
 		if	(flag)
-			dbg_error(NULL, "[mdmat:14]", "s", oname);
+			log_error(NULL, "[mdmat:14]", "s", oname);
 
 		rd_deref(md);
 		return NULL;

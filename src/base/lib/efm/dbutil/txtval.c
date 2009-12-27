@@ -68,7 +68,7 @@ unsigned txt_unsigned (const char *buf, int pos, int len)
 		case '.':	/* FALLTHROUGH */
 		case ',':	break;
 		default:
-			dbg_error(NULL, FMT_21, "dc", pos,
+			log_error(NULL, FMT_21, "dc", pos,
 				txt_char(buf, pos, 1));
 			break;
 		}
@@ -133,7 +133,7 @@ unsigned txt_base37 (const char *buf, int pos, int len)
 		case 'Z': case 'z':	val += 36; break;
 		default:
 
-			dbg_error(NULL, FMT_25, "dc", pos,
+			log_error(NULL, FMT_25, "dc", pos,
 				txt_char(buf, pos, 1));
 			break;
 		}

@@ -109,7 +109,7 @@ DataType DataType (str Name, str def = NULL, str base = NULL)
 	setup.line();
 	setup.line("setup_done = 1;");
 	setup.line("AddType(&Type_$1);", Name);
-	return (DataType) { Name, def, base, setup, DataBase(str) };
+	return (DataType) { Name, def, base, setup, NULL, NULL };
 }
 
 void DataType::setup (str fmt = NULL, ...)
@@ -134,8 +134,8 @@ void DataType::write (bool glob = true)
 	}
 	else	src << "static ";
 
-	fpsub(src, "EfiType Type_$1 = COMPLEX_TYPE($1%#s, $1%#s, ", dt_name);
-	fpsub(src, "sizeof($1), ", dt_name);
+	fpsub(src, "EfiType Type_$1 = COMPLEX_TYPE($[1;%#s], ", dt_name);
+	fpsub(src, "$[1;%#s], sizeof($1), ", dt_name);
 
 	if	(dt_recl)
 	{
@@ -151,7 +151,7 @@ void DataType::write (bool glob = true)
 	src << ", ";
 	src << (dt_base ? dt_base : "NULL");
 	src << ", NULL, NULL, NULL, ";
-	src << (dt_recl ? "0" : "TYPE_MALLOC");
+	src << (dt_recl == "0" ? "TYPE_MALLOC" : "0");
 	src << ");\n";
 
 	dt_setup.write(glob);

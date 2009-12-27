@@ -3,24 +3,36 @@
 #include <EFEU/io.h>
 #include <ctype.h>
 
+static char *tab[] = {
+	"size_t", "ssize_t", "ptrdiff_t",
+	"time_t",
+	"off_t",
+	"mode_t",
+	"regex_t",
+	"regmatch_t",
+	"wchar_t",
+
+	"int8_t", "int16_t", "int32_t", "int64_t", "intmax_t",
+	"uint8_t", "uint16_t", "uint32_t", "uint64_t", "uintmax_t",
+
+#if	1
+	"Type_t",
+	"Lval_t",
+	"List_t",
+	"Expr_t",
+#endif
+};
+
 static int check (const char *name)
 {
 	char *p = strrchr(name, '_');
+	int i;
 
 	if	(p == NULL)	return 0;
-
 	if	(strcmp(p, "_t") != 0)	return 0;
-	if	(strcmp(name, "size_t") == 0)	return 0;
-	if	(strcmp(name, "time_t") == 0)	return 0;
-	if	(strcmp(name, "off_t") == 0)	return 0;
-	if	(strcmp(name, "mode_t") == 0)	return 0;
-	if	(strcmp(name, "regex_t") == 0)	return 0;
-	if	(strcmp(name, "regmatch_t") == 0)	return 0;
 
-	if	(strcmp(name, "Type_t") == 0)	return 0;
-	if	(strcmp(name, "Lval_t") == 0)	return 0;
-	if	(strcmp(name, "List_t") == 0)	return 0;
-	if	(strcmp(name, "Expr_t") == 0)	return 0;
+	for (i = 0; i < tabsize(tab); i++)
+		if (strcmp(name, tab[i]) == 0) return 0;
 
 	return 1;
 }

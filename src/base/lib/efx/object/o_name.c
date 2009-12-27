@@ -32,8 +32,10 @@ static void n_copy (const EfiType *type, void *tg, const void *src);
 static EfiObj *n_meval (const EfiType *type, const void *ptr);
 static EfiObj *n_seval (const EfiType *type, const void *ptr);
 
-EfiType Type_mname = EVAL_TYPE("_MemberName_", EfiName, n_meval, n_clean, n_copy);
-EfiType Type_sname = EVAL_TYPE("_ScopeName_", EfiName, n_seval, n_clean, n_copy);
+EfiType Type_mname = EVAL_TYPE("_MemberName_", EfiName, n_meval,
+	NULL, n_clean, n_copy);
+EfiType Type_sname = EVAL_TYPE("_ScopeName_", EfiName, n_seval,
+	NULL, n_clean, n_copy);
 
 EfiName Buf_name = { NULL, NULL };
 
@@ -117,7 +119,7 @@ EfiObj *GetMember (EfiObj *obj, const char *name)
 		if	(type->dim)	break;
 	}
 
-	dbg_note(NULL, "[efmain:164]", "ss", obj->type->name, name);
+	log_note(NULL, "[efmain:164]", "ss", obj->type->name, name);
 	return NULL;
 }
 
@@ -134,6 +136,6 @@ EfiObj *GetScope (EfiObj *obj, const char *name)
 		if	(obj)	return obj;
 	}
 
-	dbg_note(NULL, "[efmain:166]", "s", name);
+	log_note(NULL, "[efmain:166]", "s", name);
 	return NULL;
 }

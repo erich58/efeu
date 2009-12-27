@@ -61,9 +61,9 @@ static void fpar_clear(FUNCPAR *par, int n)
 
 static int fpar_error(FUNCPAR *par, const char *fmt, int n)
 {
-	dbg_note(NULL, "[efmain:60]", NULL);
+	log_note(NULL, "[efmain:60]", NULL);
 	ListFunc(ioerr, par->func);
-	dbg_note(NULL, fmt, "d", n);
+	log_note(NULL, fmt, "d", n);
 	fpar_clear(par, n);
 	return 1;
 }
@@ -125,7 +125,7 @@ EfiObj *EvalFunc (EfiFunc *func, const EfiObjList *list)
 
 	if	(!IsFunc(func))
 	{
-		dbg_error(NULL, "[efmain:65]", NULL);
+		log_error(NULL, "[efmain:65]", NULL);
 		return NULL;
 	}
 

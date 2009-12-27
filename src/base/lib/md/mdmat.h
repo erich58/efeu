@@ -47,6 +47,8 @@ If not, write to the Free Software Foundation, Inc.,
 void SetupMdMat (void);
 void SetupMdTest (void);
 
+extern LogControl *md_err;
+extern LogControl *md_note;
 
 /*	Typedefinition für multidimensionale Matrizen
 */

@@ -136,7 +136,7 @@ mdlist *io_mdlist (IO *io, int flag)
 	}
 	else if	(c != EOF && !isspace(c))
 	{
-		dbg_error(NULL, "[mdmat:81]", "c", c);
+		log_error(NULL, "[mdmat:81]", "c", c);
 		io_close(tmp);
 		return NULL;
 	}

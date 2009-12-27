@@ -25,6 +25,7 @@ void TypeDef::enumdef (IO def, int recl = 4)
 
 	t_recl = (recl && recl < 4) ? recl : 4;
 	t_cname = "int";
+	t_base = "&Type_enum";
 	read_func = "Enum_read";
 	write_func = "Enum_write";
 	copy_func = "Enum_copy";
@@ -79,22 +80,46 @@ void TypeDef::xenumdef (IO def, int recl = 4)
 
 	t_recl = (recl && recl < 4) ? recl : 4;
 	t_cname = "int";
+	t_base = "&Type_enum";
 	read_func = "Enum_read";
 	write_func = "Enum_write";
 	copy_func = "Enum_copy";
 	s_setup += "type->flags |= TYPE_ENUM;\n";
+
+	Function f = Function("char *$1Label", "$1 val", t_name);
+	f.line("switch (val)");
+	f.beg();
 
 	while (getline(def, name, n, desc))
 	{
 		if	(name == "@end")	break;
 
 		enumerator(name, n, desc);
+		f.case(n, "return $(name:%#s);");
 	}
+
+	f.case(NULL, "break;");
+	f.end();
+	f.line("return NULL;");
+	f.write(false);
 
 	e_dim = 0;
 	s_setup += "SetFunc(0, NULL, \"$1 $1 (int)\", Enum_iconv);\n";
+	s_setup += "SetFunc(0, NULL, \"$1 $1 (str)\", Enum_sconv);\n";
 	s_setup += "SetFunc(0, NULL, \"int $1 ()\", Enum_iconv);\n";
 	s_setup += "SetFunc(0, NULL, \"unsigned $1 ()\", Enum_iconv);\n";
+	func("to_str", "restricted str $1 ()", string !
+int n = Val_int(arg[0]);
+char *p = $1Label(n);
+Val_str(rval) = p ? mstrcpy(p) : msprintf("%d", n);
+!);
+	func("fprint", "virtual int fprint (IO, $1)", string !
+IO *io = Val_ptr(arg[0]);
+int n = Val_int(arg[1]);
+char *p = $1Label(n);
+
+Val_int(rval) = p ? io_xprintf(io, "%#s", p) : io_xprintf(io, "%d", n);
+!);
 }
 
 static void TypeDef::label_func (bool glob)

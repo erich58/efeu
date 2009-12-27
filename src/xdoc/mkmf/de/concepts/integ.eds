@@ -14,8 +14,6 @@ Dazu richten wir zunächst im Hauptverzeichnis des Projektes das Verzeichnis
 |shmkmf| können einer aktuellen EFEU-Distribution entnommen werden.
 Quelle: |http://efeu.cybertec.at|, Unterverzeichnis: |src/config/shmkmf|.
 
-//\pipe[verbatim] cd ../../../src/config/shmkmf; ls -CR -I CVS
-
 \smh_init
 \smh_exec mkdir src
 \smh_exec mkdir shmkmf
@@ -27,8 +25,8 @@ Quelle: |http://efeu.cybertec.at|, Unterverzeichnis: |src/config/shmkmf|.
 \smh_exec cp $src/pasctrian.c src/tools
 \smh_exec cp $src/pasctrian.tex src/pasctrian
 
-Da jetzt |shmkmf| nicht mehr direkt Verfügbar ist, benötigen wir ein
-einfaches |Makefile| zur initialisierung des Builkprozesses. Im
+Da jetzt |shmkmf| nicht mehr direkt verfügbar ist, benötigen wir ein
+einfaches |Makefile| zur initialisierung des Buildprozesses. Im
 wesentlichen benötigen wir die Regel zur Generierung des Makefiles im
 |build|-Verzeichnis. Das vorher im Hauptverzeichnis plazierte
 |Config.make| wird nach |src| verschoben. Es besteht wiederum nur aus
@@ -36,18 +34,47 @@ einer Befehlszeile:
 \smh_create src/Config.make
 submake
 \end
+Die Optionen |-s| und |-w| werden nicht mehr benötigt, da die
+Trennung in Source-Zweig und Build-Zweig bereits im Makefile
+durchgeführt wird. Mehr dazu später.
 
 Das Makefile im Hauptverzeichnis hat folgenden Aufbau:
 \smh_exec cp $src/make.config Makefile
-\smh_exec cat Makefile
+\smh_exec[verbatim] cat Makefile
+
+Das Makefile besteht aus zwei Bereichen:
+*	Der Grundkonzeption des Generierungsprozesses
+*	Die Generierung des Basismakefiles für die Anwendung
+
+Die Grundkonzeption hängt von den jeweiligen Anforderungen ab.
+Üblicherweise wird hier über das Pseudoziel |all| das Hauptmakefile
+der Anwendung aktiviert. Zusätzlich sind im Beispiel noch die
+Aufräumregeln |purge| und |clean| definiert. Durch die saubere
+Trennung zwischenSourcen und generierten Dateien können hier einfach
+die Zielverzeichnisse gelöscht werden.
+
+Für die Generierung des Basismakefiles wird eine einfache
+Bootstrapregel benötigt, die Prüfung von Abhängigkeiten erfolgt
+implizit bei seiner Verwendung über den Aufruf mit dem Pseudoziel
+|all|. Daher wird das Makefile nur generiert, wenn es nicht schon existiert.
+Die Trennung in Source- und Build-Zweig erfolt durch Aufruf von
+|shmkmf| im Build-Zweig mit dem Pfad zum Sourcefile.
+Es empfiehlt sich, hier absolute Pfade zu verwenden, daher wird das
+Hauptverzeichnis wird mit |pwd| abgefragt und in einer
+Hilfsvariablen zwischengespeichert.
+
+Da die Skripts nicht in einer installierten Version vorliegen
+(Filezusatz |.sh|, Ausführbarkeitsrechte müssen nicht gesetzt sein),
+wird |shmkmf| über die Shell gestartet. An dieser Art des Aufrufs
+erkennt |shmkmf|, dass es nicht in der installierten Version
+aufgerufen wurde und berücksichtigt dies bei der Suche nach
+Konfigurationsdateien und bei den Aufrufkonventionen in den Make-Regeln.
 
 \smh_exec cp $src/shmkmf.config shmkmf.cfg
 \smh_exec cp $src/binom.config src/binom/Config.make
 \smh_exec cp $src/tools.config src/tools/Config.make
 \smh_exec cp $src/pasctrian.config src/pasctrian/Config.make
 
-XXXX
-\smh_exec[verbatim] diff -C 1 -r . /home/erich/test/mkmf
-XXXX
-//\smh_exec[verbatim] find . -type f -print | sort #|
+//\smh_exec make
+//\smh_exec[verbatim] ls -CR
 \smh_clean

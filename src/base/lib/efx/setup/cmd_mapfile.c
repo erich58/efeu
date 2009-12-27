@@ -66,7 +66,7 @@ static void f_load (EfiFunc *func, void *rval, void **arg)
 	MAP(rval) = MapFile_open(Val_str(arg[0]));
 
 	if	(!MAP(rval))
-		dbg_note(NULL, "$!: MapFile($1%#s): $2\n", "ss",
+		log_note(NULL, "$!: MapFile($[1;%#s]): $2\n", "ss",
 			Val_str(arg[0]), strerror(errno));
 }
 

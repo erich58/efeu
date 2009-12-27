@@ -39,7 +39,7 @@ void md_count (mdmat *ctab, const void *data)
 
 	if	(!ctab->x_priv)
 	{
-		dbg_note("md", "[mdmat:303]", NULL);
+		log_note(md_note, "[mdmat:303]", NULL);
 		return;
 	}
 

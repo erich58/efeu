@@ -23,7 +23,8 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 test $efeuprj_smh && return
-efeuprj_smh=1
+
+: ${make:=make}
 
 mf_rule -d usage " " "@efeuprj $SRC"
 mf_rule -d all
@@ -36,8 +37,8 @@ do
 	dir=`dirname $path`
 	mf_rule -d all $name
 	mf_rule -d clean $name.clean
-	mf_rule $name "$dep $name.d/Makefile" "cd $name.d; make all"
-	mf_rule $name.clean $name.d/Makefile "cd $name.d; make clean"
+	mf_rule $name "$dep $name.d/Makefile" "cd $name.d; $make all"
+	mf_rule $name.clean $name.d/Makefile "cd $name.d; $make clean"
 	mf_rule $name.d/Makefile "" \
 		"test -d $name.d || mkdir $name.d" \
 		"cd $name.d; shmkmf -t $TOP $dir"

@@ -41,14 +41,14 @@ Kennbuchstaben mit der folgenden Bedeutung:
 [x]	Vorzeichenloser Ganzzahlwert in Hexadezimaldarstellung
 [X]	Vorzeichenloser, 64-Bit Ganzzahlwert in Hexadezimaldarstellung
 [c]	Zeichen unter Hochkomma
+[*]     Folge von Zeichenketten bis zu einem Nullpointer
+[%]     Argument ist eine Formatanweisung mit Parametern
+        ACHTUNG: Die Parameter verbleiben in der Liste!
 */
 
 void arg_append (ArgList *args, const char *def, va_list list)
 {
-	int val;
-	unsigned uval;
-	uint64_t luval;
-	void *ptr;
+	char *p;
 
 	if	(def == NULL)	return;
 
@@ -66,42 +66,43 @@ void arg_append (ArgList *args, const char *def, va_list list)
 			arg_madd(args, va_arg(list, char *));
 			break;
 		case 'p':
-			ptr = va_arg(list, void *);
-			arg_madd(args, msprintf("%p", ptr));
+			arg_printf(args, "%p", va_arg(list, void *));
 			break;
 		case 'd':
-			val = va_arg(list, int);
-			arg_madd(args, msprintf("%d", val));
+			arg_printf(args, "%d", va_arg(list, int));
 			break;
 		case 'u':
-			uval = va_arg(list, unsigned);
-			arg_madd(args, msprintf("%u", uval));
+			arg_printf(args, "%u", va_arg(list, unsigned));
 			break;
 		case 'z':
-			arg_madd(args, msprintf("%zu", va_arg(list, size_t)));
+			arg_printf(args, "%zu", va_arg(list, size_t));
 			break;
 		case 'U':
-			luval = va_arg(list, uint64_t);
-			arg_madd(args, msprintf("%llu", luval));
+			arg_printf(args, "%llu", va_arg(list, uint64_t));
 			break;
 		case 'x':
-			uval = va_arg(list, unsigned);
-			arg_madd(args, msprintf("%#x", uval));
+			arg_printf(args, "%#x", va_arg(list, unsigned));
 			break;
 		case 'X':
-			luval = va_arg(list, uint64_t);
-			arg_madd(args, msprintf("%#llx", luval));
+			arg_printf(args, "%#llx", va_arg(list, uint64_t));
 			break;
 		case 'c':
-			val = va_arg(list, int);
-			arg_madd(args, msprintf("%#c", val));
+			arg_printf(args, "%#c", va_arg(list, int));
+			break;
+		case '%':
+			p = va_arg(list, char *);
+			StrPool_vprintf(arg_next(args), p, list);
+			break;
+		case '*':
+			while ((p = va_arg(list, char *)))
+				arg_cadd(args, p);
+
 			break;
 		default:
-			dbg_note("ArgList", "[efm:61]"
+			log_note(NULL, "[efm:61]"
 				"$!: ArgList: undefined format key $1.\n",
 				"c", *def);
-			break;
+			continue;
 		}
 	}
 }
-

@@ -121,9 +121,9 @@ static void hpost_lbl (HPOST *hpost, va_list list)
 /*	Zeichen ausgeben
 */
 
-static int hpost_put (int c, void *ptr)
+static int hpost_put (int c, IO *io)
 {
-	HPOST *hpost = ptr;
+	HPOST *hpost = io->data;
 	hpost->last = c;
 	return io_putc(c, hpost->tmp);
 }
@@ -388,9 +388,9 @@ static void hpost_create (HPOST *hpost)
 /*	Kontrollfunktion
 */
 
-static int hpost_ctrl (void *ptr, int req, va_list list)
+static int hpost_ctrl (IO *io, int req, va_list list)
 {
-	HPOST *hpost = ptr;
+	HPOST *hpost = io->data;
 
 	switch (req)
 	{

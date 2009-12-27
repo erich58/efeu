@@ -24,9 +24,9 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/ioctrl.h>
 #include <EFEU/mstring.h>
 
-static int conv_get (void *ptr)
+static int conv_get (IO *io)
 {
-	return ucs_to_latin9 (io_getucs(ptr));
+	return ucs_to_latin9 (io_getucs(io->data));
 }
 
 

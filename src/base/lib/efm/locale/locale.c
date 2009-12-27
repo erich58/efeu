@@ -87,7 +87,7 @@ struct LCStack {
 	LocaleDef locale;	/* Lokaledaten */
 };
 
-static ALLOCTAB(LCTAB, 8, sizeof(struct LCStack));
+static ALLOCTAB(LCTAB, "LCStack", 8, sizeof(struct LCStack));
 
 static struct LCStack *LocaleStack = NULL;
 

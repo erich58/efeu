@@ -167,7 +167,7 @@ static void linebreak (void)
 	}
 }
 
-static int part_put (int c, void *ptr)
+static int part_put (int c, IO *out)
 {
 	switch (c)
 	{
@@ -530,7 +530,7 @@ static InfoNode *load(InfoNode *info, const char *def)
 		name = fsearch(InfoPath, NULL, def, NULL);
 
 	if	(name == NULL)
-		dbg_error(NULL, "[eftools:6]", "s", def);
+		log_error(NULL, "[eftools:6]", "s", def);
 
 	io = io_fileopen(name, "rz");
 	info = AddInfo(info, def, NULL, NULL, NULL);

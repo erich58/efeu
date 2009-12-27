@@ -52,7 +52,7 @@ Auf der Tcl-Seite gibt es die vordefinierten Befehle |@expr| und |@eval|,
 mit denen auf den EFEU-Interpreter zugegriffen werden kenn.
 
 Details zur Schnittstelle sind im Handbucheintrag \mref{etk(1)}
-beschrieben. Ein kurzer Überblick überblick über den EFEU-Befehlsinterpreter
+beschrieben. Ein kurzer Überblick über den EFEU-Befehlsinterpreter
 kann im Handbucheintrag \mref{esh(1)} nachgeschlagen werden.
 
 Die Tk-Erweiterung zu Tcl steht erst nach Aufruf von |tkinit()|

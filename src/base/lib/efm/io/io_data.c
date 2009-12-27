@@ -71,20 +71,20 @@ static char *iodata_ident (IODATA *s)
 		(uint64_t) s->pos, (uint64_t) s->size);
 }
 
-static int iodata_get (void *ptr)
+static int iodata_get (IO *io)
 {
-	IODATA *s = ptr;
+	IODATA *s = io->data;
 	return (s->pos < s->size) ? (int) s->data[s->pos++] : EOF;
 }
 
-static size_t iodata_dbread (void *ptr, void *dptr,
+static size_t iodata_dbread (IO *io, void *dptr,
 	size_t recl, size_t size, size_t n)
 {
-	IODATA *s = ptr;
+	IODATA *s = io->data;
 	size_t i, j;
 
 	if	(s->pos + n * recl > s->size)
-		dbg_error(NULL, "[ftools:21]", NULL);
+		log_error(NULL, "[ftools:21]", NULL);
 
 	for (i = 0; i < n; i++)
 	{
@@ -102,9 +102,9 @@ static size_t iodata_dbread (void *ptr, void *dptr,
 	return recl * n;
 }
 
-static int iodata_ctrl (void *ptr, int req, va_list list)
+static int iodata_ctrl (IO *io, int req, va_list list)
 {
-	IODATA *s = ptr;
+	IODATA *s = io->data;
 
 	switch (req)
 	{

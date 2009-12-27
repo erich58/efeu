@@ -131,7 +131,11 @@ static void f_diff_idx (EfiFunc *func, void *rval, void **arg)
 
 static void f_str2idx (EfiFunc *func, void *rval, void **arg)
 {
-	RVIDX = str2TimeIndex(Val_str(arg[0]));
+	char *p;
+	RVIDX = str2TimeIndex(Val_str(arg[0]), &p);
+
+	if	(p && *p)
+		io_printf(ioerr, "rest=%s\n", p);
 }
 
 static void f_ptr2idx (EfiFunc *func, void *rval, void **arg)

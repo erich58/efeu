@@ -23,7 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 
 
-static ALLOCTAB(list_tab, 0, sizeof(EfiObjList));
+static ALLOCTAB(list_tab, "EfiObjList", 0, sizeof(EfiObjList));
 
 
 /*	Objektliste generieren

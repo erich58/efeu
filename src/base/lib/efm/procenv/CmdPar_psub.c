@@ -198,9 +198,7 @@ static int do_copy (CmdPar *par, IO *in, IO *out,
 
 static void do_psub (IO *in, IO *out, ArgList *args, int mode)
 {
-	StrBuf *sb = sb_acquire();
-	f_puts(psubexpandarg(sb, in, args), out, mode);
-	sb_release(sb);
+	f_puts(psubexpandarg(NULL, in, args), out, mode);
 }
 
 static char *do_vsub (CmdPar *par, IO *in, ArgList *args,

@@ -48,7 +48,7 @@ void ParseCommand (int *argc, char **argv)
 	if	(CmdPar_eval(par, argc, argv, 0) <= 0)
 		exit(EXIT_FAILURE);
 
-	DebugMode(GetResource("Debug", NULL));
+	LogConfig(GetResource("Debug", NULL));
 }
 
 /*

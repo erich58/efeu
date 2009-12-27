@@ -39,5 +39,8 @@ If not, write to the Free Software Foundation, Inc.,
 @eval success HAS_ISATTY 'isatty(0)'
 @eval -i sys/dir.h success HAS_GETPWNAM 'getpwnam(NULL)'
 @eval -i sys/mman.h success HAS_MMAP 'mmap(NULL,0,0,0,0,0)'
+@eval -i sys/time.h success HAS_TIMEVAL 'struct timeval buf'
+@eval -i sys/time.h -i time.h success HAS_GETTIMEOFDAY 'gettimeofday(NULL,NULL)'
+@eval -i syslog.h success HAS_SYSLOG 'syslog(LOG_ERR,NULL)'
 
 #endif	/* EFEU/extension.h */

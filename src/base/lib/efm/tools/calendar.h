@@ -26,6 +26,7 @@ If not, write to the Free Software Foundation, Inc.,
 #define	EFEU_calendar_h	1
 
 #include <EFEU/io.h>
+#include <time.h>
 
 #define	CALENDAR_OFFSET_1900 	693608	/* 31 Dez 1899 */
 
@@ -50,12 +51,21 @@ int CalendarIndex1900 (int tag, int monat, int jahr);
 int TodayIndex (void);
 
 CalInfo *Calendar (int idx, CalInfo *buf);
+CalInfo *tmCalendar (struct tm *tm, CalInfo *buf);
 
 int PrintCalendar (IO *io, const char *fmt, int idx);
+int PrintCalInfo (IO *io, const char *fmt, CalInfo *buf);
+int Print_tm (IO *io, const char *fmt, struct tm *tm);
+
 char *Calendar2str (const char *fmt, int idx);
+char *tm2str (const char *fmt, struct tm *tm);
 int str2Calendar (const char *str, char **endptr, int flag);
 int Calendar_jdiff (unsigned t1, unsigned t2);
 int str2jahr (const char *str, char **endptr);
+int str2sec (const char *str, char **endptr);
+
+int CalInfo_week (const CalInfo *cal);
+int Calendar_week (int idx);
 
 /*	Umrechnung in alte Kalenderbasis
 */

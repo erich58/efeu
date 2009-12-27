@@ -37,9 +37,9 @@ typedef struct {
 /*	Zeichen lesen
 */
 
-static int lnum_get (void *ptr)
+static int lnum_get (IO *io)
 {
-	LNUM *lnum = ptr;
+	LNUM *lnum = io->data;
 	int c;
 
 	lnum->line += lnum->nl;
@@ -52,9 +52,9 @@ static int lnum_get (void *ptr)
 /*	Kontrollfunktion
 */
 
-static int lnum_ctrl (void *ptr, int req, va_list list)
+static int lnum_ctrl (IO *io, int req, va_list list)
 {
-	LNUM *lnum = ptr;
+	LNUM *lnum = io->data;
 	int stat;
 
 	switch (req)

@@ -154,7 +154,7 @@ void Func_OLS (EfiFunc *func, void *rval, void **arg)
 
 	if	(dim == 0)
 	{
-		dbg_note(NULL, "[TimeSeries:31]", NULL);
+		log_note(NULL, "[TimeSeries:31]", NULL);
 		memfree(ext);
 		return;
 	}
@@ -170,7 +170,7 @@ void Func_OLS (EfiFunc *func, void *rval, void **arg)
 	{
 		if	(ext[i].base.type != base.type)
 		{
-			dbg_note(NULL, "[TimeSeries:32]", NULL);
+			log_note(NULL, "[TimeSeries:32]", NULL);
 			memfree(ext);
 			return;
 		}
@@ -198,7 +198,7 @@ void Func_OLS (EfiFunc *func, void *rval, void **arg)
 
 	if	(nr < dim)
 	{
-		dbg_note(NULL, "[TimeSeries:33]", NULL);
+		log_note(NULL, "[TimeSeries:33]", NULL);
 		memfree(ext);
 		return;
 	}
@@ -225,7 +225,7 @@ void Func_OLS (EfiFunc *func, void *rval, void **arg)
 
 	if	(GaussJordan(z, dim) != dim)
 	{
-		dbg_note(NULL, "[TimeSeries:34]", NULL);
+		log_note(NULL, "[TimeSeries:34]", NULL);
 		memfree(ext);
 		memfree(z);
 		return;

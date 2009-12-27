@@ -56,15 +56,15 @@ static char *prompt = NULL;
 /*	Hilfsfunktionen
 */
 
-static int ia_get (void *io);
-static int ia_put (int c, void *io);
-static int ia_ctrl (void *io, int req, va_list list);
+static int ia_get (IO *io);
+static int ia_put (int c, IO *io);
+static int ia_ctrl (IO *io, int req, va_list list);
 
 
 /*	Lesen von der Standardeingabe
 */
 
-static int ia_get (void *ptr)
+static int ia_get (IO *io)
 {
 	int c;
 
@@ -86,7 +86,7 @@ static int ia_get (void *ptr)
 
 	if	(c == EOF)
 	{
-		ia_put('\n', ptr);
+		ia_put('\n', io);
 	}
 	else	iflag = (c == '\n');
 
@@ -97,7 +97,7 @@ static int ia_get (void *ptr)
 /*	Zeichen nach Standardausgabe schreiben
 */
 
-static int ia_put (int c, void *ptr)
+static int ia_put (int c, IO *io)
 {
 	return putchar(c);
 }
@@ -106,7 +106,7 @@ static int ia_put (int c, void *ptr)
 /*	Kontrollfunktion
 */
 
-static int ia_ctrl (void *par, int req, va_list list)
+static int ia_ctrl (IO *io, int req, va_list list)
 {
 	char **ptr;
 

@@ -71,7 +71,7 @@ int main (int narg, char **arg)
 	char *Mode;
 	S2DEval eval;
 
-	SetVersion("$Id: src2doc.c,v 1.23 2008-10-04 20:13:52 ef Exp $");
+	SetVersion("$Id: src2doc.c,v 1.24 2009-09-27 05:43:09 ef Exp $");
 	SetProgName(arg[0]);
 	SetupStd();
 	SetupReadline();
@@ -92,7 +92,7 @@ int main (int narg, char **arg)
 	eval = Mode ? S2DMode_get(Mode) : S2DName_get(DocName);
 
 	if	(eval == NULL)
-		dbg_error(NULL, "[1]", "s", Mode);
+		log_error(NULL, "[1]", "s", Mode);
 
 	if	(!Name) 
 		Name = mbasename(DocName, NULL);

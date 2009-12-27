@@ -1,8 +1,10 @@
 /*
-:*:	debug class
-:de:	Debugklasse
+:*:unicode tools
+:de:Unicode-Hilfsfunktionen
 
-$Copyright (C) 2008 Erich Frühstück
+$Header	<EFEU/$1>
+
+$Copyright (C) 2009 Erich Frühstück
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -21,28 +23,18 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include <EFEU/Debug.h>
-#include <EFEU/ftools.h>
+#ifndef	EFEU_unicode_h
+#define	EFEU_unicode_h	1
 
-FILE *DebugClassFile (DebugClass *cl)
-{
-	if	(!cl)	return NULL;
+#include <EFEU/stdint.h>
 
-	if	(cl->sync < DebugChangeCount)
-	{
-		cl->sync = DebugChangeCount;
+int32_t latin9_to_ucs (int c);
+int ucs_to_latin9 (int32_t c);
 
-		if	(cl->log)
-		{
-			fprintf(cl->log, "STOP debugging %s\n", cl->name);
-			fileclose(cl->log);
-		}
+int32_t pgetucs (char **p, size_t lim);
+int nputucs (int32_t c, unsigned char *buf, size_t len);
 
-		cl->log = filerefer(LogFile(cl->name, cl->level));
+int ucscopy_utf8 (char *tg, size_t len, const char *src);
+int ucscopy_latin9 (char *tg, size_t len, const char *src);
 
-		if	(cl->log)
-			fprintf(cl->log, "START debugging %s\n", cl->name);
-	}
-
-	return cl->log;
-}
+#endif	/* EFEU/unicode.h */

@@ -6,6 +6,16 @@
 #include <EFEU/stdtype.h>
 #include <EFEU/printobj.h>
 
+static LogControl err_log = LOG_CONTROL("edb", LOGLEVEL_ERR);
+static LogControl note_log = LOG_CONTROL("edb", LOGLEVEL_NOTE);
+static LogControl info_log = LOG_CONTROL("edb", LOGLEVEL_INFO);
+static LogControl debug_log = LOG_CONTROL("edb", LOGLEVEL_DEBUG);
+
+LogControl *edb_err = &err_log;
+LogControl *edb_note = &note_log;
+LogControl *edb_info = &info_log;
+LogControl *edb_debug = &debug_log;
+
 static char *edb_ident (const void *data)
 {
 	const EDB *edb;

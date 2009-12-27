@@ -68,15 +68,15 @@ static char *strio_ident (STRIO *s)
 /*	IO - Struktur
 */
 
-static int str_get (void *ptr)
+static int str_get (IO *io)
 {
-	STRIO *s = ptr;
+	STRIO *s = io->data;
 	return s->str[s->pos] ? (int) s->str[s->pos++] : EOF;
 }
 
-static int str_ctrl (void *ptr, int req, va_list list)
+static int str_ctrl (IO *io, int req, va_list list)
 {
-	STRIO *s = ptr;
+	STRIO *s = io->data;
 
 	switch (req)
 	{

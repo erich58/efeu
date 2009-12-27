@@ -44,7 +44,7 @@ static struct IDXCMP *idxcmplist (char **list, size_t ldim, size_t dim);
 static int idxcmp (struct IDXCMP *ic, const char *name, size_t idx);
 
 
-static ALLOCTAB(idxcmp_tab, 32, sizeof(struct IDXCMP));
+static ALLOCTAB(idxcmp_tab, "IDXCMP", 32, sizeof(struct IDXCMP));
 
 static int pcmp (struct IDXCMP *t, const char *s, size_t n);
 static int ncmp (struct IDXCMP *t, const char *s, size_t n);

@@ -38,7 +38,7 @@ void RangeFunc (EfiFunc *func, void *rval, void **arg)
 
 	if	(f_cmp == NULL)
 	{
-		dbg_note(NULL, "[efmain:216]", NULL);
+		log_note(NULL, "[efmain:216]", NULL);
 		*ptr = NewObjList(ConstObj(func->arg[1].type, arg[1]));
 		return;
 	}
@@ -63,7 +63,7 @@ void RangeFunc (EfiFunc *func, void *rval, void **arg)
 
 	if	(f_step == NULL)
 	{
-		dbg_note(NULL, "[efmain:217]", NULL);
+		log_note(NULL, "[efmain:217]", NULL);
 		*ptr = NewObjList(ConstObj(func->arg[1].type, arg[1]));
 		return;
 	}

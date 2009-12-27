@@ -245,7 +245,7 @@ static DFunc get_df (const char *name)
 		}
 	}
 
-	dbg_error(NULL, "[2]", "s", name);
+	log_error(NULL, "[2]", "s", name);
 	return NULL;
 }
 
@@ -304,7 +304,7 @@ int main (int narg, char **arg)
 	int nd, ne;
 
 	SetProgName(arg[0]);
-	SetVersion("$Id: edbdiff.c,v 1.7 2008-08-11 21:12:40 ef Exp $");
+	SetVersion("$Id: edbdiff.c,v 1.8 2009-09-27 05:43:09 ef Exp $");
 	SetupStd();
 	SetupUtil();
 	SetupPreproc();

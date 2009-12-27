@@ -72,7 +72,7 @@ void MF_data(EfiFunc *func, void *rval, void **arg)
 
 		if	(par.func == NULL)
 		{
-			dbg_note(NULL, "[mdmat:95]",
+			log_note(NULL, "[mdmat:95]",
 				"ss", ftab[0]->name, md->type->name);
 			return;
 		}

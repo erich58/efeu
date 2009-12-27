@@ -336,7 +336,7 @@ static EfiObj *p_config (IO *io, void *data)
 		}
 		else
 		{
-			dbg_note(NULL, "[1]", "s", name);
+			log_note(NULL, "[1]", "s", name);
 		}
 
 		memfree(name);
@@ -448,7 +448,7 @@ int main (int narg, char **arg)
 	char *flags;
 
 	ChangeLocale("C");
-	SetVersion("$Id: mksource.c,v 1.44 2008-09-02 20:48:10 ef Exp $");
+	SetVersion("$Id: mksource.c,v 1.46 2009-10-17 21:18:03 ef Exp $");
 	SetProgName(arg[0]);
 	bootstrap = mtabcat(" ", arg, narg);
 
@@ -480,7 +480,6 @@ int main (int narg, char **arg)
 	PopVarTab();
 	SetupOutput = 0;
 	flags = sb_nul(&sb_flags);
-	io_xprintf(ioerr, "flags=%#s\n", flags);
 
 	if	(Verbose)
 		io_xprintf(ioerr, "%s\n", bootstrap);

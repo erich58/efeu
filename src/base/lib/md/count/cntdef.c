@@ -27,7 +27,8 @@ If not, write to the Free Software Foundation, Inc.,
 EfiType Type_cotab = REF_TYPE ("CountTab", MdCountPar *);
 EfiType Type_cltab = REF_TYPE ("ClassTab", MdCountPar *);
 EfiType Type_cdef = REF_TYPE ("MdCntDef", MdCntDef *);
-EfiType Type_cntobj = PTR_TYPE ("MdCount", MdCount *, &Type_ptr, NULL, NULL);
+EfiType Type_cntobj = PTR_TYPE ("MdCount", MdCount *, &Type_ptr,
+	NULL, NULL, NULL);
 
 static int p_trange (const EfiType *st, const void *data, IO *io)
 {
@@ -213,6 +214,12 @@ static void m_count (EfiFunc *func, void *rval, void **arg)
 	md_count(Val_mdmat(arg[0]), NULL);
 }
 
+static void trange_add (EfiFunc *func, void *rval, void **arg)
+{
+	EfiVec *vec = Val_ptr(arg[0]);
+	Val_int(rval) = IOTimeRange(&vec->buf, Val_io(arg[1]));
+}
+
 static void print_trange (EfiFunc *func, void *rval, void **arg)
 {
 	Val_int(rval) = PrintTimeRange(Val_ptr(arg[0]),
@@ -248,6 +255,7 @@ static EfiFuncDef fdef[] = {
 		"MdCntDef::add (ClassTab cl, str ext, . & obj)",
 		MdCntDef_cadd },
 
+	{ 0, &Type_int, "TimeRange[]::add (IO io = iostd)", trange_add },
 	{ FUNC_VIRTUAL, &Type_int, "fprint(IO, TimeRange)", print_trange },
 
 	{ 0, &Type_mdmat, "mdmat (restricted MdCount cobj, mdaxis x = NULL)",

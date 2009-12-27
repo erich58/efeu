@@ -155,7 +155,7 @@ void Bitfield(str Name, str Desc, IO Def, bool flag = true)
 			"*data = (($1 *) ptr)->$2;", Name, name);
 		LocalFunction("void $1_$2_set", "unsigned *data, void *ptr",
 			"(($1 *) ptr)->$2 = *data;", Name, name);
-		mtab += psub("\t{ $2%#s, $3%#s, $1_$2_get, $1_$2_set },\n",
+		mtab += psub("\t{ $[2;%#s], $[3;%#s], $1_$2_get, $1_$2_set },\n",
 			Name, name, desc);
 		size += n;
 

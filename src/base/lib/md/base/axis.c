@@ -5,7 +5,7 @@
 
 #include <EFEU/mdmat.h>
 
-static ALLOCTAB(atab, 8, sizeof(mdaxis));
+static ALLOCTAB(atab, "mdaxis", 8, sizeof(mdaxis));
 
 
 /*	Achse generieren

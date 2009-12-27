@@ -25,11 +25,16 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/ftools.h>
 #include <EFEU/Debug.h>
 
-#define	TRACE_MODE	0	/* enable trace control */
+#define	TRACE_MODE	1	/* enable trace control */
 
-#define	DEF_BLK		16
+#define	DEF_SIZE	2040
+#define	MIN_BLK		16
 
-#define	BLKSIZE(tab)	((tab)->blksize ? (tab)->blksize : DEF_BLK)
+static int log_lock = 0;
+static LogControl log_debug = LOG_CONTROL("alloctab", LOGLEVEL_DEBUG);
+
+static ALLOCTAB(root, "root", 0, 0);	/* Dummy-Tabelle für verkettung */
+static AllocTab *chain = &root;
 
 /*
 $Description
@@ -37,32 +42,46 @@ $Description
 with an assignment table. The internal structure is described
 in \mref{memalloc(7)}.
 :de:Die Funktionen verwalten Speichersegmente fixer Größe über eine
-Zuweisungstabelle. Der innere Aufbau iund die Einrichtung einer
+Zuweisungstabelle. Der innere Aufbau und die Einrichtung einer
 Zuweisungstabelle sind in \mref{memalloc(7)} beschrieben.
 */
 
-#define	TRACE_NEW "Pointer %p requisited.\n"
+#define	TRACE_NEW "Pointer %p allocated.\n"
 #define	TRACE_DEL "Pointer %p released.\n"
+
+static void alloctab_id (IO *out, AllocTab *tab)
+{
+	io_puts("alloctab(", out);
+
+	if	(tab->name)
+	{
+		io_puts(tab->name, out);
+	}
+	else	io_printf(out, "%p", tab);
+
+	io_puts("): ", out);
+}
 
 #if	TRACE_MODE
 
+static LogControl log_trace = LOG_CONTROL("alloctab", LOGLEVEL_TRACE);
+
 static void alloctab_trace (AllocTab *tab, const char *fmt, void *ptr)
 {
-	static FILE *trace_file = NULL;
-	static int trace_sync = 0;
+	IO *out;
 
-	if	(trace_sync < DebugChangeCount)
+	if	(log_lock)	return;
+
+	log_lock = 1;
+
+	if	((out = LogOpen(&log_trace)))
 	{
-		trace_sync = DebugChangeCount;
-		fileclose(trace_file);
-		trace_file = filerefer(LogFile("alloctab", DBG_TRACE));
+		alloctab_id(out, tab);
+		io_printf(out, fmt, ptr);
+		io_close(out);
 	}
 
-	if	(trace_file)
-	{
-		fprintf(trace_file, "alloctab %p: ", tab);
-		fprintf(trace_file, fmt, ptr);
-	}
+	log_lock = 0;
 }
 
 #else
@@ -80,17 +99,24 @@ static void alloctab_trace (AllocTab *tab, const char *fmt, void *ptr)
 
 static void alloctab_error (AllocTab *tab, const char *fmt, ...)
 {
-	FILE *file = LogFile("alloctab", DBG_ERR);
+	IO *out;
+	
+	if	(log_lock)	return;
 
-	if	(file)
+	log_lock = 1;
+
+	if	((out = LogOpen(ErrLog)))
 	{
 		va_list args;
 
+		alloctab_id(out, tab);
 		va_start(args, fmt);
-		fprintf(file, "alloctab %p: ", tab);
-		vfprintf(file, fmt, args);
+		io_vprintf(out, fmt, args);
 		va_end(args);
+		io_close(out);
 	}
+
+	log_lock = 0;
 }
 
 
@@ -99,7 +125,21 @@ static void load (AllocTab *tab)
 	size_t n, size;
 	AllocTabList *p;
 
-	tab->nfree = BLKSIZE(tab);
+	if	(!tab->chain)
+	{
+		tab->chain = chain;
+		chain = tab;
+	}
+
+	if	(!tab->blksize)
+	{
+		tab->blksize = DEF_SIZE / tab->elsize;
+
+		if	(tab->blksize < MIN_BLK)
+			tab->blksize = MIN_BLK;
+	}
+
+	tab->nfree = tab->blksize;
 	size = tab->elsize * tab->nfree;
 	p = (AllocTabList *) lmalloc(sizeof(AllocTabList) + size);
 	p->next = tab->blklist;
@@ -231,7 +271,7 @@ int tst_data (AllocTab *tab, void *entry)
 
 	if	(tab == NULL)	return 0;
 
-	n = tab->elsize * BLKSIZE(tab);
+	n = tab->elsize * tab->blksize;
 
 	for (p = tab->blklist; p != NULL; p = p->next)
 	{
@@ -254,18 +294,21 @@ int tst_data (AllocTab *tab, void *entry)
 	return 0;
 }
 
-static int debug_sync = 0;
-static FILE *debug_file = NULL;
-
 static void alloctab_abort (AllocTab *tab, const char *fmt, ...)
 {
-	va_list args;
+	IO *out = LogOpen(&log_debug);
 
-	va_start(args, fmt);
-	fprintf(debug_file, "alloctab %p: ", tab);
-	vfprintf(debug_file, fmt, args);
-	va_end(args);
-	abort();
+	if	(out)
+	{
+		va_list args;
+
+		va_start(args, fmt);
+		alloctab_id(out, tab);
+		io_vprintf(out, fmt, args);
+		va_end(args);
+		io_close(out);
+		abort();
+	}
 }
 
 /*
@@ -273,7 +316,7 @@ static void alloctab_abort (AllocTab *tab, const char *fmt, ...)
 table. The acitivities are only performed, if the debug_level
 for alloctab is at least debug (see \mref{Debug(3)}).
 :de:Die Funktion |$1| überprüft die Konsistenz der Zuweisungstabelle und
-ihrer Speichersegmente falls dere Debug-Level für alloctab
+ihrer Speichersegmente falls der Debug-Level für alloctab
 auf debug gesetzt ist.
 Vergleiche dazu auch \mref{Debug(3)}.
 */
@@ -283,18 +326,17 @@ void check_data (AllocTab *tab)
 	AllocTabList *p;
 	size_t n;
 
-	if	(tab == NULL)	return;
+	if	(!tab || log_lock)	return;
 
-	if	(debug_sync < DebugChangeCount)
-	{
-		debug_sync = DebugChangeCount;
-		fileclose(debug_file);
-		debug_file = filerefer(LogFile("alloctab", DBG_DEBUG));
-	}
+	log_lock = 1;
+	LogUpdate(&log_debug);
+	log_lock = 0;
 
-	if	(!debug_file)	return;
+	if	(!log_debug.entry)	return;
 
-	for (n = 0, p = tab->blklist; p != NULL; n += BLKSIZE(tab), p = p->next)
+	log_lock = 1;
+
+	for (n = 0, p = tab->blklist; p; n += tab->blksize, p = p->next)
 		lcheck(p);
 
 	if	(n != tab->nused + tab->nfree)
@@ -311,6 +353,27 @@ void check_data (AllocTab *tab)
 
 	if	(n != tab->nfree)
 		alloctab_abort(tab, ERR_LFREE, tab->nfree);
+
+	log_lock = 0;
+}
+
+/*
+:*:The function |$1| walks along the table chain and calls <visit> vor every
+allocation tabel. It's use is primary for debugging and generating statistics
+about memory usage.
+:de:Die Funktion |$1| durchwandert die Tabellenkette und ruft <visit> für
+jede Tabelle auf. Ihre Verwendung dient primär der Fehlersuche und der
+Generierung von Statistiken über die Speicherverwendung.
+*/
+
+void AllocTab_walk (void (*visit) (AllocTab *tab, void *par), void *par)
+{
+	AllocTab *tab;
+
+	if	(!visit)	return;
+
+	for (tab = chain; tab; tab = tab->chain)
+		visit(tab, par);
 }
 
 /*

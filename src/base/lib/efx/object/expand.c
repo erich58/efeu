@@ -51,7 +51,7 @@ void Assign_vec (EfiType *type, void *data, size_t dim, const EfiObjList *list)
 	}
 
 	if	(list != NULL)
-		dbg_note(NULL, "[efmain:138]", NULL);
+		log_note(NULL, "[efmain:138]", NULL);
 }
 
 void Struct2List (EfiFunc *func, void *rval, void **arg)

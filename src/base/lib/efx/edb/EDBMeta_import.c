@@ -117,7 +117,7 @@ void EDBMeta_import (EDBMetaDef *def, EDBMeta *meta, const char *arg)
 	}
 	else
 	{
-		dbg_error("edb",  ERR_DATA, "ms", Type2str(type), mode->name);
+		log_error(edb_err,  ERR_DATA, "ms", Type2str(type), mode->name);
 		memfree(mode);
 		return;
 	}

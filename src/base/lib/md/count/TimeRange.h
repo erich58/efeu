@@ -33,11 +33,14 @@ If not, write to the Free Software Foundation, Inc.,
 
 typedef struct {
 	char *label;	/* Bereichskennung */
-	unsigned ug;	/* Intervalluntergrenze */
-	unsigned og;	/* Intervallobergrenze */
+	unsigned ug;	/* Intervalluntergrenze, Datum */
+	unsigned og;	/* Intervallobergrenze, Datum */
 	unsigned dat;	/* Bezugsdatum für Stammdaten */
 	unsigned jahr;	/* Bezugsjahr für Stammdaten */
-	unsigned tage;	/* Intervallbreite */
+	unsigned tage;	/* Intervallbreite, Datum */
+	unsigned ug_sec;	/* Intervalluntergrenze, Sekunden */
+	unsigned og_sec;	/* Intervallobergrenze, Sekunden */
+	unsigned sec;	/* Intervallbreite, Sekunden */
 } TimeRange;
 
 int IOTimeRange (VecBuf *buf, IO *io);

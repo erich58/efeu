@@ -34,11 +34,14 @@ If not, write to the Free Software Foundation, Inc.,
 #define	MSG_PFX	"messages"
 #define	MSG_SFX	"msg"
 
-#define	ERRMSG	"%s: message catalog %#s not found.\n"
+#define	W_CAT	"%s: message catalog %#s not found.\n"
+#define	W_KEY	"%s: key %#s not found in message catalog %#s.\n"
 #define	M_LOAD	"%s: loading message catalog %#s.\n"
-#define	M_NOKEY	"%s: key %#s not found in message catalog %#s.\n"
 
-#define	LOG(level)	LogOut("msg", level)
+#define	UNICODE	1	/* Flag für Unicode-Speicherung */
+
+static LogControl msg_warn = LOG_CONTROL("msg", LOGLEVEL_WARN);
+static LogControl msg_debug = LOG_CONTROL("msg", LOGLEVEL_DEBUG);
 
 /*	Formateintrag
 */
@@ -83,11 +86,11 @@ static IO *ftab_open (const char *name)
 
 	if	(p == NULL)
 	{
-		io_xprintf(LOG(DBG_NOTE), ERRMSG, ProgName, name);
+		log_printf(&msg_warn, W_CAT, ProgName, name);
 		return NULL;
 	}
 
-	io_xprintf(LOG(DBG_DEBUG), M_LOAD, ProgName, p);
+	log_printf(&msg_debug, M_LOAD, ProgName, p);
 	io = io_fileopen(p, "r");
 	memfree(p);
 	return io;
@@ -96,7 +99,7 @@ static IO *ftab_open (const char *name)
 static void load_fmt (IO *io, StrBuf *buf)
 {
 	char *delim = "\n";
-	int c;
+	int32_t c;
 
 	do	c = io_getc(io);
 	while	(c == ' ' || c == '\t');
@@ -108,22 +111,37 @@ static void load_fmt (IO *io, StrBuf *buf)
 	else	io_ungetc(c, io);
 
 	while ((c = io_xgetc(io, delim)) != EOF)
+	{
+#if	UNICODE
+		c = io_ucscompose(io, c);
+
+		if	(c > 0)
+			sb_putucs(c, buf);
+#else
+		n += io_nputc(c, out, 1);
 		if (c) sb_putc(c, buf);
+#endif
+	}
 
 	io_getc(io);
 	sb_putc(0, buf);
 }
 
 
-static void ftab_show (IO *io, MainEntry *entry)
+static void ftab_show (LogControl *ctrl, MainEntry *entry)
 {
+	IO *io;
 	int n;
+
+	io = LogOpen(ctrl);
 
 	if	(!io)	return;
 
 	for (n = 0; n < entry->dim; n++)
 		io_xprintf(io, "%s: %#s\n",
 			entry->tab[n].key, entry->tab[n].fmt);
+
+	io_close(io);
 }
 
 static void ftab_load (IO *io, MainEntry *entry, int endmark)
@@ -175,7 +193,7 @@ static void ftab_load (IO *io, MainEntry *entry, int endmark)
 	}
 
 	qsort(entry->tab, entry->dim, sizeof(entry->tab[0]), SubEntry_comp);
-	ftab_show(LOG(DBG_DEBUG), entry);
+	ftab_show(&msg_debug, entry);
 }
 
 static VECBUF(FormatTab, 32, sizeof(MainEntry));
@@ -232,12 +250,11 @@ char *FormatTabEntry (const char *name, const char *key)
 
 	if	(s == NULL)
 	{
-		io_xprintf(LOG(DBG_NOTE), M_NOKEY,
-			ProgName, key, name);
+		log_printf(&msg_warn, W_KEY, ProgName, key, name);
 		return NULL;
 	}
 
-	io_xprintf(LOG(DBG_TRACE), "GetFormat(%#s,%#s): %#s\n",
+	log_printf(&msg_debug, "GetFormat(%#s,%#s): %#s\n",
 		ptr->name, s->key, s->fmt);
 	return s->fmt;
 }

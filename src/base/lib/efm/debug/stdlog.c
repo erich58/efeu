@@ -1,9 +1,9 @@
 /*
 Standardfunktionen zur Meldungsausgabe
 
-$Name dbg_psub, dbg_vpsub, dbg_message, dbg_note, dbg_error
+$Name log_psub, log_psubarg, log_psubvarg, log_note, log_error
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2009 Erich Frühstück
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -29,32 +29,31 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/ioctrl.h>
 
 /*
-Die Funktion |$1| gibt die Fehlermeldung <fmt> vom Level <level> für
-die Klasse <cl> aus.
+Die Funktion |$1| gibt die Meldung <fmt> für die Protokollklasse <ctrl> aus.
 Die Substitutionsparameter werden in Form einer einer Argumentliste übergegen.
 Diese Funktion stellt die Basis für alle Funktionen zur Ausgabe
-von Fehlermewldungen dar und wird selten direkt verwendet.
+von Fehlermeldungen dar und wird selten direkt verwendet.
 */
 
-void dbg_psub (const char *cl, int level, const char *fmt, ArgList *args)
+void log_psub (LogControl *ctrl, const char *fmt, ArgList *args)
 {
 	IO *io;
 	char *xfmt;
 
-	if	(!(io = LogOut(cl, level)))
+	if	(!(io = LogOpen(ctrl)))
 		return;
 
 	if	(!(xfmt = GetFormat(fmt)))
 	{
-		switch (level)
+		switch (ctrl->level)
 		{
-		case DBG_ERR:	io_puts("ERROR", io); break;
-		case DBG_NOTE:	io_puts("NOTE", io); break;
-		case DBG_INFO:	io_puts("INFO", io); break;
-		case DBG_STAT:	io_puts("STAT", io); break;
-		case DBG_DEBUG:	io_puts("DEBUG", io); break;
-		case DBG_TRACE:	io_puts("TRACE", io); break;
-		default:	io_puts("MESSAGE", io); break;
+		case LOGLEVEL_ERR:	io_puts("ERROR", io); break;
+		case LOGLEVEL_WARN:	io_puts("WARNING", io); break;
+		case LOGLEVEL_NOTE:	io_puts("NOTE", io); break;
+		case LOGLEVEL_INFO:	io_puts("INFO", io); break;
+		case LOGLEVEL_DEBUG:	io_puts("DEBUG", io); break;
+		case LOGLEVEL_TRACE:	io_puts("TRACE", io); break;
+		default:		io_puts("MESSAGE", io); break;
 		}
 
 		if	(fmt && *fmt)
@@ -78,12 +77,13 @@ void dbg_psub (const char *cl, int level, const char *fmt, ArgList *args)
 		io_putc('\n', io);
 	}
 	else	CmdPar_psubout(NULL, io, xfmt, args);
+
+	io_close(io);
 }
 
 /*
-Die Funktion |$1| gibt die Fehlermeldung <fmt> vom Level <level> für
-die Klasse <cl> aus. Die Substitutionsparameter werden in einer
-Argumentliste zusammengestellt.
+Die Funktion |$1| gibt die Meldung <fmt> für die Protokollklasse <ctrl> aus.
+Die Substitutionsparameter werden in einer Argumentliste zusammengestellt.
 Der Parameter 0 wird durch <id> bestimmt, <id> muß entweder |NULL| sein
 oder auf einen mit |memalloc()| eingerichteten Speicher verweisen.
 Alle anderen Parameter werden über <argdef> an die
@@ -94,7 +94,7 @@ von Fehlermeldungen mit einer variablen Argumentliste dar und wird
 selten direkt verwendet.
 */
 
-void dbg_vpsub (const char *cl, int level, const char *fmt,
+void log_psubvarg (LogControl *ctrl, const char *fmt,
 	char *id, const char *argdef, va_list list)
 {
 	if	(argdef || id)
@@ -102,26 +102,22 @@ void dbg_vpsub (const char *cl, int level, const char *fmt,
 		ArgList *args = arg_create();
 		arg_madd(args, id);
 		arg_append(args, argdef, list);
-		dbg_psub(cl, level, fmt, args);
+		log_psub(ctrl, fmt, args);
 		rd_deref(args);
 	}
-	else	dbg_psub(cl, level, fmt, NULL);
+	else	log_psub(ctrl, fmt, NULL);
 }
 
-/*
-Die Funktion |$1| ist eine allgemeine Funktion zur Ausgabe von
-Fehlermeldungen. Sie akzeptiert die gleichen Argumente wie |dbg_vpsub|,
-jedoch werden die Parameter als variable Argumentliste übergeben.
-*/
 
-void dbg_message (const char *cl, int level, const char *fmt,
+void log_psubarg (LogControl *ctrl, const char *fmt,
 	char *id, const char *argdef, ...)
 {
 	va_list list;
 	va_start(list, argdef);
-	dbg_vpsub(cl, level, fmt, id, argdef, list);
+	log_psubvarg(ctrl, fmt, id, argdef, list);
 	va_end(list);
 }
+
 
 /*
 Die Funktion |$1| gibt eine Meldung zur Fehlerklasse <cl> vom Level
@@ -129,11 +125,11 @@ Die Funktion |$1| gibt eine Meldung zur Fehlerklasse <cl> vom Level
 hat immer den Wert |NULL|.
 */
 
-void dbg_note (const char *cl, const char *fmt, const char *argdef, ...)
+void log_note (LogControl *ctrl, const char *fmt, const char *argdef, ...)
 {
 	va_list list;
 	va_start(list, argdef);
-	dbg_vpsub(cl, DBG_NOTE, fmt, NULL, argdef, list);
+	log_psubvarg(ctrl ? ctrl : NoteLog, fmt, NULL, argdef, list);
 	va_end(list);
 }
 
@@ -144,11 +140,11 @@ Die Funktion |$1| gibt eine Meldung zur Fehlerklasse <cl> vom Level
 immer den Wert |NULL|.
 */
 
-void dbg_error (const char *cl, const char *fmt, const char *argdef, ...)
+void log_error (LogControl *ctrl, const char *fmt, const char *argdef, ...)
 {
 	va_list list;
 	va_start(list, argdef);
-	dbg_vpsub(cl, DBG_ERR, fmt, NULL, argdef, list);
+	log_psubvarg(ctrl ? ctrl : ErrLog, fmt, NULL, argdef, list);
 	va_end(list);
 	exit(EXIT_FAILURE);
 }

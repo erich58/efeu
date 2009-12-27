@@ -134,6 +134,29 @@ void VStat (str sname, str label, IO def, str pdef = NULL,
 }
 
 /*
+Die Funktion |$1| generiert zusätzlich zu einer Ausgabefunktion für
+eine |IO|-Struktur eine Protokollfunktion für eine |LogControl|-Struktur.
+Ansonsten sind die Parameter gleich wie bei |VStat|.
+*/
+
+void LogStat (str sname, str label, IO def, str pdef = NULL,
+	bool glob = false, str vtype = "unsigned")
+{
+	sname = psub(sname);
+	VStat(sname, label, def, pdef, glob, "IO", vtype);
+	Function f = Function("void $1_log",
+		"LogControl *ctrl, " + vtype + " *tab", sname);
+	f.line("IO *out = LogOpen(ctrl);");
+	f.newpar();
+	f.line("if\t(out)");
+	f.beg();
+	f.line("$1_print(out, tab);", sname);
+	f.line("io_close(out);");
+	f.end();
+	f.write(glob);
+}
+
+/*
 $Example
 
 Das folgende Beispiel zeigt ein Programm, welches die Zeichen der

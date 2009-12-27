@@ -25,8 +25,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/ioctrl.h>
 
 
-static int cr_get (void *ptr);
-static int cr_ctrl (void *ptr, int req, va_list list);
+static int cr_get (IO *io);
+static int cr_ctrl (IO *io, int req, va_list list);
 
 IO *io_crfilter (IO *io)
 {
@@ -43,11 +43,11 @@ IO *io_crfilter (IO *io)
 /*	Zeichen lesen
 */
 
-static int cr_get (void *ptr)
+static int cr_get (IO *io)
 {
 	int c;
 
-	do	c = io_getc(ptr);
+	do	c = io_getc(io->data);
 	while	(c == '\r' || c == 32);
 
 	return c;
@@ -57,12 +57,12 @@ static int cr_get (void *ptr)
 /*	Kontrollfunktion
 */
 
-static int cr_ctrl (void *ptr, int req, va_list list)
+static int cr_ctrl (IO *io, int req, va_list list)
 {
 	switch (req)
 	{
-	case IO_CLOSE:	return io_close(ptr);
-	case IO_REWIND:	return io_rewind(ptr);
-	default:	return io_vctrl(ptr, req, list);
+	case IO_CLOSE:	return io_close(io->data);
+	case IO_REWIND:	return io_rewind(io->data);
+	default:	return io_vctrl(io->data, req, list);
 	}
 }

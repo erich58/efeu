@@ -30,7 +30,7 @@ mdmat *md_mul (mdmat *md1, mdmat *md2, int flag)
 
 	if	(md1 == NULL || md2 == NULL)
 	{
-		dbg_error(NULL, "[mdmat:61]", NULL);
+		log_error(NULL, "[mdmat:61]", NULL);
 		return NULL;
 	}
 
@@ -44,7 +44,7 @@ mdmat *md_mul (mdmat *md1, mdmat *md2, int flag)
 	
 	if	(par.mul == NULL)
 	{
-		dbg_error(NULL, "[mdmat:64]", "mm",
+		log_error(NULL, "[mdmat:64]", "mm",
 			type2str(md1->type), type2str(md2->type));
 		return NULL;
 	}
@@ -86,7 +86,7 @@ mdmat *md_mul (mdmat *md1, mdmat *md2, int flag)
 
 			if	((n = cmp_axis(x1, x2, flag)) != 0)
 			{
-				dbg_note(NULL, "[mdmat:62]", "ssd",
+				log_note(NULL, "[mdmat:62]", "ssd",
 					StrPool_get(x1->sbuf, x1->i_name),
 					StrPool_get(x2->sbuf, x2->i_name),
 					n);
@@ -99,7 +99,7 @@ mdmat *md_mul (mdmat *md1, mdmat *md2, int flag)
 		{
 			del_axis(xpre);
 			del_axis(xpost);
-			dbg_error(NULL, "[mdmat:63]", NULL);
+			log_error(NULL, "[mdmat:63]", NULL);
 			return NULL;
 		}
 	}

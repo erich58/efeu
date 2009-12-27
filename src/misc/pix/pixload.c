@@ -64,7 +64,7 @@ OldPixMap *load_OldPixMap(const char *name)
 	{
 	case 0:
 		fileclose(file);
-		dbg_error(NULL, "[pixmap:11]", "s", name);
+		log_error(NULL, "[pixmap:11]", "s", name);
 		return NULL;
 	case 1:
 		pix = read_PPMFile(file);

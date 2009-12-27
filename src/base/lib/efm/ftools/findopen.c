@@ -22,6 +22,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/ftools.h>
 #include <EFEU/procenv.h>
+#include <EFEU/Debug.h>
 
 
 #define FMT_6	"[ftools:6]$!: file $1 not found.\n"
@@ -43,6 +44,6 @@ FILE *findopen (const char *path, const char *pfx,
 		return file;
 	}
 
-	dbg_error(NULL, FMT_6, "m", mstrpaste(".", name ? name : "", ext));
+	log_error(NULL, FMT_6, "m", mstrpaste(".", name ? name : "", ext));
 	return NULL;
 }

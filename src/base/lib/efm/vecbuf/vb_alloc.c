@@ -23,6 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/vecbuf.h>
 #include <EFEU/memalloc.h>
 #include <EFEU/procenv.h>
+#include <EFEU/Debug.h>
 
 #define	E_NEXP "[efm:1]$!: can not expand constant data buffer.\n"
 
@@ -85,7 +86,7 @@ void *_vb_alloc (VecBuf *buf, size_t dim)
 			return save;
 		}
 
-		dbg_error(NULL, E_NEXP, NULL);
+		log_error(NULL, E_NEXP, NULL);
 	}
 
 	return NULL;

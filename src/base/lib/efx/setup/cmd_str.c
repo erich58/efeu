@@ -82,6 +82,27 @@ static void f_dstrcut (EfiFunc *func, void *rval, void **arg)
 }
 
 EXPR(k_ptr2str, NULL)
+
+/*
+static void data2str (void *rval, const EfiType *type, const void *data)
+{
+	StrBuf *sb = sb_acquire();
+	IO *io = io_strbuf(sb);
+	PrintData(io, obj);
+	io_close(io);
+	Val_str(rval) = sb_cpyrelease(sb);
+}
+*/
+
+static void k_any2str (EfiFunc *func, void *rval, void **arg)
+{
+	StrBuf *sb = sb_acquire();
+	IO *io = io_strbuf(sb);
+	PrintObj(io, arg[0]);
+	io_close(io);
+	Val_str(rval) = sb_cpyrelease(sb);
+}
+
 EXPR(k_char2str, msprintf("%c", Val_char(arg[0])))
 EXPR(k_double2str, DoubleToString(Val_double(arg[0])))
 
@@ -388,6 +409,13 @@ static void f_lower (EfiFunc *func, void *rval, void **arg)
 	}
 }
 
+static void f_utf8 (EfiFunc *func, void *rval, void **arg)
+{
+	StrBuf *sb = sb_acquire();
+	sb_putmb(Val_str(arg[0]), sb);
+	RVSTR = sb_cpyrelease(sb);
+}
+
 static void f_lexsortkey (EfiFunc *func, void *rval, void **arg)
 {
 	RVSTR = mstrcpy(lexsortkey(Val_str(arg[0]), NULL));
@@ -426,7 +454,8 @@ static EfiFuncDef func_str[] = {
 	{ 0, &Type_str, "str (double)", k_double2str },
 	{ 0, &Type_str, "str (char, int = 1)", k_nchar2str },
 	{ 0, &Type_str, "str (Type_t, int verbosity = 1)", k_type2str },
-	{ 0, &Type_str, "str (_Ptr_)", k_ptr2str },
+	{ 0, &Type_str, "str (restricted _Ptr_)", k_ptr2str },
+	{ FUNC_RESTRICTED, &Type_str, "str (.)", k_any2str },
 
 	{ FUNC_VIRTUAL, &Type_char, "operator[] (str, int)", f_str_index },
 	{ FUNC_VIRTUAL, &Type_str, "operator+ (str, str)", f_str_add },
@@ -452,6 +481,7 @@ static EfiFuncDef func_str[] = {
 	{ 0, &Type_int, "strlen (str s)", f_strlen },
 	{ 0, &Type_str, "uppercase (str)", f_upper },
 	{ 0, &Type_str, "lowercase (str)", f_lower },
+	{ 0, &Type_str, "utf8conv (str)", f_utf8 },
 	{ 0, &Type_str, "lexsortkey (str)", f_lexsortkey },
 };
 

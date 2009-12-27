@@ -24,7 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 #include <Math/TimeSeries.h>
 
-static ALLOCTAB(par_tab, 0, sizeof(OLSPar));
+static ALLOCTAB(par_tab, "OLSPar", 0, sizeof(OLSPar));
 
 static char *par_ident (const void *ptr)
 {

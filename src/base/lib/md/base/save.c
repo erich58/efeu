@@ -119,7 +119,7 @@ void md_save(IO *io, mdmat *md, unsigned mask)
 			md_putdata(io, md->type, md->axis, mask, md->data);
 			md_puteof(io);
 		}
-		else	dbg_note(NULL, "[mdmat:24]", "m", type2str(md->type));
+		else	log_note(NULL, "[mdmat:24]", "m", type2str(md->type));
 	}
 }
 

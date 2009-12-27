@@ -23,15 +23,11 @@
 #include <sys/file.h>
 #include <unistd.h>
 
-extern void process (int fd);
+static LogControl err_ctrl = LOG_CONTROL("cube", LOGLEVEL_ERR);
+static LogControl note_ctrl = LOG_CONTROL("cube", LOGLEVEL_NOTE);
+static LogControl trace_ctrl = LOG_CONTROL("cube", LOGLEVEL_TRACE);
 
-static void cube_debug (int level, char *fmt, char *argdef, ...)
-{
-	va_list list;
-	va_start(list, argdef);
-	dbg_vpsub("cube", level, fmt, NULL, argdef, list);
-	va_end(list);
-}
+extern void process (int fd);
 
 static int server = 1;
 
@@ -40,7 +36,7 @@ static void sig_int (int sig)
 	char *p = GetResource("Config", NULL);
 	IO *io = io_fopen(p, "r");
 	MapTab_clean();
-	cube_debug(DBG_NOTE, "$!: reload $1\n", "s", p);
+	log_note(&note_ctrl, "$!: reload $1\n", "s", p);
 	MapTab_load(io);
 	io_close(io);
 }
@@ -50,7 +46,7 @@ static void remove_pid_file(void *pid_file)
 	if	(server && pid_file)
 	{
 		remove(pid_file);
-		cube_debug(DBG_NOTE, "$!: pid file removed.\n", "s", pid_file);
+		log_note(&note_ctrl, "$!: pid file removed.\n", "s", pid_file);
 	}
 }
 
@@ -71,7 +67,7 @@ int main (int argc, char **argv)
 	/*
 	EfeuConfig("standalone");
 	*/
-	SetVersion("$Id: mdmapd.c,v 1.6 2008-08-11 21:13:23 ef Exp $");
+	SetVersion("$Id: mdmapd.c,v 1.7 2009-09-27 05:46:13 ef Exp $");
 	SetupStd();
 	SetupUtil();
 
@@ -108,11 +104,11 @@ int main (int argc, char **argv)
 
 	if 	((sockfd = socket (PF_INET, SOCK_STREAM, 0)) < 0) 
 	{
-		cube_debug(DBG_ERR, "$!: socket: $1\n", "s", strerror(errno));
+		log_error(&err_ctrl, "$!: socket: $1\n", "s", strerror(errno));
 		exit (EXIT_FAILURE);
 	}
 
-	cube_debug(DBG_TRACE, "$!: socket created successfully.\n", NULL);
+	log_note(&trace_ctrl, "$!: socket created successfully.\n", NULL);
 
 	address.sin_family = AF_INET;
 	address.sin_port = htons (GetIntResource("Port", 2000));
@@ -121,15 +117,15 @@ int main (int argc, char **argv)
 
 	if	(bind (sockfd, (struct sockaddr *) &address, sizeof address)) 
 	{
-		cube_debug(DBG_ERR, "$!: bind: $1\n", "s", strerror(errno));
+		log_error(&err_ctrl, "$!: bind: $1\n", "s", strerror(errno));
 		exit (EXIT_FAILURE);
 	}
 
-	cube_debug(DBG_TRACE, "$!: socket server is ready.\n", NULL);
+	log_note(&trace_ctrl, "$!: socket server is ready.\n", NULL);
 
 	if 	(listen (sockfd, 5)) 
 	{
-		cube_debug(DBG_ERR, "$!: listen: $1\n", "s", strerror(errno));
+		log_error(&err_ctrl, "$!: listen: $1\n", "s", strerror(errno));
 		exit (EXIT_FAILURE);
 	}
 
@@ -158,7 +154,7 @@ int main (int argc, char **argv)
 				fprintf(stderr, "server: interrupt\n");
 				continue;
 			default:
-				cube_debug(DBG_ERR, "$!: accept: $1\n",
+				log_error(&err_ctrl, "$!: accept: $1\n",
 					"s", strerror(errno));
 				exit (EXIT_FAILURE);
 			}
@@ -176,7 +172,7 @@ int main (int argc, char **argv)
 			exit(EXIT_SUCCESS);
 		}
 
-		cube_debug(DBG_NOTE, "$!: connect pid=$1\n", "d", pid);
+		log_note(&note_ctrl, "$!: connect pid=$1\n", "d", pid);
 		close(fd);
 	}
 	

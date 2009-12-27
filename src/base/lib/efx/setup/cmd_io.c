@@ -48,13 +48,15 @@ CEXPR(f_iaopen, RVIO = io_interact(STR(0), STR(1)))
 CEXPR(f_diropen, RVIO = diropen(STR(0), STR(1)))
 
 CEXPR(f_bigbuf, RVIO = io_bigbuf(INT(0), STR(1)))
-CEXPR(f_logout, RVIO = io_refer(ParseLogOut(STR(0))))
 CEXPR(f_tmpfile, RVIO = io_tmpfile())
 CEXPR(f_tmpbuf, RVIO = io_tmpbuf(*((uint32_t *) arg[0])))
 CEXPR(f_langfilter, RVIO = langfilter(io_refer(IO(0)), STR(1)))
 CEXPR(f_lnum, RVIO = io_lnum(io_refer(IO(0))))
 CEXPR(f_ucs2latin9, RVIO = io_ucs2latin9(io_refer(IO(0))))
 CEXPR(f_lmark, RVIO = io_lmark(io_refer(IO(0)), STR(1), STR(2), INT(3)))
+CEXPR(f_in_utf8, RVIO = in_utf8(io_refer(IO(0))))
+CEXPR(f_out_utf8, RVIO = out_utf8(io_refer(IO(0))))
+CEXPR(f_out_latin9, RVIO = out_latin9(io_refer(IO(0))))
 CEXPR(f_indent, RVIO = io_indent(io_refer(IO(0)), INT(1), INT(2)))
 CEXPR(f_pushio, io_push(IO(0), io_refer(IO(1))))
 CEXPR(f_popio, RVIO = io_pop(IO(0)))
@@ -235,7 +237,7 @@ static void f_getline (EfiFunc *func, void *rval, void **arg)
 
 		if	(list->obj == NULL || list->obj->lval == NULL)
 		{
-			dbg_note(NULL, "[efmain:88]", "s", func->name);
+			log_note(NULL, "[efmain:88]", "s", func->name);
 			memfree(p);
 			continue;
 		}
@@ -391,7 +393,6 @@ static EfiFuncDef fdef_io[] = {
 	{ 0, &Type_io, "iaopen (str prompt, str hist = NULL)", f_iaopen },
 	{ 0, &Type_io, "diropen (str dir, str base)", f_diropen },
 	{ 0, &Type_io, "bigbuf (int size, str pfx = NULL)", f_bigbuf },
-	{ 0, &Type_io, "logout (str def)", f_logout },
 	{ 0, &Type_io, "findopen (str path, str name, str type = NULL, \
 str mode = \"r\")", f_findopen },
 	{ 0, &Type_io, "lnum (IO io)", f_lnum },
@@ -399,6 +400,9 @@ str mode = \"r\")", f_findopen },
 	{ 0, &Type_io, "langfilter (IO io, str lang = NULL)", f_langfilter },
 	{ 0, &Type_io, "linemark (IO io, str pre = \"%4d\t\", \
 str post = NULL, bool flag = false)", f_lmark },
+	{ 0, &Type_io, "in_utf8 (IO io)", f_in_utf8 },
+	{ 0, &Type_io, "out_utf8 (IO io)", f_out_utf8 },
+	{ 0, &Type_io, "out_latin9 (IO io)", f_out_latin9 },
 	{ 0, &Type_io, "indent (IO io, char c = '\t', int n = 1)", f_indent },
 	{ 0, &Type_void, "IO::push (IO io)", f_pushio },
 	{ 0, &Type_io, "IO::pop (void)", f_popio },

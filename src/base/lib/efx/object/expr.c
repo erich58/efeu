@@ -22,10 +22,31 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/object.h>
 #include <EFEU/stdtype.h>
+#include <EFEU/printobj.h>
 
 
 static void clean_list (const EfiType *type, void *tg, int mode);
 static void copy_list (const EfiType *type, void *tg, const void *src);
+
+static int print_list (const EfiType *type, const void *data, IO *io)
+{
+	EfiObjList *list;
+	char *delim;
+	int n;
+
+	n = io_puts("{", io);
+	delim = NULL;
+
+	for (list = Val_ptr(data); list != NULL; list = list->next)
+	{
+		n += io_puts(delim, io);
+		n += PrintObj(io, list->obj);
+		delim = ", ";
+	}
+
+	n += io_puts("}", io);
+	return n;
+}
 
 static void clean_call (const EfiType *type, void *tg, int mode);
 static void copy_call (const EfiType *type, void *tg, const void *src);
@@ -36,13 +57,13 @@ static void clean_ofunc (const EfiType *type, void *tg, int mode);
 static void copy_ofunc(const EfiType *st, void *tg, const void *src);
 
 EfiType Type_list = PTR_TYPE("List_t", EfiObjList *, &Type_ptr,
-	clean_list, copy_list);
+	print_list, clean_list, copy_list);
 EfiType Type_ofunc = PTR_TYPE("ObjFunc", EfiObjFunc, NULL,
-	clean_ofunc, copy_ofunc);
-EfiType Type_explist = EVAL_TYPE("_ExprList_", EfiObjList *,
-	eval_list, clean_list, copy_list);
-EfiType Type_call = EVAL_TYPE("_Expr_", EfiExpr,
-	eval_call, clean_call, copy_call);
+	NULL, clean_ofunc, copy_ofunc);
+EfiType Type_explist = EVAL_TYPE("_ExprList_", EfiObjList *, eval_list,
+	NULL, clean_list, copy_list);
+EfiType Type_call = EVAL_TYPE("_Expr_", EfiExpr, eval_call,
+	NULL, clean_call, copy_call);
 
 
 static void clean_list (const EfiType *type, void *data, int mode)

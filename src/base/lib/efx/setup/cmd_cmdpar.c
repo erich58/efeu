@@ -32,8 +32,8 @@ If not, write to the Free Software Foundation, Inc.,
 #define	E_PROTO	"[efi:proto]$!: Function $1: Prototype not compatible.\n"
 
 extern EfiType Type_StrPool;
-static EfiType Type_cpar = REF_TYPE("CmdPar", CmdPar *);
-static EfiType Type_argl = XREF_TYPE("ArgList", ArgList *, &Type_StrPool);
+EfiType Type_CmdPar = REF_TYPE("CmdPar", CmdPar *);
+EfiType Type_ArgList = XREF_TYPE("ArgList", ArgList *, &Type_StrPool);
 
 ArgList *arg_list (const char *base, EfiObjList *list)
 {
@@ -58,10 +58,10 @@ ArgList *arg_func (EfiFunc *func, int n, void **arg)
 	if	(func->vaarg)
 		return arg_list(NULL, Val_list(arg[func->dim - 1]));
 
-	if	(func->arg[n].type == &Type_argl)
+	if	(func->arg[n].type == &Type_ArgList)
 		return rd_refer(Val_ptr(arg[n]));
 
-	dbg_note(NULL, E_PROTO, "s", func->name);
+	log_note(NULL, E_PROTO, "s", func->name);
 	return NULL;
 }
 
@@ -297,7 +297,7 @@ static void f_error (EfiFunc *func, void *rval, void **arg)
 {
 	char *fmt = Val_str(arg[0]);
 	ArgList *argl = arg_list(NULL, Val_list(arg[1]));
-	dbg_psub(NULL, DBG_ERR, fmt, argl);
+	log_psub(ErrLog, fmt, argl);
 	rd_deref(argl);
 	exit(EXIT_FAILURE);
 }
@@ -306,7 +306,7 @@ static void f_message (EfiFunc *func, void *rval, void **arg)
 {
 	char *fmt = Val_str(arg[0]);
 	ArgList *argl = arg_list(NULL, Val_list(arg[1]));
-	dbg_psub(NULL, DBG_NOTE, fmt, argl);
+	log_psub(NoteLog, fmt, argl);
 	rd_deref(argl);
 }
 
@@ -355,15 +355,15 @@ static void f_mkpath (EfiFunc *func, void *rval, void **arg)
 */
 
 static EfiFuncDef func_cpar[] = {
-	{ FUNC_RESTRICTED, &Type_cpar, "_Ptr_ ()", f_null },
-	{ 0, &Type_cpar, "CmdPar (void)", f_ptr },
-	{ FUNC_RESTRICTED, &Type_cpar, "CmdPar (str name)", f_create },
+	{ FUNC_RESTRICTED, &Type_CmdPar, "_Ptr_ ()", f_null },
+	{ 0, &Type_CmdPar, "CmdPar (void)", f_ptr },
+	{ FUNC_RESTRICTED, &Type_CmdPar, "CmdPar (str name)", f_create },
 	{ FUNC_VIRTUAL, &Type_void,
 		"CmdPar::usage (IO out = NULL, str fmt = NULL)", f_usage },
 	{ FUNC_VIRTUAL, &Type_void,
 		"CmdPar::usage (IO out, IO def)", f_iousage },
 	{ 0, &Type_void, "CmdPar::manpage (IO out = NULL)", f_manpage },
-	{ 0, &Type_cpar, "CmdPar::read (IO def, bool flag = false)", f_read },
+	{ 0, &Type_CmdPar, "CmdPar::read (IO def, bool flag = false)", f_read },
 	{ 0, &Type_void, "CmdPar::write (IO def)", f_write },
 	{ 0, &Type_void, "CmdPar::load (str name, bool flag = false)", f_load },
 	{ 0, &Type_list, "CmdPar::eval (List_t list)", f_eval },
@@ -378,9 +378,9 @@ static EfiFuncDef func_cpar[] = {
 	{ 0, &Type_list, "listres (RegExp select = NULL)", f_listres },
 	{ 0, &Type_str, "getfmt (str def)", f_getfmt },
 
-	{ FUNC_RESTRICTED, &Type_argl, "_Ptr_ ()", f_null },
-	{ FUNC_RESTRICTED, &Type_argl, "str ()", f_argl_str },
-	{ 0, &Type_argl, "ArgList (str name, ...)", f_argl_list },
+	{ FUNC_RESTRICTED, &Type_ArgList, "_Ptr_ ()", f_null },
+	{ FUNC_RESTRICTED, &Type_ArgList, "str ()", f_argl_str },
+	{ 0, &Type_ArgList, "ArgList (str name, ...)", f_argl_list },
 	{ 0, &Type_void, "ArgList::operator+= (str arg)", f_argl_add },
 	{ 0, &Type_void, "ArgList::set (int n, str arg = NULL)", f_argl_set },
 	{ FUNC_VIRTUAL, &Type_int, "dim (ArgList list)", f_argl_dim },
@@ -421,7 +421,7 @@ static EfiFuncDef func_cpar[] = {
 
 void CmdSetup_cmdpar(void)
 {
-	AddType(&Type_cpar);
-	AddType(&Type_argl);
+	AddType(&Type_CmdPar);
+	AddType(&Type_ArgList);
 	AddFuncDef(func_cpar, tabsize(func_cpar));
 }

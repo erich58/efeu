@@ -23,17 +23,17 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/io.h>
 #include <EFEU/ioctrl.h>
 
-static int null_put (int c, void *ptr)
+static int null_put (int c, IO *io)
 {
 	return c;
 }
 
-static int null_ctrl (void *ptr, int c, va_list list)
+static int null_ctrl (IO *io, int c, va_list list)
 {
 	switch (c)
 	{
 	case IO_REWIND:	return 0;
-	case IO_IDENT:	*va_arg(list, char **) = ptr; return 0;
+	case IO_IDENT:	*va_arg(list, char **) = io->data; return 0;
 	default:	return EOF;
 	}
 }

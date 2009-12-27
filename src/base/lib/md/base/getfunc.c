@@ -12,7 +12,7 @@ EfiFunc *mdfunc_add (const EfiType *type)
 		2, type, 1, type, 0); 
 
 	if	(func == NULL)
-		dbg_note(NULL, "[mdmat:16]", "m", type2str(type));
+		log_note(NULL, "[mdmat:16]", "m", type2str(type));
 
 	return func;
 }

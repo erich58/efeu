@@ -40,6 +40,7 @@ void TypeDef::create (bool glob = true)
 	{
 		fpsub(io, "\ntypedef enum {\n$2} $1;\n\n",
 			t_name, e_member);
+		t_cname = t_name;
 	}
 	else if	(t_cname)
 	{

@@ -8,8 +8,15 @@
 #include <EFEU/EfiCount.h>
 #include <EFEU/EfiView.h>
 
+static LogControl err_log = LOG_CONTROL("md", LOGLEVEL_ERR);
+static LogControl note_log = LOG_CONTROL("md", LOGLEVEL_NOTE);
+
+LogControl *md_err = &err_log;
+LogControl *md_note = &note_log;
+
 EfiType Type_mdmat = REF_TYPE("mdmat", mdmat *);
-EfiType Type_mdaxis = PTR_TYPE("mdaxis", mdaxis *, &Type_ptr, NULL, NULL);
+EfiType Type_mdaxis = PTR_TYPE("mdaxis", mdaxis *, &Type_ptr,
+		NULL, NULL, NULL);
 EfiType Type_mdidx = STD_TYPE("mdidx", EfiMdIndex, NULL, NULL, NULL);
 
 mdmat *Buf_mdmat = NULL;

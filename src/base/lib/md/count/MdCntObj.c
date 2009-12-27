@@ -19,7 +19,6 @@ You should have received a copy of the GNU Library General Public
 License along with this library; see the file COPYING.Library.
 If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
 */
 
 #include <EFEU/mdcount.h>
@@ -32,7 +31,7 @@ typedef struct {
 	EfiFunc *f_add;
 } ObjCount;
 
-static ALLOCTAB(buf_count, 100, sizeof(ObjCount));
+static ALLOCTAB(buf_count, "ObjCount", 100, sizeof(ObjCount));
 
 static EfiFunc *get_add (EfiType *type)
 {

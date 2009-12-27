@@ -101,7 +101,7 @@ int main (int narg, char **arg)
 	char *p;
 	int i;
 
-	SetVersion("$Id: efeudoc.c,v 1.36 2008-06-14 03:51:02 ef Exp $");
+	SetVersion("$Id: efeudoc.c,v 1.37 2009-09-27 05:43:09 ef Exp $");
 	SetProgName(arg[0]);
 	CFGPath = mkpath(".", NULL, "lib/efeudoc", NULL);
 	SetupDoc();
@@ -119,7 +119,7 @@ int main (int narg, char **arg)
 #if	0
 	if	(getuid() == 0)
 	{
-		dbg_note(NULL, "[Doc:0]", NULL);
+		log_note(NULL, "[Doc:0]", NULL);
 		return 1;
 	}
 #endif

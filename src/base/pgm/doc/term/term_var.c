@@ -23,7 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <term.h>
 #include <efeudoc.h>
 
-static ALLOCTAB(Stackab, 32, sizeof(TermVar));
+static ALLOCTAB(Stackab, "TermVar", 32, sizeof(TermVar));
 
 static void TermVar_copy(TermVar *tg, TermVar *src)
 {

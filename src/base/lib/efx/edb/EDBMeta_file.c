@@ -130,6 +130,13 @@ void EDBMeta_file (EDBMetaDef *def, EDBMeta *meta, const char *arg)
 		if	(mode == M_SORT)
 			meta->cur = edb_sort(meta->cur,
 				key ? cmp_create(type, key, NULL) : NULL);
+
+		if	(meta->desc)
+		{
+			memfree(meta->cur->desc);
+			meta->cur->desc = meta->desc;
+			meta->desc = NULL;
+		}
 	}
 	else if	(mode)
 	{
@@ -155,6 +162,14 @@ void EDBMeta_file (EDBMetaDef *def, EDBMeta *meta, const char *arg)
 		}
 
 		meta->cur = edb_merge(cmp, tab, n);
+
+		if	(meta->desc)
+		{
+			memfree(meta->cur->desc);
+			meta->cur->desc = meta->desc;
+			meta->desc = NULL;
+		}
+
 		memfree(tab);
 	}
 	else

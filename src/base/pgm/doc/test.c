@@ -200,9 +200,9 @@ static void show_par (TPAR *par, const char *fmt, va_list list)
 /*	Steuerzeichen ausgeben
 */
 
-static int test_ctrl (void *ptr, int req, va_list list)
+static int test_ctrl (IO *io, int req, va_list list)
 {
-	TPAR *par = ptr;
+	TPAR *par = io->data;
 	NAME *name;
 	int last, lbreak;
 
@@ -276,9 +276,9 @@ static int test_ctrl (void *ptr, int req, va_list list)
 /*	Zeichen ausgeben
 */
 
-static int test_put (int c, void *ptr)
+static int test_put (int c, IO *io)
 {
-	TPAR *par = ptr;
+	TPAR *par = io->data;
 
 	if	(par->plain)
 		return io_putc(c, par->out);

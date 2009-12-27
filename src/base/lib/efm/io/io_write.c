@@ -31,7 +31,7 @@ size_t io_write(IO *io, const void *buf, size_t nbyte)
 		size_t n;
 
 		for (n = 0; n < nbyte; ptr++, n++)
-			if ((*io->put)(*ptr, io->data) == EOF) break;
+			if ((*io->put)(*ptr, io) == EOF) break;
 
 		return n;
 	}
@@ -47,7 +47,7 @@ size_t io_rwrite(IO *io, const void *buf, size_t nbyte)
 		size_t n;
 
 		for (n = 0, ptr += nbyte - 1; n < nbyte; ptr--, n++)
-			if ((*io->put)(*ptr, io->data) == EOF) break;
+			if ((*io->put)(*ptr, io) == EOF) break;
 
 		return n;
 	}

@@ -26,20 +26,20 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/mstring.h>
 
 
-static int crlf_put (int c, void *ptr)
+static int crlf_put (int c, IO *io)
 {
 	if	(c == '\n')
-		io_putc('\r', ptr);
+		io_putc('\r', io->data);
 
-	return io_putc(c, ptr);
+	return io_putc(c, io->data);
 }
 
-static int crlf_ctrl (void *ptr, int req, va_list list)
+static int crlf_ctrl (IO *io, int req, va_list list)
 {
 	if	(req == IO_CLOSE)
-		return io_close(ptr);
+		return io_close(io->data);
 
-	return io_vctrl(ptr, req, list);
+	return io_vctrl(io->data, req, list);
 }
 
 /*

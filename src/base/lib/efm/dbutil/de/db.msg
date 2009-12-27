@@ -22,12 +22,10 @@ If not, write to the Free Software Foundation, Inc.,
 
 pos	$!: DBData: Feldposition $1, Breite $2 nicht zulässig (recl = $3).\n
 idx	$!: DBData: Feldindex $1 nicht zulässig (dim = $2).\n
+recl	$!: DBData: Ungültiges Satzlängenfeld.\n
 
 11	$!: Spalte $1: Ungültige Ziffer $2 in Zahlenwert.\n
 12	$!: Spalte $1: Fehler in BCD-Wert $2 (HIGH)\n
 13	$!: Spalte $1: Fehler in BCD-Wert $2 (LOW)\n
 14	$!: Spalte $1: Fehler in BCD-Wert $2 (SIGNUM).\n
 15	$!: Spalte $1: Zeichen $2 nicht alphanumerisch.\n
-
-21	$!: Spalte $1: Ungültige Ziffer $2 in Zahlenwert.\n
-25	$!: Spalte $1: Zeichen $2 nicht alphanumerisch.\n

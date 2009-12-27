@@ -26,9 +26,9 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/efio.h>
 
 
-void SrcData_copy (SrcData *data, StrBuf *buf, const char *name)
+StrBuf *SrcData_copy (SrcData *data, StrBuf *buf, const char *name)
 {
-	if	(sb_getpos(&data->buf) == 0)	return;
+	if	(sb_getpos(&data->buf) == 0)	return buf;
 
 	if	(strncmp("$include", (char *) data->buf.data, 8) == 0)
 	{
@@ -46,7 +46,8 @@ void SrcData_copy (SrcData *data, StrBuf *buf, const char *name)
 		io_push(data->ein, io_fileopen(p ,"rzd"));
 		sb_clean(&data->buf);
 	}
-	else	DocBuf_copy(&data->doc, &data->buf, buf, name);
+	else	buf = DocBuf_copy(&data->doc, &data->buf, buf, name);
 
 	sb_clean(data->doc.source);
+	return buf;
 }

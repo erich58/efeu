@@ -19,7 +19,6 @@ You should have received a copy of the GNU Library General Public
 License along with this library; see the file COPYING.Library.
 If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
 */
 
 #include <EFEU/mdcount.h>
@@ -87,7 +86,7 @@ void MdCountPar_range (MdCountPar *par, const char *def)
 		{
 			noaxis = 1;
 		}
-		else	dbg_note(NULL, W_OPT, "s", x->name);
+		else	log_note(NULL, W_OPT, "s", x->name);
 
 		memfree(x);
 	}

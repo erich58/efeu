@@ -210,7 +210,7 @@ static EfiObj *range_op(IO *io, EfiOp *op, EfiObj *obj)
 	
 	if	(func == NULL)
 	{
-		dbg_note(NULL, E70, "s", op->name);
+		log_note(NULL, E70, "s", op->name);
 		DelObjList(list);
 		return NULL;
 	}
@@ -598,13 +598,13 @@ static EfiObj *LeftAssign (const char *name, EfiObj *obj)
 
 	if	(obj == NULL)
 	{
-		dbg_note(NULL, E214, "s", name);
+		log_note(NULL, E214, "s", name);
 		return NULL;
 	}
 
 	if	((func = GetTypeFunc(obj->type, name)) == NULL)
 	{
-		dbg_note(NULL, E215, "ss", name, obj->type->name);
+		log_note(NULL, E215, "ss", name, obj->type->name);
 		UnrefObj(obj);
 		return NULL;
 	}

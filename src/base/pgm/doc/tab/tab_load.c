@@ -290,5 +290,5 @@ void DocTab_fload (DocTab *tab, const char *name)
 		DocTab_load(tab, io_lnum(io_fileopen(fname, "rd")));
 		memfree(fname);
 	}
-	else	dbg_error(NULL, FMT, "m", mstrpaste(".", name, FILE_EXT));
+	else	log_error(NULL, FMT, "m", mstrpaste(".", name, FILE_EXT));
 }

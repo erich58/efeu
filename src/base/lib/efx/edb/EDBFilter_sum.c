@@ -68,7 +68,7 @@ static TLIST *tlist (EfiType *type, size_t offset, size_t dim)
 		2, type, 1, type, 0); 
 
 	if	(!t->par)
-		dbg_note("edb", FMT_NOCMP, "s", type->name);
+		log_note(edb_note, FMT_NOCMP, "s", type->name);
 
 	return t;
 }
@@ -102,7 +102,7 @@ static SLIST *slist (EfiType *type, size_t offset, size_t dim)
 		2, type, 1, type, 0); 
 
 	if	(!s->add)
-		dbg_note("edb", FMT_NOADD, "s", type->name);
+		log_note(edb_note, FMT_NOADD, "s", type->name);
 
 	return s;
 }

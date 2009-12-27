@@ -80,19 +80,19 @@ typedef struct {
 	int (*fclose) (FILE *file);
 } FILE_IO;
 
-static int f_get (void *ptr);
-static int f_put (int c, void *ptr);
-static int f_ctrl (void *ptr, int req, va_list list);
+static int f_get (IO *io);
+static int f_put (int c, IO *io);
+static int f_ctrl (IO *io, int req, va_list list);
 
-static size_t f_dbread (void *par, void *p, size_t r, size_t s, size_t n)
+static size_t f_dbread (IO *io, void *p, size_t r, size_t s, size_t n)
 {
-	FILE_IO *fio = par;
+	FILE_IO *fio = io->data;
 	return r * dbread(fio->file, p, r, s, n);
 }
 
-static size_t f_dbwrite (void *par, const void *p, size_t r, size_t s, size_t n)
+static size_t f_dbwrite (IO *io, const void *p, size_t r, size_t s, size_t n)
 {
-	FILE_IO *fio = par;
+	FILE_IO *fio = io->data;
 	return r * dbwrite(fio->file, p, r, s, n);
 }
 
@@ -123,9 +123,9 @@ IO *io_stream (const char *name, FILE *file, int (*fclose) (FILE *))
 /*	Lesen eines Zeichens
 */
 
-static int f_get (void *ptr)
+static int f_get (IO *io)
 {
-	FILE_IO *fio = ptr;
+	FILE_IO *fio = io->data;
 	return getc(fio->file);
 }
 
@@ -133,9 +133,9 @@ static int f_get (void *ptr)
 /*	Ausgabe eines Zeichens
 */
 
-static int f_put (int c, void *ptr)
+static int f_put (int c, IO *io)
 {
-	FILE_IO *fio = ptr;
+	FILE_IO *fio = io->data;
 	return putc(c, fio->file);
 }
 
@@ -143,9 +143,9 @@ static int f_put (int c, void *ptr)
 /*	Kontrollfunktion
 */
 
-static int f_ctrl (void *ptr, int req, va_list list)
+static int f_ctrl (IO *io, int req, va_list list)
 {
-	FILE_IO *fio = ptr;
+	FILE_IO *fio = io->data;
 	int stat;
 	long offset;
 

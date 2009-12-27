@@ -33,9 +33,9 @@ typedef struct {
 	int newline;	/* Flag für neue Zeile */
 } INDENT;
 
-static int indent_put (int c, void *ptr)
+static int indent_put (int c, IO *io)
 {
-	INDENT *indent = ptr;
+	INDENT *indent = io->data;
 
 	if	(indent->newline && c != '\n')
 	{
@@ -47,9 +47,9 @@ static int indent_put (int c, void *ptr)
 	return io_putc(c, indent->io);
 }
 
-static int indent_ctrl (void *ptr, int req, va_list list)
+static int indent_ctrl (IO *io, int req, va_list list)
 {
-	INDENT *indent = ptr;
+	INDENT *indent = io->data;
 	size_t stat;
 
 	switch (req)

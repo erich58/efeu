@@ -30,6 +30,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/strbuf.h>
 #include <EFEU/stdint.h>
 #include <EFEU/StrPool.h>
+#include <EFEU/LogConfig.h>
 
 #define	IO_MAX_SAVE	6
 #define	IO_STAT_OK	0
@@ -42,12 +43,12 @@ typedef struct IO IO;
 
 struct IO {
 	REFVAR;
-	int (*get) (void *par);
-	int (*put) (int c, void *par);
-	int (*ctrl) (void *par, int c, va_list list);
-	size_t (*dbread) (void *par, void *data,
+	int (*get) (IO *io);
+	int (*put) (int c, IO *io);
+	int (*ctrl) (IO *io, int c, va_list list);
+	size_t (*dbread) (IO *io, void *data,
 		size_t recl, size_t size, size_t dim);
-	size_t (*dbwrite) (void *par, const void *data,
+	size_t (*dbwrite) (IO *io, const void *data,
 		size_t recl, size_t size, size_t dim);
 	void *data;
 
@@ -204,6 +205,9 @@ int io_printf (IO *io, const char *fmt, ...);
 int io_xprintf (IO *io, const char *fmt, ...);
 int io_mbprintf (IO *io, const char *fmt, ...);
 
+void log_vprintf (LogControl *log, const char *fmt, va_list list);
+void log_printf (LogControl *log, const char *fmt, ...);
+
 /*	Binäre Ein/Ausgabe
 */
 
@@ -292,11 +296,17 @@ IO *xlangfilter (IO *in, const char *lang,
 	int (*newpar) (IO *io, int c, void *par), void *par);
 IO *langfilter (IO *in, const char *lang);
 
+IO *in_utf8 (IO *io);	/* UTF-8 Eingabekonvertierung */
+IO *out_utf8 (IO *io);	/* UTF-8 Ausgabekonvertierung */
+IO *out_latin9 (IO *io);	/* LATIN-9 Ausgabekonvertierung */
+
 /*	Teilfileausgabe in Bibliothek
 */
 
 IO *diropen (const char *name, const char *base);
 int io_newpart (IO *io, const char *name, const char *repl);
 int io_endpart (IO *io);
+
+IO *LogOpen (LogControl *ctrl);
 
 #endif	/* EFEU/io.h */

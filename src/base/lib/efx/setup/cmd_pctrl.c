@@ -116,6 +116,11 @@ static void f_allocstat (EfiFunc *func, void *rval, void **arg)
 	Obj_stat(STR(0));
 }
 
+static void f_AllocTab_stat (EfiFunc *func, void *rval, void **arg)
+{
+	AllocTab_stat(Val_io(arg[0]), NULL);
+}
+
 static void f_memcheck (EfiFunc *func, void *rval, void **arg)
 {
 	memcheck();
@@ -205,10 +210,12 @@ static void f_getppid (EfiFunc *func, void *rval, void **arg)
 	Val_int(rval) = getppid();
 }
 
+/*
 static void f_time(EfiFunc *func, void *rval, void **arg)
 {
 	Val_int(rval) = time(NULL);
 }
+*/
 
 static void f_expand(EfiFunc *func, void *rval, void **arg)
 {
@@ -227,6 +234,7 @@ static EfiFuncDef fdef_pctrl[] = {
 	{ 0, &Type_bool, "rename (str oldpath, str newpath)", f_rename },
 	{ 0, &Type_bool, "remove (str path)", f_remove },
 	{ 0, &Type_void, "perror (str pfx = NULL)", f_perror },
+	{ 0, &Type_void, "AllocTab_stat (IO out = iostd)", f_AllocTab_stat },
 	{ 0, &Type_void, "allocstat (str mark = NULL)", f_allocstat },
 	{ 0, &Type_void, "memstat (str mark = NULL)", f_memstat },
 	{ 0, &Type_void, "meminfo (str mark = NULL)", f_meminfo },
@@ -249,7 +257,9 @@ static EfiFuncDef fdef_pctrl[] = {
 	{ 0, &Type_void, "tempstat (void)", f_tempstat },
 	{ 0, &Type_int, "getpid ()", f_getpid },
 	{ 0, &Type_int, "getppid ()", f_getppid },
+	/*
 	{ 0, &Type_int, "time ()", f_time },
+	*/
 	{ 0, &Type_str,  "ExpandPath (str = NULL)", f_expand },
 };
 

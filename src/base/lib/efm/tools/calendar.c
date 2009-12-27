@@ -205,6 +205,20 @@ CalInfo *TimeCalendar (CalTimeIndex time, CalInfo *buf)
 	return buf;
 }
 
+CalInfo *tmCalendar (struct tm *tm, CalInfo *buf)
+{
+	if	(buf == NULL)	buf = &cal_buf;
+
+	buf->year = tm->tm_year + 1900;
+	buf->wday = tm->tm_wday;
+	buf->yday = tm->tm_yday + 1;
+	buf->month = tm->tm_mon + 1;
+	buf->day = tm->tm_mday;
+	buf->hour = tm->tm_hour;
+	buf->min = tm->tm_min;
+	buf->sec = tm->tm_sec;
+	return buf;
+}
 
 /*	Datumshilfsfunktionen
 */
@@ -354,3 +368,22 @@ int Calendar_jdiff (unsigned t1, unsigned t2)
 
 	return jdiff;
 }
+
+int CalInfo_week (const CalInfo *cal)
+{
+	int w0 = (cal->yday + 10 - cal->wday) % 7;
+	int w = (9 + cal->yday - w0) / 7;
+
+	if	(w)
+		return w;
+	else if	(w0 == 6 || (w0 == 5 && LeapYear(cal->year - 1)))
+		return 53;
+	else	return 52;
+}
+
+int Calendar_week (int idx)
+{
+	CalInfo cal;
+	return CalInfo_week(Calendar(idx, &cal));
+}
+

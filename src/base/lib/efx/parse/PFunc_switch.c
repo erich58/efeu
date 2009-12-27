@@ -37,7 +37,7 @@ struct CASE {
 	EfiObjList *list;
 };
 
-static ALLOCTAB(case_tab, 0, sizeof(struct CASE));
+static ALLOCTAB(case_tab, "switch-case", 0, sizeof(struct CASE));
 
 static struct CASE *new_case (EfiObj *obj)
 {
@@ -83,8 +83,8 @@ static void copy_case (const EfiType *st, void *tg, const void *src)
 	Val_case(tg) = new_case(RefObj(Val_case(src)->obj));
 }
 
-static EfiType Type_case = EVAL_TYPE("_case_", struct CASE *,
-	eval_case, clean_case, copy_case);
+static EfiType Type_case = EVAL_TYPE("_case_", struct CASE *, eval_case,
+	NULL, clean_case, copy_case);
 
 
 /*	Auswertungsfunktion

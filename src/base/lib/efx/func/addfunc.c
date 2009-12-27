@@ -26,7 +26,7 @@ static void del_func (EfiFunc **func)
 {
 	if	(func && func[0])
 	{
-		dbg_note(NULL, "[efmain:203]", "s",
+		log_note(NULL, "[efmain:203]", "s",
 			func[0]->name ? func[0]->name :
 			(func[0]->type ? func[0]->type->name : NULL));
 		rd_deref(func[0]);
@@ -38,7 +38,7 @@ static void set_virfunc (EfiVirFunc *vf, EfiFunc *func)
 {
 	if	(vf == NULL)
 	{
-		dbg_note(NULL, "[efmain:202]", "s", func->name);
+		log_note(NULL, "[efmain:202]", "s", func->name);
 		rd_deref(func);
 		return;
 	}
@@ -46,7 +46,7 @@ static void set_virfunc (EfiVirFunc *vf, EfiFunc *func)
 	if	(func->virfunc == 0)
 	{
 		func->virfunc = 1;
-		dbg_note(NULL, "[efmain:205]", "s", func->name);
+		log_note(NULL, "[efmain:205]", "s", func->name);
 	}
 
 	del_func(vb_search(&vf->tab, &func, FuncComp, VB_REPLACE));
@@ -208,7 +208,7 @@ static void AddTypeFunc (EfiFunc *func)
 	*/
 	else
 	{
-		dbg_note(NULL, "[efmain:201]", "ss", func->name, type->name);
+		log_note(NULL, "[efmain:201]", "ss", func->name, type->name);
 		rd_deref(func);
 	}
 }
@@ -230,7 +230,7 @@ void AddFunc (EfiFunc *func)
 
 		if	(!type)
 		{
-			dbg_note(NULL, "[efmain:206]", NULL);
+			log_note(NULL, "[efmain:206]", NULL);
 			rd_deref(func);
 		}
 		else if	(type->create)
@@ -262,7 +262,7 @@ void AddFunc (EfiFunc *func)
 		}
 		else
 		{
-			dbg_note(NULL, "[efmain:202]", "s", func->name);
+			log_note(NULL, "[efmain:202]", "s", func->name);
 			rd_deref(func);
 		}
 	}

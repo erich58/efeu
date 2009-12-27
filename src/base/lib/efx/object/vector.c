@@ -26,7 +26,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	VEC_BSIZE	128	/* Blockgröße für Zahl der Datenbankeinträge */
 
-static ALLOCTAB(vec_tab, 0, sizeof(EfiVec));
+static ALLOCTAB(vec_tab, "EfiVec", 0, sizeof(EfiVec));
 
 static char *vec_ident (const void *data)
 {
@@ -68,9 +68,9 @@ static void vec_realloc (EfiVec *vec, size_t dim)
 static int test_vla (EfiVec *vec)
 {
 	if	(!vec)
-		dbg_note(NULL, "[efmain:255]", NULL);
+		log_note(NULL, "[efmain:255]", NULL);
 	else if	(vec->buf.blksize == 0)
-		dbg_note(NULL, "[efmain:256]", NULL);
+		log_note(NULL, "[efmain:256]", NULL);
 	else	return 1;
 
 	return 0;
@@ -120,7 +120,7 @@ void EfiVec_delete (EfiVec *vec, size_t pos, size_t dim)
 
 	if	(pos + dim > vec->buf.used)
 	{
-		dbg_note(NULL, "[efmain:155]", NULL);
+		log_note(NULL, "[efmain:155]", NULL);
 
 		if	(pos >= vec->buf.used)
 			return;
@@ -244,7 +244,7 @@ EfiObj *Vector (EfiVec *vec, size_t idx)
 
 	if	(!vec)
 	{
-		dbg_note(NULL, "[efmain:255]", NULL);
+		log_note(NULL, "[efmain:255]", NULL);
 		return NULL;
 	}
 
@@ -252,7 +252,7 @@ EfiObj *Vector (EfiVec *vec, size_t idx)
 	{
 		if	(!vec->buf.blksize)
 		{
-			dbg_note(NULL, "[efmain:155]", NULL);
+			log_note(NULL, "[efmain:155]", NULL);
 			return NULL;
 		}
 		else	EfiVec_resize(vec, idx + 1);

@@ -84,8 +84,9 @@ void Struct_clean (const EfiType *type, void *tg, int mode);
 COMPLEX_TYPE(name, NULL, 0, 0, NULL, NULL, NULL, \
 	NULL, NULL, NULL, NULL, 0);
 
-#define	EVAL_TYPE(name, type, eval, clean, copy) \
-COMPLEX_TYPE(name, TYPE_CNAME(type), sizeof(type), 0, NULL, NULL, NULL, \
+#define	EVAL_TYPE(name, type, eval, print, clean, copy) \
+COMPLEX_TYPE(name, TYPE_CNAME(type), sizeof(type), 0, \
+	NULL, NULL, print, \
 	NULL, eval, clean, copy, TYPE_MALLOC)
 
 #define	SIMPLE_TYPE(name, type, base, print)	\
@@ -102,8 +103,9 @@ COMPLEX_TYPE(name, TYPE_CNAME(type), sizeof(type), sizeof(type), \
 COMPLEX_TYPE(name, TYPE_CNAME(type), sizeof(type), 0, NULL, NULL, NULL, \
 	base, NULL, clean, copy, 0)
 
-#define	PTR_TYPE(name, type, base, clean, copy)	\
-COMPLEX_TYPE(name, TYPE_CNAME(type), sizeof(type), 0, NULL, NULL, NULL, \
+#define	PTR_TYPE(name, type, base, print, clean, copy)	\
+COMPLEX_TYPE(name, TYPE_CNAME(type), sizeof(type), 0, \
+	NULL, NULL, print, \
 	base, NULL, clean, copy, TYPE_MALLOC)
 
 #define	REF_TYPE(name, type)	\

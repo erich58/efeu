@@ -25,6 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/calendar.h>
 #include <Math/TimeSeries.h>
 
+#define	TBASE(x)	((x) == TS_HOUR || (x) == TS_MIN || (x) == TS_SEC)
 #define	MBASE(x)	((x) == TS_MONTH || (x) == TS_QUART || (x) == TS_YEAR)
 
 #define	mittel(a,b)	(0.5 * ((a) + (b) + 1.))

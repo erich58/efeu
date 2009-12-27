@@ -31,7 +31,10 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/Info.h>
 #include <EFEU/Debug.h>
 
-#define	EDBLog	LogOut("edb", DBG_STAT)
+extern LogControl *edb_err;
+extern LogControl *edb_note;
+extern LogControl *edb_info;
+extern LogControl *edb_debug;
 
 typedef struct {
 	REFVAR;		/* Referenzzähler */

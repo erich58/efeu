@@ -35,7 +35,7 @@ static MdClass gsel = {
 };
 
 
-static ALLOCTAB(sdef_tab, 16, sizeof(MdCntGrp));
+static ALLOCTAB(sdef_tab, "MdCntGrp", 16, sizeof(MdCntGrp));
 
 
 /*	Eintrag initialisieren
@@ -156,7 +156,7 @@ mdaxis *md_ctabaxis (IO *io, MdCountPar *gtab)
 
 		if	((s = MdClass_get(gtab, def->list[i])) == NULL)
 		{
-			dbg_error("md", "[mdmat:44]", "s", def->list[i]);
+			log_error(md_err, "[mdmat:44]", "s", def->list[i]);
 			continue;
 		}
 

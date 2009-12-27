@@ -23,7 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 #include <EFEU/refdata.h>
 
-static ALLOCTAB(tab_func, 0, sizeof(EfiFunc));
+static ALLOCTAB(tab_func, "EfiFunc", 0, sizeof(EfiFunc));
 
 static void func_clean (void *data)
 {

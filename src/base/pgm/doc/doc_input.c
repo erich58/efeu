@@ -104,7 +104,7 @@ void Doc_input (Doc *doc, const char *opt, IO *in)
 			eval = 2;
 		else
 		{
-			dbg_note(NULL, "[Doc:11]", "s", opt);
+			log_note(NULL, "[Doc:11]", "s", opt);
 			break;
 		}
 	}
@@ -209,7 +209,7 @@ IO *Doc_open (const char *path, const char *name, int flag)
 
 		if	(stat(dname, &buf) == EOF)
 		{
-			dbg_note(NULL, "[Doc:4]", "m", dname);
+			log_note(NULL, "[Doc:4]", "m", dname);
 			return NULL;
 		}
 
@@ -224,7 +224,7 @@ IO *Doc_open (const char *path, const char *name, int flag)
 			if	(!dname)
 			{
 				dname = mstrpaste("/", ddir, MAINDOC);
-				dbg_note(NULL, "[Doc:5]", "m", dname);
+				log_note(NULL, "[Doc:5]", "m", dname);
 				memfree(ddir);
 				return NULL;
 			}
@@ -233,7 +233,7 @@ IO *Doc_open (const char *path, const char *name, int flag)
 	}
 	else
 	{
-		dbg_note(NULL, "[Doc:5]", "s", name);
+		log_note(NULL, "[Doc:5]", "s", name);
 		return NULL;
 	}
 

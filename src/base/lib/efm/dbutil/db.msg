@@ -22,12 +22,10 @@ If not, write to the Free Software Foundation, Inc.,
 
 pos	$!: DBData: field position $1, width $2 out of range (recl = $3).\n
 idx	$!: DBData: field index $1 out of range (dim = $2).\n
+recl	$!: DBData: invalid record length.\n
 
 11	$!: column $1: invalid digit $2 in value.\n
 12	$!: column $1: error in BCD-value $2 (HIGH)\n
 13	$!: column $1: error in BCD-value $2 (LOW)\n
 14	$!: column $1: error in BCD-value $2 (SIGNUM).\n
 15	$!: column $1: character $2 not alphanumeric.\n
-
-21	$!: column $1: invalid digit $2 in value.\n
-25	$!: column $1: character $2 not alphanumeric.\n

@@ -25,7 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	LIST_DEPTH	4
 
-static ALLOCTAB(env_tab, 32, sizeof(DocEnv));
+static ALLOCTAB(env_tab, "DocEnv", 32, sizeof(DocEnv));
 
 void Doc_newenv (Doc *doc, int depth, ...)
 {

@@ -79,7 +79,7 @@ int EshEval (int *narg, char **arg)
 	if	(CmdPar_eval(par, narg, arg, 1) <= 0)
 		return EXIT_FAILURE;
 
-	DebugMode(CmdPar_getval(par, "Debug", NULL));
+	LogConfig(CmdPar_getval(par, "Debug", NULL));
 	SetFunc(0, &Type_void, "shift (int n = 1)", f_shift);
 	AddParseDef(esh_pdef, tabsize(esh_pdef));
 
@@ -165,7 +165,7 @@ static EfiObj *pf_pconfig (IO *io, void *data)
 	if	(CmdPar_eval(NULL, pgm_argc, pgm_argv, 0) <= 0)
 		exit(EXIT_FAILURE);
 
-	DebugMode(GetResource("Debug", NULL));
+	LogConfig(GetResource("Debug", NULL));
 	return NULL;
 }
 

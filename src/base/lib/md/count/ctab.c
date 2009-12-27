@@ -108,7 +108,7 @@ int md_ctabinit (mdmat *tab, MdCountList *list)
 
 	if	(list->cnt->add == NULL)
 	{
-		dbg_error(NULL, "[mdmat:41]", NULL);
+		log_error(NULL, "[mdmat:41]", NULL);
 		list->cnt->add = dummy;
 	}
 

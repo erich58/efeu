@@ -226,17 +226,20 @@ static void add_val(EDBAggregate *aggr, mdaxis *axis, char *tg, char *src)
 	else	EDBAggregateData(aggr, tg, src);
 }
 
-static void edb2md_init (EDB2MD *par, EfiType *type)
+static void edb2md_init (EDB2MD *par, EDB *edb)
 {
 	mdaxis **xptr;
 	EfiStruct *st, **ptr;
+	EfiType *type;
 
 	par->md = new_mdmat();
 	par->md->sbuf = NewStrPool();
+	par->md->i_name = StrPool_add(par->md->sbuf, edb->desc);
 	par->var = NULL;
 	ptr = &par->var;
 	par->aggr = NULL;
 	xptr = &par->md->axis;
+	type = edb->obj->type;
 
 	for (st = type->list; st; st = st->next)
 	{
@@ -309,7 +312,7 @@ mdmat *edb2md (EDB *edb)
 
 	if	(!edb)	return NULL;
 
-	edb2md_init(&buf, edb->obj->type);
+	edb2md_init(&buf, edb);
 
 	while (edb_read(edb))
 		edb2md_add(&buf, edb->obj->data);
@@ -329,7 +332,7 @@ static void init_edb2md (EDB *edb, EDBPrintMode *mode, IO *io)
 	EDB2MD *par;
 
 	par = memalloc(sizeof *par);
-	edb2md_init(par, edb->obj->type);
+	edb2md_init(par, edb);
 	par->out = io;
 	par->pmode = mode->par;
 	mode->par = NULL;

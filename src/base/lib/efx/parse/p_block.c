@@ -71,7 +71,8 @@ EfiObj *PFunc_return (IO *io, void *data)
 static EfiObj *e_block (const EfiType *st, const void *ptr);
 static void d_block (const EfiType *st, void *tg, int mode);
 static void c_block (const EfiType *st, void *tg, const void *source);
-EfiType Type_block = EVAL_TYPE("_Block_", EfiBlock, e_block, d_block, c_block);
+EfiType Type_block = EVAL_TYPE("_Block_", EfiBlock, e_block,
+	NULL, d_block, c_block);
 
 
 static void d_block (const EfiType *st, void *tg, int mode)
@@ -85,7 +86,7 @@ static void d_block (const EfiType *st, void *tg, int mode)
 
 static void c_block (const EfiType *st, void *tg, const void *src)
 {
-	dbg_error(NULL, "[efmain:144]", NULL);
+	log_error(NULL, "[efmain:144]", NULL);
 }
 
 

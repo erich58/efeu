@@ -32,7 +32,7 @@ FILE *tempopen (void)
 
 	if	((file = tmpfile()) == NULL)
 	{
-		dbg_error(NULL, FMT_ERR, NULL);
+		log_error(NULL, FMT_ERR, NULL);
 		return NULL;
 	}
 	

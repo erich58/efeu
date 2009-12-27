@@ -19,7 +19,6 @@ You should have received a copy of the GNU Library General Public
 License along with this library; see the file COPYING.Library.
 If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
 */
 
 #include <EFEU/mdcount.h>
@@ -34,7 +33,7 @@ typedef struct {
 	int *map;
 } ObjClass;
 
-static ALLOCTAB(buf_class, 100, sizeof(ObjClass));
+static ALLOCTAB(buf_class, "ObjClass", 100, sizeof(ObjClass));
 
 static int enum_dummy (MdClass *p_cdef, const void *ptr)
 {

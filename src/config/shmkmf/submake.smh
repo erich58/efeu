@@ -1,5 +1,5 @@
 # :*:create master makefile for subprojects
-# :de:Haupmakefile für Teilprojekte generieren
+# :de:Hauptmakefile für Teilprojekte generieren
 #
 # $Synopsis
 # include $1
@@ -78,6 +78,11 @@ submake_clean="clean"
 # Genererierungsziele und nicht für die Aufräumziele.
 #
 # :de:
+# Die folgenden Optionen und Argumente werden von $! akzeptiert:
+#
+# @arglist
+#
+# :de:
 # Quell- und Aufbauverzeichnis dürfen zusammenfallen. Die Makefiles werden
 # dann jeweils im gleichen Verzeichnis wie die zugehörigen |Config.make|
 # Dateien gebaut.
@@ -110,7 +115,7 @@ submake ()
 		-w)	work="$2"; shift 2;;
 		-s)	src="$SRC/$2"; shift 2;;
 		--)	shift; break;;
-		-*)	shmkmf_invop mf_rule "$1";;
+		-*)	shmkmf_invop submake "$1";;
 		*)	break;;
 		esac
 	done
@@ -120,12 +125,18 @@ submake ()
 	test "$usage" && mf_rule -d usage "" \
 		"@echo 'usage: make <target> | <project>[.target]'"
 
-	$_submake_list $SRC > ProjectList
 	mf_update -w "$work" ProjectList $_submake_list $SRC
-	test -n "$work" && work=$work/
-	add_depend ${work}ProjectList
 
-	for prj in `cat ProjectList`
+	if [ -n "$work" ]; then
+		[ -d $work ] || mkdir -p $work
+		work=$work/
+	fi
+
+	plist="${work}ProjectList"
+	add_depend $plist
+	$_submake_list $SRC > $plist
+
+	for prj in `cat $plist`
 	do
 		dir=$SRC/$prj
 		cfg=$dir/Config.make
@@ -146,25 +157,10 @@ echo '# <no description>') | sed -e 's/^#[ 	]*/	/'
 		mf_rule $wdir/Makefile $cfg "test -d $wdir || mkdir -p $wdir" \
 			"cd $wdir; $shmkmf -t $TOP $cfg"
 
-		if [ -f $dir/Depends ]
-		then
-			add_depend $dir/Depends
-
-			for dep in `sed -e 's/#.*//' $dir/Depends`
-			do
-				mf_rule $wdir/Makefile $dep/Makefile
-
-				for tg in $build
-				do
-					printf "%s:: %s\n" \
-						"$name.$tg" "$dep.$tg"
-				done
-			done
-		fi
-
 		for dep in `grep '^#.*Depends:' $cfg | sed -e 's/.*Depends://'`
 		do
-			printf "\n"
+			printf "\n%s/Makefile: %s/Makefile\n" \
+				"$wdir" "$work$dep"
 
 			for tg in $build
 			do
@@ -172,13 +168,13 @@ echo '# <no description>') | sed -e 's/^#[ 	]*/	/'
 			done
 		done
 
-		printf "\n%s:: %s\n" "$name" "$wdir/Makefile"
-		printf "%s::\n\t%s\n" "$name" "cd $wdir; make"
+		printf "\n%s:: %s/Makefile; %s\n" \
+			"$name" "$wdir" "cd $wdir; make"
 
 		for tg in $build $clean
 		do
-			printf "%s:: %s\n\t%s\n" "$name.$tg" "$wdir/Makefile" \
-				"cd $wdir; make $tg"
+			printf "%s:: %s/Makefile; %s\n" \
+				"$name.$tg" "$wdir" "cd $wdir; make $tg"
 		done
 	done
 

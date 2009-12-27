@@ -61,7 +61,7 @@ static int sub_search (StrBuf *sb, const char *name)
 
 	sb_puts(name, sb);
 	sb_putc(0, sb);
-	dbg_message("fsearch", DBG_TRACE, "access(\"$1\")\n", NULL, "s", sb->data);
+	log_note(TraceLog, "access(\"$1\")\n", "s", sb->data);
 
 	if	(access((char *) sb->data, R_OK) == 0)
 		return 1;

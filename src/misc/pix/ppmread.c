@@ -116,7 +116,7 @@ static int color_value (VecBuf *buf, int red, int green, int blue)
 
 	if	(buf->used >= 255)
 	{
-		dbg_error(NULL, "[pixmap:2]", NULL);
+		log_error(NULL, "[pixmap:2]", NULL);
 		return 0;
 	}
 
@@ -178,7 +178,7 @@ OldPixMap *read_PPMFile (FILE *file)
 
 	if	(p[0] != 'P')
 	{
-		dbg_error(NULL, "[pixmap:1]", NULL);
+		log_error(NULL, "[pixmap:1]", NULL);
 		return NULL;
 	}
 
@@ -190,7 +190,7 @@ OldPixMap *read_PPMFile (FILE *file)
 	case '4':	get = get_pbmraw; bitmap = 1; break;
 	case '5':	get = get_pgmraw; bitmap = 0; break;
 	case '6':	get = get_ppmraw; bitmap = 0; break;
-	default:	dbg_error(NULL, "[pixmap:1]", NULL); return NULL;
+	default:	log_error(NULL, "[pixmap:1]", NULL); return NULL;
 	}
 
 	cols = atoi(get_val(file));

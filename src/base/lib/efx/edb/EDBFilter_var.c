@@ -132,7 +132,7 @@ EDB *edb_conv (EDB *edb, EfiType *type)
 	}
 	else
 	{
-		dbg_note(NULL, ERR_CONV, "mm", edb->obj->type->name,
+		log_note(NULL, ERR_CONV, "mm", edb->obj->type->name,
 			type->name);
 
 		rd_deref(edb);
@@ -147,7 +147,7 @@ EDB *edb_xconv (EDB *edb, const char *name)
 	if	(type)
 		return edb_conv(edb, type);
 	
-	dbg_error("edb", ERR_TYP, "s", name);
+	log_error(edb_err, ERR_TYP, "s", name);
 	rd_deref(edb);
 	return NULL;
 }

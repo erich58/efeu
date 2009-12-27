@@ -19,7 +19,6 @@ You should have received a copy of the GNU Library General Public
 License along with this library; see the file COPYING.Library.
 If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
 */
 
 #include <EFEU/mdcount.h>
@@ -210,7 +209,7 @@ void MdCntDef_cadd (EfiFunc *func, void *rval, void **arg)
 		EfiObj *obj = arg[3];
 
 		if	(obj && cdef->obj && obj->type != cdef->obj->type)
-			dbg_note("md", "[mdmat:304]", NULL);
+			log_note(md_note, "[mdmat:304]", NULL);
 
 		xadd(tab, cdef->cltab.data, cdef->cltab.used,
 			Val_str(arg[2]), obj);

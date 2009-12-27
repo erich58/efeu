@@ -29,14 +29,18 @@ void TimeRange_sync (TimeRange *rng)
 /*	Datumsbereich
 */
 
-#define	DAT_TAG		1	/* Tagesangabe */
-#define	DAT_MONAT	2	/* Monatsangabe */
-#define	DAT_QUART	3	/* Quartalsangabe */
-#define	DAT_JAHR	4	/* Jahresangabe */
+#define	DAT_SEC		1	/* Sekundenangabe */
+#define	DAT_MIN		2	/* Minutenangabe */
+#define	DAT_HOUR	3	/* Stundenangabe */
+#define	DAT_TAG		4	/* Tagesangabe */
+#define	DAT_MONAT	5	/* Monatsangabe */
+#define	DAT_QUART	6	/* Quartalsangabe */
+#define	DAT_JAHR	7	/* Jahresangabe */
 
 typedef struct {
 	unsigned type : 8;	/* Datumstype */
 	unsigned val : 24;	/* Datumswert */
+	unsigned sec : 32;	/* Sekunden */
 } DAT;
 
 /*	Jahresangabe standardisieren
@@ -98,6 +102,7 @@ static DAT *get_dat(IO *io, DAT *ptr, char *delim)
 
 	ptr->type = 0;
 	ptr->val = 0;
+	ptr->sec = 0;
 
 	while ((c = io_eat(io, delim)) == '#')
 	{
@@ -109,11 +114,24 @@ static DAT *get_dat(IO *io, DAT *ptr, char *delim)
 
 	if	(!next_val(io, &a))
 	{
-		io_error(io, "[Synthesis:21]", "c", io_getc(io));
+		io_error(io, "[mdmat:305]", "c", io_getc(io));
 		return NULL;
 	}
 
-	if	(sub_val(io, '.', &b))
+	if	(sub_val(io, '-', &b))
+	{
+		if	(sub_val(io, '-', &c))
+		{
+			ptr->type = DAT_TAG;
+			ptr->val = CalendarIndex(c, b, sync_jahr(a));
+		}
+		else
+		{
+			ptr->type = DAT_MONAT;
+			ptr->val = sync_jahr(a) * 12 + b - 1; 
+		}
+	}
+	else if	(sub_val(io, '.', &b))
 	{
 		if	(sub_val(io, '.', &c))
 		{
@@ -128,6 +146,17 @@ static DAT *get_dat(IO *io, DAT *ptr, char *delim)
 	}
 	else if	(sub_val(io, ':', &b))
 	{
+		ptr->type = DAT_MIN;
+		ptr->sec = (a * 60 + b) * 60;
+		
+		if	(sub_val(io, ':', &c))
+		{
+			ptr->type = DAT_SEC;
+			ptr->sec += c;
+		}
+	}
+	else if	(sub_val(io, '/', &b))
+	{
 		ptr->type = DAT_QUART;
 		ptr->val = sync_jahr(a) * 4 + b - 1; 
 	}
@@ -135,6 +164,24 @@ static DAT *get_dat(IO *io, DAT *ptr, char *delim)
 	{
 		ptr->type = DAT_JAHR;
 		ptr->val = sync_jahr(a);
+	}
+
+	if	(ptr->type == DAT_TAG && sub_val(io, ' ', &a))
+	{
+		ptr->type = DAT_HOUR;
+		ptr->sec = a * 60 * 60;
+
+		if	(sub_val(io, ':', &a))
+		{
+			ptr->type = DAT_MIN;
+			ptr->sec += a * 60;
+
+			if	(sub_val(io, ':', &a))
+			{
+				ptr->type = DAT_SEC;
+				ptr->sec += a;
+			}
+		}
 	}
 
 	return ptr;
@@ -181,6 +228,16 @@ static unsigned dat_lim (int type, int val)
 	}
 }
 
+static unsigned sec_lim (int type, int val)
+{
+	switch (type)
+	{
+	case DAT_SEC:	return val;
+	case DAT_MIN:	return val - val % 60;
+	case DAT_HOUR:	return val - val % 3600;
+	default:	return 0;
+	}
+}
 
 /*	Neuer Datumsbereich
 */
@@ -221,6 +278,8 @@ static TimeRange *new_range(VecBuf *buf, DAT *a, DAT *b, int flag, char *fmt)
 
 	range->ug = dat_lim(a->type, a->val);
 	range->og = dat_lim(b->type, b->val + 1) - 1;
+	range->ug_sec = sec_lim(a->type, a->val);
+	range->og_sec = sec_lim(b->type, b->val + 1) - 1;
 	TimeRange_sync(range);
 
 	if	(fmt)
@@ -297,7 +356,7 @@ int IOTimeRange (VecBuf *buf, IO *io)
 
 			if	(c != '.')
 			{
-				io_error(io, "[Synthesis:21]", "c", c);
+				io_error(io, "[mdmat:305]", "c", c);
 				break;
 			}
 
@@ -352,6 +411,9 @@ int IOTimeRange (VecBuf *buf, IO *io)
 	case DAT_MONAT:	return 'm';
 	case DAT_QUART:	return 'q';
 	case DAT_JAHR:	return 'j';
+	case DAT_SEC:	return 'S';
+	case DAT_MIN:	return 'M';
+	case DAT_HOUR:	return 'H';
 	default:	return 0;
 	}
 }
@@ -376,6 +438,12 @@ int strTimeRange (VecBuf *buf, const char *def)
 	return type;
 }
 
+static int put_sec (IO *io, unsigned sec)
+{
+	return io_printf(io, " %02d:%02d:%02d", sec / 3600,
+		(sec / 60) % 60, sec % 60);
+}
+
 int PrintTimeRange (IO *io, TimeRange *rng, size_t n)
 {
 	int i;
@@ -383,10 +451,41 @@ int PrintTimeRange (IO *io, TimeRange *rng, size_t n)
 	for (i = 0; n-- > 0; rng++)
 	{
 		i += io_xprintf(io, "%-12s\t", rng->label);
-		i += PrintCalendar(io, "%d.%m.%Y - ", rng->ug);
-		i += PrintCalendar(io, "%d.%m.%Y", rng->og);
-		i += PrintCalendar(io, "%t%d.%m.%Y", rng->dat);
-		i += io_xprintf(io, " %4d\n", rng->tage);
+
+		if	(rng->tage)
+			i += PrintCalendar(io, "%d.%m.%Y", rng->ug);
+
+		if	(rng->sec)
+			i += put_sec(io, rng->ug_sec);
+
+		i += io_puts(" - ", io);
+
+		if	(rng->sec)
+			i += put_sec(io, rng->og_sec);
+
+		if	(rng->tage)
+			i += PrintCalendar(io, "%d.%m.%Y", rng->og);
+
+		i += PrintCalendar(io, "%t%d.%m.%Y ", rng->dat);
+
+		if	(rng->tage)
+			i += io_xprintf(io, "%4d", rng->tage);
+
+		if	(rng->sec)
+		{
+			int h = rng->sec / 3600;
+			int m = (rng->sec / 60) % 60;
+			int s = rng->sec % 60;
+
+			if	(rng->tage)
+				i += io_puts("+", io);
+
+			if	(h)	i += io_printf(io, "%dh", h);
+			if	(m)	i += io_printf(io, "%dm", m);
+			if	(s)	i += io_printf(io, "%ds", s);
+		}
+
+		i += io_puts("\n", io);
 	}
 
 	return i;

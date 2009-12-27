@@ -19,7 +19,6 @@ You should have received a copy of the GNU Library General Public
 License along with this library; see the file COPYING.Library.
 If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
 */
 
 #include <EFEU/mdcount.h>
@@ -56,5 +55,5 @@ void MdCount_add (MdCountPar *tab, MdCount *entry, size_t dim)
 			vb_search(&tab->vtab, &key, cmp_vtab, VB_REPLACE);
 		}
 	}
-	else	dbg_note("md", "[mdmat:301]", NULL);
+	else	log_note(md_note, "[mdmat:301]", NULL);
 }

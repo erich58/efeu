@@ -25,7 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/mstring.h>
 #include <EFEU/memalloc.h>
 
-static ALLOCTAB(calltab, 100, sizeof(CmdParCall));
+static ALLOCTAB(calltab, "CmdParCall", 30, sizeof(CmdParCall));
 
 /*
 Die Funktion |$1| liefert eine neue Aufrufdefinition

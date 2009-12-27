@@ -127,7 +127,12 @@ static EDB *meta_eval (EDBMeta *meta)
 	do	c = io_skipcom(meta->ctrl, &meta->buf, 1);
 	while	(isspace(c));
 
-	meta->desc = sb_strcpy(&meta->buf);
+	p = sb_nul(&meta->buf);
+
+	while (*p == ' ' || *p == '\t')
+		p++;
+
+	meta->desc = *p ? mstrcpy(p) : NULL;
 	io_ungetc(c, meta->ctrl);
 
 	if	(c != '@')

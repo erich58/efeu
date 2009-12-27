@@ -178,7 +178,7 @@ static void eval_info (const char *mode, const char *name)
 		}
 	}
 
-	dbg_note("info", ERR_MODE, "s", mode);
+	log_note(NULL, ERR_MODE, "s", mode);
 }
 
 void BrowseInfo (const char *name)

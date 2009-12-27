@@ -29,11 +29,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <ctype.h>
 
 #define	ERR_CMD "[edb:cmd]$!: unknown command $1.\n"
-#define	ERR_VAR	"[edb:var]$!: invalid declaration $1.\n"
-#define	ERR_MEM	"[edb:mem]$!: type $1 has no member $2.\n"
 #define	ERR_VEC	"[edb:vec]$!: vector could only used on the whole.\n"
-#define ERR_USE	"[edb:use]$!: name $1 arready used.\n"
-#define	ERR_TYP	"[edb:typ]$!: unknown datatype $1.\n"
 #define	ERR_ORD "[edb:ord]$!: invalid order of parameters.\n"
 #define	ERR_NOC "[edb:noc]$!: use of C-expression not available.\n"
 
@@ -45,14 +41,9 @@ If not, write to the Free Software Foundation, Inc.,
 #define EXTNAME "custom_trans_func"
 
 typedef struct {
-	EfiStruct *var;
-	EDBAssign *assign;
-} VDEF;
-
-typedef struct {
 	REFVAR;
 	EDB *base;
-	VDEF vdef;
+	EfiFunc *cfunc;
 	EfiObj *expr;
 	EfiObj *obj;
 	EfiVarTab *tab;
@@ -68,14 +59,13 @@ static void trans_clean (void *data)
 {
 	TRANS *trans = data;
 	rd_deref(trans->base);
+	rd_deref(trans->cfunc);
 	UnrefObj(trans->expr);
 	UnrefObj(trans->obj);
 	DelVarTab(trans->tab);
 	rd_deref(trans->src);
 	rd_deref(trans->tg);
 	rd_deref(trans->cmp);
-	rd_deref(trans->vdef.assign);
-	DelEfiStruct(trans->vdef.var);
 	memfree(trans);
 }
 
@@ -87,8 +77,6 @@ static void *trans_alloc (EDB *edb)
 	
 	trans = memalloc(sizeof *trans);
 	trans->base = edb;
-	trans->vdef.var = NULL;
-	trans->vdef.assign = NULL;
 	trans->expr = NULL;
 	trans->obj = NULL;
 	trans->tab = NULL;
@@ -99,6 +87,15 @@ static void *trans_alloc (EDB *edb)
 	return rd_init(&trans_reftype, trans);
 }
 
+static int can_reduce (EfiType *type)
+{
+	if	(!type->list)		return 0;
+	if	(type->list->next)	return 0;
+	if	(type->list->dim)	return 0;
+
+	return 1;
+}
+
 static void make_type (TRANS *trans)
 {
 	EfiType *type;
@@ -106,21 +103,18 @@ static void make_type (TRANS *trans)
 	if	(trans->obj)
 		return;
 
-	if	(!trans->vdef.var)
+	if	(trans->cfunc)
 	{
-		type = trans->base->obj->type;
+		type = trans->cfunc->type;
 	}
-	else if	(!trans->vdef.var->next && (trans->flags & TRANS_REDUCE))
+	else	type = trans->base->obj->type;
+
+	if	(trans->flags & TRANS_REDUCE && can_reduce(type))
 	{
-		type = trans->vdef.var->type;
-		trans->vdef.var->offset = 0;
+		type = type->list->type;
 	}
-	else	type = MakeStruct(NULL, NULL, RefEfiStruct(trans->vdef.var));
 
 	trans->obj = LvalObj(NULL, type);
-	/*
-	PrintEDBAssign(ioerr, trans->vdef.assign);
-	*/
 }
 
 static void make_tab (TRANS *trans)
@@ -132,23 +126,11 @@ static void make_tab (TRANS *trans)
 
 	if	(trans->flags & TRANS_VEC)
 	{
+		VarTab_xadd(trans->tab, "base", NULL,
+			NewPtrObj(&Type_EDB, rd_refer(trans->base)));
 		trans->src = NewEfiVec(trans->base->obj->type, NULL, 0);
 		VarTab_xadd(trans->tab, "src", NULL,
 			NewPtrObj(&Type_vec, rd_refer(trans->src)));
-
-		if	(!trans->vdef.assign)
-		{
-			EfiStruct *var = NewEfiStruct(trans->base->obj->type,
-				NULL, 0);
-			trans->vdef.assign = NewEDBAssign(NULL, NULL, NULL,
-				var, 0);
-		}
-
-		EDBAssignFunc(rd_refer(trans->vdef.assign),
-			trans->obj->type, trans->base->obj->type);
-
-		VarTab_xadd(trans->tab, "base", NULL,
-			NewPtrObj(&Type_EDB, rd_refer(trans->base)));
 		trans->tg = NewEfiVec(trans->obj->type, NULL, 0);
 		VarTab_xadd(trans->tab, "tg", NULL,
 			NewPtrObj(&Type_vec, rd_refer(trans->tg)));
@@ -170,260 +152,21 @@ typedef struct {
 static void tpar_list (IO *out);
 
 
-static int add_var (VDEF *vdef, EfiStruct *var, int flag)
-{
-	EfiStruct **p;
-
-	for (p = &vdef->var; *p; p = &(*p)->next)
-	{
-		if	(mstrcmp(var->name, (*p)->name) == 0)
-		{
-			if	(flag)
-				dbg_error("edb", ERR_USE, "s", var->name);
-
-			rd_deref(var);
-			return 0;
-		}
-	}
-
-	*p = var;
-	return 1;
-}
-
-static void add_xvar (VDEF *vdef, EfiObj *base, EfiStruct *st,
-	EfiStruct *var, int flag)
-{
-	if	(add_var(vdef, var, flag))
-		vdef->assign = NewEDBAssign(vdef->assign, base, st,
-			var, var->offset);
-}
-
-
-
-static void add_vardef (IO *io, VDEF *vdef, const char *name)
-{
-	EfiType *type;
-
-	type = GetType(name);
-
-	if	(!type)
-	{
-		io_push(io, io_cstr(name));
-	}
-	
-	type = Parse_type(io, type);
-
-	if	(type)
-	{
-		add_var(vdef, GetStructEntry(io, type), 1);
-	}
-	else	dbg_error("edb", ERR_TYP, "s", name);
-}
-
-static EfiStruct *get_member (EfiType *type, char *name)
-{
-	EfiStruct *var;
-
-	for (var = type->list; var; var = var->next)
-		if (mstrcmp(name, var->name) == 0) return var;
-
-	dbg_error("edb", ERR_MEM, "ss", type->name, name);
-	return NULL;
-}
-
-static void add_type_member (VDEF *vdef, EfiType *type, size_t offset)
-{
-	EfiStruct *v;
-	EfiObj *base;
-
-	base = LvalObj(&Lval_ptr, type, NULL);
-
-	for (v = type->list; v; v = v->next)
-	{
-		EfiStruct *x = NewEfiStruct(v->type, v->name, v->dim);
-		x->offset = offset + v->offset;
-
-		if	(v->member)
-			add_xvar(vdef, base, v, x, 0);
-		else	add_xvar(vdef, NULL, NULL, x, 0);
-	}
-
-	UnrefObj(base);
-}
-
-static void get_var (TRANS *trans, VDEF *vdef, char *name, char *def)
-{
-	EfiType *type;
-	EfiStruct *var;
-	size_t offset;
-	size_t dim;
-	char *last;
-	char *p;
-
-	type = trans->base->obj->type;
-	offset = 0;
-	dim = 0;
-	last = NULL;
-
-	if	(mstrcmp(def, ".") == 0)
-	{
-		add_xvar(vdef, NULL, NULL, NewEfiStruct(type, name, 0), 1);
-		return;
-	}
-
-	while (def != NULL)
-	{
-		if	((p = strchr(def, '.')) != NULL)
-			*p++ = 0;
-
-		if	(dim)
-			dbg_error("dbg", ERR_VEC, NULL);
-
-		if	(mstrcmp(def, "*") == 0)
-		{
-			add_type_member(vdef, type, offset);
-			return;
-		}
-
-		var = get_member(type, def);
-
-		if	(!var)	return;
-
-		if	(var->member)
-		{
-			EfiStruct *x = NewEfiStruct(var->type,
-				name ? name : def, var->dim);
-			EfiObj *base = LvalObj(&Lval_ptr, type, NULL);
-			x->offset = offset;
-			add_xvar(vdef, base, var, x, 0);
-			return;
-		}
-
-		type = var->type;
-		dim = var->dim;
-		offset += var->offset;
-		last = def;
-		def = p;
-	}
-
-	var = NewEfiStruct(type, name ? name : last, dim);
-	var->offset = offset;
-	add_xvar(vdef, NULL, NULL, var, 1);
-}
-
-static int io_trans_var (IO *io, TRANS *trans, VDEF *vdef, int delim)
-{
-	EfiType *type;
-	StrBuf *sb;
-	char *name;
-	char *arg;
-	int pos;
-	int c;
-
-	do
-	{
-		c = io_getc(io);
-
-		if	(c == EOF || c == delim)	return 0;
-	}
-	while	(isspace(c) || c == ',');
-
-	if	(c == '}' || c == ';')
-	{
-		io_ungetc(c, io);
-		return 0;
-	}
-
-	if	(c == '{')
-	{
-		while (io_trans_var(io, trans, vdef, '}'))
-			;
-
-		return 1;
-	}
-
-	sb = sb_acquire();
-	pos = 0;
-
-	while (c != EOF && !strchr(",;}\n", c))
-	{
-		if	(isspace(c))
-		{
-			add_vardef(io, vdef, sb_nul(sb));
-			sb_release(sb);
-			return 1;
-		}
-
-		if	(c == '=' && !pos)
-		{
-			sb_putc(0, sb);
-			c = io_getc(io);
-
-			if	(c == '{')
-			{
-				VDEF vbuf;
-				EfiStruct *var;
-
-				vbuf.var = NULL;
-				vbuf.assign = NULL;
-
-				while (io_trans_var(io, trans, &vbuf, '}'))
-					;
-
-				type = MakeStruct(NULL, NULL, vbuf.var);
-				var = NewEfiStruct(type, (char *) sb->data, 0);
-
-				if	(add_var(vdef, var, 1) && vbuf.assign)
-				{
-					vdef->assign = NewEDBAssign(
-						vdef->assign, NULL, NULL,
-						var, 0);
-					vdef->assign->sub = vbuf.assign;
-				}
-
-				sb_release(sb);
-				return 1;
-			}
-
-			pos = sb_getpos(sb);
-		}
-		else
-		{
-			sb_putc(c, sb);
-			c = io_getc(io);
-		}
-	}
-
-	io_ungetc(c, io);
-	name = sb_nul(sb);
-	arg = name + pos;
-	get_var(trans, vdef, name, arg);
-	sb_release(sb);
-	return 1;
-}
-
 static void trans_var (TRANS *trans, const char *opt, const char *list)
 {
-	IO *io;
-	
 	if	(trans->obj)
-		dbg_error("edb", ERR_ORD, NULL);
+		log_error(edb_err, ERR_ORD, NULL);
 
 	if	(!opt || *opt == 'r')
 		trans->flags |= TRANS_REDUCE;
 
-	io = io_cstr(list);
-
-	while (io_trans_var(io, trans, &trans->vdef, EOF))
-		;
-
-	io_close(io);
+	trans->cfunc = ConstructObjFunc(NULL, list, trans->base->obj);
 }
 
 static void trans_vec (TRANS *trans, const char *opt, const char *cmp)
 {
 	if	(trans->tab)
-		dbg_error("edb", ERR_ORD, NULL);
+		log_error(edb_err, ERR_ORD, NULL);
 
 	trans->flags |= TRANS_VEC;
 
@@ -554,7 +297,7 @@ static void set_func (TRANS *trans, IO *io, int delim)
 	memfree(name);
 	deltempdir(dir);
 #else
-	dbg_error("edb", ERR_NOC, NULL);
+	log_error(edb_err, ERR_NOC, NULL);
 #endif
 }
 
@@ -652,7 +395,16 @@ static void tpar_eval (TRANS *trans, AssignArg *arg)
 		}
 	}
 
-	dbg_error("edb", ERR_CMD, "s", arg->name);
+	log_error(edb_err, ERR_CMD, "s", arg->name);
+}
+
+static void copy_data (TRANS *trans, void *tg, void *src)
+{
+	if	(trans->cfunc)
+	{
+		trans->cfunc->eval(trans->cfunc, tg, &src);
+	}
+	else	AssignData(trans->obj->type, tg, src);
 }
 
 static int std_read (EfiType *type, void *data, void *par)
@@ -661,16 +413,7 @@ static int std_read (EfiType *type, void *data, void *par)
 
 	while (edb_read(trans->base))
 	{
-		if	(trans->vdef.assign)
-		{
-			EDBAssignData(trans->vdef.assign, data,
-				trans->base->obj->data);
-		}
-		else if	(!trans->vdef.var)
-		{
-			AssignData(type, data, trans->base->obj->data);
-		}
-
+		copy_data(trans, data, trans->base->obj->data);
 		CmdEval_stat = 0;
 
 		if	(trans->func)
@@ -689,7 +432,6 @@ static int std_read (EfiType *type, void *data, void *par)
 			PopVarTab();
 			PopVarTab();
 			PopVarTab();
-
 		}
 
 		switch (CmdEval_stat)
@@ -757,7 +499,7 @@ static int vec_read (EfiType *type, void *data, void *par)
 
 			while (n-- > 0)
 			{
-				EDBAssignData(trans->vdef.assign, tp, sp);
+				copy_data(trans, tp, sp);
 				sp += trans->src->buf.elsize;
 				tp += trans->tg->buf.elsize;
 			}
@@ -831,34 +573,20 @@ EDB *edb_trans (EDB *base, const char *def)
 		memfree(arg);
 	}
 
-	return trans_edb(trans, NULL);
+	return trans_edb(trans, mstrcpy(base->desc));
 }
 
 
 static EDB *fdef_trans (EDBFilter *filter, EDB *base,
 	const char *opt, const char *arg)
 {
-	return edb_trans(base, arg);
+	return edb_trans(base, opt);
 }
 
 EDBFilter EDBFilter_trans = EDB_FILTER(NULL,
-	"trans", "=par", fdef_trans, NULL, 
+	"trans", "[par]", fdef_trans, NULL, 
 	":*:transforming records.\n"
-	"trans= gives a list of availabel parameters.\n"
+	"trans[?] gives a list of availabel parameters.\n"
 	":de:Transformieren von Datensätzen.\n"
-	"Die Angabe trans= liefert die verfügbaren Parameter.\n"
-);
-
-static EDB *fdef_cut (EDBFilter *filter, EDB *base,
-	const char *opt, const char *arg)
-{
-	TRANS *trans = trans_alloc(base);
-	trans_var(trans, opt, arg);
-	return trans_edb(trans, NULL);
-}
-
-EDBFilter EDBFilter_cut = EDB_FILTER(NULL,
-	"cut", "[r]=list", fdef_cut, NULL,
-	":*:cut out single variables of each record"
-	":de:Einzelne Variablen aus den Datensätzen ausschneiden"
+	"Die Angabe trans[?] liefert die verfügbaren Parameter.\n"
 );

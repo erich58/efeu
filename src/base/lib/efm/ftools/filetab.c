@@ -51,28 +51,31 @@ static int file_cmp (const void *pa, const void *pb)
 
 static VECBUF(filetab, 32, sizeof(FileTab));
 
+static LogControl debug_log = LOG_CONTROL("file", LOGLEVEL_DEBUG);
+
 static void file_debug (const char *type, FileTab *tab)
 {
-	FILE *log;
+	IO *log;
 
 	if	(!tab)	return;
 
-	log = LogFile("file", DBG_TRACE);
+	log = LogOpen(&debug_log);
 
 	if	(!log)	return;
 
-	fprintf(log, "file: %s", type);
+	io_printf(log, "file: %s", type);
 
 	if	(tab->refcount)
-		fprintf(log, "[%d]", tab->refcount);
+		io_printf(log, "[%d]", tab->refcount);
 
-	fputs(" (", log);
+	io_puts(" (", log);
 
 	if	(tab->name)
-		fprintf(log, "\"%s\"", tab->name);
-	else	fprintf(log, "%p", tab->file);
+		io_printf(log, "\"%s\"", tab->name);
+	else	io_printf(log, "%p", tab->file);
 
-	fprintf(log, ", \"%s\")\n", tab->mode);
+	io_printf(log, ", \"%s\")\n", tab->mode);
+	io_close(log);
 }
 
 static void closeall (void *par)
@@ -136,7 +139,7 @@ int fileclose (FILE *file)
 
 	if	(tab == NULL)
 	{
-		dbg_note(NULL, FMT_11, NULL);
+		log_note(NULL, FMT_11, NULL);
 		return EOF;
 	}
 
@@ -191,19 +194,21 @@ char *fileident (FILE *file)
 }
 
 
-void filedebug (FILE *file, int level, const char *fmt, const char *def, ...)
-{
-	va_list list;
-       	va_start(list, def);
-	dbg_vpsub("file", level, fmt, mstrcpy(fileident(file)), def, list);
-	va_end(list);
-}
-
 void fileerror (FILE *file, const char *fmt, const char *def, ...)
 {
 	va_list list;
        	va_start(list, def);
-	dbg_vpsub("file", DBG_ERR, fmt, mstrcpy(fileident(file)), def, list);
+	log_psubvarg(ErrLog, fmt, mstrcpy(fileident(file)), def, list);
 	va_end(list);
 	exit(EXIT_FAILURE);
+}
+
+void filedebug (FILE *file, LogControl *ctrl,
+		const char *fmt, const char *def, ...)
+{
+	va_list list;
+       	va_start(list, def);
+	log_psubvarg(ctrl ? ctrl : DebugLog, fmt,
+			mstrcpy(fileident(file)), def, list);
+	va_end(list);
 }

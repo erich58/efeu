@@ -72,7 +72,7 @@ RandomType *GetRandomType (const char *name)
 		if (mstrcmp(name, (*type)->name) == 0) return *type;
 
 	if	(name)
-		dbg_note(NULL, "[efmain:301]", "s", name);
+		log_note(NULL, "[efmain:301]", "s", name);
 
 	return NULL;
 }

@@ -22,7 +22,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/object.h>
 
-static ALLOCTAB(tab_vtab, 0, sizeof(EfiVarTab));
+static ALLOCTAB(tab_vtab, "EfiVarTab", 0, sizeof(EfiVarTab));
 
 static char *vtab_ident (const void *data)
 {

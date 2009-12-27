@@ -45,7 +45,16 @@ static void ltx_hdr (void *drv, int mode)
 IO *DocOut_latex (IO *io)
 {
 	LaTeX *ltx = DocDrv_alloc(NAME, sizeof(LaTeX));
-	ltx->out = io;
+
+	if	(GetFlagResource("UseUTF8"))
+	{
+		ltx->out = out_utf8(io);
+	}
+	else
+	{
+		ltx->out = out_latin9(io);
+	}
+
 	ltx->last = '\n';
 	ltx->symtab = DocSym_load(SYMTAB);
 	ltx->put = LaTeX_putc;
@@ -54,10 +63,5 @@ IO *DocOut_latex (IO *io)
 	ltx->rem = LaTeX_rem;
 	ltx->cmd = LaTeX_cmd;
 	ltx->env = LaTeX_env;
-
-	if	(io)
-		io->putucs = GetFlagResource("UseUTF8") ?
-			io_putucs_utf8 : io_putucs_latin1;
-
 	return DocDrv_io(ltx);
 }

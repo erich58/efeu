@@ -35,9 +35,9 @@ typedef struct {
 	char *arg;	/* Argument */
 } AssignArg;
 
-extern char *argval (const char *arg);
-extern AssignArg *assignarg (const char *arg, char **ptr, const char *delim);
+char *argval (const char *arg);
+void skiparg (int *narg, char **arg, int n);
 
-extern void skiparg (int *narg, char **arg, int n);
+AssignArg *assignarg (const char *arg, char **ptr, const char *delim);
 
 #endif	/* EFEU/parsearg.h */

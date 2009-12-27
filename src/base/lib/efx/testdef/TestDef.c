@@ -30,7 +30,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	ID	"TestDef"
 
-static ALLOCTAB(entry_tab, 0, sizeof(TestDefEntry));
+static ALLOCTAB(entry_tab, "TestDefEntry", 0, sizeof(TestDefEntry));
 
 static TestDefEntry *test_entry (EfiType *type, const char *name,
 	const char *opt, const char *arg);

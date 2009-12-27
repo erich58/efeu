@@ -54,16 +54,16 @@ static void pg_flush (PGCOPY *par)
 
 	if      (PQputline(par->pg->conn, (char *) par->wbuf.data) != 0)
 	{
-		dbg_note("PG", M_FLUSH, NULL);
+		PG_info(par->pg, M_FLUSH, NULL);
 	}
 
 	sb_begin(&par->wbuf);
 }
 				
 
-static int pg_put (int c, void *ptr)
+static int pg_put (int c, IO *io)
 {
-	PGCOPY *par = ptr;
+	PGCOPY *par = io->data;
 
 	if	(c == '\n')
 	{
@@ -87,9 +87,9 @@ static void pg_load (PGCOPY *par, int flag)
 	par->flag = c;
 }
 
-static int pg_get (void *ptr)
+static int pg_get (IO *io)
 {
-	PGCOPY *par = ptr;
+	PGCOPY *par = io->data;
 
 	while (*par->ptr == 0)
 	{
@@ -109,9 +109,9 @@ static int pg_get (void *ptr)
 	return *par->ptr++;
 }
 
-static int pg_ctrl (void *ptr, int req, va_list list)
+static int pg_ctrl (IO *io, int req, va_list list)
 {
-	PGCOPY *par = ptr;
+	PGCOPY *par = io->data;
 
 	switch (req)
 	{
@@ -134,7 +134,7 @@ static int pg_ctrl (void *ptr, int req, va_list list)
 		}
 
 		if      (PQendcopy(par->pg->conn) != 0)
-			dbg_note("PG", M_ECOPY, NULL);
+			PG_info(par->pg, M_ECOPY, NULL);
 
 		par->pg->lock = 0;
 		PG_clear(par->pg);
@@ -234,7 +234,7 @@ IO *PG_open (PG *pg, const char *name, const char *mode)
 
 	if	(wflag < 0)
 	{
-		dbg_note("PG", M_OPEN, "ss", name, mode);
+		PG_info(pg, M_OPEN, "ss", name, mode);
 		rd_deref(pg);
 		return NULL;
 	}

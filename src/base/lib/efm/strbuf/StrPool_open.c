@@ -35,9 +35,9 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/Debug.h>
 #include <EFEU/parsub.h>
 
-static int pool_put (int c, void *ptr)
+static int pool_put (int c, IO *io)
 {
-	StrPool *pool = ptr;
+	StrPool *pool = io->data;
 
 	if	(pool->used + 1 >= pool->msize)
 		StrPool_expand(pool, 1);
@@ -45,14 +45,14 @@ static int pool_put (int c, void *ptr)
 	return (unsigned char) (pool->mdata[pool->used++] = (char) c);
 }
 
-static int pool_ctrl (void *ptr, int req, va_list list)
+static int pool_ctrl (IO *io, int req, va_list list)
 {
-	StrPool *pool = ptr;
+	StrPool *pool = io->data;
 
 	switch (req)
 	{
 	case IO_CLOSE:
-		pool_put(0, ptr);
+		pool_put(0, io);
 		rd_deref(pool);
 		return 0;
 	case IO_IDENT:
@@ -75,6 +75,18 @@ IO *StrPool_open (StrPool *pool)
 		return io;
 	}
 	else	return NULL;
+}
+
+size_t StrPool_vprintf (StrPool *pool, const char *fmt, va_list args)
+{
+	size_t pos;
+	IO *out;
+
+	pos = StrPool_offset(pool);
+	out = StrPool_open(pool);
+	io_vxprintf(out, fmt, args);
+	io_close(out);
+	return pos;
 }
 
 size_t StrPool_printf (StrPool *pool, const char *fmt, ...)

@@ -16,7 +16,6 @@ void SetupEDBFilter (void)
 	AddEfiPar(NULL, &EDBFilter_sort);
 	AddEfiPar(NULL, &EDBFilter_uniq);
 	AddEfiPar(NULL, &EDBFilter_sum);
-	AddEfiPar(NULL, &EDBFilter_cut);
 	AddEfiPar(NULL, &EDBFilter_var);
 	AddEfiPar(NULL, &EDBFilter_conv);
 	AddEfiPar(NULL, &EDBFilter_trans);

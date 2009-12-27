@@ -44,7 +44,15 @@ void EfiClass_info (IO *out, const void *data)
 	desc = langfilter(io_cstr(fmt), NULL);
 
 	io_puts(fdef->epc_name, out);
-	io_puts(fdef->syntax, out);
+
+	if	(fdef->syntax)
+	{
+		if	(!strchr("[=]", fdef->syntax[0]))
+			io_puts(" ", out);
+
+		io_puts(fdef->syntax, out);
+	}
+
 	io_puts("\n\t", out);
 
 	while  ((c = io_getc(desc)) != EOF)
@@ -68,6 +76,8 @@ void EfiClass_info (IO *out, const void *data)
 	io_putc('\n', out);
 }
 
+extern EfiClass EfiClass_grp;
+
 void SetupEfiClass (void)
 {
 	static int init_done = 0;
@@ -80,5 +90,6 @@ void SetupEfiClass (void)
 	AddEfiPar(NULL, &EfiClass_generic);
 	AddEfiPar(NULL, &EfiClass_test);
 	AddEfiPar(NULL, &EfiClass_switch);
+	EfiClassEnum();
 	info = GetInfo(NULL, NULL);
 }

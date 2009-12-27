@@ -212,7 +212,7 @@ static int desc_par (IO *io, int c, void *par)
 	else	return 0;
 }
 
-void DocBuf_copy (DocBuf *doc, StrBuf *base, StrBuf *buf, const char *name)
+StrBuf *DocBuf_copy (DocBuf *doc, StrBuf *base, StrBuf *buf, const char *name)
 {
 	int need_nl;
 	IO *io;
@@ -310,4 +310,5 @@ void DocBuf_copy (DocBuf *doc, StrBuf *base, StrBuf *buf, const char *name)
 
 	io_close(io);
 	sb_clean(base);
+	return buf;
 }

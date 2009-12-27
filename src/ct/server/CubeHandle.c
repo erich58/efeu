@@ -84,9 +84,9 @@ static int test_break (CubeHandle *handle)
 	return 1;
 }
 
-static int out_put (int c, void *ptr)
+static int out_put (int c, IO *io)
 {
-	CubeHandle *handle = ptr;
+	CubeHandle *handle = io->data;
 
 	if	(handle->out_eof)	return EOF;
 
@@ -139,9 +139,9 @@ static int out_put (int c, void *ptr)
 	return c;
 }
 
-static int out_ctrl (void *ptr, int req, va_list list)
+static int out_ctrl (IO *io, int req, va_list list)
 {
-	CubeHandle *handle = ptr;
+	CubeHandle *handle = io->data;
 
 	switch (req)
 	{

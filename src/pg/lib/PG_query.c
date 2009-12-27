@@ -90,7 +90,7 @@ char *PG_fname (PG *pg, int field)
 
 	if	(field < 0 || field >= nfields)
 	{
-		dbg_note("PG", M_NF, "dd", field, nfields);
+		PG_info(pg, M_NF, "dd", field, nfields);
 		return NULL;
 	}
 
@@ -113,13 +113,13 @@ char *PG_value (PG *pg, int tuple, int field)
 
 	if	(tuple < 0 || tuple >= ntuples)
 	{
-		dbg_note("PG", M_NT, "dd", tuple, ntuples);
+		PG_info(pg, M_NT, "dd", tuple, ntuples);
 		return NULL;
 	}
 
 	if	(field < 0 || field >= nfields)
 	{
-		dbg_note("PG", M_NF, "dd", field, nfields);
+		PG_info(pg, M_NF, "dd", field, nfields);
 		return NULL;
 	}
 

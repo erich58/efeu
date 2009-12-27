@@ -59,7 +59,7 @@ static int cmp_idx (const void *p1, const void *p2)
 	else				return 0;
 }
 
-static int getidx (PGresult *res, const char *def)
+static int getidx (PG *pg, const char *def)
 {
 	int n;
 
@@ -67,15 +67,15 @@ static int getidx (PGresult *res, const char *def)
 	{
 		n = atoi(def + 1);
 
-		if	(n < 0)	n += PQnfields(res);
+		if	(n < 0)	n += PQnfields(pg->res);
 
-		if	(n >= PQnfields(res))
+		if	(n >= PQnfields(pg->res))
 			n = -1;
 	}
-	else	n = PQfnumber(res, def);
+	else	n = PQfnumber(pg->res, def);
 
 	if	(n < 0)
-		dbg_note("PG", M_UNDEF, "s", def);
+		PG_info(pg, M_UNDEF, "s", def);
 
 	return n;
 }
@@ -112,7 +112,7 @@ static char *inc_lbl (const char *lbl, const char *def)
 	return p;
 }
 
-static mdaxis *make_axis (StrPool *sbuf, PGresult *res, const char *def, int n)
+static mdaxis *make_axis (StrPool *sbuf, PG *pg, const char *def, int n)
 {
 	AssignArg *args;
 	VecBuf xbuf;
@@ -123,7 +123,7 @@ static mdaxis *make_axis (StrPool *sbuf, PGresult *res, const char *def, int n)
 	int i, j, k;
 	
 	args = assignarg(def, NULL, ",");
-	field = getidx(res, args->arg ? args->arg : args->name);
+	field = getidx(pg, args->arg ? args->arg : args->name);
 
 	if	(field < 0)
 	{
@@ -135,7 +135,7 @@ static mdaxis *make_axis (StrPool *sbuf, PGresult *res, const char *def, int n)
 
 	for (i = 0; i < n; i++)
 	{
-		idx[i].data = PQgetvalue(res, i, field);
+		idx[i].data = PQgetvalue(pg->res, i, field);
 		idx[i].idx = i;
 	}
 		
@@ -243,7 +243,7 @@ mdmat *PG_mdmat (PG *pg, const EfiType *type,
 
 	if	(ntuples == 0)
 	{
-		dbg_note("PG", M_NODATA, NULL);
+		PG_info(pg, M_NODATA, NULL);
 		return NULL;
 	}
 
@@ -253,7 +253,7 @@ mdmat *PG_mdmat (PG *pg, const EfiType *type,
 	if	((f_add = mdfunc_add(type)) == NULL)
 		return NULL;
 
-	field = getidx(pg->res, valdef);
+	field = getidx(pg, valdef);
 
 	if	(field < 0)	return NULL;
 
@@ -271,7 +271,7 @@ mdmat *PG_mdmat (PG *pg, const EfiType *type,
 
 	for (i = 0; i < n; i++)
 	{
-		*ptr = make_axis(md->sbuf, pg->res, list[i], ntuples);
+		*ptr = make_axis(md->sbuf, pg, list[i], ntuples);
 
 		if	(*ptr != NULL)
 			ptr = &(*ptr)->next;

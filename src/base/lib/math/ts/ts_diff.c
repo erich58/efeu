@@ -40,7 +40,7 @@ TimeSeries *ts_diff (TimeSeries *ts, int n, EfiVirFunc *fptr)
 
 	if	(func == NULL)
 	{
-		dbg_note(NULL, "[TimeSeries:21]", NULL); 
+		log_note(NULL, "[TimeSeries:21]", NULL); 
 		return NULL;
 	}
 
@@ -87,7 +87,7 @@ void ts_cumulate (TimeSeries *ts, TimeSeries *base, EfiVirFunc *fptr)
 	
 	if	(ts->base.type != base->base.type)
 	{
-		dbg_note(NULL, "[TimeSeries:1]",
+		log_note(NULL, "[TimeSeries:1]",
 			"cc", ts->base.type, base->base.type);
 		return;
 	}
@@ -96,7 +96,7 @@ void ts_cumulate (TimeSeries *ts, TimeSeries *base, EfiVirFunc *fptr)
 
 	if	(func == NULL)
 	{
-		dbg_note(NULL, "[TimeSeries:21]", NULL); 
+		log_note(NULL, "[TimeSeries:21]", NULL); 
 		return;
 	}
 

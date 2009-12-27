@@ -48,12 +48,13 @@ static void maincopy (StrBuf *buf, IO *io)
 	int space;
 
 	space = 0;
+	c = '\n';
 
-	while ((c = io_skipcom(io, NULL, 1)) != EOF)
+	while ((c = io_skipcom(io, NULL, c == '\n')) != EOF)
 	{
 		if	(c == '\n')
 		{
-			int d = io_peek(io);
+			int d = io_skipcom(io, NULL, 1);
 			space = 0;
 
 			if	(d == ' ' || d == '\t')
@@ -64,6 +65,7 @@ static void maincopy (StrBuf *buf, IO *io)
 				io_ungetc(c, io);
 				continue;
 			}
+			else	io_ungetc(d, io);
 		}
 		else if	(c == '\t' || c == ' ')
 		{

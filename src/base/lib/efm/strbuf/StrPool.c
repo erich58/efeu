@@ -83,10 +83,10 @@ StrPool *StrPool_map (const char *path)
 	int fd;
 
 	if	((fd = open(path, O_RDONLY)) == EOF)
-		dbg_error(NULL, "$!: open: $1\n", "s", strerror(errno));
+		log_error(NULL, "$!: open: $1\n", "s", strerror(errno));
 
 	if	(fstat(fd, &buf) == EOF)
-		dbg_error(NULL, "$!: stat: $1\n", "s", strerror(errno));
+		log_error(NULL, "$!: stat: $1\n", "s", strerror(errno));
 
 	pool = memalloc(sizeof *pool);
 
@@ -96,7 +96,7 @@ StrPool *StrPool_map (const char *path)
 	pool->cdata = mmap(NULL, pool->csize, PROT_READ, MAP_SHARED, fd, 0);
 
 	if	(pool->cdata == MAP_FAILED)
-		dbg_error(NULL, "$!: mmap: $1\n", "s", strerror(errno));
+		log_error(NULL, "$!: mmap: $1\n", "s", strerror(errno));
 
 	if	(pool->csize >= sizeof(magic) &&
 			memcmp(pool->cdata, magic, sizeof magic) == 0)
@@ -174,7 +174,7 @@ void StrPool_save (StrPool *pool, const char *path)
 	int fd;
 
 	if	((fd = creat(path, 0666)) < 0)
-		dbg_error(NULL, "$!: creat: $1\n", "s", strerror(errno));
+		log_error(NULL, "$!: creat: $1\n", "s", strerror(errno));
 
 	write(fd, pool->cdata, pool->csize);
 	write(fd, pool->mdata, pool->used);

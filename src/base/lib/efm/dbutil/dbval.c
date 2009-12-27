@@ -122,7 +122,7 @@ unsigned db_cval(const unsigned char *buf, int pos, int len)
 		case LETTER_X:	val = 16 * val + 15; break;
 		default:
 
-			dbg_error(NULL, FMT_11, "dc", pos,
+			log_error(NULL, FMT_11, "dc", pos,
 				db_char(buf, pos, 1));
 			break;
 		}
@@ -190,7 +190,7 @@ unsigned db_pval(const unsigned char *buf, int pos, int len)
 
 		if	((c = (buf[pos] >> 4)) > 9)
 		{
-			dbg_error(NULL, FMT_12, "dx", pos + 1, buf[pos]);
+			log_error(NULL, FMT_12, "dx", pos + 1, buf[pos]);
 		}
 		else	val += c;
 
@@ -198,7 +198,7 @@ unsigned db_pval(const unsigned char *buf, int pos, int len)
 
 		if	((c = (buf[pos] & 0xF)) > 9)
 		{
-			dbg_error(NULL, FMT_13, "dx", pos + 1, buf[pos]);
+			log_error(NULL, FMT_13, "dx", pos + 1, buf[pos]);
 		}
 		else	val += c;
 
@@ -209,7 +209,7 @@ unsigned db_pval(const unsigned char *buf, int pos, int len)
 
 	if	((c = (buf[pos] >> 4)) > 9)
 	{
-		dbg_error(NULL, FMT_12, "dx", pos, buf[pos]);
+		log_error(NULL, FMT_12, "dx", pos, buf[pos]);
 	}
 	else	val += c;
 
@@ -218,7 +218,7 @@ unsigned db_pval(const unsigned char *buf, int pos, int len)
 	case 0xD:	val = - (long) val; break;
 	case 0xC:
 	case 0xF:	break;
-	default:	dbg_error(NULL, FMT_14, "dx", pos + 1, buf[pos]); break;
+	default:	log_error(NULL, FMT_14, "dx", pos + 1, buf[pos]); break;
 	}
 
 	return val;
@@ -257,7 +257,7 @@ unsigned db_bcdval(const unsigned char *buf, int pos, int len)
 
 		if	((c = (buf[pos] >> 4)) > 9)
 		{
-			dbg_error(NULL, FMT_12, "dx", pos + 1, buf[pos]);
+			log_error(NULL, FMT_12, "dx", pos + 1, buf[pos]);
 		}
 		else	val += c;
 
@@ -265,7 +265,7 @@ unsigned db_bcdval(const unsigned char *buf, int pos, int len)
 
 		if	((c = (buf[pos] & 0xF)) > 9)
 		{
-			dbg_error(NULL, FMT_13, "dx", pos + 1, buf[pos]);
+			log_error(NULL, FMT_13, "dx", pos + 1, buf[pos]);
 		}
 		else	val += c;
 
@@ -331,7 +331,7 @@ unsigned db_a37l(const unsigned char *buf, int pos, int len)
 		case LETTER_Z:	val += 36; break;
 		default:
 
-			dbg_error(NULL, FMT_15, "dc", pos, db_char(buf, pos, 1));
+			log_error(NULL, FMT_15, "dc", pos, db_char(buf, pos, 1));
 			break;
 		}
 	}

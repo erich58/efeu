@@ -259,7 +259,7 @@ static void f_texpand (EfiFunc *func, void *rval, void **arg)
 
 	if	(ts->base.type != x->base.type)
 	{
-		dbg_note(NULL, "[TimeSeries:23]", NULL); 
+		log_note(NULL, "[TimeSeries:23]", NULL); 
 		return;
 	}
 
@@ -588,7 +588,7 @@ static void f_index (EfiFunc *func, void *rval, void **arg)
 
 	if	(ts == NULL || n < 0 || n >= ts->dim)
 	{
-		dbg_note(NULL, "[TimeSeries:11]", NULL);
+		log_note(NULL, "[TimeSeries:11]", NULL);
 
 		if	(!func->type)
 		{

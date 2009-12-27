@@ -59,10 +59,10 @@ static int do_connect (void)
 	if	(!connect_flag)	return EOF;
 
 	if 	((fd = socket (PF_INET, SOCK_STREAM, 0)) < 0) 
-		dbg_error(NULL, "$!: socket: $1\n", "s", strerror(errno));
+		log_error(NULL, "$!: socket: $1\n", "s", strerror(errno));
 
 	if	(connect(fd, (struct sockaddr *) &address, sizeof address))
-		dbg_error(NULL, "$!: connect: $1\n", "s", strerror(errno));
+		log_error(NULL, "$!: connect: $1\n", "s", strerror(errno));
 
 	io_xprintf(log_out, "* connect\n");
 	return fd;
@@ -88,7 +88,7 @@ static void send_data (int fd, const char *p)
 	io_xprintf(log_out, "> %s\n", p);
 
 	if	(fx != EOF && write(fx, p, strlen(p) + 1) <= 0)
-		dbg_error(NULL, "$!: write: $1\n", "s", strerror(errno));
+		log_error(NULL, "$!: write: $1\n", "s", strerror(errno));
 
 	if	(usec)
 		usleep(usec);
@@ -111,7 +111,7 @@ int main (int argc, char **argv)
 	/*
 	EfeuConfig("standalone");
 	*/
-	SetVersion("$Id: mdmap.c,v 1.5 2008-08-11 21:13:23 ef Exp $");
+	SetVersion("$Id: mdmap.c,v 1.6 2009-09-27 05:46:13 ef Exp $");
 	ParseCommand(&argc, argv);
 
 	SetupStd();
@@ -125,7 +125,7 @@ int main (int argc, char **argv)
 	if	((p = GetResource("Host", NULL)))
 	{
 		if	(!(hp = gethostbyname(p)))
-			dbg_error(NULL, "$!: gethostbyname: $1 not found.\n",
+			log_error(NULL, "$!: gethostbyname: $1 not found.\n",
 				"s", p);
 
 		memcpy(&address.sin_addr, hp->h_addr_list[0],

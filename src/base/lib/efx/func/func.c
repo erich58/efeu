@@ -86,7 +86,7 @@ void Func_func (EfiFunc *func, void *rval, void **arg)
 static void check_use (VarTabEntry *entry)
 {
 	if	(entry->obj->refcount)
-		dbg_error(NULL, "[efmain:169]", "s", entry->name);
+		log_error(NULL, "[efmain:169]", "s", entry->name);
 }
 
 static void farg_set (EfiVarTab *vtab, EfiFuncArg *arg, void *data, int bound)

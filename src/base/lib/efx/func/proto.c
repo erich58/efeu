@@ -302,7 +302,7 @@ EfiFunc *MakePrototype(IO *io, EfiType *type, EfiName *nptr, unsigned flags)
 
 	if	(rflag && (func->type != func->arg[0].type))
 	{
-		dbg_note(NULL, "[efmain:97]", "s", name);
+		log_note(NULL, "[efmain:97]", "s", name);
 	}
 
 	return func;
@@ -380,7 +380,7 @@ int ParseFuncArg(IO *io, EfiFuncArg *arg, int delim)
 		{
 			if	((p = io_getname(io)) == NULL)
 			{
-				dbg_note(NULL, "[efmain:89]", NULL);
+				log_note(NULL, "[efmain:89]", NULL);
 				return FARG_ERROR;
 			}
 
@@ -437,7 +437,7 @@ int ParseFuncArg(IO *io, EfiFuncArg *arg, int delim)
 	{
 		if	(arg->lval)
 		{
-			dbg_note(NULL, "[efmain:86]", "s", arg->name);
+			log_note(NULL, "[efmain:86]", "s", arg->name);
 			return FARG_ERROR;
 		}
 
@@ -475,7 +475,7 @@ size_t GetFuncArg(IO *io, EfiFuncArg **arg, int delim)
 	}
 
 	if	(c == FARG_ELLIPSE)
-		dbg_note(NULL, "[efmain:146]", NULL);
+		log_note(NULL, "[efmain:146]", NULL);
 
 	*arg = memalloc(n * sizeof **arg);
 	io_rewind(tmp);

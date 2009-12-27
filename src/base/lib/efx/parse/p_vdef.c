@@ -36,7 +36,8 @@ typedef struct {
 	EfiObj *defval;	/* Initialisierungswert */
 } EfiVarDecl;
 
-EfiType Type_vdef = EVAL_TYPE("_VarDecl_", EfiVarDecl, e_vdef, d_vdef, c_vdef);
+EfiType Type_vdef = EVAL_TYPE("_VarDecl_", EfiVarDecl, e_vdef,
+	NULL, d_vdef, c_vdef);
 
 /*	Scope-Namen lesen
 */
@@ -54,6 +55,21 @@ EfiName *Parse_sname (IO *io, EfiName *buf)
 
 	c = io_eat(io, " \t");
 
+	if	(c == '[')
+	{
+		EfiType *type = GetType(buf->name);
+
+		if	(type)
+		{
+			type = Parse_type(io, type);
+			buf->obj = type2Obj(type);
+			memfree(buf->name);
+			buf->name = NULL;
+		}
+
+		c = io_eat(io, " \t");
+	}
+
 	if	(c == ':')
 	{
 		c = io_getc(io);
@@ -62,7 +78,11 @@ EfiName *Parse_sname (IO *io, EfiName *buf)
 		{
 			EfiType *type;
 
-			if	(buf->name == NULL)
+			if	(buf->obj)
+			{
+				;
+			}
+			else if	(buf->name == NULL)
 			{
 				buf->obj = NewPtrObj(&Type_vtab,
 					RefVarTab(GlobalVar));
@@ -368,7 +388,7 @@ static EfiObj *e_vdef(const EfiType *type, const void *ptr)
 		
 		if	(dim == 0)
 		{
-			dbg_note(NULL, "[efmain:302]", NULL);
+			log_note(NULL, "[efmain:302]", NULL);
 			return NULL;
 		}
 	}
@@ -395,7 +415,7 @@ static EfiObj *e_vdef(const EfiType *type, const void *ptr)
 	if	(entry)
 	{
 		if	(entry->type != vartype)
-			dbg_note(NULL, "[efmain:154b]", "s", name);
+			log_note(NULL, "[efmain:154b]", "s", name);
 
 		if	(entry->get)
 			obj = entry->get(NULL, entry->data);

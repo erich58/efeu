@@ -128,7 +128,7 @@ static void $1_$2_set (unsigned *data, void *ptr)
 }
 
 !, "$1", name);
-	s_bftab += psub("\t{ $2%#s, $3%#s, $1_$2_get, $1_$2_set },\n",
+	s_bftab += psub("\t{ $[2;%#s], $[3;%#s], $1_$2_get, $1_$2_set },\n",
 		"$1", name, desc);
 }
 
@@ -450,8 +450,8 @@ $1_size	sizeof($1)
 	}
 	else	src << "static ";
 
-	fpsub(src, "EfiType Type_$1 = COMPLEX_TYPE($1%#s, $1%#s, ", s_name);
-	fpsub(src, "sizeof($1), 0,\n\t", s_name);
+	fpsub(src, "EfiType Type_$1 = COMPLEX_TYPE($[1;%#s], ", s_name);
+	fpsub(src, "$[1;%#s], sizeof($1), 0,\n\t", s_name);
 	fprintf(src, "%s, %s, NULL, NULL, NULL, %s, NULL, TYPE_MALLOC);\n\n",
 		f_read, f_write, f_clean);
 

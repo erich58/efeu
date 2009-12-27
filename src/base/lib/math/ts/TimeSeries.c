@@ -26,7 +26,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	TS_BLKSIZE	32
 
-static ALLOCTAB(ts_tab, 0, sizeof(TimeSeries));
+static ALLOCTAB(ts_tab, "TimeSeries", 0, sizeof(TimeSeries));
 
 static void ts_clean (void *data)
 {
@@ -110,7 +110,7 @@ void ts_sync (TimeSeries *ts, TimeIndex base, size_t dim, int offset)
 
 	if	(ts->base.type != base.type)
 	{
-		dbg_note(NULL, "[TimeSeries:1]",
+		log_note(NULL, "[TimeSeries:1]",
 			"cc", ts->base.type, base.type);
 		return;
 	}

@@ -23,7 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <mroff.h>
 #include <efeudoc.h>
 
-static ALLOCTAB(Stackab, 32, sizeof(ManRoffVar));
+static ALLOCTAB(Stackab, "ManRoffVar", 32, sizeof(ManRoffVar));
 
 static void copy_var(ManRoffVar *tg, ManRoffVar *src)
 {

@@ -45,7 +45,7 @@ static int set_arg (EfiFunc *func, EfiFuncArg *arg, size_t narg, EfiObj *obj)
 {
 	if	(obj == NULL)
 	{
-		dbg_note(NULL, "[efmain:94]", "sd", func->name,
+		log_note(NULL, "[efmain:94]", "sd", func->name,
 			narg + 1 - func->bound);
 		clean_arg(arg, narg);
 		return 0;
@@ -68,7 +68,7 @@ static int not_a_vfunc (EfiVirFunc *vtab)
 
 	if	(IsVirFunc(vtab))	return 0;
 
-	dbg_error(NULL, "[efmain:65]", NULL);
+	log_error(NULL, "[efmain:65]", NULL);
 	return 1;
 }
 
@@ -148,7 +148,7 @@ static EfiFunc *get_func (EfiVirFunc *vtab, EfiFuncArg *arg,
 	}
 
 	sb_putc(')', sb);
-	dbg_note(NULL, func ? "[efmain:91]" : "[efmain:92]",
+	log_note(NULL, func ? "[efmain:91]" : "[efmain:92]",
 		"m", sb_cpyrelease(sb));
 	clean_arg(arg, narg);
 	return NULL;

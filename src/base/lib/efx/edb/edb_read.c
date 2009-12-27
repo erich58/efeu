@@ -32,10 +32,7 @@ void edb_closein (EDB *edb)
 		rd_debug(edb, "close input");
 
 		if	(p)
-		{
-			dbg_message("edb", DBG_STAT, FMT_NREAD,
-				p, "u", (unsigned) edb->nread);
-		}
+			log_psubarg(edb_info, FMT_NREAD, p, "z", edb->nread);
 
 		rd_deref(edb->ipar);
 		edb->save = 0;

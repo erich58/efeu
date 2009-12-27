@@ -56,6 +56,6 @@ EfiObj *KonvObj (const EfiObj *obj, EfiType *def)
 		p = msprintf("(%s) %s", obj->type->name, Val_str(obj->data));
 	else	p = mstrcpy(obj->type->name);
 
-	dbg_note(NULL, "[efmain:161]", "ms", p, def ? def->name : NULL);
+	log_note(NULL, "[efmain:161]", "ms", p, def ? def->name : NULL);
 	return NULL;
 }

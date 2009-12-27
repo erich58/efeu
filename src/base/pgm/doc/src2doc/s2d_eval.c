@@ -177,14 +177,16 @@ static void keyline (SrcData *data, int c)
 	}
 	else if	(sb_getpos(&data->buf) && (decl->type & data->xmask))
 	{
-		sb_printf(data->doc.tab[BUF_DESC], "\n/* %s */\n", name);
-		SrcData_copy(data, data->doc.tab[BUF_DESC], name);
+		StrBuf *buf = SrcData_copy(data, NULL, name);
 
-		aus = io_strbuf(data->doc.tab[BUF_DESC]);
-		io_puts("\n\\code\n", aus);
-		Decl_print(decl, aus, name);
-		io_puts("\\end\n", aus);
-		io_close(aus);
+		if	(buf)
+		{
+			aus = io_strbuf(buf);
+			io_puts("\n\\code\n", aus);
+			Decl_print(decl, aus, name);
+			io_puts("\\end\n", aus);
+			io_close(aus);
+		}
 	}
 	else	SrcData_copy(data, NULL, NULL);
 

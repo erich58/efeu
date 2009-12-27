@@ -31,7 +31,7 @@ int io_putc (int c, IO *io)
 {
 	if	(io && io->put)
 	{
-		int stat = io->put(c, io->data);
+		int stat = io->put(c, io);
 
 		if	(stat == EOF)
 			io->stat |= IO_STAT_ERR;
@@ -53,7 +53,7 @@ int io_nputc (int c, IO *io, int n)
 
 		for (i = 0; i < n; i++)
 		{
-			if	(io->put(c, io->data) == EOF)
+			if	(io->put(c, io) == EOF)
 			{
 				io->stat |= IO_STAT_ERR;
 				break;
@@ -80,7 +80,7 @@ int io_puts (const char *str, IO *io)
 
 		for (n = 0; *p != 0; p++, n++)
 		{
-			if	(io->put(*p, io->data) == EOF)
+			if	(io->put(*p, io) == EOF)
 			{
 				io->stat |= IO_STAT_ERR;
 				break;
@@ -107,7 +107,7 @@ int io_nlputs(const char *str, IO *io)
 
 		for (n = 0; *p != 0; last = *(p++), n++)
 		{
-			if	(io->put(*p, io->data) == EOF)
+			if	(io->put(*p, io) == EOF)
 			{
 				io->stat |= IO_STAT_ERR;
 				return n;
@@ -116,7 +116,7 @@ int io_nlputs(const char *str, IO *io)
 
 		if	(last != '\n')
 		{
-			if	(io->put('\n', io->data) == EOF)
+			if	(io->put('\n', io) == EOF)
 			{
 				io->stat |= IO_STAT_ERR;
 			}

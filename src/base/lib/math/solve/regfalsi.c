@@ -40,7 +40,7 @@ double regfalsi (double (*f)(void *par, double x),
 
 	if	(y0 * y1 >= 0.)
 	{
-		dbg_error(NULL, "[solve:2]", "mm", msprintf(SolveFmt, x1),
+		log_error(NULL, "[solve:2]", "mm", msprintf(SolveFmt, x1),
 			msprintf(SolveFmt, x1));
 		return 0.5 * (x0 + x1);
 	}
@@ -52,7 +52,7 @@ double regfalsi (double (*f)(void *par, double x),
 	{
 		if	(SolveFlag)
 		{
-			dbg_note(NULL, "[solve:5]", "dmmm", i,
+			log_note(NULL, "[solve:5]", "dmmm", i,
 				msprintf(SolveFmt, x0),
 				msprintf(SolveFmt, x1),
 				msprintf("%g", weight));
@@ -74,6 +74,6 @@ double regfalsi (double (*f)(void *par, double x),
 		else if	(z < 0.5)	weight = (1. + weight) / 2.;
 	}
 
-	dbg_note(NULL, "[solve:3]", NULL);
+	log_note(NULL, "[solve:3]", NULL);
 	return x;
 }

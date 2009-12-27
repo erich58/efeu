@@ -1,0 +1,280 @@
+/*	Hilfsfunktionen zur Tabellengenerierung
+	$Copyright (C) 1997, 2004 Erich Frühstück
+	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+*/
+
+#ifndef	_include_Figure_hdr
+#define	_include_Figure_hdr	1
+
+#define	Figure_Width	41.
+#define	Figure_HUnit	4.
+#define	Figure_VUnit	4.5
+
+
+#include <TabLabel.hdr>
+
+/*	Tabellenumgebung
+*/
+
+struct Picture {
+	double width;	/* Breite */
+	double height;	/* Höhe */
+	double left;	/* Linker Rand */
+	double right;	/* Rechter Rand */
+	double top;	/* Oberer Rand */
+	double bottom;	/* Unterer Rand */
+	double y0;	/* Vertikaler Offset */
+	double ys;	/* Vertikale Skalierung */
+	double x0;	/* Horizontaler Offset */
+	double xs;	/* Horizontale Skalierung */
+};
+
+struct Figure {
+	IO out;		/* Ausgabestruktur */
+	bool figenv;	/* Figure/Tabular-Umgebung */
+	str endkey;	/* Abschlußstring */
+	Picture pic;	/* Bildparameter */
+};
+
+struct TabCol {
+	str name;	/* Achsenname */
+	str head;	/* Kopfzeile */
+	str end;	/* Tabellenende */
+	str coldef;	/* Spaltendefinition */
+	str select;	/* Selektionsdefinition */
+};
+
+TabCol TabCol (str axis, promotion IO io)
+{
+	str key, label;
+	str delim = "=";
+	str headline;
+	str beg = "";
+
+	name = axis;
+	select = axis;
+
+	while (getline(io, key, label))
+	{
+		switch (key)
+		{
+		case "@top":
+			head += label + "\n"
+			break;
+		case "@beg":
+			beg += label + "\n"
+			break;
+		case "@end":
+			end += label + "\n"
+			break;
+		default:
+			if	(axis)
+			{
+				select += delim + key;
+				delim = ",";
+			}
+			/* FALLTHROUGH */
+		case ".":
+			coldef += strcut(label, " \t");
+			headline = paste(" | ", headline, label);
+			break;
+		}
+	}
+
+	head += paste("\n", headline, beg);
+}
+
+Figure Figure (IO out, str type = NULL, str figpos = NULL)
+{
+	this.out = out;
+
+	if	(type)
+	{
+		figenv = true;
+
+		fprintf(out, "\\%s", type);
+
+		if	(figpos)
+			fprintf(out, "[%s]", figpos);
+
+		fprintf(out, "\n");
+	}
+	else	figenv = false;
+}
+
+void Figure::end ()
+{
+	out << endkey;
+	endkey = NULL;
+}
+
+void Figure ()
+{
+	this.end();
+
+	if	(this.figenv)
+	{
+		out << "\\end\n";
+		this.figenv = false;
+	}
+}
+
+void Figure::printf (str fmt, ...)
+	fprintf(out, fmt, va_list)
+	
+void Figure::puts (str arg)
+	fprintf(out, "%s\n", arg)
+	
+void Figure::caption (str text = NULL, str shortform = NULL)
+{
+	end();
+
+	if	(figenv)
+	{
+		printf("\\caption");
+
+		if	(shortform)
+			printf("[%s]", sname);
+
+		printf(" %s\n", text);
+	}
+}
+
+virtual void Figure::tab (TabCol col, ...)
+{
+	printf("\n\\tab %s\n", col.coldef);
+	fpsub(out, col.head, va_list);
+	endkey = col.end + "\n";
+}
+
+virtual void Figure::tabline (str label)
+{
+	printf("%s\n", label);
+}
+
+virtual void Figure::tabline (str label, ...)
+{
+	fmt_str = "%*s";
+	printf("%s", label);
+
+	if	(dim(va_list))
+	{
+		for (x in va_list)
+		{
+			out << " | ";
+			fprint(out, x);
+		}
+	}
+
+	out << "\n";
+}
+
+virtual void Figure::body (TabLabel line, mdmat md,
+	VirFunc ifunc = NULL, int lag = 0)
+{
+	if	(!line)	line = LDummyTabLabel;
+
+	out << line.special ? line.special : "[]";
+
+	for (x in line.tab)
+	{
+		if	(md && x.name)
+			tabline(x.label, md.data(x.name, ifunc, lag));
+		else	tabline(x.label);
+	}
+}
+
+void Figure::picture (int height = 14, bool frame = false)
+{
+	out << "\n---- latex\n\\par\n";
+
+	if	(frame)	out << "\\fbox";
+
+	pic.width = Figure_HUnit * (Figure_Width - 3. * figmarg);
+	pic.height = Figure_VUnit * height;
+
+	out << "{\\unitlength=1mm\n";
+	fprintf(io, "\\begin{picture}(%.1f,%.1f)\n", pic.width, pic.height);
+	endkey = "\\end{picture}}\\par\n----\n";
+	margin();
+}
+
+virtual void Figure::xmap ()
+{
+	pic.x0 = pic.left;
+	pic.xs = Figure_HUnit;
+}
+
+virtual void Figure::xmap (double a, double b)
+{
+	pic.xs = xdiv(pic.width - pic.left - pic.right, b - a);
+	pic.x0 = pic.left - a * pic.xs;
+}
+
+virtual void Figure::ymap ()
+{
+	pic.y0 = pic.bottom;
+	pic.ys = Figure_VUnit;
+}
+
+virtual void Figure::ymap (double a, double b)
+{
+	pic.ys = xdiv(pic.height - pic.top - pic.bottom, b - a);
+	pic.y0 = pic.bottom - a * pic.ys;
+}
+
+
+void Figure::margin (double left = 0., double right = 0.,
+	double top = 0., double bottom = 0.)
+{
+	pic.left = Figure_HUnit * left;
+	pic.right = Figure_HUnit * right;
+	pic.top = Figure_VUnit * top;
+	pic.bottom = Figure_VUnit * bottom;
+	xmap();
+	ymap();
+}
+
+void Figure::frame ()
+{
+	double w = pic.width - pic.left - pic.right;
+	double h = pic.height - pic.top - pic.bottom;
+	fprintf(io, "\\put(%.1f,%.1f){\line(1,0){%.1f}}\n",
+		pic.left, pic.bottom, w);
+	fprintf(io, "\\put(%.1f,%.1f){\line(1,0){%.1f}}\n",
+		pic.left, pic.bottom + h, w);
+	fprintf(io, "\\put(%.1f,%.1f){\line(0,1){%.1f}}\n",
+		pic.left, pic.bottom, h);
+	fprintf(io, "\\put(%.1f,%.1f){\line(0,1){%.1f}}\n",
+		pic.left + w, pic.bottom, h);
+}
+
+void Figure::put (double x, double y, str arg)
+	fprintf(io, "\\put(%.1f,%.1f){%s}\n",
+		pic.x0 + pic.xs * x, pic.y0 + pic.ys * y, arg);
+
+void Figure::fbox(double x, double y, double w, double h, str pos, str txt)
+{
+	put(x, y, sprintf("\\framebox(%.1f,%.1f)[%s]{%s}",
+		Figure_HUnit * w, Figure_VUnit * h, pos, txt));
+}
+
+void Figure::mbox(double x, double y, double w, double h, str pos, str txt)
+{
+	put(x, y, sprintf("\\makebox(%.1f,%.1f)[%s]{%s}",
+		Figure_HUnit * w, Figure_VUnit * h, pos, txt));
+}
+
+void Figure::hline(double y0, double a, double b)
+{
+	put(a, y0, sprintf("\\line(%d,0){%.1f}", a > b ? -1 : 1,
+		pic.xs * abs(b - a)));
+}
+
+void Figure::vline(double x0, double a, double b)
+{
+	put(x0, a, sprintf("\\line(0,%d){%.1f}", a > b ? -1 : 1,
+		pic.ys * abs(b - a)));
+}
+
+#endif	/* _include_Figure_hdr */

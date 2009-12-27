@@ -59,6 +59,7 @@ void StrPool_expand (StrPool *pool, size_t s);
 size_t StrPool_offset (StrPool *pool);
 size_t StrPool_add (StrPool *pool, const char *str);
 size_t StrPool_xadd (StrPool *pool, const char *str);
+size_t StrPool_vprintf (StrPool *pool, const char *fmt, va_list args);
 size_t StrPool_printf (StrPool *pool, const char *fmt, ...);
 size_t StrPool_psubarg (StrPool *pool, const char *fmt, const char *def, ...);
 size_t StrPool_align (StrPool *pool, size_t size);

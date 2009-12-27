@@ -87,7 +87,7 @@ EDB *edb_paste (EDB *base, EDB *sub)
 	}
 	else
 	{
-		dbg_note(NULL, ERR_CONV, "mm", sub->obj->type->name,
+		log_note(NULL, ERR_CONV, "mm", sub->obj->type->name,
 			base->obj->type->name);
 		rd_deref(sub);
 	}

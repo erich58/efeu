@@ -33,22 +33,22 @@ typedef struct {
 } CLPAR;
 
 
-static int clpar_get (void *ptr)
+static int clpar_get (IO *io)
 {
-	CLPAR *clpar = ptr;
+	CLPAR *clpar = io->data;
 	return io_getc(clpar->io);
 }
 
-static int clpar_put (int c, void *ptr)
+static int clpar_put (int c, IO *io)
 {
-	CLPAR *clpar = ptr;
+	CLPAR *clpar = io->data;
 	return io_putc(c, clpar->io);
 }
 
 
-static int clpar_ctrl (void *ptr, int req, va_list list)
+static int clpar_ctrl (IO *io, int req, va_list list)
 {
-	CLPAR *clpar = ptr;
+	CLPAR *clpar = io->data;
 
 	if	(req == IO_CLOSE)
 	{

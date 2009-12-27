@@ -136,7 +136,7 @@ static EfiObj *$1_$2 (const EfiObj *base, void *par)
 }
 
 !, name, vname, type);
-	s_mtab += psub("\t{ $2%#s, &Type_$3, $1_$2, NULL, $4%#s },\n",
+	s_mtab += psub("\t{ $[2;%#s], &Type_$3, $1_$2, NULL, $[4;%#s] },\n",
 		name, vname, type, desc);
 	s_list += psub(string !
 	*ptr = NewObjList(LvalObj(&Lval_ptr, &Type_$1, &data->$2));
@@ -711,7 +711,7 @@ static EfiObj *$0_$2 (const EfiObj *base, void *par)
 !, arg);
 	s_func += "\t}\n\treturn NULL;\n}\n\n";
 	s_mtab += psub(string !
-	{ $2%#s, &Type_$1, $0_$2, NULL, $(desc:%#s) },
+	{ $[2;%#s], &Type_$1, $0_$2, NULL, $(desc:%#s) },
 !, arg);
 	if	(key)
 	{

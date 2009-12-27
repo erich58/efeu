@@ -53,12 +53,12 @@ typedef struct {
 
 static void bb_debug (BIGBUF *bb, const char *cmd)
 {
-	dbg_message("bigbuf", DBG_TRACE, "$1($2)\n", NULL, "ss", cmd, bb->name);
+	log_note(TraceLog, "$1($2)\n", "ss", cmd, bb->name);
 }
 
 static void bb_error (BIGBUF *bb, const char *fmt)
 {
-	dbg_error(NULL, fmt, "s", bb->name);
+	log_error(NULL, fmt, "s", bb->name);
 }
 
 static void bb_flush (BIGBUF *bb)
@@ -89,9 +89,9 @@ static void bb_flush (BIGBUF *bb)
 	bb->end = bb->pos = 0;
 }
 
-static int bb_ctrl (void *ptr, int req, va_list list)
+static int bb_ctrl (IO *io, int req, va_list list)
 {
-	BIGBUF *bb = ptr;
+	BIGBUF *bb = io->data;
 
 	switch (req)
 	{
@@ -139,9 +139,9 @@ static int bb_ctrl (void *ptr, int req, va_list list)
 	}
 }
 
-static int bb_put (int c, void *ptr)
+static int bb_put (int c, IO *io)
 {
-	BIGBUF *bb = ptr;
+	BIGBUF *bb = io->data;
 
 	if	(bb->pos >= bb->size)
 		bb_flush(bb);
@@ -150,9 +150,9 @@ static int bb_put (int c, void *ptr)
 	return c;
 }
 
-static int bb_get (void *ptr)
+static int bb_get (IO *io)
 {
-	BIGBUF *bb = ptr;
+	BIGBUF *bb = io->data;
 
 	while (bb->pos >= bb->end)
 	{

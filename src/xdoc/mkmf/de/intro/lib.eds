@@ -86,9 +86,11 @@ Die Syntax dieser Funktionen ist im Anhang unter \mref{cc.smh(7)} beschrieben.
 \ssec Die generierten Regeln für |make|
 
 Das Makefile wird mit Hilfe von |shmkmf| generiert.
-Der Aufruf liefert die folgende Ausgabe:
+Der Aufruf liefert die folgende Ausgabe\note{Überlange
+Zeilen wurden bei der Darstellung umgebrochen. Die Umbruchstellen sind
+wie bei Fortsetzungszeilen mit einem Gegenschrägstrich markiert.}:
 
-\smh_exec[verbatim] shmkmf
+\smh_exec[fold] shmkmf
 
 Diese hängt von der jeweiligen Konfiguration und Systemumgebung
 ab. Erkennbar ist aber, dass bereits beim Generieren des Makefiles das
@@ -101,9 +103,7 @@ nicht mitgerechnet) ist das generierte Makefile bereits recht umfangreich.
 Der Aufbau ist klar und sollte jemandem, dem die Syntax von
 Makefiles vertraut ist, kein Verständnisproblem bereiten. Durch die
 Kommentareinfügungen sind die Wirkungen der einzelnen Anweisungen
-deutlich sichtbar.
-
-<*Achtung:*> Überlange Zeilen werden bei der Darstellung
+deutlich sichtbar. Überlange Zeilen wurden bei der Darstellung
 umgebrochen.
 
 \smh_exec[fold] cat Makefile

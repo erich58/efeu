@@ -1,0 +1,6 @@
+# Formatdefinitionen in Objektdateien auflisten
+# 
+# $Copyright (C) 2009 Erich Frühstück
+
++file(s) |
+	Liste der Dateien

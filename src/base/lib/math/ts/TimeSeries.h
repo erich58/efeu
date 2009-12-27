@@ -42,6 +42,9 @@ If not, write to the Free Software Foundation, Inc.,
 #define	TS_MONTH	'm'	/* Monatsdaten */
 #define	TS_WEEK		'w'	/* Wochenzähler */
 #define	TS_DAY		'd'	/* Tageszähler */
+#define	TS_HOUR		'H'	/* Stunden */
+#define	TS_MIN		'M'	/* Minuten */
+#define	TS_SEC		'S'	/* Sekunden */
 
 typedef struct {
 	unsigned type : 8;	/* Zeiteinheit */
@@ -52,7 +55,7 @@ typedef struct {
 int tindex_type (const char *name);
 
 TimeIndex tindex_create (int type, int value);
-TimeIndex str2TimeIndex (const char *str);
+TimeIndex str2TimeIndex (const char *str, char **ptr);
 int tindex_print (IO *io, TimeIndex idx, int offset);
 char *TimeIndex2str (TimeIndex idx, int offset);
 TimeIndex tindex_conv (TimeIndex idx, int type, int pos);

@@ -41,7 +41,7 @@ void edb_data (EDB *edb, IO *io, const char *def)
 			idef->par, opt, arg) : io;
 		edb_input(edb, idef->in_read, par);
 	}
-	else	dbg_error("edb",  ERR_DATA, "ss", type->name, mode->name);
+	else	log_error(edb_err,  ERR_DATA, "ss", type->name, mode->name);
 
 	memfree(mode);
 }

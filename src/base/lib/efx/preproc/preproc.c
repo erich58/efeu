@@ -87,8 +87,8 @@ typedef struct {
 /*	Hilfsfunktionen
 */
 
-static int pp_get (void *ptr);
-static int pp_ctrl (void *ptr, int req, va_list list);
+static int pp_get (IO *io);
+static int pp_ctrl (IO *io, int req, va_list list);
 
 static void pptest_start (PPInput *input, int flag);
 static void pptest_end (PPInput *input);
@@ -96,7 +96,7 @@ static void pptest_end (PPInput *input);
 static PPInput *new_input (IO *io);
 static int subclose (PPData *pp);
 
-static ALLOCTAB(pptest_tab, 0, sizeof(PPTest));
+static ALLOCTAB(pptest_tab, "PPTest", 0, sizeof(PPTest));
 
 static void pp_cmd (PPData *pp);
 static void pp_subcmd (PPData *pp, int code);
@@ -201,9 +201,9 @@ static void pp_skip (IO *io, int flag)
 /*	Zeichen lesen
 */
 
-static int pp_get (void *ptr)
+static int pp_get (IO *io)
 {
-	PPData *pp = ptr;
+	PPData *pp = io->data;
 	PPInput *x;
 	IO *tmp;
 	int flag;
@@ -387,9 +387,9 @@ static int subclose(PPData *pp)
 /*	Kontrollfunktion
 */
 
-static int pp_ctrl (void *ptr, int req, va_list list)
+static int pp_ctrl (IO *io, int req, va_list list)
 {
-	PPData *pp = ptr;
+	PPData *pp = io->data;
 	int stat;
 	char **p;
 
@@ -448,7 +448,7 @@ static int pp_ctrl (void *ptr, int req, va_list list)
 
 		if	(pp->input && pp->input->io->ctrl)
 		{
-			return (*pp->input->io->ctrl)(pp->input->io->data, req, list);
+			return (*pp->input->io->ctrl)(pp->input->io, req, list);
 		}
 
 		return EOF;

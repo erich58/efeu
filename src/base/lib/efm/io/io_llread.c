@@ -70,13 +70,13 @@ static int vput_residual (uint64_t val, IO *io)
 	{
 		if	(val > MASK_7)
 		{
-			io->put(BIT_CONT | (val & MASK_7), io->data);
+			io->put(BIT_CONT | (val & MASK_7), io);
 			val >>= 7;
 		}
 		else	break;
 	}
 
-	io->put(val, io->data);
+	io->put(val, io);
 	return n + 1;
 }
 
@@ -134,12 +134,12 @@ size_t io_llwrite (IO *io, const int64_t *val, size_t dim)
 	{
 		if	(*val == 0)
 		{
-			io->put(0, io->data);
+			io->put(0, io);
 			continue;
 		}
 		else if	(*val == -(*val))
 		{
-			io->put(BIT_SIG, io->data);
+			io->put(BIT_SIG, io);
 			continue;
 		}
 
@@ -159,10 +159,10 @@ size_t io_llwrite (IO *io, const int64_t *val, size_t dim)
 
 		if	(uval)
 		{
-			io->put(byte | BIT_CONT, io->data);
+			io->put(byte | BIT_CONT, io);
 			n += vput_residual(uval, io);
 		}
-		else	io->put(byte, io->data);
+		else	io->put(byte, io);
 	}
 
 	return n;
@@ -187,10 +187,10 @@ size_t io_ullwrite (IO *io, const uint64_t *val, size_t dim)
 	{
 		if	(*val > MASK_7)
 		{
-			io->put(BIT_CONT | (*val & MASK_7), io->data);
+			io->put(BIT_CONT | (*val & MASK_7), io);
 			n += vput_residual(*val >> 7, io);
 		}
-		else	io->put(*val, io->data);
+		else	io->put(*val, io);
 	}
 
 	return n;

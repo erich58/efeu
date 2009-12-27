@@ -57,6 +57,7 @@ void CmdSetup_StrPool(void);	/* Stringpool */
 void CmdSetup_DatPool(void);	/* Datenpool */
 void CmdSetup_MapFile(void);	/* Dateimapping */
 void CmdSetup_assignarg(void);	/* Zuweisungsargument */
+void CmdSetup_time(void);	/* Zeitstrukturen, Standardbibliothek */
 void CmdSetup_date(void);	/* Datum- und Zeit */
 void CmdSetup_unix(void);	/* UNIX-Systemstrukturen */
 void CmdSetup_regex(void);	/* Reguläre Ausdrücke */
@@ -66,6 +67,7 @@ void CmdSetup_dl(void);		/* Dynamische Bibliotheken */
 void CmdSetup_dbutil(void);	/* Datenbankhilfsfunktionen */
 void CmdSetup_stat(void);	/* Interpreterstatus */
 void CmdSetup_type(void);	/* Datentypen */
+void CmdSetup_log(void);	/* Protokollkonfiguration */
 
 void CmdSetup_int8 (void);
 void CmdSetup_int16 (void);

@@ -36,13 +36,13 @@ mdmat *mdinv (mdmat *base)
 
 	if	(base == NULL)
 	{
-		dbg_error(NULL, "[mdmath:1]", NULL);
+		log_error(NULL, "[mdmath:1]", NULL);
 		return NULL;
 	}
 
 	if	(GetKonv(&konv, base->type, &Type_double) == NULL)
 	{
-		dbg_note(NULL, "[mdmath:2]", "m", type2str(base->type));
+		log_note(NULL, "[mdmath:2]", "m", type2str(base->type));
 		return NULL;
 	}
 
@@ -77,7 +77,7 @@ mdmat *mdinv (mdmat *base)
 
 	if	(lines != cols)
 	{
-		dbg_error(NULL, "[mdmath:3]", NULL);
+		log_error(NULL, "[mdmath:3]", NULL);
 		return NULL;
 	}
 
@@ -94,7 +94,7 @@ mdmat *mdinv (mdmat *base)
 	if	((cols = GaussJordan(md->data, lines)) != lines)
 	{
 		del_mdmat(md);
-		dbg_error(NULL, "[mdmath:4]", "dd", lines, cols);
+		log_error(NULL, "[mdmath:4]", "dd", lines, cols);
 		return NULL;
 	}
 

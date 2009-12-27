@@ -27,7 +27,6 @@ If not, write to the Free Software Foundation, Inc.,
 #define	EFEU_strbuf_h	1
 
 #include <EFEU/memalloc.h>
-#include <EFEU/refdata.h>
 #include <EFEU/stdint.h>
 
 /*

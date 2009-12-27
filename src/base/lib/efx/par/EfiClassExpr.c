@@ -82,7 +82,7 @@ EfiObj *EfiClassExpr (EfiObj *base, const char *def)
 	else if	(cl->create)
 	{
 		EfiClassArg arg;
-		cl->create(&arg, x->opt, x->arg);
+		cl->create(&arg, obj->type, x->opt, x->arg, cl->par);
 		base = Obj_call(class_expr, arg.update, MakeObjList(3, base,
 			NewPtrObj(&Type_type, arg.type),
 			NewPtrObj(&Type_ref, arg.par)));

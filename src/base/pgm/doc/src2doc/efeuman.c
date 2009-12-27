@@ -368,7 +368,7 @@ int main (int argc, char **argv)
 	if	(CmdPar_eval(par, &argc, argv, 1) <= 0)
 		exit(EXIT_FAILURE);
 
-	DebugMode(GetResource("Debug", NULL));
+	LogConfig(GetResource("Debug", NULL));
 	argc--;
 	argv++;
 
@@ -417,7 +417,7 @@ int main (int argc, char **argv)
 	{
 		;
 	}
-	else	dbg_error(NULL, E_CFG, NULL);
+	else	log_error(NULL, E_CFG, NULL);
 
 	io_close(io);
 

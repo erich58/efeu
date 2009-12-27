@@ -188,7 +188,7 @@ static void v_bsearch (EfiFunc *func, void *rval, void **arg)
 		obj->type, 0, vec->type, 0);
 
 	if	(v_bsearch_func == NULL)
-		dbg_note(NULL, "[efmain:nocmp]", NULL);
+		log_note(NULL, "[efmain:nocmp]", NULL);
 	else if	(vec->buf.used)
 		ptr = bsearch(obj->data, vec->buf.data,
 			vec->buf.used, vec->buf.elsize, v_bsearch_cmp);
@@ -266,7 +266,7 @@ static void v_assign (EfiFunc *func, void *rval, void **arg)
 			EvalObj(RefObj(list->obj), NULL)));
 
 	if	(list != NULL)
-		dbg_note(NULL, "[efmain:138]", NULL);
+		log_note(NULL, "[efmain:138]", NULL);
 
 	Val_ptr(rval) = rd_refer(vec);
 }
@@ -287,7 +287,7 @@ static void v_xassign (EfiFunc *func, void *rval, void **arg)
 			EvalObj(RefObj(list->obj), NULL)));
 
 	if	(list != NULL)
-		dbg_note(NULL, "[efmain:138]", NULL);
+		log_note(NULL, "[efmain:138]", NULL);
 
 	Val_ptr(rval) = rd_refer(vec);
 }

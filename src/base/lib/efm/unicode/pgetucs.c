@@ -21,18 +21,16 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include <EFEU/ioscan.h>
-#include <EFEU/fmtkey.h>
-#include <ctype.h>
+#include <EFEU/mstring.h>
 
 #define	U1(c)	((c & 0x80) == 0)	/* Test auf 1-Byte Sequenz */
 #define	U2(c)	((c & 0xe0) == 0xc0)	/* Test auf 2-Byte Sequenz */
 #define U3(c)	((c & 0xf0) == 0xe0)	/* Test auf 3-Byte Sequenz */
 #define	U4(c)	((c & 0xf8) == 0xf0)	/* Test auf 4-Byte Sequenz */
 
-#define	V2(c)	((c & 0x1f) << 6)	/* Startbits für 2-Byte Sequenz */
-#define	V3(c)	((c & 0xf) << 12)	/* Startbits für 3-Byte Sequenz */
-#define	V4(c)	((c & 0x7) << 18)	/* Startbits für 4-Byte Sequenz */
+#define	V2(c)	(c & 0x1f)	/* Startbits für 2-Byte Sequenz */
+#define	V3(c)	(c & 0xf)	/* Startbits für 3-Byte Sequenz */
+#define	V4(c)	(c & 0x7)	/* Startbits für 4-Byte Sequenz */
 
 #define	UF(c)	((c & 0xc0) == 0x80)	/* Test auf Folgezeichen */
 #define	VF(c)	(c & 0x3f)		/* Datenbits des Folgezeichens */
@@ -63,7 +61,7 @@ auch auf nicht mit 0 terminierte Zeichenketten anwenden. Bei
 null-terminierten Zeichenfeldern kann ein beliebiger Wert |>=| 4 übergeben
 werden.
 
-Zeichen mit Kodewert zwischen 128 ud 256, die nicht Teil einer UTF8-Kodierung
+Zeichen mit Kodewert zwischen 128 und 256, die nicht Teil einer UTF8-Kodierung
 sind, werden als ISO 8859-15-Kodewert aufgefasst und entsprechend umgewandelt.
 Falls für <lim> ein Wert |<=| 1 übergeben wird, werden keine Multibyte-Zeichen
 aufgelöst und die Funktion verhält sich wie eine reine Konvertierung von

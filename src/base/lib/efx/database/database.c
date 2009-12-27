@@ -304,7 +304,7 @@ static void f_db_index(EfiFunc *func, void *rval, void **arg)
 
 	if	(db == NULL || n < 0 || n >= db->buf.used)
 	{
-		dbg_note(NULL, "[efmain:35]", NULL);
+		log_note(NULL, "[efmain:35]", NULL);
 		return;
 	}
 

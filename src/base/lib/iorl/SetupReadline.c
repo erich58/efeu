@@ -342,17 +342,17 @@ static char *iorl_builtin (char *line)
 /*	Readline - Interface
 */
 
-static int iorl_get (void *ptr);
-static int iorl_put (int c, void *ptr);
-static int iorl_ctrl (void *ptr, int req, va_list list);
+static int iorl_get (IO *io);
+static int iorl_put (int c, IO *io);
+static int iorl_ctrl (IO *io, int req, va_list list);
 
 
 /*	Lesen von der Standardeingabe
 */
 
-static int iorl_get (void *ptr)
+static int iorl_get (IO *io)
 {
-	RLBUF *rlbuf = ptr;
+	RLBUF *rlbuf = io->data;
 
 	while (rlbuf->buf == NULL)
 	{
@@ -423,7 +423,7 @@ static int iorl_get (void *ptr)
 /*	Zeichen zur Standardausgabe schreiben
 */
 
-static int iorl_put(int c, void *ptr)
+static int iorl_put(int c, IO *io)
 {
 	putchar(c);
 	return 1;
@@ -433,9 +433,9 @@ static int iorl_put(int c, void *ptr)
 /*	Kontrollfunktion
 */
 
-static int iorl_ctrl (void *rlptr, int req, va_list list)
+static int iorl_ctrl (IO *io, int req, va_list list)
 {
-	RLBUF *rlbuf = rlptr;
+	RLBUF *rlbuf = io->data;
 	char **ptr;
 
 	switch (req)

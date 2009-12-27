@@ -31,7 +31,7 @@ int sb_xprintf (StrBuf *sb, const char *fmt, ...)
 		int n;
 
 		va_start(args, fmt);
-		n = sb_vprintf(sb, fmt, args);
+		n = sb_vxprintf(sb, fmt, args);
 		va_end(args);
 		return n;
 	}

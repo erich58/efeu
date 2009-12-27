@@ -96,3 +96,4 @@ index values not compatible.\n
 302	$!: classification table is not initialized.\n
 303	$!: data cube nor prepared for counting.\n
 304	$!: differing data type for additional classifications.\n
+305	$!: time range $0: unexpected character $1.\n

@@ -34,7 +34,10 @@ If not, write to the Free Software Foundation, Inc.,
 "$!: DBData: field position $1, width $2 out of range (recl = $3).\n"
 #define	MSG_IDX	"[db:idx]" \
 "$!: DBData: field index $1 out of range (dim = $2).\n"
+#define	MSG_RECL	"[db:recl]" \
+"$!: DBData: invalid record length.\n"
 
+static LogControl note_ctrl = LOG_CONTROL("DBData", LOGLEVEL_NOTE);
 static DBDATA(DBDataBuf);
 
 /*
@@ -63,13 +66,13 @@ DBData *DBData_ebcdic (DBData *db, IO *io, int recl)
 
 		if	(db->recl < 4)
 		{
-			io_error(io, "[db:3]", NULL);
+			io_error(io, MSG_RECL, NULL);
 			return NULL;
 		}
 			
 		if	(io_getval(io, 2) != 0)
 		{
-			io_error(io, "[db:4]", NULL);
+			io_error(io, MSG_RECL, NULL);
 			return NULL; 
 		}
 
@@ -91,7 +94,7 @@ DBData *DBData_ebcdic (DBData *db, IO *io, int recl)
 
 	if	(io_read(io, db->buf, db->recl) != db->recl)
 	{
-		io_error(io, "[db:4]", NULL);
+		io_error(io, MSG_RECL, NULL);
 		return NULL;
 	}
 
@@ -428,7 +431,7 @@ int DBData_check (DBData *data, int pos, int len)
 	if	(pos + len - 1 <= data->recl)
 		return 0;
 
-	dbg_note("DBData", MSG_POS, "ddd", pos, len, (int) data->recl);
+	log_note(&note_ctrl, MSG_POS, "ddd", pos, len, (int) data->recl);
 	return 1;
 }
 
@@ -444,7 +447,7 @@ unsigned char *DBData_ptr (DBData *data, int pos, int len)
 	if	(pos + len <= data->recl)
 		return data->buf + pos;
 
-	dbg_note("DBData", MSG_POS, "ddd", pos, len, (int) data->recl);
+	log_note(&note_ctrl, MSG_POS, "ddd", pos, len, (int) data->recl);
 	return NULL;
 }
 
@@ -479,7 +482,7 @@ char *DBData_xfield (DBData *data, int idx)
 {
 	if	(data == NULL || idx < 1 || idx > data->dim)
 	{
-		dbg_note("DBData", MSG_IDX,
+		log_note(&note_ctrl, MSG_IDX,
 			"dd", idx + 1, data ? (int) data->dim : 0);
 	}
 

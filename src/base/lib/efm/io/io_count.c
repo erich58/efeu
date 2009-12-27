@@ -29,9 +29,9 @@ typedef struct {
 	size_t count;	/* Zahl der ausgegebenen Zeichen */
 } COUNT;
 
-static int std_put (int c, void *ptr)
+static int std_put (int c, IO *io)
 {
-	COUNT *count = ptr;
+	COUNT *count = io->data;
 
 	if	((c = io_putc(c, count->io)) != EOF)
 		count->count++;
@@ -39,16 +39,16 @@ static int std_put (int c, void *ptr)
 	return c;
 }
 
-static int dummy_put (int c, void *ptr)
+static int dummy_put (int c, IO *io)
 {
-	COUNT *count = ptr;
+	COUNT *count = io->data;
 	count->count++;
 	return c;
 }
 
-static int count_ctrl (void *ptr, int req, va_list list)
+static int count_ctrl (IO *io, int req, va_list list)
 {
-	COUNT *count = ptr;
+	COUNT *count = io->data;
 	size_t stat;
 
 	switch (req)

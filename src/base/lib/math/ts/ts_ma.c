@@ -67,7 +67,7 @@ void ts_ima (TimeSeries *ts, TimeSeries *base, int adjust)
 	
 	if	(ts->base.type != base->base.type)
 	{
-		dbg_note(NULL, "[TimeSeries:1]",
+		log_note(NULL, "[TimeSeries:1]",
 			"cc", ts->base.type, base->base.type);
 		return;
 	}

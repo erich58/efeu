@@ -25,16 +25,19 @@ typedef struct {
 struct EfiClass {
 	EPC_VAR;
 	char *syntax;
-	void (*create) (EfiClassArg *par, const char *opt, const char *arg);
+	void (*create) (EfiClassArg *def, const EfiType *type,
+		const char *opt, const char *arg, void *par);
+	void *par;
 };
 
 void EfiClass_info (IO *io, const void *data);
 
-#define	EFI_CLASS(type, name, syntax, create, label) \
+#define	EFI_CLASS(type, name, syntax, create, par, label) \
 	{ EPC_DATA(&EfiPar_class, type, name, label, EfiClass_info), \
-		syntax, create }
+		syntax, create, par }
 
 void SetupEfiClass (void);
+void EfiClassEnum (void);
 void EfiClassInfo (InfoNode *info);
 
 extern EfiClass EfiClass_flag;
@@ -57,5 +60,10 @@ typedef struct {
 void AddEfiClassDef (EfiVarTab *tab, EfiClassDef *def, size_t dim);
 int MakeEfiClass (EfiType *type, const char *name, const char *def);
 EfiObj *EfiClassExpr (EfiObj *base, const char *def);
+
+void DayTime (EfiClassArg *def, const EfiType *type,
+		const char *opt, const char *arg, void *par);
+void CalClass (EfiClassArg *def, const EfiType *type,
+		const char *opt, const char *arg, void *par);
 
 #endif	/* EFEU/EfiClass.h */

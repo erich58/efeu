@@ -55,7 +55,7 @@ typedef struct {
 
 void DocBuf_init (DocBuf *doc);
 void DocBuf_write (DocBuf *doc, IO *io);
-void DocBuf_copy (DocBuf *doc, StrBuf *buf, StrBuf *def, const char *name);
+StrBuf *DocBuf_copy (DocBuf *doc, StrBuf *buf, StrBuf *def, const char *name);
 
 void copy_protect (const char *str, IO *io);
 

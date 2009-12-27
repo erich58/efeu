@@ -60,19 +60,13 @@ GZIP = "-n1"
 # :*:debug-level
 # :de:Debug-Modus
 
--debug::mode[debug]|Debug
+-debug::mode[.debug]|Debug
 	:*:set debug level for command
-	:de:setzt den Debug-Level für das Kommando.
-#	Folgende Angaben sind möglich:
-#	[none]	Keine Meldungen ausgeben;
-#	[err]	Fehlermeldungen ausgeben;
-#	[note]	Anmerkungen ausgeben;
-#	[info]	Verarbeitungsinformationen ausgeben;
-#	[stat]	Verarbeitungsstatistiken ausgeben;
-#	[trace]	Ablaufinformationen ausgeben;
-#	[debug]	Debugginginformationen ausgeben (default);
+	See \mref{LogConfig(3)} for details.
+	:de:setzt den Protokollmodus für das Kommando.
+	Vergleiche dazu \mref{LogConfig(3)}.
 
--verbose|Debug = stat
-	:*:set debug level to |stat|.
-	:de:setzt den Debug-Level auf |stat|.
+-verbose|Debug = .info
+	:*:set debug level to |.info|.
+	:de:setzt den Debug-Level auf |.info|.
 

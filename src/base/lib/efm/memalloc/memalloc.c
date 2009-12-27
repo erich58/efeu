@@ -37,11 +37,11 @@ static int mem_cmp (const void *a, const void *b);
 */
 
 static AllocTab mem_tab[] = {
-	ALLOCDATA(512, 1 * sizeof(void *)),
-	ALLOCDATA(256, 2 * sizeof(void *)),
-	ALLOCDATA(128, 4 * sizeof(void *)),
-	ALLOCDATA(64, 8 * sizeof(void *)),
-	ALLOCDATA(32, 16 * sizeof(void *)),
+	ALLOCDATA("mem_1p", 512, 1 * sizeof(void *)),
+	ALLOCDATA("mem_2p", 256, 2 * sizeof(void *)),
+	ALLOCDATA("mem_4p", 128, 4 * sizeof(void *)),
+	ALLOCDATA("mem_8p", 64, 8 * sizeof(void *)),
+	ALLOCDATA("mem_16p", 32, 16 * sizeof(void *)),
 };
 
 static VECBUF (mem_large, 32, sizeof(void *));

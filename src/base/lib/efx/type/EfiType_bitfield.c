@@ -34,7 +34,7 @@ static EfiObj *BFPar_alloc (EfiType *type, va_list list)
 //	par->base = va_arg(list, EfiObj *);
 	par->def = va_arg(list, EfiBitfield *);
 	par->data = (par + 1);
-	fprintf(stderr, "base %p: %d\n", par->base, par->base->refcount);
+//	fprintf(stderr, "base %p: %d\n", par->base, par->base->refcount);
 	AddUpdateObj(&par->base->list, (EfiObj *) par);
 	return (EfiObj *) par;
 }

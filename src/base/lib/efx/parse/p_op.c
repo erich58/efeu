@@ -198,7 +198,7 @@ EfiObj *BinaryTerm(const char *name, EfiObj *left, EfiObj *right)
 	if	(func == NULL || left == NULL || right == NULL)
 	{
 		if	(func == NULL)
-			dbg_note(NULL, "[efmain:70]", "s", name);
+			log_note(NULL, "[efmain:70]", "s", name);
 
 		UnrefObj(left);
 		UnrefObj(right);

@@ -26,6 +26,7 @@ If not, write to the Free Software Foundation, Inc.,
 #define	EFEU_mstring_h	1
 
 #include <EFEU/memalloc.h>
+#include <EFEU/unicode.h>
 #include <EFEU/stdint.h>
 #include <EFEU/io.h>
 
@@ -57,9 +58,5 @@ uint64_t mstr2uint64 (const char *str, char **ptr, int base);
 int32_t mstr2ucs (const char *str, char **ptr);
 
 void mtrim (char *s);
-
-int32_t latin9_to_ucs (int c);
-int ucs_to_latin9 (int32_t c);
-int32_t pgetucs (char **p, size_t lim);
 
 #endif	/* EFEU/mstring.h */

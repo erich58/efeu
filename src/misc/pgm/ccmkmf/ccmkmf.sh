@@ -19,10 +19,9 @@
 # License along with EFEU; see the file COPYING.
 # If not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-#	A-3423 St. Andrä/Wördern, Südtirolergasse 17-21/5
 
 # $pconfig
-# Version="$Id: ccmkmf.sh,v 1.6 2008-04-06 18:16:31 ef Exp $"
+# Version="$Id: ccmkmf.sh,v 1.7 2009-10-18 07:56:35 ef Exp $"
 # n |
 #	:*:no filter
 #	:de:Keinen Ausgabefilter

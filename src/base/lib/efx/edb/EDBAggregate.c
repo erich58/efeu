@@ -47,7 +47,7 @@ EDBAggregate *NewEDBAggregate (EDBAggregate *next, const char *op,
 		2, var->type, 1, var->type, 0); 
 
 	if	(!x->f_aggregate)
-		dbg_note(NULL, ERR_AGGR, "ss", op, var->type->name);
+		log_note(NULL, ERR_AGGR, "ss", op, var->type->name);
 
 	return rd_init(&aggr_reftype, x);
 }

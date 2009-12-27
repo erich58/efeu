@@ -24,6 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/efutil.h>
 #include <EFEU/cmdconfig.h>
 #include <EFEU/calendar.h>
+#include <EFEU/EfiClass.h>
 #include <time.h>
 
 #define	RVINT	Val_int(rval)
@@ -34,6 +35,8 @@ If not, write to the Free Software Foundation, Inc.,
 #define	LONG(n)		Val_long(arg[n])
 #define	DOUBLE(n)	Val_double(arg[n])
 #define	TIME(x)		((CalTimeIndex *) (x))[0]
+
+extern EfiType Type_time;
 
 static EfiVarDef vardef[] = {
 	{ "CenturyLimit", &Type_int, &CenturyLimit,
@@ -126,7 +129,7 @@ static EfiObj *Time_member (const EfiObj *obj, void *data)
 }
 
 static EfiVarDef v_Time[] = {
-	{ "fmt", &Type_str, &Date_fmt },
+	{ "fmt", &Type_str, &Time_fmt },
 };
 
 static EfiMember m_Time[] = {
@@ -189,6 +192,13 @@ static void f_Date(EfiFunc *func, void *rval, void **arg)
 		Val_int(arg[2]));
 }
 
+static void f_time2Date(EfiFunc *func, void *rval, void **arg)
+{
+	struct tm *tm = localtime(arg[0]);
+	Val_Date(rval) = CalendarIndex(tm->tm_mday, tm->tm_mon + 1,
+		tm->tm_year + 1900);
+}
+
 static void f_StdDate(EfiFunc *func, void *rval, void **arg)
 {
 	Val_Date(rval) = CalBaseStd(Val_int(arg[0]));
@@ -213,8 +223,12 @@ static void f_datecut (EfiFunc *func, void *rval, void **arg)
 	else	Val_Date(rval) = 0;
 }
 
+static void f_Date0 (EfiFunc *func, void *rval, void **arg)
+{
+	Val_Date(rval) = TodayIndex();
+}
 
-static void f_today(EfiFunc *func, void *rval, void **arg)
+static void f_today (EfiFunc *func, void *rval, void **arg)
 {
 	Val_Date(rval) = TodayIndex() + Val_int(arg[0]);
 }
@@ -283,6 +297,29 @@ static void f_localtime (EfiFunc *func, void *rval, void **arg)
 	TIME(rval) = Time_offset(CurrentTime(), Val_int(arg[0]));
 }
 
+static void f_Time2time (EfiFunc *func, void *rval, void **arg)
+{
+	CalInfo *x = TimeCalendar(TIME(arg[0]), NULL);
+	struct tm tm;
+	tm.tm_year = x->year - 1900;
+	tm.tm_mon = x->month - 1;
+	tm.tm_mday = x->day;
+	tm.tm_hour = x->hour;
+	tm.tm_min = x->min;
+	tm.tm_sec = x->sec;
+	*((time_t *) rval) = mktime(&tm);
+}
+
+static void f_time2Time(EfiFunc *func, void *rval, void **arg)
+{
+	struct tm *tm = localtime(arg[0]);
+	CalTimeIndex *tp = rval;
+	tp->date = Val_Date(arg[0]);
+	tp->date = CalendarIndex(tm->tm_mday, tm->tm_mon + 1,
+		tm->tm_year + 1900);
+	tp->time = 60 * (60 * tm->tm_hour + tm->tm_min) + tm->tm_sec;
+}
+
 /*	Konvertierung
 */
 
@@ -291,11 +328,29 @@ static void f_Time2Date (EfiFunc *func, void *rval, void **arg)
 	Val_Date(rval) = TIME(arg[0]).date;
 }
 
+static void f_Date2time (EfiFunc *func, void *rval, void **arg)
+{
+	CalInfo *x = Calendar(Val_Date(arg[0]), NULL);
+	struct tm tm;
+	tm.tm_year = x->year - 1900;
+	tm.tm_mon = x->month - 1;
+	tm.tm_mday = x->day;
+	tm.tm_hour = 12;
+	tm.tm_min = 0;
+	tm.tm_sec = 0;
+	*((time_t *) rval) = mktime(&tm);
+}
+
 static void f_Date2Time (EfiFunc *func, void *rval, void **arg)
 {
 	CalTimeIndex *tp = rval;
 	tp->date = Val_Date(arg[0]);
 	tp->time = 12 * 60 * 60;
+}
+
+static void f_Time (EfiFunc *func, void *rval, void **arg)
+{
+	TIME(rval) = CurrentTime();
 }
 
 static void f_Time_add (EfiFunc *func, void *rval, void **arg)
@@ -346,6 +401,9 @@ static void f_LeapYear_Time (EfiFunc *func, void *rval, void **arg)
 */
 
 static EfiFuncDef fdef[] = {
+	{ 0, &Type_Date, "Date (time t)", f_time2Date },
+	{ 0, &Type_time, "Date ()", f_Date2time },
+	{ 0, &Type_Date, "Date (void)", f_Date0 },
 	{ 0, &Type_Date, "Date (int t, int m, int j)", f_Date },
 	{ 0, &Type_Date, "Date (int b1900)", f_StdDate },
 	{ 0, &Type_Date, "Date (str s, bool end = false)", f_str2Date },
@@ -363,7 +421,10 @@ static EfiFuncDef fdef[] = {
 	{ 0, &Type_Date, "today (int offset = 0)", f_today },
 	{ 0, &Type_int, "jdiff (Date d1, Date d2)", f_Date_jdiff },
 
+	{ 0, &Type_Time, "Time (void)", f_Time },
+	{ 0, &Type_Time, "Time (time t)", f_time2Time },
 	{ 0, &Type_Time, "Time (str s, bool end = false)", f_str2Time },
+	{ 0, &Type_time, "Time ()", f_Time2time },
 	{ FUNC_RESTRICTED, &Type_str, "Time ()", f_Time2str },
 	{ FUNC_RESTRICTED, &Type_double, "Time ()", f_Time2dbl },
 	{ 0, &Type_str, "Time::konv (str fmt = NULL)", f_Time_conv },
@@ -386,6 +447,18 @@ static EfiFuncDef fdef[] = {
 	{ FUNC_VIRTUAL, &Type_list, "operator: (Time, Time, int)", RangeFunc },
 };
 
+/*	Klassifikationen
+*/
+
+static int get_cal (const EfiObj *obj)
+{
+	return Val_Date(obj->data);
+}
+
+static EfiClass cl_range = EFI_CLASS(NULL,
+	"date", "[fmt]=ug[:og]", CalClass, get_cal,
+	"calendar classification"
+);
 
 /*	Initialisieren
 */
@@ -396,6 +469,7 @@ void CmdSetup_date(void)
 	AddType(&Type_Date);
 	AddVarDef(Type_Date.vtab, v_Date, tabsize(v_Date));
 	AddEfiMember(Type_Date.vtab, m_Date, tabsize(m_Date));
+	AddEfiPar(&Type_Date, &cl_range);
 	AddType(&Type_Time);
 	AddVarDef(Type_Time.vtab, v_Time, tabsize(v_Time));
 	AddEfiMember(Type_Time.vtab, m_Time, tabsize(m_Time));

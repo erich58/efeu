@@ -32,14 +32,24 @@ If not, write to the Free Software Foundation, Inc.,
 #define	SIGLEN	63
 
 /*
-Die Funktion |$1| sucht in der Formatdefinition <def> nach einer
-Formatkennung und liefert das zugehörige Format. Falls <def>
-keine Formatkennung enthält, liefert die Funktion <def>. Falls
-die Formatdefinition nicht gefunden wurde, liefert die Funktion
-den nach der Formatkennung folgenden Text. Eine Formatkennung
-hat die Form <"|[|<name>|]|"> und muß am Anfang der Formatkennung
-stehen. Die Bedeutung von |[| kann mit einem Backslash aufgehoben
-werden.
+Die Funktion |$1| liefert den durch die Formatdefinition <def>
+definierten Formatstring. Eine Formatdefinition besteht
+aus einer Formatkennung und einen Vorgabeformat.
+
+Eine Formatkennung hat die Form:
+
+[|[|<name>|:|<key>|]|]
+	In der Formatdatei <name> wird nach dem Eintrag <key> gesucht.
+[|[|<key>|]|]
+	Der Basisname des Kommandos bestimmt die Formatdatei, <key> den
+	Eintrag.
+[|[%|<name>|]|]
+	Die Resourcevariable <name> bestimmt den Formateintrag.
+[|[]|]
+	Leerkennung, die Funktion liefert den Vorgabewert.
+
+Falls keine Formatkennung vorhanden ist oder kein Formateintrag gefunden wurde,
+wird das Vorgabeformat geliefert.
 */
 
 char *GetFormat (const char *def)
@@ -54,25 +64,32 @@ char *GetFormat (const char *def)
 	if	(def == NULL)
 		return NULL;
 
-	if	(def[0] == '\\' && def[1] == '[')
-		return (char *) def + 1;
-
 	if	(*def != '[')
 		return (char *) def;
 
 	p = def + 1;
-	flag = (*p == '%');
 
-	if	(flag)	p++;
+	if	(*p == ']')
+		return (char *) p + 1;
 
-	key = flag ? nbuf : NULL;
+	if	(*p == '%')
+	{
+		p++;
+		key = nbuf;
+		flag = 1;
+	}
+	else
+	{
+		key = NULL;
+		flag = 0;
+	}
 
-	for (i = 0; *p && *p != ']'; p++)
+	for (i = 0; *p != ']'; p++)
 	{
 		if	(*p == 0)	return (char *) def;
 		if	(i >= SIGLEN)	continue;
 
-		if	(*p == ':' && key == NULL)
+		if	(*p == ':' && !key)
 		{
 			nbuf[i++] = 0;
 			key = nbuf + i;

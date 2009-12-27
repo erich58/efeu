@@ -40,7 +40,6 @@ extern EDBFilter EDBFilter_test;
 extern EDBFilter EDBFilter_expr;
 extern EDBFilter EDBFilter_trans;
 extern EDBFilter EDBFilter_join;
-extern EDBFilter EDBFilter_cut;
 extern EDBFilter EDBFilter_var;
 extern EDBFilter EDBFilter_conv;
 extern EDBFilter EDBFilter_dup;

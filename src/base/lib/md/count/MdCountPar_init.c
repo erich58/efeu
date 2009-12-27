@@ -19,7 +19,6 @@ You should have received a copy of the GNU Library General Public
 License along with this library; see the file COPYING.Library.
 If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
 */
 
 #include <EFEU/mdcount.h>
@@ -113,23 +112,22 @@ void MdCountPar_init (MdCountPar *par, EfiObj *obj, const char *method)
 		exit(EXIT_SUCCESS);
 	}
 
-	if	((p = strchr(xarg->name, ':')))
+	cobj = RefObj(obj);
+	method = xarg->name;
+
+	while ((p = strchr(method, '.')))
 	{
 		*p = 0;
+		cobj = cnt_obj(cobj, method);
 		method = p + 1;
-		cobj = cnt_obj(obj, xarg->name);
-	}
-	else
-	{
-		cobj = RefObj(obj);
-		method = xarg->name;
 	}
 
+	fprintf(stderr, "method=%s\n", method);
 	type = cobj->type;
-	cdef = SearchEfiPar(type, &EfiPar_EfiCount, xarg->name);
+	cdef = SearchEfiPar(type, &EfiPar_EfiCount, method);
 
 	if	(!cdef)
-		dbg_error(NULL, ERR_METHOD, "ms", Type2str(type), xarg->name);
+		log_error(NULL, ERR_METHOD, "ms", Type2str(type), method);
 
 /*	Klassen und Zähltypen initialisieren
 */

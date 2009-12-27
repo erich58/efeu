@@ -51,7 +51,7 @@ void RestoreVarStack (EfiVarStack *vstack)
 #define	USE_ALLOCTAB	0
 
 #if	USE_ALLOCTAB
-static ALLOCTAB(stack_tab, 64, sizeof(EfiVarStack));
+static ALLOCTAB(stack_tab, "EfiVarStack", 64, sizeof(EfiVarStack));
 #endif
 
 void PushVarTab (EfiVarTab *tab, EfiObj *obj)

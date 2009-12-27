@@ -27,7 +27,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/strbuf.h>
 #include <ctype.h>
 
-static ALLOCTAB(mp_tab, 32, sizeof(MatchPar));
+static ALLOCTAB(mp_tab, "MatchPar", 32, sizeof(MatchPar));
 
 static int pcmp (MatchPar *mp, const char *name, size_t idx)
 {

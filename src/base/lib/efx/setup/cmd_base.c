@@ -24,6 +24,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/cmdsetup.h>
 #include <EFEU/refdata.h>
 #include <EFEU/CmdPar.h>
+#include <EFEU/printobj.h>
+#include <ctype.h>
 
 /*	Lösch- und Kopierfunktionen
 */
@@ -143,27 +145,84 @@ static EfiObj *Eval_name(const EfiType *type, const void *data)
 	return NewPtrObj(&Type_undef, mstrcpy(Val_str(data)));
 }
 
+static int print_ptr (const EfiType *st, const void *data, IO *io)
+{
+	if	(Val_ptr(data))
+	{
+		return io_printf(io, "_Ptr_(%p)", Val_ptr(data));
+	}
+	else	return io_puts("NULL", io);
+}
+
+static int print_type (const EfiType *st, const void *data, IO *io)
+{
+	const EfiType *type = * (const EfiType **) data;
+	return io_puts(type ? type->name : ".", io);
+}
+
+static int print_obj (const EfiType *st, const void *data, IO *io)
+{
+	return PrintObj(io, Val_obj(data));
+}
+
+static int print_expr (const EfiType *st, const void *data, IO *io)
+{
+	int n = io_puts("[", io);
+	n += PrintObj(io, Val_obj(data));
+	return n + io_puts("]", io);
+}
+
+static int std_name (const char *name)
+{
+	if	(!isalpha(*name) && *name != '_')	return 0;
+
+	for (name++; *name; name++)
+		if	(!isalnum(*name) && *name != '_')	return 0;
+
+	return 1;
+}
+
+static int print_name (const EfiType *st, const void *data, IO *io)
+{
+	const char *name = * (const char **) data;
+
+	if	(!name && !*name)
+		return io_puts("operator\"\"", io);
+
+	if	(std_name(name))
+		return io_puts(name, io);
+
+	return io_xprintf(io, "operator%#s", name);
+}
 
 /*	Einfache Pointertypen
 */
 
 EfiType Type_void = COMPLEX_TYPE("void", NULL, 0, 0, NULL, NULL, NULL, \
 	NULL, Eval_void, NULL, NULL, 0);
-EfiType Type_ptr = PTR_TYPE("_Ptr_", void *, NULL, NULL, NULL);
-EfiType Type_obj = PTR_TYPE("Object", EfiObj *, &Type_ptr, Clean_obj, Copy_obj);
-EfiType Type_expr = PTR_TYPE("Expr_t", EfiObj *, &Type_ptr, Clean_obj, Copy_obj);
+EfiType Type_ptr = PTR_TYPE("_Ptr_", void *, NULL,
+	print_ptr, NULL, NULL);
+EfiType Type_obj = PTR_TYPE("Object", EfiObj *, &Type_ptr,
+	print_obj, Clean_obj, Copy_obj);
+EfiType Type_expr = PTR_TYPE("Expr_t", EfiObj *, &Type_ptr,
+	print_expr, Clean_obj, Copy_obj);
 EfiType Type_str = COMPLEX_TYPE("str", "char *", sizeof(char *), 0,
 	Read_str, Write_str, Print_str,
 	&Type_ptr, NULL, Clean_str, Copy_str, TYPE_MALLOC);
-EfiType Type_type = PTR_TYPE("Type_t", EfiType *, &Type_ptr, NULL, NULL);
-EfiType Type_lval = PTR_TYPE("Lval_t", EfiType *, &Type_type, NULL, NULL);
-EfiType Type_name = EVAL_TYPE("_Name_", char *, Eval_name, Clean_str, Copy_str);
-EfiType Type_undef = PTR_TYPE("_undef_", char *, NULL, Clean_str, Copy_str);
+EfiType Type_type = PTR_TYPE("Type_t", EfiType *, &Type_ptr,
+	print_type, NULL, NULL);
+EfiType Type_lval = PTR_TYPE("Lval_t", EfiType *, &Type_type,
+	NULL, NULL, NULL);
+EfiType Type_name = EVAL_TYPE("_Name_", char *, Eval_name,
+	print_name, Clean_str, Copy_str);
+EfiType Type_undef = PTR_TYPE("_undef_", char *, NULL,
+	NULL, Clean_str, Copy_str);
 
 /*	Referenztypen
 */
 
-EfiType Type_ref = PTR_TYPE("_Ref_", void *, &Type_ptr, Clean_ref, Copy_ref);
+EfiType Type_ref = PTR_TYPE("_Ref_", void *, &Type_ptr,
+	NULL, Clean_ref, Copy_ref);
 EfiType Type_efi = REF_TYPE ("Efi", Efi *);
 EfiType Type_func = REF_TYPE("Func", EfiFunc *);
 EfiType Type_vfunc = REF_TYPE("VirFunc", EfiVirFunc *);

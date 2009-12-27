@@ -136,8 +136,6 @@ void CmdPar_expand (CmdPar *par, IO *in, IO *out)
 
 static void subcopy (CmdPar *par, IO *in, IO *out, int delim)
 {
-	StrBuf *buf;
-	char *p;
 	int32_t c;
 
 	while ((c = io_getucs(in)) != delim)
@@ -147,10 +145,7 @@ static void subcopy (CmdPar *par, IO *in, IO *out, int delim)
 		case EOF:
 			return;
 		case '$':
-			buf = sb_acquire();
-			p = psubexpand(buf, in, 0, NULL);
-			io_puts(p, out);
-			sb_release(buf);
+			io_puts(psubexpand(NULL, in, 0, NULL), out);
 			break;
 		case '@':
 			CmdPar_expand(par, in, out);

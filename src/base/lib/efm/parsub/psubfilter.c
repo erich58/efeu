@@ -51,9 +51,9 @@ static int psub_sget (PSUB *par)
 	return c;
 }
 
-static int psub_get (void *ptr)
+static int psub_get (IO *io)
 {
-	PSUB *par = ptr;
+	PSUB *par = io->data;
 	int c;
 
 	if	(par->save)
@@ -68,12 +68,13 @@ static int psub_get (void *ptr)
 
 	while ((c = io_getc(par->io)) == PSUBKEY)
 	{
+		sb_setpos(&par->buf, 0);
 		par->ptr = psubexpandarg(&par->buf, par->io, par->args);
 
 		if	(*par->ptr)
 			return psub_sget(par);
 
-		par->ptr = 0;
+		par->ptr = NULL;
 	}
 
 	if	(c == '"')
@@ -82,9 +83,9 @@ static int psub_get (void *ptr)
 	return c;
 }
 
-static int psub_ctrl (void *ptr, int req, va_list list)
+static int psub_ctrl (IO *io, int req, va_list list)
 {
-	PSUB *par = ptr;
+	PSUB *par = io->data;
 	int stat;
 
 	switch (req)

@@ -25,7 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/io.h>
 #include <EFEU/ioctrl.h>
 
-static ALLOCTAB(io_tab, 0, sizeof(IO));
+static ALLOCTAB(io_tab, "IO", 0, sizeof(IO));
 
 int io_close_stat = 0;
 

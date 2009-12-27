@@ -47,9 +47,9 @@ If not, write to the Free Software Foundation, Inc.,
 #define	NULL	((void *) 0)
 #endif
 
-@eval typedef size_t unsigned long
-@eval typedef ssize_t long
-@eval typedef ptrdiff_t unsigned long
+@eval typedef size_t unsigned long int
+@eval typedef ssize_t long int
+@eval typedef ptrdiff_t unsigned long int
 
 @beg -x check
 printf("#define	PTRSIZE_%d\n", sizeof(void *));

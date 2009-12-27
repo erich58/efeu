@@ -54,36 +54,21 @@ Hilfsfunktion zur Testausgabe
 
 static int debug_depth = 0;
 
+static LogControl sort_debug = LOG_CONTROL(NAME, LOGLEVEL_DEBUG);
+
 static void debug (const char *fmt, ...)
 {
-	static int sync = 0;
-	static FILE *log = NULL;
-
-	if	(sync < DebugChangeCount)
-	{
-		sync = DebugChangeCount;
-
-		if	(log)
-		{
-			fprintf(log, "%s: STOP debugging\n", NAME);
-			fileclose(log);
-		}
-
-		log = filerefer(LogFile(NAME, DBG_DEBUG));
-
-		if	(log)
-			fprintf(log, "%s: START debugging\n", NAME);
-	}
+	IO *log = LogOpen(&sort_debug);
 
 	if	(log)
 	{
 		va_list list;
 
 		va_start(list, fmt);
-		fprintf(log, "%s: %*s", NAME, debug_depth, "");
-		vfprintf(log, fmt, list);
+		io_printf(log, "%s: %*s", NAME, debug_depth, "");
+		io_vprintf(log, fmt, list);
 		va_end(list);
-		fputc('\n', log);
+		io_close(log);
 	}
 }
 
@@ -94,13 +79,13 @@ Tabelle mit temporären Dateinamen
 static void ftab_init (VecBuf *ftab)
 {
 	vb_init(ftab, FTAB_BLK, sizeof(char *));
-	debug("ftab_init()\n");
+	debug("ftab_init()");
 }
 
 static void ftab_free (VecBuf *ftab)
 {
 	vb_free(ftab);
-	debug("ftab_free()\n");
+	debug("ftab_free()");
 }
 
 static char *ftab_next (VecBuf *ftab)
@@ -134,15 +119,15 @@ typedef struct {
 	EfiObj *obj2;	/* Zweites Objekt für Vergleich */
 } DBUF;
 
-static int dbuf_get (void *ptr)
+static int dbuf_get (IO *io)
 {
-	DBUF *buf = ptr;
+	DBUF *buf = io->data;
 	return buf->data[buf->dpos++];
 }
 
-static int dbuf_put (int c, void *ptr)
+static int dbuf_put (int c, IO *io)
 {
-	DBUF *buf = ptr;
+	DBUF *buf = io->data;
 
 	if	(buf->dpos < buf->dlim)
 		buf->data[buf->dpos] = c;
@@ -254,9 +239,9 @@ static int std_cmp (const void *a_ptr, const void *b_ptr)
 	else				return 0;
 }
 
-static int ext_get (void *ptr)
+static int ext_get (IO *io)
 {
-	unsigned char **p = ptr;
+	unsigned char **p = io->data;
 	return *((*p)++);
 }
 
@@ -587,7 +572,7 @@ static EDB *fdef_sort (EDBFilter *filter, EDB *base,
 		case 'k':	lim *= 1024.; break;
 		case 'M':	lim *= 1024. * 1024.; break;
 		case 'G':	lim *= 1024. * 1024. * 1024.; break;
-		default:	dbg_note("edb", FMT_UNIT, "c", *p); break;
+		default:	log_note(edb_note, FMT_UNIT, "c", *p); break;
 		}
 
 		edb_sort_space = lim + 0.5;

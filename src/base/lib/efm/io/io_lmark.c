@@ -34,9 +34,9 @@ typedef struct {
 	int lnum;	/* Zeilennummer (kann im Format verwendet werden) */
 } LMARK;
 
-static int lmark_put (int c, void *ptr)
+static int lmark_put (int c, IO *io)
 {
-	LMARK *lmark = ptr;
+	LMARK *lmark = io->data;
 
 	if	(lmark->newline && (lmark->flag || c != '\n'))
 	{
@@ -54,9 +54,9 @@ static int lmark_put (int c, void *ptr)
 	return io_putc(c, lmark->io);
 }
 
-static int lmark_ctrl (void *ptr, int req, va_list list)
+static int lmark_ctrl (IO *io, int req, va_list list)
 {
-	LMARK *lmark = ptr;
+	LMARK *lmark = io->data;
 	int stat;
 
 	switch (req)

@@ -68,7 +68,7 @@ int main (int argc, char **argv)
 	int k;
 
 	SetProgName(argv[0]);
-	SetVersion("$Id: zstamp.c,v 1.11 2005-04-27 07:51:16 ef Exp $");
+	SetVersion("$Id: zstamp.c,v 1.12 2009-09-27 05:45:45 ef Exp $");
 	ParseCommand(&argc, argv);
 	sync = GetFlagResource("SyncStamp");
 	clear = GetFlagResource("ClearStamp");
@@ -90,7 +90,7 @@ int main (int argc, char **argv)
 
 		if	(S_ISDIR(sbuf.st_mode))
 		{
-			dbg_note(NULL, ISDIR, "s", src);
+			log_note(NULL, ISDIR, "s", src);
 			continue;
 		}
 
@@ -107,7 +107,7 @@ int main (int argc, char **argv)
 		if	(k != HSIZE || buf[0] != 037 || buf[1] != 0213)
 		{
 			fclose(file);
-			dbg_note(NULL, MAGIC, "s", src);
+			log_note(NULL, MAGIC, "s", src);
 			continue;
 		}
 
@@ -184,9 +184,9 @@ int main (int argc, char **argv)
 			if	(k != HSIZE)
 			{
 				fclose(file);
-				dbg_error(NULL, WERR, "s", src);
+				log_error(NULL, WERR, "s", src);
 			}
-			else	dbg_note(NULL, SET, "s", src);
+			else	log_note(NULL, SET, "s", src);
 		}
 
 		if	(set_utime)

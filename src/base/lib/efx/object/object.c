@@ -34,7 +34,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 extern char *ProgIdent;
 
-DebugClass ObjDebugClass = DEBUG_CLASS_DATA("Obj", DBG_DEBUG);
+LogControl ObjDebugControl = LOG_CONTROL("Obj", LOGLEVEL_DEBUG);
 
 #if	DEBUG_FLAG
 
@@ -147,14 +147,11 @@ EfiObj *NewPtrObj (const EfiType *type, const void *data)
 
 static void do_debug (int flag, char *fmt, const EfiObj *obj)
 {
-	int i;
-	FILE *file;
 	IO *log;
+	int i;
 		
-	if	(!(file = DebugClassFile(&ObjDebugClass)))
+	if	(!(log = LogOpen(&ObjDebugControl)))
 		return;
-
-	log = io_stream(NULL, file, NULL);
 
 	if	(flag == 2)
 	{

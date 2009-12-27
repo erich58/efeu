@@ -30,7 +30,6 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	ERR	"fatal error in %s: use of a deleted object (%p).\n"
 #define	ERRM	"fatal error in %s: object (%p): bad magic number.\n"
-#define	ERR2	"fatal error in %s: object (%p): undefined reference type.\n"
 
 #define	KEY_ALLOC	"alloc"
 #define	KEY_REFER	"refer"
@@ -47,7 +46,7 @@ static RefData *rd_check (const void *data, const char *name)
 {
 	RefData *rd = (RefData *) data;
 
-	if	(rd == NULL)
+	if	(!rd)
 		return NULL;
 
 #ifdef	REFDATA_MAGIC
@@ -59,16 +58,8 @@ static RefData *rd_check (const void *data, const char *name)
 	}
 #endif
 
-	if	(rd->reftype == NULL)
-	{
-/*
-		fprintf(stderr, ERR2, name, rd);
-		abort();
-		exit(EXIT_FAILURE);
-*/
+	if	(!rd->reftype)
 		return NULL;
-	}
-
 
 	if	(rd->refcount == 0)
 	{
@@ -86,33 +77,33 @@ static RefData *rd_check (const void *data, const char *name)
 static int debug_depth = 0;
 static int debug_lock = 0;
 
-static void debug_id (FILE *log, const RefData *rd, const char *cmd)
+static void debug_id (IO *log, const RefData *rd, const char *cmd)
 {
 	int i;
 
 	for (i = 0; i < debug_depth; i++)
-		putc('\t', log);
+		io_putc('\t', log);
 
-	fputs(cmd, log);
-	putc('(', log);
+	io_puts(cmd, log);
+	io_putc('(', log);
 
 	if	(rd->reftype->label)
 	{
-		fputs(rd->reftype->label, log);
-		putc(' ', log);
+		io_puts(rd->reftype->label, log);
+		io_putc(' ', log);
 	}
 
-	fprintf(log, "%lu %p)", (unsigned long) rd->refcount, rd);
+	io_printf(log, "%lu %p)", (unsigned long) rd->refcount, rd);
 }
 
-static FILE *debug_log (const RefData *rd)
+static IO *debug_log (const RefData *rd)
 {
-	return debug_lock ? NULL : DebugClassFile(rd->reftype->dbg);
+	return LogOpen(rd->reftype->log);
 }
 
 static void std_debug (const RefData *rd, const char *cmd)
 {
-	FILE *log = debug_log(rd);
+	IO *log = debug_log(rd);
 
 	if	(log)
 	{
@@ -124,11 +115,11 @@ static void std_debug (const RefData *rd, const char *cmd)
 
 		if	(ident)
 		{
-			putc(' ', log);
-			fputs(ident, log);
+			io_putc(' ', log);
+			io_puts(ident, log);
 		}
 
-		putc('\n', log);
+		io_close(log);
 		memfree(ident);
 		debug_lock--;
 	}
@@ -137,7 +128,7 @@ static void std_debug (const RefData *rd, const char *cmd)
 void rd_debug (const void *data, const char *fmt, ...)
 {
 	const RefData *rd = data;
-	FILE *log = rd ? debug_log(rd) : NULL;
+	IO *log = rd ? debug_log(rd) : NULL;
 
 	if	(log)
 	{
@@ -148,12 +139,12 @@ void rd_debug (const void *data, const char *fmt, ...)
 			va_list args;
 
 			va_start(args, fmt);
-			putc(' ', log);
-			vfprintf(log, fmt, args);
+			io_putc(' ', log);
+			io_vxprintf(log, fmt, args);
 			va_end(args);
 		}
 			
-		putc('\n', log);
+		io_close(log);
 	}
 }
 
@@ -221,7 +212,7 @@ void *rd_deref (void *data)
 	}
 	else
 	{
-		int indent = DebugClassFile(rd->reftype->dbg) ? 1 : 0;
+		int indent = LogUpdate(rd->reftype->log);
 		std_debug(rd, KEY_CLEAN);
 		rd->refcount = 0;
 

@@ -26,15 +26,6 @@ If not, write to the Free Software Foundation, Inc.,
 		DocStyle = "report";
 
 	author = expand("Erich Frühstück");
-/*
-	addr = expand(string !
-Erich Frühstück\br
-Südtirolergasse 17--21/5\br
-A\-3423 St.Andrä/Wördern\br
-Telefon (02242) 310 99
-!, false);
-*/
-
 	str exname = langcpy(":*:Exercise:de:Aufgabe");
 	latex::preamble += string !
 

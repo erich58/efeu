@@ -35,6 +35,7 @@ y	Jahr
 q	Jahr:Quartal
 w	Woche/Jahr
 m	Monat.Jahr
+m	Jahr.Monat
 d	Tag.Monat.Jahr
 d	Jahr-Monat-Tag
 */
@@ -65,7 +66,7 @@ static int add_century(int year)
 	return year;
 }
 
-TimeIndex str2TimeIndex (const char *str)
+TimeIndex str2TimeIndex (const char *str, char **ptr)
 {
 	TimeIndex idx;
 	char *p;
@@ -73,14 +74,19 @@ TimeIndex str2TimeIndex (const char *str)
 	idx.type = TS_INDEX;
 	idx.value = 0;
 
-	if	(str == NULL)	return idx;
+	if	(str == NULL)
+	{
+		if	(ptr)	*ptr = NULL;
+
+		return idx;
+	}
 	
 	while 	(isspace(*str))
 		str++;
 
 	if	(*str == '#')
 	{
-		idx.value = strtol(str, NULL, 10);
+		idx.value = strtol(str + 1, ptr, 10);
 		return idx;
 	}
 
@@ -93,7 +99,7 @@ TimeIndex str2TimeIndex (const char *str)
 	}
 	else if	(*p == '/')
 	{
-		int year = add_century(strtol(p + 1, NULL, 10));
+		int year = add_century(strtol(p + 1, &p, 10));
 		idx.type = TS_WEEK;
 		idx.value = WeekIndex(year, idx.value);
 	}
@@ -101,7 +107,7 @@ TimeIndex str2TimeIndex (const char *str)
 	{
 		idx.value = add_century(idx.value);
 		idx.type = TS_QUART;
-		idx.value = 4 * idx.value + strtol(p + 1, NULL, 10) - 1;
+		idx.value = 4 * idx.value + strtol(p + 1, &p, 10) - 1;
 	}
 	else if	(*p == '.')
 	{
@@ -109,7 +115,7 @@ TimeIndex str2TimeIndex (const char *str)
 
 		if	(p && *p == '.')
 		{
-			int year = add_century(strtol(p + 1, NULL, 10));
+			int year = add_century(strtol(p + 1, &p, 10));
 			idx.type = TS_DAY;
 			idx.value = CalendarIndex(idx.value, b, year);
 		}
@@ -127,7 +133,7 @@ TimeIndex str2TimeIndex (const char *str)
 
 		if	(p && *p == '-')
 		{
-			int day = strtol(p + 1, NULL, 10);
+			int day = strtol(p + 1, &p, 10);
 			idx.type = TS_DAY;
 			idx.value = CalendarIndex(day, month, idx.value);
 		}
@@ -138,6 +144,8 @@ TimeIndex str2TimeIndex (const char *str)
 		}
 	}
 	else	idx.value = add_century(idx.value);
+
+	if	(ptr)	*ptr = p;
 
 	return idx;
 }
@@ -327,7 +335,7 @@ int tindex_diff (TimeIndex a, TimeIndex b)
 {
 	if	(a.type != b.type)
 	{
-		dbg_note(NULL, "[TimeSeries:1]", "cc", a.type, b.type);
+		log_note(NULL, "[TimeSeries:1]", "cc", a.type, b.type);
 		b = tindex_conv(b, a.type, 0);
 	}
 
@@ -362,6 +370,6 @@ int tindex_type (const char *name)
 		return TS_DAY;
 	}
 
-	dbg_note(NULL, "[TimeSeries:2]", "s", name);
+	log_note(NULL, "[TimeSeries:2]", "s", name);
 	return 0;
 }

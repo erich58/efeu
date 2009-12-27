@@ -28,15 +28,15 @@ typedef struct {
 	StrBuf buf;	/* Zwischebuffer */
 } DIVIDE;
 
-static int divide_put (int c, void *ptr)
+static int divide_put (int c, IO *io)
 {
-	DIVIDE *div = ptr;
+	DIVIDE *div = io->data;
 	return sb_putc(c, &div->buf);
 }
 
-static int divide_ctrl (void *ptr, int req, va_list list)
+static int divide_ctrl (IO *io, int req, va_list list)
 {
-	DIVIDE *div = ptr;
+	DIVIDE *div = io->data;
 
 	switch (req)
 	{

@@ -176,7 +176,7 @@ static void f_main (EfiFunc *func, void *rval, void **arg)
 static void f_tcleval (EfiFunc *func, void *rval, void **arg)
 {
 	ArgList *argl;
-	StrBuf *sb, *tmp;
+	StrBuf *sb;
 	IO *in, *out;
 	char *p;
 	int flag;
@@ -199,7 +199,6 @@ static void f_tcleval (EfiFunc *func, void *rval, void **arg)
 	else	argl = NULL;
 
 	sb = sb_acquire();
-	tmp = sb_acquire();
 	in = io_cstr(Val_str(arg[0]));
 	out = io_strbuf(sb);
 	flag = 0;
@@ -208,7 +207,7 @@ static void f_tcleval (EfiFunc *func, void *rval, void **arg)
 	{
 		if	(c == '$')
 		{
-			p = psubexpandarg(tmp, in, argl);
+			p = psubexpandarg(NULL, in, argl);
 
 			if	(flag)
 				io_xputs(p, out, "\"");
@@ -223,7 +222,6 @@ static void f_tcleval (EfiFunc *func, void *rval, void **arg)
 		}
 	}
 
-	sb_release(tmp);
 	io_close(out);
 	ETK_eval(etk, sb_nul(sb));
 	sb_release(sb);

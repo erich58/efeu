@@ -24,7 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/preproc.h>
 #include <EFEU/stack.h>
 
-static ALLOCTAB(macdeftab, 0, sizeof(PPMacro));
+static ALLOCTAB(macdeftab, "PPMacro", 0, sizeof(PPMacro));
 
 
 PPMacro *NewMacro (void)
@@ -130,7 +130,7 @@ void AddMacro (PPMacro *def)
 		MacroTab = NewMacroTab(0);
 
 	if	(nkt_fetch(MacroTab, def->name, NULL))
-		dbg_note(NULL, "[preproc:211]", "s", def->name);
+		log_note(NULL, "[preproc:211]", "s", def->name);
 
 	nkt_insert(MacroTab, def->name, def);
 }

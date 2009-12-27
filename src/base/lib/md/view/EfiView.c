@@ -161,7 +161,7 @@ EfiView *EfiView_create (EfiObj *data, const char *method)
 
 			if	(!base || base->type == &Type_undef)
 			{
-				dbg_error(NULL,
+				log_error(NULL,
 					"Unbekannte Komponente \"$1\".\n",
 					"s", arg->name);
 				base = RefObj(data);
@@ -185,7 +185,7 @@ EfiView *EfiView_create (EfiObj *data, const char *method)
 
 			if	(!par)
 			{
-				dbg_error(NULL,
+				log_error(NULL,
 					"$1: Unbekannte Methode \"$2\".\n",
 					"ss", base->type->name, p);
 			}
@@ -365,7 +365,7 @@ static void set_eval (EfiView *view)
 	else if	(view->eval_range)
 	{
 		if	(!view->range_dim)
-			dbg_error(NULL, "Zeitbereich fehlt.\n", NULL);
+			log_error(NULL, "Zeitbereich fehlt.\n", NULL);
 
 		view->eval_total = eval_func;
 	}

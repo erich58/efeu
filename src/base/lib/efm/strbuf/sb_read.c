@@ -45,7 +45,7 @@ char *sb_read (int fd, StrBuf *sb)
 
 		if ((n = read(fd, sb->data + sb->pos, sb->nfree)) < 0)
 		{
-			dbg_error(NULL, "$!: read: $1\n", "s",
+			log_error(NULL, "$!: read: $1\n", "s",
 				strerror(errno));
 			break;
 		}
@@ -55,7 +55,7 @@ char *sb_read (int fd, StrBuf *sb)
 
 		if	(ioctl(fd, FIONREAD, &nread))
 		{
-			dbg_error(NULL, "$!: ioctl: $1\n", "s",
+			log_error(NULL, "$!: ioctl: $1\n", "s",
 				strerror(errno));
 			break;
 		}

@@ -44,7 +44,7 @@ static RefType mem_reftype = REFTYPE_INIT("data", NULL, mem_clean);
 
 /*
 The function |$1| creates a reference object with a dynamic allocated
-memory field of size <size>. The data could be accesed by |rd_ptr|.
+memory field of size <size>. The data could be accesed by |rd_data|.
 */
 
 void *rd_alloc (size_t size)

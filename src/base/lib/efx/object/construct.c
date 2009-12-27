@@ -28,6 +28,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/MatchPar.h>
 #include <EFEU/ioctrl.h>
 #include <EFEU/preproc.h>
+#include <EFEU/EDB.h>
 #include <ctype.h>
 
 #define	PAR_DEBUG	0
@@ -53,7 +54,7 @@ struct ConstructEntry {
 	int idx;
 };
 
-static ALLOCTAB(entry_tab, 0, sizeof(ConstructEntry));
+static ALLOCTAB(entry_tab, "ConstructEntry", 0, sizeof(ConstructEntry));
 
 static ConstructEntry *ConstructEntry_alloc (EfiStruct *var)
 {
@@ -335,7 +336,7 @@ static ConstructEntry *add_var (ConstructPar *par, EfiStruct *var, int flag)
 		if	(mstrcmp(var->name, (*p)->name) == 0)
 		{
 			if	(flag)
-				dbg_error("edb", ERR_USE, "s", var->name);
+				log_error(edb_err, ERR_USE, "s", var->name);
 
 			rd_deref(var);
 			return NULL;
@@ -660,9 +661,9 @@ static int parse_expr (IO *io, ConstructPar *par, int delim)
 		c = io_eat(io, "%s");
 
 		if	(!name)
-			dbg_error("edb", ERR_NAME, NULL);
+			log_error(edb_err, ERR_NAME, NULL);
 	}
-	else	dbg_error("edb", ERR_CHAR, "c", c);
+	else	log_error(edb_err, ERR_CHAR, "c", c);
 
 	c = io_getc(io);
 
@@ -729,7 +730,7 @@ static int parse_expr (IO *io, ConstructPar *par, int delim)
 			list_var(ioerr, NULL, base);
 			exit(EXIT_SUCCESS);
 		}
-		else	dbg_error("edb", ERR_CHAR, "c", c);
+		else	log_error(edb_err, ERR_CHAR, "c", c);
 
 		return 1;
 	}
@@ -764,7 +765,7 @@ static int parse_expr (IO *io, ConstructPar *par, int delim)
 			return 1;
 		}
 	}
-	else	dbg_error("edb", ERR_CHAR, "c", c);
+	else	log_error(edb_err, ERR_CHAR, "c", c);
 
 	return 1;
 }

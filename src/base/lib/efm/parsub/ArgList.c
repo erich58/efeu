@@ -76,13 +76,13 @@ extern ArgList *arg_create (void)
 }
 
 /*
-Die Funktion |$1| erweitert die Argumentliste <list> um
-den konstanten String <arg>.
+Die Funktion |$1| beginnt ein neues Argument und liefert die
+Argumentliste als StrPool-Pointer.
 */
 
-void arg_cadd (ArgList *list, const char *arg)
+StrPool *arg_next (ArgList *list)
 {
-	if	(!list)	return;
+	if	(!list)	return NULL;
 
 	if	(list->dim >= list->size)
 	{
@@ -91,7 +91,33 @@ void arg_cadd (ArgList *list, const char *arg)
 			list->size * sizeof list->index[0]);
 	}
 
-	list->index[list->dim++] = StrPool_add((StrPool *) list, arg);
+	list->index[list->dim++] = StrPool_offset((StrPool *) list);
+	return (StrPool *) list;
+}
+
+/*
+Die Funktion |$1| entfernt den letzten Argumenteintrag.
+*/
+
+void arg_undo (ArgList *list)
+{
+	if	(list && list->dim)
+	{
+		list->dim--;
+
+		if	(list->index[list->dim] > list->csize)
+			list->used = list->index[list->dim] - list->csize;
+	}
+}
+
+/*
+Die Funktion |$1| erweitert die Argumentliste <list> um
+den konstanten String <arg>.
+*/
+
+void arg_cadd (ArgList *list, const char *arg)
+{
+	StrPool_xadd(arg_next(list), arg);
 }
 
 /*
@@ -101,8 +127,21 @@ den dynamisch generierten String <arg>.
 
 void arg_madd (ArgList *list, char *arg)
 {
-	arg_cadd(list, arg);
+	StrPool_xadd(arg_next(list), arg);
 	memfree(arg);
+}
+
+/*
+Die Funktion |$1| erweitert die Argumentliste <list> um
+den durch die Formatanweisung definierten String.
+*/
+
+void arg_printf (ArgList *list, const char *fmt, ...)
+{
+	va_list args;
+	va_start(args, fmt);
+	StrPool_vprintf(arg_next(list), fmt, args);
+	va_end(args);
 }
 
 /*

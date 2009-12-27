@@ -19,10 +19,9 @@
 # License along with EFEU; see the file COPYING.
 # If not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-# A-3423 St. Andrä/Wördern, Südtirolergasse 17-21/5
 
 # $pconfig
-# Version="$Id: shmkmf.sh,v 1.90 2009-03-15 21:09:07 ef Exp $"
+# Version="$Id: shmkmf.sh,v 1.92 2009-10-18 07:50:48 ef Exp $"
 # Config=Config.make
 # Makefile=Makefile
 #
@@ -602,8 +601,6 @@ if [ $_stdrules ]; then
 	mf_rule -d "purge" "" "rm -f core" >> $_output
 	mf_rule -d "clean" "purge" >> $_output
 	mf_rule -d "uninstall" >> $_output
-else
-	rm -f $shmkmf_post
 fi
 
 # execute postponed commands

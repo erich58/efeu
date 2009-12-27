@@ -28,7 +28,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 int io_vctrl (IO *io, int req, va_list list)
 {
-	return (io && io->ctrl) ? io->ctrl(io->data, req, list) : EOF;
+	return (io && io->ctrl) ? io->ctrl(io, req, list) : EOF;
 }
 
 int io_ctrl (IO *io, int req, ...)
@@ -39,7 +39,7 @@ int io_ctrl (IO *io, int req, ...)
 		int stat;
 
 		va_start(list, req);
-		stat = (*io->ctrl)(io->data, req, list);
+		stat = (*io->ctrl)(io, req, list);
 		va_end(list);
 		return stat;
 	}

@@ -25,7 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	NODE_BSIZE	64
 
-static ALLOCTAB(info_tab, 0, sizeof(InfoNode));
+static ALLOCTAB(info_tab, "InfoNode", 0, sizeof(InfoNode));
 
 static void entry_clean (void *data)
 {

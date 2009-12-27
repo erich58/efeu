@@ -173,6 +173,7 @@ static EfiMember type_member[] = {
 extern unsigned TypeTabChangeCount;
 extern NameKeyTab TypeTab;
 
+#if	0
 static void show_base (IO *io, const EfiType *type)
 {
 	ShowType(io, type);
@@ -184,6 +185,7 @@ static void show_base (IO *io, const EfiType *type)
 		io_putc(')', io);
 	}
 }
+#endif
 
 static void list_name(IO *io, EfiStruct *st)
 {

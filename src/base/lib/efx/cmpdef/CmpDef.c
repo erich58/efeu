@@ -22,11 +22,14 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/CmpDef.h>
+#include <EFEU/Debug.h>
 #include <ctype.h>
 
 #define	ID	"CmpDef"
 
-static ALLOCTAB(entry_tab, 0, sizeof(CmpDefEntry));
+static LogControl cmp_note = LOG_CONTROL("CmpDef", LOGLEVEL_NOTE);
+
+static ALLOCTAB(entry_tab, "CmpDefEntry", 0, sizeof(CmpDefEntry));
 static STRBUF(name_buf, 0);
 
 typedef struct {
@@ -204,7 +207,7 @@ static EfiVirFunc *get_vfunc (char *name)
 	EfiVirFunc *vcmp = GetGlobalFunc(name);
 
 	if	(!vcmp)
-		dbg_note(ID, FMT_GET, "s", name);
+		log_note(&cmp_note, FMT_GET, "s", name);
 
 	return vcmp;
 }
@@ -235,7 +238,7 @@ static void set_cmp (CmpDefEntry *entry, EfiVirFunc *vcmp)
 			entry->cmp = do_cmp_func;
 			entry->clean = rd_clean;
 		}
-		else	dbg_note(ID, FMT_CMP, "ms", rd_ident(vcmp),
+		else	log_note(&cmp_note, FMT_CMP, "ms", rd_ident(vcmp),
 				entry->type->name);
 
 		rd_deref(vcmp);
@@ -375,7 +378,7 @@ static CmpDefEntry *next_entry (EfiType *base, EfiVirFunc *vcmp,
 
 			if	(n >= entry->dim)
 			{
-				dbg_note(ID, FMT_DIM, "d", n);
+				log_note(&cmp_note, FMT_DIM, "d", n);
 				break;
 			}
 
@@ -427,7 +430,7 @@ static CmpDefEntry *next_entry (EfiType *base, EfiVirFunc *vcmp,
 
 			if	(!var)
 			{
-				dbg_note(ID, FMT_VAR, "ss",
+				log_note(&cmp_note, FMT_VAR, "ss",
 					entry->type->name, name);
 				break;
 			}
@@ -454,7 +457,7 @@ static CmpDefEntry *next_entry (EfiType *base, EfiVirFunc *vcmp,
 		}
 		else
 		{
-			dbg_note(ID, FMT_KEY, "c", *def);
+			log_note(&cmp_note, FMT_KEY, "c", *def);
 			def++;
 		}
 	}

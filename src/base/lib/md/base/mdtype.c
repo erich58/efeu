@@ -69,7 +69,7 @@ EfiKonv *Md_KonvDef(EfiKonv *buf, const EfiType *type1, const EfiType *type2)
 	EfiKonv *konv = GetKonv(buf, type1, type2);
 
 	if	(konv == NULL)
-		dbg_note(NULL, "[mdmat:102]",
+		log_note(NULL, "[mdmat:102]",
 			"mm", type2str(type1), type2str(type2));
 
 	return konv;

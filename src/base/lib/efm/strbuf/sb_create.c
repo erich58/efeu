@@ -25,7 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	SB_SIZE	1000
 
-static ALLOCTAB(sb_tab, 32, sizeof(StrBuf));
+static ALLOCTAB(sb_tab, "StrBuf", 32, sizeof(StrBuf));
 
 
 /*

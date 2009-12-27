@@ -6,6 +6,7 @@ include efeu.smh
 include readline.smh
 
 mf_dir CFGDIR=$TOP/lib/efeudoc
+mf_dir ESHLIB=$TOP/lib/esh
 mf_dir BIN=$TOP/bin
 
 efeu_libvar -p DOC iorl -ml RL_LIB md efmath efx efm -lm
@@ -35,6 +36,7 @@ foreach -m CFGDIR -S dmac 'mf_file $tg $src'
 foreach -m CFGDIR -S cfg 'mf_file $tg $src'
 foreach -m CFGDIR -S eps 'mf_file $tg $src'
 foreach -m CFGDIR -S ltx 'mf_file $tg $src'
+foreach -m ESHLIB -S hdr 'mf_file $tg $src'
 
 mf_var DOCBUF "DocBuf.o DocBuf_copy.o MacDef.o" \
 	"s2d_parse.o s2d_skip.o s2d_decl.o copy.o" 

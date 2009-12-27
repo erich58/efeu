@@ -26,6 +26,7 @@ If not, write to the Free Software Foundation, Inc.,
 #define	EFEU_ftools_h	1
 
 #include <EFEU/mstring.h>
+#include <EFEU/LogConfig.h>
 
 #ifndef	SEEK_SET
 #define	SEEK_SET	0
@@ -53,10 +54,10 @@ extern char *fileident (FILE *file);
 extern void filenotice (const char *name, const char *mode,
 	FILE *file, int (*close) (FILE *file));
 extern FILE *filerefer (FILE *file);
-extern void filedebug (FILE *file, int level, const char *fmt,
-	const char *argdef, ...);
 extern void fileerror (FILE *file, const char *fmt,
 	const char *argdef, ...);
+
+extern FILE *log_file (LogControl *ctrl);
 
 /*
 temporay files

@@ -105,7 +105,7 @@ static WINDOW *xnewwin(int maxy, int maxx, int begy, int begx)
 	if	(win == NULL)
 	{
 		EndWin();
-		dbg_error(NULL, "[efwin:1]", "dddd",
+		log_error(NULL, "[efwin:1]", "dddd",
 			maxy, maxx, begy, begx);
 	}
 

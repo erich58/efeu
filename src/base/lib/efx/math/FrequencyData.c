@@ -97,6 +97,32 @@ static void assign_add (EfiFunc *func, void *rval, void **arg)
 }
 
 
+static void left_scale (EfiFunc *func, void *rval, void **arg)
+{
+	FrequencyData *freq = rval;
+	double a = Val_double(arg[0]);
+	FrequencyData *b = arg[1];
+	freq->n = b->n * a;
+	freq->x = b->x * a;
+}
+
+static void right_scale (EfiFunc *func, void *rval, void **arg)
+{
+	FrequencyData *freq = rval;
+	FrequencyData *a = arg[0];
+	double b = Val_double(arg[1]);
+	freq->n = a->n * b;
+	freq->x = a->x * b;
+}
+
+static void assign_scale (EfiFunc *func, void *rval, void **arg)
+{
+	FrequencyData *a = arg[0];
+	double b = Val_double(arg[1]);
+	a->n *= b;
+	a->x *= b;
+}
+
 static EfiFuncDef func[] = {
 	{ FUNC_VIRTUAL, &Type_FrequencyData,
 		"FrequencyData (double)", freq_double },
@@ -110,6 +136,12 @@ static EfiFuncDef func[] = {
 		"operator+ (FrequencyData, FrequencyData)", binary_add },
 	{ 0, &Type_FrequencyData, \
 		"& FrequencyData::operator+= & (FrequencyData)", assign_add },
+	{ FUNC_VIRTUAL, &Type_FrequencyData, \
+		"operator* (FrequencyData, double)", right_scale },
+	{ FUNC_VIRTUAL, &Type_FrequencyData, \
+		"operator* (double, FrequencyData)", left_scale },
+	{ 0, &Type_FrequencyData, \
+		"& FrequencyData::operator*= & (double)", assign_scale },
 };
 
 void CmdSetup_FrequencyData (void)

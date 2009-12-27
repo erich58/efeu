@@ -38,9 +38,9 @@ typedef struct {
 	int last;	/* Letztes ausgegebene Zeichen */
 } FILTER;
 
-static int filter_put (int c, void *ptr)
+static int filter_put (int c, IO *io)
 {
-	FILTER *filter = ptr;
+	FILTER *filter = io->data;
 
 	if	(c == '$' || (c == INFO_KEY && filter->last == '\n'))
 		io_putc(c, filter->io);
@@ -81,9 +81,9 @@ static int label_put (int c, IO *io)
 	return io_putc(c, io);
 }
 
-static int filter_ctrl (void *ptr, int req, va_list list)
+static int filter_ctrl (IO *io, int req, va_list list)
 {
-	FILTER *filter = ptr;
+	FILTER *filter = io->data;
 
 	switch (req)
 	{

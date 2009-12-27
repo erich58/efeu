@@ -144,7 +144,7 @@ void AddStruct (EfiVarTab *tab, EfiStruct *def, size_t dim)
 
 		if	(ptr)
 		{
-			dbg_note(NULL, "[efmain:154]", "s", ptr->name);
+			log_note(NULL, "[efmain:154]", "s", ptr->name);
 			var_clean(ptr);
 		}
 	}
@@ -211,7 +211,7 @@ void VarTab_xadd (EfiVarTab *tab, char *name, char *desc, EfiObj *obj)
 
 	if	(ptr)
 	{
-		dbg_note(NULL, "[efmain:154]", "s", ptr->name);
+		log_note(NULL, "[efmain:154]", "s", ptr->name);
 		var_clean(ptr);
 	}
 }

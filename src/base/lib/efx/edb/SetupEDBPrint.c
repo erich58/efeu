@@ -87,7 +87,7 @@ static void set_split (EDBPrintMode *mode, const EDBPrintDef *def,
 	if	(def->par)
 	{
 		if	(arg)
-			dbg_note("edb", FMT_XARG, "ss", def->name, arg);
+			log_note(edb_note, FMT_XARG, "ss", def->name, arg);
 
 		arg = def->par;
 	}
@@ -105,7 +105,7 @@ static void set_split (EDBPrintMode *mode, const EDBPrintDef *def,
 	case 'k':	lim *= 1024.; break;
 	case 'M':	lim *= 1024. * 1024.; break;
 	case 'G':	lim *= 1024. * 1024. * 1024.; break;
-	default:	dbg_note("edb", FMT_UNIT, "sc", def->name, *p); break;
+	default:	log_note(edb_note, FMT_UNIT, "sc", def->name, *p); break;
 	}
 
 	mode->split = lim + 0.5;

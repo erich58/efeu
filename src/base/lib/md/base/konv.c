@@ -17,7 +17,7 @@ int md_konv(mdmat *md, const EfiType *type)
 
 	if	(GetKonv(&def, md->type, type) == NULL)
 	{
-		dbg_note(NULL, "[mdmat:102]", NULL);
+		log_note(NULL, "[mdmat:102]", NULL);
 		return EOF;
 	}
 

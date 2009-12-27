@@ -72,7 +72,7 @@ void TimeSeriesKonv_j2m (TimeSeries *ts)
 
 	if	(ts == NULL || ts->base.type != TS_YEAR)
 	{
-		dbg_note(NULL, "[TimeSeries:12]", NULL);
+		log_note(NULL, "[TimeSeries:12]", NULL);
 		return;
 	}
 

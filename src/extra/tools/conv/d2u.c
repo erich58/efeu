@@ -114,7 +114,7 @@ static char *savename (const char *path)
 		else	perror((char *) buf.data);
 	}
 
-	dbg_note(NULL, NOTMP, "s", path);
+	log_note(NULL, NOTMP, "s", path);
 	return NULL;
 }
 
@@ -203,7 +203,7 @@ int main (int argc, char **argv)
 	int stamp;
 
 	SetProgName(argv[0]);
-	SetVersion("$Id: d2u.c,v 1.5 2007-01-05 20:52:10 ef Exp $");
+	SetVersion("$Id: d2u.c,v 1.6 2009-09-27 05:45:45 ef Exp $");
 	ParseCommand(&argc, argv);
 	check = GetFlagResource("CheckOnly");
 	stamp = GetFlagResource("Timestamp");
@@ -236,7 +236,7 @@ int main (int argc, char **argv)
 
 		if	(S_ISDIR(statbuf.st_mode))
 		{
-			dbg_note(NULL, ISDIR, "s", src);
+			log_note(NULL, ISDIR, "s", src);
 			continue;
 		}
 
@@ -253,19 +253,19 @@ int main (int argc, char **argv)
 
 		if	(msg)
 		{
-			dbg_note(NULL, msg, "s", src);
+			log_note(NULL, msg, "s", src);
 			remove(tmp);
 			tmp = NULL;
 		}
 		else if	(check)
 		{
-			dbg_note(NULL, CHECK, "s", src);
+			log_note(NULL, CHECK, "s", src);
 			remove(tmp);
 			tmp = NULL;
 		}
 		else if	(rename(tmp, src) == 0)
 		{
-			dbg_note(NULL, CONV, "s", src);
+			log_note(NULL, CONV, "s", src);
 			tmp = NULL;
 		}
 		else	perror(src);

@@ -44,6 +44,9 @@ typedef struct {
 } ArgList;
 
 ArgList *arg_create (void);
+StrPool *arg_next (ArgList *args);
+void arg_undo (ArgList *args);
+void arg_printf (ArgList *args, const char *fmt, ...);
 void arg_append (ArgList *args, const char *fmt, va_list list);
 void arg_cadd (ArgList *args, const char *arg);
 void arg_madd (ArgList *args, char *arg);

@@ -42,7 +42,7 @@ EfiObj *AssignTerm (const char *name, EfiObj *left, EfiObj *right)
 
 	if	(left == NULL)
 	{
-		dbg_note(NULL, "[efmain:211]", NULL);
+		log_note(NULL, "[efmain:211]", NULL);
 		rd_deref(right);
 		return NULL;
 	}
@@ -56,7 +56,7 @@ EfiObj *AssignTerm (const char *name, EfiObj *left, EfiObj *right)
 	}
 	else
 	{
-		dbg_note(NULL, left->lval ? "[efmain:215]" : "[efmain:213]",
+		log_note(NULL, left->lval ? "[efmain:215]" : "[efmain:213]",
 			"ss", name, left->type->name);
 		rd_deref(right);
 		rd_deref(left);
@@ -74,7 +74,7 @@ EfiObj *AssignObj (EfiObj *left, EfiObj *right)
 
 	if	(right == NULL)
 	{
-		dbg_note(NULL, "[efmain:212]", NULL);
+		log_note(NULL, "[efmain:212]", NULL);
 		return left;
 	}
 

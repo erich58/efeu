@@ -7,6 +7,7 @@ static struct TypeDef {
 	str t_desc;	/* Kurzbeschreibung */
 	str t_cname;	/* C-Datentyp */
 	int t_recl;	/* Satzlänge */
+	str t_base;	/* Basisdatentyp */
 	bool set_base;	/* Flag für Vererbung */
 	int need_setup;	/* Modus für Setup */
 	bool create_done;

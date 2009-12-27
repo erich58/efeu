@@ -38,8 +38,8 @@ use	$!: Name $1 ist bereits verwendet.\n
 var	$!: Ungültige Variablendefinition $1.\n
 vec	$!: Vektor kann nur zur Gänze selektiert werden.\n
 xchar 	$0: Extra Zeichen im Header ignoriert.\n
-print	$!: Datentyp $1: Unbekannte Ausgabedefinition $2%#s.\n
-input	$!: Datentyp $1: Unbekannte Eingabedefinition $2%#s.\n
+print	$!: Datentyp $1: Unbekannte Ausgabedefinition $[2;%#s].\n
+input	$!: Datentyp $1: Unbekannte Eingabedefinition $[2;%#s].\n
 
 nread	$0: $1 Datensätze gelesen.\n
 nwrite	$0: $1 Datensätze geschrieben.\n

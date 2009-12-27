@@ -1,6 +1,6 @@
 \sec	Standardfilter
 
-Neben den bereits erwähnten Filtern |script|, |trans| und |cut| stehen
+Neben den bereits erwähnten Filtern |script|, |trans| und |var| stehen
 noch die folgenden Filter standardmäßig zur Verfügung:
 
 \ssec \index[Datensatzselektion]\index{Teildatensätze auswählen}

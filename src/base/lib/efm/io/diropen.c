@@ -39,9 +39,9 @@ typedef struct {
 /*	Zeichen ausgeben
 */
 
-static int dopen_put (int c, void *ptr)
+static int dopen_put (int c, IO *io)
 {
-	DOPEN *dopen = ptr;
+	DOPEN *dopen = io->data;
 	return io_putc(c, dopen->io);
 }
 
@@ -49,9 +49,9 @@ static int dopen_put (int c, void *ptr)
 /*	Kontrollfunktion
 */
 
-static int dopen_ctrl (void *ptr, int req, va_list list)
+static int dopen_ctrl (IO *io, int req, va_list list)
 {
-	DOPEN *dopen = ptr;
+	DOPEN *dopen = io->data;
 	int stat;
 	char *p, *arg;
 

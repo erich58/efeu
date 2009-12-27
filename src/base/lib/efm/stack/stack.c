@@ -25,7 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	STACK_BSIZE	63	/* Blockgröße für Stacksegmente */
 
-static ALLOCTAB(Stacktab, STACK_BSIZE, sizeof(Stack));
+static ALLOCTAB(Stacktab, "Stack", STACK_BSIZE, sizeof(Stack));
 
 void pushstack (Stack **ptr, void *data)
 {

@@ -25,7 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	VIRFUNC_BSIZE	16
 
-static ALLOCTAB(tab_virfunc, 0, sizeof(EfiVirFunc));
+static ALLOCTAB(tab_virfunc, "EfiVirFunc", 0, sizeof(EfiVirFunc));
 
 static void virfunc_clean (void *data)
 {

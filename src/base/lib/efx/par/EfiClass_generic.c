@@ -33,6 +33,7 @@ struct SParEntry {
 	int (*eval) (SParEntry *entry, const EfiObj *base);
 	SParEntry *next;
 	SParEntry *sub;
+	EfiObj *base;
 	EfiObj *expr;
 	int rval;
 };
@@ -71,6 +72,7 @@ static void del_entry (SParEntry *entry)
 {
 	if	(entry)
 	{
+		UnrefObj(entry->base);
 		UnrefObj(entry->expr);
 		del_entry(entry->next);
 		del_entry(entry->sub);
@@ -78,7 +80,7 @@ static void del_entry (SParEntry *entry)
 	}
 }
 
-static int test_entry (SParEntry *entry, const EfiObj *obj)
+static int test_entry (SParEntry *entry, const EfiObj *base, const EfiObj *obj)
 {
 	for (; entry; entry = entry->next)
 	{
@@ -90,7 +92,9 @@ static int test_entry (SParEntry *entry, const EfiObj *obj)
 	{
 		if	(entry->sub)
 		{
-			int rval = test_entry(entry->sub, obj);
+			EfiObj *x = EvalObj(RefObj(entry->base), NULL);
+			int rval = test_entry(entry->sub, base, x ? x : base);
+			UnrefObj(x);
 
 			if	(rval)
 				return rval;
@@ -123,6 +127,12 @@ static void show_entry (IO *out, int depth, SParEntry *entry)
 			io_puts("eval", out);
 		else	io_puts("?", out);
 
+		if	(entry->base)
+			io_printf(out, "\tbase=%p", entry->base);
+
+		if	(entry->expr)
+			io_printf(out, "\texpr=%p", entry->expr);
+
 		io_putc('\n', out);
 		show_entry(out, depth + 1, entry->sub);
 	}
@@ -154,7 +164,7 @@ static void sdef_key (SDef *def, char *key)
 {
 	memfree(def->arg[0]);
 	def->arg[0] = def->arg[1];
-	def->arg[1] = key;
+	def->arg[1] = mstrcpy(key);
 }
 
 static char *sdef_psub (SDef *def, const char *fmt)
@@ -180,7 +190,7 @@ static int par_update (const EfiObj *obj, void *opaque_par)
 	PushVarTab(RefVarTab(obj->type->vtab), RefObj(obj));
 	PushVarTab(RefVarTab(par->tab), NULL);
 	PushVarTab(NULL, NULL);
-	rval = test_entry(par->entry, obj);
+	rval = test_entry(par->entry, obj, obj);
 	PopVarTab();
 	PopVarTab();
 	PopVarTab();
@@ -205,16 +215,59 @@ static char *get_line (IO *io)
 	return p;
 }
 
+static char *next_arg (char *p, char **ptr)
+{
+	int n, k;
+	int quote;
+
+	if	(p[0] == '\\' && p[1])
+		p++;
+
+	quote = 0;
+
+	for (k = n = 0; p[n]; n++)
+	{
+		if	(!quote && strchr(DELIM, p[n]))
+		{
+			do	n++;
+			while	(p[n] && strchr(DELIM, p[n]));
+
+			break;
+		}
+
+		if	(p[n] == '"')
+		{
+			quote = !quote;
+			continue;
+		}
+		else if	(p[n] == '\\' && p[n+1])
+		{
+			n++;
+
+			switch (p[n])
+			{
+			case 'n':	p[k++] = '\n'; break;
+			case 't':	p[k++] = '\t'; break;
+			default:	p[k++] = p[n]; break;
+			}
+		}
+		else	p[k++] = p[n];
+	}
+
+	p[k] = 0;
+	*ptr = p + n;
+	return p;
+}
+
 static int make_label (SDef *sdef, char *def)
 {
 	if	(def && *def)
 	{
-		char *p = mstrcut(def, &def, DELIM, 1);
+		char *p = next_arg(def, &def);
 		AddEnumKey(sdef->type,
 			sdef_psub(sdef, p),
 			sdef_psub(sdef, def),
 			++sdef->code);
-		memfree(p);
 		return sdef->code;
 	}
 	else	return 0;
@@ -245,7 +298,8 @@ static char *test_key (const char *key, char *def)
 	return NULL;
 }
 
-static SParEntry *parse_test (SDef *def, const char *opt,
+
+static SParEntry *parse_test (SDef *def, int stat, const char *opt,
 	int (*eval) (SParEntry *entry, const EfiObj *base))
 {
 	SParEntry *entry, **ptr;
@@ -268,19 +322,20 @@ static SParEntry *parse_test (SDef *def, const char *opt,
 			else if	((arg = test_key("case", p)))
 			{
 				SParEntry *x = new_entry();
-				x->eval = entry ? NULL : eval_true;
-				arg = *arg ? mstrcpy(arg) : NULL;
-				x->sub = parse_test(def, arg, eval_case);
-				memfree(arg);
+				x->eval = stat ? NULL : eval_true;
+				stat = 1;
+				x->base = arg ? strterm(arg) : NULL;
+				x->sub = parse_test(def, 1, NULL, eval_case);
 				*ptr = x;
 				ptr = &(*ptr)->next;
 			}
 			else if	((arg = test_key("test", p)))
 			{
 				SParEntry *x = new_entry();
-				x->eval = entry ? NULL : eval_true;
+				x->eval = stat ? NULL : eval_true;
+				stat = 1;
 				arg = *arg ? mstrcpy(arg) : NULL;
-				x->sub = parse_test(def, arg, eval_test);
+				x->sub = parse_test(def, 1, arg, eval_test);
 				memfree(arg);
 				*ptr = x;
 				ptr = &(*ptr)->next;
@@ -294,10 +349,9 @@ static SParEntry *parse_test (SDef *def, const char *opt,
 			}
 			else if	((arg = test_key("eval", p)))
 			{
-				SParEntry *x = new_entry();
-				x->eval = eval_expr;
-				x->expr = strterm(arg);
-				*ptr = x;
+				*ptr = new_entry();
+				(*ptr)->eval = eval_expr;
+				(*ptr)->expr = strterm(arg);
 				ptr = &(*ptr)->next;
 			}
 			else
@@ -308,10 +362,7 @@ static SParEntry *parse_test (SDef *def, const char *opt,
 			continue;
 		}
 
-		if	(p[0] == '\\' && p[1])
-			p++;
-
-		key = mstrcut(p, &p, DELIM, 1);
+		key = next_arg(p, &p);
 		*ptr = new_entry();
 
 		if	(mstrcmp("*", key) == 0)
@@ -340,8 +391,8 @@ static SParEntry *parse_test (SDef *def, const char *opt,
 	return entry;
 }
 
-static void par_create (EfiClassArg *def, const char *opt, const char *arg,
-	int (*eval) (SParEntry *entry, const EfiObj *base))
+static void par_create (EfiClassArg *def, const EfiType *type,
+	const char *opt, const char *arg, void *eval)
 {
 	SDef sdef;
 	SPar *par;
@@ -361,7 +412,7 @@ static void par_create (EfiClassArg *def, const char *opt, const char *arg,
 		LvalObj(&Lval_ptr, &Type_str, sdef.arg + 1));
 
 	PushVarTab(NULL, NULL);
-	par->entry = parse_test(&sdef, opt, eval);
+	par->entry = parse_test(&sdef, 0, opt, eval);
 	par->tab = RefVarTab(LocalVar);
 	PopVarTab();
 
@@ -378,32 +429,17 @@ static void par_create (EfiClassArg *def, const char *opt, const char *arg,
 	def->par = rd_init(&SPar_reftype, par);
 }
 
-static void create_generic (EfiClassArg *def, const char *opt, const char *arg)
-{
-	par_create(def, opt, arg, NULL);
-}
-
 EfiClass EfiClass_generic = EFI_CLASS(NULL,
-	"generic", "[expr]=case label desc;...", create_generic,
+	"generic", "[expr]=case label desc;...", par_create, NULL,
 	"generic class construction"
 );
 
-static void create_switch (EfiClassArg *def, const char *opt, const char *arg)
-{
-	par_create(def, opt, arg, eval_case);
-}
-
 EfiClass EfiClass_switch = EFI_CLASS(NULL,
-	"switch", "[fmt]=key label desc;...", create_switch,
+	"switch", "[fmt]=key label desc;...", par_create, eval_case,
 	"switch expression"
 );
 
-static void create_test (EfiClassArg *def, const char *opt, const char *arg)
-{
-	par_create(def, opt, arg, eval_test);
-}
-
 EfiClass EfiClass_test = EFI_CLASS(NULL,
-	"test", "[fmt]=key label desc;...", create_test,
+	"test", "[fmt]=key label desc;...", par_create, eval_test,
 	"test expression"
 );

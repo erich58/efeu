@@ -161,7 +161,7 @@ MdClass *md_subclass (MdClass *base, const char *def)
 	}
 
 	if	(sub->dim == 0)
-		dbg_error(NULL, "[mdmat:46]", NULL);
+		log_error(NULL, "[mdmat:46]", NULL);
 
 	io_close(io);
 	sb_release(buf);

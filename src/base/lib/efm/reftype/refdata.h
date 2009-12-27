@@ -41,7 +41,7 @@ typedef struct {
 	char *label;		/* Bezeichnung */
 	char *(*ident) (const void *data); /* Identifikationsfunktion */
 	void (*clean) (void *data); /* Löschfunktion */
-	void *dbg;		/* Debug Klasse */
+	struct LogControl *log;	/* Protokollsteuerung */
 } RefType;
 
 /*
@@ -66,8 +66,8 @@ Der Makro |$1| expandiert zu den Initialisierungswerten eines erweiterten
 Referenztyps.
 */
 
-#define	REFTYPE_EXT(label, ident, clean, dbg)	\
-{ label, ident, clean, dbg }
+#define	REFTYPE_EXT(label, ident, clean, log)	\
+{ label, ident, clean, log }
 
 /*
 :*:
@@ -90,12 +90,15 @@ Er muß zu Beginn der Datentypedefinition stehen.
 #endif
 
 /*
+$Synopsis
+\index{REFDATA}(type)\br
+$Description
 :*:
-The macro |$1| generates the initial values for the reference values
+The macro |REFDATA| generates the initial values for the reference values
 of a reference type. He is used by the initialization of an object
 with reference type.
 :de:
-Der Makro |$1| liefert die Initialisierungswerte für die
+Der Makro |REFDATA| liefert die Initialisierungswerte für die
 Referenzvariablen. Er wird bei der Initialisierung eines
 Referenzobjektes verwendet.
 */

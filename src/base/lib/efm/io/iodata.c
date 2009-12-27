@@ -48,7 +48,7 @@ size_t io_dbread (IO *io, void *dptr, size_t recl, size_t size, size_t n)
 	}
 
 	if	(io->dbread && !io->nsave)
-		return io->dbread(io->data, dptr, recl, size, n);
+		return io->dbread(io, dptr, recl, size, n);
 
 	for (i = 0; i < n; i++)
 	{
@@ -81,7 +81,7 @@ size_t io_dbwrite (IO *io, const void *dptr, size_t recl, size_t size, size_t n)
 	register int c;
 	
 	if	(io && io->dbwrite)
-		return io->dbwrite(io->data, dptr, recl, size, n);
+		return io->dbwrite(io, dptr, recl, size, n);
 
 	for (i = 0; i < n; i++)
 	{

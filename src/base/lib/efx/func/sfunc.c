@@ -26,35 +26,26 @@ If not, write to the Free Software Foundation, Inc.,
 
 int FuncDebugLock = 0;
 
-static IO *FuncDebugLog = NULL;
-static int FuncDebugSync = 0;
-
-static int debug_mode (void)
-{
-	if	(FuncDebugLock)	return 0;
-
-	if	(FuncDebugSync < DebugChangeCount)
-	{
-		FuncDebugSync = DebugChangeCount;
-		rd_deref(FuncDebugLog);
-		FuncDebugLog = rd_refer(LogOut("func", DBG_DEBUG));
-	}
-
-	return (FuncDebugLog != NULL);
-}
+static LogControl func_debug = LOG_CONTROL("func", LOGLEVEL_DEBUG);
+static LogControl func_trace = LOG_CONTROL("func", LOGLEVEL_TRACE);
 
 void FuncDebug (EfiFunc *func, const char *pfx)
 {
-	if	(func && debug_mode())
+	IO *out;
+
+	if	(FuncDebugLock)	return;
+
+	if	(func && (out = LogOpen(&func_debug)))
 	{
 		if	(pfx)
 		{
-			io_puts(pfx, FuncDebugLog);
-			io_putc('\t', FuncDebugLog);
+			io_puts(pfx, out);
+			io_putc('\t', out);
 		}
 
-		ListFunc(FuncDebugLog, func);
-		io_putc('\n', FuncDebugLog);
+		ListFunc(out, func);
+		io_putc('\n', out);
+		io_close(out);
 	}
 }
 
@@ -73,13 +64,13 @@ static void show_dist(IO *io, EfiFunc *func, int dist,
 	int i;
 
 	FuncDebugLock++;
-	io_xprintf(io, "%#.2x\t", dist);
+	io_xprintf(io, "%#.4x  ", dist & 0xffff);
 	ListFunc(io, func);
 	io_putc('\n', io);
 
 	for (i = 0; i < dim; i++)
 	{
-		io_xprintf(io, "%d:\t%#.2x\t%s\t", i, konv[i].dist,
+		io_xprintf(io, "%5d:  %#.4x\t%s\t", i, konv[i].dist & 0xffff,
 			konv[i].type ? konv[i].type->name : ".");
 		ListFunc(io, konv[i].func);
 		io_putc('\n', io);
@@ -97,6 +88,7 @@ EfiFunc *SearchFunc (EfiVirFunc *vtab, EfiFuncArg *arg,
 	EfiArgKonv *x, *konv, *curkonv;
 	int i, dist, curdist;
 	EfiFunc *func, *curfunc, **ftab;
+	IO *out;
 
 	if	(vtab == NULL || vtab->tab.used == 0)
 		return NULL;
@@ -105,7 +97,7 @@ EfiFunc *SearchFunc (EfiVirFunc *vtab, EfiFuncArg *arg,
 
 	if	(!IsVirFunc(vtab))
 	{
-		dbg_error(NULL, "[efmain:65]", NULL);
+		log_error(NULL, "[efmain:65]", NULL);
 		return NULL;
 	}
 
@@ -127,8 +119,11 @@ EfiFunc *SearchFunc (EfiVirFunc *vtab, EfiFuncArg *arg,
 		curfunc = ftab[i];
 		curdist = get_konvdef(curfunc, narg, arg, curkonv);
 
-		if	(debug_mode())
-			show_dist(ioerr, curfunc, curdist, curkonv, narg);
+		if	((out = LogOpen(&func_trace)))
+		{
+			show_dist(out, curfunc, curdist, curkonv, narg);
+			io_close(out);
+		}
 
 		switch (curdist)
 		{

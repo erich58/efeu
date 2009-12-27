@@ -74,7 +74,7 @@ MapFile *MapFile_open (const char *path)
 
 	if	(data == MAP_FAILED)
 	{
-		dbg_error(NULL, "$!: mmap: $1.\n", "s", strerror(errno));
+		log_error(NULL, "$!: mmap: $1.\n", "s", strerror(errno));
 		return NULL;
 	}
 

@@ -33,28 +33,47 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	INC_PFX	"include"
 
-/*	Die eingebauten Funktionen werden über Makros definiert
-*/
+static void f_isdigit (EfiFunc *func, void *rval, void **arg)
+{
+	Val_int(rval) = isdigit(Val_int(arg[0])) ? 1 : 0;
+}
 
-#define	BUILTIN(name)	static void name (EfiFunc *func, void *rval, void **arg)
+static void f_isalpha (EfiFunc *func, void *rval, void **arg)
+{
+	Val_int(rval) = isalpha(Val_int(arg[0])) ? 1 : 0;
+}
 
-#define	F_INT(N, E)	BUILTIN(N) { Val_int(rval) = (E); }
-#define	F_STR(N, E)	BUILTIN(N) { Val_str(rval) = (E); }
+static void f_isalnum (EfiFunc *func, void *rval, void **arg)
+{
+	Val_int(rval) = isalnum(Val_int(arg[0])) ? 1 : 0;
+}
 
+static void f_isspace (EfiFunc *func, void *rval, void **arg)
+{
+	Val_int(rval) = isspace(Val_int(arg[0])) ? 1 : 0;
+}
 
-F_INT(f_isdigit, isdigit(Val_int(arg[0])) ? 1 : 0)
-F_INT(f_isalpha, isalpha(Val_int(arg[0])) ? 1 : 0)
-F_INT(f_isalnum, isalnum(Val_int(arg[0])) ? 1 : 0)
-F_INT(f_isspace, isspace(Val_int(arg[0])) ? 1 : 0)
 
 /*	Test auf Variablendefinition
 */
 
-F_INT(c_sizeof, ((EfiObj *) arg[0])->type->size)
-F_INT(u_sizeof, 0)
-F_INT(t_sizeof, Val_type(arg[0])->size)
+static void c_sizeof (EfiFunc *func, void *rval, void **arg)
+{
+	Val_int(rval) = ((EfiObj *) arg[0])->type->size;
+}
 
-BUILTIN(f_declare)
+static void u_sizeof (EfiFunc *func, void *rval, void **arg)
+{
+	Val_int(rval) = 0;
+}
+
+static void t_sizeof (EfiFunc *func, void *rval, void **arg)
+{
+	Val_int(rval) = Val_type(arg[0])->size;
+}
+
+
+static void f_declare (EfiFunc *func, void *rval, void **arg)
 {
 	StrBuf *sb;
 	IO *tmp;
@@ -66,12 +85,12 @@ BUILTIN(f_declare)
 	Val_str(rval) = sb_cpyrelease(sb);
 }
 
-BUILTIN(f_whatis)
+static void f_whatis (EfiFunc *func, void *rval, void **arg)
 {
 	Val_str(rval) = Obj_ident(arg[0]);
 }
 
-BUILTIN(f_align)
+static void f_align (EfiFunc *func, void *rval, void **arg)
 {
 	int sig = 1;
 	int n = Val_int(arg[0]);
@@ -89,7 +108,7 @@ BUILTIN(f_align)
 	Val_int(rval) = sig * k * ((n + k - 1) / k);
 }
 
-BUILTIN(f_offset)
+static void f_offset (EfiFunc *func, void *rval, void **arg)
 {
 	EfiObj *base = arg[0];
 	EfiObj *obj = arg[1];
@@ -101,7 +120,7 @@ BUILTIN(f_offset)
 /*	Funktionsauswertung
 */
 
-BUILTIN(f_ofunc)
+static void f_ofunc (EfiFunc *func, void *rval, void **arg)
 {
 	EfiObjFunc *x;
 	EfiObjList *list;
@@ -123,17 +142,17 @@ BUILTIN(f_ofunc)
 }
 
 
-BUILTIN(f_func)
+static void f_func (EfiFunc *func, void *rval, void **arg)
 {
 	Val_obj(rval) = EvalFunc(Val_func(arg[0]), Val_list(arg[1]));
 }
 
-BUILTIN(f_vfunc)
+static void f_vfunc (EfiFunc *func, void *rval, void **arg)
 {
 	Val_obj(rval) = EvalVirFunc(Val_vfunc(arg[0]), Val_list(arg[1]));
 }
 
-BUILTIN(f_tfunc)
+static void f_tfunc (EfiFunc *func, void *rval, void **arg)
 {
 	EfiType *type = Val_type(arg[0]);
 	EfiObjList *list = Val_list(arg[1]);
@@ -160,7 +179,7 @@ BUILTIN(f_tfunc)
 	}
 	else
 	{
-		dbg_note(NULL, "[efmain:71]", "s", Val_type(arg[0])->name);
+		log_note(NULL, "[efmain:71]", "s", Val_type(arg[0])->name);
 	}
 }
 
@@ -168,7 +187,7 @@ BUILTIN(f_tfunc)
 /*	Sonstiges
 */
 
-BUILTIN(get_op)
+static void get_op (EfiFunc *func, void *rval, void **arg)
 {
 	EfiObj *var;
 	EfiObj *obj;
@@ -187,29 +206,29 @@ BUILTIN(get_op)
 	Val_io(rval) = rd_refer(Val_io(arg[0]));
 }
 
-BUILTIN(f_putc)
+static void f_putc (EfiFunc *func, void *rval, void **arg)
 {
 	Val_int(rval) = io_putc(Val_char(arg[0]), Val_io(arg[1]));
 }
 
-BUILTIN(f_puts)
+static void f_puts (EfiFunc *func, void *rval, void **arg)
 {
 	Val_int(rval) = io_puts(Val_str(arg[0]), Val_io(arg[1]));
 }
 
-BUILTIN(f_printf)
+static void f_printf (EfiFunc *func, void *rval, void **arg)
 {
 	Val_int(rval) = PrintFmtList(iostd, Val_str(arg[0]),
 		Val_list(arg[1]));
 }
 
-BUILTIN(f_fprintf)
+static void f_fprintf (EfiFunc *func, void *rval, void **arg)
 {
 	Val_int(rval) = PrintFmtList(Val_io(arg[0]), Val_str(arg[1]),
 		Val_list(arg[2]));
 }
 
-BUILTIN(f_sprintf)
+static void f_sprintf (EfiFunc *func, void *rval, void **arg)
 {
 	StrBuf *sb;
 	IO *io;
@@ -221,7 +240,7 @@ BUILTIN(f_sprintf)
 	Val_str(rval) = sb_cpyrelease(sb);
 }
 
-BUILTIN(f_xprintf)
+static void f_xprintf (EfiFunc *func, void *rval, void **arg)
 {
 	StrBuf *sb;
 
@@ -230,35 +249,24 @@ BUILTIN(f_xprintf)
 	Val_str(rval) = sb_cpyrelease(sb);
 }
 
-BUILTIN(f_debug)
-{
-	PrintFmtList(ParseLogOut(Val_str(arg[0])),
-		Val_str(arg[1]), Val_list(arg[2]));
-}
-
-BUILTIN(f_DebugMode)
-{
-	DebugMode(Val_str(arg[0]));
-}
-
-BUILTIN(f_expr)
+static void f_expr (EfiFunc *func, void *rval, void **arg)
 {
 	Val_obj(rval) = strterm(Val_str(arg[0]));
 }
 
-BUILTIN(f_eval)
+static void f_eval (EfiFunc *func, void *rval, void **arg)
 {
 	streval(Val_str(arg[0]));
 }
 
-BUILTIN(f_geval)
+static void f_geval (EfiFunc *func, void *rval, void **arg)
 {
 	PushVarTab(RefVarTab(GlobalVar), NULL);
 	streval(Val_str(arg[0]));
 	PopVarTab();
 }
 
-BUILTIN(f_cmdeval)
+static void f_cmdeval (EfiFunc *func, void *rval, void **arg)
 {
 	IO *io = io_cmdpreproc(io_refer(Val_io(arg[0])));
 
@@ -273,12 +281,12 @@ BUILTIN(f_cmdeval)
 	io_close(io);
 }
 
-BUILTIN(f_ioeval)
+static void f_ioeval (EfiFunc *func, void *rval, void **arg)
 {
 	io_eval(Val_io(arg[0]), Val_str(arg[1]));
 }
 
-BUILTIN(f_load)
+static void f_load (EfiFunc *func, void *rval, void **arg)
 {
 	IO *io;
 
@@ -293,7 +301,7 @@ BUILTIN(f_load)
 	else	Val_int(rval) = 0;
 }
 
-BUILTIN(f_gload)
+static void f_gload (EfiFunc *func, void *rval, void **arg)
 {
 	IO *io;
 
@@ -331,15 +339,29 @@ static void f_include (EfiFunc *func, void *rval, void **arg)
 	io_close(io);
 }
 
-F_STR(f_fsearch, fsearch(Val_str(arg[0]), NULL,
-	Val_str(arg[1]), Val_str(arg[2])))
+static void f_fsearch (EfiFunc *func, void *rval, void **arg)
+{
+	Val_str(rval) = fsearch(Val_str(arg[0]), NULL,
+		Val_str(arg[1]), Val_str(arg[2]));
+}
 
-F_INT(f_texputs, TeXputs(Val_str(arg[1]), Val_io(arg[0])))
-F_INT(f_pcopy, io_pcopy(Val_io(arg[0]), Val_io(arg[1]),
-	Val_int(arg[2]), 0, NULL))
-F_STR(f_mpcopy, mpcopy(Val_io(arg[0]), Val_int(arg[1]), 0, NULL))
+static void f_texputs (EfiFunc *func, void *rval, void **arg)
+{
+	Val_int(rval) = TeXputs(Val_str(arg[1]), Val_io(arg[0]));
+}
 
-BUILTIN(f_cat)
+static void f_pcopy (EfiFunc *func, void *rval, void **arg)
+{
+	Val_int(rval) = io_pcopy(Val_io(arg[0]), Val_io(arg[1]),
+		Val_int(arg[2]), 0, NULL);
+}
+
+static void f_mpcopy (EfiFunc *func, void *rval, void **arg)
+{
+	Val_str(rval) = mpcopy(Val_io(arg[0]), Val_int(arg[1]), 0, NULL);
+}
+
+static void f_cat (EfiFunc *func, void *rval, void **arg)
 {
 	StrBuf *sb;
 	char *delim;
@@ -361,7 +383,7 @@ BUILTIN(f_cat)
 	Val_str(rval) = sb_cpyrelease(sb);
 }
 
-BUILTIN(f_patcmp)
+static void f_patcmp (EfiFunc *func, void *rval, void **arg)
 {
 	char *p;
 
@@ -375,12 +397,12 @@ BUILTIN(f_patcmp)
 		CopyData(&Type_str, arg[2], &p);
 }
 
-BUILTIN(f_listcmp)
+static void f_listcmp (EfiFunc *func, void *rval, void **arg)
 {
 	Val_int(rval) = listcmp(Val_str(arg[0]), Val_char(arg[1]));
 }
 
-BUILTIN(f_pselect)
+static void f_pselect (EfiFunc *func, void *rval, void **arg)
 {
 	char *name, *pat, *p;
 	EfiObjList *l;
@@ -411,7 +433,7 @@ BUILTIN(f_pselect)
 	Val_int(rval) = flag ? 1 : 0;
 }
 
-BUILTIN(f_split)
+static void f_split (EfiFunc *func, void *rval, void **arg)
 {
 	size_t i, n;
 	char **list;
@@ -430,7 +452,7 @@ BUILTIN(f_split)
 	memfree(list);
 }
 
-BUILTIN(f_index)
+static void f_index (EfiFunc *func, void *rval, void **arg)
 {
 	int i, c;
 	char *s;
@@ -562,8 +584,6 @@ static EfiFuncDef fdef_func[] = {
 	{ 0, &Type_int, "fprintf (IO io, str fmt, ...)", f_fprintf },
 	{ 0, &Type_str, "sprintf (str fmt, ...)", f_sprintf },
 	{ 0, &Type_str, "xprintf (str fmt, ...)", f_xprintf },
-	{ 0, &Type_void, "debug (str def, str fmt, ...)", f_debug },
-	{ 0, &Type_void, "DebugMode (str def)", f_DebugMode },
 
 	{ FUNC_VIRTUAL, &Type_int, "pcopy (IO in, IO out, int delim = EOF)",
 		f_pcopy },

@@ -42,7 +42,7 @@ static void t_copy (const EfiType *st, void *tg, const void *src)
 }
 
 EfiType Type_assignarg = PTR_TYPE("AssignArg", AssignArg *,
-	&Type_ptr, t_clean, t_copy);
+	&Type_ptr, NULL, t_clean, t_copy);
 
 static EfiObj *m_name (const EfiObj *base, void *data)
 {

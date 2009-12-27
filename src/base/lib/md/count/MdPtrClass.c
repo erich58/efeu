@@ -19,7 +19,6 @@ You should have received a copy of the GNU Library General Public
 License along with this library; see the file COPYING.Library.
 If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
 */
 
 #include <EFEU/mdcount.h>
@@ -49,7 +48,7 @@ void MdPtrClass_add (MdCountPar *tab, MdPtrClass *entry, size_t dim)
 		for (; dim-- > 0; entry++)
 			MdClass_add(tab, (MdClass *) entry, 1);
 	}
-	else	dbg_note("md", "[mdmat:302]", NULL);
+	else	log_note(md_note, "[mdmat:302]", NULL);
 }
 
 void MdPtrClass_xadd (MdCountPar *tab, MdPtrClass *entry, size_t dim,

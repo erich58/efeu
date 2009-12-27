@@ -81,9 +81,9 @@ static int push_ident (PUSHPAR *par, char **ptr)
 /*	IO - Funktionen
 */
 
-static int push_get (void *ptr)
+static int push_get (IO *io)
 {
-	PUSHPAR *par = ptr;
+	PUSHPAR *par = io->data;
 	int c;
 
 	if	(par->lock)
@@ -95,9 +95,9 @@ static int push_get (void *ptr)
 	return c;
 }
 
-static int push_put (int c, void *ptr)
+static int push_put (int c, IO *io)
 {
-	PUSHPAR *par = ptr;
+	PUSHPAR *par = io->data;
 
 	if	(par->lock)
 		return io_putc(c, &par->save);
@@ -108,9 +108,9 @@ static int push_put (int c, void *ptr)
 	return c;
 }
 
-static int push_ctrl (void *ptr, int req, va_list list)
+static int push_ctrl (IO *io, int req, va_list list)
 {
-	PUSHPAR *par = ptr;
+	PUSHPAR *par = io->data;
 	int stat;
 
 	if	(par->lock)

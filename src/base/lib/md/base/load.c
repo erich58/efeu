@@ -210,7 +210,7 @@ mdmat *md_load (IO *io, const char *str, const char *odef)
 
 		if	(vsel_struct == NULL)
 		{
-			dbg_error(NULL, "[mdmat:15]", "ms",
+			log_error(NULL, "[mdmat:15]", "ms",
 				type2str(md->type), odef);
 			return NULL;
 		}
@@ -227,7 +227,7 @@ mdmat *md_load (IO *io, const char *str, const char *odef)
 		if	(vsel_dim == 0 || md->type->size == 0)
 		{
 			io_close(vsel_io);
-			dbg_error(NULL, "[mdmat:15]", NULL);
+			log_error(NULL, "[mdmat:15]", NULL);
 			return NULL;
 		}
 
@@ -554,6 +554,7 @@ static void skipdata (const EfiType *type, mdaxis *x)
 /*	Objektselektion generieren
 */
 
+#if	0
 static int walk_type (const char *name, EfiType **type, int o1, int o2)
 {
 	int n, k;
@@ -613,6 +614,7 @@ static int walk_type (const char *name, EfiType **type, int o1, int o2)
 
 	return n;
 }
+#endif
 
 static EfiStruct *getentry (EfiType *type, const char *name)
 {

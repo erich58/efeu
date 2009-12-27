@@ -3,11 +3,10 @@
 :de:Programmbeispiel: Hello World!
 
 $Copyright (C) 2002 Erich Frühstück
-A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
 */
 
 pconfig !
-Version = "$Id: hello2.esh,v 1.1 2003-10-10 10:32:42 ef Exp $"
+Version = "$Id: hello2.esh,v 1.2 2009-10-18 07:56:33 ef Exp $"
 
 Format = "%s"
 	:*:format specification

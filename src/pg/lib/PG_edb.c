@@ -307,12 +307,12 @@ static void edb2pg_clean (void *data)
 	EDB2PG *par = data;
 
 	if	(par->endline && PQputline(par->pg->conn, "\\.\n"))
-		dbg_note("PG", M_FLUSH, NULL);
+		PG_info(par->pg, M_FLUSH, NULL);
 
 	if      (par->copy)
 	{
 		if	(PQendcopy(par->pg->conn) != 0)
-			dbg_note("PG", M_ECOPY, NULL);
+			PG_info(par->pg, M_ECOPY, NULL);
 	}
 	else
 	{
@@ -350,7 +350,7 @@ static char *edb2pg_get (EDB2PG *par)
 static int edb2pg_cmd (EDB2PG *par)
 {
 	char *p = edb2pg_get(par);
-	PG_info(par->pg, p);
+	PG_info(par->pg, "$!: $1", "s", p);
 	return PG_command(par->pg, p);
 }
 
@@ -457,7 +457,7 @@ static size_t write_pg (EfiType *type, void *data, void *p_par)
 	sb_putc('\n', &par->buf);
 
 	if	(PQputline(par->pg->conn, edb2pg_get(par)) != 0)
-		dbg_note("PG", M_FLUSH, NULL);
+		PG_info(par->pg, M_FLUSH, NULL);
 
 	return 1;
 }
@@ -510,7 +510,7 @@ static void init_pg (EDB *edb, EDBPrintMode *mode, IO *io)
 
 		io_xprintf(par->io, "COPY %s FROM stdin", arg->name);
 		cmd = edb2pg_get(par);
-		PG_info(par->pg, cmd);
+		PG_info(par->pg, "$!: $1", "s", cmd);
 		PG_exec(par->pg, cmd, PGRES_COPY_IN);
 		par->endline = 1;
 		par->copy = 1;
@@ -545,7 +545,7 @@ static void pset_pg (EDBPrintMode *mode, const EDBPrintDef *def,
 		mode->init = init_pg;
 		mode->split = 0;
 	}
-	else	dbg_error(NULL, E_NAME, NULL);
+	else	log_error(NULL, E_NAME, NULL);
 }
 
 static EDBPrintDef pdef_pg = { "pg", "[flag]=db:name", pset_pg, NULL,
@@ -745,14 +745,14 @@ static void meta_query (EDBMetaDef *def, EDBMeta *meta, const char *arg)
 
 		PG_query(par->pg, "FETCH 0 IN tmpcursor");
 		res = par->pg->res;
-		log = LogOut(NULL, DBG_INFO);
 
 		if	(!res)
 		{
-			dbg_error(NULL, E_FETCH, NULL);
+			log_error(NULL, E_FETCH, NULL);
 			return;
 		}
 
+		log = LogOpen(InfoLog);
 		nfields = PQnfields(res);
 		var = NULL;
 		ptr = &var;
@@ -799,6 +799,7 @@ static void meta_query (EDBMetaDef *def, EDBMeta *meta, const char *arg)
 			ptr = &(*ptr)->next;
 		}
 
+		io_close(log);
 		type = MakeStruct(NULL, NULL, var);
 		conv = par->conv.data;
 

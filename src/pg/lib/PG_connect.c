@@ -48,7 +48,7 @@ static void pg_clean (void *ptr)
 		fileclose(pg->trace);
 	}
 
-	PG_info(pg, "FINISH");
+	PG_info(pg, "$0: FINISH", NULL);
 
 	if	(pg->conn)
 		PQfinish(pg->conn);
@@ -104,6 +104,10 @@ static char *pg_ident (const void *ptr)
 
 static RefType pg_reftype = REFTYPE_INIT("PG", pg_ident, pg_clean);
 
+static LogControl pg_info = LOG_CONTROL("PG", LOGLEVEL_INFO);
+static LogControl pg_trace = LOG_CONTROL("PG", LOGLEVEL_TRACE);
+static LogControl pg_debug = LOG_CONTROL("PG", LOGLEVEL_DEBUG);
+
 /*
 :de:
 Die Funktion |$1| erzeugt eine Verbindung zu einem PostgreSQL Datenbankserver
@@ -149,13 +153,20 @@ PG *PG_connect (const char *def)
 
 	if	(conn == NULL)
 	{
-		dbg_note("PG", M_NOMEM, NULL);
+		PG_info(NULL, M_NOMEM, NULL);
 		return NULL;
 	}
 	else if	(PQstatus(conn) == CONNECTION_BAD)
 	{
-		dbg_note("PG", M_BAD, "s", def);
-		conn_info(LogOut("PG", DBG_DEBUG), conn);
+		IO *io;
+		PG_info(NULL, M_BAD, "s", def);
+
+		if	((io = LogOpen(&pg_debug)))
+		{
+			conn_info(io, conn);
+			io_close(io);
+		}
+
 		PQfinish(conn);
 		return NULL;
 	}
@@ -168,8 +179,8 @@ PG *PG_connect (const char *def)
 		pg->trans = 0;
 
 		rd_init(&pg_reftype, pg);
-		PG_info(pg, "CONNECT");
-		pg->trace = filerefer(LogFile("PG", DBG_TRACE));
+		PG_info(pg, "$0: CONNECT", NULL);
+		pg->trace = log_file(&pg_trace);
 
 		if	(pg->trace)
 			PQtrace(pg->conn, pg->trace);
@@ -185,21 +196,29 @@ PG *PG_connect (const char *def)
 |DBG_INFO| aus.
 */
 
-void PG_info (PG *pg, const char *fmt, ...)
+void PG_info (PG *pg, const char *fmt, const char *argdef, ...)
 {
-	IO *io = LogOut("PG", DBG_INFO);
+	IO *io = LogOpen(&pg_info);
 
 	if	(io && fmt)
 	{
 		va_list list;
-		io_xprintf(io, "postgres[%s]: ", PQdb(pg->conn));
-		va_start(list, fmt);
-		io_vxprintf(io, fmt, list);
+		ArgList *args;
+		
+		args = arg_create();
+
+		if	(pg)
+			arg_printf(args, "postgres[%s]", PQdb(pg->conn));
+		else	arg_cadd(args, NULL);
+
+		va_start(list, argdef);
+		arg_append(args, argdef, list);
 		va_end(list);
-		io_putc('\n', io);
+		io_psub(io, fmt, args);
+		io_close(io);
+		rd_deref(args);
 	}
 }
-
 
 #endif
 

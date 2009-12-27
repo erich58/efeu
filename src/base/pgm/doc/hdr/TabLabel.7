@@ -1,0 +1,163 @@
+\Name
+TabLabel -- Tabellenachsen
+\Synopsis
+\tthang
+\#include \<TabLabel.hdr\>
+
+TabLabel TabLabel (str <key>, str <name>)
+
+TabLabel TabLabel (str <key>, str <name>, IO <io>)
+
+TabLabel TabLabel::entry (str <key>, str <label>)
+
+int CompLabel (TabLabel <a>, TabLabel <b>)
+
+TabLabel CDummyTabLabel;
+
+TabLabel LDummyTabLabel;
+\Description
+Der Datentype |TabLabel| definiert eine Tabellenachse.
+Er wird in Kombination mit dem Datentype |Figure|
+(Vergleiche dazu \mref{Figure(7)}) zur Einarbeitung von Daten
+aus einer Datenmatrix verwendet.
+
+Eine Tabellenachse kann sowohl für die Zeilen- als auch die
+Spalten einer Tabelle verwendet werden.
+Sie hat den folgenden Aufbau:
+
+---- verbatim
+struct TabLabel {
+	str key;	/* Kennung */
+	str name;	/* Achsenname */
+	str list;	/* Selektionsliste */
+	DataBase tab;	/* Indextabelle */
+	str special;	/* Sonderdefinitionen */
+};
+----
+
+Dabei gibt |TabLabel::key| die Kennung der Tabellenachse
+und |TabLabel::name| den
+Namen der zugehörigen Achse in der Datenmatrix an. Die
+Variable |TabLabel::list| enthält die Selektionsliste mit den
+Achsenelementen. Sie wird beim Laden der Datenmatrix zur
+Generierung von Zusammenfassungen benötigt und sorgt dabei
+für die richtigen Reihenfolge der Achsenelemente (Wichtig bei Spalten!).
+Der Konverter |str TabLabel()| liefert den Selektionsstring
+der Achsenstruktur. Damit kann die Achse stellvertretend für
+seine Komponente beim Laden einer Datenmatrix angegeben werden.
+
+Die Datenbank |TabLabel::tab| enthält die einzelen
+Zeilen- bzw. Spaltenbezeichner und die zugehörigen
+Selektionsdefinitionen der Datenmatrix.
+
+In |TabLabel::special| stehen |efeudoc|-Sequenzen, die zu Beginn
+eines Tabellenkopfes (Spaltenachse) bzw. Tabellenkörpers (Zeilenachse)
+auszugeben sind.
+
+\margin	Konstruktion von Achsendefinitionen
+Achsendefintionen werden am einfachsten mit dem Konstruktor
+|TabLabel| konstruiert.
+Als Argument wird die Achsenkennung <key>,
+der Name der zugehörigen Datenachse und eine IO-Struktur mit
+Definitionszeilen für die einzelnen Achsenbezeichner übergeben.
+In der Regel wird anstelle der IO-Struktur ein Definitionsstring
+(implizite Konvertierung) übergeben.
+
+Jede Definitionszeile besteht aus zwei Einträgen (Kennung und Bezeichner),
+die durch ein Leerzeichen oder einem Tabulator getrennt sind.
+Die Kennung <key>, die keine Leerzeichen oder Tabulatoren enthalten darf,
+bestimmt die Selektion in der Datenmatrix.
+Der Bezeichner <label> definiert den Achsenbezeichner bei der Ausgabe
+der Tabelle. Er kann beliebig viele Leerzeichen und Tabulatoren enthalten.
+
+Beginnt die Kennung mit einem Klammeraffen |@| wird keine
+Achsenselektion definiert. Die Komponente |TabLabel::special|
+(siehe oben) wird mit dem Bezeichner erweitert.
+Dabei stehen folgende Varianten zur Verfügung:
+[|@+|]	Ein Tabulator wird zu Beginn eingefügt (Fortsetzungszeilen).
+[|@*|]	Der Zeilenvorschub am Ende wird unterdrückt.
+
+Folgende Kennungen sind möglich:
+[<name>]
+	Der Name <name> gibt den zugehörigen Achsenindex in der
+	Datenmatrix an.
+[<|:<name>\[<liste>\]|>]
+	Die Achsenkennung <name> wird erst beim Laden eingerichtet und die
+	Daten ergeben sich durch entsprechnde Aggregation der in <list>
+	angeführten Achsenkennungen.
+[|.|]
+	Der Tabellenachse werden keine Daten in der Datenmatrix
+	zugeordnet. Bei Tabellen mit komplexeren Datentransformationen
+	können in einer Tabellenzeile aus einem Datenmatrixeintrag
+	mehrere Tabellenwerte errechnet werden. Die Tabellenachse
+	benötigt damit mehr Spalten als Datenwerte vorhanden sind.
+	Bei Zeilenachsen können damit Leerzeilen konstruiert werden.
+
+Beginnt ein Bezeichner mit einer Ziffer, die mit einem Doppelpunkt
+abgeschlossen wird, definiert diese die Breite der Spalte.
+
+Anstelle der Konstruktion der Tabellenachse über eine IO-Struktur
+können die einzelnen Einträge auch mit |TabLabel::entry| generiert
+werden.
+
+\Examples
+Das folgende Beispiel zeigt eine einfache Zeilenachse mit einer Gliederung
+durch Leerzeilen. Die letzte Zeile wird in Fettschrift gesetzt.
+
+---- verbatim
+TabLabel("sv", "sv", string !
+MANN	Männer
+FRAU	Frauen
+.
+A00-18	Bis 18
+A19-24	19 bis 24
+A25-29	25 bis 29
+A30-39	30 bis 39
+A40-49	40 bis 49
+A50-54	50 bis 54
+A55-59	55 bis 59
+A60-99	60 und älter
+.
+GES	[*]Insgesamt
+!);
+----
+
+Der folgende Spaltenkopf besitzt eine Doppelgliederung.
+Die Achsenbezeichner beziehen sich auf die unterste Gliederung.
+
+---- verbatim
+TabLabel("hdr", "epi", string !
+@	[1] | Unselbständig Erwerbstätige\\mark{1} |
+@+	#3l davon haben mindestens eine Episode von:
+@*	[1]
+GES
+AEPI	Arbeitslosigkeit
+PEPI	Pension
+SEPI	Sonstiges\\mark{2}
+!);
+----
+
+Die Dummyachsen |CDummyTabLabel| und |LDummyTabLabel| sind folgend definiert:
+
+---- verbatim
+TabLabel CDummyTabLabel = TabLabel("CDummy", NULL,
+string !
+A	Spalte A
+B	Spalte B
+C	Spalte C
+D	Spalte D
+!);
+
+TabLabel LDummyTabLabel = TabLabel("LDummy", NULL,
+string !
+1	Zeile 1
+2	Zeile 2
+3	Zeile 3
+4	Zeile 4
+.	.......
+n	*Zeile n
+!);
+----
+
+\SeeAlso
+\mref{efeudoc(1)}, \mref{Figure(7)}.

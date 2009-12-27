@@ -237,7 +237,7 @@ Programm). Hier stehen zwei Möglichkeiten zur Verfügung:
 	Quellverzeichnis korrespondierende Build-Verzeichnis
 	gewechselt. Ein Aufruf von |make| in diesem Verzeichnis
 	generiert die Teilaufgabe.
-*	Das Hilfskommandos |comake| wird vom
+*	Das Hilfskommando |comake| wird vom
 	Quellverzeichnis aus aufgerufen. Dieses Skript sucht nach dem
 	korrespondierenden Build-Verzeichnis und ruft dort |make| auf.
 	Zusätzlich kann mit der Option |-t| auch |make| im

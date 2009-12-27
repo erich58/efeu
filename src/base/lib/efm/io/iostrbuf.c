@@ -24,21 +24,21 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/ioctrl.h>
 #include <EFEU/strbuf.h>
 
-static int sbuf_get (void *ptr)
+static int sbuf_get (IO *io)
 {
-	StrBuf *sb = ptr;
+	StrBuf *sb = io->data;
 	return sb_getc(sb);
 }
 
-static int sbuf_put (int c, void *ptr)
+static int sbuf_put (int c, IO *io)
 {
-	StrBuf *sb = ptr;
+	StrBuf *sb = io->data;
 	return sb_putc(c, sb);
 }
 
-static int sb_nctrl (void *ptr, int req, va_list list)
+static int sb_nctrl (IO *io, int req, va_list list)
 {
-	StrBuf *sb = ptr;
+	StrBuf *sb = io->data;
 
 	switch (req)
 	{
@@ -51,9 +51,9 @@ static int sb_nctrl (void *ptr, int req, va_list list)
 	}
 }
 
-static int sb_cctrl (void *ptr, int req, va_list list)
+static int sb_cctrl (IO *io, int req, va_list list)
 {
-	StrBuf *sb = ptr;
+	StrBuf *sb = io->data;
 
 	switch (req)
 	{
@@ -81,6 +81,7 @@ IO *io_tmpbuf (size_t size)
 	io->ctrl = sb_cctrl;
 	return io;
 }
+
 
 IO *io_strbuf (StrBuf *buf)
 {

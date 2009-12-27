@@ -25,7 +25,11 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	TRACE	0
 
-static ALLOCTAB(deftab, 0, sizeof(EfiStruct));
+#if	TRACE
+static LogControl trace_ctrl = LOG_CONTROL("NewStruct", LOGLEVEL_TRACE);
+#endif
+
+static ALLOCTAB(deftab, "EfiStruct", 0, sizeof(EfiStruct));
 
 static char *var_ident (const void *data)
 {
@@ -45,8 +49,7 @@ static void var_clean (void *data)
 		var->clean(var);
 
 #if	TRACE
-	dbg_message("NewStruct", DBG_TRACE, "DelStruct[$2]: $1\n", NULL, "pu",
-			var, (unsigned) deftab.nused);
+	log_note(&trace_ctrl, "DelStruct[$2]: $1\n", "pz", var, deftab.nused);
 #endif
 	del_data(&deftab, var);
 }
@@ -61,8 +64,7 @@ EfiStruct *NewEfiStruct (EfiType *type, const char *name, size_t dim)
 	var->reftype = NULL;
 	var->refcount = 0;
 #if	TRACE
-	dbg_message("NewStruct", DBG_TRACE, "NewStruct[$2]: $1\n", NULL, "pu",
-			var, (unsigned) deftab.nused);
+	log_note(&trace_ctrl, "NewStruct[$2]: $1\n", "pz", var, deftab.nused);
 #endif
 	memset(var, 0, sizeof(EfiStruct));
 	var->name = mstrcpy(name);

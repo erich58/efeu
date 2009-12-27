@@ -56,7 +56,7 @@ void md_paste(mdmat *md, const char *name, const char *delim, int pos, int n)
 
 	if	(pos + n > md_dim(md->axis))
 	{
-		dbg_error(NULL, "[mdmat:41]", NULL);
+		log_error(NULL, "[mdmat:41]", NULL);
 		return;
 	}
 

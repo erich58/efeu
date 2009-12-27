@@ -54,7 +54,7 @@ typedef struct {
 
 PG *PG_connect (const char *def);
 int PG_print (IO *io, PG *pg);
-void PG_info (PG *pg, const char *fmt, ...);
+void PG_info (PG *pg, const char *fmt, const char *argdef, ...);
 
 void PG_clear (PG *pg);
 int PG_exec (PG *pg, const char *cmd, ExecStatusType type);
@@ -80,6 +80,7 @@ mdmat *PG_mdmat (PG *pg, const EfiType *type,
 
 void PG_edb (void);
 extern int PG_expandlim;
+
 #endif
 
 void PG_setup (void);

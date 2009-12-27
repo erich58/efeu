@@ -121,7 +121,7 @@ static EfiObj *pf_func (IO *io, void *data)
 
 static EfiObj *pf_expression (IO *io, void *data)
 {
-	dbg_note(NULL, "WARNING: expression obsolete, use [...] instead.\n",
+	log_note(NULL, "WARNING: expression obsolete, use [...] instead.\n",
 		NULL);
 	return expr2Obj(Parse_cmd(io));
 }
@@ -455,9 +455,9 @@ static void f_proto (CmdPar *par, IO *io, const char *arg)
 	{
 		if	(i > 0)	io_puts("\\br\n", io);
 
-		io_puts("<|", io);
+		io_puts("|", io);
 		ListFunc(io, ftab[i]);
-		io_puts("|>", io);
+		io_puts("|", io);
 	}
 
 	io_putc('\n', io);
@@ -599,6 +599,7 @@ void SetupStd(void)
 	CmdSetup_DatPool();
 	CmdSetup_StrPool();
 	CmdSetup_assignarg();
+	CmdSetup_time();
 	CmdSetup_date();
 	CmdSetup_regex();
 	CmdSetup_cmdpar();
@@ -608,6 +609,7 @@ void SetupStd(void)
 	CmdSetup_timeval();
 	CmdSetup_dl();
 	CmdSetup_dbutil();
+	CmdSetup_log();
 
 	AddEfiMember(Type_list.vtab, list_member, tabsize(list_member));
 	AddEfiMember(Type_ref.vtab, ref_member, tabsize(ref_member));

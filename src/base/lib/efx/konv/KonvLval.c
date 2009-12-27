@@ -96,7 +96,7 @@ EfiObj *KonvLval(EfiObj *obj, EfiType *type)
 
 	if	(obj == NULL || obj->lval == NULL)
 	{
-		dbg_note(NULL, "[efmain:167]", NULL);
+		log_note(NULL, "[efmain:167]", NULL);
 		return NULL;
 	}
 

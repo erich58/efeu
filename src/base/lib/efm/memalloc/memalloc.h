@@ -99,37 +99,49 @@ Sie enthält eine Liste der freien Elemente
 (|freelist|) und eine Liste mit Datenblöcken (|blklist|).
 Die Zahl der freien Segmente wird in |nfree| und die Zahl der
 benutzten Segmente wird in |nused| gespeichert.
+Die Komponente |name| wird zur leichteren Identifizierung der Tabellen
+für Debuggingzwecke verwendet.
 Mit den Funktionen |new_data| und |del_data| können Datensegmente
-entnommen und wieder hineiungestellt werden. Vergleiche dazu
+entnommen und wieder hineingestellt werden. Vergleiche dazu
 \mref{alloctab(3)}.
 
 :de:
 Zum Auffüllen der freien Liste wird ein Block mit |blksize| Elementen
 angefordert. Jedem Block ist eine Kettenstruktur vorangestellt (Für
-die Liste der Datenblöcke).  Der Speicherbedarf für einen Block
+die Liste der Datenblöcke). Der Speicherbedarf für einen Block
 beträgt |sizeof(AllocTabList)| + |blksize| * |elsize|.
 Datenblöcke, die zum Füllen der freien Liste angefordert wurden,
 werden nicht mehr freigegeben.
 
 :de:
 Die Datensegmentgröße muß auf die Größe einer Kettenstruktur
-ausgerichtet sein.  Freie Elemente werden zu einer Liste verkettet und
+ausgerichtet sein. Freie Elemente werden zu einer Liste verkettet und
 können dort entnommen werden.
+
+:de:
+Die Komponente |chain| dient zur Verkettung der einzelnen Tabellen
+zur Auswertung allozierter Speicherbereiche. Die Verkettung erfolgt
+implizit bei der ersten Verwendung einer Tabelle.
 */
 
-typedef struct {
+typedef struct AllocTab AllocTab;
+
+struct AllocTab {
+	const char *name;
 	size_t blksize;
 	size_t elsize;
 	size_t nfree;
 	size_t nused;
 	AllocTabList *blklist;
 	AllocTabList *freelist;
-} AllocTab;
+	AllocTab *chain;	/* Verkettung für Statistiken und Debugging */
+};
 
 void *new_data (AllocTab *tab);
 int del_data (AllocTab *tab, void *data);
 int tst_data (AllocTab *tab, void *data);
 void check_data (AllocTab *tab);
+void AllocTab_walk (void (*visit) (AllocTab *tab, void *par), void *par);
 
 #define	ALLOCSIZE(size)		sizealign(size, sizeof(AllocTabList))
 
@@ -142,7 +154,8 @@ Durch <blk> wird die Zahl der Elemente eines Blockes festgelegt.
 Falls <blk> den Wert 0 hat, werden Standardvorgaben verwendet.
 */
 
-#define	ALLOCDATA(blk,size)	{ blk, ALLOCSIZE(size), 0, 0, NULL, NULL, }
+#define	ALLOCDATA(name,blk,size)	\
+	{ name, blk, ALLOCSIZE(size), 0, 0, NULL, NULL, NULL }
 
 /*
 :de:
@@ -153,8 +166,8 @@ Durch <blk> wird die Zahl der Elemente eines Blockes festgelegt.
 Falls <blk> den Wert 0 hat, werden Standardvorgaben verwendet.
 */
 
-#define	ALLOCTAB(name,blk,size)	AllocTab name = ALLOCDATA(blk, size)
-
+#define	ALLOCTAB(vname,name,blk,size)	\
+	AllocTab vname = ALLOCDATA(name,blk, size)
 
 void *memalloc (size_t size);
 void memnotice (void *ptr);

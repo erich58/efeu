@@ -38,7 +38,7 @@ double bisection (int (*f)(void *par, double x), void *par, double x0, double x1
 
 	if	(y0 * y1 > 0)
 	{
-		dbg_error(NULL, "[solve:2]", "mm", msprintf(SolveFmt, x0),
+		log_error(NULL, "[solve:2]", "mm", msprintf(SolveFmt, x0),
 			msprintf(SolveFmt, x1));
 	}
 
@@ -48,7 +48,7 @@ double bisection (int (*f)(void *par, double x), void *par, double x0, double x1
 	{
 		if	(SolveFlag)
 		{
-			dbg_note(NULL, "[solve:4]", "dmm", i,
+			log_note(NULL, "[solve:4]", "dmm", i,
 				msprintf(SolveFmt, x0),
 				msprintf(SolveFmt, x1));
 		}
@@ -62,6 +62,6 @@ double bisection (int (*f)(void *par, double x), void *par, double x0, double x1
 		else				x1 = x, y1 = y;
 	}
 
-	dbg_note(NULL, "[solve:3]", NULL);
+	log_note(NULL, "[solve:3]", NULL);
 	return 0.;
 }

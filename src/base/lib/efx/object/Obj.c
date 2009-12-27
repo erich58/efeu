@@ -45,11 +45,11 @@ If not, write to the Free Software Foundation, Inc.,
 #define	do_check(obj)
 #endif
 
-extern DebugClass ObjDebugClass;
+extern LogControl ObjDebugControl;
 
-static ALLOCTAB(tab_ptr, 100, SIZE_PTR + CHECK_SIZE);
-static ALLOCTAB(tab_small, 292, SIZE_SMALL + CHECK_SIZE);
-static ALLOCTAB(tab_large, 50, SIZE_LARGE + CHECK_SIZE);
+static ALLOCTAB(tab_ptr, "PtrObj", 100, SIZE_PTR + CHECK_SIZE);
+static ALLOCTAB(tab_small, "SmallObj", 292, SIZE_SMALL + CHECK_SIZE);
+static ALLOCTAB(tab_large, "LargeObj", 50, SIZE_LARGE + CHECK_SIZE);
 
 static size_t stat_alloc = 0;
 static size_t stat_free = 0;
@@ -99,20 +99,20 @@ static void clean_huge (void *data)
 }
 
 static RefType reftype_ptr = REFTYPE_EXT("PtrObj",
-	NULL, clean_ptr, &ObjDebugClass);
+	NULL, clean_ptr, &ObjDebugControl);
 static RefType reftype_ext = REFTYPE_EXT("ExtObj",
-	NULL, clean_ext, &ObjDebugClass);
+	NULL, clean_ext, &ObjDebugControl);
 static RefType reftype_small = REFTYPE_EXT("SmallObj",
-	NULL, clean_small, &ObjDebugClass);
+	NULL, clean_small, &ObjDebugControl);
 static RefType reftype_large = REFTYPE_EXT("LargeObj",
-	NULL, clean_large, &ObjDebugClass);
+	NULL, clean_large, &ObjDebugControl);
 static RefType reftype_huge = REFTYPE_EXT("HugeObj",
-	NULL, clean_huge, &ObjDebugClass);
+	NULL, clean_huge, &ObjDebugControl);
 
 static RefType reftype_large_lval = REFTYPE_EXT("LargeLval",
-	NULL, clean_large, &ObjDebugClass);
+	NULL, clean_large, &ObjDebugControl);
 static RefType reftype_huge_lval = REFTYPE_EXT("HugeLval",
-	NULL, clean_huge, &ObjDebugClass);
+	NULL, clean_huge, &ObjDebugControl);
 
 EfiObj *ExtObj (const EfiType *type, const void *data)
 {

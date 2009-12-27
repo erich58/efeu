@@ -51,8 +51,8 @@ typedef struct {
 	int protect;	/* Schutzflag */
 } LFPAR;
 
-static int lf_get (void *ptr);
-static int lf_ctrl (void *ptr, int req, va_list list);
+static int lf_get (IO *io);
+static int lf_ctrl (IO *io, int req, va_list list);
 
 /*
 :de:
@@ -354,9 +354,9 @@ static int lf_fill (LFPAR *lf)
 /*	Zeichen lesen
 */
 
-static int lf_get (void *ptr)
+static int lf_get (IO *io)
 {
-	LFPAR *lf = ptr;
+	LFPAR *lf = io->data;
 
 	if	(lf->nsave == 0)
 	{
@@ -375,9 +375,9 @@ static int lf_get (void *ptr)
 /*	Kontrollfunktion
 */
 
-static int lf_ctrl (void *ptr, int req, va_list list)
+static int lf_ctrl (IO *io, int req, va_list list)
 {
-	LFPAR *lf = ptr;
+	LFPAR *lf = io->data;
 	int stat;
 
 	switch (req)

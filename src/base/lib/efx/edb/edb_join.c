@@ -130,7 +130,7 @@ static void dbdef_load (DBDEF *def, EfiObj *key, CmpDef *cmp)
 			io_puts("\n", ioerr);
 			PrintObj(ioerr, def->db->obj);
 			io_puts("\n", ioerr);
-			dbg_error("edb", ERR_CMP, "m", rd_ident(def->db->ipar));
+			log_error(edb_err, ERR_CMP, "m", rd_ident(def->db->ipar));
 		}
 
 		if	(r != 0)
@@ -218,7 +218,7 @@ static EfiStruct *get_var (EfiType *type, const char *name)
 		if (mstrcmp(name, v->name) == 0)
 			return v;
 
-	dbg_error("edb", ERR_MEM, "ss", type->name, name);
+	log_error(edb_err, ERR_MEM, "ss", type->name, name);
 	return NULL;
 }
 
@@ -231,7 +231,7 @@ static void join_add_var (JOIN *join, EDBAssign **ptr, EfiStruct *var, int flag)
 		if	(mstrcmp(var->name, (*p)->name) == 0)
 		{
 			if	(flag)
-				dbg_error("edb", ERR_USE, "s", var->name);
+				log_error(edb_err, ERR_USE, "s", var->name);
 
 			return;
 		}
@@ -298,7 +298,7 @@ static void join_filter (JOIN *join, const char *opt, const char *arg)
 
 	if	(join->key || join->kvar)
 	{
-		dbg_error("edb", ERR_ORD, NULL);
+		log_error(edb_err, ERR_ORD, NULL);
 		return;
 	}
 
@@ -366,7 +366,7 @@ static void join_key (JOIN *join, const char *opt, const char *vdef)
 		v = get_var(join->db[1].db->obj->type, b);
 
 		if	(v->type != (*p)->type || v->dim != (*p)->dim)
-			dbg_error("edb", ERR_INC, "s", name);
+			log_error(edb_err, ERR_INC, "s", name);
 
 		dbdef_kvar(join->db + 1, rd_refer(*p), v->offset);
 		p = &(*p)->next;
@@ -395,7 +395,7 @@ static void join_auto (JOIN *join)
 			if	(p1->type != p2->type ||
 					p1->dim != p2->dim)
 			{
-				dbg_error("edb", ERR_INC, "s", p1->name);
+				log_error(edb_err, ERR_INC, "s", p1->name);
 				continue;
 			}
 
@@ -424,7 +424,7 @@ static void join_make_key (JOIN *join)
 		join_auto(join);
 
 	if	(!join->kvar)
-		dbg_error("edb", ERR_KEY, NULL);
+		log_error(edb_err, ERR_KEY, NULL);
 	
 	type = MakeStruct(NULL, NULL, RefEfiStruct(join->kvar));
 
@@ -457,7 +457,7 @@ static void join_use (JOIN *join, const char *opt, const char *arg)
 		}
 	}
 
-	dbg_error("edb", ERR_DBI, "s", arg);
+	log_error(edb_err, ERR_DBI, "s", arg);
 }
 
 static void join_var (JOIN *join, const char *opt, const char *vdef)
@@ -509,7 +509,7 @@ static void join_var (JOIN *join, const char *opt, const char *vdef)
 		}
 		else
 		{
-			dbg_error("edb", ERR_VAR, "s", name);
+			log_error(edb_err, ERR_VAR, "s", name);
 			continue;
 		}
 
@@ -543,7 +543,7 @@ static void join_var (JOIN *join, const char *opt, const char *vdef)
 		}
 
 		if	(name)
-			dbg_error("edb", ERR_VAR, "s", name);
+			log_error(edb_err, ERR_VAR, "s", name);
 	}
 
 	memfree(list);
@@ -614,7 +614,7 @@ static void jpar_eval (JOIN *join, AssignArg *arg)
 		}
 	}
 
-	dbg_error("edb", ERR_CMD, "s", arg->name);
+	log_error(edb_err, ERR_CMD, "s", arg->name);
 }
 
 

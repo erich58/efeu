@@ -25,6 +25,10 @@ If not, write to the Free Software Foundation, Inc.,
 
 #if	HAS_TCL
 
+#ifndef	CONST84
+#define	CONST84
+#endif
+
 static void etk_clean (void *ptr)
 {
 	ETK *etk = ptr;
@@ -40,18 +44,18 @@ static char *etk_ident (const void *ptr)
 static RefType etk_reftype = REFTYPE_INIT("TK", etk_ident, etk_clean);
 
 static int proc_expr (ClientData data, Tcl_Interp *interp,
-		int argc, char **argv)
+		int argc, CONST84 char **argv)
 {
-	IO *io = io_mstr(mtabcat(" ", argv + 1, argc - 1));
+	IO *io = io_mstr(mtabcat(" ", (char **) argv + 1, argc - 1));
 	UnrefObj(UnaryTerm("tclset", NULL, EvalObj(Parse_term(io, 0), NULL)));
 	io_close(io);
 	return TCL_OK;
 }
 
 static int proc_eval (ClientData data, Tcl_Interp *interp,
-		int argc, char **argv)
+		int argc, CONST84 char **argv)
 {
-	IO *io = io_mstr(mtabcat(" ", argv + 1, argc - 1));
+	IO *io = io_mstr(mtabcat(" ", (char **) argv + 1, argc - 1));
 	CmdEval(io, NULL);
 	io_close(io);
 	return TCL_OK;

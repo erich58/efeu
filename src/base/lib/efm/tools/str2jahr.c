@@ -1,6 +1,5 @@
 /*	Jahresbestimmung
 	(c) 2000 Erich Frühstück
-	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
 */
 
 #include <EFEU/calendar.h>

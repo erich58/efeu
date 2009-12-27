@@ -37,9 +37,9 @@ typedef struct {
 	unsigned eof : 1; 	/* EOF - Flag */
 } CEPAR;
 
-static int ce_get (void *ptr)
+static int ce_get (IO *base)
 {
-	CEPAR *par = ptr;
+	CEPAR *par = base->data;
 	EfiObj *obj;
 	IO *io;
 	int c;
@@ -102,9 +102,9 @@ static int ce_get (void *ptr)
 	return sb_getc(&par->buf);
 }
 
-static int ce_ctrl (void *ptr, int req, va_list list)
+static int ce_ctrl (IO *io, int req, va_list list)
 {
-	CEPAR *par = ptr;
+	CEPAR *par = io->data;
 	int stat;
 
 	switch (req)

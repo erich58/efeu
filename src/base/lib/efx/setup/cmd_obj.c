@@ -413,7 +413,7 @@ static void list_qsort (EfiFunc *func, void *rval, void **arg)
 
 	if	(!Val_vfunc(arg[1]))
 	{
-		dbg_note(NULL, "[efmain:nocmp]", NULL);
+		log_note(NULL, "[efmain:nocmp]", NULL);
 		return;
 	}
 
@@ -450,7 +450,7 @@ static void list_uniq (EfiFunc *func, void *rval, void **arg)
 
 	if	(!Val_vfunc(arg[1]))
 	{
-		dbg_note(NULL, "[efmain:nocmp]", NULL);
+		log_note(NULL, "[efmain:nocmp]", NULL);
 		return;
 	}
 
@@ -497,7 +497,7 @@ static void list_bsearch (EfiFunc *func, void *rval, void **arg)
 
 	if	(!Val_vfunc(arg[2]))
 	{
-		dbg_note(NULL, "[efmain:nocmp]", NULL);
+		log_note(NULL, "[efmain:nocmp]", NULL);
 		return;
 	}
 

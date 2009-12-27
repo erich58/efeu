@@ -58,7 +58,7 @@ gcc_wflags="-Wall -Wmissing-prototypes -Wpointer-arith"
 # [cc_shared]
 #	Flag für die Verfügbarkeit von shared objects (gemeinsam genutzte
 #	Bibliotheken).
-# [cc_flags]
+# [cc_cflags]
 #	Verfügbare Compilerflags.
 
 cc_config ()
@@ -66,7 +66,7 @@ cc_config ()
 	_w=$TMP/cc_config
 	mkdir -p $_w
 
-	if [ $CC ]
+	if [ "$CC" ]
 	then
 		case "$CC" in
 		gcc)	CC="$CC $gcc_wflags";;
@@ -155,9 +155,8 @@ _cc_setup_done=
 # $pconfig !
 # !
 # :de:Die Funktion $1 generiert Makefile-Makros für den
-# C-Kompiler. Sie wird implizit von den anderen Funktionen aufgerufen.
-# Die Funktion ist gegen Mehrfachaufrufe abgesichert und wird implizit
-# von anderen Funktionen aufgerufen.
+# C-Kompiler. Die Funktion ist gegen Mehrfachaufrufe abgesichert und wird
+# implizit von anderen Funktionen aufgerufen.
 #
 # :de:Folgende Makros werden im Makefile definiert:
 # [CC]
@@ -264,7 +263,7 @@ mf_cc ()
 	_cc_dep=""
 	_cc_ext=""
 	_cc_out=""
-	_cc_cflags='$(CFLAGS) $(CONFIG_CFLAGS)'
+	_cc_cflags='$(CONFIG_CFLAGS) $(CFLAGS)'
 	_cc_lflags='$(CONFIG_LDFLAGS)'
 	_cc_src=""
 	_cc_obj=""

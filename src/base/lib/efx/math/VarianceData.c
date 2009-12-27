@@ -130,6 +130,34 @@ static void assign_add (EfiFunc *func, void *rval, void **arg)
 	a->xx += b->xx;
 }
 
+static void left_scale (EfiFunc *func, void *rval, void **arg)
+{
+	VarianceData *var = rval;
+	double a = Val_double(arg[0]);
+	VarianceData *b = arg[1];
+	var->n = b->n * a;
+	var->x = b->x * a;
+	var->xx = b->xx * a;
+}
+
+static void right_scale (EfiFunc *func, void *rval, void **arg)
+{
+	VarianceData *var = rval;
+	VarianceData *a = arg[0];
+	double b = Val_double(arg[1]);
+	var->n = a->n * b;
+	var->x = a->x * b;
+	var->xx = a->xx * b;
+}
+
+static void assign_scale (EfiFunc *func, void *rval, void **arg)
+{
+	VarianceData *a = arg[0];
+	double b = Val_double(arg[1]);
+	a->n *= b;
+	a->x *= b;
+	a->xx *= b;
+}
 
 static EfiFuncDef func[] = {
 	{ FUNC_VIRTUAL, &Type_VarianceData,
@@ -146,6 +174,12 @@ static EfiFuncDef func[] = {
 		"operator+ (VarianceData, VarianceData)", binary_add },
 	{ 0, &Type_VarianceData, \
 		"& VarianceData::operator+= & (VarianceData)", assign_add },
+	{ FUNC_VIRTUAL, &Type_VarianceData, \
+		"operator* (VarianceData, double)", right_scale },
+	{ FUNC_VIRTUAL, &Type_VarianceData, \
+		"operator* (double, VarianceData)", left_scale },
+	{ 0, &Type_VarianceData, \
+		"& VarianceData::operator*= & (double)", assign_scale },
 };
 
 void CmdSetup_VarianceData (void)

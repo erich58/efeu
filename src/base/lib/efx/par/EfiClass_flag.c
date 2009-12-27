@@ -51,7 +51,8 @@ static int test_update (const EfiObj *obj, void *par)
 	else	return 1;
 }
 
-static void create_flag (EfiClassArg *def, const char *opt, const char *arg)
+static void create_flag (EfiClassArg *def, const EfiType *type,
+	const char *opt, const char *arg, void *par)
 {
 	EfiObj *expr;
 	char *name;
@@ -82,6 +83,6 @@ static void create_flag (EfiClassArg *def, const char *opt, const char *arg)
 }
 
 EfiClass EfiClass_flag = EFI_CLASS(NULL,
-	"flag", "[expr]=label desc", create_flag,
+	"flag", "[expr]=label desc", create_flag, NULL,
 	"flag expression"
 );

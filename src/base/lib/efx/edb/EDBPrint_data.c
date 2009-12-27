@@ -26,7 +26,7 @@ void EDBPrint_data_init (EDB *edb, EDBPrintMode *mode, IO *io)
 	pdef = SearchEfiPar(type, &EfiPar_output, xarg->name);
 
 	if	(!pdef)
-		dbg_error("edb",  ERR_PRT, "ss", type->name, xarg->name);
+		log_error(edb_err,  ERR_PRT, "ss", type->name, xarg->name);
 
 	if	(xarg->arg && xarg->arg[0] == '?')
 	{

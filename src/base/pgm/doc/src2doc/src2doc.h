@@ -88,7 +88,7 @@ void SrcData_init (SrcData *data, IO *ein);
 void SrcData_head (SrcData *data, const char *name, int sec);
 void SrcData_title (SrcData *data, const char *name);
 void SrcData_eval (SrcData *data, const char *name);
-void SrcData_copy (SrcData *data, StrBuf *buf, const char *name);
+StrBuf *SrcData_copy (SrcData *data, StrBuf *buf, const char *name);
 void SrcData_write (SrcData *data, IO *io);
 
 #define	DECL_VAR	01	/* Variable */

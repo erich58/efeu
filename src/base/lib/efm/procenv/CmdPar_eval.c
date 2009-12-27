@@ -26,6 +26,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/parsearg.h>
 #include <EFEU/RegExp.h>
 #include <EFEU/parsub.h>
+#include <EFEU/Debug.h>
 
 #define	MATCH_PART	1
 #define	MATCH_FULL	2
@@ -76,7 +77,7 @@ static CmdParKey *get_key (CmdPar *par, const char *name, const char **ptr)
 		case MATCH_PART:
 			if	(key)
 			{
-				dbg_note(NULL, "[efm:33]", "sss",
+				log_note(NULL, "[efm:33]", "sss",
 					name, key->key, (*kp)->key);
 				return NULL;
 			}
@@ -88,7 +89,7 @@ static CmdParKey *get_key (CmdPar *par, const char *name, const char **ptr)
 	}
 
 	if	(key == NULL)
-		dbg_note(NULL, "[efm:32]", "s", name);
+		log_note(NULL, "[efm:32]", "s", name);
 
 	return key;
 }
@@ -114,7 +115,7 @@ static int get_option (CmdPar *par, int *narg, char **arg, int i)
 
 		if	(flag && lopt)
 		{
-			dbg_note(NULL, "[efm:34]", "s", arg[i]);
+			log_note(NULL, "[efm:34]", "s", arg[i]);
 			return CMDPAR_ERR;
 		}
 
@@ -124,7 +125,7 @@ static int get_option (CmdPar *par, int *narg, char **arg, int i)
 		{
 			if	(lopt && opt)
 			{
-				dbg_note(NULL, "[efm:34]", "s", arg[i]);
+				log_note(NULL, "[efm:34]", "s", arg[i]);
 				return CMDPAR_ERR;
 			}
 
@@ -146,7 +147,7 @@ static int get_option (CmdPar *par, int *narg, char **arg, int i)
 			{
 				if	(i + 1 >= *narg)
 				{
-					dbg_note(NULL, "[efm:31]", "s", key->key);
+					log_note(NULL, "[efm:31]", "s", key->key);
 					return CMDPAR_ERR;
 				}
 
@@ -159,7 +160,7 @@ static int get_option (CmdPar *par, int *narg, char **arg, int i)
 		{
 			if	(*opt != '=')
 			{
-				dbg_note(NULL, "[efm:34]", "s", arg[i]);
+				log_note(NULL, "[efm:34]", "s", arg[i]);
 				return CMDPAR_ERR;
 			}
 

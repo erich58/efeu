@@ -44,7 +44,7 @@ EDB *edb_filter (EDB *base, const char *filter)
 		else if	(!(def = SearchEfiPar(base->obj->type,
 			&EfiPar_EDBFilter, x->name)))
 		{
-			dbg_error("edb", FMT_UNDEF, "s", x->name);
+			log_error(edb_err, FMT_UNDEF, "s", x->name);
 		}
 		else if	(mstrcmp(x->arg, "?") == 0)
 		{

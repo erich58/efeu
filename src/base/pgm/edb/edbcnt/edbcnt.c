@@ -71,7 +71,7 @@ static void cnt_exit (EDB *edb, char *err)
 {
 	if	(err)
 	{
-		dbg_message(NULL, DBG_ERR, err, rd_ident(edb->ipar), "m",
+		log_psubarg(ErrLog, err, rd_ident(edb->ipar), "m",
 			Type2str(edb->obj->type));
 	}
 
@@ -268,7 +268,7 @@ int main (int narg, char **arg)
 	char *p;
 
 	SetProgName(arg[0]);
-	SetVersion("$Id: edbcnt.c,v 1.16 2008-06-14 04:06:52 ef Exp $");
+	SetVersion("$Id: edbcnt.c,v 1.17 2009-09-27 05:43:09 ef Exp $");
 	SetupStd();
 	SetupUtil();
 	SetupPreproc();

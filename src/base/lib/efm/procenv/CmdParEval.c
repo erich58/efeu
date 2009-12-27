@@ -216,7 +216,7 @@ static int f_config (CmdPar *cpar, CmdParVar *var,
 		io_close(io);
 		memfree(name);
 	}
-	else	dbg_note(NULL, "[efm:22]", "m", name);
+	else	log_note(NULL, "[efm:22]", "m", name);
 
 	return 0;
 }

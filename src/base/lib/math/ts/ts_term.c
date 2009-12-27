@@ -43,12 +43,12 @@ void ts_assign (EfiVirFunc *fptr, TimeSeries *t1,
 	{
 		if	((t2 = Val_TimeSeries(data)) == NULL)
 		{
-			dbg_note(NULL, "[TimeSeries:22]", NULL); 
+			log_note(NULL, "[TimeSeries:22]", NULL); 
 			return;
 		}
 		else if	(t1->base.type != t2->base.type)
 		{
-			dbg_note(NULL, "[TimeSeries:23]", NULL); 
+			log_note(NULL, "[TimeSeries:23]", NULL); 
 			return;
 		}
 
@@ -84,7 +84,7 @@ void ts_assign (EfiVirFunc *fptr, TimeSeries *t1,
 
 	if	(func == NULL)
 	{
-		dbg_note(NULL, "[TimeSeries:24]", NULL); 
+		log_note(NULL, "[TimeSeries:24]", NULL); 
 		return;
 	}
 
@@ -107,7 +107,7 @@ TimeSeries *ts_func (EfiVirFunc *fptr, TimeSeries *t1)
 
 	if	(func == NULL)
 	{
-		dbg_note(NULL, "[TimeSeries:21]", NULL); 
+		log_note(NULL, "[TimeSeries:21]", NULL); 
 		return NULL;
 	}
 
@@ -148,12 +148,12 @@ TimeSeries *ts_term (EfiVirFunc *fptr,
 	{
 		if	((t2 = Val_TimeSeries(arg2)) == NULL)
 		{
-			dbg_note(NULL, "[TimeSeries:22]", NULL); 
+			log_note(NULL, "[TimeSeries:22]", NULL); 
 			return NULL;
 		}
 		else if	(t1 && t1->base.type != t2->base.type)
 		{
-			dbg_note(NULL, "[TimeSeries:23]", NULL); 
+			log_note(NULL, "[TimeSeries:23]", NULL); 
 			return NULL;
 		}
 	}
@@ -167,7 +167,7 @@ TimeSeries *ts_term (EfiVirFunc *fptr,
 
 	if	(func == NULL)
 	{
-		dbg_note(NULL, "[TimeSeries:24]", NULL); 
+		log_note(NULL, "[TimeSeries:24]", NULL); 
 		return NULL;
 	}
 

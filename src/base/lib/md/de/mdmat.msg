@@ -96,3 +96,4 @@ Achsenindizes sind nicht kompatibel.\n
 302	$!: Klassifikationstabelle ist nicht initialisiert.\n
 303	$!: Datenmatrix nicht für Auszählungen vorbereitet.\n
 304	$!: Abweichender Datentyp für zusätzliche Klassifikationenen.\n
+305	$!: Datumsbereich $0: Unerwartetes Zeichen $1.\n

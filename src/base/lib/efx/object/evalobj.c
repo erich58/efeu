@@ -48,7 +48,7 @@ EfiObj *EvalObj(EfiObj *x, EfiType *type)
 
 			if	(x == y)
 			{
-				dbg_note(NULL, "[efmain:137]",
+				log_note(NULL, "[efmain:137]",
 					"s", x->type->name);
 				UnrefObj(x);
 				x = NULL;
