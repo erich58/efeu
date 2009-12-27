@@ -144,7 +144,7 @@ int main (int narg, char **arg)
 	PgmName = arg[0];
 
 #ifdef	EFEUCFG
-	SetVersion("$Id: unblock.c,v 1.4 2008-04-16 18:19:06 ef Exp $");
+	SetVersion(EFEU_VERSION);
 	ParseCommand(&narg, arg);
 #else
 	if	(narg < 2 || narg > 3)

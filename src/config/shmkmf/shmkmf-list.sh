@@ -21,7 +21,7 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 # $pconfig
-# Version="$Id: shmkmf-list.sh,v 1.2 2009-03-25 21:23:25 ef Exp $"
+# Version=":VN:"
 #
 # :dir |
 #	:*:name of the main directory
@@ -36,7 +36,7 @@ EOF
 
 case "$1" in
 -\?|--help*)	usage $1; exit 0;;
---version)	efeuman -- $0 $1 || grep 'Version="[$]Id:' $0; exit 0;;
+--version)	efeuman -- $0 $1 || grep 'Version[=]' $0; exit 0;;
 esac
 
 if	[ $# -ne 1 ]

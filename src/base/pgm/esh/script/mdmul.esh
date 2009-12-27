@@ -24,7 +24,6 @@ If not, write to the Free Software Foundation, Inc.,
 PrintListDelim = "\t";
 
 pconfig !
-Version = "$Id: mdmul.esh,v 1.14 2008-02-01 16:16:34 ef Exp $"
 PrintMode = true
 MapMode = false
 

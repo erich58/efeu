@@ -21,7 +21,7 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 # $pconfig
-# Version="$Id: efeu-magic.sh,v 1.6 2008-04-06 16:06:35 ef Exp $"
+# Version=":VN:"
 # :dir |
 #	:*:directory with magic file
 #	:de:Verzeichnis mit Magic-File
@@ -33,7 +33,7 @@ usage ()
 
 case "$1" in
 -\?|--help*)	usage $1; exit 0;;
---version)	efeuman -- $0 $1 || grep 'Version="[$]Id:' $0; exit 0;;
+--version)	efeuman -- $0 $1 || grep 'Version[=]' $0; exit 0;;
 esac
 
 if [ $# -ne 1 ]; then

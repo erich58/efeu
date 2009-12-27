@@ -21,7 +21,7 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 # $pconfig
-# Version="$Id: dircmp.sh,v 1.6 2008-09-30 20:40:29 ef Exp $"
+# Version=":VN:"
 # l|
 #	:*:show all different characters (cmp -l)
 #	:de:Ausgabe aller abweichenden Bytes (cmp -l)
@@ -51,7 +51,7 @@ usage ()
 
 case "$1" in
 -\?|--help*)	usage $1; exit 0;;
---version)	efeuman -- $0 $1 || grep 'Version="[$]Id:' $0; exit 0;;
+--version)	efeuman -- $0 $1 || grep 'Version[=]' $0; exit 0;;
 esac
 
 # $Description

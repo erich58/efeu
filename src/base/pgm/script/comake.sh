@@ -1,6 +1,6 @@
 #!/bin/sh
 # :*:calling make in corresponding build directory
-# :de:Make im korriespondierendem build-Verzeichnis aufrufen
+# :de:Make im korriespondierenden build-Verzeichnis aufrufen
 #
 # $Copyright (C) 2008 Erich Frühstück
 # This file is part of EFEU.
@@ -21,7 +21,7 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 # $pconfig
-# Version="$Id: comake.sh,v 1.2 2009-10-16 20:43:35 ef Exp $"
+# Version=":VN:"
 # t|
 #	:*:run make in top directory
 #	:de:make im Hauptverzeichnis aufrufen
@@ -48,6 +48,11 @@ usage ()
 usage: $0 [-tvn] [-s sub] [--] [make-parameter]
 EOF
 }
+
+case "$1" in
+-\?|--help*)	usage $1; exit 0;;
+--version)	efeuman -- $0 $1 || grep 'Version[=]' $0; exit 0;;
+esac
 
 # parse command args
 

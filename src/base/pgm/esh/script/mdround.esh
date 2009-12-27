@@ -25,7 +25,6 @@ double Value = 1.;
 PrintListDelim = "\t";
 
 pconfig !
-Version = "$Id: mdround.esh,v 1.11 2008-02-01 16:16:34 ef Exp $"
 PrintMode = true
 MapMode = false
 

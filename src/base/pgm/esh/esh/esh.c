@@ -44,7 +44,7 @@ If not, write to the Free Software Foundation, Inc.,
 int main (int narg, char **arg)
 {
 	SetProgName(arg[0]);
-	SetVersion("$Id: esh.c,v 1.19 2008-11-02 15:40:31 ef Exp $");
+	SetVersion(EFEU_VERSION);
 
 	SetupStd();
 	SetupUtil();

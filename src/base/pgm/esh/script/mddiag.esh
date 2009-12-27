@@ -24,7 +24,6 @@ If not, write to the Free Software Foundation, Inc.,
 PrintListDelim = "\t";
 
 pconfig !
-Version = "$Id: mddiag.esh,v 1.11 2008-02-01 16:25:58 ef Exp $"
 PrintMode = true
 MapMode = false
 Axis = "#1"

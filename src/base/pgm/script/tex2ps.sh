@@ -21,7 +21,7 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 # $pconfig
-# Version="$Id: tex2ps.sh,v 1.12 2009-05-15 20:15:46 ef Exp $"
+# Version=":VN:"
 # q |
 #	:*:landscape
 #	:de:Landscape
@@ -47,7 +47,7 @@ EOF
 
 case "$1" in
 -\?|--help*)	usage $1; exit 0;;
---version)	efeuman -- $0 $1 || grep 'Version="[$]Id:' $0; exit 0;;
+--version)	efeuman -- $0 $1 || grep 'Version[=]' $0; exit 0;;
 esac
 
 #	parse command line

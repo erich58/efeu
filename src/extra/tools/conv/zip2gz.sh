@@ -21,7 +21,7 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 # $pconfig
-# Version="$Id: zip2gz.sh,v 1.1 2008-03-02 15:49:51 ef Exp $"
+# Version=":VN:"
 # a|
 #	:*:get data in text mode (default)
 #	:de:Daten im Textmodus auslesen (default)
@@ -45,7 +45,7 @@ usage ()
 
 case "$1" in
 -\?|--help*)	usage $1; exit 0;;
---version)	efeuman -- $0 $1 || grep 'Version="[$]Id:' $0; exit 0;;
+--version)	efeuman -- $0 $1 || grep 'Version[=]' $0; exit 0;;
 esac
 
 # $Description

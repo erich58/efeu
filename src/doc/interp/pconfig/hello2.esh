@@ -6,7 +6,7 @@ $Copyright (C) 2002 Erich Frühstück
 */
 
 pconfig !
-Version = "$Id: hello2.esh,v 1.2 2009-10-18 07:56:33 ef Exp $"
+Version = "hello2.esh 1.0"
 
 Format = "%s"
 	:*:format specification

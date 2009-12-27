@@ -16,7 +16,7 @@
 int main (int narg, char **arg)
 {
 	SetProgName(arg[0]);
-	SetVersion("$Id: pixmap.c,v 1.5 2002-11-13 06:18:50 ef Exp $");
+	SetVersion(EFEU_VERSION);
 
 	SetupStd();
 	SetupUtil();

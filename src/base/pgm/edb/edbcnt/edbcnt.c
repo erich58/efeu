@@ -268,7 +268,7 @@ int main (int narg, char **arg)
 	char *p;
 
 	SetProgName(arg[0]);
-	SetVersion("$Id: edbcnt.c,v 1.17 2009-09-27 05:43:09 ef Exp $");
+	SetVersion(EFEU_VERSION);
 	SetupStd();
 	SetupUtil();
 	SetupPreproc();

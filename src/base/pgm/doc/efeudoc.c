@@ -101,7 +101,7 @@ int main (int narg, char **arg)
 	char *p;
 	int i;
 
-	SetVersion("$Id: efeudoc.c,v 1.37 2009-09-27 05:43:09 ef Exp $");
+	SetVersion(EFEU_VERSION);
 	SetProgName(arg[0]);
 	CFGPath = mkpath(".", NULL, "lib/efeudoc", NULL);
 	SetupDoc();

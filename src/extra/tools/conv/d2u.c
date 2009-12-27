@@ -203,7 +203,7 @@ int main (int argc, char **argv)
 	int stamp;
 
 	SetProgName(argv[0]);
-	SetVersion("$Id: d2u.c,v 1.6 2009-09-27 05:45:45 ef Exp $");
+	SetVersion(EFEU_VERSION);
 	ParseCommand(&argc, argv);
 	check = GetFlagResource("CheckOnly");
 	stamp = GetFlagResource("Timestamp");

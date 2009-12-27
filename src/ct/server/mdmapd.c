@@ -67,7 +67,7 @@ int main (int argc, char **argv)
 	/*
 	EfeuConfig("standalone");
 	*/
-	SetVersion("$Id: mdmapd.c,v 1.7 2009-09-27 05:46:13 ef Exp $");
+	SetVersion(EFEU_VERSION);
 	SetupStd();
 	SetupUtil();
 

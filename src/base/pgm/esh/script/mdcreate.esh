@@ -24,7 +24,6 @@ If not, write to the Free Software Foundation, Inc.,
 PrintListDelim = "\t";
 
 pconfig !
-Version = "$Id: mdcreate.esh,v 1.10 2007-10-12 19:15:00 ef Exp $"
 PrintMode = true
 MapMode = false
 

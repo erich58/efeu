@@ -78,7 +78,7 @@ cat << EOF
 # bei der Installation von EFEU generiert.
 
 # \$pconfig
-# Version="\$Id: efeucc.gencmd,v 1.6 2008-04-16 19:24:46 ef Exp $"
+# Version="$VN"
 # ::arg(s) |
 #	:*:cc options and arguments
 #	:de:cc Optionen und Argumente
@@ -90,7 +90,7 @@ usage ()
 
 case "\$1" in
 -\\?|--help*)	usage \$1; exit 0;;
---version)	efeuman -- \$0 \$1 || grep 'Version="[\$]Id:' \$0; exit 0;;
+--version)	efeuman -- \$0 \$1 || grep 'Version[=]' \$0; exit 0;;
 esac
 
 # \$Description
@@ -107,5 +107,5 @@ esac
 # cc(1).
 
 LD_RUN_PATH="\$LD_RUN_PATH:$top/lib"; export LD_RUN_PATH
-exec $CC -D_XOPEN_SOURCE -I$top/include -L$top/lib \$@
+exec $CC -D_XOPEN_SOURCE -I$top/include -L$top/lib "\$@"
 EOF

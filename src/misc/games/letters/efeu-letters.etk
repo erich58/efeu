@@ -22,7 +22,6 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 pconfig !
-Version = "$Id: efeu-letters.etk,v 1.10 2008-04-16 17:49:01 ef Exp $"
 Dir: set "$(fsearch(mkpath(\"share\"), \"eletters\"):%s)"
 Audio = false
 DisplayHourglass = false

@@ -24,7 +24,6 @@ If not, write to the Free Software Foundation, Inc.,
 Date::fmt = "%d.%m.%Y";
 
 pconfig !
-Version = "$Id: edbcat.esh,v 1.5 2008-09-07 20:34:41 ef Exp $"
 PrintMode = NULL
 PreFilter = NULL
 PostFilter = NULL

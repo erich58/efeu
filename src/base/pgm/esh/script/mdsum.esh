@@ -22,8 +22,6 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 pconfig !
-Version = "$Id: mdsum.esh,v 1.10 2008-02-01 16:16:34 ef Exp $"
-
 r | Reduce = true
 	:*:remove singular axis
 	:de:Entfernen von singulären Achsen

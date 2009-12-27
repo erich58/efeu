@@ -44,12 +44,17 @@ include dir.smh
 # d:dep |
 #	:*:expands depend list by <dep>.
 #	:de:ergänzt die Abhängigkeiten um <dep>.
+# s:subst |
+#	:*:substitution statetement in the form of <=key=repl=>, where <=> is
+#	an arbitrary delimiter.
+#	:de:Ersetzungsanweisung der Form <=key=repl=>, wobei für <=> ein
+#	beliebiges Trennzeichen verwendet werden kann.
 # m:mode |
 #	:*:set the permissions of target to the given <mode>.
 #	:de:setzt die Zugriffsrechte für das Ziel entsprechend von <mode>.
 #	Vergleiche dazu \mref\{chmod(1)\}.
 # /%*=*/%name=repl |
-#	:*:substituten rule, passed to |mf_rule|.
+#	:*:substitution rule, passed to |mf_rule|.
 #	See \mref\{rule.smh(7)\} for details.
 #	:de:definiert eine Ersetzungsregel, die an |mf_rule| weitergereicht
 #	wird.
@@ -82,26 +87,33 @@ include dir.smh
 # @arglist
 #
 # :*:
-# Normally |cp| is used to create the target file. If <cmd> is given,
-# the following command line is used to create the target:
+# Normally |cat| or |sed| (in conjunction with option |-s|) is used to create
+# the target file. If <cmd> is given, the following command line is used to
+# create the target:
 #	<cmd> <src> <arg(s)> |> $@|
+# In this case option |-s| is ignored.
 # :de:
-# Im Normalfall wird |cp| zur Installation der Datei verwendet, bei Verwendung
-# von <cmd> kann aber ein beliebiger Befehl zur Erzeugung der
-# Zieldatei verwendet werden. Die generierte Befehlszeile hat die Form:
+# Im Normalfall wird |cat| oder |sed| (in Verbindung  mit option |-s|) zur
+# Installation der Datei verwendet, bei Verwendung von <cmd> kann aber ein
+# beliebiger Befehl zur Erzeugung der Zieldatei verwendet werden. Die
+# generierte Befehlszeile hat die Form:
 #	<cmd> <src> <arg(s)> |> $@|
+# In diesem Fall wird die Option |-s| ignoriert.
 
 mf_file ()
 {
+	_file_vn=""
 	_file_flg="-a"
 	_file_dep=
 	_file_mode=
+	_file_subst=
 
 	while [ -n "$1" ]
 	do
 		case "$1" in
 		-n)	_file_flg=""; shift 1;;
 		-i)	_file_flg="$_file_flg $1"; shift 1;;
+		-s)	_file_subst="$_file_subst -e 's$2'"; shift 2;;
 		-[AC])	_file_flg="$_file_flg $1 $2"; shift 2;;
 		-[AC]*)	_file_flg="$_file_flg $1"; shift 1;;
 		%*=*)	_file_flg="$_file_flg $1"; shift 1;;
@@ -121,9 +133,11 @@ mf_file ()
 	if [ "$#" -gt 0 ]; then
 		_file_cmd="$1 $_file_src"
 		shift;
-		_file_cmd="$_file_cmd $* >"
+		_file_cmd="$_file_cmd $*"
+	elif [ -n "$_file_subst" ]; then
+		_file_cmd="sed$_file_subst $_file_src"
 	else
-		_file_cmd="cp -f $_file_src"
+		_file_cmd="cat $_file_src"
 	fi
 
 	if [ -n "$_file_mode" ]; then
@@ -135,7 +149,7 @@ mf_file ()
 	fi
 
 	mf_rule $_file_flg "$_file_tg" "$_file_src$_file_dep" \
-		"$_file_pre$_file_cmd \$@$_file_post"
+		"$_file_pre$_file_cmd > \$@$_file_post"
 }
 
 # $Description

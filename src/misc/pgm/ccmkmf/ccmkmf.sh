@@ -21,7 +21,7 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 # $pconfig
-# Version="$Id: ccmkmf.sh,v 1.7 2009-10-18 07:56:35 ef Exp $"
+# Version=":VN:"
 # n |
 #	:*:no filter
 #	:de:Keinen Ausgabefilter
@@ -66,7 +66,7 @@ EOF
 
 case "$1" in
 -\?|--help*)	usage $1; exit 0;;
---version)	efeuman -- $0 $1 || grep 'Version="[$]Id:'; exit 0;;
+--version)	efeuman -- $0 $1 || grep 'Version[=]'; exit 0;;
 esac
 
 # $Description

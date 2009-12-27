@@ -21,7 +21,7 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 # $pconfig
-# Version="$Id: shmkmf.sh,v 1.92 2009-10-18 07:50:48 ef Exp $"
+# Version=":VN:"
 # Config=Config.make
 # Makefile=Makefile
 #
@@ -70,7 +70,7 @@ EOF
 
 case "$1" in
 -\?|--help*)	_shmkmf_usage $1; exit 0;;
---version)	efeuman -- $0 $1 || grep 'Version="[$]Id:' $0; exit 0;;
+--version)	efeuman -- $0 $1 || grep 'Version[=]' $0; exit 0;;
 esac
 
 # set search path

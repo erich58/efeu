@@ -21,7 +21,7 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 # $pconfig
-# Version="$Id: efeu-vimrc.sh,v 1.9 2008-08-02 08:13:47 ef Exp $"
+# Version=":VN:"
 # :dir|
 #	:*:directory with configuration files
 #	:de:Verzeichnis mit Konfigurationsdateien
@@ -33,7 +33,7 @@ usage ()
 
 case "$1" in
 -\?|--help*)	usage $1; exit 0;;
---version)	efeuman -- $0 $1 || grep 'Version="[$]Id:'; exit 0;;
+--version)	efeuman -- $0 $1 || grep 'Version[=]'; exit 0;;
 esac
 
 # $SeeAlso

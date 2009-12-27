@@ -1,33 +1,33 @@
-Version 3.3
+EFEU 3.3
 
 *	Conversion from cvs to mercurial.
 *	Rework on logging and debugging concept.
 
-Version 3.2-6
+EFEU 3.2-6
 
 *	Fixed a bug in pasting axes of a data cube.
 
-Version 3.2-5
+EFEU 3.2-5
 
 *	Minor enhancements in document creation.
 *	Minor corrections in documentations.
 
-Version 3.2-4
+EFEU 3.2-4
 
 *	Minor enhancements in makefile creation.
 *	Minor enhancements in document creation.
 *	Minor corrections in documentations.
 
-Version 3.2-3
+EFEU 3.2-3
 
 *	Enhancements to |efeudoc| for better representation of tabulars.
 *	Alternative output functions to IO and SBUF structures.
 
-Version 3.2-2
+EFEU 3.2-2
 
 *	Enhancements in makefile creation.
 
-Version 3.2-1
+EFEU 3.2-1
 
 *	Run time creation of path variables insteat of hardcoded values.
 *	Added install rules to the main Makefile.
@@ -39,7 +39,7 @@ Version 3.2-1
 *	New data structure |StringPool| for efficient storing of
 	related strings.
 
-Version 3.1
+EFEU 3.1
 
 *	Enhancements to the EDB concept.
 *	Changed default suffix for |efeudoc| from .doc to .eds to avoid
@@ -49,7 +49,7 @@ Version 3.1
 	structures, better support for bitfields. Additional tools to create
 	sources for data types implemented in C and plugable in EFI.
 
-Version 3.0-1
+EFEU 3.0-1
 
 *	Added fixed size integer types and 64-Bit integer arithmetic.
 *	Added configuration checks to be independent of missing
@@ -68,7 +68,7 @@ Version 3.0-1
 *	Fixed updating of extended lvalues in variable argument lists.
 *	Modified assignarg to do not separate arguments inside braces.
 
-Version 2.0
+EFEU 2.0
 
 *	Fixed incompatibilities of |pp2dep| with gcc 3.2
 *	Renamed all data types ending in |_t| to avoid
@@ -80,7 +80,7 @@ Version 2.0
 *	Replaced |tmpfile()| with string buffers in |ppfilter|.
 *	Rework on EFEU configuration.
 
-Version 1.1-1
+EFEU 1.1-1
 
 *	Fixed incorrect representation of negative long values.
 *	New keyword |enum| for enum data types.
@@ -91,7 +91,7 @@ Version 1.1-1
 *	New operator |[|<expr>|]| for expressions - replacement
 	for |expression| keyword.
 
-Version 1.1
+EFEU 1.1
 
 *	Added scripts |dircpy| and |dircmp| to distribution.
 *	Enhancements for manpage tools.
@@ -103,13 +103,13 @@ Version 1.1
 *	Added command |rawtape| to distribution.
 *	New function |GetFormat()| to get/replace message formats.
 
-Version 1.0-5
+EFEU 1.0-5
 
 *	|efeudoc|: added missing |io_close()| to |Doc_input()| (no more
 	zombies on processing the user reference manual).
 *	Description of findgrep reworked.
 
-Version 1.0-4
+EFEU 1.0-4
 
 *	New documentation: user reference manual
 *	|efeudoc|: adapted some formats for HTML output to get
@@ -117,24 +117,24 @@ Version 1.0-4
 	bootstrap resource to get HTML-documents created in the
 	correct language.
 
-Version 1.0-3
+EFEU 1.0-3
 
 *	Allow the use of a long option name which is unique to the
 	first characters of another long option name (needed to
 	make |mdprint| compatible to the old command configuration).
 
-Version 1.0-2
+EFEU 1.0-2
 
 *	Added |CHANGELOG| to distribution.
 *	Fixed a bug in |src/base/lib/efm/procenv/CmdParEval.c| to
 	allow the use of a resource variable by redefining itself.
 
-Version 1.0-1
+EFEU 1.0-1
 
 *	Fixed a bug in |src/base/lib/efx/vtab/var.c|: |DelVar()| must check
 	if some other function clears the data buffer of |Var_t|.
 *	Added header |<string.h>| to some files (needed by some libc versions).
 
-Version 1.0
+EFEU 1.0
 
 *	First release of efeu.

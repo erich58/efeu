@@ -22,7 +22,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 pconfig !
-Version = "$Id: edf.esh,v 1.10 2007-01-07 12:21:43 ef Exp $"
+Version = ":VN:"
 Unit = 1000
 LBL_DEV = Filesystem
 LBL_SIZE = :*:size:de:Größe MB

@@ -24,8 +24,6 @@ If not, write to the Free Software Foundation, Inc.,
 bool AllFiles = false;
 
 pconfig !
-Version = "$Id: edbfile.esh,v 1.1 2009-10-12 23:39:13 ef Exp $"
-
 a | :eval "AllFiles = true;"
 	listet alle Dateien auf.
 +file(s) |

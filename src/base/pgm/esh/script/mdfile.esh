@@ -22,7 +22,6 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 pconfig !
-Version = "$Id: mdfile.esh,v 1.10 2007-10-17 15:57:36 ef Exp $"
 AllStat = false
 Mode = NULL
 

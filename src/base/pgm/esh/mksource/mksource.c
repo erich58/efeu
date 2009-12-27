@@ -448,7 +448,7 @@ int main (int narg, char **arg)
 	char *flags;
 
 	ChangeLocale("C");
-	SetVersion("$Id: mksource.c,v 1.46 2009-10-17 21:18:03 ef Exp $");
+	SetVersion(EFEU_VERSION);
 	SetProgName(arg[0]);
 	bootstrap = mtabcat(" ", arg, narg);
 

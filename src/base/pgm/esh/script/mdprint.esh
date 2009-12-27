@@ -26,7 +26,6 @@ fmt_float = "%*.*f";
 float_prec = 2;
 
 pconfig !
-Version = "$Id: mdprint.esh,v 1.19 2008-02-01 16:16:34 ef Exp $"
 Mark = "#-1"
 mode = "std"
 Locale = "en"

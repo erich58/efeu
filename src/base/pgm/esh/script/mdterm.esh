@@ -28,7 +28,6 @@ fmt_float = "%*.*f";
 float_prec = 2;
 
 pconfig !
-Version = "$Id: mdterm.esh,v 1.15 2008-02-01 16:16:34 ef Exp $"
 PrintMode = true
 MapMode = false
 

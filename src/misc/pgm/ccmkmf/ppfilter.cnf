@@ -19,7 +19,7 @@
 # If not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-Version = "$Id: ppfilter.cnf,v 1.1 2008-04-09 19:22:03 ef Exp $"
+Version = ":VN:"
 
 c|
 	:*:converts LF to CR/LF

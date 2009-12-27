@@ -33,7 +33,7 @@ de*)
 esac
 
 # $pconfig
-# Version="$Id: shmkmf-config.sh,v 1.4 2009-02-17 21:33:24 ef Exp $"
+# Version=":VN:"
 # v|
 #	:*:display this help and exit
 #	:de:Fehlermeldungen ausgeben
@@ -72,7 +72,7 @@ usage ()
 
 case "$1" in
 -\?|--help*)	usage $1; exit 0;;
---version)	efeuman -- $0 $1 || grep 'Version="[$]Id:' $0; exit 0;;
+--version)	efeuman -- $0 $1 || grep 'Version[=]' $0; exit 0;;
 esac
 
 tmp=/tmp/efeu$$

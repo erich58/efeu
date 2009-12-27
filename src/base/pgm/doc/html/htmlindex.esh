@@ -22,7 +22,6 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 pconfig !
-Version = "$Id: htmlindex.esh,v 1.11 2008-06-06 04:15:49 ef Exp $"
 Output = "index.html";
 MAGIC = "HTMLINDEX";
 

@@ -68,7 +68,7 @@ int main (int argc, char **argv)
 	int k;
 
 	SetProgName(argv[0]);
-	SetVersion("$Id: zstamp.c,v 1.12 2009-09-27 05:45:45 ef Exp $");
+	SetVersion(EFEU_VERSION);
 	ParseCommand(&argc, argv);
 	sync = GetFlagResource("SyncStamp");
 	clear = GetFlagResource("ClearStamp");

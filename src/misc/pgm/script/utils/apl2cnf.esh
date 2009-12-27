@@ -3,7 +3,7 @@ bool International = true;
 
 pconfig !
 Ident = "Alte Kommondosyntaxdateien konvertieren"
-Version = "$Revision: 1.5 $"
+Version = ":VN:"
 Copyright = "(c) 2001 Erich Frühstück"
 
 x | :eval International = false

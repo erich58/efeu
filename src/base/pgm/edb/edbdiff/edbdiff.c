@@ -304,7 +304,7 @@ int main (int narg, char **arg)
 	int nd, ne;
 
 	SetProgName(arg[0]);
-	SetVersion("$Id: edbdiff.c,v 1.8 2009-09-27 05:43:09 ef Exp $");
+	SetVersion(EFEU_VERSION);
 	SetupStd();
 	SetupUtil();
 	SetupPreproc();

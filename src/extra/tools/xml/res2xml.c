@@ -31,7 +31,7 @@ If not, write to the Free Software Foundation, Inc.,
 int main (int argc, char **argv)
 {
 	SetProgName(argv[0]);
-	SetVersion("$Id: res2xml.c,v 1.1 2008-07-17 03:48:39 ef Exp $");
+	SetVersion(EFEU_VERSION);
 	ParseCommand(&argc, argv);
 	return EXIT_SUCCESS;
 }

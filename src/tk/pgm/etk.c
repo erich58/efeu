@@ -41,7 +41,7 @@ If not, write to the Free Software Foundation, Inc.,
 int main(int narg, char **arg)
 {
 	SetProgName(arg[0]);
-	SetVersion("$Id: etk.c,v 1.7 2002-11-13 06:18:53 ef Exp $");
+	SetVersion(EFEU_VERSION);
 
 	SetupStd();
 	SetupUtil();

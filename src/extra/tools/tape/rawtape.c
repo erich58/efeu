@@ -224,7 +224,7 @@ int main (int narg, char **arg)
 	PgmName = arg[0];
 
 #ifdef	EFEUCFG
-	SetVersion("$Id: rawtape.c,v 1.10 2008-04-16 18:19:06 ef Exp $");
+	SetVersion(EFEU_VERSION);
 	ParseCommand(&narg, arg);
 	varblock = GetFlagResource("varblock");
 	recover = GetFlagResource("recover");

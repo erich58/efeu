@@ -24,7 +24,6 @@ If not, write to the Free Software Foundation, Inc.,
 Date::fmt = "%d.%m.%Y";
 
 pconfig !
-Version = "$Id: edb.esh,v 1.19 2008-09-07 20:34:41 ef Exp $"
 PrintHead = true
 PrintMode = NULL
 Filter = NULL
