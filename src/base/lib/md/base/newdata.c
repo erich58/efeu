@@ -1,6 +1,5 @@
 /*	Datenwerte in Liste konvertieren, Neue Version
 	(c) 1995 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
 */
 
 #include <EFEU/mdmat.h>
@@ -190,9 +189,9 @@ static void add_data(EVALPAR *par, void *data, void *base)
 		{
 			obj = ptr2Obj(NULL);
 		}
-		else	obj = MakeRetVal(par->func, arg);
+		else	obj = ConstRetVal(par->func, arg);
 	}
-	else	obj = LvalObj(par->type, NULL, data);
+	else	obj = LvalObj(&Lval_ptr, par->type, data);
 
 	if	(obj)
 	{

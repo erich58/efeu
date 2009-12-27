@@ -1,12 +1,28 @@
-/*	Pipe - IO-Struktur
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Pipe - IO-Struktur
 
-	Version 0.4
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 
 #include <EFEU/io.h>
+#include <EFEU/MakeDepend.h>
 #include <ctype.h>
 
 #if	QC
@@ -34,9 +50,18 @@ io_t *io_popen(const char *proc, const char *mode)
 
 	switch (*mode)
 	{
-	case 'r':	file = popen(proc, "r"); break;
-	case 'w':	file = popen(proc, "w"); break;
-	default:	file = NULL; break;
+	case 'r':
+		file = popen(proc, "r");
+		break;
+	case 'w':
+		if	(MakeDepend && strchr(mode, 'd'))
+			return NULL;
+
+		file = popen(proc, "w");
+		break;
+	default:
+		file = NULL;
+		break;
 	}
 
 	if	(!file)	return NULL;
@@ -91,12 +116,12 @@ int pclose(FILE *file)
 			if	(entry->proc)
 			{
 				system(entry->proc);
-				FREE(entry->proc);
+				memfree(entry->proc);
 			}
 
 			remove(entry->name);
-			FREE(entry->name);
-			FREE(entry);
+			memfree(entry->name);
+			memfree(entry);
 			return 0;
 		}
 		else	ptr = &(*ptr)->next;
@@ -126,7 +151,7 @@ FILE *popen(const char *name, const char *mode)
 
 		p = mstrcat(" > ", name, key->name, NULL);
 		system(p);
-		FREE(p);
+		memfree(p);
 		key->file = fileopen(key->name, "r");
 		break;
 

@@ -1,8 +1,5 @@
 /*	Auflisten von Selektionsdefinitionen
 	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
-
-	Version 2
 */
 
 #include <EFEU/mdmat.h>
@@ -11,6 +8,10 @@
 
 #define	MAX_COLUMNS	64	/* Max. Spaltenzahl */
 #define	WIDTH		16	/* Breite für Zusammenfassung */
+
+#define	LBL_CLASS	\
+	":*:grouping classes" \
+	":de:Selektionsklassen"
 
 #define	HEAD	getmsg(MSG_MDMAT, 1, "#Name\tDIM\tDESCRIPTION\n")
 
@@ -91,7 +92,7 @@ void MdShowClass(io_t *io, xtab_t *tab, const char *plist)
 	{
 		dim = strsplit(plist, ",;%s", &list);
 		xwalk(tab, (visit_t) show_long);
-		FREE(list);
+		memfree(list);
 	}
 	else	xwalk(tab, (visit_t) show_short);
 }
@@ -112,13 +113,13 @@ static InfoNode_t *class_root = NULL;
 
 static int add_klass(MdClass_t *entry)
 {
-	AddInfo(class_root, entry->name, mstrcpy(entry->desc),
+	AddInfo(class_root, entry->name, entry->desc,
 		print_class, entry);
 	return 1;
 }
 
 void MdClassInfo (InfoNode_t *info, xtab_t *tab)
 {
-	class_root = AddInfo(info, "class", "Selektionsklassen", NULL, NULL);
+	class_root = AddInfo(info, "class", LBL_CLASS, NULL, NULL);
 	xwalk(tab, (visit_t) add_klass);
 }

@@ -1,4 +1,6 @@
-/*	EFEU-Basisbibliotheken und programe
+/*
+:*:	EFEU basic libraries and commands
+:de:	EFEU-Basisbibliotheken und programe
 */
 
 #include <d2m.cfg>
@@ -7,38 +9,75 @@ TOPDIR = _EFEU_TOP
 BINDIR = $(TOPDIR)/bin
 LIBDIR = $(TOPDIR)/lib
 APPDIR = $(TOPDIR)/lib/efeu
+DOCDIR = $(TOPDIR)/doc
 
-DIR2MAKE = dir2make -B $(BINDIR) -L $(LIBDIR) -A $(APPDIR)
+DIR2MAKE = dir2make -B $(BINDIR) -L $(LIBDIR) -A $(APPDIR) -D $(DOCDIR)
+
+#define DE_Doc(name,desc,src,dep)	\
+SubMakeRule(Concat(de-,name),desc,src,dep,\
+dir2make -n -D $(DOCDIR)/de -p --lang=de -d name)
 
 BaseInc = -H $(TOPDIR)/include/EFEU
 MathInc = -H $(TOPDIR)/include/Math
 
 #if	__linux__
-SubMake(Linux,Lokale Programme für Linux,arch/Linux,NullArg,NullArg)
+#if	LANG_de
+SubMake(Linux,"Linux spezifische Programme",arch/Linux,NullArg,NullArg)
+#else
+SubMake(Linux,"Linux specific commands",arch/Linux,NullArg,NullArg)
+#endif
 #endif
 
 #if	_AIX
-SubMake(aix,Lokale Programme für AIX,arch/aix,NullArg,NullArg)
+#if	LANG_de
+SubMake(aix,"AIX spezifische Programme",arch/aix,NullArg,NullArg)
+#else
+SubMake(aix,"AIX specific commands",arch/aix,NullArg,NullArg)
+#endif
 #endif
 
-SubMake(script,Shell-Scripts,pgm/script,NullArg,NullArg)
-SubMake(tools,Einfache Hilfsprogramme,pgm/tools,NullArg,NullArg)
+#if	LANG_de
+SubMake(script,"Shell-Scripts",pgm/script,NullArg,NullArg)
+#else
+SubMake(script,"shell scripts",pgm/script,NullArg,NullArg)
+#endif
 
-SubMake(efm,Basisbibliothek,lib/efm,$(BaseInc) -lefm,NullArg)
-SubMake(efx,Erweiterungsbibliothek,lib/efx,$(BaseInc) -lefx,efm)
-SubMake(iorl,Readline-Schnittstelle,lib/iorl,$(BaseInc) -liorl,efm efx)
-SubMake(md,Datenmatrix,lib/md,$(BaseInc) -lmd,efm efx)
-SubMake(efmath,Mathematische Hilfsfunktionen,lib/math,$(MathInc) -lefmath,efm efx)
+#if	LANG_de
+SubMake(efm,"Basisbibliothek",lib/efm,$(BaseInc) -lefm,NullArg)
+SubMake(iorl,"Readline-Schnittstelle",lib/iorl,$(BaseInc) -liorl,efm)
+SubMake(efx,"Erweiterungsbibliothek",lib/efx,$(BaseInc) -lefx,efm)
+SubMake(md,"Datenmatrix",lib/md,$(BaseInc) -lmd,efm efx)
+SubMake(efwin,"Fensterhilfsprogramme",lib/win,$(BaseInc) -l efwin,efm efx)
+SubMake(efmath,"Mathematische Hilfsfunktionen",lib/math,$(MathInc) -lefmath,efm efx)
+#else
+SubMake(efm,"basic libraries",lib/efm,$(BaseInc) -lefm,NullArg)
+SubMake(iorl,"readline interface",lib/iorl,$(BaseInc) -liorl,efm)
+SubMake(efx,"extension library",lib/efx,$(BaseInc) -lefx,efm)
+SubMake(md,"data cube library",lib/md,$(BaseInc) -lmd,efm efx)
+SubMake(efwin,"curses tools",lib/win,$(BaseInc) -l efwin,efm efx)
+SubMake(efmath,"mathematican functions",lib/math,$(MathInc) -lefmath,efm efx)
+#endif
 
-BASELIB=	efm efx md efmath
+BASELIB=	efm efx md efmath iorl
 
-SubMake(esh,"esh, mksource und Skripts",pgm/esh,NullArg,$(BASELIB) iorl)
-SubMake(texmerge,Dokumentgenerierung,pgm/texmerge,-x,$(BASELIB))
-SubMake(xprint,Druckerausgabe,pgm/xprint,NullArg,efm efx)
+#if	LANG_de
+SubMake(tools,"Einfache Hilfsprogramme",pgm/tools,NullArg,$(BASELIB))
+SubMake(esh,"esh, mksource und Scripts",pgm/esh,NullArg,$(BASELIB))
+SubMake(eis,"EFEU-Informationssystem",pgm/eis,NullArg,$(BASELIB))
+SubMake(doc,"Dokumentgenerator",pgm/doc,NullArg,$(BASELIB))
+#else
+SubMake(tools,"simple tools",pgm/tools,NullArg,$(BASELIB))
+SubMake(esh,"esh, mksource and scripts",pgm/esh,NullArg,$(BASELIB))
+SubMake(eis,"EFEU-information system",pgm/eis,NullArg,$(BASELIB))
+SubMake(doc,"document generator",pgm/doc,NullArg,$(BASELIB))
+#endif
 
-SubMake(pix,Pixelfiles,lib/pix,$(BaseInc) -lpix,efm efx)
-SubMake(efwin,Fensterhilfsprogramme,lib/win,$(BaseInc) -l efwin,efm efx)
-
-SubMake(eis,EFEU-Informationssystem,pgm/eis,NullArg,$(BASELIB))
-SubMake(other,Sonstige Hilfsprogramme,pgm/other,NullArg,$(BASELIB))
-SubMake(doc,Dokumentkonverter,pgm/doc,NullArg,$(BASELIB))
+#if	LANG_de
+DE_Doc(efm,"Handbuch zur efm-Programmbibliothek",lib/efm,doc)
+DE_Doc(iorl,"Handbuch zur Readline-Schnittstelle",lib/iorl,doc)
+DE_Doc(md,"Handbuch zur md-Programmbibliothek",lib/md,doc)
+#else
+DE_Doc(efm,"german documentation to efm library",lib/efm,doc)
+DE_Doc(iorl,"german documentation to readline interface",lib/iorl,doc)
+DE_Doc(md,"german documentation to md library",lib/md,doc)
+#endif

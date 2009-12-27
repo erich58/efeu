@@ -1,8 +1,23 @@
-/*	Makrosubstitution
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Makrosubstitution
 
-	Version 0.4
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/efmain.h>
@@ -150,7 +165,7 @@ int iocpy_macsub(io_t *in, io_t *out, int c, const char *arg, unsigned int flags
 	if	(mac == NULL || mac->lock)
 	{
 		n = io_puts(s, out);
-		FREE(s);
+		memfree(s);
 		return n;
 	}
 
@@ -167,8 +182,8 @@ int iocpy_macsub(io_t *in, io_t *out, int c, const char *arg, unsigned int flags
 		{
 			n = io_puts(s, out);
 			n += io_puts(delim, out);
-			FREE(s);
-			FREE(delim);
+			memfree(s);
+			memfree(delim);
 			return n;
 		}
 
@@ -179,7 +194,7 @@ int iocpy_macsub(io_t *in, io_t *out, int c, const char *arg, unsigned int flags
 	if	(mac->lock)
 	{
 		n = io_puts(s, out);
-		FREE(s);
+		memfree(s);
 		return n;
 	}
 
@@ -188,10 +203,10 @@ int iocpy_macsub(io_t *in, io_t *out, int c, const char *arg, unsigned int flags
 	mac->lock = 0;
 
 	for (i = 0; i < narg; i++)
-		FREE(macarg[i]);
+		memfree(macarg[i]);
 
-	FREE(macarg);
-	FREE(s);
+	memfree(macarg);
+	memfree(s);
 	return n;
 }
 

@@ -1,8 +1,23 @@
-/*	Polynom - Funktionen
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Polynom - Funktionen
 
-	Version 3.0
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/object.h>
@@ -151,8 +166,10 @@ static FuncDef_t fdef[] = {
 /*	Variablen
 */
 
-static Var_t vardef[] = {
-	{ "pndebug", &Type_bool, &pnreftype.debug },
+static VarDef_t vardef[] = {
+	{ "pndebug", &Type_bool, &pnreftype.debug,
+		":*:flag to control debuging of polynoms\n"
+		":de:Flag zum Debuggen von Polynomen\n" },
 };
 
 
@@ -160,5 +177,5 @@ void SetupPnom(void)
 {
 	AddType(&Type_pnom);
 	AddFuncDef(fdef, tabsize(fdef));
-	AddVar(NULL, vardef, tabsize(vardef));
+	AddVarDef(NULL, vardef, tabsize(vardef));
 }

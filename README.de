@@ -1,0 +1,136 @@
+\title	Willkommen zur EFEU Veröffentlichung
+\author	Erich Frühstück
+
+\sec	Enleitung
+
+Die Erich Frühstück Entwicklungs Umgebung wurde von Erich Frühstück
+im Rahmen seiner Projektarbeiten im Auftrag der
+<"Synthesis Forschung Gesellschaft m.b.H."> entwickelt.
+
+EFEU besteht aus:
+*	Entwicklungswerkzeugen,
+*	umfangreichen C Bibliotheken und
+*	Anwendungsprogrammen.
+
+\sec	Entwicklungswerkzeuge
+
+[mkmf]
+	generiert ein Makefile aus einem Imakefile analog zu
+	xmkmf (X11 development).
+[dir2make]
+	generiert ein Makefile direkt aus dem Sourcebaum.
+	Es werden nur wenige Konfigurationsparameter benötigt.
+	Alles andere wird automatisch von make durchgeführt,
+	wobei vollständige Abhängigkeitsdefinitionen generiert werden.
+	Falls eine Bibliothek erweitert wird, genügt es, die
+	Verzeichnisstruktur um die entsprechenden Sourcedatei zu
+	erweitern.
+[efeugen]
+	ruft make in einem globalen, durch die Umgebungsvariable
+	EFEUGEN definiertem, Generierungsverzeichnis auf.
+	In EFEU ist die generierung von Bibliotheken und Kommandos
+	vollständig von den Sourcen getrennt.
+[efeubuild]
+	generiert das Hauptmakefile zur Generierung und Installation
+	der Programme und Dateien.
+
+\sec	C Bibliotheken
+
+[efm]
+	ist die Basisbibliothek für EFEU Anwendungen. Hier folgt
+	ein kurzer Überblick:
+	*	Werkzeuge für eine robuste Speicherverwaltung.
+	*	Funktionen zum Zusammenhängen und Kopieren von
+		Zeichenketten mit Speicherzuteilung.
+	*	Buffer für dynamisch wachsende Zeichenketten und
+		Vektoren.
+	*	Datenstrukturen mit Referenzzähler und garbage collection.
+	*	Hilfsfunktionen zur Dateiverarbeitung, die die Angabe
+		einer Pipline anstelle eines Filenamens erlauben.
+		Automatische Implementation von
+		(De)Compressionsfiltern (gzip) in Abhängigkeit von
+		Filezusätzen.
+	*	Beinhaltet ein high level Interface zu Dateien,
+		Zeichenketten und allem von dem man lesen oder
+		in das man schreiben kenn.
+		Erlaubt die Kontrolle von spezifischen Möglichkeiten
+		der zugrundeliegenden Datenstrukturen. Ein- und
+		Ausgabefilter können auf einfache Weise dazugeschalten
+		werden.
+	*	Enhält Funktionen zur Programmkonfiguration.
+		Die Dokumentation der Kommandoargumente und Optionen ist
+		in die Deklaration integriert.
+[efx]
+	stellt den esh Interpreter (siehe Anwendungen) und einige
+	Erweiterungen zur Basisbibliothek zur Verfügung.
+[iorl]
+	stellt ein Interface zu readline zur Verfügung.
+[md]
+	enthält eine Reihe von Hilfsfunktionen zur Verarbeitung
+	von mehrdsimensionalen Datenmatrizen (Datenwürfeln).
+	Das `mdmat' Datenformat unterstützt Datenwürfel vom beliebigem
+	Datentype und ohne Dimensionsbegrenzung.
+	Die Bibliothek enthält auch Funktionen zum Auszählen von
+	Datenstrukturen.
+[efmath]
+	beinhaltet Funktionen für stuckweise Polynome und Zeitreihen.
+	Stellt Splineinterpolation und OLS-Schätzer zur verfügung.
+[efwin]
+	ist eine oberfläche zu curses. Die Funktionalität ist zur zeit
+	auf die Erfordernisse der Anwendungsprogramme beschränkt.
+	Aktuell wird diese Bibliothek nur von "eis" (siehe
+	Anwendungen) verwendet.
+[PG]
+	ist eine Oberfläche zu PostgreSQL als Modul für esh oder zur
+	direkten Verwendung in C Programmen.
+
+\sec	Anwendungsprogramme
+
+[esh]
+	ist ein Befehlsinterpreter mit einer Syntax ähnlich zu C/C++.
+	Kann auf vielfältige Art und Weise eingesetzt werden.
+	Der Anwendungsbereich beginnt bei einem Tischrechner (readline
+	interface) und endet bei komplexen Skripts.
+	Der Interprerer teilt sich Datenpointer direkt mit
+	C-Programmen. Er kann in C-Programmen zur Auswertung von
+	Konfigurationsdateien verwendet werden und er läßt sich leicht
+	mit eigenen C-Funktionen und Datentypen erweitern.
+[mksource]
+	verwendet den esh Interprerter um C Sourcen zu generieren.
+	In der EFEU Veröffentlichung finden sich keine Anwendungen,
+	aber dieses Werkzeug wird intensiv zur Datenanalyse bei Synthesis
+	eingesetzt.
+[efeudoc]
+	ist eine Dokumentgenerator mit verschiedenen Ausgabeformaten
+	(LaTeX, HTML, roff, ...). Der esh Interpreter wird in
+	Makrofunktionen verwendet und erlaubt die direkte Datenanalyse
+	und Tabellengenerierung aus Datenwürfeln im Dokument.
+[src2doc]
+	extrahiert Kommentare aus Sourcedateien zur weiterverarbeitung
+	mit efeudoc. Dieses Werkzeug erlaubt die Integration der
+	Dokumentation in den Sourcecode.
+[eis]
+	ist ein Informationssystem zum durchsuchen von ein Befehlen
+	eingebauten Informationen. Jede Form von Informationen kann
+	dargestellt werden, sofern das Programm eine
+	Darstellungsfunktion zur Verfügung stellt und sie Regristriert.
+	Es gibt eine curses basierende Version und eine cgi basierende
+	Version (Web Server) von eis.
+
+\sec	Installation von EFEU
+
+Lies die Installationshinweise in der Datei INSTALL.de oder
+rufe einfach make auf.
+
+\sec	Anmerkungen
+
+*	EFEU benötigt teTeX und readline development.
+*	Die aktuellen Dokumentationen sind in Deutsch, englische
+	Versionen werden kommen.
+*	Weitere Dokumentationen sind in arbeit.
+*	Diese Datei ist im efeudoc Format geschrieben.
+*	Lies die Sourcen und hab freude daran !
+
+Bitte melde Fehler in EFEU direkt dem Autor:
+
+Erich Frühstück <ef@synthesis.co.at>

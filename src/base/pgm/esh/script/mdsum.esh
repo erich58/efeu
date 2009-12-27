@@ -1,32 +1,61 @@
-Ident = "Achsen einer\nDatenmatrix\naufsummieren";
-Copyright = "(c) 1997 Erich Frühstück, A-1090 Wien, Währinger Straße 64/6";
-Version = "2";
+/*
+:*:	accumulate axis of data cube
+:de:	Achsen einer Datenmatrix aufsummieren
 
-bool PrintMode = true;
-bool Reduce = false;
-str VarDef = NULL;
-str Title = NULL;
-str Input = NULL;
-str Output = NULL;
-str SelDef = NULL;
+Copyright (C) 1997, 2001 Erich Frühstück
+This file is part of EFEU.
 
-PrintListDelim = "\t";
+EFEU is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
 
-PgmOpt("r", "Reduce=true", "Entfernen von singulären Achsen")
-PgmOpt("v [name=]var", "VarDef=paste(' ', VarDef, #1)", "Variablenselektion")
-PgmOpt("T titel", "Title=#1", "Titel der Ausgabedatei")
-PgmArg("ein", "Input=#1", "Name der Eingabedatei")
-PgmArg("aus", "Output=#1", "Name der Ausgabedatei")
-PgmXArg("*=*", "SelDef=paste(' ', SelDef, #1)", NULL)
-PgmOptArg("name=var", NULL, "Selektionsparameter")
-PgmVaArg("Name(n)", NULL, "Achsenbezeichner")
+EFEU is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
 
-loadarg;
+You should have received a copy of the GNU General Public
+License along with EFEU; see the file COPYING.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+*/
+
+pconfig !
+#if	Lang == "de"
+Ident = "Achsen einer Datenmatrix aufsummieren"
+#else
+Ident = "accumulate axis of data cube"
+#endif
+Version = "2"
+Copyright = "(c) 1997, 2001 Erich Frühstück"
+
+r | Reduce = true
+	:*:remove singulary axis
+	:de:Entfernen von singulären Achsen
+v:[name::]var | VarDef: append " "
+	:*:select type components
+	:de:Variablenselektion
+T:title | Title
+	:*:set title of output file
+	:de:Titel der Ausgabedatei setzen
+:in | Input
+	:*:input file name
+	:de:Name der Eingabedatei
+:out | Output
+	:*:output file name
+	:de:Name der Ausgabedatei
+/.*=.*/name=var | SelDef: append " "
+	:*:selection parameter
+	:de:Selektionsparameter
+*name(s) | 
+	:*:name of axis to cummulate
+	:de:Achsenbezeichner
+!
 
 mdmat md = mdload(Input, SelDef, VarDef);
 
-if	(Reduce)	md.reduce();
-if	(Title)		md.title = Title;
+if	(flagres("Reduce"))	md.reduce();
+if	(Title)			md.title = Title;
 
 sumaxis(md, cat(" ", List_t(argv, 1))).save(Output);
-free(md);

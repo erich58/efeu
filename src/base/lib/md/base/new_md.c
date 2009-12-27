@@ -1,8 +1,5 @@
 /*	MDMAT - Datenstruktur generieren/freigeben
 	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
-
-	Version 2.0
 */
 
 
@@ -37,7 +34,7 @@ char *md_ident(mdmat_t *md)
 	return sb2str(sb);
 }
 
-REFTYPE(md_reftype, "MD", md_ident, md_admin);
+ADMINREFTYPE(md_reftype, "MD", md_ident, md_admin);
 
 
 mdmat_t *new_mdmat(void)

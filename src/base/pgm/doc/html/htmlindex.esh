@@ -1,0 +1,84 @@
+pconfig !
+#if	Lang == "de"
+Ident = "HTML-Index in der aktuellen Bibliothek generieren";
+#else
+Ident = "create index.html for current directory";
+#endif
+Copyright = "(c) 2000 Erich Frühstück";
+Version = "1";
+
+Output = "index.html";
+MAGIC = "HTMLINDEX";
+
+::name|Output
+	:*:output file
+	:de:Ausgabefile
+!
+
+List_t list = flist(".", "main.html");
+
+if	(dim(list) == 0)
+{
+	fpsub(ioerr, langcpy(string !
+:*:$!: no html-documents found!
+:de:$!: Keine HTML-Dokumente gefunden!
+!));
+	exit(1);
+}
+
+if	(fsearch(NULL, Output))
+{
+	IO io = open(Output, "r");
+
+	if	(!regexec(MAGIC, fgets(io, EOF)))
+	{
+		fpsub(ioerr, langcpy(string !
+:*:$!: file $(Output) not created from $!!
+:de:$!: Datei $(Output) wurde nicht von $! generiert!
+!));
+		exit(1);
+	}
+}
+
+IO out = open(Output, "w");
+
+regex_t regex = "<TITLE>(.*)</TITLE>";
+
+struct Entry {
+	str name;
+	str title;
+};
+
+int CmpEntry (Entry a, Entry b) lexcmp(a.title, b.title)
+
+DataBase db = DataBase(Entry);
+
+for (x in list)
+{
+	IO io = open(x, "r");
+	db += { substr(x, 2), regex.match(fgets(io, EOF)).next.obj };
+}
+
+db.sort(CmpEntry);
+
+fpsub(out, string !
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<!-- CREATOR: $(MAGIC:%s) -->
+<HEAD>
+#if	Lang == "de"
+<TITLE>Dokumentindex</TITLE>
+#else
+<TITLE>document index</TITLE>
+#endif
+</HEAD>
+<BODY>
+!);
+
+for (x in db)
+	fprintf(out, "<A HREF=%#s> %s<A><BR>\n", x.name, x.title);
+
+out << string !
+</BODY>
+</HTML>
+!;

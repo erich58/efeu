@@ -1,8 +1,23 @@
-/*	Hilfsprogramme für Spreadsheed-Conector
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Hilfsprogramme für Spreadsheed-Conector
 
-	Version 0.4
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/object.h>
@@ -65,7 +80,7 @@ static SC_t *sc_admin(SC_t *tg, const SC_t *src)
 	else	return memalloc(sizeof(SC_t));
 }
 
-REFTYPE(sc_reftype, "SC", sc_ident, sc_admin);
+ADMINREFTYPE(sc_reftype, "SC", sc_ident, sc_admin);
 
 static SC_t *sc_create(int row, int col)
 {
@@ -193,7 +208,8 @@ static void f_sc_save(Func_t *func, void *rval, void **arg)
 	if	(sc == NULL || io == NULL)	return;
 
 	for (j = 0; j < sc->cols; j++)
-		io_printf(io, "format %s %d %d 0\n", makecol(j), sc->width[j], sc->prec[j]);
+		io_printf(io, "format %s %d %d 0\n",
+			makecol(j), sc->width[j], sc->prec[j]);
 
 	for (i = 0; i < sc->rows; i++)
 		for (j = 0; j < sc->cols; j++)
@@ -426,10 +442,12 @@ static void f_sc_get(Func_t *func, void *rval, void **arg)
 		{
 		case SC_EXPR:
 		case SC_LABEL:
-			Val_obj(rval) = LvalObj(&Type_str, NULL, &data->label);
+			Val_obj(rval) = LvalObj(&Lval_ref, &Type_str,
+				Val_SC(arg[0]), &data->label);
 			break;
 		case SC_DATA:
-			Val_obj(rval) = LvalObj(&Type_double, NULL, &data->value);
+			Val_obj(rval) = LvalObj(&Lval_ref, &Type_double,
+				Val_SC(arg[0]), &data->value);
 			break;
 		default:
 			Val_obj(rval) = ptr2Obj(NULL);
@@ -446,9 +464,10 @@ static void f_sc_data(Func_t *func, void *rval, void **arg)
 	{
 		data->type = SC_DATA;
 		data->align = 0;
-		Val_ptr(rval) = &data->value;
+		Val_obj(rval) = LvalObj(&Lval_ref, &Type_double,
+			Val_SC(arg[0]), &data->value);
 	}
-	else	Val_ptr(rval) = NULL;
+	else	Val_obj(rval) = ptr2Obj(NULL);
 }
 
 static void f_sc_label(Func_t *func, void *rval, void **arg)
@@ -459,9 +478,10 @@ static void f_sc_label(Func_t *func, void *rval, void **arg)
 	{
 		data->type = SC_LABEL;
 		data->align = Val_int(arg[3]);
-		Val_ptr(rval) = &data->label;
+		Val_obj(rval) = LvalObj(&Lval_ref, &Type_str,
+			Val_SC(arg[0]), &data->label);
 	}
-	else	Val_ptr(rval) = NULL;
+	else	Val_obj(rval) = ptr2Obj(NULL);
 }
 
 static void f_sc_expr(Func_t *func, void *rval, void **arg)
@@ -472,9 +492,10 @@ static void f_sc_expr(Func_t *func, void *rval, void **arg)
 	{
 		data->type = SC_EXPR;
 		data->align = 0;
-		Val_ptr(rval) = &data->label;
+		Val_obj(rval) = LvalObj(&Lval_ref, &Type_str,
+			Val_SC(arg[0]), &data->label);
 	}
-	else	Val_ptr(rval) = NULL;
+	else	Val_obj(rval) = ptr2Obj(NULL);
 }
 
 static void f_sc_type(Func_t *func, void *rval, void **arg)
@@ -511,19 +532,21 @@ static int *m_y(SC_t **ptr)
 	return *ptr ? &(*ptr)->y : NULL;
 }
 
-static Var_t var_sc[] = {
-	{ "rows", &Type_int, NULL, 0, 0, ConstMember, m_rows },
-	{ "cols", &Type_int, NULL, 0, 0, ConstMember, m_cols },
-	{ "x", &Type_int, NULL, 0, 0, LvalMember, m_x },
-	{ "y", &Type_int, NULL, 0, 0, LvalMember, m_y },
+static MemberDef_t var_sc[] = {
+	{ "rows", &Type_int, ConstMember, m_rows },
+	{ "cols", &Type_int, ConstMember, m_cols },
+	{ "x", &Type_int, LvalMember, m_x },
+	{ "y", &Type_int, LvalMember, m_y },
 };
 
 
 /*	Initialisieren
 */
 
-static Var_t sc_var[] = {
-	{ "SC_Debug", &Type_bool, &sc_reftype.debug },
+static VarDef_t sc_var[] = {
+	{ "SC_Debug", &Type_bool, &sc_reftype.debug,
+		":*:flag to control debuging of SC-structures\n"
+		":de:Flag zum Debuggen von SC-Strukturen\n" },
 };
 
 static ParseDef_t sc_pdef[] = {
@@ -537,9 +560,9 @@ static FuncDef_t sc_func[] = {
 	{ 0, &Type_SC, "SC (IO io)", f_sc_load },
 	{ 0, &Type_SC, "SC::save (IO io)", f_sc_save },
 	{ 0, &Type_obj, "SC::get(int row, int col)", f_sc_get },
-	{ 0, &Type_double, "& SC::data(int row, int col)", f_sc_data },
-	{ 0, &Type_str, "& SC::expr(int row, int col)", f_sc_expr },
-	{ 0, &Type_str, "& SC::label(int row, int col, int align = 0)",
+	{ 0, &Type_obj, "SC::data(int row, int col)", f_sc_data },
+	{ 0, &Type_obj, "SC::expr(int row, int col)", f_sc_expr },
+	{ 0, &Type_obj, "SC::label(int row, int col, int align = 0)",
 		f_sc_label },
 	{ 0, &Type_int, "SC::type(int row, int col)", f_sc_type },
 	{ 0, &Type_void, "SC::format(int col, int width = 10, int prec = 2)",
@@ -561,8 +584,8 @@ void SetupSC(void)
 		AddParseDef(sc_pdef, tabsize(sc_pdef));
 		AddType(&Type_SC);
 		AddFuncDef(sc_func, tabsize(sc_func));
-		AddVar(NULL, sc_var, tabsize(sc_var));
-		AddVar(Type_SC.vtab, var_sc, tabsize(var_sc));
+		AddVarDef(NULL, sc_var, tabsize(sc_var));
+		AddMember(Type_SC.vtab, var_sc, tabsize(var_sc));
 		need_init = 0;
 	}
 }

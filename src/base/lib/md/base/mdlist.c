@@ -1,8 +1,5 @@
 /*	Listenzerlegung
 	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
-
-	Version 2
 */
 
 #include <EFEU/mdmat.h>
@@ -42,7 +39,7 @@ void del_mdlist(mdlist_t *list)
 	if	(list != NULL)
 	{
 		del_mdlist(list->next);
-		FREE(list);
+		memfree(list);
 	}
 }
 

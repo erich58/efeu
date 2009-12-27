@@ -1,8 +1,23 @@
-/*	Zeichen und Strings
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Zeichen und Strings
 
-	Version 0.4
+$Copyright (C) 1994, 2001 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/object.h>
@@ -69,6 +84,7 @@ EXPR(f_str_rmul, strmul(STR(0), INT(1)))
 
 EXPR(f_str_add,	mstrpaste(NULL, STR(0), STR(1)))
 EXPR(f_strpaste, mstrpaste(STR(0), STR(1), STR(2)))
+EXPR(f_langcpy, mlangcpy(STR(0), STR(1)))
 CEXPR(f_strlen, Val_int(rval) = STR(0) ? strlen(STR(0)) : 0)
 
 /*	Spezialfunktionen
@@ -93,14 +109,8 @@ static void k_nchar2str (Func_t *func, void *rval, void **arg)
 
 static void k_type2str (Func_t *func, void *rval, void **arg)
 {
-	strbuf_t *sb;
-	io_t *tmp;
-
-	sb = new_strbuf(0);
-	tmp = io_strbuf(sb);
-	ShowType(tmp, Val_type(arg[0]));
-	io_close(tmp);
-	Val_str(rval) = sb2str(sb);
+	Type_t *type = Val_type(arg[0]);
+	Val_str(rval) = type ? mstrcpy(type->name) : NULL;
 }
 
 static void f_str_index (Func_t *func, void *rval, void **arg)
@@ -348,6 +358,7 @@ static FuncDef_t func_str[] = {
 		f_xstrcut },
 	{ 0, &Type_str, "strsub (str s, str repl, str in = NULL, bool glob = true)", f_strsub },
 	{ 0, &Type_str, "paste (str delim, str a, str b)", f_strpaste },
+	{ 0, &Type_str, "langcpy (str def, str lang = NULL)", f_langcpy },
 	{ 0, &Type_int, "strlen (str s)", f_strlen },
 	{ 0, &Type_str, "uppercase (str)", f_upper },
 	{ 0, &Type_str, "lowercase (str)", f_lower },

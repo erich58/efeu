@@ -1,8 +1,23 @@
-/*	Funktionen bestimmen und auswerten
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Funktionen bestimmen und auswerten
 
-	Version 0.4
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/object.h>
@@ -128,7 +143,7 @@ Obj_t *EvalVirFunc(VirFunc_t *vtab, const ObjList_t *list)
 				UnrefObj(arg[i].defval);
 				arg[i].defval = obj;
 				arg[i].type = obj->type;
-				arg[i].lval = obj->lref ? 1 : 0;
+				arg[i].lval = obj->lval ? 1 : 0;
 				arg[i].nokonv = 1;
 			}
 		}
@@ -188,13 +203,21 @@ Obj_t *EvalVirFunc(VirFunc_t *vtab, const ObjList_t *list)
 		void **arglist = ALLOC(argdim, void *);
 
 		for (i = 0; i < argdim; i++)
+		{
 			arglist[i] = func->arg[i].type ?
 				arg[i].defval->data : arg[i].defval;
+		}
 
-		obj = MakeRetVal(func, arglist);
+		obj = MakeRetVal(func, arg[i].defval, arglist);
 		memfree(arglist);
+
+		for (i = 0; i < argdim; i++)
+		{
+			if	(func->arg[i].lval)
+				SyncLval(arg[i].defval);
+		}
 	}
-	else	obj = MakeRetVal(func, NULL);
+	else	obj = MakeRetVal(func, NULL, NULL);
 
 	clean_arg(arg, argdim);
 	return obj;
@@ -217,7 +240,7 @@ static int set_arg (Func_t *func, FuncArg_t *arg, size_t narg, Obj_t *obj)
 
 	arg[narg].defval = obj;
 	arg[narg].type = obj->type;
-	arg[narg].lval = obj->lref ? 1 : 0;
+	arg[narg].lval = obj->lval ? 1 : 0;
 	arg[narg].nokonv = 1;
 	return 1;
 }
@@ -231,9 +254,7 @@ static void clean_arg (FuncArg_t *arg, size_t narg)
 	int i;
 
 	for (i = 0; i < narg; i++)
-	{
 		UnrefObj(arg[i].defval);
-	}
 
 	memfree(arg);
 }

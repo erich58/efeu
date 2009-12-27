@@ -1,15 +1,23 @@
-/*	Datei öffnen
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Datei öffnen
 
-	Version 0.4
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
 
-April 1999:
-	Flexiblere Kompressionsverfahren.
-	Automatische Einträge in Abhängigkeitslisten.
-März 2000:
-	Filename "-" wird wie Nullpointer behandelt.
-	Filedeskriptorkennungen "&0", "&1", "&2".
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/ftools.h>
@@ -17,8 +25,16 @@ März 2000:
 #include <EFEU/parsub.h>
 #include <EFEU/patcmp.h>
 #include <EFEU/MakeDepend.h>
+#include <EFEU/Debug.h>
 
-/*	Zugriffsmodi
+/*
+$Description
+April 1999:
+	Flexiblere Kompressionsverfahren.
+	Automatische Einträge in Abhängigkeitslisten.
+März 2000:
+	Filename "-" wird wie Nullpointer behandelt.
+	Filedeskriptorkennungen "&0", "&1", "&2".
 */
 
 #define	MODE_READ	0
@@ -67,16 +83,16 @@ static char *zcmd (const char *name, const char *mode)
 /*	Pipeline öffnen
 */
 
-static FILE *open_pipe (char *name, int mode)
+static FILE *open_pipe (const char *name, int mode)
 {
 	FILE *file = popen(name + 1, ptype[mode]);
 	
 	if	(file == NULL)
 	{
 		message("popen", MSG_FTOOLS, 2, 2, name + 1, ptype[mode]);
-		procexit(EXIT_FAILURE);
+		exit(EXIT_FAILURE);
 	}
-	else	filenotice(name, file, pclose);
+	else	filenotice(name, ptype[mode], file, pclose);
 
 	return file;
 }
@@ -84,22 +100,23 @@ static FILE *open_pipe (char *name, int mode)
 /*	Datei öffnen
 */
 
-static FILE *open_file (char *name, int mode)
+static FILE *open_file (const char *name, int mode)
 {
 	FILE *file = fopen(name, ftype[mode]);
 	
 	if	(file == NULL)
 	{
 		message("fopen", MSG_FTOOLS, 3, 2, name, ftype[mode]);
-		procexit(EXIT_FAILURE);
+		exit(EXIT_FAILURE);
 	}
-	else	filenotice(name, file, fclose);
+	else	filenotice(name, ftype[mode], file, fclose);
 
 	return file;
 }
 
 
-/*	Datei öffnen
+/*
+Die Funktion |$1| öffnet die Datei <name> mit Zugriff <mode>
 */
 
 FILE *fileopen (const char *name, const char *mode)
@@ -116,7 +133,7 @@ FILE *fileopen (const char *name, const char *mode)
 	case 'a':	omode = MODE_APPEND; break;
 	default:
 		message("fileopen", MSG_FTOOLS, 1, 2, name, mode);
-		procexit(EXIT_FAILURE);
+		exit(EXIT_FAILURE);
 		return NULL;
 	}
 
@@ -140,7 +157,7 @@ FILE *fileopen (const char *name, const char *mode)
 		return (omode == MODE_READ) ? stdin : stdout;
 
 	if	(*name == '|')
-		return open_pipe(mstrcpy(name), omode);
+		return open_pipe(name, omode);
 
 	if	(*name == '&')
 	{
@@ -154,7 +171,11 @@ FILE *fileopen (const char *name, const char *mode)
 	}
 
 	if	((fname = zcmd(name, mode)))
-		return open_pipe(fname, omode);
+	{
+		FILE *file = open_pipe(fname, omode);
+		memfree(fname);
+		return file;
+	}
 	
-	return open_file(mstrcpy(name), omode);
+	return open_file(name, omode);
 }

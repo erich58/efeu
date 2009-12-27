@@ -1,6 +1,5 @@
 /*	Achsen einer Datenmatrix aufsummieren
 	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
 */
 
 #include <EFEU/mdmat.h>
@@ -42,7 +41,7 @@ mdmat_t *md_cat(const char *def, mdmat_t **tab, size_t dim)
 		{
 			p = msprintf("%s%d", list->name, i + 1);
 			sb_putstr(p, sb);
-			FREE(p);
+			memfree(p);
 		}
 		else	sb_putstr(list->list[i], sb);
 
@@ -62,7 +61,7 @@ mdmat_t *md_cat(const char *def, mdmat_t **tab, size_t dim)
 
 	del_mdlist(list);
 	md->axis = new_axis(ndim);
-	p = sb->data;
+	p = (char *) sb->data;
 	md->axis->name = mstrcpy(nextstr(&p));
 
 	for (i = 0; i < ndim; i++)
@@ -79,7 +78,7 @@ mdmat_t *md_cat(const char *def, mdmat_t **tab, size_t dim)
 	while ((*ptr = add_axis(x, dim)) != NULL)
 		ptr = &(*ptr)->next;
 
-	FREE(x);
+	memfree(x);
 
 /*	Datenmatrix generieren
 */

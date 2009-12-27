@@ -1,6 +1,5 @@
 /*	Label generieren
 	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
 */
 
 #include <EFEU/mdlabel.h>
@@ -21,7 +20,7 @@ static mdaxis_t *idx2axis (xtab_t *tab, const char *name);
 
 static void del_key(void *ptr)
 {
-	FREE(((KEY *) ptr)->name);
+	memfree(((KEY *) ptr)->name);
 	del_data(&key_tab, ptr);
 }
 

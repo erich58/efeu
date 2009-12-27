@@ -1,100 +1,176 @@
-Ident = "Datenmatrix ausgeben";
-Copyright = "(c) 1997 Erich Frühstück, A-1090 Wien, Währinger Straße 64/6";
-Version = "2";
+/*
+:*:	print data cube
+:de:	Datenmatrix ausgeben
 
-bool PrintMode = true;
-bool Reduce = false;
-str VarDef = NULL;
-str Title = NULL;
-str Input = NULL;
-str Output = NULL;
-str SelDef = NULL;
-str SumList = NULL;
-str Mark = "#-1";
-str mode = "std";
-str locale = NULL;
-str Flags = NULL;
+Copyright (C) 1997, 2001 Erich Frühstück
+This file is part of EFEU.
 
-str LP = "|tex2ps - | lpr -h ";
-str LPQ = "|tex2ps -q - | lpr -h ";
-str PS = "|tex2ps -";
-str PSQ = "|tex2ps -q -";
+EFEU is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+EFEU is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with EFEU; see the file COPYING.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+*/
 
 PrintListDelim = "\t";
 fmt_long = "%*li";
 fmt_float = "%*.*f";
 
-void addflag(str x)
-	Flags = paste(" ", Flags, x);
+pconfig !
+#if	Lang == "de"
+Ident = "Datenmatrix ausgeben"
+#else
+Ident = "print data cube"
+#endif
+Version = "2"
+Copyright = "(c) 1997, 2001 Erich Frühstück"
+Mark = "#-1"
+mode = "std"
+Locale = "en"
+.LP = "|tex2ps - | lpr -h "
+.LPQ = "|tex2ps -q - | lpr -h "
+.PS = "|tex2ps -"
+.PSQ = "|tex2ps -q -"
 
-void texmode(str m = "tex")
-	mode = m, addflag("title"), locale = "TeX";
-
-PgmOpt("F file", "gload(IncPath, #1)", "Datei mit Definitionen laden")
-PgmOpt("E expr", "geval(#1)", "Ausdruck auswerten")
-
-PgmOpt("M mode", "mode=#1", "Ausgabemodus, Vorgabe $(mode:%#s)")
-PgmOpt("test", "mode=\"test\"", "Aufbereitung als ASCII-Datei")
-PgmOpt("ascii", "mode=\"ascii\"", "Aufbereitung als ASCII-Datei")
-PgmOpt("struct", "mode=\"struct\"; addflag(\"nohead nomark\")",
-	"Struktorausgabe")
-PgmOpt("csv", "mode=\"csv\"; locale=\"de\"", "Aufbereitung für excel")
-PgmOpt("tex", "texmode()", "Aufbereitung für TeX")
-PgmOpt("tab", "texmode(\"tab\")", "Aufbereitung für TeX-Tabellen")
-PgmOpt("data", "mode=\"data\"; addflag(\"nohead\")", "Nur Datenwerte ausgeben")
-PgmOpt("sc", "mode=\"sc\"; locale=\"us\"", "Aufbereitung für sc-Spreadsheet")
-PgmOpt("std", "PrintListDelim=\" \"; field_width = 7; \
-	addflag(\"mode=std title label=8\")",
-	"Fixe Spaltenausrichtung")
-
-PgmOpt("ps", "texmode(); Output=PS",
-	"Ausgabe als Postscriptfile, Hochformat")
-PgmOpt("psq", "texmode(); addflag(\"landscape\"); Output=PSQ",
-	"Ausgabe als Postscriptfile, Querformat")
-PgmOpt("lp", "texmode(); Output=LP",
-	"Ausgabe zum Drucker, Hochformat")
-PgmOpt("lpq", "texmode(); addflag(\"landscape\"); Output=LPQ",
-	"Ausgabe zum Drucker, Querformat")
-
-PgmOpt("m", "addflag(\"mark\")", "Spaltenbezeichner markieren")
-PgmOpt("M", "addflag(\"nomark\")", "Spaltenbezeichner unterdrücken")
-PgmOpt("h", "addflag(\"nodata\")", "Nur Header ausgeben")
-PgmOpt("b", "addflag(\"nohead\")", "Header unterdrücken")
-PgmOpt("t", "addflag(\"title\")", "Nur Titel im Header ausgeben")
-PgmOpt("z", "addflag(\"nozero\")", "Nullwerte unterdrücken")
-
-PgmOpt("us", "locale=\"us\"", "Amerikanische Zahlendarstellung")
-PgmOpt("de", "locale=\"de\"", "Deutsche Zahlendarstellung")
-
-PgmOpt("f font", "addflag(#1+\"pt\")", "Fontgröße in pt")
-PgmOpt("l width", "addflag(\"label=\"+#1)", "Breite der Zeilenbezeichner")
-PgmOpt("3", "float_align=3", "3-Stellige Gleitkommausrichtung")
-PgmOpt("w width", "field_width=#1", "Feldbreite der Zahlenwerte")
-PgmOpt("p prec", "float_prec=#1", "Genauigkeit der Zahlenwerte")
-PgmOpt("d delim", "PrintListDelim=#1", "Trennzeichen in Listen")
-PgmOpt("g", "fmt_float=\"%*.*g\"", "Universalformat verwenden")
-PgmOpt("e", "fmt_float=\"%*.*e\"", "Exponentialformat verwenden")
-
-PgmOpt("x list", "Mark=#1", "Achsenliste für Spalten")
-PgmOpt("s list", "SumList=#1", "Achsen aufsummieren")
-PgmOpt("r", "Reduce=true", "Entfernen von singulären Achsen")
-PgmOpt("v [name=]var", "VarDef=paste(' ', VarDef, #1)", "Variablenselektion")
-PgmOpt("T titel", "Title=#1", "Titel der Ausgabedatei")
-PgmArg("ein", "Input=#1", "Name der Eingabedatei")
-PgmOptArg("aus", "Output=#1;PrintMode=false", "Name der Ausgabedatei")
-PgmXArg("*=*", "SelDef=paste(' ', SelDef, #1)", NULL)
-PgmOptArg("name=var", NULL, "Selektionsparameter")
-
-loadarg;
+F:file | :eval 'gload(IncPath, "{}")'
+	:*:execute command lines in file <file>
+	:de:Datei <file> mit Befehlszeilen laden
+E:expr | :eval 'geval("{}")'
+	:*:evaluate expression <expr>
+	:de:Ausdruck <expr> auswerten
+M:mode | mode
+	:*:set output mode, default is "{mode}"
+	:de:Ausgabemodus, Vorgabe "{mode}"
+-ascii | mode = ascii
+	:*:preparate as ascii file
+	:de:Aufbereitung als ASCII-Datei
+-csv | mode = csv; Locale = NULL
+	:*:preparation for excel
+	:de:Aufbereitung für excel
+-tex | mode = tex
+	:*:preparation for LaTeX
+	:de:Aufbereitung für TeX
+-tab | mode = tab
+	:*:preparation for LaTeX tabular environment
+	:de:Aufbereitung für TeX-Tabellen
+-data | mode="data"; Flags: set "{Flags} nohead"
+	:*:print only data values
+	:de:Nur Datenwerte ausgeben
+-sc | mode = "sc"; Locale = "en"
+	:*:ouput sc spreadsheed
+	:de:Aufbereitung für sc-Spreadsheet
+-std | :eval 'PrintListDelim=" "; field_width = 7'; \
+	Flags: set "{Flags} mode=std title label=8"
+	:*:fixed column alignment
+	:de:Fixe Spaltenausrichtung
+-ps | mode = tex; Output: set {.PS}
+	:*:output PostScript file
+	:de:Ausgabe als Postscriptfile, Hochformat
+-psq | mode = tex; Flags: set "{Flags} landscape"; Output: set {.PSQ}
+	:*:output PostScript file in landscape
+	:de:Ausgabe als Postscriptfile, Querformat
+-lp | mode = tex; Output: set {.LP}
+	:*:print data cube
+	:de:Ausgabe zum Drucker, Hochformat
+-lpq | mode = tex; Flags: set "{Flags} landscape"; Output: set {.LPQ}
+	:*:print data cube in landscape
+	:de:Ausgabe zum Drucker, Querformat
+m | Flags: set "{Flags} mark"
+	:*:mark column marker as comment
+	:de:Spaltenbezeichner markieren
+-nomark | Flags: set "{Flags} nomark"
+	:*:suppress column marker
+	:de:Spaltenbezeichner unterdrücken
+h | Flags: set "{Flags} nodata"
+	:*:show header only
+	:de:Nur Header ausgeben
+b | Flags: set "{Flags} nohead"
+	:*:show data only
+	:de:Header unterdrücken
+t | Flags: set "{Flags} title"
+	:*:show only title in header
+	:de:Nur Titel im Header ausgeben
+z | Flags: set "{Flags} nozero"
+	:*:suppress 0 values
+	:de:Nullwerte unterdrücken
+L:loc | -locale:loc | Locale
+	:*:set locale for number format to <loc>
+	:de:Lokale für Zahlendarstellung auf <loc> setzen
+f:font | Flags: set "{Flags} {}pt"
+	:*:font size in point
+	:de:Fontgröße in pt
+l:width | Flags: set "{Flags} label={}"
+	:*:width of line label
+	:de:Breite der Zeilenbezeichner
+3 | :eval 'float_align=3'
+	:*:align exponent to multiples of 3
+	:de:3-Stellige Gleitkommausrichtung
+w:width | :eval 'field_width="{}"'
+	:*:field width for values
+	:de:Feldbreite der Zahlenwerte
+p:prec | :eval 'float_prec="{}"'
+	:*:floating number precission
+	:de:Genauigkeit der Zahlenwerte
+d:delim | :eval 'PrintListDelim="{}"'
+	:*:delimiter of lists
+	:de:Trennzeichen in Listen
+g | :eval 'fmt_float="%*.*g"'
+	:*:use universal float format
+	:de:Universalformat verwenden
+e | :eval 'fmt_float="%*.*e"'
+	:*:use exponential float format
+	:de:Exponentialformat verwenden
+x:list | Mark
+	:*:mark axis as column
+	:de:Achsenliste für Spalten
+s:list | SumList
+	:*:accummulate list of axis
+	:de:Achsen aufsummieren
+r | Reduce = true
+	:*:remove singulary axis
+	:de:Entfernen von singulären Achsen
+v:[name::]var | VarDef: append " "
+	:*:select type components
+	:de:Variablenselektion
+T:title | Title
+	:*:set title of output file
+	:de:Titel der Ausgabedatei setzen
+:file | Input
+	:*:input file
+	:de:Name der Eingabedatei
+/.*=.*/name=var | SelDef: append " "
+	:*:selection parameter
+	:de:Selektionsparameter
+::out | Output
+	:*:output file
+	:de:Name der Ausgabedatei
+!
 
 mdmat md = mdload(Input, SelDef, VarDef);
 
-if	(SumList)	md = sumaxis(md, strsub(SumList, ",", " ", true));
-if	(Reduce)	md.reduce();
-if	(Title)		md.title = Title;
-if	(mode)		addflag("mode=" + mode);
+if	(SumList)
+	md = sumaxis(md, strsub(SumList, ",", " ", true));
 
-setlocale(LC_PRINT, locale);
+if	(flagres("Reduce"))	md.reduce();
+if	(Title)			md.title = Title;
+if	(mode)			Flags = paste(" ", Flags, "mode=" + mode);
+
+if	(mode == "tex" ||  mode == "tab")
+{
+	Locale = "TeX";
+	Flags += " title";
+}
+
+setlocale(LC_PRINT, Locale ? Locale : Lang);
 
 md.mark(strsub(Mark, ",", " ", true));
 md.print(open(Output, "wz"), Flags);

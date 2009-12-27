@@ -1,77 +1,92 @@
-/*	Formatdefinitionen für MDMAT-Programmbibliothek
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+error messages for mdmat library
 
-	Version 0.4
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-1	#Name	Zahl	Beschreibung\n
+1	#name	count	description\n
 
-10	$!: $0: ACHTUNG: Altes Datenformat.\n
-11	$!: Falsche Magic-Nummer in Datenfile.\n
-12	$!: Falsche Elementzahl in Datenfile.\n
-13	$!: EOF - Marke fehlt.\n
-14	$!: Falsche Datenlänge für Objekttype $1.\n
-15	$!: Datentype $1 hate keine Komponente $2.\n
-16	$!: Datentype $1 kann nicht addiert werden (Operator += nicht definiert).\n
-17	$!: Achtung: Datentype $1 mit variabler Satzlänge.\n
+10	$!: $0: ATTENTION: old data format.\n
+11	$!: bad magic in data file.\n
+12	$!: wrong number of elments in data file.\n
+13	$!: missing EOF mark.\n
+14	$!: worng size of type $1.\n
+15	$!: type $1 has no component $2.\n
+16	$!: can not add values of type $1 (operator += not defined).\n
+17	$!: ATTENTION: type $1 has variable record length.\n
 
-18	$!: Binärer Operator $1 ($2, $3) ist nicht definiert.\n
-19	$!: Zuweisungsoperator $2::$1 & ($3) ist nicht definiert.\n
+18	$!: binary operator $1 ($2, $3) is not defined.\n
+19	$!: assignment operator $2::$1 & ($3) is not defined.\n
 
-21	$!: Objekttyp $1 nicht definiert.\n
-22	$!: Datentype $1 kann nicht gelesen werden.\n
-23	$!: Eine Komponente des Datentypes $(#1:%#s) kann nicht gelesen werden.\n
-24	$!: Datentype $1 kann nicht ausgegeben werden.\n
-25	$!: Eine Komponente des Datentypes $(#1:%#s) kann nicht ausgegeben werden.\n
+21	$!: object type $1 is not defined.\n
+22	$!: can not read objects of type $1.\n
+23	$!: can not read a component of type $(#1:%#s).\n
+24	$!: can not write objects of type $1.\n
+25	$!: can not write a component of type $(#1:%#s).\n
 
-31	$!: Falsche Kennung in Datenfile.\n
-32	$!: Fehlerhafte Dimensionsangabe.\n
-33	$!: Datensektor fehlt.\n
+31	$!: wrong key in data file.\n
+32	$!: error in dimension.\n
+33	$!: missing data sector.\n
 
-41	$!: Zählerstruktur nicht definiert.\n
-42	$!: Additionsfunktion nicht definiert.\n
-43	$!: Gruppendefinitionen fehlen.\n
-44	$!: Gruppendefinition $1 nicht gefunden.\n
+41	$!: counter is not defined.\n
+42	$!: accumulation function is not defined.\n
+43	$!: missing grouping information.\n
+44	$!: undefined group $1.\n
 
-51	$!: $(#1:%#s) ist keine Gleitkommamatrix.\n
-52	$!: Gleitkommamatrix $(#1:%#s) - falsche Objektgröße.\n
-53	$!: Multiplikation von $(#1:%#s) mit $(#2:%#s):\n\
-Dimensionenszahlen sind nicht kompatibel.\n
-54	$!: Multiplikation von $(#1:%#s) mit $(#2:%#s):\n\
-Achsenindizes sind nicht kompatibel.\n
+51	$!: $(#1:%#s) is not of type double.\n
+52	$!: filed of type double $(#1:%#s) - wrong object size.\n
+53	$!: multiplication of $(#1:%#s) with $(#2:%#s):\n\
+dimension not compatible.\n
+54	$!: multiplication of $(#1:%#s) with $(#2:%#s):\n\
+index values not compatible.\n
 
-61	$!: Leere Matrize(n) bei Matrixmultiplikation.\n
-62	$!: Matrixmultiplikation: Achsen $(#1:%#s) - $(#2:%#s) sind nicht kompatibel (flags=$3).\n
-63	$!: Matrixmultiplikation: Inkompatible Achsenzahl.\n
-64	$!: Matrixmultiplikation: Datentype $1 nicht mit $2 multiplizierbar.\n
-65	$!: Matrixmultiplikation: Datentype $1 nicht addierbar.\n
+61	$!: mdmul: empty data cube(s).\n
+62	$!: mdmul: axis $(#1:%#s) - $(#2:%#s) are not compatible (flags=$3).\n
+63	$!: mdmul: incompatible number of axis.\n
+64	$!: mdmul: can not multiply $1 with $2.\n
+65	$!: mdmul: cann not add values of type $1.\n
 
-71	$!: $0: Spaltenbezeichner fehlerhaft.\n
-72	$!: $0: Unvollständige Zeile.\n
-73	$!: $0: Extra Zeichen: $(#1:%#s).\n
+71	$!: $0: missing column label.\n
+72	$!: $0: incomplete line.\n
+73	$!: $0: extra character: $(#1:%#s).\n
 
-81	$!: Zeichen $1 statt '=' in Listendefinition.\n
+81	$!: Character $1 in list where '=' is expected.\n
 
-91	$!: mdterm: Funktion ist nicht definiert.\n
-92	$!: Achsen $1 - $1 sind nicht kompatibel (andere Dimension).\n
-93	$!: mdterm: Funktion %s hat keinen Rückgabewert.\n
-94	$!: mdterm: Funktion %s ist nicht definiert.\n
-95	$!: Funktion $1 ist nicht zur Datenabfrage vom Type $2 geeignet.\n
+91	$!: mdterm: function not defined.\n
+92	$!: incompatible axis $1 - $1 (differnd sizes).\n
+93	$!: mdterm: function "$1" has no return value.\n
+94	$!: mdterm: function "$1" is not defined.\n
+95	$!: function $1 is not appropirate for queryng data of type $2.\n
 
-101	$!: Datenmatrix hat keine Komponente $(#1:%#s).\n
-102	$!: Type $(#1:%#s) nicht in $(#2:%#s) konvertierbar.\n
-103	$!: Datenmatrix von Type $(#1:%#s) kann nicht gerundet werden.\n
+101	$!: data cube has no component $(#1:%#s).\n
+102	$!: can not convert type $(#1:%#s) into $(#2:%#s).\n
+103	$!: can not round data cube of type $(#1:%#s).\n
 
-191	$!: $0: Unvollständige Zeile.\n
-192	$!: $0: Unerwartetes Fileende, keine Daten.\n
-193	$!: $0: Spaltenbezeichner fehlt.\n
-194	$!: $0: Verschiedene Achsenbezeicher ($(#1:%#s) - $(#2:%#s))\nbei gleichem Datenwert.\n
-195	$!: $0: Achsenbezeichner unvollständig.\n
-196	$!: $0: Extra Werte in Datenfile.\n
-197	$!: $0: Illegale Zeichenfolge $(#1:%#s) im Zahlenwert.\n
+191	$!: $0: incomplete line.\n
+192	$!: $0: unexpected end of file, no data.\n
+193	$!: $0: missing column seperator.\n
+194	$!: $0: different labels ($(#1:%#s) - $(#2:%#s))\nby equal values.\n
+195	$!: $0: incomplete axis label.\n
+196	$!: $0: extra values in data file.\n
+197	$!: $0: illegal character sequence $(#1:%#s) in values.\n
 
-201	$!: Leere Matrix bei Matrixinversion.\n
-202	$!: Type $(#1:%#s) nicht in double konvertierbar.\n
-203	$!: Matrixinversion: Matrix nicht Quadratisch.\n
-204	$!: Matrixinversion: Datenmatrix ist singulär (dim=$1, rang=$2).\n
+201	$!: empty data cube by inversion.\n
+202	$!: could not convert $(#1:%#s) into double.\n
+203	$!: inversion of data cube: not a square field.\n
+204	$!: inversion of data cube: singulary data cube (dim=$1, range=$2).\n

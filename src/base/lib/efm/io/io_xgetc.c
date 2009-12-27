@@ -1,8 +1,23 @@
-/*	Zeichen mit Sonderbedeutung lesen
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Zeichen mit Sonderbedeutung lesen
 
-	Version 0.4
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/io.h>
@@ -10,7 +25,9 @@
 #include <EFEU/patcmp.h>
 #include <ctype.h>
 
-static int get_oct (io_t *io);
+#define	ESCEXT	0	/* \e=^[ und \d=^? - Erweiterung verwenden */
+
+static int get_oct (io_t *io, int first);
 static int get_hex (io_t *io);
 
 
@@ -19,9 +36,7 @@ static int get_hex (io_t *io);
 
 int io_xgetc (io_t *io, const char *delim)
 {
-	int c, meta;
-
-	meta = 0;
+	int c;
 
 	while ((c = io_getc(io)) != EOF)
 	{
@@ -33,56 +48,41 @@ int io_xgetc (io_t *io, const char *delim)
 			{
 			case EOF:	return EOF;
 			case '\n':	io_linemark(io); continue;
-			case '~':
-			case '^':
-			case '\\':	return (c | meta);
-			case 'b':	return ('\b' | meta);
-			case 'f':	return ('\f' | meta);
-			case 'n':	return ('\n' | meta);
-			case 'r':	return ('\r' | meta);
-			case 't':	return ('\t' | meta);
-			case 'v':	return ('\v' | meta);
+			case '\\':	return c;
+			case 'b':	return '\b';
+			case 'f':	return '\f';
+			case 'n':	return '\n';
+			case 'r':	return '\r';
+			case 't':	return '\t';
+			case 'v':	return '\v';
+			case 'a':	return 7;
 			case '0':
 			case '1':
 			case '2':
-			case '3':	io_ungetc(c, io);
-					return (get_oct(io) | meta);
-			case 'x':	return (get_hex(io) | meta);
-			case 'e':	return (033 | meta);
-			case 'd':	return (127 | meta);
+			case '3':	return get_oct(io, c);
+			case 'x':	return get_hex(io);
+#if	ESCEXT
+			case 'e':	return 27;
+			case 'd':	return 127;
+#endif
 			default:	break;
 			}
 
 			if	(listcmp(delim, c))
-				return (c | meta);
+				return c;
 
 			io_ungetc(c, io);
-			return ('\\' | meta);
+			return '\\';
 		}
 
-	/*	Sonstige Zeichen
+	/*	Sonstige Zeichen
 	*/
-		else if	(listcmp(delim, c) && !meta)
+		else if	(listcmp(delim, c))
 		{
 			io_ungetc(c, io);
 			break;
 		}
-		else if	(c == '^')
-		{
-			switch ((c = io_getc(io)))
-			{
-			case EOF:	return EOF;
-			case '?':	return 127 | meta;
-			default:	return (c & 0x1F) | meta;
-			}
-
-			break;
-		}
-		else if	(c == '~' && !meta)
-		{
-			meta = 0x80;
-		}
-		else	return (c | meta);
+		else	return c;
 	}
 
 	return EOF;
@@ -92,12 +92,14 @@ int io_xgetc (io_t *io, const char *delim)
 /*	Oktales Zeichen lesen
 */
 
-static int get_oct (io_t *io)
+static int get_oct (io_t *io, int c)
 {
 	char buf[4];
-	int i, c;
+	int i;
 
-	for (i = 0; i < 3; i++)
+	buf[0] = c;
+
+	for (i = 1; i < 3; i++)
 	{
 		c = io_getc(io);
 

@@ -1,8 +1,23 @@
-/*	IO - Strukturen
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+IO - Strukturen
 
-	Version 0.4
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/object.h>
@@ -28,13 +43,17 @@ CEXPR(f_open, RVIO = io_fileopen(STR(0), STR(1)))
 CEXPR(f_popen, RVIO = io_popen(STR(0), STR(1)))
 CEXPR(f_findopen, RVIO = io_findopen(STR(0), STR(1), STR(2), STR(3)))
 CEXPR(f_iaopen, RVIO = io_interact(STR(0), STR(1)))
+CEXPR(f_diropen, RVIO = diropen(STR(0), STR(1)))
 
 CEXPR(f_bigbuf, RVIO = io_bigbuf(INT(0), STR(1)))
 CEXPR(f_tmpfile, RVIO = io_tmpfile())
+CEXPR(f_langfilter, RVIO = langfilter(io_refer(IO(0)), STR(1)))
 CEXPR(f_lmark, RVIO = io_lmark(io_refer(IO(0)), STR(1), STR(2), INT(3)))
 CEXPR(f_indent, RVIO = io_indent(io_refer(IO(0)), INT(1), INT(2)))
 CEXPR(f_pushio, io_push(IO(0), io_refer(IO(1))))
 CEXPR(f_popio, RVIO = io_pop(IO(0)))
+CEXPR(f_newpart, RVINT = io_newpart(IO(0), STR(1), STR(2)))
+CEXPR(f_endpart, RVINT = io_endpart(IO(0)))
 
 CEXPR(f_close, RVINT = io_close(IO(0)); IO(0) = NULL)
 CEXPR(f_rewind, RVINT = io_rewind(IO(0)))
@@ -178,11 +197,11 @@ static void f_getline (Func_t *func, void *rval, void **arg)
 
 		p = io_xgets(io, list->next ? "%s" : "\n");
 
-		if	(list->obj == NULL || list->obj->lref == NULL)
+		if	(list->obj == NULL || list->obj->lval == NULL)
 		{
 			reg_cpy(1, func->name);
 			errmsg(MSG_EFMAIN, 88);
-			FREE(p);
+			memfree(p);
 			continue;
 		}
 
@@ -289,7 +308,7 @@ static void f_filter (Func_t *func, void *rval, void **arg)
 	}
 
 	io_close(io);
-	FREE(cmd);
+	memfree(cmd);
 	remove(name);
 	Val_str(rval) = sb2str(buf);
 }
@@ -304,15 +323,19 @@ static FuncDef_t fdef_io[] = {
 	{ 0, &Type_io, "open (str name, str mode)", f_open },
 	{ 0, &Type_io, "popen (str name, str mode)", f_popen },
 	{ 0, &Type_io, "iaopen (str prompt, str hist = NULL)", f_iaopen },
+	{ 0, &Type_io, "diropen (str dir, str base)", f_diropen },
 	{ 0, &Type_io, "bigbuf (int size, str pfx = NULL)", f_bigbuf },
 	{ 0, &Type_io, "findopen (str path, str name, str type = NULL, \
 str mode = \"r\")", f_findopen },
+	{ 0, &Type_io, "langfilter (IO io, str lang = NULL)", f_langfilter },
 	{ 0, &Type_io, "linemark (IO io, str pre = \"%4d\t\", \
 str post = NULL, bool flag = false)", f_lmark },
 	{ 0, &Type_io, "indent (IO io, char c = '\t', int n = 1)", f_indent },
 	{ 0, &Type_void, "IO::push (IO io)", f_pushio },
 	{ 0, &Type_io, "IO::pop (void)", f_popio },
-	{ 0, &Type_int, "close (IO & io)", f_close },
+	{ 0, &Type_int, "IO::newpart (str name, str repl = NULL)", f_newpart },
+	{ 0, &Type_int, "IO::endpart (void)", f_endpart },
+	{ FUNC_VIRTUAL, &Type_int, "close (IO & io)", f_close },
 	{ 0, &Type_int, "rewind (IO io)", f_rewind },
 	{ 0, &Type_int, "copy (IO in, IO out)", f_copy },
 

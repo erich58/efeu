@@ -1,34 +1,49 @@
-/*	EFEU-Informationssystem
-	(c) 1998 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+:*:	cgi interface to eis
+:de:	CGI-Schnittstelle zu eis
+
+$Copyright (C) 1998 Erich Frühstück
+This file is part of EFEU.
+
+EFEU is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+EFEU is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with EFEU; see the file COPYING.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include <EFEU/pconfig.h>
+#include <EFEU/Resource.h>
+#include <EFEU/LangType.h>
+#include <EFEU/parsub.h>
+#include <EFEU/mstring.h>
+#include <EFEU/io.h>
 #include <EFEU/Info.h>
-#include <EFEU/efwin.h>
-#include <sys/errno.h>
 
+#define	_String(x)	#x
+#define	String(x)	_String(x)
+#define	TOP		String(_EFEU_TOP)
 
-#define	CONFIRM_QUIT	0
-
-#define	ctrl(c)	((c) & 0x1f)
-
-#define	PSIZE ((info_win->_maxy - 2) / 2)
-
+static char *lang = NULL;
 static char *node = NULL;
 static char *file = NULL;
 static char *cmd = NULL;
-static char *fmt_head = "EIS-Informationssystem\n\n";
-static char *fmt_foot = NULL;
 
-static char *fmt_failed = "Anfrage nicht beantwortbar:\n\n";
+#define	FMT_HEAD	\
+	":*:EFEU information system" \
+	":de:EIS-Informationssystem"
 
-Var_t vardef[] = {
-	{ "fmt_head",	&Type_str, &fmt_head },
-	{ "fmt_foot",	&Type_str, &fmt_foot },
-	{ "fmt_failed",	&Type_str, &fmt_failed },
-};
-
+#define	FMT_FAILURE	\
+	":*:request failed:" \
+	":de:Anfrage nicht beantwortbar:"
 
 static void html_cmd (const char *cmd, io_t *io)
 {
@@ -100,7 +115,7 @@ static void cgi_puts (const char *p, io_t *io)
 
 static InfoNode_t *load_cmd (InfoNode_t *base, const char *def)
 {
-	char *name = msprintf("|%s -dump", def);
+	char *name = msprintf("|%s --dump 2>/dev/null", def);
 	InfoNode_t *info = AddInfo(base, def, NULL, NULL, NULL);
 	LoadInfo(info, name);
 	memfree(name);
@@ -120,6 +135,8 @@ static void parse_arg (int narg, char **arg)
 	{
 		if	(*arg == NULL)
 			continue;
+		else if	(strncmp("lang=", *arg, 5) == 0)
+			cgi_arg(&lang, *arg + 5);
 		else if	(strncmp("cmd=", *arg, 4) == 0)
 			cgi_arg(&cmd, *arg + 4);
 		else if	(strncmp("file=", *arg, 5) == 0)
@@ -170,7 +187,9 @@ static void HTMLInfo (io_t *io, InfoNode_t *info, const char *key, char *node)
 	if	(info->load)
 		info->load(info);
 
-	html_cmd(fmt_head, io);
+	html_cmd("<h3 ALIGN=center>", io);
+	io_langputs(FMT_HEAD, io);
+	html_cmd("</h3>\n", io);
 	html_cmd("<h3>", io);
 	io_putc(' ', io);
 	io_puts(info->label, io);
@@ -193,8 +212,6 @@ static void HTMLInfo (io_t *io, InfoNode_t *info, const char *key, char *node)
 
 	if	(info->list)
 		list_node(io, info, key, node);
-
-	html_cmd(fmt_foot, io);
 }
 
 
@@ -204,40 +221,52 @@ int main (int narg, char **arg)
 	io_t *io;
 	int dim;
 	char **list;
+	char *pfx;
 	char *arglist;
 
-	putenv("PATH=.:/efeu/bin:/usr/bin:/bin");
-
-	libinit(arg[0]);
-	pconfig(NULL, vardef, tabsize(vardef));
-	loadarg(&narg, arg);
-
-	io_puts("Content-type:text/html\n\n", iostd);
+/*	Argumente bestimmen
+*/
+	ParseCommand(&narg, arg);
 
 	parse_arg(narg - 1, arg + 1);
 	dim = strsplit(getenv("QUERY_STRING"), "&", &list);
 	parse_arg(dim, list);
+	memfree(list);
 
-	io = io_html(iostd);
+	putenv("PATH=" TOP "/bin:/usr/bin:/bin");
+
+	if	(lang)
+	{
+		SetLangType(lang);
+		putenv(msprintf("LANG=%s", lang));
+		pfx = msprintf("lang\t%s\n", lang);
+	}
+	else	pfx = NULL;
 
 	info = GetInfo(NULL, NULL);
 	info->list = NULL;
 	info->par = NULL;
 
+/*	HTML-Dokument generieren
+*/
+	io_puts("Content-type:text/html\n\n", iostd);
+
+	io = io_html(iostd);
+
 	if	(cmd != NULL)
 	{
 		info = load_cmd(NULL, cmd);
-		arglist = mstrpaste("\t", "cmd", cmd);
+		arglist = msprintf("%scmd\t%s", pfx, cmd);
 	}
 	else if	(file != NULL)
 	{
 		info = load_file(NULL, file);
-		arglist = mstrpaste("\t", "file", file);
+		arglist = msprintf("%sfile\t%s", pfx, file);
 	}
 	else
 	{
 		info = NULL;
-		arglist = mstrcpy("node\t");
+		arglist = msprintf("%snode\t", pfx);
 	}
 
 	info = GetInfo(info, node);
@@ -245,15 +274,16 @@ int main (int narg, char **arg)
 	if	(!info)
 	{
 		html_cmd("<pre>\n", io);
-		io_puts(fmt_failed, io);
-		io_printf(iostd, "Kommando: %#s\n", cmd);
-		io_printf(iostd, "Datei: %#s\n", file);
-		io_printf(iostd, "Knoten: %#s\n", node);
+		io_langputs(FMT_FAILURE, io);
+		io_puts("\n\n", io);
+		io_printf(iostd, "%7s %#s\n", "cmd:", cmd);
+		io_printf(iostd, "%7s %#s\n", "file:", file);
+		io_printf(iostd, "%7s %#s\n", "node:", node);
 		html_cmd("</pre>\n", io);
 	}
 	else	HTMLInfo(io, info, arglist, node);
 
 	io_close(io);
-	libexit(0);
+	exit(0);
 	return 0;
 }

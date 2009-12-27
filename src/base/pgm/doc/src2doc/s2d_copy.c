@@ -1,11 +1,29 @@
-/*	Kommentarbuffer umkopieren 
-	(c) 2000 Erich Frühstück
-	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+/*
+Kommentarbuffer umkopieren 
+
+$Copyright (C) 2000 Erich Frühstück
+This file is part of EFEU.
+
+EFEU is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+EFEU is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with EFEU; see the file COPYING.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include "src2doc.h"
 #include <EFEU/parsub.h>
 #include <EFEU/mstring.h>
+#include <EFEU/efio.h>
 
 
 static int cmp (const char *name, const char *arg)
@@ -31,35 +49,28 @@ static int cmp (const char *name, const char *arg)
 	return 0;
 }
 
-static strbuf_t *set_var (SrcData_t *data, int par, char **pptr)
+static strbuf_t *set_var (SrcData_t *data, int par, io_t *io)
 {
-	char *ptr = *pptr;
-	
-	do	ptr++;
-	while	(*ptr && *ptr != '\n');
-
-	while (isspace(*ptr))
-		*(ptr++) = 0;
-
+	char *p = io_mgets(io, "\n");
 	memfree(data->var[par]);
-	data->var[par] = parsub(*pptr);
-	*pptr = ptr;
+	data->var[par] = parsub(p);
+	memfree(p);
 	return NULL;
 }
 
-static strbuf_t *get_buf (SrcData_t *data, int par, char **ptr)
+static strbuf_t *get_buf (SrcData_t *data, int par, io_t *io)
 {
 	return data->tab[par];
 }
 
-static strbuf_t *get_synopsis (SrcData_t *data, int par, char **ptr)
+static strbuf_t *get_synopsis (SrcData_t *data, int par, io_t *io)
 {
 	return data->synopsis;
 }
 
 static struct {
 	char *key;
-	strbuf_t *(*eval) (SrcData_t *data, int par, char **ptr);
+	strbuf_t *(*eval) (SrcData_t *data, int par, io_t *io);
 	int par;
 } evaltab[] = {
 	{ "head[er]",		set_var, VAR_HEAD },
@@ -72,16 +83,17 @@ static struct {
 	{ "note[s]",		get_buf, BUF_NOTE },
 	{ "warn[ings]",		get_buf, BUF_WARN },
 	{ "err[ors]",		get_buf, BUF_ERR },
+	{ "copyright",		set_var, VAR_COPYRIGHT },
 	{ "syn[opsis]",		get_synopsis, 0 },
 };
 
-static strbuf_t *eval_key (SrcData_t *data, const char *key, char **ptr)
+static strbuf_t *eval_key (SrcData_t *data, const char *key, io_t *io)
 {
 	int i;
 
 	for (i = 0; i < tabsize(evaltab); i++)
 		if	(cmp(evaltab[i].key, key))
-			return evaltab[i].eval(data, evaltab[i].par, ptr);
+			return evaltab[i].eval(data, evaltab[i].par, io);
 
 	return NULL;
 }
@@ -91,41 +103,36 @@ static strbuf_t *eval_key (SrcData_t *data, const char *key, char **ptr)
 
 void SrcData_copy (SrcData_t *data, strbuf_t *buf)
 {
-	char *ptr;
 	int need_nl;
+	io_t *io;
+	int c;
 
 	if	(sb_getpos(data->buf) == 0)	return;
 
-	sb_putc(0, data->buf);
-	ptr = (char *) data->buf->data;
 	need_nl = (buf && sb_getpos(buf));
+	sb_begin(data->buf);
+	io = langfilter(io_strbuf(data->buf), NULL);
 
-	while (*ptr != 0)
+	while ((c = io_getc(io)) != EOF)
 	{
-		if	(*ptr == '$')
+		if	(c == '$')
 		{
-			ptr++;
+			void *p;
 
-			if	(isdigit(*ptr))
+			switch (io_scan(io, SCAN_INT|SCAN_NAME, &p))
 			{
-				int n = strtoul(ptr, &ptr, 10);
-
+			case SCAN_INT:
 				if	(buf)
-					sb_puts(reg_get(n), buf);
-
+					sb_puts(reg_get(*((int *) p)), buf);
 				continue;
-			}
-			else if	(isalpha(*ptr))
-			{
-				char *key = ptr;
+			case SCAN_NAME:
 
-				do	ptr++;
-				while	(isalpha(*ptr));
+				do	c = io_getc(io);
+				while	(isspace(c));
 
-				while (isspace(*ptr))
-					*(ptr++) = 0;
-
-				buf = eval_key(data, key, &ptr);
+				io_ungetc(c, io);
+				buf = eval_key(data, p, io);
+				memfree(p);
 				need_nl = (buf && sb_getpos(buf));
 				continue;
 			}
@@ -139,11 +146,10 @@ void SrcData_copy (SrcData_t *data, strbuf_t *buf)
 				need_nl = 0;
 			}
 
-			sb_putc(*ptr, buf);
+			sb_putc(c, buf);
 		}
-
-		ptr++;
 	}
 
+	io_close(io);
 	sb_clear(data->buf);
 }

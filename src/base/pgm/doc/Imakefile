@@ -9,17 +9,18 @@ OBJ=	efeudoc.o skip.o parse.o p_reg.o p_block.o copy.o docsym.o \
 	test.o \
 	DocDrv.o \
 	sgml.o sgml_putc.o sgml_cmd.o sgml_env.o \
-	stex.o stex_putc.o stex_cmd.o stex_env.o \
+	html.o html_open.o html_putc.o html_cmd.o html_env.o \
+	LaTeX.o latex.o latex_putc.o latex_cmd.o latex_env.o \
 	mroff.o mroff_putc.o mroff_cmd.o mroff_env.o \
 	term.o term_putc.o term_cmd.o term_env.o \
 	Doc.o docout.o \
 	listarg.o f_section.o setup.o
 
 Destination(CFGDIR,$(EFEUTOP)/lib/efeudoc)
-CFLAGS= -DCFGPATH='".:$(EFEUTOP)/doc:$(CFGDIR)"'
+CFLAGS= -DCFGPATH=@"'\".:$(EFEUTOP)/doc/src:$(CFGDIR)\"'"
 
-Destination(TEXDIR,$(EFEUTOP)/texmf/tex/latex/syntex)
+/*
+Destination(CFG_LATEX,$(CFGDIR)/latex)
+*/
+
 Program($(BINDIR),efeudoc,$(OBJ),$(DEP),$(LIB))
-
-all::
-	-texhash $(EFEUTOP)/texmf

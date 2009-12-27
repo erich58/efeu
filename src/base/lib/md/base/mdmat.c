@@ -1,8 +1,5 @@
 /*	Arbeiten mit multidimensionalen Matrizen
 	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
-
-	Version 2.0
 */
 
 #include <EFEU/mdmat.h>
@@ -92,25 +89,25 @@ static int *i_flags(mdidx_t *idx)
 }
 
 
-static Var_t var_mdmat[] = {
-	{ "title", &Type_str, NULL, 0, 0, LvalMember, m_title },
-	{ "type", &Type_type, NULL, 0, 0, ConstMember, m_type },
-	{ "size", &Type_int, NULL, 0, 0, ConstMember, m_size },
-	{ "dim", &Type_int, NULL, 0, 0, ConstMember, m_dim },
-	{ "axis", &Type_mdaxis,	NULL, 0, 0, LvalMember,	m_axis },
+static MemberDef_t var_mdmat[] = {
+	{ "title", &Type_str, LvalMember, m_title },
+	{ "type", &Type_type, ConstMember, m_type },
+	{ "size", &Type_int, ConstMember, m_size },
+	{ "dim", &Type_int, ConstMember, m_dim },
+	{ "axis", &Type_mdaxis,	LvalMember,	m_axis },
 };
 
-static Var_t var_mdaxis[] = {
-	{ "name", &Type_str, NULL, 0, 0, LvalMember, x_name },
-	{ "dim", &Type_int, NULL, 0, 0, ConstMember, x_dim },
-	{ "flags", &Type_int, NULL, 0, 0, ConstMember, x_flags },
-	{ "next", &Type_mdaxis, NULL, 0, 0, LvalMember, x_next },
-	{ "index", &Type_vec, NULL, 0, 0, x_index, NULL },
+static MemberDef_t var_mdaxis[] = {
+	{ "name", &Type_str, LvalMember, x_name },
+	{ "dim", &Type_int, ConstMember, x_dim },
+	{ "flags", &Type_int, ConstMember, x_flags },
+	{ "next", &Type_mdaxis, LvalMember, x_next },
+	{ "index", &Type_vec, x_index, NULL },
 };
 
-static Var_t var_mdidx[] = {
-	{ "name", &Type_str, NULL, 0, 0, LvalMember, i_name },
-	{ "flags", &Type_int, NULL, 0, 0, ConstMember, i_flags },
+static MemberDef_t var_mdidx[] = {
+	{ "name", &Type_str, LvalMember, i_name },
+	{ "flags", &Type_int, ConstMember, i_flags },
 };
 
 
@@ -173,27 +170,42 @@ static FuncDef_t pdef[] = {
 	{ 0, &Type_mdmat, "mdmat (.)", any_to_mdmat },
 };
 
-int IgnoreMdSizeError = 0;
-
-static Var_t vardef[] = {
-	{ "mddebug", &Type_bool, &md_reftype.debug },
-	{ "IgnoreMdSizeError", &Type_bool, &IgnoreMdSizeError },
-	{ "MdClassListFormat", &Type_str, &MdClassListFormat },
-	{ "MdClassPrintHead", &Type_str, &MdClassPrintHead },
-	{ "MdClassPrintEntry", &Type_str, &MdClassPrintEntry },
-	{ "MdClassPrintFoot", &Type_str, &MdClassPrintFoot },
-	{ "MdClassPrintLimit", &Type_int, &MdClassPrintLimit },
+static VarDef_t vardef[] = {
+	{ "mddebug", &Type_bool, &md_reftype.debug,
+		":*:flag to control debuging of mdmat-structures\n"
+		":de:Flag zum Debuggen von mdmat-Strukturen\n" },
+	{ "MdClassListFormat", &Type_str, &MdClassListFormat,
+		":*:parameter for displaying count classes\n"
+		":de:Parameter zur Darstellung von Zählklassen\n" },
+	{ "MdClassPrintHead", &Type_str, &MdClassPrintHead,
+		":*:parameter for displaying count classes\n"
+		":de:Parameter zur Darstellung von Zählklassen\n" },
+	{ "MdClassPrintEntry", &Type_str, &MdClassPrintEntry,
+		":*:parameter for displaying count classes\n"
+		":de:Parameter zur Darstellung von Zählklassen\n" },
+	{ "MdClassPrintFoot", &Type_str, &MdClassPrintFoot,
+		":*:parameter for displaying count classes\n"
+		":de:Parameter zur Darstellung von Zählklassen\n" },
+	{ "MdClassPrintLimit", &Type_int, &MdClassPrintLimit,
+		":*:parameter for displaying count classes\n"
+		":de:Parameter zur Darstellung von Zählklassen\n" },
 };
 
 void SetupMdMat(void)
 {
+	static int setup_done = 0;
+
+	if	(setup_done)	return;
+
+	setup_done = 1;
+	SetupStd();
 	AddType(&Type_mdmat);
 	AddType(&Type_mdaxis);
 	AddType(&Type_mdidx);
 	AddFuncDef(pdef, tabsize(pdef));
-	AddVar(NULL, vardef, tabsize(vardef));
-	AddVar(Type_mdmat.vtab, var_mdmat, tabsize(var_mdmat));
-	AddVar(Type_mdaxis.vtab, var_mdaxis, tabsize(var_mdaxis));
-	AddVar(Type_mdidx.vtab, var_mdidx, tabsize(var_mdidx));
+	AddVarDef(NULL, vardef, tabsize(vardef));
+	AddMember(Type_mdmat.vtab, var_mdmat, tabsize(var_mdmat));
+	AddMember(Type_mdaxis.vtab, var_mdaxis, tabsize(var_mdaxis));
+	AddMember(Type_mdidx.vtab, var_mdidx, tabsize(var_mdidx));
 	MdFuncDef();
 }

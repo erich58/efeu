@@ -1,6 +1,23 @@
-/*	Zählerdefintion generieren
-	(c) 2000 Erich Frühstück
-	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+/*
+Zählerdefintion generieren
+
+$Copyright (C) 2000 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #ifndef	_cntdef_ms
@@ -21,6 +38,7 @@ struct CntDef {
 	str var_type;	/* Variablentype */
 	str var_name;	/* Variablenname */
 	int var_dim;	/* Dimension des Variablenvektors */
+	DataBase ini;	/* Datenbank mit Initialisierungsfunktionen */
 	DataBase cnt;	/* Datenbank mit Zählern */
 	DataBase class;	/* Datenbank mit Klassifikationen */
 };
@@ -35,7 +53,7 @@ virtual inline CntDef CntDef (str type = NULL, bool glob = true,
 	str arg = (type ? psub(type) : "const void") + " *data";
 	return (CntDef) { glob, psub(pfx), arg,
 		"MdClass_t", "MdClass_t *c, " + arg, "data",
-		NULL, NULL, 0,
+		NULL, NULL, 0, DataBase(str),
 		DataBase(LabelEntry), DataBase(LabelEntry) };
 }
 
@@ -43,15 +61,25 @@ virtual inline CntDef CntDef (str type = NULL, bool glob = true,
 */
 
 virtual inline CntDef CntDef (str name, int n, str def,
-	bool glob = true, str pfx = NULL)
+	str vname = NULL, bool glob = true, str pfx = NULL)
 {
 	name = psub(name);
 
 	if	(def)
 		Struct(name, "Klassifikationsvariablen", def, glob);
 
-	fpsub(src, "static $1_t $1_var[$2];\n", name, n);
+	if	(!vname)
+	{
+		src << "static ";
+		vname = name + "_var";
+	}
+	else if	(!glob)
+	{
+		src << "static ";
+	}
+	else	fpsub(hdr, "extern $1_t $2[$3];\n", name, vname, n);
 
+	fpsub(src, "$1_t $2[$3];\n", name, vname, n);
 	Struct("$1_class", "Klassifikationstype", string !
 @macro	MDCLASS_VAR	Basisvariablen
 $1_t	*ptr		Variablenpointer
@@ -60,7 +88,7 @@ $1_t	*ptr		Variablenpointer
 
 	return (CntDef) { glob, psub(pfx), "const void *data",
 		type, type + " *c, const void *data", "c->ptr",
-		name + "_t", name + "_var", n,
+		name + "_t", vname, n, DataBase(str),
 		DataBase(LabelEntry), DataBase(LabelEntry) };
 }
 
@@ -76,15 +104,22 @@ void CntDef::init(str name, str args = NULL, str body = NULL)
 	f.newpar();
 	f.line("ptr = n < $3 ? $2 + n : &buf;");
 	f.line("memset(ptr, 0, sizeof($1));");
-	f.newpar();
-	f.body(body);
-	f.newpar();
+
+	if	(body)
+	{
+		f.line();
+		f.beg();
+		f.body(body);
+		f.end();
+		f.line();
+	}
+
 	f.line("return ptr;");
 	f.write(glob);
 }
 
 
-void CntDef::ctab(str name, str fmt = NULL, str pext = NULL)
+void CntDef::ctab(str name, str fmt = NULL, str pext = NULL, str xdesc = NULL)
 {
 	src << "\n/*\tKlassifikationstabelle\n*/\n\n";
 	name = psub(name);
@@ -97,7 +132,8 @@ void CntDef::ctab(str name, str fmt = NULL, str pext = NULL)
 	{
 		str cname = fmt ? psub(fmt, x.name) : x.name;
 		str fname = paste("_", pfx, x.name);
-		fprintf(src, "\t{ %#s, %#s,\n\t", cname, x.desc); 
+		fprintf(src, "\t{ %#s, %#s,\n\t", cname,
+			paste(", ", x.desc, xdesc)); 
 		fpsub(src, "\t$1_dim, $1_tab, (MdClassify_t) $1_idx", fname);
 		src << pext << " },\n";
 	}
@@ -105,10 +141,13 @@ void CntDef::ctab(str name, str fmt = NULL, str pext = NULL)
 	src << "};\n\n";
 }
 
-void CntDef::setup(str name, str pfx = NULL)
+void CntDef::setup(str name, str lblpfx = NULL, ...)
 {
 	Function f = Function("void $1_setup",
 		"xtab_t *count, xtab_t *class, int n", name);
+
+	for (x in ini)
+		f.fline("%s_setup(count, class, n);", x);
 
 	if	(dim(cnt))
 	{
@@ -127,21 +166,34 @@ void CntDef::setup(str name, str pfx = NULL)
 
 		src << "};\n\n";
 		f.line("XAPPEND(count, $1_cnt, XS_ENTER);", name);
+		cnt.delete(0, dim(cnt));
 	}
 
 	if	(dim(class))
 	{
-		str fmt = paste(".", pfx, "$1");
+		str xdesc = va_list.pop();
+		str ext = strcut(xdesc, "%s");
+		str fmt = paste(".", lblpfx, "$1");
+		str lbl = paste(".", fmt, ext == "." ? NULL : ext);
+
 		f.line("XAPPEND(class, $1_class, XS_ENTER);", name);
-		ctab("$1_class", fmt, var_dim ? "$1_var" : NULL);
+		ctab("$1_class", lbl, var_dim ? var_name : NULL, xdesc);
 
 		for (int i = 1; i < var_dim; i++)
 		{
+			xdesc = va_list.pop();
+			ext = strcut(xdesc, "%s");
+
+			if	(ext && ext != ".")
+				lbl = paste(".", fmt, ext);
+			else	lbl = sprintf("%s.%d", fmt, i + 1);
+
 			f.line("if\t(n <= $2)\treturn;", name, i);
 			f.line("XAPPEND(class, $1_class$2, XS_ENTER);");
-			ctab("$1_class$2", sprintf("%s.%d", fmt, i + 1),
-				var_name + " + $2");
+			ctab("$1_class$2", lbl, var_name + " + $2", xdesc);
 		}
+
+		class.delete(0, dim(class));
 	}
 
 	f.write(glob);
@@ -161,6 +213,11 @@ void CntDef::add_class(str name, str desc)
 	class += { name, desc };
 }
 
+void CntDef::use(...)
+{
+	for (x in va_list)
+		ini += x;
+}
 
 /*	Zählobjekt definieren
 */
@@ -258,7 +315,7 @@ virtual void CntDef::switch(str name, str desc, str expr, str fmt, IO def)
 }
 
 virtual void CntDef::switch(str name, str desc, str expr, IO def)
-	switch(name, desc, expr, "$(key)", def);
+	this.switch(name, desc, expr, "$(key)", def);
 
 virtual void CntDef::test(str name, str desc, str init, str fmt, IO def)
 {

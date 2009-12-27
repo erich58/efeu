@@ -1,2 +1,0 @@
-#define	PixScript(dir,base,name) \
-InstallCmdScript(PathName($(BINDIR),name),PathName(dir,base),-c pixmap)

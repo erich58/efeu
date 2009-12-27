@@ -1,8 +1,23 @@
-/*	Ganzzahlobjekte
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Ganzzahlobjekte
 
-	Version 0.4
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/object.h>
@@ -26,7 +41,7 @@ EXPR(name, INT(0) op INT(1))
 CEXPR(name, IRETVAL = INT(0) op INT(1))
 
 #define	ASSIGN(name, op)	\
-LEXPR(name, INT(0) op INT(1))
+CEXPR(name, INT(0) op INT(1))
 
 
 /*	Funktionen
@@ -117,8 +132,8 @@ COMPARE(b_int_gt, >)
 
 #if	MAKE_ASSIGN_OP
 
-LEXPR(l_int_inc, ++INT(0))
-LEXPR(l_int_dec, --INT(0))
+CEXPR(l_int_inc, ++INT(0))
+CEXPR(l_int_dec, --INT(0))
 EXPR(r_int_inc, INT(0)++)
 EXPR(r_int_dec, INT(0)--)
 

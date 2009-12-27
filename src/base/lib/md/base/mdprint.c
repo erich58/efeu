@@ -1,8 +1,5 @@
 /*	Multidimensionale Matrix standardisiert ausgeben
 	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
-
-	Version 2
 */
 
 #include <EFEU/printobj.h>
@@ -92,7 +89,7 @@ static void put_label(io_t *io, const char *key, const char *arg)
 	{
 		io_ctrl(io, PCTRL_LEFT);
 		io_puts(key, io);
-		io_puts(arg, io);
+		io_mputs(arg, io, ":");
 		io_ctrl(io, PCTRL_LINE);
 	}
 }
@@ -128,7 +125,9 @@ static void show_header(io_t *io, mdmat_t *md)
 	ShowType(io, md->type);
 	io_ctrl(io, PCTRL_LINE);
 
-	put_label(io, H_LOCALE, GetLocale(LOC_PRINT));
+	if	(Locale.print)
+		put_label(io, H_LOCALE, Locale.print->name);
+
 	show_axis(io, H_LINES, md->axis, 0);
 	show_axis(io, H_COLUMNS, md->axis, XMARK);
 }
@@ -179,7 +178,7 @@ static void headline2(io_t *io, size_t dim, Type_t *type, const char *str)
 	{
 		p = msprintf("%s[%d]", str, i);
 		headline(io, NULL, type, p);
-		FREE(p);
+		memfree(p);
 	}
 }
 
@@ -198,7 +197,7 @@ static void headline(io_t *io, mdaxis_t *x, Type_t *type, const char *str)
 		{
 			p = mstrpaste(".", str, x->idx[i].name);
 			headline(io, x->next, type, p);
-			FREE(p);
+			memfree(p);
 		}
 	}
 	else if	(type->dim != 0)
@@ -220,7 +219,7 @@ static void headline(io_t *io, mdaxis_t *x, Type_t *type, const char *str)
 			}
 			else	headline(io, NULL, st->type, p);
 
-			FREE(p);
+			memfree(p);
 		}
 	}
 	else
@@ -323,7 +322,7 @@ static void l_walk(io_t *io, mdmat_t *md, mdaxis_t *x, const char *label, char *
 		{
 			p = mstrpaste(".", label, x->idx[i].name);
 			l_walk(io, md, x->next, p, ptr);
-			FREE(p);
+			memfree(p);
 			ptr += x->size;
 		}
 	}

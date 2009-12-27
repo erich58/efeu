@@ -1,13 +1,29 @@
-/*	Basistypen
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Basistypen
 
-	Version 0.4
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/object.h>
 #include <EFEU/cmdsetup.h>
 #include <EFEU/refdata.h>
+#include <EFEU/CmdPar.h>
 
 /*	Lösch- und Kopierfunktionen
 */
@@ -54,8 +70,16 @@ static Obj_t *Eval_void(const Type_t *type, const void *data)
 
 static Obj_t *Eval_name(const Type_t *type, const void *data)
 {
-	Obj_t *x = GetVar(NULL, Val_str(data), NULL);
-	return x ? x : NewPtrObj(&Type_undef, mstrcpy(Val_str(data)));
+	Obj_t *obj;
+	CmdParVar_t *var;
+	
+	if	((obj = GetVar(NULL, Val_str(data), NULL)) != NULL)
+		return obj;
+
+	if	((var = CmdPar_var(NULL, Val_str(data), 0)) != NULL)
+		return ResourceObj(&Type_str, var->name);
+
+	return NewPtrObj(&Type_undef, mstrcpy(Val_str(data)));
 }
 
 
@@ -91,7 +115,9 @@ Type_t Type_bool = SIMPLE_TYPE("bool", int, NULL);
 Type_t Type_byte = SIMPLE_TYPE("byte", char, NULL);
 Type_t Type_short = SIMPLE_TYPE("short", short, NULL);
 Type_t Type_int = SIMPLE_TYPE("int", int, &Type_bool);
+Type_t Type_uint = SIMPLE_TYPE("unsigned", unsigned, NULL);
 Type_t Type_long = SIMPLE_TYPE("long", long, NULL);
+Type_t Type_size = SIMPLE_TYPE("size_t", unsigned long, NULL);
 Type_t Type_float = SIMPLE_TYPE("float", float, NULL);
 Type_t Type_double = SIMPLE_TYPE("double", double, NULL);
 
@@ -99,7 +125,9 @@ uchar_t Buf_char = 0;
 char Buf_byte = 0;
 short Buf_short = 0;
 int Buf_int = 0;
+unsigned Buf_uint = 0;
 long Buf_long = 0;
+unsigned long Buf_size = 0;
 float Buf_float = 0.;
 double Buf_double = 0.;
 
@@ -116,6 +144,13 @@ static void f_mkvirfunc (Func_t *func, void *rval, void **arg)
 {
 	Val_vfunc(rval) = VirFunc(rd_refer(Val_func(arg[0])));
 }
+
+static void f_ofunc2vfunc (Func_t *func, void *rval, void **arg)
+{
+	ObjFunc_t *x = arg[0];
+	Val_vfunc(rval) = VirFunc(rd_refer(x->func));
+}
+
 
 static void f_ptr_not (Func_t *func, void *rval, void **arg)
 {
@@ -148,6 +183,7 @@ static FuncDef_t func_base[] = {
 	{ 0, &Type_vtab, "VarTab (str name = NULL, int bs = 0)", f_vtab },
 	{ 0, &Type_void, "void (.)", f_any2void },
 	{ 0, &Type_vfunc, "Func ()", f_mkvirfunc },
+	{ 0, &Type_vfunc, "ObjFunc ()", f_ofunc2vfunc },
 	{ FUNC_VIRTUAL, &Type_bool, "operator!() (_Ptr_)", f_ptr_not },
 	{ FUNC_VIRTUAL, &Type_bool, "operator== (_Ptr_, _Ptr_)", f_ptr_eq },
 	{ FUNC_VIRTUAL, &Type_bool, "operator!= (_Ptr_, _Ptr_)", f_ptr_ne },
@@ -164,6 +200,7 @@ void CmdSetup_base(void)
 	AddType(&Type_type);
 	AddType(&Type_func);
 	AddType(&Type_vfunc);
+	AddType(&Type_ofunc);
 	AddType(&Type_expr);
 
 	AddType(&Type_bool);
@@ -171,6 +208,8 @@ void CmdSetup_base(void)
 	AddType(&Type_short);
 	AddType(&Type_int);
 	AddType(&Type_long);
+	AddType(&Type_uint);
+	AddType(&Type_size);
 	AddType(&Type_float);
 	AddType(&Type_double);
 	AddType(&Type_char);

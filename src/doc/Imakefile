@@ -1,0 +1,42 @@
+/*
+:*:	EFEU basic documentation
+:de:	EFEU-Basishandbücher
+
+$Copyright (C) 2001 Erich Frühstück
+This file is part of EFEU.
+
+EFEU is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+EFEU is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with EFEU; see the file COPYING.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+*/
+
+#include <d2m.cfg>
+
+DOCDIR = _EFEU_TOP/doc
+
+#define DE_Doc(name,desc,src)	\
+SubMakeRule(Concat(de-,name),desc,src,NullArg,\
+dir2make -n -D $(DOCDIR)/de -p --lang=de -d name)
+
+#if	LANG_de
+DE_Doc(make,"make und co",make)
+DE_Doc(prog,"EFEU Programmierhandbuch",prog)
+DE_Doc(mdmat,"Handbuch zu den Datenmatrizen",mdmat)
+DE_Doc(efeudoc,"Handbuch zum Dokumentkonverter",efeudoc)
+#else
+DE_Doc(make,"german documentation about mkmf",make)
+DE_Doc(prog,"german documentation about EFEU programming",prog)
+DE_Doc(mdmat,"german documentation about data cubes",mdmat)
+DE_Doc(efeudoc,"german documentation about efeudoc",efeudoc)
+#endif

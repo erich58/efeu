@@ -1,8 +1,5 @@
 /*	Listenvergleich
 	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
-
-	Version 2
 */
 
 #include <EFEU/mdmat.h>

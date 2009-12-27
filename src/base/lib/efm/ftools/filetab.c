@@ -1,14 +1,31 @@
 /*	Hilfsprogramme zum öffnen von Files
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+:*:	administration of FILE-pointers
+:de:	Administration von FILE-Pointern
 
-	Version 0.4
+$Copyright (C) 1994, 2001 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/ftools.h>
 #include <EFEU/vecbuf.h>
 #include <EFEU/patcmp.h>
 #include <EFEU/procenv.h>
+#include <EFEU/Debug.h>
 
 
 int filedebugflag = 0;
@@ -17,7 +34,9 @@ int filedebugflag = 0;
 typedef struct {
 	FILE *file;
 	char *name;
+	char *mode;
 	int (*close) (FILE *file);
+	int refcount;
 } FileTab_t;
 
 static int file_cmp (const FileTab_t *a, const FileTab_t *b)
@@ -29,32 +48,75 @@ static int file_cmp (const FileTab_t *a, const FileTab_t *b)
 
 static VECBUF(filetab, 32, sizeof(FileTab_t));
 
-static void file_debug(const char *type, FileTab_t *tab)
+static void file_debug (const char *type, FileTab_t *tab)
 {
-	if	(tab && filedebugflag)
-	{
-		if	(tab->name)
-			fprintf(stderr, "%s(%s)\n", type, tab->name);
-		else	fprintf(stderr, "%s(%p)\n", type, tab->file);
-	}
+	io_t *io;
+
+	if	(!tab)	return;
+
+	io = filedebugflag ? ioerr : LogOut("file", DBG_TRACE);
+
+	if	(!io)	return;
+
+	io_printf(io, "file: %s", type);
+
+	if	(tab->refcount)
+		io_printf(io, "[%d]", tab->refcount);
+
+	io_puts(" (", io);
+
+	if	(tab->name)
+		io_printf(io, "%#s", tab->name);
+	else	io_printf(io, "%p", tab->file);
+
+	io_printf(io, ", %#s)\n", tab->mode);
 }
 
+static void closeall (void)
+{
+	FileTab_t *tab;
+	int i;
 
-void filenotice (char *name, FILE *file, int (*close) (FILE *file))
+	tab = filetab.data;
+
+	for (i = 0; i < filetab.used; i++)
+	{
+		file_debug("forced close", tab + i);
+
+		if	(tab[i].close)
+			tab[i].close(tab[i].file);
+
+		memfree(tab[i].name);
+	}
+
+	filetab.used = 0;
+}
+
+static void setup_closeall (void)
+{
+	static int closeall_registered = 0;
+
+	if	(closeall_registered)	return;
+
+	atexit(closeall);
+	closeall_registered = 1;
+}
+
+void filenotice (const char *name, const char *mode,
+	FILE *file, int (*close) (FILE *file))
 {
 	FileTab_t tab;
 
-	tab.name = name;
+	tab.name = mstrcpy(name);
+	tab.mode = mstrcpy(mode);
 	tab.file = file;
 	tab.close = close;
+	tab.refcount = 0;
 	file_debug("open", &tab);
 	vb_search(&filetab, &tab, (comp_t) file_cmp, VB_REPLACE);
+	setup_closeall();
 }
 
-
-/*	Datei schließen, falls sie verschieden von stdin und
-	stdout ist.
-*/
 
 int fileclose (FILE *file)
 {
@@ -67,44 +129,50 @@ int fileclose (FILE *file)
 		return 0;
 
 	key.file = file;
-	tab = vb_search(&filetab, &key, (comp_t) file_cmp, VB_DELETE);
+	tab = vb_search(&filetab, &key, (comp_t) file_cmp, VB_SEARCH);
 
-	if	(tab)
+	if	(tab == NULL)
 	{
-		file_debug("close", tab);
-		stat = (tab->close ? tab->close(tab->file) : 0);
-		memfree(tab->name);
-		return stat;
+		message("fileclose", MSG_FTOOLS, 11, 0);
+		return EOF;
 	}
 
-	message("fileclose", MSG_FTOOLS, 11, 0);
-	return EOF;
+	if	(tab->refcount)
+	{
+		file_debug("deref", tab);
+		tab->refcount--;
+		return 0;
+	}
+
+	file_debug("close", tab);
+	stat = (tab->close ? tab->close(tab->file) : 0);
+	memfree(tab->name);
+	vb_search(&filetab, &key, (comp_t) file_cmp, VB_DELETE);
+	return stat;
 }
 
 
-void closeall(void)
+FILE *filerefer (FILE *file)
 {
-	FileTab_t *tab;
-	int i;
+	FileTab_t key, *tab;
 
-	tab = filetab.data;
+	key.file = file;
+	tab = vb_search(&filetab, &key, (comp_t) file_cmp, VB_SEARCH);
 
-	for (i = 0; i < filetab.used; i++)
+	if	(tab)
 	{
-		file_debug("close", tab + i);
-
-		if	(tab[i].close)
-			tab[i].close(tab[i].file);
-
-		memfree(tab[i].name);
+		tab->refcount++;
+		file_debug("refer", tab);
 	}
 
-	filetab.used = 0;
+	return file;
 }
 
 
 char *fileident (FILE *file)
 {
+	setup_closeall();
+
 	if	(file == NULL)		return NULL;
 	else if	(file == stdin)		return "<stdin>";
 	else if	(file == stdout)	return "<stdout>";
@@ -120,17 +188,19 @@ char *fileident (FILE *file)
 }
 
 
-void filemessage(FILE *file, const char *name, int num, int narg, ...)
+void filemessage (FILE *file, const char *name, int num, int narg, ...)
 {
-	va_list list = va_start(list, narg);
+	va_list list;
+       	va_start(list, narg);
 	vmessage(fileident(file), name, num, narg, list);
 	va_end(list);
 }
 
-void fileerror(FILE *file, const char *name, int num, int narg, ...)
+void fileerror (FILE *file, const char *name, int num, int narg, ...)
 {
-	va_list list = va_start(list, narg);
+	va_list list;
+       	va_start(list, narg);
 	vmessage(fileident(file), name, num, narg, list);
 	va_end(list);
-	procexit(EXIT_FAILURE);
+	exit(EXIT_FAILURE);
 }

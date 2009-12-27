@@ -1,0 +1,15 @@
+@name
+\Name
+@ident
+\Synopsis
+@synopsis
+\Description
+Das Programm
+|$!| ist eine Version des esh-Interpreters mit eingebauten Hilfsfunktionen zur
+Pixmap - Verarbeitung.
+
+Die folgenden Optionen und Argumente werden vom Programm akzeptiert:
+
+@arglist 12
+\SeeAlso
+intro(1), esh(1).

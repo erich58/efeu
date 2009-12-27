@@ -1,14 +1,30 @@
-/*	Prozessumgebung
-	(c) 1997 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
-
-	Version 0.6
+/*
+:*:	process environment
+:de:	Prozessumgebung
 
 $Header	<EFEU/$1>
+
+$Copyright (C) 1997 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	EFEU_PROCENV_H
-#define	EFEU_PROCENV_H	1
+#ifndef	_EFEU_procenv_h
+#define	_EFEU_procenv_h	1
 
 #include <EFEU/config.h>
 
@@ -23,27 +39,29 @@ $Header	<EFEU/$1>
 extern char *ProgName;		/* Programmname */
 extern char *ProgIdent;		/* Programmidentifikation */
 extern char *ApplPath;		/* Suchpfad für Hilfsdateien */
+extern char *InfoPath;		/* Suchpfad für Informationsdateien */
 extern char *Pager;		/* Seitenfilter */
 extern char *Shell;		/* Shell */
 
 #define	MSG_EFM	"efm"
 
-/*	Prozeßinitialisierung
+/*	Programmnamen initialisieren
 */
 
-void procinit (const char *name);
-void procexit (int status);
+extern void SetProgName (const char *name);
+extern void SetApplPath (const char *path);
+extern void SetInfoPath (const char *path);
 
-extern void (*_procexit_cleanup) (void);
-
+extern char *ExpandPath (const char *name);
 
 /*	Fehlermeldungen
 */
 
 extern char *MessageHandler;		/* Meldungsverwalter */
 
-void message (const char *id, const char *name, int num, int narg, ...);
-void vmessage (const char *id, const char *name, int num, int narg,
-	va_list list);
+extern void message (const char *id, const char *name, int num,
+	int narg, ...);
+extern void vmessage (const char *id, const char *name, int num,
+	int narg, va_list list);
 
 #endif	/* EFEU/procenv.h */

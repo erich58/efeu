@@ -1,0 +1,49 @@
+# configuration file for esh
+#
+# Copyright (C) 2001 Erich Frühstück
+# This file is part of EFEU.
+# 
+# EFEU is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+# 
+# EFEU is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public
+# License along with EFEU; see the file COPYING.
+# If not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+Ident = "EFEU--Shell"
+Version = "Version 1.0"
+Copyright = "(c) 2001 Erich Frühstück"
+
+CmdType = "esh"
+
+@ESHPATH|I:dir|IncPath:eval 'IncPath = paste(PATHSEP, IncPath, "{}")'
+	:*:appends <dir> to the search path for scripts.
+	The default setting is "{IncPath}".
+	:de:erweitert den Suchpfad für Skriptfiles um <dir>.
+	Die Vorgabe für den Suchpfad ist "{IncPath}".
+D:"name|=|val"|:eval 'copy(preproc("#define " + strsub("{}", "=", " ")), NULL);'
+	:*:defines macro <name> with value <val>
+	:de:definiert den Makro <name> mit Wert <value>
+-noeval|PPOnly = 1
+	:*:preprozess only, do not evaluate commands.
+	:de:Es wird nur der Preprozessor verwendet, das Skriptfile wird nicht
+	verarbeitet.
+-depend|:eval "MakeDepend=true"
+	:*:create dependend list, do not create output files.
+	:de:Es wird eine Abhängigkeitsliste zusammengestellt.
+	Zieldateien werden nicht generiert.
+::file|
+	:*:name of the script
+	:de:ist der Name des Skriptfiles, daß vom Interpreter
+	verarbeitet werden soll
+*arg(s)|
+	:*:command parameter for script
+	:de:sind Argumente und Optionen, die vom Skriptfile verarbeitet werden.

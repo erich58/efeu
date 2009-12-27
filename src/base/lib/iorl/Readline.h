@@ -1,31 +1,86 @@
-/*	Programmkonfiguration
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Readline-Schnittstelle
 
-	Version 0.4
+$Header <EFEU/$1>
+
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #ifndef	EFEU_Readline_h
 #define	EFEU_Readline_h	1
 
-#include <EFEU/pconfig.h>
+#include <EFEU/io.h>
 
-/*	Initialisierungsfunktionen
+extern void SetupReadline (void);
+
+/*
+$Description
+Die Readline-Schnittstelle läßt sich mithilfe von |io_ctrl|-Aufrufen
+konfigurieren. Alls erstes Argument wird eine IO-Struktur übergeben,
+danach folgt der Kontrollmakro und die zur Steuerung notwendigen
+Argumente. Bei Erfolg liefert der Aufruf den Wert von 0.
+Falls die <io>-Struktur keine Readline-Schnittstelle darstellt,
+werden die Aktionen einfach ignoriert und |io_ctrl| liefert |EOF| (-1).
+
+Im folgenden sind die einzelnen Kontrollaufrufe angeführt.
+Der Datentype der spezifischen Argumente wird mit einem cast dargestellt:
+
+[<|io_ctrl(<io>, $1)|>]
+	bewirkt nichts, der Rückgabewert kann aber
+	zum testen einer IO-Struktur auf eine
+	Readline-Schnittstelle verwendet werden.
+	Eine Readline-Schnittstelle wird nur für interaktive Programme
+	eingerichtet!
 */
 
-void SetupReadline (void);
-void SetupInteract (void);
-void SetupDebug (void);
+#define	RLCTRL			('R' << 8)
 
-io_t *io_readline (const char *prompt, const char *hist);
-io_t *io_interact (const char *prompt, const char *hist);
+/*
+[<|io_ctrl(<io>, $1, (int) <key>|>)]
+	setzt das Interaktionszeichen für eingebaute Befehle der
+	Readline-Schnittstelle.
+	Voreingestellt ist das Rufzeichen <"|!|">.
+*/
 
-extern io_t *(*_interact_open) (const char *prompt, const char *hist);
-extern io_t *(*_interact_filter) (io_t *io);
+#define	RLCTRL_KEY		(RLCTRL|0x01)
 
-extern int iorl_key;
-extern int iorl_maxhist;
+/*
+[<|io_ctrl(<io>, $1, (int) <size>|>)]
+	legt die maximale Zahl der History-Zeilen festgelgt.
+	Ein Wert von 0 steht für unbegrenzt.
+	Voreingestellt sind 100 Zeilen.
+*/
 
-int EshConfig (int *narg, char **arg);
+#define	RLCTRL_HSIZE		(RLCTRL|0x02)
+
+/*
+$Example
+Die nachfolgenden Programmzeilen zeigen die typische Verwendung der
+oben beschriebenen Steuermakros.
+
+---- verbatim
+if	(io_ctrl(io, RLCTRL) == 0)
+	io_puts("readline-Funktionalität verfügbar!\n", io);
+
+io_ctrl(io, RLCTRL_KEY, '%');
+io_ctrl(io, RLCTRL_HSIZE, 500);
+----
+*/
 
 #endif	/* EFEU_Readline_h */

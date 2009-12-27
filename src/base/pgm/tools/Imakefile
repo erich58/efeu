@@ -1,3 +1,6 @@
+DEP=	DEP_IORL DEP_EFX DEP_EFM
+LIB=	LIB_IORL LIB_EFX LIB_EFM
+
 Program($(BINDIR),mkdump,mkdump.o,NullArg,NullArg)
 Program($(BINDIR),undump,undump.o,NullArg,NullArg)
-Program($(BINDIR),fix2var,fix2var.o,NullArg,NullArg)
+Program($(BINDIR),PrintMessage,PrintMessage.o,$(DEP),$(LIB))

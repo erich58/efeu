@@ -1,6 +1,5 @@
 /*	Ausgabekontrolle für mdprint
 	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
 */
 
 #include <EFEU/pctrl.h>
@@ -70,7 +69,7 @@ static int pf_ctrl(PrFilter_t *pf, int req, va_list list)
 			pf->ctrl(pf, PCTRL_END, list);
 
 		stat = io_close(pf->io);
-		FREE(pf);
+		memfree(pf);
 		return stat;
 	}
 

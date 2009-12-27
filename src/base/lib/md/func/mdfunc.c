@@ -1,8 +1,5 @@
 /*	MDMAT - Funktionen
 	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
-
-	Version 3.0
 */
 
 #include <EFEU/object.h>
@@ -154,7 +151,7 @@ static void MF_cat(Func_t *func, void *rval, void **arg)
 	for (i = 0; i < dim; i++)
 		rd_deref(tab[i]);
 
-	FREE(tab);
+	memfree(tab);
 	RVMD = md;
 }
 
@@ -165,7 +162,7 @@ static void MF_index(Func_t *func, void *rval, void **arg)
 
 	if	(md && n * md->type->size < md->size)
 	{
-		Val_obj(rval) = LvalObj(md->type, md,
+		Val_obj(rval) = LvalObj(&Lval_ref, md->type, md,
 			(char *) md->data + n * md->type->size);
 	}
 	else	Val_obj(rval) = NULL;

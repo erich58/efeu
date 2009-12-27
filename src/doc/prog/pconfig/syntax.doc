@@ -1,0 +1,157 @@
+\sec	Konfigurationsdatei
+
+Eine \index{Konfigurationsdatei} für Programmparameter ist zeilenweise
+aufgebaut und setzt sich aus den folgenden Zeilentypen zusammen:
+
+*	\index{Kommentar}e: Diese sind mit einem Gittersymbol in der ersten
+	Spalte gekennzeichnet.
+*	\index{Beschreibungstext}e: Diese sind durch einen Tabulator in der
+	ersten Spalte gekennzeichnet. Aufeinanderfolgende
+	Beschreibungstexte gehören zusammen. Beschreibungstexte nach
+	einem Kommentar oder einer Leerzeile werden ignoriert.
+*	\index{Definitionszeile}n: Das sind alle anderen Zeilen,
+	die nicht mit einem Gittersymbol oder einem Tabulator
+	beginnen.
+
+Eine \index{Definitionszeile} besteht aus einer Liste von Kennungen,
+gefolgt von einer Liste von Befehlen.
+Die einzelnen Kennungen werden von einem Pipesymbol |||| begrenzt,
+die Befehle durch einen Strichpunkt |;| oder den Zeilenvorschub am Ende
+einer Zeile.
+
+Eine allgemeine Definitionszeile ist damit folgend aufgebaut:
+
+... [<Kennung> ||||] [<Kennung> ||||] <Befehl> [|;| <Befehl> ] ...
+
+Aufeinanderfolgende Leerzeichen und Tabulatoren vor und nach einem
+Trennzeichen werden ignoriert, innerhalb einer Kennung oder eines
+Befehles werden sie auf ein Leerzeichen reduziert.
+
+Folgende Kennungen sind definiert:
+
+[|@|<name>]
+	Umgebungsvariable <name>,
+[<name>]
+	Option |-|<name> ohne Argument,
+[<name>|:|<arg>]
+	Option |-|<name> mit zwingendem Argument,
+[<name>|::|<arg>]
+	Option |-|<name> mit optionalem Argument,
+[|:|<arg>]
+	notwendiges Argument,
+[|::|<arg>]
+	optionales Argument,
+[|$|<arg>]
+	letztes Argument,
+[|*|<arg>]
+	variable Argumentliste mit beliebig vielen Argumenten,
+[|+|<arg>]
+	variable Argumentliste mit mindestens einem Argument,
+[|/|<regex>|/|<arg>]
+	Argument, das dem \index[regulärer Ausdruck]regulären
+	Ausdruck <regex> entspricht.
+
+Der Parameter <arg> wird für die Darstellung der Kommandosyntax
+verwendet. Er wird standardmäßig in kursiv gesetzt, bei regulären
+Ausdrücken wird Schreibmaschinenschrift verwendet.
+
+Jede Kennung kann einen \index{Vorgabewert} enthalten. Dieser wird in eckigen
+Klammern gesetzt und am Ende der Kennung angegeben.
+Der Vorgabewert kommt zum Einsatz, wenn bei einer Option mit optionalem
+Argument  dieses nicht angegeben wurde, oder wenn anstelle eines
+Arguments ein einzelnes Minuszeichen steht.
+
+Optionen, die aus mehr als einem Zeichen bestehen, sollten mit
+einem Minuszeichen <"|-|"> beginnen. Damit werden einerseits Konflikte mit
+Einzeichenoptionen vermieden und die Kommandosyntax ist GNU-kompatibel.
+
+Befehlskennungen sind folgend aufgebaut:
+
+[<name>]
+	Der Befehl besteht nur aus dem Resourcenamen <name>.
+[<=[<name>]~|=|~[<val>]=>]
+	Bei dem Befehl handelt es sich um eine Zuweisung.
+[<=[<name>]~|:|~<func>~[<arg>]=>]
+	Hier handelt es sich um eine allgemeine Befehlskennung.
+	Der Resourcename <name> ist optional, aber das Trennzeichen
+	<"|:|"> muß zwingend vorhanden sein. Das Funktionsargument <arg> ist
+	durch Leerzeichen oder Tabulatoren vom Funktionsnamen <func>
+	zu trennen.
+
+Beachte den Unterschied zwischen der Zuweisung <"<name> |=| <val>"> und
+der Befehlskennung <"<name>|: set| <val>">.
+Im ersten Fall erhält <name> den Wert von
+<val> ohne, im zweiten Fall den Wert von <val> mit
+\index{Substitution} von Parameterwerten.
+
+Der \index{Beschreibungstext} nach einer Definitionszeile dient zur
+Erläuterung der einzelnen Befehlszeilen und wird zur Konstruktion
+des Handbucheintrages verwendet.
+Folgt ein Beschreibungstext einer Definitionszeile ohne einer Kennung,
+dient er zur Beschreibung der Resourcevariablen des letzten Befehls.
+
+Obwohl der Vorgabewert einer Kennung am Ende stehen sollte,
+wird er an jeder beliebigen Position akzeptiert.
+Die Interpretation der Leerzeichen oder der speziellen Trennzeichen
+kann durch Setzen von Anführungszeichen (einfach oder doppelt) oder
+mit dem Backslash als Fluchtsymbol unterbunden werden.
+
+\ssec	Standardoptionen
+Eine Reihe von Optionen ist bereits vordefiniert. Im folgenden wird
+die Dateu |efm.cnf| aufgelistet, die von jedem Kommando automatisch
+geladen wird:
+
+\include[verbatim] \eval{fsearch(ApplPath, "config/efm.cnf")}
+
+\ssec	Alter Standard
+Die alte Konfiguration der Programmparameter erfolgte in
+Konfigurationsdateien, die vom esh-Interpreter ausgewertet
+wurden. Diese haben den \index[Filezusatz <"|.app|">]Zusatz <"|.app|">.
+Die Definition von Programmparametern erfolgte mit den folgenden
+Funktionen:
+
+[<|PgmEnv(<name>, <cmd>, <desc>)|>]
+	\index[|PgmEnv|]definiert eine Umgebungsvariable,
+[<|PgmOpt(<name>, <cmd>, <desc>)|>]
+	\index[|PgmOpt|]definiert eine Option,
+[<|PgmArg(<name>, <cmd>, <desc>)|>]
+	\index[|PgmArg|]definiert ein Argument,
+[<|PgmRegExp(<expr>, <name>, <cmd>, <desc>)|>]
+	\index[|PgmRegExp|]definiert einen regulären Ausdruck,
+[<|PgmOptArg(<name>, <cmd>, <desc>)|>]
+	\index[|PgmOptArg|]definiert ein optionales Argument,
+[<|PgmVaArg(<name>, <cmd>, <desc>)|>]
+	\index[|PgmVaArg|]definiert eine variable Argumentliste.
+
+Im Zuge der Umstellung ist geplant, daß diese Funktionen
+direkt in den neuen Standard übersetzt werden. Eine Konvertierung
+der Konfigurationsdateien ist damit nicht notwendig.
+
+Zwei Funktionen wurden bereits im Rahmen der Umstellung
+eliminiert. Sie sind im folgenden beschrieben, falls eine alte
+Konfigurationsdatei sie noch verwendet und dieses angepaßt werden muß:
+
+[<|PgmXOpt(<name>, <cmd>, <desc>)|>]
+	\index[|PgmXOpt|]definierte Optionen, die einem Muster
+	entsprechen. Das einzige Kommando, das diese Option benutzte
+	war \index{|mdmul|}. Es definierte eine Option |-|<num>, die
+	einen numerischen Wert darstellt.  Sie wurde durch |-n| <num>
+	ersetzt.
+
+[<|PgmXArg(<name>, <cmd>, <desc>)|>]
+	\index[|PgmXArg|]wurde durch \index{|PgmRegExp|} ersetzt.
+	Die Funktionalität ist ähnlich. Da |PgmXArg| keine
+	ansprechende Darstellung des Arguments erlaubte, wurde sie
+	meist mit \index{|PgmOptArg|} ohne Ausdruck kombiniert.
+	Während |PgmXArg| an beliebiger Stelle definiert werden kann,
+	muß |PgmRegExp| vor optionalen Argumenten und variablen
+	Argumentlisten definiert werden.  Völlige Kompatibilität
+	besteht, wenn |PgmRegExp| vor jedem Argument eingefügt wird,
+	es gibt aber gute Gründe, dies erst nach den feststehenden
+	Argumenten zu tun.
+
+Alte Esh-Scripts verwenden ebenfalls diese Funktionen zur
+Konfiguration. Die Analyse der Programmargumente wird mit
+dem Schlüsselwort \index{|loadarg|} aktiviert.
+Nach |pconfig| oder |loadarg| stehen die Funktionen des alten
+Standards nicht mehr zur Verfügung.

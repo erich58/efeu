@@ -1,0 +1,40 @@
+\appendix	Geschichte
+Dieser Abschnitt dokumentiert die Entwicklung des Dokumentgenerators.
+Alle Änderungen werden hier mit Datum vermerkt und nach der
+Aktualität gereiht.
+
+\margin	Mai 2001
+Ab Mai 2001 wird der Synthesis-Standard nicht mehr als Grundlage der
+\LaTeX;-Formatieriung herangezogen. Es gibt eine Makrodatei zur
+aktivierung des Synthesis-Stiles.
+
+\margin	Jänner 2000
+Folgende Erweiterungen/Änderungen wurden im Jänner 2000 durchgeführt:
+*	Die neue Umgebung |spage| dient zur Verschiebung des linken
+	Randes. Zusätzlich besteht die Möglichkeit, auf eine kleinere
+	Schrift und/oder auf Schreibmaschinenschrift umzustellen.
+*	Der Befehl Fußnotenmarkierungen wurde von |\fn| auf |\mark|
+	umgeändert.
+*	Das mit |\date| gesetzte Datum kann mit dem Befehl |\thedate|
+	abgerufen werden.
+*	Neue Befehle und Makros für Handbucheinträge:
+	|proto|, |mksource| und |@MSExample|.
+*	Der neue Befehl |config| ladet eine Konfigurationsdatei.
+*	Die Konfigurationsdatei |EFEU| initialisiert Titelparameter
+	für EFEU-Dokumente (Logo, Autor, Adresse) und stellt den
+	Makro |@Impressum| zur Verfügung.
+
+\margin	Dezember 1999
+Im Dezember 1999 wurde |efeudoc| freigegeben.
+Der \LaTeX-Treiber ist im wesentlichen fertiggestellt.
+Das Handbuch steht in einer Rohfassung zur verfügung.
+
+Die folgenden Arbeiten sind noch offen:
+*	Tabellen werden derzeit nur vom \LaTeX-Treiber korrekt
+	dargestellt.
+*	Das Konzept zur online-Abfrage von Dokumenten muß noch
+	erarbeitet werden.
+*	Die automatische Generierung der Begriffserläuterung
+	steht erst in einer Rohversion zur Verfügung.
+*	Einzelne Layoutfragen sind noch nicht abgeklärt.
+*	Es gibt noch kein Programmierhandbuch zu |efeudoc|.

@@ -1,8 +1,23 @@
-/*	Linearkombination von stückweisen Polynomen
-	(c) 1992 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Linearkombination von stückweisen Polynomen
 
-	Version 2.0
+$Copyright (C) 1992 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/efmain.h>
@@ -61,8 +76,8 @@ pnom_t *pnlincmb(pnom_t *p, ...)
 
 /*	Vektoren aufbauen
 */
-	lc_m = ALLOC(n, double);
-	pl = ALLOC(n, pnom_t *);
+	lc_m = memalloc(n * sizeof(double));
+	pl = memalloc(n * sizeof(pnom_t *));
 	va_start(k, p);
 	deg = 0;
 
@@ -82,7 +97,7 @@ pnom_t *pnlincmb(pnom_t *p, ...)
 	lc_pn = pnalloc(lc_dim, deg);
 	lc_dim = 0;
 	(void) pnjoin(pl, n, lc_sub);
-	FREE(pl);
-	FREE(lc_m);
+	memfree(pl);
+	memfree(lc_m);
 	return lc_pn;
 }

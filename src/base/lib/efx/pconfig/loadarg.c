@@ -1,15 +1,42 @@
-/*	Laden von Aufrufparametern
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Laden von Aufrufparametern
 
-	Version 0.4
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/pconfig.h>
 #include <EFEU/Info.h>
+#include <EFEU/RegExp.h>
+#include <EFEU/Resource.h>
+#include <EFEU/Debug.h>
 
 #define	ARGNAME		"name"
 #define	ARGVALUE	"arg"
+
+#define LBL_OPT	":*:options" \
+		":de:Optionen"
+
+#define LBL_ARG	":*:arguments" \
+		":de:Argumente"
+
+#define	LBL_ENV	":*:environment" \
+		":de:Umgebungsvariablen"
 
 static void LoadOpt (int *argc, char **argv);
 static void do_eval (const char *cmd, char *name, const char *arg);
@@ -22,7 +49,7 @@ static char **argv;
 static char *argname = NULL;
 static char *argvalue = NULL;
 
-static Var_t vartab[] = {
+static VarDef_t vartab[] = {
 	{ ARGNAME, &Type_str, &argname },
 	{ ARGVALUE, &Type_str, &argvalue },
 };
@@ -61,13 +88,13 @@ void loadarg(int *narg, char **arg)
 	argv = arg;
 
 	PushVarTab(NULL, NULL);
-	AddVar(NULL, vartab, tabsize(vartab));
+	AddVarDef(NULL, vartab, tabsize(vartab));
 /*
 	PushVarTab(RefVarTab(GlobalVar), NULL);
 */
-	AddInfo(NULL, "Opt", "Optionen", ArgInfo, &PgmDefTab.opt);
-	AddInfo(NULL, "Arg", "Argumente", ArgInfo, &PgmDefTab.arg);
-	AddInfo(NULL, "Env", "Umgebungsvariablen", ArgInfo, &PgmDefTab.env);
+	AddInfo(NULL, "Opt", LBL_OPT, ArgInfo, &PgmDefTab.opt);
+	AddInfo(NULL, "Arg", LBL_ARG, ArgInfo, &PgmDefTab.arg);
+	AddInfo(NULL, "Env", LBL_ENV, ArgInfo, &PgmDefTab.env);
 	LoadOpt(argc, argv);
 
 	if	(PgmDefTab.xarg.used)
@@ -93,14 +120,17 @@ void loadarg(int *narg, char **arg)
 	if	(flag && *narg != 1)
 	{
 		usage(UsageFmt, ioerr);
-		libexit(EXIT_FAILURE);
+		exit(EXIT_FAILURE);
 	}
+
+	DebugMode(GetResource("Debug", NULL));
 }
 
 int arg_eval (vecbuf_t *buf)
 {
 	pardef_t *def;
 	size_t n;
+	int i;
 
 	for (n = buf->used, def = buf->data; n > 0; n--, def++)
 	{
@@ -110,7 +140,23 @@ int arg_eval (vecbuf_t *buf)
 		if	(def->cmd == NULL)
 			continue;
 
-		if	(*argc > 1)
+		if	(def->flag == P_REGEX)
+		{
+			RegExp_t *expr = RegExp(def->key, 0);
+
+			for (i = 1; i < *argc; )
+			{
+				if	(RegExp_exec(expr, argv[i], NULL))
+				{
+					do_eval(def->cmd, NULL, argv[i]);
+					skiparg(argc, argv, i);
+				}
+				else	i++;
+			}
+
+			rd_deref(expr);
+		}
+		else if	(*argc > 1)
 		{
 			do_eval(def->cmd, mstrcpy(def->name), argv[1]);
 			skiparg(argc, argv, 1);
@@ -118,7 +164,7 @@ int arg_eval (vecbuf_t *buf)
 		else if	(def->flag == P_ARG)
 		{
 			usage(UsageFmt, ioerr);
-			libexit(EXIT_FAILURE);
+			exit(EXIT_FAILURE);
 		}
 	}
 
@@ -298,8 +344,8 @@ static void do_eval (const char *cmd, char *name, const char *arg)
 	argvalue = argval(arg);
 	reg_cpy(1, argvalue);	/* Wegen Kompatiblität */
 	streval(cmd);
-	FREE(argname);
-	FREE(argvalue);
+	memfree(argname);
+	memfree(argvalue);
 	argname = NULL;
 	argvalue = NULL;
 }

@@ -1,8 +1,23 @@
-/*	Kalenderrechnung
-	(c) 1997 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Kalenderrechnung
 
-	Version 0.4
+$Copyright (C) 1997 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/calendar.h>
@@ -11,6 +26,9 @@
 
 #define	OFFSET_LIMIT	0xFFFF	/* Limit für Offset */
 #define	SEC_OF_DAY	(24 * 60 * 60)
+
+#define	YLIM_2000	50	/* Jahresgrenze für 2000 - Offset */
+#define	YLIM_1900	100	/* Jahresgrenze für 1900 - Offset */
 
 
 /*	leap year -- account for gregorian reformation in 1752
@@ -49,6 +67,9 @@
 
 int LeapYear (int year)
 {
+	if	(year < YLIM_2000)	year += 2000;
+	if	(year < YLIM_1900)	year += 1900;
+
 	return leap_year(year);
 }
 
@@ -71,8 +92,8 @@ static int DayInYear(int day, int month, int year)
 
 int CalendarIndex (int day, int month, int year)
 {
-	if	(year < 50)	year += 2000;
-	if	(year < 100)	year += 1900;
+	if	(year < YLIM_2000)	year += 2000;
+	if	(year < YLIM_1900)	year += 1900;
 
 	return last_day_of_year(year - 1) + DayInYear(day, month, year);
 }
@@ -115,6 +136,12 @@ static Calendar_t *set_date (int idx, Calendar_t *buf)
 	int leap;
 
 	if	(buf == NULL)	buf = &cal_buf;
+
+	if	(idx == 0)
+	{
+		memset(buf, 0, sizeof(Calendar_t));
+		return buf;
+	}
 
 	if	(idx <= OFFSET_LIMIT)
 		idx += CALENDAR_OFFSET_1900;
@@ -188,37 +215,66 @@ int CalBase1900(int x)
 	return x - CALENDAR_OFFSET_1900;
 }
 
-int str2Calendar (const char *str, char **endptr)
+int str2Calendar (const char *str, char **endptr, int flag)
 {
 	int tag, monat, jahr;
 	char *p;
 
-	if	(str == NULL || !isdigit(*str))	return 0;
+	if	(str == NULL)	return 0;
 
-	tag = strtol(str, &p, 10);
+	while (isspace(*str))
+		str++;
 
-	if	(p && *p == '.' && isdigit(*(++p)))
-	{
-		monat = strtol(p, &p, 10);
-	}
-	else
-	{
-		monat = tag;
-		tag = 1;
-	}
+	if	(!isdigit(*str))	return 0;
 
-	if	(p && *p == '.' && isdigit(*(++p)))
+	jahr = strtol(str, &p, 10);
+	monat = 1;
+	tag = 1;
+
+	if	(p && *p == '-' && isdigit(p[1]))
 	{
-		jahr = strtol(p, &p, 10);
+		monat = strtol(p + 1, &p, 10);
+
+		if	(p && *p == '-' && isdigit(p[1]))
+		{
+			tag = strtol(p + 1, &p, 10);
+			flag = 0;
+		}
 	}
-	else
+	else if	(p && *p == '.' && isdigit(p[1]))
 	{
-		jahr = monat;
-		monat = tag;
-		tag = 1;
+		monat = jahr;
+		jahr = strtol(p + 1, &p, 10);
+
+		if	(p && *p == '.' && isdigit(p[1]))
+		{
+			tag = monat;
+			monat = jahr;
+			jahr = strtol(p + 1, &p, 10);
+			flag = 0;
+		}
+	}
+	else if	(flag)
+	{
+		monat = 12;
 	}
 
 	if	(endptr)	*endptr = p;
+
+	if	(jahr < YLIM_2000)	jahr += 2000;
+	if	(jahr < YLIM_1900)	jahr += 1900;
+
+	if	(flag)
+	{
+		if	(monat == 12)
+		{
+			jahr++;
+			monat = 1;
+		}
+		else	monat++;
+
+		return CalendarIndex(1, monat, jahr) - 1;
+	}
 
 	return CalendarIndex(tag, monat, jahr);
 }
@@ -226,13 +282,13 @@ int str2Calendar (const char *str, char **endptr)
 /*	Zeithilfsfunktionen
 */
 
-Time_t str2Time (const char *str, char **endptr)
+Time_t str2Time (const char *str, char **endptr, int flag)
 {
 	int hour, min, sec;
 	Time_t x;
 	char *p;
 
-	x.date = str2Calendar(str, &p);
+	x.date = str2Calendar(str, &p, flag);
 	hour = p ? strtol(p, &p, 10) : 12;
 
 	if	(p && *p == ':')

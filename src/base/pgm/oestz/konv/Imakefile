@@ -1,7 +1,0 @@
-DEP=	DEP_EFX DEP_EFM
-LIB=	LIB_EFX LIB_EFM
-
-OBJ=	oestzkonv.o oestz.o open.o texput.o \
-	hdr.o doc.o names.o type.o scale.o
-
-Program($(BINDIR),oestzkonv,$(OBJ),$(DEP),$(LIB))

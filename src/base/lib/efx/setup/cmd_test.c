@@ -1,8 +1,23 @@
-/*	Programmsteuerung
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Programmsteuerung
 
-	Version 0.4
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/object.h>
@@ -100,35 +115,43 @@ static void f_showkonv (Func_t *func, void *rval, void **arg)
 
 static void f_lcshow (Func_t *func, void *rval, void **arg)
 {
-	io_t *io;
-	int n;
-
-	io = Val_io(arg[0]);
-	n = 0;
+	io_t *io = Val_io(arg[0]);
 
 	if	(Locale.scan)
 	{
-		n += io_printf(io, "scan.thousands_sep = %#s\n",
+		io_printf(io, "scan.thousands_sep = %#s\n",
 			Locale.scan->thousands_sep);
-		n += io_printf(io, "scan.decimal_point = %#s\n",
+		io_printf(io, "scan.decimal_point = %#s\n",
 			Locale.scan->decimal_point);
 	}
 
 	if	(Locale.print)
 	{
-		n += io_printf(io, "print.thousands_sep = %#s\n",
+		io_printf(io, "print.thousands_sep = %#s\n",
 			Locale.print->thousands_sep);
-		n += io_printf(io, "print.decimal_point = %#s\n",
+		io_printf(io, "print.decimal_point = %#s\n",
 			Locale.print->decimal_point);
-		n += io_printf(io, "print.negativ_sign = %#s\n",
+		io_printf(io, "print.negativ_sign = %#s\n",
 			Locale.print->negative_sign);
-		n += io_printf(io, "print.positive_sign = %#s\n",
+		io_printf(io, "print.positive_sign = %#s\n",
 			Locale.print->positive_sign);
-		n += io_printf(io, "print.zero_sign = %#s\n",
+		io_printf(io, "print.zero_sign = %#s\n",
 			Locale.print->zero_sign);
 	}
+}
 
-	Val_int(rval) = n;
+static void f_locale (Func_t *func, void *rval, void **arg)
+{
+	io_t *io = Val_io(arg[0]);
+
+	if	(Locale.scan)
+		io_printf(io, "LC_SCAN=%#s\n", Locale.scan->name);
+
+	if	(Locale.print)
+		io_printf(io, "LC_PRINT=%#s\n", Locale.print->name);
+
+	if	(Locale.date)
+		io_printf(io, "LC_DATE=%#s\n", Locale.date->name);
 }
 
 static void f_parselist (Func_t *func, void *rval, void **arg)
@@ -144,6 +167,7 @@ void CmdSetup_test(void)
 	SetFunc(0, &Type_void, "vtabstack (int = 0, IO = iostd)", f_vtabstack);
 	SetFunc(0, &Type_int, "dist (Type_t a, Type_t b)", f_typedist);
 	SetFunc(0, &Type_void, "showkonv (Type_t a, Type_t b)", f_showkonv);
-	SetFunc(0, &Type_int, "lcshow (IO = iostd)", f_lcshow);
+	SetFunc(0, &Type_void, "lcshow (IO = iostd)", f_lcshow);
+	SetFunc(0, &Type_void, "locale (IO = iostd)", f_locale);
 	SetFunc(0, &Type_void, "parselist (IO = iostd)", f_parselist);
 }

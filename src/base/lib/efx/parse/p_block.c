@@ -1,8 +1,23 @@
-/*	Blockverarbeitung
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Blockverarbeitung
 
-	Version 0.4
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/object.h>
@@ -38,7 +53,7 @@ static Obj_t *do_return(void *ptr, const ObjList_t *list)
 	UnrefObj(CmdEval_retval);
 	x = list ? EvalObj(RefObj(list->obj), NULL) : NULL;
 
-	if	(x && x->lref)
+	if	(x && x->lval)
 	{
 		CmdEval_retval = ConstObj(x->type, x->data);
 		UnrefObj(x);
@@ -212,3 +227,5 @@ Obj_t *Expr_forin(void *par, const ObjList_t *list)
 	PopVarTab();
 	return NULL;
 }
+
+

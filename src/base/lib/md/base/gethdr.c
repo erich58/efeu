@@ -1,14 +1,8 @@
 /*	Header einer multidimensionale Matrix laden
 	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
-
-	Version 2.0
 */
 
 #include <EFEU/mdmat.h>
-
-
-extern int IgnoreMdSizeError;
 
 static unsigned get_2byte(io_t *io)
 {
@@ -53,7 +47,7 @@ mdmat_t *md_gethdr(io_t *io)
 
 		reg_set(0, io_ident(io));
 		errmsg(MSG_MDMAT, 10);
-		libexit(0);
+		exit(EXIT_SUCCESS);
 		get_LSBF(io, &k, 2);
 		dim = k;
 		get_LSBF(io, &space, 4);
@@ -107,7 +101,7 @@ mdmat_t *md_gethdr(io_t *io)
 		{
 			md->type = &Type_int;
 		}
-		else if	(IgnoreMdSizeError == 0)
+		else
 		{
 			reg_cpy(1, oname);
 			liberror(MSG_MDMAT, 14);

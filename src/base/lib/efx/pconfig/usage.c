@@ -1,8 +1,23 @@
-/*	Hilfetextformatierung
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Hilfetextformatierung
 
-	Version 0.4
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/ftools.h>
@@ -17,6 +32,14 @@
 
 #define	HLP_PFX	"help"
 #define	HLP_SFX	"hlp"
+
+char *UsageFmt = "\\Synopsis\n@synopsis\n";
+
+char *HelpFmt = "\\manpage[1]{$!}\n\
+\\Name\n@ident\n\
+\\Synopsis\n@synopsis\n\
+\\Description\n@arglist 10\n\
+";
 
 static void s_name (io_t *io, const char *arg);
 static void s_ident (io_t *io, const char *arg);
@@ -206,6 +229,11 @@ static void usage_short(io_t *io, pardef_t *def)
 	case P_OPTARG:
 		show_xarg(io, def->name, 0);
 		break;
+	case P_REGEX:
+		io_puts("\\{~", io);
+		show_arg(io, def->name, 0);
+		io_puts("~}", io);
+		break;
 	default:
 		show_arg(io, def->name, 0);
 		break;
@@ -331,9 +359,9 @@ static void s_proto(io_t *io, const char *arg)
 
 	for (i = 0; i < tab->tab.used; i++)
 	{
-		io_puts("\\ttitem{", io);
+		io_puts("<|", io);
 		ListFunc(io, ftab[i]);
-		io_puts("}\n", io);
+		io_puts("|>\\br\n", io);
 	}
 }
 
@@ -488,9 +516,9 @@ void cp_usage(io_t *in, io_t *out)
 	{
 		char *p;
 
-		p = fsearch(ApplPath, HLP_PFX, ProgName, HLP_SFX);
+		p = xfsearch(ApplPath, HLP_PFX, ProgName, HLP_SFX);
 		in = p ? io_fileopen(p, "r") : io_cstr(HelpFmt);
-		FREE(p);
+		memfree(p);
 	}
 	else	in = io_refer(in);
 

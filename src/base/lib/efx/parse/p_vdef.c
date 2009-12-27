@@ -1,19 +1,34 @@
-/*	Parser für Variablendefinitionen
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Parser für Variablendefinitionen
 
-	Version 0.4
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/object.h>
 #include <EFEU/stdtype.h>
 #include <EFEU/Op.h>
 
-static void d_vdef (const Type_t *type, VarDef_t *tg);
-static void c_vdef (const Type_t *type, VarDef_t *tg, const VarDef_t *src);
-static Obj_t *e_vdef (const Type_t *type, const VarDef_t *def);
+static void d_vdef (const Type_t *type, VarDecl_t *tg);
+static void c_vdef (const Type_t *type, VarDecl_t *tg, const VarDecl_t *src);
+static Obj_t *e_vdef (const Type_t *type, const VarDecl_t *def);
 
-Type_t Type_vdef = EVAL_TYPE("_VarDef_", VarDef_t,
+Type_t Type_vdef = EVAL_TYPE("_VarDecl_", VarDecl_t,
 	(Eval_t) e_vdef, (Clean_t) d_vdef, (Copy_t) c_vdef);
 
 /*	Scope-Namen lesen
@@ -114,7 +129,7 @@ ObjList_t *Parse_idx (io_t *io)
 
 Obj_t *Parse_vdef(io_t *io, Type_t *type, int flag)
 {
-	VarDef_t vdef;
+	VarDecl_t vdef;
 	ObjList_t **ptr;
 	Obj_t *obj;
 	int c;
@@ -241,17 +256,17 @@ ObjList_t *VarDefList(io_t *io, int delim)
 }
 
 
-static void d_vdef(const Type_t *type, VarDef_t *tg)
+static void d_vdef(const Type_t *type, VarDecl_t *tg)
 {
 	UnrefObj(tg->name.obj);
 	memfree(tg->name.name);
 	DelObjList(tg->idx);
 	UnrefObj(tg->defval);
-	memset(tg, 0, sizeof(VarDef_t));
+	memset(tg, 0, sizeof(VarDecl_t));
 }
 
 
-static void c_vdef(const Type_t *type, VarDef_t *tg, const VarDef_t *src)
+static void c_vdef(const Type_t *type, VarDecl_t *tg, const VarDecl_t *src)
 {
 	tg->type = src->type;
 	tg->name.obj = RefObj(src->name.obj);
@@ -264,7 +279,7 @@ static void c_vdef(const Type_t *type, VarDef_t *tg, const VarDef_t *src)
 /*	Variablendefinition auswerten
 */
 
-static Obj_t *e_vdef(const Type_t *type, const VarDef_t *vdef)
+static Obj_t *e_vdef(const Type_t *type, const VarDecl_t *vdef)
 {
 	Var_t *var;
 	Obj_t *x, *defval;

@@ -1,8 +1,23 @@
-/*	Standardfunktionen
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Standardfunktionen
 
-	Version 0.4
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/ftools.h>
@@ -12,6 +27,8 @@
 #include <EFEU/printobj.h>
 #include <EFEU/locale.h>
 #include <EFEU/preproc.h>
+#include <EFEU/Debug.h>
+#include <EFEU/LangType.h>
 
 
 /*	Die eingebauten Funktionen werden über Makros definiert
@@ -32,15 +49,28 @@ F_INT(t_sizeof, Val_type(arg[0])->size)
 
 CEXPR(c_typeof, Val_type(rval) = ((Obj_t *) arg[0])->type)
 
+BUILTIN(f_declare)
+{
+	strbuf_t *sb;
+	io_t *tmp;
+
+	sb = new_strbuf(0);
+	tmp = io_strbuf(sb);
+	ShowType(tmp, Val_type(arg[0]));
+	io_close(tmp);
+	Val_str(rval) = sb2str(sb);
+}
+
 BUILTIN(f_whatis)
 {
 	Obj_t *obj = arg[0];
 
 	if	(obj)
 	{
-		if	(obj->lref)
+		if	(obj->lval)
 		{
-			char *p = rd_ident(obj->lref);
+			char *p = obj->lval->ident ? 
+				obj->lval->ident(obj) : NULL;
 
 			if	(p)
 			{
@@ -172,6 +202,15 @@ BUILTIN(get_op)
 	Val_io(rval) = rd_refer(Val_io(arg[0]));
 }
 
+BUILTIN(f_putc)
+{
+	Val_int(rval) = io_putc(Val_char(arg[0]), Val_io(arg[1]));
+}
+
+BUILTIN(f_puts)
+{
+	Val_int(rval) = io_puts(Val_str(arg[0]), Val_io(arg[1]));
+}
 
 BUILTIN(f_printf)
 {
@@ -197,6 +236,16 @@ BUILTIN(f_sprintf)
 	Val_str(rval) = sb2str(sb);
 }
 
+BUILTIN(f_debug)
+{
+	PrintFmtList(ParseLogOut(Val_str(arg[0])),
+		Val_str(arg[1]), Val_list(arg[2]));
+}
+
+BUILTIN(f_DebugMode)
+{
+	DebugMode(Val_str(arg[0]));
+}
 
 BUILTIN(f_expr)
 {
@@ -274,7 +323,7 @@ BUILTIN(f_vpsub)
 	ObjList_t *l;
 	int i;
 
-	for (i= 1, l = Val_list(arg[1]); l != NULL; i++, l = l->next)
+	for (i = 1, l = Val_list(arg[1]); l != NULL; i++, l = l->next)
 		reg_set(i, Obj2str(RefObj(l->obj)));
 
 	Val_str(rval) = parsub(Val_str(arg[0]));
@@ -322,7 +371,7 @@ BUILTIN(f_cat)
 		delim = Val_str(arg[0]);
 		s = Obj2str(RefObj(l->obj));
 		sb_puts(s, sb);
-		FREE(s);
+		memfree(s);
 	}
 
 	Val_str(rval) = sb2str(sb);
@@ -436,11 +485,12 @@ static void f_typelist (Func_t *func, void *rval, void **arg)
 
 static void f_setlocale (Func_t *func, void *rval, void **arg)
 {
-	if	(!SetLocale(Val_int(arg[0]), Val_str(arg[1])))
-	{
-		reg_cpy(1, Val_str(arg[1]));
-		errmsg(MSG_EFMAIN, 7);
-	}
+	SetLocale(Val_int(arg[0]), Val_str(arg[1]));
+}
+
+static void f_setlang (Func_t *func, void *rval, void **arg)
+{
+	SetLangType(Val_str(arg[0]));
 }
 
 static void f_printparam (Func_t *func, void *rval, void **arg)
@@ -452,11 +502,6 @@ static void f_printparam (Func_t *func, void *rval, void **arg)
 	Locale.print->negative_sign = mstrcpy(Val_str(arg[2]));
 	Locale.print->positive_sign = mstrcpy(Val_str(arg[3]));
 	Locale.print->zero_sign = mstrcpy(Val_str(arg[4]));
-}
-
-static void f_getlocale (Func_t *func, void *rval, void **arg)
-{
-	Val_str(rval) = mstrcpy(GetLocale(Val_int(arg[0])));
 }
 
 static void f_lcpush (Func_t *func, void *rval, void **arg)
@@ -495,14 +540,19 @@ static FuncDef_t fdef_func[] = {
 	{ FUNC_VIRTUAL, &Type_int, "sizeof (Type_t)", t_sizeof },
 	{ 0, &Type_type, "typeof (.)", c_typeof },
 	{ 0, &Type_str, "whatis (.)", f_whatis },
+	{ 0, &Type_str, "declare (Type_t)", f_declare },
 	{ FUNC_VIRTUAL, &Type_int, "offset (., .)", f_offset },
 	{ FUNC_VIRTUAL, &Type_int, "align (int, int)", f_align },
 	
 	{ FUNC_VIRTUAL, &Type_io, "operator>> (IO, . &)", get_op },
 
+	{ 0, &Type_int, "putc (char c, IO io = iostd)", f_putc },
+	{ 0, &Type_int, "puts (str s, IO io = iostd)", f_puts },
 	{ 0, &Type_int, "printf (str fmt, ...)", f_printf },
 	{ 0, &Type_int, "fprintf (IO io, str fmt, ...)", f_fprintf },
 	{ 0, &Type_str, "sprintf (str fmt, ...)", f_sprintf },
+	{ 0, &Type_void, "debug (str def, str fmt, ...)", f_debug },
+	{ 0, &Type_void, "DebugMode (str def)", f_DebugMode },
 
 	{ FUNC_VIRTUAL, &Type_str, "psub (str fmt)", f_psub },
 	{ FUNC_VIRTUAL, &Type_int, "psub (IO io, str fmt)", f_iopsub },
@@ -535,7 +585,7 @@ static FuncDef_t fdef_func[] = {
 
 	{ 0, &Type_list, "typelist ()", f_typelist },
 	{ 0, &Type_void, "setlocale (int type, str name = NULL)", f_setlocale },
-	{ 0, &Type_str, "getlocale (int type)", f_getlocale },
+	{ 0, &Type_void, "setlang (str lang = NULL)", f_setlang },
 	{ 0, &Type_void, "lcsave ()", f_lcpush },
 	{ 0, &Type_void, "lcrestore ()", f_lcpop },
 	{ 0, &Type_void, "printparam (str ts = NULL, str dp = \".\", \

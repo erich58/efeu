@@ -1,6 +1,23 @@
-/*	Informationseintrag suchen
-	(c) 1998 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Informationseintrag suchen
+
+$Copyright (C) 1998 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/Info.h>
@@ -98,8 +115,8 @@ InfoNode_t *GetInfo (InfoNode_t *base, const char *name)
 	return info;
 }
 
-InfoNode_t *AddInfo (InfoNode_t *base, const char *name, char *label,
-	PrintInfo_t func, void *par)
+InfoNode_t *AddInfo (InfoNode_t *base, const char *name,
+	const char *label, PrintInfo_t func, void *par)
 {
 	InfoNode_t *info, **ip;
 	char *ptr;
@@ -108,7 +125,10 @@ InfoNode_t *AddInfo (InfoNode_t *base, const char *name, char *label,
 
 	if	(ptr == NULL)
 	{
+		/*
 		fprintf(stderr, "Knoten %s in Verwendung.\n", name);
+		*/
+		fprintf(stderr, "node %s in use.\n", name);
 		return NULL;
 	}
 
@@ -125,7 +145,7 @@ InfoNode_t *AddInfo (InfoNode_t *base, const char *name, char *label,
 		base = *ip;
 	}
 
-	base->label = label;
+	base->label = mlangcpy(label, NULL);
 	base->func = func;
 	base->par = par;
 	return base;

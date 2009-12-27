@@ -1,0 +1,75 @@
+\Name
+intro -- Einführung in Kommandos
+\Description
+Dieser Anhang beschreibt die einzelnen Kommandos zur Manipulation
+von mehrdimensionalen Datenmatrizen in alphabetischer
+Reihenfolge.
+Die Notationen orientieren sich an den Standards für UNIX--Handbücher.
+
+Referenzen werden in der Form <Name(num)> geschrieben, wobei
+<num> die Kapitelnummer der Handbucheinträge angibt.
+Die einzelnen Einträge im Kapitel sind alphabetisch sortiert.
+
+\shead	Abschnitte
+Alle Handbucheinträge gliedern sich in die folgenden
+Abschnitte (die nicht immer alle angeführt sind):
+[BEZEICHNUNG]
+	gibt den Hauptnamen (und vorhandene zweite Namen)
+	und eine kurze Beschreibung des Kommandos oder der Makrofunktion an.
+[ÜBERSICHT]
+	faßt die Aufrufsyntax des beschriebenen Kommandos, der beschriebenen
+	Makrofunktion zusammen.
+	Es werden folgende Konventionen verwendet:
+	[<|Schreibmaschinenschrift|>]
+		Zeichenketten werden so eingegeben, wie sie
+		angegeben werden.
+	[<Schrägschrift>]
+		Zeichenketten geben formale Parameter an, die durch
+		aktuelle Argumente oder andere Kommandos ersetzt
+		werden müssen.
+	[<=[]=>]
+		Argumente, die in eckigen Klammern stehen, müssen nicht
+		unbedingt angegeben werden.
+	[|...|]
+		Mehrere Punkte zeigen an, daß hier eine beliebig
+		lange Liste von Argumenten stehen kann (z.B mehrere
+		Dateinamen).
+[BESCHREIBUNG]
+	gibt an, wie dieses Kommando, diese Makrofunktion zu benutzen ist.
+[BEISPIEL(E)]
+	gibt Aufrufbeispiel(e) an.
+[DATEIEN]
+	gibt die Dateien an, die vom Kommando angesprochen werden.
+[UMGEBUNGSVARIABLEN]
+	listet Umgebungsvariablen auf, die den Ablauf eines Kommandos
+	beeinflussen.
+[BEMERKUNGEN]
+	gibt nützliche Hinweise zu diesem Kommando bzw. dieser Makrofunktion.
+[SIEHE AUCH]
+	gibt Hinweise auf Kommandos und Makrofunktionen aus demselben
+	Themenbereich.
+[DIAGNOSE]
+	erläutert Fehlermeldungen, die vorkommen können. Selbsterklärende
+	Meldungen werden nicht aufgeführt.
+[WARNUNGEN]
+	gibt mögliche Höchstgrenzen oder Grenzen an.
+[FEHLER]
+	enthält eine Liste der bekannten Fehler, die noch nicht
+	berichtigt wurden. Es wird eine kurze Beschreibung gegeben, wie der
+	Fehler zu umgehen ist.
+
+\shead	Argumente und Optionen
+Die Aufrufargumente von Kommandos werden in Optionen und Argumente
+unterteilt. Optionen sind, wie der Name schon sagt, optionale
+Parameter, während Argumente in der Regel angegeben werden müssen.
+Die Reihenfolge von Optionen ist beliebig, während die Reihenfolge
+der Argumente vorgegeben ist. Manche Argumente können auch
+weggelassen werden, es werden dann Standardvorgaben verwendet:
+z.B: Ausgabe zur Standardausgabe anstelle einer Datei.
+Optionen werden durch ein Minus gekennzeichnet.
+
+Anstelle eines Arguments kann ein einzelnes Minus |-| stehen.
+Falls ein Argument von der Schreibweise her in Konflikt mit einer
+Optionskennung gerät, kann vor dem Argument die spezielle
+Kennung |--| angegeben werden. Nach dieser
+Kennung werden keine Optionen geprüft.

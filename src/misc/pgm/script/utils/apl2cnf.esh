@@ -1,0 +1,117 @@
+bool EshScript = false;
+
+pconfig !
+Ident = "Alte Kommondosyntaxdateien konvertieren"
+Version = "$Revision: 1.2 $"
+Copyright = "(c) 2001 Erich Frühstück"
+
+e | :eval EshScript = true
+	Esh Script verarbeiten
+::file|Input
+	Eingabefile
+!
+
+void ShowHead(void)
+{
+	static int head_done = 0;
+
+	if	(head_done)	return;
+
+#if	EshScript
+	Ident = strsub(Ident, "\n", " ");
+	printf("pconfig !\n");
+	printf("#if	Lang == %#s\n", "de");
+	printf("Ident = %#s\n", Ident);
+	printf("#else\nIdent = \n#endif\n", Ident);
+#else
+	printf("Ident = %#s\n", Ident);
+#endif
+	printf("Version = %#s\n", Version);
+	printf("Copyright = %#s\n", Copyright);
+	printf("\n");
+	head_done = 1;
+}
+
+void PrintCmd(str cmd)
+{
+	if	(cmd)
+	{
+		cmd = strsub(cmd, "\n", ";");
+		cmd = strsub(cmd, ";;", ";");
+		cmd = strsub(cmd, "#1", "\"{}\"");
+		cmd = strsub(cmd, "'", "\\'");
+		printf(":eval '%s'", cmd);
+	}
+
+	printf("\n");
+}
+
+void PrintDesc(IO io)
+{
+	str pfx = "\t:*:XXX\n\t:de:";
+	str line;
+
+	while (getline(io, line))
+	{
+		printf("%s%s\n", pfx, line);
+		pfx = "\t";
+	}
+}
+
+void PgmEnv(str name, str cmd, str desc = NULL)
+{
+	ShowHead();
+	printf("@%s | ", name);
+	PrintCmd(cmd);
+	PrintDesc(desc);
+}
+
+void PgmOpt(str name, str cmd, str desc = NULL)
+{
+	ShowHead();
+	printf("%s | ", strsub(strsub(name, " ", ":"), "=", "::"));
+	PrintCmd(cmd);
+	PrintDesc(desc);
+}
+
+void PgmArg(str name, str cmd, str desc = NULL)
+{
+	ShowHead();
+	printf(":%s | ", name);
+	PrintCmd(cmd);
+	PrintDesc(desc);
+}
+
+void PgmOptArg(str name, str cmd, str desc = NULL)
+{
+	ShowHead();
+	printf("::%s | ", name);
+	PrintCmd(cmd);
+	PrintDesc(desc);
+}
+
+void PgmVaArg(str name, str cmd, str desc = NULL)
+{
+	ShowHead();
+	printf("*%s | ", name);
+	PrintCmd(cmd);
+	PrintDesc(desc);
+}
+
+void PgmRegExp(str key, str name, str cmd, str desc = NULL)
+{
+	ShowHead();
+	printf("/%s/%s | ", key, name);
+	PrintCmd(cmd);
+	PrintDesc(desc);
+}
+
+if	(Input)
+{
+	load(NULL, Input, "app");
+}
+else	eval(iostd);
+
+#if	EshScript
+printf("!\n");
+#endif

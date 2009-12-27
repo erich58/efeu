@@ -1,8 +1,25 @@
-/*	Objektdefinitionen
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Objektdefinitionen
 
-	Version 0.4
+$Header <EFEU/$1>
+
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #ifndef	EFEU_OBJECT_H
@@ -19,6 +36,7 @@
 typedef struct Obj_s Obj_t;
 typedef struct Type_s Type_t;
 typedef struct Func_s Func_t;
+typedef struct Lval_s Lval_t;
 
 
 /*	Vektoren
@@ -46,10 +64,33 @@ struct Var_s {
 	GetMember_t member;	/* Abfragefunktion */
 	void *par;		/* Strukturparameter */
 	Var_t *next;		/* Nächster Eintrag */
+	char *desc;		/* Beschreibungstext */
+	clean_t clean;		/* Aufräumfunktion */
 };
 
 Obj_t *Var2Obj (Var_t *var, const Obj_t *obj);
 
+
+/*	Variablendefinition
+*/
+
+typedef struct {
+	char *name;		/* Variablenname */
+	Type_t *type;		/* Variablentype */
+	void *data;		/* Datenpointer */
+	char *desc;		/* Beschreibungstext */
+} VarDef_t;
+
+/*	Mitgliederdefinitionen
+*/
+
+typedef struct {
+	char *name;		/* Variablenname */
+	Type_t *type;		/* Variablentype */
+	GetMember_t member;	/* Abfragefunktion */
+	void *par;		/* Strukturparameter */
+	char *desc;		/* Beschreibungstext */
+} MemberDef_t;
 
 /*	Variablentabellen
 */
@@ -118,13 +159,31 @@ struct Type_s {
 };
 
 
+/*	Zuweisungsobjekte
+*/
+
+struct Lval_s {
+	Obj_t *(*alloc) (Type_t *type, va_list list);
+	void (*free) (Obj_t *obj);
+	void (*update) (Obj_t *obj);
+	void (*sync) (Obj_t *obj);
+	char *(*ident) (Obj_t *obj);
+};
+
+extern Lval_t Lval_ptr;
+extern Lval_t Lval_ref;
+
 struct Obj_s {
 	REFVAR;		/* Referenzvariablen */
 	Type_t *type;	/* Datentype */
-	void *lref;	/* Lval-Referenz */
+	Lval_t *lval;	/* Lval-Type */
 	void *data;	/* Datenpointer */
 };
 
+extern Obj_t *Obj_alloc (size_t size);
+extern void Obj_free (Obj_t *obj, size_t size);
+extern void Obj_stat (const char *prompt);
+extern void Obj_check (const Obj_t *obj);
 
 Type_t *NewType (char *name);
 
@@ -144,12 +203,13 @@ Var_t *GetStruct (io_t *io, int delim);
 Type_t *FindStruct (Var_t *list, size_t size);
 Type_t *MakeStruct (char *name, Type_t *base, Var_t *list);
 
+Obj_t *LvalObj (Lval_t *lval, Type_t *type, ...);
 Obj_t *NewObj (Type_t *type, void *data);
-Obj_t *LvalObj (Type_t *type, void *lref, void *data);
 Obj_t *ConstObj (Type_t *type, const void *data);
 Obj_t *RefObj (const Obj_t *obj);
 void DeleteObj (Obj_t *obj);
 void UnrefObj (Obj_t *obj);
+void SyncLval (Obj_t *obj);
 Obj_t *AssignTerm (const char *name, Obj_t *left, Obj_t *right);
 Obj_t *AssignObj (Obj_t *left, Obj_t *right);
 
@@ -183,7 +243,9 @@ extern uchar_t Buf_char;	/* Buffer für Zeichenkonstante */
 extern char Buf_byte;		/* Buffer für Byteswert */
 extern short Buf_short;		/* Buffer für kurze Ganzzahlkonstante */
 extern int Buf_int;		/* Buffer für normale Ganzzahlkonstante */
-extern long Buf_long;		/* Buffer für Ganzzahlkonstante */
+extern long Buf_long;		/* Buffer für lange Ganzzahlkonstante */
+extern unsigned Buf_uint;	/* Buffer für Vorzeichenfreie Ganzzahlk. */
+extern unsigned long Buf_size;	/* Buffer für Größenangaben */
 
 extern Type_t Type_char;	/* Zeichenkonstante */
 extern Type_t Type_bool;	/* Logische Konstante */
@@ -191,6 +253,8 @@ extern Type_t Type_byte;	/* 1 Byte Ganzzahlkonstante */
 extern Type_t Type_short;	/* Kurze Ganzzahlkonstante */
 extern Type_t Type_int;		/* Normale Ganzzahlkonstante */
 extern Type_t Type_long;	/* Lange Ganzzahlkonstante */
+extern Type_t Type_uint;	/* Vorzeichenfreie Ganzzahlkonstante */
+extern Type_t Type_size;	/* Größenangaben */
 extern Type_t Type_Date;	/* Datumsindex */
 extern Type_t Type_Time;	/* Zeitindex */
 
@@ -200,6 +264,8 @@ extern Type_t Type_Time;	/* Zeitindex */
 #define	Val_short(x)	((short *) (x))[0]
 #define	Val_int(x)	((int *) (x))[0]
 #define	Val_long(x)	((long *) (x))[0]
+#define	Val_uint(x)	((unsigned *) (x))[0]
+#define	Val_size(x)	((size_t *) (x))[0]
 #define	Val_Date(x)	((int *) (x))[0]
 
 #define	bool2Obj(x)	NewObj(&Type_bool, (Buf_int = (x), &Buf_int))
@@ -208,6 +274,8 @@ extern Type_t Type_Time;	/* Zeitindex */
 #define	short2Obj(x)	NewObj(&Type_short, (Buf_short = (x), &Buf_short))
 #define	int2Obj(x)	NewObj(&Type_int, (Buf_int = (x), &Buf_int))
 #define	long2Obj(x)	NewObj(&Type_long, (Buf_long = (x), &Buf_long))
+#define	uint2Obj(x)	NewObj(&Type_uint, (Buf_uint = (x), &Buf_uint))
+#define	size2Obj(x)	NewObj(&Type_size, (Buf_size = (x), &Buf_size))
 
 #define	Obj2bool(x)	(Obj2Data((x), &Type_bool, &Buf_int), Buf_int)
 #define	Obj2char(x)	(Obj2Data((x), &Type_char, &Buf_char), Buf_char)
@@ -215,6 +283,8 @@ extern Type_t Type_Time;	/* Zeitindex */
 #define	Obj2short(x)	(Obj2Data((x), &Type_short, &Buf_short), Buf_short)
 #define	Obj2int(x)	(Obj2Data((x), &Type_int, &Buf_int), Buf_int)
 #define	Obj2long(x)	(Obj2Data((x), &Type_long, &Buf_long), Buf_long)
+#define	Obj2uint(x)	(Obj2Data((x), &Type_uint, &Buf_uint), Buf_uint)
+#define	Obj2size(x)	(Obj2Data((x), &Type_size, &Buf_size), Buf_size)
 
 
 /*	Gleitkommaobjekte
@@ -301,6 +371,16 @@ extern Vec_t Buf_vec;		/* Buffer für Vektorstruktur */
 Obj_t *StructMember (const Var_t *st, const Obj_t *obj);
 Obj_t *LvalMember (const Var_t *st, const Obj_t *obj);
 Obj_t *ConstMember (const Var_t *st, const Obj_t *obj);
+Obj_t *TransMember (const Var_t *st, const Obj_t *obj);
+
+typedef struct {
+	void (*get) (void *data, void *buf);
+	void (*set) (void *data, void *buf);
+} TransPar_t;
+
+Obj_t *ResourceVar (const Var_t *st, const Obj_t *obj);
+Obj_t *ResourceObj (Type_t *type, const char *name);
+
 
 typedef void *(*EvalMember_t) (const void *data);
 
@@ -330,6 +410,8 @@ void PopVarTab (void);
 void PushContext (VarTab_t *tab, Obj_t *obj);
 void PopContext (void);
 
+void AddVarDef (VarTab_t *tab, VarDef_t *def, size_t dim);
+void AddMember (VarTab_t *tab, MemberDef_t *def, size_t dim);
 void AddVar (VarTab_t *tab, Var_t *def, size_t dim);
 Obj_t *GetVar (VarTab_t *tab, const char *name, const Obj_t *obj);
 void SetVar (VarTab_t *tab, const char *name, const char *value);
@@ -368,7 +450,7 @@ typedef struct {
 	Name_t name;	/* Namensdefinition */
 	ObjList_t *idx;	/* Indexliste */
 	Obj_t *defval;	/* Initialisierungswert */
-} VarDef_t;
+} VarDecl_t;
 
 ObjList_t *VarDefList (io_t *io, int delim);
 void DelType (Type_t *type);
@@ -546,9 +628,8 @@ void Func_func (Func_t *func, void *rval, void **arg);
 Obj_t *EvalFunc (Func_t *func, const ObjList_t *list);
 Obj_t *EvalVirFunc (VirFunc_t *func, const ObjList_t *list);
 
-Obj_t *MakeRetVal (Func_t *func, void **arg);
-void IgnoreRetVal (Func_t *func, void **arg);
-void KonvRetVal (Type_t *type, void *data, Func_t *func, void **arg);
+Obj_t *MakeRetVal (Func_t *func, Obj_t *firstarg, void **arg);
+Obj_t *ConstRetVal (Func_t *func, void **arg);
 
 void CallFunc (Type_t *type, void *ptr, Func_t *func, ...);
 void CallVoidFunc (Func_t *func, ...);

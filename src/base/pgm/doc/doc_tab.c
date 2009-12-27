@@ -1,6 +1,23 @@
-/*	Tabellenzeilen
-	(c) 1999 Erich Frühstück
-	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+/*
+Tabellenzeilen
+
+$Copyright (C) 1999 Erich Frühstück
+This file is part of EFEU.
+
+EFEU is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+EFEU is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with EFEU; see the file COPYING.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include "efeudoc.h"
@@ -70,6 +87,7 @@ static void tabline (Doc_t *doc, io_t *in)
 		return;
 	}
 
+	io_ctrl(doc->out, DOC_CMD, DOC_TAB_BEG);
 	flag = 0;
 
 	while ((c = io_skipcom(in, NULL, 0)) != EOF)
@@ -83,22 +101,8 @@ static void tabline (Doc_t *doc, io_t *in)
 		else if	(doc->env.cpos == 0 && c == '#')
 		{
 			int num = DocParseNum(in);
-			
-			switch ((c = io_getc(in)))
-			{
-			case ' ': case '\t':
-			case 'R': case 'r':
-			case 'L': case 'l':
-			case 'C': case 'c':
-				DocSkipSpace(in, 0);
-				break;
-			default:
-				io_ungetc(c, in);
-				c = 0;
-				break;
-			}
-
-			io_ctrl(doc->out, DOC_BEG, DOC_ENV_MCOL, c, num);
+			char *fmt = DocParseFlags(in);
+			io_ctrl(doc->out, DOC_BEG, DOC_ENV_MCOL, fmt, num);
 			flag |= 2;
 		}
 		else if	(c == '\n')
@@ -134,12 +138,12 @@ static void tabline (Doc_t *doc, io_t *in)
 	io_putc('\n', doc->out);
 }
 
-void Doc_tab (Doc_t *doc, io_t *in, const char *height, const char *width)
+void Doc_tab (Doc_t *doc, io_t *in, const char *opt, const char *arg)
 {
 	int c;
 
 	Doc_par(doc);
-	Doc_newenv(doc, 0, DOC_ENV_TAB, height, width);
+	Doc_newenv(doc, 0, DOC_ENV_TAB, opt, arg);
 	doc->env.hmode = 2;
 
 	while ((c = io_skipcom(in, NULL, 1)) != EOF)

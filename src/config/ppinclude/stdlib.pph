@@ -1,31 +1,59 @@
-/*	Standardbibliotheken
-	(c) 1999 Erich Frühstück
-	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+/*
+:*:standard library names
+:de:Standardbibliotheksnamen
+
+$Copyright (C) 1999 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #ifndef	_stdlib_pph
 #define	_stdlib_pph	1
 
+/*
+$Description
+Für die wichtigsten vom EFEU-Projekt verwalteten Programmbibliotheken
+gibt es sowohl die zugehörigen Link-Optionen (|LIB_|<name>> Makros)
+als auch die vollen Pfadnamen der Programmbibliotheken
+(|DEP_|<name> Makros) als Makro vordefiniert.
+Zusätzlich sind auch häufig gebrauchte Standardbibliotheken als
+Makro vordefiniert.
+
+Fehlende Makros für EFEU-Projektbibliotheken können durch <|StdLib(<name>)|>
+(Link-Option) und <|LinkName(<name>)|> (Pfadname) ersetzt werden.
+*/
+
+#ifndef	LIB_M
+/*
+Der Makro |$1| definiert die Programmbibliothek für mathematische Funktionen.
+*/
 #define	LIB_M		-lm
+#endif
 
 #if	__linux__
+/*
+Der Makro |$1| definiert die Curses-Programmbibliothek.
+*/
 #define	LIB_CURSES	-lncurses
 #else
 #define	LIB_CURSES	-lcurses
 #endif
 
-#if	__linux__
-#define	INC_READLINE
-/*
-Bei SuSE 6.4 fehlt in libreadline.so die Abhängigkeit von ncurses.so
-
-#define	LIB_READLINE	-lreadline
-*/
-#define	LIB_READLINE	-lreadline -lncurses
-#else
-#define	INC_READLINE	-I/local/include
-#define	LIB_READLINE	-L/local/lib -lreadline -liberty LIB_CURSES
-#endif
+#include <readline.pph>
 
 #if	__linux__
 #define	LIB_X11	-L/usr/X11R6/lib -lX11
@@ -33,42 +61,62 @@ Bei SuSE 6.4 fehlt in libreadline.so die Abhängigkeit von ncurses.so
 #define	LIB_X11	-L/usr/lib/X11 -lX11
 #endif
 
-/*	EFEU Programmbibliotheken
+/*
+$Synopsis
+\index{|LIB_EFM|}
+\index{|LIB_EFX|}
+\index{|LIB_IORL|}
+\index{|LIB_MD|}
+\index{|LIB_WIN|}
+\index{|LIB_MATH|}
+
+\index{|DEP_EFM|}
+\index{|DEP_EFX|}
+\index{|DEP_IORL|}
+\index{|DEP_MD|}
+\index{|DEP_WIN|}
+\index{|DEP_MATH|}
+
+$Description
+Makros für EFEU-Programmbibliotheken:
+[|EFM|]
+	Basisprogrammbibliothek mit elementaren
+	Funktionen des EFEU-Projektes,
+[|EFX|]
+	Erweiterungsbibliothek mit Befehlsinterpreter;
+[|IORL|]
+	Schnittstelle zur Readline-Programmbibliothek;
+[|MD|]
+	mehrdimensionale Datenmatrizen;
+[|WIN|]
+	Schnittstelle zur Curses-Programmbibliothek, in Arbeit;
+[|MATH|]
+	mathematisches Erweiterungspaket,
+	umfaßt derzeit Polynom- und Zeitreihenfunktionen.
 */
+
+#if	0	/* src2doc needs */
+#endif		/* this two lines */
 
 #define	DEP_EFM		StdLib(efm)
 #define	DEP_EFX		StdLib(efx)
 #define	DEP_IORL	StdLib(iorl)
 #define	DEP_MD		StdLib(md)
-#define	DEP_PIXMAP	StdLib(pix)
 #define	DEP_WIN		StdLib(efwin)
 #define	DEP_MATH	StdLib(efmath)
 
 #define	LIB_EFM		LinkName(efm)
 #define	LIB_EFX		LinkName(efx) LIB_M
-#define	LIB_IORL	LinkName(iorl) LIB_READLINE
+#define	LIB_IORL	LinkName(iorl) $(RL_LIB)
 #define	LIB_MD		LinkName(md)
-#define	LIB_PIXMAP	LinkName(pix)
 #define	LIB_WIN		LinkName(efwin)
 #define	LIB_MATH	LinkName(efmath)
 
-
-/*	Projektbibliotheken
+/*
+$Notes
+Die Makros für Systembibliotheken sollten in eine lokale
+Konfigurationsdatei ausgelagert werden, da ihre Definition
+vom verwendeten System abhängt.
 */
-
-#define	DEP_KDB		StdLib(kdb)
-#define	LIB_KDB		LinkName(kdb)
-
-#define	DEP_SYNT	StdLib(SynBase)
-#define	LIB_SYNT	LinkName(SynBase)
-
-#define	DEP_SDB		StdLib(SynStd)
-#define	LIB_SDB		LinkName(SynStd)
-
-
-/*	Testbibliotheken
-*/
-
-#define	MEMALLOC	$(STDLIBDIR)/memalloc.o
 
 #endif	/* stdlib.pph */

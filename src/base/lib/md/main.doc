@@ -1,0 +1,27 @@
+\config	efeu
+\date	Oktober 2000
+\dhead	Handbuch für Programmierer
+\dnote	Rohfassung
+\title	Die Programmbibliothek md
+Handbuch für Programmierer
+
+\intro
+Die Programmbiliothek |md| enthält sämtliche Hilfsfunktionen
+zum Arbeiten mit Datenmatrizen.
+
+Das Handbuch ist in Arbeit. Der allgemeine Teil muß noch
+geschrieben werden. Die Funktionen, Makros und Datentypen
+sind zwar vollständig angeführt, aber nur zum Teil beschrieben.
+
+	Erich Frühstück\br
+	Wördern, \thedate
+\toc
+\addsrclist
+\getsrc		*.doc
+\appendix
+\mchap[3]	Funktionen
+\src2doc	*.c
+\mchap[7]	Makropakete und Konventionen
+\src2doc	*.h *.7
+\printindex
+@Impressum(2000)

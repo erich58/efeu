@@ -1,8 +1,5 @@
 /*	Multidimensionale Matrix einlesen
 	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
-
-	Version 2
 */
 
 #include <EFEU/mdmat.h>
@@ -384,7 +381,7 @@ static mdmat_t *textmode(io_t *io, char *title)
 		if	(save_label(tmp, xlabel, p))
 			io_error(io, MSG_MDMAT, 195, 0);
 
-		FREE(p);
+		memfree(p);
 		coldim++;
 	}
 

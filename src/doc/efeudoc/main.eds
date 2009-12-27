@@ -1,0 +1,17 @@
+\config	efeu
+\date	Mai 2001
+\dhead	Handbuch zu efeudoc
+\dnote	Rohfassung
+\title	Einführung in efeudoc
+Grundlagen der Dokumentgenerierung
+im Rahmen von EFEU
+
+\include Intro.doc
+\toc
+\include Grundlagen.doc
+\include Aufbau.doc
+\include Text.doc
+\include Tabellen.doc
+\include Anhang.doc
+\printindex
+@Impressum(2000)

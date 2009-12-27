@@ -1,5 +1,3 @@
-Label: Sourcelisten und TAG-File zusammenstellen
-Maintainer: Erich Frühstück
+Label: rules for tag files and name tables
+Label_de: Sourcelisten und TAG-File zusammenstellen
 Depends: *
-Version: 0.5
-Patchlevel: 0

@@ -1,8 +1,23 @@
-/*	Parametersubstitution
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Parametersubstitution
 
-	Version 0.4
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/vecbuf.h>
@@ -48,7 +63,8 @@ int iocpy_psub(io_t *in, io_t *out, int c, const char *arg, unsigned int flags)
 	}
 	else if	(isdigit(def.key))
 	{
-		return io_puts(reg_get(def.key - '0'), out);
+		char *arg = reg_get(def.key - '0');
+		return flags ? io_xputs(arg, out, "\"") : io_puts(arg, out);
 	}
 	else	return (io_putc(def.key, out) != EOF) ? 1 : 0;
 }
@@ -56,18 +72,23 @@ int iocpy_psub(io_t *in, io_t *out, int c, const char *arg, unsigned int flags)
 
 int io_pcopy(io_t *in, io_t *out, void *arg)
 {
-	int c;
-	int n;
+	int c, n, flag;
 
 	n = 0;
+	flag = 0;
 
 	while ((c = io_mgetc(in, 1)) != EOF)
 	{
 		if	(c == psub_key)
 		{
-			n += iocpy_psub(in, out, c, NULL, 0);
+			n += iocpy_psub(in, out, c, NULL, flag);
 		}
-		else	n += io_nputc(c, out, 1);
+		else
+		{
+			if	(c == '"')	flag = !flag;
+
+			n += io_nputc(c, out, 1);
+		}
 	}
 
 	return n;

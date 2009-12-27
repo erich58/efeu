@@ -1,6 +1,5 @@
 /*	Werte abfragen/setzen
 	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
 */
 
 

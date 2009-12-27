@@ -1,8 +1,23 @@
-/*	Suche nach einer Datei
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Suche nach einer Datei
 
-	Version 0.4
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/mstring.h>
@@ -47,10 +62,8 @@ static int checkpath(const char *path)
 
 static char *sub_search(strbuf_t *sb, const char *name)
 {
-	if	(sb->pos != 0)
-	{
+	if	(sb->pos != 0 && sb->data[sb->pos - 1] != '/')
 		sb_putc('/', sb);
-	}
 
 	sb_puts(name, sb);
 	sb_putc(0, sb);
@@ -67,7 +80,8 @@ static char *sub_search(strbuf_t *sb, const char *name)
 /*	Suche nach dem File
 */
 
-char *fsearch(const char *path, const char *subpath, const char *name, const char *type)
+char *fsearch(const char *path, const char *subpath,
+	const char *name, const char *type)
 {
 	fname_t *fn;
 	char *fname;
@@ -187,4 +201,21 @@ char *fsearch(const char *path, const char *subpath, const char *name, const cha
 	}
 
 	return sub_search(sb, fname);
+}
+
+char *xfsearch(const char *path, const char *subpath,
+	const char *name, const char *type)
+{
+	fname_t *fn;
+	char *p, *fname;
+
+	if	(name == NULL)	return NULL;
+
+	fn = strtofn(name);
+	fn->type = (char *) type;
+	p = fntostr(fn);
+	memfree(fn);
+	fname = fsearch(path, subpath, p, NULL);
+	memfree(p);
+	return fname;
 }

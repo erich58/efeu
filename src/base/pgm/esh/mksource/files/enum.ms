@@ -1,12 +1,44 @@
-/*	Aufzählungen
-	(c) 1998 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Aufzählungen
+
+$Copyright (C) 1998 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #ifndef	_Enum_ms
 #define	_Enum_ms	1
 
 #include <function.ms>
+
+regex_t Enum_name = "^[[:alnum:]_]+$";
+
+void Enum_macro (IO io, str ename, str name, int n, str desc)
+{
+	if	(regexec(Enum_name, name))
+	{
+		fprintf(io, "#define\t%s_%s\t%d", ename, name, n);
+
+		if	(desc)
+			fprintf(io, "\t/* %s */", desc);
+
+		io << "\n";
+	}
+}
 
 void Enum(str ename, str label, IO def, bool glob = true)
 {
@@ -26,12 +58,17 @@ void Enum(str ename, str label, IO def, bool glob = true)
 
 	for (n = 0; getline(def, name, desc); n++)
 	{
-		if	(patcmp("<1->[%n_]", name))
+		while (name[0] == '[')
 		{
-			fprintf(io, "#define\t%s_%s\t%d", ename, name, n);
-			fprintf(io, "\t/* %s */\n", desc);
+			name = substr(name, 1);
+			str xname = strcut(name, "]");
+			Enum_macro(io, ename, xname, n, desc);
 		}
 
+		if	(name[0] == '\\')
+			name = substr(name, 1);
+
+		Enum_macro(io, ename, name, n, desc);
 		fprintf(src, "\t%#s,\t/* %s */\n", name, desc);
 	}
 
@@ -78,8 +115,7 @@ void ListEnum (str ename, str label, bool glob, ...)
 
 	for (name in va_list)
 	{
-		if	(patcmp("<1->[%n_]", name))
-			fprintf(io, "#define\t%s_%s\t%d\n", ename, name, n);
+		Enum_macro(io, ename, name, n);
 
 		if	(n % 4 == 0)
 			src << "\n";

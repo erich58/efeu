@@ -1,8 +1,23 @@
-/*	Ganzzahlwert formatieren
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Ganzzahlwert formatieren
 
-	Version 0.4
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/fmtkey.h>
@@ -17,8 +32,6 @@ static char *uc_digit = "0123456789ABCDEF";
 int fmt_long(io_t *io, const fmtkey_t *key, long xval)
 {
 	strbuf_t *sb;
-	ulong_t smask;
-	ulong_t lmask;
 	ulong_t val;
 	int n, k, sig, base;
 	int ptrval;
@@ -51,34 +64,40 @@ int fmt_long(io_t *io, const fmtkey_t *key, long xval)
 
 /*	Datenwert setzen
 */
-	smask = 0x7FFF;
-	lmask = 0x7FFFFFFF;
-	val = xval;
-
-	if	(sig == 0)
-	{
-		smask = 0xFFFF;
-		lmask = 0xFFFFFFFF;
-	}
-	else if	(xval < 0)
-	{
-		val = -xval;
-		sig = -1;
-	}
-	else if	(xval == 0)
-	{
-		sig = 0;
-	}
-
 	if	(ptrval || key->flags & FMT_LONG)
 	{
-		;
+		val = xval;
 	}
 	else if	(key->flags & FMT_SHORT)
 	{
-		val &= smask;
+		short x = xval;
+
+		if	(!sig)
+		{
+			val = (unsigned short) x;
+		}
+		else if	(x < 0)
+		{
+			val = -x;
+			sig = -1;
+		}
+		else	val = x;
 	}
-	else	val &= lmask;
+	else
+	{
+		int x = xval;
+
+		if	(!sig)
+		{
+			val = (unsigned int) x;
+		}
+		else if	(x < 0)
+		{
+			val = -x;
+			sig = -1;
+		}
+		else	val = x;
+	}
 
 /*	Ziffern zwischenspeichern (Verkehrte Reihenfolge !)
 */

@@ -1,0 +1,120 @@
+% efeudoc macros
+% Copyright (C) 2001 Erich Frühstück
+% This file is part of EFEU.
+% 
+% EFEU is free software; you can redistribute it and/or
+% modify it under the terms of the GNU General Public
+% License as published by the Free Software Foundation; either
+% version 2 of the License, or (at your option) any later version.
+% 
+% EFEU is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty
+% of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+% See the GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public
+% License along with EFEU; see the file COPYING.
+% If not, write to the Free Software Foundation, Inc.,
+% 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+%% Standardpakete
+
+\usepackage{textcomp}
+\usepackage{verbatim}
+\usepackage{graphicx}
+\usepackage[dvips,usenames]{color}
+\usepackage{makeidx}
+\makeindex
+
+%% Layoutparameter
+
+\emergencystretch=10pt
+\parindent=0em
+\parskip=0.5\baselineskip
+\topsep=-\parskip
+\partopsep=0pt
+\frenchspacing
+
+% Disable single lines at the start of a paragraph (Schusterjungen)
+\clubpenalty = 10000
+% Disable single lines at the end of a paragraph (Hurenkinder)
+\widowpenalty = 10000 \displaywidowpenalty = 10000
+% Disable hyphenation at the end of a page
+\brokenpenalty=10000
+
+\pagestyle{headings}
+
+%% Makro-Anpassungen
+
+\newbox\EDtempbox
+
+\renewenvironment{description}
+	{\list{}{\settowidth{\labelsep}{~~}%
+		\labelwidth=\leftmargin
+		\advance\labelwidth by -\labelsep
+		\let\makelabel\descriptionlabel}}
+	{\endlist}
+
+\renewcommand{\descriptionlabel}[1]{%
+	\savebox{\EDtempbox}{#1}%
+	\ifdim\wd\EDtempbox > \labelwidth
+		\makebox[\labelwidth][l]{\parbox[b]{%
+			\linewidth}{\raggedright #1\\ \strut}}%
+	\else
+		\makebox[\labelwidth][l]{\usebox{\EDtempbox}}%
+	\fi
+	\ignorespaces}
+
+\newcommand{\EDsubcaption}[2][0]{\centerline{#2}}%
+
+
+\let\norule\relax
+
+%% Handbuchmakros
+
+\newif\ifcode
+\codefalse
+
+\newenvironment{code}{\bgroup\tt\ignorespaces\codetrue}{\egroup}
+
+\newenvironment{EDhangpar}%
+	{\list{}{\labelwidth=0pt\labelsep=0pt
+		\topsep=0pt
+		\itemindent-\leftmargin
+		\listparindent-\leftmargin}\item}%
+	{\endlist}
+
+\newcommand{\EDappendix}{\cleardoublepage\appendix
+	\setcounter{secnumdepth}{-1}}
+
+\newenvironment{EDmanpage}[2][1]{%
+	\cleardoublepage
+	\markright{#2(#1)}%
+	\addcontentsline{toc}{section}{#2(#1)}%
+	}{}
+
+\newcommand{\EDmanchapter}[2][1]{\cleardoublepage
+	\addcontentsline{toc}{chapter}{#2}%
+	\markright{#2}%
+	\chapter*{#2}
+	\clearpage}
+
+\newcommand{\EDmanhead}[2][0]{\par{\hskip-\leftmargin \bf #2\par
+	\vspace{-\parsep}}}
+
+\newcommand{\EDmansubhead}[2][0]{\par{\hskip-\leftmargin \bf #2\par
+	\vspace{-\parsep}}}
+
+\def\atpoint#1{\hbox to 0pt{\vbox to 0pt{\vss #1}\hss}\ignorespaces}%
+
+\makeatletter
+\def\verbatim@processline{%
+	\leavevmode
+	\ifcode\else\atpoint{\color[gray]{0.9}%
+		\rule[-0.3\baselineskip]{\linewidth}{1.05\baselineskip}}\fi
+	\the\verbatim@line\par}%
+
+\newenvironment{EDverbatim}%
+	{\vskip0.5\baselineskip\verbatim}%
+	{\endverbatim\vskip0.5\baselineskip}
+\makeatother

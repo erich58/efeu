@@ -1,6 +1,5 @@
 /*	Label abfragen
 	(c) 1995 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
 */
 
 #include <EFEU/mdmat.h>
@@ -42,7 +41,7 @@ void MF_label(Func_t *func, void *rval, void **arg)
 				obj = NewPtrObj(&Type_str, msprintf("%s=%s",
 					x->name, x->idx[i].name));
 			}
-			else	obj = LvalObj(&Type_str, md, &x->idx[i].name);
+			else	obj = LvalObj(&Lval_ref, &Type_str, md, &x->idx[i].name);
 
 			*ptr = NewObjList(obj);
 			ptr = &(*ptr)->next;

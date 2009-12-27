@@ -1,0 +1,11 @@
+@:Hauptbibliothek
+Wilkommen im EFEU-Informationssystem
+Copyright (C) 1998 Erich Frühstück
+
+?		Kurzanleitung
+q		Abbruch
+
+@efeu:Standardkommandos
+@efeu/esh|esh --dump
+@efeu/mksource|mksource --dump
+@efeu/efeudoc|efeudoc --dump

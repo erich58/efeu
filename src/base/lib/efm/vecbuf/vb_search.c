@@ -1,8 +1,23 @@
-/*	Verwalten, Suchen und Sortieren von Einträgen in einem Vektorbuffer
-	(c) 1996 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Verwalten, Suchen und Sortieren von Einträgen in einem Vektorbuffer
 
-	Version 0.6
+$Copyright (C) 1996 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/vecbuf.h>
@@ -48,7 +63,7 @@ Als Modus <mode> ist eines der folgenden Werte zulässig:
 	Falls der Eintrag bereits vorhanden ist,
 	werden die Daten mit dem Suchschlüssel ausgetauscht,
 	und die Funktion liefert den Pointer auf den Suchschlüssel.
-	Ansonsten wird ein neuer Entrag generiert
+	Ansonsten wird ein neuer Eintrag generiert
 	und die Daten vom Suchschlüssel übernommen.
 	Der Suchschlüssel wird anschließend gelöscht
 	und die Funktion liefert einen Nullpointer.

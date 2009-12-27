@@ -1,13 +1,30 @@
-/*	Funktionsprototypen generieren
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Funktionsprototypen generieren
 
-	Version 0.4
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/object.h>
 #include <EFEU/Op.h>
 #include <ctype.h>
+
+int func_lval_debug = 0;
 
 static int do_copy (io_t *io, io_t *tmp);
 
@@ -90,54 +107,6 @@ Func_t *MakePrototype(io_t *io, Type_t *type, Name_t *nptr, unsigned flags)
 
 		memfree(tname);
 	}
-
-/*	Funktionsnamen und Funktionsflags abfragen
-*/
-#if	0
-	if	(name == NULL)
-	{
-		c = io_eat(io, "%s");
-
-		if	(c == '&')
-		{
-			rflag = 1;
-			io_getc(io);
-			c = io_eat(io, "%s");
-		}
-
-		if	((name = GetFuncName(io)) == NULL)
-			return NULL;
-	}
-
-/*	Objektbindung bestimmen
-*/
-	if	((otype = GetType(name)) != NULL)
-	{
-		memfree(name);
-		name = NULL;
-	}
-
-	if	(io_eat(io, " \t") == ':')
-	{
-		if	(io_getc(io) != ':')
-		{
-			io_error(io, MSG_EFMAIN, 129, 0);
-			return NULL;
-		}
-
-		io_getc(io);
-
-		if	(otype == NULL)
-		{
-			io_error(io, MSG_EFMAIN, 128, 1, name);
-			memfree(name);
-			return NULL;
-		}
-
-		if	((name = GetFuncName(io)) == NULL)
-			return NULL;
-	}
-#endif
 
 /*	Funktionsnamen bestimmen
 */
@@ -272,6 +241,15 @@ Func_t *MakePrototype(io_t *io, Type_t *type, Name_t *nptr, unsigned flags)
 		return NULL;
 	}
 
+/*	Überprüfung der Rückgabereferenz
+*/
+	if	(rflag && n == 0)
+	{
+		io_error(io, MSG_EFMAIN, 96, 1, name);
+		io_close(tmp);
+		return NULL;
+	}
+
 	func = NewFunc();
 	func->type = (type == &Type_obj) ? NULL : type;
 	func->lretval = rflag;
@@ -302,6 +280,17 @@ Func_t *MakePrototype(io_t *io, Type_t *type, Name_t *nptr, unsigned flags)
 	io_rewind(tmp);
 	io_read(tmp, func->arg, n * sizeof(FuncArg_t));
 	io_close(tmp);
+
+	if	(func_lval_debug && func->lretval)
+	{
+		ListFunc(ioerr, func);
+		io_puts(";\n", ioerr);
+	}
+
+	if	(rflag && (func->type != func->arg[0].type))
+	{
+		message(NULL, MSG_EFMAIN, 97, 1, name);
+	}
 
 	return func;
 }

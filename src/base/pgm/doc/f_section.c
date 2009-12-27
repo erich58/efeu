@@ -1,6 +1,23 @@
-/*	Gliederungsbefehl
-	(c) 1999 Erich Frühstück
-	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+/*
+Gliederungsbefehl
+
+$Copyright (C) 1999 Erich Frühstück
+This file is part of EFEU.
+
+EFEU is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+EFEU is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with EFEU; see the file COPYING.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include "efeudoc.h"
@@ -41,14 +58,18 @@ void DocFunc_section (Func_t *func, void *rval, void **arg)
 	case 'm':	mode = 2; type = DOC_SEC_MARG; break;
 	case 'F':	mode = 2; type = DOC_SEC_CAPT; break;
 	case 'f':	mode = 2; type = DOC_SEC_SCAPT; break;
-	case 'N':	mode = 2; type = DOC_SEC_NOTE; break;
+	case 'N':	mode = 3; type = DOC_SEC_NOTE; break;
 	case 'n':	mode = 2; type = DOC_SEC_FNOTE; break;
 	default:	break;
 	}
 
 /*	Umgebungsbereinigung
 */
-	if	(mode == 2)
+	if	(mode == 3)
+	{
+		;
+	}
+	else if	(mode == 2)
 	{
 		if	(DOC_IS_LIST(doc->env.type))
 			Doc_endenv(doc);
@@ -61,8 +82,11 @@ void DocFunc_section (Func_t *func, void *rval, void **arg)
 	}
 	else	Doc_endall(doc, mode);
 
-	Doc_par(doc);
-	Doc_stdpar(doc, 0);
+	if	(mode < 3)
+	{
+		Doc_par(doc);
+		Doc_stdpar(doc, 0);
+	}
 
 	if	(doc->env.pflag)
 		io_putc('\n', doc->out);
@@ -78,6 +102,10 @@ void DocFunc_section (Func_t *func, void *rval, void **arg)
 	doc->env.hmode = 0;
 	io_close(in);
 	io_ctrl(doc->out, DOC_END, type, p);
-	io_putc('\n', doc->out);
-	doc->env.pflag = (mode < 2);
+
+	if	(mode < 3)
+	{
+		io_putc('\n', doc->out);
+		doc->env.pflag = (mode < 2);
+	}
 }

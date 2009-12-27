@@ -1,12 +1,32 @@
-/*	Allgemeine Funktionen
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Allgemeine Funktionen
 
-	Version 0.4
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/object.h>
 #include <EFEU/cmdconfig.h>
+
+#define	CMPFUNC(name,op,cmp)	\
+static void name (Func_t *func, void *rval, void **arg) \
+{ int x; Val_int(rval) = cmp(&x, arg) && (x op 0) ? 1 : 0; }
+
 
 /*	Ausdrücke auswerten
 */
@@ -76,6 +96,28 @@ static void assign_op(Func_t *func, void *rval, void **arg)
 	memfree(p);
 	Val_obj(rval) = AssignObj(left, right);
 }
+
+static int do_cmp(int *val, void **arg)
+{
+	Obj_t *x = EvalObj(BinaryTerm("cmp", RefObj(arg[0]),
+		RefObj(arg[1])), &Type_int);
+
+	if	(x)
+	{
+		*val = Obj2int(x);
+		return 1;
+	}
+
+	*val = 0;
+	return 0;
+}
+
+CMPFUNC(any_lt,<,do_cmp)
+CMPFUNC(any_le,<=,do_cmp)
+CMPFUNC(any_eq,==,do_cmp)
+CMPFUNC(any_ne,!=,do_cmp)
+CMPFUNC(any_ge,>=,do_cmp)
+CMPFUNC(any_gt,>,do_cmp)
 
 /*	Increment- und Dekrementoperatoren
 */
@@ -193,7 +235,7 @@ static void list_expr(list_eval eval, const char *name, void *rval, void **arg)
 	{
 		obj = EvalObj(RefObj(right->obj), NULL);
 
-		if	(obj && obj->lref)
+		if	(obj && obj->lval)
 		{
 			*ptr = NewObjList(ConstObj(obj->type, obj->data));
 			UnrefObj(obj);
@@ -226,6 +268,41 @@ static void list_binary(Func_t *func, void *rval, void **arg)
 {
 	list_expr(BinaryTerm, func->name, rval, arg);
 }
+
+static int do_listcmp(int *val, void **arg)
+{
+	ObjList_t *left = Val_list(arg[0]);
+	ObjList_t *right = Val_list(arg[1]);
+
+	while (left && right)
+	{
+		*val = Obj2int(BinaryTerm("cmp", RefObj(left->obj),
+			RefObj(right->obj)));
+
+		if	(*val != 0)	return 1;
+
+		left = left->next;
+		right = right->next;
+	}
+
+	if	(right)	*val = -1;
+	else if	(left)	*val = 1;
+	else		*val = 0;
+
+	return 1;
+}
+
+static void list_cmp(Func_t *func, void *rval, void **arg)
+{
+	do_listcmp(rval, arg);
+}
+
+CMPFUNC(list_lt,<,do_listcmp)
+CMPFUNC(list_le,<=,do_listcmp)
+CMPFUNC(list_eq,==,do_listcmp)
+CMPFUNC(list_ne,!=,do_listcmp)
+CMPFUNC(list_ge,>=,do_listcmp)
+CMPFUNC(list_gt,>,do_listcmp)
 
 static Obj_t *do_listassign(const char *name, Obj_t *left, Obj_t *right)
 {
@@ -274,7 +351,7 @@ static void f_pushlist (Func_t *func, void *rval, void **arg)
 	{
 		Obj_t *obj = EvalObj(RefObj(x->obj), NULL);
 
-		if	(obj && obj->lref)
+		if	(obj && obj->lval)
 		{
 			y = NewObjList(ConstObj(obj->type, obj->data));
 			UnrefObj(obj);
@@ -302,7 +379,7 @@ static void f_toplist (Func_t *func, void *rval, void **arg)
 	{
 		Obj_t *obj = EvalObj(RefObj(x->obj), NULL);
 
-		if	(obj && obj->lref)
+		if	(obj && obj->lval)
 		{
 			y = NewObjList(ConstObj(obj->type, obj->data));
 			UnrefObj(obj);
@@ -345,6 +422,13 @@ static FuncDef_t fdef_obj[] = {
 	{ FUNC_VIRTUAL, &Type_obj, "operator++ (. &)", f_post_inc },
 	{ FUNC_VIRTUAL, &Type_obj, "operator-- (. &)", f_post_dec },
 
+	{ FUNC_VIRTUAL, &Type_bool, "operator< (., . )", any_lt },
+	{ FUNC_VIRTUAL, &Type_bool, "operator<= (., . )", any_le },
+	{ FUNC_VIRTUAL, &Type_bool, "operator== (., . )", any_eq },
+	{ FUNC_VIRTUAL, &Type_bool, "operator!= (., . )", any_ne },
+	{ FUNC_VIRTUAL, &Type_bool, "operator> (., . )", any_gt },
+	{ FUNC_VIRTUAL, &Type_bool, "operator>= (., . )", any_ge },
+
 	{ 0, &Type_obj, "Object::operator:= & (.)", base_assign },
 	{ 0, &Type_obj, "Object::operator*= & (.)", assign_op },
 	{ 0, &Type_obj, "Object::operator/= & (.)", assign_op },
@@ -373,6 +457,14 @@ static FuncDef_t fdef_obj[] = {
 	{ FUNC_VIRTUAL, &Type_list, "operator+ (List_t, List_t)", list_binary },
 	{ FUNC_VIRTUAL, &Type_list, "operator- (List_t, List_t)", list_binary },
 	{ FUNC_VIRTUAL, &Type_list, "operator* (List_t, List_t)", list_binary },
+
+	{ FUNC_VIRTUAL, &Type_int, "cmp (List_t, List_t)", list_cmp },
+	{ FUNC_VIRTUAL, &Type_bool, "operator< (List_t, List_t)", list_lt },
+	{ FUNC_VIRTUAL, &Type_bool, "operator<= (List_t, List_t)", list_le },
+	{ FUNC_VIRTUAL, &Type_bool, "operator== (List_t, List_t)", list_eq },
+	{ FUNC_VIRTUAL, &Type_bool, "operator!= (List_t, List_t)", list_ne },
+	{ FUNC_VIRTUAL, &Type_bool, "operator> (List_t, List_t)", list_gt },
+	{ FUNC_VIRTUAL, &Type_bool, "operator>= (List_t, List_t)", list_ge },
 
 	{ 0, &Type_list, "List_t::operator= (List_t)", list_assign },
 	{ 0, &Type_list, "List_t::operator+= (List_t)", list_xassign },

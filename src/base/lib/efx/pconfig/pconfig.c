@@ -1,44 +1,59 @@
-/*	Programmkonfiguration
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Programmkonfiguration
 
-	Version 0.4
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/ftools.h>
 #include <EFEU/pconfig.h>
 #include <EFEU/parsedef.h>
+#include <EFEU/CmdPar.h>
+#include <EFEU/Resource.h>
 
-static char *Ident = "EFEU-Anwendungsprogramm";
-static char *Version = "0.4 (Beta)";
-static char *Copyright = "(c) 1999 Erich Frühstück";
-static char *Welcome = "$! - Version $(Version:%s)\n$(Copyright:%s)\n";
+#define	TYPEMASK	0x0f
+#define	KEYFLAG		0x10
+#define	WELCOME		"$! - Version $(Version:%s)\n$(Copyright:%s)\n"
 
-static Var_t vardef[] = {
-	{ "Ident",	&Type_str, &Ident },
-	{ "Version",	&Type_str, &Version },
-	{ "Copyright",	&Type_str, &Copyright },
-	{ "Welcome",	&Type_str, &Welcome },
+deftab_t PgmDefTab = {
+	NULL,
+	VB_DATA(8, sizeof(pardef_t)),
+	VB_DATA(8, sizeof(pardef_t)),
+	VB_DATA(8, sizeof(pardef_t)),
+	VB_DATA(8, sizeof(pardef_t)),
+	VB_DATA(8, sizeof(pardef_t)),
+};
+
+static VarDef_t vardef[] = {
+	{ "HelpFmt",	&Type_str, &HelpFmt },
+	{ "UsageFmt",	&Type_str, &UsageFmt },
 };
 
 
-static Obj_t *p_msgtab (io_t *io, void *data)
-{
-	if	(io_eat(io, "%s") == '{')
-	{
-		io_getc(io);
-		io_loadmsg(io, NULL, "}");
-	}
-
-	return NULL;
-}
 
 static Obj_t *p_pardef (io_t *io, void *data)
 {
 	pardef_t *pdef;
 	ObjList_t *list;
 	vecbuf_t *vb;
+	char *desc;
 	char *name;
+	int type;
 
 	if	(io_eat(io, " \t") == '(')
 	{
@@ -47,7 +62,9 @@ static Obj_t *p_pardef (io_t *io, void *data)
 	}
 	else	return NULL;
 
-	switch ((int) (size_t) data)
+	type = (size_t) data;
+
+	switch (type & TYPEMASK)
 	{
 	case P_ENV:	vb = &PgmDefTab.env; break;
 	case P_OPT:	vb = &PgmDefTab.opt; break;
@@ -57,10 +74,14 @@ static Obj_t *p_pardef (io_t *io, void *data)
 	}
 
 	pdef = vb_next(vb);
-	pdef->flag = (int) (size_t) data;
+	pdef->flag = (type & TYPEMASK);
+
+	pdef->key = (type & KEYFLAG) ? Obj2str(ReduceObjList(&list)) : NULL;
 	pdef->name = Obj2str(ReduceObjList(&list));
 	pdef->cmd = Obj2str(ReduceObjList(&list));
-	pdef->desc = Obj2str(ReduceObjList(&list));
+	desc = Obj2str(ReduceObjList(&list));
+	pdef->desc = mlangcpy(desc, NULL);
+	memfree(desc);
 	DelObjList(list);
 
 	if	(pdef->flag == P_ENV)
@@ -77,34 +98,63 @@ static Obj_t *p_pardef (io_t *io, void *data)
 
 
 static ParseDef_t pdef[] = {
-	{ "msgtab", p_msgtab, NULL },
 	{ "PgmEnv", p_pardef, (void *) P_ENV },
 	{ "PgmOpt", p_pardef, (void *) P_OPT },
-	{ "PgmXOpt", p_pardef, (void *) P_XOPT },
 	{ "PgmArg", p_pardef, (void *) P_ARG },
-	{ "PgmXArg", p_pardef, (void *) P_XARG },
+	{ "PgmRegExp", p_pardef, (void *) (P_REGEX|KEYFLAG) },
 	{ "PgmOptArg", p_pardef, (void *) P_OPTARG },
 	{ "PgmVaArg", p_pardef, (void *) P_BREAK },
 };
 
+static void f_usage(Func_t *func, void *rval, void **arg)
+{
+	io_t *out;
+
+	out = io_fileopen(*((char **) arg[1]), "w");
+	cp_usage(Val_io(arg[0]), out);
+	io_close(out);
+}
+
+
+static void f_iousage(Func_t *func, void *rval, void **arg)
+{
+	cp_usage(Val_io(arg[0]), Val_io(arg[1]));
+}
+
+
+static FuncDef_t fdef[] = {
+	{ FUNC_VIRTUAL, &Type_void, "usage (IO def, str name)", f_usage },
+	{ FUNC_VIRTUAL, &Type_void,  "usage (IO def, IO out)", f_iousage },
+};
+
 static void *parse_tab = NULL;
+
+static int pconfig_stat = 0;
 
 void pconfig_init(void)
 {
+	if	(pconfig_stat)	return;
+
 	if	(parse_tab == NULL)
 	{
-		AddVar(NULL, vardef, tabsize(vardef));
+		AddFuncDef(fdef, tabsize(fdef));
+		AddVarDef(NULL, vardef, tabsize(vardef));
 		PushParseTab(NULL);
 		AddParseDef(pdef, tabsize(pdef));
 		parse_tab = PopParseTab();
 	}
 
 	PushParseTab(parse_tab);
+	pconfig_stat = 1;
 }
 
 void pconfig_exit(void)
 {
-	PopParseTab();
+	if	(pconfig_stat)
+	{
+		PopParseTab();
+		pconfig_stat = 0;
+	}
 }
 
 void pconfig (const char *name, Var_t *var, size_t dim)
@@ -123,8 +173,8 @@ void pconfig (const char *name, Var_t *var, size_t dim)
 	}
 
 	info = GetInfo(NULL, NULL);
-	info->label = mstrcpy(Ident);
+	info->label = mstrcpy(GetResource("Ident", name));
 	info->func = NULL;
-	info->par = mstrcpy(Welcome);
+	info->par = mstrcpy(WELCOME);
 	pconfig_exit();
 }

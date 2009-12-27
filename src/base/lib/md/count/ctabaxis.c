@@ -1,8 +1,5 @@
 /*	Zählerstruktur generieren
 	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
-
-	Version 2
 */
 
 #include <EFEU/mdmat.h>
@@ -67,7 +64,7 @@ mdaxis_t *md_classaxis(const char *name, ...)
 	tmp = io_tmpbuf(0);
 	io_putstr(name, tmp);
 
-	list = va_start(list, name);
+	va_start(list, name);
 
 	while ((class = va_arg(list, MdClass_t *)) != NULL)
 	{
@@ -224,7 +221,7 @@ static MdClass_t *mksubsel(const char *def, MdClass_t *main)
 		}
 
 		dim = strsplit(p, ",", &list);
-		FREE(p);
+		memfree(p);
 
 		for (i = 0; i < main->dim; i++)
 		{
@@ -253,7 +250,7 @@ static MdClass_t *mksubsel(const char *def, MdClass_t *main)
 			}
 		}
 
-		FREE(list);
+		memfree(list);
 	}
 
 	io_close(io);

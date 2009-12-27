@@ -1,8 +1,23 @@
-/*	Standard Ein-Ausgabe (Plain)
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Standard Ein-Ausgabe (Plain)
 
-	Version 0.4
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/io.h>
@@ -44,8 +59,16 @@ static int std_ctrl (void *ptr, int c, va_list list)
 	}
 }
 
-static io_t ios_batch = STD_IODATA(std_get, std_put, std_ctrl, "<stdin,stdout>");
-static io_t ios_err = STD_IODATA(NULL, err_put, std_ctrl, "<stderr>");
+static io_t ios_batch = STD_IODATA(std_get, std_put,
+	std_ctrl, "<stdin,stdout>");
+
+static io_t ios_err = STD_IODATA(NULL, err_put,
+	std_ctrl, "<stderr>");
+
+io_t *io_batch (void)
+{
+	return rd_refer(&ios_batch);
+}
 
 io_t *iostd = &ios_batch;
 io_t *iomsg = &ios_batch;

@@ -1,6 +1,23 @@
-/*	Datenstruktur
-	(c) 2000 Erich Frühstück
-	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+/*
+Datenstruktur
+
+$Copyright (C) 2000 Erich Frühstück
+This file is part of EFEU.
+
+EFEU is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+EFEU is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with EFEU; see the file COPYING.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include "src2doc.h"
@@ -15,6 +32,7 @@ static char *SecHead[] = {
 	"\\Notes\n",
 	"\\Warnings\n",
 	"\\Errors\n",
+	"\\Copyright\nCopyright\n",
 };
 
 void SrcData_init (SrcData_t *data, io_t *ein, io_t *aus)
@@ -105,6 +123,10 @@ void SrcData_clean (SrcData_t *data)
 
 	del_strbuf(data->buf);
 	del_strbuf(data->synopsis);
+
+	if	(data->var[VAR_COPYRIGHT])
+		io_printf(data->aus, "\\Copyright\nCopyright %s\n",
+			data->var[VAR_COPYRIGHT]);
 
 	for (i = 0; i < VAR_DIM; i++)
 		memfree(data->var[i]);

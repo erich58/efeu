@@ -1,11 +1,28 @@
-/*	Kommentare lesen/zwischenspeichern
-	(c) 1999 Erich Frühstück
-	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+/*
+Kommentare lesen/zwischenspeichern
+
+$Copyright (C) 1999 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/io.h>
 
-#define	PROMPT	"/* "
+#define	PROMPT	"/* "	/**/
 
 static void comment_line (io_t *io, strbuf_t *buf, int flag)
 {
@@ -92,6 +109,20 @@ static void comment_cstyle (io_t *io, strbuf_t *buf, int flag)
 		io_getc(io);
 }
 
+/*
+Die Funktion |$1| liest das nächste Zeichen aus der Eingabestruktur <io>,
+wobei Kommentare im C++-Style überlesen werden.
+
+Falls <buf> verschieden
+von NULL ist, wird der Kommentartext in <buf> gespeichert.
+Ein Kommentar der Form <|/\* ... *\/|> überschreibt den Buffer,
+während ein Kommentar der Form <*\// ... <newline>*> am Ende des
+Buffers angehängt wird.
+
+Falls <flag> verschieden von 0 ist,
+wird ein dem Kommentar folgender Zeilenvorschub, bzw. der das Kommentar
+abschließende Zeilenvorschub nicht überlesen.
+*/
 
 int io_skipcom (io_t *io, strbuf_t *buf, int flag)
 {
@@ -110,3 +141,8 @@ int io_skipcom (io_t *io, strbuf_t *buf, int flag)
 
 	return c;
 }
+
+/*
+$SeeAlso
+\mref{io_getc(3)}.
+*/

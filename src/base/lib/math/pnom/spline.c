@@ -1,33 +1,45 @@
-/*	Splineinterpolation mit Polynomstruktur
-	(c) 1991 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Splineinterpolation mit Polynomstruktur
 
-	Version 2.0
+$Copyright (C) 1991 Erich Frühstück
+This file is part of EFEU.
 
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+*/
+
+#include <Math/pnom.h>	    /* Polynomstruktur */
+
+/*
 Gegeben sind n+1 Stützpunkte x[i], i=0,..,n mit den zugehörigen
 Funktionswerten y[i]. Gesucht ist eine Interpolation der Funktion
 in den n Intervallen mit stückweisen Polynomen 3. Grades.
-
 Achtung: Der Aufrufparameter n gibt die Zahl der Stützstellen an
 und muss daher um 1 reduziert werden, um der obigen Bedeutung zu
 entsprechen.
-
 In allen Programmen wird p als Name der Polynomstruktur verwendet.
 Die Koeffizienten werden durch Makros repräsentiert um eine
 bessere Lesbarkeit der Routinen zu erreichen. Bei der Spline-
 interpolation werden einzelne Koeffizientenvektoren für Zwischen-
 ergebnisse benötigt. Um die Übersichtlichkeit zu bewahren,
 werden sie über Makros unter anderen Namen angesprochen.
-
 Die Splineinterpolation wird in 3 Varianten angeboten:
-
 a)      2. Ableitung an den Randpunkten ist 0,
 b)      Funktion ist periodisch,
 c)      1. Ableitung an den Randpunkten ist vorgegeben.
-
 */
-
-#include <Math/pnom.h>	    /* Polynomstruktur */
 
 static void koef (pnom_t *p, size_t n, double *x, double *y, double m);
 static pnom_t *init (size_t n, double *x, double *y);

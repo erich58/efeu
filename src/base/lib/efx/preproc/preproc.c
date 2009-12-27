@@ -1,12 +1,28 @@
-/*	Eingabe - Preprozessor
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Eingabe - Preprozessor
 
-	Version 0.4
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/ftools.h>
 #include <EFEU/efmain.h>
+#include <EFEU/KeyTab.h>
 #include <EFEU/efio.h>
 #include <EFEU/object.h>
 #include <EFEU/preproc.h>
@@ -355,7 +371,7 @@ static int subclose(pp_t *pp)
 
 	pp->input = x->next;
 	stat = io_close(x->io);
-	FREE(x);
+	memfree(x);
 	return stat;
 }
 
@@ -476,7 +492,7 @@ static pp_cmd_t pp_cdef[] = {
 	{ "endif", PP_ENDIF },
 };
 
-static xtab_t *pp_tab = NULL;
+static vecbuf_t *pp_tab = NULL;
 
 static void cmd_include (pp_t *pp);
 static void cmd_undef (io_t *io);
@@ -498,18 +514,18 @@ static void pp_cmd(pp_t *pp)
 
 	if	(pp_tab == NULL)
 	{
-		pp_tab = xcreate(tabsize(pp_cdef), skey_cmp);
-		XAPPEND(pp_tab, pp_cdef, XS_ENTER);
+		pp_tab = KeyTab(16);
+		StrKey_append(pp_tab, tabparm(pp_cdef));
 	}
 
-	if	((cmd = skey_find(pp_tab, name)) == NULL)
+	if	((cmd = StrKey_get(pp_tab, name, NULL)) == NULL)
 	{
 		io_error(x->io, PREPROC, 191, 1, name);
 		memfree(name);
 		return;
 	}
 
-	FREE(name);
+	memfree(name);
 	io_eat(x->io, " \t");
 
 	if	(x->test == NULL)
@@ -747,7 +763,7 @@ static void cmd_undef(io_t *io)
 
 	key.name = io_mgets(io, "%s");
 	DelMacro(xsearch(MacroTab, &key, XS_DELETE));
-	FREE(key.name);
+	memfree(key.name);
 }
 
 
@@ -758,7 +774,7 @@ static int cmd_isdef(io_t *io)
 
 	key.name = io_mgets(io, "%s");
 	flag = (xsearch(MacroTab, &key, XS_FIND) != NULL);
-	FREE(key.name);
+	memfree(key.name);
 	return flag;
 }
 

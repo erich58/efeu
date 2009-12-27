@@ -1,10 +1,29 @@
-/*	Labelgenerierung
-	(c) 1997 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Labelgenerierung
+
+$Header <EFEU/$1>
+
+$Copyright (C) 1997 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef MDLABEL_H
-#define	MDLABEL_H	1
+#ifndef _EFEU_mdlabel_h
+#define	_EFEU_mdlabel_h	1
 
 #include <EFEU/mdmat.h>
 
@@ -33,9 +52,6 @@ int save_label (io_t *tmp, MdLabel_t *label, char *p);
 mdaxis_t *label2axis (MdLabel_t *label);
 
 
-/*	Lesefilter
-*/
-
 #define	ICTRL_HEAD	1	/* Wechsel in Headermodus */
 #define	ICTRL_TEXT	2	/* Wechsel in Textmode */
 #define	ICTRL_NUM	3	/* Wechsel in numerischen Mode */
@@ -44,4 +60,4 @@ mdaxis_t *label2axis (MdLabel_t *label);
 io_t *rfilter (io_t *io);
 
 
-#endif	/* MDLABEL_H */
+#endif	/* EFEU/mdlabel.h */

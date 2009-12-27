@@ -1,7 +1,23 @@
-/*	Pixelfile generieren
-	(c) 2000 Erich Frühstück
-	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Pixelfile generieren
+
+$Copyright (C) 2000 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/Pixmap.h>
@@ -27,7 +43,7 @@ static char *PixmapIdent (Pixmap_t *pix)
 	return msprintf("%dx%dx3", pix->rows, pix->cols);
 }
 
-REFTYPE(Pixmap_reftype, "Pixmap", PixmapIdent, PixmapAdmin);
+ADMINREFTYPE(Pixmap_reftype, "Pixmap", PixmapIdent, PixmapAdmin);
 
 
 /*	Pixmap-File generieren
@@ -111,9 +127,9 @@ static int *m_rows (Pixmap_t **pix)
 	return &Buf_int;
 }
 
-static Var_t var_Pixmap[] = {
-	{ "cols", &Type_int, NULL, 0, 0, ConstMember, m_cols },
-	{ "rows", &Type_int, NULL, 0, 0, ConstMember, m_rows },
+static MemberDef_t var_Pixmap[] = {
+	{ "cols", &Type_int, ConstMember, m_cols },
+	{ "rows", &Type_int, ConstMember, m_rows },
 };
 
 
@@ -121,5 +137,5 @@ void SetupPixmap (void)
 {
 	AddType(&Type_Pixmap);
 	AddFuncDef(fdef, tabsize(fdef));
-	AddVar(Type_Pixmap.vtab, var_Pixmap, tabsize(var_Pixmap));
+	AddMember(Type_Pixmap.vtab, var_Pixmap, tabsize(var_Pixmap));
 }

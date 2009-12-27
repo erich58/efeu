@@ -1,13 +1,29 @@
-/*	Standardverarbeitung
-	(c) 2000 Erich Frühstück
-	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+/*
+Standardverarbeitung
 
-	Version 1.0
+$Copyright (C) 2000 Erich Frühstück
+This file is part of EFEU.
+
+EFEU is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+EFEU is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with EFEU; see the file COPYING.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include "src2doc.h"
 #include <EFEU/strbuf.h>
 #include <EFEU/patcmp.h>
+#include <EFEU/parsub.h>
 #include <EFEU/ftools.h>
 #include <ctype.h>
 
@@ -47,14 +63,17 @@ static void subcopy (const char *name, io_t *ein, io_t *aus, io_t *src)
 		char *p;
 
 		sb_putc(0, buf);
-		/*
-		io_puts("\\title\t", aus);
-		*/
 
-		for (p = (char *) buf->data; *p != 0 && *p != '\n'; p++)
-			io_putc(*p, aus);
+		for (p = (char *) buf->data; *p != 0; p++)
+		{
+			if	(*p == '\n')
+			{
+				p[1] = 0;
+				break;
+			}
+		}
 
-		io_putc('\n', aus);
+		io_psub(aus, (char *) buf->data);
 		sb_clear(buf);
 	}
 	else if	(name)
@@ -71,7 +90,7 @@ static void subcopy (const char *name, io_t *ein, io_t *aus, io_t *src)
 
 			sb_putc(0, buf);
 			io_putc('\n', aus);
-			io_puts((char *) buf->data, aus);
+			io_psub(aus, (char *) buf->data);
 			sb_clear(buf);
 			flag = 0;
 		}

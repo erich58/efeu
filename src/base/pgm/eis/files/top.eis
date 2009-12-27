@@ -1,21 +1,11 @@
-@:Hauptbibliothek
-Wilkommen im EFEU-Informationssystem
-(c) 1998 Erich Frühstück
-A-1090 Wien, Währinger Straße 64/6
+@:top node
+Welcome to the EFEU information system
+Copyright (C) 1998 Erich Frühstück
 
-?		Kurzanleitung
-q		Abbruch
+?		short instruction
+q		quit
 
-@efeu:Standardkommandos
-@efeu/esh|esh -dump
-@efeu/mksource|mksource -dump
-@efeu/dezile|dezile -dump
-@db:Synthesis-Datenbanken|syndb -dump=/SynDB
-@mipro:Mikroprognose < mipro
-@sprog:Synthesis-Auswertungsprogramme
-@sprog/syndb|syndb -dump
-@sprog/syncnt|syncnt -dump
-@sprog/amscnt|amscnt -dump
-@sprog/bhvcnt|bhvcnt -dump
-@sprog/phvcnt|phvcnt -dump
-@sprog/pjdcnt|pjdcnt -dump
+@efeu:EFEU commands
+@efeu/esh|esh --dump
+@efeu/mksource|mksource --dump
+@efeu/efeudoc|efeudoc --dump

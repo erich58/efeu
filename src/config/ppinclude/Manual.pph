@@ -1,0 +1,66 @@
+/*
+Regeln für Handbucheinträge
+
+$Copyright (C) 2001 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+*/
+
+#ifndef	_Manual_pph
+#define	_Manual_pph	1
+
+/*
+Der Makro |$1| definiert die Bibliothek für einen Handbucheintrag.
+*/
+#define	ManualDir(path,ext)		\
+PathName(path, Concat(man,ext))
+
+/*
+Der Makro |$1| definiert den Namen eines Handbucheintrags.
+*/
+#define	ManualName(path,name,ext)	\
+PathName(ManualDir(path,ext),Concat3(name,.,ext))
+
+/*
+Der Makro |$1| installiert einen Handbucheintrag.
+*/
+#define	InstallManual(name,num,src,flags)			\
+NamedTarget(man,ManualName($(MANDIR),name,num))			@;\
+NamedCleanTarget(man.clean,ManualName($(MANDIR),name,num))	@;\
+ManualName($(MANDIR),name,num): src				@;\
+@+cp src $@							@;\
+
+/*
+Der Makro |$1| linkt einen Hanbucheintrag auf einen anderen Namen.
+*/
+#define	LinkManual(name,num,target)				\
+NamedTarget(man,$(MANDIR)/man@.num/target.num.Z)		@;\
+NamedCleanTarget(man.clean,$(MANDIR)/man@.num/target@.num.Z)	@;\
+$(MANDIR)/man@.num/target.num.Z: $(MANDIR)/man@.num/name@.num.Z	@;\
+@+ln -s $(MANDIR)/man@.num/name@.num.Z $@			@;
+
+/*
+$Notes
+Die Regeln zur Generierung von Handbucheinträgen sind veraltet
+und stehen nur mehr aus Kompatiblitätsgründen
+zur Verfügung.
+
+$SeeAlso
+\mref{mkmf(1)}.
+*/
+
+#endif	/* Manual.pph */

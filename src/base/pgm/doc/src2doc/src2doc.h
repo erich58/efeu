@@ -1,8 +1,23 @@
-/*	Dokumentation aus Sourcefile generieren
-	(c) 2000 Erich Frühstück
-	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+/*
+Dokumentation aus Sourcefile generieren
 
-	Version 1.0
+$Copyright (C) 2000 Erich Frühstück
+This file is part of EFEU.
+
+EFEU is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+EFEU is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with EFEU; see the file COPYING.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #ifndef	_src2doc_h
@@ -61,7 +76,8 @@ typedef struct {
 #define	VAR_SEC		1
 #define	VAR_TITLE	2
 #define	VAR_HEAD	3
-#define	VAR_DIM		4
+#define	VAR_COPYRIGHT	4
+#define	VAR_DIM		5
 
 struct SrcData_s {
 	int hdr;	/* Flag für Header */
@@ -102,5 +118,6 @@ extern void Decl_print (Decl_t *decl, io_t *io);
 extern Decl_t *parse_decl (io_t *io, int c);
 
 extern char *Secnum;
+extern char *IncFmt;
 
 #endif	/* src2doc.h */

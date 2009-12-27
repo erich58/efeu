@@ -1,6 +1,23 @@
-/*	Dokumenteinbindung
-	(c) 1999 Erich Frühstück
-	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+/*
+Dokumenteinbindung
+
+$Copyright (C) 1999 Erich Frühstück
+This file is part of EFEU.
+
+EFEU is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+EFEU is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with EFEU; see the file COPYING.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include "efeudoc.h"
@@ -65,6 +82,8 @@ void Doc_input (Doc_t *doc, const char *opt, io_t *in)
 			base = alt, alt = DOC_MODE_SKIP;
 		else if	(testkey("sgml", &opt))
 			base = alt, alt = DOC_MODE_SGML;
+		else if	(testkey("html", &opt))
+			base = alt, alt = DOC_MODE_HTML;
 		else if	(testkey("latex", &opt))
 			base = alt, alt = DOC_MODE_TEX;
 		else if	(testkey("man", &opt))
@@ -158,11 +177,14 @@ io_t *Doc_open (const char *path, const char *name, int flag)
 {
 	io_t *in;
 	
-	DocPath = mstrcpy(path);
-	DocName = fsearch(NULL, NULL, name, NULL);
+	if	(mstrcmp(name, ".") == 0)
+		name = MAINDOC;
 
-	if	(DocName == NULL)
-		DocName = fsearch(path, NULL, name, NULL);
+	DocPath = mstrcpy(path);
+	DocName = fsearch(path, NULL, name, NULL);
+
+	if	(!DocName)
+		DocName = fsearch(NULL, NULL, name, NULL);
 
 	if	(DocName)
 	{
@@ -180,7 +202,7 @@ io_t *Doc_open (const char *path, const char *name, int flag)
 		if	(S_ISDIR(buf.st_mode))
 		{
 			memfree(DocPath);
-			DocPath = mstrpaste(":", path, DocName);
+			DocPath = mstrpaste(":", DocName, path);
 			p = mstrpaste("/", DocName, MAINDOC);
 			memfree(DocName);
 			DocName = p;
@@ -189,7 +211,7 @@ io_t *Doc_open (const char *path, const char *name, int flag)
 		{
 			fname_t *fn = strtofn(DocName);
 			memfree(DocPath);
-			DocPath = mstrpaste(":", path, fn->path);
+			DocPath = mstrpaste(":", fn->path, path);
 			memfree(fn);
 		}
 	}
@@ -199,7 +221,7 @@ io_t *Doc_open (const char *path, const char *name, int flag)
 		return NULL;
 	}
 
-	in = io_lnum(io_fileopen(DocName, "rz"));
+	in = io_lnum(io_fileopen(DocName, "rzd"));
 
 	if	(flag)
 	{

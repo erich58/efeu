@@ -1,6 +1,23 @@
-/*	Testdokumentausgabe
-	(c) 1999 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Testdokumentausgabe
+
+$Copyright (C) 1999 Erich Frühstück
+This file is part of EFEU.
+
+EFEU is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+EFEU is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with EFEU; see the file COPYING.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <efeudoc.h>
@@ -43,6 +60,7 @@ static NAME_t cmd_tab[] = {
 	{ DOC_REF_PAGE, "pageref", "%s", 0 },
 	{ DOC_REF_MAN, "manref", "%s", 0 },
 
+	{ DOC_TAB_BEG, "tabbeg", NULL, 1 },
 	{ DOC_TAB_SEP, "tabseb", NULL, 1 },
 	{ DOC_TAB_END, "tabend", NULL, 0 },
 	{ DOC_TAB_HEIGHT, "lineheight", NULL, 0 },
@@ -86,6 +104,7 @@ static NAME_t env_tab[] = {
 	{ DOC_MODE_VERB, "verb", NULL, 1 },
 	{ DOC_MODE_MAN, "man", "@", 1 },
 	{ DOC_MODE_TEX, "tex", "@", 1 },
+	{ DOC_MODE_HTML, "html", "@", 1 },
 	{ DOC_MODE_SGML, "sgml", "@", 1 },
 	{ DOC_MODE_PLAIN, "plain", NULL, 1 },
 
@@ -96,13 +115,14 @@ static NAME_t env_tab[] = {
 	{ DOC_ENV_TAG, "tag", NULL, 1 },
 	{ DOC_ENV_SPAGE, "spage", "%#s %#s", 1 },
 	{ DOC_ENV_MPAGE, "mpage", "%#s %#s", 1 },
+	{ DOC_ENV_BIB, "bib", "%#s", 1 },
 	{ DOC_ENV_FIG, "fig", "%#s", 1 },
 	{ DOC_ENV_TAB, "tab", "height=%s width=%s", 1 },
 	{ DOC_ENV_URL, "url", "%#s", 1 },
 	{ DOC_ENV_CODE, "code", NULL, 0 },
 	{ DOC_ENV_HANG, "hang", NULL, 0 },
 	{ DOC_ENV_SLOPPY, "sloppy", NULL, 0 },
-	{ DOC_ENV_MCOL, "multicol", "%c %d", 0 },
+	{ DOC_ENV_MCOL, "multicol", "%s %d", 0 },
 };
 
 

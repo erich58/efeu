@@ -1,10 +1,26 @@
-/*	Programmgenerierung
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Programmgenerierung
 
-	Version 3.0
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+EFEU is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+EFEU is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with EFEU; see the file COPYING.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#include <EFEU/Resource.h>
 #include <EFEU/pconfig.h>
 #include <EFEU/parsedef.h>
 #include <EFEU/preproc.h>
@@ -67,7 +83,7 @@ static OUTPUT *get_output(const char *name)
 static char *BaseName = NULL;	/* Basisname */
 static int Verbose = 0;		/* Protokollmodus */
 
-static Var_t globvar[] = {
+static VarDef_t globvar[] = {
 	{ "HeaderName",		&Type_str, &output[OUT_HDR].fname },
 	{ "BaseName",		&Type_str, &BaseName },
 	{ "VerboseMode",	&Type_int, &Verbose },
@@ -87,7 +103,7 @@ static int MakeRule = 0;	/* Regel generieren */
 static int MakeList = 0;	/* Liste generieren */
 static int LockFlag = 0;	/* Sperrflag */
 
-static Var_t locvar[] = {
+static VarDef_t locvar[] = {
 	{ "Template",	&Type_str, &Template },
 	{ "DependName",	&Type_str, &DependName },
 	{ "ListName",	&Type_str, &ListName },
@@ -357,24 +373,28 @@ int main(int narg, char **arg)
 	char *bootstrap;
 	int i;
 
-	libinit(arg[0]);
+	SetProgName(arg[0]);
 	bootstrap = listcat(" ", arg, narg);
-	SetupMdMat();
-	SetupMath();
-	SetupPreproc();
+
+	SetupStd();
 	SetupUtil();
+	SetupPreproc();
+
 	SetupDataBase();
 	SetupRand48();
 	SetupRandom();
+	SetupMdMat();
+	SetupMath();
 	SetupDebug();
+
 	AddParseDef(pdef, tabsize(pdef));
 	AddFuncDef(fdef, tabsize(fdef));
-	AddVar(NULL, globvar, tabsize(globvar));
+	AddVarDef(NULL, globvar, tabsize(globvar));
 
 	SetupOutput = 1;
 	PushVarTab(NULL, NULL);
-	pconfig(NULL, locvar, tabsize(locvar));
-	loadarg(&narg, arg);
+	AddVarDef(LocalVar, locvar, tabsize(locvar));
+	ParseCommand(&narg, arg);
 	PopVarTab();
 	SetupOutput = 0;
 

@@ -1,0 +1,4 @@
+#include <libpq.pph>
+
+XLIBS=	$(PQLIB) LIB_MD LIB_EFX LIB_EFM
+CFLAGS=	$(PQINC)

@@ -1,8 +1,5 @@
 /*	Matrizen multiplizieren
 	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
-
-	Version 2.0
 */
 
 #include <EFEU/mdmat.h>
@@ -116,7 +113,7 @@ mdmat_t *md_mul (mdmat_t *md1, mdmat_t *md2, int flag)
 	memset(md->data, 0, (size_t) md->size);
 	par.buf = memalloc(md->type->size);
 	mainwalk(&par, md->axis, md1->axis, md2->axis, md->data, md1->data, md2->data);
-	FREE(par.buf);
+	memfree(par.buf);
 	return md;
 }
 

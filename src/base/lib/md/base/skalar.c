@@ -1,6 +1,5 @@
 /*	Skalar in Datenmatrix konvertieren
 	(c) 1995 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
 */
 
 #include <EFEU/mdmat.h>

@@ -1,8 +1,23 @@
-/*	Auswertungsfunktion für Sourcefiles
-	(c) 2000 Erich Frühstück
-	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+/*
+Auswertungsfunktion für Sourcefiles
 
-	Version 1.0
+$Copyright (C) 2000 Erich Frühstück
+This file is part of EFEU.
+
+EFEU is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+EFEU is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with EFEU; see the file COPYING.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include "src2doc.h"
@@ -131,6 +146,26 @@ static void keyline (SrcData_t *data, int c)
 }
 
 
+static char *get_title (strbuf_t *buf)
+{
+	char *p;
+	size_t n;
+
+	sb_putc(0, buf);
+	p = buf->data;
+
+	for (n = 0; p[n] != 0; n++)
+	{
+		if	(strncmp("(c)", p + n, 3) == 0)
+		{
+			sb_setpos(buf, n);
+			break;
+		}
+	}
+
+	return sb2str(buf);
+}
+
 void SrcData_eval (SrcData_t *data)
 {
 	int c;
@@ -139,15 +174,10 @@ void SrcData_eval (SrcData_t *data)
 
 	if	(sb_getpos(data->buf))
 	{
-		char *title, *p;
-
-		sb_putc(0, data->buf);
-		title = (char *) data->buf->data;
-		p = strchr(title, '\n');
+		strbuf_t *buf = new_strbuf(0);
+		SrcData_copy(data, buf);
 		memfree(data->var[VAR_TITLE]);
-		data->var[VAR_TITLE] = p ? mstrncpy(title, p - title) :
-			mstrcpy(title);
-		SrcData_copy(data, NULL);
+		data->var[VAR_TITLE] = get_title(buf);
 	}
 
 	while ((c = skip_space(data->ein, data->buf)) != EOF)

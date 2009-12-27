@@ -1,6 +1,23 @@
-/*	Dokumentgenerator
-	(c) 1999 Erich Frühstück
-	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+/*
+Dokumentgenerator
+
+$Copyright (C) 1999 Erich Frühstück
+This file is part of EFEU.
+
+EFEU is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+EFEU is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with EFEU; see the file COPYING.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #ifndef	_efeudoc_h
@@ -25,6 +42,7 @@ extern int DocSkipSpace (io_t *in, int flag);
 extern int DocSkipWhite (io_t *in);
 
 extern int DocParseNum (io_t *in);
+extern char *DocParseFlags (io_t *in);
 extern char *DocParseName (io_t *in, int key);
 extern char *DocParseMacArg (io_t *in);
 extern char *DocParseLine (io_t *in, int flag);
@@ -122,7 +140,7 @@ void Doc_endlist (Doc_t *doc);
 void Doc_newenv (Doc_t *doc, int depth, ...);
 void Doc_endenv (Doc_t *doc);
 void Doc_endall (Doc_t *doc, int mode);
-void Doc_tab (Doc_t *doc, io_t *in, const char *height, const char *width);
+void Doc_tab (Doc_t *doc, io_t *in, const char *opt, const char *arg);
 
 
 /*	Dokumentmakros
@@ -179,6 +197,7 @@ extern DocTab_t *GlobalDocTab;
 extern Type_t Type_Doc;
 extern char *DocPath;
 extern char *DocName;
+extern char *DocStyle;
 
 char *ListArg_str (ObjList_t *list, int n);
 int ListArg_int (ObjList_t *list, int n);

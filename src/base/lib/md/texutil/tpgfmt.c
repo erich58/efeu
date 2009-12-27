@@ -1,6 +1,5 @@
 /*	Seitenformat bestimmen
 	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
 */
 
 #include <EFEU/texutil.h>

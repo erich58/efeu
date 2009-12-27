@@ -1,0 +1,39 @@
+\sec	Allgemeines
+
+Die \index{X/Open-Spezifikation} definiert eine standardisierte Verwendung
+von Kommandozeilenoptionen. Daneben bietet sie eine standardisierte
+Programmierschnittstelle für die Bereitstellung von
+Kommandozeilenschaltern in C-Programmen: die Funktion \index{|getopt|}.
+
+In EFEU wird ein ähnlicher Weg gegangen, jedoch wird die
+Konfiguration der Programmargumente gleichzeitig mit ihrer
+Dokumentation verbunden. Weiters werden zusätzlich Umgebungsvariablen
+und Argumente mit einbezogen.
+
+Die Formatierung der Beschreibungstexte erfolgt mit \index{|efeudoc|}.
+Dokumente können damit in mehreren Formaten (roff, \LaTeX, HTML, &ldots;)
+generiert werden. Weiters besteht die Möglichkeit, die Aufrufsyntax
+direkt in eine längere \index{Programmdokumentation} einzubauen.
+
+In der \index{EFEU-Spezifikation} können ähnlich wie in der GNU-Version
+von \index{|getopt|} Optionen an beliebiger Stelle, also auch nach den
+Argumenten, angegeben werden.
+Das Flag \index{|POSIXLY_CORRECT|}, das bei der GNU-Version von
+|getopt| diese Erweiterung deaktiviert, wird von EFEU
+nicht unterstützt.
+
+Derzeit wird noch eine alte Version der Options- und Argumentabfrage
+verwendet. Diese erfüllt nicht die \index{X/Open-Spezifikation}, da alle
+Optionen wie lange Optionen behandelt werden. Die einzelnen Flags
+können daher nicht miteinander kombiniert werden.
+
+Shell-Skripts und einzelne Kommandos, die für ihre Arbeiten keine Funktionen
+der EFEU-Bibliotheken benötigen, verwenden weiterhin \index{|getopt|} bzw.
+\index{|getopts|}.
+X11-Kommandos setzen auf den X11-Standards zur Kontrolle der
+Programmargumente auf. Näheres dazu kann in den einschlägigen
+Handbüchern\note Die Online-Handbücher sollten unter Linux verfügbar sein.
+	Eine gedruckte Version gibt es von O'Reilly unter dem Titel
+	<"The X Window System">.
+nachgelesen werden.
+

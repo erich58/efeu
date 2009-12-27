@@ -1,0 +1,8 @@
+PDEP=	StdLib(pix) DEP_IORL DEP_EFX DEP_EFM
+PLIB=	LinkName(pix) LIB_IORL LIB_EFX LIB_EFM
+
+Program($(BINDIR),pixmap,pixmap.o,$(PDEP),$(PLIB))
+Program($(BINDIR),pixtoX11,pixtoX11.o,$(PDEP),$(PLIB) LIB_X11)
+
+#define	PixScript(dir,base,name) \
+InstallCmdScript(PathName($(BINDIR),name),PathName(dir,base),-ec pixmap)

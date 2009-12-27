@@ -1,8 +1,23 @@
-/*	Datenstrukturen mit Referenzzähler
-	(c) 1995 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Datenstrukturen mit Referenzzähler
 
-	Version 0.4
+$Copyright (C) 1995 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 
@@ -17,7 +32,6 @@
 #define	KEY_REFER	"refer"
 #define	KEY_DEREF	"deref"
 #define	KEY_CLEAN	"clean"
-#define	KEY_REUSE	"reuse"
 #define	KEY_DEBUG	"debug"
 
 /*	Hilfsfunktion zur Überprüfung eines Referenzobjektes.
@@ -108,7 +122,25 @@ char *rd_ident (const void *data)
 }
 
 
-/*	Datenobjekt genereieren
+/*	Datenobjekt initialisieren
+*/
+
+void *rd_init (const reftype_t *type, void *data)
+{
+	refdata_t *rd = data;
+
+	if	(rd)
+	{
+		rd->reftype = type;
+		rd->refcount = 1;
+		std_debug(rd, KEY_ALLOC);
+	}
+
+	return rd;
+}
+
+
+/*	Datenobjekt generieren
 */
 
 void *rd_create (const reftype_t *type)
@@ -166,58 +198,15 @@ void rd_deref (void *data)
 		std_debug(rd, KEY_CLEAN);
 		rd->refcount = 0;
 
-		if	(rd->reftype && rd->reftype->admin)
-		{
-			debug_depth++;
+		debug_depth++;
+
+		if	(rd->reftype == NULL)
+			;
+		else if	(rd->reftype->clean)
+			rd->reftype->clean(data);
+		else if	(rd->reftype->admin)
 			rd->reftype->admin(data, NULL);
-			debug_depth--;
-		}
+
+		debug_depth--;
 	}
 }
-
-
-#if	0
-void *rd_copy (const void *data)
-{
-	refdata_t *rd = rd_check(data, "rd_copy");
-
-	if	(rd->refcount > 1 && rd->reftype->admin)
-	{
-		refdata_t *tg = rd->reftype->admin(NULL, rd);
-
-		if	(tg != rd)
-		{
-			if	(tg)
-			{
-				tg->reftype = rd->reftype;
-				tg->refcount = 1;
-				std_debug(tg, KEY_ALLOC);
-			}
-
-			rd_deref(rd);
-			return tg;
-		}
-	}
-
-	std_debug(rd, KEY_REUSE);
-	return rd;
-}
-
-void *rd_admin (void *tptr, const void *sptr)
-{
-	refdata_t *tg = rd_check(tptr, "rd_admin");
-	refdata_t *src = rd_check(sptr, "rd_admin");
-
-	if	(tg->reftype != src->reftype)
-	{
-		message("rd_admin", MSG_EFM, 11, 0);
-		return tg;
-	}
-
-	if	(tg->reftype->admin)
-	{
-		tg->reftype->admin(tg, src);
-		rd_deref(src);
-	}
-}
-#endif

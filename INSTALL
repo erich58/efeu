@@ -1,0 +1,56 @@
+PRELIMINARIES
+
+The following packages are needed:
+
+*	C development
+*	readline development
+*	teTeX
+
+The following packages are recommanded:
+
+*	postgresql development
+*	sc Spreadsheet Calculator
+
+All Files of EFEU are build relative to the main directory of the
+release, from now on we refer it with <TOP>. The subdirectories
+<TOP>/include, <TOP>/ppinclude, <TOP>/build, <TOP>/lib, <TOP>/bin
+and <TOP>/doc are private to EFEU and should not be used by other software.
+Add <TOP>/bin to your PATH to get commands found.
+
+It is a good idea but not a neccessarity, to define an extra user for
+administrating EFEU. The name of this user is typically efeu with group efeu.
+You could use his HOME directory or the subdirectory efeu[-version] as <TOP>.
+If you create a symbolic link /efeu or /opt/efeu to <TOP>, you can use this
+instead of the real <TOP>.
+
+The sources should be installed under <TOP>/src.
+You can add your own applications to this directory.
+Every subdirectory defines a project.
+
+EFEU comes with the following projects:
+
+[config]	basic module for setting up mkmf;
+[base]		libraries and commands;
+[doc]		documentations;
+[pg]		front end to PostgreSQL;
+[scope]		rules for tag files and name tabels.
+
+If postgresql-development is not installed, the project pg is not
+implemented. This does not influence the other components.
+
+INSTALLATION
+
+Change to directory <TOP>. Run 'make all'.
+
+The following steps are performed for building EFEU:
+#	run make in <TOP>/src, if there is a Makefile (if you have
+	cvs access to efeu, this updates yor sources);
+#	run <TOP>/config/setup, if it exists (installs basic scripts,
+	needed for the next steps);
+#	run efeubuild to create <TOP>/build/Makefile;
+#	run make in <TOP>/build/Makefile (the main work).
+
+The script efeugen calls make in <TOP>/build or any subdirectory
+of it. You need to set either the environment EFEUBUILD to <TOP>/build
+or the environment EFEUTOP to <TOP>, as long as <TOP> is not your
+HOME directory.

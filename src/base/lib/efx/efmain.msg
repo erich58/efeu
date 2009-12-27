@@ -1,175 +1,193 @@
-/*	Standardfehlermeldungen der efmain - Programmbibliothek
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+error messages of efx Library
 
-	Version 0.4
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-1	$!: NACHRICHT $1.\n
-2	$!: FEHLER $1.\n
-3	$!: Formatdatei $1 nicht gefunden.\n
+1	$!: MESSAGE $1.\n
+2	$!: ERROR $1.\n
+3	$!: format file $1 not found.\n
 
-5	$!: Zuweisungstabelle ist nicht definiert.\n
-6	$!: Konfigurationsdatei $1 nicht gefunden.\n
-7	$!: Lokale $1 nicht gefunden.\n
-8	$!: $0: Datei $1 nicht gefunden.\n
+5	$!: assignment table is not defined.\n
+6	$!: configuration file $1 not found.\n
+8	$!: $0: file $1 not found.\n
+9	$!: $0: loadarg unexpected.\n
 
-21	$!: Datei $1 nicht lesbar.\n
-22	$!: Datei $1 nicht beschreibbar.\n
-23	$!: Datei $1, Zugriff $2 nicht möglich.\n
-24	$!: Schließen einer nicht mit fileopen() göffneten Datei.\n
-25	$!: Verwendung einer bereits geschlossenen IO-Struktur.\n
-26	$!: Temporäre Datei kann nicht generiert werden.\n
+21	$!: file $1 not readable.\n
+22	$!: file $1 not writeable.\n
+23	$!: file $1, access $2 not possible.\n
+24	$!: closing a file not registered by filenotice().\n
+25	$!: use of a closed IO-structure.\n
+26	$!: could not create temporary file.\n
 
-27	$!: Alle temporären Dateinamen in Verwendung.\n
-28	$!: Unbekannter Zugriff auf Datei.\n
-29	$!: Prozess $(#1) nicht generierbar.\n
+28	$!: undefiined access.\n
+29	$!: process $(#1) not created.\n
 
-31	$!: Option $1 - fehlendes Argument.\n
-32	$!: Unbekannte Option $1.\n
-33	$!: Resourcefile $1 generiert.\n
-34	$!: Initialisierungsfile $1 generiert.\n
-35	$!: Datenbankindex außerhalb des zulässigen Bereichs.\n
-38	$!: Variable $1 ist nicht definiert.\n
-39	$!: Variable $1 kann nicht initialisiert werden (falscher Datentype).\n
+31	$!: option -$1 - missing argument.\n
+32	$!: unknown option -$1.\n
+33	$!: resource file $1 created.\n
+34	$!: file $1 created.\n
+35	$!: database index out of bound.\n
+38	$!: variable $1 ist not defined.\n
+39	$!: could not initialize variable $1 (wrong type).\n
 
-41	$!: Konstanter Datenbuffer kann nicht vergrößert werden.\n
-42	$!: File $0: Vorzeitiges Fileende beim Lesen eines Vektorfeldes.\n
-43	$!: File $0: Ausgabefehler beim Schreiben eines Vektorfeldes.\n
+41	$!: can not expand const data buffuer.\n
+42	$!: file $0: unexpected EOF by reading data field.\n
+43	$!: file $0: output error by writing data field.\n
 
-51	$!: $0: Mehr als ein 'u' in Ganzzahlwert.\n
-52	$!: $0: Mehr als ein 'l' in Ganzzahlwert.\n
+51	$!: $0: more then one 'u' in integral constant.\n
+52	$!: $0: more then one 'l' in integral constant.\n
 
-60	$!: Funktion $"
-61	$": Argument $1 nicht definiert.\n
-62	$": Argument $1 ist kein L-Wert.\n
-63	$": Zuviele Argumente.\n
+60	$!: function $"
+61	$": argument $1 not defined.\n
+62	$": argument $1 is not an L-value.\n
+63	$": too many arguments.\n
 
-65	$!: EvalFunc() mit ungültigen Datenpointer aufgerufen!\n
+65	$!: EvalFunc() called with invalid pointer!\n
 
-70	$!: Operator $1 nicht gefunden.\n
-71	$!: Funktion $1 nicht gefunden.\n
-72	$!: $0: Unerwartetes Zeichen $1 in Befehlszeile.\n
-73	$!: Datei $1 (Suchpfad $2) nicht gefunden.\n
-74	$!: Funktion $1 für Datentype $2 nicht gefunden.\n
-75	$!: $1-Konstruktor für Argumentliste nicht definiert.\n
+70	$!: operator $1 not found.\n
+71	$!: function $1 not found.\n
+72	$!: $0: unexpected character $1 in command line.\n
+73	$!: file $1 (path $2) not found.\n
+74	$!: funktion $1 for type $2 not found.\n
+75	$!: $1-constructor for given arguments not defined.\n
 
-81	$!: $0: Funktions/Variablenname fehlt.\n
-82	$!: $0: Funktionstype fehlt.\n
-83	$!: $0: Unbekannter Datentype $1.\n
-84	$!: $0: Extra Zeichen nach Ellipse $1.\n
-85	$!: $0: Syntaxfehler in Ellipse $1.\n
-86	$!: Vorgabewert für L-Wert nicht zulässig.\n
-87	$!: Argumentliste fehlt.\n
-88	$!: Argument für $1 ist kein L-Wert.\n
-89	$!: $0: Objekttype fehlt.\n
-90	$!: $0: Syntaxfehler im Datentype $1.\n
+81	$!: $0: missing name of function/variable.\n
+82	$!: $0: missing return type of function.\n
+83	$!: $0: unknown type $1.\n
+84	$!: $0: extra character after ellipsis $1.\n
+85	$!: $0: syntax error in ellipsis $1.\n
+86	$!: default value for L-value not permitted.\n
+87	$!: missing arguments.\n
+88	$!: argument $1 is not a L-value.\n
+89	$!: $0: missing object type.\n
+90	$!: $0: syntax error in data type $1.\n
 
-211	$!: Linkes Argument einer Zuweisung ist kein Objekt.\n
-212	$!: Rechtes Argument einer Zuweisung ist kein Objekt.\n
-213	$!: Linker Operant einer Zuweisung ist kein L-Wert.\n
-214	$!: Operant des Operators $1 ist nicht definiert.\n
-215	$!: Operator $1 für Datentype $2 nicht definiert.\n
-216	$!: Bereichsliste: Vergleichsfunktion ist nicht definiert.\n
-217	$!: Bereichsliste: Schrittweite nicht bestimmbar.\n
+211	$!: left side of assignment is not an object.\n
+212	$!: right side of assignment is not an object.\n
+213	$!: Left object of assignment is not an L-value.\n
+214	$!: argument of operator $1 is not defined.\n
+215	$!: operator $1 for type $2 is not defined.\n
+216	$!: range list: comparsion function is not defined.\n
+217	$!: range list: step size is not determinable.\n
 
-91	$!: Funktion $1: Kein Effekt.\n
-92	$!: Funktion $1: Falsche Argumente.\n
-93	$!: Funktion $1: Argument $2 ist nicht definiert.\n
-94	$!: Undefinierter Vorgabewert in Funktionsaufruf.\n
-95	$!: $0: Ungültiger Name in for-in Schleife.\n
+91	$!: function $1: null effect.\n
+92	$!: function $1: wrong arguments.\n
+93	$!: function $1: argument $2 is not defined.\n
+94	$!: undefined default value in function call.\n
+95	$!: $0: invalid name in for-in loop.\n
+96	$!: $0: function $1: No argument for return reference defined.\n
+97	$!: function $1: ATTENTION: incompatible return reference.\n
 
-101	$!: $0: Operator $1: Rechtes Argument fehlt.\n
-102	$!: $0: Bedingter Ausdruck: ":" fehlt.\n
-103	$!: $0: Teilterm: Abschlußklammer fehlt.\n
-105	$!: $0: Stringabschluß fehlt.\n
-106	$!: $0: Unvollständige Argumentliste.\n
-108	$!: $0: Zeichenabschluß fehlt.\n
-109	$!: $0: Syntaxfehler: $1 statt $2 gelesen.\n
-110	$!: $0: Syntaxfehler: unvollständiger Block.\n
+101	$!: $0: operator $1: right argument is missing.\n
+102	$!: $0: conditional expression: ":" is missing.\n
+103	$!: $0: partial term: right parenthese is missing.\n
+105	$!: $0: missing end of string.\n
+106	$!: $0: incomplete argument list.\n
+108	$!: $0: missing end of charachter constant.\n
+109	$!: $0: syntax error: read $1 where $2 is expected.\n
+110	$!: $0: syntax error: incomplete block.\n
 
-111	$!: Funktion $1: Kein Effekt.\n
-112	$!: Funktion $1: Falsche Argumente.\n
-113	$!: $0: ACHTUNG: Kein Effekt.\n
-114	$!: $0: Unerwartetes Zeichen $1.\n
-115	$!: $0: Funktionsname fehlt.\n
-116	$!: $0: Syntaxfehler in Funktionsdefinition $1.\n
-117	$!: $0: Befehlszeile fehlt.\n
-118	$!: $0: Variablendefinition fehlt.\n
-119	$!: $0: Punkt ohne Gliederungsname.\n
+111	$!: function $1: null effect.\n
+112	$!: function $1: wrong arguments.\n
+113	$!: $0: ATTENTION: null effect.\n
+114	$!: $0: unexpected character $1.\n
+115	$!: $0: name of function is missing.\n
+116	$!: $0: syntax error in function declaration $1.\n
+117	$!: $0: command line is missing.\n
 	
-120	$!: Objekt vom Typ $1 wurde bereits freigegeben!\n
-121	$!: $0: Unerwartetes Fileende.\n
-122	$!: $0: Syntaxfehler in Strukturdefinition.\n
-123	$!: $0: Syntaxfehler in Typedefinition.\n
-124	$!: $0: Speichergröße von $1 ist nicht definiert.\n
-125	$!: Undefiniertes Objekt $1 in Argumentliste.\n
-126	$!: Undefinierter Vorgabewert in Funktionsaufruf.\n
-127	$!: $0: Funktionstype fehlt.\n
-128	$!: $0: Unbekannter Datentype $1.\n
-129	$!: $0: Unbekannte Objektbindung in Prototype.\n
+120	$!: object of type $1 already released!\n
+121	$!: $0: unexpected end of file.\n
+122	$!: $0: syntax error in structure declaration.\n
+123	$!: $0: syntax error in type declaration.\n
+124	$!: $0: memmorry size of $1 is not defined.\n
+125	$!: undefined object $1 in argument list.\n
+126	$!: undefined default value in function call.\n
+127	$!: $0: type of function is missing.\n
+128	$!: $0: undefined data type$1.\n
+129	$!: $0: undefined object binding in prototype.\n
 
-221	$!: $0: Destruktor mit Rückgabewert $1.\n
-222	$!: $0: Konverter für $1 ohne Rückgabewert.\n
-223	$!: $0: Argumente für Destruktor/Konverter nicht zugelassen.\n
-224	$!: $0: Extra Zeichen nach void-Kennung.\n
-225	$!: $0: Scope mit ungültigen Datentype $1.\n
+221	$!: $0: destructor with return value $1.\n
+222	$!: $0: converter for $1 without return value.\n
+223	$!: $0: argument for destructor/constructor not allowed.\n
+224	$!: $0: extra character after void key.\n
+225	$!: $0: scope with invalid data type $1.\n
 
-131	$!: Zuweisung: Linkes Objekt ist kein L-Wert!\n
-132	$!: Zuweisung: Rechtes Objekt ist nicht definiert!\n
-133	$!: Zuweisung: Rechtes Objekt hat inkompatiblen Type!\n
-134	$!: Objekt ist kein Skalar!\n
-135	$!: Objekt ist kein Vektor!\n
-136	$!: Objekt vom Type $1 kann nicht kopiert werden!\n
-137	$!: ACHTUNG: Rekursives Objekt vom Type $1!\n
-138	$!: Zusätzliche Initialisierungswerte wurden ignoriert.\n
+131	$!: assignment: left object is not an L-value!\n
+132	$!: assignment: right object is not defined!\n
+133	$!: assignment: right object has incompatible type!\n
+134	$!: object is not a scalar!\n
+135	$!: object is not a vector!\n
+136	$!: object of type $1 could not be copied!\n
+137	$!: ATTENTION: recursive object of type $1!\n
+138	$!: extra initialisation values are ignored.\n
 
-141	$!: Unbekannter Objekttype $1.\n
-142	$!: Extra Zeichen nach Ellipse $2.\n
-143	$!: Vorgabewert für L-Wert nicht zulässig.\n
-144	$!: Funktionsblöcke können nicht kopiert werden.\n
-145	$!: Terme und Listen können nicht kopiert werden.\n
-146	$!: Ellipse in Argumentliste wurde ignoriert.\n
+141	$!: unknown type $1.\n
+142	$!: extra character after ellipse $2.\n
+143	$!: default value for L-value is not allowed.\n
+144	$!: could not copy function block.\n
+145	$!: could not copy term or list.\n
+146	$!: ellipse in argument list would be ignored.\n
 
-151	$!: Variablentabelle kann nicht kopiert werden.\n
-152	$!: $0: Syntaxfehler in Variablendefinition.\n
-153	$!: $0: Unbekannter Datentype $1.\n
-154	$!: ACHTUNG: Variable $1 neu definiert.\n
-155	$!: Vektorindex außerhalb des zulässigen Bereichs.\n
-156	$!: $0: Syntaxfehler in Strukturdefinition.\n
-157	$!: ACHTUNG: Struktur $1 neu definiert.\n
-158	$!: Speichergröße von $1 ist nicht definiert.\n
-159	$!: Unerlaubtes Mitglied in Struktur $1.\n
+151	$!: could not copy table of variables.\n
+152	$!: $0: syntax error in variable declaration.\n
+153	$!: $0: undefined data type$1.\n
+154	$!: ATTENTION: variable $1 new declared.\n
+155	$!: vector index out of bounds.\n
+156	$!: $0: syntax error in structure declaration.\n
+157	$!: ATTENTION: new declaration of structure $1.\n
+158	$!: allocation size of $1 is not defined.\n
+159	$!: unexpected member in structure $1.\n
 
-161	$!: Objekt $1 nicht in $2 konvertierbar.\n
-162	$!: Name $1 nicht gefunden.\n
-163	$!: Lesefunktion für Objekt $1 nicht definiert.\n
-164	$!: Objekt vom Type $1: Komponente $2 ist nicht definiert.\n
-165	$!: Zuweisungsobjekt erlaubt keine Komponentenauflösung.\n
-166	$!: Variable $1 ist nicht definiert.\n
+161	$!: could not convert $1 to $2.\n
+162	$!: name $1 not found.\n
+163	$!: could not read objects of type $1.\n
+164	$!: object of type $1: component $2 is not defined.\n
+165	$!: asignment ovject does not allow decomposition.\n
+166	$!: variable $1 is not defined.\n
 
-171	$!: Ungültiges "break".\n
-172	$!: Ungültiges "continue".\n
-173	$!: Unbekannte Funktion/Operator $1.\n
-174	$!: Unbekannte Funktion/Operator $1.\n
-175	$!: Funktion $1: L-Wert kann nicht generiert werden.\n
+171	$!: unexpected "break".\n
+172	$!: unexpected "continue".\n
+173	$!: undefined function/operator $1.\n
+174	$!: undefined function/operator $1.\n
+175	$!: function $1: could not create L-value.\n
 
-181	$!: $0: EOF in Liste.\n
-182	$!: $0: Fehlendes Objekt vor $1.\n
-183	$!: $0: Unerwartetes Zeichen $1 in Liste.\n
+181	$!: $0: EOF in list.\n
+182	$!: $0: missing object before $1.\n
+183	$!: $0: unexpected character $1 in list.\n
 
-191	$!: $0: Member/Scope-Name wurde nicht angegeben.\n
-192	$!: $0: Komponente $1 von Scope ist nicht definiert.\n
-193	$!: $0: Komponente $1 ist nicht definiert.\n
-194	$!: $0: Syntaxfehler in Vektorindex.\n
-195	$!: $0: Linker Operant einer Zuweisung ist kein L-Wert.\n
-196	$!: $0: Global-Operator ohne Namen.\n
+191	$!: $0: missing member/scope name.\n
+192	$!: $0: component $1 of scope is not definiert.\n
+193	$!: $0: component $1 is not defined.\n
+194	$!: $0: syntax error in vector index.\n
+195	$!: $0: left operand of assignment is not an L-value.\n
+196	$!: $0: global operator without name.\n
 
-201	$!: Funktion "$1": Komponente von $2 bereits in Verwendung.\n
-202	$!: Funktion "$1": Name bereits in Verwendung.\n
-203	$!: ACHTUNG: Funktion "$1" wurde neu definiert.\n
-205	$!: Funktion "$1" wurde als virtuell angenommen.\n
+201	$!: Function "$1": component $2 already in use.\n
+202	$!: Function "$1": name already in use.\n
+203	$!: ATTENTION: new declaration of Function "$1".\n
+205	$!: Function "$1" assumpted to be virtual.\n
 
-302	$!: Unbekannte Speicherlänge in Variablendefinition.\n
+301	$!: undefined random number generator $1.\n
+302	$!: undefined size in variable declaration.\n
 
-400	$!: Funktionsdefinition noch nicht ausprogrammiert.\n
+401	$!: $0: missing block after switch-statement.\n
+402	$!: $0: syntax error in case-statement.\n
+403	$!: $0: unexpected character after default statement.\n
+404	$!: $0: command lines befor case are ignored.\n

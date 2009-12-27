@@ -1,0 +1,23 @@
+\sec Variablen
+
+\ssec	Namen
+
+Ein Name besteht aus einer Folge von Buchstaben und Ziffern.
+Das erste Zeichen muß ein Buchstabe sein. Ein Unterstreichungszeichen
+<"|_|"> gilt als Buchstabe.
+
+Mit Hilfe des Schlüsselwortes
+|operator| können auch beliebige Namen angesprochen werden.
+Der Name wird dabei entweder unter doppelte Anführung gesetzt oder
+durch Leerzeichen bzw. Tabulatoren begrenzt. Nach dem Schlüsselwort
+dürfen Leerzeichen und Tabulatoren stehen. Obwohl diese
+Konstruktion allgemein verwendet werden kann, sollte sie nur
+zur Definition von Operatorfunktionen (Funktionen, deren Aufruf
+durch einen Operator bewirkt wird) verwendet werden.
+
+\label{static}
+@TODO
+
+Innerhalb eines Blocks
+deklarierte Variablen gelten nur innerhalb des Blocks.
+

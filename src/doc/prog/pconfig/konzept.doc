@@ -1,0 +1,236 @@
+\sec	Konzept
+
+Alle konfigurierbaren Parameter eines Kommandos werden in einer
+\index{Resourcetabelle} abgelegt. Jeder Eintrag in diese Tabelle besteht
+aus einem Namen, einem Wert und einem Beschreibungstext. Die
+einzelnen Komponenten sind Zeichenketten.
+
+Für einen Namen sind grundsätzlich
+alle Zeichen zugelassen, jedoch empfiehlt es sich, nur Buchstaben,
+Zahlen, Unterstreichungszeichen und Punkte zu verwenden.
+Namen, die mit einem Punkt beginnen, sind für eine interne Verwendungen
+reserviert und sollten nicht für einen Kommandoparameter verwendet
+werden.
+
+\index[Resourceabfrage]
+Die einzelnen Resourcen werden im Programm mit der Funktion
+\index{|GetResource|} abgefragt. Dabei wird der Resourcename und ein
+Vorgabewert angegeben. Dieser wird verwendet, wenn die Resource
+nicht definiert ist oder einen Nullpointer als Wert zugewiesen hat.
+
+Die Zuweisung von Werten zu den einzelnen Resourcen erfolgt bei der
+Analyse der Programmumgebung (Umgebungsvariablen) und der
+\index{Befehlszeilenparameter} (Optionen und Argumente). Gesteuert wird diese
+Zuweisung über \index{Kommandodefinitionen}. Diese setzen sich aus Kennungen
+(bestimmen die Aktivierung) und Befehlen (Verändern die Resourcen)
+zusammen.  Die Kommandodefinitionen werden aus speziellen
+Konfigurationsdateien geladen.
+
+\ssec	Konfigurationsparameter laden
+
+Das Laden der Konfigurationsparameter und die Analyse der
+Umgebungsvariablen, Optionen und Argumente wird von der
+Funktion \index{|ParseCommand|} durchgeführt. Als Parameter wird
+ein Pointer auf die Zahl der Argumente und der
+\index{Argumentvektor} selbst übergeben. Bei der Abfrage der Parameter
+wird der Argumentvektor umgeschrieben. Im Regelfall besteht er nur mehr
+aus dem Aufrufnamen des Kommandos.
+
+Die Funktion \index{|ParseCommand|} lädt zwei
+Konfigurationsdateien: \index{|efm.cnf|} und
+\index{<name>|.cnf|}, wobei <name> der Basisname des aufgerufenen
+Kommandos ist. Gesucht werden die Konfigurationsdateien in den
+folgenden Verzeichnissen (<TOP> verweist auf die Hauptbibliothek
+der EFEU-Installation):
+
+*	in der aktuellen Bibliothek;
+*	im Verzeichnisnamen des Aufrufnamens (falls definiert);
+*	in den durch die Umgebungsvariable \index{|APLLPATH|} definierten
+	Verzeichnissen;
+*	im Verzeichnis \index{<TOP>|/lib/efeu/$LANG/config|},
+	falls die Umgebungsvariable \index{|LANG|} definiert ist;
+*	im Verzeichnis \index{<TOP>|/lib/efeu/config|};
+*	im Verzeichnis \index{|$HOME/lib/efeu/config|}.
+
+Zu jeder Kennung gehört ein \index{Parameterwert}. Bei Umgebungsvariablen ist
+es der Wert der Umgebungsvariablen, ansonsten das Argument. Bei
+Optionen ohne Argument ist es ein Nullpointer. Kennungen können einen
+Vorgabewert enthalten, der immer dann eingesetzt wird, wenn der
+Parameterwert ein Nullpointer ist.
+
+Bestehen Definitionszeilen nur aus Befehlen, werden diese
+sofort beim Laden ausgewertet und nicht gespeichert.
+Als Parameterwert wird ein Nullpointer verwendet.
+Meist werden mit solchen Definitionszeilen Resourcen initialisiert.
+
+\index{Optionen} sind Kommandozeilenargumente, die mit einem Minus |-|
+gekennzeichnet sind. In der \index{X/Open-Spezifikation}
+handelt es sich um Einzeichenoptionen, EFEU erlaubt ähnlich wie der
+GNU-Standard auch lange Optionskennungen.
+Lange Optionskennungen müssen nicht
+vollständig angegeben werden, ein signifikanter Teil der Kennung
+genügt. Lange Optionen beginnen üblicherweise mit einem zusätzlichen
+Minus, bei EFEU handelt es sich hier aber im Gegensatz zu GNU nur um eine
+Konvention.
+
+Optionen können zwingende oder optionale
+Argumente besitzen. Einzeichenoptionen können in einem
+Optionsstring kombiniert werden. Davon darf aber nur die letzte
+Option ein optionales oder zwingendes Argument besitzen.
+
+Ein optionales Argument muß unmittelbar an die Optionskennung
+angehängt werden, ein zwingendes Argument kann wahlweise
+an die Optionskennung angehängt oder das nächste
+Kommandozeilenargument sein.
+Bei langen Optionskennungen muß vor einem angehängten Argument das
+Zuweisungszeichen <"|=|"> stehen.
+
+\index{Argumente} sind alle Kommandozeilenargumente, die keine Option oder
+kein Optionsargument sind.
+Es besteht die Möglichkeit, einen Teil der Argumente über reguläre Ausdrücke
+abzutesten. Falls der reguläre Ausdruck ein Teilmuster enthält, wird
+für den Parameterwert nur der entsprechende Teil des Argumentes verwendet.
+Reguläre Ausdrücke werden hauptsächlich zur Abfrage von Argumenten der
+Form <"<name>|=|<val>"> verwendet. Der entsprechende reguläre Ausdruck ist
+<"|.*=.*|">
+
+Im EFEU-Standard wird ein Argument, das
+nur aus einem Minuszeichen <"|-|"> besteht, durch einen Nullpointer
+ersetzt. Meist wird ein einzelnes Minus anstelle eines Dateinamens
+stellvertretend für die Standardeingabe bzw. Standardausgabe
+verwendet.
+Beginnt ein Argument mit einem Schrägstrich, wird er entfernt und das
+darauffolgende Zeichen nicht interpretiert.
+
+Diese Regeln gelten auch für Argumente von Optionen, aber nicht für
+Umgebungsvariablen und reguläre Ausdrücke.
+Weiters erfolgt diese Interpretation nur, wenn das Argument
+abgefragt und nicht nur geprüft wird. Siehe weiter unten!
+
+Die Auswertung der Kommandodefinitionen erfolgt nach den folgenden
+Richtlinien:
+
+*	Zuerst werden die Umgebungsvariablen ausgewertet.
+	Die zugehörigen Befehle werden nur ausgeführt, wenn die
+	Umgebungsvariable existiert oder die Kennung einen Vorgabewert
+	verschieden von |NULL| enthält. Die Abfrage erfolgt in der
+	Reihenfolge der Definition.
+*	Im nächsten Schritt wird die Kommandozeile nach Optionen
+	analysiert. Die Abfrage erfolgt in der Reihenfolge des
+	Auftretens.
+*	Schlußendlich werden die Argumente in der Reihenfolge der
+	Definition abgefragt. Hier gibt es eine Besonderheit:
+	Enthält die zugehörige Kommandodefinition keine Befehle,
+	verbleibt das Argument im Argumentvektor, sein Vorhandensein
+	wird aber geprüft.
+*	Am Ende wird geprüft, ob alle Argumente des Argumentvektors
+	verwendet wurden.
+
+Bezieht sich eine Kennung auf mehrere Argumente (regulärer Ausdruck,
+variable Argumentliste), werden die Befehle für jedes Argument einzeln
+aufgerufen.
+
+Wurde das Kommando mit zu wenigen oder zu vielen Argumenten aufgerufen,
+wird eine kurze Syntaxbeschreibung ausgegeben und das Kommando
+abgebrochen.
+
+\ssec	Befehle
+
+Die einzelnen Befehle werden durch den Namen der zugehörigen
+Programmresource, einer \index{Auswertungsfunktion} und einem optionalen
+\index{Funktionsargument} definiert.
+
+Falls der Befehl nur aus dem Resourcenamen besteht, wird die Resource
+auf den Parameterwert gesetzt. Eine weitere Spezialform ist die
+\index{Zuweisung}: Hier wird die Resource mit dem Wert des Funktionsarguments
+belegt, der Parameterwert wird ignoriert.
+Diese kommen bei der Initialisierung von Resourcen oder bei Flags
+(Optionen ohne Argumente) zum Einsatz.
+
+Folgende Funktionen sind definiert:
+
+[message <fmt>]
+	gibt eine Meldung am Standardfehlerkanal aus.
+[set <fmt>]
+	setzt  den Wert der Resourcevariablen entsprechend der
+	Formatdefinition <fmt>.
+[insert <delim>]
+	fügt den Parameterwert am Anfang der Resourcedefinition
+	mit Trennzeichen <delim> ein.
+[append <delim>]
+	hängt den Parameterwert mit Trennzeichen <delim> ans Ende der
+	Resourcedefinition.
+[config <name>]
+	ladet die Konfigurationsdatei mit Namen <name>.
+[usage <fmt>]
+	generiert eine Aufrufverwendung entsprechend der Formatanweisung <fmt>
+	und schreibt sie auf den Standardfehlerkanal.
+[manpage <name>]
+	generiert einen Handbucheintrag und schreibt in nach <name>.
+	Dabei handelt es sich in der Regel um eine Pipeline mit
+	Formatierungskommandos.
+[info <name>]
+	ruft spezifische Informationseinträge über das Kommando ab.
+[dump <name>]
+	ruft Informationseinträge über das Kommando für eine
+	Weiterverarbeitung mit \index{|eis|} ab.
+[exit <val>]
+	bricht das Kommando mit Exit-Status <val> ab. Wird
+	meist mit Informationsabfragen über das Kommando kombiniert.
+[break]
+	bricht die Optionsabfrage ab. Diese Funktion ist nicht für
+	den Standardgebrauch gedacht, da \index{|ParseCommand|} nicht
+	zwischen Fehler und Abbruch unterscheidet, es gibt aber Low-Level
+	Funktionen, mit denen das möglich ist.
+
+\index[Substitution]
+Mit Ausnahme von |insert|, |append| und |exit| wird das Argument
+der Auswertungsfunktion mit \index{|CmdPar_psub|} überarbeitet.
+Dabei werden Parameterwerte und Recourcewerte im Argument
+eingefügt.
+
+Falls das Funktionsargument NULL ist, wird es durch
+den Parameterwert ersetzt.
+
+Ein Dollar |$| leitet eine Parametersubstitution im Sinne
+von |parsub()| ein. Die möglichen Formate sind konfigurationsabhängig.
+Ein Ausdruck \index{Substitutionsdefinition}en der Form
+|{|<name>|}| wird durch den Resourcewert von <name> ersetzt.
+Ein leerer Ausdruck |{}| wird durch den Parameterwert der Kennung
+ersetzt. Eine Resourceabfrage kann beliebige Substiutionen enthalten,
+eine Parametersubstitution kann aber nicht geschachtel werden.
+
+Bei der Ersetzung werden Anführungen und Attribute kontrolliert
+und einzelne Zeichen bei Bedarf geeignet maskiert.
+Vergleiche dazu \mref{CmdPar_psub(3)}.
+
+\ssec	Zusatzinformationen
+Sämtliche Konfigurationsparameter werden in einer Struktur vom
+Type \index{|CmdPar_t|} gespeichert. Die Funktionen |ParseCommand|
+und |GetResource| arbeiten nur mit einer global definierten Struktur
+dieses Types. Es besteht aber die Möglichkeit, mehrere solcher
+Strukturen zu verwalten und auszuwerten. Detailierte Informationen
+dazu können in den entsprechenden Handbucheinträgen der
+|efm|-Programmbibliothek nachgeschlagen werden. Vergleiche dazu
+\mref{CmdPar(3)},
+\mref{CmdParCall(3)},
+\mref{CmdParDef(3)},
+\mref{CmdParEval(3)},
+\mref{CmdParKey(3)},
+\mref{CmdParVar(3)},
+\mref{CmdPar_eval(3)},
+\mref{CmdPar_list(3)},
+\mref{CmdPar_load(3)},
+\mref{CmdPar_psub(3)},
+\mref{CmdPar_usage(3)},
+\mref{CmdPar_write(3)},
+\mref{Resource(3)} und
+\mref{CmdPar(7)}.
+
+Die Liste der Auswertungsfunktionen kann erweitert werden.
+So wird bei der
+Initialisierung des \index{|esh|-Interpreter}s die Funktion |eval|
+definiert, die das Funktionsargument nach der üblichen
+Parametersubstitution als esh-Ausdruck auswertet.
+Die Erweiterung muß vor dem Aufruf
+von \index{|ParseCommand|} erfolgen.

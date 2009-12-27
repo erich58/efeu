@@ -1,60 +1,79 @@
-Ident = "Datenmatrizen\nbezüglich einer Achse zusammenhängen";
-Copyright = "(c) 1997 Erich Frühstück, A-1090 Wien, Währinger Straße 64/6";
-Version = "2";
+/*
+:*:	paste data cubes with regard to axis
+:de:	Datenmatrizen bezüglich einer Achse zusammenhängen
 
-str Title = NULL;
-str Output = NULL;
-str Name = "#1";
-str Expr = NULL;
-bool Reduce = false;
-str VarDef = NULL;
-str SelDef = NULL;
-bool PrintMode = true;
-bool Uniq = false;
-bool Sort = false;
+Copyright (C) 1997, 2001 Erich Frühstück
+This file is part of EFEU.
+
+EFEU is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+EFEU is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with EFEU; see the file COPYING.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+*/
 
 PrintListDelim = "\t";
 
-PgmOpt("r", "Reduce=true", "entfernt singuläre Achsen aus den Datenfiles")
-PgmOpt("s", "Sort=true", "sortiert die Achsenbezeichner")
-PgmOpt("u", "Uniq=true", string !
-sortiert die Achsenbezeichner,
-wobei gleiche Bezeichner nur einmal verwendet werden.
-Bei gleichen Bezeichnern werden die Daten der zuletzt angegebenen
-Datei entnommen.
-!);
-PgmOpt("e expr", "Expr=#1", string !
-definiert einen Vergleichsausdruck für die Sortierung.
-Im Ausdruck stehen die Variablen <a> und <b> für die
-jeweiligen Achsenezeichner.
-Falls <expr> nicht definiert ist,
-wird <|cmp(<a>,<b>)|> verwendet.
-!);
-PgmOpt("v [name=]var", "VarDef=paste(' ', VarDef, #1)", string !
-definiert eine Variablenselektion.
-!)
-PgmOpt("T titel", "Title=#1", string !
-setzt den Titel der Ausgabedatei auf <titel>.
-!);
-PgmOpt("n name", "Name=#1", string !
-definiert die Achse, bezüglich der die Daten zusammengehängt werden.
-Die Vorgabe ist $(Name).
-!)
-PgmOpt("o aus", "Output=#1; PrintMode=false", string !
-definiert die Ausgabedatei. Fehlt die Option, wird die resultierende
-Datenmatrix im ASCII-Format zur Standardausgabe geschrieben.
-!);
-PgmVaArg("ein1 ...", NULL, "ist die Liste der Eingabedatei(en).")
-PgmXArg("*=*", "SelDef=paste(' ', SelDef, #1)", NULL)
-PgmOptArg("name=var", NULL, "definiert Selektionsparameter.")
+pconfig !
+#if	Lang == "de"
+Ident = "Datenmatrizen bezüglich einer Achse zusammenhängen"
+#else
+Ident = "paste data cubes with regard to axis"
+#endif
+Version = "2"
+Copyright = "(c) 1997, 2001 Erich Frühstück"
+PrintMode = true
+Name = "#1"
 
-loadarg;
-
-if	(argc <= 1)
-{
-	usage(UsageFmt, ioerr);
-	exit(0);
-}
+r | Reduce = true
+	:*:remove singulary axis
+	:de:Entfernen von singulären Achsen
+v:[name::]var | VarDef: append " "
+	:*:select type components
+	:de:Variablenselektion
+T:title | Title
+	:*:set title of output file
+	:de:Titel der Ausgabedatei setzen
+s | Sort = true
+	:*:sort label of axis
+	:de:sortiert die Achsenbezeichner
+u | Uniq = true
+	:*:sort label of axis, use only last of uniq labels
+	:de:sortiert die Achsenbezeichner,
+	wobei gleiche Bezeichner nur einmal verwendet werden.
+	Bei gleichen Bezeichnern werden die Daten der zuletzt angegebenen
+	Datei entnommen.
+e:expr | Expr
+	:*:expression for comparing, default is "cmp(a,b)".
+	:de:definiert einen Vergleichsausdruck für die Sortierung.
+	Im Ausdruck stehen die Variablen <a> und <b> für die
+	jeweiligen Achsenezeichner.
+	Falls <expr> nicht definiert ist,
+	wird <|cmp(<a>,<b>)|> verwendet.
+n:name | Name
+	:*:name of axis for pasting, default is {Name}
+	:de:definiert die Achse, bezüglich der die Daten zusammengehängt werden.
+	Die Vorgabe ist {Name}.
+o:aus | Output; PrintMode = false
+	:*:output file
+	:de:definiert die Ausgabedatei. Fehlt die Option, wird die resultierende
+	Datenmatrix im ASCII-Format zur Standardausgabe geschrieben.
+/.*=.*/name=var | SelDef: append " "
+	:*:selection parameter
+	:de:Selektionsparameter
++file(s) ... | 
+	:*:list of input files.
+	:de:ist die Liste der Eingabedatei(en).
+!
 
 int n = argc - 1;
 
@@ -85,8 +104,8 @@ int cmp_pos(ENTRY a, ENTRY b)
 DataBase DB = DataBase(ENTRY);
 mdmat tab[n];
 
-if	(Uniq)	DB.sort(cmp_uniq);
-else if	(Sort)	DB.sort(cmp_sort);
+if	(flagres("Uniq"))	DB.sort(cmp_uniq);
+else if	(flagres("Sort"))	DB.sort(cmp_sort);
 
 for (int i = 0; i < n; i++)
 {
@@ -96,7 +115,7 @@ for (int i = 0; i < n; i++)
 		DB += { i, dim(DB), x };
 }
 
-if	(!Sort)	DB.sort(cmp_pos);
+if	(!flagres("Sort"))	DB.sort(cmp_pos);
 
 /*	Datenfiles überarbeiten
 */
@@ -117,10 +136,11 @@ for (i = 0; i < n; i++)
 	}
 }
 
-if	(Title)		tab[0].title = Title;
-if	(Reduce)	tab[0].reduce();
+if	(flagres("Reduce"))	tab[0].reduce();
+if	(Title)			tab[0].title = Title;
 
-if	(PrintMode)	tab[0].mark("#-1").print(iostd, "nohead");
-else			tab[0].save(Output);
+if	(flagres("PrintMode"))
+	tab[0].mark("#-1").print(iostd, "nohead");
+else	tab[0].save(Output);
 
 free(tab[0]);

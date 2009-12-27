@@ -1,0 +1,328 @@
+\title	Generierte Makefiles
+
+\sec	Vorbemerkung
+
+So gut |make| auch ist, die folgernden Nachteile
+müssen angeführt werden:
+*	Das Schreiben der Beschreibungsdatei und insbesonders die
+	Zusammenstellung aller Abhängigkeiten für ein Ziel ist lästig.
+*	Makefiles werden bei umfangreichen Aufgabestellungen schnell
+	unübersichtlich.
+*	Es gibt keine Möglichkeit, ähnliche oder häufig vorkommende Einträge mit
+	Makrofunktionen zu definieren.
+*	Bei der Übertragung einer Aufgabe auf einen anderen Rechnertyp muß
+	das Makefile angepaßt werden.
+
+Durch den Übergang von geschriebenen Makefiles zu generierten Makefiles
+lassen sich diese Nachteile weitestgehend ausmerzen.
+Alle größeren Programmpakete verwenden eine Form der automatischen
+Generierung von Makefiles.
+
+Ich habe für EFEU eine Methode verwendet,
+die sich an das Konzept zur Kompilierung der Kommandos und Bibliotheken
+der graphischen Benutzeroberfläche X11 auf UNIX-Workstations orientiert.
+
+\margin	Beschreibungsbasis
+Anstelle der Beschreibungsdatei |Makefile| wird eine Beschreibungsbasis
+|Imakefile| geschrieben. Diese Beschreibungsbasis wird mithilfe eines
+Preprozessors in das |Makefile| konvertiert.
+
+\margin	Selbstregenerierung
+Sobald eine Beschreibungsdatei generiert wurde, überprüft |make|
+selbst, ob sich die Beschreibungsbasis geändert hat und
+zunächst die Beschreibungsdatei selbst generiert werden muß.
+Dieser Schritt wird auch durchgeführt, wenn |make| mit der
+Option |-n| aufgerufen wird.
+Ansonsten würden ja veraltete Befehlsfolgen angezeigt werden.
+
+\margin	Generierte Abhängigkeitsregeln
+Auch die automatische Generierung von Abhängigkeitsregeln
+kann |make| selbst übernehmen. Dies wird durch Regeln
+mit dem Pseudoziel |depend| erwirkt. Bei einem Aufruf
+von |make depend| werden Abhängigkeitsregeln ans Ende der
+Beschreibungsdatei angehängt.
+
+Die Abhängigkeitslisten selbst werden von Hilfsprogrammen generiert.
+Für C--Programme steht dazu das Hilfsprogramm |pp2dep|
+zur Verfügung. Es generiert aus der Preprozessorausgabe
+zu einem C--Sorcefiles eine Liste aller
+eingebundenen Headerdateien. Die Abhängigkeitsliste für die Beschreibungsdatei
+selbst wird ebenfalls mit |pp2dep| generiert.
+Die Kommandos |mksource| und |efeudoc| des EFEU--Projektes
+erlauben ebenfalls die Ausgabe einer Liste von Abhängigkeiten.
+
+\sec	Der C--Preprozessor
+
+Als Preprozessor kommt der C--Preprozessor zum Einsatz.
+Er ist Teil des C--Kompliers und ist auf jedem UNIX--System
+mit Entwicklungsumgebung verfügbar. Er bietet folgende Funktionalität:
+*	Die Definition von Makrofunktionen: Damit können auch komplexe
+	Regeln durch einfache Definitionszeilen generiert werden.
+*	Kontrollblöcke für eine bedingte Verarbeitung:
+	Damit lassen sich sehr gut Systemunterschiede behandeln.
+*	Einbinden von Definitionsfiles: Damit können Makropakete
+	geladen werden.
+
+Alle Preprozessorbefehle beginnen mit einem Gittersymbol und werden
+Direktiven genannt. Sie gelten jeweils nur für eine Zeile.
+Bei Bedarf muß eine Zeile mit einem Gegenschrägstrich vor dem
+Zeilenvorschub fortgesetzt werden.
+
+\margin	Kommentare
+Kommentare werden mit <"|/*|"> eingeleitet und mit <"|*/|"> beendet.
+Sie können an beliebiger Stelle der Beschreibungsdatei verwendet
+werden. Innerhalb einer Zeichenkette werden Kommentare nicht
+interpretiert. Kommentare können nicht verschachtelt werden.
+
+\margin	Makrodefinitionen
+
+Ein Makroname beginnt mit einem Buchstaben oder einem
+Unterstreichungszeichen und kann beliebig viele Buchstaben, Ziffern
+oder Unterstreichungszeichen enthalten. Es gibt Makros mit Argumenten
+und solche ohne Argumente. Die Argumentliste wird von runden Klammern
+eingeschlossen, die enzelnen Argumente werden durch Komma getrennt.
+
+Zur Definition von Makros stehen folgende Direktiven zur Verfügung:
+[<|#define <name> <expr>|>]
+	Definiert den Makro <name> mit dem Ausdruck <expr>.
+	Jedes Vorkommen von <name> wird automatisch durch <expr>
+	ersetzt.
+[<|#define <name>(<arglist>) <expr>|>]
+	Definiert eine Makrofunktion <name> mit Argumenten. Bei der
+	Ausführung werden die formalen Argumentnamen in <expr> mit den
+	aktuellen Werten ersetzt. Die öffnende Argumentklammer
+	muß unmittelbar an dem Makronamen anschließen.
+	Die Argumentliste kann leer sein.
+[|#undef|]
+	Löscht eine Makrodefinition.
+
+\margin	Makroexpansion
+Die Bedingung, daß die Argumentliste unmittelbar an dem Makronamen
+anschließen muß, gilt nur für die Makrodefinition, nicht beim
+Aufruf eines Makros.
+Wurde ein Makro mit Argumenten definiert, erfolgt die Ersetzung nur
+dann, wenn der Makro in der Eingabedatei mit Argument aufgerufen
+wurde.
+
+\margin	Bedingte Verarbeitung
+Der Präprozessor erlaubt die bedingte Verarbeitung der Beschreibungsbasis.
+Folgende Direktiven werden dazu verwendet:
+[<|#if <expr>|>]
+	Testet den konstanten Ausdruck <expr>
+[<|#ifdef <name>|>]
+	Testet ob der Makro <name> definiert ist.
+[<|#ifndef <name>|>]
+	Testet ob der Makro <name> nicht definiert ist.
+[<|#elif <expr>|>]
+	Testet den konstanten Ausdruck <expr> als Alternative.
+[|#else|]
+	Alternative.
+[|#endif|]
+	Ende eines bedingten Blocks.
+
+Ein Testblock beginnt mit einer if-Anweisung
+(|#if|, |#ifdef| oder |#ifndef|), danach folgen
+beliebig viele |#elif|-Anweisungen,
+eine optionale |#else|-Anweisung
+und zwingend eine |#endif|-Anweisung.
+Testblöcke können beliebig verschachtelt werden.
+
+Weiters kennt der C-Preprozessor noch folgende Direktiven:
+[<|#include \<<filename>\>|>]
+	dient zum einbinden der Datei <filename>.
+	Diese wird in einer vorgegebenen Liste von Bibliotheken gesucht.
+[<|#include "filename"|>]
+	bindet wie oben die Datei <filename> ein,
+	es wird aber zuerst im aktuellen Verzeichnis gesucht.
+[|#line|]
+	wird für die Fehlerdiagnostik zur korrekten Bestimmung der aktuellen
+	Datei und der Zeilennummer benötigt.
+[|#error|]
+	generiert eine Fehlermeldung.
+[|#pragma|]
+	aktiviert ein implementationsspezifisches Verhalten.
+
+Da in C--Programmen kein Unterschied zwischen Leerzeichen Tabulatoren und
+Zeilenvorschüben gemacht wird, ersetzt der C--Preprozessor bei Makroaufrufen
+alle <"weißen"> Zeichen durch ein Leerzeichen.
+Der Preprozessor erhält die Zeilenpositionen der Ursprungsdateien,
+wo dies nicht möglich ist, werden spezielle Direktiven eingebaut.
+Insbesonders bei der Entfernung von Kommentaren bleiben
+Zeilenvorschübe bestehen, die stören können.
+
+\margin	Filterprogramm
+Die korrekte Verwendung von Tabulatoren und Zeilenvorschüben ist aber
+in der Beschreibungsdatei notwendig. Diese Zeichen müssen
+beim C--Preprozessor durchgeschleußt werden. Weiters werden
+bestimmte Sonderzeichen wie Gittersymbol und einfache Anführungen
+vom Präprozessor anders behandelt als von |make|.
+
+Zur Definition der für den Preprozessor kritischen Zeichen
+wird der Klammeraffe als Fluchtsymbol eingesetzt.
+In Kombination mit einer Zeichenkette in C-Syntax kann eine beliebige
+Zeichenkette durchgeschleußt werden.
+Weiters besteht die Möglichkeit, einen Teil der Eingabedatei
+Zwischenzubuffern. Diese Buffer werden am Ende der Datei in
+umgekehrter Reihenfolge wir ihre Definition ausgegeben.
+
+Folgende Steueranweisungen werden vom Postfilter interpretiert:
+[|@"|<Text>|"|]
+	Liefert die in der Zeichenkette <Text> definierten Zeichen
+[|@.|]	Leere Sequenz
+[|@!|]	Das Gittersymbol
+[|@:|]	Ein Komma
+[|@+|]	Ein Tabulator
+[|@;|]	Ein Zeilenvorschub
+[|@/|]	Ein Gegenschrägstrich
+[|@@|]	Ein Klammeraffe
+[|@||]	Eine einfache Anführung
+[|@{|]	Beginnt eine Zwischenbufferung
+[|@}|]	Beendet eine Zwischenbufferung
+
+Folgt einem Klammeraffen keines der oben angeführten Zeichen, wird
+er unverändert übernommen. Insbesonders braucht beim Makro
+|$@| nur ein Klammeraffe angegeben werden,
+wenn danach ein Leerzeichen folgt.
+
+Beliebig viele aufeinanderfolgende Leerzeilen werden auf eine
+einzige Leerzeile reduziert. Daher braucht mit der Sequenz |@;|
+nicht gespart werden.
+
+Der Ausdruck <"|@"\n\t"|"> ist gleichwertig mit <"|@;@+|">.
+Die Zwischenbufferung erlaubt die Definition von Befehlszeilen, die
+ans Ende des Makefiles gehören, im Kopf des Imakefiles.
+
+\margin	mkmf
+Die Implementation des Preprozessors und des Filterprogramms
+erfolgt mit dem Shell-Skript |mkmf|.
+In der Regel wird das Kommando ohne Argument aufgerufen.
+Die genaue Syntax kann im Anhang nachgelesen werden.
+
+\sec	Beispiel
+
+Für die Beschreibungsdatei aus dem vorherigen Kapitel zur Generierung
+von Auszählungen der Betriebsdatenbank wird eine Beschreibungsbasis
+generiert. Aus Demonstrationsgründen wurde dabei die Zähldefinition
+für die Wiener Gemeindebezirke nicht als Makro definiert.
+
+Das Imakefile
+
+\include[verbatim]	gen1.bsp
+
+generiert das Makefile
+
+\mkmf	gen1.bsp
+
+Die Konfigurationsdatei |data.cfg| sorgt für die notwendigen
+Regeln zur Neugenerierung des Makefiles selbst.
+
+Man sieht sofort, daß eine weitere Auszählung sehr einfach angefügt werden
+kann. Der vordefinierte Makro |AllTarget| sorgt automatisch für
+die korrekten Einträge der Pseudoziele |all| und |clean|.
+
+Bei der zweiten Zähldefinition mußte die Definition der Bezirksachse
+unter Anführung gestellt werden, da das Komma ansonsten als
+Argumenttrennzeichen des Makros |Count| interpretiert worden wäre.
+Die Verwendung von |@:| anstelle des Kommas wäre ebenfalls eine Lösung,
+die aber nicht so gefällig ist.
+Anführungszeichen sind in Shell-Befehlsfolgen kein Nachteil.
+
+\sec	Standardmakros
+
+Im Rahmen des EFEU-Projektes wurden  eine Reihe von
+Standardmakros zum Schreiben von Beschreibungsbasen (Imakefikles)
+vordefiniert. Zum Teil stehen sie sofort zur Verfügung, zum Teil
+müssen sie durch Einbinden einer Headerdatei mit |\#include| erst
+aktiviert werden.
+
+Einige Headerdateien bilden Konfigurationsdateien für |mkmf|.
+Diese haben den Zusatz |.cfg| und sorgen für die Mindesteinträge
+in ein Makefile. In einer früheren Version von |mkmf| wurde die
+Datei |mkmf.cfg| immer eingebunden, in der aktuellen Version nur
+mehr, wenn im Imakefile keine |#include|-Anweisung vorhanden ist.
+
+Für die Datengenerierung eignet sich die Datei |data.cfg|.
+Das generierte Makefiles ist kleiner und enthält keine
+keine Definitionszeilen, die nur bei der Programmentwicklung benötigt werden.
+Die Headerdateien |base.pph| und |rules.pph| werden automatisch
+eingebunden.
+
+Der Anhang enthält im Kapitel <"Verschiedenes(7)"> Handbucheinträge
+für alle vordefinierten Makros.
+Falls zur Aktivierung eine Datei eingebunden werden muß,
+ist diese beim jeweiligen Handbucheintrag angegeben.
+
+Der Eintrag |base(7)| sollte auf jedem Fall gelesen werden.
+Er enthält wichtige Hinweise zur Entwicklung kompatibler
+Beschreibungsbasen.
+
+\margin	Fehlerhafte Beschreibungsdatei
+Normalerweise wird mit jeder Änderung der Beschreibungsbasis
+automatisch auch die Beschreibungsdatei
+beim nächsten Aufruf von |make| neu generiert.
+Gibt es Fehler in der Beschreibungsbasis, kann es vorkommen,
+daß die Beschreibungsdatei syntaktisch falsch ist und nicht
+mehr von |make| verarbeitet werden kann.
+In diesem Fall ist nach Korrektur der Beschreibungsbasis
+die Beschreibungsdatei mit |mkmf| neu zu generieren.
+
+\sec	Verwendung der Pseudoziele
+
+\margin	Pseudoziele
+Die Verarbeitungskontrolle wird grundsätzlich über Pseudoziele
+gesteuert. Diese werden in Konstruktionsziele und Aufräumziele
+unterschieden.
+Jede zu generierende Datei wird einem Konstruktionsziel und
+einem Aufräumziel zugeordent. Dies geschieht mit den Makros
+\index{|NamedTarget()|} und \index{|NamedCleanTarget()|}.
+
+Im Regelfall wird als Konstruktionsziel \index{|all|} und
+als Aufräumziel \index{|clean|} verwendet.
+Dafür steht der Makro \index{|AllTarget()|}
+zur Verfügung (Siehe dazu \mref{NamedTarget(7)}.
+
+\margin	Konstruktionsziele
+Standardmäßig werden die folgenden Konstruktionsziele
+verwendet:
+[|all|]
+	wird als Hauptkonstruktionsziel verwendet.
+[|clean|]
+	wird als Aufräumziel verwendet.
+[|update|]
+	sorgt dafür, daß das Makefile neu generiert wird, auch wenn
+	sich die Beschreibungsbasis nicht geändert hat.
+[|depend|]
+	sorgt dafür, daß die generierbaren Abhängigkeiten ans Makefile
+	angehängt werden. Wird von |update| aktiviert und sollte
+	nicht direkt aufgerufen werden.
+[|purge|]
+	dient zum Löschen von Dateien, die bei einzelnen
+	Rechenschritten als Nebenprodukt entstanden oder nicht zu den
+	primären Ergebnisdateien zählen.  Vordefiniert ist das Löschen
+	eines Speicherauszugsdatei mit dem Namen |core|.  Dieses Ziel
+	wird automatisch von |clean| aktiviert.
+
+\margin	Zielhierarchie
+Bei der Verwendung verschiedener Konstruktionsziele und/oder
+Aufräumziele kann durch die Definition gegenseitiger
+Abhängigkeiten eine Konstruktionshierarchie und Aufräumhierarchie
+definiert werden.
+
+\margin	Verknüpfen von Verzeichnisen
+Ist die Generierung von Daten in einem anderen Verzeichnis
+Vorbedingung für die Arbeiten, empfiehlt sich der folgende
+Eintrag zu Beginn der Beschreibungsbasis:
+
+----
+all::
+        (cd $(DATA); $(MAKE) all)
+----
+
+Hier wurde davon ausgegangen, daß der Makro |DATA| auf den Namen
+des Verzeichnisses mit den Vorbedingungen gesetzt wurde.
+Bei jedem Aufruf von |make| wird auf jedem Fall überprüft,
+ob auch alle Dateien
+des anderen Verzeichnisses bereits auf dem letzten Stand sind.
+Die Verwendung des Makros |MAKE| anstelle des Kommandonamens
+|make| erlaubt das automatische Durchschleußen der Option
+|-n|.

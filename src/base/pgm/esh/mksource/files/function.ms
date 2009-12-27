@@ -1,6 +1,23 @@
-/*	Hilfsfunktionen zur Funktionsgenerierung
-	(c) 1996 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Hilfsfunktionen zur Funktionsgenerierung
+
+$Copyright (C) 1996 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #ifndef	_MS_FUNCTION
@@ -98,22 +115,22 @@ void Function::add_line & (int dp, str cmd)
 }
 
 
-void Function::beg & (str fmt = NULL)
-	startline(), lines += { depth++, psub(fmt) + "{" }, ignorepar();
+void Function::beg & (str _fmt = NULL)
+	startline(), lines += { depth++, psub(_fmt) + "{" }, ignorepar();
 
-void Function::end & (str fmt = NULL)
-	lines += { --depth, "}" + psub(fmt) }, newpar();
+void Function::end & (str _fmt = NULL)
+	lines += { --depth, "}" + psub(_fmt) }, newpar();
 
-void Function::line & (str fmt = NULL, ...)
-	add_line(depth, psub(fmt, va_list));
+void Function::line & (str _fmt = NULL, ...)
+	add_line(depth, psub(_fmt, va_list));
 
-void Function::ppline & (str fmt = NULL, ...)
-	add_line(0, psub(fmt, va_list));
+void Function::ppline & (str _fmt = NULL, ...)
+	add_line(0, psub(_fmt, va_list));
 
-inline void Function::comment & (str fmt = NULL, ...)
+inline void Function::comment & (str _fmt = NULL, ...)
 {
 	startline();
-	lines += { 0, "/*\t" + psub(fmt, va_list) };
+	lines += { 0, "/*\t" + psub(_fmt, va_list) };
 	lines += { 0, "*/" };
 	newpar();
 }
@@ -124,40 +141,40 @@ void Function::fline & (str fmt, ...)
 /*	Switch - Anweisungen
 */
 
-void Function::switch & (str expr, ...)
-	line("switch (" + expr + ")", va_list), beg();
+void Function::switch & (str _expr, ...)
+	line("switch (" + _expr + ")", va_list), beg();
 
-inline void Function::case & (str key, str _cmd = NULL, ...)
+inline void Function::case & (str _key, str _cmd = NULL, ...)
 {
 	_cmd = psub(_cmd, va_list);
-	key = key ? "case " + psub(key) : "default";
-	add_line(depth - 1, paste("\t", key + ":", _cmd));
+	_key = _key ? "case " + psub(_key) : "default";
+	add_line(depth - 1, paste("\t", _key + ":", _cmd));
 }
 
-inline void Function::cblock & (str key, str _cmd, ...)
+inline void Function::cblock & (str _key, str _cmd, ...)
 {
 	_cmd = psub(_cmd, va_list);
-	key = key ? "case " + psub(key) : "default";
+	_key = _key ? "case " + psub(_key) : "default";
 
-	add_line(depth - 1, key + ":");
+	add_line(depth - 1, _key + ":");
 
 	for (x in split(_cmd, "\n"))
 		add_line(depth, x);
 }
 
 
-inline void Function::body & (str fmt = NULL, ...)
-	for (x in split(psub(fmt, va_list), "\n"))
+inline void Function::body & (str _fmt = NULL, ...)
+	for (x in split(psub(_fmt, va_list), "\n"))
 		add_line(depth, x);
 
-void Function::byte_order_dep & (str fmt, str std, str rev, ...)
+void Function::byte_order_dep & (str _fmt, str std, str rev, ...)
 {
 	ppline("#if\tREVBYTEORDER");
 	setreg(0, rev);
-	body(fmt, va_list);
+	body(_fmt, va_list);
 	ppline("#else");
 	setreg(0, std);
-	body(fmt, va_list)
+	body(_fmt, va_list)
 	ppline("#endif");
 }
 
@@ -177,7 +194,7 @@ void Function::block & (str head, str body, ...)
 	newpar();
 }
 
-int Function::pfbody & (str fname, IO def, bool in_switch = false)
+int Function::pfbody & (IO def, str fname, str vardef, bool in_switch = false)
 {
 	str key, fmt;
 	bool need_break = false;
@@ -191,9 +208,7 @@ int Function::pfbody & (str fname, IO def, bool in_switch = false)
 			parflag = false;
 		}
 
-		key = psub(key);
-
-		if	(key[0] == "@")
+		if	(key[0] == '@')
 		{
 			key = substr(key, 1);
 
@@ -202,7 +217,7 @@ int Function::pfbody & (str fname, IO def, bool in_switch = false)
 				newpar();
 				line("if\t(" + fmt + ")");
 				beg();
-				pfbody(fname, def);
+				pfbody(def, fname, vardef);
 				parflag = true;
 			}
 			else if	(key == "elif")
@@ -216,7 +231,7 @@ int Function::pfbody & (str fname, IO def, bool in_switch = false)
 				line();
 				line("switch (" + fmt + ")");
 				beg();
-				pfbody(fname, def, true);
+				pfbody(def, fname, vardef, true);
 				parflag = true;
 			}
 			else if	(key == "else")
@@ -229,7 +244,7 @@ int Function::pfbody & (str fname, IO def, bool in_switch = false)
 			{
 				if	(need_break) line("break;");
 
-				case(fmt);
+				this.case(fmt);
 				need_break = false;
 				continue;
 			}
@@ -237,7 +252,7 @@ int Function::pfbody & (str fname, IO def, bool in_switch = false)
 			{
 				if	(need_break) line("break;");
 
-				case(NULL);
+				this.case(NULL);
 				need_break = false;
 				continue;
 			}
@@ -252,14 +267,20 @@ int Function::pfbody & (str fname, IO def, bool in_switch = false)
 
 			continue;
 		}
-		else if	(fmt == NULL)
+
+		if	(key == ".")	key = NULL;
+		else if	(vardef)	key = psub(vardef, key);
+		else			key = psub(key);
+
+		if	(fmt == NULL)
 		{
 			line();
 			continue;
 		}
 		else if	(fmt[0] == '$')
 		{
-			fline("io_puts(%s, %s);", psub(substr(fmt, 1), key), fname);
+			fline("io_puts(%s, %s);",
+				psub(substr(fmt, 1), key), fname);
 		}
 		else if	(fmt[0] == '"')
 		{

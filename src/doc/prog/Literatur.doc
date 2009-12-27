@@ -1,0 +1,29 @@
+\bibliography
+\bibitem matthew
+Neil Mathew, Richard Stones.
+Linux Programmierung,
+Bonn: MITP-Verlag, 2000
+\bibitem karsten
+Karsten Günther, Kestler Grelck, Thorsten Zilm.
+Linux -- Die User-Befehlsreferenz,
+Bonn: MITP-Verlag, 1999
+\bibitem stroustrup
+Bjarne Stroustrup.
+Die C++ Programmiersprache,
+Addison.Wesely, Bonn 1992
+\bibitem make
+Erich Frühstück.
+Make und Co,
+EFEU--Handbuch
+\bibitem efm
+Erich Frühstück.
+Die Programmbibliothek efm,
+EFEU--Handbuch
+\bibitem iorl
+Erich Frühstück.
+Die Readline-Schnittstelle,
+EFEU--Handbuch
+\bibitem md
+Erich Frühstück.
+Die Programmbibliothek md,
+EFEU--Handbuch

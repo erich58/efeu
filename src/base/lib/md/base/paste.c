@@ -1,8 +1,5 @@
 /*	Zusammenfügen von Dimensionen
 	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
-
-	Version 2
 */
 
 #include <EFEU/mdmat.h>
@@ -37,7 +34,7 @@ static void mkindex(const char *delim, mdaxis_t *x, char *last, int n)
 			mkindex(delim, x->next, p, n);
 		}
 
-		FREE(last);
+		memfree(last);
 	}
 	else
 	{

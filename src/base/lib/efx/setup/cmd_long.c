@@ -1,8 +1,23 @@
-/*	Ganzzahlobjekte
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Lange Ganzzahlobjekte
 
-	Version 0.4
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/object.h>
@@ -24,7 +39,7 @@ EXPR(name, LONG(0) op LONG(1))
 CEXPR(name, Val_int(rval) = LONG(0) op LONG(1))
 
 #define	ASSIGN(name, op)	\
-LEXPR(name, LONG(0) op LONG(1))
+CEXPR(name, LONG(0) op LONG(1))
 
 
 /*	Funktionen
@@ -38,15 +53,15 @@ static void f_long_abs (Func_t *func, void *rval, void **arg)
 
 static void f_long_min (Func_t *func, void *rval, void **arg)
 {
-	register int a = LONG(0);
-	register int b = LONG(1);
+	register long a = LONG(0);
+	register long b = LONG(1);
 	LRETVAL = a < b ? a : b;
 }
 
 static void f_long_max (Func_t *func, void *rval, void **arg)
 {
-	register int a = LONG(0);
-	register int b = LONG(1);
+	register long a = LONG(0);
+	register long b = LONG(1);
 	LRETVAL = a > b ? a : b;
 }
 
@@ -90,8 +105,8 @@ COMPARE(b_long_gt, >)
 
 EXPR(r_long_inc, LONG(0)++)
 EXPR(r_long_dec, LONG(0)--)
-LEXPR(l_long_inc, ++LONG(0))
-LEXPR(l_long_dec, --LONG(0))
+CEXPR(l_long_inc, ++LONG(0))
+CEXPR(l_long_dec, --LONG(0))
 
 ASSIGN(a_long_mul, *=)
 ASSIGN(a_long_div, /=)

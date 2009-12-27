@@ -1,6 +1,23 @@
-/*	Dokumentausgabefilter
-	(c) 1999 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Dokumentausgabefilter
+
+$Copyright (C) 1999 Erich Frühstück
+This file is part of EFEU.
+
+EFEU is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+EFEU is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with EFEU; see the file COPYING.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <DocOut.h>
@@ -9,7 +26,32 @@
 #include <EFEU/parsub.h>
 #include <EFEU/ioctrl.h>
 #include <EFEU/Info.h>
+#include <EFEU/MakeDepend.h>
 
+
+extern io_t *html_open(const char *dir, const char *pfx);
+
+/*	Postfilterausgabe
+*/
+
+static io_t *post_open (const char *name, const char *par)
+{
+	if	(MakeDepend)
+	{
+		AddTarget(name);
+		return NULL;
+	}
+
+	if	(name)
+	{
+		char *p = mstrpaste(*name == '|' ? NULL : " > ", par, name);
+		io_t *io = io_popen(p, "w");
+		memfree(p);
+		return io;
+	}
+
+	return io_popen(par, "w");
+}
 
 /*	Tabelle mit Ausgabefunktionen
 */
@@ -17,35 +59,31 @@
 
 static DocType_t TypeTab[] = {
 	{ "test", "Testausgabe",
-		DocOut_test, NULL },
+		DocOut_test, NULL, NULL },
 	{ "term", "Terminalausgabe",
-		DocOut_term, NULL },
-
-
-	{ "SynTeX", "LaTeX-Dokument im Synthesis-Standard",
-		DocOut_syntex, NULL },
-	{ "SynPS", "PostScript-Dokument im Synthesis-Standard",
-		DocOut_syntex, "tex2ps -n3 -" },
-
+		DocOut_term, NULL, NULL },
+	{ "LaTeX", "LaTeX-Dokument",
+		DocOut_latex, NULL, NULL },
+	{ "tex2ps", "PostScript-Dokument über LaTeX",
+		DocOut_latex, post_open, "tex2ps -n3 -" },
 	{ "man", "Handbuchsource",
 		DocOut_mroff, NULL },
 	{ "nroff", "Nroff-formatiertes Handbuch",
-		DocOut_mroff, "groff -Tlatin1 -t -man" },
-
-	{ "sgml", "SGML-Ausgabe",
-		DocOut_sgml, NULL },
-	{ "txt", "Textausgabe mit Attributen",
-		DocOut_sgml, "efeudoc_sgml -t txt -" },
-	{ "filter", "Textausgabe ohne Attribute",
-		DocOut_sgml, "efeudoc_sgml -t filter -" },
-	{ "latex", "LaTeX-Dokument über SGML",
-		DocOut_sgml, "efeudoc_sgml -t latex -" },
-	{ "ps", "Postscript-Dokument über SGML",
-		DocOut_sgml, "efeudoc_sgml -t ps -" },
-	{ "cgi", "HTML-Dokument mit CGI-Kopf",
-		DocOut_sgml, "efeudoc_sgml -t cgi -" },
+		DocOut_mroff, post_open, "groff -Tlatin1 -t -man" },
 	{ "html", "HTML-Dokument",
-		DocOut_sgml, "efeudoc_sgml -t html -" },
+		DocOut_html, html_open, NULL },
+	{ "sgml", "SGML-Ausgabe",
+		DocOut_sgml, NULL, NULL },
+	{ "txt", "Textausgabe mit Attributen",
+		DocOut_sgml, post_open, "efeudoc_sgml -t txt -" },
+	{ "filter", "Textausgabe ohne Attribute",
+		DocOut_sgml, post_open, "efeudoc_sgml -t filter -" },
+	{ "latex", "LaTeX-Dokument über SGML",
+		DocOut_sgml, post_open, "efeudoc_sgml -t latex -" },
+	{ "ps", "Postscript-Dokument über SGML",
+		DocOut_sgml, post_open, "efeudoc_sgml -t ps -" },
+	{ "cgi", "HTML-Dokument mit CGI-Kopf",
+		DocOut_sgml, post_open, "efeudoc_sgml -t cgi -" },
 };
 
 
@@ -73,7 +111,7 @@ static void print_type (io_t *io, InfoNode_t *base)
 
 void DocOutInfo (const char *name, const char *desc)
 {
-	AddInfo(NULL, name, mstrcpy(desc), print_type, NULL);
+	AddInfo(NULL, name, desc, print_type, NULL);
 }
 
 
@@ -89,20 +127,14 @@ io_t *DocOut (DocType_t *type, const char *name)
 {
 	io_t *io;
 
-	if	(type && type->post)
-	{
-		if	(name)
-		{
-			char *p = mstrpaste(*name == '|' ? NULL : " > ",
-				type->post, name);
-			io = io_popen(p, "w");
-			memfree(p);
-		}
-		else	io = io_popen(type->post, "w");
-	}
-	else	io = io_fileopen(name, "wz");
+	if	(type == NULL)
+		return io_fileopen(name, "wzd");
 
-	if	(type && type->filter)
+	if	(type->docopen)
+		io = type->docopen(name, type->par);
+	else	io = io_fileopen(name, "wzd");
+
+	if	(type->filter)
 		io = type->filter(io);
 
 	return io;

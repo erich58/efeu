@@ -1,8 +1,23 @@
-/*	String/Zeichen mit Sonderdarstellung ausgeben
-	(c) 1993 Erich Fruehstueck
-	A-1090 Wien, Waehringer Strasse 64/6
+/*
+String/Zeichen mit Sonderdarstellung ausgeben
 
-	Version 0.4
+$Copyright (C) 1993 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 
@@ -62,8 +77,6 @@ int io_xputc(int c, io_t *io, const char *delim)
 	case '\t':	c = 't'; break;
 	case '\v':	c = 'v'; break;
 	case '\\':	break;
-	case '^':	break;
-	case '~':	break;
 #if	ESCEXT
 	case 033:	c = 'e'; break;
 	case 127:	c = 'd'; break;
@@ -82,28 +95,7 @@ int io_xputc(int c, io_t *io, const char *delim)
 	}
 	else
 	{
-		if	(c & 0x80)
-		{
-			buf[pos++] = '~';
-			c &= 0x7F;
-		}
-
-		if	(c == (c & 0x1F))
-		{
-			buf[pos++] = '^';
-			buf[pos++] = '@' | c;
-		}
-		else if	(c == 127)
-		{
-			buf[pos++] = '^';
-			buf[pos++] = '?';
-		}
-		else if	(listcmp(delim, c))
-		{
-			buf[pos++] = '\\';
-			buf[pos++] = c;
-		}
-		else	buf[pos++] = c;
+		return io_printf(io, "\\%03o", c);
 	}
 	
 	buf[pos] = 0;

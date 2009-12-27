@@ -1,6 +1,23 @@
-/*	Lesefunktionen
-	(c) 1999 Erich Frühstück
-	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+/*
+Lesefunktionen
+
+$Copyright (C) 1999 Erich Frühstück
+This file is part of EFEU.
+
+EFEU is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+EFEU is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with EFEU; see the file COPYING.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <efeudoc.h>
@@ -411,4 +428,38 @@ int DocParseNum (io_t *in)
 		return atoi((char *) parse_buf.data);
 	}
 	else	return 0;
+}
+
+
+/*	Steuerflags einlesen: Diese werden nur temporär verwendet
+*/
+
+char *DocParseFlags (io_t *in)
+{
+	int c;
+
+	sb_clear(&parse_buf);
+
+	while ((c = io_getc(in)) != EOF)
+	{
+		if	(isspace(c))
+		{
+			io_ungetc(c, in);
+			DocSkipSpace(in, 0);
+			break;
+		}
+		else if	(c == ';')
+		{
+			break;
+		}
+		else	sb_putc(c, &parse_buf);
+	}
+
+	if	(parse_buf.pos)
+	{
+		sb_putc(0, &parse_buf);
+		return (char *) parse_buf.data;
+	}
+
+	return NULL;
 }

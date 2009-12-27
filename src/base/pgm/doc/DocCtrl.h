@@ -1,12 +1,31 @@
-/*	Kontrollfunktionen für Dokumentausgabe
-	(c) 1999 Erich Frühstück
-	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+/*
+Kontrollfunktionen für Dokumentausgabe
 
-	Version 0.4
+$Copyright (C) 1991 Erich Frühstück
+This file is part of EFEU.
+
+EFEU is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+EFEU is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with EFEU; see the file COPYING.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #ifndef	_EFEU_DocCtrl_h
 #define	_EFEU_DocCtrl_h	1
+
+#ifndef	CFGEXT
+#define	CFGEXT	"cfg"
+#endif
 
 #define	DOC_CTRL	('D' << 8)
 #define	DOC_TYPE	(DOC_CTRL|0)	/* Dokumenttype */
@@ -42,12 +61,13 @@
 /*	Tabellen
 */
 
-#define	DOC_TAB_SEP	0x20	/* Tabellentrennzeichen */
-#define	DOC_TAB_END	0x21	/* Tabellenzeilenende */
-#define	DOC_TAB_HEIGHT	0x22	/* Tabellenhöhe */
-#define	DOC_TAB_BLINE	0x23	/* Fette Zeile */
-#define	DOC_TAB_BRULE	0x24	/* Fette Linie */
-#define	DOC_TAB_INDENT	0x25	/* Tabelleneinrückung */
+#define	DOC_TAB_BEG	0x20	/* Beginn einer Tabellenzeile */
+#define	DOC_TAB_SEP	0x21	/* Tabellentrennzeichen */
+#define	DOC_TAB_END	0x22	/* Ende einer Tabellenzeile */
+#define	DOC_TAB_HEIGHT	0x23	/* Tabellenhöhe */
+#define	DOC_TAB_BLINE	0x24	/* Fette Zeile */
+#define	DOC_TAB_BRULE	0x25	/* Fette Linie */
+#define	DOC_TAB_INDENT	0x26	/* Tabelleneinrückung */
 
 /*	Umgebungen werden mit DOC_BEG eingeleitet und mit DOC_END
 	beendet.  Die Umgebungskennungen werden nach inhaltlichen
@@ -117,9 +137,10 @@
 #define	DOC_MODE_COPY	(DOC_MODE_CTRL|0x1)	/* Kopiermodus */
 #define	DOC_MODE_MAN	(DOC_MODE_CTRL|0x2)	/* Handbuchsource */
 #define	DOC_MODE_TEX	(DOC_MODE_CTRL|0x3)	/* TeX-Source */
-#define	DOC_MODE_SGML	(DOC_MODE_CTRL|0x4)	/* SGML-Source */
-#define	DOC_MODE_VERB	(DOC_MODE_CTRL|0x5)	/* Verbatim */
-#define	DOC_MODE_PLAIN	(DOC_MODE_CTRL|0x6)	/* Rohausgabe */
+#define	DOC_MODE_HTML	(DOC_MODE_CTRL|0x4)	/* HTML-Source */
+#define	DOC_MODE_SGML	(DOC_MODE_CTRL|0x5)	/* SGML-Source */
+#define	DOC_MODE_VERB	(DOC_MODE_CTRL|0x6)	/* Verbatim */
+#define	DOC_MODE_PLAIN	(DOC_MODE_CTRL|0x7)	/* Rohausgabe */
 
 /*	Sonstige Umgebungen
 */
@@ -139,5 +160,6 @@
 #define	DOC_ENV_MCOL	(DOC_ENV_CTRL|0xc)	/* Mehrfachspalte */
 #define	DOC_ENV_SPAGE	(DOC_ENV_CTRL|0xd)	/* Teilseite */
 #define	DOC_ENV_MPAGE	(DOC_ENV_CTRL|0xe)	/* Handbucheintrag */
+#define	DOC_ENV_BIB	(DOC_ENV_CTRL|0xf)	/* Literaturverzeichnis */
 
 #endif	/* EFEU/DocCtrl.h */

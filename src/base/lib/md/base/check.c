@@ -1,15 +1,14 @@
 /*	Achsennamen auf Gleichheit testen
 	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+*/
 
-	Version 2
+#include <EFEU/mdmat.h>
 
+/*
 Der Test erfolgt durch den Aufbau einer Suchtabelle für die Achsen,
 wobei gezählt wird, wie oft eine Achse durch eine neue Definition
 ersetzt wird. Die Suchtabelle wird anschließend gelöscht.
 */
-
-#include <EFEU/mdmat.h>
 
 int check_axis(mdaxis_t *axis)
 {

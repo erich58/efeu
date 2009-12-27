@@ -1,0 +1,18 @@
+#include <d2m.cfg>
+
+TOPDIR = _EFEU_TOP
+CFGDIR = $(TOPDIR)/ppinclude
+INCDIR = $(TOPDIR)/include/DB
+BINDIR = $(TOPDIR)/bin
+LIBDIR = $(TOPDIR)/lib
+APPDIR = $(TOPDIR)/lib/efeu
+DOCDIR = $(TOPDIR)/doc
+
+DIR2MAKE = dir2make -H $(INCDIR) -B $(BINDIR) -L $(LIBDIR) -A $(APPDIR)
+
+SubMake(pg,"PostgreSQL-interface",lib,-lPG,NullArg)
+
+SubMakeRule(pgdoc,"documentation",lib,pg,\
+dir2make -n -D $(DOCDIR)/en -d pg -p --lang=en)
+SubMakeRule(de-pgdoc,"german documentation",lib,pg,\
+dir2make -n -D $(DOCDIR)/de -d pg -p --lang=de)

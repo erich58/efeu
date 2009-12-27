@@ -1,50 +1,103 @@
-Ident = "Zwei Datenmatrizen verknüpfen";
-Copyright = "(c) 1997 Erich Frühstück, A-1090 Wien, Währinger Straße 64/6";
-Version = "2";
+/*
+:*:	evaluate data cube expression
+:de:	Zwei Datenmatrizen verknüpfen
 
-bool PrintMode = true;
-bool Reduce = false;
-str VarDef = NULL;
-str Title = NULL;
-str Ein1 = NULL;
-str Ein2 = NULL;
-str Output = NULL;
-str SelDef = NULL;
-VirFunc Funktion = NULL;
-str Expr = NULL;
+Copyright (C) 1997, 2001 Erich Frühstück
+This file is part of EFEU.
+
+EFEU is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+EFEU is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with EFEU; see the file COPYING.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+*/
+
+VirFunc Function = NULL;
 Type_t Type = NULL;
-
 PrintListDelim = "\t";
 
-PgmOpt("F file", "gload(IncPath, #1)", "Datei mit Definitionen laden")
-PgmOpt("E expr", "geval(#1)", "Ausdruck auswerten")
+pconfig !
+#if	Lang == "de"
+Ident = "Zwei Datenmatrizen verknüpfen"
+#else
+Ident = "evaluate data cube expression"
+#endif
+Version = "2"
+Copyright = "(c) 1997, 2001 Erich Frühstück"
+PrintMode = true
 
-PgmOpt("add", "Funktion=operator\"+\"", "Punktweise Addition (default)")
-PgmOpt("sub", "Funktion=operator\"-\"", "Punktweise Subtraktion")
-PgmOpt("mul", "Funktion=operator\"*\"", "Punktweise Multiplikation")
-PgmOpt("div", "Funktion=operator\"/\"", "Punktweise Division")
-PgmOpt("min", "Funktion=operator\"min\"", "Minimum der beiden Werte")
-PgmOpt("max", "Funktion=operator\"max\"", "Maximum der beiden Werte")
-PgmOpt("f func", "eval(\"Funktion = \" + #1)", "Funktion/Operator")
-PgmOpt("t type", "Type=expr(#1)", "Ausgabetype")
-PgmOpt("e expr", "Expr=#1", "Ausdruck")
-
-PgmOpt("r", "Reduce=true", "Entfernen von singulären Achsen")
-PgmOpt("p prec", "float_prec=#1", "Genauigkeit der Zahlenwerte")
-PgmOpt("v [name=]var", "VarDef=paste(' ', VarDef, #1)", "Variablenselektion")
-PgmOpt("T titel", "Title=#1", "Titel der Ausgabedatei")
-PgmArg("m1", "Ein1=#1", "Name der 1. Datenmatrix")
-PgmArg("m2", "Ein2=#1", "Name der 2. Datenmatrix")
-PgmOptArg("aus", "Output=#1;PrintMode=false", "Name der Ausgabedatei")
-PgmXArg("*=*", "SelDef=paste(' ', SelDef, #1)", NULL)
-PgmOptArg("name=var", NULL, "Selektionsparameter")
-
-loadarg;
+F:file | :eval 'gload(IncPath, "{}")'
+	:*:execute command lines in file <file>
+	:de:Datei <file> mit Befehlszeilen laden
+E:expr | :eval 'geval("{}")'
+	:*:evaluate expression <expr>
+	:de:Ausdruck <expr> auswerten
+-add | :eval 'Function = operator"+"'
+	:*:cell by cell addition
+	:de:Punktweise Addition (default)
+-sub | :eval 'Function = operator"-"'
+	:*:cell by cell subtraction
+	:de:Punktweise Subtraktion
+-mul | :eval 'Function = operator"*"'
+	:*:cell by cell multiplikation
+	:de:Punktweise Multiplikation
+-div | :eval 'Function = operator"/"'
+	:*:cell by cell division
+	:de:Punktweise Division
+-min | :eval 'Function = operator"min"'
+	:*:cell minimum
+	:de:Minimum der beiden Werte
+-max | :eval 'Function = operator"max"'
+	:*:cell maximum
+	:de:Maximum der beiden Werte
+f:func | :eval 'eval("Function = {}")'
+	:*:cell by cell function/operator
+	:de:Funktion/Operator
+t:type | :eval 'Type = expr("{}")'
+	:*:data type
+	:de:Ausgabetype
+e:expr | Expr
+	:*:expression
+	:de:Ausdruck
+p:prec | :eval 'float_prec="{}"'
+	:*:floating number precission
+	:de:Genauigkeit der Zahlenwerte
+r | Reduce = true
+	:*:remove singulary axis
+	:de:Entfernen von singulären Achsen
+v:[name::]var | VarDef: append " "
+	:*:select type components
+	:de:Variablenselektion
+T:title | Title
+	:*:set title of output file
+	:de:Titel der Ausgabedatei setzen
+:file1 | Ein1
+	:*:name of first data cube
+	:de:Name der 1. Eingabedatei
+:file2 | Ein2
+	:*:name of second data cube
+	:de:Name der 2. Eingabedatei
+/.*=.*/name=var | SelDef: append " "
+	:*:selection parameter
+	:de:Selektionsparameter
+::out | Output; PrintMode = false
+	:*:output file
+	:de:Name der Ausgabedatei
+!
 
 mdmat md1 = mdload(Ein1, SelDef, VarDef);
 mdmat md2 = mdload(Ein2, SelDef, VarDef);
 
-if	(Reduce)
+if	(flagres("Reduce"))
 {
 	md1.reduce();
 	md2.reduce();
@@ -60,16 +113,17 @@ if	(Expr)
 
 	eval(sprintf("virtual %s _EVALFUNC(%s x, %s y) return (%s);",
 		Type, md1.type, md2.type, Expr));
-	Funktion = _EVALFUNC;
+	Function = _EVALFUNC;
 }
 
-mdmat md = mdexpr(Funktion, md1, md2);
+mdmat md = mdexpr(Function, md1, md2);
 
 if	(Type)		md.konv(Type);
 if	(Title)		md.title = Title;
 
-if	(PrintMode)	md.mark("#-1").print(iostd, "nohead");
-else			md.save(Output);
+if	(flagres("PrintMode"))
+	md.mark("#-1").print(iostd, "nohead");
+else	md.save(Output);
 
 free(md1);
 free(md2);

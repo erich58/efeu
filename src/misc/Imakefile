@@ -1,0 +1,27 @@
+/*	Diverses
+*/
+
+#include <d2m.cfg>
+
+TOPDIR = _EFEU_TOP
+BINDIR = $(TOPDIR)/bin
+LIBDIR = $(TOPDIR)/lib
+APPDIR = $(TOPDIR)/lib/efeu
+DOCDIR = $(TOPDIR)/doc
+
+DIR2MAKE = dir2make -B $(BINDIR) -L $(LIBDIR) -A $(APPDIR) -D $(DOCDIR)
+
+BaseInc = -H $(TOPDIR)/include/EFEU
+MathInc = -H $(TOPDIR)/include/Math
+
+#if	__linux__
+SubMake(Linux,"Lokale Programme für Linux",pgm/Linux,NullArg,NullArg)
+#endif
+
+SubMake(script,"Shell-Scripts",pgm/script,NullArg,NullArg)
+SubMake(tools,"Einfache Hilfsprogramme",pgm/tools,NullArg,NullArg)
+
+SubMake(pix,"Pixelfiles",lib/pix,$(BaseInc) -lpix,NullArg)
+
+SubMake(xprint,"Druckerausgabe",pgm/xprint,NullArg,NullArg)
+SubMake(pixmap,"Hilfsprogrammei für Pixeldateien",pgm/pixmap,NullArg,pix)

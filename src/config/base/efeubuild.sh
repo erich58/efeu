@@ -1,108 +1,183 @@
 #!/bin/sh
-#	Hauptmakefile für EFEU-Projekte generieren
-#	(c) 2000 Erich Frühstück
-#	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+# :*:create main Makefile for EFEU-projects
+# :de:Hauptmakefile für EFEU-Projekte generieren
+#
+# Copyright (C) 2000 Erich Frühstück
+# This file is part of EFEU.
+# 
+# EFEU is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+# 
+# EFEU is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public
+# License along with EFEU; see the file COPYING.
+# If not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-#	Version 0.9
+top=${EFEUTOP:=~}
 
-top=${EFEUTOP:-~}
-cfg=etc/efeu.conf
-prj=etc/efeu.prj
+# message formats
+
+msg1="usage: $0 [top]\n"
+msg2="directory %s does not exist!\n"
+msg3="create rules for %s\n"
+msg4="create directory %s\n"
+msg5="*** setting up %s ***\n"
+msg6="Makefile in %s successfull created.\n"
+msg7="Setup failed for project(s):%s.\n"
+
+lbl_usage="usage:"
+lbl_init="init Makefiles"
+lbl_all="build all targets"
+lbl_clean="clean all targets"
+lbl_failed="setup failed:"
+
+case ${LANG:=en} in
+de*)
+	msg1="Aufruf: $0 [top]\n"
+	msg2="Bibliothek %s existiert nicht!\n"
+	msg3="Generierungsregeln für %s einrichten\n"
+	msg4="Bibliothek %s einrichten\n"
+	msg5="*** Initialisierung von %s ***\n"
+	msg6="Makefile in %s wurde generiert.\n"
+	msg7="Initialisierung für Projekt(e)%s fehlgeschlagen.\n"
+
+	lbl_usage="Aufruf:"
+	lbl_init="Neugenerierung der Makefiles"
+	lbl_all="Alle Ziele generieren"
+	lbl_clean="Alle Ziele löschen"
+	lbl_failed="Fehlgeschlagene Initialisierungen:"
+	;;
+esac
+
+# parse command args
+
+while getopts h opt
+do
+	case $opt in
+	h)	printf "$msg1"; exit 0;;
+	\?)	printf "$msg1"; exit 1;;
+	esac
+done
+
+shift `expr $OPTIND - 1`
 
 if [ $# -eq 1 ]; then
 	top=$1
 fi
 
-cd $top || exit 1
+# go to top, get absolut path
 
-#	Sourcebibliothek prüfen
+cd $top || exit 1
+top=`pwd`
+
+# test for source directory
 
 if	[ ! -d $top/src ]; then
-	echo "Bibliothek $top/src existiert nicht!"
+	printf "$msg2" $top/src
 	exit 1
 fi
 
-top=`pwd`
-echo "Generierungsregeln für $top einrichten"
+printf "$msg3" $top
 
-if [ -f $top/$cfg ]; then
-	echo "Konfigurationsdatei $top/$cfg laden"
-	. $top/$cfg
-fi
-
-#	Basisbibliotheken einrichten
+# create basic directories if neccessary
 
 for x in bin lib build
 do
 	if [ ! -d $top/$x ]; then
-		echo "Bibliothek $top/$x einrichten"
+		printf "$msg4" $top/$x
 		mkdir $top/$x || exit 1
 	fi
 done
 
-#	Hilfsfunktionen
+# get value of entry name in file 
 
-mf_echo ()	# Aufruf: mf_echo [target] < desc
+get_var ()	# usage: get_var name file
 {
-	echo
-
-	if [ $# -ge 1 ]; then
-		echo "$1::"
-	fi
-
-	expand -12,30 | sed -e '
-s/"/\\\\&/g
-s/^/	@echo \"/
-s/$/\"/
-'
+	grep "^$1" $2 | ( read name val; echo "$val")
 }
 
-mf_target ()	# Aufruf: mf_target name deps
-{
-	cat >> Makefile << !
+# get project list in order of dependence
+# depend name '.' stands for no project
+# depend name '*' stands for all other projects
 
-$1:: $2
-!
+get_plist ()	# usage: get_plist
+{
+	( cd $top/src; for x in *
+	do
+		if	[ -f $x/DESC ]; then
+			dep=`get_var Depend $x/DESC`
+			echo "$x	$dep"
+		fi
+	done ) | awk '
+BEGIN { printf(".\t.\n") }
+/setup/ { next }
+{
+	n = split($2,dep,",")
+
+	for (i = 1; i <= n; i++)
+		printf("%s\t%s\n", dep[i], $1)
+}
+$2 ~ /\*/ { next }
+{ printf("%s\t%s\n", $1, "*") }
+' | tsort | grep -v '^[.*]$'
 }
 
-mf_rule ()	# Aufruf: mf_rule name deps rule
-{
-	cat >> Makefile << !
+# tools for Makefile entries
 
-$1: $2
-	$3
-!
+mf_echo ()	# usage: mf_echo name desc
+{
+	printf "\t@echo '%-11s %s'\n" "$1" "$2" >> Makefile
 }
 
-#	Projekteintrag generieren
-
-make_projekt ()	# make_projekt src name deplist desc
+mf_target ()	# usage: mf_target name deps
 {
-	if [ $3 != "." ]; then
+	printf "\n%s:: %s\n" "$1" "$2" >> Makefile
+}
+
+mf_rule ()	# usage: mf_rule name deps rule
+{
+	printf "\n%s: %s\n\t%s\n" "$1" "$2" "$3" >> Makefile
+}
+
+# create make rules for project
+
+make_project ()	# usage: make_project src name deplist
+{
+	if [ "$3" != "." ]; then
 		deplist=`echo $3 | tr ',' ' '`
 	else
 		deplist=""
 	fi
 
-	echo "$2	$4" | mf_echo usage >> Makefile
-	mf_target init $2
-	mf_rule $2.d "" "mkdir $2.d"
-	mf_rule $2 "$deplist $2.d/Makefile" "( cd $2.d; make )"
-
-	for x in all clean update
-	do
-		mf_target $x $2.$x
-		mf_rule $2.$x $2.d/Makefile "( cd $2.d; make $x )"
-	done
+	mf_target all $2
+	mf_target clean $2.clean
+	mf_rule $2 "$deplist $2.d/Makefile" "( cd $2.d; make all )"
+	mf_rule $2.clean $2.d/Makefile "( cd $2.d; make clean )"
+	mf_rule $2.d "$1" "if [ ! -d \$@ ]; then mkdir -p \$@; fi; touch \$@"
 
 	if [ -f $1/Configure ]; then
 		mf_rule $2.d/Makefile "$2.d $1/Configure" \
-			"( cd $1; Configure \$(TOP) ) > \$@"
+			"( cd $1; ./Configure \$(TOP) ) > \$@"
+	elif [ -f $1/Makefile ]; then
+		cat >> Makefile <<!
+
+$2.d/Makefile: $2.d
+	@printf "all::\n\t(cd $1; make all)\n\n" > \$@
+	@printf "clean::\n\t(cd $1; make clean)\n\n" >> \$@
+!
 	elif [ -f $1/Imakefile ]; then
 		cat >> Makefile <<!
 
 $2.d/Imakefile: $2.d $1/Imakefile
-	echo "SRCTOP=	$1" > \$@
+	echo "TOP=	$top" > \$@
+	echo "SRC=	$1" >> \$@
 	echo "#include \"$1/Imakefile\"" >> \$@
 
 $2.d/Makefile: $2.d $2.d/Imakefile
@@ -111,24 +186,6 @@ $2.d/Makefile: $2.d $2.d/Imakefile
 	else
 		mf_rule $2.d/Makefile $2.d "( cd $2.d; dir2make $1 )"
 	fi
-}
-
-#	Projektliste verarbeiten
-
-eval_plist ()
-{
-	plist=""
-
-	while
-		read name dep desc
-	do
-		if [ "A$dep" = "A*" ]; then
-			dep="$plist"
-		fi
-
-		make_projekt "$top/src/$name" "$name" "$dep" "$desc"
-		plist="$plist,$name"
-	done
 }
 
 #	Makefile in der Konfgurationsbibliothek generieren
@@ -142,33 +199,80 @@ cat > Makefile << !
 TOP=	$top
 !
 
-mf_echo usage >> Makefile <<!
-Aufruf:	make <name> | all | clean | update
-	make <name>[.all|.clean|.update] | <name>.<sub>
+mf_target usage ""
+mf_echo "$lbl_usage" "make init | all | clean"
+mf_echo " " "make <name> | <name>.clean"
+mf_echo
+mf_echo init	"$lbl_init"
+mf_echo all	"$lbl_all"
+mf_echo clean	"$lbl_clean"
+mf_echo
 
-init	Unterbibliotheken initialisieren (alle Ziele ohne Zusatz)
-all	Alles generieren (alle Ziele mit Zusatz .all)
-clean	Alles Aufräumen (alle Ziele mit Zusatz .clean)
-update	Alles auf den letzten Stand bringen (alle Ziele mit Zusatz .update)
-config	Generierungsregeln neu Konfigurieren
-!
+mf_rule init: " " "efeubuild \$(TOP)"
+mf_target all init
 
-mf_rule config "" "efeubuild \$(TOP)"
-mf_target init config
-mf_target all config
-mf_target update config
+#	Projektliste aufarbeiten
 
-#	Projektdatei abarbeiten
+plist=""
+failed=""
 
-if	[ -f $top/$prj ]; then
-	echo "Projektdatei $top/$prj laden"
-	grep '^[^#]' $top/$prj | eval_plist
-	mf_rule Makefile "$top/$prj" "efeubuild \$(TOP)"
+if
+	llab=`expr "$LANG" : '\([a-z][a-z]\).*'`
+then
+	llab="Label_$llab"
 else
-	makedep=""
-	make_projekt "$top/src" "std" "." "Standardprojekt"
-	mf_rule Makefile "" "efeubuild \$(TOP)"
+	llab="Label"
 fi
 
-echo "Makefile in $gen wurde generiert."
+for name in `get_plist`
+do
+	full_name="$top/src/$name"
+
+	if
+		grep "$llab" $full_name/DESC > /dev/null
+	then
+		desc=`get_var $llab $full_name/DESC`
+	else
+		desc=`get_var Label $full_name/DESC`
+	fi
+
+	dep=`get_var Depend $full_name/DESC`
+
+	mf_target usage ""
+	mf_echo "$name" "$desc"
+
+	if
+		[ -x $full_name/setup ]
+	then
+		printf "$msg5" $name >&2
+
+		if
+			(cd $full_name; ./setup)
+		then
+			:
+		else
+			failed="$failed $name"
+			mf_rule $name "" "(cd $full_name; ./setup)"
+			continue
+		fi
+	fi
+
+	if expr "X$dep" : ".*\*.*" > /dev/null; then
+		dep=`echo "$dep" | sed -e "s/\*/$plist/g"`
+	else
+		plist="$plist,$name"
+	fi
+
+	make_project "$full_name" "$name" "$dep"
+done
+
+printf "\n" >&2
+printf "$msg6" $gen
+
+if [ "$failed" != "" ]; then
+	printf "$msg7" "$failed"
+	mf_target usage ""
+	mf_echo
+	printf "\t@echo '%s'\n" "$lbl_failed$failed" >> Makefile
+fi
 

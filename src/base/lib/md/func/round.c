@@ -1,6 +1,5 @@
 /*	Datenmatrix runden
 	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
 */
 
 #include <EFEU/mdmat.h>
@@ -99,5 +98,5 @@ void MdRound(mdaxis_t *axis, void *data, Konv_t *get, Konv_t *set, double val,
 		ptr += axis->size;
 	}
 
-	FREE(x);
+	memfree(x);
 }

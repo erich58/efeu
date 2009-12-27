@@ -1,33 +1,29 @@
-/*	Konfigurationsdatei öffnen
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Konfigurationsdatei öffnen
 
-	Version 0.4
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/ftools.h>
 #include <EFEU/pconfig.h>
 #include <EFEU/parsedef.h>
-
-
-io_t *io_applfile(const char *name, int type)
-{
-	char *p, *pfx, *sfx;
-	io_t *io;
-
-	switch (type)
-	{
-	case APPL_APP:	pfx = "app-defaults"; sfx = "app"; break;
-	case APPL_CFG:	pfx = "app-defaults"; sfx = "cfg"; break;
-	case APPL_TRM:	pfx = "term"; sfx = "trm"; break;
-	default:	pfx = NULL; sfx = NULL; break;
-	}
-
-	p = fsearch(ApplPath, pfx, name, sfx);
-	io = p ? io_fileopen(p, "r") : NULL;
-	FREE(p);
-	return io;
-}
+#include <EFEU/preproc.h>
 
 
 int applfile(const char *name, int type)
@@ -36,7 +32,7 @@ int applfile(const char *name, int type)
 
 	if	(io != NULL)
 	{
-		io = io_lnum(io);
+		io = io_cmdpreproc(io);
 		io_eval(io, NULL);
 		io_close(io);
 		return 1;

@@ -1,11 +1,29 @@
-/*	Sortierfunktion für Funktionen
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Sortierfunktion für Funktionen
 
-	Version 0.4
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
 
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+*/
+
+#include <EFEU/object.h>
+
+/*
 Die Sortierordnung bestimmt die Funktionssuche.
-
 Funktionen mit fixer Argumentzahl kommen vor Funktionen mit variabler
 Argumentzahl und werden mit aufsteigender Argumentzahl sortiert.
 Funktionen mit variabler Argumentzahl werden nach absteigender
@@ -13,8 +31,6 @@ Argumentzahl sortiert.
 Bei gleichem Datentype werden L-Werte vor Konstanten gereiht.
 Bei verschiedenen Datentype wird das Funktionsgewicht berücksichtigt.
 */
-
-#include <EFEU/object.h>
 
 
 int FuncComp (const void *pa, const void *pb)

@@ -1,13 +1,36 @@
-/*	Ruecktransformation eines dump-Files
-	(c) 1991 Erich Fruehstueck
-	A-1090 Wien, Waehringer Strasse 64/6
+/*
+:*:	restore binary file from ascii representation
+:de:	Ruecktransformation eines dump-Files
+
+$Copyright (C) 1991 Erich Frühstück
+This file is part of EFEU.
+
+EFEU is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+EFEU is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with EFEU; see the file COPYING.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <stdio.h>
 
+/*
 #define	AUFRUF	"Aufruf: %s Ein Aus\n"
 #define	NOREAD	"%s: File %s nicht lesbar.\n"
 #define	NOWRITE	"%s: File %s nicht beschreibbar.\n"
+*/
+#define	AUFRUF	"usage: %s in out\n"
+#define	NOREAD	"%s: file %s not readable.\n"
+#define	NOWRITE	"%s: file %s not writeable.\n"
 
 
 /*	Lesen eines Zeichens

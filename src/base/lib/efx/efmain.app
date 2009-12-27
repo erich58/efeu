@@ -1,42 +1,64 @@
-/*	Initialisierungssequenzen für efmain - Programmbibliothek
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
-*/
+/*
+Initialisierungssequenzen für efmain - Programmbibliothek
 
-setlocale(LC_DATE, "de")
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+*/
 
 //	Hilfetextparameter
 
-HelpFmt = "\
+HelpFmt = string !
 @name
-\\Name
+\Name
 @ident
-\\Synopsis
+\Synopsis
 @synopsis
-\\Description
+\Description
+#if	Lang == "de"
 Folgende Optionen und Argumente werden vom Kommando |$!| akzeptiert:
+#else
+The following options and arguments are accepted from command |$!|:
+#endif
 @arglist 12
-\\Environment
+\Environment
 @environ 12
-";
+!;
 
-VersionFmt = "\
-\\hang
-|$!| - $(Ident:%s), Version $(Version:%s)
-\\br
+str VersionFmt = string !
+\hang
+|$!| - $(Ident:%s),
+Version $(Version:%s)
+\br
 $(Copyright:%s)
-";
+!;
 
-InfoPath = ".:/efeu/lib/eis:/efeu/lib/efeu/info"
-
-PgmEnv("SHELL", "Shell=#1",
-	"legt die Shell für Systemaufrufe fest.");
-PgmEnv("PAGER", "Pager='|'+#1",
-	"bestimmt das Kommando für den Seitenfilter.");
-PgmEnv("APPLPATH", "ApplPath=paste(':',ApplPath,#1)",
-	"definiert den Suchpfad für Anpassungsfiles.");
-PgmEnv("MessageHandler", "MessageHandler=#1",
-	"definiert das Kommando zur Ausgabe von Fehlermeldungen.");
+PgmEnv("SHELL", "Shell=#1", string !
+:*:determines shell for system calls.
+:de:legt die Shell für Systemaufrufe fest.
+!);
+PgmEnv("PAGER", "Pager='|'+#1", string !
+:*:determines command for crt viewing
+:de:bestimmt das Kommando für den Seitenfilter.
+!);
+PgmEnv("MessageHandler", "MessageHandler=#1", string !
+:*:determines command for displaying messages.
+:de:definiert das Kommando zur Ausgabe von Fehlermeldungen.
+!);
 
 str help_command = "help_$1 ? eval(help_$1) : usage(NULL, NULL)";
 str help_raw = "usage(NULL, iostd)";
@@ -48,34 +70,58 @@ str help_html = "usage(NULL, \"|efeudoc -T html -\")";
 str help_cgi = "usage(NULL, \"|efeudoc -T cgi -\")";
 str help_roff = "usage(NULL, \"|efeudoc -T man -\")";
 str help_tex = "usage(NULL, \"|efeudoc -T SynTeX -\")";
-str help_man = "usage(NULL, \"|efeudoc -man -\")";
-str help_lp = "usage(NULL, \"|efeudoc -lp -\")";
+str help_man = "usage(NULL, \"|efeudoc --man -\")";
+str help_lp = "usage(NULL, \"|efeudoc --lp -\")";
 
 PgmOpt("?", "usage(UsageFmt, ioerr); exit(0)", NULL);
-PgmOpt("help", "eval(help_term); exit(0)", NULL);
-PgmOpt("help=type", "eval(psub(help_command)); exit(0)", string !
-gibt den Handbucheintrag des Kommandos aus.
+PgmOpt("-help", "eval(help_term); exit(0)", NULL);
+PgmOpt("-help=type", "eval(psub(help_command)); exit(0)", string !
+:*:
+print usage of command. The optional parameter <type>
+determines the formatting and output of the description.
+[term]	display on terminal (default)
+[raw]	raw data for |efeudoc|
+[lp]	send to printer
+:de:
+gibt eine Beschreibung des Kommandos aus.
 Der zusätzliche Parameter <type> bestimmt die Formatierung und
-die Ausgabe des Handbucheintrags.
+die Ausgabe der Beschreibung.
 [term]	Terminalausgabe (default)
 [raw]	Rohformat für |efeudoc|
 [lp]	Ausgabe zum Drucker
 !);
 
-PgmOpt("info", "Info(NULL, iostd); exit(0)", NULL);
-PgmOpt("info=entry", "Info(#1, iostd); exit(0)", string !
-listet verfügbare Informationseinträge des Kommandos auf.
-Das Argument <entry> ist optional.
+PgmOpt("-info", "Info(NULL, iostd); exit(0)", NULL);
+PgmOpt("-info=entry", "Info(#1, iostd); exit(0)", string !
+:*:show command information
+:de:listet verfügbare Informationseinträge des Kommandos auf.
 !);
 
-PgmOpt("dump", "InfoDump(NULL, iostd); exit(0)", NULL);
-PgmOpt("dump=entry", "InfoDump(#1, iostd); exit(0)", string !
+PgmOpt("-dump", "InfoDump(NULL, iostd); exit(0)", NULL);
+PgmOpt("-dump=entry", "InfoDump(#1, iostd); exit(0)", string !
+:*:dump command information to standard output.
 schreibt sämtliche Informationseinträge des Kommandos zur Standardausgabe.
-Das optionale Argument <entry> erlaubt eine Teilselektion
-der Einträge.
 !);
 
-PgmOpt("V", "usage(VersionFmt, ioerr); exit(0)", string !
-gibt die Versionsnummer des Kommandos aus.
+PgmOpt("-version", "usage(VersionFmt, ioerr); exit(0)", string !
+:*:shows version information
+:de:gibt die Versionsnummer des Kommandos aus.
+!);
+
+PgmOpt("-debug=mode", "setres(\"Debug\", #1)", string !
+:*:sets debug level for command
+:de:Setzt den Debug-Level für das Kommando.
+Folgende Angaben sind möglich:
+[none]	Keine Meldungen ausgeben;
+[err]	Fehlermeldungen ausgeben;
+[note]	Anmerkungen ausgeben;
+[stat]	Verarbeitungsstatistiken ausgeben;
+[trace]	Ablaufinformationen ausgeben;
+[debug]	Debugginginformationen ausgeben (default);
+!);
+
+PgmOpt("-verbose", "setres(\"Debug\", \"stat\")", string !
+:*:sets debug level to |stat|.
+:de:Setzt den Debug-Level auf |stat|.
 !);
 

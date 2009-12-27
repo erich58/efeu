@@ -1,0 +1,52 @@
+/*
+Documentation of PG Library, german version
+
+$Copyright (C) 2001 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+*/
+
+\config	efeu
+\date	Juni 2001
+\dhead	Handbuch für Programmierer
+\dnote	Rohfassung
+\title	EFEU Schnittstelle zu PostgreSQL
+Handbuch für Programmierer
+
+\intro
+Die Programmbibliothek |PG| stellt eine Oberfläche für SQL-Anfragen
+an einen PostgreSQL Datenbankserver zur Verfügung.
+Diese können sowohl in C-Programmen als auch in esh-Skripts
+verwendet werden.
+
+Das Handbuch ist in Arbeit. Der allgemeine Teil muß noch
+geschrieben werden.
+
+	Erich Frühstück\br
+	Wördern, \thedate
+
+\toc
+\addsrclist
+\getsrc		*-de.doc
+\appendix
+\mchap[3]	Funktionen
+\src2doc[-L de]	*.c
+\mchap[7]	Makropakete und Konventionen
+\src2doc[-L de]	*.h *.7
+\printindex
+@Impressum(2000)
+

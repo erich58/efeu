@@ -1,49 +1,87 @@
-Ident = "Datenmatrix lesen";
-Copyright = "(c) 1997 Erich Frühstück, A-1090 Wien, Währinger Straße 64/6";
-Version = "2";
+/*
+:*:	read data cube
+:de:	Datenmatrix lesen
 
-bool PrintMode = true;
-bool Reduce = false;
-bool SCFlag = false;
-str Title = NULL;
-str Input = NULL;
-str Output = NULL;
-str SelDef = NULL;
-str VarDef = NULL;
-str Flags = NULL;
-str locale = NULL;
+Copyright (C) 1997, 2001 Erich Frühstück
+This file is part of EFEU.
+
+EFEU is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+EFEU is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with EFEU; see the file COPYING.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+*/
 
 PrintListDelim = "\t";
 
-void addflag(str x)
-	Flags = paste(" ", Flags, x);
+pconfig !
+#if	Lang == "de"
+Ident = "Datenmatrix lesen"
+#else
+Ident = "read data cube"
+#endif
+Version = "2"
+Copyright = "(c) 1997, 2001 Erich Frühstück"
+PrintMode = true
 
-PgmOpt("x name(n)", "addflag(\"x=\"+#1)", "Spaltenachsen")
-PgmOpt("y name(n)", "addflag(\"y=\"+#1)", "Zeilenachsen")
-PgmOpt("t type", "addflag(\"type=\"+#1)", "Datentype")
-PgmOpt("m", "addflag(\"magic\")", "Test auf Kennung")
-PgmOpt("de", "locale=\"de\"", "Deutsches Zahlenformat")
-PgmOpt("us", "locale=\"us\"", "Amerikanisches Zahlenformat")
-PgmOpt("sc", "SCFlag=true", "SC-Spreadsheet konvertieren")
-PgmOpt("r", "Reduce=true", "Entfernen von singulären Achsen")
-PgmOpt("v [name=]var", "VarDef=paste(\" \", VarDef, #1)", "Variablenselektion")
-PgmOpt("T titel", "Title=#1", "Titel der Ausgabedatei")
-PgmArg("ein", "Input=#1", "Name der Eingabedatei")
-PgmOptArg("aus", "Output=#1;PrintMode=false", "Name der Ausgabedatei")
-PgmXArg("*=*", "SelDef=paste(' ', SelDef, #1)", NULL)
-PgmOptArg("name=var", NULL, "Selektionsparameter")
+x:name | Flags: set "{Flags} x={}"
+	:*:column axis name(s)
+	:de:Spaltenachsenname(n)
+y:name | Flags: set "{Flags} y={}"
+	:*:row axis name(s)
+	:de:Zeilenachsenname(n)
+t:type | Flags: set "{Flags} type={}"
+	:*:data type
+	:de:Datentype
+m | Flags: set "{Flags} magic"
+	:*:check magic number
+	:de:Test auf Kennung
+L:loc | -locale:loc | Locale
+	:*:set locale for number format to <loc>
+	:de:Lokale für Zahlendarstellung auf <loc> setzen
+-sc | SCFlag = true
+	:*:konvert sc spreadsheet
+	:de:SC-Spreadsheet konvertieren
+
+r | Reduce = true
+	:*:remove singulary axis
+	:de:Entfernen von singulären Achsen
+v:[name::]var | VarDef: append " "
+	:*:select type components
+	:de:Variablenselektion
+T:title | Title
+	:*:set title of output file
+	:de:Titel der Ausgabedatei setzen
+
+:file | Input
+	:*:input file
+	:de:Name der Eingabedatei
+/.*=.*/name=var | SelDef: append " "
+	:*:selection parameter
+	:de:Selektionsparameter
+::out | Output; PrintMode = false
+	:*:output file
+	:de:Name der Ausgabedatei
+!
 
 msgtab {
 	1, "$!: Datei $(Input) ist keine Datenmatrix.\n"
 }
 
-loadarg;
-
-if	(locale)	setlocale(LC_ALL, locale);
+if	(Locale)	setlocale(LC_ALL, Locale);
 
 mdmat md;
 
-if	(SCFlag)
+if	(flagres("SCFlag"))
 {
 	str name = tempnam();
 	IO io = open(sprintf("|sc %s >/dev/null", Input), "w");
@@ -58,10 +96,11 @@ if	(md == NULL)	error(NULL, 1);
 
 if	(SelDef || VarDef)	md = reload(md, SelDef, VarDef);
 
-if	(Reduce)	md.reduce();
-if	(Title)		md.title = Title;
+if	(flagres("Reduce"))	md.reduce();
+if	(Title)			md.title = Title;
 
-if	(PrintMode)	md.mark("#-1").print(iostd);
-else			md.save(Output);
+if	(flagres("PrintMode"))
+	md.mark("#-1").print(iostd, "nohead");
+else	md.save(Output);
 
 free(md);

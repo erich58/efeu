@@ -1,5 +1,3 @@
-Label: EFEU-Basisbibliotheken/Standardkommandos
-Maintainer: Erich Frühstück
-Depends: base
-Version: 0.4
-Patchlevel: 0
+Label:	basic libraries and commands	
+Label_de: EFEU-Basisbibliotheken/Standardkommandos
+Depends: config

@@ -1,8 +1,23 @@
-/*	Sortierung/Abfragen von Formatdefinitionen
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Sortierung/Abfragen von Formatdefinitionen
 
-	Version 0.4
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/vecbuf.h>
@@ -12,6 +27,7 @@
 #include <EFEU/patcmp.h>
 #include <EFEU/msgtab.h>
 #include <EFEU/procenv.h>
+#include <EFEU/Debug.h>
 
 #define	MSG_PFX	"messages"
 #define	MSG_SFX	"msg"
@@ -55,7 +71,7 @@ static MSGTAB_t *new_msgtab(const char *name)
 /*	Suche nach einer Formatdefinition
 */
 
-char *getmsg(const char *name, int num, const char *defval)
+char *getmsg (const char *name, int num, const char *defval)
 {
 	MSGTAB_t key, *tab;
 	msgdef_t mkey, *msg;
@@ -78,8 +94,7 @@ char *getmsg(const char *name, int num, const char *defval)
 
 		if	(io == NULL)
 		{
-			reg_str(1, name);
-			io_psub(ioerr, getmsg(MSG_EFEU, 3, ERRMSG));
+			io_printf(LogOut("msgtab", DBG_ERR), ERRMSG, name);
 			return (char *) defval;
 		}
 

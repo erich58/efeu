@@ -1,8 +1,5 @@
 /*	Multidimensionale Matrix selektiv laden
 	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
-
-	Version 2
 */
 
 #include <EFEU/mdmat.h>
@@ -152,7 +149,7 @@ mdmat_t *md_load(io_t *io, const char *str, const char *odef)
 		vsel_io = io_tmpbuf(0);
 		vsel_dim = strsplit(odef, ",%s", &vsel_list);
 		vsel_dim = walk_type(NULL, (Type_t **) &md->type, 0, 0);
-		FREE(vsel_list);
+		memfree(vsel_list);
 
 		if	(vsel_dim == 0 || md->type->size == 0)
 		{
@@ -197,8 +194,8 @@ mdmat_t *md_load(io_t *io, const char *str, const char *odef)
 		memfree(x->priv);
 
 	del_axis(axis);
-	FREE(data_buf);
-	FREE(vsel_cdef);
+	memfree(data_buf);
+	memfree(vsel_cdef);
 	md_tsteof(io);
 	return md;
 }
@@ -245,6 +242,9 @@ static mdaxis_t *mkaxis(mdaxis_t *x, mdlist_t *def)
 
 	for (i = 0; i < def->dim; i++)
 	{
+		if	(def->list[i] == NULL)
+			continue;
+
 		if	(def->list[i][0] == ':')
 		{
 			if	(def->list[i][1] == '#')
@@ -321,6 +321,9 @@ static mdaxis_t *mkaxis(mdaxis_t *x, mdlist_t *def)
 
 	for (i = 0; i < def->dim; i++)
 	{
+		if	(def->list[i] == NULL)
+			continue;
+
 		if	(def->list[i][0] == ':')
 		{
 			if	(def->lopt[i])
@@ -382,7 +385,7 @@ static mdaxis_t *mkaxis(mdaxis_t *x, mdlist_t *def)
 		}
 	}
 
-	p = sb->data;
+	p = (char *) sb->data;
 	y->name = mstrcpy(nextstr(&p));
 
 	for (j = 0; j < y->dim; j++)
@@ -515,7 +518,7 @@ static int walk_type(const char *name, Type_t **type, int o1, int o2)
 		}
 		else	*st = (*st)->next;
 
-		FREE(p);
+		memfree(p);
 	}
 
 	if	(n)

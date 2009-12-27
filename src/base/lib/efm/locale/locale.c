@@ -1,48 +1,83 @@
-/*	Sprachanpassung
-	(c) 1997 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Sprachanpassung
 
-	Version 0.6
+$Copyright (C) 1997 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/locale.h>
 #include <EFEU/memalloc.h>
 #include <EFEU/vecbuf.h>
+#include <EFEU/io.h>
 
-#define	NAME_US		"us"
-#define	NAME_DE		"de"
-#define	NAME_TEX	"TeX"
-#define	NAME_DOC	"doc"
-#define	NAME_ORA	"Oracle"
+/*
+:*:the table |$1| contains locale for value representation
+:de:Der Vektor |$1| enthält Locale zur Wertedarstellung
+*/
 
-LCValue_t LCValue_US = { NAME_US, NULL, ".", "-", "+", " " };
-LCValue_t LCValue_DE = { NAME_DE, ".", ",", "-", "+", " " };
-LCValue_t LCValue_TEX = { NAME_TEX, ".", ",", "$-$", "$+$", " " };
-LCValue_t LCValue_DOC = { NAME_DOC, ".", ",", "\\minus ", "\\plus ", " " };
-
-LCDate_t LCDate_US = { NAME_US,
-	{ "January", "February", "March", "April", "May", "June", "July",
-		"August", "September", "October", "November", "December", },
-	{ "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday",
-		"Friday", "Saturday" },
+LCValue_t LCValue[] = {
+	{ "C", NULL, ".", "-", "+", " " },
+	{ "de", ".", ",", "-", "+", " " },
+	{ "TeX", ".", ",", "$-$", "$+$", " " },
+	{ "doc", ".", ",", "\\minus ", "\\plus ", " " },
 };
 
-LCDate_t LCDate_DE = { NAME_DE,
-	{ "Jänner", "Februar", "März", "April", "Mai", "Juni", "Juli",
-		"August", "September", "Oktober", "November", "Dezember", },
-	{ "Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag",
-		"Freitag", "Samstag" },
+/*
+static vectors for month names and weekday names
+*/
+
+static char *M_en[12] = {
+	"January", "February", "March", "April", "May", "June", "July",
+	"August", "September", "October", "November", "December",
 };
 
-LCDate_t LCDate_ORA = { NAME_ORA,
-	{ "Jannuar", "Februar", "März", "April", "Mai", "Juni", "Juli",
-		"August", "September", "Oktober", "November", "Dezember", },
-	{ "Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag",
-		"Freitag", "Samstag" },
+static char *W_en[7] = {
+	"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday",
+	"Friday", "Saturday"
 };
 
-Locale_t Locale = { NULL, &LCValue_US, &LCValue_US, &LCDate_US };
+static char *M_de[12] = {
+	"Jannuar", "Februar", "März", "April", "Mai", "Juni", "Juli",
+	"August", "September", "Oktober", "November", "Dezember"
+};
 
+static char *M_de_AT[12] = {
+	"Jänner", "Februar", "März", "April", "Mai", "Juni", "Juli",
+	"August", "September", "Oktober", "November", "Dezember"
+};
+
+static char *W_de[7] =	{
+	"Sonntag", "Montag", "Dienstag", "Mittwoch",
+	"Donnerstag", "Freitag", "Samstag"
+};
+
+/*
+:*:the table |$1| contains locale for data representation
+:de:Der Vektor |$1| enthält Locale zur Datumsdarstellung
+*/
+
+LCDate_t LCDate[] = {
+	{ "C", M_en, W_en },
+	{ "de_AT", M_de_AT, W_de },
+	{ "de", M_de, W_de },
+};
+
+Locale_t Locale = { LCValue, LCValue, LCDate };
 
 /*	Lokale Stack
 */
@@ -57,6 +92,7 @@ struct LCStack_s {
 static ALLOCTAB(LCTAB, 8, sizeof(LCStack_t));
 
 static LCStack_t *LocaleStack = NULL;
+
 
 void PushLocale(void)
 {
@@ -79,70 +115,49 @@ void PopLocale(void)
 }
 
 
-/*	Lokale - Datenbank
+/*	Lokale suchen
 */
 
-static int lc_cmp(const Locale_t *a, const Locale_t *b)
+static int lc_comp (const char *name, const char *key)
 {
-	if	(a == b)		return 0;
-	if	(a->name == b->name)	return 0;
-	if	(a->name == NULL)	return -1;
-	if	(b->name == NULL)	return 1;
+	while (*name)
+	{
+		if	(*key != *name)	return 0;
 
-	return strcmp(a->name, b->name);
-}
+		name++;
+		key++;
+	}
 
-static VECBUF(LocaleTab, 8, sizeof(Locale_t));
-
-static Locale_t DefTab[] = {
-	{ NULL,	&LCValue_US, &LCValue_US, &LCDate_DE },
-	{ NAME_US, &LCValue_US, &LCValue_US, &LCDate_US },
-	{ NAME_DE, &LCValue_DE, &LCValue_DE, &LCDate_DE },
-	{ NAME_TEX, &LCValue_US, &LCValue_TEX, &LCDate_DE },
-	{ NAME_DOC, &LCValue_US, &LCValue_DOC, &LCDate_DE },
-	{ NAME_ORA, &LCValue_DE, &LCValue_DE, &LCDate_ORA },
-};
-
-
-void AddLocale(Locale_t *data, size_t dim)
-{
-	for (; dim-- > 0; data++)
-		vb_search(&LocaleTab, data, (comp_t) lc_cmp, VB_REPLACE);
-}
-
-
-int SetLocale(unsigned type, const char *name)
-{
-	Locale_t key, *x;
-
-	if	(LocaleTab.used == 0)
-		AddLocale(DefTab, sizeof(DefTab) / sizeof(DefTab[0]));
-
-	key.name = (char *) name;
-	x = vb_search(&LocaleTab, &key, (comp_t) lc_cmp, VB_SEARCH);
-
-	if	(x == NULL)	return 0;
-
-	if	(type & LOC_SCAN)
-		Locale.scan = x->scan;
-
-	if	(type & LOC_PRINT)
-		Locale.print = x->print;
-
-	if	(type & LOC_DATE)
-		Locale.date = x->date;
-
-	Locale.name = (type == LOC_ALL) ? x->name : NULL;
 	return 1;
 }
 
-char *GetLocale(unsigned type)
+static void *lc_search (void *tab, size_t dim, size_t elsize, const char *key)
 {
-	switch (type)
+	LCKey_t *ptr;
+	int i;
+
+	if	(key == NULL)	return tab;
+
+	for (i = 0; i < dim; i++)
 	{
-	case LOC_SCAN:	return Locale.scan ? Locale.scan->name : NULL;
-	case LOC_PRINT:	return Locale.print ? Locale.print->name : NULL;
-	case LOC_DATE:	return Locale.date ? Locale.date->name : NULL;
-	default:	return Locale.name;
+		ptr = (void *) ((char *) tab + i * elsize);
+
+		if	(ptr->name && lc_comp(ptr->name, key))
+			return ptr;
 	}
+
+	return tab;
+}
+
+void SetLocale (unsigned type, const char *name)
+{
+	if	(type & LOC_PRINT)
+		Locale.print = lc_search(tabparm(LCValue), name);
+
+	if	(type & LOC_SCAN)
+		Locale.scan = (type & LOC_PRINT) ? Locale.print :
+			lc_search(tabparm(LCValue), name);
+
+	if	(type & LOC_DATE)
+		Locale.date = lc_search(tabparm(LCDate), name);
 }

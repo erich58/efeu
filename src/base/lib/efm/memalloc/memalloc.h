@@ -1,14 +1,29 @@
-/*	Speicherplatzverwaltung
-	(c) 1996 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
-
-	Version 0.6
+/*
+Speicherplatzverwaltung
 
 $Header	<EFEU/$1>
+
+$Copyright (C) 1996 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	EFEU_MEMALLOC_H
-#define	EFEU_MEMALLOC_H	1
+#ifndef	_EFEU_memalloc_h
+#define	_EFEU_memalloc_h	1
 
 #include <EFEU/config.h>
 #include <EFEU/types.h>
@@ -64,14 +79,23 @@ void *admin_data (alloctab_t *tab, void *tg, const void *src);
 extern int alloctab_debug_flag;
 
 #define	ALLOCSIZE(size)		sizealign(size, sizeof(chain_t))
+
+/*
+Der Makro |$1| liefert die Initialisierungswerte für eine Zuweisungstabelle
+zur Verwaltung von Speicherelementen fixer Länge.
+Die Länge eines Segmentes wird durch <size> festgelegt.
+Durch <blk> wird die Zahl der Elemente eines Blockes festgelegt.
+Falls <blk> den Wert 0 hat, werden Standardvorgaben verwendet.
+*/
+
 #define	ALLOCDATA(blk,size)	{ blk, ALLOCSIZE(size), 0, 0, NULL, NULL, }
 
 /*
 Der Makro |$1| initialisiert eine Zuweisungstabelle
 zur Verwaltung von Speicherelementen fixer Länge unter dem Namen <name>.
-Die Länge eines Segmentes wird durch <elsize> festgelegt.
-Durch <blksize> wird die Zahl der Elemente eines Blockes festgelegt.
-Falls <blksize> den Wert 0 hat, werden Standardvorgaben verwendet.
+Die Länge eines Segmentes wird durch <size> festgelegt.
+Durch <blk> wird die Zahl der Elemente eines Blockes festgelegt.
+Falls <blk> den Wert 0 hat, werden Standardvorgaben verwendet.
 */
 
 #define	ALLOCTAB(name,blk,size)	alloctab_t name = ALLOCDATA(blk, size)

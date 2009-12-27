@@ -1,0 +1,120 @@
+\title	Welcome to the EFEU source release
+\author	Erich Frühstück
+
+\sec	Introduction
+
+EFEU was designed by Erich Frühstück. It is the environment for his
+programming work in projects of the synthesis research institute.
+
+EFEU consists of
+*	development tools,
+*	extensive C libraries and
+*	application commands.
+
+\sec	Development tools
+
+[mkmf]
+	creates a Makefile from Imakefile similar to xmkmf (X11 development).
+[dir2make]
+	creates a Makefile directly from source tree. There are only
+	a few configuration parameters neccessary. All other work
+	is done by make, with a correct list of dependencies.
+	If you expand a library, you just add the source files
+	to the defining directory tree.
+[efeugen]
+	runs make on a global building place, definend by environemt.
+	In EFEU the building of libraries and commands is
+	completly separated from source.
+[efeubuild]
+	creates a master Makefile for building and installing your
+	programms.
+
+\sec	C libraries
+
+[efm]
+	is the basic library for EFEU applications. Here comes a
+	brief overview:
+	*	Robust memory allocation tools.
+	*	Functions to concatenate and copy strings with memory
+		allocation.
+	*	Buffers for dynamik growing strings and fields.
+	*	Data structures with reference counters and
+		garbage collection.
+	*	File tools, that allows you to specify pipes wherever
+		a filename is expected and supports automatic implementation
+		of (de)compression filters (gzip) depending on filename
+		extensions.
+	*	Includes a high level interface to files, strings and
+		anything else where you can read from or write to.
+		Allows to control specific capabilities of the coverd
+		structure. You can easy add input and output filters.
+	*	Includes functions for command configuration.
+		The documentation of command arguments and options is
+		part of the declaration.
+[efx]
+	provides the esh interpreter (see applications) and
+	some extensions to the basic library.
+[iorl]
+	provides an interface to readline.
+[md]
+	consists of library functions to handle data cubes.
+	The `mdmat' data format supports data cubes of any types
+	and with no limits on dimensions.
+	Includes functions for counting data structures.
+[efmath]
+	consists of library functions to handle polynoms and time series.
+	Supports spline interpolation and OLS estimation.
+[efwin]
+	is a frontend to curses. The functionality is limited to the
+	nessesaries of applications. Currently only used by `eis' (see
+	applications).
+[PG]
+	is a frontend to PostgreSQL as plugin for esh or for direct
+	use in C programms.
+
+\sec	Application commands
+
+[esh]
+	is a command interpreter with a syntax similar to C/C++.
+	You can use it in many ways. The application range starts
+	by a desc calculator (readline interface) and ends by complex
+	scripts.
+	The interpreter shares data pointer directly with C-programms.
+	You can use it in C-Programms for evaluation configuration scripts
+	and you can easy add your own C-functions and data types to it.
+[mksource]
+	uses the esh interpreter to produce C source. You may miss
+	applications in the current release of efeu, but this tool
+	is heavily used on synthesis research institute.
+[efeudoc]
+	is a document generator with different output
+	formats (LaTeX, HTML, roff, ...). The esh interpreter is used
+	in macros, so you can directly integrate data evaluation or
+	create tables from data cubes directly in your document.
+[src2doc]
+	extracts comments from source file to be processed with
+	efeudoc. This tool allows you to integrate the documentation
+	in the source code.
+[eis]
+	is a information system for browsing builtin informations of
+	commands. Every information could be displayed, as long
+	as the programm supports a display function and registers it.
+	There is an curses-based and a cgi-based frontend to browse
+	through this informations.
+
+\sec	Installing EFEU
+
+Read the instructions in INSTALL or just try make.
+
+\sec	Notes
+
+*	EFEU requires teTeX and readline development.
+*	The current documentation is almost in german,
+	english versions are coming.
+*	Lots of more documentation is coming.
+*	The format of this file is efeudoc.
+*	Read the source, have fun !
+
+Please report any bugs in EFEU to the author:
+
+Erich Frühstück <ef@synthesis.co.at>

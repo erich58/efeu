@@ -1,55 +1,144 @@
-/*	Prozesskontrolle
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Prozessumgebung
 
-	Version 0.4
+$Copyright (C) 2001 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/procenv.h>
 #include <EFEU/mstring.h>
 #include <EFEU/ftools.h>
+#include <EFEU/CmdPar.h>
+#include <EFEU/parsub.h>
+#include <EFEU/ioctrl.h>
+#include <EFEU/LangType.h>
 
 /*	Systemabhängige Parameter:
 
-S_SHELLENV	Environmentvariable mit Befehlsinterpreter.
-S_SYSNAME	Systemname
-S_APPLPATH	Standardsuchpfad
 S_PGM_SHELL	Standardbefehlsinterpreter
 S_PGM_PAGER	Standardseitenfilter
 */
 
-#define S_APPLPATH	".:/efeu/lib/efeu/%L/%S:/efeu/lib/efeu/%S:~/lib/%S"
 #define S_PGM_SHELL	"/bin/sh"
 #define S_PGM_PAGER	"|less -r"
 
-char *ProgIdent = NULL;
+/*
+Die Variable |$1| enthält den Basisnamen des Kommandos.
+*/
+
 char *ProgName = NULL;
-char *ApplPath = S_APPLPATH;
+
+/*
+Die Variable |$1| enthält die Kommandoidentifikation.
+Sie unterscheidet sich im normalfall nicht von |ProgName|.
+*/
+
+char *ProgIdent = NULL;
+
+/*
+Die Variable |$1| enthält den Namen der Shell für Unterprozesse.
+*/
+
 char *Shell = S_PGM_SHELL;
+
+/*
+Die Variable |$1| enthält den Namen des Kommandos für eine
+Seitenorientierte ausgabe.
+*/
+
 char *Pager = S_PGM_PAGER;
 
-
-void procinit (const char *name)
+static int c_name (io_t *in, io_t *out, void *arg)
 {
+	return io_puts(ProgName, out);
+}
+
+static int c_id (io_t *in, io_t *out, void *arg)
+{
+	return io_puts(ProgIdent, out);
+}
+
+/*
+static int c_font(io_t *in, io_t *out, void *arg)
+{
+	int n;
+
+	n = io_ctrl(out, (int) (size_t) arg);
+	return (n == EOF ? 0 : n);
+}
+*/
+
+/*
+Die Funktion |$1| initialisiert die globalen Variablen
+|ProgName| und |ProgIdent| entsprechend dem Aufrufnamen
+des Kommandos. Weiters wird |SetApplPath| mit dem Verzeichnisnamen
+aufgerufen.
+*/
+
+void SetProgName (const char *name)
+{
+	static int need_setup = 1;
+	static int need_config = 1;
 	fname_t *pgname;
+
+	if	(need_setup)
+	{
+		SetLangType(NULL);
+		psubfunc('!', c_name, NULL);
+		psubfunc('%', c_id, NULL);
+		/*
+		psubfunc('R', c_font, (void *) IO_ROMAN_FONT);
+		psubfunc('B', c_font, (void *) IO_BOLD_FONT);
+		psubfunc('I', c_font, (void *) IO_ITALIC_FONT);
+		*/
+		need_setup = 0;
+	}
 
 	if	((pgname = strtofn(name)) != NULL)
 	{
+		CmdPar_t *par = CmdPar_ptr(NULL);
+
 		memfree(ProgName);
 		memfree(ProgIdent);
 		ProgName = mstrcpy(pgname->name);
 		ProgIdent = mstrcpy(ProgName);
+		SetApplPath(pgname->path);
 		memfree(pgname);
+		memfree(par->name);
+		par->name = mstrcpy(ProgName);
+
+		if	(need_config)
+		{
+			CmdPar_load(par, "efm");
+			need_config = 0;
+		}
 	}
+	else	SetApplPath(NULL);
+
+	SetInfoPath(NULL);
 }
 
-void (*_procexit_cleanup) (void) = NULL;
+/*
+$Notes
+Die Prozessumgebung wird überarbeitet und daher kann sich an den
+einzelnen Variablen einiges ändern.  Dies sollte keine Kompatiblitätsprobleme
+aufwerfen, da die Variablen nur Bibliotheksintern verwendung finden.
 
-void procexit (int status)
-{
-	if	(_procexit_cleanup)
-		_procexit_cleanup();
-
-	closeall();
-	exit(status);
-}
+$SeeAlso
+\mref{getenv(3)} im @PRM.
+*/

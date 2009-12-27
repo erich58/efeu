@@ -1,6 +1,23 @@
-/*	Initialisierung
-	(c) 1999 Erich Frühstück
-	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+/*
+Initialisierung
+
+$Copyright (C) 1999 Erich Frühstück
+This file is part of EFEU.
+
+EFEU is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+EFEU is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with EFEU; see the file COPYING.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/efutil.h>
@@ -17,6 +34,7 @@
 #include <Math/mdmath.h>
 #include <EFEU/stdtype.h>
 #include <EFEU/cmdconfig.h>
+#include "LaTeX.h"
 #include "efeudoc.h"
 
 Type_t Type_Doc = REF_TYPE("Doc", Doc_t *);
@@ -61,13 +79,13 @@ static int *doc_rmode (Doc_t **ptr)
 	return &Buf_int;
 }
 
-static Var_t var_doc[] = {
-	{ "var", &Type_vtab, NULL, 0, 0, LvalMember, doc_var },
-	{ "out", &Type_io, NULL, 0, 0, ConstMember, doc_out },
-	{ "stat", &Type_bool, NULL, 0, 0, ConstMember, doc_stat },
-	{ "vmode", &Type_bool, NULL, 0, 0, ConstMember, doc_vmode },
-	{ "hmode", &Type_bool, NULL, 0, 0, ConstMember, doc_hmode },
-	{ "rmode", &Type_bool, NULL, 0, 0, ConstMember, doc_rmode },
+static MemberDef_t var_doc[] = {
+	{ "var", &Type_vtab, LvalMember, doc_var },
+	{ "out", &Type_io, ConstMember, doc_out },
+	{ "stat", &Type_bool, ConstMember, doc_stat },
+	{ "vmode", &Type_bool, ConstMember, doc_vmode },
+	{ "hmode", &Type_bool, ConstMember, doc_hmode },
+	{ "rmode", &Type_bool, ConstMember, doc_rmode },
 };
 
 static void f_push (Func_t *func, void *rval, void **arg)
@@ -226,7 +244,7 @@ static void f_cmd (Func_t *func, void *rval, void **arg)
 	}
 }
 
-static void f_latex (Func_t *func, void *rval, void **arg)
+static void f_plaintex (Func_t *func, void *rval, void **arg)
 {
 	Doc_t *doc = Val_ptr(arg[0]);
 
@@ -316,6 +334,9 @@ static void f_newenv (Func_t *func, void *rval, void **arg)
 	case 'q':	Doc_newenv(doc, 4, DOC_ENV_QUOTE); break;
 	case 'i':	Doc_newenv(doc, 0, DOC_ENV_INTRO); break;
 	case 's':	Doc_newenv(doc, 0, DOC_ENV_SLOPPY); break;
+	case '$':
+		io_ctrl(doc->out, DOC_BEG, DOC_ENV_FORMULA);
+		break;
 	case 'm':
 		Doc_endall(doc, 0);
 		a1 = ListArg_str(list, 0);
@@ -331,6 +352,10 @@ static void f_newenv (Func_t *func, void *rval, void **arg)
 	case 'f':
 		Doc_endall(doc, 1);
 		Doc_newenv(doc, 0, DOC_ENV_FIG, ListArg_str(list, 0));
+		break;
+	case 'b':
+		Doc_endall(doc, 0);
+		Doc_newenv(doc, 0, DOC_ENV_BIB, ListArg_str(list, 0));
 		break;
 	default:	break;
 	}
@@ -350,7 +375,11 @@ static void f_end (Func_t *func, void *rval, void **arg)
 	case 'a':	Doc_endall(doc, 0); break;
 	case 'x':	Doc_endall(doc, 1); break;
 	case 'l':	Doc_endlist(doc); break;
-	default:	Doc_endenv(doc); break;
+	case '$':
+		io_ctrl(doc->out, DOC_END, DOC_ENV_FORMULA);
+		break;
+	default:
+		Doc_endenv(doc); break;
 	}
 }
 
@@ -422,6 +451,13 @@ static void f_sync (Func_t *func, void *rval, void **arg)
 		Doc_newline(Val_ptr(arg[0]));
 	}
 	else	io_ungetc(c, CmdEval_cin);
+}
+
+static void f_cfgname (Func_t *func, void *rval, void **arg)
+{
+	Val_str(rval) = fsearch(CFGPATH, NULL, Val_str(arg[0]), NULL);
+	io_printf(ioerr, "%s\n", Val_str(rval));
+	AddDepend(Val_str(rval));
 }
 
 /*	Parse - Funktionen
@@ -498,11 +534,11 @@ static FuncDef_t func_doc[] = {
 	{ 0, &Type_list, "Doc::stack ()", f_stack },
 	{ 0, &Type_void, "Doc::load (IO in, IO log = NULL)", f_load },
 	{ 0, &Type_list, "Doc::maclist (str name = NULL)", f_maclist },
-	{ 0, &Type_void, "Doc::showmac (str name, IO io = cout, int mode = NULL)", f_showmac },
+	{ 0, &Type_void, "Doc::showmac (str name, IO io = cout, int mode = 0)", f_showmac },
 
 	{ 0, &Type_void, "Doc::mode (char type)", f_mode },
 	{ 0, &Type_void, "Doc::cmd (char type, ...)", f_cmd },
-	{ 0, &Type_bool, "Doc::latex (str cmd = NULL)", f_latex },
+	{ 0, &Type_bool, "Doc::plaintex (str cmd = NULL)", f_plaintex },
 	{ 0, &Type_void, "Doc::plain (str arg = NULL)", f_plain },
 	{ 0, &Type_void, "Doc::comment (str comment)", f_comment },
 	{ 0, &Type_void, "Doc::label (int type, str name)", f_label },
@@ -515,7 +551,7 @@ static FuncDef_t func_doc[] = {
 	{ 0, &Type_void, "Doc::include (str opt, str name)", f_include },
 	{ 0, &Type_void, "Doc::input (str opt, IO in)", f_input },
 	{ 0, &Type_void, "Doc::config (str name)", f_config },
-	{ 0, &Type_void, "Doc::tab (str height, str width)", f_tab },
+	{ 0, &Type_void, "Doc::tab (str opt, str arg)", f_tab },
 	{ 0, &Type_void, "Doc::section (char type, str toc, str head)",
 		DocFunc_section },
 	{ 0, &Type_void, "Doc::eval (str expr)", f_eval },
@@ -528,6 +564,7 @@ static FuncDef_t func_doc[] = {
 	{ 0, &Type_str, "Doc::LongArg (char beg = 0, char end = '\n', bool flag = false)",
 		f_longarg },
 	{ 0, &Type_void, "Doc::sync ()", f_sync },
+	{ 0, &Type_str, "cfgname (str name)", f_cfgname },
 
 	{ 0, &Type_char, "SkipSpace (IO io, bool nl = false)", SkipSpace },
 	{ 0, &Type_char, "SkipWhite (IO io)", SkipWhite },
@@ -551,6 +588,7 @@ void SetupDoc (void)
 
 	if	(setup_done)	return;
 
+	SetupStd();
 	SetupUtil();
 	SetupPreproc();
 	SetupDataBase();
@@ -564,7 +602,7 @@ void SetupDoc (void)
 	SetupSC();
 
 	AddType(&Type_Doc);
-	AddVar(Type_Doc.vtab, var_doc, tabsize(var_doc));
+	AddMember(Type_Doc.vtab, var_doc, tabsize(var_doc));
 	AddFuncDef(func_doc, tabsize(func_doc));
 	GlobalDocTab = DocTab("global");
 }

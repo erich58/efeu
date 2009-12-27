@@ -1,8 +1,23 @@
-/*	Programmsteuerung
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Programmsteuerung
 
-	Version 0.4
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/ftools.h>
@@ -19,17 +34,22 @@
 
 static void f_exit (Func_t *func, void *rval, void **arg)
 {
-	libexit(INT(0));
+	exit(INT(0));
 }
 
 static void f_system (Func_t *func, void *rval, void **arg) \
 {
-	callproc(STR(0));
+	Val_int(rval) = callproc(STR(0));
 }
 
 static void f_memstat (Func_t *func, void *rval, void **arg)
 {
 	memstat(STR(0));
+}
+
+static void f_allocstat (Func_t *func, void *rval, void **arg)
+{
+	Obj_stat(STR(0));
 }
 
 static void f_memcheck (Func_t *func, void *rval, void **arg)
@@ -49,7 +69,7 @@ static void f_getenv (Func_t *func, void *rval, void **arg)
 static void f_pathname (Func_t *func, void *rval, void **arg)
 {
 	fname_t *fn = strtofn(STR(0));
-	RVSTR = fn ? mstrcpy(fn->path) : NULL;
+	RVSTR = fn ? mstrcpy(fn->path ? fn->path : ".") : NULL;
 	memfree(fn);
 }
 
@@ -103,13 +123,19 @@ static void f_time(Func_t *func, void *rval, void **arg)
 	Val_int(rval) = time(NULL);
 }
 
+static void f_expand(Func_t *func, void *rval, void **arg)
+{
+	Val_str(rval) = ExpandPath(Val_str(arg[0]));
+}
+
 
 /*	Funktionstabelle
 */
 
 static FuncDef_t fdef_pctrl[] = {
 	{ 0, &Type_void, "exit (int rval = 0)", f_exit },
-	{ 0, &Type_void, "system (str cmd = NULL)", f_system },
+	{ 0, &Type_int, "system (str cmd = NULL)", f_system },
+	{ 0, &Type_void, "allocstat (str mark = NULL)", f_allocstat },
 	{ 0, &Type_void, "memstat (str mark = NULL)", f_memstat },
 	{ 0, &Type_void, "memcheck ()", f_memcheck },
 	{ 0, &Type_str, "getenv (str name, str def = NULL)", f_getenv },
@@ -122,6 +148,7 @@ static FuncDef_t fdef_pctrl[] = {
 		f_tempnam },
 	{ 0, &Type_int, "getpid ()", f_getpid },
 	{ 0, &Type_int, "time ()", f_time },
+	{ 0, &Type_str,  "ExpandPath (str = NULL)", f_expand },
 };
 
 

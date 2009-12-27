@@ -1,46 +1,44 @@
-/*	Übersichten
-	(c) 1999 Erich Frühstück
-	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+/*
+Übersichten
+
+$Copyright (C) 1999 Erich Frühstück
+This file is part of EFEU.
+
+EFEU is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+EFEU is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with EFEU; see the file COPYING.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 Übersicht
-	$1 |[|<margin>|] [|<Kurzform>|]| <Haupttitel>
-	<Untertitel>
+	$1 |[|<pos>|]|
 
-Der Befehl $1 beginnt eine neue Übersicht.
+Der Befehl $1 beginnt eine gleitende Übersicht.
 
-\def\fig	{{
-	newenv('f', xexpand(ParseOpt(cin, true)));
-	str opt = ParseOpt(cin, true);
-	str head = ParseLine(cin);
-	str shead = ParsePar(cin);
+\def\fig	newenv('f', xexpand(ParseOpt(cin, true)));
 
-	if	(head)	section('F', opt, head);
-	if	(shead)	section('f', NULL, shead);
-}}
+Über- und Unterschriften für Übersichten
+	$1 |[|<Kurzform>|]| <Überschrift>
+
+Der Befehl $1 setzt eine Über- bzw. Unterschrift in einer gleitenden
+Übersicht.
+
+\def\caption	section('F', ParseOpt(cin, true), ParseLine(cin, true));
 
 Tabelle
-	$1 |[|<Höhe>|]| <Breitenliste>
+	$1 |[|<pos>|]| <fmt>
 
-Der Befehl $1 beginnt eine Tabelle.
+Der Befehl $1 beginnt eine Tabelle mit vertiklarer Ausruchtung <pos>
+und Spaltenformartierung <fmt>.
 
-\def\tab	{{
-        str height = xexpand(ParseOpt(cin, true));
-	DataBase wd = DataBase(str);
-
-	for (x in split(xexpand(ParseLine(cin)), "%s,"))
-	{
-		str z[] = split(x, "*");
-
-		if	(dim(z) > 1)
-		{
-			int n = z[0];
-
-			while (n-- > 0)
-				wd += z[1];
-		}
-		else	wd += x;
-	}
-
-	tab(height, cat(",", (List_t) wd));
-}}
+\def\tab	tab(ParseOpt(cin, true), ParseLine(cin));

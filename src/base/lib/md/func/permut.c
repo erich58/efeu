@@ -1,8 +1,5 @@
 /*	Achsen permutierten
 	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
-
-	Version 2.0
 */
 
 #include <EFEU/mdmat.h>
@@ -64,7 +61,7 @@ void md_permut(mdmat_t *md, const char *str)
 		del_test(test);
 	}
 
-	FREE(list);
+	memfree(list);
 
 	qsort(tab, mdim, sizeof(XDATA), (comp_t) cmp_data);
 
@@ -77,5 +74,5 @@ void md_permut(mdmat_t *md, const char *str)
 	}
 
 	*ptr = NULL;
-	FREE(tab);
+	memfree(tab);
 }

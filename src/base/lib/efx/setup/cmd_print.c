@@ -1,8 +1,23 @@
-/*	Ausgabefunktionen
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Ausgabefunktionen
 
-	Version 0.4
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/object.h>
@@ -23,17 +38,43 @@ static char *v_fmt_str = "%#*s";
 static char *v_fmt_float = "%*.*f";
 static char *v_fmt_int = "%*i";
 static char *v_fmt_long = "%*lil";
+static char *v_fmt_uint = "%*uu";
+static char *v_fmt_size = "%*lulu";
 
-static Var_t var_print[] = {
-	{ "field_width",	&Type_int,	&PrintFieldWidth },
-	{ "float_prec",		&Type_int,	&PrintFloatPrec },
-	{ "fmt_str",		&Type_str,	&v_fmt_str },
-	{ "fmt_float",		&Type_str,	&v_fmt_float },
-	{ "fmt_int",		&Type_str,	&v_fmt_int },
-	{ "fmt_long",		&Type_str,	&v_fmt_long },
-	{ "PrintListBegin",	&Type_str,	&PrintListBegin },
-	{ "PrintListDelim",	&Type_str,	&PrintListDelim },
-	{ "PrintListEnd",	&Type_str,	&PrintListEnd },
+static VarDef_t var_print[] = {
+	{ "field_width", &Type_int, &PrintFieldWidth,
+		":*:field with for formatting values\n"
+		":de:Feldbreite für Werte\n" },
+	{ "float_prec", &Type_int, &PrintFloatPrec,
+		":*:floating point precission\n"
+		":de:Genauigkeit von Gleitkommawerten\n" },
+	{ "fmt_str", &Type_str, &v_fmt_str,
+		":*:format key for strings\n"
+		":de:Formatdefinition für Zeichenketten\n" },
+	{ "fmt_float", &Type_str, &v_fmt_float,
+		":*:format key for floating point numbers\n"
+		":de:Formatdefinition für Gleitkommazahlen\n" },
+	{ "fmt_int", &Type_str, &v_fmt_int,
+		":*:format key for integer\n"
+		":de:Formatdefinition für Ganzzahlwerte\n" },
+	{ "fmt_long", &Type_str, &v_fmt_long,
+		":*:format key for long integer\n"
+		":de:Formatdefinition für lange Ganzzahlwerte\n" },
+	{ "fmt_unsigned", &Type_str, &v_fmt_uint,
+		":*:format key for unsigned integer\n"
+		":de:Formatdefinition für vorzeichenfreie Ganzzahlwerte\n" },
+	{ "fmt_size", &Type_str, &v_fmt_size,
+		":*:format key for size integer\n"
+		":de:Formatdefinition für Größenzahlen\n" },
+	{ "PrintListBegin", &Type_str, &PrintListBegin,
+		":*:start string used in displaying lists\n"
+		":de:Startzeichen für Listen\n" },
+	{ "PrintListDelim", &Type_str, &PrintListDelim,
+		":*:delimiter used in displaying lists\n"
+		":de:Trennzeichen für Listen\n" },
+	{ "PrintListEnd", &Type_str, &PrintListEnd,
+		":*:end string used in displaying lists\n"
+		":de:Abschlußzeichen für Listen\n" },
 };
 
 
@@ -73,6 +114,18 @@ static void fprint_long(Func_t *func, void *rval, void **arg)
 {
 	RV = io_printf(Val_io(arg[0]), v_fmt_long,
 		PrintFieldWidth, Val_long(arg[1]));
+}
+
+static void fprint_uint(Func_t *func, void *rval, void **arg)
+{
+	RV = io_printf(Val_io(arg[0]), v_fmt_uint,
+		PrintFieldWidth, Val_uint(arg[1]));
+}
+
+static void fprint_size(Func_t *func, void *rval, void **arg)
+{
+	RV = io_printf(Val_io(arg[0]), v_fmt_size,
+		PrintFieldWidth, (ulong_t) Val_size(arg[1]));
 }
 
 static void fprint_double(Func_t *func, void *rval, void **arg)
@@ -369,7 +422,9 @@ static void put_obj(Func_t *func, void *rval, void **arg)
 static FuncDef_t fdef_print[] = {
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, bool)", fprint_bool },
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, int)", fprint_int },
-	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, long)",	fprint_long },
+	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, long)", fprint_long },
+	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, unsigned)", fprint_uint },
+	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, size_t)", fprint_size },
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, double)", fprint_double },
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, char)", fprint_char },
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, str)", fprint_str },
@@ -407,6 +462,6 @@ static FuncDef_t fdef_print[] = {
 
 void CmdSetup_print(void)
 {
-	AddVar(NULL, var_print, tabsize(var_print));
+	AddVarDef(NULL, var_print, tabsize(var_print));
 	AddFuncDef(fdef_print, tabsize(fdef_print));
 }

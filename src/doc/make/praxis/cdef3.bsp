@@ -1,0 +1,6 @@
+DB=	/irgendwo/MeineDatenbank
+RNG1=	-r 1999
+RNG2=	-r 1995..1999
+
+Count(x1.dat,$(DB),-e bst $(RNG1),"grp=ges,pn.geschl")
+Count(x2.dat,$(DB),-e bst $(RNG2),"grp=ges,pn.alter")

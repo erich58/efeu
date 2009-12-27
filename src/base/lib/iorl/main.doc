@@ -1,0 +1,29 @@
+\config	efeu
+\date	Mai 2001
+\dhead	Handbuch für Programmierer
+\dnote	Rohfassung
+\title	Die Readline-Schnittstelle
+Handbuch für Programmierer
+
+\intro
+Die Programmbiliothek |iorl| definiert eine Schnittstelle
+zur Readline-Bibliothek über eine IO-Struktur.
+
+Die Schnittstelle wird derzeit um die Konfigurierbarkeit
+des Vervollständigunmgsalgorithmus erweitert.
+
+Das Handbuch ist in Arbeit. Der allgemeine Teil muß noch
+geschrieben werden.
+
+	Erich Frühstück\br
+	Wördern, \thedate
+\toc
+\addsrclist
+\getsrc		*.doc
+\appendix
+\mchap[3]	Funktionen
+\src2doc	*.c
+\mchap[7]	Makropakete und Konventionen
+\src2doc	*.h *.7
+\printindex
+@Impressum(2001)

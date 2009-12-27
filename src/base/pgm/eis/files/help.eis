@@ -1,26 +1,25 @@
-@:Kurzanleitung
-@h1:Steuerbefehle
-q		Quit
-^L		Bildschirm erneuern
-@h2:Knoten wechseln
-u, UP		Cursor zum vorherigen Begriff
-d, DOWN		Cursor zum nächsten Begriff
-f, RIGHT, ENTER	Wechsel zum Unterbegriff
-b, LEFT		Zurück zum Hauptbegriff
-t		Wechsel zur Hauptbibliothek
-:		Knoten angeben
-@h3:Bewegung im Knoten
-h, HOME		Anfang der Seite
-e, END		Ende der Seite
-n, NPAGE	Vorwärtsblättern
-p, PPAGE	Zurückblättern
-j, Space	Eine Zeile Vorwärts
-k, Backspace	Eine Zeile zurück
-/		Suche nach Begriff
-@h4:Neue Knoten laden
-<		Datei laden
-|		Kommandoinformationen laden
+@:short instruction
+@h1:control keys
+q		quit
+^L		refresh screen
+@h2:change node
+u, UP		to previous node
+d, DOWN		to next node
+f, RIGHT, ENTER	to subnode
+b, LEFT		back to main
+t		change to top node
+:		enter node
+@h3:moving in node
+h, HOME		to begin of node
+e, END		to end of node
+n, NPAGE	forward one page
+p, PPAGE	bacckward one page
+j, Space	forward one line
+k, Backspace	backward one line
+/		search
+@h4:load node
+<		load nodes from file
+|		load nodes from command
 
-Neue Knoten werden in der Hauptbibliothek eingerichtet.
-Diese scheinen dort jedoch nur auf, wenn die Hauptbibliothek
-mit 't' angesprungen wird.
+New nodes are created as subnode of the top node, they are only
+visible, whenn you change to top node with key 't'.

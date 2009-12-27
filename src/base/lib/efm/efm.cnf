@@ -1,0 +1,111 @@
+# :*:common options of EFEU-commands
+# :de:Basisoptionen für EFEU-Kommandos
+
+# Copyright (C) 2001 Erich Frühstück
+# This file is part of EFEU.
+# 
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Library General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+# 
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU Library General Public License for more details.
+# 
+# You should have received a copy of the GNU Library General Public
+# License along with this library; see the file COPYING.Library.
+# If not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+# :*:predefined resources
+# :de:Vordefinierte Resourcen
+
+Ident: lset ":*:command:de:Kommando:_: $!"
+	:*:short description of command
+	:de:Kurzbeschreibung des Kommandos
+Version = NULL
+	:*:command version
+	:de:Versions/Revisionsnummer des Kommandos
+Copyright = NULL
+	:*:copyright information
+	:de:Copyright-Informationen
+Debug = note
+	:*:debug level for messages
+	:de:Debug-Level für Meldungsausgabe
+
+# :*:dummy entries for direct evaluated environments
+# :de:Dummy-Einträge für direkt abgefragte Umgebungsvariablen
+
+@APPLPATH|
+	:*:path for configuration files.
+	:de:Suchpfad für Konfigurationsdateien.
+@LANG|
+	:*:locale information
+	:de:Sprachanpassung
+
+# :*:document production
+# :de:Handbuchgenerierung
+
+.help.term = "|efeudoc -T term - | less -r"
+.help.man = "|efeudoc -T man -"
+.help.lp = "|efeudoc -T LaTeX - | tex2ps - | lpr"
+.help.raw = NULL
+
+-help::type[term]|:manpage {.help.{}}; :exit 0
+	:*:
+	print usage of command. The optional parameter <type>
+	determines the formatting and output of the description.
+	[term]	display on terminal (default)
+	[raw]	raw data for |efeudoc|
+	[lp]	send to printer
+	:de:
+	gibt eine Beschreibung des Kommandos aus.
+	Der zusätzliche Parameter <type> bestimmt die Formatierung und
+	die Ausgabe der Beschreibung.
+	[term]	Terminalausgabe (default)
+	[raw]	Rohformat für |efeudoc|
+	[lp]	Ausgabe zum Drucker
+
+# :*:eis interface
+# :de:eis - Schnittstelle
+
+-info::entry|:info; :exit 0
+	:*:show command information
+	:de:listet verfügbare Informationseinträge des Kommandos auf.
+
+-dump::entry|:dump; :exit 0
+	:*:dump command information to standard output.
+	:de:schreibt sämtliche Informationseinträge des Kommandos zur
+	Standardausgabe.
+#	Das optionale Argument <entry> erlaubt eine
+#	Teilselektion der Einträge.
+
+# :*:version information
+# :de:Versionsausgabe
+
+.version.fmt = "\\hang @! - @{Ident}\\br\n@{Version}\\br\n@{Copyright}"
+
+-version|:usage {.version.fmt}; :exit 0
+	:*:shows version information
+	:de:gibt die Versionsnummer des Kommandos aus.
+
+# :*:debug-level
+# :de:Debug-Modus
+
+-debug::mode[debug]|Debug
+	:*:sets debug level for command
+	:de:Setzt den Debug-Level für das Kommando.
+#	Folgende Angaben sind möglich:
+#	[none]	Keine Meldungen ausgeben;
+#	[err]	Fehlermeldungen ausgeben;
+#	[note]	Anmerkungen ausgeben;
+#	[stat]	Verarbeitungsstatistiken ausgeben;
+#	[trace]	Ablaufinformationen ausgeben;
+#	[debug]	Debugginginformationen ausgeben (default);
+
+-verbose|Debug = stat
+	:*:sets debug level to |stat|.
+	:de:Setzt den Debug-Level auf |stat|.
+

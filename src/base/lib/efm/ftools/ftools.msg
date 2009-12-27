@@ -1,25 +1,40 @@
-/*	Fehlermeldungen der Filehilfsprogramme
-	(c) 1997 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+error messages for file tools
 
-	Version 0.4
+$Copyright (C) 1997 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-1	$!: Datei "$1": Unbekannter Zugriff "$2".\n
-2	$!: $0("$1", "$2"): Ausführung fehlgeschlagen.\n
-3	$!: $0("$1", "$2"): Datei kann nicht geöffnet werden.\n
-5	$!: Temporäre Datei kann nicht generiert werden.\n
-6	$!: Datei $1 nicht gefunden.\n
+1	$!: file "$1": undefined access mode "$2".\n
+2	$!: $0("$1", "$2"): execution failed.\n
+3	$!: $0("$1", "$2"): could not open file.\n
+5	$!: could not create temporary file.\n
+6	$!: file $1 not found.\n
 
-11	$!: Schließen einer nicht mit fileopen() göffneten Datei.\n
+11	$!: closing a file not registered by filenotice().\n
 
-21	$!: File $0: Unerwartetes Fileende beim Lesen.\n
-22	$!: File $0: Daten konnten nicht ausgegeben werden.\n
+21	$!: file $0: unexpected EOF.\n
+22	$!: file $0: could not write data.\n
 
-31	$!: $0: Temporäre Datei $1 kann nicht generiert werden.\n
-32	$!: $0: Datei $1 kann nicht abgeschnitten werden.\n
-33	$!: $0: Ausgabefehler in Datei $1.\n
-34	$!: $0: Eingabefehler in Datei $1.\n
-35	$!: $0: Filepositionierung in Datei $1 fehlgeschlagen.\n
+31	$!: $0: could not create tempoaray file $1.\n
+32	$!: $0: could not truncate file $1.\n
+33	$!: $0: output error in file $1.\n
+34	$!: $0: input error in file $1.\n
+35	$!: $0: seeking in file $1 failed.\n
 
-41	$!: Datei $1.$2 nicht gefunden.\n
+41	$!: file $1.$2 not found.\n

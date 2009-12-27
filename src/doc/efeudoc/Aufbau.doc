@@ -1,0 +1,183 @@
+\title	Dokumentaufbau und Gliederung
+
+\sec	Vorspann
+
+Im Vorspann des Dokuments wird der Bearbeitungsstil und die Titelseite
+festgelegt. Bei Handbucheinträgen kann er vollständig entfallen.
+Bei kleinen Dokumenten sollte zumindest der Titel gesetzt werden.
+Fehlende Parameter der Titelseite werden mit Dateiattributen und dem
+Datum der Formatierung vervollständigt. Die Reihenfolge der
+Vorspannbefehle ist nicht relevant.
+
+\margin	Dokumentart
+Die Dokumentart wird mit dem Befehl \index{|\style|} festgelegt.
+Folgende Angaben sind möglich:
+[|article|]
+	liefert ein einfaches Dokument ohne Titelblatt und ohne
+	Kapiteleinteilung. Das ist der Standard bei fehlender
+	Dokumentart.
+[|report|]
+	liefert ein einseitiges Dokument ohne Innentitel und ohne
+	Bereichsblätter.
+[|book|]
+	liefert ein zweiseitiges Dokument mit Innentitel und Bereichsblättern.
+
+Die Vorgaben für Titel- und Trennblätter gelten nur bei fehlenden
+Dokumentoptionen.
+
+\margin	Dokumentoptionen
+Der Befehl |\synflg| dient zur Übergabe von Dokumentoptionen an
+den SynTeX-Treiber. Eine Interpretation dieser Parameter von anderen
+Treibern ist grundsätzlich möglich, wird aber derzeit nicht
+durchgeführt.
+
+Die Dokumentoptionen beziehen sich auf das |syntex|-Makropaket.
+Folgende Optionen sind derzeit definiert:
+[|twotitlepage|]
+	Titelblatt und Innentitel werden generiert;
+[|onetitlepage|]
+	nur das Titelblatt wird generiert;
+[|notitlepage|]
+	es wird kein Titelblatt generiert;
+[|globaltabnum|]
+	Tabellen werden global durchnummeriert;
+[|localtabnum|]
+	Tabellen werden kapitelweise durchnummeriert;
+[|toctabentry|]
+	Tabellen scheinen im Inhaltsverzeichnis auf;
+[|sectabentry|]
+	Tabellen scheinen im Bereichsblatt auf;
+[|notabentry|]
+	Tabellen werden in keinem Verzeichnis eingetragen;
+[|chapterpage|]
+	Es werden Kapitel-, aber keine Bereichsblätter generiert;
+[|sectionpage|]
+	Es werden Kapitel- und Bereichsblätter generiert;
+[|nochapterpage|]
+	Es werden weder Kapitel-, noch Bereichsblätter generiert.
+
+Die Dokumentflags können auf mehrere |\synflg|-Befehle aufgeteilt
+werden. Die einzelnen Flags sind mit Komma zu trennen.
+Bei sich gegenseitig ausschließenden Optionen gilt der letzte Wert.
+
+\margin	Zusatzpakete
+Der Befehl |\synpkg| erlaubt das Laden zusätzlicher Makropakete für
+den SynTeX-Treiber.  Vergleiche dazu auch <"Einführung in SynTeX">
+von Erich Frühstück. Dieser Parameter wird von anderen Treibern
+nicht berücksichtigt.
+
+Zusatzpakete bieten die Möglichkeit der Umdefinition
+einzelner Befehle oder Parameter um eine Änderung des Layouts zu erwirken.
+Insbesonders kann damit Einfluß auf die Gestaltung der Titelseite
+genommen werden.
+
+Folgende Makropakete stehen derzeit für das Synthesis-Layout zur
+Verfügung:
+[|efeulogo|]
+	setzt das Titelblatt mit dem EFEU-Logo;
+[|synraster|]
+	generiert auf jeder Seite ein Zeilen- und Spaltenraster
+	zur Layoutkontrolle.
+
+\margin	Titelblatt
+Das Titelblatt wird automatisch generiert.
+Die einzelnen Titelblattteile werden mit Befehlen im Vorspann
+definiert.
+---- eval
+for (x in "\\title", "\\date", "\\dhead", "\\dnote", "\\author", "\\addr")
+{
+//	fprintf(cout, "[\index{|%s|}]\n", x);
+	cout << "*";
+	showmac(x, linemark(cout, "\t"), 0);
+}
+----
+
+\margin	Dokumentbeginn
+Ein Dokument beginnt, sobald das erste Zeichen des laufenden Textes
+auszugeben ist.
+Der |\titel|-Befehl wird zu einem |\chapter|-Befehl, der Untertitel
+wird ignoriert.
+
+Teildokumente, die ein Kapitel darstellen, sollten immer |\title|
+anstelle von |\chapter| verwenden, damit sie auch als alleinstehendes
+Dokument verarbeitet werden können.
+
+\margin Vorwort und Verzeichnisse
+Das Vorwort beginnt immer auf einer rechten Seite.
+Es wird mit dem Befehl |\intro| eingeleitet.
+Wie jede andere Umgebung wird das Vorwort automatisch mit
+dem nächsten Glliederungsbefehl beendet, insbesonders auch
+durch den |\toc|-Befehl, mit dem das Inhaltsverzeichnis generiert
+wird.
+
+\sec	Fortlaufende Untergliederung
+
+Für die fortlaufende \index{Untergliederung} stehen die folgenden
+Befehle zur Verfügung:
+
+---- eval
+for (x in "\\part", "\\chap", "\\sec", "\\ssec", "\\para")
+	showmac(x, cout, 1);
+----
+
+\sec	Anhang
+
+Ein Bereich im Anhang wird mit dem Befehl \index{|\appendix|}
+begonnen. Beim ersten Auftreten des Befehls beginnt der Anhang,
+jeder weitere Befehl schließt die aktuelle Seite ab und sorgt
+dafür, dass der Folgetext auf einer rechten Seite beginnt.
+
+Der Befehl \index{|\appendix|} kompiniert die Einleitung
+eines Anhangkapitels mit dem Gliederungsbefehl |\paragraph|.
+Die Überschrift (und ihre Kurzfom) kann direkt beim |\appendix|-Befehl
+angegeben werden.
+
+Die aktuelle Seite wird nur begonnen, wenn beim |\appendix|-Befehl
+auch eine Überschrift angegeben wurde (Kurzform reicht nicht).
+Mehrere |\appendix|-Befehle können also hintereinander stehen,
+ohne daß zusätzliche Leerseiten generiert werden.
+
+\margin{Handbuchkapitel}
+\index{Handbuchkapitel} werden mit dem Befehl \index{|\mchap|} gesetzt.
+Er hat die Syntax:
+	|\mchap [|<sec>|]| <name>
+
+Dabei gibt <name> den Kapitelnamen und <sec> die Kapitelnummer an.
+Die einzelnen Kapiteln sind genormt.
+
+Die Handbuchkapitel werden mit den folgenden Befehlen
+gegliedert:
+
+---- eval
+for (x in "\\mpage", "\\head", "\\shead")
+	showmac(x, cout, 1);
+----
+
+\margin	Liste der Übersichten
+Der Befehl \index{|\lof|} generiert eine \index{Liste der
+Übersichten}.
+Er ruft indirekt |\appendix| auf.
+
+\margin	Stichwortverzeichnis
+Der Befehl \index{|\printindex|} generiert ein \index{Stichwortverzeichnis}.
+Er ruft indirekt |\appendix| auf.
+Die einzelnen Stichworteinträge werden mit dem |\index|-Befehl generiert.
+Dieser wird auf Seite \pref{index} näher beschrieben.
+
+\margin	Literaturverzeichnis
+Auf die Möglichkeiten von \LaTeX; zur Erzeugung des Literaturverzeichnisses,
+insbesonders auf \BibTeX; wird nicht zurückgegriffen.
+Die Zitierbefehle werden nicht genutzt.
+Das \index{Literaturverzeichnis} wird einfach mit
+|\appendix Literatur| eingeleitet.
+
+Beispiel für einen Literatureintrag:
+---- verbatim
+Frühstück, Erich
+*	Handbuch zu SynTeX
+Synthesis, Wien, 1999
+----
+
+\margin Impressum
+Das \index{Impressum} beginnt immer auf einer rechten Seite.
+Es wird mit |\appendix Impressum| eingeleitet.

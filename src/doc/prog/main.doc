@@ -1,0 +1,18 @@
+\config	efeu
+\date	Mai 2001
+\dhead	Handbuch
+\dnote	Rohfassung
+\title	EFEU Programmierung
+Programmentwicklung mit EFEU
+
+\include Vorwort.doc
+\toc
+\include einl/main.doc
+\include gkurs/main.doc
+\include pconfig/main.doc
+\appendix
+//\mchap[1]	Kommandos
+//\pipe	bkprog --help=raw
+\include Literatur.doc
+\printindex
+@Impressum(2001)

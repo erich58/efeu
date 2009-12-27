@@ -1,8 +1,23 @@
-/*	Dokumentation aus Sourcefile generieren
-	(c) 2000 Erich Frühstück
-	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+/*
+Dokumentation aus Sourcefile generieren
 
-	Version 1.0
+$Copyright (C) 2000 Erich Frühstück
+This file is part of EFEU.
+
+EFEU is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+EFEU is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with EFEU; see the file COPYING.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include "src2doc.h"
@@ -40,14 +55,22 @@ static void pp_define (SrcData_t *data, const char *name)
 
 	p = parse_name(data->ein, skip_blank(data->ein));
 
-	if	(io_peek(data->ein) == '(')
+	if	(sb_getpos(data->buf) && *p != '_')
 	{
-		io_t *aus = io_strbuf(data->synopsis);
 		reg_cpy(1, p);
+		sb_puts("\\index[", data->synopsis);
 		sb_puts(p, data->synopsis);
-		sb_putc(io_getc(data->ein), data->synopsis);
-		copy_block(data->ein, aus, ')');
-		io_close(aus);
+		sb_puts("]\n", data->synopsis);
+		sb_puts(p, data->synopsis);
+
+		if	(io_peek(data->ein) == '(')
+		{
+			io_t *aus = io_strbuf(data->synopsis);
+			sb_putc(io_getc(data->ein), data->synopsis);
+			copy_block(data->ein, aus, ')');
+			io_close(aus);
+		}
+
 		sb_puts("\n\n", data->synopsis);
 		SrcData_copy(data, data->tab[BUF_DESC]);
 	}
@@ -69,7 +92,7 @@ void s2d_hdr (const char *name, io_t *ein, io_t *aus)
 
 	SrcData_init(&data, ein, aus);
 	data.var[VAR_NAME] = bname(name);
-	data.var[VAR_HEAD] = msprintf("%#s", name);
+	data.var[VAR_HEAD] = msprintf(IncFmt ? IncFmt : "%#s", name);
 	data.ppdef = hdr_ppdef;
 	data.ppdim = tabsize(hdr_ppdef);
 	data.mask = DECL_TYPE|DECL_STRUCT;

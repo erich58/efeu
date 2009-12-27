@@ -1,6 +1,23 @@
-/*	Zusatzregeln für dir2make
-	(c) 1999 Erich Frühstück
-	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+/*
+Zusatzregeln für dir2make
+
+$Copyright (C) 1999 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #ifndef	_d2m_rules_pph
@@ -8,39 +25,83 @@
 
 #include <rules.pph>
 
+#undef	StdTarget
 #define	StdTarget(name)	AllTarget(name)@;NamedTarget(force,name)
 
-/*	Installationsbibliothek einrichten
+#undef	ProvideDir
+
+/*
+Der Makro |$1| richtet die Installationsbibliothek <dir> ein.
 */
+
+#define	ProvideDir(dir)	\
+@;files:: dir @;\
+@;dir:; -mkdir -p $@ @;\
+@;
 
 #undef	Destination
 
+/*
+Der Makro |$1| richtet die Bibliothek <dir> ein und initialisiert
+den Makronamen <name> mit dem Bibliothekspfad.
+*/
+
 #define	Destination(name,dir) \
 @;name = dir @;\
-@;files:: dir @;\
-@;dir:; mkdir -p $@ @;\
+ProvideDir(dir)
+
+#undef	Directory
+
+/*
+Der Makro |$1| generiert die Bibliothek <dir>. Bei |make clean|
+wird sie gelöscht.
+*/
+
+#define	Directory(dir) \
+ProvideDir(dir) \
+@{@;clean:: @;@+-rmdir dir @;@} \
 @;
 
-/*	File Installieren
+#undef	SymLink
+
+/*
+Der Makro |$1| setzt einen symbolischen Link von <src> auf
+<target>.
 */
+
+#define	SymLink(target,src) \
+@;AllTarget(target) \
+@;target: src \
+@;@+ln -fs src target \
+@;
 
 #undef	InstallFile
 #undef	InstallGenFile
+
+/*
+Der Makro |$1| installiert die Datei <name> in der Bibliothek
+<dir> unter dem Namen <tg>.
+*/
 
 #define	InstallFile(name,dest,tg) \
 NamedTarget(files,PathName(dest,tg)) \
 CleanTarget(PathName(dest,tg)) \
 @;PathName(dest,tg): name \
-@;@+$(RM) $@ \
-@;@+$(CP) name $@ \
+@;@+rm -f $@ \
+@;@+cp -f name $@ \
 @;
+
+/*
+Der Makro |$1| installiert die generierte Datei <name> in der Bibliothek
+<dir> unter dem Namen <tg>.
+*/
 
 #define	InstallGenFile(name,dest,tg) \
 NamedTarget(genfiles,PathName(dest,tg)) \
 CleanTarget(PathName(dest,tg)) \
 @;PathName(dest,tg): name \
-@;@+$(RM) $@ \
-@;@+$(CP) name $@ \
+@;@+rm -f $@ \
+@;@+cp -f name $@ \
 @;
 
 #define	Source(dir,name) \
@@ -58,9 +119,6 @@ CompileRule(ObjectName(name),SourceName(name),$(INCFLG) -c SourceName(name) -o $
 DependRule(ObjectName(name),SourceName(name),$(INCFLG) -c SourceName(name)) \
 @;
 
-/*	Programme und Skripts
-*/
-
 #define	Program(dir,name,obj,dep,libs) \
 StdTarget(PathName(dir,ProgramName(name))) \
 LinkCompileRule(PathName(dir,ProgramName(name)),obj dep,obj,libs)
@@ -72,6 +130,8 @@ Program($(BINDIR),name,Concat(name,.o),dep,libs)
 InstallCmdScript(PathName($(BINDIR),name),PathName(dir,base),NullArg)
 
 #define	EshScript(dir,base,name) \
-InstallCmdScript(PathName($(BINDIR),name),PathName(dir,base),-c esh)
+InstallCmdScript(PathName($(BINDIR),name),PathName(dir,base),-ec esh)
+
+#include <manual.pph>
 
 #endif	/* d2m_rules.pph */

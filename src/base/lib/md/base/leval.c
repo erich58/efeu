@@ -1,6 +1,5 @@
 /*	Zeilenweise Datenauswertung
 	(c) 1995 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
 */
 
 #include <EFEU/mdmat.h>
@@ -43,7 +42,7 @@ static void leval_end(void *par)
 
 static void leval_data(void *par, Type_t *type, void *ptr, void *base)
 {
-	*PAR->ptr = NewObjList(LvalObj(type, NULL, ptr));
+	*PAR->ptr = NewObjList(LvalObj(&Lval_ptr, type, ptr));
 	PAR->ptr = &(*PAR->ptr)->next;
 }
 

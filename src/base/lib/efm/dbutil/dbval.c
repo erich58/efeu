@@ -1,22 +1,40 @@
-/*	Werte aus Buffer abfragen
-	(c) 1993 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Werte aus Buffer abfragen
+
+$Copyright (C) 1993 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/ebcdic.h>
 #include <EFEU/dbutil.h>
 #include <EFEU/procenv.h>
 #include <EFEU/strbuf.h>
+#include <EFEU/mstring.h>
 
 
 static void val_error(int pos, int num, const uchar_t *ptr)
 {
 	char buf[32];
 
-	sprintf(buf, "%d", num);
+	sprintf(buf, "%d", pos);
 	message(buf, MSG_DB, num, 1,
 		ptr ? msprintf("%#c", db_char(ptr, pos, 1)) : NULL);
-	procexit(EXIT_FAILURE);
+	exit(EXIT_FAILURE);
 }
 
 /*	Test auf Leerfeld
@@ -221,6 +239,7 @@ unsigned db_a37l(const uchar_t *buf, int pos, int len)
 
 		switch (buf[pos++])
 		{
+		case 0:
 		case SPACE:	break;
 		case DIGIT_0:	val +=  1; break;
 		case DIGIT_1:	val +=  2; break;

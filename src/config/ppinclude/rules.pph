@@ -1,321 +1,106 @@
-/*	Standardregeln für Makefiles
-	(c) 1999 Erich Frühstück
-	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+/*
+Standardregeln für Makefiles
+
+$Copyright (C) 1999 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #ifndef	_rules_pph
 #define	_rules_pph	1
 
-#include <base.pph>
-
 #if	__linux__
+/*
+Falls der Makro |$1| auf 1 gesetzt ist, werden dynamische
+Programmbibliotheken anstelle von statischen verwendet.
+*/
 #define	DoSharedLib	1
+/*
+Falls der Makro |$1| auf 1 gesetzt ist, werden Debuginformationen
+beim Kompilieren generiert.
+*/
 #define AddDebugInfo	1
 #endif
 
-/*	Anpassungsmakros
+/*
+$Description
+Die folgenden Headerdateien werden von |rules.pph| automatisch eingebunden:
+[|base.pph|]
+	Basismakros für efeupp
+[|Name.pph|]
+	Namensmakros
+[|Path.pph|]
+	Konstruktion von Pfadnamen
+[|Target.pph|]
+	Zielmakros
+[|CreateDir.pph|]
+	Bibliotheken einrichten/entfernen
+[|Install.pph|]
+	Installation von Dateien
+[|Submake.pph|]
+	Teilmakefiles
+[|Compile.pph|]
+	Kompilierungsregeln
+[|Lib.pph|]
+	Regeln für Programmbibliotheken
+[|Manual.pph|]
+	Regeln für Handbucheinträge
+$SeeAlso
+\mref{make(1)}, \mref{mkmf(1)}.\br
+\mref{base(7)},
+\mref{Name(7)},
+\mref{Path(7)},
+\mref{Target(7)},
+\mref{CreateDir(7)},
+\mref{Install(7)},
+\mref{Submake(7)},
+\mref{Compile(7)},
+\mref{Lib(7)},
+\mref{Manual(7)}.
 */
 
-#ifndef	ProgramName
-#define	ProgramName(name)	name
-#endif
+#include <base.pph>
+#include <Name.pph>
+#include <Path.pph>
+#include <Target.pph>
+#include <CreateDir.pph>
+#include <Install.pph>
+#include <Submake.pph>
+#include <Compile.pph>
+#include <Lib.pph>
+#include <Manual.pph>
 
-#ifndef	HeaderName
-#define	HeaderName(name)	Concat(name,.h)
-#endif
-
-#ifndef	SourceName
-#define	SourceName(name)	Concat(name,.c)
-#endif
-
-#ifndef	ObjectName
-#define	ObjectName(name)	Concat(name,.o)
-#endif
-
-#ifndef	StaticLibName
-#define	StaticLibName(name)	Concat3(lib,name,.a)
-#endif
-
-#ifndef	SharedLibName
-#define	SharedLibName(name)	Concat3(lib,name,.so)
-#endif
-
-#ifndef	SharedLibdirName
-#define	SharedLibdirName(name)	Concat(-L,name) Concat(-Wl@:-rpath@:,name)
-#endif
-
-#ifndef	StaticLibdirName
-#define	StaticLibdirName(name)	Concat(-L,name)
-#endif
-
-#ifndef	LinkName
-#define	LinkName(name)		Concat(-l,name)
-#endif
-
-#ifndef PathName
-#define	PathName(dir,name)	Concat3(dir,/,name)
-#endif
-
-#ifndef ApplPath
-#define	ApplPath(dir,name)	Concat3(dir,/app-defaults/,name)
-#endif
-
-#ifndef MsgPath
-#define	MsgPath(dir,name)	Concat3(dir,/messages/,name)
-#endif
-
-#ifndef DocPath
-#define	DocPath(dir,name)	Concat3(dir,/doc/,name)
-#endif
-
-#ifndef HelpPath
-#define	HelpPath(dir,name)	Concat3(dir,/help/,name)
-#endif
-
-#ifndef TermPath
-#define	TermPath(dir,name)	Concat3(dir,/term/,name)
-#endif
-
-/*	Standardmakros
+/*
+Der Makro |$1|
+generiert eine einfache Makefileregel. <Name> ist
+der Name der Zieldatei, <dep> ist die Liste der Abhängigkeiten
+und <cmd> ist die Befehlszeile.
 */
-
-#define	StdInclude(name)	PathName($(STDINCDIR),name)
-
-#if	DoSharedLib
-
-#define	StdLib(name)		PathName($(STDLIBDIR),SharedLibName(name))
-#define	LocalLib(dir,name)	PathName(dir,SharedLibName(name))
-#define	LibdirName(name)	SharedLibdirName(name)
-
-#else
-
-#define	StdLib(name)		PathName($(STDLIBDIR),StaticLibName(name))
-#define	LocalLib(dir,name)	PathName(dir,StaticLibName(name))
-#define	LibdirName(name)	StaticLibdirName(name)
-
-#endif
-
-#define	NamedTarget(name,dep)		@;name:: dep @;@;
-#define	NamedCleanTarget(name,dep)	@;name:: @;@+$(RM) dep @;@;
-
-#define	CleanTarget(dep)	NamedCleanTarget(clean,dep)
-#define	AllTarget(dep)		NamedTarget(all,dep)@;CleanTarget(dep)
-
 #define	SimpleRule(name,dep,cmd)	@;name: dep@;@+cmd @;
 
+/*
+Der Makro |$1|
+nimmt zusätzlich <name> in die Abhängigkeitsliste
+des Pseudoziels |all| auf. Weiters wird <name> in die
+Aufräumliste des Pseudoziels |clean| eingetragen.
+*/
 #define	AllTargetRule(name,dep,cmd) \
 @;AllTarget(name) \
 @;SimpleRule(name,dep,cmd) \
 @;
-
-#define	CreateDir(name)	\
-@;@;NamedTarget(all,name) \
-@;name:; mkdir $@	\
-@;
-
-#define	CleanDir(name) \
-@;@;clean:: @;@+-rmdir name \
-@;
-
-#define	InstallFile(target,file,dep)	@;\
-NamedTarget(target,file)		@;\
-CleanTarget(file)		@;\
-file: dep			@;\
-@+$(RM) $@			@;\
-@+$(CP) dep $@			@;
-
-#define	InstallScript(file,dep)	@;\
-AllTarget(file)			@;\
-file: dep			@;\
-@+$(RM) $@			@;\
-@+$(CP) dep $@			@;\
-@+chmod a+x $@			@;
-
-#define	InstallCmdScript(file,dep,flags)	@;\
-AllTarget(file)			@;\
-file: dep			@;\
-@+efeuscript flags dep file	@;
-
-#define	BuildMakefile(mkfile,imkfile,iflags)	@;\
-mkfile: imkfile					@;\
-@+mkmf iflags imkfile mkfile			@;
-
-#define	NamedSubmake(name,mfile,args)	@;\
-name:: mfile				@;\
-@+$(MAKE) -f mfile args
-
-/*	Regeln zum Kompilieren
-*/
-
-#define	CompileRule(tg,dep,args) \
-@;@;tg: dep \
-@;@+$(CC) $(STDDEFINES) $(CFLAGS) $(STDCFLAGS) $(SYSCFLAGS) args \
-@;
-
-#if	AddDebugInfo
-
-#define	LinkCompileRule(tg,dep,args,lflags) \
-CompileRule(tg,dep,-o $@ args $(SYSLFLAGS) lflags $(SYSLIBS))
-
-#else
-
-#define	LinkCompileRule(tg,dep,args,lflags) @;\
-@;tg: dep @;\
-@+$(CC) $(STDDEFINES) $(CFLAGS) $(STDCFLAGS) $(SYSCFLAGS) -o $@ args \
-	$(SYSLFLAGS) lflags $(SYSLIBS) @;\
-@+strip $@ @;\
-@;
-
-#endif
-
-#define	DependRule(tg,dep,args) \
-@;@;depend:: \
-@;@+$(CPP) $(STDDEFINES) $(CFLAGS) $(STDCFLAGS) $(SYSCFLAGS) args | \
-$(CPP2DEP) tg >> MAKEFILE \
-@;
-
-#define	SpecialObjectRule(name,dep,flags) \
-CompileRule(ObjectName(name),SourceName(name) dep,flags -c SourceName(name)) \
-DependRule(ObjectName(name),SourceName(name),flags -c SourceName(name)) \
-@;
-
-#define	NormalProgramRule(name,flags,src,dep,libs) \
-LinkCompileRule(ProgramName(name),src dep,flags src,libs) \
-DependRule(ProgramName(name),src,flags src) \
-@;
-
-#define	InstalledProgramRule(dir,name,flags,src,dep,libs) \
-NormalProgramRule(PathName(dir,name),flags,src,dep,libs)
-
-#define	SimpleProgramRule(name,dep) \
-NormalProgramRule(name,NullArg,SourceName(name),dep,$(STDLIBS))
-
-#define	NormalProgramTarget(name,flags,src,dep,libs)	\
-AllTarget(ProgramName(name))				@;\
-NormalProgramRule(name,flags,src,dep,libs)		@;
-
-#define	InstalledProgramTarget(dir,name,flags,src,dep,libs)	\
-AllTarget(PathName(dir,ProgramName(name)))			@;\
-InstalledProgramRule(dir,name,flags,src,dep,libs)		@;
-
-#define	NormalObjectTarget(name,flags) \
-AllTarget(ObjectName(name)) \
-SpecialObjectRule(name,NullArg,flags) \
-@;
-
-#define	SimpleProgramTarget(name,dep)	\
-NormalProgramTarget(name,NullArg,SourceName(name),dep,$(STDLIBS))
-
-/*	Regeln für Programmbibliothek
-*/
-
-#define NormalMemberTarget(libname,flags,src,dep)	\
-@;@;depend:: \
-@;@+$(CPP) $(STDDEFINES) $(CFLAGS) $(STDCFLAGS) $(SYSCFLAGS) \
-flags -c SourceName(src) | \
-$(CPP2DEP) libname >> MAKEFILE \
-@;@;libname:: SourceName(src) dep					@;\
-@+$(CC) $(STDDEFINES) $(CFLAGS) $(STDCFLAGS) $(SYSCFLAGS) \
-flags -c SourceName(src)	@;\
-@+ar -rv libname ObjectName(src)				@;\
-@+ranlib libname						@;\
-@+$(RM) ObjectName(src)						@;
-
-/*	Regeln für statische Programmbibliotheken
-*/
-
-#define	StaticLib(name)	PathName($(STDLIBDIR),StaticLibName(name))
-
-#define	StaticLibRule(dir,name,obj) \
-@;PathName(dir,StaticLibName(name)): obj \
-@;@+ar rv $@ $? \
-@;@+ranlib $@ \
-@;
-
-#define	StaticLibTarget(dir,name,obj) \
-@;AllTarget(PathName(dir,StaticLibName(name))) \
-@;StaticLibRule(dir,name,obj) \
-@;
-
-/*	Regeln für dynamische Programmbibliotheken
-*/
-
-#if	DoSharedLib
-
-#define	SharedLibRule(dir,name,obj,libs) \
-@;PathName(dir,SharedLibName(name)): obj \
-@;@+efeucc -shared -Wl,-soname,lib##name##.so -o $@ obj $(SYSLFLAGS) libs \
-@;
-
-#define	SharedLibTarget(dir,name,obj,libs) \
-@;AllTarget(PathName(dir,SharedLibName(name))) \
-@;SharedLibRule(dir,name,obj,libs) \
-@;
-
-#else	/* !DoSharedLib */
-
-#define	SharedLibRule(dir,name,obj,libs)
-#define	SharedLibTarget(lib,obj,libs)
-
-#endif	/* DoSharedLib */
-
-#if	DoSharedLib
-#define	LibRule(dir,name,obj,libs)	SharedLibRule(dir,name,obj,libs)
-#define	LibTarget(dir,name,obj,libs)	SharedLibTarget(dir,name,obj,libs)
-#else
-#define	LibRule(dir,name,obj,libs)	StaticLibRule(dir,name,obj)
-#define	LibTarget(dir,name,obj,libs)	StaticLibTarget(dir,name,obj)
-#endif
-
-#define SimpleMemberTarget(libname,src,dep) \
-	NormalMemberTarget(libname,NullArg,src,dep)
-
-/*	ACHTUNG: Syntaxänderung
-#define	LinkFile(target,name) \
-@;AllTarget(target) \
-@;target: name \
-@;@+$(LN) name target \
-@;
-*/
-
-#define	ManualDir(path,ext)		\
-PathName(path, Concat(man,ext))
-
-#define	ManualName(path,name,ext)	\
-PathName(ManualDir(path,ext),Concat3(name,.,ext))
-
-#define	InstallManual(name,num,src,flags)			\
-NamedTarget(man,ManualName($(MANDIR),name,num))			@;\
-NamedCleanTarget(man.clean,ManualName($(MANDIR),name,num))	@;\
-ManualName($(MANDIR),name,num): src				@;\
-@+$(CP) src $@							@;\
-
-#define	LinkManual(name,num,target)				\
-NamedTarget(man,$(MANDIR)/man@.num/target.num.Z)		@;\
-NamedCleanTarget(man.clean,$(MANDIR)/man@.num/target@.num.Z)	@;\
-$(MANDIR)/man@.num/target.num.Z: $(MANDIR)/man@.num/name@.num.Z	@;\
-@+$(LN) $(MANDIR)/man@.num/name@.num.Z $@			@;
-
-/*	Hilfsdateien
-*/
-
-#define	PreprocessFile(in,out,flags) \
-@;@;out: in \
-@;@+efeupp flags in $@ \
-@;
-
-#define	InstallLocalHeaderFile(t,p,f)	InstallFile(t,PathName(p,f),f)
-#define	InstallLocalApplFile(t,p,f)	InstallFile(t,ApplPath(p,f),f)
-#define	InstallLocalMsgFile(t,p,f)	InstallFile(t,MsgPath(p,f),f)
-#define	InstallLocalDocFile(t,p,f)	InstallFile(t,DocPath(p,f),f)
-#define	InstallLocalTermFile(t,p,f)	InstallFile(t,TermPath(p,f),f)
-#define	InstallLocalHelpFile(t,p,f)	InstallFile(t,HelpPath(p,f),f)
-
-#define	InstallHeaderFile(f)	InstallLocalHeaderFile(header,$(STDINCDIR),f)
-#define	InstallApplFile(f)	InstallLocalApplFile(files,$(EFEULIB),f)
-#define	InstallMsgFile(f)	InstallLocalMsgFile(files,$(EFEULIB),f)
-#define	InstallDocFile(f)	InstallLocalDocFile(files,$(EFEULIB),f)
-#define	InstallTermFile(f)	InstallLocalTermFile(files,$(EFEULIB),f)
-#define	InstallHelpFile(f)	InstallLocalHelpFile(files,$(EFEULIB),f)
 
 #endif	/* rules.pph */

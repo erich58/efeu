@@ -1,8 +1,25 @@
-/*	Programmkonfiguration
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Programmkonfiguration
 
-	Version 0.4
+$Header <EFEU/$1>
+
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #ifndef	EFEU_PCONFIG_T
@@ -12,12 +29,15 @@
 #include <EFEU/efmain.h>
 #include <EFEU/efio.h>
 #include <EFEU/object.h>
+#include <EFEU/procenv.h>
+#include <EFEU/appl.h>
 
 /*	Programmparameter
 */
 
 typedef struct {
 	int flag;	/* Steuerflag */
+	char *key;	/* Schlüsselwort */
 	char *name;	/* Argumentname */
 	char *cmd;	/* Rückruffunktion */
 	char *desc;	/* Beschreibungsformat */
@@ -32,6 +52,7 @@ typedef struct {
 #define	P_OPTARG	7	/* Optionale Argumente */
 #define	P_BREAK		8	/* Abbruch der Argumentanalyse */
 #define	P_SET		9	/* Variable initialisieren */
+#define	P_REGEX		10	/* Regulärer Ausdruck */
 
 
 /*	Globale Programmparameter
@@ -48,22 +69,11 @@ typedef struct {
 
 extern deftab_t PgmDefTab;
 
-
 /*	Initialisierungsfunktionen
 */
 
 void SetupReadline (void);
-void SetupInteract (void);
 void SetupDebug (void);
-
-io_t *io_readline (const char *prompt, const char *hist);
-io_t *io_interact (const char *prompt, const char *hist);
-
-extern io_t *(*_interact_open) (const char *prompt, const char *hist);
-extern io_t *(*_interact_filter) (io_t *io);
-
-extern int iorl_key;
-extern int iorl_maxhist;
 
 /*	Programmkonfiguration
 */
@@ -72,7 +82,6 @@ typedef struct {
 	char *name;	/* Programmname */
 	int (*eval) (int argc, char **argv);
 } pconfig_t;
-
 
 /*	Initialisierungsfunktionen
 */
@@ -90,14 +99,7 @@ void cp_usage(io_t *in, io_t *out);
 extern InfoNode_t *ProcInfo;
 void ArgInfo (io_t *io, InfoNode_t *info);
 
-#define	APPL_APP	1
-#define	APPL_HLP	2
-#define	APPL_TRM	3
-#define	APPL_CFG	4
-
 int applfile (const char *name, int type);
-io_t *io_applfile (const char *name, int type);
-
 
 /*	Globale Variablen
 */

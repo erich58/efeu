@@ -1,6 +1,23 @@
-/*	Hilfsprogramme
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Hilfsprogramme
+
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/pconfig.h>
@@ -73,14 +90,17 @@ static Obj_t *Date_member (const Var_t *var, const Obj_t *obj)
 		(int) (size_t) var->par);
 }
 
-static Var_t var_Date[] = {
-	{ "fmt", &Type_str, &Date_fmt, 0, 0, NULL, NULL },
-	{ "day", &Type_int, NULL, 0, 0, Date_member, (void *) DM_DAY },
-	{ "month", &Type_int, NULL, 0, 0, Date_member, (void *) DM_MON },
-	{ "year", &Type_int, NULL, 0, 0, Date_member, (void *) DM_YEAR },
-	{ "wday", &Type_int, NULL, 0, 0, Date_member, (void *) DM_WDAY },
-	{ "yday", &Type_int, NULL, 0, 0, Date_member, (void *) DM_YDAY },
-	{ "cal1900", &Type_int, NULL, 0, 0, base1900, NULL },
+static VarDef_t v_Date[] = {
+	{ "fmt", &Type_str, &Date_fmt },
+};
+
+static MemberDef_t m_Date[] = {
+	{ "day", &Type_int, Date_member, (void *) DM_DAY },
+	{ "month", &Type_int, Date_member, (void *) DM_MON },
+	{ "year", &Type_int, Date_member, (void *) DM_YEAR },
+	{ "wday", &Type_int, Date_member, (void *) DM_WDAY },
+	{ "yday", &Type_int, Date_member, (void *) DM_YDAY },
+	{ "cal1900", &Type_int, base1900, NULL },
 };
 
 static Obj_t *Time_member (const Var_t *var, const Obj_t *obj)
@@ -89,16 +109,19 @@ static Obj_t *Time_member (const Var_t *var, const Obj_t *obj)
 		(int) (size_t) var->par);
 }
 
-static Var_t var_Time[] = {
-	{ "fmt", &Type_str, &Time_fmt, 0, 0, NULL, NULL },
-	{ "day", &Type_int, NULL, 0, 0, Time_member, (void *) DM_DAY },
-	{ "month", &Type_int, NULL, 0, 0, Time_member, (void *) DM_MON },
-	{ "year", &Type_int, NULL, 0, 0, Time_member, (void *) DM_YEAR },
-	{ "wday", &Type_int, NULL, 0, 0, Time_member, (void *) DM_WDAY },
-	{ "yday", &Type_int, NULL, 0, 0, Time_member, (void *) DM_YDAY },
-	{ "hour", &Type_int, NULL, 0, 0, Time_member, (void *) DM_HOUR },
-	{ "min", &Type_int, NULL, 0, 0, Time_member, (void *) DM_MIN },
-	{ "sec", &Type_int, NULL, 0, 0, Time_member, (void *) DM_SEC },
+static VarDef_t v_Time[] = {
+	{ "fmt", &Type_str, &Date_fmt },
+};
+
+static MemberDef_t m_Time[] = {
+	{ "day", &Type_int, Time_member, (void *) DM_DAY },
+	{ "month", &Type_int, Time_member, (void *) DM_MON },
+	{ "year", &Type_int, Time_member, (void *) DM_YEAR },
+	{ "wday", &Type_int, Time_member, (void *) DM_WDAY },
+	{ "yday", &Type_int, Time_member, (void *) DM_YDAY },
+	{ "hour", &Type_int, Time_member, (void *) DM_HOUR },
+	{ "min", &Type_int, Time_member, (void *) DM_MIN },
+	{ "sec", &Type_int, Time_member, (void *) DM_SEC },
 };
 
 
@@ -152,7 +175,7 @@ static void f_StdDate(Func_t *func, void *rval, void **arg)
 
 static void f_str2Date(Func_t *func, void *rval, void **arg)
 {
-	Val_Date(rval) = str2Calendar(Val_str(arg[0]), NULL);
+	Val_Date(rval) = str2Calendar(Val_str(arg[0]), NULL, Val_bool(arg[1]));
 }
 
 static void f_today(Func_t *func, void *rval, void **arg)
@@ -211,7 +234,7 @@ static void f_fprint_Time (Func_t *func, void *rval, void **arg)
 
 static void f_str2Time(Func_t *func, void *rval, void **arg)
 {
-	TIME(rval) = str2Time(Val_str(arg[0]), NULL);
+	TIME(rval) = str2Time(Val_str(arg[0]), NULL, Val_bool(arg[1]));
 }
 
 static void f_localtime (Func_t *func, void *rval, void **arg)
@@ -237,13 +260,11 @@ static void f_Date2Time (Func_t *func, void *rval, void **arg)
 static void f_Time_add (Func_t *func, void *rval, void **arg)
 {
 	TIME(arg[0]) = Time_offset(TIME(arg[0]), Val_int(arg[1]));
-	Val_ptr(rval) = arg[0];
 }
 
 static void f_Time_sub (Func_t *func, void *rval, void **arg)
 {
 	TIME(arg[0]) = Time_offset(TIME(arg[0]), -Val_int(arg[1]));
-	Val_ptr(rval) = arg[0];
 }
 
 static void f_Time_dist (Func_t *func, void *rval, void **arg)
@@ -263,6 +284,23 @@ static void f_Time_cmp (Func_t *func, void *rval, void **arg)
 	else				Val_int(rval) = 0;
 }
 
+static void f_LeapYear (Func_t *func, void *rval, void **arg)
+{
+	Val_bool(rval) = LeapYear(Val_int(arg[0]));
+}
+
+static void f_LeapYear_Date (Func_t *func, void *rval, void **arg)
+{
+	Calendar_t *x = Calendar(Val_Date(arg[0]), NULL);
+	Val_bool(rval) = LeapYear(x->year);
+}
+
+static void f_LeapYear_Time (Func_t *func, void *rval, void **arg)
+{
+	Calendar_t *x = TimeCalendar(TIME(arg[0]), NULL);
+	Val_bool(rval) = LeapYear(x->year);
+}
+
 
 /*	Funktionstabelle
 */
@@ -270,7 +308,7 @@ static void f_Time_cmp (Func_t *func, void *rval, void **arg)
 static FuncDef_t fdef[] = {
 	{ 0, &Type_Date, "Date (int t, int m, int j)", f_Date },
 	{ 0, &Type_Date, "Date (int b1900)", f_StdDate },
-	{ 0, &Type_Date, "Date (str s)", f_str2Date },
+	{ 0, &Type_Date, "Date (str s, bool end = false)", f_str2Date },
 	{ FUNC_PROMOTION, &Type_int, "Date ()", f_Date2int },
 	{ FUNC_RESTRICTED, &Type_str, "Date ()", f_Date2str },
 	{ FUNC_RESTRICTED, &Type_double, "Date ()", f_Date2dbl },
@@ -281,7 +319,7 @@ static FuncDef_t fdef[] = {
 	{ FUNC_VIRTUAL, &Type_int, "cmp (Date, Date)", f_Date_cmp },
 	{ 0, &Type_Date, "today (int offset = 0)", f_today },
 
-	{ 0, &Type_Time, "Time (str s)", f_str2Time },
+	{ 0, &Type_Time, "Time (str s, bool end = false)", f_str2Time },
 	{ FUNC_RESTRICTED, &Type_str, "Time ()", f_Time2str },
 	{ FUNC_RESTRICTED, &Type_double, "Time ()", f_Time2dbl },
 	{ 0, &Type_str, "Time::konv (str fmt = NULL)", f_Time_konv },
@@ -295,6 +333,9 @@ static FuncDef_t fdef[] = {
 	{ FUNC_PROMOTION, &Type_Date, "Time ()", f_Time2Date },
 	{ FUNC_VIRTUAL, &Type_int, "operator- (Time, Time)", f_Time_dist },
 	{ FUNC_VIRTUAL, &Type_int, "cmp (Time, Time)", f_Time_cmp },
+	{ FUNC_VIRTUAL, &Type_bool, "LeapYear (int year)", f_LeapYear },
+	{ FUNC_VIRTUAL, &Type_bool, "LeapYear (Date date)", f_LeapYear_Date },
+	{ FUNC_VIRTUAL, &Type_bool, "LeapYear (Time time)", f_LeapYear_Time },
 };
 
 
@@ -304,8 +345,10 @@ static FuncDef_t fdef[] = {
 void CmdSetup_date(void)
 {
 	AddType(&Type_Date);
-	AddVar(Type_Date.vtab, var_Date, tabsize(var_Date));
+	AddVarDef(Type_Date.vtab, v_Date, tabsize(v_Date));
+	AddMember(Type_Date.vtab, m_Date, tabsize(m_Date));
 	AddType(&Type_Time);
-	AddVar(Type_Time.vtab, var_Time, tabsize(var_Time));
+	AddVarDef(Type_Time.vtab, v_Time, tabsize(v_Time));
+	AddMember(Type_Time.vtab, m_Time, tabsize(m_Time));
 	AddFuncDef(fdef, tabsize(fdef));
 }

@@ -1,8 +1,5 @@
 /*	Produktmatrix generieren
 	(c) 1997 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
-
-	Version 2.0
 */
 
 #include <EFEU/mdmat.h>
@@ -85,7 +82,7 @@ mdmat_t *md_prod (mdmat_t *base)
 	par.buf = memalloc(md->type->size);
 	mainwalk(&par, md->axis, base->axis, base->axis,
 		md->data, base->data, base->data);
-	FREE(par.buf);
+	memfree(par.buf);
 	return md;
 }
 

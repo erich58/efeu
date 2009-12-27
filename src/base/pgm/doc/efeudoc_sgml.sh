@@ -1,11 +1,29 @@
-#	SGML-Dokument konvertieren
-#	(c) 1999 Erich Frühstück
-#	A-3423 St. Andrä/Wördern, Südtirolergasse 17-21/5
+# :*:convert sgml document
+# :de:SGML-Dokument konvertieren
+#
+# Copyright (C) 1999 Erich Frühstück
+# This file is part of EFEU.
+# 
+# EFEU is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+# 
+# EFEU is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public
+# License along with EFEU; see the file COPYING.
+# If not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-#	Die sgml_tools können nicht als pipe verwendet werden.
-#	Daher erfolgt die Verarbeitung in einer eigenen Bibliothek
+# Die sgml_tools können nicht als pipe verwendet werden.
+# Daher erfolgt die Verarbeitung in einer eigenen Bibliothek
 
-tmpdir=/var/tmp/edoc$$
+: ${LANG:=en}
+tmpdir=${TMPDIR:-/tmp}/edoc$$
 name=$tmpdir/doc
 
 trap "rm -rf $tmpdir" 0
@@ -17,7 +35,9 @@ OPTDEF="hlt:"
 
 usage ()
 {
-	cat <<!
+	case $LANG in
+	de*)
+		cat <<!
 Aufruf: $0 [-hl] [-t type] name[.sgml]
 
 	-h		Dieser Text
@@ -25,11 +45,25 @@ Aufruf: $0 [-hl] [-t type] name[.sgml]
 	-t type		Ausgabetype
 	name		Definitionsfile
 !
+		;;
+	*)
+		cat <<!
+usage: $0 [-hl] [-t type] name[.sgml]
+
+	-h		this text
+	-l		list types
+	-t type		output type
+	name		input file
+!
+		;;
+	esac
 }
 
 list ()
 {
-	cat <<!
+	case $LANG in
+	de*)
+		cat <<!
 man	Handbuch-Source für nroff/troff
 nroff	nroff-Formatierung über Handbuchsourcen
 txt	Textausgabe mit Attributen
@@ -38,6 +72,19 @@ html	HTML-Dokument
 latex	LaTeX-Dokument
 ps	PostScript-Dokument
 !
+		;;
+	*)
+		cat <<!
+man	Handbuch-Source für nroff/troff
+nroff	nroff-Formatierung über Handbuchsourcen
+txt	Textausgabe mit Attributen
+filter	Textausgabe ohne Attribute
+html	HTML-Dokument
+latex	LaTeX-Dokument
+ps	PostScript-Dokument
+!
+		;;
+	esac
 }
 
 type=txt
@@ -69,7 +116,12 @@ elif [ -f $1 ]; then
 elif [ -f $1.sgml ]; then
 	cp $1.sgml $tmpdir/doc.sgml
 else
-	echo "$0: Eingabefile $1 ist nicht lesbar" >&2 
+	case $LANG in
+	de*)	echo "$0: Eingabefile $1 ist nicht lesbar" >&2;;
+	*)	echo "$0: file $1 not readable" >&2;; 
+	esac
+
+	exit 1
 fi
 
 unset LANG

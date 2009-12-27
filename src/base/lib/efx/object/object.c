@@ -1,14 +1,27 @@
-/*	Objekte verwalten
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Objekte verwalten
 
-	Version 0.4
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/object.h>
 #include <EFEU/refdata.h>
-
-#define	MEMCHECK	0
 
 #define	DEBUG_FLAG	1
 
@@ -31,51 +44,31 @@ static void do_debug (int flag, char *fmt, const Obj_t *obj);
 #endif
 
 
-#define	SIZE_PTR	(sizeof(Obj_t))
-#define	SIZE_SMALL	(sizeof(Obj_t) + sizeof(long))
-#define	SIZE_LARGE	(sizeof(Obj_t) + 4 * sizeof(void *))
-
-
-#if	MEMCHECK
-#define	CHECK_SIZE	8
-#define	CHECK_MASK	"12345678"
-
-static void mem_check(const Obj_t *obj);
-#else
-#define	CHECK_SIZE	0
-#define	CHECK_MASK	""
-
-#define	mem_check(obj)
-#endif
-
-static ALLOCTAB(tab_ptr, 0, SIZE_PTR);
-static ALLOCTAB(tab_small, 0, SIZE_SMALL + CHECK_SIZE);
-static ALLOCTAB(tab_large, 0, SIZE_LARGE + CHECK_SIZE);
-
-
-/*	Dummyreferenzobjekt für LVAL-Werte
+/*	Zuweisungsobjekt generieren
 */
 
-REFTYPE(lval_reftype, "LVAL", NULL, NULL);
-
-static refdata_t lval_refdata = { REFDATA(&lval_reftype) };
-
-
-/*	Pointerobjekt generieren
-*/
-
-Obj_t *LvalObj(Type_t *type, void *lref, void *data)
+Obj_t *LvalObj (Lval_t *lval, Type_t *type, ...)
 {
 	Obj_t *x;
+	va_list args;
 
-	x = new_data(&tab_ptr);
+	va_start(args, type);
+	x = lval->alloc(type, args);
+	va_end(args);
+
 	x->reftype = NULL;
 	x->refcount = 1;
 	x->type = type;
-	x->data = data;
-	x->lref = rd_refer(lref ? lref : &lval_refdata);
+	x->lval = lval;
+	lval->update(x);
 	do_debug(0, "new ", x);
 	return x;
+}
+
+void SyncLval (Obj_t *obj)
+{
+	if	(obj && obj->lval && obj->lval->sync)
+		obj->lval->sync(obj);
 }
 
 /*	Neues Objekt generieren
@@ -89,20 +82,12 @@ static Obj_t *newobj(Type_t *type, void *data, const void *defval)
 	if	(type == NULL)	return NULL;
 
 	size = type->size + sizeof(Obj_t);
-
-	if	(size <= SIZE_SMALL)	obj = new_data(&tab_small);
-	else if	(size <= SIZE_LARGE)	obj = new_data(&tab_large);
-	else				obj = lmalloc(size);
-
+	obj = Obj_alloc(size);
 	obj->reftype = NULL;
 	obj->refcount = 1;
-	obj->lref = NULL;
+	obj->lval = NULL;
 	obj->type = type;
 	obj->data = (obj + 1);
-
-#if	MEMCHECK
-	memcpy(((char *) obj) + size, CHECK_MASK, CHECK_SIZE);
-#endif
 
 	if	(data)
 	{
@@ -143,7 +128,7 @@ Obj_t *NewPtrObj(Type_t *type, const void *data)
 
 Obj_t *RefObj(const Obj_t *obj)
 {
-	mem_check(obj);
+	Obj_check(obj);
 
 	if	(obj)
 	{
@@ -152,7 +137,7 @@ Obj_t *RefObj(const Obj_t *obj)
 		if	(obj->refcount == 0)
 		{
 			fprintf(stderr, ERR_MSG1, ProgIdent, (ulong_t) obj);
-			libexit(EXIT_FAILURE);
+			exit(EXIT_FAILURE);
 		}
 
 		((Obj_t *) obj)->refcount++;
@@ -172,41 +157,36 @@ static void del_obj(Obj_t *obj, int cleanup)
 	{
 		do_debug(0, "delete ", obj);
 		fprintf(stderr, ERR_MSG1, ProgIdent, (ulong_t) obj);
-		libexit(EXIT_FAILURE);
+		exit(EXIT_FAILURE);
 	}
 
 	do_debug(1, "delete ", obj);
 
-	if	(obj->lref == NULL && cleanup)
+	if	(obj->lval == NULL && cleanup)
 		CleanData(obj->type, obj->data);
 
 	obj->refcount = 0;
 	do_debug(2, NULL, obj);
 
-	if	(obj->lref)
+	if	(obj->lval)
 	{
-		rd_deref(obj->lref);
-		del_data(&tab_ptr, obj);
+		obj->lval->free(obj);
 	}
 	else if	(obj->type)
 	{
-		size_t size = sizeof(Obj_t) + obj->type->size;
-
-		if	(size <= SIZE_SMALL)	del_data(&tab_small, obj);
-		else if	(size <= SIZE_LARGE)	del_data(&tab_large, obj);
-		else				lfree(obj);
+		Obj_free(obj, sizeof(Obj_t) + obj->type->size);
 	}
 	else
 	{
 		fprintf(stderr, ERR_MSG2, ProgIdent, (ulong_t) obj);
-		libexit(EXIT_FAILURE);
+		exit(EXIT_FAILURE);
 	}
 }
 
 
 void UnrefObj(Obj_t *obj)
 {
-	mem_check(obj);
+	Obj_check(obj);
 
 	if	(obj == NULL)
 	{
@@ -218,37 +198,15 @@ void UnrefObj(Obj_t *obj)
 		do_debug(0, "deref[%d] ", obj);
 	}
 	else	del_obj(obj, 1);
-#if	0
-	else if	(obj->lref)
-	{
-		do_debug(1, "delete ", obj);
-		obj->refcount = 0;
-		del_data(&tab_ptr, obj);
-		do_debug(2, NULL, obj);
-	}
-	else if	(obj->type)
-	{
-		size_t size;
-
-		do_debug(1, "delete ", obj);
-		CleanData(obj->type, obj->data);
-		obj->refcount = 0;
-		do_debug(2, NULL, obj);
-		size = sizeof(Obj_t) + obj->type->size;
-
-		if	(size <= SIZE_SMALL)	del_data(&tab_small, obj);
-		else if	(size <= SIZE_LARGE)	del_data(&tab_large, obj);
-		else				lfree(obj);
-	}
-#endif
 }
+
 
 /*	Objekt löschen
 */
 
 void DeleteObj(Obj_t *obj)
 {
-	mem_check(obj);
+	Obj_check(obj);
 
 	if	(obj == NULL)
 	{
@@ -318,20 +276,3 @@ static void do_debug(int flag, char *fmt, const Obj_t *obj)
 
 #endif
 
-#if	MEMCHECK
-
-#define	CHECK_MSG	"%s: Speicherfehler von Objekt %lx, Type %#s.\n"
-
-void mem_check(const Obj_t *obj)
-{
-	size_t size;
-	
-	if	(obj == NULL || obj->lref)	return;
-
-	size = sizeof(Obj_t) + obj->type->size;
-
-	if	(memcmp(((const char *) obj) + size, CHECK_MASK, CHECK_SIZE) != 0)
-		io_printf(ioerr, CHECK_MSG, ProgIdent, (ulong_t) obj, obj->type->name);
-}
-
-#endif

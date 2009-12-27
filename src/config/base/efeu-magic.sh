@@ -1,15 +1,37 @@
 #!/bin/sh
-#	Magic-File für EFEU updaten
-#	(c) 2000 Erich Frühstück
-#	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+# :*: update magic for efile
+# :de: Magic-File für efile erneuern
+#
+# Copyright (C) 2000 Erich Frühstück
+# This file is part of EFEU.
+# 
+# EFEU is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+# 
+# EFEU is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public
+# License along with EFEU; see the file COPYING.
+# If not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-cd @TOP@/etc || exit 1
+top=`efeutop`
+cd $top/etc || exit 1
 
 cat > magic <<!
-# Magic data für file Kommando.
-# Formatbeschreibung ist in magic(5).
-# Diese Datei wurde mit update-magic zusammengestellt.
+# magic data for file command.
+# Format is described in magic(5).
+# This file was collected by $0.
 !
+
+if [ ! -w magic ]; then
+	exit 1
+fi
 
 add_magic ()
 {
@@ -29,4 +51,9 @@ if [ -d magic.d ]; then
 	find magic.d -type f -print | add_magic >> magic
 fi
 
-find /etc/magic /usr/share/misc/magic -print 2>/dev/null | add_magic >> magic
+for x in /etc/magic /usr/share/misc/magic
+do
+	if [ -f $x ]; then
+		echo $x | add_magic >> magic
+	fi
+done

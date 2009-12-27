@@ -1,8 +1,23 @@
-/*	Abhängigkeitslisten
-	(c) 1999 Erich Frühstück
-	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+/*
+Abhängigkeitslisten
 
-	Version 0.6
+$Copyright (C) 1999 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/ftools.h>
@@ -60,7 +75,38 @@ static int put_name (io_t *io, int col, const char *name)
 	return col + io_puts(name, io);
 }
 
-void MakeDependRule (io_t *io)
+void MakeTaskRule (io_t *io, const char *name)
+{
+	int n, p;
+	char **ptr;
+
+	io_putc('\n', io);
+	p = put_name(io, 0, name);
+	p += io_puts("::", io);
+
+	for (n = TargetList.used, ptr = TargetList.data; n-- > 0; ptr++)
+		p = put_name(io, p, *ptr);
+
+	io_putc('\n', io);
+}
+
+void MakeCleanRule (io_t *io, const char *name)
+{
+	int n, p;
+	char **ptr;
+
+	io_puts(name, io);
+	io_puts(" ::\n\t", io);
+	p = 8;
+	p = put_name(io, 0, "rm -f");
+
+	for (n = TargetList.used, ptr = TargetList.data; n-- > 0; ptr++)
+		p = put_name(io, p, *ptr);
+
+	io_putc('\n', io);
+}
+
+void MakeTargetRule (io_t *io, const char *cmd)
 {
 	int n, p;
 	char **ptr;
@@ -81,4 +127,17 @@ void MakeDependRule (io_t *io)
 		p = put_name(io, p, *ptr);
 
 	io_putc('\n', io);
+
+	if	(cmd)
+	{
+		io = io_lmark(io_refer(io), "\t", NULL, 0);
+		io_puts(cmd, io);
+		io_putc('\n', io);
+		io_close(io);
+	}
+}
+
+void MakeDependRule (io_t *io)
+{
+	MakeTargetRule(io, NULL);
 }

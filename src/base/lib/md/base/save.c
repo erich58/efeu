@@ -1,8 +1,5 @@
 /*	Header einer multidimensionale Matrix ausgeben
 	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
-
-	Version 2
 */
 
 #include <EFEU/mdmat.h>
@@ -104,7 +101,7 @@ void md_puthdr(io_t *io, mdmat_t *md, unsigned mask)
 	}
 
 	io_nputc(0, io, space - n);
-	FREE(oname);
+	memfree(oname);
 }
 
 

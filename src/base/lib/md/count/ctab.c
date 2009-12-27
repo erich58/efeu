@@ -1,8 +1,5 @@
 /*	Zählerstruktur generieren
 	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
-
-	Version 2
 */
 
 #include <EFEU/mdmat.h>
@@ -88,7 +85,6 @@ void md_ctabinit(mdmat_t *tab, MdCount_t *counter)
 
 		subinit(&init, 0, tab->axis, (char *) tab->data);
 	}
-	else	memset(tab->data, 0, tab->size);
 }
 
 

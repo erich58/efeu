@@ -1,25 +1,54 @@
-Ident = "Datenmatrix generieren";
-Copyright = "(c) 1997 Erich Frühstück, A-1090 Wien, Währinger Straße 64/6";
-Version = "2";
+/*
+:*:	create data cube
+:de:	Datenmatrix generieren
 
-bool PrintMode = true;
-str Title = NULL;
-str Input = NULL;
-str Output = NULL;
-str List = NULL;
-str Type = NULL;
-str Value = NULL;
+Copyright (C) 1997, 2001 Erich Frühstück
+This file is part of EFEU.
+
+EFEU is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+EFEU is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with EFEU; see the file COPYING.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+*/
 
 PrintListDelim = "\t";
 
-PgmOpt("T titel", "Title=#1", "Titel der Ausgabedatei")
-PgmOpt("v value", "Value=#1", "Vorgabewert für Datenwerte")
-PgmArg("type", "Type=#1", "Datentype")
-PgmOptArg("aus", "Output=#1;PrintMode=false", "Name der Ausgabedatei")
-PgmXArg("*=*", "List=paste(' ', List, #1)", NULL)
-PgmOptArg("name=list", NULL, "Achsendefinitionen")
+pconfig !
+#if	Lang == "de"
+Ident = "Datenmatrix generieren"
+#else
+Ident = "create data cube"
+#endif
+Version = "2"
+Copyright = "(c) 1997, 2001 Erich Frühstück"
+PrintMode = true
 
-loadarg;
+v:value | Value
+	:*:default value
+	:de:Vorgabewert für Datenwerte
+T:title | Title
+	:*:set title of output file
+	:de:Titel der Ausgabedatei setzen
+:type | Type
+	:*:type of data
+	:de:Datentype
+/.*=.*/name=var | List: append " "
+	:*:list of axis
+	:de:Achsendefinitionen
+::aus | Output; PrintMode = false
+	:*:name of output file
+	:de:Name der Ausgabedatei
+!
 
 mdmat md = expr(paste(" = ", sprintf("%s _x", Type), Value) + ";");
 
@@ -49,7 +78,8 @@ for (x in split(List, " "))
 	md = mdcat(x, list);
 }
 
-if	(PrintMode)	md.mark("#-1").print(iostd, "nohead");
-else			md.save(Output);
+if	(flagres("PrintMode"))
+	md.mark("#-1").print(iostd, "nohead");
+else	md.save(Output);
 
 free(md);

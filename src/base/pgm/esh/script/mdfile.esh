@@ -1,19 +1,53 @@
-Ident = "Informationen zu einer Datenmatrix ausgeben";
-Copyright = "(c) 1997 Erich Frühstück, A-1090 Wien, Währinger Straße 64/6";
-Version = "2";
+/*
+:*:	show structure of data cube
+:de:	Informationen zu einer Datenmatrix ausgeben
 
-bool ListAxis = false;
-bool AllStat = false;
+Copyright (C) 1997, 2001 Erich Frühstück
+This file is part of EFEU.
 
-PgmOpt("a", "AllStat=true", "Status zu allen Dateien")
-PgmOpt("x", "ListAxis=true", "Achsen auflisten")
-PgmVaArg("file(s)", NULL, "Datenfile(s)")
+EFEU is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+EFEU is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with EFEU; see the file COPYING.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+*/
+
+pconfig !
+#if	Lang == "de"
+Ident = "Informationen zu einer Datenmatrix ausgeben"
+#else
+Ident = "show structure of data cube"
+#endif
+Version = "2"
+Copyright = "(c) 1997, 2001 Erich Frühstück"
+AllStat = false
+ListAxis = false
+
+a | AllStat = true
+	:*:status of all files
+	:de:Status zu allen Dateien
+x | ListAxis = true
+	:*:show labels
+	:de:Achsen auflisten
+*file(s) | 
+	:*:files
+	:de:Datenfile(s)
+!
 
 void list_axis(mdmat md)
 {
 	mdaxis x;
 
-	if	(!ListAxis)	return;
+	if	(!flagres("ListAxis"))	return;
 
 	for (x = md.axis; x != NULL; x = x.next)
 	{
@@ -32,8 +66,6 @@ void list_axis(mdmat md)
 		iostd << "\n";
 	}
 }
-
-loadarg;
 
 int i;
 IO io;
@@ -73,7 +105,7 @@ for (i = 1; i < argc; i++)
 		list_axis(md);
 		free(md);
 	}
-	else if	(AllStat)
+	else if	(flagres("AllStat"))
 	{
 		printf("%s: Keine Datenmatrix.\n", name);
 	}

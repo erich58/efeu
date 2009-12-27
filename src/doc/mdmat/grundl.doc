@@ -1,0 +1,6 @@
+\title	Grundlagen
+
+Sämtliche Datenmatrixoperationen stehen über eingebaute Funktionen
+im |esh|-Interpreter zur Verfügung. Dementsprechend handelt es sich
+bei allen Kommandos zur Manipulation von Datenmatrizen um
+|esh|-Skripts.

@@ -1,0 +1,66 @@
+# Copyright (C) 1999 Erich Frühstück
+# This file is part of EFEU.
+# 
+# EFEU is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+# 
+# EFEU is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public
+# License along with EFEU; see the file COPYING.
+# If not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+Ident: lset ":*:document generator:de:EFEU-Dokumentkonverter"
+Version = "1.0"
+Copyright = "(C) 1999 Erich Frühstück"
+
+Type = NULL
+Config = NULL
+Bootstrap = NULL
+
+-lang:Lang|:eval 'setlang("{}")'
+	:*:set language
+	:de:Sprache setzen
+T:type|Type:
+	:*:document type
+	:de:Ausgabetype
+C:cfg|Config:
+	:*:configuration file
+	:de:Konfigurationsfile
+H:hdr|Head; Bootstrap: set '{Bootstrap} -H "{}"'
+	:*:evaluates <hdr> befor any input file.
+	:de:Wertet den String <hdr> vor den Eingabedateien aus.
+	Damit können Dokumentmakros definiert werden.
+0|NoHead = 1; Bootstrap: append " -0"
+	:*:suppress document head
+	:de:Dokumentkopf unterdrücken
+r:name|TaskName; MakeDepend = 1
+	:*:create target rule for make
+	:de:Generierungsregeln mit Pseudoziel
+d|MakeDepend = 1
+	:*:create dependence
+	:de:Abhängigkeitsregeln generieren
+t|Type = "term"; Output = "|less -r"
+	:*:terminal output
+	:de:Terminalausgabe
+l|Type = "LaTeX"
+	:*:LaTeX document
+	:de:LaTeX-Dokument
+p|Type = "tex2ps"
+	:*:PostScript document over LaTeX
+	:de:PostScript-Dokument über LaTeX
+h|Type = "html"
+	:*:html document
+	:de:HTML-Dokument
+o:aus|Output
+	:*:output file
+	:de:Ausgabefile
++file(s)|
+	:*:input file(s)
+	:de:Eingabedatei(en)

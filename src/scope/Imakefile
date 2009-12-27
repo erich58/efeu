@@ -1,4 +1,12 @@
+#include <mkmf.cfg>
+
 BDIR=	$(EFEUTOP)/build
+
+#if	_AIX
+CTAGS=	ctags -tw
+#else
+CTAGS=	ctags
+#endif
 
 #define	PLIST(x)	Concat3($(BDIR)/,x,.d)
 
@@ -7,47 +15,51 @@ BASE=	PLIST(std) PLIST(synt) PLIST(wmm) PLIST(oestz)
 usage::
 	@echo "Aufruf: make all | clean | update | tags"
 	@echo
-	@echo "all	Generiert alle Fileelisten (aber nicht tags)" 
+	@echo "all	Generiert alles" 
 	@echo "clean	Löscht alle generierten Dateien" 
 	@echo "update	Erneuert die Sourceliste" 
 	@echo "tags	Generiert ein tag-File für vi" 
 
+all:: update
+
 update::
 	rm -f SourceBase
-	make all
+	make files
 
 SourceBase:
 	rm -f SourceList
 	mksrclist $(BDIR) $@
 
 SourceList: SourceBase
-	-grep SourceList SourceBase | xargs cat > $@
-	-grep '\.[ch]$$' SourceBase >> $@
-	-grep '\.[0-9]$$' SourceBase >> $@
+	-grep SourceList SourceBase | xargs sort -u > $@
+	-grep @"'\\.[ch]$$'" SourceBase | sort -u >> $@
+	-grep @"'\\.[0-9]$$'" SourceBase | sort -u >> $@
 
 clean::
 	rm -f SourceBase SourceList
 
-#	Filelisten
+@!	Filelisten
 
-FILES= C H TPL DEF MS ESH MSG APP MAN
+FILES= C H TPL DEF MS ESH MSG APP DOC MAN
 
-all:: $(FILES)
+files:: $(FILES)
 
 clean::
 	rm -f $(FILES)
 
-C: SourceList; -grep '\.c$$' SourceList > $@
-H: SourceList; -grep '\.h$$' SourceList > $@
-TPL: SourceList; -grep '\.tpl$$' SourceList > $@
-DEF: SourceList; -grep '\.def$$' SourceList > $@
-MS: SourceList; -grep '\.ms$$' SourceList > $@
-ESH: SourceList; -grep '\.esh$$' SourceList > $@
-MSG: SourceList; -grep '\.msg$$' SourceList > $@
-APP: SourceList; -grep '\.app$$' SourceList > $@
-MAN: SourceList; -grep '\.[0-9]$$' SourceList > $@
+C: SourceList; -grep @"'\\.c$$'" SourceList > $@
+H: SourceList; -grep @"'\\.h$$'" SourceList > $@
+SRC: SourceList; -grep @"'\\.src$$'" SourceList > $@
+TPL: SourceList; -grep @"'\\.tpl$$'" SourceList > $@
+DEF: SourceList; -grep @"'\\.def$$'" SourceList > $@
+MS: SourceList; -grep @"'\\.ms$$'" SourceList > $@
+ESH: SourceList; -grep @"'\\.esh$$'" SourceList > $@
+MSG: SourceList; -grep @"'\\.msg$$'" SourceList > $@
+APP: SourceList; -grep @"'\\.app$$'" SourceList > $@
+DOC: SourceList; -grep @"'\\.doc$$'" SourceList > $@
+MAN: SourceList; -grep @"'\\.[0-9]$$'" SourceList > $@
 
-#	Kennungsfile für vi
+@!	Kennungsfile für vi
 
 all:: tags
 
@@ -56,5 +68,5 @@ clean::
 
 tags: C H
 	rm -f $@
-	cat C H | xargs ctags -a
+	cat C H | xargs $(CTAGS) -a
 

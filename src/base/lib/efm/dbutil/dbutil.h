@@ -1,44 +1,36 @@
-/*	Datenbankhilfsprogramme
-	(c) 1995 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Datenbankhilfsprogramme
 
 $Header	<EFEU/$1>
+
+$Copyright (C) 1995 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #ifndef EFEU_DBUTIL_H
 #define EFEU_DBUTIL_H	1
 
-#include <EFEU/ftools.h>
+#include <EFEU/io.h>
 
 #define	MSG_DB		"db"
 
-typedef size_t (*db_read_t) (void *data, size_t size, size_t nitems, FILE *file);
-typedef size_t (*db_write_t) (const void *data, size_t size, size_t nitems, FILE *file);
 
-typedef struct {
-	FILE *file;
-	db_read_t read;
-	db_write_t write;
-	void *buf;
-	size_t reclen;
-} DBFILE;
-
-
-DBFILE *db_open (const char *name, const char *mode, size_t size);
-DBFILE *db_xopen (const char *name, const char *mode, size_t size,
-	db_read_t read, db_write_t write);
-
-void db_close (DBFILE *db);
-void *db_get (DBFILE *db);
-void *db_last (DBFILE *db);
-int db_put (const void *data, DBFILE *db);
-int db_uniq (const void *data, DBFILE *db);
-
-size_t db_read (void *data, size_t dim, DBFILE *db);
-size_t db_write (const void *data, size_t dim, DBFILE *db);
-
-
-/*	Konvertierungshilfsprogramme
+/*	EBCDIC-Konvertierungshilfsprogramme
 */
 
 int db_isblank (const uchar_t *buf, int pos, int len);
@@ -54,19 +46,21 @@ char *db_str (const uchar_t *buf, int pos, int len);
 double db_double (const uchar_t *buf, int pos, int len);
 
 
-/*	Dateien sortieren
+/*	ASCII-Konvertierungshilfsprogramme
 */
 
-extern char *dbsort_tmpdir;
-extern char *dbsort_prefix;
-extern int dbsort_debug;
+char *txt_load (io_t *io, char *buf, int recl);
+unsigned txt_unsigned (const char *buf, int pos, int len);
+unsigned txt_base37 (const char *buf, int pos, int len);
+char *txt_str (const char *buf, int pos, int len);
+char txt_char (const char *buf, int pos, int len);
 
-void db_sort (DBFILE *in, DBFILE *out, size_t blksize, comp_t comp, int uniq);
-void db_fsort (const char *iname, const char *oname, size_t elsize,
-	db_read_t read, db_write_t write, size_t blksize, comp_t comp, int uniq);
 
 /*	Zahlendarstellung zur Basis 37
 */
+
+unsigned a37l (const char *s);
+char *l37a (unsigned x);
 
 #define	DIG37_SPACE	0
 #define	DIG37_0		1
@@ -106,8 +100,6 @@ void db_fsort (const char *iname, const char *oname, size_t elsize,
 #define	DIG37_Y		35
 #define	DIG37_Z		36
 
-unsigned a37l (const char *s);
-char *l37a (unsigned x);
 int ebcdic2ascii (int x);
 
 #endif	/* EFEU/dbutil.h */

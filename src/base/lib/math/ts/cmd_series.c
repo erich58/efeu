@@ -1,8 +1,23 @@
-/*	Befehlsinterpreter für Zeitreihenanalysen initialisieren
-	(c) 1997 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Befehlsinterpreter für Zeitreihenanalysen initialisieren
 
-	Version 1.0
+$Copyright (C) 1997 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/object.h>
@@ -471,7 +486,7 @@ static void TimeSeries2List (Func_t *func, void *rval, void **arg)
 }
 */
 
-static void f_index(Func_t *func, void *rval, void **arg)
+static void f_index (Func_t *func, void *rval, void **arg)
 {
 	TimeSeries_t *ts;
 	int n;
@@ -489,15 +504,20 @@ static void f_index(Func_t *func, void *rval, void **arg)
 		errmsg(MSG_TS, 11);
 		Buf_double = 0.;
 
-		if	(func->lretval)
-			Val_ptr(rval) = &Buf_double;
+		if	(!func->type)
+		{
+			Val_obj(rval) = NULL;
+		}
 		else	Val_double(rval) = 0.;
 
 		return;
 	}
 
-	if	(func->lretval)
-		Val_ptr(rval) = ts->data + n;
+	if	(!func->type)
+	{
+		Val_obj(rval) = LvalObj(&Lval_ref,
+			&Type_double, ts, ts->data + n);
+	}
 	else	Val_double(rval) = ts->data[n];
 }
 
@@ -612,10 +632,10 @@ int b, double x = 0.)", f_ncreate },
 		"operator[] (TimeSeries, TimeIndex)", f_index },
 	{ FUNC_VIRTUAL, &Type_double,
 		"operator[] (TimeSeries, int)", f_index },
-	{ FUNC_VIRTUAL, &Type_double,
-		"& operator[] (TimeSeries &, TimeIndex)", f_index },
-	{ FUNC_VIRTUAL, &Type_double,
-		"& operator[] (TimeSeries &, int)", f_index },
+	{ FUNC_VIRTUAL, &Type_obj,
+		"operator[] (TimeSeries &, TimeIndex)", f_index },
+	{ FUNC_VIRTUAL, &Type_obj,
+		"operator[] (TimeSeries &, int)", f_index },
 
 	{ FUNC_VIRTUAL, &Type_TimeSeries,
 		"TimeSeries::expand(TimeIndex, double = 0.)", f_expand },

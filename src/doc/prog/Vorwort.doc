@@ -1,0 +1,47 @@
+\intro
+Dieses Buch wendet sich an Programmentwickler und Anwender unter UNIX,
+die für ihre Arbeit die Werkzeuge und Programmbibliotheken von EFEU
+nutzen wollen.
+
+Bei \index{EFEU}\note <*E*>rich <*F*>rühstück <*E*>ntwicklungs-<*U*>mgebung
+handelt es sich um eine Entwicklungsumgebung
+zur Bildung von Programmbibliotheken und Anwenderprogrammen sowie
+eine Reihe von Hilfswerkzeugen für die tägliche Arbeit.
+
+Besondere Eigenschaften:
+*	Umfangreiche C-Programmbibliotheken;
+*	Makefilegenerierung mit C-Preprozessor aus einem Imakefile oder
+	direkt aus dem Sourcebaum;
+*	Mathematische Funktionen zum Arbeiten mit Datenwürfeln
+	(beliebigdimensional), Polynomen und Zeitreihen;
+*	Befehlsinterpreter mit C++-ähnlicher Syntax;
+*	Generierung von Sourcecode aus Schablonendateien;
+*	Handbuchgenerierung aus Sourcefiles;
+*	Dokumentsprache mit einfacher Syntax, komplexen
+	Einbindemöglichkeiten und verschiedenen Ausgabeformaten
+	(\LaTeX, HTML, roff, &ldots;).
+\endlist
+
+Die EFEU-Implementierung bei Synthesis enthält zusätzlich 
+noch eine Reihe von Programmbibliotheken und Kommandos zur
+Auswertung und Verwaltung von administrativen Daten und für
+Modellrechnungen. Diese zum Teil sehr umfangreichen Module
+werden in eigenen Handbüchern behandelt.
+
+In der ursprünglichen Form sollte dieses Handbuch den Schwerpunkt
+C-Programmierung haben, nach Rücksprache mit Mitarbeitern
+des Instiutes habe ich den esh-Interpreter in den
+Vordergrund gestellt.
+Trotzdem werden weiterhin einige Ausführungen zur C-Programmierung
+ins Handbuch einfließen. Zum einen weist der esh-Interpreter eine starke
+Affinität zu C/C++ auf, zum anderen ergeben sich dadurch tiefere
+Einblicke in die zugrundeliegenden Programmbibliotheken.
+
+/*
+Zum Verständnis dieses Buches sind Grundkenntnisse in der Arbeit
+mit UNIX-Systemen sowie in der Programmiersprache C förderlich.
+*/
+
+	Erich Frühstück\br
+	Wördern, \thedate
+

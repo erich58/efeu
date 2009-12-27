@@ -1,10 +1,28 @@
-/*	EFEU-Informationssystem
-	(c) 1998 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+EFEU-Informationssystem
+
+$Copyright (C) 1998 Erich Frühstück
+This file is part of EFEU.
+
+EFEU is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+EFEU is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with EFEU; see the file COPYING.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/pconfig.h>
 #include <EFEU/preproc.h>
+#include <EFEU/Resource.h>
 #include "eistty.h"
 
 #define	CONFIRM_QUIT	0
@@ -13,24 +31,15 @@
 
 #define	PSIZE ((info_win->_maxy - 2) / 2)
 
-int Lines = 0;
-int CommandInfo = 0;
-char *Node = NULL;
-
-Var_t vardef[] = {
-	{ "Lines",	&Type_int, &Lines },
-	{ "Node",	&Type_str, &Node },
-	{ "CommandInfo",	&Type_bool, &CommandInfo },
-};
-
 static int eval(int c);
 
 static InfoNode_t *LoadCommand(InfoNode_t *info, const char *def)
 {
-	char *cmd = msprintf("%s -dump", def);
+	char *name = strrchr(def, '/');
+	char *cmd = msprintf("%s --dump", def);
 	io_t *io = io_popen(cmd, "r");
 
-	info = AddInfo(info, def, NULL, NULL, NULL);
+	info = AddInfo(info, name ? name + 1 : def, NULL, NULL, NULL);
 	IOLoadInfo(info, io);
 	memfree(cmd);
 	io_close(io);
@@ -50,7 +59,7 @@ static InfoNode_t *load(InfoNode_t *info, const char *def)
 	if	(name == NULL)
 	{
 		message("findopen", MSG_FTOOLS, 6, 1, def);
-		procexit(EXIT_FAILURE);
+		exit(EXIT_FAILURE);
 	}
 
 	io = io_fileopen(name, "rz");
@@ -67,14 +76,13 @@ static InfoNode_t *load(InfoNode_t *info, const char *def)
 
 int main(int narg, char **arg)
 {
-	int i;
+	int i, Lines;
 	int key;
 	InfoNode_t *info;
 
 	libinit(arg[0]);
 	SetupWin();
-	pconfig(NULL, vardef, tabsize(vardef));
-	loadarg(&narg, arg);
+	ParseCommand(&narg, arg);
 
 	info = GetInfo(NULL, NULL);
 	info->list = NULL;
@@ -83,7 +91,7 @@ int main(int narg, char **arg)
 
 	for (i = 1; i < narg; i++)
 	{
-		if	(CommandInfo)
+		if	(GetFlagResource("CommandInfo"))
 		{
 			info = LoadCommand(NULL, arg[i]);
 		}
@@ -92,6 +100,7 @@ int main(int narg, char **arg)
 
 	if	(narg > 2)	info = NULL;
 	
+	Lines = GetIntResource("Lines", 0);
 	InitWin();
 
 	if	(Lines)
@@ -106,14 +115,14 @@ int main(int narg, char **arg)
 	ShowWindow(info_win);
 
 	key = '\f';
-	MakePart(GetInfo(info, Node));
+	MakePart(GetInfo(info, GetResource("Node", NULL)));
 
 	while (eval(key))
 		key = wgetch(info_win);
 
 	DelWindow(info_win);
 	EndWin();
-	libexit(EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 	return 0;
 }
 
@@ -203,7 +212,7 @@ static int eval(int key)
 	case '<':
 		if	((p = GetString("Datenfile: ")) != NULL)
 		{
-			WinMessage("%s -dump", p);
+			WinMessage("%s --dump", p);
 			MakePart(load(0, p));
 			memfree(p);
 		}
@@ -212,7 +221,7 @@ static int eval(int key)
 	case '|':
 		if	((p = GetString("Kommando: ")) != NULL)
 		{
-			WinMessage("|%s -dump", p);
+			WinMessage("|%s --dump", p);
 			MakePart(LoadCommand(NULL, p));
 			memfree(p);
 		}

@@ -1,0 +1,125 @@
+# :*:configuration file for mksource
+# :de:Konfigurationsdatei für Programmgenerierung
+# 
+# $Copyright (C) 1994 Erich Frühstück
+# This file is part of EFEU.
+# 
+# EFEU is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+# 
+# EFEU is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public
+# License along with EFEU; see the file COPYING.
+# If not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+Ident:lset ":*:c source generator:de:Sourcefilegenerierung"
+Version = "1.0"
+Copyright = "(c) 1995 Erich Frühstück"
+
+:eval 'IncPath = paste(PATHSEP, IncPath, EFEUTOP + "/lib/mksource")'
+:eval 'IncPath = paste(PATHSEP, IncPath, getenv("ESHPATH"))'
+:eval 'fmt_str = "%*s"'
+:eval 'VerboseMode = 1'
+
+I:dir | :eval 'IncPath = paste(PATHSEP, "{}", IncPath)'
+	:*:appends <dir> to the search path for scripts.
+	default value is "$(IncPath)"
+	:de:erweitert den Suchpfad für Skriptfiles um <dir>,
+	der Startwert ist "$(IncPath)"
+
+s | :eval 'VerboseMode = 0'
+	:*:silent execution
+	:de:Arbeitsschritte nicht protokollieren
+
+V | :eval 'VerboseMode = 1'
+	:*:little verbose
+	:de:Arbeitsschritte kurz protokollieren
+
+v | :eval 'VerboseMode = 2'
+	:*:verbose
+	:de:Arbeitsschritte ausführlich protokollieren
+
+l | :eval 'MakeList = true'
+	:*:create list of targets
+	:de:Liste der zu generierenden Dateien
+
+L:name | :eval 'ListName = "{}"; MakeList = true'
+	:*:create list of targets for <name>
+	:de:Liste mit Namen <name> generieren
+
+r | :eval 'MakeRule = true'
+	:*:create rule
+	:de:Makefileregeln generieren
+
+x | :eval 'AllTarget = NULL; CleanTarget = NULL; DependTarget = NULL'
+	:*:no pseude targets for make
+	:de:Keine Pseudoziele für Makefileregeln
+
+-all:name | :eval 'AllTarget = "{}"'
+	:*:target name
+	:de:Name des Generierungszieles
+
+-clean:name | :eval 'CleanTarget = "{}"'
+	:*:clean target name
+	:de:Name des Löschzieles
+
+-depend:name | :eval 'DependTarget = "{}"'
+	:*:depend target name
+	:de:Name des Ziels für Abhängigkeitsregeln
+
+-lock | :eval 'LockFlag = true'
+	:*:lock file creation
+	:de:Filegenerierung sperren
+
+-unlock | :eval 'LockFlag = false'
+	:*:unlock file creation
+	:de:hebt eine vordefinierte Sperre auf
+
+d | :eval 'MakeDep = true'
+	:*:make dependence
+	:de:Abhängigkeitsregeln generieren
+
+D name | :eval 'DependName = "{}"; MakeDep = true'
+	:*:make dependenve for target <name>
+	:de:Abhängigkeitsregel für <name> generieren
+
+n name | :eval 'config name = "{}"'
+	:*:base name for created files
+	:de:Basisname für Standardnamen
+
+h | :eval 'config hdr'
+	:*:create header
+	:de:Headerfile mit Standardnamen generieren
+
+c | :eval 'config src'
+	:*:create source
+	:de:Sourcefile mit Standardnamen generieren
+
+H hdr | :eval 'config hdr = $1'
+	:*:create header with name <hdr>
+	:de:Headerfile mit Namen <hdr> generieren
+
+C src | :eval 'config src = $1'
+	:*:create source with name <src>
+	:de:Sourcefile mit Namen <src> generieren
+
+t | :eval 'LockFlag = true; config tex'
+	:*:(obsolete) create TeX documentation, lock other outputs
+	:de:(veraltet) TeX-Dokumentation mit Standardnamen generieren,
+	andere Files sperren
+
+T doc | :eval 'LockFlag = true; config tex = $1'
+	:*:(obsolete) create TeX documentation <doc>, lock other outputs
+	:de:(veraltet) TeX-Dokumentation <doc> generieren,
+	andere Files sperren
+
+:name | :eval 'Template = "{}"'
+	:*:script
+	:de:Skriptfile

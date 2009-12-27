@@ -1,8 +1,23 @@
-/*	Nullstellenbestimmung
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Nullstellenbestimmung
 
-	Version 2.0
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/pconfig.h>
@@ -17,7 +32,7 @@ double SolveEps = 0.000001;
 int SolveStep = 25;
 char *SolveFmt = "%12lG";
 
-static Var_t solve_var[] = {
+static VarDef_t solve_var[] = {
 	{ "debug", 	&Type_bool, &SolveFlag },
 	{ "epsilon", 	&Type_double, &SolveEps },
 	{ "maxstep", 	&Type_int, &SolveStep },
@@ -26,8 +41,10 @@ static Var_t solve_var[] = {
 
 VarTab_t *SolvePar = NULL;
 
-static Var_t glob_var[] = {
-	{ "SolvePar",	&Type_vtab, &SolvePar },
+static VarDef_t glob_var[] = {
+	{ "SolvePar", &Type_vtab, &SolvePar,
+		":*:solve parameter tab\n"
+		":de:Lösungsparametertabelle\n" },
 };
 
 static int solve_intval(void *par, double x)
@@ -79,7 +96,7 @@ static FuncDef_t solve_Func[] = {
 void SetupSolve()
 {
 	SolvePar = VarTab("SolvePar", 32);
-	AddVar(SolvePar, solve_var, tabsize(solve_var));
-	AddVar(NULL, glob_var, tabsize(glob_var));
+	AddVarDef(SolvePar, solve_var, tabsize(solve_var));
+	AddVarDef(NULL, glob_var, tabsize(glob_var));
 	AddFuncDef(solve_Func, tabsize(solve_Func));
 }

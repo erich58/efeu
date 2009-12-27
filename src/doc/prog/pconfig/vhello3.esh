@@ -1,0 +1,24 @@
+#!/usr/bin/env esh
+
+pconfig !
+Ident = "Programmbeispiel: Hello World"
+Version = "$Revision: 1.1 $"
+Copyright = "(c) 2001 Erich Frühstück"
+
+Format = "%s"
+	Formatierungsanweisung für den Ausgabetext.
+Label = "Hallo Welt!"
+	Ausgabetext.
+
+q|-quote|Format = "\"%s\""
+	Gibt den Ausgabetext unter Anführung aus.
+f:fmt|-format:fmt|Format
+	Setzt das Ausgabeformat, die Vorgabe ist |{Format}|.
+::arg|Label
+	Bestimmt den Ausgabetext, die Vorgabe ist <"{Label}">.
+!
+
+str fmt = getres("Format", "%s");
+str label = getres("Label", "Hello World!");
+printf(fmt, label);
+putc('\n');

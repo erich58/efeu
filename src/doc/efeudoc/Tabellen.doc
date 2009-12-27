@@ -1,0 +1,87 @@
+\title	Tabellen und Grafiken
+
+\sec	Tabellenumgebung
+
+Tabellen und Graphiken werden in eine eigene \index{Tabellenumgebung}
+gestellt. Diese erlaubt die Verschiebung des linken Randes um mehr
+Platz für die Tabelle zu schaffen.
+
+Die Tabellenumgebung wird durch den Befehl \index{|\fig|} eingeleitet.
+Sie endet automatisch bei der nächsten Tabellenumgebung oder
+beim nächsten Gliederungsbefehl. Sie kann aber auch mit |\end|
+abgeschlossen werden. Eine Tabellenumgebung kann nicht innerhalb
+einer anderen Umgebung stehen.
+
+Der |\fig| Befehl besitzt die folgende Syntax:
+	|\fig[|<Rand>|][|<Kurzeintrag>|]| <Haupttitel>\br
+	<Untertitel>
+
+Grundsätzlich sind alle Parameter optional. Wird ein Kurzeintrag
+angegeben, muß auch der Rand spezifiziert werden.
+Der Haupttitel muß in der gleichen Zeile wie der |\fig|-Befehl stehen.
+Der Untertitel wird aus dem nachfolgenden Absatz gebildet.
+Folgt dem |\fig|-Befehl eine Leerzeile, entfällt der Untertitel.
+
+Anmerkungen innerhalb der Tabellenumgebung erfolgen mit dem
+Befehl \index{|\fignote|}. Er hat die Syntax:
+	|\fignote[|<Breite>|]| <Text>
+
+Durch <Breite> wird die Spaltenbreite der Anmerkung bestimmt.
+Der Anmerkungstext beginnt neben dem Befehl und kann mit eingerückten
+Zeilen fortgesetzt werden.
+
+\sec	Tabellen
+
+Eine Tabelle wird mit dem |\tab|-Befehl eingeleitet und endet
+bei der nächsten Leerzeile.
+Im Tabellensatz haben die Zeichen~||||, |[|~und~|#| eine modifizierte
+Bedeutung.
+
+Die einzelnen Tabellenspalten
+werden mit dem Pipe-Symbol~|||| getrennt. Ein Zeilenvorschub
+beendet eine Tabellenzeile. Beginnt die nachfolgende
+Zeile jedoch mit einer Einrückung (Leerzeichen oder Tabulator)
+gilt sie als Fortsetzung der aktuellen Zeile.
+
+\margin	Tabellenparameter
+Am Anfang einer Tabellenzeile können Zeilenparameter angegeben
+werden. Diese werden von eckigen Klammern |[]| eingeschlossen.
+Folgende Parameter sind möglich:
+*	Eine Zahl ändert die Zeilenhöhe für die aktuelle Zeile;
+*	Ein Stern |*| steht für eine Zeile in Fettschrift;
+*	Ein Minus |-| steht für eine Zeile mit fetten Linien;
+//*	Ein Klammeraffe |@|\mark{0} generiert eine Trennzeile;
+*	Ein Plus |+| erhöht die Einrückung der aktuellen Zeile.
+
+Die Einrückkennung |+| muß am Ende des Parameterstrings angegeben werden.
+Mehrfachangaben sind möglich.
+
+Eine Tabellenzeile, die nur aus dem Zeilenparameter besteht, generiert
+eine Trennzeile. Bleibt ein Spalteneintrag frei, wird für diesen
+Eintrag auch der Tabellenbalken unterdrückt. Die Ausgabe des Balkens
+bei einem leeren Tabelleneintrag kann mit einer Tilde |~|
+(fixes Leerzeichen) erzwungen werden.
+
+\margin	Mehrfachspalten
+Am Anfang eines Tabelleneintrags kann die Kennung für eine
+Mehrfachspalte stehen. Sie wird durch das Gittersymbol~'#'
+eingeleitet, danach folgt die Zahl der zusammengefaßten Spalten und
+einem (optionalen) Positionierungsparameter. Nachfolgende Leerzeichen
+werden überlesen.
+
+Folgende Positionsierungsparameter sind möglich:
+[l]	Linksbündiger Text,
+[c]	Zentrierter Text,
+[r]	Rechtsbündiger Text (Standardvorgabe).
+
+/*
+\newpage
+\include bsptab.doc
+\newpage
+\fig[0]	Tabellensource
+Beschreibungsdatei der Tabelle \ref{bsptab}.
+
+\vspace 1
+\include[verbatim] bsptab.doc
+\end
+*/

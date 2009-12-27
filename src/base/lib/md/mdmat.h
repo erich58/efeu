@@ -1,12 +1,29 @@
-/*	Arbeiten mit multidimensionalen Matrizen
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Arbeiten mit multidimensionalen Matrizen
 
-	Version 2.0
+$Header <EFEU/$1>
+
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	MDMAT_H
-#define	MDMAT_H	1
+#ifndef	_EFEU_mdmat_h
+#define	_EFEU_mdmat_h	1
 
 #define	MSG_MDMAT	"mdmat"
 
@@ -76,12 +93,12 @@ int check_axis (mdaxis_t *axis);
 /*	Achsenvergleich
 */
 
+int cmp_axis (mdaxis_t *a, mdaxis_t *b, int flag);
+
 #define	MDXCMP_NAME	1	/* Achsennamen vergleichen */
 #define	MDXCMP_DIM	2	/* Dimensionen vergleichen */
 #define	MDXCMP_IDX	4	/* Indexbezeichner vergleichen */
 #define	MDXCMP_ALL	7	/* Alle Parameter Testen */
-
-int cmp_axis (mdaxis_t *a, mdaxis_t *b, int flag);
 
 
 /*	Multidimensionale Matrix
@@ -100,7 +117,17 @@ typedef struct {
 extern reftype_t md_reftype;
 char *md_ident(mdmat_t *md);
 
+/*
+Der Makro $1 erhöht den Referenzzähler der Datenmatrix um 1
+*/
+
 #define	ref_mdmat(x)	rd_refer(x)
+
+/*
+Der Makro $1 verringert den Referenzzähler der Datenmatrix um 1
+und gibt die Datenstruktur bei Bedarf frei.
+*/
+
 #define	del_mdmat(x)	rd_deref(x)
 
 
@@ -291,4 +318,4 @@ void MF_label (Func_t *func, void *rval, void **arg);
 
 extern void *mdmat;
 
-#endif	/* MDMAT_H */
+#endif	/* EFEU/mdmat.h */

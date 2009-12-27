@@ -1,8 +1,5 @@
 /*	Teststruktur fuer Bezeichner generieren
 	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
-
-	Version 2.0
 */
 
 #include <EFEU/mdmat.h>
@@ -101,7 +98,7 @@ mdtest_t *mdmktestlist(const char *list, size_t dim)
 	{
 		p = io_mgets(io, "%s,");
 		*ptr = new_test(p, dim);
-		FREE(p);
+		memfree(p);
 		ptr = &(*ptr)->next;
 	}
 

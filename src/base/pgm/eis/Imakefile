@@ -4,3 +4,4 @@ EIS_OBJ= eistty.o show.o edit.o
 
 Program($(BINDIR),eistty,$(EIS_OBJ),$(EIS_DEP),$(EIS_LIB))
 Destination(EISDIR,$(EFEUTOP)/lib/eis)
+ProvideDir($(EISDIR)/de)

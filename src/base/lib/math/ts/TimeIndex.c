@@ -1,9 +1,31 @@
-/*	Zeitreihenindex
-	(c) 1997 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Zeitreihenindex
 
-	Version 1.0
+$Copyright (C) 1997 Erich Frühstück
+This file is part of EFEU.
 
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+*/
+
+#include <EFEU/object.h>
+#include <EFEU/calendar.h>
+#include <Math/TimeSeries.h>
+#include <ctype.h>
+
+/*
 #	#Index
 y	Jahr
 q	Jahr:Quartal
@@ -11,11 +33,6 @@ w	Woche/Jahr
 m	Monat.Jahr
 d	Tag.Monat.Jahr
 */
-
-#include <EFEU/object.h>
-#include <EFEU/calendar.h>
-#include <Math/TimeSeries.h>
-#include <ctype.h>
 
 #define	MONTAG(woche)	(7 * (woche) + 0)
 #define	MITTWOCH(woche)	(7 * (woche) + 3)
@@ -102,7 +119,7 @@ TimeIndex_t str2TimeIndex (const char *str)
 }
 
 
-char *TimeIndex2str (TimeIndex_t idx, int offset)
+int PrintTimeIndex (io_t *io, TimeIndex_t idx, int offset)
 {
 	Calendar_t cal;
 	int week;
@@ -113,20 +130,33 @@ char *TimeIndex2str (TimeIndex_t idx, int offset)
 	{
 	case TS_DAY:
 		Calendar(idx.value, &cal);
-		return msprintf("%d.%d.%d", cal.day, cal.month, cal.year);
+		return io_printf(io, "%d.%d.%d",
+			cal.day, cal.month, cal.year);
 	case TS_WEEK:
 		Calendar(MITTWOCH(idx.value), &cal);
 		week = idx.value - WeekIndex(cal.year, 0);
-		return msprintf("%d/%d", week, cal.year);
+		return io_printf(io, "%d/%d", week, cal.year);
 	case TS_MONTH:
-		return msprintf("%d.%d", 1 + idx.value % 12, idx.value / 12);
+		return io_printf(io, "%d.%d",
+			1 + idx.value % 12, idx.value / 12);
 	case TS_QUART:
-		return msprintf("%d:%d", idx.value / 4, 1 + idx.value % 4);
+		return io_printf(io, "%d:%d",
+			idx.value / 4, 1 + idx.value % 4);
 	case TS_YEAR:
-		return msprintf("%d", idx.value);
+		return io_printf(io, "%d", idx.value);
 	default:
-		return msprintf("#%d", idx.value);
+		return io_printf(io, "#%d", idx.value);
 	}
+}
+
+char *TimeIndex2str (TimeIndex_t idx, int offset)
+{
+	strbuf_t *buf = new_strbuf(0);
+	io_t *io = io_strbuf(buf);
+
+	PrintTimeIndex(io, idx, offset);
+	io_close(io);
+	return sb2str(buf);
 }
 
 static double dat2dbl(unsigned idx, int pos)

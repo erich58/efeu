@@ -1,8 +1,23 @@
-/*	Datenbankstruktur
-	(c) 1995 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Datenbankstruktur
 
-	Version 0.4
+$Copyright (C) 1995 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/vecbuf.h>
@@ -29,7 +44,7 @@ static DataBase_t *db_admin(DataBase_t *tg, const DataBase_t *src)
 				(char *) tg->buf.data + i * tg->type->size);
 
 		vb_free(&tg->buf);
-		FREE(tg);
+		memfree(tg);
 		return NULL;
 	}
 
@@ -39,7 +54,7 @@ static DataBase_t *db_admin(DataBase_t *tg, const DataBase_t *src)
 }
 
 
-REFTYPE(DB_reftype, "DB", db_ident, db_admin);
+ADMINREFTYPE(DB_reftype, "DB", db_ident, db_admin);
 
 
 /*	Datentype
@@ -184,7 +199,7 @@ static Obj_t *db_search(DataBase_t *db, Obj_t *obj, int flag)
 	{
 	case VB_SEARCH:
 
-		return p2 ? LvalObj(db->type, db, p2) : ptr2Obj(NULL);
+		return p2 ? LvalObj(&Lval_ref, db->type, db, p2) : ptr2Obj(NULL);
 
 	case VB_DELETE:
 	case VB_REPLACE:
@@ -203,6 +218,9 @@ static Obj_t *db_search(DataBase_t *db, Obj_t *obj, int flag)
 		CleanData(db->type, p2);
 		memfree(p2);
 	}
+
+	if	(p1 != p2)
+		memfree(p1);
 
 	return obj;
 }
@@ -282,7 +300,7 @@ static void f_db_index(Func_t *func, void *rval, void **arg)
 		return;
 	}
 
-	Val_obj(rval) = LvalObj(db->type, db,
+	Val_obj(rval) = LvalObj(&Lval_ref, db->type, db,
 		(char *) db->buf.data + n * db->type->size);
 }
 
@@ -293,7 +311,7 @@ static void f_db_print(Func_t *func, void *rval, void **arg)
 
 	p = db_ident(Val_DB(arg[1]));
 	Val_int(rval) = io_puts(p, Val_io(arg[0]));
-	FREE(p);
+	memfree(p);
 }
 */
 
@@ -338,7 +356,7 @@ static void DB2List (Func_t *func, void *rval, void **arg)
 
 		for (i = 0; i < db->buf.used; i++)
 		{
-			*ptr = NewObjList(LvalObj(db->type, db, data));
+			*ptr = NewObjList(LvalObj(&Lval_ref, db->type, db, data));
 			data += db->type->size;
 			ptr = &(*ptr)->next;
 		}
@@ -351,8 +369,10 @@ static void DB2List (Func_t *func, void *rval, void **arg)
 /*	Initialisieren
 */
 
-static Var_t db_var[] = {
-	{ "DataBaseDebug", &Type_bool, &DB_reftype.debug },
+static VarDef_t db_var[] = {
+	{ "DataBaseDebug", &Type_bool, &DB_reftype.debug,
+		":*:flag to control debuging of DataBase objects\n"
+		":de:Flag zum Debuggen von DataBase Objekte\n" },
 };
 
 static FuncDef_t db_func[] = {
@@ -382,6 +402,6 @@ VirFunc	test = NULL, str list = NULL)", f_db_fsave },
 void SetupDataBase(void)
 {
 	AddType(&Type_DB);
-	AddVar(NULL, db_var, tabsize(db_var));
+	AddVarDef(NULL, db_var, tabsize(db_var));
 	AddFuncDef(db_func, tabsize(db_func));
 }

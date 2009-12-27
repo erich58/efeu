@@ -1,0 +1,20 @@
+\title	Der nächste Schritt
+
+\sec	Ausgangsbasis
+
+Bei umfangreichen Projekten kann auch das Schreiben von Imakefiles
+lästig werden und man möchte diesen Schritt automatisieren.
+
+Betrachtet man z.B: die Definition einer Programmbibliothek.
+Die einzelönen Funktionen der Programmbibliothek sind auf verschiedene
+Sourcefiles aufgeteilt. Das Imakefile für die Programmbibliothek
+benötigt im wesentlichen nicht mehjr als den Namen der
+Programmbibliothek, ein paar Zusatzinformationen über den
+Installationsort und eine Liste der involvierten Dateien.
+
+Jedesmal, wenn eine neue Datei dazugestellt oder eine alte Datei
+gelöscht oder umbenannt wird, muß die Liste der involvierten
+Dateien im Imakefile angepaßt werden. Was spricht dagegen,
+diesen Abgleich automatisch durchzuführen.
+
+@TODO

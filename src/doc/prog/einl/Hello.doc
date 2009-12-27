@@ -1,0 +1,65 @@
+\sec	Hello World
+
+Viele Bücher zur Programmentwicklung, insbesonders in der UNIX-Welt
+beginnen mit dem bekanntesten aller Programme, nämlich <"Hello World">.
+//An diesem Beispiel lassen sich bereits die ersten Konzepte von EFEU
+//gut demonstrieren.
+
+Hier ist der Quellcode der Datei |hello1.c|, die klassische Variante
+von <"Hello World">.
+
+\include[verbatim] hello1.c
+
+Kompiliert wird das Programm mit dem Befehl
+	|cc -o hello1 hello1.c|
+
+Sehen wur uns nun die Datei |hello2.esh| an, die Esh-Version
+von <"Hello World">.
+
+\include[verbatim] hello2.esh
+
+Aufgerufen wird das Skript mit
+	|esh hello2.esh|
+
+Achtung: Der Strichpunkt am Ende der Zeile ist notwendig, da sonst
+der Rückgabewert von |printf| -- die Zahl der ausgegebenen Zeichen --
+ebenfalls ausgegeben wird.
+
+\ssec	Ausführbarkeit von Skripts
+Um ein esh-Skript ausführbar zu machen, benötigt es
+als erste Zeile einen speziellen Eintrag der Form:
+	<|#!\eval{EFEUTOP}/esh|>
+
+der das Betriebssystem darüber informiert, dass das
+Skript vom Kommando |esh| interpriert werden soll.
+Dabei muss aber der absolute Pfadname angegeben werden.
+Da aber EFEU an den verschiedensten Stellen im System
+installiert sein kann, sind solche Skripts auf andere Rechner
+nicht übertragbar. Daher wird ein Trick angewendet und folgende
+Zeile eingefügt:
+	<|#!/usr/bin/env esh|>
+
+Das Kommando |env| dient eigentlich dazu, ein Kommando in
+veränderter Umgebung ausführen zu lassen. Diese Funktionalität
+wird zwar nicht benötigt, aber es erlaubt den Start des
+esh-Interpreters ohne absolute Pfadangabe.
+
+Damit das Skript auch ausführbar ist, muß noch der Dateimodus mit
+dem Befehl |chmod| geändert werden:
+	|chmod a+x hello2.esh|
+
+Alternativ dazu können diese Schritte mit dem Hilfsprogramm
+|efeuscript| durchgeführt werden. Es dient zur Installation
+eines Skriptfiles und wird in der Regel in Makefiles verwendet.
+Der Aufruf von |efeuscript -h| liefert die Syntax des Kommandos:
+
+---- verbatim | sh
+efeuscript -h
+----
+
+Ein Esh-Skript wird mit den Optionen |-e -c esh| installiert.
+Falls das Sourcefile den Filezusatz <"|.esh|"> enthält,
+sind keine Optionen notwendig, die Einstellungen werden automatisch
+an Hand des Filenamens ermittelt. Das obige Programmbeispiel kann also
+folgend installiert werden:
+	<|efeuscript hello2.esh <bindir>/hello2|>

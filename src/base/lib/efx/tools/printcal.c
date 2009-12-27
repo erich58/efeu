@@ -1,17 +1,32 @@
-/*	Datumsformatierung
-	(c) 1995 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Datumsformatierung
 
-	Version 2.0
+$Copyright (C) 1995 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/calendar.h>
 #include <EFEU/locale.h>
 
-#define	LOCALE	(Locale.date ? Locale.date : &LCDate_DE)
+#define	LOCALE	(Locale.date ? Locale.date : LCDate)
 
-#define	MONAT(dat)	LOCALE->month[(cal->month - 1) % 12]
-#define	WTAG(idx)	LOCALE->weekday[cal->wday % 7]
+#define	MONAT(x)	LOCALE->month[x ? (x - 1) % 12 : 0]
+#define	WTAG(x)		LOCALE->weekday[x % 7]
 
 #define	FMT_DATE	"%_d.%_m.%Y"
 #define	FMT_TIME	"%_d.%_m.%Y %H:%M:%S"
@@ -64,11 +79,11 @@ static int print_key (io_t *io, Calendar_t *cal, int key, putval_t putval)
 {
 	switch (key)
 	{
-	case 'a':	return io_printf(io, "%2.2s", WTAG(cal));
-	case 'A':	return io_puts(WTAG(cal), io);
+	case 'a':	return io_printf(io, "%2.2s", WTAG(cal->wday));
+	case 'A':	return io_puts(WTAG(cal->wday), io);
 	case 'h':
-	case 'b':	return io_printf(io, "%3.3s", MONAT(cal));
-	case 'B':	return io_puts(MONAT(cal), io);
+	case 'b':	return io_printf(io, "%3.3s", MONAT(cal->month));
+	case 'B':	return io_puts(MONAT(cal->month), io);
 	case 'd':	return putval(io, 2, cal->day);
 	case 'D':	return print_key_D(io, cal, putval);
 	case 'e':	return io_printf(io, "%2d", cal->day);

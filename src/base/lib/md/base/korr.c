@@ -1,6 +1,5 @@
 /*	Datenmatrix korrigieren
 	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
 */
 
 #include <EFEU/mdmat.h>
@@ -78,5 +77,5 @@ static void do_korr(mdaxis_t *axis, void *data, Konv_t *get, Konv_t *set, double
 		ptr += axis->size;
 	}
 
-	FREE(dat);
+	memfree(dat);
 }

@@ -1,55 +1,81 @@
-/*	Überschriften für Handbucheinträge
-	(c) 1999 Erich Frühstück
-	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+/*
+Überschriften für Handbucheinträge
+
+$Copyright (C) 1999 Erich Frühstück
+This file is part of EFEU.
+
+EFEU is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+EFEU is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with EFEU; see the file COPYING.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
+
+\eval {
+	void mansection(str name)
+		section('H', NULL, fgets(langfilter(name), EOF));
+}
 
 Hauptüberschrift BEZEICHNUNG
 
-\def\Name	section('H', NULL, "BEZEICHNUNG");
+\def\Name	mansection(":*:NAME:de:BEZEICHNUNG");
 
 Hauptüberschrift ÜBERSICHT
 
-\def\Synopsis	section('H', NULL, "ÜBERSICHT");
+\def\Synopsis	mansection(":*:SYNOPSIS:de:ÜBERSICHT");
 
 Hauptüberschrift BESCHREIBUNG
 
-\def\Description	section('H', NULL, "BESCHREIBUNG");
+\def\Description	mansection(":*:DESCRIPTION:de:BESCHREIBUNG");
 
 Hauptüberschrift BEISPIEL
 
-\def\Example	section('H', NULL, "BEISPIEL");
+\def\Example	mansection(":*:EXAMPLE:de:BEISPIEL");
 
 Hauptüberschrift BEISPIELE
 
-\def\Examples	section('H', NULL, "BEISPIELE");
+\def\Examples	mansection(":*:EXAMPLES:de:BEISPIELE");
 
 Hauptüberschrift DATEIEN
 
-\def\Files	section('H', NULL, "DATEIEN");
+\def\Files	mansection(":*:FILES:de:DATEIEN");
 
 Hauptüberschrift UMGEBUNGSVARIABLEN
 
-\def\Environment	section('H', NULL, "UMGEBUNGSVARIABLEN");
+\def\Environment	mansection(":*:ENVIRONMENT:de:UMGEBUNGSVARIABLEN");
 
 Hauptüberschrift SIEHE AUCH
 
-\def\SeeAlso	section('H', NULL, "SIEHE AUCH");
+\def\SeeAlso	mansection(":*:SEE ALSO:de:SIEHE AUCH");
 
 Hauptüberschrift DIAGNOSE
 
-\def\Diagnostics	section('H', NULL, "DIAGNOSE");
+\def\Diagnostics	mansection(":*:DIAGNOSTICS:de:DIAGNOSE");
 
 Hauptüberschrift BEMERKUNGEN
 
-\def\Notes	section('H', NULL, "BEMERKUNGEN");
+\def\Notes	mansection(":*:NOTES:de:BEMERKUNGEN");
 
 Hauptüberschrift WARNUNGEN
 
-\def\Warnings	section('H', NULL, "WARNUNGEN");
+\def\Warnings	mansection(":*:WARNINGS:de:WARNUNGEN");
 
 Hauptüberschrift FEHLER
 
-\def\Errors	section('H', NULL, "FEHLER");
+\def\Errors	mansection(":*:ERRORS:de:FEHLER");
+
+Hauptüberschrift COPYRIGHT
+
+\def\Copyright	mansection("COPYRIGHT");
 
 Handbuch des Programmierers
 
@@ -73,11 +99,10 @@ Die Funktion $1 dient zur Ausgabe eines Funktionsprototypes
 /*	Kommandos für Kompatiblität
 */
 
-\def\SynTeX	{ mode('h'); if (!latex("Syn\TeX{}")) cout << "SynTeX"; }
-\def\BibTeX	{ mode('h'); if (!latex("{\sc Bib}\TeX{}")) cout << "BibTeX"; }
-\def\LaTeX	{ mode('h'); if (!latex("\\LaTeX{}")) cout << "LaTeX"; }
-\def\LaTeXe	{ mode('h'); if (!latex("\\LaTeXe{}")) cout << "LaTeX2e"; }
-\def\TeX	{ mode('h'); if (!latex("\\TeX{}")) cout << "TeX"; }
+\def\BibTeX	{ mode('h'); if (!plaintex("{\sc Bib}\TeX{}")) cout << "BibTeX"; }
+\def\LaTeX	{ mode('h'); if (!plaintex("\\LaTeX{}")) cout << "LaTeX"; }
+\def\LaTeXe	{ mode('h'); if (!plaintex("\\LaTeXe{}")) cout << "LaTeX2e"; }
+\def\TeX	{ mode('h'); if (!plaintex("\\TeX{}")) cout << "TeX"; }
 
 \def\tthang	{ newenv('c'); newenv('h'); }
 \def\sloppy	newenv('s');

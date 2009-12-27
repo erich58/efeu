@@ -1,0 +1,19 @@
+/*      Beschreibungsbasis
+*/
+
+#include <data.cfg>
+
+DB=     /db/vz/VZB1999.gz
+RNG=	1996
+GRP=    grp=ges,bs.gb,dg.wikl
+BL=     bland=ges,dg.bland
+FLAGS=  -e betr=anz -r $(RNG)
+
+#define Count(name,list) \
+@;AllTarget(name) \
+@;name: $(DB) \
+@;@+syncnt $(FLAGS) $(DB) $@ list \
+@;
+
+Count(betr.md,$(GRP) $(BL))
+Count(wien.md,$(GRP) "bez=ges,dg.wbez")

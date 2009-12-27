@@ -1,8 +1,23 @@
-/*	UNIX-Spezifische Funktionen und Strukturen
-	(c) 1999 Erich Frühstück
-	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+/*
+UNIX-Spezifische Funktionen und Strukturen
 
-	Version 0.4
+$Copyright (C) 1999 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/object.h>
@@ -51,13 +66,13 @@ static int *fstat_mode (fstat_t *fstat) { return &fstat->mode; }
 static long *fstat_size (fstat_t *fstat) { return &fstat->size; }
 static Time_t *fstat_mtime (fstat_t *fstat) { return &fstat->mtime; }
 
-static Var_t fstat_var[] = {
-	{ "path", &Type_str, NULL, 0, 0, ConstMember, fstat_path },
-	{ "uid", &Type_int, NULL, 0, 0, ConstMember, fstat_uid },
-	{ "gid", &Type_int, NULL, 0, 0, ConstMember, fstat_gid },
-	{ "mode", &Type_int, NULL, 0, 0, ConstMember, fstat_mode },
-	{ "size", &Type_long, NULL, 0, 0, ConstMember, fstat_size },
-	{ "mtime", &Type_Time, NULL, 0, 0, ConstMember, fstat_mtime },
+static MemberDef_t fstat_var[] = {
+	{ "path", &Type_str, ConstMember, fstat_path },
+	{ "uid", &Type_int, ConstMember, fstat_uid },
+	{ "gid", &Type_int, ConstMember, fstat_gid },
+	{ "mode", &Type_int, ConstMember, fstat_mode },
+	{ "size", &Type_long, ConstMember, fstat_size },
+	{ "mtime", &Type_Time, ConstMember, fstat_mtime },
 };
 
 static void str2fstat (Func_t *func, void *rval, void **arg)
@@ -153,13 +168,13 @@ static char **pwd_shell (pwd_t *pwd) { return &pwd->shell; }
 static int *pwd_uid (pwd_t *pwd) { return &pwd->uid; }
 static int *pwd_gid (pwd_t *pwd) { return &pwd->gid; }
 
-static Var_t pwd_var[] = {
-	{ "name", &Type_str, NULL, 0, 0, ConstMember, pwd_name },
-	{ "gecos", &Type_str, NULL, 0, 0, ConstMember, pwd_gecos },
-	{ "home", &Type_str, NULL, 0, 0, ConstMember, pwd_home },
-	{ "shell", &Type_str, NULL, 0, 0, ConstMember, pwd_shell },
-	{ "uid", &Type_int, NULL, 0, 0, ConstMember, pwd_uid },
-	{ "gid", &Type_int, NULL, 0, 0, ConstMember, pwd_gid },
+static MemberDef_t pwd_var[] = {
+	{ "name", &Type_str, ConstMember, pwd_name },
+	{ "gecos", &Type_str, ConstMember, pwd_gecos },
+	{ "home", &Type_str, ConstMember, pwd_home },
+	{ "shell", &Type_str, ConstMember, pwd_shell },
+	{ "uid", &Type_int, ConstMember, pwd_uid },
+	{ "gid", &Type_int, ConstMember, pwd_gid },
 };
 
 
@@ -302,8 +317,8 @@ static FuncDef_t func_unix[] = {
 void CmdSetup_unix(void)
 {
 	AddType(&Type_fstat);
-	AddVar(Type_fstat.vtab, fstat_var, tabsize(fstat_var));
+	AddMember(Type_fstat.vtab, fstat_var, tabsize(fstat_var));
 	AddType(&Type_pwd);
-	AddVar(Type_pwd.vtab, pwd_var, tabsize(pwd_var));
+	AddMember(Type_pwd.vtab, pwd_var, tabsize(pwd_var));
 	AddFuncDef(func_unix, tabsize(func_unix));
 }

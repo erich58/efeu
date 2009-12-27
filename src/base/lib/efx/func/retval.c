@@ -1,25 +1,41 @@
-/*	Rückgabewerte berechnen
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Rückgabewerte berechnen
 
-	Version 0.4
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/object.h>
 
-Obj_t *MakeRetVal(Func_t *func, void **arg)
+
+Obj_t *MakeRetVal(Func_t *func, Obj_t *firstarg, void **arg)
 {
 	Obj_t *obj;
 
-	if	(func->type == NULL)
+	if	(func->lretval)
+	{
+		func->eval(func, NULL, arg);
+		obj = RefObj(firstarg);
+	}
+	else if	(func->type == NULL)
 	{
 		obj = NULL;
 		func->eval(func, &obj, arg);
-	}
-	else if	(func->lretval)
-	{
-		obj = LvalObj(func->type, func, NULL);
-		func->eval(func, &obj->data, arg);
 	}
 	else
 	{
@@ -31,17 +47,26 @@ Obj_t *MakeRetVal(Func_t *func, void **arg)
 }
 
 
-void IgnoreRetVal(Func_t *func, void **arg)
+Obj_t *ConstRetVal (Func_t *func, void **args)
 {
-	UnrefObj(MakeRetVal(func, arg));
-}
+	Obj_t *obj;
 
-
-void KonvRetVal(Type_t *type, void *data, Func_t *func, void **arg)
-{
-	if	(type != func->type || func->lretval)
+	if	(func->lretval)
 	{
-		Obj2Data(MakeRetVal(func, arg), type, data);
+		func->eval(func, NULL, args);
+		obj = ConstObj(func->type, args[0]);
 	}
-	else	func->eval(func, data, arg);
+	else if	(func->type == NULL)
+	{
+		obj = NULL;
+		func->eval(func, &obj, args);
+	}
+	else
+	{
+		obj = NewObj(func->type, NULL);
+		func->eval(func, obj->data, args);
+	}
+
+	return obj;
 }
+

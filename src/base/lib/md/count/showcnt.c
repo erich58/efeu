@@ -1,12 +1,13 @@
 /*	Auflisten von Zählerdefinitionen
 	(c) 1995 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
-
-	Version 2
 */
 
 #include <EFEU/mdmat.h>
 #include <EFEU/mdcount.h>
+
+#define	LBL_COUNT \
+	":*:counter types" \
+	":de:Zählerdefinitionen"
 
 void md_showcnt(io_t *io, xtab_t *tab)
 {
@@ -42,13 +43,13 @@ static InfoNode_t *count_root = NULL;
 
 static int add_count(MdCount_t *entry)
 {
-	AddInfo(count_root, entry->name, mstrcpy(entry->desc),
+	AddInfo(count_root, entry->name, entry->desc,
 		print_count, entry);
 	return 1;
 }
 
 void MdCountInfo (InfoNode_t *info, xtab_t *tab)
 {
-	count_root = AddInfo(info, "count", "Zählerdefinitionen", NULL, NULL);
+	count_root = AddInfo(info, "count", LBL_COUNT, NULL, NULL);
 	xwalk(tab, (visit_t) add_count);
 }

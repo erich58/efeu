@@ -1,25 +1,35 @@
 #!/bin/sh
-#	TeX-Formatierung
-#	(c) 1993 Erich Fruehstueck
-#	A-1090 Wien, Waehringer Strasse 64/6
+# :*:convert TeX-document to PostScript
+# :de:TeX-Formatierung
+#
+# Copyright (C) 1993, 2001 Erich Frühstück
+# This file is part of EFEU.
+# 
+# EFEU is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+# 
+# EFEU is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public
+# License along with EFEU; see the file COPYING.
+# If not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 name=TeX$$
 texfile=$name.tex
 dvifile=$name.dvi
 psfile=$name.ps
 count=1
-#TEXINPUTS=.:`pwd`:/usr/lib/texmf/texmf/tex//
-#export TEXINPUTS
 
 usage ()
 {
-	echo "Aufruf: $0 [-h] [-q] [-n count] [-r res] src [ps]"
-	exit 1
-}
-
-help ()
-{
-	cat <<!
+	case ${LANG:=en} in
+	de*)	cat <<!
 Aufruf: $0 [-h] [-q] [-n count] [-r res] src [ps]
 
 	-h	Dieser Text
@@ -30,40 +40,44 @@ Aufruf: $0 [-h] [-q] [-n count] [-r res] src [ps]
 	ps	Ausgabefile
 
 !
-	exit 0
+		;;
+	*)	cat <<!
+usage: $0 [-h] [-q] [-n count] [-r res] src [ps]
+
+	-h	this output
+	-q	landscape
+	-n	nummber of formatting runs
+	-r	resolution
+	src	source
+	ps	target
+!
+		;;
+	esac
 }
 
-#	Aufarbeiten der Argumentliste
+#	parse command line
 
-if
-	set -- `getopt hn:qr: "$@" 2>&1`
-	test $? -ne 0
-then
-	shift
-	echo $0: $*
-	exit 1
-fi
-
-#	Optionen abfragen
-
-for i
+while getopts hn:qr: opt
 do
-	case $i in
-	-h)	help;;
-	-n)	count=$2; shift 2;;
-	-q)	psflags="$psflags -t landscape"; shift;;
-	-r)	psflags="$psflags -D$2"; shift 2;;
-	--)	shift; break;;
+	case $opt in
+	n)	count=$OPTARG;;
+	q)	psflags="$psflags -t landscape";;
+	r)	psflags="$psflags -D$OPTARG";;
+	h)	usage; exit 0;;
+	\?)	usage | sed -e '/^$/q'; exit 1;;
 	esac
 done
+
+shift `expr $OPTIND - 1`
 
 if
 	test $# -lt 1
 then
-	usage;
+	usage
+	exit 1
 fi
 
-#	Eingabefile generieren
+#	create input file
 
 if
 	test A$1 = A-
@@ -78,11 +92,16 @@ elif
 then
 	cp $1 $texfile
 else
-	echo "$0: Datei \"$1\" nicht gefunden." >&2
+	case $LANG in
+	de*)	echo "$0: Datei \"$1\" nicht gefunden." >&2;;
+	*)	echo "$0: file \"$1\" not found." >&2;;
+	esac
+
+	exit 1
 fi
 
 
-#	Formatieren mit tex oder latex
+#	formatting mit tex oder latex
 
 if
 	fgrep -c documentstyle $texfile > /dev/null
@@ -97,7 +116,7 @@ else
 	echo "\\\\end" >> $texfile
 fi
 
-echo "Formatieren..." >&2
+echo "formatting..." >&2
 
 while [ $count -gt 0 ]
 do
@@ -111,7 +130,7 @@ do
 done
 
 case `basename $0` in
-	tex2ps)	echo "Konvertieren..." >&2
+	tex2ps)	echo "converting..." >&2
 		dvips $psflags $dvifile -o $psfile
 		outfile=$psfile
 		;;
@@ -119,7 +138,7 @@ case `basename $0` in
 		;;
 esac
 
-#	Ausgabefile kopieren
+#	copy output to target
 
 if
 	test $# -lt 2
@@ -140,6 +159,6 @@ else
 	cp $outfile $2
 fi
 
-#	Aufraeumen
+#	cleanup
 
 rm -f $name.*

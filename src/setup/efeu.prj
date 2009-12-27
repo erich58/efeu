@@ -1,8 +1,0 @@
-#	EFEU-Projekte
-#	(c) 2000 Erich Frühstück
-#	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
-
-#name	dep	desc
-base	.	Basismodul für Entwicklungsumgebung
-std	base	EFEU-Basisbibliotheken/Standardkommandos
-scope	*	Sorcelisten und TAG-Files zusammenstellen

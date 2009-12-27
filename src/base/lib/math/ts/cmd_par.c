@@ -1,8 +1,23 @@
-/*	Regressionskoeffizienten
-	(c) 1997 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Regressionskoeffizienten
 
-	Version 1.0
+$Copyright (C) 1997 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/object.h>
@@ -99,19 +114,19 @@ static Obj_t *par_res (const Var_t *st, const Obj_t *obj)
 	return x ? NewPtrObj(&Type_TimeSeries, rd_refer(x->res)) : NULL;
 }
 
-static Var_t var_OLSPar[] = {
-	{ "nr", &Type_int, NULL, 0, 0, ConstMember, par_nr },
-	{ "df", &Type_int, NULL, 0, 0, ConstMember, par_df },
-	{ "r2", &Type_double, NULL, 0, 0, ConstMember, par_r2 },
-	{ "rbar2", &Type_double, NULL, 0, 0, ConstMember, par_rbar2 },
-	{ "dw", &Type_double, NULL, 0, 0, ConstMember, par_dw },
-	{ "see", &Type_double, NULL, 0, 0, ConstMember, par_see },
-	{ "koef", &Type_vec, NULL, 0, 0, par_koef, NULL },
-	{ "exogen", &Type_vec, NULL, 0, 0, par_exogen, NULL },
-	{ "res", &Type_TimeSeries, NULL, 0, 0, par_res, NULL },
-	{ "base", &Type_TimeIndex, NULL, 0, 0, ConstMember, par_base },
-	{ "first", &Type_TimeIndex, NULL, 0, 0, ConstMember, par_first },
-	{ "last", &Type_TimeIndex, NULL, 0, 0, ConstMember, par_last },
+static MemberDef_t var_OLSPar[] = {
+	{ "nr", &Type_int, ConstMember, par_nr },
+	{ "df", &Type_int, ConstMember, par_df },
+	{ "r2", &Type_double, ConstMember, par_r2 },
+	{ "rbar2", &Type_double, ConstMember, par_rbar2 },
+	{ "dw", &Type_double, ConstMember, par_dw },
+	{ "see", &Type_double, ConstMember, par_see },
+	{ "koef", &Type_vec, par_koef, NULL },
+	{ "exogen", &Type_vec, par_exogen, NULL },
+	{ "res", &Type_TimeSeries, par_res, NULL },
+	{ "base", &Type_TimeIndex, ConstMember, par_base },
+	{ "first", &Type_TimeIndex, ConstMember, par_first },
+	{ "last", &Type_TimeIndex, ConstMember, par_last },
 };
 
 /*	Funktionen
@@ -147,5 +162,5 @@ void CmdSetup_OLSPar (void)
 {
 	AddType(&Type_OLSPar);
 	AddFuncDef(func, tabsize(func));
-	AddVar(Type_OLSPar.vtab, var_OLSPar, tabsize(var_OLSPar));
+	AddMember(Type_OLSPar.vtab, var_OLSPar, tabsize(var_OLSPar));
 }

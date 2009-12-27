@@ -1,8 +1,23 @@
-/*	Funktionen bestimmen und auswerten
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Funktionen bestimmen und auswerten
 
-	Version 0.4
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/object.h>
@@ -33,7 +48,12 @@ static void fpar_clear(FUNCPAR *par, int n)
 	int i;
 
 	for (i = 0; i < n; i++)
+	{
+		if	(par->func->arg[i].lval)
+			SyncLval(par->obj[i]);
+
 		UnrefObj(par->obj[i]);
+	}
 
 	memfree(par->obj);
 	memfree(par->arg);
@@ -54,7 +74,7 @@ static int test_lval (const Obj_t *obj, const Type_t *type)
 	const Type_t *old;
 
 	if	(obj == NULL)		return 1;
-	if	(obj->lref == NULL)	return 1;
+	if	(obj->lval == NULL)	return 1;
 	if	(type == NULL)		return 0;
 
 	for (old = obj->type; old != NULL; old = old->dim ? NULL : old->base)
@@ -93,7 +113,7 @@ static int fpar_set(FUNCPAR *par, int n, Obj_t *obj)
 Obj_t *EvalFunc(Func_t *func, const ObjList_t *list)
 {
 	FUNCPAR par;
-	Obj_t *obj;
+	Obj_t *obj, *firstarg;
 	int i, dim;
 
 	if	(func == NULL)
@@ -122,11 +142,12 @@ Obj_t *EvalFunc(Func_t *func, const ObjList_t *list)
 			return fpar_error(&par, 0, 63), NULL;
 		}
 
-		return MakeRetVal(func, NULL);
+		return MakeRetVal(func, NULL, NULL);
 	}
 
 	fpar_init(&par, func);
 	dim = func->dim - func->vaarg;
+	firstarg = list ? list->obj : NULL;
 
 	for (i = 0; i < dim; i++)
 	{
@@ -150,7 +171,7 @@ Obj_t *EvalFunc(Func_t *func, const ObjList_t *list)
 	else if	(list != NULL)
 		return fpar_error(&par, dim, 63), NULL;
 
-	obj = MakeRetVal(func, par.arg);
+	obj = MakeRetVal(func, firstarg, par.arg);
 	fpar_clear(&par, dim);
 	return obj;
 }

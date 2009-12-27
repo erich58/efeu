@@ -1,0 +1,130 @@
+\sec	Syntaktische Grundlagen
+
+Die Eingabezeilen werden durch einen \index{Präprozessor} gefiltert und können
+Kommentare enthalten. Die \index{Direktiven} (Präprozessorbefehle)
+werden mit einem Gittersymbol <"\index{|#|}"> eingeleitet und enden
+beim nächsten Zeilenvorschub.
+
+Kommentare können wie in C++ Programmen wahlweise
+durch |/*| ... |*/| oder |//| ... <Zeilenvorschub> gekapselt werden.
+
+\ssec	Ausdrücke
+
+Ausdrücke beginnen entweder mit einem Schlüsselwort oder stellen
+einen Block oder Term dar. Die Schlüsselwörter generieren
+Kontrollstrukturen oder spezielle syntaktische Konstruktionen.
+Sie werden später noch detailiert dargestellt.
+
+Ein Block wird mit geschwungenen Klammern |{| ... |}|
+abgegrenzt und besteht aus einer Liste von Ausdrücken.
+Blöcke kommen in der Regel bei Funktionsrumpfen, Schleifen und
+Testblöcken zum Einsatz.
+
+Ein Ausdruck, der nicht mit einer geschwungenen Klammer beginnt,
+wird als Term gelesen.
+Terme sind Kombinationen von Konstanten, Variablen und
+Funktionsaufrufen mit Operatoren, z.B:
+
+---- verbatim
+3 * 5
+3 * (x + 5)
+x = sqrt(7)
+int x = 13
+a < 5 || b > 10
+----
+
+Ein Term wird entweder mit einem Strichpunkt oder einem Zeilenvorschub
+aufgerufen. Wird ein Term der äußersten Ebene mit einem Zeilenvorschub
+abgeschlossen, wird das Ergebnis des Terms ausgegeben.
+Ergebnisse von Termen, die mit einem Strichpunkt abgeschlossen werden
+oder innerhalb eines Blocks stehen, werden nicht ausgewertet.
+
+Terme der äußersten Ebene werden unmittelbar nach dem Lesen
+ausgewertet. Blöcke werden erst ausgeführt, nachdem sie vollständig
+gelesen wurden. Einzige Ausnahme: Terme, denen das Schlüsselwort
+|const| oder |static| vorangestellt wird, werden immer sofort nach dem Lesen
+ausgeführt. Die Verwendung von |static| wird bei der Beschreibung der
+Variablen \vref{static} erklärt.
+
+Die automatische Ausgabe von Berechnungsergebnissen
+dient primär der interaktiven Verarbeitung.
+In Skripts empfiehlt es sich, jeden Term mit einem Strichpunkt
+abzuschließen und Ausgaben über Ausgabefunktionen zu steuern.
+
+\ssec	Präprozessor
+
+Der verwendete Präprozessor hat eine ähnliche Syntax wie der
+C-Präprozessor. Es gibt jedoch einen wesentlichen Unterschied:
+Der Präprozessor wird nicht zur Vorverarbeitung der gesamten Datei
+verwendet, sondern ist zeilenweise implementiert und arbeitet direkt
+mit dem Befehlsinterpreter zusammen. Insbesonders kann durch verändern
+von Variablen im Befehlsmodus auch die Verarbeitung nachfolgender
+Präprozessorzeilen beeinflußt werden.
+
+Eine Direktive, bei der nach dem
+Startzeichen <"|#|"> ein Sonderzeichen folgt, wird ebenfalls als
+Kommentarzeile betrachtet. Insbesonders gilt das auch für die
+Zeile:
+	<|#!/efeu/bin/env esh|>
+
+Durch Einfügen dieser Zeile zu Beginn der Datei kann ein Skript
+ausführbar gemacht werden. Diese Eigenschaft des Präprozessors
+sollte ausschließlich für den eben dargestellten Zweck und nicht
+für allgemeine Kommentare verwendet werden.
+
+Die folgenden Präprozessordirektiven können verwendet werden:
+
+[|#include <|<file>|>|]
+	Einbinden der Datei <file>. Die Suche erfolgt in den durch die
+	Variable \index{|IncPath|} definierten Verzeichnissen.
+
+[|#include "|<file>|"|]
+	Wie oben, jedoch zusätzliche Suche im aktuellen Verzeichnis, falls
+	dieses nicht im Suchpfad enthalten ist.
+
+[|#if|~<expr>]
+	Falls der Ausdruck <expr> logisch wahr liefert,
+	werden die nachfolgenden Zeilen interpretiert,
+	ansonsten übersprungen.
+
+[|#elif|~<expr>]
+	Falls kein vorangegangener Ausdruck einer |#if| oder |#elif|
+	Anweisung logisch wahr war und <expr> einen logisch wahren
+	Ausdruck liefert, werden die nachfolgenden Statements ausgeführt.
+
+[|#else|]
+	Falls kein vorangegangener Ausdruck einer |#if| oder |#elif|
+	Anweisung logisch wahr war, werden die nachfolgenden Statements
+	ausgeführt.
+
+[|#endif|]
+	Ende eines Abfrageblockes.
+
+[|#define|~<name>~<repl>]
+	Definiert einen Makro <name> der durch <repl> ersetzt wird.
+
+[|#define|~<name>(<arglist>)~<repl>]
+	Definiert einen Makro <name> mit Argumenten. Die öffnende Klammer
+	muß unmittelbar nach dem Namen folgen.
+
+[|#undef|~<name>]
+	Löscht die Definition des Makros <name>
+
+[|#ifdef|~<name>]
+	Testet, ob der angegebene Makro definiert ist.
+
+[|#ifndef|~<name>]
+	Testet, ob der angegebene Makro nicht definiert ist.
+
+[|#error|~<Text>]
+	Liefert eine Fehlermeldung.
+
+\ssec	Systemaufrufe
+
+Im interarktiven Modus können Systemaufrufe direkt eingegeben werden.
+Als Startzeichen ist wie für die im vorigem Kapitel beschriebenen
+readline-Kommandos ein Rufzeichen einzugeben, z.B:
+	|!ls -l|
+
+In Skripts werden Systemkommandos mit der Funktion |system|
+abgesetzt.

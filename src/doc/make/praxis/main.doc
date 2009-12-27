@@ -1,0 +1,161 @@
+\title	Praxistips für Imakefiles
+
+\sec	Vorbemerkung
+
+Ein gutes Imakefile ist nicht nur einfach die Regelbeschreibung
+für die Generierung von Programmen oder Daten.
+Ein entscheidendes Kriterium für die Güte eines Makefiles ist neben
+der reinen Funktionalität auch seine Lesbarkeit.
+
+Im folgenden sind wichtige Punkte aungeführt, die die Qualität eines
+Imakefiles ausmachen:
+*	Funktionalität,
+*	Lesbarkeit,
+*	Verständlichkeit,
+*	Übersichtlichkeit,
+*	Einheitliche Standards und
+*	Dokumentation der Arbeitsschritte.
+
+\margin Lange Zeilen
+Zeilen sollten immer physikalisch vor der 80. Spalte umgebrochen werden,
+ansonsten gibt es Probleme beim Ausdruck.
+
+Eine überlange logische Definitionszeile kann folgendermaßen in mehrere
+physikalische Zeilen zerlegt werden:
+*	Einfügen von Backslash Zeilenvorschub an geeigneten Stellen.
+	Zwischen Backslash und Zeilenvorschub darf kein Leerzeichen
+	stehen!
+*	Einfügen von |@/| Zeilenvorschub an geeigneten Stellen.
+	Die zweite Variante sorgt dafür, daß auch im generiertem Makefile
+	die physikalischen Zeilen nicht zu lang werden.
+
+Welche Stellen sich zum Einfügen dieser Zeichen eignen, hängt primär
+von der Lesbarkeit ab. Man sollte nicht unbedingt mitten in einem Wort
+umbrechen. Werden die Umbruchzeichen an einer Stelle eingefügt, an der
+Leerzeichen und Tabulatoren nicht stören, können die Folgezeilen
+zusätzlich eingerückt werden, was die Lesbarkeit des Imakefiles erhöht.
+
+\sec	Der richtige Einsatz von Makros
+
+Makros haben folgende Funktion:
+*	Die Zentralisierung von Konfigurationsparametern
+	(Pfadnamen, Optionen, ...),
+*	das Ausblenden von internen Details und
+*	die Erhöhung der Übersichtlichkeit.
+
+Ein Makro, der keines der oben genannten Kriterien erfüllt, sollte besser
+nicht verwendet werden.
+
+Zunächst müssen zwei verschiedene Formen von Makros auseinandergehalten
+werden:
+*	Preprozesormakros: Diese werden mit |#define| eingerichtet
+	und werden bei der Generierung des Makefiles aufgelöst.
+	Es gibt Makros mit Argumenten -- ihre Verwendung erinnert an einen
+	Funktionsaufruf -- und solche ohne Argumente.
+	Sobald der Name des Makros im Imakefile vorkommt, wird er
+	entsprechend ersetzt.
+*	Make-Makros: Diese werden durch Zeilen der Form
+		<name> |=| <value>
+	eingerichtet und haben keine Argumente. Bei der Verwendung
+	des Makros muß ein Dollar vorangestellt werden. Ist der
+	Makroname länger als ein Buchstabe, muß er zusätzlich noch
+	geklammert werden.
+
+Bei der Auflösung von Preprozessormakros und beim Einfügen von
+Makroargumenten werden vorher und nacher Leerzeichen eingefügt.
+Dies macht Sinn für C-Programme, ist aber in Makefiles störend.
+Damit beim Verkleben von Makros und Makroargumenten mit anderen
+Makros und Textteilen keine unerwünschten Leerzeichen entstehen sind
+spezielle Makrofunktionen notwendig. Vergleiche dazu \mref{base(7)}
+und \mref{Path(7)}.
+
+Für Pfadnamen und Konfigurationsparameter eignen sich Makefile-Makros
+besser als Preprozessormakros. Ausschlaggebend dafür sind die
+folgenden beiden Gründe:
+*	Das Verkleben von Makros mit Namen ist umständlich.
+*	Das Makefile wird lesbarer.
+
+Sehr häufig dienen Makros zur Konstruktion einer vollständigen Regel.
+Hierbei sollten die syntaktischen Grundlagen von |make| berücksichtigt
+werden. Eine Generierungsregel hat die allgemeine Form:
+	<Ziel>|:| <Abhängigkeiten>; <Befehle>
+Daher sollten die Argumente des Makros in folgender Reihenfolge
+Angegeben werdfen:
+*	Argumente, die das Ziel spezifizieren;
+*	Argumente, die die Abhängigkeiten spezifizieren;
+*	Argumente, die die Befehle definieren.
+
+Beispiel: Ein Makro, der eine Zählung definiert, sollte die
+Argumente mit folgender Bedeutung verwenden:
+*	Ergebnisdatei,
+*	Datenbankname,
+*	Zählflags und
+*	Achsendefinitionen.
+
+Funktionell ähnliche Makros sollten nicht unabhängig definiert
+werden, sondern von einer gemeinsamen, allgemeinen Form abgeleitet
+werden. Die Lesbarkeit der Imakefiles wird dadurch erhöht:
+
+Beispiel: Die folgenden beiden Makrodefinitionen
+
+\spage[3]
+\include[verbatim] cdef1.bsp
+\end
+
+werden besser durch
+
+\spage[3]
+\include[verbatim] cdef2.bsp
+\end
+
+definiert.
+
+Hier stellt sich aber auch die Frage, ob es überhaupt Sinn macht,
+die Makros |Count1| und |Count2| zu definieren, oder ob das Imakefile
+nicht verständlicher ist, wenn direkt der Makro |Count| zum Einsatz
+kommt. Die beiden Zeitbereiche sollten jedoch mit eigenen Make-Makros
+definiert werden, etwa so:
+
+\spage[3]
+\include[verbatim] cdef3.bsp
+\end
+
+Ob die Optionskennung |-r| Teil des Makros ist, oder zusammen mit
+dem Makro eingesetzt wird, ist Geschmakssache.
+
+Haben alle generierten Dateien zu funktionell ähnlichen Makros
+gleiche Filezusätze, oder stehen sie im gleichen (Unter)verzeichnis,
+Sollten die Pfad- und Filezusätze automatisch vom Makro angefügt
+werden. Mit speziellen Namensmakros kann zusätzlich noch die Übersicht
+erhöht werden. Vergleiche dazu nachstehendes Beispiel:
+
+\spage[3]
+\include[verbatim] name.bsp
+\end
+\newpage
+
+\sec	Dokumentationen
+
+Zu EFEU gehört ein Hilfskommando mit dem Namen |src2doc|. Es generiert
+aus einem Sourcefile (allgemein einer beliebgigen Datei mit Befehlen
+und Kommentaren) eine Dokumentation. Mithilfe dieses Kommandos können
+Generierungsregeln und Dokumentation in euiner Datei integriert
+werden.
+
+In der Praxis zeigt sich, wenn Dokumentationen und Definitionszeilen
+in getrennten Dateien stehen, die Dokumentationen sehr schnell
+veraltet sind und selten auf den neuesten Stand gebracht werden.
+//(Die Dokumentation mach ich dann später, also nie).
+Kommentare neben Definitionszeilen werden eher angepaßt, wenn sie
+nicht mehr zusammenstimmen. Leider funktioniert das in der Regel
+auch nur, wenn man gleich bei der Konstruktion der Imakefiles
+die Dokumentation mit einplant.
+
+Es gibt verschiedenste
+Aufbereitungsmethoden, die vom Typ der Sourcedatei abhängen und mit
+Optionen überschrieben werden können.
+Standardmäßig werden bei einem Imakefile die Kommentare im Textmodus
+und die Definitionszeilen in Schreibmaschinentext gesetzt.
+Für reine Makrodefinitionen eignet sich die Aufbereitung von
+Headerdateien zu Handbucheinträgen. Dieser Modus wird automatisch bei
+Dateien mit dem Zusatz |.pph| verwendet.

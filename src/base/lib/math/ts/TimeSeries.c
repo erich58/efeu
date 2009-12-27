@@ -1,8 +1,23 @@
-/*	Referenztype der Zeitreihenstruktur
-	(c) 1997 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Referenztype der Zeitreihenstruktur
 
-	Version 1.0
+$Copyright (C) 1997 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/object.h>
@@ -36,13 +51,25 @@ static char *ts_ident (const TimeSeries_t *ts)
 {
 	if	(ts)
 	{
-		return msprintf("%#s[%d]", ts->name, ts->dim);
+		strbuf_t *buf = new_strbuf(0);
+		io_t *io = io_strbuf(buf);
+		io_printf(io, "%s[%d] ", ts->name, ts->dim);
+		PrintTimeIndex(io, ts->base, 0);
+
+		if	(ts->dim)
+		{
+			io_putc(' ', io);
+			PrintTimeIndex(io, ts->base, ts->dim - 1);
+		}
+
+		io_close(io);
+		return sb2str(buf);
 	}
 	else	return mstrcpy("NULL");
 }
 
 
-REFTYPE(TimeSeries_reftype, "TimeSeries", ts_ident, ts_admin);
+ADMINREFTYPE(TimeSeries_reftype, "TimeSeries", ts_ident, ts_admin);
 
 
 /*	Zeitreihe generieren

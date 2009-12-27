@@ -1,8 +1,23 @@
-/*	Funktionen
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*
+Funktionen
 
-	Version 0.4
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/object.h>
@@ -76,7 +91,7 @@ Func_t *XGetFunc(Type_t *type, VirFunc_t *vtab, FuncArg_t *arg, size_t narg)
 		else	def->konv[i].data = NULL;
 	}
 
-	FREE(konv);
+	memfree(konv);
 
 /*	Neue Funktion definieren
 */
@@ -155,7 +170,7 @@ Func_t *GetFunc (Type_t *type, VirFunc_t *tab, int narg, ...)
 	arg = VaFuncArg(narg, list);
 	va_end(list);
 	func = XGetFunc(type, tab, arg, narg);
-	FREE(arg);
+	memfree(arg);
 	return func;
 }
 
@@ -167,103 +182,9 @@ Func_t *VaGetFunc (Type_t *type, VirFunc_t *tab, int narg, va_list list)
 
 	arg = VaFuncArg(narg, list);
 	func = XGetFunc(type, tab, arg, narg);
-	FREE(arg);
+	memfree(arg);
 	return func;
 }
-
-
-static void va_func_ptr_eval(Func_t *func, void *rval, va_list list)
-{
-	void **args;
-	int n;
-
-	if	(func->dim)
-	{
-		args = memalloc(func->dim * sizeof(void *));
-
-		for (n = 0; n < func->dim; n++)
-			args[n] = va_arg(list, void *);
-
-	}
-	else	args = NULL;
-
-	func->eval(func, rval, args);
-	memfree(args);
-}
-
-static Obj_t *va_func_obj_eval(Func_t *func, va_list list)
-{
-	Obj_t *obj = NULL;
-
-	if	(func->type == NULL)
-	{
-		obj = NULL;
-		va_func_ptr_eval(func, &obj, list);
-	}
-	else if	(func->lretval)
-	{
-		obj = LvalObj(func->type, func, NULL);
-		va_func_ptr_eval(func, &obj->data, list);
-	}
-	else
-	{
-		obj = NewObj(func->type, NULL);
-		va_func_ptr_eval(func, obj->data, list);
-	}
-
-	return obj;
-}
-
-void CallFunc (Type_t *type, void *ptr, Func_t *func, ...)
-{
-	va_list list;
-
-	if	(func == NULL)	return;
-
-	va_start(list, func);
-
-	if	(type != func->type)
-	{
-		Obj2Data(va_func_obj_eval(func, list), type, ptr);
-	}
-	else	va_func_ptr_eval(func, ptr, list);
-
-	va_end(list);
-}
-
-
-/* VARARGS 2 */
-
-void CallVoidFunc (Func_t *func, ...)
-{
-	if	(func)
-	{
-		va_list list;
-
-		va_start(list, func);
-		UnrefObj(va_func_obj_eval(func, list));
-		va_end(list);
-	}
-}
-
-
-/* VARARGS 2 */
-
-Obj_t *CallFuncObj (Func_t *func, ...)
-{
-	if	(func)
-	{
-		va_list list;
-		Obj_t *obj;
-
-		va_start(list, func);
-		obj = va_func_obj_eval(func, list);
-		va_end(list);
-		return obj;
-	}
-	else	return NULL;
-}
-
 
 /*	Auswertungsfunktion
 */
@@ -298,7 +219,7 @@ static void GetFuncEval(Func_t *func, void *rval, void **ptr)
 		{
 			Obj_t *o;
 
-			o = EvalObj(ptr[i], farg[i].type);
+			o = EvalObj(RefObj(ptr[i]), farg[i].type);
 
 			if	(o == NULL)
 				o = NewObj(farg[i].type, NULL);
@@ -310,7 +231,7 @@ static void GetFuncEval(Func_t *func, void *rval, void **ptr)
 		{
 			if	(farg[i].lval)
 			{
-				arglist[i] = LvalObj(arg[i].type, NULL, ptr[i]);
+				arglist[i] = LvalObj(&Lval_ptr, arg[i].type, ptr[i]);
 			}
 			else	arglist[i] = ConstObj(arg[i].type, ptr[i]);
 		}
@@ -362,7 +283,7 @@ static void GetFuncEval(Func_t *func, void *rval, void **ptr)
 		}
 		else if	(arg[i].lval)
 		{
-			o = LvalObj(arg[i].type, NULL, ptr[i]);
+			o = LvalObj(&Lval_ptr, arg[i].type, ptr[i]);
 		}
 		else	o = ConstObj(arg[i].type, ptr[i]);
 
@@ -375,7 +296,16 @@ static void GetFuncEval(Func_t *func, void *rval, void **ptr)
 
 /*	Auswerten und Aufräumen
 */
-	KonvRetVal(func->type, rval, def->func, arglist);
+	if	(def->func->lretval)
+	{
+		def->func->eval(def->func, NULL, arglist);
+	}
+	else if	(func->type != def->func->type)
+	{
+		Obj2Data(MakeRetVal(def->func, NULL, arglist),
+			func->type, rval);
+	}
+	else	def->func->eval(def->func, rval, arglist);
 
 	for (i = 0; i < def->dim; i++)
 	{
@@ -397,7 +327,7 @@ static void GetFuncEval(Func_t *func, void *rval, void **ptr)
 		}
 	}
 
-	FREE(arglist);
+	memfree(arglist);
 	DelObjList(list);
 	DelObjList(vlist);
 }
