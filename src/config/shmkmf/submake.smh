@@ -25,56 +25,127 @@
 test $submake_smh && return
 submake_smh=1
 
-# $Description
+# $alias
+# $pconfig !
+# u|
+#	:*:create primary target with usage output
+#	:de:generiert Verwendungsinformationen als Basisziel.
+# b:name|
+#	:*:expands the list of build targets with <name>
+#	:de:erweitert die Liste der Generierungsziele mit <name>
+# c:name|
+#	:*:expands the list of clean targets with <name>
+#	:de:erweitert die Liste der Aufräumziele mit <name>
+# i|
+#	:*:is a shortcut for |-b install -c uninstall|
+#	:de: ist eine Kurzform für |-b install -c uninstall|
+# p|
+#	:*:is a shortcut for |-c purge|
+#	:de: ist eine Kurzform für |-c purge|
+# !
 # :de:
-# Durch das Einbinden der Headerdatei |$1| werden für jedes Unterverzeichnis
-# im Quellverzeichnis korrespondierende Verzeichnisse im Aufbauverzeichnis
-# angelegt. Dabei werden nur jene Verzeichnisse berücksichtigt, die eine
+# Die Funktion |$1| generiert für jedes Unterverzeichnis
+# im Quellverzeichnis ein korrespondierendes Verzeichnis im Aufbauverzeichnis
+# Dabei werden nur jene Verzeichnisse berücksichtigt, die eine
 # |Config.make| Datei enthalten. Abhängigkeiten zwischen den Verzeichnissen
-# werden über die optionale Datei |Depends| gesteuert. Sie enthält jeweils
-# eine Liste aller Verzeichnisse, die zuvor gebaut werden müssen.
+# werden über das Schlüsselwort |Depends:| im Kommentartext gesteuert.
+# Nach diesem Schlüsselwört folgt eine Liste aller Verzeichnisse, die zuvor
+# gebaut werden müssen. Die Abhängigkeiten gelten nur für die
+# Genererierungsziele und nicht für die Aufräumziele.
 #
 # :de:
-# Quell- und Aufbauverzeichnis dürfen zusammenfallen.
+# Quell- und Aufbauverzeichnis dürfen zusammenfallen. Die Makefiles werden
+# dann jeweils im gleichen Verzeichnis wie die zugehörigen |Config.make|
+# Dateien gebaut.
 # Zur Kontrolle der Zusammensetzung der Unterverzeichnisse wird die Datei
 # |ProjectList| mit einer Liste aller Quellverzeichnisse im Aufbauverzeichnis
 # angelegt und bei jedem Aufruf von |make| auf Veränderung geprüft.
 
-SRC=`cd $SRC; pwd`
-TOP=`cd $TOP; pwd`
-mf_update ProjectList ls "$SRC/*"
-add_depend ProjectList
+submake ()
+{(
+	SRC=`cd $SRC; pwd`
+	TOP=`cd $TOP; pwd`
+	tpl=$TMP/.submake.tpl
+	usage=
+	build="all"
+	clean="clean"
+	printf "%%::" > $tpl
 
-_submake_rule () # Parameter: name config
-{
-	mf_rule -d all $1.all
-	mf_rule -d $1.all $1/Makefile "cd $1; make all"
-	mf_rule -d $1.clean $1/Makefile "cd $1; make clean"
-	mf_rule $1/Makefile $2 "test -d $1 || mkdir -p $1" \
-		"cd $1; $shmkmf -t $TOP $2"
-	mf_rule -d clean $1.clean
-}
+	while [ -n "$1" ]
+	do
+		case "$1" in
+		-u)	usage=1; shift 1;;
+		-b)	build="$build $2"; shift 2;;
+		-c)	clean="$clean $2"; shift 2;;
+		-i)	build="$build install";
+			clean="$clean uninstall";
+			shift 1;;
+		-p)	clean="$clean purge"; shift 1;;
+		--)	shift; break;;
+		-*)	shmkmf_invop mf_rule "$1";;
+		*)	break;;
+		esac
+	done
 
-_submake_tmp=$TMP/submake.tmp
+	test "$#" -eq 0 || shmkmf_warg submake
 
-for _x in $SRC/*/Config.make
-do
-	_d=`dirname $_x`
-	_n=`basename $_d`
-	_submake_rule $_n $_x >> $_submake_tmp
+	test "$usage" && mf_rule -d usage "" \
+		"@echo 'usage: make <target> | <project>[.target]'"
 
-	if [ -f $_d/Depends ]
-	then
-		add_depend $_d/Depends
+	mf_update ProjectList ls "$SRC/*/Config.make"
+	add_depend ProjectList
 
-		for _y in `sed -e 's/#.*//' $_d/Depends`
+	for cfg in $SRC/*/Config.make
+	do
+		printf "\n# %s\n" "$cfg"
+		grep '^#' $cfg
+		add_depend $cfg
+
+		_d=`dirname $cfg`
+		name=`basename $_d`
+		printf " %s.%%" $name >> $tpl
+
+		test "$usage" && mf_rule -r -d usage "" <<!
+@printf '%s' $name
+@(grep '^#' $cfg || @/
+echo '# <no description>') | sed -e 's/^#[ 	]*/	/'
+!
+		mf_rule $name/Makefile $cfg "test -d $name || mkdir -p $name" \
+			"cd $name; $shmkmf -t $TOP $cfg"
+
+		for dep in `grep '^#.*Depends:' $cfg | sed -e 's/.*Depends://'`
 		do
-			mf_rule -d $_n.all $_y.all
-		done
-	fi
-done
+			printf "\n"
 
-postpone cat $_submake_tmp
+			for tg in $build
+			do
+				printf "%s:: %s\n" "$name.$tg" "$dep.$tg"
+			done
+		done
+
+		printf "\n%s::%s\n" "$name" "$name/Makefile"
+		printf "%s::; %s\n" "$name" "cd $name; make"
+
+		for tg in $build $clean
+		do
+			printf "%s::%s; %s\n" "$name.$tg" "$name/Makefile" \
+				"cd $name; make $tg"
+		done
+	done
+
+	printf "\n" >> $tpl
+	echo
+
+	for tg in $build
+	do
+		sed -e "s/%/$tg/g" $tpl
+	done
+
+	for tg in $clean
+	do
+		postpone sed -e "s/%/$tg/g" $tpl
+	done
+)}
 
 # $SeeAlso
 # \mref{shmkmf(1)},

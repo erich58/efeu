@@ -12,11 +12,11 @@
 # :de:Dieses Kommando wurde mit |make starter|
 # bei der Installation von EFEU generiert.
 
-PATH=%T:$PATH
+PATH=%T/bin:$PATH
 export PATH
 
 # $pconfig
-# Version="$Id: efeu.tpl,v 1.2 2008-04-17 20:48:46 ef Exp $"
+# Version="$Id: efeu.tpl,v 1.3 2008-05-05 19:51:02 ef Exp $"
 # ::cmd |
 #	:*:command to start
 #	:de:Kommando

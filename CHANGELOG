@@ -1,3 +1,7 @@
+Version 3.2-2
+
+*	Fixed path setting in starter script.
+
 Version 3.2-1
 
 *	Run time creation of path variables insteat of hardcoded values.
