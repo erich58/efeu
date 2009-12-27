@@ -50,7 +50,7 @@ void TermPar_init(void)
 	{
 		IO *in;
 
-		in = io_findopen(CFGPATH, TPARM, CFGEXT, "r");
+		in = io_findopen(CFGPath, TPARM, CFGEXT, "r");
 		in = io_lnum(in);
 		PushVarTab(NULL, NULL);
 		AddVarDef(NULL, term_var, tabsize(term_var));

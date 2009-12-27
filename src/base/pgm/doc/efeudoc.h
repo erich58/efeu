@@ -198,6 +198,7 @@ extern char *DocPath;
 extern char *DocName;
 extern char *DocDir;
 extern char *DocStyle;
+extern char *CFGPath;
 
 char *ListArg_str (EfiObjList *list, int n);
 int ListArg_int (EfiObjList *list, int n);

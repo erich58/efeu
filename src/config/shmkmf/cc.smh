@@ -217,7 +217,7 @@ mf_cc ()
 # created by a prior call to |mf_cc|. The list of objectfiles is cleard
 # therafter.
 # :de:
-# Die Funnktion $! erzeugt eine Variablenzuweisung mit allen
+# Die Funktion $! erzeugt eine Variablenzuweisung mit allen
 # Objektdateien aller vorangegangenen Aufrufe von |mf_cc|. Anschließend
 # wird die Liste der Objektdateien gelöscht.
 #
@@ -266,14 +266,12 @@ mf_objlist ()
 # v:vn |
 #	:*:sets the version number <vn> of the shared library
 #	(ignored for static libraries).
-#	:de:definiert die Versionsnummer <vn> der gemeinsam genutzten Bibliothek
-#	(wird bei statischen Bibliotheken ignoriert).
-# r:rn[.pl] |
-#	:*:sets the release number <rn> with optional patch level <pl> of
-#	the shared library
+#	:de:definiert die Versionsnummer <vn> der gemeinsam genutzten
+#	Bibliothek (wird bei statischen Bibliotheken ignoriert).
+# r:rn |
+#	:*:sets the release number <rn> of the shared library
 #	(ignored for static libraries).
-#	:de:definiert die Releasenummer <rn> und den optionalen
-#	Patchlevel <pn> der gemeinsam genutzten Bibliothek
+#	:de:definiert die Releasenummer <rn> der gemeinsam genutzten Bibliothek
 #	(wird bei statischen Bibliotheken ignoriert).
 # :name |
 #	:*:defines the library name
@@ -369,8 +367,6 @@ mf_lib ()
 
 		if [ -n "$rn" ]; then
 			llist="$llist $tg"
-			x=`expr "$rn" : '\([^.]\)\.'`
-			test -n "$x" && llist="$llist $tg.$x"
 			tg="$tg.$rn"
 		fi
 

@@ -26,6 +26,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/preproc.h>
 #include <ctype.h>
 
+extern char *CFGPath;
+
 #define	FILE_EXT	"sym"
 
 static int sym_cmp (const void *pa, const void *pb)
@@ -105,7 +107,7 @@ DocSym *DocSym_load (const char *name)
 	DocSym *sym;
 
 	sym = memalloc(sizeof(DocSym));
-	load(sym, io_findopen(CFGPATH, name, FILE_EXT, "rd"));
+	load(sym, io_findopen(CFGPath, name, FILE_EXT, "rd"));
 	reorg(sym);
 	return sym;
 }

@@ -52,6 +52,7 @@ char *DocName = NULL;
 char *DocInit = NULL;
 char *DocExit = NULL;
 char *DocStyle = NULL;
+char *CFGPath = NULL;
 
 EfiVarDef globvar[] = {
 	{ "DocPath", &Type_str, &DocPath },
@@ -60,6 +61,7 @@ EfiVarDef globvar[] = {
 	{ "DocInit", &Type_str, &DocInit },
 	{ "DocExit", &Type_str, &DocExit },
 	{ "DocStyle", &Type_str, &DocStyle },
+	{ "CFGPath", &Type_str, &CFGPath },
 };
 
 
@@ -99,8 +101,9 @@ int main (int narg, char **arg)
 	char *p;
 	int i;
 
-	SetVersion("$Id: efeudoc.c,v 1.33 2008-04-16 17:43:00 ef Exp $");
+	SetVersion("$Id: efeudoc.c,v 1.34 2008-04-23 20:11:28 ef Exp $");
 	SetProgName(arg[0]);
+	CFGPath = mkpath(".", NULL, "lib/efeudoc", NULL);
 	SetupDoc();
 	SetupReadline();
 	SetupDebug();
@@ -147,7 +150,7 @@ int main (int narg, char **arg)
 	for (i = 1; i < narg; i++)
 	{
 		char *p = argval(arg[i]);
-		eval_file(doc, CFGPATH, p);
+		eval_file(doc, CFGPath, p);
 		memfree(p);
 	}
 

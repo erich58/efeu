@@ -56,7 +56,7 @@ void LaTeX_setup (void)
 
 		AddInfo(NULL, "latex", INFO_LABEL, par_info, NULL);
 
-		in = io_findopen(CFGPATH, "latex", CFGEXT, "rd");
+		in = io_findopen(CFGPath, "latex", CFGEXT, "rd");
 		in = io_cmdpreproc(in);
 		CmdEval(in, NULL);
 		io_close(in);

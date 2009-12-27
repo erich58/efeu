@@ -283,7 +283,7 @@ void DocTab_fload (DocTab *tab, const char *name)
 	fname = fsearch(DocPath, NULL, name, FILE_EXT);
 
 	if	(!fname)
-		fname = fsearch(CFGPATH, NULL, name, FILE_EXT);
+		fname = fsearch(CFGPath, NULL, name, FILE_EXT);
 
 	if	(fname)
 	{

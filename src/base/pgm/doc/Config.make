@@ -23,7 +23,6 @@ mf_var OBJ "efeudoc.o skip.o parse.o p_reg.o p_block.o copy.o docsym.o" \
 	"Doc.o docout.o" \
 	"listarg.o f_section.o setup.o"
 
-mf_var CFLAGS "-DCFGPATH='\".:\$(CFGDIR)\"'"
 mf_cc -o '$(BIN)/efeudoc' -mo OBJ -md DEP_DOC -ml LIB_DOC
 
 foreach -m CFGDIR -S enc 'mf_file $tg $src'

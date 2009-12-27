@@ -62,7 +62,7 @@ void Doc_start (Doc *doc)
 	doc->stat = 1;
 	Doc_pushvar(doc);
 
-	in = io_findopen(CFGPATH, HEADCFG, CFGEXT, "rd");
+	in = io_findopen(CFGPath, HEADCFG, CFGEXT, "rd");
 	in = io_cmdpreproc(in);
 	CmdEval(in, NULL);
 	io_close(in);

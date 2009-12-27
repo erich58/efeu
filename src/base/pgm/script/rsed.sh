@@ -21,7 +21,7 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 # $pconfig
-# Version="$Id: rsed.sh,v 1.1 2008-03-02 15:49:51 ef Exp $"
+# Version="$Id: rsed.sh,v 1.8 2008-04-23 20:20:57 ef Exp $"
 # d|
 #	:*:show differences after editing without replacing
 #	the orignial file.

@@ -469,7 +469,7 @@ static void f_sync (EfiFunc *func, void *rval, void **arg)
 
 static void f_cfgname (EfiFunc *func, void *rval, void **arg)
 {
-	Val_str(rval) = fsearch(CFGPATH, NULL, Val_str(arg[0]), NULL);
+	Val_str(rval) = fsearch(CFGPath, NULL, Val_str(arg[0]), NULL);
 	/*
 	io_printf(ioerr, "%s\n", Val_str(rval));
 	*/

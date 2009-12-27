@@ -26,7 +26,7 @@ SETENV=	EFEUTOP=`pwd`; PATH=$$EFEUTOP/bin:$$PATH; export EFEUTOP PATH
 
 config::
 	sh sanity-check.sh
-	if [ -f src/Makefile ]; then (cd src; make); fi
+	-if [ -f src/Makefile ]; then (cd src; make); fi
 	if [ -x src/config/setup ]; then (cd src/config; ./setup ../..); fi
 	($(SETENV); cd build; shmkmf)
 

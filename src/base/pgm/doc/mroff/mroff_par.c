@@ -92,7 +92,7 @@ void mroff_setup (void)
 		PushVarTab(RefVarTab(ManRoff_tab), NULL);
 		AddInfo(NULL, NAME, INFO_LABEL, par_info, NULL);
 
-		in = io_findopen(CFGPATH, CFGNAME, CFGEXT, "rd");
+		in = io_findopen(CFGPath, CFGNAME, CFGEXT, "rd");
 		in = io_cmdpreproc(in);
 		CmdEval(in, NULL);
 		io_close(in);

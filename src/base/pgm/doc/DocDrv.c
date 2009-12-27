@@ -24,6 +24,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/preproc.h>
 #include <EFEU/cmdeval.h>
 
+extern char *CFGPath;
+
 #define	BLKS	32		/* Blockgröße der Variablentabelle */
 
 
@@ -66,7 +68,7 @@ void DocDrv_eval (void *ptr, const char *name)
 	
 	drv = ptr;
 	drv->submode++;
-	in = io_findopen(CFGPATH, name, CFGEXT, "rd");
+	in = io_findopen(CFGPath, name, CFGEXT, "rd");
 	in = io_cmdpreproc(in);
 	out = DocDrv_io(drv);
 	PushVarTab(RefVarTab(drv->vartab), NULL);

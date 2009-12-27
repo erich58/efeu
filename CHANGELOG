@@ -1,5 +1,6 @@
-Version 3.2
+Version 3.2-1
 
+*	Run time creation of path variables insteat of hardcoded values.
 *	Added install rules to the main Makefile.
 *	Removed some rarely used tools.
 *	Removed deprecated Makefile generator |ccmkmf|.
