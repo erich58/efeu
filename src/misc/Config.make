@@ -1,5 +1,5 @@
 # :en: miscellaneous
 # :de: Verschiedenes
-##Depends: base
+##Depends: base tk
 
 include efeuprj.smh

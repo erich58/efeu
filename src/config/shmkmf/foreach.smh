@@ -168,7 +168,7 @@ foreach ()
 		-d)	_pfx="$2/"; shift 2;;
 		-p)	_pfx="$2/"; _dir="$2"; _mdir="mf_dir -q -p"; shift 2;;
 		-c)	_pfx="$2/"; _dir="$2"; _mdir="mf_dir -q -c"; shift 2;;
-		-m)	_pfx="\$($2)/"; _mdir="mf_dir -q -p"; shift 2;;
+		-m)	_pfx="\$($2)/"; _mdir="mf_dir -q -c"; shift 2;;
 		-M)	_map="$2"; shift 2;;
 		-x)	_sub="$2/"; shift 2;;
 

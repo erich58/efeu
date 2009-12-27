@@ -1,3 +1,8 @@
+Version 3.3
+
+*	Conversion from cvs to mercurial.
+*	Rework on logging and debugging concept.
+
 Version 3.2-6
 
 *	Fixed a bug in pasting axes of a data cube.
