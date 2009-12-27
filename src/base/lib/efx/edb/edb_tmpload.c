@@ -30,7 +30,7 @@ void edb_tmpload (EDB *edb)
 	while (edb->read(edb->obj->type, edb->obj->data, edb->ipar))
 		WriteData(edb->obj->type, edb->obj->data, tmp);
 
-	CleanData(edb->obj->type, edb->obj->data);
+	CleanData(edb->obj->type, edb->obj->data, 0);
 	edb_closein(edb);
 	io_rewind(tmp);
 	edb->read = read_binary;

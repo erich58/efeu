@@ -1,0 +1,92 @@
+/*
+:*:duration
+:de:Periodendauer
+
+$Copyright (C) 2007 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+*/
+
+StdFunc("static void $1_duration_range",
+	"EfiView *view, TimeRange *range", string !
+EfiVec *vec = Val_ptr(view->base->data);
+unsigned beg, end;
+$1 *epi;
+int n;
+
+for (n = 0; n < vec->buf.used; n++)
+{
+	epi = (void *) ((char *) vec->buf.data + n * vec->buf.elsize);
+
+	beg = (epi->beg > range->ug) ? epi->beg : range->ug;
+	end = (epi->end && epi->end < range->og) ? epi->end : range->og;
+
+	if	(beg <= end)
+	{
+		CopyData(vec->type, view->eval_obj->data, epi);
+		epi = view->eval_obj->data;
+		epi->beg = beg;
+		epi->end = end;
+		EfiView_event(view, end, end - beg + 1.);
+	}
+}
+!, BaseName);
+
+StdFunc("static void $1_duration_total",
+	"EfiView *view", string !
+EfiVec *vec = Val_ptr(view->base->data);
+$1 *epi;
+int n;
+
+for (n = 0; n < vec->buf.used; n++)
+{
+	epi = (void *) ((char *) vec->buf.data + n * vec->buf.elsize);
+	CopyData(vec->type, view->eval_obj->data, epi);
+
+	if	(epi->end)
+	{
+		EfiView_event(view, epi->end, epi->beg ?
+			epi->end - epi->beg + 1. : .0);
+	}
+	else if	(epi->beg)
+	{
+		EfiView_event(view, epi->beg, 0.);
+	}
+}
+!, BaseName);
+
+StdFunc("static void $1_duration_create",
+	"EfiView *view, const char *opt, const char *arg", string !
+EfiVec *vec = Val_ptr(view->base->data);
+
+if	(view->range_dim)
+{
+	view->eval_range = $1_duration_range;
+}
+else	view->eval_total = $1_duration_total;
+
+view->eval_obj = NewObj(vec->type, NULL);
+!, BaseName);
+
+fpsub(src, string !
+EfiViewPar $1_duration_view = EFI_VIEW (NULL, "duration", NULL,
+	$1_duration_create, "Duration of Periods"
+);
+!, BaseName);
+
+def.s_setup += sprintf("AddEfiPar(NewVecType(type, 0), &%s_duration_view);\n",
+	BaseName);

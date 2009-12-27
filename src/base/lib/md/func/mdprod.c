@@ -75,8 +75,7 @@ mdmat *md_prod (mdmat *base)
 	md = new_mdmat();
 	md->axis = xpre;
 	md->type = (EfiType *) par.mul->type;
-	md->size = md_size(md->axis, md->type->size);
-	md->data = memalloc(md->size);
+	md_alloc(md);
 	memset(md->data, 0, (size_t) md->size);
 	par.buf = memalloc(md->type->size);
 	mainwalk(&par, md->axis, base->axis, base->axis,

@@ -101,7 +101,7 @@ int main (int narg, char **arg)
 	char *p;
 	int i;
 
-	SetVersion("$Id: efeudoc.c,v 1.30 2005-09-04 06:52:39 ef Exp $");
+	SetVersion("$Id: efeudoc.c,v 1.31 2007-09-06 20:09:10 ef Exp $");
 	SetProgName(arg[0]);
 	SetupDoc();
 	SetupReadline();
@@ -184,7 +184,7 @@ int main (int narg, char **arg)
 		sb_putc(0, sb);
 		MakeTaskRule(iostd, p);
 		MakeTargetRule(iostd, (char *) sb->data);
-		sb_destroy(sb);
+		rd_deref(sb);
 		return 0;
 	}
 

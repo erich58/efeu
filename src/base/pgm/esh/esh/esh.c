@@ -37,13 +37,13 @@ If not, write to the Free Software Foundation, Inc.,
 #include <Math/pnom.h>
 #include <Math/mdmath.h>
 #include <Math/func.h>
-#include <Math/StatData.h>
+#include <EFEU/StatData.h>
 
 
 int main (int narg, char **arg)
 {
 	SetProgName(arg[0]);
-	SetVersion("$Id: esh.c,v 1.16 2006-04-10 04:36:57 ef Exp $");
+	SetVersion("$Id: esh.c,v 1.17 2007-07-30 15:04:47 ef Exp $");
 
 	SetupStd();
 	SetupUtil();

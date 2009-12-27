@@ -20,6 +20,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/EDB.h>
+#include <EFEU/EDBFilter.h>
 #include <ctype.h>
 
 typedef struct {
@@ -78,7 +79,7 @@ static EDB *fdef_clip (EDBFilter *filter, EDB *base,
 	if	(count)
 	{
 		clip->count = count;
-		edb = edb_create(RefObj(base->obj), NULL);
+		edb = edb_share(base);
 		edb->read = clip_read;
 		edb->ipar = clip;
 		return edb;
@@ -89,8 +90,8 @@ static EDB *fdef_clip (EDBFilter *filter, EDB *base,
 	return base;
 }
 
-EDBFilter EDBFilter_clip = {
+EDBFilter EDBFilter_clip = EDB_FILTER(NULL,
 	"clip", "=skip,count", fdef_clip, NULL,
 	":*:clips out a part of the database"
 	":de:Datenbank auf Bereich einschränken"
-};
+);

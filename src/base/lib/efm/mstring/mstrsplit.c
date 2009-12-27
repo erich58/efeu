@@ -115,6 +115,6 @@ size_t mstrsplit(const char *str, const char *delim, char ***ptr)
 				;
 	}
 
-	sb_destroy(sb);
+	rd_deref(sb);
 	return dim;
 }

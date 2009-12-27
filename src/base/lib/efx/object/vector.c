@@ -46,7 +46,7 @@ static void vec_clean (void *data)
 	if	(vec->buf.blksize)
 	{
 		for (n = vec->buf.used; n-- > 0; ptr += vec->type->size)
-			DestroyData(vec->type, ptr);
+			CleanData(vec->type, ptr, 1);
 
 		vb_free(&vec->buf);
 	}
@@ -90,8 +90,8 @@ void EfiVec_resize (EfiVec *vec, size_t dim)
 		do
 		{
 			vec->buf.used--;
-			DestroyData(vec->type, (char *) vec->buf.data
-				+ vec->buf.elsize * vec->buf.used);
+			CleanData(vec->type, (char *) vec->buf.data
+				+ vec->buf.elsize * vec->buf.used, 1);
 		}
 		while	(vec->buf.used > dim);
 	}
@@ -132,7 +132,7 @@ void EfiVec_delete (EfiVec *vec, size_t pos, size_t dim)
 
 	while (dim-- > 0)
 	{
-		DestroyData(vec->type, data);
+		CleanData(vec->type, data, 1);
 		data = (char *) data + vec->buf.elsize;
 	}
 }
@@ -169,17 +169,24 @@ EfiVec *NewEfiVec (EfiType *type, void *data, size_t dim)
 	return NULL;
 }
 
-EfiVec *EfiVec_copy (EfiVec *s)
+EfiVec *EfiVec_copy (EfiVec *t, EfiVec *s)
 {
-	if	(s)
-	{
-		EfiVec *t = NewEfiVec(s->type, NULL, s->buf.used);
-		rd_debug(t, "copy %p %lu", s, (unsigned long) s->buf.used);
-		CopyVecData(s->type, s->buf.used, t->buf.data, s->buf.data);
-		return t;
-	}
+	if	(!s)	return t;
 
-	return NULL;
+	if	(t)
+	{
+		if	(!test_vla(t))
+			return t;
+
+		EfiVec_resize(t, 0);
+	}
+	else	t = NewEfiVec(s->type, NULL, 0);
+
+	rd_debug(t, "copy %p %lu", s, (unsigned long) s->buf.used);
+	vb_realloc(&t->buf, s->buf.used);
+	t->buf.used = s->buf.used;
+	CopyVecData(s->type, s->buf.used, t->buf.data, s->buf.data);
+	return t;
 }
 
 EfiObj *EfiVecObj (EfiType *type, void *data, size_t dim)
@@ -227,7 +234,8 @@ int Print_vec (const EfiType *st, const void *data, IO *io)
 		io_puts("{ }", io);
 }
 
-EfiType Type_vec = IOREF_TYPE("EfiVec", EfiVec *, Read_vec, Write_vec);
+EfiType Type_vec = IOREF_TYPE("EfiVec", EfiVec *,
+	Read_vec, Write_vec, Print_vec);
 
 
 EfiObj *Vector (EfiVec *vec, size_t idx)
@@ -254,7 +262,7 @@ EfiObj *Vector (EfiVec *vec, size_t idx)
 
 	if	(vec->type->list && vec->type->dim && !vec->type->list->next)
 	{
-		EfiVar *var = vec->type->list;
+		EfiStruct *var = vec->type->list;
 		vec = NewEfiVec(var->type, ptr, var->dim);
 		return NewPtrObj(&Type_vec, vec);
 	}

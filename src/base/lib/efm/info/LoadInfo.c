@@ -37,7 +37,7 @@ static void add_entry(InfoNode *node, StrBuf *sb)
 	{
 		node->par = sb2str(sb);
 	}
-	else	sb_destroy(sb);
+	else	rd_deref(sb);
 }
 
 static int get_key(IO *io, char **p)

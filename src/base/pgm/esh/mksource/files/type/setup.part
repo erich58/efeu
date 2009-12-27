@@ -1,0 +1,229 @@
+/*
+:*:The function |$1| crates a setup function to register the
+structure as EFI-Datatype.
+:de:Die Funktion |$1| generiert eine Initialisierungsfunktion
+zur Registrierung der Struktur als EFI-Datentyp.
+*/
+
+virtual void TypeDef::setup (str fname, bool glob = true)
+{
+	Function f;
+
+	bf_close();
+	need_setup = false;
+
+	if	(up_init || up_body)
+	{
+		f = Function("void Type_$1_update", "$1 *data", t_name);
+		f.body(up_init + up_body, t_name);
+		f.write(false);
+		read_body += psub("Type_$1_update(data);\n", t_name);
+	}
+
+	if	(!read_func && read_body)
+	{
+		read_func = psub("Type_$1_read", t_name);
+		f = Function("size_t " + read_func,
+			"const EfiType *type, void *p_data, IO *io")
+		f.line("$1 *data = p_data;", t_name);
+
+		if	(s_var && read_body == /st_var/)
+			f.line("EfiStruct *st_var = type->list;");
+
+		f.line("size_t size = 0;");
+
+		if	(has_bf && read_body == /bf_data/)
+			f.line("uint64_t bf_data = 0;");
+
+		f.body(read_body, t_name);
+		f.line("return size;");
+		f.write(false);
+	}
+
+	if	(!write_func && write_body)
+	{
+		write_func = psub("Type_$1_write", t_name);
+		f = Function("size_t " + write_func,
+			"const EfiType *type, const void *p_data, IO *io")
+		f.line("const $1 *data = p_data;", t_name);
+
+		if	(s_var && write_body == /st_var/)
+			f.line("EfiStruct *st_var = type->list;");
+
+		f.line("size_t size = 0;");
+
+		if	(has_bf && write_body == /bf_data/)
+			f.line("uint64_t bf_data = 0;");
+
+		f.body(write_body, t_name);
+		f.line("return size;");
+		f.write(false);
+	}
+
+	if	(!print_func && print_body)
+	{
+		print_func = psub("Type_$1_print", t_name);
+		f = Function("int " + print_func,
+			"const EfiType *type, const void *p_data, IO *io")
+		f.line("const $1 *data = p_data;", t_name);
+
+		if	(s_var && print_body == /st_var/)
+			f.line("EfiStruct *st_var = type->list;");
+
+		f.body(print_body, t_name);
+		f.line("return 1;");
+		f.write(false);
+	}
+
+	if	(!clean_func && clean_body)
+	{
+		clean_func = psub("Type_$1_clean", t_name);
+		f = Function("void " + clean_func,
+			"const EfiType *type, void *p_data, int mode")
+		f.line("$1 *data = p_data;", t_name);
+
+		if	(s_var && clean_body == /st_var/)
+			f.line("EfiStruct *st_var = type->list;");
+
+		f.body(clean_body, t_name);
+		f.write(false);
+	}
+
+	if	(!copy_func && copy_body)
+	{
+		copy_func = psub("Type_$1_copy", t_name);
+		f = Function("void " + copy_func,
+			"const EfiType *type, void *p_tg, const void *p_src")
+		f.line("$1 *tg = p_tg;", t_name);
+		f.line("const $1 *src = p_src;", t_name);
+
+		if	(s_var && copy_body == /st_var/)
+			f.line("EfiStruct *st_var = type->list;");
+
+		f.body(copy_body, t_name);
+		f.write(false);
+	}
+
+	if	(compat)
+	{
+		Define(glob ? hdr : top, "$1_size sizeof($1)", t_name);
+		Define(glob ? hdr : top, "$1_recl $2", t_name,
+			flag_vrecl ? 0 : t_recl);
+		Macro(glob ? hdr : top, "$1_clear", "data, dim",
+			"\nmemset(data, 0, (dim) * $1_size)", t_name);
+
+		f = Function("size_t $1_read",
+			"IO *io, $1 *data, size_t n", t_name);
+		f.line("return ReadVecData(&Type_$1, n, data, io);", t_name);
+		f.write(glob);
+
+		f = Function("size_t $1_write",
+			"IO *io, const $1 *data, size_t n", t_name);
+		f.line("return WriteVecData(&Type_$1, n, data, io);", t_name);
+		f.write(glob);
+	}
+
+	if	(glob)
+	{
+		fpsub(hdr, "extern EfiType Type_$1;\n", t_name);
+		fpsub(hdr, s_proto, t_name);
+	}
+	else	src << "static ";
+
+	if	(!t_cname)	t_cname = t_name;
+
+	fprintf(src, "EfiType Type_%s = COMPLEX_TYPE(%#s, %#s, ",
+		t_name, t_name, t_cname);
+	fprintf(src, "sizeof(%s), %d,\n\t",
+		t_cname, flag_vrecl ? 0 : t_recl);
+	fprintf(src, "%s, %s, %s,\n\t",
+		read_func ? read_func : "NULL",
+		write_func ? write_func : "NULL",
+		print_func ? print_func : "NULL");
+
+	if	(e_member)
+	{
+		fprintf(src, "&Type_enum, NULL, ");
+	}
+	else	fprintf(src, "NULL, NULL, ");
+
+	fprintf(src, "%s, %s, TYPE_EXTERN",
+		clean_func ? clean_func : "NULL",
+		copy_func ? copy_func : "NULL");
+
+	if	(flag_malloc)
+		src << "|TYPE_MALLOC";
+
+	src << ");\n\n";
+
+	if	(dim(t_ctrl))
+		epc_tab("EfiControl", "control", t_ctrl);
+
+	if	(dim(t_idef))
+		epc_tab("EfiInput", "input", t_idef);
+
+	if	(dim(t_odef))
+		epc_tab("EfiOutput", "output", t_odef);
+	
+	f = Function("void " + fname, NULL, t_name);
+	f.line("static int setup_done = 0;");
+	f.line("EfiType *type;");
+
+	if	(s_var)
+		f.line("EfiStruct *st_var;");
+
+	if	(has_bf)
+		f.line("size_t offset;");
+
+	f.line();
+	f.line("if	(setup_done)	return;");
+	f.line();
+	f.line("setup_done = 1;");
+	f.body(pre_setup, t_name);
+	f.line("type = &Type_$1;", t_name);
+	f.line("AddType(type);");
+
+	if	(s_var)
+		f.line("st_var = type->list;");
+
+	f.body(s_setup, t_name);
+
+	if	(set_base)
+		f.line("type->base = type->list->type;");
+
+	if	(s_var)
+		f.line("AddListConv(type, List2Struct, Struct2List);", t_name);
+
+	if	(s_mtab)
+	{
+		fprintf(src, "static EfiMember %s_mtab[] = {\n", t_name);
+		fpsub(src, s_mtab, t_name);
+		fprintf(src, "};\n\n");
+		f.line("AddEfiMember(type->vtab, $1_mtab, tabsize($1_mtab));",
+			t_name);
+	}
+
+	if	(s_ftab)
+	{
+		fprintf(src, "static EfiFuncDef %s_ftab[] = {\n", t_name);
+		fpsub(src, s_ftab, t_name);
+		fprintf(src, "};\n\n");
+		f.line("AddFuncDef($1_ftab, tabsize($1_ftab));", t_name);
+	}
+
+	if	(e_dim)
+		label_func(glob);
+
+	f.body(post_setup, t_name);
+	f.write(true);
+}
+
+virtual void TypeDef::setup (bool glob)
+{
+	setup(t_name + "_setup", glob);
+}
+
+virtual void TypeDef::setup ()
+{
+	setup(t_name + "_setup", glob_decl);
+}

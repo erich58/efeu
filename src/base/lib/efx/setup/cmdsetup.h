@@ -50,9 +50,11 @@ void CmdSetup_func(void);	/* Funktionen */
 void CmdSetup_op(void);		/* Operatoren einrichten */
 void CmdSetup_info(void);	/* Informationsdatenbank */
 void CmdSetup_strbuf(void);	/* Stringbuffer */
+void CmdSetup_assignarg(void);	/* Zuweisungsargument */
 void CmdSetup_date(void);	/* Datum- und Zeit */
 void CmdSetup_unix(void);	/* UNIX-Systemstrukturen */
 void CmdSetup_regex(void);	/* Reguläre Ausdrücke */
+void CmdSetup_match(void);	/* Mustervergleich */
 void CmdSetup_cmdpar(void);	/* Befehlsparameter */
 void CmdSetup_dl(void);		/* Dynamische Bibliotheken */
 void CmdSetup_dbutil(void);	/* Datenbankhilfsfunktionen */

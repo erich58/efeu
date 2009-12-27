@@ -22,40 +22,49 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/EDB.h>
 
+#define	FMT_NREAD	"[edb:nread]$0: $1 records read.\n"
+
 void edb_closein (EDB *edb)
 {
 	if	(edb && edb->read)
 	{
+		char *p = edb->nread ? rd_ident(edb->ipar) : 0;
 		rd_debug(edb, "close input");
+
+		if	(p)
+		{
+			dbg_message("edb", DBG_STAT, FMT_NREAD,
+				p, "u", (unsigned) edb->nread);
+		}
+
 		rd_deref(edb->ipar);
 		edb->save = 0;
 		edb->ipar = NULL;
 		edb->read = NULL;
+		edb->nread = 0;
 	}
 }
 
-int edb_read (EDB *edb)
+void *edb_read (EDB *edb)
 {
-	int rval;
-
 	if	(!edb || !edb->read)
-		return 0;
+		return NULL;
 
 	if	(edb->save)
 	{
 		edb->save = 0;
-		return 1;
+		return edb->obj->data;
 	}
 	
-	rval = edb->read(edb->obj->type, edb->obj->data, edb->ipar);
-
-	if	(rval == 0)
+	if	(edb->read(edb->obj->type, edb->obj->data, edb->ipar))
 	{
-		CleanData(edb->obj->type, edb->obj->data);
-		edb_closein(edb);
+		edb->nread++;
+		return edb->obj->data;
 	}
 
-	return rval;
+	CleanData(edb->obj->type, edb->obj->data, 0);
+	edb_closein(edb);
+	return 0;
 }
 
 void edb_unread (EDB *edb)

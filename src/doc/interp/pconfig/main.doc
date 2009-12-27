@@ -1,8 +1,0 @@
-\langpar
-:*:\title	Program configuration
-:de:\title	Programmkonfiguration
-
-\include intro@ext.doc
-\include hello@ext.doc
-\include concept@ext.doc
-\include syntax@ext.doc

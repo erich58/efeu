@@ -36,7 +36,7 @@ static void res_free (EfiObj *obj)
 {
 	char **name = (void *) (obj + 1);
 	memfree(*name);
-	DestroyData(obj->type, obj->data);
+	CleanData(obj->type, obj->data, 1);
 	Obj_free(obj, sizeof(EfiObj) + sizeof(char **) + obj->type->size);
 }
 
@@ -59,6 +59,7 @@ static char *res_ident (const EfiObj *obj)
 }
 
 static EfiLval Lval_res = {
+	"res", "Resource",
 	res_alloc,
 	res_free,
 	res_update,

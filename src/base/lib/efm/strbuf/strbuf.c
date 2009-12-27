@@ -27,6 +27,19 @@ If not, write to the Free Software Foundation, Inc.,
 
 static ALLOCTAB(sb_tab, 32, sizeof(StrBuf));
 
+static char *ref_ident (const void *ptr)
+{
+	return sb_strcpy((StrBuf *) ptr);
+}
+
+static void ref_clean (void *ptr)
+{
+	sb_free(ptr);
+	del_data(&sb_tab, ptr);
+}
+
+RefType sb_reftype = REFTYPE_INIT("StrBuf", ref_ident, ref_clean);
+
 /*
 :*:
 The Function |$1| initializes the dynamic string with the blocksize <bsize>.
@@ -86,7 +99,6 @@ void sb_clean (StrBuf *sb)
 	}
 }
 
-
 /*
 :*:
 The function |$1| creates a new string buffer with blocksize <bsize>.
@@ -98,28 +110,9 @@ StrBuf *sb_create (size_t blksize)
 {
 	StrBuf *buf = new_data(&sb_tab);
 	sb_init(buf, blksize);
+	rd_init(&sb_reftype, buf);
 	return buf;
 }
-
-/*
-:*:
-The function |$1| frees the memory space from a string buffer created
-with |sb_create|.
-:de:
-Die Funktion |$1| gibt ein mit |sb_create| angefordertes Zeichenfeld
-wieder frei.
-*/
-
-int sb_destroy (StrBuf *buf)
-{
-	if	(buf)
-	{
-		sb_free(buf);
-		return (del_data(&sb_tab, buf) ? 0 : EOF);
-	}
-	else	return 0;
-}
-
 
 /*
 :*:
@@ -288,7 +281,7 @@ als String. Der Rückgabewert ist nur dann ein gültiger String, wenn ein
 
 char *sb_str (StrBuf *buf, int pos)
 {
-	if	(buf && buf->pos)
+	if	(buf && pos < buf->pos)
 	{
 		return (char *) buf->data + pos;
 	}
@@ -333,7 +326,7 @@ char *sb2str (StrBuf *buf)
 	if	(buf)
 	{
 		char *p = sb_strcpy(buf);
-		sb_destroy(buf);
+		rd_deref(buf);
 		return p;
 	}
 
@@ -369,7 +362,7 @@ char *sb2mem (StrBuf *buf)
 	if	(buf)
 	{
 		char *p = sb_memcpy(buf);
-		sb_destroy(buf);
+		rd_deref(buf);
 		return p;
 	}
 

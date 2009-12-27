@@ -5,10 +5,12 @@
 #include <EFEU/mdmat.h>
 #include <EFEU/mdcount.h>
 #include <EFEU/stdtype.h>
+#include <EFEU/EfiCount.h>
+#include <EFEU/EfiView.h>
 
 EfiType Type_mdmat = REF_TYPE("mdmat", mdmat *);
-EfiType Type_mdaxis = SIMPLE_TYPE("mdaxis", mdaxis *, &Type_ptr, NULL);
-EfiType Type_mdidx = SIMPLE_TYPE("mdidx", mdindex, NULL, NULL);
+EfiType Type_mdaxis = PTR_TYPE("mdaxis", mdaxis *, &Type_ptr, NULL, NULL);
+EfiType Type_mdidx = STD_TYPE("mdidx", mdindex, NULL, NULL, NULL);
 
 mdmat *Buf_mdmat = NULL;
 mdaxis *Buf_mdaxis = NULL;
@@ -225,4 +227,6 @@ void SetupMdMat(void)
 	MdSetup_count();
 	MdSetup_func();
 	Setup_edb2md();
+	SetupEfiCount();
+	SetupEfiView();
 }

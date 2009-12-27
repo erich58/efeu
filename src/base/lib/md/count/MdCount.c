@@ -31,7 +31,7 @@ static int cmp_vtab (const void *pa, const void *pb)
 	return mstrcmp((*a)->name, (*b)->name);
 }
 
-MdCount *MdCount_get (MdCountTab *tab, const char *name)
+MdCount *MdCount_get (MdCountPar *tab, const char *name)
 {
 	MdCount buf, *key, **ptr;
 	buf.name = (char *) name;
@@ -40,7 +40,13 @@ MdCount *MdCount_get (MdCountTab *tab, const char *name)
 	return ptr ? *ptr : NULL;
 }
 
-void MdCount_add (MdCountTab *tab, MdCount *entry, size_t dim)
+void AddMdCount (MdCountPar *tab, void *entry)
+{
+	MdCount *key = entry;
+	vb_search(&tab->vtab, &key, cmp_vtab, VB_REPLACE);
+}
+
+void MdCount_add (MdCountPar *tab, MdCount *entry, size_t dim)
 {
 	if	(tab)
 	{

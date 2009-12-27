@@ -153,7 +153,7 @@ if	(list)
 	Obj2Data(RefObj(list->obj), &Type_$1, &data->$2);
 	list = list->next;
 }
-else	CleanData(&Type_$1, &data->$2);
+else	CleanData(&Type_$1, &data->$2, 0);
 !, type, vname);
 }
 
@@ -210,7 +210,7 @@ return 0;
 		"return $1_write(io, data, 1);", name);
 	
 	LocalFunction("void Type_$1_clean",
-		"const EfiType *type, void *data",
+		"const EfiType *type, void *data, int mode",
 		"$1_clear(data, 1);", name);
 
 	f = Function("void Type_$1_copy",
@@ -246,7 +246,7 @@ io_close(io);
 	fpsub(src, string !
 EfiType Type_$1 = COMPLEX_TYPE("$1", "$1", sizeof($1), 0,
 	Type_$1_read, Type_$1_write, Type_$1_print,
-	NULL, NULL, NULL, Type_$1_clean, Type_$1_copy);
+	NULL, NULL, Type_$1_clean, Type_$1_copy, TYPE_MALLOC);
 !, name);
 
 	io << "\n";
@@ -281,15 +281,20 @@ $1_mtab, tabsize($1_mtab));", name);
 			name);
 	}
 
-	Function xprint = Function("int Type_$1_print", 
-		"const EfiType *type, const void *opaque, IO *io",
-		name);
-	xprint.line("const $1 *data = opaque;", name);
-	xprint.line("int n = io_puts(\"{ \", io);", name);
-	xprint.body(s_print);
-	xprint.line("n += io_puts(\"}\", io);");
-	xprint.line("return n;");
-	xprint.write(false);
+	if	(strlen(s_print))
+	{
+		Function xprint = Function("int Type_$1_print", 
+			"const EfiType *type, const void *opaque, IO *io",
+			name);
+
+		xprint.line("const $1 *data = opaque;", name);
+		xprint.line("int n = io_puts(\"{ \", io);", name);
+		xprint.body(s_print);
+		xprint.line("n += io_puts(\"}\", io);");
+		xprint.line("return n;");
+		xprint.write(false);
+	}
+	else	Define(hdr, "Type_$1_print NULL", name);
 
 	if	(s_create)
 	{
@@ -538,6 +543,21 @@ static void DBDataDef::sub & (str base, str ndef, str desc, bool flag)
 	}
 }
 
+/*	Efi-Teildatentype mit Standardnamenskonvention
+*/
+
+static void DBDataDef::efi & (str base, str vname, str desc, bool flag)
+{
+	member(base, vname, desc);
+	var += { base, base, vname, desc };
+
+	List_t args = { base, vname };
+	read_body += psub("s += ReadData(&Type_$1, &data->$2, io);\n", args);
+	write_body += psub("s += WriteData(&Type_$1, &data->$2, io);\n", args);
+	clear_body += psub("CleanData(&Type_$1, &data->$2, 0);\n", args);
+	fix = false;
+}
+
 static void DBDataDef::cond & (str key, str base, str vname, str desc)
 {
 	member(base, vname, desc);
@@ -703,6 +723,13 @@ static EfiObj *$0_$2 (const EfiObj *base, void *par)
 	*ptr = NewObjList(EfiVecObj(&Type_$1, data->$2, $3));
 	ptr = &(*ptr)->next;
 !, arg);
+	s_print += psub(string !
+	{
+		EfiObj *obj = EfiVecObj(&Type_$1, data->$2, $3);
+		PrintObj(io, obj);
+		UnrefObj(obj);
+	}
+!, arg);
 	s_create += psub(string !
 
 	if	(list)
@@ -710,7 +737,7 @@ static EfiObj *$0_$2 (const EfiObj *base, void *par)
 		Obj2VecData(RefObj(list->obj), &Type_$1, $3, data->$2);
 		list = list->next;
 	}
-	else	CleanVecData(&Type_$1, $3, data->$2);
+	else	CleanVecData(&Type_$1, $3, data->$2, 0);
 !, arg);
 	fix = false;
 	recl = NULL;
@@ -803,6 +830,8 @@ void DBData (str Name, str Desc, IO Def, bool glob = true)
 			x.ext(type + " *", name, desc);
 		else if	(key == "sub")
 			x.sub(type, name, desc, flag);
+		else if	(key == "efi")
+			x.efi(type, name, desc, flag);
 		else if	(key[0] == '?')
 			x.cond(substr(key, 1), type, name, desc);
 		else if	(key[0] == '@')

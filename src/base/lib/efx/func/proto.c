@@ -21,20 +21,34 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/object.h>
+#include <EFEU/parsedef.h>
 #include <EFEU/Op.h>
 #include <ctype.h>
 
 
 static int do_copy (IO *io, IO *tmp, int delim);
 
-static EfiType *get_type(IO *io, char *name)
+static EfiType *get_type (IO *io, char *name)
 {
-	EfiType *type;
+	EfiType *type = NULL;
+	EfiParseDef *parse;
 
-	if	((type = GetType(name)) == NULL)
-		io_error(io, "[efmain:83]", "s", name);
+	if	((parse = GetParseDef(name)) != NULL)
+	{
+		EfiObj *obj = (*parse->func)(io, parse->data);
 
-	return Parse_type(io, type);
+		if	(obj && obj->type == &Type_type)
+			type = Val_type(obj->data);
+
+		UnrefObj(obj);
+	}
+	else	type = XGetType(name);
+
+	if	(type)
+		return Parse_type(io, type);
+
+	io_error(io, "[efmain:83]", "s", name);
+	return NULL;
 }
 
 
@@ -230,7 +244,7 @@ EfiFunc *MakePrototype(IO *io, EfiType *type, EfiName *nptr, unsigned flags)
 		arg.promote = 0;
 		arg.cnst = (arg.lval == 0);
 		arg.defval = NULL;
-		io_write(tmp, &arg, sizeof(EfiFuncArg));
+		io_write(tmp, &arg, sizeof arg);
 		n++;
 	}
 
@@ -268,20 +282,21 @@ EfiFunc *MakePrototype(IO *io, EfiType *type, EfiName *nptr, unsigned flags)
 	{
 		func->vaarg = 1;
 		arg.name = "va_list";
+		arg.desc = NULL;
 		arg.type = &Type_list;
 		arg.lval = 0;
 		arg.nokonv = 0;
 		arg.promote = 0;
 		arg.cnst = 0;
 		arg.defval = NULL;
-		io_write(tmp, &arg, sizeof(EfiFuncArg));
+		io_write(tmp, &arg, sizeof arg);
 		n++;
 	}
 
 	func->dim = n;
-	func->arg = memalloc(n * sizeof(EfiFuncArg));
+	func->arg = memalloc(n * sizeof func->arg[0]);
 	io_rewind(tmp);
-	io_read(tmp, func->arg, n * sizeof(EfiFuncArg));
+	io_read(tmp, func->arg, n * sizeof func->arg[0]);
 	io_close(tmp);
 
 	if	(rflag && (func->type != func->arg[0].type))
@@ -304,7 +319,7 @@ static int do_copy(IO *io, IO *tmp, int delim)
 	flag = ParseFuncArg(io, &arg, delim);
 
 	if	(flag == FARG_STDARG)
-		io_write(tmp, &arg, sizeof(EfiFuncArg));
+		io_write(tmp, &arg, sizeof arg);
 
 	return flag;
 }
@@ -316,6 +331,7 @@ int ParseFuncArg(IO *io, EfiFuncArg *arg, int delim)
 	int c;
 
 	arg->name = NULL;
+	arg->desc = NULL;
 	arg->type = NULL;
 	arg->defval = NULL;
 	arg->lval = 0;
@@ -460,9 +476,9 @@ size_t GetFuncArg(IO *io, EfiFuncArg **arg, int delim)
 	if	(c == FARG_ELLIPSE)
 		dbg_note(NULL, "[efmain:146]", NULL);
 
-	*arg = memalloc(n * sizeof(EfiFuncArg));
+	*arg = memalloc(n * sizeof **arg);
 	io_rewind(tmp);
-	io_read(tmp, *arg, n * sizeof(EfiFuncArg));
+	io_read(tmp, *arg, n * sizeof **arg);
 	io_close(tmp);
 	return n;
 }

@@ -1,0 +1,71 @@
+/*
+:*:The function |$1| adds structure members to the structur
+definition.
+:de:Die Funktion |$1| erweitert die Strukturdefinitionen entsprechend
+der Einträge in <def>. Eine einzelne Zeile hat die Form
+	<type> <name> <desc>
+wobei <type> der Datentyp, <name> der Variablenname und <desc> der
+Beschreibungstext ist. Eine Zahl anstelle von <type> generiert einen
+Bitfeldeintrag der entsprechenden Größe.
+Ein . oder das Schlusselwort
+|@macro| anstelle von <type> erzeugt einen Eintrag der Form |"|<name>|;"|.
+Vergleiche dazu untenstehendes Beispiel.
+Falls <type> mit einem Klammeraffen beginnt,
+handelt es sich um eine Steueranweisung oder einen Spezialeintrag.
+Folgende Anweisungen sind definiert:
+\end
+(Liste unvollständig)
+*/
+
+void TypeDef::addentry (IO in)
+{
+	str name, desc;
+	str key, def;
+
+	while (getline(in, key, def))
+	{
+		if	(key[0] == '@')
+		{
+			extvar(in, substr(key, 1), def);
+			continue;
+		}
+
+		key = psub(key, t_name);
+		name = psub(xstrcut(def, "%s"), t_name);
+		desc = psub(def, name);
+
+		if	(key == ".")
+		{
+			bf_close();
+			s_var += sprintf("\t%s;\t/* %s */\n", name, desc);
+		}
+		else if	(isdigit(key[0]))
+		{
+			bitfield(NULL, name, key, desc);
+		}
+		else if	(name == /:/)
+		{
+			str tname = xstrcut(name, ":");
+			bitfield(key, tname, name, desc);
+		}
+		else if	(key == /^C:/)
+		{
+			bf_close();
+			addvar(substr(key, 2), name, desc);
+		}
+		else if	(key == /^X:/)
+		{
+			extefivar(substr(key, 2), name, desc);
+		}
+		else if	(name[0] == '*')
+		{
+			bf_close();
+			addvar(key, name, desc);
+		}
+		else	efivar(key, name, desc);
+	}
+
+	bf_close();
+}
+
+

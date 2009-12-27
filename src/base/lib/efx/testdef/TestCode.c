@@ -88,7 +88,8 @@ int TestCode (void *par, unsigned code)
 }
 
 
-TestParDef TestPar_a37l = { "=[!^]codelist",
+TestParDef TestPar_a37l = { &Type_uint,
+	"=[!^]codelist",
 	MakeCodePar, memfree, a37l
 };
 
@@ -137,6 +138,7 @@ void *MakeEnumPar (const char *opt, const char *arg, void *par)
 	return cpar;
 }
 
-TestParDef TestPar_enum = { "[type]=[!^]codelist",
+TestParDef TestPar_enum = { &Type_int,
+	"[type]=[!^]codelist",
 	MakeEnumPar, memfree, NULL
 };

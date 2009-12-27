@@ -1,0 +1,27 @@
+/*
+Alias-Datentyp
+*/
+
+void TypeDef::alias (str base)
+{
+	if	(base == /^C:/)
+	{
+		t_cname = substr(base, 2);
+		base = NULL;
+	}
+	else if	(base == /^X:/)
+	{
+		base = substr(base, 2);
+		t_cname = cname(base);
+	}
+	else
+	{
+		Type_t x = (Type_t) base;
+		base = (str) x;
+		t_cname = x.cname;
+		t_recl = x.recl;
+	}
+
+	if	(base)
+		s_setup += sprintf("type->base = XGetType(%#s);\n", base);
+}

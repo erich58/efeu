@@ -151,7 +151,7 @@ mdlist *io_mdlist (IO *io, int flag)
 	list->lopt = list->list + dim;
 	ptr = (char *) (list->lopt + dim);
 	memcpy(ptr, buf->data, space);
-	sb_destroy(buf);
+	rd_deref(buf);
 
 	list->next = NULL;
 	list->name = list_next(&ptr);

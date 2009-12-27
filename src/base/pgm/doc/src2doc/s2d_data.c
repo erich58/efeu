@@ -36,5 +36,5 @@ void SrcData_init (SrcData *data, IO *ein)
 void SrcData_write (SrcData *data, IO *io)
 {
 	DocBuf_write(&data->doc, io);
-	sb_destroy(data->buf);
+	rd_deref(data->buf);
 }

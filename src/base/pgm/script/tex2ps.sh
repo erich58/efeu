@@ -21,7 +21,7 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 # $pconfig
-# Version="$Id: tex2ps.sh,v 1.9 2005-09-23 07:37:39 ef Exp $"
+# Version="$Id: tex2ps.sh,v 1.11 2007-08-19 04:22:10 ef Exp $"
 # q |
 #	:*:landscape
 #	:de:Landscape
@@ -47,7 +47,7 @@ EOF
 
 case "$1" in
 -\?|--help*)	usage $1; exit 0;;
---version)	efeuman -- $0 $1 || grep 'Version="[$]Id:'; exit 0;;
+--version)	efeuman -- $0 $1 || grep 'Version="[$]Id:' $0; exit 0;;
 esac
 
 #	parse command line
@@ -55,7 +55,6 @@ esac
 name=TeX$$
 texfile=$name.tex
 dvifile=$name.dvi
-psfile=$name.ps
 count=1
 
 while getopts n:qr: opt
@@ -119,13 +118,6 @@ else
 	echo "\\\\end" >> $texfile
 fi
 
-case `basename $0` in
-	tex2pdf) 
-		cmd="pdf$cmd"
-		dvifile=$name.pdf
-		;;
-esac
-
 echo "formatting..." >&2
 
 while [ $count -gt 0 ]
@@ -140,9 +132,16 @@ do
 done
 
 case `basename $0` in
-	tex2ps)	echo "converting..." >&2
-		dvips $psflags $dvifile -o $psfile
-		outfile=$psfile
+	tex2ps)
+		echo "converting..." >&2
+		dvips $psflags $dvifile -o $name.ps
+		outfile=$name.ps
+		;;
+	tex2pdf)
+		echo "converting..." >&2
+		dvips $psflags $dvifile -o $name.ps
+		ps2pdf $name.ps $name.pdf
+		outfile=$name.pdf
 		;;
 	*)	outfile=$dvifile
 		;;

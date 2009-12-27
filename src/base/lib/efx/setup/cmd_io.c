@@ -67,15 +67,22 @@ CEXPR(f_io_rewind, RVINT = io_rewind(IO(0)) != EOF)
 CEXPR(f_io_flush, RVINT = io_ctrl(IO(0), IO_FLUSH) != EOF)
 
 CEXPR(f_getc, RVINT = io_getc(IO(0)))
+CEXPR(f_getwc, *((int32_t *) rval) = io_getucs(IO(0)))
 CEXPR(f_peek, RVINT = io_peek(IO(0)))
 CEXPR(f_eat, RVINT = io_eat(IO(0), STR(1)))
 CEXPR(f_ungetc, RVINT = io_ungetc(INT(1), IO(0)))
 CEXPR(f_putc, RVINT = io_putc(INT(1), IO(0)))
+CEXPR(f_putwc, RVINT = io_putucs(*((int32_t *) arg[1]), IO(0)))
 CEXPR(f_puts, RVINT = io_puts(STR(1), IO(0)))
 CEXPR(f_xputs, RVINT = io_xputs(STR(1), IO(0), STR(2)))
 CEXPR(f_mputs, RVINT = io_mputs(STR(1), IO(0), STR(2)))
 CEXPR(f_protect, io_protect(IO(0), INT(1)))
 CEXPR(f_submode, io_submode(IO(0), INT(1)))
+
+static void f_ucswmode (EfiFunc *func, void *rval, void **arg)
+{
+	io_ucswmode(IO(0), STR(1));
+}
 
 static void f_getpos (EfiFunc *func, void *rval, void **arg)
 {
@@ -181,7 +188,7 @@ static void f_scanline (EfiFunc *func, void *rval, void **arg)
 		else	sb_putc(c, sb);
 	}
 
-	sb_destroy(sb);
+	rd_deref(sb);
 	Val_list(rval) = list;
 }
 
@@ -228,7 +235,7 @@ static void f_getline (EfiFunc *func, void *rval, void **arg)
 			continue;
 		}
 
-		CleanData(list->obj->type, list->obj->data);
+		CleanData(list->obj->type, list->obj->data, 0);
 		obj = p ? EvalObj(str2Obj(p), list->obj->type) : NULL;
 
 		if	(obj)
@@ -398,10 +405,13 @@ str post = NULL, bool flag = false)", f_lmark },
 		"copy (promotion IO in, IO out)", f_copy },
 
 	{ 0, &Type_int, "IO::getc ()", f_getc },
+	{ 0, &Type_wchar, "IO::getwc ()", f_getwc },
 	{ 0, &Type_int, "IO::eat (str delim)", f_eat },
 	{ 0, &Type_int, "IO::peek ()", f_peek },
 	{ 0, &Type_int, "IO::ungetc (int x)", f_ungetc },
 	{ 0, &Type_int, "IO::putc (int x)", f_putc },
+	{ 0, &Type_int, "IO::putwc (wchar_t x)", f_putwc },
+	{ 0, &Type_void, "IO::ucswmode (str def = NULL)", f_ucswmode },
 
 	{ 0, &Type_int, "IO::mgetc (bool flag = true)", f_mgetc },
 	{ 0, &Type_int, "IO::xgetc (str delim = NULL)", f_xgetc },

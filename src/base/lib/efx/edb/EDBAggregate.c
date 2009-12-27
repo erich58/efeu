@@ -36,7 +36,7 @@ static void aggr_clean (void *ptr)
 static RefType aggr_reftype = REFTYPE_INIT("EDBAggregate", NULL, aggr_clean);
 
 EDBAggregate *NewEDBAggregate (EDBAggregate *next, const char *op,
-	EfiVar *var, unsigned offset)
+	EfiStruct *var, unsigned offset)
 {
 	EDBAggregate *x = memalloc(sizeof *x);
 	x->next = next;

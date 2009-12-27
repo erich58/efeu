@@ -88,6 +88,6 @@ void StdInfoBrowser (const char *name)
 		info = GetInfo(base, p);
 	}
 
-	sb_destroy(buf);
+	rd_deref(buf);
 	io_close(io);
 }

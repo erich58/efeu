@@ -80,7 +80,7 @@ size_t io_read_size (size_t *ptr, IO *io)
 		if	(!(c & M_FLAG))	break;
 	}
 
-	if	(*ptr)	*ptr = val;
+	if	(ptr)	*ptr = val;
 
 	return n;
 }

@@ -103,6 +103,6 @@ char *getstring(IO *io)
 	case '/':
 	case '!':
 	case '|':	return loadstring(io, c);
-	default:	return io_mgets(io, ";\n");
+	default:	return io_mgets(io, "\n");
 	}
 }

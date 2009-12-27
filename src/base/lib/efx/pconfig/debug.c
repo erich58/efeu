@@ -90,7 +90,7 @@ static void f_print(IO *io)
 
 	if	(obj)
 	{
-		PrintObj(ioerr, obj);
+		ShowObj(ioerr, obj);
 		io_putc('\n', ioerr);
 	}
 

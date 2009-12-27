@@ -31,7 +31,13 @@ static int cmp_ctab (const void *pa, const void *pb)
 	return mstrcmp((*a)->name, (*b)->name);
 }
 
-void MdClass_add (MdCountTab *tab, MdClass *entry, size_t dim)
+void AddMdClass (MdCountPar *tab, void *entry)
+{
+	MdClass *key = entry;
+	vb_search(&tab->ctab, &key, cmp_ctab, VB_REPLACE);
+}
+
+void MdClass_add (MdCountPar *tab, MdClass *entry, size_t dim)
 {
 	if	(tab)
 	{
@@ -44,7 +50,7 @@ void MdClass_add (MdCountTab *tab, MdClass *entry, size_t dim)
 	else	dbg_note("md", "[mdmat:302]", NULL);
 }
 
-MdClass *MdClass_get (MdCountTab *tab, const char *name)
+MdClass *MdClass_get (MdCountPar *tab, const char *name)
 {
 	MdClass buf, *key, **ptr;
 	buf.name = (char *) name;

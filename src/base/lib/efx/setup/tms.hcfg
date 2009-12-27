@@ -42,4 +42,4 @@ If not, write to the Free Software Foundation, Inc.,
 
 void CmdSetup_tms(void);
 
-#endif	/* EFEU/dl.h */
+#endif	/* EFEU/tms.h */

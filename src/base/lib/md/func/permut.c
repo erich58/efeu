@@ -2,7 +2,8 @@
 	(c) 1994 Erich Frühstück
 */
 
-#include <EFEU/mdtest.h>
+#include <EFEU/mdmat.h>
+#include <EFEU/MatchPar.h>
 
 typedef struct {
 	unsigned oldpos;
@@ -10,7 +11,8 @@ typedef struct {
 	mdaxis *axis;
 } XDATA;
 
-#define	TEST(test, x) ((x).newpos == 0 && mdtest_eval(test, (x).axis->name, (x).oldpos))
+#define	TEST(mp, x) \
+	((x).newpos == 0 && MatchPar_exec(mp, (x).axis->name, (x).oldpos))
 
 static int cmp_xdata(const void *pa, const void *pb)
 {
@@ -30,7 +32,7 @@ void md_permut(mdmat *md, const char *str)
 	size_t dim;
 	size_t mdim;
 	mdaxis *axis, **ptr;
-	mdtest *test;
+	MatchPar *match;
 	XDATA *tab;
 	int i, j;
 
@@ -56,12 +58,12 @@ void md_permut(mdmat *md, const char *str)
 
 	for (i = 0; i < dim; i++)
 	{
-		test = mdtest_create(list[i], mdim);
+		match = MatchPar_create(list[i], mdim);
 
 		for (j = 0; j < mdim; j++)
-			if (TEST(test, tab[j])) tab[j].newpos = dim - i;
+			if (TEST(match, tab[j])) tab[j].newpos = dim - i;
 
-		mdtest_clean(test);
+		rd_deref(match);
 	}
 
 	memfree(list);

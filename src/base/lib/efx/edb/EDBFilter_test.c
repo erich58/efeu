@@ -22,22 +22,34 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/EDB.h>
+#include <EFEU/EDBFilter.h>
 
-typedef struct {
+typedef struct TEST TEST;
+
+struct TEST {
 	REFVAR;
 	EDB *base;
+	EfiType *type;
 	EfiObj *expr;
-} TEST;
+	EfiObjList *list;
+	int (*test) (TEST *test);
+};
 
 static void test_clean (void *data)
 {
 	TEST *par = data;
 	rd_deref(par->base);
 	UnrefObj(par->expr);
+	DelObjList(par->list);
 	memfree(par);
 }
 
 static RefType test_reftype = REFTYPE_INIT("EDB_TEST", NULL, test_clean);
+
+static int test_bool (TEST *test)
+{
+	return Obj2bool(RefObj(test->expr));
+}
 
 static int test_read (EfiType *type, void *data, void *opaque_par)
 {
@@ -70,21 +82,24 @@ static EDB *test_create (EDBFilter *filter, EDB *base,
 	par = memalloc(sizeof *par);
 	par->base = rd_refer(base);
 
-	io = io_cstr(arg);
+	io = io_cstr(opt);
 	PushVarTab(RefVarTab(base->obj->type->vtab), RefObj(base->obj));
 	par->expr = Parse_cmd(io);
+	par->type = &Type_bool;
+	par->list = NULL;
+	par->test = test_bool;
 	PopVarTab();
 	io_close(io);
 
-	edb = edb_create(RefObj(base->obj), NULL);
+	edb = edb_share(base);
 	edb->read = test_read;
 	edb->ipar = rd_init(&test_reftype, par);
 	return edb;
 }
 
 
-EDBFilter EDBFilter_test = {
-	"test", "=expr", test_create, NULL,
+EDBFilter EDBFilter_test = EDB_FILTER(NULL,
+	"test", "[expr]", test_create, NULL,
 	":*:select records with test expression"
 	":de:Datensätze mit Testausdruck selektieren"
-};
+);

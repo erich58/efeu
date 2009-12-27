@@ -128,11 +128,11 @@ void DocBuf_write (DocBuf *doc, IO *io)
 			io_puts((char *) doc->tab[i]->data, io);
 		}
 
-		sb_destroy(doc->tab[i]);
+		rd_deref(doc->tab[i]);
 	}
 
-	sb_destroy(doc->synopsis);
-	sb_destroy(doc->source);
+	rd_deref(doc->synopsis);
+	rd_deref(doc->source);
 
 	if	(doc->var[VAR_COPYRIGHT])
 		io_printf(io, "\\Copyright\nCopyright %s\n",

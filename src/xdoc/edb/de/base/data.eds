@@ -28,7 +28,7 @@ Die folgenden Zeilen zeigen die Beispieldatei \index{|pers.edb|}:
 
 \include[verbatim]	pers.edb
 
-Das nächste Beispiel zeigt ein einfaches Metadatenfile, dass
+Das nächste Beispiel zeigt ein einfaches Metadatenfile, das
 auf die Daten des vorherigen Beispiels zurückgreift:
 
 \include[verbatim]	mpers.edb
@@ -38,11 +38,11 @@ eingebundene Datei |pers.edb| definiert wird. Diese Form von
 Metadatenfiles findet man bei großen Datenmengen, die sich nicht mehr
 als einzelne Datei abspeichern lassen. Die einzelnen Teile werden dann
 mithilfe eines Metadatenfiles und der \index{|@file|-Anweisung}
-zusammengefaßt.
+zusammengefasst.
 
 Daten können auch über Funktionen generiert werden.
 Die folgende Beispieldatei \index{|rand.edb|} liefert beliebig viele,
-normalverteilten Zufallszahlen:
+normalverteilte Zufallszahlen:
 
 \include[verbatim]	rand.edb
 
@@ -51,5 +51,4 @@ Mit \index{|static|} deklarierte Zeilen werden bereits beim Parsen des
 Ausdrucks ausgewertet. Da es sich hierbei um ein unbegrenztes
 Datenfile handelt, muss bei der Verarbeitung die Zahl der Datensätze
 begrenzt werden. Bei Verwendung der Kommandoskripts \mref{edb(1)},
-\mref{edbcat(1)} und \mref{edbjoin(1)} erfolgt dies einfach mit der
-Option |-n|.
+\mref{edbcat(1)} und \mref{edbjoin(1)} erfolgt dies mit der Option |-n|.

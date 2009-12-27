@@ -1,0 +1,91 @@
+/*
+Datenstruktur zur Datentypgenerierung
+*/
+
+static struct TypeDef {
+	str t_name;	/* Datentypname */
+	str t_desc;	/* Kurzbeschreibung */
+	str t_cname;	/* C-Datentyp */
+	int t_recl;	/* Satzlänge */
+	bool set_base;	/* Flag für Vererbung */
+	int need_setup;	/* Modus für Setup */
+	bool create_done;
+	bool glob_decl;	
+	bool compat;	/* Kompatiblitätsflag */
+
+	str s_var;	/* Strukturvariablen */
+	str e_member;	/* Mitglieder einer Aufzählung */
+	int e_dim;	/* Dimension des Label-Vektors */
+	str s_proto;
+	str s_mtab;
+	str s_ftab;
+	str s_setup;
+
+	str read_func;	/* Lesefunktion */
+	str read_body;
+	str read_tmpbuf; /* Zwischenbuffer für Lesefunktion */
+
+	str write_func;	/* Schreibfunktion */
+	str write_body;
+
+	str print_func;	/* Darstellungsfunktion */
+	str print_body;
+
+	str clean_func;	/* Löschfunktion */
+	str clean_body;
+
+	str copy_func;	/* Kopierfunktion */
+	str copy_body;
+
+	str up_init;
+	str up_body;
+	str pre_setup;
+	str post_setup;
+	int bf_size;
+	int bf_used;
+	bool has_bf;
+	bool flag_malloc;
+	bool flag_vrecl;	/* Flag für variable Satzlänge */
+
+	str[] t_ctrl;
+	str[] t_idef;
+	str[] t_odef;
+}
+
+/*
+:*:The data type |$1| allows the construction of C structures.
+:de:Der Datentype |$1| erlaubt die Konstruktion von C Datenstrukturen.
+*/
+
+TypeDef TypeDef (str _name, str _desc, str def = NULL, ...)
+{
+	static bool need_mktype = true;
+
+	if	(need_mktype)
+	{
+		StdInclude(top, "EFEU/mktype",
+			"EFEU/EfiInput", "EFEU/EfiOutput",
+			"EFEU/EDBFilter");
+		need_mktype = false;
+	}
+
+	t_name = psub(_name, va_list);
+	t_desc = psub(_desc, va_list);
+	need_setup = true;
+	glob_decl = true;
+
+	if	(def)
+	{
+		addentry(def);
+		create(glob_decl);
+	}
+}
+
+void TypeDef ()
+{
+	if	(this.need_setup)
+	{
+		this.need_setup = false;
+		this.setup(this.glob_decl);
+	}
+}

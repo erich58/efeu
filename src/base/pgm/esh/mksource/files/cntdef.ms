@@ -68,16 +68,19 @@ erhalten. Die Variable <type> gibt den Datentype des Datenpointers an.
 wird ein Nullstring übergeben, wird <"|const void *|"> verwendet.
 */
 
-virtual promotion inline CntDef CntDef (str type = NULL, bool glob = true,
-	str pfx = NULL)
+virtual promotion inline CntDef CntDef (str type = NULL, bool cglob = true,
+	str cpfx = NULL)
 {
-	str arg = type ? psub("const $1 *ptr = data;", type) : NULL;
-	str decl = type ? psub("const $1 *ptr = data;", type) : NULL;
-	return (CntDef) { glob, NULL, NULL, psub(pfx),
-		"MdCount", arg,
-		"MdClass", "MdClass *c, const void *data", decl,
-		(type ? "ptr" : "data"), NULL, NULL, 0, NULL, NULL,
-		DataBase(LabelEntry), DataBase(LabelEntry) };
+	glob = cglob;
+	pfx = psub(cpfx);
+	ctype = "MdCount";
+	cntarg = type ? psub("const $1 *ptr = data;", type) : NULL;
+	idxtype = "MdClass";
+	idxarg = "MdClass *c, const void *data";
+	idxvar = type ? psub("const $1 *ptr = data;", type) : NULL;
+	ptr = type ? "ptr" : "data";
+	cnt = DataBase(LabelEntry);
+	class = DataBase(LabelEntry);
 }
 
 /*
@@ -88,11 +91,11 @@ Die Datenstruktur <name> wird mit mithilfe von |Struct|
 */
 
 virtual promotion inline CntDef CntDef (str name, int n, str def,
-	str vname = NULL, bool glob = true, str pfx = NULL)
+	str vname = NULL, bool cglob = true, str cpfx = NULL)
 {
 	name = psub(name);
-	str tsetup = NULL;
-	str ftab = NULL;
+	glob = cglob;
+	pfx = psub(cpfx);
 
 	if	(def == /[[:space:]]/)
 	{
@@ -121,8 +124,8 @@ virtual promotion inline CntDef CntDef (str name, int n, str def,
 	else	fpsub(hdr, "extern $1 $2[$3];\n", name, vname, n);
 
 	fpsub(src, "$1 $2[$3];\n", name, vname, n);
-	str cdecl = psub("$1 *ptr = ((MdPtrCount *) cnt)->ptr;", name);
-	str decl = psub("$1 *ptr = ((MdPtrClass *) c)->ptr;", name);
+	cntarg = psub("$1 *ptr = ((MdPtrCount *) cnt)->ptr;", name);
+	idxvar = psub("$1 *ptr = ((MdPtrClass *) c)->ptr;", name);
 
 	if	(tsetup)
 	{
@@ -137,11 +140,15 @@ virtual promotion inline CntDef CntDef (str name, int n, str def,
 		ftab += psub("\"cntvar (int, $1)\", f_cntvar_$1 },\n", name);
 	}
 
-	return (CntDef) { glob, tsetup, ftab, psub(pfx),
-		"MdPtrCount", cdecl,
-		"MdPtrClass", "MdClass *c, const void *data", decl,
-		"ptr", name, vname, n, NULL, NULL,
-		DataBase(LabelEntry), DataBase(LabelEntry) };
+	ctype = "MdPtrCount";
+	idxtype = "MdPtrClass";
+	idxarg = "MdClass *c, const void *data";
+	ptr = "ptr";
+	var_type = name;
+	var_name = vname;
+	var_dim = n;
+	cnt = DataBase(LabelEntry);
+	class = DataBase(LabelEntry);
 }
 
 
@@ -277,12 +284,12 @@ void CntDef::setup(str name, str lblpfx = NULL, ...)
 	name = psub(name, va_list);
 	Function f_ext = var_type && (glob || var_dim) ? \
 		Function("void $1_extend",
-			"MdCountTab *count, const char *ext, $2 *ptr",
+			"MdCountPar *count, const char *ext, $2 *ptr",
 			name, var_type) : NULL;
 	Function f_add = Function("void $1_add",
-		"MdCountTab *count, int n", name);
+		"MdCountPar *count, int n", name);
 	Function f = Function("void $1_setup",
-		"MdCountTab *count, int n", name);
+		"MdCountPar *count, int n", name);
 
 	for (x in add)
 		f_add.body(x);
@@ -681,21 +688,21 @@ struct DezilBasis {
 
 cdef.cntobj("eink", "Einkommenszähler", DezilBasis, string !
 .	anz	1.
-.	val	$(ptr)->satz
-return 	.	$(ptr)->satz ? 1 : 0
+.	val	$$(ptr)->satz
+return 	.	$$(ptr)->satz ? 1 : 0
 !);
 
 cdef.test("std", "Standardklassen",
-	"int x = $(ptr)->satz;", "x <= $(key)", string !
+	"int x = $$(ptr)->satz;", "x <= $$(key)", string !
 0
-@test	$(ptr)->btag == $(key)
+@test	$$(ptr)->btag == $$(key)
 0	B0	Keine Beitragstage
 *	E0	Kein Einkommen
 @end
-10000	E$(key)	Einkommen $((int) last + 1) bis zu $(key)
-20000	E$(key)	Einkommen $((int) last + 1) bis zu $(key)
-50000	E$(key)	Einkommen $((int) last + 1) bis zu $(key)
-*	EXXX	Einkommen über $(last)
+10000	E$$(key)	Einkommen $$((int) last + 1) bis zu $$(key)
+20000	E$$(key)	Einkommen $$((int) last + 1) bis zu $$(key)
+50000	E$$(key)	Einkommen $$((int) last + 1) bis zu $$(key)
+*	EXXX	Einkommen über $$(last)
 !);
 
 cdef.setup("EK", "ek");

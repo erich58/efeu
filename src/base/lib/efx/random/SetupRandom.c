@@ -41,7 +41,7 @@ EfiType Type_Random = REF_TYPE("Random", Random *);
 CEXPR(f_null, Val_Random(rval) = NULL)
 CEXPR(f_newrand, Val_Random(rval) = NewRandom(GetRandomType(STR(1)), INT(0)))
 CEXPR(f_int2rand, Val_Random(rval) = NewRandom(NULL, INT(0)))
-CEXPR(f_str2rand, Val_Random(rval) = str2Random(STR(0)))
+CEXPR(f_str2rand, Val_Random(rval) = str2Random(STR(0), NULL))
 CEXPR(f_copy, Val_Random(rval) = CopyRandom(RAND(0)));
 
 CEXPR(f_seed, SeedRandom(RAND(0), INT(1)))

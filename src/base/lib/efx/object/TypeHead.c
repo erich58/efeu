@@ -40,7 +40,7 @@ static int add_head (StrBuf *sb, const EfiType *type)
 	else if	(type->list)
 	{
 		int n;
-		EfiVar *v;
+		EfiStruct *v;
 
 		for (n = 0, v = type->list; v; v = v->next)
 			n += add_head(sb, v->type);

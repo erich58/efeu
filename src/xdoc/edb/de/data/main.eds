@@ -1,7 +1,7 @@
 \chap	\label{data}EDB-Datenformat
 
-\include syntax.doc
-\include control.doc
-\include command.doc
-\include type.doc
-\include read.doc
+\include syntax.eds
+\include control.eds
+\include command.eds
+\include type.eds
+\include read.eds

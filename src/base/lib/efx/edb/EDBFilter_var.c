@@ -20,6 +20,11 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/EDB.h>
+#include <EFEU/EDBFilter.h>
+#include <EFEU/konvobj.h>
+
+#define	ERR_CONV "[edb:conv]don't know how to convert $1 in $2.\n"
+#define	ERR_TYP	"[edb:typ]$!: unknown datatype $1.\n"
 
 typedef struct {
 	REFVAR;
@@ -66,28 +71,95 @@ static EDB *fdef_var (EDBFilter *filter, EDB *edb,
 	EfiType *type;
 	COMPOSE *par;
 	
-	func = ConstructFunc(edb->obj->type, NULL, arg);
+	if	(!arg || !*arg)
+	{
+		EfiVar_list(ioerr, NULL, edb->obj->type->vtab);
+		exit(EXIT_SUCCESS);
+	}
+
+	func = ConstructObjFunc(NULL, arg, edb->obj);
 
 	if	(!func)
 		return NULL;
 
 	par = memalloc(sizeof *par);
 	par->base = edb;
-	par->func = rd_refer(func);
+	par->func = func;
 
 	type = func->type;
 
-	if	(opt && *opt == 'r' && can_reduce(type))
-		type = type->list->type;
+	if	(can_reduce(type))
+	{
+		if	((opt && *opt == 'r') ||
+			mstrcmp("this", type->list->name) == 0)
+			type = type->list->type;
+	}
 
-	edb = edb_create(LvalObj(NULL, type), NULL);
+	edb = edb_create(type);
 	edb->read = var_read;
 	edb->ipar = rd_init(&var_reftype, par);
 	return edb;
 }
 
-EDBFilter EDBFilter_var = {
+EDBFilter EDBFilter_var = EDB_FILTER(NULL,
 	"var", "[r]=list", fdef_var, NULL,
 	":*:rearrange variables with expresions and patterns"
 	":de:Neuzusammenstellung von Variablen über Ausdrücke und Muster"
-};
+);
+
+EDB *edb_conv (EDB *edb, EfiType *type)
+{
+	EfiKonv *conv;
+	COMPOSE *par;
+
+	if	(!edb || !type || edb->obj->type == type)
+		return edb;
+
+	conv = GetKonv(NULL, edb->obj->type, type);
+
+	if	(conv && conv->func)
+	{
+		par = memalloc(sizeof *par);
+		par->base = edb;
+		par->func = rd_refer(conv->func);
+
+		edb = edb_create(type);
+		edb->desc = mstrcpy(par->base->desc);
+		edb->read = var_read;
+		edb->ipar = rd_init(&var_reftype, par);
+		return edb;
+	}
+	else
+	{
+		dbg_note(NULL, ERR_CONV, "mm", edb->obj->type->name,
+			type->name);
+
+		rd_deref(edb);
+		return NULL;
+	}
+}
+
+EDB *edb_xconv (EDB *edb, const char *name)
+{
+	EfiType *type = XGetType(name);
+
+	if	(type)
+		return edb_conv(edb, type);
+	
+	dbg_error("edb", ERR_TYP, "s", name);
+	rd_deref(edb);
+	return NULL;
+}
+
+static EDB *fdef_conv (EDBFilter *filter, EDB *edb,
+	const char *opt, const char *arg)
+{
+	return edb_xconv(edb, arg);
+}
+
+EDBFilter EDBFilter_conv = EDB_FILTER(NULL,
+	"conv", "=type", fdef_conv, NULL,
+	":*:convert data type"
+	":de:Datentyp konvertieren"
+);
+

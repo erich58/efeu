@@ -82,7 +82,7 @@ mdmat *md_cat(const char *def, mdmat **tab, size_t dim)
 
 	if	(md->type == NULL)	md->type = &Type_ptr;
 
-	sb_destroy(sb);
+	rd_deref(sb);
 
 /*	Teilachsen bestimmen
 */
@@ -95,8 +95,7 @@ mdmat *md_cat(const char *def, mdmat **tab, size_t dim)
 
 /*	Datenmatrix generieren
 */
-	md->size = md_size(md->axis, md->type->size);
-	md->data = memalloc(md->size);
+	md_alloc(md);
 	memset(md->data, 0, md->size);
 
 /*	Werte einfügen

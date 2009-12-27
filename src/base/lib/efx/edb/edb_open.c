@@ -38,7 +38,7 @@ static EDB *edb_import (EfiType *type, const char *path, const char *def)
 	char *scan;
 	IO *io;
 
-	edb = edb_create(LvalObj(NULL, type), NULL);
+	edb = edb_create(type);
 
 	if	(*def == '[')
 	{
@@ -109,12 +109,23 @@ static char *type_end (const char *name)
 	return NULL;
 }
 
+static char *filterpos (const char *name)
+{
+	for (; *name != 0; name++)
+		if	(isspace(*name))
+			return (char *) name;
+
+	return NULL;
+}
+
 EDB *edb_fopen (const char *path, const char *name)
 {
 	char *p;
+	char *buf;
+	char *filter;
 	EDB *edb;
 
-	if	(!name || strchr("|&./", *name))
+	if	(!name || *name == '|' || *name == '&')
 		return edb_meta(io_fileopen(name, "rz"), mstrcpy(path));
 
 	if	(*name == '{')
@@ -124,7 +135,9 @@ EDB *edb_fopen (const char *path, const char *name)
 		unsigned pos;
 
 		io_ctrl(io, IO_GETPOS, &pos);
-		return edb_import(type, path, name + pos + 1);
+		edb = edb_import(type, path, name + pos + 1);
+		io_close(io);
+		return edb;
 	}
 
 	if	((p = type_end(name)))
@@ -133,6 +146,16 @@ EDB *edb_fopen (const char *path, const char *name)
 		EfiType *type = edb_type(tname);
 		memfree(tname);
 		return edb_import(type, path, p);
+	}
+
+	buf = NULL;
+	filter = NULL;
+
+	if	((p = filterpos(name)))
+	{
+		buf = mstrncpy(name, p - name);
+		name = buf;
+		filter = p + 1;
 	}
 
 	p = fsearch(path, NULL, name, NULL);
@@ -144,5 +167,6 @@ EDB *edb_fopen (const char *path, const char *name)
 	edb = edb_meta(io_fileopen(p ? p : name, "rz"),
 		p ? mdirname(p, 1) : NULL);
 	memfree(p);
-	return edb;
+	memfree(buf);
+	return edb_filter(edb, filter);
 }

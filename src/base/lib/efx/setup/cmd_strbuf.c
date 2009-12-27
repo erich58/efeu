@@ -28,7 +28,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/preproc.h>
 #include <EFEU/pconfig.h>
 
-EfiType Type_strbuf = STD_TYPE("strbuf", StrBuf *, &Type_ptr, NULL, NULL);
+EfiType Type_strbuf = PTR_TYPE("strbuf", StrBuf *, &Type_ptr, NULL, NULL);
 
 #define	SB(x)	((StrBuf **) (x))[0]
 
@@ -74,7 +74,7 @@ static void f_free (EfiFunc *func, void *rval, void **arg)
 {
 	if	(SB(arg[0]))
 	{
-		sb_destroy(SB(arg[0]));
+		rd_deref(SB(arg[0]));
 		SB(arg[0]) = NULL;
 	}
 }

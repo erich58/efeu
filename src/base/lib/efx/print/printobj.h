@@ -52,6 +52,6 @@ extern int PrintFieldWidth;
 
 void SetFloatPrec (const char *def);
 int PrintDouble (IO *io, double val);
-
+char *DoubleToString (double val);
 
 #endif	/* EFEU/printobj.h */

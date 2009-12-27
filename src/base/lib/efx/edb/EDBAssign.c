@@ -32,13 +32,16 @@ static void assign_clean (void *ptr)
 
 static RefType assign_reftype = REFTYPE_INIT("EDBAssign", NULL, assign_clean);
 
-EDBAssign *NewEDBAssign (EDBAssign *next, EfiVar *var, unsigned offset)
+EDBAssign *NewEDBAssign (EDBAssign *next, EfiObj *base, EfiStruct *st,
+	EfiStruct *var, unsigned offset)
 {
 	EDBAssign *x = memalloc(sizeof *x);
 	x->next = next;
 	x->sub = NULL;
 	x->var = rd_refer(var);
 	x->offset = offset;
+	x->base = RefObj(base);
+	x->st = rd_refer(st);
 	return rd_init(&assign_reftype, x);
 }
 
@@ -53,6 +56,12 @@ void EDBAssignData (EDBAssign *assign, void *opaque_tg, void *opaque_src)
 		if	(assign->sub)
 		{
 			EDBAssignData(assign->sub, tg, src);
+		}
+		else if	(assign->base)
+		{
+			assign->base->data = src;
+			Obj2Data(assign->st->member(assign->st, assign->base),
+				assign->var->type, tg);
 		}
 		else	AssignVecData(assign->var->type, n, tg, src);
 	}
@@ -105,4 +114,37 @@ void EDBAssignFunc (EDBAssign *assign, EfiType *tg, EfiType *base)
 	conv->clean = rd_deref;
 	AddFunc(conv);
 	io_close(io);
+}
+
+static int print_depth = 0;
+
+void PrintEDBAssign (IO *out, EDBAssign *assign)
+{
+	if	(!out)	return;
+	
+	for (; assign; assign = assign->next)
+	{
+		io_nputc('\t', out, print_depth);
+		io_printf(out, "%d %s %s",
+			assign->var->offset,
+			assign->var->type->name,
+			assign->var->name);
+
+		io_printf(out, " <- %d", assign->offset);
+
+		if	(assign->base)
+			io_printf(out, " %s %s::%s",
+				assign->st->type->name,
+				assign->base->type->name,
+				assign->st->name);
+
+		io_putc('\n', out);
+
+		if	(assign->sub)
+		{
+			print_depth++;
+			PrintEDBAssign(out, assign->sub);
+			print_depth--;
+		}
+	}
 }

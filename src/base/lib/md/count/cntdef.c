@@ -22,11 +22,19 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/mdcount.h>
 #include <EFEU/stdtype.h>
+#include <EFEU/TimeRange.h>
 
-EfiType Type_cotab = REF_TYPE ("CountTab", MdCountTab *);
-EfiType Type_cltab = REF_TYPE ("ClassTab", MdCountTab *);
+EfiType Type_cotab = REF_TYPE ("CountTab", MdCountPar *);
+EfiType Type_cltab = REF_TYPE ("ClassTab", MdCountPar *);
 EfiType Type_cdef = REF_TYPE ("MdCntDef", MdCntDef *);
-EfiType Type_cntobj = STD_TYPE ("MdCount", MdCount *, &Type_ptr, NULL, NULL);
+EfiType Type_cntobj = PTR_TYPE ("MdCount", MdCount *, &Type_ptr, NULL, NULL);
+
+static int p_trange (const EfiType *st, const void *data, IO *io)
+{
+	return PrintTimeRange(io, (TimeRange *) data, 1);
+}
+
+EfiType Type_trange = SIMPLE_TYPE("TimeRange", TimeRange, NULL, p_trange);
 
 static EfiObj *cdef_obj (const EfiObj *base, void *data)
 {
@@ -38,15 +46,60 @@ static EfiMember cdef_member[] = {
 	{ "obj", NULL, cdef_obj, NULL, },
 };
 
+static EfiObj *rng_label (const EfiObj *base, void *par)
+{
+	char *label = base ? ((TimeRange *) base->data)->label : NULL;
+	return str2Obj(mstrcpy(label));
+}
+
+static EfiObj *rng_ug (const EfiObj *base, void *par)
+{
+	int val = base ? ((TimeRange *) base->data)->ug : 0;
+	return NewObj(&Type_Date, &val);
+}
+
+static EfiObj *rng_og (const EfiObj *base, void *par)
+{
+	int val = base ? ((TimeRange *) base->data)->og : 0;
+	return NewObj(&Type_Date, &val);
+}
+
+static EfiObj *rng_dat (const EfiObj *base, void *par)
+{
+	int val = base ? ((TimeRange *) base->data)->dat : 0;
+	return NewObj(&Type_Date, &val);
+}
+
+static EfiObj *rng_jahr (const EfiObj *base, void *par)
+{
+	int val = base ? ((TimeRange *) base->data)->jahr : 0;
+	return NewObj(&Type_int, &val);
+}
+
+static EfiObj *rng_tage (const EfiObj *base, void *par)
+{
+	int val = base ? ((TimeRange *) base->data)->tage : 0;
+	return NewObj(&Type_int, &val);
+}
+
+static EfiMember var_trange[] = {
+	{ "label", &Type_str, rng_label, NULL },
+	{ "ug", &Type_Date, rng_ug, NULL },
+	{ "og", &Type_Date, rng_og, NULL },
+	{ "dat", &Type_Date, rng_dat, NULL },
+	{ "jahr", &Type_int, rng_jahr, NULL },
+	{ "tage", &Type_int, rng_tage, NULL },
+};
+
 static void cot_create (EfiFunc *func, void *rval, void **arg)
 {
-	Val_ptr(rval) = MdCountTab_create();
+	Val_ptr(rval) = MdCountPar_create();
 	MdCount_add(Val_ptr(rval), stdcount, 1);
 }
 
 static void cot_index (EfiFunc *func, void *rval, void **arg)
 {
-	MdCountTab *tab = Val_ptr(arg[0]);
+	MdCountPar *tab = Val_ptr(arg[0]);
 	int idx = Val_int(arg[1]);
 
 	if	(tab && idx < tab->vtab.used)
@@ -74,7 +127,7 @@ static void co_print (EfiFunc *func, void *rval, void **arg)
 
 static void cot_list (EfiFunc *func, void *rval, void **arg)
 {
-	MdCountTab *tab = Val_ptr(arg[0]);
+	MdCountPar *tab = Val_ptr(arg[0]);
 	IO *io = Val_ptr(arg[1]);
 
 	if	(tab && io)
@@ -89,7 +142,7 @@ static void cot_list (EfiFunc *func, void *rval, void **arg)
 
 static void clt_create (EfiFunc *func, void *rval, void **arg)
 {
-	Val_ptr(rval) = MdCountTab_create();
+	Val_ptr(rval) = MdCountPar_create();
 }
 
 static void clt_xcreate (EfiFunc *func, void *rval, void **arg)
@@ -108,13 +161,13 @@ static void clt_xcreate (EfiFunc *func, void *rval, void **arg)
 	cl->label = label;
 	cl->classify = NULL;
 		
-	Val_ptr(rval) = MdCountTab_create();
+	Val_ptr(rval) = MdCountPar_create();
 	MdClass_add(Val_ptr(rval), cl, 1);
 }
 
 static void clt_list (EfiFunc *func, void *rval, void **arg)
 {
-	MdCountTab *tab = Val_ptr(arg[0]);
+	MdCountPar *tab = Val_ptr(arg[0]);
 	IO *io = Val_ptr(arg[1]);
 
 	if	(tab && io)
@@ -129,7 +182,7 @@ static void clt_list (EfiFunc *func, void *rval, void **arg)
 
 static void axis_create (EfiFunc *func, void *rval, void **arg)
 {
-	MdCountTab *tab = Val_ptr(arg[0]);
+	MdCountPar *tab = Val_ptr(arg[0]);
 	IO *io = Val_ptr(arg[1]);
 	mdaxis **ptr;
 	
@@ -161,6 +214,12 @@ static void m_count (EfiFunc *func, void *rval, void **arg)
 	md_count(Val_mdmat(arg[0]), NULL);
 }
 
+static void print_trange (EfiFunc *func, void *rval, void **arg)
+{
+	Val_int(rval) = PrintTimeRange(Val_ptr(arg[0]),
+		(TimeRange *) arg[1], 1);
+}
+
 static EfiFuncDef fdef[] = {
 	{ 0, &Type_cotab, "CountTab (void)", cot_create },
 	{ 0, &Type_void, "CountTab::list (IO io = iostd)", cot_list },
@@ -190,6 +249,8 @@ static EfiFuncDef fdef[] = {
 		"MdCntDef::add (ClassTab cl, str ext, . & obj)",
 		MdCntDef_cadd },
 
+	{ FUNC_VIRTUAL, &Type_int, "fprint(IO, TimeRange)", print_trange },
+
 	{ 0, &Type_mdmat, "mdmat (restricted MdCount cobj, mdaxis x = NULL)",
 		m_create },
 	{ 0, &Type_void, "mdmat::count ()", m_count },
@@ -202,6 +263,8 @@ void MdSetup_count (void)
 	AddType(&Type_cdef);
 	AddEfiMember(Type_cdef.vtab, cdef_member, tabsize(cdef_member));
 	AddType(&Type_cntobj);
+	AddType(&Type_trange);
+	AddEfiMember(Type_trange.vtab, var_trange, tabsize(var_trange));
 	VarTab_xadd(NULL, "stdcount", NULL, NewPtrObj(&Type_cntobj, stdcount));
 	AddFuncDef(fdef, tabsize(fdef));
 }

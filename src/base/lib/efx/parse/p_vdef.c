@@ -24,7 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/stdtype.h>
 #include <EFEU/Op.h>
 
-static void d_vdef (const EfiType *type, void *tg);
+static void d_vdef (const EfiType *type, void *tg, int mode);
 static void c_vdef (const EfiType *type, void *tg, const void *src);
 static EfiObj *e_vdef(const EfiType *type, const void *ptr);
 
@@ -301,7 +301,7 @@ EfiObjList *VarDefList (IO *io, int delim)
 }
 
 
-static void d_vdef (const EfiType *type, void *data)
+static void d_vdef (const EfiType *type, void *data, int mode)
 {
 	EfiVarDecl *tg = data;
 	UnrefObj(tg->name.obj);
@@ -324,13 +324,18 @@ static void c_vdef (const EfiType *type, void *tptr, const void *sptr)
 }
 
 
+static void vec_clean (VarTabEntry *entry)
+{
+	memfree((char *) entry->name);
+	lfree(entry->data);
+}
+
 /*	Variablendefinition auswerten
 */
 
 static EfiObj *e_vdef(const EfiType *type, const void *ptr)
 {
 	const EfiVarDecl *vdef;
-	EfiVar *var;
 	VarTabEntry *entry;
 	EfiObj *obj, *defval;
 	EfiType *vartype;
@@ -398,9 +403,17 @@ static EfiObj *e_vdef(const EfiType *type, const void *ptr)
 	}
 	else if (dim)
 	{
-		var = NewVar(vartype, name, dim);
-		AddVar(vtab, var, 1);
-		obj = Var2Obj(var, NULL);
+		VarTabEntry entry;
+		entry.name = mstrcpy(name);
+		entry.desc = NULL;
+		entry.type = vartype;
+		entry.get = NULL;
+		entry.entry_clean = vec_clean;
+		entry.data = lmalloc(vartype->size * dim);
+		memset(entry.data, 0, vartype->size * dim);
+		entry.obj = EfiVecObj(vartype, entry.data, dim);
+		obj = RefObj(entry.obj);
+		VarTab_add(vtab, &entry);
 	}
 	else
 	{

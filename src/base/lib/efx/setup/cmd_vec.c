@@ -24,6 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/Op.h>
 #include <EFEU/cmdconfig.h>
 #include <EFEU/CmpDef.h>
+#include <EFEU/TestDef.h>
 
 static EfiObj *vec_dim (const EfiObj *base, void *data)
 {
@@ -201,12 +202,50 @@ static void v_bsearch (EfiFunc *func, void *rval, void **arg)
 	}
 	else if	(vec->type->list && vec->type->dim && !vec->type->list->next)
 	{
-		EfiVar *var = vec->type->list;
+		EfiStruct *var = vec->type->list;
 		vec = NewEfiVec(var->type, ptr, var->dim);
 		Val_obj(rval) = NewPtrObj(&Type_vec, vec);
 	}
 	else	Val_obj(rval) = LvalObj(&Lval_ref, vec->type, vec, ptr);
 }
+
+#if	0
+static void v_test (EfiFunc *func, void *rval, void **arg)
+{
+	Val_int(rval) = EfiVec_test(Val_ptr(arg[0]), Val_ptr(arg[1]));
+}
+
+static void v_test_def (EfiFunc *func, void *rval, void **arg)
+{
+	EfiVec *vec = Val_ptr(arg[0]);
+
+	if	(vec)
+	{
+		TestDef *def = TestDef_create(vec->type, Val_str(arg[1]));
+		Val_int(rval) = EfiVec_test(vec, def);
+		rd_deref(def);
+	}
+	else	Val_int(rval) = 0;
+}
+
+static void v_sel (EfiFunc *func, void *rval, void **arg)
+{
+	Val_int(rval) = EfiVec_select(Val_ptr(arg[0]), Val_ptr(arg[1]));
+}
+
+static void v_sel_def (EfiFunc *func, void *rval, void **arg)
+{
+	EfiVec *vec = Val_ptr(arg[0]);
+
+	if	(vec)
+	{
+		TestDef *def = TestDef_create(vec->type, Val_str(arg[1]));
+		Val_int(rval) = EfiVec_select(vec, def);
+		rd_deref(def);
+	}
+	else	Val_int(rval) = 0;
+}
+#endif
 
 /*	assignment
 */
@@ -260,6 +299,7 @@ static EfiFuncDef fdef_vec[] = {
 	{ FUNC_VIRTUAL, &Type_obj, "operator[] (EfiVec, int)", v_index },
 	{ FUNC_VIRTUAL, &Type_obj, "operator[] (EfiVec, _Enum_)", v_index },
 	{ FUNC_VIRTUAL, &Type_list, "operator[] (EfiVec, List_t)", v_list },
+	{ FUNC_VIRTUAL, &Type_list, "operator[] (EfiVec)", Vec2List },
 
 	{ 0, &Type_vec, "EfiVec::operator= (List_t)", v_assign },
 	{ 0, &Type_vec, "EfiVec::operator:= (List_t)", v_assign },
@@ -285,6 +325,16 @@ static EfiFuncDef fdef_vec[] = {
 	{ FUNC_VIRTUAL, &Type_void, "qsort (EfiVec vec, CmpDef cmp)",
 		v_qsort },
 	{ 0, &Type_void, "EfiVec::qsort (CmpDef cmp)", v_qsort },
+
+#if	0
+	{ FUNC_VIRTUAL, &Type_bool, "test (EfiVec vec, str def)", v_test_def },
+	{ FUNC_VIRTUAL, &Type_bool, "test (EfiVec vec, TestDef tst)", v_test },
+	{ 0, &Type_bool, "EfiVec::test (TestDef tst)", v_test },
+
+	{ FUNC_VIRTUAL, &Type_int, "select (EfiVec vec, str def)", v_sel_def },
+	{ FUNC_VIRTUAL, &Type_int, "select (EfiVec vec, TestDef tst)", v_sel },
+	{ 0, &Type_int, "EfiVec::select (TestDef tst)", v_test },
+#endif
 
 	{ FUNC_VIRTUAL, &Type_void,
 		"uniq (EfiVec vec, str cmpdef, bool sort = true)",

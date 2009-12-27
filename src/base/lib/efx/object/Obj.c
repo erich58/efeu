@@ -49,14 +49,55 @@ static ALLOCTAB(tab_large, 50, SIZE_LARGE + CHECK_SIZE);
 static size_t stat_alloc = 0;
 static size_t stat_free = 0;
 
+static void clean_ptr (void *data)
+{
+	del_data(&tab_ptr, data);
+}
+
+static void clean_small (void *data)
+{
+	del_data(&tab_small, data);
+}
+
+static void clean_large (void *data)
+{
+	del_data(&tab_large, data);
+}
+
+static void clean_huge (void *data)
+{
+	lfree(data);
+	stat_free++;
+}
+
+static RefType reftype_ptr = REFTYPE_INIT("PtrObj", NULL, clean_ptr);
+static RefType reftype_small = REFTYPE_INIT("SmallObj", NULL, clean_small);
+static RefType reftype_large = REFTYPE_INIT("LargeObj", NULL, clean_large);
+static RefType reftype_huge = REFTYPE_INIT("HugeObj", NULL, clean_huge);
+
 EfiObj *Obj_alloc (size_t size)
 {
 	EfiObj *obj;
 
-	if	(size <= SIZE_PTR)	obj = new_data(&tab_ptr);
-	else if	(size <= SIZE_SMALL)	obj = new_data(&tab_small);
-	else if	(size <= SIZE_LARGE)	obj = new_data(&tab_large);
-	else				obj = lmalloc(size), stat_alloc++;
+	if	(size <= SIZE_PTR)
+	{
+		obj = rd_init(&reftype_ptr, new_data(&tab_ptr));
+	}
+	else if	(size <= SIZE_SMALL)
+	{
+		obj = rd_init(&reftype_small, new_data(&tab_small));
+	}
+	else if	(size <= SIZE_LARGE)
+	{
+		obj = rd_init(&reftype_large, new_data(&tab_large));
+	}
+	else			
+	{
+		obj = lmalloc(size);
+		memset(obj, 0, size);
+		rd_init(&reftype_huge, obj);
+		stat_alloc++;
+	}
 
 #if	MEMCHECK
 	memcpy(((char *) obj) + size, CHECK_MASK, CHECK_SIZE);
@@ -72,8 +113,10 @@ void Obj_free (EfiObj *obj, size_t size)
 	else				lfree(obj), stat_free++;
 }
 
-#define	STAT_1	"%s: Size %3ld +%3ld: %5ld used, %5ld free, %5ld byte (%ldx%ldx%ld)\n"
-#define	STAT_L	"%s: Large objects: %5ld used, %5ld requests\n"
+#define	STAT_1	\
+	"%s: Size %3ld +%3ld: %5ld used, %5ld free, %5ld byte (%ldx%ldx%ld)\n"
+#define	STAT_L	\
+	"%s: Large objects: %5ld used, %5ld requests\n"
 
 static void show_alloc(AllocTab *tab, const char *prompt)
 {
@@ -128,6 +171,15 @@ char *Obj_ident (const EfiObj *obj)
 			}
 		}
 
+		sb_printf(buf, " sync=%u", obj->sync);
+
+		if	(obj->reftype)
+		{
+			sb_printf(buf, " [%s %u]",
+				obj->reftype->label, obj->refcount);
+		}
+		else	sb_printf(buf, " [%u]", obj->refcount);
+
 		return sb2str(buf);
 	}
 
@@ -135,9 +187,8 @@ char *Obj_ident (const EfiObj *obj)
 }
 
 /*
-Die Funktion |$1| schreibt eine Liste der
-von Objekten reservierten Speichersegmete
-zur Standardfehlerausgabe.
+Die Funktion |$1| schreibt eine Liste der von Objekten reservierten
+Speichersegmete zur Standardfehlerausgabe.
 */
 
 void Obj_stat (const char *prompt)
@@ -156,7 +207,7 @@ void Obj_stat (const char *prompt)
 #define	CHECK_MSG	"%s: Speicherfehler von Objekt %p, Type %#s.\n"
 
 
-void Obj_check(const EfiObj *obj)
+void Obj_check (const EfiObj *obj)
 {
 #if	MEMCHECK
 	size_t size;

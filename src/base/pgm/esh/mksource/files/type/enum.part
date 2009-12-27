@@ -1,0 +1,119 @@
+/*
+Aufzählungstyp einrichten.
+*/
+
+static void TypeDef::enumerator (str name, int n, str desc)
+{
+	if	(name == /^[[:alnum:]_]+$/)
+	{
+		e_member += sprintf("\t%s_%s = %d,", t_name, name, n);
+
+		if	(desc)
+			e_member += sprintf("\t/* %s */", desc);
+
+		e_member += "\n";
+	}
+
+	s_setup += sprintf("AddEnumKey(type, %#s, %#s, %d);\n",
+		name, desc, n);
+}
+	
+void TypeDef::enumdef (IO def, int recl = 4)
+{
+	str name, desc;
+	int n;
+
+	t_recl = (recl && recl < 4) ? recl : 4;
+	t_cname = "int";
+	read_func = "Enum_read";
+	write_func = "Enum_write";
+	copy_func = "Enum_copy";
+	s_setup += "type->flags |= TYPE_ENUM;\n";
+
+	fprintf(src, "\nstatic Label %sTab[] = {\n", t_name);
+
+	for (n = 0; getline(def, name, desc); n++)
+	{
+		if	(name == "@end")	break;
+
+		while (name[0] == '[')
+		{
+			name = substr(name, 1);
+			str xname = strcut(name, "]");
+			enumerator(xname, n, desc);
+		}
+
+		if	(name[0] == '\\')
+			name = substr(name, 1);
+
+		enumerator(name, n, desc);
+		fprintf(src, "\t{ %#s, %#s },\n", name, desc);
+	}
+
+	if	(n == 0)
+		fprintf(src, "\t{ %#s, %#s },\n", NULL, "Dummyeintrag");
+
+	src << "};\n";
+
+	e_dim = n;
+	s_setup += "SetFunc(0, NULL, \"$1 $1 (int)\", Enum_iconv);\n";
+	s_setup += "SetFunc(0, NULL, \"$1 $1 (str)\", Enum_sconv);\n";
+	s_setup += "SetFunc(0, NULL, \"int $1 ()\", Enum_iconv);\n";
+	s_setup += "SetFunc(0, NULL, \"unsigned $1 ()\", Enum_iconv);\n";
+	func("to_str", "restricted str $1 ()", string !
+Val_str(rval) = mstrcpy($1Label(Val_int(arg[0])));
+!);
+	func("fprint", "virtual int fprint (IO, $1)", string !
+IO *io = Val_ptr(arg[0]);
+unsigned n = Val_int(arg[1]);
+
+Val_int(rval) = (n < tabsize($1Tab)) ?
+	io_printf(io, "%#s", $1Tab[n].name) : io_printf(io, "%d", n);
+!);
+}
+
+void TypeDef::xenumdef (IO def, int recl = 4)
+{
+	str name, desc;
+	int n;
+
+	t_recl = (recl && recl < 4) ? recl : 4;
+	t_cname = "int";
+	read_func = "Enum_read";
+	write_func = "Enum_write";
+	copy_func = "Enum_copy";
+	s_setup += "type->flags |= TYPE_ENUM;\n";
+
+	while (getline(def, name, n, desc))
+	{
+		if	(name == "@end")	break;
+
+		enumerator(name, n, desc);
+	}
+
+	e_dim = 0;
+	s_setup += "SetFunc(0, NULL, \"$1 $1 (int)\", Enum_iconv);\n";
+	s_setup += "SetFunc(0, NULL, \"int $1 ()\", Enum_iconv);\n";
+	s_setup += "SetFunc(0, NULL, \"unsigned $1 ()\", Enum_iconv);\n";
+}
+
+static void TypeDef::label_func (bool glob)
+{
+	if	(glob)
+		fprintf(hdr, "\n#define\t%sDim\t%d\n\n", t_name, e_dim);
+
+	Function f;
+
+	f = Function("unsigned $1Index", "const char *name", t_name);
+	f.line("return EnumKeyCode(&Type_$1, name);", t_name);
+	f.write(glob);
+
+	f = Function("char *$1Label", "unsigned n", t_name);
+	f.line("return $1Tab[n < $1Dim ? n : 0].name;", t_name);
+	f.write(glob);
+
+	f = Function("char *$1Desc", "unsigned n", t_name);
+	f.line("return $1Tab[n < $1Dim ? n : 0].desc;", t_name);
+	f.write(glob);
+}
+

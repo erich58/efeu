@@ -80,12 +80,12 @@ Random *NewRandom (RandomType *type, unsigned int sval)
 	return rd_init(&Random_reftype, rand);
 }
 
-Random *str2Random (const char *arg)
+Random *str2Random (const char *arg, char **ptr)
 {
 	RandomType *type = NULL;
 	unsigned int sval = 1;
 
-	if	(arg != NULL)
+	if	(arg)
 	{
 		if	(*arg == ':')
 		{
@@ -101,7 +101,11 @@ Random *str2Random (const char *arg)
 			if	(*arg == ':')	arg++;
 		}
 
-		sval = strtoul(arg, NULL, 0);
+		sval = strtoul(arg, ptr, 0);
+	}
+	else if	(ptr)
+	{
+		*ptr = NULL;
 	}
 
 	return NewRandom(type, sval);

@@ -88,7 +88,7 @@ static void insert_code (DocBuf *doc)
 
 	sb_puts("---- verbatim\n", buf);
 	sb_putc(0, doc->source);
-	sb_puts(doc->source->data, buf);
+	sb_puts((char *) doc->source->data, buf);
 	sb_puts("\n----\n", buf);
 }
 

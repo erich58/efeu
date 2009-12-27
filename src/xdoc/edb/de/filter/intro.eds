@@ -27,8 +27,11 @@ Filter können parametrisiert werden. Die allgemeine Syntax ist
 	<name>|[|<opt>|]=|<arg>
 Die Parameter <opt> und <arg> können vom Filter <name> beliebig
 verwendet werden. In der Regel werden notwendige Parameter über
-<arg> und zusätzliche Parameter über <opt> übergeben. Falls <opt>
-nicht angegeben wird, entfallen auch die eckigen Klammern.
+<arg> und zusätzliche Parameter über <opt> übergeben. Parameter, die
+Leerzeichen enthalten können, werden bevorzugt als <opt> übergeben.
+Falls <opt> nicht angegeben wird, entfallen auch die eckigen Klammern.
+Dabei ist zu beachten, dass keine Angabe von <opt> und eine leere
+Klammer (Leerstring für <opt>) unterschiedlich behandelt werden.
 
 Bei der Implementierung der Filter wird die \index{Filterdefinition} aus
 einer Zeichenkette ermittelt. Mehrere Filter können dabei angegeben
@@ -39,6 +42,8 @@ Klammern werden weiße Zeichen nicht als Trennzeichen behandelt.
 Stehen nur Teile der Filterdefinition in geschwungenen Klammern, sind
 sie Teil der Filterdefinition. Wird die gesamte Filterdefinition in
 geschwungene Klammern gesetzt, werden diese bei der Analyse entfernt.
+Dies wird benötigt, wenn z.B. im Argument einer Filterdefinition ein
+Leerzeichen außerhalb einer Klammer steht.
 
 \index[Informationsabfrage zu Datenbankfiltern]
 Wird ein |?| als Filtername angegeben, werden alle verfügbaren Filter
@@ -55,13 +60,16 @@ Definition als Zeichenkette, das Skript wird aber vorher noch mit
 einem \index{Preprozessor} überarbeitet. Dabei
 werden Kommentare im C-Stil (ISO99) und Preprozessordirektiven
 abgearbeitet.
-\index{Lange Zeilen} können mithilfe eines \index{Gegenschrägstrich}s
-zerlegt werden (Die Sequenz Gegenschrägstrich Zeilenvorschub wird aus
-der Eingabe gelöscht).
+\index{Lange Zeilen} können mithilfe eines
+\index{Gegenschrägstrich}s\note
+	Die Sequenz Gegenschrägstrich Zeilenvorschub wird aus
+	der Eingabe gelöscht.
+zerlegt werden.
 
 Zusätzlich werden Leerzeichen vor einem Zeilenvorschub entfernt und
-eingerückte Zeilen gelten als \index{Fortsetzungszeilen} (Ein Zeilenvorschub
-gefolgt von Leerzeichen oder Tabulatoren wird entfernt).
+eingerückte Zeilen gelten als \index{Fortsetzungszeilen}\xnote{Ein
+Zeilenvorschub gefolgt von einem Leerzeichen oder einem Tabulatoren
+wird entfernt.}.
 Damit lassen sich Skripts übersichtlicher schreiben.
 
 \index[|script|]
@@ -79,7 +87,7 @@ Komponenten der Datenstruktur festgelegt. Die Sortierung erfolgt in
 der Reihenfolge der Angaben.
 
 Jeder Komponente kann ein |+| für aufsteigend oder ein |-| für
-abstegend vorgangestellt werden. Ohne Angabe einer Richtungsangabe wird
+absteigend vorangestellt werden. Ohne Angabe einer Richtungsangabe wird
 aufsteigend sortiert. Danach folgt optional der Name einer
 Vergeichsfunktion. Dieser Name wird mit einem |:| abgeschlossen.
 Ohne Angabe wird die Funktion |cmp| verwendet.

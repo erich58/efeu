@@ -227,11 +227,11 @@ static void f_tcleval (EfiFunc *func, void *rval, void **arg)
 		}
 	}
 
-	sb_destroy(tmp);
+	rd_deref(tmp);
 	io_close(out);
 	sb_putc(0, sb);
 	ETK_eval(etk, (char *) sb->data);
-	sb_destroy(sb);
+	rd_deref(sb);
 	rd_deref(argl);
 }
 

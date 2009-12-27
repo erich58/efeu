@@ -102,16 +102,16 @@ static char *savename (const char *path)
 		sb_printf(&buf, ".#%.0d%s", i, name);
 		sb_putc(0, &buf);
 
-		if	(create_file(buf.data))
+		if	(create_file((char *) buf.data))
 		{
-			return buf.data;
+			return (char *) buf.data;
 		}
 		else if	(errno != EEXIST)
 		{
 			perror(path);
 			return NULL;
 		}
-		else	perror(buf.data);
+		else	perror((char *) buf.data);
 	}
 
 	dbg_note(NULL, NOTMP, "s", path);
@@ -203,7 +203,7 @@ int main (int argc, char **argv)
 	int stamp;
 
 	SetProgName(argv[0]);
-	SetVersion("$Id: d2u.c,v 1.4 2004-12-23 07:53:46 ef Exp $");
+	SetVersion("$Id: d2u.c,v 1.5 2007-01-05 20:52:10 ef Exp $");
 	ParseCommand(&argc, argv);
 	check = GetFlagResource("CheckOnly");
 	stamp = GetFlagResource("Timestamp");

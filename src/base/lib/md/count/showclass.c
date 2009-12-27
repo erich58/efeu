@@ -76,7 +76,7 @@ void MdClassPrint (IO *io, MdClass *cdef)
 	io_psubarg(io, MdClassPrintFoot, "nss", cdef->name, cdef->desc);
 }
 
-void MdShowClass (IO *io, MdCountTab *tab, const char *plist)
+void MdShowClass (IO *io, MdCountPar *tab, const char *plist)
 {
 	MdClass **ptr;
 	size_t n;
@@ -114,7 +114,7 @@ static void print_class (IO *io, InfoNode *info)
 }
 
 
-void MdClassInfo (InfoNode *info, MdCountTab *tab)
+void MdClassInfo (InfoNode *info, MdCountPar *tab)
 {
 	InfoNode *root;
 	MdClass **ptr;

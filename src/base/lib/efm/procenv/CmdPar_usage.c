@@ -21,6 +21,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/CmdPar.h>
+#include <EFEU/EfeuConfig.h>
 #include <EFEU/strbuf.h>
 #include <EFEU/ftools.h>
 #include <EFEU/parsub.h>
@@ -87,7 +88,7 @@ static void expand_func (CmdPar *par, IO *in, IO *out, int c)
 	else	arg = NULL;
 
 	eval->eval(par, out, arg);
-	sb_destroy(sb);
+	rd_deref(sb);
 }
 
 static void subcopy (CmdPar *par, IO *in, IO *out, int delim);
@@ -176,7 +177,7 @@ static void subcopy (CmdPar *par, IO *in, IO *out, int delim)
 		}
 	}
 
-	sb_destroy(buf);
+	rd_deref(buf);
 }
 
 
@@ -189,7 +190,13 @@ void CmdPar_iousage (CmdPar *par, IO *out, IO *def)
 void CmdPar_usage (CmdPar *par, IO *out, const char *fmt)
 {
 	IO *def = io_cstr(fmt ? fmt : USAGE_FMT);
-	out = out ? io_refer(out) : ERR_OUT;
+
+	if	(out)
+		out = io_refer(out);
+	else if	(EfeuConfigPar.standalone)
+		out = io_refer(ioerr);
+	else	out = ERR_OUT;
+
 	subcopy(CmdPar_ptr(par), def, out, EOF);
 	io_close(def);
 	io_close(out);
@@ -216,9 +223,19 @@ void CmdPar_manpage (CmdPar *par, IO *out)
 		memfree(base);
 	}
 
-	def = p ? io_fileopen(p, "r") : io_cstr(HLP_FMT);
-	memfree(p);
-	out = out ? io_refer(out) : STD_OUT;
+	if	(p)
+	{
+		def = io_fileopen(p, "r");
+		memfree(p);
+	}
+	else	def = io_cstr(CmdPar_getval(par, ".manpage.fmt", NULL));
+
+	if	(out)
+		out = io_refer(out);
+	else if	(EfeuConfigPar.standalone)
+		out = io_refer(iostd);
+	else	out = STD_OUT;
+
 	subcopy(par, def, out, EOF);
 	io_close(def);
 	io_close(out);

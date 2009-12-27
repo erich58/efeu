@@ -87,7 +87,7 @@ static IO *ftab_open (const char *name)
 		return NULL;
 	}
 
-	io_printf(LOG(DBG_STAT), M_LOAD, ProgName, p);
+	io_printf(LOG(DBG_DEBUG), M_LOAD, ProgName, p);
 	io = io_fileopen(p, "r");
 	memfree(p);
 	return io;

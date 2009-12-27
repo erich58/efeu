@@ -2,6 +2,7 @@
 
 \pipe	|edb --help=raw|
 \pipe	|edbcat --help=raw|
+\pipe	|edbdiff --help=raw|
 \pipe	|edbjoin --help=raw|
 \pipe	|esh --help=raw|
 \pipe	|md2edb --help=raw|

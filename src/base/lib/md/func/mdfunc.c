@@ -188,6 +188,11 @@ static void MF_show(EfiFunc *func, void *rval, void **arg)
 	md_show(Val_io(arg[1]), Val_mdmat(arg[0]));
 }
 
+static void MF_clone(EfiFunc *func, void *rval, void **arg)
+{
+	Val_mdmat(rval) = md_clone(Val_mdmat(arg[0]));
+}
+
 extern void *md_DATA2(mdmat *md, unsigned mask, unsigned base, int lag);
 
 extern void MF_valsum(EfiFunc *func, void *rval, void **arg);
@@ -200,6 +205,7 @@ static EfiFuncDef fdef[] = {
 	{ 0, &Type_mdmat, "mdread (IO io, str def = NULL)", MF_read },
 	{ 0, &Type_mdmat, "reload (mdmat md, str sel = NULL, str vsel = NULL)",
 		MF_reload },
+	{ 0, &Type_mdmat, "mdmat::clone ()", MF_clone },
 	{ 0, &Type_mdmat, "mdmul (mdmat a, mdmat b, int flag = 2)", MF_mdmul },
 /*
 	{ 0, &Type_mdmat, "mdinv (mdmat a)", MF_mdinv },

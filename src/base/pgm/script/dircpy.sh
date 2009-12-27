@@ -21,7 +21,7 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 # $pconfig
-# Version="$Id: dircpy.sh,v 1.3 2005-10-07 05:46:46 ef Exp $"
+# Version="$Id: dircpy.sh,v 1.4 2007-08-19 04:22:10 ef Exp $"
 # :src|
 #	:*:source directory
 #	:de:Ausgangsverzeichnis
@@ -39,7 +39,7 @@ usage ()
 
 case "$1" in
 -\?|--help*)	usage $1; exit 0;;
---version)	efeuman -- $0 $1 || grep 'Version="[$]Id:'; exit 0;;
+--version)	efeuman -- $0 $1 || grep 'Version="[$]Id:' $0; exit 0;;
 esac
 
 # $Description

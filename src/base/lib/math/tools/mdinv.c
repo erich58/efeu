@@ -84,8 +84,7 @@ mdmat *mdinv (mdmat *base)
 	md = new_mdmat();
 	md->axis = xpre;
 	md->type = &Type_double;
-	md->size = md_size(md->axis, md->type->size);
-	md->data = memalloc(md->size);
+	md_alloc(md);
 
 	getdata(&konv, md->axis, base->axis, base->axis, md->data, base->data);
 

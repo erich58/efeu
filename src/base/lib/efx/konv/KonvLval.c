@@ -41,7 +41,7 @@ static EfiObj *lcast_alloc (EfiType *type, va_list list)
 static void lcast_free (EfiObj *obj)
 {
 	LCAST *lc = (LCAST *) obj;
-	CleanData(lc->type, lc->data);
+	CleanData(lc->type, lc->data, 1);
 	UnrefObj(lc->base);
 	Obj_free(obj, LCAST_SIZE(lc->type));
 }
@@ -66,6 +66,7 @@ static void lcast_sync (EfiObj *obj)
 }
 
 static EfiLval lcast_lval = {
+	"lcast", NULL,
 	lcast_alloc, lcast_free,
 	lcast_update, lcast_sync,
 	lcast_ident,

@@ -149,4 +149,5 @@ If not, write to the Free Software Foundation, Inc.,
 Eingerückte Zeilen nach dem Befehl gelten als Fortsetzungszeilen.
 
 \def\note	section('N', ParseOpt(cin, true), ParseLine(cin, true));
+\def\xnote	section('N', ParseOpt(cin, true), ParseArg(cin));
 

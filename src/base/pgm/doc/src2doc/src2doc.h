@@ -34,6 +34,7 @@ S2DEval S2DMode_get (const char *name);
 void S2DMode_list (IO *io);
 
 void s2d_hdr (const char *name, IO *ein, IO *aus);
+void s2d_xhdr (const char *name, IO *ein, IO *aus);
 void s2d_src (const char *name, IO *ein, IO *aus);
 void s2d_cmd (const char *name, IO *ein, IO *aus);
 void s2d_std (const char *name, IO *ein, IO *aus);

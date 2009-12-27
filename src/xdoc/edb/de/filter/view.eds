@@ -1,0 +1,132 @@
+\sec \label{view}\index{Datensicht}
+
+\index[Filter |view|]
+Der Filter \index{|view|}
+legt für ein (meist komplexes) Datenobjekt eine Sicht auf
+bestimmte Zustände fest, die für eine Reihe von Ereignissen definiert
+ist. Im einfachsten Fall ist das Ereigniss eine Änderung des
+Datenobjektes, meist handelt es sich um eine Zustandsbeschreibung der
+Daten zu einem gewissen Zeitpunkt oder für einen vorgegebenen
+Zeitbereich. Zu jedem Ereignis wird ein Ereigniswert und ein
+Ereigniszeitpunkt festgelegt. Der Ereigniswert ist aggregierbar,
+häufig hat er den Wert 1.
+
+Die Ereignisse einer Datensicht werden durch Angabe einer Methode
+und einer Zeitbereichsliste festgelegt. Die Methode kann wahlweise für
+die gesamte Datenstruktur oder für ein einzelnes Mitglied angegeben
+werden. Der resultierende Datentyp
+wird durch eine Auswahlliste der verfügbaren Variablen festgelegt.
+Die Interpretation der Zeitbereichsliste hängt von der Methode ab.
+
+\ssec	Syntax
+
+Die allgemeine Syntax des Filters lautet:
+
+|view|[|[|[<weight>|*|][<member>|:|][<method>][|;|<range>]|]|]|=|<varlist>
+
+Der Parameter <weight> ist ein Gewichtungsfaktor. Er dient bei einer
+Stichprobenauswertung zur Hochrechnung der Aggregate. Bis auf die
+Auswahlliste <varlist> sind alle anderen Angaben optional. Dabei ist
+auf die korrekte Verwendung der Trennzeichen zu achten. Der |*| nach
+dem Gewicht ist optional. Eine leere Auswahlliste listet alle
+verfügbaren Variablen auf.
+
+\ssec	Methoden
+
+Die verfügbaren Methoden
+hängen vom Datentyp ab und sind dort in der Parametertabelle als
+Klasse |EfiView| gespeichert (Vergleiche dazu Abschnitt \ref{par},
+Seite \pref{par}).
+Es gibt universelle und vererbbare Methoden.
+Die Methode kann auch von einer Komponente abgeleitet werden.
+
+/*
+Zwei Grundformen der Verarbeitung stehen für Datensichten zur verfügung:
+*	Zusammenstellen von Zustandsvariablen eines Ereignisses.
+*	Aggregation der Daten zu einem Datenwürfel.
+*/
+
+Beispiele:
+*	Einzelne Werte einer Datenstruktur sollen nach gewissen
+	Klassifikationsmerkmalen zu einem Datenwürfel aggregiert
+	werden. Der Filter dient zunächst zur Zusammenstellung einer
+	geeigneten Datenstruktur, die Aggregation erfolgt mithilfe der
+	Ausgabedefinition |md|.
+*	Gegeben ist eine Datenstruktur mit einem Vektorfeld. Gesucht
+	ist eine Normalisierung der Daten für die einzelnen
+	Ausprägungen des Vektors.
+*	Gegeben ist ein Datenobjekt mit einem Vektor von
+	Episodendaten. Ausgewertet werden die Abgänge (Ereignisse) aus den
+	einzelnen Episoden.
+
+\ssec	Variablen
+
+Der Typ der Daten legt fest, welche Auswertungsmöglichkeiten zur
+Verfügung stehen. Diese werden zum Teil aus den einzelnen
+Strukturkomponenten abgeleitet und zusammengefasst. Sie lassen sich
+auf abgeleitete Datentypen vererben:
+
+*	Vorgabe des Datenobjektes;
+*	Bestimmung der Auswertungsmethode;
+*	Rahmenbedingungen für die Auswertung;
+*	Auswahl der verfügbaren Variablen und Zusammenstellung einer
+	neuen Datenstruktur oder eines Datenwürfels.
+
+Folgende Variablen stehen zur Auswahl bereit:
+[|seq|]
+	ist eine Kennung für die Ablauffolge. Es handelt sich um
+	eine Struktur vom Typ \index{|EfiViewSeq|} mit den Komponenten:
+	[id]	Laufnummer: Diese wird für jedes Ereignis um 1 erhöht.
+	[rec]	Datensatznummer: Diese wird für jeden Datensatz um 1 erhöht.
+	[num]	Ereignisnummer: Diese startet bei jedem neuen Datensatz mit 1
+		und wird für jedes Ereignis erhöht.
+[|t|]
+	ist der Ereigniszeitpunkt vom Type |Date|.
+[|val|]
+	ist der Ereigniswert E (Type: |double|) mit Gewicht w multipliziert.
+[|freq|]
+	ist eine Struktur vom Typ \index{|FrequencyData|} mit { w, w*E } für
+	eine Mittelwertbildung.
+[|var|]
+	ist eine Struktur vom Typ \index{|VarianceData|} mit
+	{ w, w*E, w*E*E } für Varianzberechnungen.
+[|data|]
+	ist das Basisdatenelement, der aktueller Datensatz.
+[|range|]
+	ist ein unbenannter Aufzähltyp mit der Kennung des aktuellen
+	Zeitbereichs. Die Variable ist nur bei Angabe einer Zeitbereichsliste
+	verfügbar.
+[|view|]
+	ist eine Struktur mit abgeleiteten Variablen eines Ereignisses. Die
+	Variable ist nur vorhanden, wenn die Methode zusätzliche Variablen
+	generiert.
+
+Die Variablen können nach den folgenden drei Kategorien eingeteilt werden:
+*	Klassifikationen (z.B. |range|),
+*	Aggregate (z.B. |val|, |freq| und |var|) und
+*	sonstige Variablen (z.B. |seq|, |t|).
+
+Während bei der Zusammenstellung einer Ausgabedatenstruktur alle
+Variablentypen verwendet werden können, stehen bei der Konstruktion
+von Datenwürfeln nur Klassifikationen (diese bilden die Achsen des
+Datenwürfels) und Aggregate zur Konstruktion des Datentyps des Würfels
+zur Verfügung.
+
+Die Syntax für die Variablenliste <varlist> ist bereits ausführlich
+beim Filter |var| (Abschnitt \ref{var}, Seite \pref{var}) beschrieben.
+
+\ssec	Standardmethoden
+
+Auf jeden Datentyp kann die Methode |record| angewendet werden.
+Diese wird auch als Vorgabe bei fehlender Angabe verwendet.
+
+Ausgewertet wird der Datensatz für jeden vorgegebenen Zeitbereich oder
+genau einmal bei einer fehlenden Zeitbereichsliste.
+Die Variable |view| ist nicht definiert.
+
+Für Vektoren steht die elementare Methode |element| zur Verfügung.
+Mit ihr werden die einzelnen Vektorelemente der Reihe nach
+abgearbeitet. Das aktuelle Vektorelement kann mit |view| angesprochen
+werden. Bei Angabe einer Zeitbereichsliste erfolgt die Auswertung
+wiederum für jeden Zeitbereich.
+

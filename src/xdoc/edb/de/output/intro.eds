@@ -8,23 +8,22 @@ Bei den EDB-Kommandos wird die Ausgabedefinition über die \index{Option |-p|}
 vorgeben. Innerhalb eines |esh|-Skripts wird die Ausgabedefinition
 als Parameter an die Funktion |EDB::fout| bzw. |EDB::out| übergeben.
 
-Die Parameter folgendermaßen eingeteilt werden:
+Die Parameter können folgendermaßen eingeteilt werden:
 *	Parameter, die direkt den Ausgabemodus bestimmen;
-*	Parameter, die algemeine Flags setzen, auf die die
-	Ausgabemodi zurückgrefen;
+*	Parameter, die allgemeine Flags setzen, auf die die
+	Ausgabemodi zurückgreifen;
 *	Parameter, die die Umgebung verändern und somit indirekt
-	auf die Formatierung einfluß nehmen;
-*	Symbolische Namen für eine Kombination von Parametern.
+	auf die Formatierung Einfluss nehmen;
+*	Makros für eine Kombination von Ausgabedefinitionen. Parameter
+	können weitergereicht werden.
 
 Die Standardausgabedefinition ist \index{|default|}. Es handelt sich dabei
-um einen symbolischen Namen für die Kombination |plain,verbose,split=512M|.
+um einen Makro für die Kombination |plain,verbose,split=512M|.
 
 Die Liste der Ausgabedefinitionen läßt sich erweitern.
 So gehört z.B. die Ausgabefunktion |md| nicht zum Basisumfang von
-|EDB|, sondern wird erst durch aktivieren der |mdmat|-Funktionen
+|EDB|, sondern wird erst mit der Aktivierung der |mdmat|-Funktionen
 eingetragen.
-
-\docpart[syndb] syndb.doc
 
 \ssec	Headerausgabe
 
@@ -32,15 +31,15 @@ eingetragen.
 Datenfiles enthalten zumeist einen Datensatzkopf oder Header.
 Es gibt einen vordefinierten
 Parameter für die Headerausgabe, der mit den folgenden
-Parameterdefinitionen gesetzt werden kann:
+Parameterdefinitionen verändert werden kann:
 
 [\index{|nohead|}]
-	Keinen Datensatzkopf ausgeben;
+	unterdrückt die Ausgabe des Datensatzkopfes;
 [\index{|compact|}]
-	Kompakte Darstellung des Datensatzkopfes;
+	sorgt für eine kompakte Darstellung des Datensatzkopfes;
 [\index{|verbose|}]
-	Ausführliche Darstellung des Datensazukopfes mit zusätzlichen
-	Kommentaren.
+	liefert eine ausführliche Darstellung des Datensazukopfes mit
+	zusätzlichen Kommentaren.
 
 Die Verwendung dieses Parameters ist vom Ausgabemodus abhängig und
 wird nicht immer berücksichtigt.
@@ -49,29 +48,29 @@ Die Voreinstellung ist |verbose|.
 \ssec	Aufspalten großer Dateien
 
 \index[Aufspalten von Dateien]
-Abhängig vom verwendetem Dateisystem können nur Dateien bis zu einer
+Abhängig vom verwendeten Dateisystem können nur Dateien bis zu einer
 maximalen Größe gespeichert werden. Um auch größere Datenmengen
 zu verarbeiten, können Dateien automatisch aufgespalten werden.
-Vorraussetzung dabei ist, das die Ausgabe in eine Datei erfolgt und
+Vorraussetzung dabei ist, dass die Ausgabe in eine Datei und
 nicht zur Standardausgabe erfolgt.
 
 Das Aufspaltungsprinzip wird am besten anhand eines Beispiels erklärt.
-Angenommen, es soll die Datei |foo.bar| generiert werden.
-Zunächst erfolgt die Ausgabe direkt in diese Datei. Ist die
-Verarbeitung vor erreichen des Ausgabelimits abgeschlossen,
-ist nichts weiter zu tun, die Datei enthält vollständig die Daten.
-
-Bei Überschreitung des \index{Ausgabeslimit}s wird die Datei |foo.bar| in
-|foo.01.bar| umbenannt und ein Metadatenfile |foo.bar| eingerichtet.
-Weiters wird eine neue Datei |foo.02.bar| angelegt, in die nun die
-weitere Ausgabe erfolgt. Bei erneuter Überschreitung des Limits wird
-dann |foo.03.bar| generiert und das Metadatenfile |foo.bar| ergänzt.
+Angenommen, es soll die Datei |foo.bar| generiert werden:
+*	Zunächst erfolgt die Ausgabe direkt in diese Datei. Ist die
+	Verarbeitung vor dem Erreichen des Ausgabelimits abgeschlossen,
+	ist nichts weiter zu tun, die Datei enthält vollständig die Daten.
+*	Bei Überschreitung des \index{Ausgabeslimit}s wird die Datei
+	|foo.bar| in |foo.01.bar| umbenannt und ein Metadatenfile
+	|foo.bar| eingerichtet. Weiters wird eine neue Datei
+	|foo.02.bar| angelegt, in die nun die weitere Ausgabe erfolgt.
+	Bei erneuter Überschreitung des Limits wird dann |foo.03.bar|
+	generiert und das Metadatenfile |foo.bar| ergänzt.
 
 Liefert der Ausgabemodus Dateien im EDB-Datenformat, kann der gesamte
 Datenbestand über das Metadatenfile |foo.bar| gelesen werden.
 
 Der Filezusatz der Ausgabedatei wird auch für alle Teildateien
-beibehalten. Damit wird sichergestellt, das bei dem Filezusatz |.gz|
+beibehalten. Damit wird sichergestellt, dass bei dem Filezusatz |.gz|
 oder |.bz2| auch alle Teildateien komprimiert werden. Bei Kommandos,
 die auf den EFEU-Bibliotheken aufbauen, werden Dateien mit
 entsprechendem Filezusatz automatisch mit dem zugehörigen

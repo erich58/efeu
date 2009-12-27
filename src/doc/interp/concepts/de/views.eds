@@ -1,0 +1,114 @@
+\sec Datensichten
+
+Eine Datensicht legt für ein (meist komplexes) Datenobjekt eine Sicht auf
+bestimmte Zustände fest, die für eine Reihe von Ereignissen definiert
+ist. Im einfachsten Fall ist das Ereigniss eine Änderung des
+Datenobjektes, meist handelt es sich um eine Zustandsbeschreibung der
+Daten zu einem gewissen Zeitpunkt oder für einen vorgegebenen
+Zeitbereich.
+
+Die Ereignisse einer Datensicht werden Parameter durch Angabe einer Methode
+und einer Zeitbereichsliste festgelegt.
+Die verfügbaren Methoden
+hängen vom Datentyp ab und sind dort in der Parametertabelle
+gespeichert. Es gibt universelle und vererbbare Methoden.
+Die Interpretation der Zeitbereichsliste hängt von der Methode ab.
+
+Zwei Grundformen der Verarbeitung stehen für Datensichten zur verfügung:
+*	Zusammenstellen von Zustandsvariablen eines Ereignisses.
+*	Aggregation der Daten zu einem Datenwürfel.
+
+Beispiele:
+*	Einzelne Werte einer Datenstruktur sollen nach gewissen
+	Klassifikationsmerkmalen zu einem Datenwürfel aggregiert
+	werden.
+*	Gegeben ist eine Datenstruktur mit einem Vektorfeld. Gesucht
+	ist eine Normalisierung der Daten für die einzelnen
+	Ausprägungen des Vektors.
+*	Gegeben ist ein Datenobjekt mit einem Vektor von
+	Episodendaten. Ausgewertet sollen die Abgänge (Ereignisse) aus den
+	einzelnen Episoden werden.
+
+Ähnlich der EDB-Datenschnittsteller wird eine Datensicht für einen
+beliebigen L-Wert angelegt. Auch hier steht eine Handle-Objekt im
+Interpreter zur verfügung, über das Datenwerte gesetzt und ausgewertet
+werden können.
+
+Im Regelfall wird eine Datensicht auf eine
+bestehende EDB-Datenschnittstelle aufgesetzt. Hier
+teilen sich die Datenschnittstelle und die Datensicht das gleiche
+Datenobjekt. Je nach Anwendungsbereich kann dabei über eine Sicht ein
+Datenbankfilter oder eine Ausgabefunktion für einen Datenwürfel
+eingerichtet werden.
+
+\ssec	Objektorientierung
+
+Der Typ der Daten legt fest, welche Auswertungsmöglichkeiten zur
+verfügung stehen. Diese werden zum Teil aus den einzelnen
+Strukturkomponenten abgeleitet und zusammengefasst. Sie lassen sich
+auf abgeleitete Datentypen vererben.
+
+*	Vorgabe des Datenobjektes;
+*	Bestimmung der Auswertungsmethode;
+*	Rahmenbedingungen für die Auswertung;
+*	Auswahl der verfügbaren Variablen und Zusammenstellung einer
+	neuen Datenstruktur oder eines Datenwürfels.
+
+Die verfügbaren Variablen entstammen den Bereichen:
+[|stat|]
+	Zustandsvariablen der Datensicht.
+[|data|]
+	Komponenten des Datenobjekts.
+[|view|]
+	Abgeleitete Variablen eines Ereignisses.
+
+Sie können nach den folgenden drei Kategorien eingeteilt werden:
+*	Klassifikationen,
+*	Aggregate und
+*	sonstige Variablen.
+
+Während bei der Zusammenstellung einer Ausgabedatenstruktur alle
+Variablentypen verwendet werden können, stehen bei der Konstruktion
+von Datenwürfeln nur Klassifikationen (diese bilden die Achsen des
+Datenwürfels) und Aggregate zur Konstruktion des Datentyps des Würfels
+zur verfügung.
+
+Klassifikationen stellen bei der Bildung von Datenwürfel eine wichtige
+Gruppe dar. Es handelt sich dabei um die Einteilung der Werte eines
+Datentyps in diskrete Gruppen. Als Resultat wird ein Objekt mit
+Aufzählungstyp geliefert. Klassifikationen werden als Komponenten
+eines Datentyps eingetragen. Diese können einerseits bereits
+vordefiniert sein oder anwendungsspezifisch konstruiert werden.
+
+\ssec	Ereignis
+
+Ein allgemeines Ereignis hat einen Zeitpunkt (kann auch 0 sein, wenn
+keine Zeitzuordnung möglich oder sinnvoll ist) und einen Datenwert.
+
+\ssec	Zeitbereiche
+
+Zeitbereiche spielen bei Datensichten eine wichtige Rolle.
+
+\ssec	Zustandsvariablen der Datensicht
+
+[|id|]
+	Eine Laufnummer pro verarbeitetem Ereignis, beginnend bei 1.
+[|record|]
+	Eine Laufnummer pro verarbeiteten Datensatz, beginned bei 1.
+[|event|]
+	Die Nummer des aktuellen Ereignisses, jeweils pro Datensatz
+	bei 1 beginnend gezählt.
+[|range|]
+	Der zum Ereignis gehörende Zeitbereich, falls definiert.
+[|date|]
+	Das Ereignisdatum, falls definiert.
+[|weight|]
+	Das Gewicht des Ereignisses. Das ist auch die Standardvariable
+	zur Aggregation.
+
+
+\ssec	Konstruktion von Klassifikationen
+
+Neue Klassifikationen werden mit der Funktion
+	|Type_t::class(str name, str def)|
+eingerichtet.

@@ -21,6 +21,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/EDB.h>
 #include <EFEU/parsearg.h>
+#include <EFEU/EDBFilter.h>
 
 #define	FMT_UNDEF	"edb_filter: undefined filter \"$1\".\n"
 
@@ -33,27 +34,30 @@ EDB *edb_filter (EDB *base, const char *filter)
 
 	while (base && (x = assignarg(filter, &p, " \t\n")) != NULL)
 	{
-		EDBFilter *def = GetEDBFilter(x->name);
 		EDB *next = NULL;
-
-		if	(mstrcmp(x->arg, "?") == 0)
+		EDBFilter *def;
+		
+		if	(!x->name[0])
 		{
-			if	(def)	PrintEDBFilter(ioerr, def, 1);
-			else		ListEDBFilter(ioerr, 1);
-
+			next = base;
+		}
+		else if	(!(def = SearchEfiPar(base->obj->type,
+			&EfiPar_EDBFilter, x->name)))
+		{
+			dbg_error("edb", FMT_UNDEF, "s", x->name);
+		}
+		else if	(mstrcmp(x->arg, "?") == 0)
+		{
+			PrintEfiPar(ioerr, def);
 			next = NULL;
 		}
-		else if	(def && def->create)
+		else if	(def->create)
 		{
 			next = def->create(def, base, x->opt, x->arg);
 			rd_debug(next, "filter %s[%s]=%s",
 				x->name, x->opt, x->arg);
 		}
-		else if	(x->name[0] == 0)
-		{
-			next = base;
-		}
-		else	dbg_error("edb", FMT_UNDEF, "s", x->name);
+		else	next = base;
 
 		memfree(x);
 		filter = p;

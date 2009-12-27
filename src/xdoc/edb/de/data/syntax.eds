@@ -9,7 +9,7 @@ Ein \index{|EDB|-Datenfile} besteht aus den folgenden Komponenten:
 Die erste Zeile eines EDB-Datenfiles enthält die Kennung \index{|EDB|},
 gefolgt von einer Versionsnummer. Derzeit wird die Versionsnummer
 nicht ausgewertet, der Rest der Zeile wird einfach ignoriert. Aus
-Kompatiblitätsgrunden für zukünftige Erweiterungen sollte hier
+Kompatiblitätsgründen für zukünftige Erweiterungen sollte hier
 1.0 angegeben werden.
 
 \index[Kommentare]
@@ -24,9 +24,7 @@ dem Kennwort der Anweisung und den Argumenten der Anweisung.
 Einige Anweisungen benötigen einen \index{Datenteil}. Dieser schließt
 unmittelbar an die Anweisung an und endet bei der nächsten Anweisung.
 Eine Ausnahme stellt die \index{|@data|-Anweisung} dar. Sie schließt den
-Metadatenbereich ab. Alle nachfolgenden Zeilen gehören zum Datenteil,
-der Datenstrom wird nicht mehr nach dem Auftreten von Anweisungen
-analysiert.
+Metadatenbereich ab. Alle nachfolgenden Zeilen gehören zum Datenteil.
 
 Die Interpretation des Datenteils hängt von der Anweisung ab.
 Kommentare im Datenteil sind nur zulässig, wenn dies von der

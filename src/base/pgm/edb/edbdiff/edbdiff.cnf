@@ -1,0 +1,58 @@
+# EDB Datenbanken vergleichen
+# 
+# $Copyright (C) 2007 Erich Frühstück
+# This file is part of EFEU.
+# 
+# EFEU is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+# 
+# EFEU is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public
+# License along with EFEU; see the file COPYING.
+# If not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+maxrec=100
+maxerr=5
+Print=label
+Diff=std
+Comp=NULL
+
+a:def | Filter1: append " "
+	:*:applay filter <def> on first input file
+	:de:Filter <def> auf die erste Eingabedatei anwenden
+b:def | Filter2: append " "
+	:*:applay filter <def> on second input files
+	:de:Filter <def> auf die zweite Eingabedatei anwenden
+f:def | Filter: append " "
+	:*:applay filter <def> on both input file after indiviual filters.
+	:de:Filter <def> nach individuellen Filtern auf beide Eingabefiles
+	anwenden.
+p:mode | Print
+	:*:output mode
+	:de:Ausgabemodus
+c:name | Comp
+	Vergleichsfunktion für Datensätze, Vorgabe {Comp}
+d:name | Diff
+	Darstellungsfunktion für Unterschiede, Vorgabe {Diff}
+n:lim | maxrec
+	:*:Limit of input data lines
+	:de:Begrenzung der gelesenen Datenzeilen
+e:lim | maxerr
+	:*:Limit of output differences lines
+	:de:Begrenzung der ausgegebenen Unterschiede
+:db1 | DB1
+	:*:name of first data file
+	:de:Name der 1. Datenbank
+:db2 | DB2
+	:*:name of second data file
+	:de:Name der 2. Datenbank
+::out | Output
+	:*:output file name
+	:de:Name der Ausgabedatei

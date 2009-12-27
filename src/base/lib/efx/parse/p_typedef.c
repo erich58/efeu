@@ -35,10 +35,10 @@ void CopyDataFunc (EfiFunc *func, void *rval, void **arg)
 
 extern void CopyKonv(EfiType *type, EfiType *base);
 
-EfiObj *PFunc_typedef(IO *io, void *arg)
+EfiObj *PFunc_typedef (IO *io, void *arg)
 {
 	EfiType *type;
-	EfiVar *st;
+	EfiStruct *st;
 	char *def;
 
 	if	((st = GetStructEntry(io, NULL)) == NULL)
@@ -49,17 +49,17 @@ EfiObj *PFunc_typedef(IO *io, void *arg)
 	type->base = st->dim ? NewVecType(st->type, st->dim) : st->type;
 	type->copy = type->base->copy;
 	type->clean = type->base->clean;
-	type->destroy = type->base->destroy;
 	type->size = type->base->size;
 	type->recl = type->base->recl;
 	type->read = type->base->read;
 	type->write = type->base->write;
-	type->defval = st->data;
-	st->data = NULL;
-	DelVar(st);
+	AddType(type);
+
+	CopyData(type, type->defval,
+		st->defval ? st->defval->data : type->base->defval);
+	rd_deref(st);
 
 	CopyKonv(type, type->base);
-	AddType(type);
 	def = msprintf("%s ()", type->name);
 	SetFunc(FUNC_PROMOTION, type->base, def, CopyDataFunc);
 	memfree(def);
@@ -70,9 +70,9 @@ EfiObj *PFunc_typedef(IO *io, void *arg)
 /*	Strukturkomponente bestimmen
 */
 
-EfiVar *GetStructEntry(IO *io, EfiType *type)
+EfiStruct *GetStructEntry (IO *io, EfiType *type)
 {
-	EfiVar *st;
+	EfiStruct *st;
 	EfiObj *obj;
 	void *name;
 	size_t dim;
@@ -117,14 +117,20 @@ EfiVar *GetStructEntry(IO *io, EfiType *type)
 		else	dim = n;
 	}
 
-	st = NewVar(type, name, dim);
-	st->member = StructMember;
+	st = NewEfiStruct(type, name, dim);
 	st->offset = 0;
 
 	if	(c == '=')
 	{
 		io_getc(io);
-		Obj2Data(Parse_term(io, OpPrior_Assign), st->type, st->data);
+		st->defval = Parse_term(io, OpPrior_Assign);
+		
+		if	(dim)
+		{
+			st->defval = EvalObj(st->defval,
+				NewVecType(st->type, st->dim));
+		}
+		else	st->defval = EvalObj(st->defval, st->type);
 	}
 
 	return st;
@@ -134,10 +140,10 @@ EfiVar *GetStructEntry(IO *io, EfiType *type)
 /*	Strukturliste generieren
 */
 
-EfiVar *GetStruct (IO *io, int delim)
+EfiStruct *GetStruct (IO *io, int delim)
 {
 	EfiType *type;
-	EfiVar *st, **ptr;
+	EfiStruct *st, **ptr;
 	int c;
 
 	type = NULL;
@@ -150,7 +156,7 @@ EfiVar *GetStruct (IO *io, int delim)
 		{
 		case EOF:
 
-			DelVar(st);
+			rd_deref(st);
 			io_error(io, "[efmain:121]", NULL);
 			return NULL;
 
@@ -162,7 +168,7 @@ EfiVar *GetStruct (IO *io, int delim)
 
 		if	((*ptr = GetStructEntry(io, type)) == NULL)
 		{
-			DelVar(st);
+			rd_deref(st);
 			return NULL;
 		}
 

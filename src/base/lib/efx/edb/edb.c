@@ -10,6 +10,7 @@ static char *edb_ident (const void *data)
 {
 	const EDB *edb;
 	StrBuf *sb;
+	char *p;
 	IO *io;
 
 	edb = data;
@@ -18,12 +19,23 @@ static char *edb_ident (const void *data)
 
 	if	(edb->obj)
 	{
-		io_puts("(", io);
 		PrintType(io, edb->obj->type, 0);
-		io_puts(") ", io);
-		PrintData(io, edb->obj->type, edb->obj->data);
 	}
 	else	io_puts("void", io);
+
+	if	((p = rd_ident(edb->ipar)))
+	{
+		io_puts(" in=", io);
+		io_puts(p, io);
+		memfree(p);
+	}
+
+	if	((p = rd_ident(edb->opar)))
+	{
+		io_puts(" out=", io);
+		io_puts(p, io);
+		memfree(p);
+	}
 
 	io_close(io);
 	return sb2str(sb);
@@ -42,7 +54,7 @@ static void edb_clean (void *data)
 
 static RefType EDB_reftype = REFTYPE_INIT("EDB", edb_ident, edb_clean);
 
-EDB *edb_create (EfiObj *obj, char *desc)
+EDB *edb_alloc (EfiObj *obj, char *desc)
 {
 	/*
 	if	(obj)
@@ -55,24 +67,35 @@ EDB *edb_create (EfiObj *obj, char *desc)
 		edb->save = 0;
 		edb->ipar = NULL;
 		edb->read = NULL;
+		edb->nread = 0;
 		edb->opar = NULL;
 		edb->write = NULL;
+		edb->nwrite = 0;
 		return rd_init(&EDB_reftype, edb);
 	}
 
 	return NULL;
 }
 
+EDB *edb_create (EfiType *type)
+{
+	return edb_alloc(LvalObj(NULL, type), NULL);
+}
+
+EDB *edb_share (EDB *base)
+{
+	return edb_alloc(RefObj(base->obj), mstrcpy(base->desc));
+}
 
 void edb_head (const EDB *edb, IO *io, int verbosity)
 {
-	EfiVar *var;
+	EfiStruct *var;
 
 	if	(!edb || !io)	return;
 
 	io_printf(io, "EDB\t1.0\n");
 
-	if	(edb->desc && verbosity)
+	if	(edb->desc && verbosity > 1)
 	{
 		char *p;
 
@@ -95,15 +118,16 @@ void edb_head (const EDB *edb, IO *io, int verbosity)
 		io_puts("\n@type\n", io);
 	}
 
-	if	(!edb->obj->type->list)
+	if	(edb->obj->type->cname || !edb->obj->type->list)
 	{
-		PrintType(io, edb->obj->type, verbosity ? 2 : 1);
+		PrintType(io, edb->obj->type, verbosity);
 		io_putc('\n', io);
+		return;
 	}
 
 	for (var = edb->obj->type->list; var != NULL; var = var->next)
 	{
-		PrintType(io, var->type, verbosity ? 2 : 1);
+		PrintType(io, var->type, verbosity);
 		io_putc(' ', io);
 		io_puts(var->name, io);
 
@@ -112,7 +136,7 @@ void edb_head (const EDB *edb, IO *io, int verbosity)
  
 		io_putc(';', io);
 
-		if	(var->desc && verbosity)
+		if	(var->desc && verbosity > 1)
 			io_printf(io, "\t/* %s */", var->desc);
 
 		io_putc('\n', io);
@@ -121,7 +145,7 @@ void edb_head (const EDB *edb, IO *io, int verbosity)
 
 void edb_vlist (const EDB *edb, const char *pfx, IO *io)
 {
-	EfiVar *var;
+	EfiStruct *var;
 	const char *delim;
 
 	if	(!edb || !io)	return;

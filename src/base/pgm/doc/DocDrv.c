@@ -33,7 +33,6 @@ If not, write to the Free Software Foundation, Inc.,
 void *DocDrv_alloc (const char *name, size_t size)
 {
 	DocDrv *drv = memalloc(size);
-	vb_init(&drv->varbuf, BLKS, sizeof(EfiVar));
 	drv->vartab = VarTab(name, BLKS);
 	DocDrv_var(drv, &Type_io, "plain", &drv->out);
 	drv->name = name;
@@ -45,7 +44,6 @@ void DocDrv_free (void *ptr)
 	DocDrv *drv = ptr;
 
 	DelVarTab(drv->vartab);
-	vb_free(&drv->varbuf);
 	DocSym_free(drv->symtab);
 	memfree(ptr);
 }
@@ -56,12 +54,8 @@ void DocDrv_free (void *ptr)
 void DocDrv_var (void *ptr, EfiType *type, const char *name, void *data)
 {
 	DocDrv *drv = ptr;
-	EfiVar *var = vb_next(&drv->varbuf);
-	memset(var, 0, sizeof(EfiVar));
-	var->name = (char *) name;
-	var->type = type;
-	var->data = data;
-	AddVar(drv->vartab, var, 1);
+	VarTab_xadd(drv->vartab, mstrcpy(name), NULL,
+		LvalObj(&Lval_ptr, type, data));
 }
 
 

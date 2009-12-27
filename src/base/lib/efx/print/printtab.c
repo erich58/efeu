@@ -32,29 +32,29 @@ EfiFunc *GetPrintFunc (const EfiType *type)
 		2, &Type_io, 0, type, 0);
 }
 
-static int show_struct (IO *io, const EfiVar *list, const void *data)
+static int show_struct (IO *io, EfiType *type, const void *data)
 {
 	char *delim;
-	const void *ptr;
+	EfiStruct *list;
+	EfiObj *obj, *base;
 	int n;
 
 	n = io_puts(PrintListBegin, io);
 	delim = NULL;
+	list = type->list;
+	base = LvalObj(&Lval_ptr, type, data);
 
 	for (; list != NULL; list = list->next)
 	{
 		n += io_puts(delim, io);
 		delim = PrintListDelim;
-		ptr = (const char *) data + list->offset;
-
-		if	(list->dim)
-		{
-			n += PrintVecData(io, list->type, ptr, list->dim);
-		}
-		else	n += ShowData(io, list->type, ptr);
+		obj = Var2Obj(list, base);
+		n += ShowObj(io, obj);
+		UnrefObj(obj);
 	}
 
 	n += io_puts(PrintListEnd, io);
+	UnrefObj(base);
 	return n;
 }
 
@@ -109,7 +109,7 @@ int ShowAny (IO *io, const EfiType *type, const void *data)
 	}
 	else if	(type->list)
 	{
-		return show_struct(io, type->list, data);
+		return show_struct(io, (EfiType *) type, data);
 	}
 	else if	(IsTypeClass(type, &Type_enum))
 	{

@@ -21,7 +21,7 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 # $pconfig
-# Version="$Id: efeugen.sh,v 1.1 2004-11-06 07:43:42 ef Exp $"
+# Version="$Id: efeugen.sh,v 1.2 2007-08-19 04:22:10 ef Exp $"
 # n|
 #	:*:show rules, do not execute
 #	:de:Regeln nur anzeigen
@@ -44,7 +44,7 @@ usage ()
 
 case "$1" in
 -\?|--help*)	usage $1; exit 0;;
---version)	efeuman -- $0 $1 || grep 'Version="[$]Id:'; exit 0;;
+--version)	efeuman -- $0 $1 || grep 'Version="[$]Id:' $0; exit 0;;
 esac
 
 # $Description

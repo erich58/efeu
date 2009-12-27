@@ -40,7 +40,7 @@ cat << EOF
 # von EFEU generiert.
 
 # \$pconfig
-# Version="\$Id: efeutop.gencmd,v 1.1 2004-11-27 17:19:28 ef Exp $"
+# Version="\$Id: efeutop.gencmd,v 1.2 2007-08-19 04:34:55 ef Exp $"
 
 usage ()
 {
@@ -50,7 +50,7 @@ usage ()
 
 case "\$1" in
 -\\?|--help*)	usage \$1; exit 0;;
---version)	efeuman -- \$0 \$1 || grep 'Version="[\$]Id:'; exit 0;;
+--version)	efeuman -- \$0 \$1 || grep 'Version="[\$]Id:' \$0; exit 0;;
 ?*)		usage -?; exit 1;;
 esac
 

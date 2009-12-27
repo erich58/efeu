@@ -58,6 +58,8 @@ static char *obj_ident (const EfiObj *obj)
 }
 
 EfiLval Lval_obj = {
+	"obj",
+	NULL,
 	obj_alloc,
 	obj_free,
 	obj_update,

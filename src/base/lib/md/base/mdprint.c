@@ -188,7 +188,7 @@ static int vardim (EfiType *type, size_t dim)
 	}
 	else if	(type->list)
 	{
-		EfiVar *st;
+		EfiStruct *st;
 		int n;
 
 		for (n = 0, st = type->list; st != NULL; st = st->next)
@@ -263,7 +263,7 @@ static void headline(IO *io, mdaxis *x, EfiType *type, const char *str)
 	}
 	else if	(type->list != NULL)
 	{
-		EfiVar *st;
+		EfiStruct *st;
 		char *p;
 
 		for (st = type->list; st != NULL; st = st->next)
@@ -330,7 +330,7 @@ static void t_walk(IO *io, EfiType *type, size_t dim, char *ptr)
 	}
 	else if	(type->list)
 	{
-		EfiVar *st;
+		EfiStruct *st;
 
 		for (st = type->list; st != NULL; st = st->next)
 			t_walk(io, st->type, st->dim, ptr + st->offset);

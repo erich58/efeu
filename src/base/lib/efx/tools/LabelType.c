@@ -23,16 +23,16 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 #include <EFEU/stdtype.h>
 
-void LabelType (const char *name, Label *label, size_t dim)
+EfiType *LabelType (const char *name, Label *label, size_t dim)
 {
 	EfiType *type;
 	int val;
 	
-	type = NewEnumType(name);
+	type = NewEnumType(name, EnumTypeRecl(dim));
 
 	for (val = 0; val < dim; val++, label++)
 		VarTab_xadd(type->vtab, label->name, label->desc,
 			NewObj(type, &val));
 
-	AddEnumType(type);
+	return AddEnumType(type);
 }

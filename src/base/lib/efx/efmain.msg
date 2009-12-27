@@ -152,6 +152,7 @@ If not, write to the Free Software Foundation, Inc.,
 256	$!: immutable vector size.\n
 156	$!: $0: syntax error in structure declaration.\n
 157	$!: ATTENTION: new declaration of structure $1.\n
+157b	$!: ATTENTION: structure $1 allready declared in a different way.\n
 158	$!: allocation size of $1 is not defined.\n
 159	$!: unexpected member in structure $1.\n
 
@@ -186,6 +187,7 @@ If not, write to the Free Software Foundation, Inc.,
 202	$!: Function "$1": name already in use.\n
 203	$!: ATTENTION: new declaration of Function "$1".\n
 205	$!: Function "$1" assumpted to be virtual.\n
+206	$!: Illegal Function declaration.\n
 
 301	$!: undefined random number generator $1.\n
 302	$!: undefined size in variable declaration.\n
@@ -197,3 +199,6 @@ If not, write to the Free Software Foundation, Inc.,
 
 ppm	$!: $0: invalid header in pixmap file.\n
 nocmp	$!: compare function not defined.\n
+
+vdiff	$!: $0: data type $1: wrong version $2 != $3.\n
+vskip	$!: $0: no version control for data type $1.\n

@@ -29,14 +29,14 @@ If not, write to the Free Software Foundation, Inc.,
 /*	Abbruch von Schleifen
 */
 
-static EfiObj *do_break(void *ptr, const EfiObjList *list)
+static EfiObj *do_break (void *ptr, const EfiObjList *list)
 {
 	CmdEval_stat = (int) (size_t) ptr;
 	return NULL;
 }
 
 
-EfiObj *PFunc_break(IO *io, void *data)
+EfiObj *PFunc_break (IO *io, void *data)
 {
 	return Obj_call(do_break,
 		(void *) (size_t) (data ? CmdEval_Cont : CmdEval_Break), NULL);
@@ -46,26 +46,20 @@ EfiObj *PFunc_break(IO *io, void *data)
 /*	Beenden eines Funktionsaufrufes
 */
 
-static EfiObj *do_return(void *ptr, const EfiObjList *list)
+static EfiObj *do_return (void *ptr, const EfiObjList *list)
 {
 	EfiObj *x;
 
 	UnrefObj(CmdEval_retval);
+	CmdEval_retval = NULL;
 	x = list ? EvalObj(RefObj(list->obj), NULL) : NULL;
-
-	if	(x && x->lval)
-	{
-		CmdEval_retval = ConstObj(x->type, x->data);
-		UnrefObj(x);
-	}
-	else	CmdEval_retval = x;
-
+	CmdEval_retval = x;
 	CmdEval_stat = CmdEval_Return;
 	return NULL;
 }
 
 
-EfiObj *PFunc_return(IO *io, void *data)
+EfiObj *PFunc_return (IO *io, void *data)
 {
 	return Obj_call(do_return, NULL, NewObjList(Parse_term(io, 0)));
 }
@@ -75,12 +69,12 @@ EfiObj *PFunc_return(IO *io, void *data)
 */
 
 static EfiObj *e_block (const EfiType *st, const void *ptr);
-static void d_block (const EfiType *st, void *tg);
+static void d_block (const EfiType *st, void *tg, int mode);
 static void c_block (const EfiType *st, void *tg, const void *source);
 EfiType Type_block = EVAL_TYPE("_Block_", EfiBlock, e_block, d_block, c_block);
 
 
-static void d_block(const EfiType *st, void *tg)
+static void d_block (const EfiType *st, void *tg, int mode)
 {
 	DelVarTab(((EfiBlock *) tg)->tab);
 	DelObjList(((EfiBlock *) tg)->list);
@@ -89,13 +83,13 @@ static void d_block(const EfiType *st, void *tg)
 }
 
 
-static void c_block(const EfiType *st, void *tg, const void *src)
+static void c_block (const EfiType *st, void *tg, const void *src)
 {
 	dbg_error(NULL, "[efmain:144]", NULL);
 }
 
 
-EfiObj *EvalExpression(const EfiObj *obj)
+EfiObj *EvalExpression (const EfiObj *obj)
 {
 	EfiObj *x;
 
@@ -115,7 +109,7 @@ EfiObj *EvalExpression(const EfiObj *obj)
 }
 
 
-static EfiObj *e_block(const EfiType *st, const void *ptr)
+static EfiObj *e_block (const EfiType *st, const void *ptr)
 {
 	EfiObjList *l;
 
@@ -135,7 +129,7 @@ static EfiObj *e_block(const EfiType *st, const void *ptr)
 /*	Schleifen
 */
 
-EfiObj *Expr_for(void *par, const EfiObjList *list)
+EfiObj *Expr_for (void *par, const EfiObjList *list)
 {
 	EfiObj *test;
 	EfiObj *step;
@@ -185,24 +179,32 @@ EfiObj *Expr_for(void *par, const EfiObjList *list)
 }
 
 
-EfiObj *Expr_forin(void *par, const EfiObjList *list)
+static EfiObj *forin_get (const EfiObj *base, void *data)
 {
-	EfiVar var;
+	return RefObj(Val_obj(data));
+}
+
+EfiObj *Expr_forin (void *par, const EfiObjList *list)
+{
+	VarTabEntry entry;
 	EfiObj *body;
 	EfiObj *lobj;
 	EfiObj *x;
 
-	memset(&var, 0, sizeof(EfiVar));
-	var.name = Val_str(list->obj->data);
-	var.dim = 0;
+	PushVarTab(NULL, NULL);
+	entry.name = Val_str(list->obj->data);
+	entry.desc = NULL;
+	entry.obj = NULL;
+	entry.get = forin_get;
+	entry.entry_clean = NULL;
+	entry.data = &x;
+	VarTab_add(NULL, &entry);
+
 	list = list->next;
 	lobj = EvalObj(RefObj(list->obj), &Type_list);
 	body = list->next->obj;
 
 	if	(lobj == NULL || body == NULL)	return NULL;
-
-	PushVarTab(NULL, NULL);
-	AddVar(NULL, &var, 1);
 
 	for (list = Val_list(lobj->data); list != NULL; list = list->next)
 	{
@@ -210,12 +212,8 @@ EfiObj *Expr_forin(void *par, const EfiObjList *list)
 
 		if	(x == NULL)	continue;
 
-		var.type = x->type;
-		var.data = x->data;
 		CmdEval_stat = 0;
 		UnrefEval(RefObj(body));
-		var.type = NULL;
-		var.data = NULL;
 		UnrefObj(x);
 
 		if	(CmdEval_stat == CmdEval_Return)
@@ -233,5 +231,3 @@ EfiObj *Expr_forin(void *par, const EfiObjList *list)
 	PopVarTab();
 	return NULL;
 }
-
-

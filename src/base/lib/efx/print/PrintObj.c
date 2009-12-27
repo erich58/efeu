@@ -28,29 +28,29 @@ int PrintObj (IO *io, const EfiObj *obj)
 		io_puts("void", io));
 }
 
-static int print_struct (IO *io, const EfiVar *list, const void *data)
+static int print_struct (IO *io, EfiType *type, const void *data)
 {
 	char *delim;
-	const void *ptr;
+	EfiStruct *list;
+	EfiObj *obj, *base;
 	int n;
 
+	list = type->list;
 	n = io_puts("{", io);
 	delim = NULL;
+	base = LvalObj(&Lval_ptr, type, data);
 
 	for (; list != NULL; list = list->next)
 	{
 		n += io_puts(delim, io);
 		delim = ", ";
-		ptr = (const char *) data + list->offset;
-
-		if	(list->dim)
-		{
-			n += PrintVecData(io, list->type, ptr, list->dim);
-		}
-		else	n += PrintData(io, list->type, ptr);
+		obj = Var2Obj(list, base);
+		n += PrintObj(io, obj);
+		UnrefObj(obj);
 	}
 
 	n += io_puts("}", io);
+	UnrefObj(base);
 	return n;
 }
 
@@ -66,7 +66,7 @@ int PrintData (IO *io, const EfiType *type, const void *data)
 	}
 	else if	(type->list)
 	{
-		return print_struct(io, type->list, data);
+		return print_struct(io, (EfiType *) type, data);
 	}
 	else if	(IsTypeClass(type, &Type_enum))
 	{

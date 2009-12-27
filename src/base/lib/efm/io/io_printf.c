@@ -92,7 +92,12 @@ int io_vprintf(IO *io, const char *fmt, va_list list)
 		case 'c':
 		case 'C':
 
-			n += fmt_char(io, &key, va_arg(list, int));
+			if	(key.flags & FMT_LONG)
+			{
+				n += fmt_ucs(io, &key, va_arg(list, int32_t));
+			}
+			else	n += fmt_char(io, &key, va_arg(list, int));
+
 			break;
 
 		case 'i':

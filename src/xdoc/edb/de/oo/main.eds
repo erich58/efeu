@@ -1,0 +1,6 @@
+\chap	Objektorientiertes Design
+
+\include intro.eds
+\include pers.eds
+\include data.eds
+\include eval.eds

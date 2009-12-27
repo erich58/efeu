@@ -107,7 +107,7 @@ static int subio_ctrl (void *ptr, int req, va_list list)
 	{
 	case IO_CLOSE:
 		stat = io_close(subio->io);
-		sb_destroy(subio->buf);
+		rd_deref(subio->buf);
 		memfree(subio->key);
 		memfree(subio);
 		return stat;

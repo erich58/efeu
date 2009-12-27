@@ -6,10 +6,11 @@
 #include <EFEU/EDB.h>
 #include <EFEU/parsearg.h>
 #include <EFEU/Resource.h>
+#include <EFEU/EfiPar.h>
 
 #define	FMT_UNDEF	"edb_out: undefined parameter \"$1\" ignored.\n"
 
-EDBPrintMode *edb_pmode (EDBPrintMode *pmode, const char *mode)
+EDBPrintMode *edb_pmode (EDBPrintMode *pmode, EDB *edb, const char *mode)
 {
 	AssignArg *arg;
 	static EDBPrintMode pmode_buf;
@@ -22,8 +23,11 @@ EDBPrintMode *edb_pmode (EDBPrintMode *pmode, const char *mode)
 		pmode->header = 0;
 		pmode->split = 0;
 		pmode->par = NULL;
-		edb_pmode(pmode, "default");
+		edb_pmode(pmode, edb, "default");
 	}
+
+	if	(mode == NULL && edb && edb->obj)
+		mode = GetEfiControl(edb->obj->type, "EDBPrintMode");
 
 	while ((arg = assignarg(mode, (char **) &mode, ",")))
 	{
@@ -31,13 +35,13 @@ EDBPrintMode *edb_pmode (EDBPrintMode *pmode, const char *mode)
 
 		if	(!def)
 		{
-			if	(arg->name && *arg->name)
-				dbg_note("edb", FMT_UNDEF, "s", arg->name);
+			pmode->init = EDBPrint_data_init;
+			pmode->par = rd_wrap(arg, memfree);
+			arg = NULL;
 		}
 		else if	(mstrcmp(arg->arg, "?") == 0)
 		{
-			io_printf(ioerr, "%s\t%s\n", def->name,
-				GetFormat(def->desc));
+			ShowEDBPrintDef(ioerr, def, 1);
 			exit(EXIT_SUCCESS);
 		}
 		else	def->set(pmode, def, arg->opt, arg->arg);

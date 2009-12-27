@@ -46,8 +46,10 @@ struct Label {
 	LabelEntry[] entry;
 };
 
-Label Label (str name, ...)
-	return { psub(name, va_list), NULL };
+Label Label (str lname, ...)
+{
+	name = psub(lname, va_list);
+}
 
 /*
 Die Funktion |$1| liefert die akzuelle Zahl der Label-Einträge

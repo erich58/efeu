@@ -62,8 +62,6 @@ EfiObj *LvalObj (EfiLval *lval, EfiType *type, ...)
 	x = lval->alloc(type, args);
 	va_end(args);
 
-	x->reftype = NULL;
-	x->refcount = 1;
 	x->type = type;
 	x->lval = lval;
 	lval->update(x);
@@ -98,7 +96,7 @@ void SyncObjList (EfiObjList *list)
 /*	Neues Objekt generieren
 */
 
-static EfiObj *newobj (EfiType *type, void *data, const void *defval)
+static EfiObj *newobj (const EfiType *type, void *data, const void *defval)
 {
 	EfiObj *obj;
 	size_t size;
@@ -107,10 +105,8 @@ static EfiObj *newobj (EfiType *type, void *data, const void *defval)
 
 	size = type->size + sizeof(EfiObj);
 	obj = Obj_alloc(size);
-	obj->reftype = NULL;
-	obj->refcount = 1;
 	obj->lval = NULL;
-	obj->type = type;
+	obj->type = (EfiType *) type;
 	obj->data = (obj + 1);
 
 	if	(data)
@@ -131,17 +127,17 @@ static EfiObj *newobj (EfiType *type, void *data, const void *defval)
 	return obj;
 }
 
-EfiObj *NewObj (EfiType *type, void *data)
+EfiObj *NewObj (const EfiType *type, void *data)
 {
 	return newobj(type, data, NULL);
 }
 
-EfiObj *ConstObj (EfiType *type, const void *data)
+EfiObj *ConstObj (const EfiType *type, const void *data)
 {
 	return newobj(type, NULL, data);
 }
 
-EfiObj *NewPtrObj (EfiType *type, const void *data)
+EfiObj *NewPtrObj (const EfiType *type, const void *data)
 {
 	return newobj(type, &data, NULL);
 }
@@ -188,7 +184,7 @@ static void del_obj (EfiObj *obj, int cleanup)
 	do_debug(1, "delete ", obj);
 
 	if	(obj->lval == NULL && cleanup)
-		DestroyData(obj->type, obj->data);
+		CleanData(obj->type, obj->data, 1);
 
 	obj->refcount = 0;
 	do_debug(2, NULL, obj);

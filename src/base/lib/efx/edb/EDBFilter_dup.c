@@ -20,6 +20,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/EDB.h>
+#include <EFEU/EDBFilter.h>
 
 /*
 Verdopplungsliste
@@ -27,11 +28,11 @@ Verdopplungsliste
 
 typedef struct DLISTStruct {
 	struct DLISTStruct *next;
-	EfiVar *var;
+	EfiStruct *var;
 	EfiObj *obj;
 } DLIST;
 
-static DLIST *dlist (EfiVar *var, const char *expr)
+static DLIST *dlist (EfiStruct *var, const char *expr)
 {
 	DLIST *t = memalloc(sizeof *t);
 	t->next = NULL;
@@ -89,7 +90,7 @@ static void *dup_alloc (EDB *edb, const char *vlist)
 	DUP *dup;
 	char *expr;
 	DLIST **ptr;
-	EfiVar *var;
+	EfiStruct *var;
 	char **list;
 	size_t dim;
 	int i;
@@ -135,10 +136,11 @@ static int dup_read (EfiType *type, void *data, void *par)
 		dup->ptr = dup->ptr->next;
 		return dup->rval;
 	}
-	else if	((dup->rval = edb_read(dup->base)))
+	else if	(edb_read(dup->base))
 	{
 		CopyData(type, data, dup->base->obj->data);
 		dup->ptr = dup->list;
+		dup->rval = 1;
 		return dup->rval;
 	}
 	else	return 0;
@@ -147,14 +149,14 @@ static int dup_read (EfiType *type, void *data, void *par)
 static EDB *fdef_dup (EDBFilter *filter, EDB *base,
 	const char *opt, const char *arg)
 {
-	EDB *edb = edb_create(LvalObj(NULL, base->obj->type), NULL);
+	EDB *edb = edb_create(base->obj->type);
 	edb->read = dup_read;
 	edb->ipar = dup_alloc(base, arg);
 	return edb;
 }
 
-EDBFilter EDBFilter_dup = {
+EDBFilter EDBFilter_dup = EDB_FILTER(NULL,
 	"dup", "=list", fdef_dup, NULL,
 	":*:duplicate records"
 	":de:Datensätze duplizieren"
-};
+);

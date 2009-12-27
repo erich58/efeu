@@ -48,6 +48,21 @@ static void make_base (XOUT *xout)
 
 	xout->base = io_fileopen(xout->lastname, "wz");
 	io_printf(xout->base, "EDB\t1.0\n");
+
+	if	(xout->edb->desc)
+	{
+		io_puts("// ", xout->base);
+
+		for (p = xout->edb->desc; *p != 0; p++)
+		{
+			if	(*p != '\n')	io_putc(*p, xout->base);
+			else if	(p[1])		io_puts("\n// ", xout->base);
+			else			break;
+		}
+
+		io_putc('\n', xout->base);
+	}
+
 	p = strrchr(name, '/');
 	io_printf(xout->base, "@file\n%s\n", p ? p + 1 : name);
 	memfree(xout->lastname);
@@ -73,7 +88,7 @@ static void xout_next (XOUT *xout)
 
 	memfree(xout->lastname);
 	xout->lastname = name;
-	xout->pmode.init(xout->edb, &xout->pmode, io);
+	edb_setout(xout->edb, io, &xout->pmode);
 	xout_sub(xout->edb, xout);
 }
 
@@ -146,8 +161,10 @@ void edb_fout (EDB *edb, const char *name, const char *mode)
 	EDBPrintMode *pmode;
 	IO *io;
 
+	if	(!edb)	return;
+
 	io = io_fileopen(name, "wz");
-	pmode = edb_pmode(NULL, mode);
+	pmode = edb_pmode(NULL, edb, mode);
 	edb_setout(edb, io, pmode);
 
 	if	(pmode->split && name && *name != '|' && *name != '&')

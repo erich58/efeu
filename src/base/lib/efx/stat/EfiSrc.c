@@ -84,6 +84,11 @@ void EfiSrc_hdr (Efi *efi, const char *name)
 	EfiSrc_push(Efi_ptr(efi), EfiSrc_alloc("include(%#s)", name));
 }
 
+void EfiSrc_type (Efi *efi, const char *name)
+{
+	EfiSrc_push(Efi_ptr(efi), EfiSrc_alloc("extern %s;", name));
+}
+
 /*
 $SeeAlso
 \mref{EfiStat(7)}.

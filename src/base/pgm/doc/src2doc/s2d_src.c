@@ -102,6 +102,22 @@ void s2d_hdr (const char *name, IO *ein, IO *aus)
 	SrcData_write(&data, aus);
 }
 
+void s2d_xhdr (const char *name, IO *ein, IO *aus)
+{
+	SrcData data;
+
+	SrcData_init(&data, ein);
+	data.doc.var[VAR_NAME] = bname(name);
+	data.doc.var[VAR_HEAD] = msprintf(IncFmt ? IncFmt : "%#s", name);
+	data.ppdef = hdr_ppdef;
+	data.ppdim = tabsize(hdr_ppdef);
+	data.mask = DECL_TYPE|DECL_STRUCT|DECL_VAR|DECL_FUNC;
+	io_printf(aus, "\\mpage[%s] %s\n", Secnum ? Secnum : "3",
+		data.doc.var[VAR_NAME]);
+	SrcData_eval(&data, name);
+	SrcData_write(&data, aus);
+}
+
 
 /*	Sourcefiles
 */

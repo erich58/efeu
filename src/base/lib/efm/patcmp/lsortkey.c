@@ -73,7 +73,7 @@ char *lexsortkey (const char *base, StrBuf *buf)
 		sb_puts(lextab[(unsigned char) *base], buf);
 
 	sb_putc(0, buf);
-	return buf->data;
+	return (char *) buf->data;
 }
 
 int lexcmp (const char *a, const char *b)

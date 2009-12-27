@@ -284,7 +284,7 @@ DBData *DBData_qtext (DBData *db, IO *io, const char *delim)
 		db->tab = lmalloc(db->tab_size * sizeof (char *));
 	}
 
-	p = db->buf;
+	p = (char *) db->buf;
 	db->tab[0] = p;
 
 	for (i = 1; i < db->dim; i++)

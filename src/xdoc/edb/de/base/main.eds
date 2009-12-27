@@ -1,10 +1,9 @@
 \chap	\label{base}Grundlagen
 
-\include intro.doc
-\include data.doc
-\include trans.doc
-\include join.doc
-\include print.doc
-\include gzip.doc
-\docpart[syndb] syncnt.doc
-\include info.doc
+\include intro.eds
+\include data.eds
+\include print.eds
+\include path.eds
+\include trans.eds
+\include oo.eds
+\include info.eds

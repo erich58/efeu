@@ -27,6 +27,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/parsub.h>
 #include <EFEU/ioctrl.h>
 #include <EFEU/LangDef.h>
+#include <EFEU/locale.h>
 
 /*	Systemabhängige Parameter:
 
@@ -97,6 +98,7 @@ void SetProgName (const char *name)
 
 	if	(need_setup)
 	{
+		ChangeLocale(NULL);
 		SetLangDef(NULL);
 		psubfunc('!', c_name, NULL);
 		psubfunc('%', c_id, NULL);
@@ -107,9 +109,25 @@ void SetProgName (const char *name)
 	{
 		CmdPar *par;
 		char *path;
+		char *p;
 		
 		path = mdirname(name, 0);
-		SetApplPath(path);
+		p = path ? strrchr(path, '/') : NULL;
+
+		if	(p && strcmp(p, "/bin") == 0)
+		{
+			char *top = mstrncpy(path, p - path);
+			p = mstrpaste("/lib/efeu/%L/%S:", top, path);
+			memfree(top);
+			SetApplPath(p);
+			memfree(p);
+		}
+		else if	(mstrcmp(path, "bin") == 0)
+		{
+			SetApplPath("lib/efeu/%L/%S:bin");
+		}
+		else	SetApplPath(path);
+
 		memfree(path);
 
 		par = CmdPar_ptr(NULL);

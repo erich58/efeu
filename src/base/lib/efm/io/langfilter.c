@@ -387,7 +387,7 @@ static int lf_ctrl (void *ptr, int req, va_list list)
 
 		stat = io_close(lf->io);
 		memfree(lf->lang);
-		sb_destroy(lf->buf);
+		rd_deref(lf->buf);
 		memfree(lf);
 		return stat;
 

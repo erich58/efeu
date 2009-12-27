@@ -170,7 +170,7 @@ int iocpy_macsub (IO *in, IO *out, int c,
 	if	(mac == NULL || mac->lock)
 	{
 		n = io_puts((char *) sb->data, out);
-		sb_destroy(sb);
+		rd_deref(sb);
 		return n;
 	}
 
@@ -194,7 +194,7 @@ int iocpy_macsub (IO *in, IO *out, int c,
 			io_ungetc(c, in);
 			sb_putc(0, sb);
 			n = io_puts((char *) sb->data, out);
-			sb_destroy(sb);
+			rd_deref(sb);
 			return n;
 		}
 
@@ -212,7 +212,7 @@ int iocpy_macsub (IO *in, IO *out, int c,
 		io_prompt(in, prompt);
 	}
 
-	sb_destroy(sb);
+	rd_deref(sb);
 	mac->lock = 1;
 	n = mac->sub(mac, out, argv.data, argv.used);
 	mac->lock = 0;

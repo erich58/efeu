@@ -21,38 +21,48 @@ static int epc_cmp (const void *a, const void *b)
 	return mstrcmp((*ka)->epc_name, (*kb)->epc_name);
 }
 
-
-void *GetEfiPar (EfiType *type, EfiPar *par, const char *name)
+static VecBuf *epc_ptr (EfiType *type)
 {
-	EfiParClass key, *kp;
-	void **rp;
+	return type ? &type->par : &epc_buf;
+}
 
-	if	(!name)	return NULL;
+void *SearchEfiPar (EfiType *type, EfiPar *par, const char *name)
+{
+	EfiParClass key, *kp, **rp;
+	EfiType *base;
+
+	if	(!name || !*name)	return NULL;
 
 	if	(mstrcmp(name, "?") == 0)
 	{
-		ListEfiPar(ioerr, type, par, 0);
+		ListEfiPar(ioerr, type, par, NULL, 0);
 		exit(EXIT_SUCCESS);
 	}
 
 	key.epc_par = par;
 	key.epc_name = name;
 	kp = &key;
-	rp = NULL;
 
-	if	(type)
-		rp = vb_search(&type->par, &kp, epc_cmp, VB_SEARCH);
+	for (base = type; base; base = base->base)
+	{
+		rp = vb_search(&base->par, &kp, epc_cmp, VB_SEARCH);
 
-	if	(!rp)
-		rp = vb_search(&epc_buf, &kp, epc_cmp, VB_SEARCH);
+		if	(rp && (!(*rp)->epc_type || (*rp)->epc_type == type))
+			return *rp;
+	}
 
+	rp = vb_search(&epc_buf, &kp, epc_cmp, VB_SEARCH);
 	return rp ? *rp : NULL;
 }
 
-
-static VecBuf *epc_ptr (EfiType *type)
+void *GetEfiPar (EfiType *type, EfiPar *par, const char *name)
 {
-	return type ? &type->par : &epc_buf;
+	EfiParClass key, *kp, **rp;
+	key.epc_par = par;
+	key.epc_name = name;
+	kp = &key;
+	rp = vb_search(epc_ptr(type), &kp, epc_cmp, VB_SEARCH);
+	return rp ? *rp : NULL;
 }
 
 void AddEfiPar (EfiType *type, void *data)
@@ -117,7 +127,8 @@ void PrintEfiPar (IO *io, void *data)
 #define	LIST_WIDTH	13
 #define	LIST_BREAK	65
 
-static void list_modul (IO *io, VecBuf *buf, EfiPar *par, int mode)
+static void list_modul (IO *io, VecBuf *buf, EfiPar *par,
+	const char *pfx, int mode)
 {
 	const EfiPar *last;
 	EfiParClass **ptr;
@@ -160,26 +171,43 @@ static void list_modul (IO *io, VecBuf *buf, EfiPar *par, int mode)
 					(col / LIST_WIDTH + 1) - col);
 			}
 
+			if	(pfx)
+			{
+				col += io_puts(pfx, io);
+				col += io_nputc('.', io, 1);
+			}
+
 			col += io_puts((*ptr)->epc_name, io);
 		}
 		else if	(mode == 1)
 		{
+			if	(pfx)
+				io_printf(io, "%s.", pfx);
+
 			io_printf(io, "%s\t%s\n", (*ptr)->epc_name,
 				(*ptr)->epc_label);
 		}
 		else	PrintEfiPar(io, *ptr);
 	}
 
-	io_putc('\n', io);
+	if	(col)
+		io_putc('\n', io);
 }
 
-void ListEfiPar (IO *io, EfiType *type, EfiPar *par, int verbosity)
+void ListEfiPar (IO *io, EfiType *type, EfiPar *par,
+	const char *pfx, int verbosity)
 {
+	EfiType *base;
+
 	if	(!io)	return;
 
-	if	(type)
-		list_modul(io, &type->par, par, verbosity);
+	for (base = type; base; base = base->base)
+	{
+		list_modul(io, &base->par, par, pfx, verbosity);
+
+		if	(!par)	break;
+	}
 
 	if	(par || !type)
-		list_modul(io, &epc_buf, par, verbosity);
+		list_modul(io, &epc_buf, par, pfx, verbosity);
 }

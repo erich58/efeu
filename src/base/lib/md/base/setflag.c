@@ -2,7 +2,8 @@
 	(c) 1994 Erich Frühstück
 */
 
-#include <EFEU/mdtest.h>
+#include <EFEU/mdmat.h>
+#include <EFEU/MatchPar.h>
 
 unsigned mdsf_mark (unsigned old, int sel, unsigned val)
 {
@@ -45,17 +46,17 @@ static void allindex (mdaxis *x, unsigned mask,
 static void subfunc (mdaxis *x, mdlist *l, unsigned mask,
 	unsigned (*func) (unsigned old, int flag, unsigned val), unsigned flag)
 {
-	mdtest *test;
+	MatchPar *mp;
 	int n;
 
-	test = mdtestlist(l->list, l->dim, x->dim);
+	mp = MatchPar_vec(l->list, l->dim, x->dim);
 
 	for (n = 0; n < x->dim; n++)
 		if (!(x->idx[n].flags & mask))
 			x->idx[n].flags = func(x->idx[n].flags,
-				mdtest_eval(test, x->idx[n].name, n + 1), flag);
+				MatchPar_exec(mp, x->idx[n].name, n + 1), flag);
 
-	mdtest_clean(test);
+	rd_deref(mp);
 }
 
 
@@ -84,7 +85,7 @@ void md_setflag (mdmat *md, const char *def, unsigned mask,
 {
 	mdlist *l, *list;
 	mdaxis *x;
-	mdtest *test;
+	MatchPar *mp;
 	int n, dim;
 
 	if	(md == NULL || md->axis == NULL)
@@ -115,11 +116,11 @@ void md_setflag (mdmat *md, const char *def, unsigned mask,
 
 	for (l = list; l != NULL; l = l->next)
 	{
-		test = mdtest_create(l->name, dim);
+		mp = MatchPar_create(l->name, dim);
 
 		for (x = md->axis, n = 1; x != NULL; x = x->next, n++)
 		{
-			if	(mdtest_eval(test, x->name, n))
+			if	(MatchPar_exec(mp, x->name, n))
 			{
 				if	(fx)	x->flags = fx(x->flags, 1, vx);
 
@@ -132,7 +133,7 @@ void md_setflag (mdmat *md, const char *def, unsigned mask,
 			}
 		}
 
-		mdtest_clean(test);
+		rd_deref(mp);
 	}
 
 	del_mdlist(list);

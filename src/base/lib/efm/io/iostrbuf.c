@@ -60,7 +60,7 @@ static int sb_cctrl (void *ptr, int req, va_list list)
 	case IO_REWIND:	sb->pos = 0; return 0;
 	case IO_GETPOS:	*va_arg(list, unsigned *) = sb->pos; return 0;
 	case IO_SETPOS:	sb->pos = *va_arg(list, unsigned *); return 0;
-	case IO_CLOSE:	return sb_destroy(sb);
+	case IO_CLOSE:	rd_deref(sb); return 0;
 	case IO_IDENT:	*va_arg(list, char **) = "<tmpbuf>"; return 0;
 	default:	return EOF;
 	}

@@ -8,3 +8,26 @@ Funktionen ausgegeben.
 Dabei werden über Header nachgeladene Erweiterungen ebenfalls
 dargestellt. Die entsprechenden Optionen (z.B. |-F|) müssen vor
 |--info| angegeben werden.
+
+Alternativ können auch bei vielen Parametern durch Eingabe eines
+Fragezeichens (|?|) die zugehörigen Informationen abgerufen werden.
+
+Beispiele:
+\ttitem edb <type>[?]
+Listet die verfügbaren Lesefunktionen für den Datentype <type> auf.
+\ttitem edb <db> -p?
+Listet die verfügbaren Ausgabefunktionen für die Datenbank <db> auf.
+\ttitem edb <db> -f?
+Listet die verfügbaren Filter für die Datenbank <db> auf.
+\ttitem edb <db> -f join=?
+Liefert die Beschreibung zum Datenbankfilter |join|. Der Filter ist
+allgemein verfügbar und die Informationsausgabe ist unabhängig von der
+Datenbank, z.B. kann hier die Dummy-Datenbank |void:| angegeben werden.
+\ttitem edb <db> -f join[?]
+Listet die Parameter für den Datenbankfilter |join| auf\note
+	Diese Form der Informationsabfrage ist nur möglich, wenn sie
+	im jeweiligen Filter implementiert wurde. Falls vorhanden,
+	sollte im Beschreibungstext zum Filter darauf hingewiesen
+	werden.
+.
+\end

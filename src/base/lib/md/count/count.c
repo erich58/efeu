@@ -23,6 +23,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/mdmat.h>
 #include <EFEU/mdcount.h>
 
+double MdCountWeight = 1.;
+
 void (*md_count_hook) (MdCountList *clist, mdmat *md) = NULL;
 
 void md_count (mdmat *ctab, const void *data)

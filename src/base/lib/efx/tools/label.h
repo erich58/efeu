@@ -33,6 +33,4 @@ typedef struct {
 	char *desc;
 } Label;
 
-void LabelType (const char *name, Label *def, size_t dim);
-
 #endif	/* EFEU/label.h */

@@ -14,4 +14,6 @@ elseif getline(1) =~ '#!/usr/bin/env wish'
 	set ft=tcl
 elseif getline(3) =~ '^exec wish'
 	set ft=tcl
+elseif getline(1) =~ '^/[*]'
+	set ft=esh
 endif

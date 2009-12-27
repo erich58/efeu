@@ -1,0 +1,63 @@
+/*
+*/
+
+static void TypeDef::st_member (str type, str name, str desc)
+{
+	int dim = 0;
+
+	if	(regexec("\\[", name))
+		(name, dim) = regmatch("(.*)\\[(.*)\\]", name).next;
+
+	str part = dim ? "VecData(st_var->type, st_var->dim" : \
+		"Data(st_var->type";
+	str tg = sprintf(", %stg->%s", dim ? "" : "&", name);
+	str src = sprintf(", %ssrc->%s", dim ? "" : "&", name);
+	str data = sprintf(", %sdata->%s", dim ? "" : "&", name);
+	str post = ");\n";
+
+	next(name, 0);
+	read_body += cat(NULL, "size += Read", part, data, ", io", post);
+	write_body += cat(NULL, "size += Write", part, data, ", io", post);
+	copy_body += cat(NULL, "Copy", part, tg, src, post);
+	clean_body += cat(NULL, "Clean", part, data, ", mode", post);
+
+	s_setup += "st_var = EfiType_stdvar(type, st_var, ";
+	s_setup += sprintf("offsetof($1, %s),\n\t%s, %#s, %#s, %#s);\n",
+		name, dim, type, name, desc);
+}
+
+static virtual void TypeDef::efivar (str type, str name, str desc)
+{
+	Type_t t = (Type_t) type;
+	bf_close();
+	addvar(t.cname, name, desc);
+	st_member((str) t, name, desc);
+
+	if	(t.recl)	t_recl += t.recl;
+	else			flag_vrecl = true;
+
+	if	(t.flags & 0x4)	flag_malloc = true;
+}
+
+static str TypeDef::cname (str type)
+{
+	switch (type)
+	{
+	case RegExp("\\[\\]"):
+		return "EfiVec *";
+	case RegExp("\\["):
+		return regmatch("^(.*)\\[", type).next.obj + " *";
+	default:
+		return type;
+	}
+}
+
+static virtual void TypeDef::extefivar (str type, str name, str desc)
+{
+	bf_close();
+	addvar(cname(type), name, desc);
+	st_member(type, name, desc);
+	s_setup += "type->flags |= st_var->type->flags & TYPE_MALLOC;\n"
+	flag_vrecl = true;
+}
+

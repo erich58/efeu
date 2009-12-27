@@ -35,12 +35,10 @@ static void var_clean (VarTabEntry *var)
 {
 	if	(var)
 	{
-		memfree((char *) var->name);
-		memfree(var->desc);
 		UnrefObj(var->obj);
 
-		if	(var->clean)
-			var->clean(var->data);
+		if	(var->entry_clean)
+			var->entry_clean(var);
 	}
 }
 
@@ -120,7 +118,12 @@ static EfiObj *vget (const EfiObj *base, void *data)
 	return Var2Obj(data, base);	
 }
 
-void AddVar (EfiVarTab *tab, EfiVar *def, size_t dim)
+static void struct_clean (VarTabEntry *entry)
+{
+	rd_deref(entry->data);
+}
+
+void AddStruct (EfiVarTab *tab, EfiStruct *def, size_t dim)
 {
 	VarTabEntry entry, *ptr;
 
@@ -135,12 +138,8 @@ void AddVar (EfiVarTab *tab, EfiVar *def, size_t dim)
 		entry.desc = def->desc;
 		entry.obj = NULL;
 		entry.get = vget;
-		entry.clean = rd_deref;
-#if 1
-		entry.data = def; /* !!!! */
-#else
-		entry.data = rd_refer(def); /* !!!! */
-#endif
+		entry.entry_clean = struct_clean;
+		entry.data = rd_refer(def);
 		ptr = vb_search(&tab->tab, &entry, var_cmp, VB_REPLACE);
 
 		if	(ptr)
@@ -160,7 +159,7 @@ VarTabEntry *VarTab_xget (EfiVarTab *tab, const char *name)
 	entry.type = NULL;
 	entry.obj = NULL;
 	entry.get = NULL;
-	entry.clean = NULL;
+	entry.entry_clean = NULL;
 	entry.data = NULL;
 
 	tab = CurrentVarTab(tab);
@@ -172,10 +171,27 @@ VarTabEntry *VarTab_xget (EfiVarTab *tab, const char *name)
 	return ptr;
 }
 
+VarTabEntry *VarTab_next (EfiVarTab *tab)
+{
+	tab = CurrentVarTab(tab);
+	return vb_next(&tab->tab);
+}
+
+void VarTab_qsort (EfiVarTab *tab)
+{
+	tab = CurrentVarTab(tab);
+	vb_qsort(&tab->tab, var_cmp);
+}
+
 void VarTab_add (EfiVarTab *tab, VarTabEntry *entry)
 {
 	tab = CurrentVarTab(tab);
 	var_clean(vb_search(&tab->tab, entry, var_cmp, VB_REPLACE));
+}
+
+static void xadd_clean (VarTabEntry *entry)
+{
+	memfree((char *) entry->name);
 }
 
 void VarTab_xadd (EfiVarTab *tab, char *name, char *desc, EfiObj *obj)
@@ -184,11 +200,11 @@ void VarTab_xadd (EfiVarTab *tab, char *name, char *desc, EfiObj *obj)
 
 	entry.name = name;
 	entry.desc = desc;
-	entry.type = obj->type;
+	entry.type = obj ? obj->type : NULL;
 	entry.obj = obj;
 	entry.get = NULL;
-	entry.clean = memfree;
-	entry.data = name;
+	entry.entry_clean = xadd_clean;
+	entry.data = NULL;
 
 	tab = CurrentVarTab(tab);
 	ptr = vb_search(&tab->tab, &entry, var_cmp, VB_REPLACE);
@@ -202,11 +218,5 @@ void VarTab_xadd (EfiVarTab *tab, char *name, char *desc, EfiObj *obj)
 
 void VarTab_del (EfiVarTab *tab, const char *name)
 {
-	if	(tab)
-	{
-		VarTabEntry *ptr = var_get(tab, name, VB_DELETE);
-
-		if	(ptr && ptr->clean)
-			ptr->clean(ptr->data);
-	}
+	var_clean(var_get(tab, name, VB_DELETE));
 }

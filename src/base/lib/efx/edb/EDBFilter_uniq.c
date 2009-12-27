@@ -20,6 +20,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/EDB.h>
+#include <EFEU/EDBFilter.h>
 
 typedef struct {
 	REFVAR;
@@ -33,6 +34,7 @@ static void uniq_clean (void *data)
 	UNIQ *uniq = data;
 	rd_deref(uniq->base);
 	io_close(uniq->io);
+	sb_free(&uniq->buf);
 	memfree(uniq);
 }
 
@@ -50,10 +52,9 @@ static void *uniq_alloc (EDB *edb)
 static int read_uniq (EfiType *type, void *data, void *par)
 {
 	UNIQ *uniq = par;
-	int rval;
 	int pos;
 
-	if	(!(rval = edb_read(uniq->base)))
+	if	(!edb_read(uniq->base))
 		return 0;
 
 	io_rewind(uniq->io);
@@ -76,20 +77,20 @@ static int read_uniq (EfiType *type, void *data, void *par)
 	edb_unread(uniq->base);
 	io_rewind(uniq->io);
 	ReadData(type, data, uniq->io);
-	return rval;
+	return 1;
 }
 
 static EDB *fdef_uniq (EDBFilter *filter, EDB *base,
 	const char *opt, const char *arg)
 {
-	EDB *edb = edb_create(LvalObj(NULL, base->obj->type), NULL);
+	EDB *edb = edb_create(base->obj->type);
 	edb->read = read_uniq;
 	edb->ipar = uniq_alloc(base);
 	return edb;
 }
 
-EDBFilter EDBFilter_uniq = {
+EDBFilter EDBFilter_uniq = EDB_FILTER(NULL,
 	"uniq", NULL, fdef_uniq, NULL,
 	":*:remove duplicate data lines"
 	":de:Doppelte Datensätze entfernen"
-};
+);

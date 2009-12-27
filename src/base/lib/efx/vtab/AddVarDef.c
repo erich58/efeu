@@ -41,7 +41,7 @@ void AddVarDef (EfiVarTab *tab, EfiVarDef *def, size_t dim)
 		entry.obj = LvalObj(&Lval_ptr, def->type, def->data);
 		entry.get = NULL;
 		entry.data = def;
-		entry.clean = NULL;
+		entry.entry_clean = NULL;
 		VarTab_add(tab, &entry);
 	}
 }

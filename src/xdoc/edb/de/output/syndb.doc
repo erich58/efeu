@@ -1,9 +1,0 @@
-\index[Ausgabe als Synthesis-Datenbankfile]
-Wird ein EDB-Datenfile mit einem Synthesis-Datenbanktyp geladen,
-steht der Ausgabemodus |syndb=|<pdef> zur Verfügung. Als Parameter wird
-eine Ausgabedefinition für den Synthesis-Datenbanktyp übergeben.
-Die Vorgabe ist |copy|.
-
-Diese Ausgabedefinition wird selten verwendet, da alle EDB-Datenfiles
-von den |syndb|-Kommandos gelesen werden können, die Konvertierung in
-ein Synthesis-Datenfile erfolgt implizit.

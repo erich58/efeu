@@ -1,0 +1,60 @@
+\sec	\label{nest}\index{Verschachtelung}
+
+\index[Filter |nest|]
+Der Filter \index{|nest|} dient zur Erzeugung geschachtelter
+Relationen, auch \index{NF\latex{$^2$}-Relation} genannt.
+Diese Bezeichnung wird vom
+Englischen <Non First Normal Form (NFNF)> abgeleitet und darf nicht
+mit der 2. Normalform (2NF) verwechselt werden.
+
+Die allgemeine Syntax lautet:
+
+|nest[|<v1>[|[uniq]|]|=|<l1> <v2>[|[uniq]|]|=|<l2> &ldots;|]|
+
+Dabei ist <v1>, <v2> der Name eines Vektors und <l1>, <l2> sind
+Musterlisten zur Variablenselektion. Es können beliebig viele
+Vektordefinitionen angegeben werden. Die nicht von einer Musterliste
+selektierten Variablen bilden den Schlüssel für die Verschachtelung.
+Alle Datensätze mit gleichem Schlüssel werden zusammengefasst.
+Die Dimension der Vektoren ist gleich der Zahl der zusammengefasssten
+Datensätze. Falls das Flag |uniq| angegeben wurde, werden
+aufeinanderfolgende, idente Werte des jeweiligen Vektors auf einen
+Repräsentanten reduziert.
+
+Der resultierende Datensatz besteht aus den Schlüsselvariablen und den
+Vektoren. Grundsätzlich werden alle Strukturkomponenten entweder dem
+Schlüssel oder einem Vektor zugeordnet. Bei dieser Zuordnung werden
+die einzelnen Komponenten der Reihe nach mit den Musterlisten der
+Vektordefinitionen verglichen. Die Reihenfolge der Vektordefinitionen
+ist signifikant. Die erste Übereinstimmung wird genommen.
+
+Die Syntax für die Musterselektion stimmt mit der Musterselektion beim
+|var|-Filter überein, es werden aber keine eckigen Klammern angegeben.
+Weiters können nur Basiskomponenten angesprochen werden.
+Falls Teilkomponenten oder über einen Ausdruck abgeleitete Variablen
+benötigt werden, lässt sich dies über einen vorgeschaltenen
+|var|-Filter erreichen.
+
+Wenn für einen Vektor mehr als eine Komponente angegeben wurde, wird
+eine eigene Datenstruktur eingerichtet, ansonsten wird der Typ der
+Komponente verwendet. Die Reihenfolge der Variablen ist festgelegt,
+kann aber mit einem nachgeschalteten |var|-Filter geändert werden.
+
+Falls nur eine Vektordefinition angegeben wurde, ist das Resultat eine
+sogenannte \index{PNF-Relation} (<Partitioned Normal Form>).
+Diese Teilklasse der
+verschachtelten Relationen lässt sich immer entschachteln und auf eine
+1. Normalform zürckführen.
+
+Beispiel: Der Aufruf\note
+	Der Filter \mref{fold(1)} dient zum Umbrechen überlanger Zeilen.
+
+---- eval
+{
+str cmd = "edb -f 'nest[epi=-num]' data.edb | fold -s";
+input("verbatim", cmd);
+input(NULL, "liefert");
+input("verbatim", popen(cmd, "r"));
+}
+----
+

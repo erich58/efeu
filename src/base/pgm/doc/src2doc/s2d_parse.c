@@ -36,7 +36,7 @@ char *parse_close (StrBuf *buf)
 	if	(sb_getpos(buf))
 	{
 		sb_putc(0, buf);
-		return buf->data;
+		return (char *) buf->data;
 	}
 	else	return NULL;
 }
@@ -131,6 +131,10 @@ Decl *parse_decl (IO *io, int c)
 			else if	(Decl_test(&decl, "typedef"))
 				decl.type = DECL_TYPE;
 			else if	(Decl_test(&decl, "struct"))
+				decl.type = DECL_STRUCT, sflag = 1;
+			else if	(Decl_test(&decl, "enum"))
+				decl.type = DECL_STRUCT, sflag = 1;
+			else if	(Decl_test(&decl, "union"))
 				decl.type = DECL_STRUCT, sflag = 1;
 		}
 		else if	(c == ':')

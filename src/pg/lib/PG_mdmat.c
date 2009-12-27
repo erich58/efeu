@@ -106,7 +106,7 @@ static char *inc_lbl (const char *lbl, const char *def)
 	io = io_strbuf(buf);
 	p = Obj2str(Parse_term(io, 0));
 	io_close(io);
-	sb_destroy(buf);
+	rd_deref(buf);
 	return p;
 }
 
@@ -275,8 +275,7 @@ mdmat *PG_mdmat (PG *pg, const EfiType *type,
 
 /*	set data
 */
-	md->size = md_size(md->axis, md->type->size);
-	md->data = memalloc(md->size);
+	md_alloc(md);
 	buf = memalloc(type->size);
 
 	for (i = 0; i < ntuples; i++)
@@ -296,7 +295,7 @@ mdmat *PG_mdmat (PG *pg, const EfiType *type,
 
 /*	clean private data
 */
-	DestroyData(type, buf);
+	CleanData(type, buf, 1);
 	memfree(buf);
 
 	for (p = md->axis; p != NULL; p = p->next)

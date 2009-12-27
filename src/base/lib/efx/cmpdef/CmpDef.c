@@ -29,6 +29,12 @@ If not, write to the Free Software Foundation, Inc.,
 static ALLOCTAB(entry_tab, 0, sizeof(CmpDefEntry));
 static STRBUF(name_buf, 0);
 
+typedef struct {
+	EfiObj *base;
+	EfiStruct *st;
+	CmpDefEntry *entry;
+} CDEF;
+
 static char *parse_name (const char *def, char **ptr)
 {
 	sb_clean(&name_buf);
@@ -40,7 +46,25 @@ static char *parse_name (const char *def, char **ptr)
 		*ptr = (char *) def;
 
 	sb_putc(0, &name_buf);
-	return name_buf.data;
+	return (char *) name_buf.data;
+}
+
+static void put_entry (CmpDefEntry *p, IO *io)
+{
+	io_putc(p->invert ? '-' : '+', io);
+	io_printf(io, "%d:%d*%d %s", p->offset, p->dim,
+		p->type->size, p->type->name);
+
+	if	(p->clean == rd_deref)
+	{
+		char *x = rd_ident(p->par);
+
+		io_puts(" {", io);
+		io_puts(x, io);
+		io_puts("}", io);
+		memfree(x);
+	}
+	else	io_printf(io, " {%p}", p->par);
 }
 
 static char *cmp_ident (const void *data)
@@ -51,28 +75,19 @@ static char *cmp_ident (const void *data)
 	{
 		StrBuf *sb;
 		CmpDefEntry *p;
+		IO *io;
 		
 		sb = sb_create(0);
-		sb_puts(cdef->type->name, sb);
+		io = io_strbuf(sb);
+		io_puts(cdef->type->name, io);
 
 		for (p = cdef->list; p; p = p->next)
 		{
-			sb_putc(' ', sb);
-			sb_putc(p->invert ? '-' : '+', sb);
-			sb_printf(sb, "%d:%d*%d %s", p->offset, p->dim,
-				p->type->size, p->type->name);
-
-			if	(p->clean == rd_deref)
-			{
-				char *x = rd_ident(p->par);
-
-				sb_puts(" {", sb);
-				sb_puts(x, sb);
-				sb_puts("}", sb);
-				memfree(x);
-			}
+			io_putc(' ', io);
+			put_entry(p, io);
 		}
 
+		io_close(io);
 		return sb2str(sb);
 	}
 
@@ -244,19 +259,19 @@ static void make_subcmp (CmpDefEntry *entry, char *def, char **ptr)
 	entry->clean = rd_deref;
 }
 
-CmpDefEntry *cmp_entry (EfiType *type, size_t off, size_t dim, int inv)
+CmpDefEntry *cmp_member (EfiStruct *st, int inv)
 {
 	CmpDefEntry *entry = new_data(&entry_tab);
 	entry->next = NULL;
-	entry->type = type;
+	entry->type = st->type;
 	entry->invert = inv;
-	entry->offset = off;
-	entry->dim = dim;
+	entry->offset = st->offset;
+	entry->dim = st->dim;
 	entry->cmp = do_cmp_std;
 	entry->clean = NULL;
 	entry->par = NULL;
 
-	if	(type)
+	if	(st->type)
 	{
 		set_dim(entry);
 		set_cmp(entry, NULL);
@@ -265,11 +280,60 @@ CmpDefEntry *cmp_entry (EfiType *type, size_t off, size_t dim, int inv)
 	return entry;
 }
 
-static CmpDefEntry *next_entry (EfiType *base, char *def, char **ptr)
+static CmpDefEntry *next_entry (EfiType *base, EfiVirFunc *vcmp,
+	char *def, char **ptr);
+
+static int cdef_cmp (CmpDefEntry *entry, void *pa, void *pb)
+{
+	CDEF *cdef;
+	EfiObj *a, *b;
+	int r;
+	
+	cdef = entry->par;
+	cdef->base->data = pa;
+	a = cdef->st->member(cdef->st, cdef->base);
+	cdef->base->data = pb;
+	b = cdef->st->member(cdef->st, cdef->base);
+
+	if	(a && b)
+	{
+		r = cdef->entry->cmp(cdef->entry, a->data, b->data);
+	}
+	else if	(a)	r = 1;
+	else if	(b)	r = -1;
+	else		r = 0;
+
+	UnrefObj(a);
+	UnrefObj(b);
+	return cdef->entry->invert ? -r : r;
+}
+
+static void cdef_clean (void *ptr)
+{
+	CDEF *cdef = ptr;
+	UnrefObj(cdef->base);
+	memfree(cdef);
+}
+
+static void set_vcmp (CmpDefEntry *entry, EfiStruct *st,
+	EfiVirFunc *vcmp, char *def, char **ptr)
+{
+	CDEF *cdef = memalloc(sizeof *cdef);
+
+	cdef->base = LvalObj(&Lval_ptr, entry->type, NULL);
+	cdef->st = st;
+	cdef->entry = next_entry(st->type, vcmp, def, ptr);
+
+	entry->par = cdef;
+	entry->cmp = cdef_cmp;
+	entry->clean = cdef_clean;
+}
+
+static CmpDefEntry *next_entry (EfiType *base, EfiVirFunc *vcmp,
+	char *def, char **ptr)
 {
 	CmpDefEntry *entry;
-	EfiVirFunc *vcmp;
-	EfiVar *var;
+	EfiStruct *var;
 
 	entry = new_data(&entry_tab);
 	entry->next = NULL;
@@ -361,9 +425,23 @@ static CmpDefEntry *next_entry (EfiType *base, char *def, char **ptr)
 				if	(mstrcmp(var->name, name) == 0)
 					break;
 
-			if	(var)
+			if	(!var)
 			{
-				entry->type = var->type;
+				dbg_note(ID, FMT_VAR, "ss",
+					entry->type->name, name);
+				break;
+			}
+
+			entry->type = var->type;
+
+			if	(var->member)
+			{
+				set_dim(entry);
+				set_vcmp(entry, var, vcmp, def, ptr);
+				return entry;
+			}
+			else
+			{
 				entry->offset += var->offset;
 				entry->dim = var->dim;
 
@@ -372,12 +450,6 @@ static CmpDefEntry *next_entry (EfiType *base, char *def, char **ptr)
 					entry->dim = entry->type->dim;
 					entry->type = entry->type->base;
 				}
-			}
-			else
-			{
-				dbg_note(ID, FMT_VAR, "ss",
-					entry->type->name, name);
-				break;
 			}
 		}
 		else
@@ -421,7 +493,7 @@ CmpDef *cmp_create (EfiType *type, const char *def, char **cptr)
 
 	while (*p != 0)
 	{
-		if ((*ptr = next_entry(type, p, &p)))
+		if ((*ptr = next_entry(type, NULL, p, &p)))
 			ptr = &(*ptr)->next;
 
 		if	(*p == ',')	p++;

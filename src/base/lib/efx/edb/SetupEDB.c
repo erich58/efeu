@@ -8,6 +8,7 @@
 #include <EFEU/EDBMeta.h>
 #include <EFEU/stdtype.h>
 #include <EFEU/CmpDef.h>
+#include <EFEU/EDBFilter.h>
 
 #define	EDB_DUMMY	1	/* Expermimentell */
 
@@ -57,25 +58,25 @@ static EfiMember edb_var[] = {
 #if	EDB_DUMMY
 static void f_dummy (EfiFunc *func, void *rval, void **arg)
 {
-	Val_ptr(rval) = edb_create(NULL, NULL);
+	Val_ptr(rval) = edb_alloc(NULL, NULL);
 }
 #endif
 
 static void f_create (EfiFunc *func, void *rval, void **arg)
 {
-	Val_ptr(rval) = edb_create(RefObj(arg[0]),
+	Val_ptr(rval) = edb_alloc(RefObj(arg[0]),
 		mstrcpy(Val_str(arg[1])));
 }
 
 static void f_tcreate (EfiFunc *func, void *rval, void **arg)
 {
-	Val_ptr(rval) = edb_create(LvalObj(NULL, Val_type(arg[0])),
+	Val_ptr(rval) = edb_alloc(LvalObj(NULL, Val_type(arg[0])),
 		mstrcpy(Val_str(arg[1])));
 }
 
 static void f_xcreate (EfiFunc *func, void *rval, void **arg)
 {
-	Val_ptr(rval) = edb_create(LvalObj(NULL, Val_type(arg[0])), NULL);
+	Val_ptr(rval) = edb_alloc(LvalObj(NULL, Val_type(arg[0])), NULL);
 }
 
 static void f_open (EfiFunc *func, void *rval, void **arg)
@@ -157,7 +158,7 @@ static void f_edbjoin (EfiFunc *func, void *rval, void **arg)
 
 static void f_read (EfiFunc *func, void *rval, void **arg)
 {
-	Val_bool(rval) = edb_read(Val_ptr(arg[0]));
+	Val_bool(rval) = edb_read(Val_ptr(arg[0])) != NULL;
 }
 
 static void f_unread (EfiFunc *func, void *rval, void **arg)
@@ -204,63 +205,20 @@ static void f_closeout (EfiFunc *func, void *rval, void **arg)
 
 static void f_load (EfiFunc *func, void *rval, void **arg)
 {
-	EfiVec *vec;
-	EfiObj *obj;
-	EDB *edb;
-	char *p;
-	size_t n;
-	
-	vec = Val_ptr(arg[0]);
+	EfiVec_load(Val_ptr(arg[0]), Val_str(arg[1]),
+		NULL, Val_str(arg[2]));
+}
 
-	if	(!vec)	return;
-
-	obj = LvalObj(NULL, vec->type);
-	edb = edb_filter(edb_fopen(NULL, Val_str(arg[1])), Val_str(arg[2]));
-	edb = edb_paste(edb_create(obj, NULL), edb);
-
-	for (n = 0; edb_read(edb); n++)
-	{
-		if	(n < vec->buf.used)
-		{
-			p = (char *) vec->buf.data + vec->buf.elsize * n;
-			AssignData(vec->type, p, obj->data);
-		}
-		else if	(vec->buf.blksize)
-		{
-			CopyData(vec->type, vb_next(&vec->buf), obj->data);
-		}
-		else	break;
-	}
-
-	rd_refer(edb);
+static void f_xload (EfiFunc *func, void *rval, void **arg)
+{
+	EfiVec_load(Val_ptr(arg[0]), Val_str(arg[1]),
+		Val_str(arg[2]), Val_str(arg[3]));
 }
 
 static void f_save (EfiFunc *func, void *rval, void **arg)
 {
-	EfiVec *vec;
-	EfiObj *obj;
-	EDB *edb;
-	size_t n;
-	char *p;
-	
-	vec = Val_ptr(arg[0]);
-
-	if	(!vec)	return;
-
-	obj = LvalObj(NULL, vec->type);
-	edb = edb_create(obj, mstrcpy(Val_str(arg[3])));
-	n = vec->buf.used;
-	p = vec->buf.data;
-	edb_fout(edb, Val_str(arg[1]), Val_str(arg[2]));
-
-	while (n-- > 0)
-	{
-		AssignData(obj->type, obj->data, p);
-		p += vec->buf.elsize;
-		edb_write(edb);
-	}
-
-	rd_deref(edb);
+	EfiVec_save(Val_ptr(arg[0]), Val_str(arg[1]),
+		Val_str(arg[2]), Val_str(arg[3]));
 }
 
 static EfiFuncDef edb_func[] = {
@@ -294,7 +252,10 @@ static EfiFuncDef edb_func[] = {
 	{ 0, &Type_void, "EDB::closein ()", f_closein },
 	{ 0, &Type_void, "EDB::closeout ()", f_closeout },
 
-	{ 0, &Type_void, "EfiVec::load(str name, str filter = NULL)", f_load },
+	{ 0, &Type_void, "EfiVec::load(str name, "
+		"str filter = NULL)", f_load },
+	{ 0, &Type_void, "EfiVec::xload(str name, "
+		"str mode, str filter = NULL)", f_xload },
 	{ 0, &Type_void, "EfiVec::save(str name, "
 		"str mode = NULL, str desc = NULL)", f_save },
 };

@@ -25,7 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 size_t ReadData (const EfiType *type, void *data, IO *io)
 {
-	CleanData(type, data);
+	CleanData(type, data, 0);
 
 	if	(type->read)
 	{
@@ -40,7 +40,7 @@ size_t ReadData (const EfiType *type, void *data, IO *io)
 
 size_t ReadVecData (const EfiType *type, size_t dim, void *data, IO *io)
 {
-	CleanVecData(type, dim, data);
+	CleanVecData(type, dim, data, 0);
 
 	if	(type->read)
 	{

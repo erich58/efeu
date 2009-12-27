@@ -45,7 +45,7 @@ static void dummy (MdCount *cnt, void *data, void *buf)
 */
 
 mdmat *md_ioctab (const char *title, IO *io,
-	MdCountTab *gtab, MdCount *counter)
+	MdCountPar *gtab, MdCount *counter)
 {
 	mdmat *tab;
 	mdaxis **ptr;
@@ -117,7 +117,7 @@ int md_ctabinit (mdmat *tab, MdCountList *list)
 */
 	if	(list->next)
 	{
-		EfiVar *vlist;
+		EfiStruct *vlist;
 		IO *io;
 
 		io = io_tmpbuf(0);
@@ -156,8 +156,7 @@ int md_ctabinit (mdmat *tab, MdCountList *list)
 	}
 
 	tab->x_priv = list;
-	tab->size = md_size(tab->axis, tab->type->size);
-	tab->data = memalloc(tab->size);
+	md_alloc(tab);
 
 	if	(need_init)
 	{
@@ -190,7 +189,7 @@ int md_ctabinit (mdmat *tab, MdCountList *list)
 */
 
 mdmat *md_ctab (const char *title, const char *def,
-	MdCountTab *gtab, MdCount *counter)
+	MdCountPar *gtab, MdCount *counter)
 {
 	IO *io;
 	mdmat *md;

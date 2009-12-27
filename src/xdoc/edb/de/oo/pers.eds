@@ -1,0 +1,61 @@
+\sec	Personendaten
+
+Zur Darstellung der Personendaten wird die Datenstruktur |PERS| in der
+Headerdatei |PERS.hdr| definiert. Für die im wesentlichen
+beschreibenden Daten werden keine besonderen Methoden benötigt. Bei
+Auswertungen wird in der Regel anstelle des Geburtsjahres das Alter
+zum Auswertungszeitpunkt benötigt.
+
+Seitens EFEU wird der
+Datentyp \index{|AGE99|} für Altersangaben im Bereich 0 bis 99 Jahren -- höhere
+Altersangaben werden auf 99 umgewandelt -- bereitgestellt. Für diesen Datentyp
+existiert eine Parameterdefinition zur Konstruktion von beliebigen
+Altersklassifikationen.
+
+Diese Altersklassifikationen können auf folgende Art genutzt werden:
+*	Bei Auswertungen durch Konvertieren des errechneten Alters
+	in einen |AGE99|-Datenwert.
+*	Als Methode (Funktion, die zu einem gegebenen
+	Auswertungszeitpunkt das Alter ermittelt) beim Datentyp |PERS|.
+*	Als Methode bei einem extra für das Geburtsjahr
+	eingerichteten Datentyp |BirthYear|.
+
+Der dritten Möglichkeit wird der Vorzug gegeben, da bei der
+Zusammenstellung eines neuen Datentyps aus Komponenten von |PERS|
+die Methode zur Altersbestimmung mit dem Geburtsjahr mit übertragen wird.
+
+Der Aufzähldatentyp für das Geschlecht wurde
+mit |Gender| benannt.
+
+Im folgenden ist die Headerdatei |PERS.hdr| aufgelistet:
+
+\include[verbatim]	PERS.hdr
+
+Zur Konvertierung der Personendaten aus der ursprünglichen
+Datenstruktur wird das Metadatenfile |ex2_pers.edb| verwendet:
+
+\include[verbatim]	ex2_pers.edb
+
+Die Aktivierung des Datentyps erfolgte mit der Anweisung
+---- verbatim
+extern PERS
+----
+im |@head|-Abschnitt des Metadatenteils. Alternativ dazu kann auch
+---- verbatim
+#include "PERS.hdr"
+----
+oder
+---- verbatim
+include("PERS.hdr")
+----
+verwendet werden.
+
+Die Datenumwandlung erfolgt durch eine Neuzusammenstellung der
+Variablen mit dem Filter |var|. Durch die Regel, dass eine unbenannte
+Struktur, die mit einer bennanten Struktur übereinstimmt, stets durch
+die benannte Struktur ersetzt wird, genügt eine kompatible
+Variablenzusammenstellung.
+
+Die Darstellung der Daten mit Ausgabemodus |plain|:
+
+\pipe[verbatim]  |edb -n0 ex2_pers.edb|

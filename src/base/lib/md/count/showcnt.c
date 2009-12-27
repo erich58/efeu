@@ -27,7 +27,7 @@ If not, write to the Free Software Foundation, Inc.,
 	":*:counter types" \
 	":de:Zählerdefinitionen"
 
-void md_showcnt(IO *io, MdCountTab *tab)
+void md_showcnt(IO *io, MdCountPar *tab)
 {
 	MdCount **cnt;
 	size_t n;
@@ -56,7 +56,7 @@ static void print_count(IO *io, InfoNode *info)
 	io_putc('\n', io);
 }
 
-void MdCountInfo (InfoNode *info, MdCountTab *tab)
+void MdCountInfo (InfoNode *info, MdCountPar *tab)
 {
 	InfoNode *root;
 	MdCount **cnt;

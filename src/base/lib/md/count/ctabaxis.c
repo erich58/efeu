@@ -100,7 +100,7 @@ mdaxis *md_classaxis (const char *name, ...)
 	return grp;
 }
 
-mdaxis *md_ctabaxis (IO *io, MdCountTab *gtab)
+mdaxis *md_ctabaxis (IO *io, MdCountPar *gtab)
 {
 	mdaxis *grp;
 	MdCntGrp *sdef, **x;

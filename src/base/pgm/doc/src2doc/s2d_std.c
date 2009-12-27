@@ -168,14 +168,14 @@ void s2d_std (const char *name, IO *ein, IO *aus)
 	StrBuf *buf = sb_create(0);
 	std_head(name, buf, ein, aus);
 	std_copy(name, buf, ein, aus, aus);
-	sb_destroy(buf);
+	rd_deref(buf);
 }
 
 void s2d_xstd (const char *name, IO *ein, IO *aus)
 {
 	StrBuf *buf = sb_create(0);
 	std_copy(name, buf, ein, aus, aus);
-	sb_destroy(buf);
+	rd_deref(buf);
 }
 
 void s2d_script (const char *name, IO *ein, IO *aus)
@@ -195,7 +195,7 @@ void s2d_com (const char *name, IO *ein, IO *aus)
 	StrBuf *buf = sb_create(0);
 	std_head(name, buf, ein, aus);
 	std_copy(name, buf, ein, aus, NULL);
-	sb_destroy(buf);
+	rd_deref(buf);
 }
 
 void s2d_doc (const char *name, IO *ein, IO *aus)

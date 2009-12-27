@@ -74,8 +74,7 @@ mdmat *TimeSeries2mdmat (TimeSeries *ts)
 
 /*	Datenwerte speichern
 */
-	md->size = md_size(md->axis, md->type->size);
-	md->data = memalloc(md->size);
+	md_alloc(md);
 	ptr = md->data;
 
 	for (i = 0; i < ts->dim; i++)

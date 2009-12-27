@@ -100,7 +100,7 @@ static void psubfmt (StrBuf *buf, IO *in, const char *par)
 	case 'E':
 	case 'g':
 	case 'G':
-		fmt_double(out, &key, par ? strtod(par, NULL) : 0.);
+		fmt_double(out, &key, par ? C_strtod(par, NULL) : 0.);
 		break;
 	default:
 		io_note(in, E_ILKEY, "c", key.mode);
@@ -194,7 +194,7 @@ int io_pcopy (IO *in, IO *out, int delim, int argc, char **argv)
 		}
 	}
 
-	sb_destroy(buf);
+	rd_deref(buf);
 	return n;
 }
 

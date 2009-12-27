@@ -39,8 +39,8 @@ static void vtab_subclean (void *data)
 	VarTabEntry *var = data;
 	UnrefObj(var->obj);
 
-	if	(var->clean)
-		var->clean(var->data);
+	if	(var->entry_clean)
+		var->entry_clean(var);
 }
 
 static void vtab_clean (void *data)

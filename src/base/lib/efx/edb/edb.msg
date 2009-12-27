@@ -38,3 +38,8 @@ use	$!: name $1 arready used.\n
 var	$!: invalid declaration $1.\n
 vec	$!: vector could only used on the whole.\n
 xchar	$0: extra character in header ignored.\n
+print	$!: type $1: undefinied print method $2.\n
+input	$!: type $1: undefined input method $2.\n
+
+nread	$0: $1 records read.\n
+nwrite	$0: $1 records written.\n

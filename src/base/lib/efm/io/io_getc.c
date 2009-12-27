@@ -36,7 +36,7 @@ int io_getc (IO *io)
 
 	if	(io->get)
 	{
-		register int c;
+		int c;
 
 		if	((c = (*io->get)(io->data)) != EOF)
 			return c;

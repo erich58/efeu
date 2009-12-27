@@ -42,7 +42,6 @@ If not, write to the Free Software Foundation, Inc.,
 	char last;		\
 	IO *out;		\
 	EfiVarTab *vartab;	\
-	VecBuf varbuf;		\
 	DocSym *symtab;	\
 	int (*put) (void *drv, int c); \
 	void (*sym) (void *drv, const char *symbol); \

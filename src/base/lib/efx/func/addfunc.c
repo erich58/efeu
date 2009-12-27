@@ -140,6 +140,11 @@ static EfiObj *get_vfunc (const EfiObj *obj, void *data)
 	return NewObj(&Type_ofunc, &ofunc);
 }
 
+static void func_clean (VarTabEntry *entry)
+{
+	rd_deref(entry->data);
+}
+
 static void AddTypeFunc (EfiFunc *func)
 {
 	EfiType *type;
@@ -175,7 +180,7 @@ static void AddTypeFunc (EfiFunc *func)
 		entry.desc = NULL;
 		entry.type = &Type_ofunc;
 		entry.obj = NULL;
-		entry.clean = rd_deref;
+		entry.entry_clean = func_clean;
 
 		if	(func->virfunc)
 		{
@@ -223,7 +228,12 @@ void AddFunc (EfiFunc *func)
 	{
 		EfiType *type = func->type;
 
-		if	(type->create)
+		if	(!type)
+		{
+			dbg_note(NULL, "[efmain:206]", NULL);
+			rd_deref(func);
+		}
+		else if	(type->create)
 		{
 			set_virfunc(type->create, func);
 		}

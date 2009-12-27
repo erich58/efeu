@@ -107,8 +107,7 @@ mdmat *md_mul (mdmat *md1, mdmat *md2, int flag)
 	md = new_mdmat();
 	md->axis = xpre;
 	md->type = (EfiType *) par.mul->type;
-	md->size = md_size(md->axis, md->type->size);
-	md->data = memalloc(md->size);
+	md_alloc(md);
 	memset(md->data, 0, (size_t) md->size);
 	par.buf = memalloc(md->type->size);
 	mainwalk(&par, md->axis, md1->axis, md2->axis, md->data, md1->data, md2->data);

@@ -29,8 +29,6 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/appl.h>
 #include <ctype.h>
 
-#define	FMT_HEAD	"\\dhead\t$1(1)\n\\mpage[1] $1\n"
-
 static NameKeyTab ExpandTab = NKT_DATA("Expand", 32, NULL);
 static void setup_builtin (void);
 
@@ -140,7 +138,8 @@ static void putvar (CmdPar *par, IO *io, const char *name)
 
 static void f_head (CmdPar *par, IO *io, const char *arg)
 {
-	io_psubarg(io, FMT_HEAD, "ns", par->name);
+	io_psubarg(io, CmdPar_getval(par, ".manpage.head", NULL),
+		"ns", par->name);
 }
 
 static void f_ident (CmdPar *par, IO *io, const char *arg)
@@ -154,7 +153,7 @@ static void f_ident (CmdPar *par, IO *io, const char *arg)
 static void f_name (CmdPar *par, IO *io, const char *arg)
 {
 	f_head(par, io, arg);
-	io_puts("\\Name\n", io);
+	putvar(par, io, ".manpage.name");
 	f_ident(par, io, arg);
 }
 

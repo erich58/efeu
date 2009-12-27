@@ -1,0 +1,76 @@
+\sec	Auswertungen
+
+Als Basis für die Auswertungen werden die Personendaten und
+Episodeninformationen zusammengeführt. Das Resultat ist eine
+Datenbank mit Datensätzen, die jeweils eine im Kontext der Auswertung
+eine vollständige Beschreibung des Gegenstandes von Interesse
+(<"object of interest">) enthalten.
+
+Die Zusammenführung erfolgt über das Metadatenfile |ex2.edb|:
+
+\include[verbatim] ex2.edb
+
+Bei größeren Datenbeständen empfiehlt es sich hier, eine physikalische
+Kopie der Daten in einem Staging-Bereich abzulegen. Bei diesen
+einfachen Beispieldateien wurde direkt mit den Metadatenfiles
+gearbeitet.
+
+Da jeder Satz für sich alle Daten für die Auswertungen enthält, könnte
+auf den Schlüssel Personennumer (z.B. zur Anonymisierung) vollständig
+verzichtet werden. Für eine Auswertung wird die Datei sequenziell
+abgearbeitet.
+
+Eine Zusammenführung einzelner Tabellen wie bei einem
+relationalen Datenmodell ist nicht erforderlich. Fragen der
+Optimiertung entfallen, da die Datenorganisation und die sequenzielle
+Abarbeitung an sich schon eine schnelle Verarbeitung
+erwirkt (keine Suchprozesse,
+keine Notwendigkeit für Indizes, gute Unterstützung seitens der
+Peripherie und des Betriebssystems durch prefetching und caching).
+
+\ssec	Durchschnittsbestand
+
+Der Vektortyp |Period[]| unterstützt mit der Methode
+|av_stock| für den Datenbankfilter |view| die Auswertung von
+Durchschnittsbeständen.
+
+Das folgende Filterskript |stock.def| zeigt eine typische Anwendung dieser
+Methode:
+
+\include[verbatim] stock.def
+
+Die Anwendung des Filters auf |ex2.edb| liefert die Ausgabe
+(Ausgabefunktion |data|):
+
+Der Aufruf
+---- eval
+{
+str cmd = "edb -s stock.def -p data ex2.edb"
+input("verbatim", cmd);
+input(NULL, "liefert die Ausgabe");
+input("verbatim", popen(cmd, "r"));
+}
+----
+
+Die so generierte Datei erfüllt die Vorraussetzungen für die
+Konvertierung als Datenwürfel.
+
+Mit
+---- eval
+{
+str cmd = "edb -s stock.def -p md=nohead,prec=4f ex2.edb"
+input("verbatim", cmd);
+input(NULL, "wird nachstehende Ausgabe generiert:");
+input("verbatim", popen(cmd, "r"));
+}
+----
+
+\ssec	Mittleres Einkommen
+
+Der Durchschnittsbestand wird von |av_stock| direkt unterstützt. Mit
+dieser Methode lassen sich aber auch allgemeine, bestandsgewichtete
+Variablen ableiten. Im folgenden wird der Filter für die Bestimmung
+des mittleren Einkommens gezeigt:
+
+\include[verbatim] av_income.def
+

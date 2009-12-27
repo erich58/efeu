@@ -60,34 +60,35 @@ static void fpar_enum (EfiFunc *func, void *rval, void **arg)
 		Val_str(arg[0]), Val_str(arg[1]));
 }
 
-static void f_test (EfiFunc *func, void *rval, void **arg)
+static void f_create (EfiFunc *func, void *rval, void **arg)
 {
-	TestDef *par = Val_ptr(arg[0]);
-
-	if	(par && par->test)
-	{
-		EfiObjList *list = Val_ptr(arg[1]);
-		Val_int(rval) = 0;
-
-		for (; list != 0; list = list->next)
-		{
-			if	(par->test(par->data, list->obj))
-			{
-				Val_int(rval) = 1;
-				break;
-			}
-		}
-	}
-	else	Val_int(rval) = 1;
+	Val_ptr(rval) = TestDef_create(Val_type(arg[0]),
+		func->dim > 1 ? Val_str(arg[1]) : NULL);
 }
 
+static void f_test (EfiFunc *func, void *rval, void **arg)
+{
+	TestDef *def = Val_ptr(arg[0]);
+	EfiObjList *list = Val_list(arg[1]);
+
+	for (Val_int(rval) = 0; list; list = list->next)
+	{
+		if	(TestDef_obj(def, list->obj))
+		{
+			Val_int(rval) = 1;
+			break;
+		}
+	}
+}
+	
 static EfiFuncDef fdef[] = {
+	{ 0, &Type_TestDef, "TestDef (Type_t type)", f_create },
+	{ 0, &Type_TestDef, "TestDef (Type_t type, str def)", f_create },
 	{ 0, &Type_TestDef, "TestNum (str arg)", par_num },
 	{ 0, &Type_TestDef, "TestDat (str arg)", par_dat },
 	{ 0, &Type_TestDef, "TestDat1900 (str arg)", par_dat1900 },
 	{ 0, &Type_TestDef, "TestEnum (str type, str arg)", fpar_enum },
-	{ FUNC_VIRTUAL, &Type_int, "operator() (TestDef par, List_t list)",
-		f_test },
+	{ FUNC_VIRTUAL, &Type_bool, "operator() (TestDef, List_t)", f_test },
 };
 
 void SetupTestDef (void)

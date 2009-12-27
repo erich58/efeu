@@ -1,7 +1,0 @@
-\mchap[1]	Commands
-
-\pipe	|edb --help=raw|
-\pipe	|edbcat --help=raw|
-\pipe	|edbjoin --help=raw|
-\pipe	|esh --help=raw|
-\pipe	|md2edb --help=raw|

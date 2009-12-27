@@ -69,7 +69,7 @@ typedef struct {
 } Random;
 
 Random *NewRandom (RandomType *type, unsigned int sval);
-Random *str2Random (const char *str);
+Random *str2Random (const char *str, char **ptr);
 Random *CopyRandom (Random *rd);
 
 void SeedRandom (Random *rd, unsigned int sval);

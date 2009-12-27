@@ -37,6 +37,8 @@ If not, write to the Free Software Foundation, Inc.,
 #define	M_ECOPY	"$!: PQendcopy() failed\n"
 #define	E_FETCH	"$!: could not fetch data type\n"
 
+#define	E2P_DEBUG	0
+
 static Stack *epg_stack = NULL;
 static PG *epg = NULL;
 
@@ -258,13 +260,32 @@ typedef struct {
 	int offset;
 	int (*pfunc)(IO *out, const EfiType *type, const void *data);
 	void (*conv)(EfiType *type, void *data, const char *def);
+	EfiObj *base;
+	EfiStruct *st;
 } CONVARG;
 
 static void conv_free (void *ptr)
 {
 	CONVARG *conv = ptr;
 	memfree(conv->name);
+	UnrefObj(conv->base);
 }
+
+#if	E2P_DEBUG
+static void put_conv (CONVARG *conv, IO *out)
+{
+	io_printf(out, "%2d %2d", conv->offset,
+		conv->base ? conv->base->type->size : conv->type->size);
+	io_printf(out, " %-12s", conv->type->name);
+	io_printf(out, " %-12s", conv->name);
+	io_printf(out, " %-12s", conv->pg_type);
+
+	if	(conv->base)
+		io_printf(out, " %s", conv->base->type->name);
+
+	io_putc('\n', out);
+}
+#endif
 
 typedef struct {
 	REFVAR;	/* Referenzvariablen */
@@ -275,6 +296,17 @@ typedef struct {
 	int endline;
 	int copy;
 } EDB2PG;
+
+#if	E2P_DEBUG
+static void put_pdef (EDB2PG *par, IO *out)
+{
+	size_t n;
+	CONVARG *arg;
+
+	for (n = par->conv.used, arg = par->conv.data; n-- > 0; arg++)
+		put_conv(arg, out);
+}
+#endif
 
 static void edb2pg_clean (void *data)
 {
@@ -328,70 +360,24 @@ static int edb2pg_cmd (EDB2PG *par)
 	return PG_command(par->pg, p);
 }
 
-static void add_pdef (EDB2PG *par, EfiType *type, const char *name, int offset)
+static void add_conv (EDB2PG *par, char *name, EfiType *type,
+	int offset, EfiStruct *st, EfiObj *base)
 {
 	CONVARG *p;
-	int n;
-	
-	if	(type->list)
-	{
-		EfiVar *x;
-
-		for (x = type->list; x; x = x->next)
-		{
-			size_t off = offset + x->offset;
-
-			if	(x->dim)
-			{
-				int pos, n;
-
-				if	(name)
-				{
-					sb_puts(name, &par->buf);
-					sb_putc('_', &par->buf);
-				}
-
-				sb_puts(x->name, &par->buf);
-				pos = par->buf.pos;
-
-				for (n = 1; n <= x->dim; n++)
-				{
-					par->buf.pos = pos;
-					io_printf(par->io, "_%d", n);
-					sb_putc(0, &par->buf);
-					add_pdef(par, x->type, 
-						(char *) par->buf.data, off);
-					off += x->type->size;
-				}
-
-				sb_clean(&par->buf);
-			}
-			else if	(name)
-			{
-				sb_puts(name, &par->buf);
-				sb_putc('_', &par->buf);
-				sb_puts(x->name, &par->buf);
-				sb_putc(0, &par->buf);
-				add_pdef(par, x->type, 
-					(char *) par->buf.data, off);
-				sb_clean(&par->buf);
-			}
-			else	add_pdef(par, x->type, x->name, off);
-		}
-
-		return;
-	}
+	size_t n;
 
 	p = vb_next(&par->conv);
-	p->name = mstrcpy(name ? name : "this");
+	p->name = name ? name : "this";
 	p->type = type;
 	p->offset = offset;
 	p->pfunc = PrintData;
 	p->conv = conv_any;
+	p->base = base;
+	p->st = st;
 
 	for (n = 0; n < tabsize(conv_tab); n++)
 	{
-		if	(conv_tab[n].test(type, conv_tab[n].type))
+		if	(conv_tab[n].test(p->type, conv_tab[n].type))
 		{
 			p->pg_type = conv_tab[n].pg_type;
 			p->pfunc = conv_tab[n].pfunc;
@@ -401,17 +387,76 @@ static void add_pdef (EDB2PG *par, EfiType *type, const char *name, int offset)
 	}
 }
 
+static void add_pdef (EDB2PG *par, EfiType *type, char *name, int offset)
+{
+	if	(type->list)
+	{
+		EfiStruct *x;
+		EfiObj *base;
+
+		base = LvalObj(&Lval_ptr, type, NULL);
+
+		for (x = type->list; x; x = x->next)
+		{
+			size_t off;
+			char *s;
+
+			off = offset + x->offset;
+			s = mstrpaste("_", name, x->name);
+
+			if	(x->member)
+			{
+				add_conv(par, s, x->type, offset,
+					x, RefObj(base));
+			}
+			else if	(x->dim)
+			{
+				int n;
+
+				for (n = 1; n <= x->dim; n++)
+				{
+					char *vn = msprintf("%s_%d", s, n);
+					add_pdef(par, x->type, vn, off);
+					off += x->type->size;
+				}
+
+				memfree(s);
+			}
+			else	add_pdef(par, x->type, s, off);
+		}
+
+		UnrefObj(base);
+		memfree(name);
+	}
+	else	add_conv(par, name, type, offset, NULL, NULL);
+}
+
 static size_t write_pg (EfiType *type, void *data, void *p_par)
 {
 	EDB2PG *par = p_par;
 	char *delim = NULL;
 	CONVARG *put;
+	EfiObj *obj;
 	size_t n;
 	
 	for (n = par->conv.used, put = par->conv.data; n-- > 0; put++)
 	{
 		sb_puts(delim, &par->buf);
-		put->pfunc(par->io, put->type, (char *) data + put->offset);
+
+		if	(put->base)
+		{
+			put->base->data = (char *) data + put->offset;
+			obj = put->st->member(put->st, put->base);
+			put->pfunc(par->io, put->type,
+				obj ? obj->data : put->type->defval);
+			UnrefObj(obj);
+		}
+		else
+		{
+			put->pfunc(par->io, put->type,
+				(char *) data + put->offset);
+		}
+
 		delim = "\t";
 	}
 
@@ -441,6 +486,10 @@ static void init_pg (EDB *edb, EDBPrintMode *mode, IO *io)
 			exit(EXIT_FAILURE);
 
 		add_pdef(par, type, NULL, 0);
+
+#if	E2P_DEBUG
+		put_pdef(par, ioerr);
+#endif
 
 		if	(arg->drop)
 		{
@@ -505,7 +554,7 @@ static void pset_pg (EDBPrintMode *mode, const EDBPrintDef *def,
 	else	dbg_error(NULL, E_NAME, NULL);
 }
 
-static EDBPrintDef pdef_pg = { "pg", pset_pg, NULL,
+static EDBPrintDef pdef_pg = { "pg", "[flag]=db:name", pset_pg, NULL,
 	":*:write out as PostrgeSQL table"
 	":de:Ausgabe in eine PostgreSQL-Tabelle"
 };
@@ -515,6 +564,7 @@ static int read_pg (EfiType *type, void *data, void *p_par)
 {
 	EDB2PG *par = p_par;
 	CONVARG *get;
+	EfiObj *obj;
 	size_t n;
 	char *p;
 	int c;
@@ -534,7 +584,7 @@ static int read_pg (EfiType *type, void *data, void *p_par)
 
 	if	(c == EOF)	return 0;
 
-	p = par->buf.data;
+	p = (char *) par->buf.data;
 
 	if	(p[0] == '\\' && p[1] == '.')
 		return 0;
@@ -556,12 +606,29 @@ static int read_pg (EfiType *type, void *data, void *p_par)
 			}
 		}
 
-		get[n].conv(get[n].type, (char *) data + get[n].offset, arg);
+		if	(get[n].base)
+		{
+			get[n].base->data = (char *) data + get[n].offset;
+			obj = get[n].st->member(get[n].st, get[n].base);
+
+			if	(obj)
+			{
+				get[n].conv(get[n].type, obj->data, arg);
+				SyncLval(obj);
+				UnrefObj(obj);
+			}
+		}
+		else
+		{
+			get[n].conv(get[n].type,
+				(char *) data + get[n].offset, arg);
+		}
+
 		n++;
 	}
 
 	for (; n < par->conv.used; n++)
-		CleanData(get[n].type, (char *) data + get[n].offset);
+		CleanData(get[n].type, (char *) data + get[n].offset, 0);
 
 	return 1;
 }
@@ -587,6 +654,9 @@ static void meta_copy (EDBMetaDef *def, EDBMeta *meta, const char *arg)
 	par->copy = 1;
 
 	add_pdef(par, meta->cur->obj->type, NULL, 0);
+#if	E2P_DEBUG
+	put_pdef(par, ioerr);
+#endif
 	edb_input(meta->cur, read_pg, par);
 }
 
@@ -605,7 +675,7 @@ static void set_data (EDB2PG *par, EfiType *type, void *data)
 			PQgetvalue(res, 0, i));
 
 	for (; i < par->conv.used; i++)
-		CleanData(get[i].type, (char *) data + get[i].offset);
+		CleanData(get[i].type, (char *) data + get[i].offset, 0);
 }
 
 static int read_query (EfiType *type, void *data, void *p_par)
@@ -646,7 +716,7 @@ static char *parse_query (IO *io, StrBuf *buf)
 	while (buf->pos && buf->data[buf->pos - 1] == ' ')
 		buf->data[--buf->pos] = 0;
 
-	return buf->data;
+	return (char *) buf->data;
 }
 
 static void meta_query (EDBMetaDef *def, EDBMeta *meta, const char *arg)
@@ -674,7 +744,7 @@ static void meta_query (EDBMetaDef *def, EDBMeta *meta, const char *arg)
 	{
 		PGresult *res;
 		int i, nfields;
-		EfiVar *var, **ptr;
+		EfiStruct *var, **ptr;
 		CONVARG *conv;
 		EfiType *type;
 		IO *log;
@@ -731,7 +801,7 @@ static void meta_query (EDBMetaDef *def, EDBMeta *meta, const char *arg)
 
 			io_printf(log, "%s: %s: %s -> %s\n", def->name,
 				conv->name, conv->pg_type, conv->type->name);
-			*ptr = NewVar(conv->type, conv->name, 0);
+			*ptr = NewEfiStruct(conv->type, conv->name, 0);
 			ptr = &(*ptr)->next;
 		}
 
@@ -741,7 +811,8 @@ static void meta_query (EDBMetaDef *def, EDBMeta *meta, const char *arg)
 		for (var = type->list; var; var = var->next, conv++)
 			conv->offset = var->offset;
 
-		meta->cur = edb_create(LvalObj(NULL, type), meta->desc);
+		meta->cur = edb_create(type);
+		meta->cur->desc = meta->desc;
 		meta->desc = NULL;
 	}
 	else	add_pdef(par, meta->cur->obj->type, NULL, 0);

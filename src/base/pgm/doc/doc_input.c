@@ -26,7 +26,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <ctype.h>
 #include <sys/stat.h>
 
-#define	MAINDOC	"main.doc"
+#define	MAINDOC	"main.eds"
 
 
 static int testkey (const char *key, const char **ptr)
@@ -178,14 +178,10 @@ void Doc_input (Doc *doc, const char *opt, IO *in)
 		deltemp(tmp);
 }
 
-
 IO *Doc_open (const char *path, const char *name, int flag)
 {
 	IO *in;
 	
-	if	(mstrcmp(name, ".") == 0)
-		name = MAINDOC;
-
 	DocPath = mstrcpy(path);
 	DocName = fsearch(path, NULL, name, NULL);
 
@@ -208,7 +204,15 @@ IO *Doc_open (const char *path, const char *name, int flag)
 		{
 			memfree(DocPath);
 			DocPath = mstrpaste(":", DocName, path);
-			p = mstrpaste("/", DocName, MAINDOC);
+
+			p = fsearch(DocName, NULL, "main", "eds");
+
+			if	(!p)
+				p = fsearch(DocName, NULL, "main", "doc");
+
+			if	(!p)
+				p = mstrpaste("/", DocName, MAINDOC);
+
 			memfree(DocName);
 			DocName = p;
 		}

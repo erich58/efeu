@@ -124,7 +124,7 @@ static void label_def (MdEfiClass *cl, IO *io)
 		label->desc = sb_strcpy(sb);
 	}
 
-	sb_destroy(sb);
+	rd_deref(sb);
 	cl->dim = tab.used;
 	cl->label = tab.data;
 }
@@ -172,13 +172,13 @@ void MdCntDef_expr (EfiFunc *func, void *rval, void **arg)
 	*ptr = cl;
 }
 
-static void add (MdCountTab *tab, MdEfiClass **ptr, size_t n)
+static void add (MdCountPar *tab, MdEfiClass **ptr, size_t n)
 {
 	for (; n-- > 0; ptr++)
 		MdClass_add(tab, (MdClass *) *ptr, 1);
 }
 
-static void xadd (MdCountTab *tab, MdEfiClass **ptr, size_t n,
+static void xadd (MdCountPar *tab, MdEfiClass **ptr, size_t n,
 	const char *ext, EfiObj *obj)
 {
 	for (; n-- > 0; ptr++)
@@ -198,7 +198,7 @@ static void xadd (MdCountTab *tab, MdEfiClass **ptr, size_t n,
 void MdCntDef_cadd (EfiFunc *func, void *rval, void **arg)
 {
 	MdCntDef *cdef;
-	MdCountTab *tab;
+	MdCountPar *tab;
 	
 	cdef = Val_ptr(arg[0]);
 	tab = Val_ptr(arg[1]);

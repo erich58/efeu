@@ -20,6 +20,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/EDB.h>
+#include <EFEU/EDBFilter.h>
 
 #define	FMT_NOADD	"$!: don't know how to add data of type \"$1\".\n"
 #define	FMT_NOCMP	"$!: don't know how to compare data of type \"$1\".\n"
@@ -142,7 +143,7 @@ static void *sum_alloc (EDB *edb, const char *vlist)
 	SUM *sum;
 	TLIST **tp;
 	SLIST **sp;
-	EfiVar *var;
+	EfiStruct *var;
 	char **list;
 	size_t dim;
 	int flag;
@@ -209,9 +210,8 @@ static void sum_add (SUM *spar, const char *a, const char *b)
 static int sum_read (EfiType *type, void *data, void *par)
 {
 	SUM *sum = par;
-	int rval;
 
-	if	(!(rval = edb_read(sum->base)))
+	if	(!edb_read(sum->base))
 		return 0;
 
 	CopyData(type, data, sum->base->obj->data);
@@ -225,20 +225,21 @@ static int sum_read (EfiType *type, void *data, void *par)
 	}
 
 	edb_unread(sum->base);
-	return rval;
+	return 1;
 }
 
 static EDB *fdef_sum (EDBFilter *filter, EDB *base,
 	const char *opt, const char *arg)
 {
-	EDB *edb = edb_create(LvalObj(NULL, base->obj->type), NULL);
+	EDB *edb = edb_create(base->obj->type);
+	edb->desc = mstrcpy(base->desc);
 	edb->read = sum_read;
 	edb->ipar = sum_alloc(base, arg);
 	return edb;
 }
 
-EDBFilter EDBFilter_sum = {
+EDBFilter EDBFilter_sum = EDB_FILTER(NULL,
 	"sum", "=list", fdef_sum, NULL,
 	":*:summing records"
 	":de:Aufsummieren von Datensätzen"
-};
+);

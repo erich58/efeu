@@ -72,7 +72,7 @@ static EfiObj *eval_case (const EfiType *type, const void *data)
 	return NULL;
 }
 
-static void clean_case (const EfiType *st, void *data)
+static void clean_case (const EfiType *st, void *data, int mode)
 {
 	del_case(Val_case(data));
 	Val_case(data) = NULL;

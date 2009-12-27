@@ -45,10 +45,11 @@ Folgende Angaben sind möglich:
 	Die Vorgabe ist |b|, da dieser Parameter zum Setzen eines
 	Filters auf die zweite Datenbank bei Implementation der Verknüpfung
 	über den Filter |join| benötigt wird.
+	Die gleichzeitige Verwendung von |a| und |b| ist zulässig,
+	aber nur sinnvoll, wenn eine
+	Filterdefintion auf beide Datenbanken angewendet werden kann.
 	Bei Verwendung des Kommandos |$!| können Filter
 	mit der Option |-a| bzw. |-b| spezifiziert werden.
-	Mehrfachangaben sind zulässig, selten kann aber eine
-	Filterdefintion auf beide Datenbanken angewendet werden.
 \item	|mode=|<flags>
 	Das Argument <flags> bestimmt, für welche Situationen eine
 	Verarbeitung erfolgen soll:

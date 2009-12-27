@@ -122,7 +122,7 @@ static int pg_ctrl (void *ptr, int req, va_list list)
 			pg_flush(par);
 			sb_puts("\\.", par->wbuf);
 			pg_flush(par);
-			sb_destroy(par->wbuf);
+			rd_deref(par->wbuf);
 		}
 
 		if	(par->rbuf)

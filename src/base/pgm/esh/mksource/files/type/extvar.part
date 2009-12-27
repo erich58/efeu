@@ -1,0 +1,64 @@
+/*
+*/
+
+static void TypeDef::extvar (IO in, str type, str def)
+{
+	str key = xstrcut(type, ",");
+
+	switch (key)
+	{
+	case "config":
+		for (x in split(def, "%s"))
+		{
+			str arg = x;
+			str name = xstrcut(arg, "=");
+
+			switch (name)
+			{
+			case "nosetup":
+			case "ctype":
+				need_setup = false;
+				break;
+			case "local":
+				glob_decl = false;
+				break;
+			case "compat":
+				compat = true;
+				break;
+			default:
+				fprintf(ioerr, "%s: %#s\n", name, arg);
+				break;
+			}
+		}
+
+		break;
+	case "macro":
+		str name = xstrcut(def, "%s");
+		bf_close();
+		s_var += sprintf("\t%s;\t/* %s */\n", name, def);
+		break;
+	case "align":
+		bf_close();
+		bf_size = 8 * int(def);
+		break;
+	case "version":
+		version(xstrcut(def, "%s"));
+		break;
+	case "enum":
+		enumdef(in, int(def));
+		break;
+	case "xenum":
+		xenumdef(in, int(def));
+		break;
+	case "base":
+		set_base = true;
+		break;
+	case "setup":
+		need_setup = xstrcut(def, "%s");
+		break;
+	default:
+		message("Unbekanntes Kennwort $1\n", key);
+		break;
+	}
+}
+

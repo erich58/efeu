@@ -28,7 +28,7 @@ A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
 
 static char *cl_ident (const void *ptr)
 {
-	const MdCountTab *tab = ptr;
+	const MdCountPar *tab = ptr;
 	return msprintf("%s[%d]", tab->reftype->label, tab->vtab.used);
 }
 
@@ -75,7 +75,7 @@ MdCountList *MdCountList_add (MdCountList *list, MdCount *cnt)
 	return MdCountList_create(cnt);
 }
 
-MdCountList *MdCountList_get (MdCountTab *tab, const char *def)
+MdCountList *MdCountList_get (MdCountPar *tab, const char *def)
 {
 	MdCount *cnt;
 	MdCountList *list;

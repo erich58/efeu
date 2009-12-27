@@ -189,6 +189,11 @@ static void fprint_char(EfiFunc *func, void *rval, void **arg)
 	RV = io_printf(Val_io(arg[0]), "%c", Val_char(arg[1]));
 }
 
+static void fprint_wchar(EfiFunc *func, void *rval, void **arg)
+{
+	RV = io_printf(Val_io(arg[0]), "%lc", Val_wchar(arg[1]));
+}
+
 static void fprint_str(EfiFunc *func, void *rval, void **arg)
 {
 	RV = io_printf(Val_io(arg[0]), v_fmt_str,
@@ -456,6 +461,7 @@ static EfiFuncDef fdef_print[] = {
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, varsize)", fprint_uint64 },
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, double)", fprint_double },
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, char)", fprint_char },
+	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, wchar_t)", fprint_wchar },
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, str)", fprint_str },
 
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, _Name_)", fprint_name },

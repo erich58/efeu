@@ -29,11 +29,12 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/vecbuf.h>
 #include <EFEU/label.h>
 #include <EFEU/Info.h>
+#include <EFEU/TimeRange.h>
 
 /*	Zählerdefinition
 */
 
-typedef struct MdCountStruct MdCount;
+typedef struct MdCount MdCount;
 
 #define	MDCOUNT_VAR \
 	char *name; \
@@ -43,36 +44,56 @@ typedef struct MdCountStruct MdCount;
 	void (*init) (MdCount *cnt, void *data, size_t *idx, size_t dim); \
 	void (*add) (MdCount *cnt, void *data, void *buf)
 
-struct MdCountStruct {
+struct MdCount {
 	MDCOUNT_VAR;
 };
 
-typedef struct MdCountListStruct {
+typedef struct MdCountList MdCountList;
+
+struct MdCountList {
 	REFVAR;
 	MdCount *cnt;
 	EfiType *type;
 	size_t offset;
 	int flag;
 	void *data;
-	struct MdCountListStruct *next;
-} MdCountList;
+	MdCountList *next;
+};
 
 MdCountList *MdCountList_create (MdCount *cnt);
 MdCountList *MdCountList_add (MdCountList *list, MdCount *cnt);
 
-typedef struct {
+typedef struct MdCountPar MdCountPar;
+
+struct MdCountPar {
 	REFVAR;
 	VecBuf vtab;	/* Variablentabelle */
 	VecBuf ctab;	/* Klassifikationstabelle */
-} MdCountTab;
+	TimeRange *time_range;	/* Zeitbereich */
+	int time_dim;		/* Zahl der Zeitbereiche */
+	int time_idx;		/* Aktueller Zeitindex */
+	mdaxis *axis;		/* Vordefinierte Achsen */
+	mdmat *md;		/* Datenmatrix */
+	EfiObj *obj;		/* Zählobjekt */
+	EDB *edb;		/* Ausgabedatenbank */
+	void *cpar;		/* Zählparameter */
+	int (*count) (MdCountPar *par, TimeRange *range);
+	uint64_t recnum;
+	uint64_t event;
+	double weight;		/* Hochrechnungsgewicht */
+};
 	
-MdCountTab *MdCountTab_create (void);
+MdCountPar *MdCountPar_create (void);
+void MdCountPar_range (MdCountPar *par, const char *range);
+void MdCountPar_init (MdCountPar *par, EfiObj *obj, const char *method);
+int MdCountPar_count (MdCountPar *par);
+void MdCountPar_event (MdCountPar *par, unsigned dat, double weight);
 
-
-MdCount *MdCount_get (MdCountTab *tab, const char *name);
-MdCountList *MdCountList_get (MdCountTab *tab, const char *name);
-void MdCount_add (MdCountTab *tab, MdCount *entry, size_t dim);
-void MdCountInfo (InfoNode *info, MdCountTab *tab);
+MdCount *MdCount_get (MdCountPar *tab, const char *name);
+MdCountList *MdCountList_get (MdCountPar *tab, const char *name);
+void AddMdCount (MdCountPar *tab, void *entry);
+void MdCount_add (MdCountPar *tab, MdCount *entry, size_t dim);
+void MdCountInfo (InfoNode *info, MdCountPar *tab);
 
 extern EfiType Type_cotab;
 extern EfiType Type_cntobj;
@@ -109,11 +130,12 @@ extern int MdClassPrintLimit;
 
 void MdClassList (IO *io, MdClass *cdef);
 void MdClassPrint (IO *io, MdClass *cdef);
-void MdShowClass (IO *io, MdCountTab *tab, const char *plist);
-void MdClassInfo (InfoNode *info, MdCountTab *tab);
+void MdShowClass (IO *io, MdCountPar *tab, const char *plist);
+void MdClassInfo (InfoNode *info, MdCountPar *tab);
 
-void MdClass_add (MdCountTab *class, MdClass *tab, size_t dim);
-MdClass *MdClass_get (MdCountTab *tab, const char *name);
+void AddMdClass (MdCountPar *tab, void *entry);
+void MdClass_add (MdCountPar *class, MdClass *tab, size_t dim);
+MdClass *MdClass_get (MdCountPar *tab, const char *name);
 
 MdClass *md_subclass (MdClass *base, const char *def);
 
@@ -127,8 +149,8 @@ typedef struct {
 
 MdPtrCount *MdPtrCount_copy (MdPtrCount *tab, size_t dim,
 	const char *ext, void *ptr);
-void MdPtrCount_add (MdCountTab *tab, MdPtrCount *entry, size_t dim);
-void MdPtrCount_xadd (MdCountTab *tab, MdPtrCount *entry, size_t dim,
+void MdPtrCount_add (MdCountPar *tab, MdPtrCount *entry, size_t dim);
+void MdPtrCount_xadd (MdCountPar *tab, MdPtrCount *entry, size_t dim,
 	const char *ext, void *ptr);
 
 typedef struct {
@@ -138,8 +160,8 @@ typedef struct {
 
 MdPtrClass *MdPtrClass_copy (MdPtrClass *tab, size_t dim,
 	const char *ext, void *ptr);
-void MdPtrClass_add (MdCountTab *tab, MdPtrClass *entry, size_t dim);
-void MdPtrClass_xadd (MdCountTab *tab, MdPtrClass *entry, size_t dim,
+void MdPtrClass_add (MdCountPar *tab, MdPtrClass *entry, size_t dim);
+void MdPtrClass_xadd (MdCountPar *tab, MdPtrClass *entry, size_t dim,
 	const char *ext, void *ptr);
 
 /*	Zählgruppe
@@ -157,15 +179,15 @@ typedef struct MdCntGrpStruct {
 */
 
 mdaxis *md_classaxis (const char *name, ...);
-mdaxis *md_ctabaxis (IO *io, MdCountTab *stab);
+mdaxis *md_ctabaxis (IO *io, MdCountPar *stab);
 mdmat *md_ctab (const char *titel, const char *def,
-	MdCountTab *gtab, MdCount *counter);
+	MdCountPar *gtab, MdCount *counter);
 mdmat *md_ioctab (const char *titel, IO *io,
-	MdCountTab *gtab, MdCount *counter);
+	MdCountPar *gtab, MdCount *counter);
 
 int md_ctabinit (mdmat *md, MdCountList *list);
 void md_count (mdmat *tab, const void *data);
-void md_showcnt (IO *io, MdCountTab *tab);
+void md_showcnt (IO *io, MdCountPar *tab);
 void md_count_add (MdCountList *clist, mdaxis *x, char *ptr);
 
 extern void (*md_count_hook) (MdCountList *clist, mdmat *md);
@@ -193,5 +215,14 @@ typedef struct {
 MdCntDef* MdCntDef_create (EfiType *type, const char *pfx);
 void MdCntDef_expr (EfiFunc *funv, void *rval, void **arg);
 void MdCntDef_cadd (EfiFunc *func, void *rval, void **arg);
+
+/*
+Datenobjekt für Zählungen vorbereiten
+*/
+
+void MdCntObj (MdCountPar *tab, EfiObj *obj, char *name, char *desc);
+void MdCntObjClass (MdCountPar *tab, EfiObj *obj, char *name, char *desc);
+
+extern double MdCountWeight;
 
 #endif	/* EFEU/mdcount.h */

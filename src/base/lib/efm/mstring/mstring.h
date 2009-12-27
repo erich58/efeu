@@ -26,6 +26,7 @@ If not, write to the Free Software Foundation, Inc.,
 #define	EFEU_mstring_h	1
 
 #include <EFEU/memalloc.h>
+#include <EFEU/stdint.h>
 
 size_t mstrlen (const char *a);
 int mstrcmp (const char *a, const char *b);
@@ -48,5 +49,8 @@ char *mlangcpy (const char *fmt, const char *lang);
 
 char *mdirname (const char *path, int flag);
 char *mbasename (const char *path, char **suffix);
+
+int64_t mstr2int64 (const char *str, char **ptr, int base);
+uint64_t mstr2uint64 (const char *str, char **ptr, int base);
 
 #endif	/* EFEU/mstring.h */

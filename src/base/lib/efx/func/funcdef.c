@@ -23,7 +23,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 
 
-void SetFunc(unsigned flags, EfiType *type, const char *fmt, void (*eval) (EfiFunc *func, void *rval, void **arg))
+void SetFunc(unsigned flags, EfiType *type, const char *fmt,
+	void (*eval) (EfiFunc *func, void *rval, void **arg))
 {
 	EfiFunc *func = Prototype(fmt, type, NULL, flags);
 
@@ -48,6 +49,7 @@ void DelFuncArg(EfiFuncArg *arg, size_t dim)
 		while (dim-- != 0)
 		{
 			memfree(arg[dim].name);
+			memfree(arg[dim].desc);
 			UnrefObj(arg[dim].defval);
 		}
 

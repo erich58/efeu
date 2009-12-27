@@ -4,19 +4,7 @@
 */
 
 #include <EFEU/EDB.h>
-
-static EDB *fdef_show (EDBFilter *filter, EDB *base,
-	const char *opt, const char *arg)
-{
-	ListEDBFilter(ioerr, 0);
-	return NULL;
-}
-
-static EDBFilter filter_show = {
-	"?", NULL, fdef_show, NULL,
-	":*:list available filters"
-	":de:Auflisten der verfügbaren Datenbankfilter"
-};
+#include <EFEU/EDBFilter.h>
 
 void SetupEDBFilter (void)
 {
@@ -25,17 +13,20 @@ void SetupEDBFilter (void)
 	if	(init_done)	return;
 
 	init_done = 1;
-	AddEDBFilter(&filter_show);
-	AddEDBFilter(&EDBFilter_sort);
-	AddEDBFilter(&EDBFilter_uniq);
-	AddEDBFilter(&EDBFilter_sum);
-	AddEDBFilter(&EDBFilter_cut);
-	AddEDBFilter(&EDBFilter_var);
-	AddEDBFilter(&EDBFilter_trans);
-	AddEDBFilter(&EDBFilter_dup);
-	AddEDBFilter(&EDBFilter_tee);
-	AddEDBFilter(&EDBFilter_clip);
-	AddEDBFilter(&EDBFilter_script);
-	AddEDBFilter(&EDBFilter_join);
-	AddEDBFilter(&EDBFilter_test);
+	AddEfiPar(NULL, &EDBFilter_sort);
+	AddEfiPar(NULL, &EDBFilter_uniq);
+	AddEfiPar(NULL, &EDBFilter_sum);
+	AddEfiPar(NULL, &EDBFilter_cut);
+	AddEfiPar(NULL, &EDBFilter_var);
+	AddEfiPar(NULL, &EDBFilter_conv);
+	AddEfiPar(NULL, &EDBFilter_trans);
+	AddEfiPar(NULL, &EDBFilter_dup);
+	AddEfiPar(NULL, &EDBFilter_tee);
+	AddEfiPar(NULL, &EDBFilter_clip);
+	AddEfiPar(NULL, &EDBFilter_script);
+	AddEfiPar(NULL, &EDBFilter_join);
+	AddEfiPar(NULL, &EDBFilter_test);
+	AddEfiPar(NULL, &EDBFilter_expr);
+	AddEfiPar(NULL, &EDBFilter_nest);
+	AddEfiPar(NULL, &EDBFilter_sample);
 }

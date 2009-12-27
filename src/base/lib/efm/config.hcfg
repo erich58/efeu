@@ -55,4 +55,6 @@ printf("#undef	REVBYTEORDER\n");
 printf("#define	REVBYTEORDER %d\n", ((char *) &x)[0]);
 @end
 
+extern double C_strtod (const char *def, char **ptr);
+
 #endif	/* EFEU/config.h */

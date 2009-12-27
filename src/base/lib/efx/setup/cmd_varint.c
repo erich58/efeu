@@ -47,7 +47,7 @@ static int print_data (const EfiType *type, const void *data, IO *io)
 
 EfiType Type_varint = COMPLEX_TYPE(S, "int64_t", sizeof(T), 0,
 	read_data, write_data, print_data,
-	NULL, NULL, NULL, NULL, NULL);
+	NULL, NULL, NULL, NULL, 0);
 
 #include "stdint.src"
 

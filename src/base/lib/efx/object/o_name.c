@@ -27,7 +27,7 @@ If not, write to the Free Software Foundation, Inc.,
 /*	Kopier und Auswertungsfunktionen
 */
 
-static void n_clean (const EfiType *type, void *data);
+static void n_clean (const EfiType *type, void *data, int mode);
 static void n_copy (const EfiType *type, void *tg, const void *src);
 static EfiObj *n_meval (const EfiType *type, const void *ptr);
 static EfiObj *n_seval (const EfiType *type, const void *ptr);
@@ -37,7 +37,7 @@ EfiType Type_sname = EVAL_TYPE("_ScopeName_", EfiName, n_seval, n_clean, n_copy)
 
 EfiName Buf_name = { NULL, NULL };
 
-static void n_clean(const EfiType *type, void *data)
+static void n_clean(const EfiType *type, void *data, int mode)
 {
 	EfiName *tg = data;
 	memfree(tg->name);
@@ -71,24 +71,28 @@ static EfiObj *n_seval(const EfiType *type, const void *ptr)
 	return GetScope(RefObj(name->obj), name->name);
 }
 
-EfiObj *Var2Obj (EfiVar *var, const EfiObj *obj)
+EfiObj *Var2Obj (EfiStruct *var, const EfiObj *obj)
 {
-	if	(var == NULL)
+	void *ptr;
+
+	if	(var == NULL || obj == NULL)
 		return NULL;
 
 	if	(var->member)
 		return var->member(var, obj);
 
-	if	(!var->data)
-		return ConstObj(var->type, NULL);
+	ptr = (char *) obj->data + var->offset;
 
 	if	(var->dim)
-		return EfiVecObj(var->type, var->data, var->dim);
+		return EfiVecObj(var->type, ptr, var->dim);
 
 	if	(var->type->dim)
-		return EfiVecObj(var->type->base, var->data, var->type->dim);
+		return EfiVecObj(var->type->base, ptr, var->type->dim);
 
-	return LvalObj(&Lval_ptr, var->type, var->data);
+	if	(obj->lval)
+		return LvalObj(&Lval_ptr, var->type, ptr);
+
+	return ConstObj(var->type, ptr);
 }
 
 

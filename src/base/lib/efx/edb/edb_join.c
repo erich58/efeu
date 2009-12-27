@@ -24,6 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/cmdeval.h>
 #include <EFEU/parsearg.h>
 #include <EFEU/printobj.h>
+#include <EFEU/EDBFilter.h>
 #include <ctype.h>
 
 #define	ERR_VAR	"[edb:var]$!: invalid declaration $1.\n"
@@ -80,9 +81,9 @@ static void dbdef_clean (DBDEF *def)
 	rd_deref(def->vec);
 }
 
-static void dbdef_kvar (DBDEF *def, EfiVar *var, size_t offset)
+static void dbdef_kvar (DBDEF *def, EfiStruct *var, size_t offset)
 {
-	def->set_key = NewEDBAssign(def->set_key, var, offset);
+	def->set_key = NewEDBAssign(def->set_key, NULL, NULL, var, offset);
 }
 
 static int dbdef_read (DBDEF *def)
@@ -103,7 +104,7 @@ static int dbdef_read (DBDEF *def)
 
 static void dbdef_key (DBDEF *def, EfiObj *key)
 {
-	CleanData(key->type, key->data);
+	CleanData(key->type, key->data, 0);
 	CopyData(key->type, key->data, def->key->data);
 }
 
@@ -146,12 +147,12 @@ typedef struct {
 	REFVAR;
 	DBDEF db[2];
 
-	EfiVar *kvar;
+	EfiStruct *kvar;
 	EfiObj *key;
 	CmpDefEntry *clist;
 	CmpDef *cmp;
 	EDBAssign *kassign;
-	EfiVar *var;
+	EfiStruct *var;
 	EfiVec *tg;
 	int mode;
 	int use;
@@ -169,8 +170,8 @@ static void join_clean (void *data)
 
 	rd_deref(join->tg);
 	rd_deref(join->kassign);
-	DelVarList(join->kvar);
-	DelVarList(join->var);
+	DelEfiStruct(join->kvar);
+	DelEfiStruct(join->var);
 	memfree(join);
 }
 
@@ -198,10 +199,10 @@ static void *join_alloc (EDB *db1, EDB *db2)
 }
 
 
-static EfiVar *get_var (EfiType *type, const char *name)
+static EfiStruct *get_var (EfiType *type, const char *name)
 {
-	static EfiVar buf;
-	EfiVar *v;
+	static EfiStruct buf;
+	EfiStruct *v;
 
 	if	(name == NULL || mstrcmp(name, ".") == 0)
 	{
@@ -220,9 +221,9 @@ static EfiVar *get_var (EfiType *type, const char *name)
 	return NULL;
 }
 
-static void join_add_var (JOIN *join, EDBAssign **ptr, EfiVar *var, int flag)
+static void join_add_var (JOIN *join, EDBAssign **ptr, EfiStruct *var, int flag)
 {
-	EfiVar **p;
+	EfiStruct **p;
 
 	for (p = &join->var; *p; p = &(*p)->next)
 	{
@@ -235,14 +236,14 @@ static void join_add_var (JOIN *join, EDBAssign **ptr, EfiVar *var, int flag)
 		}
 	}
 
-	*p = NewVar(var->type, var->name, var->dim);
-	*ptr = NewEDBAssign(*ptr, *p, var->offset);
+	*p = NewEfiStruct(var->type, var->name, var->dim);
+	*ptr = NewEDBAssign(*ptr, NULL, NULL, *p, var->offset);
 }
 
 static void join_add_type (JOIN *join, EDBAssign **ptr,
 	EfiType *type, const char *name)
 {
-	EfiVar buf;
+	EfiStruct buf;
 
 	buf.type = type;
 	buf.name = (char *) name;
@@ -251,7 +252,7 @@ static void join_add_type (JOIN *join, EDBAssign **ptr,
 	join_add_var(join, ptr, &buf, 1);
 }
 
-static void join_add_list (JOIN *join, EDBAssign **ptr, EfiVar *list)
+static void join_add_list (JOIN *join, EDBAssign **ptr, EfiStruct *list)
 {
 	for (; list; list = list->next)
 		join_add_var(join, ptr, list, 0);
@@ -324,7 +325,7 @@ static void join_key (JOIN *join, const char *opt, const char *vdef)
 	char *a, *b, *name;
 	size_t dim, i;
 	int inv;
-	EfiVar *v, **p;
+	EfiStruct *v, **p;
 	CmpDefEntry **cp;
 
 	dim = mstrsplit(vdef, "%s,", &list);
@@ -356,9 +357,10 @@ static void join_key (JOIN *join, const char *opt, const char *vdef)
 		else	b = a;
 
 		v = get_var(join->db[0].db->obj->type, a);
-		*p = NewVar(v->type, name, v->dim);
-		*cp = cmp_entry(v->type, 0, v->dim, inv);
+		*p = NewEfiStruct(v->type, name, v->dim);
 		dbdef_kvar(join->db, *p, v->offset);
+		v->offset = 0;
+		*cp = cmp_member(v, inv);
 
 		v = get_var(join->db[1].db->obj->type, b);
 
@@ -375,8 +377,8 @@ static void join_key (JOIN *join, const char *opt, const char *vdef)
 
 static void join_auto (JOIN *join)
 {
-	EfiVar *p1, *p2;
-	EfiVar **kp;
+	EfiStruct *p1, *p2;
+	EfiStruct **kp;
 	CmpDefEntry **cp;
 
 	kp = &join->kvar;
@@ -396,10 +398,11 @@ static void join_auto (JOIN *join)
 				continue;
 			}
 
-			*kp = NewVar(p1->type, p1->name, p1->dim);
+			*kp = NewEfiStruct(p1->type, p1->name, p1->dim);
 			dbdef_kvar(join->db, *kp, p1->offset);
 			dbdef_kvar(join->db + 1, *kp, p2->offset);
-			*cp = cmp_entry(p1->type, 0, p1->dim, 0);
+			*cp = cmp_member(p1, 0);
+			(*cp)->offset = 0;
 			kp = &(*kp)->next;
 			cp = &(*cp)->next;
 			break;
@@ -411,7 +414,7 @@ static void join_auto (JOIN *join)
 static void join_make_key (JOIN *join)
 {
 	EfiType *type;
-	EfiVar *vp;
+	EfiStruct *vp;
 	CmpDefEntry *cp;
 
 	if	(join->key)			return;
@@ -422,7 +425,7 @@ static void join_make_key (JOIN *join)
 	if	(!join->kvar)
 		dbg_error("edb", ERR_KEY, NULL);
 	
-	type = MakeStruct(NULL, NULL, RefVarList(join->kvar));
+	type = MakeStruct(NULL, NULL, RefEfiStruct(join->kvar));
 
 	cp = join->clist;
 	vp = join->kvar;
@@ -463,7 +466,7 @@ static void join_var (JOIN *join, const char *opt, const char *vdef)
 	char *vname;
 	size_t dim, i;
 	EfiType *type;
-	EfiVar *st, **p;
+	EfiStruct *st, **p;
 	EDBAssign **x;
 
 	dim = mstrsplit(vdef, "%s,", &list);
@@ -527,7 +530,7 @@ static void join_var (JOIN *join, const char *opt, const char *vdef)
 		{
 			if	(mstrcmp(st->name, name) == 0)
 			{
-				EfiVar buf;
+				EfiStruct buf;
 				buf.type = st->type;
 				buf.name = vname ? vname : name;
 				buf.dim = st->dim;
@@ -784,11 +787,11 @@ EDB *edb_join (EDB *edb1, EDB *edb2, const char *def)
 
 	if	(join->var)
 	{
-		type = MakeStruct(NULL, NULL, RefVarList(join->var));
+		type = MakeStruct(NULL, NULL, RefEfiStruct(join->var));
 		join->tg = NewEfiVec(type, NULL, 0);
 	}
 
-	edb = edb_create(LvalObj(NULL, type), NULL);
+	edb = edb_create(type);
 	edb->read = join_read;
 	edb->ipar = join;
 	return edb;
@@ -807,10 +810,10 @@ static EDB *fdef_join (EDBFilter *filter, EDB *base,
 	return edb_join(base, edb_fopen(NULL, arg), opt);
 }
 
-EDBFilter EDBFilter_join = {
+EDBFilter EDBFilter_join = EDB_FILTER(NULL,
 	"join", "[par]=file", fdef_join, NULL, 
 	":*:join with database <file> and parameters <par>.\n"
 	"join[?] gives a list of availabel parameters.\n"
 	":de:Verknüpfen mit Datenbank <file> und Parameter <par>.\n"
 	"Die Angabe join[?] liefert die verfügbaren Parameter.\n"
-};
+);

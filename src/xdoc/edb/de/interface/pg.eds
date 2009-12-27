@@ -115,7 +115,7 @@ Alle anderen Datentypen werden in |text| umgesetzt.
 \ssec	Zugriff auf PostgreSQL Tabellen
 
 Bei Konstruktion einer Tabelle mithilfe der |pg|-Ausgabefunktion
-wird ein Metafile generiert, dass wiederum den Zugriff auf die
+wird ein Metafile generiert, das wiederum den Zugriff auf die
 Tabellendaten erlaubt. Im hier verwendeten Beispiel hat es folgenden
 Aufbau:
 
@@ -199,17 +199,17 @@ zu |pg_query|, jedoch kann mehr als eine Anweisung gesendet werden.
 |pg_exec| <dbdef>\br
 <SQL-Anweisungen>
 
-Die Abweisungen |pg_copy|, |pg_query| und |pg_exec| bauen jeweils eine
-unabhängige Verbindung auf. Sollen diese Anweisungen mit ein und der
-selben Verbindung ausgeführt werden, kann eine solche mit |pg_connect|
-eingerichtet werden. Die Abfrageanweisungen werden dann ohne
-Datenbankdefinition verwendet. Der Zugriff auf die Verbindung wird mit
-|pg_close| geschlossen. Jede weitere Anweisung mit SQL-Abfragen baut eine
-neue
-Verbindung auf.
+Die Anweisungen |pg_copy|, |pg_query| und |pg_exec| bauen im
+Normalfall jeweils eine unabhängige Verbindung auf. Alternativ dazu
+kann zunächst eine Verbindung mit |pg_connect| eingerichtet werden.
+Anschließend werden die Abfrageanweisungen ohne
+Datenbankdefinition verwendet. Der Zugriff auf die Datenbank wird mit
+|pg_close| geschlossen.
+Jede weitere Anweisung mit SQL-Abfragen baut eine
+neue Verbindung auf.
 
 |pg_connect| <dbdef>\n
-Metafileanweisungen\br
+<Metafileanweisungen>\br
 |pg_close|
 
 Die Anweisung |pg_connect| kann geschachtelt werden.

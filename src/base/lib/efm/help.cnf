@@ -46,6 +46,9 @@
 # :*:format definitions for manpage creation
 # :de:Formatdefinitionen zur Handbuchgenerierung
 
+.manpage.head = "\\dhead\t$1(1)\n\\mpage[1] $1\n"
+.manpage.name = "\\Name\n"
+.manpage.fmt = "@name\n@synopsis -h\n@arglist -hi\n@environ -h\n@copyright -h\n"
 .synopsis.head = "\\Synopsis\n"
 .synopsis.intro = ":*:usage:\n:de:Aufruf:\n"
 .arglist.head = "\\Description\n"

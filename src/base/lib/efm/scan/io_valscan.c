@@ -33,9 +33,7 @@ If not, write to the Free Software Foundation, Inc.,
 static double scan_dbuf = 0;
 
 static unsigned int buf_int = 0;
-static uint32_t buf_int32 = 0;
 static uint64_t buf_int64 = 0;
-
 
 
 /*	Test auf Tausendtrennstelle
@@ -188,8 +186,9 @@ static int make_int64 (void **ptr, int sig, uint64_t val, unsigned flags)
 static int make_integer (IO *io, void **ptr, int sig, uint64_t val,
 	unsigned base)
 {
-	unsigned type = SCAN_INT;
 	unsigned flags = 0;
+	int type = SCAN_INT;
+	int lflag = 0;
 	void *buf= NULL;
 	int c;
 
@@ -214,16 +213,13 @@ static int make_integer (IO *io, void **ptr, int sig, uint64_t val,
 
 		case 'l': case 'L':
 
-			if	(type == SCAN_INT64)
+			if	(lflag > 1)
 			{
 				io_error(io, "[efm:52]", NULL);
 			}
-			else if	(type == SCAN_INT32)
-			{
-				type = SCAN_INT64;
-			}
-			else	type = SCAN_INT32;
+			else	lflag++;
 
+			type = SCAN_INT64;
 			continue;
 
 		default:
@@ -235,10 +231,9 @@ static int make_integer (IO *io, void **ptr, int sig, uint64_t val,
 	}
 	while (c != EOF);
 
-	switch (base & (SCAN_INTMASK))
+	switch (base & (SCAN_INT | SCAN_INT64))
 	{
 	case SCAN_INT:		type = SCAN_INT; break;
-	case SCAN_INT32:	type = SCAN_INT32; break;
 	case SCAN_INT64:	type = SCAN_INT64; break;
 	default:		break;
 	}
@@ -246,22 +241,6 @@ static int make_integer (IO *io, void **ptr, int sig, uint64_t val,
 	if	(type == SCAN_INT64)
 	{
 		return make_int64(ptr, sig, val, flags);
-	}
-	else if	(type == SCAN_INT32)
-	{
-		if	((base & SCAN_INT64) && (uint32_t) val != val)
-			return make_int64(ptr, sig, val, flags);
-
-		*ptr = &buf_int32;
-
-		if	(flags || (int32_t) val < 0)
-		{
-			buf_int32 = sig ? -val : val;
-			flags |= SCAN_UNSIGNED;
-		}
-		else	*((int32_t *) *ptr) = sig ? -val : val;
-
-		return SCAN_INT32 | flags;
 	}
 	else
 	{
@@ -327,10 +306,15 @@ static int add_exp (IO *io, StrBuf *sb, int c)
 	return 0;
 }
 
-
 static void add_fract (IO *io, StrBuf *sb)
 {
 	int c;
+
+#if	HAS_NL_LANGINFO
+	sb_puts(nl_langinfo(RADIXCHAR), sb);
+#else
+	sb_putc('.', sb);
+#endif
 
 	while ((c = io_getc(io)) != EOF)
 	{
@@ -355,7 +339,7 @@ static int make_double (IO *io, void **ptr, StrBuf *sb, int sign)
 		*ptr = &scan_dbuf;
 	}
 
-	sb_destroy(sb);
+	rd_deref(sb);
 	return SCAN_DOUBLE;
 }
 
@@ -378,14 +362,14 @@ int io_valscan (IO *in, unsigned flags, void **ptr)
 */
 	mode = 0;
 
-	if	(flags & SCAN_INTMASK)
+	if	(flags & (SCAN_INTEGER))
 		mode |= GET_INT;
 
-	if	(flags & (SCAN_FLTMASK))
+	if	(flags & (SCAN_FLOAT | SCAN_DOUBLE))
 		mode |= GET_DBL;
 
 	if	(mode == GET_DBL)
-		flags &= ~SCAN_MODEMASK;
+		flags &= ~SCAN_UNSIGNED;
 
 /*	Vorzeichen abfragen
 */
@@ -402,20 +386,20 @@ int io_valscan (IO *in, unsigned flags, void **ptr)
 	c = io_getc(in);
 	valtype = 0;
 
-	if	(c == '0' && (flags & SCAN_MODEMASK))
+	if	(c == '0' && (flags & SCAN_BASEMASK))
 	{
 		c = io_getc(in);
 
 		if	((flags & SCAN_HEXVAL) && (c == 'x' || c == 'X'))
 		{
 			lval = get_hexval(in);
-			flags &= (SCAN_INTMASK | SCAN_HEXVAL);
+			flags &= (SCAN_INT | SCAN_HEXVAL);
 			return make_integer(in, ptr, sign == '-', lval, flags);
 		}
 		else if	((flags & SCAN_BINVAL) && (c == 'b' || c == 'B'))
 		{
 			lval = get_binval(in);
-			flags &= (SCAN_INTMASK | SCAN_BINVAL);
+			flags &= (SCAN_INT | SCAN_BINVAL);
 			return make_integer(in, ptr, sign == '-', lval, flags);
 		}
 
@@ -430,7 +414,6 @@ int io_valscan (IO *in, unsigned flags, void **ptr)
 	{
 		sb = sb_create(0);
 		sb_putc('0', sb);
-		sb_putc('.', sb);
 		add_fract(in, sb);
 		return make_double(in, ptr, sb, sign == '-');
 	}
@@ -472,7 +455,6 @@ int io_valscan (IO *in, unsigned flags, void **ptr)
 	}
 	else if	(test_dp(in, c, 1))
 	{
-		sb_putc('.', sb);
 		add_fract(in, sb);
 		return make_double(in, ptr, sb, sign == '-');
 	}
@@ -489,6 +471,6 @@ int io_valscan (IO *in, unsigned flags, void **ptr)
 	io_ungetc(c, in);
 	sb_putc(0, sb);
 	lval = conv_val(sb->data, base);
-	sb_destroy(sb);
+	rd_deref(sb);
 	return make_integer(in, ptr, sign == '-', lval, flags);
 }

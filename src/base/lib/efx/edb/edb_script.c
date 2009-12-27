@@ -20,6 +20,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/EDB.h>
+#include <EFEU/EDBFilter.h>
 #include <EFEU/preproc.h>
 
 static void subcopy (StrBuf *buf, IO *io, int delim)
@@ -96,8 +97,8 @@ EDB *edb_script (EDB *edb, IO *io)
 		StrBuf *buf = sb_create(0);
 		io = io_cmdpreproc(io);
 		maincopy(buf, io);
-		edb = edb_filter(edb, buf->data);
-		sb_destroy(buf);
+		edb = edb_filter(edb, (char *) buf->data);
+		rd_deref(buf);
 	}
 	
 	io_close(io);
@@ -110,8 +111,8 @@ static EDB *fdef_script (EDBFilter *filter, EDB *base,
 	return arg ? edb_script(base, io_fileopen(arg, "r")) : base;
 }
 
-EDBFilter EDBFilter_script = {
+EDBFilter EDBFilter_script = EDB_FILTER(NULL,
 	"script", "=path", fdef_script, NULL,
 	":*:load filter from script"
 	":de:Filter aus Datei laden"
-};
+);

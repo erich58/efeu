@@ -269,7 +269,7 @@ void DocTab_load (DocTab *tab, IO *io)
 	}
 
 	PopVarTab();
-	sb_destroy(desc);
+	rd_deref(desc);
 	io_close(io);
 }
 

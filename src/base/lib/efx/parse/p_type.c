@@ -100,6 +100,8 @@ EfiType *Parse_type(IO *io, EfiType *type)
 		}
 	}
 
+	EfiType_version(type, io);
+	
 	while (io_eat(io, " \t") == '[')
 	{
 		io_getc(io);
@@ -120,5 +122,13 @@ EfiType *Parse_type(IO *io, EfiType *type)
 		}
 	}
 
+	return type;
+}
+
+EfiType *str2Type (const char *def)
+{
+	IO *io = io_cstr(def);
+	EfiType *type = Parse_type(io, NULL);
+	io_close(io);
 	return type;
 }

@@ -14,7 +14,7 @@ typedef struct {
 	mdmat *md;
 	IO *out;
 	EDBAggregate *aggr;
-	EfiVar *var;
+	EfiStruct *var;
 	EfiObj *obj;
 	EfiFunc *f_add;
 	char *pmode;
@@ -109,7 +109,7 @@ static void add_type (EfiType *type, size_t offset)
 
 	if	(type->list)
 	{
-		EfiVar *st;
+		EfiStruct *st;
 
 		for (st = type->list; st; st = st->next)
 			if (!st->dim) add_type(st->type, offset + st->offset);
@@ -225,7 +225,7 @@ static void add_val(EDBAggregate *aggr, mdaxis *axis, char *tg, char *src)
 static void edb2md_init (EDB2MD *par, EfiType *type)
 {
 	mdaxis **xptr;
-	EfiVar *st, **ptr;
+	EfiStruct *st, **ptr;
 
 	par->md = new_mdmat();
 	par->var = NULL;
@@ -242,7 +242,7 @@ static void edb2md_init (EDB2MD *par, EfiType *type)
 		}
 		else
 		{
-			*ptr = NewVar(st->type, st->name, st->dim);
+			*ptr = NewEfiStruct(st->type, st->name, st->dim);
 			par->aggr = NewEDBAggregate(par->aggr, "+=", *ptr,
 				st->offset);
 			ptr = &(*ptr)->next;
@@ -263,7 +263,7 @@ static void edb2md_init (EDB2MD *par, EfiType *type)
 			par->obj = NewObj(par->md->type, NULL);
 		}
 
-		par->var = NewVar(par->md->type, NULL, 0);
+		par->var = NewEfiStruct(par->md->type, NULL, 0);
 	}
 	else if	(par->var->dim == 0 && par->var->next == NULL)
 	{
@@ -272,12 +272,11 @@ static void edb2md_init (EDB2MD *par, EfiType *type)
 	}
 	else
 	{
-		par->md->type = MakeStruct(NULL, NULL, RefVarList(par->var));
+		par->md->type = MakeStruct(NULL, NULL, RefEfiStruct(par->var));
 		par->obj = NewObj(par->md->type, NULL);
 	}
 
-	par->md->size = md_size(par->md->axis, par->md->type->size);
-	par->md->data = memalloc(par->md->size);
+	md_alloc(par->md);
 	par->f_add = mdfunc_add(par->md->type);
 }
 
@@ -295,7 +294,7 @@ static void edb2md_free (EDB2MD *par)
 
 	UnrefObj(par->obj);
 	rd_deref(par->f_add);
-	DelVarList(par->var);
+	DelEfiStruct(par->var);
 	rd_deref(par->aggr);
 }
 
@@ -342,7 +341,7 @@ static void pset_edb2md (EDBPrintMode *mode, const EDBPrintDef *def,
 	mode->par = mstrcpy(arg);
 }
 
-static EDBPrintDef pdef_edb2md = { "md", pset_edb2md, NULL,
+static EDBPrintDef pdef_edb2md = { "md", "=pmode", pset_edb2md, NULL,
 	":*:write out as data cube"
 	":de:Ausgabe als Datenmatrix"
 };

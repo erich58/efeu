@@ -1,0 +1,97 @@
+/*
+Makros zur Konstruktion von Regeln in Makefiles
+
+$Header	<$1>
+$Copyright (C) 2007 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+*/
+
+#ifndef	ms_rules_hdr
+#define	ms_rules_hdr	1
+
+/*
+$Description
+Die Headerdatei $1 enthält eine Reihe von Makrodefinitionen zur
+Erzeugung von Makefileregeln im Kontext von |mksource|. Sie
+können bei der |rule|-Anweisung verwendet werden.
+
+$Notes
+Die Makrodefinitionen können allgemein zur Erzeugung von Regeln mithilfe
+des EFI-Interpreters eingesetzt werden. Dabei ist zu beachten, dass
+eine mit diesen Regeln überarbeitete Definitionsdatei die
+Nachbearbeitung mittels Parametersubstitution erfordert.
+*/
+
+fmt_str = "%*s";
+
+/*
+Der Makro |$1|
+generiert eine Liste von zu löschenden Dateien für das
+Aufräumziel |clean|.
+*/
+
+#define	CleanTarget(x)	\
+clean::$("\n\t")rm -f x
+
+/*
+Der Makro |$1|
+generiert für die Datei <name> eine Abhängigkeit für das Pseudoziel
+|all| und eine Aufräumregel für das Aufräumziel |clean|.
+*/
+
+#define	AllTarget(x)	all:: x$("\n\n")CleanTarget(x)
+
+/*
+Wird der Makro |$1| als Ziel einer Regel angeführt, wird automatisch
+auch eine Abhängigkeit für das Pseudoziel
+|all| und eine Aufräumregel für das Pseudoziel |clean| generiert.
+*/
+
+#define Target(x)	AllTarget(x)$("\n\n")x
+
+/*
+Der Makro |$1|
+generiert eine einfache Makefileregel. <Name> ist
+der Name der Zieldatei, <dep> ist die Liste der Abhängigkeiten
+und <cmd> ist die Befehlszeile.
+*/
+
+#define	SimpleRule(tg,src,cmd)	tg: src$("\n\t")cmd
+
+/*
+Der Makro |$1|
+nimmt zusätzlich <name> in die Abhängigkeitsliste
+des Pseudoziels |all| auf. Weiters wird <name> in die
+Aufräumliste des Pseudoziels |clean| eingetragen.
+*/
+
+#define	StdRule(tg,src,cmd)	Target(tg): src$("\n\t")cmd
+
+/*
+Der Makro |$1| setzt einen symbolischen Link von <src> auf
+<target>.
+*/
+
+#define	SymLink(tg,src)	StdRule(tg,src,rm -f $$@; ln -s src $$@)
+
+/*
+$SeeAlso
+\mref{mksource(1)}.
+*/
+
+#endif	/* ms_rules.hdr */

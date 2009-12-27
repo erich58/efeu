@@ -21,6 +21,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/CmdPar.h>
+#include <EFEU/EfeuConfig.h>
 #include <EFEU/strbuf.h>
 #include <EFEU/parsub.h>
 
@@ -112,15 +113,24 @@ static void optkey (CmdParKey *key, IO *io)
 
 static void show_opt (CmdParKey *key, IO *io)
 {
-	io_puts("\n", io);
-	io_puts("\\[~", io);
-	optkey(key, io);
-	io_puts("~]", io);
+	if	(CmdPar_docmode)
+	{
+		io_puts("\n", io);
+		io_puts("\\[~", io);
+		optkey(key, io);
+		io_puts("~]", io);
+	}
+	else
+	{
+		io_puts(" [ ", io);
+		optkey(key, io);
+		io_puts(" ]", io);
+	}
 }
 
 static void show_arg (CmdParKey *key, IO *io)
 {
-	io_puts("\n", io);
+	io_puts(CmdPar_docmode ? "\n" : " ", io);
 
 	switch (key->argtype)
 	{
@@ -224,9 +234,14 @@ void CmdPar_synopsis (CmdPar *par, IO *io, int flag)
 	if	(io == NULL)	return;
 
 	par = CmdPar_ptr(par);
-	io_puts("\\hang\n|", io);
-	verbatim(par->name, io, 0);
-	io_puts("|", io);
+
+	if	(CmdPar_docmode)
+	{
+		io_puts("\\hang\n|", io);
+		verbatim(par->name, io, 0);
+		io_puts("|", io);
+	}
+	else	verbatim(par->name, io, 0);
 	
 	if	(flag)
 	{
@@ -251,7 +266,10 @@ void CmdPar_synopsis (CmdPar *par, IO *io, int flag)
 				show_arg(*p, io);
 	}
 
-	io_puts("\n\\end\n", io);
+	io_puts("\n", io);
+
+	if	(CmdPar_docmode)
+		io_puts("\\end\n", io);
 }
 
 /*
@@ -271,7 +289,8 @@ void CmdPar_arglist (CmdPar *par, IO *io)
 	for (n = par->def.used, def = par->def.data; n-- > 0; def++)
 		if ((*def)->desc) list_def(par, *def, io, 1);
 
-	io_puts("\\end\n", io);
+	if	(CmdPar_docmode)
+		io_puts("\\end\n", io);
 }
 
 /*

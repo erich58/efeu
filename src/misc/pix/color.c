@@ -36,6 +36,7 @@ COLOR SetColor(double red, double green, double blue)
 	color.red = ColorValue(red);
 	color.green = ColorValue(green);
 	color.blue = ColorValue(blue);
+	color.idx = 0;
 	return color;
 }
 

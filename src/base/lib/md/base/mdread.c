@@ -81,7 +81,7 @@ static void set_par (const char *def)
 		else if	(patcmp("nomagic", list[i], NULL))
 			need_magic = 0;
 		else if	(patcmp("type=", list[i], &p))
-			Type = mdtype(p);
+			Type = str2Type(p);
 	}
 
 	memfree(list);
@@ -174,7 +174,7 @@ static char *get_header(IO *io)
 			case H_TITLE:	SETPAR(title); break;
 			case H_ROWS:	SETPAR(YNames); break;
 			case H_COLUMNS:	SETPAR(XNames); break;
-			case H_TYPE:	Type = mdtype(p); break;
+			case H_TYPE:	Type = str2Type(p); break;
 			case H_LOCALE:	SetLocale(LOC_SCAN, p); break;
 			default:	break;
 			}
@@ -350,7 +350,7 @@ static char *get_col(IO *io, const char *name, EfiType *type, int n)
 	char *last;
 	char *p;
 	char *subname;
-	EfiVar *st;
+	EfiStruct *st;
 
 	if	(type->list == NULL)
 	{
@@ -410,7 +410,7 @@ static char *get_col(IO *io, const char *name, EfiType *type, int n)
 
 static int get_val(IO *io, EfiType *type, char *ptr)
 {
-	EfiVar *st;
+	EfiStruct *st;
 	EfiObj *obj;
 	char *p;
 
@@ -500,7 +500,6 @@ static mdmat *textmode(IO *io, char *title)
 
 	io_rewind(tmp);
 
-
 /*	Datenwerte lesen
 */
 	buf = memalloc(md->type->size);
@@ -533,14 +532,19 @@ static mdmat *textmode(IO *io, char *title)
 	memfree(buf);
 	io_rewind(tmp);
 
-/*	Achsen generieren
+/*	Achsen zusammenstellen
 */
 	md->axis = label2axis(ylabel);
-	md->size = md_size(md->axis, xaxis->size * xaxis->dim);
+	ptr = &md->axis;
+
+	while (*ptr != NULL)
+		ptr = &(*ptr)->next;
+
+	*ptr = xaxis;
 
 /*	Daten laden
 */
-	md->data = memalloc(md->size);
+	md_alloc(md);
 	memset(md->data, 0, md->size);
 
 	for (i = 0; i < linedim; i++)
@@ -550,21 +554,13 @@ static mdmat *textmode(IO *io, char *title)
 
 		pos = md->data;
 
-		for (x = md->axis; x != NULL; x = x->next)
+		for (x = md->axis; x != xaxis; x = x->next)
 			pos += getshort(tmp) * x->size;
 
 		for (j = 0; j < coldim; j++)
 			io_read(tmp, pos + offset[j], md->type->size);
 	}
 
-/*	X - Achsen anhängen
-*/
-	ptr = &md->axis;
-
-	while (*ptr != NULL)
-		ptr = &(*ptr)->next;
-
-	*ptr = xaxis;
 	return md;
 }
 

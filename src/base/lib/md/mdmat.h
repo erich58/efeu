@@ -115,6 +115,7 @@ typedef struct {
 	size_t size;	/* Speicherbedarf für Datenfeld */
 	void *data;	/* Datenfeld */
 	void *x_priv;	/* Private Daten */
+	void *x_data;	/* Referenzobjekt für Daten */
 } mdmat;
 
 extern RefType md_reftype;
@@ -173,6 +174,8 @@ mdlist *mdlistcmp (const char *name, int depth, mdlist *list);
 
 size_t md_dim (mdaxis *axis);
 size_t md_size (mdaxis *axis, size_t size);
+void md_alloc (mdmat *md);
+extern void *(*md_alloc_hook) (size_t size);
 
 void md_allflag(mdmat *md, unsigned mask,
 	unsigned (*fx) (unsigned old, int flag, unsigned val), unsigned vx,
@@ -268,6 +271,7 @@ mdmat *md_mul (mdmat *m1, mdmat *m2, int flag);
 mdmat *md_sum (mdmat *md, const char *str);
 mdmat *md_diag (mdmat *md, const char *str);
 mdmat *md_create (EfiType *type, const char *def);
+mdmat *md_clone (const mdmat *md);
 mdmat *md_assign (const char *name, mdmat *m1, mdmat *m2);
 mdmat *md_term (EfiVirFunc *func, mdmat *m1, mdmat *m2);
 mdmat *md_cat (const char *name, mdmat **md, size_t dim);

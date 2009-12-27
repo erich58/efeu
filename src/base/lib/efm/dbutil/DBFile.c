@@ -69,6 +69,7 @@ DBFile *DBFile_open (IO *io, int mode, size_t recl, const char *delim)
 	file->mode = mode;
 	file->recl = recl;
 	file->delim = mstrcpy(delim);
+	file->save = 0;
 	return rd_init(&DBFile_reftype, file);
 }
 
@@ -76,6 +77,12 @@ DBFile *DBFile_open (IO *io, int mode, size_t recl, const char *delim)
 int DBFile_next (DBFile *file)
 {
 	if	(!file)	return 0;
+
+	if	(file->save)
+	{
+		file->save = 0;
+		return 1;
+	}
 
 	switch (file->mode)
 	{
@@ -116,6 +123,11 @@ int DBFile_next (DBFile *file)
 		DBData_split(&file->data, file->delim);
 
 	return 1;
+}
+
+void DBFile_unread (DBFile *file)
+{
+	file->save = 1;
 }
 
 void DBFile_show (DBFile *file, IO *io)

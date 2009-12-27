@@ -180,7 +180,7 @@ BUILTIN(get_op)
 
 	if	(obj)
 	{
-		CleanData(var->type, var->data);
+		CleanData(var->type, var->data, 0);
 		CopyData(var->type, var->data, obj->data);
 	}
 
@@ -357,7 +357,7 @@ BUILTIN(f_patcmp)
 	char *p;
 
 	if	(func->dim == 3)
-		CleanData(&Type_str, arg[2]);
+		CleanData(&Type_str, arg[2], 0);
 
 	Val_int(rval) = patcmp(Val_str(arg[0]),
 		Val_str(arg[1]), func->dim == 3 ? &p : NULL);

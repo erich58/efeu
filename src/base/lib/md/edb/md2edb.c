@@ -22,18 +22,18 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/mdmat.h>
 #include <EFEU/printobj.h>
 
-static EfiVar *axis2var (mdaxis *x)
+static EfiStruct *axis2var (mdaxis *x)
 {
+	EfiType *type;
 	int i;
 
-	EfiType *type;
-	type = NewEnumType(NULL);
-	
+	type = NewEnumType(NULL, EnumTypeRecl(x->dim));
+
 	for (i = 0; i < x->dim; i++)
 		AddEnumKey(type, mstrcpy(x->idx[i].name), NULL, i + 1);
 
 	type = AddEnumType(type);
-	return NewVar(type, x->name, 0);
+	return NewEfiStruct(type, x->name, 0);
 }
 
 static void save_data (IO *io, const EfiType *type, mdaxis *x,
@@ -62,7 +62,7 @@ static void save_data (IO *io, const EfiType *type, mdaxis *x,
 		
 EDB *md2edb (mdmat *md)
 {
-	EfiVar *var, **ptr;
+	EfiStruct *var, **ptr;
 	mdaxis *x;
 	EDB *edb;
 	IO *tmp;
@@ -82,9 +82,9 @@ EDB *md2edb (mdmat *md)
 		n += 4;
 	}
 
-	*ptr = NewVar(md->type, mstrcpy("data"), 0);
+	*ptr = NewEfiStruct(md->type, mstrcpy("data"), 0);
 
-	edb = edb_create(LvalObj(NULL, MakeStruct(NULL, NULL, var)),
+	edb = edb_alloc(LvalObj(NULL, MakeStruct(NULL, NULL, var)),
 		mstrcpy(md->title));
 
 	tmp = io_tmpfile();

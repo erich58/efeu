@@ -61,7 +61,7 @@ char *WinEdit (WinSize *ws, char *defval)
 		case KEY_ESC:
 
 			DelWindow(win);
-			sb_destroy(sb);
+			rd_deref(sb);
 			return NULL;
 
 		case ctrl('K'):

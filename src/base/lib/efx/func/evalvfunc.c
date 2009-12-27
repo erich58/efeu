@@ -185,6 +185,19 @@ static EfiObj *eval_func (EfiFunc *func, EfiArgKonv *fkonv,
 
 	fargdim = func->dim - func->vaarg;
 
+/*	Vorgabewerte einsetzen
+*/
+	while (narg < fargdim)
+	{
+		obj = EvalObj(RefObj(func->arg[narg].defval),
+			func->arg[narg].type);
+
+		if	(!set_arg(func, arg, narg, obj))
+			return NULL;
+
+		narg++;
+	}
+
 /*	Bei variablen Argumenten Liste generieren
 */
 	if	(func->vaarg && (narg != func->dim ||
@@ -203,19 +216,6 @@ static EfiObj *eval_func (EfiFunc *func, EfiArgKonv *fkonv,
 		}
 
 		set_arg(func, arg, narg, Obj_list(vlist));
-		narg++;
-	}
-
-/*	Vorgabewerte einsetzen
-*/
-	while (narg < fargdim)
-	{
-		obj = EvalObj(RefObj(func->arg[narg].defval),
-			func->arg[narg].type);
-
-		if	(!set_arg(func, arg, narg, obj))
-			return NULL;
-
 		narg++;
 	}
 

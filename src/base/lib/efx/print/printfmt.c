@@ -116,7 +116,21 @@ int PrintFmtList (IO *io, const char *fmt, EfiObjList *list)
 		case 'c':
 		case 'C':
 
-			n += fmt_char(io, &key, Obj2char(get_arg(&list)));
+			obj = get_arg(&list);
+
+			if	(key.flags & FMT_LONG)
+			{
+				int32_t z;
+				Obj2Data(obj, &Type_wchar, &z);
+				n += fmt_ucs(io, &key, z);
+			}
+			else
+			{
+				unsigned char c;
+				Obj2Data(obj, &Type_char, &c);
+				n += fmt_char(io, &key, c);
+			}
+
 			break;
 
 		case 'i':
@@ -183,7 +197,7 @@ int PrintFmtList (IO *io, const char *fmt, EfiObjList *list)
 
 				if	((x = EvalObj(int2Obj(n), obj->type)))
 				{
-					CleanData(obj->type, obj->data);
+					CleanData(obj->type, obj->data, 0);
 					CopyData(obj->type, obj->data, x->data);
 					UnrefObj(x);
 				}

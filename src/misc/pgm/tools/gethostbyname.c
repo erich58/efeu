@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <netdb.h>
 
-static void show_addr(unsigned char *p, size_t len)
+static void show_addr (char *p, size_t len)
 {
 	char *delim = " ";
 
@@ -14,7 +14,7 @@ static void show_addr(unsigned char *p, size_t len)
 	}
 }
 
-int main(int narg, char **arg)
+int main (int narg, char **arg)
 {
 	struct hostent *host;
 	char **p;

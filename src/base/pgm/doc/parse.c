@@ -393,7 +393,7 @@ char *DocParseName (IO *in, int key)
 	}
 
 	sb_putc(0, &parse_buf);
-	return parse_buf.data;
+	return (char *) parse_buf.data;
 }
 
 /*	Ganzzahlwert ohne Vorzeichen einlesen.

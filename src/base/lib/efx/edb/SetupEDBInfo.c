@@ -21,6 +21,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/EDB.h>
 #include <EFEU/Info.h>
+#include <EFEU/EDBFilter.h>
 
 
 void SetupEDBInfo (void)

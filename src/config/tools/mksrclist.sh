@@ -21,7 +21,7 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 # $pconfig
-# Version="$Id: mksrclist.sh,v 1.1 2004-11-27 17:19:28 ef Exp $"
+# Version="$Id: mksrclist.sh,v 1.2 2007-08-19 04:34:55 ef Exp $"
 # f|
 #	:*:force creation of output file
 #	:de:Forcierte Neugenerierung der Ausgabedatei
@@ -59,7 +59,7 @@ usage ()
 
 case "$1" in
 -\?|--help*)	usage $1; exit 0;;
---version)	efeuman -- $0 $1 || grep 'Version="[$]Id:'; exit 0;;
+--version)	efeuman -- $0 $1 || grep 'Version="[$]Id:' $0; exit 0;;
 esac
 
 # message formats

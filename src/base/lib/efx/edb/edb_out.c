@@ -17,5 +17,5 @@ void edb_setout (EDB *edb, IO *out, EDBPrintMode *pmode)
 
 void edb_out (EDB *edb, IO *io, const char *mode)
 {
-	edb_setout(edb, io, edb_pmode(NULL, mode));
+	edb_setout(edb, io, edb_pmode(NULL, edb, mode));
 }

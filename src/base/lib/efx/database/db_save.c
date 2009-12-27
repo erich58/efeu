@@ -166,11 +166,11 @@ static void del_idxcmp(struct IDXCMP *test)
 /*	Variablenliste zur Ausgabe generieren
 */
 
-static size_t make_list (EfiVar *st, char *list, EfiVar ***ptr)
+static size_t make_list (EfiStruct *st, char *list, EfiStruct ***ptr)
 {
 	size_t dim, idim;
 	char **ilist;
-	EfiVar *x;
+	EfiStruct *x;
 	struct IDXCMP *cmp;
 
 	*ptr = NULL;
@@ -183,7 +183,7 @@ static size_t make_list (EfiVar *st, char *list, EfiVar ***ptr)
 	idim = mstrsplit(list, "%s,;", &ilist);
 	cmp = idxcmplist(ilist, idim, dim);
 	memfree(ilist);
-	*ptr = memalloc(dim * sizeof(EfiVar *));
+	*ptr = memalloc(dim * sizeof **ptr);
 	dim = 0;
 
 	for (x = st, dim = 0; x != NULL; x = x->next)
@@ -200,7 +200,7 @@ static size_t make_list (EfiVar *st, char *list, EfiVar ***ptr)
 /*	Header ausgeben
 */
 
-static void print_header (IO *io, EfiVar **ptr, size_t dim)
+static void print_header (IO *io, EfiStruct **ptr, size_t dim)
 {
 	char *delim;
 	int i;
@@ -222,7 +222,7 @@ static void print_header (IO *io, EfiVar **ptr, size_t dim)
 /*	Daten ausgeben
 */
 
-static void print_data (IO *io, int mode, char *data, EfiVar **ptr, size_t dim)
+static void print_data (IO *io, int mode, char *data, EfiStruct **ptr, size_t dim)
 {
 	char *delim;
 	int i;
@@ -254,7 +254,7 @@ static void print_data (IO *io, int mode, char *data, EfiVar **ptr, size_t dim)
 void DB_save(IO *io, EfiDB *db, int mode, EfiVirFunc *test, char *list)
 {
 	size_t dim;
-	EfiVar **ptr;
+	EfiStruct **ptr;
 	char *data;
 	char *delim;
 	EfiFunc *func;

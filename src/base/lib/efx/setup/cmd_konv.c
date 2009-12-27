@@ -28,6 +28,11 @@ void Ptr2bool (EfiFunc *func, void *rval, void **arg)
 	Val_int(rval) = Val_ptr(arg[0]) != NULL;
 }
 
+static void f_obj2list (EfiFunc *func, void *rval, void **arg)
+{
+	Val_list(rval) = NewObjList(RefObj(arg[0]));
+}
+
 void Vec2List (EfiFunc *func, void *rval, void **arg)
 {
 	long i, start, end;
@@ -124,7 +129,7 @@ CEXPR(k_float2double, Val_double(rval) = Val_float(arg[0]))
 
 static void str2type (EfiFunc *func, void *rval, void **arg)
 {
-	Val_type(rval) = XGetType(Val_str(arg[0]));
+	Val_type(rval) = str2Type(Val_str(arg[0]));
 }
 
 static EfiFuncDef konv_func[] = {
@@ -150,6 +155,7 @@ static EfiFuncDef konv_func[] = {
 	/*
 	{ FUNC_RESTRICTED, &Type_bool, "_Ptr_ ()", Ptr2bool },
 	*/
+	{ FUNC_RESTRICTED, &Type_list, "List_t (.)", f_obj2list },
 	{ FUNC_RESTRICTED, &Type_list, "EfiVec ()", Vec2List },
 	{ 0, &Type_list, "List_t (EfiVec, int start)", Vec2List },
 	{ 0, &Type_list, "List_t (EfiVec, int start, int dim)", Vec2List },

@@ -36,6 +36,19 @@ static int read_conv (EfiType *type, void *data, void *par)
 	return 0;
 }
 
+static int read_copy (EfiType *type, void *data, void *par)
+{
+	void *p;
+
+	if	((p = edb_read(par)))
+	{
+		CopyData(type, data, p);
+		return 1;
+	}
+	
+	return 0;
+}
+
 EDB *edb_paste (EDB *base, EDB *sub)
 {
 	EfiKonv conv;
@@ -48,10 +61,12 @@ EDB *edb_paste (EDB *base, EDB *sub)
 
 	if	(base->obj->type == sub->obj->type)
 	{
-		edb_input(base, sub->read, sub->ipar);
-		sub->read = NULL;
-		sub->ipar = NULL;
-		rd_deref(sub);
+		if	(!base->read)
+		{
+			rd_deref(base);
+			base = sub;
+		}
+		else	edb_input(base, read_copy, sub);
 	}
 	else if	(!GetKonv(&conv, sub->obj->type, base->obj->type))
 	{

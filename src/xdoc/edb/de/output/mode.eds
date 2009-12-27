@@ -2,8 +2,8 @@
 
 Der Ausgabemodus determiniert im wesentlichen die Ausgabe. Er enthält
 eine Ausgabefunktion, die für jeden Datensatz aufgerufen wird. Wobei
-hier Ausgabe nicht unbedingt das Schreiben von Daten in eine Datei
-bedeuten muss, es können z.B. auch Daten in einer \index{Datenmatrix}
+hier eine Ausgabe nicht unbedingt das Schreiben von Daten in eine Datei
+bedeuten muss, es können z.B. auch Daten zu einem \index{Datenwürfel}
 aggregiert werden. Vergleiche dazu \ref{md}, Seite \pref{md}.
 
 \ssec	Ausgabe als EDB-Datenfile
@@ -15,7 +15,7 @@ gleichnamigen Standardlesefunktionen für EDB-Datenfiles.
 Allen Ausgabemodi ist gemeinsam, dass sie einen standardisierten
 EDB-Datenfilekopf mit dem Datentyp des EDB-Datenfiles generieren.
 Aus dem Datentyp werden eventuell benötigte Headerzeilen extrahiert.
-Der Kopteil schließt mit einer \index{|@data|-Anweisung} ab, die als
+Der Kopfteil schließt mit einer \index{|@data|-Anweisung} ab, die als
 Parameter die zur Ausgabe passende, gleichnamige Lesedefinition enthält.
 
 [\index{|plain|}]
@@ -54,18 +54,26 @@ Datenwerte als Zeichenkette am besten geeignet. Der Dateikopf wird
 nicht benötigt, eine Kommentarzeile mit den Namen der Variablen kann
 aber hilfreich sein.
 
-[\index{|data|}[|=crlf|]]
-	Die Daten werden analog zu |label| ausgegeben, es wird kein
-	Dateikopf erzeugt. Die erste Zeile enthält die Namen
-	der Variablen. Diese kann mit dem Parameter |nohead| unterdrückt
+[\index{|data|}&;|[|<opt>|]=|<mode>]
+	sorgt für eine Ausgabe der Daten entsprechend der
+	Ausgabedefinition <mode>.
+	Welche Ausgabeformate für den Datentyp verfügbar
+	sind, kann durch eine leere Definition |data=| abgefragt
 	werden.
-	Falls \index{|crlf|} als Argument angegeben wird, werden
-	die Ausgabezeilen mit Wagenrücklauf und Zeilenvorschub abgesschlossen.
-[\index{|x|}, \index{|export|}]
-	Ist ein symbolischer Name für die Kombination |data,nosplit|.
-[\index{|csv|}]
-	Ist ein symbolischer Name für die Kombination
-	|data=crlf,nosplit,nohead,locale|.
+
+	Ohne Angabe eines Ausgabemodus werden die Daten analog zu |label|
+	ausgegeben, es wird kein Dateikopf erzeugt. Die erste Zeile enthält
+	die Namen der Variablen. Diese kann mit dem Parameter |nohead|
+	unterdrückt werden.
+
+	Falls \index{|crlf|} als Option angegeben wird, werden
+	die Ausgabezeilen mit Wagenrücklauf und Zeilenvorschub abgeschlossen.
+[\index{|x|}&;|[|<opt>|]=|<mode>, \index{|export|}&;|[|<opt>|]=|<mode>]
+	sind Makros für die Kombination
+	|{data[|<opt>|]=|<mode>|},nosplit|.
+[\index{|csv|}&;|=|<mode>]
+	ist ein Makro für die Kombination
+	|{data[crlf]=|<mode>|},nosplit,nohead,locale|.
 
 \ssec	Formatierte Ausgabe
 
@@ -94,7 +102,7 @@ input("verbatim", popen(cmd, "r"));
 
 \index[Ausgabe als Datenmatrix]
 Mit der Ausgabedefinition \index{|md|} werden die Daten zu einer Datenmatrix
-aufsummiert.
+(Datenwürfel) aufsummiert.
 
 Beim Einrichten der Ausgabestruktur wird die resultierende Datenmatrix
 entsprechend der Struktur des Datentyps generiert. Bei der Ausgabe
@@ -103,29 +111,30 @@ Datenmatrix addiert. Erst beim Schließen der Ausgabestruktur wird die
 Datenmatrix ausgegeben.
 
 Als Argument kann ein Ausgabemodus für die Datematrix angegeben
-werden. Fehlt dieser, wird die Datenmatrix binär ausgegeben.
+werden. Fehlt dieser, erfolgt die Ausgabe binär.
 
 \index[Rahmenbedingungen für die Ausgabe als Datenmatrix]
 Für die Ausgabe als Datenmatrix muss
 die Struktur des Datentyps gewisse Rahmenbedingungen erfüllen. Notfalls
-müssen mithilfe der Filter |trans| oder |cut| geeignete
-Datentyptransformationen durchgeführt werden.
+muss mithilfe der Filter |view|, |trans| oder |var| eine geeignete
+Datentyptransformation durchgeführt werden.
 
-Jede einzelne Komponente muss eines der folgenden drei Bedingungen erfüllen:
+Jede einzelne Komponente muss eine der folgenden drei Bedingungen erfüllen:
 *	Die Komponente ist ein Aufzählungstyp;
 *	Die Komponente ist eine Struktur, die sich ausschließlich aus
-	Aufzählungstypen zusammenssetzt;
+	Aufzählungstypen zusammensetzt;
 *	Die Komponente ist eine aufsummierbare Variable.
 
 Aus den Strukturkomponenten, die die ersten beiden Bedingungen
-erfüllen, werden Achsen Konstruiert. Der Name der Komponente bestimmt
+erfüllen, werden Achsen konstruiert. Der Name der Komponente bestimmt
 den Namen der Achse, während die möglichen Ausprägungen die
 Achenbezeichner festlegen. Die restlichen Komponenten bilden den
 Datentyp der Datenmatrix.
 
 Ob eine Komponente aufsummierbar ist, ist eine inhaltliche und keine
 technische Frage. So gut wie alle Datentypen (auch Zeichenketten) lassen
-sich summieren, aber nicht alle Summationen sind sinnvoll.
+sich summieren, aber nicht alle Summationen sind im Kontext der
+Würfelgenerierung sinnvoll.
 So werden z.B. beim Aufsummieren von Zeichenketten die einzelnen Textteile
 zusammengehängt.
 
@@ -137,12 +146,16 @@ Anzahl der Männer und Frauen daraus generieren.
 Der Aufruf
 ---- eval
 {
-str cmd = "edb -f 'cut=gender,{int anz = 1}' -p md=std pers.edb";
+str cmd = "edb -f var=gender,anz=1 -p md=std pers.edb";
 input("verbatim", cmd);
 input(NULL, "liefert");
 input("verbatim", popen(cmd, "r"));
 }
 ----
 
-Von der Dateistruktur wird nur |gender| verwendet, Zusätzlich wird
+Von der Datenstruktur wird nur |gender| verwendet, zusätzlich wird
 eine Zählvariable |anz| eingerichtet.
+
+Die Ausgabe als Datenmatrix (Datenwürfel) wird häufig im Kontext mit
+einer Datensicht (Datenbankfilter |view|) verwendet. Dieser ist ein
+eigenes Kapitel gewidmet (Abschnitt \ref{view}, Seite \pref{view}).

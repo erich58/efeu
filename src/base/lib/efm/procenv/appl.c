@@ -24,6 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/mstring.h>
 #include <EFEU/ftools.h>
 #include <EFEU/appl.h>
+#include <EFEU/EfeuConfig.h>
 
 #define	_String(x)	#x
 #define	String(x)	_String(x)
@@ -63,10 +64,13 @@ void SetApplPath (const char *path)
 
 /*	Systemsuchpfade
 */
-	sb_printf(sb, ":%s/lib/efeu/%%L/%%S", TOP);
+	if	(EfeuConfigPar.standalone == 0)
+	{
+		sb_printf(sb, ":%s/lib/efeu/%%L/%%S", TOP);
 
-	if	((p = getenv("HOME")) != NULL)
-		sb_printf(sb, ":%s/lib/efeu/%%L/%%S", p);
+		if	((p = getenv("HOME")) != NULL)
+			sb_printf(sb, ":%s/lib/efeu/%%L/%%S", p);
+	}
 
 	sb_puts(":./%L/%S", sb);
 	memfree(ApplPath);

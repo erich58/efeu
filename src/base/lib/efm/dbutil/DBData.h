@@ -86,6 +86,7 @@ typedef struct {
 	IO *io;
 	DBData data;
 	int mode;
+	int save;	/* Flag für Zurückschreiben */
 	size_t recl;
 	char *delim;
 } DBFile;
@@ -100,5 +101,6 @@ extern RefType DBFile_reftype;
 DBFile *DBFile_open (IO *io, int mode, size_t recl, const char *delim);
 int DBFile_next (DBFile *file);
 void DBFile_show (DBFile *file, IO *io);
+void DBFile_unread (DBFile *file);
 
 #endif	/* EFEU/DBData.h */

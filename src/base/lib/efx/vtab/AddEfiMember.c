@@ -39,7 +39,7 @@ void AddEfiMember (EfiVarTab *tab, EfiMember *def, size_t dim)
 		entry.obj = NULL;
 		entry.get = def->get;
 		entry.data = def;
-		entry.clean = NULL;
+		entry.entry_clean = NULL;
 		VarTab_add(tab, &entry);
 	}
 }

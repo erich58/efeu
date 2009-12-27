@@ -21,7 +21,7 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 # $pconfig
-# Version="$Id: efile.sh,v 1.3 2004-11-06 06:28:04 ef Exp $"
+# Version="$Id: efile.sh,v 1.4 2007-08-19 04:22:10 ef Exp $"
 # :file(s)|
 #	:*:list of files to determine file types
 #	:de:Liste der Dateien zur Bestimmung des Dateitypes
@@ -33,7 +33,7 @@ usage ()
 
 case "$1" in
 ""|-\?|--help*)	usage $1; exit 0;;
---version)	efeuman -- $0 $1 || grep 'Version="[$]Id:'; exit 0;;
+--version)	efeuman -- $0 $1 || grep 'Version="[$]Id:' $0; exit 0;;
 esac
 
 # $Description

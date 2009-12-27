@@ -117,6 +117,7 @@ EfiFunc *XGetFunc (EfiType *type, EfiVirFunc *vtab,
 	{
 		func->arg[i].type = arg[i].type;
 		func->arg[i].name = mstrcpy(arg[i].name);
+		func->arg[i].desc = NULL;
 		func->arg[i].lval = arg[i].lval;
 		func->arg[i].nokonv = 1;
 		func->arg[i].cnst = 1;
@@ -154,6 +155,7 @@ EfiFuncArg *VaFuncArg (int narg, va_list list)
 		arg[i].lval = va_arg(list, int);
 		arg[i].nokonv = 0;
 		arg[i].name = NULL;
+		arg[i].desc = NULL;
 		arg[i].defval = NULL;
 	}
 
@@ -325,7 +327,7 @@ static void GetFuncEval (EfiFunc *func, void *rval, void **ptr)
 		}
 		else if	(konv[i].func || konv[i].type)
 		{
-			CleanData(farg[i].type, arglist[i]);
+			CleanData(farg[i].type, arglist[i], 1);
 		}
 	}
 

@@ -8,7 +8,7 @@ modifizierbares Datenobjekt, ein sognenanter
 , der um Ein- und Ausgabedefinitionen erweitert
 wird. Der L-Wert dient dabei als Zwischenspeicher für die Datenwerte.
 
-Folgenden Möglichkeiten stehen zur Verfügung, um ein EDB-Datenobjekt
+Folgende Möglichkeiten stehen zur Verfügung, um ein EDB-Datenobjekt
 einzurichten:
 *	Umhüllen eines beliebigen L-Wertes mit einer
 	EDB-Datenstruktur.

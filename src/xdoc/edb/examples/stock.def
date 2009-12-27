@@ -1,0 +1,6 @@
+view[data:av_stock 2000..2002]={
+	year = range,
+	data.pers.gender,
+	age = data.pers.birth_year.age(t){cut=24,39,49},
+	val,
+}

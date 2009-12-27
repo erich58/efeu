@@ -35,10 +35,26 @@ static EfiObj *data_alloc (EfiType *type, va_list list)
 	return obj;
 }
 
+static EfiObj *data_xalloc (EfiType *type, va_list list)
+{
+	EfiObj *obj = Obj_alloc(type->size + sizeof *obj);
+	void *data = va_arg(list, void *);
+	obj->data = (obj + 1);
+
+	memset(obj->data, 0, type->size);
+
+	if	(data)
+		CopyData(type, obj->data, data);
+	else if	(type->defval)
+		CopyData(type, obj->data, type->defval);
+
+	return obj;
+}
+
 static void data_free (EfiObj *obj)
 {
-	DestroyData(obj->type, obj->data);
-	Obj_free(obj, sizeof(EfiObj));
+	CleanData(obj->type, obj->data, 1);
+	Obj_free(obj, obj->type->size + sizeof *obj);
 }
 
 static void data_update (EfiObj *obj)
@@ -57,7 +73,19 @@ static char *data_ident (const EfiObj *obj)
 }
 
 EfiLval Lval_data = {
+	"data",
+	NULL,
 	data_alloc,
+	data_free,
+	data_update,
+	data_sync,
+	data_ident,
+};
+
+EfiLval Lval_xdata = {
+	"xdata",
+	NULL,
+	data_xalloc,
 	data_free,
 	data_update,
 	data_sync,

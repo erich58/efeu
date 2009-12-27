@@ -37,7 +37,8 @@ void EDBMeta_type (EDBMetaDef *def, EDBMeta *meta, const char *arg)
 	if	(type)
 	{
 		meta->prev = edb_paste(meta->prev, meta->cur);
-		meta->cur = edb_create(LvalObj(NULL, type), meta->desc);
+		meta->cur = edb_create(type);
+		meta->cur->desc = meta->desc;
 		meta->desc = NULL;
 	}
 }
@@ -112,6 +113,10 @@ static EDBMetaDef mdef[] = {
 	{ "file", EDBMeta_file, 0,
 		":*:file registration"
 		":de:Datei registrieren"
+	},
+	{ "import", EDBMeta_import, 1,
+		":*:import external data files"
+		":de:Externe Datenfiles einbinden"
 	},
 	{ "paste", EDBMeta_paste, 0,
 		":*:paste data files"

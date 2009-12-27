@@ -4,7 +4,8 @@
 
 #include <EFEU/mdmat.h>
 
-static void do_md_sum(EfiFunc *func, mdaxis *x2, mdaxis *x, char *base, char *data)
+static void do_md_sum (EfiFunc *func, mdaxis *x2, mdaxis *x,
+	char *base, char *data)
 {
 	int i;
 
@@ -32,7 +33,7 @@ static void do_md_sum(EfiFunc *func, mdaxis *x2, mdaxis *x, char *base, char *da
 }
 
 
-mdmat *md_sum(mdmat *md, const char *def)
+mdmat *md_sum (mdmat *md, const char *def)
 {
 	mdmat *m2;
 	EfiFunc *add;
@@ -61,8 +62,7 @@ mdmat *md_sum(mdmat *md, const char *def)
 		}
 	}
 
-	m2->size = md_size(m2->axis, m2->type->size);
-	m2->data = memalloc(m2->size);
+	md_alloc(m2);
 	memset(m2->data, 0, (size_t) m2->size);
 	do_md_sum(add, m2->axis, md->axis, m2->data, md->data);
 	md_allflag(md, 0, mdsf_clear, MDXFLAG_TEMP, NULL, 0);

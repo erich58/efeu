@@ -5,7 +5,7 @@
 #include <EFEU/mdmat.h>
 #include <EFEU/preproc.h>
 
-EfiType *mdtype(const char *str)
+EfiType *mdtype (const char *str)
 {
 	IO *io;
 	EfiType *type;
@@ -27,11 +27,14 @@ EfiType *mdtype(const char *str)
 	if	((type = GetType(str)) != NULL)
 		return type;
 
+	if	((type = edb_type(str)) != NULL)
+		return type;
+
 /*	Wegen Kompatibilität
 */
 	if	(strncmp(str, "struct", 6) != 0)
 	{
-		EfiVar *list;
+		EfiStruct *list;
 
 		io = io_cstr(str);
 		list = GetStruct(io, EOF);

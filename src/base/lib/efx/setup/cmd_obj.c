@@ -23,6 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 #include <EFEU/Op.h>
 #include <EFEU/cmdconfig.h>
+#include <EFEU/EfiClass.h>
 
 #define	CMPFUNC(name,op,cmp)	\
 static void name (EfiFunc *func, void *rval, void **arg) \
@@ -41,6 +42,16 @@ static void f_str2expr (EfiFunc *func, void *rval, void **arg)
 	io_close(io);
 }
 
+static void lval_class (EfiFunc *func, void *rval, void **arg)
+{
+	Val_obj(rval) = EfiClassExpr(RefObj(arg[0]), Val_str(arg[1]));
+}
+
+static void expr_class (EfiFunc *func, void *rval, void **arg)
+{
+	Val_obj(rval) = EfiClassExpr(RefObj(Val_obj(arg[0])), Val_str(arg[1]));
+}
+
 CEXPR(f_str2virfunc, Val_vfunc(rval) = VirFunc(GetGlobalFunc(Val_str(arg[0]))))
 CEXPR(f_xeval, Val_obj(rval) = EvalExpression(Val_obj(arg[0])))
 
@@ -56,7 +67,6 @@ static void f_xeval2 (EfiFunc *func, void *rval, void **arg)
 
 CEXPR(l_dim, Val_int(rval) = ObjListLen(Val_list(arg[0])))
 CEXPR(c_dim, Val_int(rval) = 1)
-
 
 /*	Zuweisungsoperatoren für allgemeine Objekte
 */
@@ -348,6 +358,26 @@ static void f_ldata (EfiFunc *func, void *rval, void **arg)
 {
 	EfiObjList *list = Val_list(arg[0]);
 	Val_obj(rval) = RefObj(list ? list->obj : arg[1]);
+	UpdateLval(Val_obj(rval));
+}
+
+static void list_update (EfiFunc *func, void *rval, void **arg)
+{
+	UpdateObjList(Val_list(arg[0]));
+}
+
+static void obj_update (EfiFunc *func, void *rval, void **arg)
+{
+	EfiObj *obj = arg[0];
+
+	if	(obj)
+		UpdateLval(Val_obj(obj->data));
+}
+
+static void f_odata (EfiFunc *func, void *rval, void **arg)
+{
+	EfiObj *obj = arg[0];
+	Val_obj(rval) = RefObj(obj ? Val_obj(obj->data) : arg[1]);
 }
 
 /*	sorting and seraching
@@ -489,6 +519,8 @@ static void list_bsearch (EfiFunc *func, void *rval, void **arg)
 
 static EfiFuncDef fdef_obj[] = {
 	{ FUNC_RESTRICTED, &Type_expr, "str ()", f_str2expr },
+	{ FUNC_VIRTUAL, &Type_expr, "classify (. &, str def)", lval_class },
+	{ FUNC_VIRTUAL, &Type_expr, "classify (Expr_t, str def)", expr_class },
 	{ FUNC_RESTRICTED, &Type_vfunc, "str ()", f_str2virfunc },
 	{ FUNC_VIRTUAL, &Type_obj, "eval (Expr_t)", f_xeval },
 	{ FUNC_VIRTUAL, &Type_obj, "eval (Expr_t, VarTab)", f_xeval2 },
@@ -557,6 +589,9 @@ static EfiFuncDef fdef_obj[] = {
 	{ 0, &Type_void, "List_t::top (...)", f_toplist },
 	{ 0, &Type_obj, "List_t::pop (. def = NULL)", f_poplist },
 	{ 0, &Type_obj, "List_t::data (. def = NULL)", f_ldata },
+	{ 0, &Type_void, "List_t::update ()", list_update },
+	{ 0, &Type_void, "Object::update ()", obj_update },
+	{ 0, &Type_obj, "Object::data (. def = NULL)", f_odata },
 	{ FUNC_VIRTUAL, &Type_void, "qsort (List_t list, VirFunc f)",
 		list_qsort },
 	{ 0, &Type_void, "List_t::qsort (VirFunc f)", list_qsort },

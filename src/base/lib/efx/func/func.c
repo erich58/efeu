@@ -21,6 +21,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/object.h>
+#include <EFEU/cmdeval.h>
 
 
 /*	Funktionsaufrufe
@@ -42,101 +43,93 @@ void Func_func (EfiFunc *func, void *rval, void **arg)
 	RestoreVarStack(vstack);
 }
 
+static EfiObj *farg_obj (EfiFuncArg *arg, void *data)
+{
+	if	(arg->type == NULL)
+		return RefObj(data);
+
+	if	(arg->lval || arg->cnst)
+		return LvalObj(&Lval_ptr, arg->type, data);
+
+	return LvalObj(&Lval_xdata, arg->type, data);
+}
 
 void Func_inline (EfiFunc *func, void *rval, void **arg)
 {
 	EfiObj *x;
-	EfiVar *var;
 	EfiVarTab *vtab;
+	VarTabEntry *entry;
+	int rbase;
 	int i;
+
+	rbase = (!func->bound && !func->name);
+
+	if	(rbase)
+	{
+		EfiObj *base = LvalObj(&Lval_ptr, func->type, rval);
+		PushVarTab(RefVarTab(func->type->vtab), base);
+	}
 
 /*	Variablentabelle für Argumente aufbauen
 */
 	if	(func->dim)
 	{
-		var = memalloc(func->dim * sizeof(EfiVar));
+		vtab = VarTab(func->name, func->dim);
 
 		for (i = 0; i < func->dim; i++)
 		{
-			if	(func->arg[i].name == NULL)	continue;
+			if	(func->arg[i].name == NULL)
+				continue;
 
-			var[i].name = func->arg[i].name;
-			var[i].dim = 0;
-
-			if	(func->arg[i].type == &Type_vec)
-			{
-				EfiVec *vec = Val_ptr(arg[i]);
-				var[i].type = vec->type;
-				var[i].data = vec->buf.data;
-				var[i].dim = vec->buf.used;
-			}
-			else if	(func->arg[i].type == NULL)
-			{
-				var[i].type = &Type_obj;
-				var[i].data = &arg[i];
-			}
-			else if	(func->arg[i].lval == 0
-				&& func->arg[i].cnst == 0)
-			{
-				var[i].type = func->arg[i].type;
-				var[i].data = memalloc(var[i].type->size);
-				CopyData(var[i].type, var[i].data, arg[i]);
-			}
-			else if	(func->arg[i].type)
-			{
-				var[i].type = func->arg[i].type;
-				var[i].data = arg[i];
-			}
+			entry = VarTab_next(vtab);
+			entry->name = func->arg[i].name;
+			entry->type = func->arg[i].type;
+			entry->desc = NULL;
+			entry->obj = farg_obj(func->arg + i, arg[i]);
+			entry->get = NULL;
+			entry->data = NULL;
+			entry->entry_clean = NULL;
 		}
-
-		vtab = VarTab(func->name, func->dim);
-		AddVar(vtab, var, func->dim);
 
 		if	(func->scope)
 		{
-			x = func->bound ? Var2Obj(var, NULL) : NULL;
+			if	(func->bound)
+			{
+				entry = vtab->tab.data;
+				x = RefObj(entry->obj);
+			}
+			else	x = NULL;
+
 			PushVarTab(RefVarTab(func->scope), x);
 		}
 
+		VarTab_qsort(vtab);
 		PushVarTab(vtab, NULL);
 	}
-	else	var = NULL;
 
-	x = EvalExpression(func->par);
-
-/*	Rückgabewert ermitteln
-*/
-	if	(func->type == NULL)
+	if	((x = EvalExpression(func->par)))
 	{
-		Val_obj(rval) = x;
+		if	(func->type == NULL)
+		{
+			Val_obj(rval) = x;
+		}
+		else if	(func->lretval)
+		{
+			UnrefObj(x);
+		}
+		else	Obj2Data(x, func->type, rval);
 	}
-	else if	(func->lretval)
-	{
-		UnrefObj(x);
-		x = NULL;
-	}
-	else	Obj2Data(x, func->type, rval);
 
 /*	Variablentabelle für Argumente löschen
 */
 	if	(func->dim)
 	{
-		for (i = 0; i < func->dim; i++)
-		{
-			if	(func->arg[i].name == NULL)	continue;
-			if	(func->arg[i].type == &Type_vec) continue;
-			if	(func->arg[i].type == NULL)	continue;
-			if	(func->arg[i].lval != 0)	continue;
-			if	(func->arg[i].cnst != 0)	continue;
-
-			CleanData(var[i].type, var[i].data);
-			memfree(var[i].data);
-		}
-
 		PopVarTab();
-		memfree(var);
 
 		if	(func->scope)
 			PopVarTab();
 	}
+
+	if	(rbase)
+		PopVarTab();
 }

@@ -101,7 +101,7 @@ static void *make_par (const char *opt, const char *arg, void *ptr)
 	default:	par->test = NULL; break;
 	}
 
-	par->a = strtod(arg, &p);
+	par->a = C_strtod(arg, &p);
 	par->b = par->a;
 
 	if	(par->test)	return par;
@@ -112,7 +112,7 @@ static void *make_par (const char *opt, const char *arg, void *ptr)
 
 		if	(*p)
 		{
-			par->b = strtod(p, &p);
+			par->b = C_strtod(p, &p);
 			par->test = nflag ? test_nrange : test_range;
 		}
 		else	par->test = nflag ? test_lt : test_ge;
@@ -126,7 +126,8 @@ static void *make_par (const char *opt, const char *arg, void *ptr)
 	return par;
 }
 
-TestParDef TestPar_double = { "=[!^][<>]value]|[first]:[last]",
+TestParDef TestPar_double = { &Type_double,
+	"=[!^][<>]value]|[first]:[last]",
 	make_par, memfree, NULL, 
 	":*:The valid values for the test are defined either by a relation\n"
 	"(less or greater a specific value) or a intervall (limits enclosed).\n"

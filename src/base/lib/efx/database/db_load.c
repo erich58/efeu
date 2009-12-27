@@ -84,7 +84,7 @@ static void addtodb (EfiDB *db, void *buf, EfiObj *expr)
 		VarTab_xadd(NULL, "y", NULL, LvalObj(&Lval_ptr, db->type, ptr));
 		UnrefEval(RefObj(expr));
 		PopVarTab();
-		CleanData(db->type, buf);
+		CleanData(db->type, buf, 0);
 	}
 	else	DB_search(db, buf, VB_ENTER);
 }

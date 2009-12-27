@@ -2,9 +2,18 @@
 
 \index[Transformationen]
 Auf die einzelnen EDB-Datenschnittstellen können
-\index{Transformartionsfunktion}en gesetzt werden. Mehrere Datenschnittstellen
+\index{Transformationsfunktion}en gesetzt werden. Mehrere Datenschnittstellen
 können miteinander verknüpft werden. Das Resultat ist wiederum eine
 EDB-Datenschnittstelle.
+
+Es gibt verschiedene Formen der Implementierung dieser
+Transformationen. Eine Möglichkeit davon sind entsprechende
+Anweisungen in einem EDB-Datenfile. Diese werden im Kapitel
+\ref{data} beschrieben.
+
+Innerhalb eines
+\index{|esh|-Skript}s können Transformationen mithilfe von Funktionen auf
+eine Datenschnittstelle aufgesetzt werden.
 
 \ssec	Filter
 
@@ -21,26 +30,55 @@ ein paar Beispiele angeführt:
 *	Umordnung/Sortierung von Datensätzen;
 *	Reduktion von Variablen;
 *	Aggregation von Datensätzen;
-*	Ergänzen mit neuen Variablen.
+*	Ergänzen mit neuen Variablen;
+*	Zusammenstellung von Variablen zu einer Datensicht.
 
 Filter arbeiten nicht nur mit einzelnen Datensätzen, sondern können
-mehrere zusammenhängende Datensätze als Einheit verarbeiten.
-Komplexe Modifikationen sind mit dem \index{|trans|}-Filter
-möglich.
+mehrere, zusammenhängende Datensätze als Einheit verarbeiten.
+Komplexe Modifikationen sind mit dem \index{|trans|}- und
+\index{|view|}-Filter möglich.
 
-\ssec	Implementierungsformen
+Filter können folgend aktiviert werden:
+*	Durch die |@filter| Anweisung in einem EDB-Datenfile.
+*	Als Parameter beim Öffnen eines EDB-Datenfiles
+	oder mithilfe der Funktion |EDB::filter| in einem Skript.
+*	Durch Kommandozeilenoptionen von \mref{edb(1)},
+	\mref{edbcat(1)}  und  \mref{edbjoin(1)}.
 
-Es gibt verschiedene Formen der Implementierung dieser
-Transformationen. Eine Möglichkeit davon sind entsprechende
-Anweisungen in einem EDB-Datenfile. Diese werden im Kapitel
-\ref{data} beschrieben.
+\ssec	Zusammenhängen von Datenfiles
 
-Filter können über Kommandozeilenoptionen von \mref{edb(1)} angegeben werden.
+Datenfiles können mithilfe von \index{|edbcat|} zusammengehängt werden.
+Standardmäßig werden die Dateien der Reihe nach abgearbeitet.
+Alternativ können die Dateien auch bezüglich einer
+Vergleichsdefinition (Option |-m| <cmp>) gemischt werden.
+Zusätzlich kann auch eine \index{Sortierung} der Einzeldateien (Angabe von
+|-s| <cmp> anstelle von |-m| <cmp>) verlangt werden.
+Die Spezifikation einer Vergleichsdefinition wird in Abschnitt
+\ref{cmp}, Seite \pref{cmp} beschrieben.
 
-Verknüpfungen können mit dem Kommando \mref{edbjoin(1)} erfolgen. Alternativ
-können sie aber auch über den Filter \index{|join|} definiert werden. Als
-Argument wird das zweite EDB-Datenfile angegeben.
+Falls die Dateien nur gemischt werden sollen und diese nicht bereits
+sortiert sind, ist das Ergebnis undefiniert.
+Weitere Details zu diesem Kommando stehen unter \mref{edbcat(1)}.
 
-Schlußendlich können Transformationen innerhalb eines
-\index{|esh|-Skript}s mithilfe von Funktionen auf eine Datenschnittstelle
-aufgesetzt werden.
+Die entsprechende Anweisung in einem EDB-Datenfile lautet |@file|.
+
+\ssec	Verknüpfen von Datenfiles
+
+Das Kommando \index{|edbjoin|} erlaubt das Verknüpfen zweier Datenfiles
+über einen gemeinsamen Schlüssel. Im Anhang (\mref{edbjoin(1)}) wird das
+Kommando ausführlich beschrieben.
+
+Die Verknüpfung zweier Datenfiles kann alternativ auch über ein
+EDB-Metadatenfile (Anweisung |@join|) oder mithilfe des Filters
+\index{|join|} definiert werden.
+
+Die folgenden Zeilen zeigen die Datei \index{|data.edb|}
+mit Episodendaten zu den in \index{|pers.edb|} definierten Personen.
+
+\include[verbatim]	data.edb
+
+Diese beiden Tabellen können einfach mit dem Befehl
+|edbjoin -n0 pers.edb data.edb| verknüpft werden.
+Die Ausgabe ist:
+
+\pipe[verbatim] |edbjoin -n0 pers.edb data.edb|

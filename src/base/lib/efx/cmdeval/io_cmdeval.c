@@ -114,7 +114,7 @@ static int ce_ctrl (void *ptr, int req, va_list list)
 		CmdEval_cout = par->cout;
 		CmdEval_cin = par->cin;
 		stat = io_close(par->io);
-		sb_destroy(par->buf);
+		rd_deref(par->buf);
 		memfree(par->delim);
 		memfree(par);
 		break;

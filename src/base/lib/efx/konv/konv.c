@@ -68,7 +68,7 @@ EfiKonv *GetKonv(EfiKonv *konv, const EfiType *old, const EfiType *new)
 		if	(konv->type == old)
 		{
 			konv->func = NULL;
-			return &buf;
+			return konv;
 		}
 		else if	((konv->func = Konverter(old, konv->type)))
 		{

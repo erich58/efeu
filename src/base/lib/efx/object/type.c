@@ -99,7 +99,7 @@ int IsTypeClass (const EfiType *type, const EfiType *base)
 	return 0;
 }
 
-static int cmp_struct (EfiVar *a, EfiVar *b)
+static int cmp_struct (EfiStruct *a, EfiStruct *b)
 {
 	while (a != NULL || b != NULL)
 	{
@@ -116,7 +116,7 @@ static int cmp_struct (EfiVar *a, EfiVar *b)
 	return 1;
 }
 
-EfiType *FindStruct (EfiVar *list, size_t size)
+EfiType *FindStruct (EfiStruct *list, size_t size)
 {
 	EfiType *type;
 	NameKeyEntry *ptr;

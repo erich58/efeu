@@ -1,0 +1,15 @@
+/*
+Data types
+*/
+
+#ifndef	DATA_hdr
+#define	DATA_hdr 1
+
+extern Period;
+
+struct DATA : Period range { double income };
+
+DATA DATA (Date beg, Date end, double income)
+	return { { beg, end }, income };
+
+#endif /* DATA.hdr */

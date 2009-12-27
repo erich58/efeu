@@ -43,7 +43,7 @@ static mdaxis *make_axis(mdaxis *x1, mdaxis *x2, unsigned mask)
 }
 
 
-static void do_md_term(EfiFunc *func, mdaxis *x, char *p, mdaxis *x1,
+static void do_md_term (EfiFunc *func, mdaxis *x, char *p, mdaxis *x1,
 	char *p1, mdaxis *x2, char *p2)
 {
 	int i, n;
@@ -151,8 +151,7 @@ mdmat *md_term (EfiVirFunc *virfunc, mdmat *m1, mdmat *m2)
 	md = new_mdmat();
 	md->type = (EfiType *) func->type;
 	md->axis = make_axis(m1->axis, m2 ? m2->axis : NULL, 0);
-	md->size = md_size(md->axis, md->type->size);
-	md->data = memalloc(md->size);
+	md_alloc(md);
 	memset(md->data, 0, md->size);
 
 	if	(m2)

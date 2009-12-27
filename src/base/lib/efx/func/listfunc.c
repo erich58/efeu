@@ -139,5 +139,12 @@ int PrintFuncArg(IO *io, EfiFuncArg *arg)
 		n += PrintObj(io, arg->defval);
 	}
 
+	if	(arg->desc)
+	{
+		n += io_puts(" /* ", io);
+		n += io_puts(arg->desc, io);
+		n += io_puts(" */", io);
+	}
+
 	return n;
 }

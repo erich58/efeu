@@ -108,7 +108,7 @@ void CallVoidFuncVec (EfiFunc *func, void **args)
 		}
 
 		func->eval(func, data, args);
-		CleanData(func->type, data);
+		CleanData(func->type, data, 1);
 	}
 }
 

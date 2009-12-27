@@ -22,16 +22,22 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/EDB.h>
 #include <EFEU/Debug.h>
 #include <EFEU/ioctrl.h>
+#include <EFEU/stdtype.h>
+#include <EFEU/EDBFilter.h>
+
+#define	FMT_UNIT "edb_sort: undefined unit key $2.\n"
 
 #if	1
 #define	EDB_SORT_MIN	0xfff0		/* 64 kB - 16 */
-#define	EDB_SORT_STD	0xfffff0	/* 16 MB - 16 */
-#define	EDB_MAX_MERGE	32
+#define	EDB_SORT_STD	0x3fffff0	/* 64 MB - 16 */
+#define	EDB_MAX_MERGE	128
 #else
 #define	EDB_SORT_MIN	16
 #define	EDB_SORT_STD	64
 #define	EDB_MAX_MERGE	3
 #endif
+
+#define	EDB_MIN_DIM	4	/* Für sehr große Datenstrukturen */
 
 size_t edb_sort_space = 0;
 
@@ -122,6 +128,7 @@ typedef struct {
 	unsigned pidx;	/* Index im Positionsvektor */
 	unsigned space;	/* Größe des Datenbuffers */
 	unsigned mdim;	/* Maximaler Positionsindex */
+	unsigned ksize;	/* Schlüssellänge */
 	CmpDef *cmp;	/* Vergleichsfunktion */
 	EfiObj *obj1;	/* Erstes Objekt für Vergleich */
 	EfiObj *obj2;	/* Zweites Objekt für Vergleich */
@@ -144,6 +151,35 @@ static int dbuf_put (int c, void *ptr)
 	return c;
 }
 
+static unsigned get_ksize (CmpDef *cmp)
+{
+	CmpDefEntry *entry;
+	unsigned ksize;
+
+	if	(!cmp)	return 0;
+		
+	ksize = 0;
+
+	for (entry = cmp->list; entry; entry = entry->next)
+	{
+		if	(entry->type->flags & TYPE_MALLOC)
+			return 0;
+
+		ksize += entry->dim * entry->type->size;
+	}
+
+	return ksize;
+}
+
+static void write_key (IO *out, CmpDef *cmp, char *data)
+{
+	CmpDefEntry *entry;
+
+	for (entry = cmp->list; entry; entry = entry->next)
+		io_write(out, data + entry->offset,
+			entry->dim * entry->type->size);
+}
+
 static void dbuf_init (DBUF *buf, EfiType *type, CmpDef *cmp)
 {
 	size_t space;
@@ -151,6 +187,11 @@ static void dbuf_init (DBUF *buf, EfiType *type, CmpDef *cmp)
 	if	(edb_sort_space > EDB_SORT_MIN)	space = edb_sort_space;
 	else if	(edb_sort_space)		space = EDB_SORT_MIN;
 	else					space = EDB_SORT_STD;
+
+	buf->ksize = get_ksize(cmp);
+
+	if	(buf->ksize > space)
+		buf->ksize = 0;
 
 	buf->mdim = space / sizeof buf->pos[0];
 	buf->space = buf->mdim * sizeof buf->pos[0];
@@ -178,6 +219,29 @@ static void dbuf_free (DBUF *buf)
 	UnrefObj(buf->obj2);
 }
 
+static CmpDef *cdef = NULL;
+static EfiObj *cmp1 = NULL;
+static EfiObj *cmp2 = NULL;
+
+static int key_cmp (const void *a_ptr, const void *b_ptr)
+{
+	CmpDefEntry *entry;
+	char *a = (char *) ((POS *) a_ptr)->ptr;
+	char *b = (char *) ((POS *) b_ptr)->ptr;
+
+	for (entry = cdef->list; entry; entry = entry->next)
+	{
+		int r = entry->cmp(entry, a, b);
+
+		if	(r)	return entry->invert ? -r : r;
+
+		a += entry->dim * entry->type->size;
+		b += entry->dim * entry->type->size;
+	}
+
+	return 0;
+}
+
 static int std_cmp (const void *a_ptr, const void *b_ptr)
 {
 	const POS *a = a_ptr;
@@ -189,10 +253,6 @@ static int std_cmp (const void *a_ptr, const void *b_ptr)
 	else if	(a->size > b->size)	return 1;
 	else				return 0;
 }
-
-static CmpDef *cdef = NULL;
-static EfiObj *cmp1 = NULL;
-static EfiObj *cmp2 = NULL;
 
 static int ext_get (void *ptr)
 {
@@ -217,84 +277,6 @@ static int ext_cmp (const void *a_ptr, const void *b_ptr)
 	return cmp_data(cdef, cmp1->data, cmp2->data);
 }
 
-static int dbuf_load (VecBuf *ftab, DBUF *buf, EDB *base)
-{
-	FILE *file;
-	unsigned i, j, n;
-	unsigned char *p;
-	EfiObj *obj;
-	unsigned start;
-
-	obj = base->obj;
-	buf->dpos = 0;
-	buf->pidx = buf->mdim - 1;
-	buf->dlim = buf->pidx * sizeof buf->pos[0];
-	start = buf->dpos;
-
-	while (buf->dpos < buf->dlim && edb_read(base))
-	{
-		WriteData(obj->type, obj->data, buf->io);
-
-		if	(buf->dpos > buf->dlim)
-		{
-			if	(start == 0)
-			{
-				IO *out = io_fileopen(ftab_next(ftab), "wb");
-				WriteData(obj->type, obj->data, out);
-				io_close(out);
-				debug("space = %u, big data", buf->dpos);
-				return 1;
-			}
-
-			edb_unread(base);
-			break;
-		}
-
-		buf->pos[buf->pidx].ptr = buf->data + start;
-		buf->pos[buf->pidx].size = buf->dpos - start;
-		/*
-		debug("%2d: %8u %8u", buf->pidx, start,
-			buf->pos[buf->pidx].size);
-		*/
-		buf->dlim = --buf->pidx * sizeof buf->pos[0];
-		start = buf->dpos;
-	}
-
-	buf->dpos = start;
-	buf->pidx++;
-
-	if	(buf->pidx == buf->mdim)
-		return 0;
-
-	n = buf->mdim - buf->pidx;
-
-	if	(n <= 1)
-	{
-		;
-	}
-	else if	(buf->cmp)
-	{
-		cdef = buf->cmp;
-		cmp1 = buf->obj1;
-		cmp2 = buf->obj2;
-		qsort(buf->pos + buf->pidx, n, sizeof buf->pos[0], ext_cmp);
-	}
-	else	qsort(buf->pos + buf->pidx, n, sizeof buf->pos[0], std_cmp);
-
-	file = fileopen(ftab_next(ftab), "wb");
-
-	for (i = buf->pidx; i < buf->mdim; i++)
-		for (p = buf->pos[i].ptr, j = buf->pos[i].size; j-- > 0; p++)
-			putc(*p, file);
-
-	fileclose(file);
-	debug("space = %u, unused = %d, dim = %u",
-		buf->dpos, (buf->pidx * sizeof buf->pos[0]) - buf->dpos,
-		buf->mdim - buf->pidx);
-
-	return n;
-}
-
 static int read_binary (EfiType *type, void *data, void *par)
 {
 	if	(io_peek(par) == EOF)
@@ -307,7 +289,6 @@ static size_t write_binary (EfiType *type, void *data, void *par)
 {
 	return WriteData(type, data, par);
 }
-
 
 static void preload (EDB *edb)
 {
@@ -336,7 +317,7 @@ static EDB *tmp_merge (EfiType *type, CmpDef *cmp, char **list, size_t dim)
 
 	if	(dim <= 1)
 	{
-		edb = edb_create(LvalObj(NULL, type), NULL);
+		edb = edb_create(type);
 
 		if	(dim)
 		{
@@ -382,38 +363,242 @@ static EDB *tmp_merge (EfiType *type, CmpDef *cmp, char **list, size_t dim)
 	return edb;
 }
 
+static int dbuf_load (VecBuf *ftab, DBUF *buf, EDB *base)
+{
+	FILE *file;
+	unsigned i, j, n;
+	unsigned char *p;
+	EfiObj *obj;
+	unsigned start;
+
+	obj = base->obj;
+	buf->dpos = 0;
+	buf->pidx = buf->mdim - 1;
+	buf->dlim = buf->pidx * sizeof buf->pos[0];
+	start = buf->dpos;
+
+	while (buf->dpos < buf->dlim && edb_read(base))
+	{
+		if	(buf->ksize)
+			write_key(buf->io, buf->cmp, obj->data);
+
+		WriteData(obj->type, obj->data, buf->io);
+
+		if	(buf->dpos > buf->dlim)
+		{
+			if	(start == 0)
+			{
+				IO *out = io_fileopen(ftab_next(ftab), "wb");
+				WriteData(obj->type, obj->data, out);
+				io_close(out);
+				debug("space = %u, big data", buf->dpos);
+				return 1;
+			}
+
+			edb_unread(base);
+			break;
+		}
+
+		buf->pos[buf->pidx].ptr = buf->data + start;
+		buf->pos[buf->pidx].size = buf->dpos - start;
+		/*
+		debug("%2d: %8u %8u", buf->pidx, start,
+			buf->pos[buf->pidx].size);
+		*/
+		buf->dlim = --buf->pidx * sizeof buf->pos[0];
+		start = buf->dpos;
+	}
+
+	buf->dpos = start;
+	buf->pidx++;
+
+	if	(buf->pidx == buf->mdim)
+		return 0;
+
+	n = buf->mdim - buf->pidx;
+
+	if	(n <= 1)
+	{
+		;
+	}
+	else if	(buf->ksize)
+	{
+		cdef = buf->cmp;
+		qsort(buf->pos + buf->pidx, n, sizeof buf->pos[0], key_cmp);
+	}
+	else if	(buf->cmp)
+	{
+		cdef = buf->cmp;
+		cmp1 = buf->obj1;
+		cmp2 = buf->obj2;
+		qsort(buf->pos + buf->pidx, n, sizeof buf->pos[0], ext_cmp);
+	}
+	else	qsort(buf->pos + buf->pidx, n, sizeof buf->pos[0], std_cmp);
+
+	file = fileopen(ftab_next(ftab), "wb");
+
+	for (i = buf->pidx; i < buf->mdim; i++)
+	{
+		p = buf->pos[i].ptr + buf->ksize;
+		j = buf->pos[i].size - buf->ksize;
+
+		while (j-- > 0)
+			putc(*p++, file);
+	}
+
+	fileclose(file);
+	debug("space = %u, unused = %d, dim = %u",
+		buf->dpos, (buf->pidx * sizeof buf->pos[0]) - buf->dpos,
+		buf->mdim - buf->pidx);
+
+	return n;
+}
+
+static EDB *sort_dbuf (EDB *edb, CmpDef *cmp)
+{
+	DBUF buf;
+	VecBuf ftab;
+	EfiType *type;
+
+	type = edb->obj->type;
+	ftab_init(&ftab);
+	dbuf_init(&buf, type, cmp);
+
+	while (dbuf_load(&ftab, &buf, edb))
+		;
+
+	dbuf_free(&buf);
+	debug("fdim=%u\n", (unsigned) ftab.used);
+	edb = tmp_merge(type, cmp, ftab.data, ftab.used);
+	ftab_free(&ftab);
+	return edb;
+}
+
+
+static int cmp_fix (const void *a_ptr, const void *b_ptr)
+{
+	return cmp_data(cdef, a_ptr, b_ptr);
+}
+
+static void fix_save (VecBuf *ftab, EfiType *type, CmpDef *cmp,
+	char *p, size_t n)
+{
+	IO *out;
+
+	if	(n)
+	{
+		cdef = cmp;
+		qsort(p, n, type->size, cmp_fix);
+	}
+
+	out = io_fileopen(ftab_next(ftab), "wb");
+
+	while (n-- > 0)
+	{
+		WriteData(type, p, out);
+		p += type->size;
+	}
+
+	io_close(out);
+}
+
+static EDB *sort_fix (EDB *edb, CmpDef *cmp)
+{
+	size_t n, dim;
+	void *buf;
+	char *p;
+	EfiType *type;
+	VecBuf ftab;
+
+	if	(!edb->read)	return edb;
+
+	if	(edb_sort_space > EDB_SORT_MIN)	dim = edb_sort_space;
+	else if	(edb_sort_space)		dim = EDB_SORT_MIN;
+	else					dim = EDB_SORT_STD;
+
+	type = edb->obj->type;
+	dim /= type->size;
+
+	if	(dim < EDB_MIN_DIM)	dim = EDB_MIN_DIM;
+
+	buf = lmalloc(dim * type->size);
+	debug("size = %u, dim = %u", (unsigned) type->size, (unsigned) dim);
+
+	n = 0;
+	p = buf;
+	ftab_init(&ftab);
+
+	while (edb_read(edb))
+	{
+		CopyData(type, p, edb->obj->data);
+
+		if	(++n >= dim)
+		{
+			fix_save(&ftab, type, cmp, buf, n);
+			n = 0;
+			p = buf;
+		}
+		else	p += type->size;
+	}
+
+	if	(n)
+		fix_save(&ftab, type, cmp, buf, n);
+
+	edb_closein(edb);
+	lfree(buf);
+	debug("fdim=%u\n", (unsigned) ftab.used);
+	edb = tmp_merge(type, cmp, ftab.data, ftab.used);
+	ftab_free(&ftab);
+	return edb;
+}
+
+
 EDB *edb_sort (EDB *base, CmpDef *cmp)
 {
 	EDB *edb;
 	EfiType *type;
-	DBUF buf;
-	VecBuf ftab;
 
 	type = base->obj->type;
-	ftab_init(&ftab);
-	dbuf_init(&buf, type, cmp);
 
-	while (dbuf_load(&ftab, &buf, base))
-		;
+	if	(!cmp || (type->flags & TYPE_MALLOC))
+	{
+		edb = sort_dbuf(base, cmp);
+	}
+	else	edb = sort_fix(base, cmp);
 
-	dbuf_free(&buf);
+	edb->desc = mstrcpy(base->desc);
 	rd_deref(base);
-
-	debug("fdim=%d\n", ftab.used);
-	edb = tmp_merge(type, cmp, ftab.data, ftab.used);
-	ftab_free(&ftab);
 	return edb;
 }
 
 static EDB *fdef_sort (EDBFilter *filter, EDB *base,
 	const char *opt, const char *arg)
 {
+	if	(opt)
+	{
+		char *p;
+		double lim;
+		
+		lim = C_strtod(opt, &p);
+
+		switch (*p)
+		{
+		case  0:	break;
+		case 'k':	lim *= 1024.; break;
+		case 'M':	lim *= 1024. * 1024.; break;
+		case 'G':	lim *= 1024. * 1024. * 1024.; break;
+		default:	dbg_note("edb", FMT_UNIT, "c", *p); break;
+		}
+
+		edb_sort_space = lim + 0.5;
+	}
+
 	return edb_sort(base, arg ?
 		cmp_create(base->obj->type, arg, NULL) : NULL);
 }
 
-EDBFilter EDBFilter_sort = {
-	"sort", "=cmp", fdef_sort, NULL,
+EDBFilter EDBFilter_sort = EDB_FILTER(NULL,
+	"sort", "[size]=cmp", fdef_sort, NULL,
 	":*:sort data"
 	":de:Daten sortieren"
-};
+);

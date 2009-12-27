@@ -1,0 +1,15 @@
+
+virtual void TypeDef::filter (str syntax, str label, str cdef, str rdef,
+	str otype = NULL, str par = NULL)
+{
+	s_setup += sprintf("AddEfiPar(type, &%s);\n",
+		EDBFilter(syntax, label, cdef, rdef,
+			t_name, otype, par, t_name, false));
+}
+
+virtual void TypeDef::filter (str syntax, str label, str cdef, str rdef)
+{
+	s_setup += sprintf("AddEfiPar(type, &%s);\n",
+		EDBFilter(syntax, label, cdef, rdef,
+			t_name, t_name, NULL, t_name, false));
+}

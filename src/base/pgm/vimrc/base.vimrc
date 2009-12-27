@@ -11,6 +11,7 @@ augroup filetype
   au BufNewFile,BufRead	*.etk			set ft=esh
   au BufNewFile,BufRead	*.dmac	set ft=dmac
   au BufNewFile,BufRead	*.doc,*.fig,*.[1-9]*,*hlp	set ft=doc
+  au BufNewFile,BufRead	*.eds			set ft=doc
   au BufNewFile,BufRead	CHANGELOG*,README*	set ft=doc
 augroup END
 

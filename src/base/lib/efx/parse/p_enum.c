@@ -136,24 +136,46 @@ EfiObj *PFunc_enum (IO *io, void *data)
 	EfiType *type;
 	EfiType *base;
 	char *name, *prompt;
+	size_t recl;
 	int c;
 
 	name = io_getname(io);
+
+	if	(name == NULL)	type = NULL;
+	else if	(data)		type = XGetType(name);
+	else			type = GetType(name);
+
+	EfiType_version(type, io);
 	c = io_eat(io, "%s");
+	recl = 4;
+	base = NULL;
 
 	if	(c == ':')
 	{
 		io_getc(io);
-		base = Parse_type(io, NULL);
-		memfree(io_getname(io));
+		c = io_eat(io, "%s");
+
+		if	(isdigit(c))
+		{
+			void *ptr;
+			io_valscan(io, SCAN_INT, &ptr);
+			recl = Val_int(ptr);
+		}
+		else
+		{
+			base = Parse_type(io, NULL);
+			recl = base->recl;
+			memfree(io_getname(io));
+		}
+
 		c = io_eat(io, "%s");
 	}
-	else	base = NULL;
 
 	if	(base && !IsTypeClass(base, &Type_enum))
 	{
 		io_error(io, "[efmain:186]", "s", base->name);
 		base = NULL;
+		recl = 4;
 	}
 
 	if	(c != '{')
@@ -162,15 +184,28 @@ EfiObj *PFunc_enum (IO *io, void *data)
 		return NULL;
 	}
 
-	type = NewEnumType(name);
-	memfree(name);
-
-	if	(base)
-		type->base = base;
-
 	io_getc(io);
 	prompt = io_prompt(io, PROMPT);
-	add_key(type, io, '}');
+
+	if	(!type)
+	{
+		type = NewEnumType(name, recl);
+
+		if	(base)
+			type->base = base;
+
+		add_key(type, io, '}');
+		type = AddEnumType(type);
+	}
+	else
+	{
+		/* Nur überlesen, derzeit keine Prüfung auf Äquivalenz! */
+
+		while ((c = io_skipcom(io, NULL, 0)) != '}')
+			;
+	}
+
 	io_prompt(io, prompt);
-	return type2Obj(AddEnumType(type));
+	memfree(name);
+	return type2Obj(type);
 }

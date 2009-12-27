@@ -71,7 +71,7 @@ void copy_block (IO *ein, IO *aus, int end, int flag)
 	prompt = io_prompt(ein, ">>> ");
 	last = 0;
 
-	while ((c = io_skipcom(ein, NULL, 0)) != EOF && c != end)
+	while ((c = io_getc(ein)) != EOF && c != end)
 	{
 		subcopy(ein, aus, c, (flag && last == '\n'));
 		last = c;

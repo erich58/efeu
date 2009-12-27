@@ -12,6 +12,7 @@ A-3423 St.Andrä/Wördern, Wildenhaggasse 38
 
 typedef struct CATPAR {
 	REFVAR;
+	EfiObj *obj;
 	EDB *sub;
 	char *path;
 	char **tab;
@@ -26,6 +27,7 @@ static void cat_clean (void *data)
 	for (i = 0; i < cat->dim; i++)
 		memfree(cat->tab[i]);
 
+	rd_deref(cat->obj);
 	rd_deref(cat->sub);
 	memfree(cat->path);
 	memfree(cat);
@@ -39,34 +41,29 @@ static int cat_read (EfiType *type, void *data, void *par)
 
 	for (;;)
 	{
-		if	(cat->sub->read(type, data, cat->sub->ipar))
+		if	(edb_read(cat->sub))
 			return 1;
 
-		edb_closein(cat->sub);
+		rd_deref(cat->sub);
 		
 		if	(cat->dim)
 		{
-			edb_paste(cat->sub, edb_fopen(cat->path, cat->tab[0]));
+			cat->sub = edb_conv(edb_fopen(cat->path,
+				cat->tab[0]), type);
+			cat->obj->data = cat->sub->obj->data;
 			memfree(cat->tab[0]);
 			cat->tab++;
 			cat->dim--;
 		}
-		else	return 0;
+		else
+		{
+			cat->obj->data = cat->obj + 1;
+			cat->sub = NULL;
+			break;
+		}
 	}
 
 	return 0;
-}
-
-
-static char *get_next (char **flist)
-{
-	char *p = *flist;
-
-	while (*p == 0)
-		p++;
-
-	*flist = p + strlen(p);
-	return p;
 }
 
 static int get_mode (const char *arg, char **key)
@@ -96,9 +93,9 @@ static int get_mode (const char *arg, char **key)
 	return mode;
 }
 
+
 void EDBMeta_file (EDBMetaDef *def, EDBMeta *meta, const char *arg)
 {
-	char *flist;
 	char *key;
 	EfiType *type;
 	EDB *edb;
@@ -106,25 +103,14 @@ void EDBMeta_file (EDBMetaDef *def, EDBMeta *meta, const char *arg)
 	int mode;
 
 	mode = get_mode(arg, &key);
-	flist = EDBMeta_par(meta, 1);
 
-	if	(!flist || !flist[0])
+	if	(!(n = EDBMeta_list(meta)))
 	{
 		memfree(key);
 		return;
 	}
 
-	for (n = 0, i = 1; flist[i]; i++)
-	{
-		if	(flist[i] == '\n')
-		{
-			flist[i] = 0;
-
-			if (flist[i-1]) n++;
-		}
-	}
-	
-	edb = edb_fopen(meta->path, get_next(&flist));
+	edb = edb_fopen(meta->path, EDBMeta_next(meta));
 
 	if	(!meta->cur)
 	{
@@ -139,7 +125,7 @@ void EDBMeta_file (EDBMetaDef *def, EDBMeta *meta, const char *arg)
 
 	type = meta->cur->obj->type;
 
-	if	(n < 1)
+	if	(n <= 1)
 	{
 		if	(mode == M_SORT)
 			meta->cur = edb_sort(meta->cur,
@@ -156,12 +142,11 @@ void EDBMeta_file (EDBMetaDef *def, EDBMeta *meta, const char *arg)
 
 		for (i = 1; i < n; i++)
 		{
-			edb = edb_fopen(meta->path, get_next(&flist));
+			edb = edb_fopen(meta->path, EDBMeta_next(meta));
 
 			if	(edb->obj->type != type)
 			{
-				tab[i] = edb_paste(edb_create(LvalObj(NULL,
-					type), NULL), edb);
+				tab[i] = edb_paste(edb_create(type), edb);
 			}
 			else	tab[i] = edb;
 
@@ -182,17 +167,20 @@ void EDBMeta_file (EDBMetaDef *def, EDBMeta *meta, const char *arg)
 		cat->tab = (void *) (cat + 1);
 		cat->dim = n;
 		cat->sub = meta->cur;
-		meta->cur = edb_create(RefObj(cat->sub->obj), meta->desc);
+		cat->obj = LvalObj(NULL, cat->sub->obj->type);
+		cat->obj->data = cat->sub->obj->data;
+		meta->cur = edb_alloc(RefObj(cat->obj), meta->desc);
 		meta->desc = NULL;
 		meta->cur->read = cat_read;
 		meta->cur->ipar = rd_init(&cat_reftype, cat);
 
 		for (i = 0; i < n; i++)
-			cat->tab[i] = mstrcpy(get_next(&flist));
+			cat->tab[i] = mstrcpy(EDBMeta_next(meta));
 	}
 
 	memfree(key);
 }
+
 
 void EDBMeta_paste (EDBMetaDef *def, EDBMeta *meta, const char *arg)
 {
@@ -223,8 +211,7 @@ void EDBMeta_paste (EDBMetaDef *def, EDBMeta *meta, const char *arg)
 
 		if	(meta->prev->obj->type != type)
 		{
-			tab[1] = edb_paste(edb_create(LvalObj(NULL,
-				type), NULL), meta->prev);
+			tab[1] = edb_paste(edb_create(type), meta->prev);
 		}
 		else	tab[1] = meta->prev;
 

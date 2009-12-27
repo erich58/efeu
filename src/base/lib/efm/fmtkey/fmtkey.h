@@ -59,6 +59,7 @@ int ftool_ioalign (IO *io, StrBuf *sb, const FmtKey *key);
 
 int fmt_bool (IO *io, const FmtKey *key, int val);
 int fmt_char (IO *io, const FmtKey *key, int val);
+int fmt_ucs (IO *io, const FmtKey *key, int32_t val);
 int fmt_str (IO *io, const FmtKey *key, const char *val);
 int fmt_long (IO *io, const FmtKey *key, long val);
 int fmt_double (IO *io, const FmtKey *key, double val);

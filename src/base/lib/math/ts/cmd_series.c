@@ -39,8 +39,13 @@ static size_t f_write (const EfiType *type, const void *data, IO *io)
 	return ts_write(io, Val_ptr(data));
 }
 
+static int f_print (const EfiType *type, const void *data, IO *io)
+{
+	return ts_print(io, Val_ptr(data), "%.16g");
+}
+
 EfiType Type_TimeSeries = IOREF_TYPE("TimeSeries", TimeSeries *,
-	f_read, f_write);
+	f_read, f_write, f_print);
 
 
 static char *def_fmt = "%#10.2f";
@@ -221,7 +226,6 @@ static void f_fprint (EfiFunc *func, void *rval, void **arg)
 static void f_expand (EfiFunc *func, void *rval, void **arg)
 {
 	TimeSeries *ts;
-	double z;
 	int i, n;
 
 	ts = Val_TimeSeries(arg[0]);
@@ -240,10 +244,6 @@ static void f_expand (EfiFunc *func, void *rval, void **arg)
 	if	(n < 0)	n = 0;
 
 	ts_expand(ts, n);
-	z = Val_double(arg[2]);
-
-	while (i < ts->dim)
-		ts->data[i++] = z;
 }
 
 static void f_texpand (EfiFunc *func, void *rval, void **arg)

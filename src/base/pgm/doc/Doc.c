@@ -28,7 +28,7 @@ static void doc_clean (void *data)
 	io_close(tg->out);
 
 	if	(tg->buf)
-		sb_destroy(tg->buf);
+		rd_deref(tg->buf);
 
 	while (tg->cmd_stack)
 		rd_deref(popstack(&tg->cmd_stack, NULL));

@@ -22,7 +22,11 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/object.h>
 #include <EFEU/printobj.h>
+#include <EFEU/stdtype.h>
+#include <EFEU/EfiPar.h>
 #include <ctype.h>
+
+static int PrintTypeDepth = 0;
 
 static int not_a_name (const char *name)
 {
@@ -38,10 +42,25 @@ static int not_a_name (const char *name)
 	return 0;
 }
 
+static int show_version (IO *io, const EfiType *type, int space)
+{
+	EfiControl *ctrl = GetEfiPar((EfiType *) type,
+		&EfiPar_control, "version");
+
+	if	(ctrl && ctrl->data)
+	{
+		int n = io_nputc(' ', io, space);
+		return n + io_printf(io, "<%s>", ctrl->data);
+	}
+
+	return 0;
+}
+
 static int show_enum (IO *io, const EfiType *type, int verbosity)
 {
 	int n;
-	char *delim;
+	char delim;
+	int depth;
 
 	n = io_puts("enum", io);
 
@@ -51,12 +70,25 @@ static int show_enum (IO *io, const EfiType *type, int verbosity)
 		n += io_puts(type->name, io);
 	}
 
-	delim = verbosity > 1 ? "\n\t" : " ";
+	if	(verbosity > 1)
+	{
+		delim = '\n';
+		depth = PrintTypeDepth + 1;
+	}
+	else
+	{
+		delim = ' ';
+		depth = 0;
+	}
 
-	if	(type->base != &Type_enum)
+	if	(type->base && type->base != &Type_enum)
 	{
 		n += io_puts(" : ", io);
-		n += show_enum(io, type->base, verbosity);
+		n += PrintType(io, type->base, verbosity);
+	}
+	else if	(type->recl != 4)
+	{
+		n += io_printf(io, " : %d", type->recl);
 	}
 
 	n += io_puts(" {", io);
@@ -73,7 +105,8 @@ static int show_enum (IO *io, const EfiType *type, int verbosity)
 		{
 			if	(p->obj && p->obj->type == type)
 			{
-				n += io_puts(delim, io);
+				n += io_nputc(delim, io, 1);
+				n += io_nputc('\t', io, depth);
 
 				if	(not_a_name(p->name))
 				{
@@ -87,21 +120,38 @@ static int show_enum (IO *io, const EfiType *type, int verbosity)
 					Val_int(p->obj->data));
 
 				if	(p->desc && verbosity > 1)
-					n += io_printf(io, "\t/* %s */",
+					n += io_printf(io, " /* %s */",
 						p->desc);
 			}
 		}
 	}
 
-	n += io_puts(verbosity > 1 ? "\n}" : " }", io);
+	if	(verbosity > 1)
+	{
+		n += io_nputc('\n', io, 1);
+		n += io_nputc('\t', io, PrintTypeDepth);
+	}
+	else	n += io_nputc(' ', io, 1);
+
+	n += io_nputc('}', io, 1);
+	return n;
+}
+
+static int show_name (IO *io, EfiStruct *st)
+{
+	int n = io_nputc(' ', io, 1);
+	n += io_puts(st->name, io);
+
+	if	(st->dim > 1)
+		n += io_printf(io, "[%d]", st->dim);
+
 	return n;
 }
 
 static int show_struct (IO *io, const EfiType *type, int verbosity)
 {
-	EfiVar *st;
+	EfiStruct *st;
 	EfiType *last;
-	char *delim;
 	char *desc;
 	int n;
 
@@ -111,21 +161,34 @@ static int show_struct (IO *io, const EfiType *type, int verbosity)
 	{
 		n += io_nputc(' ', io, 1);
 		n += io_puts(type->name, io);
+		n += show_version(io, type, 1);
 	}
+
+	st = type->list;
 
 	if	(type->base)
 	{
 		n += io_puts(" : ", io);
 		n += PrintType(io, type->base, verbosity);
+
+		if	(st && st->offset == 0)
+		{
+			if	(st->name)
+				n += show_name(io, st);
+			st = st->next;
+		}
 	}
 
 	n += io_puts(" {", io);
-	delim = verbosity > 1 ? "\n\t" : " ";
-	n += io_puts(delim, io);
+	PrintTypeDepth++;
+
+	if	(verbosity > 1)
+		n += io_puts("\n", io);
+
 	last = NULL;
 	desc = NULL;
 
-	for (st = type->list; st != NULL; st = st->next)
+	for (; st != NULL; st = st->next)
 	{
 		if	(!st->name)	continue;
 
@@ -135,33 +198,43 @@ static int show_struct (IO *io, const EfiType *type, int verbosity)
 			{
 				n += io_puts(";", io);
 
-				if	(desc)
+				if	(desc && verbosity > 1)
 				{
 					n += io_puts(" /* ", io);
 					n += io_puts(desc, io);
 					n += io_puts(" */", io);
 				}
 
-				n += io_puts(delim, io);
+				if	(verbosity > 1)
+					n += io_puts("\n", io);
 			}
 
 			if	(st->type == type->base)
+			{
+				if	(verbosity > 1)
+					n += io_nputc('\t', io, PrintTypeDepth);
+				else	n += io_nputc(' ', io, 1);
+
 				n += io_puts(st->type->name, io);
-			else	n += ShowType(io, st->type);
+			}
+			else
+			{
+				if	(verbosity <= 1)
+					n += io_nputc(' ', io, 1);
+
+				n += PrintType(io, st->type, verbosity);
+			}
 		}
 		else	n += io_nputc(',', io, 1);
 
-		n += io_nputc(' ', io, 1);
-		n += io_puts(st->name, io);
-
-		if	(st->dim > 1)
-			n += io_printf(io, "[%d]", st->dim);
-
+		n += show_name(io, st);
 		last = st->type;
 
 		if	(verbosity > 1)
 			desc = st->desc;
 	}
+
+	PrintTypeDepth--;
 
 	if	(verbosity > 1)
 	{
@@ -175,7 +248,9 @@ static int show_struct (IO *io, const EfiType *type, int verbosity)
 			n += io_puts(" */", io);
 		}
 		
-		n += io_puts("\n}", io);
+		n += io_puts("\n", io);
+		n += io_nputc('\t', io, PrintTypeDepth);
+		n += io_puts("}", io);
 	}
 	else	n += io_puts(" }", io);
 
@@ -185,37 +260,79 @@ static int show_struct (IO *io, const EfiType *type, int verbosity)
 
 int PrintType (IO *io, const EfiType *type, int verbosity)
 {
-	if	(type == NULL)
-		return io_puts(".", io);
+	int n = 0;
 
 	if	(verbosity <= 0)
-		return io_puts(type->name, io);
+		return io_puts(type ? type->name : ".", io);
 
-	if	(IsTypeClass(type, &Type_enum) && type != &Type_enum)
-		return show_enum(io, type, verbosity);
+	if	(verbosity > 1)
+		n += io_nputc('\t', io, PrintTypeDepth);
+
+	if	(type == NULL)
+		return n + io_puts(".", io);
+
+	if	(type->flags & TYPE_EXTERN)
+	{
+		n += io_puts("extern ", io);
+
+		if	(type->name && verbosity <= 2)
+		{
+			n += io_puts(type->name, io);
+			n += show_version(io, type, 0);
+			return n;
+		}
+		else if	(verbosity)
+		{
+			verbosity--;
+		}
+	}
 
 	if	(type->list)
-		return show_struct(io, type, verbosity);
-
-	if	(type->dim)
 	{
-		int n = PrintType(io, type->base, 1);
-		n += io_printf(io, "[%d]", type->dim);
-		return n;
+		n += show_struct(io, type, verbosity);
 	}
-
-	if	(type->base == &Type_vec)
+	else if	(type->dim)
+	{
+		PrintTypeDepth--;
+		n += PrintType(io, type->base, verbosity);
+		PrintTypeDepth++;
+		n += io_printf(io, "[%d]", type->dim);
+	}
+//	else if	((type->flags & TYPE_ENUM) && type != &Type_enum)
+	else if	(type->flags & TYPE_ENUM)
+	{
+		n += show_enum(io, type, verbosity);
+	}
+	else if	(IsTypeClass(type, &Type_vec))
 	{
 		EfiVec *vec = Val_ptr(type->defval);
-		int n = PrintType(io, vec->type, 1);
+		PrintTypeDepth--;
+		n += PrintType(io, vec->type, verbosity);
+		PrintTypeDepth++;
 		n += io_puts("[]", io);
-		return n;
 	}
+	else 	n += io_puts(type->name, io);
 
-	return io_puts(type->name, io);
+	return n;
 }
 
 int ShowType (IO *io, const EfiType *type)
 {
 	return PrintType(io, type, 1);
+}
+
+char *Type2str (const EfiType *type)
+{
+	StrBuf *sb;
+	IO *io;
+
+	sb = sb_create(0);
+	io = io_strbuf(sb);
+
+	if	(type && type->name && type->name[0] != '_')
+		PrintType(io, type, 0);
+	else	PrintType(io, type, 1);
+
+	io_close(io);
+	return sb2str(sb);
 }

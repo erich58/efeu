@@ -1,0 +1,19 @@
+/*
+$Example
+\ms_example
+config hdr src
+
+#include <TypeDef.ms>
+
+StdInclude(hdr, "EFEU/refdata");
+
+TypeDef("Data", "example data type with bitfields", string !
+int	b1:12	bitfield
+int	b2:10	bitfield
+int	i1[4]	integer vector
+double	d	floting point number
+str	s	string
+!);
+\end
+*/
+

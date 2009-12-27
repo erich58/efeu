@@ -1,0 +1,85 @@
+# :*:count edb data files
+# :de:EDB-Datenbank auszählen
+#
+# $Copyright (C) 2007 Erich Frühstück
+# A-3423 St.Andrä/Wördern, Wildenhaggasse 38
+
+.out.mark = NULL
+.out.fmt = "|mdprint -r -t -l15 -w7 {.out.mark} -p$(float_prec) -"
+
+:eval fmt_int = "\"%*d\"";
+:eval fmt_float = "\"%*.*f\"";
+:eval float_prec = 0
+:eval Date::fmt = "\"%d.%m.%Y\"";
+
+Output: vset .out.fmt
+Title = "$! -e {Method} -c {Counter} -r $(Range?Range:\"-\":%s)\n{Grpdef}"
+Select = NULL
+Counter = count
+Method = record
+Range = NULL
+Weight = 1.
+CountLimit = 0;
+RecordMode = NULL;
+DBName = NULL;
+Post = NULL;
+:eval MdClassPrintLimit = 0
+
+i::mode | InfoMode; StartInfo = true
+	Informationsausgabe mit Modus <mode>.
+l::pat | ClassList; ShowClass = true
+	listet alle verfügbaren Zählklassen und ihre Klassenausprägungen auf,
+	die dem Muster <pat> entsprechen.
+	Die Auswertungsfunktion muß definiert sein.
+L::pat | ClassList; ShowClass = true; :eval MdClassPrintLimit=1
+	listet alle verfügbaren Zählklassen auf,
+	die dem Muster <pat> entsprechen.
+	Die Auswertungsfunktion muß definiert sein.
+E:expr | :eval 'geval("{}")'
+	:*:evaluate expression <expr>
+	:de:Ausdruck <expr> auswerten
+F:file | :eval 'gload(IncPath, "{}")'
+	:*:execute command lines in file <file>
+	:de:Datei <file> mit Befehlszeilen laden
+x:list[-] | .out.mark: set "-x {}"; Output: vset .out.fmt
+	gibt für die Textausgabe die Achsenliste für die Spalten vor.
+p:prec | :eval float_prec={}; Output: vset .out.fmt 
+	bestimmt bei der Textausgabe die Darstellungsgenauigkeit von
+	Gleitkommawerten. Die Vorgabe ist $(float_prec).
+T:titel | Title
+	setzt den Titel der Datenmatrix auf <titel>.
+	Die Vorgabe ist |{Title}|.
+f:def | Filter: append " "
+	:*:applay filter <def> on input file
+	:de:Filter <def> auf Eingabefile anwenden
+e:eval | Method
+	definiert das Auswertungsverfahren, Die Vorgabe ist |"{Method}"|.
+c:counter | Counter
+	definiert den Zähler, die Vorgabe ist |"{Counter}"|.
+r:range | Range
+	definiert den Zeitbereich für die Zählung, die Vorgabe ist |"{Range}"|.
+w:weight | Weight
+	definiert das Hochrechnungsgewicht für die Zählung.
+	Die Vorgabe ist ${Weight}.
+n:lim | CountLimit
+	Maximale Zahl der Zählaufrufe (0 = unbegrenzt), Vorgabe {CountLimit}
+R::mode[label] | RecordMode; :eval float_prec = 16; \
+		.out.fmt = NULL; Output = NULL;
+	aktiviert die Einzelsatzaufzeichnung mit Modus <mode>.
+	Mögliche Werte können mit -R? abgefragt werden.
+d:delim | RecordDelimiter
+	setzt das Trennzeichen zwischen den einzelnen Werten auf <delim>.
+M:target | :eval 'depend(DBName); makedepend("{}"); exit(0)'
+	generiert Abhängigkeitsregeln für die angegebene Zieldatei <target>.
+P:post | Post: set "{Post}|{}"
+	erweitert die Postfilter für die Zählung.
+:in | Input
+	:*:input file name
+	:de:Name der Eingabedatei
+/.*=.*/<name>=<list> | Grpdef: append " "
+	definiert eine Achse mit Namen <name> der Datenmatrix. Das Argument
+	wird anhand des Zuweisungszeichens |=| identifiziert. Mit <list>
+	werden die für die Achse verwendeten Klassifikationen angegeben.
+::out | Output
+	:*:output file name
+	:de:Name der Ausgabedatei

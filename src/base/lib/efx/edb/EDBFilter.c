@@ -22,6 +22,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/EDB.h>
 #include <EFEU/nkt.h>
 #include <EFEU/Resource.h>
+#include <EFEU/EDBFilter.h>
 
 #define	INFO_NAME	"filter"
 
@@ -29,36 +30,22 @@ If not, write to the Free Software Foundation, Inc.,
 	":*:data base filter" \
 	":de:Datenbankfilter"
 
-static NameKeyTab FilterTab = NKT_DATA("EDBFilterTab", 60, NULL);
+EfiPar EfiPar_EDBFilter = { "EDBFilter", "EDB data filter" };
 
-void AddEDBFilter (EDBFilter *def)
+void EDBFilter_info (IO *out, const void *data)
 {
-	nkt_insert(&FilterTab, def->name, def);
-}
-
-EDBFilter *GetEDBFilter (const char *name)
-{
-	SetupEDBFilter();
-	return nkt_fetch(&FilterTab, name, NULL);
-}
-
-void PrintEDBFilter (IO *out, EDBFilter *fdef, int flag)
-{
+	const EDBFilter *fdef;
 	char *fmt;
 	IO *desc;
 	int c;
 
-	fmt = GetFormat(fdef->desc);
+	fdef = data;
+	fmt = GetFormat(fdef->epc_label);
 	desc = langfilter(io_cstr(fmt), NULL);
 
-	io_puts(fdef->name, out);
-
-	if	(flag)
-	{
-		io_puts(fdef->syntax, out);
-		io_puts("\n\t", out);
-	}
-	else	io_putc('\t', out);
+	io_puts(fdef->epc_name, out);
+	io_puts(fdef->syntax, out);
+	io_puts("\n\t", out);
 
 	while  ((c = io_getc(desc)) != EOF)
 	{
@@ -66,16 +53,14 @@ void PrintEDBFilter (IO *out, EDBFilter *fdef, int flag)
 		{
 			switch (c = io_getc(desc))
 			{
-			case '1':	io_puts(fdef->name, out); break;
+			case '1':	io_puts(fdef->epc_name, out); break;
 			case '2':	io_puts(fdef->par, out); break;
 			default:	io_putc(c, out); break;
 			}
 		}
 		else if	(c == '\n')
 		{
-			if	(flag)
-				io_puts("\n\t", out);
-			else	break;
+			io_puts("\n\t", out);
 		}
 		else	io_putc(c, out);
 	}
@@ -84,32 +69,20 @@ void PrintEDBFilter (IO *out, EDBFilter *fdef, int flag)
 	io_putc('\n', out);
 }
 
-static int list_flag = 0;
-
-static int do_list (const char *name, void *data, void *par)
+static void print_info (IO *io, InfoNode *info)
 {
-	PrintEDBFilter(par, data, list_flag);
-	return 0;
+	EDBFilter_info(io, info->par);
 }
 
-void ListEDBFilter (IO *out, int flag)
+static void add_info (EfiParClass *entry, void *data)
 {
-	SetupEDBFilter();
-	list_flag = flag;
-	nkt_walk(&FilterTab, do_list, out);
-}
-
-static int add_info (const char *name, void *data, void *par)
-{
-	EDBFilter *fdef = data;
-	InfoNode *info = par;
-	AddInfo(info, fdef->name, GetFormat(fdef->desc), NULL, NULL);
-	return 0;
+	AddInfo(data, entry->epc_name, GetFormat(entry->epc_label),
+		print_info, entry);
 }
 
 static void load_info (InfoNode *info)
 {
-	nkt_walk(&FilterTab, add_info, info);
+	EfiParWalk(NULL, &EfiPar_EDBFilter, add_info, info);
 }
 
 void EDBFilterInfo (InfoNode *info)

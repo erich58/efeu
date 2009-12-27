@@ -17,5 +17,5 @@ Parametern.
 Bei den EDB-Kommandos wird die Ausgabefunktion über die Option |-p|
 festgelegt. Standardmäßig werden nur die ersten 10 Datensätze
 ausgegeben. Mithilfe der Option |-n|<num> kann dieses
-\index[Ausgabelimit]Limit auf einen anderen Wert gesetzt, oder gänzlich
+\index[Ausgabelimit]Limit auf einen anderen Wert gesetzt oder gänzlich
 aufgehoben werden (|-n0|).

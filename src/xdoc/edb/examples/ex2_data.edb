@@ -1,0 +1,11 @@
+EDB	1.0
+@head
+extern DATA
+@file
+data.edb
+@filter
+var={
+	num,
+	data=DATA(bdat,edat,income),
+}
+nest[data]

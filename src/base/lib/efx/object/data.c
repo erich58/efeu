@@ -23,21 +23,12 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 
 
-void DestroyData (const EfiType *type, void *tg)
+void CleanData (const EfiType *type, void *tg, int mode)
 {
 	if	(type->fclean)
 		type->fclean->eval(type->fclean, NULL, &tg);
 
-	if	(type->clean)	type->clean(type, tg);
-	if	(type->destroy)	type->destroy(type, tg);
-}
-
-void CleanData (const EfiType *type, void *tg)
-{
-	if	(type->fclean)
-		type->fclean->eval(type->fclean, NULL, &tg);
-
-	if	(type->clean)	type->clean(type, tg);
+	if	(type->clean)	type->clean(type, tg, mode);
 	else			memset(tg, 0, type->size);
 }
 
@@ -69,7 +60,7 @@ void AssignData (const EfiType *type, void *tg, const void *src)
 {
 	if	(tg == src)	return;
 
-	CleanData(type, tg);
+	CleanData(type, tg, 0);
 	CopyData(type, tg, src);
 }
 
@@ -77,21 +68,11 @@ void AssignData (const EfiType *type, void *tg, const void *src)
 /*	Vektordaten
 */
 
-void DestroyVecData (const EfiType *type, size_t dim, void *tg)
+void CleanVecData (const EfiType *type, size_t dim, void *tg, int mode)
 {
 	while (dim > 0)
 	{
-		DestroyData(type, tg);
-		tg = ((char *) tg) + type->size;
-		dim--;
-	}
-}
-
-void CleanVecData (const EfiType *type, size_t dim, void *tg)
-{
-	while (dim > 0)
-	{
-		CleanData(type, tg);
+		CleanData(type, tg, mode);
 		tg = ((char *) tg) + type->size;
 		dim--;
 	}
@@ -114,7 +95,7 @@ void AssignVecData (const EfiType *type, size_t dim, void *tg, const void *src)
 {
 	if	(tg != src)
 	{
-		CleanVecData(type, dim, tg);
+		CleanVecData(type, dim, tg, 0);
 		CopyVecData(type, dim, tg, src);
 	}
 }

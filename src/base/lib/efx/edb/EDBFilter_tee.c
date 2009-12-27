@@ -20,6 +20,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/EDB.h>
+#include <EFEU/EDBFilter.h>
 
 static int tee_read (EfiType *type, void *data, void *par)
 {
@@ -28,7 +29,6 @@ static int tee_read (EfiType *type, void *data, void *par)
 	if	(edb_read(base))
 	{
 		edb_write(base);
-		CopyData(type, data, base->obj->data);
 		return 1;
 	}
 
@@ -38,15 +38,15 @@ static int tee_read (EfiType *type, void *data, void *par)
 static EDB *tee_create (EDBFilter *filter, EDB *base,
 	const char *opt, const char *arg)
 {
-	EDB *edb = edb_create(LvalObj(NULL, base->obj->type), NULL);
+	EDB *edb = edb_share(base);
 	edb->read = tee_read;
 	edb->ipar = rd_refer(base);
 	edb_fout(base, arg, opt);
 	return edb;
 }
 
-EDBFilter EDBFilter_tee = {
+EDBFilter EDBFilter_tee = EDB_FILTER(NULL,
 	"tee", "[mode]=path", tee_create, NULL,
 	":*:copy records and write into file"
 	":de:Datensätze in Datei mitprotokollieren"
-};
+);

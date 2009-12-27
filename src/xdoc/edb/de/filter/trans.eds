@@ -35,7 +35,7 @@ Die mehrfache Verwendung einer Komponente ist zulässig, aber alle
 Namen in der neuen Datenstruktur müssen verschieden sein.
 
 Ein einzelner Stern |*|
-wählt alle Variablen der Quellstruktur aus, deren Name noch nicht in
+wählt alle Variablen der Quellstruktur aus, deren Namen noch nicht in
 der Zielstruktur verwendet wurden. Damit lassen sich z.B. leicht
 Umordnungen realisieren, es müssen nur die Namen jener Variablen
 angegeben werden, die vorgezogen werden. Die restlichen Variablen
@@ -49,7 +49,7 @@ Innerhalb einer Teilstrukturdefinition (nächster Absatz) können sie
 entfallen.
 
 \index{Teilstruktur}en können mithilfe von <name>|={|<list>|}| eingerichtet
-wirden, wobei <list> wiederum eine Liste von Variablendefinitionen
+werden, wobei <list> wiederum eine Liste von Variablendefinitionen
 ist.
 
 Beispiel: |var=num,name={first_name,family_name}|
@@ -111,12 +111,12 @@ den Namen \index{|src|} und \index{|tg|} zur Verfügung. Weiters kann
 auf die Komponenten direkt mit ihren Namen zugegriffen werden. Dabei
 gilt folgende \index{Sichtbarkeit}shierarchie:
 
-*	Automatische Variablen im Auswertungsblock
-*	Statische Variablen im Auswertungsblock
-*	Aufrufparameter für den Ausdruck (|tg|, |src|).
-*	Namensraum des Zieldatentyps
-*	Namensraum des Quelldatentyps
-*	Globale Variablen
+*	Automatische Variablen im Auswertungsblock,
+*	statische Variablen im Auswertungsblock,
+*	Aufrufparameter für den Ausdruck (|tg|, |src|),
+*	Namensraum des Zieldatentyps,
+*	Namensraum des Quelldatentyps,
+*	globale Variablen.
 
 Bei der Vektorverarbeitung referieren die Namen \index{|src|} und
 \index{|tg|} die Quell- und Zielvektoren. Zusätzlich steht unter
@@ -136,7 +136,7 @@ auf die |EDB|-Datenschnittstelle mittels \index{|base|} zugegriffen werden.
 
 Bei der Generierung des Sourcefiles wird für den Ausdruck <expr>
 eine \index{Parametersubstitution} durchgeführt. Dabei kann auf
-Variablen des EFEU-Interpreters zugegriffen werden, Insbesonders
+Variablen des EFEU-Interpreters zugegriffen werden. Insbesonders
 kann damit auf einfache Weise die \index{Adresse einer Strukturkomponente}
 ermittelt werden. Der Ausdruck |$(&src.gender)| liefert z.B. die Adresse der
 Komponente |geschl| in der Datenstruktur des EDB-Datenfiles

@@ -1,0 +1,18 @@
+/*
+Datentypkomponenten
+*/
+
+void TypeDef::member (str name, str desc, str body)
+{
+	str type = strcut(name, "%s");
+
+	Function f = Function("EfiObj *m_$1_$2",
+		"const EfiObj *base, void *par", t_name, name);
+	f.line("$2 *data = base ? base->data : Type_$1.defval;",
+		t_name, t_cname);
+	f.body(body, t_name);
+	f.write(false);
+
+	s_mtab += psub("\t{ $2%#s, NULL, m_$1_$2, NULL, $4%#s },\n",
+		t_name, name, type, desc);
+}

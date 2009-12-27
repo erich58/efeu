@@ -150,7 +150,9 @@ void DataType::write (bool glob = true)
 	src << (dt_print ? dt_print : "NULL");
 	src << ", ";
 	src << (dt_base ? dt_base : "NULL");
-	src << ", NULL, NULL, NULL, NULL);\n";
+	src << ", NULL, NULL, NULL, ";
+	src << (dt_recl ? "0" : "TYPE_MALLOC");
+	src << ");\n";
 
 	dt_setup.write(glob);
 	DBMacros(glob ? hdr : top);

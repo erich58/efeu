@@ -24,7 +24,7 @@
 : ${GLOBCVS:=$EFEUTOP/src}
 
 # $pconfig
-# Version="$Id: globcvs.sh,v 1.8 2004-10-25 05:46:27 ef Exp $"
+# Version="$Id: globcvs.sh,v 1.9 2007-08-19 04:22:10 ef Exp $"
 # *"|--ls| <=\\|=> cvs parameter" |
 #	:*:any cvs option or argument
 #	:de:beliegige cvs Option oder Argument
@@ -37,7 +37,7 @@ usage ()
 
 case "$1" in
 -\?|--help*)	usage $1; exit 0;;
---version)	efeuman -- $0 $1 || grep 'Version="[$]Id:'; exit 0;;
+--version)	efeuman -- $0 $1 || grep 'Version="[$]Id:' $0; exit 0;;
 esac
 
 # $Description

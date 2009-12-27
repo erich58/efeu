@@ -196,7 +196,7 @@ static void do_psub (IO *in, IO *out, ArgList *args, int mode)
 	StrBuf *sb = sb_create(0);
 	f_puts(args ? psubexpand(sb, in, args->dim, args->data) :
 		psubexpand(sb, in, 0, NULL), out, mode);
-	sb_destroy(sb);
+	rd_deref(sb);
 }
 
 static char *do_vsub (CmdPar *par, IO *in, ArgList *args,

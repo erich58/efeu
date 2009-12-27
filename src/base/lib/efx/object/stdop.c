@@ -548,6 +548,7 @@ static EfiObj *assign_op(IO *io, EfiOp *op, EfiObj *left)
 	return Obj_call(assign_expr, (void *) op->name, list);
 }
 
+int ParseStringIndex = 0;
 
 EfiObj *Parse_index(IO *io)
 {
@@ -567,7 +568,8 @@ EfiObj *Parse_index(IO *io)
 
 static EfiObj *vecindex(IO *io, EfiOp *op, EfiObj *left)
 {
-	return BinaryTerm("[]", left, Parse_index(io));
+	EfiObj *idx = Parse_index(io);
+	return idx ? BinaryTerm("[]", left, idx) : UnaryTerm("[]", NULL, left);
 }
 
 

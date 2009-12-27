@@ -59,6 +59,8 @@ AssignArg *assignarg (const char *arg, char **ptr, const char *delim)
 	while (isspace(*arg))
 		arg++;
 
+	if	(*arg == 0)	return NULL;
+
 	if	(*arg == '{')
 	{
 		x = assignarg(arg + 1, ptr, "}");
@@ -67,7 +69,7 @@ AssignArg *assignarg (const char *arg, char **ptr, const char *delim)
 		{
 			(*ptr)++;
 
-			while (**ptr == ' ')
+			while (isspace(**ptr))
 				(*ptr)++;
 			
 			if	(**ptr && strchr(delim, **ptr))
@@ -87,7 +89,7 @@ AssignArg *assignarg (const char *arg, char **ptr, const char *delim)
 			{
 				*ptr = (char *) arg + n;
 
-				while (**ptr == ' ')
+				while (isspace(**ptr))
 					(*ptr)++;
 
 				if	(**ptr && strchr(delim, **ptr))
@@ -120,9 +122,10 @@ AssignArg *assignarg (const char *arg, char **ptr, const char *delim)
 		{
 			pa = n + 1;
 		}
+		else	po = pe = 0;
 	}
 
-	x = (AssignArg *) memalloc(sizeof(AssignArg) + n + 1);
+	x = memalloc(sizeof *x + n + 1);
 	p = strncpy((char *) (x + 1), arg, n);
 	p[n] = 0;
 	x->name = p;

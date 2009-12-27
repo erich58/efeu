@@ -1,5 +1,8 @@
 \chap	Datenbankfilter
 
-\include intro.doc
-\include trans.doc
-\include simple.doc
+\include intro.eds
+\include var.eds
+\include nest.eds
+\include view.eds
+\include trans.eds
+\include simple.eds

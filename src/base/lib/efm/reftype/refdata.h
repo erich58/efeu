@@ -91,12 +91,16 @@ typedef struct {
 	REFVAR;
 } RefData;
 
-extern void *rd_init (const RefType *type, void *data);
-extern void *rd_refer (const void *data);
-extern void rd_deref (void *data);
+void *rd_init (const RefType *type, void *data);
+void *rd_refer (const void *data);
+void rd_deref (void *data);
 
-extern char *rd_ident (const void *data);
-extern void rd_debug (const void *data, const char *fmt, ...);
+char *rd_ident (const void *data);
+void rd_debug (const void *data, const char *fmt, ...);
+
+void *rd_alloc (size_t size);
+void *rd_wrap (void *data, void (*clean) (void *data));
+void *rd_data (void *rd);
 
 /*
 $Example
@@ -156,7 +160,7 @@ You should always use |REFTYPE_INIT| to initialize the reference type,
 because the internal structure of RefType may change. The 
 macro provides a constant interface.
 :de:
-Ein Refernztyp sollte immer mit |REFTYPE_INIT| initialisiert
+Ein Referenztyp sollte immer mit |REFTYPE_INIT| initialisiert
 werden, da sich die Zusammensetzung der Struktur ändern kann. Der
 Makro liefert eine konstante Schnittstelle.
 */

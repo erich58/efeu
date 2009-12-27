@@ -1,0 +1,13 @@
+/*
+Die Funktion |$1| generiert einen Kontrollparameter
+*/
+
+void TypeDef::ctrl (str name, str val, str desc = NULL)
+{
+	t_ctrl.append(sprintf("\tEPC_CONTROL(&Type_%s, %#s, %#s, %#s),\n",
+		t_name, name, desc, val));
+}
+
+void TypeDef::version (str val)
+	ctrl("version", val, "data type version");
+

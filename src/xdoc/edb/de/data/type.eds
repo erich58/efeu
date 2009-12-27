@@ -19,14 +19,26 @@ z.B. Funktionen, Ausdrücke und Listen.
 Die folgenden elementaren Datentypen können für EDB-Datenfiles
 verwendet werden:
 
-*	\index{|byte|}, \index{|short|}, \index{|bool|}, \index{|int|},
-	\index{|unsigned|}, \index{|long|}, \index{|size_t|} für
-	Ganzzahlwerte,
-*	\index{|float|} oder \index{|double|} für Gleitkommawerte,
+*	\index{|bool|} für logische Werte,
+*	\index{|int8_t|}, \index{|int16_t|}, \index{|int|},
+	\index{|int32_t|}, \index{|int64_t|} und \index{|varint|}
+	für vorzeichenbehaftete Ganzzahlwerte,
+*	\index{|uint8_t|}, \index{|uint16_t|}, \index{|unsigned|},
+	\index{|uint32_t|}, \index{|uint64_t|} und \index{|varsize|}
+	für vorzeichenlose Ganzzahlwerte,
+*	\index{|Date|} für Datumsangaben,
+*	\index{|float|} und \index{|double|} für Gleitkommawerte,
 *	\index{|char|} für Zeichenkonstanten und
 *	\index{|str|} für Zeichenketten.
 
-In der Regel beschränkt man sich auf |int|, |unsigned|, |double| und |str|.
+Die binäre Darstellung der Datentypen |int| und |unsigned| hängt von der
+jeweiligen Implementation der gleichnamigen C-Datentypen, mit denen der
+EFEU-Interpreter kompiliert wurde, ab. Auch wenn diese auf vielen
+Systemen mit 32 Bit implementiert sind, eignen sie sich nicht für
+einen kompatiblen Datenaustausch. Bei |varint| und |varsize| handelt es
+sich um 64-Bit Ganzzahltypen mit einer variablen Datenlänge. Diese
+eignen sich zur effizienten Speicherung von Variablen mit einem weiten
+Wertebereich.
 
 \ssec	\index{Strukturen}
 
@@ -55,7 +67,9 @@ Strukturdefinition verwendet werden kann. In EDB-Datenfiles werden in
 der Regel zur Vermeidung von Namenskonflikten \index{namenlose Strukturen}
 verwendet.
 \index[Strukturvergleich]Zwei Strukturen gelten als gleich, wenn ihre
-Komponenten jeweils gleichen Datentyp und Namen aufweisen.
+Komponenten jeweils gleichen Datentyp und Namen aufweisen. Falls eine
+namenlose Struktur mit einer benannten Struktur übereinstimmt, wird
+sie durch die benannte Struktur ersetzt.
 
 \ssec	\index{Aufzählungstypen}
 
@@ -69,13 +83,20 @@ ein Aufzählungstyp für die Komponente |gender| eingerichtet.
 Auch hier kann optional ein symbolischer Name für den Aufzählungstyp
 angegeben werden.
 \index[Vergleich von Aufzählungstypen]Zwei Aufzählungstypen gelten als
-gleich, wenn die möglichen Ausprägungen bezüglich Wert und
-symbolischer Namen übereinstimmen.
+gleich, wenn die möglichen Ausprägungen bezüglich der Werte und der
+symbolischen Namen übereinstimmen.
 
 Aufzählungstypen und Strukturen, die ausschließlich Komponenten mit
 Aufzählungstypen aufweisen, kommt bei der \index{Aggregation} eines
 EDB-Datenfiles zu einem \index{Datenwürfel} eine besondere Rolle zu: Sie
 bestimmen die Achsen des Datenwürfels.
+
+Aufzählungstypen werden intern als |int| gespeichert, es kann aber
+eine Bytelänge in der Form |:| <len> nach dem Schlüsselwort |enum|
+für die Binärdarstellung angegeben werden, z.B:
+	|enum : 1 { m = 1, f = 2 }|
+
+Variablen mit Aufzählungstyp werden auch als Klassifikationen bezeichnet.
 
 \ssec	\index{Datenfelder}
 
@@ -106,4 +127,23 @@ keine Beschränkungen bei der Konstruktion von Vektordatentypen gibt.
 \index[Schachtelung von Datenfeldern]
 Eine mehrfache Schachtelung von Datenfeldern mit variablen Längen ist
 möglich, weist aber einen hohen \index{Speicherverwaltungsaufwand} auf und
-kann daher bei größeren Datenmengen zu Performanceproblemen führen.
+kann daher bei größeren Datenmengen zu Perfor&-mance&-problemen führen.
+
+\ssec	\index{Konstruktionsdefinition}
+
+Eine Datenstruktur kann auch über eine sogenannte
+Konstruktionsdefinition eingerichtet werden. Die Struktur wird dabei
+implizit über eine Liste von Ausdrücken zu Basisvariablen definiert.
+Diese Form der Typdefinition wird implizit bei einer Reihe von
+Filterdefinition bei der Zusammenstellung von Variablen verwendet.
+
+\ssec	\index{Externe Datentypen}
+
+Bei den externen Datentypen handelt es sich um in C implementierte
+Datentypen, die in der Regel über Programmmodule nachgeladen werden.
+Durch die Implementation in C können solche Datentypen mit sehr viel
+spezifischeren Eigenschaften ausgestattet werden, z.B:
+*	Bitfeldstrukturen,
+*	spezifische Binärrepräsentationen,
+*	interne Verküpfungen von Komponenten.
+

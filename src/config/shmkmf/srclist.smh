@@ -36,11 +36,11 @@ _tmplist=$TMP/.tmplist
 #	Vorgabewert ist |find|.
 # p:arg |
 #	:*:defines additional parameters or filters to the collect command.
-#	The default value is |-type f -name \"*[!~]\" -print || sort|
+#	The default value is |-type f -name \"[!.]*[!~]\" -print || sort|
 #	The parameter list is cleard by Option |-c|.
 #	:de:bestimmt zusätzliche Parameter oder Filter für die
 #	Zusammenstellung der Dateien. Der Vorgabewert ist 
-#	|-type f -name \"*[!~]\" -print || sort|.
+#	|-type f -name \"[!.]*[!~]\" -print || sort|.
 #	Die Parameterliste wird von der Option |-c| gelöscht.
 # n:name |
 #	:*:collects files which match the file pattern <name>.
@@ -91,7 +91,7 @@ mf_srclist ()
 	_srclist=SourceList
 	_srclist_cmd=find
 	_srclist_top="$SRC"
-	_srclist_post="-type f -name \"*[!~]\" -print | sort"
+	_srclist_post="-type f -name \"[!.]*[!~]\" -print | sort"
 
 	while [ -n "$1" ]
 	do

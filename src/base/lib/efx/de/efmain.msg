@@ -153,6 +153,7 @@ If not, write to the Free Software Foundation, Inc.,
 256	$!: Vektorgröße kann nicht verändert werden.\n
 156	$!: $0: Syntaxfehler in Strukturdefinition.\n
 157	$!: ACHTUNG: Struktur $1 neu definiert.\n
+157b	$!: ACHTUNG: Struktur $1 kann nicht umdefiniert werden.\n
 158	$!: Speichergröße von $1 ist nicht definiert.\n
 159	$!: Unerlaubtes Mitglied in Struktur $1.\n
 
@@ -187,6 +188,7 @@ If not, write to the Free Software Foundation, Inc.,
 202	$!: Funktion "$1": Name bereits in Verwendung.\n
 203	$!: ACHTUNG: Funktion "$1" wurde neu definiert.\n
 205	$!: Funktion "$1" wurde als virtuell angenommen.\n
+206	$!: Unerlaubte Funktionsdeklaration.\n
 
 301	$!: Unbekannter Zufallsgeneratortype $1.\n
 302	$!: Unbekannte Speicherlänge in Variablendefinition.\n
@@ -199,3 +201,6 @@ If not, write to the Free Software Foundation, Inc.,
 
 ppm	$!: $0: Ungültiger Header in Pixmap-Datei.\n
 nocmp	$!: Vergleichsfunktion ist nicht definiert.\n
+
+vdiff	$!: $0: Datentyp $1: falsche Version $2 != $3.\n
+vskip	$!: $0: Keine Versionskontrolle für Datentyp $1.\n

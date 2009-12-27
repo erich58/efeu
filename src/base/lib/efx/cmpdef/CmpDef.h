@@ -41,7 +41,7 @@ struct CmpDefEntryStruct {
 	void *par;
 };
 
-CmpDefEntry *cmp_entry (EfiType *type, size_t off, size_t dim, int inv);
+CmpDefEntry *cmp_member (EfiStruct *st, int inv);
 
 typedef struct {
 	REFVAR;

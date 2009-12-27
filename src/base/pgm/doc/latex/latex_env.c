@@ -148,21 +148,12 @@ static ENV *env_tab[] = {
 
 static void add_env (EfiVarTab *tab, ENV **env, size_t dim)
 {
-	EfiVar *var;
-
 	for (; dim-- > 0; env++)
 	{
-		var = NewVar(NULL, NULL, 0);
-		var->name = mstrcpy((*env)->name);
-		var->type = &Type_str;
-		var->data = &(*env)->beg;
-		AddVar(tab, var, 1);
-
-		var = NewVar(NULL, NULL, 0);
-		var->name = mstrpaste(NULL, "end", (*env)->name);
-		var->type = &Type_str;
-		var->data = &(*env)->end;
-		AddVar(tab, var, 1);
+		VarTab_xadd(tab, mstrcpy((*env)->name), NULL,
+			LvalObj(&Lval_ptr, &Type_str, &(*env)->beg));
+		VarTab_xadd(tab, mstrpaste(NULL, "end", (*env)->name), NULL,
+			LvalObj(&Lval_ptr, &Type_str, &(*env)->end));
 	}
 }
 

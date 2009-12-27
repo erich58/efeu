@@ -1,0 +1,15 @@
+EDB	1.0
+@head
+extern PERS
+@file
+pers.edb
+@filter
+var={
+	num,
+	pers={
+		first_name,
+		family_name,
+		birth_year = (BirthYear) birth_year,
+		gender,
+	},
+}

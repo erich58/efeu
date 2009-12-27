@@ -40,6 +40,7 @@ struct IndexFunc {
 	Label lbl;
 	str keysep;
 	str lblsep;
+	bool mzero;	/* 0 als missing value */
 };
 
 /*
@@ -52,7 +53,7 @@ die bei der Parametersubstitution zur Verfügung stehen.
 
 IndexFunc IndexFunc (str _name, str _args, ...)
 	return { Function("int " + _name + "_idx", _args, va_list),
-		Label(_name), "_", ", " }
+		Label(_name), "_", ", ", false }
 
 /*
 Mit Hilfe der Funktion |$1| wird die Indexfunktion und die Indextabelle
@@ -91,8 +92,9 @@ inline void IndexFunc::body(IO _io, ...)
 		else	func.line(_cmd, va_list);
 	}
 
-	if	(!rval)
-		func.fline("return %d;", lbl.entry.dim);
+	if	(rval)	;
+	else if	(mzero)	func.fline("return 0;");
+	else		func.fline("return %d;", lbl.entry.dim);
 }
 
 /*
@@ -114,7 +116,7 @@ void IndexPar::operator+= (str fmt)
 
 inline int IndexFunc::beg (IndexPar &par, str key, str label, IndexPar base)
 {
-	par.val = lbl.entry.dim;
+	par.val = lbl.entry.dim + mzero;
 	str name = xstrcut(label, "%s");
 
 	if	(name)
@@ -234,7 +236,7 @@ inline bool IndexFunc::range (str & label, IndexPar base = NULL)
 
 	if	(!base.mode)
 	{
-		base.val = lbl.entry.dim;
+		base.val = lbl.entry.dim + mzero;
 		base.mode = 1;
 	}
 	else	first++;

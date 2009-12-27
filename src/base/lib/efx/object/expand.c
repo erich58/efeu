@@ -22,7 +22,6 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/object.h>
 
-
 EfiObjList *Expand_vec (EfiType *type, const void *data, size_t dim)
 {
 	EfiObjList *list, **ptr;
@@ -55,13 +54,11 @@ void Assign_vec (EfiType *type, void *data, size_t dim, const EfiObjList *list)
 		dbg_note(NULL, "[efmain:138]", NULL);
 }
 
-
 void Struct2List (EfiFunc *func, void *rval, void **arg)
 {
 	EfiObjList *list, **ptr;
-	EfiVar *st;
-	const char *p;
-	EfiObj *obj;
+	EfiStruct *st;
+	EfiObj *base;
 	char *data;
 
 	list = NULL;
@@ -69,71 +66,42 @@ void Struct2List (EfiFunc *func, void *rval, void **arg)
 	st = func->arg[0].type->list;
 	data = arg[0];
 
+	if	(func->arg[0].lval)
+		base = LvalObj(&Lval_ptr, func->arg[0].type, arg[0]);
+	else	base = ConstObj(func->arg[0].type, arg[0]);
+
 	while (st != NULL)
 	{
-		p = data + st->offset;
-
-		if	(st->dim)
-		{
-			obj = Obj_list(Expand_vec(st->type, p, st->dim));
-		}
-		else	obj = ConstObj(st->type, p);
-
-		*ptr = NewObjList(obj);
+		*ptr = NewObjList(Var2Obj(st, base));
 		ptr = &(*ptr)->next;
 		st = st->next;
 	}
 
 	Val_list(rval) = list;
+	UnrefObj(base);
 }
 
 
 void List2Struct (EfiFunc *func, void *rval, void **arg)
 {
 	EfiObjList *list;
-	EfiVar *st;
-	char *p, *s;
-	EfiObj *obj;
+	EfiObj *base, *tg;
+	EfiStruct *st;
 
 	list = Val_list(arg[0]);
-	memset(rval, 0, func->type->size);
+	base = LvalObj(&Lval_ptr, func->type, rval);
 
 	for (st = func->type->list; st != NULL; st = st->next)
 	{
-		p = (char *) rval + st->offset;
+		tg = Var2Obj(st, base);
 
 		if	(list)
 		{
-			obj = EvalObj(RefObj(list->obj),
-				st->dim ? &Type_list : st->type);
+			AssignObj(tg, RefObj(list->obj));
 			list = list->next;
 		}
-		else	obj = NULL;
-
-		if	(obj)
-		{
-			if	(st->dim)
-			{
-				Assign_vec(st->type, p, st->dim,
-					Val_list(obj->data));
-			}
-			else	CopyData(st->type, p, obj->data);
-
-			UnrefObj(obj);
-		}
-		else
-		{
-			if	(func->type->defval)
-			{
-				s = (char *) func->type->defval + st->offset;
-			}
-			else	s = st->data;
-
-			if	(st->dim)
-			{
-				CopyVecData(st->type, st->dim, p, s);
-			}
-			else	CopyData(st->type, p, s);
-		}
+		else	CleanData(tg->type, tg->data, 0);
 	}
+
+	UnrefObj(base);
 }

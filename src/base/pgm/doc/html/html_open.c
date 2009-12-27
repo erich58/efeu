@@ -398,9 +398,9 @@ static int hpost_ctrl (void *ptr, int req, va_list list)
 	{
 	case IO_CLOSE:
 		hpost_create(hpost);
-		sb_destroy(hpost->toc);
-		sb_destroy(hpost->lof);
-		sb_destroy(hpost->ref);
+		rd_deref(hpost->toc);
+		rd_deref(hpost->lof);
+		rd_deref(hpost->ref);
 		memfree(hpost->path);
 		memfree(hpost->title);
 		memfree(hpost->fname);

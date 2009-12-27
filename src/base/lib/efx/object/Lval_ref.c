@@ -59,6 +59,8 @@ static char *ref_ident (const EfiObj *obj)
 }
 
 EfiLval Lval_ref = {
+	"ref",
+	NULL,
 	ref_alloc,
 	ref_free,
 	ref_update,

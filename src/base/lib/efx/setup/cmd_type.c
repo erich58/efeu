@@ -24,6 +24,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/cmdsetup.h>
 #include <EFEU/printobj.h>
 #include <EFEU/Info.h>
+#include <EFEU/EfiClass.h>
+#include <EFEU/Resource.h>
 #include <ctype.h>
 
 #define	KEY_TYPE	"Type"
@@ -72,16 +74,22 @@ static EfiObj *type_size (const EfiObj *obj, void *data)
 	return int2Obj(type ? type->size : 0);
 }
 
+static EfiObj *type_flags (const EfiObj *obj, void *data)
+{
+	EfiType *type = Val_type(obj->data);
+	return uint2Obj(type ? type->flags : 0);
+}
+
 static EfiObj *type_name (const EfiObj *obj, void *data)
 {
 	EfiType *type = Val_type(obj->data);
-	return str2Obj(type ? type->name : NULL);
+	return str2Obj(type ? mstrcpy(type->name) : NULL);
 }
 
 static EfiObj *type_cname (const EfiObj *obj, void *data)
 {
 	EfiType *type = Val_type(obj->data);
-	return str2Obj(type ? type->cname : NULL);
+	return str2Obj(type ? mstrcpy(type->cname) : NULL);
 }
 
 static EfiObj *type_desc (const EfiObj *obj, void *data)
@@ -153,6 +161,7 @@ static EfiMember type_member[] = {
 	{ "dim", &Type_int, type_dim, NULL },
 	{ "recl", &Type_int, type_recl, NULL },
 	{ "size", &Type_int, type_size, NULL },
+	{ "flags", &Type_uint, type_flags, NULL },
 	{ "create", &Type_vfunc, type_create, NULL },
 	{ "var", &Type_vtab, type_var, NULL },
 	{ "convlist", &Type_list, type_clist, NULL },
@@ -176,7 +185,7 @@ static void show_base (IO *io, const EfiType *type)
 	}
 }
 
-static void list_name(IO *io, EfiVar *st)
+static void list_name(IO *io, EfiStruct *st)
 {
 	ShowType(io, st->type);
 
@@ -217,9 +226,24 @@ static void info_type (IO *io, InfoNode *info)
 	io_printf(io, "cname = %#s\n", type->cname);
 	io_printf(io, "size = %d\n", type->size);
 	io_printf(io, "recl = %d\n", type->recl);
+
+	if	(type->dim)
+		io_printf(io, "dim = %d\n", type->dim);
+
 	io_putc('\n', io);
 
 	if	(type->eval)	io_puts("eval()\n", io);
+
+	if	(type->flags)
+	{
+		io_puts("flags:", io);
+
+		if	(type->flags & TYPE_EXTERN)	io_puts("\textern", io);
+		if	(type->flags & TYPE_ENUM)	io_puts("\tenum", io);
+		if	(type->flags & TYPE_MALLOC)	io_puts("\tmalloc", io);
+
+		io_putc('\n', io);
+	}
 
 	if	(type->base)
 	{
@@ -242,11 +266,14 @@ static void info_type (IO *io, InfoNode *info)
 	io_putc('\n', io);
 	io_puts("copy:", io);
 
-	if	(type->fcopy)
-		io_puts("\tfunction", io);
-
 	if	(type->copy)
 		io_puts("\tbuiltin", io);
+	else if	(type->write && type->read)
+		io_puts("\twrite/read", io);
+	else	io_puts("\tmemcpy", io);
+
+	if	(type->fcopy)
+		io_puts("\tfunction", io);
 
 	io_putc('\n', io);
 	
@@ -257,9 +284,7 @@ static void info_type (IO *io, InfoNode *info)
 
 	if	(type->clean)
 		io_puts("\tbuiltin", io);
-
-	if	(type->destroy)
-		io_puts("\tdestroy", io);
+	else	io_puts("\tmemset", io);
 
 	io_putc('\n', io);
 }
@@ -317,23 +342,70 @@ static void tinfo_var (IO *io, InfoNode *info)
 	ShowVarTab(io, NULL, type->vtab);
 }
 
+static void print_par (IO *io, InfoNode *info)
+{
+	PrintEfiPar(io, info->par);
+}
+
+typedef struct {
+	InfoNode *base;
+	InfoNode *sub;
+	const EfiPar *par;
+} ADD;
+
+static void add_par (EfiParClass *entry, void *data)
+{
+	ADD *add = data;
+
+	if	(add->par != entry->epc_par)
+	{
+		add->par = entry->epc_par;
+		add->sub = AddInfo(add->base,
+			add->par->name, add->par->label, NULL, NULL);
+	}
+
+	AddInfo(add->sub, entry->epc_name, GetFormat(entry->epc_label),
+		print_par, entry);
+}
+
+static void load_par (InfoNode *info)
+{
+	ADD add;
+	add.base = info;
+	add.sub = NULL;
+	add.par = NULL;
+	EfiParWalk(info->par, NULL, add_par, &add);
+}
+
+static void tinfo_par (IO *io, InfoNode *info)
+{
+	;
+}
+
 static void tinfo_list (IO *io, InfoNode *info)
 {
 	EfiType *type;
-	EfiVar *st;
-	size_t size, tsize;
+	EfiStruct *st;
+	size_t size, loffset, tsize;
 
 	type = info->par;
 	tsize = 0;
+	loffset = 0;
 
 	for (st = type->list; st != NULL; st = st->next)
 	{
-		if	(tsize != st->offset)
+		if	(tsize != st->offset && loffset != st->offset)
 			io_printf(io, "@%d:%d\n", tsize, st->offset - tsize);
 
 		size = st->type->size * (st->dim ? st->dim : 1);
 		tsize = st->offset + size;
-		io_printf(io, "@%d:%d\t", st->offset, size);
+		loffset = st->offset;
+		io_printf(io, "@%d:%d", st->offset, size);
+
+		if	(st->member)
+			io_putc('*', io);
+
+		io_putc('\t', io);
 		list_name(io, st);
 		io_putc('\n', io);
 	}
@@ -342,6 +414,7 @@ static void tinfo_list (IO *io, InfoNode *info)
 static void type_setup (InfoNode *info)
 {
 	EfiType *type = info->par;
+	InfoNode *sub;
 
 	AddInfo(info, "conv", ":en:Converters:de:Konverter",
 		tinfo_conv, type);
@@ -349,6 +422,9 @@ static void type_setup (InfoNode *info)
 		tinfo_create, type);
 	AddInfo(info, "var", ":en:Variables:de:Variablen",
 		tinfo_var, type);
+	sub = AddInfo(info, "par", ":en:Parameters:de:Parameter",
+		tinfo_par, type);
+	sub->setup = load_par;
 
 	if	(type->base)
 	{
@@ -418,12 +494,97 @@ static void f_type_info (EfiFunc *func, void *rval, void **arg)
 	}
 
 	sb_putc(0, buf);
-	BrowseInfo(buf->data);
-	sb_destroy(buf);
+	BrowseInfo((char *) buf->data);
+	rd_deref(buf);
 }
+
+static void f_get_ctrl (EfiFunc *func, void *rval, void **arg)
+{
+	EfiControl *ctrl = SearchEfiPar(Val_type(arg[0]),
+		&EfiPar_control, Val_str(arg[1]));
+	Val_str(rval) = ctrl ? mstrcpy(ctrl->data) : NULL;
+}
+
+static void f_list_ctrl (EfiFunc *func, void *rval, void **arg)
+{
+	EfiType *type = Val_type(arg[0]);
+	IO *io = Val_io(arg[1]);
+	ListEfiPar(io, type, &EfiPar_control, NULL, 1);
+}
+
+static void f_set_ctrl (EfiFunc *func, void *rval, void **arg)
+{
+	EfiType *type = Val_type(arg[0]);
+	char *name = Val_str(arg[1]);
+	char *def = Val_str(arg[2]);
+	EfiControl *ctrl = GetEfiPar(type, &EfiPar_control, name);
+
+	if	(ctrl)
+	{
+		memfree(ctrl->data);
+		ctrl->data = mstrcpy(def);
+	}
+	else
+	{
+		ctrl = memalloc(sizeof *ctrl);
+		ctrl->epc_par = &EfiPar_control;
+		ctrl->epc_type = Val_bool(arg[3]) ? NULL : type;
+		ctrl->epc_name = mstrcpy(name);
+		ctrl->epc_label = mstrcpy(Val_str(arg[4]));
+		ctrl->epc_info = EfiControl_info;
+		ctrl->data = mstrcpy(def);
+		AddEfiPar(type, ctrl);
+	}
+}
+
+static void g_set_ctrl (EfiFunc *func, void *rval, void **arg)
+{
+	char *name = Val_str(arg[0]);
+	char *def = Val_str(arg[1]);
+	EfiControl *ctrl = GetEfiPar(NULL, &EfiPar_control, name);
+
+	if	(ctrl)
+	{
+		memfree(ctrl->data);
+		ctrl->data = mstrcpy(def);
+	}
+	else
+	{
+		ctrl = memalloc(sizeof *ctrl);
+		ctrl->epc_par = &EfiPar_control;
+		ctrl->epc_type = NULL;
+		ctrl->epc_name = mstrcpy(name);
+		ctrl->epc_label = mstrcpy(Val_str(arg[2]));
+		ctrl->epc_info = EfiControl_info;
+		ctrl->data = mstrcpy(def);
+		AddEfiPar(NULL, ctrl);
+	}
+}
+
+static void f_is_type (EfiFunc *func, void *rval, void **arg)
+{
+	EfiType *type = GetType(Val_str(arg[0]));
+	Val_bool(rval) = type ? 1 : 0;
+}
+
+static void f_make_class (EfiFunc *func, void *rval, void **arg)
+{
+	Val_bool(rval) = MakeEfiClass(Val_type(arg[0]),
+		Val_str(arg[1]), Val_str(arg[2]));
+}
+
 
 static EfiFuncDef fdef_type[] = {
 	{ 0, &Type_void, "Type_t::info (str mode = NULL)", f_type_info },
+	{ 0, &Type_str, "Type_t::get_ctrl (str name)", f_get_ctrl },
+	{ 0, &Type_void, "Type_t::set_ctrl (str name, str value,"
+		"bool inheritable = false, str label = NULL)", f_set_ctrl },
+	{ 0, &Type_void, "set_ctrl (str name, str value, str label = NULL)",
+		g_set_ctrl },
+	{ 0, &Type_void, "Type_t::list_ctrl (IO out = iostd)", f_list_ctrl },
+	{ 0, &Type_bool, "is_type (str name)", f_is_type },
+	{ 0, &Type_bool, "Type_t::class (str name, str def)", f_make_class },
+
 };
 
 /*	Initialisierung

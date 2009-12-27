@@ -35,12 +35,15 @@ typedef struct {
 	char *desc;
 	char *path;
 	StrBuf buf;
+	char *list;
 } EDBMeta;
 
 void EDBMeta_init (EDBMeta *meta, IO *base, IO *ctrl);
 void EDBMeta_clean (EDBMeta *meta);
 EDB *EDBMeta_edb (EDBMeta *meta);
 char *EDBMeta_par (EDBMeta *meta, int flag);
+int EDBMeta_list (EDBMeta *meta);
+char *EDBMeta_next (EDBMeta *meta);
 
 typedef struct EDBMetaDefStruct EDBMetaDef;
 
@@ -53,6 +56,7 @@ struct EDBMetaDefStruct {
 
 void EDBMeta_type (EDBMetaDef *def, EDBMeta *meta, const char *arg);
 void EDBMeta_file (EDBMetaDef *def, EDBMeta *meta, const char *arg);
+void EDBMeta_import (EDBMetaDef *def, EDBMeta *meta, const char *arg);
 void EDBMeta_paste (EDBMetaDef *def, EDBMeta *meta, const char *arg);
 
 void AddEDBMetaDef (EDBMetaDef *def, size_t dim);

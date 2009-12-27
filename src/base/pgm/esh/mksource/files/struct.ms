@@ -57,7 +57,9 @@ static struct Struct {
 */
 
 Struct Struct (str _name, ...)
-	return { psub(_name, va_list) };
+{
+	s_name = psub(_name, va_list);
+}
 
 /*
 :*:The function |$1| provides include statements for type definitions.
@@ -158,7 +160,7 @@ static void Struct::subvar (str type, str name, str desc)
 	s_setup += sprintf(" 0, %#s, %#s, %#s);\n", type, name, desc);
 	s_read += psub("size += $1_read(io, &data->$2, 1);\n", type, name);
 	s_write += psub("size += $1_write(io, &data->$2, 1);\n", type, name);
-	s_clean += psub("CleanData(&Type_$1, &data->$2);\n", type, name);
+	s_clean += psub("CleanData(&Type_$1, &data->$2, mode);\n", type, name);
 }
 
 static void Struct::extvar (str type, str def)
@@ -430,7 +432,7 @@ void Struct::setup (str fname, bool glob = true)
 	{
 		f_clean = psub("Type_$1_clean", s_name);
 		f = Function("void " + f_clean,
-			"const EfiType *type, void *opaque_data")
+			"const EfiType *type, void *opaque_data, int mode")
 		f.line("$1 *data = opaque_data;", s_name);
 		f.body(s_clean, s_name);
 		f.write(false);
@@ -450,7 +452,7 @@ $1_size	sizeof($1)
 
 	fpsub(src, "EfiType Type_$1 = COMPLEX_TYPE($1%#s, $1%#s, ", s_name);
 	fpsub(src, "sizeof($1), 0,\n\t", s_name);
-	fprintf(src, "%s, %s, NULL, NULL, NULL, NULL, %s, NULL);\n\n",
+	fprintf(src, "%s, %s, NULL, NULL, NULL, %s, NULL, TYPE_MALLOC);\n\n",
 		f_read, f_write, f_clean);
 
 	f = Function("void " + fname, NULL, s_name);
@@ -462,6 +464,7 @@ $1_size	sizeof($1)
 	f.line("AddType(&Type_$1);", s_name);
 	f.body(s_setup, s_name);
 	f.line("AddMemberFunc(&Type_$1);", s_name);
+	f.line("AddListConv(&Type_$1, List2Struct, Struct2List);", s_name);
 
 	if	(s_bftab)
 	{
@@ -542,7 +545,7 @@ static void $$1_$1_realloc ($$1 *data)
 data->$2 = sb_size($1_buf);
 $$1_$1_realloc(data);
 memcpy(data->$1, $1_buf->data, data->$2);
-sb_destroy($1_buf);
+rd_deref($1_buf);
 !, name, size);
 }
 

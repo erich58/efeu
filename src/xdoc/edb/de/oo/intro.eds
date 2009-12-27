@@ -1,0 +1,27 @@
+\sec 	Vorbemerkung
+
+In den bisherigen Abschnitten wurden die Beispieldateien
+|pers.edb| und |data.edb| vorgestellt, die einem traditionellen
+relationalen Datenkonzept entsprechen. In diesem Kapitel wird
+aufgezeigt, wie Konzepte der objektorientierten Programmierung
+bei der Datenanalyse genutzt werden können.
+
+\ssec	Headerdeklarationen
+
+Die für die Daten verwendeten Datentypen werden in eigenen Headerfiles
+definiert. Falls der Basisname mit dem Datentype übereinstimmt und der
+Filezusatz auf |.hdr| lautet, kann der Datentyp direkt oder in
+Verbindung mit dem Schlüsselwort |extern|\note
+	Wird dieses Schlüsselwort vor einem unbekannten Datentyp
+	angegeben, wird nach einer entsprechenden Headerdatei oder
+	einer gemeinsam genützten Objektdatei mit der Definition
+	dieses Datentyps gesucht.
+aktiviert werden.
+
+\ssec	Datenkonvertierung
+
+Die äquivalenten Daten im objektorientierten Konzept werden mit
+|ex2_pers.edb| und |ex2_data.edb| benannt. Anstelle einer unabhängigen
+Definition werden sie hier zur Demonstration der
+Datentransformationsmöglichkeiten direkt aus den
+ursprünglichen Daten abgeleitet.

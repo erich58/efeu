@@ -32,6 +32,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 typedef struct {
+	EfiType *type;		/* Datentype */
 	char *syntax;
 	void *(*create) (const char *opt, const char *arg, void *ptr);
 	void (*clean) (void *ptr);
@@ -43,11 +44,13 @@ extern void *CreateTestPar (TestParDef *def, const char *opt, const char *arg);
 extern void CleanTestPar (TestParDef *def, void *par);
 
 extern TestParDef TestPar_Num;
+extern TestParDef TestPar_64;
 extern TestParDef TestPar_Dat;
 extern TestParDef TestPar_Dat1900;
 
 void *MakeValPar (const char *opt, const char *arg, void *data);
 int TestVal (void *par, unsigned data);
+int TestVal64 (void *par, uint64_t data);
 
 extern TestParDef TestPar_a37l;
 extern TestParDef TestPar_enum;
@@ -65,10 +68,23 @@ int Test_double (void *par, double data);
 
 typedef int (*TestDefFunc) (void *data, const EfiObj *obj);
 
+typedef struct TestDefEntryStruct TestDefEntry;
 typedef struct TestDefStruct TestDef;
+
+struct TestDefEntryStruct {
+	TestDefEntry *next;
+	EfiType *type;
+	size_t dim;
+	size_t offset;
+	int (*tst)(TestDefEntry *entry, void *data);
+	void (*clean)(void *par);
+	void *par;
+};
 
 struct TestDefStruct {
 	REFVAR;
+	EfiType *type;
+	TestDefEntry *list;
 	TestParDef *par;
 	TestDefFunc test;
 	void *data;
@@ -76,6 +92,13 @@ struct TestDefStruct {
 
 TestDef *test_create (TestParDef *def, TestDefFunc test,
 	const char *opt, const char *arg);
+
+TestDef *TestDef_create (EfiType *type, const char *def);
+int TestDef_test (TestDef *def, const void *data);
+int TestDef_obj (TestDef *def, const EfiObj *obj);
+
+int EfiVec_test (EfiVec *buf, TestDef *def);
+int EfiVec_select (EfiVec *buf, TestDef *def);
 
 void SetupTestDef(void);
 

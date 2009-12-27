@@ -1,8 +1,28 @@
-/*	Multidimensionale Matrix selektiv laden
-	(c) 1994 Erich Frühstück
+/*
+:*:seklectiv load of data cube
+:de:Multidimensionale Matrix selektiv laden
+
+$Copyright (C) 1994, 2007 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include <EFEU/mdtest.h>
+#include <EFEU/mdmat.h>
+#include <EFEU/MatchPar.h>
 
 typedef struct {
 	short skip;	/* Überlesen */
@@ -37,19 +57,19 @@ typedef struct {
 } VSEL_T;
 
 static int walk_type (const char *name, EfiType **type, int o1, int o2);
-static EfiVar *getentry (EfiType *type, const char *name);
+static EfiStruct *getentry (EfiType *type, const char *name);
 
 static char **vsel_list = NULL;
 static VSEL_T *vsel_cdef = NULL;
 static size_t vsel_dim = 0;
-static EfiVar *vsel_struct = NULL;
+static EfiStruct *vsel_struct = NULL;
 static IO *vsel_io = NULL;
 
 
 /*	Datenmatrix aus Datei laden
 */
 
-mdmat *md_fload(const char *name, const char *list, const char *var)
+mdmat *md_fload (const char *name, const char *list, const char *var)
 {
 	IO *io;
 	mdmat *md;
@@ -60,7 +80,7 @@ mdmat *md_fload(const char *name, const char *list, const char *var)
 	return md;
 }
 
-mdmat *md_reload(mdmat *md, const char *list, const char *var)
+mdmat *md_reload (mdmat *md, const char *list, const char *var)
 {
 	IO *io;
 
@@ -77,7 +97,7 @@ mdmat *md_reload(mdmat *md, const char *list, const char *var)
 /*	Matrix selektiv laden
 */
 
-mdmat *md_load(IO *io, const char *str, const char *odef)
+mdmat *md_load (IO *io, const char *str, const char *odef)
 {
 	mdmat *md;
 	mdaxis *axis, *x;
@@ -115,7 +135,7 @@ mdmat *md_load(IO *io, const char *str, const char *odef)
 		size_t n;
 		char *ptr;
 
-		md->data = memalloc(md->size);
+		md_alloc(md);
 		memset(md->data, 0, (size_t) md->size);
 		n = md->size / md->type->size;
 		ptr = md->data;
@@ -186,8 +206,7 @@ mdmat *md_load(IO *io, const char *str, const char *odef)
 
 /*	Daten laden
 */
-	md->size = md_size(md->axis, md->type->size);
-	md->data = memalloc(md->size);
+	md_alloc(md);
 	memset(md->data, 0, (size_t) md->size);
 
 	if	(need_add)
@@ -217,7 +236,7 @@ mdmat *md_load(IO *io, const char *str, const char *odef)
 /*	Neue Achse generieren
 */
 
-static mdaxis *mkaxis(mdaxis *x, mdlist *def)
+static mdaxis *mkaxis (mdaxis *x, mdlist *def)
 {
 	size_t xvars;
 	int preselect;
@@ -228,7 +247,7 @@ static mdaxis *mkaxis(mdaxis *x, mdlist *def)
 	mdaxis *y;
 	SDEF *sdef;
 	size_t *ptr;
-	mdtest *test;
+	MatchPar *mp;
 	StrBuf *sb;
 	char *p;
 
@@ -271,15 +290,15 @@ static mdaxis *mkaxis(mdaxis *x, mdlist *def)
 			continue;
 		}
 
-		test = mdtest_create(def->list[i], x->dim);
+		mp = MatchPar_create(def->list[i], x->dim);
 
-		if	(test->flag)	preselect = 0;
+		if	(mp->flag)	preselect = 0;
 
 		for (j = 0; j < x->dim; j++)
 		{
-			if	(test->cmp(test, x->idx[j].name, j + 1))
+			if	(mp->cmp(mp, x->idx[j].name, j + 1))
 			{
-				flag = test->flag;
+				flag = mp->flag;
 			}
 			else if	(preselect)
 			{
@@ -297,7 +316,7 @@ static mdaxis *mkaxis(mdaxis *x, mdlist *def)
 			}
 		}
 
-		mdtest_clean(test);
+		rd_deref(mp);
 		preselect = 0;
 	}
 
@@ -341,15 +360,15 @@ static mdaxis *mkaxis(mdaxis *x, mdlist *def)
 		{
 			if	(def->lopt[i])
 			{
-				test = mdmktestlist(def->lopt[i], x->dim);
+				mp = MatchPar_list(def->lopt[i], x->dim);
 			}
-			else	test = NULL;
+			else	mp = NULL;
 
-			if	(test != NULL)
+			if	(mp != NULL)
 			{
 				for (j = 0; j < x->dim; j++)
 				{
-					if	(mdtest_eval(test, x->idx[j].name, j))
+					if	(MatchPar_exec(mp, x->idx[j].name, j))
 					{
 						sdef[j].skip = 0;
 						sdef[j].idx[sdef[j].dim++] = xvars;
@@ -357,7 +376,7 @@ static mdaxis *mkaxis(mdaxis *x, mdlist *def)
 				}
 			}
 
-			mdtest_clean(test);
+			rd_deref(mp);
 
 			if	(def->list[i][1] != '#')
 			{
@@ -404,7 +423,7 @@ static mdaxis *mkaxis(mdaxis *x, mdlist *def)
 	for (j = 0; j < y->dim; j++)
 		y->idx[j].name = mstrcpy(nextstr(&p));
 
-	sb_destroy(sb);
+	rd_deref(sb);
 	return y;
 }
 
@@ -412,7 +431,7 @@ static mdaxis *mkaxis(mdaxis *x, mdlist *def)
 /*	Datenwerte lesen
 */
 
-static void getdata(const EfiType *type, char *data, mdaxis *x, mdaxis *y)
+static void getdata (const EfiType *type, char *data, mdaxis *x, mdaxis *y)
 {
 	size_t i, j;
 	SDEF *sdef;
@@ -473,7 +492,7 @@ static void adddata (char *y, char *x, mdaxis *axis)
 	else	CallVoidFunc(f_add, y, x);
 }
 
-static void skipdata(const EfiType *type, mdaxis *x)
+static void skipdata (const EfiType *type, mdaxis *x)
 {
 	if	(x != NULL)
 	{
@@ -489,11 +508,11 @@ static void skipdata(const EfiType *type, mdaxis *x)
 /*	Objektselektion generieren
 */
 
-static int walk_type(const char *name, EfiType **type, int o1, int o2)
+static int walk_type (const char *name, EfiType **type, int o1, int o2)
 {
 	int n, k;
 	int new_offset;
-	EfiVar **st;
+	EfiStruct **st;
 
 /*	Test auf Selektion der kompletten Struktur
 */
@@ -549,9 +568,9 @@ static int walk_type(const char *name, EfiType **type, int o1, int o2)
 	return n;
 }
 
-static EfiVar *getentry (EfiType *type, const char *name)
+static EfiStruct *getentry (EfiType *type, const char *name)
 {
-	EfiVar *st;
+	EfiStruct *st;
 
 	for (st = type->list; st != NULL; st = st->next)
 	{
@@ -565,13 +584,13 @@ static EfiVar *getentry (EfiType *type, const char *name)
 /*	Lesefunktion bei Objektselektion
 */
 
-static void std_get(const EfiType *type, void *ptr)
+static void std_get (const EfiType *type, void *ptr)
 {
 	ReadData(type, ptr, load_io);
 }
 
 
-static void member_get(const EfiType *type, void *ptr)
+static void member_get (const EfiType *type, void *ptr)
 {
 	ReadData(data_type, data_buf, load_io);
 

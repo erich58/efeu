@@ -63,6 +63,7 @@ struct Function {
 	int depth;
 	bool need_par;
 	bool allow_par;
+	bool ext_linkage;
 	int _nb;
 	int _nh;
 	FunctionLine[] _body;
@@ -85,37 +86,42 @@ str Function ()
 	return _name ? sprintf("%s(%s)", _name, _arg ? _arg : "void") : NULL;
 
 /*
-Beim Konstruktor |$1| gibt die Variable <_name> den Datentyp und Namen der
-Funktion an. Das Argument <_args> bestimmt die Argumentliste der Funktion.
-Auf <_name> und <_args> wird eine Parametersubstitution angewendet.
+Beim Konstruktor |$1| gibt die Variable <_xname> den Datentyp und Namen der
+Funktion an. Das Argument <_xargs> bestimmt die Argumentliste der Funktion.
+Auf <_xname> und <_xargs> wird eine Parametersubstitution angewendet.
 Alle weiteren Argumente setzen Stringregister,
 die bei der Parametersubstitution zur Verfügung stehen.
 */
 
-Function Function (str _name)
-	return { psub(_name), NULL, 1, false, false };
-
-inline Function Function (str _name, str _args, ...)
+inline Function Function (str _xname, str _xargs = NULL, ...)
 {
-	_name = psub(_name, va_list);
-	_args = psub(_args, va_list);
-	return { _name, _args, 1, false, false };
+	if	(_xname == /^static/)
+	{
+		strcut(_xname, "%s");
+		ext_linkage = false;
+	}
+	else	ext_linkage = true;
+
+	_name = psub(_xname, va_list);
+	_arg = psub(_xargs, va_list);
+	depth = 1;
 }
 
 /*
 Mit Hilfe der Funktion |$1| wird die C-Funktion
-ausgegeben. Das Argument <global> bestimmt, ob die Funktionsdefinition
-global oder statisch erfolgen soll. Bei einer globalen Definition wird
-auch ein Prototyp in die Headerdatei geschrieben.
+ausgegeben. Das Argument <ext> bestimmt, ob die Funktionsdefinition
+mit externer Bindung oder statisch erfolgen soll.
+Der Prototyp wird bei externer Bindung nach hdr, ansonsten nach top
+ausgegeben.
 */
 
-void Function::write (bool global = false)
+virtual void Function::write (bool ext)
 {
 	if	(!_name)	return;
 
 	str proto = sprintf("%s (%s)", _name, _arg ? _arg : "void");
 
-	if	(global)
+	if	(ext)
 	{
 		hdr << "extern " << proto << ";\n";
 	}
@@ -139,9 +145,20 @@ void Function::write (bool global = false)
 		x.write();
 
 	if	(!dim(_head) && !dim(_body))
-		src << ";";
+		src << "\t;\n";
 
 	src << "}\n\n";
+}
+
+/*
+Mit Hilfe der Funktion |$1| wird die C-Funktion ausgegeben.
+Die Bindung wird über ein internes Flag gesteuert, dass beim
+einrichten der Deklarationsstruktur gesetzt wird.
+*/
+
+virtual void Function::write ()
+{
+	write(ext_linkage);
 }
 
 /*
@@ -353,6 +370,25 @@ inline void Function::cblock & (str _key, str _cmd, ...)
 }
 
 /*
+Einfache C-Funktionen können mit der Funktion |Func| konstruiert werden.
+Das Argument <_body> bestimmt den Funktionsrumpf. Auch auf ihn wird
+Parametersubstitution angewendet.
+Für alle anderen Argumente gilt das bei der Beschreibung
+des Konstruktors gesagte.
+*/
+
+inline void StdFunc (str _name, str _args, str _body, ...)
+{
+	Function f = Function(_name, _args, va_list);
+
+	if	(f.ext_linkage)
+		usecomment();
+
+	f.body(_body, va_list);
+	f.write();
+}
+
+/*
 Einfache C-Funktionen können mit den Funktionen |GlobalFunction| und
 |LocalFunction| konstruiert werden. Das Argument <_body> bestimmt den
 Funktionsrumpf. Auch auf ihn wird Parametersubstitution angewendet.
@@ -362,6 +398,8 @@ des Konstruktors gesagte.
 
 inline void GlobalFunction (str _name, str _args, str _body, ...)
 {
+	usecomment();
+
 	Function f = Function(_name, _args, va_list);
 	f.body(_body, va_list);
 	f.write(true);

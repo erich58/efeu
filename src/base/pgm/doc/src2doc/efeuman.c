@@ -395,7 +395,7 @@ int main (int argc, char **argv)
 		eval_script(io, buf);
 	}
 
-	sb_destroy(buf);
+	rd_deref(buf);
 	io_close(io);
 
 	CmdPar_setval(par, "Ident", mstrcpy(doc_buf.var[VAR_TITLE]));

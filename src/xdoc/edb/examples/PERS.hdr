@@ -1,0 +1,27 @@
+/*
+Personal data types
+*/
+
+#ifndef	PERS_hdr
+#define	PERS_hdr 1
+
+extern AGE99;
+
+typedef int BirthYear;
+
+AGE99 BirthYear::age (Date t)
+	return t.year - this;
+
+enum Gender {
+	m = 1,	/* male */
+	f = 2,	/* female */
+};
+
+struct PERS {
+	str first_name;
+	str family_name;
+	BirthYear birth_year;
+	Gender gender;
+};
+
+#endif /* PERS.hdr */

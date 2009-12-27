@@ -31,33 +31,95 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/Random.h>
 #include <EFEU/MakeDepend.h>
 #include <EFEU/cmdeval.h>
+#include <EFEU/ioctrl.h>
 #include <Math/TimeSeries.h>
-#include <Math/StatData.h>
+#include <EFEU/StatData.h>
 #include <Math/pnom.h>
 #include <Math/mdmath.h>
 #include <Math/func.h>
 #include <ctype.h>
 
-#define	HEADLINE	"Nicht editieren, Datei wurde automatisch generiert."
 #define	PROTECTKEY	"ms_"
 #define	NAME		"name"
 
-#define	ALLOW_SPLIT	0	/* Ausgabeaufspaltung zulassen */
+#define	F_HEAD	":*:Do not edit, file was created with\n" \
+		":de:Nicht editieren, Datei wurde mit\n"
+#define	F_END	":de:generiert.\n"
+
+#define	R_HEAD	"\n# Rules from $! -r $0\n"
+#define	R_END	"\n# End of rules from $0\n"
+
 
 /*	Globale Variablen
 */
 
 static char *BaseName = NULL;	/* Basisname */
 static int Verbose = 0;		/* Protokollmodus */
+static char *bootstrap = NULL;	/* Aufrufparameter */
+static int hdr_comment = 0;	/* Kommentare auch in den Header schreiben */
+
+static void put_comment (const char *txt, IO *out)
+{
+	io_puts("\n/*\n", out);
+	io_puts(txt, out);
+	io_puts("*/\n\n", out);
+}
 
 /*	Ausgabedefinitionen
 */
 
+static void hdr_c (IO *out, const char *txt)
+{
+	static int need_nl;
+
+	io_puts("/*\n", out);
+
+	if	(txt)
+	{
+		for (need_nl = 0; *txt; txt++)
+		{
+			io_putc(*txt, out);
+			need_nl = *txt != '\n';
+		}
+
+		if	(need_nl)
+			io_putc('\n', out);
+
+		io_putc('\n', out);
+	}
+
+	io_langputs(F_HEAD, out);
+	io_puts(bootstrap, out);
+	io_putc('\n', out);
+	io_langputs(F_END, out);
+	io_puts("*/\n\n", out);
+}
+
+static void hdr_tex (IO *out, const char *txt)
+{
+	static int at_start;
+
+	if	(!txt)	return;
+
+	for (at_start = 1; *txt; txt++)
+	{
+		if	(at_start)
+			io_puts("% ", out);
+
+		io_putc(*txt, out);
+		at_start = (*txt == '\n');
+	}
+
+	if	(!at_start)
+		io_putc('\n', out);
+
+	io_putc('\n', out);
+}
 
 typedef struct {
 	char *name;	/* Name */
 	char *ext;	/* Filezusatz */
-	char *cfmt;	/* Kommentarformat */
+	void (*hfunc) (IO *out, const char *txt);
 	int protect;	/* Schutzflag */
 	char *fname;	/* Filename */
 	int flag;	/* Steuerflag */
@@ -66,12 +128,12 @@ typedef struct {
 } OUTPUT;
 
 static OUTPUT output[] = {
-	{ "hdr", "h", "/*\t$1\n*/\n", 1, NULL, 0, NULL, 0 },
+	{ "hdr", "h", hdr_c, 1, NULL, 0, NULL, 0 },
 	{ "top", NULL, NULL, 0, NULL, 0, NULL, 0 },
-	{ "src", "c", "/*\t$1\n*/\n", 0, NULL, 0, NULL, 0 },
-	{ "tex", "tex", "% $1\n", 0, NULL, 0, NULL, 0 },
-	{ "doc", "doc", "/*\t$1\n*/\n", 0, NULL, 0, NULL, 0 },
-	{ "info", "info", "/*\t$1\n*/\n", 0, NULL, 0, NULL, 0 },
+	{ "src", "c", hdr_c, 0, NULL, 0, NULL, 0 },
+	{ "tex", "tex", hdr_tex, 0, NULL, 0, NULL, 0 },
+	{ "doc", "doc", hdr_c, 0, NULL, 0, NULL, 0 },
+	{ "info", "info", hdr_c, 0, NULL, 0, NULL, 0 },
 };
 
 #define	OUT_HDR	0
@@ -91,6 +153,7 @@ static void divide_src (void)
 		output[OUT_HDR].io = output[OUT_SRC].io;
 		output[OUT_SRC].io = io_divide(output[OUT_HDR].io, 0);
 	}
+	else	hdr_comment = 1;
 
 	if	(!output[OUT_TOP].io)
 	{
@@ -139,7 +202,7 @@ static EfiVarDef locvar[] = {
 	{ "DependTarget",	&Type_str, &DependTarget },
 	{ "MakeRule",	&Type_bool, &MakeRule },
 	{ "MakeList",	&Type_bool, &MakeList },
-	{ "MakeDep",		&Type_bool, &MakeDep },
+	{ "MakeDep",	&Type_bool, &MakeDep },
 	{ "LockFlag",	&Type_bool, &LockFlag },
 };
 
@@ -158,7 +221,7 @@ static void protect_name (const char *name, IO *io)
 
 static int SetupOutput = 1;
 
-static void open_output (OUTPUT *out, const char *name)
+static void open_output (OUTPUT *out, const char *name, const char *head)
 {
 	if	(out->io)	return;
 
@@ -185,11 +248,8 @@ static void open_output (OUTPUT *out, const char *name)
 
 	out->io = io_fileopen(out->fname, "w");
 
-	if	(out->cfmt)
-	{
-		io_psubarg(out->io, out->cfmt, "ns", HEADLINE);
-		io_putc('\n', out->io);
-	}
+	if	(out->hfunc)
+		out->hfunc(out->io, head);
 
 	if	(out && out->protect && out->fname)
 	{
@@ -221,35 +281,6 @@ static void close_output (OUTPUT *out)
 	out->inc = 0;
 }
 
-#if	ALLOW_SPLIT
-static void include_output (OUTPUT *out, const char *name)
-{
-	if	(out->flag)
-		AddTarget(name); 
-
-	if	(!out->io)	return;
-
-	if	(out->inc)
-	{
-		rd_deref(io_pop(out->io));
-		out->inc = 0;
-	}
-
-	if	(name)
-	{
-		io_printf(out->io, "#include %#s\n", name);
-		io_push(out->io, io_fileopen(name, "w"));
-		out->inc = 1;
-
-		if	(out->cfmt)
-		{
-			io_psubarg(out->io, out->cfmt, "ns", HEADLINE);
-			io_putc('\n', out->io);
-		}
-	}
-}
-#endif
-
 
 /*	Ausgabedefinition initialisieren
 */
@@ -267,12 +298,12 @@ static int eval_stat = 1;
 
 static EfiObj *p_config (IO *io, void *data)
 {
-	void (*func) (OUTPUT *out, const char *name);
 	char *name, *p, *arg;
+	char *head;
 	OUTPUT *out;
 	int c;
 	
-	func = data;
+	io_ctrl(io, IOPP_COMMENT, &head);
 
 	while ((c = io_eat(io, " \t")) != EOF)
 	{
@@ -300,7 +331,7 @@ static EfiObj *p_config (IO *io, void *data)
 		}
 		else if	((out = get_output(name)) != NULL)
 		{
-			func(out, arg);
+			open_output(out, arg, head);
 		}
 		else
 		{
@@ -311,22 +342,68 @@ static EfiObj *p_config (IO *io, void *data)
 		memfree(arg);
 	}
 	
-#if	!ALLOW_SPLIT
 	if	(MakeList || MakeRule)
 		eval_stat = 0;
-#endif
 
 	divide_src();
+	memfree(head);
 	return NULL;
 }
 
+static STRBUF(rule_buf, 0);
+
+static EfiObj *p_rule (IO *io, void *data)
+{
+	int c;
+	char *p;
+
+	c = io_eat(io, " \t");
+	sb_putc('\n', &rule_buf);
+	p = getstring(io);
+	sb_puts(p, &rule_buf);
+	memfree(p);
+
+	if	(rule_buf.data[rule_buf.pos - 1] != '\n')
+		sb_putc('\n', &rule_buf);
+
+	return NULL;
+}
 
 static EfiParseDef pdef[] = {
-	{ "config", p_config, open_output },
-#if	ALLOW_SPLIT
-	{ "include", p_config, include_output },
-#endif
+	{ "config", p_config, NULL },
+	{ "rule", p_rule, NULL },
+	{ "rules", p_rule, NULL },
 };
+
+static void add_comment (const char *txt)
+{
+	if	(txt)
+	{
+		put_comment(txt, output[OUT_SRC].io);
+
+		if	(hdr_comment)
+			put_comment(txt, output[OUT_HDR].io);
+	}
+}
+
+static void f_usecomment (EfiFunc *func, void *rval, void **arg)
+{
+	char *com = NULL;
+	io_ctrl(Val_io(arg[0]), IOPP_COMMENT, &com);
+	add_comment(com);
+	Val_str(rval) = com;
+}
+
+static void f_addcomment (EfiFunc *func, void *rval, void **arg)
+{
+	add_comment(Val_str(arg[0]));
+}
+
+static EfiFuncDef fdef[] = {
+	{ 0, &Type_str, "usecomment (IO io = cin)", f_usecomment },
+	{ 0, &Type_void, "addcomment (str com)", f_addcomment },
+};
+
 
 static void eval_file(const char *name)
 {
@@ -356,10 +433,9 @@ static void eval_file(const char *name)
 
 int main (int narg, char **arg)
 {
-	char *bootstrap;
 	int i;
 
-	SetVersion("$Id: mksource.c,v 1.31 2006-09-07 10:35:24 ef Exp $");
+	SetVersion("$Id: mksource.c,v 1.39 2007-07-30 15:04:47 ef Exp $");
 	SetProgName(arg[0]);
 	bootstrap = mtabcat(" ", arg, narg);
 
@@ -381,6 +457,7 @@ int main (int narg, char **arg)
 	SetupDebug();
 
 	AddParseDef(pdef, tabsize(pdef));
+	AddFuncDef(fdef, tabsize(fdef));
 	AddVarDef(NULL, globvar, tabsize(globvar));
 
 	SetupOutput = 1;
@@ -431,7 +508,7 @@ int main (int narg, char **arg)
 	for (i = 0; i < tabsize(output); i++)
 	{
 		if	(output[i].flag)
-			open_output(output + i, NULL);
+			open_output(output + i, NULL, NULL);
 
 		add_output(output + i);
 	}
@@ -467,6 +544,13 @@ int main (int narg, char **arg)
 
 	if	(MakeRule && Template)
 	{
+		char *arg[2];
+
+		arg[0] = Template;
+		arg[1] = BaseName;
+
+		io_psubvec(iostd, R_HEAD, 2, arg);
+
 		if	(AllTarget)
 			printf("\n%s:: %s\n", AllTarget, DependName);
 
@@ -487,6 +571,26 @@ int main (int narg, char **arg)
 
 		printf("\n%s: %s\n\t%s %s\n",
 			DependName, Template, ProgName, Template);
+
+		if	(rule_buf.pos)
+		{
+			IO *in;
+
+			AddVarDef(LocalVar, locvar, tabsize(locvar));
+
+			in = io_cstr("#include <ms_rules.hdr>\n");
+			in = io_cmdpreproc(in);
+			CmdEval(in, iostd);
+			io_close(in);
+
+			sb_setpos(&rule_buf, 0);
+			in = io_strbuf(&rule_buf);
+			in = io_cmdpreproc(in);
+			io_pcopy(in, iostd, EOF, 2, arg);
+			io_close(in);
+		}
+
+		io_psubvec(iostd, R_END, 2, arg);
 	}
 
 	if	(MakeDep)

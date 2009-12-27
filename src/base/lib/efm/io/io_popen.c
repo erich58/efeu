@@ -77,7 +77,7 @@ IO *io_popen(const char *proc, const char *mode)
 	sb_puts(">", sb);
 	sb_putc(0, sb);
 	io = io_stream((char *) sb->data, file, pclose);
-	sb_destroy(sb);
+	rd_deref(sb);
 	return io;
 }
 

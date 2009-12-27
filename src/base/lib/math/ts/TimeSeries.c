@@ -97,7 +97,8 @@ void ts_expand(TimeSeries *ts, size_t dim)
 		lfree(save);
 	}
 
-	ts->dim = dim;
+	while (ts->dim < dim)
+		ts->data[ts->dim++] = 0.;
 }
 
 

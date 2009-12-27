@@ -1,0 +1,41 @@
+\sec	Episodendaten
+
+Zur Darstellung der Episodendaten wird die Datenstruktur |DATA| in der
+Headerdatei |DATA.hdr| definiert.
+
+Teil der EFEU-Entwicklungsumgebung ist der Datentyp \index{|Period|} für einen
+Zeitbereich. Dieser eignet sich gut als Basistyp für die
+Episodendaten. Für Vektoren vom Typ |Period| stehen eine Reihe von
+Auswertungskonzepten für den Datenbankfilter |view| zur Verfügung.
+Diese können dank Vektorvererbung von einem Episodenvektor genutzt
+werden.
+
+Im folgenden ist die Headerdatei |DATA.hdr| aufgelistet:
+
+\include[verbatim]	DATA.hdr
+
+Zur Vereinfachung der Datenkonvertierung wurde ein
+Konstruktor definiert.
+
+Analog zu den Personendaten wird das Metadatenfile |ex2_data.edb|
+zur Konvertierung verwendet. Die Episoden werden anschließend mit
+|nest| zu Vektoren zusammengefasst.
+
+\include[verbatim]	ex2_data.edb
+
+Alternativ zur Verwendung des in |DATA.hdr| definierten Konstruktors
+in der Komponentendefinition
+---- verbatim
+data = DATA(beg, end, income),
+----
+wäre auch der Ausdruck
+---- verbatim
+data = (DATA) { { beg, end }, income},
+----
+möglich. Dieser nutzt die implizit für jede Struktur definierte
+Listenkonvertierung.
+
+Die nachstehende Ausgabe zeigt die Daten mit Ausgabemodus |plain|,
+die einzelnen Zeilen wurden zur besseren Darstellung mit |fold| umgebrochen:
+
+\pipe[verbatim]  |edb -n0 ex2_data.edb || fold -s -70|

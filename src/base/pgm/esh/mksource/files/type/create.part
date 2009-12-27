@@ -1,0 +1,48 @@
+/*
+:*:The function |$1| provides include statements for type definitions.
+:de:Die Funktion |$1| sorgt für die zur Typedefinition notwendigen
+Headerdateien.
+*/
+
+void TypeDef::DataTypeHeader (bool glob = true)
+{
+	static bool need_object = true;
+
+	if	(glob && need_object)
+	{
+		StdInclude(hdr, "EFEU/object");
+		need_object = false;
+	}
+}
+
+/*
+:*:The function |$1| creates the data type.
+:de:Die Funktion |$1| generiert den Datentyp.
+*/
+
+void TypeDef::create (bool glob = true)
+{
+	if	(create_done)	return;
+
+	create_done = true;
+
+	bf_close();
+	DataTypeHeader(glob);
+	IO io = glob ? hdr : top;
+
+	if	(s_var)
+	{
+		fpsub(io, "\ntypedef struct $1 $1;\n\nstruct $1 {\n$2};\n\n",
+			t_name, s_var);
+		t_cname = t_name;
+	}
+	else if	(e_member)
+	{
+		fpsub(io, "\ntypedef enum {\n$2} $1;\n\n",
+			t_name, e_member);
+	}
+	else if	(t_cname)
+	{
+		fpsub(io, "\ntypedef $2 $1;\n\n", t_name, t_cname);
+	}
+}

@@ -165,7 +165,7 @@ inline void CntObj(str name, Type_t type, IO def, str arg = NULL)
 			f_add.line(cmd + ";", args);
 			break;
 		case "assign":
-			f_set.line("CleanData(&Type_$1, buf);", type);
+			f_set.line("CleanData(&Type_$1, buf, 0);", type);
 			f_set.line("Val_$1(buf) = " + cmd + ";", type);
 			f_add.line("AssignData(&Type_$1, ptr, buf);", type);
 			break;

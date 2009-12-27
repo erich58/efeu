@@ -14,7 +14,7 @@ stehen drei Varianten zur Verfügung:
 	Die Datenzeile enthält einzelne, durch einen Strichpunkt
 	getrennte Felder, die zunächst als Zeichenkette geladen
 	und anschließend in den entsprechenden Datentyp umgewandelt werden.
-	Ausdrücke werden nicht berechnet, Zeichenketten mussen aber
+	Ausdrücke werden nicht berechnet, Zeichenketten müssen aber
 	nicht wie bei |plain| unter Anführung stehen.
 [\index{|binary|}]
 	Die Daten sind binär gespeichert.
@@ -29,7 +29,7 @@ zugegriffen.
 
 Mit der Kombination |@expr| und |@data| lassen sich beliebige
 Eingabeformate verarbeiten. In der folgenden Beispieldatei |epi.edb| sind
-abwechselnd Stamm- und Epiosodendaten enthalten.
+abwechselnd Stamm- und Episodendaten enthalten.
 
 \include[verbatim] epi.edb
 

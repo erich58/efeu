@@ -25,8 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/printobj.h>
 #include <ctype.h>
 
-static void VecDestroy (const EfiType *type, void *tg);
-static void VecClean (const EfiType *type, void *tg);
+static void VecClean (const EfiType *type, void *tg, int mode);
 static void VecCopy (const EfiType *type, void *tg, const void *src);
 static size_t ReadVec (const EfiType *t, void *dp, IO *io);
 static size_t WriteVec (const EfiType *t, const void *dp, IO *io);
@@ -40,8 +39,7 @@ static void V0Type2Vec (EfiFunc *func, void *rval, void **arg);
 static void V0Type2List (EfiFunc *func, void *rval, void **arg);
 static void List2V0Type (EfiFunc *func, void *rval, void **arg);
 
-static void V0Destroy (const EfiType *type, void *tg);
-static void V0Clean (const EfiType *type, void *tg);
+static void V0Clean (const EfiType *type, void *tg, int mode);
 static void V0Copy (const EfiType *type, void *tg, const void *src);
 
 EfiType *VecType (EfiType *type, EfiObjList *idx)
@@ -56,7 +54,7 @@ EfiType *VecType (EfiType *type, EfiObjList *idx)
 
 EfiType *NewVecType (EfiType *type, int dim)
 {
-	EfiType *ntype;
+	EfiType *ntype, *t;
 	char *name;
 	char *p;
 
@@ -71,9 +69,10 @@ EfiType *NewVecType (EfiType *type, int dim)
 	if	(dim)
 	{
 		ntype = NewType(name);
+		ntype->cname = type->cname ?
+			mstrpaste(" ", type->cname, "*") : NULL;
 		ntype->dim = dim;
 		ntype->base = type;
-		ntype->destroy = type->destroy ? VecDestroy : NULL;
 		ntype->clean = type->clean ? VecClean : NULL;
 		ntype->copy = type->copy ? VecCopy : NULL;
 		ntype->size = dim * type->size;
@@ -81,6 +80,7 @@ EfiType *NewVecType (EfiType *type, int dim)
 		ntype->read = type->read ? ReadVec : NULL;
 		ntype->write = type->write ? WriteVec : NULL;
 		ntype->print = PrintVec;
+		ntype->flags = type->flags & TYPE_MALLOC;
 		AddType(ntype);
 		p = msprintf("%s & ()", ntype->name);
 		SetFunc(0, &Type_vec, p, VType2Vec);
@@ -93,9 +93,15 @@ EfiType *NewVecType (EfiType *type, int dim)
 	else
 	{
 		ntype = NewType(name);
-		ntype->dim = dim;
-		ntype->base = &Type_vec;
-		ntype->destroy = V0Destroy;
+		ntype->cname = mstrcpy("EfiVec *");
+		ntype->dim = 0;
+
+		if	(type->base && !type->dim)
+		{
+			ntype->base = NewVecType(type->base, 0);
+		}
+		else	ntype->base = &Type_vec;
+
 		ntype->clean = V0Clean;
 		ntype->copy = V0Copy;
 		ntype->size = sizeof(EfiVec *);
@@ -104,10 +110,15 @@ EfiType *NewVecType (EfiType *type, int dim)
 		ntype->write = Write_vec;
 		ntype->print = Print_vec;
 		ntype->defval = memalloc(sizeof(EfiVec *));
+		ntype->flags = TYPE_MALLOC;
 		Val_ptr(ntype->defval) = NewEfiVec(type, NULL, 0);
 		AddType(ntype);
 		p = msprintf("%s & ()", ntype->name);
 		SetFunc(0, &Type_vec, p, V0Type2Vec);
+
+		for (t = ntype->base; t && t != &Type_vec; t = t->base)
+			SetFunc(FUNC_PROMOTION, t, p, V0Type2Vec);
+
 		SetFunc(FUNC_RESTRICTED, &Type_list, p, V0Type2List);
 		memfree(p);
 		p = msprintf("%s (List_t)", ntype->name);
@@ -133,28 +144,26 @@ static void VecCopy (const EfiType *type, void *tg, const void *src)
 		vtype->copy(vtype, (char *) tg + n, (const char *) src + n);
 }
 
-static void V0Destroy (const EfiType *type, void *tg)
+static void V0Clean (const EfiType *type, void *tg, int mode)
 {
-	rd_deref(Val_ptr(tg));
-}
-
-static void V0Clean (const EfiType *type, void *tg)
-{
-	if	(Val_ptr(tg))
+	if	(mode)
+		rd_deref(Val_ptr(tg));
+	else if	(Val_ptr(tg))
 		EfiVec_resize(Val_ptr(tg), 0);
+
 }
 
 
 static void V0Copy (const EfiType *type, void *tg, const void *src)
 {
-	Val_ptr(tg) = EfiVec_copy(Val_ptr(src));
+	Val_ptr(tg) = EfiVec_copy(Val_ptr(tg), Val_ptr(src));
 }
 
 
 /*	Löschfunktion für Vektortypen
 */
 
-static void VecDestroy (const EfiType *type, void *tg)
+static void VecClean (const EfiType *type, void *tg, int mode)
 {
 	const EfiType *vtype;
 	size_t n;
@@ -162,18 +171,7 @@ static void VecDestroy (const EfiType *type, void *tg)
 	vtype = type->base;
 
 	for (n = 0; n < type->size; n += vtype->size)
-		vtype->destroy(vtype, (char *) tg + n);
-}
-
-static void VecClean (const EfiType *type, void *tg)
-{
-	const EfiType *vtype;
-	size_t n;
-
-	vtype = type->base;
-
-	for (n = 0; n < type->size; n += vtype->size)
-		vtype->clean(vtype, (char *) tg + n);
+		vtype->clean(vtype, (char *) tg + n, mode);
 }
 
 static size_t ReadVec (const EfiType *t, void *dp, IO *io)

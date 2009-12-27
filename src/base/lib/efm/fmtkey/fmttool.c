@@ -64,6 +64,6 @@ int ftool_ioalign (IO *io, StrBuf *sb, const FmtKey *key)
 		io_putc(sb->data[--sb->pos], io);
 
 	n += io_nputc(' ', io, key->width - n);
-	sb_destroy(sb);
+	rd_deref(sb);
 	return n;
 }

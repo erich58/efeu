@@ -87,7 +87,7 @@ typedef struct {
 
 #define	Val_fstat(x)	((FileStat *) (x))[0]
 
-static void fstat_clean (const EfiType *st, void *data)
+static void fstat_clean (const EfiType *st, void *data, int mode)
 {
 	memfree(Val_fstat(data).path);
 	memset(data, 0, st->size);
@@ -253,7 +253,7 @@ typedef struct {
 	unsigned gid;
 } PWD;
 
-static void pwd_clean (const EfiType *type, void *data)
+static void pwd_clean (const EfiType *type, void *data, int mode)
 {
 	register PWD *pwd = data;
 	memfree(pwd->name);

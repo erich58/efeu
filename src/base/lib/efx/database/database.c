@@ -35,7 +35,7 @@ static char *db_ident (const void *data)
 static void db_clean (void *data)
 {
 	EfiDB *db = data;
-	DestroyVecData(db->type, db->buf.used, db->buf.data);
+	CleanVecData(db->type, db->buf.used, db->buf.data, 1);
 	vb_free(&db->buf);
 	memfree(db);
 }
@@ -138,7 +138,7 @@ static void f_db_delete(EfiFunc *func, void *rval, void **arg)
 	{
 		while (dim-- != 0)
 		{
-			CleanData(db->type, ptr);
+			CleanData(db->type, ptr, 0);
 			ptr += db->type->size;
 		}
 	}
@@ -157,7 +157,7 @@ static void f_db_clean (EfiFunc *func, void *rval, void **arg)
 
 		while (n-- > 0)
 		{
-			CleanData(db->type, ptr);
+			CleanData(db->type, ptr, 0);
 			ptr += db->type->size;
 		}
 
@@ -219,7 +219,7 @@ static EfiObj *db_search(EfiDB *db, EfiObj *obj, int flag)
 
 	if	(p2 != NULL)
 	{
-		CleanData(db->type, p2);
+		CleanData(db->type, p2, 0);
 		memfree(p2);
 	}
 

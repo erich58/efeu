@@ -1,0 +1,127 @@
+/*
+:*:Age classifications
+:de:Altersklassifikationen
+
+$Copyright (C) 2007 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+*/
+
+#include <index.ms>
+#include <RefPar.ms>
+
+StdInclude(top, "EFEU/EfiClass");
+
+str ID = psub("$1_Cut", BaseName);
+
+RefPar(ID, string !
+size_t dim		Number of threshold values
+$(BaseName) *tab	Table of threshold values
+!);
+
+StdFunc("static int $1_update", "const EfiObj *base, void *p_par", string !
+int i;
+
+$1 *par = p_par;
+$2 *val = base->data;
+
+for (i = 0; i < par->dim; i++)
+	if (*val <= par->tab[i]) break;
+
+return i + 1;
+!, ID, BaseName);
+
+StdFunc("static void $1_create",
+	"EfiClassArg *def, const char *opt, const char *arg",
+	string !
+EfiObjList *list;
+EfiType *type;
+$1 *par;
+$2 last, val;
+int dim;
+
+Obj2Data(strterm(arg), &Type_list, &list);
+dim = ObjListLen(list);
+
+par = memalloc(sizeof *par + dim * sizeof par->tab[0]);
+par->dim = 0;
+par->tab = (void *) (par + 1);
+
+type = NewEnumType(NULL, 1);
+last = 0;
+
+while (list)
+{
+	Obj2Data(ReduceObjList(&list), &Type_$2, &val);
+
+	if	(val >= 99)	break;
+
+	if	(val >= last)
+	{
+		par->tab[par->dim++] = val;
+		AddEnumKey(type, msprintf("A%02d-%02d", last, val),
+			msprintf("Age group %2d - %2d", last, val), par->dim);
+		last = val + 1;
+	}
+}
+
+AddEnumKey(type, msprintf("A%02d-99", last), 
+	msprintf("Age group %2d and older", last), par->dim + 1);
+type = AddEnumType(type);
+rd_init(&$1_reftype, par);
+def->type = type;
+def->update = $1_update;
+def->par = par;
+!, ID, BaseName);
+
+fpsub(src, string !
+static EfiClass $1_class = EFI_CLASS(NULL,
+	"cut", "=list", $1_create,
+	"split among threshold values");
+!, ID, BaseName);
+
+def.s_setup += sprintf("AddEfiPar(type, &%s_class);\n", ID);
+
+inline IndexFunc TypeDef::idxfunc(str name)
+{
+	IndexFunc f = IndexFunc(paste("_", t_name, name),
+		"const EfiObj *base, void *par");
+	f.mzero = true;
+	f.func.line("$1 *ptr = base->data;", t_cname);
+	return f;
+}
+
+virtual promotion void TypeDef::test(str name, str desc,
+	str init, str fmt, IO def)
+{
+	str ptr = "ptr";
+	IndexFunc f = idxfunc(name);
+	f.func.body(init);
+
+	if	(!f.test(fmt, def))
+		f.func.fline("return %d;", f.lbl.entry.dim);
+		
+	f.write(false);
+	fpsub(src, string !
+static EfiClassDef $1_$2_vardef = {
+	$2%#s, $3%#s,
+	$1_$2_dim, $1_$2_tab, $1_$2_idx, NULL,
+};
+!, t_name, name, desc);
+	s_setup += psub("AddEfiClassDef(type->vtab, &$1_$2_vardef, 1);\n",
+	t_name, name);
+}

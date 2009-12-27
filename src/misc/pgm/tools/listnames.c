@@ -70,6 +70,6 @@ int main (int argc, char **argv)
 	for (i = 1; i < argc; i++)
 		eval(buf, argv[i]);
 
-	sb_destroy(buf);
+	rd_deref(buf);
 	return EXIT_SUCCESS;
 }

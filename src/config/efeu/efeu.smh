@@ -261,6 +261,12 @@ efeu_library ()
 
 	mf_var LIBNAME "-D 'LIBNAME=\"$name\"'"
 
+	if [ "$CC_SHARED" ]; then
+		mf_var LIB $lib/lib$name.so
+	else
+		mf_var LIB $lib/lib$name.a
+	fi
+
 	foreach -A files -p $inc -S h 'mf_file $tg $src'
 	test -n "$cfg" && foreach -A files -p $inc -s hcfg "$cfg \$tg.h \$src"
 
@@ -284,7 +290,7 @@ efeu_library ()
 # $pconfig !
 # p:name |
 #	verwende |DEP_|<name> und |LIB_|<name> als Variablennamen
-#	anstelle von |DEP| und |LIB|.
+#	anstelle von |DEP_LIST| und |LIB_LIST|.
 # L:path | 
 #	setzt das aktuelle Verzeichnis <ldir> für Programmbibliotheken auf
 #	<path> und erweitert die Link-Flags um |-L|<path>.
@@ -325,8 +331,8 @@ efeu_library ()
 efeu_libvar ()
 {(
 	ldir="$TOP/lib"
-	dep_var="DEP"
-	lib_var="LIB"
+	dep_var="DEP_LIST"
+	lib_var="LIB_LIST"
 	dep=
 	lib=
 
@@ -349,6 +355,7 @@ efeu_libvar ()
 		-ml)	lib="$lib \$($2)"; shift 2;;
 		-s)	dep="$dep \$(DEP_$2)"; lib="$lib \$(LIB_$2)"; shift 2;;
 		-sl)	lib="$lib \$(LIB_$2)"; shift 2;;
+		*.so)	dep="$dep $1"; lib="$lib $1"; shift 1;;
 		*)	dep="$dep $ldir/lib$1$sfx"; lib="$lib -l$1"; shift 1;;
 		esac
 	done
@@ -374,7 +381,7 @@ efeu_libvar ()
 # :name |
 #	Name des Programms
 # *args |
-#	zusätzliche Argumente werden an |mf_libvar| übergeben.
+#	zusätzliche Argumente werden an |efeu_libvar| übergeben.
 # !
 # :*:
 # The following options and arguments are accepted by @!:
@@ -402,7 +409,7 @@ efeu_stdprog ()
 		-u)	cfg="mf_config -u"; shift 1;;
 		-b)	bin="$2"; shift 2;;
 		-x)	xflag=1; shift 1;;
-		-*)	shmkmf_invop "efeu_library" "$1"; shift 1;;
+		-*)	shmkmf_invop "efeu_stdprog" "$1"; shift 1;;
 		*)	name="$1"; shift 1; break;;
 		esac
 	done
@@ -415,7 +422,7 @@ efeu_stdprog ()
 	test -n "$xflag" && foreach -s tpl "efeu_gensrc \$src"
 	foreach -s c "mf_cc -I. -I$SRC -c \$src"
 	mf_objlist OBJ
-	mf_cc -o "\$(BIN)/$name" -mo OBJ -md DEP -ml LIB
+	mf_cc -o "\$(BIN)/$name" -mo OBJ -md DEP_LIST -ml LIB_LIST
 )}
 
 # $pconfig !

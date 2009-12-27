@@ -35,6 +35,10 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/CmpDef.h>
 #include <EFEU/TestDef.h>
 #include <EFEU/tms.h>
+#include <EFEU/EfiInput.h>
+#include <EFEU/EfiOutput.h>
+#include <EFEU/EfiClass.h>
+#include <EFEU/StatData.h>
 #include <ctype.h>
 
 #define	KEY_VAR	"Var"
@@ -226,6 +230,7 @@ static EfiParseDef pdef[] = {
 	{ "parsub", pf_parsub, NULL },
 	{ "static", pf_static, NULL },
 	{ "const", pf_const, NULL },
+	{ "extern", PFunc_extern, NULL },
 
 	{ "struct", PFunc_struct, NULL },
 	{ "construct", PFunc_construct, NULL },
@@ -511,6 +516,9 @@ static EfiVarDef vardef[] = {
 	{ "memtrace", &Type_bool, &memtrace,
 		":*:flag to control allocation tracing\n"
 		":de:Flag zur Ablaufverfolgung der Speicherverwaltung\n" },
+	{ "ParseStringIndex", &Type_bool, &ParseStringIndex,
+		":*:flag to control index parsing\n"
+		":de:Flag zur Steuerung der Indexbestimmung\n" },
 };
 
 
@@ -563,6 +571,11 @@ void SetupStd(void)
 
 	SetupCmpDef();
 	SetupTestDef();
+	SetupStatData();
+
+	SetupEfiInput();
+	SetupEfiOutput();
+	SetupEfiClass();
 
 	CmdSetup_vec();
 	CmdSetup_obj();
@@ -576,8 +589,10 @@ void SetupStd(void)
 	CmdSetup_op();
 	CmdSetup_info();
 	CmdSetup_strbuf();
+	CmdSetup_assignarg();
 	CmdSetup_date();
 	CmdSetup_regex();
+	CmdSetup_match();
 	CmdSetup_cmdpar();
 	CmdSetup_unix();
 	CmdSetup_tms();

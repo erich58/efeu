@@ -131,8 +131,8 @@ static void f_vconn (EfiFunc *func, void *rval, void **arg)
 	}
 
 	sb_putc(0, sb);
-	Val_ptr(rval) = PG_connect(sb->data);
-	sb_destroy(sb);
+	Val_ptr(rval) = PG_connect(sb_str(sb, 0));
+	rd_deref(sb);
 }
 
 static void do_exec (void *rval, void **arg, ExecStatusType stat)

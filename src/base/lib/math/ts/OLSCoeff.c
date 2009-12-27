@@ -29,7 +29,7 @@ If not, write to the Free Software Foundation, Inc.,
 /*	Datentype
 */
 
-static void Clean_OLSCoeff(const EfiType *st, void *data)
+static void Clean_OLSCoeff(const EfiType *st, void *data, int mode)
 {
 	memfree(Val_OLSCoeff(data).name);
 	Val_OLSCoeff(data).name = NULL;

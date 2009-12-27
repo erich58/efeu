@@ -5,14 +5,14 @@ noch die folgenden Filter standardmäßig zur Verfügung:
 
 \ssec \index[Datensatzselektion]\index{Teildatensätze auswählen}
 
-|test=|<expr>
+|test[|<expr>|]|
 
 \index[Filter |test|]
 Der Filter \index{|test|} führt eine einfache Datensatzselektion mithilfe
-eines Testausdrucks dar. Datensätze, für die der Ausdruck <expr>
+eines Testausdrucks durch. Datensätze, für die der Ausdruck <expr>
 logisch falsch liefert, werden ignoriert. Der folgende Aufruf
 selektiert alle Frauen aus der Beispieldatei |pers.edb|:
-	|edb -f test=gender==2 pers.edb|
+	|edb -f test[gender==2] pers.edb|
 
 \ssec \index{Beschränken der Datensätze}
 
@@ -20,9 +20,34 @@ selektiert alle Frauen aus der Beispieldatei |pers.edb|:
 
 \index[Filter |clip|]
 Der Filter \index{|clip|} beschränkt die Datenbank auf <lim> Datensätze, wobei
-die ersten <skip> Datensätze überlesen werden. Falls <lim> fehlt, oder
-0 spezifiziert würde, wird die Datenbank nicht beschränkt, es werden
-nur <skip> Datensätze überlesen.
+die ersten <skip> Datensätze überlesen werden. Falls <lim> fehlt, oder mit
+0 spezifiziert wurde, wird die Datenbank nicht beschränkt, sondern
+nur <skip> Datensätze überlesen. Bei einem fehlenden Wert für <skip> wird
+0 (keinen Datensatz überlesen) angenommen.
+
+\ssec \index{Stichprobenauswahl}
+
+|sample[|[|:|<method>|:|]<seed>[|,|<cmp>]|]=|<percent>
+
+\index[Filter |sample|]
+Der Filter \index{|sample|} generiert eine Zufallstichprobe mit einer
+prozentuellen Größe von <percent>. Der Zufallsgenerator wird durch
+eine Methode <method> (Vorgabe: |std|) und einen Initialisierungswert <seed>
+(Vorgabe: 0) festgelegt. Die Auswahl erfolgt durch Vergleich einer
+Zufallszahl mit der Stichprobengröße. Ist die Zufallszahl kleiner als
+die Stichprobengröße, wird der Datensatz genommen, ansonsten
+verworfen.
+
+Falls eine Vergleichsdefinition <cmp> angegeben wurde, wird nicht pro
+Datensatz, sondern pro Gruppe aufeinanderfolgender und gleicher
+Datensätze eine Zufallszahl berechnet. Datensätze, die bezüglich der
+Vergleichsdefinition <cmp> übereinstimmen, werden gleich behandelt.
+
+Beispiel: Der folgende Aufruf
+	|edb -f sample[:std:0,num]=50 data.edb|
+generiert eine 50% Stichprobe von |data.edb|, wobei sichergestellt ist,
+dass die Datensätze einer Person entweder zur Gänze ausgewählt oder
+abgelehnt werden.
 
 \ssec \index{Doppelte Datensätze entfernen}
 
@@ -45,8 +70,9 @@ von Datenzeilen in ein Aggregatfile ist vorher eine geeignete
 Sortierung vorzunehmen.
 
 Neben dieser einfachen Form von Aggregation besteht die Möglichkeit,
-ein EDB-Datenfile als Datenmatrix auszugeben. Vergleiche dazu
-Abschnitt \ref{md}, Seite \pref{md}.
+ein EDB-Datenfile als Datenmatrix auszugeben. Eine Sortierung der
+Daten ist nicht notwendig.
+Vergleiche dazu Abschnitt \ref{md}, Seite \pref{md}.
 
 \ssec \index{Sortieren von Datensätzen}
 

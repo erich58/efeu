@@ -1,0 +1,28 @@
+/*
+Hilfsfunktionen
+*/
+
+static void TypeDef::addvar (str tname, str name, str desc)
+{
+	str p = paste(tname == /[*]$/ ? NULL : " ", tname, name);
+	s_var += sprintf("\t%s;", p);
+
+	if	(desc) s_var += sprintf("\t/* %s */", desc);
+
+	s_var += "\n";
+}
+
+static void TypeDef::next (str name, bool cont)
+{
+	str step = cont ? "st_var = " : "\nst_var = ";
+
+	if	(clean_body)
+		step += sprintf("st_var->next; /* %s */\n", name);
+	else	step += sprintf("type->list; /* %s */\n", name);
+
+	read_body += step;
+	write_body += step;
+	copy_body += step;
+	clean_body += step;
+}
+

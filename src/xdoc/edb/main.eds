@@ -24,19 +24,20 @@ If not, write to the Free Software Foundation, Inc.,
 \config	efeu
 \config docpart
 
-\docpart title.doc
+\docpart title.eds
 \author	Erich Frühstück
 
 @Copyright(2006)
 
-\docpart preface.doc
+\docpart preface.eds
 \toc
 \docpart base
 \docpart data
-\docpart filter
 \docpart output
+\docpart filter
+\docpart oo
 \docpart interface
 \appendix
-\docpart command.doc
-\docpart bib.doc
+\docpart command.eds
+\docpart bib.eds
 \printindex

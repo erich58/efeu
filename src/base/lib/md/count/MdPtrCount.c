@@ -42,7 +42,7 @@ MdPtrCount *MdPtrCount_copy (MdPtrCount *src, size_t dim,
 	return tg;
 }
 
-void MdPtrCount_add (MdCountTab *tab, MdPtrCount *entry, size_t dim)
+void MdPtrCount_add (MdCountPar *tab, MdPtrCount *entry, size_t dim)
 {
 	if	(tab)
 	{
@@ -52,7 +52,7 @@ void MdPtrCount_add (MdCountTab *tab, MdPtrCount *entry, size_t dim)
 	else	dbg_note("md", "[mdmat:301]", NULL);
 }
 
-void MdPtrCount_xadd (MdCountTab *tab, MdPtrCount *entry, size_t dim,
+void MdPtrCount_xadd (MdCountPar *tab, MdPtrCount *entry, size_t dim,
 	const char *ext, void *ptr)
 {
 	MdPtrCount_add(tab, MdPtrCount_copy(entry, dim, ext, ptr), dim);

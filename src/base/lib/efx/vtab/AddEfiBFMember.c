@@ -67,6 +67,8 @@ static char *bf_ident (const EfiObj *obj)
 }
 
 EfiLval Lval_bf = {
+	"bf",
+	NULL,
 	bf_alloc,
 	bf_free,
 	bf_update,
@@ -96,7 +98,7 @@ void AddEfiBFMember (EfiVarTab *tab, EfiBFMember *def, size_t dim)
 		entry.obj = NULL;
 		entry.get = bf_get;
 		entry.data = def;
-		entry.clean = NULL;
+		entry.entry_clean = NULL;
 		VarTab_add(tab, &entry);
 	}
 }

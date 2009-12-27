@@ -80,7 +80,7 @@ static EfiObj *parse_regex(IO *io, EfiOp *op, EfiObj *left)
 	}
 
 	obj = NewPtrObj(&Type_regex, RegExp_comp((char *) sb->data, flag));
-	sb_destroy(sb);
+	rd_deref(sb);
 	return obj;
 }
 

@@ -27,6 +27,7 @@ If not, write to the Free Software Foundation, Inc.,
 #define	EFEU_strbuf_h	1
 
 #include <EFEU/memalloc.h>
+#include <EFEU/refdata.h>
 
 /*
 :*:
@@ -63,12 +64,15 @@ begonnen und anschließend die aktuelle Größe immer verdoppelt.
 */
 
 typedef struct {
+	REFVAR;
 	unsigned char *data;	/* Datenbuffer */
 	unsigned size;	/* Aktuelle Größe des Buffers */
 	unsigned blksize;	/* Blockgröße zur Buffervergrößerung */
 	int nfree;	/* Zahl der freien Zeichen */
 	int pos;	/* Aktuelle Bufferposition */
 } StrBuf;
+
+extern RefType sb_reftype;
 
 /*
 :*:
@@ -79,7 +83,7 @@ Der Makro |$1| initialisiert die Strukturkomponenten des
 Zeichenfeldes. Als Argument wird die Blockgröße benötigt.
 */
 
-#define	SB_DATA(blk)		{ NULL, 0, blk, 0, 0 }
+#define	SB_DATA(blk)	{ REFDATA(&sb_reftype), NULL, 0, blk, 0, 0 }
 
 /*
 :*:
@@ -93,7 +97,6 @@ es mit der Blockgröße <blk>.
 #define	STRBUF(name, blk)	StrBuf name = SB_DATA(blk)
 
 StrBuf *sb_create (size_t blksize);
-int sb_destroy (StrBuf *buf);
 void sb_init (StrBuf *buf, size_t blksize);
 
 void sb_expand (StrBuf *buf);

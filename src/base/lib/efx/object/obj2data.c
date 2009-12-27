@@ -137,7 +137,7 @@ void Obj2VecData(EfiObj *obj, EfiType *type, size_t dim, void *ptr)
 		dim--;
 	}
 
-	CleanVecData(type, dim, ptr);
+	CleanVecData(type, dim, ptr, 0);
 	UnrefObj(obj);
 }
 

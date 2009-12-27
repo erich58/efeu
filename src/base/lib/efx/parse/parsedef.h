@@ -54,6 +54,7 @@ EfiObj *PFunc_bool (IO *io, void *data);
 EfiObj *PFunc_int (IO *io, void *data);
 EfiObj *PFunc_str (IO *io, void *data);
 EfiObj *PFunc_type (IO *io, void *data);
+EfiObj *PFunc_extern (IO *io, void *data);
 
 EfiObj *PFunc_for (IO *io, void *data);
 EfiObj *PFunc_while (IO *io, void *data);
@@ -64,5 +65,7 @@ EfiObj *PFunc_return (IO *io, void *data);
 EfiObj *PFunc_switch (IO *io, void *data);
 EfiObj *PFunc_case (IO *io, void *data);
 EfiObj *PFunc_default (IO *io, void *data);
+
+void EfiType_version (EfiType *type, IO *io);
 
 #endif	/* EFEU/parsedef.h */

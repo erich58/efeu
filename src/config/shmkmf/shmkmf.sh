@@ -22,7 +22,7 @@
 # A-3423 St. Andrä/Wördern, Südtirolergasse 17-21/5
 
 # $pconfig
-# Version="$Id: shmkmf.sh,v 1.79 2006-03-01 13:17:33 ef Exp $"
+# Version="$Id: shmkmf.sh,v 1.81 2007-08-19 04:34:55 ef Exp $"
 # Config=Config.make
 # Makefile=Makefile
 #
@@ -68,7 +68,7 @@ EOF
 
 case "$1" in
 -\?|--help*)	_shmkmf_usage $1; exit 0;;
---version)	efeuman -- $0 $1 || grep 'Version="[$]Id:'; exit 0;;
+--version)	efeuman -- $0 $1 || grep 'Version="[$]Id:' $0; exit 0;;
 esac
 
 # set search path
@@ -248,6 +248,7 @@ if [ -d $Config ]; then
 	Config=$SRC/Config.make
 else
 	SRC=`dirname $Config`
+	Config=$SRC/`basename $Config`
 fi
 
 if [ -z "$_cmd" -a ! -f $Config ]; then

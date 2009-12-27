@@ -13,7 +13,7 @@ static void init_binary (EDB *edb, EDBPrintMode *mode, IO *io)
 	if	(!mode->header)
 		mode->header = 1;
 
-	edb_head(edb, io, mode->header > 1);
+	edb_head(edb, io, mode->header);
 	io_puts("@data binary\n", io);
 	edb->write = write_binary;
 	edb->opar = io;

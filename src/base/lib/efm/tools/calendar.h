@@ -55,6 +55,7 @@ int PrintCalendar (IO *io, const char *fmt, int idx);
 char *Calendar2str (const char *fmt, int idx);
 int str2Calendar (const char *str, char **endptr, int flag);
 int Calendar_jdiff (unsigned t1, unsigned t2);
+int str2jahr (const char *str, char **endptr);
 
 /*	Umrechnung in alte Kalenderbasis
 */

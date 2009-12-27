@@ -1,5 +1,5 @@
 \chap	\label{output}Ausgabedefinitionen
 
-\include intro.doc
-\include mode.doc
-\include script.doc
+\include intro.eds
+\include mode.eds
+\include script.eds

@@ -50,6 +50,8 @@ static char *ptr_ident (const EfiObj *obj)
 }
 
 EfiLval Lval_ptr = {
+	"ptr",
+	NULL,
 	ptr_alloc,
 	ptr_free,
 	ptr_update,

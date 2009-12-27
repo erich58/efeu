@@ -4,7 +4,7 @@
 
 #include <EFEU/mdmat.h>
 
-void md_reduce(mdmat *md, const char *def)
+void md_reduce (mdmat *md, const char *def)
 {
 	mdaxis **ptr;
 	mdaxis *x;

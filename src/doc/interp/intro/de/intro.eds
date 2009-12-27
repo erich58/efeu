@@ -1,0 +1,10 @@
+\title	Eine Übersicht in Beispielen
+
+Ziel dieses Kapitels ist ein schnellen Einstieg in das Arbeiten mit |esh|.
+Die wichtigsten Sprachelemente werden anhand von realistischen
+Beispielen aufgezeigt, ohne dabei vollständig und präzise zu sein.
+
+Einige der dabei verwendeten Konstrukte werden in den nachfolgenden
+Kapiteln detailierter beschrieben.
+Der Handbucheintrag zu |esh| im Anhang enthält eine Zusammenfassung
+der Syntax des Befehlsinterpreters.

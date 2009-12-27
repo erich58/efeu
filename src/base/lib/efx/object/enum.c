@@ -29,17 +29,6 @@ void AddEnumKey (EfiType *type, char *name, char *desc, int val)
 	VarTab_xadd(type->vtab, name, desc, NewObj(type, &val));
 }
 
-static int name_is_std (const char *str)
-{
-	if	(!str)	return 0;
-	if	(*str != '_' && !isalpha(*str))	return 0;
-
-	while (*(++str) != 0)
-		if (*str != '_' && !isalnum(*str)) return 0;
-
-	return 1;
-}
-
 char *EnumKeyLabel (const EfiType *type, int val, int flag)
 {
 	VarTabEntry *p;
@@ -69,18 +58,9 @@ char *EnumKeyLabel (const EfiType *type, int val, int flag)
 			if	(!flag)
 				return mstrcpy(p->name);
 
-			if	(!mode)
-				return msprintf("%#s", p->name);
-
-			if	(name_is_std(p->name))
-				return mstrpaste("::", t->name, p->name);
-
-			return msprintf("%s::operator%#s", t->name, p->name);
+			return msprintf("%#s", p->name);
 		}
 	}
-
-	if	(flag && type->name && type->name[0] != '_')
-		return msprintf("(%s) %d", type->name, val);
 
 	return msprintf("%d", val);
 }
@@ -139,23 +119,23 @@ int EnumKeyCode (const EfiType *type, const char *name)
 	return 0;
 }
 
-static void ikonv (EfiFunc *func, void *rval, void **arg)
+void Enum_iconv (EfiFunc *func, void *rval, void **arg)
 {
 	Val_int(rval) = Val_int(arg[0]);
 }
 
-static void str2enum (EfiFunc *func, void *rval, void **arg)
+void Enum_sconv (EfiFunc *func, void *rval, void **arg)
 {
 	Val_int(rval) = EnumKeyCode(func->type, Val_str(arg[0]));
 }
 
-static void enum2str (EfiFunc *func, void *rval, void **arg)
+void Enum_to_str (EfiFunc *func, void *rval, void **arg)
 {
 	int val = Val_int(arg[0]);
 	Val_str(rval) = EnumKeyLabel(func->arg[0].type, val, 0);
 }
 
-static void fprint_enum (EfiFunc *func, void *rval, void **arg)
+void Enum_fprint (EfiFunc *func, void *rval, void **arg)
 {
 	char *p = EnumKeyLabel(func->arg[1].type, Val_int(arg[1]), 1);
 	Val_int(rval) = io_puts(p, Val_ptr(arg[0]));
@@ -166,24 +146,64 @@ static struct {
 	char *fmt;
 	void (*func) (EfiFunc *func, void *rval, void **arg);
 } fdef[] = {
-	{ "$1 $1 (int)", ikonv },
-	{ "int $1 ()", ikonv },
-	{ "unsigned $1 ()", ikonv },
-	{ "$1 $1 (str)", str2enum },
-	{ "restricted str $1 ()", enum2str },
-	{ "virtual int fprint (IO, $1)", fprint_enum },
+	{ "$1 $1 (int)", Enum_iconv },
+	{ "int $1 ()", Enum_iconv },
+	{ "unsigned $1 ()", Enum_iconv },
+	{ "$1 $1 (str)", Enum_sconv },
+	{ "restricted str $1 ()", Enum_to_str },
+	{ "virtual int fprint (IO, $1)", Enum_fprint },
 };
 
+size_t Enum_read (const EfiType *type, void *data, IO *io)
+{
+	Val_int(data) = io_llget(io, type->recl);
+	return type->recl;
+}
 
-EfiType *NewEnumType (const char *name)
+size_t Enum_write (const EfiType *type, const void *data, IO *io)
+{
+	io_llput(Val_int(data), io, type->recl);
+	return type->recl;
+}
+
+size_t Enum_uread (const EfiType *type, void *data, IO *io)
+{
+	Val_uint(data) = io_ullget(io, type->recl);
+	return type->recl;
+}
+
+size_t Enum_uwrite (const EfiType *type, const void *data, IO *io)
+{
+	io_ullput(Val_uint(data), io, type->recl);
+	return type->recl;
+}
+
+void Enum_copy (const EfiType *type, void *tg, const void *src)
+{
+	Val_int(tg) = Val_int(src);
+}
+
+size_t EnumTypeRecl (size_t dim)
+{
+	if	(dim < 0x7f)	return 1;
+	if	(dim < 0x7fff)	return 2;
+
+	return 4;
+}
+
+EfiType *NewEnumType (const char *name, size_t recl)
 {
 	EfiType *type;
 	type = NewType(mstrcpy(name));
 	type->cname = "int";
 	type->size = sizeof(int);
-	type->recl = sizeof(int);
+	type->recl = recl;
 	type->base = &Type_enum;
+	type->read = Enum_read;
+	type->write = Enum_write;
+	type->copy = Enum_copy;
 	type->vtab = VarTab(mstrcpy(type->name), 0);
+	type->flags = TYPE_ENUM;
 	return type;
 }
 
@@ -234,8 +254,6 @@ static int test_enum (EfiType *base, EfiType *type)
 EfiType *AddEnumType (EfiType *type)
 {
 	EfiType *base;
-	char *arg[2];
-	int n;
 
 	if	(type->name)
 	{
@@ -276,9 +294,28 @@ EfiType *AddEnumType (EfiType *type)
 	else	type->name = msprintf("_enum_%p", type);
 
 	AddType(type);
+	AddEnumFunc(type);
+	return type;
+}
+
+void AddEnumFunc (EfiType *type)
+{
+	char *arg[2];
+	int n;
 
 	arg[0] = NULL;
 	arg[1] = type->name;
+
+	if	(!type->read)
+		type->read = Enum_read;
+
+	if	(!type->write)
+		type->write = Enum_write;
+
+	if	(!type->copy)
+		type->copy = Enum_copy;
+
+	type->flags |= TYPE_ENUM;
 
 	for (n = tabsize(fdef); n-- > 0;)
 	{
@@ -286,22 +323,14 @@ EfiType *AddEnumType (EfiType *type)
 		SetFunc(0, NULL, p, fdef[n].func);
 		memfree(p);
 	}
-
-	return type;
 }
 
-EfiType *EnumType (const char *name)
+EfiType *MakeEnumType (const char *name, EnumTypeDef *def, size_t dim)
 {
-	EfiType *type = NewEnumType(name);
-	return AddEnumType(type);
-}
-
-void MakeEnumType (const char *name, EnumTypeDef *def, size_t dim)
-{
-	EfiType *type = NewEnumType(name);
+	EfiType *type = NewEnumType(name, EnumTypeRecl(dim));
 
 	for (; dim-- > 0; def++)
 		AddEnumKey(type, mstrcpy(def->name), NULL, def->val);
 
-	AddEnumType(type);
+	return AddEnumType(type);
 }

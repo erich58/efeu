@@ -204,15 +204,13 @@ int Function::pfbody & (IO def, str fname, str vardef, bool in_switch = false)
 Die Funktion |$1| erzeugt eine einfache Ausgabefunktionen mit
 Rückgabetype und Namen <name>, einer IO-Struktur mit Namen |out| als erstes
 Argument und den zusätzlichen Variablen <args>.
-Falls <glob> wahr ist, wird die Ausgabefunktion global erzeugt,
-ansonsten lokal.
 */
 
-void PrintFunc(str name, str args, IO def, bool glob = true)
+void PrintFunc (str name, str args, IO def, ...)
 {
-	Function f = Function(name, paste(", ", "IO *out", args));
+	Function f = Function(name, paste(", ", "IO *out", args), va_list);
 	f.pfbody(def, "out", NULL);
-	f.write(glob);
+	f.write();
 }
 
 /*

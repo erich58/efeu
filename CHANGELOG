@@ -1,3 +1,13 @@
+Version 3.1
+
+*	Enhancements to the EDB concept.
+*	Changed default suffix for |efeudoc| from .doc to .eds to avoid
+	name conflicts with word documents.
+*	New Keyword |extern| to implicit load additional data types from
+	shared objects. Transparent access to members of C data
+	structures, better support for bitfields. Additional tools to create
+	sources for data types implemented in C and pluggable in EFI.
+
 Version 3.0-1
 
 *	Added fixed size integer types and 64-Bit integer arithmetic.

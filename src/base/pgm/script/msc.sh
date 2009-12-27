@@ -23,7 +23,7 @@
 : ${LANG:=en}
 
 # $pconfig
-# Version="$Id: msc.sh,v 1.7 2004-10-25 05:46:27 ef Exp $"
+# Version="$Id: msc.sh,v 1.8 2007-08-19 04:22:10 ef Exp $"
 # file |
 #	name of file
 # :mdprint options |
@@ -36,7 +36,7 @@ usage ()
 
 case "$1" in
 -\?|--help*)	usage $1; exit 0;;
---version)	efeuman -- $0 $1 || grep 'Version="[$]Id:'; exit 0;;
+--version)	efeuman -- $0 $1 || grep 'Version="[$]Id:' $0; exit 0;;
 esac
 
 # $Description

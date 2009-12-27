@@ -24,13 +24,18 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/printobj.h>
 #include <EFEU/parsedef.h>
 #include <EFEU/Op.h>
+#include <EFEU/EfiClass.h>
+#include <EFEU/MatchPar.h>
 #include <ctype.h>
 
+#define	PAR_DEBUG	0
 #define	SHOW_EVAL	0
 
 #define	ERR_TYP	"[edb:typ]$!: unknown datatype $1.\n"
 #define ERR_USE	"[edb:use]$!: name $1 arready used.\n"
 #define ERR_VAR	"[edb:var]$!: unknown variable $1.\n"
+#define ERR_NAME	"$!: missing variable name.\n"
+#define ERR_CHAR	"$!: unexpected character $1.\n"
 
 /*	Selektionseinträge
 */
@@ -39,16 +44,16 @@ typedef struct ConstructEntry ConstructEntry;
 
 struct ConstructEntry {
 	ConstructEntry *next;
-	EfiVar *var;
+	EfiStruct *var;
 	EfiFunc *func;
 	EfiObj *obj;
-	EfiVar *base;
+	EfiStruct *base;
 	int idx;
 };
 
 static ALLOCTAB(entry_tab, 0, sizeof(ConstructEntry));
 
-static ConstructEntry *ConstructEntry_alloc (EfiVar *var)
+static ConstructEntry *ConstructEntry_alloc (EfiStruct *var)
 {
 	ConstructEntry *entry = new_data(&entry_tab);
 	entry->next = NULL;
@@ -78,10 +83,11 @@ static void ConstructEntry_clean (ConstructEntry *entry)
 
 typedef struct {
 	size_t dim;
+	size_t idx;
 	VarTabEntry **var;
 	EfiVarTab *tab;
 	EfiObj *obj;
-	EfiVar *vlist;
+	EfiStruct *vlist;
 	ConstructEntry *root;
 	ConstructEntry **ptr;
 } ConstructPar;
@@ -102,6 +108,7 @@ static void *Construct_alloc (EfiFunc *func)
 	
 	par = memalloc(sizeof *par + func->dim * sizeof par->var[0]);
 	par->dim = func->dim;
+	par->idx = 0;
 	par->var = NULL;
 	par->tab = NULL;
 	par->obj = NULL;
@@ -117,7 +124,8 @@ static void *Construct_alloc (EfiFunc *func)
 
 			for (i = 0; i < par->dim; i++)
 				VarTab_xadd(par->tab, func->arg[i].name,
-					NULL, farg_obj(func->arg + i));
+					func->arg[i].desc,
+					farg_obj(func->arg + i));
 
 			for (i = 0; i < par->dim; i++)
 				par->var[i] = VarTab_get(par->tab,
@@ -129,6 +137,10 @@ static void *Construct_alloc (EfiFunc *func)
 			par->tab = RefVarTab(par->obj->type->vtab);
 		}
 	}
+	else if	(func->scope)
+	{
+		par->tab = RefVarTab(func->scope);
+	}
 	
 	par->vlist = NULL;
 	par->root = NULL;
@@ -137,17 +149,29 @@ static void *Construct_alloc (EfiFunc *func)
 	return par;
 }
 
+#if	PAR_DEBUG
+static void par_info (ConstructPar *par, const char *pfx)
+{
+	if	(par->obj)
+		io_printf(ioerr, "%s: obj.refcount: %d\n", pfx,
+			par->obj->refcount);
+}
+#endif
+
 static void Construct_clean (void *opaque_par)
 {
 	ConstructPar *par = opaque_par;
-	DelVarList(par->vlist);
+	DelEfiStruct(par->vlist);
 	DelVarTab(par->tab);
+#if	PAR_DEBUG
+	par_info(par, "clean");
+#endif
 	UnrefObj(par->obj);
 	ConstructEntry_clean(par->root);
 	memfree(par);
 }
 
-static ConstructEntry *Construct_next (ConstructPar *par, EfiVar *var)
+static ConstructEntry *Construct_next (ConstructPar *par, EfiStruct *var)
 {
 	if	(var)
 	{
@@ -180,6 +204,7 @@ static void func_noarg (EfiFunc *func, void *rval, void **arg)
 		}
 	}
 }
+
 
 static void func_list (EfiFunc *func, void *rval, void **arg)
 {
@@ -240,7 +265,11 @@ static void show_eval (ConstructPar *par)
 		}
 		else if	(entry->obj)
 		{
-			io_printf(ioerr, "expr\n");
+			if	(entry->obj->type->eval)
+				io_printf(ioerr, "expr\n");
+			else if	(entry->obj->lval)
+				io_printf(ioerr, "lval\n");
+			else	io_printf(ioerr, "const\n");
 		}
 		else if	(entry->base)
 		{
@@ -254,7 +283,7 @@ static void show_eval (ConstructPar *par)
 /*	Funktionsverwaltung
 */
 
-static EfiFunc *cf_create (void)
+static EfiFunc *cf_create (const EfiObj *obj)
 {
 	EfiFunc *func;
 
@@ -271,6 +300,20 @@ static EfiFunc *cf_create (void)
 	func->clean = Construct_clean;
 	func->dim = 0;
 	func->arg = NULL;
+
+	if	(obj)
+	{
+		func->dim = 1;
+		func->arg = memalloc(sizeof *func->arg);
+		func->arg->name = NULL;
+		func->arg->type = obj->type;
+		func->arg->defval = RefObj(obj);
+		func->arg->lval = 0;
+		func->arg->cnst = 0;
+		func->arg->promote = 0;
+		func->arg->nokonv = 0;
+	}
+
 	return func;
 }
 
@@ -279,9 +322,9 @@ static EfiFunc *cf_create (void)
 
 static void cf_set (EfiFunc *func, const char *name, IO *io, int delim);
 
-static ConstructEntry *add_var (ConstructPar *par, EfiVar *var, int flag)
+static ConstructEntry *add_var (ConstructPar *par, EfiStruct *var, int flag)
 {
-	EfiVar **p;
+	EfiStruct **p;
 
 	if	(!var)	return NULL;
 
@@ -292,7 +335,7 @@ static ConstructEntry *add_var (ConstructPar *par, EfiVar *var, int flag)
 			if	(flag)
 				dbg_error("edb", ERR_USE, "s", var->name);
 
-			DelVar(var);
+			rd_deref(var);
 			return NULL;
 		}
 	}
@@ -301,21 +344,21 @@ static ConstructEntry *add_var (ConstructPar *par, EfiVar *var, int flag)
 	return Construct_next(par, var);
 }
 
-static void add_expr (ConstructPar *par, EfiType *type, char *name, EfiObj *obj)
+static void add_expr (ConstructPar *par, EfiType *type,
+	char *name, int flag, EfiObj *obj)
 {
 	EfiObj *cobj = EvalObj(RefObj(obj), type);
 
 	if	(cobj)
 	{
-		EfiVar *var;
+		EfiStruct *var;
 		ConstructEntry *entry;
 
-		var = NewVar(cobj->type, NULL, 0);
+		var = NewEfiStruct(cobj->type, NULL, 0);
 		var->name = name;
-		var->member = StructMember;
 		var->offset = 0;
-		Obj2Data(cobj, var->type, var->data);
-		entry = add_var(par, var, 1);
+		var->defval = cobj;
+		entry = add_var(par, var, flag);
 
 		if	(entry)
 			entry->obj = obj;
@@ -337,58 +380,167 @@ static void list_var (IO *out, const char *pfx, EfiObj *obj)
 	io_putc('\n', out);
 }
 
-static void add_member (IO *io, ConstructPar *par,
-	EfiType *type, char *name, int idx)
+
+static EfiObj *member_obj (EfiObj *obj, EfiStruct *st)
 {
-	char *p;
-	EfiVar *v;
-
-	p = io_mgets(io, "%s,;{}");
-
-	for (v = type->list; v; v = v->next)
+	if	(!obj->lval || st->member || st->dim)
 	{
-		if	(patcmp(p, v->name, NULL))
-		{
-			EfiVar *var;
-			ConstructEntry *entry;
-
-			if	(name)
-			{
-				var = NewVar(v->type, NULL, v->dim);
-				var->name = name;
-			}
-			else	var = NewVar(v->type, v->name, v->dim);
-
-			entry = add_var(par, var, name ? 1 : 0);
-
-			if	(entry)
-			{
-				entry->base = rd_refer(v);
-				entry->idx = idx;
-			}
-
-			if	(name)	break;
-		}
+		EfiName name;
+		name.obj = obj;
+		name.name = mstrcpy(st->name);
+		return NewObj(&Type_mname, &name);
 	}
-
-	memfree(p);
+	
+	return LvalObj(&Lval_obj, st->type, obj,
+		(char *) obj->data + st->offset);
 }
 
-static void add_member_list (IO *io, ConstructPar *par, char *name, char *var)
+static size_t match_dim_base (EfiObj *base)
 {
-	int i;
+	EfiStruct *st;
+	size_t n;
 
-	for (i = 0; i < par->dim; i++)
+	for (n = 0, st = base->type->list; st; st = st->next, n++)
+		;
+
+	return n;
+}
+
+static size_t match_dim (ConstructPar *par)
+{
+	if	(par->obj)	return match_dim_base(par->obj);
+	else if	(par->dim)	return par->dim;
+	else if	(par->tab)	return par->tab->tab.used;
+	else			return 0;
+}
+
+static void add_select_base (ConstructPar *par, EfiObj *base, char *name,
+	MatchPar *mp)
+{
+	EfiStruct *st;
+	size_t n;
+
+	for (n = 1, st = base->type->list; st; st = st->next, n++)
 	{
-		if	(mstrcmp(par->var[i]->name, var) == 0)
+		if	(MatchPar_exec(mp, st->name, n))
 		{
-			memfree(var);
-			add_member(io, par, par->var[i]->type, name, i);
-			return;
+			add_expr(par, NULL,
+				name ? name : mstrcpy(st->name),
+				name ? 1 : 0, member_obj(base, st));
 		}
 	}
+}
 
-	dbg_error("edb", ERR_VAR, "s", var);
+static void add_select (ConstructPar *par, char *name, MatchPar *mp)
+{
+	if	(par->obj)
+	{
+		add_select_base(par, par->obj, name, mp);
+		return;
+	}
+	else if	(par->dim)
+	{
+		size_t n;
+
+		for (n = 0; n < par->dim; n++)
+		{
+			VarTabEntry *var = par->var[n];
+
+			if	(MatchPar_exec(mp, var->name, n + 1))
+			{
+				add_expr(par, NULL,
+					name ? name : mstrcpy(var->name),
+					name ? 1 : 0, RefObj(var->obj));
+			}
+		}
+	}
+	else if	(par->tab)
+	{
+		VarTabEntry *var = par->tab->tab.data;
+		size_t n;
+
+		for (n = 1; n <= par->tab->tab.used; n++, var++)
+		{
+			if	(MatchPar_exec(mp, var->name, n))
+			{
+				add_expr(par, NULL,
+					name ? name : mstrcpy(var->name),
+					name ? 1 : 0, RefObj(var->obj));
+			}
+		}
+	}
+}
+
+
+static EfiObj *get_member (EfiObj *base, const char *member)
+{
+	EfiName name;
+
+	if	(base->lval)
+	{
+		EfiStruct *st;
+
+		for (st = base->type->list; st; st = st->next)
+		{
+			if	(mstrcmp(st->name, member) != 0)
+				continue;
+
+			if	(st->member || st->dim)
+				break;
+
+			return LvalObj(&Lval_obj, st->type, base,
+				(char *) base->data + st->offset);
+		}
+
+	}
+
+	name.obj = base;
+	name.name = mstrcpy(member);
+	return NewObj(&Type_mname, &name);
+}
+
+static EfiObj *get_base (ConstructPar *par, const char *name)
+{
+	EfiObj *base;
+
+	if	(par->obj)
+	{
+		base = get_member(RefObj(par->obj), name);
+	}
+	else if	(par->tab)
+	{
+		base = GetVar(par->tab, name, NULL);
+	}
+	else
+	{
+		base = NewPtrObj(&Type_name, mstrcpy(name));
+	}
+
+	return base;
+}
+
+static EfiObj *parse_class (IO *io, EfiObj *base)
+{
+	while (io_eat(io, "%s") == '{')
+	{
+		char *p = getstring(io);
+		base = EfiClassExpr(base, p);
+		memfree(p);
+	}
+
+	return base;
+}
+
+static int parse_expr (IO *io, ConstructPar *par, int delim);
+
+static int parse_list (IO *io, ConstructPar *par, int delim)
+{
+	io_getc(io);
+
+	while (parse_expr(io, par, delim))
+		;
+
+	return 1;
 }
 
 static int parse_expr (IO *io, ConstructPar *par, int delim)
@@ -397,14 +549,64 @@ static int parse_expr (IO *io, ConstructPar *par, int delim)
 	EfiType *type;
 	EfiParseDef *parse;
 	EfiObj *obj;
+	MatchPar *mp;
 	char *name;
 
 	c = io_eat(io, "%s,;");
+
+	if	(c == EOF)
+		return 0;
 
 	if	(c == delim)
 	{
 		io_getc(io);
 		return 0;
+	}
+
+	if	(c == '?')
+	{
+		if	(par->obj)
+		{
+			list_var(ioerr, NULL, par->obj);
+		}
+		else if	(par->tab)
+		{
+			ShowVarTab(ioerr, "var", par->tab);
+			io_putc('\n', ioerr);
+		}
+		else
+		{
+			int i;
+
+			for (i = 0; i < par->dim; i++)
+				list_var(ioerr, par->var[i]->name,
+					par->var[i]->obj);
+		}
+
+		exit(EXIT_SUCCESS);
+	}
+
+	if	(c == '{')
+		return parse_list(io, par, '}');
+
+	if	(c == '(')
+		return parse_list(io, par, ')');
+
+	if	(c == '*')
+	{
+		io_getc(io);
+		mp = MatchPar_create(NULL, match_dim(par));
+		add_select(par, NULL, mp);
+		rd_deref(mp);
+		return 1;
+	}
+	else if	(c == '[')
+	{
+		io_getc(io);
+		mp = MatchPar_scan(io, ']', match_dim(par));
+		add_select(par, NULL, mp);
+		rd_deref(mp);
+		return 1;
 	}
 
 	name = io_getname(io);
@@ -428,122 +630,113 @@ static int parse_expr (IO *io, ConstructPar *par, int delim)
 		}
 
 		c = io_eat(io, "%s");
+
+		if	(!name)
+			dbg_error("edb", ERR_NAME, NULL);
 	}
+	else	dbg_error("edb", ERR_CHAR, "c", c);
 
 	c = io_getc(io);
 
-	if	(c == '?')
+	if	(c == delim || c == EOF || c == ',' || c == ';')
 	{
-		if	(par->obj)
+		if	(type)
 		{
-			list_var(ioerr, NULL, par->obj);
+			EfiStruct *var = NewEfiStruct(type, NULL, 0);
+			var->name = name;
+			var->offset = 0;
+			add_var(par, var, 1);
 		}
-		else
-		{
-			int i;
+		else	add_expr(par, NULL, name, 1, get_base(par, name));
 
-			for (i = 0; i < par->dim; i++)
-				list_var(ioerr, par->var[i]->name,
-					par->var[i]->obj);
-		}
-
-		exit(EXIT_SUCCESS);
+		return (c == ',' || c == ';');
 	}
 
 	if	(c == '{')
 	{
-		EfiFunc *func = cf_create();
-		cf_set(func, name, io, '}');
+		EfiObj *base = get_base(par, name);
+		io_ungetc(c, io);
+		base = parse_class(io, base);
+		add_expr(par, type, name, 1, base);
+		return 1;
+	}
+	else if	(c == '.')
+	{
+		EfiObj *base;
+
+		base = get_base(par, name);
 		memfree(name);
+		name = io_getname(io);
+		c = io_getc(io);
 
-		if	(func)
+		while (name && c == '.')
 		{
-			ConstructEntry *entry = add_var(par,
-				GetStructEntry(io, func->type), 1);
-
-			if	(entry)
-				entry->func = rd_refer(func);
+			base = get_member(base, name);
+			memfree(name);
+			name = io_getname(io);
+			c = io_getc(io);
 		}
+
+		if	(name)
+		{
+			io_ungetc(c, io);
+			base = get_member(base, name);
+			base = parse_class(io, base);
+			add_expr(par, NULL, name, 1, base);
+		}
+		else if	(c == '*')
+		{
+			mp = MatchPar_create(NULL, match_dim_base(base));
+			add_select_base(par, base, NULL, mp);
+			rd_deref(mp);
+		}
+		else if	(c == '[')
+		{
+			mp = MatchPar_scan(io, ']', match_dim_base(base));
+			add_select_base(par, base, NULL, mp);
+			rd_deref(mp);
+		}
+		else if	(c == '?')
+		{
+			list_var(ioerr, NULL, base);
+			exit(EXIT_SUCCESS);
+		}
+		else	dbg_error("edb", ERR_CHAR, "c", c);
 
 		return 1;
 	}
 
 	if	(c == '=')
 	{
-		add_expr(par, type, name, Parse_term(io, OpPrior_Comma));
-	}
-	else if	(type)
-	{
-		EfiVar *var = NewVar(type, NULL, 0);
-		var->name = name;
-		var->member = StructMember;
-		var->offset = 0;
-		add_var(par, var, 1);
-	}
-	else if	(c == ':')
-	{
-		char *p;
+		c = io_eat(io, "%s");
 
-		if	(par->obj)
+		if	(c == '{')
 		{
-			add_member(io, par, par->obj->type, name, 0);
+			EfiFunc *func;
+			EfiStruct *st;
+			ConstructEntry *entry;
+			
+			io_getc(io);
+			func = cf_create(par->obj);
+  			cf_set(func, NULL, io, '}');
+			st = NewEfiStruct(func->type, name, 0);
+			st->offset = 0;
+			entry = add_var(par, st, 1);
+
+			if	(entry)
+				entry->func = rd_refer(func);
+
+			return 1;
 		}
 		else
 		{
-			p = io_getname(io);
-			c = io_getc(io);
-			add_member_list(io, par, name, p);
-		}
-		
-		return 1;
-	}
-	else if	(c == '.')
-	{
-		if	(par->obj)
-			dbg_error("edb", ERR_VAR, "s", name);
-
-		add_member_list(io, par, NULL, name);
-	}
-	else if	(!name)
-	{
-		if	(c == ',' || c == ';')
+			obj = Parse_term(io, OpPrior_Comma);
+			obj = parse_class(io, obj);
+			add_expr(par, type, name, 1, obj);
 			return 1;
-
-		io_ungetc(c, io);
-		add_member(io, par, par->obj->type, NULL, 0);
-		return 1;
-	}
-	else
-	{
-		if	(par->obj)
-		{
-			EfiVar *v;
-
-			for (v = par->obj->type->list; v; v = v->next)
-			{
-				if	(mstrcmp(name, v->name) == 0)
-				{
-					EfiVar *var;
-					ConstructEntry *entry;
-
-					var = NewVar(v->type, NULL, v->dim);
-					var->name = name;
-					entry = add_var(par, var, 1);
-
-					if	(entry)
-					{
-						entry->base = rd_refer(v);
-						entry->idx = 0;
-					}
-
-					return 1;
-				}
-			}
 		}
-
-		obj = NewPtrObj(&Type_name, mstrcpy(name));
-		add_expr(par, NULL, name, obj);
 	}
+	else	dbg_error("edb", ERR_CHAR, "c", c);
 
 	return 1;
 }
@@ -564,28 +757,43 @@ static int test_parenthesis (const char *def)
 	return 1;
 }
 
+static void cf_set (EfiFunc *func, const char *name, IO *io, int delim)
+{
+	ConstructPar *par;
 
-EfiFunc *ConstructFunc (EfiType *base, const char *name, const char *def)
+	par = Construct_alloc(func);
+	PushVarTab(RefVarTab(par->tab), RefObj(par->obj));
+#if	PAR_DEBUG
+	par_info(par, "beg");
+#endif
+
+	while (parse_expr(io, par, delim))
+		;
+
+#if	PAR_DEBUG
+	par_info(par, "end");
+#endif
+	PopVarTab();
+	func->type = MakeStruct(mstrcpy(name), NULL, RefEfiStruct(par->vlist));
+	func->par = par;
+#if	SHOW_EVAL
+	show_eval(par);
+#endif
+}
+
+
+EfiFunc *ConstructObjFunc (const char *name, const char *def, EfiObj *obj)
 {
 	IO *io;
 	EfiFunc *func;
 
-	if	(!base || !def)
+	if	(!obj || !def)
 		return NULL;
 
 	while (isspace(*def))
 		def++;
 
-	func = cf_create();
-	func->dim = 1;
-	func->arg = memalloc(sizeof *func->arg);
-	func->arg->name = NULL;
-	func->arg->type = base;
-	func->arg->defval = ConstObj(base, NULL);
-	func->arg->lval = 0;
-	func->arg->cnst = 0;
-	func->arg->promote = 0;
-	func->arg->nokonv = 0;
+	func = cf_create(obj);
 
 	if	(test_parenthesis(def))
 	{
@@ -602,25 +810,28 @@ EfiFunc *ConstructFunc (EfiType *base, const char *name, const char *def)
 	return func;
 }
 
-static void cf_set (EfiFunc *func, const char *name, IO *io, int delim)
+EfiFunc *ConstructFunc (const char *name, const char *def, EfiVarTab *tab)
 {
-	ConstructPar *par;
+	IO *io;
+	EfiFunc *func;
+	
+	func = cf_create(NULL);
+	func->scope = RefVarTab(tab);
+	
+	if	(test_parenthesis(def))
+	{
+		io = io_cstr(def + 1);
+		cf_set(func, name, io, '}');
+	}
+	else
+	{
+		io = io_cstr(def);
+		cf_set(func, name, io, EOF);
+	}
 
-	par = Construct_alloc(func);
-	PushVarTab(RefVarTab(par->tab), RefObj(par->obj));
-
-	while (parse_expr(io, par, delim))
-		;
-
-	PopVarTab();
-	func->type = MakeStruct(mstrcpy(name), NULL, RefVarList(par->vlist));
-	func->par = par;
-	AddFunc(func);
-#if	SHOW_EVAL
-	show_eval(par);
-#endif
+	io_close(io);
+	return func;
 }
-
 
 EfiObj *PFunc_construct (IO *io, void *data)
 {
@@ -650,9 +861,10 @@ EfiObj *PFunc_construct (IO *io, void *data)
 		dim = 0;
 	}
 
-	func = cf_create();
+	func = cf_create(NULL);
 	func->arg = arg;
 	func->dim = dim;
 	cf_set(func, name, io, '}');
+	AddFunc(func);
 	return type2Obj(Parse_type(io, func->type));
 }

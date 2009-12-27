@@ -33,13 +33,21 @@ static struct BitfieldVar {
 	str desc;	/* Beschreibungstext */
 };
 
-static BitfieldVar BitfieldVar (int size, str name, str desc)
-	return { size, name, desc }
+static BitfieldVar BitfieldVar (int s, str n, str d)
+{
+	size = s;
+	name = n;
+	desc = d;
+}
 
-static BitfieldVar BitfieldVar (int size, int num)
-	BitfieldVar (size, sprintf("_D%d", num), "Ausrichtungsdummy");
+static BitfieldVar BitfieldVar (int s, int num)
+{
+	size = s;
+	name = sprintf("_D%d", num);
+	desc = "Ausrichtungsdummy";
+}
 
-static void BitfieldVar::typeline(IO io)
+static void BitfieldVar::typeline (IO io)
 {
 	fprintf(io, "\tunsigned %s : %d;", name, size)
 

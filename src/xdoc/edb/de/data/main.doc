@@ -1,7 +1,0 @@
-\chap	\label{data}EDB-Datenformat
-
-\include syntax.doc
-\include control.doc
-\include command.doc
-\include type.doc
-\include read.doc

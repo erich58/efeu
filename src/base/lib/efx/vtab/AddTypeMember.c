@@ -23,25 +23,22 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 
 /*
-Die Funktion |$1| erweitert die Variablentabelle <tab> entsprechend
-der angegebenen Parameter.
+Die Funktion |$1| erweitert den Datentyp base um eine Komponente.
 */
 
 void AddTypeMember (EfiType *base, size_t offset, size_t dim,
 	const char *vtype, const char *vname, const char *desc)
 {
 	EfiType *type;
-	EfiVar *var, **ptr;
-	char *p;
+	EfiStruct *var, **ptr;
 
-	type = XGetType(vtype);
+	type = str2Type(vtype);
 
 	if	(!type)	return;
 
-	var = NewVar(type, vname, dim);
+	var = NewEfiStruct(type, vname, dim);
 	var->offset = offset;
 	var->desc = mlangcpy(desc, NULL);
-	var->member = StructMember;
 
 	ptr = &base->list;
 
@@ -49,13 +46,5 @@ void AddTypeMember (EfiType *base, size_t offset, size_t dim,
 		ptr = &(*ptr)->next;
 
 	*ptr = var;
-	p = (char *) base->defval + offset;
-
-	if	(var->dim)
-	{
-		CopyVecData(var->type, var->dim, p, var->data);
-	}
-	else	CopyData(var->type, p, var->data);
-
-	AddVar(base->vtab, var, 1);
+	AddStruct(base->vtab, var, 1);
 }

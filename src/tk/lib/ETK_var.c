@@ -160,6 +160,8 @@ static Tcl_Obj *obj_bool (void *data)
 #endif
 
 static EfiLval Lval_tcl = {
+	"tcl",
+	NULL,
 	tcl_alloc,
 	tcl_free,
 	tcl_update,

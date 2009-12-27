@@ -41,7 +41,7 @@ EfiType *edb_type (const char *def)
 
 	if	(isalpha(c) || c == '_')
 	{
-		EfiVar *var = GetStructEntry(io, type);
+		EfiStruct *var = GetStructEntry(io, type);
 
 		if	(var)
 		{

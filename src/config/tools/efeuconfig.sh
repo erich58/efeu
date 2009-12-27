@@ -33,7 +33,7 @@ de*)
 esac
 
 # $pconfig
-# Version="$Id: efeuconfig.sh,v 1.6 2006-05-08 20:38:57 ef Exp $"
+# Version="$Id: efeuconfig.sh,v 1.7 2007-08-19 04:34:55 ef Exp $"
 # v|
 #	:*:display this help and exit
 #	:de:Fehlermeldungen ausgeben
@@ -72,7 +72,7 @@ usage ()
 
 case "$1" in
 -\?|--help*)	usage $1; exit 0;;
---version)	efeuman -- $0 $1 || grep 'Version="[$]Id:'; exit 0;;
+--version)	efeuman -- $0 $1 || grep 'Version="[$]Id:' $0; exit 0;;
 esac
 
 tmp=/tmp/efeu$$

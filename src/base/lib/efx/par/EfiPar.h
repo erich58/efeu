@@ -47,11 +47,31 @@ typedef struct {
 } EfiParClass;
 
 void *GetEfiPar (EfiType *type, EfiPar *par, const char *name);
+void *SearchEfiPar (EfiType *type, EfiPar *par, const char *name);
 void AddEfiPar (EfiType *type, void *data);
 void AddEfiParTab (EfiType *type, void *data, size_t dim, size_t size);
 void PrintEfiPar (IO *io, void *data);
 void EfiParWalk (EfiType *type, EfiPar *par,
 	void (*visit) (EfiParClass *entry, void *ptr), void *ptr);
-void ListEfiPar (IO *io, EfiType *type, EfiPar *par, int verbosity);
+void ListEfiPar (IO *io, EfiType *type, EfiPar *par,
+	const char *pfx, int verbosity);
+
+/*
+Steuerparameter
+*/
+
+extern EfiPar EfiPar_control;
+void EfiControl_info (IO *io, const void *data);
+
+typedef struct {
+	EPC_VAR;
+	char *data;
+} EfiControl;
+
+#define	EPC_CONTROL(type, name, label, par)	\
+	{ EPC_DATA(&EfiPar_control, type, name, label, EfiControl_info), par }
+
+char *GetEfiControl (EfiType *type, char *name);
+char *SearchEfiControl (EfiType *type, char *name);
 
 #endif	/* EFEU/EfiPar.h */

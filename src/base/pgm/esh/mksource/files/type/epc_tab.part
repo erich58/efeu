@@ -1,0 +1,12 @@
+static void TypeDef::epc_tab(str ttype, str name, EfiVec db)
+{
+	fpsub(src, "\nstatic $3 $1_$2[] = {\n", t_name, name, ttype);
+
+	for (x in db)
+		src << x;
+
+	src << "};\n\n";
+	s_setup += psub("AddEfiParTab(type, tabparm($1_$2));\n",
+		t_name, name); 
+}
+

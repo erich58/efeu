@@ -1,0 +1,34 @@
+/*
+:de:Die Funktion |$1| erzeugt eine benutzerdefinierte, binäre
+Lesefunktion.
+*/
+
+void TypeDef::read (str body)
+{
+	read_func = psub("Type_$1_read", t_name);
+	Function f = Function("size_t " + read_func,
+		"const EfiType *type, void *p_data, IO *io")
+	f.line("$1 *data = p_data;", t_name);
+	f.body(body, t_name);
+	f.write(false);
+}
+
+/*
+:de:Die Funktion |$1| erzeugt eine benutzerdefinierte, binäre
+Schreibfunktion.
+*/
+
+void TypeDef::write (str body)
+{
+	write_func = psub("Type_$1_write", t_name);
+	Function f = Function("size_t " + write_func,
+		"const EfiType *type, const void *p_data, IO *io")
+	f.line("const $1 *data = p_data;", t_name);
+	f.body(body, t_name);
+	f.write(false);
+}
+
+/*
+$Description
+:de:Schreib- und Lesefunktion müssen zueinander kompatibel sein.
+*/

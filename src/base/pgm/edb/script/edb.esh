@@ -24,7 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 Date::fmt = "%d.%m.%Y";
 
 pconfig !
-Version = "$Id: edb.esh,v 1.12 2006-02-24 13:52:56 ef Exp $"
+Version = "$Id: edb.esh,v 1.14 2007-09-05 08:44:12 ef Exp $"
 PrintHead = true
 PrintMode = NULL
 Filter = NULL
@@ -50,21 +50,28 @@ d | PrintHead = false
 n:lim | Limit
 	:*:Limit of output data lines
 	:de:Begrenzung der ausgegebenen Datenzeilen
+f:def | Filter: append " "
+	:*:applay filter <def> on input file
+	:de:Filter <def> auf Eingabedatei anwenden
+s:file | -script:file | Filter: set " script={}"
+	:*:applay filter script <file> on input file
+	:de:Filterskript <file> auf Eingabedatei anwenden
 :in | Input
 	:*:input file name
 	:de:Name der Eingabedatei
 ::out | Output
 	:*:output file name
 	:de:Name der Ausgabedatei
-f:def | Filter: append " "
-	:*:applay filter <def> on input file
-	:de:Filter <def> auf Eingabefile anwenden
 !
 
 if	(PrintMode == "csv")
 	setlocale(LC_PRINT, Lang);
 
 EDB edb = edbopen(Input, Filter);
+
+if	(Title)
+	edb.desc = Title;
+
 edb.fout(Output, PrintMode);
 edb.copy(Limit);
 edb = NULL;

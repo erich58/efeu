@@ -1,0 +1,60 @@
+/*
+:*:create efi compatible data types
+:de:EFI kompatible Datenstrukturen generieren
+
+$Header	<$1>
+$Copyright (C) 2006 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+*/
+
+#ifndef	TypeDef_ms
+#define	TypeDef_ms	1
+
+#include <macro.ms>
+#include <function.ms>
+#include <printfunc.ms>
+#include <EDBFilter.ms>
+
+@include struct.part
+@include tools.part
+@include bitfield.part
+@include var.part
+@include extvar.part
+@include addentry.part
+@include enum.part
+@include alias.part
+@include create.part
+@include func.part
+@include member.part
+@include epc_tab.part
+@include ctrl.part
+@include input.part
+@include output.part
+@include filter.part
+
+void TypeDef::xtype (str name, ...)
+	pre_setup += sprintf("XGetType(%#s);\n", psub(name, va_list));
+
+void TypeDef::use (str name, ...)
+	pre_setup += sprintf("%s_setup();\n", psub(name, va_list));
+
+@include io.part
+@include setup.part
+@include example.part
+
+#endif	/* TypeDef.ms */

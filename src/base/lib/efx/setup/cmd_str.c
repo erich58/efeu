@@ -21,6 +21,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/object.h>
+#include <EFEU/printobj.h>
 #include <EFEU/cmdconfig.h>
 #include <ctype.h>
 
@@ -42,20 +43,47 @@ CEXPR(name, Val_int(rval) = mstrcmp(STR(0), STR(1)) op 0)
 CEXPR(k_char2int, Val_int(rval) = CHAR(0))
 CEXPR(k_int2char, Val_char(rval) = (unsigned char) Val_int(arg[0]))
 
+CEXPR(c_int32, *((int32_t *) rval) = *((int32_t *) arg[0]))
+CEXPR(k_wchar2int, *((int *) rval) = *((int32_t *) arg[0]))
+CEXPR(k_int2wchar, *((int32_t *) rval) = *((int *) arg[0]))
+
 CEXPR(k_str2int, Val_int(rval) = STR(0) ?
-		(int) strtol(STR(0), NULL, 0) : 0)
+	(int) strtol(STR(0), NULL, 0) : 0)
 CEXPR(k_str2uint, Val_uint(rval) = STR(0) ?
-		(unsigned) strtoul(STR(0), NULL, 0) : 0)
+	(unsigned) strtoul(STR(0), NULL, 0) : 0)
 CEXPR(c_str2int, Val_int(rval) = STR(0) ?
 	(int) strtol(STR(0), NULL, Val_int(arg[1])) : 0)
 CEXPR(c_str2uint, Val_uint(rval) = STR(0) ?
 	(unsigned) strtoul(STR(0), NULL, Val_int(arg[1])) : 0)
-CEXPR(k_str2double, Val_double(rval) = STR(0) ?
-		strtod(STR(0), NULL) : 0.)
+
+static void k_str2double (EfiFunc *func, void *rval, void **arg)
+{
+	char *def = Val_str(arg[0]);
+ 	Val_double(rval) = def ? C_strtod(def, NULL) : 0.;
+}
+
+static void f_dstrcut (EfiFunc *func, void *rval, void **arg)
+{
+	char **s = arg[0];
+
+	if	(*s)
+	{
+		char *p = NULL;
+		Val_double(rval) = strtod(*s, &p);
+
+		if	(p != *s)
+		{
+			p = mstrcpy(p);
+			memfree(*s);
+			*s = p;
+		}
+	}
+	else	Val_double(rval) = 0.;
+}
 
 EXPR(k_ptr2str, NULL)
 EXPR(k_char2str, msprintf("%c", Val_char(arg[0])))
-EXPR(k_double2str, msprintf("%g", Val_double(arg[0])))
+EXPR(k_double2str, DoubleToString(Val_double(arg[0])))
 
 static void to_int32 (EfiFunc *func, void *rval, void **arg)
 {
@@ -132,8 +160,14 @@ static void k_nchar2str (EfiFunc *func, void *rval, void **arg)
 
 static void k_type2str (EfiFunc *func, void *rval, void **arg)
 {
-	EfiType *type = Val_type(arg[0]);
-	Val_str(rval) = type ? mstrcpy(type->name) : NULL;
+	StrBuf *sb;
+	IO *io;
+
+	sb = sb_create(0);
+	io = io_strbuf(sb);
+	PrintType(io, Val_type(arg[0]), Val_int(arg[1]));
+	io_close(io);
+	Val_str(rval) = sb2str(sb);
 }
 
 static void f_str_index (EfiFunc *func, void *rval, void **arg)
@@ -164,6 +198,7 @@ static void f_strcut (EfiFunc *func, void *rval, void **arg)
 	char *s;
 	char *p;
 	int i;
+	int mode;
 
 	if	((s = STR(0)) == NULL)
 	{
@@ -179,10 +214,17 @@ static void f_strcut (EfiFunc *func, void *rval, void **arg)
 
 		RVSTR = i ? mstrncpy(s, i) : NULL;
 		i++;
+		mode = INT(2);
 
-		if	(INT(2))
+		if	(mode > 0)
+		{
 			while (s[i] && listcmp(p, s[i]))
 				i++;
+		}
+		else if	(mode < 0)
+		{
+			--i;
+		}
 
 		STR(0) = s[i] ? mstrcpy(s + i) : NULL;
 		memfree(s);
@@ -199,6 +241,7 @@ static void f_xstrcut (EfiFunc *func, void *rval, void **arg)
 	char *delim, *base;
 	IO *in, *out;
 	int c;
+	int mode;
 
 	if	((base = STR(0)) == NULL)
 	{
@@ -245,7 +288,12 @@ static void f_xstrcut (EfiFunc *func, void *rval, void **arg)
 
 /*	Reststring
 */
-	if	(INT(2))
+	mode = INT(2);
+
+	if	(mode < 0)
+		io_ungetc(c, in);
+
+	if	(mode > 0)
 		io_eat(in, delim);
 
 	while ((c = io_getc(in)) != EOF)
@@ -349,6 +397,11 @@ static EfiFuncDef func_str[] = {
 	{ FUNC_PROMOTION, &Type_int, "char ()", k_char2int },
 	{ 0, &Type_char, "char (int)", k_int2char },
 
+	{ FUNC_PROMOTION, &Type_int, "wchar_t ()", k_wchar2int },
+	{ FUNC_PROMOTION, &Type_int32, "wchar_t ()", c_int32 },
+	{ 0, &Type_wchar, "wchar_t (int)", k_int2wchar },
+	{ 0, &Type_wchar, "wchar_t (int32_t)", c_int32 },
+
 	{ 0, &Type_int, "int (str)", k_str2int },
 	{ 0, &Type_int, "int (str, int base)", c_str2int },
 	{ 0, &Type_uint, "unsigned (str)", k_str2uint },
@@ -368,11 +421,11 @@ static EfiFuncDef func_str[] = {
 	{ 0, &Type_varsize, "varsize (str)", to_uint64 },
 	{ 0, &Type_varsize, "varsize (str, int base)", to_uint64 },
 
-	{ 0, &Type_double, "double (str)", k_str2double },
+	{ 0, &Type_double, "double (str, bool locale = false)", k_str2double },
 	{ 0, &Type_str, "char ()", k_char2str },
 	{ 0, &Type_str, "str (double)", k_double2str },
 	{ 0, &Type_str, "str (char, int = 1)", k_nchar2str },
-	{ 0, &Type_str, "str (Type_t)", k_type2str },
+	{ 0, &Type_str, "str (Type_t, int verbosity = 1)", k_type2str },
 	{ 0, &Type_str, "str (_Ptr_)", k_ptr2str },
 
 	{ FUNC_VIRTUAL, &Type_char, "operator[] (str, int)", f_str_index },
@@ -387,11 +440,13 @@ static EfiFuncDef func_str[] = {
 	{ FUNC_VIRTUAL, &Type_bool, "operator> (str, str)", b_str_gt },
 
 	{ 0, &Type_str, "substr (str s, int pos, int len = 0)", f_substr },
-	{ 0, &Type_str, "strcut (str & s, str delim, bool flag = true)",
+	{ 0, &Type_str, "strcut (str & s, str delim, int mode = 1)",
 		f_strcut },
-	{ 0, &Type_str, "xstrcut (str & s, str delim, bool flag = true)",
+	{ 0, &Type_str, "xstrcut (str & s, str delim, int mode = 1)",
 		f_xstrcut },
-	{ 0, &Type_str, "strsub (str s, str repl, str in = NULL, bool glob = true)", f_strsub },
+	{ 0, &Type_double, "dstrcut (str & s)", f_dstrcut },
+	{ 0, &Type_str, "strsub (str s, str repl, str in = NULL, "
+		"bool glob = true)", f_strsub },
 	{ 0, &Type_str, "paste (str delim, str a, str b)", f_strpaste },
 	{ 0, &Type_str, "langcpy (str def, str lang = NULL)", f_langcpy },
 	{ 0, &Type_int, "strlen (str s)", f_strlen },

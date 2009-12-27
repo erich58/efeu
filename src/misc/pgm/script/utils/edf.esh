@@ -22,7 +22,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 pconfig !
-Version = "$Id: edf.esh,v 1.9 2006-03-15 09:20:55 ef Exp $"
+Version = "$Id: edf.esh,v 1.10 2007-01-07 12:21:43 ef Exp $"
 Unit = 1000
 LBL_DEV = Filesystem
 LBL_SIZE = :*:size:de:Größe MB
@@ -84,9 +84,9 @@ scale = 1024. / (scale * scale);
 printf(fmt_hdr, LBL_DEV, LBL_SIZE, LBL_USED, LBL_AVAIL, LBL_MOUNT);
 
 #if	UNAME == "Linux"
-IO io = open("|LANG=en_US df -P", "r");
+IO io = open("|LANG=C df -P", "r");
 #else
-IO io = open("|LANG=en_US df", "r");
+IO io = open("|LANG=C df", "r");
 #endif
 
 str line;

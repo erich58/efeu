@@ -11,7 +11,11 @@ static void md_clean (void *data)
 	mdmat *tg = data;
 	del_axis(tg->axis);
 	memfree(tg->title);
-	memfree(tg->data);
+
+	if	(tg->data != rd_data(tg->x_data))
+		memfree(tg->data);
+
+	rd_deref(tg->x_data);
 	memfree(tg);
 }
 
@@ -40,10 +44,24 @@ mdmat *new_mdmat(void)
 	return rd_init(&md_reftype, memalloc(sizeof(mdmat)));
 }
 
+void *(*md_alloc_hook) (size_t size) = NULL;
+
+void md_alloc (mdmat *md)
+{
+	if	(!md)	return;
+
+	md->size = md_size(md->axis, md->type->size);
+	md->x_data = md_alloc_hook ? md_alloc_hook(md->size) :
+		rd_wrap(lmalloc(md->size), lfree);
+	md->data = rd_data(md->x_data);
+	memset(md->data, 0, md->size);
+}
+
 /*	Datenmatrix kopieren
 */
 
-static void do_copy(mdaxis *y, mdaxis *x, size_t size, char *py, char *px, unsigned mask)
+static void do_copy (mdaxis *y, mdaxis *x, size_t size,
+	char *py, char *px, unsigned mask)
 {
 	int i;
 
@@ -66,7 +84,7 @@ static void do_copy(mdaxis *y, mdaxis *x, size_t size, char *py, char *px, unsig
 }
 
 
-mdmat *cpy_mdmat(const mdmat *md, unsigned mask)
+mdmat *cpy_mdmat (const mdmat *md, unsigned mask)
 {
 	mdmat *m2;
 	mdaxis *x, **ptr;
@@ -85,8 +103,33 @@ mdmat *cpy_mdmat(const mdmat *md, unsigned mask)
 		ptr = &(*ptr)->next;
 	}
 
-	m2->size = md_size(m2->axis, m2->type->size);
-	m2->data = memalloc(m2->size);
+	md_alloc(m2);
 	do_copy(m2->axis, md->axis, m2->type->size, m2->data, md->data, mask);
 	return m2;
+}
+
+mdmat *md_clone (const mdmat *base)
+{
+	mdmat *md;
+	mdaxis *x, **ptr;
+
+	if	(base == NULL)	return NULL;
+
+	md = new_mdmat();
+	md->axis = NULL;
+	md->type = base->type;
+
+	ptr = &md->axis;
+
+	for (x = base->axis; x != NULL; x = x->next)
+	{
+		*ptr = cpy_axis(x, 0);
+		ptr = &(*ptr)->next;
+	}
+
+	md->title = mstrcpy(base->title);
+	md->size = base->size;
+	md->x_data = rd_refer(base->x_data);
+	md->data = rd_data(md->x_data);
+	return md;
 }

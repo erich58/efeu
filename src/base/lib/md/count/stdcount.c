@@ -38,7 +38,7 @@ static MdCount counter = {
 };
 
 /*
-Die globale Variable |$1| definiert einen Standartzähler
+Die globale Variable |$1| definiert einen Standardzähler
 mit |int| als Datentyp.
 */
 

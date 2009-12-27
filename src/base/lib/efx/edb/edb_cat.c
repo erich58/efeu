@@ -58,7 +58,7 @@ static int cpar_read (EfiType *type, void *data, void *par)
 				CopyData(type, data, obj->data);
 				UnrefObj(obj);
 			}
-			else	CleanData(type, data);
+			else	CleanData(type, data, 0);
 			
 			return 1;
 		}
@@ -86,7 +86,7 @@ EDB *edb_cat (EDB **tab, size_t dim)
 		for (n = 0; dim-- > 0; n++)
 			cpar->tab[n] = tab[dim];
 
-		edb = edb_create(LvalObj(NULL, tab[0]->obj->type), NULL);
+		edb = edb_create(tab[0]->obj->type);
 		edb->read = cpar_read;
 		edb->ipar = cpar;
 		return edb;

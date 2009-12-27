@@ -47,12 +47,6 @@ EfiObj *Parse_obj(IO *io, int flags)
 		return (mode & SCAN_UNSIGNED) ?
 			NewObj(&Type_uint, p) : NewObj(&Type_int, p);
 
-	case SCAN_INT32:
-
-		return (mode & SCAN_UNSIGNED) ?
-			varsize2Obj(*((uint32_t *) p)) :
-			varint2Obj(*((int32_t *) p));
-
 	case SCAN_INT64:
 
 		return (mode & SCAN_UNSIGNED) ?
@@ -66,22 +60,25 @@ EfiObj *Parse_obj(IO *io, int flags)
 
 		return NewObj(&Type_double, p);
 
-	case SCAN_NULL:
-
-		return ptr2Obj(NULL);
-
 	case SCAN_STR:
 
 		return str2Obj(p);
 
 	case SCAN_CHAR:
 
-		obj = char2Obj(* (char *) p);
-		break;
+		return NewObj(&Type_char, p);
+
+	case SCAN_UCS:
+
+		return NewObj(&Type_wchar, p);
 
 	case SCAN_NAME:		
 
-		if	((type = GetType(p)) != NULL)
+		if	(p == NULL)
+		{
+			return ptr2Obj(NULL);
+		}
+		else if	((type = GetType(p)) != NULL)
 		{
 			obj = PFunc_type(io, type);
 		}

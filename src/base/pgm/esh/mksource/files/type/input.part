@@ -1,0 +1,106 @@
+/*
+Die Funktion |$1| generiert eine allgemeine Eingabefunktion
+*/
+
+void TypeDef::input (str name, str desc, str create, str body, str par = NULL)
+{
+	str iname = "NULL";
+	str oname = psub("$1_$2_openin", t_name, name);
+	str rname = psub("$1_$2_input", t_name, name);
+
+	Function f = Function("int " + rname,
+		"EfiType *type, void *opaque_data, void *opaque_par");
+
+	f.fline("%s *data = opaque_data;", t_name);
+
+	if	(par)
+	{
+		f.fline("%s *par = opaque_par;", par);
+	}
+	else	f.fline("IO *in = opaque_par;");
+
+	f.body(body, t_name, par);
+	f.write(false);
+
+	Function f = Function("void * " + oname, "IO *in, const EfiType *type,
+		void *par, const char *opt, const char *arg");
+
+	if	(par)
+	{
+		if	(create)
+		{
+			f.line("$1 *data = NULL;", par);
+			f.body(create, t_name, par);
+			f.line("return data;");
+		}
+		else
+		{
+			f.line("return $1_create(in, type, par, opt, arg);",
+				par);
+		}
+	}
+	else
+	{
+		f.body(create, t_name);
+		f.line("return in;");
+	}
+
+	f.write(false);
+
+	t_idef.append(sprintf("\tEPC_INPUT(&Type_%s, %#s, %#s, \
+%s, %s, %s, NULL),\n", t_name, name, desc, iname, oname, rname));
+}
+
+/*
+Die Funktion |$1| generiert einfache Lesefunktionen mithilfe von |DBData|.
+Sie wird nicht direkt verwendet, sondern ist die Basis für die davon
+abgeleiteten Funktionen |TypeDef::ebcdic|, |TypeDef::text| und |TypeDef::qtext|.
+*/
+
+void TypeDef::dbdata (str name, str desc, str body, str func)
+{
+	str iname = "NULL";
+	str rname = psub("$1_$2_input", t_name, name);
+
+	Function f = Function("int " + rname,
+		"EfiType *type, void *opaque_data, void *opaque_par");
+
+	f.fline("%s *tg = opaque_data;", t_name);
+	f.line("IO *in = opaque_par;");
+	f.line("DBData *data = NULL;");
+
+	f.fline("while ((data = %s))", func);
+	f.beg();
+	f.body(body, t_name);
+	f.line("return 1;");
+	f.end();
+	f.line("return 0;");
+	f.write(false);
+
+	t_idef.append(sprintf("\tEPC_INPUT(&Type_%s, %#s, %#s, \
+%s, NULL, %s, NULL),\n", t_name, name, desc, iname, rname));
+}
+
+/*
+Die Funktion |$1| generiert eine einfache Lesefunktion für EBCDIC-Daten
+mithilfe von |DBData_ebcdic|.
+*/
+
+void TypeDef::ebcdic (str name, str desc, int recl, str body)
+	dbdata(name, desc, body, sprintf("DBData_ebcdic(NULL, in, %d)", recl));
+
+/*
+Die Funktion |$1| generiert eine einfache Lesefunktion für Textdaten
+mithilfe von |DBData_text|.
+*/
+
+void TypeDef::text (str name, str desc, str delim, str body)
+	dbdata(name, desc, body, sprintf("DBData_text(NULL, in, %#s)", delim));
+
+/*
+Die Funktion |$1| arbeitet analog zu |TypeDef::text|, verwendet aber
+|DBData_qtext| anstelle von |DBData_text|.
+*/
+
+void TypeDef::qtext (str name, str desc, str delim, str body)
+	dbdata(name, desc, body, sprintf("DBData_qtext(NULL, in, %#s)", delim));

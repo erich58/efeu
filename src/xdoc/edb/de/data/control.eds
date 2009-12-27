@@ -4,7 +4,7 @@
 \index[vorhergehende Datenschnittstelle]
 Die \index{Kontrollstruktur} zur Abarbeitung der Anweisungen in einem
 EDB-Datenfile besteht im wesentlichen aus zwei EDB-Datenschnittstellen
-(aktuelle und vorhergehnde Datenschnittstelle) und Hilfsvariablen zur
+(aktuelle und vorhergehende Datenschnittstelle) und Hilfsvariablen zur
 Zusammenstellung einer Datenschnittstelle.
 
 Jedesmal, wenn durch eine Anweisung eine neue Datenschnittstelle

@@ -151,7 +151,7 @@ EDB *edb_merge (CmpDef *cdef, EDB **tab, size_t dim)
 		for (n = 0; n < dim; n++)
 			entry_init(mpar->tab + n, tab[n]);
 
-		edb = edb_create(LvalObj(NULL, tab[0]->obj->type), NULL);
+		edb = edb_create(tab[0]->obj->type);
 		edb->read = mpar_read;
 		edb->ipar = mpar;
 		return edb;

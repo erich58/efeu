@@ -22,13 +22,25 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/EDB.h>
 
+#define	FMT_NWRITE	"[edb:nwrite]$0: $1 records written.\n"
+
 void edb_closeout (EDB *edb)
 {
 	if	(edb && edb->write)
 	{
+		char *p = edb->nwrite ? rd_ident(edb->opar) : 0;
+		rd_debug(edb, "close output");
+
+		if	(p)
+		{
+			dbg_message("edb", DBG_STAT, FMT_NWRITE,
+				p, "u", (unsigned) edb->nwrite);
+		}
+
 		rd_deref(edb->opar);
 		edb->opar = NULL;
 		edb->write = NULL;
+		edb->nwrite = 0;
 	}
 }
 
@@ -38,5 +50,8 @@ void edb_write (EDB *edb)
 		return;
 
 	if	(!edb->write(edb->obj->type, edb->obj->data, edb->opar))
+	{
 		edb_closeout(edb);
+	}
+	else	edb->nwrite++;
 }

@@ -24,20 +24,20 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/stdtype.h>
 
 
-static void clean_list (const EfiType *type, void *tg);
+static void clean_list (const EfiType *type, void *tg, int mode);
 static void copy_list (const EfiType *type, void *tg, const void *src);
 
-static void clean_call (const EfiType *type, void *tg);
+static void clean_call (const EfiType *type, void *tg, int mode);
 static void copy_call (const EfiType *type, void *tg, const void *src);
 static EfiObj *eval_call (const EfiType *type, const void *ptr);
 static EfiObj *eval_list (const EfiType *type, const void *ptr);
 
-static void clean_ofunc (const EfiType *type, void *tg);
+static void clean_ofunc (const EfiType *type, void *tg, int mode);
 static void copy_ofunc(const EfiType *st, void *tg, const void *src);
 
-EfiType Type_list = STD_TYPE("List_t", EfiObjList *, &Type_ptr,
+EfiType Type_list = PTR_TYPE("List_t", EfiObjList *, &Type_ptr,
 	clean_list, copy_list);
-EfiType Type_ofunc = STD_TYPE("ObjFunc", EfiObjFunc, NULL,
+EfiType Type_ofunc = PTR_TYPE("ObjFunc", EfiObjFunc, NULL,
 	clean_ofunc, copy_ofunc);
 EfiType Type_explist = EVAL_TYPE("_ExprList_", EfiObjList *,
 	eval_list, clean_list, copy_list);
@@ -45,7 +45,7 @@ EfiType Type_call = EVAL_TYPE("_Expr_", EfiExpr,
 	eval_call, clean_call, copy_call);
 
 
-static void clean_list (const EfiType *type, void *data)
+static void clean_list (const EfiType *type, void *data, int mode)
 {
 	EfiObjList **list = data;
 	DelObjList(*list);
@@ -53,7 +53,7 @@ static void clean_list (const EfiType *type, void *data)
 }
 
 
-static void clean_call (const EfiType *type, void *data)
+static void clean_call (const EfiType *type, void *data, int mode)
 {
 	EfiExpr *expr = data;
 	DelObjList(expr->list);
@@ -62,13 +62,13 @@ static void clean_call (const EfiType *type, void *data)
 }
 
 
-static void copy_list(const EfiType *type, void *tg, const void *src)
+static void copy_list (const EfiType *type, void *tg, const void *src)
 {
 	Val_ptr(tg) = RefObjList(Val_ptr(src));
 }
 
 
-static void copy_call(const EfiType *type, void *tptr, const void *sptr)
+static void copy_call (const EfiType *type, void *tptr, const void *sptr)
 {
 	EfiExpr *tg = tptr;
 	const EfiExpr *src = sptr;
@@ -86,7 +86,7 @@ static EfiObj *eval_list (const EfiType *type, const void *ptr)
 }
 
 
-static EfiObj *eval_call(const EfiType *st, const void *ptr)
+static EfiObj *eval_call (const EfiType *st, const void *ptr)
 {
 	const EfiExpr *expr = ptr;
 	return expr->eval ? expr->eval((void *) expr->par, expr->list) : NULL;
@@ -97,7 +97,8 @@ static EfiObj *eval_call(const EfiType *st, const void *ptr)
 */
 
 
-EfiObj *Obj_call(EfiObj *(*eval) (void *par, const EfiObjList *list), void *par, EfiObjList *list)
+EfiObj *Obj_call (EfiObj *(*eval) (void *par, const EfiObjList *list),
+	void *par, EfiObjList *list)
 {
 	EfiExpr expr;
 
@@ -108,7 +109,7 @@ EfiObj *Obj_call(EfiObj *(*eval) (void *par, const EfiObjList *list), void *par,
 }
 
 
-static void clean_ofunc(const EfiType *st, void *tg)
+static void clean_ofunc (const EfiType *st, void *tg, int mode)
 {
 	EfiObjFunc *ofunc = tg;
 	UnrefObj(ofunc->obj);
@@ -117,7 +118,7 @@ static void clean_ofunc(const EfiType *st, void *tg)
 }
 
 
-static void copy_ofunc(const EfiType *st, void *tptr, const void *sptr)
+static void copy_ofunc (const EfiType *st, void *tptr, const void *sptr)
 {
 	EfiObjFunc *tg = tptr;
 	const EfiObjFunc *src = sptr;

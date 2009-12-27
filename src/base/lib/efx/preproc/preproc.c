@@ -377,6 +377,7 @@ static int subclose(PPData *pp)
 		del_data(&pptest_tab, t);
 	}
 
+	sb_clean(pp->combuf);
 	pp->input = x->next;
 	stat = io_close(x->io);
 	memfree(x);
@@ -402,8 +403,8 @@ static int pp_ctrl (void *ptr, int req, va_list list)
 		while (pp->input != NULL)
 			if (subclose(pp) != 0) stat = EOF;
 
-		sb_destroy(pp->buf);
-		sb_destroy(pp->combuf);
+		rd_deref(pp->buf);
+		rd_deref(pp->combuf);
 		memfree(pp->ident);
 		memfree(pp);
 		return stat;

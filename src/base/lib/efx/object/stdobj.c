@@ -33,6 +33,11 @@ EfiObj *char2Obj (int val)
 	return NewObj(&Type_char, &data);
 }
 
+EfiObj *ucs2Obj (int32_t val)
+{
+	return NewObj(&Type_wchar, &val);
+}
+
 EfiObj *int2Obj (int val)
 {
 	return NewObj(&Type_int, &val);
@@ -51,6 +56,11 @@ EfiObj *varint2Obj (int64_t val)
 EfiObj *varsize2Obj (uint64_t val)
 {
 	return NewObj(&Type_varsize, &val);
+}
+
+EfiObj *EnumObj (const EfiType *type, int val)
+{
+	return NewObj(type, &val);
 }
 
 EfiObj *float2Obj (double val)

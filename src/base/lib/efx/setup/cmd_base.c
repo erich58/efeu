@@ -28,7 +28,7 @@ If not, write to the Free Software Foundation, Inc.,
 /*	Lösch- und Kopierfunktionen
 */
 
-void Clean_obj(const EfiType *st, void *data)
+void Clean_obj(const EfiType *st, void *data, int mode)
 {
 	UnrefObj(Val_obj(data));
 	Val_obj(data) = NULL;
@@ -39,7 +39,7 @@ void Copy_obj(const EfiType *st, void *tg, const void *src)
 	Val_obj(tg) = RefObj(Val_obj(src));
 }
 
-void Clean_ref(const EfiType *st, void *data)
+void Clean_ref(const EfiType *st, void *data, int mode)
 {
 	rd_deref(Val_ptr(data));
 	Val_ptr(data) = NULL;
@@ -92,7 +92,7 @@ int Print_str (const EfiType *st, const void *data, IO *io)
 	else	return io_puts("NULL", io);
 }
 
-void Clean_str(const EfiType *st, void *data)
+void Clean_str(const EfiType *st, void *data, int mode)
 {
 	memfree(Val_str(data));
 	Val_str(data) = NULL;
@@ -101,6 +101,11 @@ void Clean_str(const EfiType *st, void *data)
 void Copy_str(const EfiType *st, void *tg, const void *src)
 {
 	Val_str(tg) = mstrcpy(Val_str(src));
+}
+
+void Memory_copy(const EfiType *st, void *tg, const void *src)
+{
+	memcpy(tg, src, st->size);
 }
 
 
@@ -128,22 +133,22 @@ static EfiObj *Eval_name(const EfiType *type, const void *data)
 */
 
 EfiType Type_void = COMPLEX_TYPE("void", NULL, 0, 0, NULL, NULL, NULL, \
-	NULL, Eval_void, NULL, NULL, NULL);
-EfiType Type_ptr = STD_TYPE("_Ptr_", void *, NULL, NULL, NULL);
-EfiType Type_obj = STD_TYPE("Object", EfiObj *, &Type_ptr, Clean_obj, Copy_obj);
-EfiType Type_expr = STD_TYPE("Expr_t", EfiObj *, &Type_ptr, Clean_obj, Copy_obj);
+	NULL, Eval_void, NULL, NULL, 0);
+EfiType Type_ptr = PTR_TYPE("_Ptr_", void *, NULL, NULL, NULL);
+EfiType Type_obj = PTR_TYPE("Object", EfiObj *, &Type_ptr, Clean_obj, Copy_obj);
+EfiType Type_expr = PTR_TYPE("Expr_t", EfiObj *, &Type_ptr, Clean_obj, Copy_obj);
 EfiType Type_str = COMPLEX_TYPE("str", "char *", sizeof(char *), 0,
 	Read_str, Write_str, Print_str,
-	&Type_ptr, NULL, NULL, Clean_str, Copy_str);
-EfiType Type_type = STD_TYPE("Type_t", EfiType *, &Type_ptr, NULL, NULL);
-EfiType Type_lval = STD_TYPE("Lval_t", EfiType *, &Type_type, NULL, NULL);
+	&Type_ptr, NULL, Clean_str, Copy_str, TYPE_MALLOC);
+EfiType Type_type = PTR_TYPE("Type_t", EfiType *, &Type_ptr, NULL, NULL);
+EfiType Type_lval = PTR_TYPE("Lval_t", EfiType *, &Type_type, NULL, NULL);
 EfiType Type_name = EVAL_TYPE("_Name_", char *, Eval_name, Clean_str, Copy_str);
-EfiType Type_undef = STD_TYPE("_undef_", char *, NULL, Clean_str, Copy_str);
+EfiType Type_undef = PTR_TYPE("_undef_", char *, NULL, Clean_str, Copy_str);
 
 /*	Referenztypen
 */
 
-EfiType Type_ref = STD_TYPE("_Ref_", void *, &Type_ptr, Clean_ref, Copy_ref);
+EfiType Type_ref = PTR_TYPE("_Ref_", void *, &Type_ptr, Clean_ref, Copy_ref);
 EfiType Type_efi = REF_TYPE ("Efi", Efi *);
 EfiType Type_func = REF_TYPE("Func", EfiFunc *);
 EfiType Type_vfunc = REF_TYPE("VirFunc", EfiVirFunc *);
@@ -162,6 +167,11 @@ static int print_bool (const EfiType *type, const void *data, IO *io)
 static int print_char (const EfiType *type, const void *data, IO *io)
 {
 	return io_printf(io, "%#c", Val_char(data));
+}
+
+static int print_wchar (const EfiType *type, const void *data, IO *io)
+{
+	return io_printf(io, "%#lc", *((int32_t *) data));
 }
 
 static int print_int (const EfiType *type, const void *data, IO *io)
@@ -184,9 +194,12 @@ static int print_double (const EfiType *type, const void *data, IO *io)
 	return io_printf(io, "%.16g", Val_double(data));
 }
 
-EfiType Type_enum = SIMPLE_TYPE("_Enum_", int, NULL, print_int);
+EfiType Type_enum = COMPLEX_TYPE("_Enum_", "int", sizeof(int), 4, 
+	Enum_read, Enum_write, NULL, NULL, NULL, NULL, Enum_copy, TYPE_ENUM);
+
 EfiType Type_bool = SIMPLE_TYPE("bool", int, NULL, print_bool);
 EfiType Type_char = SIMPLE_TYPE("char", unsigned char, NULL, print_char);
+EfiType Type_wchar = SIMPLE_TYPE("wchar_t", int32_t, NULL, print_wchar);
 EfiType Type_int = SIMPLE_TYPE("int", int, NULL, print_int);
 EfiType Type_uint = SIMPLE_TYPE("unsigned", unsigned, NULL, print_uint);
 EfiType Type_float = SIMPLE_TYPE("float", float, NULL, print_float);
@@ -232,7 +245,7 @@ static void f_any_free (EfiFunc *func, void *rval, void **arg)
 {
 	register EfiObj *obj = arg[0];
 
-	if	(obj)	CleanData(obj->type, obj->data);
+	if	(obj)	CleanData(obj->type, obj->data, 0);
 }
 
 static void f_vtab(EfiFunc *func, void *rval, void **arg)
@@ -288,6 +301,7 @@ void CmdSetup_base(void)
 	AddType(&Type_double);
 
 	AddType(&Type_char);
+	AddType(&Type_wchar);
 	AddType(&Type_str);
 	AddType(&Type_io);
 	AddType(&Type_vtab);

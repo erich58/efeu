@@ -167,17 +167,20 @@ static unsigned get_dat1900(char *def, char **ptr, int flag)
 	return CalBase1900(str2Calendar(def, ptr, flag));
 }
 
-TestParDef TestPar_Num = { "=[!^][+-]value|[first]:[last]",
+TestParDef TestPar_Num = { &Type_uint,
+	"=[!^][+-]value|[first]:[last]",
 	MakeValPar, memfree, get_val,
 	EN_VAL EN_NEG DE_VAL DE_NEG
 };
 
-TestParDef TestPar_Dat = { "=[!^][+-]date|[beg]:[end]",
+TestParDef TestPar_Dat = { &Type_Date,
+	"=[!^][+-]date|[beg]:[end]",
 	MakeValPar, memfree, get_dat,
 	EN_DAT EN_NEG DE_DAT DE_NEG
 };
 
-TestParDef TestPar_Dat1900 = { "=[!^][+-]date|[beg]:[end]",
+TestParDef TestPar_Dat1900 = { &Type_uint,
+	"=[!^][+-]date|[beg]:[end]",
 	MakeValPar, memfree, get_dat1900,
 	EN_DAT EN_NEG DE_DAT DE_NEG
 };

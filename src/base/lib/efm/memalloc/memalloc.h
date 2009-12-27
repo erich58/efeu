@@ -75,6 +75,7 @@ void *lmalloc (size_t size);
 void *lrealloc (void *ptr, size_t size);
 void lfree (void *ptr);
 void lcheck (void *ptr);
+void lcheckall (void);
 
 /*
 :*:The type |$1| is used as allocation list node.

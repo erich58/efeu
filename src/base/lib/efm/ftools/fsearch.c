@@ -244,7 +244,7 @@ char *fsearch (const char *path, const char *sub,
 
 		if	(flag)	return sb2str(sb);
 
-		sb_destroy(sb);
+		rd_deref(sb);
 		return NULL;
 	}
 	else if	(access(name, R_OK) == 0)

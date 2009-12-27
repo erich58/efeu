@@ -42,12 +42,16 @@ extern char *ApplPath;		/* Suchpfad für Hilfsdateien */
 extern char *InfoPath;		/* Suchpfad für Informationsdateien */
 extern char *Pager;		/* Seitenfilter */
 extern char *Shell;		/* Shell */
+extern char *CurrentLocale;	/* Aktuelle Lokale-Setzung */
 
 /*	Programmnamen initialisieren
 */
 
+void ChangeLocale (const char *def);
+void EfeuConfig (const char *name);
 void SetProgName (const char *name);
 void SetApplPath (const char *path);
+void SetInfoPath (const char *path);
 void SetInfoPath (const char *path);
 
 char *ExpandPath (const char *name);

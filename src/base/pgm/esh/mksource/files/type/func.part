@@ -1,0 +1,21 @@
+/*
+:*:The function |$1| creates a EFI function which is registered on
+setting up the data type.
+:de:Die Funktion |$1| definiert eine EFI Funktion, die beim
+Einrichten des Datentyps regristriert wird.
+*/
+
+void TypeDef::func (str name, str proto, str body)
+{
+	LocalFunction("void func_$1_$2",
+		"EfiFunc *func, void *rval, void **arg", body, t_name, name);
+	s_ftab += psub("\t{ 0, NULL, \"" + proto + "\", func_$1_$2 },\n",
+		t_name, name);
+}
+
+void TypeDef::extfunc (str name, str proto)
+{
+	s_ftab += psub("\t{ 0, NULL, \"" + proto + "\", $2 },\n",
+		t_name, name);
+}
+

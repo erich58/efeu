@@ -94,7 +94,7 @@ static int psub_ctrl (void *ptr, int req, va_list list)
 	case IO_CLOSE:
 
 		rd_deref(par->args);
-		sb_destroy(par->buf);
+		rd_deref(par->buf);
 		stat = io_close(par->io);
 		memfree(par);
 		return stat;

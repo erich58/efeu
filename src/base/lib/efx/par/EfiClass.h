@@ -1,0 +1,58 @@
+/*
+Klassifikationen für Efeu-Datenobjekte
+
+$Copyright (C) 2007 Erich Frühstück
+A-3423 St.Andrä/Wördern, Wildenhaggasse 38
+*/
+
+#ifndef	EFEU_EfiClass_h
+#define	EFEU_EfiClass_h	1
+
+#include <EFEU/EfiPar.h>
+#include <EFEU/object.h>
+#include <EFEU/Info.h>
+
+extern EfiPar EfiPar_class;
+
+typedef struct EfiClass EfiClass;
+
+typedef struct {
+	EfiType *type;
+	int (*update) (const EfiObj *base, void *par);
+	void *par;
+} EfiClassArg;
+
+struct EfiClass {
+	EPC_VAR;
+	char *syntax;
+	void (*create) (EfiClassArg *par, const char *opt, const char *arg);
+};
+
+void EfiClass_info (IO *io, const void *data);
+
+#define	EFI_CLASS(type, name, syntax, create, label) \
+	{ EPC_DATA(&EfiPar_class, type, name, label, EfiClass_info), \
+		syntax, create }
+
+void SetupEfiClass (void);
+void EfiClassInfo (InfoNode *info);
+
+extern EfiClass EfiClass_test;
+
+void AddEfiClass (EfiVarTab *tab, const char *name, const char *desc,
+	EfiType *type, int (*update) (const EfiObj *, void *), void *par);
+
+typedef struct {
+	const char *name;
+	const char *desc;
+	size_t dim;
+	Label *label;
+	int (*update) (const EfiObj *base, void *par);
+	void *par;
+} EfiClassDef;
+
+void AddEfiClassDef (EfiVarTab *tab, EfiClassDef *def, size_t dim);
+int MakeEfiClass (EfiType *type, const char *name, const char *def);
+EfiObj *EfiClassExpr (EfiObj *base, const char *def);
+
+#endif	/* EFEU/EfiClass.h */

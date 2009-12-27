@@ -32,6 +32,7 @@ typedef struct {
 
 static S2DMode tab[] = {
 	{ "hdr", s2d_hdr, "Handbucheintrag für Headerfile"},
+	{ "xhdr", s2d_xhdr, "Erweiterter Handbucheintrag für Headerfile"},
 	{ "src", s2d_src, "Handbucheintrag für Sourcefile"},
 	{ "cmd", s2d_cmd, "Handbucheintrag für Scriptdateien"},
 	{ "sh", s2d_sh, "Handbucheintrag für Shellfunktionen"},
@@ -55,6 +56,7 @@ static S2DName ntab[] = {
 	{ "*.pph", s2d_hdr },
 	{ "*.c", s2d_src },
 	{ "*.doc", s2d_doc },
+	{ "*.eds", s2d_doc },
 	{ "*.ms", s2d_cmd },
 	{ "*.hdr", s2d_cmd },
 	{ "*.smh", s2d_sh },

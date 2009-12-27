@@ -58,7 +58,7 @@ void Doc_eval (Doc *doc, IO *in, const char *expr)
 	{
 		io_push(in, io_mstr(sb2str(buf)));
 	}
-	else	sb_destroy(buf);
+	else	rd_deref(buf);
 }
 
 void Doc_cmd (Doc *doc, IO *in)

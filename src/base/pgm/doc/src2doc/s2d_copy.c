@@ -30,12 +30,12 @@ void SrcData_copy (SrcData *data, StrBuf *buf, const char *name)
 {
 	if	(sb_getpos(data->buf) == 0)	return;
 
-	if	(strncmp("$include", data->buf->data, 8) == 0)
+	if	(strncmp("$include", (char *) data->buf->data, 8) == 0)
 	{
 		char *p, *q;
 
 		sb_putc(0, data->buf);
-		p = data->buf->data + 8;
+		p = (char *) data->buf->data + 8;
 
 		while (*p && (*p == ' ' || *p == '\n'))
 			p++;

@@ -198,6 +198,7 @@ void meminfo (const char *pfx)
 		{
 			fprintf(stderr, "%s:\t%p\t%u\t%lu\n", pfx,
 				p->ptr, p->idx, (unsigned long) p->size);
+			lcheck(p->ptr);
 		}
 	}
 #else
@@ -287,15 +288,16 @@ Speicherbereich wieder frei. Ein Nullpointer ist als Argument zulässig.
 
 void lfree (void *p)
 {
+	if	(!p)	return;
+
+#if	MEMTRACE
+	trace_add(p, 0);
+#endif
 #if	MEMCHECK
 	lcheck(p);
+	free(((MEMHEAD *) p) - 1);
 #else
-	if	(p != NULL)
-		free(p);
-#endif
-#if	MEMTRACE
-	if	(p)
-		trace_add(p, 0);
+	free(p);
 #endif
 }
 
@@ -352,6 +354,28 @@ void lcheck (void *p)
 
 	if	(memcmp(((char *) p) + head->size, CHECK_MASK, CHECK_SIZE) != 0)
 		fprintf(stderr, MSG2, p);
+#else
+	;
+#endif
+}
+
+void lcheckall (void)
+{
+#if	MEMTRACE
+	TRACE *p;
+	size_t n, k;
+
+	for (p = trace_tab, n = trace_dim, k = 0; n-- > 0; p++)
+	{
+		if	(p->size)
+		{
+			lcheck(p->ptr);
+			k++;
+		}
+	}
+
+	fprintf(stderr, "lcheckall: %u entries, %u active\n",
+		(unsigned) trace_dim, (unsigned) k);
 #else
 	;
 #endif

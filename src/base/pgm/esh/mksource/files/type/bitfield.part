@@ -1,0 +1,118 @@
+/*
+Bitfeldstrukturen
+*/
+
+static void TypeDef::bf_close ()
+{
+	if	(!bf_used)	return;
+
+	int w = (bf_used + 7) / 8;
+	int s = 8 * w - bf_used;
+	bf_used = 0;
+	t_recl += w;
+	read_body += sprintf("bf_data = io_ullget(io, %d)", w);
+
+	write_body += "io_ullput(bf_data";
+
+	if	(s)
+	{
+		write_body += sprintf(" << %d", s);
+		read_body += sprintf(" >> %d", s);
+	}
+
+	write_body += sprintf(", io, %d);\nsize += %d;\n", w, w);
+	read_body += sprintf(";\nsize += %d;\n", w);
+	read_body += read_tmpbuf;
+	read_tmpbuf = NULL;
+}
+
+static void TypeDef::bitfield (str type, str name, int size, str desc)
+{
+	int s;
+
+	if	(!bf_size)	bf_size = 32;
+
+	if	(size <= bf_size)	s = bf_size;
+	else if	(size <= 32)		s = 32;
+	else if	(size <= 64)		s = 64;
+	else				s = size = 64;
+
+	has_bf = true;
+
+	if	(s != bf_size)
+	{
+		bf_size = s;
+		bf_close();
+	}
+
+	if	(bf_used + size > s)	bf_close();
+
+	str t;
+
+	if	(type == NULL)
+	{
+		t = type = sprintf("uint%d_t", s);
+	}
+	else if	(type == /^X:/)
+	{
+		type = substr(type, 2);
+		t = cname(type);
+	}
+	else if	(type == /^C:/)
+	{
+		t = type = NULL;
+	}
+	else
+	{
+		Type_t x = (Type_t) type;
+		type = (str) x;
+		t = x.cname;
+	}
+
+	addvar(sprintf("uint%d_t", s), sprintf("%s : %d", name, size), desc);
+	str pfx = paste("_", t_name, name);
+
+	if	(!type || !need_setup)
+		return;
+
+	if	(bf_used)
+		;
+	else if	(s_setup)
+		s_setup += "offset = st_var->offset + st_var->type->size;\n";
+	else	s_setup = "offset = 0;\n";
+	
+	LocalFunction("void $1_$2_get", "void *data, void *ptr",
+		"*(($3 *) data) = (($1 *) ptr)->$2;", t_name, name, t);
+
+	LocalFunction("void $1_$2_set", "void *data, void *ptr",
+		"(($1 *) ptr)->$2 = *(($3 *) data);", t_name, name, t);
+
+	fprintf(src, "static EfiBitfield %s = {\n", pfx);
+	fprintf(src, "\t%#s, %#s, %d,\n", type, name, size);
+	fprintf(src, "\t%s_get, %s_set,\n", pfx, pfx);
+	fprintf(src, "\t%#s\n};\n", desc);
+
+	s_setup += "st_var = EfiType_bitfield(type, st_var, offset, &";
+	s_setup += pfx;
+	s_setup += ");\n";
+
+	next(name, bf_used);
+
+	if	(bf_used)
+	{
+		write_body += sprintf("bf_data = (bf_data << %d) | data->%s;\n",
+			size, name);
+		read_tmpbuf = sprintf("data->%s = bf_data; bf_data >>= %d;\n%s",
+			name, size, read_tmpbuf);
+	}
+	else
+	{
+		write_body += sprintf("bf_data = data->%s;\n", name);
+		read_tmpbuf = sprintf("data->%s = bf_data;\n", name);
+	}
+
+	copy_body += sprintf("tg->%s = src->%s;\n", name, name);
+	clean_body += sprintf("data->%s = 0;\n", name);
+	bf_used += size;
+}
+

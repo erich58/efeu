@@ -615,7 +615,7 @@ void CmdPar_read (CmdPar *par, IO *io, int end, int flag)
 		}
 	}
 
-	sb_destroy(sb);
+	rd_deref(sb);
 	io_close(io);
 }
 

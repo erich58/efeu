@@ -11,18 +11,56 @@
 #define	FMT_UNIT	"edb_out: parameter \"$1\": undefined unit key $2.\n"
 #define	FMT_XARG	"edb_out: parameter \"$1\": argument \"$2\" ignored.\n"
 
-#define	XOUT_LIM	(512 * 1024 * 1024)
+#define	XOUT_LIM	(2000 * 1024 * 1024)
+
+static STRBUF(pdef_buf, 0);
+
+char *EDBPrintDef_psub (const char *fmt, const char *opt, const char *arg)
+{
+	if	(!fmt)	return NULL;
+
+	for (sb_clean(&pdef_buf); *fmt; fmt++)
+	{
+		if	(fmt[0] == '[' && fmt[1] == ']')
+		{
+			if	(opt)
+			{
+				sb_putc('[', &pdef_buf);
+				sb_puts(opt, &pdef_buf);
+				sb_putc(']', &pdef_buf);
+			}
+
+			fmt++;
+		}
+		else if	(fmt[0] == '=' && fmt[1] == '#')
+		{
+			if	(arg)
+			{
+				sb_putc('=', &pdef_buf);
+				sb_puts(arg, &pdef_buf);
+			}
+
+			fmt++;
+		}
+		else	sb_putc(*fmt, &pdef_buf);
+	}
+
+	sb_putc(0, &pdef_buf);
+	return (char *) pdef_buf.data;
+}
 
 void EDBPrintDef_alias (EDBPrintMode *mode, const EDBPrintDef *def,
 	const char *opt, const char *arg)
 {
-	edb_pmode(mode, def->par);
+	char *p = mstrcpy(EDBPrintDef_psub(def->par, opt, arg));
+	edb_pmode(mode, NULL, p);
+	memfree(p);
 }
 
 static void set_header (EDBPrintMode *mode, const EDBPrintDef *def,
 	const char *opt, const char *arg)
 {
-	mode->header = atoi(def->par);
+	mode->header = atoi(arg ? arg : def->par);
 }
 
 static void set_prec (EDBPrintMode *mode, const EDBPrintDef *def,
@@ -59,7 +97,7 @@ static void set_split (EDBPrintMode *mode, const EDBPrintDef *def,
 		return;
 	}
 
-	lim = strtod(arg, &p);
+	lim = C_strtod(arg, &p);
 
 	switch (*p)
 	{
@@ -82,83 +120,94 @@ static void show_def (EDBPrintMode *mode, const EDBPrintDef *def,
 
 
 static EDBPrintDef pdef[] = {
-	{ "?", show_def, NULL,
+	{ "?", NULL, show_def, NULL,
 		":*:list print flags"
 		":de:Auflisten der Ausgabeflags"
 	},
-	{ "default", EDBPrintDef_alias, "plain,verbose,split=512M",
+	{ "default", NULL, EDBPrintDef_alias, "plain,verbosity=2,split=512M",
 		":*:default flags: $2"
 		":de:Standardvorgabe: $2"
 	},
-	{ "binary", EDBPrint_binary, NULL,
+	{ "null", NULL, EDBPrint_null, NULL,
+		":*:dummy output"
+		":de:Leerausgabe"
+	},
+	{ "binary", NULL, EDBPrint_binary, NULL,
 		":*:binary output"
 		":de:Binärausgabe"
 	},
-	{ "plain", EDBPrint_plain, NULL,
+	{ "plain", NULL, EDBPrint_plain, NULL,
 		":*:plain output"
 		":de:Textausgabe als Term"
 	},
-	{ "label", EDBPrint_label, NULL,
+	{ "label", NULL, EDBPrint_label, NULL,
 		":*:label output"
 		":de:Textausgabe als Zeichenkette"
 	},
-	{ "data", EDBPrint_data, NULL,
+	{ "data", "[opt]=def", EDBPrint_data, NULL,
 		":*:data without declarations"
 		":de:Nur Daten ohne Deklarationen ausgeben"
 	},
-	{ "fmt", EDBPrint_fmt, NULL,
+	{ "fmt", "[head]=fmt", EDBPrint_fmt, NULL,
 		":*:formatted output of data lines"
 		":de:Formatierte Ausgabe von Datenzeilen"
 	},
 
-	{ "locale", set_locale, NULL,
+	{ "locale", "=lang", set_locale, NULL,
 		":*:set locale for output"
 		":de:Lokale für die Ausgabe setzen"
 	},
-	{ "nohead", set_header, "0",
-		":*:no header"
-		":de:Kein Header"
+
+	{ "verbosity", "=level", set_header, "1",
+		":*:header verbosity level"
+		":de:Wortumfang des Headers"
 	},
-	{ "compact", set_header, "1",
-		":*:compact header"
-		":de:Kompakter Header ohne Kommentare"
+	{ "nohead", NULL, EDBPrintDef_alias, "verbosity=0",
+		":*:no header, alias for $2"
+		":de:Kein Header, Kurzform für $2"
 	},
-	{ "verbose", set_header, "2",
-		":*:verbose header"
-		":de:Header mit Kommentaren"
+	{ "compact", NULL, EDBPrintDef_alias, "verbosity=1",
+		":*:compact header\nalias for $2"
+		":de:Kompakter Header ohne Kommentare\nKurzform für $2"
 	},
-	{ "prec", set_prec, "18g",
+	{ "verbose", NULL, EDBPrintDef_alias, "verbosity=2",
+		":*:verbose header\nalias for $2"
+		":de:Header mit Kommentaren\nKurzform für $2"
+	},
+	
+	{ "prec", "[width]=prec", set_prec, "18g",
 		":*:precision of floating point numbers"
 		":de:Genauigkeit von Gleitkommazahlen festlegen"
 	},
 
-	{ "split", set_split, NULL,
+	{ "split", "=limit", set_split, NULL,
 		":*:split limit for output"
 		":de:Aufspaltungslimit für die Ausgabe"
 	},
-	{ "nosplit", set_split, "0",
+	{ "nosplit", NULL, set_split, "0",
 		":*:do not split output"
 		":de:Ausgabe nicht aufspalten"
 	},
 
-	{ "export", EDBPrintDef_alias, "data,nosplit",
-		":*:export data, synonymous to $2"
-		":de:Daten exportieren, entspricht $2"
+	{ "export", "[opt]=def", EDBPrintDef_alias, "{data[]=#},nosplit",
+		":*:export data\nalias for $2"
+		":de:Daten exportieren\nKurzform für $2"
 	},
-	{ "csv", EDBPrintDef_alias, "data=crlf,nosplit,nohead,locale",
-		":*:export data with CR/LF, synonymous to $2"
-		":de:Daten mit CR/LF exportieren, enspricht $2"
+	{ "csv", "=def", EDBPrintDef_alias,
+		"{data[crlf]=#},nosplit,nohead,locale",
+		":*:export data with CR/LF\nalias for $2"
+		":de:Daten mit CR/LF exportieren\nKurzform für $2"
 	},
 
-	{ "b", EDBPrintDef_alias, "binary",
+	{ "b", NULL, EDBPrintDef_alias, "binary",
 		":*:alias for $2"
 		":de:Kurzform für $2"
 	},
-	{ "l", EDBPrintDef_alias, "label",
+	{ "l", NULL, EDBPrintDef_alias, "label",
 		":*:alias for $2"
 		":de:Kurzform für $2"
 	},
-	{ "x", EDBPrintDef_alias, "export",
+	{ "x", "[opt]=def", EDBPrintDef_alias, "{export[]=#}",
 		":*:alias for $2"
 		":de:Kurzform für $2"
 	},

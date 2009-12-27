@@ -32,7 +32,7 @@ esac
 if [ "$CC" != "" ]; then
 	:
 elif	gcc --version >/dev/null 2>&1; then
-	CC="gcc -O -fPIC -Wall -Wmissing-prototypes -Wpointer-arith"
+	CC="gcc -fPIC -Wall -Wmissing-prototypes -Wpointer-arith"
 else
 	case `uname -s` in
 	AIX)	CC="xlc -qsrcmsg";;
@@ -78,7 +78,7 @@ cat << EOF
 # bei der Installation von EFEU generiert.
 
 # \$pconfig
-# Version="\$Id: efeucc.gencmd,v 1.3 2006-06-18 04:41:25 ef Exp $"
+# Version="\$Id: efeucc.gencmd,v 1.5 2007-08-19 04:34:55 ef Exp $"
 # ::arg(s) |
 #	:*:cc options and arguments
 #	:de:cc Optionen und Argumente
@@ -90,7 +90,7 @@ usage ()
 
 case "\$1" in
 -\\?|--help*)	usage \$1; exit 0;;
---version)	efeuman -- \$0 \$1 || grep 'Version="[\$]Id:'; exit 0;;
+--version)	efeuman -- \$0 \$1 || grep 'Version="[\$]Id:' \$0; exit 0;;
 esac
 
 # \$Description

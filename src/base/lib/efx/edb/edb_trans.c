@@ -24,6 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/cmdeval.h>
 #include <EFEU/parsearg.h>
 #include <EFEU/printobj.h>
+#include <EFEU/EDBFilter.h>
 #include <EFEU/dl.h>
 #include <ctype.h>
 
@@ -44,7 +45,7 @@ If not, write to the Free Software Foundation, Inc.,
 #define EXTNAME "custom_trans_func"
 
 typedef struct {
-	EfiVar *var;
+	EfiStruct *var;
 	EDBAssign *assign;
 } VDEF;
 
@@ -74,7 +75,7 @@ static void trans_clean (void *data)
 	rd_deref(trans->tg);
 	rd_deref(trans->cmp);
 	rd_deref(trans->vdef.assign);
-	DelVarList(trans->vdef.var);
+	DelEfiStruct(trans->vdef.var);
 	memfree(trans);
 }
 
@@ -114,9 +115,12 @@ static void make_type (TRANS *trans)
 		type = trans->vdef.var->type;
 		trans->vdef.var->offset = 0;
 	}
-	else	type = MakeStruct(NULL, NULL, RefVarList(trans->vdef.var));
+	else	type = MakeStruct(NULL, NULL, RefEfiStruct(trans->vdef.var));
 
 	trans->obj = LvalObj(NULL, type);
+	/*
+	PrintEDBAssign(ioerr, trans->vdef.assign);
+	*/
 }
 
 static void make_tab (TRANS *trans)
@@ -134,8 +138,10 @@ static void make_tab (TRANS *trans)
 
 		if	(!trans->vdef.assign)
 		{
-			EfiVar *var = NewVar(trans->base->obj->type, NULL, 0);
-			trans->vdef.assign = NewEDBAssign(NULL, var, 0);
+			EfiStruct *var = NewEfiStruct(trans->base->obj->type,
+				NULL, 0);
+			trans->vdef.assign = NewEDBAssign(NULL, NULL, NULL,
+				var, 0);
 		}
 
 		EDBAssignFunc(rd_refer(trans->vdef.assign),
@@ -164,9 +170,9 @@ typedef struct {
 static void tpar_list (IO *out);
 
 
-static int add_var (VDEF *vdef, EfiVar *var, int flag)
+static int add_var (VDEF *vdef, EfiStruct *var, int flag)
 {
-	EfiVar **p;
+	EfiStruct **p;
 
 	for (p = &vdef->var; *p; p = &(*p)->next)
 	{
@@ -175,7 +181,7 @@ static int add_var (VDEF *vdef, EfiVar *var, int flag)
 			if	(flag)
 				dbg_error("edb", ERR_USE, "s", var->name);
 
-			DelVar(var);
+			rd_deref(var);
 			return 0;
 		}
 	}
@@ -184,10 +190,12 @@ static int add_var (VDEF *vdef, EfiVar *var, int flag)
 	return 1;
 }
 
-static void add_xvar (VDEF *vdef, EfiVar *var, int flag)
+static void add_xvar (VDEF *vdef, EfiObj *base, EfiStruct *st,
+	EfiStruct *var, int flag)
 {
 	if	(add_var(vdef, var, flag))
-		vdef->assign = NewEDBAssign(vdef->assign, var, var->offset);
+		vdef->assign = NewEDBAssign(vdef->assign, base, st,
+			var, var->offset);
 }
 
 
@@ -212,9 +220,9 @@ static void add_vardef (IO *io, VDEF *vdef, const char *name)
 	else	dbg_error("edb", ERR_TYP, "s", name);
 }
 
-static EfiVar *get_member (EfiType *type, char *name)
+static EfiStruct *get_member (EfiType *type, char *name)
 {
-	EfiVar *var;
+	EfiStruct *var;
 
 	for (var = type->list; var; var = var->next)
 		if (mstrcmp(name, var->name) == 0) return var;
@@ -225,20 +233,28 @@ static EfiVar *get_member (EfiType *type, char *name)
 
 static void add_type_member (VDEF *vdef, EfiType *type, size_t offset)
 {
-	EfiVar *v;
+	EfiStruct *v;
+	EfiObj *base;
+
+	base = LvalObj(&Lval_ptr, type, NULL);
 
 	for (v = type->list; v; v = v->next)
 	{
-		EfiVar *x = NewVar(v->type, v->name, v->dim);
+		EfiStruct *x = NewEfiStruct(v->type, v->name, v->dim);
 		x->offset = offset + v->offset;
-		add_xvar(vdef, x, 0);
+
+		if	(v->member)
+			add_xvar(vdef, base, v, x, 0);
+		else	add_xvar(vdef, NULL, NULL, x, 0);
 	}
+
+	UnrefObj(base);
 }
 
 static void get_var (TRANS *trans, VDEF *vdef, char *name, char *def)
 {
 	EfiType *type;
-	EfiVar *var;
+	EfiStruct *var;
 	size_t offset;
 	size_t dim;
 	char *last;
@@ -251,7 +267,7 @@ static void get_var (TRANS *trans, VDEF *vdef, char *name, char *def)
 
 	if	(mstrcmp(def, ".") == 0)
 	{
-		add_xvar(vdef, NewVar(type, name, 0), 1);
+		add_xvar(vdef, NULL, NULL, NewEfiStruct(type, name, 0), 1);
 		return;
 	}
 
@@ -270,6 +286,19 @@ static void get_var (TRANS *trans, VDEF *vdef, char *name, char *def)
 		}
 
 		var = get_member(type, def);
+
+		if	(!var)	return;
+
+		if	(var->member)
+		{
+			EfiStruct *x = NewEfiStruct(var->type,
+				name ? name : def, var->dim);
+			EfiObj *base = LvalObj(&Lval_ptr, type, NULL);
+			x->offset = offset;
+			add_xvar(vdef, base, var, x, 0);
+			return;
+		}
+
 		type = var->type;
 		dim = var->dim;
 		offset += var->offset;
@@ -277,9 +306,9 @@ static void get_var (TRANS *trans, VDEF *vdef, char *name, char *def)
 		def = p;
 	}
 
-	var = NewVar(type, name ? name : last, dim);
+	var = NewEfiStruct(type, name ? name : last, dim);
 	var->offset = offset;
-	add_xvar(vdef, var, 1);
+	add_xvar(vdef, NULL, NULL, var, 1);
 }
 
 static int io_trans_var (IO *io, TRANS *trans, VDEF *vdef, int delim)
@@ -322,7 +351,7 @@ static int io_trans_var (IO *io, TRANS *trans, VDEF *vdef, int delim)
 		{
 			sb_putc(0, sb);
 			add_vardef(io, vdef, (char *) sb->data);
-			sb_destroy(sb);
+			rd_deref(sb);
 			return 1;
 		}
 
@@ -334,7 +363,7 @@ static int io_trans_var (IO *io, TRANS *trans, VDEF *vdef, int delim)
 			if	(c == '{')
 			{
 				VDEF vbuf;
-				EfiVar *var;
+				EfiStruct *var;
 
 				vbuf.var = NULL;
 				vbuf.assign = NULL;
@@ -343,12 +372,13 @@ static int io_trans_var (IO *io, TRANS *trans, VDEF *vdef, int delim)
 					;
 
 				type = MakeStruct(NULL, NULL, vbuf.var);
-				var = NewVar(type, (char *) sb->data, 0);
+				var = NewEfiStruct(type, (char *) sb->data, 0);
 
 				if	(add_var(vdef, var, 1) && vbuf.assign)
 				{
 					vdef->assign = NewEDBAssign(
-						vdef->assign, var, 0);
+						vdef->assign, NULL, NULL,
+						var, 0);
 					vdef->assign->sub = vbuf.assign;
 				}
 
@@ -369,7 +399,7 @@ static int io_trans_var (IO *io, TRANS *trans, VDEF *vdef, int delim)
 	name = (char *) sb->data;
 	arg = name + pos;
 	get_var(trans, vdef, name, arg);
-	sb_destroy(sb);
+	rd_deref(sb);
 	return 1;
 }
 
@@ -380,7 +410,7 @@ static void trans_var (TRANS *trans, const char *opt, const char *list)
 	if	(trans->obj)
 		dbg_error("edb", ERR_ORD, NULL);
 
-	if	(opt && *opt == 'r')
+	if	(!opt || *opt == 'r')
 		trans->flags |= TRANS_REDUCE;
 
 	io = io_cstr(list);
@@ -776,7 +806,7 @@ static EDB *trans_edb (TRANS *trans, char *desc)
 	if	(trans->tg)
 		trans->tg->buf.used = 0;
 
-	edb = edb_create(RefObj(trans->obj), desc);
+	edb = edb_alloc(RefObj(trans->obj), desc);
 	edb->read = (trans->flags & TRANS_VEC) ? vec_read : std_read;
 	edb->ipar = trans;
 
@@ -812,13 +842,13 @@ static EDB *fdef_trans (EDBFilter *filter, EDB *base,
 	return edb_trans(base, arg);
 }
 
-EDBFilter EDBFilter_trans = {
+EDBFilter EDBFilter_trans = EDB_FILTER(NULL,
 	"trans", "=par", fdef_trans, NULL, 
 	":*:transforming records.\n"
 	"trans= gives a list of availabel parameters.\n"
 	":de:Transformieren von Datensätzen.\n"
 	"Die Angabe trans= liefert die verfügbaren Parameter.\n"
-};
+);
 
 static EDB *fdef_cut (EDBFilter *filter, EDB *base,
 	const char *opt, const char *arg)
@@ -828,8 +858,8 @@ static EDB *fdef_cut (EDBFilter *filter, EDB *base,
 	return trans_edb(trans, NULL);
 }
 
-EDBFilter EDBFilter_cut = {
+EDBFilter EDBFilter_cut = EDB_FILTER(NULL,
 	"cut", "[r]=list", fdef_cut, NULL,
 	":*:cut out single variables of each record"
 	":de:Einzelne Variablen aus den Datensätzen ausschneiden"
-};
+);
