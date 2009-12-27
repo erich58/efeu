@@ -1,0 +1,25 @@
+void SEP(str key = "*")
+	printf("===== %s =====\n", key);
+
+Info().load("B", "Testeintrag B", "info");
+Info x = Info("B");
+x
+(str) x
+x.name
+x.head
+x.entry
+(List_t) x
+//interactive
+
+void Show(Info z)
+{
+	SEP(z);
+	iostd << z.name << "\t" << z.head << "\n";
+	iostd << z.entry;
+	iostd << (List_t) z << "\n";
+
+	for (x in z)
+		Show(x);
+}
+
+Show(Info())

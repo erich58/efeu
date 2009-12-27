@@ -1,0 +1,113 @@
+/*	Befehle für Marken und Referenzen
+	(c) 1999 Erich Frühstück
+	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+*/
+
+/*	Interne Referenzen
+*/
+
+Label
+	$1 |{|<Name>|}|
+
+Der Befehl $1 setzt einen Label an der aktuellen Position.
+
+\def\label	label('l', ParseArg(cin));
+
+Referenz
+	$1 |{|<Name>|}|
+
+Der Befehl $1 referenziert den Wert eines Labels.
+
+\def\ref	label('r', ParseArg(cin));
+
+Seitenreferenz
+	$1 |{|<Name>|}|
+
+Der Befehl $1 referenziert die Seite eines Labels.
+
+\def\pref	label('p', ParseArg(cin));
+
+Kombinierte Referenz
+	$1 |{|<Name>|}|
+
+Der Befehl $1 referenziert Wert und Seite eines Labels.
+
+\def\vref	label('v', ParseArg(cin));
+
+/*	Begriffserläuterung
+*/
+
+\eval	DataBase btab = DataBase(str, cmp);
+
+Begriffsname
+	$1 <Name>
+
+Der Befehl $1 definiert den Namen eines Begriffs in einer
+Begriffsbeschreibungsdatei.
+
+\def\name	cout << "<*" << ParseLine(cin) << "*>\\br\n";
+
+Stichwortreferenz
+	$1 |[|<Name>|]|\br
+	$1 |{|<Name>|}|
+
+Der Befehl $1 referenziert den Begriff <Name>. Steht der Name in
+eckigen Klammern, bleibt er im laufenden Text unsichtbar, ansonsten
+wird er dargestellt.
+
+\def\bref	{{
+	str name = ParseOpt(cin, true);
+
+	if	(name)	btab += name;
+
+	name = ParseArg(cin);
+
+	if	(name)
+	{
+		btab += name;
+		cout << name;
+	}
+}}
+
+Begriffsliste
+
+Der Befehl $1 generiert eine Begriffsliste
+
+\def\blist	{
+for (x in btab)
+	fprintf(cout, "*\t%s\n", x);
+}
+
+Begriffsverzeichnis
+
+Der Befehl $1 generiert ein Begriffsverzeichnis
+
+\def\makebg	{{
+	str name = tmpnam();
+	IO io = open(name, "w");
+
+	for (x in btab)
+		fprintf(io, "%s\n", x);
+
+	close(io);
+	cout << "\\appendix Begriffserläuterungen\n");
+	cout << filter("bglist -f " + name);
+	remove(name);
+}}
+
+/*	Externe Referenzen
+*/
+
+Referenz auf einen Handbucheintrag.
+	$1 |{|<arg>|}|
+
+Der Befehl $1 generiert eine Referenz auf einen Handbucheintrag.
+
+\def\mref	label('m', expand(ParseArg(cin)));
+
+Referenz auf einen Hyperlink.
+	$1 |[|<url>|] {|<Bezeichnung>|}|
+
+Der Befehl $1 generiert einen Hyperlink.
+
+\def\url	url(ParseOpt(cin, true), expand(ParseArg(cin)));

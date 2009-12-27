@@ -1,0 +1,50 @@
+\secnum[3]
+\entry[memalloc]{memalloc, memnotice, memfree, memstat}
+\Name
+\caption{Robuste Speicherzuweisung}
+\Synopsis
+\tthang
+#include <EFEU/memalloc.h>
+
+void *memalloc (size_t \it{size});
+
+void memnotice (void *\it{ptr});
+
+void memfree (void *\it{ptr});
+
+void memstat (void);
+\end
+\Description
+Die Funktion \tt{memmalloc} reserviert einen Speicherplatz der
+Größe \it{size}.
+Die Funktionen verwalten unterschiedliche
+Zuweisungstabellen in Abhängigkeit der Größe des Speicherfeldes.
+
+Die Funktion \tt{memnotice} registriert ein mit \tt{lmalloc}
+oder \tt{malloc} generiertes Speicherfeld und ermöglicht damit
+die Freigabe des Speicherfeldes mit \tt{memfree}.
+
+Die Funktion \tt{memfree} gibt einen mit \tt{memalloc}
+generierten Speicherplatz frei. Die Funktion überprüft den
+Speicherplatz \it{ptr}, ob er aus den Zuweisungstabellen
+stammt. Die Übergabe eines Pointers, der \it{nicht}
+von einem Aufruf von \tt{memalloc} stammt oder mit
+\tt{memnotice} registriert wurde, ist zulässig.
+
+Die Funktion \tt{memstat} schreibt eine Liste der
+von \tt{memalloc} reservierten Speichersegmete
+zur Standardfehlerausgabe.
+\SeeAlso
+\tt{alloctab(3)}, \tt{lmalloc(3)}.\break
+\tt{malloc(3S)}, \tt{stdio(3S)} im \PRM.
+\Diagnostics
+Kann der gewünschte Speicherplatz nicht reserviert werden,
+wird die Verarbeitung mit einer Fehlermeldung abgebrochen.
+Falls \tt{memnotice} zweimal mit dem selben Datenpointer
+aufgerufen wird, ohne daß er zuvor freigegeben wurde,
+wird eine Warnung ausgegeben.
+\Notes
+Ein Anwendungsprogramm, daß viele gleich lange Speichersegmente
+verwendet, sollte diese nach Möglichkeit direkt mit \tt{alloctab(3)}
+verwalten, da damit der Zuweisungsalgorithmus von
+\tt{memalloc} entlastet wird.

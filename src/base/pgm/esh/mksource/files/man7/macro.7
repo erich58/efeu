@@ -1,0 +1,53 @@
+\Name
+Macro -- Konstruktion von Makrodefinitionen
+\Synopsis
+\tthang
+\#include \<macro.ms\>
+
+void Macro(IO <io>, str <name>, str <args>, str <body>, ...);
+
+void Define(IO <io>, IO <def>, ...)
+
+void Include(IO <io>, str <def>, ...)
+
+\Description
+Die Funktion |Macro| dient zur Konstruktion einer Makrofunktion.
+Als Argumente wird der Makroname <name>, die Argumentliste
+<args> und der Makrorumpf <body> übergeben.
+Die Makrodefinition wird in die Datei <io> geschrieben. Hier wird
+wahlweise |hdr| oder |src| eingesetzt.
+
+Wird als Argumentliste ein Nullpointer übergeben, wird ein Makro
+ohne Argument generiert. Bei einem Leerstring wird ein
+Makro mit 0 Argumenten generiert.
+
+Die zusätzlichen Argumente werden als der Reihe nach in den
+Stringregistern beginnend bei 1 gespeichert und können damit
+über Parametersubstitution, die auf die drei anderen Argumente
+angewendet wird, eingebaut werden.
+
+Bei Zeilenvorschüben im Makrorumpf werden automatisch entsprechende
+Fortsetzungszeilen in der Makrodefinition generiert.
+
+Einfache Makrodefinitionen können mit der Funktion |Define| generiert
+werden. Jede Zeile der Eingabestruktur <def> besteht aus dem
+Makronamen, dem Ersetzungstext und einem Beschreibungstext.
+Besteht der Ersetzungstext aus mehr als einem Wordf, muß er unter
+Anführung gestellt werden.
+
+Die Funktion |Include| dient zur Konstruktion von
+|#include|-Statements in den Sourcefiles. Das Argument <def> wird
+in Teilstrings (Filenamen) aufgespalten. Für jeden Teilstring wird ein
+|#include|-Statement generiert. Steht ein Teilstring nicht in spitzen
+Klammern, wird er unter Anführung gestellt.
+
+\Example
+Das nachfolgende Beispiel zeigt die Anwendung der obigen Funktionen.
+
+\spage [3]
+@MSExample(mac.bsp,erzeugt die Programmzeilen)
+\end
+
+\SeeAlso
+mksource(1),\br
+struct(7), function(7).

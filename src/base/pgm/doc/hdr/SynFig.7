@@ -1,0 +1,101 @@
+\Name
+SynFig -- Werkzeuge zur Generierung von Übersichten
+\Synopsis
+\tthang
+\#include \<SynFig.hdr\>
+
+SynFig SynFig (IO <io>, int <margin> = 6, bool <npage> = true)
+
+void SynFig::caption (str <hname>, str <sname>)
+
+void SynFig::printf (str <fmt>, ...)
+
+void SynFig::puts (str <text>)
+
+virtual void SynFig::note (str <name>, int <width> = 3)
+
+void SynFig::tab (TabLabel <col>, int <width> = 2, int <height> = 2)
+
+void SynFig::body (TabLabel <line>, mdmat <md>, VirFunc <idx> = NULL, int <lag> = 0)
+
+void SynFig::tabline (str <label>, ...)
+
+//void SynFig::picture (int <height> = 14, int <xpos> = 0, int <ypos> = 0)
+
+void SynFig::end ()
+\Description
+Der Datentype |SynFig| erlaubt die Konstuktion einer
+|fig|-Umgebung in |efeudoc|.
+
+Der Konstruktor benötigt als Argument die aktuelle
+Ausgabestruktur. Mit <margin> wird der linke Rand der Übersicht angegeben.
+Falls das optionale Flag <npage> gesetzt ist,
+wird die Tabelle auf einer neuen Seite begonnen.
+
+Der Abschluß der |fig|-Umgebung erfolgt automatisch bei Freigabe
+der |SynFig|-Struktur. Eine explizite Freigabe ist mit der
+Funktion |free()|, oder durch Initialisierung mit NULL möglich.
+Endet die Lebensdauer einer |SynFig|-Struktur nach einer
+Tabellendefinition, kann auf die explizite Freigabe verzichtet werden,
+da der Destruktor automatisch aufgerufen wird.
+
+Die Tabellenüberschrift wird am einfachsten mit der Funktion
+|SynFig::caption| generiert.
+Als Argument wird die Haupt- und Unterüberschrift übergeben.
+Der Befehl sollte am Anfang einer Übersicht stehen und kann nur
+einmal verwendet werden.
+
+Zur Konstruktion beliebiger Textteile in der Tabellenumgebung stehen
+die folgende Funktionen zur Verfügung:
+[|SynFig::puts|]
+	gibt <text>, gefolgt von einem Zeilenvorschub aus.
+[|SynFig::printf|]
+	Erlaubt eine formatierte Ausgabe von Variablen
+	(Vergleiche dazu \mref{printf(3)}).
+
+Tabellenanmerkungen können mit der Funktion |SynFig:note| generiert
+werden. Das Argument <width> gibt die Spaltenbreite an.
+Alternativ dazu können die Anmerkungen bereits als Makro
+vordefiniert sein. Der Makroaufruf wird am einfachsten mit
+|SynFig::puts| ausgegeben.
+
+\margin	Tabellenkonstruktion
+
+Mit |SynFig::tab| wird der Tabellenkopf eingeleitet.
+Als Argument wird der Achsenbezeichner für die Spalten
+und optional die Standardbreite
+einer Spalte und die Standardhöhe einer Zeile übergeben.
+
+Der Tabelenkörper wird mit der Funktion |SynFig::body|
+generiert. Als erstes Argument wird die Achsenstruktur für
+die Tabellenzeilen übergeben. Danach folgt die Datenmatrix
+mit den Tabellendaten und den zugehörigen Auswertungsparameter.
+
+Die Tabellendaten werden mit der Funktion |mdmat::data| generiert,
+wobei der Definitionsstring von der Achsenstruktur <line> bestimmt wird.
+Die anderen Parameter werden von der Funktion |SynFig::body| übernommen.
+
+Eine einzelne Tabellenzeile wird mit der Funktion
+|SynFig::tabline| generiert. Als Argument wird der
+Zeilenbezeichner <label> und die Liste der Tabellenwerte
+ausgegeben. Fehlen die Tabellenwerte, wird eine Leerzeile mit
+Balken generiert.
+
+Die Funktion |SynFig::end| schließt eine Tabelle ab.
+
+\Example
+Das folgende Beispiel
+
+\include[verbatim] bsp.tab
+
+generiert die folgende Ausgabe
+
+\include[eval verbatim] bsp.tab
+
+\SeeAlso
+\mref{printf(3)} im @PRM.\br
+\mref{efeudoc(1)}, \mref{mdmat(5)}, \mref{TabLabel(7)}.
+
+\Notes
+Die globale Variable |fmt_str| wird bei der Tabellenkonstruktion
+auf |"%*s"| gesetzt.

@@ -1,0 +1,1 @@
+MathProg(korrscan,korrscan.o picture.o load.o copy.o adjust.o)

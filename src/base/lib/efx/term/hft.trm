@@ -1,0 +1,19 @@
+/*	Terminalanpassung für hft
+	(c) 1994 Erich Frühstück
+	A-1090 Wien, Währinger Straße 64/6
+*/
+
+COLUMNS = getenv("COLUMNS", "106");
+LINES = getenv("LINES", "34");
+
+CLEAR = "\e[H\e[J"	// Bildschirm Löschen
+
+//ItalicFont = "\e[4m"	// Schriftwechsel Italic ("Unterstrichen)
+//ItalicFont = "\e[31m"	// Schriftwechsel Italic -> rot
+//ItalicFont = "\e[32m"	// Schriftwechsel Italic -> grün
+//BoldFont = "\e[1m"	// Schriftwechsel Fett
+//BoldFont = "\e[7m"	// Schriftwechsel Fett -> Revers Video
+//BoldFont = "\e[33m"	// Schriftwechsel Fett -> gelb
+ItalicFont = "\e[33m"	// Schriftwechsel Italic -> gelb
+BoldFont = "\e[34m"	// Schriftwechsel Fett -> blau
+RomanFont = "\e[0;30m"	// Schriftwechsel Standard ("Roman)

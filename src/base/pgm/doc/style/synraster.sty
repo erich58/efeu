@@ -1,0 +1,83 @@
+%	Anpassung der OUTPUT - Routine für Raster
+%	(c) 1995 Erich Frühstück
+%	A-1090 Wien, Währinger Straße 64/6
+
+\typeout{Stilfile für Raster, (c) 1995 Erich Frühstück}
+%\usepackage{graphicx}
+%\usepackage[dvips,usenames]{color}
+%\input colordvi
+%\def\color#1#2{#2}
+
+%\advance\voffset by 1cm
+%\advance\hoffset by 1cm
+
+%	\@tempdima wird intern verwendet
+
+\newcount\Sr@Count
+
+\def\Sr@Box#1{\vbox to \z@ {%
+	\vskip -0.5\fboxrule
+	\vskip -\Syn@vunit
+	\hrule height \fboxrule
+	\hbox to 2\Syn@hunit {%
+		\vsize=#1\Syn@vunit
+		\advance\vsize by 2\Syn@vunit
+		\advance\vsize by \headsep
+		\advance\vsize by 10.5mm
+		\advance\vsize by \footskip
+		\advance\vsize by -\fboxrule
+		\vrule height \vsize
+		\hss
+		\vrule height \vsize
+	}%
+	\hrule height \fboxrule
+	\vss
+}}
+
+%	Vertikale Boxen
+
+\def\Sr@VLine#1{\hbox{%
+	\Sr@Count\Syn@Spalten
+	\loop
+	\ifnum\Sr@Count>1
+		\Sr@Box{#1}\hskip\Syn@hunit
+		\advance\Sr@Count by -1
+	\repeat
+	\Sr@Box{#1}%
+}}
+
+\def\Sr@Line#1{\hbox {\vbox to \Syn@vunit
+	{\raggedleft \hsize\@tempdima \advance\hsize by 8mm \vss #1 \hrule}}}
+
+\def\Sr@HLine{%
+	\Sr@Count=2
+	\loop
+	\ifnum\Sr@Count<\Syn@Zeilen
+		\Sr@Line{\the\Sr@Count}%
+		\advance\Sr@Count by 1
+	\repeat
+}
+
+\def\Sr@STER{\hbox to \z@ {\hskip -9\Syn@hunit{\vbox to \z@ {%
+	\@tempdima=41\Syn@hunit
+	\color{Red}{%
+	\vskip-\Syn@vunit
+	\Sr@VLine{\Syn@Zeilen}
+	\vskip-\Syn@vunit
+	\color{Cyan}{\Sr@Line{~}}%
+	\color{Cyan}{\Sr@Line{Kopf}}%
+	\vskip 10.5mm
+	\vskip \headsep
+	\vskip -2\Syn@vunit
+	\color{Cyan}{\Sr@Line{0}}%
+	\Sr@Line{1}%
+	\color{Cyan}{\Sr@HLine}%
+	\Sr@Line{\Syn@Zeilen}%
+	\color{Cyan}{\Sr@Line{~}}%
+	\color{Cyan}{\Sr@Line{~}}%
+	\color{Cyan}{\Sr@Line{Fuß}}%
+	\vss
+	}%
+}}\hss}}
+
+\let\Syn@HeadHook\Sr@STER

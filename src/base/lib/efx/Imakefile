@@ -1,0 +1,2 @@
+XLIBS=	LIB_EFM
+Destination(TRMDIR,$(EFEULIB)/term)

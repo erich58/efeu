@@ -1,0 +1,25 @@
+DEP=	DEP_IORL DEP_MD DEP_MATH DEP_EFX DEP_EFM
+LIB=	LIB_IORL LIB_MD LIB_MATH LIB_EFX LIB_EFM
+
+OBJ=	efeudoc.o skip.o parse.o p_reg.o p_block.o copy.o docsym.o \
+	doctab.o doc_cmd.o doc_mac.o \
+	doc_tools.o doc_mark.o doc_env.o doc_copy.o doc_tab.o \
+	doc_verb.o doc_input.o subin.o expand.o \
+	tab_info.o tab_load.o tab.o tab_mac.o \
+	test.o \
+	DocDrv.o \
+	sgml.o sgml_putc.o sgml_cmd.o sgml_env.o \
+	stex.o stex_putc.o stex_cmd.o stex_env.o \
+	mroff.o mroff_putc.o mroff_cmd.o mroff_env.o \
+	term.o term_putc.o term_cmd.o term_env.o \
+	Doc.o docout.o \
+	listarg.o f_section.o setup.o
+
+Destination(CFGDIR,$(EFEUTOP)/lib/efeudoc)
+CFLAGS= -DCFGPATH='".:$(EFEUTOP)/doc:$(CFGDIR)"'
+
+Destination(TEXDIR,$(EFEUTOP)/texmf/tex/latex/syntex)
+Program($(BINDIR),efeudoc,$(OBJ),$(DEP),$(LIB))
+
+all::
+	-texhash $(EFEUTOP)/texmf

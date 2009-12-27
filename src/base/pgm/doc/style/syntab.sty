@@ -1,0 +1,293 @@
+%	SynTab.sty
+%	(c) 1995 Erich Frühstück
+%	A-1090 Wien, Währinger Straße 64/6
+
+\NeedsTeXFormat{LaTeX2e}
+\typeout{Synthesis-Layout für Tabellen. Version 1.0 vom 27.10.1999}
+
+%	Tabellenumgebung
+
+\ifSyn@globaltabnum
+\newcounter{SynTable}
+\renewcommand{\theSynTable}{\arabic{SynTable}}
+\else
+\newcounter{SynTable}[chapter]
+\renewcommand{\theSynTable}{\ifnum \value{chapter} > 0\relax
+	\thechapter.\arabic{SynTable}%
+	\else \arabic{SynTable} \fi}
+\fi
+
+\newcount\St@margin
+\St@margin=6
+
+%	Hauptüberschrift
+
+\def\St@caption{\@ifstar{\St@scaption}{\@dblarg{\St@xcaption}}}
+
+\def\St@scaption#1{{\raggedright\bf\fixedspacing #1}\newline}
+
+\def\St@xcaption[#1]#2{{%
+	\Syn@numcontentsline{toc}{table}{\theSynTable}{#1}
+	\Syn@numcontentsline{lot}{table}{\theSynTable}{#1}
+	\vspace{\baselineskip}
+	\TopMargin{Übersicht \theSynTable}
+	{\bf\fixedspacing #2}\newline\nopagebreak}\ignorespaces}
+
+\def\St@captionF{\@ifstar{\St@scaption}{\@dblarg{\St@xcaptionF}}}
+
+\def\St@xcaptionF[#1]#2{{%
+	\vspace{\baselineskip}
+	\TopMargin{Übersicht \theSynTable~--~Fortsetzung}
+	{\bf\fixedspacing #2}\newline\nopagebreak}\ignorespaces}
+
+%	Unterüberschrift
+
+\def\St@subcaption{\@ifstar{\St@ssubcaption}{\@dblarg{\St@xsubcaption}}}
+
+\def\St@ssubcaption#1{{\raggedright #1}\newline}
+
+\def\St@xsubcaption[#1]#2{{%
+	\Syn@addcontentsline{toc}{subcaption}{#1}
+	\Syn@addcontentsline{lot}{subcaption}{#1}
+	{\raggedright #2}\newline}}
+
+\def\St@subcaptionF{\@ifstar{\St@ssubcaption}{\@dblarg{\St@xsubcaptionF}}}
+
+\def\St@xsubcaptionF[#1]#2{{{\raggedright #2}\newline}}
+
+
+\newenvironment{SynTable}[1][6]{%\par%
+	\St@margin=#1
+	\refstepcounter{SynTable}%
+	\let\caption\St@caption
+	\let\subcaption\St@subcaption
+	\begin{samepage}
+	\begin{list}{\strut}{%
+		\leftmargin=#1\Syn@RasterZelle
+		\advance\leftmargin by -\evensidemargin
+		\advance\textwidth by -\leftmargin
+	\vspace{\baselineskip}
+	\item[]
+	}%
+}{%
+%	\outer@nobreak
+	\end{list}%
+	\end{samepage}%
+}
+
+\newenvironment{SynTableF}[1][6]{%\par%
+	\St@margin=#1
+	\let\caption\St@captionF
+	\let\subcaption\St@subcaptionF
+	\begin{samepage}
+	\begin{list}{\strut}{%
+		\leftmargin=#1\Syn@RasterZelle
+		\advance\leftmargin by -\evensidemargin
+		\advance\textwidth by -\leftmargin
+	\vspace{\baselineskip}
+	\item[]
+	}%
+}{%
+%	\outer@nobreak
+	\end{list}%
+	\end{samepage}%
+}
+
+%	Tabelle
+
+\newdimen\St@LabelWidth
+\newdimen\St@ColumnWidth
+
+\newdimen\SynTabColSep
+\SynTabColSep=\Syn@hunit
+\newdimen\SynTabUnit
+\SynTabUnit=\Syn@RasterZelle
+
+\def\St@Bold{\bf}
+\def\St@Roman{\rm}
+\let\St@Font\St@Roman
+
+\def\thislinebold{\noalign{\global\let\St@Font\St@Bold}}
+\def\thisrulebold{\noalign{\global\let\St@StdWidth\Syn@ThickLine}}
+\def\boldline{\noalign{\global\let\St@Font\St@Bold}}
+\def\boldrule{\noalign{\global\let\St@StdWidth\Syn@ThickLine}}
+
+\def\St@LineHeight{2\Syn@vunit}
+\let\St@CurrentHeight\St@LineHeight
+\def\lineheight#1{\noalign{\global\def\St@CurrentHeight{#1\Syn@vunit}}}
+
+\def\St@StdWidth{\Syn@ThinLine}
+
+\let\St@RuleWidth\St@StdWidth
+\def\St@Rule#1{\Syn@Balken{#1}{\St@RuleWidth}}
+\def\St@NoRule#1{}
+
+\let\theSt@Rule\St@Rule
+\def\norule{\global\let\theSt@Rule\St@NoRule}
+
+\fboxsep=-\fboxrule
+
+\newbox\St@box
+
+\def\St@alignl{\rightskip \z@ plus 0.5\hsize minus \SynTabColSep}
+\def\St@alignr{\raggedleft}
+\def\St@alignc{\centering}
+
+\def\St@MakeBox#1#2#3{%
+	\setbox\St@box=\vtop to \St@CurrentHeight {%
+		\hsize=#1\St@Font\csname St@align#2\endcsname\strut#3\vfill
+	}\theSt@Rule{#1}\box\St@box
+	\global\let\theSt@Rule\St@Rule}
+
+\def\St@Box#1#2{%
+	\St@ColumnWidth=\csname St@col\the\St@Counter\endcsname
+	\St@MakeBox{\St@ColumnWidth}{#1}{#2}%
+	\global\advance\St@Counter by 1}
+
+\newtoks\St@Label
+\newtoks\St@ColSep
+\newtoks\St@CR
+\newtoks\St@TabEnd
+\newtoks\St@Tabular
+\newtoks\St@Column
+\newtoks\St@EmptyLine
+
+\def\St@Append#1#2{#1=\expandafter\expandafter
+	\expandafter{\expandafter\the\expandafter#1\the#2}}
+
+%\St@Label={\St@Box{\rightskip \z@ plus 0.5\hsize minus \SynTabColSep}{#}}%
+\St@Label={\St@Box{l}{#}}%
+%\St@Column={&\St@Box{\raggedleft}{#}\global\St@TempCount\z@}%
+\St@Column={&\St@Box{r}{#}\global\St@TempCount\z@}%
+\St@ColSep={&}%
+\St@CR={\cr}%
+\St@TabEnd={\tabskip=0pt
+	\global\let\St@Font\St@Roman
+	\global\let\St@CurrentHeight\St@LineHeight
+	\global\let\St@StdWidth\Syn@ThinLine
+	\cr}%
+
+
+\newcount\St@Counter
+\newcount\St@NumCol
+\newcount\St@TempCount
+\St@TempCount\z@
+
+\def\St@multicol[#1]#2#3{\multispan#2{%
+	\St@ColumnWidth=-\SynTabColSep
+	\ifnum\St@Counter<\St@NumCol
+	\else\global\St@Counter=\z@\fi
+	\global\St@TempCount=\St@Counter
+	\global\advance\St@Counter by #2%
+	\loop
+	\ifnum\St@TempCount<\St@Counter
+		\advance\St@ColumnWidth by \SynTabColSep
+		\advance\St@ColumnWidth by \csname St@col\the\St@TempCount\endcsname
+		\global\advance\St@TempCount by 1%
+	\repeat
+	\St@MakeBox{\St@ColumnWidth}{#1}{#3}}%
+	\global\St@TempCount=\z@
+	\ignorespaces}
+
+\def\multicol#1#2{\St@multicol[r]{#1}{#2}}
+\def\lmulticol#1#2{\St@multicol[l]{#1}{#2}}
+\def\cmulticol#1#2{\St@multicol[c]{#1}{#2}}
+
+\St@EmptyLine={\cr}%
+\def\emptyline{\the\St@EmptyLine}
+
+%\def\St@indent{\leftskip2\Syn@hunit\relax}
+\def\St@indent{\advance\leftskip by 2\Syn@hunit\relax}
+
+\def\St@AddColumn#1{%
+	\St@ColumnWidth=#1\SynTabUnit
+	\advance\St@LabelWidth by -\St@ColumnWidth
+	\advance\St@ColumnWidth by -\SynTabColSep
+	\advance\St@Counter by \@ne
+	\expandafter\edef\csname St@col\the\St@Counter\endcsname {\the\St@ColumnWidth}%
+	\St@Append\St@EmptyLine\St@ColSep
+	\St@Append\St@Tabular\St@Column}
+
+\def\St@StdTab(#1,#2)#3{%
+	\St@LabelWidth=\textwidth
+	\def\St@LineHeight{#2\Syn@vunit}
+	\global\let\St@CurrentHeight\St@LineHeight
+	\leavevmode\vtop\bgroup
+	\let\indent\St@indent
+	\let\St@bf\bf
+	\def\bf{\St@bf\global\let\St@RuleWidth\Syn@ThickLine}
+	\let\St@rm\rm
+	\def\rm{\St@rm\global\let\St@RuleWidth\St@StdWidth}
+	\St@EmptyLine={}%
+%	\St@Tabular={\ialign\bgroup\tabskip\SynTabColSep\global\St@Counter\z@}%
+	\St@Tabular={\ialign\bgroup\tabskip\SynTabColSep\global\St@Counter\St@TempCount}%
+	\St@Append\St@Tabular\St@Label
+	\St@NumCol=#3
+	\St@Counter=\z@
+	\loop
+	\ifnum\St@Counter<\St@NumCol
+		\St@AddColumn{#1}%
+	\repeat
+	\expandafter\edef\csname St@col0\endcsname {\the\St@LabelWidth}
+	\St@Append\St@EmptyLine\St@CR
+	\St@Append\St@Tabular\St@TabEnd
+	\the\St@Tabular}
+
+\let\St@CurrentEntry\@empty
+
+\def\St@ExtTab#1#2{%
+	\St@LabelWidth=\textwidth
+	\def\St@LineHeight{#1\Syn@vunit}
+	\global\let\St@CurrentHeight\St@LineHeight
+	\leavevmode\vtop\bgroup
+	\let\indent\St@indent
+	\let\St@bf\bf
+	\def\bf{\St@bf\global\let\St@RuleWidth\Syn@ThickLine}
+	\let\St@rm\rm
+	\def\rm{\St@rm\global\let\St@RuleWidth\St@StdWidth}
+	\St@EmptyLine={}%
+%	\St@Tabular={\ialign\bgroup\tabskip\SynTabColSep\global\St@Counter\z@}%
+	\St@Tabular={\ialign\bgroup\tabskip\SynTabColSep\global\St@Counter\St@TempCount}%
+	\St@Append\St@Tabular\St@Label
+	\St@Counter=\z@
+	\@for\St@CurrentEntry:=#2\do{%
+		\ifx\St@CurrentEntry\@empty\else
+		\St@AddColumn{\St@CurrentEntry}%
+		\fi}%
+	\St@Append\St@EmptyLine\St@CR
+	\St@Append\St@Tabular\St@TabEnd
+	\St@NumCol=\St@Counter
+	\expandafter\edef\csname St@col0\endcsname {\the\St@LabelWidth}
+	\St@ColumnWidth=\St@NumCol\SynTabColSep
+	\St@ColumnWidth=-\St@ColumnWidth
+	\advance\St@ColumnWidth by \textwidth
+%	\St@ColumnWidth=\textwidth
+	\advance\St@ColumnWidth by -\St@LabelWidth
+	\divide\St@ColumnWidth by \St@NumCol
+	\the\St@Tabular}
+
+\def\SynTab{\par\nopagebreak\bgroup
+	\@ifnextchar({\St@StdTab}{\St@ExtTab}}
+
+%\def\endSynTab{\egroup \egroup \\ \strut \par \egroup}
+\def\endSynTab{\egroup \egroup \\ \strut \par \vspace{-\baselineskip}\egroup}
+
+%	Tabellenanmerkungen
+
+\newcommand{\SynTabNote}[2][3]{%
+	\ifhmode \hskip\Syn@hunit
+	\else \leavevmode
+	\fi
+	\footnotesize
+	\vtop to 0pt {%
+		\hsize=#1\Syn@RasterZelle
+		\advance\hsize by -\Syn@hunit
+		\rightskip \z@ plus 0.25\hsize minus 0.5\Syn@hunit
+		#2
+		\vss
+	}\ignorespaces}
+
+%	Anmerkungsmakros
+
+\newcommand{\setnote}[3][3]{\expandafter\def\csname Sn@#2\endcsname{\SynTabNote[#1]{#3}}}
+\def\note#1{\csname Sn@#1\endcsname\ignorespaces}

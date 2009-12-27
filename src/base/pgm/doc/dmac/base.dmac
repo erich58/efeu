@@ -1,0 +1,155 @@
+/*	Basisbefehle
+	(c) 1999 Erich Frühstück
+	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+*/
+
+Leerbefehl
+
+Der Befehl $1 bewirkt nichts.
+
+\def\relax	;
+
+Neue Befehlstabelle
+
+Der Befehl $1 generiert eine neue Tabelle für Befehle, Makros und
+Variablen und legt sie am Tabellenstack ab.
+
+\def\push	push(NULL);
+
+Befehlstabelle entfernen
+
+Der Befehl $1 entfernt die unterste Tabelle vom Tabellenstack.
+
+\def\pop	pop();
+
+Kommentar
+	$1 <Kommentar>
+
+Der Befehl $1 schreibt einen Kommentar in das Ausgabefile.
+
+\def\rem	comment(ParseLine(cin));	
+
+/*
+Befehl/Makro definieren
+	$1 |\\|<name> <expr>\br
+	$1 |@|<name> <fmt>
+
+Der Befehl $1 definiert den Befehl bzw. den Makro <name>.
+Dabei ist <expr> ist ein beliebiger Ausdruck des esh-Interpreters
+und <fmt> ein Formatstring.
+
+\def\def	def();
+*/
+
+Konfigurationsfile laden
+	$1 <name>
+
+Der Befehl $1 ladet die Befehle in der Konfigurationsdatei <name>.
+
+\def\config	config(xexpand(ParseLine(cin)));
+
+Datei einbinden
+	$1 |[|<flags>|]| <name>
+
+Der Befehl $1 bindet die Datei <file> an der aktuellen Position ein.
+Folgende Steuerflags können angegeben werden:
+[|verb|]
+	Wortwörtlicher Text ohne Interpretation von Sonderzeichen.
+	Tabulatoren werden durch Leerzeichen ersetzt.
+[|latex|]
+	Datei enthält LaTeX-Steuersequenzen
+[|sgml|]
+	Datei enthält SGML-Steuersequenzen
+[|man|]
+	Datei enthält nroff-Steuersequnenzen im Handbuchstandard
+[|ignore|]
+	Datei wird verarbeitet, aber es erfolgt keine Ausgabe.
+[|eval|]
+	Die Datei wird als Befehlsskript ausgewertet.
+
+\def\include	include(ParseOpt(cin, true), xexpand(ParseLine(cin)));
+
+Prozesseingabe
+	$1 |[|<flags>|]| <cmd>
+	~~~~...
+
+Der Befehl $1 bindet die Ausgabe des Kommandos <cmd> ein.
+Die Flags <flags> sind äquivalent zu |\include|.
+
+\def\pipe	input(ParseOpt(cin, true), popen(ParseLine(cin, true), "r"))
+
+/*
+Teildatenverarbeitung
+	$1 <flags>\br
+	...\br
+	|\endinput|
+
+Der Befehl $1 verarbeitet die Teildaten wie eine eigene Datei
+Die Flags <flags> sind äquivalent zu |\include|.
+
+\def\input	input(ParseLine(cin), ParseRegion(cin, "\\\\endinput*"));
+*/
+
+Ausdruck auswerten
+	$1 <expr>\br
+	$1 <|{<expr>}|>
+
+Der Befehl $1 wertet den nachfolgenden Ausdruck <expr> aus und
+stellt das Ergebnis in die Standardeingabe. Der Ausdruck kann
+wahlweise als Befehlszeile, oder als Block mit geschwungenen
+Klammern angegeben werden.
+
+Beispiel: |\eval{3*5}| liefert \protect\eval{3*5}.
+
+\def\eval	eval(ParseExpr(cin));
+
+/*	Indexeintrag
+*/
+
+Indexeintrag
+	$1 <|[<Eintrag>]{<Bereich>}|>
+Der Befehl $1 generiert einen Indexeintrag <Eintrag> zu einem
+Textbereich <Bereich>.
+Fehlt <Eintrag> wird <Bereich> als Indexeintrag verwendet.
+
+\def\index	{{
+	str opt = ParseOpt(cin, true);
+	str arg = ParseArg(cin);
+
+	if	(!opt)	opt = arg;
+
+	mode('h');
+	index(xexpand(opt), expand(opt));
+	cout << arg;
+}}
+
+/*	Zeichen zurückschreiben
+*/
+
+Zeilenvorschub
+	$1
+Der Befehl $1 schreibt einen Zeilenvorschub zurück.
+
+\def\n	cin.ungetc('\n');
+
+Tabulator
+	$1
+Der Befehl $1 schreibt einen Tabulator zurück.
+
+\def\t	cin.ungetc('\t');
+
+
+/*	LaTeX-Befehle
+*/
+
+\LaTeX-Befehl
+	$1 <|[<Alternative>] {<LaTeX-Code>}|>
+
+Der Befehl $1 erlaubt die direkte Ausgabe von \LaTeX-Code an den
+SynTeX-Treiber. Bei allen anderen Ausgabetreibern wird die Alternative
+ausgegeben.
+
+\def\latex	{{
+	str alt = ParseOpt(cin, true);
+	if	(!latex(ParseArg(cin))) cout << alt;
+}}

@@ -1,0 +1,318 @@
+/*	Strukturprognose
+	(c) 1997 Erich Frühstück
+	A-1090 Wien, Währinger Straße 64/6
+*/
+
+#ifndef	_Include_Struktur
+#define	_Include_Struktur	1
+
+#include <TimeSeries/OLS>
+
+#if	0
+/*	Residuentabelle bei Differenzschätzung
+*/
+
+virtual void SynTab::residuen(str name, tsVec_t B, tsVec_t DB, tsVec_t DBS,
+	tsVec_t N, tsVec_t DN, tsVec_t DNS)
+{
+	int first = min(DB.first(), DN.first());
+	int last = max(DB.last(), DN.last());
+
+	TeXfmtpar.set();
+
+	this.caption("%s: Residuen %d bis %d", name, first, last);
+	this.io << string !
+\vskip-\baselineskip
+\begin{SynTab}(1.5,1){8}
+\boldline
+\lineheight{2}
+\norule & \multicol{4}{Bestand} & \multicol{4}{Betroffenheit} \cr
+\lineheight{2}
+\boldline
+\norule	& Absolut\-wert & Zu\-wachs & Schätz\-wert & Fehler\\ in \%
+	& Absolut\-wert & Zu\-wachs & Schätz\-wert & Fehler\\ in \% \cr
+!
+
+	double n, dn, b, db;
+	int jahr;
+
+	for (jahr = first; jahr <= last; jahr++)
+	{
+		double x;
+
+		fprintf(this.io, "%d", jahr);
+		b = B[jahr];
+		db = DB[jahr];
+		x = DBS[jahr];
+		fprintf(this.io, " & %.0f & %.0f & %.0f & %.2f",
+			b, db, x, (b ? 100. * (x - db) / b : 0.));
+		n = N[jahr];
+		dn = DN[jahr];
+		x = DNS[jahr];
+		fprintf(this.io, " & %.0f & %.0f & %.0f & %.2f",
+			n, dn, x, (n ? 100. * (x - dn) / n : 0.));
+		this.io << " \\cr\n";
+	}
+
+	last = max(DBS.last(), DNS.last());
+	this.io << "\\boldrule\n";
+
+	for (; jahr <= last; jahr++)
+	{
+		fprintf(this.io, "%d", jahr);
+		db = DBS[jahr];
+		b += db;
+		fprintf(this.io, " & %.0f & %.0f & %.0f & ---", b, db, db);
+		dn = DNS[jahr];
+		n += dn;
+		fprintf(this.io, " & %.0f & %.0f & %.0f & ---", n, dn, dn);
+		this.io << " \\cr\n";
+	}
+
+	TeXfmtpar.restore();
+	this.io << "\\end{SynTab}\n";
+}
+#endif
+
+
+/*	Dauer aus Betroffenheit und Bestand berechnen
+*/
+
+TimeSeries Dauer(str name, TimeSeries N, TimeSeries B)
+{
+	TimeIndex first = N.first > B.first ? N.first : B.first;
+	TimeIndex last = N.last < B.last ? N.last : B.last;
+	TimeSeries D = TimeSeries(name, first, last);
+	D.fmt = "%.2f";
+
+	double z;
+
+	for (; first <= last; first++)
+	{
+		z = N[first];
+		z = z ? B[first] / z : 0.;
+		D[first] = z * first.length;
+	}
+
+	return D;
+}
+
+#if	0
+/*	Residuentabelle bei Absolutwerten
+*/
+
+inline void SynTable_t::residuen(str name, tsVec_t B, tsVec_t BS, tsVec_t N, tsVec_t NS)
+{
+	int first = min(B.first(), N.first());
+	int last = max(B.last(), N.last());
+
+	TeXfmtpar.set();
+
+	this.caption("%s: Residuen %d--%d", name, first, last);
+	this.io << string !
+\begin{SynTab}(2,1){6}
+\boldline
+\lineheight{2}
+\norule & \multicol{3}{Bestand} & \multicol{3}{Betroffenheit} \cr
+\lineheight{2}
+\boldline
+\norule	& Beobach\-tung & Schätz\-wert & Fehler\\ in \%
+	& Beobach\-tung & Schätz\-wert & Fehler\\ in \% \cr
+!
+	int jahr;
+	double b, n;
+
+	for (jahr = first; jahr <= last; jahr++)
+	{
+		double x;
+
+		fprintf(this.io, "%d", jahr);
+		b = B[jahr];
+		x = BS[jahr];
+		fprintf(this.io, " & %.0f & %.0f & %.02f", b, x,
+			(b ? 100. * (x - b) / b : 0.));
+		n = N[jahr];
+		x = NS[jahr];
+		fprintf(this.io, " & %.0f & %.0f & %.02f", n, x,
+			(n ? 100. * (x - n) / n : 0.));
+		this.io << " \\cr\n";
+	}
+
+	last = max(BS.last(), NS.last());
+	this.io << "\\boldrule\n";
+
+	for (; jahr <= last; jahr++)
+	{
+		fprintf(this.io, "%d", jahr);
+		b = BS[jahr];
+		fprintf(this.io, " & %.0f & %.0f & ---", b, b);
+		n = NS[jahr];
+		fprintf(this.io, " & %.0f & %.0f & ---", n, n);
+		this.io << " \\cr\n";
+	}
+
+	TeXfmtpar.restore();
+	this.io << "\\end{SynTab}\n";
+}
+#endif
+
+
+/*	Strukturschätzung
+*/
+
+struct Struktur {
+	TimeSeries N;
+	TimeSeries RN;
+	TimeSeries B;
+	TimeSeries RB;
+};
+
+#if	0
+virtual void fprint(IO io, Struktur x)
+{
+	TimeSeries XN = 100. * x.RN / x.N;
+	XN.name = "XN";
+	XN.prec = 2;
+	TimeSeries XB = 100. * x.RB / x.B;
+	XB.name = "XB";
+	XB.prec = 2;
+	TimeSeries D = Dauer("B", x.N, x.B);
+	TimeSeries XD = Dauer("XD", x.N + x.RN, x.B + x.RB) - D;
+	XD = 100. * XD / D;
+	XD.name = "XD";
+	XD.prec = 2;
+	tsPrint(io, x.B, XB, x.N, XN, D, XD);
+}
+
+conversion (Struktur_t x, mdmat_t y, 1)
+{
+	double n, b, d;
+	str name = tempnam();
+	IO tmp = open(name, "w");
+	tmp << "##Type\tdouble\n";
+	tmp << "##Spalten\tvar\n";
+	tmp << "##Zeilen\tjahr\n";
+	tmp << "3\tN\tB\tD\n";
+
+	for (int jahr = x.N.first(); jahr <= x.N.last(); jahr++)
+	{
+		n = x.N[jahr];
+		b = x.B[jahr];
+		d = n ? (b / n) : 0.;
+		d *= (jahr % 4 == 0) ? 366. : 365.;
+		fprintf(tmp, "%d\t%.0f\t%.0f\t%.2f\n", jahr, n, b, d);
+	}
+
+	close(tmp);
+	y = mdload(sprintf("|mdread %s -", name));
+	remove(name);
+}
+
+inline void SynTable_t::Struktur(str name, Struktur_t st)
+{
+	int first = min(st.N.first(), st.B.first());
+	int last = max(st.N.last(), st.B.last());
+
+	TeXfmtpar.set();
+
+	this.caption("%s: Prognose %d--%d", name, first, last);
+	this.io << string !
+\begin{SynTab}(2,1){6}
+\boldline
+\lineheight{2}
+\norule & \multicol{2}{Bestand} & \multicol{2}{Betroffenheit} & \multicol{2}{Dauer} \cr
+\lineheight{2}
+\boldline
+\norule	& Absolut\-wert & Fehler & Absolut\-wert & Fehler & Absolut\-wert & Fehler \cr
+!
+
+	for (int jahr = first; jahr <= last; jahr++)
+	{
+		double tage = (jahr % 4 == 0) ? 366. : 365;
+		double n = st.N[jahr];
+		double rn = st.RN[jahr];
+		double xn = n + rn;
+		rn = n ? 100. * rn / n : 0.;
+		double b = st.B[jahr];
+		double rb = st.RB[jahr];
+		double xb  = b + rb;
+		rb = n ? 100. * rb / b : 0.;
+		double d = n ? (b * tage / n) : 0.;
+		double xd = xn ? (xb * tage / xn) : 0.;
+		double rd = d ? 100. * (xd - d) / d : 0.;
+
+		fprintf(this.io, "%d", jahr);
+		fprintf(this.io, " & %.0f", b);
+		fprintf(this.io, (rb ? " & %.2f" : " & --"), rb);
+		fprintf(this.io, " & %.0f", n);
+		fprintf(this.io, (rn ? " & %.2f" : " & --"), rn);
+		fprintf(this.io, " & %.2f", d);
+		fprintf(this.io, (rd ? " & %.2f" : " & --"), rd);
+		this.io << " \\cr\n";
+	}
+
+	TeXfmtpar.restore();
+	this.io << "\\end{SynTab}\n";
+}
+
+inline void operator+= (Struktur_t & x, Struktur_t y)
+{
+	x.N += y.N;
+	x.RN += y.RN;
+	x.B += y.B;
+	x.RB += y.RB;
+}
+
+
+function Struktur_t Struktur(IO io, str name, tsVec_t B, tsVec_t DB, OLSPar_t BPar,
+	tsVec_t N, tsVec_t DN, OLSPar_t NPar)
+{
+	SynTable_t tab;
+
+	tab = SynTable(io, 0);
+	tab.caption("%s: Schätzen des Bestands %d bis %d", name, DB.first(), DB.last());
+	tab.printf("\\vskip-\\baselineskip\n");
+	tab.koef(BPar);
+	tab.printf("\\vskip\\baselineskip\n");
+	tab.close();
+
+	tab = SynTable(io, 0);
+	tab.caption("%s: Schätzen der Betroffenheit %d bis %d", name, DN.first(), DN.last());
+	tab.printf("\\vskip-\\baselineskip\n");
+	tab.koef(NPar);
+	tab.printf("\\vskip\\baselineskip\n");
+	tab.close();
+
+	tab = SynTable(io, 0);
+	tab.residuen(name, B, DB, BPar.prj, N, DN, NPar.prj)
+	tab.close();
+
+	io << "\\clearpage\n";
+	return { N.prj(NPar.prj), N.res(NPar.prj), B.prj(BPar.prj), B.res(BPar.prj) };
+}
+
+function Struktur_t Struktur(IO io, str name, tsVec_t B, OLSPar_t BPar,
+	tsVec_t N, OLSPar_t NPar)
+{
+	SynTable_t tab;
+
+	tab = SynTable(io, 0);
+	tab.caption("%s: Schätzen des Bestandes %d--%d", name, B.first(), B.last());
+	tab.koef(BPar);
+	tab.close();
+
+	tab = SynTable(io, 0);
+	tab.caption("%s: Schätzen der Betroffenheit %d--%d", name, N.first(), N.last());
+	tab.koef(NPar);
+	tab.close();
+
+	tab = SynTable(io, 0);
+	tab.residuen(name, B, BPar.prj, N, NPar.prj);
+	tab.close();
+
+	io << "\\clearpage\n";
+	return { N.aprj(NPar.prj), N.ares(NPar.prj), B.aprj(BPar.prj), B.ares(BPar.prj) };
+}
+#endif
+
+#endif	/* _Include_Struktur */

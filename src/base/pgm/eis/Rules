@@ -1,0 +1,1 @@
+eis	DFXF	InstallFile(%s/%s.%s,$(EISDIR),%s)

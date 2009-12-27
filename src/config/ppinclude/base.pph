@@ -1,0 +1,36 @@
+/*	Basismakros für efeupp
+	(c) 1999 Erich Frühstück
+	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+
+	Version 1.0
+*/
+
+#ifndef	_base_pph
+#define	_base_pph	1
+
+/*	Löschen von typischerweise vordefinierten Makros,
+	die zu unerwarteten Ergebnissen führen können.
+*/
+
+#undef	unix
+#undef	linux
+#undef	dos
+#undef	UNIX
+#undef	MSDOS
+
+#if	__STDC__
+#define	String(x)	#x
+#define	Concat2(a,b)	@.##a##b##@.
+#define	Concat3(a,b,c)	@.##a##b##c##@.
+#define	Concat4(a,b,c,d)@.##a##b##c##d##@.
+#else
+#define	String(x)	"x"
+#define	Concat2(a,b)	a/**/b
+#define	Concat3(a,b,c)	a/**/b/**/c
+#define	Concat4(a,b,c,d)a/**/b/**/c/**/d
+#endif
+
+#define	NullArg		@.
+#define	Concat(a,b)	Concat2(a,b)
+
+#endif	/* base.pph */

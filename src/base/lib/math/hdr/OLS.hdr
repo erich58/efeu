@@ -1,0 +1,54 @@
+/*	Hilfsprogramme zur OLS-Schätzung
+	(c) 1995 Erich Frühstück
+	A-1090 Wien, Währinger Straße 64/6
+*/
+
+#ifndef	_Include_OLS
+#define	_Include_OLS	1
+
+#include <SynFig.hdr>
+
+/*	Koeffizienten in Datenmatrix konvertieren
+*/
+
+mdmat OLSPar()
+{
+	mdmat x[dim(this.koef)];
+	str label = NULL;
+
+	for (int i = 0; i < dim(this.koef); i++)
+	{
+		x[i] = mdcat("type=K,S,T", this.koef[i].val, this.koef[i].se,
+			this.koef[i].t);
+		label = paste(",", label, this.koef[i].name);
+	}
+
+	return mdcat("dep=" + label, (List_t) x);
+}
+
+/*	Koeffizienten im Synthesis-Stil ausgeben
+*/
+
+virtual void SynFig::tabline(OLSKoef x)
+	this.printf("%s | %.5g | %.5g | %.6f\n", x.name, x.val, x.se, x.t);
+
+virtual void SynFig::tab(OLSPar par, str width = "3.5")
+{
+	this.printf("\n\\begin{SynFig}(%s,1){3}\n", width);
+	this.printf("\\boldrule\nBeobachtungen & %d & ", par.nr);
+	this.printf("\\lmulticol{1}{Freiheitsgrade} & %d \\cr\n", par.df);
+	this.printf("R**2 & %.6f & ", par.r2);
+	this.printf("\\lmulticol{1}{RBAR**2} & %.6f \\cr\n", par.rbar2);
+	this.printf("Durbin Watson & %.6f & ", par.dw);
+	this.printf("\\lmulticol{1}{SEE} & %.3f \\cr\n", par.see);
+	this.tabline();
+	this.tabline("\\boldline\n\\norule", "Koeffizient",
+		"Standardfehler", "T-Statistic");
+
+	for (x in par.koef)
+		this.tabline(x);
+
+	this.end();
+}
+
+#endif	/* _Include_OLS */

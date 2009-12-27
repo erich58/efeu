@@ -1,0 +1,5 @@
+Label: EFEU-Basisbibliotheken/Standardkommandos
+Maintainer: Erich Frühstück
+Depends: base
+Version: 0.4
+Patchlevel: 0

@@ -1,0 +1,17 @@
+/*	Strukturdefinition
+*/
+
+config hdr
+
+#include <struct.ms>
+
+hdr << "#define	BASE	int a; int b\n"
+
+Struct("Data", "Referenzdatenstruktur", string !
+@macro	BASE	Basisvariablen
+12	b1	Bitfeld
+10	b2	Bitfeld
+int	i1[4]	Integervektor
+double	d	Gleitkommazahl
+unsigned\ char	c	Vorzeichenfreie Zeichenkonstante
+!);

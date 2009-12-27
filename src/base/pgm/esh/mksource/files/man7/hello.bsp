@@ -1,0 +1,10 @@
+/*	Kommando: Hello World
+*/
+
+config src 
+#include <function.ms>
+
+GlobalFunction("int main", "int argc, char **argv", string !
+printf("Hello World!\n");
+return 0;
+!);

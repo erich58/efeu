@@ -1,0 +1,101 @@
+Ident = "Datenmatrix ausgeben";
+Copyright = "(c) 1997 Erich Frühstück, A-1090 Wien, Währinger Straße 64/6";
+Version = "2";
+
+bool PrintMode = true;
+bool Reduce = false;
+str VarDef = NULL;
+str Title = NULL;
+str Input = NULL;
+str Output = NULL;
+str SelDef = NULL;
+str SumList = NULL;
+str Mark = "#-1";
+str mode = "std";
+str locale = NULL;
+str Flags = NULL;
+
+str LP = "|tex2ps - | lpr -h ";
+str LPQ = "|tex2ps -q - | lpr -h ";
+str PS = "|tex2ps -";
+str PSQ = "|tex2ps -q -";
+
+PrintListDelim = "\t";
+fmt_long = "%*li";
+fmt_float = "%*.*f";
+
+void addflag(str x)
+	Flags = paste(" ", Flags, x);
+
+void texmode(str m = "tex")
+	mode = m, addflag("title"), locale = "TeX";
+
+PgmOpt("F file", "gload(IncPath, #1)", "Datei mit Definitionen laden")
+PgmOpt("E expr", "geval(#1)", "Ausdruck auswerten")
+
+PgmOpt("M mode", "mode=#1", "Ausgabemodus, Vorgabe $(mode:%#s)")
+PgmOpt("test", "mode=\"test\"", "Aufbereitung als ASCII-Datei")
+PgmOpt("ascii", "mode=\"ascii\"", "Aufbereitung als ASCII-Datei")
+PgmOpt("struct", "mode=\"struct\"; addflag(\"nohead nomark\")",
+	"Struktorausgabe")
+PgmOpt("csv", "mode=\"csv\"; locale=\"de\"", "Aufbereitung für excel")
+PgmOpt("tex", "texmode()", "Aufbereitung für TeX")
+PgmOpt("tab", "texmode(\"tab\")", "Aufbereitung für TeX-Tabellen")
+PgmOpt("data", "mode=\"data\"; addflag(\"nohead\")", "Nur Datenwerte ausgeben")
+PgmOpt("sc", "mode=\"sc\"; locale=\"us\"", "Aufbereitung für sc-Spreadsheet")
+PgmOpt("std", "PrintListDelim=\" \"; field_width = 7; \
+	addflag(\"mode=std title label=8\")",
+	"Fixe Spaltenausrichtung")
+
+PgmOpt("ps", "texmode(); Output=PS",
+	"Ausgabe als Postscriptfile, Hochformat")
+PgmOpt("psq", "texmode(); addflag(\"landscape\"); Output=PSQ",
+	"Ausgabe als Postscriptfile, Querformat")
+PgmOpt("lp", "texmode(); Output=LP",
+	"Ausgabe zum Drucker, Hochformat")
+PgmOpt("lpq", "texmode(); addflag(\"landscape\"); Output=LPQ",
+	"Ausgabe zum Drucker, Querformat")
+
+PgmOpt("m", "addflag(\"mark\")", "Spaltenbezeichner markieren")
+PgmOpt("M", "addflag(\"nomark\")", "Spaltenbezeichner unterdrücken")
+PgmOpt("h", "addflag(\"nodata\")", "Nur Header ausgeben")
+PgmOpt("b", "addflag(\"nohead\")", "Header unterdrücken")
+PgmOpt("t", "addflag(\"title\")", "Nur Titel im Header ausgeben")
+PgmOpt("z", "addflag(\"nozero\")", "Nullwerte unterdrücken")
+
+PgmOpt("us", "locale=\"us\"", "Amerikanische Zahlendarstellung")
+PgmOpt("de", "locale=\"de\"", "Deutsche Zahlendarstellung")
+
+PgmOpt("f font", "addflag(#1+\"pt\")", "Fontgröße in pt")
+PgmOpt("l width", "addflag(\"label=\"+#1)", "Breite der Zeilenbezeichner")
+PgmOpt("3", "float_align=3", "3-Stellige Gleitkommausrichtung")
+PgmOpt("w width", "field_width=#1", "Feldbreite der Zahlenwerte")
+PgmOpt("p prec", "float_prec=#1", "Genauigkeit der Zahlenwerte")
+PgmOpt("d delim", "PrintListDelim=#1", "Trennzeichen in Listen")
+PgmOpt("g", "fmt_float=\"%*.*g\"", "Universalformat verwenden")
+PgmOpt("e", "fmt_float=\"%*.*e\"", "Exponentialformat verwenden")
+
+PgmOpt("x list", "Mark=#1", "Achsenliste für Spalten")
+PgmOpt("s list", "SumList=#1", "Achsen aufsummieren")
+PgmOpt("r", "Reduce=true", "Entfernen von singulären Achsen")
+PgmOpt("v [name=]var", "VarDef=paste(' ', VarDef, #1)", "Variablenselektion")
+PgmOpt("T titel", "Title=#1", "Titel der Ausgabedatei")
+PgmArg("ein", "Input=#1", "Name der Eingabedatei")
+PgmOptArg("aus", "Output=#1;PrintMode=false", "Name der Ausgabedatei")
+PgmXArg("*=*", "SelDef=paste(' ', SelDef, #1)", NULL)
+PgmOptArg("name=var", NULL, "Selektionsparameter")
+
+loadarg;
+
+mdmat md = mdload(Input, SelDef, VarDef);
+
+if	(SumList)	md = sumaxis(md, strsub(SumList, ",", " ", true));
+if	(Reduce)	md.reduce();
+if	(Title)		md.title = Title;
+if	(mode)		addflag("mode=" + mode);
+
+setlocale(LC_PRINT, locale);
+
+md.mark(strsub(Mark, ",", " ", true));
+md.print(open(Output, "wz"), Flags);
+free(md);

@@ -1,0 +1,130 @@
+/*	Befehle für die Titelseite
+	(c) 1999 Erich Frühstück
+	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+*/
+
+\eval	{
+	str style = NULL;	// Dokumentstil
+	str date = NULL;	// Publikationsdatum
+	str dochead = NULL;	// Kopfzeilentext
+	str title = NULL;	// Haupttitel
+	str subtitle = NULL;	// Untertitel
+	str author = NULL;	// Autorenliste
+	str docnote = NULL;	// Prozessuale Anmerkung
+	str addr = NULL;	// Adressenblock
+	str synpkg = NULL;	// Liste von SynTeX-Paketen
+	str synflag = NULL;	// Flags für SynTex-Makromodul
+}
+
+Dokumentart
+	$1 <Stil>
+
+Der Befehl $1 setzt die Dokumentart.
+
+\def\style	style = xexpand(ParseLine(cin));
+
+Datum setzen
+	$1 <Datum>
+
+Der Befehl $1 setzt das Datum des Dokuments.
+
+\def\date	date = expand(ParseLine(cin));
+
+Datum abfragen
+	$1
+
+Der Befehl $1 ruft das Dokumentdatum ab.
+
+\def\thedate	plain(date);
+
+Titel
+	$1 |[|<Kurzform>|]| <Titel>\br
+	<Untertitel>
+
+Falls das Dokument noch nicht begonnen wurde, setzt der Befehl $1
+Titel und Untertitel des Dokuments. Ansonsten wird ein neues Kapitel
+begonnen, wobei die Kurzform für den Eintrag ins Inhaltsverzeichnis
+verwendet wird.
+
+\def\title	{{
+	str opt = ParseOpt(cin, true);
+	str main = ParseLine(cin);
+	str sub = ParsePar(cin);
+
+	if	(stat)	section('C', opt, main);
+	else		title = expand(main), subtitle = expand(sub);
+}}
+
+Dokumentkopf
+	$1 <Dokumentkopf>
+
+Der Befehl $1 setzt den Dokumentkopf
+
+\def\dhead	dochead = expand(ParseLine(cin));
+
+Dokumentanmerkung
+	$1 <Dokumentanmerkung>
+
+Der Befehl $1 setzt die Dokumentanmerkung für die Titelseite.
+
+\def\dnote	docnote = expand(ParseLine(cin));
+
+Autorenliste
+	$1 <Autorenliste>\br
+	~~~~&ldots;
+
+Der Befehl $1 definiert die Autorenliste für die Titelseite.
+
+\def\author	author = expand(strsub(ParseLine(cin, true), "\n", "\\br\n"));
+
+Adressblock
+	$1 <Adresse>\br
+	$1\br
+	<Adresse>
+
+Der Befehl $1 definiert den Adressenblock für die Titelseite.
+
+\def\addr	{
+addr = ParseLine(cin);
+addr = expand(addr ? addr : ParsePar(cin), false);
+}
+
+SynTeX-Pakete
+	$1[<opt>] <name>
+
+Der Befehl $1 definiert ein Zusatzpaket für SynTeX.
+
+\def\synpkg	{{
+	str opt = ParseOpt(cin, true);
+	str name = ParseLine(cin);
+	synpkg += sprintf("\\usepackage[%s]{%s}\n", opt, name);
+}}
+
+SynTeX-Flags
+	$1 <flag>,<flag>
+
+Der Befehl $1 erweitert die Dokumentflags für \SynTeX.
+\def\synflg	synflag = paste(",", synflag, ParseLine(cin));
+
+Vorwort/Einführung
+
+Der Befehl $1 beginnt das Vorwort
+
+\def\intro	newenv('i');
+
+Adresse der Synthesis-Forschungsgesellschaft
+
+\def@Synthesis
+<*Synthesis*> Forschungsgesellschaft\br
+Kolingasse 1/12\br
+A\-1090 Wien\br
+Telefon 310 63 25\br
+Fax 310 63 32
+
+Adresse von Erich Frühstück.
+
+\def@EF
+Erich Frühstück\br
+Südtirolergasse 17--21/5\br
+A\-3423 St.Andrä/Wördern\br
+Telefon (02242) 310 99

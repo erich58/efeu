@@ -1,0 +1,24 @@
+//\cmdeval{obbeyspace=true;}
+
+
+
+Das ist ein Test.
+	Einrückung.
+Ende der Einrückung.
+
+\list{tt}
+\cmdeval{autolist="\\ttitem#1a";}
+(*)	Absatz 1
+	jkjkjk
+	hgjghghjgh
+(*)	Absatz 2
+	-	fgfgf
+	-	jhkjkjkj
+xxxx
+	Absatz 3
+\cmdeval{autolist=NULL;}
+\endlist
+
+Neuer Absatz
+\input{test/b}
+Nach dem Eingabefile

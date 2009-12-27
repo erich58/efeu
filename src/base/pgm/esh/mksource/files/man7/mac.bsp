@@ -1,0 +1,24 @@
+/*	Makrodefinitionen
+*/
+
+config hdr
+
+#include <macro.ms>
+
+Include(hdr, "<$1/config.h> $2.h", "EFEU", "local");
+
+Define(hdr, string !
+FLAG_A	0x1	Flag A
+FLAG_B	0x2	Flag B
+FLAG_C	0x4	Flag C
+FLAG_X	"FLAG_B | FLAG_C"	Flag B oder C
+!);
+
+Macro(hdr, "Einfach", NULL, "1.5");
+Macro(hdr, "Test$1", "x,y", "(x + $1 * y)", 5);
+Macro(hdr, "Print_$1", "", string !
+printf(
+"$1: %s\\n", 
+$1)
+!, "Var");
+

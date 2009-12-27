@@ -1,0 +1,91 @@
+#!/bin/sh
+#	Generierung des Hauptmakefiles für das EFEU-Projekt
+#	(c) 2000 Erich Frühstück
+#	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+
+#	Version 0.9
+
+src=`pwd`
+tools="$src/tools"
+
+#	Basis-Sorce testen
+
+if [ ! -d $tools ]; then
+	echo "$0: Bibliothek $tools existiert nicht!"
+	exit 1
+fi
+
+#	Installationsbibliothek bestimmen
+
+top=`$tools/efeu-topdir $1` || exit 1
+
+#	PATH-Variable testen
+
+if 
+	expr :$PATH: : '.*:'$top/bin':.*' > /dev/null
+then
+	:
+else
+	echo "$0: PATH muß $top/bin enthalten"
+	exit 1
+fi
+
+#	Konfigurationsparameter laden
+
+$tools/efeu-config $top $src || exit 1
+. $top/etc/efeu.conf || exit 1
+
+arch=`uname -s`
+sysname=`uname -s`_`uname -m`
+
+echo
+echo "Konfiguration für $sysname"
+echo "Hauptbibliothek: $top"
+echo "Standardshell für Skripts: $DEFSH"
+echo "Verfügbarer Hauptspeicher: $MAXMEM"
+echo "C-Kompiler: $CC"
+
+#	Dateistempel für Systemkennung generieren
+
+touch $top/$sysname
+
+#	Basisbibliotheken einrichten
+
+if [ ! -d $top/bin ]; then
+	mkdir $top/bin || exit 1
+fi
+
+#	Basisskripts installieren
+
+(	cd scripts
+	for x in *
+	do
+		if [ -f $x ]; then
+			sed -e "s|@TOP@|$top|g" $x > $top/bin/$x
+			chmod a+x $top/bin/$x
+		fi
+	done
+)
+
+PATH=$top/bin:$PATH
+
+#	Projektdatei generieren
+
+if [ ! -f $top/etc/efeu.prj ]; then
+	echo "$0: Projektdatei $top/etc/efeu.prj wurde eingerichtet"
+	cp $tools/efeu.prj $top/etc/efeu.prj
+fi
+
+echo
+efeubuild $top
+#( cd $top/build; make base )
+
+cat <<!
+
+EFEU ist Konfiguriert und kann implementiert werden.
+Das Kompileren der EFEU-Bibliotheken und Kommandos erfolgt
+entweder mit efeugen oder direkt in der Bibliothek $top/build
+mit make.
+
+!
+exit

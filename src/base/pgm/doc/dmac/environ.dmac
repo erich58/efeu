@@ -1,0 +1,86 @@
+/*	Umgebungen
+	(c) 1999 Erich Frühstück
+	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+*/
+
+Kodeumgebung
+
+Der Befehl $1 wechselt in die Code-Umgebung. Innerhalb dieser
+Umgebung wird der Text in Schreibmaschine gesetzt.
+
+\def\code	newenv('c');
+
+Hängende Absätze
+
+Der Befehl $1 beginnt eine Umgebung mit hängenden Absätzen.
+
+\def\hang	newenv('h');
+
+Einrückung
+
+Der Befehl $1 wechselt in die quote-Umgebung.
+Innerhalb dieser Umgebung wird der Text eingerückt.
+
+\def\quote	newenv('q');
+
+Aktuelle Umgebung beenden
+
+Der Befehl $1 schließt die aktuelle Umgebung ab.
+
+\def\end	endenv(0);
+
+Alle Umgebungen beenden
+
+Der Befehl $1 schließt alle Umgebungen ab.
+
+\def\endall	endenv('a');
+
+/*	Listen
+*/
+
+Liste beenden
+
+Der Befehl $1 schließt die aktuelle Liste ab.
+
+\def\endlist	endenv('l');
+
+Beschreibungsmarke in Standardschrift
+	$1 <Marke>
+
+Der Befehl $1 setzt eine Beschreibungsmarke in Standardschrift.
+
+\def\item	newline(); cout << "[<=" << ParseLine(cin) << "=>]\n";
+
+Beschreibungsmarke in Kursivschrift
+	$1 <Marke>
+
+Der Befehl $1 setzt eine Beschreibungsmarke in Kursivschrift.
+
+\def\ititem	newline(); cout << "[</" << ParseLine(cin) << "/>]\n";
+
+Beschreibungsmarke in Fettschrift
+	$1 <Marke>
+
+Der Befehl $1 setzt eine Beschreibungsmarke in Fettschrift.
+
+\def\bfitem	newline(); cout << "[" << ParseLine(cin) << "]\n";
+
+Listeneintrag in Schreibmaschinenschrift
+	$1 <Marke>
+
+Der Befehl $1 setzt eine Beschreibungsmarke in
+Schreibmaschinenschrift.
+
+\def\ttitem	newline(); cout << "[<|" << ParseLine(cin) << "|>]\n";
+
+Teilseite
+	$1 |[|<margin>|]| <flags>
+
+Der Befehl beginnt eine Teilseite. Der Parameter <margin>
+bestimmt den neuen Rand.
+
+\def\spage	{{
+	str pos = xexpand(ParseOpt(cin, true));
+	str flags = xexpand(ParseLine(cin));
+	newenv('p', pos, flags);
+}}

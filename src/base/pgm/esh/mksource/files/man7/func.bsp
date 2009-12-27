@@ -1,0 +1,18 @@
+/*	Generierte Funktion mit switch-Block
+*/
+
+config hdr src 
+#include <function.ms>
+
+Function f = Function("int test", "int key, int mode");
+f.line("switch (key)");
+f.beg();
+f.case("1");
+f.case("2", "return 1;");
+f.cblock("3", string !
+if	(mode)	return 2;
+else		return 3;
+!);
+f.case(NULL, "return 0;");
+f.end();
+f.write(true);

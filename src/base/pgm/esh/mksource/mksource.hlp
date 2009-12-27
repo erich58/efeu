@@ -1,0 +1,51 @@
+/*	Handbucheintrag für mksource
+	(c) 2000 Erich Frühstück
+	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+*/
+
+@name
+\Name
+@ident
+\Synopsis
+@synopsis
+\Description
+Das Kommando |$!|
+dient zur Generierung von C-Sourcefiles mithilfe
+des EFEU-Befehlsinterpreters.
+
+Bei der Eingabedatei handelt es sich um ein Skriptfile für den
+Befehlsinterpreter. Die Ausgabe erfolgt in die folgenden
+drei IO-Strukturen:
+[|hdr|]	C-Headerfile
+[|src|]	C-Sourcefile
+[|doc|]	Dokumentationsfile (siehe Anmerkung am Ende)
+
+Ob die mit den Ausgabestrukturen verbundenen Dateien auch
+generiert werden, hängt von einer Konfigurationszeile zu Beginn
+des Skripts ab. Sie hat die Gestalt:
+
+|config| <list>
+
+wobei <list> die gewünschten Ausgabestrukturen enthält, für die
+auch eine Datei generiert werden soll. Der Basisname der
+Ausgabedateien wird vom Basisnamen des Skriptfiles bestimmt.
+Es gibt aber auch die Möglichkeit, die Namen der Ausgabedateien
+explizit vorzugeben.
+
+Das Kommando erlaubt auch die Generierung von Makefileregeln.
+Falls eines der entsprechenden Flags gesetzt ist, werden keine
+Dateien generiert und nur die Regeln zur Standardausgabe geschrieben.
+
+Folgende Optionen und Argumente werden vom Kommando |$!| akzeptiert:
+@arglist
+
+\SeeAlso
+esh(1),\br
+function(7)
+\Notes
+Die Generierung von Dokumentationen wird derzeit von
+\LaTeX; auf |efeudoc| umgestellt und kann daher nur begrenzt
+verwendet werden.
+\head	AUTOR
+Erich Frühstück\br
+A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5

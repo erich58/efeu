@@ -1,0 +1,195 @@
+\mapge[1]{TabLabel}
+\Name
+TabLabel - Tabellenachsen
+\Synopsis
+\tthang	\#include <TabLabel>
+\tthang	TabLabel TabLabel (str \it{key}, str \it{name})
+\tthang	TabLabel TabLabel(str \it{key}, str \it{name}, IO \it{io})
+\tthang	TabLabel TabLabel::entry(str \it{key}, str \it{label})
+\tthang int CompLabel(TabLabel \it{a}, TabLabel \it{b})
+\tthang	TabLabel CDummyTabLabel;
+\tthang	TabLabel LDummyTabLabel;
+\Description
+Der Datentype \tt{TabLabel} definiert eine Tabellenachse.
+Er wird in Kombination mit dem Datentype \tt{SynTab}
+(Vergleiche dazu \it{SynTab(7)}) zur Einarbeitung von Daten
+aus einer Datenmatrix verwendet.
+
+Eine Tabellenachse kann sowohl für die Zeilen- als auch die
+Spalten einer Tabelle verwendet werden.
+Sie hat den folgenden Aufbau:
+
+\nofill
+struct TabLabel {
+	str key;	\/* Kennung */
+	str name;	\/* Achsenname */
+	str list;	\/* Selektionsliste */
+	DataBase tab;	\/* Indextabelle */
+	str special;	\/* Sonderdefinitionen */
+};
+\end
+
+Dabei gibt \tt{TabLabel::key} die Kennung der Tabellenachse
+und \tt{TabLabel::name} den
+Namen der zugehörigen Achse in der Datenmatrix an. Die
+Variable \tt{TabLabel::list} enthält die Selektionsliste mit den
+Achsenelementen. Sie wird beim Laden der Datenmatrix zur
+Generierung von Zusammenfassungen benötigt und sorgt dabei
+für die richtigen Reihenfolge der Achsenelemente (Wichtig bei Spalten!).
+Der Konverter \tt{str TabLabel()} liefert den Selektionsstring
+der Achsenstruktur. Damit kann die Achse stellvertretend für
+seine Komponente beim Laden einer Datenmatrix angegeben werden.
+
+Die Datenbank \tt{TabLabel::tab} enthält die einzelen
+Zeilen- bzw. Spaltenbezeichner und die zugehörigen
+Selektionsdefinitionen der Datenmatrix.
+
+In \tt{TabLabel::special} stehen LaTeX-Befehle, die zu Beginn
+eines Tabellenkopfes (Spaltenachse) bzw. Tabellenkörpers (Zeilenachse)
+auszugeben sind.
+
+\subsection{Konstruktion von Achsendefinitionen}
+Achsendefintionen werden am einfachsten mit dem Konstruktor
+\tt{TabLabel} konstruiert.
+Als Argument wird die Achsenkennung \it{key},
+der Name der zugehörigen Datenachse und eine IO-Struktur mit
+Definitionszeilen für die einzelnen Achsenbezeichner übergeben.
+In der Regel wird anstelle der IO-Struktur ein Definitionsstring
+(implizite Konvertierung) übergeben.
+
+Jede Definitionszeile besteht aus zwei Einträgen (Kennung und Bezeichner),
+die durch ein Leerzeichen oder einem Tabulator getrennt sind.
+Die Kenneung, die keine Leerzeichen oder Tabulatoren enthalten darf,
+bestimmt die Selektion in der Datenmatrix,
+der Bezeichner definiert den Achsenbezeichner bei der Ausgabe
+der Tabelle.
+Der Bezeichner kann beliebig viele Leerzeichen und Tabulatoren enthalten.
+
+Folgende Kennungen sind möglich:
+\list
+\ttitem	@
+Kein Achsenbezeichner, die Komponente \tt{TabLabel::special} (siehe oben)
+wird mit dem Bezeichner erweitert.
+\ttitem	\it{name}
+Der Name \it{name} gibt den zugehörigen Achsenbezeichner in der Datenmatrix
+an.
+\ttitem	:\it{name}[\it{liste}]
+Der Achsenbezeichner \it{name} wird erst beim Laden eingerichtet und die
+Daten ergeben sich durch entsprechnde Aggregation der in \it{list}
+angeführten Achsenbezeichner.
+\ttitem	.
+Der Tabellenachse wird kein Achsenbezeichner in der Datenmatrix zugeordnet.
+Bei Tabellen mit komplexeren Datentransformationen können in einer
+Tabellenzeile aus einem Datenmatrixeintrag mehrere Tabellenwerte
+errechnet werden. Die Tabellenachse benötigt damit mehr Spalten
+als Datenwerte vorhanden sind.
+Bei Zeilenachsen können damit benannte Leerzeilen konstruiert werden.
+\end
+
+Zu Beginn eines Bezeichners können spezielle Kennungen stehen,
+die der Reihe nach abgefragt werden. Das erste Zeichen, das
+keiner Kennung mehr entspricht, stellt den Beginn des Achsenbezeichners
+dar.
+
+Folgende Kennungen sind möglich:
+\list
+\ttitem	[\it{size}]
+Explizite Angabe der Höhe einer Zeile, bzw. Breite einer Spalte.
+Nur notwendig, wenn nicht alle Zeilen die gleiche Höhe oder alle
+Spalten die gleiche Breite haben.
+\ttitem	@
+Eine Leerzeile wird ausgegeben (Alte Definition,
+Besser: Eigene Definitionszeile mit Punkt als Kennung und leeren
+Bezeichner, siehe 1. Beispiel).
+\ttitem	*
+Die Zeile wird fett gesetzt.
+\ttitem	-
+Die Zeile wird mit fetten Linien gesetzt.
+\ttitem	+
+Die Zeile wird eingerückt. Mehrere Einrückungen sind zulässig.
+\end
+Mit Ausnahme der Spaltenbreite werden alle anderen Kennungen für
+Spaltenachsen ignoriert.
+
+Anstelle der Verwendung einer IO-Struktur bei der Konstruktion
+einer Tabellenachse kann auch die Funktion \tt{TabLabel::entry}
+verwendet werden. Als Argument kann
+
+Anstelle des Konstruktors mit einer IO-Struktur der 
+\Examples
+Das folgende Beispiel zeigt eine einfache Zeilenachse mit einer Gliederung
+durch Leerzeilen.
+
+\nofill
+TabLabel("sv", "sv", string !
+MANN	Männer
+FRAU	Frauen
+.
+A00-18	Bis 18
+A19-24	19 bis 24
+A25-29	25 bis 29
+A30-39	30 bis 39
+A40-49	40 bis 49
+A50-54	50 bis 54
+A55-59	55 bis 59
+A60-99	60 und älter
+.
+Burg	Burgenland
+Kaer	Kärnten
+Nied	Niederösterreich
+Ober	Oberösterreich
+Salz	Salzburg
+Stei	Steiermark
+Tiro	Tirol
+Vora	Vorarlberg
+Wien	Wien
+Blnz	Keine Zuordnung
+.
+INL	Inländer\\Innen
+AUS	Ausländer\\Innen
+.
+GES	*Insgesamt
+!);
+\end
+
+Der folgende Spaltenkopf besitzt eine Doppelgliederung.
+Die Achsenbezeichner beziehen sich auf die unterste Gliederung.
+Beachte, daß zwischen der letzten Sonderdefinition und dem
+ersten Achsenbezeichner automatisch ein "\\norule" eingefügt
+wird.
+
+\nofill
+TabLabel("hdr8", "epi", string !
+@	\\\\lineheight{1}
+@	\\\\norule & Unselbständig Erwerbstätige\\\\fn1 &
+@	\\\\lmulticol{3}{davon haben mindestens eine Episode von:}\\\\cr 
+@	\\\\lineheight{1}
+GES	\\\\norule
+AEPI	Arbeitslosigkeit 
+PEPI	Pension 
+SEPI	Sonstiges\\\\fn2
+!);
+\end
+
+Die Dummyachsen CDummyTabLabel und LDummyTabLabel sind folgend definiert:
+
+\nofill
+TabLabel CDummyTabLabel = TabLabel("CDummy", NULL, string !
+A	Spalte A
+B	Spalte B
+C	Spalte C
+D	Spalte D
+!);
+
+TabLabel LDummyTabLabel = TabLabel("LDummy", NULL, string !
+1	Zeile 1
+2	Zeile 2
+3	Zeile 3
+4	Zeile 4
+.	.......
+n	*Zeile n
+!);
+\end
+
+\SeeAlso
+\mref{efeudoc(1)}, \mref{SynTab(7)}.

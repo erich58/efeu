@@ -1,0 +1,7 @@
+md_paste benötigt eine frisch geladene Datenmatrix,
+	sonst kann es zu Programmabstürzen oder unerwarteten
+	Datenverschiebungen kommen.
+
+Ein Hilfsprogramm zur Reorganisation des Datenspeichers wäre
+wünschenswert.
+

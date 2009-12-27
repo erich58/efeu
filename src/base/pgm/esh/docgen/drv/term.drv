@@ -1,0 +1,37 @@
+\FileIdent[term.drv]{Treiber für Terminalausgabe}
+//	(c) 1999 Erich Frühstück
+//	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+
+/*	Terminalparameter laden
+*/
+
+\cmdeval {
+VarTab term = VarTab("term");
+
+int term::size(str env, str cap)
+{
+	int x = getenv(env, NULL);
+	return x ? x : filter("tput "+ cap);
+}
+
+int term::lines = term::size("LINES", "lines");
+int term::cols = term::size("COLUMNS", "cols");
+str term::clear = global::filter("tput clear");
+str term::smso = global::filter("tput smso");
+str term::rmso = global::filter("tput rmso");
+str term::smul = global::filter("tput smul");
+str term::rmul = global::filter("tput rmul");
+
+}
+
+/*	Attributmakros
+*/
+
+/**/
+\newcmd\bfon{plain.puts(term.smso);}
+\newcmd\iton{plain.puts(term.smul);}
+\newcmd\tton{plain.puts(term.smso);}
+
+\newcmd\bfoff{plain.puts(term.rmso);}
+\newcmd\itoff{plain.puts(term.rmul);}
+\newcmd\ttoff{plain.puts(term.rmso);}

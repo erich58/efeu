@@ -1,0 +1,195 @@
+\Name
+mdmat -- Format einer mehrdimensionalen Datenmatrix
+\Synopsis
+\tthang
+\#include \<EFEU/mdmat.h\>
+
+\Description
+Eine mehrdimensionale Datenmatrix ist ein mehrdimensionales
+Schema von Datenobjekten. Die Datenobjekte sind durch einen
+Objektnamen und die Objektlänge (benötigter Speicherplatz)
+charakterisiert und ansonsten beliebig. In der Regel werden
+standardisierte Datenobjekte verwendet, die sich aus Basistypen
+ableiten lassen. Näheres dazu im nächsten Abschnitt.
+
+Die einzelnen Dimensionen
+werden als Achsen bezeichnet und sind durch einen Namen gekennzeichnet.
+Die Datenmatrix wird normalerweise als binäre Datei gespeichert,
+sie kann aber auch als Textdatei gespeichert werden.
+
+\shead	Standardisierte Datentypen
+Die Standardisierten Datentypen bauen auf den 4 Grundtypen
+
+---- verbatim
+char	1 Byte Ganzzahlwert
+short	2 Byte Ganzzahlwert
+int	4 Byte Ganzzahlwert
+float	4 Byte Gleitkommawert
+double	8 Byte Gleitkommawert
+----
+
+auf. Diese Grundtypen können direkt als unbenannter Datentyp angegeben
+werden. Alternativ dazu kann auch ein bennanter Datentyp in der Form
+<type name> angegeben werden.
+
+Abgesehen von den Grundtypen kann jeder Datentyp des EFEU-Interpters
+angegeben werden. Insbesonders sind auch komplexe Strukturen zulässig.
+Nicht alle Datentypen haben eine rechnerunabhängige Darstellung
+(Bytelänge von long), diese sollten zur Vermeidung von
+Kompatiblitätsproblemen vermieden werden.
+Details zur Konstruktion von Datentypen können im Handbuch zum
+EFEU-Interpreter nachgelesen werden.
+
+Die durch
+
+\code
+\hang
+struct DATA { int anz; double val } x; { int a; DATA b } y
+\end
+\end
+
+definierte Struktur hat die Komponenten
+<x.anz>, <x.val>, <y.a>, <y.b.anz> und <y.b.val>,
+wobei zusätzlich der Datentype <DATA> deklariert wurde und wie
+ein Basistype eingesetzt werden kann.
+
+Obwohl Variablennamen nicht in jedem Fall erforderlich sind, sollten sie
+jedoch außer bei reinen Basistypen immer angegeben werden, da manche
+Kommandos den Namen der Variablen zum Zugriff benötigen.
+
+\shead	Gepacktes Datenformat
+Ein gepacktes, oder binäres Datenfile besteht aus den Sektoren: Kopf,
+Achsendimensionen, Textteil, Datenteil und EOF-Kennung.
+
+Der Kopfteil des binären Datenfiles hat den folgenden Aufbau:
+
+---- verbatim
+Name	Byte	Bezeichnung
+magic	2	Dateikennung
+dim	2	Zahl der Achsen
+space	4	Speicherbedarf für Strings
+size	4	Länge eines Datenobjektes
+nel	4	Zahl der Datenobjekte
+----
+
+Die ersten zwei Byte des Datenfiles beinhalten die Dateikennung.
+Diese hat den Wert 0xEFD1 und dient zur Kennzeichnung der Datei
+als mehrdimensionale Datenmatrix. Danach folgt die Zahl der Achsen
+der Datenmatrix (2 Byte Wert). Die restlichen drei Variablen des
+Kopfes bestimmen den notwendigen Speicherbedarf für die Datenmatrix.
+
+Die Achsendimensionen werden als 4 Byte Ganzzahlenwerte gespeichert.
+
+Der Textteil enthält den Titel, die Bezeichnung des Datenobjektes,
+die Achsennamen und die Achsenindizes.
+Die einzelnen Wörter des Textteiles sind durch ein Nullzeichen getrennt.
+Die Länge des Textteiles wird auf ein Vielfaches von 4 Byte aufgerundet.
+
+Der Datenteil enthält die Daten in gepackter Form entsprechend
+der Zahl der Datenobjekte <nel> und deren Länge <size>.
+
+Die EOF-Marke besteht aus der Zeichenfolge "*EOF". Sie erlaubt eine
+einfache Konsistenzprüfung des Datenfiles.
+
+Sämtliche Zahlenwerte werden unabhängig von der Byteordnung des
+Rechnertypes mit dem am höchten signifikanten Byte zuerst
+gespeichert (MSBF, little endian).
+
+\shead	ASCII-Datenformat
+Das ASCII-Datenformat dient primär zum Datenaustausch.
+Die Konvertierung der Datenformate erfolgt mit den Kommandos
+|mdread| bzw. |mdprint|. Es stehen auch entsprechende
+Bibliotheksfunktionen zur Konvertierung zur Verfügung.
+
+Eine ASCII-Datenmatrix kann Kommentare enthalten.
+Eine Kommentarzeile wird durch ein Gittersymbol "|#|"
+gekennzeichnet.
+Kommentare können wie in C++ auch in der Form  "|/*| ... |*/|" oder
+"|//| ... Zeilenvorschub" geschrieben werden.
+
+Ein Backslash hebt die Sonderbedeutung eines Zeichens (und des Backslash
+selbst) auf. Damit können Trennzeichen in einem Namen markiert werden.
+Die Kombination "Gegenschrägstrich Zeilenvorschub" wird ignoriert, damit
+lassen sich auf einfache Weise Zeilen fortsetzen. Dies kann z.B: bei
+einem komplexen Datentyp oder einem langen Titel von Nutzen sein.
+
+Die Daten werden dabei als zweidimensionale Matrix aufgebaut.
+Achsen werden bei Bedarf zusammengefaßt. Der Achsenbeseichner einer
+zusammengefaßten Achse wird durch Zusammenhängen der Achsenbezeichner
+der Basisachsen gewonnen, wobei ein Punkt als Trennzeichen verwendet wird.
+Beim Lesen werden so zusammengefaßte Achsen wieder aufgespalten.
+
+Die Dateien werden in Kopfteil und Datenteil unterteilt.
+Der Datenteil muß vorhanden sein, der Kopfteil ist optional,
+ist aber für eine Rekonstruktion der Achsenbezeichner, des
+Titels und dem Datentyp notwendig. Diese Informationen
+müßten ansonsten explizit beim Lesen einer ASCI-Datenmatrix
+angegeben werden.
+
+Um die Optionalität des Kopfteiles zu unterstreichen, werden die
+Anweisungen als besonders gekennzeichnete Kommentarzeilen ausgeführt.
+Sie beginnen mit zwei Gittersymbolen "|##|" und enthalten ein Schlüsselwort,
+gefolgt von den zugehörigen Parameterwerten.
+Eine Kopfzeile mit unbekannter Kennung wird einfach überlesen.
+
+In der Regel wird ein ASCII-Datenfile mit der Kennung
+"|##MDMAT|", gefolgt von einer Versionsnummer, eingeleitet.
+Die Kennung dient nur zur Identifikation der Datei und wird nicht
+interpretiert.
+
+Folgende Befehlszeilen können im Kopf vorkommen:
+[|##Titel| <Titel>]
+	definiert den Titel der Datenmatrix.
+[|##Type| <Datentype>]
+	definiert den Datetype der Datenmatrix.
+[|##Locale| <Name>]
+	definiert die Locale, die zur Darstellung der Zahlenwerte
+	verwendet wurde. Wahlweise kann "de" (Deutsches Zahlenformat)
+	oder "us" (Amerikanisches Zahlenformat) verwendet werden.
+[|##Zeilen| <Achsenbezeichner der Zeilen>]
+	definiert die Achsennamen, die zur Konstruktion der Zeilen
+	verwendet wurden.
+[|##Spalten| <Achsenbezeichner der Spalten>]
+	definiert die Achsennamen, die zur Konstruktion der Spalten
+	verwendet wurden.
+
+Alle Zeilen, die nicht als Kommentarzeilen gekennzeichnet
+sind, bilden den Datenteil.
+
+Die einzelnen Spalten des Datenteils werden entweder durch
+genau einen Strich- oder Doppelpunkt, bzw. durch beliebig viele
+Leerzeichen oder Tabulatoren getrennt. Kommen Strich- und/oder
+Doppelpunkte als Trennzeichen zum Einsatz, können einzelne Felder
+auch leer sein.
+
+Die erste Zeile des Datenteils enthält die Spaltenbezeichner,
+alle anderen enthalten Datenzeilen, wobei in der ersten Spalte
+der Zeilenbezeichner steht.
+Das Feld in der ersten Zeile der ersten Datenzeile wird nicht interpretiert,
+es muß aber ein Eintrag vorhanden sein --- ausgenommen bei
+der Verwendung von Strich- oder Doppelpunkten als Trennzeichen.
+Bei generierten ASCII-Dateien wird hier die Spaltenzahl eingetragen.
+Diese Information erwies sich bei der Weiterverarbeitung mit einem
+Spreadsheetprogramm als recht nützlich.
+
+\Example
+Zur Veranschaulichung ist im folgenden die ASCII-Version eines einfachen
+Datenfiles aufgelistet:
+
+----	verbatim
+##MDMAT		2.0
+##Titel		Testdatei
+##Type		double
+##Locale	us
+##Zeilen	y
+##Spalten	x
+5	x1	x2	x3	x4	x5
+y1	1.1	2.2	3.3	4.4	5.5
+y2	0	1.1	2.2	3.3	4.4
+y3	-1.1	0	1.1	2.2	3.3
+y4	-2.2	-1.1	0	1.1	2.2
+y5	-3.3	-2.2	-1.1	0	1.1
+----
+
+\SeeAlso
+mdprint(1), mdread(1).

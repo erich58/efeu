@@ -1,0 +1,24 @@
+%       11pt Größenfile
+%	für Synthesis - Layout
+%       (c) 1995 Christoph Urbanek
+%       A-1020 Wien, Scholzgasse 16/4
+%	(c) 1999 Erich Frühstück
+%	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+
+\ProvidesFile{syntex.11pt}[1999/10/27 Synthesis Sizes for 10pt v2.0]
+
+\renewcommand\normalsize{\@setfontsize\normalsize\@xipt\Syn@vunit}
+\normalsize
+\renewcommand\small{\@setfontsize\small\@xpt\Syn@vunit}
+\renewcommand\footnotesize{\@setfontsize\footnotesize\@ixpt\Syn@vunit}
+\renewcommand\scriptsize{\@setfontsize\scriptsize\@viiipt\Syn@vunit}
+\renewcommand\tiny{\@setfontsize\tiny\@vpt\Syn@vunit}
+\renewcommand\large{\@setfontsize\large\@xiipt\Syn@vunit}
+\renewcommand\Large{\@setfontsize\Large\@xivpt{2\Syn@vunit}}
+\renewcommand\LARGE{\@setfontsize\LARGE\@xvipt{2\Syn@vunit}}
+\renewcommand\huge{\@setfontsize\huge\@xxpt{2\Syn@vunit}}
+\renewcommand\Huge{\@setfontsize\Huge\@xxvpt{3\Syn@vunit}}
+
+\endinput
+
+% End of file `syntex.11pt'.

@@ -1,0 +1,3 @@
+mac	DFX	MakeDocFile(%s,%s.%s)
+drv	DFX	MakeDocFile(%s,%s.%s)
+enc	DFX	MakeDocFile(%s,%s.%s)

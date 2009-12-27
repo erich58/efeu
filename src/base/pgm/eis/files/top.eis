@@ -1,0 +1,21 @@
+@:Hauptbibliothek
+Wilkommen im EFEU-Informationssystem
+(c) 1998 Erich Frühstück
+A-1090 Wien, Währinger Straße 64/6
+
+?		Kurzanleitung
+q		Abbruch
+
+@efeu:Standardkommandos
+@efeu/esh|esh -dump
+@efeu/mksource|mksource -dump
+@efeu/dezile|dezile -dump
+@db:Synthesis-Datenbanken|syndb -dump=/SynDB
+@mipro:Mikroprognose < mipro
+@sprog:Synthesis-Auswertungsprogramme
+@sprog/syndb|syndb -dump
+@sprog/syncnt|syncnt -dump
+@sprog/amscnt|amscnt -dump
+@sprog/bhvcnt|bhvcnt -dump
+@sprog/phvcnt|phvcnt -dump
+@sprog/pjdcnt|pjdcnt -dump

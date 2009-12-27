@@ -1,0 +1,191 @@
+\MPsecnum{7}
+\MPentry{SynTab}
+\MPsection{BEZEICHNUNG}
+\MPcaption{Werkzeuge zur Tabellengenerierung}
+\MPsection{ÜBERSICHT}
+\begin{MPhangpar}
+{\tt{}\#include $<$syntab.tm$>$}\end{MPhangpar}
+
+\begin{MPhangpar}
+{\tt{}SynTab SynTab (IO {\it{}io}, bool {\it{}clrpage} = true)}\end{MPhangpar}
+
+\begin{MPhangpar}
+{\tt{}SynTab SynTab (IO {\it{}io}, int {\it{}margin}, bool {\it{}clrpage} = true)}\end{MPhangpar}
+
+\begin{MPhangpar}
+{\tt{}void SynTab::printf (str {\it{}fmt}, ...)}\end{MPhangpar}
+
+\begin{MPhangpar}
+{\tt{}void SynTab::line (str {\it{}text})}\end{MPhangpar}
+
+\begin{MPhangpar}
+{\tt{}void SynTab::caption (str {\it{}hname}, str {\it{}sname})}\end{MPhangpar}
+
+\begin{MPhangpar}
+{\tt{}void SynTab::def (str {\it{}name}, str {\it{}def})}\end{MPhangpar}
+
+
+\begin{MPhangpar}
+{\tt{}virtual void SynTab::note (str {\it{}name})}\end{MPhangpar}
+
+\begin{MPhangpar}
+{\tt{}virtual void SynTab::note (...)}\end{MPhangpar}
+
+\begin{MPhangpar}
+{\tt{}void SynTab::begin (TabLabel {\it{}col}, int {\it{}width} = 2, int {\it{}height} = 2)}\end{MPhangpar}
+
+\begin{MPhangpar}
+{\tt{}void SynTab::body (TabLabel {\it{}line}, mdmat {\it{}md}, VirFunc {\it{}idx} = NULL, int {\it{}lag} = 0)}\end{MPhangpar}
+
+\begin{MPhangpar}
+{\tt{}virtual void SynTab::tabline (str {\it{}label})}\end{MPhangpar}
+
+\begin{MPhangpar}
+{\tt{}virtual void SynTab::tabline (str {\it{}label}, ...)}\end{MPhangpar}
+
+\begin{MPhangpar}
+{\tt{}void SynTab::end ()}\end{MPhangpar}
+
+\MPsection{BESCHREIBUNG}
+Der Datentype {\tt{}SynTab} dient zur Generierung
+einer Tabelle im Synthesis{-}Standard. Er dient zur Konstruktion einer
+{\tt{}SynTab}{-}Umgebung, die in  eine {\tt{}SynTable}{-}Umgebung eingebettet ist.
+
+Eine {\tt{}SynTab}{-}Struktur wird mit einem Konstruktor
+eingerichtet, der automatisch auch den Beginn der zugehörigen
+{\tt{}SynTable}{-}Umgebung generiert.
+
+Bei den Konstruktoren gibt
+die Variable {\it{}io} die aktuelle Ausgabestruktur an.
+Wahlweise kann eine Tabelle mit der aktuellen Randeinstellung oder
+mit expliziter Angabe des Randes generiert werden.
+Falls das optionale Flag {\it{}clrpage} gesetzt ist,
+wird die Tabelle auf einer
+neuen Seite begonnen.
+
+Der Abschluß der {\tt{}SynTable}{-}Umgebung erfolgt automatisch bei Freigabe
+der {\tt{}SynTab}{-}Struktur. Eine explizite Freigabe ist mit der
+Funktion {\tt{}free()}, oder durch Initialisierung mit NULL möglich.
+Endet die Lebensdauer einer {\tt{}SynTab}{-}Struktur nach einer
+Tabellendefinition, kann auf die explizite Freigabe verzichtet werden,
+da der Destruktor automatisch aufgerufen wird.
+
+Die Tabellenüberschrift wird am einfachsten mit der Funktion
+{\tt{}SynTab::caption} generiert.
+Als Argument wird die Haupt{-} und Unterüberschrift übergeben.
+Sie erzeugt die Ausgabe
+{\tt{}$\backslash$caption\{{\it{}hname}\}} und {\tt{}$\backslash$subcaption\{{\it{}sname}\}}.
+
+Tabellenanmerkungen können mit der Funktion {\tt{}note} generiert
+werden. Dabei kann entweder ein einzelner String (für eine Anmerkung)
+oder eine Stringliste mit den Namen von Anmerkungen übergeben
+werden. Dabei wird angenommen, daß entsprechende Anmerkungen mit
+den \LaTeX{-}Macros {\tt{}$\backslash$setnote} (Synthesis{-}Standard) eingerichtet wurden.
+
+Zur Konstruktion beliebiger Textteile in der Tabellenumgebung stehen noch
+folgende Funktionen zur Verfügung:
+
+\begin{MPlist}
+\MPitem{{\tt{}SynTab::printf}}
+Erlaubt eine formatierte Ausgabe von Variablen
+(Vergleiche dazu {\it{}printf(3)}).
+
+\MPitem{{\tt{}SynTab::line}}
+gibt {\it{}text}, gefolgt von einem Zeilenvorschub aus.
+
+\MPitem{{\tt{}SynTab::def}}
+dient zur Definition einfacher \LaTeX{-}Makros mit dem Namen
+{\it{}name} und dem Definitionsstring {\it{}def}.
+
+\end{MPlist}
+\MPsubsection{Tabellenkonstruktion}
+
+Zur Konstruktion von Tabellen stehen die Funktionen {\tt{}SynTab::begin},
+{\tt{}SynTab::body} und {\tt{}SynTab::end} zur Verfügung.
+
+Mit {\tt{}SynTab::begin} wird der Tabellenkopf eingeleitet.
+Als Argument wird der Achsenbezeichner für die Spalten
+und optional die Standardbreite
+einer Spalte und die Standardhöhe einer Zeile übergeben.
+
+Der Tabelenkörper wird mit der Funktion {\tt{}SynTab::body}
+generiert. Als erstes Argument wird die Achsenstruktur für
+die Tabellenzeilen übergeben. Danach folgt die Datenmatrix
+mit den Tabellendaten und die zugehörigen Auswertungsparameter.
+
+Die Tabellendaten werden mit der Funktion {\tt{}mdmat::data} generiert,
+wobei der Definitionsstring von der Achsenstruktur {\it{}line} bestimmt wird.
+Die anderen Parameter werden von der Funktion {\tt{}SynTab::body} übernommen.
+
+Eine einzelne Tabellenzeile wird mit der Funktion
+\MPitem{{\tt{}SynTab::tabline}} generiert. Als Argument wird der
+Zeilenbezeichner {\it{}label} und die Liste der Tabellenwerte
+ausgegeben. Fehlen die Tabellenwerte, wird eine Leerzeile (mit
+hängenden Linien) generiert.
+
+Die Funktion {\tt{}SynTab::end} schließt eine Tabelle ab.
+
+\MPsection{BEISPIEL}
+Das folgende Beispiel
+{\tt{}\begin{MPnofill}
+\#include $<$syntab.tm$>$
+~
+/$\ast$      Testdaten und Achsenbezeichner
+$\ast$/
+~
+mdmat md = mdread ((IO) string !
+2       c1      c2      c3
+l1      1.1     1.2     1.3
+l2      2.1     2.2     2.3
+l3      3.1     3.2     3.3
+!, {\tt\symbol{34}}type=double x=Spalten y=Zeilen{\tt\symbol{34}});
+~
+TabLabel col = TabLabel({\tt\symbol{34}}col{\tt\symbol{34}}, {\tt\symbol{34}}Spalten{\tt\symbol{34}}, string !
+c1      Spalte 1
+c2      Spalte 2
+c3      Spalte 3
+!);
+~
+TabLabel line = TabLabel({\tt\symbol{34}}line{\tt\symbol{34}}, {\tt\symbol{34}}Zeilen{\tt\symbol{34}}, string !
+l1      Zeile 1
+l2      Zeile 2
+l3      Zeile 3
+!);
+~
+/$\ast$      Tabelle
+$\ast$/
+~
+SynTab tab = SynTab(iostd);
+tab.caption({\tt\symbol{34}}Testtabelle{\tt\symbol{34}}, {\tt\symbol{34}}Untertitel{\tt\symbol{34}});
+tab.begin(col);
+tab.body(line, md);
+tab.end();
+tab.note({\tt\symbol{34}}n1{\tt\symbol{34}});
+free(tab);
+\end{MPnofill}
+}generiert die folgende Ausgabe
+
+{\tt{}\begin{MPnofill}
+$\backslash$clearpage
+$\backslash$begin\{SynTable\}
+$\backslash$caption\{Testtabelle\}
+$\backslash$subcaption\{Untertitel\}
+~
+$\backslash$begin\{SynTab\}\{2\}\{2,2,2\}
+$\backslash$thislinebold
+$\backslash$norule \& Spalte 1 \& Spalte 2 \& Spalte 3 $\backslash$cr
+Zeile 1 \& 1.10 \& 1.20 \& 1.30 $\backslash$cr
+Zeile 2 \& 2.10 \& 2.20 \& 2.30 $\backslash$cr
+Zeile 3 \& 3.10 \& 3.20 \& 3.30 $\backslash$cr
+$\backslash$end\{SynTab\}
+~
+$\backslash$note\{n1\}
+$\backslash$end\{SynTable\}
+\end{MPnofill}
+}\MPsection{SIEHE AUCH}
+printf(3) im {\it{}Programmers's Reference Manual}.\newline
+texmerge(1), TabLabel(7).
+
+\MPsection{BEMERKUNGEN}
+Die Variablen {\tt{}PrintListBegin}, {\tt{}PrintListDelim} und {\tt{}PrintListEnd}
+werden bei der Tabellenkonstruktion umdefiniert.

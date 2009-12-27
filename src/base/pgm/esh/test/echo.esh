@@ -1,0 +1,15 @@
+#!/lbin/esh
+Ident = "Testskript: echo";
+Version = "1.0";
+Copyright = "(c) 1995 Erich Frühstück";
+
+bool flag = true;
+
+PgmOpt("n", "flag=false", "Zeilenvorschub unterdrücken");
+PgmVaArg("String", NULL, "Ausgabetext");
+loadarg;
+
+for (int i = 1, str delim = NULL; i < argc; i++, delim = " ")
+	iostd << delim << argv[i];
+
+if	(flag)	iostd << "\n";

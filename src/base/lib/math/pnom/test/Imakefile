@@ -1,0 +1,13 @@
+/*	Testprogramme
+	(c) 1995 Erich Frühstück
+	A-1090 Wien, Währinger Straße 64/6
+*/
+
+DEP=	DEP_PNOM DEP_MD DEP_EFX DEP_EFM
+LIB=	LIB_PNOM LIB_MD LIB_EFX LIB_EFM LIB_READLINE
+
+#define	Program(name,src)	\
+NormalProgramTarget(name,NullArg,src,$(DEP),$(LIB))
+
+Program(tst,tst.c)
+Program(t_solve,t_solve.c)

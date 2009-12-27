@@ -1,0 +1,5 @@
+S2DOBJ= src2doc.o s2d_skip.o s2d_decl.o s2d_parse.o \
+	s2d_data.o s2d_eval.o s2d_copy.o \
+	s2d.o s2d_std.o s2d_src.o
+
+Program($(BINDIR),src2doc,$(S2DOBJ),$(DEP),$(LIB))

@@ -1,0 +1,61 @@
+TopMargin = 0;
+str pgfmt = NULL;
+
+bool landscape = false;
+bool compress = false;
+
+if	(Format == "qc")	landscape = true, compress = true;
+else if	(Format == "cq")	landscape = true, compress = true;
+else if	(Format == "q")		landscape = true;
+else if	(Format == "c")		compress = true;
+
+if	(landscape)
+{
+	LeftMargin = 5;
+	PageWidth = 105;
+	PageHeight = 46;
+	pgfmt = "\e[1p";
+}
+else
+{
+	LeftMargin = 5;
+	PageWidth = 70;
+	PageHeight = 66;
+	pgfmt = "\e[0p";
+}
+
+/*	Initialisierung:
+
+	^[c	Hartes Rueckstellen
+	^[<n>p	Seitenorientierung
+	^[[?2h	Auto FF deaktivieren
+	^[[?5h	Auto CR bei LF freigeben
+	^[('$2	IBML Zeichensatz fuer Code 0 - 127 laden
+	^[)' 1	IBMR1 Zeichensatz fuer Code 128 - 255 laden
+*/
+
+//pc_dev = "|PCLIB/CanonPost|lpr -h -Pcanon";
+pc_dev = "|lpr -h -Pcanon";
+pc_init = "\ec" + pgfmt + "\e[?2h\e[?5h\e('\$2\e)' 1";
+
+if	(compress)
+{
+	pc_init += "\e[2 K\e[4 L"
+	LeftMargin = 7;
+	PageWidth = PageWidth * 1.5 + 1.5;
+	PageHeight = PageHeight * 8. / 6. + 0.5;
+}
+
+pc_exit = "\ec";
+pc_ff = "\f";
+pc_nl = "\n";
+pc_ul = "_\b";
+
+fonttab {
+	1,	"\e[1m",	"\e[22m"
+	2,	"\e[3m",	"\e[23m"
+	3,	"\e[4m",	"\e[24m"
+	10,	"\e[5m",	"\e[25m"
+	11,	"\e[4m",	"\e[0m"
+	12,	"\e[1;0;0{",	"\e[0}"
+}

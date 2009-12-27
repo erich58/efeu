@@ -1,0 +1,60 @@
+BDIR=	$(EFEUTOP)/build
+
+#define	PLIST(x)	Concat3($(BDIR)/,x,.d)
+
+BASE=	PLIST(std) PLIST(synt) PLIST(wmm) PLIST(oestz)
+
+usage::
+	@echo "Aufruf: make all | clean | update | tags"
+	@echo
+	@echo "all	Generiert alle Fileelisten (aber nicht tags)" 
+	@echo "clean	Löscht alle generierten Dateien" 
+	@echo "update	Erneuert die Sourceliste" 
+	@echo "tags	Generiert ein tag-File für vi" 
+
+update::
+	rm -f SourceBase
+	make all
+
+SourceBase:
+	rm -f SourceList
+	mksrclist $(BDIR) $@
+
+SourceList: SourceBase
+	-grep SourceList SourceBase | xargs cat > $@
+	-grep '\.[ch]$$' SourceBase >> $@
+	-grep '\.[0-9]$$' SourceBase >> $@
+
+clean::
+	rm -f SourceBase SourceList
+
+#	Filelisten
+
+FILES= C H TPL DEF MS ESH MSG APP MAN
+
+all:: $(FILES)
+
+clean::
+	rm -f $(FILES)
+
+C: SourceList; -grep '\.c$$' SourceList > $@
+H: SourceList; -grep '\.h$$' SourceList > $@
+TPL: SourceList; -grep '\.tpl$$' SourceList > $@
+DEF: SourceList; -grep '\.def$$' SourceList > $@
+MS: SourceList; -grep '\.ms$$' SourceList > $@
+ESH: SourceList; -grep '\.esh$$' SourceList > $@
+MSG: SourceList; -grep '\.msg$$' SourceList > $@
+APP: SourceList; -grep '\.app$$' SourceList > $@
+MAN: SourceList; -grep '\.[0-9]$$' SourceList > $@
+
+#	Kennungsfile für vi
+
+all:: tags
+
+clean::
+	rm -f tags
+
+tags: C H
+	rm -f $@
+	cat C H | xargs ctags -a
+

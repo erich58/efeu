@@ -1,0 +1,2 @@
+#include "hft.cap";
+pc_dev = "|less -r";

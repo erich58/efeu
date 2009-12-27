@@ -1,0 +1,77 @@
+/*	Zusatzregeln für dir2make
+	(c) 1999 Erich Frühstück
+	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+*/
+
+#ifndef	_d2m_rules_pph
+#define	_d2m_rules_pph	1
+
+#include <rules.pph>
+
+#define	StdTarget(name)	AllTarget(name)@;NamedTarget(force,name)
+
+/*	Installationsbibliothek einrichten
+*/
+
+#undef	Destination
+
+#define	Destination(name,dir) \
+@;name = dir @;\
+@;files:: dir @;\
+@;dir:; mkdir -p $@ @;\
+@;
+
+/*	File Installieren
+*/
+
+#undef	InstallFile
+#undef	InstallGenFile
+
+#define	InstallFile(name,dest,tg) \
+NamedTarget(files,PathName(dest,tg)) \
+CleanTarget(PathName(dest,tg)) \
+@;PathName(dest,tg): name \
+@;@+$(RM) $@ \
+@;@+$(CP) name $@ \
+@;
+
+#define	InstallGenFile(name,dest,tg) \
+NamedTarget(genfiles,PathName(dest,tg)) \
+CleanTarget(PathName(dest,tg)) \
+@;PathName(dest,tg): name \
+@;@+$(RM) $@ \
+@;@+$(CP) name $@ \
+@;
+
+#define	Source(dir,name) \
+PathName(dir,SourceName(name))
+
+#define	Object(dir,name) \
+AllTarget(ObjectName(name)) \
+CompileRule(ObjectName(name),Source(dir,name),$(INCFLG) Concat(-I,dir) -c Source(dir,name) -o $@) \
+DependRule(ObjectName(name),Source(dir,name),$(INCFLG) Concat(-I,dir) -c Source(dir,name)) \
+@;
+
+#define	GenObject(name) \
+AllTarget(ObjectName(name)) \
+CompileRule(ObjectName(name),SourceName(name),$(INCFLG) -c SourceName(name) -o $@) \
+DependRule(ObjectName(name),SourceName(name),$(INCFLG) -c SourceName(name)) \
+@;
+
+/*	Programme und Skripts
+*/
+
+#define	Program(dir,name,obj,dep,libs) \
+StdTarget(PathName(dir,ProgramName(name))) \
+LinkCompileRule(PathName(dir,ProgramName(name)),obj dep,obj,libs)
+
+#define	SimpleProgram(name,dep,libs) \
+Program($(BINDIR),name,Concat(name,.o),dep,libs)
+
+#define	ShellScript(dir,base,name) \
+InstallCmdScript(PathName($(BINDIR),name),PathName(dir,base),NullArg)
+
+#define	EshScript(dir,base,name) \
+InstallCmdScript(PathName($(BINDIR),name),PathName(dir,base),-c esh)
+
+#endif	/* d2m_rules.pph */

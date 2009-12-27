@@ -1,0 +1,74 @@
+/*	Standardbibliotheken
+	(c) 1999 Erich Frühstück
+	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+*/
+
+#ifndef	_stdlib_pph
+#define	_stdlib_pph	1
+
+#define	LIB_M		-lm
+
+#if	__linux__
+#define	LIB_CURSES	-lncurses
+#else
+#define	LIB_CURSES	-lcurses
+#endif
+
+#if	__linux__
+#define	INC_READLINE
+/*
+Bei SuSE 6.4 fehlt in libreadline.so die Abhängigkeit von ncurses.so
+
+#define	LIB_READLINE	-lreadline
+*/
+#define	LIB_READLINE	-lreadline -lncurses
+#else
+#define	INC_READLINE	-I/local/include
+#define	LIB_READLINE	-L/local/lib -lreadline -liberty LIB_CURSES
+#endif
+
+#if	__linux__
+#define	LIB_X11	-L/usr/X11R6/lib -lX11
+#else
+#define	LIB_X11	-L/usr/lib/X11 -lX11
+#endif
+
+/*	EFEU Programmbibliotheken
+*/
+
+#define	DEP_EFM		StdLib(efm)
+#define	DEP_EFX		StdLib(efx)
+#define	DEP_IORL	StdLib(iorl)
+#define	DEP_MD		StdLib(md)
+#define	DEP_PIXMAP	StdLib(pix)
+#define	DEP_WIN		StdLib(efwin)
+#define	DEP_MATH	StdLib(efmath)
+
+#define	LIB_EFM		LinkName(efm)
+#define	LIB_EFX		LinkName(efx) LIB_M
+#define	LIB_IORL	LinkName(iorl) LIB_READLINE
+#define	LIB_MD		LinkName(md)
+#define	LIB_PIXMAP	LinkName(pix)
+#define	LIB_WIN		LinkName(efwin)
+#define	LIB_MATH	LinkName(efmath)
+
+
+/*	Projektbibliotheken
+*/
+
+#define	DEP_KDB		StdLib(kdb)
+#define	LIB_KDB		LinkName(kdb)
+
+#define	DEP_SYNT	StdLib(SynBase)
+#define	LIB_SYNT	LinkName(SynBase)
+
+#define	DEP_SDB		StdLib(SynStd)
+#define	LIB_SDB		LinkName(SynStd)
+
+
+/*	Testbibliotheken
+*/
+
+#define	MEMALLOC	$(STDLIBDIR)/memalloc.o
+
+#endif	/* stdlib.pph */

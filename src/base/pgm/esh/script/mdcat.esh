@@ -1,0 +1,48 @@
+Ident = "Datenmatrizen\nzusammenfassen";
+Copyright = "(c) 1997 Erich Frühstück, A-1090 Wien, Währinger Straße 64/6";
+Version = "2";
+
+str Title = NULL;
+str Output = NULL;
+str Name = "X";
+bool PrintMode = true;
+
+PrintListDelim = "\t";
+
+PgmOpt("T titel", "Title=#1", "Titel der Ausgabedatei")
+PgmOpt("n name", "Name=#1", "Achsenbezeichner, Vorgabe $(Name)")
+PgmVaArg("ein1 ...", NULL, "Eingabedatei(en)")
+PgmOpt("o aus", "Output=#1; PrintMode=false", "Name der Ausgabedatei")
+
+loadarg;
+
+List_t list;
+str label = Name;
+str delim = "=";
+str name, fname;
+
+for (int i = 1; i < argc; i++)
+{
+	int idx = index(argv[i], '=')
+
+	if	(argv[i][idx] == '=')
+	{
+		fname = substr(argv[i], idx + 1);
+		name = substr(argv[i], 0, idx);
+	}
+	else	name = fname = argv[i];
+
+	name = substr(name, 0, index(name, '.'));
+	label += sprintf("%s%s", delim, name);
+	list = catlist(list, mdload(fname));
+	delim = ",";
+}
+
+mdmat md = mdcat(label, list);
+
+if	(Title)		md.title = Title;
+
+if	(PrintMode)	md.mark("#-1").print(iostd, "nohead");
+else			md.save(Output);
+
+free(md);

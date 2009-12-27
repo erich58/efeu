@@ -1,0 +1,21 @@
+\entry{CountProg}
+\Name
+\caption{Zählprogramme generieren}
+\Synopsis
+\hang	\#include <cntprog.cmd>
+\hang	virtual void CountProg::countdef & (str name);
+\hang	virtual void CountProg::countdef & (str name, CountDef def);
+\hang	virtual void CountProg::classdef & (str name);
+\hang	virtual void CountProg::classdef & (str name, ClassDef def);
+\hang	void CountProg::setup(bool global = false);
+\hang	void CountProg::count(str read, bool global = false);
+\hang	void CountProg::main();
+\hang	CountProgInput CountProgFileInput;
+\hang	CountProgInput CountProgIOInput;
+\hang	CountProgInput CountProgInput(str decl, str open, str close);
+\hang	CountProgData CountProgVoidData;
+\hang	CountProgData CountProgBufferData(str type);
+\hang	CountProgData CountProgData(str decl, str init, str clean);
+\hang	CountProg CountProg(str name);
+
+\Description

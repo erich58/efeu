@@ -1,0 +1,101 @@
+/*	Gnu-Plot Schnittstelle für Zeitreihen
+	(c) 1997 Erich Frühstück
+	A-1090 Wien, Währinger Straße 64/6
+*/
+
+bool PlotDataHist = false;
+double PlotDataGew = 1.;
+
+str _PlotDataFile (List_t list)
+{
+	str name = tempnam();
+	IO io = open(name, "w");
+
+	TimeIndex i = list.obj.first;
+	TimeIndex last = list.obj.last;
+	lcsave();
+	setlocale(LC_PRINT, "us");
+
+	for (x in list.next)
+	{
+		if	(i < x.first)	i = x.first;
+		if	(last > x.last)	last = x.last;
+	}
+
+	for (; i <= last; i++)
+	{
+		if	(PlotDataHist)
+		{
+			double z = (1. - PlotDataGew) * i;
+			fprintf(io, "%g", PlotDataGew * i.floor + z);
+
+			for (x in list)
+				fprintf(io, " %g", x[i]);
+
+			fprintf(io, "\n%g", PlotDataGew * i.ceil + z);
+
+			for (x in list)
+				fprintf(io, " %g", x[i]);
+
+			io << '\n';
+		}
+		else
+		{
+			fprintf(io, "%g", i);
+
+			for (x in list)
+				fprintf(io, " %g", x[i]);
+
+			io << '\n';
+		}
+	}
+
+	close(io);
+	lcrestore();
+	return name;
+}
+
+
+virtual void PlotData(str out, str name, ...)
+{
+	str datafile = _PlotDataFile(va_list);
+	str script = tempnam();
+	IO io = open(script, "w");
+
+	if	(out)
+	{
+		io << "set terminal postscript landscape color"
+		io << " \"Times-Roman\" 14\n";
+		fprintf(io, "set output %#s\n", out);
+	}
+
+//	io << "set key style line\n";
+	io << "set data style line\n";
+	fprintf(io, "set title %#s\n", name);
+	str delim = "plot";
+	int n = 2;
+
+	for (x in va_list)
+	{
+		str a = x.name ? x.name : sprintf("x%d", n - 1);
+		fprintf(io, "%s\t%#s using 1:%d title %#s",
+			delim, datafile, n++, a);
+		delim = " ,\\\n";
+	}
+
+	io << '\n';
+
+	if	(out == NULL)
+		fprintf(io, "pause -1 %#s\n", "Hit return to continue");
+
+	close(io);
+	system("gnuplot " + script);
+	remove(script);
+	remove(datafile);
+}
+
+virtual void PlotData(str name, ...)
+	PlotData(NULL, name, va_list);
+
+virtual void PrintData(str name, ...)
+	PlotData("|lpr", name, va_list);

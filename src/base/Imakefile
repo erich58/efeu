@@ -1,0 +1,44 @@
+/*	EFEU-Basisbibliotheken und programe
+*/
+
+#include <d2m.cfg>
+
+TOPDIR = _EFEU_TOP
+BINDIR = $(TOPDIR)/bin
+LIBDIR = $(TOPDIR)/lib
+APPDIR = $(TOPDIR)/lib/efeu
+
+DIR2MAKE = dir2make -B $(BINDIR) -L $(LIBDIR) -A $(APPDIR)
+
+BaseInc = -H $(TOPDIR)/include/EFEU
+MathInc = -H $(TOPDIR)/include/Math
+
+#if	__linux__
+SubMake(Linux,Lokale Programme für Linux,arch/Linux,NullArg,NullArg)
+#endif
+
+#if	_AIX
+SubMake(aix,Lokale Programme für AIX,arch/aix,NullArg,NullArg)
+#endif
+
+SubMake(script,Shell-Scripts,pgm/script,NullArg,NullArg)
+SubMake(tools,Einfache Hilfsprogramme,pgm/tools,NullArg,NullArg)
+
+SubMake(efm,Basisbibliothek,lib/efm,$(BaseInc) -lefm,NullArg)
+SubMake(efx,Erweiterungsbibliothek,lib/efx,$(BaseInc) -lefx,efm)
+SubMake(iorl,Readline-Schnittstelle,lib/iorl,$(BaseInc) -liorl,efm efx)
+SubMake(md,Datenmatrix,lib/md,$(BaseInc) -lmd,efm efx)
+SubMake(efmath,Mathematische Hilfsfunktionen,lib/math,$(MathInc) -lefmath,efm efx)
+
+BASELIB=	efm efx md efmath
+
+SubMake(esh,"esh, mksource und Skripts",pgm/esh,NullArg,$(BASELIB) iorl)
+SubMake(texmerge,Dokumentgenerierung,pgm/texmerge,-x,$(BASELIB))
+SubMake(xprint,Druckerausgabe,pgm/xprint,NullArg,efm efx)
+
+SubMake(pix,Pixelfiles,lib/pix,$(BaseInc) -lpix,efm efx)
+SubMake(efwin,Fensterhilfsprogramme,lib/win,$(BaseInc) -l efwin,efm efx)
+
+SubMake(eis,EFEU-Informationssystem,pgm/eis,NullArg,$(BASELIB))
+SubMake(other,Sonstige Hilfsprogramme,pgm/other,NullArg,$(BASELIB))
+SubMake(doc,Dokumentkonverter,pgm/doc,NullArg,$(BASELIB))

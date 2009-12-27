@@ -1,0 +1,47 @@
+\Name
+Enum -- Konstruktion einer Aufzählungsdefinition
+\Synopsis
+\tthang
+\#include \<enum.ms\>
+
+void Enum(str <ename>, IO <def>, bool <glob> = true)
+
+\Description
+Die Funktion |Enum| generiert eine Aufzählungsdefinition
+mit dem Namen <ename>. Falls Flag <glob> wahr ist,
+wird die Auszählungsdefinition global, ansonsten lokal generiert.
+
+Die IO-Struktur <def> enthält Definitionszeilen der Form:
+	<name> <desc>
+
+wobei <name> ein Ausprägungsname und <desc> ein Beschreibungstext
+ist. In <name> dürfen keine Sonderzeichen vorkommen.
+
+Für jeden Eintrag wird ein Makro mit dem Namen <ename>|_|<name>}
+und der Laufnummer (beginnend bei 0) als Wert konstruiert.
+Zusätzlich wird der Makro <ename>|Dim| mit der Zahl der
+Ausprägungen generiert.
+
+Die folgenden Funktionen werden definiert:
+
+\ttitem	char *<enum>Name (unsigned <index>);
+	liefert den Namen der Aufzählung mit Index <index>.
+\ttitem	char *<enum>Label (unsigned <index>);
+	liefert den Beschreibungstext der Aufzählung mit Index <index>.
+\ttitem	unsigned <enum>Index (const char *<name>);
+	liefert den Index der Aufzählung mit Namen <name>.
+
+Bei nicht definierten Argumenten (Index außerhalb des zulässigen Bereichs,
+unbekannter Name) wird immer die erste Aufzählungsdefinition verwendet.
+
+\Example
+Im nachfolgenden Beispiel wird eine Aufzählungsstruktur mit
+sozialrechtlichen Stellungen generiert.
+
+\spage [3]
+@MSExample(sr.bsp,erzeugt die Programmzeilen)
+\end
+
+\SeeAlso
+mksource(1),\br
+strcut(7).

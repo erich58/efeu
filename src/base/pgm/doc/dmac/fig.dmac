@@ -1,0 +1,46 @@
+/*	Übersichten
+	(c) 1999 Erich Frühstück
+	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+*/
+
+Übersicht
+	$1 |[|<margin>|] [|<Kurzform>|]| <Haupttitel>
+	<Untertitel>
+
+Der Befehl $1 beginnt eine neue Übersicht.
+
+\def\fig	{{
+	newenv('f', xexpand(ParseOpt(cin, true)));
+	str opt = ParseOpt(cin, true);
+	str head = ParseLine(cin);
+	str shead = ParsePar(cin);
+
+	if	(head)	section('F', opt, head);
+	if	(shead)	section('f', NULL, shead);
+}}
+
+Tabelle
+	$1 |[|<Höhe>|]| <Breitenliste>
+
+Der Befehl $1 beginnt eine Tabelle.
+
+\def\tab	{{
+        str height = xexpand(ParseOpt(cin, true));
+	DataBase wd = DataBase(str);
+
+	for (x in split(xexpand(ParseLine(cin)), "%s,"))
+	{
+		str z[] = split(x, "*");
+
+		if	(dim(z) > 1)
+		{
+			int n = z[0];
+
+			while (n-- > 0)
+				wd += z[1];
+		}
+		else	wd += x;
+	}
+
+	tab(height, cat(",", (List_t) wd));
+}}

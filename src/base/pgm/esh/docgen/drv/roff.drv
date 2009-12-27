@@ -1,0 +1,34 @@
+\FileIdent[roff.drv]{Treiber für nroff/troff}
+//	(c) 1999 Erich Frühstück
+//	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+
+/*	Hilfsfunktionen zur Konstruktion von roff-Anweisungen:
+*/
+
+\cmdeval {
+void Merge::roff_comment (str s)
+	fprintf(plain, ".\\\"\t%s\n", psub(s));
+}
+
+/*	Dokumentgerüst
+*/
+
+/**/
+\cmdeval {
+roff_comment("Nicht editieren, Dokument wurde mit $! generiert.");
+plain << ".do hla de\n.do hpf hyphen.de\n";
+}
+
+
+/*	Attributmakros
+*/
+
+/**/
+
+\def\bfon{\plainout{\\\\fB}}
+\def\iton{\plainout{\\\\fI}}
+\def\tton{\plainout{\\\\fB}}
+
+\def\bfoff{\plainout{\\\\fR}}
+\def\itoff{\plainout{\\\\fR}}
+\def\ttoff{\plainout{\\\\fR}}

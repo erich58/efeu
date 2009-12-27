@@ -1,0 +1,73 @@
+Ident = "Funktion auf Datenmatrix anwenden";
+Copyright = "(c) 1997 Erich Frühstück, A-1090 Wien, Währinger Straße 64/6";
+Version = "2";
+
+bool PrintMode = true;
+bool Reduce = false;
+str VarDef = NULL;
+str Title = NULL;
+str Input = NULL;
+str Output = NULL;
+str SelDef = NULL;
+str Mark = "#-1";
+VirFunc Funktion = NULL;
+str Expr = NULL;
+Type_t Type = NULL;
+
+PrintListDelim = "\t";
+
+PgmOpt("F file", "gload(IncPath, #1)", "Datei mit Definitionen laden")
+PgmOpt("E expr", "geval(#1)", "Ausdruck auswerten")
+
+PgmOpt("neg", "Funktion=operator\"-()\"", "Negation")
+PgmOpt("not", "Funktion=operator\"!()\"", "Boolsche Negation")
+PgmOpt("cpl", "Funktion=operator\"~()\"", "Bitweises Komplement")
+PgmOpt("rnd", "Funktion=operator\"rnd\"", "Runden auf Ganzzahlwerte")
+PgmOpt("f func", "eval(\"Funktion = \" + #1)", "Funktion/Operator")
+PgmOpt("t type", "Type=expr(#1)", "Ausgabetype")
+PgmOpt("e expr", "Expr=#1", "Ausdruck")
+
+PgmOpt("x list", "Mark=#1", "Achsenliste für Spalten")
+PgmOpt("r", "Reduce=true", "Entfernen von singulären Achsen")
+PgmOpt("p prec", "float_prec=#1", "Genauigkeit der Zahlenwerte")
+PgmOpt("v [name=]var", "VarDef=paste(' ', VarDef, #1)", "Variablenselektion")
+PgmOpt("T titel", "Title=#1", "Titel der Ausgabedatei")
+PgmArg("ein", "Input=#1", "Name der Eingabedatei")
+PgmOptArg("aus", "Output=#1;PrintMode=false", "Name der Ausgabedatei")
+PgmXArg("*=*", "SelDef=paste(' ', SelDef, #1)", NULL)
+PgmOptArg("name=var", NULL, "Selektionsparameter")
+
+loadarg;
+
+mdmat md = mdload(Input, SelDef, VarDef);
+
+if	(Reduce)	md.reduce();
+
+if	(Expr)
+{
+	if	(Type == NULL)
+	{
+		eval(sprintf("%s x;", md.type));
+		Type = typeof(expr(Expr));
+	}
+
+	eval(sprintf("virtual %s _EVALFUNC(%s x) return (%s);",
+		Type, md.type, Expr));
+	md = mdexpr(_EVALFUNC, md);
+}
+else
+{
+	if	(Funktion)	md = mdexpr(Funktion, md);
+	if	(Type)		md.konv(Type);
+}
+
+if	(Title)		md.title = Title;
+
+if	(PrintMode)
+{
+	md.mark(strsub(Mark, ",", " ", true));
+	md.print(iostd, "nohead");
+}
+else	md.save(Output);
+
+free(md);

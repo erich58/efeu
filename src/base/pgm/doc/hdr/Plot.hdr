@@ -1,0 +1,107 @@
+/*	Gnu-Plot Schnittstelle
+	(c) 1997 Erich Frühstück
+	A-1090 Wien, Währinger Straße 64/6
+*/
+
+struct Plot {
+	str script;
+	IO io;
+	bool pause;
+	DataBase files;
+};
+
+Plot Plot(str name, str file = NULL)
+{
+	DataBase files = DataBase(str);
+	str script = tempnam();
+	IO io = open(script, "w");
+	files += script;
+	bool pause = false;
+
+	if	(file)
+	{
+		io << "set terminal postscript landscape color"
+		io << " \"Times-Roman\" 14\n";
+		fprintf(io, "set output %#s\n", file);
+	}
+	else	pause = true;
+
+	io << "set data style line\n";
+
+	if	(name)
+		fprintf(io, "set title %#s\n", name);
+
+	return (Plot) { script, io, pause, files };
+}
+
+void Plot()
+{
+	if	(!this.script)	return;
+
+	if	(this.pause)
+		fprintf(this.io, "pause -1 %#s\n", "<RETURN> fortfahren\n");
+
+	close(this.io);
+	system("gnuplot " + this.script);
+
+	for (x in this.files)
+		remove(x);
+}
+
+/*	Plotanweisung generieren
+*/
+
+void Plot::plot(str label, ...)
+{
+	List_t llist = split(label, " ");
+	str delim = "plot";
+
+	for (z in va_list)
+	{
+		fprintf(this.io, "%s\t%s", delim, z);
+
+		if	(llist)
+		{
+			str a = llist.obj;
+			llist = llist.next;
+
+			if	(a)
+				fprintf(this.io, " title %#s", a);
+		}
+
+		delim = " ,\\\n";
+	}
+
+	this.io << '\n';
+}
+
+
+/*	Datenvektoren ausgeben
+*/
+
+void Plot::data(str label, Vec_t x, ...)
+{
+	str file = tempnam();
+	this.files += file;
+	IO io = open(file, "w");
+
+	for (int i = 0; i < dim(x); i++)
+	{
+		fprintf(io, "%g", x[i]);
+
+		for (z in va_list)
+			fprintf(io, " %g", z[i]);
+
+		io << '\n';
+	}
+
+	close(io);
+
+	DataBase db = DataBase(str);
+	int n = 2;
+
+	for (z in va_list)
+		db += sprintf("%#s using 1:%d", file, n++);
+
+	this.plot(label, (List_t) db);
+}

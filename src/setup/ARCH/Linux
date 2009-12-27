@@ -1,0 +1,19 @@
+#!/bin/sh
+#	Lunux - spezifische Anpassung
+#	(c) 1999 Erich Frühstück
+#	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+
+#	CC	C-Kompiler
+#	maxmem	Verfügbarer Hauptspeicher
+#	defsh	Default Shell für Skripts
+
+CC="gcc -fPIC -Wall -Wmissing-prototypes -D_GNU_SOURCE"
+
+case `uname -m` in
+i*86)	CC="$CC -O -m486";;
+*)	;;
+esac
+
+if [ -r /proc/meminfo ]; then
+	MAXMEM=`awk '/MemTotal/ { printf("%d\n", $2/1000.) }' /proc/meminfo`
+fi

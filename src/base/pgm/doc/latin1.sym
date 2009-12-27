@@ -1,0 +1,38 @@
+/*	Latin1-Transformation
+	(c) 1999 Erich Frühstück
+	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+*/
+
+Auml	Ä
+Aring	Å
+AElig	Æ
+Ccedil	Ç
+Eacute	É
+Ntilde	Ñ
+Ouml	Ö
+szlig	ß
+agrave	à
+aacute	á
+acirc	â
+auml	ä
+aring	å
+aelig	æ
+ccedil	ç
+egrave	è
+eacute	é
+circ	ê
+euml	ë
+igrave	ì
+iacute	í
+icirc	î
+iuml	ï
+ntilde	ñ
+ograve	ò
+oacute	ó
+ocirc	ô
+ouml	ö
+ugrave	ù
+uacute	ú
+ucirc	û
+uuml	ü
+yuml	ÿ

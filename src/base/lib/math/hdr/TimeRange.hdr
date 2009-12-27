@@ -1,0 +1,38 @@
+/*	Zeitbereich bestimmen
+	(c) 1997 Erich Frühstück
+	A-1090 Wien, Währinger Straße 64/6
+*/
+
+#ifndef	_Include_TimeRange
+#define	_Include_TimeRange
+
+struct TimeRange {
+	TimeIndex first;
+	TimeIndex last;
+};
+
+TimeRange TimeRange(TimeIndex a, TimeIndex b)
+	return (a < b) ? ( a, b ) : ( b, a );
+
+TimeRange TimeSeries()
+	return TimeRange(first, last);
+
+
+TimeRange TimeRange(TimeSeries a, ...)
+{
+	TimeIndex first = a.first;
+	TimeIndex last = a.last;
+
+	for (x in va_list)
+	{
+		if	(first < x.first)	first = x.first;
+		if	(last > x.last)		last = x.last;
+	}
+
+	return (TimeRange) { first, last };
+}
+
+virtual int fprint (IO io, TimeRange x)
+	fprintf(io, "%s %s", x.first, x.last)
+
+#endif	/* _Include_TimeRange */

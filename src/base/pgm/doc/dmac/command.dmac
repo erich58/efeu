@@ -1,0 +1,76 @@
+/*	Steuerbefehle
+	(c) 1999 Erich Frühstück
+	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+*/
+
+Zeilenumbruch
+
+Der Befehl $1 bewirkt einen Zeilenumbruch.
+
+\def\br	cmd('\n')
+
+Seitenumbruch
+
+Der Befehl $1 bewirkt einen Seitenumbruch.
+
+\def\newpage	cmd('\f')
+
+Inhaltsverzeichnis
+
+Der Befehl $1 generiert ein Inhaltsverzeichnis.
+
+\def\toc	endenv('a'); cmd('t');
+
+Verzeichnis der Übersichten
+
+Der Befehl $1 generiert eine Liste der Übersichten
+
+\def\lof	endenv('a'); cmd('f');
+
+Anhang
+	$1 |[|<Kopfzeile>|]| <Bezeichnung>
+
+Der Befehl $1 beginnt einen neuen Anhangteil.
+
+\def\appendix	{{
+	endenv('a');
+	cmd('a');
+
+	str opt = ParseOpt(cin, true);
+	str arg = ParseLine(cin);
+
+	if	(arg)	section('p', opt, arg);
+}}
+
+Stichwortverzeichnis
+
+Der Befehl $1 generiert das Stichwortverzeichnis.
+
+\def\printindex	latex("\\printindex\n");
+
+Fußnotenmarke
+	$1 |{|<num>|}|
+
+Der Befehl $1 generiert eine Fußnotenmarke.
+
+\def\mark	cmd('m', xexpand(ParseArg(cin)));
+\def\fn	cmd('m', xexpand(ParseArg(cin)));
+
+Literaturmarke
+	$1 |{|<name>|}|
+
+Der Befehl $1 generiert eine Literaturmarke.
+
+\def\lmark	cout << "<=[" << ParseArg(cin) << "]=>";
+
+Vertikale Verschiebung
+	$1 <num>
+
+Der Befehl $1 beendet den laufenden Absatz und generiert eine
+vertikale Verschiebung um <num> Zeilen.
+
+\def\vspace	{
+	mode('v');
+	latex(sprintf("\\vspace{%d\\baselineskip}\n",
+		xexpand(ParseLine(cin))));
+}

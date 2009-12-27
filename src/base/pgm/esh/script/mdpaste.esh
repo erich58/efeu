@@ -1,0 +1,126 @@
+Ident = "Datenmatrizen\nbezüglich einer Achse zusammenhängen";
+Copyright = "(c) 1997 Erich Frühstück, A-1090 Wien, Währinger Straße 64/6";
+Version = "2";
+
+str Title = NULL;
+str Output = NULL;
+str Name = "#1";
+str Expr = NULL;
+bool Reduce = false;
+str VarDef = NULL;
+str SelDef = NULL;
+bool PrintMode = true;
+bool Uniq = false;
+bool Sort = false;
+
+PrintListDelim = "\t";
+
+PgmOpt("r", "Reduce=true", "entfernt singuläre Achsen aus den Datenfiles")
+PgmOpt("s", "Sort=true", "sortiert die Achsenbezeichner")
+PgmOpt("u", "Uniq=true", string !
+sortiert die Achsenbezeichner,
+wobei gleiche Bezeichner nur einmal verwendet werden.
+Bei gleichen Bezeichnern werden die Daten der zuletzt angegebenen
+Datei entnommen.
+!);
+PgmOpt("e expr", "Expr=#1", string !
+definiert einen Vergleichsausdruck für die Sortierung.
+Im Ausdruck stehen die Variablen <a> und <b> für die
+jeweiligen Achsenezeichner.
+Falls <expr> nicht definiert ist,
+wird <|cmp(<a>,<b>)|> verwendet.
+!);
+PgmOpt("v [name=]var", "VarDef=paste(' ', VarDef, #1)", string !
+definiert eine Variablenselektion.
+!)
+PgmOpt("T titel", "Title=#1", string !
+setzt den Titel der Ausgabedatei auf <titel>.
+!);
+PgmOpt("n name", "Name=#1", string !
+definiert die Achse, bezüglich der die Daten zusammengehängt werden.
+Die Vorgabe ist $(Name).
+!)
+PgmOpt("o aus", "Output=#1; PrintMode=false", string !
+definiert die Ausgabedatei. Fehlt die Option, wird die resultierende
+Datenmatrix im ASCII-Format zur Standardausgabe geschrieben.
+!);
+PgmVaArg("ein1 ...", NULL, "ist die Liste der Eingabedatei(en).")
+PgmXArg("*=*", "SelDef=paste(' ', SelDef, #1)", NULL)
+PgmOptArg("name=var", NULL, "definiert Selektionsparameter.")
+
+loadarg;
+
+if	(argc <= 1)
+{
+	usage(UsageFmt, ioerr);
+	exit(0);
+}
+
+int n = argc - 1;
+
+if	(Expr)
+{
+	eval(sprintf("int CompFunc(str a, str b) return %s;\n", Expr));
+}
+else	Func CompFunc = int cmp(str, str);
+
+struct ENTRY {
+	int num;
+	int pos;
+	str label;
+};
+
+int cmp_sort(ENTRY a, ENTRY b)
+{
+	int n = CompFunc(a.label, b.label);
+	return n ? n : cmp(a.pos, b.pos);
+}
+
+int cmp_uniq(ENTRY a, ENTRY b)
+	return CompFunc(a.label, b.label);
+
+int cmp_pos(ENTRY a, ENTRY b)
+	return cmp(a.pos, b.pos);
+
+DataBase DB = DataBase(ENTRY);
+mdmat tab[n];
+
+if	(Uniq)	DB.sort(cmp_uniq);
+else if	(Sort)	DB.sort(cmp_sort);
+
+for (int i = 0; i < n; i++)
+{
+	tab[i] = mdload(argv[i + 1], SelDef, VarDef);
+
+	for (x in tab[i].label(Name))
+		DB += { i, dim(DB), x };
+}
+
+if	(!Sort)	DB.sort(cmp_pos);
+
+/*	Datenfiles überarbeiten
+*/
+
+for (i = 0; i < n; i++)
+{
+	str sel = NULL;
+
+	for (x in DB)
+		sel = paste(",", sel, (x.num == i ? x.label : ":" + x.label));
+
+	tab[i] = reload(tab[i], paste("=", Name, sel));
+
+	if	(i > 0)
+	{
+		tab[0] += tab[i];
+		free(tab[i]);
+	}
+}
+
+if	(Title)		tab[0].title = Title;
+if	(Reduce)	tab[0].reduce();
+
+if	(PrintMode)	tab[0].mark("#-1").print(iostd, "nohead");
+else			tab[0].save(Output);
+
+free(tab[0]);

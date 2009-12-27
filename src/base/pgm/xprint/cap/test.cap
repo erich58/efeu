@@ -1,0 +1,21 @@
+pc_dev = NULL;
+TopMargin = 0;
+PageHeight = 33;
+LeftMargin = 8;
+PageWidth = 90;
+pc_ul = NULL
+pc_init = "INITIALISIERUNG\n";
+pc_exit = NULL;
+pc_ff = "\f"
+pc_nl = "\n";
+
+fonttab {
+	1,	"<FONT 1 ein>",	"<FONT1 aus>"
+	2,	"<FONT 2 ein>",	"<FONT2 aus>"
+	3,	"<FONT 3 ein>",	"<FONT3 aus>"
+	4,	"<FONT 4 ein>",	"<FONT4 aus>"
+	5,	"<FONT 5 ein>",	"<FONT5 aus>"
+	10,	"<FONT 10 ein>",	"<FONT10 aus>"
+	11,	"<FONT 11 ein>",	"<FONT11 aus>"
+	12,	"<FONT 12 ein>",	"<FONT12 aus>"
+}

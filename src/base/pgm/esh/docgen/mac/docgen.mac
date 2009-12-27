@@ -1,0 +1,74 @@
+/*	Konfigurationsfile für eisdoc
+	(c) 1999 Erich Frühstück
+	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+*/
+
+#if	0
+/**/
+\newcmd\FileIdent[OA ]{
+	if	(VerboseMode)
+		fprintf(iolog, "%s: ", #1s);
+
+	if	(VerboseMode > 1)
+		fprintf(iolog, "%s\n", psub(#2s));
+}
+
+\FileIdent[docgen.mac]{Konfigurationsfile für eisdoc}
+
+/*	Der Makro at_exit kann von Treibern zum Aufräumen umdefiniert
+	werden.
+*/
+
+\let\at_exit\relax
+
+/*	Schriftsätze
+
+Zum Ein- und Ausschalten von Schriften werden interne Befehle
+der Form \arg{name}on und \arg{name}off verwendet.
+Ihre Definition ist Treiberspezifisch.
+
+Roman ist die Standardschrift, die Ein- und Ausschaltbefehle
+sind Dummybefehle und werden für einen vorübergehenden Wechsel
+aus einer anderen Schrift benötigt.
+*/
+
+\cmdeval List_t fontstack;
+\let\rmon\relax
+\let\rmoff\relax
+
+/*	\\$1{name}	Schaltet die Schrift name ein
+*/
+\newcmd\font_on[a]
+{
+	if (fontstack) fprintf(cout, "\\%soff", fontstack.obj);
+
+	fontstack.push(#1s);
+	fprintf(cout, "\\%son\\;", fontstack.obj);
+}
+
+/*	\\$1	Beendet einen Schriftsatz.
+*/
+\newcmd\font_off
+{
+	if (fontstack) fprintf(cout, "\\%soff", fontstack.pop());
+	if (fontstack) fprintf(cout, "\\%son", fontstack.obj);
+	cout << "\\;";
+}
+
+/*	\\$1{arg}	Gibt arg in der Schrift $1 aus.
+*/
+
+\def\rm[a]{\font_on#0a#1;\font_off}
+\let\bf\rm
+\let\it\rm
+\let\tt\rm
+
+/*	Die Aktivierungsbefehle für Schriften werden von
+	den jeweiligen Treibern überschrieben. 
+*/
+
+/**/
+\let\bfon\relax	\let\bfoff\relax
+\let\iton\relax	\let\itoff\relax
+\def\tton{\bfon} \def\ttoff{\bfoff}
+#endif

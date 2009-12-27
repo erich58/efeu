@@ -1,0 +1,83 @@
+/*	Überschriften für Handbucheinträge
+	(c) 1999 Erich Frühstück
+	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+*/
+
+Hauptüberschrift BEZEICHNUNG
+
+\def\Name	section('H', NULL, "BEZEICHNUNG");
+
+Hauptüberschrift ÜBERSICHT
+
+\def\Synopsis	section('H', NULL, "ÜBERSICHT");
+
+Hauptüberschrift BESCHREIBUNG
+
+\def\Description	section('H', NULL, "BESCHREIBUNG");
+
+Hauptüberschrift BEISPIEL
+
+\def\Example	section('H', NULL, "BEISPIEL");
+
+Hauptüberschrift BEISPIELE
+
+\def\Examples	section('H', NULL, "BEISPIELE");
+
+Hauptüberschrift DATEIEN
+
+\def\Files	section('H', NULL, "DATEIEN");
+
+Hauptüberschrift UMGEBUNGSVARIABLEN
+
+\def\Environment	section('H', NULL, "UMGEBUNGSVARIABLEN");
+
+Hauptüberschrift SIEHE AUCH
+
+\def\SeeAlso	section('H', NULL, "SIEHE AUCH");
+
+Hauptüberschrift DIAGNOSE
+
+\def\Diagnostics	section('H', NULL, "DIAGNOSE");
+
+Hauptüberschrift BEMERKUNGEN
+
+\def\Notes	section('H', NULL, "BEMERKUNGEN");
+
+Hauptüberschrift WARNUNGEN
+
+\def\Warnings	section('H', NULL, "WARNUNGEN");
+
+Hauptüberschrift FEHLER
+
+\def\Errors	section('H', NULL, "FEHLER");
+
+Handbuch des Programmierers
+
+\def@PRM	<Programmer''s Reference Manual>
+
+Handbuch des Systemadministrators
+
+\def@SARM	<System Administrator''s Reference Manual>
+
+/*	Hilfsfunktionen
+*/
+
+Funktionsprototype
+	$1 <Prototype>
+
+Die Funktion $1 dient zur Ausgabe eines Funktionsprototypes
+
+\def\proto	fprintf(cout, "<|%s|>\\br\n", ParseLine(cin, true));
+
+
+/*	Kommandos für Kompatiblität
+*/
+
+\def\SynTeX	{ mode('h'); if (!latex("Syn\TeX{}")) cout << "SynTeX"; }
+\def\BibTeX	{ mode('h'); if (!latex("{\sc Bib}\TeX{}")) cout << "BibTeX"; }
+\def\LaTeX	{ mode('h'); if (!latex("\\LaTeX{}")) cout << "LaTeX"; }
+\def\LaTeXe	{ mode('h'); if (!latex("\\LaTeXe{}")) cout << "LaTeX2e"; }
+\def\TeX	{ mode('h'); if (!latex("\\TeX{}")) cout << "TeX"; }
+
+\def\tthang	{ newenv('c'); newenv('h'); }
+\def\sloppy	newenv('s');

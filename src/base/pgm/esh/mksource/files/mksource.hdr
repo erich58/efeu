@@ -1,0 +1,17 @@
+/*	Verwendung von mksource - Funktionen in esh-Skripts
+	(c) 2000 Erich Frühstück
+	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+*/
+
+#ifndef	_mksource_hdr
+#define	_mksource_hdr	1
+
+IncPath = paste(":", IncPath, EFEUTOP + "/lib/mksource");
+fmt_str = "%*s";
+
+IO global::hdr = NULL;
+IO global::src = iostd;
+IO global::doc = NULL;
+IO global::eis = NULL;
+
+#endif	/* mksource.hdr */

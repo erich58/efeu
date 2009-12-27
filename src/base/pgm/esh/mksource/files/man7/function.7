@@ -1,0 +1,131 @@
+\Name
+Function -- Werkzeuge zur Funktionsgenerierung
+\Synopsis
+\tthang
+\#include \<function.ms\>
+
+Function Function (str <name>);
+
+Function Function (str <name>, str <args>, ...);
+
+void Function::write (bool <global> = false);
+
+void LocalFunction (str <name>, str <args>, str <body>, ...);
+
+void GlobalFunction (str <name>, str <args>, str <body>, ...);
+
+\Description
+Der Datentype |Function| dient zur Generierung einer C-Funktion. Beim
+Konstruktor gibt die Variable <name> den Datentype und Namen der
+Funktion an. Das Argument <args> bestimmt die Argumentliste der Funktion.
+Auf <name> und <arg> wird eine Parametersubstitution angewendet.
+Alle weiteren Argumente setzen Stringregister,
+die bei der Parametersubstitution zur Verfügung stehen.
+
+Mit Hilfe der Funktion |Function::write| wird die C-Funktion
+ausgegeben. Das Argument <global> bestimmt, ob die Funktionsdefinition
+global oder statisch erfolgen soll. Bei einer globalen Definition wird
+auch ein Prototyp in die Headerdatei geschrieben.
+
+Einfache C-Funktionen können mit den Funktionen |GlobalFunction| und
+|LocalFunction| konstruiert werden. Das Argument <body> bestimmt den
+Funktionsrumpf. Auch auf ihn wird Parametersubstitution angewendet.
+Für alle anderen Argumente gilt das bei der Beschreibung
+des Konstruktors Gesagte.
+
+\shead	Konstruktion von Befehlszeilen
+Zur Konstruktion von Befehlszeilen stehen eine Reihe von Funktionen
+zur Verfügung. Die Sourcezeilen werden mit einem Formatargument <fmt>
+übergeben, das mit Paramatersubstitution überarbeitet wird.
+Zusätzliche Argumente setzen die Stringregister für die
+Parametersubstitution.
+
+\hang
+\proto	void Function::line \& (str <fmt> = NULL, ...);
+fügt eine Befehlszeile ein.
+
+\proto	void Function::ppline \& (str <fmt> = NULL, ...);
+fügt eine Zeile ohne Einrückung ein und wird vorzugsweise für
+Preprozessorzeilen verwendet.
+
+\proto	void Function::fline \& (str <fmt> = NULL, ...);
+fügt eine Befehlszeile ein. Der Formatstring <fmt> wird
+jedoch nicht mit Parametersubstitution, sondern mit |sprintf|
+formatiert. Die Stringregister werden nicht verändert.
+
+\proto	void Function::comment \& (str <fmt> = NULL, ...);
+fügt einen Kommentar ein.
+
+\proto	void Function::body (str <fmt> = NULL, ...);
+zerlegt den Formatstring <fmt> in einzelne Zeilen
+und fügt sie in der Datenstruktur ein.
+
+\proto	void Function::beg \& (str <fmt> = NULL);
+beginnt einen Funktionsblock. Das Argument |fmt|
+wird vor der öffnenden Klammer eingefügt.
+
+\proto	void Function::end \& (str <fmt> = NULL);
+schließt einen Funktionsblock.
+Das Argument |fmt| wird nach der schließenden Klammer eingefügt.
+
+\proto	void Function::block \& (str <head>, str <body>, ...);
+generiert eine Blockstruktur mit Kopf <head> und Körper <body> 
+
+\proto	void Function::case \& (str <key>, str <cmd> = NULL, ...);
+erzeugt eine |case|-Anweisung mit zugehörigem Kommando.
+Ist <key> der Null-String, wird eine |default| Anweisung
+generiert.
+
+\proto	void Function::cblock \& (str <key>, str <cmd>, ...);
+erzeugt eine |case|-Anweisung mit einem Block von
+Befehlszeilen.
+
+\proto int Function::pfbody \& (str <name>, IO <def>, bool <in_switch> = false);
+dient zur Konstruktion des Rumps einer Ausgabefunktion.
+Details dazu stehen unter \mref{printfunc(7)}.
+/*
+\proto	void Function::byte_order_dep \& (str <fmt>, str <std>, str <rev>, ...);
+*/
+\end
+
+Ein Funktionsblock kann auch ohne den Funktionen |Function::beg|,
+|Function::end| oder |Function::block| konstruiert werden.
+Dann müssen allerdings die Blockklammern explizit als Befehlszeilen
+ausgegeben werden.
+Um einen gut strukturierten Code zu erhalten, sind
+vor den Befehlszeilen je nach Blocktiefe entsprechend
+viele Tabulatoren einzufügen.
+
+Die folgenden Hilfsfunktionen dienen zur besseren Gliederung
+der generierten Befehlszeilen:
+
+\hang
+\proto	void Function::startline \& ();
+wird zu Beginn jeder Zeile aufgerufen und fügt bei Bedarf eine
+Leerzeile ein.
+
+\proto	void Function::newpar \& ();
+fügt eine Absatztrennung ein.
+
+\proto	void Function::ignorepar \& ();
+ignoriert nachfolgende Absatztrennungen
+\end
+
+\Examples
+
+Das erste Beispiel zeigt die Generierung des Kommandos
+<"Hello World"> mit Hilfe des Datentypes |Function|.
+
+\spage[3]
+@MSExample(hello.bsp,erzeugt die Programmzeilen)
+\end
+
+Das zweite Beispiel zeigt die Konstruktion eines |switch|-Blocks
+mit einzelnen Funktionsaufrufen.
+
+\spage[3]
+@MSExample(func.bsp,erzeugt die Programmzeilen)
+\end
+
+\SeeAlso
+mksource(1), printfunc(7).

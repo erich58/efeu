@@ -1,0 +1,2 @@
+ms	DFXFX	InstallFile(%s/%s.%s,$(MSLIB),%s.%s)
+hdr	DFXFX	InstallFile(%s/%s.%s,$(ESHLIB),%s.%s)

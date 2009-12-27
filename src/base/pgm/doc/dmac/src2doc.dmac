@@ -1,0 +1,135 @@
+/*	Handbucheinträge aus Sourcefiles generieren
+	(c) 2000 Erich Frühstück
+	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+*/
+
+\eval	{
+struct SourceListEntry {
+	str name;
+	str path;
+};
+
+int SourceListComp(SourceListEntry a, SourceListEntry b)
+{
+	int n = lexcmp(a.name, b.name);
+	return n ? n : cmp(a.path, b.path);
+}
+
+DataBase SourceList = DataBase(SourceListEntry, SourceListComp);
+}
+
+Liste der Programmsourcen um Dateien in Bibliothek erweitern
+	$1 <dir>
+
+Der Befehl $1 erweitert die Liste der Programmsourcen zur Konstruktion von
+Handbucheinträgen mit allen Dateien aus der Bibliothek <dir>.
+Fehlt die Angabe von <dir>, wird der Bibliotheksname der aktuellen
+Eingabedatei genommen.
+
+\def\addsrclist {{
+str path = xexpand(ParseLine(cin));
+
+if	(!path)	path = pathname(DocName);
+
+path = path ? path + "/" : ".";
+
+for (x in split(filter("mksrclist " + path)))
+	if	(x != DocName)
+		SourceList += { basename(x), x };
+}}
+
+Liste der Programmsourcen um Einzeldatei erweitern
+	$1 <name>
+
+Der Befehl $1 erweitert die Liste der Programmsourcen mit der
+Datei <name>.
+
+\def\addsrc {{
+str x = fsearch(NULL, xexpand(ParseLine(cin)), NULL);
+
+if	(x)
+	SourceList += { basename(x), x };
+}}
+
+
+Aktuelle Liste der Programmsourcen ausgeben
+	$1 <fmt>
+
+Der Befehl $1 gibt die aktuelle Liste der Programmsourcen aus.
+
+\def\printsrclist {{
+	str fmt = ParseLine(cin);
+	fmt = fmt ? fmt + "\n" : "$1: $2\n";
+
+	for (x in SourceList)
+		fpsub(cout, fmt, x.name, x.path);
+}}
+
+Dateien aus der Liste der Programmsourcen löschen
+	$1 <list>
+
+Der Befehl $1 löscht alle Dateien aus der Liste der Programmsourcen,
+die der Musterliste <list> entsprechen. Eine leere Liste löcht alle
+Einträge.
+
+\def\delsrc {{
+	List_t list = split(ParseLine(cin));
+	int i = 0;
+
+	while (i < dim(SourceList))
+	{
+		if	(pselect(SourceList[i].name, list))
+			SourceList.delete(i, 1);
+		else	i++;
+	}
+}}
+
+Handbucheinträge aus Programmsourcen generieren
+	$1 |[|<flags>|]| <list>
+
+Das Argument <list> gibt eine Liste von Selektionsmustern an.
+Der Optionale Parameter <flags> erlaubt die Übergabe von Optionen
+an das Kommando |src2doc|.
+
+\def\src2doc {{
+str cmd = paste(" ", "src2doc", ParseOpt(cin, true)) + " ";
+List_t list = split(ParseLine(cin, true));
+
+for (x in SourceList)
+	if (pselect(x.name, list))
+		cout << filter(cmd + x.path);
+}}
+
+Dateien der Sourceliste einbinden
+	$1 <list>
+
+Das Argument <list> gibt eine Liste von Selektionsmustern zur
+Auswahl der Dateien an.
+
+\def\srcinclude {{
+str cmd = ParseOpt(cin, true);
+List_t list = split(ParseLine(cin, true));
+cmd = cmd ? "|" + cmd : "$1";
+
+for (x in SourceList)
+	if (pselect(x.name, list))
+		include(NULL, x.path);
+}}
+
+Dateien der Sourceliste einbinden
+	$1 |[|<cmd>|]| <list>
+
+Das Argument <list> gibt eine Liste von Selektionsmustern zur
+Auswahl der Dateien an.
+Der optionale Parameter <cmd> bestimmt das Filterprogramm zur
+Aufbereitung des Datenfiles.
+
+\def\getsrc {{
+str cmd = ParseOpt(cin, true);
+List_t list = split(ParseLine(cin, true));
+cmd = cmd ? "|" + cmd : "$1";
+
+for (x in SourceList)
+	if (pselect(x.name, list))
+		copy(open(psub(cmd, x.path), "rz"), cout);
+}}

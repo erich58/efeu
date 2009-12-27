@@ -1,0 +1,20 @@
+/*	Handbuchindex generieren
+	(c) 1999 Erich Frühstück
+	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+*/
+
+Handbucheintrag
+
+\def\mpage	{
+	str sec = ParseOpt(cin, true);
+	str name = ParseLine(cin);
+	fprintf(cout, "[%s(%s)]\n", name, sec);
+}
+
+Start der Beschreibung
+
+\def\Name	SkipWhite(cin);
+
+Ende der Beschreibung
+
+\def\Synopsis	cin.mgets();

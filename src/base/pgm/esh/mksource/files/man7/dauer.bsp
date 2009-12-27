@@ -1,0 +1,24 @@
+/*	Zählobjekt
+*/
+
+config src
+
+#include <macro.ms>
+#include <cntobj.ms>
+
+Include(src, "<Synthesis/TimeRange.h>")
+
+src << "extern unsigned dauer;\n";
+
+struct Dauer {
+	int anz;
+	int val;
+	int tage;
+};
+
+CntObj("strukt", Dauer, string !
+.	anz	dauer ? 1 : 0
+.	val	dauer
+ini	tage	$1 = time_range[idx[0]].tage
+return	.	dauer ? 1 : 0
+!);

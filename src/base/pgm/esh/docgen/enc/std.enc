@@ -1,0 +1,33 @@
+/*	Standardeingabekonvertierung
+	(c) 1999 Erich Frühstück
+	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+*/
+
+!!	\n\\eval 
+(*)	\\symbol{bullet}
+-	-
+--	\\symbol{endash}
+---	\\symbol{emdash}
+$-$	\\minus\\;
+$+$	\\plus\\;
+<<	\\symbol{<<}
+>>	\\symbol{>>}
+->	\\symbol{right}
+<-	\\symbol{left}
+!=	\\symbol{ne}
+<=	\\symbol{le}
+==	\\symbol{eq}
+>=	\\symbol{ge}
+|\^	\\symbol{up}
+|v	\\symbol{down}
+/*
+Ä	\\symbol{"A}
+Ö	\\symbol{"O}
+Ü	\\symbol{"U}
+ß	\\symbol{"s}
+ä	\\symbol{"a}
+ö	\\symbol{"o}
+ü	\\symbol{"u}
+*/
+\~n	\\symbol{\~n}
+\~N	\\symbol{\~N}

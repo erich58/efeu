@@ -1,0 +1,57 @@
+\entry{types}
+\Name
+\caption{Basistypen für EFEU-Programmbibliothek}
+\Synopsis
+\hang	\#include <EFEU/types.h>
+\Description
+In \tt{EFEU/types.h} werden die
+folgenden Funktionstypen definiert:
+\nofill
+	typedef int (*comp_t) (const void *a, const void *b);
+	typedef int (*visit_t) (void *ptr);
+	typedef void (*setup_t) (void);
+	typedef void *(*create_t) (void);
+	typedef void (*clean_t) (void *ptr);
+	typedef char *(*ident_t) (const void *data);
+\end
+Diese werden in cast-Ausdrücke bei der Übergabe von Funktionspointern
+Verwendet (siehe Beispiel weiter unten).
+
+Die zugehörigen Funktionen kommen folgendermaßen zum Einsatz:
+\list
+\ttitem{comp_t}
+Vergleichsfunktion für Sortier und Suchfunktionen.
+\ttitem{visit_t}
+Funktion zum Durchwandern von Datenlisten.
+\ttitem{setup_t}
+Funktion zur Initialisierung.
+\ttitem{create_t}
+Funktion zur Generierung eines Objektes.
+\ttitem{clean_t}
+Funktion zur Freigabe eines Objektes, z.B: \tt{memfree}.
+\ttitem{ident_t}
+Funktion zur Generierung einer Identifikation.
+\end
+\Example
+Der Datentype \tt{comp_t} definiert eine Vergleichsfunktion, wie
+sie von \tt{bsearch(3C)}, \tt{qsort(3C)} oder \tt{vbsearch(3)}
+als Argument benötigt wird.
+
+Anstelle der Definition einer Vergleichsfunktion mit \tt{void *} Pointern,
+wird direkt der benötigte Datentype verwendet und dafür bei der
+Übergabe der Funktion der cast \tt{(chain_t)} verwendet.
+
+Die folgende Tabelle
+\nofill
+	char *tab[] = {
+		"Birnen", "Weintrauben", "Orangen", "Bananen"
+	};
+\end
+wird mit
+\nofill
+	qsort(tab, sizeof(tab)/sizeof(tab[0]), sizeof(tab[0]), (comp_t) strcmp);
+\end
+alphabetisch sortiert.
+\SeeAlso
+\tt{vbsearch(3)}, \tt{config(5)}.\break
+\tt{bsearch(3C)}, \tt{qsort(3C)} im \PRM.

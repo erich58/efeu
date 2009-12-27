@@ -1,0 +1,5 @@
+CGI_DEP= DEP_EFX DEP_EFM
+CGI_LIB= LIB_EFX LIB_EFM
+CGI_OBJ= eis-cgi.o
+
+Program($(BINDIR),eis-cgi,$(CGI_OBJ),$(CGI_DEP),$(CGI_LIB))

@@ -1,0 +1,7 @@
+//\\inputenc{std}
+abc---def
+Umlaute: ÄÖÜäöüß
+Sonderzeichen >>Anführung<<.
+abc~ndef~ghij
+\closeinput
+Rest des Datenfiles

@@ -1,0 +1,15 @@
+/*	Einfache Zähler
+*/
+
+config hdr src
+
+#include <macro.ms>
+#include <cntdef.ms>
+
+Include(hdr, "<EFEU/mdcount.h>")
+Include(src, HeaderName)
+
+CntDef cdef = CntDef()
+cdef.cntobj("ges", "Fallzähler", int, ". . 1");
+cdef.classfunc("ges", "Gesamtheit", "return 0;", "GES Gesamtheit");
+cdef.setup("Simple");

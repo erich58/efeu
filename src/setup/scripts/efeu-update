@@ -1,0 +1,55 @@
+#!/bin/sh
+#	Sourcen auf den letzten Stand bringen
+
+top=${EFEUTOP:=@TOP@}
+src=$top/src
+
+#	Aufrufsyntax
+
+usage ()
+{
+	cat <<!
+Aufruf: $0 [-hn] [dir]
+
+	-h	Dieser Text
+	-n	Regeln nur anzeigen
+	dir	Bibliothek mit Sourcen, Vorgabe $src.
+
+Das Kommando wechselt in die Bibliothek <dir> und macht ein
+update aller Unterbibliothekn, die unter Kontrolle von cvs
+liegen.
+!
+}
+
+while getopts nh opt
+do
+	case $opt in
+	h)	usage; exit 0;;
+	\?)	usage | sed -e '/^$/q'; exit 1;;
+	esac
+done
+
+shift `expr $OPTIND - 1`
+
+if [ $# -gt 0 ]; then
+	src=$1
+fi
+
+cd $src || exit 1
+src=`pwd`
+
+if [ -d CVS ]; then
+	echo "$src:"
+	cvs update
+	exit 0
+fi
+
+for x in *
+do
+	if [ -d $x/CVS ]; then
+		echo "$src/$x:"
+		(cd $x; cvs update)
+	else
+		echo "$src/$x: Keine Versionskontrolle!"
+	fi
+done

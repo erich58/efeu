@@ -1,0 +1,2 @@
+cfg	DFXFX	InstallFile(%s/%s.%s,$(CFGDIR),%s.%s)
+hdr	DFXF	InstallFile(%s/%s.%s,$(CFGDIR),%s)

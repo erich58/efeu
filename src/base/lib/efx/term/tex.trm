@@ -1,0 +1,15 @@
+/*	Terminalanpassung für TeX
+	(c) 1994 Erich Frühstück
+	A-1090 Wien, Währinger Straße 64/6
+*/
+
+LINES = 24	// Zeilenzahl 
+COLUMNS = 80	// Spaltenzahl
+CLEAR = NULL	// Bildschirm Löschen
+
+Init = "\\documentstyle[A4,isogerman]{article}\n\\begin{document}\n"
+Exit = "\\end{document}\n"
+
+ItalicFont = "\\it "	// Schriftwechsel Italic
+BoldFont = "\\bf "	// Schriftwechsel Fett
+RomanFont = "\\rm "	// Schriftwechsel Roman

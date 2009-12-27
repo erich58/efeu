@@ -1,0 +1,52 @@
+/*	Einkommenszähler
+*/
+
+config hdr src
+
+#include <macro.ms>
+#include <cntdef.ms>
+
+Include(hdr, "<EFEU/mdcount.h>")
+Include(src, HeaderName)
+
+CntDef cdef = CntDef("EKData", 1, string !
+int	btag	Beitragstage
+int	satz	Einkommenssatz
+!);
+
+cdef.init("SetEK", "unsigned btag, unsigned satz", string !
+ptr->btag = btag;
+ptr->satz = satz;
+!);
+
+/*	Zählobjekt: esh-Struktur
+*/
+
+struct DezilBasis {
+	double anz;
+	double val;
+};
+
+cdef.cntobj("eink", "Einkommenszähler", DezilBasis, string !
+.	anz	1.
+.	val	$(ptr)->satz
+return 	.	$(ptr)->satz ? 1 : 0
+!);
+
+/*	Einkommensklasse
+*/
+
+cdef.test("std", "Standardklassen",
+	"int x = $(ptr)->satz;", "x <= $(key)", string !
+0
+@test	$(ptr)->btag == $(key)
+0	B0	Keine Beitragstage
+*	E0	Kein Einkommen
+@end
+10000	E$(key)	Einkommen $((int) last + 1) bis zu $(key)
+20000	E$(key)	Einkommen $((int) last + 1) bis zu $(key)
+50000	E$(key)	Einkommen $((int) last + 1) bis zu $(key)
+*	EXXX	Einkommen über $(last)
+!);
+
+cdef.setup("EK", "ek");

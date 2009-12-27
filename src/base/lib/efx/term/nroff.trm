@@ -1,0 +1,12 @@
+/*	Terminalanpassung für nroff
+	(c) 1994 Erich Frühstück
+	A-1090 Wien, Währinger Straße 64/6
+*/
+
+LINES = 24	// Zeilenzahl 
+COLUMNS = 80	// Spaltenzahl
+CLEAR = NULL	// Bildschirm Löschen
+
+ItalicFont = "\\fI"	// Schriftwechsel Italic
+BoldFont = "\\fB"	// Schriftwechsel Fett
+RomanFont = "\\fR"	// Schriftwechsel Roman

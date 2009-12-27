@@ -1,0 +1,11 @@
+//info(DataBase)
+
+struct X { str name; int val };
+
+DataBase db = DataBase(X);
+db += { "Test", 20 };
+
+for (x in db)
+	iostd << x << '\n';
+
+db.save(iostd, true);

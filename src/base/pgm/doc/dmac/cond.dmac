@@ -1,0 +1,46 @@
+/*	Bedingte Ausdrücke
+	(c) 1999 Erich Frühstück
+	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+*/
+
+Bedingter Ausdruck
+	$1 |(|<expr>|,|<ifpart>|,|<elsepart>|)|
+
+Falls <expr> wahr ist, wird <ifpart> ausgegeben, ansonsten <elsepart>.
+
+\def@if	 \eval{cout << (($1) ? "$2" : "$3");}
+
+Testblock
+	$1 |{|<expr>|}| <ifpart> [|\else| <elsepart>] |\endif|\br
+
+Falls <expr> wahr ist, wird <ifpart> ausgegeben, ansonsten <elsepart>.
+Das Schlüsselwort |\else| kann zusammen mit <elsepart> entfallen.
+Testblöcke können verschachtelt werden. Kommentare und mit |||| ... ||||
+oder |----| ... |----| geklammerte Textteile werden nicht nach
+Schlüsselwörtern untersucht.
+
+\def\if	{ cout << ParseBlock(cin, expr(ParseExpr(cin)),
+	"if", "endif", "else"); }
+
+/*
+PROBLEM:
+Das Aufspalten der Liste mit split liefert keine gute Zerlegung:
+Keine Maskierung, Leerfelder bei mehreren weißen Zeichen
+hinterainander oder am Ende der Liste, ...
+
+Textschleife
+	$1 <List> |\do| <Block> |\done|
+
+Der Text <Block> wird für jedes Argument der Liste <List>
+ausgeführt. Die einzelnen Werte der Liste sind durch Leerzeichen oder
+Komma getrennt. Im Text <Block> wird |$1| gegen das aktuelle Argument
+ersetzt.
+
+\def\for {{
+	str list = ParseBlock(cin, 1, NULL, "do", NULL);
+	str expr = ParseBlock(cin, 1, "do", "done", NULL);
+
+	for (x in split(list, "%s,"))
+		cout << psub(expr, x);
+}}
+*/

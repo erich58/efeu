@@ -1,0 +1,42 @@
+Ident = "Zwei Datenmatrizen vergleichen";
+Copyright = "(c) 1998 Erich Frühstück, A-1090 Wien, Währinger Straße 64/6";
+Version = "2";
+
+bool Reduce = false;
+str VarDef = NULL;
+str Ein1 = NULL;
+str Ein2 = NULL;
+str Output = NULL;
+str SelDef = NULL;
+
+PrintListDelim = "\t";
+
+PgmOpt("r", "Reduce=true", "Entfernen von singulären Achsen")
+PgmOpt("v [name=]var", "VarDef=paste(' ', VarDef, #1)", "Variablenselektion")
+PgmOpt("p prec", "float_prec=#1", "Genauigkeit der Zahlenwerte")
+PgmArg("m1", "Ein1=#1", "Name der 1. Datenmatrix")
+PgmArg("m2", "Ein2=#1", "Name der 2. Datenmatrix")
+PgmOptArg("aus", "Output=#1", "Name der Ausgabedatei")
+PgmXArg("*=*", "SelDef=paste(' ', SelDef, #1)", NULL)
+PgmOptArg("name=var", NULL, "Selektionsparameter")
+
+loadarg;
+
+mdmat md1 = mdload(Ein1, SelDef, VarDef);
+mdmat md2 = mdload(Ein2, SelDef, VarDef);
+
+if	(Reduce)
+{
+	md1.reduce();
+	md2.reduce();
+}
+
+str tn1 = tmpnam("mdd");
+str tn2 = tmpnam("mdd");
+md1.print(open(tn1, "w"), "nohead");
+md2.print(open(tn2, "w"), "nohead");
+system(paste(" > ", sprintf("diff %s %s", tn1, tn2), Output));
+remove(tn1);
+remove(tn2);
+free(md1);
+free(md2);

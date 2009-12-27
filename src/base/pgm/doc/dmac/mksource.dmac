@@ -1,0 +1,49 @@
+/*	Befehle zur Sourcefilegenerierung
+	(c) 2000 Erich Frühstück
+	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+*/
+
+Sourcefile generieren
+	$1 <Datei>
+
+Der Befehl $1 wendet |mksource| auf die angegebene Skriptdatei
+an und bindet die Ergebnisdateien wortwörtlich ein.
+
+\def\mksource {{
+str fname = fsearch(DocPath, expand(ParseLine(cin)), NULL);
+
+if	(fname)
+{
+	str name = filename(fname);
+	str tmp = tmpnam("ms_");
+	system("mkdir " + tmp);
+	copy(open(fname, "r"), open(sprintf("%s/%s.tpl", tmp, name), "w"));
+
+	str list = filter(sprintf("( cd %s; mksource -s -l %s.tpl | sort -r )",
+		tmp, name));
+	system(sprintf("( cd %s; mksource -s %s.tpl )", tmp, name));
+
+	for (x in split(list, "%s"))
+	{
+		fprintf(cout, "<*%s*>\n\n", x);
+		cout << "---- verbatim\n";
+		copy(open(sprintf("%s/%s", tmp, x), "r"), cout);
+		cout << "----\n";
+	}
+
+	system("rm -rf " + tmp);
+}
+}}
+
+Beispiel einbinden
+	$1 |(|<name>,<text>|)|
+
+Der Makro bindet ein Beispielskript und sein Ergebnis ein.
+Dabei ist <name> der Name des Skripts und <text> der Trenntext
+zwischen Skriptfile und den Ergebnisdateien.
+
+\def@MSExample
+<*$1*>
+\include[verbatim] $1
+$2\par
+\mksource $1

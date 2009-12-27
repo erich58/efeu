@@ -1,0 +1,3 @@
+Program($(BINDIR),mkdump,mkdump.o,NullArg,NullArg)
+Program($(BINDIR),undump,undump.o,NullArg,NullArg)
+Program($(BINDIR),fix2var,fix2var.o,NullArg,NullArg)

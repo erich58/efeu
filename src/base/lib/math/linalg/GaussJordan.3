@@ -1,0 +1,25 @@
+\entry{GaussJordan}
+\Name
+\caption{Gauß-Jordan-Algorithmus}
+\Synopsis
+\tthang	\#include <Math/linalg.h>
+\tthang	size_t GaussJordan (double *\it{data}, size_t \it{double});
+\Description
+Die Funktion \tt{GaussJordan} berechnet die Inverse
+einer Quadratischen Matrix mithilfe
+des Gauß-Jordan-Algorithmus. Als Argument wird ein
+Vektorfeld \it{data} mit den Datenwerten und die Dimension \it{dim} der
+Datenmatrix übergeben. Die Werte sind im Datenfeld zeilenweise
+angeordnet.
+Das Datenfeld wird Zeilenweise durch die Elemente der inversen Matrix
+ersetzt.
+
+/*
+\SeeAlso
+\tt{alloctab(3)}, \tt{memalloc(3)}.\break
+\tt{malloc(3S)} im \PRM.
+*/
+\Diagnostics
+Bei erfolgreicher Durchführung der Matrixinversion liefert die Funktion
+die Dimension der Matrix, ansonsten die Zahl der erfolgreich durchgeführeten
+Zeilenschritte. Der Inhalt des Datenfeldes ist unbestimmt.

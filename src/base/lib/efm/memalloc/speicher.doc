@@ -1,0 +1,11 @@
+\chap	Speicherplatzverwaltung
+
+\sec	Allgemeines
+Die EFEU Programmbibliotheken arbeiten sehr viel mit dynamischen Speichern.
+Zur Verwaltung von Speichersegmenrten gibt es eine Reihe von Hilfsfunktionen,
+die verschiedenen Anforderungen gerecht werden.
+
+\sec	Basisfunktionen
+
+\mref{lmalloc(3)}
+\mref{lfree(3)}

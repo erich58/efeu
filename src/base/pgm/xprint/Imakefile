@@ -1,0 +1,16 @@
+DEP=	DEP_IORL DEP_EFX DEP_EFM
+LIB=	LIB_IORL LIB_EFX LIB_EFM
+
+Destination(PCLIB,$(EFEUTOP)/lib/xprint)
+
+#define	CapFile(dir,name)	\
+AllTarget(PathName($(PCLIB),name)) @;\
+PathName($(PCLIB),name): PathName(dir,name)	@;\
+@+sed -e 's|PCLIB|$(PCLIB)|g' PathName(dir,name) > $@	@;
+
+
+OBJ =	xprint.o setup.o pcfilter.o header.o fonttab.o copy.o
+
+Program($(BINDIR),xprint,$(OBJ),$(DEP),$(LIB))
+Program($(PCLIB),CanonPost,CanonPost.o,NullArg,NullArg)
+Program($(PCLIB),BJCPost,BJCPost.o,NullArg,NullArg)

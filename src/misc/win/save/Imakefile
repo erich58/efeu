@@ -1,0 +1,34 @@
+#define	NAME	efwin
+
+#include <libgen.tpl>
+
+Group(efwin)
+
+/*	Headerdateien und Definitionsfiles
+*/
+
+Header(efwin)
+
+MsgFile(efwin.msg)
+
+/*	Testprogramme
+*/
+
+Program(win,DEP_WIN DEP_EFX DEP_EFM,LIB_WIN LIB_EFX LIB_EFM LIB_CURSES)
+File(win.app)
+
+/*	Hilfsprogramme
+*/
+
+Source(initwin,efwin)
+Source(winpos,efwin)
+Source(winutil,efwin)
+Source(window,efwin)
+Source(trace,efwin)
+Source(backgrnd,efwin)
+Source(winout,efwin)
+Source(select,efwin)
+Source(menu,efwin)
+Source(question,efwin)
+Source(confirm,efwin)
+Source(edit,efwin)

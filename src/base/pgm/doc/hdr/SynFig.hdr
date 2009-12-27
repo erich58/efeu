@@ -1,0 +1,123 @@
+/*	Hilfsfunktionen zur Tabellengenerierung
+	(c) 1997 Erich Frühstück
+	A-1090 Wien, Währinger Straße 64/6
+*/
+
+#ifndef	_Include_SynFig
+#define	_Include_SynFig	1
+
+#include <TabLabel.hdr>
+
+
+/*	Tabellenumgebung
+*/
+
+struct SynFig {
+	IO io;		/* Ausgabestruktur */
+	int cols;	/* Aktuelle Spaltenzahl */
+	int margin;	/* Linker Rand */
+	bool cont;	/* Fortsetzungstabelle */
+	bool mode;	/* Verarbeitungsmodus */
+	str endkey;	/* Abschlußstring */
+};
+
+SynFig SynFig (IO io, int margin = 6, bool npage = true, bool cont = false)
+{
+	if	(npage)	io << "\\newpage\n";
+
+	return { io, 0, margin, cont, false };
+}
+
+void SynFig ()
+	if	(this.mode)	this.io << "\\end\n";
+
+void SynFig::printf (str fmt, ...)
+	fprintf(io, fmt, va_list)
+	
+void SynFig::puts (str arg)
+	fprintf(io, "%s\n", arg)
+	
+void SynFig::caption (str hname = NULL, str sname = NULL)
+{
+	if	(mode)	return;
+
+	mode = true;
+	printf("\\fig[%d] %s\n%s\n", margin, hname, sname);
+}
+
+virtual void SynFig::note (str name, int width = 3)
+	printf("\\fignote[%d] %s\n", width, strsub(name, "\n", "\n\t"));
+
+virtual void SynFig::tab (TabLabel col, int width = 2, int height = 2)
+{
+	if	(!col)	col = CDummyTabLabel;
+
+	caption();
+	printf("\n\\tab[%d]", height);
+
+	for (x in col.tab)
+		printf(" %d", x.width ? x.width : width);
+
+	io << "\n";
+	io << col.special;
+	io << "[*]";
+
+	for (x in col.tab)
+		printf(" | %s", x.label);
+
+	io << "\n";
+	cols = dim(col.tab);
+	endkey = "\n";
+}
+
+virtual void SynFig::tabline (str label, ...)
+{
+	fmt_str = "%*s";
+	io << (strlen(label) ? label : "[]");
+
+	for (x in va_list)
+	{
+		io << " | ";
+		fprint(io, x);
+	}
+
+	io << "\n";
+}
+
+virtual void SynFig::body (TabLabel line, mdmat md, VirFunc ifunc = NULL, int lag = 0)
+{
+	if	(!line)	line = LDummyTabLabel;
+
+	io << line.special ? line.special : "[]";
+
+	for (x in line.tab)
+	{
+		if	(md && x.name)
+			tabline(x.label, md.data(x.name, ifunc, lag));
+		else	tabline(x.label);
+	}
+}
+
+void SynFig::end ()
+{
+	io << endkey;
+	endkey = NULL;
+	cols = 0;
+}
+
+void SynFig::picture (int height = 14, int xpos = 0, int ypos = 0)
+{
+	caption();
+	io << "\n---- latex\n";
+	io << "\\vspace{-1\\baselineskip}\n"
+	io << "\\leavevmode\\vbox to 0pt {\\hsize\\textwidth\n"
+	io << "\\beginpicture\n"
+	io << "\\setcoordinatesystem units <12mm,\\baselineskip>";
+	printf(" point at %d %d\n", xpos, ypos);
+	printf("\\put {\\strut} at 0 -1\n");
+	printf("\\put {\\strut} at 0 %d\n", height + 1);
+	endkey = "\\endpicture\n\\par\\vss}\n";
+	endkey += printf("\\vspace{%d\\baselineskip}\n----\n", height + 3);
+}
+
+#endif	/* _Include_SynFig */

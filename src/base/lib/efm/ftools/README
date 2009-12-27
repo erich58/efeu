@@ -1,0 +1,7 @@
+Kompressionsalgorithmen:
+
+gzip -1	Schnelle Kompression
+gzip -9 extrem langsam, bringt nicht viel
+bzip2 	Höhrere Kompression erzielbar (33% für SynAL)
+	Beim Komprimieren etwa 3 fache CPU-Zeit als gzip -1
+	Beim Lesen etwa 4 fache CPU-Zeit

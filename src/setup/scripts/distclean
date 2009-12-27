@@ -1,0 +1,14 @@
+#!/bin/sh
+sysname=`uname -s`_`uname -m`
+top=@TOP@
+
+for x in include ppinclude build lib bin
+do
+	echo rm -rf $top/$x
+	rm -rf $top/$x
+done
+
+echo rm -f $top/$sysname
+rm -f $top/$sysname
+cd $top/src/setup
+efeuconf

@@ -1,0 +1,50 @@
+\entry{CountDef}
+\Name
+\caption{Zähler für Zählprogramme generieren}
+
+\Synopsis
+\hang	\#include <countdef.ms>
+\hang	CountDef CountDef(str decl = NULL)
+\hang	void CountDef::tab(str name)
+\hang	void CountDef::setup(str name)
+\hang	void CountDef::standard(str name, str desc, IO def)
+
+\Description
+Die Funktion \tt{CountDef} generiert eine Datenstruktur zur Definition von
+Zählern für Zählprogramme.
+Als Argument wird die Datendeklaration \it{decl} für das Zählobjekt übergeben.
+Ein Nullpointer steht für die Standarddeklaration "const void *ptr".
+
+Mit der Datenstruktur \tt{CountDef} stehen Funktionen zur Konstruktion
+von Zählern zur Verfügung.
+Derzeit ist nur \tt{CountDef::standard} definiert.
+Die Datenstruktur
+enthält eine Datenbank, in der jeder neu konstruierte
+Zähler eingetragen wird.
+
+Nach Abschluß aller
+Definitionen wird mit der Funktion \tt{CountDef::tab} eine
+Tabelle mit den Zählern generiert.
+
+Die Funktion \tt{CountDef::setup} generiert zusätzlich zur Tabelle
+mit den Zählern eine Initialisierungsfunktion,
+die die Tabelleneinträge in die globale Datenbank der
+Zählerdefinitionen des Zählprogramms stellt.
+
+\sloppy
+Die Zählfunktionen und Tabellendefinitionen werden
+zur Vermeidung von Namenskonflikten anderer Programmteile statisch deklariert.
+Lediglich die mit \tt{CountDef::setup} generierten Initialisierungsfunktionen
+werden global eingerichtet.
+\end
+
+\subsection{Konstruktion von Zählern}
+Die Funktion \tt{CountDef::standard} generiert einen Standardzähler.
+Als Argument wird der Name \it{name} des Zählers, ein Beschreibungstext
+\it{desc} und eine IO-Struktur mit Definitionszeilen übergeben.
+Jede Definitionszeile definiert eine Komponente einer Datenstruktur.
+Der Reihe nach wird der Datentype, der Variablennamen und ein
+Ausdruck zur Initialisierung der Komponente angegeben.
+
+\SeeAlso
+\tt{classdef(7)}.

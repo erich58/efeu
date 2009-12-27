@@ -1,0 +1,595 @@
+/*	Handbucheintrag für esh
+	(c) 1995 Erich Frühstück
+	A-1090 Wien, Währinger Strasse 64/6
+*/
+@name
+\Name
+@ident
+\Synopsis
+@synopsis file
+\Description
+Das Programm |$!|
+interpretiert Skriptfiles in der Syntax des EFEU - Befehlsinterpreters.
+
+Das Eingabefile wird durch einen Präprozessor gefiltert und kann
+Kommentare enthalten. Präprozessorzeilen werden durch ein "#"
+gekennzeichnet. Kommentare können wie in C++ Programmen wahlweise
+durch |/*| ... |*/| oder |//| ... <Newline> gekapselt werden.
+Die Eigenschaften des Präprozessors werden
+weiter unten beschrieben.
+
+\shead	Optionen
+Falls als erstes Argument ein Skriptfile angegeben wird, bestimmt dieses
+die Syntax der Optionen und Argumente.
+Die im Skriptfile festgelegte Syntax kann mit den Optionen
+|-?| oder |-help| abgefragt werden.
+
+Falls kein Argument, oder das erste Argument/Option mit einem Minus
+beginnt, gelten die im folgenden aufgelisteten Optionen und Argumente.
+
+@arglist 14
+
+\head	PRÄPROZESSOR
+Der verwendete Präprozessor hat eine ähnliche Syntax wie der C-Präprozessor.
+Es gibt jedoch einen wesentlichen Unterschied:
+
+Der Präprozesser wird nicht zur Vorverarbeitung der gesamten Datei verwendet,
+sondern ist zeilenweise implementiert und arbeitet direkt mit dem Befehlsinterpreter
+zusammen. Insbesonders kann durch verändern von Variablen im Befehlsmodus
+auch die Verarbeitung nachfolgender Präprozessorzeilen beeinflußt werden.
+
+Eine Präprozessorzeile, bei der nach dem
+Startzeichen "#" ein Sonderzeichen folgt, wird ebenfalls als
+Kommentarzeile betrachtet. Insbesonders gilt das auch für die
+Zeile
+
+\code
+	#!$(EFEUTOP:%s)/bin/$!
+\end
+
+Durch Einfügen dieser Zeile zu Beginn der Datei, kann ein Templatefile
+ausführbar gemacht werden. Falls $! in einer anderen Bibliothek
+installiert wurde, ist der Pfad entsprechend abzuändern.
+
+Die folgenden Präprozessordirektiven können verwendet werden:
+
+\item	|#include <|<file>|>|
+	Einbinden der Datei <file> Die Suche erfolgt in den durch die
+	Option |-I| definierten Bibliotheken.
+
+\item	|#include "|<file>|"|
+	Wie oben, jedoch zusätzliche Suche in der aktuellen Bibliothek, falls
+	diese nicht im Suchpfad enthalten ist.
+
+\item	|#if| <expr>
+	Falls der Ausdruck <expr> logisch wahr liefert, werden die nachfolgenden
+	Zeilen interpretiert, ansonsten übersprungen.
+
+\item	|#elif| <expr>
+	Falls kein vorangegangener Ausdruck einer |#if| oder |#elif|
+	Anweisung logisch wahr war und <expr> einen logisch wahren
+	Ausdruck liefert, werden die nachfolgenden Statements ausgeführt.
+
+\item	|#else|
+	Falls kein vorangegangener Ausdruck einer |#if| oder |#elif|
+	Anweisung logisch wahr war, werden die nachfolgenden Statements
+	ausgeführt.
+
+\item	|#endif|
+	Ende eines Abfrageblockes.
+
+\item	|#define| <name> <repl>
+	Definiert einen Makro <name> der durch <repl> ersetzt wird.
+
+\item	|#define|  <name>(<arglist>) <repl>
+	Definiert einen Makro <name> mit Argumenten. Die öffnende Klammer
+	muß unmittelbar nach dem Namen folgen.
+
+\item	|#undef| <name>
+	Löscht die Definition des Makros <name>
+
+\item	|#ifdef| <name>
+	Testet, ob der angegebene Makro definiert ist.
+
+\item	|#ifndef| <name>
+	Testet, ob der angegebene Makro nicht definiert ist.
+
+\item	|#error| <Text>
+	Liefert eine Fehlermeldung.
+
+\head	BEFEHLSINTERPRETER
+Der Befehlsinterpreter hat eine C ähnliche Syntax, mit
+gewissen C++ Erweiterungen. Es gibt jedoch keine Pointer.
+Hier werden nur die wichtigsten Syntaxregeln für den Interpreter angeführt.
+
+\shead	Datentypen
+Die folgenden Datentypen stehen zur Verfügung:
+
+\ttitem	bool
+	Boolscher Wert, hat die Ausprägungen <true> oder <false>.
+\ttitem	char
+	Zeichenkonstante, immer positiv.
+\ttitem	short
+	Kurzer Ganzzahlwert (2 Byte).
+\ttitem	long
+	Langer Ganzzahlwert
+\ttitem	int
+	Normaler Ganzzahlwert
+\ttitem	float
+	Kurzer Gleitkommawert (4 Byte).
+\ttitem	double
+	Langer Gleitkommawert (8 Byte).
+\ttitem	str
+	Zeichenkette (String).
+\ttitem	IO
+	Ein/Ausgabestruktur.
+\ttitem	Object
+	Beliebiges Objekt.
+\ttitem	Vec_t
+	Beliebiger Vektor.
+\ttitem	List_t
+	Liste von Objekten.
+\ttitem	Func_t
+	Funktion (Tabelle mit allen Überladungen).
+\ttitem	_ObjFunc_
+	Objektgebundene Funktion (Überladungstabelle und Objekt).
+\ttitem	_NULL_
+	Datentype für universellen Nullpointer. Ein Nullpointer wird mit
+	dem Schlüsselword |NULL| eingerichtet. Strings, IO-Strukturen
+	und Funktionen können mit einem Nullpointer initialisiert werden.
+\ttitem	mdmat_t
+	Mehrdimensionale Datenmatrix.
+\ttitem	mdaxis_t
+	Achsendefinition einer mehrdimensionalen Datenmatrix.
+\ttitem	mdidx_t
+	Index einer Achse einer mehrdimensionalen Datenmatrix.
+
+\shead	Abgeleitete Datentypen
+
+Neben den Basistypen gibt es noch abgeleitete Datentypen.
+Dazu gehören Vektortypen und Strukturen.
+
+Ein Vektortype wird durch
+
+\code
+	<type>[<dim>]
+\end
+
+repräsentiert. Sobald das erstemal anstelle eines Datentypes die obige
+Definition verwendet wird, wird der Datentype eingerichtet (Es gibt noch
+andere Situationen, die die Einrichtung eines Vektortypes erfordern).
+
+Strukturen werden analog wie in C definiert:
+
+\code
+	struct <name> { <type> <name>; ... }
+\end
+
+Der Strukturname <name> ist zwar optional, sollte jedoch immer
+angegeben werden. Der Strukturname kann als Datentype eingesetzt werden.
+
+Eine Struktur kann auch Vektoren enthalten. Diese können
+wahlweise durch
+
+\code
+	<type>[<dim>] <name>
+\end
+
+oder
+
+\code
+	<type> <name>[<dim>]
+\end
+
+deklariert werden.
+In beiden Fällen wird ein Vektortype generiert.
+
+Falls eine Struktur die gleichen Komponenten (Typen und Namen)
+wie eine bereits definierte Struktur auweist, wird nur ein Aliasname
+generiert.
+
+Eine Aliasname für einen Datentype kann durch
+
+\code
+	typedef <type> <name>
+	typedef <type> <name>[<dim>]
+	typedef <type>[<dim>] <name>
+\end
+
+eingerichtet werden. Die zwei letzten Formen sind gleichwertig.
+Bei mehreren Dimensionen ist darauf zu achten, daß die Dimensionsparameter
+nach einem Datentype in umgekehrter Reihenfolge angegeben
+werden als nach einem Namen.
+
+Der Datentype |int| ist als Aliasname
+auf |long| bzw |short| implementiert.
+
+\shead	Konstanten
+Eine <Konstante> ist entweder ein Ganzzahlwert, ein Gleitkommawert
+(enthält Dezimalpunkt oder Exponent) eine logische Konstante (Schlüsselword
+<true> oder <false>) eine Zeichenkonstante (Zeichen unter einfacher
+Anführung) oder ein String (Zeichenfolge unter doppelter Anführung, oder das
+Schlüsselword |NULL|).
+
+\shead	Variablen
+Variablen müssen deklariert werden, bevor sie verwendet werden können.
+Dies erfolgt durch eine der folgenden Befehlszeilen:
+
+\item	<type> <name> = <defval>
+Definiert eine Variable mit zugehörigen Vorgabewert. Kann an beliebiger
+Stelle eine Ausdruckes vorkommen. Der Vorgabewert ist optional.
+
+\item	<type> <name1>, <name2> = <defval>
+Definiert zwei Variablen des Datentypes <type>. Nur die zweite
+Variable wird mit <defval> initialisiert.
+
+\item	<type> <name>[<dim>] = { <x1>, <x2>, ...}
+Definiert einen Vektor. <dim> kann weggelassen werden, falls eine
+Liste von Initialisierungswerten angegeben wird.
+\endlist
+
+Es können auch mehrdimensionale Vektoren generiert werden.
+Die Implementierung der zweiten und weiteren Dimensionen
+erfolgt über Vektortypen.
+
+Eine Variablendefinition liefert als Ergebnis den Wert
+der definierten Variablen.
+
+Variablen werden in einer Hierarchie von Variablentabellen gespeichert.
+An oberster Stelle steht die globale Variablentabelle, an unterster Stelle
+die lokale oder aktuelle Variablentabelle. Neue Variablen werden in der
+lokalen Variablentabelle generiert. Die Suche von Variablen
+erfolgt von unten nach oben.
+Funktionen (außer typegebundene Funktionen)
+stehen immer in der globalen Variablentabelle.
+
+\shead	Terme
+Konstanten und Variablen können mit Operatoren zu Termen verknüpft
+werden. Die folgenden Operatoren stehen zur Verfügung:
+
+\code
+	[]  ()  {}  .  !  \~  #  ++  --
+	*  /  %  +  -  <<  >>  <  <=  >  >=  ==  !=  &  ^  |  &&  ||  ?
+	=  *=  /=  %=  +=  -=  <<=  >>=  &=  ^=  |=  ,
+\end
+
+Der "#" - Operator ist ein Prefixoperator, der angewand auf
+ein Ganzzahlobjekt zur Abfrage von Stringregistern dient.
+Diese werden bei Abfrage von Aufrufargumenten, bei der
+Parametersubstitution und bei der Ausgabe
+von Fehlermeldungen belegt.
+
+Operatoren werden entsprechend ihrer Priorität abgearbeitet.
+Linke Operatoren und Zuweisungsoperatoren werden von rechts nach links,
+die anderen Operatoren von links nach rechts abgearbeitet.
+Bei den Operatoren && und || wird der rechte Operand nicht mehr ausgewertet,
+falls das Resultat bereits durch den linken Operanden determiniert wird.
+Einzelne Terme können geklammert werden.
+
+Die folgenden Operatoren haben eine abweichende Syntax:
+
+\ttitem	<term>[<idx>]
+	Indexoperator.
+
+\ttitem	<term> (<arg1>,<arg2>, ... )
+	Funktionsaufruf
+
+\ttitem	<cond> ? <term1> : <term2>
+	Bedingter Ausdruck. Falls <cond> wahr ist liefert er <term1>,
+	ansonsten <term2>.
+
+\ttitem	{{<arg1>,<arg2>, ... }}
+	Definiert eine Indexliste. Diese kann jedoch nicht zu Beginn
+	einer Befehlszeile stehen (wird sonst als Befehlsblock interpretiert).
+	Steht üblicherweise auf der rechten Seite einer Initialisierung
+	eines Vektors.
+
+Operatoren werden intern wie Funktionen behandelt. Mit dem Schlüsselwort
+|operator| kann ein Operatorname direkt angesprochen werden.
+Folgende Schreibweisen sind zulässig:
+
+\code
+	operator <op>
+	operator \"<op>\"
+\end
+
+Bei der ersten Schreibweise muß nach <op> ein Leerzeichen folgen.
+
+Damit linke Operatoren von rechten unterscheidbar sind, werden sie
+intern mit dem Zusatz "()" versehen (z.B: "-()" für die Negation.
+Dies ist bei der Definition von Funktionen zu beachten.
+
+Folgende Terme sind gleichwertig:
+
+\code
+	a + b
+	operator+ (a, b)
+\end
+
+Ein Datentype, der von runden Klammern eingeschlossen ist,
+bildet einen Cast-Operator, der eine Umwandlung des nachfolgenden
+Terms auf den gewünschten Datentype erzwingt.
+
+\shead	Befehlszeilen
+Die einfachste Form einer Befehlszeile ist ein Term.
+Eine Variablendefinition (siehe oben) stellt eine weitere Form von Befehlszeile dar.
+Folgende Konstruktionen für Befehlszeilen sind definiert:
+
+\ttitem	void <cmd>
+	Ergebnis des Ausdrucks <cmd> ignorieren.
+
+\ttitem	const <cmd>
+	Ausdruck <cmd> sofort auswerten.
+
+\ttitem	static <cmd>
+	Ausdruck <cmd> sofort auswerten und Ergebnis ignorieren.
+	Wird in Blöcken zur Definition statischer Variablen verwendet
+
+\ttitem	global <cmd>
+	Ausdruck <cmd> sofort auswerten und Ergebnis ignorieren, wobei
+	während der Auswertung die globale Variablentabelle als
+	unterste Variablentabelle zur verfügung steht. Mit dem
+	Schlüsselword |global| werden daher Variablen global
+	definiert.
+
+\item	{{ <cmdlist> }}
+	definiert einen Block von Befehlszeilen. Variablen, die
+	innerhalb eines Blocks definiert wurden, gelten nur innerhalb
+	des Blocks.  Dabei wird zwischen statischen Variablen (werden
+	bereits beim Lesen des Blocks generiert) und dynamischen
+	Variablen (werden bei der Ausführung eines Blocks generiert)
+	unterschieden.  Statische Variablen werden durch das
+	Schlüsselword <static> eingerichtet.
+
+Während der Abarbeitung eines Blocks werden zwei neu Variablentabellen
+generiert. Die erste steht bereits beim Lesen der Befehlszeilen zur
+Verfügung (statische Variablen), die zweite wird bei Ausführung des
+Blocks definiert. Bei Funktionsdefinitionen enthält diese auch
+die Funktionsargumente.
+
+Der Rückgabewert eines Blockes kann mit |return| definiert werden
+(Bei Funktionsrümpfen).
+Bei Schleifen kann ein Block vorzeitig mit |br| verlassen,
+oder mit <continue> ein neuer Zyklus gestartet werden.
+
+\ttitem	while (<cond>) <cmd>\br do <cmd> while (<cond>)
+	Definiert eine Schleife. Der Ausdruck <cmd> wird solange ausgeführt,
+	wie <cond> logisch wahr ist. Bei <cmd> handelt es sich entweder um
+	eine einfache Befehlszeile oder einen Block. Bei der zweiten Form wird
+	<cmd> zumindest einmal ausgeführt.
+
+\ttitem	for (<a>; <cond>; <b>) <cmd>
+	Zu Beginn der Verarbeitung wird <a> ausgeführt.
+	Der Ausdruck <cmd> wird solange ausgeführt, wie <cond>
+	wahr ist. Nach jedem Schleifendurchlauf wird <b> ausgeführt.
+
+\ttitem	for (<name> in <list>) <cmd>
+	Für jedes Element der Liste <list> wird <cmd>
+	ausgeführt. <Name> ist der Name einer temporäre Variablen,
+	die das aktuelle Element der Liste enthält.
+	Anstelle von <list> kann auch ein einzelnes Objekt stehen,
+	das in eine Liste konvertierbar ist (z.B: ein Vektor).
+
+\ttitem	if (<cond>) <cmd1>\br if (<cond>) <cmd1> else <cmd2>
+	Falls die Bedingung <cond> wahr ist, wird <cmd1> ausgeführt,
+	ansonsten wird, falls das Schlüsselword |else| angegeben ist,
+	<cmd2> ausgeführt.
+
+\shead	Funktionen
+Für den Befehlsinterpreter sind Funktionen eine Klasse von Funktionen
+mit gleichem Namen, aber unterschiedlichen Argumenten (Überladungen).
+Bei einem Funktionsaufruf wird dann jene Funktion ausgewählt, die
+am besten zu den aktuellen Argumenten paßt (die geringste Konvertierungsdistanz
+der Datentypen aufweist).
+
+Funktionen werden in globale Funktionen und typegebundene Funktionen
+eingeteilt. Letztere sind an ein Objekt des entsprechenden Types gebunden und
+werden in der Form
+
+\code
+	<Objekt>.<name>(<arg1>, ... )
+\end
+
+aufgerufen.
+Bei der Deklaration wird als Name <type>.<name> eingesetzt.
+Operatoren werden wie globale Funktionen behandelt.
+
+Eine Funktionsdefinition beginnt mit dem Schlüsselword
+|function| oder |inline|. Danach folgt der Funktionsprototyp
+und der Funktionsrumpf (wahlweise Befehlszeile oder Block).
+Der Unterschied zwischen den beiden Deklarationen liegt darin, daß
+bei |inline| die lokalen Variablen des aktuellen Blocks sichtbar
+bleiben, während bei |function| nur auf die globalen Variablen
+zugegriffen werden kann.
+
+Funktionsargumente sind entweder Konstanten oder L-Werte (Objekte an denen
+etwas zugewiesen werden kann).
+Falls eine Funktion einen L-Wert als Argument braucht,
+wird dies durch ein |&| nach dem Datentype signalisiert.
+
+Eine Ausnahme bildet der Datentype |Vec_t| als Träger für Vektoren,
+da die entsprechenden Vektorwerte immer L-Werte sind.
+Die Deklaration des Datentypes |Vec_t| als L-Wert ist notwendig,
+wenn die Vektorinformation, nicht die Datenwerte, verändert werden sollen.
+
+Ein Prototype besteht aus dem Datentype des Rückgabewertes
+(oder dem Schlüsselword |void|, falls
+keiner generiert werden soll), einen optionalen |&| (Falls der
+Rückgabewert ein L-Wert ist), den Namen
+der Funktion, gefolgt von der Argumentliste.
+
+Bei typegebundenen Funktionen steht zwischen Funktionsname und Argumentliste
+ein |&|, falls die Bindung an einen L-Wert erfolgt.
+Im Funktionsrumpf kann auf das Objekt unter dem Namen |this| zugegriffen
+werden.
+
+Ein Argument in der Argumentliste wurd durch den Datentype (mit eventuell
+vorhandenem Flag für einen L-Wert), gefolgt von einem optionalen Namen und
+von einer optionalen Vorgabewert. Falls für ein Argument, und allen nachfolgenden
+ein Vorgabewert zugewiesen wird, kann das Argument beim Funktionsaufruf
+entfallen und der Vorgabewert wird stellvertretend eingesetzt.
+In der Argumentliste kann anstelle eines Datentypes ein Punkt stehen,
+in diesem Fall kann ein beliebiges Objekt an dieser Stelle eingesetzt werden.
+
+Falls anstelle des letztes Argument eine Tilde "..." steht, hat die Funktion
+eine variable Argumentzahl.
+Im Funktionsrumpf stehen alle zusätzlichen Argumente als Objektliste
+unter dem Namen |va_list| zur Verfügung. Falls beim Funktionsaufruf
+als einziges zusätzliches Argument bereits eine Objektliste übergeben wird,
+wird diese nicht nocheinmal in eine Liste gepackt, sondern direkt übergeben.
+
+Der Funktionsrumpf besteht entweder aus einer einzelnen Befehlszeile oder
+einem Block. Bei einem Block wird der Rückgabewert durch eine |return|
+Anweisung definiert.
+
+\shead	Standardfunktionen
+Im folgenden werden die wichtigsten Funktionen aufgezählt, die im Befehlsinterpreter
+integeriert sind.
+
+@proto call
+Ruft eine Funktion mit der angegebenen Argumentliste auf.
+
+@proto sizeof
+Liefert die Bytegröße eines Objektes/Datentypes.
+
+@proto typeof
+Liefert den Datentype eines Objektes.
+
+@proto idx
+Berechnet Indexwerte in Prozent (100 * (<a> / <b>)).
+
+@proto rate
+Berechnet Zuwachsraten in Prozent (100 * (<a> - <b>) / <b>)).
+
+@proto #()
+@proto getreg
+Ruft ein Stringregister ab.
+
+@proto setreg
+Setzt ein Stringregister.
+
+@proto exit
+Abbruch des Programms.
+
+@proto system
+Betriebssystembefehl absetzen.
+
+@proto psub
+Parametersubstitution durchführen.
+
+@proto expr
+String als Term auswerten.
+
+@proto eval
+Befehlszeilen in String/Datei interpretieren.
+
+@proto load
+Befehlszeilen aus Datei laden. Falls die Datei nicht gefunden wurde,
+liefert die Funktion false, ansonsten true.
+
+@proto getenv
+Umgebungsvariable abfragen.
+
+@proto errmsg
+Fehlermeldung ausgeben.
+
+@proto error
+Fehlermeldung ausgeben und Programm abbrechen.
+
+@proto fsearch
+Datei suchen.
+
+@proto cat
+Strings zusammenhängen.
+
+@proto paste
+Zwei Strings zusammenhängen, Trennzeichen wird nur eingefügt,
+wenn beide Strings verschieden von NULL sind.
+
+@proto patcmp
+Mustervergleich, siehe \mref{patcmp(3)}
+
+@proto split
+String in Teile aufspalten.
+
+@proto substr
+Teilstring generieren.
+
+@proto open
+Neue IO-Struktur öffnen. Argumente wie bei der C-Bibliotheksfunktion <fopen>.
+Ein Nullstring als Filename öffnet Standardeingabe (bzw. Standardausgabe bei
+Schreibzugriff).
+
+@proto close
+IO-Struktur schließen.
+
+@proto remove
+Datei löschen.
+
+@proto print
+Unformatierte Ausgabe von Objekten, liefert die Zahl der ausgegebenen Zeichen.
+Trennzeichen müssen explizit (als String oder Zeichen) übergeben werden.
+Formatierung erfolgt mit Standardvorgaben.
+
+@proto printf
+Formatierte Ausgabe von Objekten. Der Formatstring hat die gleiche
+Syntax wie eine Formatangabe der C-Bibliotheksfunktion <printf(3S)>.
+
+@proto sprintf
+Formatierte Ausgabe von Objekten in einen String.
+
+@proto Prior
+Priorität eines binären Operators abfragen.
+
+@proto RightOp
+Rechten Operator definieren.
+
+@proto LeftOp
+Linken Operator definieren.
+
+@proto BinOp
+Binären Operator definieren. Falls als drittes Argument |true|
+übergeben wird, ist der Operator Rechtsassoziativ, ansonsten Linksassoziativ.
+
+\shead	Globale Variablen
+Die folgenden globalen Variablen stehen zur Verfügung
+(ohne Formatierungsparameter, die kommen später):
+
+\ttitem	IO iostd
+	Standard Ein/Ausgabestruktur.
+\ttitem	IO iomsg
+	Ausgabestruktur für Nachrichten.
+\ttitem	IO ioerr
+	Ausgabestruktur für Fehlermeldungen.
+
+\head	FORMATIERUNGSPARAMETER
+
+Die Darstelluung von Zahlenwerten und anderen Ergebnissen kann
+durch eine Reihe von Formatierungsparametern beeinflußt werden.
+
+\ttitem	str <field_width>
+	Feldbreite zur Wertausgabe, Vorgabe $(field_width).
+\ttitem	str <float_prec>
+	Genauigkeit von Gleitkommazahlen.  Vorgabe $(float_prec).
+\ttitem	str <fmt_str>
+	Formatdefinition für Zeichenketten, Vorgabe $(fmt_str:%#s).
+\ttitem	str <PrintListBegin>
+	Startzeichen bei der Ausgabe einer Liste von Objekten,
+	Vorgabe $(PrintListDelim:%#s).
+\ttitem	str <PrintListDelim>
+	Trennzeichen bei der Ausgabe einer Liste von Objekten,
+	Vorgabe $(PrintListDelim:%#s).
+\ttitem	str <PrintListEnd>
+	Abschlußzeichen bei der Ausgabe einer Liste von Objekten,
+	Vorgabe $(PrintListDelim:%#s).
+
+\Environment
+@environ 14
+
+\Notes
+Bei dem Programm handelt es sich derzeit um eine Beta-Version.
+Umfangreiche Änderungen können derzeit nicht ausgeschlossen werden.
+
+\head	AUTOR
+Erich Frühstück\br
+1090 Wien, Währinger Straße 64/6.

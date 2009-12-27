@@ -1,0 +1,62 @@
+/*	Begriffsliste generieren
+	(c) 1999 Erich Frühstück
+	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+*/
+
+Begrifsname
+
+\eval	{
+	struct DATA {
+		str key;
+		str name;
+		bool flag;
+		List_t ref;
+	};
+
+	int DATACMP(DATA x, DATA y)	cmp(x.key, y.key);
+
+	DataBase srctab = DataBase(DATA, DATACMP);
+	int Index = 0;
+
+	inline int add_entry (str name)
+	{
+		DATA key = { name, DocName, false };
+		srctab += key;
+		return srctab.index(key);
+		return 0;
+	}
+
+	inline void ref_entry (str name)
+	{
+		Index = srctab.index({ name });
+
+		if	(Index >= dim(srctab))
+		{
+			printf("// Unbekannter Begriff %s\n", name);
+			return;
+		}
+
+		if	(srctab[Index].flag)	return;
+
+		srctab[Index].flag = true;
+
+		for (x in srctab[Index].ref)
+			ref_entry(x);
+	}
+
+	inline void ref_list (void)
+	{
+		srctab.sort(lexcmp);
+
+		for (x in srctab)
+			if (x.flag)
+				printf("\\include %s\n", x.name);
+	}
+
+	DocExit = "ref_list()";
+}
+
+\def\name	Index = add_entry(ParseLine(cin));
+\def\bref	srctab[Index].ref.push(ParseArg(cin));
+\def\entry	ref_entry(ParseLine(cin));
+\def\listall	for (x in srctab) x.flag = true;

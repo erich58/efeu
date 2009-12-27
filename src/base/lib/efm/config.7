@@ -1,0 +1,66 @@
+\Name
+config -- Basiskopfdatei für EFEU-Programme
+\Synopsis
+\code
+\#include EFEU/config.h
+
+REVBYTEORDER
+
+\index[uchar_t]
+typedef unsigned char uchar_t;
+
+\index[ushort_t]
+typedef unsigned short ushort_t;
+
+\index[ulong_t]
+typedef unsigned long ulong_t;
+
+tabsize(x)
+
+sizealign(x, y)
+
+\end
+\Description
+Die Headerdatei |EFEU/config.h| wird von allen Headerdateien
+der EFEU-Programmbibliotheken eingebundet. Sie dient zur
+Systemanpassung. Sie wird bei der Installation von EFEU
+Systemabhängig generiert.
+
+Die folgenden Headerdateien werden automatisch eingebunden:
+[|<stdio.h>|]
+	Standard Ein-/Ausgabe Bibliotheksfunktionen;
+[|<stdarg.h>|]
+	variable Argumentlisten;
+[|<string.h>|]
+	Hilfsfunktuonen für Zeichenketten (Strings);
+[|<stdlib.h>|]
+	Allgemeinwe Hilfsfunktionen;
+[|<unistd.h>|]
+	UNIX-Speizifische Konstanten und Funktionen;
+
+Weiters wird gewährleistet, daß der Datentype \index{|size_t|}
+(Ganzzahldatentype für Adressen) und der Makro \index{|NULL|}
+(generischer Nullpointer) definiert sind.
+
+Der Makro \index{|REVBYTEORDER|} dient zur Abfrage der Byteordnung des Systems.
+Hat er den Wert 1, werden niedrigsignifikante Bytes vor höhersignifikanten
+Bytes abgespeichert.
+
+Die folgenden Datentypen werden zur Verfügung gestellt:
+[|uchar_t|]
+	Vorzeichenfreie Zeichenkonstante
+[|ushort_t|]
+	Vorzeichenfreier, kurzer Ganzzahlwert
+[|ulong_t|]
+	Vorzeichenfreier, langer Ganzzahlwert
+
+Da diese Typen auf manchen Systemen (BSD-kompatiblen) bereits
+vordefiniert sind, erfolgt ihre Deklaration hier.
+
+Der Makro \index{|tabsize|} liefert die erste Dimension des
+Datenfeldes <x>.  Er wird für globale oder statische Felder verwendet,
+deren erste Dimension nicht vorgegebnen ist, sondern aus der Zahl der
+Initialisierungswerte bestimmt  wird.
+
+Der Makro \index{|sizealign|} dient zur Ausrichtung der Speichergröße <x> auf
+ganzzahlige Vielfache von <y>.

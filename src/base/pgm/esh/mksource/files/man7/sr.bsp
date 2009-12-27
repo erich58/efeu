@@ -1,0 +1,21 @@
+/*	Sozialrechtliche Stellung
+*/
+
+config hdr src
+
+#include <macro.ms>
+#include <enum.ms>
+
+Include(hdr, "<EFEU/config.h>");
+Include(src, HeaderName);
+
+Enum("SR", "Sozialrechtliche Stellung", string !
+-	Unbekannt
+D	Angestellte
+A	ArbeiterIn
+M	Beamte
+U	Sonstige unselbständig Beschäftigte
+S	Selbständige
+B	Bauern
+X	Sonstige selbständig Beschäftigte
+!);

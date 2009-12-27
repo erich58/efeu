@@ -1,0 +1,32 @@
+/*	Konfigurationsdatei für efeudoc
+	(c) 1999 Erich Frühstück
+	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+
+Es werden nur die Befehle \def, \eval und \include interpretiert.
+Text vor einer Befehlsdefinition liefert die Beschreibung des
+Befehls. Leerzeilen werden nur innerhalb eines Beschreibungsblocks
+gesichert.
+
+\eval	expr
+	Wertet den Ausdruck expr aus.
+\def	\name expr
+	Definiert einen Befehl.
+\def	@name expr
+	Definiert einen Makro.
+\include file
+	Ladet eine Konfigurationsdate.
+*/
+
+\eval	{ fmt_str = "%*s" }
+
+\include base.dmac
+\include title.dmac
+\include section.dmac
+\include command.dmac
+\include environ.dmac
+\include fig.dmac
+\include manhead.dmac
+\include ref.dmac
+\include cond.dmac
+\include src2doc.dmac
+\include mksource.dmac

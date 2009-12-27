@@ -1,0 +1,2 @@
+XLIBS=	LIB_EFX LIB_EFM
+Destination(TSHDR,$(ESHLIB)/TimeSeries)
