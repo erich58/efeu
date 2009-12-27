@@ -29,15 +29,15 @@ If not, write to the Free Software Foundation, Inc.,
 static char *lc_digit = "0123456789abcdef";
 static char *uc_digit = "0123456789ABCDEF";
 
-int fmt_uint64 (IO *io, const FmtKey *key, uint64_t xval)
+int fmt_uintmax (IO *io, const FmtKey *key, uintmax_t xval)
 {
-	return fmt_int64(io, key, ((int64_t *) &xval)[0]);
+	return fmt_intmax(io, key, ((intmax_t *) &xval)[0]);
 }
 
-int fmt_int64 (IO *io, const FmtKey *key, int64_t xval)
+int fmt_intmax (IO *io, const FmtKey *key, intmax_t xval)
 {
 	StrBuf *sb;
-	uint64_t val;
+	uintmax_t val;
 	int n, k, sig, base;
 	int ptrval;
 	char *p, *sep, *digit, *mark;
@@ -69,7 +69,7 @@ int fmt_int64 (IO *io, const FmtKey *key, int64_t xval)
 
 /*	Datenwert setzen
 */
-	if	(ptrval || key->flags & FMT_XLONG)
+	if	(key->size == FMTKEY_IMAX)
 	{
 		if	(sig && xval < 0)
 		{
@@ -78,17 +78,53 @@ int fmt_int64 (IO *io, const FmtKey *key, int64_t xval)
 		}
 		else	val = xval;
 	}
-	else if	(key->flags & FMT_BYTE)
+	else if	(ptrval)
 	{
-		val = (uint8_t) xval;
+		val = (size_t) xval;
+	}
+	else if	(key->size == FMTKEY_PDIFF)
+	{
+		val = (ptrdiff_t) xval;
 
-		if	(sig && (int8_t) val < 0)
+		if	(sig && (ptrdiff_t) val < 0)
 		{
-			val = (uint8_t) - val;
+			val = (ptrdiff_t) - val;
+			sig = -1;
+		}
+		else	val = xval;
+	}
+	else if	(key->size == FMTKEY_SIZE)
+	{
+		val = (size_t) xval;
+
+		if	(sig && (ssize_t) val < 0)
+		{
+			val = (size_t) - val;
+			sig = -1;
+		}
+		else	val = xval;
+	}
+	else if	(key->size == FMTKEY_XLONG)
+	{
+		val = (uint64_t) xval;
+
+		if	(sig && (int64_t) val < 0)
+		{
+			val = (uint64_t) - val;
 			sig = -1;
 		}
 	}
-	else if	(key->flags & FMT_SHORT)
+	else if	(key->size == FMTKEY_LONG)
+	{
+		val = (uint32_t) xval;
+
+		if	(sig && (int32_t) val < 0)
+		{
+			val = (uint32_t) - val;
+			sig = -1;
+		}
+	}
+	else if	(key->size == FMTKEY_SHORT)
 	{
 		val = (uint16_t) xval;
 
@@ -98,13 +134,13 @@ int fmt_int64 (IO *io, const FmtKey *key, int64_t xval)
 			sig = -1;
 		}
 	}
-	else if	(key->flags & FMT_LONG)
+	else if	(key->size == FMTKEY_BYTE)
 	{
-		val = (uint32_t) xval;
+		val = (uint8_t) xval;
 
-		if	(sig && (int32_t) val < 0)
+		if	(sig && (int8_t) val < 0)
 		{
-			val = (uint32_t) - val;
+			val = (uint8_t) - val;
 			sig = -1;
 		}
 	}
@@ -196,5 +232,5 @@ int fmt_int64 (IO *io, const FmtKey *key, int64_t xval)
 
 int fmt_long(IO *io, const FmtKey *key, long xval)
 {
-	return fmt_int64(io, key, (int64_t) xval);
+	return fmt_intmax(io, key, (intmax_t) xval);
 }

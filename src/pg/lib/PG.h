@@ -29,6 +29,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/vecbuf.h>
 #include <EFEU/mdmat.h>
 #include <EFEU/io.h>
+#include <EFEU/mktype.h>
 #include <DB/pq_config.h>
 
 #if	HAS_PQ
@@ -48,38 +49,40 @@ typedef struct {
 	PGresult *res;	/* Ergebnisdaten */
 	FILE *trace;	/* Trace File */
 	int lock;	/* Sperre für exec-Befehle */
+	int trans;	/* Flag für Transaktion */
 } PG;
 
-extern PG *PG_connect (const char *def);
-extern int PG_print (IO *io, PG *pg);
-extern void PG_info (PG *pg, const char *fmt, ...);
+PG *PG_connect (const char *def);
+int PG_print (IO *io, PG *pg);
+void PG_info (PG *pg, const char *fmt, ...);
 
-extern void PG_clear (PG *pg);
-extern int PG_exec (PG *pg, const char *cmd, ExecStatusType type);
-extern const char *PG_status (PG *pg);
-extern int PG_command (PG *pg, const char *cmd);
+void PG_clear (PG *pg);
+int PG_exec (PG *pg, const char *cmd, ExecStatusType type);
+const char *PG_status (PG *pg);
+int PG_command (PG *pg, const char *cmd);
+void PG_serialize (PG *pg);
 
-extern int PG_query (PG *pg, const char *cmd);
-extern int PG_ntuples (PG *pg);
-extern int PG_nfields (PG *pg);
-extern char *PG_fname (PG *pg, int field);
-extern char *PG_value (PG *pg, int tuple, int field);
+int PG_query (PG *pg, const char *cmd);
+int PG_ntuples (PG *pg);
+int PG_nfields (PG *pg);
+char *PG_fname (PG *pg, int field);
+char *PG_value (PG *pg, int tuple, int field);
 
 void *PGType_create (PG *pg);
 char *PGType_name (void *handle, Oid oid);
 void PGType_clean (void *handle);
 void PGType_list (void *handle, IO *out);
 
-extern IO *PG_open (PG *pg, const char *name, const char *mode);
+IO *PG_open (PG *pg, const char *name, const char *mode);
 
-extern mdmat *PG_mdmat (PG *pg, const EfiType *type,
+mdmat *PG_mdmat (PG *pg, const EfiType *type,
 	const char *value, const char *axis);
 
-extern void PG_edb (void);
+void PG_edb (void);
 extern int PG_expandlim;
 #endif
 
-extern void SetupPG (void);
+void PG_setup (void);
 
 /*
 $SeeAlso

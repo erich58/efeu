@@ -26,6 +26,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/io.h>
 #include <EFEU/strbuf.h>
 #include <EFEU/CmdPar.h>
+#include <EFEU/nkt.h>
 
 #define	BUF_SYN		0
 #define	BUF_DESC	1
@@ -57,5 +58,7 @@ void DocBuf_write (DocBuf *doc, IO *io);
 void DocBuf_copy (DocBuf *doc, StrBuf *buf, StrBuf *def, const char *name);
 
 void copy_protect (const char *str, IO *io);
+
+extern NameKeyTab *AliasTab;
 
 #endif	/* DocBuf.h */

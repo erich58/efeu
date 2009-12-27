@@ -25,12 +25,16 @@ double Value = 1.;
 PrintListDelim = "\t";
 
 pconfig !
-Version = "$Id: mdround.esh,v 1.9 2005-07-24 05:12:41 ef Exp $"
+Version = "$Id: mdround.esh,v 1.11 2008-02-01 16:16:34 ef Exp $"
 PrintMode = true
+MapMode = false
 
 r | Reduce = true
-	:*:remove singulary axis
+	:*:remove singular axis
 	:de:Entfernen von singulären Achsen
+m:map | Output; MapMode = true
+	:*:create file mapping
+	:de:Dateiabbild generieren
 v:[name::]var | VarDef: append " "
 	:*:select type components
 	:de:Variablenselektion
@@ -62,7 +66,9 @@ if	(Title)			md.title = Title;
 if	(flagres("Adjust"))	md.adjust(Value);
 else				md.round(Value);
 
-if	(flagres("PrintMode"))
+if	(flagres("MapMode"))
+	md.map(Output);
+else if	(flagres("PrintMode"))
 	md.mark("#-1").print(iostd, "nohead");
 else	md.save(Output);
 

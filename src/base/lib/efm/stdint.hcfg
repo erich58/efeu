@@ -49,6 +49,8 @@ If not, write to the Free Software Foundation, Inc.,
 @@eval failure NEED_UINT32 'uint32_t x'
 @@eval failure NEED_INT64 'int64_t x'
 @@eval failure NEED_UINT64 'uint64_t x'
+@@eval failure NEED_INTMAX 'intmax_t x'
+@@eval failure NEED_UINTMAX 'uintmax_t x'
 
 #if	NEED_INT8
 fputs("typedef signed char int8_t;\n", stdout);
@@ -100,7 +102,23 @@ else
 #if	HAS_LONG_LONG
 	fputs("typedef unsigned long long int uint64_t;\n", stdout);
 #else
-	fputs("typedef long int int64_t;\n", stdout);
+	fputs("typedef unsigned long int uint64_t;\n", stdout);
+#endif
+#endif
+
+#if	NEED_INTMAX
+#if	HAS_LONG_LONG
+	fputs("typedef long long int intmax_t;\n", stdout);
+#else
+	fputs("typedef long int intmax_t;\n", stdout);
+#endif
+#endif
+
+#if	NEED_UINTMAX
+#if	HAS_LONG_LONG
+	fputs("typedef unsigned long long int uintmax_t;\n", stdout);
+#else
+	fputs("typedef unsigned long int uintmax_t;\n", stdout);
 #endif
 #endif
 

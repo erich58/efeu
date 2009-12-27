@@ -22,6 +22,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <DB/PG.h>
+#include <DB/PGCube.h>
 #include <EFEU/EDB.h>
 #include <EFEU/EDBMeta.h>
 #include <EFEU/printobj.h>
@@ -40,36 +41,23 @@ If not, write to the Free Software Foundation, Inc.,
 #define	E2P_DEBUG	0
 
 static Stack *epg_stack = NULL;
-static PG *epg = NULL;
+static PGCube cube = { NULL, NULL, NULL };
 
 static PG *epg_connect (const char *arg, int force)
 {
 	PG *x;
 
-	if	(epg && !force && !arg)
-		return rd_refer(epg);
+	if	(cube.pg && !force && !arg)
+		return rd_refer(cube.pg);
 
-	if	(!arg || *arg == 0)
-	{
-		x = PG_connect("");
-	}
-	else if	(strchr(arg, '=') != NULL)
-	{
-		x = PG_connect(arg);
-	}
-	else
-	{
-		char *p = mstrpaste("=", "dbname", arg);
-		x = PG_connect(p);
-		memfree(p);
-	}
+	x = PG_connect(arg ? arg : "");
 
 	if	(force)
 	{
-		if	(epg)
-			pushstack(&epg_stack, epg);
+		if	(cube.pg)
+			pushstack(&epg_stack, cube.pg);
 
-		epg = rd_refer(x);
+		cube.pg = rd_refer(x);
 	}
 
 	return x;
@@ -77,13 +65,13 @@ static PG *epg_connect (const char *arg, int force)
 
 static void epg_close(void)
 {
-	rd_deref(epg);
-	epg = popstack(&epg_stack, NULL);
+	rd_deref(cube.pg);
+	cube.pg = popstack(&epg_stack, NULL);
 }
 
 static void edb_closeall (void *par)
 {
-	while (epg)
+	while (cube.pg)
 		epg_close();
 }
 
@@ -121,7 +109,13 @@ static int pfunc_uint64 (IO *out, const EfiType *type, const void *data)
 
 static int pfunc_str (IO *out, const EfiType *type, const void *data)
 {
-	return Print_str(type, data, out);
+	char *str = Val_str(data);
+
+	if	(str)
+	{
+		return io_xputs(str, out, "\";");
+	}
+	else	return io_puts("NULL", out);
 }
 
 static int pfunc_date (IO *out, const EfiType *type, const void *data)
@@ -524,7 +518,7 @@ static void init_pg (EDB *edb, EDBPrintMode *mode, IO *io)
 		edb->opar = par;
 	}
 
-	edb_head(edb, io, mode->header > 1);
+	edb_head(edb, io, mode->header);
 	io_puts("@head\n", io);
 	io_puts("#include <pg.hdr>\n", io);
 	io_puts("@pg_copy ", io);
@@ -812,8 +806,12 @@ static void meta_query (EDBMetaDef *def, EDBMeta *meta, const char *arg)
 			conv->offset = var->offset;
 
 		meta->cur = edb_create(type);
-		meta->cur->desc = meta->desc;
-		meta->desc = NULL;
+
+		if	(meta->cur)
+		{
+			meta->cur->desc = meta->desc;
+			meta->desc = NULL;
+		}
 	}
 	else	add_pdef(par, meta->cur->obj->type, NULL, 0);
 
@@ -824,6 +822,44 @@ static void meta_query (EDBMetaDef *def, EDBMeta *meta, const char *arg)
 static void meta_connect (EDBMetaDef *def, EDBMeta *meta, const char *arg)
 {
 	rd_deref(epg_connect(arg, 1));
+}
+
+static void meta_group (EDBMetaDef *def, EDBMeta *meta, const char *arg)
+{
+	char *p = EDBMeta_par(meta, 0);
+
+	if	(!cube.grp)
+		cube.grp = NewEfiVec(&Type_PG_Grp, NULL, 0);
+
+	PG_Grp_parse(cube.grp, p);
+}
+
+static void meta_cursor (EDBMetaDef *def, EDBMeta *meta, const char *arg)
+{
+	char *cmd;
+	memfree(cube.cname);
+	cube.cname = mstrcpy(arg ? arg : "tmpcursor");
+	cmd = msprintf("declare %s cursor for\n%s", cube.cname,
+		EDBMeta_par(meta, 0));
+	PG_serialize(cube.pg);
+	PG_command(cube.pg, cmd);
+	memfree(cmd);
+}
+
+static void meta_create (EDBMetaDef *def, EDBMeta *meta, const char *arg)
+{
+	PGCube_mktype(&cube);
+	PGCube_create(&cube, arg);
+	meta->prev = edb_paste(meta->prev, meta->cur);
+	meta->cur = cube.edb;
+
+	if	(meta->cur)
+	{
+		meta->cur->desc = meta->desc;
+		meta->desc = NULL;
+	}
+
+	cube.edb = NULL;
 }
 
 static void meta_close (EDBMetaDef *def, EDBMeta *meta, const char *arg)
@@ -860,10 +896,24 @@ static EDBMetaDef mdef[] = {
 		":*:send SQL-query to server"
 		":de:SQL-Kommando zum Server senden"
 	},
+	{ "pg_group", meta_group, 0,
+		":*:define grouping for cube generation"
+		":de:Gruppen für die Würfelkonstruktion festlegen"
+	},
+	{ "pg_cursor", meta_cursor, 0,
+		":*:define cursor for data query"
+		":de:Cursor für Datenabfrage definieren"
+	},
+	{ "pg_create", meta_create, 0,
+		":*:Create EDB-Datafile with given cursor and group"
+		":de:Erzeuge ein EDB-Datenfile mit entsprechender"
+		"Cursor und Gruppendefinition"
+	},
 };
 
 void PG_edb (void)
 {
+	PGCube_setup();
 	AddEDBPrintDef(&pdef_pg, 1);
 	AddEDBMetaDef(mdef, tabsize(mdef));
 	proc_clean(edb_closeall, NULL);

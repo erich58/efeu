@@ -30,11 +30,11 @@ If not, write to the Free Software Foundation, Inc.,
 /*	Labelstruktur
 */
 
-typedef struct MdLabelStruct MdLabel;
+typedef struct MdAxisLabelStruct MdAxisLabel;
 
 
-struct MdLabelStruct {
-	MdLabel *next;
+struct MdAxisLabelStruct {
+	MdAxisLabel *next;
 	char *name;	/* Name der Achse */
 	size_t len;	/* Länge des Bezeichners */
 	size_t dim;	/* Zahl der Muster */
@@ -43,13 +43,13 @@ struct MdLabelStruct {
 };
 
 
-MdLabel *new_label (void);
-void del_label (MdLabel *label);
-MdLabel *set_label (const char *def);
-MdLabel *init_label (const char *fmt, const char *def);
+MdAxisLabel *new_label (void);
+void del_label (MdAxisLabel *label);
+MdAxisLabel *set_label (const char *def);
+MdAxisLabel *init_label (const char *fmt, const char *def);
 
-int save_label (IO *tmp, MdLabel *label, char *p);
-mdaxis *label2axis (MdLabel *label);
+int save_label (IO *tmp, MdAxisLabel *label, char *p);
+mdaxis *label2axis (StrPool *sbuf, MdAxisLabel *label);
 
 
 #define	ICTRL_HEAD	1	/* Wechsel in Headermodus */

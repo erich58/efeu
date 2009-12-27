@@ -412,6 +412,9 @@ static void eval_file(const char *name)
 
 	fname = fsearch(IncPath, NULL, name, NULL);
 
+	if	(fname == NULL)
+		fname = fsearch(NULL, NULL, name, NULL);
+
 	if	(fname == NULL)	return;
 
 	if	(Verbose)
@@ -435,7 +438,8 @@ int main (int narg, char **arg)
 {
 	int i;
 
-	SetVersion("$Id: mksource.c,v 1.39 2007-07-30 15:04:47 ef Exp $");
+	ChangeLocale("C");
+	SetVersion("$Id: mksource.c,v 1.41 2008-04-20 07:38:15 ef Exp $");
 	SetProgName(arg[0]);
 	bootstrap = mtabcat(" ", arg, narg);
 

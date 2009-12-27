@@ -33,7 +33,6 @@ include dl.smh
 config latex.cfg
 
 # $Synopsis
-# include $1
 #
 # \index{|EFM_LIB|}\br
 # \index{|EFX_LIB|}\br
@@ -109,6 +108,7 @@ if [ $_stdrules ]; then
 	postpone _efeu_post
 fi
 
+# $alias
 # $pconfig !
 # I:path |
 #	:*:install information files in the directory <path>.
@@ -129,14 +129,14 @@ fi
 #	Sourcen.
 # !
 # :*:
-# The following options and arguments are accepted by @!:
+# The following options and arguments are accepted by $!:
 # :de:
-# Die Funktion @! erzeugt Regeln für mit |mksource| generierte Dateien.
+# Die Funktion $! erzeugt Regeln für mit |mksource| generierte Dateien.
 # Die generierten Dateien werden für das Scheinziel |files| eingetragen.
-# Für generierte Sourcefiles werden mithilfe von |mf_cc| auch Regeln zur
+# Für die generierten Sourcefiles werden mithilfe von |mf_cc| auch Regeln zur
 # Kompilierung erzeugt.
 # \par
-# Die folgenden Optionen und Argumente werden von @! akzeptiert:
+# Die folgenden Optionen und Argumente werden von $! akzeptiert:
 #
 # @arglist
 
@@ -187,6 +187,7 @@ efeu_gensrc ()
 	done
 )}
 
+# $alias
 # $pconfig !
 # t:top |
 #	definiert das Hauptverzeichniss für die Installation, die
@@ -216,19 +217,19 @@ efeu_gensrc ()
 #	Bibliothek.
 # !
 # :*:
-# The following options and arguments are accepted by @!:
+# The following options and arguments are accepted by $!:
 # :de:
-# Die Funktion @! generiert Regeln zum Aufbau
+# Die Funktion $! generiert Regeln zum Aufbau
 # einer Programmbibliothek.
 # \par
-# Die folgenden Optionen und Argumente werden von @! akzeptiert:
+# Die folgenden Optionen und Argumente werden von $! akzeptiert:
 #
 # @arglist
 #
 # :de:
-# Wurde kein Installationsverzeichnis für Heasderdateien angegeben,m
+# Wurde kein Installationsverzeichnis für Headerdateien angegeben,
 # wird <top>|/include| verwendet, wurde kein Installationsverzeichnis
-# für die Bibliothek angegeben, wird <top>|/lib| verwendet.
+# für die Programmbibliothek angegeben, wird <top>|/lib| verwendet.
 
 efeu_library ()
 {(
@@ -287,6 +288,7 @@ efeu_library ()
 	mf_lib -p $lib $name -mo OBJLIST "$@"
 )}
 
+# $alias
 # $pconfig !
 # p:name |
 #	verwende |DEP_|<name> und |LIB_|<name> als Variablennamen
@@ -319,12 +321,12 @@ efeu_library ()
 #	Bibliotheken verfügbar sind.
 # !
 # :*:
-# The following options and arguments are accepted by @!:
+# The following options and arguments are accepted by $!:
 # :de:
-# Die Funktion @! generiert aus Bibliotheksnamen Variablen mit
+# Die Funktion $! generiert aus Bibliotheksnamen Variablen mit
 # Anhängigkeitsnamen und Link-Flags.
 # \par
-# Die folgenden Optionen und Argumente werden von @! akzeptiert:
+# Die folgenden Optionen und Argumente werden von $! akzeptiert:
 #
 # @arglist
 
@@ -364,6 +366,7 @@ efeu_libvar ()
 	mf_var "$lib_var" "$lib"
 )}
 
+# $alias
 # $pconfig !
 # t:top |
 #	definiert das Hauptverzeichniss für die Installation, die
@@ -384,12 +387,12 @@ efeu_libvar ()
 #	zusätzliche Argumente werden an |efeu_libvar| übergeben.
 # !
 # :*:
-# The following options and arguments are accepted by @!:
+# The following options and arguments are accepted by $!:
 # :de:
-# Die Funktion @! generiert Regeln zum Aufbau
-# eines einzelnen Programms aus mehreren Sourcefiles.
+# Die Funktion $! generiert Regeln zum Aufbau
+# eines einzelnen Programms aus mehreren Quelldateien.
 # \par
-# Die folgenden Optionen und Argumente werden von @! akzeptiert:
+# Die folgenden Optionen und Argumente werden von $! akzeptiert:
 #
 # @arglist
 
@@ -425,26 +428,27 @@ efeu_stdprog ()
 	mf_cc -o "\$(BIN)/$name" -mo OBJ -md DEP_LIST -ml LIB_LIST
 )}
 
+# $alias
 # $pconfig !
 # d |
 #	:*:delete an existing note file. No rule is generated.
-#	:de:Lösche eine bestehende Anmerkungsdatei. Es wird keine
-#	Regel generieret
+#	:de:Löscht eine bestehende Anmerkungsdatei. Es wird keine
+#	Regel generiert.
 # :name |
 # 	:*:Name of note file, default is basename of source directory
 #	:de:Name der Anmerkungsdatei, Vorgabe ist der Basisname des
 #	Sourceverzeichnisses.
 # !
 # :*:
-# The function \index{@!} creates a note file about the building of
+# The function $! creates a note file about the building of
 # a specific target and shows the contents every time make is called
-# with target $$AllTarget. This function is used on commenting problems.
+# with target |$$AllTarget|. This function is used on commenting problems.
 # :de:
-# Die Funktion \index{|mf_usage|} generiert eine Anmerkungsdatei und gibt
-# dessen Inhalt bei jedem Aufruf von |make| mit dem Ziel $$AllTarget aus. Sie
-# wird zur Kommentierunmg von Problemen verwendet.
+# Die Funktion $! generiert eine Anmerkungsdatei und gibt
+# dessen Inhalt bei jedem Aufruf von |make| mit dem Ziel |$$AllTarget| aus. Sie
+# wird zur Kommentierung von Problemen verwendet.
 #
-# $@arglist
+# @arglist
 
 efeu_note ()
 {(
@@ -486,6 +490,52 @@ de*)	efeu_deflang=de;;
 *)	efeu_deflang=en;;
 esac
 
+# $alias
+# $pconfig !
+# :name |
+# 	:*:Name of note file
+#	:de:Name der Anmerkungsdatei
+# :expr |
+#	:*:Test expression
+#	:de:Testausdruck
+# !
+# :*:
+# The function $! creates a note file if the test expression failes.
+# It is used on commenting restrictions or problems.
+# :de:
+# Die Funktion $! generiert eine Anmerkungsdatei falls der
+# Testausdruck fehlschlägt.
+# Sie wird zur Kommentierunmg von Einschränkungen oder Problemen verwendet.
+#
+# @arglist
+
+efeu_test ()
+{(
+	test $# -ge 2 || shmkmf_warg "efeu_test"
+
+	dir=$TOP/note
+	name=$1
+	shift 1
+	path=$dir/$name
+
+	printf "\n%s::\n" $AllTarget
+	printf "\t@if %s; then \\\\\n" "$*"
+	printf "\trm -f $path; \\\\\n"
+	printf "\telse \\\\\n"
+	printf "\ttest -f %s || mkdir -p %s; \\\\\n" $dir $dir
+	printf "\techo '%s: src=%s build=%s' > $path; \\\\\n" "$name" $SRC `pwd`
+
+	while read line
+	do
+		printf "\techo '\t%s' >> $path; \\\\\n" "$line"
+	done
+
+	printf "\tcat $path; \\\\\n"
+	printf "\tfi;\n\n"
+)}
+
+
+# $alias
 # $pconfig !
 # l:lang |
 #	definiert die Sprachen für die die Dokumentation generiert werden
@@ -499,11 +549,11 @@ esac
 #	Verzeichnis mit den Dokumentsourcen
 # !
 # :*:
-# The following options and arguments are accepted by @!:
+# The following options and arguments are accepted by $!:
 # :de:
-# Die Funktion @! generiert Dokumentationen mithile von |efeudoc|.
+# Die Funktion $! generiert Dokumentationen mithile von |efeudoc|.
 # \par
-# Die folgenden Optionen und Argumente werden von @! akzeptiert:
+# Die folgenden Optionen und Argumente werden von $! akzeptiert:
 #
 # @arglist
 
@@ -565,6 +615,7 @@ AIX)	man_ext=""; man_filter="";;
 *)	man_ext=".gz"; man_filter="| gzip";;
 esac
 
+# $alias
 # $pconfig !
 # l:lang |
 #	definiert die Sprachen, für die das Handbuch generiert werden
@@ -573,11 +624,11 @@ esac
 #	gibt den Abschnitt für die Handbucheinträge vor.
 # !
 # :*:
-# The following options and arguments are accepted by @!:
+# The following options and arguments are accepted by $!:
 # :de:
-# Die Funktion @! installiert Handbucheinträge.
+# Die Funktion $! installiert Handbucheinträge.
 # \par
-# Die folgenden Optionen und Argumente werden von @! akzeptiert:
+# Die folgenden Optionen und Argumente werden von $! akzeptiert:
 #
 # @arglist
 
@@ -595,8 +646,18 @@ efeu_man ()
 		esac
 	done
 
-	mf_rule -a "$1.$sec$man_ext" "$2" \
+	ext="$sec$man_ext"
+	mf_rule -a "$1.$ext" "$2" \
 		"LANG=$lng src2doc $2 | efeudoc -Tman - $man_filter > \$@"
+
+	dir=`dirname $1`
+	base=`basename $1`
+
+	for x in `src2doc -a $2`
+	do
+		mf_rule -a "$dir/$x.$ext" "$dir/$base.$ext" \
+			"cd $dir; ln -fs $base.$ext $x.$ext"
+	done
 )}
 
 # $SeeAlso

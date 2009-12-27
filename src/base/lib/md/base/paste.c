@@ -21,7 +21,7 @@ static size_t getdim(mdaxis *x, int n)
 }
 
 
-static void mkindex(const char *delim, mdaxis *x, char *last, int n)
+static void mkindex (const char *delim, mdaxis *x, char *last, int n)
 {
 	if	(--n >= 0)
 	{
@@ -30,15 +30,15 @@ static void mkindex(const char *delim, mdaxis *x, char *last, int n)
 
 		for (j = 0; j < x->dim; j++)
 		{
-			p = mstrpaste(delim, last, x->idx[j].name);
+			p = mstrpaste(delim, last,
+				StrPool_get(x->sbuf, x->idx[j].i_name));
 			mkindex(delim, x->next, p, n);
+			memfree(p);
 		}
-
-		memfree(last);
 	}
 	else
 	{
-		idx->name = last;
+		idx->i_name = StrPool_add(x->sbuf, last);
 		idx->flags = 0;
 		idx++;
 	}
@@ -70,8 +70,16 @@ void md_paste(mdmat *md, const char *name, const char *delim, int pos, int n)
 
 /*	Achsen zusammenfassen
 */
-	new = new_axis(getdim(old, n));
-	new->name = (name ? mstrcpy(name) : msprintf("%d", pos));
+	new = new_axis(md->sbuf, getdim(old, n));
+
+	if	(!name)
+	{
+		char *p = msprintf("%d", pos);
+		new->i_name = StrPool_add(md->sbuf, p);
+		memfree(p);
+	}
+	else	new->i_name = StrPool_add(md->sbuf, name);
+
 	new->size = old->size;
 	idx = new->idx;
 	mkindex(delim, old, NULL, n);

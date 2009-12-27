@@ -1,0 +1,6 @@
+\title	File formats
+
+\include intro.eds
+\include binary.eds
+\include map.eds
+\include xml.eds

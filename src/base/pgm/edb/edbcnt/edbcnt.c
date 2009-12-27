@@ -169,7 +169,7 @@ static EDB *make_edb (mdmat *md)
 		if	(xvar->next)
 			type = MakeStruct(NULL, NULL, RefEfiStruct(xvar));
 
-		*ptr = NewEfiStruct(type, x->name, 0);
+		*ptr = NewEfiStruct(type, StrPool_get(x->sbuf, x->i_name), 0);
 		(*ptr)->par = xvar;
 		ptr = &(*ptr)->next;
 	}
@@ -179,7 +179,7 @@ static EDB *make_edb (mdmat *md)
 	obj = LvalObj(NULL, MakeStruct(NULL, NULL, rec_var));
 	rec_obj = LvalObj(&Lval_ptr, md->type,
 		(char *) obj->data + cvar->offset);
-	return edb_alloc(obj, mstrcpy(md->title));
+	return edb_alloc(obj, mstrcpy(StrPool_get(md->sbuf, md->i_name)));
 }
 
 static void std_init (MdCountList *clist, mdmat *md)
@@ -270,7 +270,7 @@ int main (int narg, char **arg)
 	char *p;
 
 	SetProgName(arg[0]);
-	SetVersion("$Id: edbcnt.c,v 1.12 2007-07-30 15:04:47 ef Exp $");
+	SetVersion("$Id: edbcnt.c,v 1.15 2007-11-12 16:32:57 ef Exp $");
 	SetupStd();
 	SetupUtil();
 	SetupPreproc();
@@ -358,7 +358,10 @@ int main (int narg, char **arg)
 /*	Datenmatrix generieren
 */
 	md = new_mdmat();
-	md->title = CmdPar_psub(NULL, GetResource("Title", NULL), NULL);
+	md->sbuf = NewStrPool();
+	p = CmdPar_psub(NULL, GetResource("Title", NULL), NULL);
+	md->i_name = StrPool_xadd(md->sbuf, p);
+	memfree(p);
 	md->axis = CountPar->axis;
 	CountPar->axis = NULL;
 	ptr = &md->axis;

@@ -49,7 +49,7 @@ static void maincopy (StrBuf *buf, IO *io)
 
 	space = 0;
 
-	while ((c = io_mgetc(io, 1)) != EOF)
+	while ((c = io_skipcom(io, NULL, 1)) != EOF)
 	{
 		if	(c == '\n')
 		{
@@ -58,7 +58,7 @@ static void maincopy (StrBuf *buf, IO *io)
 
 			if	(d == ' ' || d == '\t')
 			{
-				do	c = io_getc(io);
+				do	c = io_skipcom(io, NULL, 1);
 				while	(c == ' ' || c == '\t');
 
 				io_ungetc(c, io);
@@ -95,7 +95,6 @@ EDB *edb_script (EDB *edb, IO *io)
 	if	(edb && io)
 	{
 		StrBuf *buf = sb_create(0);
-		io = io_cmdpreproc(io);
 		maincopy(buf, io);
 		edb = edb_filter(edb, (char *) buf->data);
 		rd_deref(buf);

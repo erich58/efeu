@@ -18,7 +18,9 @@ void md_reduce (mdmat *md, const char *def)
 
 	while (*ptr != NULL)
 	{
-		if	((*ptr)->dim == 1 && patselect((*ptr)->name, list, n))
+		if	((*ptr)->dim == 1 &&
+			patselect(StrPool_get((*ptr)->sbuf,
+				(*ptr)->i_name), list, n))
 		{
 			x = *ptr;
 			*ptr = x->next;

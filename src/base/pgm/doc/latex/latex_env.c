@@ -251,13 +251,8 @@ static void put_env (LaTeX *ltx, int mode, ENV *env, va_list list)
 	if	(mode)
 	{
 		ArgList *args = env->args ? env_par(env->args, list) : NULL;
-
-		if	(args)
-		{
-			io_psubvec(ltx->out, env->beg, args->dim, args->data);
-			rd_deref(args);
-		}
-		else	io_psubvec(ltx->out, env->beg, 0, NULL);
+		io_psub(ltx->out, env->beg, args);
+		rd_deref(args);
 	}
 	else
 	{
@@ -289,7 +284,7 @@ static void put_xenv (LaTeX *ltx, int mode, ENV *env, va_list list)
 
 		if	(env->beg)
 		{
-			io_psubvec(ltx->out, env->beg, args->dim, args->data);
+			io_psub(ltx->out, env->beg, args);
 		}
 		else
 		{
@@ -299,7 +294,7 @@ static void put_xenv (LaTeX *ltx, int mode, ENV *env, va_list list)
 
 			for (i = 1; i < args->dim; i++)
 				io_printf(ltx->out, " #%d=%#s",
-					i, args->data[i]);
+					i, arg_get(args, i));
 		}
 
 		rd_deref(args);

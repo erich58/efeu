@@ -29,7 +29,16 @@ If not, write to the Free Software Foundation, Inc.,
 
 int io_putc (int c, IO *io)
 {
-	return (io && io->put) ? io->put(c, io->data) : 0;
+	if	(io && io->put)
+	{
+		int stat = io->put(c, io->data);
+
+		if	(stat == EOF)
+			io->stat |= IO_STAT_ERR;
+
+		return stat;
+	}
+	else	return 0;
 }
 
 
@@ -43,7 +52,13 @@ int io_nputc (int c, IO *io, int n)
 		register int i;
 
 		for (i = 0; i < n; i++)
-			if (io->put(c, io->data) == EOF) break;
+		{
+			if	(io->put(c, io->data) == EOF)
+			{
+				io->stat |= IO_STAT_ERR;
+				break;
+			}
+		}
 
 		return i;
 	}
@@ -58,13 +73,19 @@ int io_puts (const char *str, IO *io)
 {
 	if	(io && io->put && str)
 	{
-		register const unsigned char *p;
-		register int n;
+		const unsigned char *p;
+		int n;
 
 		p = (const unsigned char *) str;
 
 		for (n = 0; *p != 0; p++, n++)
-			if (io->put(*p, io->data) == EOF) break;
+		{
+			if	(io->put(*p, io->data) == EOF)
+			{
+				io->stat |= IO_STAT_ERR;
+				break;
+			}
+		}
 
 		return n;
 	}
@@ -78,17 +99,29 @@ int io_nlputs(const char *str, IO *io)
 {
 	if	(io && io->put && str)
 	{
-		register const unsigned char *p;
-		register int n, last;
+		const unsigned char *p;
+		int n, last;
 
 		p = (const unsigned char *) str;
 		last = '\n';
 
 		for (n = 0; *p != 0; last = *(p++), n++)
-			if (io->put(*p, io->data) == EOF) break;
+		{
+			if	(io->put(*p, io->data) == EOF)
+			{
+				io->stat |= IO_STAT_ERR;
+				return n;
+			}
+		}
 
-		if (last != '\n')
-			if (io->put('\n', io->data) != EOF) n++;
+		if	(last != '\n')
+		{
+			if	(io->put('\n', io->data) == EOF)
+			{
+				io->stat |= IO_STAT_ERR;
+			}
+			else	n++;
+		}
 
 		return n;
 	}
@@ -103,7 +136,7 @@ int io_copy (IO *in, IO *out)
 	int c, n;
 
 	for (n = 0; (c = io_getc(in)) != EOF; n++)
-		io_putc(c, out);
+		if (io_putc(c, out) == EOF) break;
 
 	return n;
 }

@@ -57,6 +57,9 @@ L:lang|:eval 'setlang("{}")'
 l|:eval 'ListMode(iostd); exit(0);'
 	:*:list execution modes 
 	:de:Verarbeitungsmodi auflisten
+a| ListAlias = true
+	:*:list alias table 
+	:de:Aliastabelle ausgeben
 :src|:eval 'DocName="{}"'
 	:*:input file
 	:de:Eingabefile

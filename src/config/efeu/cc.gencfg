@@ -75,3 +75,5 @@ then
 else
 	echo "CC_SHARED="
 fi
+
+echo 'CPP2DEP="-E | pp2dep -l"'

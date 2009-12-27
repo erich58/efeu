@@ -36,7 +36,6 @@ static void ref_free (EfiObj *obj)
 {
 	RefData **ptr = (void *) (obj + 1);
 	rd_deref(*ptr);
-	Obj_free(obj, sizeof(EfiObj) + sizeof(RefData *));
 }
 
 static void ref_update (EfiObj *obj)

@@ -26,11 +26,9 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/ftools.h>
 #include <EFEU/io.h>
 #include <EFEU/dl.h>
+#include <EFEU/mkpath.h>
 
-#define	_String(x)	#x
-#define	String(x)	_String(x)
-
-char *so_path = ".:" String(EFEUROOT) "/lib";
+char *so_path = NULL;
 
 #if	HAS_DLFCN
 
@@ -58,6 +56,9 @@ void *so_open (const char *name)
 	void *handle;
 	
 	if	(name == NULL)	return NULL;
+
+	if	(!so_path)
+		so_path = mkpath(ProgDir, NULL, "lib", NULL);
 
 	path = fsearch(so_path, NULL, name, "so");
 

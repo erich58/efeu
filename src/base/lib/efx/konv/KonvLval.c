@@ -43,7 +43,6 @@ static void lcast_free (EfiObj *obj)
 	LCAST *lc = (LCAST *) obj;
 	CleanData(lc->type, lc->data, 1);
 	UnrefObj(lc->base);
-	Obj_free(obj, LCAST_SIZE(lc->type));
 }
 
 static char *lcast_ident (const EfiObj *obj)

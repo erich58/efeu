@@ -45,7 +45,7 @@ EfiType *edb_type (const char *def)
 
 		if	(var)
 		{
-			var->next = GetStruct(io, EOF);
+			var = GetStruct(var, io, EOF);
 			type = MakeStruct(NULL, NULL, var);
 		}
 	}

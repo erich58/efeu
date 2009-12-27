@@ -27,6 +27,7 @@ _file_smh=1
 
 include dir.smh
 
+# $alias
 # $pconfig !
 # n |
 #	:*:clears options passed to |mf_rule|.
@@ -45,7 +46,8 @@ include dir.smh
 #	:de:ergänzt die Abhängigkeiten um <dep>.
 # m:mode |
 #	:*:set the permissions of target to the given <mode>.
-#	:de:setzt die Zugriffsrechte für das Ziel cwentsprechend von <mode>.
+#	:de:setzt die Zugriffsrechte für das Ziel entsprechend von <mode>.
+#	Vergleiche dazu \mref\{chmod(1)\}.
 # /%*=*/%name=repl |
 #	:*:substituten rule, passed to |mf_rule|.
 #	See \mref\{rule.smh(7)\} for details.
@@ -160,13 +162,16 @@ mf_file ()
 # mf_file -x '\$(BIN)/foo' foo.sh
 # mf_file '\$(DATA)/foo.dat' "a.dat b.dat c.dat" "cat" "| sort"
 # \end
+# //| Kompensation des Pipe-Symbols für langpar
 # :de:
 # Die folgende Zeilen
+# \config shmkmf
 # \shmkmf[-x] generieren die Ausgabe
 # mf_file '\$(LIB)/foo.def' foo.def
 # mf_file -x '\$(BIN)/foo' foo.sh
 # mf_file '\$(DATA)/foo.dat' "a.dat b.dat c.dat" "cat" "| sort"
 # \end
+# //| Kompensation des Pipe-Symbols für langpar
 
 # $Note
 # :*:The header |$1| is preloaded by |shmkmf|.

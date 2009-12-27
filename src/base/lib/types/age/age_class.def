@@ -34,10 +34,11 @@ $(BaseName) *tab	Table of threshold values
 !);
 
 StdFunc("static int $1_update", "const EfiObj *base, void *p_par", string !
+static $2 defval = 0;
 int i;
 
 $1 *par = p_par;
-$2 *val = base->data;
+$2 *val = base ? base->data : &defval;
 
 for (i = 0; i < par->dim; i++)
 	if (*val <= par->tab[i]) break;

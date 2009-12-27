@@ -22,6 +22,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/EfiClass.h>
 #include <EFEU/parsearg.h>
+#include <ctype.h>
 
 int MakeEfiClass (EfiType *type, const char *name, const char *def)
 {
@@ -29,13 +30,21 @@ int MakeEfiClass (EfiType *type, const char *name, const char *def)
 	EfiClass *cl;
 	int stat;
 
-	if	(def == NULL || *def == 0)
+	if	(def == NULL)
 	{
 		ListEfiPar(ioerr, type, &EfiPar_class, NULL, 0);
 		return 0;
 	}
 
-	if	(*def == '?')
+	while (isspace((unsigned char) *def))
+		def++;
+
+	if	(*def == 0)
+	{
+		ListEfiPar(ioerr, type, &EfiPar_class, NULL, 0);
+		return 0;
+	}
+	else if	(*def == '?')
 	{
 		ListEfiPar(ioerr, type, &EfiPar_class, NULL,
 			def[1] == '?' ? 2 : 1);

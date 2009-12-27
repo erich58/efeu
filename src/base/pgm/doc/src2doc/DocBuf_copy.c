@@ -28,6 +28,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 #include <ctype.h>
 
+NameKeyTab *AliasTab = NULL;
+
 
 static int cmp (const char *name, const char *arg)
 {
@@ -129,6 +131,29 @@ static StrBuf *set_cmdpar (DocBuf *doc, int par, IO *io, StrBuf *buf)
 	return buf ? buf : doc->tab[BUF_DESC];
 }
 
+static StrBuf *add_alias (DocBuf *doc, int par, IO *io, StrBuf *buf)
+{
+	if	(!AliasTab)
+		AliasTab = nkt_create("alias", 0, NULL);
+
+	if	(io_peek(io) != '\n')
+	{
+		char *fmt, *name;
+
+		fmt = io_mgets(io, "\n");
+		name = mpsubvec(fmt, 2, set_args);
+		nkt_insert(AliasTab, name, NULL);
+		memfree(fmt);
+	}
+	else
+	{
+		io_getc(io);
+		nkt_insert(AliasTab, mstrcpy(set_args[1]), NULL);
+	}
+	
+	return buf;
+}
+
 static struct {
 	char *key;
 	StrBuf *(*eval) (DocBuf *doc, int par, IO *io, StrBuf *buf);
@@ -148,6 +173,7 @@ static struct {
 	{ "syn[opsis]",		get_synopsis, 0 },
 	{ "source",		cpy_source, 0 },
 	{ "pconfig",		set_cmdpar, 0 },
+	{ "alias",		add_alias, 0 },
 };
 
 static StrBuf *eval_key (DocBuf *doc, const char *key, IO *io, StrBuf *buf)
@@ -235,7 +261,7 @@ void DocBuf_copy (DocBuf *doc, StrBuf *base, StrBuf *buf, const char *name)
 				char *p = io_getname(io);
 
 				do	c = io_getc(io);
-				while	(isspace(c));
+				while	(c == ' ' || c == '\t');
 
 				io_ungetc(c, io);
 				set_args[1] = (char *) name;

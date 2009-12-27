@@ -32,92 +32,14 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	USAGE	"usage: %s [-m<mac>] [-d<level>] -p<path> [-a] [-o] -l<lib> [name ...\n"
 
-/*
-$pconfig
-m::name |
-	:*:define macro name <name> with found flags.
-	:de:Makro <name> mit gefundenen Flags initialisieren.
-d::level |
-	:*:max level of recursvive search.
-	:de:Maximale Ebene bei rekursiver Suche.
-I::path |
-	:*:path to search header files (default: |/usr/include|).
-	:de:Suchpfad für Kopfdateien, Vorgabe: |/usr/include|.
-L::path |
-	:*:path to search libraries (default: |/lib:/usr/lib|).
-	:de:Suchpfad für Bibliotheken, Vorgabe: |/lib:/usr/lib|.
-a |
-	:*:try next search only if last search was successfull.
-	:de:Nächste Suche nur durchführen, wenn letzte Suche erfolgreich war.
-o |
-	:*:try next search only if last search failed.
-	:de:Nächste Suche nur durchführen, wenn letzte Suche fehlschlug.
-l:lib |
-	:*:search for libraray corresponding to the regular
-	expression |^lib(|<lib>|)\.(a||so)$$|.
-	:de:Suche nach der Bibliothek, die dem regulären
-	Ausdruck |^lib(|<lib>|)\.(a||so)$$| entspricht.
-::name |
-	:*:search for header <name>, where <name> may contain
-	directory parts as in |X11/X.h|.
-	:de:Suche nach der Kopfdatei <name>, wobei <name>
-	Pfadteile enthalten kann (z.B: |X11/X.h|)
-*/
-
 static char *callname = NULL;
 
 static void usage (const char *arg)
 {
-	execlp("efeuman", "efeuman", "-s", __FILE__, "--", callname, arg, NULL);
+	execlp("efeuman", "efeuman", callname, arg, NULL);
 	fprintf(stderr, USAGE, callname);
 	exit(arg ? 0 : 1);
 }
-
-/*
-$Description
-:*:The command |$1| is used by configuration tools to determine
-install places of external libraries and header files. A |//| in
-a path means to search subdirectories recursively.
-If no header file or library is given, the command lists all directories
-where files are searched.
-:de:Das Kommando |$1| wird von Konfigurationswerkzeugen zur Bestimmung
-des Installationsortes von externen Programmbibliotheken verwendet.
-Ein |//| in einem Pfad bewirkt eine rekursive Suche von Teilverzeichnissen.
-Falls keine Kopfdatei oder Bibliothek angegeben wurde, werden alle
-Verzeichnisse aufgelistet.
-
-@arglist -i
-
-:*:No space beetwen option key and option argument is allowed.
-If |-L| or |-I| is used without any argument, the corresponding path
-is set to null.
-:de:Zwischen Optionskennung und Optionsargument darf kein Leerzeichen
-stehen. Falls |-L| oder |-I| ohne Argument verwendet wird, wird der
-zugehörige Suchpfad auf |NULL| gesetzt.
-
-$Example
-:*:The command
-:de:Der Befehl
-
-|$! -L/usr/local//lib:/opt//lib| -lreadline
-
-:*:searches for the library |readline| in the default places |/lib|,
-|/usr/lib| and all subdirectories with name |lib| of |/usr/local| and
-|/opt|.
-:de:sucht nach der Bibliothek |readline| in den Standardorten |/lib|,
-|/usr/lib| und allen Unterverzeichnissen von |/usr/local| und |/opt|
-mit Namen |lib|.
-
-|$! -lncurses -o -lcurses|
-
-:*:Checks if library |ncurses| is available or if |curses| should be used
-instead
-:de:Prüft, ob |ncurses| verfügbar ist oder ob |curses| stellvertretend
-verwendet werden soll.
-
-$SeeAlso
-efeuconfig(1).
-*/
 
 /*	memmory allocation
 */

@@ -28,7 +28,7 @@ C/C++. If your are familiar with this language(s), you would easy
 learn to use this interpreter.
 
 |$!| accepts comments in the style of C/C++ and uses a preprocessor
-similiar to C/C++. See later in this document. Lines starting
+similar to C/C++. See later in this document. Lines starting
 with |#!| are not interpreted by |$!|. If the script is executable
 and the first line is
 
@@ -37,7 +37,7 @@ and the first line is
 where <path> is the full path name of the command |esh|, you can use
 it like an ordinary command.
 I prefer the following variation,
-which is independend from the installation place of |$!|:
+which is independent from the installation place of |$!|:
 
 	|#!/usr/bin/env esh|
 
@@ -50,13 +50,13 @@ On some places, e.g. inside the argument list of a function, a linefeed
 does not terminate the expression and is skipped like tabs or spaces.
 
 In the outermost level (outside any block or function body) every
-statement is evaluated immediatly after parsing. If an expression is
+statement is evaluated immediately after parsing. If an expression is
 not terminated by a semicolon, the result is written to standard output
 followed by the terminating character.
 
 For example: The line
 	|3 * 5 4 + 7 $$ 2 - 1; 4 + 1|
-is splitted into the 4 expressions
+is split into the 4 expressions
 	|3 * 5| terminated by space\br
 	|4 + 7| terminated by |$$|\br
 	|2 - 1| terminated by |;|\br
@@ -74,7 +74,7 @@ used as control key to run history and system commands.
 
 The use of |readline| in interactive mode and the automatic display of
 results in the outermost level allows to use |$!| as a
-comfortable desc calculator.
+comfortable desk calculator.
 
 The complete EFEU interpreter language is implemented with C library
 functions. |$!| is a simple command which uses this functions.
@@ -83,7 +83,7 @@ C functions. You can add your own functions and types to the interpreter.
 So it is easy to use this language for configuration files or to
 test functions with it.
 
-If EFEU is build with shared libraries (e.g. on linux) you can expand
+If EFEU is build with shared libraries (e.g. on Linux) you can expand
 |$!| at run time. If shared libraries are not available,
 you can take a copy of |$!.c| and add your extensions there.
 
@@ -99,8 +99,8 @@ The following options and arguments are accepted by |$!|:
 
 \head	PREPROCESSOR
 
-The EFEU interpreter language uses a preprocessor similiar to C.
-The preprocessor is built in as a filter and can be used independend
+The EFEU interpreter language uses a preprocessor similar to C.
+The preprocessor is built in as a filter and can be used independent
 of the interpreter. The preprocessor evaluates the input per line and
 not per file. So you can create or change variables which may be used
 later in conditional directives.
@@ -117,7 +117,7 @@ starting with |#include|. Afterwards, the following cases are possible:
 	Characters after |<| are silently ignored.
 
 \item	|#include| <expr>
-	First, <expr> is evaluated und converted to string.
+	First, <expr> is evaluated and converted to string.
 	If the resulting string does not start with |<|,
 	the current directory is searched before any other directory
 	in |IncPath|.
@@ -133,14 +133,14 @@ str header = paste("/", "SubDir", "MyHeader");
 ----
 
 The variable <header> is defined in the outermost level, so it is
-immediatly executed and can be used in the following |#include|
+immediately executed and can be used in the following |#include|
 directive. Adding |<| and |>| avoids searching the current directory
 (if |IncPath| does not include the current directory).
 
 \shead Conditionals
 
 A conditional begins with a <"conditional directive">: |#if|,
-|#ifdef| or |#ifndef| and ends with |#endif|. A conditinal
+|#ifdef| or |#ifndef| and ends with |#endif|. A conditional
 block may contain |#elif| and |#else| directives.
 Conditional blocks may be nested.
 
@@ -148,7 +148,7 @@ The directives
 	|#ifdef| <name>
 and
 	|#ifndef| <name>
-are used to test macro definations.
+are used to test macro definitions.
 No macro substitution is performed on this directive lines.
 
 The simplest form of a conditional is:
@@ -177,11 +177,11 @@ Macros are defined with the |#define| directive. It has to forms:
 \item	|#define| <name> <replacement>
 	defines a macro without arguments.
 \item	|#define| <name>|(|<args>|)| <replacement>
-	defines a macro with arguments. The left parenthes must
-	follow immediatly the name of the macro.
+	defines a macro with arguments. The left parenthesis must
+	follow immediately the name of the macro.
 
 The name of a macro must start with an alphabetic or underline
-character and may contain only aphanumeric or underline characters.
+character and may contain only alphanumeric or underline characters.
 
 In |$!| macros are rare used. In most of all places, variables and
 functions are the better solution. Normally they are only used to protect
@@ -220,7 +220,7 @@ In opposite to C/C++, the use of this operator is not restricted
 to assigning data in variable declarations.
 
 The expression operator parses an expression without evaluation.
-This expression may be stored in a variable oder passed as function
+This expression may be stored in a variable or passed as function
 argument for later evaluation.
 
 \tab	|l|l|l|
@@ -232,7 +232,7 @@ argument for later evaluation.
 <|::|> | scope resolution | <type><|::|><name>
 <|::|> | variable selection | <vartab><|::|><name>
 <|.|> | member selection | <expr><|.|><name>
-<|[]|> | subscripting | <expr><|[|><expr><|]|>
+<|[]|> | sub scripting | <expr><|[|><expr><|]|>
 <|()|> | function call | <expr><|(|><list><|)|>
 [-]
 
@@ -258,7 +258,7 @@ to any type, that could be converted in the type |VarTab|.
 
 \tab	|l|l|l|
 [-]
-#3|c| <*Compareson operators*>
+#3|c| <*Comparison operators*>
 [--]
 <|\<|> | less than | <expr> <|\<|> <expr>
 <|\<=|> | less than or equal | <expr> <|\<=|> <expr>
@@ -271,13 +271,13 @@ to any type, that could be converted in the type |VarTab|.
 
 \tab	|l|l|l|
 [-]
-#3|c| <*Bitwise operators*>
+#3|c| <*Bit wise operators*>
 [--]
-<|\&|> | bitwise AND | <expr> <|\&|> <expr>
+<|\&|> | bit wise AND | <expr> <|\&|> <expr>
 [-]
-<|^|> | bitwise exclusive OR | <expr> <|^|> <expr>
+<|^|> | bit wise exclusive OR | <expr> <|^|> <expr>
 [-]
-<|\||> | bitwise inclusive OR | <expr> <|\||> <expr>
+<|\||> | bit wise inclusive OR | <expr> <|\||> <expr>
 [-]
 
 \tab	|l|l|l|
@@ -290,7 +290,7 @@ to any type, that could be converted in the type |VarTab|.
 [-]
 
 The right operand of a logical operator is only evaluated, if the
-resulting value is not determinated by the left operand.
+resulting value is not determined by the left operand.
 So in
 	|false &&| <expr>\br
 	|true ||||| <expr>\br
@@ -306,8 +306,9 @@ the right operand <expr> is never evaluated.
 [-]
 
 The range operator creates a list of variables, starting by <start>
-and ending by <end>. For numbers, the value of <step> must be positive
-the default value is 1. Wrong use of this operator may
+and ending by <end>. For numbers, the value of <step> must be
+positive.
+The default value is 1. Wrong use of this operator may
 result in an infinite loop.
 There is no range operator in C/C++.
 
@@ -328,7 +329,7 @@ There is no range operator in C/C++.
 <|\|=|> | inclusive OR and assign | <lvalue> <|\|=|> <expr>
 [-]
 
-Assign operators are right associativ.
+Assign operators are right associative.
 
 \tab	|l|l|l|
 [-]
@@ -337,7 +338,7 @@ Assign operators are right associativ.
 <|,|> | list separator | <expr> <|,|> <expr>
 [-]
 
-The comma |,| in esh is used as list seperator like python,
+The comma |,| in esh is used as list separator like python,
 not as comma operator like C/C++. So <a>, <b>, ..., <n>
 returns a list containing <a>, <b>, ..., <n>.
 
@@ -356,13 +357,13 @@ difference to the list separator.
 
 \ttitem	for (<a>; <cond>; <b>) <expr>
 	First, <a> is evaluated. As long as <cond> is true, <expr> and
-	then <b> is evaluated. Either <a>, <cond> or <b> may be ommited,
+	then <b> is evaluated. Either <a>, <cond> or <b> may be omitted,
 	<a> and <b> must be simple expressions.
 
 \ttitem	for (<name> in <list>) <expr>
-	The representant <name> is set to each element of the list
+	The representative <name> is set to each element of the list
 	in turn, and <expr> is evaluated each time. If <list> consists
-	of a single element and is type is convertable to |List_t|,
+	of a single element and is type is convertible to |List_t|,
 	the result of the conversion is used instead.
 
 In any case of loop, the statement |break| breaks out of the loop and
@@ -377,7 +378,7 @@ the statement |continue| starts the next cycle.
 	If the expression <cond> is true, <expr1> is executed,
 	else <expr2> is executed.
 
-\shead	Switch statemet
+\shead	Switch statement
 
 The syntax of a |switch| statement is:
 
@@ -393,15 +394,16 @@ switch (<expr>)\br
 \end
 
 where <label> may be <|case~<val>|> or |default|.
-The expression <val> is evaluated by parsing the switch statement.
+The expression <val> is evaluated on parsing and not on executing the
+switch statement.
 The value of <expr> is compared with all labels in order of
-defination. If the comparison is true, all following
+definition. If the comparison is true, all following
 statements until |break|, |continue|, |return| or the end of the
 switch block is reached, are executed.
 If none of the labels compares with <expr>, all statements after
 |default| (if present) are executed.
 
-In opposite to C, any data type is allowied in the switch statement
+In opposite to C, any data type is allowed in the switch statement
 as long as the operator |==| is defined. In particular you can use
 strings in switch statements.
 
@@ -412,7 +414,7 @@ no return value.
 Every block has two tables of variables. The less visible table
 is created by parsing the command lines, the more visible table
 on evaluating the block.
-Every expression following the keyword |static| is executed immediatly
+Every expression following the keyword |static| is executed immediately
 after parsing. So type declaration with the prefix |static| creates
 variables in the less visible table. The use of |static| is not
 restricted to declarations.
@@ -432,40 +434,43 @@ x = (int y = 5);
 ----
 declares first the integer variable <x> and the double variables
 <a> and <b>. Afterwards the integer variable <y> is declared with
-value 5 und the result (the value 5) is assigned to <x>.
+value 5 and the result (the value 5) is assigned to <x>.
+It is allowed to declare a variable more than once with the same type.
+All but the first declarations are converted to a assignment
+statement.
 
 Every predefined data type in the interpreter language has a corresponding
 data type in C.
 The EFEU interpreter language does not have pointers,
 but data types may be represented by pointer types in C.
 
-The interpreter distinguishes between lvalues und constants.
+The interpreter distinguishes between lvalues and constants.
 An lvalue is anything, that could stand on the left side
-of an assignement. Typical lvalues are variables. The result of
+of an assignment. Typical lvalues are variables. The result of
 an expression or a function call may be an lvalue or not.
 
 \shead	Integral types
 
-Like in C/C++, there are several different integral types. The
-following table shows the types in esh and their representation  in C.
+Like in C/C++, there are several different integral types.
+The interpreter supports the exact-width integer types as defined in
+C99. They are int8_t, int16_t, int32_t, int64_t, uint8_t, uint16_t,
+uint32_t and uint64_t. The following table shows additional integral
+types and their representation in C.
 
 \tab	|l|l|
 [-]
 <*esh type*> | <*C type*>
 [-]
-byte | signed char
-short | short int
 bool | int
 int | int
 unsigned | unsigned int
-long | long int
-size_t | long unsigned int
+varint | int64_t
+varsize | uint64_t
 [-]
 
-The keywords |short|, |unsigned| and |long| are type names and not
-type qualifiers like in C.
-The type |int| is a subclass of |bool|, so |int| can be used at any
-place where |bool| is expected.
+The keyword |unsigned| is a type name and not a type qualifier like in C.
+The data types |varint| and |varsize| have a variable length binary
+representation in data files.
 
 The syntax of integral constants is like C/C++.
 The keywords |true| (integral value 0) and |false|
@@ -484,18 +489,18 @@ A character in esh has the type |char| and its code value is
 considered as unsigned.
 
 Strings are completely different implemented in |esh| than in C.
-They are no fields of type |char|, they have the data type |str|.
+They are not fields of type |char|, they have the data type |str|.
 If you assign a string to a value or use it as function argument,
 the whole string (not the address) is copied.
 Copying strings is always done with memory allocation and there
-is a builtin garbage collection for it (and generally for all dynamic
+is a built in garbage collection for it (and generally for all dynamic
 allocated objects).
 
 Character constants are delimited by single quotes, string
 constants by double quotes.
 The backslash is used as escape character like in C.
 
-String constants may contain linefeeds.
+String constants may contain linefeed.
 In esh, two strings next to
 each other are not concatenated like in C/C++.
 You need the add operator |+| to do this.
@@ -511,7 +516,7 @@ There must be a newline after |!| in the starting line and
 |!| must be the first character in the last line. A so defined
 string always contains a linefeed at end. The backslash is no
 longer used as escape character with one exception: protecting
-a |!| at beginning of line to be interpreterdt as string termination.
+a |!| at beginning of line to be interpreted as string termination.
 This construction of strings may be used anywhere inside an expression.
 
 Comments are skipped and preprocessor directives are interpreted inside
@@ -528,7 +533,7 @@ to get the file <file> included in the string <s>.
 Note, that in EFEU (and so in esh) null strings (character pointer to
 NULL) can be used like ordinary strings and there is a difference
 between null strings and empty strings (strings containing only the
-terminating 0).  The EFEU libraries contains tools for handling
+terminating 0) are handled . The EFEU libraries contains tools for handling
 dynamic allocated strings and you can mix them with constant strings.
 The memory allocation tools in EFEU knows, if the memory of a
 string could be freed.
@@ -549,7 +554,7 @@ type of the constant |NULL|.
 Types which starts and ends with the underline symbol are reserved
 for internal use. Normally, you don't declare variables of this type.
 But this types may be used for arguments in virtual functions, e.g.
-to distinguish between the constant |NULL| and a string initialazed
+to distinguish between the constant |NULL| and a string initialized
 with |NULL|.
 
 \shead	Lists
@@ -561,7 +566,7 @@ language:
 	use it at begin of a statement because |{| is also used
 	for grouping expressions.
 #	with the list operator: |3, 5|. Note the low priority of the
-	list operator. You need parantheses to use it in terms.
+	list operator. You need parentheses to use it in terms.
 	You get only lists of at least two elements.
 #	with the range operator: |3 : 5 : 2|. All members of the list
 	have the same type.
@@ -570,7 +575,7 @@ Any object of type |List_t| have the two components:
 [|obj|]
 	returns the first entry of the list or |NULL| for empty lists.
 [|next|]
-	returns the sublist starting with the next element or an
+	returns the sub list starting with the next element or an
 	empty list, if there are no more elements.
 
 In absence of pointers in esh, you may use |List_t| as substitution.
@@ -585,10 +590,14 @@ Data fields may be declared in one of the two possible forms:
 	declares <name> as a scalar of type <type>|[|<dim>|]|.
 
 In the first case and if the data field
-is initialised by a list of values, <dim> may be ommitted and
+is initialized by a list of values, <dim> may be omitted and
 the number of elements in the list determines the size of the field.
 In the second case, a new type is implicit created. The field size
 is necessary.
+
+In the second case 0 or a missing value of <dim> indicates a variable
+length array. The data field is implicit enlarged as you use a higher
+index. Data types of the form <type>|[]| are subclasses of |EfiVec|.
 
 If you have more then one dimension, a declaration of the form
 	<type> <name>|[|<n0>|][|<n1>|]...[|<nk>|];|
@@ -597,7 +606,7 @@ is translated into
 
 because data fields can only have one dimension, but there is no
 limit on creating vector types.
-It is clear that only <n0> may be ommitted.
+It is clear that only <n0> may be omitted.
 
 Data fields are always packed into a object of type |EfiVec| on use.
 A data field can always
@@ -606,15 +615,12 @@ with a list. If the list has less elements than the data field, only
 the corresponding elements are changed.
 
 EFEU provides you the following data types for a more
-powerfull handling of data than ordinary data fields:
+powerful handling of data than ordinary data fields:
 
-\ttitem	DataBase
-	is a dynamic data field with an optional sort order.
-	You can insert, delete and search entries.
 \ttitem TimeSeries
 	are dynamic fields of type double with a time index.
 \ttitem	mdmat
-	holds a data cube of any type with unlimmeted nummber of
+	holds a data cube of any type with unlimited number of
 	dimensions, only restricted by available memory.
 	EFEU contains a lot of tools for handling such data cubes.
 
@@ -623,7 +629,7 @@ powerfull handling of data than ordinary data fields:
 The simplest way to create a new type is |typedef|, as in
 	|typedef int myint;|
 
-The new type |myint| is created as subtype of |int| not as alias.
+The new type |myint| is created as subclass of |int|, not as alias.
 
 Structures are created with the |struct| statement. The syntax is
 	|struct| <type> [|:| <base> [ <name> ]] |{| type declarations |}|
@@ -662,16 +668,16 @@ struct MyDataType {
 
 The EFEU interpreter supports enumeration types. The syntax is
 	|enum| <type> [|:| <base> [ <name> ]] |{| identifier list |}|
-with a comma separated list of identifiers with optional assignement values.
+with a comma separated list of identifiers with optionally assignment values.
 If <base> is defined, <type> is created as subtype of <base>,
 else as subtype of |_Enum_|. The enumeration keys are bound to
-the enumeration type. They may be used immediatly after declaration.
+the enumeration type. They may be used immediately after declaration.
 
 The following statement:
 	|enum Color { Red, Green = 5, Blue };|
 creates an enumeration type width name |Color| and identifiers |Color::Red|,
 |Color::Green| and |Color::Blue|. The corresponding integer values are
-0, 5 and 6. For every enumeration type, convertes from/to |int|/|str| are
+0, 5 and 6. For every enumeration type, converts from/to |int|/|str| are
 created. So the following assignments are all valid:
 
 ---- verbatim
@@ -692,7 +698,7 @@ A function declaration in esh has the general form
 	<type> <name> |(| <arglist> |)|\br
 	~~~~~~~~<expr>
 
-Normaly <expr> is a block structure, but in esh you can also
+Normally <expr> is a block structure, but in esh you can also
 use a single (but not empty) expression. If the function does not
 return any value, use the special type |void|.
 
@@ -704,7 +710,7 @@ int f (int x) return x + 1;
 inline int f (int x) { return x + 1; }
 ----
 
-In esh, the keywort |inline| has nothing to do with optimacing, but
+In esh, the keyword |inline| has nothing to do with optimation, but
 with visibility. A inline function sees all variable tables as in
 the line where it is called. All functions defined with a single
 expression are default of type inline.
@@ -737,14 +743,14 @@ form of a function argument is:
 
 The |&| key indicates that the argument must be an lvalue.
 A tilde |...| stands for a variable list of arguments. Inside the
-function this list could be refered unter the reserved name |va_list|.
+function this list could be referenced under the reserved name |va_list|.
 
 Behind the most operators stands a function with the name of the operator.
 You can use either |operator "|<name>|"|
 or |operator|<name>|<space>| for such function names.
 For example: |operator+| is the name of the addition function.
 Function names of prefix operators have an additional <"()"> in the name
-to distingish between postfix and binary operators.
+to distinguish between postfix and binary operators.
 So |operator+()| is the name of the unary plus.
 
 \shead Virtual functions
@@ -788,7 +794,7 @@ object.
 
 \shead	Special Functions
 
-Functions which have the same name as a type, define constructors
+Functions which have the same name as a type, defines constructors
 and converters.
 
 Constructors have the form:
@@ -805,13 +811,13 @@ is a normal constructor without arguments.
 Converters have the form:
 	<tg_type> <src_type> |()|
 
-whith an empty argument list.
-The source data is refered under the name |this|.
+with an empty argument list.
+The source data is referred under the name |this|.
 If the target type is |void| the function defines the destructor
 of the type.
 
 Because of internal garbage collection, there is normally no need
-on copy constructors and desctructors.
+on copy constructor and destructor.
 You must be very carefully in defining this functions,
 because you get an infinite recursive call if an object of the type
 is copied inside the function.
@@ -820,16 +826,15 @@ is copied inside the function.
 
 If you are missing something in the documentation, you may get it
 from esh. The option |--info| provide an interface
-to builtin informations.
-The best way to visit this information is |eis|.
-Just enter the command |eis -p esh|.
-In esh, you can get the
-information with |Info()|.
+to builtin information,
+just enter the command |esh --info|.
+If you are running esh in interactive mode, you can get the
+information with the function call |Info()|.
 
 If you want to know how a function is used, just enter
 the function name and the prototype is displayed.
-If you need information to a data type, just enter the name
-of the data type.
+For a data type <type> you can call the function <type>|.info()| to
+get additional information's.
 
 \ttitem	global
 	is the table of global variables

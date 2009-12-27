@@ -31,6 +31,7 @@ mdmat *mdinv (mdmat *base)
 	mdaxis *axis, *xpre, *xpost, **ppre, **ppost;
 	EfiKonv konv;
 	mdmat *md;
+	StrPool *sbuf;
 	int lines, cols;
 
 	if	(base == NULL)
@@ -53,19 +54,20 @@ mdmat *mdinv (mdmat *base)
 	ppre = &xpre;
 	ppost = &xpost;
 	lines = cols = 1;
+	sbuf = NewStrPool();
 
 	for (axis = base->axis; axis != NULL; axis = axis->next)
 	{
 		if	(axis->flags & MDXFLAG_MARK)
 		{
-			*ppost = cpy_axis(axis, 0);
+			*ppost = cpy_axis(sbuf, axis, 0);
 			(*ppost)->flags = MDXFLAG_MARK;
 			ppost = &(*ppost)->next;
 			cols *= axis->dim;
 		}
 		else
 		{
-			*ppre = cpy_axis(axis, 0);
+			*ppre = cpy_axis(sbuf, axis, 0);
 			ppre = &(*ppre)->next;
 			lines *= axis->dim;
 		}
@@ -82,6 +84,7 @@ mdmat *mdinv (mdmat *base)
 /*	Datenmatrix generieren
 */
 	md = new_mdmat();
+	md->sbuf = sbuf;
 	md->axis = xpre;
 	md->type = &Type_double;
 	md_alloc(md);

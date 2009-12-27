@@ -31,7 +31,7 @@ static EfiObj *ptr_alloc (EfiType *type, va_list list)
 
 static void ptr_free (EfiObj *obj)
 {
-	Obj_free(obj, sizeof(EfiObj));
+	;
 }
 
 static void ptr_update (EfiObj *obj)

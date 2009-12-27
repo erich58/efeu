@@ -1,0 +1,41 @@
+\sec	Projektszenario
+
+Das Projektszenario wurde so gewählt, dass sowohl Programmentwicklung
+(klassische Aufgaben für |make|) als auch allgemeine Projektaufgaben
+(meist wenig beachtete Nutzungsmöglichkeiten für |make|) behandelt
+werden können.
+
+Das Endprodukt ist ein PostScript-Dokument mit dem Bild eines Pascalschen
+Dreiecks. Dabei handelt es sich um eine Tabelle mit
+Binomialkoeffizienten in Dreiecksform. Das Dokument wird mithilfe von
+\LaTeX; erstellt.
+
+\fig[h]
+---- eval latex
+string !
+\begin{centering}
+\def\C#1{\makebox[1.73\baselineskip][c]{#1}}
+!
+filter("./pasctrian 12 '\\C{%d}' | sed -e 's/$/\\\\\\\\/'")
+string !
+\end{centering}
+!
+----
+\caption Das Pascalsche Dreieck
+\end
+
+Die Tabelle selbst wird mit einem Hilfsprogramm
+erstellt und in das Hauptdokument eingebunden.
+
+Das Hilfsprogramm wiederum nutzt eine Programmbibliothek mit
+Funktionen zur Berechnung der Binomialkoeffizienten.
+
+Auf dem Weg zum fertigen Dokument sind die folgenden
+Arbeitsschritte notwendig:
+*	Erstellen einer Programmbibliothek mit Funktionen zur
+	Berechnung von Binomialkoeffizienten;
+*	Kompilieren des Hilfsprogramms;
+*	Erstellen der Tabelle;
+*	Formatieren des Dokuments;
+*	Konvertieren in das gewünschte Ausgabeformat.
+

@@ -22,7 +22,6 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/object.h>
-#include <EFEU/mactools.h>
 #include <EFEU/cmdsetup.h>
 #include <EFEU/procenv.h>
 #include <EFEU/dl.h>

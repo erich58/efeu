@@ -19,16 +19,14 @@
 # If not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-:eval 'IncPath = paste(PATHSEP, IncPath, EFEULIB + "/mksource")'
+:eval 'IncPath = paste(PATHSEP, IncPath, mkpath("lib/mksource"))'
 :eval 'IncPath = paste(PATHSEP, IncPath, getenv("ESHPATH"))'
 :eval 'fmt_str = "%*s"'
 :eval 'VerboseMode = 1'
 
 I:dir | :eval 'IncPath = paste(PATHSEP, "{}", IncPath)'
 	:*:appends <dir> to the search path for scripts.
-	The default value is <"|$(IncPath)|">
-	:de:erweitert den Suchpfad für Skriptfiles um <dir>,
-	der Startwert ist <"|$(IncPath)|">
+	:de:erweitert den Suchpfad für Skriptfiles um <dir>.
 
 s | :eval 'VerboseMode = 0'
 	:*:silent execution

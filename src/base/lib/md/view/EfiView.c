@@ -107,7 +107,7 @@ static void view_clean (void *ptr)
 	memfree(view);
 }
 
-static const RefType EfiView_reftype = REFTYPE_INIT("EfiView",
+static RefType EfiView_reftype = REFTYPE_INIT("EfiView",
 	view_ident, view_clean);
 
 

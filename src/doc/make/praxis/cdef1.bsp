@@ -1,9 +1,0 @@
-#define	Count1(name,db,class)	@;\
-Target(name): db		@;\
-@+syncnt -e bst -r 1999 db -o $@ class	@;\
-@;
-
-#define	Count2(name,db,class)	@;\
-Target(name): db		@;\
-@+syncnt -e bst -r 1995..1999 -o $@ db class	@;\
-@;

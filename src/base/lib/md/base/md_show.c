@@ -13,6 +13,7 @@ void md_show (IO *io, mdmat *md)
 	char *delim;
 	int i, n;
 	int lock;
+	char *p;
 
 	if	(!md)	return;
 
@@ -28,13 +29,13 @@ void md_show (IO *io, mdmat *md)
 
 	io_putc(']', io);
 
-	if	(md->title)
-		io_printf(io, " %#s\n", md->title);
+	if	(md->i_name)
+		io_printf(io, " %#s\n", StrPool_get(md->sbuf, md->i_name));
 	else	io_putc('\n', io);
 
 	for (x = md->axis; x != NULL; x = x->next)
 	{
-		n = io_puts(x->name, io);
+		n = io_puts(StrPool_get(x->sbuf, x->i_name), io);
 
 		if	(x->flags)
 		{
@@ -76,13 +77,15 @@ void md_show (IO *io, mdmat *md)
 				lock = 1;
 			}
 
+			p = StrPool_get(x->sbuf, x->idx[i].i_name);
+
 			if	(x->idx[i].flags & MDFLAG_BASE)
 			{
 				n += io_puts("[", io);
-				n += io_puts(x->idx[i].name, io);
+				n += io_puts(p, io);
 				n += io_puts("]", io);
 			}
-			else	n += io_puts(x->idx[i].name, io);
+			else	n += io_puts(p, io);
 		}
 
 		if	(lock)

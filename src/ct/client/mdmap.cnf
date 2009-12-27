@@ -1,0 +1,38 @@
+# :*:server test client
+# :de:Testprogramm für Server
+
+# $Copyright (C) 2007 Erich Frühstück
+
+Port = 2100
+SleepTime = 0;
+Repeat = 1;
+Single = false;
+Connect = true;
+Command = NULL;
+Host = NULL;
+
+h:host | -host:host | Host
+	:*:Specifies the host name. 
+	:de:Gibt den Rechnernamen an.
+p:port | -port:port | Port
+	:*:Specifies the server port (default {Port}). 
+	:de:Gibt die Portnummer für die Verbindung an.
+s | Single = true
+	:*:send every command in a single connection
+	:de:Einzelverbindungen
+r:count | Repeat
+	:*:repeat factor
+	:de:Wiederholungsfaktor
+t:time | SleepTime
+	:*:Sleep time in milliseconds
+	:de:Wartezeit in milisecunden
+e:command | Command
+	:*:query command
+	:de:Abfrageausdruck
+n | Connect = false
+	:*:No connection, test only
+	:de:Keine Verbindung, nur testen
+::in | Input
+	:*:Input file
+::out | Ouput
+	:*:Output file

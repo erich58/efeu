@@ -68,7 +68,11 @@ char *CmdPar_psub (CmdPar *par, const char *fmt, const char *arg)
 		ArgList args;
 
 		in = io_cstr(fmt);
-		args.data = (char **) &arg;
+		args.cdata = "";
+		args.csize = 1;
+		args.mdata = (char *) arg;
+		args.msize = 1;
+		args.index = &args.csize;
 		args.dim = 1;
 		p = do_vsub(CmdPar_ptr(par), in, &args, 0, EOF);
 		io_close(in);
@@ -169,7 +173,8 @@ static int do_copy (CmdPar *par, IO *in, IO *out,
 		case '{':
 			name = do_vsub(par, in, args, 0, '}');
 			f_puts(name ? CmdPar_getval(par, name, NULL) :
-				args->data[0], out, mode);
+				StrPool_get((StrPool *) args,
+					args->index[0]), out, mode);
 			memfree(name);
 			continue;
 		case '"':
@@ -194,8 +199,7 @@ static int do_copy (CmdPar *par, IO *in, IO *out,
 static void do_psub (IO *in, IO *out, ArgList *args, int mode)
 {
 	StrBuf *sb = sb_create(0);
-	f_puts(args ? psubexpand(sb, in, args->dim, args->data) :
-		psubexpand(sb, in, 0, NULL), out, mode);
+	f_puts(psubexpandarg(sb, in, args), out, mode);
 	rd_deref(sb);
 }
 

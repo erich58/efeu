@@ -61,3 +61,11 @@ static virtual void TypeDef::extefivar (str type, str name, str desc)
 	flag_vrecl = true;
 }
 
+static virtual void TypeDef::ptrefivar (str type, str name, str desc)
+{
+	bf_close();
+	addvar(type + " *", name, desc);
+	st_member(type, name, desc);
+	s_setup += "type->flags |= st_var->type->flags & TYPE_MALLOC;\n"
+	flag_vrecl = true;
+}

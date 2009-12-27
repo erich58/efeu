@@ -37,7 +37,6 @@ static void res_free (EfiObj *obj)
 	char **name = (void *) (obj + 1);
 	memfree(*name);
 	CleanData(obj->type, obj->data, 1);
-	Obj_free(obj, sizeof(EfiObj) + sizeof(char **) + obj->type->size);
 }
 
 static void res_update (EfiObj *obj)

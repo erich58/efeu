@@ -12,7 +12,8 @@ typedef struct {
 } XDATA;
 
 #define	TEST(mp, x) \
-	((x).newpos == 0 && MatchPar_exec(mp, (x).axis->name, (x).oldpos))
+	((x).newpos == 0 && MatchPar_exec(mp, \
+	StrPool_get((x).axis->sbuf, (x).axis->i_name), (x).oldpos))
 
 static int cmp_xdata(const void *pa, const void *pb)
 {

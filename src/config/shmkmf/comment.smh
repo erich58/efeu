@@ -25,6 +25,7 @@
 test $_comment_smh && return
 _comment_smh=1
 
+# $alias
 # $pconfig !
 # n |
 # 	:*:suppresses the empty line before assignment.
@@ -58,6 +59,7 @@ mf_comm ()
 	printf "# %s\n" "$@"
 }
 
+# $alias
 # $pconfig !
 # !
 # :*:

@@ -37,10 +37,10 @@ static char *argl_ident (const void *data)
 		IO *io = io_strbuf(buf);
 		int i;
 
-		io_puts(par->data[0], io);
+		io_puts(StrPool_get(data, par->index[0]), io);
 
 		for (i = 1; i < par->dim; i++)
-			io_printf(io, " %#s", par->data[i]);
+			io_printf(io, " %#s", StrPool_get(data, par->index[i]));
 
 		io_close(io);
 		return sb2str(buf);
@@ -51,17 +51,9 @@ static char *argl_ident (const void *data)
 
 static void argl_clean (void *data)
 {
-	ArgList *argl;
-	int i;
-
-	argl = data;
-
-	for (i = 0; i < argl->dim; i++)
-		memfree(argl->data[i]);
-
-	argl->dim = 0;
-
-	lfree(argl->data);
+	ArgList *argl = data;
+	StrPool_clean(data);
+	lfree(argl->index);
 	memfree(argl);
 }
 
@@ -78,36 +70,9 @@ Die Funktion |$1| generiert eine neue Argumentliste.
 
 extern ArgList *arg_create (void)
 {
-	return rd_init(&ArgList_reftype, memalloc(sizeof(ArgList)));
-}
-
-/*
-Die Funktion |$1| erweitert die Argumentliste <list> um
-den dynamisch generierten String <arg>.
-*/
-
-void arg_madd (ArgList *list, char *arg)
-{
-	if	(list)
-	{
-		if	(list->dim >= list->size)
-		{
-			char **save;
-			size_t i;
-			
-			save = list->data;
-			list->size += BLKSIZE;
-			list->data = lmalloc(list->size * sizeof(char *));
-
-			for (i = 0; i < list->dim; i++)
-				list->data[i] = save[i];
-
-			lfree(save);
-		}
-
-		list->data[list->dim++] = arg;
-	}
-	else	memfree(arg);
+	ArgList *arg = memalloc(sizeof *arg);
+	StrPool_init((void *) arg);
+	return rd_init(&ArgList_reftype, arg);
 }
 
 /*
@@ -117,7 +82,27 @@ den konstanten String <arg>.
 
 void arg_cadd (ArgList *list, const char *arg)
 {
-	if	(list)	arg_madd(list, mstrcpy(arg));
+	if	(!list)	return;
+
+	if	(list->dim >= list->size)
+	{
+		list->size += BLKSIZE;
+		list->index = lrealloc(list->index,
+			list->size * sizeof list->index[0]);
+	}
+
+	list->index[list->dim++] = StrPool_add((StrPool *) list, arg);
+}
+
+/*
+Die Funktion |$1| erweitert die Argumentliste <list> um
+den dynamisch generierten String <arg>.
+*/
+
+void arg_madd (ArgList *list, char *arg)
+{
+	arg_cadd(list, arg);
+	memfree(arg);
 }
 
 /*
@@ -130,23 +115,32 @@ hier der Eintrag 0 nicht abgefragt wird!
 
 char *arg_get (ArgList *list, int n)
 {
-	if	(list == NULL)	return NULL;
-	if	(n == 0)	return list->data[0];
+	if	(list == NULL)
+		return NULL;
 
-	if	(n < 0)	n += list->dim;
+	if	(n == 0)
+		return StrPool_get((StrPool *) list, list->index[0]);
 
-	return (n > 0 && n < list->dim) ? list->data[n] : NULL;
+	if	(n < 0)
+		n += list->dim;
+
+	return (n > 0 && n < list->dim) ?
+		StrPool_get((StrPool *) list, list->index[n]) : NULL;
+}
+
+int arg_test (ArgList *list, int n)
+{
+	return (list && n >= 0 && n < list->dim);
 }
 
 /*
 Die Funktion |$1| setzt den <n>-ten Eintrag der Argumentliste <list> auf
-den dynamisch generierten String <val>. Bei Bedarf wird die Liste
-vergrößert.
+<val>. Bei Bedarf wird die Liste vergrößert.
 Negative Werte für <n> werden vom Ende der Liste weg gerechnet, wobei
 hier der Eintrag 0 nicht gesetzt wird!
 */
 
-extern void arg_set (ArgList *list, int n, char *val)
+extern void arg_cset (ArgList *list, int n, const char *val)
 {
 	if	(list && (n >= 0 || n + list->dim > 0))
 	{
@@ -154,32 +148,36 @@ extern void arg_set (ArgList *list, int n, char *val)
 
 		if	(n + 1 >= list->size)
 		{
-			char **save;
 			size_t i;
-			
-			save = list->data;
-			list->size += BLKSIZE;
-			list->data = lmalloc(list->size * sizeof(char *));
 
-			for (i = 0; i < list->dim; i++)
-				list->data[i] = save[i];
+			list->size += BLKSIZE;
+			list->index = lrealloc(list->index,
+				list->size * sizeof list->index[0]);
 
 			for (i = list->dim; i < n; i++)
-				list->data[i] = NULL;
+				list->index[i] = 0;
 
 			list->dim = n + 1;
-			lfree(save);
 		}
 		else if	(n >= list->dim)
 		{
 			list->dim = n + 1;
 		}
-		else	memfree(list->data[n]);
 
-		list->data[n] = val;
+		list->index[n] = StrPool_add((StrPool *) list, val);
 	}
-	else	memfree(val);
 }
+
+/*
+Wie |arg_cset|, jedoch mit einem dynamisch generierten String <arg>.
+*/
+
+void arg_mset (ArgList *list, int n, char *val)
+{
+	arg_cset(list, n, val);
+	memfree(val);
+}
+
 
 /*
 $SeeAlso

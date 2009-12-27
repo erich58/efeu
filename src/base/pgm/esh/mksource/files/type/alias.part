@@ -14,6 +14,11 @@ void TypeDef::alias (str base)
 		base = substr(base, 2);
 		t_cname = cname(base);
 	}
+	else if	(base == /^P:/)
+	{
+		base = substr(base, 2);
+		t_cname = base + " *";
+	}
 	else
 	{
 		Type_t x = (Type_t) base;

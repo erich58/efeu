@@ -39,7 +39,7 @@ static void cl_clean (void *ptr)
 	memfree(list);
 }
 
-static const RefType reftype = REFTYPE_INIT("MdCountList", cl_ident, cl_clean);
+static RefType reftype = REFTYPE_INIT("MdCountList", cl_ident, cl_clean);
 
 MdCountList *MdCountList_create (MdCount *cnt)
 {

@@ -1,2 +1,0 @@
-include curses.smh
-efeu-xlib -mLD_EFWIN -L$TOP/lib -lefwin

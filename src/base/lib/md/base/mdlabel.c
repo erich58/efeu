@@ -10,11 +10,11 @@ typedef struct {
 	int idx;
 } KEY;
 
-static ALLOCTAB(label_tab, 32, sizeof(MdLabel));
+static ALLOCTAB(label_tab, 32, sizeof(MdAxisLabel));
 
 static void del_key (void *ptr);
 static int get_idx (VecBuf *tab, const char *name);
-static mdaxis *idx2axis (VecBuf *tab, const char *name);
+static mdaxis *idx2axis (StrPool *sbuf, VecBuf *tab, const char *name);
 
 static void del_key (void *ptr)
 {
@@ -26,17 +26,18 @@ static int cmp_key (const void *a, const void *b)
 	return mstrcmp(((const KEY *) a)->name, ((const KEY *) b)->name);
 }
 
-static mdaxis *idx2axis (VecBuf *vb, const char *name)
+static mdaxis *idx2axis (StrPool *sbuf, VecBuf *vb, const char *name)
 {
 	KEY *key;
 	mdaxis *x;
 	int n;
 
-	x = new_axis(vb->used);
-	x->name = mstrcpy(name);
+	x = new_axis(sbuf, vb->used);
+	x->i_name = StrPool_add(x->sbuf, name);
+	x->i_desc = 0;
 
 	for (key = vb->data, n = vb->used; n-- > 0; key++)
-		x->idx[key->idx].name = mstrcpy(key->name);
+		x->idx[key->idx].i_name = StrPool_add(x->sbuf, key->name);
 
 	return x;
 }
@@ -58,9 +59,9 @@ static int get_idx (VecBuf *vb, const char *name)
 }
 
 
-MdLabel *new_label (void)
+MdAxisLabel *new_label (void)
 {
-	MdLabel *x;
+	MdAxisLabel *x;
 
 	x = new_data(&label_tab);
 	x->next = NULL;
@@ -73,7 +74,7 @@ MdLabel *new_label (void)
 }
 
 
-void del_label (MdLabel *x)
+void del_label (MdAxisLabel *x)
 {
 	del_label(x->next);
 	vb_clean(&x->idxtab, del_key);
@@ -81,10 +82,10 @@ void del_label (MdLabel *x)
 }
 
 
-MdLabel *set_label (const char *def)
+MdAxisLabel *set_label (const char *def)
 {
 	mdlist *list, *l;
-	MdLabel *label, **ptr;
+	MdAxisLabel *label, **ptr;
 
 	list = str2mdlist(def, MDLIST_NAMEOPT);
 	label = NULL;
@@ -104,12 +105,12 @@ MdLabel *set_label (const char *def)
 }
 
 
-MdLabel *init_label (const char *name, const char *def)
+MdAxisLabel *init_label (const char *name, const char *def)
 {
 	int dim;
 	int i;
 	char **list;
-	MdLabel *label, **ptr;
+	MdAxisLabel *label, **ptr;
 	char *fmt;
 
 	dim = mstrsplit(def, ".", &list);
@@ -129,7 +130,7 @@ MdLabel *init_label (const char *name, const char *def)
 }
 
 
-mdaxis *label2axis (MdLabel *label)
+mdaxis *label2axis (StrPool *sbuf, MdAxisLabel *label)
 {
 	mdaxis *axis, **ptr;
 
@@ -138,7 +139,7 @@ mdaxis *label2axis (MdLabel *label)
 
 	while (label != NULL)
 	{
-		*ptr = idx2axis(&label->idxtab, label->name);
+		*ptr = idx2axis(sbuf, &label->idxtab, label->name);
 		ptr = &(*ptr)->next;
 		label = label->next;
 	}
@@ -147,7 +148,7 @@ mdaxis *label2axis (MdLabel *label)
 }
 
 
-int save_label (IO *tmp, MdLabel *label, char *p)
+int save_label (IO *tmp, MdAxisLabel *label, char *p)
 {
 	char *x;
 	int i;

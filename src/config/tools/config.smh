@@ -27,6 +27,7 @@ _config_smh=1
 
 include rule.smh
 
+# $alias
 # $pconfig !
 # i | A:name | C:name |
 #	:*:These flages are passed to |mf_rule|. They determines
@@ -41,7 +42,7 @@ include rule.smh
 #	:*:This flag is passed to |efeuconfig|.
 #	See \mref\{efeuconfig(1)} for details.
 #	:de:Dieses Flags wird an |efeuconfig| weitergereicht.
-#	Vergleiche dazu \mref\{efeuconfig.smh(1)}.
+#	Vergleiche dazu \mref\{efeuconfig(1)}.
 # u |
 #	:*:If this flag is set, a rule for updating the target is created.
 #	:de:Falls Flag gesetzt ist, wird eine |update|-Regel generiert. Die

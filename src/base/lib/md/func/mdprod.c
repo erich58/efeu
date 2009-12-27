@@ -25,6 +25,7 @@ mdmat *md_prod (mdmat *base)
 	mdaxis *axis, *xpre, *xpost, **ppre, **ppost;
 	GPAR par;
 	mdmat *md;
+	StrPool *sbuf;
 
 	if	(base == NULL)
 		return NULL;
@@ -55,14 +56,15 @@ mdmat *md_prod (mdmat *base)
 	xpost = NULL;
 	ppre = &xpre;
 	ppost = &xpost;
+	sbuf = NewStrPool();
 
 	for (axis = base->axis; axis != NULL; axis = axis->next)
 	{
 		if	(axis->flags & MDXFLAG_MARK)
 		{
-			*ppre = cpy_axis(axis, 0);
+			*ppre = cpy_axis(sbuf, axis, 0);
 			ppre = &(*ppre)->next;
-			*ppost = cpy_axis(axis, 0);
+			*ppost = cpy_axis(sbuf, axis, 0);
 			(*ppost)->flags = MDXFLAG_MARK;
 			ppost = &(*ppost)->next;
 		}
@@ -73,6 +75,7 @@ mdmat *md_prod (mdmat *base)
 /*	Datenmatrix generieren
 */
 	md = new_mdmat();
+	md->sbuf = sbuf;
 	md->axis = xpre;
 	md->type = (EfiType *) par.mul->type;
 	md_alloc(md);

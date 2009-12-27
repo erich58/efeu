@@ -30,11 +30,14 @@ If not, write to the Free Software Foundation, Inc.,
 #if	HAS_PQ
 
 #define	M_NOMEM	"$!: not enough memory to create data.\n"
-#define	M_BAD	"$!: connection to database server failed.\n"
+#define	M_BAD	"$!: connection `$1' to database server failed.\n"
 
 static void pg_clean (void *ptr)
 {
 	PG *pg = ptr;
+
+	if	(pg->trans)
+		PG_command(pg, "commit");
 
 	if	(pg->res)
 		PQclear(pg->res);
@@ -104,7 +107,10 @@ static RefType pg_reftype = REFTYPE_INIT("PG", pg_ident, pg_clean);
 /*
 :de:
 Die Funktion |$1| erzeugt eine Verbindung zu einem PostgreSQL Datenbankserver
-und liefert eine Struktur vom Type |PG|.
+und liefert eine Struktur vom Type |PG|. Die Verbindung wird mit der Funktion
+|PQconnectdb| aufgebaut, der Parameter <def> wird an diese Funktion
+weitergereicht. Falls nur der Datenbankname angegeben wird, kann das
+Schlüsselwort |dbname| entfallen.
 :*:
 The function |$1| makes a new connection to a PostgreSQL backend
 and returns a |PG| structure.
@@ -122,9 +128,24 @@ PG *PG_connect (const char *def)
 {
 	PGconn *conn;
 	
-	if	(def == NULL)	return NULL;
-
-	conn = PQconnectdb(def);
+	if	(def == NULL)
+	{
+		return NULL;
+	}
+	else if	(*def == 0)
+	{
+		conn = PQconnectdb("");
+	}
+	else if	(strchr(def, '=') != NULL)
+	{
+		conn = PQconnectdb(def);
+	}
+	else
+	{
+		char *p = mstrpaste("=", "dbname", def);
+		conn = PQconnectdb(p);
+		memfree(p);
+	}
 
 	if	(conn == NULL)
 	{
@@ -144,6 +165,7 @@ PG *PG_connect (const char *def)
 		pg->conn = conn;
 		pg->res = NULL;
 		pg->lock = 0;
+		pg->trans = 0;
 
 		rd_init(&pg_reftype, pg);
 		PG_info(pg, "CONNECT");
@@ -157,10 +179,10 @@ PG *PG_connect (const char *def)
 }
 
 /*
-:*:The function |$1| displays a report to error class |PG| and level |DBG_INFO|.
-:de:Die Funktion |$1| gibt eine Meldung zur Fehlerklasse |IO| vom Level
-|DBG_INFO| aus. Der Parameter 0 enthält wird mit |io_ident()|
-auf die Kennung der IO-Struktur <io> gesetzt.
+:*:The function |$1| displays a report to error class |PG| and level
+|DBG_INFO|.
+:de:Die Funktion |$1| gibt eine Meldung zur Fehlerklasse |PG| vom Level
+|DBG_INFO| aus.
 */
 
 void PG_info (PG *pg, const char *fmt, ...)

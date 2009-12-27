@@ -1,0 +1,52 @@
+\appendix
+
+\langpar
+:*:\mchap[1]	Commands
+:de:\mchap[1]	Kommandos
+
+\pipe	|efeuconfig --help=raw|
+\pipe	|efeuscript --help=raw|
+\pipe	|efeu-xlib --help=raw|
+\pipe	|mkmf --help=raw|
+\pipe	|mksrclist --help=raw|
+\pipe	|pp2dep --help=raw|
+\pipe	|shmkmf --help=raw|
+
+\langpar
+:*:\mchap[7]	Supplemental |shmkmf|-functions
+:de:\mchap[7]	Ergänzende |shmkmf|-Funktionen
+
+\delsrc
+\addsrcpath	\eval{mkpath("lib/shmkmf")}
+\src2doc	*.smh
+
+/*
+\langpar
+:*:\appendix	Documentation tools
+:de:\appendix	Dokumentationswerkzeuge
+
+\langpar
+:*:This sections describes a set of |efeudoc| commands to write
+examples for the use of |shmkmf|. They are activated by the
+command line:\br
+|\config shmkmf|\br
+:de:Dieser Abschnitt enthält eine Liste von |efeudoc|-Befehlen
+zum Schreiben von Beispielen für |shmkmf|. Sie werden
+mit der Befehlszeile\br
+|\config shmkmf|\br
+aktiviert.
+
+\config shmkmf
+
+---- eval
+for (x in "\\shmkmf", "\\smh_head", "\\smh_init", "\\smh_exec", "\\smh_clean")
+{
+	showmac(x, cout, 0);
+	cout << "\n\n";
+}
+----
+*/
+
+\include	bib.eds
+
+\printindex

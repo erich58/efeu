@@ -43,6 +43,11 @@ EfiObj *int2Obj (int val)
 	return NewObj(&Type_int, &val);
 }
 
+EfiObj *str2Obj (char *str)
+{
+	return NewObj(&Type_str, &str);
+}
+
 EfiObj *uint2Obj (unsigned val)
 {
 	return NewObj(&Type_uint, &val);

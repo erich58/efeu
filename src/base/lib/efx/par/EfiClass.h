@@ -37,7 +37,10 @@ void EfiClass_info (IO *io, const void *data);
 void SetupEfiClass (void);
 void EfiClassInfo (InfoNode *info);
 
+extern EfiClass EfiClass_flag;
+extern EfiClass EfiClass_generic;
 extern EfiClass EfiClass_test;
+extern EfiClass EfiClass_switch;
 
 void AddEfiClass (EfiVarTab *tab, const char *name, const char *desc,
 	EfiType *type, int (*update) (const EfiObj *, void *), void *par);

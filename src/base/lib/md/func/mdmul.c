@@ -26,6 +26,7 @@ mdmat *md_mul (mdmat *md1, mdmat *md2, int flag)
 	mdaxis *xpre, *xpost, **ppre, **ppost;
 	GPAR par;
 	mdmat *md;
+	StrPool *sbuf;
 
 	if	(md1 == NULL || md2 == NULL)
 	{
@@ -62,19 +63,20 @@ mdmat *md_mul (mdmat *md1, mdmat *md2, int flag)
 	xpost = NULL;
 	ppre = &xpre;
 	ppost = &xpost;
+	sbuf = NewStrPool();
 
 	while (x1 || x2)
 	{
 		if	(x1 && !(x1->flags & MDXFLAG_MARK))
 		{
-			*ppre = cpy_axis(x1, 0);
+			*ppre = cpy_axis(sbuf, x1, 0);
 			(*ppre)->flags = MDXFLAG_MARK;
 			ppre = &(*ppre)->next;
 			x1 = x1->next;
 		}
 		else if	(x2 && !(x2->flags & MDXFLAG_MARK))
 		{
-			*ppost = cpy_axis(x2, 0);
+			*ppost = cpy_axis(sbuf, x2, 0);
 			ppost = &(*ppost)->next;
 			x2 = x2->next;
 		}
@@ -85,7 +87,9 @@ mdmat *md_mul (mdmat *md1, mdmat *md2, int flag)
 			if	((n = cmp_axis(x1, x2, flag)) != 0)
 			{
 				dbg_note(NULL, "[mdmat:62]", "ssd",
-					x1->name, x2->name, n);
+					StrPool_get(x1->sbuf, x1->i_name),
+					StrPool_get(x2->sbuf, x2->i_name),
+					n);
 			}
 
 			x1 = x1->next;
@@ -105,6 +109,7 @@ mdmat *md_mul (mdmat *md1, mdmat *md2, int flag)
 /*	Datenmatrix generieren
 */
 	md = new_mdmat();
+	md->sbuf = sbuf;
 	md->axis = xpre;
 	md->type = (EfiType *) par.mul->type;
 	md_alloc(md);

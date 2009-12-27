@@ -92,7 +92,7 @@ static void debug_id (FILE *log, const RefData *rd, const char *cmd)
 		putc(' ', log);
 	}
 
-	fprintf(log, "%d %p)", rd->refcount, rd);
+	fprintf(log, "%lu %p)", (unsigned long) rd->refcount, rd);
 }
 
 static FILE *debug_log (const RefData *rd)

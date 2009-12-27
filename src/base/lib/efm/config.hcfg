@@ -48,12 +48,24 @@ If not, write to the Free Software Foundation, Inc.,
 #endif
 
 @eval typedef size_t unsigned long
+@eval typedef ssize_t long
+@eval typedef ptrdiff_t unsigned long
+
+@beg -x check
+printf("#define	PTRSIZE_%d\n", sizeof(void *));
+@end
 
 @beg -x error "Byteorder not identified."
 int x = 1;
 printf("#undef	REVBYTEORDER\n");
 printf("#define	REVBYTEORDER %d\n", ((char *) &x)[0]);
 @end
+
+@eval failure NEED_VA_COPY 'va_list a, b; va_copy(a, b)'
+
+#if	NEED_VA_COPY
+#define	va_copy(a,b)	a = b
+#endif
 
 extern double C_strtod (const char *def, char **ptr);
 

@@ -22,7 +22,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 cmd	$!: Unbekanntes Kommando \"$1\"\n
 cmp	$!: Sortierfehler bei Datenbank $1.\n
-conv	$!: Datetyp $1 nicht in $2 konvertierbar.\n
+conv	$!: Datentyp $1 nicht in $2 konvertierbar.\n
 aggr	$!: Aggregatfunktion $1 für Datentyp $2 ist nicht defininiert.\n
 dbi	$!: Ungültige Datenfileangabe $1.\n
 inc	$!: Schlüssel $1 nicht kompatibel.\n

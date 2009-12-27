@@ -41,6 +41,8 @@ static ALLOCTAB(sdef_tab, 16, sizeof(MdCntGrp));
 /*	Eintrag initialisieren
 */
 
+static STRBUF(buf_label, 0);
+
 mdaxis *md_classaxis (const char *name, ...)
 {
 	va_list list;
@@ -48,7 +50,8 @@ mdaxis *md_classaxis (const char *name, ...)
 	mdaxis *grp;
 	MdCntGrp *sdef, **x;
 	size_t dim;
-	IO *tmp;
+	StrPool *sbuf;
+	size_t offset;
 	int i, j;
 
 	if	(name == NULL)	return NULL;
@@ -56,15 +59,27 @@ mdaxis *md_classaxis (const char *name, ...)
 	sdef = NULL;
 	x = &sdef;
 	dim = 0;
-	tmp = io_tmpbuf(0);
-	io_putstr(name, tmp);
+	sbuf = NewStrPool();
+	offset = StrPool_add(sbuf, name);
+	buf_label.pos = 0;
 
 	va_start(list, name);
 
 	while ((class = va_arg(list, MdClass *)) != NULL)
 	{
+		if	(class->desc)
+		{
+			if	(buf_label.pos)
+				sb_puts("; ", &buf_label);
+
+			sb_puts(class->desc, &buf_label);
+		}
+
 		for (j = 0; j < class->dim; j++)
-			io_putstr(class->label[j].name, tmp);
+		{
+			StrPool_xadd(sbuf, class->label[j].name);
+			StrPool_xadd(sbuf, class->label[j].desc);
+		}
 
 		*x = new_data(&sdef_tab);
 		(*x)->next = NULL;
@@ -85,18 +100,29 @@ mdaxis *md_classaxis (const char *name, ...)
 		sdef->flag = 0;
 		sdef->idx = 0;
 		dim = gsel.dim;
-		io_putstr(NULL, tmp);
+		StrPool_xadd(sbuf, NULL);
+		StrPool_xadd(sbuf, NULL);
 	}
 
-	io_rewind(tmp);
-	grp = new_axis(dim);
-	grp->name = io_getstr(tmp);
+	grp = new_axis(sbuf, dim);
+	grp->i_name = offset;
+
+	if	(buf_label.pos)
+	{
+		sb_putc(0, &buf_label);
+		grp->i_desc = StrPool_add(sbuf, (char *) buf_label.data);
+	}
+
 	grp->priv = sdef;
 
 	for (i = 0; i < dim; i++)
-		grp->idx[i].name = io_getstr(tmp);
+	{
+		offset += strlen(StrPool_get(sbuf, offset)) + 1;
+		grp->idx[i].i_name = offset;
+		offset += strlen(StrPool_get(sbuf, offset)) + 1;
+		grp->idx[i].i_desc = offset;
+	}
 
-	io_close(tmp);
 	return grp;
 }
 
@@ -105,8 +131,8 @@ mdaxis *md_ctabaxis (IO *io, MdCountPar *gtab)
 	mdaxis *grp;
 	MdCntGrp *sdef, **x;
 	size_t dim;
+	size_t offset;
 	mdlist *def;
-	IO *tmp = NULL;
 	int i, j;
 
 /*	Achsendefinition bestimmen
@@ -119,8 +145,8 @@ mdaxis *md_ctabaxis (IO *io, MdCountPar *gtab)
 	sdef = NULL;
 	x = &sdef;
 	dim = 0;
-	tmp = io_tmpbuf(0);
-	io_putstr(def->name, tmp);
+	offset = StrPool_xadd(gtab->pool, def->name);
+	buf_label.pos = 0;
 
 	for (i = 0; i < def->dim; i++)
 	{
@@ -136,8 +162,19 @@ mdaxis *md_ctabaxis (IO *io, MdCountPar *gtab)
 
 		s = md_subclass(s, def->lopt[i]);
 
+		if	(s->desc)
+		{
+			if	(buf_label.pos)
+				sb_puts("; ", &buf_label);
+
+			sb_puts(s->desc, &buf_label);
+		}
+
 		for (j = 0; j < s->dim; j++)
-			io_putstr(s->label[j].name, tmp);
+		{
+			StrPool_xadd(gtab->pool, s->label[j].name);
+			StrPool_xadd(gtab->pool, s->label[j].desc);
+		}
 
 		*x = new_data(&sdef_tab);
 		(*x)->next = NULL;
@@ -158,19 +195,30 @@ mdaxis *md_ctabaxis (IO *io, MdCountPar *gtab)
 		(*x)->flag = 0;
 		(*x)->idx = 0;
 		dim = gsel.dim;
-		io_putstr(NULL, tmp);
+		StrPool_xadd(gtab->pool, NULL);
+		StrPool_xadd(gtab->pool, NULL);
 	}
 
 /*	Indexliste generieren
 */
-	io_rewind(tmp);
-	grp = new_axis(dim);
-	grp->name = io_getstr(tmp);
+	grp = new_axis(gtab->pool, dim);
+	grp->i_name = offset;
+
+	if	(buf_label.pos)
+	{
+		sb_putc(0, &buf_label);
+		grp->i_desc = StrPool_add(gtab->pool, (char *) buf_label.data);
+	}
+
 	grp->priv = sdef;
 
 	for (i = 0; i < dim; i++)
-		grp->idx[i].name = io_getstr(tmp);
+	{
+		offset += strlen(StrPool_get(gtab->pool, offset)) + 1;
+		grp->idx[i].i_name = offset;
+		offset += strlen(StrPool_get(gtab->pool, offset)) + 1;
+		grp->idx[i].i_desc = offset;
+	}
 
-	io_close(tmp);
 	return grp;
 }

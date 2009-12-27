@@ -1,0 +1,11 @@
+@name
+@synopsis -h
+\Description
+Das Kommando |$!| wird von |shmkmf| zur Bestimmung der
+Abhängigkeiten zwischen einzelnen EFEU-Projekten und zur Ausgabe
+der Projektbezeichnungen benutzt.
+
+@arglist -i
+
+\SeeAlso
+\mref{shmkmf(1)}.

@@ -1,0 +1,124 @@
+\sec	Die Programmbibliothek |binom|.
+
+\smh_init
+\smh_exec cp $src/binom.h .
+\smh_exec cp $src/factorial.c .
+\smh_exec cp $src/bincoef.c .
+
+Die Programmbibliothek |binom| stellt Hilfsfunktionen zur Berechnung
+der Binomialkoeffizienten zur Verfügung.
+Sie wird aus den folgenden drei Dateien gebildet:
+*	|binom.h|
+*	|factorial.c|
+*	|bincoef.c|
+
+Die Kopfdatei |binom.h| enthält die Funktionsprototypen
+der Bibliotheksfunktionen.
+
+\include[verbatim] binom.h
+
+Das Sourcefile |factorial.c| definiert die Funktion |factorial| zur
+Berechnung der Fakultät.
+
+\include[verbatim] factorial.c
+
+Das Sourcefile |bincoef.c| definiert die Funktion |bincoef| zur
+Berechnung der Binomialkoeffizienten. Diese werden mithilfe von
+|factorial| berechnet. Dieses Verfahren ist nicht das numerisch
+beste, weil die Koeffizienten nur bis \math{n \latex{\leq} 12} berechnet werden
+können. In diesem Kontext geht es jedoch mehr um die Anschaulichkeit als
+um optimale Algorithmen.
+
+\include[verbatim] bincoef.c
+
+\ssec Konfiguration des Bildungssystems
+
+Die Konfigurationsdatei |Config.make| bestimmt die Regeln für |make|.
+Zum besseren Verständnis der einzelnen Funktionen und ihrer Auswirkung
+werden mit Hilfe von |mf_comm| Kommentare in das generierte Makefile gesetzt.
+
+---- config
+\def\smh_rule {{
+	str cmd = ParseLine(cin, true);
+
+	if	(smh_temp)
+	{
+		IO out = open(smh_temp + "/Config.make", "a");
+
+		if	(cmd)
+		{
+			fprintf(out, "mf_comm %#s\n", "CONFIG: " + cmd);
+			fprintf(out, "%s\n", cmd);
+		}
+		else	fprintf(out, "mf_comm %#s\n", "CONFIG: EOF");
+
+		close(out);
+	}
+}}
+----
+
+\smh_rule include cc.smh
+\smh_rule mf_cc -c factorial.c
+\smh_rule mf_cc -c bincoef.c
+\smh_rule mf_objlist OBJ
+\smh_rule mf_lib -v 1 -r 0 binom -mo OBJ
+\smh_rule
+\smh_exec[verbatim] cat Config.make
+
+Zunächst werden
+die Hilfsfunktionen für die Erstellung von C-Programmen mithilfe
+der |include| Funktion geladen. Anschließend werden die
+Übersetzungsregeln für die einzelnen Module mit |mf_cc| generiert.
+Die Syntax von |mf_cc| orientiert sich an der Syntax von |cc|,
+jedoch werden die Sourcen nicht kompiliert, sondern nur die Regeln zum
+Kompilieren generiert.
+
+Die Zeile |mf_objlist OBJ| nutzt bereits ein typisches
+Leistungsmerkmal von |shmkmf|. Die durch die einzelnen |mf_cc|-Funktionen
+definierten Objektdateien werden intern gespeichert. Mithilfe von
+|mf_objlist| wird nun die Liste dieser Dateien als Make-Variable |OBJ|
+zur Verfügung gestellt.
+Diese Variable wird dann bei der abschließenden Anweisung |mf_lib| zur
+Konstruktion der Programmbibliothek verwendet.
+
+Die Syntax dieser Funktionen ist im Anhang unter \mref{cc.smh(7)} beschrieben.
+
+\ssec Die generierten Regeln für |make|
+
+Das Makefile wird mit Hilfe von |shmkmf| generiert.
+Der Aufruf liefert die folgende Ausgabe:
+
+\smh_exec[verbatim] shmkmf
+
+Diese hängt von der jeweiligen Konfiguration und Systemumgebung
+ab. Erkennbar ist aber, dass bereits beim Generieren des Makefiles das
+Kommando |make| aufgerufen wird. Dies dient zur Ergänzung der Regeln
+mit vom C-Kompiler generierten Abhängigkeiten, die aus den
+beteiligten Sourcedateien ermittelt werden.
+
+Gegenüber den 5 Zeilen der Konfigurationsdatei (Kommentarerzeugung
+nicht mitgerechnet) ist das generierte Makefile bereits recht umfangreich.
+Der Aufbau ist klar und sollte jemandem, dem die Syntax von
+Makefiles vertraut ist, kein Verständnisproblem bereiten. Durch die
+Kommentareinfügungen sind die Wirkungen der einzelnen Anweisungen
+deutlich sichtbar.
+
+<*Achtung:*> Überlange Zeilen werden bei der Darstellung
+umgebrochen.
+
+\smh_exec[verbatim] fold -s Makefile
+
+\ssec	Bauen der Programmbibliothek
+
+Die Programmbibliothek wird nun einfach durch Aufruf von |make|
+gebaut. Im Folgenden ist das typische Aufbauprotokoll dargestellt:
+
+\smh_exec[verbatim] make 2>&1
+
+Dieses kann wiederum, je nach Konfiguration und Systemumgebung, leicht
+unterschiedlich ausfallen.
+
+Schlussendlich stehen die folgenden Dateien im Arbeitsverzeichnis:
+
+\smh_exec[verbatim] ls -l
+\smh_clean

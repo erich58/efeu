@@ -33,7 +33,7 @@ static int var_print (const EfiType *st, const void *data, IO *io)
 		var->n, var->x, var->xx);
 }
 
-EfiType Type_VarianceData = SIMPLE_TYPE("VarianceData", VarianceData,
+EfiType Type_VarianceData = EXTERN_TYPE("VarianceData", VarianceData,
 	&Type_FrequencyData, var_print);
 
 static EfiObj *member_mean (const EfiObj *base, void *data)
@@ -162,7 +162,7 @@ void CmdSetup_VarianceData (void)
 	st_var = EfiType_stdvar(type, st_var, offsetof(VarianceData, n),
 		0, "double", "n", "number of observations");
 	st_var = EfiType_stdvar(type, st_var, offsetof(VarianceData, x),
-		0, "double", "x", "cumulative frequency");
+		0, "double", "x", "aggregated values");
 	st_var = EfiType_stdvar(type, st_var, offsetof(VarianceData, xx),
 		0, "double", "xx", "sum of squares");
 	AddEfiMember(type->vtab, vardef, tabsize(vardef));

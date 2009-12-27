@@ -196,6 +196,7 @@ extern DocTab *GlobalDocTab;
 extern EfiType Type_Doc;
 extern char *DocPath;
 extern char *DocName;
+extern char *DocDir;
 extern char *DocStyle;
 
 char *ListArg_str (EfiObjList *list, int n);

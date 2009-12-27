@@ -23,15 +23,16 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 #include <EFEU/preproc.h>
 #include <EFEU/pconfig.h>
-#include <EFEU/mactools.h>
 #include <EFEU/ioctrl.h>
+#include <EFEU/mkpath.h>
 
 /*	Variablen
 */
 
-char *IncPath = ".:"
-	String(EFEUROOT) "/lib/esh/%S:"
-	String(EFEUROOT) "/lib/esh";
+#define	SUBDIR1 "lib/esh/%S"
+#define	SUBDIR2 "lib/esh"
+
+char *IncPath = NULL;
 
 static EfiVarDef pp_var[] = {
 	{ "IncPath",	&Type_str, &IncPath,
@@ -80,11 +81,11 @@ static EfiFuncDef ppfdef[] = {
 void SetupPreproc()
 {
 	static int init_done = 0;
-
+	
 	if	(init_done)	return;
 
 	init_done = 1;
-
+	IncPath = mkpath(ProgDir, NULL, SUBDIR1, SUBDIR2, NULL);
 	AddVarDef(GlobalVar, pp_var, tabsize(pp_var));
 	AddFuncDef(ppfdef, tabsize(ppfdef));
 }

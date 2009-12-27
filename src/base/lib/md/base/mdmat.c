@@ -10,16 +10,21 @@
 
 EfiType Type_mdmat = REF_TYPE("mdmat", mdmat *);
 EfiType Type_mdaxis = PTR_TYPE("mdaxis", mdaxis *, &Type_ptr, NULL, NULL);
-EfiType Type_mdidx = STD_TYPE("mdidx", mdindex, NULL, NULL, NULL);
+EfiType Type_mdidx = STD_TYPE("mdidx", EfiMdIndex, NULL, NULL, NULL);
 
 mdmat *Buf_mdmat = NULL;
 mdaxis *Buf_mdaxis = NULL;
-mdindex Buf_mdidx = { NULL, 0 };
 
 static EfiObj *get_title (const EfiObj *base, void *data)
 {
 	mdmat *md = base ? Val_ptr(base->data) : NULL;
-	return md ? LvalObj(&Lval_ref, &Type_str, md, &md->title) : NULL;
+	return md ? StrPoolObj(base, md->sbuf, &md->i_name) : NULL;
+}
+
+static EfiObj *get_desc (const EfiObj *base, void *data)
+{
+	mdmat *md = base ? Val_ptr(base->data) : NULL;
+	return md ? StrPoolObj(base, md->sbuf, &md->i_desc) : NULL;
 }
 
 static EfiObj *get_type (const EfiObj *base, void *data)
@@ -52,26 +57,38 @@ static EfiMember var_mdmat[] = {
 	{ "title", &Type_str, get_title, NULL,
 		":*:title of data cube\n"
 		":de:Titel der Datenmatrix\n" },
+	{ "desc", &Type_str, get_desc, NULL,
+		":*:description of data cube\n"
+		":de:Kurzbeschreibung der Datenmatrix\n" },
 	{ "type", &Type_type, get_type, NULL },
 	{ "dim", &Type_int, get_dim, NULL },
 	{ "size", &Type_int, get_size, NULL },
 	{ "axis", &Type_mdaxis, get_axis, NULL },
 };
 
-static EfiObj *x_index (const EfiObj *base, void *data)
-{
-	mdaxis *x = base ? Val_mdaxis(base->data) : NULL;
-	return x ? EfiVecObj(&Type_mdidx, x->idx, x->dim) : NULL;
-}
-
 static EfiObj *x_name (const EfiObj *base, void *data)
 {
 	if	(base)
 	{
 		mdaxis *x = Val_ptr(base->data);
-		return LvalObj(&Lval_obj, &Type_str, base, &x->name);
+		return StrPoolObj(base, x->sbuf, &x->i_name);
 	}
 	else	return NULL;
+}
+
+static EfiObj *x_desc (const EfiObj *base, void *data)
+{
+	if	(base)
+	{
+		mdaxis *x = Val_ptr(base->data);
+		return StrPoolObj(base, x->sbuf, &x->i_desc);
+	}
+	else	return NULL;
+}
+
+static EfiObj *x_head (const EfiObj *base, void *data)
+{
+	return str2Obj(base ? mdx_head(Val_ptr(base->data)) : NULL);
 }
 
 static EfiObj *x_next (const EfiObj *base, void *data)
@@ -99,8 +116,35 @@ static EfiObj *x_flags (const EfiObj *base, void *par)
 	return ConstObj(&Type_int, &flags);
 }
 
+static EfiObj *x_index (const EfiObj *base, void *data)
+{
+	mdaxis *x;
+	EfiObjList *list, **ptr;
+
+	list = NULL;
+	ptr = &list;
+	x = base ? Val_ptr(base->data) : NULL;
+
+	if	(x)
+	{
+		EfiMdIndex idx;
+
+		idx.axis = x;
+
+		for (idx.axis = x, idx.n = 0; idx.n < x->dim; idx.n++)
+		{
+			*ptr = NewObjList(ConstObj(&Type_mdidx, &idx));
+			ptr = &(*ptr)->next;
+		}
+	}
+
+	return NewPtrObj(&Type_list, list);
+}
+
 static EfiMember var_mdaxis[] = {
 	{ "name", &Type_str, x_name, NULL },
+	{ "desc", &Type_str, x_desc, NULL },
+	{ "head", &Type_str, x_head, NULL },
 	{ "dim", &Type_int, x_dim, NULL },
 	{ "flags", &Type_int, x_flags, NULL },
 	{ "next", &Type_mdaxis, x_next, NULL },
@@ -111,20 +155,42 @@ static EfiObj *i_name (const EfiObj *base, void *par)
 {
 	if	(base)
 	{
-		mdindex *idx = base->data;
-		return LvalObj(&Lval_obj, &Type_str, base, &idx->name);
+		EfiMdIndex *idx = base->data;
+		return (idx->axis && idx->n < idx->axis->dim) ?
+			StrPoolObj(base, idx->axis->sbuf,
+				&idx->axis->idx[idx->n].i_name) :
+			str2Obj(NULL);
+	}
+	else	return NULL;
+}
+
+static EfiObj *i_desc (const EfiObj *base, void *par)
+{
+	if	(base)
+	{
+		EfiMdIndex *idx = base->data;
+		return (idx->axis && idx->n < idx->axis->dim) ?
+			StrPoolObj(base, idx->axis->sbuf,
+				&idx->axis->idx[idx->n].i_desc) :
+			str2Obj(NULL);
 	}
 	else	return NULL;
 }
 
 static EfiObj *i_flags (const EfiObj *base, void *par)
 {
-	return int2Obj(base ? ((mdindex *) base->data)->flags : 0);
+	if	(base)
+	{
+		EfiMdIndex *idx = base->data;
+		return int2Obj((idx->axis && idx->n < idx->axis->dim) ?
+			idx->axis->idx[idx->n].flags : 0);
+	}
+	else	return NULL;
 }
-
 
 static EfiMember var_mdidx[] = {
 	{ "name", &Type_str, i_name, NULL },
+	{ "desc", &Type_str, i_desc, NULL },
 	{ "flags", &Type_int, i_flags, NULL },
 };
 
@@ -143,8 +209,10 @@ static void print_mdaxis (EfiFunc *func, void *rval, void **arg)
 
 	if	(x != NULL)
 	{
-		n = io_printf(io, "(name = %#s, dim = %d, size = %d, flags = %b)",
-			x->name, x->dim, x->size, x->flags);
+		n = io_printf(io,
+			"(name = %#s, dim = %d, size = %d, flags = %b)",
+			StrPool_get(x->sbuf, x->i_name),
+			x->dim, x->size, x->flags);
 	}
 	else	n = io_puts("NULL", io);
 
@@ -153,8 +221,17 @@ static void print_mdaxis (EfiFunc *func, void *rval, void **arg)
 
 static void print_mdidx (EfiFunc *func, void *rval, void **arg)
 {
-	Val_int(rval) = io_printf(Val_io(arg[0]), "(%#s, %d)",
-		Val_mdidx(arg[1]).name, Val_mdidx(arg[1]).flags);
+	IO *io = Val_ptr(arg[0]);
+	EfiMdIndex *p = arg[1];
+
+	if	(p->axis && p->n < p->axis->dim)
+	{
+		mdindex *i = p->axis->idx + p->n;
+
+		Val_int(rval) = io_printf(io, "(%#s, %d)",
+			StrPool_get(p->axis->sbuf, i->i_name), i->flags);
+	}
+	else	Val_int(rval) = io_puts("NULL", io);
 }
 
 /*

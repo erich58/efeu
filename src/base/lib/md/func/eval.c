@@ -178,7 +178,8 @@ static void datawalk (const WALKPAR *walk, DATAPAR *data, MdEvalDef *eval)
 			next.base = ptr + n * x->size;
 		}
 
-		next.idx = newidx(walk->idx, x->idx[n].name);
+		next.idx = newidx(walk->idx, StrPool_get(x->sbuf,
+			x->idx[n].i_name));
 		next.data = walk->data + n * x->size;
 		datawalk(&next, data, eval);
 		clridx(next.idx);

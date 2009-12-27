@@ -1,0 +1,7 @@
+\sec	Nachbemerkung
+
+Die hier präsentierte Lösung hat noch einige Schwachstellen. So müssen
+Beispielsweise bei einer Erweiterung der Programmbibliothek um
+zusätzlich Module auch entsprechende Einträge in die
+Konfigurationsdatei geschrieben werden. Im nächsten Kapitel wird
+ein Konzept vorgestellt, bei dem dies nicht mehr notwendig ist.

@@ -36,6 +36,7 @@ If not, write to the Free Software Foundation, Inc.,
 #define	EXIT_FAILURE	1
 #endif
 
+extern char *ProgDir;		/* Programmverzeichnis, falls verfügbar */
 extern char *ProgName;		/* Programmname */
 extern char *ProgIdent;		/* Programmidentifikation */
 extern char *ApplPath;		/* Suchpfad für Hilfsdateien */

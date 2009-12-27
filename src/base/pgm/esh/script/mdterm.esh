@@ -28,8 +28,9 @@ fmt_float = "%*.*f";
 float_prec = 2;
 
 pconfig !
-Version = "$Id: mdterm.esh,v 1.13 2006-06-07 08:45:19 ef Exp $"
+Version = "$Id: mdterm.esh,v 1.15 2008-02-01 16:16:34 ef Exp $"
 PrintMode = true
+MapMode = false
 
 F:file | :eval 'gload(IncPath, "{}")'
 	:*:execute command lines in file <file>
@@ -65,11 +66,14 @@ e:expr | Expr
 	:*:expression
 	:de:Ausdruck
 p:prec | :eval 'float_prec="{}"'
-	:*:floating number precission
+	:*:floating number precision
 	:de:Genauigkeit der Zahlenwerte
 r | Reduce = true
-	:*:remove singulary axis
+	:*:remove singular axis
 	:de:Entfernen von singulären Achsen
+m:map | Output; MapMode = true
+	:*:create file mapping
+	:de:Dateiabbild generieren
 v:[name::]var | VarDef: append " "
 	:*:select type components
 	:de:Variablenselektion
@@ -117,7 +121,9 @@ mdmat md = mdexpr(Function, md1, md2);
 if	(Type)		md.konv(Type);
 if	(Title)		md.title = Title;
 
-if	(flagres("PrintMode"))
+if	(flagres("MapMode"))
+	md.map(Output);
+else if	(flagres("PrintMode"))
 	md.mark("#-1").print(iostd, "nohead");
 else	md.save(Output);
 

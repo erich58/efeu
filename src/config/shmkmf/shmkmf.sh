@@ -22,7 +22,7 @@
 # A-3423 St. Andrä/Wördern, Südtirolergasse 17-21/5
 
 # $pconfig
-# Version="$Id: shmkmf.sh,v 1.81 2007-08-19 04:34:55 ef Exp $"
+# Version="$Id: shmkmf.sh,v 1.84 2008-03-14 06:19:58 ef Exp $"
 # Config=Config.make
 # Makefile=Makefile
 #
@@ -49,9 +49,12 @@
 # t:top |
 #	:*:sets |TOP| to <top> (default: .)
 #	:de:Setzt |TOP| auf <top>, Vorgabe: .
-# I:dir |
+# C:dir |
 #	:*:expand config path with <dir>
 #	:de:Suchpfad für Konfigurationsdateien um <dir> erweitern
+# I:dir |
+#	:*:expand include path with <dir>
+#	:de:Suchpfad für Headerdateien um <dir> erweitern
 # ::config | Config
 #	:*:name of configuration file (default: {Config})
 #	:de:Name der Konfigurationsdatei, Vorgabe: {Config}
@@ -126,7 +129,7 @@ _make_arg=
 _stdrules=true
 shmkmf_verbose=
 
-while getopts vpxic:r:t:I: opt
+while getopts vpxic:r:t:C:I: opt
 do
 	case $opt in
 	\?)	_shmkmf_usage; exit 1;;
@@ -140,6 +143,13 @@ do
 		_x="`shmkmf_quote $OPTARG`";
 		_cmd="echo $_x";
 		bootstrap="$bootstrap -c $_x"
+		;;
+	C)	
+		if	test A$OPTARG = A-
+		then	ConfigPath=""
+		else	ConfigPath="$OPTARG:$ConfigPath"
+		fi
+		bootstrap="$bootstrap -C$OPTARG"
 		;;
 	I)	
 		if	test A$OPTARG = A-
@@ -445,7 +455,7 @@ postpone ()	#usage: postpone cmd arg(s)
 mf_bootstrap ()
 {
 	printf "\n%s: " $Makefile
-	sort -u $_deplist | sed -e '$!s/$/ \\/' -e '1!s/^/		/'
+	sort -u $_deplist | sed -e '$!s/$/ \\/' -e '1!s/^/  /'
 	printf "\t%s\n" "$bootstrap"
 	printf "\nupdate::\n\t%s\n" "$bootstrap"
 }
@@ -469,6 +479,10 @@ mf_depend ()	# usage: mf_depend [-d dep] rules
 FILE=$0
 add_depend "$0"
 config shmkmf.cfg
+
+if [ -f $TOP/shmkmf.cfg ]; then
+	do_include $TOP/shmkmf.cfg
+fi
 
 # process config file
 
@@ -501,6 +515,7 @@ fi
 
 if [ $_stdrules ]; then
 	printf "\n# $fmt_srule\n" $shmkmf_id >> $_output
+	mf_rule -d "all" >> $_output
 	mf_bootstrap >> $_output
 	mf_rule -d "install" "all" >> $_output
 	mf_rule -d "depend" >> $_output

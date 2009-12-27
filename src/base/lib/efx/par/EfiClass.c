@@ -76,6 +76,9 @@ void SetupEfiClass (void)
 	if	(init_done)	return;
 
 	init_done = 1;
+	AddEfiPar(NULL, &EfiClass_flag);
+	AddEfiPar(NULL, &EfiClass_generic);
 	AddEfiPar(NULL, &EfiClass_test);
+	AddEfiPar(NULL, &EfiClass_switch);
 	info = GetInfo(NULL, NULL);
 }

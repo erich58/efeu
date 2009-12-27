@@ -43,7 +43,6 @@ static void bf_free (EfiObj *obj)
 {
 	BFDATA *bf = (void *) (obj + 1);
 	UnrefObj(bf->base);
-	Obj_free(obj, sizeof(EfiObj) + sizeof(BFDATA));
 }
 
 static void bf_update (EfiObj *obj)

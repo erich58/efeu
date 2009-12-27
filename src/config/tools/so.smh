@@ -27,11 +27,19 @@ _so_smh=1
 
 include cc.smh
 
+so_undef ()
+{
+	mf_rule -d all '' \
+		"@echo 'Shared objects not supported, rule'" \
+		"@echo '$*'" "@echo skipped.'"
+}
+
 mf_rule -d all files
 mf_rule -d depend files
 mf_rule -d files
 mf_srclist -c mksrclist
 
+# $alias
 # $pconfig !
 # :tg |
 #	:*:name of target file without extension.
@@ -43,9 +51,23 @@ mf_srclist -c mksrclist
 #	:*:additional arguments for |mf_cc|.
 #	:de:zusätzliche Argumente für |mf_cc|.
 # !
+# :*:
+# The function $! creates a rule to compile a shared object module.
+# The following options and arguments are accepted:
+# :de:
+# Die Funktion $! generiert eine Regel zum kompilieren eines gemeinsam
+# genutzten Objektmoduls.
+# Die folgenden Optionen und Argumente werden akzeptiert:
+#
+# @arglist
 
 so_cc ()
 {(
+	if [ -z "$CC_SHARED" ]; then
+		so_undef so_cc "$@"
+		return
+	fi
+
 	test "$#" -lt 2 && shmkmf_warg so_cc
 	tg=$1
 	src=$2
@@ -53,6 +75,7 @@ so_cc ()
 	mf_cc -I. -I$SRC -o $tg.so $src -xc "-shared -nostdlib" "$@"
 )}
 
+# $alias
 # $pconfig !
 # H:path |
 #	:*:install header files in the directory <path>.
@@ -68,12 +91,28 @@ so_cc ()
 #	:de:zusätzliche Argumente für |mf_cc| zum kompilieren der
 #	Sourcen.
 # !
+# :*:
+# The function $! creates a rule to compile a shared object module,
+# where the sources are createt with |mksource| from a template file.
+# The following options and arguments are accepted:
+# :de:
+# Die Funktion $! generiert eine Regel zum kompilieren eines gemeinsam
+# genutzten Objektmoduls, wobei die Sourcen mit |mksource| aus einer
+# Schablonendatei generiert werden.
+# Die folgenden Optionen und Argumente werden akzeptiert:
+#
+# @arglist
 
 so_mksource ()
 {(
 	inc=
 	lib=.
 	
+	if [ -z "$CC_SHARED" ]; then
+		so_undef so_mksource "$@"
+		return;
+	fi
+
 	while [ -n "$1" ]
 	do
 		case "$1" in
@@ -104,31 +143,6 @@ so_mksource ()
 		esac
 	done
 )}
-
-# $pconfig !
-# :tg |
-#	:*:name of target directory
-#	:de:Name des Zielverzeichnisses
-# :src |
-#	:*:name of source directory
-#	:de:Name des Quellverzeichnisses
-# :def |
-#	:*:name of definition file.
-#	:de:Name der Definitionsdatei.
-# !
-
-so_linklist ()
-{(
-	test "$#" -ne 3 && shmkmf_warg so_linklist
-	add_depend $3
-
-	sed -e '/^#/d' -e '/^[ 	]*$/d' $3 | while read tg src
-	do
-		mf_rule -a $1/$tg.so $2/$src.so \
-			'rm -f %@; ln -s %1 %@'
-	done
-)}
-
 
 
 # $SeeAlso

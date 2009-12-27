@@ -54,7 +54,8 @@ static void subfunc (mdaxis *x, mdlist *l, unsigned mask,
 	for (n = 0; n < x->dim; n++)
 		if (!(x->idx[n].flags & mask))
 			x->idx[n].flags = func(x->idx[n].flags,
-				MatchPar_exec(mp, x->idx[n].name, n + 1), flag);
+				MatchPar_exec(mp, StrPool_get(x->sbuf,
+					x->idx[n].i_name), n + 1), flag);
 
 	rd_deref(mp);
 }
@@ -120,7 +121,8 @@ void md_setflag (mdmat *md, const char *def, unsigned mask,
 
 		for (x = md->axis, n = 1; x != NULL; x = x->next, n++)
 		{
-			if	(MatchPar_exec(mp, x->name, n))
+			if	(MatchPar_exec(mp, StrPool_get(x->sbuf,
+					x->i_name), n))
 			{
 				if	(fx)	x->flags = fx(x->flags, 1, vx);
 

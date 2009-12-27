@@ -29,6 +29,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/refdata.h>
 #include <EFEU/strbuf.h>
 #include <EFEU/stdint.h>
+#include <EFEU/StrPool.h>
 
 #define	IO_MAX_SAVE	6
 #define	IO_STAT_OK	0
@@ -104,6 +105,7 @@ int io_ungetc (int c, IO *io);
 int io_pushback (IO *io);
 int io_rewind (IO *io);
 int io_close (IO *io);
+int io_err (IO *io);
 
 int io_close_stat;
 
@@ -129,6 +131,12 @@ IO *io_string (char *str, void (*clean) (void *ptr));
 IO *io_strbuf (StrBuf *buf);
 IO *io_tmpbuf (size_t size);
 IO *io_bigbuf (size_t size, const char *pfx);
+IO *io_data (void *ref, void *data, size_t size);
+
+IO *StrPool_open (StrPool *pool);
+void StrPool_dump (StrPool *pool, IO *out);
+size_t StrPool_read (StrPool *pool, size_t size, IO *in);
+size_t StrPool_write (StrPool *pool, IO *out);
 
 /*
 Der Makro |$1| liefert eine IO-Struktur auf einen konstanten String.

@@ -43,7 +43,7 @@ static void rt_clean (void *ptr)
 	memfree(def);
 }
 
-static const RefType reftype = REFTYPE_INIT("MdCntDef", rt_ident, rt_clean);
+static RefType reftype = REFTYPE_INIT("MdCntDef", rt_ident, rt_clean);
 
 MdCntDef* MdCntDef_create (EfiType *type, const char *pfx)
 {

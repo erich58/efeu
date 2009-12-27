@@ -629,11 +629,18 @@ Falls <flag> gesetzt ist, wird Bezeichnung und Kopierrechtsinformation
 aus dem Kommentarkopf extrahiert.
 */
 
-void CmdPar_load (CmdPar *par, const char *name, int flag)
+int CmdPar_load (CmdPar *par, const char *name, int flag)
 {
 	IO *io = io_applfile(name, APPL_CNF);
-	CmdPar_read (par, io, EOF, flag);
-	io_close(io);
+
+	if	(io)
+	{
+		CmdPar_read (par, io, EOF, flag);
+		io_close(io);
+		return 1;
+	}
+
+	return 0;
 }
 
 /*

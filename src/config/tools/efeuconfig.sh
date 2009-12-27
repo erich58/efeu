@@ -32,8 +32,9 @@ de*)
 	;;
 esac
 
+# $alias
 # $pconfig
-# Version="$Id: efeuconfig.sh,v 1.7 2007-08-19 04:34:55 ef Exp $"
+# Version="$Id: efeuconfig.sh,v 1.10 2008-04-06 18:52:51 ef Exp $"
 # v|
 #	:*:display this help and exit
 #	:de:Fehlermeldungen ausgeben
@@ -148,6 +149,8 @@ shift
 # Falls die |-x| Option gesetzt ist, wird das generierte Programm auch
 # ausgeführt und seine Ausgabe eingearbeitet.
 #
+# @arglist -i
+# 
 # :*:
 # The first argument determines the action of |$!|. If it is |file|
 # or |update|, a template file is evaluated, otherwise a special
@@ -168,18 +171,18 @@ shift
 #
 # |@@set| <flags>
 #	:*:sets options for the following calls to |$!|.
-#	:de:Setzt Optionen für die nachfolgenden Aufrufe von |$1|.
+#	:de:Setzt Optionen für die nachfolgenden Aufrufe von |$!|.
 #
 # |@@add| <flags>
 #	:*:expands the options for the following calls to |$!|.
-#	:de:Erweitert die Optionen für die nachfolgenden Aufrufe von |$1|.
+#	:de:Erweitert die Optionen für die nachfolgenden Aufrufe von |$!|.
 #
 # |@@include| <file>
 #	:*:if header <file> exists, a include directive is createted and the
 #	options for the following calls to |$!| are expanded to include it.
 #	:de:Falls die Headerdatei <file> existiert, wird eine
 #	include-Direktive generiert und die Optionen für
-#	die nachfolgenden Aufrufe von |$1| erweitert, ums sie einzubinden.
+#	die nachfolgenden Aufrufe von |$!| erweitert, um sie einzubinden.
 #
 # |@@eval| <args>
 #	:*:calls |$!| with the given arguments.
@@ -197,8 +200,6 @@ shift
 #	:de:Ruft |$!| mit Option |-s| und den angegebenen Argumenten auf und
 #	leitet alle Zeilen zwischen |@@beg| und |@@end| an |$!| weiter.
 #
-# @arglist -i
-# 
 # :*:The following commands are performed by the command |$!|
 # :de:Die folgenden Kommandos werden vom Programm |$!| ausgeführt:
 
@@ -342,6 +343,7 @@ esac
 
 mkdir $tmp || exit 1
 cat > $tmp/tprog.c <<EOF
+#include <stddef.h>
 #include <stdio.h>
 #include <stdarg.h>
 #include <string.h>

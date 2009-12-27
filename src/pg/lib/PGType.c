@@ -54,7 +54,7 @@ void *PGType_create (PG *pg)
 
 	if	(!pg)	return NULL;
 
-	PG_query(pg, "SELECT oid,typname from pg_type");
+	PG_query(pg, "select oid, typname from pg_type");
 
 	if	(!pg->res || !(n = PQntuples(pg->res)))
 		return NULL;

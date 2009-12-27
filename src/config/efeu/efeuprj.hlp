@@ -1,0 +1,10 @@
+@name
+@synopsis -h
+\Description
+The command |$!| is used by |shmkmf| to query the dependence information
+for EFEU projects and to display the project label.
+
+@arglist -i
+
+\SeeAlso
+\mref{shmkmf(1)}.

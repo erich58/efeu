@@ -1,0 +1,81 @@
+# :*:create master makefile for subprojects
+# :de:Haupmakefile für Teilprojekte generieren
+#
+# $Synopsis
+# include $1
+#
+# $Copyright (C) 2008 Erich Frühstück
+# This file is part of EFEU.
+# 
+# EFEU is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+# 
+# EFEU is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public
+# License along with EFEU; see the file COPYING.
+# If not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+test $submake_smh && return
+submake_smh=1
+
+# $Description
+# :de:
+# Durch das Einbinden der Headerdatei |$1| werden für jedes Unterverzeichnis
+# im Quellverzeichnis korrespondierende Verzeichnisse im Aufbauverzeichnis
+# angelegt. Dabei werden nur jene Verzeichnisse berücksichtigt, die eine
+# |Config.make| Datei enthalten. Abhängigkeiten zwischen den Verzeichnissen
+# werden über die optionale Datei |Depends| gesteuert. Sie enthält jeweils
+# eine Liste aller Verzeichnisse, die zuvor gebaut werden müssen.
+#
+# :de:
+# Quell- und Aufbauverzeichnis dürfen zusammenfallen.
+# Zur Kontrolle der Zusammensetzung der Unterverzeichnisse wird die Datei
+# |ProjectList| mit einer Liste aller Quellverzeichnisse im Aufbauverzeichnis
+# angelegt und bei jedem Aufruf von |make| auf Veränderung geprüft.
+
+SRC=`cd $SRC; pwd`
+TOP=`cd $TOP; pwd`
+mf_update ProjectList ls "$SRC/*"
+add_depend ProjectList
+
+_submake_rule () # Parameter: name config
+{
+	mf_rule -d all $1.all
+	mf_rule -d $1.all $1/Makefile "cd $1; make all"
+	mf_rule -d $1.clean $1/Makefile "cd $1; make clean"
+	mf_rule $1/Makefile $2 "test -d $1 || mkdir -p $1" \
+		"cd $1; $shmkmf -t $TOP $2"
+	mf_rule -d clean $1.clean
+}
+
+_submake_tmp=$TMP/submake.tmp
+
+for _x in $SRC/*/Config.make
+do
+	_d=`dirname $_x`
+	_n=`basename $_d`
+	_submake_rule $_n $_x >> $_submake_tmp
+
+	if [ -f $_d/Depends ]
+	then
+		add_depend $_d/Depends
+
+		for _y in `sed -e 's/#.*//' $_d/Depends`
+		do
+			mf_rule -d $_n.all $_y.all
+		done
+	fi
+done
+
+postpone cat $_submake_tmp
+
+# $SeeAlso
+# \mref{shmkmf(1)},
+# \mref{efeuprj.smh(7)},

@@ -1,9 +1,0 @@
-@name
-@synopsis -h
-\Description
-The command |$1| reads data from tape device <dev> und writes to the
-file <file>. If no <file> is specified, only status information is
-produced.
-
-@arglist -i
-@copyright -h

@@ -30,7 +30,7 @@ _dl_smh=1
 # $Description
 # :de:
 # Durch Einbinden der Headerdatei |$1| wird der Makro
-# |LD_DL| mit link-Flags für dynamische ladbare module definiert.
+# |LD_DL| mit link-Flags für dynamische ladbare Module definiert.
 
 mf_comm "dl configuration from $FILE"
 efeu-xlib -mLD_DL -ldl

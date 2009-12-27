@@ -24,10 +24,10 @@ If not, write to the Free Software Foundation, Inc.,
 PrintListDelim = "\t";
 
 pconfig !
-Version = "$Id: mdpermut.esh,v 1.8 2005-07-24 05:12:41 ef Exp $"
+Version = "$Id: mdpermut.esh,v 1.9 2008-02-01 16:16:34 ef Exp $"
 
 r | Reduce = true
-	:*:remove singulary axis
+	:*:remove singular axis
 	:de:Entfernen von singulären Achsen
 v:[name::]var | VarDef: append " "
 	:*:select type components

@@ -54,7 +54,6 @@ static EfiObj *data_xalloc (EfiType *type, va_list list)
 static void data_free (EfiObj *obj)
 {
 	CleanData(obj->type, obj->data, 1);
-	Obj_free(obj, obj->type->size + sizeof *obj);
 }
 
 static void data_update (EfiObj *obj)

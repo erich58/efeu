@@ -27,11 +27,13 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/Resource.h>
 #include <EFEU/parsub.h>
 #include <EFEU/Debug.h>
+#include <EFEU/mkpath.h>
 
 #define	E_PROTO	"[efi:proto]$!: Function $1: Prototype not compatible.\n"
 
+extern EfiType Type_StrPool;
 static EfiType Type_cpar = REF_TYPE("CmdPar", CmdPar *);
-static EfiType Type_argl = REF_TYPE("ArgList", ArgList *);
+static EfiType Type_argl = XREF_TYPE("ArgList", ArgList *, &Type_StrPool);
 
 ArgList *arg_list (const char *base, EfiObjList *list)
 {
@@ -236,7 +238,11 @@ static void cpar_psub (EfiFunc *func, void *rval, void **arg)
 	arg_cadd(argl, par->name);
 
 	for (list = Val_list(arg[2]); list != NULL; list = list->next)
-		arg_madd(argl, Obj2str(RefObj(list->obj)));
+	{
+		EfiObj *obj = EvalObj(RefObj(list->obj), &Type_str);
+		arg_cadd(argl, obj ? Val_str(obj->data) : NULL);
+		UnrefObj(obj);
+	}
 
 	sb = sb_create(0);
 	out = io_strbuf(sb);
@@ -268,7 +274,7 @@ static void f_argl_add (EfiFunc *func, void *rval, void **arg)
 
 static void f_argl_set (EfiFunc *func, void *rval, void **arg)
 {
-	arg_set(Val_ptr(arg[0]), Val_int(arg[1]), mstrcpy(Val_str(arg[2])));
+	arg_cset(Val_ptr(arg[0]), Val_int(arg[1]), Val_str(arg[2]));
 }
 
 static void f_argl_dim (EfiFunc *func, void *rval, void **arg)
@@ -315,8 +321,8 @@ static void f_psub (EfiFunc *func, void *rval, void **arg)
 {
 	char *fmt = Val_str(arg[0]);
 	ArgList *argl = arg_func(func, 1, arg);
-	Val_str(rval) = argl ? mpsubvec(fmt, argl->dim, argl->data) :
-		mpsubvec(fmt, 0, NULL);
+	Val_str(rval) = mpsub(fmt, argl);
+	rd_deref(argl);
 }
 
 static void f_fpsub (EfiFunc *func, void *rval, void **arg)
@@ -324,10 +330,26 @@ static void f_fpsub (EfiFunc *func, void *rval, void **arg)
 	IO *io= Val_io(arg[0]);
 	char *fmt = Val_str(arg[1]);
 	ArgList *argl = arg_func(func, 2, arg);
-	Val_int(rval) = argl ? io_psubvec(io, fmt, argl->dim, argl->data) :
-		io_psubvec(io, fmt, 0, NULL);
+	Val_int(rval) = io_psub(io, fmt, argl);
+	rd_deref(argl);
 }
 
+static void f_poolpsub (EfiFunc *func, void *rval, void **arg)
+{
+	StrPool *pool = Val_ptr(arg[0]);
+	IO *io = StrPool_open(pool);
+	char *fmt = Val_str(arg[1]);
+	ArgList *argl = arg_func(func, 2, arg);
+	*((uint64_t *) rval) = StrPool_offset(pool);
+	io_psub(io, fmt, argl);
+	io_close(io);
+	rd_deref(argl);
+}
+
+static void f_mkpath (EfiFunc *func, void *rval, void **arg)
+{
+	Val_str(rval) = mkpath(ProgDir, NULL, Val_str(arg[0]), NULL);
+}
 
 /*	Funktionstabelle
 */
@@ -372,6 +394,13 @@ static EfiFuncDef func_cpar[] = {
 	{ FUNC_VIRTUAL, &Type_io,
 		"psubfilter (promotion IO io, ArgList args)", f_psubfilter },
 
+	{ FUNC_VIRTUAL, &Type_varsize,
+		"StrPool::psub (str fmt)", f_poolpsub },
+	{ FUNC_VIRTUAL, &Type_varsize,
+		"StrPool::psub (str fmt, ...)", f_poolpsub },
+	{ FUNC_VIRTUAL, &Type_varsize,
+		"StrPool::psub (str fmt, ArgList args)", f_poolpsub },
+
 	{ FUNC_VIRTUAL, &Type_str, "psub (str fmt)", f_psub },
 	{ FUNC_VIRTUAL, &Type_str, "psub (str fmt, ...)", f_psub },
 	{ FUNC_VIRTUAL, &Type_str, "psub (str fmt, ArgList args)", f_psub },
@@ -386,6 +415,7 @@ static EfiFuncDef func_cpar[] = {
 	{ 0, &Type_void, "message (str fmt, ...)", f_message },
 	{ 0, &Type_void, "error (str fmt, ...)", f_error },
 	{ 0, &Type_void, "ShowFmtTab (IO io, str name, str fmt)", f_fmt_show },
+	{ 0, &Type_str, "mkpath (str ext)", f_mkpath },
 };
 
 

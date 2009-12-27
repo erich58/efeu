@@ -68,8 +68,11 @@ void LocalVar (str _decl, str _val = NULL, str _desc = NULL, ...)
 /*
 Die Funktion |$1| richtet einen Vektor ein. Falls <glob> den Wert
 true hat, wird der Vektor mit externer Verknüpfbarkeit und ansonsten
-statisch eingerichtet. Der Laufindex |n| kann bei der Wertedefinition
-verwendet werden.
+statisch eingerichtet. Falls für |_dim| der Wert 0 übergeben wird,
+bestimmt |_val| die Zuweisungsliste für den Vektor. Bei jedem
+Zeilenumbruch in |_val| wird ein Komma eingefügt. Ist |_dim| größer als 0,
+steht |_val| für jedes einzelne Vektorelement. Der Laufindex |n| kann bei
+der Wertedefinition verwendet werden.
 */
 
 inline void DeclVec (bool _glob = true, str _decl, int _dim,
@@ -77,20 +80,24 @@ inline void DeclVec (bool _glob = true, str _decl, int _dim,
 {
 	_decl = psub(_decl, va_list) + sprintf("[%.0d]", _dim);
 
-	if	(_desc)
-	{
-		_desc = "/*\t" + psub(_desc, va_list) + "\n*/\n";
-
-		if	(_glob)	hdr << _desc;
-
-		src << _desc;
-	}
-
 	src << "\n";
 
-	if	(_glob)
+	if	(_desc)
+	{
+		_desc = psub(_desc, va_list);
+
+		if	(_glob)
+			fprintf(hdr, "extern %s;\t/* %s */\n", _decl, _desc);
+
+		fprintf(src, "/*\n%s\n*/\n", _desc);
+	}
+	else if	(_glob)
+	{
 		fprintf(hdr, "extern %s;\n", _decl);
-	else	src << "static ";
+	}
+
+	if	(!_glob)
+		src << "static ";
 
 	src << _decl;
 
@@ -137,10 +144,17 @@ Das folgende Beispiel zeigt die Verwendung der Deklarationsfunktionen:
 config hdr src
 
 #include <var.ms>
-GlobalVar("int x", "12", "Variable x");
-LocalVar("int \$1_x", "12", "Variable \$1_x", "pfx");
-LocalVec("int z", 10, "$(n)", "Vektor z");
-GlobalVec("double l", 10, "$(log(n + 1.):%.8f", "Tabelle l");
+GlobalVar("int x", NULL, "Variable x");
+LocalVar("int \$1_x", "42", "Variable \$1_x", "pfx");
+
+GlobalVec("struct {
+	double n, l;
+} tab", 5, "{ \$(n + 1.:%#.0f), \$(log(n + 1.):%.8f) }", "Log-Table");
+
+LocalVec("int x", 0, string !
+23, 14
+39
+!, "Vektor x");
 \end
 
 $SeeAlso

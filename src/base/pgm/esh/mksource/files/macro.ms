@@ -167,4 +167,6 @@ printf(
 
 */
 
+/**/
+
 #endif	/* macro.ms */

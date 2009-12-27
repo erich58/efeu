@@ -70,6 +70,8 @@ int EshEval (int *narg, char **arg)
 	SetupStd();
 
 	par = CmdPar_alloc(ProgName);
+	p = mstrcpy(CmdPar_getval(NULL, "Version", NULL));
+	CmdPar_setval(par, "Version", p);
 	CmdPar_load(par, "efm", 0);
 	CmdPar_load(par, "eshconf", 0);
 	CmdPar_load(par, par->name, 1);

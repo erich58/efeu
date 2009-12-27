@@ -59,28 +59,37 @@ EDB *edb_paste (EDB *base, EDB *sub)
 	if	(!sub)
 		return base;
 
+	if	(!base->desc)
+	{
+		base->desc = sub->desc;
+		sub->desc = NULL;
+	}
+
 	if	(base->obj->type == sub->obj->type)
 	{
 		if	(!base->read)
 		{
+			memfree(sub->desc);
+			sub->desc = base->desc;
+			base->desc = NULL;
 			rd_deref(base);
 			base = sub;
 		}
 		else	edb_input(base, read_copy, sub);
 	}
-	else if	(!GetKonv(&conv, sub->obj->type, base->obj->type))
-	{
-		dbg_note(NULL, ERR_CONV, "mm", sub->obj->type->name,
-			base->obj->type->name);
-		rd_deref(sub);
-	}
-	else
+	else if	(GetKonv(&conv, sub->obj->type, base->obj->type))
 	{
 		CPAR *cpar = memalloc(sizeof *cpar);
 		cpar->sub = sub;
 		cpar->conv = conv;
 		rd_init(&cpar_reftype, cpar);
 		edb_input(base, read_conv, cpar);
+	}
+	else
+	{
+		dbg_note(NULL, ERR_CONV, "mm", sub->obj->type->name,
+			base->obj->type->name);
+		rd_deref(sub);
 	}
 
 	return base;

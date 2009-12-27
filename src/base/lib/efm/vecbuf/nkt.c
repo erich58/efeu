@@ -35,7 +35,7 @@ static char *nkt_rt_ident (const void *ptr)
 static void nkt_rt_clean (void *ptr)
 {
 	NameKeyTab *nkt = ptr;
-	vb_clean(&nkt->tab, nkt->clean);
+	nkt_clean(ptr);
 	memfree(nkt->name);
 	memfree(nkt);
 }
@@ -45,7 +45,7 @@ Die externe Variable |$1| definiert den Referenztyp für
 Suchtabellen mit Namensschlüssel.
 */
 
-const RefType nkt_reftype = REFTYPE_INIT("NameKeyTab",
+RefType nkt_reftype = REFTYPE_INIT("NameKeyTab",
 	nkt_rt_ident, nkt_rt_clean);
 
 /*
@@ -69,8 +69,20 @@ Die Funktion |$1| löscht alle Einträge del Schlüsseltabelle <nkt>.
 
 void nkt_clean (NameKeyTab *nkt)
 {
-	if	(nkt)
-		vb_clean(&nkt->tab, nkt->clean);
+	if	(!nkt)	return;
+
+	if	(nkt->clean)
+	{
+		NameKeyEntry *entry = nkt->tab.data;
+
+		while (nkt->tab.used)
+		{
+			nkt->clean(entry->data);
+			nkt->tab.used--;
+			entry++;
+		}
+	}
+	else	nkt->tab.used = 0;
 }
 
 static int nkt_cmp (const void *pa, const void *pb)

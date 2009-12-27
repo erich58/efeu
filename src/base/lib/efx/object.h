@@ -31,6 +31,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/ftools.h>
 #include <EFEU/nkt.h>
 #include <EFEU/stdint.h>
+#include <EFEU/StrPool.h>
 
 /*	Typedefinitionen für Objekte
 */
@@ -250,7 +251,6 @@ struct EfiObjStruct {
 };
 
 EfiObj *Obj_alloc (size_t size);
-void Obj_free (EfiObj *obj, size_t size);
 void Obj_stat (const char *prompt);
 void Obj_check (const EfiObj *obj);
 char *Obj_ident (const EfiObj *obj);
@@ -295,17 +295,18 @@ int IsTypeClass (const EfiType *type, const EfiType *base);
 /*	Initialisierungsfunktionen
 */
 
-EfiStruct *GetStruct (IO *io, int delim);
+EfiStruct *GetStruct (EfiStruct *base, IO *io, int delim);
 EfiStruct *GetStructEntry (IO *io, EfiType *type);
 EfiType *FindStruct (EfiStruct *list, size_t size);
 EfiType *MakeStruct (char *name, EfiStruct *base, EfiStruct *list);
 
+#define	RefObj(obj)	rd_refer(obj)
+#define	UnrefObj(obj)	rd_deref(obj)
+
 EfiObj *LvalObj (EfiLval *lval, EfiType *type, ...);
 EfiObj *NewObj (const EfiType *type, void *data);
 EfiObj *ConstObj (const EfiType *type, const void *data);
-EfiObj *RefObj (const EfiObj *obj);
-void DeleteObj (EfiObj *obj);
-void UnrefObj (EfiObj *obj);
+
 void SyncLval (EfiObj *obj);
 void UpdateLval (EfiObj *obj);
 EfiObj *AssignTerm (const char *name, EfiObj *left, EfiObj *right);
@@ -377,6 +378,7 @@ EfiObj *int2Obj (int val);
 EfiObj *uint2Obj (unsigned val);
 EfiObj *varint2Obj (int64_t val);
 EfiObj *varsize2Obj (uint64_t val);
+EfiObj *str2Obj (char *str);
 
 int Obj2bool (EfiObj *obj);
 int Obj2char (EfiObj *obj);
@@ -410,6 +412,7 @@ extern EfiType Type_ref;		/* Referenzobjekt */
 extern EfiType Type_efi;		/* Interpreterobjekt */
 extern EfiType Type_enum;	/* Aufzählungsobjekt */
 extern EfiType Type_str;		/* Stringkonstante */
+extern EfiType Type_varstr;		/* Stringkonstante, Version 2 */
 extern EfiType Type_obj;		/* Objektpointer */
 extern EfiType Type_expr;	/* Objektpointer mit Ausdruck */
 extern EfiType Type_type;	/* Datentype */
@@ -421,7 +424,6 @@ extern EfiType Type_undef;	/* Nicht definierter Name */
 extern EfiType Type_name;	/* Name */
 
 #define	ptr2Obj(x)	NewPtrObj(&Type_ptr, x)
-#define	str2Obj(x)	NewPtrObj(&Type_str, x)
 #define	obj2Obj(x)	NewPtrObj(&Type_obj, x)
 #define	expr2Obj(x)	NewPtrObj(&Type_expr, x)
 #define	type2Obj(x)	NewPtrObj(&Type_type, x)
@@ -460,6 +462,7 @@ extern EfiType Type_sname;	/* Scope-Name */
 
 
 EfiObj *ResourceObj (EfiType *type, const char *name);
+EfiObj *StrPoolObj (const EfiObj *base, const StrPool *pool, size_t *idx);
 
 EfiStruct *NewEfiStruct (EfiType *type, const char *name, size_t dim);
 void DelEfiStruct (EfiStruct *var);
@@ -628,7 +631,6 @@ struct EfiFuncStruct {
 	EfiVarTab *scope;	/* Funktionsumgebung */
 	EfiType *type;		/* Rückgabetype */
 	EfiFuncArg *arg;	/* Argumentliste */
-//	void (*eval) (EfiFunc *func, void *rval, void **arg);
 	EfiFuncCall eval;	/* Funktionsaufruf */
 	unsigned dim : 24;	/* Zahl der Argumente */
 	unsigned lretval : 1;	/* Flag für Rückgabe von L-Wert */

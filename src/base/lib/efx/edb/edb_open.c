@@ -10,6 +10,8 @@ A-3423 St.Andrä/Wördern, Wildenhaggasse 38
 #include <EFEU/preproc.h>
 #include <ctype.h>
 
+#define	E104	"[efmain:104]$!: $0: expression: missing right bracket.\n"
+
 EDB *edb_open (IO *io)
 {
 	char *p = rd_ident(io);
@@ -118,6 +120,11 @@ static char *filterpos (const char *name)
 	return NULL;
 }
 
+static int read_dummy (EfiType *type, void *data, void *par)
+{
+	return 0;
+}
+
 EDB *edb_fopen (const char *path, const char *name)
 {
 	char *p;
@@ -131,12 +138,27 @@ EDB *edb_fopen (const char *path, const char *name)
 	if	(*name == '{')
 	{
 		IO *io = io_cstr(name + 1);
-		EfiType *type = MakeStruct(NULL, NULL, GetStruct(io, '}'));
+		EfiType *type = MakeStruct(NULL, NULL,
+			GetStruct(NULL, io, '}'));
 		unsigned pos;
 
 		io_ctrl(io, IO_GETPOS, &pos);
 		edb = edb_import(type, path, name + pos + 1);
 		io_close(io);
+		return edb;
+	}
+	else if	(*name == '[')
+	{
+		IO *io = io_cstr(name + 1);
+		EfiObj *obj = EvalObj(Parse_cmd(io), NULL);
+
+		if	(io_eat(io, " \t") != ']')
+			io_error(io, E104, NULL);
+
+		io_close(io);
+		edb = edb_alloc(obj, NULL);
+		edb_input(edb, read_dummy, NULL);
+		edb_unread(edb);
 		return edb;
 	}
 

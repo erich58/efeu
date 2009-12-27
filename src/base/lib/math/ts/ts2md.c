@@ -61,16 +61,21 @@ mdmat *TimeSeries2mdmat (TimeSeries *ts)
 /*	Datenmatrix generieren
 */
 	md = new_mdmat();
+	md->sbuf = NewStrPool();
 	md->type = &Type_double;
-	md->title = mstrcpy(ts->name);
+	md->i_name = StrPool_xadd(md->sbuf, ts->name);
 
 /*	Achse initialisieren
 */
-	md->axis = new_axis(ts->dim);
-	md->axis->name = mstrcpy(type_name(ts->base.type));
+	md->axis = new_axis(md->sbuf, ts->dim);
+	md->axis->i_name = StrPool_xadd(md->sbuf, type_name(ts->base.type));
 
 	for (i = 0; i < ts->dim; i++)
-		md->axis->idx[i].name = TimeIndex2str(ts->base, i);
+	{
+		char *p = TimeIndex2str(ts->base, i);
+		md->axis->idx[i].i_name = StrPool_add(md->sbuf, p);
+		memfree(p);
+	}
 
 /*	Datenwerte speichern
 */

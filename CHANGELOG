@@ -1,3 +1,14 @@
+Version 3.2
+
+*	Added install rules to the main Makefile.
+*	Removed some rarely used tools.
+*	Removed deprecated Makefile generator |ccmkmf|.
+*	Fixed a problem with write access to read only memory.
+*	Changed representation of labels and added additional
+	description entries for axes and indices in data cubes.
+*	New data structure |StringPool| for efficient storing of
+	related strings.
+
 Version 3.1
 
 *	Enhancements to the EDB concept.
@@ -6,25 +17,25 @@ Version 3.1
 *	New Keyword |extern| to implicit load additional data types from
 	shared objects. Transparent access to members of C data
 	structures, better support for bitfields. Additional tools to create
-	sources for data types implemented in C and pluggable in EFI.
+	sources for data types implemented in C and plugable in EFI.
 
 Version 3.0-1
 
 *	Added fixed size integer types and 64-Bit integer arithmetic.
-*	Added configuration checks to be independend of missing
+*	Added configuration checks to be independent of missing
 	packages, which are not essential to build EFEU.
 *	Replaced |dir2make|, |ccmkmf| by |shmkmf| to build EFEU-projects.
 *	New makefile generator |shmkmf| using |/bin/sh|.
-*	Added library functions to handle temporay files in a save way.
+*	Added library functions to handle temporary files in a save way.
 *	New data file concept EDB (still in work).
 *	Fixed invalid conversions for dates later than 1.1.3000.
-*	Support for default values in structur construction.
+*	Support for default values in structure construction.
 *	Implementation of dynamic vector types.
 *	Replaced object/data macros by functions and removed
 	global data buffers.
 *	Fixed a memory hole.
 *	Added debugging functions to locate memory holes.
-*	Fixed updating of extented lvalues in variable argument lists.
+*	Fixed updating of extended lvalues in variable argument lists.
 *	Modified assignarg to do not separate arguments inside braces.
 
 Version 2.0
@@ -35,13 +46,13 @@ Version 2.0
 *	Added Tcl/Tk interface for EFEU-Interpreter.
 *	Rework on message handling.
 *	Added command |unblock| and |zip2gz| to distribution.
-*	Vim syntax files for EFEU filetypes.
+*	Vim syntax files for EFEU file types.
 *	Replaced |tmpfile()| with string buffers in |ppfilter|.
 *	Rework on EFEU configuration.
 
 Version 1.1-1
 
-*	Fixed incorrect representation of negativ long values.
+*	Fixed incorrect representation of negative long values.
 *	New keyword |enum| for enum data types.
 *	Standardization of header identificators.
 *	Fixed conflict in searching |readline.h| with
@@ -72,13 +83,13 @@ Version 1.0-4
 
 *	New documentation: user reference manual
 *	|efeudoc|: adapted some formats for HTML output to get
-	correct english documents, append language setting to
-	bootstrap resource to get html-documents created in the
+	correct English documents, append language setting to
+	bootstrap resource to get HTML-documents created in the
 	correct language.
 
 Version 1.0-3
 
-*	Allow the use of a long option name which is uniq to the
+*	Allow the use of a long option name which is unique to the
 	first characters of another long option name (needed to
 	make |mdprint| compatible to the old command configuration).
 

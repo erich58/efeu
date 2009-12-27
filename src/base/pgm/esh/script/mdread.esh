@@ -24,8 +24,9 @@ If not, write to the Free Software Foundation, Inc.,
 PrintListDelim = "\t";
 
 pconfig !
-Version = "$Id: mdread.esh,v 1.12 2005-07-24 05:12:41 ef Exp $"
+Version = "$Id: mdread.esh,v 1.14 2008-02-01 16:16:34 ef Exp $"
 PrintMode = true
+MapMode = false
 
 x:name | Flags: set "{Flags} x={}"
 	:*:column axis name(s)
@@ -36,7 +37,7 @@ y:name | Flags: set "{Flags} y={}"
 t:type | Flags: set "{Flags} type={}"
 	:*:data type
 	:de:Datentype
-m | Flags: set "{Flags} magic"
+M | Flags: set "{Flags} magic"
 	:*:check magic number
 	:de:Test auf Kennung
 L:loc | -locale:loc | Locale
@@ -47,8 +48,11 @@ L:loc | -locale:loc | Locale
 	:de:SC-Spreadsheet konvertieren
 
 r | Reduce = true
-	:*:remove singulary axis
+	:*:remove singular axis
 	:de:Entfernen von singulären Achsen
+m:map | Output; MapMode = true
+	:*:create file mapping
+	:de:Dateiabbild generieren
 v:[name::]var | VarDef: append " "
 	:*:select type components
 	:de:Variablenselektion
@@ -90,7 +94,9 @@ if	(SelDef || VarDef)	md = reload(md, SelDef, VarDef);
 if	(flagres("Reduce"))	md.reduce();
 if	(Title)			md.title = Title;
 
-if	(flagres("PrintMode"))
+if	(flagres("MapMode"))
+	md.map(Output);
+else if	(flagres("PrintMode"))
 	md.mark("#-1").print(iostd, "nohead");
 else	md.save(Output);
 

@@ -32,7 +32,7 @@ static int freq_print (const EfiType *st, const void *data, IO *io)
 	return io_printf(io, "{%.16g, %.16g}", freq->n, freq->x);
 }
 
-EfiType Type_FrequencyData = SIMPLE_TYPE("FrequencyData", FrequencyData,
+EfiType Type_FrequencyData = EXTERN_TYPE("FrequencyData", FrequencyData,
 	NULL, freq_print);
 
 static EfiObj *member_mean (const EfiObj *base, void *data)
@@ -125,7 +125,7 @@ void CmdSetup_FrequencyData (void)
 	st_var = EfiType_stdvar(type, st_var, offsetof(FrequencyData, n),
 		0, "double", "n", "number of observations");
 	st_var = EfiType_stdvar(type, st_var, offsetof(FrequencyData, x),
-		0, "double", "x", "cumulative frequency");
+		0, "double", "x", "aggregated values");
 	AddEfiMember(type->vtab, var_fd, tabsize(var_fd));
 	AddFuncDef(func, tabsize(func));
 }

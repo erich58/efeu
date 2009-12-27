@@ -40,6 +40,7 @@ _rule_smh=1
 AllTarget=all
 CleanTarget=clean
 
+# $alias
 # $pconfig !
 # A:name |
 # 	:*:create extra rule for letting phony target <name> depending on <tg>.
@@ -187,6 +188,7 @@ mf_rule ()
 	rm -f $_rule_sed
 }
 
+# $alias
 # $pconfig !
 # C:name |
 # 	:*:use phony target <name> insteat of $$CleanTarget.
@@ -226,10 +228,10 @@ mf_clean ()
 # $Description
 # :de:
 # \shead Ersetzungsregeln
-# Bei der Ausgabe der Regeln werden mithilfe von |sed| Ersetzungen
-# durchgeführt. Insbesonders stehen Abkürzungen für die einzelnen
-# Dateien der Abhängigkeitsliste zur Verfügung. Ersetzungskennungen
-# werden mit einem Prozentzeichen eingeleitet.
+# Bei der Ausgabe der Regeln werden mithilfe des Streameditors |sed|
+# Ersetzungen durchgeführt. Insbesonders stehen Abkürzungen für die
+# einzelnen Dateien der Abhängigkeitsliste zur Verfügung.
+# Ersetzungskennungen werden mit einem Prozentzeichen eingeleitet.
 # [|%0|] Komplette Liste der Abhängigkeiten
 # [|%1|] Erste Datei aus der Liste der Abhängigkeiten
 # [|%|<n>] <n>-te Datei aus der Liste der Abhängigkeiten

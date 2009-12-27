@@ -84,6 +84,7 @@ static EDB *fdef_uniq (EDBFilter *filter, EDB *base,
 	const char *opt, const char *arg)
 {
 	EDB *edb = edb_create(base->obj->type);
+	edb->desc = mstrcpy(base->desc);
 	edb->read = read_uniq;
 	edb->ipar = uniq_alloc(base);
 	return edb;

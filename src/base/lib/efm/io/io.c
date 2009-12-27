@@ -96,6 +96,11 @@ int io_pushback (IO *io)
 /*	Zurücksetzen der IO-Struktur
 */
 
+int io_err (IO *io)
+{
+	return (io && (io->stat & IO_STAT_ERR));
+}
+
 int io_rewind (IO *io)
 {
 	if	(io_ctrl(io, IO_REWIND) == EOF)

@@ -36,7 +36,10 @@ Kennbuchstaben mit der folgenden Bedeutung:
 [m]	Dynamische Zeichenkette
 [d]	Ganzzahlwert
 [u]	Vorzeichenloser Ganzzahlwert
+[z]	size_t Ganzzahlwert
+[U]	Vorzeichenloser, 64-Bit Ganzzahlwert
 [x]	Vorzeichenloser Ganzzahlwert in Hexadezimaldarstellung
+[X]	Vorzeichenloser, 64-Bit Ganzzahlwert in Hexadezimaldarstellung
 [c]	Zeichen unter Hochkomma
 */
 
@@ -44,6 +47,7 @@ void arg_append (ArgList *args, const char *def, va_list list)
 {
 	int val;
 	unsigned uval;
+	uint64_t luval;
 	void *ptr;
 
 	if	(def == NULL)	return;
@@ -53,7 +57,7 @@ void arg_append (ArgList *args, const char *def, va_list list)
 		switch (*def)
 		{
 		case 'n':
-			arg_madd(args, NULL);
+			arg_cadd(args, NULL);
 			break;
 		case 's':
 			arg_cadd(args, va_arg(list, char *));
@@ -73,9 +77,20 @@ void arg_append (ArgList *args, const char *def, va_list list)
 			uval = va_arg(list, unsigned);
 			arg_madd(args, msprintf("%u", uval));
 			break;
+		case 'z':
+			arg_madd(args, msprintf("%zu", va_arg(list, size_t)));
+			break;
+		case 'U':
+			luval = va_arg(list, uint64_t);
+			arg_madd(args, msprintf("%llu", luval));
+			break;
 		case 'x':
 			uval = va_arg(list, unsigned);
 			arg_madd(args, msprintf("%#x", uval));
+			break;
+		case 'X':
+			luval = va_arg(list, uint64_t);
+			arg_madd(args, msprintf("%#llx", luval));
 			break;
 		case 'c':
 			val = va_arg(list, int);

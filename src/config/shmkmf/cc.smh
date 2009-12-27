@@ -1,0 +1,411 @@
+# :*:functions for compile rules
+# :de:Hilfsfunktionen für Kompilierungsregeln
+#
+# $Synopsis
+# include $1
+#
+# $Copyright (C) 2004 Erich Frühstück
+# This file is part of EFEU.
+# 
+# EFEU is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+# 
+# EFEU is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public
+# License along with EFEU; see the file COPYING.
+# If not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+test $_cc_smh && return
+_cc_smh=1
+
+: ${CC:=cc}
+STDCFLAGS=
+CC_SHARED=
+CPP2DEP=
+
+mf_comm "CC configuration"
+config cc.cfg
+mf_var -n CC "$CC"
+mf_var -n STDCFLAGS "$STDCFLAGS"
+
+if
+	test -n "$CPP2DEP"
+then
+	cc_mkdep="$CPP2DEP "
+elif
+	_name=`fsearch $IncludePath pp2dep.awk`
+then
+	mf_var -n PP2DEP "$_name"
+	cc_mkdep='-E | awk -f $(PP2DEP) -v tg='
+else
+	cc_mkdep=""
+fi
+
+mf_comm -n "End of CC configuration"
+cc_objlist=$TMP/objlist
+
+# $alias
+# $pconfig !
+# d:dep |
+#	:*:expands the dependence list by <dep>.
+#	:de:erweitert die Liste der Abhängigkeiten um <dep>.
+# md:name |
+#	:*:is an abbrevation for |-d '$$(|<name>|)'|.
+#	:de:ist eine Abkürzung für |-d '$$(|<name>|)'|.
+# c |
+#	:*:stands for compile onley. Creates to every C-sourcefile a
+#	target name with suffix |.o|. This option is passed to the C-compiler.
+#	:de: steht für nur kompilieren. Zu jedem C-Sourcefile wird ein
+#	Zielname mit Zusatz |.o| bestimmt. Die Option wird an den
+#	C-Kompiler weitergereicht.
+# I::path | D::macdef | U::name |
+#	:*:these options are passed to the C-compiler.
+#	:de:Diese Optionen werden an den C-Kompiler weitergereicht.
+# xc:flag |
+#	:*:passes compile optionen <flag> to the C-compiler
+#	:de:reicht Übersetzungsoptionen <flag> an den C-Kompiler weiter.
+# mc:name |
+#	:*:is an abbrevation for |-xc '$$(|<name>|)'|.
+#	:de:ist eine Abkürzung für |-xc '$$(|<name>|)'|.
+# o:name |
+#	:*:determines the name of target, if option |-c| is not used.
+#	:de:bestimmt den Namen Zieldatei falls Option |-c| nicht
+#	verwendet wurde.
+# L::path | l::name |
+#	:*:these options are passed to the C-compiler.
+#	:de:diese Optionen werden an den C-Kompiler weitergereicht.
+# xl:flag |
+#	:*:passes link option <flag> to the C-compiler
+#	:de:reicht Linkoption <flag> an den C-Kompiler weiter.
+# ml:name |
+#	:*:is an abbrevation for |-xl '$$(|<name>|)'|.
+#	:de:ist eine Abkürzung für |-xl '$$(|<name>|)'|.
+# xo:obj |
+#	:*:expands the object file list by <obj>.
+#	:de:erweitert die Liste der Objektdateien um <obj>.
+# mo:name |
+#	:*:is an abbrevation for |-xo '$$(|<name>|)'|.
+#	:de:ist eine Abkürzung für |-xo '$$(|<name>|)'|.
+# //<name>.c |
+#	:*:is handled as C-source file.
+#	:de:wird als C-Source Datei gehandhabt.
+# //<name>.o |
+#	:*:is handled als object file.
+#	:de:wird als Objektdatei gehandhabt.
+# :name |
+#	:*:is handled als other source file.
+#	:de:wird als sonstiges Sourcefile gehandhabt.
+# !
+# :*:
+# The function $! creates a rule to compile/link C-programms.
+# The following options and arguments are accepted:
+# :de:
+# Die Funktion $! generiert eine Regel zum kompilieren/linken von C-Programmen.
+# Die folgenden Optionen und Argumente werden akzeptiert:
+#
+# @arglist
+#
+# :de:
+# Die einzelnen Paramaeter werden von $! nach folgenden Kriterien
+# unterschiedlich behandelt:
+# *	Übersetzungsflags
+# *	Sourcedateien
+# *	Objektdateien
+# *	Linkerflags
+# * 	Zusätzliche Abhängigkeiten
+# Die Funktion generiert Einträge im Makefile zur automatischen
+# Bestimmung der Abhängigkeiten der Sourcen von den einzelnen
+# Headerdateien.
+# Die durch die Regel generierten Objektdateien werden in einer
+# Dateiliste zwischengespeichert.
+
+mf_cc ()
+{
+	_cc_dep=""
+	_cc_ext=""
+	_cc_out=""
+	_cc_cflags='$(CFLAGS) $(STDCFLAGS)'
+	_cc_lflags=""
+	_cc_src=""
+	_cc_obj=""
+
+	while [ -n "$1" ]
+	do
+		case "$1" in
+		-d)	
+			_cc_dep="$_cc_dep $2"
+			shift 2;;
+		-md)	
+			_cc_dep="$_cc_dep \$($2)"
+			shift 2;;
+		-c)
+			_cc_ext=".o"
+			_cc_cflags="$_cc_cflags $1"
+			shift 1;;
+		-[IDU]*)
+			_cc_cflags="$_cc_cflags $1"
+			shift 1;;
+		-xc)
+			_cc_cflags="$_cc_cflags $2";
+			shift 2;;
+		-mc)
+			_cc_cflags="$_cc_cflags \$($2)";
+			shift 2;;
+		-o)	
+			_cc_out="$2"
+			shift 2;;
+		-[lL]*)	
+			_cc_lflags="$_cc_lflags $1"
+			shift 1;;
+		-xl)
+			_cc_lflags="$_cc_lflags $2";
+			shift 2;;
+		-ml)
+			_cc_lflags="$_cc_lflags \$($2)";
+			shift 2;;
+		-xo)	
+			_cc_obj="$_cc_obj $2"
+			shift 2;;
+		-mo)
+			_cc_obj="$_cc_obj \$($2)";
+			shift 2;;
+		-*)	
+			shmkmf_invop "mf_cc" "$1"
+			shift 1;;
+		*.c)	
+			test -n "$_cc_out" || _cc_out=`basename $1 .c`$_cc_ext;
+			_cc_src="$_cc_src $1"
+			shift 1;;
+		*.S)	
+			test -n "$_cc_out" || _cc_out=`basename $1 .S`$_cc_ext;
+			_cc_obj="$_cc_obj $1"
+			shift 1;;
+		*.o)	
+			_cc_obj="$_cc_obj $1"
+			shift 1;;
+		*)	
+			_cc_src="$_cc_src $1"
+			shift 1;;
+		esac
+	done
+
+	test -n "$_cc_out" || shmkmf_warg "mf_cc"
+	test -n "$_cc_ext" && echo "$_cc_out" >> $cc_objlist
+
+	mf_rule -a "$_cc_out" "$_cc_src$_cc_dep$_cc_obj" \
+		"\$(CC) $_cc_cflags -o \$@ $_cc_src$_cc_obj$_cc_lflags"
+
+	test -n "$_cc_src" -a -n "$cc_mkdep" && mf_depend -d "$_cc_src" \
+		"\$(CC) $_cc_cflags$_cc_src $cc_mkdep$_cc_out >> $Makefile"
+}
+
+# $alias
+# $pconfig !
+# :name |
+#	:*:name of macro
+#	:de:Name des Makros
+# !
+# :*:
+# The function $! writes out a variable assignment with all object files
+# created by a prior call to |mf_cc|. The list of objectfiles is cleard
+# therafter.
+# :de:
+# Die Funnktion $! erzeugt eine Variablenzuweisung mit allen
+# Objektdateien aller vorangegangenen Aufrufe von |mf_cc|. Anschließend
+# wird die Liste der Objektdateien gelöscht.
+#
+# @arglist
+
+mf_objlist ()
+{
+	printf "\n%s=" "$1"
+
+	if [ -f $cc_objlist ]; then
+		sed -e '$!s/$/ \\/' -e 's/^/	/' $cc_objlist
+		rm -f $cc_objlist
+	else
+		printf "\n"
+	fi
+}
+
+# $alias
+# $pconfig !
+# A:name |
+#	:*:sets the variablale |AllTarget| to <name>.
+#	:de:setzt die Variable |AllTarget| auf <name>.
+# C:name |
+#	:*:sets the variablale |CleanTarget| to <name>.
+#	:de:setzt die Variable |CleanTarget| auf <name>.
+# i |
+#	:*:is an abbreviation for |-A install -C uninstall|.
+# 	:de:setzt die Variablen |AllTarget| auf |install| und |CleanTarget|
+#	auf |uninstall|.
+# d:dir |
+#	:*:install files in the directory <dir>.
+#	:de:installiere Dateien im Verzeichniss <dir>.
+# m:name |
+#	:*:use the directory defined by macro <name> for target files.
+#	:de:verwendet das durch den Makronamen <name> definierte
+#	Verzeichnis für Zieldateien.
+# p:dir |
+#	:*:like |-d|, create additional creation rule for directory <dir>
+#	with phony target |$$AllTarget|.
+# c:dir |
+#	:*:like |-p|, create additional cleaning rules for directory <dir>
+#	(and possibly needed subdirectories) with phony target |$$CleanTarget|.
+#	:de:wie |-p|, generiert aber zusätzlich noch eine Regel zum Löschen
+#	von <dir> (und möglicher Unterverzeichnisse) mit Scheinziel
+#	|$$CleanTarget|.
+# v:vn |
+#	:*:sets the version number <vn> of the shared library
+#	(ignored for static libraries).
+#	:de:definiert die Versionsnummer <vn> der gemeinsam genutzten Bibliothek
+#	(wird bei statischen Bibliotheken ignoriert).
+# r:rn[.pl] |
+#	:*:sets the release number <rn> with optional patch level <pl> of
+#	the shared library
+#	(ignored for static libraries).
+#	:de:definiert die Releasenummer <rn> und den optionalen
+#	Patchlevel <pn> der gemeinsam genutzten Bibliothek
+#	(wird bei statischen Bibliotheken ignoriert).
+# :name |
+#	:*:defines the library name
+#	:de:definiert den Namen der Programmbibliothek
+# d:dep |
+#	:*:expands the dependence list by <dep>.
+#	:de:erweitert die Liste der Abhängigkeiten um <dep>.
+# L::path | l::name |
+#	:*:these options are passed to the C-compiler.
+#	:de:diese Optionen werden an den C-Kompiler weitergereicht.
+# xl:flag |
+#	:*:passes link option <flag> to the C-compiler
+#	:de:reicht Linkoption <flag> an den C-Kompiler weiter.
+# ml:name |
+#	:*:is an abbrevation for |-xl '$$(|<name>|)'|.
+#	:de:ist eine Abkürzung für |-xl '$$(|<name>|)'|.
+# xo:obj |
+#	:*:expands the object file list by <obj>.
+#	:de:erweitert die Liste der Objektdateien um <obj>.
+# mo:name |
+#	:*:is an abbrevation for |-xo '$$(|<name>|)'|.
+#	:de:ist eine Abkürzung für |-xo '$$(|<name>|)'|.
+# :obj |
+#	:*:expands the object file list by <obj>.
+#	:de:erweitert die Liste der Objektdateien um <obj>.
+# !
+# :*:
+# The function $! creates a program library.
+# :de:
+# Die Funktion generiert eine Programmbibliothek.
+#
+# @arglist
+
+mf_lib ()
+{(
+	dir="."
+	name=
+	obj=
+	lflags=
+	dep=
+	vn=
+	rn=
+
+	while [ -n "$1" ]
+	do
+		case "$1" in
+		-i)	AllTarget=install; CleanTarget=uninstall; shift 1;;
+		-A)	AllTarget="$2"; shift 2;;
+		-C)	CleanTarget="$2"; shift 2;;
+
+		-d)	dir="$2"; shift 2;;
+		-p)	dir="$2"; mf_dir -p "$dir"; shift 2;;
+		-c)	dir="$2"; mf_dir -c "$dir"; shift 2;;
+		-m)	dir="\$($2)"; shift 2;;
+
+		-v)	vn="$2"; shift 2;;
+		-r)	rn="$2"; shift 2;;
+
+		-*)	shmkmf_invop "mf_cc" "$1"; shift 1;;
+		*)	name="$1"; shift 1; break;;
+		esac
+	done
+
+	while [ -n "$1" ]
+	do
+		case "$1" in
+		-d)	dep="$dep $2"; shift 2;;
+		-[lL])	lflags="$lflags $1 $2"; shift 2;;
+		-[lL]*)	lflags="$lflags $1"; shift 1;;
+		-xl)	lflags="$lflags $2"; shift 2;;
+		-ml)	lflags="$lflags \$($2)"; shift 2;;
+		-xo)	obj="$obj $2"; shift 2;;
+		-mo)	obj="$obj \$($2)"; shift 2;;
+		*)	obj="$obj $1"; shift 1;;
+		esac
+	done
+
+	if [ -z "$obj" ]; then
+		x="${name}_obj"
+		mf_objlist "$x"
+		obj="\$($x)"
+	fi
+
+	if [ "$CC_SHARED" ]; then
+		oname=lib$name.so
+
+		if [ -n "$vn" ]; then
+			llist="$oname"
+			oname="$oname.$vn"
+		fi
+
+		tg="$oname"
+
+		if [ -n "$rn" ]; then
+			llist="$llist $tg"
+			x=`expr "$rn" : '\([^.]\)\.'`
+			test -n "$x" && llist="$llist $tg.$x"
+			tg="$tg.$rn"
+		fi
+
+		flags="-shared -Wl,-soname,$oname -o \$@"
+		mf_rule -a "$dir/$tg" "$obj$dep" "\$(CC) $flags $obj $lflags"
+
+		for x in $llist
+		do
+			mf_rule -a "$dir/$x" "$dir/$tg" \
+				"cd $dir; ln -fs $tg $x"
+		done
+	else
+		tg="$dir/lib$name.a"
+		mf_rule -a "$tg" "$obj$dep" "ar rv \$@ $obj" "ranlib \$@"
+	fi
+)}
+
+# $Examples
+# \config shmkmf
+# :*:The following example shows the use of the functions.
+# The lines
+# \shmkmf[-x] creates the output:
+# :de:Das folgende Beispiel zeigt die Verwendung der Funktionen.
+# Die Zeilen
+# \shmkmf[-x] erzeugen die Ausgabe:
+# :_:
+# include cc.smh
+#
+# mf_cc -c foo.c
+# mf_cc -c bar.c
+# mf_objlist OBJ
+# mf_lib foobar -mo OBJ
+# mf_cc -o test main.c -lfoobar
+# \end
+
+# $SeeAlso
+# \mref{shmkmf(1)},
+# \mref{cc(1)}.

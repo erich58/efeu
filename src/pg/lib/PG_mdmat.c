@@ -110,7 +110,7 @@ static char *inc_lbl (const char *lbl, const char *def)
 	return p;
 }
 
-static mdaxis *make_axis (PGresult *res, const char *def, int n)
+static mdaxis *make_axis (StrPool *sbuf, PGresult *res, const char *def, int n)
 {
 	AssignArg *args;
 	VecBuf xbuf;
@@ -198,11 +198,11 @@ static mdaxis *make_axis (PGresult *res, const char *def, int n)
 
 	qsort(idx, n, sizeof(IDX), cmp_idx);
 
-	axis = new_axis(xbuf.used);
-	axis->name = mstrcpy(args->name);
+	axis = new_axis(sbuf, xbuf.used);
+	axis->i_name = StrPool_xadd(sbuf, args->name);
 
 	for (i = 0, xp = xbuf.data; i < xbuf.used; i++)
-		axis->idx[i].name = xp[i];
+		axis->idx[i].i_name = StrPool_add(sbuf, xp[i]);
 
 	axis->priv = idx;
 	vb_free(&xbuf);
@@ -232,6 +232,7 @@ mdmat *PG_mdmat (PG *pg, const EfiType *type,
 	EfiKonv konv;
 	EfiFunc *f_add;
 	void *buf;
+	char *title;
 
 	if	(pg == NULL || pg->res == NULL || type == NULL)
 		return NULL;
@@ -257,15 +258,18 @@ mdmat *PG_mdmat (PG *pg, const EfiType *type,
 /*	create mdmat-object
 */
 	md = new_mdmat();
+	md->sbuf = NewStrPool();
 	md->type = (EfiType *) type;
-	md->title = msprintf("%s by %s", valdef, axis);
+	title = msprintf("%s by %s", valdef, axis);
+	md->i_name = StrPool_add(md->sbuf, title);
+	memfree(title);
 	ptr = &md->axis;
 
 	n = mstrsplit(axis, ",", &list);
 
 	for (i = 0; i < n; i++)
 	{
-		*ptr = make_axis(pg->res, list[i], ntuples);
+		*ptr = make_axis(md->sbuf, pg->res, list[i], ntuples);
 
 		if	(*ptr != NULL)
 			ptr = &(*ptr)->next;

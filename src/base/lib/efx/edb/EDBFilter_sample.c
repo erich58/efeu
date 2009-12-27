@@ -24,6 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/EDBFilter.h>
 #include <EFEU/konvobj.h>
 #include <EFEU/Random.h>
+#include <ctype.h>
 
 typedef struct {
 	REFVAR;

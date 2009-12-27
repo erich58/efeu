@@ -1,0 +1,8 @@
+\mchap[1]	Commands
+\addsrclist	\eval{DocDir}/../../base/pgm/esh/script
+\eval {
+for (x in SourceList)
+	if (patcmp("md*.esh", x.name))
+		input(NULL, popen(filename(x.name) + " --help=raw", "r"));
+}
+

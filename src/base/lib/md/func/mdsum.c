@@ -47,7 +47,9 @@ mdmat *md_sum (mdmat *md, const char *def)
 
 	md_setflag(md, def, 0, mdsf_mark, MDXFLAG_TEMP, NULL, 0);
 	m2 = new_mdmat();
-	m2->title = mstrcpy(md->title);
+	m2->sbuf = NewStrPool();
+	m2->i_name = StrPool_copy(m2->sbuf, md->sbuf, md->i_name);
+	m2->i_desc = StrPool_copy(m2->sbuf, md->sbuf, md->i_desc);
 	m2->axis = NULL;
 	m2->type = md->type;
 
@@ -57,7 +59,7 @@ mdmat *md_sum (mdmat *md, const char *def)
 	{
 		if	(!(x->flags & MDXFLAG_TEMP))
 		{
-			*ptr = cpy_axis(x, 0);
+			*ptr = cpy_axis(m2->sbuf, x, 0);
 			ptr = &(*ptr)->next;
 		}
 	}

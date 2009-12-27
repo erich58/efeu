@@ -36,11 +36,11 @@ do
 	dir=`dirname $path`
 	mf_rule -d all $name
 	mf_rule -d clean $name.clean
-	mf_rule $name "$dep $name.d/Makefile" "( cd $name.d; make all )"
-	mf_rule $name.clean $name.d/Makefile "( cd $name.d; make clean )"
+	mf_rule $name "$dep $name.d/Makefile" "cd $name.d; make all"
+	mf_rule $name.clean $name.d/Makefile "cd $name.d; make clean"
 	mf_rule $name.d/Makefile "" \
 		"test -d $name.d || mkdir $name.d" \
-		"( cd $name.d; shmkmf -t $TOP $dir )"
+		"cd $name.d; shmkmf -t $TOP $dir"
 done)
 
 # rules for automatic updating the Makefile

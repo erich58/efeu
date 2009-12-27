@@ -57,16 +57,24 @@ Sie wird nicht direkt verwendet, sondern ist die Basis für die davon
 abgeleiteten Funktionen |TypeDef::ebcdic|, |TypeDef::text| und |TypeDef::qtext|.
 */
 
-void TypeDef::dbdata (str name, str desc, str body, str func)
+void TypeDef::dbdata (str name, str desc, str body, str par, str func)
 {
 	str iname = "NULL";
+	str oname = par ? psub("$1_create", par) : "NULL";
 	str rname = psub("$1_$2_input", t_name, name);
 
 	Function f = Function("int " + rname,
 		"EfiType *type, void *opaque_data, void *opaque_par");
 
 	f.fline("%s *tg = opaque_data;", t_name);
-	f.line("IO *in = opaque_par;");
+
+	if	(par)
+	{
+		f.line("$1 *par = opaque_par;", par);
+		f.line("IO *in = par->io;");
+	}
+	else	f.line("IO *in = opaque_par;");
+
 	f.line("DBData *data = NULL;");
 
 	f.fline("while ((data = %s))", func);
@@ -78,7 +86,7 @@ void TypeDef::dbdata (str name, str desc, str body, str func)
 	f.write(false);
 
 	t_idef.append(sprintf("\tEPC_INPUT(&Type_%s, %#s, %#s, \
-%s, NULL, %s, NULL),\n", t_name, name, desc, iname, rname));
+%s, %s, %s, NULL),\n", t_name, name, desc, iname, oname, rname));
 }
 
 /*
@@ -86,21 +94,24 @@ Die Funktion |$1| generiert eine einfache Lesefunktion für EBCDIC-Daten
 mithilfe von |DBData_ebcdic|.
 */
 
-void TypeDef::ebcdic (str name, str desc, int recl, str body)
-	dbdata(name, desc, body, sprintf("DBData_ebcdic(NULL, in, %d)", recl));
+void TypeDef::ebcdic (str name, str desc, int recl, str body, str par = NULL)
+	dbdata(name, desc, body, par,
+		sprintf("DBData_ebcdic(NULL, in, %d)", recl));
 
 /*
 Die Funktion |$1| generiert eine einfache Lesefunktion für Textdaten
 mithilfe von |DBData_text|.
 */
 
-void TypeDef::text (str name, str desc, str delim, str body)
-	dbdata(name, desc, body, sprintf("DBData_text(NULL, in, %#s)", delim));
+void TypeDef::text (str name, str desc, str delim, str body, str par = NULL)
+	dbdata(name, desc, body, par,
+		sprintf("DBData_text(NULL, in, %#s)", delim));
 
 /*
 Die Funktion |$1| arbeitet analog zu |TypeDef::text|, verwendet aber
 |DBData_qtext| anstelle von |DBData_text|.
 */
 
-void TypeDef::qtext (str name, str desc, str delim, str body)
-	dbdata(name, desc, body, sprintf("DBData_qtext(NULL, in, %#s)", delim));
+void TypeDef::qtext (str name, str desc, str delim, str body, str par = NULL)
+	dbdata(name, desc, body, par,
+		sprintf("DBData_qtext(NULL, in, %#s)", delim));

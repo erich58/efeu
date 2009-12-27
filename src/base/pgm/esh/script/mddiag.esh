@@ -1,5 +1,5 @@
 /*
-:*:	diagonalisation of data cube
+:*:	diagonalize axis of data cube
 :de:	Datenmatrix diagonalisieren
 
 $Copyright (C) 1997, 2001 Erich Frühstück
@@ -24,12 +24,13 @@ If not, write to the Free Software Foundation, Inc.,
 PrintListDelim = "\t";
 
 pconfig !
-Version = "$Id: mddiag.esh,v 1.8 2005-07-24 05:12:41 ef Exp $"
+Version = "$Id: mddiag.esh,v 1.11 2008-02-01 16:25:58 ef Exp $"
 PrintMode = true
+MapMode = false
 Axis = "#1"
 
 r | Reduce = true
-	:*:remove singulary axis
+	:*:remove singular axis
 	:de:Entfernen von singulären Achsen
 v:[name::]var | VarDef: append " "
 	:*:select type components
@@ -37,6 +38,12 @@ v:[name::]var | VarDef: append " "
 T:title | Title
 	:*:set title of output file
 	:de:Titel der Ausgabedatei setzen
+x:axis | Axis
+	:*:name of axis
+	:de:Name der Achse
+m:map | Output; MapMode = true
+	:*:create file mapping
+	:de:Dateiabbild generieren
 :ein | Input
 	:*:input file
 	:de:Name der Eingabedatei
@@ -46,9 +53,6 @@ T:title | Title
 ::aus | Output; PrintMode = false
 	:*:output file
 	:de:Name der Ausgabedatei
-::axis | Axis
-	:*:name of axis
-	:de:Name der Achse
 !
 
 mdmat md = mdload(Input, SelDef, VarDef);
@@ -58,7 +62,9 @@ if	(Title)			md.title = Title;
 
 md = mddiag(md, Axis);
 
-if	(flagres("PrintMode"))
+if	(flagres("MapMode"))
+	md.map(Output);
+else if	(flagres("PrintMode"))
 	md.mark("#-1").print(iostd, "nohead");
 else	md.save(Output);
 

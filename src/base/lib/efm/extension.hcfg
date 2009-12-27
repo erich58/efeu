@@ -38,5 +38,6 @@ If not, write to the Free Software Foundation, Inc.,
 
 @eval success HAS_ISATTY 'isatty(0)'
 @eval -i sys/dir.h success HAS_GETPWNAM 'getpwnam(NULL)'
+@eval -i sys/mman.h success HAS_MMAP 'mmap(NULL,0,0,0,0,0)'
 
 #endif	/* EFEU/extension.h */

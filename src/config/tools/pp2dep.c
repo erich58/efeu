@@ -77,57 +77,15 @@ static void *ecfg_realloc (void *data, size_t size)
 	else	return p;
 }
 
-/*
-$pconfig
-l|
-	:*:list only local files
-	:de:Nur lokale Dateien auflisten
-x:pattern|
-	:*:Exclude files which match <pattern>.
-	:de:Dateien, die Muster <name> entsprechen, nicht auflisten
-*target(s) |
-	:*:list of targets
-	:de:Liste der Generierungsziele
-*/
 
 char *ProgName = "";
 
 static void usage (const char *arg)
 {
-	execlp("efeuman", "efeuman", "-s", __FILE__, "--", ProgName, arg, NULL);
+	execlp("efeuman", "efeuman", ProgName, arg, NULL);
 	fprintf(stderr, FMT_USAGE, ProgName);
 	exit(arg ? 0 : 1);
 }
-
-/*
-$Description
-:*:
-The command |$!| greps the names of included files from the output
-of the C preprocessor and creates a dependend list for given targets.
-:de:
-Das Kommando |$!| filtert aus der Ausgabe des C--Preprozessors
-die Namen von eingebundenen Dateien und stellt daraus eine Abhängigkeitsliste
-für die angegebenen Ziele <target(s)> zusammen.
-
-@arglist -i
-
-:*:
-The next lines show the typical use of |pp2dep| in a Makefiles:
-:de:
-Die typische Anwendung für |pp2dep| erfolgt in einem Makefile der
-Form:
-
----- verbatim
-file.o: file.c
-	$$(CC) -c file.c
-
-depend::
-	$$(CC) -E -c file.c | pp2dep -l file.o >> Makefile
-----
-
-$SeeAlso
-\mref{cc(1)}, \mref{make(1)}, \mref{mkmf(1)}, \mref{ppfilter(1)}.
-*/
 
 
 /*	Namensliste
@@ -274,7 +232,7 @@ int main (int narg, char **arg)
 
 	if	(narg > 1)
 	{
-		if	(strncmp("--h", arg[1], 3) == 0)
+		if	(strncmp("--", arg[1], 2) == 0)
 			usage(arg[1]);
 	}
 
@@ -314,7 +272,7 @@ int main (int narg, char **arg)
 		}
 	}
 
-/*	Bei fehlenden Zielnamen wird eine einfache Fileliste generiert
+/*	Bei fehlendem Zielnamen wird eine einfache Fileliste generiert
 */
 	if	(narg == 0)
 	{

@@ -1,0 +1,16 @@
+\config	efeu
+\config docpart
+
+\docpart title.eds
+\author	Erich Frühstück
+
+@Copyright('2004, 2008')
+
+\docpart preface.eds
+\toc
+\docpart base
+\docpart intro
+\docpart concepts
+\docpart practice
+\docpart experts
+\docpart appendix

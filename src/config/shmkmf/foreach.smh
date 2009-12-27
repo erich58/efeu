@@ -28,6 +28,7 @@ _foreach_smh=1
 include dir.smh
 include srclist.smh
 
+# $alias
 # $pconfig !
 # A:name |
 #	:*:sets the variablale |AllTarget| to <name>.
@@ -132,17 +133,17 @@ include srclist.smh
 #	Ist in Verbindung mit |mf_srclist| nicht notwendig.
 # !
 # :*:
-# The function @! allows the execution of <cmd> for a list of files. These list
+# The function $! allows the execution of <cmd> for a list of files. These list
 # is collected by |tmplist| from <path>. If the source list is predefined by
 # |mf_srclist|, no path is nessesary (see \mref{srclist.smh(7)} for details).
-# The following options and arguments are accepted by @!:
+# The following options and arguments are accepted by $!:
 # :de:
-# Die Funktion @! dient zur Ausführung von <cmd> für eine Liste von
+# Die Funktion $! dient zur Ausführung von <cmd> für eine Liste von
 # Dateien. Die Dateiliste wird mithilfe von |tmplist| aus den Pfadangaben
 # <path> zusammengestellt. Wurde mit
 # |mf_srclist| eine Dateiliste definiert, ist die Angabe von Pfadnamen optional.
 # Vergleiche dazu \mref{srclist.smh(7)}.
-# Die folgenden Optionen und Argumente werden von @! akzeptiert:
+# Die folgenden Optionen und Argumente werden von $! akzeptiert:
 #
 # @arglist
 
@@ -252,34 +253,34 @@ foreach ()
 # configuration files (extension |.cfg|) in directory |\$(CFG)|. This could be
 # done with the lines:
 # \shmkmf[-x] The created rules have the form:
-# foreach -m BIN -s sh 'mf_file -x \$tg \$src' .
-# foreach -m CFG -S cfg 'mf_file \$tg \$src' .
+# foreach -m BIN -s sh 'mf_file -x \$tg \$src' \$SRC
+# foreach -m CFG -S cfg 'mf_file \$tg \$src' \$SRC
 # \end
 # :de:
 # Die Programme (Zusatz |.sh|) sollen im Verzeichnis |\$(BIN)| und die
 # Konfigurationsdateien (Zusatz |.cfg|) im Verzeichnis |\$(CFG)| installiert
 # werden. Dies erfolgt einfach mit den Zeilen:
 # \shmkmf[-x] Die generierten Regeln lauten:
-# foreach -m BIN -s sh 'mf_file -x \$tg \$src' .
-# foreach -m CFG -S cfg 'mf_file \$tg \$src' .
+# foreach -m BIN -s sh 'mf_file -x \$tg \$src' \$SRC
+# foreach -m CFG -S cfg 'mf_file \$tg \$src' \$SRC
 # \end
 #
 # :*:
 # The help files with suffix |.hlp| should be divided in different
 # target directories. Files in subdirectories with name |de| belongs to
-# |$(LIB)/de/help| and all other belongs to |$(LIB)/help|. The folowing
+# |\$(LIB)/de/help| and all other belongs to |\$(LIB)/help|. The folowing
 # rule
 # \shmkmf[-x] provides the wanted division:
-# foreach -m LIB -M 'de=de/help *=help' -S hlp 'mf_file \$tg \$src' .
+# foreach -m LIB -M 'de=de/help *=help' -S hlp 'mf_file \$tg \$src' \$SRC
 # \end
 # :de:
 # Die Hilfe-Dateien mit Zusatz |.hlp| sind je nach Sprachkennung in
 # unterschiedliche Verzeichnisse zu verteilen. Dabei sollen alle
-# Handbucheinträge der Unterverzeichnisse |de| in |$(LIB)/de/help| und alle
-# anderen in |$(LIB)/help| installiert werden. Dies Aufteilung erfolgt mithilfe
-# der Mapping-Option |-M|. Die folgende Regel
+# Handbucheinträge der Unterverzeichnisse |de| in |\$(LIB)/de/help| und alle
+# anderen in |\$(LIB)/help| installiert werden. Dies Aufteilung erfolgt
+# mithilfe der Mapping-Option |-M|. Die folgende Regel
 # \shmkmf[-x] liefert die gewünschte Aufteilung:
-# foreach -m LIB -M 'de=de/help *=help' -S hlp 'mf_file \$tg \$src' .
+# foreach -m LIB -M 'de=de/help *=help' -S hlp 'mf_file \$tg \$src' \$SRC
 # \end
 #
 # :*:
@@ -288,7 +289,7 @@ foreach ()
 # Die folgende Befehlszeile ist äquivalent:
 #
 # ---- verbatim
-# foreach -m LIB -M de -x help -S hlp 'mf_file \$tg \$src' .
+# foreach -m LIB -M de -x help -S hlp 'mf_file \$tg \$src' \$SRC
 # ----
 # \smh_clean
 

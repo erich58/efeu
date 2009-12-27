@@ -50,7 +50,7 @@ static char *func_ident (const void *data)
 	return msprintf("%s()", p);
 }
 
-static const RefType FuncRefType = REFTYPE_INIT("Func",
+static RefType FuncRefType = REFTYPE_INIT("Func",
 	func_ident, func_clean);
 
 int IsFunc (void *ptr)

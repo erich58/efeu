@@ -49,7 +49,7 @@ static void rt_clean (void *ptr)
 	memfree(par);
 }
 
-static const RefType reftype = REFTYPE_INIT("MdCountPar", rt_ident, rt_clean);
+static RefType reftype = REFTYPE_INIT("MdCountPar", rt_ident, rt_clean);
 
 static int rec_count (MdCountPar *par, TimeRange *range)
 {
@@ -71,6 +71,7 @@ static MdCount ctab[] = {
 MdCountPar* MdCountPar_create (void)
 {
 	MdCountPar *par = memalloc(sizeof *par);
+	par->pool = NewStrPool();
 	vb_init(&par->vtab, VBSIZE, sizeof(MdCount *));
 	vb_init(&par->ctab, CBSIZE, sizeof(MdClass *));
 	MdCount_add(par, stdcount, 1);

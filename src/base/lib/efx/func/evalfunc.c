@@ -81,22 +81,24 @@ static int test_lval (const EfiObj *obj, const EfiType *type)
 }
 
 
-static int fpar_set(FUNCPAR *par, int n, EfiObj *obj)
+static int fpar_set (FUNCPAR *par, int n, EfiObj *obj)
 {
-	register EfiFuncArg *arg = par->func->arg + n;
+	EfiFuncArg *arg = par->func->arg + n;
+	par->obj[n] = EvalObj(RefObj(obj), NULL);
+
+	if	(!par->obj[n])
+		return fpar_error(par, "[efmain:61]", n);
 
 	if	(arg->lval)
 	{
-		par->obj[n] = EvalObj(RefObj(obj), NULL);
-
 		if	(test_lval(par->obj[n], arg->type))
 			return fpar_error(par, "[efmain:62]", n);
 	}
-	else
+	else if	(arg->type && !IsTypeClass(par->obj[n]->type, arg->type))
 	{
-		par->obj[n] = EvalObj(RefObj(obj), arg->type);
+		par->obj[n] = EvalObj(par->obj[n], arg->type);
 
-		if	(par->obj[n] == NULL)
+		if	(!par->obj[n])
 			return fpar_error(par, "[efmain:61]", n);
 	}
 

@@ -33,9 +33,11 @@ If not, write to the Free Software Foundation, Inc.,
 #include <time.h>
 #include <pwd.h>
 #include <sys/stat.h>
+#include <sys/param.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <dirent.h>
+#include <stdlib.h>
 
 static void mode_putc (IO *out, int mode, const char *xkey)
 {
@@ -385,8 +387,11 @@ static int skip_name (const char *name)
 	return 0;
 }
 
+#define	FTYPE_F	0x1
+#define	FTYPE_D	0x2
+
 static EfiObjList **do_flist (EfiObjList **ptr, size_t offset,
-	const char *path, const char *pat)
+	const char *path, const char *pat, int type)
 {
 	DIR *dir;
 	struct dirent *entry;
@@ -409,19 +414,36 @@ static EfiObjList **do_flist (EfiObjList **ptr, size_t offset,
 		if	(stat(p, &statbuf) != 0)
 		{
 			memfree(p);
+			continue;
 		}
-		else if (S_ISDIR(statbuf.st_mode))
+
+		if	(S_ISDIR(statbuf.st_mode))
 		{
 			dp = vb_next(dir_buf);
-			*dp = p;
+
+			if	(type & FTYPE_D)
+			{
+				*dp = mstrcpy(p);
+			}
+			else
+			{
+				*dp = p;
+				continue;
+			}
+		}
+		else if	(!(type & FTYPE_F))
+		{
+			memfree(p);
+			continue;
 		}
 		/*
-		else if (!S_ISREG(statbuf.st_mode))
+		if (!S_ISREG(statbuf.st_mode))
 		{
 			memfree(p);
 		}
 		*/
-		else if	(!pat || patcmp(pat, entry->d_name, NULL))
+
+		if	(!pat || patcmp(pat, entry->d_name, NULL))
 		{
 			if	(offset)
 			{
@@ -432,13 +454,14 @@ static EfiObjList **do_flist (EfiObjList **ptr, size_t offset,
 
 			ptr = &(*ptr)->next;
 		}
+		else	memfree(p);
 	}
 
 	closedir(dir);
 
 	for (dp = dir_buf->data, n = dir_buf->used; n--; dp++)
 	{
-		ptr = do_flist(ptr, offset, *dp, pat);
+		ptr = do_flist(ptr, offset, *dp, pat, type);
 		memfree(*dp);
 	}
 
@@ -450,6 +473,19 @@ static void f_flist (EfiFunc *func, void *rval, void **arg)
 {
 	EfiObjList **ptr = (EfiObjList **) rval;
 	char *path = Val_str(arg[0]);
+	char *p = Val_str(arg[3]);
+	int type;
+
+	if	(!p)	p = "f";
+
+	for (type = 0; *p; p++)
+	{
+		switch (*p)
+		{
+		case 'f':	type |= FTYPE_F; break;
+		case 'd':	type |= FTYPE_D; break;
+		}
+	}
 
 	if	(!path)	path = ".";
 
@@ -457,14 +493,21 @@ static void f_flist (EfiFunc *func, void *rval, void **arg)
 
 	if	(Val_bool(arg[2]))
 	{
-		do_flist(ptr, strlen(path) + 1, path, Val_str(arg[1]));
+		do_flist(ptr, strlen(path) + 1, path, Val_str(arg[1]), type);
 	}
-	else	do_flist(ptr, 0, path, Val_str(arg[1]));
+	else	do_flist(ptr, 0, path, Val_str(arg[1]), type);
 }
 
-static void f_mkdir (EfiFunc *func, void *rval, void **arg) \
+static void f_mkdir (EfiFunc *func, void *rval, void **arg)
 {
 	Val_bool(rval) = mkdir(Val_str(arg[0]), (mode_t) 0777) == 0;
+}
+
+static void f_getcwd (EfiFunc *func, void *rval, void **arg)
+{
+	char buf[PATH_MAX];
+	char *p = getcwd(buf, sizeof(buf));
+	Val_str(rval) = mstrcpy(p);
 }
 
 /*	Funktionstabelle
@@ -485,9 +528,10 @@ static EfiFuncDef func_unix[] = {
 	{ FUNC_RESTRICTED, &Type_bool, "passwd ()", pwd2bool },
 	{ 0, &Type_int, "getuid ()", f_getuid },
 	{ 0, &Type_int, "umask (int mask)", f_umask },
-	{ 0, &Type_list, "flist (str path, str pat = NULL, bool rel = false)",
-		f_flist },
+	{ 0, &Type_list, "flist (str path, str pat = NULL,"
+		" bool rel = false, str type = \"f\")", f_flist },
 	{ 0, &Type_bool, "mkdir (str path)", f_mkdir },
+	{ 0, &Type_str, "getcwd ()", f_getcwd },
 };
 
 

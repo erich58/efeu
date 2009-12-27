@@ -11,6 +11,7 @@ A-3423 St.Andrä/Wördern, Wildenhaggasse 38
 
 #include <macro.ms>
 #include <function.ms>
+#include <RefPar.ms>
 
 /*
 Die Funktion |$1| generiert einen Filter für EDB-Datenbanken.
@@ -167,5 +168,7 @@ $SeeAlso
 \mref{mksource(1)}, \mref{vstat(7)}, \mref{TypeDef(7)}.\br
 Handbuch <"Die EDB-Datenschnittstelle">.
 */
+
+/**/
 
 #endif	/* EDBFilter.ms */

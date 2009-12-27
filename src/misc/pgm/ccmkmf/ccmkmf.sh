@@ -22,7 +22,7 @@
 #	A-3423 St. Andrä/Wördern, Südtirolergasse 17-21/5
 
 # $pconfig
-# Version="$Id: ccmkmf.sh,v 1.4 2005-09-08 15:19:33 ef Exp $"
+# Version="$Id: ccmkmf.sh,v 1.6 2008-04-06 18:16:31 ef Exp $"
 # n |
 #	:*:no filter
 #	:de:Keinen Ausgabefilter
@@ -137,7 +137,13 @@ esac
 
 # setup parameters und filters
 
-top=`efeutop`
+top=`dirname $0`
+
+case "$top" in
+	*/bin)	top=`dirname $top`;;
+esac
+
+echo $magic
 CC="efeucc"
 pathcfg="$top/etc/mkmf.cfg"
 defcfg="mkmf.cfg"

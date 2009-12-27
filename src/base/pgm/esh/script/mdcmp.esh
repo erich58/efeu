@@ -27,7 +27,7 @@ Type_t Type = NULL;
 PrintListDelim = "\t";
 
 pconfig !
-Version = "$Id: mdcmp.esh,v 1.10 2005-07-24 05:12:41 ef Exp $"
+Version = "$Id: mdcmp.esh,v 1.12 2008-02-01 16:16:34 ef Exp $"
 
 F:file | :eval 'gload(IncPath, "{}")'
 	:*:execute command lines in file <file>
@@ -44,7 +44,7 @@ e:expr | Expr
 	:de:Ausdruck
 
 r | Reduce = true
-	:*:remove singulary axis
+	:*:remove singular axis
 	:de:Entfernen von singulären Achsen
 v:[name::]var | VarDef: append " "
 	:*:select type components
@@ -61,7 +61,7 @@ T:title | Title
 /.*=.*/<name>=<var> | SelDef: append " "
 	:*:selection parameter
 	:de:Selektionsparameter
-::aus | Output; PrintMode = false
+::aus | Output
 	:*:output file
 	:de:Name der Ausgabedatei
 !

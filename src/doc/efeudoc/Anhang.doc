@@ -7,7 +7,7 @@
 \mchap[7]	Makropakete
 
 ---- eval
-for (x in flist(EFEUSRC + "/std/pgm/doc", "*.7"))
+for (x in flist(DocDir + "../../base/pgm/doc", "*.7"))
 	fprintf(cout, "\\include %s\n", x);
 ----
 

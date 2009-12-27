@@ -30,11 +30,8 @@ mit dem Kommando abgestimmt und auf den neuesetem Stand.
 
 Im folgenden sind die wichtigsten Werkzeuge von EFEU
 überblicksartig aufgelistet:
-\ttitem	mkmf
-	generiert ein Makefile aus einem Imakefile analog zu
-	xmkmf (X11 development).
-\ttitem	dir2make
-	generiert ein Makefile direkt aus dem Sourcebaum.
+\ttitem	shmkmf
+	generiert ein Makefile aus einer Konfigurationsdatei
 \ttitem	esh
 	ist ein Befehlsinterpreter mit einer Syntax ähnlich zu C/C++.
 \ttitem	mksource
@@ -42,9 +39,6 @@ Im folgenden sind die wichtigsten Werkzeuge von EFEU
 \ttitem	efeudoc
 	ist eine Dokumentgenerator mit verschiedenen Ausgabeformaten
 	(LaTeX, HTML, roff, ...).
-\ttitem	eis
-	ist ein Informationssystem zum durchsuchen von ein Befehlen
-	eingebauten Informationen.
 \end
 
 	Erich Frühstück\br

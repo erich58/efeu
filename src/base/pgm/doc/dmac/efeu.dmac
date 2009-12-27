@@ -95,9 +95,9 @@ Telefon (02242) 310 99
 !;
 	latex::margin = "EDmanhead";
 	latex::it = "\\it\\color{Red}";
-	latex::tt = "\\tt\\color{Blue}";
+	latex::tt = "\\tt\\color{RoyalBlue}";
 	latex::rm = "\\rm\\color{Black}";
-	latex::code = "\\begin{code}\\color{Blue}%"
+	latex::code = "\\begin{code}\\color{RoyalBlue}%"
 }
 
 :*:Exercise

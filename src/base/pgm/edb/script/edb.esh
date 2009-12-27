@@ -1,5 +1,5 @@
 /*
-:*:	copy of efeu-datafiles
+:*:	copy efeu data files
 :de:	Kopieren von Efeu-Datenfiles
 
 $Copyright (C) 2004 Erich Frühstück
@@ -24,7 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 Date::fmt = "%d.%m.%Y";
 
 pconfig !
-Version = "$Id: edb.esh,v 1.14 2007-09-05 08:44:12 ef Exp $"
+Version = "$Id: edb.esh,v 1.18 2008-02-01 16:26:15 ef Exp $"
 PrintHead = true
 PrintMode = NULL
 Filter = NULL
@@ -53,7 +53,7 @@ n:lim | Limit
 f:def | Filter: append " "
 	:*:applay filter <def> on input file
 	:de:Filter <def> auf Eingabedatei anwenden
-s:file | -script:file | Filter: set " script={}"
+s:file | -script:file | Filter: set "{Filter} script={}"
 	:*:applay filter script <file> on input file
 	:de:Filterskript <file> auf Eingabedatei anwenden
 :in | Input
@@ -70,7 +70,7 @@ if	(PrintMode == "csv")
 EDB edb = edbopen(Input, Filter);
 
 if	(Title)
-	edb.desc = Title;
+	edb.desc = psub(Title);
 
 edb.fout(Output, PrintMode);
 edb.copy(Limit);

@@ -29,10 +29,8 @@ The single manpages are created by the commands itself with
 the option |--help|. So the command syntax is always up to date.
 
 Here is a briev overview of the most importand tools of EFEU:
-\ttitem	mkmf
-	create Makefile from Imakefile.
-\ttitem	dir2make
-	creates Makefile from source tree.
+\ttitem	shmkmf
+	create Makefile from Config.make.
 \ttitem	esh
 	is a command interpreter with a syntax similar to C/C++.
 \ttitem	mksource
@@ -40,9 +38,6 @@ Here is a briev overview of the most importand tools of EFEU:
 \ttitem	efeudoc
 	is a document generator with different output formats (LaTeX,
 	HTML, roff, ...).
-\ttitem	eis
-	is a information system for browsing descriptions to build in
-	data structures of commands.
 \end
 
 	Erich Frühstück\br

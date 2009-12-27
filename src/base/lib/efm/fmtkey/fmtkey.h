@@ -3,7 +3,7 @@ Formatierungsschlüssel
 
 $Header	<EFEU/$1>
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994, 2007 Erich Frühstück
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -32,6 +32,7 @@ If not, write to the Free Software Foundation, Inc.,
 typedef struct {
 	int mode;	/* Formatierungsmodus */
 	int flags;	/* Steuerflags */
+	int size;	/* Größenangabe */
 	int width;	/* Feldbreite */
 	int prec;	/* Präzession */
 	char *list;	/* Zeichenliste */
@@ -49,10 +50,15 @@ int fmtkey (const char *fmt, FmtKey *key);
 #define	FMT_NEED_PREC	0x40	/* Genauigkeit muß abgefragt werden */
 #define	FMT_NOPREC	0x80	/* Keine Genauigkeit angegeben */
 #define	FMT_NEGPREC	0x100	/* negative Genauigkeit */
-#define	FMT_BYTE	0x200	/* 1 Byte Datenwert */
-#define	FMT_SHORT	0x400	/* Kurzer Datenwert */
-#define	FMT_LONG	0x800	/* Langer Datenwert */
-#define	FMT_XLONG	0x1000	/* Sehr Langer Datenwert */
+#define	FMT_GROUP	0x200	/* Grupperiungsflag */
+
+#define	FMTKEY_BYTE	1	/* 1 Byte Datenwert */
+#define	FMTKEY_SHORT	2	/* Kurzer Datenwert */
+#define	FMTKEY_LONG	3	/* Langer Datenwert */
+#define	FMTKEY_XLONG	4	/* Sehr Langer Datenwert */
+#define	FMTKEY_SIZE	5	/* size_t kompatibler Datenwert */
+#define	FMTKEY_PDIFF	6	/* ptrdiff_t kompatibler Datenwert */
+#define	FMTKEY_IMAX	7	/* intmax_t kompatibler Datenwert */
 
 void ftool_addsig (StrBuf *buf, int sig, int flags);
 int ftool_ioalign (IO *io, StrBuf *sb, const FmtKey *key);
@@ -63,7 +69,7 @@ int fmt_ucs (IO *io, const FmtKey *key, int32_t val);
 int fmt_str (IO *io, const FmtKey *key, const char *val);
 int fmt_long (IO *io, const FmtKey *key, long val);
 int fmt_double (IO *io, const FmtKey *key, double val);
-int fmt_int64 (IO *io, const FmtKey *key, int64_t val);
-int fmt_uint64 (IO *io, const FmtKey *key, uint64_t val);
+int fmt_intmax (IO *io, const FmtKey *key, intmax_t val);
+int fmt_uintmax (IO *io, const FmtKey *key, uintmax_t val);
 
 #endif	/* EFEU/fmtkey.h */

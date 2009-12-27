@@ -214,14 +214,39 @@ int sb_puts (const char *str, StrBuf *buf)
 {
 	if	(str && buf)
 	{
-		register int n;
+		int n;
 
-		for (n = 0; *str != 0; n++, str++)
+		for (n = 0; *str; n++, str++)
 			sb_putc(*str, buf);
 
 		return n;
 	}
-	else	return 0;
+
+	return 0;
+}
+
+/*
+:*:
+The function |$1| is similar to |sb_puts|, but writes not more than <len>
+bytes of the string <str> to the string buffer <sb>.
+:de:
+Die Funktion |$1| schreibt maximal <len> Zeichen des Strings <str> in das
+Zeichenfeld <sb>.
+*/
+
+int sb_nputs (const char *str, size_t len, StrBuf *buf)
+{
+	if	(str && buf)
+	{
+		int n;
+
+		for (n = 0; n < len && *str; n++, str++)
+			sb_putc(*str, buf);
+
+		return n;
+	}
+
+	return 0;
 }
 
 /*

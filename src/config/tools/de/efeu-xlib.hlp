@@ -1,0 +1,31 @@
+@name
+@synopsis -h
+\Description
+Das Kommando |$!| wird von Konfigurationswerkzeugen zur Bestimmung
+des Installationsortes von externen Programmbibliotheken verwendet.
+Ein |//| in einem Pfad bewirkt eine rekursive Suche von Teilverzeichnissen.
+Falls keine Kopfdatei oder Bibliothek angegeben wurde, werden alle
+Verzeichnisse aufgelistet.
+
+@arglist -i
+
+Zwischen Optionskennung und Optionsargument darf kein Leerzeichen
+stehen. Falls |-L| oder |-I| ohne Argument verwendet wird, wird der
+zugehörige Suchpfad auf |NULL| gesetzt.
+
+\Example
+Der Befehl
+
+|$! -L/usr/local//lib:/opt//lib| -lreadline
+
+sucht nach der Bibliothek |readline| in den Standardorten |/lib|,
+|/usr/lib| und allen Unterverzeichnissen von |/usr/local| und |/opt|
+mit Namen |lib|.
+
+|$! -lncurses -o -lcurses|
+
+Prüft, ob |ncurses| verfügbar ist oder ob |curses| stellvertretend
+verwendet werden soll.
+
+\SeeAlso
+\mref{efeuconfig(1)}.

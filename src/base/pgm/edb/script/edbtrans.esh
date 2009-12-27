@@ -1,5 +1,5 @@
 /*
-:*:	transformation of efeu-datafiles
+:*:	Transformation of efeu data files
 :de:	Transformieren von Efeu-Datenfiles
 
 $Copyright (C) 2005 Erich Frühstück
@@ -24,7 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 Date::fmt = "%d.%m.%Y";
 
 pconfig !
-Version = "$Id: edbtrans.esh,v 1.2 2005-11-17 11:58:49 ef Exp $"
+Version = "$Id: edbtrans.esh,v 1.4 2008-02-01 16:22:01 ef Exp $"
 PrintMode = NULL
 Filter1 = NULL
 Filter2 = NULL
@@ -69,6 +69,10 @@ if	(PrintMode == "csv")
 	setlocale(LC_PRINT, Lang);
 
 EDB edb = edbopen(Input, Filter1).trans(Trans).filter(Filter2);
+
+if	(Title)
+	edb.desc = psub(Title);
+
 edb.fout(Output, PrintMode);
 edb.copy(Limit);
 edb = NULL;

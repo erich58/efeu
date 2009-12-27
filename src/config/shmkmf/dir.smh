@@ -25,6 +25,7 @@
 test $_dir_smh && return
 _dir_smh=1
 
+# $alias
 # $pconfig !
 # q |
 #	:*:supresses echoing for the following directory rules.
@@ -38,12 +39,12 @@ _dir_smh=1
 #	:*:creates additional cleaning rules for the following directories
 #	with phony target |$$CleanTarget|.
 #	:de:erzeugt zusätzliche Aufräumregeln für die nachfolgenden
-#	Verzeichnisse unter Verwendung des Scheinziels |$$CleanTarget|.
+#	Verzeichnisse unter Verwendung des Scheinzieles |$$CleanTarget|.
 # C:name |
 #	:*:creates additional cleaning rules for the following directories
 #	with phony target <name>.
 #	:de:erzeugt zusätzliche Aufräumregeln für die nachfolgenden
-#	Verzeichnisse unter Verwendung des Scheinziels <name>.
+#	Verzeichnisse unter Verwendung des Scheinzieles <name>.
 # p |
 #	:*:do not create create cleaning rules for the following directories.
 #	:de:erzeugt keine Aufräumregeln für die nachfolgenden Verzeichnisse.
@@ -111,7 +112,7 @@ _dir_smh=1
 # Die Aufräumregeln für Verzeichnisse werden mithilfe von |postpone| ans
 # Ende des Makefiles gestellt. Damit wird sichergestellt, dass alle
 # nachfolgenden Aufräumregeln zur Installation von Dateien zuerst
-# ausgegführt werden.
+# ausgeführt werden.
 #
 # :*:
 # The following options are switches, which may intermixed with

@@ -50,7 +50,7 @@ static char *virfunc_ident (const void *data)
 		rd_ident(((EfiFunc **) func->tab.data)[0]) : NULL;
 }
 
-static const RefType VirFuncRefType = REFTYPE_INIT("VirFunc",
+static RefType VirFuncRefType = REFTYPE_INIT("VirFunc",
 	virfunc_ident, virfunc_clean);
 
 int IsVirFunc (void *ptr)

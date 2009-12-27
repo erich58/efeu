@@ -21,11 +21,9 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifdef	EFEUROOT
-#define	EFEUCFG	1
+#ifdef	EFEUCFG
 #define	FDEF(name,def)	GetFormat("[%" name "]" def)
 #else
-#define	EFEUCFG	0
 #define	FDEF(name,def)	def
 #endif
 
@@ -47,13 +45,11 @@ If not, write to the Free Software Foundation, Inc.,
 #include <fcntl.h>
 #include <errno.h>
 
-#if	__linux__
 #include <stdarg.h>
 #include <stdlib.h>
 #include <unistd.h>
-#endif
 
-#if	EFEUCFG
+#ifdef	EFEUCFG
 #include <EFEU/Resource.h>
 #endif
 
@@ -227,8 +223,8 @@ int main (int narg, char **arg)
 
 	PgmName = arg[0];
 
-#if	EFEUCFG
-	SetVersion("$Id: rawtape.c,v 1.9 2006-03-01 10:00:43 ef Exp $");
+#ifdef	EFEUCFG
+	SetVersion("$Id: rawtape.c,v 1.10 2008-04-16 18:19:06 ef Exp $");
 	ParseCommand(&narg, arg);
 	varblock = GetFlagResource("varblock");
 	recover = GetFlagResource("recover");
@@ -255,7 +251,7 @@ int main (int narg, char **arg)
 		{
 		case 'h':
 			fprintf(stderr, USAGE, PgmName);
-			fprintf(stderr, OPTLIST, blksize);
+			fprintf(stderr, OPTLIST, blksize, splitsize);
 			return 1;
 		case 'v': varblock = 1; break;
 		case 'f': varblock = 0; break;

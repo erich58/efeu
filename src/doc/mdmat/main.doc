@@ -34,13 +34,13 @@ Datenmatrizen relevanten Handbucheintr‰ge zusammengefaﬂt.
 \appendix
 \mchap[1]	Kommandos
 \include intro.1
-\addsrclist	\eval{EFEUSRC}/base/pgm/esh/script
+\addsrclist	\eval{DocDir}/../../base/pgm/esh/script
 \eval {
 for (x in SourceList)
 	if (patcmp("*.esh", x.name))
 		input(NULL, popen(filename(x.name) + " --help=raw", "r"));
 }
-\addsrclist	\eval{EFEUSRC}/base/lib/md
+\addsrclist	\eval{DocDir}/../../base/lib/md
 \mchap[5]	Dateiformate
 \srcinclude	*.5
 \printindex

@@ -25,6 +25,9 @@ static void TypeDef::extvar (IO in, str type, str def)
 			case "compat":
 				compat = true;
 				break;
+			case "vrecl":
+				flag_vrecl = true;
+				break;
 			default:
 				fprintf(ioerr, "%s: %#s\n", name, arg);
 				break;

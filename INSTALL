@@ -6,52 +6,23 @@ The following packages are needed:
 *	readline development
 *	teTeX
 
-The following packages are recommanded:
+The following packages are recommended:
 
 *	postgresql development
 *	tcl/tk development
 
-All Files of EFEU are build relative to the main directory of the
-release, from now on we refer it with <TOP>. The subdirectories
-<TOP>/include, <TOP>/ppinclude, <TOP>/build, <TOP>/lib, <TOP>/bin
-and <TOP>/doc are private to EFEU and should not be used by other software.
-Add <TOP>/bin to your PATH to get commands found.
+COMPILING
 
-It is a good idea but not a neccessarity, to define an extra user for
-administrating EFEU. The name of this user is typically efeu with group efeu.
-You could use his HOME directory or the subdirectory efeu[-version] as <TOP>.
-If you create a symbolic link /efeu or /opt/efeu to <TOP>, you can use this
-instead of the real <TOP>.
+To compile EFEU, just do a
 
-The sources should be installed under <TOP>/src.
-You can add your own applications to this directory.
-Every subdirectory defines a project.
-
-EFEU comes with the following projects:
-
-[config]	basic module for setting up mkmf;
-[base]		libraries and commands;
-[doc]		documentations;
-[pg]		front end to PostgreSQL;
-[tk]		tcl/tk-interface
-[scope]		rules for tag files and name tabels.
-
-If postgresql-development is not installed, the project pg is not
-implemented. This does not influence the other components.
+make all
 
 INSTALLATION
 
-Change to directory <TOP>. Run 'make all'.
+After Compiling, EFEU is ready to run. You only need to expand the
+environment PATH with <TOP>/bin, where <TOP> is the top directory of EFEU.
 
-The following steps are performed for building EFEU:
-#	run make in <TOP>/src, if there is a Makefile (if you have
-	cvs access to efeu, this updates yor sources);
-#	run <TOP>/config/setup, if it exists (installs basic scripts,
-	needed for the next steps);
-#	run shmkmf to create <TOP>/build/Makefile;
-#	run make in <TOP>/build/Makefile (the main work).
-
-The script efeugen calls make in <TOP>/build or any subdirectory
-of it. You need to set either the environment EFEUGEN to <TOP>/build
-or the environment EFEUTOP to <TOP>, as long as <TOP> is not your
-HOME directory.
+Alternatively you could install EFEU in a standard place. You need to run the
+script efeu-install.sh with root right. If called with option --local, all
+files go to /usr/local. The default is installing the files in /usr and /etc.
+You can easy uninstall EFEU by calling efeu-uninstall as root.

@@ -203,7 +203,6 @@ static void m_create (EfiFunc *func, void *rval, void **arg)
 {
 	mdmat *md;
 	md = new_mdmat();
-	md->title = NULL;
 	md->axis = Val_ptr(arg[1]);
 	md_ctabinit(md, Val_ptr(arg[0]));
 	Val_ptr(rval) = md;

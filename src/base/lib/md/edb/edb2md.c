@@ -53,6 +53,7 @@ static RefType edb2md_reftype = REFTYPE_INIT("EDB2MD", NULL, edb2md_clean);
 
 typedef struct {
 	const char *name;
+	const char *desc;
 	size_t offset;
 	int val;
 } IDX;
@@ -137,6 +138,7 @@ static void add_type (EfiType *type, size_t offset)
 			{
 				idx = vb_next(&idx_buf);
 				idx->name = p->name;
+				idx->desc = p->desc;
 				idx->offset = offset;
 				idx->val = Val_int(p->obj->data);
 			}
@@ -153,7 +155,7 @@ static size_t idx_load (EfiType *type, size_t offset)
 	return idx_buf.used;
 }
 
-static mdaxis *make_axis (const char *name)
+static mdaxis *make_axis (StrPool *pool, const char *name, const char *desc)
 {
 	mdaxis *x;
 	IDX *idx;
@@ -161,8 +163,9 @@ static mdaxis *make_axis (const char *name)
 	size_t n, k;
 
 	vb_qsort(&idx_buf, idx_cmp);
-	x = new_axis(idx_buf.used);
-	x->name = mstrcpy(name);
+	x = new_axis(pool, idx_buf.used);
+	x->i_name = StrPool_xadd(pool, name);
+	x->i_desc = StrPool_xadd(pool, desc);
 
 	idx = idx_buf.data;
 	grp = igrp_alloc(idx);
@@ -177,7 +180,8 @@ static mdaxis *make_axis (const char *name)
 		}
 
 		(*gp)->dim++;
-		x->idx[n].name = mstrcpy(idx[n].name);
+		x->idx[n].i_name = StrPool_add(pool, idx[n].name);
+		x->idx[n].i_desc = StrPool_add(pool, idx[n].desc);
 		(*gp)->maxval = idx[n].val;
 	}
 
@@ -228,6 +232,7 @@ static void edb2md_init (EDB2MD *par, EfiType *type)
 	EfiStruct *st, **ptr;
 
 	par->md = new_mdmat();
+	par->md->sbuf = NewStrPool();
 	par->var = NULL;
 	ptr = &par->var;
 	par->aggr = NULL;
@@ -237,7 +242,7 @@ static void edb2md_init (EDB2MD *par, EfiType *type)
 	{
 		if	(idx_load(st->type, st->offset))
 		{
-			*xptr = make_axis(st->name);
+			*xptr = make_axis(par->md->sbuf, st->name, st->desc);
 			xptr = &(*xptr)->next;
 		}
 		else
@@ -338,10 +343,10 @@ static void pset_edb2md (EDBPrintMode *mode, const EDBPrintDef *def,
 	mode->name = def->name;
 	mode->init = init_edb2md;
 	mode->split = 0;
-	mode->par = mstrcpy(arg);
+	mode->par = arg ? msprintf("mode=%s %s", arg, opt) : NULL;
 }
 
-static EDBPrintDef pdef_edb2md = { "md", "=pmode", pset_edb2md, NULL,
+static EDBPrintDef pdef_edb2md = { "md", "[flags]=pmode", pset_edb2md, NULL,
 	":*:write out as data cube"
 	":de:Ausgabe als Datenmatrix"
 };

@@ -38,38 +38,16 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	NOSPACE	"sorry: malloc(%lu) failed\n"
 
-/*
-$pconfig
-d|
-	:*:create dependence list
-	:de:Abhängigkeitsliste generieren
-:file(s) |
-	:*:project description file(s)
-	:de:Projektbeschreibungsdatei(en)
-*/
 
 static char *callname = NULL;
 
 static void usage (const char *arg)
 {
-	execlp("efeuman", "efeuman", "-s", __FILE__, "--", callname, arg, NULL);
+	execlp("efeuman", "efeuman", callname, arg, NULL);
 	fprintf(stderr, USAGE, callname);
 	exit(arg ? 0 : 1);
 }
 
-/*
-$Description
-:*:The command |$1| is used by |shmkmf| to query the dependence information
-for EFEU projects and to display the project label.
-:de:Das Kommando |$1| wird von |efeubild| zur Bestimmung der
-Abhängigkeiten zwischen einzelnen EFEU-Projekten und zur Ausgabe
-der Projektbezeichnungen benutzt.
-
-@arglist -i
-
-$SeeAlso
-shmkmf(1).
-*/
 
 static void error (const char *fmt, ...)
 {

@@ -23,6 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/parsearg.h>
 #include <EFEU/memalloc.h>
+#include <EFEU/mstring.h>
 #include <ctype.h>
 #include <EFEU/io.h>
 
@@ -51,6 +52,7 @@ AssignArg *assignarg (const char *arg, char **ptr, const char *delim)
 	AssignArg *x;
 	char *p;
 	size_t n, po, pe, pa;
+	int trim_arg;
 
 	if	(ptr)	*ptr = NULL;
 
@@ -80,6 +82,7 @@ AssignArg *assignarg (const char *arg, char **ptr, const char *delim)
 	}
 
 	po = pe = pa = 0;
+	trim_arg = 0;
 
 	for (n = 0; arg[n] != 0; n++)
 	{
@@ -122,6 +125,11 @@ AssignArg *assignarg (const char *arg, char **ptr, const char *delim)
 		{
 			pa = n + 1;
 		}
+		else if	(isspace((unsigned char) arg[n]) && !delim)
+		{
+			pa = n + 1;
+			trim_arg = 1;
+		}
 		else	po = pe = 0;
 	}
 
@@ -142,6 +150,9 @@ AssignArg *assignarg (const char *arg, char **ptr, const char *delim)
 	{
 		p[pa - 1] = 0;
 		x->arg = p + pa;
+
+		if	(trim_arg)
+			mtrim(x->arg);
 	}
 	else	x->arg = NULL;
 

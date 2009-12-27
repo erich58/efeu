@@ -21,14 +21,14 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 # $pconfig
-# Version="$Id: efeu-vimrc.sh,v 1.6 2004-10-25 05:46:27 ef Exp $"
+# Version="$Id: efeu-vimrc.sh,v 1.8 2008-04-06 16:20:57 ef Exp $"
 # :dir|
 #	:*:directory with configuration files
 #	:de:Verzeichnis mit Konfigurationsdateien
 
 usage ()
 {
-	efeuman -- $0 $1 || printf "usage: $0 [dir]"
+	efeuman -- $0 $1 || echo "usage: $0 dir"
 }
 
 case "$1" in
@@ -39,17 +39,12 @@ esac
 # $SeeAlso
 # vim(1).
 
-top=`efeutop`
-
-if [ $# -gt 1 ]; then
-	usage; exit 1
-elif [ $# -eq 1 ]; then
-	dir=$1
-else
-	dir=$top/share/vim
+if [ $# -ne 1 ]; then
+	usage -?
+	exit 1
 fi
 
-cd $dir || exit 1
+cd $1 || exit 1
 dir=`pwd`
 
 Update ()

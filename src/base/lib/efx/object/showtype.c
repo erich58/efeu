@@ -171,7 +171,7 @@ static int show_struct (IO *io, const EfiType *type, int verbosity)
 		n += io_puts(" : ", io);
 		n += PrintType(io, type->base, verbosity);
 
-		if	(st && st->offset == 0)
+		if	(st && st->type == type->base && st->offset == 0)
 		{
 			if	(st->name)
 				n += show_name(io, st);
@@ -298,12 +298,14 @@ int PrintType (IO *io, const EfiType *type, int verbosity)
 		PrintTypeDepth++;
 		n += io_printf(io, "[%d]", type->dim);
 	}
-//	else if	((type->flags & TYPE_ENUM) && type != &Type_enum)
+/*
+	else if	((type->flags & TYPE_ENUM) && type != &Type_enum)
+*/
 	else if	(type->flags & TYPE_ENUM)
 	{
 		n += show_enum(io, type, verbosity);
 	}
-	else if	(IsTypeClass(type, &Type_vec))
+	else if	(IsTypeClass(type, &Type_vec) && Val_ptr(type->defval))
 	{
 		EfiVec *vec = Val_ptr(type->defval);
 		PrintTypeDepth--;
@@ -311,7 +313,10 @@ int PrintType (IO *io, const EfiType *type, int verbosity)
 		PrintTypeDepth++;
 		n += io_puts("[]", io);
 	}
-	else 	n += io_puts(type->name, io);
+	else
+	{
+		n += io_puts(type->name, io);
+	}
 
 	return n;
 }

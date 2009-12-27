@@ -99,6 +99,13 @@ void EDBMeta_import (EDBMetaDef *def, EDBMeta *meta, const char *arg)
 	idef = mode ? SearchEfiPar(type, &EfiPar_input, mode->name)
 		: &EfiInput_plain;
 
+	if	(meta->cur->read)
+	{
+		meta->prev = edb_paste(meta->prev, meta->cur);
+		meta->cur = edb_create(type);
+		meta->cur->desc = mstrcpy(meta->prev->desc);
+	}
+
 	if	(idef)
 	{
 		if	(mode && mode->arg && mode && mode->arg[0] == '?')
@@ -124,8 +131,8 @@ void EDBMeta_import (EDBMetaDef *def, EDBMeta *meta, const char *arg)
 	}
 
 	io = data_open(meta->path, EDBMeta_next(meta));
-	par = idef->in_open ? idef->in_open(io, type,
-		idef->par, mode->opt, mode->arg) : io;
+	par = idef->in_open ? idef->in_open(io, type, idef->par,
+		mode ? mode->opt : NULL, mode ? mode->arg : NULL) : io;
 
 	if	(n > 1)
 	{
@@ -135,8 +142,8 @@ void EDBMeta_import (EDBMetaDef *def, EDBMeta *meta, const char *arg)
 		cat = memalloc(sizeof *cat + n * sizeof cat->tab[0]);
 		cat->idef = idef;
 		cat->path = mstrcpy(meta->path);
-		cat->opt = mstrcpy(mode->opt);
-		cat->arg = mstrcpy(mode->arg);
+		cat->opt = mode ? mstrcpy(mode->opt) : NULL;
+		cat->arg = mode ? mstrcpy(mode->arg) : NULL;
 		cat->tab = (void *) (cat + 1);
 		cat->dim = n;
 		cat->par = par;

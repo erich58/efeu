@@ -1,5 +1,5 @@
 /*
-:*:	concattenuation of efeu-datafiles
+:*:	concatenation of efeu data files
 :de:	Zusammenhängen von Efeu-Datenfiles
 
 $Copyright (C) 2004 Erich Frühstück
@@ -24,7 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 Date::fmt = "%d.%m.%Y";
 
 pconfig !
-Version = "$Id: edbcat.esh,v 1.1 2005-05-18 13:45:03 ef Exp $"
+Version = "$Id: edbcat.esh,v 1.4 2008-02-01 16:22:01 ef Exp $"
 PrintMode = NULL
 PreFilter = NULL
 PostFilter = NULL
@@ -85,6 +85,10 @@ EDB edb = edbcat(list);
 
 list = NULL;
 edb = edb.filter(PostFilter);
+
+if	(Title)
+	edb.desc = psub(Title);
+
 edb.fout(Output, PrintMode);
 edb.copy(Limit);
 edb = NULL;

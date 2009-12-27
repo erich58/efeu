@@ -36,7 +36,6 @@ static void obj_free (EfiObj *obj)
 {
 	EfiObj **ptr = (void *) (obj + 1);
 	UnrefObj(*ptr);
-	Obj_free(obj, sizeof(EfiObj) + sizeof(EfiObj *));
 }
 
 static void obj_update (EfiObj *obj)

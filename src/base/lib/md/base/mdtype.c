@@ -36,8 +36,8 @@ EfiType *mdtype (const char *str)
 	{
 		EfiStruct *list;
 
-		io = io_cstr(str);
-		list = GetStruct(io, EOF);
+		io = io_cmdpreproc(io_cstr(str));
+		list = GetStruct(NULL, io, EOF);
 		io_close(io);
 		return MakeStruct(NULL, NULL, list);
 	}

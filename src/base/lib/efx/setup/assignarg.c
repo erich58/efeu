@@ -44,6 +44,30 @@ static void t_copy (const EfiType *st, void *tg, const void *src)
 EfiType Type_assignarg = PTR_TYPE("AssignArg", AssignArg *,
 	&Type_ptr, t_clean, t_copy);
 
+static EfiObj *m_name (const EfiObj *base, void *data)
+{
+	AssignArg *arg = base ? Val_ptr(base->data) : NULL;
+	return str2Obj(base ? mstrcpy(arg->name) : NULL);
+}
+
+static EfiObj *m_opt (const EfiObj *base, void *data)
+{
+	AssignArg *arg = base ? Val_ptr(base->data) : NULL;
+	return str2Obj(base ? mstrcpy(arg->opt) : NULL);
+}
+
+static EfiObj *m_arg (const EfiObj *base, void *data)
+{
+	AssignArg *arg = base ? Val_ptr(base->data) : NULL;
+	return str2Obj(base ? mstrcpy(arg->arg) : NULL);
+}
+
+static EfiMember vtab[] = {
+	{ "name", &Type_str, m_name, NULL },
+	{ "opt", &Type_str, m_opt, NULL },
+	{ "arg", &Type_str, m_arg, NULL },
+};
+
 static void f_create (EfiFunc *func, void *rval, void **arg)
 {
 	Val_ptr(rval) = assignarg(Val_str(arg[0]), NULL, Val_str(arg[1]));
@@ -117,4 +141,5 @@ void CmdSetup_assignarg(void)
 {
 	AddType(&Type_assignarg);
 	AddFuncDef(ftab, tabsize(ftab));
+	AddEfiMember(Type_assignarg.vtab, vtab, tabsize(vtab));
 }

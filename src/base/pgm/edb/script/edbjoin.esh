@@ -1,5 +1,5 @@
 /*
-:*:	joining efeu-datafiles
+:*:	joining efeu data files
 :de:	Verknüpfen von Efeu-Datenfiles
 
 $Copyright (C) 2005 Erich Frühstück
@@ -24,7 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 Date::fmt = "%d.%m.%Y";
 
 pconfig !
-Version = "$Id: edbjoin.esh,v 1.3 2005-11-17 10:24:19 ef Exp $"
+Version = "$Id: edbjoin.esh,v 1.5 2008-02-01 16:22:01 ef Exp $"
 PrintMode = NULL
 Filter1 = NULL
 Filter2 = NULL
@@ -77,6 +77,10 @@ if	(PrintMode == "csv")
 
 EDB edb = edbjoin(edbopen(DB1, Filter1), edbopen(DB2, Filter2), JoinArg);
 edb = edb.filter(Filter);
+
+if	(Title)
+	edb.desc = psub(Title);
+
 edb.fout(Output, PrintMode);
 edb.copy(Limit);
 edb = NULL;

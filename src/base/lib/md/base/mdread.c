@@ -443,7 +443,7 @@ static mdmat *textmode(IO *io, char *title)
 {
 	IO *tmp;
 	mdmat *md;
-	MdLabel *xlabel, *ylabel;
+	MdAxisLabel *xlabel, *ylabel;
 	mdaxis **ptr, *xaxis, *x;
 	long *offset;
 	size_t linedim, coldim;
@@ -453,7 +453,8 @@ static mdmat *textmode(IO *io, char *title)
 /*	Achsen bestimmen
 */
 	md = new_mdmat();
-	md->title = title;
+	md->sbuf = NewStrPool();
+	md->i_name = StrPool_xadd(md->sbuf, title);
 	md->type = Type ? Type : &Type_double;
 	xlabel = set_label(XNames);
 	ylabel = set_label(YNames);
@@ -486,7 +487,7 @@ static mdmat *textmode(IO *io, char *title)
 	}
 
 	offset = memalloc(coldim * sizeof(long));
-	xaxis = label2axis(xlabel);
+	xaxis = label2axis(md->sbuf, xlabel);
 	md_size(xaxis, md->type->size);
 	io_rewind(tmp);
 
@@ -534,7 +535,7 @@ static mdmat *textmode(IO *io, char *title)
 
 /*	Achsen zusammenstellen
 */
-	md->axis = label2axis(ylabel);
+	md->axis = label2axis(md->sbuf, ylabel);
 	ptr = &md->axis;
 
 	while (*ptr != NULL)

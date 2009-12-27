@@ -26,6 +26,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/Op.h>
 #include <EFEU/EfiClass.h>
 #include <EFEU/MatchPar.h>
+#include <EFEU/ioctrl.h>
+#include <EFEU/preproc.h>
 #include <ctype.h>
 
 #define	PAR_DEBUG	0
@@ -533,6 +535,31 @@ static EfiObj *parse_class (IO *io, EfiObj *base)
 
 static int parse_expr (IO *io, ConstructPar *par, int delim);
 
+static void add_desc (IO *io, ConstructPar *par)
+{
+	EfiStruct *st;
+	char *p = NULL;
+
+	if	(!par->vlist)
+	{
+		io_ctrl(io, IOPP_COMMENT, NULL);
+		return;
+	}
+
+	io_ctrl(io, IOPP_COMMENT, &p);
+
+	if	(p)
+	{
+		mtrim(p);
+
+		for (st = par->vlist; st->next; st = st->next)
+			;
+
+		memfree(st->desc);
+		st->desc = p;
+	}
+}
+
 static int parse_list (IO *io, ConstructPar *par, int delim)
 {
 	io_getc(io);
@@ -553,6 +580,7 @@ static int parse_expr (IO *io, ConstructPar *par, int delim)
 	char *name;
 
 	c = io_eat(io, "%s,;");
+	add_desc(io, par);
 
 	if	(c == EOF)
 		return 0;
@@ -797,12 +825,12 @@ EfiFunc *ConstructObjFunc (const char *name, const char *def, EfiObj *obj)
 
 	if	(test_parenthesis(def))
 	{
-		io = io_cstr(def + 1);
+		io = io_cmdpreproc(io_cstr(def + 1));
 		cf_set(func, name, io, '}');
 	}
 	else
 	{
-		io = io_cstr(def);
+		io = io_cmdpreproc(io_cstr(def));
 		cf_set(func, name, io, EOF);
 	}
 
@@ -820,12 +848,12 @@ EfiFunc *ConstructFunc (const char *name, const char *def, EfiVarTab *tab)
 	
 	if	(test_parenthesis(def))
 	{
-		io = io_cstr(def + 1);
+		io = io_cmdpreproc(io_cstr(def + 1));
 		cf_set(func, name, io, '}');
 	}
 	else
 	{
-		io = io_cstr(def);
+		io = io_cmdpreproc(io_cstr(def));
 		cf_set(func, name, io, EOF);
 	}
 

@@ -1,5 +1,5 @@
 /*
-:*:	convert data cube to efeu-datafiles
+:*:	convert data cube to efeu data files
 :de:	Konvertiere eine Datenmatrix in ein Efeu-Datenfiles
 
 $Copyright (C) 2006 Erich Frühstück
@@ -24,7 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 Date::fmt = "%d.%m.%Y";
 
 pconfig !
-Version = "$Id: md2edb.esh,v 1.3 2006-03-23 11:45:13 ef Exp $"
+Version = "$Id: md2edb.esh,v 1.4 2008-02-01 16:16:34 ef Exp $"
 PrintHead = true
 PrintMode = NULL
 Filter = NULL
@@ -42,7 +42,7 @@ v:[name::]var | VarDef: append " "
 	:*:select type components of data cube
 	:de:Variablenselektion für Datenmatrix
 r | Reduce = true
-	:*:remove singulary axis
+	:*:remove singular axis
 	:de:Entfernen von singulären Achsen
 T:title | Title
 	:*:set title of output file
@@ -57,7 +57,7 @@ n:lim | Limit
 	:*:Limit of output data lines
 	:de:Begrenzung der ausgegebenen Datenzeilen
 f:def | Filter: append " "
-	:*:applay filter <def> on efeu-datafile
+	:*:apply filter <def> on efeu data files
 	:de:Filter <def> auf EFEU-Datenfile anwenden
 :in | Input
 	:*:input file name

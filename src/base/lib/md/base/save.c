@@ -6,118 +6,81 @@
 
 #define	STRLEN(x)	(x ? strlen(x) + 1 : 1)
 
-static size_t putstr (const char *str, IO *io);
-
-static void put_2byte(unsigned x, IO *io)
+static void put_2byte (unsigned x, IO *io)
 {
 	io_putc((x >> 8) & 0xFF, io);
 	io_putc(x & 0xFF, io);
 }
 
-static void put_4byte(unsigned x, IO *io)
+static void put_compact (uint64_t x, IO *io)
 {
-	io_putc((x >> 24) & 0xFF, io);
-	io_putc((x >> 16) & 0xFF, io);
-	io_putc((x >> 8) & 0xFF, io);
-	io_putc(x & 0xFF, io);
+	io_ullwrite(io, &x, 1);
 }
 
-void md_puthdr(IO *io, mdmat *md, unsigned mask)
+#define	put_index(tg, src, idx, io) \
+	put_compact(StrPool_copy(tg, src, idx), io)
+
+void md_puthdr (IO *io, mdmat *md, unsigned mask)
 {
 	mdaxis *x;
-	unsigned n;
-	size_t j;
-	int k;
-	char *oname;
-	char *head;
-	unsigned dim;
-	unsigned space;
-	unsigned recl;
-	unsigned nel;
+	mdindex *idx;
+	size_t n;
+	StrPool *sbuf;
+	char *p;
+	size_t dim;
 
-/*	Stringlänge und Zahl der Elemente bestimmen
-*/
-	head = TypeHead(md->type);
-	oname = type2str(md->type);
-	dim = md_dim(md->axis);
-	space = STRLEN(md->title);
-	space += STRLEN(head);
-	space += STRLEN(oname);
-	recl = md->type->recl;
-	nel = 1;
+	sbuf = NewStrPool();
+
+	put_2byte(MD_MAGIC3, io);
+	put_compact(md_dim(md->axis), io);
+
+	p = TypeHead(md->type);
+	put_compact(StrPool_add(sbuf, p), io);
+	memfree(p);
+
+	p = type2str(md->type);
+	put_compact(StrPool_add(sbuf, p), io);
+	memfree(p);
+
+	put_index(sbuf, md->sbuf, md->i_name, io);
+	put_index(sbuf, md->sbuf, md->i_desc, io);
 
 	for (x = md->axis; x != NULL; x = x->next)
 	{
-		for (j = k = 0; j < x->dim; j++)
+		dim = 0;
+
+		for (idx = x->idx, n = x->dim; n-- > 0; idx++)
 		{
-			if	(!(x->idx[j].flags & mask))
-			{
-				space += STRLEN(x->idx[j].name);
-				k++;
-			}
+			if	(idx->flags & mask)
+				continue;
+
+			dim++;
 		}
 
-		space += STRLEN(x->name);
-		nel *= k;
-	}
+		put_compact(dim, io);
+		put_index(sbuf, x->sbuf, x->i_name, io);
+		put_index(sbuf, x->sbuf, x->i_desc, io);
 
-	space = 4 * ((space + 3) / 4);
+		for (idx = x->idx, n = x->dim; n-- > 0; idx++)
+		{
+			if	(idx->flags & mask)
+				continue;
 
-/*	Header ausgeben
-*/
-	put_2byte(MD_MAGIC2, io);
-	put_2byte(dim, io);
-	put_4byte(space, io);
-	put_4byte(recl, io);
-
-/*	Gruppendimensionen ausgeben
-*/
-	x = md->axis;
-
-	for (x = md->axis; x != NULL; x = x->next)
-	{
-		for (j = n = 0; j < x->dim; j++)
-			if (!(x->idx[j].flags & mask)) n++;
-
-		put_4byte(n, io);
+			put_index(sbuf, x->sbuf, idx->i_name, io);
+			put_index(sbuf, x->sbuf, idx->i_desc, io);
+		}
 	}
 
 /*	Textteil ausgeben
 */
-	n = putstr(md->title, io);
-	n += putstr(head, io);
-	n += putstr(oname, io);
-	x = md->axis;
-
-	for (x = md->axis; x != NULL; x = x->next)
-	{
-		n += putstr(x->name, io);
-
-		for (j = 0; j < x->dim; j++)
-		{
-			if	(!(x->idx[j].flags & mask))
-			{
-				n += putstr(x->idx[j].name, io);
-			}
-		}
-	}
-
-	io_nputc(0, io, space - n);
-	memfree(oname);
+	put_compact(sbuf->used, io);
+	io_write(io, sbuf->mdata, sbuf->used);
+	rd_deref(sbuf);
 }
 
 
 /*	String ausgeben
 */
-
-static size_t putstr(const char *str, IO *io)
-{
-	size_t n;
-
-	n = io_puts(str, io);
-	io_putc(0, io);
-	return n + 1;
-}
 
 void md_puteof(IO *io)
 {
@@ -145,7 +108,6 @@ void md_putdata(IO *io, const EfiType *type, mdaxis *x,
 	}
 	else	WriteData(type, data, io);
 }
-
 
 void md_save(IO *io, mdmat *md, unsigned mask)
 {

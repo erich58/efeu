@@ -68,9 +68,7 @@ static int psub_get (void *ptr)
 
 	while ((c = io_getc(par->io)) == PSUBKEY)
 	{
-		par->ptr = par->args ? psubexpand(par->buf, par->io,
-			par->args->dim, par->args->data) :
-			psubexpand(par->buf, par->io, 0, NULL);
+		par->ptr = psubexpandarg(par->buf, par->io, par->args);
 
 		if	(*par->ptr)
 			return psub_sget(par);

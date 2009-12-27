@@ -148,6 +148,7 @@ static struct {
 } fdef[] = {
 	{ "$1 $1 (int)", Enum_iconv },
 	{ "int $1 ()", Enum_iconv },
+	{ "$1 $1 (unsigned)", Enum_iconv },
 	{ "unsigned $1 ()", Enum_iconv },
 	{ "$1 $1 (str)", Enum_sconv },
 	{ "restricted str $1 ()", Enum_to_str },

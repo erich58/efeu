@@ -19,7 +19,8 @@ int cmp_axis(mdaxis *x1, mdaxis *x2, int flag)
 
 	rflag = 0;
 
-	if	((flag & MDXCMP_NAME) && mstrcmp(x1->name, x2->name) != 0)
+	if	((flag & MDXCMP_NAME) && StrPool_cmp(x1->sbuf, x1->i_name,
+			x2->sbuf, x2->i_name) != 0)
 	{
 		rflag |= MDXCMP_NAME;
 	}
@@ -35,7 +36,8 @@ int cmp_axis(mdaxis *x1, mdaxis *x2, int flag)
 
 		for (i = 0; i < dim; i++)
 		{
-			if	(mstrcmp(x1->idx[i].name, x2->idx[i].name) != 0)
+			if	(StrPool_cmp(x1->sbuf, x1->idx[i].i_name,
+					x2->sbuf, x2->idx[i].i_name) != 0)
 			{
 				rflag |= MDXCMP_IDX;
 				break;

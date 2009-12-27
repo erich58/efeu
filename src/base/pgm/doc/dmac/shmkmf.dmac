@@ -124,7 +124,12 @@ Possible outputs are inserted with mode <mode> (same statements as in
 
 	if	(smh_temp)
 	{
-		str res = filter("sh", "cd " + smh_temp + "\n" + cmd);
+		str res = filter("sh", psub(string !
+src=`pwd`
+export src
+cd $(smh_temp:%s)
+$(cmd:%s)
+!));
 
 		if	(res)
 			input(mode, res);

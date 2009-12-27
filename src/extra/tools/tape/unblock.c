@@ -21,11 +21,9 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifdef	EFEUROOT
-#define	EFEUCFG	1
+#ifdef	EFEUCFG
 #define	FDEF(name,def)	GetFormat("[%" name "]" def)
 #else
-#define	EFEUCFG	0
 #define	FDEF(name,def)	def
 #endif
 
@@ -41,7 +39,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <stdio.h>
 
-#if	EFEUCFG
+#ifdef	EFEUCFG
 #include <EFEU/Resource.h>
 #include <EFEU/ftools.h>
 #endif
@@ -104,7 +102,7 @@ static void copy_block (FILE *in, FILE *out, int n)
 
 static FILE *f_open (const char *name, const char *mode)
 {
-#if	EFEUCFG
+#ifdef	EFEUCFG
 	return fileopen(name, *mode == 'r' ? "rz" : "wz");
 #else
 	if	(name && strcmp(name, "-") != 0)
@@ -126,7 +124,7 @@ static FILE *f_open (const char *name, const char *mode)
 
 static void f_close (FILE *file)
 {
-#if	EFEUCFG
+#ifdef	EFEUCFG
 	fileclose(file);
 #else
 	if	(file && file != stdin && file != stdout)
@@ -145,8 +143,8 @@ int main (int narg, char **arg)
 
 	PgmName = arg[0];
 
-#if	EFEUCFG
-	SetVersion("$Id: unblock.c,v 1.3 2002-04-03 09:14:13 ef Exp $");
+#ifdef	EFEUCFG
+	SetVersion("$Id: unblock.c,v 1.4 2008-04-16 18:19:06 ef Exp $");
 	ParseCommand(&narg, arg);
 #else
 	if	(narg < 2 || narg > 3)

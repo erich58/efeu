@@ -24,8 +24,9 @@ If not, write to the Free Software Foundation, Inc.,
 PrintListDelim = "\t";
 
 pconfig !
-Version = "$Id: mdmul.esh,v 1.12 2006-10-29 08:52:09 ef Exp $"
+Version = "$Id: mdmul.esh,v 1.14 2008-02-01 16:16:34 ef Exp $"
 PrintMode = true
+MapMode = false
 
 F:file | :eval 'gload(IncPath, "{}")'
 	:*:execute command lines in file <file>
@@ -34,8 +35,11 @@ E:expr | :eval 'geval("{}")'
 	:*:evaluate expression <expr>
 	:de:Ausdruck <expr> auswerten
 r | Reduce = true
-	:*:remove singulary axis
+	:*:remove singular axis
 	:de:Entfernen von singulären Achsen
+m:map | Output; MapMode = true
+	:*:create file mapping
+	:de:Dateiabbild generieren
 v:[name::]var | VarDef: append " "
 	:*:select type components
 	:de:Variablenselektion
@@ -81,7 +85,9 @@ mdmat md = mdmul(md1.mark(x1), md2.mark(x2));
 
 if	(Title)		md.title = Title;
 
-if	(flagres("PrintMode"))
+if	(flagres("MapMode"))
+	md.map(Output);
+else if	(flagres("PrintMode"))
 	md.mark("#-1").print(iostd, "nohead");
 else	md.save(Output);
 

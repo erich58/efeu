@@ -28,7 +28,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/preproc.h>
 #include <EFEU/pconfig.h>
 
-EfiType Type_strbuf = PTR_TYPE("strbuf", StrBuf *, &Type_ptr, NULL, NULL);
+EfiType Type_strbuf = REF_TYPE("strbuf", StrBuf *);
 
 #define	SB(x)	((StrBuf **) (x))[0]
 
@@ -165,10 +165,16 @@ static void f_index (EfiFunc *func, void *rval, void **arg)
 	Val_char(rval) = (sb && i < sb_size(sb)) ? sb->data[i] : 0;
 }
 
+static void f_read (EfiFunc *func, void *rval, void **arg)
+{
+	Val_bool(rval) = sb_read(Val_int(arg[1]), SB(arg[0])) != NULL;
+}
+
 static EfiFuncDef fdef_strbuf[] = {
 	{ 0, &Type_strbuf, "strbuf (int bsize = 0)", f_create },
 	{ FUNC_VIRTUAL, &Type_void, "free (strbuf & sb)", f_free },
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, strbuf)", f_fprint },
+	{ 0, &Type_bool, "strbuf::read (int fd)", f_read },
 	{ 0, &Type_int, "strbuf::seek (int n)", f_seek },
 	{ 0, &Type_int, "strbuf::pos ()", f_pos },
 	{ 0, &Type_void, "strbuf::sync ()", f_sync },

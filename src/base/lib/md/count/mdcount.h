@@ -67,6 +67,7 @@ typedef struct MdCountPar MdCountPar;
 
 struct MdCountPar {
 	REFVAR;
+	StrPool *pool;	/* Stringpool */
 	VecBuf vtab;	/* Variablentabelle */
 	VecBuf ctab;	/* Klassifikationstabelle */
 	TimeRange *time_range;	/* Zeitbereich */

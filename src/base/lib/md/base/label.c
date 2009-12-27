@@ -36,13 +36,9 @@ void MF_label(EfiFunc *func, void *rval, void **arg)
 			if	(x->idx[i].flags & (MDFLAG_LOCK|MDFLAG_TEMP))
 				continue;
 
-			if	(flag)
-			{
-				obj = NewPtrObj(&Type_str, msprintf("%s=%s",
-					x->name, x->idx[i].name));
-			}
-			else	obj = LvalObj(&Lval_ref, &Type_str, md, &x->idx[i].name);
-
+			obj = NewPtrObj(&Type_str, mstrpaste("=",
+				flag ? StrPool_get(x->sbuf, x->i_name) : NULL,
+				StrPool_get(x->sbuf, x->idx[i].i_name)));
 			*ptr = NewObjList(obj);
 			ptr = &(*ptr)->next;
 		}

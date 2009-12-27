@@ -4,7 +4,7 @@
 
 #include <EFEU/mdmat.h>
 
-static mdaxis *make_axis(mdaxis *x1, mdaxis *x2, unsigned mask)
+static mdaxis *make_axis(StrPool *sbuf, mdaxis *x1, mdaxis *x2, unsigned mask)
 {
 	mdaxis *x, **ptr;
 
@@ -15,10 +15,12 @@ static mdaxis *make_axis(mdaxis *x1, mdaxis *x2, unsigned mask)
 	{
 		if	(cmp_axis(x1, x2, MDXCMP_DIM) != 0)
 		{
-			dbg_note(NULL, "[mdmat:92]", "ss", x1->name, x2->name);
-			*ptr = cpy_axis(x1->dim >= x2->dim ? x1 : x2, mask);
+			dbg_note(NULL, "[mdmat:92]", "ss",
+				StrPool_get(x1->sbuf, x1->i_name),
+				StrPool_get(x2->sbuf, x2->i_name));
+			*ptr = cpy_axis(sbuf, x1->dim >= x2->dim ? x1 : x2, mask);
 		}
-		else	*ptr = cpy_axis(x1, mask);
+		else	*ptr = cpy_axis(sbuf, x1, mask);
 
 		ptr = &(*ptr)->next;
 		x1 = x1->next;
@@ -27,14 +29,14 @@ static mdaxis *make_axis(mdaxis *x1, mdaxis *x2, unsigned mask)
 
 	while (x1)
 	{
-		*ptr = cpy_axis(x1, mask);
+		*ptr = cpy_axis(sbuf, x1, mask);
 		ptr = &(*ptr)->next;
 		x1 = x1->next;
 	}
 
 	while (x2)
 	{
-		*ptr = cpy_axis(x2, mask);
+		*ptr = cpy_axis(sbuf, x2, mask);
 		ptr = &(*ptr)->next;
 		x2 = x2->next;
 	}
@@ -149,8 +151,9 @@ mdmat *md_term (EfiVirFunc *virfunc, mdmat *m1, mdmat *m2)
 	}
 
 	md = new_mdmat();
+	md->sbuf = NewStrPool();
 	md->type = (EfiType *) func->type;
-	md->axis = make_axis(m1->axis, m2 ? m2->axis : NULL, 0);
+	md->axis = make_axis(md->sbuf, m1->axis, m2 ? m2->axis : NULL, 0);
 	md_alloc(md);
 	memset(md->data, 0, md->size);
 

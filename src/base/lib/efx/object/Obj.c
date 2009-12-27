@@ -22,12 +22,13 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/object.h>
 #include <EFEU/refdata.h>
+#include <EFEU/stdtype.h>
 
 #define	MEMCHECK	0
 
 #define	SIZE_PTR	(sizeof(EfiObj))
-#define	SIZE_SMALL	(sizeof(EfiObj) + sizeof(long))
-#define	SIZE_LARGE	(sizeof(EfiObj) + 4 * sizeof(void *))
+#define	SIZE_SMALL	(sizeof(EfiObj) + sizeof(void *))
+#define	SIZE_LARGE	(sizeof(EfiObj) + 6 * sizeof(void *))
 
 #if	MEMCHECK
 #define	CHECK_SIZE	8
@@ -43,29 +44,45 @@ If not, write to the Free Software Foundation, Inc.,
 #endif
 
 static ALLOCTAB(tab_ptr, 100, SIZE_PTR + CHECK_SIZE);
-static ALLOCTAB(tab_small, 70, SIZE_SMALL + CHECK_SIZE);
+static ALLOCTAB(tab_small, 292, SIZE_SMALL + CHECK_SIZE);
 static ALLOCTAB(tab_large, 50, SIZE_LARGE + CHECK_SIZE);
 
 static size_t stat_alloc = 0;
 static size_t stat_free = 0;
 
+static void clean_data (EfiObj *obj)
+{
+	if	(obj->lval && obj->lval->free)
+	{
+		obj->lval->free(obj);
+	}
+	else if	(obj->data)
+	{
+		CleanData(obj->type, obj->data, 1);
+	}
+}
+
 static void clean_ptr (void *data)
 {
+	clean_data(data);
 	del_data(&tab_ptr, data);
 }
 
 static void clean_small (void *data)
 {
+	clean_data(data);
 	del_data(&tab_small, data);
 }
 
 static void clean_large (void *data)
 {
+	clean_data(data);
 	del_data(&tab_large, data);
 }
 
 static void clean_huge (void *data)
 {
+	clean_data(data);
 	lfree(data);
 	stat_free++;
 }
@@ -103,14 +120,6 @@ EfiObj *Obj_alloc (size_t size)
 	memcpy(((char *) obj) + size, CHECK_MASK, CHECK_SIZE);
 #endif
 	return obj;
-}
-
-void Obj_free (EfiObj *obj, size_t size)
-{
-	if	(size <= SIZE_PTR)	del_data(&tab_ptr, obj);
-	else if	(size <= SIZE_SMALL)	del_data(&tab_small, obj);
-	else if	(size <= SIZE_LARGE)	del_data(&tab_large, obj);
-	else				lfree(obj), stat_free++;
 }
 
 #define	STAT_1	\

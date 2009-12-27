@@ -24,7 +24,6 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/parsedef.h>
 #include <EFEU/cmdsetup.h>
 #include <EFEU/locale.h>
-#include <EFEU/mactools.h>
 #include <EFEU/math.h>
 
 /*	Variablen
@@ -53,7 +52,6 @@ static EfiObj *p_eof (IO *io, void *data)
 	return int2Obj(EOF);
 }
 
-
 static EfiObj *p_NaN (IO *io, void *data)
 {
 	return double2Obj(ExceptionValue(0.));
@@ -69,16 +67,12 @@ static EfiObj *p_pi (IO *io, void *data)
 	return double2Obj(M_PI);
 }
 
-
 static EfiParseDef pdef_const[] = {
 	{ "true", PFunc_bool, "" },
 	{ "false", PFunc_bool, NULL },
 	{ "EOF", p_eof, NULL },
 	{ "FNAMESEP", PFunc_str, "/" },
 	{ "PATHSEP", PFunc_str, ":" },
-	{ "EFEUROOT", PFunc_str, String(EFEUROOT) },
-	{ "EFEUSRC", PFunc_str, String(EFEUROOT) "/src" },
-	{ "EFEULIB", PFunc_str, String(EFEUROOT) "/lib" },
 	{ "NaN", p_NaN, NULL },
 	{ "Inf", p_Inf, NULL },
 	{ "M_PI", p_pi, NULL },
@@ -87,7 +81,6 @@ static EfiParseDef pdef_const[] = {
 	{ "LC_DATE", PFunc_int, (void *) LOC_DATE },
 	{ "LC_ALL", PFunc_int, (void *) LOC_ALL },
 };
-
 
 void CmdSetup_const(void)
 {

@@ -183,6 +183,7 @@ static void keyline (SrcData *data, int c)
 		aus = io_strbuf(buf);
 		io_puts("---- verbatim\n", aus);
 		io_puts(decl->def, aus);
+		io_puts(decl->arg, aus);
 
 		switch (decl->type)
 		{
@@ -202,8 +203,6 @@ static void keyline (SrcData *data, int c)
 		{
 		case DECL_FUNC:
 		case DECL_SFUNC:
-			io_putc(' ', aus);
-			io_puts(decl->arg, aus);
 
 			while ((c = io_skipcom(data->ein, NULL, 0)) == '\n')
 				subcopy(data->ein, aus, c, 0);

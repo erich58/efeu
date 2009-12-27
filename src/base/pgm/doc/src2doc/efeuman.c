@@ -31,6 +31,8 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	BSIZE	4096
 
+#define	E_CFG	"[efeuman:1]$!: syntax description not found.\n"
+
 /*	Globale Variablen
 */
 
@@ -333,6 +335,12 @@ static void eval_source (IO *io, StrBuf *buf)
 	addbuf(buf);
 }
 
+static void setval (CmdPar *par, const char *name, char *val)
+{
+	if	(val)
+		CmdPar_setval(par, name, mstrcpy(val));
+}
+
 /*	Hauptprogramm
 */
 
@@ -383,23 +391,29 @@ int main (int argc, char **argv)
 	}
 
 	buf = sb_create(BSIZE);
+	io = NULL;
 
 	if	(source)
 	{
 		io = io_lnum(io_fileopen(source, "rzd"));
 		eval_source(io, buf);
 	}
-	else
+	else if ((io = io_fopen(argv[0], "r")))
 	{
-		io = io_lnum(io_fileopen(argv[0], "rzd"));
+		io = io_lnum(io);
 		eval_script(io, buf);
 	}
+	else if	(CmdPar_load(par, par->name, 1))
+	{
+		;
+	}
+	else	dbg_error(NULL, E_CFG, NULL);
 
 	rd_deref(buf);
 	io_close(io);
 
-	CmdPar_setval(par, "Ident", mstrcpy(doc_buf.var[VAR_TITLE]));
-	CmdPar_setval(par, "Copyright", mstrcpy(doc_buf.var[VAR_COPYRIGHT]));
+	setval(par, "Ident", doc_buf.var[VAR_TITLE]);
+	setval(par, "Copyright", doc_buf.var[VAR_COPYRIGHT]);
 
 	if	(CmdPar_eval(par, &argc, argv, 0) <= 0)
 		exit(EXIT_FAILURE);

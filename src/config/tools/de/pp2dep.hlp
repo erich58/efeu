@@ -1,0 +1,22 @@
+@name
+@synopsis -h
+\Description
+Das Kommando |$!| filtert aus der Ausgabe des C--Preprozessors
+die Namen von eingebundenen Dateien und stellt daraus eine Abhängigkeitsliste
+für die angegebenen Ziele <target(s)> zusammen.
+
+@arglist -i
+
+Die typische Anwendung für |pp2dep| erfolgt in einem Makefile der
+Form:
+
+---- verbatim
+file.o: file.c
+	$$(CC) -c file.c
+
+depend::
+	$$(CC) -E -c file.c | pp2dep -l file.o >> Makefile
+----
+
+\SeeAlso
+\mref{cc(1)}, \mref{make(1)}, \mref{shmkmf(1)}.

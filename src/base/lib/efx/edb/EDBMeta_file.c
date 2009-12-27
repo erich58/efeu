@@ -129,12 +129,12 @@ void EDBMeta_file (EDBMetaDef *def, EDBMeta *meta, const char *arg)
 	{
 		if	(mode == M_SORT)
 			meta->cur = edb_sort(meta->cur,
-				cmp_create(type, key, NULL));
+				key ? cmp_create(type, key, NULL) : NULL);
 	}
 	else if	(mode)
 	{
 		EDB **tab = memalloc(n * sizeof *tab);
-		CmpDef *cmp = cmp_create(type, key, NULL);
+		CmpDef *cmp = key ? cmp_create(type, key, NULL) : NULL;
 		int i;
 
 		tab[0] = (mode == M_SORT) ?
@@ -186,34 +186,34 @@ void EDBMeta_paste (EDBMetaDef *def, EDBMeta *meta, const char *arg)
 {
 	int mode;
 	char *key;
-	EfiType *type;
 
 	if	(!meta->cur)	return;
 
 	mode = get_mode(arg, &key);
-	type = meta->cur->obj->type;
 
 	if	(!meta->prev)
 	{
 		if	(mode == M_SORT)
 			meta->cur = edb_sort(meta->cur,
-				cmp_create(type, key, NULL));
+				cmp_create(meta->cur->obj->type, key, NULL));
 	}
 	else if	(mode)
 	{
 		CmpDef *cmp;
 		EDB *tab[2];
+		EfiType *type;
 
-		cmp = cmp_create(type, key, NULL);
+		type = meta->prev->obj->type;
+		cmp = key ? cmp_create(type, key, NULL) : NULL;
 
 		tab[0] = (mode == M_SORT) ?
-			edb_sort(meta->cur, rd_refer(cmp)) : meta->cur;
+			edb_sort(meta->prev, rd_refer(cmp)) : meta->prev;
 
-		if	(meta->prev->obj->type != type)
+		if	(meta->cur->obj->type != type)
 		{
-			tab[1] = edb_paste(edb_create(type), meta->prev);
+			tab[1] = edb_paste(edb_create(type), meta->cur);
 		}
-		else	tab[1] = meta->prev;
+		else	tab[1] = meta->cur;
 
 		if	(mode == M_SORT)
 			tab[1] = edb_sort(tab[1], rd_refer(cmp));

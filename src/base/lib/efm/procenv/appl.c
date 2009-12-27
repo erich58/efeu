@@ -25,10 +25,10 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/ftools.h>
 #include <EFEU/appl.h>
 #include <EFEU/EfeuConfig.h>
+#include <EFEU/mkpath.h>
 
-#define	_String(x)	#x
-#define	String(x)	_String(x)
-#define	TOP		String(EFEUROOT)
+#define	ENVIRON	"APPLPATH"
+#define	SUBDIR	"lib/efeu/%L/%S"
 
 /*
 Die Variable |$1| bestimmt den Suchpfad für Applikationsdateien.
@@ -37,46 +37,21 @@ Die Variable |$1| bestimmt den Suchpfad für Applikationsdateien.
 char *ApplPath = NULL;
 
 /*
-Die Funktion |$1| initialisiert den Suchpfad |ApplPath| für Applikationsdateien.
-Falls für <path> ein Nullpointer angegeben wurde und der Suchpfad bereits
-initialisiert wurde, wird er von |$1| nicht verändert.
+Die Funktion |$1| initialisiert den Suchpfad |ApplPath| für
+Applikationsdateien. Als Parameter wird im Normalfall der
+Verzeichnisname des aufgerufenen Programms übergeben. Falls für <dir>
+ein Nullpointer angegeben wurde und der Suchpfad bereits initialisiert
+wurde, wird er von |$1| nicht verändert.
 */
 
-void SetApplPath (const char *path)
+void SetApplPath (const char *dir)
 {
-	StrBuf *sb;
-	char *p;
-
-	if	(ApplPath && !path)	return;
-
-	sb = sb_create(0);
-
-/*	Basispfade
-*/
-	sb_putc('.', sb);
-
-	if	(path)	sb_putc(':', sb), sb_puts(path, sb);
-
-/*	Environment
-*/
-	if	((p = getenv("APPLPATH")) != NULL)
-		sb_putc(':', sb), sb_puts(p, sb);
-
-/*	Systemsuchpfade
-*/
-	if	(EfeuConfigPar.standalone == 0)
+	if	(!ApplPath || dir)
 	{
-		sb_printf(sb, ":%s/lib/efeu/%%L/%%S", TOP);
-
-		if	((p = getenv("HOME")) != NULL)
-			sb_printf(sb, ":%s/lib/efeu/%%L/%%S", p);
+		memfree(ApplPath);
+		ApplPath = mkpath(dir, ENVIRON, SUBDIR, NULL);
 	}
-
-	sb_puts(":./%L/%S", sb);
-	memfree(ApplPath);
-	ApplPath = sb2str(sb);
 }
-
 
 /*
 Die Funktion |$1| sucht eine Applikationsdatei vom Type |type|
@@ -109,6 +84,9 @@ IO *io_applfile (const char *name, int type)
 	case APPL_HLP:	pfx = "help"; sfx = "hlp"; break;
 	default:	pfx = NULL; sfx = NULL; break;
 	}
+
+	if	(!ApplPath)
+		SetApplPath(ProgDir);
 
 	p = fsearch(ApplPath, pfx, name, sfx);
 	io = p ? io_fileopen(p, "r") : NULL;

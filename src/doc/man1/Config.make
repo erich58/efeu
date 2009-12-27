@@ -18,30 +18,21 @@ manentry ()
 	done
 }
 
-manentry binedit
-manentry ccmkmf
-manentry dir2make
 manentry dircmp
 manentry dircpy
 manentry edb
 manentry edbcat
 manentry edbjoin
 manentry edbtrans
-manentry edf
 manentry efeu-magic
 manentry efeu-xlib
 manentry efeuconfig
 manentry efeucc
 manentry efeudoc
-manentry efeugen
 manentry efeuscript
-manentry efeutop
 manentry efile
-manentry eis
-#manentry eis-cgi
 manentry esh
 manentry findgrep
-manentry globcvs
 manentry htmlindex
 manentry mdcat
 manentry mdcmp
@@ -59,18 +50,10 @@ manentry mdround
 manentry mdselect
 manentry mdsum
 manentry mdterm
-manentry mkdump
 manentry mkmf
 manentry mksource
 manentry mksrclist
-manentry msc
-manentry mvi
 manentry pp2dep
-manentry ppfilter
-manentry sc2md
 manentry shmkmf
 manentry src2doc
 manentry tex2ps
-manentry unblock
-manentry undump
-manentry zip2gz

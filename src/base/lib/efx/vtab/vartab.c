@@ -52,7 +52,7 @@ static void vtab_clean (void *data)
 	del_data(&tab_vtab, tg);
 }
 
-static const RefType VarTabRefType = REFTYPE_INIT("VarTab",
+static RefType VarTabRefType = REFTYPE_INIT("VarTab",
 	vtab_ident, vtab_clean);
 
 #define	VTABSIZE	32

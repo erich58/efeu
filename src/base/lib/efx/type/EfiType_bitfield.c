@@ -41,7 +41,6 @@ static void BFPar_free (EfiObj *obj)
 {
 	BFPar *par = (void *) obj;
 	UnrefObj(par->base);
-	Obj_free(obj, sizeof *par + obj->type->size);
 }
 
 static void BFPar_update (EfiObj *obj)

@@ -21,7 +21,7 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 # $pconfig
-# Version="$Id: mkmf.sh,v 1.3 2007-08-19 04:22:10 ef Exp $"
+# Version="$Id: mkmf.sh,v 1.5 2008-03-07 20:51:28 ef Exp $"
 # n |
 #	:*:print out the selected Makefile-generator without executing it.
 #	:de:zeige den ausgewählten Makefile-Generator ohne ihn
@@ -109,5 +109,9 @@ EOF
 	exit 1
 fi
 
+# $Note
+# :*:The command |ccmkmf| ist deprecated.
+# :de:Das Kommando |ccmkmf| ist veraltet.
+#
 # $SeeAlso
 # shmkmf(1), xmkmf(1), ccmkmf(1), autoconf(1).

@@ -7,64 +7,22 @@ Folgende Softwarepakete werden benötigt:
 
 Folgende Softwarepakete werden empfohlen:
 *	postgresql-Development
-*	sc Spreadsheet Calculator
 *	tcl/tk-Development
 
-Alle Dateien von EFEU werden relativ zum Hauptverzeichnis
-der Veröffentlichung, im folgenden mit <TOP> bezeichnet, generiert.
-Die Unterverzeichnisse <TOP>/include, <TOP>/ppinclude, <TOP>/build,
-<TOP>/lib, <TOP>/bin und <TOP>/doc sollten nicht von anderer Software
-benützt werden. Damit die generierten Kommandos ausgeführt werden
-können, muß die Umgebungsvariable PATH um <TOP>/bin erweitert
-werden.
+ÜBERSETZEN
 
-Ich empfehle die Einrichtung eines eigenen Anwenders für die
-Verwaltung von EFEU. Dieser hat üblicherweise den Namen efeu und die
-Gruppe efeu. Als Hauptverzeichnis von EFEU kann das
-HOME-Verzeichnis des EFEU-Verwalters oder ein Unterverzeichnis
-der Form efeu[-Version] verwendet werden.
-Falls ein symbolischer Link auf <TOP> gesetzt wird, kann dieser
-stellvertretend für das reale Verzeichnis <TOP> verwendet werden.
-Als Namen für den Link eignen sich dabei /efeu oder /opt/efeu.
+Der Aufruf von
 
-Die Sourcen sind in einzelne Module unterteilt und
-werden im Verzeichnis <TOP>/src installiert.
-Folgende Module gehören zur Grundkonfiguration von efeu:
+	make all
 
-[config]	Basismodul für Entwicklungsumgebung;
-[base]		EFEU-Basisbibliotheken/Standardkommandos;
-[doc]		Handbücher;
-[pg]		Schnittstellenfunktionen zu PostgreSQL;
-[tk]		Schnittstelle für TCL/TK;
-[scope]		Sorcelisten und TAG-Files zusammenstellen.
-
-Bei fehlender Installation von PostgreSQL-Development
-bleibt das Projekt pg unkonfiguriert, dies hat keinen Einfluß
-auf die Funktionalität der anderen Komponenten.
+sorgt für die Übersetzung von EFEU.
 
 INSTALLATION
 
-Nach der Installation der Sourcen wird in das Verzeichnis
-<TOP> gewechselt und dort "make all" aufgerufen.
+Nach der Übersetzung kann EFEU bereits verwendet werden, es genügt,
+den Suchpfad für Programme mit <TOP>/bin zu erweitern.
 
-Die folgenden Schritte werden dabei zur Generierung von EFEU
-durchgeführt:
-#	Falls in <TOP>/src ein Makefile existiert, wird
-	dort make aufgerufen (falls die Sourcen mit checkout aus einem
-	cvs Archiv geholt werden).
-#	Falls das script <TOP>/config/setup existiert, wird dieses
-	aufgerufen (installiert Basisskripts, die für die nächsten
-	Schritte benötigt werden).
-#	Das Makefile <TOP>/build/Makefile wird mit shmkmf generiert.
-#	Schlußendlich wird make in <TOP>/build aufgerufen um alle
-	Programme und Bibliotheken zu generieren und die benötigten
-	Dateien zu installieren.
-
-Das Skript efeugen ruft make in <TOP>/build oder einem Unterverzeichnis
-auf. Falls <TOP> nicht mit dem HOME-Verzeichnis übereinstimmt, sollte
-entweder die Umgebungsvariable EFEUTOP auf <TOP> gesetzt werden oder
-die Umgebungsvariable EFEUGEN auf <TOP>/build.
-
-Nach einer Umstrukturierung der Sourcen von EFEU empfiehlt sich
-der Aufruf von "make clean" in <TOP>, damit "Installationsleichen"
-gelöscht werden.
+Alternativ dazu kann EFEU aber auch in /usr oder /usr/local installiert werden.
+Dazu muss das Skript efeu-install.sh mit Root-Rechten aufgerufen
+werden. Die Option --local wählt die Installation in /usr/local aus.
+EFEU kann von root mit dem Kommando efeu-uninstall deinstalliert werden.

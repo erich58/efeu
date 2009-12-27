@@ -61,6 +61,13 @@ static void f_choice (EfiFunc *func, void *rval, void **arg)
 		vec->buf.elsize, Val_uint(arg[2]));
 }
 
+static void f_fprint (EfiFunc *func, void *rval, void **arg)
+{
+	char *p = rd_ident(Val_ptr(arg[1]));
+	Val_int(rval) = io_puts(p, Val_io(arg[0]));
+	memfree(p);
+}
+
 static EfiFuncDef fdef[] = {
 	{ FUNC_RESTRICTED, &Type_Random, "_Ptr_ ()", f_null },
 	{ 0, &Type_Random, "Random (str rdef)", f_str2rand },
@@ -82,6 +89,8 @@ static EfiFuncDef fdef[] = {
 	{ 0, &Type_void, "srand (int val = 1, Random rand = NULL)", f_srand },
 	{ 0, &Type_double, "drand (Random rand = NULL)", f_uniform },
 	{ 0, &Type_double, "nrand (Random rand = NULL)", f_normal },
+
+	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, Random)", f_fprint },
 };
 
 

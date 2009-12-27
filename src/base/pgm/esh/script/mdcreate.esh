@@ -24,8 +24,9 @@ If not, write to the Free Software Foundation, Inc.,
 PrintListDelim = "\t";
 
 pconfig !
-Version = "$Id: mdcreate.esh,v 1.9 2005-07-24 05:12:41 ef Exp $"
+Version = "$Id: mdcreate.esh,v 1.10 2007-10-12 19:15:00 ef Exp $"
 PrintMode = true
+MapMode = false
 
 v:value | Value
 	:*:default value
@@ -36,6 +37,9 @@ T:title | Title
 :type | Type
 	:*:type of data
 	:de:Datentype
+m:map | Output; MapMode = true
+	:*:create file mapping
+	:de:Dateiabbild generieren
 /.*=.*/<name>=<var> | List: append " "
 	:*:list of axis
 	:de:Achsendefinitionen
@@ -74,7 +78,9 @@ for (x in split(List, " "))
 
 md.title = Title;
 
-if	(flagres("PrintMode"))
+if	(flagres("MapMode"))
+	md.map(Output);
+else if	(flagres("PrintMode"))
 	md.mark("#-1").print(iostd, "nohead");
 else	md.save(Output);
 

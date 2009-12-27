@@ -22,7 +22,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/object.h>
 
-static void swap_data(size_t size, char *a, char *b)
+static void swap_data (size_t size, char *a, char *b)
 {
 	int i;
 
@@ -43,7 +43,7 @@ EfiObj *AssignTerm (const char *name, EfiObj *left, EfiObj *right)
 	if	(left == NULL)
 	{
 		dbg_note(NULL, "[efmain:211]", NULL);
-		UnrefObj(right);
+		rd_deref(right);
 		return NULL;
 	}
 	else if	((func = GetTypeFunc(left->type, name)) != NULL)
@@ -58,14 +58,14 @@ EfiObj *AssignTerm (const char *name, EfiObj *left, EfiObj *right)
 	{
 		dbg_note(NULL, left->lval ? "[efmain:215]" : "[efmain:213]",
 			"ss", name, left->type->name);
-		UnrefObj(right);
-		UnrefObj(left);
+		rd_deref(right);
+		rd_deref(left);
 		return NULL;
 	}
 }
 
 
-EfiObj *AssignObj(EfiObj *left, EfiObj *right)
+EfiObj *AssignObj (EfiObj *left, EfiObj *right)
 {
 	if	(left == NULL || left->lval == NULL)
 		return AssignTerm("=", left, right);
@@ -83,16 +83,16 @@ EfiObj *AssignObj(EfiObj *left, EfiObj *right)
 	else	AssignData(left->type, left->data, right->data);
 
 	SyncLval(left);
-	UnrefObj(right);
+	rd_deref(right);
 	return left;
 }
 
 
-void Obj2Data(EfiObj *obj, EfiType *type, void *ptr)
+void Obj2Data (EfiObj *obj, EfiType *type, void *ptr)
 {
 	if	(type == NULL)
 	{
-		UnrefObj(obj);
+		rd_deref(obj);
 		return;
 	}
 
@@ -105,18 +105,19 @@ void Obj2Data(EfiObj *obj, EfiType *type, void *ptr)
 	else if	(obj->lval == NULL && obj->refcount == 1)
 	{
 		memcpy(ptr, obj->data, type->size);
-		DeleteObj(obj);
+		obj->data = NULL;
+		rd_deref(obj);
 	}
 	else
 	{
 		if	(ptr != obj->data)
 			CopyData(type, ptr, obj->data);
 
-		UnrefObj(obj);
+		rd_deref(obj);
 	}
 }
 
-void Obj2VecData(EfiObj *obj, EfiType *type, size_t dim, void *ptr)
+void Obj2VecData (EfiObj *obj, EfiType *type, size_t dim, void *ptr)
 {
 	EfiObjList *list;
 
@@ -138,11 +139,11 @@ void Obj2VecData(EfiObj *obj, EfiType *type, size_t dim, void *ptr)
 	}
 
 	CleanVecData(type, dim, ptr, 0);
-	UnrefObj(obj);
+	rd_deref(obj);
 }
 
 
-void *Obj2Ptr(EfiObj *obj, EfiType *type)
+void *Obj2Ptr (EfiObj *obj, EfiType *type)
 {
 	void *ptr = NULL;
 	Obj2Data(obj, type, &ptr);

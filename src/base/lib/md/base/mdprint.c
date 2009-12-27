@@ -24,6 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/mdmat.h>
 #include <EFEU/pctrl.h>
 #include <EFEU/locale.h>
+#include <EFEU/parsearg.h>
 
 #define H_MAGIC		"##MDMAT   "
 #define H_TITLE		"##Title   "
@@ -32,6 +33,8 @@ If not, write to the Free Software Foundation, Inc.,
 #define H_LOCALE	"##Locale  "
 #define H_ROWS		"##Rows    "
 #define H_COLUMNS	"##Columns "
+#define H_AXIS		"##Axis"
+#define H_INDEX		"##Index"
 #define H_VERSION	"2.0"
 
 #define	LLABEL	"."
@@ -48,6 +51,7 @@ static int label_width = 0;
 static int cur_line = 0;
 static int max_line = 0;
 static int max_col = 0;
+static int out_mode = 0;
 
 extern int PrintFieldWidth;
 extern int PrintFloatPrec;
@@ -72,6 +76,8 @@ static IO *set_pctrl(IO *io, const char *def)
 			data_flag = 1;
 		else if	(strcmp("nohead", list[i]) == 0)
 			head_flag = 0;
+		else if	(strcmp("xhead", list[i]) == 0)
+			head_flag = 3;
 		else if	(strcmp("head", list[i]) == 0)
 			head_flag = 2;
 		else if	(strcmp("title", list[i]) == 0)
@@ -95,7 +101,19 @@ static IO *set_pctrl(IO *io, const char *def)
 		else if	(patcmp("font=", list[i], &p))
 			pctrl_fsize = atoi(p);
 		else if	(patcmp("mode=", list[i], &p) && !out)
-			out = io_pctrl(io, p);
+		{
+			if	(strcmp("binary", p) == 0)
+			{
+				out_mode = 1;
+				out = io;
+			}
+			else if	(strcmp("map", p) == 0)
+			{
+				out_mode = 2;
+				out = io;
+			}
+			else	out = io_pctrl(io, p);
+		}
 	}
 
 	memfree(list);
@@ -125,7 +143,7 @@ static void show_axis(IO *io, const char *label, mdaxis *axis, int flag)
 		if	((axis->flags & XMARK) == flag)
 		{
 			io_puts(delim, io);
-			io_puts(axis->name, io);
+			io_puts(StrPool_get(axis->sbuf, axis->i_name), io);
 			delim = " ";
 		}
 	}
@@ -150,12 +168,12 @@ static void put_head (IO *io, char *head)
 	}
 }
 
-static void show_header(IO *io, mdmat *md)
+static void show_header(IO *io, mdmat *md, int ext)
 {
 	char *head;
 
 	put_label(io, H_MAGIC, H_VERSION);
-	put_label(io, H_TITLE, md->title);
+	put_label(io, H_TITLE, StrPool_get(md->sbuf, md->i_name));
 
 	if	((head = TypeHead(md->type)))
 	{
@@ -170,6 +188,38 @@ static void show_header(IO *io, mdmat *md)
 
 	if	(Locale.print)
 		put_label(io, H_LOCALE, Locale.print->name);
+
+	if	(ext)
+	{
+		StrPool *pool;
+		mdaxis *axis;
+		mdindex *idx;
+		size_t n;
+
+		pool = md->axis->sbuf;
+
+		for (axis = md->axis; axis; axis = axis->next)
+		{
+			io_ctrl(io, PCTRL_LEFT);
+			io_puts(H_AXIS, io);
+			io_ctrl(io, PCTRL_LEFT);
+			io_puts(StrPool_get(pool, axis->i_name), io);
+			io_ctrl(io, PCTRL_LEFT);
+			io_puts(StrPool_get(pool, axis->i_desc), io);
+			io_ctrl(io, PCTRL_LINE);
+
+			for (idx = axis->idx, n = axis->dim; n-- > 0; idx++)
+			{
+				io_ctrl(io, PCTRL_LEFT);
+				io_puts(H_INDEX, io);
+				io_ctrl(io, PCTRL_LEFT);
+				io_puts(StrPool_get(pool, idx->i_name), io);
+				io_ctrl(io, PCTRL_LEFT);
+				io_puts(StrPool_get(pool, idx->i_desc), io);
+				io_ctrl(io, PCTRL_LINE);
+			}
+		}
+	}
 
 	show_axis(io, H_ROWS, md->axis, 0);
 	show_axis(io, H_COLUMNS, md->axis, XMARK);
@@ -252,7 +302,8 @@ static void headline(IO *io, mdaxis *x, EfiType *type, const char *str)
 			if	(x->idx[i].flags & MDFLAG_LOCK)
 				continue;
 
-			p = mstrpaste(".", str, x->idx[i].name);
+			p = mstrpaste(".", str,
+				StrPool_get(x->sbuf, x->idx[i].i_name));
 			headline(io, x->next, type, p);
 			memfree(p);
 		}
@@ -369,6 +420,8 @@ static void c_walk(IO *io, mdaxis *x, EfiType *type, char *ptr)
 
 static void l_walk(IO *io, mdmat *md, mdaxis *x, const char *label, char *ptr)
 {
+	if	(io_err(io))	return;
+
 	while (x != NULL && (x->flags & XMARK))
 		x = x->next;
 
@@ -382,7 +435,8 @@ static void l_walk(IO *io, mdmat *md, mdaxis *x, const char *label, char *ptr)
 			if	(x->idx[i].flags & MDFLAG_LOCK)
 				continue;
 
-			p = mstrpaste(".", label, x->idx[i].name);
+			p = mstrpaste(".", label,
+				StrPool_get(x->sbuf, x->idx[i].i_name));
 			l_walk(io, md, x->next, p, ptr + i * x->size);
 			memfree(p);
 		}
@@ -408,6 +462,8 @@ static void l_walk(IO *io, mdmat *md, mdaxis *x, const char *label, char *ptr)
 
 static void show_data(IO *io, mdmat *md)
 {
+	if	(io_err(io))	return;
+	
 	put_header(io, md);
 	cur_line = 0;
 	max_line = io_ctrl(io, PCTRL_LINES);
@@ -416,17 +472,35 @@ static void show_data(IO *io, mdmat *md)
 	io_ctrl(io, PCTRL_EDATA);
 }
 
-void md_print(IO *io, mdmat *md, const char *def)
+void md_print (IO *io, mdmat *md, const char *def)
 {
 	if	(md == NULL)	return;
 
 	io = set_pctrl(io, def);
 
+	switch (out_mode)
+	{
+	case 2:
+		md_putmap(md, io);
+		io_close(io);
+		return;
+	case 1:
+		md_save(io, md, 0);
+		io_close(io);
+		return;
+	}
+
 	switch (head_flag)
 	{
-	case  2:	show_header(io, md); break;
-	case  1:	put_label(io, NULL, md->title); break;
-	default:	break;
+	case  3:
+		show_header(io, md, 1); break;
+	case  2:
+		show_header(io, md, 0); break;
+	case  1:
+		put_label(io, NULL, StrPool_get(md->sbuf, md->i_name));
+		break;
+	default:
+		break;
 	}
 
 	if	(data_flag)	show_data(io, md);

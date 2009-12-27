@@ -1,5 +1,5 @@
 /*
-Piuxeldatei ausgeben
+Pixeldatei ausgeben
 
 $Copyright (C) 2000 Erich Frühstück
 This file is part of EFEU.

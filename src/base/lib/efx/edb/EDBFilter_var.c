@@ -96,6 +96,7 @@ static EDB *fdef_var (EDBFilter *filter, EDB *edb,
 	}
 
 	edb = edb_create(type);
+	edb->desc = mstrcpy(par->base->desc);
 	edb->read = var_read;
 	edb->ipar = rd_init(&var_reftype, par);
 	return edb;

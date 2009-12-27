@@ -34,6 +34,7 @@ int io_fmtkey(IO *io, FmtKey *key)
 
 	key->mode = 0;
 	key->flags = FMT_RIGHT;
+	key->size = 0;
 	key->width = 0;
 	key->prec = 0;
 	key->list = NULL;
@@ -49,6 +50,7 @@ int io_fmtkey(IO *io, FmtKey *key)
 		else if	(c == '-')	key->flags &= ~FMT_RIGHT;
 		else if	(c == '0')	key->flags |= FMT_ZEROPAD;
 		else if	(c == '#')	key->flags |= FMT_ALTMODE;
+		else if	(c == '\'')	key->flags |= FMT_GROUP;
 		else			break;
 
 		c = io_getc(io);
@@ -108,19 +110,19 @@ int io_fmtkey(IO *io, FmtKey *key)
 	for (;;)
 	{
 		if	(c == 'h')
-		{
-			key->flags |= (key->flags & FMT_SHORT) ?
-				FMT_BYTE : FMT_SHORT;
-		}
-		else if	(c == 'l')
-		{
-			key->flags |= (key->flags & FMT_LONG) ?
-				FMT_XLONG : FMT_LONG;
-		}
-		else if	(c == 'L')
-		{
-			key->flags |= FMT_XLONG;
-		}
+			key->size = (key->size == FMTKEY_SHORT) ?
+				FMTKEY_BYTE : FMTKEY_SHORT;
+		else if (c == 'l')
+			key->size = (key->size == FMTKEY_LONG) ?
+				FMTKEY_XLONG : FMTKEY_LONG;
+		else if (c == 'L')
+			key->size = FMTKEY_XLONG;
+		else if (c == 'z')
+			key->size = FMTKEY_SIZE;
+		else if (c == 'j')
+			key->size = FMTKEY_IMAX;
+		else if (c == 't')
+			key->size = FMTKEY_PDIFF;
 		else	break;
 
 		c = io_getc(io);
@@ -166,7 +168,7 @@ int io_fmtkey(IO *io, FmtKey *key)
 	return n;
 }
 
-int fmtkey(const char *fmt, FmtKey *key)
+int fmtkey (const char *fmt, FmtKey *key)
 {
 	IO *io = io_cstr(fmt);
 	int n = io_fmtkey(io, key);

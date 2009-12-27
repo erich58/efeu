@@ -26,7 +26,7 @@ If not, write to the Free Software Foundation, Inc.,
 \config shmkmf
 
 \Description
-Das Kommando <|\index{$!}|> generiert ein Makefile mithilfe der Shell.
+Das Kommando \index{|$!|} generiert ein Makefile mithilfe der Shell.
 Dabei steht die volle Funktionalität der Shell zur Formulierung
 von Regeln zur Verfügung.
 
@@ -75,12 +75,12 @@ optional angegeben werden.
 
 \shead	Einbinden von Dateien
 
-Mithilfe der Funktion <|\index{include}|> können Dateien eingebunden werden,
+Mithilfe der Funktion \index{|include|} können Dateien eingebunden werden,
 die entsprechend dem aktuellen Stand des Suchpfads \index{|IncludePath|}
 gesucht werden. Für Dateien mit absoluten oder relativen Pfadnamen
 wird der Suchpfad nicht verwendet.
 Die so eingebundenen Dateien werden registriert und von
-<|\index{mf_bootstrap}|>
+\index{|mf_bootstrap|}
 zur Konstruktion einer Regel für das Makefile <mf> selbst verwendet.
 Zusätzliche Argumente von |include| können in der Datei ausgewertet
 werden. Diese Dateien werden im folgenden \index{Headerdateien}
@@ -102,13 +102,13 @@ verwendet. Die zugehörige Hilfsvariable zum Schutz gegen
 Mehrfacheinbindung heißt <name>|_smh|.
 
 Analog zu |include| können Konfigurationsdateien mit
-der Funktion <|\index{config}|> entsprechend dem aktuellen Stand des
+der Funktion \index{|config|} entsprechend dem aktuellen Stand des
 Suchpfads \index{|ConfigPath|} gesucht werden. Im Unterschied zu
-<|\index{include}|> führt das fehlen einer Konfigurationsdatei nicht
+\index{|include|} führt das fehlen einer Konfigurationsdatei nicht
 zum Abbruch der Verarbeitung.
 
 Eine weitere Variante zu |include| stellt die Funktion
-<|\index{xinclude}|> dar. Die Headerdatei wird dabei von einer
+\index{|xinclude|} dar. Die Headerdatei wird dabei von einer
 eigenen Instanz von |$!| überarbeitet und das Ergebnis in einer
 Datei zwischengespeichert. Der Name der Zwischendatei wurd durch das
 zweite Argument der Funktion festgelegt. Fehlt die Angabe, wird der
@@ -144,11 +144,11 @@ mf_comm "Anwenderdefinitionen"
 \end
 
 Die Regel für das |Makefile| und das Pseudoziel |update| werden
-dabei mit der Funktion <|\index{mf_bootstrap}|> generiert.
+dabei mit der Funktion \index{|mf_bootstrap|} generiert.
 Die Liste der Dateien, von denen Makefile abhängt, wird intern
-gespeichert und kann mit der Funktion |add_depend| erweitert werden.
+gespeichert und kann mit der Funktion \index{|add_depend|} erweitert werden.
 Der Aufruf von |shmkmf| steht in der nur lesbaren Variablen
-|bootstrap|.
+\index{|bootstrap|}.
 
 Die Zusatzzeilen können mit der Option |-x| unterdrückt werden.
 
@@ -156,8 +156,8 @@ Die Zusatzzeilen können mit der Option |-x| unterdrückt werden.
 
 Es gibt mehrere Möglichkeiten, Ausgaben für das Makefile zu erzeugen.
 
-Zunächst können die Regeln direkt mit <|\index{echo}|> oder
-<|\index{printf}|> generiert werden.
+Zunächst können die Regeln direkt mit \index{|echo|} oder
+\index{|printf|} generiert werden.
 Für |echo| gibt es leider unterschiedliche Implementationen,
 was die Handhabung von maskierten Zeichen wie |\t| für Tabulator,
 |\n| für Zeilenvorschübe und |\c| zur Unterdrückung des
@@ -196,7 +196,7 @@ durch die Shell und der Dollar muß nicht mehr gequoted werden.
 Die bevorzugte Weise zur Erzeugung von Generierungsregeln ist jedoch
 der Einsatz von vordefinierten Hilfsfunktionen.
 Obige Regel kann auch mit
-\index[mf_rule]
+\index[|mf_rule|]
 
 ---- verbatim
 mf_rule foo foo.c '$$(CC) -o $$@ foo.c'
@@ -217,7 +217,7 @@ generiert.
 Die Namen der Pseudoziele können durch setzen der Variablen
 \index{|AllTarget|} und \index{|CleanTarget|} modifiziert werden.
 
-Die allgemeine Syntax von <|\index{mf_rule}|> ist
+Die allgemeine Syntax von \index{|mf_rule|} ist
 
 |mf_rule| [|-a|] <tg> <dep> <cmd(s)>
 
@@ -231,11 +231,11 @@ Die Ausgabe hat die Form:
 Neben |mf_rule| bilden |mf_comm| und |mf_var| die elementaren
 Funktionen zur Regelkonstruktion.
 
-Die Funktion <|\index{mf_comm}|> generiert für jedes Argument <arg> eine
+Die Funktion \index{|mf_comm|} generiert für jedes Argument <arg> eine
 Kommentarzeile der Form:\br
 |#| <arg>
 
-Die Funktion <|\index{mf_var}|> generiert eine Variablendefinition für |make|.
+Die Funktion \index{|mf_var|} generiert eine Variablendefinition für |make|.
 Als Argument wird der Name <name> der Variablen und der
 Zuweisungswert <def> übergeben. Variablen in |make| werden manchmal
 auch Makros genannt. Sie dürfen nicht mit Variablen der Shell
@@ -271,13 +271,13 @@ Die Funktion |mf_depend| richtet solche Abhängigkeitsregeln ein, wobei
 |make depend| automatisch nach Erstellung des Makefiles aufgerufen
 wird.
 
-Die allgemeine Syntax von <|\index{mf_depend}|> ist
+Die allgemeine Syntax von \index{|mf_depend|} ist
 
 |mf_depend| [|-d| <dep>] <cmd(s)>
 
 \shead	Verschieben von Kommandos
 
-Die Funktion <|\index{postpone}|> sorgt für eine spätere Ausführung
+Die Funktion \index{|postpone|} sorgt für eine spätere Ausführung
 eines Kommandos nach Abarbeitung aller nachfolgenden Befehle. Die
 Argumente werden beim Aufruf von |postpone| expandiert und dürfen
 keine einfachen Anführungszeichen enthalten.
@@ -327,25 +327,25 @@ Interne Hilfsfunktionen und Variablen werden in der Regel nicht in
 Konfigurationsdateien verwendet. Sie erleichtern jedoch die
 Definition von Funktionen in eigenen <"Header">-Dateien.
 
-Die Funktion <|\index{shmkmf_abort}|> löscht das zu generiende
+Die Funktion \index{|shmkmf_abort|} löscht das zu generiende
 Makefile und bricht die Verarbeitung ab. Der aktuelle Stand des
 Makefiles wird am Fehlerkanal ausgegeben.  Sie wird intern von
 Hilfsfunktionen im Fehlerfall verwendet.
 
-Die Funktion <|\index{shmkmf_warg}|> wird von Hilfsfunktionen im Fall
+Die Funktion \index{|shmkmf_warg|} wird von Hilfsfunktionen im Fall
 des Aufrufs mit der falschen Zahl an Argumente verwendet.
 Die Funktion |shmkmf_warg| erwartet als Argument den Namen der Funktion.
 Sie produziert eine entsprechende Fehlermeldung und bricht die
 Verarbeitung mit |shmkmf_abort| ab.
 
-Die Funktion <|\index{shmkmf_invop}|> wird von Hilfsfunktionen im Fall
+Die Funktion \index{|shmkmf_invop|} wird von Hilfsfunktionen im Fall
 des Aufrufs mit einer ungültigen Option verwendet.
 Die Funktion |shmkmf_invop| erwartet als Argument den Namen der Funktion
 und die unbekannte Optionskennung.
 Sie produziert eine entsprechende Fehlermeldung und bricht die
 Verarbeitung mit |shmkmf_abort| ab.
 
-Die Funktion <|\index{mf_bootstrap}|>
+Die Funktion \index{|mf_bootstrap|}
 erzeugt die Regeln zur Erneuerung des Makefiles aus der
 Konfigurationsdatei. Sie wird im Normalfall automatisch als
 Standardregel an ein Makefile angehängt (kann mit der Option
@@ -358,4 +358,4 @@ Die Variable \index{|shmkmf_id|} enthält den Aufrufnamen von |$!|.
 Sie wird bei der Ausgabe von Fehlermeldungen verwendet.
 
 \SeeAlso
-efeutop(1), ccmkmf(1).
+make(1) @PRM.

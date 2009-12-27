@@ -38,6 +38,8 @@ int io_printf(IO *io, const char *fmt, ...)
 int io_vprintf(IO *io, const char *fmt, va_list list)
 {
 	FmtKey key;
+	intmax_t sval;
+	uintmax_t uval;
 	int n;
 
 	if	(fmt == NULL)	return 0;
@@ -92,32 +94,75 @@ int io_vprintf(IO *io, const char *fmt, va_list list)
 		case 'c':
 		case 'C':
 
-			if	(key.flags & FMT_LONG)
+			switch (key.size)
 			{
+			case FMTKEY_LONG:
 				n += fmt_ucs(io, &key, va_arg(list, int32_t));
+				break;
+			default:
+				n += fmt_char(io, &key, va_arg(list, int));
+				break;
 			}
-			else	n += fmt_char(io, &key, va_arg(list, int));
 
 			break;
 
 		case 'i':
 		case 'd':
+			switch (key.size)
+			{
+			case FMTKEY_IMAX:
+				sval = va_arg(list, intmax_t);
+				break;
+			case FMTKEY_PDIFF:
+				sval = va_arg(list, ptrdiff_t);
+				break;
+			case FMTKEY_SIZE:
+				sval = va_arg(list, ssize_t);
+				break;
+			case FMTKEY_XLONG:
+				sval = va_arg(list, int64_t);
+				break;
+			case FMTKEY_LONG:
+				sval = va_arg(list, int32_t);
+				break;
+			default:
+				sval = va_arg(list, int);
+				break;
+			}
+
+			n += fmt_intmax(io, &key, sval);
+			break;
+
+
 		case 'u':
 		case 'b':
 		case 'o':
 		case 'x':
 		case 'X':
 
-			if	(key.flags & FMT_XLONG)
+			switch (key.size)
 			{
-				n += fmt_int64(io, &key, va_arg(list, int64_t));
+			case FMTKEY_IMAX:
+				uval = va_arg(list, uintmax_t);
+				break;
+			case FMTKEY_PDIFF:
+				uval = va_arg(list, ptrdiff_t);
+				break;
+			case FMTKEY_SIZE:
+				uval = va_arg(list, size_t);
+				break;
+			case FMTKEY_XLONG:
+				uval = va_arg(list, uint64_t);
+				break;
+			case FMTKEY_LONG:
+				uval = va_arg(list, uint32_t);
+				break;
+			default:
+				uval = va_arg(list, unsigned);
+				break;
 			}
-			else if	(key.flags & FMT_LONG)
-			{
-				n += fmt_int64(io, &key, va_arg(list, int32_t));
-			}
-			else	n += fmt_int64(io, &key, va_arg(list, int));
 
+			n += fmt_uintmax(io, &key, uval);
 			break;
 
 		case 'f':
@@ -125,6 +170,8 @@ int io_vprintf(IO *io, const char *fmt, va_list list)
 		case 'E':
 		case 'g':
 		case 'G':
+		case 'a':
+		case 'A':
 
 			n += fmt_double(io, &key, va_arg(list, double));
 			break;
@@ -132,36 +179,38 @@ int io_vprintf(IO *io, const char *fmt, va_list list)
 		case 'p':
 		case 'P':
 
-			n += fmt_uint64(io, &key,
-				(uint64_t) (size_t) va_arg(list, void *));
+			n += fmt_uintmax(io, &key,
+				(uintmax_t) (size_t) va_arg(list, void *));
 			break;
 
 		case 'n':
 
-			if	(key.flags & FMT_XLONG)
+			switch (key.size)
 			{
-				int64_t *ptr = va_arg(list, int64_t *);
-				*ptr = n;
-			}
-			else if	(key.flags & FMT_LONG)
-			{
-				int32_t *ptr = va_arg(list, int32_t *);
-				*ptr = n;
-			}
-			else if	(key.flags & FMT_BYTE)
-			{
-				int8_t *ptr = va_arg(list, int8_t *);
-				*ptr = n;
-			}
-			else if	(key.flags & FMT_SHORT)
-			{
-				int16_t *ptr = va_arg(list, int16_t *);
-				*ptr = n;
-			}
-			else
-			{
-				int *ptr = va_arg(list, int *);
-				*ptr = n;
+			case FMTKEY_IMAX:
+				*va_arg(list, intmax_t *) = n;
+				break;
+			case FMTKEY_PDIFF:
+				*va_arg(list, ptrdiff_t *) = n;
+				break;
+			case FMTKEY_SIZE:
+				*va_arg(list, size_t *) = n;
+				break;
+			case FMTKEY_XLONG:
+				*va_arg(list, int64_t *) = n;
+				break;
+			case FMTKEY_LONG:
+				*va_arg(list, int32_t *) = n;
+				break;
+			case FMTKEY_SHORT:
+				*va_arg(list, int16_t *) = n;
+				break;
+			case FMTKEY_BYTE:
+				*va_arg(list, int8_t *) = n;
+				break;
+			default:
+				*va_arg(list, int *) = n;
+				break;
 			}
 
 			break;

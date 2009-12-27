@@ -27,6 +27,7 @@ _update_smh=1
 
 include dir.smh
 
+# $alias
 # $pconfig !
 # n |
 #	:*:clears options passed to |mf_rule|.
@@ -119,11 +120,8 @@ mf_update ()
 
 	mf_rule -d $_update_flg "$_update_tg" "" \
 		"$_update_echo$* > \$@~" \
-		"${_update_echo}if cmp -s \$@~ \$@; then \\" \
-		"	rm -f \$@~; \\" \
-		"else \\" \
-		"	mv -f \$@~ \$@$_update_post; \\" \
-		"fi"
+		"${_update_echo}if cmp -s \$@~ \$@; then rm -f \$@~; \\" \
+		"else mv -f \$@~ \$@$_update_post; fi"
 }
 
 # $Examples

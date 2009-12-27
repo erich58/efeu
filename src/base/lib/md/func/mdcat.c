@@ -1,19 +1,35 @@
-/*	Achsen einer Datenmatrix aufsummieren
-	(c) 1994 Erich Frühstück
+/*
+:de:Achsen einer Datenmatrix aufsummieren
+
+$Copyright (C) 1994, 2007 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/mdmat.h>
 
-static mdaxis *add_axis(mdaxis **tab, size_t dim);
-static void setval(EfiKonv *konv, mdaxis *x, char *px,
-	mdaxis *y, char *py);
+static mdaxis *add_axis (StrPool *pool, mdaxis **tab, size_t dim);
+static void setval (EfiKonv *konv, mdaxis *x, char *px, mdaxis *y, char *py);
 
-mdmat *md_cat(const char *def, mdmat **tab, size_t dim)
+mdmat *md_cat (const char *def, mdmat **tab, size_t dim)
 {
 	size_t i;
 	mdmat *md;
 	mdlist *list;
-	StrBuf *sb;
 	mdaxis **x;
 	char *fmt;
 	char *p;
@@ -25,6 +41,7 @@ mdmat *md_cat(const char *def, mdmat **tab, size_t dim)
 
 	list = str2mdlist(def, 0);
 	md = new_mdmat();
+	md->sbuf = NewStrPool();
 
 	if	(list == NULL)	list = str2mdlist("X", 0);
 
@@ -35,10 +52,11 @@ mdmat *md_cat(const char *def, mdmat **tab, size_t dim)
 
 /*	Hauptachse und Datentype bestimmen, Achsenpointer setzen
 */
-	sb = sb_create(0);
-	sb_putstr(list->name, sb);
 	md->type = NULL;
 	ndim = max(dim, list->dim);
+	md->axis = new_axis(md->sbuf, ndim);
+	md->axis->i_name = StrPool_xadd(md->sbuf, list->name);
+
 	x = memalloc(ndim * sizeof(mdaxis *));
 
 	for (i = 0; i < ndim; i++)
@@ -47,16 +65,21 @@ mdmat *md_cat(const char *def, mdmat **tab, size_t dim)
 		{
 			if	(fmt)
 			{
-				p = mpsubarg(fmt, "ssd",
-					tab[i] ? tab[i]->title : NULL,
+				p = mpsubarg(fmt, "ssd", tab[i] ?
+					StrPool_get(tab[i]->sbuf,
+					tab[i]->i_name) : NULL,
 					list->name, i + 1);
 			}
 			else	p = msprintf("%s%d", list->name, i + 1);
 
-			sb_putstr(p, sb);
+			md->axis->idx[i].i_name = StrPool_xadd(md->sbuf, p);
 			memfree(p);
 		}
-		else	sb_putstr(list->list[i], sb);
+		else	
+		{
+			md->axis->idx[i].i_name = StrPool_xadd(md->sbuf,
+					list->list[i]);
+		}
 
 		if	(i >= dim || tab[i] == NULL)
 		{
@@ -73,22 +96,14 @@ mdmat *md_cat(const char *def, mdmat **tab, size_t dim)
 	}
 
 	del_mdlist(list);
-	md->axis = new_axis(ndim);
-	p = (char *) sb->data;
-	md->axis->name = mstrcpy(nextstr(&p));
-
-	for (i = 0; i < ndim; i++)
-		md->axis->idx[i].name = mstrcpy(nextstr(&p));
 
 	if	(md->type == NULL)	md->type = &Type_ptr;
-
-	rd_deref(sb);
 
 /*	Teilachsen bestimmen
 */
 	ptr = &md->axis->next;
 
-	while ((*ptr = add_axis(x, dim)) != NULL)
+	while ((*ptr = add_axis(md->sbuf, x, dim)) != NULL)
 		ptr = &(*ptr)->next;
 
 	memfree(x);
@@ -118,7 +133,7 @@ mdmat *md_cat(const char *def, mdmat **tab, size_t dim)
 }
 
 
-static mdaxis *add_axis(mdaxis **tab, size_t dim)
+static mdaxis *add_axis(StrPool *pool, mdaxis **tab, size_t dim)
 {
 	int i;
 	mdaxis *axis;
@@ -135,10 +150,10 @@ static mdaxis *add_axis(mdaxis **tab, size_t dim)
 		tab[i] = tab[i]->next;
 	}
 
-	return cpy_axis(axis, 0);
+	return cpy_axis(pool, axis, 0);
 }
 
-static void setval(EfiKonv *konv, mdaxis *x, char *px,
+static void setval (EfiKonv *konv, mdaxis *x, char *px,
 	mdaxis *y, char *py)
 {
 	if	(x != NULL)

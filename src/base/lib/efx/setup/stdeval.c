@@ -477,6 +477,9 @@ static EfiVarDef vardef[] = {
 	{ "ProgIdent",	&Type_str, &ProgIdent,
 		":*:identification of command\n"
 		":de:Identifikation des Kommandos\n" },
+	{ "ProgDir",	&Type_str, &ProgDir,
+		":*:directory of command\n"
+		":de:Verzeichnisname des Kommandos\n" },
 	{ "ProgName",	&Type_str, &ProgName,
 		":*:call name of command\n"
 		":de:Aufrufname des Kommandos\n" },
@@ -548,6 +551,7 @@ void SetupStd(void)
 	CmdSetup_float();
 	CmdSetup_double();
 	CmdSetup_str();
+	CmdSetup_varstr();
 	CmdSetup_io();
 	CmdSetup_stat();
 
@@ -589,11 +593,14 @@ void SetupStd(void)
 	CmdSetup_op();
 	CmdSetup_info();
 	CmdSetup_strbuf();
+	CmdSetup_MapFile();
+	CmdSetup_DatPool();
+	CmdSetup_StrPool();
 	CmdSetup_assignarg();
 	CmdSetup_date();
 	CmdSetup_regex();
-	CmdSetup_match();
 	CmdSetup_cmdpar();
+	CmdSetup_match();
 	CmdSetup_unix();
 	CmdSetup_tms();
 	CmdSetup_dl();

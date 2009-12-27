@@ -203,6 +203,10 @@ static EDBPrintDef pdef[] = {
 		":*:alias for $2"
 		":de:Kurzform für $2"
 	},
+	{ "raw", NULL, EDBPrintDef_alias, "data=binary,nosplit",
+		":*:alias for $2"
+		":de:Kurzform für $2"
+	},
 	{ "l", NULL, EDBPrintDef_alias, "label",
 		":*:alias for $2"
 		":de:Kurzform für $2"

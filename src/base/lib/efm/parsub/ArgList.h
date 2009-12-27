@@ -28,26 +28,30 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/refdata.h>
 #include <EFEU/vecbuf.h>
+#include <EFEU/StrPool.h>
 
 /*
 :de:
-Die Struktur |$1| verwaltet einen Vektor von dynamisch generierten
-Strings.
+Die Struktur |$1| verwaltet einen Vektor von Strings. Sie baut auf
+einen Stringpool auf.
 */
 
 typedef struct {
-	REFVAR;
+	STRPOOL_VAR;
 	size_t size;
 	size_t dim;
-	char **data;
+	size_t *index;
 } ArgList;
 
-extern ArgList *arg_create (void);
-extern void arg_append (ArgList *args, const char *fmt, va_list list);
-extern void arg_cadd (ArgList *args, const char *arg);
-extern void arg_madd (ArgList *args, char *arg);
-extern void arg_set (ArgList *args, int n, char *val);
-extern char *arg_get (ArgList *args, int n);
+ArgList *arg_create (void);
+void arg_append (ArgList *args, const char *fmt, va_list list);
+void arg_cadd (ArgList *args, const char *arg);
+void arg_madd (ArgList *args, char *arg);
+void arg_cset (ArgList *args, int n, const char *val);
+void arg_mset (ArgList *args, int n, char *val);
+char *arg_get (ArgList *args, int n);
+char *arg_xget (ArgList *args, int n);
+int arg_test (ArgList *args, int n);
 
 /*
 $SeeAlso

@@ -26,11 +26,12 @@ ebenfalls ausgegeben wird.
 \ssec	Ausführbarkeit von Skripts
 Um ein esh-Skript ausführbar zu machen, benötigt es
 als erste Zeile einen speziellen Eintrag der Form:
-	<|#!\eval{EFEUROOT}/esh|>
+	|#!/|<bindir>|/esh|
 
 der das Betriebssystem darüber informiert, dass das
 Skript vom Kommando |esh| interpriert werden soll.
-Dabei muss aber der absolute Pfadname angegeben werden.
+Für <bindir> muss aber der absolute Pfadname des
+Installationsverzeichnisses von |esh| angegeben werden.
 Da aber EFEU an den verschiedensten Stellen im System
 installiert sein kann, sind solche Skripts auf andere Rechner
 nicht übertragbar. Daher wird ein Trick angewendet und folgende

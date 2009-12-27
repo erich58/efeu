@@ -1,0 +1,38 @@
+# :*:data cube server
+# :de:Server für Datenwürfel
+
+# $Copyright (C) 2007 Erich Frühstück
+
+
+Port = 2100
+Debug = note
+Debug = cube=trace
+#Logfile = NULL
+Config = NULL
+SingleSession = false;
+ListCommands = false;
+PidFile = NULL
+Version = "Version 1.1"
+
+-list | ListCommands = true
+	:*:List commands and return
+s | SingleSession = true
+	:*:Run single session (allows debugging)
+d | Debug = cube=trace
+	:*:Debug mode
+q | Debug = err
+	:*:Quiet mode. Report only errors.
+	:de:Stille Verarbeitung. Nur Fehler werden gemeldet.
+#l:log | Logfile
+#	:*:Log file for client/server transactions.
+#	:de:Logfile für Client/Server Datenaustausch.
+-pid-file:path | PidFile
+	:*:File to write the process id.
+	:de:Datename zur Ausgabe der Prozessnummer
+p:port | -port:port | Port
+	:*:Specifies the port on which the server listens for connections
+	(default {Port}). 
+	:de:Gibt die Portnummer an, auf der der Sever auf Verbindungen
+	horcht, der Vorgabewert ist {Port}.
+::cfg | Config
+	:*:Config file with data cube locations

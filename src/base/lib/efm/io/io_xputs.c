@@ -26,9 +26,12 @@ If not, write to the Free Software Foundation, Inc.,
 #include <ctype.h>
 
 #define	ESCEXT	0	/* \e=^[ und \d=^? - Erweiterung verwenden */
-#define	LATIN1	1	/* Zeichen 161 - 255 unverändert ausgeben */
+#define	LATIN1	0	/* Zeichen 161 - 255 unverändert ausgeben */
+#define	EXTEND	1	/* Zeichen 128 - 255 unverändert ausgeben */
 
-#if	LATIN1
+#if	EXTEND
+#define	printable(c)	isprint(c) || ((unsigned char) (c) > 127)
+#elif	LATIN1
 #define	printable(c)	isprint(c) || ((unsigned char) (c) > 160)
 #else
 #define	printable(c)	isprint(c)

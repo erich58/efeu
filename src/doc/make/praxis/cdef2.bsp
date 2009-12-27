@@ -1,7 +1,0 @@
-#define	Count(name,db,flag,class)	@;\
-Target(name): db		@;\
-@+syncnt flg -o $@ db class	@;\
-@;
-
-#define	Count1(name,db,class)	Count(name,db,-e bst -r 1999,class)
-#define	Count2(name,db,class)	Count(name,db,-e bst -r 1955..1999,class)

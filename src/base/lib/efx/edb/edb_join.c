@@ -25,6 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/parsearg.h>
 #include <EFEU/printobj.h>
 #include <EFEU/EDBFilter.h>
+#include <EFEU/EDBJoin.h>
 #include <ctype.h>
 
 #define	ERR_VAR	"[edb:var]$!: invalid declaration $1.\n"
@@ -742,9 +743,13 @@ EDB *edb_join (EDB *edb1, EDB *edb2, const char *def)
 	JOIN *join;
 	EDB *edb;
 	EfiType *type;
+	EDBJoin *jdef;
 
 	if	(!edb1)	return edb2;
 	if	(!edb2)	return edb1;
+
+	if	((jdef = GetEDBJoin(edb1->obj->type, edb2->obj->type)))
+		return jdef->create(jdef, edb1, edb2, def);
 
 	join = join_alloc(edb1, edb2);
 

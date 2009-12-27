@@ -39,6 +39,12 @@ S_PGM_PAGER	Standardseitenfilter
 #define S_PGM_PAGER	"|less -r"
 
 /*
+Die Variable |$1| enthält den Verzeichnisnamen (falls bekannt) des Programms.
+*/
+
+char *ProgDir = NULL;
+
+/*
 Die Variable |$1| enthält den Basisnamen des Kommandos.
 */
 
@@ -108,27 +114,10 @@ void SetProgName (const char *name)
 	if	(name && *name)
 	{
 		CmdPar *par;
-		char *path;
-		char *p;
 		
-		path = mdirname(name, 0);
-		p = path ? strrchr(path, '/') : NULL;
-
-		if	(p && strcmp(p, "/bin") == 0)
-		{
-			char *top = mstrncpy(path, p - path);
-			p = mstrpaste("/lib/efeu/%L/%S:", top, path);
-			memfree(top);
-			SetApplPath(p);
-			memfree(p);
-		}
-		else if	(mstrcmp(path, "bin") == 0)
-		{
-			SetApplPath("lib/efeu/%L/%S:bin");
-		}
-		else	SetApplPath(path);
-
-		memfree(path);
+		memfree(ProgDir);
+		ProgDir = mdirname(name, 0);
+		SetApplPath(ProgDir);
 
 		par = CmdPar_ptr(NULL);
 		memfree(par->name);

@@ -78,7 +78,7 @@ cat << EOF
 # bei der Installation von EFEU generiert.
 
 # \$pconfig
-# Version="\$Id: efeucc.gencmd,v 1.5 2007-08-19 04:34:55 ef Exp $"
+# Version="\$Id: efeucc.gencmd,v 1.6 2008-04-16 19:24:46 ef Exp $"
 # ::arg(s) |
 #	:*:cc options and arguments
 #	:de:cc Optionen und Argumente
@@ -98,20 +98,14 @@ esac
 # for cc and expands the include path and |LD_RUN_PATH|
 # according to the EFEU top directory. Just have a look to
 # the command |$bin/efeucc| to see the settings.
-# |\\\$!| defines the macro |EFEUROOT| with the top directory
-# of the EFEU-implementation. It allows programms to determine the
-# installation place of efeu.
 # :de:Das Kommando |\\\$!| setzt einige default Optionen für
 # def C-Kompiler und erweitert die Suchpfade für Einbindedateien
 # und Bibliotheken entsprechend dem Hauptverzeichnis von EFEU.
 # Die aktuelle Setzung kann direkt dem Kommando |$bin/efeucc|
 # entnommen werden.
-# |\\\$!| definiert den Makro |EFEUROOT| mit der Hauptbibliothek
-# der EFEU-Implementation. Damit kann in Programmen der Installationsort
-# von Dateien ermittelt werden.
 # \$SeeAlso
 # cc(1).
 
 LD_RUN_PATH="\$LD_RUN_PATH:$top/lib"; export LD_RUN_PATH
-exec $CC -D_XOPEN_SOURCE -DEFEUROOT=$top -I$top/include -L$top/lib \$@
+exec $CC -D_XOPEN_SOURCE -I$top/include -L$top/lib \$@
 EOF

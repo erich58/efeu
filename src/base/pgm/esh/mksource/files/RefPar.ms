@@ -58,4 +58,6 @@ RefType $1_reftype = REFTYPE_INIT("$1", NULL, $1_clean);
 !, name);
 }
 
+/**/
+
 #endif	/* RefPar.ms */

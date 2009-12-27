@@ -31,8 +31,9 @@ static char *rident (const void *data)
 	if	(rd->type)
 	{
 		StrBuf *sb = sb_create(0);
+		sb_putc(':', sb);
 		sb_puts(rd->type->name, sb);
-		sb_putc(' ', sb);
+		sb_putc(':', sb);
 
 		if	(rd->type->ident)
 		{

@@ -71,8 +71,8 @@ static int show_fmt (const char *name, void *data, void *ptr)
 {
 	CmdParEval *eval = data;
 	ShowPar *par = ptr;
-	arg_set(par->arg, 1, mstrcpy(name));
-	arg_set(par->arg, 2, mstrcpy(eval->desc));
+	arg_cset(par->arg, 1, name);
+	arg_cset(par->arg, 2, eval->desc);
 	CmdPar_psubout(par->cpar, par->out, par->fmt, par->arg);
 	return 0;
 }
@@ -93,7 +93,7 @@ void CmdParEval_show (IO *io, const char *fmt)
 		par.fmt = fmt;
 		par.arg = arg_create();
 		par.cpar = CmdPar_ptr(NULL);
-		arg_set(par.arg, 0, NULL);
+		arg_cset(par.arg, 0, NULL);
 		nkt_walk(&EvalTab, show_fmt, &par);
 		rd_deref(par.arg);
 	}

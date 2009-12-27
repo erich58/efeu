@@ -24,13 +24,17 @@ If not, write to the Free Software Foundation, Inc.,
 PrintListDelim = "\t";
 
 pconfig !
-Version = "$Id: mdpaste.esh,v 1.8 2005-07-24 05:12:41 ef Exp $"
+Version = "$Id: mdpaste.esh,v 1.10 2008-02-01 16:16:34 ef Exp $"
 PrintMode = true
+MapMode = false
 Name = "#1"
 
 r | Reduce = true
-	:*:remove singulary axis
+	:*:remove singular axis
 	:de:Entfernen von singulären Achsen
+m:map | Output; MapMode = true
+	:*:create file mapping
+	:de:Dateiabbild generieren
 v:[name::]var | VarDef: append " "
 	:*:select type components
 	:de:Variablenselektion
@@ -38,10 +42,10 @@ T:title | Title
 	:*:set title of output file
 	:de:Titel der Ausgabedatei setzen
 s | Sort = true
-	:*:sort label of axis
+	:*:sort labels of axis
 	:de:sortiert die Achsenbezeichner
 u | Uniq = true
-	:*:sort label of axis, use only last of uniq labels
+	:*:sort labels of axis, use only last of repeated labels
 	:de:sortiert die Achsenbezeichner,
 	wobei gleiche Bezeichner nur einmal verwendet werden.
 	Bei gleichen Bezeichnern werden die Daten der zuletzt angegebenen
@@ -133,7 +137,9 @@ for (i = 0; i < n; i++)
 if	(flagres("Reduce"))	tab[0].reduce();
 if	(Title)			tab[0].title = Title;
 
-if	(flagres("PrintMode"))
+if	(flagres("MapMode"))
+	tab[0].map(Output);
+else if	(flagres("PrintMode"))
 	tab[0].mark("#-1").print(iostd, "nohead");
 else	tab[0].save(Output);
 

@@ -25,10 +25,10 @@
 Ident = ":*:command:de:Kommando:_: $!"
 	:*:short description of command
 	:de:Kurzbeschreibung des Kommandos
-Version = NULL
+Version
 	:*:command version
 	:de:Versions/Revisionsnummer des Kommandos
-Copyright = NULL
+Copyright
 	:*:copyright information
 	:de:Copyright-Informationen
 Debug = note
@@ -50,8 +50,8 @@ GZIP = "-n1"
 
 :config help
 
-# :*:eis interface
-# :de:eis - Schnittstelle
+# :*:info interface
+# :de:Info - Schnittstelle
 
 -info::entry|:info; :exit 0
 	:*:show command information

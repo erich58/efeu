@@ -32,10 +32,12 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/pconfig.h>
 #include <EFEU/refdata.h>
 #include <EFEU/EDB.h>
+#include <EFEU/MapFile.h>
 
 #define	MD_MAGIC0	0xEFD0		/* Alte Kennung (Revers Byteorder) */
 #define	MD_MAGIC1	0xEFD1		/* Datenmatrix, Version 1 */
 #define	MD_MAGIC2	0xEFD2		/* Datenmatrix, Version 2 */
+#define	MD_MAGIC3	0xEFD3		/* Datenmatrix, Version 3 */
 #define	MD_EOFMARK	"*EOF"		/* Eofmarke */
 
 
@@ -53,12 +55,12 @@ EfiType *mdtype (const char *str);
 char *type2str (const EfiType *type);
 
 
-
 /*	Struktur für Achsenbezeichner
 */
 
 typedef struct {
-	char *name;	/* Achsenbezeichner */
+	size_t i_name;	/* Index des Namens */
+	size_t i_desc;	/* Index der Beschreibung */
 	unsigned flags;	/* Selektionsflags */
 } mdindex;
 
@@ -68,18 +70,30 @@ typedef struct {
 
 typedef struct mdaxis_struct mdaxis;
 
+typedef struct {
+	REFVAR;		/* Referenzvariablen */
+	StrPool *sbuf;	/* Stringpool für Namen */
+	size_t idx;	/* Spaltenindex */
+	size_t cols;	/* Zahl der Spalten */
+	size_t dim;	/* Indexdimension */
+	size_t *tab;	/* Offset - Tabelle */
+} mdx_lbl;
+
 struct mdaxis_struct {
 	mdaxis *next;	/* Verweis auf nächstes Element */
+	StrPool *sbuf;	/* Stringpool für Namen */
+	size_t i_name;	/* Index des Achsennamens */
+	size_t i_desc;	/* Index der Achsenbeschreibung */
 	size_t size;	/* Datengröße eines Elementes */
 	size_t dim;	/* Zahl der Elemente */
-	char *name;	/* Achsenname */
 	mdindex *idx;	/* Indexvektor */
 	unsigned flags;	/* Steuerflags */
+	mdx_lbl *lbl;	/* Erweiterte Labels */
 	void *priv;	/* Private Referenzdaten */
 };
 
-mdaxis *new_axis (size_t dim);
-mdaxis *cpy_axis (mdaxis *axis, unsigned mask);
+mdaxis *new_axis (StrPool *sbuf, size_t dim);
+mdaxis *cpy_axis (StrPool *sbuf, mdaxis *axis, unsigned mask);
 void del_axis (mdaxis *axis);
 
 #define	MDFLAG_LOCK	1	/* Index ist gesperrt */
@@ -92,6 +106,11 @@ void del_axis (mdaxis *axis);
 #define	MDXFLAG_HIDE	4	/* Achsenlabel unterdrücken */
 #define	MDXFLAG_TEMP	8	/* Temporäre Markierung */
 
+void mdx_init (mdaxis *axis);
+void mdx_choice (mdaxis *axis, const char *def);
+void mdx_index (mdaxis *axis, int n);
+char *mdx_head (mdaxis *axis);
+char *mdx_label (mdaxis *axis, int n);
 
 /*	Achsenvergleich
 */
@@ -109,7 +128,10 @@ int cmp_axis (mdaxis *a, mdaxis *b, int flag);
 
 typedef struct {
 	REFVAR;		/* Referenzzähler */
-	char *title;	/* Titel der Matrix */
+	MapFile *map;	/* Mapfile */
+	StrPool *sbuf;	/* Stringpool */
+	size_t i_name;	/* Index des Matrixnamens */
+	size_t i_desc;	/* Index der Matrixbeschreibung */
 	EfiType *type;	/* Datentype */
 	mdaxis *axis;	/* Achsenkette */
 	size_t size;	/* Speicherbedarf für Datenfeld */
@@ -200,19 +222,27 @@ mdmat *md_load (IO *io, const char *def, const char *odef);
 mdmat *md_fload (const char *name, const char *def, const char *odef);
 mdmat *md_reload (mdmat *md, const char *def, const char *odef);
 
+mdmat *md_getmap (const char *path);
+mdmat *md_map (MapFile *map);
+int md_fputmap (mdmat *md, const char *path);
+int md_putmap (mdmat *md, IO *out);
+void md_reorg_label (mdmat *md);
+
 mdmat *edb2md (EDB *edb);
 EDB *md2edb (mdmat *md);
 void Setup_edb2md (void);
 
-mdmat *md_gethdr (IO *io);
+mdmat *md_gethdr (IO *io, int mode);
 void md_tsteof (IO *io);
+int md_file (IO *out, const char *name, const char *mode);
+void md_info (IO *io, mdmat *md, const char *name, const char *mode);
 
-void md_walk (mdmat *md, const char *def,
-	void (*visit)(EfiType *type, void *data));
-void md_xwalk (mdmat *md, const char *def,
-	void (*visit)(EfiType *type, void *data, void *base));
-void md_twalk (mdmat *md, const char *def, int lag,
-	void (*visit)(EfiType *type, void *data, void *base));
+int md_walk (void *par, mdmat *md, const char *def,
+	int (*visit) (void *par, EfiType *type, void *data));
+int md_xwalk (void *par, mdmat *md, const char *def,
+	int (*visit) (void *par, EfiType *type, void *data, void *base));
+int md_twalk (void *par, mdmat *md, const char *def, int lag,
+	int (*visit) (void *par, EfiType *type, void *data, void *base));
 
 void md_puthdr (IO *io, mdmat *md, unsigned mask);
 void md_putdata (IO *io, const EfiType *type, mdaxis *axis,
@@ -229,20 +259,20 @@ void md_ssave (IO *io, mdmat *md, int (*cmp) (mdindex *a, mdindex *b),
 /*	Schnittstelle zu Befehlsinterpreter
 */
 
+typedef struct {
+	mdaxis *axis;
+	size_t n;
+} EfiMdIndex;
+
 extern EfiType Type_mdmat;
 extern EfiType Type_mdaxis;
 extern EfiType Type_mdidx;
-
-extern mdmat *Buf_mdmat;
-extern mdaxis *Buf_mdaxis;
-extern mdindex Buf_mdidx;
 
 #define	Obj_mdmat(x)	NewPtrObj(&Type_mdmat, (x))
 #define	Obj_mdaxis(x)	NewPtrObj(&Type_mdaxis, (x))
 
 #define	Val_mdmat(x)	((mdmat **) x)[0]
 #define	Val_mdaxis(x)	((mdaxis **) x)[0]
-#define	Val_mdidx(x)	((mdindex *) x)[0]
 
 void MdSetup_func (void);
 

@@ -36,19 +36,10 @@ If not, write to the Free Software Foundation, Inc.,
 #define	NOREAD	"%s: file %s not readable.\n"
 #define	NOWRITE	"%s: file %s not writeable.\n"
 
-/*
-$pconfig
-:in |
-	:*:input file
-	:de:Eingabefile
-:out |
-	:*:output file
-	:de:Ausgabefile
-*/
 
 static void usage (const char *name, const char *arg)
 {
-	execlp("efeuman", "efeuman", "-s", __FILE__, "--", name, arg, NULL);
+	execlp("efeuman", "efeuman", name, arg, NULL);
 	fprintf(stderr, USAGE, name);
 	exit(arg ? 0 : 1);
 }

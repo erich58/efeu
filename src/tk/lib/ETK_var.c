@@ -104,7 +104,6 @@ static void tcl_free (EfiObj *obj)
 	memfree(var->name);
 #endif
 	rd_deref(var->etk);
-	Obj_free(obj, TCLSIZE(obj->type));
 }
 
 static void tcl_update (EfiObj *obj)

@@ -41,7 +41,7 @@ typedef struct {
 	void (*clean) (void *data);
 } NameKeyTab;
 
-extern const RefType nkt_reftype;
+extern RefType nkt_reftype;
 
 /*
 Der Makro |$1| liefert die Initialisierungswerte für eine Schlüsseltabelle

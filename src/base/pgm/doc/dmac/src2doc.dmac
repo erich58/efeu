@@ -49,13 +49,27 @@ Eingabedatei genommen.
 \def\addsrclist {{
 str path = xexpand(ParseLine(cin));
 
-if	(!path)	path = dirname(DocName);
+if	(!path)	path = DocDir;
 
 path = path ? path + "/" : ".";
 
 for (x in split(filter("mksrclist " + path)))
 	if	(x != DocName)
 		SourceList += { basename(x), x };
+}}
+
+\def\addsrcpath {{
+str path = xexpand(ParseLine(cin));
+
+for (dir in split(path, ":"))
+{
+	if	(!FileStat(dir))
+		continue;
+
+	for (x in split(filter("mksrclist " + dir)))
+		if	(x != DocName)
+			SourceList += { basename(x), x };
+}
 }}
 
 :*:expand source list with single file

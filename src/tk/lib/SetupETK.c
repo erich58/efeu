@@ -211,8 +211,7 @@ static void f_tcleval (EfiFunc *func, void *rval, void **arg)
 			if	(!tmp)
 				tmp = sb_create(0);
 
-			p = argl ? psubexpand(tmp, in, argl->dim, argl->data) :
-				psubexpand(tmp, in, 0, NULL);
+			p = psubexpandarg(tmp, in, argl);
 
 			if	(flag)
 				io_xputs(p, out, "\"");

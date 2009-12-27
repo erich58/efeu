@@ -181,47 +181,48 @@ void Doc_input (Doc *doc, const char *opt, IO *in)
 IO *Doc_open (const char *path, const char *name, int flag)
 {
 	IO *in;
+	char *dname;
+	char *ddir;
 	
-	DocPath = mstrcpy(path);
-	DocName = fsearch(path, NULL, name, NULL);
+	dname = fsearch(path, NULL, name, NULL);
+	ddir = NULL;
 
-	if	(!DocName)
-		DocName = fsearch(NULL, NULL, name, NULL);
+	if	(!dname)
+		dname = fsearch(NULL, NULL, name, NULL);
 
-	if	(DocName)
+	if	(dname)
 	{
 		struct stat buf;
-		char *p;
 
-		if	(stat(DocName, &buf) == EOF)
+		if	(strcmp(dname, "./.") == 0)
 		{
-			dbg_note(NULL, "[Doc:4]", "m", DocName);
-			DocName = NULL;
+			memfree(dname);
+			dname = mstrcpy(".");
+		}
+
+		if	(stat(dname, &buf) == EOF)
+		{
+			dbg_note(NULL, "[Doc:4]", "m", dname);
 			return NULL;
 		}
 
 		if	(S_ISDIR(buf.st_mode))
 		{
-			memfree(DocPath);
-			DocPath = mstrpaste(":", DocName, path);
+			ddir = dname;
+			dname = fsearch(ddir, NULL, "main", "eds");
 
-			p = fsearch(DocName, NULL, "main", "eds");
+			if	(!dname)
+				dname = fsearch(ddir, NULL, "main", "doc");
 
-			if	(!p)
-				p = fsearch(DocName, NULL, "main", "doc");
-
-			if	(!p)
-				p = mstrpaste("/", DocName, MAINDOC);
-
-			memfree(DocName);
-			DocName = p;
+			if	(!dname)
+			{
+				dname = mstrpaste("/", ddir, MAINDOC);
+				dbg_note(NULL, "[Doc:5]", "m", dname);
+				memfree(ddir);
+				return NULL;
+			}
 		}
-		else if	((p = mdirname(DocName, 0)) != NULL)
-		{
-			memfree(DocPath);
-			DocPath = mstrpaste(":", p, path);
-			memfree(p);
-		}
+		else	ddir = mdirname(dname, 0);
 	}
 	else
 	{
@@ -229,7 +230,25 @@ IO *Doc_open (const char *path, const char *name, int flag)
 		return NULL;
 	}
 
-	in = io_lnum(io_fileopen(DocName, "rzd"));
+	in = io_lnum(io_fileopen(dname, "rzd"));
+
+	memfree(DocName);
+	DocName = dname;
+	memfree(DocDir);
+	DocDir = ddir ? ddir : mstrcpy(".");
+	memfree(DocPath);
+	
+	if	(ddir)
+	{
+		int n = strlen(ddir);
+
+		if	(strncmp(ddir, path, n) == 0 && path[n] == ':')
+		{
+			DocPath = mstrcpy(path);
+		}
+		else	DocPath = mstrpaste(":", ddir, path);
+	}
+	else	DocPath = mstrcpy(path);
 
 	if	(flag)
 	{
@@ -254,16 +273,21 @@ void Doc_include (Doc *doc, const char *opt, const char *name)
 	IO *io;
 	char *save_name;
 	char *save_path;
+	char *save_dir;
 	
 	save_name = DocName;
 	save_path = DocPath;
+	save_dir = DocDir;
 	DocName = NULL;
 	DocPath = NULL;
+	DocDir = NULL;
 	io = Doc_open(save_path, name, opt ? 0 : 1);
 	Doc_rem(doc, "Eingabedatei: $1", "nm", rd_ident(io));
 	Doc_input(doc, opt, io);
 	memfree(DocName);
 	memfree(DocPath);
+	memfree(DocDir);
 	DocName = save_name;
 	DocPath = save_path;
+	DocDir = save_dir;
 }

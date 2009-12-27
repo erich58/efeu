@@ -38,6 +38,7 @@ void CmdSetup_size(void);	/* Vorzeichenfreie lange Ganzzahlwerte */
 void CmdSetup_float(void);	/* Einfache Gleitkommawerte */
 void CmdSetup_double(void);	/* Doppelte Gleitkommawerte */
 void CmdSetup_str(void);	/* Zeichen und Strings */
+void CmdSetup_varstr(void);	/* Zeichenketten, Version 2 */
 void CmdSetup_io(void);		/* Ein-, Ausgabestrukturen */
 void CmdSetup_print(void);	/* Ausgabefunktionen */
 void CmdSetup_vec(void);	/* Vektorfunktionen */
@@ -50,6 +51,9 @@ void CmdSetup_func(void);	/* Funktionen */
 void CmdSetup_op(void);		/* Operatoren einrichten */
 void CmdSetup_info(void);	/* Informationsdatenbank */
 void CmdSetup_strbuf(void);	/* Stringbuffer */
+void CmdSetup_StrPool(void);	/* Stringpool */
+void CmdSetup_DatPool(void);	/* Datenpool */
+void CmdSetup_MapFile(void);	/* Dateimapping */
 void CmdSetup_assignarg(void);	/* Zuweisungsargument */
 void CmdSetup_date(void);	/* Datum- und Zeit */
 void CmdSetup_unix(void);	/* UNIX-Systemstrukturen */

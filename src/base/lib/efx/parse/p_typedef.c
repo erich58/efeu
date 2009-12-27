@@ -23,6 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 #include <EFEU/Op.h>
 #include <EFEU/parsedef.h>
+#include <EFEU/ioctrl.h>
 
 /*	Typedefinition: Falls kein Vektortype angegeben ist, wird nur
 	ein Aliasname generiert.
@@ -140,15 +141,43 @@ EfiStruct *GetStructEntry (IO *io, EfiType *type)
 /*	Strukturliste generieren
 */
 
-EfiStruct *GetStruct (IO *io, int delim)
+static void add_desc (IO *io, EfiStruct *last)
+{
+	if	(last)
+	{
+		char *p = NULL;
+		io_ctrl(io, IOPP_COMMENT, &p);
+
+		if	(p)
+		{
+			mtrim(p);
+			memfree(last->desc);
+			last->desc = p;
+		}
+	}
+	else	io_ctrl(io, IOPP_COMMENT, NULL);
+}
+
+EfiStruct *GetStruct (EfiStruct *base, IO *io, int delim)
 {
 	EfiType *type;
-	EfiStruct *st, **ptr;
+	EfiStruct **ptr;
+	EfiStruct *last;
 	int c;
 
+	if	(base)
+	{
+		ptr = &base->next;
+		last = base;
+	}
+	else
+	{
+		ptr = &base;
+		last = NULL;
+	}
+
 	type = NULL;
-	st = NULL;
-	ptr = &st;
+	io_ctrl(io, IOPP_COMMENT, NULL);
 
 	while ((c = io_eat(io, " \t")) != delim)
 	{
@@ -156,25 +185,32 @@ EfiStruct *GetStruct (IO *io, int delim)
 		{
 		case EOF:
 
-			rd_deref(st);
+			rd_deref(base);
 			io_error(io, "[efmain:121]", NULL);
 			return NULL;
 
 		case '\n':
-		case ';':	type = NULL; /* FALLTHROUGH */
-		case ',':	io_getc(io); continue;
-		default:	break;
+		case ';':
+			type = NULL; /* FALLTHROUGH */
+		case ',':
+			io_getc(io);
+			add_desc(io, last);
+			continue;
+		default:
+			break;
 		}
 
 		if	((*ptr = GetStructEntry(io, type)) == NULL)
 		{
-			rd_deref(st);
+			rd_deref(base);
 			return NULL;
 		}
 
+		last = *ptr;
 		type = (*ptr)->type;
 		ptr = &(*ptr)->next;
 	}
 
-	return st;
+	add_desc(io, last);
+	return base;
 }

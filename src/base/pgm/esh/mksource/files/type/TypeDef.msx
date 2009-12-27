@@ -29,6 +29,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <function.ms>
 #include <printfunc.ms>
 #include <EDBFilter.ms>
+#include <EDBJoin.ms>
 
 @include struct.part
 @include tools.part
@@ -46,6 +47,7 @@ If not, write to the Free Software Foundation, Inc.,
 @include input.part
 @include output.part
 @include filter.part
+@include join.part
 
 void TypeDef::xtype (str name, ...)
 	pre_setup += sprintf("XGetType(%#s);\n", psub(name, va_list));

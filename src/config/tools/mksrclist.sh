@@ -21,7 +21,7 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 # $pconfig
-# Version="$Id: mksrclist.sh,v 1.2 2007-08-19 04:34:55 ef Exp $"
+# Version="$Id: mksrclist.sh,v 1.3 2008-03-31 20:53:25 ef Exp $"
 # f|
 #	:*:force creation of output file
 #	:de:Forcierte Neugenerierung der Ausgabedatei
@@ -39,14 +39,18 @@
 #	:de:Name der Ausgabedatei für ein update
 
 # $Description
-# The command |$!| creates a list of files unter <top>
+# :*:The command |$!| creates a list of files unter <top>.
+# :de:Das Kommando |$!| generiert eine Liste von Dateien unterhalb von <top>.
 #
 # @arglist -i
 #
 # $Diagnostic
-# The command |$1| returns 2 on an error in creating the source list.
+# :*:The command |$!| returns 2 on an error in creating the source list.
 # If the source list is new or it hase changed, the return code is 1.
 # Otherwise the return code is 0.
+# :de:Das Kommando |$!| liefert 2, falls ein Fehler bei der Erzeugung der
+# Dateiliste auftrat. Falls die Dateiliste neu ist oder sich verädert hat,
+# ist der Rückgabewert 1. Bei unveränderter Dateiliste ist er 0.
 # 
 # $SeeAlso
 # shmkmf(1), d2m.smh(7).

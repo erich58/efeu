@@ -174,6 +174,34 @@ static void f_getconv (EfiFunc *func, void *rval, void **arg)
 	Val_func(rval) = konv ? rd_refer(konv->func) : NULL;
 }
 
+static void f_showenum (EfiFunc *func, void *rval, void **arg)
+{
+	EfiType *type;
+	IO *out;
+
+	type = Val_type(arg[0]);
+	out = Val_io(arg[1]);
+
+	if	(type->vtab)
+	{
+		VarTabEntry *p;
+		size_t n;
+
+		p = type->vtab->tab.data;
+		n = type->vtab->tab.used;
+
+		for (; n-- > 0; p++)
+		{
+			if	(p->obj && p->obj->type == type)
+			{
+				io_printf(out, "%d;%s;%s\n",
+					Val_int(p->obj->data),
+					p->name, p->desc);
+			}
+		}
+	}
+}
+
 static EfiObj *func_type (const EfiObj *base, void *data)
 {
 	EfiFunc *func = base ? Val_ptr(base->data) : NULL;
@@ -198,5 +226,7 @@ void CmdSetup_test(void)
 	SetFunc(0, &Type_void, "locale (IO = iostd)", f_locale);
 	SetFunc(0, &Type_void, "parselist (IO = iostd)", f_parselist);
 	SetFunc(0, &Type_str, "typehead (Type_t type)", f_typehead);
+	SetFunc(0, &Type_void, "showenum (Type_t type, IO = iostd)",
+			f_showenum);
 	AddEfiMember(Type_func.vtab, var_func, tabsize(var_func));
 }

@@ -154,6 +154,8 @@ EDB *edb_merge (CmpDef *cdef, EDB **tab, size_t dim)
 		edb = edb_create(tab[0]->obj->type);
 		edb->read = mpar_read;
 		edb->ipar = mpar;
+		edb->desc = tab[0]->desc;
+		tab[0]->desc = NULL;
 		return edb;
 	}
 

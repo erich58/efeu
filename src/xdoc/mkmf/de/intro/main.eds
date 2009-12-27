@@ -1,0 +1,9 @@
+\title	Ein einfaches Beispiel
+
+\config shmkmf
+\include intro.eds
+\include scenario.eds
+\include lib.eds
+\include pgm.eds
+\include doc.eds
+\include notes.eds

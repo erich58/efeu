@@ -58,7 +58,7 @@ int PrintFmtList (IO *io, const char *fmt, EfiObjList *list)
 {
 	FmtKey key;
 	EfiObj *obj;
-	int64_t lval;
+	intmax_t lval;
 	int n;
 
 	if	(fmt == NULL)	return 0;
@@ -118,7 +118,7 @@ int PrintFmtList (IO *io, const char *fmt, EfiObjList *list)
 
 			obj = get_arg(&list);
 
-			if	(key.flags & FMT_LONG)
+			if	(key.size == FMTKEY_LONG)
 			{
 				int32_t z;
 				Obj2Data(obj, &Type_wchar, &z);
@@ -143,23 +143,36 @@ int PrintFmtList (IO *io, const char *fmt, EfiObjList *list)
 
 			obj = get_arg(&list);
 
-			if	(key.flags & FMT_XLONG)
+			if	(key.size == FMTKEY_IMAX
+				|| key.size == FMTKEY_XLONG)
 			{
 				Obj2Data(obj, &Type_int64, &lval);
 			}
-			else if	(key.flags & FMT_LONG)
+			else if	(key.size == FMTKEY_PDIFF)
+			{
+				int64_t z;
+				Obj2Data(obj, &Type_int64, &z);
+				lval = (ptrdiff_t) z;
+			}
+			else if	(key.size == FMTKEY_SIZE)
+			{
+				uint64_t z;
+				Obj2Data(obj, &Type_uint64, &z);
+				lval = (size_t) z;
+			}
+			else if	(key.size == FMTKEY_LONG)
 			{
 				int32_t z;
 				Obj2Data(obj, &Type_int32, &z);
 				lval = z;
 			}
-			else if	(key.flags & FMT_BYTE)
+			else if	(key.size == FMTKEY_BYTE)
 			{
 				int8_t z;
 				Obj2Data(obj, &Type_int8, &z);
 				lval = z;
 			}
-			else if	(key.flags & FMT_SHORT)
+			else if	(key.size == FMTKEY_SHORT)
 			{
 				int16_t z;
 				Obj2Data(obj, &Type_int16, &z);
@@ -167,7 +180,7 @@ int PrintFmtList (IO *io, const char *fmt, EfiObjList *list)
 			}
 			else	lval = Obj2int(obj);
 
-			n += fmt_int64(io, &key, lval);
+			n += fmt_intmax(io, &key, lval);
 			break;
 
 		case 'f':
@@ -175,6 +188,8 @@ int PrintFmtList (IO *io, const char *fmt, EfiObjList *list)
 		case 'E':
 		case 'g':
 		case 'G':
+		case 'a':
+		case 'A':
 
 			obj = get_arg(&list);
 			n += fmt_double(io, &key, Obj2double(obj));

@@ -26,7 +26,7 @@ fmt_float = "%*.*f";
 float_prec = 2;
 
 pconfig !
-Version = "$Id: mdprint.esh,v 1.17 2006-06-07 08:45:19 ef Exp $"
+Version = "$Id: mdprint.esh,v 1.19 2008-02-01 16:16:34 ef Exp $"
 Mark = "#-1"
 mode = "std"
 Locale = "en"
@@ -47,22 +47,22 @@ M:mode | mode
 	:*:set output mode, default is "{mode}"
 	:de:Ausgabemodus, Vorgabe "{mode}"
 -ascii | mode = ascii
-	:*:preparate as ascii file
+	:*:prepare as ascii file
 	:de:Aufbereitung als ASCII-Datei
 -csv | mode = csv; Suffix = "csv"; Locale = NULL
-	:*:preparation for excel
+	:*:prepare for excel
 	:de:Aufbereitung für excel
 -tex | mode = tex
-	:*:preparation for LaTeX
+	:*:prepare for LaTeX
 	:de:Aufbereitung für TeX
 -tab | mode = tab
-	:*:preparation for LaTeX tabular environment
+	:*:prepare for LaTeX tabular environment
 	:de:Aufbereitung für TeX-Tabellen
 -data | mode="data"; Flags: set "{Flags} nohead"
 	:*:print only data values
 	:de:Nur Datenwerte ausgeben
 -sc | mode = "sc"; Locale = "en"
-	:*:output sc spreadsheed
+	:*:output sc spreadsheet
 	:de:Aufbereitung für sc-Spreadsheet
 -std | :eval 'PrintListDelim=" "; field_width = 7'; \
 	Flags: set "{Flags} mode=std title label=8"
@@ -80,7 +80,7 @@ M:mode | mode
 -lpq | mode = tex; Flags: set "{Flags} landscape"; Output: set {.LPQ}
 	:*:print data cube in landscape
 	:de:Ausgabe zum Drucker, Querformat
-m | Flags: set "{Flags} mark"
+-mark| Flags: set "{Flags} mark"
 	:*:mark column marker as comment
 	:de:Spaltenbezeichner markieren
 -nomark | Flags: set "{Flags} nomark"
@@ -92,6 +92,9 @@ h | Flags: set "{Flags} nodata"
 b | Flags: set "{Flags} nohead"
 	:*:show data only
 	:de:Header unterdrücken
+H | Flags: set "{Flags} xhead"
+	:*:show complete header
+	:de:Vollständigen Header ausgeben
 t | Flags: set "{Flags} title"
 	:*:show only title in header
 	:de:Nur Titel im Header ausgeben
@@ -114,7 +117,7 @@ w:width | :eval 'field_width="{}"'
 	:*:field width for values
 	:de:Feldbreite der Zahlenwerte
 p:prec | :eval 'float_prec="{}"'
-	:*:floating number precission
+	:*:floating number precision
 	:de:Genauigkeit der Zahlenwerte
 d:delim | :eval 'PrintListDelim="{}"'
 	:*:delimiter of lists
@@ -132,10 +135,10 @@ s:list | SumList: append " "
 	:*:accumulate list of axis
 	:de:Achsen aufsummieren
 r | Reduce = " "
-	:*:remove singulary axis
+	:*:remove singular axis
 	:de:Entfernen von singulären Achsen
 R:list | Reduce: append " "
-	:*:remove singulary axis from List <list>
+	:*:remove singular axis from List <list>
 	:de:Entfernen von singulären Achsen aus der Liste <list>
 v:[name::]var | VarDef: append " "
 	:*:select type components
@@ -150,7 +153,7 @@ P:name\|=\|list | -paste:name\|=\|list | Paste: append " "
 	:*:delimiter for pasting axis, default: {PasteDelim}
 	:de:Begrenzer für das Verkleben von Achsen, Vorgabe {PasteDelim}
 S:list | -split:list | Split: append ","
-	:*:split datamatrix by axis <list>.
+	:*:split data matrix by axis <list>.
 	:de:Datenmatrix nach Achse(n) <list> aufspalten.
 :file | Input
 	:*:input file

@@ -1,0 +1,14 @@
+\sec	Programm |pasctrian|.
+
+Das Hilfskommando |pasctrian| erzeugt die Werte für das
+Pascalsche Dreieck. Als Argument muss der Exponent <n>, bis zu dem
+die Binomialkoeffizienten berechnet werden sollen, vorgegeben werden.
+
+\include[verbatim]	pasctrian.c
+
+Die Anweisung zur Generierung der Kompilierungsregel für einfache
+Kommandos entspricht dem zugehörigen Aufruf des C-Kompilers:
+
+---- verbatim
+mf_cc -o pasctrian pasctrian.c -lbinom
+----

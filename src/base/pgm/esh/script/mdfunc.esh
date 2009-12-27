@@ -26,8 +26,9 @@ Type_t Type = NULL;
 PrintListDelim = "\t";
 
 pconfig !
-Version = "$Id: mdfunc.esh,v 1.10 2005-07-24 05:12:41 ef Exp $"
+Version = "$Id: mdfunc.esh,v 1.12 2008-02-01 16:16:34 ef Exp $"
 PrintMode = true
+MapMode = false
 Mark = "#-1"
 
 F:file | :eval 'gload(IncPath, "{}")'
@@ -37,8 +38,11 @@ E:expr | :eval 'geval("{}")'
 	:*:evaluate expression <expr>
 	:de:Ausdruck <expr> auswerten
 r | Reduce = true
-	:*:remove singulary axis
+	:*:remove singular axis
 	:de:Entfernen von singulären Achsen
+m:map | Output; MapMode = true
+	:*:create file mapping
+	:de:Dateiabbild generieren
 v:[name::]var | VarDef: append " "
 	:*:select type components
 	:de:Variablenselektion
@@ -49,7 +53,7 @@ T:title | Title
 	:*:negation
 	:de:Negation
 -not | :eval 'Function = operator"!()"'
-	:*:boolean not
+	:*:Boolean not
 	:de:Boolsche Negation
 -cpl | :eval 'Function = operator"~()"'
 	:*:bitwise complement
@@ -70,7 +74,7 @@ x:list | Mark
 	:*:list of column axis, default "{Mark}"
 	:de:Achsenliste für Spalten, Vorgabe "{Mark}"
 p:prec | :eval 'float_prec = {}'
-	:*:floating number precission
+	:*:floating number precision
 	:de:Genauigkeit der Zahlenwerte
 :file | Input
 	:*:input file
@@ -107,11 +111,10 @@ else
 
 if	(Title)		md.title = Title;
 
-if	(flagres("PrintMode"))
-{
-	md.mark(strsub(Mark, ",", " ", true));
-	md.print(iostd, "nohead");
-}
+if	(flagres("MapMode"))
+	md.map(Output);
+else if	(flagres("PrintMode"))
+	md.mark(strsub(Mark, ",", " ", true)).print(iostd, "nohead");
 else	md.save(Output);
 
 free(md);

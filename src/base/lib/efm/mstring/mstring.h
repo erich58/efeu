@@ -53,4 +53,6 @@ char *mbasename (const char *path, char **suffix);
 int64_t mstr2int64 (const char *str, char **ptr, int base);
 uint64_t mstr2uint64 (const char *str, char **ptr, int base);
 
+void mtrim (char *s);
+
 #endif	/* EFEU/mstring.h */

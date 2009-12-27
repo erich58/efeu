@@ -106,6 +106,7 @@ void sb_free (StrBuf *sb);
 int sb_get (StrBuf *sb);
 int sb_put (int c, StrBuf *sb);
 int sb_puts (const char *str, StrBuf *sb);
+int sb_nputs (const char *str, size_t len, StrBuf *sb);
 int sb_rputs (const char *str, StrBuf *sb);
 int sb_putstr (const char *str, StrBuf *sb);
 int sb_printf (StrBuf *sb, const char *fmt, ...);
@@ -189,7 +190,7 @@ Rückgabewert.
 
 /*
 :*:
-The macro |$1| worrya about a correct allignment of the valid
+The macro |$1| worry about a correct allignment of the valid
 characters to a whole-numbered multiple of <m>. If nessesary,
 '\0'-characters are inserted at end of the character field.
 :de:
@@ -206,6 +207,7 @@ char *sb2mem (StrBuf *sb);
 char *sb_strcpy (StrBuf *sb);
 char *sb_memcpy (StrBuf *sb);
 char *lexsortkey (const char *base, StrBuf *buf);
+char *sb_read (int fd, StrBuf *sb);
 
 /*
 $Warning

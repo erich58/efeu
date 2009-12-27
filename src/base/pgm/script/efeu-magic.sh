@@ -21,18 +21,30 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 # $pconfig
-# Version="$Id: efeu-magic.sh,v 1.2 2007-08-19 04:22:10 ef Exp $"
+# Version="$Id: efeu-magic.sh,v 1.6 2008-04-06 16:06:35 ef Exp $"
+# :dir |
+#	:*:directory with magic file
+#	:de:Verzeichnis mit Magic-File
+
+usage ()
+{
+	efeuman -- $0 $1 || echo "usage: $0 dir"
+}
 
 case "$1" in
--\?|--help*)	efeuman -- $0 $1; exit 0;;
+-\?|--help*)	usage $1; exit 0;;
 --version)	efeuman -- $0 $1 || grep 'Version="[$]Id:' $0; exit 0;;
 esac
+
+if [ $# -ne 1 ]; then
+	usage -?
+	exit 1
+fi
 
 # $SeeAlso
 # efile(1), file(1), magic(5).
 
-top=`efeutop`
-cd $top/etc || exit 1
+cd $1 || exit 1
 
 cat > magic <<EOF
 # magic data for file command.
@@ -62,7 +74,7 @@ if [ -d magic.d ]; then
 	find magic.d -type f -print | add_magic >> magic
 fi
 
-for x in /etc/magic /usr/share/misc/magic
+for x in /etc/magic /usr/share/file/magic /usr/share/misc/magic
 do
 	if [ -f $x ]; then
 		echo $x | add_magic >> magic

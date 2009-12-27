@@ -54,26 +54,6 @@ int NextEnumCode (const EfiType *type, int start)
 	else	return start;
 }
 
-static void clearspace (char *p)
-{
-	int i, k;
-
-	if	(!p)	return;
-
-	i = k = 0;
-
-	while (isspace((unsigned char) p[i]))
-		i++;
-
-	while (p[i] != 0)
-		p[k++] = p[i++];
-
-	p[k] = 0;
-
-	while (k && isspace((unsigned char) p[k-1]))
-		p[--k] = 0;
-}
-
 static void add_key (EfiType *type, IO *io, int delim)
 {
 	int start;
@@ -121,7 +101,7 @@ static void add_key (EfiType *type, IO *io, int delim)
 		{
 			char *p = NULL;
 			io_ctrl(io, IOPP_COMMENT, &p);
-			clearspace(p);
+			mtrim(p);
 			AddEnumKey(type, name, p, start);
 			start++;
 		}

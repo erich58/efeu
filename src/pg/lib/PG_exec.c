@@ -62,6 +62,7 @@ int PG_exec (PG *pg, const char *cmd, ExecStatusType stat)
 	if	(pg == NULL || cmd == NULL)
 		return 0;
 
+	rd_debug(pg, "PQexec(\"%s\")", cmd);
 	pg->res = PQexec(pg->conn, cmd);
 
 	if	(pg->res == NULL)
@@ -110,6 +111,15 @@ respected return status PGRES_COMMAND_OK.
 int PG_command (PG *pg, const char *cmd)
 {
 	return PG_exec(pg, cmd, PGRES_COMMAND_OK);
+}
+
+void PG_serialize (PG *pg)
+{
+	if	(!pg || pg->trans)	return;
+
+	PG_command(pg, "begin");
+	PG_command(pg, "set transaction isolation level serializable");
+	pg->trans = 1;
 }
 
 /*

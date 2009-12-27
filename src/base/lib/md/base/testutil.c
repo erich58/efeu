@@ -70,20 +70,23 @@ static void MF_showflag(EfiFunc *func, void *rval, void **arg)
 
 	for (x = md->axis; x != NULL; x = x->next)
 	{
-		io_puts(x->name, io);
+		io_puts(StrPool_get(x->sbuf, x->i_name), io);
 		delim = "=";
 
-		if (x->flags) io_printf(io, "[%x]", x->flags);
+		if (x->flags)
+			io_printf(io, "[%x]", x->flags);
 
 		for (n = 0; n < x->dim; n++)
 		{
-			if (x->idx[n].flags & mask) continue;
+			if (x->idx[n].flags & mask)
+				continue;
 
 			io_puts(delim, io);
 			delim = ",";
-			io_puts(x->idx[n].name, io);
+			io_puts(StrPool_get(x->sbuf, x->idx[n].i_name), io);
 
-			if (x->idx[n].flags) io_printf(io, "[%x]", x->idx[n].flags);
+			if (x->idx[n].flags)
+				io_printf(io, "[%x]", x->idx[n].flags);
 		}
 
 		io_putc('\n', io);

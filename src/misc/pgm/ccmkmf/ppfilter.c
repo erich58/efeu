@@ -29,18 +29,11 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	USAGE	"usage: %s [-c]\n"
 
-/*
-$pconfig
-c|
-	:*:converts LF to CR/LF
-	:de:Konvertiert LF nach CR/LF
-*/
-
 static char *callname = NULL;
 
 static void usage (const char *arg)
 {
-	execlp("efeuman", "efeuman", "-s", __FILE__, "--", callname, arg, NULL);
+	execlp("efeuman", "efeuman", callname, arg, NULL);
 	fprintf(stderr, USAGE, callname);
 	exit(arg ? 0 : 1);
 }
@@ -51,29 +44,6 @@ static void error (const char *desc)
 	exit(1);
 }
 
-/*
-$Description
-:*:The command |$!| is used by |ccmkmf| to filter the output of the
-C-preprocessor. The following options are accepted:
-:de:Das Kommando |$!| wird von |ccmkmf| zum Filtern der Ausgabe des
-C-Präprozessors verwendet. Die folgenden Optionen werden vom Kommando
-akzeptiert.
-
-@arglist
-
-$Notes
-:*:
-The check of options is done in a very simple form without
-error diagnostics, because
-the command is normally used only by |ccmkmf|.
-:de:
-Da das Kommando nicht direkt aufgerufen wird, wurde auf eine
-genaue Überprüfung der Argumentliste verzichtet. Nur das erste
-Argument wird analysiert.
-
-$SeeAlso
-\mref{efeucc(1)}, \mref{ccmkmf(1)}, \mref{pp2dep(1)}, \mref{cc(1)}.
-*/
 
 #define	DEBUG	1
 

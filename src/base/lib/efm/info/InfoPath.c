@@ -23,10 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/mstring.h>
 #include <EFEU/Info.h>
 #include <EFEU/LangDef.h>
-
-#define	_String(x)	#x
-#define	String(x)	_String(x)
-#define	TOP		String(EFEUROOT)
+#include <EFEU/mkpath.h>
 
 /*
 Die Variable |$1| bestimmt den Suchpfad für Informationsdateien.
@@ -40,34 +37,28 @@ Falls für <path> ein Nullpointer angegeben wurde und der Suchpfad bereits
 initialisiert wurde, wird er von |$1| nicht verändert.
 */
 
-void SetInfoPath (const char *path)
+void SetInfoPath (const char *dir)
 {
 	StrBuf *sb;
 
-	if	(InfoPath && !path)	return;
+	if	(InfoPath && !dir)	return;
 
 	sb = sb_create(0);
 
 /*	Basispfade
 */
-#if	0
-	sb_putc('.', sb);
-#endif
-
-	if	(path)
+	if	(dir)
 	{
-		if	(sb_getpos(sb))	sb_putc(':', sb);
-
-		sb_puts(path, sb);
+		if	(!mkpath_bin(sb, dir, "lib/efeu/%L/info"))
+			mkpath_add(sb, dir);
 	}
 
 /*	Systemsuchpfade
 */
 	if	(sb_getpos(sb))	sb_putc(':', sb);
 
-	sb_printf(sb, "%s/lib/eis/%%L/", TOP);
-	sb_printf(sb, ":%s/lib/efeu/%%L/info", TOP);
-
+	mkpath_base(sb, "lib/eis/%L");
+	mkpath_base(sb, "lib/efeu/%L/info");
 	memfree(InfoPath);
 	InfoPath = sb2str(sb);
 }

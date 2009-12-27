@@ -23,6 +23,6 @@ If not, write to the Free Software Foundation, Inc.,
 #ifndef pg_hdr
 #define	pg_hdr	1
 
-loadlib("PG", "SetupPG");
+loadlib("PG", "PG_setup");
 
 #endif

@@ -9,6 +9,7 @@
 #include <EFEU/stdtype.h>
 #include <EFEU/CmpDef.h>
 #include <EFEU/EDBFilter.h>
+#include <EFEU/EDBJoin.h>
 
 #define	EDB_DUMMY	1	/* Expermimentell */
 
@@ -131,7 +132,6 @@ static void f_edbmerge (EfiFunc *func, void *rval, void **arg)
 		if	(Val_bool(arg[1]))
 		{
 			int i;
-			io_printf(ioerr, "SORT\n");
 
 			for (i = 0; i < n; i++)
 				tab[i] = edb_sort(tab[i], rd_refer(comp));
@@ -278,4 +278,5 @@ void SetupEDB (void)
 	EDBFilterInfo(info);
 	EDBPrintInfo(info);
 	EDBMetaInfo(info);
+	EDBJoinInfo(info);
 }

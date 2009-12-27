@@ -1,0 +1,20 @@
+@name
+@synopsis -h
+\Description
+The command |$!| greps the names of included files from the output
+of the C preprocessor and creates a dependend list for given targets.
+
+@arglist -i
+
+The next lines show the typical use of |pp2dep| in a Makefiles:
+
+---- verbatim
+file.o: file.c
+	$$(CC) -c file.c
+
+depend::
+	$$(CC) -E -c file.c | pp2dep -l file.o >> Makefile
+----
+
+\SeeAlso
+\mref{cc(1)}, \mref{make(1)}, \mref{shmkmf(1)}.

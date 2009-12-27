@@ -27,13 +27,14 @@ static EfiStruct *axis2var (mdaxis *x)
 	EfiType *type;
 	int i;
 
-	type = NewEnumType(NULL, EnumTypeRecl(x->dim));
+	type = NewEnumType(NULL, 4);
 
 	for (i = 0; i < x->dim; i++)
-		AddEnumKey(type, mstrcpy(x->idx[i].name), NULL, i + 1);
+		AddEnumKey(type, StrPool_mget(x->sbuf, x->idx[i].i_name),
+			StrPool_mget(x->sbuf, x->idx[i].i_desc), i + 1);
 
 	type = AddEnumType(type);
-	return NewEfiStruct(type, x->name, 0);
+	return NewEfiStruct(type, StrPool_get(x->sbuf, x->i_name), 0);
 }
 
 static void save_data (IO *io, const EfiType *type, mdaxis *x,
@@ -85,7 +86,7 @@ EDB *md2edb (mdmat *md)
 	*ptr = NewEfiStruct(md->type, mstrcpy("data"), 0);
 
 	edb = edb_alloc(LvalObj(NULL, MakeStruct(NULL, NULL, var)),
-		mstrcpy(md->title));
+		mstrcpy(StrPool_get(md->sbuf, md->i_name)));
 
 	tmp = io_tmpfile();
 	buf = memalloc(n);

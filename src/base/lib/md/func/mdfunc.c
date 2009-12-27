@@ -6,6 +6,7 @@
 #include <EFEU/mdmat.h>
 #include <EFEU/mdcount.h>
 #include <EFEU/stdtype.h>
+#include <EFEU/MatchPar.h>
 
 
 #define	RVMD	Val_mdmat(rval)
@@ -29,18 +30,11 @@ MDC_FUNC(MF_load, md_fload(STR(0), STR(1), STR(2)))
 MDC_FUNC(MF_read, md_read(Val_io(arg[0]), STR(1)))
 MDC_FUNC(MF_reload, md_reload(rd_refer(MD(0)), STR(1), STR(2)))
 
-/*
-static void MF_reload(EfiFunc *func, void *rval, void **arg)
+static void MF_file (EfiFunc *func, void *rval, void **arg)
 {
-	IO *io;
-
-	io = io_tmpfile();
-	md_save(io, MD(0), MDFLAG_LOCK);
-	io_rewind(io);
-	RVMD = md_load(io, STR(1), STR(2));
-	io_close(io);
+	Val_bool(rval) = md_file(Val_io(arg[0]),
+		Val_str(arg[1]), Val_str(arg[2]));
 }
-*/
 
 static void MF_cpy(EfiFunc *func, void *rval, void **arg)
 {
@@ -87,6 +81,12 @@ MDC_FUNC(MF_mdinv, md_inv(MD(0)))
 */
 MDC_FUNC(MF_mdprod, md_prod(MD(0)))
 MDB_FUNC(MF_save, md_fsave(STR(1), MD(0), Val_bool(arg[2]) ? MDFLAG_LOCK : 0))
+
+static void MF_map (EfiFunc *func, void *rval, void **arg)
+{
+	Val_bool(rval) = md_fputmap(Val_mdmat(arg[0]), Val_str(arg[1]));
+}
+
 MDB_FUNC(MF_print, md_print(rd_refer(Val_io(arg[1])), MD(0), STR(2)))
 
 MDB_FUNC(MF_konv, md_konv(md, Val_type(arg[1])))
@@ -199,9 +199,52 @@ extern void MF_valsum(EfiFunc *func, void *rval, void **arg);
 extern void MF_leval(EfiFunc *func, void *rval, void **arg);
 extern void MF_xeval(EfiFunc *func, void *rval, void **arg);
 
+static void mdx_select (EfiFunc *func, void *rval, void **arg)
+{
+	mdaxis *x;
+	MatchPar *mp;
+	int n;
+	
+	x = Val_mdaxis(arg[0]);
+	mp = MatchPar_create(Val_str(arg[1]), md_dim(x));
+
+	for (n = 1; x; x = x->next, n++)
+		if (MatchPar_exec(mp, StrPool_get(x->sbuf, x->i_name), n))
+			break;
+
+	rd_deref(mp);
+	Val_mdaxis(rval) = x;
+}
+
+static void mdx_nselect (EfiFunc *func, void *rval, void **arg)
+{
+	mdaxis *x = Val_mdaxis(arg[0]);
+	int n = Val_int(arg[1]);
+
+	while (x && n > 0)
+	{
+		x = x->next;
+		n--;
+	}
+
+	Val_mdaxis(rval) = x;
+}
+
+static void f_mdx_choice (EfiFunc *func, void *rval, void **arg)
+{
+	mdx_choice(Val_ptr(arg[0]), Val_str(arg[1]));
+}
+
+static void f_mdx_index (EfiFunc *func, void *rval, void **arg)
+{
+	mdx_index(Val_ptr(arg[0]), Val_int(arg[1]));
+}
+
 static EfiFuncDef fdef[] = {
 	{ 0, &Type_mdmat, "mdload (str file, str sel = NULL, str vsel = NULL)",
 		MF_load },
+	{ 0, &Type_bool, "mdfile (IO *io, str file, str mode = NULL)",
+		MF_file },
 	{ 0, &Type_mdmat, "mdread (IO io, str def = NULL)", MF_read },
 	{ 0, &Type_mdmat, "reload (mdmat md, str sel = NULL, str vsel = NULL)",
 		MF_reload },
@@ -235,6 +278,7 @@ static EfiFuncDef fdef[] = {
 	{ FUNC_VIRTUAL, &Type_mdmat, "mdmat::expr (str op, mdmat)", MF_expr },
 	{ FUNC_VIRTUAL, &Type_mdmat, "mdmat::expr (str op)", MF_expr },
 
+	{ 0, &Type_bool, "mdmat::map (str path)", MF_map },
 	{ 0, &Type_mdmat, "mdmat::save (str file, bool select = true)",
 		MF_save },
 	{ 0, &Type_mdmat, "mdmat::print (IO io = iostd, str def = NULL)",
@@ -266,6 +310,12 @@ int lag = 0)", MF_data },
 	{ 0, &Type_mdmat, "mdmat::eval (str axis, Expr_t cmd)", MF_xeval },
 	{ 0, &Type_void, "mdmat::show (IO io = iostd)",
 		MF_show },
+	{ FUNC_VIRTUAL, &Type_mdaxis, "operator[] (mdaxis, str)",
+		mdx_select },
+	{ FUNC_VIRTUAL, &Type_mdaxis, "operator[] (mdaxis, int)",
+		mdx_nselect },
+	{ FUNC_VIRTUAL, &Type_void, "mdaxis::choice(str)", f_mdx_choice },
+	{ FUNC_VIRTUAL, &Type_void, "mdaxis::choice(int)", f_mdx_index },
 };
 
 

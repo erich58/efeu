@@ -53,7 +53,8 @@ mdmat *md_ioctab (const char *title, IO *io,
 /*	Matrixheader generieren
 */
 	tab = new_mdmat();
-	tab->title = mstrcpy(title);
+	tab->sbuf = rd_refer(gtab->pool);
+	tab->i_name = StrPool_xadd(tab->sbuf, title);
 	tab->axis = NULL;
 	ptr = &tab->axis;
 
@@ -134,8 +135,8 @@ int md_ctabinit (mdmat *tab, MdCountList *list)
 		}
 
 		io_rewind(io);
-		io = io_lnum(io);
-		vlist = GetStruct(io, EOF);
+		io = io_cmdpreproc(io);
+		vlist = GetStruct(NULL, io, EOF);
 		io_close(io);
 		tab->type = MakeStruct(NULL, NULL, vlist);
 

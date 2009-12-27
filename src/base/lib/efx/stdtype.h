@@ -31,16 +31,21 @@ If not, write to the Free Software Foundation, Inc.,
 void Clean_obj (const EfiType *st, void *data, int mode);
 void Clean_ref (const EfiType *st, void *data, int mode);
 void Clean_str (const EfiType *st, void *data, int mode);
+void Clean_varstr (const EfiType *st, void *data, int mode);
 
 void Copy_obj (const EfiType *st, void *tg, const void *src);
 void Copy_ref (const EfiType *st, void *tg, const void *src);
 void Copy_str (const EfiType *st, void *tg, const void *src);
+void Copy_varstr (const EfiType *st, void *tg, const void *src);
 
 void Memory_copy (const EfiType *type, void *tg, const void *src);
 
 size_t Read_str (const EfiType *st, void *data, IO *io);
 size_t Write_str (const EfiType *st, const void *data, IO *io);
 int Print_str (const EfiType *st, const void *data, IO *io);
+size_t Read_varstr (const EfiType *st, void *data, IO *io);
+size_t Write_varstr (const EfiType *st, const void *data, IO *io);
+int Print_varstr (const EfiType *st, const void *data, IO *io);
 size_t Read_vec (const EfiType *st, void *data, IO *io);
 size_t Write_vec (const EfiType *st, const void *data, IO *io);
 int Print_vec (const EfiType *st, const void *data, IO *io);
@@ -88,6 +93,11 @@ COMPLEX_TYPE(name, TYPE_CNAME(type), sizeof(type), sizeof(type), \
 	NULL, NULL, print, \
 	base, NULL, NULL, NULL, 0)
 
+#define	EXTERN_TYPE(name, type, base, print)	\
+COMPLEX_TYPE(name, TYPE_CNAME(type), sizeof(type), sizeof(type), \
+	NULL, NULL, print, \
+	base, NULL, NULL, NULL, TYPE_EXTERN)
+
 #define	STD_TYPE(name, type, base, clean, copy)	\
 COMPLEX_TYPE(name, TYPE_CNAME(type), sizeof(type), 0, NULL, NULL, NULL, \
 	base, NULL, clean, copy, 0)
@@ -99,6 +109,10 @@ COMPLEX_TYPE(name, TYPE_CNAME(type), sizeof(type), 0, NULL, NULL, NULL, \
 #define	REF_TYPE(name, type)	\
 COMPLEX_TYPE(name, TYPE_CNAME(type), sizeof(type), 0, NULL, NULL, NULL, \
 	&Type_ref, NULL, Clean_ref, Copy_ref, TYPE_MALLOC)
+
+#define	XREF_TYPE(name, type, base)	\
+COMPLEX_TYPE(name, TYPE_CNAME(type), sizeof(type), 0, NULL, NULL, NULL, \
+	base, NULL, Clean_ref, Copy_ref, TYPE_MALLOC)
 
 #define	IOREF_TYPE(name, type, read, write, print) \
 COMPLEX_TYPE(name, TYPE_CNAME(type), sizeof(type), 0, read, write, print, \

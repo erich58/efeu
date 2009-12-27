@@ -1,0 +1,75 @@
+\sec	mkmf
+
+So gut |make| auch ist, die folgenden Nachteile
+müssen angeführt werden:
+*	Das Schreiben der Beschreibungsdatei und insbesonders die
+	Zusammenstellung aller Abhängigkeiten für ein Ziel ist
+	aufwendig.
+*	Makefiles werden bei umfangreichen Aufgabenstellungen schnell
+	unübersichtlich.
+*	Es gibt keine Möglichkeit, ähnliche oder häufig vorkommende Einträge
+	über Makros oder Funktionen zu definieren.
+*	Bei der Übertragung einer Aufgabe auf einen anderen Rechnertyp muß
+	das Makefile angepasst werden.
+
+Durch den Übergang von geschriebenen Makefiles zu generierten Makefiles
+lassen sich diese Nachteile weitestgehend ausmerzen.
+Alle größeren Programmpakete verwenden eine Form der automatischen
+Generierung von Makefiles.
+
+\ssec	xmkmf
+
+Das Kommando |xmkmf| ist Teil der Entwicklungsumgebung des
+X-Window-Systems. Es generiert mithilfe des C-Preprozessors aus
+einer Datei Namens |Imakefile| ein Makefile.
+Das Kommando ist primär auf X-Anwendungen zugeschnitten und für einen
+anderen Anwendungsbereich weniger gut geeignet.
+
+\ssec	ccmkmf
+
+Das Kommando |ccmkmf| basiert auf dem gleichen Grundgedanken wie
+|xmkmf|. Auch hier wird der C-Preprozessor zu Generierung eingesetzt.
+Die Aufgabe zerfällt in ein einfaches Shell-Skript |ccmkmf| und einen
+nachgeschalteten Filter |ppfilter|, der die Ausgabe des Preprozessors
+in eine für |make| korrekte Form bringt. Das Kommando ist veraltet und
+wurde Ende 2004 durch |shmkmf| ersetzt.
+
+\ssec	autoconf
+
+Auch |autoconf| verwendet einen Preprozessor zur Generierung von
+Makefiles, im Unterschied zu |xmkmf| und |ccmkmf| wird aber der
+|m4|, der traditionelle UNIX makro Prozessor, verwendet.
+
+\ssec	shmkmf
+
+Die Makefile-Generierung mit |shmkmf| geht einen anderen Weg. Hier
+werden nicht Makroaufrufe mithilfe eines Preprozessors expandiert,
+sondern das Makefile wird mithilfe von Funktionen und Kommandos generiert.
+Die Anweisungen stehen in einer Datei mit dem Namen |Config.make|, die
+im Kontext des Skripts |shmkmf| aufgerufen werden. Dieses Konzept ist
+Schwerpunkt dieser Dokumentationen.
+Die Handbuchseiten zur Verwendung des Kommandos stehen im Anhang.
+
+Diese Vorgangsweise eröffnet zusätzliche Möglichkeiten, die mit einem
+Preprozessor nur schwer durchgeführt werden können. So konnte die
+automatische Erstellung und Aktualisierung eines Makefiles direkt
+aus den Inhalt eines Verzeichnisses in |shmkmf| integriert werden.
+
+Im in der Zwischenzeit veralteten Konzept von |ccmkmf| musste das
+zweistufig gemacht werden. Zunächst wurde mit einem Hilfskommando ein
+|Imakefile| zusammengestellt und aschließend daraus das |Makefile|
+generiert.
+
+Während bei der Makroexpansion nur eine fixe Anzahl von
+Parametern in einer genau festgelegten Reihenfolge verwendet werden können,
+erlaubt der Einsatz von Shellfunktionen eine höhere Flexiblität. Zwar
+entsteht zusätzlicher Aufwand beim Parsen der Argumente, aber die
+Einsatzmöglichkeiten der so definierten Funktionen sind vielseitiger.
+
+\ssec	mkmf
+
+Das Kommando |mkmf| ist ein Wrapper (Hüllfunktion) für eine Reihe
+verschiedener Werkzeuge der Makefilegenerierung. Es erkennt anhand der
+vorhandenen Konfigurationsdateien, welches Werkzeug zur
+Makefilegenerierung eingesetzt werden soll (Vergleiche dazu \mref{mkmf(1)}).
+

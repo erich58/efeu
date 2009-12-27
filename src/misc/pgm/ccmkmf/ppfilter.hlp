@@ -1,0 +1,15 @@
+@name
+@synopsis -h
+\Description
+The command |$!| is used by |ccmkmf| to filter the output of the
+C-preprocessor. The following options are accepted:
+
+@arglist
+
+\Notes
+The check of options is done in a very simple form without
+error diagnostics, because
+the command is normally used only by |ccmkmf|.
+
+\SeeAlso
+\mref{efeucc(1)}, \mref{ccmkmf(1)}, \mref{pp2dep(1)}, \mref{cc(1)}.

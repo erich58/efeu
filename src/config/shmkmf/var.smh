@@ -25,6 +25,7 @@
 test $_var_smh && return
 _var_smh=1
 
+# $alias
 # $pconfig !
 # n |
 # 	:*:suppress empty line before assignment

@@ -30,18 +30,25 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/ArgList.h>
 
 void psubfunc (int key, int (*copy) (IO *in, IO *out, void *par), void *par);
+
 char *psubexpand (StrBuf *buf, IO *in, int argc, char **argv);
-
-IO *psubfilter (IO *io, ArgList *list);
-
+int io_psubvec (IO *io, const char *fmt, int argc, char **argv);
+char *mpsubvec (const char *fmt, int argc, char **argv);
 int io_pcopy (IO *in, IO *out, int delim, int argc, char **argv);
+char *mpcopy (IO *in, int delim, int argc, char **argv);
+
+char *psubexpandarg (StrBuf *buf, IO *in, ArgList *argl);
+
+int io_pcopyarg (IO *in, IO *out, int delim, ArgList *argl);
+
 int io_psubvarg (IO *io, const char *fmt, const char *argdef, va_list list);
 int io_psubarg (IO *io, const char *fmt, const char *argdef, ...);
-int io_psubvec (IO *io, const char *fmt, int argc, char **argv);
+int io_psub (IO *io, const char *fmt, ArgList *argl);
 
-char *mpcopy (IO *in, int delim, int argc, char **argv);
 char *mpsubvarg (const char *fmt, const char *argdef, va_list list);
 char *mpsubarg (const char *fmt, const char *argdef, ...);
-char *mpsubvec (const char *fmt, int argc, char **argv);
+char *mpsub (const char *fmt, ArgList *argl);
+
+IO *psubfilter (IO *io, ArgList *list);
 
 #endif	/* EFEU/parsub.h */

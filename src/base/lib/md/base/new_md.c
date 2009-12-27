@@ -10,12 +10,13 @@ static void md_clean (void *data)
 {
 	mdmat *tg = data;
 	del_axis(tg->axis);
-	memfree(tg->title);
 
-	if	(tg->data != rd_data(tg->x_data))
+	if	(!tg->map && tg->data != rd_data(tg->x_data))
 		memfree(tg->data);
 
+	rd_deref(tg->sbuf);
 	rd_deref(tg->x_data);
+	rd_deref(tg->map);
 	memfree(tg);
 }
 
@@ -28,7 +29,7 @@ static char *md_ident (const void *data)
 	md = data;
 	sb = sb_create(0);
 	io = io_strbuf(sb);
-	io_printf(io, "name=%#s, type=", md->title);
+	io_printf(io, "name=%#s, type=", StrPool_get(md->sbuf, md->i_name));
 	ShowType(io, md->type);
 	io_printf(io, ", dim=%d", md_dim(md->axis));
 	io_printf(io, ", size=%ld", md->size);
@@ -92,6 +93,7 @@ mdmat *cpy_mdmat (const mdmat *md, unsigned mask)
 	if	(md == NULL)	return NULL;
 
 	m2 = new_mdmat();
+	m2->sbuf = NewStrPool();
 	m2->axis = NULL;
 	m2->type = md->type;
 
@@ -99,7 +101,7 @@ mdmat *cpy_mdmat (const mdmat *md, unsigned mask)
 
 	for (x = md->axis; x != NULL; x = x->next)
 	{
-		*ptr = cpy_axis(x, mask);
+		*ptr = cpy_axis(m2->sbuf, x, mask);
 		ptr = &(*ptr)->next;
 	}
 
@@ -116,6 +118,7 @@ mdmat *md_clone (const mdmat *base)
 	if	(base == NULL)	return NULL;
 
 	md = new_mdmat();
+	md->sbuf = NewStrPool();
 	md->axis = NULL;
 	md->type = base->type;
 
@@ -123,11 +126,12 @@ mdmat *md_clone (const mdmat *base)
 
 	for (x = base->axis; x != NULL; x = x->next)
 	{
-		*ptr = cpy_axis(x, 0);
+		*ptr = cpy_axis(md->sbuf, x, 0);
 		ptr = &(*ptr)->next;
 	}
 
-	md->title = mstrcpy(base->title);
+	md->i_name = StrPool_copy(md->sbuf, base->sbuf, base->i_name);
+	md->i_desc = StrPool_copy(md->sbuf, base->sbuf, base->i_desc);
 	md->size = base->size;
 	md->x_data = rd_refer(base->x_data);
 	md->data = rd_data(md->x_data);

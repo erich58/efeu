@@ -1,4 +1,4 @@
-$Copyright (C) 2007 Erich Frühstück
+$Copyright (C) 2008 Erich Frühstück
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or

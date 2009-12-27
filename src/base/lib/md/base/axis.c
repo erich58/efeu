@@ -11,17 +11,20 @@ static ALLOCTAB(atab, 8, sizeof(mdaxis));
 /*	Achse generieren
 */
 
-mdaxis *new_axis(size_t dim)
+mdaxis *new_axis (StrPool *sbuf, size_t dim)
 {
 	mdaxis *x;
 
 	x = new_data(&atab);
 	x->next = NULL;
-	x->name = NULL;
+	x->sbuf = rd_refer(sbuf);
+	x->i_name = 0;
+	x->i_desc = 0;
 	x->size = 0;
 	x->dim = dim;
 	x->idx = memalloc(dim * sizeof(mdindex));
 	x->priv = NULL;
+	x->lbl = NULL;
 	x->flags = 0;
 	return x;
 }
@@ -32,17 +35,11 @@ mdaxis *new_axis(size_t dim)
 
 void del_axis(mdaxis *axis)
 {
-	mdindex *p;
-	size_t n;
-
 	if	(axis == NULL)	return;
 
 	del_axis(axis->next);
-
-	for (p = axis->idx, n = axis->dim; n-- > 0; p++)
-		memfree(p->name);
-
-	memfree(axis->name);
+	rd_deref(axis->sbuf);
+	rd_deref(axis->lbl);
 	memfree(axis->idx);
 	del_data(&atab, axis);
 }
@@ -51,7 +48,7 @@ void del_axis(mdaxis *axis)
 /*	Achse kopieren
 */
 
-mdaxis *cpy_axis(mdaxis *old, unsigned mask)
+mdaxis *cpy_axis (StrPool *sbuf, mdaxis *old, unsigned mask)
 {
 	mdaxis *new;
 	int i, dim;
@@ -65,14 +62,19 @@ mdaxis *cpy_axis(mdaxis *old, unsigned mask)
 		dim++;
 	}
 
-	new = new_axis(dim);
-	new->name = mstrcpy(old->name);
+	new = new_axis(sbuf, dim);
+	new->i_name = StrPool_copy(new->sbuf, old->sbuf, old->i_name);
+	new->i_desc = StrPool_copy(new->sbuf, old->sbuf, old->i_desc);
 
 	for (i = dim = 0; i < old->dim; i++)
 	{
 		if	(old->idx[i].flags & mask)	continue;
 
-		new->idx[dim++].name = mstrcpy(old->idx[i].name);
+		new->idx[dim].i_name = StrPool_copy(new->sbuf,
+			old->sbuf, old->idx[i].i_name);
+		new->idx[dim].i_desc = StrPool_copy(new->sbuf,
+			old->sbuf, old->idx[i].i_desc);
+		dim++;
 	}
 
 	return new;

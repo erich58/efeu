@@ -1,0 +1,97 @@
+/*	Introduction, german version
+
+$Copyright (C) 2004, 2008 Erich Frühstück
+This file is part of EFEU.
+
+EFEU is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+EFEU is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with EFEU; see the file COPYING.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+*/
+
+\preface
+
+Das Kommando |make| ist ein wichtiges Werkzeug für die automatisierte
+Abarbeitung von Aufgaben. Es ist Teil des Entwicklungssystems und wird
+im Regelfall zum Kompilieren einzelner Programme oder Programmpakete
+verwendet. Seine Anwendung ist aber nicht nur auf diesen
+ursprünglichen Anwendungsbereich beschränkt, es lassen sich damit
+auch allgemeine Projektarbeiten durchführen.
+
+Im Prinzip kann |make| überall dort eingesetzt werden, wo eine
+Stapelverarbeitung möglich ist. Gegenüber von Skripts hat |make| den Vorteil,
+dass nur jene Teilaufgaben durchgeführt werden müssen, die von
+Änderungen betroffen sind.
+
+Für |make| wird die Aufgabe in mehrere Teilziele zerlegt. Für jedes
+Teilziel benötigt |make| die Informationen, wovon dieses Teilziel
+abhängt und welche Befehle zur Erreichung des Teilziel notwendig sind.
+Diese Regeln werden in einem |Makefile| festgeschrieben.
+
+In der Regel handelt es sich bei den Teilzielen und Abhängigkeiten um Dateien.
+Ob die
+entsprechenden Befehle zur Erzeugung der Ziele abgerufen werden
+müssen, wird anhand der Zeitstempel der Dateien ermittelt: Sobald eine
+Datei, von der das Ziel abhängt, neueren Datums als das Ziel selbst ist,
+wird das Ziel neu generiert.
+
+Um ordnungsgemäß arbeiten zu können, benötigt |make| eine vollständige
+Liste von Abhängigkeiten, so müssen z.B. bei einer Regel zur Erzeugung
+einer Objektdatei nicht nur das Sourcefile, sondern auch die
+eingebundenen Header mit angegeben werden, denn auch eine Änderung
+einer Headerdatei erfordert eine Neuübersetzung der Objektdatei.
+
+Die Abhängigkeiten vollständig zu halten, ist aufwendig und erfordert
+einiges an Sorgfalt. Andererseits kennt ein Compiler die einzelnen,
+eingebundenen Dateien und ist entweder in der Lage, die
+Abhängigkeiten direkt aufzulisten oder eine Zwischenausgabe zu liefern,
+aus der diese Informationen mit geringem Aufwand herausgeholt
+werden können. Was liegt also näher, als die Bestimmung der Abhängigkeiten zu
+automatisieren?
+
+Sehr oft liegt die Situation vor, dass alle Sourcen eines
+Verzeichnisses ein einzelnes Programm oder eine Programmbibliothek
+ergeben. Die Arbeit, alle einzeln in einem Makefile aufzulisten, kann
+auch ein Skript erledigen.
+
+Damit sind wir schon bei den Vorteilen generierter Makefiles. Meist
+genügen wenige Anweisungen um die Bildungsregeln für ein Projekt
+festzulegen. Diese müssen auch nicht mehr angepasst werden, mit jeder
+neu angelegten Datei werden auch automatisch die Regeln für |make|
+erweitert. Hier gibt es auch aktive Unterstützung von |make|, denn als
+erster Schritt wird immer geprüft, ob das |Makefile| selbst erneuert
+werden muss.
+
+Das hier vorgestellte Werkzeug zur Generierung von Makefiles basiert
+auf der Shell. Die folgenden Gründe sprechen für ihren Einsatz als
+Makefilegenerator:
+*	Sie ist der Standard-Befehlsinterpreter auf jedem POSIX-System,
+*	Individuelle Anpassungen sind einfach möglich,
+*	Zusätzliche Hilfskommandos können leicht integriert werden.
+
+Abschließend noch eine wichtige Anmerkung zu diesem Handbuch:
+
+Die einzelnen Beschreibungstexte werden von den Kommandos selbst
+mit der Option |--help| generiert oder aus den Kommentaren der
+installierten Definitionsdateien gewonnen.
+Die Syntax ist damit automatisch
+mit den Kommandos und den Funktionsdefinitionen
+abgestimmt und auf dem neuesten Stand.
+Die einzelnen Handbuchseiten sind auch online mit |man| abrufbar.
+
+Der Umfang der Dokumentation hängt von den lokal installierten
+EFEU-Projekten und der Dokumentsprache ab. Teile des Handbuchs sind in
+Arbeit.
+
+	Erich Frühstück\br
+	Wördern, \thedate

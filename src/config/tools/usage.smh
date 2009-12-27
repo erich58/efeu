@@ -25,8 +25,9 @@
 test $usage_smh && return
 usage_smh=1
 
+# $alias
 # $Synopsis
-# \index[mf_usage]
+# \index[|mf_usage|]
 # mf_usage -f <fmt> <arg(s)>
 #
 # mf_usage -c <desc>

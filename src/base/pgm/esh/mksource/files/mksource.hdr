@@ -23,7 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #ifndef	mksource_hdr
 #define	mksource_hdr	1
 
-IncPath = paste(":", IncPath, EFEULIB + "/mksource");
+IncPath = paste(":", IncPath, mkpath("lib/mksource"));
 fmt_str = "%*s";
 
 IO global::hdr = NULL;

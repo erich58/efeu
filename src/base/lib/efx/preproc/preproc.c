@@ -78,7 +78,7 @@ typedef struct {
 	int at_start;	/* Flag für Zeilenbeginn */
 	int save;	/* Zahl der gebufferten Zeichen */
 #if	NEED_PROTECT
-	int protect;	/* Abbruchschutz */
+	int protect;	/* Schutzmodus */
 #endif
 	int expand;	/* Flag für String und Makrointerpretation */
 } PPData;
@@ -377,7 +377,6 @@ static int subclose(PPData *pp)
 		del_data(&pptest_tab, t);
 	}
 
-	sb_clean(pp->combuf);
 	pp->input = x->next;
 	stat = io_close(x->io);
 	memfree(x);

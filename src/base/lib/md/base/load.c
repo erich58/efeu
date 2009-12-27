@@ -1,5 +1,5 @@
 /*
-:*:seklectiv load of data cube
+:*:selectiv load of data cube
 :de:Multidimensionale Matrix selektiv laden
 
 $Copyright (C) 1994, 2007 Erich Frühstück
@@ -69,12 +69,51 @@ static IO *vsel_io = NULL;
 /*	Datenmatrix aus Datei laden
 */
 
+static int extname (const char *name)
+{
+	char *p;
+
+	if	(name == NULL || *name == '|' || *name == '&')
+		return 1;
+
+	p = strrchr(name, '.');
+
+	if	(!p)	return 0;
+
+	p++;
+
+	if	(strcmp(p, "gz") == 0)	return 1;
+	if	(strcmp(p, "bz2") == 0)	return 1;
+
+	return 0;
+}
+
 mdmat *md_fload (const char *name, const char *list, const char *var)
 {
 	IO *io;
 	mdmat *md;
+	MapFile *map;
 
-	io = io_fileopen(name, "rdz");
+	if	(extname(name))
+	{
+		io = io_fileopen(name, "rdz");
+	}
+	else if	((map = MapFile_open(name)))
+	{
+		if	((md = md_map(map)))
+		{
+			rd_deref(map);
+
+			if	(list || var)
+				return md_reload(md, list, var);
+
+			return md;
+		}
+
+		io = io_data(map, map->data, map->size);
+	}
+	else	io = io_fileopen(name, "rdz");
+
 	md = md_load(io, list, var);
 	io_close(io);
 	return md;
@@ -121,7 +160,7 @@ mdmat *md_load (IO *io, const char *str, const char *odef)
 
 /*	Dateiheader lesen
 */
-	if	((md = md_gethdr(io)) == NULL)
+	if	((md = md_gethdr(io, 1)) == NULL)
 	{
 		return NULL;
 	}
@@ -153,7 +192,8 @@ mdmat *md_load (IO *io, const char *str, const char *odef)
 
 	for (x = axis; x != NULL; x = x->next)
 	{
-		*ptr = mkaxis(x, mdlistcmp(x->name, depth++, def));
+		*ptr = mkaxis(x, mdlistcmp(StrPool_get(x->sbuf, x->i_name),
+			depth++, def));
 		ptr = &(*ptr)->next;
 	}
 
@@ -248,8 +288,6 @@ static mdaxis *mkaxis (mdaxis *x, mdlist *def)
 	SDEF *sdef;
 	size_t *ptr;
 	MatchPar *mp;
-	StrBuf *sb;
-	char *p;
 
 	x->priv = NULL;
 
@@ -257,11 +295,15 @@ static mdaxis *mkaxis (mdaxis *x, mdlist *def)
 */
 	if	(def == NULL)
 	{
-		y = new_axis(x->dim);
-		y->name = mstrcpy(x->name);
+		y = new_axis(x->sbuf, x->dim);
+		y->i_name = x->i_name;
+		y->i_desc = x->i_desc;
 
 		for (i = 0; i < x->dim; i++)
-			y->idx[i].name = mstrcpy(x->idx[i].name);
+		{
+			y->idx[i].i_name = x->idx[i].i_name;
+			y->idx[i].i_desc = x->idx[i].i_desc;
+		}
 
 		return y;
 	}
@@ -296,7 +338,8 @@ static mdaxis *mkaxis (mdaxis *x, mdlist *def)
 
 		for (j = 0; j < x->dim; j++)
 		{
-			if	(mp->cmp(mp, x->idx[j].name, j + 1))
+			if	(mp->cmp(mp, StrPool_get(x->sbuf,
+					x->idx[j].i_name), j + 1))
 			{
 				flag = mp->flag;
 			}
@@ -343,9 +386,9 @@ static mdaxis *mkaxis (mdaxis *x, mdlist *def)
 
 /*	Neue Achsenbezeichner zusammenstellen
 */
-	y = new_axis(xvars);
-	sb = sb_create(32);
-	sb_putstr(x->name, sb);
+	y = new_axis(x->sbuf, xvars);
+	y->i_name = x->i_name;
+	y->i_desc = x->i_desc;
 	y->priv = NULL;
 	xvars = 0;
 
@@ -368,10 +411,13 @@ static mdaxis *mkaxis (mdaxis *x, mdlist *def)
 			{
 				for (j = 0; j < x->dim; j++)
 				{
-					if	(MatchPar_exec(mp, x->idx[j].name, j))
+					if	(MatchPar_exec(mp,
+							StrPool_get(x->sbuf,
+							x->idx[j].i_name), j))
 					{
 						sdef[j].skip = 0;
-						sdef[j].idx[sdef[j].dim++] = xvars;
+						sdef[j].idx[sdef[j].dim++] =
+							xvars;
 					}
 				}
 			}
@@ -380,8 +426,8 @@ static mdaxis *mkaxis (mdaxis *x, mdlist *def)
 
 			if	(def->list[i][1] != '#')
 			{
-				sb_putstr(def->list[i] + 1, sb);
-				xvars++;
+				y->idx[xvars++].i_name = StrPool_add(y->sbuf,
+					def->list[i] + 1);
 				continue;
 			}
 
@@ -389,8 +435,12 @@ static mdaxis *mkaxis (mdaxis *x, mdlist *def)
 
 			for (j = 0; j < anz; j++)
 			{
-				sb_printf(sb, "%s%d%c", x->name, xvars + 1, 0);
+				char *p = msprintf("%s%d%c",
+					StrPool_get(x->sbuf, x->i_name),
+					xvars + 1, 0);
+				y->idx[xvars].i_name = StrPool_add(y->sbuf, p);
 				xvars++;
+				memfree(p);
 			}
 
 			continue;
@@ -402,7 +452,10 @@ static mdaxis *mkaxis (mdaxis *x, mdlist *def)
 			{
 				sdef[j].skip = sdef[j].tmpload = 0;
 				sdef[j].offset = xvars;
-				sb_putstr(x->idx[j].name, sb);
+				y->idx[xvars].i_name = StrPool_copy(y->sbuf,
+					x->sbuf, x->idx[j].i_name);
+				y->idx[xvars].i_desc = StrPool_copy(y->sbuf,
+					x->sbuf, x->idx[j].i_desc);
 				xvars++;
 			}
 		}
@@ -417,13 +470,6 @@ static mdaxis *mkaxis (mdaxis *x, mdlist *def)
 		}
 	}
 
-	p = (char *) sb->data;
-	y->name = mstrcpy(nextstr(&p));
-
-	for (j = 0; j < y->dim; j++)
-		y->idx[j].name = mstrcpy(nextstr(&p));
-
-	rd_deref(sb);
 	return y;
 }
 

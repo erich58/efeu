@@ -24,7 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/cmdsetup.h>
 #include <EFEU/DBData.h>
 
-EfiType Type_DBFile = REF_TYPE("DBFile", DBFile);
+EfiType Type_DBFile = REF_TYPE("DBFile", DBFile *);
 
 static EfiObj *m_recl (const EfiObj *base, void *data)
 {

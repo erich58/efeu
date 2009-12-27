@@ -23,6 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/pconfig.h>
 #include <EFEU/strbuf.h>
 #include <EFEU/Resource.h>
+#include <EFEU/nkt.h>
 #include "src2doc.h"
 #include <ctype.h>
 
@@ -34,6 +35,8 @@ char *DocName = NULL;
 char *Secnum = NULL;
 char *IncFmt = NULL;
 int InsertCode = 0;
+int ListAlias = 0;
+
 
 EfiVarDef globvar[] = {
 	{ "DocName", &Type_str, &DocName },
@@ -51,6 +54,11 @@ static EfiFuncDef fdef[] = {
 	{ FUNC_VIRTUAL, &Type_void, "ListMode (IO io = iostd)", f_list },
 };
 
+static int print_alias (const char *name, void *data, void *par)
+{
+	io_printf(par, "%s\n", name);
+	return 0;
+}
 
 /*	Hauptprogramm
 */
@@ -63,7 +71,7 @@ int main (int narg, char **arg)
 	char *Mode;
 	S2DEval eval;
 
-	SetVersion("$Id: src2doc.c,v 1.18 2003-07-28 08:26:01 ef Exp $");
+	SetVersion("$Id: src2doc.c,v 1.20 2008-04-06 18:18:13 ef Exp $");
 	SetProgName(arg[0]);
 	SetupStd();
 	SetupReadline();
@@ -80,6 +88,7 @@ int main (int narg, char **arg)
 	Name = GetResource("Name", NULL);
 	Mode = GetResource("Mode", NULL);
 	InsertCode = GetFlagResource("InsertCode");
+	ListAlias = GetFlagResource("ListAlias");
 	eval = Mode ? S2DMode_get(Mode) : S2DName_get(DocName);
 
 	if	(eval == NULL)
@@ -91,7 +100,7 @@ int main (int narg, char **arg)
 	ein = DocName ? io_fileopen(DocName, "rzd") :
 		io_interact(NULL, "s2d_hist");
 	ein = io_lnum(ein);
-	aus = io_fileopen(GetResource("Output", NULL), "wzd");
+	aus = ListAlias ? NULL : io_fileopen(GetResource("Output", NULL), "wzd");
 	eval(Name, ein, aus);
 
 /*	Leerzeile am Ende verhindert das unerwartete Verschwinden von 
@@ -100,5 +109,11 @@ int main (int narg, char **arg)
 	io_putc('\n', aus);
 	io_close(ein);
 	io_close(aus);
+
+	if	(ListAlias)
+	{
+		nkt_walk(AliasTab, print_alias, iostd);
+	}
+
 	return 0;
 }

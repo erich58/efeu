@@ -28,6 +28,7 @@ _script_smh=1
 include dir.smh
 include srclist.smh
 
+# $alias
 # $pconfig !
 # u | g | e | r | c:arg | s:arg |
 #	:*:These flages are passed to |efeuscript|.
@@ -42,9 +43,9 @@ include srclist.smh
 #	:de:Ist der Name der Quelldatei.
 # !
 # :*:
-# The function @! creates rules for installing scripts with |efeuscript|.
+# The function $! creates rules for installing scripts with |efeuscript|.
 # :de:
-# Die Funktion @! generiert Regeln zur Installation von Script-Dateien
+# Die Funktion $! generiert Regeln zur Installation von Script-Dateien
 # mithilfe von |efeuscript|.
 
 mf_script ()

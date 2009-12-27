@@ -24,8 +24,9 @@ If not, write to the Free Software Foundation, Inc.,
 PrintListDelim = "\t";
 
 pconfig !
-Version = "$Id: mdcat.esh,v 1.6 2001-10-18 12:11:20 ef Exp $"
+Version = "$Id: mdcat.esh,v 1.7 2007-10-12 19:15:00 ef Exp $"
 PrintMode = true
+MapMode = false
 Name = X
 
 T:title | Title
@@ -34,12 +35,15 @@ T:title | Title
 n:name | Name
 	:*:name of axis, default {Name}
 	:de:Achsenbezeichner, Vorgabe {Name}
-*file(s) | 
-	:*:input file(s)
-	:de:Eingabedatei(en)
+m:map | Output; MapMode = true
+	:*:create file mapping
+	:de:Dateiabbild generieren
 o:out | Output; PrintMode = false
 	:*:output file
 	:de:Name der Ausgabedatei
+*file(s) | 
+	:*:input file(s)
+	:de:Eingabedatei(en)
 !
 
 List_t list;
@@ -68,7 +72,9 @@ mdmat md = mdcat(label, list);
 
 if	(Title)		md.title = Title;
 
-if	(flagres("PrintMode"))
+if	(flagres("MapMode"))
+	md.map(Output);
+else if	(flagres("PrintMode"))
 	md.mark("#-1").print(iostd, "nohead");
 else	md.save(Output);
 

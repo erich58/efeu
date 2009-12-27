@@ -28,6 +28,7 @@ _srclist_smh=1
 _srclist=/dev/null
 _tmplist=$TMP/.tmplist
 
+# $alias
 # $pconfig !
 # c:cmd |
 #	:*:determines the command <cmd> to collect source files. The default
@@ -58,20 +59,20 @@ _tmplist=$TMP/.tmplist
 #	zusammenzustellen sind.
 # !
 # :*:
-# The function @! creates rules to administrate a list of sourcefiles,
+# The function $! creates rules to administrate a list of sourcefiles,
 # which are collected with <find> or a similar command. At every call
 # of |make| the contents of the source list is checked. If anything
 # has changed, the Makefile is updated. The first version of the source
 # list is created by |shmkmf| self.
-# The following options and arguments are accepted by @!:
+# The following options and arguments are accepted by $!:
 # :de:
-# Die Funktion @! generiert Regeln zur Verwaltung einer
+# Die Funktion $! generiert Regeln zur Verwaltung einer
 # Liste von Sourcefiles, die mit |find| oder einem ähnlichen Kommando
 # zusammengestellt werden. Bei jedem Aufruf von |make| wird die Dateiliste
 # auf eine Veränderung geprüft. Sobald sich die Dateiliste verändert,
 # wird das Makefile neu generiert. Eine erste Version der Dateiliste
 # wird bereits von |shmkmf| angelegt.
-# Die folgenden Optionen und Argumente werden von @! akzeptiert:
+# Die folgenden Optionen und Argumente werden von $! akzeptiert:
 #
 # @arglist
 #
@@ -84,7 +85,8 @@ _tmplist=$TMP/.tmplist
 # Die Zusammenstellung der Dateiliste erfolgt mit folgendem Kommando:
 #	<cmd> <dir> <arg(s)> |> $@|
 # In der Standardvorgabe werden nur reguläre Dateien, die nicht mit
-# einer Tilde enden gesucht. Die resultierende Liste ist sortiert.
+# einem Punkt beginnen oder mit einer Tilde enden, gesucht. Die
+# resultierende Liste ist sortiert.
 
 mf_srclist ()
 {
@@ -122,6 +124,7 @@ mf_srclist ()
 		'@if cmp -s $@~ $@; then rm -f $@~; else mv -f $@~ $@; fi'
 }
 
+# $alias
 # $pconfig !
 # :tg |
 #	:*:name of the target list
@@ -138,13 +141,13 @@ mf_srclist ()
 #	siehe weiter unten.
 # !
 # :*:
-# The Funktion @! allows to creat a partial list from a basic list.
+# The Funktion $! allows to creat a partial list from a basic list.
 # The partial list is checked like the basic list and the first
 # version is also created by |shmkmf|.
 # The following command line is used to create the target:
 #	<cmd> <src> <arg(s)> |> $@|
 # :de:
-# Die Funktion @! erlaubt die Konstruktion einer Teiliste aus einer
+# Die Funktion $! erlaubt die Konstruktion einer Teiliste aus einer
 # Basisliste. Die Teilliste wird wir die Basisliste bei jedem Aufruf
 # auf Veränderungen geprüft. Die erste Version wird ebenfalls bereits von
 # |shmkmf| angelegt.
@@ -168,10 +171,11 @@ mf_sublist ()
 		'@if cmp -s $@~ $@; then rm -f $@~; else mv -f $@~ $@; fi'
 }
 
+# $alias
 # $pconfig !
 # d |
 #	:*:deletes the temporary list of filenames (if existing). 
-#	:de:löscht eine vorhandene temporäre Dateiliste.
+#	:de:löscht eine temporäre Dateiliste (falls sie existiert).
 # n |
 #	:*:checks the existence of a temporary or the last by |mf_srclist|
 #	arranged file list and returns here name. If none of them exists,
@@ -189,11 +193,11 @@ mf_sublist ()
 #	handelt, werden alle Dateien des Verzeichnisses angehängt.
 # !
 # :*:
-# The function @! controlls a temporary list of file names.
+# The function $! controlls a temporary list of file names.
 # The following options and arguments are accepted:
 # :de:
-# Die Funktion @! verwaltet eine temporäre Liste von Dateinamen.
-# Die folgenden Optionen und Argumente werden von @! akzeptiert:
+# Die Funktion $! verwaltet eine temporäre Liste von Dateinamen.
+# Die folgenden Optionen und Argumente werden von $! akzeptiert:
 #
 # @arglist
 
@@ -231,6 +235,7 @@ tmplist ()
 	done
 }
 
+# $alias
 # $pconfig !
 # :expr |
 #	:*:gives the regular expression <expr> to select files.
@@ -241,18 +246,18 @@ tmplist ()
 #	auszuwählen sind.
 # !
 # :*:
-# The function @! selects file names from the list files <list> with regular
-# expression <expr>. If no list  file is given, the function @! searches
+# The function $! selects file names from the list files <list> with regular
+# expression <expr>. If no list  file is given, the function $! searches
 # for a list created by |tmplist| and then for a list created by
 # |mf_srclist|.
-# The following options and arguments are accepted by @!:
+# The following options and arguments are accepted by $!:
 # :de:
-# Die Funktion @! liefert alle in den Dateilisten <list>
+# Die Funktion $! liefert alle in den Dateilisten <list>
 # vorkommenden Dateien, die dem Muster <expr> entsprechen.
 # Falls keine Dateiliste angegeben wurde, wird zuerst nach der mit
 # |tmplist| generierten Liste und anschließend nach der mit
 # |mf_srclist| verwalteten Liste gesucht.
-# Die folgenden Optionen und Argumente werden von @! akzeptiert:
+# Die folgenden Optionen und Argumente werden von $! akzeptiert:
 #
 # @arglist
 
@@ -267,18 +272,19 @@ srclist_get ()
 	fi
 }
 
+# $alias
 # $pconfig !
 # ::name |
 #	:*:name of lists where to extract files.
 #	:de:Namen der Dateilise, aus denen Dateien auszuwählen sind.
 # !
 # :*:
-# The function @! sets the actual file list to <name> for commands using
+# The function $! sets the actual file list to <name> for commands using
 # |srclist_get|. This allows to switch between differnt, with |mf_srclist|
 # created file lists. If no argument is given or if the file <name> does not
 # exists, |/dev/null| is used.
 # :de:
-# Die Funktion @! setzt die aktuelle Fileliste auf <name>. Dies beeinflußt
+# Die Funktion $! setzt die aktuelle Fileliste auf <name>. Dies beeinflußt
 # alle nachfolgenden Kommandos, die Dateien mit |srclist_get| abrufen.
 # Damit kann zwischen mehreren, mit |mf_srclist| generierten Dateien
 # gewechselt werden. Falls die Funktion ohne Argument aufgerufen wurde,

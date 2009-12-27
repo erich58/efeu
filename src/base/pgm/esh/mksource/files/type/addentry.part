@@ -57,6 +57,10 @@ void TypeDef::addentry (IO in)
 		{
 			extefivar(substr(key, 2), name, desc);
 		}
+		else if	(key == /^P:/)
+		{
+			ptrefivar(substr(key, 2), name, desc);
+		}
 		else if	(name[0] == '*')
 		{
 			bf_close();

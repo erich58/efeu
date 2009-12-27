@@ -1,0 +1,16 @@
+#	Binary data cube
+0	byte	0xEF
+>1	byte	0xD1	binary data cube, version 1
+>1	byte	0xD2	binary data cube, version 2
+>1	byte	0xD3	binary data cube, version 3
+#	Mapped data cube
+0	string	EDCM8	mapped data cube, 64-bit,
+>6	string	>\0	version %s,
+>>8	string	12345678	little endian
+>>8	string	87654321	big endian
+0	string	EDCM4	mapped data cube, 32-bit,
+>6	string	>\0	version %s,
+>>8	string	4321	big endian
+>>8	string	1234	little endian
+#	ASCII data cube
+0	string	\#\#MDMAT	ascii data cube

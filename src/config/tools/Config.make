@@ -6,6 +6,7 @@ mf_depend -d 'files $(BIN)/pp2dep'
 
 mf_dir SMH=$TOP/lib/shmkmf
 mf_dir CFG=$TOP/etc/shmkmf
+mf_var -x APP $TOP/lib/efeu
 
 mkprog ()
 {
@@ -16,4 +17,7 @@ foreach -m BIN -s c "mkprog \$tg \$src"
 foreach -m BIN -s sh 'mf_file -x $tg $src'
 foreach -m SMH -S smh 'mf_file $tg $src'
 foreach -m CFG -S cfg 'mf_file $tg $src'
+
+foreach -c $APP -M de -x config -S cnf 'mf_file $tg $src'
+foreach -c $APP -M de -x help -S hlp 'mf_file $tg $src'
 

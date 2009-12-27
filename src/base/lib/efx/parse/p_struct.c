@@ -67,7 +67,7 @@ EfiObj *PFunc_struct(IO *io, void *data)
 
 	io_getc(io);
 	prompt = io_prompt(io, PROMPT);
-	st = GetStruct(io, '}');
+	st = GetStruct(NULL, io, '}');
 	io_prompt(io, prompt);
 
 	if	(st == NULL)	return NULL;

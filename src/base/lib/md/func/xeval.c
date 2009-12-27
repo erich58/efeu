@@ -5,7 +5,7 @@
 #include <EFEU/mdmat.h>
 #include <EFEU/MatchPar.h>
 
-static void maineval(EfiObj *expr, mdaxis *axis, EfiObj **xobj,
+static void maineval (EfiObj *expr, mdaxis *axis, EfiObj **xobj,
 	mdaxis *x, unsigned mask, void *data)
 {
 	int i;
@@ -19,7 +19,8 @@ static void maineval(EfiObj *expr, mdaxis *axis, EfiObj **xobj,
 			if	(x->idx[i].flags & mask)
 				continue;
 
-			Val_str((*xobj)->data) = x->idx[i].name;
+			Val_str((*xobj)->data) = StrPool_get(x->sbuf,
+					x->idx[i].i_name);
 			maineval(expr, axis, xobj + 1, x->next, mask,
 				(char *) data + i * x->size);
 		}
@@ -63,7 +64,8 @@ static void md_xeval (mdmat *md, const char *name, unsigned mask, EfiObj *expr)
 	axis = NULL;
 
 	for (x = md->axis, n = 1; x != NULL; x = x->next, n++)
-		if (MatchPar_exec(match, x->name, n)) axis = x;
+		if (MatchPar_exec(match, StrPool_get(x->sbuf, x->i_name), n))
+			axis = x;
 
 	rd_deref(match);
 
@@ -89,7 +91,7 @@ static void md_xeval (mdmat *md, const char *name, unsigned mask, EfiObj *expr)
 	
 		xobj[n] = ConstObj(&Type_str, NULL);
 		entry = VarTab_next(NULL);
-		entry->name = x->name;
+		entry->name = StrPool_get(x->sbuf, x->i_name);
 		entry->type = &Type_str;
 		entry->desc = NULL;
 		entry->obj = xobj[n];
@@ -110,7 +112,8 @@ static void md_xeval (mdmat *md, const char *name, unsigned mask, EfiObj *expr)
 
 			xobj[n] = LvalObj(&Lval_ptr, md->type, NULL);
 			entry = VarTab_next(NULL);
-			entry->name = axis->idx[i].name;
+			entry->name = StrPool_get(axis->sbuf,
+				axis->idx[i].i_name);
 			entry->type = md->type;
 			entry->desc = NULL;
 			entry->obj = xobj[n];
