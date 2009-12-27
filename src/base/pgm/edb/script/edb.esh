@@ -24,7 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 Date::fmt = "%d.%m.%Y";
 
 pconfig !
-Version = "$Id: edb.esh,v 1.18 2008-02-01 16:26:15 ef Exp $"
+Version = "$Id: edb.esh,v 1.19 2008-09-07 20:34:41 ef Exp $"
 PrintHead = true
 PrintMode = NULL
 Filter = NULL
@@ -32,6 +32,11 @@ Limit = 10
 
 :config gzip
 
+I:dir|IncPath:eval 'IncPath = paste(PATHSEP, IncPath, "{}")'
+	:*:append <dir> to the search path for script headers.
+	The default setting is "$(IncPath:%s)".
+	:de:erweitert den Suchpfad für Skriptfiles um <dir>.
+	Die Vorgabe für den Suchpfad ist:\br "|$(IncPath:%s)|".
 E:expr | :eval 'geval("{}")'
 	:*:evaluate expression <expr>
 	:de:Ausdruck <expr> auswerten

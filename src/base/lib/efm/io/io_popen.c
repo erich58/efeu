@@ -68,16 +68,15 @@ IO *io_popen(const char *proc, const char *mode)
 
 	if	(!file)	return NULL;
 
-	sb = sb_create(32);
+	sb = sb_acquire();
 	sb_puts("<!", sb);
 
 	for (i = 0; proc[i] && !isspace(proc[i]); i++)
 		sb_putc(proc[i], sb);
 
 	sb_puts(">", sb);
-	sb_putc(0, sb);
-	io = io_stream((char *) sb->data, file, pclose);
-	rd_deref(sb);
+	io = io_stream(sb_nul(sb), file, pclose);
+	sb_release(sb);
 	return io;
 }
 

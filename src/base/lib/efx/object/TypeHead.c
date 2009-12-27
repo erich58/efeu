@@ -60,9 +60,9 @@ char *TypeHead (const EfiType *type)
 	}
 	else if	(type->list)
 	{
-		StrBuf *sb = sb_create(0);
+		StrBuf *sb = sb_acquire();
 		add_head(sb, type);
-		return sb2str(sb);
+		return sb_cpyrelease(sb);
 	}
 	else	return TypeHead(type->base);
 

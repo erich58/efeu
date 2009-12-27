@@ -189,8 +189,8 @@ static void f_comment (EfiFunc *func, void *rval, void **arg)
 static void f_def (EfiFunc *func, void *rval, void **arg)
 {
 	Doc *doc = Val_ptr(arg[0]);
-	DocTab_def(doc->cmd_stack->data, Val_io(arg[1]), doc->buf);
-	sb_clean(doc->buf);
+	DocTab_def(doc->cmd_stack->data, Val_io(arg[1]), &doc->buf);
+	sb_trunc(&doc->buf);
 }
 
 static void f_include (EfiFunc *func, void *rval, void **arg)
@@ -471,7 +471,7 @@ static void f_cfgname (EfiFunc *func, void *rval, void **arg)
 {
 	Val_str(rval) = fsearch(CFGPath, NULL, Val_str(arg[0]), NULL);
 	/*
-	io_printf(ioerr, "%s\n", Val_str(rval));
+	io_xprintf(ioerr, "%s\n", Val_str(rval));
 	*/
 	AddDepend(Val_str(rval));
 }

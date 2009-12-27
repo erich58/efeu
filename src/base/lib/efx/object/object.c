@@ -34,12 +34,12 @@ If not, write to the Free Software Foundation, Inc.,
 
 extern char *ProgIdent;
 
+DebugClass ObjDebugClass = DEBUG_CLASS_DATA("Obj", DBG_DEBUG);
+
 #if	DEBUG_FLAG
 
 static int odebug_depth = 0;
 static int odebug_flag = 0;
-static int odebug_sync = 0;
-static IO *odebug_log = NULL;
 
 static void do_debug (int flag, char *fmt, const EfiObj *obj);
 #else
@@ -64,22 +64,22 @@ EfiObj *LvalObj (EfiLval *lval, EfiType *type, ...)
 
 	x->type = type;
 	x->lval = lval;
-	lval->update(x);
+
+	if	(lval->update)
+		lval->update(x);
+
 	do_debug(0, "new ", x);
 	return x;
 }
 
 void UpdateLval (EfiObj *obj)
 {
+	do_debug(0, "update ", obj);
+
 	if	(obj && obj->lval && obj->lval->update)
 		obj->lval->update(obj);
 }
 
-void SyncLval (EfiObj *obj)
-{
-	if	(obj && obj->lval && obj->lval->sync)
-		obj->lval->sync(obj);
-}
 
 void UpdateObjList (EfiObjList *list)
 {
@@ -92,6 +92,7 @@ void SyncObjList (EfiObjList *list)
 	for (; list != NULL; list = list->next)
 		SyncLval(list->obj);
 }
+
 
 /*	Neues Objekt generieren
 */
@@ -147,61 +148,62 @@ EfiObj *NewPtrObj (const EfiType *type, const void *data)
 static void do_debug (int flag, char *fmt, const EfiObj *obj)
 {
 	int i;
+	FILE *file;
+	IO *log;
+		
+	if	(!(file = DebugClassFile(&ObjDebugClass)))
+		return;
 
-	if	(odebug_sync < DebugChangeCount)
-	{
-		odebug_sync = DebugChangeCount;
-		io_puts("STOP Object debugging\n", odebug_log);
-		rd_deref(odebug_log);
-		odebug_log = rd_refer(LogOut("Obj", DBG_DEBUG));
-		io_puts("START Object debugging\n", odebug_log);
-	}
-
-	if	(!odebug_log)	return;
+	log = io_stream(NULL, file, NULL);
 
 	if	(flag == 2)
 	{
 		if	(!odebug_flag)
 		{
 			odebug_depth--;
-			io_nputc('\t', odebug_log, odebug_depth);
-			io_puts("}", odebug_log);
+			io_nputc('\t', log, odebug_depth);
+			io_puts("}", log);
 		}
 	}
 	else if	(odebug_flag)
 	{
-		io_puts(" {\n", odebug_log);
+		io_puts(" {\n", log);
 		odebug_depth++;
 	}
 
 	if	(flag != 2)
 	{
-		io_nputc('\t', odebug_log, odebug_depth);
-		io_printf(odebug_log, fmt, obj->refcount);
-		io_puts(obj->type ? obj->type->name : "NULL", odebug_log);
+		io_nputc('\t', log, odebug_depth);
+		io_xprintf(log, fmt, obj->refcount);
+		io_puts(obj->type ? obj->type->name : "NULL", log);
+
+		if	(obj->lval)
+			io_xprintf(log, " &[%s]", obj->lval->name);
 	}
 
 	if	(flag != 1)
 	{
-		io_printf(odebug_log, " (%p)", obj);
+		io_xprintf(log, " (%p)", obj);
 
 		if	(obj->type && obj->data)
 		{
-			io_puts(" = 0x", odebug_log);
+			io_puts(" = 0x", log);
 
 			for (i = 0; i < obj->type->size; i++)
-				io_printf(odebug_log, "%02x",
+				io_xprintf(log, "%02x",
 					((unsigned char *) obj->data)[i]);
 
 			if	(obj->type == &Type_str)
-				io_printf(odebug_log, "(%#s)",
+				io_xprintf(log, "(%#s)",
 					Val_str(obj->data));
 		}
 
-		io_putc('\n', odebug_log);
+		io_putc('\n', log);
 		odebug_flag = 0;
 	}
 	else	odebug_flag = 1;
+
+	io_close(log);
 }
 
 #endif

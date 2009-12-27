@@ -90,8 +90,12 @@ static void term_sym (void *drv, const char *name)
 
 		term_hmode(trm);
 
-		if	(sym)	io_puts(sym, trm->out);
-		else		io_printf(trm->out, "[%s]", name);
+		if	(sym)
+		{
+			io_puts(sym, trm->out);
+			trm->col++;
+		}
+		else	trm->col += io_xprintf(trm->out, "[%s]", name);
 	}
 }
 
@@ -106,6 +110,8 @@ IO *DocOut_term (IO *io)
 	trm->hdr = term_hdr;
 	trm->cmd = term_cmd;
 	trm->env = term_env;
+	trm->tab = NULL;
+	trm->save_out = NULL;
 	AddVarDef(trm->vartab, term_var, tabsize(term_var));
 	DocDrv_var(trm, &Type_int, "margin", &trm->var.margin);
 	TermPar_init();

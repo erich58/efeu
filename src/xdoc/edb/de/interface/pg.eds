@@ -83,8 +83,9 @@ Die Datentypen werden automatisch bestimmt. Es gelten folgende
 Umsetzungsregeln:
 
 \tab	|l|l|
-[-]EFI | Postgres
-[-]
+---
+EFI | Postgres
+---
 char | integer
 bool | integer
 int8_t | integer
@@ -103,7 +104,7 @@ float | float
 double | float
 str | text
 Date | date
-[-]
+---
 
 Aufzählungstypen werden als |integer| umgesetzt.
 Strukturen werden in Komponenten aufgelöst. Als Name wird
@@ -162,14 +163,15 @@ kann automatisch aus der Abfrage ermittelt werden. Es gelten folgende
 Umsetzungsregeln:
 
 \tab	|l|l|
-[-]Postgres | EFI
-[-]
+---
+Postgres | EFI
+---
 int4 | int
 int8 | varint
 float | double
 date | Date
 text | str
-[-]
+---
 
 Alle anderen Datentypen werden als Zeichenkette |str| übernommen.
 

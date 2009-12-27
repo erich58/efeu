@@ -136,7 +136,7 @@ void ETK_func (ETK *etk, IO *io)
 		func->par = parse_body(io);
 		func->clean = oclean;
 #if	HAS_TCL
-		CREATE(etk->interp, func->name, proc_func, func, rd_deref);
+		CREATE(etk->interp, func->name, proc_func, func, rd_clean);
 #else
 		rd_deref(func);
 #endif

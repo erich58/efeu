@@ -28,7 +28,7 @@ EfiPar EfiPar_control = { "control", "control parameters" };
 void EfiControl_info (IO *io, const void *data)
 {
 	const EfiControl *ctrl = data;
-	io_printf(io, "%s=%#s\n\t%s\n", ctrl->epc_name, ctrl->data,
+	io_xprintf(io, "%s=%#s\n\t%s\n", ctrl->epc_name, ctrl->data,
 		ctrl->epc_label);
 }
 

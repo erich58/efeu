@@ -24,9 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/efio.h>
 #include <EFEU/efutil.h>
 
-#define	BSIZE 1024
-
-char *io_lgets(IO *io, const char *end)
+char *io_lgets (IO *io, const char *end)
 {
 	StrBuf *sb;
 	int c;
@@ -35,7 +33,7 @@ char *io_lgets(IO *io, const char *end)
 
 	if	(io == NULL)	return NULL;
 
-	sb = sb_create(BSIZE);
+	sb = sb_acquire();
 	save = 0;
 	len = end ? strlen(end) : -1;
 
@@ -58,5 +56,5 @@ char *io_lgets(IO *io, const char *end)
 		sb_putc(c, sb);
 	}
 
-	return sb2str(sb);
+	return sb_cpyrelease(sb);
 }

@@ -73,8 +73,8 @@ typedef struct {
 	char **pptr;	/* Pointer auf globalen Include-Pfad */
 	char **lptr;	/* Pointer auf localen Include-Pfad */
 	PPInput *input;	/* Eingabeliste */
-	StrBuf *buf;	/* Zwischenbuffer */
-	StrBuf *combuf;	/* Kommentarbuffer */
+	StrBuf buf;	/* Zwischenbuffer */
+	StrBuf combuf;	/* Kommentarbuffer */
 	int at_start;	/* Flag für Zeilenbeginn */
 	int save;	/* Zahl der gebufferten Zeichen */
 #if	NEED_PROTECT
@@ -121,8 +121,8 @@ IO *io_ptrpreproc (IO *io, char **pptr, char **lptr)
 		pp->lptr = lptr;
 		pp->ident = NULL;
 		pp->input = new_input(io);
-		pp->buf = sb_create(0);
-		pp->combuf = sb_create(0);
+		sb_init(&pp->buf, 0);
+		sb_init(&pp->combuf, 0);
 		pp->at_start = 1;
 		pp->expand = 1;
 		pp->save = 0;
@@ -215,7 +215,7 @@ static int pp_get (void *ptr)
 
 		if	(x == NULL)	return EOF;
 
-		c = pp_eat(x, pp->combuf, pp->at_start);
+		c = pp_eat(x, &pp->combuf, pp->at_start);
 
 		if	(c == EOF)
 		{
@@ -242,19 +242,19 @@ static int pp_get (void *ptr)
 			return c;
 		}
 
-		sb_begin(pp->buf);
+		sb_begin(&pp->buf);
 
 		if	(pp->at_start)
 		{
 			while (c == ' ' || c == '\t')
 			{
-				sb_putc(c, pp->buf);
-				c = pp_eat(x, pp->combuf, 0);
+				sb_putc(c, &pp->buf);
+				c = pp_eat(x, &pp->combuf, 0);
 			}
 
 			if	(c == '#')
 			{
-				c = pp_eat(x, pp->combuf, 0);
+				c = pp_eat(x, &pp->combuf, 0);
 				
 				if	(c == '#')
 				{
@@ -262,14 +262,14 @@ static int pp_get (void *ptr)
 
 					if	(flag)	continue;
 
-					sb_putc(c, pp->buf);
-					pp->save = sb_getpos(pp->buf);
-					sb_begin(pp->buf);
+					sb_putc(c, &pp->buf);
+					pp->save = sb_getpos(&pp->buf);
+					sb_begin(&pp->buf);
 					break;
 				}
 
 				while (c == ' ' || c == '\t')
-					c = pp_eat(x, pp->combuf, 0);
+					c = pp_eat(x, &pp->combuf, 0);
 
 				if	(isalpha(c) || c == '_')
 				{
@@ -278,9 +278,9 @@ static int pp_get (void *ptr)
 					continue;
 				}
 
-				pp->save = flag ? 0 : sb_getpos(pp->buf);
+				pp->save = flag ? 0 : sb_getpos(&pp->buf);
 				pp_skip(x->io, pp->save);
-				sb_begin(pp->buf);
+				sb_begin(&pp->buf);
 				continue;
 			}
 		}
@@ -291,19 +291,19 @@ static int pp_get (void *ptr)
 			continue;
 		}
 
-		pp->save = sb_getpos(pp->buf);
+		pp->save = sb_getpos(&pp->buf);
 		pp->at_start = 0;
 		
 		if	(pp->save)
 		{
 			io_ungetc(c, x->io);
-			sb_begin(pp->buf);
+			sb_begin(&pp->buf);
 			break;
 		}
 
 		if	(pp->expand)
 		{
-			tmp = io_strbuf(pp->buf);
+			tmp = io_strbuf(&pp->buf);
 			flag = 1;
 
 			if	(isalpha(c) || c == '_')
@@ -324,8 +324,8 @@ static int pp_get (void *ptr)
 
 			if	(flag)
 			{
-				pp->save = sb_getpos(pp->buf);
-				sb_begin(pp->buf);
+				pp->save = sb_getpos(&pp->buf);
+				sb_begin(&pp->buf);
 				break;
 			}
 		}
@@ -336,7 +336,7 @@ static int pp_get (void *ptr)
 	if	(pp->save > 0)
 	{
 		pp->save--;
-		return sb_getc(pp->buf);
+		return sb_getc(&pp->buf);
 	}
 
 	return EOF;
@@ -402,8 +402,8 @@ static int pp_ctrl (void *ptr, int req, va_list list)
 		while (pp->input != NULL)
 			if (subclose(pp) != 0) stat = EOF;
 
-		rd_deref(pp->buf);
-		rd_deref(pp->combuf);
+		sb_free(&pp->buf);
+		sb_free(&pp->combuf);
 		memfree(pp->ident);
 		memfree(pp);
 		return stat;
@@ -432,9 +432,9 @@ static int pp_ctrl (void *ptr, int req, va_list list)
 	case IOPP_COMMENT:
 
 		if	((p = va_arg(list, char **)) != NULL)
-			*p = sb_strcpy(pp->combuf);
+			*p = sb_strcpy(&pp->combuf);
 
-		sb_clean(pp->combuf);
+		sb_trunc(&pp->combuf);
 		return 0;
 
 /*	Gesperrte Steuersequenzen

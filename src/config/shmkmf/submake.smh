@@ -25,6 +25,9 @@
 test $submake_smh && return
 submake_smh=1
 
+submake_build="all"
+submake_clean="clean"
+
 # $alias
 # $pconfig !
 # u|
@@ -67,8 +70,8 @@ submake ()
 	TOP=`cd $TOP; pwd`
 	tpl=$TMP/.submake.tpl
 	usage=
-	build="all"
-	clean="clean"
+	build="$submake_build"
+	clean="$submake_clean"
 	printf "%%::" > $tpl
 
 	while [ -n "$1" ]

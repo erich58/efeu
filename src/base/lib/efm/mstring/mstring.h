@@ -27,10 +27,12 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/memalloc.h>
 #include <EFEU/stdint.h>
+#include <EFEU/io.h>
 
 size_t mstrlen (const char *a);
 int mstrcmp (const char *a, const char *b);
 char *mstrchr (const char *a, const char *b);
+int mtestkey (const char *str, char **ptr, const char *key);
 
 char *mstrcat (const char *delim, const char *str1, ...);
 char *mstrcpy (const char *str);
@@ -52,7 +54,12 @@ char *mbasename (const char *path, char **suffix);
 
 int64_t mstr2int64 (const char *str, char **ptr, int base);
 uint64_t mstr2uint64 (const char *str, char **ptr, int base);
+int32_t mstr2ucs (const char *str, char **ptr);
 
 void mtrim (char *s);
+
+int32_t latin9_to_ucs (int c);
+int ucs_to_latin9 (int32_t c);
+int32_t pgetucs (char **p, size_t lim);
 
 #endif	/* EFEU/mstring.h */

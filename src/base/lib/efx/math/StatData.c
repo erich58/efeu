@@ -27,7 +27,7 @@ If not, write to the Free Software Foundation, Inc.,
 static int cov_print (const EfiType *st, const void *data, IO *io)
 {
 	const CovarianceData *cov = data;
-	return io_printf(io, "{ %.16g, %.16g, %.16g, %.16g, %.16g, %.16g }",
+	return io_xprintf(io, "{ %.16g, %.16g, %.16g, %.16g, %.16g, %.16g }",
 		cov->n, cov->x, cov->xx, cov->y, cov->yy, cov->xy);
 }
 

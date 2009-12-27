@@ -75,6 +75,19 @@ EfiObj *AssignObj (EfiObj *left, EfiObj *right)
 	if	(right == NULL)
 	{
 		dbg_note(NULL, "[efmain:212]", NULL);
+		return left;
+	}
+
+#if	LVAL_ASSIGN
+	if	(left->lval->assign)
+	{
+		left->lval->assign(left, right->data);
+	}
+	else
+#endif
+	if	(left->data == right->data)
+	{
+		;
 	}
 	else if	(right->lval == NULL && right->refcount == 1)
 	{
@@ -82,8 +95,8 @@ EfiObj *AssignObj (EfiObj *left, EfiObj *right)
 	}
 	else	AssignData(left->type, left->data, right->data);
 
-	SyncLval(left);
 	rd_deref(right);
+	SyncLval(left);
 	return left;
 }
 

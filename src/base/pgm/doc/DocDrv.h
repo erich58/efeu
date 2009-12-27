@@ -44,6 +44,7 @@ If not, write to the Free Software Foundation, Inc.,
 	EfiVarTab *vartab;	\
 	DocSym *symtab;	\
 	int (*put) (void *drv, int c); \
+	int (*putucs) (void *drv, int32_t c); \
 	void (*sym) (void *drv, const char *symbol); \
 	void (*rem) (void *drv, const char *remark); \
 	void (*hdr) (void *drv, int mode); \

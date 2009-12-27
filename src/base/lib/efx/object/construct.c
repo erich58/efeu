@@ -155,7 +155,7 @@ static void *Construct_alloc (EfiFunc *func)
 static void par_info (ConstructPar *par, const char *pfx)
 {
 	if	(par->obj)
-		io_printf(ioerr, "%s: obj.refcount: %d\n", pfx,
+		io_xprintf(ioerr, "%s: obj.refcount: %d\n", pfx,
 			par->obj->refcount);
 }
 #endif
@@ -259,25 +259,25 @@ static void show_eval (ConstructPar *par)
 
 	for (entry = par->root; entry; entry = entry->next)
 	{
-		io_printf(ioerr, "%s: ", entry->var->name);
+		io_xprintf(ioerr, "%s: ", entry->var->name);
 
 		if	(entry->func)
 		{
-			io_printf(ioerr, "func\n");
+			io_xprintf(ioerr, "func\n");
 		}
 		else if	(entry->obj)
 		{
 			if	(entry->obj->type->eval)
-				io_printf(ioerr, "expr\n");
+				io_xprintf(ioerr, "expr\n");
 			else if	(entry->obj->lval)
-				io_printf(ioerr, "lval\n");
-			else	io_printf(ioerr, "const\n");
+				io_xprintf(ioerr, "lval\n");
+			else	io_xprintf(ioerr, "const\n");
 		}
 		else if	(entry->base)
 		{
-			io_printf(ioerr, "copy(%d)\n", entry->idx);
+			io_xprintf(ioerr, "copy(%d)\n", entry->idx);
 		}
-		else	io_printf(ioerr, "defval\n");
+		else	io_xprintf(ioerr, "defval\n");
 	}
 }
 #endif

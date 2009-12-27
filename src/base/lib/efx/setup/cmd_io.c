@@ -65,6 +65,10 @@ CEXPR(f_close, RVINT = io_close(IO(0)); IO(0) = NULL)
 CEXPR(f_rewind, RVINT = io_rewind(IO(0)))
 CEXPR(f_io_rewind, RVINT = io_rewind(IO(0)) != EOF)
 CEXPR(f_io_flush, RVINT = io_ctrl(IO(0), IO_FLUSH) != EOF)
+#if	0
+CEXPR(f_io_fdin, RVINT = io_ctrl(IO(0), IO_FDIN))
+CEXPR(f_io_fdout, RVINT = io_ctrl(IO(0), IO_FDOUT))
+#endif
 
 CEXPR(f_getc, RVINT = io_getc(IO(0)))
 CEXPR(f_getwc, *((int32_t *) rval) = io_getucs(IO(0)))
@@ -147,7 +151,7 @@ static void f_scanline (EfiFunc *func, void *rval, void **arg)
 
 	list = NULL;
 	ptr = &list;
-	sb = sb_create(0);
+	sb = sb_acquire();
 
 	for (;;)
 	{
@@ -188,7 +192,7 @@ static void f_scanline (EfiFunc *func, void *rval, void **arg)
 		else	sb_putc(c, sb);
 	}
 
-	rd_deref(sb);
+	sb_release(sb);
 	Val_list(rval) = list;
 }
 
@@ -257,7 +261,7 @@ static void f_fgets (EfiFunc *func, void *rval, void **arg)
 	int c, end;
 
 	in = IO(0);
-	sb = sb_create(0);
+	sb = sb_acquire();
 	end = Val_int(arg[1]);
 
 	while ((c = io_mgetc(in, 1)) != EOF)
@@ -265,14 +269,13 @@ static void f_fgets (EfiFunc *func, void *rval, void **arg)
 		if	(c == end)
 		{
 			sb_putc(0, sb);
-			RVSTR = sb2mem(sb);
-			return;
+			break;
 		}
 
 		sb_putc(c, sb);
 	}
 
-	RVSTR = sb2str(sb);
+	RVSTR = sb_cpyrelease(sb);
 }
 
 static void f_ngets (EfiFunc *func, void *rval, void **arg)
@@ -302,10 +305,10 @@ static void f_copy (EfiFunc *func, void *rval, void **arg)
 
 static void f_filter (EfiFunc *func, void *rval, void **arg)
 {
+	StrBuf buf;
 	IO *io;
 	char *name;
 	char *cmd;
-	StrBuf *buf;
 	int flag, c;
 
 	if	((cmd = STR(0)) == NULL)
@@ -326,22 +329,23 @@ static void f_filter (EfiFunc *func, void *rval, void **arg)
 	else	name = NULL;
 
 	io = io_popen(cmd, "r");
-	buf = sb_create(0);
+	sb_init(&buf, 30);
 	flag = 0;
 
 	while ((c = io_getc(io)) != EOF)
 	{
-		if	(flag)	sb_putc('\n', buf);
+		if	(flag)	sb_putc('\n', &buf);
 
 		if	(c != '\n')
 		{
-			sb_putc(c, buf);
+			sb_putc(c, &buf);
 			flag = 0;
 		}
 		else	flag = 1;
 	}
 
 	io_close(io);
+	sb_putc(0, &buf);
 
 	if	(name)
 	{
@@ -349,7 +353,7 @@ static void f_filter (EfiFunc *func, void *rval, void **arg)
 		deltemp(name);
 	}
 
-	Val_str(rval) = sb2str(buf);
+	Val_str(rval) = sb_getmem(&buf);
 }
 
 static void f_read (EfiFunc *func, void *rval, void **arg)
@@ -429,9 +433,13 @@ str post = NULL, bool flag = false)", f_lmark },
 	{ 0, &Type_bool, "IO::setpos (unsigned offset)", f_setpos },
 	{ 0, &Type_bool, "IO::rewind (void)", f_io_rewind },
 	{ 0, &Type_bool, "IO::flush (void)", f_io_flush },
+#if	0
+	{ 0, &Type_int, "IO::fdin (void)", f_io_fdin },
+	{ 0, &Type_int, "IO::fdout (void)", f_io_fdout },
+#endif
 
-	{ 0, &Type_list, "scanline (IO io, str delim = \"%s\", \
-str end = \"\\n\")", f_scanline },
+	{ 0, &Type_list, "scanline (IO io, str delim = \"%s\", "
+		"str end = \"\\n\")", f_scanline },
 	{ 0, &Type_bool, "getline (IO io, ...)", f_getline },
 	{ 0, &Type_str, "fgetc (IO io)", f_getc },
 	{ 0, &Type_str, "fgets (IO io, int end = '\n')", f_fgets },

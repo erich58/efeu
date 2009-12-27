@@ -29,7 +29,7 @@ If not, write to the Free Software Foundation, Inc.,
 static int freq_print (const EfiType *st, const void *data, IO *io)
 {
 	const FrequencyData *freq = data;
-	return io_printf(io, "{%.16g, %.16g}", freq->n, freq->x);
+	return io_xprintf(io, "{%.16g, %.16g}", freq->n, freq->x);
 }
 
 EfiType Type_FrequencyData = EXTERN_TYPE("FrequencyData", FrequencyData,

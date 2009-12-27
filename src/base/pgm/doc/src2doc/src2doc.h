@@ -57,6 +57,9 @@ char *parse_name (IO *io, int c);
 char *parse_block (IO *io, int beg, int end, int flag);
 
 void copy_block (IO *ein, IO *aus, int end, int flag);
+void copy_token (IO *ein, IO *aus, int c, int flag);
+void copy_str (IO *ein, IO *aus, int delim);
+void copy_ (IO *ein, IO *aus, int end, int flag);
 void ppcopy (IO *ein, StrBuf *val, StrBuf *com);
 
 /*	Sourcefileanalyse
@@ -73,7 +76,7 @@ typedef struct {
 struct SrcDataStruct {
 	int hdr;	/* Flag für Header */
 	IO *ein;	/* Eingabestruktur */
-	StrBuf *buf;	/* Stringbuffer */
+	StrBuf buf;	/* Stringbuffer */
 	DocBuf doc;	/* Dokumentbuffer */
 	SrcCmd *ppdef;	/* Preprozessordefinitionen */
 	size_t ppdim;	/* Zahl der Preprozessdefinitionen */
@@ -108,6 +111,13 @@ typedef struct {
 int Decl_test (Decl *decl, const char *name);
 void Decl_print (Decl *decl, IO *io, const char *name);
 Decl *parse_decl (IO *io, int c);
+
+void MacDef_clean (void);
+void MacDef_add (IO *ein);
+char *MacDef_name (void);
+void MacDef_source (StrBuf *sb);
+void MacDef_synopsis (StrBuf *sb);
+void MacDef_list (StrBuf *sb);
 
 extern char *Secnum;
 extern char *IncFmt;

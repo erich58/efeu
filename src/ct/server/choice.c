@@ -10,7 +10,7 @@ static void show_choice (CubeHandle *handle, mdaxis *x)
 
 	for (i = 0; i < x->lbl->cols; i++)
 	{
-		io_printf(handle->out, "%d;%d;", i, i == x->lbl->idx ? 1 : 0);
+		io_xprintf(handle->out, "%d;%d;", i, i == x->lbl->idx ? 1 : 0);
 		CubeHandle_string(handle,
 			StrPool_get(x->lbl->sbuf, x->lbl->tab[i]));
 		io_putc('\n', handle->out);

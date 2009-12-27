@@ -107,7 +107,7 @@ static void f_vconn (EfiFunc *func, void *rval, void **arg)
 		return;
 	}
 
-	sb = sb_create(0);
+	sb = sb_acquire();
 	sb_printf(sb, "dbname=%s", s);
 
 	for (l = Val_list(arg[1]); l != NULL; l = l->next)
@@ -118,9 +118,8 @@ static void f_vconn (EfiFunc *func, void *rval, void **arg)
 		memfree(s);
 	}
 
-	sb_putc(0, sb);
-	Val_ptr(rval) = PG_connect(sb_str(sb, 0));
-	rd_deref(sb);
+	Val_ptr(rval) = PG_connect(sb_nul(sb));
+	sb_release(sb);
 }
 
 static void do_exec (void *rval, void **arg, ExecStatusType stat)

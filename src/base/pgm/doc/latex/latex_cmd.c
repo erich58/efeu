@@ -46,10 +46,8 @@ static char *ref_var = "\\protect\\vref";
 
 static char *tab_sep = " &";
 static char *tab_end = "\\\\";
-static char *tab_height = NULL;
-static char *tab_indent = NULL;
-static char *tab_boldline = NULL;
-static char *tab_boldrule = NULL;
+static char *tab_hline = "\\hline";
+static char *tab_cline = "\\cline{$1}";
 
 static EfiVarDef cmd_tab[] = {
 	{ "break",	&Type_str, &cmd_break },
@@ -68,10 +66,8 @@ static EfiVarDef cmd_tab[] = {
 
 	{ "tabsep", &Type_str, &tab_sep },
 	{ "tabend", &Type_str, &tab_end },
-	{ "lineheight", &Type_str, &tab_height },
-	{ "indent", &Type_str, &tab_indent },
-	{ "boldline", &Type_str, &tab_boldline },
-	{ "boldrule", &Type_str, &tab_boldrule },
+	{ "hline", &Type_str, &tab_hline },
+	{ "cline", &Type_str, &tab_cline },
 };
 
 static void print_var (IO *io, EfiVarDef *var, size_t dim)
@@ -79,7 +75,7 @@ static void print_var (IO *io, EfiVarDef *var, size_t dim)
 	io_putc('\n', io);
 
 	for (; dim-- > 0; var++)
-		io_printf(io, "%s = %#s;\n", var->name, Val_str(var->data));
+		io_xprintf(io, "%s = %#s;\n", var->name, Val_str(var->data));
 }
 
 
@@ -104,7 +100,7 @@ static void label_cmd (LaTeX *ltx, const char *cmd, const char *name)
 		{
 			if	(isalnum(*name) || strchr(".:/-", *name))
 				io_putc(*name, ltx->out);
-			else	io_printf(ltx->out, "[%02X]", *name);
+			else	io_xprintf(ltx->out, "[%02X]", *name);
 		}
 
 		io_putc('}', ltx->out);
@@ -167,7 +163,6 @@ int LaTeX_cmd (void *drv, va_list list)
 {
 	LaTeX *ltx = drv;
 	int cmd = va_arg(list, int);
-	char *p;
 
 	switch (cmd)
 	{
@@ -220,6 +215,8 @@ int LaTeX_cmd (void *drv, va_list list)
 	case DOC_REF_VAR:
 		label_cmd(ltx, ref_var, va_arg(list, char *));
 		break;
+	case DOC_TAB_BEG:
+		break;
 	case DOC_TAB_SEP:
 		io_puts(tab_sep, ltx->out);
 		add_space(ltx, ' ');
@@ -228,20 +225,28 @@ int LaTeX_cmd (void *drv, va_list list)
 		io_puts(tab_end, ltx->out);
 		add_space(ltx, '\n');
 		break;
-	case DOC_TAB_HEIGHT:
-		p = msprintf("%d", va_arg(list, int));
-		line_cmd(ltx, tab_height, p);
-		memfree(p);
+	case DOC_TAB_HLINE:
+		switch (va_arg(list, int))
+		{
+		default:
+			line_cmd(ltx, tab_hline, NULL);
+			/* FALLTHROUGH */
+		case 1:
+			line_cmd(ltx, tab_hline, NULL);
+			/* FALLTHROUGH */
+		case 0:
+			break;
+		}
+
 		break;
-	case DOC_TAB_INDENT:
-		if	(io_puts(tab_indent, ltx->out))
-			add_space(ltx, ' ');
-		break;
-	case DOC_TAB_BLINE:
-		line_cmd(ltx, tab_boldline, NULL);
-		break;
-	case DOC_TAB_BRULE:
-		line_cmd(ltx, tab_boldrule, NULL);
+	case DOC_TAB_CLINE:
+		if	(va_arg(list, int))
+		{
+			char *p = mvsprintf("%d-%d", list);
+			line_cmd(ltx, tab_cline, p);
+			memfree(p);
+		}
+
 		break;
 	default:
 		return EOF;

@@ -43,6 +43,9 @@ extern IO *DocOut_latex (IO *io);
 
 extern int LaTeX_indexmode;
 extern int LaTeX_putc (void *drv, int c);
+extern int LaTeX_vputc (void *drv, int c);
+extern int LaTeX_putucs (void *drv, int32_t c);
+extern int LaTeX_vputucs (void *drv, int32_t c);
 extern int LaTeX_xputc (void *drv, int c);
 extern int LaTeX_plain (void *drv, int c);
 extern void LaTeX_puts (LaTeX *ltx, const char *str);

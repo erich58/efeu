@@ -275,13 +275,13 @@ static char *iorl_fc (int mode, const char *args)
 		else	io = io_refer(iostd);
 
 		for (i = start - 1; i < end; i++)
-			io_printf(io, "%d: %s\n", i + 1, list[i]->line);
+			io_xprintf(io, "%d: %s\n", i + 1, list[i]->line);
 
 		io_close(io);
 		return NULL;
 	}
 
-	buf = sb_create(512);
+	buf = sb_acquire();
 	tname = NULL;
 
 	if	(mode == RL_MODE_EDIT)
@@ -292,7 +292,7 @@ static char *iorl_fc (int mode, const char *args)
 	else	io = io_strbuf(buf);
 
 	for (i = start - 1; i < end; i++)
-		io_printf(io, "%s\n", list[i]->line);
+		io_xprintf(io, "%s\n", list[i]->line);
 
 	io_close(io);
 
@@ -314,6 +314,7 @@ static char *iorl_fc (int mode, const char *args)
 	p = lmalloc(n);
 	memcpy(p, buf->data, n);
 	p[n - 1] = 0;
+	sb_release(buf);
 	return p;
 }
 

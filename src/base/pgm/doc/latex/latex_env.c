@@ -162,7 +162,7 @@ static void print_var (IO *io, EfiVarDef *var, size_t dim)
 	io_putc('\n', io);
 
 	for (; dim-- > 0; var++)
-		io_printf(io, "%s = %#s;\n", var->name, Val_str(var->data));
+		io_xprintf(io, "%s = %#s;\n", var->name, Val_str(var->data));
 }
 
 static void print_cenv (IO *io, EfiVarDef *var, size_t dim)
@@ -171,7 +171,7 @@ static void print_cenv (IO *io, EfiVarDef *var, size_t dim)
 
 	for (; dim-- > 0; var++)
 	{
-		io_printf(io, "%s = ", var->name);
+		io_xprintf(io, "%s = ", var->name);
 		ListFunc(io, Val_func(var->data));
 		io_puts(";\n", io);
 	}
@@ -182,9 +182,9 @@ static void print_env (IO *io, ENV **p, size_t dim)
 	for (; dim-- > 0; p++)
 	{
 		io_puts("\n// ", io);
-		io_printf(io, "%s: args=%#s\n", (*p)->name, (*p)->args);
-		io_printf(io, "%s = %#s;\n", (*p)->name, (*p)->beg);
-		io_printf(io, "end%s = %#s;\n", (*p)->name, (*p)->end);
+		io_xprintf(io, "%s: args=%#s\n", (*p)->name, (*p)->args);
+		io_xprintf(io, "%s = %#s;\n", (*p)->name, (*p)->beg);
+		io_xprintf(io, "end%s = %#s;\n", (*p)->name, (*p)->end);
 	}
 }
 
@@ -290,10 +290,10 @@ static void put_xenv (LaTeX *ltx, int mode, ENV *env, va_list list)
 		{
 			int i;
 
-			io_printf(ltx->out, "%% beg{%s}", env->name);
+			io_xprintf(ltx->out, "%% beg{%s}", env->name);
 
 			for (i = 1; i < args->dim; i++)
-				io_printf(ltx->out, " #%d=%#s",
+				io_xprintf(ltx->out, " #%d=%#s",
 					i, arg_get(args, i));
 		}
 
@@ -303,7 +303,7 @@ static void put_xenv (LaTeX *ltx, int mode, ENV *env, va_list list)
 	{
 		if	(env->end)
 			io_puts(env->end, ltx->out);
-		else	io_printf(ltx->out, "%% end{%s}", env->name);
+		else	io_xprintf(ltx->out, "%% end{%s}", env->name);
 	}
 
 	io_putc('\n', ltx->out);
@@ -470,7 +470,8 @@ int LaTeX_env (void *drv, int flag, va_list list)
 		break;
 	case DOC_MODE_TEX:
 	case DOC_MODE_PLAIN:
-		ltx->put = flag ? DocDrv_plain : LaTeX_putc;
+		ltx->put = flag ? LaTeX_vputc : LaTeX_putc;
+		ltx->putucs = flag ? LaTeX_vputucs : LaTeX_putucs;
 		break;
 	case DOC_MODE_HTML:
 	case DOC_MODE_MAN:
@@ -478,7 +479,8 @@ int LaTeX_env (void *drv, int flag, va_list list)
 		break;
 	case DOC_MODE_VERB:
 		put_xenv(ltx, flag, &env_verbatim, list);
-		ltx->put = flag ? DocDrv_plain : LaTeX_putc;
+		ltx->put = flag ? LaTeX_vputc : LaTeX_putc;
+		ltx->putucs = flag ? LaTeX_vputucs : LaTeX_putucs;
 		break;
 	case DOC_LIST_ITEM:
 		put_xenv(ltx, flag, &list_item, list);

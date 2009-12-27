@@ -209,7 +209,7 @@ static void print_mdaxis (EfiFunc *func, void *rval, void **arg)
 
 	if	(x != NULL)
 	{
-		n = io_printf(io,
+		n = io_xprintf(io,
 			"(name = %#s, dim = %d, size = %d, flags = %b)",
 			StrPool_get(x->sbuf, x->i_name),
 			x->dim, x->size, x->flags);
@@ -228,7 +228,7 @@ static void print_mdidx (EfiFunc *func, void *rval, void **arg)
 	{
 		mdindex *i = p->axis->idx + p->n;
 
-		Val_int(rval) = io_printf(io, "(%#s, %d)",
+		Val_int(rval) = io_xprintf(io, "(%#s, %d)",
 			StrPool_get(p->axis->sbuf, i->i_name), i->flags);
 	}
 	else	Val_int(rval) = io_puts("NULL", io);

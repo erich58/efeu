@@ -41,7 +41,8 @@ void Doc_psub (Doc *doc, IO *in)
 
 static char *copy_item (Doc *doc, IO *in, int beg, int end)
 {
-	StrBuf *buf = sb_create(0);
+	StrBuf *buf = sb_acquire();
+	char *p;
 	int depth, c;
 	
 	doc->indent++;
@@ -91,7 +92,9 @@ static char *copy_item (Doc *doc, IO *in, int beg, int end)
 	}
 
 	sb_putc(0, buf);
-	return sb2mem(buf);
+	p = sb_memcpy(buf);
+	sb_release(buf);
+	return p;
 }
 
 void Doc_sig (Doc *doc, int sig, IO *in)
@@ -175,7 +178,7 @@ void Doc_key (Doc *doc, IO *in, int c)
 	case '>':	Doc_endmark(doc); break;
 	case '+':	Doc_sig(doc, c, in); break;
 	case '-':	Doc_minus(doc, in); break;
-	default:	Doc_char(doc, c); break;
+	default:	Doc_char(doc, io_ucscompose(in, c)); break;
 	}
 }
 
@@ -183,7 +186,7 @@ void Doc_xcopy (Doc *doc, IO *in, int delim)
 {
 	int c;
 
-	while ((c = io_skipcom(in, doc->buf, doc->env.cpos == 0)) != EOF)
+	while ((c = io_skipcom(in, &doc->buf, doc->env.cpos == 0)) != EOF)
 	{
 		if	(c == delim)
 		{
@@ -225,7 +228,7 @@ void Doc_copy (Doc *doc, IO *in)
 {
 	int c;
 
-	while ((c = io_skipcom(in, doc->buf, doc->env.cpos == 0)) != EOF)
+	while ((c = io_skipcom(in, &doc->buf, doc->env.cpos == 0)) != EOF)
 	{
 		if	(doc_space(doc, c))
 			continue;

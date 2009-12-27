@@ -92,10 +92,10 @@ static void TeXbegin(IO *io, PGFMT *pgfmt)
 
 		PushLocale();
 		SetLocale(LOC_PRINT, "us");
-		io_printf(io, "\\topmargin=%gmm\n", pgfmt->topskip);
-		io_printf(io, "\\oddsidemargin=%gmm\n", pgfmt->margin);
-		io_printf(io, "\\textwidth=%gmm\n", pgfmt->width);
-		io_printf(io, "\\textheight=%gmm\n", pgfmt->height);
+		io_xprintf(io, "\\topmargin=%gmm\n", pgfmt->topskip);
+		io_xprintf(io, "\\oddsidemargin=%gmm\n", pgfmt->margin);
+		io_xprintf(io, "\\textwidth=%gmm\n", pgfmt->width);
+		io_xprintf(io, "\\textheight=%gmm\n", pgfmt->height);
 		PopLocale();
 
 		io_puts("\\voffset=-25mm\\hoffset=-25mm\n", io);
@@ -144,7 +144,7 @@ int tex_ctrl(PCTRL *pf, int cmd, va_list list)
 	case PCTRL_DATA:
 
 		io_puts("\n\\begin{tabular}{|l|", pf->io);
-		io_printf(pf->io, "*{%d}{r|}", va_arg(list, int));
+		io_xprintf(pf->io, "*{%d}{r|}", va_arg(list, int));
 		io_puts("}\n\\hline\n", pf->io);
 		pf->nl = " \\\\\n";
 		break;

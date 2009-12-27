@@ -38,7 +38,7 @@ If not, write to the Free Software Foundation, Inc.,
 typedef struct {
 	PG *pg;	/* Datenbankstruktur */
 	char *cmd;	/* SQL-Kommando */
-	StrBuf *wbuf;	/* Ausgabebuffer */
+	StrBuf wbuf;	/* Ausgabebuffer */
 	char *rbuf;	/* Eingabebuffer */
 	char *ptr;	/* Pointer auf Eingabebuffer */
 	int flag;	/* Flag für offene Daten */
@@ -46,18 +46,18 @@ typedef struct {
 
 static void pg_flush (PGCOPY *par)
 {
-	if	(sb_getpos(par->wbuf) == 0)
+	if	(sb_getpos(&par->wbuf) == 0)
 		return;
 
-	sb_putc('\n', par->wbuf);
-	sb_putc(0, par->wbuf);
+	sb_putc('\n', &par->wbuf);
+	sb_putc(0, &par->wbuf);
 
-	if      (PQputline(par->pg->conn, (char *) par->wbuf->data) != 0)
+	if      (PQputline(par->pg->conn, (char *) par->wbuf.data) != 0)
 	{
 		dbg_note("PG", M_FLUSH, NULL);
 	}
 
-	sb_begin(par->wbuf);
+	sb_begin(&par->wbuf);
 }
 				
 
@@ -69,7 +69,7 @@ static int pg_put (int c, void *ptr)
 	{
 		pg_flush(par);
 	}
-	else	sb_putc(c, par->wbuf);
+	else	sb_putc(c, &par->wbuf);
 
 	return c;
 }
@@ -117,12 +117,12 @@ static int pg_ctrl (void *ptr, int req, va_list list)
 	{
 	case IO_CLOSE:
 
-		if	(par->wbuf)
+		if	(par->wbuf.size)
 		{
 			pg_flush(par);
-			sb_puts("\\.", par->wbuf);
+			sb_puts("\\.", &par->wbuf);
 			pg_flush(par);
-			rd_deref(par->wbuf);
+			sb_free(&par->wbuf);
 		}
 
 		if	(par->rbuf)
@@ -257,7 +257,8 @@ IO *PG_open (PG *pg, const char *name, const char *mode)
 
 	pg->lock = 1;
 
-	par = memalloc(sizeof(PGCOPY));
+	par = memalloc(sizeof *par);
+	sb_init(&par->wbuf, 0);
 	par->pg = pg;
 	par->cmd = cmd;
 
@@ -265,7 +266,6 @@ IO *PG_open (PG *pg, const char *name, const char *mode)
 
 	if	(wflag)
 	{
-		par->wbuf = sb_create(0);
 		io->put = pg_put;
 	}
 	else
@@ -287,7 +287,7 @@ $SeeAlso
 \mref{io_getc(3)},
 \mref{io_gets(3)},
 \mref{io_puts(3)},
-\mref{io_printf(3)},
+\mref{io_xprintf(3)},
 \mref{PG_connect(3)},
 \mref{PG_exec(3)},
 \mref{PG_query(3)},

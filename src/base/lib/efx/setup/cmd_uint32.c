@@ -31,7 +31,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 static int print_data (const EfiType *type, const void *data, IO *io)
 {
-	return io_printf(io, "%lu", *((T *) data));
+	return io_xprintf(io, "%lu", *((T *) data));
 }
 
 EfiType Type_uint32 = SIMPLE_TYPE(S, T, NULL, print_data);

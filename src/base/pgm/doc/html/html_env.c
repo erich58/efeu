@@ -22,14 +22,13 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <HTML.h>
 
-
 /*	Hilfskommandos
 */
 
 static void put_att (HTML *html, int flag, char *att)
 {
 	if	(html->copy)	att = NULL;
-	if	(html->att)	io_printf(html->out, "</%s>", html->att);
+	if	(html->att)	io_xprintf(html->out, "</%s>", html->att);
 
 	if	(flag)
 	{
@@ -38,7 +37,7 @@ static void put_att (HTML *html, int flag, char *att)
 	}
 	else	html->att = popstack(&html->s_att, NULL);
 
-	if	(html->att)	io_printf(html->out, "<%s>", html->att);
+	if	(html->att)	io_xprintf(html->out, "<%s>", html->att);
 }
 
 static void put_env (HTML *html, int flag, const char *name, int nl)
@@ -63,15 +62,14 @@ static void put_sect (HTML *html, int flag, int type)
 	if	(flag)
 	{
 		io_puts("<P>\n", html->out);
-		sb_clean(html->buf);
-		io_push(html->out, io_strbuf(html->buf));
+		sb_trunc(&html->buf);
+		io_push(html->out, io_strbuf(&html->buf));
 		HTML_cpush(html, NULL, 0);
 	}
 	else
 	{
 		io_close(io_pop(html->out));
-		sb_putc(0, html->buf);
-		io_ctrl(html->out, type, html->buf->data);
+		io_ctrl(html->out, type, sb_nul(&html->buf));
 		io_puts("<BR>\n", html->out);
 
 		while (html->s_cmd)
@@ -91,6 +89,26 @@ static void list_env (HTML *html, int flag, const char *name)
 	}
 
 	put_env(html, flag, name, 1);
+}
+
+static char *get_align(const char *def)
+{
+	char *align = "left";
+
+	if	(!def)	return align;
+
+	for (; *def; def++)
+	{
+		switch (*def)
+		{
+		case 'l':	align = "left"; break;
+		case 'c':	align = "center"; break;
+		case 'r':	align = "right"; break;
+		default:	break;
+		}
+	}
+
+	return align;
 }
 
 int HTML_env (void *drv, int flag, va_list list)
@@ -224,12 +242,35 @@ int HTML_env (void *drv, int flag, va_list list)
 	case DOC_ENV_FORMULA:
 		break;
 	case DOC_ENV_TAB:
-		put_env(html, flag, "TABLE", 1);
+		HTML_newline(html, 0);
+
+		if	(flag)
+		{
+			char *opt = va_arg(list, char *);
+			char *def = va_arg(list, char *);
+			HTML_coldef(html, def);
+			io_printf(html->out,
+				"<TABLE frame=\"box\" rules=\"all\">\n");
+			opt = NULL;
+		}
+		else
+		{
+			io_puts("</TABLE>\n", html->out);
+		}
+
+		html->last = '\n';
 		break;
-#if 0
 	case DOC_ENV_MCOL:
+		if	(flag)
+		{
+			char *def = va_arg(list, char *);
+			int cdim = va_arg(list, int);
+			io_printf(html->out, "<TD colspan=\"%d\" align=\"%s\">",
+				cdim, get_align(def));
+			html->hmode = NULL;
+			html->cpos += cdim - 1;
+		}
 		break;
-#endif
 	default:
 		return EOF;
 	}

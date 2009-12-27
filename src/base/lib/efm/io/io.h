@@ -197,7 +197,12 @@ int io_xputs (const char *s, IO *io, const char *delim);
 int io_langputs (const char *s, IO *io);
 
 int io_vprintf (IO *io, const char *fmt, va_list list);
+int io_vxprintf (IO *io, const char *fmt, va_list list);
+int io_vmbprintf (IO *io, const char *fmt, va_list list);
+
 int io_printf (IO *io, const char *fmt, ...);
+int io_xprintf (IO *io, const char *fmt, ...);
+int io_mbprintf (IO *io, const char *fmt, ...);
 
 /*	Binäre Ein/Ausgabe
 */
@@ -240,9 +245,10 @@ Unicode Hilfsfunktionen
 */
 
 int32_t io_getucs (IO *io);
-int32_t io_getucs_auto (IO *io);
 int32_t io_getucs_utf8 (IO *io);
 int32_t io_getucs_latin1 (IO *io);
+int32_t io_getucs_latin9 (IO *io);
+int32_t io_ucscompose (IO *io, int c);
 int32_t io_ungetucs (int32_t c, IO *io);
 
 void io_ucswmode (IO *io, const char *codeset);
@@ -250,6 +256,7 @@ void io_ucswmode (IO *io, const char *codeset);
 int io_putucs (int32_t c, IO *io);
 int io_putucs_ascii (int32_t c, IO *io);
 int io_putucs_latin1 (int32_t c, IO *io);
+int io_putucs_latin9 (int32_t c, IO *io);
 int io_putucs_xml (int32_t c, IO *io);
 int io_putucs_utf8 (int32_t c, IO *io);
 

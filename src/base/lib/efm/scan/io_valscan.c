@@ -331,15 +331,14 @@ static int make_double (IO *io, void **ptr, StrBuf *sb, int sign)
 {
 	if	(ptr)
 	{
-		sb_putc(0, sb);
-		scan_dbuf = strtod((char *) sb->data, NULL);
+		scan_dbuf = strtod(sb_nul(sb), NULL);
 
 		if	(sign)	scan_dbuf = -scan_dbuf;
 
 		*ptr = &scan_dbuf;
 	}
 
-	rd_deref(sb);
+	sb_free(sb);
 	return SCAN_DOUBLE;
 }
 
@@ -352,11 +351,13 @@ int io_valscan (IO *in, unsigned flags, void **ptr)
 {
 	uint64_t lval;
 	int sign;
-	StrBuf *sb;
+	StrBuf sb;
 	int c;
 	int valtype;
 	int base;
 	int mode;
+
+	sb_init(&sb, 0);
 
 /*	Verarbeitungsmodus bestimmen
 */
@@ -412,10 +413,9 @@ int io_valscan (IO *in, unsigned flags, void **ptr)
 */
 	if	(mode != GET_INT && test_dp(in, c, valtype))
 	{
-		sb = sb_create(0);
-		sb_putc('0', sb);
-		add_fract(in, sb);
-		return make_double(in, ptr, sb, sign == '-');
+		sb_putc('0', &sb);
+		add_fract(in, &sb);
+		return make_double(in, ptr, &sb, sign == '-');
 	}
 
 /*	Test auf vorhandene Ziffern
@@ -432,7 +432,6 @@ int io_valscan (IO *in, unsigned flags, void **ptr)
 
 /*	Ganzzahlwert/Vorkommastellen zwischenspeichern
 */
-	sb = sb_create(0);
 	valtype = SCAN_INT;
 
 	while (isdigit(c))
@@ -440,7 +439,7 @@ int io_valscan (IO *in, unsigned flags, void **ptr)
 		if	(c == '8' || c == '9')
 			base = 10;
 
-		sb_putc(c, sb);
+		sb_putc(c, &sb);
 		c = io_getc(in);
 
 		while (test_sep(in, c))
@@ -455,22 +454,22 @@ int io_valscan (IO *in, unsigned flags, void **ptr)
 	}
 	else if	(test_dp(in, c, 1))
 	{
-		add_fract(in, sb);
-		return make_double(in, ptr, sb, sign == '-');
+		add_fract(in, &sb);
+		return make_double(in, ptr, &sb, sign == '-');
 	}
-	else if	(add_exp(in, sb, c))
+	else if	(add_exp(in, &sb, c))
 	{
-		return make_double(in, ptr, sb, sign == '-');
+		return make_double(in, ptr, &sb, sign == '-');
 	}
 	else if	(mode == GET_DBL)
 	{
 		io_ungetc(c, in);
-		return make_double(in, ptr, sb, sign == '-');
+		return make_double(in, ptr, &sb, sign == '-');
 	}
 
 	io_ungetc(c, in);
-	sb_putc(0, sb);
-	lval = conv_val(sb->data, base);
-	rd_deref(sb);
+	sb_putc(0, &sb);
+	lval = conv_val(sb.data, base);
+	sb_free(&sb);
 	return make_integer(in, ptr, sign == '-', lval, flags);
 }

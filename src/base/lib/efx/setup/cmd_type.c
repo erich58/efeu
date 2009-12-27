@@ -192,10 +192,10 @@ static void list_name(IO *io, EfiStruct *st)
 	if	(st->name == NULL)
 		io_puts(" <noname>", io);
 	else if	(isalpha(st->name[0]) || st->name[0] == '_')
-		io_printf(io, " %s", st->name);
-	else	io_printf(io, " operator%s", st->name);
+		io_xprintf(io, " %s", st->name);
+	else	io_xprintf(io, " operator%s", st->name);
 
-	if	(st->dim > 1)	io_printf(io, "[%d]", st->dim);
+	if	(st->dim > 1)	io_xprintf(io, "[%d]", st->dim);
 }
 
 static void info_type (IO *io, InfoNode *info)
@@ -221,14 +221,14 @@ static void info_type (IO *io, InfoNode *info)
 	}
 
 	if	(type->src)
-		io_printf(io, "src = %s\n", type->src->cmd);
+		io_xprintf(io, "src = %s\n", type->src->cmd);
 
-	io_printf(io, "cname = %#s\n", type->cname);
-	io_printf(io, "size = %d\n", type->size);
-	io_printf(io, "recl = %d\n", type->recl);
+	io_xprintf(io, "cname = %#s\n", type->cname);
+	io_xprintf(io, "size = %d\n", type->size);
+	io_xprintf(io, "recl = %d\n", type->recl);
 
 	if	(type->dim)
-		io_printf(io, "dim = %d\n", type->dim);
+		io_xprintf(io, "dim = %d\n", type->dim);
 
 	io_putc('\n', io);
 
@@ -252,7 +252,7 @@ static void info_type (IO *io, InfoNode *info)
 		io_puts("base:", io);
 
 		for (t = type->base; t; t = t->base)
-			io_printf(io, "\t%s", t->name);
+			io_xprintf(io, "\t%s", t->name);
 
 		io_putc('\n', io);
 	}
@@ -395,12 +395,12 @@ static void tinfo_list (IO *io, InfoNode *info)
 	for (st = type->list; st != NULL; st = st->next)
 	{
 		if	(tsize != st->offset && loffset != st->offset)
-			io_printf(io, "@%d:%d\n", tsize, st->offset - tsize);
+			io_xprintf(io, "@%d:%d\n", tsize, st->offset - tsize);
 
 		size = st->type->size * (st->dim ? st->dim : 1);
 		tsize = st->offset + size;
 		loffset = st->offset;
-		io_printf(io, "@%d:%d", st->offset, size);
+		io_xprintf(io, "@%d:%d", st->offset, size);
 
 		if	(st->member)
 			io_putc('*', io);
@@ -477,7 +477,7 @@ static void f_type_info (EfiFunc *func, void *rval, void **arg)
 {
 	EfiType *type = Val_type(arg[0]);
 	char *mode = Val_str(arg[1]);
-	StrBuf *buf = sb_create(0);
+	StrBuf *buf = sb_acquire();
 
 	if	(mode)
 	{
@@ -493,9 +493,8 @@ static void f_type_info (EfiFunc *func, void *rval, void **arg)
 		sb_puts(type->name, buf);
 	}
 
-	sb_putc(0, buf);
-	BrowseInfo((char *) buf->data);
-	rd_deref(buf);
+	BrowseInfo(sb_nul(buf));
+	sb_release(buf);
 }
 
 static void f_get_ctrl (EfiFunc *func, void *rval, void **arg)

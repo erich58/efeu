@@ -25,21 +25,21 @@ If not, write to the Free Software Foundation, Inc.,
 #ifndef	EFEU_fmtkey_h
 #define	EFEU_fmtkey_h	1
 
-#include <EFEU/io.h>
 #include <EFEU/strbuf.h>
 #include <EFEU/stdint.h>
+#include <EFEU/mstring.h>
 
 typedef struct {
+	StrBuf buf;	/* Zeichenbuffer */
 	int mode;	/* Formatierungsmodus */
 	int flags;	/* Steuerflags */
 	int size;	/* Größenangabe */
 	int width;	/* Feldbreite */
 	int prec;	/* Präzession */
-	char *list;	/* Zeichenliste */
 } FmtKey;
 
-int io_fmtkey (IO *io, FmtKey *key);
-int fmtkey (const char *fmt, FmtKey *key);
+#define	FKEY_DATA()	{ SB_DATA(30), 0, 0, 0, 0, 0 }
+#define	FKEY_DECL(name)	FmtKey name = FKEY_DATA()
 
 #define	FMT_BLANK	0x1	/* Blank bei positiven Werten */
 #define	FMT_SIGN	0x2	/* Vorzeichen immer ausgeben */
@@ -60,16 +60,23 @@ int fmtkey (const char *fmt, FmtKey *key);
 #define	FMTKEY_PDIFF	6	/* ptrdiff_t kompatibler Datenwert */
 #define	FMTKEY_IMAX	7	/* intmax_t kompatibler Datenwert */
 
-void ftool_addsig (StrBuf *buf, int sig, int flags);
-int ftool_ioalign (IO *io, StrBuf *sb, const FmtKey *key);
+FmtKey *fmtkey (FmtKey *buf, int32_t (*get) (void *), void *);
+int32_t fmtkey_pgetc (void *data);
+int32_t fmtkey_pgetucs (void *data);
+int32_t pgetucs (char **p, size_t lim);
 
-int fmt_bool (IO *io, const FmtKey *key, int val);
-int fmt_char (IO *io, const FmtKey *key, int val);
-int fmt_ucs (IO *io, const FmtKey *key, int32_t val);
-int fmt_str (IO *io, const FmtKey *key, const char *val);
-int fmt_long (IO *io, const FmtKey *key, long val);
-int fmt_double (IO *io, const FmtKey *key, double val);
-int fmt_intmax (IO *io, const FmtKey *key, intmax_t val);
-int fmt_uintmax (IO *io, const FmtKey *key, uintmax_t val);
+int ftool_addsig (StrBuf *buf, int sig, int flags);
+int ftool_complete (StrBuf *sb, const FmtKey *key, int pos, int nchar);
+int ftool_align (StrBuf *sb, const FmtKey *key, int pos, int nchar);
+
+int fmt_bool (StrBuf *sb, const FmtKey *key, int val);
+int fmt_char (StrBuf *sb, const FmtKey *key, int val);
+int fmt_ucs (StrBuf *sb, const FmtKey *key, int32_t val);
+int fmt_str (StrBuf *sb, const FmtKey *key, const char *val);
+int fmt_mbstr (StrBuf *sb, const FmtKey *key, const char *val);
+int fmt_long (StrBuf *sb, const FmtKey *key, long val);
+int fmt_double (StrBuf *sb, const FmtKey *key, double val);
+int fmt_intmax (StrBuf *sb, const FmtKey *key, intmax_t val);
+int fmt_uintmax (StrBuf *sb, const FmtKey *key, uintmax_t val);
 
 #endif	/* EFEU/fmtkey.h */

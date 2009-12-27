@@ -21,7 +21,7 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 # $pconfig
-# Version="$Id: efeu-vimrc.sh,v 1.8 2008-04-06 16:20:57 ef Exp $"
+# Version="$Id: efeu-vimrc.sh,v 1.9 2008-08-02 08:13:47 ef Exp $"
 # :dir|
 #	:*:directory with configuration files
 #	:de:Verzeichnis mit Konfigurationsdateien
@@ -44,6 +44,13 @@ if [ $# -ne 1 ]; then
 	exit 1
 fi
 
+top=`dirname $0`
+
+case "$top" in
+	*/bin | bin)	top=`dirname $top`;;
+esac
+
+top=`cd $top; pwd`
 cd $1 || exit 1
 dir=`pwd`
 

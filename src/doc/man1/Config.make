@@ -26,7 +26,6 @@ manentry edbjoin
 manentry edbtrans
 manentry efeu-magic
 manentry efeu-xlib
-manentry efeuconfig
 manentry efeucc
 manentry efeudoc
 manentry efeuscript
@@ -55,5 +54,6 @@ manentry mksource
 manentry mksrclist
 manentry pp2dep
 manentry shmkmf
+manentry shmkmf-config
 manentry src2doc
 manentry tex2ps

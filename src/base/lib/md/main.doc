@@ -17,6 +17,7 @@ sind zwar vollständig angeführt, aber nur zum Teil beschrieben.
 	Wördern, \thedate
 \toc
 \addsrclist
+\delsrc		main.doc
 \getsrc		*.doc
 \appendix
 \mchap[3]	Funktionen

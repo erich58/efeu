@@ -41,6 +41,7 @@ int PrintObj (IO *io, const EfiObj *obj);
 int PrintFmtList (IO *io, const char *fmt, EfiObjList *list);
 int PrintFmtObj (IO *io, const char *fmt, const EfiObj *obj);
 int ShowAny (IO *io, const EfiType *type, const void *data);
+int StrBufFmtList (StrBuf *sb, const char *fmt, EfiObjList *list);
 
 int PrintType (IO *io, const EfiType *type, int verbosity);
 void TypeInfo (const EfiType *type, const char *mode);

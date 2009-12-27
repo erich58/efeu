@@ -14,7 +14,7 @@ static char *edb_ident (const void *data)
 	IO *io;
 
 	edb = data;
-	sb = sb_create(0);
+	sb = sb_acquire();
 	io = io_strbuf(sb);
 
 	if	(edb->obj)
@@ -38,7 +38,7 @@ static char *edb_ident (const void *data)
 	}
 
 	io_close(io);
-	return sb2str(sb);
+	return sb_cpyrelease(sb);
 }
 
 
@@ -93,7 +93,7 @@ void edb_head (const EDB *edb, IO *io, int verbosity)
 
 	if	(!edb || !io)	return;
 
-	io_printf(io, "EDB\t1.0\n");
+	io_xprintf(io, "EDB\t1.0\n");
 
 	if	(edb->desc && verbosity > 1)
 	{
@@ -132,12 +132,12 @@ void edb_head (const EDB *edb, IO *io, int verbosity)
 		io_puts(var->name, io);
 
 		if	(var->dim)
-			io_printf(io, "[%d]", var->dim);
+			io_xprintf(io, "[%d]", var->dim);
  
 		io_putc(';', io);
 
 		if	(var->desc && verbosity > 1)
-			io_printf(io, "\t/* %s */", var->desc);
+			io_xprintf(io, "\t/* %s */", var->desc);
 
 		io_putc('\n', io);
 	}
@@ -157,10 +157,10 @@ void edb_vlist (const EDB *edb, const char *pfx, IO *io)
 
 	for (var = edb->obj->type->list; var != NULL; var = var->next)
 	{
-		io_printf(io, "%s%s", delim, var->name);
+		io_xprintf(io, "%s%s", delim, var->name);
 
 		if	(var->dim)
-			io_printf(io, "[%d]", var->dim);
+			io_xprintf(io, "[%d]", var->dim);
 
 		delim = ";";
 	}

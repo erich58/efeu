@@ -1,7 +1,7 @@
 /*
-Formatierungshifsprogramme
+Formatierungshifsfunktionen
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994, 2008 Erich Frühstück
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -23,47 +23,68 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/fmtkey.h>
 #include <EFEU/locale.h>
 
-void ftool_addsig (StrBuf *sb, int sig, int flags);
-int ftool_ioalign (IO *io, StrBuf *sb, const FmtKey *key);
-
 #define	LOCALE(name)	(Locale.print ? Locale.print->name : NULL)
 #define	NEG_SIG		LOCALE(negative_sign)
 #define	POS_SIG		LOCALE(positive_sign)
 #define	ZERO_SIG	LOCALE(zero_sign)
 
-
-/*	Vorzeichen ausgeben
+/*
+$alias
+Die Funktion |$1| schreibt das Vorzeichen einer Zahl entsprechend der
+Formatangaben in umgekehrter Reihenfolge in den Stringbuffer.
 */
 
-void ftool_addsig (StrBuf *sb, int sig, int flags)
+int ftool_addsig (StrBuf *sb, int sig, int flags)
 {
 	char *p;
 
 	if	(sig < 0)		p = NEG_SIG;
 	else if	(flags & FMT_SIGN)	p = (sig > 0) ? POS_SIG : ZERO_SIG;
 	else if	(flags & FMT_BLANK)	p = " ";
-	else				return;
+	else				return 0;
 
-	sb_rputs(p, sb);
+	return sb_rputs(p, sb);
 }
 
-
-/*	Ausgeben mit Feldausrichtung
+/*
+$alias
+Die Funktion |$1| schließt eine Zahlenformatierung ab. Dabei werden die ab
+<pos> geschriebenen Zeichen im Stringbuffer umgedreht und entsprechend der
+Formatierungsvorgaben ausgerichtet.
 */
 
-int ftool_ioalign (IO *io, StrBuf *sb, const FmtKey *key)
+int ftool_complete (StrBuf *sb, const FmtKey *key, int pos, int len)
 {
-	int n;
-
-	n = 0;
+	int n = sb->pos - pos;
 
 	if	(key->flags & FMT_RIGHT)
-		n += io_nputc(' ', io, key->width - sb->pos);
+		n += sb_nputc(' ', sb, key->width - n);
 
-	for (; sb->pos > 0; n++)
-		io_putc(sb->data[--sb->pos], io);
-
-	n += io_nputc(' ', io, key->width - n);
-	rd_deref(sb);
+	sb_swap(sb, pos, n);
+	n += sb_nputc(' ', sb, key->width - n);
 	return n;
+}
+
+/*
+$alias
+Die Funktion |$1| richtet die ab <pos> in den Stringbuffer geschriebenen
+Zeichen entsprechend der Formatierungsvorgaben aus.
+*/
+
+int ftool_align (StrBuf *sb, const FmtKey *key, int pos, int len)
+{
+	if	(key->width <= len)
+		return len;
+
+	if	(key->flags & FMT_RIGHT)
+	{
+		int n = sb->pos - pos;
+
+		sb->pos -= n;
+		sb_insert(sb, ' ', key->width - len);
+		sb->pos += n;
+	}
+	else	sb_nputc(' ', sb, key->width - len);
+
+	return key->width;
 }

@@ -29,7 +29,7 @@ If not, write to the Free Software Foundation, Inc.,
 typedef struct {
 	IO *io;		/* Eingabestruktur */
 	ArgList *args;	/* Argumentliste */
-	StrBuf *buf;	/* Zwischenbuffer */
+	StrBuf buf;	/* Zwischenbuffer */
 	char *ptr;	/* Zeichenpointer */
 	int mode;	/* Verarbeitungsmodus */
 	int save;	/* gesichertes Zeichen */
@@ -68,7 +68,7 @@ static int psub_get (void *ptr)
 
 	while ((c = io_getc(par->io)) == PSUBKEY)
 	{
-		par->ptr = psubexpandarg(par->buf, par->io, par->args);
+		par->ptr = psubexpandarg(&par->buf, par->io, par->args);
 
 		if	(*par->ptr)
 			return psub_sget(par);
@@ -92,7 +92,7 @@ static int psub_ctrl (void *ptr, int req, va_list list)
 	case IO_CLOSE:
 
 		rd_deref(par->args);
-		rd_deref(par->buf);
+		sb_free(&par->buf);
 		stat = io_close(par->io);
 		memfree(par);
 		return stat;
@@ -119,7 +119,7 @@ IO *psubfilter (IO *io, ArgList *args)
 		PSUB *par = memalloc(sizeof(PSUB));
 		par->io = io;
 		par->args = args;
-		par->buf = sb_create(1024);
+		sb_init(&par->buf, 0);
 		par->ptr = NULL;
 		par->mode = 0;
 

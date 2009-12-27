@@ -63,7 +63,7 @@ EDBJoin *GetEDBJoin (EfiType *t1, EfiType *t2)
 
 static void join_info (IO *out, InfoNode *info)
 {
-	io_printf(out, "JOIN\n");
+	io_xprintf(out, "JOIN\n");
 }
 
 

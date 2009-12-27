@@ -72,11 +72,11 @@ static EfiObj *inode_desc (const EfiObj *base, void *data)
 	}
 	else
 	{
-		StrBuf *sb = sb_create(0);
+		StrBuf *sb = sb_acquire();
 		IO *io = io_strbuf(sb);
 		info->func(io, info);
 		io_close(io);
-		res = sb2str(sb);
+		res = sb_cpyrelease(sb);
 	}
 	
 	return str2Obj(res);
@@ -137,11 +137,11 @@ static void f_load (EfiFunc *func, void *rval, void **arg)
 
 static void f_getinfo (EfiFunc *func, void *rval, void **arg)
 {
-	StrBuf *sb = sb_create(0);
+	StrBuf *sb = sb_acquire();
 	IO *io = io_strbuf(sb);
 	PrintInfo(io, GetInfo(NULL, STR(0)));
 	io_close(io);
-	Val_str(rval) = sb2str(sb);
+	Val_str(rval) = sb_cpyrelease(sb);
 }
 
 static void f_addinfo (EfiFunc *func, void *rval, void **arg)

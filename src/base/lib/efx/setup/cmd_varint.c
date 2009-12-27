@@ -42,7 +42,7 @@ static size_t write_data (const EfiType *type, const void *data, IO *io)
 
 static int print_data (const EfiType *type, const void *data, IO *io)
 {
-	return io_printf(io, "%lld", *((T *) data));
+	return io_xprintf(io, "%lld", *((T *) data));
 }
 
 EfiType Type_varint = COMPLEX_TYPE(S, "int64_t", sizeof(T), 0,

@@ -21,10 +21,13 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 # $pconfig
-# Version="$Id: dircmp.sh,v 1.5 2007-08-19 04:22:10 ef Exp $"
+# Version="$Id: dircmp.sh,v 1.6 2008-09-30 20:40:29 ef Exp $"
 # l|
 #	:*:show all different characters (cmp -l)
 #	:de:Ausgabe aller abweichenden Bytes (cmp -l)
+# b|
+#	:*:Ignore changes in the amount of white space.
+#	:de:Weissen Zeichen beim Vergleich ignorieren.
 # d|
 #	:*:use |diff| instead of |cmp|
 #	:de:Vergleich mit |diff| anstelle von |cmp|
@@ -90,14 +93,16 @@ esac
 # parse command args
 
 pgm=cmp
+popt=
 verbose=0
 
-while getopts cdlv opt
+while getopts bcdlv opt
 do
 	case $opt in
-	c)	pgm="diff -c";;
+	b)	pgm="diff"; popt="$popt -b";;
+	c)	pgm="diff"; popt="$popt -c";;
 	d)	pgm="diff";;
-	l)	pgm="cmp -l"; verbose=1;;
+	l)	pgm="cmp -l"; popt=""; verbose=1;;
 	v)	verbose=1;;
 	\?)	usage -?; exit 1;;
 	esac
@@ -123,8 +128,8 @@ shift 2
 ( cd $source; find . -type f "$@" -print) | sed -e '/[/]CVS[/]/d' | while read x
 do
 	if [ $verbose -gt 0 ]; then
-		echo $pgm $source/$x $target/$x
+		echo $pgm $popt $source/$x $target/$x
 	fi
 
-	$pgm $source/$x $target/$x
+	$pgm $popt $source/$x $target/$x
 done

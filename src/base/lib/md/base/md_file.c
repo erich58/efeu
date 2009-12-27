@@ -59,7 +59,7 @@ static void show_struct (IO *out, mdmat *md)
 	mdaxis *x;
 
 	for (x = md->axis; x != NULL; x = x->next)
-		io_printf(out, " %s[%zu]",
+		io_xprintf(out, " %s[%zu]",
 			StrPool_get(x->sbuf, x->i_name), x->dim);
 }
 
@@ -73,14 +73,14 @@ static void show_type (IO *out, mdmat *md, int mode)
 
 	io_putc(' ', out);
 	PrintType(out, md->type, 1);
-	io_printf(out, "[%zu", size);
+	io_xprintf(out, "[%zu", size);
 
 	if	(mode)
 	{
 		int delim = '=';
 
 		for (x = md->axis; x != NULL; x = x->next, delim = '*')
-			io_printf(out, "%c%zu", delim, x->dim);
+			io_xprintf(out, "%c%zu", delim, x->dim);
 	}
 
 	io_putc(']', out);
@@ -129,7 +129,7 @@ static void short_axis_list (IO *out, mdmat *md)
 
 	for (x = md->axis; x; x = x->next)
 	{
-		n = io_printf(out, "%s:", StrPool_get(md->sbuf, x->i_name));
+		n = io_xprintf(out, "%s:", StrPool_get(md->sbuf, x->i_name));
 
 		for (i = 0; i < x->dim; i++)
 		{
@@ -176,7 +176,7 @@ void md_info (IO *out, mdmat *md, const char *name, const char *mode)
 {
 	if	(!mode)	mode = "";
 
-	io_printf(out, "%s:", name);
+	io_xprintf(out, "%s:", name);
 
 	if	(strchr(mode, 's'))
 	{
@@ -188,7 +188,7 @@ void md_info (IO *out, mdmat *md, const char *name, const char *mode)
 		show_type(out, md, 1);
 
 		if	(!strchr(mode, 'd'))
-			io_printf(out, " %#s",
+			io_xprintf(out, " %#s",
 				StrPool_get(md->sbuf, md->i_name));
 	}
 

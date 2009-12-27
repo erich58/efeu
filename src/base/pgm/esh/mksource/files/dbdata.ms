@@ -475,7 +475,7 @@ static void DBDataDef::std & (str type, str vname, str desc)
 	switch (type)
 	{
 	case "double":
-		s_print += sprintf("n += io_printf(io, %#s, &data->%s);",
+		s_print += sprintf("n += io_xprintf(io, %#s, &data->%s);",
 			"%.18g, ", vname);
 		break;
 	}

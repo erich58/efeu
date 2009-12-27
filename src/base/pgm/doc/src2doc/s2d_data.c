@@ -28,7 +28,7 @@ void SrcData_init (SrcData *data, IO *ein)
 {
 	memset(data, 0, sizeof(SrcData));
 	DocBuf_init(&data->doc);
-	data->buf = sb_create(0);
+	sb_init(&data->buf, 0);
 	data->ein = ein;
 }
 
@@ -36,5 +36,5 @@ void SrcData_init (SrcData *data, IO *ein)
 void SrcData_write (SrcData *data, IO *io)
 {
 	DocBuf_write(&data->doc, io);
-	rd_deref(data->buf);
+	sb_free(&data->buf);
 }

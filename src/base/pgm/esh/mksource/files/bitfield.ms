@@ -140,7 +140,7 @@ void Bitfield(str Name, str Desc, IO Def, bool flag = true)
 
 		x2list.line("*ptr = NewObjList(uint2Obj(data->$1));", name);
 		x2list.line("ptr = &(*ptr)->next;");
-		xprint.line("n += io_printf(io, \" %uu,\", data->$1);", name);
+		xprint.line("n += io_xprintf(io, \" %uu,\", data->$1);", name);
 
 		list2x.newpar();
 		list2x.line("if	(list)");

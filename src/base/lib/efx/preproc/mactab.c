@@ -142,9 +142,9 @@ void ShowMacro (IO *io, PPMacro *mac)
 	io_puts(mac->name, io);
 
 	if	(mac->hasarg)
-		io_printf(io, "[%d%s]", mac->dim, mac->vaarg ? "v" : "");
+		io_xprintf(io, "[%d%s]", mac->dim, mac->vaarg ? "v" : "");
 
-	io_printf(io, " %#s\n", mac->repl);
+	io_xprintf(io, " %#s\n", mac->repl);
 
 	if	(mac->dim)
 	{

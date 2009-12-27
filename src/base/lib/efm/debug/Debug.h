@@ -38,10 +38,20 @@ If not, write to the Free Software Foundation, Inc.,
 #define	DBG_TRACE	6	/* Ablaufprotokoll */
 #define	DBG_DIM		7	/* Zahl der Debug-Level */
 
+typedef struct DebugClass {
+	const char *name;	/* Bezeichnung */
+	int level;		/* Debug - Level */
+	int sync;		/* Debug - Synchronisation */
+	FILE *log;		/* Log - File */
+} DebugClass;
+
+#define DEBUG_CLASS_DATA(name, level)	{ name, level, 0, NULL }
+
 extern int DebugKey (const char *name);
 extern char *DebugLabel (int type);
 extern void DebugMode (const char *def);
 extern FILE *LogFile (const char *cl, int level);
+extern FILE *DebugClassFile (DebugClass *cl);
 extern FILE *ParseLogFile (const char *def);
 extern IO *LogOut (const char *cl, int level);
 extern IO *ParseLogOut (const char *def);

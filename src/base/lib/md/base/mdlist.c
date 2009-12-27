@@ -113,7 +113,7 @@ mdlist *io_mdlist (IO *io, int flag)
 	if	(io_eat(io, "%s") == EOF)
 		return NULL;
 
-	buf = sb_create(0);
+	buf = sb_acquire();
 	c = copy_name(io, buf, '=', flag & MDLIST_NAMEOPT);
 	tmp = io_strbuf(buf);
 	dim = 0;
@@ -151,7 +151,7 @@ mdlist *io_mdlist (IO *io, int flag)
 	list->lopt = list->list + dim;
 	ptr = (char *) (list->lopt + dim);
 	memcpy(ptr, buf->data, space);
-	rd_deref(buf);
+	sb_release(buf);
 
 	list->next = NULL;
 	list->name = list_next(&ptr);

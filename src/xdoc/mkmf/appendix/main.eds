@@ -4,7 +4,7 @@
 :*:\mchap[1]	Commands
 :de:\mchap[1]	Kommandos
 
-\pipe	|efeuconfig --help=raw|
+\pipe	|shmkmf-config --help=raw|
 \pipe	|efeuscript --help=raw|
 \pipe	|efeu-xlib --help=raw|
 \pipe	|mkmf --help=raw|

@@ -92,13 +92,13 @@ static void head_xlist (EfiType *type, const char *name, IO *io)
 
 		if	(var->dim)
 		{
-			io_printf(io, "%s[%d]", p, var->dim);
+			io_xprintf(io, "%s[%d]", p, var->dim);
 		}
 		else if	(var->type->list)
 		{
 			head_xlist(var->type, p, io);
 		}
-		else	io_printf(io, "%s", p);
+		else	io_xprintf(io, "%s", p);
 
 		memfree(p);
 	}

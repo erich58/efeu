@@ -49,7 +49,7 @@ static void expand_func (CmdPar *par, IO *in, IO *out, int c)
 	CmdParExpand *eval;
 	char *arg;
 
-	sb = sb_create(0);
+	sb = sb_acquire();
 
 	while (!isspace(c) && c != EOF)
 	{
@@ -57,15 +57,15 @@ static void expand_func (CmdPar *par, IO *in, IO *out, int c)
 		c = io_getc(in);
 	}
 
-	sb_putc(0, sb);
-	eval = CmdParExpand_get((char *) sb->data);
+	arg = sb_nul(sb);
+	eval = CmdParExpand_get(arg);
 
 	if	(eval == NULL)
 	{
 		io_ungetc(c, in);
 		io_putc('@', out);
-		io_puts((char *) sb->data, out);
-		sb_delete(sb);
+		io_puts(arg, out);
+		sb_release(sb);
 		return;
 	}
 
@@ -80,15 +80,9 @@ static void expand_func (CmdPar *par, IO *in, IO *out, int c)
 		c = io_getc(in);
 	}
 
-	if	(sb_getpos(sb))
-	{
-		sb_putc(0, sb);
-		arg = (char *) sb->data;
-	}
-	else	arg = NULL;
-
+	arg = sb_getpos(sb) ? sb_nul(sb) : NULL;
 	eval->eval(par, out, arg);
-	rd_deref(sb);
+	sb_release(sb);
 }
 
 static void subcopy (CmdPar *par, IO *in, IO *out, int delim);
@@ -99,25 +93,18 @@ static void expand_var (CmdPar *par, IO *in, IO *out, int key)
 	char *name;
 	IO *io;
 
-	sb = sb_create(0);
+	sb = sb_acquire();
 	io = io_strbuf(sb);
 	subcopy(par, in, io, key);
 	io_close(io);
-
-	if	(sb_getpos(sb))
-	{
-		sb_putc(0, sb);
-		name = (char *) sb->data;
-	}
-	else	name = NULL;
-
+	name = sb_getpos(sb) ? sb_nul(sb) : NULL;
 	io_puts(CmdPar_getval(par, name, NULL), out);
-	sb_delete(sb);
+	sb_release(sb);
 }
 
 void CmdPar_expand (CmdPar *par, IO *in, IO *out)
 {
-	int c;
+	int32_t c;
 
 	if	(par == NULL)
 	{
@@ -125,16 +112,16 @@ void CmdPar_expand (CmdPar *par, IO *in, IO *out)
 		return;
 	}
 
-	c = io_getc(in);
+	c = io_getucs(in);
 
-	if	(isspace(c))
+	if	(c < 256 && isspace(c))
 	{
 		io_ungetc(c, in);
 		io_putc('@', out);
 	}
 	else if	(c == '!')
 	{
-		io_printf(out, "|%s|", par->name);
+		io_xprintf(out, "|%s|", par->name);
 	}
 	else if	(c == '{')
 	{
@@ -151,33 +138,28 @@ static void subcopy (CmdPar *par, IO *in, IO *out, int delim)
 {
 	StrBuf *buf;
 	char *p;
-	int c;
+	int32_t c;
 
-	buf = NULL;
-
-	while ((c = io_getc(in)) != delim)
+	while ((c = io_getucs(in)) != delim)
 	{
 		switch (c)
 		{
 		case EOF:
 			return;
 		case '$':
-			if	(!buf)
-				buf = sb_create(1024);
-
+			buf = sb_acquire();
 			p = psubexpand(buf, in, 0, NULL);
 			io_puts(p, out);
+			sb_release(buf);
 			break;
 		case '@':
 			CmdPar_expand(par, in, out);
 			break;
 		default:
-			io_putc(c, out);
+			io_putucs(c, out);
 			break;
 		}
 	}
-
-	rd_deref(buf);
 }
 
 

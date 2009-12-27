@@ -540,12 +540,12 @@ static void $$1_$1_realloc ($$1 *data)
 		name, size);
 	s_clean += psub("$$1_$1_clean(data);\n", name);
 	up_init += psub("char *$1_ptr = data->$1;\n", name);
-	sync_init += psub("StrBuf *$1_buf = sb_create(0);\n", name);
+	sync_init += psub("StrBuf *$1_buf = sb_acquire();\n", name);
 	sync_exit += psub(string !
 data->$2 = sb_size($1_buf);
 $$1_$1_realloc(data);
 memcpy(data->$1, $1_buf->data, data->$2);
-rd_deref($1_buf);
+sb_release($1_buf);
 !, name, size);
 }
 

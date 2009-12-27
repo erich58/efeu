@@ -89,7 +89,7 @@ is used.
 :*:The command $1 fetches the actual setting of the date.
 :de:Der Befehl $1 ruft das Dokumentdatum ab.
 
-\def\thedate	plain(date);
+\def\thedate	cout << date;
 
 :*:document title
 	$1 |[|<toc entry>|]| <title>\br

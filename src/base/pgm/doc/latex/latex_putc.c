@@ -53,7 +53,7 @@ static void stex_filter (int c, IO *io)
 	case '^': case '~': case '\\':
 	case '|': case '<': case '>': case '"':
 
-		io_printf(io, "\\texttt{\\char%d}", c);
+		io_xprintf(io, "\\texttt{\\char%d}", c);
 		break;
 
 	case '-': 
@@ -94,6 +94,10 @@ static void stex_filter (int c, IO *io)
 		{
 			io_puts("$\\bullet$", io);
 		}
+		else if	(c >= 160)
+		{
+			io_puts("$\\bullet$", io);
+		}
 		else	io_putc(c, io);
 
 		break;
@@ -124,6 +128,38 @@ int LaTeX_putc (void *drv, int c)
 	return c;
 }
 
+int LaTeX_vputc (void *drv, int c)
+{
+	LaTeX *stex = drv;
+
+	io_putucs(c, stex->out);
+	return c;
+}
+
+
+int LaTeX_putucs (void *drv, int32_t c)
+{
+	LaTeX *stex = drv;
+
+	if	(stex->ignorespace && isspace(c))
+		return c;
+
+	stex->ignorespace = 0;
+
+	if	(c <= 128)
+	{
+		stex_filter(c, stex->out);
+		return 1;
+	}
+
+	return io_putucs(c, stex->out);
+}
+
+int LaTeX_vputucs (void *drv, int32_t c)
+{
+	LaTeX *stex = drv;
+	return io_putucs(c, stex->out);
+}
 
 int LaTeX_xputc (void *drv, int c)
 {

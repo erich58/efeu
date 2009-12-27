@@ -28,6 +28,8 @@
 test $_tklib_smh && return 
 _tklib_smh=1
 
+include cflags.smh
+
 # $Description
 # :*:
 # Including the header |$1| defines the |make|-makros \index{|TK_INC|}
@@ -43,15 +45,15 @@ _tklib_smh=1
 # $source
 
 mf_comm "TCL/TK configuration from $FILE"
-efeu-xlib -mCPP_TCL -I/usr/include//:/usr/local/include tcl.h
-efeu-xlib -mCPP_TK -I/usr/include//:/usr/local/include tk.h
+mf_cflags CPP_TCL -I/usr/include//:/usr/local/include tcl.h
+mf_cflags CPP_TK -I/usr/include//:/usr/local/include tk.h
 
 mf_var -n TK_INC '$(CPP_TK) $(CPP_TCL)'
 
-efeu-xlib -mLD_TCL -L/usr/lib:/usr/local/lib -l'tcl[0-9.]*'
-efeu-xlib -mLD_TK -L/usr/lib:/usr/local/lib -l'tk[0-9.]*'
-efeu-xlib -mLD_X11 -L/usr/X11R6/lib:/usr/local/lib -lX11
-efeu-xlib -mLD_EXT -lm -lld
+mf_cflags LD_TCL -L/usr/lib:/usr/local/lib -l'tcl[0-9.]*'
+mf_cflags LD_TK -L/usr/lib:/usr/local/lib -l'tk[0-9.]*'
+mf_cflags LD_X11 -L/usr/X11R6/lib:/usr/local/lib -lX11
+mf_cflags LD_EXT -lm -lld
 
 mf_var -n TK_LIB '$(LD_TK) $(LD_TCL) $(LD_X11) $(LD_EXT)'
 mf_comm -n "End of TCL/TK configuration"
@@ -74,5 +76,5 @@ mf_comm -n "End of TCL/TK configuration"
 
 # $SeeAlso
 # \mref{shmkmf(1)},
-# \mref{efeu-xlib(1)},
+# \mref{cflags.smh(7)},
 # \mref{cc.smh(7)}.

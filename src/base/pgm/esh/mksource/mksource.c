@@ -46,8 +46,8 @@ If not, write to the Free Software Foundation, Inc.,
 		":de:Nicht editieren, Datei wurde mit\n"
 #define	F_END	":de:generiert.\n"
 
-#define	R_HEAD	"\n# Rules from $! -r $0\n"
-#define	R_END	"\n# End of rules from $0\n"
+#define	R_HEAD	"\n# Rules created with\n# $0\n"
+#define	R_END	"\n# End of rules created with $!\n"
 
 
 /*	Globale Variablen
@@ -57,6 +57,7 @@ static char *BaseName = NULL;	/* Basisname */
 static int Verbose = 0;		/* Protokollmodus */
 static char *bootstrap = NULL;	/* Aufrufparameter */
 static int hdr_comment = 0;	/* Kommentare auch in den Header schreiben */
+static SB_DECL(sb_flags, 0);	/* Buffer für Flags */
 
 static void put_comment (const char *txt, IO *out)
 {
@@ -147,7 +148,7 @@ static void divide_src (void)
 	if	(!output[OUT_HDR].io)
 	{
 		if	(Verbose)
-			io_printf(ioerr, "%s == %s\n", output[OUT_HDR].name,
+			io_xprintf(ioerr, "%s == %s\n", output[OUT_HDR].name,
 				output[OUT_SRC].name);
 
 		output[OUT_HDR].io = output[OUT_SRC].io;
@@ -244,7 +245,7 @@ static void open_output (OUTPUT *out, const char *name, const char *head)
 		return;
 
 	if	(Verbose)
-		io_printf(ioerr, "%s > %s\n", out->name, out->fname);
+		io_xprintf(ioerr, "%s > %s\n", out->name, out->fname);
 
 	out->io = io_fileopen(out->fname, "w");
 
@@ -399,9 +400,16 @@ static void f_addcomment (EfiFunc *func, void *rval, void **arg)
 	add_comment(Val_str(arg[0]));
 }
 
+static void f_addflag (EfiFunc *func, void *rval, void **arg)
+{
+	sb_putc(' ', &sb_flags);
+	sb_puts(Val_str(arg[0]), &sb_flags);
+}
+
 static EfiFuncDef fdef[] = {
 	{ 0, &Type_str, "usecomment (IO io = cin)", f_usecomment },
 	{ 0, &Type_void, "addcomment (str com)", f_addcomment },
+	{ 0, &Type_void, "addflag (str com)", f_addflag },
 };
 
 
@@ -418,7 +426,7 @@ static void eval_file(const char *name)
 	if	(fname == NULL)	return;
 
 	if	(Verbose)
-		io_printf(ioerr, "input < %s\n", fname);
+		io_xprintf(ioerr, "input < %s\n", fname);
 
 	AddDepend(fname); 
 	save_cin = CmdEval_cin;
@@ -437,9 +445,10 @@ static void eval_file(const char *name)
 int main (int narg, char **arg)
 {
 	int i;
+	char *flags;
 
 	ChangeLocale("C");
-	SetVersion("$Id: mksource.c,v 1.41 2008-04-20 07:38:15 ef Exp $");
+	SetVersion("$Id: mksource.c,v 1.44 2008-09-02 20:48:10 ef Exp $");
 	SetProgName(arg[0]);
 	bootstrap = mtabcat(" ", arg, narg);
 
@@ -470,9 +479,11 @@ int main (int narg, char **arg)
 	ParseCommand(&narg, arg);
 	PopVarTab();
 	SetupOutput = 0;
+	flags = sb_nul(&sb_flags);
+	io_xprintf(ioerr, "flags=%#s\n", flags);
 
 	if	(Verbose)
-		io_printf(ioerr, "%s\n", bootstrap);
+		io_xprintf(ioerr, "%s\n", bootstrap);
 
 /*	Standardnamen bestimmen
 */
@@ -491,7 +502,7 @@ int main (int narg, char **arg)
 
 		if	(suffix == NULL)
 		{
-			StrBuf *sb = sb_create(0);
+			StrBuf *sb = sb_acquire();
 
 			if	(dname)
 			{
@@ -503,7 +514,7 @@ int main (int narg, char **arg)
 			sb_puts(".tpl", sb);
 
 			memfree(Template);
-			Template = sb2str(sb);
+			Template = sb_cpyrelease(sb);
 		}
 	}
 
@@ -550,7 +561,7 @@ int main (int narg, char **arg)
 	{
 		char *arg[2];
 
-		arg[0] = Template;
+		arg[0] = bootstrap;
 		arg[1] = BaseName;
 
 		io_psubvec(iostd, R_HEAD, 2, arg);
@@ -559,8 +570,9 @@ int main (int narg, char **arg)
 			printf("\n%s:: %s\n", AllTarget, DependName);
 
 		if	(DependTarget)
-			printf("\n%s:: %s\n\t%s -d %s >> $(MAKEFILE)\n",
-				DependTarget, Template, ProgName, Template);
+			printf("\n%s:: %s\n\t%s%s -d %s >> $(MAKEFILE)\n",
+				DependTarget, Template, ProgName, flags,
+				Template);
 
 		if	(CleanTarget)
 		{
@@ -573,8 +585,8 @@ int main (int narg, char **arg)
 			printf("\n");
 		}
 
-		printf("\n%s: %s\n\t%s %s\n",
-			DependName, Template, ProgName, Template);
+		printf("\n%s: %s\n\t%s%s %s\n",
+			DependName, Template, ProgName, flags, Template);
 
 		if	(rule_buf.pos)
 		{

@@ -25,16 +25,20 @@ are accepted from command |$!|:
 	:*:default description body
 	:de:Vorgabe für Beschreibungsrumpf
 LoadConfig = false
+LoadHelp = true
 
 v:name=var | :setpar {}
 	:*:set parameter <name> to <value>.
 	:de:Parameter <name> auf <value> setzen.
+n | LoadHelp = false
+	:*:Do not load help configuration file.
+	:de:Standardhilfeoptionen nicht laden.
 c | LoadConfig = true
-	:*:load configuration file
-	:de:Konfigurationsdatei laden
+	:*:load configuration file.
+	:de:Konfigurationsdatei laden.
 s:src | :setsrc {}
-	:*:source file with command Syntax
-	:de:Sourcefile mit Kommandosyntax
+	:*:source file with command Syntax.
+	:de:Sourcefile mit Kommandosyntax.
 :script |
 	:*:script file
 	:de:Eingabefile
@@ -43,5 +47,5 @@ s:src | :setsrc {}
 	:de:gibt die Beschreibung für das Script <script> aus.
 .version.fmt = "@ident\n\n@version\n\n@copyright\n"
 ::"<=|--version|=>" |
-	:*:show version information
+	:*:show version information.
 	:de:gibt die Versionsnummer des Kommandos aus.

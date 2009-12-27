@@ -199,9 +199,9 @@ by descending priority. Operators not separated by a line have the
 same priority.
 
 \tab	|l|l|l|
-[-]
+---
 #3|c| <*Prefix operators*>
-[--]
+===
 <|::|> | global | <|::|><name>
 <|++|> | pre increment | <|++|><lvalue>
 <|--|> | pre decrement | <|--|><lvalue>
@@ -213,7 +213,7 @@ same priority.
 <|(|> | grouping | <|(|> <expr> <|)|>
 <|\[|> | expression | <|[|> <expr> <|]|>
 <|()|> | cast (type conversion) | <|(|><type><|)|> <expr>
-[-]
+---
 
 The list grouping operator creates a list of values.
 In opposite to C/C++, the use of this operator is not restricted
@@ -224,9 +224,9 @@ This expression may be stored in a variable or passed as function
 argument for later evaluation.
 
 \tab	|l|l|l|
-[-]
+---
 #3|c| <*Postfix operators*>
-[--]
+===
 <|++|> | post increment | <lvalue><|++|>
 <|--|> | post decrement | <lvalue><|--|>
 <|::|> | scope resolution | <type><|::|><name>
@@ -234,7 +234,7 @@ argument for later evaluation.
 <|.|> | member selection | <expr><|.|><name>
 <|[]|> | sub scripting | <expr><|[|><expr><|]|>
 <|()|> | function call | <expr><|(|><list><|)|>
-[-]
+---
 
 In esh, you have access to a table of variables and you can create
 your own variable tables. The scope resolution operator is
@@ -242,52 +242,52 @@ used to get a member of this table. You can apply the operator
 to any type, that could be converted in the type |VarTab|.
 
 \tab	|l|l|l|
-[-]
+---
 #3|c| <*Arithmetic operators*>
-[--]
+===
 <|*|> | multiply | <expr> <|*|> <expr>
 <|/|> | division | <expr> <|/|> <expr>
 <|%|> | modulo (remainder) | <expr> <|%|> <expr>
-[-]
+---
 <|+|> | add (plus) | <expr> <|+|> <expr>
 <|-|> | subtract | <expr> <|-|> <expr>
-[-]
+---
 <|\<\<|> | shift left | <expr> <|\<\<|> <expr>
 <|\>\>|> | shift right | <expr> <|\>\>|> <expr>
-[-]
+---
 
 \tab	|l|l|l|
-[-]
+---
 #3|c| <*Comparison operators*>
-[--]
+===
 <|\<|> | less than | <expr> <|\<|> <expr>
 <|\<=|> | less than or equal | <expr> <|\<=|> <expr>
 <|\>|> | greater than | <expr> <|\>|> <expr>
 <|\>=|> | greater than or equal | <expr> <|\>=|> <expr>
-[-]
+---
 <|==|> | equal | <expr> <|==|> <expr>
 <|!=|> | not equal | <expr> <|!=|> <expr>
-[-]
+---
 
 \tab	|l|l|l|
-[-]
+---
 #3|c| <*Bit wise operators*>
-[--]
+===
 <|\&|> | bit wise AND | <expr> <|\&|> <expr>
-[-]
+---
 <|^|> | bit wise exclusive OR | <expr> <|^|> <expr>
-[-]
+---
 <|\||> | bit wise inclusive OR | <expr> <|\||> <expr>
-[-]
+---
 
 \tab	|l|l|l|
-[-]
+---
 #3|c| <*Logical operators*>
-[--]
+===
 <|\&\&|> | logical AND | <expr> <|\&\&|> <expr>
-[-]
+---
 <|\|\||> | logical OR | <expr> <|\|\||> <expr>
-[-]
+---
 
 The right operand of a logical operator is only evaluated, if the
 resulting value is not determined by the left operand.
@@ -297,13 +297,13 @@ So in
 the right operand <expr> is never evaluated.
 
 \tab	|l|l|l|
-[-]
+---
 #3|c| <*Conditional and range operator*>
-[--]
+===
 <|? :|> | conditional operator | <cond> <|?|> <expr1> <|:|> <expr2>
-[-]
+---
 <|: :|> | range operator | <start> <|:|> <end> \[ <|:|> <step> \]
-[-]
+---
 
 The range operator creates a list of variables, starting by <start>
 and ending by <end>. For numbers, the value of <step> must be
@@ -313,9 +313,9 @@ result in an infinite loop.
 There is no range operator in C/C++.
 
 \tab	|l|l|l|
-[-]
+---
 #3|c| <*Assign operators*>
-[--]
+===
 <|=|> | simple assignment | <lvalue> <|=|> <expr>
 <|*=|> | multiply and assign | <lvalue> <|*=|> <expr>
 <|/=|> | divide and assign | <lvalue> <|/=|> <expr>
@@ -327,24 +327,24 @@ There is no range operator in C/C++.
 <|\&=|> | AND and assign | <lvalue> <|\&=|> <expr>
 <|^=|> | exclusive OR and assign | <lvalue> <|^=|> <expr>
 <|\|=|> | inclusive OR and assign | <lvalue> <|\|=|> <expr>
-[-]
+---
 
 Assign operators are right associative.
 
 \tab	|l|l|l|
-[-]
+---
 #3|c| <*List separator*>
-[--]
+===
 <|,|> | list separator | <expr> <|,|> <expr>
-[-]
+---
 
 The comma |,| in esh is used as list separator like python,
 not as comma operator like C/C++. So <a>, <b>, ..., <n>
 returns a list containing <a>, <b>, ..., <n>.
 
-If you do not use the return value of the comma operator
+If you do not use the return value
 (in the most common use), there is no
-difference to the list separator.
+difference between the comma operator and the list separator.
 
 \shead	Loops
 
@@ -458,15 +458,15 @@ uint32_t and uint64_t. The following table shows additional integral
 types and their representation in C.
 
 \tab	|l|l|
-[-]
+---
 <*esh type*> | <*C type*>
-[-]
+---
 bool | int
 int | int
 unsigned | unsigned int
 varint | int64_t
 varsize | uint64_t
-[-]
+---
 
 The keyword |unsigned| is a type name and not a type qualifier like in C.
 The data types |varint| and |varsize| have a variable length binary

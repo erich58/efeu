@@ -63,11 +63,8 @@ static NAME cmd_tab[] = {
 	{ DOC_TAB_BEG, "tabbeg", NULL, 1 },
 	{ DOC_TAB_SEP, "tabseb", NULL, 1 },
 	{ DOC_TAB_END, "tabend", NULL, 0 },
-	{ DOC_TAB_HEIGHT, "lineheight", NULL, 0 },
-	{ DOC_TAB_BLINE, "boldline", NULL, 0 },
-	{ DOC_TAB_BRULE, "boldrule", NULL, 0 },
-	{ DOC_TAB_INDENT, "indent", NULL, 0 },
-	{ DOC_TAB_SPECIAL, "tabspecial", "%s", 0 },
+	{ DOC_TAB_HLINE, "hline", NULL, 0 },
+	{ DOC_TAB_CLINE, "cline", NULL, 0 },
 };
 
 static NAME env_tab[] = {
@@ -118,7 +115,7 @@ static NAME env_tab[] = {
 	{ DOC_ENV_BIB, "bib", "%#s", 1 },
 	{ DOC_ENV_TABLE, "table", "%#s", 1 },
 	{ DOC_ENV_FIG, "fig", "%#s", 1 },
-	{ DOC_ENV_TAB, "tab", "height=%s width=%s", 1 },
+	{ DOC_ENV_TAB, "tab", "option=%s coldef=%s", 1 },
 	{ DOC_ENV_URL, "url", "%#s", 1 },
 	{ DOC_ENV_CODE, "code", NULL, 0 },
 	{ DOC_ENV_HANG, "hang", NULL, 0 },
@@ -161,13 +158,13 @@ static void show_var (IO *out, EfiVarTab *tab)
 
 	if	(!tab)	return;
 
-	io_printf(out, "\t%s: \\\n", tab->name);
+	io_xprintf(out, "\t%s: \\\n", tab->name);
 
 	for (p = tab->tab.data, n = tab->tab.used; n-- > 0; p++)
 	{
 		EfiObj *obj = p->get ? p->get(NULL, p->data) : RefObj(p->obj);
 
-		io_printf(out, "\t%s = ", p->name);
+		io_xprintf(out, "\t%s = ", p->name);
 		PrintObj(out, obj);
 		UnrefObj(obj);
 		io_puts(" \\\n", out);
@@ -197,7 +194,7 @@ static void show_par (TPAR *par, const char *fmt, va_list list)
 	{
 		io_puts(DocEnvName(va_arg(list, int)), par->out);
 	}
-	else	io_vprintf(par->out, fmt, list);
+	else	io_vxprintf(par->out, fmt, list);
 }
 
 /*	Steuerzeichen ausgeben
@@ -233,7 +230,7 @@ static int test_ctrl (void *ptr, int req, va_list list)
 		lbreak = 1;
 		break;
 	case DOC_SYM:
-		io_printf(par->out, "&\b&%s", va_arg(list, char *));
+		io_xprintf(par->out, "&\b&%s", va_arg(list, char *));
 		break;
 	case DOC_CMD:
 		name = get_def(va_arg(list, int), cmd_tab, tabsize(cmd_tab));
@@ -256,13 +253,13 @@ static int test_ctrl (void *ptr, int req, va_list list)
 		last = (int) (size_t) popstack(&par->env, (void *) 0xFF);
 
 		if	(name->key != last)
-			io_printf(par->out, " != %s %s",
+			io_xprintf(par->out, " != %s %s",
 				DocEnvName(last), ERROR);
 
 		lbreak = name->lbreak;
 		break;
 	default:
-		io_printf(par->out, "%c-%02x %s",
+		io_xprintf(par->out, "%c-%02x %s",
 			(req >> 8), req & 0xFF, UNDEF);
 		break;
 	}

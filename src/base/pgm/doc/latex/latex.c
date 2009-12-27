@@ -23,6 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <LaTeX.h>
 #include <efeudoc.h>
 #include <ctype.h>
+#include <EFEU/Resource.h>
 
 #define	NAME	"LaTeX"		/* Name der Variablentabelle */
 #define	HDRCFG	"LaTeX"		/* Kopfkonfiguration */
@@ -48,9 +49,15 @@ IO *DocOut_latex (IO *io)
 	ltx->last = '\n';
 	ltx->symtab = DocSym_load(SYMTAB);
 	ltx->put = LaTeX_putc;
+	ltx->putucs = LaTeX_putucs;
 	ltx->hdr = ltx_hdr;
 	ltx->rem = LaTeX_rem;
 	ltx->cmd = LaTeX_cmd;
 	ltx->env = LaTeX_env;
+
+	if	(io)
+		io->putucs = GetFlagResource("UseUTF8") ?
+			io_putucs_utf8 : io_putucs_latin1;
+
 	return DocDrv_io(ltx);
 }

@@ -28,7 +28,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 static void ident_std (IO *io, void *data)
 {
-	io_printf(io, "%#08x", ((int *) data)[0]);
+	io_xprintf(io, "%#08x", ((int *) data)[0]);
 }
 
 static void seed_std (void *data, unsigned int x)

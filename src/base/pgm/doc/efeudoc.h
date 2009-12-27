@@ -78,9 +78,9 @@ typedef struct {
 
 struct DocStruct {
 	REFVAR;			/* Referenzvariablen */
-	DocType *type;	/* Ausgabetype */
+	DocType *type;		/* Ausgabetype */
 	char *name;		/* Dokumentname */
-	StrBuf *buf;		/* Ausgabebuffer */
+	StrBuf buf;		/* Ausgabebuffer */
 	IO *out;		/* Ausgabestruktur */
 	unsigned stat : 1;	/* Statusflag */
 	unsigned nl : 15;	/* Zahl der gelesenen Leerzeilen */
@@ -109,7 +109,7 @@ void Doc_xcopy (Doc *doc, IO *in, int c);
 void Doc_input (Doc *doc, const char *opt, IO *in);
 void Doc_include (Doc *doc, const char *opt, const char *name);
 void Doc_str (Doc *doc, const char *str);
-void Doc_char (Doc *doc, int c);
+void Doc_char (Doc *doc, int32_t c);
 void Doc_symbol (Doc *doc, const char *name, const char *def);
 void Doc_psub (Doc *doc, IO *in);
 void Doc_eval (Doc *doc, IO *in, const char *expr);

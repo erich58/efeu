@@ -60,7 +60,7 @@ static void par_info (IO *io, InfoNode *info)
 	{
 		EfiObj *obj = p->get ? p->get(NULL, p->data) : RefObj(p->obj);
 
-		io_printf(io, "\n%s %s = ", p->type->name, p->name);
+		io_xprintf(io, "\n%s %s = ", p->type->name, p->name);
 		PrintObj(io, obj);
 		UnrefObj(obj);
 		io_putc('\n', io);

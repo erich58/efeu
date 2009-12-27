@@ -53,7 +53,7 @@ static void sbuf_clean (StrData *sd, int destroy)
 {
 	if	(destroy)
 	{
-		rd_deref(sd->ptr);
+		sb_destroy(sd->ptr);
 		sd->ctrl = NULL;
 		sd->ptr = NULL;
 	}

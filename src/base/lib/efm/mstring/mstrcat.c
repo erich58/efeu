@@ -36,7 +36,7 @@ char *mstrcat(const char *delim, const char *list, ...)
 	StrBuf *sb;
 	va_list k;
 
-	sb = sb_create(0);
+	sb = sb_acquire();
 	va_start(k, list);
 	x = NULL;
 
@@ -48,7 +48,7 @@ char *mstrcat(const char *delim, const char *list, ...)
 	}
 
 	va_end(k);
-	return sb2str(sb);
+	return sb_cpyrelease(sb);
 }
 
 
@@ -66,11 +66,11 @@ char *mstrpaste(const char *delim, const char *a, const char *b)
 	if	(a == NULL)	return mstrcpy(b);
 	if	(b == NULL)	return mstrcpy(a);
 
-	sb = sb_create(0);
+	sb = sb_acquire();
 	sb_puts(a, sb);
 	sb_puts(delim, sb);
 	sb_puts(b, sb);
-	return sb2str(sb);
+	return sb_cpyrelease(sb);
 }
 
 /*

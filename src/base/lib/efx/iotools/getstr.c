@@ -39,7 +39,7 @@ static char *loadstring(IO *io, int delim)
 {
 	int no_nl;
 	int at_begin;
-	StrBuf *buf;
+	StrBuf buf;
 	int c;
 
 	io_getc(io);
@@ -48,7 +48,7 @@ static char *loadstring(IO *io, int delim)
 	if	(c == delim)	return NULL;
 
 	io_protect(io, 1);
-	buf = sb_create(0);
+	sb_init(&buf, 0);
 	at_begin = 1;
 	no_nl = 1;
 
@@ -67,7 +67,7 @@ static char *loadstring(IO *io, int delim)
 				c = io_mgetc(io, 1);
 
 				if	(c != delim)
-					sb_putc('\\', buf); 
+					sb_putc('\\', &buf); 
 			}
 			else if	(c == delim)
 			{
@@ -75,13 +75,14 @@ static char *loadstring(IO *io, int delim)
 			}
 		}
 
-		sb_putc(c, buf);
+		sb_putc(c, &buf);
 		at_begin = (no_nl || c == '\n');
 		c = io_mgetc(io, 1);
 	}
 
 	io_protect(io, 0);
-	return sb2str(buf);
+	sb_putc(0, &buf);
+	return sb_getmem(&buf);
 }
 
 

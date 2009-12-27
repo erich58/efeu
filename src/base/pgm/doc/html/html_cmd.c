@@ -103,7 +103,7 @@ int HTML_cmd (void *drv, va_list list)
 		n = va_arg(list, int);
 
 		if	(n)
-			io_printf(html->out, "<SUP>%d</SUP>", n);
+			io_xprintf(html->out, "<SUP>%d</SUP>", n);
 		else	io_puts("<SUP>*</SUP>", html->out);
 
 		break;
@@ -120,25 +120,23 @@ int HTML_cmd (void *drv, va_list list)
 	case DOC_TAB_BEG:
 		HTML_newline(html, 0);
 		io_puts("<TR>\n", html->out);
-		io_puts(html->bline ? "<TH>" : "\n<TD>", html->out);
+		html->cpos = 0;
+		html->hmode = HTML_colgrp(html);
 		break;
 	case DOC_TAB_SEP:
-		io_puts(html->bline ? "</TH>\n<TH>" : "</TD>\n<TD>", html->out);
+		HTML_hmode(html);
+		io_puts("</TD>\n", html->out);
+		html->hmode = HTML_colgrp(html);
 		break;
 	case DOC_TAB_END:
-		io_puts(html->bline ? "</TH>" : "</TD>", html->out);
+		HTML_hmode(html);
+		io_puts("</TD>", html->out);
 		io_puts("\n</TR>\n", html->out);
 		html->last = '\n';
-		html->bline = 0;
 		break;
-	case DOC_TAB_HEIGHT:
+	case DOC_TAB_HLINE:
 		break;
-	case DOC_TAB_BLINE:
-		html->bline = 1;
-		break;
-	case DOC_TAB_BRULE:
-		break;
-	case DOC_TAB_INDENT:
+	case DOC_TAB_CLINE:
 		break;
 	default:
 		return EOF;

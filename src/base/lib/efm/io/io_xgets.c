@@ -29,7 +29,7 @@ char *io_xgets(IO *io, const char *delim)
 	int c;
 	StrBuf *sb;
 
-	sb = sb_create(0);
+	sb = sb_acquire();
 	io_protect(io, 1);
 
 	while ((c = io_xgetc(io, delim)) != EOF)
@@ -37,7 +37,7 @@ char *io_xgets(IO *io, const char *delim)
 
 	io_protect(io, 0);
 	sb_putc(0, sb);
-	return sb2mem(sb);
+	return sb_cpyrelease(sb);
 }
 
 

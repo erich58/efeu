@@ -250,7 +250,7 @@ if	(mname)
 {
 	IO *meta = io_fileopen(mname, "w");
 	edb_head(handle->edb, meta, 2);
-	io_printf(meta, "@import binary\n%s\n", dname);
+	io_xprintf(meta, "@import binary\n%s\n", dname);
 	io_close(meta);
 }
 

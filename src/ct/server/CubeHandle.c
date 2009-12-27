@@ -90,7 +90,7 @@ static int out_put (int c, void *ptr)
 
 	if	(handle->out_eof)	return EOF;
 
-	if	(handle->buf_out->pos >= handle->max_byte ||
+	if	(handle->buf_out.pos >= handle->max_byte ||
 			handle->line >= handle->max_lines)
 	{
 		size_t n;
@@ -103,12 +103,12 @@ static int out_put (int c, void *ptr)
 			return EOF;
 		}
 
-		memcpy(handle->buf_out->data, handle->seg, 3);
-		sprintf((char *) handle->buf_out->data + 3,
+		memcpy(handle->buf_out.data, handle->seg, 3);
+		sprintf((char *) handle->buf_out.data + 3,
 			"%6d%6d", (unsigned) handle->line - 1,
 			(unsigned) handle->last_pos - 16);
-		handle->buf_out->data[15] = '\n';
-		send(handle->fd, handle->buf_out->data, handle->last_pos, 0);
+		handle->buf_out.data[15] = '\n';
+		send(handle->fd, handle->buf_out.data, handle->last_pos, 0);
 
 		if	(test_break(handle))
 		{
@@ -116,24 +116,24 @@ static int out_put (int c, void *ptr)
 			return EOF;
 		}
 
-		memcpy(handle->buf_out->data, handle->key, 3);
-		sprintf((char *) handle->buf_out->data + 3,
+		memcpy(handle->buf_out.data, handle->key, 3);
+		sprintf((char *) handle->buf_out.data + 3,
 			"%6d%6d\n", 0, 0);
-		n = handle->buf_out->pos - handle->last_pos;
-		memmove(handle->buf_out->data + 16,
-			handle->buf_out->data + handle->last_pos, n);
+		n = handle->buf_out.pos - handle->last_pos;
+		memmove(handle->buf_out.data + 16,
+			handle->buf_out.data + handle->last_pos, n);
 		handle->line = 1;
 		handle->last_pos = 16;
-		handle->buf_out->pos = 16 + n;
-		sb_sync(handle->buf_out);
+		handle->buf_out.pos = 16 + n;
+		sb_sync(&handle->buf_out);
 	}
 
-	sb_putc(c, handle->buf_out);
+	sb_putc(c, &handle->buf_out);
 
 	if	(c == '\n')
 	{
 		handle->line++;
-		handle->last_pos = sb_getpos(handle->buf_out);
+		handle->last_pos = sb_getpos(&handle->buf_out);
 	}
 
 	return c;
@@ -146,8 +146,7 @@ static int out_ctrl (void *ptr, int req, va_list list)
 	switch (req)
 	{
 	case IO_REWIND:
-		sb_begin(handle->buf_out);
-		sb_sync(handle->buf_out);
+		sb_trunc(&handle->buf_out);
 		return 0;
 	case IO_CLOSE:
 		return 0;
@@ -162,7 +161,7 @@ void CubeHandle_error (CubeHandle *handle, const char *fmt, ...)
 
 	va_start(list, fmt);
 	CubeHandle_beg(handle, "ERR", NULL);
-	io_vprintf(handle->out, fmt, list);
+	io_vxprintf(handle->out, fmt, list);
 	va_end(list);
 }
 
@@ -180,8 +179,8 @@ CubeHandle *CubeHandle_init (CubeHandle *handle, int fd)
 	handle->save_limit = handle->max_lines;
 	handle->headline = 1;
 	handle->md = NULL;
-	handle->buf_in = sb_create(1000);
-	handle->buf_out = sb_create(1000);
+	sb_init(&handle->buf_in, 1000);
+	sb_init(&handle->buf_out, 1000);
 	handle->out = io_alloc();
 	handle->out->data = handle;
 	handle->out->put = out_put;
@@ -193,9 +192,9 @@ void CubeHandle_close (CubeHandle *handle)
 {
 	handle->stat = 0;
 	rd_deref(handle->md);
-	rd_deref(handle->buf_in);
+	sb_free(&handle->buf_in);
 	rd_deref(handle->out);
-	rd_deref(handle->buf_out);
+	sb_free(&handle->buf_out);
 }
 
 char *CubeHandle_read (CubeHandle *handle)
@@ -206,7 +205,7 @@ char *CubeHandle_read (CubeHandle *handle)
 
 	if	(handle->stat == 0)
 	{
-		if	(!sb_read(handle->fd, handle->buf_in))
+		if	(!sb_read(handle->fd, &handle->buf_in))
 		{
 			handle->stat = EOF;
 			return NULL;
@@ -214,7 +213,7 @@ char *CubeHandle_read (CubeHandle *handle)
 	}
 
 	handle->stat = 0;
-	p = handle->buf_in->data;
+	p = handle->buf_in.data;
 
 	while (isspace(*p))
 		p++;
@@ -236,18 +235,18 @@ void CubeHandle_beg (CubeHandle *handle, const char *key, const char *seg)
 	handle->seg = seg ? seg : key;
 	handle->max_lines = handle->save_limit;
 	io_rewind(handle->out);
-	io_printf(handle->out, "%3.3s%6d%6d\n", handle->key, 0, 0);
+	io_xprintf(handle->out, "%3.3s%6d%6d\n", handle->key, 0, 0);
 }
 
 void CubeHandle_send (CubeHandle *handle)
 {
 	if	(handle->out_eof)	return;
 
-	sprintf((char *) handle->buf_out->data + 3,
+	sprintf((char *) handle->buf_out.data + 3,
 		"%6d%6d", (unsigned) handle->line - 1,
-		(unsigned) handle->buf_out->pos - 16);
-	handle->buf_out->data[15] = '\n';
-	send(handle->fd, handle->buf_out->data, handle->buf_out->pos, 0);
+		(unsigned) handle->buf_out.pos - 16);
+	handle->buf_out.data[15] = '\n';
+	send(handle->fd, handle->buf_out.data, handle->buf_out.pos, 0);
 }
 
 void CubeHandle_set (CubeHandle *handle, char *arg)
@@ -294,9 +293,9 @@ void CubeHandle_set (CubeHandle *handle, char *arg)
 
 	if	(handle->headline)
 		io_puts("#par:value;min;max\n", handle->out);
-	io_printf(handle->out, "lines;%u;%u;%u\n",
+	io_xprintf(handle->out, "lines;%u;%u;%u\n",
 		(unsigned) handle->max_lines, MIN_LINE, MAX_LINE);
-	io_printf(handle->out, "bytes;%u;%u;%u\n",
+	io_xprintf(handle->out, "bytes;%u;%u;%u\n",
 		(unsigned) handle->max_byte, MIN_BYTE, MAX_BYTE);
-	io_printf(handle->out, "headline;%d;0;1\n", handle->headline);
+	io_xprintf(handle->out, "headline;%d;0;1\n", handle->headline);
 }

@@ -74,7 +74,7 @@ static void MF_showflag(EfiFunc *func, void *rval, void **arg)
 		delim = "=";
 
 		if (x->flags)
-			io_printf(io, "[%x]", x->flags);
+			io_xprintf(io, "[%x]", x->flags);
 
 		for (n = 0; n < x->dim; n++)
 		{
@@ -86,7 +86,7 @@ static void MF_showflag(EfiFunc *func, void *rval, void **arg)
 			io_puts(StrPool_get(x->sbuf, x->idx[n].i_name), io);
 
 			if (x->idx[n].flags)
-				io_printf(io, "[%x]", x->idx[n].flags);
+				io_xprintf(io, "[%x]", x->idx[n].flags);
 		}
 
 		io_putc('\n', io);
@@ -107,12 +107,12 @@ static void show_mdlist (IO *io, mdlist *list)
 	{
 		int i;
 
-		io_printf(io, "name=%#s, opt=%#s, dim=%d\n",
+		io_xprintf(io, "name=%#s, opt=%#s, dim=%d\n",
 			list->name, list->option, list->dim);
 
 		for (i = 0; i < list->dim; i++)
 		{
-			io_printf(io, "%d:\tlist=%#s, opt=%#s\n",
+			io_xprintf(io, "%d:\tlist=%#s, opt=%#s\n",
 				i, list->list[i], list->lopt[i]);
 		}
 

@@ -65,11 +65,8 @@ If not, write to the Free Software Foundation, Inc.,
 #define	DOC_TAB_BEG	0x20	/* Beginn einer Tabellenzeile */
 #define	DOC_TAB_SEP	0x21	/* Tabellentrennzeichen */
 #define	DOC_TAB_END	0x22	/* Ende einer Tabellenzeile */
-#define	DOC_TAB_HEIGHT	0x23	/* Tabellenhöhe */
-#define	DOC_TAB_BLINE	0x24	/* Fette Zeile */
-#define	DOC_TAB_BRULE	0x25	/* Fette Linie */
-#define	DOC_TAB_INDENT	0x26	/* Tabelleneinrückung */
-#define	DOC_TAB_SPECIAL	0x27	/* Tabellensteuerung */
+#define	DOC_TAB_HLINE	0x23	/* Horizontale Trennlinie */
+#define	DOC_TAB_CLINE	0x24	/* Trennlinie über einzelne Spalten */
 
 /*	Umgebungen werden mit DOC_BEG eingeleitet und mit DOC_END
 	beendet.  Die Umgebungskennungen werden nach inhaltlichen

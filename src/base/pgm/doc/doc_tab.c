@@ -23,51 +23,10 @@ If not, write to the Free Software Foundation, Inc.,
 #include "efeudoc.h"
 #include <ctype.h>
 
-
-static void tabcmd (Doc *doc, char *arg)
-{
-	char *p;
-
-	io_ctrl(doc->out, DOC_CMD,
-		DOC_TAB_SPECIAL, arg);
-
-	for (p = arg; *p != 0; p++)
-	{
-		switch (*p)
-		{
-		case '@':
-			io_ctrl(doc->out, DOC_CMD, DOC_CMD_TEX, "\\emptyline\n");
-			break;
-		case '-':
-			io_ctrl(doc->out, DOC_CMD, DOC_TAB_BRULE);
-			break;
-		case '*':
-			io_ctrl(doc->out, DOC_CMD, DOC_TAB_BLINE);
-			break;
-		case '+':
-			io_ctrl(doc->out, DOC_CMD, DOC_TAB_INDENT);
-			break;
-		default:
-			if	(isdigit(*p))
-			{
-				io_ctrl(doc->out, DOC_CMD,
-					DOC_TAB_HEIGHT, strtol(p, &p, 10));
-				p--;
-			}
-
-			break;
-		}
-	}
-	
-	memfree(arg);
-}
-
 static void colend (Doc *doc, int flag)
 {
 	if	(flag & 2)
 		io_ctrl(doc->out, DOC_END, DOC_ENV_MCOL);
-	else if	(flag == 0)
-		io_ctrl(doc->out, DOC_CMD, DOC_CMD_TEX, "\\norule");
 
 	Doc_nomark(doc);
 	doc->env.cpos = 0;
@@ -76,24 +35,11 @@ static void colend (Doc *doc, int flag)
 static void tabline (Doc *doc, IO *in)
 {
 	int c, flag;
-	char *arg;
-
-	while ((arg = DocParseArg(in, '[', ']', 1)) != NULL)
-		tabcmd(doc, arg);
-
-	c = io_peek(in);
-
-	if	(c == '\n' || c == EOF)
-	{
-		io_getc(in);
-		/*
-		io_ctrl(doc->out, DOC_CMD, DOC_CMD_TEX, "\\emptyline\n");
-		*/
-		return;
-	}
+	int space;
 
 	io_ctrl(doc->out, DOC_CMD, DOC_TAB_BEG);
 	flag = 0;
+	space = 0;
 
 	while ((c = io_skipcom(in, NULL, 0)) != EOF)
 	{
@@ -118,13 +64,18 @@ static void tabline (Doc *doc, IO *in)
 				break;
 
 			DocSkipSpace(in, 0);
+			space = 1;
 		}
 		else if	(c == '|')
 		{
 			colend(doc, flag);
-			io_ctrl(doc->out, DOC_CMD, DOC_TAB_SEP);
+
+			if	(io_ctrl(doc->out, DOC_CMD, DOC_TAB_SEP) == EOF)
+				io_putc('\t', doc->out);
+
 			DocSkipSpace(in, 0);
 			flag = 0;
+			space = 0;
 		}
 		else
 		{
@@ -132,15 +83,47 @@ static void tabline (Doc *doc, IO *in)
 
 			if	(isspace(c))
 			{
-				Doc_char(doc, ' ');
+				space = 1;
 			}
-			else	Doc_key(doc, in, c);
+			else
+			{
+				if	(space)
+					Doc_char(doc, ' ');
+
+				Doc_key(doc, in, c);
+				space = 0;
+			}
 		}
 	}
 
 	colend(doc, flag);
-	io_ctrl(doc->out, DOC_CMD, DOC_TAB_END);
-	io_putc('\n', doc->out);
+
+	if	(io_ctrl(doc->out, DOC_CMD, DOC_TAB_END) == EOF)
+		io_putc('\n', doc->out);
+}
+
+static void make_line (Doc *doc, IO *in, int typ)
+{
+	char *p;
+
+	if	((p = DocParseLine(in, 0)))
+	{
+		while (*p != 0)
+		{
+			int p1, p2;
+			
+			while (*p == ' ' || *p == '\t')
+				p++;
+
+			if	(!isdigit((unsigned char) *p))
+				break;
+
+			p1 = strtoul(p, &p, 10);
+			p2 = (*p == '-') ? strtoul(p + 1, &p, 10) : p1;
+			io_ctrl(doc->out, DOC_CMD, DOC_TAB_CLINE, typ, p1, p2);
+		}
+	}
+	else	io_ctrl(doc->out, DOC_CMD, DOC_TAB_HLINE, typ);
 }
 
 void Doc_tab (Doc *doc, IO *in, const char *opt, const char *arg)
@@ -156,6 +139,28 @@ void Doc_tab (Doc *doc, IO *in, const char *opt, const char *arg)
 		if	(c == '\n')	break;
 		if	(isspace(c))	continue;
 		
+		switch (c)
+		{
+		case '-':
+			if	(io_testkey(in, "--"))
+			{
+				make_line(doc, in, 1);
+				continue;
+			}
+
+			break;
+		case '=':
+			if	(io_testkey(in, "=="))
+			{
+				make_line(doc, in, 2);
+				continue;
+			}
+
+			break;
+		default:
+			break;
+		}
+
 		io_ungetc(c, in);
 		tabline(doc, in);
 	}

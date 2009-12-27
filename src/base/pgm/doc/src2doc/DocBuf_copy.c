@@ -21,6 +21,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include "DocBuf.h"
+#include "src2doc.h"
 #include <EFEU/parsub.h>
 #include <EFEU/mstring.h>
 #include <EFEU/efio.h>
@@ -106,6 +107,12 @@ static StrBuf *cpy_source (DocBuf *doc, int par, IO *io, StrBuf *buf)
 	return buf;
 }
 
+static StrBuf *maclist (DocBuf *doc, int par, IO *io, StrBuf *buf)
+{
+	MacDef_list(buf);
+	return buf;
+}
+
 static StrBuf *set_cmdpar (DocBuf *doc, int par, IO *io, StrBuf *buf)
 {
 	int c;
@@ -172,6 +179,7 @@ static struct {
 	{ "copyright",		set_var, VAR_COPYRIGHT },
 	{ "syn[opsis]",		get_synopsis, 0 },
 	{ "source",		cpy_source, 0 },
+	{ "maclist",		maclist, 0 },
 	{ "pconfig",		set_cmdpar, 0 },
 	{ "alias",		add_alias, 0 },
 };

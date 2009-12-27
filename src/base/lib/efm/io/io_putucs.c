@@ -22,16 +22,24 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/io.h>
 #include <EFEU/locale.h>
+#include <EFEU/mstring.h>
+
 
 int io_putucs_ascii (int32_t c, IO *io)
 {
-	io_putc(c > 0x7f ? '?' : c, io);
+	io_putc(c > 0xff ? '?' : c, io);
 	return 1;
 }
 
 int io_putucs_latin1 (int32_t c, IO *io)
 {
 	io_putc(c > 0xff ? '?' : c, io);
+	return 1;
+}
+
+int io_putucs_latin9 (int32_t c, IO *io)
+{
+	io_putc(ucs_to_latin9(c), io);
 	return 1;
 }
 
@@ -49,7 +57,7 @@ int io_putucs_xml (int32_t c, IO *io)
 	}
 
 	if	(c >= 0x7f)
-		return io_printf(io, "&#%d;", c);
+		return io_xprintf(io, "&#%d;", c);
 
 	io_putc(c, io);
 	return 1;
@@ -118,8 +126,9 @@ static struct {
 	{ "ANSI_X3.110-1983", io_putucs_ascii },
 	{ "ANSI_X3.4-1968", io_putucs_ascii },
 	{ "latin1", io_putucs_latin1 },
+	{ "latin9", io_putucs_latin9 },
 	{ "ISO-8859-1", io_putucs_latin1 },
-	{ "ISO-8859-15", io_putucs_latin1 },
+	{ "ISO-8859-15", io_putucs_latin9 },
 	{ "utf8", io_putucs_utf8 },
 	{ "UTF-8", io_putucs_utf8 },
 	{ "xml", io_putucs_xml },

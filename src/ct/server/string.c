@@ -20,7 +20,7 @@ static void ucs_xcopy (IO *in, IO *out)
 
 			if	(ucs < 0x20 || ucs == 0x7f)
 			{
-				io_printf(out, "\\%03o", ucs);
+				io_xprintf(out, "\\%03o", ucs);
 			}
 			else	io_putucs_utf8(ucs, out);
 
@@ -44,7 +44,7 @@ static void ucs_copy (IO *in, IO *out)
 
 			if	(ucs < 0x20 || ucs == 0x7f)
 			{
-				io_printf(out, "\\%03o", ucs);
+				io_xprintf(out, "\\%03o", ucs);
 			}
 			else	io_putucs_utf8(ucs, out);
 

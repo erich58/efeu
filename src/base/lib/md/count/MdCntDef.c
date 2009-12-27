@@ -90,7 +90,7 @@ static void label_def (MdEfiClass *cl, IO *io)
 	Label *label;
 	int c;
 
-	sb = sb_create(0);
+	sb = sb_acquire();
 	cl->dim = 0;
 	vb_init(&tab, 16, sizeof(Label));
 
@@ -124,7 +124,7 @@ static void label_def (MdEfiClass *cl, IO *io)
 		label->desc = sb_strcpy(sb);
 	}
 
-	rd_deref(sb);
+	sb_release(sb);
 	cl->dim = tab.used;
 	cl->label = tab.data;
 }

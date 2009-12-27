@@ -25,6 +25,9 @@
 test $_efeu_smh && return
 _efeu_smh=1
 
+: ${MKSOURCE:=mksource}
+: ${EFEUDOC:=efeudoc}
+
 include base.smh
 include config.smh
 include script.smh
@@ -69,16 +72,16 @@ fi
 # Nachstehnde Tabelle zeigt die Vorgaben für die Installation:
 # \par
 # \tab	|l|l|
-# [-]
-# Dateimuster | Verzeichniss
-# [-]
+# ---
+# Dateimuster | Verzeichnis
+# ---
 # <|/de/\\*.cfg|> | <|\$APPLDIR/de/config|>
 # <|*.cfg|> | <|\$APPLDIR/config|>
 # <|/de/\\*.hlp|> | <|\$APPLDIR/de/help|>
 # <|*.hlp|> | <|\$APPLDIR/help|>
 # <|/de/\\*.msg|> | <|\$APPLDIR/de/messages|>
 # <|*.msg|> | <|\$APPLDIR/messages|>
-# [-]
+# ---
 # 
 # :de:
 # Hier ist |APPLDIR| mit |\$TOP/lib/efeu| vordefiniert, wobei |TOP| auf das
@@ -160,9 +163,9 @@ efeu_gensrc ()
 
 	test "$tpl" || shmkmf_warg "efeu_gensrc"
 
-	mksource --all=files -r $tpl
+	$MKSOURCE --all=files -r $tpl
 
-	for x in `mksource -l $tpl`
+	for x in `$MKSOURCE -l $tpl`
 	do
 		case "$x" in
 		*.c)
@@ -332,7 +335,9 @@ efeu_library ()
 
 efeu_libvar ()
 {(
-	ldir="$TOP/lib"
+	lpath=$TOP/lib:$shmkmf_top/lib
+	last=""
+	top=$TOP
 	dep_var="DEP_LIST"
 	lib_var="LIB_LIST"
 	dep=
@@ -348,9 +353,10 @@ efeu_libvar ()
 	do
 		case "$1" in
 		-p)	dep_var="DEP_$2"; lib_var="LIB_$2"; shift 2;;
+		-t)	top="$2"; lpath="$lpath:$top/lib"; shift 2;;
 		-l)	lib="$lib $1$2"; shift 2;;
 		-l*)	lib="$lib $1"; shift 1;;
-		-L)	ldir="$2"; lib="$lib $1$2"; shift 2;;
+		-L)	lpath="$lpath:$2"; lib="$lib -L$2"; shift 2;;
 		-xd)	dep="$dep $2"; shift 2;;
 		-md)	dep="$dep \$($2)"; shift 2;;
 		-xl)	lib="$lib $2"; shift 2;;
@@ -358,7 +364,22 @@ efeu_libvar ()
 		-s)	dep="$dep \$(DEP_$2)"; lib="$lib \$(LIB_$2)"; shift 2;;
 		-sl)	lib="$lib \$(LIB_$2)"; shift 2;;
 		*.so)	dep="$dep $1"; lib="$lib $1"; shift 1;;
-		*)	dep="$dep $ldir/lib$1$sfx"; lib="$lib -l$1"; shift 1;;
+		*)
+			if
+				x=`fsearch $lpath lib$1$sfx`
+			then
+				dep="$dep $x"
+				d=`dirname $x`
+
+				if [ "$d" != "$last" ]; then
+					last="$d";
+					lib="$lib -L$last"
+				fi
+
+				lib="$lib -l$1"
+			fi
+			shift 1
+			;;
 		esac
 	done
 
@@ -581,9 +602,12 @@ efeu_doc ()
 	*)	shmkmf_warg "efeu_doc";;
 	esac
 
+	ucs=
+	test "$HAS_LATEX_UCS" = 1 && ucs=" -u"
+
 	for l in $lng
 	do
-		cmd="LANG=$l efeudoc $flg"
+		cmd="env LANG=$l $EFEUDOC $flg$ucs"
 		dir=$TOP/doc/$l
 
 		if [ "$HAS_LATEX" = 1 ]; then
@@ -648,7 +672,7 @@ efeu_man ()
 
 	ext="$sec$man_ext"
 	mf_rule -a "$1.$ext" "$2" \
-		"LANG=$lng src2doc $2 | efeudoc -Tman - $man_filter > \$@"
+		"LANG=$lng src2doc $2 | $EFEUDOC -Tman - $man_filter > \$@"
 
 	dir=`dirname $1`
 	base=`basename $1`

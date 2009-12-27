@@ -245,9 +245,9 @@ Wie in C/C++ gibt es eine Reihe von Ganzzahldatentypen. Die folgende
 Tabelle listet die Ganzzahltypen und ihre Äquivalente in C auf.
 
 \tab	|l|l|
-[-]
+---
 <*esh Type*> | <*C Type*>
-[-]
+---
 byte | signed char
 short | short int
 bool | int
@@ -255,7 +255,7 @@ int | int
 unsigned | unsigned int
 long | long int
 size_t | long unsigned int
-[-]
+---
 
 Die Schlüsselwörter |short|, |unsigned| und |long| sind Datentypnamen und
 keine Typqualifikatoren wie in C.
@@ -504,9 +504,9 @@ nicht durch eine horizontale Linie voneinander getrennt sind, haben
 die gleiche Priorität.
 
 \tab	|l|l|l|
-[-]
+---
 #3|c| <*Linke Operatoren*>
-[--]
+===
 <|::|> | global | <|::|><name>
 <|++|> | pre increment | <|++|><lvalue>
 <|--|> | pre decrement | <|--|><lvalue>
@@ -519,7 +519,7 @@ die gleiche Priorität.
 <|\[|> | expression | <|[|> <expr> <|]|>
 <|()|> | cast (type conversion) | <|(|><type><|)|> <expr>
 <|()|> | lvalue cast | <|(|><type> <|\&)|> <expr>
-[-]
+---
 
 Der <"list grouping"> Operator generiert eine Liste von Werten.
 Im Genensatz zu C/C++ ist dieser Operator nicht auf die
@@ -545,9 +545,9 @@ str s = "5";
 wird die Zeichenkette |s| auf |"6"| gesetzt.
 
 \tab	|l|l|l|
-[-]
+---
 #3|c| <*Rechte Operatoren*>
-[--]
+===
 <|++|> | post increment | <lvalue><|++|>
 <|--|> | post decrement | <lvalue><|--|>
 <|::|> | scope resolution | <type><|::|><name>
@@ -555,7 +555,7 @@ wird die Zeichenkette |s| auf |"6"| gesetzt.
 <|.|> | member selection | <expr><|.|><name>
 <|[]|> | subscripting | <expr><|[|><expr><|]|>
 <|()|> | function call | <expr><|(|><list><|)|>
-[-]
+---
 
 In |$!| kann auf die Variablentabellen direkt zugegriffen werden und
 es können eigene Variablentabellen generiert werden. Mithilfe des
@@ -565,52 +565,52 @@ angewendet werden, der sich in eine Variablentabelle
 (Type |VarTab|) konvertieren läßt.
 
 \tab	|l|l|l|
-[-]
+---
 #3|c| <*Arithmetische Operatoren*>
-[--]
+===
 <|*|> | multiply | <expr> <|*|> <expr>
 <|/|> | division | <expr> <|/|> <expr>
 <|%|> | modulo (remainder) | <expr> <|%|> <expr>
-[-]
+---
 <|+|> | add (plus) | <expr> <|+|> <expr>
 <|-|> | subtract | <expr> <|-|> <expr>
-[-]
+---
 <|\<\<|> | shift left | <expr> <|\<\<|> <expr>
 <|\>\>|> | shift right | <expr> <|\>\>|> <expr>
-[-]
+---
 
 \tab	|l|l|l|
-[-]
+---
 #3|c| <*Vergleichsoperatoren*>
-[--]
+===
 <|\<|> | less than | <expr> <|\<|> <expr>
 <|\<=|> | less than or equal | <expr> <|\<=|> <expr>
 <|\>|> | greater than | <expr> <|\>|> <expr>
 <|\>=|> | greater than or equal | <expr> <|\>=|> <expr>
-[-]
+---
 <|==|> | equal | <expr> <|==|> <expr>
 <|!=|> | not equal | <expr> <|!=|> <expr>
-[-]
+---
 
 \tab	|l|l|l|
-[-]
+---
 #3|c| <*Bitoperatoren*>
-[--]
+===
 <|\&|> | bitwise AND | <expr> <|\&|> <expr>
-[-]
+---
 <|^|> | bitwise exclusive OR | <expr> <|^|> <expr>
-[-]
+---
 <|\||> | bitwise inclusive OR | <expr> <|\||> <expr>
-[-]
+---
 
 \tab	|l|l|l|
-[-]
+---
 #3|c| <*Logische Operatoren*>
-[--]
+===
 <|\&\&|> | logical AND | <expr> <|\&\&|> <expr>
-[-]
+---
 <|\|\||> | logical OR | <expr> <|\|\||> <expr>
-[-]
+---
 
 Der rechte Operand eines logischen Operators wird nur ausgewertet,
 wenn das Resultat nicht bereits vom linken Operanden determiniert
@@ -621,13 +621,13 @@ So wird in
 der rechte Operand <expr> niemals ausgewertet.
 
 \tab	|l|l|l|
-[-]
+---
 #3|c| <*Bedingter Ausdruck und Bereichsoperator*>
-[--]
+===
 <|? :|> | conditional operator | <cond> <|?|> <expr1> <|:|> <expr2>
-[-]
+---
 <|: :|> | range operator | <start> <|:|> <end> \[ <|:|> <step> \]
-[-]
+---
 
 Der Bereichsoperator liefert eine Liste von Werten, beginnend
 bei <start> bis einschließlich <end>.
@@ -639,9 +639,9 @@ Eine falsche Verwendung kann in einer Endlosschleife enden.
 Es gibt keinen Bereichsoperator in C/C++.
 
 \tab	|l|l|l|
-[-]
+---
 #3|c| <*Zuweisungsoperatoren*>
-[--]
+===
 <|=|> | simple assignment | <lvalue> <|=|> <expr>
 <|*=|> | multiply and assign | <lvalue> <|*=|> <expr>
 <|/=|> | divide and assign | <lvalue> <|/=|> <expr>
@@ -653,24 +653,24 @@ Es gibt keinen Bereichsoperator in C/C++.
 <|\&=|> | AND and assign | <lvalue> <|\&=|> <expr>
 <|^=|> | exclusive OR and assign | <lvalue> <|^=|> <expr>
 <|\|=|> | inclusive OR and assign | <lvalue> <|\|=|> <expr>
-[-]
+---
 
 Zuweisungsoperatoren sind rechtsassoziativ.
 
 \tab	|l|l|l|
-[-]
+---
 #3|c| <*Listentrenner*>
-[--]
+===
 <|,|> | list separator | <expr> <|,|> <expr>
-[-]
+---
 
 Das Komma |,| wird von |$!| so wie von |python| als Listentrenner und nicht
 als Komma-Operator wie in C/C++ verwendet.
 Der Ausdruck <a>, <b>, ..., <n>
 liefert eine Liste mit den Elementen <a>, <b>, ..., <n>.
 
-Falls der Rückgabewert des Komma-Operators nicht verwendet wird (die
-übliche Anwendung), gibt es keinen Unterschied im Verhalten zum
+Falls der Rückgabewert nicht verwendet wird (die übliche Anwendung),
+gibt es keinen Unterschied im Verhalten vom Komma-Operator und
 Listentrenner.
 
 \shead	Schleifen

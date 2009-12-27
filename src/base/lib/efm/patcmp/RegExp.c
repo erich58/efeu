@@ -34,7 +34,7 @@ static char *re_ident (const void *ptr)
 	char *p;
 
 	exp = ptr;
-	sb = sb_create(0);
+	sb = sb_acquire();
 	sb_putc('/', sb);
 
 	for (p = exp->def; *p != 0; p++)
@@ -49,7 +49,7 @@ static char *re_ident (const void *ptr)
 	if	(exp->icase)
 		sb_putc('i', sb);
 
-	return sb2str(sb);
+	return sb_cpyrelease(sb);
 }
 
 static void re_clean (void *ptr)

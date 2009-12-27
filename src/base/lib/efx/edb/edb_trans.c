@@ -342,16 +342,15 @@ static int io_trans_var (IO *io, TRANS *trans, VDEF *vdef, int delim)
 		return 1;
 	}
 
-	sb = sb_create(0);
+	sb = sb_acquire();
 	pos = 0;
 
 	while (c != EOF && !strchr(",;}\n", c))
 	{
 		if	(isspace(c))
 		{
-			sb_putc(0, sb);
-			add_vardef(io, vdef, (char *) sb->data);
-			rd_deref(sb);
+			add_vardef(io, vdef, sb_nul(sb));
+			sb_release(sb);
 			return 1;
 		}
 
@@ -382,6 +381,7 @@ static int io_trans_var (IO *io, TRANS *trans, VDEF *vdef, int delim)
 					vdef->assign->sub = vbuf.assign;
 				}
 
+				sb_release(sb);
 				return 1;
 			}
 
@@ -395,11 +395,10 @@ static int io_trans_var (IO *io, TRANS *trans, VDEF *vdef, int delim)
 	}
 
 	io_ungetc(c, io);
-	sb_putc(0, sb);
-	name = (char *) sb->data;
+	name = sb_nul(sb);
 	arg = name + pos;
 	get_var(trans, vdef, name, arg);
-	rd_deref(sb);
+	sb_release(sb);
 	return 1;
 }
 
@@ -463,15 +462,15 @@ static void set_func (TRANS *trans, IO *io, int delim)
 
 	if	(trans->flags & TRANS_VEC)
 	{
-		io_printf(out, "int %s (EDB *base, "
+		io_xprintf(out, "int %s (EDB *base, "
 			"EfiVec *tg, EfiVec *src);\n\n", name);
-		io_printf(out, "int %s (EDB *base, "
+		io_xprintf(out, "int %s (EDB *base, "
 			"EfiVec *tg, EfiVec *src)\n", name);
 	}
 	else
 	{
-		io_printf(out, "int %s (EfiObj *tg, EfiObj *src);\n\n", name);
-		io_printf(out, "int %s (EfiObj *tg, EfiObj *src)\n", name);
+		io_xprintf(out, "int %s (EfiObj *tg, EfiObj *src);\n\n", name);
+		io_xprintf(out, "int %s (EfiObj *tg, EfiObj *src)\n", name);
 	}
 
 	io_puts("{\n", out);
@@ -523,10 +522,10 @@ static void set_func (TRANS *trans, IO *io, int delim)
 	out = io_fileopen(p, "w");
 	memfree(p);
 
-	io_printf(out, "#!/bin/sh\n");
-	io_printf(out, "cd %s\n", dir);
-	io_printf(out, "efeucc -o trans.so trans.c -shared -nostdlib");
-	io_printf(out, " || nl -ba trans.c\n");
+	io_xprintf(out, "#!/bin/sh\n");
+	io_xprintf(out, "cd %s\n", dir);
+	io_xprintf(out, "efeucc -o trans.so trans.c -shared -nostdlib");
+	io_xprintf(out, " || nl -ba trans.c\n");
 	io_close(out);
 
 	p = msprintf("/bin/sh %s/run.sh >&2", dir);
@@ -539,11 +538,11 @@ static void set_func (TRANS *trans, IO *io, int delim)
 
 	if	(handle == NULL)
 	{
-		io_printf(ioerr, "dlopen: %s\n", dlerror());
+		io_xprintf(ioerr, "dlopen: %s\n", dlerror());
 	}
 	else if	((ptr = dlsym(handle, name)) == NULL)
 	{
-		io_printf(ioerr, "dlsym: %s\n", dlerror());
+		io_xprintf(ioerr, "dlsym: %s\n", dlerror());
 		dlclose(handle);
 	}
 	else if	(trans->flags & TRANS_VEC)

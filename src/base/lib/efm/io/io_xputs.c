@@ -98,7 +98,7 @@ int io_xputc(int c, IO *io, const char *delim)
 	}
 	else
 	{
-		return io_printf(io, "\\%03o", c);
+		return io_xprintf(io, "\\%03o", c);
 	}
 	
 	buf[pos] = 0;

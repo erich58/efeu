@@ -43,7 +43,7 @@ static void do_dump (IO *io, char *data, size_t size, size_t offset)
 	{
 		if	(start)
 		{
-			io_printf(io, "%7zu \"", n + offset);
+			io_xprintf(io, "%7zu \"", n + offset);
 			start = 0;
 		}
 

@@ -126,7 +126,7 @@ static void PF_rule (EfiFunc *func, void *rval, void **arg)
 static void PF_cprint (EfiFunc *func, void *rval, void **arg)
 {
 	register COLOR color = Val_Color(arg[1]);
-	Val_int(rval) = io_printf(Val_io(arg[0]), "{ %5.3f, %5.3f, %5.3f }",
+	Val_int(rval) = io_xprintf(Val_io(arg[0]), "{ %5.3f, %5.3f, %5.3f }",
 		color.red / 255., color.green / 255., color.blue / 255.);
 }
 

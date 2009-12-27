@@ -38,12 +38,13 @@ If not, write to the Free Software Foundation, Inc.,
 #include <Math/mdmath.h>
 #include <Math/func.h>
 #include <EFEU/StatData.h>
+#include <EFEU/Tabular.h>
 
 
 int main (int narg, char **arg)
 {
 	SetProgName(arg[0]);
-	SetVersion("$Id: esh.c,v 1.17 2007-07-30 15:04:47 ef Exp $");
+	SetVersion("$Id: esh.c,v 1.19 2008-11-02 15:40:31 ef Exp $");
 
 	SetupStd();
 	SetupUtil();
@@ -53,6 +54,7 @@ int main (int narg, char **arg)
 	SetupEDB();
 	SetupTimeSeries();
 	SetupRandom();
+	SetupTabular();
 	SetupMdMat();
 	SetupMath();
 	SetupMdMath();

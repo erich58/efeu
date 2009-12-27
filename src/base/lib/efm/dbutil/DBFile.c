@@ -29,7 +29,7 @@ static char *ref_ident (const void *data)
 	StrBuf *sb;
 	char *p;
 
-	sb = sb_create(0);
+	sb = sb_acquire();
 	p = rd_ident(file->io);
 	sb_puts(p, sb);
 	memfree(p);
@@ -47,7 +47,7 @@ static char *ref_ident (const void *data)
 	sb_printf(sb, " delim=%#s", file->delim);
 	sb_puts("", sb);
 
-	return sb2str(sb);
+	return sb_cpyrelease(sb);
 }
 
 static void ref_clean (void *data)
@@ -139,7 +139,7 @@ void DBFile_show (DBFile *file, IO *io)
 	if	(file->data.dim)
 	{
 		for (i = 0; i < file->data.dim; i++)
-			io_printf(io, " %#s", file->data.tab[i]);
+			io_xprintf(io, " %#s", file->data.tab[i]);
 	}
 	else if	(file->mode == DBFILE_EBCDIC)
 	{

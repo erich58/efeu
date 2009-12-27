@@ -26,9 +26,7 @@ static void doc_clean (void *data)
 {
 	Doc *tg = data;
 	io_close(tg->out);
-
-	if	(tg->buf)
-		rd_deref(tg->buf);
+	sb_free(&tg->buf);
 
 	while (tg->cmd_stack)
 		rd_deref(popstack(&tg->cmd_stack, NULL));
@@ -44,16 +42,16 @@ static char *doc_ident (const void *data)
 	char *p;
 
 	doc = data;
-	sb = sb_create(0);
+	sb = sb_acquire();
 	io = io_strbuf(sb);
-	io_printf(io, "type = %#s", doc->type ? doc->type->name : NULL);
+	io_xprintf(io, "type = %#s", doc->type ? doc->type->name : NULL);
 	p = rd_ident(doc->out);
-	io_printf(io, ", out = %s", p);
+	io_xprintf(io, ", out = %s", p);
 	memfree(p);
-	io_printf(io, ", stat = %d", doc->stat);
-	io_printf(io, ", indent = %d", doc->indent);
+	io_xprintf(io, ", stat = %d", doc->stat);
+	io_xprintf(io, ", indent = %d", doc->indent);
 	io_close(io);
-	return sb2str(sb);
+	return sb_cpyrelease(sb);
 }
 
 static RefType doc_reftype = REFTYPE_INIT("Doc", doc_ident, doc_clean);
@@ -62,7 +60,7 @@ Doc *Doc_create (const char *type)
 {
 	Doc *doc = memalloc(sizeof(Doc));
 	doc->type = GetDocType(type);
-	doc->buf = sb_create(0);
+	sb_init(&doc->buf, 0);
 	doc->out = NULL;
 	doc->nl = 1;
 	pushstack(&doc->cmd_stack, rd_refer(GlobalDocTab));

@@ -41,6 +41,9 @@ void term_att (Term *trm, int flag, char *att)
 
 void term_newline (Term *trm, int flag)
 {
+	if	(trm->tab)
+		return;
+
 	if	(trm->col)
 		io_putc('\n', trm->out);
 

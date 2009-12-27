@@ -120,7 +120,7 @@ char *io_getname(IO *io)
 
 	if	(isalpha(c) || c == '_')
 	{
-		StrBuf *sb = sb_create(0);
+		StrBuf *sb = sb_acquire();
 		c = io_getc(io);
 
 		while (isalnum(c) || c == '_')
@@ -130,7 +130,7 @@ char *io_getname(IO *io)
 		}
 
 		io_ungetc(c, io);
-		return sb2str(sb);
+		return sb_cpyrelease(sb);
 	}
 
 	return NULL;
@@ -205,7 +205,7 @@ static int32_t get_ucs (IO *io, int delim)
 		default:
 			if	(!(c & 0x80))
 			{
-				io_printf(ioerr,
+				io_xprintf(ioerr,
 					"unknown escape sequence '\\%c'.\n",
 					c);
 			}
@@ -345,7 +345,7 @@ static int make_char (IO *io, int type, void **ptr)
 
 	while ((val = get_ucs(io, '\'')) != EOF)
 	{
-		io_printf(ioerr,
+		io_xprintf(ioerr,
 			"extra character %#lc in character constant.\n", val);
 	}
 

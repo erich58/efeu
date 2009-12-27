@@ -193,6 +193,11 @@ static int f_ctrl (void *ptr, int req, va_list list)
 			fileident(fio->file));
 		return 0;
 
+	case IO_FDIN:
+	case IO_FDOUT:
+
+		return fileno(fio->file);
+
 	default:
 
 		return EOF;

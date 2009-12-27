@@ -31,13 +31,14 @@ If not, write to the Free Software Foundation, Inc.,
 typedef struct {
 	char *name;
 	char *desc;
-	void (*eval) (IO *io);
+	int (*eval) (IO *io);
 } CmdDef;
 
-static void f_help(IO *io);
-static void f_print(IO *io);
-static void f_quit(IO *io);
-static void f_int(IO *io);
+static int f_help(IO *io);
+static int f_print(IO *io);
+static int f_quit(IO *io);
+static int f_int(IO *io);
+static int f_delete(IO *io);
 
 static CmdDef CmdTab[] = {
 	{ "?", "Befehle auflisten", f_help },
@@ -48,6 +49,7 @@ static CmdDef CmdTab[] = {
 	{ "p", "Ausdruck ausgeben", f_print },
 	{ "print", "Ausdruck ausgeben", f_print },
 	{ "quit", "Verarbeitung abbrechen", f_quit },
+	{ "delete", "Beobachtungspunkt löschen", f_delete },
 	{ "sigint", "Interrupt an Programm senden (gdb-Schnittstelle)", f_int },
 };
 
@@ -62,26 +64,39 @@ static CmdDef *GetCmd(const char *name)
 	return NULL;
 }
 
-static void f_help(IO *io)
+static int f_help(IO *io)
 {
 	int i;
 
 	for (i = 0; i < tabsize(CmdTab); i++)
-		io_printf(io, "%s\t%s\n", CmdTab[i].name, CmdTab[i].desc);
+		io_xprintf(io, "%s\t%s\n", CmdTab[i].name, CmdTab[i].desc);
+
+	return 0;
 }
 
-static void f_quit(IO *io)
+static int f_quit(IO *io)
 {
 	io_close(io);
 	exit(0);
+	return 0;
 }
 
-static void f_int(IO *io)
+
+static int delete_flag = 0;
+
+static int f_delete(IO *io)
+{
+	delete_flag = 1;
+	return EOF;
+}
+
+static int f_int(IO *io)
 {
 	raise(SIGINT);
+	return 0;
 }
 
-static void f_print(IO *io)
+static int f_print(IO *io)
 {
 	EfiObj *obj;
 
@@ -95,6 +110,7 @@ static void f_print(IO *io)
 	}
 
 	UnrefObj(obj);
+	return 0;
 }
 
 
@@ -111,11 +127,11 @@ static void CmdDebug(IO *io)
 
 		if	(cmd == NULL)
 		{
-			io_printf(io, "Unbekanntes Befehlsword %#s\n", p);
+			io_xprintf(io, "Unbekanntes Befehlsword %#s\n", p);
 		}
 		else if	(cmd->eval)
 		{
-			cmd->eval(io);
+			c = cmd->eval(io);
 		}
 		else	c = EOF;
 
@@ -145,7 +161,7 @@ static EfiObj *do_bpoint(void *ptr, const EfiObjList *list)
 		if	(flag)	return NULL;
 	}
 
-	io_printf(ioerr, "Breakpoint %s\n", Val_str(list->obj->data));
+	io_xprintf(ioerr, "Breakpoint %s\n", Val_str(list->obj->data));
 	io = io_interact("debug>> ", NULL);
 	CmdDebug(io);
 	io_close(io);
@@ -179,9 +195,92 @@ static EfiObj *parse_sigint(IO *io, void *data)
 	return NULL;
 }
 
+/* WATCH */
+typedef struct {
+	LVALOBJ_VAR;
+	int id;
+} WATCH;
+
+
+#define	WATCH_SIZE(type) (sizeof(WATCH) + type->size)
+
+static int watch_id = 0;
+
+static void watch_free (EfiObj *obj)
+{
+	WATCH *wp = (WATCH *) obj;
+	io_xprintf(ioerr, "Watchpoint %d deleted\n", wp->id);
+	CleanData(wp->type, wp->data, 1);
+	UnrefObj(wp->base);
+}
+
+static void watch_update (EfiObj *obj)
+{
+	WATCH *wp;
+	IO *io;
+
+	wp = (WATCH *) obj;
+	io_xprintf(ioerr, "Watchpoint %d\n", wp->id);
+	io_puts("old value: ", ioerr);
+	PrintData(ioerr, wp->type, wp->data);
+	CopyData(wp->type, wp->data, wp->base->data);
+	io_puts("\nnew value: ", ioerr);
+	PrintData(ioerr, wp->type, wp->data);
+	io_puts("\n", ioerr);
+
+	io = io_interact("debug>> ", NULL);
+	delete_flag = 0;
+	CmdDebug(io);
+	io_close(io);
+
+	if	(delete_flag)
+		rd_deref(obj);
+}
+
+static void watch_unlink (EfiObj *obj)
+{
+	((WATCH *) obj)->base = NULL;
+	rd_deref(obj);
+}
+
+static EfiLval watch_lval = {
+	"watch", NULL,
+	NULL, watch_free,
+	watch_update, NULL,
+	watch_unlink, NULL,
+};
+
+static EfiObj *do_watch(void *ptr, const EfiObjList *list)
+{
+	EfiObj *base = EvalObj(RefObj(list->obj), NULL);
+
+	if	(base && base->lval)
+	{
+		WATCH *wp = Lval_alloc(sizeof *wp + base->type->size);
+		wp->type = base->type;
+		wp->lval = &watch_lval;
+		wp->base = base;
+		wp->id = ++watch_id;
+		wp->data = (wp + 1);
+		CopyData(base->type, wp->data, base->data);
+		AddUpdateObj(&base->list, (EfiObj *) wp);
+	}
+	else	fprintf(stderr, "kein L-Wert.\n");
+
+	UnrefObj(base);
+	return NULL;
+}
+
+static EfiObj *parse_watch(IO *io, void *data)
+{
+	EfiObj *obj = Parse_term(io, 0);
+	return Obj_call(do_watch, NULL, MakeObjList(1, obj));
+}
+
 static EfiParseDef pdef[] = {
 	{ "breakpoint", parse_bpoint, NULL },
 	{ "sigint", parse_sigint, NULL },
+	{ "watch", parse_watch, NULL },
 };
 
 void SetupDebug ()

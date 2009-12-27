@@ -31,7 +31,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 static int print_data (const EfiType *type, const void *data, IO *io)
 {
-	return io_printf(io, "%hd", *((T *) data));
+	return io_xprintf(io, "%hd", *((T *) data));
 }
 
 EfiType Type_int16 = SIMPLE_TYPE(S, T, NULL, print_data);

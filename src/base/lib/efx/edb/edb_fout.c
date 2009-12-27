@@ -47,7 +47,7 @@ static void make_base (XOUT *xout)
 	}
 
 	xout->base = io_fileopen(xout->lastname, "wz");
-	io_printf(xout->base, "EDB\t1.0\n");
+	io_xprintf(xout->base, "EDB\t1.0\n");
 
 	if	(xout->edb->desc)
 	{
@@ -64,7 +64,7 @@ static void make_base (XOUT *xout)
 	}
 
 	p = strrchr(name, '/');
-	io_printf(xout->base, "@file\n%s\n", p ? p + 1 : name);
+	io_xprintf(xout->base, "@file\n%s\n", p ? p + 1 : name);
 	memfree(xout->lastname);
 	xout->lastname = name;
 }
@@ -83,7 +83,7 @@ static void xout_next (XOUT *xout)
 	if	(xout->base)
 	{
 		char *p = strrchr(name, '/');
-		io_printf(xout->base, "%s\n", p ? p + 1 : name);
+		io_xprintf(xout->base, "%s\n", p ? p + 1 : name);
 	}
 
 	memfree(xout->lastname);

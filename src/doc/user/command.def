@@ -1,8 +1,6 @@
 dircmp
 dircpy
 efeu-magic
-efeu-xlib
-efeuconfig
 efeucc
 efeudoc
 efeuscript
@@ -30,5 +28,7 @@ mksource
 mksrclist
 pp2dep
 shmkmf
+shmkmf-cflags
+shmkmf-config
 src2doc
 tex2ps

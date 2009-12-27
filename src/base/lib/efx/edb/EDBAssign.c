@@ -100,7 +100,7 @@ void EDBAssignFunc (EDBAssign *assign, EfiType *tg, EfiType *base)
 	func = MakePrototype(io, tg, NULL, FUNC_LRETVAL|FUNC_VIRTUAL);
 	func->par = assign;
 	func->eval = func_assign;
-	func->clean = rd_deref;
+	func->clean = rd_clean;
 	AddFunc(func);
 
 	io_rewind(io);
@@ -111,7 +111,7 @@ void EDBAssignFunc (EDBAssign *assign, EfiType *tg, EfiType *base)
 
 	conv->par = rd_refer(func);
 	conv->eval = func_conv;
-	conv->clean = rd_deref;
+	conv->clean = rd_clean;
 	AddFunc(conv);
 	io_close(io);
 }
@@ -125,15 +125,15 @@ void PrintEDBAssign (IO *out, EDBAssign *assign)
 	for (; assign; assign = assign->next)
 	{
 		io_nputc('\t', out, print_depth);
-		io_printf(out, "%d %s %s",
+		io_xprintf(out, "%d %s %s",
 			assign->var->offset,
 			assign->var->type->name,
 			assign->var->name);
 
-		io_printf(out, " <- %d", assign->offset);
+		io_xprintf(out, " <- %d", assign->offset);
 
 		if	(assign->base)
-			io_printf(out, " %s %s::%s",
+			io_xprintf(out, " %s %s::%s",
 				assign->st->type->name,
 				assign->base->type->name,
 				assign->st->name);

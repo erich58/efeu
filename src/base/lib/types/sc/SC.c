@@ -183,13 +183,13 @@ static void save_entry (IO *io, SCData *x, int row, int col)
 	switch (x->type)
 	{
 	case SC_LABEL:
-		io_printf(io, "%s %s%d = %#s\n", align, cs, row, x->label);
+		io_xprintf(io, "%s %s%d = %#s\n", align, cs, row, x->label);
 		break;
 	case SC_EXPR:
-		io_printf(io, "let %s%d = %s\n", cs, row, x->label);
+		io_xprintf(io, "let %s%d = %s\n", cs, row, x->label);
 		break;
 	case SC_DATA:
-		io_printf(io, "let %s%d = %.2f\n", cs, row, x->value);
+		io_xprintf(io, "let %s%d = %.2f\n", cs, row, x->value);
 		break;
 	default:
 		break;
@@ -209,7 +209,7 @@ static void f_sc_save (EfiFunc *func, void *rval, void **arg)
 	if	(sc == NULL || io == NULL)	return;
 
 	for (j = 0; j < sc->cols; j++)
-		io_printf(io, "format %s %d %d 0\n",
+		io_xprintf(io, "format %s %d %d 0\n",
 			makecol(j), sc->width[j], sc->prec[j]);
 
 	for (i = 0; i < sc->rows; i++)
@@ -311,7 +311,7 @@ void preview (IO *io, char *tname, int *rows, int *cols)
 */
 	p = msprintf("|sc %s > /dev/null", t2);
 	save = io_fileopen(p, "w");
-	io_printf(save, "%dvcP%s\nq", *cols, tname);
+	io_xprintf(save, "%dvcP%s\nq", *cols, tname);
 	io_close(save);
 	memfree(p);
 	deltemp(t2);

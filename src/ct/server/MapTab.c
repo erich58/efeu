@@ -10,7 +10,7 @@ A-3423 St.Andrä/Wördern, Wildenhaggasse 38
 #include <EFEU/parsearg.h>
 #include <ctype.h>
 
-static NameKeyTab MapTab = NKT_DATA("MapTab", 32, rd_deref);
+static NameKeyTab MapTab = NKT_DATA("MapTab", 32, rd_clean);
 
 void MapTab_clean (void)
 {
@@ -120,9 +120,9 @@ static int map_visit (const char *name, void *data, void *par)
 	PrintType(handle->out, md->type, 1);
 	io_putc('"', handle->out);
 	io_putc(';', handle->out);
-	io_printf(handle->out, "%llu;", (uint64_t) md_dim(md->axis));
-	io_printf(handle->out, "%llu;", (uint64_t) md->size / md->type->size);
-	io_printf(handle->out, "%llu;", (uint64_t) md->type->size);
+	io_xprintf(handle->out, "%llu;", (uint64_t) md_dim(md->axis));
+	io_xprintf(handle->out, "%llu;", (uint64_t) md->size / md->type->size);
+	io_xprintf(handle->out, "%llu;", (uint64_t) md->type->size);
 	CubeHandle_stridx(handle, md->sbuf, md->i_name);
 	io_putc(';', handle->out);
 	CubeHandle_stridx(handle, md->sbuf, md->i_desc);

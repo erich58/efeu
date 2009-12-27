@@ -70,11 +70,11 @@ int PrintData (IO *io, const EfiType *type, const void *data)
 	}
 	else if	(IsTypeClass(type, &Type_enum))
 	{
-		return io_printf(io, "%d", Val_int(data));
+		return io_xprintf(io, "%d", Val_int(data));
 	}
 	else if	(type->base)
 	{
-		int n = io_printf(io, "(%s) ", type->name);
+		int n = io_xprintf(io, "(%s) ", type->name);
 		return n + PrintData(io, type->base, data);
 	}
 	else if	(type->size)
@@ -82,15 +82,15 @@ int PrintData (IO *io, const EfiType *type, const void *data)
 		int i, n;
 		const unsigned char *p;
 
-		n = io_printf(io, "(%s) 0x", type->name);
+		n = io_xprintf(io, "(%s) 0x", type->name);
 		p = data;
 
 		for (i = 0; i < type->size; i++)
-			n += io_printf(io, "%02x", p[i]);
+			n += io_xprintf(io, "%02x", p[i]);
 
 		return n;
 	}
-	else	return io_printf(io, "%s()", type->name);
+	else	return io_xprintf(io, "%s()", type->name);
 }
 
 int PrintVecData (IO *io, const EfiType *type, const void *data, size_t dim)

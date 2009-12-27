@@ -112,7 +112,7 @@ MdClass *md_subclass (MdClass *base, const char *def)
 
 	io = io_cstr(def);
 	buf_label.used = 0;
-	buf = sb_create(0);
+	buf = sb_acquire();
 
 	while ((c = io_eat(io, "%s;")) != EOF)
 	{
@@ -164,7 +164,7 @@ MdClass *md_subclass (MdClass *base, const char *def)
 		dbg_error(NULL, "[mdmat:46]", NULL);
 
 	io_close(io);
-	rd_deref(buf);
+	sb_release(buf);
 	sub->label = memalloc(sub->dim * sizeof(Label));
 	memcpy(sub->label, buf_label.data, sub->dim * sizeof(Label));
 	return (MdClass *) sub;

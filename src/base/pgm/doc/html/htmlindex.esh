@@ -22,7 +22,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 pconfig !
-Version = "$Id: htmlindex.esh,v 1.9 2002-06-05 15:22:49 ef Exp $"
+Version = "$Id: htmlindex.esh,v 1.11 2008-06-06 04:15:49 ef Exp $"
 Output = "index.html";
 MAGIC = "HTMLINDEX";
 
@@ -39,7 +39,7 @@ if	(dim(list) == 0)
 :*:$!: no html-documents found!
 :de:$!: Keine HTML-Dokumente gefunden!
 !));
-	exit(1);
+	exit(0);
 }
 
 if	(fsearch(NULL, Output))
@@ -52,7 +52,7 @@ if	(fsearch(NULL, Output))
 :*:$!: file $(Output) not created from $!!
 :de:$!: Datei $(Output) wurde nicht von $! generiert!
 !));
-		exit(1);
+		exit(0);
 	}
 }
 

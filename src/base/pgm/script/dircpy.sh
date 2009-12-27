@@ -21,7 +21,7 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 # $pconfig
-# Version="$Id: dircpy.sh,v 1.4 2007-08-19 04:22:10 ef Exp $"
+# Version="$Id: dircpy.sh,v 1.5 2008-08-09 08:58:33 ef Exp $"
 # :src|
 #	:*:source directory
 #	:de:Ausgangsverzeichnis
@@ -70,5 +70,5 @@ fi
 source="$1"
 target="$2"
 shift 2
-echo find $source "$@" -depth -print
-find $source "$@" -depth -print | cpio $cpio_flags "$target"
+echo find $source -depth "$@" -print
+find $source -depth "$@" -print | cpio $cpio_flags "$target"

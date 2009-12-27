@@ -1,7 +1,7 @@
 include curses.smh
 
 if
-	efeuconfig -r curses.smh -f '-ml LD_CURSES' \
+	shmkmf-config -r curses.smh -f '-ml LD_CURSES' \
 		-i curses.h -i term.h check 'initscr()'
 then
 	mf_comm "curses availability check: SUCCESS"

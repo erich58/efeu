@@ -59,7 +59,7 @@ typedef struct {
 	const char *name;
 	EDB *edb;
 	char *id;
-	StrBuf *buf;
+	StrBuf buf;
 	int pos;
 } DATA;
 
@@ -82,21 +82,21 @@ typedef void (*DFunc) (IO *aus, DATA *a, DATA *b, const char *fmt);
 
 static void put_head (IO *aus, DATA *d, const char *mark, const char *fmt)
 {
-	io_printf(aus, "%s ", mark);
-	io_printf(aus, fmt, d->pos);
-	io_printf(aus, " %s\n", mark);
+	io_xprintf(aus, "%s ", mark);
+	io_xprintf(aus, fmt, d->pos);
+	io_xprintf(aus, " %s\n", mark);
 }
 
 static void put_mark (IO *aus, DATA *d, const char *mark)
 {
 	int i, last;
 
-	for (last = '\n', i = 0; i < d->buf->pos; i++)
+	for (last = '\n', i = 0; i < d->buf.pos; i++)
 	{
 		if	(last == '\n')
 			io_puts(mark, aus);
 
-		last = io_putc(d->buf->data[i], aus);
+		last = io_putc(d->buf.data[i], aus);
 	}
 
 	if	(last != '\n')
@@ -148,8 +148,8 @@ static void df_diff (IO *aus, DATA *a, DATA *b, const char *fmt)
 
 		put_head(aus, a, "***", fmt ? fmt : (a->pos ? "%d" : "EOF"));
 		put_head(aus, b, "---", fmt ? fmt : (b->pos ? "%d" : "EOF"));
-		buf_write(tmp1, a->buf);
-		buf_write(tmp2, b->buf);
+		buf_write(tmp1, &a->buf);
+		buf_write(tmp2, &b->buf);
 		cmd = msprintf("diff -c1 %s %s", tmp1, tmp2);
 		io = io_popen(cmd, "r");
 		memfree(cmd);
@@ -191,24 +191,24 @@ static void df_mark (IO *aus, DATA *a, DATA *b, const char *fmt)
 {
 	if	(fmt)
 	{
-		io_printf(aus, "@ %s\n", fmt);
+		io_xprintf(aus, "@ %s\n", fmt);
 	}
 	else if	(a && b)
 	{
 		if	(a->pos && b->pos)
-			io_printf(aus, "%dc%d\n", a->pos, b->pos);
+			io_xprintf(aus, "%dc%d\n", a->pos, b->pos);
 		else if	(a->pos)
-			io_printf(aus, "%d,$D\n", a->pos);
+			io_xprintf(aus, "%d,$D\n", a->pos);
 		else if	(b->pos)
-			io_printf(aus, "A%d,$\n", b->pos);
+			io_xprintf(aus, "A%d,$\n", b->pos);
 	}
 	else if	(a)
 	{
-		io_printf(aus, "%dd\n", a->pos);
+		io_xprintf(aus, "%dd\n", a->pos);
 	}
 	else if	(b)
 	{
-		io_printf(aus, "a%d\n", b->pos);
+		io_xprintf(aus, "a%d\n", b->pos);
 	}
 
 	if	(a)	put_mark(aus, a, "< ");
@@ -230,7 +230,7 @@ static void list_df (IO *io)
 	int i;
 
 	for (i = 0; i < tabsize(DiffTab); i++)
-		io_printf(io, "%s\t%s\n", DiffTab[i].name, DiffTab[i].desc);
+		io_xprintf(io, "%s\t%s\n", DiffTab[i].name, DiffTab[i].desc);
 }
 
 static DFunc get_df (const char *name)
@@ -254,35 +254,35 @@ static void data_open (DATA *data, const char *name, const char *filter)
 	data->name = name ? name : "<stdin>";
 	data->edb = edb_filter(edb_fopen(NULL, name), filter);
 	data->edb = edb_filter(data->edb, GetResource("Filter", NULL));
-	data->buf = sb_create(0);
-	edb_out(data->edb, io_strbuf(data->buf), GetResource("Print", NULL));
+	sb_init(&data->buf, 0);
+	edb_out(data->edb, io_strbuf(&data->buf), GetResource("Print", NULL));
 	data->pos = 0;
 }
 
 static void data_close (DATA *data)
 {
 	rd_deref(data->edb);
-	rd_deref(data->buf);
+	sb_free(&data->buf);
 }
 
 static void data_str (DATA *data, const char *str)
 {
-	sb_begin(data->buf);
-	sb_puts(data->edb->head, data->buf);
+	sb_trunc(&data->buf);
+	sb_puts(data->edb->head, &data->buf);
 }
 
 static void data_type (DATA *data)
 {
 	IO *out;
-	sb_begin(data->buf);
-	out = io_strbuf(data->buf);
+	sb_trunc(&data->buf);
+	out = io_strbuf(&data->buf);
 	PrintType(out, data->edb->obj->type, 1);
 	io_close(out);
 }
 
 static void data_next (DATA *data)
 {
-	sb_begin(data->buf);
+	sb_trunc(&data->buf);
 
 	if	(edb_read(data->edb))
 	{
@@ -304,7 +304,7 @@ int main (int narg, char **arg)
 	int nd, ne;
 
 	SetProgName(arg[0]);
-	SetVersion("$Id: edbdiff.c,v 1.5 2007-09-06 20:09:10 ef Exp $");
+	SetVersion("$Id: edbdiff.c,v 1.7 2008-08-11 21:12:40 ef Exp $");
 	SetupStd();
 	SetupUtil();
 	SetupPreproc();
@@ -338,10 +338,10 @@ int main (int narg, char **arg)
 	data_open(d2, STR("DB2"), STR("Filter2"));
 	aus = io_fileopen(Output, "wz");
 
-	io_printf(aus, "*** %s\n", d1->name);
-	io_printf(aus, "--- %s\n", d2->name);
+	io_xprintf(aus, "*** %s\n", d1->name);
+	io_xprintf(aus, "--- %s\n", d2->name);
 
-	if	(cmp_buf(d1->buf, d2->buf))
+	if	(cmp_buf(&d1->buf, &d2->buf))
 	{
 		df(aus, d1, d2, "header");
 	}
@@ -411,7 +411,7 @@ int main (int narg, char **arg)
 				continue;
 			}
 
-			if	(cmp_buf(d1->buf, d2->buf))
+			if	(cmp_buf(&d1->buf, &d2->buf))
 			{
 				df(aus, d1, d2, NULL);
 				ne++;

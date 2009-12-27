@@ -74,11 +74,11 @@ data->end = CalBaseStd(Val_int(arg[1]));
 !);
 
 def.func("to_str", "str $1 ()", string !
-StrBuf *buf = sb_create(0);
+StrBuf *buf = sb_acquire();
 IO *io = io_strbuf(buf);
 $1_put(arg[0], io, 0);
 io_close(io);
-Val_str(rval) = sb2str(buf);
+Val_str(rval) = sb_cpyrelease(buf);
 !);
 
 def.func("tidx", "virtual Object operator[] ($1[], restricted Date t)", string !

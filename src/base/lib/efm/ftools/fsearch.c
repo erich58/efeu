@@ -237,14 +237,14 @@ char *fsearch (const char *path, const char *sub,
 
 	if	(path && need_search(name))
 	{
-		StrBuf *sb = sb_create(FS_BSIZE);
+		StrBuf *sb = sb_acquire();
 		int flag = do_search(sb, path, sub, name, 0);
 
 		memfree(tname);
 
-		if	(flag)	return sb2str(sb);
+		if	(flag)	return sb_cpyrelease(sb);
 
-		rd_deref(sb);
+		sb_release(sb);
 		return NULL;
 	}
 	else if	(access(name, R_OK) == 0)

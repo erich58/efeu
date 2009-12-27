@@ -28,4 +28,4 @@ Prüft, ob |ncurses| verfügbar ist oder ob |curses| stellvertretend
 verwendet werden soll.
 
 \SeeAlso
-\mref{efeuconfig(1)}.
+\mref{shmkmf-config(1)}.

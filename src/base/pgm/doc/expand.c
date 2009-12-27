@@ -28,7 +28,7 @@ char *Doc_expand (Doc *doc, IO *in, int flag)
 	StrBuf *buf;
 	Doc save;
 	
-	buf = sb_create(0);
+	buf = sb_acquire();
 	save = *doc;
 	doc->out = io_strbuf(buf);
 
@@ -68,7 +68,7 @@ char *Doc_expand (Doc *doc, IO *in, int flag)
 	doc->nl = save.nl;
 	doc->env = save.env;
 	doc->env_stack = save.env_stack;
-	return sb2str(buf);
+	return sb_cpyrelease(buf);
 }
 
 char *Doc_xexpand (Doc *doc, IO *in)

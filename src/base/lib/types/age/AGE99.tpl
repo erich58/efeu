@@ -33,7 +33,7 @@ StdInclude(src, paste("/", "EfiType", BaseName));
 TypeDef def = TypeDef(BaseName, "Age in the range from 0 to 99");
 def.t_cname = "uint8_t";
 def.t_recl = 1;
-def.print_body = "io_printf(io, \"%02d\", *data);";
+def.print_body = "io_xprintf(io, \"%02d\", *data);";
 def.create(true);
 
 #include "age_class.def"

@@ -78,7 +78,7 @@ void SetFloatPrec (const char *str)
 
 int PrintDouble (IO *out, double val)
 {
-	return io_printf(out, v_fmt_float,
+	return io_xprintf(out, v_fmt_float,
 		PrintFieldWidth, PrintFloatPrec, val);
 }
 
@@ -140,7 +140,7 @@ static void fprint_ptr(EfiFunc *func, void *rval, void **arg)
 
 	if	(ptr)
 	{
-		RV = io_printf(Val_io(arg[0]), "%p", ptr);
+		RV = io_xprintf(Val_io(arg[0]), "%p", ptr);
 	}
 	else	RV = io_puts("NULL", Val_io(arg[0]));
 }
@@ -157,25 +157,25 @@ static void fprint_bool(EfiFunc *func, void *rval, void **arg)
 
 static void fprint_int(EfiFunc *func, void *rval, void **arg)
 {
-	RV = io_printf(Val_io(arg[0]), v_fmt_int,
+	RV = io_xprintf(Val_io(arg[0]), v_fmt_int,
 		PrintFieldWidth, Val_int(arg[1]));
 }
 
 static void fprint_uint(EfiFunc *func, void *rval, void **arg)
 {
-	RV = io_printf(Val_io(arg[0]), v_fmt_uint,
+	RV = io_xprintf(Val_io(arg[0]), v_fmt_uint,
 		PrintFieldWidth, Val_uint(arg[1]));
 }
 
 static void fprint_int64(EfiFunc *func, void *rval, void **arg)
 {
-	RV = io_printf(Val_io(arg[0]), v_fmt_int64,
+	RV = io_xprintf(Val_io(arg[0]), v_fmt_int64,
 		PrintFieldWidth, *((int64_t *) arg[1]));
 }
 
 static void fprint_uint64(EfiFunc *func, void *rval, void **arg)
 {
-	RV = io_printf(Val_io(arg[0]), v_fmt_uint64,
+	RV = io_xprintf(Val_io(arg[0]), v_fmt_uint64,
 		PrintFieldWidth, *((uint64_t *) arg[1]));
 }
 
@@ -186,17 +186,17 @@ static void fprint_double(EfiFunc *func, void *rval, void **arg)
 
 static void fprint_char(EfiFunc *func, void *rval, void **arg)
 {
-	RV = io_printf(Val_io(arg[0]), "%c", Val_char(arg[1]));
+	RV = io_xprintf(Val_io(arg[0]), "%c", Val_char(arg[1]));
 }
 
 static void fprint_wchar(EfiFunc *func, void *rval, void **arg)
 {
-	RV = io_printf(Val_io(arg[0]), "%lc", Val_wchar(arg[1]));
+	RV = io_xprintf(Val_io(arg[0]), "%lc", Val_wchar(arg[1]));
 }
 
 static void fprint_str(EfiFunc *func, void *rval, void **arg)
 {
-	RV = io_printf(Val_io(arg[0]), v_fmt_str,
+	RV = io_xprintf(Val_io(arg[0]), v_fmt_str,
 		PrintFieldWidth, Val_str(arg[1]));
 }
 
@@ -211,12 +211,12 @@ static void fprint_ref(EfiFunc *func, void *rval, void **arg)
 	}
 	else if	(rd->reftype == NULL)
 	{
-		RV = io_printf(io, "%p", rd);
+		RV = io_xprintf(io, "%p", rd);
 	}
 	else
 	{
 		char *p = rd_ident(rd);
-		RV = io_printf(io, "%s: %s", rd->reftype->label, p);
+		RV = io_xprintf(io, "%s: %s", rd->reftype->label, p);
 		memfree(p);
 	}
 }
@@ -325,7 +325,7 @@ static void fprint_sname(EfiFunc *func, void *rval, void **arg)
 
 static void fprint_undef(EfiFunc *func, void *rval, void **arg)
 {
-	Val_int(rval) = io_printf(Val_io(arg[0]), "(%s) %s",
+	Val_int(rval) = io_xprintf(Val_io(arg[0]), "(%s) %s",
 		Type_undef.name, Val_str(arg[1]));
 }
 

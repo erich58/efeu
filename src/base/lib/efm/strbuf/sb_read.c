@@ -30,20 +30,18 @@ static StrBuf read_buf = SB_DATA(0);
 
 char *sb_read (int fd, StrBuf *sb)
 {
-	int nread = 0;
+	int nread = 1;
 
 	if	(!sb)
 		sb = &read_buf;
 
-	sb_begin(sb);
-	sb_sync(sb);
+	sb_trunc(sb);
 
 	do
 	{
 		ssize_t n;
 
-		if	(!sb->nfree)
-			sb_expand(sb);
+		sb_expand(sb, nread);
 
 		if ((n = read(fd, sb->data + sb->pos, sb->nfree)) < 0)
 		{
@@ -53,7 +51,7 @@ char *sb_read (int fd, StrBuf *sb)
 		}
 
 		sb->pos += n;
-		sb_sync(sb);
+		sb->nfree -= n;
 
 		if	(ioctl(fd, FIONREAD, &nread))
 		{
@@ -64,12 +62,7 @@ char *sb_read (int fd, StrBuf *sb)
 	}
 	while (nread);
 
-	if	(sb->pos)
-	{
-		sb_putc(0, sb);
-		return (char *) sb->data;
-	}
-	else	return NULL;
+	return sb->pos ? sb_nul(sb) : NULL;
 }
 
 /*

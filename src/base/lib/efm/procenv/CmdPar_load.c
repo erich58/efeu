@@ -58,19 +58,19 @@ static void buf2var(CmdPar *par, const char *name, StrBuf *buf)
 	StrBuf *vbuf;
 	int c;
 
-	vbuf = sb_create(0);
+	vbuf = sb_acquire();
 	sb_setpos(buf, 0);
 	io = langfilter(io_strbuf(buf), NULL);
 
-	while ((c = io_getc(io)) != EOF)
-		sb_putc(c, vbuf);
+	while ((c = io_getucs(io)) != EOF)
+		sb_putucs(c, vbuf);
 
 	io_close(io);
 
 	var = CmdPar_var(par, name, 1);
 	memfree(var->value);
-	var->value = sb2str(vbuf);
-	sb_clean(buf);
+	var->value = sb_cpyrelease(vbuf);
+	sb_trunc(buf);
 }
 
 static void langsub (StrBuf *sb)
@@ -542,14 +542,16 @@ aus dem Kommentarkopf extrahiert.
 
 void CmdPar_read (CmdPar *par, IO *io, int end, int flag)
 {
+	StrBuf buf_data;
 	StrBuf *sb;
 	StrBuf *cbuf;
-	int c;
+	int32_t c;
 
 	if	(io == NULL)	return;
 
 	par = CmdPar_ptr(par);
-	sb = sb_create(0);
+	sb_init(&buf_data, 0);
+	sb = &buf_data;
 	io = io_lnum(io_refer(io));
 	cbuf = flag ? sb : NULL;
 
@@ -615,7 +617,7 @@ void CmdPar_read (CmdPar *par, IO *io, int end, int flag)
 		}
 	}
 
-	rd_deref(sb);
+	sb_free(&buf_data);
 	io_close(io);
 }
 

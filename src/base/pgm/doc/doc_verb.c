@@ -28,7 +28,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 void Doc_verb (Doc *doc, IO *in, int base, int alt)
 {
-	int c;
+	int32_t c;
 	int pos;
 
 	Doc_start(doc);
@@ -38,7 +38,7 @@ void Doc_verb (Doc *doc, IO *in, int base, int alt)
 
 	pos = 0;
 
-	while ((c = io_getc(in)) != EOF)
+	while ((c = io_getucs(in)) != EOF)
 	{
 		switch (c)
 		{
@@ -57,7 +57,7 @@ void Doc_verb (Doc *doc, IO *in, int base, int alt)
 			pos += io_nputc(' ', doc->out, 8 - pos % 8);
 			break;
 		default:
-			io_putc(c, doc->out);
+			io_putucs(c, doc->out);
 			pos++;
 			break;
 		}

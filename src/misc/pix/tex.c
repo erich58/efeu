@@ -38,7 +38,7 @@ void OldPixMap_TeX(EfiFunc *func, void *rval, void **arg)
 
 	if	(pix == NULL)	return;
 
-	io_printf(io, "\\begin{picture}(%d,%d)\n", pix->cols, pix->rows);
+	io_xprintf(io, "\\begin{picture}(%d,%d)\n", pix->cols, pix->rows);
 
 	for (i = 0; i < pix->rows; i++)
 	{
@@ -56,11 +56,11 @@ void OldPixMap_TeX(EfiFunc *func, void *rval, void **arg)
 				j++;
 
 			if	(j > n)
-				io_printf(io, LINE, n, pix->rows - i - 1, j - n);
+				io_xprintf(io, LINE, n, pix->rows - i - 1, j - n);
 
 			n = j;
 		}
 	}
 
-	io_printf(io, "\\end{picture}\n");
+	io_xprintf(io, "\\end{picture}\n");
 }

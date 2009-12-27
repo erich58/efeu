@@ -22,7 +22,13 @@
 Type = NULL
 Config = NULL
 Bootstrap = NULL
+UseUTF8 = false
 
+I:dir|CFGPath:eval 'CFGPath = paste(PATHSEP, CFGPath, "{}")'; Bootstrap: set '{Bootstrap} -I "{}"'
+	:*:append <dir> to the search path for configuration files.
+	The default setting is "|$(CFGPath:%s)|".
+	:de:erweitert den Suchpfad für Konfigurationsdateien um <dir>.
+	Die Vorgabe für den Suchpfad ist:\br "|$(CFGPath:%s)|".
 T:type|Type:
 	:*:document type
 	:de:Ausgabetype
@@ -36,6 +42,9 @@ H:hdr|Head: append '\n'; Bootstrap: set '{Bootstrap} -H "{}"'
 0|NoHead = 1; Bootstrap: append " -0"
 	:*:suppress document head
 	:de:Dokumentkopf unterdrücken
+u|UseUTF8 = true;
+	:*:Use UTF8 coding in sources
+	:de:UTF8 Kodierung verwenden.
 r:name|TaskName; MakeDepend = 1
 	:*:create target rule for make
 	:de:Generierungsregeln mit Pseudoziel

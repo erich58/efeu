@@ -60,7 +60,7 @@ static void subfunc (IO *io, const char *pfx, int leaf, const EfiType *type)
 		io_puts(leaf ? " `- " : " +- ", io);
 	}
 
-	io_printf(io, "%s\n", type ? type->name : "NULL");
+	io_xprintf(io, "%s\n", type ? type->name : "NULL");
 
 	info.io = io;
 	info.entry = TypeTab.tab.data;

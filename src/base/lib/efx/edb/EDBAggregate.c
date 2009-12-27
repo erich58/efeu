@@ -104,14 +104,14 @@ void EDBAggregateFunc (EDBAggregate *aggr, const char *name,
 
 	io = io_tmpbuf(0);
 	io_puts(tg->name, io);
-	io_printf(io, "::operator%#s (", name);
+	io_xprintf(io, "::operator%#s (", name);
 	io_puts(base->name, io);
 	io_puts(")", io);
 	io_rewind(io);
 	func = MakePrototype(io, tg, NULL, FUNC_LRETVAL|FUNC_VIRTUAL);
 	func->par = aggr;
 	func->eval = func_aggr;
-	func->clean = rd_deref;
+	func->clean = rd_clean;
 	AddFunc(func);
 	io_close(io);
 }

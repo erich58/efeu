@@ -45,9 +45,9 @@ typedef struct {
 	char *path;	/* Bibliothek */
 	char *title;	/* Dokumenttitel */
 	char *fname;	/* Aktuelle Datei */
-	StrBuf *ref;	/* Referenz */
-	StrBuf *toc;	/* Inhaltsverzeichnis */
-	StrBuf *lof;	/* Übersichtsverzeichnis */
+	StrBuf ref;	/* Referenz */
+	StrBuf toc;	/* Inhaltsverzeichnis */
+	StrBuf lof;	/* Übersichtsverzeichnis */
 	VecBuf idx;	/* Indexvektor */
 	VecBuf lbl;	/* Labelvektor */
 	int chap;	/* Kapitelnummer */
@@ -72,7 +72,7 @@ static void hpost_split(HPOST *hpost)
 	}
 	else	hpost->fname = msprintf("chap_%d.html", hpost->chap);
 
-	io_printf(hpost->tmp, "<>%s\n", hpost->fname);
+	io_xprintf(hpost->tmp, "<>%s\n", hpost->fname);
 }
 
 
@@ -105,7 +105,7 @@ static void hpost_idx (HPOST *hpost, va_list list)
 	x->fname = mstrcpy(hpost->fname);
 	x->name = mstrcpy(va_arg(list, char *));
 	x->label = mstrcpy(va_arg(list, char *));
-	io_printf(hpost->tmp, "<A NAME=\"IDX%d\"></A>", x->num);
+	io_xprintf(hpost->tmp, "<A NAME=\"IDX%d\"></A>", x->num);
 }
 
 static void hpost_lbl (HPOST *hpost, va_list list)
@@ -115,7 +115,7 @@ static void hpost_lbl (HPOST *hpost, va_list list)
 	x->fname = mstrcpy(hpost->fname);
 	x->name = mstrcpy(va_arg(list, char *));
 	x->label = NULL;
-	io_printf(hpost->tmp, "<A NAME=\"LBL%d\"></A>", x->num);
+	io_xprintf(hpost->tmp, "<A NAME=\"LBL%d\"></A>", x->num);
 }
 
 /*	Zeichen ausgeben
@@ -161,10 +161,9 @@ static void hpost_close (HPOST *hpost)
 	io_puts("\n<P><HR><P>\n", hpost->io);
 	io_langputs(":*:go to\n:de:Gehe zum\n", hpost->io);
 
-	if	(hpost->ref->pos)
+	if	(hpost->ref.pos)
 	{
-		sb_putc(0, hpost->ref);
-		io_puts((char *) hpost->ref->data, hpost->io);
+		io_puts(sb_nul(&hpost->ref), hpost->io);
 		io_langputs(" :*:section:de:Abschnitt", hpost->io);
 		io_puts(",\n", hpost->io);
 	}
@@ -182,7 +181,7 @@ static void hpost_close (HPOST *hpost)
 	io_puts("</HTML>\n", hpost->io);
 	io_close(hpost->io);
 	hpost->io = NULL;
-	sb_clean(hpost->ref);
+	sb_trunc(&hpost->ref);
 }
 
 static void hpost_next (HPOST *hpost)
@@ -214,12 +213,12 @@ static void hpost_next (HPOST *hpost)
 
 	if	(hpost->io)
 	{
-		if	(hpost->ref->pos)
-			sb_puts(", ", hpost->ref);
+		if	(hpost->ref.pos)
+			sb_puts(", ", &hpost->ref);
 
-		sb_printf(hpost->ref, fmt_prev, name);
+		sb_printf(&hpost->ref, fmt_prev, name);
 		hpost_close(hpost);
-		sb_printf(hpost->ref, fmt_next, hpost->fname);
+		sb_printf(&hpost->ref, fmt_next, hpost->fname);
 	}
 
 	hpost_open (hpost, name, title);
@@ -241,15 +240,15 @@ static void hpost_ref (HPOST *hpost)
 	{
 		if	(mstrcmp(lbl->name, name) == 0)
 		{
-			io_printf(hpost->io, "<A HREF=\"%s#LBL%d\">",
+			io_xprintf(hpost->io, "<A HREF=\"%s#LBL%d\">",
 				lbl->fname, lbl->num);
-			io_printf(hpost->io, "[%s]</A>", name);
+			io_xprintf(hpost->io, "[%s]</A>", name);
 			memfree(name);
 			return;
 		}
 	}
 
-	io_printf(hpost->io, "?%s?", name);
+	io_xprintf(hpost->io, "?%s?", name);
 	memfree(name);
 	return;
 }
@@ -259,7 +258,7 @@ static void hpost_ref (HPOST *hpost)
 
 static char *hpost_num(HPOST *hpost)
 {
-	StrBuf *buf = sb_create(0);
+	StrBuf *buf = sb_acquire();
 
 	if	(hpost->chap > 0)
 		sb_printf(buf, "%d", hpost->chap);
@@ -275,7 +274,7 @@ static char *hpost_num(HPOST *hpost)
 	if	(hpost->chap > 0 || hpost->sec > 0)
 		sb_putc(' ', buf);
 
-	return sb2str(buf);
+	return sb_cpyrelease(buf);
 }
 
 static void hpost_copy (HPOST *hpost)
@@ -318,21 +317,21 @@ static void hpost_sec (HPOST *hpost, const char *label, int type)
 	hpost->anum++;
 
 	io_puts(sec_beg[type], hpost->tmp);
-	io_printf(hpost->tmp, "<A NAME=\"A%d\">", hpost->anum);
+	io_xprintf(hpost->tmp, "<A NAME=\"A%d\">", hpost->anum);
 	io_puts(p, hpost->tmp);
 	io_puts(label, hpost->tmp);
 	io_puts("</A>", hpost->tmp);
 	io_puts(sec_end[type], hpost->tmp);
 
-	sb_puts(toc_beg[type], hpost->toc);
-	sb_printf(hpost->toc, "<A HREF=\"%s#A%d\">",
+	sb_puts(toc_beg[type], &hpost->toc);
+	sb_printf(&hpost->toc, "<A HREF=\"%s#A%d\">",
 		hpost->fname, hpost->anum);
 
-	sb_puts(p, hpost->toc);
-	sb_puts(label, hpost->toc);
-	sb_puts("</A>", hpost->toc);
-	sb_puts(toc_end[type], hpost->toc);
-	sb_puts("<BR>\n", hpost->toc);
+	sb_puts(p, &hpost->toc);
+	sb_puts(label, &hpost->toc);
+	sb_puts("</A>", &hpost->toc);
+	sb_puts(toc_end[type], &hpost->toc);
+	sb_puts("<BR>\n", &hpost->toc);
 	memfree(p);
 }
 
@@ -359,12 +358,11 @@ static void hpost_create (HPOST *hpost)
 	io_close(hpost->tmp);
 
 	hpost_open(hpost, "toc.html", lbl_toc);
-	sb_putc(0, hpost->toc);
-	io_puts((char *) hpost->toc->data, hpost->io);
+	io_puts(sb_nul(&hpost->toc), hpost->io);
 	hpost_close(hpost);
 
 	hpost_open(hpost, "lof.html", lbl_lof);
-	io_puts((char *) hpost->lof->data, hpost->io);
+	io_puts(sb_nul(&hpost->lof), hpost->io);
 	hpost_close(hpost);
 
 	vb_qsort(&hpost->idx, hidx_cmp);
@@ -372,7 +370,7 @@ static void hpost_create (HPOST *hpost)
 
 	for (idx = hpost->idx.data, n = hpost->idx.used; n-- > 0; idx++)
 	{
-		io_printf(hpost->io, "<A HREF=\"%s#IDX%d\">",
+		io_xprintf(hpost->io, "<A HREF=\"%s#IDX%d\">",
 			idx->fname, idx->num);
 		io_puts(idx->label, hpost->io);
 		io_puts("</A><BR>\n", hpost->io);
@@ -398,9 +396,9 @@ static int hpost_ctrl (void *ptr, int req, va_list list)
 	{
 	case IO_CLOSE:
 		hpost_create(hpost);
-		rd_deref(hpost->toc);
-		rd_deref(hpost->lof);
-		rd_deref(hpost->ref);
+		sb_free(&hpost->toc);
+		sb_free(&hpost->lof);
+		sb_free(&hpost->ref);
 		memfree(hpost->path);
 		memfree(hpost->title);
 		memfree(hpost->fname);
@@ -421,7 +419,7 @@ static int hpost_ctrl (void *ptr, int req, va_list list)
 	case DOC_REF_STD:
 	case DOC_REF_PAGE:
 	case DOC_REF_VAR:
-		io_printf(hpost->tmp, "<*%s>", va_arg(list, char *));
+		io_xprintf(hpost->tmp, "<*%s>", va_arg(list, char *));
 		break;
 	case HTML_TITLE:
 		hpost->title = va_arg(list, char *);
@@ -494,13 +492,13 @@ IO *html_open (const char *dir, const char *path)
 	par = memalloc(sizeof(HPOST));
 	par->tmp = io_bigbuf(BUF_SIZE, TMP_PFX);
 	par->path = mstrcpy(dir);
-	par->ref = sb_create(0);
-	par->toc = sb_create(0);
-	par->lof = sb_create(0);
+	sb_init(&par->ref, 0);
+	sb_init(&par->toc, 0);
+	sb_init(&par->lof, 0);
 	vb_init(&par->idx, 512, sizeof(HIDX));
 	vb_init(&par->lbl, 512, sizeof(HIDX));
 	par->fname = mstrcpy("main.html");
-	io_printf(par->tmp, "<>%s\n", par->fname);
+	io_xprintf(par->tmp, "<>%s\n", par->fname);
 
 	io = io_alloc();
 	io->put = hpost_put;

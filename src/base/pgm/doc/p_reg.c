@@ -29,7 +29,7 @@ char *DocParseRegion (IO *in, const char *delim)
 	int last;
 	int c;
 
-	buf = sb_create(0);
+	buf = sb_acquire();
 	last = 0;
 
 	while ((c = io_getc(in)) != EOF)
@@ -51,5 +51,5 @@ char *DocParseRegion (IO *in, const char *delim)
 		else	sb_putc(c, buf);
 	}
 
-	return sb2str(buf);
+	return sb_cpyrelease(buf);
 }

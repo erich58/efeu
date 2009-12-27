@@ -40,6 +40,7 @@ typedef struct EfiObjStruct EfiObj;
 typedef struct EfiTypeStruct EfiType;
 typedef struct EfiFuncStruct EfiFunc;
 typedef struct EfiLvalStruct EfiLval;
+typedef struct EfiObjListStruct EfiObjList;
 
 typedef void (*EfiFuncCall) (EfiFunc *func, void *rval, void **arg);
 
@@ -144,6 +145,7 @@ extern EfiObj *ContextObj;
 EfiVarTab *VarTab (const char *name, size_t dim);
 EfiVarTab *CurrentVarTab (EfiVarTab *tab);
 int ShowVarTab (IO *io, const char *pfx, EfiVarTab *vtab);
+int DumpVarTab (IO *io, const char *pfx, EfiVarTab *vtab);
 void EfiVar_list (IO *io, const char *pfx, EfiVarTab *vtab);
 
 VarTabEntry *VarTab_get (EfiVarTab *tab, const char *name);
@@ -223,6 +225,7 @@ struct EfiTypeStruct {
 	void (*free) (EfiObj *obj); \
 	void (*update) (EfiObj *obj); \
 	void (*sync) (EfiObj *obj); \
+	void (*unlink) (EfiObj *tg); \
 	char *(*ident) (const EfiObj *obj)
 
 struct EfiLvalStruct {
@@ -243,17 +246,27 @@ Objektvariablen
 	REFVAR; \
 	EfiType *type; \
 	EfiLval *lval; \
-	size_t sync; \
+	EfiObjList *list; \
 	void *data
 
 struct EfiObjStruct {
 	OBJECT_VAR;
 };
 
+#define	LVALOBJ_VAR	\
+	OBJECT_VAR;	\
+	EfiObj *base
+
+typedef struct {
+	LVALOBJ_VAR;
+} EfiLvalObj;
+
 EfiObj *Obj_alloc (size_t size);
+void *Lval_alloc (size_t size);
 void Obj_stat (const char *prompt);
 void Obj_check (const EfiObj *obj);
 char *Obj_ident (const EfiObj *obj);
+void Obj_putkey (const EfiObj *obj, IO *io);
 
 /*	Neue Datentypen
 */
@@ -264,6 +277,7 @@ void DelType (EfiType *type);
 typedef struct {
 	char *name;
 	int val;
+	char *desc;
 } EnumTypeDef;
 
 size_t EnumTypeRecl (size_t dim);
@@ -306,9 +320,14 @@ EfiType *MakeStruct (char *name, EfiStruct *base, EfiStruct *list);
 EfiObj *LvalObj (EfiLval *lval, EfiType *type, ...);
 EfiObj *NewObj (const EfiType *type, void *data);
 EfiObj *ConstObj (const EfiType *type, const void *data);
+EfiObj *ExtObj (const EfiType *type, const void *data);
 
 void SyncLval (EfiObj *obj);
 void UpdateLval (EfiObj *obj);
+void AddUpdateObj (EfiObjList **ptr, EfiObj *obj);
+void DelUpdateObj (EfiObjList **ptr, EfiObj *obj);
+void UnlinkUpdateList (EfiObjList *list);
+
 EfiObj *AssignTerm (const char *name, EfiObj *left, EfiObj *right);
 EfiObj *AssignObj (EfiObj *left, EfiObj *right);
 
@@ -502,10 +521,10 @@ EfiObj *GetScope (EfiObj *obj, const char *name);
 /*	Objektlisten
 */
 
-typedef struct EfiObjListStruct {
+struct EfiObjListStruct {
 	struct EfiObjListStruct *next;
 	EfiObj *obj;
-} EfiObjList;
+};
 
 extern EfiType Type_list;
 

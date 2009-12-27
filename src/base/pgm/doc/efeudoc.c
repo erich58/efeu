@@ -1,7 +1,7 @@
 /*
 Dokumentgenerator
 
-$Copyright (C) 1999 Erich Frühstück
+$Copyright (C) 1999, 2008 Erich Frühstück
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -101,7 +101,7 @@ int main (int narg, char **arg)
 	char *p;
 	int i;
 
-	SetVersion("$Id: efeudoc.c,v 1.34 2008-04-23 20:11:28 ef Exp $");
+	SetVersion("$Id: efeudoc.c,v 1.36 2008-06-14 03:51:02 ef Exp $");
 	SetProgName(arg[0]);
 	CFGPath = mkpath(".", NULL, "lib/efeudoc", NULL);
 	SetupDoc();
@@ -165,7 +165,7 @@ int main (int narg, char **arg)
 
 	if	(p && Output)
 	{
-		StrBuf *sb = sb_create(0);
+		StrBuf *sb = sb_acquire();
 
 		if	(LangDef.langdef)
 			sb_printf(sb, "LANG=%#s ", LangDef.langdef);
@@ -187,7 +187,7 @@ int main (int narg, char **arg)
 		sb_putc(0, sb);
 		MakeTaskRule(iostd, p);
 		MakeTargetRule(iostd, (char *) sb->data);
-		rd_deref(sb);
+		sb_release(sb);
 		return 0;
 	}
 

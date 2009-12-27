@@ -24,18 +24,21 @@ If not, write to the Free Software Foundation, Inc.,
 #include "efeudoc.h"
 #include <ctype.h>
 #include <EFEU/preproc.h>
+#include <EFEU/Resource.h>
 
 #define	HEAD	"document input: $0"
+#if	0
+#define	SYMTAB	(GetFlagResource("UseUTF8") ? "latin1" : "utf8")
+#endif
 #define	SYMTAB	"latin1"
 #define	HEADCFG	"DocHead"
 
 char *Doc_lastcomment (Doc *doc)
 {
-	if	(doc && doc->buf && sb_getpos(doc->buf))
+	if	(doc && sb_getpos(&doc->buf))
 	{
-		char *p = mstrncpy((char *) doc->buf->data,
-			sb_getpos(doc->buf));
-		sb_clean(doc->buf);
+		char *p = sb_strcpy(&doc->buf);
+		sb_trunc(&doc->buf);
 		return p;
 	}
 	else	return NULL;
@@ -147,16 +150,27 @@ void Doc_newline (Doc *doc)
 void Doc_char (Doc *doc, int c)
 {
 	Doc_hmode(doc);
-	io_putc(c, doc->out);
+	io_putucs(c, doc->out);
 	doc->env.cpos++;
 }
+
+static int put_str (const char *str, IO *out)
+{
+	int k;
+
+	for (k = 0; *str; k++)
+		io_putucs(pgetucs((char **) &str, 4), out);
+
+	return k;
+}
+
 
 void Doc_str (Doc *doc, const char *str)
 {
 	if	(str)
 	{
 		Doc_hmode(doc);
-		doc->env.cpos += io_puts(str, doc->out);
+		doc->env.cpos += put_str(str, doc->out);
 	}
 }
 
@@ -167,11 +181,12 @@ void Doc_symbol (Doc *doc, const char *name, const char *def)
 	char *sym;
 	Doc_hmode(doc);
 
-	if	(!symtab)	symtab = DocSym_load(SYMTAB);
+	if	(!symtab)
+		symtab = DocSym_load(SYMTAB);
 
 	if	((sym = DocSym_get(symtab, name)) != NULL)
 	{
-		doc->env.cpos += io_puts(sym, doc->out);
+		doc->env.cpos += put_str(sym, doc->out);
 	}
 	else
 	{
@@ -213,7 +228,7 @@ int DocSymbol (IO *in, IO *out)
 	if	(!symtab)	symtab = DocSym_load(SYMTAB);
 
 	if	((sym = DocSym_get(symtab, name)) != NULL)
-		return io_puts(sym, out);
+		return put_str(sym, out);
 
 	if	(io_ctrl(out, DOC_SYM, name) == EOF && c)
 		io_putc('?', out);

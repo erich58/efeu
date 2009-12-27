@@ -21,39 +21,16 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/io.h>
+#include <EFEU/mstring.h>
 
 int32_t io_getucs_latin1 (IO *io)
 {
 	return io_getc(io);
 }
 
-int32_t io_getucs_auto (IO *io)
+int32_t io_getucs_latin9 (IO *io)
 {
-	int c, d;
-
-	c = io_getc(io);
-
-	if	(c < 0)		return EOF;
-	if	(c < 0x80)	return c;
-
-	if	((c & 0xc0) == 0x80 || (c & 0xf0) == 0xf0)
-	{
-		io->getucs = io_getucs_latin1;
-		return c;
-	}
-
-	d = io_getc(io);
-	io_ungetc(d, io);
-
-	if	((d & 0xc0) != 0x80)
-	{
-		io->getucs = io_getucs_latin1;
-		return c;
-	}
-
-	io_ungetc(c, io);
-	io->getucs = io_getucs_utf8;
-	return io->getucs(io);
+	return latin9_to_ucs(io_getc(io));
 }
 
 int32_t io_getucs_utf8 (IO *io)
@@ -114,9 +91,53 @@ int32_t io_getucs_utf8 (IO *io)
 	return val;
 }
 
+#define	U1(c)	((c & 0x80) == 0)	/* Test auf 1-Byte Sequenz */
+#define	U2(c)	((c & 0xe0) == 0xc0)	/* Test auf 2-Byte Sequenz */
+#define U3(c)	((c & 0xf0) == 0xe0)	/* Test auf 3-Byte Sequenz */
+#define	U4(c)	((c & 0xf8) == 0xf0)	/* Test auf 4-Byte Sequenz */
+
+#define	V2(c)	(c & 0x1f)	/* Startbits für 2-Byte Sequenz */
+#define	V3(c)	(c & 0xf)	/* Startbits für 3-Byte Sequenz */
+#define	V4(c)	(c & 0x7)	/* Startbits für 4-Byte Sequenz */
+
+#define	UF(c)	((c & 0xc0) == 0x80)	/* Test auf Folgezeichen */
+#define	VF(c)	(c & 0x3f)		/* Datenbits des Folgezeichens */
+
+static int32_t get_sub (IO *io, int32_t val, int n)
+{
+	int c;
+	
+	if	(n == 0)
+		return val;
+
+	if	((c = io_getc(io)) < 0)
+		return EOF;
+
+	if	(UF(c) && (val = get_sub(io, val << 6 | VF(c), n - 1)) >= 0)
+		return val;
+
+	io_ungetc(c, io);
+	return EOF;
+}
+
+int32_t io_ucscompose (IO *io, int c)
+{
+	int32_t val;
+
+	if	(c < 0)	return EOF;
+	else if	(U1(c))	return c;
+	else if	(U2(c))	val = get_sub(io, V2(c), 1); 
+	else if	(U3(c))	val = get_sub(io, V3(c), 2); 
+	else if	(U4(c))	val = get_sub(io, V4(c), 3); 
+	else		return latin9_to_ucs(c);
+
+	return val >= 0 ? val : latin9_to_ucs(c);
+}
+
 int32_t io_getucs (IO *io)
 {
-	if	(!io)	return EOF;
+	if	(!io)
+		return EOF;
 
 	if	(io->ucs_save)
 	{
@@ -124,12 +145,10 @@ int32_t io_getucs (IO *io)
 		return io->ucs_char;
 	}
 
-	if	(!io->getucs)
-	{
-		io->getucs = io_getucs_auto;
-	}
+	if	(io->getucs)
+		return io->getucs(io);
 
-	return io->getucs(io);
+	return io_ucscompose(io, io_getc(io));
 }
 
 int32_t io_ungetucs (int32_t c, IO *io)

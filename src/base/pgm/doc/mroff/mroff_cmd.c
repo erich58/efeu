@@ -69,6 +69,26 @@ int mroff_cmd (void *drv, va_list list)
 	case DOC_CMD_ITEM:
 		mroff_cmdline(mr, ".IP *");
 		break;
+	case DOC_TAB_BEG:
+		mroff_tab_begrow(mr);
+		break;
+	case DOC_TAB_SEP:
+		mroff_tab_sep(mr);
+		break;
+	case DOC_TAB_END:
+		mroff_tab_endrow(mr);
+		break;
+	case DOC_TAB_HLINE:
+		mroff_tab_hline(mr, va_arg(list, int));
+		break;
+	case DOC_TAB_CLINE:
+		{
+			int n = va_arg(list, int);
+			int p1 = va_arg(list, int);
+			int p2 = va_arg(list, int);
+			mroff_tab_cline(mr, n, p1, p2);
+		}
+		break;
 	default:
 		return EOF;
 	}

@@ -33,7 +33,8 @@ CPP2DEP=
 mf_comm "CC configuration"
 config cc.cfg
 mf_var -n CC "$CC"
-mf_var -n STDCFLAGS "$STDCFLAGS"
+mf_var -n CONFIG_CFLAGS "$STDCFLAGS $PROJECT_CFLAGS"
+mf_var -n CONFIG_LDFLAGS "$PROJECT_LDFLAGS"
 
 if
 	test -n "$CPP2DEP"
@@ -131,10 +132,11 @@ mf_cc ()
 	_cc_dep=""
 	_cc_ext=""
 	_cc_out=""
-	_cc_cflags='$(CFLAGS) $(STDCFLAGS)'
-	_cc_lflags=""
+	_cc_cflags='$(CFLAGS) $(CONFIG_CFLAGS)'
+	_cc_lflags='$(CONFIG_LDFLAGS)'
 	_cc_src=""
 	_cc_obj=""
+	_cc_strip=
 
 	while [ -n "$1" ]
 	do
@@ -148,6 +150,7 @@ mf_cc ()
 		-c)
 			_cc_ext=".o"
 			_cc_cflags="$_cc_cflags $1"
+			_cc_lflags=""
 			shift 1;;
 		-[IDU]*)
 			_cc_cflags="$_cc_cflags $1"
@@ -174,8 +177,11 @@ mf_cc ()
 			_cc_obj="$_cc_obj $2"
 			shift 2;;
 		-mo)
-			_cc_obj="$_cc_obj \$($2)";
+			_cc_obj="$_cc_obj \$($2)"
 			shift 2;;
+		--strip)
+			_cc_strip="strip \$@"
+			shift 1;;
 		-*)	
 			shmkmf_invop "mf_cc" "$1"
 			shift 1;;
@@ -200,7 +206,8 @@ mf_cc ()
 	test -n "$_cc_ext" && echo "$_cc_out" >> $cc_objlist
 
 	mf_rule -a "$_cc_out" "$_cc_src$_cc_dep$_cc_obj" \
-		"\$(CC) $_cc_cflags -o \$@ $_cc_src$_cc_obj$_cc_lflags"
+		"\$(CC) $_cc_cflags -o \$@ $_cc_src$_cc_obj $_cc_lflags"
+	test "$_cc_strip" && printf "\t%s\n" "$_cc_strip"
 
 	test -n "$_cc_src" -a -n "$cc_mkdep" && mf_depend -d "$_cc_src" \
 		"\$(CC) $_cc_cflags$_cc_src $cc_mkdep$_cc_out >> $Makefile"
@@ -208,6 +215,12 @@ mf_cc ()
 
 # $alias
 # $pconfig !
+# k |
+#	:*:keep object list
+#	:de:Erhalte die Objektliste
+# p:pfx |
+#	:*:prefix for object files
+#	:de:Prefix für Objektdateien
 # :name |
 #	:*:name of macro
 #	:de:Name des Makros
@@ -225,11 +238,25 @@ mf_cc ()
 
 mf_objlist ()
 {
+	clean="rm -f $cc_objlist";
+	pfx=""
+
+	while [ -n "$1" ]
+	do
+		case "$1" in
+		-k)	clean=":"; shift 1;;
+		-p)	pfx="$2"; shift 2;;
+		*)	break;
+		esac
+	done
+
+	test -n "$1" || shmkmf_warg "mf_objlist"
+
 	printf "\n%s=" "$1"
 
 	if [ -f $cc_objlist ]; then
-		sed -e '$!s/$/ \\/' -e 's/^/	/' $cc_objlist
-		rm -f $cc_objlist
+		sed -e '$!s|$| \\|' -e "s|^|	$pfx|" $cc_objlist
+		$clean
 	else
 		printf "\n"
 	fi
@@ -310,10 +337,12 @@ mf_lib ()
 	dir="."
 	name=
 	obj=
-	lflags=
+	lflags='$(CONFIG_LDFLAGS)'
+	post=
 	dep=
 	vn=
 	rn=
+	strip=
 
 	while [ -n "$1" ]
 	do
@@ -345,6 +374,8 @@ mf_lib ()
 		-ml)	lflags="$lflags \$($2)"; shift 2;;
 		-xo)	obj="$obj $2"; shift 2;;
 		-mo)	obj="$obj \$($2)"; shift 2;;
+		--strip)
+			strip="strip \$@"; shift 1;;
 		*)	obj="$obj $1"; shift 1;;
 		esac
 	done
@@ -372,6 +403,7 @@ mf_lib ()
 
 		flags="-shared -Wl,-soname,$oname -o \$@"
 		mf_rule -a "$dir/$tg" "$obj$dep" "\$(CC) $flags $obj $lflags"
+		test "$strip" && printf "\t%s\n" "$strip"
 
 		for x in $llist
 		do
@@ -381,6 +413,7 @@ mf_lib ()
 	else
 		tg="$dir/lib$name.a"
 		mf_rule -a "$tg" "$obj$dep" "ar rv \$@ $obj" "ranlib \$@"
+		test "$strip" && printf "\t%s\n" "$strip"
 	fi
 )}
 

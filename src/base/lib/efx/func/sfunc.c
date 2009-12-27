@@ -73,13 +73,13 @@ static void show_dist(IO *io, EfiFunc *func, int dist,
 	int i;
 
 	FuncDebugLock++;
-	io_printf(io, "%#.2x\t", dist);
+	io_xprintf(io, "%#.2x\t", dist);
 	ListFunc(io, func);
 	io_putc('\n', io);
 
 	for (i = 0; i < dim; i++)
 	{
-		io_printf(io, "%d:\t%#.2x\t%s\t", i, konv[i].dist,
+		io_xprintf(io, "%d:\t%#.2x\t%s\t", i, konv[i].dist,
 			konv[i].type ? konv[i].type->name : ".");
 		ListFunc(io, konv[i].func);
 		io_putc('\n', io);

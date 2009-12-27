@@ -1,0 +1,154 @@
+# :*:functions for creating shared object modules
+# :de:Hilfsfunktionen zur Erstellung von gemeinsam genutzten Objektmodulen
+#
+# $Synopsis
+# include $1
+#
+# $Copyright (C) 2007 Erich Frühstück
+# This file is part of EFEU.
+# 
+# EFEU is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+# 
+# EFEU is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public
+# License along with EFEU; see the file COPYING.
+# If not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+test $_so_smh && return
+_so_smh=1
+
+include cc.smh
+
+: ${MKSOURCE:=mksource}
+
+so_undef ()
+{
+	mf_rule -d all '' \
+		"@echo 'Shared objects not supported, rule'" \
+		"@echo '$*'" "@echo skipped.'"
+}
+
+mf_rule -d all files
+mf_rule -d depend files
+mf_rule -d files
+mf_srclist -c mksrclist
+
+# $alias
+# $pconfig !
+# :tg |
+#	:*:name of target file without extension.
+#	:de:Name der Zieldatei ohne Filezusatz.
+# :src |
+#	:*:name of source file.
+#	:de:Name der Quelldatei.
+# *args |
+#	:*:additional arguments for |mf_cc|.
+#	:de:zusätzliche Argumente für |mf_cc|.
+# !
+# :*:
+# The function $! creates a rule to compile a shared object module.
+# The following options and arguments are accepted:
+# :de:
+# Die Funktion $! generiert eine Regel zum kompilieren eines gemeinsam
+# genutzten Objektmoduls.
+# Die folgenden Optionen und Argumente werden akzeptiert:
+#
+# @arglist
+
+so_cc ()
+{(
+	if [ -z "$CC_SHARED" ]; then
+		so_undef so_cc "$@"
+		return
+	fi
+
+	test "$#" -lt 2 && shmkmf_warg so_cc
+	tg=$1
+	src=$2
+	shift 2
+	mf_cc -I. -I$SRC -o $tg.so $src -xc "-shared -nostdlib" "$@"
+)}
+
+# $alias
+# $pconfig !
+# H:path |
+#	:*:install header files in the directory <path>.
+#	:de:installiere Headerdateien im Verzeichnis <path>.
+# L:path |
+#	:*:install shared object files in the directory <path>.
+#	:de:installiere shared object Dateien im Verzeichnis <path>.
+# :tpl |
+#	:*:name of template file.
+#	:de:Name der Schablonendatei.
+# *args |
+#	:*:additional arguments for |mf_cc| to compile sources.
+#	:de:zusätzliche Argumente für |mf_cc| zum kompilieren der
+#	Sourcen.
+# !
+# :*:
+# The function $! creates a rule to compile a shared object module,
+# where the sources are createt with |mksource| from a template file.
+# The following options and arguments are accepted:
+# :de:
+# Die Funktion $! generiert eine Regel zum kompilieren eines gemeinsam
+# genutzten Objektmoduls, wobei die Sourcen mit |mksource| aus einer
+# Schablonendatei generiert werden.
+# Die folgenden Optionen und Argumente werden akzeptiert:
+#
+# @arglist
+
+so_mksource ()
+{(
+	inc=
+	lib=.
+	
+	if [ -z "$CC_SHARED" ]; then
+		so_undef so_mksource "$@"
+		return;
+	fi
+
+	while [ -n "$1" ]
+	do
+		case "$1" in
+		-L)	lib="$2"; shift 2;;
+		-H)	inc="$2"; shift 2;;
+		--)	shift 1;;
+		*)	tpl=$1; shift 1; break;;
+		esac
+	done
+
+	test "$tpl" || shmkmf_warg "efeu_gensrc"
+
+	$MKSOURCE --all=files -r $tpl
+	add_depend $tpl
+
+	for x in `$MKSOURCE -l $tpl`
+	do
+		case "$x" in
+		*.c)
+			tg=`basename $x .c`
+			so_cc $lib/$tg $x -mo ${tg}_obj -ml ${tg}_lib "$@"
+			;;
+		*.h)
+			if [ -n "$inc" ]; then
+				mf_file -A files "$inc/$x" "$x"
+			fi
+			;;
+		esac
+	done
+)}
+
+
+# $SeeAlso
+# \mref{shmkmf(1)},
+# \mref{cflags.smh(7)},
+# \mref{cc.smh(7)},
+# \mref{cc(1)}.

@@ -154,33 +154,33 @@ int tindex_print (IO *io, TimeIndex idx, int offset)
 	{
 	case TS_DAY:
 		Calendar(idx.value, &cal);
-		return io_printf(io, "%d-%d-%d",
+		return io_xprintf(io, "%d-%d-%d",
 			cal.year, cal.month, cal.day);
 	case TS_WEEK:
 		Calendar(MITTWOCH(idx.value), &cal);
 		week = idx.value - WeekIndex(cal.year, 0);
-		return io_printf(io, "%d/%d", week, cal.year);
+		return io_xprintf(io, "%d/%d", week, cal.year);
 	case TS_MONTH:
-		return io_printf(io, "%d.%d",
+		return io_xprintf(io, "%d.%d",
 			1 + idx.value % 12, idx.value / 12);
 	case TS_QUART:
-		return io_printf(io, "%d:%d",
+		return io_xprintf(io, "%d:%d",
 			idx.value / 4, 1 + idx.value % 4);
 	case TS_YEAR:
-		return io_printf(io, "%d", idx.value);
+		return io_xprintf(io, "%d", idx.value);
 	default:
-		return io_printf(io, "#%d", idx.value);
+		return io_xprintf(io, "#%d", idx.value);
 	}
 }
 
 char *TimeIndex2str (TimeIndex idx, int offset)
 {
-	StrBuf *buf = sb_create(0);
+	StrBuf *buf = sb_acquire();
 	IO *io = io_strbuf(buf);
 
 	tindex_print(io, idx, offset);
 	io_close(io);
-	return sb2str(buf);
+	return sb_cpyrelease(buf);
 }
 
 static double dat2dbl (unsigned idx, int pos)

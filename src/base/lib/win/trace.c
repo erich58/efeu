@@ -68,7 +68,7 @@ void WinTrace (int rows, int cols)
 	io_ctrl(wio, IO_ITALIC_FONT);
 	io_puts("bei", wio);
 	io_ctrl(wio, IO_ROMAN_FONT);
-	io_printf(wio, " %d %d\n", win->_begy , win->_begx);
+	io_xprintf(wio, " %d %d\n", win->_begy , win->_begx);
 
 	keypad(win, TRUE);
 	scrollok(win, FALSE);
@@ -98,7 +98,7 @@ void WinTrace (int rows, int cols)
 		case 'e':
 		
 			p = WinEdit(NULL, "Eingabe");
-			io_printf(wio, "%#s\n", p);
+			io_xprintf(wio, "%#s\n", p);
 			break;
 
 		case 'm':
@@ -123,7 +123,7 @@ void WinTrace (int rows, int cols)
 
 		case 'x':
 		
-			io_printf(wio, "%4b: %d %d\n", flags, y, x);
+			io_xprintf(wio, "%4b: %d %d\n", flags, y, x);
 
 			switch (WinQuestion(CurrentPos(win, 0, 0, flags), "Zeichen", ".", "+"))
 			{

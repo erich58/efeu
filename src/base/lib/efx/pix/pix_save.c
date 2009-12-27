@@ -27,6 +27,6 @@ void SavePixmap (EPixmap *pix, IO *io)
 {
 	if	(!pix || !io)	return;
 
-	io_printf(io, "P6\n%d %d\n255\n", pix->cols, pix->rows);
+	io_xprintf(io, "P6\n%d %d\n255\n", pix->cols, pix->rows);
 	io_dbwrite(io, pix->data, 1, 1, pix->rows * pix->cols * 3);
 }

@@ -34,7 +34,7 @@ PPMacro *ParseMacro (IO *io)
 	int c;
 
 	mac = NewMacro();
-	buf = sb_create(0);
+	buf = sb_acquire();
 
 	while ((c = io_skipcom(io, NULL, 0)) != EOF)
 	{
@@ -77,7 +77,7 @@ PPMacro *ParseMacro (IO *io)
 	}
 
 	io_ungetc(c, io);
-	mac->repl = sb2str(buf);
+	mac->repl = sb_cpyrelease(buf);
 	return mac;
 }
 

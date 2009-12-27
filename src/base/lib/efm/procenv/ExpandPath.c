@@ -44,7 +44,7 @@ char *ExpandPath (const char *name)
 
 	if	(name == NULL)	return NULL;
 
-	sb = sb_create(0);
+	sb = sb_acquire();
 
 	while (*name != 0)
 	{
@@ -87,5 +87,5 @@ char *ExpandPath (const char *name)
 		name++;
 	}
 	
-	return sb2str(sb);
+	return sb_cpyrelease(sb);
 }

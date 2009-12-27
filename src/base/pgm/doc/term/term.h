@@ -30,6 +30,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/stack.h>
 #include <EFEU/vecbuf.h>
 #include <EFEU/object.h>
+#include <EFEU/Tabular.h>
 #include <DocDrv.h>
 
 typedef struct {
@@ -67,6 +68,8 @@ struct TermStruct {
 	TermVar var;		/* Umgebungsvariablen */
 	Stack *s_att;		/* Stack mit Attributen */
 	char *att;		/* Aktuelles Attribut */
+	Tabular *tab;	/* Tabellenstruktur */
+	IO *save_out;	/* Zwischenspeicher für Ausgabestruktur */
 };
 
 extern IO *DocOut_term (IO *io);

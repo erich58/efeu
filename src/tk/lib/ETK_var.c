@@ -165,6 +165,7 @@ static EfiLval Lval_tcl = {
 	tcl_free,
 	tcl_update,
 	tcl_sync,
+	NULL,
 	tcl_ident,
 };
 

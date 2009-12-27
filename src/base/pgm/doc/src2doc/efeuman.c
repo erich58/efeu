@@ -109,6 +109,10 @@ static int f_manpage (CmdPar *cpar, CmdParVar *var,
 			sb_puts("\n@arglist\n", doc_buf.tab[BUF_DESC]);
 		}
 
+		if	(!doc_buf.var[VAR_TITLE])
+			doc_buf.var[VAR_TITLE] = \
+				 mstrcpy(CmdPar_getval(cpar, "Ident", NULL));
+
 		DocBuf_write(&doc_buf, def);
 		io_rewind(def);
 	}
@@ -150,7 +154,7 @@ static char *buf2var (StrBuf *buf)
 	StrBuf *var;
 	int c;
 
-	var = sb_create(0);
+	var = sb_acquire();
 	sb_setpos(buf, 0);
 	io = langfilter(io_strbuf(buf), NULL);
 
@@ -158,7 +162,7 @@ static char *buf2var (StrBuf *buf)
 		sb_putc(c, var);
 
 	io_close(io);
-	return sb2str(var);
+	return sb_cpyrelease(var);
 }
 
 static char *getpar (StrBuf *buf)
@@ -193,14 +197,14 @@ static char *getpar (StrBuf *buf)
 
 static void addline (IO *io, StrBuf *buf)
 {
-	int c;
+	int32_t c;
 	int pos;
 	int flag;
 
 	pos = 1;
 	flag = 1;
 
-	while ((c = io_getc(io)) != EOF)
+	while ((c = io_getucs(io)) != EOF)
 	{
 		if	(c == '\n')	break;
 
@@ -218,7 +222,7 @@ static void addline (IO *io, StrBuf *buf)
 		} 
 		else if	(indent > pos)	indent = pos;
 
-		sb_putc(c, buf);
+		sb_putucs(c, buf);
 	}
 
 	if	(flag && !doc_buf.var[VAR_TITLE])
@@ -344,10 +348,11 @@ static void setval (CmdPar *par, const char *name, char *val)
 /*	Hauptprogramm
 */
 
+static SB_DECL(buf_str, 0);
+
 int main (int argc, char **argv)
 {
 	CmdPar *par;
-	StrBuf *buf;
 	IO *io;
 	VecBuf save;
 
@@ -374,10 +379,12 @@ int main (int argc, char **argv)
 	memcpy(&par->var, &save, sizeof(VecBuf));
 	CmdParEval_add(&eval_manpage);
 	SetProgName(argv[0]);
-	CmdPar_load(par, "help", 0);
 
 	DocBuf_init(&doc_buf);
 	doc_buf.var[VAR_NAME] = mstrcpy(par->name);
+
+	if	(GetFlagResource("LoadHelp"))
+		CmdPar_load(par, "help", 0);
 
 	if	(GetFlagResource("LoadConfig"))
 	{
@@ -390,18 +397,21 @@ int main (int argc, char **argv)
 		return 0;
 	}
 
-	buf = sb_create(BSIZE);
 	io = NULL;
 
 	if	(source)
 	{
 		io = io_lnum(io_fileopen(source, "rzd"));
-		eval_source(io, buf);
+		eval_source(io, &buf_str);
+		setval(par, "Ident", doc_buf.var[VAR_TITLE]);
+		setval(par, "Copyright", doc_buf.var[VAR_COPYRIGHT]);
 	}
 	else if ((io = io_fopen(argv[0], "r")))
 	{
 		io = io_lnum(io);
-		eval_script(io, buf);
+		eval_script(io, &buf_str);
+		setval(par, "Ident", doc_buf.var[VAR_TITLE]);
+		setval(par, "Copyright", doc_buf.var[VAR_COPYRIGHT]);
 	}
 	else if	(CmdPar_load(par, par->name, 1))
 	{
@@ -409,15 +419,12 @@ int main (int argc, char **argv)
 	}
 	else	dbg_error(NULL, E_CFG, NULL);
 
-	rd_deref(buf);
 	io_close(io);
-
-	setval(par, "Ident", doc_buf.var[VAR_TITLE]);
-	setval(par, "Copyright", doc_buf.var[VAR_COPYRIGHT]);
 
 	if	(CmdPar_eval(par, &argc, argv, 0) <= 0)
 		exit(EXIT_FAILURE);
 
 	CmdPar_usage(par, NULL, NULL);
+
 	return 0;
 }

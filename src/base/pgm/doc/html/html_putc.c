@@ -24,15 +24,28 @@ If not, write to the Free Software Foundation, Inc.,
 #include <efeudoc.h>
 #include <ctype.h>
 
+void HTML_hmode(HTML *html)
+{
+	io_puts(html->hmode, html->out);
+	html->hmode = NULL;
+}
+
 static int html_filter(int c, IO *io)
 {
-	switch (c)
+	switch ((char) c)
 	{
 	case '<':	io_puts("&lt;", io); break;
 	case '>':	io_puts("&gt;", io); break;
 	case '&':	io_puts("&amp;", io); break;
 	case '%':	io_puts("&percnt;", io); break;
 	case '"':	io_puts("&quot;", io); break;
+	case 'Ä':	io_puts("&Auml;", io); break;
+	case 'Ö':	io_puts("&Ouml;", io); break;
+	case 'Ü':	io_puts("&Uuml;", io); break;
+	case 'ä':	io_puts("&auml;", io); break;
+	case 'ö':	io_puts("&ouml;", io); break;
+	case 'ü':	io_puts("&uuml;", io); break;
+	case 'ß':	io_puts("&szlig;", io); break;
 	default:	io_putc(c, io); break;
 	}
 
@@ -43,6 +56,8 @@ void HTML_puts (HTML *html, const char *str)
 {
 	if	(str)
 	{
+		HTML_hmode(html);
+
 		while (*str != 0)
 			html_filter(*(str++), html->out);
 	}
@@ -53,6 +68,7 @@ int HTML_plain (void *drv, int c)
 {
 	HTML *html = drv;
 
+	HTML_hmode(html);
 	html_filter(c, html->out);
 	return c;
 }
@@ -64,6 +80,7 @@ int HTML_putc (void *drv, int c)
 	if	(isspace(c) && html->last == '\n')
 		return '\n';
 
+	HTML_hmode(html);
 	html_filter(c, html->out);
 	return c;
 }
@@ -96,7 +113,9 @@ void HTML_sym (void *drv, const char *name)
 	HTML *html = drv;
 	char *sym = DocSym_get(html->symtab, name);
 
+	HTML_hmode(html);
+
 	if	(sym)	io_puts(sym, html->out);
-	else		io_printf(html->out, "&%s;", name);
+	else		io_xprintf(html->out, "&%s;", name);
 }
 

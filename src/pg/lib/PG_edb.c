@@ -79,7 +79,7 @@ static char *parse_query (IO *io, StrBuf *buf);
 
 static int pfunc_int (IO *out, const EfiType *type, const void *data)
 {
-	return io_printf(out, "%d", Val_int(data));
+	return io_xprintf(out, "%d", Val_int(data));
 }
 
 static void conv_int (EfiType *type, void *data, const char *def)
@@ -89,7 +89,7 @@ static void conv_int (EfiType *type, void *data, const char *def)
 
 static int pfunc_uint (IO *out, const EfiType *type, const void *data)
 {
-	return io_printf(out, "%u", Val_uint(data));
+	return io_xprintf(out, "%u", Val_uint(data));
 }
 
 static void conv_uint (EfiType *type, void *data, const char *def)
@@ -99,12 +99,12 @@ static void conv_uint (EfiType *type, void *data, const char *def)
 
 static int pfunc_int64 (IO *out, const EfiType *type, const void *data)
 {
-	return io_printf(out, "%lld", *((int64_t *) data));
+	return io_xprintf(out, "%lld", *((int64_t *) data));
 }
 
 static int pfunc_uint64 (IO *out, const EfiType *type, const void *data)
 {
-	return io_printf(out, "%llu", *((uint64_t *) data));
+	return io_xprintf(out, "%llu", *((uint64_t *) data));
 }
 
 static int pfunc_str (IO *out, const EfiType *type, const void *data)
@@ -268,14 +268,14 @@ static void conv_free (void *ptr)
 #if	E2P_DEBUG
 static void put_conv (CONVARG *conv, IO *out)
 {
-	io_printf(out, "%2d %2d", conv->offset,
+	io_xprintf(out, "%2d %2d", conv->offset,
 		conv->base ? conv->base->type->size : conv->type->size);
-	io_printf(out, " %-12s", conv->type->name);
-	io_printf(out, " %-12s", conv->name);
-	io_printf(out, " %-12s", conv->pg_type);
+	io_xprintf(out, " %-12s", conv->type->name);
+	io_xprintf(out, " %-12s", conv->name);
+	io_xprintf(out, " %-12s", conv->pg_type);
 
 	if	(conv->base)
-		io_printf(out, " %s", conv->base->type->name);
+		io_xprintf(out, " %s", conv->base->type->name);
 
 	io_putc('\n', out);
 }
@@ -487,14 +487,14 @@ static void init_pg (EDB *edb, EDBPrintMode *mode, IO *io)
 
 		if	(arg->drop)
 		{
-			io_printf(par->io, "DROP TABLE %s", arg->name);
+			io_xprintf(par->io, "DROP TABLE %s", arg->name);
 			edb2pg_cmd(par);
 		}
 
-		io_printf(par->io, "CREATE TABLE %s (", arg->name);
+		io_xprintf(par->io, "CREATE TABLE %s (", arg->name);
 
 		for (n = 0, p = par->conv.data; n < par->conv.used; n++)
-			io_printf(par->io, "%s%s %s", n ? ", " : "",
+			io_xprintf(par->io, "%s%s %s", n ? ", " : "",
 				p[n].name, p[n].pg_type);
 		
 		if	(arg->par)
@@ -508,7 +508,7 @@ static void init_pg (EDB *edb, EDBPrintMode *mode, IO *io)
 		if	(!edb2pg_cmd(par))
 			exit(EXIT_FAILURE);
 
-		io_printf(par->io, "COPY %s FROM stdin", arg->name);
+		io_xprintf(par->io, "COPY %s FROM stdin", arg->name);
 		cmd = edb2pg_get(par);
 		PG_info(par->pg, cmd);
 		PG_exec(par->pg, cmd, PGRES_COPY_IN);
@@ -566,14 +566,14 @@ static int read_pg (EfiType *type, void *data, void *p_par)
 	sb_clean(&par->buf);
 
 	if	(!par->buf.nfree)
-		sb_expand(&par->buf);
+		sb_expand(&par->buf, 2);
 
 	while ((c = PQgetline(par->pg->conn, 
 		(char *) par->buf.data + par->buf.pos, par->buf.nfree)) == 1)
 	{
 		par->buf.pos += par->buf.nfree - 1;
 		par->buf.nfree = 1;
-		sb_expand(&par->buf);
+		sb_expand(&par->buf, 2);
 	}
 
 	if	(c == EOF)	return 0;
@@ -642,7 +642,7 @@ static void meta_copy (EDBMetaDef *def, EDBMeta *meta, const char *arg)
 	par->pg = epg_connect(db, 0);
 	memfree(db);
 
-	io_printf(par->io, "COPY %S TO stdin", arg);
+	io_xprintf(par->io, "COPY %S TO stdin", arg);
 	PG_exec(par->pg, edb2pg_get(par), PGRES_COPY_OUT);
 	par->endline = 0;
 	par->copy = 1;
@@ -793,7 +793,7 @@ static void meta_query (EDBMetaDef *def, EDBMeta *meta, const char *arg)
 				conv->conv = conv_any;
 			}
 
-			io_printf(log, "%s: %s: %s -> %s\n", def->name,
+			io_xprintf(log, "%s: %s: %s -> %s\n", def->name,
 				conv->name, conv->pg_type, conv->type->name);
 			*ptr = NewEfiStruct(conv->type, conv->name, 0);
 			ptr = &(*ptr)->next;

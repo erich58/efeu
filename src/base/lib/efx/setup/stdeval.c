@@ -68,7 +68,7 @@ static void var_info (IO *io, InfoNode *info)
 		if	(p->type == &Type_func)	continue;
 		if	(p->type == &Type_vtab)	continue;
 
-		io_printf(io, "\n%s %s\n", p->type->name, p->name);
+		io_xprintf(io, "\n%s %s\n", p->type->name, p->name);
 		var_desc(io, p);
 	}
 }
@@ -85,15 +85,15 @@ static void func_info (IO *io, InfoNode *info)
 
 		if	(p->obj->type == &Type_vfunc)
 		{
-			io_printf(io, "%s\n", p->name);
+			io_xprintf(io, "%s\n", p->name);
 			PrintData(io, p->obj->type, p->obj->data);
-			io_printf(io, "%s\n", p->desc);
+			io_xprintf(io, "%s\n", p->desc);
 		}
 		else if	(p->obj->type == &Type_func)
 		{
-			io_printf(io, "%s\n", p->name);
+			io_xprintf(io, "%s\n", p->name);
 			PrintData(io, p->obj->type, p->obj->data);
-			io_printf(io, "%s\n", p->desc);
+			io_xprintf(io, "%s\n", p->desc);
 		}
 	}
 }
@@ -319,11 +319,11 @@ static int c_ptr (IO *in, IO *out, void *arg)
 		c = io_getc(in);
 		obj = EvalObj(obj, NULL);
 
-		n += io_printf(out, "((%s *) ((char *) %s->data",
+		n += io_xprintf(out, "((%s *) ((char *) %s->data",
 			obj && obj->type->cname ? obj->type->cname : "void", p);
 
 		if	(base && obj)
-			n += io_printf(out, " + %d",
+			n += io_xprintf(out, " + %d",
 				(char *) obj->data - (char *) base->data);
 
 		UnrefObj(obj);
@@ -332,10 +332,10 @@ static int c_ptr (IO *in, IO *out, void *arg)
 	}
 	else if	(base && base->type->cname)
 	{
-		n += io_printf(out, "((%s *) %s->data)",
+		n += io_xprintf(out, "((%s *) %s->data)",
 			base->type->cname, p);
 	}
-	else	n += io_printf(out, "%s->data", p);
+	else	n += io_xprintf(out, "%s->data", p);
 
 	UnrefObj(base);
 	memfree(p);
@@ -584,6 +584,7 @@ void SetupStd(void)
 	CmdSetup_vec();
 	CmdSetup_obj();
 	CmdSetup_pctrl();
+	CmdSetup_signal();
 	CmdSetup_test();
 
 	CmdSetup_konv();
@@ -593,6 +594,7 @@ void SetupStd(void)
 	CmdSetup_op();
 	CmdSetup_info();
 	CmdSetup_strbuf();
+	CmdSetup_xml();
 	CmdSetup_MapFile();
 	CmdSetup_DatPool();
 	CmdSetup_StrPool();
@@ -603,6 +605,7 @@ void SetupStd(void)
 	CmdSetup_match();
 	CmdSetup_unix();
 	CmdSetup_tms();
+	CmdSetup_timeval();
 	CmdSetup_dl();
 	CmdSetup_dbutil();
 

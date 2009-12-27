@@ -129,7 +129,7 @@ static char *mac_expand (const char *fmt, int argc, char **argv)
 
 	if	(fmt == NULL)	return NULL;
 
-	buf = sb_create(0);
+	buf = sb_acquire();
 	in = io_cstr(fmt);
 	quote = 0;
 	depth = 0;
@@ -165,7 +165,7 @@ static char *mac_expand (const char *fmt, int argc, char **argv)
 	}
 
 	io_close(in);
-	return sb2str(buf);
+	return sb_cpyrelease(buf);
 }
 
 

@@ -277,7 +277,7 @@ EfiType *AddEnumType (EfiType *type)
 		VarTabEntry *p;
 		size_t k;
 
-		sb = sb_create(0);
+		sb = sb_acquire();
 		sb_puts("_enum", sb);
 
 		p = type->vtab->tab.data;
@@ -290,7 +290,7 @@ EfiType *AddEnumType (EfiType *type)
 		}
 
 		sb_putc('_', sb);
-		type->name = sb2str(sb);
+		type->name = sb_cpyrelease(sb);
 	}
 	else	type->name = msprintf("_enum_%p", type);
 
@@ -331,7 +331,8 @@ EfiType *MakeEnumType (const char *name, EnumTypeDef *def, size_t dim)
 	EfiType *type = NewEnumType(name, EnumTypeRecl(dim));
 
 	for (; dim-- > 0; def++)
-		AddEnumKey(type, mstrcpy(def->name), NULL, def->val);
+		AddEnumKey(type, mstrcpy(def->name), mstrcpy(def->desc),
+			def->val);
 
 	return AddEnumType(type);
 }

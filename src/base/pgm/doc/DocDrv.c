@@ -99,6 +99,12 @@ static int drv_put (int c, void *ptr)
 	return c;
 }
 
+static int drv_putucs (int32_t c, IO *io)
+{
+	DocDrv *drv = io->data;
+	return drv->putucs(drv, c);
+}
+
 static int drv_sym (DocDrv *drv, const char *name)
 {
 	if	(!drv->sym)
@@ -159,10 +165,12 @@ static int drv_ctrl (void *ptr, int req, va_list list)
 }
 
 
-IO *DocDrv_io (void *drv)
+IO *DocDrv_io (void *ptr)
 {
+	DocDrv *drv = ptr;
 	IO *io = io_alloc();
 	io->put = drv_put;
+	io->putucs = drv->putucs ? drv_putucs : NULL;
 	io->ctrl = drv_ctrl;
 	io->data = drv;
 	return io;

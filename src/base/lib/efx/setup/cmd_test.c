@@ -32,8 +32,8 @@ static void list_vtab(IO *io, EfiVarTab *tab, int limit)
 	if	(tab == NULL || tab->tab.used <= limit)
 		ShowVarTab(io, NULL, tab);
 	else if	(tab->name)
-		io_printf(io, "%s[%d]", tab->name, tab->tab.used);
-	else	io_printf(io, "%#p[%d]", tab, tab->tab.used);
+		io_xprintf(io, "%s[%d]", tab->name, tab->tab.used);
+	else	io_xprintf(io, "%#p[%d]", tab, tab->tab.used);
 }
 
 static void f_vtabstack (EfiFunc *func, void *rval, void **arg)
@@ -52,13 +52,47 @@ static void f_vtabstack (EfiFunc *func, void *rval, void **arg)
 		list_vtab(io, stack->tab, limit);
 
 		if	(stack->obj)
-			io_printf(io, "(%s)", stack->obj->type->name);
+			io_xprintf(io, "(%s)", stack->obj->type->name);
 
 	}
 
 	io_putc('\n', io);
 }
 
+static void f_vtabdump (EfiFunc *func, void *rval, void **arg)
+{
+	EfiVarStack *stack; 
+	EfiVarTab *tab;
+	EfiObj *obj;
+	IO *io;
+	int depth;
+
+	depth = Val_int(arg[0]);
+	io = Val_io(arg[1]);
+	tab = LocalVar;
+	obj = LocalObj;
+
+	for (stack = VarStack; depth-- && stack; stack = stack->next)
+	{
+		tab = stack->tab;
+		obj = stack->obj;
+	}
+
+	if	(obj)
+		io_xprintf(io, "(%s) ", obj->type->name);
+
+	DumpVarTab(io, NULL, tab);
+}
+
+static void f_objdump (EfiFunc *func, void *rval, void **arg)
+{
+	char *p = Obj_ident(arg[0]);
+	IO *io = Val_io(arg[1]);
+	io_printf(io, "%s = ", p);
+	memfree(p);
+	PrintObj(io, arg[0]);
+	io_puts("\n", io);
+}
 
 static void f_typedist (EfiFunc *func, void *rval, void **arg)
 {
@@ -92,14 +126,14 @@ static void f_showkonv (EfiFunc *func, void *rval, void **arg)
 	if	(old == NULL || new == NULL)
 		return;
 
-	io_printf(iostd, "%s -> %s: ", old->name, new->name);
+	io_xprintf(iostd, "%s -> %s: ", old->name, new->name);
 
 	if	(GetKonv(&konv, old, new))
 	{
 		char *delim;
 		int i;
 
-		io_printf(iostd, "%#4o", konv.dist);
+		io_xprintf(iostd, "%#4o", konv.dist);
 		delim = " ";
 
 		for (i = 0; i < tabsize(dist_tab); i++)
@@ -123,23 +157,23 @@ static void f_lcshow (EfiFunc *func, void *rval, void **arg)
 
 	if	(Locale.scan)
 	{
-		io_printf(io, "scan.thousands_sep = %#s\n",
+		io_xprintf(io, "scan.thousands_sep = %#s\n",
 			Locale.scan->thousands_sep);
-		io_printf(io, "scan.decimal_point = %#s\n",
+		io_xprintf(io, "scan.decimal_point = %#s\n",
 			Locale.scan->decimal_point);
 	}
 
 	if	(Locale.print)
 	{
-		io_printf(io, "print.thousands_sep = %#s\n",
+		io_xprintf(io, "print.thousands_sep = %#s\n",
 			Locale.print->thousands_sep);
-		io_printf(io, "print.decimal_point = %#s\n",
+		io_xprintf(io, "print.decimal_point = %#s\n",
 			Locale.print->decimal_point);
-		io_printf(io, "print.negativ_sign = %#s\n",
+		io_xprintf(io, "print.negativ_sign = %#s\n",
 			Locale.print->negative_sign);
-		io_printf(io, "print.positive_sign = %#s\n",
+		io_xprintf(io, "print.positive_sign = %#s\n",
 			Locale.print->positive_sign);
-		io_printf(io, "print.zero_sign = %#s\n",
+		io_xprintf(io, "print.zero_sign = %#s\n",
 			Locale.print->zero_sign);
 	}
 }
@@ -149,13 +183,13 @@ static void f_locale (EfiFunc *func, void *rval, void **arg)
 	IO *io = Val_io(arg[0]);
 
 	if	(Locale.scan)
-		io_printf(io, "LC_SCAN=%#s\n", Locale.scan->name);
+		io_xprintf(io, "LC_SCAN=%#s\n", Locale.scan->name);
 
 	if	(Locale.print)
-		io_printf(io, "LC_PRINT=%#s\n", Locale.print->name);
+		io_xprintf(io, "LC_PRINT=%#s\n", Locale.print->name);
 
 	if	(Locale.date)
-		io_printf(io, "LC_DATE=%#s\n", Locale.date->name);
+		io_xprintf(io, "LC_DATE=%#s\n", Locale.date->name);
 }
 
 static void f_parselist (EfiFunc *func, void *rval, void **arg)
@@ -194,7 +228,7 @@ static void f_showenum (EfiFunc *func, void *rval, void **arg)
 		{
 			if	(p->obj && p->obj->type == type)
 			{
-				io_printf(out, "%d;%s;%s\n",
+				io_xprintf(out, "%d;%s;%s\n",
 					Val_int(p->obj->data),
 					p->name, p->desc);
 			}
@@ -218,6 +252,8 @@ static EfiMember var_func[] = {
 void CmdSetup_test(void)
 {
 	SetFunc(0, &Type_void, "vtabstack (int = 0, IO = iostd)", f_vtabstack);
+	SetFunc(0, &Type_void, "vtabdump (int = 0, IO = iostd)", f_vtabdump);
+	SetFunc(0, &Type_void, "objdump (. obj, IO = iostd)", f_objdump);
 	SetFunc(0, &Type_int, "dist (Type_t a, Type_t b)", f_typedist);
 	SetFunc(0, &Type_void, "showkonv (Type_t a, Type_t b)", f_showkonv);
 	SetFunc(0, &Type_func, "getconv (Type_t a, Type_t b)", f_getconv);

@@ -151,7 +151,7 @@ int iocpy_macsub (IO *in, IO *out, int c,
 	StrBuf *sb;
 	VecBuf argv;
 
-	sb = sb_create(0);
+	sb = sb_acquire();
 	sb_putc(c, sb);
 
 	while ((c = io_getc(in)) != EOF)
@@ -164,13 +164,12 @@ int iocpy_macsub (IO *in, IO *out, int c,
 		else	sb_putc(c, sb);
 	}
 
-	sb_putc(0, sb);
-	mac = GetMacro((char *) sb->data);
+	mac = GetMacro(sb_nul(sb));
 
 	if	(mac == NULL || mac->lock)
 	{
-		n = io_puts((char *) sb->data, out);
-		rd_deref(sb);
+		n = io_puts(sb_nul(sb), out);
+		sb_release(sb);
 		return n;
 	}
 
@@ -178,9 +177,6 @@ int iocpy_macsub (IO *in, IO *out, int c,
 
 	if	(mac->hasarg)
 	{
-		sb->pos--;
-		sb_sync(sb);
-
 		while ((c = io_skipcom(in, NULL, 1)) != EOF)
 		{
 			if	(c != ' ' && c != '\t')
@@ -192,9 +188,8 @@ int iocpy_macsub (IO *in, IO *out, int c,
 		if	(c != '(')
 		{
 			io_ungetc(c, in);
-			sb_putc(0, sb);
-			n = io_puts((char *) sb->data, out);
-			rd_deref(sb);
+			n = io_puts(sb_nul(sb), out);
+			sb_release(sb);
 			return n;
 		}
 
@@ -212,7 +207,7 @@ int iocpy_macsub (IO *in, IO *out, int c,
 		io_prompt(in, prompt);
 	}
 
-	rd_deref(sb);
+	sb_release(sb);
 	mac->lock = 1;
 	n = mac->sub(mac, out, argv.data, argv.used);
 	mac->lock = 0;

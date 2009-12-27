@@ -25,54 +25,58 @@ If not, write to the Free Software Foundation, Inc.,
 
 /*
 :*:
-The function |$1| deletes the character at the actual position.
+The function |$1| deletes <n> character at the actual position.
 :de:
-Die Funktion |$1| löscht das Zeichen an der aktuellen Position.
+Die Funktion |$1| löscht <n> Zeichen an der aktuellen Position.
+Der Rückgabewert ist ein Pointer auf die ans Ende des Buffers verschobenen
+Zeichen.
 */
 
-int sb_delete (StrBuf *sb)
+void *sb_delete (StrBuf *sb, size_t n)
 {
-	int i, c, n;
-
-	if	(sb->nfree >= sb->size)
-		return EOF;
-
-	sb->nfree++;
-	n = sb->size - sb->nfree;
-	c = sb->data[sb->pos];
-
-	for (i = sb->pos; i < n; i++)
-		sb->data[i] = sb->data[i + 1];
-
-	if	(sb->pos > n)	sb->pos = n;
-
-	return c;
+	if	(sb && sb->pos + sb->nfree + n <= sb->size)
+	{
+		sb_move(sb, sb->pos, sb->pos + n,
+			sb->size - sb->nfree - sb->pos - n);
+		sb->nfree += n;
+		return sb->data + sb->size - sb->nfree;
+	}
+	else	return NULL;
 }
 
 /*
 :*:
-The function |$1| inserts the character <c> at the actual position.
+The function |$1| inserts the character <c> <n> times at the actual position
+and returns the address of the insertion point.
 :de:
-Die Funktion |$1| fügt das Zeichen <c> an der aktuellen Position ein.
+Die Funktion |$1| fügt das Zeichen <c> <n>-mal an der aktuellen Position ein
+und liefert die Adresse der ersten Einfügeposition
 */
 
-void sb_insert (int c, StrBuf *sb)
+void *sb_insert (StrBuf *sb, int c, size_t n)
 {
-	int i;
+	unsigned char *p;
 
-	if	(sb->pos >= sb->size - sb->nfree)
+	if	(!sb)	return NULL;
+
+	if	(sb->pos + sb->nfree == sb->size)
 	{
-		sb_put(c, sb);
-		return;
+		p = sb_expand(sb, n);
+	}
+	else
+	{
+		int pos = sb->pos;
+		sb->pos = sb->size - sb->nfree;
+		sb_expand(sb, n);
+		p = sb->data + pos;
+		memmove(p + n, p, sb->pos - pos);
+		sb->pos = pos;
 	}
 
-	if	(--sb->nfree < 0)
-		sb_expand(sb);
-
-	for (i = sb->size - sb->nfree; i > sb->pos; i--)
-		sb->data[i] = sb->data[i-1];
-
-	sb->data[sb->pos++] = c;
+	memset(p, c, n);
+	sb->nfree -= n;
+	sb->pos += n;
+	return p;
 }
 
 /*

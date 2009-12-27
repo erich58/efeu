@@ -56,11 +56,11 @@ char *type2str(const EfiType *type)
 	StrBuf *sb;
 	IO *io;
 
-	sb = sb_create(0);
+	sb = sb_acquire();
 	io = io_strbuf(sb);
 	ShowType(io, type);
 	io_close(io);
-	return sb2str(sb);
+	return sb_cpyrelease(sb);
 }
 
 

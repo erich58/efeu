@@ -1,0 +1,79 @@
+/*
+:*:working with temporary directory
+:de:Arbeiten mit temporären Dateien
+
+$Copyright (C) 2008 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+*/
+
+\ifdef\tmp\break\endif
+
+\eval {
+	str tmp_name = NULL;
+}
+
+$1
+
+:*:The command $1 removes the temporary directory for examples.
+
+\def\tmp_clean {
+	if	(tmp_name)
+	{
+		deltempdir(tmp_name);
+		tmp_name = NULL;
+	}
+}
+
+$1[|[|<mode>|]|] <cmd>
+
+:*:The command $1 executes <cmd> in the temporary directory.
+Possible outputs are inserted with mode <mode> (same statements as in
+|\include|).
+
+\def\tmp_exec {
+	if	(!tmp_name)
+		tmp_name = newtempdir();
+
+	{
+		str mode = ParseOpt(cin, true);
+		str cmd = xexpand(ParseLine(cin, true));
+		str res = filter("sh", "cd " + tmp_name + "\n" + cmd);
+
+		if	(res)
+			input(mode, res + "\n");
+	}
+}
+
+$1 <name>\br
+<data>\br
+|\end|
+
+:*:The command $1 creates a file in the temporary directory.
+
+\def\tmp_file {
+	if	(!tmp_name)
+		tmp_name = newtempdir();
+
+	{
+		str name = xexpand(ParseLine(cin));
+		str body = ParseRegion(cin, "\\\\end");
+
+		if	(name)
+			copy(body, open(paste("/", tmp_name, name), "wz"));
+	}
+}

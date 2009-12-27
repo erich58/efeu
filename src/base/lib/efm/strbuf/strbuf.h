@@ -28,6 +28,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/memalloc.h>
 #include <EFEU/refdata.h>
+#include <EFEU/stdint.h>
 
 /*
 :*:
@@ -64,15 +65,12 @@ begonnen und anschließend die aktuelle Größe immer verdoppelt.
 */
 
 typedef struct {
-	REFVAR;
 	unsigned char *data;	/* Datenbuffer */
 	unsigned size;	/* Aktuelle Größe des Buffers */
 	unsigned blksize;	/* Blockgröße zur Buffervergrößerung */
 	int nfree;	/* Zahl der freien Zeichen */
 	int pos;	/* Aktuelle Bufferposition */
 } StrBuf;
-
-extern RefType sb_reftype;
 
 /*
 :*:
@@ -83,7 +81,7 @@ Der Makro |$1| initialisiert die Strukturkomponenten des
 Zeichenfeldes. Als Argument wird die Blockgröße benötigt.
 */
 
-#define	SB_DATA(blk)	{ REFDATA(&sb_reftype), NULL, 0, blk, 0, 0 }
+#define	SB_DATA(blk)	{ NULL, 0, blk, 0, 0 }
 
 /*
 :*:
@@ -95,26 +93,62 @@ es mit der Blockgröße <blk>.
 */
 
 #define	STRBUF(name, blk)	StrBuf name = SB_DATA(blk)
+#define	SB_DECL(name, blk)	StrBuf name = SB_DATA(blk)
 
 StrBuf *sb_create (size_t blksize);
+void sb_destroy (StrBuf *sb);
+
 void sb_init (StrBuf *buf, size_t blksize);
 
-void sb_expand (StrBuf *buf);
-void sb_clean (StrBuf *sb);
+void *sb_expand (StrBuf *buf, size_t size);
+char *sb_nul (StrBuf *sb);
+void sb_trunc (StrBuf *sb);
 void sb_free (StrBuf *sb);
+void *sb_getmem (StrBuf *sb);
+
+#define sb_clean(sb)	sb_trunc(sb)
 
 int sb_get (StrBuf *sb);
 int sb_put (int c, StrBuf *sb);
+int sb_xputc(int c, StrBuf *sb, const char *delim);
+int sb_xputs(const char *str, StrBuf *sb, const char *delim);
 int sb_puts (const char *str, StrBuf *sb);
+int sb_putmb (const char *str, StrBuf *sb);
 int sb_nputs (const char *str, size_t len, StrBuf *sb);
 int sb_rputs (const char *str, StrBuf *sb);
 int sb_putstr (const char *str, StrBuf *sb);
+
 int sb_printf (StrBuf *sb, const char *fmt, ...);
 int sb_vprintf (StrBuf *sb, const char *fmt, va_list list);
-int sb_setpos (StrBuf *buf, int n);
+int sb_xprintf (StrBuf *sb, const char *fmt, ...);
+int sb_vxprintf (StrBuf *sb, const char *fmt, va_list list);
+int sb_mbprintf (StrBuf *sb, const char *fmt, ...);
+int sb_vmbprintf (StrBuf *sb, const char *fmt, va_list list);
 
-void sb_insert (int c, StrBuf *sb);
-int sb_delete (StrBuf *sb);
+int sb_setpos (StrBuf *buf, int n);
+size_t sb_putmem (StrBuf *sb, const void *mem, size_t size);
+int sb_move (StrBuf *sb, int tg, int src, int length);
+int sb_swap (StrBuf *sb, int pos, int length);
+
+int sb_nputc (int c, StrBuf *sb, int n);
+int sb_putucs (int32_t c, StrBuf *sb);
+int32_t sb_getucs (StrBuf *sb);
+
+void *sb_insert (StrBuf *sb, int c, size_t n);
+void *sb_delete (StrBuf *sb, size_t n);
+
+StrBuf *sb_acquire (void);
+void sb_release (StrBuf *buf);
+char *sb_cpyrelease (StrBuf *buf);
+
+/*
+:de:Der Makro |$1| liefert einen Stringpointer auf die aktuelle Position.
+Achtung: Der String ist nicht notwendigerweise 0-terminiert.
+Vergleiche dazu auch \mref{sbuf_nul}.
+*/
+
+#define	sb_ptr(sb)	((char *) (sb)->data + (sb)->pos)
+
 
 /*
 :*:
@@ -201,9 +235,7 @@ am Ende 0-Zeichen eingefügt.
 
 #define	sb_align(sb, m)	while ((sb_size(sb) % (m)) != 0) sb_putc(0, sb)
 
-char *sb_str (StrBuf *sb, int pos);
-char *sb2str (StrBuf *sb);
-char *sb2mem (StrBuf *sb);
+char *sb_nul (StrBuf *sb);
 char *sb_strcpy (StrBuf *sb);
 char *sb_memcpy (StrBuf *sb);
 char *lexsortkey (const char *base, StrBuf *buf);

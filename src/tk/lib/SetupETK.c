@@ -198,19 +198,16 @@ static void f_tcleval (EfiFunc *func, void *rval, void **arg)
 	}
 	else	argl = NULL;
 
-	sb = sb_create(0);
+	sb = sb_acquire();
+	tmp = sb_acquire();
 	in = io_cstr(Val_str(arg[0]));
 	out = io_strbuf(sb);
 	flag = 0;
-	tmp = NULL;
 
 	while ((c = io_getc(in)) != EOF)
 	{
 		if	(c == '$')
 		{
-			if	(!tmp)
-				tmp = sb_create(0);
-
 			p = psubexpandarg(tmp, in, argl);
 
 			if	(flag)
@@ -226,11 +223,10 @@ static void f_tcleval (EfiFunc *func, void *rval, void **arg)
 		}
 	}
 
-	rd_deref(tmp);
+	sb_release(tmp);
 	io_close(out);
-	sb_putc(0, sb);
-	ETK_eval(etk, (char *) sb->data);
-	rd_deref(sb);
+	ETK_eval(etk, sb_nul(sb));
+	sb_release(sb);
 	rd_deref(argl);
 }
 

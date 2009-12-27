@@ -42,12 +42,12 @@ static void f_src_push (EfiFunc *func, void *rval, void **arg)
 	IO *io;
 	EfiSrc *src;
 
-	sb = sb_create(0);
+	sb = sb_acquire();
 	io = io_strbuf(sb);
 	PrintFmtList(io, Val_str(arg[1]), Val_list(arg[2]));
 	io_close(io);
 	src = EfiSrc_alloc(NULL);
-	src->cmd = sb2str(sb);
+	src->cmd = sb_cpyrelease(sb);
 	EfiSrc_push(efi, src);
 	Val_ptr(rval) = efi;
 }

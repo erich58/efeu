@@ -30,7 +30,7 @@ static int print_tms (const EfiType *type, const void *data, IO *io)
 {
 	const struct tms *p = data;
 	double x = 1. / sysconf(_SC_CLK_TCK);
-	return io_printf(io, "utime=%.2f+%.2f stime=%.2f+%.2f total=%.2f",
+	return io_xprintf(io, "utime=%.2f+%.2f stime=%.2f+%.2f total=%.2f",
 		x * p->tms_utime, x * p->tms_cutime,
 		x * p->tms_stime, x * p->tms_cstime,
 		x * (p->tms_utime + p->tms_cutime +

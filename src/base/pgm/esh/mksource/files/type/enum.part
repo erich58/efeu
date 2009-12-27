@@ -68,7 +68,7 @@ IO *io = Val_ptr(arg[0]);
 unsigned n = Val_int(arg[1]);
 
 Val_int(rval) = (n < tabsize($1Tab)) ?
-	io_printf(io, "%#s", $1Tab[n].name) : io_printf(io, "%d", n);
+	io_xprintf(io, "%#s", $1Tab[n].name) : io_xprintf(io, "%d", n);
 !);
 }
 

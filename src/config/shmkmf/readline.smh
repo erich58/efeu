@@ -1,0 +1,75 @@
+# :*:configuration file for readline library
+# :de:Konfigurationsdatei für readline Bibliothek
+#
+# $Synopsis
+# include $1
+#
+# \index{|RL_INC|}\br
+# \index{|RL_LIB|}
+#
+# $Copyright (C) 2004 Erich Frühstück
+# This file is part of EFEU.
+# 
+# EFEU is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+# 
+# EFEU is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public
+# License along with EFEU; see the file COPYING.
+# If not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+test $_readline_smh && return
+_readline_smh=1
+
+include curses.smh
+
+# $Description
+# :de:
+# Durch Einbinden der Headerdatei |$1| werden folgende Makros definiert:
+# \ttitem CPP_READLINE
+#	Compile-Flag für readline-Headerfiles
+# \ttitem LD_READLINE
+#	Link-Flags für readline-Programmbinliothek
+# \ttitem RL_INC
+#	Compile-Flags für readline-Programme (ident zu |CPP_READLINE|)
+# \ttitem RL_LIB
+#	Link-Flags für readline-Programme (|LD_READLINE| und |LD_CURSES|).
+# Da readline-Programme auch curses benötigen, wird automatisch auch die
+# Konfiguration von curses mit eingebunden.
+
+mf_comm "Readline configuration from $FILE"
+mf_cflags CPP_READLINE -I/usr/include/readline:/usr/local/include/readline \
+	readline.h
+mf_cflags LD_READLINE -L/usr/local/lib -lreadline -liberty
+
+mf_var -n RL_INC '$(CPP_READLINE)'
+mf_var -n RL_LIB '$(LD_READLINE) $(LD_CURSES)'
+mf_comm -n "End of readline configuration"
+
+# $Examples
+# \config shmkmf
+# :*:
+# A typical output (depinding on library versions and
+# machine architecture) of including the
+# headerfile with
+# \shmkmf[-x] has the form:
+# include $1
+# \end
+# :de:
+# Eine typische Ausgabe (abhängig von Bibliotheksversion und
+# Rechnerarchitektur) für das Einbinden der Headerdatei mit
+# \shmkmf[-x] hat die Form:
+# include $1
+# \end
+
+# $SeeAlso
+# \mref{shmkmf(1)},
+# \mref{cflags.smh(7)},
+# \mref{cc.smh(7)}.

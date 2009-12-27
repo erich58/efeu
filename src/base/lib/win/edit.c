@@ -25,10 +25,11 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	ctrl(x)	((x) & 0x1f)
 
+static SB_DECL(sb_win, 0);
+
 char *WinEdit (WinSize *ws, char *defval)
 {
 	WINDOW *win;
-	StrBuf *sb;
 	int i;
 	int key;
 
@@ -41,9 +42,9 @@ char *WinEdit (WinSize *ws, char *defval)
 	scrollok(win, TRUE);
 	leaveok(win, FALSE);
 	ShowWindow(win);
-	sb = sb_create(0);
-	sb_puts(defval, sb);
-	sb->pos = 0;
+	sb_trunc(&sb_win);
+	sb_puts(defval, &sb_win);
+	sb_win.pos = 0;
 	key = '\f';
 
 	for (;;)
@@ -54,52 +55,51 @@ char *WinEdit (WinSize *ws, char *defval)
 		case '\r':
 
 			DelWindow(win);
-			sb->pos = sb_size(sb);
-			return sb2str(sb);
+			sb_win.pos = sb_size(&sb_win);
+			return sb_strcpy(&sb_win);
 
 		case ctrl('G'):
 		case KEY_ESC:
 
 			DelWindow(win);
-			rd_deref(sb);
 			return NULL;
 
 		case ctrl('K'):
 		
-			sb->nfree = sb->size - sb->pos;
+			sb_win.nfree = sb_win.size - sb_win.pos;
 
 		case '\f':
 
 			werase(win);
 			wmove(win, 0, 0);
 
-			for (i = 0; i < sb_size(sb); i++)
-				waddch(win, sb->data[i]);
+			for (i = 0; i < sb_size(&sb_win); i++)
+				waddch(win, sb_win.data[i]);
 
-			wmove(win, 0, sb->pos);
+			wmove(win, 0, sb_win.pos);
 			break;
 
 		case KEY_HOME:
 		case ctrl('A'):
 
-			sb->pos = 0;
-			wmove(win, 0, sb->pos);
+			sb_win.pos = 0;
+			wmove(win, 0, sb_win.pos);
 			break;
 
 		case KEY_END:
 		case ctrl('E'):
 			
-			sb->pos = sb_size(sb);
-			wmove(win, 0, sb->pos);
+			sb_win.pos = sb_size(&sb_win);
+			wmove(win, 0, sb_win.pos);
 			break;
 
 		case ctrl('B'):
 		case KEY_LEFT:
 
-			if	(sb->pos > 0)
+			if	(sb_win.pos > 0)
 			{
-				sb->pos--;
-				wmove(win, 0, sb->pos);
+				sb_win.pos--;
+				wmove(win, 0, sb_win.pos);
 			} 
 
 			break;
@@ -107,10 +107,10 @@ char *WinEdit (WinSize *ws, char *defval)
 		case ctrl('F'):
 		case KEY_RIGHT:
 
-			if	(sb->pos < sb_size(sb))
+			if	(sb_win.pos < sb_size(&sb_win))
 			{
-				sb->pos++;
-				wmove(win, 0, sb->pos);
+				sb_win.pos++;
+				wmove(win, 0, sb_win.pos);
 			} 
 
 			break;
@@ -118,11 +118,11 @@ char *WinEdit (WinSize *ws, char *defval)
 		case KEY_BACKSPACE:
 		case '\b':
 
-			if	(sb->pos > 0)
+			if	(sb_win.pos > 0)
 			{
-				sb->pos--;
-				sb_delete(sb);
-				wmove(win, 0, sb->pos);
+				sb_win.pos--;
+				sb_delete(&sb_win, 1);
+				wmove(win, 0, sb_win.pos);
 				wdelch(win);
 			}
 
@@ -130,9 +130,9 @@ char *WinEdit (WinSize *ws, char *defval)
 
 		case ctrl('D'):
 
-			if	(sb->pos < sb_size(sb))
+			if	(sb_win.pos < sb_size(&sb_win))
 			{
-				sb_delete(sb);
+				sb_delete(&sb_win, 1);
 				wdelch(win);
 			}
 
@@ -142,9 +142,9 @@ char *WinEdit (WinSize *ws, char *defval)
 
 			if	(key <= 255)
 			{
-				sb_insert(key, sb);
+				sb_insert(&sb_win, key, 1);
 				winsch(win, key);
-				wmove(win, 0, sb->pos);
+				wmove(win, 0, sb_win.pos);
 			}
 			else	beep();
 

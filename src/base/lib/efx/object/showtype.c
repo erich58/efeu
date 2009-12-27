@@ -50,7 +50,7 @@ static int show_version (IO *io, const EfiType *type, int space)
 	if	(ctrl && ctrl->data)
 	{
 		int n = io_nputc(' ', io, space);
-		return n + io_printf(io, "<%s>", ctrl->data);
+		return n + io_xprintf(io, "<%s>", ctrl->data);
 	}
 
 	return 0;
@@ -88,7 +88,7 @@ static int show_enum (IO *io, const EfiType *type, int verbosity)
 	}
 	else if	(type->recl != 4)
 	{
-		n += io_printf(io, " : %d", type->recl);
+		n += io_xprintf(io, " : %d", type->recl);
 	}
 
 	n += io_puts(" {", io);
@@ -116,11 +116,11 @@ static int show_enum (IO *io, const EfiType *type, int verbosity)
 				}
 				else	n += io_puts(p->name, io);
 
-				n += io_printf(io, " = %d,",
+				n += io_xprintf(io, " = %d,",
 					Val_int(p->obj->data));
 
 				if	(p->desc && verbosity > 1)
-					n += io_printf(io, " /* %s */",
+					n += io_xprintf(io, " /* %s */",
 						p->desc);
 			}
 		}
@@ -143,7 +143,7 @@ static int show_name (IO *io, EfiStruct *st)
 	n += io_puts(st->name, io);
 
 	if	(st->dim > 1)
-		n += io_printf(io, "[%d]", st->dim);
+		n += io_xprintf(io, "[%d]", st->dim);
 
 	return n;
 }
@@ -296,7 +296,7 @@ int PrintType (IO *io, const EfiType *type, int verbosity)
 		PrintTypeDepth--;
 		n += PrintType(io, type->base, verbosity);
 		PrintTypeDepth++;
-		n += io_printf(io, "[%d]", type->dim);
+		n += io_xprintf(io, "[%d]", type->dim);
 	}
 /*
 	else if	((type->flags & TYPE_ENUM) && type != &Type_enum)
@@ -331,7 +331,7 @@ char *Type2str (const EfiType *type)
 	StrBuf *sb;
 	IO *io;
 
-	sb = sb_create(0);
+	sb = sb_acquire();
 	io = io_strbuf(sb);
 
 	if	(type && type->name && type->name[0] != '_')
@@ -339,5 +339,5 @@ char *Type2str (const EfiType *type)
 	else	PrintType(io, type, 1);
 
 	io_close(io);
-	return sb2str(sb);
+	return sb_cpyrelease(sb);
 }

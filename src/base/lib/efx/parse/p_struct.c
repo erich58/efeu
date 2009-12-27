@@ -171,15 +171,15 @@ EfiType *MakeStruct (char *name, EfiStruct *base, EfiStruct *list)
 */
 	if	(name == NULL)
 	{
-		StrBuf *sb = sb_create(0);
+		StrBuf *sb = sb_acquire();
 		IO *io = io_strbuf(sb);
 
 		for (st = list; st != NULL; st = st->next)
-			io_printf(io, "_%s_%s_%d", st->type->name,
+			io_xprintf(io, "_%s_%s_%d", st->type->name,
 				st->name, st->dim);
 
 		io_close(io);
-		name = sb2str(sb);
+		name = sb_cpyrelease(sb);
 	}
 
 	type = NewType(name);

@@ -98,8 +98,23 @@ void Clean_str(const EfiType *st, void *data, int mode)
 	Val_str(data) = NULL;
 }
 
+static void debug_str (char * const *src, const char *tg)
+{
+	static int stat = -1;
+
+	if	(stat < 0)
+	{
+		char *p = getenv("STRDEBUG");
+		stat = p ? atoi(p) : 0;
+	}
+
+	if	(stat > 0)
+		io_xprintf(ioerr, "Copy_str(%p, %p=%#s)\n", tg, src, *src);
+}
+
 void Copy_str(const EfiType *st, void *tg, const void *src)
 {
+	debug_str(src, tg);
 	Val_str(tg) = mstrcpy(Val_str(src));
 }
 
@@ -166,32 +181,32 @@ static int print_bool (const EfiType *type, const void *data, IO *io)
 
 static int print_char (const EfiType *type, const void *data, IO *io)
 {
-	return io_printf(io, "%#c", Val_char(data));
+	return io_xprintf(io, "%#c", Val_char(data));
 }
 
 static int print_wchar (const EfiType *type, const void *data, IO *io)
 {
-	return io_printf(io, "%#lc", *((int32_t *) data));
+	return io_xprintf(io, "%#lc", *((int32_t *) data));
 }
 
 static int print_int (const EfiType *type, const void *data, IO *io)
 {
-	return io_printf(io, "%d", Val_int(data));
+	return io_xprintf(io, "%d", Val_int(data));
 }
 
 static int print_uint (const EfiType *type, const void *data, IO *io)
 {
-	return io_printf(io, "%uu", Val_uint(data));
+	return io_xprintf(io, "%uu", Val_uint(data));
 }
 
 static int print_float (const EfiType *type, const void *data, IO *io)
 {
-	return io_printf(io, "%.8g", Val_float(data));
+	return io_xprintf(io, "%.8g", Val_float(data));
 }
 
 static int print_double (const EfiType *type, const void *data, IO *io)
 {
-	return io_printf(io, "%.16g", Val_double(data));
+	return io_xprintf(io, "%.16g", Val_double(data));
 }
 
 EfiType Type_enum = COMPLEX_TYPE("_Enum_", "int", sizeof(int), 4, 

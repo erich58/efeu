@@ -44,11 +44,11 @@ static void info_clean (void *ptr)
 
 static char *info_ident (const void *ptr)
 {
-	StrBuf *sb = sb_create(0);
+	StrBuf *sb = sb_acquire();
 	IO *io = io_strbuf(sb);
 	InfoName(io, NULL, (InfoNode *) ptr);
 	io_close(io);
-	return sb2str(sb);
+	return sb_cpyrelease(sb);
 }
 
 RefType Info_reftype = REFTYPE_INIT("InfoNode", info_ident, info_clean);

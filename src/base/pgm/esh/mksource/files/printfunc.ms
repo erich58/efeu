@@ -147,7 +147,7 @@ int Function::pfbody & (IO def, str fname, str vardef, bool in_switch = false)
 		}
 		else if	(fmt[0] == '#')
 		{
-			fline("io_printf(%s, %#s, %s);", fname,
+			fline("io_xprintf(%s, %#s, %s);", fname,
 				substr(fmt, 1), key);
 		}
 		else if	(fmt[0] == '?')
@@ -166,7 +166,7 @@ int Function::pfbody & (IO def, str fname, str vardef, bool in_switch = false)
 			else
 			{
 				str v1 = strcut(fmt, ":");
-				fline("io_printf(%s, %s ? %#s : %#s, %s);",
+				fline("io_xprintf(%s, %s ? %#s : %#s, %s);",
 					fname, key, v1, fmt, key);
 			}
 		}
@@ -269,13 +269,13 @@ nicht zum eigentlichen Format.
 	Das Format wird als Zeichendefinition ausgegeben,
 	der Datenwert wird ignoriert.
 [|#|]
-	Die Ausgabe erfolgt mit |io_printf|
+	Die Ausgabe erfolgt mit |io_xprintf|
 [|?|]
 	Der Datenwert liefert einen Testausdruck, das Format muß
 	von der Form |"|<str1>|" : "|<str2>|"| , |'|<a>|' : '|<b>|'| oder
 	<fmt1>|:|<fmt2> sein. Im letzten Fall kann |:| <fmt2>
 	entfallen (wird durch NULL ersetzt) und <fmt1> bzw. <fmt2>
-	wird mit |io_printf| ausgegeben. Der Datenwert kann eingebaut
+	wird mit |io_xprintf| ausgegeben. Der Datenwert kann eingebaut
 	werden! Achtung: Leerzeichen gehören zum jeweiligen Format.
 [|=|]
 	Das Format besteht aus einer Liste von Strings, der Datenwert bestimmt

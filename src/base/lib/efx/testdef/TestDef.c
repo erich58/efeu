@@ -44,10 +44,10 @@ typedef struct {
 
 static void put_entry (TestDefEntry *p, IO *io)
 {
-	io_printf(io, "%d:%d*%d %s", p->offset, p->dim,
+	io_xprintf(io, "%d:%d*%d %s", p->offset, p->dim,
 		p->type->size, p->type->name);
 
-	if	(p->clean == rd_deref)
+	if	(p->clean == rd_clean)
 	{
 		char *x = rd_ident(p->par);
 
@@ -56,7 +56,7 @@ static void put_entry (TestDefEntry *p, IO *io)
 		io_puts("}", io);
 		memfree(x);
 	}
-	else	io_printf(io, " {%p}", p->par);
+	else	io_xprintf(io, " {%p}", p->par);
 }
 
 static char *test_ident (const void *ptr)
@@ -72,7 +72,7 @@ static char *test_ident (const void *ptr)
 		StrBuf *sb;
 		IO *io;
 
-		sb = sb_create(0);
+		sb = sb_acquire();
 		io = io_strbuf(sb);
 		io_puts(test->type->name, io);
 
@@ -83,7 +83,7 @@ static char *test_ident (const void *ptr)
 		}
 
 		io_close(io);
-		return sb2str(sb);
+		return sb_cpyrelease(sb);
 	}
 
 	return NULL;

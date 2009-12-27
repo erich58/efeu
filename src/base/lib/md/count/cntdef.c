@@ -121,7 +121,7 @@ static void co_print (EfiFunc *func, void *rval, void **arg)
 	MdCount *co = Val_ptr(arg[1]);
 
 	Val_int(rval) = co ? 
-		io_printf(io, "%s\t%s\n", co->name, co->desc) :
+		io_xprintf(io, "%s\t%s\n", co->name, co->desc) :
 		io_puts("NULL", io);
 }
 
@@ -136,7 +136,7 @@ static void cot_list (EfiFunc *func, void *rval, void **arg)
 		size_t n;
 
 		for (p = tab->vtab.data, n = tab->vtab.used; n-- > 0; p++)
-			io_printf(io, "%s\t%s\n", (*p)->name, (*p)->desc);
+			io_xprintf(io, "%s\t%s\n", (*p)->name, (*p)->desc);
 	}
 }
 

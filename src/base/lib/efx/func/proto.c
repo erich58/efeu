@@ -238,6 +238,7 @@ EfiFunc *MakePrototype(IO *io, EfiType *type, EfiName *nptr, unsigned flags)
 	if	(otype)
 	{
 		arg.name = "this";
+		arg.desc = NULL;
 		arg.type = (otype == &Type_obj) ? NULL : otype;
 		arg.lval = lflag;
 		arg.nokonv = 1;

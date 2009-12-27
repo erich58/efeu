@@ -44,7 +44,7 @@ char *nextstr (char **ptr)
 
 size_t mstrsplit(const char *str, const char *delim, char ***ptr)
 {
-	StrBuf *sb;
+	StrBuf sb;
 	size_t i, dim;
 	char *p;
 
@@ -53,7 +53,7 @@ size_t mstrsplit(const char *str, const char *delim, char ***ptr)
 
 	if	(str == NULL)	return 0;
 
-	sb = sb_create(0);
+	sb_init(&sb, 0);
 	i = dim = 0;
 
 /*	String umkopieren
@@ -62,7 +62,7 @@ size_t mstrsplit(const char *str, const char *delim, char ***ptr)
 	{
 		if	(!SPACE(*str))
 		{
-			sb_putc(0, sb);
+			sb_putc(0, &sb);
 			dim++;
 		}
 	}
@@ -75,7 +75,7 @@ size_t mstrsplit(const char *str, const char *delim, char ***ptr)
 			{
 				if	(!SPACE(*str))
 				{
-					sb_putc(0, sb);
+					sb_putc(0, &sb);
 					dim++;
 					i = 0;
 				}
@@ -83,14 +83,14 @@ size_t mstrsplit(const char *str, const char *delim, char ***ptr)
 
 			if	(i)
 			{
-				sb_putc(0, sb);
+				sb_putc(0, &sb);
 				dim++;
 				i = 0;
 			}
 		}
 		else
 		{
-			sb_putc(*str, sb);
+			sb_putc(*str, &sb);
 			str++;
 			i++;
 		}
@@ -98,7 +98,7 @@ size_t mstrsplit(const char *str, const char *delim, char ***ptr)
 
 	if	(i)
 	{
-		sb_putc(0, sb);
+		sb_putc(0, &sb);
 		dim++;
 	}
 
@@ -106,15 +106,15 @@ size_t mstrsplit(const char *str, const char *delim, char ***ptr)
 */
 	if	(dim)
 	{
-		*ptr = (char **) memalloc(sb->pos + dim * sizeof(char *));
+		*ptr = (char **) memalloc(sb.pos + dim * sizeof(char *));
 		p = (char *) ((*ptr) + dim);
-		memcpy(p, sb->data, sb->pos);
+		memcpy(p, sb.data, sb.pos);
 
 		for (i = 0; i < dim; i++, p++)
 			for ((*ptr)[i] = p; *p != 0; p++)
 				;
 	}
 
-	rd_deref(sb);
+	sb_free(&sb);
 	return dim;
 }

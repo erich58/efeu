@@ -52,10 +52,10 @@ static char *parse_name (const char *def, char **ptr)
 static void put_entry (CmpDefEntry *p, IO *io)
 {
 	io_putc(p->invert ? '-' : '+', io);
-	io_printf(io, "%d:%d*%d %s", p->offset, p->dim,
+	io_xprintf(io, "%d:%d*%d %s", p->offset, p->dim,
 		p->type->size, p->type->name);
 
-	if	(p->clean == rd_deref)
+	if	(p->clean == rd_clean)
 	{
 		char *x = rd_ident(p->par);
 
@@ -64,7 +64,7 @@ static void put_entry (CmpDefEntry *p, IO *io)
 		io_puts("}", io);
 		memfree(x);
 	}
-	else	io_printf(io, " {%p}", p->par);
+	else	io_xprintf(io, " {%p}", p->par);
 }
 
 static char *cmp_ident (const void *data)
@@ -77,7 +77,7 @@ static char *cmp_ident (const void *data)
 		CmpDefEntry *p;
 		IO *io;
 		
-		sb = sb_create(0);
+		sb = sb_acquire();
 		io = io_strbuf(sb);
 		io_puts(cdef->type->name, io);
 
@@ -88,7 +88,7 @@ static char *cmp_ident (const void *data)
 		}
 
 		io_close(io);
-		return sb2str(sb);
+		return sb_cpyrelease(sb);
 	}
 
 	return NULL;
@@ -233,7 +233,7 @@ static void set_cmp (CmpDefEntry *entry, EfiVirFunc *vcmp)
 		if	(entry->par)
 		{
 			entry->cmp = do_cmp_func;
-			entry->clean = rd_deref;
+			entry->clean = rd_clean;
 		}
 		else	dbg_note(ID, FMT_CMP, "ms", rd_ident(vcmp),
 				entry->type->name);
@@ -256,7 +256,7 @@ static void make_subcmp (CmpDefEntry *entry, char *def, char **ptr)
 	else	entry->cmp = do_cmp_sub;
 
 	entry->par = cmp_create(type, def, ptr);
-	entry->clean = rd_deref;
+	entry->clean = rd_clean;
 }
 
 CmpDefEntry *cmp_member (EfiStruct *st, int inv)

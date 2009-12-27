@@ -29,7 +29,7 @@ If not, write to the Free Software Foundation, Inc.,
 static int var_print (const EfiType *st, const void *data, IO *io)
 {
 	const VarianceData *var = data;
-	return io_printf(io, "{ %.16g, %.16g, %.16g }",
+	return io_xprintf(io, "{ %.16g, %.16g, %.16g }",
 		var->n, var->x, var->xx);
 }
 

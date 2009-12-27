@@ -164,6 +164,8 @@ If not, write to the Free Software Foundation, Inc.,
 165	$!: Zuweisungsobjekt erlaubt keine Komponentenauflösung.\n
 166	$!: Variable $1 ist nicht definiert.\n
 167	$!: Operand von L-Wert cast ist kein L-Wert.\n
+168	$!: Veränderung eines als const Deklarierten Arguments.\n
+169	$!: Funktionsargument $1 wird weiterverwendet.\n
 
 171	$!: Ungültiges "break".\n
 172	$!: Ungültiges "continue".\n

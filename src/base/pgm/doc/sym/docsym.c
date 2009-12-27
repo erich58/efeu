@@ -134,7 +134,7 @@ int DocSym_print (IO *io, DocSym *sym)
 		return 0;
 
 	for (n = 0, i = sym->dim, ptr = sym->tab; i-- > 0; ptr++)
-		n += io_printf(io, "%s\t%#s\n", ptr->key, ptr->fmt);
+		n += io_xprintf(io, "%s\t%#s\n", ptr->key, ptr->fmt);
 
 	return n;
 }

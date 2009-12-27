@@ -121,7 +121,7 @@ void PrintEfiPar (IO *io, void *data)
 		return;
 	}
 
-	io_printf(io, "%s\n\t%s\n", epc->epc_name, epc->epc_label);
+	io_xprintf(io, "%s\n\t%s\n", epc->epc_name, epc->epc_label);
 }
 
 #define	LIST_WIDTH	13
@@ -155,7 +155,7 @@ static void list_modul (IO *io, VecBuf *buf, EfiPar *par,
 			}
 
 			last = (*ptr)->epc_par;
-			io_printf(io, "\n%s\n\n", last->label);
+			io_xprintf(io, "\n%s\n\n", last->label);
 		}
 
 		if	(mode == 0)
@@ -182,9 +182,9 @@ static void list_modul (IO *io, VecBuf *buf, EfiPar *par,
 		else if	(mode == 1)
 		{
 			if	(pfx)
-				io_printf(io, "%s.", pfx);
+				io_xprintf(io, "%s.", pfx);
 
-			io_printf(io, "%s\t%s\n", (*ptr)->epc_name,
+			io_xprintf(io, "%s\t%s\n", (*ptr)->epc_name,
 				(*ptr)->epc_label);
 		}
 		else	PrintEfiPar(io, *ptr);

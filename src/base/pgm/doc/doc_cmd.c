@@ -32,20 +32,20 @@ IO *Doc_preproc (IO *io)
 
 void Doc_eval (Doc *doc, IO *in, const char *expr)
 {
-	StrBuf *buf;
+	StrBuf buf;
 	IO *save_cin;
 	IO *io, *out;
 
 	if	(expr == NULL)	return;
 
-	buf = sb_create(0);
+	sb_init(&buf, 0);
 
 	save_cin = CmdEval_cin;
 	CmdEval_cin = rd_refer(in);
 
 	Doc_pushvar(doc);
 	io = Doc_preproc(io_cstr(expr));
-	out = io_strbuf(buf);
+	out = io_strbuf(&buf);
 	CmdEvalFunc(io, out, 0);
 	io_close(io);
 	io_close(out);
@@ -54,11 +54,10 @@ void Doc_eval (Doc *doc, IO *in, const char *expr)
 	rd_deref(CmdEval_cin);
 	CmdEval_cin = save_cin;
 
-	if	(buf->pos)
-	{
-		io_push(in, io_mstr(sb2str(buf)));
-	}
-	else	rd_deref(buf);
+	if	(buf.pos)
+		io_push(in, io_mstr(sb_strcpy(&buf)));
+
+	sb_free(&buf);
 }
 
 void Doc_cmd (Doc *doc, IO *in)

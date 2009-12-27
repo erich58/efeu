@@ -244,11 +244,11 @@ static void cpar_psub (EfiFunc *func, void *rval, void **arg)
 		UnrefObj(obj);
 	}
 
-	sb = sb_create(0);
+	sb = sb_acquire();
 	out = io_strbuf(sb);
 	CmdPar_psubout(par, out, fmt, argl);
 	io_close(out);
-	Val_str(rval) = sb2str(sb);
+	Val_str(rval) = sb_cpyrelease(sb);
 	rd_deref(argl);
 }
 

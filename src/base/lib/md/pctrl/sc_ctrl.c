@@ -57,7 +57,7 @@ int sc_ctrl(PCTRL *pf, int cmd, va_list list)
 
 	case PCTRL_END:
 
-		io_printf(pf->io, "format A %d 0 0\n", max_strlen);
+		io_xprintf(pf->io, "format A %d 0 0\n", max_strlen);
 
 		if	(max_prec != 0)
 			max_width += max_prec;
@@ -71,7 +71,7 @@ int sc_ctrl(PCTRL *pf, int cmd, va_list list)
 		{
 			io_puts("format ", pf->io);
 			put_xpos(pf->io, i);
-			io_printf(pf->io, " %d %d 0\n",
+			io_xprintf(pf->io, " %d %d 0\n",
 				max_width, max_prec);
 		}
 
@@ -88,7 +88,7 @@ int sc_ctrl(PCTRL *pf, int cmd, va_list list)
 
 	io_puts(a, pf->io);
 	put_xpos(pf->io, pf->col - 1);
-	io_printf(pf->io, "%d", pf->line - 1);
+	io_xprintf(pf->io, "%d", pf->line - 1);
 	io_puts(" = ", pf->io);
 
 	switch (cmd)

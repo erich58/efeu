@@ -29,7 +29,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 typedef struct {
 	IO *io;	/* Eingabestruktur */
-	StrBuf *buf;	/* Zwischenbuffer */
+	StrBuf buf;	/* Zwischenbuffer */
 	char *delim;	/* Abschlußzeichen */
 	IO *cin;	/* Zwischensicherung von CmdEval_cin */
 	IO *cout;	/* Zwischensicherung von CmdEval_cout */
@@ -50,7 +50,7 @@ static int ce_get (void *ptr)
 
 		io = par->io;
 		c = io_eat(io, "%s");
-		sb_begin(par->buf);
+		sb_begin(&par->buf);
 
 		if	(c == EOF)	return EOF;
 
@@ -90,16 +90,16 @@ static int ce_get (void *ptr)
 				c = EOF;
 			
 			if	(c != EOF)
-				sb_putc(c, par->buf);
+				sb_putc(c, &par->buf);
 		}
 
 		UnrefObj(obj);
-		par->save = sb_getpos(par->buf);
-		sb_begin(par->buf);
+		par->save = sb_getpos(&par->buf);
+		sb_begin(&par->buf);
 	}
 
 	par->save--;
-	return sb_getc(par->buf);
+	return sb_getc(&par->buf);
 }
 
 static int ce_ctrl (void *ptr, int req, va_list list)
@@ -114,7 +114,7 @@ static int ce_ctrl (void *ptr, int req, va_list list)
 		CmdEval_cout = par->cout;
 		CmdEval_cin = par->cin;
 		stat = io_close(par->io);
-		rd_deref(par->buf);
+		sb_free(&par->buf);
 		memfree(par->delim);
 		memfree(par);
 		break;
@@ -137,14 +137,14 @@ IO *io_cmdeval (IO *io, const char *delim)
 		CEPAR *par = memalloc(sizeof(CEPAR));
 		par->io = io;
 		par->delim = mstrcpy(delim);
-		par->buf = sb_create(0);
+		sb_init(&par->buf, 0);
 		par->save = 0;
 		par->eof = 0;
 		par->cin = CmdEval_cin;
 		CmdEval_cin = par->io;
 
 		par->cout = CmdEval_cout;
-		CmdEval_cout = io_strbuf(par->buf);
+		CmdEval_cout = io_strbuf(&par->buf);
 
 		io = io_alloc();
 		io->get = ce_get;

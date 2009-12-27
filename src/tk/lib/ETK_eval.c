@@ -76,9 +76,9 @@ int ETK_eval (ETK *etk, char *cmd)
 		return 1;
 
 #if	HAS_TCL_OBJ
-	io_printf(ioerr, "tcl: %s\n", Tcl_GetStringResult(etk->interp));
+	io_xprintf(ioerr, "tcl: %s\n", Tcl_GetStringResult(etk->interp));
 #else
-	io_printf(ioerr, "tcl: %s\n", etk->interp->result);
+	io_xprintf(ioerr, "tcl: %s\n", etk->interp->result);
 #endif
 	Tcl_ResetResult(etk->interp);
 #endif

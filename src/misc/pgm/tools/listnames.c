@@ -25,32 +25,33 @@ static int check (const char *name)
 	return 1;
 }
 
-static void eval (StrBuf *buf, const char *name)
+static SB_DECL(buf_name, 0);
+
+static void eval (const char *name)
 {
 	IO *io;
 	int c;
 	int line;
 	
 	io = io_fileopen(name, "rz");
-	sb_setpos(buf, 0);
+	sb_trunc(&buf_name);
 	line = 1;
 
 	while ((c = io_getc(io)) != EOF)
 	{
 		if	(isalnum(c) || c == '_')
 		{
-			sb_putc(c, buf);
+			sb_putc(c, &buf_name);
 			continue;
 		}
 
-		if	(sb_getpos(buf))
+		if	(sb_getpos(&buf_name))
 		{
-			sb_putc(0, buf);
+			char *p = sb_nul(&buf_name);
 
-			if	(check((char *) buf->data))
-				printf("%s:%d: %s\n", name, line,
-					(char *) buf->data);
-			sb_begin(buf);
+			if	(check(p))
+				printf("%s:%d: %s\n", name, line, p);
+			sb_trunc(&buf_name);
 		}
 
 		if	(c == '\n')	line++;
@@ -62,14 +63,11 @@ static void eval (StrBuf *buf, const char *name)
 int main (int argc, char **argv)
 {
 	int i;
-	StrBuf *buf;
 
 	ParseCommand(&argc, argv);
-	buf = sb_create(1024);
 
 	for (i = 1; i < argc; i++)
-		eval(buf, argv[i]);
+		eval(argv[i]);
 
-	rd_deref(buf);
 	return EXIT_SUCCESS;
 }

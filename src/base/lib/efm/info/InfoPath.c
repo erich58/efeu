@@ -43,7 +43,7 @@ void SetInfoPath (const char *dir)
 
 	if	(InfoPath && !dir)	return;
 
-	sb = sb_create(0);
+	sb = sb_acquire();
 
 /*	Basispfade
 */
@@ -57,8 +57,8 @@ void SetInfoPath (const char *dir)
 */
 	if	(sb_getpos(sb))	sb_putc(':', sb);
 
-	mkpath_base(sb, "lib/eis/%L");
-	mkpath_base(sb, "lib/efeu/%L/info");
+	mkpath_base(sb, "lib/eis/%L", NULL);
+	mkpath_base(sb, "lib/efeu/%L/info", NULL);
 	memfree(InfoPath);
-	InfoPath = sb2str(sb);
+	InfoPath = sb_cpyrelease(sb);
 }

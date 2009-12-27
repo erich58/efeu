@@ -54,9 +54,9 @@ char *io_getarg (IO *io, int beg, int end)
 
 	if	(c == beg)
 	{
-		StrBuf *buf = sb_create(0);
+		StrBuf *buf = sb_acquire();
 		sub_copy(io, buf, end, 0);
-		return sb2str(buf);
+		return sb_cpyrelease(buf);
 	}
 
 	io_ungetc(c, io);

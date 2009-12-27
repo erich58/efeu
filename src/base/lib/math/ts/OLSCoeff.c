@@ -135,9 +135,9 @@ void CmdSetup_OLSCoeff (void)
 int OLSCoeff_print (IO *io, OLSCoeff *koef)
 {
 	/*
-	return io_printf(io, CFMT, koef->name,
+	return io_xprintf(io, CFMT, koef->name,
 		koef->val, koef->se, koef->se ? koef->val / koef->se : 0.);
 	*/
-	return io_printf(io, CFMT, koef->name,
+	return io_xprintf(io, CFMT, koef->name,
 		koef->val, koef->se, koef->val / koef->se);
 }

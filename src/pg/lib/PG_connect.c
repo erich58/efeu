@@ -60,9 +60,9 @@ static int conn_val (IO *io, const char *name, const char *val)
 {
 	if	(val)
 	{
-		return io_printf(io, "\t%s = \"%s\"\n", name, val);
+		return io_xprintf(io, "\t%s = \"%s\"\n", name, val);
 	}
-	else	return io_printf(io, "\t%s = NULL\n", name);
+	else	return io_xprintf(io, "\t%s = NULL\n", name);
 }
 
 
@@ -192,9 +192,9 @@ void PG_info (PG *pg, const char *fmt, ...)
 	if	(io && fmt)
 	{
 		va_list list;
-		io_printf(io, "postgres[%s]: ", PQdb(pg->conn));
+		io_xprintf(io, "postgres[%s]: ", PQdb(pg->conn));
 		va_start(list, fmt);
-		io_vprintf(io, fmt, list);
+		io_vxprintf(io, fmt, list);
 		va_end(list);
 		io_putc('\n', io);
 	}

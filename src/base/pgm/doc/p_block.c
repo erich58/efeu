@@ -114,7 +114,7 @@ char *DocParseBlock (IO *in, int mode, const char *beg,
 	StrBuf *buf;
 	char *p;
 
-	buf = (mode || toggle) ? sb_create(0) : NULL;
+	buf = (mode || toggle) ? sb_acquire() : NULL;
 	nl = 1;
 	depth = 0;
 
@@ -185,5 +185,5 @@ char *DocParseBlock (IO *in, int mode, const char *beg,
 		}
 	}
 
-	return sb2str(buf);
+	return sb_cpyrelease(buf);
 }

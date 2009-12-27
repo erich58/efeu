@@ -35,7 +35,7 @@ int Decl_test (Decl *decl, const char *name)
 
 void Decl_print (Decl *decl, IO *io, const char *name)
 {
-	io_printf(io, "\\index[%s]\n", name);
+	io_xprintf(io, "\\index[%s]\n", name);
 
 	switch (decl->type)
 	{
@@ -53,7 +53,7 @@ void Decl_print (Decl *decl, IO *io, const char *name)
 		io_puts(";\n\\end\n\n", io);
 		break;
 	case DECL_STRUCT:	
-		io_printf(io, "---- verbatim\n\n%s;\n----\n\n", decl->def);
+		io_xprintf(io, "---- verbatim\n\n%s;\n----\n\n", decl->def);
 		break;
 	case DECL_LABEL:
 	case DECL_CALL:

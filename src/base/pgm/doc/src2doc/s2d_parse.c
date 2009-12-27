@@ -236,3 +236,4 @@ Decl *parse_decl (IO *io, int c)
 	decl.arg = argpos ? decl.def + argpos : NULL;
 	return &decl;
 }
+

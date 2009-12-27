@@ -36,7 +36,7 @@ char *io_xident (IO *io, const char *fmt, ...)
 	if	(fmt == NULL)	return id;
 
 	va_start(list, fmt);
-	buf = sb_create(0);
+	buf = sb_acquire();
 
 	for (; *fmt != 0; fmt++)
 	{
@@ -73,5 +73,5 @@ char *io_xident (IO *io, const char *fmt, ...)
 
 	va_end(list);
 	memfree(id);
-	return sb2str(buf);
+	return sb_cpyrelease(buf);
 }

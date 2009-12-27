@@ -202,11 +202,11 @@ static void str2fstat (EfiFunc *func, void *rval, void **arg)
 
 static void f_mode2str (EfiFunc *func, void *rval, void **arg)
 {
-	StrBuf *buf = sb_create(0);
+	StrBuf *buf = sb_acquire();
 	IO *out = io_strbuf(buf);
 	io_mode(out, Val_uint(arg[0]));
 	io_close(out);
-	Val_str(rval) = sb2str(buf);
+	Val_str(rval) = sb_cpyrelease(buf);
 }
 
 static void f_mode2int (EfiFunc *func, void *rval, void **arg)
@@ -227,12 +227,12 @@ static void fprint_fstat (EfiFunc *func, void *rval, void **arg)
 	if	(fstat->path)
 	{
 		int n = 0;
-		n = io_printf(io, "(%s: ", fstat->path);
+		n = io_xprintf(io, "(%s: ", fstat->path);
 		n += PrintTime(io, "%_d. %b %Y %H:%M ", fstat->mtime);
-		n += io_printf(io, "%#o ", fstat->mode);
-		n += io_printf(io, "%d-", fstat->uid);
-		n += io_printf(io, "%d ", fstat->gid);
-		n += io_printf(io, "%lld)", fstat->size);
+		n += io_xprintf(io, "%#o ", fstat->mode);
+		n += io_xprintf(io, "%d-", fstat->uid);
+		n += io_xprintf(io, "%d ", fstat->gid);
+		n += io_xprintf(io, "%lld)", fstat->size);
 		Val_int(rval) = n;
 	}
 	else	Val_int(rval) = io_puts("(unknown)", io);
@@ -358,7 +358,7 @@ static void fprint_pwd (EfiFunc *func, void *rval, void **arg)
 	PWD *pwd = arg[1];
 
 	Val_int(rval) = pwd->name ?
-		io_printf(io, "%s (%s)", pwd->name, pwd->gecos) :
+		io_xprintf(io, "%s (%s)", pwd->name, pwd->gecos) :
 		io_puts("(unknown)", io);
 }
 

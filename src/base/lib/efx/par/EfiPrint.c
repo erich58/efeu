@@ -26,7 +26,7 @@ void EfiPrint_list (EfiPrintDef *pdef, IO *io, const char *fmt)
 	int i;
 
 	for (i = 0; i < pdef->fdim; i++)
-		io_printf(io, fmt, pdef->ftab[i].key, pdef->ftab[i].desc);
+		io_xprintf(io, fmt, pdef->ftab[i].key, pdef->ftab[i].desc);
 }
 
 void EfiPrint_info (IO *io, const void *data)

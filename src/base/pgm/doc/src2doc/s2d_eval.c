@@ -24,69 +24,11 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/strbuf.h>
 #include <EFEU/efio.h>
 
-static void subcopy (IO *ein, IO *aus, int c, int flag);
-static void copy_str (IO *ein, IO *aus, int delim);
-
-
-static void copy_str (IO *ein, IO *aus, int delim)
-{
-	int c, flag;
-
-	flag = 0;
-	io_protect(ein, 1);
-
-	while ((c = io_getc(ein)) != EOF)
-	{
-		io_putc(c, aus);
-
-		if	(flag)		flag = 0;
-		else if	(c == delim)	break;
-		else if	(c == '\\')	flag = 1;
-	}
-
-	io_protect(ein, 0);
-}
-
-static void subcopy (IO *ein, IO *aus, int c, int flag)
-{
-	if	(!(flag && isspace(c)))
-		io_putc(c, aus);
-
-	switch (c)
-	{
-	case '"':
-	case '\'':	copy_str(ein, aus, c); break;
-	case '{':	copy_block(ein, aus, '}', 0); break;
-	case '(':	copy_block(ein, aus, ')', 1); break;
-	case '[':	copy_block(ein, aus, ']', 1); break;
-	default:	break;
-	}
-}
-
-void copy_block (IO *ein, IO *aus, int end, int flag)
-{
-	char *prompt;
-	int c, last;
-
-	prompt = io_prompt(ein, ">>> ");
-	last = 0;
-
-	while ((c = io_getc(ein)) != EOF && c != end)
-	{
-		subcopy(ein, aus, c, (flag && last == '\n'));
-		last = c;
-	}
-
-	io_putc(end, aus);
-	io_prompt(ein, prompt);
-}
-
-
 static void skipline (SrcData *data, int c)
 {
 	SrcData_copy(data, NULL, NULL);
 
-	do	subcopy(data->ein, NULL, c, 0);
+	do	copy_token(data->ein, NULL, c, 0);
 	while ((c = io_skipcom(data->ein, NULL, 0)) != EOF && c != '\n');
 }
 
@@ -95,8 +37,8 @@ static void srcline (SrcData *data, char *head, int c)
 	StrBuf *buf = data->doc.tab[BUF_DESC];
 	IO *aus = io_strbuf(buf);
 
-	if	(sb_getpos(data->buf))
-		DocBuf_copy(&data->doc, data->buf, buf, NULL);
+	if	(sb_getpos(&data->buf))
+		DocBuf_copy(&data->doc, &data->buf, buf, NULL);
 
 	if	(buf->pos && buf->data[buf->pos - 1] != '\n')
 		sb_putc('\n', buf);
@@ -104,7 +46,7 @@ static void srcline (SrcData *data, char *head, int c)
 	sb_puts("---- verbatim\n", buf);
 	sb_puts(head, buf);
 
-	do	subcopy(data->ein, aus, c, 0);
+	do	copy_token(data->ein, aus, c, 0);
 	while ((c = io_skipcom(data->ein, NULL, 0)) != EOF && c != '\n');
 
 	io_close(aus);
@@ -153,7 +95,7 @@ static void subcopy2 (IO *ein, IO *aus, int delim)
 	int c;
 
 	while ((c = io_skipcom(ein, NULL, 0)) != EOF && c != delim)
-		subcopy(ein, aus, c, 0);
+		copy_token(ein, aus, c, 0);
 
 	io_ungetc(c, ein);
 }
@@ -205,11 +147,11 @@ static void keyline (SrcData *data, int c)
 		case DECL_SFUNC:
 
 			while ((c = io_skipcom(data->ein, NULL, 0)) == '\n')
-				subcopy(data->ein, aus, c, 0);
+				copy_token(data->ein, aus, c, 0);
 
 			if	(c != EOF)
 			{
-				subcopy(data->ein, aus, c, 0);
+				copy_token(data->ein, aus, c, 0);
 				subcopy2(data->ein, aus, '\n');
 			}
 
@@ -233,7 +175,7 @@ static void keyline (SrcData *data, int c)
 		sb_printf(data->doc.tab[BUF_DESC], "\n/* %s */\n", name);
 		SrcData_copy(data, data->doc.tab[BUF_DESC], name);
 	}
-	else if	(sb_getpos(data->buf) && (decl->type & data->xmask))
+	else if	(sb_getpos(&data->buf) && (decl->type & data->xmask))
 	{
 		sb_printf(data->doc.tab[BUF_DESC], "\n/* %s */\n", name);
 		SrcData_copy(data, data->doc.tab[BUF_DESC], name);
@@ -247,7 +189,7 @@ static void keyline (SrcData *data, int c)
 	else	SrcData_copy(data, NULL, NULL);
 
 	while ((c = io_skipcom(data->ein, NULL, 0)) != EOF && c != '\n')
-		subcopy(data->ein, NULL, c, 0);
+		copy_token(data->ein, NULL, c, 0);
 
 	memfree(name);
 }
@@ -270,17 +212,18 @@ static char *get_title (StrBuf *buf)
 		}
 	}
 
-	return sb2str(buf);
+	return sb_strcpy(buf);
 }
 
 void SrcData_title (SrcData *data, const char *name)
 {
-	if	(sb_getpos(data->buf))
+	if	(sb_getpos(&data->buf))
 	{
-		StrBuf *buf = sb_create(0);
+		StrBuf *buf = sb_acquire();
 		SrcData_copy(data, buf, name);
 		memfree(data->doc.var[VAR_TITLE]);
 		data->doc.var[VAR_TITLE] = get_title(buf);
+		sb_release(buf);
 	}
 }
 
@@ -288,17 +231,18 @@ void SrcData_eval (SrcData *data, const char *name)
 {
 	int c;
 
-	io_ungetc(skip_space(data->ein, data->buf), data->ein);
+	io_ungetc(skip_space(data->ein, &data->buf), data->ein);
 
-	if	(sb_getpos(data->buf))
+	if	(sb_getpos(&data->buf))
 	{
-		StrBuf *buf = sb_create(0);
+		StrBuf *buf = sb_acquire();
 		SrcData_copy(data, buf, name);
 		memfree(data->doc.var[VAR_TITLE]);
 		data->doc.var[VAR_TITLE] = get_title(buf);
+		sb_release(buf);
 	}
 
-	while ((c = skip_space(data->ein, data->buf)) != EOF)
+	while ((c = skip_space(data->ein, &data->buf)) != EOF)
 	{
 		if	(c == '#')
 		{

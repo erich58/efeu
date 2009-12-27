@@ -56,7 +56,7 @@ static EfiFuncDef fdef[] = {
 
 static int print_alias (const char *name, void *data, void *par)
 {
-	io_printf(par, "%s\n", name);
+	io_xprintf(par, "%s\n", name);
 	return 0;
 }
 
@@ -71,7 +71,7 @@ int main (int narg, char **arg)
 	char *Mode;
 	S2DEval eval;
 
-	SetVersion("$Id: src2doc.c,v 1.20 2008-04-06 18:18:13 ef Exp $");
+	SetVersion("$Id: src2doc.c,v 1.23 2008-10-04 20:13:52 ef Exp $");
 	SetProgName(arg[0]);
 	SetupStd();
 	SetupReadline();

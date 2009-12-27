@@ -35,7 +35,7 @@ void DocMac_print (IO *io, DocMac *mac, int mode)
 	if	(io && mac && mac->desc)
 	{
 		if	(mode & 0x1)
-			io_printf(io, "\n\\margin |%s|\n",  mac->name);
+			io_xprintf(io, "\n\\margin |%s|\n",  mac->name);
 
 		io_psubarg(io, mac->desc, "nm", msprintf("|%s|", mac->name));
 

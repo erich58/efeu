@@ -59,11 +59,11 @@ BUILTIN(f_declare)
 	StrBuf *sb;
 	IO *tmp;
 
-	sb = sb_create(0);
+	sb = sb_acquire();
 	tmp = io_strbuf(sb);
 	PrintType(tmp, Val_type(arg[0]), Val_bool(arg[1]) ? 1 : 2);
 	io_close(tmp);
-	Val_str(rval) = sb2str(sb);
+	Val_str(rval) = sb_cpyrelease(sb);
 }
 
 BUILTIN(f_whatis)
@@ -214,11 +214,20 @@ BUILTIN(f_sprintf)
 	StrBuf *sb;
 	IO *io;
 
-	sb = sb_create(0);
+	sb = sb_acquire();
 	io = io_strbuf(sb);
 	PrintFmtList(io, Val_str(arg[0]), Val_list(arg[1]));
 	io_close(io);
-	Val_str(rval) = sb2str(sb);
+	Val_str(rval) = sb_cpyrelease(sb);
+}
+
+BUILTIN(f_xprintf)
+{
+	StrBuf *sb;
+
+	sb = sb_acquire();
+	StrBufFmtList(sb, Val_str(arg[0]), Val_list(arg[1]));
+	Val_str(rval) = sb_cpyrelease(sb);
 }
 
 BUILTIN(f_debug)
@@ -337,7 +346,7 @@ BUILTIN(f_cat)
 	EfiObjList *l;
 	char *s;
 
-	sb = sb_create(0);
+	sb = sb_acquire();
 	delim = NULL;
 
 	for (l = Val_list(arg[1]); l != NULL; l = l->next)
@@ -349,7 +358,7 @@ BUILTIN(f_cat)
 		memfree(s);
 	}
 
-	Val_str(rval) = sb2str(sb);
+	Val_str(rval) = sb_cpyrelease(sb);
 }
 
 BUILTIN(f_patcmp)
@@ -552,6 +561,7 @@ static EfiFuncDef fdef_func[] = {
 	{ 0, &Type_int, "printf (str fmt, ...)", f_printf },
 	{ 0, &Type_int, "fprintf (IO io, str fmt, ...)", f_fprintf },
 	{ 0, &Type_str, "sprintf (str fmt, ...)", f_sprintf },
+	{ 0, &Type_str, "xprintf (str fmt, ...)", f_xprintf },
 	{ 0, &Type_void, "debug (str def, str fmt, ...)", f_debug },
 	{ 0, &Type_void, "DebugMode (str def)", f_DebugMode },
 

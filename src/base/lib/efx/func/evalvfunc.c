@@ -127,7 +127,7 @@ static EfiFunc *get_func (EfiVirFunc *vtab, EfiFuncArg *arg,
 
 	if	(func && func->eval)	return func;
 
-	sb = sb_create(0);
+	sb = sb_acquire();
 	sb_puts(((EfiFunc **) vtab->tab.data)[0]->name, sb);
 	sb_putc('(', sb);
 	delim = NULL;
@@ -148,7 +148,8 @@ static EfiFunc *get_func (EfiVirFunc *vtab, EfiFuncArg *arg,
 	}
 
 	sb_putc(')', sb);
-	dbg_note(NULL, func ? "[efmain:91]" : "[efmain:92]", "m", sb2str(sb));
+	dbg_note(NULL, func ? "[efmain:91]" : "[efmain:92]",
+		"m", sb_cpyrelease(sb));
 	clean_arg(arg, narg);
 	return NULL;
 }
@@ -173,9 +174,10 @@ static EfiObj *eval_func (EfiFunc *func, EfiArgKonv *fkonv,
 				ArgKonv(fkonv + i, obj->data,
 					arg[i].defval->data);
 				UnrefObj(arg[i].defval);
+
 				arg[i].defval = obj;
 				arg[i].type = obj->type;
-				arg[i].lval = obj->lval ? 1 : 0;
+				arg[i].lval = 0;
 				arg[i].nokonv = 1;
 			}
 		}

@@ -22,7 +22,7 @@
 # A-3423 St. Andrä/Wördern, Südtirolergasse 17-21/5
 
 # $pconfig
-# Version="$Id: shmkmf.sh,v 1.84 2008-03-14 06:19:58 ef Exp $"
+# Version="$Id: shmkmf.sh,v 1.88 2008-10-10 18:00:52 ef Exp $"
 # Config=Config.make
 # Makefile=Makefile
 #
@@ -115,9 +115,13 @@ shmkmf_quote ()
 
 # parse command arguments
 
+case "$0" in
+*.sh)	shmkmf="sh $0";;
+*)	shmkmf="$0";;
+esac
+
 TOP=.
-shmkmf="$0"
-bootstrap="$0"
+bootstrap="$shmkmf"
 Config=Config.make
 Makefile=Makefile
 
@@ -180,6 +184,60 @@ language=`expr "$LANG" : "\([a-z][a-z]\).*"`
 # codeset not supported yet
 #codeset=`expr "$LANG" : ".*[.]\([^@]*\).*"`
 
+# Die Funktion $1 spaltet eine Pfadvariable auf und fügt bei //
+# alle möglichen Zwischenverzeichnisse mithilfe von find ein.
+# Das Startverzeichnis für find enthält immer einen nachgestellen
+# Schrägstrich, damit als Startverzeichnis ein symbolischer Link
+# angegeben werden kann. Nicht alle von $1 gelieferten Verzeichnisse
+# existieren.
+
+splitpath ()
+{(
+	IFS=":"
+	for d in $1
+	do
+		case "$d" in
+		?*//?*/*)
+			a=`expr $d : '\(.*/\)/'`
+			b=`expr $d : '.*//\([^/]*\)'`
+			c=`expr $d : '.*//[^/]*\(/.*\)'`
+			find $a -type d -name "$b" \
+				-exec test -d \{\}$c \; \
+				-print 2>/dev/null |\
+				sed -e "s|\$|$c|"
+			;;
+		?*//?*)
+			a=`expr $d : '\(.*/\)/'`
+			b=`expr $d : '.*//\(.*\)'`
+			find $a -type d -name "$b" -print 2>/dev/null
+			;;
+		*//)	
+			a=`expr $d : '\(.*/\)/$'`
+			find $a -type d -print 2>/dev/null | sed -e 's|/$||'
+			;;
+		*)	
+			printf "%s\n" $d
+			;;
+		esac
+	done
+)}
+
+# Absoluten Dateinamen bestimmen.
+
+_shmkmf_fsearch ()
+{
+	while read dir
+	do
+		if [ -r $dir/$1 ]
+		then
+			printf -- "%s\n" $dir/$1
+			return 0
+		fi
+	done
+
+	return 1
+}
+
 # search file according to path
 
 fsearch ()	# usage: fsearch path file
@@ -197,17 +255,8 @@ fsearch ()	# usage: fsearch path file
 		return 1
 		;;
 	*)
-		(IFS=":"
-		for _d in $1
-		do
-			if [ -f "$_d/$2" ]; then
-				printf "%s\n" "$_d/$2"
-				return 0;
-			fi
-		done
-
-		return 1
-		)
+		splitpath "$1" | _shmkmf_fsearch "$2"
+		return
 		;;
 	esac
 }
@@ -522,6 +571,8 @@ if [ $_stdrules ]; then
 	mf_rule -d "purge" "" "rm -f core" >> $_output
 	mf_rule -d "clean" "purge" >> $_output
 	mf_rule -d "uninstall" >> $_output
+else
+	rm -f $shmkmf_post
 fi
 
 # execute postponed commands

@@ -93,7 +93,7 @@ void S2DMode_list (IO *io)
 
 	for (i = 0; i < tabsize(tab); i++)
 	{
-		io_printf(io, "%s\t%s\n", tab[i].name, tab[i].desc);
+		io_xprintf(io, "%s\t%s\n", tab[i].name, tab[i].desc);
 
 		for (j = k = 0; j < tabsize(ntab); j++)
 		{

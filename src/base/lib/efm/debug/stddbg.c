@@ -70,7 +70,7 @@ void dbg_psub (const char *cl, int level, const char *fmt, ArgList *args)
 			int i;
 
 			for (i = 0; i < args->dim; i++)
-				io_printf(io, " $%d=%#s", i,
+				io_xprintf(io, " $%d=%#s", i,
 					StrPool_get((StrPool *) args,
 						args->index[i]));
 		}

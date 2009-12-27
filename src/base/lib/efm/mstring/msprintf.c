@@ -26,24 +26,29 @@ If not, write to the Free Software Foundation, Inc.,
 
 char *msprintf(const char *fmt, ...)
 {
-	va_list args;
-	char *p;
+	if	(fmt)
+	{
+		va_list args;
+		char *p;
 
-	va_start(args, fmt);
-	p = mvsprintf(fmt, args);
-	va_end(args);
-	return p;
+		va_start(args, fmt);
+		p = mvsprintf(fmt, args);
+		va_end(args);
+		return p;
+	}
+
+	return NULL;
 }
 
 
 char *mvsprintf(const char *fmt, va_list list)
 {
-	StrBuf *sb;
-	IO *io;
+	if	(fmt)
+	{
+		StrBuf *sb = sb_acquire();
+		sb_vxprintf(sb, fmt, list);
+		return sb_cpyrelease(sb);
+	}
 
-	sb = sb_create(0);
-	io = io_strbuf(sb);
-	io_vprintf(io, fmt, list);
-	io_close(io);
-	return sb2str(sb);
+	return NULL;
 }

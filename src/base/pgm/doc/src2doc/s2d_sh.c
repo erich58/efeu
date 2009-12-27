@@ -124,7 +124,15 @@ static void sh_eval (SrcData *data, const char *name)
 	{
 		if	(c == '#')
 		{
-			add_comment(data->ein, data->buf);
+			if	(io_peek(data->ein) == '!')
+			{
+				do	c = io_getc(data->ein);
+				while	(c != EOF && c != '\n');
+
+				continue;
+			}
+
+			add_comment(data->ein, &data->buf);
 			new_par = 1;
 		}
 		else if	(at_top)
@@ -142,7 +150,7 @@ static void sh_eval (SrcData *data, const char *name)
 			if	(c == '#')
 			{
 				SrcData_copy(data, NULL, name);
-				add_comment(data->ein, data->buf);
+				add_comment(data->ein, &data->buf);
 				continue;
 			}
 
@@ -192,7 +200,7 @@ void s2d_sh (const char *name, IO *ein, IO *aus)
 	data.ppdim = 0;
 	data.mask = 0;
 
-	io_printf(aus, "\\mpage[%s] %s\n", Secnum ? Secnum : "7",
+	io_xprintf(aus, "\\mpage[%s] %s\n", Secnum ? Secnum : "7",
 		data.doc.var[VAR_NAME]);
 
 	sh_eval(&data, name);

@@ -40,13 +40,13 @@ static int lmark_put (int c, void *ptr)
 
 	if	(lmark->newline && (lmark->flag || c != '\n'))
 	{
-		io_printf(lmark->io, lmark->pre, lmark->lnum);
+		io_xprintf(lmark->io, lmark->pre, lmark->lnum);
 		lmark->newline = 0;
 	}
 
 	if	(c == '\n')
 	{
-		io_printf(lmark->io, lmark->post, lmark->lnum);
+		io_xprintf(lmark->io, lmark->post, lmark->lnum);
 		lmark->newline = 1;
 		lmark->lnum++;
 	}

@@ -40,7 +40,7 @@ void OldPixMap_Histogramm(EfiFunc *func, void *rval, void **arg)
 		vec[pix->pixel[i]]++;
 
 	for (i = 0; i < pix->colors; i++)
-		io_printf(io, "%3d, { %5.3f, %5.3f, %5.3f },%10d\n",  i,
+		io_xprintf(io, "%3d, { %5.3f, %5.3f, %5.3f },%10d\n",  i,
 			pix->color[i].red / 255., pix->color[i].green / 255.,
 			pix->color[i].blue / 255., vec[i]);
 

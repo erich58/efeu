@@ -60,7 +60,7 @@ name: base			@;\
 /*
 Der Makro |$1| generiert eine Regel zur Konfiguration der
 Headerdatei <name> aus der Definitionsdatei <base> mithilfe
-des Kommandos |efeuconfig|.
+des Kommandos |shmkmf-config|.
 Die Regel wird für das Pseudoziel <target> eingetragen.
 */
 
@@ -68,14 +68,14 @@ Die Regel wird für das Pseudoziel <target> eingetragen.
 NamedTarget(target,name)			@;\
 CleanTarget(name)		@;\
 name: base			@;\
-@+efeuconfig file base > $@	@;
+@+shmkmf-config file base > $@	@;
 
 /*
 Der Makro |$1| generiert eine Regel zur Erneuerung der
 Headerdatei <name> aus der Definitionsdatei <base> mithilfe
-des Kommandos |efeuconfig|.
+des Kommandos |shmkmf-config|.
 Die Regel wird für das Pseudoziel <target> eingetragen.
-Im Unterschied zu |ConfigHeaderFile| wird |efeuconfig|
+Im Unterschied zu |ConfigHeaderFile| wird |shmkmf-config|
 auch dann aufgerufen, wenn sich <base> nicht verändert hat.
 Damit kann auf eine Veränderung der Systemumgebung (Installation
 von zusätzlicher Software) reagiert werden.
@@ -85,7 +85,7 @@ von zusätzlicher Software) reagiert werden.
 NamedTarget(target,name)			@;\
 CleanTarget(name)		@;\
 name:: 				@;\
-@+efeuconfig update base $@	@;
+@+shmkmf-config update base $@	@;
 
 #define	InstallLocalHeaderFile(t,p,f)	InstallFile(t,PathName(p,f),f)
 #define	InstallLocalApplFile(t,p,f)	InstallFile(t,ApplPath(p,f),f)
@@ -101,7 +101,7 @@ name:: 				@;\
 
 /*
 $SeeAlso
-\mref{mkmf(1)}, \mref{efeuscript(1)}, \mref{efeuconfig(1)},
+\mref{mkmf(1)}, \mref{efeuscript(1)}, \mref{shmkmf-config(1)},
 \mref{Name(7)}, \mref{Path(7)}.
 */
 

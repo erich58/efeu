@@ -65,13 +65,13 @@ static char *get_desc (StrBuf *buf)
 
 	sb_setpos(buf, 0);
 	io = langfilter(io_strbuf(buf), NULL);
-	desc = sb_create(0);
+	desc = sb_acquire();
 
 	while ((c = io_getc(io)) != EOF)
 		sb_putc(c, desc);
 
 	io_close(io);
-	return sb2str(desc);
+	return sb_cpyrelease(desc);
 }
 
 void DocTab_def (DocTab *tab, IO *in, StrBuf *buf)
@@ -95,7 +95,7 @@ void DocTab_def (DocTab *tab, IO *in, StrBuf *buf)
 static void cmd_show (DocTab *tab, IO *in, StrBuf *desc)
 {
 	char *p = get_data(desc);
-	io_printf(ioerr, "---- show\n%s****\n", p);
+	io_xprintf(ioerr, "---- show\n%s****\n", p);
 	memfree(p);
 }
 
@@ -195,10 +195,10 @@ void DocTab_load (DocTab *tab, IO *io)
 {
 	int c, last, flag;
 	char *p;
-	StrBuf *desc;
+	StrBuf desc;
 	LoadFunc func;
 
-	desc = sb_create(0);
+	sb_init(&desc, 0);
 	flag = 0;
 	last = '\n';
 	PushVarTab(RefVarTab(tab->var), NULL);
@@ -214,9 +214,9 @@ void DocTab_load (DocTab *tab, IO *io)
 				c = io_getc(io);
 
 				if	(flag == 2)
-					sb_putc('\n', desc);
+					sb_putc('\n', &desc);
 
-				sb_putc(c, desc);
+				sb_putc(c, &desc);
 				flag = 1;
 				last = c;
 			}
@@ -226,19 +226,19 @@ void DocTab_load (DocTab *tab, IO *io)
 			}
 			else if	((func = get_func(p)) != NULL)
 			{
-				func(tab, io, desc);
-				sb_clean(desc);
+				func(tab, io, &desc);
+				sb_trunc(&desc);
 				flag = 0;
 				last = '\n';
 			}
 			else
 			{
 				if	(flag == 2)
-					sb_putc('\n', desc);
+					sb_putc('\n', &desc);
 
-				sb_putc('\\', desc);
-				sb_puts(p, desc);
-				sb_putc(';', desc);
+				sb_putc('\\', &desc);
+				sb_puts(p, &desc);
+				sb_putc(';', &desc);
 				flag = 1;
 			}
 		}
@@ -248,7 +248,7 @@ void DocTab_load (DocTab *tab, IO *io)
 
 			if	(last != '\n' || c != '\n')
 			{
-				sb_putc(c, desc);
+				sb_putc(c, &desc);
 				last = c;
 			}
 			else	flag = 2;
@@ -256,12 +256,12 @@ void DocTab_load (DocTab *tab, IO *io)
 		else
 		{
 			if	(flag == 2)
-				sb_putc('\n', desc);
+				sb_putc('\n', &desc);
 
-			sb_putc(c, desc);
+			sb_putc(c, &desc);
 
 			if	(c == '|')
-				copy_verb(io, desc);
+				copy_verb(io, &desc);
 
 			flag = 1;
 			last = c;
@@ -269,7 +269,7 @@ void DocTab_load (DocTab *tab, IO *io)
 	}
 
 	PopVarTab();
-	rd_deref(desc);
+	sb_free(&desc);
 	io_close(io);
 }
 

@@ -19,6 +19,7 @@ geschrieben werden.
 	Wördern, \thedate
 \toc
 \addsrclist
+\delsrc		main.doc
 \getsrc		*.doc
 \appendix
 \mchap[3]	Funktionen

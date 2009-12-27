@@ -163,6 +163,8 @@ If not, write to the Free Software Foundation, Inc.,
 165	$!: asignment object does not allow decomposition.\n
 166	$!: variable $1 is not defined.\n
 167	$!: operand of lvalue-cast is not an lvalue.\n
+168	$!: changing a const declared argument.\n
+169	$!: function argument $1 furthermore in use.\n
 
 171	$!: unexpected "break".\n
 172	$!: unexpected "continue".\n

@@ -24,7 +24,7 @@
 :eval 'fmt_str = "%*s"'
 :eval 'VerboseMode = 1'
 
-I:dir | :eval 'IncPath = paste(PATHSEP, "{}", IncPath)'
+I:dir | :eval 'IncPath = paste(PATHSEP, "{}", IncPath); addflag("-I{}")'
 	:*:appends <dir> to the search path for scripts.
 	:de:erweitert den Suchpfad für Skriptfiles um <dir>.
 

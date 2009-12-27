@@ -23,26 +23,38 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/konvobj.h>
 
 typedef struct {
-	OBJECT_VAR;
-	EfiObj *base;
+	LVALOBJ_VAR;
 } LCAST;
-
 
 #define	LCAST_SIZE(type) (sizeof(LCAST) + type->size)
 
 static EfiObj *lcast_alloc (EfiType *type, va_list list)
 {
-	LCAST *lc = (LCAST *) Obj_alloc(LCAST_SIZE(type));
+	LCAST *lc = Lval_alloc(sizeof *lc + type->size);
 	lc->base = va_arg(list, EfiObj *);
-	lc->data = (void *) (lc + 1);
+	lc->data = (lc + 1);
+	AddUpdateObj(&lc->base->list, (EfiObj *) lc);
+	UnrefObj(lc->base);
 	return (EfiObj *) lc;
 }
+
+static void detached_free (EfiObj *obj)
+{
+	CleanData(obj->type, obj->data, 1);
+}
+
+static EfiLval lcast_detached = {
+	"lcast_detached", NULL,
+	NULL, detached_free,
+	NULL, NULL, NULL,
+	NULL,
+};
 
 static void lcast_free (EfiObj *obj)
 {
 	LCAST *lc = (LCAST *) obj;
+	DelUpdateObj(&lc->base->list, (EfiObj *) lc);
 	CleanData(lc->type, lc->data, 1);
-	UnrefObj(lc->base);
 }
 
 static char *lcast_ident (const EfiObj *obj)
@@ -64,13 +76,19 @@ static void lcast_sync (EfiObj *obj)
 	SyncLval(lc->base);
 }
 
+static void lcast_unlink (EfiObj *obj)
+{
+	LCAST *lc = (LCAST *) obj;
+	lc->lval = &lcast_detached;
+	lc->base = NULL;
+}
+
 static EfiLval lcast_lval = {
 	"lcast", NULL,
 	lcast_alloc, lcast_free,
-	lcast_update, lcast_sync,
+	lcast_update, lcast_sync, lcast_unlink,
 	lcast_ident,
 };
-
 
 EfiObj *KonvLval(EfiObj *obj, EfiType *type)
 {

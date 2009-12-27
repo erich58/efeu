@@ -27,7 +27,9 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/procenv.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 #include <time.h>
+#include <signal.h>
 
 #define	RVSTR	Val_str(rval)
 #define	STR(n)	Val_str(arg[n])
@@ -62,7 +64,7 @@ static void f_xsystem (EfiFunc *func, void *rval, void **arg) \
 	EfiObjList *l;
 	char *s;
 
-	sb = sb_create(0);
+	sb = sb_acquire();
 
 	for (l = Val_list(arg[0]); l != NULL; l = l->next)
 	{
@@ -74,9 +76,8 @@ static void f_xsystem (EfiFunc *func, void *rval, void **arg) \
 		memfree(s);
 	}
 
-	sb_putc(0, sb);
-	Val_int(rval) = callproc((char *) sb->data);
-	rd_deref(sb);
+	Val_int(rval) = callproc(sb_nul(sb));
+	sb_release(sb);
 }
 
 static void f_rename (EfiFunc *func, void *rval, void **arg) \
@@ -199,6 +200,11 @@ static void f_getpid (EfiFunc *func, void *rval, void **arg)
 	Val_int(rval) = getpid();
 }
 
+static void f_getppid (EfiFunc *func, void *rval, void **arg)
+{
+	Val_int(rval) = getppid();
+}
+
 static void f_time(EfiFunc *func, void *rval, void **arg)
 {
 	Val_int(rval) = time(NULL);
@@ -242,6 +248,7 @@ static EfiFuncDef fdef_pctrl[] = {
 	{ 0, &Type_bool, "deltempdir (str path)", f_deltempdir },
 	{ 0, &Type_void, "tempstat (void)", f_tempstat },
 	{ 0, &Type_int, "getpid ()", f_getpid },
+	{ 0, &Type_int, "getppid ()", f_getppid },
 	{ 0, &Type_int, "time ()", f_time },
 	{ 0, &Type_str,  "ExpandPath (str = NULL)", f_expand },
 };

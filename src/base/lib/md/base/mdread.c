@@ -308,9 +308,9 @@ static char *mdscan(IO *io)
 		}
 		else
 		{
-			StrBuf *sb = sb_create(0);
+			StrBuf *sb = sb_acquire();
 			do_scan(io, sb);
-			return sb2str(sb);
+			return sb_cpyrelease(sb);
 		}
 	}
 

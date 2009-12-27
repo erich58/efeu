@@ -51,6 +51,34 @@ int term_cmd (void *drv, va_list list)
 		term_putc(trm, '*');
 		trm->var.margin += TERM_INDENT;
 		break;
+	case DOC_TAB_BEG:
+		Tabular_newline(trm->tab);
+		break;
+	case DOC_TAB_SEP:
+		trm->tab->buf.col.width = trm->col;
+		trm->col = 0;
+		trm->mode = 0;
+		trm->space = 0;
+		Tabular_entry(trm->tab);
+		break;
+	case DOC_TAB_END:
+		trm->tab->buf.col.width = trm->col;
+		trm->col = 0;
+		trm->mode = 0;
+		trm->space = 0;
+		Tabular_endline(trm->tab);
+		break;
+	case DOC_TAB_HLINE:
+		Tabular_hline(trm->tab, va_arg(list, int));
+		break;
+	case DOC_TAB_CLINE:
+		{
+			int n = va_arg(list, int);
+			int p1 = va_arg(list, int);
+			int p2 = va_arg(list, int);
+			Tabular_cline(trm->tab, n, p1, p2);
+		}
+		break;
 	default:
 		return EOF;
 	}

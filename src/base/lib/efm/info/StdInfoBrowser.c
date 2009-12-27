@@ -30,7 +30,7 @@ static char *getline (IO *io, StrBuf *buf)
 {
 	int c;
 
-	sb_clean(buf);
+	sb_trunc(buf);
 
 	while ((c = io_getc(io)) != EOF)
 	{
@@ -60,7 +60,7 @@ void StdInfoBrowser (const char *name)
 		Lines = atoi(p);
 
 	io = io_interact (" ", NULL);
-	buf = sb_create(0);
+	buf = sb_acquire();
 
 	for (;;)
 	{
@@ -88,6 +88,6 @@ void StdInfoBrowser (const char *name)
 		info = GetInfo(base, p);
 	}
 
-	rd_deref(buf);
+	sb_release(buf);
 	io_close(io);
 }

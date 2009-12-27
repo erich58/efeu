@@ -71,17 +71,17 @@ int OLSPar_print (IO *io, OLSPar *par)
 
 	p1 = TimeIndex2str(par->base, 0);
 	p2 = TimeIndex2str(par->base, par->nr - 1);
-	n  = io_printf(io, "Schätzzeitraum:%10s\t%25s\n", p1, p2);
+	n  = io_xprintf(io, "Schätzzeitraum:%10s\t%25s\n", p1, p2);
 	memfree(p1);
 	memfree(p2);
-	n += io_printf(io, "Beobachtungen: %10d\t", par->nr);
-	n += io_printf(io, "Freiheitsgrade:%10d\n", par->df);
-	n += io_printf(io, "R**2:          %10.6f\t", par->r2);
-	n += io_printf(io, "RBAR**2:       %10.6f\n", par->rbar2);
-	n += io_printf(io, "Durbin Watson: %10.6f\t", par->dw);
-	n += io_printf(io, "SEE:           %10.3f\n", par->see);
-	n += io_printf(io, "\n");
-	n += io_printf(io, "%-9s %15s %15s %15s\n", "Variable",
+	n += io_xprintf(io, "Beobachtungen: %10d\t", par->nr);
+	n += io_xprintf(io, "Freiheitsgrade:%10d\n", par->df);
+	n += io_xprintf(io, "R**2:          %10.6f\t", par->r2);
+	n += io_xprintf(io, "RBAR**2:       %10.6f\n", par->rbar2);
+	n += io_xprintf(io, "Durbin Watson: %10.6f\t", par->dw);
+	n += io_xprintf(io, "SEE:           %10.3f\n", par->see);
+	n += io_xprintf(io, "\n");
+	n += io_xprintf(io, "%-9s %15s %15s %15s\n", "Variable",
 		"Koeffizient", "Standardfehler", "T-Statistic");
 
 	for (i = 0; i < par->dim; i++)

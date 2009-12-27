@@ -9,8 +9,8 @@ typedef struct CubeHandle {
 	char *cmd;
 	char *arg;
 	mdmat *md;
-	StrBuf *buf_in;
-	StrBuf *buf_out;
+	StrBuf buf_in;
+	StrBuf buf_out;
 	IO *out;
 	size_t line;
 	size_t last_pos;

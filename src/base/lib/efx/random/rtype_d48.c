@@ -45,7 +45,7 @@ typedef struct {
 static void ident_d48 (IO *io, void *data)
 {
 	D48 *d48 = data;
-	io_printf(io, "0x%04X%04X%04X", d48->w2, d48->w1, d48->w0);
+	io_xprintf(io, "0x%04X%04X%04X", d48->w2, d48->w1, d48->w0);
 }
 
 static void seed_d48 (void *data, unsigned int x)

@@ -64,7 +64,7 @@ char *io_mgets(IO *io, const char *delim)
 	StrBuf *sb;
 	int c;
 
-	sb = sb_create(0);
+	sb = sb_acquire();
 
 	while ((c = io_mgetc(io, 0)) != EOF)
 	{
@@ -90,5 +90,5 @@ char *io_mgets(IO *io, const char *delim)
 		sb_putc(c, sb);
 	}
 
-	return sb2str(sb);
+	return sb_cpyrelease(sb);
 }

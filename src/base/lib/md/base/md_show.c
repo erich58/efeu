@@ -18,19 +18,19 @@ void md_show (IO *io, mdmat *md)
 	if	(!md)	return;
 
 	PrintType(io, md->type, 1);
-	io_printf(io, "[%d", md->size / md->type->size);
+	io_xprintf(io, "[%d", md->size / md->type->size);
 	delim = "=";
 
 	for (x = md->axis; x != NULL; x = x->next)
 	{
-		io_printf(io, "%s%d", delim, x->dim);
+		io_xprintf(io, "%s%d", delim, x->dim);
 		delim = "*";
 	}
 
 	io_putc(']', io);
 
 	if	(md->i_name)
-		io_printf(io, " %#s\n", StrPool_get(md->sbuf, md->i_name));
+		io_xprintf(io, " %#s\n", StrPool_get(md->sbuf, md->i_name));
 	else	io_putc('\n', io);
 
 	for (x = md->axis; x != NULL; x = x->next)

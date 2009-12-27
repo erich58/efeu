@@ -92,9 +92,7 @@ static void std_hook (MdCountList *clist, mdmat *md)
 
 static char *rec_name (const char *name)
 {
-	StrBuf *sb;
-	
-	sb = sb_create(32);
+	StrBuf *sb = sb_acquire();
 
 	if	(isdigit((unsigned char) *name))
 		sb_putc('_', sb);
@@ -103,7 +101,7 @@ static char *rec_name (const char *name)
 		sb_putc((*name == '_' || isalnum((unsigned char) *name)) ?
 			*name : '_', sb);
 
-	return sb2str(sb);
+	return sb_cpyrelease(sb);
 }
 
 static EfiType *rec_type (MdClass *cdef)
@@ -270,7 +268,7 @@ int main (int narg, char **arg)
 	char *p;
 
 	SetProgName(arg[0]);
-	SetVersion("$Id: edbcnt.c,v 1.15 2007-11-12 16:32:57 ef Exp $");
+	SetVersion("$Id: edbcnt.c,v 1.16 2008-06-14 04:06:52 ef Exp $");
 	SetupStd();
 	SetupUtil();
 	SetupPreproc();

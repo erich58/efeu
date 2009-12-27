@@ -37,9 +37,15 @@ If not, write to the Free Software Foundation, Inc.,
 #define EFEU_tms_h	1
 
 @eval include sys/times.h
+@eval include sys/time.h
+@eval include time.h
 @add -i sys/times.h
+@add -i sys/time.h
+@add -i time.h
 @eval success HAS_TMS 'struct tms buf; times(&buf); sysconf(_SC_CLK_TCK)'
+@eval success HAS_TIMEVAL 'struct timeval buf; gettimeofday(&buf, NULL)'
 
 void CmdSetup_tms(void);
+void CmdSetup_timeval(void);
 
 #endif	/* EFEU/tms.h */

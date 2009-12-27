@@ -42,11 +42,11 @@ static void ident_old (IO *io, void *data)
 	RNDBUF *buf = data;
 	int n;
 	
-	io_printf(io, "%2d", buf->fptr - buf->state);
-	io_printf(io, "%2d", buf->rptr - buf->state);
+	io_xprintf(io, "%2d", buf->fptr - buf->state);
+	io_xprintf(io, "%2d", buf->rptr - buf->state);
 
 	for (n = 0; n < DEG; n++)
-		io_printf(io, " %08x", buf->state[n]);
+		io_xprintf(io, " %08x", buf->state[n]);
 }
 
 /*

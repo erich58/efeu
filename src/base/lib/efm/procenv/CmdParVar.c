@@ -135,7 +135,7 @@ void CmdPar_showval (CmdPar *par, IO *io, const char *fmt)
 		{
 			io_psubarg(io, fmt, "nss", var->name, var->value);
 		}
-		else	io_printf(io, "%s=%#s\n", var->name, var->value);
+		else	io_xprintf(io, "%s=%#s\n", var->name, var->value);
 	}
 }
 

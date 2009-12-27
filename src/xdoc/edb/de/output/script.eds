@@ -12,8 +12,8 @@ Das Skript:
 str print_script = string !
 EDB edb = edbopen("pers.edb");
 
-printf("\\tab |r|l|r|\n[-]\n");
-printf("Num | Name | Year\n[--]\n");
+printf("\\tab |r|l|r|\n---\n");
+printf("Num | Name | Year\n===\n");
 
 while (edb.read())
 {
@@ -23,7 +23,7 @@ while (edb.read())
 		edb.data.birth_year);
 }
 
-printf("[-]\n");
+printf("---\n");
 !;
 cout.puts("---- verbatim\n");
 cout.puts(print_script);

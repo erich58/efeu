@@ -32,11 +32,11 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 #include <DocDrv.h>
 
-extern void mroff_setup (void);
-extern char *mroff_par (const char *name);
-extern void mroff_addpar (EfiVarDef *def, size_t dim);
-extern void mroff_cmdpar (EfiVarTab *tab);
-extern void mroff_envpar (EfiVarTab *tab);
+void mroff_setup (void);
+char *mroff_par (const char *name);
+void mroff_addpar (EfiVarDef *def, size_t dim);
+void mroff_cmdpar (EfiVarTab *tab);
+void mroff_envpar (EfiVarTab *tab);
 
 
 typedef struct ManRoffStruct ManRoff;
@@ -60,25 +60,35 @@ struct ManRoffStruct {
 	char *att;	/* Aktuelles Attribut */
 };
 
-extern IO *DocOut_mroff (IO *io);
+IO *DocOut_mroff (IO *io);
 
-extern void mroff_push (ManRoff *mr);
-extern void mroff_pop (ManRoff *mr);
+void mroff_push (ManRoff *mr);
+void mroff_pop (ManRoff *mr);
 
-extern void mroff_hdr (void *drv, int mode);
-extern int mroff_putc (void *drv, int c);
-extern int mroff_plain (void *drv, int c);
-extern int mroff_protect (void *drv, int c);
+void mroff_hdr (void *drv, int mode);
+int mroff_putc (void *drv, int c);
+int mroff_plain (void *drv, int c);
+int mroff_protect (void *drv, int c);
 
-extern void mroff_cbeg (ManRoff *mr, const char *pfx);
-extern void mroff_cend (ManRoff *mr, int flag);
+void mroff_cbeg (ManRoff *mr, const char *pfx);
+void mroff_cend (ManRoff *mr, int flag);
 
-extern void mroff_string (ManRoff *mr, const char *str);
-extern void mroff_newline (ManRoff *mr);
-extern void mroff_rem (void *drv, const char *rem);
-extern int mroff_cmd (void *drv, va_list list);
-extern int mroff_env (void *drv, int flag, va_list list);
-extern void mroff_cmdline (ManRoff *mr, const char *name);
-extern void mroff_cmdend (ManRoff *mr, const char *name);
+void mroff_string (ManRoff *mr, const char *str);
+void mroff_newline (ManRoff *mr);
+void mroff_rem (void *drv, const char *rem);
+int mroff_cmd (void *drv, va_list list);
+int mroff_env (void *drv, int flag, va_list list);
+void mroff_cmdline (ManRoff *mr, const char *name);
+void mroff_cmdend (ManRoff *mr, const char *name);
+
+void mroff_tab_beg (ManRoff *mr, const char *opt, const char *def);
+void mroff_tab_end (ManRoff *mr);
+void mroff_tab_begrow (ManRoff *mr);
+void mroff_tab_endrow (ManRoff *mr);
+void mroff_tab_mcol (ManRoff *mr, int cdim, const char *def);
+void mroff_tab_hline (ManRoff *mr, int n);
+void mroff_tab_cline (ManRoff *mr, int n, int p1, int p2);
+void mroff_tab_sep (ManRoff *mr);
+void mroff_tab_nl (ManRoff *mr);
 
 #endif	/* mroff.h */

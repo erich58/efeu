@@ -22,6 +22,46 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/object.h>
 #include <EFEU/cmdeval.h>
+#include <EFEU/printobj.h>
+
+static EfiObj *farg_ptr (EfiType *type, va_list list)
+{
+	EfiObj *obj = Obj_alloc(sizeof *obj);
+	obj->data = va_arg(list, void *);
+	return obj;
+}
+
+static EfiObj *farg_copy (EfiType *type, va_list list)
+{
+	EfiObj *obj = Obj_alloc(sizeof *obj + type->size);
+	obj->data = obj + 1;
+	CopyData(type, obj->data, va_arg(list, void *));
+	return obj;
+}
+
+static char *farg_ident (const EfiObj *obj)
+{
+	return msprintf("%s %p", obj->lval->name, obj->data);
+}
+
+static void farg_keep (EfiObj *obj)
+{
+	;
+}
+
+static EfiLval farg_lval = {
+	"farg_lval", NULL,
+	farg_ptr, farg_keep,	/* alloc, free */
+	NULL, NULL, NULL,	/* update, sync, unlink */
+	farg_ident,
+};
+
+static EfiLval farg_data = {
+	"farg_data", NULL,
+	farg_copy, NULL,
+	NULL, NULL, NULL,
+	farg_ident,
+};
 
 
 /*	Funktionsaufrufe
@@ -43,30 +83,60 @@ void Func_func (EfiFunc *func, void *rval, void **arg)
 	RestoreVarStack(vstack);
 }
 
-static EfiObj *farg_obj (EfiFuncArg *arg, void *data)
+static void check_use (VarTabEntry *entry)
 {
-	if	(arg->type == NULL)
-		return RefObj(data);
+	if	(entry->obj->refcount)
+		dbg_error(NULL, "[efmain:169]", "s", entry->name);
+}
 
-	if	(arg->lval || arg->cnst)
-		return LvalObj(&Lval_ptr, arg->type, data);
+static void farg_set (EfiVarTab *vtab, EfiFuncArg *arg, void *data, int bound)
+{
+	VarTabEntry *entry = VarTab_next(vtab);
+	entry->name = arg->name;
+	entry->type = arg->type;
+	entry->desc = NULL;
+	entry->get = NULL;
+	entry->data = NULL;
+	entry->entry_clean = NULL;
 
-	return LvalObj(&Lval_xdata, arg->type, data);
+	if	(!arg->type)
+	{
+		entry->obj = RefObj(data);
+	}
+	else if	(arg->lval)
+	{
+		entry->obj = LvalObj(&farg_lval, arg->type, data);
+		entry->entry_clean = bound ? NULL : check_use;
+	}
+	else if	(arg->cnst)
+	{
+		if	(bound)
+		{
+			entry->obj = LvalObj(&farg_lval, arg->type, data);
+		}
+		else
+		{
+			entry->obj = ExtObj(arg->type, data);
+			entry->entry_clean = check_use;
+		}
+	}
+	else	entry->obj = LvalObj(&farg_data, arg->type, data);
 }
 
 void Func_inline (EfiFunc *func, void *rval, void **arg)
 {
-	EfiObj *x;
+	EfiObj *obj;
 	EfiVarTab *vtab;
 	VarTabEntry *entry;
 	int rbase;
+	int bound;
 	int i;
 
 	rbase = (!func->bound && !func->name);
 
 	if	(rbase)
 	{
-		EfiObj *base = LvalObj(&Lval_ptr, func->type, rval);
+		EfiObj *base = LvalObj(&farg_lval, func->type, rval);
 		PushVarTab(RefVarTab(func->type->vtab), base);
 	}
 
@@ -76,53 +146,43 @@ void Func_inline (EfiFunc *func, void *rval, void **arg)
 	{
 		vtab = VarTab(func->name, func->dim);
 
-		for (i = 0; i < func->dim; i++)
-		{
-			if	(func->arg[i].name == NULL)
-				continue;
-
-			entry = VarTab_next(vtab);
-			entry->name = func->arg[i].name;
-			entry->type = func->arg[i].type;
-			entry->desc = NULL;
-			entry->obj = farg_obj(func->arg + i, arg[i]);
-			entry->get = NULL;
-			entry->data = NULL;
-			entry->entry_clean = NULL;
-		}
+		for (i = 0, bound = func->bound; i < func->dim; i++, bound = 0)
+			if (func->arg[i].name)
+				farg_set(vtab, func->arg + i, arg[i], bound);
 
 		if	(func->scope)
 		{
 			if	(func->bound)
 			{
 				entry = vtab->tab.data;
-				x = RefObj(entry->obj);
+				obj = RefObj(entry->obj);
 			}
-			else	x = NULL;
+			else	obj = NULL;
 
-			PushVarTab(RefVarTab(func->scope), x);
+			PushVarTab(RefVarTab(func->scope), obj);
 		}
 
 		VarTab_qsort(vtab);
 		PushVarTab(vtab, NULL);
 	}
+	else	vtab = NULL;
 
-	if	((x = EvalExpression(func->par)))
+	if	((obj = EvalExpression(func->par)))
 	{
 		if	(func->type == NULL)
 		{
-			Val_obj(rval) = x;
+			Val_obj(rval) = obj;
 		}
 		else if	(func->lretval)
 		{
-			UnrefObj(x);
+			UnrefObj(obj);
 		}
-		else	Obj2Data(x, func->type, rval);
+		else	Obj2Data(obj, func->type, rval);
 	}
 
 /*	Variablentabelle für Argumente löschen
 */
-	if	(func->dim)
+	if	(vtab)
 	{
 		PopVarTab();
 

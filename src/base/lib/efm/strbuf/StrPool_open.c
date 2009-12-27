@@ -86,7 +86,7 @@ size_t StrPool_printf (StrPool *pool, const char *fmt, ...)
 	pos = StrPool_offset(pool);
 	out = StrPool_open(pool);
 	va_start(args, fmt);
-	io_vprintf(out, fmt, args);
+	io_vxprintf(out, fmt, args);
 	va_end(args);
 	io_close(out);
 	return pos;

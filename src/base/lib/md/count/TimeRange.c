@@ -382,11 +382,11 @@ int PrintTimeRange (IO *io, TimeRange *rng, size_t n)
 
 	for (i = 0; n-- > 0; rng++)
 	{
-		i += io_printf(io, "%-12s\t", rng->label);
+		i += io_xprintf(io, "%-12s\t", rng->label);
 		i += PrintCalendar(io, "%d.%m.%Y - ", rng->ug);
 		i += PrintCalendar(io, "%d.%m.%Y", rng->og);
 		i += PrintCalendar(io, "%t%d.%m.%Y", rng->dat);
-		i += io_printf(io, " %4d\n", rng->tage);
+		i += io_xprintf(io, " %4d\n", rng->tage);
 	}
 
 	return i;

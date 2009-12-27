@@ -63,5 +63,6 @@ EfiLval Lval_obj = {
 	obj_free,
 	obj_update,
 	obj_sync,
+	NULL,
 	obj_ident,
 };

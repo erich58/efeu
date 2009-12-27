@@ -75,7 +75,7 @@ if	(res && PQresultStatus(res) == PGRES_TUPLES_OK)
 {
 	int nf = PQnfields(res);
 	char **arg = lmalloc((nf + 1) * sizeof arg[0]);
-	StrBuf *sb = sb_create(0);
+	StrBuf *sb = sb_acquire();
 	char *p;
 	int i;
 
@@ -89,8 +89,7 @@ if	(res && PQresultStatus(res) == PGRES_TUPLES_OK)
 		arg[i + 1] = p;
 	}
 
-	sb_putc(0, sb);
-	arg[0] = sb_str(sb, 0);
+	arg[0] = sb_nul(sb);
 
 	if	(grp->head)
 	{
@@ -99,7 +98,7 @@ if	(res && PQresultStatus(res) == PGRES_TUPLES_OK)
 	else	p = mstrcpy(arg[0]);
 
 	lfree(arg);
-	rd_deref(sb);
+	sb_release(sb);
 	return p;
 }
 
@@ -112,7 +111,7 @@ if	(res && PQresultStatus(res) == PGRES_TUPLES_OK)
 {
 	int nf = PQnfields(res);
 	char **arg = lmalloc((nf + 1) * sizeof arg[0]);
-	StrBuf *sb = sb_create(0);
+	StrBuf *sb = sb_acquire();
 	char *p;
 	int i;
 
@@ -125,8 +124,7 @@ if	(res && PQresultStatus(res) == PGRES_TUPLES_OK)
 		arg[i + 1] = p;
 	}
 
-	sb_putc(0, sb);
-	arg[0] = sb_str(sb, 0);
+	arg[0] = sb_nul(sb);
 
 	if	(fmt)
 	{
@@ -135,7 +133,7 @@ if	(res && PQresultStatus(res) == PGRES_TUPLES_OK)
 	else	p = mstrcpy(arg[0]);
 	
 	lfree(arg);
-	rd_deref(sb);
+	sb_release(sb);
 	return p;
 }
 
@@ -223,7 +221,7 @@ EfiVec_resize(vec, 0);
 if	(!def)
 	return;
 
-buf = sb_create(0);
+buf = sb_acquire();
 
 for (;;)
 {
@@ -278,10 +276,12 @@ for (;;)
 			def++;
 		}
 
-		sb_putc(0, buf);
+		cmd = sb_nul(buf);
+		arg = NULL;
 
 		if	(*def == '=')
 		{
+			sb_putc(0, buf);
 			arg_pos = sb_getpos(buf);
 			def++;
 
@@ -321,15 +321,9 @@ for (;;)
 				else	sb_putc(*def, buf);
 			}
 
-			sb_putc(0, buf);
-			arg = sb_str(buf, arg_pos);
+			cmd = sb_nul(buf);
+			arg = cmd + arg_pos;
 		}
-		else
-		{
-			arg = NULL;
-		}
-
-		cmd = sb_str(buf, 0);
 
 		for (i = 0; i < tabsize(ptab); i++)
 		{
@@ -342,7 +336,7 @@ for (;;)
 	}
 }
 
-rd_deref(buf);
+sb_release(buf);
 !, NAME);
 
 hdr << "#endif\t/* HAS_PQ */\n";

@@ -203,7 +203,7 @@ static void f_synopsis (CubeCommand *cmd, IO *out)
 	char *p;
 	int stat;
 
-	io_printf(out, "%s\n\n", cmd->label);
+	io_xprintf(out, "%s\n\n", cmd->label);
 	io_puts("usage: ", out);
 
 	if	(cmd->flags & FLG_LOAD)

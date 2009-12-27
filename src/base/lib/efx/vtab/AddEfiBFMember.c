@@ -48,7 +48,6 @@ static void bf_free (EfiObj *obj)
 static void bf_update (EfiObj *obj)
 {
 	BFDATA *bf = (void *) (obj + 1);
-	UpdateLval(bf->base);
 	bf->def->update(obj->data, bf->base->data);
 }
 
@@ -72,6 +71,7 @@ EfiLval Lval_bf = {
 	bf_free,
 	bf_update,
 	bf_sync,
+	NULL,
 	bf_ident,
 };
 

@@ -45,7 +45,7 @@ typedef struct {
 	int (*newpar) (IO *io, int c, void *par); /* Test auf neuen Absatz */
 	void *par;	/* Parameter für Absatztest */
 	char *lang;	/* Sprachkennung */
-	StrBuf *buf;	/* Zeichenbuffer */
+	StrBuf buf;	/* Zeichenbuffer */
 	int nsave;	/* Gepufferte Zeichen */
 	int nlflag;	/* Flag für neue Zeile */
 	int protect;	/* Schutzflag */
@@ -126,7 +126,7 @@ IO *xlangfilter (IO *io, const char *lang,
 		if	(par->lang == NULL)
 			par->lang = memalloc(1);
 
-		par->buf = sb_create(0);
+		sb_init(&par->buf, 0);
 		par->newpar = isnewpar;
 		par->par = tpar;
 		par->nsave = 0;
@@ -184,7 +184,7 @@ static int lf_key (LFPAR *lf)
 	char *key;
 	int c, pos, stype, type;
 
-	pos = sb_getpos(lf->buf);
+	pos = sb_getpos(&lf->buf);
 	type = 0;
 
 	while ((c = io_getc(lf->io)) != EOF)
@@ -193,17 +193,17 @@ static int lf_key (LFPAR *lf)
 		{
 		case LANG_SEP:
 		case LANG_END:
-			sb_putc(0, lf->buf);
-			key = (char *) lf->buf->data + pos;
+			sb_putc(0, &lf->buf);
+			key = (char *) lf->buf.data + pos;
 			stype = lf_skey(lf->lang, key);
 
 			if	(type < stype)
 				type = stype;
 
-			sb_setpos(lf->buf, pos);
+			sb_setpos(&lf->buf, pos);
 			break;
 		default:
-			sb_putc(c, lf->buf);
+			sb_putc(c, &lf->buf);
 			break;
 		}
 
@@ -238,8 +238,7 @@ static int lf_fill (LFPAR *lf)
 	int vstat;
 	int c;
 
-	sb_begin(lf->buf);
-	sb_sync(lf->buf);
+	sb_trunc(&lf->buf);
 	save_pos = 0;
 	mode = 2;
 	stat = 0;
@@ -249,7 +248,7 @@ static int lf_fill (LFPAR *lf)
 	{
 		if	(lf->protect)
 		{
-			sb_putc(c, lf->buf);
+			sb_putc(c, &lf->buf);
 
 			if	(c == '\n')
 			{
@@ -263,7 +262,7 @@ static int lf_fill (LFPAR *lf)
 		if	(lf->nlflag && lf->newpar &&
 				lf->newpar(lf->io, c, lf->par))
 		{
-			if	(sb_getpos(lf->buf))
+			if	(sb_getpos(&lf->buf))
 			{
 				io_ungetc(c, lf->io);
 				break;
@@ -283,14 +282,14 @@ static int lf_fill (LFPAR *lf)
 			c = io_getc(lf->io);
 
 			if	(mode && c != LANG_BEG)
-				sb_putc('\\', lf->buf);
+				sb_putc('\\', &lf->buf);
 
 			if	(c == EOF)	break;
 		}
 		else if	(c == LANG_BEG && lf_test(lf->io))
 		{
 			if	(mode)
-				sb_putc(c, lf->buf);
+				sb_putc(c, &lf->buf);
 
 			c = io_getc(lf->io);
 
@@ -299,19 +298,19 @@ static int lf_fill (LFPAR *lf)
 		else if	(c == LANG_BEG)
 		{
 			if	(mode == 2)
-				save_pos = sb_getpos(lf->buf);
+				save_pos = sb_getpos(&lf->buf);
 
 			switch (lf_key(lf))
 			{
 			case LANG_MATCH:
 				if	(stat == LANG_DEF || stat == LANG_XDEF)
-					sb_setpos(lf->buf, save_pos);
+					sb_setpos(&lf->buf, save_pos);
 
 				stat = LANG_MATCH;
 				mode = 2;
 				break;
 			case LANG_ALL:
-				save_pos = sb_getpos(lf->buf);
+				save_pos = sb_getpos(&lf->buf);
 
 				if	(save_pos)
 					return save_pos;
@@ -323,7 +322,7 @@ static int lf_fill (LFPAR *lf)
 			case LANG_DEF:
 				if	(stat != LANG_MATCH)
 				{
-					save_pos = sb_getpos(lf->buf);
+					save_pos = sb_getpos(&lf->buf);
 					mode = 1;
 					stat = LANG_DEF;
 				}
@@ -339,17 +338,17 @@ static int lf_fill (LFPAR *lf)
 		}
 		else if	(lf->nlflag && c == '\n')
 		{
-			sb_putc(c, lf->buf);
+			sb_putc(c, &lf->buf);
 			break;
 		}
 
 		if	(mode)
-			sb_putc(c, lf->buf);
+			sb_putc(c, &lf->buf);
 
 		lf->nlflag = (c == '\n');
 	}
 
-	return sb_getpos(lf->buf);
+	return sb_getpos(&lf->buf);
 }
 
 /*	Zeichen lesen
@@ -365,11 +364,11 @@ static int lf_get (void *ptr)
 
 		if	(lf->nsave == 0)	return EOF;
 
-		sb_begin(lf->buf);
+		sb_begin(&lf->buf);
 	}
 
 	lf->nsave--;
-	return sb_getc(lf->buf);
+	return sb_getc(&lf->buf);
 }
 
 
@@ -387,7 +386,7 @@ static int lf_ctrl (void *ptr, int req, va_list list)
 
 		stat = io_close(lf->io);
 		memfree(lf->lang);
-		rd_deref(lf->buf);
+		sb_free(&lf->buf);
 		memfree(lf);
 		return stat;
 

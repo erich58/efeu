@@ -21,8 +21,10 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/object.h>
+#include <EFEU/printobj.h>
 #include <EFEU/refdata.h>
 #include <EFEU/stdtype.h>
+#include <EFEU/Debug.h>
 
 #define	MEMCHECK	0
 
@@ -43,6 +45,8 @@ If not, write to the Free Software Foundation, Inc.,
 #define	do_check(obj)
 #endif
 
+extern DebugClass ObjDebugClass;
+
 static ALLOCTAB(tab_ptr, 100, SIZE_PTR + CHECK_SIZE);
 static ALLOCTAB(tab_small, 292, SIZE_SMALL + CHECK_SIZE);
 static ALLOCTAB(tab_large, 50, SIZE_LARGE + CHECK_SIZE);
@@ -52,6 +56,8 @@ static size_t stat_free = 0;
 
 static void clean_data (EfiObj *obj)
 {
+	UnlinkUpdateList(obj->list);
+
 	if	(obj->lval && obj->lval->free)
 	{
 		obj->lval->free(obj);
@@ -65,6 +71,11 @@ static void clean_data (EfiObj *obj)
 static void clean_ptr (void *data)
 {
 	clean_data(data);
+	del_data(&tab_ptr, data);
+}
+
+static void clean_ext (void *data)
+{
 	del_data(&tab_ptr, data);
 }
 
@@ -87,10 +98,31 @@ static void clean_huge (void *data)
 	stat_free++;
 }
 
-static RefType reftype_ptr = REFTYPE_INIT("PtrObj", NULL, clean_ptr);
-static RefType reftype_small = REFTYPE_INIT("SmallObj", NULL, clean_small);
-static RefType reftype_large = REFTYPE_INIT("LargeObj", NULL, clean_large);
-static RefType reftype_huge = REFTYPE_INIT("HugeObj", NULL, clean_huge);
+static RefType reftype_ptr = REFTYPE_EXT("PtrObj",
+	NULL, clean_ptr, &ObjDebugClass);
+static RefType reftype_ext = REFTYPE_EXT("ExtObj",
+	NULL, clean_ext, &ObjDebugClass);
+static RefType reftype_small = REFTYPE_EXT("SmallObj",
+	NULL, clean_small, &ObjDebugClass);
+static RefType reftype_large = REFTYPE_EXT("LargeObj",
+	NULL, clean_large, &ObjDebugClass);
+static RefType reftype_huge = REFTYPE_EXT("HugeObj",
+	NULL, clean_huge, &ObjDebugClass);
+
+static RefType reftype_large_lval = REFTYPE_EXT("LargeLval",
+	NULL, clean_large, &ObjDebugClass);
+static RefType reftype_huge_lval = REFTYPE_EXT("HugeLval",
+	NULL, clean_huge, &ObjDebugClass);
+
+EfiObj *ExtObj (const EfiType *type, const void *data)
+{
+	EfiObj *obj = rd_init(&reftype_ext, new_data(&tab_ptr));
+	obj->lval = NULL;
+	obj->type = (EfiType *) type;
+	obj->data = (void *) data;
+	obj->list = NULL;
+	return obj;
+}
 
 EfiObj *Obj_alloc (size_t size)
 {
@@ -122,12 +154,34 @@ EfiObj *Obj_alloc (size_t size)
 	return obj;
 }
 
+void *Lval_alloc (size_t size)
+{
+	void *obj;
+
+	if	(size <= SIZE_LARGE)
+	{
+		obj = rd_init(&reftype_large_lval, new_data(&tab_large));
+	}
+	else			
+	{
+		obj = lmalloc(size);
+		memset(obj, 0, size);
+		rd_init(&reftype_huge_lval, obj);
+		stat_alloc++;
+	}
+
+#if	MEMCHECK
+	memcpy(((char *) obj) + size, CHECK_MASK, CHECK_SIZE);
+#endif
+	return obj;
+}
+
 #define	STAT_1	\
 	"%s: Size %3ld +%3ld: %5ld used, %5ld free, %5ld byte (%ldx%ldx%ld)\n"
 #define	STAT_L	\
 	"%s: Large objects: %5ld used, %5ld requests\n"
 
-static void show_alloc(AllocTab *tab, const char *prompt)
+static void show_alloc (AllocTab *tab, const char *prompt)
 {
 	AllocTabList *x;
 	size_t n;
@@ -148,6 +202,28 @@ static void show_alloc(AllocTab *tab, const char *prompt)
 		(unsigned long) tab->elsize);
 }
 
+void Obj_putkey (const EfiObj *obj, IO *out)
+{
+	if	(!obj)
+	{
+		io_puts("NULL", out);
+		return;
+	}
+
+	io_printf(out, "%p:", obj);
+
+	if	(obj->reftype)
+		io_printf(out, " %s", obj->reftype->label);
+
+	io_printf(out, " %u", obj->refcount);
+
+	if	(obj->type)
+		io_printf(out, " %s", obj->type->name);
+
+	if	(obj->lval)
+		io_printf(out, " &%s", obj->lval->name);
+}
+
 /*
 Die Funktion |$1| liefert einen Identifikationsstring zum angegebenen
 Object.
@@ -158,13 +234,15 @@ char *Obj_ident (const EfiObj *obj)
 	if	(obj)
 	{
 		StrBuf *buf;
+		IO *io;
 			
-		buf = sb_create(0);
-		sb_puts(obj->type->name, buf);
+		buf = sb_acquire();
+		io = io_strbuf(buf);
+		Obj_putkey(obj, io);
 
 		if	(obj->lval)
 		{
-			sb_puts(" &", buf);
+			const EfiObjList *list;
 
 			if	(obj->lval->ident)
 			{
@@ -178,18 +256,25 @@ char *Obj_ident (const EfiObj *obj)
 					memfree(p);
 				}
 			}
+
+			sb_puts(obj->list ? " {\n" : " {", buf);
+
+			for (list = obj->list; list; list = list->next)
+			{
+				sb_putc('\t', buf);
+				Obj_putkey(list->obj, io);
+				sb_putc('\n', buf);
+			}
+
+			sb_puts("}", buf);
 		}
 
-		sb_printf(buf, " sync=%u", obj->sync);
-
-		if	(obj->reftype)
-		{
-			sb_printf(buf, " [%s %u]",
-				obj->reftype->label, obj->refcount);
-		}
-		else	sb_printf(buf, " [%u]", obj->refcount);
-
-		return sb2str(buf);
+#if	0
+		sb_puts(" = ", buf);
+		PrintObj(io, obj);
+#endif
+		io_close(io);
+		return sb_cpyrelease(buf);
 	}
 
 	return NULL;
@@ -226,7 +311,7 @@ void Obj_check (const EfiObj *obj)
 	size = sizeof(EfiObj) + obj->type->size;
 
 	if	(memcmp(((const char *) obj) + size, CHECK_MASK, CHECK_SIZE) != 0)
-		io_printf(ioerr, CHECK_MSG, ProgIdent, obj, obj->type->name);
+		io_xprintf(ioerr, CHECK_MSG, ProgIdent, obj, obj->type->name);
 #else
 	;
 #endif

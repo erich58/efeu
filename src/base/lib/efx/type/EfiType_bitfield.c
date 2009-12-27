@@ -23,30 +23,34 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/mktype.h>
 
 typedef struct {
-	OBJECT_VAR;
-	EfiObj *base;
+	LVALOBJ_VAR;
 	EfiBitfield *def;
 } BFPar;
 
 static EfiObj *BFPar_alloc (EfiType *type, va_list list)
 {
-	BFPar *par = (void *) Obj_alloc(sizeof *par + type->size);
-	par->data = (par + 1);
+	BFPar *par = Lval_alloc(sizeof *par + type->size);
 	par->base = RefObj(va_arg(list, EfiObj *));
+//	par->base = va_arg(list, EfiObj *);
 	par->def = va_arg(list, EfiBitfield *);
+	par->data = (par + 1);
+	fprintf(stderr, "base %p: %d\n", par->base, par->base->refcount);
+	AddUpdateObj(&par->base->list, (EfiObj *) par);
 	return (EfiObj *) par;
 }
 
 static void BFPar_free (EfiObj *obj)
 {
 	BFPar *par = (void *) obj;
-	UnrefObj(par->base);
+	CleanData(par->type, par->data, 1);
+
+	if	(par->base)
+		DelUpdateObj(&par->base->list, obj);
 }
 
 static void BFPar_update (EfiObj *obj)
 {
 	BFPar *bf = (void *) obj;
-	UpdateLval(bf->base);
 	bf->def->update(obj->data, bf->base->data);
 }
 
@@ -56,6 +60,8 @@ static void BFPar_sync (EfiObj *obj)
 	bf->def->sync(obj->data, bf->base->data);
 	SyncLval(bf->base);
 }
+
+static void BFPar_unlink (EfiObj *obj);
 
 static char *BFPar_ident (const EfiObj *obj)
 {
@@ -70,8 +76,30 @@ EfiLval Lval_bitfield = {
 	BFPar_free,
 	BFPar_update,
 	BFPar_sync,
+	BFPar_unlink,
 	BFPar_ident,
 };
+
+static EfiLval bf_detached = {
+	"bitfield_detached",
+	NULL,
+	NULL,
+	BFPar_free,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+};
+
+static void BFPar_unlink (EfiObj *obj)
+{
+	BFPar *bf = (void *) obj;
+	fprintf(stderr, "unlink %s %p %d [%s %p %d]\n",
+		obj->type->name, obj,obj->refcount,
+		bf->base->type->name, bf->base, bf->base->refcount);
+	bf->lval = &bf_detached;
+	bf->base = NULL;
+}
 
 static EfiObj *BFPar_get (const EfiStruct *var, const EfiObj *base)
 {

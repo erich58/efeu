@@ -28,6 +28,8 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/config.h>
 
+#define	REFDATA_MAGIC	0x12efda7a
+
 /*
 :*:
 The data type |$1| defines the reference type.
@@ -39,20 +41,33 @@ typedef struct {
 	char *label;		/* Bezeichnung */
 	char *(*ident) (const void *data); /* Identifikationsfunktion */
 	void (*clean) (void *data); /* Löschfunktion */
-	int sync;		/* Debug - Synchronisation */
-	FILE *log;		/* Log - File */
+	void *dbg;		/* Debug Klasse */
 } RefType;
 
 /*
 :*:
 The macro |$1| expands to the initialization values for a
-reference type.
+standard reference type.
 :de:
-Der Makro |$1| expandiert zu den Initialisierungswerten eines Referenztyps.
+Der Makro |$1| expandiert zu den Initialisierungswerten eines Referenztyps
+für Standardanwendungen.
 */
 
 #define	REFTYPE_INIT(label, ident, clean)	\
-{ label, ident, clean, 0, NULL }
+{ label, ident, clean, NULL }
+
+
+/*
+:*:
+The macro |$1| expands to the initialization values for a
+extended reference type.
+:de:
+Der Makro |$1| expandiert zu den Initialisierungswerten eines erweiterten
+Referenztyps.
+*/
+
+#define	REFTYPE_EXT(label, ident, clean, dbg)	\
+{ label, ident, clean, dbg }
 
 /*
 :*:
@@ -63,7 +78,16 @@ Der Makro |$1| liefert die Referenzvariablen für eine Referenzstruktur.
 Er muß zu Beginn der Datentypedefinition stehen.
 */
 
-#define	REFVAR		const RefType *reftype; size_t refcount
+#ifdef	REFDATA_MAGIC
+#define	REFVAR	\
+	unsigned refmagic; \
+	unsigned refcount; \
+	const RefType *reftype;
+#else
+#define	REFVAR	\
+	const RefType *reftype; \
+	size_t refcount
+#endif
 
 /*
 :*:
@@ -76,7 +100,11 @@ Referenzvariablen. Er wird bei der Initialisierung eines
 Referenzobjektes verwendet.
 */
 
+#ifdef	REFDATA_MAGIC
+#define	REFDATA(type)	REFDATA_MAGIC, 1, type
+#else
 #define	REFDATA(type)	type, 1
+#endif
 
 /*
 :*:
@@ -93,7 +121,8 @@ typedef struct {
 
 void *rd_init (const RefType *type, void *data);
 void *rd_refer (const void *data);
-void rd_deref (void *data);
+void *rd_deref (void *data);
+void rd_clean (void *data);
 
 char *rd_ident (const void *data);
 void rd_debug (const void *data, const char *fmt, ...);

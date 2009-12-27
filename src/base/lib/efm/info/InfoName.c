@@ -35,7 +35,7 @@ char *InfoNameToken (char **pptr)
 	if	(pptr == NULL || *pptr == NULL)
 		return NULL;
 
-	sb = sb_create(0);
+	sb = sb_acquire();
 
 	for (ptr = *pptr; *ptr != 0; ptr++)
 	{
@@ -53,7 +53,7 @@ char *InfoNameToken (char **pptr)
 	}
 
 	*pptr = *ptr ? ptr : NULL;
-	return sb2str(sb);
+	return sb_cpyrelease(sb);
 }
 
 int InfoName(IO *io, InfoNode *base, InfoNode *info)

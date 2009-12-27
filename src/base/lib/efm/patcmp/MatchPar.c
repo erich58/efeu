@@ -63,7 +63,7 @@ static char *mp_ident (const void *ptr)
 	if	(!ptr)	return NULL;
 
 	mp = ptr;
-	sb = sb_create(0);
+	sb = sb_acquire();
 	delim = '[';
 
 	while (mp)
@@ -88,7 +88,7 @@ static char *mp_ident (const void *ptr)
 	}
 
 	sb_putc(']', sb);
-	return sb2str(sb);
+	return sb_cpyrelease(sb);
 }
 
 static void mp_clean (void *ptr)
@@ -175,7 +175,7 @@ MatchPar *MatchPar_create (const char *def, size_t dim)
 		{
 			static char err_buf[256];
 			regerror(n, &x->exp, err_buf, sizeof(err_buf));
-			io_printf(ioerr, "%s: %s\n", def, err_buf);
+			io_xprintf(ioerr, "%s: %s\n", def, err_buf);
 			x->cmp = fcmp;
 		}
 		else	x->cmp = rcmp;
@@ -215,8 +215,7 @@ static MatchPar **add_match (MatchPar **ptr, StrBuf *sb, size_t dim)
 {
 	if	(sb_getpos(sb))
 	{
-		sb_putc(0, sb);
-		*ptr = MatchPar_create(sb_str(sb, 0), dim);
+		*ptr = MatchPar_create(sb_nul(sb), dim);
 		return &(*ptr)->next;
 	}
 	else	return ptr;
@@ -229,7 +228,7 @@ MatchPar *MatchPar_scan (IO *io, int delim, size_t dim)
 	int depth;
 	int c;
 
-	sb = sb_create(0);
+	sb = sb_acquire();
 	mp = NULL;
 	ptr = &mp;
 	depth = 0;
@@ -251,7 +250,7 @@ MatchPar *MatchPar_scan (IO *io, int delim, size_t dim)
 			if	(isspace(c) || c == ',')
 			{
 				ptr = add_match(ptr, sb, dim); 
-				sb_begin(sb);
+				sb_trunc(sb);
 				continue;
 			}
 		}
@@ -275,7 +274,7 @@ MatchPar *MatchPar_scan (IO *io, int delim, size_t dim)
 	}
 
 	ptr = add_match(ptr, sb, dim); 
-	rd_deref(sb);
+	sb_release(sb);
 	return mp ? mp : MatchPar_create(NULL, dim);
 }
 

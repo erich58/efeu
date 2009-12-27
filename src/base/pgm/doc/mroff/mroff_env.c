@@ -230,6 +230,24 @@ int mroff_env (void *drv, int flag, va_list list)
 			mroff_cmdline(mr, ".SS Figure");
 		mr->skip = flag;
 		break;
+	case DOC_ENV_TAB:
+		if	(flag)
+		{
+			char *opt = va_arg(list, char *);
+			char *arg = va_arg(list, char *);
+			mroff_tab_beg(mr, opt, arg);
+		}
+		else	mroff_tab_end(mr);
+
+		break;
+	case DOC_ENV_MCOL:
+		if	(flag)
+		{
+			char *def = va_arg(list, char *);
+			int cdim = va_arg(list, int);
+			mroff_tab_mcol(mr, cdim, def);
+		}
+		break;
 	default:
 		return EOF;
 	}

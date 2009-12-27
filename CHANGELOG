@@ -1,6 +1,11 @@
+Version 3.2-3
+
+*	Enhancements to |efeudoc| for better representation of tabulars.
+*	Alternative output functions to IO and SBUF struktures.
+
 Version 3.2-2
 
-*	Fixed path setting in starter script.
+*	Enhancements in makefile creation.
 
 Version 3.2-1
 

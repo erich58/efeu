@@ -84,6 +84,7 @@ static EfiLval Lval_pool = {
 	pool_free,
 	pool_update,
 	pool_sync,
+	NULL,
 	pool_ident,
 };
 

@@ -28,7 +28,7 @@ If not, write to the Free Software Foundation, Inc.,
 #if	0
 #include <EFEU/io.h>
 #define	DEBUG(ctrl, note)	\
-	io_printf(ioerr, "StrCtrl_%s: %s\n", ctrl ? ctrl->name : "null", note)
+	io_xprintf(ioerr, "StrCtrl_%s: %s\n", ctrl ? ctrl->name : "null", note)
 #else
 #define	DEBUG(ctrl, note)
 #endif

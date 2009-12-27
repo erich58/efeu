@@ -94,10 +94,10 @@ EDB *edb_script (EDB *edb, IO *io)
 {
 	if	(edb && io)
 	{
-		StrBuf *buf = sb_create(0);
+		StrBuf *buf = sb_acquire();
 		maincopy(buf, io);
-		edb = edb_filter(edb, (char *) buf->data);
-		rd_deref(buf);
+		edb = edb_filter(edb, sb_nul(buf));
+		sb_release(buf);
 	}
 	
 	io_close(io);

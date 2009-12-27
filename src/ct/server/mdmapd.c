@@ -71,7 +71,7 @@ int main (int argc, char **argv)
 	/*
 	EfeuConfig("standalone");
 	*/
-	SetVersion("$Id: mdmapd.c,v 1.5 2008-02-05 10:16:25 ef Exp $");
+	SetVersion("$Id: mdmapd.c,v 1.6 2008-08-11 21:13:23 ef Exp $");
 	SetupStd();
 	SetupUtil();
 
@@ -95,7 +95,7 @@ int main (int argc, char **argv)
 	if	((p = GetResource("PidFile", NULL)))
 	{
 		io = io_fileopen(p, "w");
-		io_printf(io, "%u\n", (unsigned) getpid());
+		io_xprintf(io, "%u\n", (unsigned) getpid());
 		io_close(io);
 		proc_clean(remove_pid_file, mstrcpy(p));
 	}

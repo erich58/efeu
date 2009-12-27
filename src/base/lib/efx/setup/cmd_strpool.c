@@ -116,15 +116,15 @@ static void f_cvar (EfiFunc *func, void *rval, void **arg)
 
 	if	(!pool || !out)	return;
 
-	io_printf(out, "\nstatic char %s_data[%u] = \"", name, size);
+	io_xprintf(out, "\nstatic char %s_data[%u] = \"", name, size);
 	put_data(out, pool->cdata, pool->csize, 1);
 	put_data(out, pool->mdata, pool->used, 0);
 	io_puts("\";\n\n", out);
 
-	io_printf(out, "static StrPool %s = {\n", name);
+	io_xprintf(out, "static StrPool %s = {\n", name);
 	io_puts("\tREFDATA(&StrPool_reftype), NULL,\n", out);
-	io_printf(out, "\t%s_data, NULL,\n", name);
-	io_printf(out, "\t%u, %u, 0, 0,\n", size, size);
+	io_xprintf(out, "\t%s_data, NULL,\n", name);
+	io_xprintf(out, "\t%u, %u, 0, 0,\n", size, size);
 	io_puts("};\n\n", out);
 }
 

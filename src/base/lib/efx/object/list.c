@@ -53,6 +53,31 @@ void DelObjList(EfiObjList *list)
 	}
 }
 
+
+/*	Updateliste löschen
+*/
+
+void UnlinkUpdateList (EfiObjList *list)
+{
+	if	(!list)	return;
+
+	while (list != NULL)
+	{
+		void *data = list;
+		EfiObj *obj = list->obj;
+		list = list->next;
+
+		io_puts("unlink(", ioerr);
+		Obj_putkey(obj, ioerr);
+		io_puts(")\n", ioerr);
+
+		if	(obj->lval && obj->lval->unlink)
+			obj->lval->unlink(obj);
+
+		del_data(&list_tab, data);
+	}
+}
+
 /*	Länge einer Liste bestimmen
 */
 

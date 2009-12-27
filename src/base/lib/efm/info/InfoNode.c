@@ -116,7 +116,7 @@ InfoNode *GetInfo (InfoNode *base, const char *name)
 	{
 		io_putc(INFO_KEY, ioerr);
 		InfoName(ioerr, NULL, info);
-		io_printf(ioerr, ": Eintrag %s nicht definiert\n", ptr);
+		io_xprintf(ioerr, ": Eintrag %s nicht definiert\n", ptr);
 		return NULL;
 	}
 

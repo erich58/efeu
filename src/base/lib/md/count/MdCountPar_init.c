@@ -32,7 +32,7 @@ static void list (IO *io, EfiType *type, const char *pfx)
 {
 	EfiStruct *st;
 
-	io_printf(io, "type=%s\n", type->name);
+	io_xprintf(io, "type=%s\n", type->name);
 	ListEfiPar(io, type, &EfiPar_EfiCount, pfx, 1);
 
 	for (st = type->list; st; st = st->next)
@@ -50,7 +50,7 @@ static void list_member (IO *io, EfiType *type, const char *pfx)
 	for (st = type->list; st; st = st->next)
 	{
 		char *p = mstrpaste(".", pfx, st->name);
-		io_printf(ioerr, "%s: %s\n", p, st->desc);
+		io_xprintf(ioerr, "%s: %s\n", p, st->desc);
 		list_member(io, st->type, p);
 		memfree(p);
 	}

@@ -94,8 +94,8 @@ void DocBuf_write (DocBuf *doc, IO *io)
 	int i;
 
 	io_puts("\\Name\n", io);
-	io_printf(io, "%s -- ", doc->var[VAR_NAME]);
-	io_printf(io, "%s\n", doc->var[VAR_TITLE]);
+	io_xprintf(io, "%s -- ", doc->var[VAR_NAME]);
+	io_xprintf(io, "%s\n", doc->var[VAR_TITLE]);
 
 	if	(doc->var[VAR_HEAD] || sb_getpos(doc->synopsis))
 	{
@@ -111,10 +111,7 @@ void DocBuf_write (DocBuf *doc, IO *io)
 		}
 
 		if	(sb_getpos(doc->synopsis))
-		{
-			sb_putc(0, doc->synopsis);
-			io_puts((char *) doc->synopsis->data, io);
-		}
+			io_puts(sb_nul(doc->synopsis), io);
 
 		io_puts("\\end\n", io);
 	}
@@ -124,21 +121,19 @@ void DocBuf_write (DocBuf *doc, IO *io)
 		if	(sb_getpos(doc->tab[i]))
 		{
 			io_puts(SecHead(i), io);
-			sb_putc(0, doc->tab[i]);
-			io_puts((char *) doc->tab[i]->data, io);
+			io_puts(sb_nul(doc->tab[i]), io);
 		}
 
-		rd_deref(doc->tab[i]);
+		sb_destroy(doc->tab[i]);
 	}
 
-	rd_deref(doc->synopsis);
-	rd_deref(doc->source);
+	sb_destroy(doc->synopsis);
+	sb_destroy(doc->source);
 
 	if	(doc->var[VAR_COPYRIGHT])
-		io_printf(io, "\\Copyright\nCopyright %s\n",
+		io_xprintf(io, "\\Copyright\nCopyright %s\n",
 			doc->var[VAR_COPYRIGHT]);
 
 	for (i = 0; i < VAR_DIM; i++)
 		memfree(doc->var[i]);
 }
-

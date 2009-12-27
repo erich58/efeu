@@ -39,7 +39,7 @@ static int lf_name (IO *io, const char *name)
 	if	(name == NULL)
 		return 0;
 	if	(!isalpha(name[0]))
-		return io_printf(io, "operator%#s", name);
+		return io_xprintf(io, "operator%#s", name);
 	return io_puts(name, io);
 }
 

@@ -198,9 +198,9 @@ static int do_copy (CmdPar *par, IO *in, IO *out,
 
 static void do_psub (IO *in, IO *out, ArgList *args, int mode)
 {
-	StrBuf *sb = sb_create(0);
+	StrBuf *sb = sb_acquire();
 	f_puts(psubexpandarg(sb, in, args), out, mode);
-	rd_deref(sb);
+	sb_release(sb);
 }
 
 static char *do_vsub (CmdPar *par, IO *in, ArgList *args,
@@ -209,11 +209,11 @@ static char *do_vsub (CmdPar *par, IO *in, ArgList *args,
 	StrBuf *sb;
 	IO *out;
 
-	sb = sb_create(0);
+	sb = sb_acquire();
 	out = io_strbuf(sb);
 	do_copy(par, in, out, args, mode, end);
 	io_close(out);
-	return sb2str(sb);
+	return sb_cpyrelease(sb);
 }
 
 /*

@@ -24,22 +24,21 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/strbuf.h>
 #include <ctype.h>
 
-int io_fmtkey(IO *io, FmtKey *key)
-{
-	FmtKey buf;
-	int c;
-	int n;
+static FKEY_DECL(buf);
 
-	if	(key == NULL)	key = &buf;
+FmtKey *fmtkey (FmtKey *key, int32_t (*get) (void *data), void *data)
+{
+	int32_t c;
+
+	if	(!key)	key = &buf;
 
 	key->mode = 0;
 	key->flags = FMT_RIGHT;
 	key->size = 0;
 	key->width = 0;
 	key->prec = 0;
-	key->list = NULL;
-	c = io_getc(io);
-	n = 1;
+	sb_trunc(&key->buf);
+	c = get(data);
 
 /*	Steuerflags
 */
@@ -53,8 +52,7 @@ int io_fmtkey(IO *io, FmtKey *key)
 		else if	(c == '\'')	key->flags |= FMT_GROUP;
 		else			break;
 
-		c = io_getc(io);
-		n++;
+		c = get(data);
 	}
 
 /*	Feldbreite
@@ -63,44 +61,38 @@ int io_fmtkey(IO *io, FmtKey *key)
 	{
 		key->width *= 10;
 		key->width += c - '0';
-		c = io_getc(io);
-		n++;
+		c = get(data);
 	}
 
 	if	(c == '*')
 	{
 		key->flags |= FMT_NEED_WIDTH;
-		c = io_getc(io);
-		n++;
+		c = get(data);
 	}
 
 /*	Genauigkeit
 */
 	if	(c == '.')
 	{
-		c = io_getc(io);
-		n++;
+		c = get(data);
 
 		if	(c == '-')
 		{
 			key->flags |= FMT_NEGPREC;
-			c = io_getc(io);
-			n++;
+			c = get(data);
 		}
 
 		while (isdigit(c))
 		{
 			key->prec *= 10;
 			key->prec += c - '0';
-			c = io_getc(io);
-			n++;
+			c = get(data);
 		}
 
 		if	(c == '*')
 		{
 			key->flags |= FMT_NEED_PREC;
-			c = io_getc(io);
-			n++;
+			c = get(data);
 		}
 	}
 	else	key->flags |= FMT_NOPREC;
@@ -125,12 +117,8 @@ int io_fmtkey(IO *io, FmtKey *key)
 			key->size = FMTKEY_PDIFF;
 		else	break;
 
-		c = io_getc(io);
-		n++;
+		c = get(data);
 	}
-
-	if	(c == EOF)
-		return n - 1;
 
 	key->mode = c;
 
@@ -139,17 +127,14 @@ int io_fmtkey(IO *io, FmtKey *key)
 		StrBuf *sb;
 		int escape;
 
-		sb = sb_create(0);
+		sb = &key->buf;
 		escape = 0;
 
-		while ((c = io_getc(io)) != EOF)
+		while ((c = get(data)) != EOF)
 		{
-			n++;
-
 			if	(c == '\\')
 			{
-				c = io_getc(io);
-				n++;
+				c = get(data);
 
 				if	(c != ']')
 					sb_putc('\\', sb);
@@ -162,16 +147,20 @@ int io_fmtkey(IO *io, FmtKey *key)
 			sb_putc(c, sb);
 		}
 
-		key->list = sb2str(sb);
+		sb_nul(sb);
 	}
 
-	return n;
+	return key;
 }
 
-int fmtkey (const char *fmt, FmtKey *key)
+int32_t fmtkey_pgetc (void *data)
 {
-	IO *io = io_cstr(fmt);
-	int n = io_fmtkey(io, key);
-	io_close(io);
-	return n;
+	char **ptr = data;
+	return (**ptr) ? *(*ptr)++ : EOF;
 }
+
+int32_t fmtkey_pgetucs (void *data)
+{
+	return pgetucs(data, 4);
+}
+

@@ -56,5 +56,6 @@ EfiLval Lval_ptr = {
 	ptr_free,
 	ptr_update,
 	ptr_sync,
+	NULL,
 	ptr_ident,
 };

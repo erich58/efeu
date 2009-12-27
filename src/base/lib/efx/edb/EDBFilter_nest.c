@@ -154,7 +154,7 @@ static NEST_VAR *new_var (NEST_VAR *ptr, const EfiObj *obj, EfiStruct *st)
 static void list_var (IO *out, EfiStruct *st)
 {
 	for (; st; st = st->next)
-		io_printf(out, "%s\t%s\n", st->name, st->desc);
+		io_xprintf(out, "%s\t%s\n", st->name, st->desc);
 }
 
 static void set_val (NEST_VAR *var, char *ptr)

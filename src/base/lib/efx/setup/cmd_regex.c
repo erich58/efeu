@@ -45,7 +45,7 @@ static EfiObj *parse_regex(IO *io, EfiOp *op, EfiObj *left)
 	int c;
 	int flag;
 
-	sb = sb_create(0);
+	sb = sb_acquire();
 	io_protect(io, 1);
 
 	while ((c = io_getc(io)) != EOF)
@@ -65,7 +65,6 @@ static EfiObj *parse_regex(IO *io, EfiOp *op, EfiObj *left)
 	}
 
 	io_protect(io, 0);
-	sb_putc(0, sb);
 
 	switch (io_peek(io))
 	{
@@ -79,8 +78,8 @@ static EfiObj *parse_regex(IO *io, EfiOp *op, EfiObj *left)
 		break;
 	}
 
-	obj = NewPtrObj(&Type_regex, RegExp_comp((char *) sb->data, flag));
-	rd_deref(sb);
+	obj = NewPtrObj(&Type_regex, RegExp_comp(sb_nul(sb), flag));
+	sb_release(sb);
 	return obj;
 }
 

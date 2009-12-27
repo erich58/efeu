@@ -27,7 +27,7 @@ void CubeHandle_axis (CubeHandle *handle, char *arg)
 	{
 		CubeHandle_stridx(handle, x->sbuf, x->i_name);
 		io_putc(';', handle->out);
-		io_printf(handle->out, "%d;", x->dim);
+		io_xprintf(handle->out, "%d;", x->dim);
 		put_xflag(x->flags, handle->out);
 		io_putc(';', handle->out);
 		CubeHandle_string(handle, mdx_head(x));

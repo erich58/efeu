@@ -64,7 +64,7 @@ static int do_connect (void)
 	if	(connect(fd, (struct sockaddr *) &address, sizeof address))
 		dbg_error(NULL, "$!: connect: $1\n", "s", strerror(errno));
 
-	io_printf(log_out, "* connect\n");
+	io_xprintf(log_out, "* connect\n");
 	return fd;
 }
 
@@ -72,7 +72,7 @@ static void close_connect (int fd)
 {
 	if	(fd != EOF)
 	{
-		io_printf(log_out, "* close\n");
+		io_xprintf(log_out, "* close\n");
 		close(fd);
 	}
 }
@@ -85,7 +85,7 @@ static void send_data (int fd, const char *p)
 
 	fx = fd == EOF ? do_connect() : fd;
 
-	io_printf(log_out, "> %s\n", p);
+	io_xprintf(log_out, "> %s\n", p);
 
 	if	(fx != EOF && write(fx, p, strlen(p) + 1) <= 0)
 		dbg_error(NULL, "$!: write: $1\n", "s", strerror(errno));
@@ -111,7 +111,7 @@ int main (int argc, char **argv)
 	/*
 	EfeuConfig("standalone");
 	*/
-	SetVersion("$Id: mdmap.c,v 1.4 2008-02-06 10:13:02 ef Exp $");
+	SetVersion("$Id: mdmap.c,v 1.5 2008-08-11 21:13:23 ef Exp $");
 	ParseCommand(&argc, argv);
 
 	SetupStd();

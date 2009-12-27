@@ -29,6 +29,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <assert.h>
 
 #define	ERR	"fatal error in %s: use of a deleted object (%p).\n"
+#define	ERRM	"fatal error in %s: object (%p): bad magic number.\n"
 #define	ERR2	"fatal error in %s: object (%p): undefined reference type.\n"
 
 #define	KEY_ALLOC	"alloc"
@@ -48,6 +49,15 @@ static RefData *rd_check (const void *data, const char *name)
 
 	if	(rd == NULL)
 		return NULL;
+
+#ifdef	REFDATA_MAGIC
+	if	(rd->refmagic != REFDATA_MAGIC)
+	{
+		fprintf(stderr, ERRM, name, rd);
+		abort();
+		exit(EXIT_FAILURE);
+	}
+#endif
 
 	if	(rd->reftype == NULL)
 	{
@@ -97,28 +107,7 @@ static void debug_id (FILE *log, const RefData *rd, const char *cmd)
 
 static FILE *debug_log (const RefData *rd)
 {
-	RefType *type = (RefType *) rd->reftype;
-
-	if	(debug_lock)
-		return NULL;
-
-	if	(type->sync < DebugChangeCount)
-	{
-		type->sync = DebugChangeCount;
-
-		if	(type->log)
-		{
-			fprintf(type->log, "STOP debugging %s\n", type->label);
-			fileclose(type->log);
-		}
-
-		type->log = filerefer(LogFile(type->label, DBG_DEBUG));
-
-		if	(type->log)
-			fprintf(type->log, "START debugging %s\n", type->label);
-	}
-
-	return type->log;
+	return debug_lock ? NULL : DebugClassFile(rd->reftype->dbg);
 }
 
 static void std_debug (const RefData *rd, const char *cmd)
@@ -188,6 +177,9 @@ void *rd_init (const RefType *type, void *data)
 	if	(rd)
 	{
 		rd->reftype = type;
+#ifdef	REFDATA_MAGIC
+		rd->refmagic = REFDATA_MAGIC;
+#endif
 		rd->refcount = 1;
 		std_debug(rd, KEY_ALLOC);
 	}
@@ -215,21 +207,21 @@ void *rd_refer (const void *data)
 /*	Referenzzähler verringern/Daten freigeben
 */
 
-void rd_deref (void *data)
+void *rd_deref (void *data)
 {
 	RefData *rd = rd_check(data, "rd_deref");
 
-	if	(rd == NULL)	return;
+	if	(rd == NULL)	return rd;
 
 	if	(rd->refcount > 1)
 	{
 		rd->refcount--;
 		std_debug(rd, KEY_DEREF);
+		return rd->refcount ? rd : NULL;
 	}
 	else
 	{
-		int indent = rd->reftype->log ? 1 : 0;
-
+		int indent = DebugClassFile(rd->reftype->dbg) ? 1 : 0;
 		std_debug(rd, KEY_CLEAN);
 		rd->refcount = 0;
 
@@ -239,5 +231,14 @@ void rd_deref (void *data)
 			rd->reftype->clean(data);
 
 		debug_depth -= indent;
+		return NULL;
 	}
+}
+
+/*	Referenzzähler verringern/Daten freigeben
+*/
+
+void rd_clean (void *data)
+{
+	rd_deref(data);
 }

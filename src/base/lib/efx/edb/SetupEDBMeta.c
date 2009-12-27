@@ -17,8 +17,8 @@
 static void meta_test (EDBMetaDef *def, EDBMeta *meta, const char *arg)
 {
 	char *desc = mlangcpy(def->desc, NULL);
-	io_printf(ioerr, "/* %s */\n", desc);
-	io_printf(ioerr, "@%s: %#s\n", def->name, arg);
+	io_xprintf(ioerr, "/* %s */\n", desc);
+	io_xprintf(ioerr, "@%s: %#s\n", def->name, arg);
 	memfree(desc);
 }
 #endif

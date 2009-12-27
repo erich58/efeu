@@ -63,6 +63,7 @@ static EfiLval Lval_res = {
 	res_free,
 	res_update,
 	res_sync,
+	NULL,
 	res_ident,
 };
 

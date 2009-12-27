@@ -109,7 +109,7 @@ static void show_entry (IO *out, int depth, SParEntry *entry)
 	for (; entry; entry = entry->next)
 	{
 		io_nputc('\t', out, depth);
-		io_printf(out, "%d\t", entry->rval);
+		io_xprintf(out, "%d\t", entry->rval);
 
 		if	(!entry->eval)
 			io_puts("-", out);
@@ -302,7 +302,7 @@ static SParEntry *parse_test (SDef *def, const char *opt,
 			}
 			else
 			{
-				io_printf(ioerr, "!%s\n", p);
+				io_xprintf(ioerr, "!%s\n", p);
 			}
 
 			continue;

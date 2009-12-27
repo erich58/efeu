@@ -83,11 +83,11 @@ static IO *ftab_open (const char *name)
 
 	if	(p == NULL)
 	{
-		io_printf(LOG(DBG_NOTE), ERRMSG, ProgName, name);
+		io_xprintf(LOG(DBG_NOTE), ERRMSG, ProgName, name);
 		return NULL;
 	}
 
-	io_printf(LOG(DBG_DEBUG), M_LOAD, ProgName, p);
+	io_xprintf(LOG(DBG_DEBUG), M_LOAD, ProgName, p);
 	io = io_fileopen(p, "r");
 	memfree(p);
 	return io;
@@ -122,7 +122,7 @@ static void ftab_show (IO *io, MainEntry *entry)
 	if	(!io)	return;
 
 	for (n = 0; n < entry->dim; n++)
-		io_printf(io, "%s: %#s\n",
+		io_xprintf(io, "%s: %#s\n",
 			entry->tab[n].key, entry->tab[n].fmt);
 }
 
@@ -133,7 +133,7 @@ static void ftab_load (IO *io, MainEntry *entry, int endmark)
 	char *p;
 	int c;
 
-	buf = sb_create(1024);
+	buf = sb_acquire();
 	entry->dim = 0;
 
 	while ((c = io_skipcom(io, NULL, 0)) != EOF)
@@ -159,6 +159,7 @@ static void ftab_load (IO *io, MainEntry *entry, int endmark)
 	entry->tab = lmalloc(entry->dim * sizeof(SubEntry) + pos);
 	p = (char *) (entry->tab + entry->dim);
 	memcpy(p, buf->data, pos);
+	sb_release(buf);
 
 	for (n = 0; n < entry->dim; n++)
 	{
@@ -231,12 +232,12 @@ char *FormatTabEntry (const char *name, const char *key)
 
 	if	(s == NULL)
 	{
-		io_printf(LOG(DBG_NOTE), M_NOKEY,
+		io_xprintf(LOG(DBG_NOTE), M_NOKEY,
 			ProgName, key, name);
 		return NULL;
 	}
 
-	io_printf(LOG(DBG_TRACE), "GetFormat(%#s,%#s): %#s\n",
+	io_xprintf(LOG(DBG_TRACE), "GetFormat(%#s,%#s): %#s\n",
 		ptr->name, s->key, s->fmt);
 	return s->fmt;
 }

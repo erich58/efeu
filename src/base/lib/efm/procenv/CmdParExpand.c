@@ -62,7 +62,7 @@ static int show_std (const char *name, void *data, void *ptr)
 {
 	CmdParExpand *eval = data;
 	char *desc = mlangcpy(eval->desc, NULL);
-	io_printf(ptr, "[%s] %#s\n", name, desc);
+	io_xprintf(ptr, "[%s] %#s\n", name, desc);
 	memfree(desc);
 	return 0;
 }

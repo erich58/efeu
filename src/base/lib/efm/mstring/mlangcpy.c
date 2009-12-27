@@ -42,13 +42,13 @@ char *mlangcpy (const char *str, const char *lang)
 		int c;
 
 		io = langfilter(io_cstr(str), lang);
-		buf = sb_create(0);
+		buf = sb_acquire();
 
 		while ((c = io_getc(io)) != EOF)
 			sb_putc(c, buf);
 
 		io_close(io);
-		return sb2str(buf);
+		return sb_cpyrelease(buf);
 	}
 	else	return NULL;
 }

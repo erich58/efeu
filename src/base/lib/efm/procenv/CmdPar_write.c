@@ -165,11 +165,11 @@ void CmdParCall_print (IO *io, CmdParCall *call)
 		put_name(call->eval->name, io);
 
 		if	(call->par)
-			io_printf(io, " %#s", call->par);
+			io_xprintf(io, " %#s", call->par);
 	}
 	else if	(call->par)
 	{
-		io_printf(io, " = %#s", call->par);
+		io_xprintf(io, " = %#s", call->par);
 	}
 }
 
@@ -219,7 +219,7 @@ void CmdPar_write (CmdPar *par, IO *io)
 	for (n = par->var.used, var = par->var.data; n-- > 0; var++)
 	{
 		put_name(var->name, io);
-		io_printf(io, " = %#s\n", var->name, var->value);
+		io_xprintf(io, " = %#s\n", var->name, var->value);
 		put_desc(var->desc, io);
 	}
 

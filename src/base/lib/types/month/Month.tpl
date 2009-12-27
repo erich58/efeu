@@ -42,7 +42,7 @@ def.copy_body = "*tg = *src;";
 def.clean_body = "data->year = data->month = 0;";
 def.print_body = string !
 if	(data->year)
-	io_printf(io, "\"%4d-%02d\"", data->year, data->month);
+	io_xprintf(io, "\"%4d-%02d\"", data->year, data->month);
 else	io_puts("NULL", io);
 !;
 

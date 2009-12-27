@@ -333,7 +333,7 @@ static void headline(IO *io, mdaxis *x, EfiType *type, const char *str)
 	else
 	{
 		io_ctrl(io, PCTRL_RIGHT);
-		io_printf(io, "%*s", PrintFieldWidth, str ? str : CLABEL);
+		io_xprintf(io, "%*s", PrintFieldWidth, str ? str : CLABEL);
 	}
 }
 
@@ -350,8 +350,8 @@ static void put_header(IO *io, mdmat *md)
 
 	switch (mark_flag)
 	{
-	case 1:	io_printf(io, "#%-*d", max(0, label_width - 1), hd); break;
-	case 2:	io_printf(io, "%-*d", label_width, hd); break;
+	case 1:	io_xprintf(io, "#%-*d", max(0, label_width - 1), hd); break;
+	case 2:	io_xprintf(io, "%-*d", label_width, hd); break;
 	default: break;
 	}
 
@@ -452,7 +452,7 @@ static void l_walk(IO *io, mdmat *md, mdaxis *x, const char *label, char *ptr)
 		}
 
 		io_ctrl(io, PCTRL_LEFT);
-		io_printf(io, "%-*s", label_width, label ? label : LLABEL);
+		io_xprintf(io, "%-*s", label_width, label ? label : LLABEL);
 		c_walk(io, md->axis, md->type, ptr);
 		io_ctrl(io, PCTRL_LINE);
 		cur_line++;

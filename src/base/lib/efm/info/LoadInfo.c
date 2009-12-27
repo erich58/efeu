@@ -31,13 +31,8 @@ static void load (InfoNode *base, IO *io);
 
 static void add_entry(InfoNode *node, StrBuf *sb)
 {
-	if	(sb == NULL)	return;
-
 	if	(node && node->func == NULL && node->par == NULL)
-	{
-		node->par = sb2str(sb);
-	}
-	else	rd_deref(sb);
+		node->par = sb_strcpy(sb);
 }
 
 static int get_key(IO *io, char **p)
@@ -45,7 +40,7 @@ static int get_key(IO *io, char **p)
 	StrBuf *sb;
 	int c;
 
-	sb = sb_create(0);
+	sb = sb_acquire();
 
 	while ((c = io_getc(io)) != EOF)
 	{
@@ -81,7 +76,7 @@ static int get_key(IO *io, char **p)
 		sb_putc(c, sb);
 	}
 
-	*p = sb2str(sb);
+	*p = sb_cpyrelease(sb);
 	return c;
 }
 
@@ -90,7 +85,7 @@ static int get_label(IO *io, char **p)
 	StrBuf *sb;
 	int c;
 
-	sb = sb_create(0);
+	sb = sb_acquire();
 
 	do	c = io_getc(io);
 	while	(c == ' ' || c == '\t');
@@ -125,7 +120,7 @@ static int get_label(IO *io, char **p)
 	while (sb->pos && isspace(sb->data[sb->pos - 1]))
 		sb->pos--;
 
-	*p = sb2str(sb);
+	*p = sb_cpyrelease(sb);
 	return c;
 }
 
@@ -134,7 +129,7 @@ static char *get_name(IO *io)
 	StrBuf *sb;
 	int c;
 
-	sb = sb_create(0);
+	sb = sb_acquire();
 
 	do	c = io_getc(io);
 	while	(c == ' ' || c == '\t');
@@ -161,7 +156,7 @@ static char *get_name(IO *io)
 	while (sb->pos && isspace(sb->data[sb->pos - 1]))
 		sb->pos--;
 
-	return sb2str(sb);
+	return sb_cpyrelease(sb);
 }
 
 static void do_load (InfoNode *info)
@@ -247,7 +242,7 @@ static void load (InfoNode *base, IO *io)
 	last = '\n';
 	buf = NULL;
 	node = (base && !base->func && !base->par) ? base : NULL;
-	buf = node ? sb_create(0) : NULL;
+	buf = sb_acquire();
 
 	while ((c = io_getc(io)) != EOF)
 	{
@@ -258,6 +253,7 @@ static void load (InfoNode *base, IO *io)
 			if	(c != INFO_KEY)
 			{
 				add_entry(node, buf);
+				sb_trunc(buf);
 				node = NULL;
 
 				if	(c != '\n')
@@ -266,18 +262,17 @@ static void load (InfoNode *base, IO *io)
 					node = get_node(io, base);
 				}
 
-				buf = node ? sb_create(0) : NULL;
 				last = '\n';
 				continue;
 			}
 		}
 
-		if	(buf)	sb_putc(c, buf);
-
+		sb_putc(c, buf);
 		last = c;
 	}
 
 	add_entry(node, buf);
+	sb_release(buf);
 	io_close(io);
 }
 

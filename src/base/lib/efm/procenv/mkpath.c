@@ -104,7 +104,7 @@ void mkpath_add (StrBuf *sb, const char *dir)
 
 static char *vmkpath (const char *dir, const char *env, va_list list)
 {
-	StrBuf *sb = sb_create(0);
+	StrBuf *sb = sb_acquire();
 
 	if	(dir)
 	{
@@ -122,7 +122,7 @@ static char *vmkpath (const char *dir, const char *env, va_list list)
 		mkpath_add(sb, getenv(env));
 		
 	mkpath_vbase(sb, list);
-	return sb2str(sb);
+	return sb_cpyrelease(sb);
 }
 
 char *mkpath (const char *dir, const char *env, ...)

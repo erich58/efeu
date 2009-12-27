@@ -83,11 +83,11 @@ void *so_open (const char *name)
 	else	handle = dlopen(name, RTLD_GLOBAL|RTLD_NOW);
 
 	if	(!handle)
-		io_printf(ioerr, "dlopen: %s\n", dlerror());
+		io_xprintf(ioerr, "dlopen: %s\n", dlerror());
 
 	return handle;
 #else
-	io_printf(ioerr, "dlopen() not available\n");
+	io_xprintf(ioerr, "dlopen() not available\n");
 	return NULL;
 #endif
 }
@@ -116,11 +116,11 @@ void loadlib (const char *lname, const char *fname)
 	}
 	else if	((init = dlsym(handle, fname)) == NULL)
 	{
-		io_printf(ioerr, "dlsym: %s\n", dlerror());
+		io_xprintf(ioerr, "dlsym: %s\n", dlerror());
 		dlclose(handle);
 	}
 	else	init();
 #else
-	io_printf(ioerr, "loadlib: not implemented\n");
+	io_xprintf(ioerr, "loadlib: not implemented\n");
 #endif
 }

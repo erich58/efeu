@@ -33,17 +33,17 @@ static char *argl_ident (const void *data)
 
 	if	(par->dim)
 	{
-		StrBuf *buf = sb_create(0);
+		StrBuf *buf = sb_acquire();
 		IO *io = io_strbuf(buf);
 		int i;
 
 		io_puts(StrPool_get(data, par->index[0]), io);
 
 		for (i = 1; i < par->dim; i++)
-			io_printf(io, " %#s", StrPool_get(data, par->index[i]));
+			io_xprintf(io, " %#s", StrPool_get(data, par->index[i]));
 
 		io_close(io);
-		return sb2str(buf);
+		return sb_cpyrelease(buf);
 	}
 
 	return	mstrcpy("NULL");

@@ -198,6 +198,40 @@ int term_env (void *drv, int flag, va_list list)
 	case DOC_ENV_FIG:
 		trm->skip = flag;
 		break;
+	case DOC_ENV_TAB:
+		if	(flag)
+		{
+			char *opt = va_arg(list, char *);
+			char *arg = va_arg(list, char *);
+			rd_deref(trm->tab);
+			trm->tab = NewTabular(arg, opt);
+			trm->tab->margin = trm->var.margin;
+			term_newline(trm, 0);
+			term_push(trm);
+			trm->save_out = trm->out;
+			trm->out = trm->tab->io;
+			trm->var.margin = 0;
+		}
+		else
+		{
+			trm->out = trm->save_out;
+			trm->save_out = NULL;
+			Tabular_print(trm->tab, trm->out);
+			rd_deref(trm->tab);
+			trm->tab = NULL;
+			io_putc('\n', trm->out);
+			term_pop(trm);
+			term_newline(trm, 0);
+		}
+		break;
+	case DOC_ENV_MCOL:
+		if	(flag)
+		{
+			char *def = va_arg(list, char *);
+			int cdim = va_arg(list, int);
+			Tabular_multicol(trm->tab, cdim, def);
+		}
+		break;
 	default:
 		return EOF;
 	}

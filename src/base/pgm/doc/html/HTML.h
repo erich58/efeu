@@ -40,33 +40,38 @@ typedef struct {
 	DOCDRV_VAR;	/* Standardausgabevariablen */
 	int class;	/* Dokumentklasse */
 	int copy;	/* Kopiermodus */
-	StrBuf *buf;	/* Temporärer Buffer */
+	StrBuf buf;	/* Temporärer Buffer */
 	char *nextpar;	/* Absatzkennung */
 	char *enditem;	/* Item - Endekemnnung */
 	Stack *s_att;	/* Stack mit Attributen */
 	char *att;	/* Aktuelles Attribute */
-	int bline;	/* Flag für fette Tabellenzeile */
-	Stack *s_cmd; /* Befehlsstack */
+	Stack *s_cmd;	/* Befehlsstack */
+	char *hmode;	/* Zeichenkette vor dem nächsten Zeichen */
+	VecBuf colgrp;	/* Spaltendefinitionen */
+	int cpos;	/* Spaltenposition */
 } HTML;
 
 typedef void (*HTMLCmd) (HTML *html, void *data); 
 
-extern void HTMLCMD_note (HTML *html, void *data);
-extern void HTML_cpush (HTML *html, HTMLCmd cmd, void *data);
-extern void HTML_cpop (HTML *html);
+void HTMLCMD_note (HTML *html, void *data);
+void HTML_cpush (HTML *html, HTMLCmd cmd, void *data);
+void HTML_cpop (HTML *html);
 
-extern IO *DocOut_html (IO *io);
+IO *DocOut_html (IO *io);
 
-extern void HTML_puts (HTML *html, const char *str);
-extern void HTML_newline (HTML *html, int n);
+void HTML_puts (HTML *html, const char *str);
+void HTML_newline (HTML *html, int n);
+void HTML_hmode (HTML *html);
 
-extern void HTML_sym (void *drv, const char *sym);
-extern int HTML_putc (void *drv, int c);
-extern int HTML_plain (void *drv, int c);
-extern void HTML_rem (void *drv, const char *rem);
-extern int HTML_cmd (void *drv, va_list list);
-extern int HTML_env (void *drv, int flag, va_list list);
+void HTML_sym (void *drv, const char *sym);
+int HTML_putc (void *drv, int c);
+int HTML_plain (void *drv, int c);
+void HTML_rem (void *drv, const char *rem);
+int HTML_cmd (void *drv, va_list list);
+int HTML_env (void *drv, int flag, va_list list);
 
-extern IO *html_open (const char *dir, const char *path);
+IO *html_open (const char *dir, const char *path);
+char *HTML_colgrp (HTML *html);
+void HTML_coldef (HTML *html, const char *def);
 
 #endif	/* HTML.h */

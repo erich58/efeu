@@ -107,7 +107,7 @@ static void std_head (const char *name, StrBuf *buf, IO *ein, IO *aus)
 	}
 	else if	(name)
 	{
-		io_printf(aus, "\\title\t%s\n\n", name);
+		io_xprintf(aus, "\\title\t%s\n\n", name);
 	}
 
 	io_ungetc(c, ein);
@@ -165,17 +165,17 @@ static void std_copy (const char *name, StrBuf *buf, IO *ein, IO *aus, IO *src)
 
 void s2d_std (const char *name, IO *ein, IO *aus)
 {
-	StrBuf *buf = sb_create(0);
+	StrBuf *buf = sb_acquire();
 	std_head(name, buf, ein, aus);
 	std_copy(name, buf, ein, aus, aus);
-	rd_deref(buf);
+	sb_release(buf);
 }
 
 void s2d_xstd (const char *name, IO *ein, IO *aus)
 {
-	StrBuf *buf = sb_create(0);
+	StrBuf *buf = sb_acquire();
 	std_copy(name, buf, ein, aus, aus);
-	rd_deref(buf);
+	sb_release(buf);
 }
 
 void s2d_script (const char *name, IO *ein, IO *aus)
@@ -192,10 +192,10 @@ void s2d_xscript (const char *name, IO *ein, IO *aus)
 
 void s2d_com (const char *name, IO *ein, IO *aus)
 {
-	StrBuf *buf = sb_create(0);
+	StrBuf *buf = sb_acquire();
 	std_head(name, buf, ein, aus);
 	std_copy(name, buf, ein, aus, NULL);
-	rd_deref(buf);
+	sb_release(buf);
 }
 
 void s2d_doc (const char *name, IO *ein, IO *aus)
@@ -211,7 +211,7 @@ void s2d_man (const char *name, IO *ein, IO *aus)
 
 	if	(fname)
 	{
-		io_printf(aus, "\\mpage[%s] %s\n",
+		io_xprintf(aus, "\\mpage[%s] %s\n",
 			Secnum ? Secnum : suffix, fname);
 		memfree(fname);
 	}

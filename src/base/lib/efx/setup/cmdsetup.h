@@ -45,12 +45,14 @@ void CmdSetup_vec(void);	/* Vektorfunktionen */
 void CmdSetup_obj(void);	/* Universielle Operatoren */
 void CmdSetup_range(void);	/* Bereichsfunktionen */
 void CmdSetup_pctrl(void);	/* Programmsteuerung */
+void CmdSetup_signal(void);	/* Signalhaendling */
 void CmdSetup_test(void);	/* Testfunktionen */
 void CmdSetup_konv(void);	/* Konvertierungen */
 void CmdSetup_func(void);	/* Funktionen */
 void CmdSetup_op(void);		/* Operatoren einrichten */
 void CmdSetup_info(void);	/* Informationsdatenbank */
 void CmdSetup_strbuf(void);	/* Stringbuffer */
+void CmdSetup_xml(void);	/* XML-Creator */
 void CmdSetup_StrPool(void);	/* Stringpool */
 void CmdSetup_DatPool(void);	/* Datenpool */
 void CmdSetup_MapFile(void);	/* Dateimapping */

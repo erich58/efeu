@@ -56,7 +56,7 @@ void CmdParEval_add (CmdParEval *eval)
 static int show_std (const char *name, void *data, void *ptr)
 {
 	CmdParEval *eval = data;
-	io_printf(ptr, "[%s] %#s\n", name, eval->desc);
+	io_xprintf(ptr, "[%s] %#s\n", name, eval->desc);
 	return 0;
 }
 
@@ -110,8 +110,8 @@ static int f_test (CmdPar *cpar, CmdParVar *var,
 	char *p;
 
 	p = CmdPar_psub(cpar, par, arg);
-	io_printf(ioerr, "%s=%#s, ", var->name, var->value);
-	io_printf(ioerr, "%#s, %#s -> %#s\n", par, arg, p);
+	io_xprintf(ioerr, "%s=%#s, ", var->name, var->value);
+	io_xprintf(ioerr, "%#s, %#s -> %#s\n", par, arg, p);
 	memfree(p);
 	return 0;
 }

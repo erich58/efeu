@@ -53,6 +53,8 @@ static int std_ctrl (void *ptr, int c, va_list list)
 {
 	switch (c)
 	{
+	case IO_FDIN:	return fileno(stdin);
+	case IO_FDOUT:	return fileno(stdout);
 	case IO_FLUSH:	return fflush(stdout);
 	case IO_CLOSE:	return 0;
 	case IO_IDENT:	*va_arg(list, char **) = ptr; return 0;
@@ -64,6 +66,7 @@ static int err_ctrl (void *ptr, int c, va_list list)
 {
 	switch (c)
 	{
+	case IO_FDOUT:	return fileno(stderr);
 	case IO_FLUSH:	return fflush(stderr);
 	case IO_CLOSE:	return 0;
 	case IO_IDENT:	*va_arg(list, char **) = ptr; return 0;

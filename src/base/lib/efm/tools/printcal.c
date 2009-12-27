@@ -37,17 +37,17 @@ typedef int (*PutVal) (IO *io, int w, int val);
 
 static int pad_none(IO *io, int width, int val)
 {
-	return io_printf(io, "%d", val);
+	return io_xprintf(io, "%d", val);
 }
 
 static int pad_zero (IO *io, int width, int val)
 {
-	return io_printf(io, "%0*d", width, val);
+	return io_xprintf(io, "%0*d", width, val);
 }
 
 static int pad_space (IO *io, int width, int val)
 {
-	return io_printf(io, "%*d", width, val);
+	return io_xprintf(io, "%*d", width, val);
 }
 
 
@@ -79,19 +79,19 @@ static int print_key (IO *io, CalInfo *cal, int key, PutVal putval)
 {
 	switch (key)
 	{
-	case 'a':	return io_printf(io, "%2.2s", WTAG(cal->wday));
+	case 'a':	return io_xprintf(io, "%2.2s", WTAG(cal->wday));
 	case 'A':	return io_puts(WTAG(cal->wday), io);
 	case 'h':
-	case 'b':	return io_printf(io, "%3.3s", MONAT(cal->month));
+	case 'b':	return io_xprintf(io, "%3.3s", MONAT(cal->month));
 	case 'B':	return io_puts(MONAT(cal->month), io);
 	case 'd':	return putval(io, 2, cal->day);
 	case 'D':	return print_key_D(io, cal, putval);
-	case 'e':	return io_printf(io, "%2d", cal->day);
+	case 'e':	return io_xprintf(io, "%2d", cal->day);
 	case 'j':	return putval(io, 3, cal->yday);
 	case 'm':	return putval(io, 2, cal->month);
 	case 'U':	return putval(io, 2, sun_week(cal));
 	case 'W':	return putval(io, 2, mon_week(cal));
-	case 'w':	return io_printf(io, "%d", cal->wday);
+	case 'w':	return io_xprintf(io, "%d", cal->wday);
 	case 'y':	return putval(io, 2, cal->year % 100);
 	case 'Y':	return putval(io, 4, cal->year);
 
@@ -118,7 +118,7 @@ static int print_cal (IO *io, const char *fmt, CalInfo *cal)
 
 	if	(fmt == NULL)
 	{
-		return io_printf(io, "%2d.%2d.%04d", cal->day, cal->month,
+		return io_xprintf(io, "%2d.%2d.%04d", cal->day, cal->month,
 			cal->year);
 	}
 
@@ -165,11 +165,11 @@ static char *cal2str (const char *fmt, CalInfo *cal)
 	StrBuf *sb;
 	IO *io;
 
-	sb = sb_create(0);
+	sb = sb_acquire();
 	io = io_strbuf(sb);
 	print_cal(io, fmt, cal);
 	io_close(io);
-	return sb2str(sb);
+	return sb_cpyrelease(sb);
 }
 
 char *Calendar2str (const char *fmt, int idx)

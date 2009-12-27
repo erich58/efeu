@@ -81,7 +81,7 @@ int TeXputc(int c, IO *io)
 		io_putc(c, io);
 		io_putc('~', io);
 		/*
-		io_printf(io, "{\\tt\\symbol{%d}}", c);
+		io_xprintf(io, "{\\tt\\symbol{%d}}", c);
 		*/
 		break;
 
@@ -94,7 +94,7 @@ int TeXputc(int c, IO *io)
 
 	case '"':
 
-		io_printf(io, "{\\tt\\symbol{%d}}", c);
+		io_xprintf(io, "{\\tt\\symbol{%d}}", c);
 		break;
 
 	case '\\':

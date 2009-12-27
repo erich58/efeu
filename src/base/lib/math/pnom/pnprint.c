@@ -31,17 +31,17 @@ int pnprint(IO *io, Polynom *p, const char *fmt)
 		return io_puts("0 0\n", io);
 	}
 
-	n = io_printf(io, "%d %d", p->dim, p->deg);
+	n = io_xprintf(io, "%d %d", p->dim, p->deg);
 
 	for (i = 0; i < p->dim; ++i)
 	{
 		n += io_nputc('\n', io, 1);
-		n += io_printf(io, fmt, p->x[i]);
+		n += io_xprintf(io, fmt, p->x[i]);
 
 		for (j = 0; j <= p->deg; ++j)
 		{
 			n += io_nputc(' ', io, 1);
-			n += io_printf(io, fmt, p->c[i][j]);
+			n += io_xprintf(io, fmt, p->c[i][j]);
 		}
 	}
 

@@ -1,0 +1,138 @@
+# :*:rules for file configuration
+# :de:Regeln zum generieren von Konfigurationsdateien
+#
+# $Synopsis
+# include $1
+#
+# $Copyright (C) 2004 Erich Frühstück
+# This file is part of EFEU.
+# 
+# EFEU is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+# 
+# EFEU is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public
+# License along with EFEU; see the file COPYING.
+# If not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+test $_config_smh && return
+_config_smh=1
+
+include rule.smh
+include cc.smh
+
+# Determine configuration command
+
+x=`dirname $0`
+
+if [ -x $x/shmkmf-config ]; then
+	_config_cmd="$x/shmkmf-config"
+elif [ -f $x/shmkmf-config.sh ]; then
+	_config_cmd="sh $x/shmkmf-config.sh"
+else
+	_config_cmd=shmkmf-config
+fi
+
+if [ -x $x/shmkmf-cflags ]; then
+	_config_cflags="$x/shmkmf-cflags"
+elif [ -f $x/shmkmf-cflags.sh ]; then
+	_config_cflags="sh $x/shmkmf-cflags.sh"
+else
+	_config_cflags=shmkmf-cflags
+fi
+
+# $alias
+# $pconfig !
+# i | A:name | C:name |
+#	:*:These flages are passed to |mf_rule|. They determines
+#	the names of the phony targets for creating/cleaning.
+#	The |-a| flag of |mf_rule| is predefined.
+#	See \mref\{rule.smh(7)} for details.
+#	:de:Diese Flags werden an |mf_rule| weitergereicht. Sie
+#	bestimmen die Namen der Scheinziele zum Generieren/Aufräumen.
+#	Das |-a| Flag von |mf_rule| ist vordefiniert.
+#	Vergleiche dazu \mref\{rule.smh(7)}.
+# r:hdr |
+#	:*:This flag is passed to |shmkmf-config|.
+#	See \mref\{shmkmf-config(1)} for details.
+#	:de:Dieses Flags wird an |shmkmf-config| weitergereicht.
+#	Vergleiche dazu \mref\{shmkmf-config(1)}.
+# u |
+#	:*:If this flag is set, a rule for updating the target is created.
+#	:de:Falls Flag gesetzt ist, wird eine |update|-Regel generiert. Die
+#	Zieldatei wird genau dann überschrieben, wenn sich ihr Inhalt ändert.
+#	Die Prüfung erfolgt bei jedem Aufruf von |make|.
+# d:dep |
+#	:*:expands depend list by <dep>, will be ignored in update mode.
+#	:de:ergänzt die Abhängigkeiten um <dep>. Wird im update-Modus
+#	ignoriert.
+# :tg |
+#	:*:is the name of the target file.
+#	:de:Ist der Name der Zieldatei
+# :src |
+#	:*:is the name of the source file.
+#	:de:Ist der Name der Quelldatei.
+# !
+# $Description
+# Die Funktion |mf_config| kopiert die Schablone <src> mit |shmkmf-config| nach
+# <tg>, wobei systemspezifische Parameter eingebaut werden.
+# Falls Flag |-u| gesetzt ist, wird eine |update|-Regel generiert. Die
+# Zieldatei wird genau dann überschrieben, wenn sich ihr Inhalt ändert. Die
+# Prüfung erfolgt bei jedem Aufruf von |make|.
+# Die folgenden Optionen und Argumente werden akzeptiert:
+#
+# @arglist
+
+mf_config ()
+{
+	_config_flg="-a"
+	_config_opt=""
+	_config_update=
+	_config_dep=""
+
+	while [ -n "$1" ]
+	do
+		case "$1" in
+		-i)	_config_flg="$_config_flg $1"; shift 1;;
+		-[AC])	_config_flg="$_config_flg $1 $2"; shift 2;;
+		-u)	_config_update="1"; shift 1;;
+		-d)	_config_dep="$_config_dep $2"; shift 2;;
+		-r)	_config_opt="$_config_opt $1 $2"; shift 2;;
+		-*)	shmkmf_invop mf_config "$1";;
+		*)	break;;
+		esac
+	done
+
+	if [ -n "$_config_update" ]; then
+		mf_rule -d $_config_flg "$1" "" \
+			"CC='$CC' $_config_cmd $_config_opt update $2 \$@"
+	else
+		mf_rule $_config_flg "$1" "$_config_dep $2" \
+			"CC='$CC' $_config_cmd $_config_opt file $2 > \$@"
+	fi
+}
+
+# $Example
+#
+# \config shmkmf
+#
+# Die folgende Zeile
+# \shmkmf[-x] generiert die Ausgabe
+# include config.smh
+# mf_config foo.h foo.hcfg
+# mf_config -u bar.h bar.hcfg
+# \end
+#
+# $SeeAlso
+# \mref{shmkmf(1)}, 
+# \mref{shmkmf-config(1)}, 
+# \mref{shmkmf-cflags(1)}, 
+# \mref{file.smh(7)},
+# \mref{script.smh(7)}.

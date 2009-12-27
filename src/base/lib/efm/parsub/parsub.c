@@ -65,36 +65,37 @@ void psubfunc (int key, int (*copy) (IO *in, IO *out, void *par), void *par)
 /*	Kopierfunktion
 */
 
-static STRBUF(expand_buf, 1024);
+static SB_DECL(expand_buf, 0);
+
+static int32_t getnext (void *data)
+{
+	return io_getucs(data);
+}
 
 static void psubfmt (StrBuf *buf, IO *in, const char *par)
 {
-	FmtKey key;
-	IO *out;
+	FmtKey *key = fmtkey(NULL, getnext, in);
 
-	out = io_strbuf(buf);
-	io_fmtkey(in, &key);
-
-	switch (key.mode)
+	switch (key->mode)
 	{
 	case 's':
 	case 'S':
-		fmt_str(out, &key, par);
+		fmt_str(buf, key, par);
 		break;
 	case 'c':
 	case 'C':
-		fmt_char(out, &key, par ? par[0] : 0);
+		fmt_char(buf, key, par ? par[0] : 0);
 		break;
 	case 'i':
 	case 'd':
-		fmt_intmax(out, &key, par ? mstr2int64(par, NULL, 10) : 0);
+		fmt_intmax(buf, key, par ? mstr2int64(par, NULL, 10) : 0);
 		break;
 	case 'b':
 	case 'o':
 	case 'u':
 	case 'x':
 	case 'X':
-		fmt_uintmax(out, &key, par ? mstr2uint64(par, NULL, 10) : 0);
+		fmt_uintmax(buf, key, par ? mstr2uint64(par, NULL, 10) : 0);
 		break;
 	case 'f':
 	case 'e':
@@ -103,17 +104,15 @@ static void psubfmt (StrBuf *buf, IO *in, const char *par)
 	case 'G':
 	case 'a':
 	case 'A':
-		fmt_double(out, &key, par ? C_strtod(par, NULL) : 0.);
+		fmt_double(buf, key, par ? C_strtod(par, NULL) : 0.);
 		break;
 	default:
-		io_note(in, E_ILKEY, "c", key.mode);
+		io_note(in, E_ILKEY, "c", key->mode);
 		/* FALLTHROUGH */
 	case 0:
 		sb_puts(par, buf);
 		break;
 	}
-
-	io_close(out);
 }
 
 char *psubexpand (StrBuf *buf, IO *in, int argc, char **argv)
@@ -174,7 +173,7 @@ char *psubexpandarg (StrBuf *buf, IO *in, ArgList *argl)
 
 	if	(!buf)	buf = &expand_buf;
 
-	sb_setpos(buf, 0);
+	sb_trunc(buf);
 	def.key = io_getc(in);
 	ptr = vb_search(&psubtab, &def, pdef_cmp, VB_SEARCH);
 
@@ -214,26 +213,23 @@ char *psubexpandarg (StrBuf *buf, IO *in, ArgList *argl)
 		sb_putc(def.key, buf);
 	}
 
-	sb_putc(0, buf);
-	return (char *) buf->data;
+	return sb_nul(buf);
 }
 
 int io_pcopy (IO *in, IO *out, int delim, int argc, char **argv)
 {
 	StrBuf *buf;
 	char *arg;
-	int c, n, flag;
+	int32_t c, n, flag;
 
 	n = 0;
 	flag = 0;
-	buf = NULL;
+	buf = sb_acquire();
 
 	while ((c = io_mgetc(in, 1)) != delim && c != EOF)
 	{
 		if	(c == PSUBKEY)
 		{
-			if	(!buf)	buf = sb_create(1024);
-
 			arg = psubexpand(buf, in, argc, argv);
 
 			if	(flag)
@@ -244,11 +240,12 @@ int io_pcopy (IO *in, IO *out, int delim, int argc, char **argv)
 		{
 			if	(c == '"')	flag = !flag;
 
+			c = io_ucscompose(in, c);
 			n += io_nputc(c, out, 1);
 		}
 	}
 
-	rd_deref(buf);
+	sb_release(buf);
 	return n;
 }
 
@@ -256,18 +253,16 @@ int io_pcopyarg (IO *in, IO *out, int delim, ArgList *args)
 {
 	StrBuf *buf;
 	char *arg;
-	int c, n, flag;
+	int32_t c, n, flag;
 
 	n = 0;
 	flag = 0;
-	buf = NULL;
+	buf = sb_acquire();
 
 	while ((c = io_mgetc(in, 1)) != delim && c != EOF)
 	{
 		if	(c == PSUBKEY)
 		{
-			if	(!buf)	buf = sb_create(1024);
-
 			arg = psubexpandarg(buf, in, args);
 
 			if	(flag)
@@ -278,21 +273,22 @@ int io_pcopyarg (IO *in, IO *out, int delim, ArgList *args)
 		{
 			if	(c == '"')	flag = !flag;
 
-			n += io_nputc(c, out, 1);
+			c = io_ucscompose(in, c);
+			n += io_putucs(c, out);
 		}
 	}
 
-	rd_deref(buf);
+	sb_release(buf);
 	return n;
 }
 
 char *mpcopy (IO *in, int delim, int argc, char **argv)
 {
-	StrBuf *sb = sb_create(0);
+	StrBuf *sb = sb_acquire();
 	IO *out = io_strbuf(sb);
 	io_pcopy(in, out, delim, argc, argv);
 	io_close(out);
-	return sb2str(sb);
+	return sb_cpyrelease(sb);
 }
 
 
@@ -353,13 +349,13 @@ char *mpsubvec (const char *fmt, int argc, char **argv)
 {
 	if	(fmt)
 	{
-		StrBuf *sb = sb_create(0);
+		StrBuf *sb = sb_acquire();
 		IO *in = io_cstr(fmt);
 		IO *out = io_strbuf(sb);
 		io_pcopy(in, out, EOF, argc, argv);
 		io_close(out);
 		io_close(in);
-		return sb2str(sb);
+		return sb_cpyrelease(sb);
 	}
 	else	return NULL;
 }
@@ -368,11 +364,11 @@ char *mpsub (const char *fmt, ArgList *argl)
 {
 	if	(fmt)
 	{
-		StrBuf *sb = sb_create(0);
+		StrBuf *sb = sb_acquire();
 		IO *out = io_strbuf(sb);
 		io_psub(out, fmt, argl);
 		io_close(out);
-		return sb2str(sb);
+		return sb_cpyrelease(sb);
 	}
 
 	return NULL;

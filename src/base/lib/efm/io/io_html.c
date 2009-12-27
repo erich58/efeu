@@ -88,7 +88,7 @@ static int filter_ctrl (void *ptr, int req, va_list list)
 		return filter->protect;
 	case CTRL_CMD:
 		fmt = va_arg(list, char *);
-		io_vprintf(filter->io, fmt, list);
+		io_vxprintf(filter->io, fmt, list);
 		return 0;
 	default:
 		break;

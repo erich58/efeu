@@ -1,8 +1,7 @@
 /*
-:*:printf for string buffer
-:de:Printf für Stringbuffer
+Datenwerte formatiern
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994, 2008 Erich Frühstück
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -21,41 +20,29 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#define	_ISOC99_SOURCE
+
 #include <EFEU/strbuf.h>
-#include <EFEU/io.h>
+#include <stdarg.h>
 
 /*
-:*:
-The function |$1| allows formatted printing to string buffers.
-See |io_printf| for a detailed description.
-:de:
-The Funktion |$1| erlaubt formatierte Ausgaben in den Stringbuffer <sb>.
-Vergleiche dazu |io_printf| für eine detailierte Beschreibung.
+Die Funktion |$1| erlaubt formatierte Ausgaben in den Stringbuffer <sb>.
+Es wird ein implizites |sb_sync| durchgeführt. Der Stringbuffer ist
+anschließend nullterminiert. Ein Nullpointer als Formatstring ist zulässig.
 */
 
 int sb_printf (StrBuf *sb, const char *fmt, ...)
 {
-	if	(sb && fmt)
-	{
-		va_list args;
-		IO *io;
-		int n;
+	va_list args;
+	int n;
 
-		io = io_strbuf(sb);
-		va_start(args, fmt);
-		n = io_vprintf(io, fmt, args);
-		va_end(args);
-		io_close(io);
-		return n;
-	}
-	else	return 0;
+	va_start(args, fmt);
+	n = sb_vprintf(sb, fmt, args);
+	va_end(args);
+	return n;
 }
 
 /*
-:*:
-The function |$1| does the same as |sb_printf| with an argument of |va_list|
-instead of a variable argument list.
-:de:
 Die Funktion |$1| hat die selbe Funktionalität wie |sb_printf|, nur wird
 ein Argument vom Typ |va_list| anstelle einer variablen Argumentliste
 verwendet.
@@ -63,22 +50,49 @@ verwendet.
 
 int sb_vprintf (StrBuf *sb, const char *fmt, va_list list)
 {
-	if	(sb && fmt)
+	int n;
+	va_list args;
+#if	! HAS_SNPRINTF
+	FILE *file;
+	char *p;
+#endif
+
+	if	(!sb)	return 0;
+
+	sb_sync(sb);
+
+#if	HAS_SNPRINTF
+	if	(!sb->nfree)
+		sb_expand(sb, 1);
+
+	if	(!fmt)
 	{
-		IO *io;
-		int n;
-
-		io = io_strbuf(sb);
-		n = io_vprintf(io, fmt, list);
-		io_close(io);
-		return n;
+		sb->data[sb->pos] = 0;
+		return 0;
 	}
-	else	return 0;
-}
 
-/*
-$SeeAlso
-\mref{io_printf(3)},
-\mref{strbuf(3)},
-\mref{strbuf(7)}.
-*/
+	va_copy(args, list);
+
+	while ((n = vsnprintf(sb_ptr(sb), sb->nfree, fmt, args)) >= sb->nfree)
+	{
+		sb_expand(sb, n + 1);
+		va_end(args);
+		va_copy(args, list);
+	}
+
+#else
+	if	(!(file = tmpfile()))
+		return 0;
+
+	n = vfprintf(file, fmt, list);
+	p = sb_expand(sb, n + 1);
+	rewind(file);
+	n = fread(p, 1, n, file);
+	p[n] = 0;
+	fclose(file);
+#endif
+	va_end(args);
+	sb->pos += n;
+	sb->nfree -= n;
+	return n;
+}

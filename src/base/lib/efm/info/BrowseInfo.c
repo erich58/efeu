@@ -84,18 +84,6 @@ static void mdef_std (const char *name)
 	StdInfoBrowser(name);
 }
 
-static void mdef_eis (const char *name)
-{
-	char *cmd;
-	
-	if	(name && *name == '/')	name++;
-
-	cmd = name ? msprintf("eis -n %#s -p %#s", name, ProgIdent) :
-		msprintf("eis -p %#s", ProgIdent);
-	callproc(cmd);
-	memfree(cmd);
-}
-
 #if	HAS_DLFCN
 
 static void mdef_extern (const char *lib, const char *browser, const char *name)
@@ -112,7 +100,7 @@ static void mdef_extern (const char *lib, const char *browser, const char *name)
 	{
 		eval(name);
 	}
-	else	io_printf(ioerr, "dlsym: %s\n", dlerror());
+	else	io_xprintf(ioerr, "dlsym: %s\n", dlerror());
 
 	so_close(handle);
 }
@@ -147,9 +135,6 @@ static MDEF mdef[] = {
 	}, { "std", mdef_std,
 		":*:use standard browser\n"
 		":de:Verwende den Standardbrowser\n"
-	}, { "eis", mdef_eis,
-		":*:start |eis| to show info entries\n"
-		":de:Verwende |eis| zur Anzeige der INFO-Einträge\n"
 #if	HAS_DLFCN
 	}, { "win", mdef_win,
 		":*:use curses based browser\n"
@@ -193,7 +178,7 @@ static void eval_info (const char *mode, const char *name)
 		}
 	}
 
-	dbg_error("info", ERR_MODE, "s", mode);
+	dbg_note("info", ERR_MODE, "s", mode);
 }
 
 void BrowseInfo (const char *name)
@@ -210,7 +195,7 @@ void BrowseInfo (const char *name)
 	if	(name[0] == '?')
 	{
 		mdef_list(iostd);
-		exit(EXIT_SUCCESS);
+		return;
 	}
 
 	mode = NULL;

@@ -44,7 +44,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <unistd.h>
 
 #ifndef	NULL
-#define	NULL	(void *) 0
+#define	NULL	((void *) 0)
 #endif
 
 @eval typedef size_t unsigned long
@@ -68,5 +68,7 @@ printf("#define	REVBYTEORDER %d\n", ((char *) &x)[0]);
 #endif
 
 extern double C_strtod (const char *def, char **ptr);
+
+@eval success HAS_SNPRINTF 'va_list list; vsnprintf(NULL, 0, NULL, list)'
 
 #endif	/* EFEU/config.h */

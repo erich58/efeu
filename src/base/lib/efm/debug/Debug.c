@@ -195,7 +195,7 @@ void DebugMode (const char *def)
 }
 
 
-static LOGDEF *LogDef (const char *class, int level)
+static LOGDEF *get_log (const char *class, int level)
 {
 	static int need_setup = 1;
 	LOGDEF *log;
@@ -223,7 +223,7 @@ static LOGDEF *LogDef (const char *class, int level)
 	return log;
 }
 
-static LOGDEF *ParseLogDef (const char *def)
+static LOGDEF *parse_log (const char *def)
 {
 	char *p, *class;
 	LOGDEF *log;
@@ -235,10 +235,10 @@ static LOGDEF *ParseLogDef (const char *def)
 	if	(p)
 	{
 		class = mstrncpy(def, p - def);
-		log = LogDef(class, DebugKey(p + 1));
+		log = get_log(class, DebugKey(p + 1));
 		memfree(class);
 	}
-	else	log = LogDef(NULL, DebugKey(def));
+	else	log = get_log(NULL, DebugKey(def));
 
 	return log;
 }
@@ -252,7 +252,7 @@ liefert die Funktion einen Nullpointer.
 
 FILE *LogFile (const char *class, int level)
 {
-	LOGDEF *log = LogDef(class, level);
+	LOGDEF *log = get_log(class, level);
 	return log ? (log->file ? log->file : stderr) : NULL;
 }
 
@@ -264,7 +264,7 @@ einer FILE-Struktur die zugehörige IO-Struktur geliefert.
 
 IO *LogOut (const char *class, int level)
 {
-	LOGDEF *log = LogDef(class, level);
+	LOGDEF *log = get_log(class, level);
 	return log ? (log->out ? log->out : ioerr) : NULL;
 }
 
@@ -278,7 +278,7 @@ und ruft die zugehörige Logdatei ab. Die beiden Funktionsaufrufe
 
 FILE *ParseLogFile (const char *def)
 {
-	LOGDEF *log = ParseLogDef(def);
+	LOGDEF *log = parse_log(def);
 	return log ? (log->file ? log->file : stderr) : NULL;
 }
 
@@ -290,7 +290,7 @@ einer FILE-Struktur die zugehörige IO-Struktur geliefert.
 
 IO *ParseLogOut (const char *def)
 {
-	LOGDEF *log = ParseLogDef(def);
+	LOGDEF *log = parse_log(def);
 	return log ? (log->out ? log->out : ioerr) : NULL;
 }
 

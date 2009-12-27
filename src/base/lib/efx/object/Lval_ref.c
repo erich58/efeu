@@ -64,5 +64,6 @@ EfiLval Lval_ref = {
 	ref_free,
 	ref_update,
 	ref_sync,
+	NULL,
 	ref_ident,
 };

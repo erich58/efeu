@@ -96,7 +96,7 @@ void PGType_list (void *handle, IO *out)
 		return;
 
 	for (i = 0; i < ptr->dim; i++)
-		io_printf(out, "%u\t%s\n", ptr->entry[i].oid,
+		io_xprintf(out, "%u\t%s\n", ptr->entry[i].oid,
 			ptr->entry[i].name);
 }
 

@@ -39,8 +39,8 @@ typedef struct {
 static void fpar_init(FUNCPAR *par, EfiFunc *func)
 {
 	par->func = func;
-	par->obj = memalloc(func->dim * sizeof(EfiObj *));
-	par->arg = memalloc(func->dim * sizeof(void *));
+	par->obj = lmalloc(func->dim * sizeof par->obj[0]);
+	par->arg = lmalloc(func->dim * sizeof par->arg[0]);
 }
 
 static void fpar_clear(FUNCPAR *par, int n)
@@ -49,12 +49,14 @@ static void fpar_clear(FUNCPAR *par, int n)
 
 	for (i = 0; i < n; i++)
 	{
-		SyncLval(par->obj[i]);
+		if	(par->func->arg[i].lval)
+			SyncLval(par->obj[i]);
+
 		UnrefObj(par->obj[i]);
 	}
 
-	memfree(par->obj);
-	memfree(par->arg);
+	lfree(par->obj);
+	lfree(par->arg);
 }
 
 static int fpar_error(FUNCPAR *par, const char *fmt, int n)
@@ -172,7 +174,13 @@ EfiObj *EvalFunc (EfiFunc *func, const EfiObjList *list)
 
 	obj = MakeRetVal(func, firstarg, par.arg);
 	fpar_clear(&par, dim);
-	SyncObjList((EfiObjList *) list);
+	
+	if	(list)
+	{
+	//	fprintf(stderr, "func: %s\n", func->name);
+		SyncObjList((EfiObjList *) list);
+	}
+
 	DelObjList((EfiObjList *) list);
 	return obj;
 }

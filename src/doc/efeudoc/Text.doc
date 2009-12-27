@@ -25,18 +25,19 @@ erste Zeichen des kursiven Textes ein Kennzeichen ist, oder
 sein könnte (Argument eines Textmakros).
 
 \newpage
-/*
 \fig[6]	Texthervorhebungen
 
-\tab[1] 2*2
-[*] | Eingabe | Darstellung
+\tab |l|r|r|
+---
+ | <*Eingabe*> | <*Darstellung*>
+===
 Standardschrift | <|\<=Text=\>|> | <=Text=>
 Einfache Anführung | <|\<'Text'\>|> | <'Text'>
 Doppelte Anführung | <|\<"Text"\>|> | <"Text">
 Fettshrift | <|\<*Text*\>|> | <*Text*>
 Schreibmaschinenschrift | <|\<\|Text\|\>|> | <|Text|>
 Italic | <|\</Text/\>|> | </Text/>
-*/
+---
 
 Das Pipe-Symbol |||| dient zur Ausgabe einer kurzen Sequenz
 von unbearbeiteten Texten und Sonderzeichen in Schreibmaschinenschrift.
@@ -87,7 +88,7 @@ ein Schreibstandard sein), kann das Ende der Liste anhand der
 Einrücktiefe ermittelt werden.  Beginnt ein Text ohne Marke auf der
 selben Ebene wie die Listenmarken, wird die Liste beendet. Sie kann
 auch direkt mit \index{|\endlist|} oder \index{|\endall|} beendet
-werden.  Ein Gliederungsbefehl beendet alle offenen Listen.
+werden. Ein Gliederungsbefehl beendet alle offenen Listen.
 
 Die zu einer Marke gehörenden Listeneinträge können bereits
 neben der Marke beginnnen, die Marke wird bei der Ermittlung der

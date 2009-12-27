@@ -122,12 +122,12 @@ static char *strmul (const char *str, int n)
 
 	if	(!str || n <= 0)	return NULL;
 
-	sb = sb_create(0);
+	sb = sb_acquire();
 
 	for (; n > 0; n--)
 		sb_puts(str, sb);
 
-	return sb2str(sb);
+	return sb_cpyrelease(sb);
 }
 
 EXPR(f_str_lmul, strmul(STR(1), INT(0)))
@@ -163,11 +163,11 @@ static void k_type2str (EfiFunc *func, void *rval, void **arg)
 	StrBuf *sb;
 	IO *io;
 
-	sb = sb_create(0);
+	sb = sb_acquire();
 	io = io_strbuf(sb);
 	PrintType(io, Val_type(arg[0]), Val_int(arg[1]));
 	io_close(io);
-	Val_str(rval) = sb2str(sb);
+	Val_str(rval) = sb_cpyrelease(sb);
 }
 
 static void f_str_index (EfiFunc *func, void *rval, void **arg)
@@ -251,7 +251,7 @@ static void f_xstrcut (EfiFunc *func, void *rval, void **arg)
 
 	in = io_cstr(base);
 	delim = STR(1);
-	sb = sb_create(0);
+	sb = sb_acquire();
 	out = io_strbuf(sb);
 
 	while ((c = io_getc(in)) != EOF)
@@ -299,7 +299,7 @@ static void f_xstrcut (EfiFunc *func, void *rval, void **arg)
 	while ((c = io_getc(in)) != EOF)
 		sb_putc(c, sb);
 
-	STR(0) = sb2str(sb);
+	STR(0) = sb_cpyrelease(sb);
 	io_close(in);
 	memfree(base);
 }
@@ -321,7 +321,7 @@ static void f_strsub (EfiFunc *func, void *rval, void **arg)
 	repl = STR(1);
 	in = STR(2);
 	flag = ! Val_bool(arg[3]);
-	sb = sb_create(0);
+	sb = sb_acquire();
 
 	while (*s != 0)
 	{
@@ -347,7 +347,7 @@ static void f_strsub (EfiFunc *func, void *rval, void **arg)
 		}
 	}
 
-	RVSTR = sb2str(sb);
+	RVSTR = sb_cpyrelease(sb);
 }
 
 static void f_upper (EfiFunc *func, void *rval, void **arg)

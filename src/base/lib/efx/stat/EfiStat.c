@@ -32,13 +32,13 @@ static void data_info (IO *io, const char *name, void *data, Stack *stack)
 	if	(!data)	return;
 
 	p = rd_ident(data);
-	io_printf(io, "\t%s:\t[0] %#s\n", name, p);
+	io_xprintf(io, "\t%s:\t[0] %#s\n", name, p);
 	memfree(p);
 
 	for (n = 1; stack; stack = stack->next, n++)
 	{
 		p = rd_ident(stack->data);
-		io_printf(io, "\t\t[%d] %#s\n", n, p);
+		io_xprintf(io, "\t\t[%d] %#s\n", n, p);
 		memfree(p);
 	}
 }
@@ -49,13 +49,13 @@ static char *stat_ident (const void *data)
 	StrBuf *sb;
 	IO *io;
 
-	sb = sb_create(0);
+	sb = sb_acquire();
 	io = io_strbuf(sb);
-	io_printf(io, "%s {\n", ptr->name); 
+	io_xprintf(io, "%s {\n", ptr->name); 
 	data_info(io, "src", ptr->src, ptr->src_stack);
 	io_puts("}\n", io);
 	io_close(io);
-	return sb2str(sb);
+	return sb_cpyrelease(sb);
 }
 
 static void stat_clean (void *ptr)

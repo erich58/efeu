@@ -32,9 +32,9 @@ If not, write to the Free Software Foundation, Inc.,
 
 typedef struct {
 	IO *io;		/* Eingabestruktur */
-	char *key;		/* Abschlußkennung */
-	size_t save;		/* Zahl der gepufferten Zeichen */
-	StrBuf *buf;		/* Zeichenbuffer */
+	char *key;	/* Abschlußkennung */
+	size_t save;	/* Zahl der gepufferten Zeichen */
+	StrBuf buf;	/* Zeichenbuffer */
 } SUBIO;
 
 
@@ -55,10 +55,10 @@ static int subio_get (void *ptr)
 		return '\n';
 	default:
 		subio->save--;
-		return sb_getc(subio->buf);
+		return sb_getc(&subio->buf);
 	}
 
-	sb_begin(subio->buf);
+	sb_begin(&subio->buf);
 
 	while ((c = io_getc(subio->io)) != EOF)
 	{
@@ -67,21 +67,21 @@ static int subio_get (void *ptr)
 
 		if	(c == '\t')
 		{
-			do	sb_putc(' ', subio->buf);
-			while	(sb_getpos(subio->buf) % 8 != 0);
+			do	sb_putc(' ', &subio->buf);
+			while	(sb_getpos(&subio->buf) % 8 != 0);
 		}
-		else	sb_putc(c, subio->buf);
+		else	sb_putc(c, &subio->buf);
 	}
 
-	if	(sb_getpos(subio->buf) == 0)
+	if	(sb_getpos(&subio->buf) == 0)
 		return c;
 
-	sb_putc(0, subio->buf);
-	subio->save = sb_getpos(subio->buf);
+	sb_putc(0, &subio->buf);
+	subio->save = sb_getpos(&subio->buf);
 
 	if	(subio->key)
 	{
-		if	(patcmp(subio->key, (char *) subio->buf->data, NULL))
+		if	(patcmp(subio->key, sb_nul(&subio->buf), NULL))
 			return EOF;
 	}
 	else if	(subio->save == 1)
@@ -89,9 +89,9 @@ static int subio_get (void *ptr)
 		return EOF;
 	}
 
-	sb_begin(subio->buf);
+	sb_begin(&subio->buf);
 	subio->save--;
-	return sb_getc(subio->buf);
+	return sb_getc(&subio->buf);
 }
 
 
@@ -107,7 +107,7 @@ static int subio_ctrl (void *ptr, int req, va_list list)
 	{
 	case IO_CLOSE:
 		stat = io_close(subio->io);
-		rd_deref(subio->buf);
+		sb_free(&subio->buf);
 		memfree(subio->key);
 		memfree(subio);
 		return stat;
@@ -129,7 +129,7 @@ IO *Doc_subin (IO *io, const char *key)
 	{
 		SUBIO *subio = memalloc(sizeof(SUBIO));
 		subio->io = io;
-		subio->buf = sb_create(0);
+		sb_init(&subio->buf, 0);
 		subio->key = mstrcpy(key);
 		subio->save = 0;
 		io = io_alloc();

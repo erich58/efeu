@@ -29,7 +29,30 @@ trap "exit 1" 1 2 3
 mkdir $tmp
 cd $tmp
 
-cat > ltest.tex << !
+HAS_LATEX_UCS=
+HAS_LATEX=
+HAS_PS2PDF=
+
+if
+	cat > ltest.tex << !
+\\documentclass[10pt,a4paper]{article}
+\\usepackage{ucs}
+\\usepackage[utf8x]{inputenc}
+\\usepackage{tabularx}
+\\usepackage{german}
+\\usepackage[german]{varioref}
+\\dateaustrian
+\\begin{document}
+This is a Test.
+\\end{document}
+!
+	latex ltest.tex 2>/dev/null >/dev/null </dev/null && \
+		dvips -o ltest.ps ltest.dvi 2>/dev/null
+then
+	HAS_LATEX_UCS=1
+	HAS_LATEX=1
+elif
+	cat > ltest.tex << !
 \\documentclass[10pt,a4paper]{article}
 \\usepackage[latin1]{inputenc}
 \\usepackage{tabularx}
@@ -40,27 +63,23 @@ cat > ltest.tex << !
 This is a Test.
 \\end{document}
 !
+	latex ltest.tex 2>/dev/null >/dev/null </dev/null && \
+		dvips -o ltest.ps ltest.dvi 2>/dev/null
+then
+	HAS_LATEX=1
+fi
+
+if
+	ps2pdf ltest.ps ltest.pdf 2>/dev/null >/dev/null
+then
+	HAS_PS2PDF=1
+fi
 
 cat << EOF
 # Do not edit, configuration file was created by
 # /bin/sh $0
 
+HAS_LATEX_UCS=$HAS_LATEX_UCS
+HAS_LATEX=$HAS_LATEX
+HAS_PS2PDF=$HAS_PS2PDF
 EOF
-
-if
-	latex ltest.tex 2>/dev/null >/dev/null && \
-		dvips -o ltest.ps ltest.dvi 2>/dev/null
-then
-	echo "HAS_LATEX=1"
-
-	if
-		ps2pdf ltest.ps ltest.pdf 2>/dev/null >/dev/null
-	then
-		echo "HAS_PS2PDF=1"
-	else
-		echo "HAS_PS2PDF="
-	fi
-else
-	echo "HAS_LATEX="
-	echo "HAS_PS2PDF="
-fi

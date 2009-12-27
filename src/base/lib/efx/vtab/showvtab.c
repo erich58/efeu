@@ -51,9 +51,9 @@ int ShowVarTab (IO *io, const char *pfx, EfiVarTab *vtab)
 
 	if	(vtab == NULL)	return io_puts("NULL", io);
 
-	if	(pfx)		n = io_printf(io, "%s", pfx);
-	else if	(vtab->name)	n = io_printf(io, "%s", vtab->name);
-	else			n = io_printf(io, "%#p", vtab);
+	if	(pfx)		n = io_xprintf(io, "%s", pfx);
+	else if	(vtab->name)	n = io_xprintf(io, "%s", vtab->name);
+	else			n = io_xprintf(io, "%#p", vtab);
 
 	n += io_puts(" = {", io);
 	pos = MAX_POS;
@@ -73,7 +73,7 @@ int ShowVarTab (IO *io, const char *pfx, EfiVarTab *vtab)
 
 		if	(name_is_std(var->name))
 			k += io_puts(var->name, io);
-		else	k += io_printf(io, "%#s", var->name);
+		else	k += io_xprintf(io, "%#s", var->name);
 
 		if	(var_is_func(var->type))
 			k += io_puts("()", io);

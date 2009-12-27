@@ -84,9 +84,9 @@ ETK *ETK_create (void)
 
 	if	(Tcl_Init(etk->interp) == TCL_ERROR)
 #if	HAS_TCL_OBJ
-		io_printf(ioerr, "tcl: %s\n", Tcl_GetStringResult(etk->interp));
+		io_xprintf(ioerr, "tcl: %s\n", Tcl_GetStringResult(etk->interp));
 #else
-		io_printf(ioerr, "tcl: %s\n", etk->interp->result);
+		io_xprintf(ioerr, "tcl: %s\n", etk->interp->result);
 #endif
 
 	Tcl_CreateCommand(etk->interp, "@expr", proc_expr, NULL, NULL);

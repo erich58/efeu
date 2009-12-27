@@ -517,6 +517,18 @@ static void list_bsearch (EfiFunc *func, void *rval, void **arg)
 	list_qsort_func = save;
 }
 
+static void f_dump (EfiFunc *func, void *rval, void **arg)
+{
+	EfiObjList *list = Val_ptr(arg[0]);
+	IO *out = Val_ptr(arg[1]);
+
+	for (; list; list = list->next)
+	{
+		Obj_putkey(list->obj, out);
+		io_puts("\n", out);
+	}
+}
+
 static EfiFuncDef fdef_obj[] = {
 	{ FUNC_RESTRICTED, &Type_expr, "str ()", f_str2expr },
 	{ FUNC_VIRTUAL, &Type_expr, "classify (. &, str def)", lval_class },
@@ -601,6 +613,7 @@ static EfiFuncDef fdef_obj[] = {
 	{ FUNC_VIRTUAL, &Type_obj, "bsearch (List_t list, . key, VirFunc f)",
 		list_bsearch },
 	{ 0, &Type_obj, "List_t::bsearch (. key, VirFunc f)", list_bsearch },
+	{ 0, &Type_void, "List_t::dump (IO *io = iostd)", f_dump },
 };
 
 
