@@ -20,8 +20,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	_EFEU_HTML_h
-#define	_EFEU_HTML_h	1
+#ifndef	HTML_h
+#define	HTML_h	1
 
 #include <EFEU/io.h>
 #include <EFEU/ioctrl.h>
@@ -61,4 +61,4 @@ extern int HTML_env (HTML_t *html, int flag, va_list list);
 
 extern io_t *html_open (const char *dir, const char *path);
 
-#endif	/* EFEU/HTML.h */
+#endif	/* HTML.h */

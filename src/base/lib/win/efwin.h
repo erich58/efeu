@@ -22,8 +22,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	EFWIN_H
-#define	EFWIN_H	1
+#ifndef	EFEU_efwin_h
+#define	EFEU_efwin_h	1
 
 #include <EFEU/efmain.h>
 #include <EFEU/efio.h>
@@ -106,4 +106,4 @@ void OverlayWindow (WINDOW *child, WINDOW *parent);
 #define getmaxy(win)		((win)?((win)->_maxy + 1):ERR)
 #endif
 
-#endif	/* EFWIN_H */
+#endif	/* EFEU/efwin.h */

@@ -23,12 +23,31 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 #include <ctype.h>
 
-#define	MAX_POS	79
+#define	MAX_POS	75
+
+static int name_is_std (const char *str)
+{
+	if	(!str)	return 0;
+	if	(*str != '_' && !isalpha(*str))	return 0;
+
+	while (*(++str) != 0)
+		if (*str != '_' && !isalnum(*str)) return 0;
+
+	return 1;
+}
+
+static int var_is_func (Type_t *type)
+{
+	if	(type == &Type_func)	return 1;
+	if	(type == &Type_vfunc)	return 1;
+	if	(type == &Type_ofunc)	return 1;
+	return 0;
+}
 
 int ShowVarTab(io_t *io, const char *pfx, VarTab_t *vtab)
 {
 	int i, n, k, pos;
-	char *name;
+	Var_t *var;
 
 	if	(vtab == NULL)	return io_puts("NULL", io);
 
@@ -41,11 +60,11 @@ int ShowVarTab(io_t *io, const char *pfx, VarTab_t *vtab)
 
 	for (i = 0; i < vtab->tab.dim; i++)
 	{
-		name = ((Var_t *) vtab->tab.tab[i])->name;
+		var = vtab->tab.tab[i];
 
-		if	(name == NULL)	continue;
+		if	(var->name == NULL)	continue;
 
-		if	(pos + strlen(name) > MAX_POS)
+		if	(pos + strlen(var->name) > MAX_POS)
 		{
 			n += io_puts("\n\t", io);
 			pos = 8;
@@ -53,7 +72,13 @@ int ShowVarTab(io_t *io, const char *pfx, VarTab_t *vtab)
 		}
 		else	k = io_puts(" ", io);
 
-		k += io_puts(name, io);
+		if	(name_is_std(var->name))
+			k += io_puts(var->name, io);
+		else	k += io_printf(io, "%#s", var->name);
+
+		if	(var_is_func(var->type))
+			k += io_puts("()", io);
+
 		pos += k;
 		n += k;
 	}

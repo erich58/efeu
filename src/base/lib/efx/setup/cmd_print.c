@@ -385,7 +385,7 @@ static void sprint_va_list(Func_t *func, void *rval, void **arg)
 {
 	strbuf_t *sb = new_strbuf(0);
 	io_t *io = io_strbuf(sb);
-	p_va_list(iostd, Val_list(arg[0]), " ");
+	p_va_list(io, Val_list(arg[0]), " ");
 	io_close(io);
 	Val_str(rval) = sb2str(sb);
 }
@@ -447,8 +447,8 @@ static FuncDef_t fdef_print[] = {
 
 	{ FUNC_VIRTUAL, &Type_int, "print (List_t)", print_list },
 	{ FUNC_VIRTUAL, &Type_int, "print (...)", print_va_list },
-	{ FUNC_VIRTUAL, &Type_int, "sprint (List_t)", sprint_list },
-	{ FUNC_VIRTUAL, &Type_int, "sprint (...)", sprint_va_list },
+	{ FUNC_VIRTUAL, &Type_str, "sprint (List_t)", sprint_list },
+	{ FUNC_VIRTUAL, &Type_str, "sprint (...)", sprint_va_list },
 
 	{ FUNC_VIRTUAL, &Type_io, "operator<< (IO, char)", put_char },
 	{ FUNC_VIRTUAL, &Type_io, "operator<< (IO, long)", put_long },

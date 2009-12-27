@@ -20,8 +20,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	_MS_BITFIELD
-#define	_MS_BITFIELD	1
+#ifndef	bitfield_ms
+#define	bitfield_ms	1
 
 #include <macro.ms>
 
@@ -146,4 +146,4 @@ void Bitfield(str Name, str Desc, IO Def, bool flag = true)
 	info << '\n';
 }
 
-#endif	/* _MS_BITFIELD */
+#endif	/* bitfield.ms */

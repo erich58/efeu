@@ -140,6 +140,7 @@ Obj_t *RefObj(const Obj_t *obj)
 		if	(obj->refcount == 0)
 		{
 			fprintf(stderr, ERR_MSG1, ProgIdent, (ulong_t) obj);
+			abort();
 			exit(EXIT_FAILURE);
 		}
 
@@ -160,6 +161,7 @@ static void del_obj(Obj_t *obj, int cleanup)
 	{
 		do_debug(0, "delete ", obj);
 		fprintf(stderr, ERR_MSG1, ProgIdent, (ulong_t) obj);
+		abort();
 		exit(EXIT_FAILURE);
 	}
 
@@ -182,6 +184,7 @@ static void del_obj(Obj_t *obj, int cleanup)
 	else
 	{
 		fprintf(stderr, ERR_MSG2, ProgIdent, (ulong_t) obj);
+		abort();
 		exit(EXIT_FAILURE);
 	}
 }

@@ -22,8 +22,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	_H_PIXMAP
-#define	_H_PIXMAP	1
+#ifndef	EFEU_oldpixmap_h
+#define	EFEU_oldpixmap_h	1
 
 #include <EFEU/efmain.h>
 #include <EFEU/object.h>
@@ -101,5 +101,5 @@ void OldPixMap_TeX (Func_t *func, void *rval, void **arg);
 
 void SetupOldPixMap (void);
 
-#endif /* _H_PIXMAP */
+#endif /* EFEU/oldpixmap.h */
 

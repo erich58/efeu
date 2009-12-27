@@ -1,0 +1,12 @@
+#include <d2m.cfg>
+
+TOPDIR = _EFEU_TOP
+CFGDIR = $(TOPDIR)/ppinclude
+INCDIR = $(TOPDIR)/include/GUI
+BINDIR = $(TOPDIR)/bin
+LIBDIR = $(TOPDIR)/lib
+APPDIR = $(TOPDIR)/lib/efeu
+
+DIR2MAKE = dir2make -H $(INCDIR) -B $(BINDIR) -L $(LIBDIR) -A $(APPDIR)
+
+SubMake(lib,"GTK-interface",lib,-lGtk,NullArg)

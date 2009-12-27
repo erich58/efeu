@@ -22,8 +22,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	EFEU_PARSEDEF_H
-#define	EFEU_PARSEDEF_H	1
+#ifndef	EFEU_parsedef_h
+#define	EFEU_parsedef_h	1
 
 #include <EFEU/object.h>
 
@@ -49,6 +49,7 @@ void ListParseDef (io_t *io);
 
 Obj_t *PFunc_typedef (io_t *io, void *data);
 Obj_t *PFunc_struct (io_t *io, void *data);
+Obj_t *PFunc_enum (io_t *io, void *data);
 
 Obj_t *PFunc_bool (io_t *io, void *data);
 Obj_t *PFunc_int (io_t *io, void *data);
@@ -65,4 +66,4 @@ Obj_t *PFunc_switch (io_t *io, void *data);
 Obj_t *PFunc_case (io_t *io, void *data);
 Obj_t *PFunc_default (io_t *io, void *data);
 
-#endif	/* EFEU_PARSEDEF_H */
+#endif	/* EFEU/parsedef.h */

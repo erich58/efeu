@@ -22,8 +22,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef EFEU_DATA_H
-#define EFEU_DATA_H	1
+#ifndef EFEU_data_h
+#define EFEU_data_h	1
 
 #include <EFEU/mstring.h>
 #include <EFEU/ftools.h>
@@ -47,4 +47,4 @@ typedef void (*clrdata_t) (void *dp, size_t n);
 size_t mstr_iodata (iofunc_t func, void *ptr, mstr_t *dp, size_t n);
 void mstr_clrdata (mstr_t *str, size_t n);
 
-#endif	/* EFEU/Data.h */
+#endif	/* EFEU/data.h */

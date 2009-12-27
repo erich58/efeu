@@ -211,12 +211,17 @@ same priority.
 <|+|> | unary plus | <|+|><expr>
 <|\{|> | list grouping | <|{|> <expr> [<|,|> <expr> ] <|}|>
 <|(|> | grouping | <|(|> <expr> <|)|>
+<|\[|> | expression | <|[|> <expr> <|]|>
 <|()|> | cast (type conversion) | <|(|><type><|)|> <expr>
 [-]
 
 The list grouping operator creates a list of values.
 In opposite to C/C++, the use of this operator is not restricted
 to assigning data in variable declarations.
+
+The expression operator parses an expression without evaluation.
+This expression may be stored in a variable oder passed as function
+argument for later evaluation.
 
 \tab	|l|l|l|
 [-]
@@ -653,6 +658,31 @@ struct MyDataType {
 	int v[10];
 };
 ----
+
+The EFEU interpreter supports enumeration types. The syntax is
+	|enum| <type> [|:| <base> [ <name> ]] |{| identifier list |}|
+with a comma separated list of identifiers with optional assignement values.
+If <base> is defined, <type> is created as subtype of <base>,
+else as subtype of |_Enum_|. The enumeration keys are bound to
+the enumeration type. They may be used immediatly after declaration.
+
+The following statement:
+	|enum Color { Red, Green = 5, Blue };|
+creates an enumeration type width name |Color| and identifiers |Color::Red|,
+|Color::Green| and |Color::Blue|. The corresponding integer values are
+0, 5 and 6. For every enumeration type, convertes from/to |int|/|str| are
+created. So the following assignments are all valid:
+
+---- verbatim
+Color c1 = "Red";
+Color c2 = 0;
+str s = Color::Red;
+int n = Color::Red;
+----
+
+The function |enumlist(|<type>|)| returns a list of all valid
+identifiers of the enumeration type <type> or an empty list, if <type> has
+no identifiers or is not an enumeration type.
 
 \head	FUNCTION DECLARATION
 

@@ -33,8 +33,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef _EFEU_config_h
-#define _EFEU_config_h	1
+#ifndef EFEU_config_h
+#define EFEU_config_h	1
 
 #include <stdio.h>
 #include <stdarg.h>

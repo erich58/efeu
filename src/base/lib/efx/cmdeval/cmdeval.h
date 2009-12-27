@@ -22,8 +22,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	EFEU_CMDEVAL_H
-#define	EFEU_CMDEVAL_H	1
+#ifndef	EFEU_cmdeval_h
+#define	EFEU_cmdeval_h	1
 
 #include <EFEU/object.h>
 #include <EFEU/parsedef.h>
@@ -50,4 +50,4 @@ void CmdEval (io_t *in, io_t *out);
 
 io_t *io_cmdeval (io_t *in, const char *delim);
 
-#endif	/* EFEU_CMDEVAL_H */
+#endif	/* EFEU/cmdeval.h */

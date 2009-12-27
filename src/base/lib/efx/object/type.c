@@ -83,6 +83,13 @@ Type_t *GetType (const char *name)
 	return skey_find(&TypeTab, name);
 }
 
+int IsTypeClass (const Type_t *type, const Type_t *base)
+{
+	for (; type != NULL; type = type->base)
+		if (type == base) return 1;
+
+	return 0;
+}
 
 void DelType (Type_t *type)
 {

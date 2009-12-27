@@ -87,13 +87,14 @@ static Obj_t *Eval_name(const Type_t *type, const void *data)
 */
 
 Type_t Type_void = COMPLEX_TYPE("void", 0, 0, NULL,
-	NULL, Eval_void, NULL, NULL);
+	NULL, Eval_void, NULL, NULL, NULL);
 Type_t Type_ptr = STD_TYPE("_Ptr_", void *, NULL, NULL, NULL);
 Type_t Type_obj = STD_TYPE("Object", Obj_t *, &Type_ptr, Clean_obj, Copy_obj);
 Type_t Type_expr = STD_TYPE("Expr_t", Obj_t *, &Type_ptr, Clean_obj, Copy_obj);
 Type_t Type_str = COMPLEX_TYPE("str", sizeof(char *), 0, IOData_str,
-	&Type_ptr, NULL, Clean_str, Copy_str);
+	&Type_ptr, NULL, Clean_str, Copy_str, NULL);
 Type_t Type_type = STD_TYPE("Type_t", Type_t *, &Type_ptr, NULL, NULL);
+Type_t Type_lval = STD_TYPE("Lval_t", Type_t *, &Type_type, NULL, NULL);
 Type_t Type_name = EVAL_TYPE("_Name_", char *, Eval_name, Clean_str, Copy_str);
 Type_t Type_undef = STD_TYPE("_undef_", char *, NULL, Clean_str, Copy_str);
 
@@ -110,8 +111,9 @@ Type_t Type_io = REF_TYPE ("IO", io_t *);
 /*	Datentypen
 */
 
-Type_t Type_char = SIMPLE_TYPE("char", uchar_t, NULL);
+Type_t Type_enum = SIMPLE_TYPE("_Enum_", int, NULL);
 Type_t Type_bool = SIMPLE_TYPE("bool", int, NULL);
+Type_t Type_char = SIMPLE_TYPE("char", uchar_t, NULL);
 Type_t Type_byte = SIMPLE_TYPE("byte", char, NULL);
 Type_t Type_short = SIMPLE_TYPE("short", short, NULL);
 Type_t Type_int = SIMPLE_TYPE("int", int, &Type_bool);
@@ -198,11 +200,13 @@ void CmdSetup_base(void)
 	AddType(&Type_ptr);
 	AddType(&Type_ref);
 	AddType(&Type_type);
+	AddType(&Type_lval);
 	AddType(&Type_func);
 	AddType(&Type_vfunc);
 	AddType(&Type_ofunc);
 	AddType(&Type_expr);
 
+	AddType(&Type_enum);
 	AddType(&Type_bool);
 	AddType(&Type_byte);
 	AddType(&Type_short);

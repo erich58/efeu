@@ -342,7 +342,8 @@ BUILTIN(f_vfpsub)
 
 BUILTIN(f_iopsub)
 {
-	fputs("ACHTUNG: psub() anstelle von fpsub().\n", stderr);
+	Message(NULL, DBG_NOTE,
+		"WARNING: psub() instead of fpsub().\n", NULL);
 	Val_int(rval) = io_psub(Val_io(arg[0]), Val_str(arg[1]));
 }
 
@@ -483,6 +484,21 @@ static void f_typelist (Func_t *func, void *rval, void **arg)
 	Val_list(rval) = list;
 }
 
+static void f_enumlist (Func_t *func, void *rval, void **arg)
+{
+	Val_list(rval) = EnumKeyList(Val_type(arg[0]));
+}
+
+static void f_typetree (Func_t *func, void *rval, void **arg)
+{
+	TypeTree(Val_io(arg[1]), Val_type(arg[0]));
+}
+
+static void f_typeclass (Func_t *func, void *rval, void **arg)
+{
+	Val_bool(rval) = IsTypeClass(Val_type(arg[0]), Val_type(arg[1]));
+}
+
 static void f_setlocale (Func_t *func, void *rval, void **arg)
 {
 	SetLocale(Val_int(arg[0]), Val_str(arg[1]));
@@ -584,6 +600,10 @@ static FuncDef_t fdef_func[] = {
 	{ 0, &Type_int, "index (str s, char c)", f_index },
 
 	{ 0, &Type_list, "typelist ()", f_typelist },
+	{ 0, &Type_list, "enumlist (Type_t type)", f_enumlist },
+	{ 0, &Type_void, "typetree (Type_t type, IO out = iostd)", f_typetree },
+	{ 0, &Type_bool, "IsTypeClass (Type_t type, Type_t base = NULL)",
+		f_typeclass },
 	{ 0, &Type_void, "setlocale (int type, str name = NULL)", f_setlocale },
 	{ 0, &Type_void, "setlang (str lang = NULL)", f_setlang },
 	{ 0, &Type_void, "lcsave ()", f_lcpush },

@@ -289,6 +289,13 @@ Time_t str2Time (const char *str, char **endptr, int flag)
 	char *p;
 
 	x.date = str2Calendar(str, &p, flag);
+
+	if	(x.date == 0)
+	{
+		x.time = 0;
+		return x;
+	}
+
 	hour = p ? strtol(p, &p, 10) : 12;
 
 	if	(p && *p == ':')

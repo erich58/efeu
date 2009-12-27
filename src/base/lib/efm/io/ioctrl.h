@@ -22,8 +22,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	_EFEU_ioctrl_h
-#define	_EFEU_ioctrl_h	1
+#ifndef	EFEU_ioctrl_h
+#define	EFEU_ioctrl_h	1
 
 #include <EFEU/io.h>
 

@@ -73,8 +73,6 @@ CEXPR(f_mgetc, RVINT = io_mgetc(IO(0), INT(1)))
 CEXPR(f_xgets, RVSTR = io_xgets(IO(0), STR(1)))
 CEXPR(f_mgets, RVSTR = io_mgets(IO(0), STR(1)))
 
-CEXPR(f_remove, RVINT = remove(STR(0)))
-
 static ObjList_t **end_scan(strbuf_t *sb, ObjList_t **ptr)
 {
 	char *p;
@@ -361,7 +359,6 @@ str end = \"\\n\")", f_scanline },
 	{ 0, &Type_str, "fgets (IO io, int end = '\n')", f_fgets },
 	{ 0, &Type_str, "ngets (IO io, int n)", f_ngets },
 
-	{ 0, &Type_int, "remove (str name)", f_remove },
 	{ 0, &Type_str, "filter (str cmd, str par = NULL)", f_filter },
 };
 

@@ -22,8 +22,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	EFEU_OBJECT_H
-#define	EFEU_OBJECT_H	1
+#ifndef	EFEU_object_h
+#define	EFEU_object_h	1
 
 #include <EFEU/efmain.h>
 #include <EFEU/efio.h>
@@ -156,28 +156,38 @@ struct Type_s {
 	vecbuf_t konv;	/* Konvertierungen */
 	VirFunc_t *create;	/* Konstruktor, überladbar */
 	void *defval;	/* Vorgabewert */
+	void *priv;	/* Private Daten des Types */
 };
 
 
 /*	Zuweisungsobjekte
 */
 
+#define	LVAL_VAR \
+	Obj_t *(*alloc) (Type_t *type, va_list list); \
+	void (*free) (Obj_t *obj); \
+	void (*update) (Obj_t *obj); \
+	void (*sync) (Obj_t *obj); \
+	char *(*ident) (Obj_t *obj)
+
+#define	LVAL_DATA(alloc,free,update,sync,ident) \
+	alloc, free, update, sync, ident
+
 struct Lval_s {
-	Obj_t *(*alloc) (Type_t *type, va_list list);
-	void (*free) (Obj_t *obj);
-	void (*update) (Obj_t *obj);
-	void (*sync) (Obj_t *obj);
-	char *(*ident) (Obj_t *obj);
+	LVAL_VAR;
 };
 
 extern Lval_t Lval_ptr;
 extern Lval_t Lval_ref;
 
+/*
+Objektvariablen
+*/
+
+#define	OBJECT_VAR	REFVAR; Type_t *type; Lval_t *lval; void *data
+
 struct Obj_s {
-	REFVAR;		/* Referenzvariablen */
-	Type_t *type;	/* Datentype */
-	Lval_t *lval;	/* Lval-Type */
-	void *data;	/* Datenpointer */
+	OBJECT_VAR;
 };
 
 extern Obj_t *Obj_alloc (size_t size);
@@ -185,15 +195,28 @@ extern void Obj_free (Obj_t *obj, size_t size);
 extern void Obj_stat (const char *prompt);
 extern void Obj_check (const Obj_t *obj);
 
+/*	Neue Datentypen
+*/
+
 Type_t *NewType (char *name);
+
+typedef struct {
+	char *name;
+	int val;
+} EnumTypeDef_t;
+
+Type_t *NewEnumType (const char *name, EnumTypeDef_t *def, size_t dim);
+void AddEnumKey (Type_t *type, const char *name, int val);
+char *EnumKeyLabel (const Type_t *type, int val, int flag);
+int EnumKeyCode (const Type_t *type, const char *key);
 
 
 /*	Makro zur Typedefinition
 */
 
 void AddType (Type_t *type);
-void AliasType (char *name, Type_t *type);
 Type_t *GetType (const char *name);
+int IsTypeClass (const Type_t *type, const Type_t *base);
 
 
 /*	Initialisierungsfunktionen
@@ -232,6 +255,7 @@ void Obj2Data (Obj_t *obj, Type_t *type, void *ptr);
 
 int ShowType (io_t *io, const Type_t *type);
 void ListType (io_t *io, const Type_t *type);
+void TypeTree (io_t *io, const Type_t *type);
 
 extern Type_t Type_void;	/* Leerer Type */
 
@@ -314,10 +338,12 @@ void *Obj2Ptr (Obj_t *obj, Type_t *type);
 
 extern Type_t Type_ptr;		/* Pointerobjekt */
 extern Type_t Type_ref;		/* Referenzobjekt */
+extern Type_t Type_enum;	/* Aufzählungsobjekt */
 extern Type_t Type_str;		/* Stringkonstante */
 extern Type_t Type_obj;		/* Objektpointer */
 extern Type_t Type_expr;	/* Objektpointer mit Ausdruck */
 extern Type_t Type_type;	/* Datentype */
+extern Type_t Type_lval;	/* Lval-Datentype */
 extern Type_t Type_info;	/* Informationsknoten */
 extern Type_t Type_io;		/* IO - Struktur */
 extern Type_t Type_vtab;	/* Variablentabelle */
@@ -385,6 +411,7 @@ Obj_t *ResourceObj (Type_t *type, const char *name);
 typedef void *(*EvalMember_t) (const void *data);
 
 Var_t *NewVar (Type_t *type, const char *name, size_t dim);
+Var_t *Obj2Var (const char *name, Obj_t *obj);
 void DelVar (Var_t *var);
 
 
@@ -454,6 +481,7 @@ typedef struct {
 
 ObjList_t *VarDefList (io_t *io, int delim);
 void DelType (Type_t *type);
+ObjList_t *EnumKeyList (Type_t *type);
 
 
 typedef struct {
@@ -688,4 +716,4 @@ Obj_t *Parse_block(io_t *io, int endchar);
 
 Obj_t *EvalExpression (const Obj_t *obj);
 
-#endif	/* EFEU_OBJECT_H */
+#endif	/* EFEU/object.h */

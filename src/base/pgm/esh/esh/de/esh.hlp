@@ -227,12 +227,17 @@ die gleiche Priorität.
 <|+|> | unary plus | <|+|><expr>
 <|\{|> | list grouping | <|{|> <expr> [<|,|> <expr> ] <|}|>
 <|(|> | grouping | <|(|> <expr> <|)|>
+<|\[|> | expression | <|[|> <expr> <|]|>
 <|()|> | cast (type conversion) | <|(|><type><|)|> <expr>
 [-]
 
 Der <"list grouping"> Operator generiert eine Liste von Werten.
 Im Genensatz zu C/C++ ist dieser Operator nicht auf die
 Initialisierung von Variablen in Deklarationen beschränkt.
+
+Der <"expression"> Operator liefert einen Ausdruck ohne ihn
+Auszuwerten. Er kann einer Variablen zugewiesen oder einer
+Funktion für eine spätere Auswertung übergeben werden.
 
 \tab	|l|l|l|
 [-]
@@ -699,6 +704,33 @@ struct MyDataType {
 	int v[10];
 };
 ----
+
+Der EFEU Interpreter unterstützt Aufzählungstypen. Die Syntax ist:
+	|enum| <type> [|:| <base> [ <name> ]] |{| Kennungsliste |}|
+mit einer durch Komma getrennten Liste von Kennungen mit optionalen
+Zuweisungswert. Die Kennungen werden an den Aufzählungstype gebunden.
+Siwe können unmittelbar nach ihrer Deklaration (also bereits für den
+nächstec Kennung innerhald der Aufzählungsdeklaration) verwendet
+werden.
+
+Die folgende Anweisung:
+	|enum Color { Red, Green = 5, Blue };|
+erzeugt einen Aufzählungstype mit Namen |Color| und den Kennungen
+|Color::Red|, |Color::Green| und |Color::Blue|. Die zugehörigen Ganzzahlwerte
+sind 0, 5 und 6. Für jeden Aufzählungstype werden Konverter
+von/nach |int|/|str| eingerichtet. Daher sind die folgenden
+Zuweisungen alle gültig:
+
+---- verbatim
+Color c1 = "Red";
+Color c2 = 0;
+str s = Color::Red;
+int n = Color::Red;
+----
+
+Die Funktion |enumlist(|<Typ>|)| liefert eine Liste aller Kennungen
+des Aufzählungstypes <Typ> oder eine leere Liste, falls <Typ> keine
+Kennungen hat oder kein Aufzählungstype ist.
 
 \head	FUNKTIONEN
 

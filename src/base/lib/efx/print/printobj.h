@@ -22,8 +22,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	EFEU_PRINTOBJ_H
-#define	EFEU_PRINTOBJ_H	1
+#ifndef	EFEU_printobj_h
+#define	EFEU_printobj_h	1
 
 #include <EFEU/efmain.h>
 #include <EFEU/efio.h>
@@ -43,4 +43,4 @@ extern char *PrintListBegin;
 extern char *PrintListDelim;
 extern char *PrintListEnd;
 
-#endif	/* EFEU_PRINTOBJ_H */
+#endif	/* EFEU/printobj.h */

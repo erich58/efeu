@@ -98,6 +98,7 @@ If not, write to the Free Software Foundation, Inc.,
 101	$!: $0: operator $1: right argument is missing.\n
 102	$!: $0: conditional expression: ":" is missing.\n
 103	$!: $0: partial term: right parenthese is missing.\n
+104	$!: $0: expression: right bracket is missing.\n
 105	$!: $0: missing end of string.\n
 106	$!: $0: incomplete argument list.\n
 108	$!: $0: missing end of charachter constant.\n
@@ -159,24 +160,27 @@ If not, write to the Free Software Foundation, Inc.,
 162	$!: name $1 not found.\n
 163	$!: could not read objects of type $1.\n
 164	$!: object of type $1: component $2 is not defined.\n
-165	$!: asignment ovject does not allow decomposition.\n
+165	$!: asignment object does not allow decomposition.\n
 166	$!: variable $1 is not defined.\n
+167	$!: operand of lvalue-cast is not an lvalue.\n
 
 171	$!: unexpected "break".\n
 172	$!: unexpected "continue".\n
 173	$!: undefined function/operator $1.\n
 174	$!: undefined function/operator $1.\n
-175	$!: function $1: could not create L-value.\n
+175	$!: function $1: could not create lvalue.\n
 
 181	$!: $0: EOF in list.\n
 182	$!: $0: missing object before $1.\n
 183	$!: $0: unexpected character $1 in list.\n
+185	$!: $0: syntax error in enum declaration.\n
+186	$!: $0: base class $1 must be an enum type.\n
 
 191	$!: $0: missing member/scope name.\n
 192	$!: $0: component $1 of scope is not definiert.\n
 193	$!: $0: component $1 is not defined.\n
 194	$!: $0: syntax error in vector index.\n
-195	$!: $0: left operand of assignment is not an L-value.\n
+195	$!: $0: left operand of assignment is not an lvalue.\n
 196	$!: $0: global operator without name.\n
 
 201	$!: Function "$1": component $2 already in use.\n

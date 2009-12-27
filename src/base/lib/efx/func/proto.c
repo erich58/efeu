@@ -72,7 +72,8 @@ Func_t *MakePrototype(io_t *io, Type_t *type, Name_t *nptr, unsigned flags)
 	int n;
 	int c;
 
-	rflag = lflag = 0;
+	lflag = 0;
+	rflag = (flags & FUNC_LRETVAL) ? 1 : 0;
 	virtual = (flags & FUNC_VIRTUAL) ? 1 : 0;
 
 	if	(flags & FUNC_RESTRICTED)	weight = KONV_RESTRICTED;

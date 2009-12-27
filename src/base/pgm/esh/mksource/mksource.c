@@ -33,7 +33,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <ctype.h>
 
 #define	HEADLINE	"Nicht editieren, Datei wurde automatisch generiert."
-#define	PROTECTKEY	"_MS_"
+#define	PROTECTKEY	"ms_"
 #define	NAME		"name"
 
 #define	ALLOW_SPLIT	0	/* Ausgabeaufspaltung zulassen */
@@ -373,7 +373,7 @@ int main(int narg, char **arg)
 	char *bootstrap;
 	int i;
 
-	SetVersion("$Id: mksource.c,v 1.6 2001-11-06 13:52:10 ef Exp $");
+	SetVersion("$Id: mksource.c,v 1.7 2002-01-04 05:28:33 ef Exp $");
 	SetProgName(arg[0]);
 	bootstrap = listcat(" ", arg, narg);
 

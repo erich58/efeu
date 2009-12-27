@@ -23,8 +23,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	_EFEU_CmdPar_h
-#define	_EFEU_CmdPar_h	1
+#ifndef	EFEU_CmdPar_h
+#define	EFEU_CmdPar_h	1
 
 #include <EFEU/io.h>
 #include <EFEU/vecbuf.h>

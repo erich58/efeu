@@ -165,4 +165,4 @@ TimeSeries_t *TimeSeriesTerm (VirFunc_t *fptr,
 	Type_t *type1, void *arg1,
 	Type_t *type2, void *arg2);
 
-#endif	/* Math_TimeSeries_h */
+#endif	/* Math/TimeSeries.h */

@@ -20,8 +20,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	_Enum_ms
-#define	_Enum_ms	1
+#ifndef	enum_ms
+#define	enum_ms	1
 
 #include <function.ms>
 
@@ -94,4 +94,4 @@ void Enum(str ename, str label, IO def, bool glob = true)
 	f.write(glob);
 }
 
-#endif	/* _Enum_ms */
+#endif	/* enum.ms */

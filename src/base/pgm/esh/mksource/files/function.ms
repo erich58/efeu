@@ -20,8 +20,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	_MS_FUNCTION
-#define	_MS_FUNCTION	1
+#ifndef	function_ms
+#define	function_ms	1
 
 struct FunctionLine {
 	int margin;	/* Rand */
@@ -366,4 +366,4 @@ inline void GlobalFunction (str _name, str _args, str _body, ...)
 	f.write(true);
 }
 
-#endif	/* _MS_FUNCTION */
+#endif	/* function.ms */

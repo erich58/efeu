@@ -26,8 +26,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/efio.h>
 #include <EFEU/mdmat.h>
 
-#ifndef	_EFEU_texutil_h
-#define	_EFEU_texutil_h	1
+#ifndef	EFEU_texutil_h
+#define	EFEU_texutil_h	1
 
 typedef struct {
 	int size;	/* Basisgröße */

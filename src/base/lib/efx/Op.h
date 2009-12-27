@@ -22,8 +22,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	EFEU_OPERATOR_H
-#define	EFEU_OPERATOR_H	1
+#ifndef	EFEU_Op_h
+#define	EFEU_Op_h	1
 
 #include <EFEU/object.h>
 
@@ -84,4 +84,4 @@ Obj_t *CommaTerm (Obj_t *left, Obj_t *right);
 Obj_t *UnaryTerm (const char *a, Obj_t *obj, int flag);
 Obj_t *BinaryTerm (const char *a, Obj_t *left, Obj_t *right);
 
-#endif	/* EFEU_OPERATOR_H */
+#endif	/* EFEU/Op.h */

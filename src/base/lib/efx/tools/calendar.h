@@ -22,8 +22,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	EFEU_CALENDAR_H
-#define	EFEU_CALENDAR_H	1
+#ifndef	EFEU_calendar_h
+#define	EFEU_calendar_h	1
 
 #include <EFEU/efmain.h>
 #include <EFEU/efio.h>
@@ -77,4 +77,4 @@ Time_t str2Time (const char *str, char **endptr, int flag);
 Time_t Time_offset (Time_t time, int s);
 int Time_dist (Time_t a, Time_t b);
 
-#endif	/* EFEU_CALENDAR_H */
+#endif	/* EFEU/calendar.h */

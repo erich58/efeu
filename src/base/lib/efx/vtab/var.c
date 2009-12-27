@@ -71,6 +71,33 @@ Var_t *NewVar (Type_t *type, const char *name, size_t dim)
 	return var;
 }
 
+static void ovar_clean (Var_t *var)
+{
+	memfree((char *) var->name);
+	memfree((char *) var->desc);
+	UnrefObj(var->par);
+}
+
+static Obj_t *ovar_get (const Var_t *var, const Obj_t *obj)
+{
+	return RefObj(var->par);
+}
+
+Var_t *Obj2Var (const char *name, Obj_t *obj)
+{
+	Var_t *var;
+
+	if	(!obj)	return NULL;
+
+	var = new_data(&deftab);
+	var->name = mstrcpy(name);
+	var->type = obj->type;
+	var->member = ovar_get;
+	var->par = obj;
+	var->desc = NULL;
+	var->clean = (clean_t) ovar_clean;
+	return var;
+}
 
 void DelVar (Var_t *var)
 {

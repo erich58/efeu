@@ -20,8 +20,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	_MS_PRINTFUNC
-#define	_MS_PRINTFUNC	1
+#ifndef	printfunc_ms
+#define	printfunc_ms	1
 
 #include <function.ms>
 
@@ -33,4 +33,4 @@ void PrintFunc(str name, str args, IO def, bool glob = true)
 	f.write(glob);
 }
 
-#endif	/* MS_PRINTFUNC */
+#endif	/* printfunc.ms */

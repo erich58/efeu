@@ -134,11 +134,6 @@ Obj_t *Parse_vdef(io_t *io, Type_t *type, int flag)
 	Obj_t *obj;
 	int c;
 
-	c = io_eat(io, " \t");
-
-	if	(c == '&')
-		return Parse_func(io, type, NULL, 0);
-
 /*	Variablenname bestimmen
 */
 	if	(Parse_sname(io, &vdef.name) == NULL)
@@ -147,7 +142,8 @@ Obj_t *Parse_vdef(io_t *io, Type_t *type, int flag)
 	c = io_eat(io, " \t");
 
 	if	(c == '&' || c == '(')
-		return Parse_func(io, type, &vdef.name, 0);
+		return Parse_func(io, type, &vdef.name,
+			(flag & 0x2) ? FUNC_LRETVAL : 0);
 
 /*	Indexliste generieren
 */
@@ -177,10 +173,10 @@ Obj_t *Parse_vdef(io_t *io, Type_t *type, int flag)
 
 /*	Bei Flag: Weitere Variablen zum gleichen Type bestimmen
 */
-	if	(flag && c == ',')
+	if	((flag & 0x1) && c == ',')
 	{
 		io_getc(io);
-		obj = CommaTerm(obj, Parse_vdef(io, type, flag));
+		obj = CommaTerm(obj, Parse_vdef(io, type, 1));
 	}
 
 	return obj;

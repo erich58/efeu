@@ -20,8 +20,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	_MS_MACRO
-#define	_MS_MACRO	1
+#ifndef	macro_ms
+#define	macro_ms	1
 
 void Macro(IO io, str name, str args, str def, ...)
 {
@@ -98,4 +98,4 @@ void StdInclude (IO io, ...)
 	io << '\n';
 }
 
-#endif	_MS_MACRO
+#endif	/* macro.ms */

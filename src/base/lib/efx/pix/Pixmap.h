@@ -22,8 +22,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef _EFEU_Pixmap_h
-#define _EFEU_Pixmap_h	1
+#ifndef EFEU_Pixmap_h
+#define EFEU_Pixmap_h	1
 
 #include <EFEU/refdata.h>
 #include <EFEU/io.h>

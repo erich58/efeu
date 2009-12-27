@@ -20,8 +20,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	_MS_VAR
-#define	_MS_VAR	1
+#ifndef	var_ms
+#define	var_ms	1
 
 /*	Die Deklarationsfunktionen sind vom Type inline, damit bei der
 	Parametersubstitution der Argumente auch lokale Variablen sichtbar
@@ -104,4 +104,4 @@ void GlobalVec (str _decl, int _dim, str _val = NULL, str _desc = NULL, ...)
 void LocalVec (str _decl, int _dim, str _val = NULL, str _desc = NULL, ...)
 	DeclVec(false, _decl, _dim, _val, _desc, va_list);
 
-#endif	_MS_VAR
+#endif	/* var.ms */

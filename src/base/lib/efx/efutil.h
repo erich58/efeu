@@ -22,8 +22,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	EFEU_EFUTIL_H
-#define	EFEU_EFUTIL_H	1
+#ifndef	EFEU_efutil_h
+#define	EFEU_efutil_h	1
 
 #include <EFEU/efmain.h>
 #include <EFEU/efio.h>
@@ -71,4 +71,4 @@ int TeXputs(const char *str, io_t *io);
 int TeXquote(const char *str, io_t *io);
 int TeXputc(int c, io_t *io);
 
-#endif	/* EFEU_EFUTIL_H */
+#endif	/* EFEU/efutil.h */

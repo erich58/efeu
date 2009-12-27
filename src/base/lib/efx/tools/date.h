@@ -22,8 +22,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	EFEU_DATE_H
-#define	EFEU_DATE_H	1
+#ifndef	EFEU_date_h
+#define	EFEU_date_h	1
 
 #include <EFEU/efmain.h>
 #include <EFEU/efio.h>
@@ -44,4 +44,4 @@ Date_t *KonvDate1900 (unsigned date, Date_t *buf);
 PrintDate (io_t *io, const char *fmt, Date_t *date);
 char *Date2str (io_t *io, const char *fmt, Date_t *date);
 
-#endif	/* EFEU_DATE_H */
+#endif	/* EFEU/date.h */

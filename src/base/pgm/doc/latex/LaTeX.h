@@ -20,8 +20,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	_EFEU_LaTeX_h
-#define	_EFEU_LaTeX_h	1
+#ifndef	LaTeX_h
+#define	LaTeX_h	1
 
 #include <EFEU/io.h>
 #include <EFEU/ioctrl.h>
@@ -61,4 +61,4 @@ void LaTeX_ShowCmd (io_t *io);
 extern char *LaTeX_var (const char *name);
 extern void LaTeX_psub (LaTeX_t *ltx, const char *name);
 
-#endif	/* EFEU/LaTeX.h */
+#endif	/* LaTeX.h */

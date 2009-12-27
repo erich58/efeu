@@ -83,4 +83,4 @@ io_ctrl(io, RLCTRL_HSIZE, 500);
 ----
 */
 
-#endif	/* EFEU_Readline_h */
+#endif	/* EFEU/Readline.h */

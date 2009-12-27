@@ -20,8 +20,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	_index_ms
-#define	_index_ms	1
+#ifndef	index_ms
+#define	index_ms	1
 
 #include <function.ms>
 #include <label.ms>

@@ -22,7 +22,7 @@
 
 # search path for header files
 
-incpath="/usr/include"
+incpath="/usr/include/readline /usr/include"
 
 for x in /usr/local/include
 do

@@ -20,8 +20,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	_EFEU_mroff_h
-#define	_EFEU_mroff_h	1
+#ifndef	mroff_h
+#define	mroff_h	1
 
 #include <EFEU/io.h>
 #include <EFEU/ioctrl.h>
@@ -82,4 +82,4 @@ extern int mroff_env (mroff_t *mr, int flag, va_list list);
 extern void mroff_cmdline (mroff_t *mr, const char *name);
 extern void mroff_cmdend (mroff_t *mr, const char *name);
 
-#endif	/* EFEU/mroff.h */
+#endif	/* roff.h */

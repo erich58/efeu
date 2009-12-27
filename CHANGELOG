@@ -1,3 +1,13 @@
+Version 1.1.1
+
+*	Fixed incorrect representation of negativ long values.
+*	New keyword |enum| for enum data types.
+*	Standardization of header identificators.
+*	Fixed conflict in searching readline.h with guile-readline/readline.h
+*	Cast operator for lvalues.
+*	New operator |[|<expr>|]| for expressions - replacement
+	for |expression| keyword.
+
 Version 1.1
 
 *	Added scripts |dircpy| and |dircmp| to distribution.

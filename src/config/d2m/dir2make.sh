@@ -146,6 +146,7 @@ bootstrap="$*"
 APP=.
 BIN=.
 HDR=.
+INC=.
 LDIR=.
 LIB=
 DDIR=.
@@ -257,7 +258,7 @@ RM=		rm -f
 CP=		cp
 LN=		ln -s
 
-INCFLG=	-I$HDR
+INCFLG=	-I$INC
 BINDIR=	$BIN
 LIBDIR=	$LDIR
 

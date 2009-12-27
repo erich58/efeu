@@ -20,8 +20,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	_EFEU_term_h
-#define	_EFEU_term_h	1
+#ifndef	term_h
+#define	term_h	1
 
 #include <EFEU/io.h>
 #include <EFEU/ioctrl.h>
@@ -83,4 +83,4 @@ extern void term_hmode (term_t *mr);
 extern int term_cmd (term_t *mr, va_list list);
 extern int term_env (term_t *mr, int flag, va_list list);
 
-#endif	/* EFEU/term.h */
+#endif	/* term.h */

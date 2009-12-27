@@ -22,8 +22,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	EFEU_MSGTAB_H
-#define	EFEU_MSGTAB_H	1
+#ifndef	EFEU_msgtab_h
+#define	EFEU_msgtab_h	1
 
 #include <EFEU/mstring.h>
 
@@ -39,4 +39,4 @@ char *getmsg (const char *name, int num, const char *def);
 void errmsg (const char *name, int num);
 void liberror (const char *name, int num);
 
-#endif	/* EFEU_MSGTAB_H */
+#endif	/* EFEU/msgtab.h */

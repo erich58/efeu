@@ -22,8 +22,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	EFEU_DATABASE_H
-#define	EFEU_DATABASE_H	1
+#ifndef	EFEU_database_h
+#define	EFEU_database_h	1
 
 #include <EFEU/object.h>
 #include <EFEU/vecbuf.h>
@@ -56,4 +56,4 @@ extern Type_t Type_DB;
 
 void SetupDataBase (void);
 
-#endif	/* EFEU_DATABASE_H */
+#endif	/* EFEU/database.h */

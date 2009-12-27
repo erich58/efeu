@@ -20,8 +20,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	_MS_STRUCT
-#define	_MS_STRUCT	1
+#ifndef	struct_ms
+#define	struct_ms	1
 
 #include <macro.ms>
 
@@ -88,19 +88,19 @@ void Struct (str Name, str Desc, IO Def, bool flag = true)
 
 /*	Struktur generieren
 */
-	fpsub(io, "\n/*\t$2\n*/\n", Name, Desc);
+	fprintf(io, "\n/*\t%s\n*/\n", Desc);
 	io << "\ntypedef struct {\n";
 
 	for (x in db)
 		x.typeline(io);
 
-	fpsub(io, "} $1_t;\n\n");
+	fprintf(io, "} %s_t;\n\n", Name);
 
 /*	Dokumentation ausgeben
 */
 	if	(flag)
 	{
-		fpsub(info, "@$1:$2");
+		fprintf(info, "@%s:%s", Name, Desc);
 
 		for (x in db)
 			fprintf(info, "%s\t%s\n", x.def, x.desc)
@@ -109,4 +109,4 @@ void Struct (str Name, str Desc, IO Def, bool flag = true)
 	}
 }
 
-#endif	/* _MS_STRUCT */
+#endif	/* struct.ms */

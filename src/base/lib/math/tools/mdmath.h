@@ -33,4 +33,4 @@ mdmat_t *mdinv (mdmat_t *base);
 
 void SetupMdMath (void);
 
-#endif	/* Math_mdmath_h */
+#endif	/* Math/mdmath.h */

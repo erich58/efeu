@@ -20,8 +20,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	_cntdef_ms
-#define	_cntdef_ms	1
+#ifndef	cntdef_ms
+#define	cntdef_ms	1
 
 #include <struct.ms>
 #include <function.ms>

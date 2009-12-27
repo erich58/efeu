@@ -22,8 +22,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef EFEU_BIGSORT_H
-#define EFEU_BIGSORT_H	1
+#ifndef EFEU_bigsort_h
+#define EFEU_bigsort_h	1
 
 #include <EFEU/ftools.h>
 #include <EFEU/vecbuf.h>

@@ -103,4 +103,4 @@ size_t RandomIndex (Random_t *rd, size_t dim);
 
 void SetupRandom (void);
 
-#endif	/* EFEU_Random_h */
+#endif	/* EFEU/Random.h */

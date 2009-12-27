@@ -99,6 +99,7 @@ If not, write to the Free Software Foundation, Inc.,
 101	$!: $0: Operator $1: Rechtes Argument fehlt.\n
 102	$!: $0: Bedingter Ausdruck: ":" fehlt.\n
 103	$!: $0: Teilterm: Abschlußklammer fehlt.\n
+104	$!: $0: Ausdruck: Abschlußklammer fehlt.\n
 105	$!: $0: Stringabschluß fehlt.\n
 106	$!: $0: Unvollständige Argumentliste.\n
 108	$!: $0: Zeichenabschluß fehlt.\n
@@ -162,6 +163,7 @@ If not, write to the Free Software Foundation, Inc.,
 164	$!: Objekt vom Type $1: Komponente $2 ist nicht definiert.\n
 165	$!: Zuweisungsobjekt erlaubt keine Komponentenauflösung.\n
 166	$!: Variable $1 ist nicht definiert.\n
+167	$!: Operand von L-Wert cast ist kein L-Wert.\n
 
 171	$!: Ungültiges "break".\n
 172	$!: Ungültiges "continue".\n
@@ -172,6 +174,8 @@ If not, write to the Free Software Foundation, Inc.,
 181	$!: $0: EOF in Liste.\n
 182	$!: $0: Fehlendes Objekt vor $1.\n
 183	$!: $0: Unerwartetes Zeichen $1 in Liste.\n
+185	$!: $0: Syntaxfehler in Aufzählungsdefinition.\n
+186	$!: $0: Basisklasse $1 muß ein Aufzählungstype sein.\n
 
 191	$!: $0: Member/Scope-Name wurde nicht angegeben.\n
 192	$!: $0: Komponente $1 von Scope ist nicht definiert.\n

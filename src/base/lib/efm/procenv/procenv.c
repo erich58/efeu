@@ -45,7 +45,7 @@ char *ProgName = NULL;
 
 /*
 Die Variable |$1| enthält die Kommandoidentifikation.
-Sie unterscheidet sich im normalfall nicht von |ProgName|.
+Sie unterscheidet sich im Normalfall nicht von |ProgName|.
 */
 
 char *ProgIdent = NULL;

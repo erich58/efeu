@@ -20,8 +20,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	_MS_CNTOBJ
-#define	_MS_CNTOBJ	1
+#ifndef	cntobj_ms
+#define	cntobj_ms	1
 
 #include <function.ms>
 
@@ -100,4 +100,4 @@ inline void CntObj(str name, Type_t type, IO def, str arg = NULL)
 	f_add.write(false);
 }
 
-#endif	/* _MS_CNTOBJ */
+#endif	/* cntobj.ms */

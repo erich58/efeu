@@ -20,8 +20,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	_MS_EBCDICDATA
-#define	_MS_EBCDICDATA	1
+#ifndef	ebcdicdata_ms
+#define	ebcdicdata_ms	1
 
 #include <macro.ms>
 #include <function.ms>
@@ -133,4 +133,4 @@ $1_clear	VRData_clear
 !);
 }
 
-#endif	/* _MS_EBCDICDATA */
+#endif	/* ebcdicdata_ms */

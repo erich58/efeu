@@ -22,8 +22,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	EFEU_EFIO_H
-#define	EFEU_EFIO_H	1
+#ifndef	EFEU_efio_h
+#define	EFEU_efio_h	1
 
 #include <EFEU/efmain.h>
 #include <EFEU/refdata.h>
@@ -238,4 +238,4 @@ io_t *io_pgfmt (io_t *io);
 io_t *io_termout (io_t *io, const char *term);
 
 
-#endif	/* EFEU_EFIO_H */
+#endif	/* EFEU/efio.h */

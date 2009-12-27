@@ -20,7 +20,7 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include <object.h>
+#include <EFEU/object.h>
 
 static Obj_t *ptr_alloc (Type_t *type, va_list list)
 {

@@ -59,6 +59,7 @@ Obj_t *PFunc_struct(io_t *io, void *data)
 	{
 		io_error(io, MSG_EFMAIN, 156, 1, p);
 		memfree(p);
+		memfree(bname);
 		return NULL;
 	}
 

@@ -22,8 +22,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	EFEU_CMDCONFIG_H
-#define	EFEU_CMDCONFIG_H	1
+#ifndef	EFEU_cmdconfig_h
+#define	EFEU_cmdconfig_h	1
 
 #include <EFEU/cmdsetup.h>
 
@@ -37,4 +37,4 @@ static void name (Func_t *func, void *rval, void **arg) \
 static void name (Func_t *func, void *rval, void **arg) \
 { expr; Val_ptr(rval) = arg[0]; }
 
-#endif	/* EFEU_CMDCONFIG_H */
+#endif	/* EFEU/cmdconfig.h */

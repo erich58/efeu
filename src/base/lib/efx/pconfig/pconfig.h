@@ -22,8 +22,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	EFEU_PCONFIG_T
-#define	EFEU_PCONFIG_T	1
+#ifndef	EFEU_pconfig_H
+#define	EFEU_pconfig_H	1
 
 #include <EFEU/Info.h>
 #include <EFEU/efmain.h>
@@ -139,4 +139,4 @@ char *ExpandPath (const char *name);
 int EshConfig (int *narg, char **arg);
 void EshIdent (io_t *in);
 
-#endif	/* EFEU_PCONFIG_T */
+#endif	/* EFEU/pconfig.h */

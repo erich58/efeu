@@ -66,7 +66,12 @@ int fmt_long(io_t *io, const fmtkey_t *key, long xval)
 */
 	if	(ptrval || key->flags & FMT_LONG)
 	{
-		val = xval;
+		if	(sig && xval < 0)
+		{
+			val = -xval;
+			sig = -1;
+		}
+		else	val = xval;
 	}
 	else if	(key->flags & FMT_SHORT)
 	{

@@ -20,8 +20,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	_vstat_ms
-#define	_vstat_ms	1
+#ifndef	vstat_ms
+#define	vstat_ms	1
 
 #include <function.ms>
 
@@ -80,4 +80,4 @@ void VStat(str sname, str label, IO def, str pdef = NULL, bool glob = true)
 	f.write(glob);
 }
 
-#endif	/* _vstat_ms */
+#endif	/* vstat.ms */

@@ -45,10 +45,22 @@ Obj_t *Parse_term(io_t *io, int prior)
 
 	if	(left->type == &Type_type)
 	{
-		if	((a = Parse_vdef(io, Val_type(left->data), 1)) != NULL)
+		int flag = 0x1;
+
+		if	(io_eat(io, " \t") == '&')
+		{
+			io_getc(io);
+			flag |= 0x2;
+		}
+
+		if	((a = Parse_vdef(io, Val_type(left->data), flag)))
 		{
 			UnrefObj(left);
 			left = a;
+		}
+		else if	(flag & 0x2)
+		{
+			left->type = &Type_lval;
 		}
 	}
 

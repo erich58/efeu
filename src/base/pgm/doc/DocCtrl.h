@@ -20,8 +20,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	_EFEU_DocCtrl_h
-#define	_EFEU_DocCtrl_h	1
+#ifndef	DocCtrl_h
+#define	DocCtrl_h	1
 
 #ifndef	CFGEXT
 #define	CFGEXT	"cfg"
@@ -163,4 +163,4 @@ If not, write to the Free Software Foundation, Inc.,
 #define	DOC_ENV_MPAGE	(DOC_ENV_CTRL|0xe)	/* Handbucheintrag */
 #define	DOC_ENV_BIB	(DOC_ENV_CTRL|0xf)	/* Literaturverzeichnis */
 
-#endif	/* EFEU/DocCtrl.h */
+#endif	/* DocCtrl.h */

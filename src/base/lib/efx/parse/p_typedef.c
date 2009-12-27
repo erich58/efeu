@@ -67,30 +67,6 @@ Obj_t *PFunc_typedef(io_t *io, void *arg)
 	return type2Obj(type);
 }
 
-#if	0
-void AliasType(char *name, Type_t *type)
-{
-	Type_t *ntype;
-	char *def;
-
-	ntype = NewType(name);
-	ntype->copy = type->copy;
-	ntype->clean = type->clean;
-	ntype->size = type->size;
-	ntype->base = type;
-	AddType(ntype);
-
-	/*
-	def = msprintf("%s ()", type->name);
-	SetFunc(FUNC_PROMOTION, ntype, def, DummyKonv);
-	*/
-	def = msprintf("%s ()", ntype->name);
-	SetFunc(FUNC_PROMOTION, (Type_t *) type, def, DummyKonv);
-	memfree(def);
-}
-#endif
-
-
 
 /*	Strukturkomponente bestimmen
 */

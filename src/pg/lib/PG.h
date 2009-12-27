@@ -22,8 +22,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	_DB_PG_h
-#define	_DB_PG_h	1
+#ifndef	DB_PG_h
+#define	DB_PG_h	1
 
 #include <EFEU/refdata.h>
 #include <EFEU/mdmat.h>

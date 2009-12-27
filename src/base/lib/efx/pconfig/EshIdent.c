@@ -48,10 +48,11 @@ void EshIdent (io_t *in)
 			p++;
 			*p = 0;
 			p++;
-			CmdPar_setval(par, "Ident", mlangcpy(desc, NULL));
 			break;
 		}
 	}
+
+	CmdPar_setval(par, "Ident", mlangcpy(desc, NULL));
 
 	for (; *p != 0; p++)
 	{

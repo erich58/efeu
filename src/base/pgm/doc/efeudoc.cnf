@@ -29,7 +29,7 @@ T:type|Type:
 C:cfg|Config:
 	:*:configuration file
 	:de:Konfigurationsfile
-H:hdr|Head; Bootstrap: set '{Bootstrap} -H "{}"'
+H:hdr|Head: append '\n'; Bootstrap: set '{Bootstrap} -H "{}"'
 	:*:evaluates <hdr> before any input file.
 	:de:Wertet den String <hdr> vor den Eingabedateien aus.
 	Damit können Dokumentmakros definiert werden.

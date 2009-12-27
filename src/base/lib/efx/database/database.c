@@ -159,6 +159,26 @@ static void f_db_delete(Func_t *func, void *rval, void **arg)
 	DBRVAL = db;
 }
 
+static void f_db_clean (Func_t *func, void *rval, void **arg)
+{
+	DataBase_t *db = Ref_DB(arg[0]);
+
+	if	(db && db->buf.used)
+	{
+		char *ptr = db->buf.data;
+		size_t n = db->buf.used;
+
+		while (n-- > 0)
+		{
+			CleanData(db->type, ptr);
+			ptr += db->type->size;
+		}
+
+		db->buf.used = 0;
+	}
+
+	DBRVAL = db;
+}
 
 
 static Obj_t *db_search(DataBase_t *db, Obj_t *obj, int flag)
@@ -388,6 +408,7 @@ VirFunc	test = NULL, str list = NULL)", f_db_fsave },
 	{ 0, &Type_int, "DataBase::index (.)", f_db_getindex },
 	{ 0, &Type_DB, "DataBase::insert (int, int = 1)", f_db_insert },
 	{ 0, &Type_DB, "DataBase::delete (int, int = 1)", f_db_delete },
+	{ 0, &Type_DB, "DataBase::clean ()", f_db_clean },
 	{ 0, &Type_DB, "DataBase::sort (VirFunc func)", f_db_sort },
 	{ FUNC_VIRTUAL, &Type_int, "dim(DataBase)", f_db_dim },
 };

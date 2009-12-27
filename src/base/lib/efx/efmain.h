@@ -22,8 +22,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	EFEU_EFMAIN_H
-#define	EFEU_EFMAIN_H	1
+#ifndef	EFEU_efmain_h
+#define	EFEU_efmain_h	1
 
 #include <EFEU/types.h>
 #include <EFEU/msgtab.h>
@@ -170,4 +170,4 @@ void del_idxcmp (idxcmp_t *ic);
 idxcmp_t *idxcmplist (char **list, size_t ldim, size_t dim);
 int idxcmp (idxcmp_t *ic, const char *name, size_t idx);
 
-#endif	/* EFEU_EFMAIN_H */
+#endif	/* EFEU/efmain.h */

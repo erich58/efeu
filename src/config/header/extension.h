@@ -31,8 +31,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef _EFEU_extension_h
-#define _EFEU_extension_h	1
+#ifndef EFEU_extension_h
+#define EFEU_extension_h	1
 
 #include <EFEU/config.h>
 

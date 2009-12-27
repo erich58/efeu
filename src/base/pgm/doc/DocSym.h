@@ -20,8 +20,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	_EFEU_DocSym_h
-#define	_EFEU_DocSym_h	1
+#ifndef	DocSym_h
+#define	DocSym_h	1
 
 #include <EFEU/io.h>
 #include <EFEU/Info.h>
@@ -49,4 +49,4 @@ int DocSym_print (io_t *io, DocSym_t *sym);
 char *DocSym_get (DocSym_t *sym, const char *name);
 void DocSym_free (DocSym_t *sym);
 
-#endif	/* EFEU/DocSym.h */
+#endif	/* DocSym.h */

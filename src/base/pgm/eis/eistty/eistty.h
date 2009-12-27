@@ -20,8 +20,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	_EISTTY_H
-#define	_EISTTY_H	1
+#ifndef	eistty_h
+#define	eistty_h	1
 
 #include <EFEU/Info.h>
 #include <EFEU/efwin.h>
@@ -54,4 +54,4 @@ void HelpWindow ();
 char *GetString (char *prompt);
 void WinMessage (char *fmt, ...);
 
-#endif	/* _EISTTY_H */
+#endif	/* eistty_h */

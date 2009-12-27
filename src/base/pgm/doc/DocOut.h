@@ -20,8 +20,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	_EFEU_DocOut_h
-#define	_EFEU_DocOut_h	1
+#ifndef	DocOut_h
+#define	DocOut_h	1
 
 #include <EFEU/io.h>
 
@@ -47,4 +47,4 @@ extern io_t *DocOut (DocType_t *type, const char *name);
 extern io_t *DocFilter (DocType_t *type, io_t *io);
 void DocOutInfo (const char *name, const char *desc);
 
-#endif	/* EFEU/DocOut.h */
+#endif	/* DocOut.h */

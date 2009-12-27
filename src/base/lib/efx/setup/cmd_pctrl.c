@@ -24,6 +24,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 #include <EFEU/pconfig.h>
 #include <EFEU/cmdsetup.h>
+#include <unistd.h>
+#include <sys/stat.h>
 #include <time.h>
 
 #define	RVSTR	Val_str(rval)
@@ -39,6 +41,22 @@ static void f_exit (Func_t *func, void *rval, void **arg)
 static void f_system (Func_t *func, void *rval, void **arg) \
 {
 	Val_int(rval) = callproc(STR(0));
+}
+
+static void f_rename (Func_t *func, void *rval, void **arg) \
+{
+	Val_bool(rval) = rename(STR(0), STR(1)) == 0;
+}
+
+static void f_remove (Func_t *func, void *rval, void **arg) \
+{
+	Val_bool(rval) = remove(STR(0)) == 0;
+}
+
+static void f_perror (Func_t *func, void *rval, void **arg) \
+{
+	char *pfx = STR(0);
+	perror(pfx ? pfx : ProgName);
 }
 
 static void f_memstat (Func_t *func, void *rval, void **arg)
@@ -134,6 +152,9 @@ static void f_expand(Func_t *func, void *rval, void **arg)
 static FuncDef_t fdef_pctrl[] = {
 	{ 0, &Type_void, "exit (int rval = 0)", f_exit },
 	{ 0, &Type_int, "system (str cmd = NULL)", f_system },
+	{ 0, &Type_bool, "rename (str oldpath, str newpath)", f_rename },
+	{ 0, &Type_bool, "remove (str path)", f_remove },
+	{ 0, &Type_void, "perror (str pfx = NULL)", f_perror },
 	{ 0, &Type_void, "allocstat (str mark = NULL)", f_allocstat },
 	{ 0, &Type_void, "memstat (str mark = NULL)", f_memstat },
 	{ 0, &Type_void, "memcheck ()", f_memcheck },

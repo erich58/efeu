@@ -32,7 +32,7 @@ If not, write to the Free Software Foundation, Inc.,
 Mithilfe der Datenstruktur |$1| kann auf einfache Weise eine
 Zeichenkette aufgebaut werden. Es gibt ähnliche Schreib- und
 Lesefunktionen wie für Dateien. Zusätzlich können auch
-Zeichen innerhalb der Zeicheinkette eingefügt oder geloscht werden
+Zeichen innerhalb der Zeicheinkette eingefügt oder gelöscht werden
 (Editierfunktion).
 Der Speicherbedarf der Zeichenkette
 wird bei Bedarf automatisch vergrößert.

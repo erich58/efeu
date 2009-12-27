@@ -23,8 +23,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	_EFEU_RegExp_h
-#define	_EFEU_RegExp_h	1
+#ifndef	EFEU_RegExp_h
+#define	EFEU_RegExp_h	1
 
 #include <EFEU/refdata.h>
 #include <regex.h>

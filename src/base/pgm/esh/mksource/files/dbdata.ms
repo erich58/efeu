@@ -20,8 +20,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	_MS_DBDATA
-#define	_MS_DBDATA	1
+#ifndef	dbdata_ms
+#define	dbdata_ms	1
 
 #include <var.ms>
 #include <macro.ms>
@@ -555,4 +555,4 @@ void DBPrintFunc (str type, str xdecl, IO def, bool nl = true, bool glob = true)
 	f.write(glob);
 }
 
-#endif	/* _MS_DBDATA */
+#endif	/* dbdata.ms */

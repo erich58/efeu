@@ -97,14 +97,14 @@ do
 	d)	pgm="diff";;
 	l)	pgm="cmp -l"; verbose=1;;
 	v)	verbose=1;;
-	\?)	usage; exit 1;;
+	\?)	usage -?; exit 1;;
 	esac
 done
 
 shift `expr $OPTIND - 1`
 
 if [ $# -ne 2 ]; then
-	usage
+	usage -?
 	exit 1
 elif [ ! -d $1 ]; then
 	printf "$fmt_noex" $1

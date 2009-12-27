@@ -22,8 +22,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	EFEU_PREPROC_H
-#define	EFEU_PREPROC_H	1
+#ifndef	EFEU_preproc_h
+#define	EFEU_preproc_h	1
 
 #include <EFEU/efio.h>
 #include <EFEU/object.h>
@@ -111,4 +111,4 @@ int iocpy_strmacsub (io_t *in, io_t *out, int key, const char *arg, unsigned fla
 
 void SetupPreproc (void);
 
-#endif	/* EFEU_PREPROC_H */
+#endif	/* EFEU/preproc.h */

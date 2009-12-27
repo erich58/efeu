@@ -58,6 +58,7 @@ int PrintFmtList (io_t *io, const char *fmt, ObjList_t *list)
 {
 	fmtkey_t key;
 	Obj_t *obj;
+	long lval;
 	int n;
 
 	if	(fmt == NULL)	return 0;
@@ -126,7 +127,15 @@ int PrintFmtList (io_t *io, const char *fmt, ObjList_t *list)
 		case 'x':
 		case 'X':
 
-			n += fmt_long(io, &key, Obj2long(getarg(&list)));
+			obj = getarg(&list);
+
+			if	(key.flags & FMT_LONG)
+				lval = Obj2long(obj);
+			else if	(key.flags & FMT_SHORT)
+				lval = Obj2short(obj);
+			else	lval = Obj2int(obj);
+
+			n += fmt_long(io, &key, lval);
 			break;
 
 		case 'f':
@@ -135,7 +144,8 @@ int PrintFmtList (io_t *io, const char *fmt, ObjList_t *list)
 		case 'g':
 		case 'G':
 
-			n += fmt_double(io, &key, Obj2double(getarg(&list)));
+			obj = getarg(&list);
+			n += fmt_double(io, &key, Obj2double(obj));
 			break;
 
 		case 'p':

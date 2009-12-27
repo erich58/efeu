@@ -124,11 +124,19 @@ int PrintAny (io_t *io, const Type_t *type, const void *data)
 	{
 		return print_struct(io, type->list, data);
 	}
+	else if	(IsTypeClass(type, &Type_enum))
+	{
+		char *p = EnumKeyLabel(type, Val_int(data), 1);
+		int n = io_puts(p, io);
+		memfree(p);
+		return n;
+	}
 	else if	(type->base)
 	{
-		return PrintData(io, type->base, data);
+		int n = io_printf(io, "(%s) ", type->name);
+		return n + PrintData(io, type->base, data);
 	}
-	else
+	else if	(type->size)
 	{
 		int i, n;
 
@@ -139,4 +147,5 @@ int PrintAny (io_t *io, const Type_t *type, const void *data)
 
 		return n;
 	}
+	else	return io_printf(io, "%s()", type->name);
 }

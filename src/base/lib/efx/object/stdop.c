@@ -30,6 +30,7 @@ static Obj_t *globvar (io_t *io, Op_t *op, Obj_t *left);
 static Obj_t *get_right(io_t *io, const Op_t *op);
 static Obj_t *conditional (io_t *io, Op_t *op, Obj_t *left);
 static Obj_t *subterm (io_t *io, Op_t *op, Obj_t *left);
+static Obj_t *expression (io_t *io, Op_t *op, Obj_t *left);
 static Obj_t *funcarg (io_t *io, Op_t *op, Obj_t *left);
 static Obj_t *vecindex(io_t *io, Op_t *op, Obj_t *left);
 static Obj_t *member_op (io_t *io, Op_t *op, Obj_t *left);
@@ -43,6 +44,7 @@ static Obj_t *left_assign (io_t *io, Op_t *op, Obj_t *left);
 static Obj_t *bool_and (void *par, const ObjList_t *list);
 static Obj_t *bool_or (void *par, const ObjList_t *list);
 static Obj_t *cast_expr (void *par, const ObjList_t *list);
+static Obj_t *lcast_expr (void *par, const ObjList_t *list);
 static Obj_t *cond_expr (void *par, const ObjList_t *list);
 
 static int opcmp(const Op_t *a, const Op_t *b)
@@ -68,6 +70,7 @@ static Op_t std_prefix[] = {
 	{ "~", OpPrior_Unary, OpAssoc_Right, PrefixOp },
 	{ "::", OpPrior_Unary, OpAssoc_Right, globvar },
 	{ "{", OpPrior_Unary, OpAssoc_Right, objlist },
+	{ "[", OpPrior_Unary, OpAssoc_Right, expression },
 	{ "--", OpPrior_Unary, OpAssoc_Right, left_assign },
 	{ "++", OpPrior_Unary, OpAssoc_Right, left_assign },
 };
@@ -191,9 +194,7 @@ static Obj_t *range_op(io_t *io, Op_t *op, Obj_t *left)
 
 static Obj_t *subterm(io_t *io, Op_t *op, Obj_t *left)
 {
-	Obj_t *obj;
-
-	obj = Parse_term(io, 0);
+	Obj_t *obj = Parse_term(io, 0);
 
 	if	(io_eat(io, " \t") != ')')
 	{
@@ -201,27 +202,28 @@ static Obj_t *subterm(io_t *io, Op_t *op, Obj_t *left)
 	}
 	else	io_getc(io);
 
-	if	(obj && obj->type == &Type_type)
+	if	(!obj)	return NULL;
+
+	if	(obj->type == &Type_type)
 	{
-		Obj_t *x;
+		Type_t *type = Val_type(obj->data);
 
-		x = Parse_term(io, OpPrior_Unary);
+		UnrefObj(obj);
+		obj = Parse_term(io, OpPrior_Unary);
 
-		if	(x && x->type->eval)
+		if	(obj && obj->type->eval)
 		{
-			ObjList_t *list;
-
-			list = NewObjList(obj);
-			list->next = NewObjList(x);
-			x = Obj_call(cast_expr, NULL, list);
+			obj = Obj_call(cast_expr, type, NewObjList(obj));
 		}
-		else
-		{
-			x = EvalObj(x, Val_type(obj->data));
-			UnrefObj(obj);
-		}
+		else	obj = EvalObj(obj, type);
+	}
+	else if	(obj->type == &Type_lval)
+	{
+		Type_t *type = Val_type(obj->data);
 
-		return x;
+		UnrefObj(obj);
+		obj = Parse_term(io, OpPrior_Unary);
+		obj = Obj_call(lcast_expr, type, NewObjList(obj));
 	}
 
 	return obj;
@@ -511,9 +513,15 @@ Obj_t *RangeTerm(Obj_t *first, Obj_t *last, Obj_t *step)
 
 static Obj_t *cast_expr(void *par, const ObjList_t *list)
 {
-	return EvalObj(RefObj(list->next->obj), Val_type(list->obj->data));
+	Obj_t *obj = NewObj(par, NULL);
+	Obj2Data(RefObj(list->obj), obj->type, obj->data);
+	return obj;
 }
 
+static Obj_t *lcast_expr(void *par, const ObjList_t *list)
+{
+	return KonvLval(RefObj(list->obj), par);
+}
 
 /*	Komma - Operator
 */
@@ -652,6 +660,19 @@ static Obj_t *vecindex(io_t *io, Op_t *op, Obj_t *left)
 static Obj_t *objlist(io_t *io, Op_t *op, Obj_t *left)
 {
 	return NewPtrObj(&Type_explist, Parse_list(io, '}'));
+}
+
+static Obj_t *expression(io_t *io, Op_t *op, Obj_t *left)
+{
+	left = expr2Obj(Parse_cmd(io));
+
+	if	(io_eat(io, " \t") != ']')
+	{
+		io_error(io, MSG_EFMAIN, 104, 0);
+	}
+	else	io_getc(io);
+
+	return left;
 }
 
 static Obj_t *LeftAssign (const char *name, Obj_t *obj)

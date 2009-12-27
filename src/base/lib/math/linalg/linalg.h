@@ -22,12 +22,12 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	MATH_LINALG_H
-#define	MATH_LINALG_H	1
+#ifndef	MATH_linalg_h
+#define	MATH_linalg_h	1
 
 #include <EFEU/config.h>
 #include <EFEU/types.h>
 
 size_t GaussJordan (double *data, size_t dim);
 
-#endif	/* MATH_LINALG_H */
+#endif	/* MATH/linalg.h */

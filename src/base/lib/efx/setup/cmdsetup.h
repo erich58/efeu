@@ -22,8 +22,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	EFEU_CMDSETUP_H
-#define	EFEU_CMDSETUP_H	1
+#ifndef	EFEU_cmdsetup_h
+#define	EFEU_cmdsetup_h	1
 
 #include <EFEU/efmain.h>
 #include <EFEU/efio.h>
@@ -55,4 +55,4 @@ void CmdSetup_regex(void);	/* Reguläre Ausdrücke */
 void CmdSetup_cmdpar(void);	/* Befehlsparameter */
 void CmdSetup_dl(void);		/* Dynamische Bibliotheken */
 
-#endif	/* EFEU_CMDSETUP_H */
+#endif	/* EFEU/cmdsetup.h */

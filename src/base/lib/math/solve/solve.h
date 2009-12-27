@@ -22,8 +22,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	MATH_SOLVE_H
-#define	MATH_SOLVE_H	1
+#ifndef	MATH_solve_h
+#define	MATH_solve_h	1
 
 #include <EFEU/efmain.h>
 #include <EFEU/efio.h>
@@ -49,4 +49,4 @@ extern char *SolveFmt;	/* Ausgabeformat */
 extern double SolveEps;	/* Genauigkeit */
 extern int SolveStep;	/* Max. Stufenzahl */
 
-#endif	/* MATH_SOLVE_H */
+#endif	/* MATH/solve.h */

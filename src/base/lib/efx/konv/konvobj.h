@@ -22,8 +22,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	EFEU_KONVOBJ_H
-#define	EFEU_KONVOBJ_H	1
+#ifndef	EFEU_konvobj_h
+#define	EFEU_konvobj_h	1
 
 #include <EFEU/efmain.h>
 #include <EFEU/efio.h>
@@ -62,6 +62,7 @@ ArgKonv_t *GetArgKonv (const Type_t *old, const Type_t *new);
 int ArgKonvDist (const Type_t *old, const Type_t *new);
 
 Obj_t *KonvObj (const Obj_t *obj, Type_t *def);
+Obj_t *KonvLval (Obj_t *obj, Type_t *def);
 void ArgKonv (ArgKonv_t *konv, void *tg, void *src);
 
 Func_t *SearchFunc (VirFunc_t *tab, FuncArg_t *arg,
@@ -83,4 +84,4 @@ Konv_t *GetKonv (Konv_t *buf, const Type_t *otype, const Type_t *ntype);
 void KonvData (Konv_t *konv, void *tg, void *src);
 int KonvDist (const Type_t *old, const Type_t *new);
 
-#endif	/* EFEU_KONVOBJ_H */
+#endif	/* EFEU/konvobj.h */

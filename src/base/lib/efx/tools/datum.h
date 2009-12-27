@@ -22,8 +22,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	EFEU_DATUM_H
-#define	EFEU_DATUM_H	1
+#ifndef	EFEU_datum_h
+#define	EFEU_datum_h	1
 
 #include <EFEU/efmain.h>
 #include <EFEU/efio.h>
@@ -59,4 +59,4 @@ char *KonvDatum(const char *fmt, int datum);
 extern char *MoName[13];
 extern char *WoName[7];
 
-#endif	/* EFEU_DATUM_H */
+#endif	/* EFEU/datum.h */

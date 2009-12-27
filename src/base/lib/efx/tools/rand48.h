@@ -22,8 +22,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	EFEU_Rand48_h
-#define	EFEU_Rand48_h	1
+#ifndef	EFEU_rand48_h
+#define	EFEU_rand48_h	1
 
 #include <EFEU/refdata.h>
 
@@ -61,4 +61,4 @@ int Rand48Round (Rand48_t *rd, double val);
 
 void SetupRand48 (void);
 
-#endif	/* EFEU_Rand48_h */
+#endif	/* EFEU/rand48.h */

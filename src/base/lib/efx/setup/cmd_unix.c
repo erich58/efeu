@@ -34,6 +34,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <time.h>
 #include <pwd.h>
 #include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 #if	EMULATE_FTW
 
@@ -360,6 +362,11 @@ static void f_flist (Func_t *func, void *rval, void **arg)
 	ftw(dir ? dir : ".", flist_eval, Val_int(arg[2]));
 }
 
+static void f_mkdir (Func_t *func, void *rval, void **arg) \
+{
+	Val_bool(rval) = mkdir(Val_str(arg[0]), (mode_t) 0777) == 0;
+}
+
 /*	Funktionstabelle
 */
 
@@ -375,6 +382,7 @@ static FuncDef_t func_unix[] = {
 	{ 0, &Type_int, "getuid ()", f_getuid },
 	{ 0, &Type_int, "ftw (str path, Expr_t expr = NULL, int depth = 1)", f_ftw },
 	{ 0, &Type_list, "flist (str path, str pat = NULL, int depth = 1)", f_flist },
+	{ 0, &Type_bool, "mkdir (str path)", f_mkdir },
 };
 
 

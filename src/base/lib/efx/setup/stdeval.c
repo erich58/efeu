@@ -30,6 +30,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/MakeDepend.h>
 #include <EFEU/LangType.h>
 #include <EFEU/printobj.h>
+#include <EFEU/Debug.h>
 #include <ctype.h>
 
 #define LBL_VAR	":*:global variables" \
@@ -110,6 +111,8 @@ static Obj_t *pf_func (io_t *io, void *data)
 
 static Obj_t *pf_expression (io_t *io, void *data)
 {
+	Message(NULL, DBG_NOTE,
+		"WARNING: expression obsolete, use [...] instead.\n", NULL);
 	return expr2Obj(Parse_cmd(io));
 }
 
@@ -200,6 +203,7 @@ static ParseDef_t pdef[] = {
 	{ "const", pf_const, NULL },
 
 	{ "struct", PFunc_struct, NULL },
+	{ "enum", PFunc_enum, NULL },
 	{ "typedef", PFunc_typedef, NULL },
 
 	{ "interactive", p_interact, NULL },
@@ -212,13 +216,13 @@ static ParseDef_t pdef[] = {
 
 static Obj_t *list_obj (const Var_t *st, const Obj_t *obj)
 {
-	register ObjList_t *list = Val_list(obj->data);
+	register ObjList_t *list = obj ? Val_list(obj->data) : NULL;
 	return list ? RefObj(list->obj) : ptr2Obj(NULL);
 }
 
 static Obj_t *list_next (const Var_t *st, const Obj_t *obj)
 {
-	register ObjList_t *list = Val_list(obj->data);
+	register ObjList_t *list = obj ? Val_list(obj->data) : NULL;
 
 	list = list ? RefObjList(list->next) : NULL;
 	return NewPtrObj(&Type_list, list);

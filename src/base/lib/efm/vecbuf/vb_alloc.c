@@ -79,7 +79,7 @@ void *_vb_alloc (vecbuf_t *buf, size_t dim)
 
 			save = buf->data;
 			buf->size = buf->blksize * ((dim + buf->blksize - 1) / buf->blksize);
-			buf->data = lmalloc((ulong_t) buf->size * buf->elsize);
+			buf->data = lmalloc(buf->size * buf->elsize);
 			return save;
 		}
 
