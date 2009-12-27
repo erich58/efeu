@@ -128,11 +128,3 @@ Schreibmaschinenschrift.
 	str flags = xexpand(ParseLine(cin));
 	newenv('p', pos, flags);
 }}
-
-:*:mathematic typesetting
-	$1 <formular>
-:de:Mathematischer Formelsatz
-	$1 <Formel>
-
-\def\math	newenv('$'); cout << ParseArg(cin) << "\\eval{endenv('$')}";
-

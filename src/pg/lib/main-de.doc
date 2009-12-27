@@ -22,8 +22,6 @@ If not, write to the Free Software Foundation, Inc.,
 
 \config	efeu
 \date	Juni 2001
-\dhead	Handbuch für Programmierer
-\dnote	Rohfassung
 \title	EFEU Schnittstelle zu PostgreSQL
 Handbuch für Programmierer
 

@@ -21,7 +21,7 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 # $pconfig
-# Version="$Id: tex2ps.sh,v 1.11 2007-08-19 04:22:10 ef Exp $"
+# Version="$Id: tex2ps.sh,v 1.12 2009-05-15 20:15:46 ef Exp $"
 # q |
 #	:*:landscape
 #	:de:Landscape
@@ -57,7 +57,7 @@ texfile=$name.tex
 dvifile=$name.dvi
 count=1
 
-while getopts n:qr: opt
+while getopts pn:qr: opt
 do
 	case $opt in
 	n)	count=$OPTARG;;
@@ -130,6 +130,16 @@ do
 
 	count=`expr $count - 1`
 done
+
+#	check for dvipost
+
+if
+	fgrep -c 'usepackage{dvipost}' $texfile > /dev/null
+then
+	dvipost $dvifile $dvifile
+fi
+
+#	converting
 
 case `basename $0` in
 	tex2ps)

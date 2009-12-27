@@ -23,12 +23,12 @@ If not, write to the Free Software Foundation, Inc.,
 
 \eval	{
 	str date = NULL;	// Publikationsdatum
-	str dochead = NULL;	// Kopfzeilentext
+//	str dochead = NULL;	// Kopfzeilentext
 	str title = NULL;	// Haupttitel
 	str subtitle = NULL;	// Untertitel
 	str author = NULL;	// Autorenliste
 	str docnote = NULL;	// Prozessuale Anmerkung
-	str addr = NULL;	// Adressenblock
+//	str addr = NULL;	// Adressenblock
 	DataBase docflags = DataBase(str);
 	DataBase setup = DataBase(str);
 }
@@ -94,7 +94,7 @@ is used.
 :*:document title
 	$1 |[|<toc entry>|]| <title>\br
 	<subtitle>
-:de:Titel
+:de:Titel und Untertitel
 	$1 |[|<Kurzform>|]| <Titel>\br
 	<Untertitel>
 
@@ -116,22 +116,6 @@ verwendet wird.
 	else		title = expand(main), subtitle = expand(sub);
 }}
 
-:*:document head
-:de:Dokumentkopf
-	$1 <Dokumentkopf>
-
-:de:Der Befehl $1 setzt den Dokumentkopf
-
-\def\dhead	dochead = expand(ParseLine(cin));
-
-:*:document note on title page
-:de:Dokumentanmerkung
-	$1 <Dokumentanmerkung>
-
-:de:Der Befehl $1 setzt die Dokumentanmerkung für die Titelseite.
-
-\def\dnote	docnote = expand(ParseLine(cin));
-
 :*:list of authors
 :de:Autorenliste
 	$1 <Autorenliste>\br
@@ -140,19 +124,6 @@ verwendet wird.
 :de:Der Befehl $1 definiert die Autorenliste für die Titelseite.
 
 \def\author	author = expand(strsub(ParseLine(cin, true), "\n", "\\br\n"));
-
-:*:address block for title page
-:de:Adressblock
-	$1 <Adresse>\br
-	$1\br
-	<Adresse>
-
-:de:Der Befehl $1 definiert den Adressenblock für die Titelseite.
-
-\def\addr	{
-addr = ParseLine(cin);
-addr = expand(addr ? addr : ParsePar(cin), false);
-}
 
 :*:introduction
 :de:Einführung

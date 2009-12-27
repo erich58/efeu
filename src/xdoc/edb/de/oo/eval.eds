@@ -45,7 +45,7 @@ Die Anwendung des Filters auf |ex2.edb| liefert die Ausgabe
 Der Aufruf
 ---- eval
 {
-str cmd = "edb -s stock.def -p data ex2.edb"
+str cmd = "edb -I. -s stock.def -p data ex2.edb"
 input("verbatim", cmd);
 input(NULL, "liefert die Ausgabe");
 input("verbatim", popen(cmd, "r"));
@@ -58,7 +58,7 @@ Konvertierung als Datenwürfel.
 Mit
 ---- eval
 {
-str cmd = "edb -s stock.def -p md=nohead,prec=4f ex2.edb"
+str cmd = "edb -I. -s stock.def -p md=nohead,prec=4f ex2.edb"
 input("verbatim", cmd);
 input(NULL, "wird nachstehende Ausgabe generiert:");
 input("verbatim", popen(cmd, "r"));

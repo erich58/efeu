@@ -1,7 +1,18 @@
+Version 3.2-5
+
+*	Minor enhancements in document creation.
+*	Minor corrections in documentations.
+
+Version 3.2-4
+
+*	Minor enhancements in makefile creation.
+*	Minor enhancements in document creation.
+*	Minor corrections in documentations.
+
 Version 3.2-3
 
 *	Enhancements to |efeudoc| for better representation of tabulars.
-*	Alternative output functions to IO and SBUF struktures.
+*	Alternative output functions to IO and SBUF structures.
 
 Version 3.2-2
 

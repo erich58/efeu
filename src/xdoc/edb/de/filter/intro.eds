@@ -61,13 +61,11 @@ einem \index{Preprozessor} überarbeitet. Dabei
 werden Kommentare im C-Stil (ISO99) und Preprozessordirektiven
 abgearbeitet.
 \index{Lange Zeilen} können mithilfe eines
-\index{Gegenschrägstrich}s\note
-	Die Sequenz Gegenschrägstrich Zeilenvorschub wird aus
-	der Eingabe gelöscht.
-zerlegt werden.
+\index{Gegenschrägstrich}s\note{Die Sequenz Gegenschrägstrich
+Zeilenvorschub wird aus der Eingabe gelöscht.} zerlegt werden.
 
 Zusätzlich werden Leerzeichen vor einem Zeilenvorschub entfernt und
-eingerückte Zeilen gelten als \index{Fortsetzungszeilen}\xnote{Ein
+eingerückte Zeilen gelten als \index{Fortsetzungszeilen}\note{Ein
 Zeilenvorschub gefolgt von einem Leerzeichen oder einem Tabulatoren
 wird entfernt.}.
 Damit lassen sich Skripts übersichtlicher schreiben.

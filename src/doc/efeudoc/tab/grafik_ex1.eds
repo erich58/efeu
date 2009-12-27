@@ -1,0 +1,6 @@
+---- eval latex ignore
+cout << filter("gnuplot", string !
+set terminal latex
+plot sin(x)
+!) << "\n";
+----

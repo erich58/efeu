@@ -136,6 +136,32 @@ $(cmd:%s)
 	}
 }}
 
+$1 <name>
+<data lines>\br
+|\end|\br
+
+:*:The command $1 creates the file <name>
+in the temporary directory |smh_temp| with the given data lines.
+:de:Das Kommando $1 generiert die Datei <name> im temporären
+Verzeichnis |smh_temp| mit den gegebenen Datenzeilen.
+
+\def\smh_create {{
+	str name = ParseLine(cin, true);
+	str data = ParseRegion(cin, "\\\\end");
+
+	if	(smh_temp)
+	{
+		IO out = open(paste("/", smh_temp, name), "w");
+		puts(data, out);
+		close(out);
+	}
+
+	cout << "\n\n---- verbatim\n";
+//	fprintf(cout, "$ cat %s\n", name);
+	puts(data, cout);
+	cout << "----\n\n";
+}}
+
 $1
 
 :*:The command $1 removes the temporary directory for |shmkmf| examples

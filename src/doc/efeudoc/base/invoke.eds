@@ -1,0 +1,28 @@
+\sec	Aufruf
+
+Das Kommando |efeudoc| wird wahlweise mit dem Namen einer
+Dokumentdatei oder einem Verzeichnis aufgerufen.
+Falls ein Verzeichnis angegeben wurde, wird nach der Datei
+|main.eds| gesucht und bei Erfolg verarbeitet. Falls anstelle eines
+Namens ein |-| angegeben wurde, wird die Standardeingabe verarbeitet.
+
+Die Art der Aufbereitung wird über Optionen gesteuert. Die
+Standardvorgabe ist planer Text ohne Steuerinformationen.
+Allgemein kann der Ausgabemodus mit der Option |-T|~<mode> angegeben
+werden. Für die wichtigsten Modi gibt es kurze Optionen:
+[|-t|]
+	Terminalausgabe mit |less|.
+[|-l|]
+	Ausgabe von \LaTeX;-Sourcen.
+[|-p|]
+	Postscript-Dokument über \LaTeX.
+[|--pdf|]
+	PDF-Dokument über \LaTeX.
+
+Die Ausgabedatei wird über die Option |-o| festgelegt. Vorgabe ist die
+Standardausgabe.
+
+|efeudoc| unterstützt die automatische Dokumentgenerierung mit |make|.
+Mit der Option |-r|~<target> wird anstelle der Dokumentaufbereitung
+eine Generierungsregel für |make| mit dem Pseudoziel <target>
+und einer vollständigen Abhängigkeitsliste ausgegeben.

@@ -43,7 +43,7 @@ static char *sec_manhead = NULL;
 static char *sec_mansubhead = NULL;
 static char *sec_caption = "caption";
 static char *sec_subcaption = NULL;
-static char *sec_margin = NULL;
+static char *sec_margin = "marginpar";
 static char *sec_note = "footnote";
 static char *sec_fignote = NULL;
 
@@ -439,7 +439,7 @@ int LaTeX_env (void *drv, int flag, va_list list)
 		put_xsec(ltx, flag, sec_subcaption, list);
 		break;
 	case DOC_SEC_MARG:
-		put_xsec(ltx, flag, sec_margin, list);
+		put_sec(ltx, flag, sec_margin, list);
 		break;
 	case DOC_SEC_NOTE:
 		put_sec(ltx, flag, sec_note, list);

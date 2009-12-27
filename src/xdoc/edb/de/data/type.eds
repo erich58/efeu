@@ -60,8 +60,8 @@ definiert eine Datenstruktur mit den Komponenten |num|, |first_name|,
 
 \index[benannte Strukturen]
 Normalerweise werden Strukturen in EFEU-Skripts benannt, d.h. es wird
-ein symbolischer Name\note Dieser wird optional nach dem Schlüsselwort |struct|
-	angegeben.
+ein symbolischer Name\note{Dieser wird optional nach dem Schlüsselwort
+|struct| angegeben.}
 vergeben, der stellvertretend für die
 Strukturdefinition verwendet werden kann. In EDB-Datenfiles werden in
 der Regel zur Vermeidung von Namenskonflikten \index{namenlose Strukturen}

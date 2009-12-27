@@ -1,0 +1,23 @@
+\appendix
+
+\mchap[1]	Kommandos
+
+\pipe	|efeudoc --help=raw|
+\pipe	|esh --help=raw|
+\pipe	|src2doc --help=raw|
+\pipe	|tex2ps --help=raw|
+
+/*
+\mchap[7]	Makropakete
+
+---- eval
+
+for (x in flist(DocDir + "../../../base/pgm/doc", "*.7"))
+	fprintf(cout, "\\include %s\n", x);
+----
+*/
+
+\include bib.eds
+\include history.eds
+
+\lof

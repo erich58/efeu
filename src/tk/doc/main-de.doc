@@ -22,8 +22,6 @@ If not, write to the Free Software Foundation, Inc.,
 
 \config	efeu
 \date	Juli 2002
-\dhead	Handbuch für Programmierer
-\dnote	Rohfassung
 \title	EFEU Schnittstelle zu Tcl/Tk
 Handbuch für Programmierer
 

@@ -1,0 +1,11 @@
+Beispiel für eine Aufzählungsliste:
+*	Listeneintrag mit einem längeren Absatz zur
+	Demonstration der Funktionsweise von
+	Einrückungen.
+
+	Ein neuer Absatz mit einer Nummerierung:
+	#	Eintrag 1
+	#	Eintrag 2
+*	Ein weiterer Listeneintrag
+
+Text nach der Aufzählung.

@@ -55,7 +55,7 @@ void DocFunc_section (EfiFunc *func, void *rval, void **arg)
 	case 'p':	mode = 1; type = DOC_SEC_PARA; break;
 	case 'H':	mode = 1; type = DOC_SEC_HEAD; break;
 	case 'h':	mode = 2; type = DOC_SEC_SHEAD; break;
-	case 'm':	mode = 2; type = DOC_SEC_MARG; break;
+	case 'm':	mode = 3; type = DOC_SEC_MARG; break;
 	case 'F':	mode = 2; type = DOC_SEC_CAPT; break;
 	case 'f':	mode = 2; type = DOC_SEC_SCAPT; break;
 	case 'N':	mode = 3; type = DOC_SEC_NOTE; break;

@@ -40,14 +40,15 @@ Datei eingefügt, dessen Filezusatz mit einer Ziffer beginnt.
 
 \def\mpage newenv('m', expand(ParseOpt(cin, true)), expand(ParseLine(cin)));
 
-:*:Name section of manpage
+:*:Name section of manpage with caption NAME
 	$1 |[|toc entry|]| <title>\br
-	~~~~....
+	~~~~...\br
 	$1 |[|toc entry|]|\br
 	<one line title>
-:de:Namensabschnitt einer Handbuchseite
+:de:Namensabschnitt einer Handbuchseite mit
+Hauptüberschrift BEZEICHNUNG
 	$1 |[|Kurzform|]| <Titel>\br
-	~~~~....
+	~~~~...\br
 	$1 |[|Kurzform|]|\br
 	<Einzeiliger Titel>
 

@@ -139,10 +139,12 @@ int term_env (void *drv, int flag, va_list list)
 		trm->put = (flag ? term_verb : term_putc);
 		break;
 	case DOC_MODE_SKIP:
+		trm->skip = flag;
+		break;
 	case DOC_MODE_MAN:
 	case DOC_MODE_TEX:
 	case DOC_MODE_HTML:
-		trm->skip = flag;
+		term_env (trm, flag, list);
 		break;
 
 /*	Listen
@@ -196,7 +198,6 @@ int term_env (void *drv, int flag, va_list list)
 		break;
 	case DOC_ENV_TABLE:
 	case DOC_ENV_FIG:
-		trm->skip = flag;
 		break;
 	case DOC_ENV_TAB:
 		if	(flag)

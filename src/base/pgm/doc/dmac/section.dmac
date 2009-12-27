@@ -128,26 +128,20 @@ If not, write to the Free Software Foundation, Inc.,
 \def\para	section('p', ParseOpt(cin, true), ParseLine(cin, true));
 
 :*:marginal note
-	$1 |[|<vertical offset>|]| <note>\br
-	~~~~&ldots;
+	$1 |[|<left>|] {|<note>|}|
 :de:Randnotiz
-	$1 |[|<Verschiebung>|]| <Randnotiz>\br
-	~~~~&ldots;
+	$1 |[|<Links>|] {|<Randnotiz>|}|
 
-:de:Der Befehl $1 setzt eine Randnotiz.
+:de:Der Befehl $1 setzt eine Randnotiz. Der optionale Text <Links>
+für linke Seiten wird nur bei doppelseitigem Druck verwendet.
 
-\def\margin	section('m', ParseOpt(cin, true), ParseLine(cin, true));
+\def\margin	section('m', ParseOpt(cin, true), ParseArg(cin));
 
 :*:footnote
-	$1 |[|<mark>|]| <note>\br
-	~~~~&ldots;
+	$1 |[|<mark>|] {|<note>|}|\br
 :de:Fußnote
-	$1 |[|<Marke>|]| <Anmerkung>\br
-	~~~~&ldots;
+	$1 |[|<Marke>|] {|<Anmerkung>|}|\br
 
 :de:Der Befehl $1 setzt eine Fußnote.
-Eingerückte Zeilen nach dem Befehl gelten als Fortsetzungszeilen.
 
-\def\note	section('N', ParseOpt(cin, true), ParseLine(cin, true));
-\def\xnote	section('N', ParseOpt(cin, true), ParseArg(cin));
-
+\def\note	section('N', ParseOpt(cin, true), ParseArg(cin));

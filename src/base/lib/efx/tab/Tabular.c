@@ -159,9 +159,15 @@ void Tabular_multicol (Tabular *tab, int cdim, const char *def)
 	{
 		switch (*def)
 		{
+		case 'p':
+		case 'm':
+		case 'b':
+			tab->buf.col.align = TabularAlign_left;
+			break;
 		case 'r':
 			tab->buf.col.align = TabularAlign_right;
 			break;
+		case 'X':
 		case 'l':
 			tab->buf.col.align = TabularAlign_left;
 			break;
@@ -199,6 +205,7 @@ void Tabular_column (Tabular *tab, const char *def)
 		case 'r':
 			col = new_column(tab, TabularAlign_right);
 			break;
+		case 'X':
 		case 'l':
 			col = new_column(tab, TabularAlign_left);
 			break;

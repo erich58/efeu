@@ -1,0 +1,28 @@
+\sec	Grafiken
+
+Für Grafiken gibt es noch keine vordefinierten Methoden in |efeudoc|.
+Eine der Schwierigkeiten liegt dain, dass zum einen nicht alle
+Ausgabetreiber mit Grafiken nicht umgehen können und zum anderen
+unterschiedliche Aufbereitungen benötigt werden.
+
+Insofern Grafiken nur in der \LaTeX-Version benötigt werden,
+kann der entsprechende \LaTeX-Code mittels |\include| oder
+einem Eingabebereich und geeigneten Steuerflags eingebunden werden.
+Hier besteht auch die Möglichkeit, den Code mithilfe des integrierten
+Befehlsinterpreters und/oder externer Kommandos
+(z.B. \index{|gnuplot|}) im Rahmen der Dokumentverarbeitung zu erzeugen.
+Vergleiche dazu Abbildung \vref{gra1}.
+
+\fig
+\latex\centering
+\include[verbatim] grafik_ex1.eds
+
+\include grafik_ex1.eds
+\caption Grafikerstellung mit gnuplot
+\label{gra1}
+\end
+
+Für die HTML-Aufbereitung ist geplant,
+\LaTeX-Codebereiche mit Hilfe von |latex| und
+einer geeignete Nachbearbeitung (|dvips|, |netpbm|, |imagemagick|)
+als Grafik einzubinden.

@@ -13,9 +13,9 @@ Kompatiblitätsgründen für zukünftige Erweiterungen sollte hier
 1.0 angegeben werden.
 
 \index[Kommentare]
-Das erste Kommentar im C-Stil (ISO 99)\note Kommentare der Form
-	/\* ... *\/ oder /\/ ... Zeilenvorschub.
-definiert den Beschreibungstext des Datenfiles. Dieser wird auch
+Das erste Kommentar im C-Stil (ISO 99)\note{Kommentare der Form
+/\* ... *\/ oder /\/ ... Zeilenvorschub.} definiert den Beschreibungstext
+des Datenfiles. Dieser wird auch
 bei der Ausgabe wieder in den \index{Kopfteil} geschrieben.
 
 Nach der Kennung folgt der \index{Metadatenteil} mit den einzelnen

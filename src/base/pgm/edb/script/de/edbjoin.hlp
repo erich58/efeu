@@ -106,22 +106,22 @@ von |use|.
 
 Anmerkungen:
 \ttitem	mode=a
-Liefert alle Datensätze der ersten Datenbank für die es keinen
-entsprechenden Datensatz in der zweiten Datenbank gibt.
+	Liefert alle Datensätze der ersten Datenbank für die es keinen
+	entsprechenden Datensatz in der zweiten Datenbank gibt.
 \ttitem	use=a
-Liefert alle Datensätze der ersten Datenbank für die es mindestens
-einen entsprechenden Datensatz in der zweiten Datenbank gibt,
+	Liefert alle Datensätze der ersten Datenbank für die es mindestens
+	einen entsprechenden Datensatz in der zweiten Datenbank gibt,
 \ttitem	mode=ax
-Liefert kombinierte Datensätze für jeden Datensatz der ersten
-Datenbank, wobei bei fehlenden Datensätzen der zweiten Datenbank
-Vorgabewerte für die zusätzlichen Variablen eingesetzt werden.
+	Liefert kombinierte Datensätze für jeden Datensatz der ersten
+	Datenbank, wobei bei fehlenden Datensätzen der zweiten Datenbank
+	Vorgabewerte für die zusätzlichen Variablen eingesetzt werden.
 \ttitem	mode=a use=x
-Liefert für jeden nur in der ersten Datenbank vorkommenden Datensatz
-einen kombinierten Datensatz, wobei die zusätzlichen Variablen
-der zweiten Datenbank auf Vorgabewerte gesetzt sind. Diese Angabe
-ist selten sinnvoll.
+	Liefert für jeden nur in der ersten Datenbank vorkommenden Datensatz
+	einen kombinierten Datensatz, wobei die zusätzlichen Variablen
+	der zweiten Datenbank auf Vorgabewerte gesetzt sind. Diese Angabe
+	ist selten sinnvoll.
 \ttitem	mode=b use=a
-Liefert eine leere Datenbank vom Type der ersten Datenbank.
+	Liefert eine leere Datenbank vom Type der ersten Datenbank.
 \end
 
 @environ -h

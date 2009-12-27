@@ -238,8 +238,10 @@ Fehlt <Eintrag> wird <Bereich> als Indexeintrag verwendet.
 
 :*:\LaTeX; code
 	$1 <|[<alt>] {<code>}|>
+	$1 <|[<alt>] <code>|>
 :de:\LaTeX-Befehl
-	$1 <|[<Alternative>] {<LaTeX-Code>}|>
+	$1 <|[<Alternative>] {<LaTeX-Code>}|>\br
+	$1 <|[<Alternative>] <LaTeX-Code>|>
 
 :*:The command allows to insert latex code <code> for the latex driver.
 All other drivers use <alt> instead.
@@ -249,5 +251,22 @@ ausgegeben.
 
 \def\latex	{{
 	str alt = ParseOpt(cin, true);
-	if	(!plaintex(ParseArg(cin))) cout << alt;
+	str arg = ParseArg(cin);
+
+	if	(!arg)	arg = ParseLine(cin) + "\n";
+
+	if	(!plaintex(arg)) cout << alt;
 }}
+
+:*:mathematic typesetting
+	$1 <|{<formular>}|>
+:de:Mathematischer Formelsatz
+	$1 <|{<Formel>}|>
+
+\def\math	{{
+	str cmd = ParseArg(cin);
+
+	if	(!plaintex("$" + cmd + "$"))
+		plain(cmd);
+}}
+

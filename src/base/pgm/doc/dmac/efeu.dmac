@@ -26,12 +26,14 @@ If not, write to the Free Software Foundation, Inc.,
 		DocStyle = "report";
 
 	author = expand("Erich Frühstück");
+/*
 	addr = expand(string !
 Erich Frühstück\br
 Südtirolergasse 17--21/5\br
 A\-3423 St.Andrä/Wördern\br
 Telefon (02242) 310 99
 !, false);
+*/
 
 	str exname = langcpy(":*:Exercise:de:Aufgabe");
 	latex::preamble += string !
@@ -52,7 +54,7 @@ Telefon (02242) 310 99
 \textwidth=15cm
 
 \reversemarginpar
-%\marginparwidth=2cm
+\marginparwidth=2cm
 %\newcommand{\margin}[2][]{\mbox{}\marginpar{\bf#2}\ignorespaces}
 
 \makeatletter
@@ -93,7 +95,8 @@ Telefon (02242) 310 99
 	\exercisename\arabic{chapter}-\arabic{exnum}.}}
 %% END
 !;
-	latex::margin = "EDmanhead";
+//	latex::margin = "EDmanhead";
+	latex::margin = "marginpar";
 	latex::it = "\\it\\color{Red}";
 	latex::tt = "\\tt\\color{RoyalBlue}";
 	latex::rm = "\\rm\\color{Black}";
@@ -149,7 +152,7 @@ If not, write to the Free Software Foundation, Inc.,
 \appendix	Impressum
 Eigentümer und Verleger:\br
 Erich Frühstück\br
-Südtirolergasse 17--21/5\br
+//Wildenhaggasse 38\br
 A\-3423 St.Andrä/Wördern
 \par
 Für den Inhalt verantwortlich:\br

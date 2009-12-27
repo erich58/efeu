@@ -1,0 +1,84 @@
+\sec	Anhang
+
+Ein Bereich im Anhang wird mit dem Befehl \index{|\appendix|}
+begonnen. Beim ersten Auftreten des Befehls beginnt der Anhang,
+jeder weitere Befehl schließt die aktuelle Seite ab und sorgt
+dafür, dass der Folgetext auf einer rechten Seite beginnt.
+
+Der Befehl \index{|\appendix|} kombiniert die Einleitung
+eines Anhangkapitels mit dem Gliederungsbefehl |\paragraph|.
+Die Überschrift (und ihre Kurzfom) kann direkt beim |\appendix|-Befehl
+angegeben werden.
+
+Die aktuelle Seite wird nur begonnen, wenn beim |\appendix|-Befehl
+auch eine Überschrift angegeben wurde (Kurzform reicht nicht).
+Mehrere |\appendix|-Befehle können also hintereinander stehen,
+ohne daß zusätzliche Leerseiten generiert werden.
+
+\ssec Handbuchkapitel
+
+\index{Handbuchkapitel} werden mit dem Befehl \index{|\mchap|} gesetzt.
+Er hat die Syntax:
+	|\mchap [|<sec>|]| <name>
+
+Dabei gibt <name> den Kapitelnamen und <sec> die Kapitelnummer an.
+Die einzelnen Kapitelnummern sind genormt und orientieren sich an den
+Handbuchstandards.
+
+Die Handbuchkapitel werden mit den folgenden Befehlen
+gegliedert:
+
+---- eval
+for (x in "\\mpage", "\\Name", "\\head", "\\shead")
+	showmac(x, cout, 1);
+----
+
+Für die in Handbuchseiten standardisierten Überschriften stehen Makros zur
+verfügung. Diese werden dentsprechend der aktuellen Sprachumgebung
+(Umgebungsvariable |LANG|) aufgelöst. Derzeit stehen Deutsch und
+Englisch (Vorgabe bei unbekannter Sprache) zur verfügung.
+
+---- eval
+for (x in "Synopsis", "Description", "Example", "Examples",
+		"Files", "Environment", "SeeAlso", "Diagnostics",
+		"Notes", "Warnings", "Errors", "Copyright")
+	showmac("\\" + x, cout, 1);
+----
+
+\ssec	Liste der Übersichten
+
+Der Befehl \index{|\lof|} generiert eine \index{Liste der Übersichten}.
+Er ruft indirekt |\appendix| auf.
+Analog zu |\lof| generiert der Befehl \index{|\lot|}
+eine \index{Liste der Tabellen}.
+
+\ssec	Stichwortverzeichnis
+
+Der Befehl \index{|\printindex|} generiert ein \index{Stichwortverzeichnis}.
+Er ruft indirekt |\appendix| auf.
+Die einzelnen Stichworteinträge werden mit dem |\index|-Befehl generiert.
+Dieser wird auf Seite \pref{index} näher beschrieben.
+
+\ssec	Literaturverzeichnis
+
+Das \index{Literaturverzeichnis} wird mit
+|\bibliography| eingeleitet. Die einzelnen Einträge werden mit dem
+Schlüsselwort |\bibitem|, gefolgt von einer kurzen Kennung
+eingeleitet.
+
+Beispiel für einen Literatureintrag:
+---- verbatim
+\bibitem kop1
+Helmut Kopka.
+LaTeX. 1. Eine Einführung.
+Pearson Studium, 3. überarbeitete Auflage 2006
+----
+
+Zitiert wird ein Eintrag mit dem Befehl \index{|\cite|} und der Angabe
+der Kennung, z. B. |\cite{kop1}|.
+
+\ssec Impressum
+
+Das \index{Impressum} beginnt immer auf einer rechten Seite.
+Es wird mit |\appendix Impressum| eingeleitet.
+

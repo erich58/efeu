@@ -55,14 +55,18 @@ int term_cmd (void *drv, va_list list)
 		Tabular_newline(trm->tab);
 		break;
 	case DOC_TAB_SEP:
-		trm->tab->buf.col.width = trm->col;
+		if	(trm->tab)
+			trm->tab->buf.col.width = trm->col;
+
 		trm->col = 0;
 		trm->mode = 0;
 		trm->space = 0;
 		Tabular_entry(trm->tab);
 		break;
 	case DOC_TAB_END:
-		trm->tab->buf.col.width = trm->col;
+		if	(trm->tab)
+			trm->tab->buf.col.width = trm->col;
+
 		trm->col = 0;
 		trm->mode = 0;
 		trm->space = 0;

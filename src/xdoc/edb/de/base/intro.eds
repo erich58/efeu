@@ -3,10 +3,10 @@
 Beim \index{EDB-Datenkonzept} geht es darum, große Datenmengen
 eines bestimmten Datentyps zu manipulieren. Kern dabei ist ein
 modifizierbares Datenobjekt, ein sognenanter
-\index{L-Wert}\note Der Name leitet sich davon ab, dass ein
-	L-Wert auf der linken Seite einer Zuweisung steht.
-, der um Ein- und Ausgabedefinitionen erweitert
-wird. Der L-Wert dient dabei als Zwischenspeicher für die Datenwerte.
+\index{L-Wert}\note{Der Name leitet sich davon ab, dass ein L-Wert auf
+der linken Seite einer Zuweisung steht.}, der um Ein- und
+Ausgabedefinitionen erweitert wird. Der L-Wert dient dabei als
+Zwischenspeicher für die Datenwerte.
 
 Folgende Möglichkeiten stehen zur Verfügung, um ein EDB-Datenobjekt
 einzurichten:

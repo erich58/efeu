@@ -14,4 +14,40 @@ Dazu richten wir zunächst im Hauptverzeichnis des Projektes das Verzeichnis
 |shmkmf| können einer aktuellen EFEU-Distribution entnommen werden.
 Quelle: |http://efeu.cybertec.at|, Unterverzeichnis: |src/config/shmkmf|.
 
-\pipe[verbatim] cd ../../../src/config/shmkmf; ls -CR -I CVS
+//\pipe[verbatim] cd ../../../src/config/shmkmf; ls -CR -I CVS
+
+\smh_init
+\smh_exec mkdir src
+\smh_exec mkdir shmkmf
+\smh_exec cp -R $src/../../../src/config/shmkmf/ .
+\smh_exec mkdir src/binom src/tools src/pasctrian
+\smh_exec cp $src/binom.h src/binom
+\smh_exec cp $src/factorial.c src/binom
+\smh_exec cp $src/bincoef.c src/binom
+\smh_exec cp $src/pasctrian.c src/tools
+\smh_exec cp $src/pasctrian.tex src/pasctrian
+
+Da jetzt |shmkmf| nicht mehr direkt Verfügbar ist, benötigen wir ein
+einfaches |Makefile| zur initialisierung des Builkprozesses. Im
+wesentlichen benötigen wir die Regel zur Generierung des Makefiles im
+|build|-Verzeichnis. Das vorher im Hauptverzeichnis plazierte
+|Config.make| wird nach |src| verschoben. Es besteht wiederum nur aus
+einer Befehlszeile:
+\smh_create src/Config.make
+submake
+\end
+
+Das Makefile im Hauptverzeichnis hat folgenden Aufbau:
+\smh_exec cp $src/make.config Makefile
+\smh_exec cat Makefile
+
+\smh_exec cp $src/shmkmf.config shmkmf.cfg
+\smh_exec cp $src/binom.config src/binom/Config.make
+\smh_exec cp $src/tools.config src/tools/Config.make
+\smh_exec cp $src/pasctrian.config src/pasctrian/Config.make
+
+XXXX
+\smh_exec[verbatim] diff -C 1 -r . /home/erich/test/mkmf
+XXXX
+//\smh_exec[verbatim] find . -type f -print | sort #|
+\smh_clean

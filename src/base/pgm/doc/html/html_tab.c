@@ -21,6 +21,7 @@ void HTML_coldef (HTML *html, const char *def)
 	{
 		switch (*def)
 		{
+		case 'X':
 		case 'l':	add_col(html, "<TD align=\"left\">"); break;
 		case 'c':	add_col(html, "<TD align=\"center\">"); break;
 		case 'r':	add_col(html, "<TD align=\"right\">"); break;

@@ -1,0 +1,225 @@
+/*	Dokumentgenerierung
+
+$Copyright (C) 2001, 2009 Erich Frühstück
+This file is part of EFEU.
+
+EFEU is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+EFEU is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with EFEU; see the file COPYING.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+*/
+
+@name
+@synopsis -h
+\Description
+
+Das Kommando |$!| ist ein Dokumentgenerator, der verschiedene
+Ausgabeformate  (\LaTeX, HTML, nroff/troff, ...) kennt. Der
+EFEU-Interpreter (Vergleiche dazu \mref{esh(1)}) wird in Anweisungen
+verwendet und erlaubt Datenauswertungen direkt im Dokument.
+
+@arglist -h
+
+Die Beschreibungssprache ist ein Textformat mit Steueranweisungen,
+bei dem zusätzlich auch Strukturierungen und Einrückungen
+berücksichtigt werden. Der Beschreibungstext soll dabei schon ein
+grobes Bild der gewünschten Formatierung liefern. Am nachstehenden
+Beispiel der Konstruktion vo Listen wird dies deutlich:
+
+\_example= {{
+	ParseLine(cin);
+	str x = ParseBlock(cin, 1, NULL, "_end");
+	cout << "Der Code\n\n"
+	cout << "---- verbatim\n" << x << "----\n\n";
+	cout << "erzeugt die Ausgabe:\n\n";
+	cout << "\\latex{\n\\hrulefill\n}\n";
+	cout << x;
+	cout << "\n\n\\latex{\n\\hrulefill\n}\n\n";
+}}
+
+\_example
+Beispiel für eine Aufzählungsliste:
+*	Listeneintrag mit einem längeren Absatz zur
+	Demonstration der Funktionsweise von
+	Einrückungen.
+
+	Ein neuer Absatz mit einer Aufzählung:
+	#	Eintrag 1
+	#	Eintrag 2
+*	Ein weiterer Listeneintrag
+
+Text nach der Aufzählung.
+\_end
+
+\shead	Zeichensatz
+Ein Dokument kann gemischt Zeichen in UTF8 oder ISO~8859-15 enthalten.
+Die Interpretation von UTF8-Sequenzen ist vorrangig. Gehört ein Byte
+nicht zu einer UTF8-Sequenz, wird es als Zeichen im Zeichensatz
+ISO~8859-15 interpretiert.
+
+Intern werden die Zeichen im Unicode gespeichert.
+
+Von den weißen Zeichen wird nur das Leerzeichen, der Tabulator und
+der Zeilenvorschub interpretiert.
+Tabulatoren werden automatisch in
+Leerzeichen expandiert. Tabulatorbreite ist dabei 8 Zeichen.
+Mehrere aufeinanderfolgende Leerzeichen gelten im Regelfall wie
+ein einzelnes Leerzeichen.
+Eine Leerzeile trennt einzelne Absätze.
+
+\shead	Einrücktiefe
+Leerzeichen und Tabulatoren am Anfang einer Zeile werden
+nicht ausgegeben, sondern bestimmen die aktuelle \index{Einrücktiefe}.
+Diese dient zur automatischen Verwaltung von listenähnlichen
+Strukturen. Bei Tabellenzeilen und bei Befehlen mit langen Argumenten
+dient die Einrückung zur Kennzeichnung von Fortsetzungszeilen.
+
+\shead	Kommentare
+Eine Beschreibungsdatei kann \index{Kommentare} im C++-Stil enthalten.
+Diese sind etweder durch  |/*| ... |*/| oder durch |//| ... Zeilenvorschub
+begrenzt, wobei der Zeilenvorschub selbst nicht zum Kommentar
+gerechnet wird.
+
+Beginnt ein Kommentar unmittelbar am Zeilenanfang, wird ein dem
+Kommentar folgender Zeilenvorschub unterdrückt.  Bei der Entfernung
+eines Kommentars aus dem Eingabestrom kann damit nie eine Leerzeile
+(Absatztrennung!) entstehen.
+
+\shead	Namen
+Befehle, Makros und Sonderzeichen werden durch einen \index{Namen}
+gekennzeichnet.
+Dieser muß mit einem Buchstaben beginnen und darf nur aus Buchstaben
+und Ziffern bestehen. Ein \index{Unterstreichungssymbol} gilt als Buchstabe.
+
+Folgt auf einem Namen ein Leerzeichen oder ein Tabulator, werden alle
+folgenden Leerzeichen und Tabulatoren entfernt. Folgt auf einen Namen
+ein Strichpunkt, wird dieser entfernt.
+Jedes andere Zeichen nach einem Namen bleibt erhalten.
+
+\shead	\index{Ligaturen}
+Dabei handelt es sich um gewisse Buchstabenkombinationen,
+bei deren Zusammentreffen ein neues Zeichen gebildet, oder
+einzelne Zeichen anders gesetzt werden. Folgende Ligaturen
+sind definiert:
+*	Ein einzelnes Minuszeichen \index{|-|} wird als kurzer Strich -, zwei
+	aufeinanderfolgende Minuszeichen \index{|--|} werden als mittellanger
+	Strich -- und drei aufeinanderfolgende Minuszeichen \index{|---|}
+	werden als langer Strich --- gesetzt.
+*	Drei aufeinanderfolgende Punkte werden mit einem breiteren Abstand
+	gesetzt. Alternativ kann dafür |&ldots;| eingesetzt werden.
+*	Ein Plus |-| oder ein Minus \index{|+|} vor einer Ziffer wird im
+	mathematischen Modus gesetzt.
+
+\shead	Fluchtsymbol
+
+Der Dokumentgenerator kennt eine Reihe von Steuerzeichen.
+Zu ihrer Ausgabe wird als \index{Fluchtsymbol} der
+\index{Gegenschrägstrich}~|\|
+verwendet. Dieser dient auch zur Kennung eines Dokumentbefehls.
+Grundsätzlich gilt: folgt einem Gegenschrägstrich ein
+alphanumerisches Zeichen oder ein Unterstreichungssymbol, handelt es
+sich um einen Dokumentbefehl, ansonsten wird das nachfolgende Zeichen
+wie ein gewöhnliches Zeichen behandelt, unabhängig davon ob es sich
+um ein Sonderzeichen handelt oder nicht.
+
+Für die Maskierung mit dem Fluchtsymbol gelten folgende Regeln:
+*	Die Zeichen |\|, |@|, |&|, |<|, |>|, |||| und |~|
+	benötigen immer das Fluchtsymbol.
+*	Ein Zuweisungszeichen |=| nach einem Befehl- oder Makronamen
+	benötigt das Fluchtsymbol.
+*	Die Zeichen |*|, |#| und |[| benötigen am Anfang einer Zeile
+	oder im Tabellensatz das Fluchtsymbol.
+*	Einzelne Steuerzeichen oder Befehle können die syntaktische
+	Bedeutung einzelner Zeichen vorübergehend ändern.
+*	Damit eine Kommentarkennung |/*| und |//| nicht interpretiert wird,
+	ist eines der Zeichen zu maskieren.
+*	Ligaturen können wahlweise durch Maskierung eines Zeichens
+	oder durch Einfügen von leeren Kommentaren |/**/| aufgehoben werden.
+*	Bei Befehls- und Makroargumenten gelten eigene
+	Maskierungsregeln, sie werden im Abschnitt \vref{macro}
+	beschrieben.
+
+\shead	Sonderzeichen
+Satztechnische Zeichen (z.B: Umbruchstellen)
+und schwer über die Standardtastatur
+eingebbare Zeichen werden als \index{Sonderzeichen} bezeichnet.
+
+Ein Sonderzeichen wird mit dem Steuerzeichen \index{|&|} eingeleitet,
+danach folgt der Name des Sonderzeichens oder ein einzelnes,
+nichtnumerisches Zeichen. Als Namenskonvention werden die in HTML
+üblichen Namen für Character Entitäten verwendet.
+
+Die nichtnumerischen Zeichen werden für
+häufig verwendete Sonderzeichen eingesetzt. Ist die entsprechende
+Zeichenkombination nicht definiert, wirkt |&| wie ein Fluchtsymbol.
+Derzeit wird nur |&-| für das Sonderzeichen \index{|&shy;|}, das eine
+Umbruchstelle markiert, verwendet. Die Kombination |&;| gilt als
+Leerzeichein und kann z.B. zum Aufbrechen einer Ligatur verwendet
+werden.
+
+Für das häufig benötigte Leerzeichen ohne Umbrucherlaubnis wird
+das Steuerzeichen \index{|~|} (entspricht \index{|&nbsp;|}) verwendet.
+
+\shead	Absätze
+Die Grundelemente eines Dokumentes sind Absätze. Diese werden
+voneinander durch Leerzeilen getrennt. Bei Befehlen, die einen
+neuen Absatz erzwingen, kann die Leerzeile entfallen. Die Zahl
+der Leerzeilen zwischen einem Absatz ist beliebig.
+
+\head	ANWEISUNGEN
+
+Dieser Abschnitt listet alle vordefinierten Anweisungen
+von |$!| auf.
+
+Bezüglich der Argumentdarstellung von Befehlen gilt folgende Konvention:
+*	Gibt es mehrere Varianten der Argumentübergabe, werden diese
+	der Reihe nach angegeben. Eine Befehlsvariante beginnt immer
+	mit dem Befehlswort selbst.
+*	Mit Klammern versehene Ausdrücke müssen auch mit den entsprechenden
+	Klammern eingegeben werden. Sie sind optional und können mit
+	den zugehörigen Klammern weggelassen werden.
+*	Ein Argument ohne Klammerung in der gleichen Zeile des Befehls
+	wird mit dem nächsten Zeilenvorschub abgeschlossen.
+*	Eingerückte Punkte in der nächsten Zeile deuten eine
+	Fortsetzbarkeit des Arguments mit eingerückten Zeilen an.
+*	Ein Argument in der nächsten Zeile bedeutet einen
+	physikalischen Absatz, d.h. die Anweisung endet bei der ersten
+	Leerzeile.
+
+
+---- eval
+str mac_tab[] = maclist();
+qsort(mac_tab, "lexcmp:");
+
+for (x in mac_tab)
+	if (x[0] == '\\' && x[1] != '_')
+		showmac(x, cout, 1);
+----
+
+\head	MAKROS
+
+Dieser Abschnitt enthält eine Auflistung aller vordefinierten
+Makros von |$!|.
+
+---- eval
+for (x in mac_tab)
+	if (x[0] == '@@' && x[1] != '_')
+		showmac(x, cout, 1);
+----
+
+@environ -h
+
+\SeeAlso
+\mref{esh(1)}.
+
+@copyright -h

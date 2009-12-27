@@ -71,7 +71,7 @@ int io_skipcom (IO *io, StrBuf *buf, int flag)
 	int c;
 
 	startline = 1;
-	indent = 0;
+	indent = -1;
 
 	while ((c = io_getc(io)) == '/')
 	{
@@ -83,7 +83,7 @@ int io_skipcom (IO *io, StrBuf *buf, int flag)
 			if	(buf)
 			{
 				sb_clean(buf);
-				indent = 0;
+				indent = -1;
 				save_cstyle(io, buf, flag);
 				startline = 1;
 			}
@@ -100,7 +100,7 @@ int io_skipcom (IO *io, StrBuf *buf, int flag)
 				if	(startline)
 				{
 					sb_clean(buf);
-					indent = 0;
+					indent = -1;
 				}
 
 				c = save_line(io, buf);
@@ -226,11 +226,11 @@ static void save_cstyle (IO *io, StrBuf *buf, int flag)
 			else if	(c == '\t')	pos = 8 + 8 * (pos / 8);
 			else			flag = 0;
 
-			if	(indent && pos > indent)
+			if	(indent >= 0 && pos > indent)
 				flag = 0;
 
 			if	(flag)		continue;
-			if	(!indent)	indent = pos;
+			if	(indent < 0)	indent = pos;
 			if	(buf->pos)	;
 		}
 		else if	(indent > pos)	indent = pos;

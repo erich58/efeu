@@ -281,6 +281,7 @@ void Doc_include (Doc *doc, const char *opt, const char *name)
 	char *save_name;
 	char *save_path;
 	char *save_dir;
+	Doc save;
 	
 	save_name = DocName;
 	save_path = DocPath;
@@ -289,8 +290,11 @@ void Doc_include (Doc *doc, const char *opt, const char *name)
 	DocPath = NULL;
 	DocDir = NULL;
 	io = Doc_open(save_path, name, opt ? 0 : 1);
+	save = *doc;
+	doc->nl = 1;
 	Doc_rem(doc, "Eingabedatei: $1", "nm", rd_ident(io));
 	Doc_input(doc, opt, io);
+	doc->nl = save.nl;
 	memfree(DocName);
 	memfree(DocPath);
 	memfree(DocDir);

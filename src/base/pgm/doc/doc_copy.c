@@ -129,6 +129,25 @@ void Doc_minus (Doc *doc, IO *in)
 	else	Doc_sig (doc, '-', in);
 }
 
+void Doc_dots (Doc *doc, IO *in)
+{
+	if	(io_peek(in) == '.')
+	{
+		io_getc(in);
+
+		if	(io_peek(in) == '.')
+		{
+			io_getc(in);
+			Doc_symbol(doc, "ldots", "...");
+			return;
+		}
+
+		Doc_char(doc, '.');
+	}
+
+	Doc_char(doc, '.');
+}
+
 static int doc_space (Doc *doc, int c)
 {
 	switch (c)
@@ -178,6 +197,7 @@ void Doc_key (Doc *doc, IO *in, int c)
 	case '>':	Doc_endmark(doc); break;
 	case '+':	Doc_sig(doc, c, in); break;
 	case '-':	Doc_minus(doc, in); break;
+	case '.':	Doc_dots(doc, in); break;
 	default:	Doc_char(doc, io_ucscompose(in, c)); break;
 	}
 }
@@ -284,7 +304,9 @@ void Doc_copy (Doc *doc, IO *in)
 				continue;
 			case '[':
 				Doc_item(doc, DOC_LIST_DESC);
+/*
 				doc->nl = 0;
+*/
 				doc->env.item = copy_item(doc, in, c, ']');
 				continue;
 			default:

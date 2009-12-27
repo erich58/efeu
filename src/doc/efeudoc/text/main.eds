@@ -1,0 +1,6 @@
+\title	Textsatz
+
+\include attrib.eds
+\include list.eds
+\include quote.eds
+\include ref.eds

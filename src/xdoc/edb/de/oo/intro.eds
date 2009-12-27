@@ -11,12 +11,10 @@ bei der Datenanalyse genutzt werden können.
 Die für die Daten verwendeten Datentypen werden in eigenen Headerfiles
 definiert. Falls der Basisname mit dem Datentype übereinstimmt und der
 Filezusatz auf |.hdr| lautet, kann der Datentyp direkt oder in
-Verbindung mit dem Schlüsselwort |extern|\note
-	Wird dieses Schlüsselwort vor einem unbekannten Datentyp
-	angegeben, wird nach einer entsprechenden Headerdatei oder
-	einer gemeinsam genützten Objektdatei mit der Definition
-	dieses Datentyps gesucht.
-aktiviert werden.
+Verbindung mit dem Schlüsselwort |extern|\note{Wird dieses
+Schlüsselwort vor einem unbekannten Datentyp angegeben, wird nach
+einer entsprechenden Headerdatei oder einer gemeinsam genützten
+Objektdatei mit der Definition dieses Datentyps gesucht.} aktiviert werden.
 
 \ssec	Datenkonvertierung
 

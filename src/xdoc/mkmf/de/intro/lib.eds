@@ -25,7 +25,7 @@ Berechnung der Fakultät.
 Das Sourcefile |bincoef.c| definiert die Funktion |bincoef| zur
 Berechnung der Binomialkoeffizienten. Diese werden mithilfe von
 |factorial| berechnet. Dieses Verfahren ist nicht das numerisch
-beste, weil die Koeffizienten nur bis \math{n \latex{\leq} 12} berechnet werden
+beste, weil die Koeffizienten nur bis \math{n \leq 12} berechnet werden
 können. In diesem Kontext geht es jedoch mehr um die Anschaulichkeit als
 um optimale Algorithmen.
 

@@ -1,0 +1,60 @@
+\sec	Makrodefinitionen
+
+Das Kommando |efeudoc| kennt zwei Formen von Makrodefinitionen:
+Textmakros und Dokumentbefehle.
+
+\index{Textmakros} werden mit einem Klammeraffen~\index{|@|} eingeleitet,
+danach folgt der Befehlsname und optional eine Parameterliste der Form:
+	|(|<arg1>|,|<arg2>|,| &ldots;, <argn>|)|.
+Die Parameter werden in den Textstring eingemischt.
+
+Zur Maskierung von Trennzeichen werden einfache Anführungszeichen~|'|
+verwendet. Ein Anführungszeichen selbst wird durch zwei
+aufeinander folgende Anführungszeichen dargestellt. Alle anderen
+Zeichen der Parameterliste werden unverändert übernommen.
+
+Als Parameterkennung wird der Dollar \index{|$|}, gefolgt von der
+Parameternummer verwendet. Die Kennung |$*| steht für alle
+Argumente. Beim Mischen wird darauf Rücksicht genommen, ob die
+Parameterkennung unter Anführung oder innerhalb runder Klammern
+steht:
+*	Bei einer Anführung wird der Parameter als esh-String ausgegeben.
+	Bei |$*| werden die einzelnen Argumente unter Anführung gesetzt
+	und mit Komma getrennt. Dies unterstützt die
+	Übergabe von Parametern an einen esh-Ausdruck.
+*	Innerhalb einer Klammer wird dafür gesorgt, dass die Zeichen
+	|(|, |,| und |)| maskiert werden. Bei |$*| werden die
+	einzelnen Argumente durch Komma getrennt. Dies unterstützt die
+	Übergabe von Parametern an einen Textmakro.
+*	Ansonsten werden die Zeichen unverändert ausgegeben.
+*	Standardmäßig werden die Parameter bei |$*| durch ein
+	Leerzeichen getrennt.
+
+\index{Dokumentbefehle} werden mit einem Gegenschrägstrich~\index{|\|}
+eingeleitet, danach folgt der Befehlsname. Befehle sind esh-Ausdrücke.
+
+Eine Reihe von Befehlen benötigt Parameter.
+Bezüglich der Parametersyntax gibt es nur Konventionen
+und keine vorgegebene Struktur. Die Befehle sind frei in esh
+programmierbar und holen sich ihre Parameter selbst aus dem
+Eingabestrom. Dazu gibt es eine Reihe von eingebauten Parsefunktionen.
+
+Folgt nach einem Makronamen (Befehl oder Textmakro) ein
+Zuweisungszeichen~|=| wird der Makro mit dem nachfolgenden \index{Ausdruck}
+definiert. Es gibt folgende Varianten:
+*	Beginnt ein Ausdruck mit einer geschwungenen Klammer,
+	endet er bei der ersten geschwungenen Klammer der gleichen
+	Verschachtelungstiefe. Klammern in Strings werden nicht
+	berücksichtigt. Die äußeren Klammern gehören nicht zum Ausdruck.
+	Nachfolgende weiße Zeichen und ein einzelner Zeilenvorschub
+	werden entfernt.
+*	Beginnt ein Ausdruck mit einem Zeilenvorschub, endet
+	er bei der ersten Leerzeile (physikalischer Absatz).
+*	Ansonsten gehören alle Zeichen bis zum nächsten
+	Zeilenvorschub zum Ausdruck.
+
+Alternativ können Makros auch in Konfigurationsdateien definiert werden.
+Hier besteht die Möglichkeit, gleichzeitig zur Definition der Makros auch
+eine zugehörige Dokumentation zu verfassen. Diese kann innerhalb eines
+Dokuments abgerufen werden.
+Im Kapitel \vref{macro} werden Makrodefinitionen ausführlicher behandelt.

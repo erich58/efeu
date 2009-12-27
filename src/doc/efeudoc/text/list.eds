@@ -1,0 +1,86 @@
+\sec	Listen
+
+Listen werden automatisch bei Vorhandensein einer Listenmarke
+begonnen. Je nach Art der Listenmarke wird eine Aufzählungsliste,
+eine nummerierte Liste oder eine Beschreibungsliste generiert.
+Wechselt die Art der Listenmarke, wird auch die Listenumgebung
+gewechselt.
+
+Folgende Marken sind definiert:
+*	Ein Stern |*| am Anfang einer Zeile stellt
+	eine Aufzählungsmarke dar. Folgt dem Stern ein
+	nichtweißes Zeichen, gilt er nicht als Marke.
+*	Ein Gitterzeichen |#| am Anfang einer Zeile stellt
+	eine Nummerierungsmarke dar. Folgt dem Gitterzeichen ein
+	nichtweißes Zeichen, gilt er nicht als Marke.
+*	Ein mit eckigen Klammern |[|~&ldots;~|]| begrenzter Text am Anfang einer
+	Zeile stellt eine Beschreibungsmarke dar.
+
+Beachte: Die Art der Listenmarken, der Nummerierungsstil (dezimal,
+alphabetisch oder römisch) und die Schrift der Beschreibungsmarke
+werden von den entsprechenden Textprozessoren (\LaTeX, |nroff|,
+&ldots;) bestimmt.
+
+\fig
+\include[verbatim] list_ex1.eds
+~
+
+\include list_ex1.eds
+\caption Beispiel für die Listengenerierung
+\end
+
+Werden die zugehörigen Listeneinträge eingerückt geschrieben (sollte
+ein Schreibstandard sein), kann das Ende der Liste anhand der
+Einrücktiefe ermittelt werden.  Beginnt ein Text ohne Marke auf der
+selben Ebene wie die Listenmarken, wird die Liste beendet. Sie kann
+auch direkt mit \index{|\endlist|} oder \index{|\endall|} beendet
+werden. Ein Gliederungsbefehl beendet alle offenen Listen.
+
+Die zu einer Marke gehörenden Listeneinträge können bereits
+neben der Marke beginnen, die Marke wird bei der Ermittlung der
+Einrücktiefe mit berücksichtigt.
+
+Ist ein Listeneintrag eingerückt, können Teillistenmarken auf der
+selben Einrücktiefe wie der Listeneintrag selbst stehen, ansonsten
+müssen sie eingerückt werden.
+
+Neben den syntaktisch eingebauten Marken gibt es noch Befehle,
+die Listenmarken generieren. Sie werden in der Regel zur Vereinfachung
+von Beschreibungsmarken mit einer vom Standard abweichenden Schrift
+verwendet.
+
+Folgende Markenbefehle sind definiert:
+[\index{|\item|}]
+	Marke in Standardschrift,
+[\index{|\ititem|}]
+	Marke in Italic,
+[\index{|\ttitem|}]
+	Marke in Schreibmaschinenschrift,
+[\index{|\bfitem|}]
+	Marke in Fettschrift.
+
+Wie Einrückungen können auch Listen einen eigenen Absatz bilden,
+oder Teil eines Absatzes sein. Die Beschreibungstexte einer Marke
+können selbst aus mehreren Absätzen bestehen und Teillisten enthalten.
+
+Eine Einrückung, die einer Liste folgt, kann von dieser
+nicht unterschieden werden. Hier muss die Liste vorher mit
+\index{|\endlist|} beendet werden.
+
+\sec	Anmerkungen
+
+\index{Randnotizen} werden mit dem Befehl
+	\index{|\margin|}|[|<Position>|]|<Text>
+generiert.
+
+\index{Fußnoten} werden mit dem Befehl
+	\index{|\note|}|[|<Marke>|]{|<Text>|}| generiert.
+Die Fußnotenmarke kann optional vorgegeben werden.
+
+Das ist der laufende Text, der mit einer Randnotiz\margin{Das ist
+die Randnotiz} und einer
+Fußnote\note{Das ist die Fußnote} versehen ist.
+
+Eine Fußnotenmarke kann unabhängig von einer Fußnote mit dem
+Befehl \index{|\mark|}|{|<num>|}| generiert werden. Hat <num> den Wert 0,
+wird ein Stern als Marke verwendet.

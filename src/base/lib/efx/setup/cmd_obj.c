@@ -531,8 +531,10 @@ static void f_dump (EfiFunc *func, void *rval, void **arg)
 
 static EfiFuncDef fdef_obj[] = {
 	{ FUNC_RESTRICTED, &Type_expr, "str ()", f_str2expr },
-	{ FUNC_VIRTUAL, &Type_expr, "classify (. &, str def)", lval_class },
-	{ FUNC_VIRTUAL, &Type_expr, "classify (Expr_t, str def)", expr_class },
+	{ FUNC_VIRTUAL, &Type_expr, "classification (. &, str def)",
+		lval_class },
+	{ FUNC_VIRTUAL, &Type_expr, "classification (Expr_t, str def)",
+		expr_class },
 	{ FUNC_RESTRICTED, &Type_vfunc, "str ()", f_str2virfunc },
 	{ FUNC_VIRTUAL, &Type_obj, "eval (Expr_t)", f_xeval },
 	{ FUNC_VIRTUAL, &Type_obj, "eval (Expr_t, VarTab)", f_xeval2 },

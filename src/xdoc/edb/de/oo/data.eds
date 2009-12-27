@@ -35,7 +35,9 @@ data = (DATA) { { beg, end }, income},
 möglich. Dieser nutzt die implizit für jede Struktur definierte
 Listenkonvertierung.
 
-Die nachstehende Ausgabe zeigt die Daten mit Ausgabemodus |plain|,
-die einzelnen Zeilen wurden zur besseren Darstellung mit |fold| umgebrochen:
+Die nachstehende Ausgabe zeigt die Daten mit Ausgabemodus |plain|:
 
-\pipe[verbatim]  |edb -n0 ex2_data.edb || fold -s -70|
+\pipe[fold]  |edb -I. -n0 ex2_data.edb|
+
+überlange Zeilen wurden umgebrochen. Die Umbruchstellen sind mit einem
+Gegenschrägstrich am Zeilenende gekennzeichnet.

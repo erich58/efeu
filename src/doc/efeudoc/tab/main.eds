@@ -1,0 +1,5 @@
+\title	Tabellen und Grafiken
+
+\include tab.eds
+\include grafik.eds
+\include fig.eds

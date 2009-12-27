@@ -34,8 +34,13 @@ void DocMac_print (IO *io, DocMac *mac, int mode)
 {
 	if	(io && mac && mac->desc)
 	{
+		io = io_refer(io);
+
 		if	(mode & 0x1)
-			io_xprintf(io, "\n\\margin |%s|\n",  mac->name);
+		{
+			io_xprintf(io, "[|%s|]\n",  mac->name);
+			io = io_lmark(io, "\t", NULL, 0);
+		}
 
 		io_psubarg(io, mac->desc, "nm", msprintf("|%s|", mac->name));
 
@@ -45,6 +50,8 @@ void DocMac_print (IO *io, DocMac *mac, int mode)
 			io_nlputs(mac->fmt, io);
 			io_nlputs("----", io);
 		}
+
+		io_close(io);
 	}
 }
 

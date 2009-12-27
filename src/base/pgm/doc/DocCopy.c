@@ -51,6 +51,7 @@ int DocVerb (IO *in, IO *out)
 	return n;
 }
 
+#if	0
 static void signum (IO *in, IO *out, int sig)
 {
 	if	(isdigit(io_peek(in)))
@@ -100,3 +101,4 @@ void DocCopy (IO *in, IO *out)
 	while (stack)
 		key = DocMark_end(&stack, out, key);
 }
+#endif

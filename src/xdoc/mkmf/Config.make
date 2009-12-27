@@ -8,6 +8,7 @@ AllTarget=files
 foreach -S c 'mf_file $tg $src'
 foreach -S h 'mf_file $tg $src'
 foreach -S tex 'mf_file $tg $src'
+foreach -S config 'mf_file $tg $src'
 
 AllTarget=all
 foreach -S c 'mf_cc -c $src'

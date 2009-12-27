@@ -76,8 +76,7 @@ edb "str[label]:|ls"
 ls | edb str[label]:-
 ----
 
-Der erste Aufruf liefert Zufallszahlen aus |/dev/random|\note
-	Linux spezifische Gerätedatei, liefert Zufallsbytes (\mref{random(4)}).
-.
+Der erste Aufruf liefert Zufallszahlen aus |/dev/random|\note{Linux
+spezifische Gerätedatei, liefert Zufallsbytes (\mref{random(4)}).}.
 Die beiden anderen Aufrufe sind äquivalent, sie liefern jeweils eine
 Datenbank mit den Dateinamen im aktuellen Verzeichnis.

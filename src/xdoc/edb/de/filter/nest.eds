@@ -46,8 +46,8 @@ Diese Teilklasse der
 verschachtelten Relationen lässt sich immer entschachteln und auf eine
 1. Normalform zürckführen.
 
-Beispiel: Der Aufruf\note
-	Der Filter \mref{fold(1)} dient zum Umbrechen überlanger Zeilen.
+Beispiel: Der Aufruf\note{Der Filter \mref{fold(1)} dient zum
+Umbrechen überlanger Zeilen.}
 
 ---- eval
 {

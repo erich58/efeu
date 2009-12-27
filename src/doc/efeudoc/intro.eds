@@ -1,0 +1,77 @@
+\preface
+
+Das Kommando |efeudoc| ist ein Dokumentgenerator, der aus einer
+einheitlichen Beschreibungsspache Eingabeformate unterschiedlicher
+Textverarbeitungssysteme generiert.
+
+Zur Zeit können die folgenden Textformate generiert werden:
+*	Planer Text ohne Steuerinformationen,
+*	Terminalausgabe mit Attributen,
+*	\LaTeX;-Dokumentsourcen,
+*	über \LaTeX; generierte PostScript, bzw. PDF-Dokumente,
+*	|man|-kompatible Handbuchsourcen,
+*	HTML Dateien.
+
+Es wurde ein möglichst einfacher Aufbau der Beschreibungssprache
+gewählt.  Layoutangaben wurden verbannt und sind extern vorgegeben.
+Neben der Vereinfachung wird damit auch gewährleistet, daß die
+Dokumente in einem einheitlichen Satandard erscheinen.
+
+Der Dokumentgenerator |efeudoc| erlaubt auf einfache Weise das Einbinden
+externer Dateien. Während der Dokumentverarbeitung kann der
+EFEU-Interpreter zur Datenaufbereitung genutzt werden.
+Weiters können andere Prozesse gestartet und deren
+Ausgabe eingebaut werden.
+
+Die Entwicklung von |efeudoc| wurde im wesentlichen durch zwei
+auf dem ersten Blick unterschiedlichen Aufgabenbereiche bestimmt:
+
+*	Schreiben von Handbucheinträgen;
+*	Generierung von Tabellenbänden.
+
+Handbucheinträge im Unix/Linux Umfeld werden traditionel mit
+|troff| verfasst. Im EFEU-Konzept werden Handbucheinträge von
+den Kommandos selbst generiert, um möglichst den aktuellen Stand der
+Kommandos wiederspiegeln zu können. Neben dem Umweg über das
+|troff|-Datenformat und |man|
+wird hier auch eine direkte Ausgabe zum Terminal gewünscht. Weiters
+möchte man einzelne Handbucheinträge auch in allgemeineren, meist in
+\LaTeX; verfassten, Dokumenten einbauen. Für Handbucheinträge ist
+daher eine einheitliche, leicht zu generierende Beschreibungssprache
+und unterschiedliche Ausgabeformate gefragt.
+
+Tabellenbände werden vorzugsweise in \LaTeX; generiert, da einerseits die
+Beschreibungssprache von \LaTeX; relativ einfach generiert werden kann, und
+anderserseits \LaTeX; sehr viel Möglichkeiten zur Gestaltung der
+Dokumente bietet. Gefragt ist hier vor allem der direkte Zugriff auf
+Datenquellen und deren Aufbereitung im Zuge der Dokumentverarbeitung.
+
+Neben der drucktechnischen Umsetzung von Tabellenbänden, wird
+zunehmend auch eine Aufbereitung als Webseite gefragt. Hier trifft
+sich die Tabellenbandproduktion mit der Handbucherstellung bezüglich
+einer einheitlichen Beschreibungssprache für unterschiedliche Ausgabeformate.
+
+Auf der anderen Seite gibt es auch bei Handbucheintragen den Bedarf an
+eingebauter Information. So können Anwendungsbeispiele nicht
+nur beschrieben, sondern gleich ausgeführt werden und die, unter
+Umständen umgebungsabhängigen, Ausgaben eingebaut werden.
+Damit wird auch einem auseinanderdriften von Anwendung und Dokumentation
+gegengesteuert (Verhindern läßt es sich allerdings nicht).
+
+Manpages von EFEU-Kommandos werden durch Aufruf des Kommandos mit der
+Option |--help=raw| eingebunden. Bei der Formatierung des Dokuments
+wird somit immer der aktuelle Stand des Handbucheintrages verwendet.
+
+Efeudoc orientiert sich an \LaTeX;. Für eine anspruchsvolle Druckfassung
+wird die Dokumenterstellung über die Zwischenstufe \LaTeX; erstellt. Die
+Formatierungsläufe und nachgeschaltenen Konvertierungen (dvi nach
+PostScript nach PDF) werden direkt von |efeudoc| kontrolliert.
+
+Ein Grundverständnis von \LaTeX; ist von Vorteil, wird aber nicht
+vorrausgesetzt.
+
+Eine kompakte Zusammenfassung von |efeudoc| und relevanter Kommandos
+findet sich im Anhang dieses Dokuments.
+
+	Erich Frühstück\br
+	Wördern, \thedate

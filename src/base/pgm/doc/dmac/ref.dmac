@@ -70,10 +70,10 @@ If not, write to the Free Software Foundation, Inc.,
 \def\mref	label('m', xexpand(ParseArg(cin)));
 
 :*:reference to uniform resource locator
-	$1 |[|<url>|] {|<label>|}|
+	$1 ||||<url>||| {|<label>|}|
 :de:Referenz auf einen Hyperlink.
-	$1 |[|<url>|] {|<Bezeichnung>|}|
+	$1 ||||<url>||| {|<Bezeichnung>|}|
 
 :de:Der Befehl $1 generiert einen Hyperlink.
 
-\def\url	url(ParseOpt(cin, true), xexpand(ParseArg(cin)));
+\def\url	url(ParseVerb(cin, true), xexpand(ParseArg(cin)));

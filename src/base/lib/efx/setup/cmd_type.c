@@ -582,7 +582,8 @@ static EfiFuncDef fdef_type[] = {
 		g_set_ctrl },
 	{ 0, &Type_void, "Type_t::list_ctrl (IO out = iostd)", f_list_ctrl },
 	{ 0, &Type_bool, "is_type (str name)", f_is_type },
-	{ 0, &Type_bool, "Type_t::class (str name, str def)", f_make_class },
+	{ 0, &Type_bool, "Type_t::classification (str name, str def)",
+		f_make_class },
 
 };
 

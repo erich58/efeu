@@ -58,4 +58,4 @@ Variablenzusammenstellung.
 
 Die Darstellung der Daten mit Ausgabemodus |plain|:
 
-\pipe[verbatim]  |edb -n0 ex2_pers.edb|
+\pipe[verbatim]  |edb -I. -n0 ex2_pers.edb|

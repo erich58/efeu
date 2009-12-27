@@ -139,7 +139,7 @@ Anschließend bleiben drei mögliche Fälle:
 	Das ist nur ein Spezialfall der zweiten Variante.
 	Die Datei <name> wird zuerst im aktuellen Verzeichnis gesucht.
 
-In |$!| sind die folgenden Konstruktionen erlaubt:
+In |$!| ist die folgende Konstruktion erlaubt:
 ---- verbatim
 str header = paste("/", "SubDir", "MyHeader");
 #include "<" + header + ">"
@@ -237,7 +237,7 @@ manche Datentypen werden durch Pointer auf C-Datentypen repräsentiert.
 Der Interpreter unterscheidet zwischen L-Werten und Konstanten. Ein
 L-Wert ist alles, was auf der linken Seite einer Zuweisung stehen
 darf. Typische L-Werte sind Variablen. Das Resultat eines Terms oder
-eines Funktionsaufwertes kann ein L-Wert sein.
+eines Funktionsaufrufes kann ein L-Wert sein.
 
 \shead	Ganzzahltypen
 
@@ -248,23 +248,31 @@ Tabelle listet die Ganzzahltypen und ihre Äquivalente in C auf.
 ---
 <*esh Type*> | <*C Type*>
 ---
-byte | signed char
-short | short int
 bool | int
+---
+int8_t | int8_t
+int16_t | int16_t
 int | int
+int32_t | int32_t
+int64_t | int64_t
+varint | int64_t
+---
+uint8_t | uint8_t
+uint16_t | uint16_t
 unsigned | unsigned int
-long | long int
-size_t | long unsigned int
+uint32_t | uint32_t
+uint64_t | uint64_t
+varsize | uint64_t
 ---
 
-Die Schlüsselwörter |short|, |unsigned| und |long| sind Datentypnamen und
-keine Typqualifikatoren wie in C.
-Der Datentyp |int| ist eine Unterklasse von |bool|, daher kann |int|
-immer auch dort verwendet werden, wo |bool| erwartet wird.
+Das Schlüsselwort |unsigned| ist ein Datentypnamen und
+keine Typqualifikation wie in C. Die Datentypen |varint| und |varsize|
+unterscheiden sich von |int64_t| und |uint64_t| durch eine kompakte,
+wertabhängige Darstellung in Binärdateien.
 
 Die Syntax von Ganzzahlkonstanten ist wie in C/C++.
 Die Schlüsselworter |true| (Ganzzahlwert~0) und |false|
-(Ganzzahlwert~1) werden für boolsche Werte verwendet.
+(Ganzzahlwert~1) sind vom Typ |bool|.
 
 \shead	Gleitkommatypen
 
@@ -278,6 +286,9 @@ wo die Genauigkeit der Werte nicht so wichtig ist, eingerichtet.
 
 Ein Zeichen in |$!| ist vom Type |char| und sein Kodewert wird als
 vorzeichenlos interpretiert (Wertebereich 0 ... 255).
+Weiters steht zur Speicherung von Unicodezeichen der Datentyp
+|wchar_t| zur verfügung. Der zugehörige C-Datentyp ist |int32_t| und
+nicht |wchar_t|.
 
 Zeichenketten (Strings) werden in |$!| völlig anders als in C implementiert.
 Sie werden nicht als Felder vom Type |char| eingerichtet, sondern
@@ -299,7 +310,7 @@ in der folgenden Form verwendet wird:
 	Inhalt des Strings\br
 	|!|
 
-unmittelbar nach |!| muß ein Zeilenvorschub stehen und |!| muss
+Unmittelbar nach |!| muß ein Zeilenvorschub stehen und |!| muss
 das erste Zeichen der letzten Zeile sein. Eine so definierte
 Zeichenkonstante enthält immer einen Zeilenvorschub am Ende.
 Der Gegenschrägstrich wird nur mehr zum Schutz eines |!| am Anfang
@@ -333,7 +344,7 @@ kann.
 Datentypen, die über Pointer implementiert werden, kopieren bei einer
 Zuweisung nur die Adresse und nicht die Daten (Zeichenketten sind
 eine Ausnahme). Aber sie benutzen einen Referenzzähler für
-die Speicherbereinigung, der beim kopieren erhöht wird.
+die Speicherbereinigung, der beim Kopieren erhöht wird.
 Alle diese Datentypen sind von der Basisklasse |_Ref_| abgeleitet.
 
 Der Datentyp |_Ref_| und alle anderen Datentypen mit
@@ -395,7 +406,7 @@ konvertiert, da Datenfelder nur eindimensional sein können, aber es
 keine Beschränkungen bei der Konstruktion von Vektordatentypen gibt.
 Es ist klar, dass nur <n0> weggelassen werden kann.
 
-Datenfelder werden bei der Verwendung immer in ein Objekt vom Type
+Datenfelder werden bei der Verwendung immer in ein Objekt vom Typ
 |EfiVec| gepackt.
 Ein Datenfeld kann in eine Liste konvertiert werden und die Werte
 eines Datenfeldes können durch Zuweisung einer Liste verändert werden.
@@ -411,7 +422,7 @@ Datentypen für ein mächtigeres Hantieren mit Daten zur Verfügung:
 	sind dynamische Datenfelder vom Type |double| mit einem
 	Zeitindex.
 \ttitem	mdmat
-	verwaltet einen Datenwürfel beliebigen Types und beliebiger
+	verwaltet einen Datenwürfel beliebigen Typs und beliebiger
 	Zahl an Dimensionen. Seine Größe wird nur durch den verfügbaren
 	Speicher begrenzt. EFEU enthält eine Reihe von Hilfswerkzeugen
 	zur Manipulation solcher Datenwürfel.
@@ -421,16 +432,17 @@ Datentypen für ein mächtigeres Hantieren mit Daten zur Verfügung:
 Der einfachste Weg um einen neuen Datentyp einzurichten, ist
 |typedef|, z.B:
 	|typedef int myint;|
-
+ 
 Der neue Datentyp |myint| wird
 von |int| als Basisklasse abgeleitet (Vererbung).
-Damit kann |myint| wie |int| verwendet werden. Es handelt
-sich aber nicht nur um einen neuen Namen für |int|.
+Damit kann |myint| wie |int| verwendet werden, ist aber nicht
+nur ein anderer Namen für |int| wie in C.
 
 Strukturen werden mit der |struct| Anweisung erzeugt. Die Syntax ist
 	|struct| <type> [|:| <base> [ <name> ]] |{| Deklarationen |}|
 analog zu C++. Fals <base> definiert ist, wird <type> von <base> abgeleitet.
-Nur ein Basistype kann angegeben werden.
+Nur ein Basistype kann angegeben werden. Der EFEU-Interpreter kennt
+keine Mehrfachvererbung.
 
 Die folgenden zwei Datentypen
 
@@ -451,7 +463,7 @@ Jeder zuvor definierte Datentyp kann bei der Definition einer
 Datenstruktur verwendet werden. Es gibt aber keine
 Vorwärtsdeklaration.
 
-Jedes Objekt mit einem Strukturdatentype kann in eine Liste
+Jedes Objekt mit einem Strukturdatentyp kann in eine Liste
 umgewandelt werden und jede Liste läßt sich in ein Strukturobjekt
 konvertieren.
 
@@ -465,6 +477,22 @@ struct MyDataType {
 	int v[10];
 };
 ----
+
+Datentypen müssen nicht benannt werden. Eine Variable kann z.B. auch
+mit einer namenlosen Struktur eingerichtet werden:
+
+---- verbatim
+struct {
+	int i;
+	double d;
+} data;
+----
+
+Falls eine gleichwertige, benannte Struktur existiert, wird diese
+Stellvertretend eingesetzt. Sollten mehr als zwei gleichwertige
+Strukturen existieren, ist undefiniert, welche zum Zug kommt.
+Zwei Strukturen sind gleichwertig, wenn alle Komponenten gleichen
+Namen und Datentyp haben.
 
 Der EFEU Interpreter unterstützt Aufzählungstypen. Die Syntax ist:
 	|enum| <type> [|:| <base> [ <name> ]] |{| Kennungsliste |}|
@@ -491,7 +519,85 @@ int n = Color::Red;
 
 Die Funktion |enumlist(|<Typ>|)| liefert eine Liste aller Kennungen
 des Aufzählungstypes <Typ> oder eine leere Liste, falls <Typ> keine
-Kennungen hat oder kein Aufzählungstype ist.
+Kennungen hat oder kein Aufzählungstype ist. Vergleiche dazu auch
+den Abschnitt KLASSIFIKATIONEN weiter unten.
+
+\shead	Konstruktion von Datentypen mit Ausdrücken
+
+Datentypen können auch über eine Konstruktionsfunktion eingerichtet
+werden. Das Grundprinzip ist einfach: Eine Datenstruktur wird
+über eine Liste von Ausdrücken definiert. Der Datentyp (und teilweise
+auch der Variablenname) kann implizit aus dem Ausdruck abgeleitet
+werden. Ein so abgeleiteter Datentyp ist unbenannt (außer es existiert
+eine benannte, gleichwertige Datenstruktur).
+
+Die Möglichkeiten dieser Datentypkonstruktionen werden am besten
+an einem Beispiel demonstriert:
+
+Der folgende Code
+
+---- eval verbatim
+str DATA_DECL = string !
+construct DATA : int a, double b {
+	str date = today();
+	a;
+	data = {
+		double x = 3 * a;
+		y = 2 * b;
+	};
+}
+!
+----
+
+generiert die Datenstruktur
+
+---- eval verbatim
+expr(DATA_DECL)
+----
+
+und die Konstruktionsfunktionen
+
+---- eval verbatim
+DATA.create
+----
+
+Die Variante mit der Liste als Argument wird für jede Struktur
+eingerichtet. Die spezifisch mit |construct| eingerichtete Version
+hat die Parameter |int a, double b|, wie sie in der ersten Datenzeile
+angegeben wurde.
+
+Der Aufruf |DATA(2, 3.5)| generiert ein Objekt vom Typ |DATA| mit den
+folgenden Werten:
+
+---- eval verbatim
+str save = fmt_str;
+fmt_str = "%#*s";
+DATA(2, 3.5)
+fmt_str = save;
+----
+
+Die allgemeine Syntax ist:
+	|construct| <Typ> [ |:| <varlist> ] |{|\br
+		<vardef>;\br
+		...\br
+	|}|
+wobei <vardef> entweder eine einfache Variable in der Form
+	\[[<type>] <name> ] [ |=| <expr> ]|;|\br
+oder eine Teilstruktur mit Syntax
+	<name> |= {|\br
+		\[[<type>] <name> ] [ |=| <expr> ]|;|\br
+		...
+	|}|
+ist. Der Datentyp <type> ist optional und wird aus dem Wert von <expr>
+bestimmt. Falls <expr> eine Strukturkomponente ist, kann auch der Name
+<name> entfallen. Umgekehrt kann bei bekannten Datentyp und
+Variablennamen der Ausdruck <expr> entfallen.
+
+Die Variablenliste <varlist> kann auch leer sein. In diesem Fall
+können bei <expr> nur globale Variablen genutzt werden.
+
+Diese Form der Datentypkonstruktion wird implizit bei der Aufbereitung
+und Unmformung von EDB-Datenfiles genutzt.
 
 \head	AUSDRÜCKE
 
@@ -526,7 +632,7 @@ Im Genensatz zu C/C++ ist dieser Operator nicht auf die
 Initialisierung von Variablen in Deklarationen beschränkt.
 
 Der <"expression"> Operator liefert einen Ausdruck ohne ihn
-Auszuwerten. Er kann einer Variablen zugewiesen oder einer
+auszuwerten. Er kann einer Variablen zugewiesen oder einer
 Funktion für eine spätere Auswertung übergeben werden.
 
 Ein Datentyp, der von runden Klammern eingeschlossen ist,
@@ -733,7 +839,8 @@ werden die Anweisungen nach |default| (falls vorhanden) ausgeführt.
 
 Im Gegensatz zu C kann jeder Datentyp, für den der Vergleichsoperator |==|
 definiert ist, für Switch-Anweisungen verwendet werden.
-Insbesonders können Zeichenketten in Switch-Anweisungen verwendet werden.
+Insbesonders können Zeichenketten und reguläre Ausdrücke
+in Switch-Anweisungen verwendet werden.
 
 \shead	Blockbildung
 
@@ -747,7 +854,6 @@ Lesen der Befehlszeilen ausgewertet. Damit können Variablen in der
 inneren (oder statischen) Variablentabelle eingerichtet werden.
 Die Verwendung von |static| ist aber nicht auf Variablendeklarationen
 beschränkt.
-
 
 \head	FUNKTIONEN
 
@@ -773,7 +879,8 @@ Variablentabellen, die auch in der Zeile mit dem Funktionsaufruf
 sichtbar waren. Alle Funktionen, die nur aus einem einzelnen Ausdruck
 bestehen, gelten als inline Funktionen.
 
-Das folgende Beispiel zeigt die Notwendigkeit von inline Funktionen:
+Das folgende Beispiel zeigt einen Anwendungsfall für das Schlüsselwort
+|inline|:
 
 ---- verbatim
 inline str f (str fmt)
@@ -791,6 +898,10 @@ Die Funktion |psub| substituiert Parameter entsprechend einem
 Formatstring.
 Falls |f| nicht inline ist, ist die Variable |x| für |psub|
 unsichtbar und die Substitution |$$(x)| schlägt fehl.
+
+Der Overhead für den Aufruf einer inline-Funktion ist geringer
+als der einer normale Funktion, allerdings kann es zu Seiteneffekten
+bezüglich der Sichtbarkeit von Variablen kommen.
 
 Funktionen haben den Datentyp |Func| und jede Funktion kann
 auch als Variable (Funktionsname ohne Argumentliste) angesprochen werden.
@@ -909,6 +1020,67 @@ ist besondere Vorsicht notwendig: Sobald hier ein Objekt dieses Types
 kopiert wird (z.B. bei der Weitergabe an eine andere Funktion),
 führt der Aufruf des Konstruktors/Destruktors zu einer endlosen Rekursion.
 
+\head	KLASSIFIKATIONEN
+
+Der EFEU-Interpreter bietet vielfältige Möglichkeiten, um Daten zu
+Klassifizieren. Implizit wird dabei immer auch ein unbenannter
+Aufzählungstyp eingerichtet.
+
+Es gibt zwei Möglichkeiten, eine Klassifikation einzurichten:
+
+@proto Type_t::classification
+	generiert zu einem Datentyp eine Komponente <name>,
+	die bei Abfrage die Klassifikation des Wertes liefert.
+@proto classification
+	liefert einen Ausdruck, der bei Auswertung die Klassifikation
+	liefert. Der Klassifikationausdruck kann wahlweise für einen
+	L-Wert oder einen Ausdruck eingerichtet werden.
+
+Die Klassifikationsdefinition <def> hat immer den gleichen Aufbau.
+Zu Beginn steht die Art der Klassifikation. Die verfüggbaren
+Klassifikationsarten sind Datentypabhängig.
+
+Folgende Klassifikationsarten stehen für alle Datentypen zur
+Verfügung:
+[flag]
+	Entscheidung über einen Ausdruck.
+[switch]
+	Einteilung über eine switch-Anweisung.
+[test]
+	Einteilung über einen Testausdruck
+[generic]
+	Kombination der obengenannten Klassifikationsarten.
+
+Die Klassifikationsarten |switch|, |test| und |flag| sind Sonderfälle
+der generische Klassifikationsart |generic|. Diese hat den folgenden
+Aufbau:
+	|generic|\br
+	<generic-group>\br
+	...
+
+<generic-group>:
+	<switch-group>\br
+	<test-group>\br
+	|@eval| <expr>\br
+	|@other| <label> <desc>
+
+Der Eintrag |@eval| dient zur Berechnung von Zwischenergebnissen.
+|@other| steht für alle noch nicht abgedeckten Fälle.
+
+<test-group>:
+	|@test| <expr>\br
+	<key> <label> <desc>\br
+	<generic-group>\br
+	|@end|
+
+In <expr> wird |$$1| gegen den aktuellen Schlüssel <key> ersetzt.
+
+<switch-group>:
+	|@case|\br
+	<key> <label> <desc>\br
+	<generic-group>\br
+	|@end|
+
 \Notes
 
 Dieser Handbucheintrag kann nur eine verkürzte Darstellung des
@@ -953,6 +1125,8 @@ Weitere nützliche Variablen und Funktionen:
 	zeigt die aktuelle Hierarchie der Variablentabellen.
 @proto typelist
 	liefert eine Liste aller definierten Datentypen.
+@proto Type_t::info
+	liefert Informationen zu einem bestimmten Datentyp.
 
 @environ -h
 

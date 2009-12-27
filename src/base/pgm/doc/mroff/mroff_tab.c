@@ -49,8 +49,13 @@ static void col_def (const char *def)
 
 	for (; *def != 0; def++)
 	{
+		int col = *def;
+
 		switch (*def)
 		{
+		case 'X':
+			col = 'l';
+			/* FALLTHROUGH */
 		case 'l':
 		case 'c':
 		case 'r':
@@ -61,11 +66,11 @@ static void col_def (const char *def)
 				*p = tab_col.pos;
 			}
 
-			sb_putc(*def, &tab_col);
+			sb_putc(col, &tab_col);
 			p = NULL;
 			break;
 		case '|':
-			sb_putc(*def, &tab_col);
+			sb_putc(col, &tab_col);
 			break;
 		default:
 			break;
@@ -106,20 +111,25 @@ void mroff_tab_mcol (ManRoff *mr, int cdim, const char *def)
 
 	for (; *def; def++)
 	{
+		int col = *def;
+
 		switch (*def)
 		{
+		case 'X':
+			col = 'l';
+			/* FALLTHROUGH */
 		case 'l':
 		case 'r':
 		case 'c':
 			if	(flag)
 			{
-				sb_putc(*def, &tab_col);
+				sb_putc(col, &tab_col);
 				sb_nputc('s', &tab_col, cdim - 1);
 				flag = 0;
 			}
 			break;
 		case '|':
-			sb_putc(*def, &tab_col);
+			sb_putc(col, &tab_col);
 			break;
 		}
 	}

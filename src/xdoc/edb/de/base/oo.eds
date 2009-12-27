@@ -9,7 +9,7 @@ EDB-Datenfiles.
 In den Datentypen werden nicht nur die Attribute, sondern auch die
 Methoden festgelegt. Folgende Informationen sind in einem Datentyp
 gespeichert:
-*	Der Typ der Basisklasse\xnote{Der Efeu-Interpreter kennt nur
+*	Der Typ der Basisklasse\note{Der Efeu-Interpreter kennt nur
 	Einfachvererbung.} bei einer abgeleiteten Klasse.
 *	Eine geordnete Liste mit den Komponenten der Struktur.
 	Diese beschreiben die Attribute der Datenstruktur.

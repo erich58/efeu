@@ -211,6 +211,25 @@ int DocSymbol (IO *in, IO *out)
 		name = DocParseName(in, 0);
 		c = '?';
 	}
+	else if	(c == '#')
+	{
+		c = io_peek(in);
+
+		if	(c == 'x' || c == 'X')
+		{
+			io_getc(in);
+			c = strtoul(DocParseFlags(in), NULL, 16);
+		}
+		else if	(isdigit(c))
+		{
+			c = strtoul(DocParseFlags(in), NULL, 10);
+		}
+		else	c = '#';
+
+		fprintf(stderr, "Entity: %x\n", c);
+		io_putucs(c, out);
+		return 1;
+	}
 	else
 	{
 		switch (c)

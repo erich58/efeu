@@ -1,0 +1,98 @@
+\sec	Einbinden von Dateien
+
+Mit dem Befehl \index{|\include|} können Dateien eingebunden werden.
+Er hat die Syntax:
+	|\include[|<flags>|]| <name>
+
+Die Datei <name> wird entsprechend dem Suchpfad für Dokumente
+gesucht. Einthält <name> einem Schrägstrich~|/|, wird während der
+Verarbeitung der Suchpfad um den Bibliotheksnamen der Datei
+erweitert.
+
+Die Steuerflags <flags> bestimmen die Verarbeitung der Datei.
+Folgende Angaben sind möglich:
+[|config|]
+	Die Datei wird als Konfigurationsdatei geladen.
+	Es kann nicht mit anderen Flags kombiniert werden.
+[|eval|]
+	Die Datei wird mit zunächst mit dem esh-Interpreter ausgewertet.
+[|geval|]
+	Wie |eval|, aber neue Variablen und Funktionen werden global
+	eingerichtet.
+[|verbatim|]
+	Der Inhalt wird wortwörtlich in Schreibmaschinenschrift
+	dargestellt und (abhängig von Layouteinstellungen) grau hinterlegt.
+[|fold|[|=|<cols>]]
+	Ist eine Variante zu |verbatim|, wobei lange Zeilen automatisch
+	umgebrochen werden. Die Umbruchposition kann optional als Parameter
+	übergeben werden, die Vorgabe ist 80. Umbruchstellen werden mit einem
+	Backslash vor dem Zeilenumbruch markiert.
+[|code|]
+	Der Inhalt wird in Schreibmaschinenschrift
+	dargestellt, Attributwechsel sind möglich.
+[|latex|]
+	Die Datei enthält \LaTeX;-Code und wird nur Verarbeitet, wenn
+	der Ausgabetreiber dies unterstützt.
+[|html|]
+	Die Datei enthält HTML-Code und wird nur Verarbeitet, wenn der
+	Ausgabetreiber dies unterstützt.
+[|man|]
+	Die Datei enthält |troff|-Code für Handbucheinträge und wird nur
+	Verarbeitet, wenn der Ausgabetreiber dies unterstützt.
+[|ignore|]
+	Der Inhalt der Datei wird ignoriert. Die Verwendung ist nur in
+	Kombination mit anderen Steuerflags sinnvoll.
+
+Die Flags |latex|, |html| und |man| werden in der Regel mit
+|verbatim| oder |ignore| kombiniert. Falls der Ausgabetreiber
+die Datei nicht verarbeiten kann, wird die Alternative
+verwendet.
+
+Der Parameter <flags> kann auch ein Kommando enthalten, durch das die
+Daten gefiltert werden. Es wird mit dem Pipe-Symbol |||| eingeleitet.
+Fals |eval| gesetzt ist, werden die Daten zuvor mit dem
+esh-Interpreter verarbeitet. Alle anderen Flags beziehen sich auf
+die Verarbeitung der gefilterten Daten.
+
+Beispiel: der Befehl
+---- verbatim
+\include[eval latex verbatim || gnuplot] diag.def
+----
+wertet die Datei mit den esh-Interpreter aus, schickt das Ergebnis
+an das Kommando |gnuplot| und interpretiert das Resultat als
+\LaTeX-Befehle. Falls der Ausgabetrieber diese nicht verarbeiten kann,
+werden die Befehle wortwörtlich dargestellt.
+
+Anstelle einer Datei kann auch die Ausgabe eines Kommandos
+mithilfe des \index{|\pipe|}-Befehls
+eingebunden werden.
+Er hat die Syntax:
+	|\pipe[|<flags>|]| <cmdline>
+Für <flags> gelten die gleichen Regeln wie beim |\include|-Befehl.
+Zu beachten ist, dass bei der Interpretation von <cmdline> die üblichen
+Regeln für den normalen Textfluß gelten. Bei Sonderzeichen empfiehlt es sich,
+die Befehlsanweisung mit dem Pipe-Symbol zu klammern.
+
+Beispiel: Die Anweisung
+---- verbatim
+\pipe[verbatim] ls -al \eval{DocDir}
+----
+liefert
+
+\pipe[verbatim] ls -al \eval{DocDir}
+
+\label{here}
+Durch mindestens vier Minuszeichen |----| wird ein \index{Eingabebereich}
+abgetrennt. Er wird wie eine extern eingebundene Datei behandelt.
+Die genaue Syntax lautet:
+	|----| <flags>\br
+	<Eingabebereich>\br
+	|----| <Kommentar>\br
+
+wobei für <flags> wieder die gleichen Regeln wie beim |\include|-Befehl gelten.
+
+Eingabebereiche werden sehr häufig zum Auswerten von esh-Sequenzen
+als Alternative zum |\eval|-Befehl verwendet.
+
+Die in diesem Abschnitt dargestellten Beispielcodes wurden mihilfe eines
+Eingabebereichs und dem Steuerflag |verbatim| gesetzt.

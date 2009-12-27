@@ -530,6 +530,11 @@ static void ParseBlock (EfiFunc *func, void *rval, void **arg)
 		Val_str(arg[2]), Val_str(arg[3]), Val_str(arg[4]));
 }
 
+static void ParseVerb (EfiFunc *func, void *rval, void **arg)
+{
+	Val_str(rval) = DocParseArg(Val_io(arg[0]), '|', '|', Val_bool(arg[1]));
+}
+
 static void ParseOpt (EfiFunc *func, void *rval, void **arg)
 {
 	Val_str(rval) = DocParseArg(Val_io(arg[0]), '[', ']', Val_bool(arg[1]));
@@ -594,6 +599,7 @@ static EfiFuncDef func_doc[] = {
 	{ 0, &Type_str, "ParseRegion (IO io, str delim = NULL)", ParseRegion },
 	{ 0, &Type_str, "ParseBlock (IO io, bool mode, str beg = \"beg\", "
 		"str end = \"end\", str toggle = NULL)", ParseBlock },
+	{ 0, &Type_str, "ParseVerb (IO io, bool flag = false)", ParseVerb },
 	{ 0, &Type_str, "ParseOpt (IO io, bool flag = false)", ParseOpt },
 	{ 0, &Type_str, "ParseArg (IO io, bool flag = false)", ParseArg },
 };

@@ -1,0 +1,12 @@
+\sec	Textverschiebungen
+
+Ein eingerückter Text, der nicht auf eine Listenmarke folgt,
+erzeugt eine Umgebung mit eingerücktem Text. Diese endet,
+sobald die Einrücktiefe wieder reduziert wird.
+
+Einrückungen können beliebig verschachtelt werden.
+Sie können wahlweise einen eigenen Absatz bilden,
+oder Teil eines Absatzes sein.
+
+Die Entsprechung der Textverschiebungen in \LaTeX; ist die
+|\quote|-Umgebung.

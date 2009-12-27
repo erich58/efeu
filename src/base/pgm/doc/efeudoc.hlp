@@ -37,7 +37,7 @@ in your document.
 	cout << "creates the output:\n\n" << x << "\n";
 }}
 
-The document prozessor |$!| uses a ascii input format that allows you
+The document prozessor |$!| uses a plain text input format that allows you
 to write the document similar to the desired output and tries to use
 controls as less as possible.
 
@@ -86,7 +86,10 @@ The following notation is used in command syntax:
 	empty line.
 
 ---- eval
-for (x in maclist())
+str mactab[] = maclist();
+qsort(mactab, "lexcmp:");
+
+for (x in mactab)
 	if (x[0] == '\\' && x[1] != '_')
 		showmac(x, cout, 1);
 ----
@@ -97,7 +100,7 @@ This sections contains a list of all predefined
 macros of |$!|.
 
 ---- eval
-for (x in maclist())
+for (x in mactab)
 	if (x[0] == '@@' && x[1] != '_')
 		showmac(x, cout, 1);
 ----

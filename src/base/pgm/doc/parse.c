@@ -55,6 +55,14 @@ static void copy_quote (IO *in, StrBuf *buf, int key)
 
 			c = io_getc(in);
 		}
+		else if	(c == '\\')
+		{
+			if	(io_peek(in) == '\n')
+			{
+				io_getc(in);
+				continue;
+			}
+		}
 
 		sb_putc(c, buf);
 	}
@@ -308,17 +316,15 @@ static char *do_parse (IO *in, int beg, int end)
 
 	while ((c = io_skipcom(in, NULL, 0)) != EOF)
 	{
-		/*
 		if	(c == '\\')
 		{
-			c = io_getc(in);
-
-			if	(c != '\\' && c != '\'' && c != beg && c != end)
-				sb_putc('\\', &parse_buf);
+			if	(io_peek(in) == '\n')
+			{
+				io_getc(in);
+				continue;
+			}
 		}
-		else
-		*/
-		if	(c == '\'')
+		else if	(c == '\'')
 		{
 			test_quote(in, &parse_buf, c);
 			continue;

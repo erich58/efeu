@@ -115,6 +115,7 @@ void Doc_psub (Doc *doc, IO *in);
 void Doc_eval (Doc *doc, IO *in, const char *expr);
 void Doc_sig (Doc *doc, int sig, IO *in);
 void Doc_minus (Doc *doc, IO *in);
+void Doc_dots (Doc *doc, IO *in);
 IO *Doc_subin (IO *io, const char *key);
 
 void Doc_start (Doc *doc);

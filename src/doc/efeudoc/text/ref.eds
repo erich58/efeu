@@ -1,0 +1,58 @@
+\sec	Referenzen
+
+\ssec	Textbezüge
+
+Der Befehl \index{|\label|} setzt einen Label im laufendem Text,
+der Referenziert werden kann. Dabei kann sowohl die Seite als
+auch der aktuelle Kontext (Kapitelnummer, Bereichsnummer oder
+Übersichtsnummer) abgefragt werden.
+
+Der Befehl \index{|\ref|} liefert den Kontext eines Labels.
+
+Der Befehl \index{|\pref|} liefert die Seite, auf der der Label
+gesetzt wurde.
+
+Der Befehl \index{|\vref|} liefert Kontext und Seitenangabe eines
+Labels, wobei letztere in Bezug zur Seite der Abfrage gesetzt
+wird.
+
+\ssec	Handbuchreferenz
+
+\index[Handbuchreferenz]
+Der Befehl \index{|\mref|} referenziert einen Handbucheintrag.
+Er wird in der Form:
+	|\mref{|<name>|(|<num>|)}|
+geschrieben, wobei <name> den Handbucheintrag und <num> das
+Handbuchkapitel angibt.
+
+\ssec	Hyperlink
+
+Der Befehl \index{|\url|} referenziert einen \index{Hyperlink}. Er hat
+die Syntax:
+	|\url|||<url>|||{|<Bezeichnung>|}|
+
+Dabei steht <url> für den Hyperlink und <Bezeichnung> für die
+Schaltfläche im laufenden Text. Der Hyperlink wird in verbatim-Form
+angegeben.
+
+\ssec	Stichworteinträge
+
+\label{index}
+Ein \index{Stichworteintrag} wird mit dem Befehl \index{|\index|} generiert.
+Der Eintrag kann wahlweise in eckigen oder geschwungenen Klammern
+angegeben werden. Bei geschwungenen Klammern erscheint der
+Begriff auch im laufenden Text.
+
+Die Version mit eckigen Klammern sollte nur verwendet werden, wenn
+der Stichworteintrag im laufenden Text nicht vorkommt, anders
+geschrieben wird oder ein <"Zerbrechlichkeitsproblem"> besteht.
+Dies tritt z.B: auf, wenn ein |\index|-Befehl in einem
+Gliederungsbefehl, einer Randnotiz oder einem Zitat verwendet wird
+und Sonderzeichen oder Attributwechsel enthält. Nähere Hinweise
+zu <"zerbrechlichen Befehlen"> finden sich in jedem \LaTeX-Handbuch.
+
+Beachte auch, dass Leerzeichen oder Zeilenvorschübe nach dem
+|\index|-Befehl erhalten bleiben. Eine Zeile, die nur aus einem
+Stichworteintrag mit einem Stichwort in eckigen Klammern besteht,
+kann zu einer Absatztrennung führen und sollte daher nur zwischen
+den Absätzen stehen.
