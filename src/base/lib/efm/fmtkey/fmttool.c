@@ -23,8 +23,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/fmtkey.h>
 #include <EFEU/locale.h>
 
-void ftool_addsig (strbuf_t *sb, int sig, int flags);
-int ftool_ioalign (io_t *io, strbuf_t *sb, const fmtkey_t *key);
+void ftool_addsig (StrBuf *sb, int sig, int flags);
+int ftool_ioalign (IO *io, StrBuf *sb, const FmtKey *key);
 
 #define	LOCALE(name)	(Locale.print ? Locale.print->name : NULL)
 #define	NEG_SIG		LOCALE(negative_sign)
@@ -35,7 +35,7 @@ int ftool_ioalign (io_t *io, strbuf_t *sb, const fmtkey_t *key);
 /*	Vorzeichen ausgeben
 */
 
-void ftool_addsig (strbuf_t *sb, int sig, int flags)
+void ftool_addsig (StrBuf *sb, int sig, int flags)
 {
 	char *p;
 
@@ -51,7 +51,7 @@ void ftool_addsig (strbuf_t *sb, int sig, int flags)
 /*	Ausgeben mit Feldausrichtung
 */
 
-int ftool_ioalign (io_t *io, strbuf_t *sb, const fmtkey_t *key)
+int ftool_ioalign (IO *io, StrBuf *sb, const FmtKey *key)
 {
 	int n;
 

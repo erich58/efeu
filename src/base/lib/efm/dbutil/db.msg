@@ -20,18 +20,14 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-1	$!: can not read from file $0.\n
-2	$!: can not write to file $0.\n
-3	$!: file $0: output error.\n
-4	$!: $0: invalid record size.\n
-5	$!: $0: error in record size field.\n
+pos	$!: DBData: field position $1, width $2 out of range (recl = $3).\n
+idx	$!: DBData: field index $1 out of range (dim = $2).\n
 
-11	$!: column $0: invalid digit $1 in value.\n
-12	$!: column $0: error in BCD-value (HIGH)\n
-13	$!: column $0: error in BCD-value (LOW)\n
-14	$!: column $0: error in BCD-value (SIGNUM).\n
-15	$!: column $0: character $1 not alphanumeric.\n
+11	$!: column $1: invalid digit $2 in value.\n
+12	$!: column $1: error in BCD-value $2 (HIGH)\n
+13	$!: column $1: error in BCD-value $2 (LOW)\n
+14	$!: column $1: error in BCD-value $2 (SIGNUM).\n
+15	$!: column $1: character $2 not alphanumeric.\n
 
-31	$!: $0: tempnam() failed.\n
-32	$!: $0: output error in file $1: only $1 of $2 records written.\n
-33	$!: $0: can not merge more than 8 files.\n
+21	$!: column $1: invalid digit $2 in value.\n
+25	$!: column $1: character $2 not alphanumeric.\n

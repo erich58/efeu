@@ -26,56 +26,47 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	DB_BLKSIZE	128	/* Blockgröße für Zahl der Datenbankeinträge */
 
-static char *db_ident(const DataBase_t *db)
+static char *db_ident (const void *data)
 {
-	if	(db == NULL)	return msprintf("NULL");
-
+	const EfiDB *db = data;
 	return msprintf("%s[%d]", db->type->name, db->buf.used);
 }
 
-static DataBase_t *db_admin(DataBase_t *tg, const DataBase_t *src)
+static void db_clean (void *data)
 {
-	if	(tg)
-	{
-		int i;
+	EfiDB *db;
+	int i;
 
-		for (i = 0; i < tg->buf.used; i++)
-			CleanData(tg->type,
-				(char *) tg->buf.data + i * tg->type->size);
+	for (i = 0, db = data; i < db->buf.used; i++)
+		CleanData(db->type, (char *) db->buf.data + i * db->type->size);
 
-		vb_free(&tg->buf);
-		memfree(tg);
-		return NULL;
-	}
-
-	tg = ALLOC(1, DataBase_t);
-	memset(tg, 0, sizeof(DataBase_t));
-	return tg;
+	vb_free(&db->buf);
+	memfree(db);
 }
 
 
-ADMINREFTYPE(DB_reftype, "DB", db_ident, db_admin);
+static RefType DB_reftype = REFTYPE_INIT("DB", db_ident, db_clean);
 
 
 /*	Datentype
 */
 
-Type_t Type_DB = REF_TYPE("DataBase", DataBase_t *);
+EfiType Type_DB = REF_TYPE("DataBase", EfiDB *);
 
-#define	Val_DB(x)	((DataBase_t **) x)[0]
+#define	Val_DB(x)	((EfiDB **) x)[0]
 #define	Ref_DB(x)	rd_refer(Val_DB(x))
 
 
 /*	Datenbank generieren
 */
 
-DataBase_t *DB_create(Type_t *type, size_t blk)
+EfiDB *DB_create(EfiType *type, size_t blk)
 {
-	DataBase_t *db;
+	EfiDB *db;
 
 	if	(type == NULL)	return NULL;
 
-	db = rd_create(&DB_reftype);
+	db = memalloc(sizeof(EfiDB));
 	db->type = type;
 	db->cmp = NULL;
 	db->buf.data = NULL;
@@ -83,15 +74,15 @@ DataBase_t *DB_create(Type_t *type, size_t blk)
 	db->buf.elsize = type->size;
 	db->buf.size = 0;
 	db->buf.used = 0;
-	return db;
+	return rd_init(&DB_reftype, db);
 }
 
 
-#define	DBRVAL	((DataBase_t **) rval)[0]
+#define	DBRVAL	((EfiDB **) rval)[0]
 
-static void f_db_create(Func_t *func, void *rval, void **arg)
+static void f_db_create(EfiFunc *func, void *rval, void **arg)
 {
-	DataBase_t *db;
+	EfiDB *db;
 	db = DB_create(Val_type(arg[0]), Val_int(arg[2]));
 
 	if	(db)
@@ -99,9 +90,9 @@ static void f_db_create(Func_t *func, void *rval, void **arg)
 	DBRVAL = db;
 }
 
-static void f_db_fload(Func_t *func, void *rval, void **arg)
+static void f_db_fload(EfiFunc *func, void *rval, void **arg)
 {
-	io_t *io;
+	IO *io;
 
 	io = io_lnum(io_fileopen(Val_str(arg[1]), "r"));
 	DB_load(io, Val_DB(arg[0]), Val_obj(arg[2]));
@@ -109,9 +100,9 @@ static void f_db_fload(Func_t *func, void *rval, void **arg)
 	DBRVAL = Ref_DB(arg[0]);
 }
 
-static void f_db_load(Func_t *func, void *rval, void **arg)
+static void f_db_load(EfiFunc *func, void *rval, void **arg)
 {
-	io_t *io;
+	IO *io;
 
 	io = io_lnum(io_refer(Val_io(arg[1])));
 	DB_load(io, Val_DB(arg[0]), Val_obj(arg[2]));
@@ -120,9 +111,9 @@ static void f_db_load(Func_t *func, void *rval, void **arg)
 }
 
 
-static void f_db_insert(Func_t *func, void *rval, void **arg)
+static void f_db_insert(EfiFunc *func, void *rval, void **arg)
 {
-	DataBase_t *db;
+	EfiDB *db;
 	void *ptr;
 	size_t pos, dim;
 
@@ -137,9 +128,9 @@ static void f_db_insert(Func_t *func, void *rval, void **arg)
 }
 
 
-static void f_db_delete(Func_t *func, void *rval, void **arg)
+static void f_db_delete(EfiFunc *func, void *rval, void **arg)
 {
-	DataBase_t *db;
+	EfiDB *db;
 	char *ptr;
 	size_t pos, dim;
 
@@ -159,9 +150,9 @@ static void f_db_delete(Func_t *func, void *rval, void **arg)
 	DBRVAL = db;
 }
 
-static void f_db_clean (Func_t *func, void *rval, void **arg)
+static void f_db_clean (EfiFunc *func, void *rval, void **arg)
 {
-	DataBase_t *db = Ref_DB(arg[0]);
+	EfiDB *db = Ref_DB(arg[0]);
 
 	if	(db && db->buf.used)
 	{
@@ -181,7 +172,7 @@ static void f_db_clean (Func_t *func, void *rval, void **arg)
 }
 
 
-static Obj_t *db_search(DataBase_t *db, Obj_t *obj, int flag)
+static EfiObj *db_search(EfiDB *db, EfiObj *obj, int flag)
 {
 	char *p1, *p2;
 
@@ -218,18 +209,15 @@ static Obj_t *db_search(DataBase_t *db, Obj_t *obj, int flag)
 	switch (flag)
 	{
 	case VB_SEARCH:
+	case VB_ENTER:
 
-		return p2 ? LvalObj(&Lval_ref, db->type, db, p2) : ptr2Obj(NULL);
+		return p2 ? LvalObj(&Lval_ref, db->type, db, p2)
+			: ptr2Obj(NULL);
 
 	case VB_DELETE:
 	case VB_REPLACE:
 
 		obj = p2 ? ConstObj(db->type, p2) : ptr2Obj(NULL);
-		break;
-
-	case VB_ENTER:
-
-		obj = ConstObj(db->type, p2);
 		break;
 	}
 
@@ -246,10 +234,10 @@ static Obj_t *db_search(DataBase_t *db, Obj_t *obj, int flag)
 }
 
 
-static void f_db_getindex(Func_t *func, void *rval, void **arg)
+static void f_db_getindex(EfiFunc *func, void *rval, void **arg)
 {
-	DataBase_t *db;
-	Obj_t *obj;
+	EfiDB *db;
+	EfiObj *obj;
 	char *p;
 
 	db = Val_DB(arg[0]);
@@ -268,27 +256,31 @@ static void f_db_getindex(Func_t *func, void *rval, void **arg)
 		db->type->size : db->buf.used;
 }
 
-static void f_db_find(Func_t *func, void *rval, void **arg)
+static void f_db_find(EfiFunc *func, void *rval, void **arg)
 {
 	Val_obj(rval) = db_search(Val_DB(arg[0]), arg[1], VB_SEARCH);
 }
 
-static void f_db_replace(Func_t *func, void *rval, void **arg)
+static void f_db_get(EfiFunc *func, void *rval, void **arg)
+{
+	Val_obj(rval) = db_search(Val_DB(arg[0]), arg[1], VB_ENTER);
+}
+
+static void f_db_replace(EfiFunc *func, void *rval, void **arg)
 {
 	Val_obj(rval) = db_search(Val_DB(arg[0]), arg[1], VB_REPLACE);
 }
 
-
-static void f_db_remove(Func_t *func, void *rval, void **arg)
+static void f_db_remove(EfiFunc *func, void *rval, void **arg)
 {
 	Val_obj(rval) = db_search(Val_DB(arg[0]), arg[1], VB_DELETE);
 }
 
 
-static void f_db_fsave(Func_t *func, void *rval, void **arg)
+static void f_db_fsave(EfiFunc *func, void *rval, void **arg)
 {
-	io_t *io;
-	DataBase_t *db;
+	IO *io;
+	EfiDB *db;
 
 	io = io_fileopen(Val_str(arg[1]), "w");
 	db = Ref_DB(arg[0]);
@@ -298,17 +290,17 @@ static void f_db_fsave(Func_t *func, void *rval, void **arg)
 	DBRVAL = db;
 }
 
-static void f_db_save(Func_t *func, void *rval, void **arg)
+static void f_db_save(EfiFunc *func, void *rval, void **arg)
 {
-	register DataBase_t *db = Ref_DB(arg[0]);
+	register EfiDB *db = Ref_DB(arg[0]);
 	DB_save(Val_io(arg[1]), db, Val_bool(arg[2]),
 		Val_vfunc(arg[3]), Val_str(arg[4]));
 	DBRVAL = db;
 }
 
-static void f_db_index(Func_t *func, void *rval, void **arg)
+static void f_db_index(EfiFunc *func, void *rval, void **arg)
 {
-	DataBase_t *db;
+	EfiDB *db;
 	int n;
 
 	db = Val_DB(arg[0]);
@@ -316,7 +308,7 @@ static void f_db_index(Func_t *func, void *rval, void **arg)
 
 	if	(db == NULL || n < 0 || n >= db->buf.used)
 	{
-		errmsg(MSG_EFMAIN, 35);
+		dbg_note(NULL, "[efmain:35]", NULL);
 		return;
 	}
 
@@ -325,7 +317,7 @@ static void f_db_index(Func_t *func, void *rval, void **arg)
 }
 
 /*
-static void f_db_print(Func_t *func, void *rval, void **arg)
+static void f_db_print(EfiFunc *func, void *rval, void **arg)
 {
 	char *p;
 
@@ -336,9 +328,9 @@ static void f_db_print(Func_t *func, void *rval, void **arg)
 */
 
 
-static void f_db_sort(Func_t *func, void *rval, void **arg)
+static void f_db_sort(EfiFunc *func, void *rval, void **arg)
 {
-	DataBase_t *db;
+	EfiDB *db;
 
 	if	((db = Ref_DB(arg[0])) == NULL)
 		return;
@@ -349,9 +341,9 @@ static void f_db_sort(Func_t *func, void *rval, void **arg)
 }
 
 
-static void f_db_dim(Func_t *func, void *rval, void **arg)
+static void f_db_dim(EfiFunc *func, void *rval, void **arg)
 {
-	DataBase_t *x = Val_DB(arg[0]);
+	EfiDB *x = Val_DB(arg[0]);
 	Val_int(rval) = x ? x->buf.used : 0;
 }
 
@@ -359,12 +351,12 @@ static void f_db_dim(Func_t *func, void *rval, void **arg)
 /*	Konvertierung in Liste
 */
 
-static void DB2List (Func_t *func, void *rval, void **arg)
+static void DB2List (EfiFunc *func, void *rval, void **arg)
 {
 	int i;
-	ObjList_t *list, **ptr;
+	EfiObjList *list, **ptr;
 	char *data;
-	DataBase_t *db;
+	EfiDB *db;
 
 	list = NULL;
 	ptr = &list;
@@ -389,7 +381,7 @@ static void DB2List (Func_t *func, void *rval, void **arg)
 /*	Initialisieren
 */
 
-static FuncDef_t db_func[] = {
+static EfiFuncDef db_func[] = {
 	{ FUNC_RESTRICTED, &Type_list, "DataBase ()", DB2List },
 	{ 0, &Type_DB, "DataBase (Type_t, VirFunc cmp = NULL, int bs = 0)",
 		f_db_create },
@@ -403,8 +395,14 @@ VirFunc test = NULL, str list = NULL)", f_db_save },
 VirFunc	test = NULL, str list = NULL)", f_db_fsave },
 	{ 0, &Type_obj, "DataBase::operator+= (.)", f_db_replace },
 	{ 0, &Type_obj, "DataBase::operator-= (.)", f_db_remove },
-	{ FUNC_VIRTUAL, &Type_obj, "operator[] (DataBase *, int * n)", f_db_index },
+	{ 0, &Type_obj, "DataBase::find (.)", f_db_find },
+	{ 0, &Type_obj, "DataBase::get (.)", f_db_get },
+	{ 0, &Type_obj, "DataBase::replace (.)", f_db_replace },
+	{ 0, &Type_obj, "DataBase::remove (.)", f_db_remove },
+	{ FUNC_VIRTUAL, &Type_obj, "operator[] (DataBase *, int * n)",
+		f_db_index },
 	{ FUNC_VIRTUAL, &Type_obj, "operator[] (DataBase *, .)", f_db_find },
+	{ FUNC_VIRTUAL, &Type_obj, "operator() (DataBase *, .)", f_db_get },
 	{ 0, &Type_int, "DataBase::index (.)", f_db_getindex },
 	{ 0, &Type_DB, "DataBase::insert (int, int = 1)", f_db_insert },
 	{ 0, &Type_DB, "DataBase::delete (int, int = 1)", f_db_delete },

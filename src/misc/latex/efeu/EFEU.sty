@@ -1,0 +1,143 @@
+%	EFEU - Layout
+%	(c) 1995 Erich Frühstück
+%	A-1090 Wien, Währinger Straße 64/6
+
+\message{Dokumentstil `EFEU' Version 1.0 vom Juni 1991}
+
+%	vertikale Seitenabmessung
+
+\input{isogerman.sty}
+\input{schuster.sty}
+\usepackage{graphicx}
+\usepackage[dvips,usenames]{color}
+
+\voffset=-1in
+\topmargin=1.5cm
+\headheight=5mm
+\headsep=1.5cm
+\topskip=5mm
+\footskip=1.5cm
+
+\if@compatibility
+	\footheight\headheight
+\fi
+
+%\textheight=23cm
+\textheight\paperheight
+\advance\textheight by -2\topmargin
+\advance\textheight by -\headheight
+\advance\textheight by -\headsep
+\advance\textheight by -\footskip
+
+%	horizontale Seitenabmessung
+
+\hoffset=-1in
+%\oddsidemargin=2.5cm
+%\evensidemargin=2.5cm
+\oddsidemargin=3.5cm
+\evensidemargin=2.5cm
+\textwidth\paperwidth
+\advance\textwidth by -\oddsidemargin
+\advance\textwidth by -\evensidemargin
+%\textwidth=15cm
+
+%	Randnotizen
+
+\marginparpush\baselineskip
+\marginparsep=5mm
+%\marginparwidth=15mm
+\marginparwidth\evensidemargin
+\advance\marginparwidth by -2\marginparsep
+
+%	Layoutparameter
+
+\pagenumbering{arabic}
+\parskip=1.5ex plus 0.5ex minus 0.5ex
+\parindent=0em
+\frenchspacing
+
+%	Titelseite
+
+\long\def\Maketitle{{%
+	\clearpage
+	\if@twoside \setcounter{page}{-1}
+	\else \setcounter{page}{0}
+	\fi
+	\centering
+	\thispagestyle{empty}
+	\parbox[b][0.85\textheight][t]{0.28\textwidth}{%
+		\includegraphics[height=0.9\textheight]%
+		{/home/efeu/tex/latex/logo/efeu.eps}}
+	\parbox[b][0.55\textheight][s]{0.52\textwidth}{\raggedright
+		{\Huge\bf\color{Red}{\@title}\\}%
+		\vfill
+		{\large\bf\@author\\}}%
+	\clearpage}}
+
+\long\def\maketitle{{%
+	\Maketitle
+	\cleardoublepage
+	\centering
+	\thispagestyle{empty}
+	\parbox[b][0.85\textheight][t]{0.28\textwidth}{%
+%		\leftskip 0pt plus 1cm minus 1cm
+		\rightskip 0pt plus 5cm minus 5cm
+		\unitlength 2.0in
+		\divide\unitlength by 300
+		\input{/home/efeu/tex/latex/logo/efeu.pic}}
+	\parbox[b][0.55\textheight][s]{0.52\textwidth}{\raggedright
+		{\Huge\bf\@title\\}%
+		\vfill
+		\date
+		\vfill
+		{\large\bf\@author\\}}%
+	\clearpage}}
+
+
+\def\getinclist#1{\typeout{}\typein[\@inclist]{#1}%
+\ifx\@inclist\empty\relax\else\includeonly{\@inclist}\fi}
+
+
+%	Seitenstyle
+
+\def\EFEU@chaptermark#1{\markright{\uppercase{#1}}{}}
+
+\def\ps@plain{%
+	\let\@evenhead\@empty
+	\let\@oddhead\@empty
+	\def\@evenfoot{\thepage\hfill}
+	\def\@oddfoot{\hfill\thepage}
+	\let\@mkboth\markboth
+}
+
+\def\ps@headings{%
+	\def\@oddhead{Kapitel \thechapter\hfil\rightmark}%
+	\def\@evenhead{\leftmark\hfil Kapitel \thechapter}%
+	\def\@evenfoot{\thepage\hfill}
+	\def\@oddfoot{\hfill\thepage}
+	\let\@mkboth\markboth
+	\let\chaptermark\EFEU@chaptermark
+	\let\sectionmark\@gobble
+}
+
+\def\ps@myheadings{%
+	\def\@evenhead{\thechapter\hfil\slshape\leftmark}%
+	\def\@oddhead{{\slshape\rightmark}\hfil\thechapter}%
+	\def\@evenfoot{\thepage\hfill}
+	\def\@oddfoot{\hfill\thepage}
+%	\let\@mkboth\@gobbletwo
+%	\let\chaptermark\@gobble
+%	\let\sectionmark\@gobble
+	\let\@mkboth\markboth
+}
+
+
+\def\cleardoublepage{\clearpage
+	\if@twoside \ifodd\c@page
+	\else
+		\thispagestyle{empty}
+		\hbox{}\newpage
+		\if@twocolumn\hbox{}\newpage\fi
+	\fi\fi}
+
+\newcount\Syn@RepCount

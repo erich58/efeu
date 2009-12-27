@@ -64,28 +64,28 @@ static void arg_xadd (char *arg)
 	else	arg_add("");
 }
 
-static int e_gtkarg (CmdPar_t *cpar, CmdParVar_t *var,
+static int e_gtkarg (CmdPar *cpar, CmdParVar *var,
 	const char *par, const char *arg)
 {
 	arg_xadd(CmdPar_psub(cpar, par, arg));
 	return 0;
 }
 
-static CmdParEval_t edef = { "gtkarg", "GTK-Argument setzen", e_gtkarg };
+static CmdParEval edef = { "gtkarg", "GTK-Argument setzen", e_gtkarg };
 
 #if	!SET_LOCALE
-static void f_gtklocale (Func_t *func, void *rval, void **arg)
+static void f_gtklocale (EfiFunc *func, void *rval, void **arg)
 {
 	gtk_set_locale();
 }
 #endif
 
-static void f_gtkarg (Func_t *func, void *rval, void **arg)
+static void f_gtkarg (EfiFunc *func, void *rval, void **arg)
 {
 	arg_xadd(mstrcpy(Val_str(arg[0])));
 }
 
-static FuncDef_t fdef[] = {
+static EfiFuncDef fdef[] = {
 #if	!SET_LOCALE
 	{ 0, &Type_void, "gtklocale()", f_gtklocale },
 #endif

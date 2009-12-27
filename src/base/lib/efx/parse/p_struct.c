@@ -27,16 +27,17 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	ALIGN(x, y)	((y) * (((x) + (y) - 1) / (y)))
 
-static void StClean (const Type_t *type, void *tg);
-static void StCopy (const Type_t *type, void *tg, const void *src);
-static size_t StIOData (const Type_t *t, iofunc_t f, void *p, void *d, size_t n);
+static void StClean (const EfiType *type, void *tg);
+static void StCopy (const EfiType *type, void *tg, const void *src);
+static size_t StRead (const EfiType *type, void *data, IO *io);
+static size_t StWrite (const EfiType *type, const void *data, IO *io);
 
 
-Obj_t *PFunc_struct(io_t *io, void *data)
+EfiObj *PFunc_struct(IO *io, void *data)
 {
-	Type_t *type;
-	Type_t *base;
-	Var_t *st;
+	EfiType *type;
+	EfiType *base;
+	EfiVar *st;
 	void *p;
 	char *prompt;
 	char *bname;
@@ -57,8 +58,7 @@ Obj_t *PFunc_struct(io_t *io, void *data)
 
 	if	(c != '{')
 	{
-		io_error(io, MSG_EFMAIN, 156, 1, p);
-		memfree(p);
+		io_error(io, "[efmain:156]", "m", p);
 		memfree(bname);
 		return NULL;
 	}
@@ -74,7 +74,7 @@ Obj_t *PFunc_struct(io_t *io, void *data)
 
 	if	(base)
 	{
-		Var_t *bvar = NewVar(base, NULL, 0);
+		EfiVar *bvar = NewVar(base, NULL, 0);
 		bvar->name = bname;
 		bvar->member = StructMember;
 		type = MakeStruct(p, bvar, st);
@@ -85,27 +85,29 @@ Obj_t *PFunc_struct(io_t *io, void *data)
 }
 
 
-static void ExpandKonv (Func_t *func, void *rval, void **arg)
+static void ExpandKonv (EfiFunc *func, void *rval, void **arg)
 {
 	CopyData(func->arg[0].type, rval, arg[0]);
 }
 
 
-Type_t *MakeStruct(char *name, Var_t *base, Var_t *list)
+EfiType *MakeStruct(char *name, EfiVar *base, EfiVar *list)
 {
-	Type_t *type;
-	Var_t *st;
+	EfiType *type;
+	EfiVar *st;
 	size_t tsize, size, recl;
 	int vrecl;
-	Clean_t clean;
-	Copy_t copy;
-	IOData_t iodata;
+	void (*clean) (const EfiType *type, void *data);
+	void (*copy) (const EfiType *type, void *tg, const void *src);
+	size_t (*read) (const EfiType *type, void *data, IO *io);
+	size_t (*write) (const EfiType *type, const void *data, IO *io);
 	char *p;
 	
 	tsize = 0;
 	copy = NULL;
 	clean = NULL;
-	iodata = StIOData;
+	read = StRead;
+	write = StWrite;
 	recl = 0;
 	vrecl = 0;
 
@@ -119,13 +121,15 @@ Type_t *MakeStruct(char *name, Var_t *base, Var_t *list)
 	{
 		if	(st->type->copy)	copy = StCopy;
 		if	(st->type->clean)	clean = StClean;
-		if	(!st->type->iodata)	iodata = NULL;
 
-		if	(st->type->recl)
+		if	(!st->type->recl)
 		{
-			recl += st->type->recl * (st->dim ? st->dim : 1);
+			if	(!st->type->read)	read = NULL;
+			if	(!st->type->write)	write = NULL;
+
+			vrecl = 1;
 		}
-		else	vrecl = 1;
+		else	recl += st->type->recl * (st->dim ? st->dim : 1);
 
 		size = st->type->size * (st->dim ? st->dim : 1);
 
@@ -150,8 +154,8 @@ Type_t *MakeStruct(char *name, Var_t *base, Var_t *list)
 */
 	if	(name == NULL)
 	{
-		strbuf_t *sb = new_strbuf(0);
-		io_t *io = io_strbuf(sb);
+		StrBuf *sb = new_strbuf(0);
+		IO *io = io_strbuf(sb);
 
 		for (st = list; st != NULL; st = st->next)
 			io_printf(io, "_%s%d", st->type->name, st->dim);
@@ -163,7 +167,8 @@ Type_t *MakeStruct(char *name, Var_t *base, Var_t *list)
 	type = NewType(name);
 	type->size = tsize;
 	type->recl = vrecl ? 0 : recl;
-	type->iodata = iodata;
+	type->read = read;
+	type->write = write;
 	type->eval = NULL;
 	type->clean = clean;
 	type->copy = copy;
@@ -197,9 +202,9 @@ Type_t *MakeStruct(char *name, Var_t *base, Var_t *list)
 /*	Kopierfunktion für Strukturtypen
 */
 
-static void StCopy(const Type_t *type, void *tg, const void *src)
+static void StCopy(const EfiType *type, void *tg, const void *src)
 {
-	Var_t *st;
+	EfiVar *st;
 
 	for (st = type->list; st != NULL; st = st->next)
 	{
@@ -215,9 +220,9 @@ static void StCopy(const Type_t *type, void *tg, const void *src)
 /*	Löschfunktion für Strukturtypen
 */
 
-static void StClean(const Type_t *type, void *tg)
+static void StClean(const EfiType *type, void *tg)
 {
-	Var_t *st;
+	EfiVar *st;
 
 	for (st = type->list; st != NULL; st = st->next)
 	{
@@ -227,21 +232,39 @@ static void StClean(const Type_t *type, void *tg)
 	}
 }
 
-static size_t StIOData (const Type_t *type, iofunc_t f, void *p, void *d, size_t n)
+static size_t StRead (const EfiType *type, void *data, IO *io)
 {
-	Var_t *st;
+	EfiVar *st;
 	size_t recl;
 
-	for (recl = 0; n > 0; n--, d = (char *) d + type->size)
+	for (recl = 0, st = type->list; st != NULL; st = st->next)
 	{
-		for (st = type->list; st != NULL; st = st->next)
-		{
-			void *dptr = (char *) d + st->offset;
+		void *dptr = (char *) data + st->offset;
 
-			if	(st->dim)
-				recl += IOVecData(st->type, f, p, st->dim, dptr);
-			else	recl += IOData(st->type, f, p, dptr);
+		if	(st->dim)
+		{
+			recl += ReadVecData(st->type, st->dim, dptr, io);
 		}
+		else	recl += ReadData(st->type, dptr, io);
+	}
+
+	return recl;
+}
+
+static size_t StWrite (const EfiType *type, const void *data, IO *io)
+{
+	EfiVar *st;
+	size_t recl;
+
+	for (recl = 0, st = type->list; st != NULL; st = st->next)
+	{
+		void *dptr = (char *) data + st->offset;
+
+		if	(st->dim)
+		{
+			recl += WriteVecData(st->type, st->dim, dptr, io);
+		}
+		else	recl += WriteData(st->type, dptr, io);
 	}
 
 	return recl;

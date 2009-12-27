@@ -37,7 +37,7 @@ typedef struct {
 	int state[DEG];	/* Statusfeld */
 } RNDBUF;
 
-static void ident_old (io_t *io, void *data)
+static void ident_old (IO *io, void *data)
 {
 	RNDBUF *buf = data;
 	int n;
@@ -86,7 +86,7 @@ static int do_rand (RNDBUF *buf)
 
 static double rand_old (void *data)
 {
-	return DRAND_KOEF * do_rand(data);
+	return do_rand(data) / 2147483648.;
 }
 
 
@@ -147,7 +147,7 @@ static void *copy_old (const void *data)
 	return tg;
 }
 
-RandomType_t RandomType_old = {
+RandomType RandomType_old = {
 	"old", ":*:compatible to:de:Kompatibel zu:_: random(3), libc6-2.0.3",
 	ident_old, init_old, copy_old, memfree, seed_old, rand_old
 };

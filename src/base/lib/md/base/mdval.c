@@ -6,7 +6,7 @@
 #include <EFEU/mdmat.h>
 
 
-long Md_getlong(Konv_t *konv, void *data)
+long Md_getlong(EfiKonv *konv, void *data)
 {
 	if	(konv)
 	{
@@ -18,7 +18,7 @@ long Md_getlong(Konv_t *konv, void *data)
 }
 
 
-double Md_getdbl(Konv_t *konv, void *data)
+double Md_getdbl(EfiKonv *konv, void *data)
 {
 	if	(konv)
 	{
@@ -30,13 +30,13 @@ double Md_getdbl(Konv_t *konv, void *data)
 }
 
 
-void Md_setlong(Konv_t *konv, void *data, long val)
+void Md_setlong(EfiKonv *konv, void *data, long val)
 {
 	KonvData(konv, data, &val);
 }
 
 
-void Md_setdbl(Konv_t *konv, void *data, double val)
+void Md_setdbl(EfiKonv *konv, void *data, double val)
 {
 	KonvData(konv, data, &val);
 }

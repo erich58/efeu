@@ -29,31 +29,30 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	ALIGN(x, y)	((y) * (((x) + (y) - 1) / (y)))
 
-static int get_start (Type_t *type, int start)
+static int get_start (EfiType *type, int start)
 {
-	xtab_t *tab;
-	Var_t *var;
-	int i;
-
-	if	(!(type && type->vtab))	return start;
-
-	tab = &type->vtab->tab;
-
-	for (i = 0; i < tab->dim; i++)
+	if	(type && type->vtab)
 	{
-		var = tab->tab[i];
+		VarTabEntry *p = type->vtab->tab.data;
+		size_t n = type->vtab->tab.used;
 
-		if	(var->type != type)
-			continue;
+		for (; n-- > 0; p++)
+		{
+			if	(p->obj && p->obj->type == type)
+			{
+				int val = Val_int(p->obj->data);
 
-		if	(start <= (int) var->par)
-			start = (int) var->par + 1;
+				if	(start <= val)
+					start = val + 1;
+			}
+		}
+
+		return get_start(type->base, start);
 	}
-
-	return get_start(type->base, start);
+	else	return start;
 }
 
-static void add_key (Type_t *type, io_t *io, int delim)
+static void add_key (EfiType *type, IO *io, int delim)
 {
 	int start;
 	int c;
@@ -82,7 +81,6 @@ static void add_key (Type_t *type, io_t *io, int delim)
 		if	(name)
 		{
 			AddEnumKey(type, name, start);
-			memfree(name);
 			start++;
 		}
 	}
@@ -91,10 +89,10 @@ static void add_key (Type_t *type, io_t *io, int delim)
 	while	(c != EOF && c != delim);
 }
 
-Obj_t *PFunc_enum(io_t *io, void *data)
+EfiObj *PFunc_enum (IO *io, void *data)
 {
-	Type_t *type;
-	Type_t *base;
+	EfiType *type;
+	EfiType *base;
 	char *name, *prompt;
 	int c;
 
@@ -112,14 +110,13 @@ Obj_t *PFunc_enum(io_t *io, void *data)
 
 	if	(base && !IsTypeClass(base, &Type_enum))
 	{
-		io_error(io, MSG_EFMAIN, 186, 1, base->name);
+		io_error(io, "[efmain:186]", "s", base->name);
 		base = NULL;
 	}
 
 	if	(c != '{')
 	{
-		io_error(io, MSG_EFMAIN, 185, 1, name);
-		memfree(name);
+		io_error(io, "[efmain:185]", "m", name);
 		return NULL;
 	}
 

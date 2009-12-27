@@ -37,7 +37,13 @@ fi
 top=`(cd $top; pwd)`
 src=`pwd`
 
-cfname=$top/ppinclude/gtk.pph
+cfdir=$top/ppinclude
+
+if [ ! -d $cfdir ]; then
+	mkdir -p $cfdir || exit 1
+fi
+
+cfname=$cfdir/gtk.pph
 
 cat > $cfname.tmp << !
 /*
@@ -57,6 +63,8 @@ if	cmp -s $cfname.tmp $cfname
 then	rm $cfname.tmp
 else	mv $cfname.tmp $cfname
 fi
+
+cat $cfname
 
 # check implementation
 

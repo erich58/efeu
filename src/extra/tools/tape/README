@@ -1,4 +1,6 @@
 The commands in this directory could be compiled independend of EFEU
-but without his documentation standard.
-To distingush between compilation mode, the macro _EFEU_TOP (defined
+but without the EFEU documentation standard and some extensions to
+file handling.
+
+To distinguish between compilation mode, the macro EFEUROOT (defined
 by efeucc) is checked.

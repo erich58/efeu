@@ -28,25 +28,13 @@ If not, write to the Free Software Foundation, Inc.,
 	":*:LaTeX configuration parameter" \
 	":de:LaTeX-Konfigurationsparameter"
 
-static VarTab_t *LaTeX_tab = NULL;
+static EfiVarTab *LaTeX_tab = NULL;
 
-static VarDef_t vardef[] = {
+static EfiVarDef vardef[] = {
 	{ "latex",	&Type_vtab, &LaTeX_tab },
 };
 
-char *LaTeX_var (const char *name)
-{
-	return Obj2str(GetVar(LaTeX_tab, name, NULL));
-}
-
-void LaTeX_psub (LaTeX_t *ltx, const char *name)
-{
-	char *fmt = LaTeX_var(name);
-	io_psub(ltx->out, fmt);
-	memfree(fmt);
-}
-
-static void par_info (io_t *io, InfoNode_t *info)
+static void par_info (IO *io, InfoNode *info)
 {
 	LaTeX_ShowCmd(io);
 	LaTeX_ShowEnv(io);
@@ -58,7 +46,7 @@ void LaTeX_setup (void)
 
 	if	(need_setup)
 	{
-		io_t *in;
+		IO *in;
 
 		LaTeX_tab = VarTab("LaTeX", 64);
 		AddVarDef(NULL, vardef, tabsize(vardef));

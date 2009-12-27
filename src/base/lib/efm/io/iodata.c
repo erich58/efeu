@@ -36,14 +36,14 @@ If not, write to the Free Software Foundation, Inc.,
 /*	Datensätze lesen
 */
 
-size_t io_dbread (io_t *io, void *dptr, size_t recl, size_t size, size_t n)
+size_t io_dbread (IO *io, void *dptr, size_t recl, size_t size, size_t n)
 {
 	register size_t i, j;
 	register int c;
 
 	if	(io == NULL || io->stat != IO_STAT_OK)
 	{
-		io_error(io, MSG_FTOOLS, 21, 0);
+		io_error(io, "[ftools:21]", NULL);
 		return 0;
 	}
 
@@ -57,7 +57,7 @@ size_t io_dbread (io_t *io, void *dptr, size_t recl, size_t size, size_t n)
 		for (j = 0; j < recl; j++)
 		{
 			if	((c = io_getc(io)) == EOF)
-				io_error(io, MSG_FTOOLS, 21, 0);
+				io_error(io, "[ftools:21]", NULL);
 
 			SET(data, c);
 		}
@@ -75,7 +75,7 @@ size_t io_dbread (io_t *io, void *dptr, size_t recl, size_t size, size_t n)
 /*	Datensätze ausgeben
 */
 
-size_t io_dbwrite (io_t *io, void *dptr, size_t recl, size_t size, size_t n)
+size_t io_dbwrite (IO *io, const void *dptr, size_t recl, size_t size, size_t n)
 {
 	register size_t i, j;
 	register int c;
@@ -92,7 +92,7 @@ size_t io_dbwrite (io_t *io, void *dptr, size_t recl, size_t size, size_t n)
 			c = GET(data);
 
 			if	(io_putc(c, io) == EOF)
-				io_error(io, MSG_FTOOLS, 22, 0);
+				io_error(io, "[ftools:22]", NULL);
 		}
 
 		dptr = (char *) dptr + size;

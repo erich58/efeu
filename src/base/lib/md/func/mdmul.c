@@ -6,30 +6,30 @@
 
 
 typedef struct {
-	mdaxis_t *x1;
-	mdaxis_t *x2;
-	Func_t *mul;
-	Func_t *add;
+	mdaxis *x1;
+	mdaxis *x2;
+	EfiFunc *mul;
+	EfiFunc *add;
 	void *buf;
 } GPAR;
 
-static void mainwalk (GPAR *par, mdaxis_t *x, mdaxis_t *x1, mdaxis_t *x2, char *p, char *p1, char *p2);
-static void subwalk (GPAR *par, mdaxis_t *x1, mdaxis_t *x2, char *p, char *p1, char *p2);
+static void mainwalk (GPAR *par, mdaxis *x, mdaxis *x1, mdaxis *x2, char *p, char *p1, char *p2);
+static void subwalk (GPAR *par, mdaxis *x1, mdaxis *x2, char *p, char *p1, char *p2);
 
 
 /*	Hauptprogramm
 */
 
-mdmat_t *md_mul (mdmat_t *md1, mdmat_t *md2, int flag)
+mdmat *md_mul (mdmat *md1, mdmat *md2, int flag)
 {
-	mdaxis_t *x1, *x2;
-	mdaxis_t *xpre, *xpost, **ppre, **ppost;
+	mdaxis *x1, *x2;
+	mdaxis *xpre, *xpost, **ppre, **ppost;
 	GPAR par;
-	mdmat_t *md;
+	mdmat *md;
 
 	if	(md1 == NULL || md2 == NULL)
 	{
-		liberror(MSG_MDMAT, 61);
+		dbg_error(NULL, "[mdmat:61]", NULL);
 		return NULL;
 	}
 
@@ -38,13 +38,13 @@ mdmat_t *md_mul (mdmat_t *md1, mdmat_t *md2, int flag)
 
 /*	Multiplikations und Additionsfunktionen zusammenstellen
 */
-	par.mul = GetFunc(NULL, GetGlobalFunc("*"), 2, md1->type, 0, md2->type, 0); 
+	par.mul = GetFunc(NULL, GetGlobalFunc("*"), 2,
+		md1->type, 0, md2->type, 0); 
 	
 	if	(par.mul == NULL)
 	{
-		reg_set(1, type2str(md1->type));
-		reg_set(2, type2str(md2->type));
-		liberror(MSG_MDMAT, 64);
+		dbg_error(NULL, "[mdmat:64]", "mm",
+			type2str(md1->type), type2str(md2->type));
 		return NULL;
 	}
 
@@ -53,7 +53,8 @@ mdmat_t *md_mul (mdmat_t *md1, mdmat_t *md2, int flag)
 	if	(par.add == NULL)
 		return NULL;
 
-/*	Ergebnisachsen zusammenstellen und gemeinsame Achsen auf Kompatiblität testen
+/*	Ergebnisachsen zusammenstellen und gemeinsame Achsen auf Kompatiblität
+	testen
 */
 	x1 = md1->axis;
 	x2 = md2->axis;
@@ -83,10 +84,8 @@ mdmat_t *md_mul (mdmat_t *md1, mdmat_t *md2, int flag)
 
 			if	((n = cmp_axis(x1, x2, flag)) != 0)
 			{
-				reg_cpy(1, x1->name);
-				reg_cpy(2, x2->name);
-				reg_fmt(3, "%d", n);
-				errmsg(MSG_MDMAT, 62);
+				dbg_note(NULL, "[mdmat:62]", "ssd",
+					x1->name, x2->name, n);
 			}
 
 			x1 = x1->next;
@@ -96,7 +95,7 @@ mdmat_t *md_mul (mdmat_t *md1, mdmat_t *md2, int flag)
 		{
 			del_axis(xpre);
 			del_axis(xpost);
-			liberror(MSG_MDMAT, 63);
+			dbg_error(NULL, "[mdmat:63]", NULL);
 			return NULL;
 		}
 	}
@@ -107,7 +106,7 @@ mdmat_t *md_mul (mdmat_t *md1, mdmat_t *md2, int flag)
 */
 	md = new_mdmat();
 	md->axis = xpre;
-	md->type = (Type_t *) par.mul->type;
+	md->type = (EfiType *) par.mul->type;
 	md->size = md_size(md->axis, md->type->size);
 	md->data = memalloc(md->size);
 	memset(md->data, 0, (size_t) md->size);
@@ -121,7 +120,7 @@ mdmat_t *md_mul (mdmat_t *md1, mdmat_t *md2, int flag)
 /*	Primäre Achsen der ersten Matrix
 */
 
-static void mainwalk (GPAR *par, mdaxis_t *x, mdaxis_t *x1, mdaxis_t *x2, char *p, char *p1, char *p2)
+static void mainwalk (GPAR *par, mdaxis *x, mdaxis *x1, mdaxis *x2, char *p, char *p1, char *p2)
 {
 	int i;
 	size_t s1;
@@ -165,7 +164,7 @@ static void mainwalk (GPAR *par, mdaxis_t *x, mdaxis_t *x1, mdaxis_t *x2, char *
 /*	Gemeinsame Achsen
 */
 
-static void subwalk(GPAR *par, mdaxis_t *x1, mdaxis_t *x2, char *p, char *p1, char *p2)
+static void subwalk(GPAR *par, mdaxis *x1, mdaxis *x2, char *p, char *p1, char *p2)
 {
 	int i, n;
 

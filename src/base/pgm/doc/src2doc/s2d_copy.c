@@ -26,8 +26,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/efio.h>
 
 
-void SrcData_copy (SrcData_t *data, strbuf_t *buf)
+void SrcData_copy (SrcData *data, StrBuf *buf, const char *name)
 {
 	if	(sb_getpos(data->buf) != 0)
-		DocBuf_copy(&data->doc, data->buf, buf);
+		DocBuf_copy(&data->doc, data->buf, buf, name);
 }

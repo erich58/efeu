@@ -23,9 +23,9 @@ If not, write to the Free Software Foundation, Inc.,
 #include <Math/pnom.h>
 
 
-pnom_t *pnconst(double x, double y)
+Polynom *pnconst(double x, double y)
 {
-	pnom_t *p;
+	Polynom *p;
 
 	p = pnalloc(1, 0);
 	p->x[0] = x;

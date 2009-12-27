@@ -23,67 +23,57 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 #include <ctype.h>
 
-XTAB(TypeTab, 0, skey_cmp);
+static void DelType (void *ptr)
+{
+	EfiType *type = ptr;
+	DelVarTab(type->vtab);
+	memfree(type->name);
+}
+
+NameKeyTab TypeTab = NKT_DATA("Type", 60, DelType);
 
 
 /*	Neuen Type generieren
 */
 
-Type_t *NewType(char *name)
+EfiType *NewType (char *name)
 {
-	Type_t *type;
+	EfiType *type;
 
-	type = ALLOC(1, Type_t);
-	memset(type, 0, sizeof(Type_t));
+	type = memalloc(sizeof(EfiType));
 	/*
-	type->name = name ? name : msprintf("T%#lx", (ulong_t) type);
+	type->name = name ? name : msprintf("T%#p", type);
 	*/
 	type->name = name;
-	vb_init(&type->konv, 8, sizeof(Func_t *));
+	vb_init(&type->konv, 8, sizeof(EfiFunc *));
 	return type;
 }
 
 
-void AddType (Type_t *type)
+void AddType (EfiType *type)
 {
-	Type_t *t2;
-
 	if	(type->name == NULL)	return;
-
-	t2 = xsearch(&TypeTab, type, XS_REPLACE);
-
-	if	(t2 != NULL)
-	{
-		reg_str(1, t2->name);
-		errmsg(MSG_EFMAIN, 157);
-	}
 
 	if	(type->vtab == NULL)
 		type->vtab = VarTab(mstrcpy(type->name), 0);
 
 	if	(type->defval == NULL)
 	{
-	/*
-		Var_t *var;
-
-		if	(type->dim)
-			var = NewVar(type->base, mstrcpy("this"), type->dim);
-		else	var = NewVar(type, mstrcpy("this"), 0);
-
-		xsearch(&type->tab, var, XS_REPLACE);
-	*/
 		type->defval = memalloc(type->size);
 		memset(type->defval, 0, type->size);
 	}
+
+	if	(nkt_insert(&TypeTab, type->name, type))
+		dbg_note(NULL, "[efmain:157]", "s", type->name);
 }
 
 
-Type_t *GetType (const char *name)
+EfiType *GetType (const char *name)
 {
-	return skey_find(&TypeTab, name);
+	return nkt_fetch(&TypeTab, name, NULL);
 }
 
-int IsTypeClass (const Type_t *type, const Type_t *base)
+int IsTypeClass (const EfiType *type, const EfiType *base)
 {
 	for (; type != NULL; type = type->base)
 		if (type == base) return 1;
@@ -91,36 +81,8 @@ int IsTypeClass (const Type_t *type, const Type_t *base)
 	return 0;
 }
 
-void DelType (Type_t *type)
-{
-	DelVarTab(type->vtab);
-	memfree(type->name);
-}
 
-
-static int cmp_struct (Var_t *a, Var_t *b);
-
-Type_t *FindStruct(Var_t *list, size_t size)
-{
-	Type_t *type;
-	int i;
-
-	for (i = 0; i < TypeTab.dim; i++)
-	{
-		type = TypeTab.tab[i];
-
-		if	(type && type->size == size &&
-			 cmp_struct(list, type->list))
-		{
-			return type;
-		}
-	}
-
-	return NULL;
-}
-
-
-static int cmp_struct(Var_t *a, Var_t *b)
+static int cmp_struct (EfiVar *a, EfiVar *b)
 {
 	while (a != NULL || b != NULL)
 	{
@@ -135,4 +97,24 @@ static int cmp_struct(Var_t *a, Var_t *b)
 	}
 
 	return 1;
+}
+
+EfiType *FindStruct (EfiVar *list, size_t size)
+{
+	EfiType *type;
+	NameKeyEntry *ptr;
+	size_t n;
+
+	for (ptr = TypeTab.tab.data, n = TypeTab.tab.used; n-- > 0; ptr++)
+	{
+		type = ptr->data;
+
+		if	(type && type->size == size &&
+			 cmp_struct(list, type->list))
+		{
+			return type;
+		}
+	}
+
+	return NULL;
 }

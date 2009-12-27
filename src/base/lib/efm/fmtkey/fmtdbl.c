@@ -22,7 +22,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/locale.h>
 #include <EFEU/fmtkey.h>
-#include <math.h>
+#include <EFEU/math.h>
 #include <float.h>
 #include <ctype.h>
 
@@ -33,25 +33,16 @@ static char *digit = "0123456789";
 #define	LOCALE(name)	(Locale.print ? Locale.print->name : NULL)
 #define	DP_KEY		(Locale.print ? Locale.print->decimal_point : ".")
 
-#if	_AIX
+static void f_fmt(StrBuf *sb, const FmtKey *key, int *sig, double val);
+static void x_fmt(StrBuf *sb, const FmtKey *key, int *sig, double val);
 
-#include <fp.h>
-
-#define	isnan(x)	IS_NAN(x)
-#define	isinf(x)	IS_INF(x)
-
-#endif
-
-static void f_fmt(strbuf_t *sb, const fmtkey_t *key, int *sig, double val);
-static void x_fmt(strbuf_t *sb, const fmtkey_t *key, int *sig, double val);
-
-static void put_exponent(strbuf_t *sb, int exponent, int mode);
-static void put_mantisse(strbuf_t *sb, double val, int prec, int flags);
+static void put_exponent(StrBuf *sb, int exponent, int mode);
+static void put_mantisse(StrBuf *sb, double val, int prec, int flags);
 
 
-int fmt_double(io_t *io, const fmtkey_t *key, double val)
+int fmt_double(IO *io, const FmtKey *key, double val)
 {
-	strbuf_t *sb;
+	StrBuf *sb;
 	int sig;
 
 	if	(isnan(val))
@@ -98,7 +89,7 @@ static int g_adjust(int mode, int exponent, int prec)
 	return exponent < prec + 3;
 }
 
-static void x_fmt(strbuf_t *sb, const fmtkey_t *key, int *sig, double val)
+static void x_fmt(StrBuf *sb, const FmtKey *key, int *sig, double val)
 {
 	int exponent;
 	int prec;
@@ -183,7 +174,7 @@ static void x_fmt(strbuf_t *sb, const fmtkey_t *key, int *sig, double val)
 }
 
 
-static void f_fmt(strbuf_t *sb, const fmtkey_t *key, int *sig, double val)
+static void f_fmt(StrBuf *sb, const FmtKey *key, int *sig, double val)
 {
 	char *dp;
 	int prec;
@@ -210,7 +201,7 @@ static void f_fmt(strbuf_t *sb, const fmtkey_t *key, int *sig, double val)
 }
 
 
-static void put_exponent(strbuf_t *sb, int exponent, int mode)
+static void put_exponent(StrBuf *sb, int exponent, int mode)
 {
 	char *p;
 	int n;
@@ -235,7 +226,7 @@ static void put_exponent(strbuf_t *sb, int exponent, int mode)
 	sb_putc(isupper(mode) ? 'E' : 'e', sb);
 }
 
-static void put_mantisse(strbuf_t *sb, double val, int prec, int flags)
+static void put_mantisse(StrBuf *sb, double val, int prec, int flags)
 {
 	char *ts;
 	double tmp;

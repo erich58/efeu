@@ -25,21 +25,21 @@ If not, write to the Free Software Foundation, Inc.,
 #include <ctype.h>
 
 
-void term_att (term_t *trm, int flag, char *att)
+void term_att (Term *trm, int flag, char *att)
 {
 	if	(flag)		pushstack(&trm->s_att, trm->att);
 	else			att = popstack(&trm->s_att, NULL);
 
 	if	(att == trm->att)	return;
 
-	if	(trm->att)	io_puts(TermPar.rm, trm->out);
+	if	(trm->att)	io_puts(term_par.rm, trm->out);
 	if	(att)		io_puts(att, trm->out);
 
 	trm->att = att;
 }
 
 
-void term_newline (term_t *trm, int flag)
+void term_newline (Term *trm, int flag)
 {
 	if	(trm->col)
 		io_putc('\n', trm->out);
@@ -58,7 +58,7 @@ void term_newline (term_t *trm, int flag)
 		io_putc('\n', trm->out);
 }
 
-void term_hmode (term_t *trm)
+void term_hmode (Term *trm)
 {
 	if	(trm->col < trm->var.margin)
 		trm->col += io_nputc(' ', trm->out, trm->var.margin - trm->col);
@@ -69,15 +69,17 @@ void term_hmode (term_t *trm)
 	trm->mode = 1;
 }
 
-int term_putc (term_t *trm, int c)
+int term_putc (void *drv, int c)
 {
+	Term *trm = drv;
+
 	if	(c == 0)
 	{
 		term_newline(trm, 0);
 	}
 	else if	(isspace(c))
 	{
-		if	(trm->col > TermPar.wpmargin)
+		if	(trm->col > term_par.wpmargin)
 			term_newline(trm, 0);
 
 		trm->space = trm->mode ? 1 : 0;
@@ -92,8 +94,10 @@ int term_putc (term_t *trm, int c)
 	return c;
 }
 
-int term_verb (term_t *trm, int c)
+int term_verb (void *drv, int c)
 {
+	Term *trm = drv;
+
 	if	(c != '\n')
 	{
 		term_hmode(trm);
@@ -105,11 +109,11 @@ int term_verb (term_t *trm, int c)
 	return c;
 }
 
-void term_string (term_t *trm, const char *str)
+void term_string (Term *trm, const char *str)
 {
 	if	(str == NULL)	return;
 
 	for (; *str != 0; str++)
-		trm->put((DocDrv_t *) trm, *str);
+		trm->put(trm, *str);
 }
 

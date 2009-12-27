@@ -4,12 +4,12 @@
 
 #include <EFEU/mdmat.h>
 
-int md_konv(mdmat_t *md, const Type_t *type)
+int md_konv(mdmat *md, const EfiType *type)
 {
-	Konv_t def;
+	EfiKonv def;
 	char *buf, *src, *tg;
-	ulong_t dim;
-	mdaxis_t *x;
+	size_t dim;
+	mdaxis *x;
 
 	if	(md == NULL)		return EOF;
 	if	(type == NULL)		return 0;
@@ -17,7 +17,7 @@ int md_konv(mdmat_t *md, const Type_t *type)
 
 	if	(GetKonv(&def, md->type, type) == NULL)
 	{
-		errmsg(MSG_MDMAT, 102);
+		dbg_note(NULL, "[mdmat:102]", NULL);
 		return EOF;
 	}
 
@@ -41,7 +41,7 @@ int md_konv(mdmat_t *md, const Type_t *type)
 		x->size *= type->size;
 	}
 
-	md->type = (Type_t *) type;
+	md->type = (EfiType *) type;
 	memfree(md->data);
 	md->data = buf;
 	return 1;

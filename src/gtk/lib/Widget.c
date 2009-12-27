@@ -25,13 +25,13 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/CmdPar.h>
 #include <EFEU/parsedef.h>
 
-Type_t EGtkWidgetType = STD_TYPE("GtkWidget", GtkWidget *,
+EfiType EGtkWidgetType = STD_TYPE("GtkWidget", GtkWidget *,
 	&EGtkObjectType, NULL, NULL);
 
 void EGtkWidgetClass(GtkType gtktype, EGtkArgDef *arg, size_t narg,
 	EGtkSigDef *sig, size_t nsig)
 {
-	Type_t *type = EGtkType(gtktype);
+	EfiType *type = EGtkType(gtktype);
 	AddEGtkArg(type, arg, narg);
 	AddEGtkSig(type, sig, nsig);
 }
@@ -125,7 +125,7 @@ static EGtkSigDef sig_widget[] = {
 /*	Hilfsfunktionen
 */
 
-static FuncDef_t fdef[] = {
+static EfiFuncDef fdef[] = {
 	{ 0, NULL, "GtkObject GtkWidget ()", EGtkTypeCast },
 };
 

@@ -5,10 +5,10 @@
 #include <EFEU/mdmat.h>
 #include <EFEU/efutil.h>
 
-void md_round(mdmat_t *md, double factor, unsigned mask)
+void md_round(mdmat *md, double factor, unsigned mask)
 {
-	Konv_t get;
-	Konv_t set;
+	EfiKonv get;
+	EfiKonv set;
 	double val;
 
 	if	(md == NULL)	return;
@@ -21,10 +21,10 @@ void md_round(mdmat_t *md, double factor, unsigned mask)
 	MdRound(md->axis, md->data, &get, &set, val, factor, mask);
 }
 
-void md_adjust(mdmat_t *md, double val, unsigned mask)
+void md_adjust(mdmat *md, double val, unsigned mask)
 {
-	Konv_t get;
-	Konv_t set;
+	EfiKonv get;
+	EfiKonv set;
 	double factor;
 
 	if	(md == NULL)	return;
@@ -39,7 +39,7 @@ void md_adjust(mdmat_t *md, double val, unsigned mask)
 }
 
 
-double MdValSum(mdaxis_t *x, void *data, Konv_t *get, unsigned mask)
+double MdValSum(mdaxis *x, void *data, EfiKonv *get, unsigned mask)
 {
 	double val;
 	int i;
@@ -59,7 +59,7 @@ double MdValSum(mdaxis_t *x, void *data, Konv_t *get, unsigned mask)
 }
 
 
-void MdRound(mdaxis_t *axis, void *data, Konv_t *get, Konv_t *set, double val,
+void MdRound(mdaxis *axis, void *data, EfiKonv *get, EfiKonv *set, double val,
 	double factor, unsigned mask)
 {
 	double *x;
@@ -72,7 +72,7 @@ void MdRound(mdaxis_t *axis, void *data, Konv_t *get, Konv_t *set, double val,
 		return;
 	}
 
-	x = ALLOC(axis->dim, double);
+	x = memalloc(axis->dim * sizeof(double));
 
 /*	Werte bestimmen
 */

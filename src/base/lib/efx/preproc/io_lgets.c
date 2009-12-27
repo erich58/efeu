@@ -26,9 +26,9 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	BSIZE 1024
 
-char *io_lgets(io_t *io, const char *end)
+char *io_lgets(IO *io, const char *end)
 {
-	strbuf_t *sb;
+	StrBuf *sb;
 	int c;
 	int save;
 	int len;

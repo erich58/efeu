@@ -25,11 +25,11 @@ If not, write to the Free Software Foundation, Inc.,
 #include <ctype.h>
 #include <EFEU/preproc.h>
 
-#define	HEAD	"Dokumenteingabe: $0"
+#define	HEAD	"document input: $0"
 #define	SYMTAB	"latin1"
 #define	HEADCFG	"DocHead"
 
-char *Doc_lastcomment (Doc_t *doc)
+char *Doc_lastcomment (Doc *doc)
 {
 	if	(doc && doc->buf && sb_getpos(doc->buf))
 	{
@@ -41,16 +41,21 @@ char *Doc_lastcomment (Doc_t *doc)
 	else	return NULL;
 }
 
-void Doc_rem (Doc_t *doc, const char *fmt)
+void Doc_rem (Doc *doc, const char *fmt, const char *argdef, ...)
 {
-	char *p = parsub(fmt);
+	va_list list;
+	char *p;
+	
+	va_start(list, argdef);
+	p = mpsubvarg(fmt, argdef, list);
+	va_end(list);
 	io_ctrl(doc->out, DOC_REM, p);
 	memfree(p);
 }
 
-void Doc_start (Doc_t *doc)
+void Doc_start (Doc *doc)
 {
-	io_t *in;
+	IO *in;
 
 	if	(doc->stat)	return;
 
@@ -66,7 +71,7 @@ void Doc_start (Doc_t *doc)
 	Doc_popvar(doc);
 }
 
-void Doc_stdpar (Doc_t *doc, int type)
+void Doc_stdpar (Doc *doc, int type)
 {
 	doc->env.par_beg = NULL;
 	doc->env.par_end = NULL;
@@ -74,7 +79,7 @@ void Doc_stdpar (Doc_t *doc, int type)
 }
 
 
-void Doc_hmode (Doc_t *doc)
+void Doc_hmode (Doc *doc)
 {
 	if	(!doc->env.hmode)
 	{
@@ -99,7 +104,7 @@ void Doc_hmode (Doc_t *doc)
 	}
 }
 
-void Doc_par (Doc_t *doc)
+void Doc_par (Doc *doc)
 {
 	if	(doc->env.hmode == 2)	return;
 
@@ -124,7 +129,7 @@ void Doc_par (Doc_t *doc)
 	}
 }
 
-void Doc_newline (Doc_t *doc)
+void Doc_newline (Doc *doc)
 {
 	if	(doc->nl == 0)
 	{
@@ -139,14 +144,14 @@ void Doc_newline (Doc_t *doc)
 	doc->indent = 0;
 }
 
-void Doc_char (Doc_t *doc, int c)
+void Doc_char (Doc *doc, int c)
 {
 	Doc_hmode(doc);
 	io_putc(c, doc->out);
 	doc->env.cpos++;
 }
 
-void Doc_str (Doc_t *doc, const char *str)
+void Doc_str (Doc *doc, const char *str)
 {
 	if	(str)
 	{
@@ -155,14 +160,14 @@ void Doc_str (Doc_t *doc, const char *str)
 	}
 }
 
-static DocSym_t *symtab = NULL;
+static DocSym *symtab = NULL;
 
-void Doc_symbol (Doc_t *doc, const char *name, const char *def)
+void Doc_symbol (Doc *doc, const char *name, const char *def)
 {
 	char *sym;
 	Doc_hmode(doc);
 
-	if	(!symtab)	symtab = DocSym(SYMTAB);
+	if	(!symtab)	symtab = DocSym_load(SYMTAB);
 
 	if	((sym = DocSym_get(symtab, name)) != NULL)
 	{
@@ -178,7 +183,7 @@ void Doc_symbol (Doc_t *doc, const char *name, const char *def)
 }
 
 
-int DocSymbol (io_t *in, io_t *out)
+int DocSymbol (IO *in, IO *out)
 {
 	char *name, *sym;
 	int c;
@@ -205,7 +210,7 @@ int DocSymbol (io_t *in, io_t *out)
 		}
 	}
 
-	if	(!symtab)	symtab = DocSym(SYMTAB);
+	if	(!symtab)	symtab = DocSym_load(SYMTAB);
 
 	if	((sym = DocSym_get(symtab, name)) != NULL)
 		return io_puts(sym, out);

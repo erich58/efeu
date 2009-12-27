@@ -27,31 +27,27 @@ If not, write to the Free Software Foundation, Inc.,
 /*	Referenztype
 */
 
-static Pixmap_t *PixmapAdmin (Pixmap_t *tg, const Pixmap_t *src)
+static void pix_clean (void *data)
 {
-	if	(tg)
-	{
-		memfree(tg->data);
-		memfree(tg);
-		return NULL;
-	}
-	else	return memalloc(sizeof(Pixmap_t));
+	EPixmap *tg = data;
+	memfree(tg->data);
+	memfree(tg);
 }
 
-static char *PixmapIdent (Pixmap_t *pix)
+static char *pix_ident (const void *data)
 {
+	const EPixmap *pix = data;
 	return msprintf("%dx%dx3", pix->rows, pix->cols);
 }
 
-ADMINREFTYPE(Pixmap_reftype, "Pixmap", PixmapIdent, PixmapAdmin);
-
+static RefType Pixmap_reftype = REFTYPE_INIT("Pixmap", pix_ident, pix_clean);
 
 /*	Pixmap-File generieren
 */
 
-Pixmap_t *NewPixmap (size_t rows, size_t cols, int color)
+EPixmap *NewPixmap (size_t rows, size_t cols, int color)
 {
-	Pixmap_t *pix = rd_create(&Pixmap_reftype);
+	EPixmap *pix = memalloc(sizeof(EPixmap));
 	pix->rows = rows;
 	pix->cols = cols;
 	pix->data = memalloc(rows * cols * 3);
@@ -59,7 +55,7 @@ Pixmap_t *NewPixmap (size_t rows, size_t cols, int color)
 	if	(color)
 	{
 		size_t n;
-		uchar_t r, g, b, *p;
+		unsigned char r, g, b, *p;
 
 		r = (color >> 16) & 0xff;
 		g = (color >> 8) & 0xff;
@@ -69,44 +65,44 @@ Pixmap_t *NewPixmap (size_t rows, size_t cols, int color)
 			p[0] = r, p[1] = g, p[2] = b;
 	}
 
-	return pix;
+	return rd_init(&Pixmap_reftype, pix);
 }
 
 
 /*	Datentype
 */
 
-Type_t Type_Pixmap = REF_TYPE("Pixmap", Pixmap_t *);
+EfiType Type_Pixmap = REF_TYPE("Pixmap", EPixmap *);
 
 
-static void PF_create (Func_t *func, void *rval, void **arg)
+static void PF_create (EfiFunc *func, void *rval, void **arg)
 {
 	Val_ptr(rval) = NewPixmap(Val_int(arg[1]), Val_int(arg[0]),
 		Val_int(arg[2]));
 }
 
-static void PF_load (Func_t *func, void *rval, void **arg)
+static void PF_load (EfiFunc *func, void *rval, void **arg)
 {
-	io_t *io = io_fileopen(Val_str(arg[0]), "rz");
+	IO *io = io_fileopen(Val_str(arg[0]), "rz");
 	Val_ptr(rval) = LoadPixmap(io);
 	io_close(io);
 }
 
-static void PF_save (Func_t *func, void *rval, void **arg)
+static void PF_save (EfiFunc *func, void *rval, void **arg)
 {
-	io_t *io = io_fileopen(Val_str(arg[1]), "wz");
+	IO *io = io_fileopen(Val_str(arg[1]), "wz");
 	SavePixmap(Val_ptr(arg[0]), io);
 	io_close(io);
 	Val_ptr(rval) = rd_refer(Val_ptr(arg[0]));
 }
 
-static void PF_vadjust (Func_t *func, void *rval, void **arg)
+static void PF_vadjust (EfiFunc *func, void *rval, void **arg)
 {
 	Pixmap_vadjust(Val_ptr(arg[0]), Val_int(arg[1]), Val_int(arg[2]));
 	Val_ptr(rval) = rd_refer(Val_ptr(arg[0]));
 }
 
-static FuncDef_t fdef[] = {
+static EfiFuncDef fdef[] = {
 	{ 0, &Type_Pixmap, "Pixmap (int width, int height, int color = 0)",
 		PF_create },
 	{ 0, &Type_Pixmap, "LoadPixmap (str name)", PF_load },
@@ -114,22 +110,23 @@ static FuncDef_t fdef[] = {
 	{ 0, &Type_Pixmap, "Pixmap::vadjust (int color, int offset)", PF_vadjust },
 };
 
-
-static int *m_cols (Pixmap_t **pix)
+static EfiObj *get_cols (const EfiObj *base, void *data)
 {
-	Buf_int = (*pix != NULL) ? (*pix)->cols : 0;
-	return &Buf_int;
+	EPixmap *pix = base ? Val_ptr(base->data) : NULL;
+	int cols = pix ? pix->cols : 0;
+	return ConstObj(&Type_int, &cols);
 }
 
-static int *m_rows (Pixmap_t **pix)
+static EfiObj *get_rows (const EfiObj *base, void *data)
 {
-	Buf_int = (*pix != NULL) ? (*pix)->rows : 0;
-	return &Buf_int;
+	EPixmap *pix = base ? Val_ptr(base->data) : NULL;
+	int rows = pix ? pix->rows : 0;
+	return ConstObj(&Type_int, &rows);
 }
 
-static MemberDef_t var_Pixmap[] = {
-	{ "cols", &Type_int, ConstMember, m_cols },
-	{ "rows", &Type_int, ConstMember, m_rows },
+static EfiMember var_Pixmap[] = {
+	{ "cols", &Type_int, get_cols, NULL },
+	{ "rows", &Type_int, get_rows, NULL },
 };
 
 
@@ -137,5 +134,5 @@ void SetupPixmap (void)
 {
 	AddType(&Type_Pixmap);
 	AddFuncDef(fdef, tabsize(fdef));
-	AddMember(Type_Pixmap.vtab, var_Pixmap, tabsize(var_Pixmap));
+	AddEfiMember(Type_Pixmap.vtab, var_Pixmap, tabsize(var_Pixmap));
 }

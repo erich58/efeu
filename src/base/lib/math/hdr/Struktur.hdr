@@ -12,8 +12,8 @@
 /*	Residuentabelle bei Differenzschätzung
 */
 
-virtual void SynTab::residuen(str name, tsVec_t B, tsVec_t DB, tsVec_t DBS,
-	tsVec_t N, tsVec_t DN, tsVec_t DNS)
+virtual void SynTab::residuen(str name, tsEfiVec B, tsEfiVec DB, tsEfiVec DBS,
+	tsEfiVec N, tsEfiVec DN, tsEfiVec DNS)
 {
 	int first = min(DB.first(), DN.first());
 	int last = max(DB.last(), DN.last());
@@ -101,7 +101,7 @@ TimeSeries Dauer(str name, TimeSeries N, TimeSeries B)
 /*	Residuentabelle bei Absolutwerten
 */
 
-inline void SynTable_t::residuen(str name, tsVec_t B, tsVec_t BS, tsVec_t N, tsVec_t NS)
+inline void SynTable_t::residuen(str name, tsEfiVec B, tsEfiVec BS, tsEfiVec N, tsEfiVec NS)
 {
 	int first = min(B.first(), N.first());
 	int last = max(B.last(), N.last());
@@ -184,7 +184,7 @@ virtual void fprint(IO io, Struktur x)
 	tsPrint(io, x.B, XB, x.N, XN, D, XD);
 }
 
-conversion (Struktur_t x, mdmat_t y, 1)
+conversion (Struktur_t x, mdmat y, 1)
 {
 	double n, b, d;
 	str name = tempnam();
@@ -264,8 +264,8 @@ inline void operator+= (Struktur_t & x, Struktur_t y)
 }
 
 
-function Struktur_t Struktur(IO io, str name, tsVec_t B, tsVec_t DB, OLSPar_t BPar,
-	tsVec_t N, tsVec_t DN, OLSPar_t NPar)
+function Struktur_t Struktur(IO io, str name, tsEfiVec B, tsEfiVec DB, OLSPar_t BPar,
+	tsEfiVec N, tsEfiVec DN, OLSPar_t NPar)
 {
 	SynTable_t tab;
 
@@ -291,8 +291,8 @@ function Struktur_t Struktur(IO io, str name, tsVec_t B, tsVec_t DB, OLSPar_t BP
 	return { N.prj(NPar.prj), N.res(NPar.prj), B.prj(BPar.prj), B.res(BPar.prj) };
 }
 
-function Struktur_t Struktur(IO io, str name, tsVec_t B, OLSPar_t BPar,
-	tsVec_t N, OLSPar_t NPar)
+function Struktur_t Struktur(IO io, str name, tsEfiVec B, OLSPar_t BPar,
+	tsEfiVec N, OLSPar_t NPar)
 {
 	SynTable_t tab;
 

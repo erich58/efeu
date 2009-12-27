@@ -53,7 +53,42 @@ EXPR(f_atan2, atan2(DOUBLE(0), DOUBLE(1)));
 EXPR(f_pow, pow(DOUBLE(0), DOUBLE(1)));
 EXPR(f_fmod, fmod(DOUBLE(0), DOUBLE(1)));
 
-static FuncDef_t fdef_math[] = {
+static void f_rnd125 (EfiFunc *func, void *rval, void **arg)
+{
+	double a, b, sig;
+	
+	a = Val_double(arg[0]);
+	sig = 1.;
+
+	if	(a < 0.)
+	{
+		a = -a;
+		sig = -1;
+	}
+	else if	(a == 0.)
+	{
+		Val_double(rval) = 0.;
+		return;
+	}
+
+	b = pow(10., (int) (log(a) / log(10)));
+	a /= b;
+
+	while (a > 1.)
+	{
+		a *= 0.1;
+		b *= 10.;
+	}
+
+	if	(a <= 0.1)	a = 0.1;
+	else if	(a <= 0.2)	a = 0.2;
+	else if	(a <= 0.5)	a = 0.5;
+	else			a = 1.0;
+
+	Val_double(rval) = sig * a * b;
+}
+
+static EfiFuncDef fdef_math[] = {
 	{ FUNC_VIRTUAL, &Type_double, "log (double)", f_log },
 	{ FUNC_VIRTUAL, &Type_double, "xlog (double)", f_xlog },
 	{ FUNC_VIRTUAL, &Type_double, "exp (double)", f_exp },
@@ -69,6 +104,7 @@ static FuncDef_t fdef_math[] = {
 	{ FUNC_VIRTUAL, &Type_double, "atan2 (double, double)", f_atan2 },
 	{ FUNC_VIRTUAL, &Type_double, "sqrt (double)", f_sqrt },
 	{ FUNC_VIRTUAL, &Type_double, "operator% (double, double)", f_fmod },
+	{ FUNC_VIRTUAL, &Type_double, "rnd125 (double)", f_rnd125 },
 };
 
 

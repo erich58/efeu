@@ -25,9 +25,9 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/efio.h>
 #include <EFEU/efutil.h>
 
-static int subgetc (io_t *io, const char *delim);
+static int subgetc (IO *io, const char *delim);
 
-int io_egetc(io_t *io, const char *delim)
+int io_egetc(IO *io, const char *delim)
 {
 	int c;
 
@@ -40,7 +40,7 @@ int io_egetc(io_t *io, const char *delim)
 }
 
 
-static int subgetc(io_t *io, const char *delim)
+static int subgetc(IO *io, const char *delim)
 {
 	int c;
 

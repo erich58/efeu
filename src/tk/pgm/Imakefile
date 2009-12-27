@@ -1,0 +1,8 @@
+#include <tklib.pph>
+
+DEP=	StdLib(ETK) DEP_IORL DEP_MD DEP_MATH DEP_EFX DEP_EFM
+LIB=	LinkName(ETK) LIB_IORL LIB_MD LIB_MATH LIB_EFX LIB_EFM $(TK_LIB)
+
+CFLAGS=	$(TK_INC)
+
+Program($(BINDIR),etk,etk.o,$(DEP),$(LIB))

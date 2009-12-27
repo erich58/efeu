@@ -38,28 +38,28 @@ If not, write to the Free Software Foundation, Inc.,
 #define	MSG_DOC	"Doc"
 #endif
 
-extern int DocSkipSpace (io_t *in, int flag);
-extern int DocSkipWhite (io_t *in);
+extern int DocSkipSpace (IO *in, int flag);
+extern int DocSkipWhite (IO *in);
 
-extern int DocParseNum (io_t *in);
-extern char *DocParseFlags (io_t *in);
-extern char *DocParseName (io_t *in, int key);
-extern char *DocParseMacArg (io_t *in);
-extern char *DocParseLine (io_t *in, int flag);
-extern char *DocParsePar (io_t *in);
-extern char *DocParseExpr (io_t *in);
-extern char *DocParseRegion (io_t *in, const char *delim);
-extern char *DocParseArg (io_t *in, int beg, int end, int flag);
-extern char *DocParseBlock (io_t *in, int mode, const char *beg,
+extern int DocParseNum (IO *in);
+extern char *DocParseFlags (IO *in);
+extern char *DocParseName (IO *in, int key);
+extern char *DocParseMacArg (IO *in);
+extern char *DocParseLine (IO *in, int flag);
+extern char *DocParsePar (IO *in);
+extern char *DocParseExpr (IO *in);
+extern char *DocParseRegion (IO *in, const char *delim);
+extern char *DocParseArg (IO *in, int beg, int end, int flag);
+extern char *DocParseBlock (IO *in, int mode, const char *beg,
 	const char *end, const char *toggle);
 
-extern void DocCopy (io_t *in, io_t *out);
-extern void DocExpand (io_t *in, io_t *out);
-extern int DocVerb (io_t *in, io_t *out);
-extern int DocSymbol (io_t *in, io_t *out);
+extern void DocCopy (IO *in, IO *out);
+extern void DocExpand (IO *in, IO *out);
+extern int DocVerb (IO *in, IO *out);
+extern int DocSymbol (IO *in, IO *out);
 
 
-typedef struct Doc_s Doc_t;
+typedef struct DocStruct Doc;
 
 typedef struct {
 	unsigned type : 16;
@@ -70,77 +70,75 @@ typedef struct {
 	unsigned hmode : 2;
 	unsigned pflag : 1;
 	char mark_key;
-	stack_t *mark;
+	Stack *mark;
 	char *item;
-	void (*par_beg) (Doc_t *doc);
-	void (*par_end) (Doc_t *doc);
-} DocEnv_t;
+	void (*par_beg) (Doc *doc);
+	void (*par_end) (Doc *doc);
+} DocEnv;
 
-struct Doc_s {
+struct DocStruct {
 	REFVAR;			/* Referenzvariablen */
-	DocType_t *type;	/* Ausgabetype */
+	DocType *type;	/* Ausgabetype */
 	char *name;		/* Dokumentname */
-	strbuf_t *buf;		/* Ausgabebuffer */
-	io_t *out;		/* Ausgabestruktur */
+	StrBuf *buf;		/* Ausgabebuffer */
+	IO *out;		/* Ausgabestruktur */
 	unsigned stat : 1;	/* Statusflag */
 	unsigned nl : 15;	/* Zahl der gelesenen Leerzeilen */
 	unsigned indent : 15;	/* Aktuelle Einrückung */
-	DocEnv_t env;		/* Aktuelle Umgebung */
-	stack_t *env_stack;	/* Stack mit Umgebungen */
-	stack_t *cmd_stack;	/* Stack mit Befehlstabellen */
+	DocEnv env;		/* Aktuelle Umgebung */
+	Stack *env_stack;	/* Stack mit Umgebungen */
+	Stack *cmd_stack;	/* Stack mit Befehlstabellen */
 };
 
-extern reftype_t Doc_reftype;
+Doc *Doc_create (const char *type);
 
-Doc_t *Doc (const char *type);
+IO *Doc_open (const char *path, const char *name, int flag);
 
-io_t *Doc_open (const char *path, const char *name, int flag);
+char *Doc_lastcomment (Doc *doc);
+void Doc_rem (Doc *doc, const char *fmt, const char *argdef, ...);
+void Doc_close (Doc *doc);
+void Doc_copy (Doc *doc, IO *in);
+void Doc_key (Doc *doc, IO *in, int c);
+char *Doc_expand (Doc *doc, IO *in, int flag);
+char *Doc_xexpand (Doc *doc, IO *in);
+void Doc_verb (Doc *doc, IO *in, int base, int alt);
+void Doc_scopy (Doc *doc, const char *str);
+void Doc_mcopy (Doc *doc, char *str);
+void Doc_xcopy (Doc *doc, IO *in, int c);
+void Doc_input (Doc *doc, const char *opt, IO *in);
+void Doc_include (Doc *doc, const char *opt, const char *name);
+void Doc_str (Doc *doc, const char *str);
+void Doc_char (Doc *doc, int c);
+void Doc_symbol (Doc *doc, const char *name, const char *def);
+void Doc_psub (Doc *doc, IO *in);
+void Doc_eval (Doc *doc, IO *in, const char *expr);
+void Doc_sig (Doc *doc, int sig, IO *in);
+void Doc_minus (Doc *doc, IO *in);
+IO *Doc_subin (IO *io, const char *key);
 
-char *Doc_lastcomment (Doc_t *doc);
-void Doc_rem (Doc_t *doc, const char *fmt);
-void Doc_close (Doc_t *doc);
-void Doc_copy (Doc_t *doc, io_t *in);
-void Doc_key (Doc_t *doc, io_t *in, int c);
-char *Doc_expand (Doc_t *doc, io_t *in, int flag);
-char *Doc_xexpand (Doc_t *doc, io_t *in);
-void Doc_verb (Doc_t *doc, io_t *in, int base, int alt);
-void Doc_scopy (Doc_t *doc, const char *str);
-void Doc_mcopy (Doc_t *doc, char *str);
-void Doc_xcopy (Doc_t *doc, io_t *in, int c);
-void Doc_input (Doc_t *doc, const char *opt, io_t *in);
-void Doc_include (Doc_t *doc, const char *opt, const char *name);
-void Doc_str (Doc_t *doc, const char *str);
-void Doc_char (Doc_t *doc, int c);
-void Doc_symbol (Doc_t *doc, const char *name, const char *def);
-void Doc_psub (Doc_t *doc, io_t *in);
-void Doc_eval (Doc_t *doc, io_t *in, const char *expr);
-void Doc_sig (Doc_t *doc, int sig, io_t *in);
-void Doc_minus (Doc_t *doc, io_t *in);
-io_t *Doc_subin (io_t *io, const char *key);
-
-void Doc_start (Doc_t *doc);
-void Doc_hmode (Doc_t *doc);
-void Doc_par (Doc_t *doc);
-void Doc_stdpar (Doc_t *doc, int type);
-void Doc_newline (Doc_t *doc);
+void Doc_start (Doc *doc);
+void Doc_hmode (Doc *doc);
+void Doc_par (Doc *doc);
+void Doc_stdpar (Doc *doc, int type);
+void Doc_newline (Doc *doc);
 
 int DocMark_type (int c, int def);
-int DocMark_beg (stack_t **stack, io_t *out, io_t *in);
-int DocMark_end (stack_t **stack, io_t *out, int key);
+int DocMark_beg (Stack **stack, IO *out, IO *in);
+int DocMark_end (Stack **stack, IO *out, int key);
 
-void Doc_begmark (Doc_t *doc, io_t *in);
-void Doc_endmark (Doc_t *doc);
-void Doc_nomark (Doc_t *doc);
-void Doc_unmark (Doc_t *doc);
-void Doc_remark (Doc_t *doc);
+void Doc_begmark (Doc *doc, IO *in);
+void Doc_endmark (Doc *doc);
+void Doc_nomark (Doc *doc);
+void Doc_unmark (Doc *doc);
+void Doc_remark (Doc *doc);
 
-void Doc_item (Doc_t *doc, int type);
-int Doc_islist (Doc_t *doc);
-void Doc_endlist (Doc_t *doc);
-void Doc_newenv (Doc_t *doc, int depth, ...);
-void Doc_endenv (Doc_t *doc);
-void Doc_endall (Doc_t *doc, int mode);
-void Doc_tab (Doc_t *doc, io_t *in, const char *opt, const char *arg);
+void Doc_item (Doc *doc, int type);
+int Doc_islist (Doc *doc);
+void Doc_endlist (Doc *doc);
+void Doc_newenv (Doc *doc, int depth, ...);
+void Doc_endenv (Doc *doc);
+void Doc_endall (Doc *doc, int mode);
+void Doc_tab (Doc *doc, IO *in, const char *opt, const char *arg);
 
 
 /*	Dokumentmakros
@@ -150,10 +148,10 @@ typedef struct {
 	char *name;	/* Makroname */
 	char *desc;	/* Makrobeschreibung */
 	char *fmt;	/* Makroformat */
-} DocMac_t;
+} DocMac;
 
-void DocMac_clean (DocMac_t *mac);
-void DocMac_print (io_t *io, DocMac_t *mac, int mode);
+void DocMac_clean (DocMac *mac);
+void DocMac_print (IO *io, DocMac *mac, int mode);
 
 
 /*	Variablen- und Makrotabellen
@@ -162,18 +160,18 @@ void DocMac_print (io_t *io, DocMac_t *mac, int mode);
 typedef struct {
 	REFVAR;		/* Referenzvariablen */
 	char *name;	/* Tabellenname */
-	VarTab_t *var;	/* Variablentabelle */
-	vecbuf_t mtab;	/* Makrotabelle */
-} DocTab_t;
+	EfiVarTab *var;	/* Variablentabelle */
+	VecBuf mtab;	/* Makrotabelle */
+} DocTab;
 
-extern reftype_t DocTab_reftype;
-DocTab_t *DocTab (const char *name);
-void DocTab_setmac (DocTab_t *tab, char *name, char *desc, char *fmt);
-DocMac_t *DocTab_getmac (DocTab_t *tab, const char *name);
+extern RefType DocTab_reftype;
+DocTab *DocTab_create (const char *name);
+void DocTab_setmac (DocTab *tab, char *name, char *desc, char *fmt);
+DocMac *DocTab_getmac (DocTab *tab, const char *name);
 
-void DocTab_def (DocTab_t *tab, io_t *in, strbuf_t *buf);
-void DocTab_load (DocTab_t *tab, io_t *io);
-void DocTab_fload (DocTab_t *tab, const char *name);
+void DocTab_def (DocTab *tab, IO *in, StrBuf *buf);
+void DocTab_load (DocTab *tab, IO *io);
+void DocTab_fload (DocTab *tab, const char *name);
 
 
 /*	Abfragefunktionen
@@ -181,27 +179,27 @@ void DocTab_fload (DocTab_t *tab, const char *name);
 
 void DocMacInfo (const char *name, const char *desc);
 
-DocTab_t *Doc_gettab (Doc_t *doc, const char *name);
-DocMac_t *Doc_getmac (Doc_t *doc, const char *name);
-VarTab_t *Doc_vartab (Doc_t *doc);
-Obj_t *Doc_getvar (Doc_t *doc, const char *name);
-void Doc_pushvar (Doc_t *doc);
-void Doc_popvar (Doc_t *doc);
-void Doc_cmd (Doc_t *doc, io_t *in);
-void Doc_mac (Doc_t *doc, io_t *in);
+DocTab *Doc_gettab (Doc *doc, const char *name);
+DocMac *Doc_getmac (Doc *doc, const char *name);
+EfiVarTab *Doc_vartab (Doc *doc);
+EfiObj *Doc_getvar (Doc *doc, const char *name);
+void Doc_pushvar (Doc *doc);
+void Doc_popvar (Doc *doc);
+void Doc_cmd (Doc *doc, IO *in);
+void Doc_mac (Doc *doc, IO *in);
 
 /*	Initialisierung
 */
 
-extern DocTab_t *GlobalDocTab;
-extern Type_t Type_Doc;
+extern DocTab *GlobalDocTab;
+extern EfiType Type_Doc;
 extern char *DocPath;
 extern char *DocName;
 extern char *DocStyle;
 
-char *ListArg_str (ObjList_t *list, int n);
-int ListArg_int (ObjList_t *list, int n);
-void DocFunc_section (Func_t *func, void *rval, void **arg);
+char *ListArg_str (EfiObjList *list, int n);
+int ListArg_int (EfiObjList *list, int n);
+void DocFunc_section (EfiFunc *func, void *rval, void **arg);
 void SetupDoc (void);
 
 #endif	/* efeudoc.h */

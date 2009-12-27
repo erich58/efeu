@@ -27,37 +27,43 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/object.h>
 
-void Clean_obj (const Type_t *st, void *data);
-void Clean_ref (const Type_t *st, void *data);
-void Clean_str (const Type_t *st, void *data);
+void Clean_obj (const EfiType *st, void *data);
+void Clean_ref (const EfiType *st, void *data);
+void Clean_str (const EfiType *st, void *data);
 
-void Copy_obj (const Type_t *st, void *tg, const void *src);
-void Copy_ref (const Type_t *st, void *tg, const void *src);
-void Copy_str (const Type_t *st, void *tg, const void *src);
+void Copy_obj (const EfiType *st, void *tg, const void *src);
+void Copy_ref (const EfiType *st, void *tg, const void *src);
+void Copy_str (const EfiType *st, void *tg, const void *src);
 
-size_t IOData_std (const Type_t *t, iofunc_t f, void *p, void *d, size_t n);
-size_t IOData_str (const Type_t *t, iofunc_t f, void *p, void *d, size_t n);
+size_t Read_str (const EfiType *st, void *data, IO *io);
+size_t Write_str (const EfiType *st, const void *data, IO *io);
 
-
-#define	COMPLEX_TYPE(name,size,recl,iodata,base,eval,clean,copy,priv)	\
-{ name, size, recl, iodata, base, eval, clean, copy, \
-0, NULL, NULL, NULL, NULL, VB_DATA(8, sizeof(Func_t *)), NULL, NULL, priv }
+#define	COMPLEX_TYPE(name, size, recl, read, write, base, eval, clean, copy) \
+{ name, size, recl, read, write, base, eval, clean, copy, \
+	0, NULL, NULL, NULL, NULL, VB_DATA(8, sizeof(EfiFunc *)), NULL, NULL }
 
 #define	DUMMY_TYPE(name) \
-COMPLEX_TYPE(name, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL);
+COMPLEX_TYPE(name, 0, 0, NULL, NULL, \
+	NULL, NULL, NULL, NULL);
 
-#define	EVAL_TYPE(name, type, eval, clean, copy)	\
-COMPLEX_TYPE(name, sizeof(type), 0, NULL, NULL, eval, clean, copy, NULL)
+#define	EVAL_TYPE(name, type, eval, clean, copy) \
+COMPLEX_TYPE(name, sizeof(type), 0, NULL, NULL, \
+	NULL, eval, clean, copy)
 
 #define	SIMPLE_TYPE(name, type, base)	\
-COMPLEX_TYPE(name, sizeof(type), sizeof(type), IOData_std, base, \
-	NULL, NULL, NULL, NULL)
+COMPLEX_TYPE(name, sizeof(type), sizeof(type), NULL, NULL, \
+	base, NULL, NULL, NULL)
 
 #define	STD_TYPE(name, type, base, clean, copy)	\
-COMPLEX_TYPE(name, sizeof(type), 0, NULL, base, NULL, clean, copy, NULL)
+COMPLEX_TYPE(name, sizeof(type), 0, NULL, NULL, \
+	base, NULL, clean, copy)
 
 #define	REF_TYPE(name, type)	\
-COMPLEX_TYPE(name, sizeof(type), 0, NULL, &Type_ref, NULL, \
-	Clean_ref, Copy_ref, NULL)
+COMPLEX_TYPE(name, sizeof(type), 0, NULL, NULL, \
+	&Type_ref, NULL, Clean_ref, Copy_ref)
+
+#define	IOREF_TYPE(name, type, read, write) \
+COMPLEX_TYPE(name, sizeof(type), 0, read, write, \
+	&Type_ref, NULL, Clean_ref, Copy_ref)
 
 #endif	/* EFEU/stdtype.h */

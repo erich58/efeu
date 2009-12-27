@@ -28,12 +28,14 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	FILE_EXT	"sym"
 
-static int sym_cmp (DocSymEntry_t *a, DocSymEntry_t *b)
+static int sym_cmp (const void *pa, const void *pb)
 {
+	const DocSymEntry *a = pa;
+	const DocSymEntry *b = pb;
 	return mstrcmp(a->key, b->key);
 }
 
-static void cpy_str (io_t *io, strbuf_t *buf)
+static void cpy_str (IO *io, StrBuf *buf)
 {
 	int c;
 
@@ -46,7 +48,7 @@ static void cpy_str (io_t *io, strbuf_t *buf)
 	sb_putc(0, buf);
 }
 
-static void load (DocSym_t *sym, io_t *io)
+static void load (DocSym *sym, IO *io)
 {
 	int c;
 
@@ -79,13 +81,13 @@ static char *next_str (char **ptr)
 	return p;
 }
 
-static void reorg (DocSym_t *sym)
+static void reorg (DocSym *sym)
 {
-	DocSymEntry_t *entry;
+	DocSymEntry *entry;
 	char *ptr;
 	int i;
 
-	sym->tab = memalloc(sym->dim * sizeof(DocSymEntry_t));
+	sym->tab = memalloc(sym->dim * sizeof(DocSymEntry));
 	ptr = (char *) sym->buf.data;
 
 	for (i = sym->dim, entry = sym->tab; i-- > 0; entry++)
@@ -95,37 +97,35 @@ static void reorg (DocSym_t *sym)
 	}
 
 	if	(sym->dim > 1)
-		qsort(sym->tab, sym->dim, sizeof(DocSymEntry_t),
-			(comp_t) sym_cmp);
+		qsort(sym->tab, sym->dim, sizeof(DocSymEntry), sym_cmp);
 }
 
-DocSym_t *DocSym (const char *name)
+DocSym *DocSym_load (const char *name)
 {
-	DocSym_t *sym;
+	DocSym *sym;
 
-	sym = memalloc(sizeof(DocSym_t));
+	sym = memalloc(sizeof(DocSym));
 	load(sym, io_findopen(CFGPATH, name, FILE_EXT, "rd"));
 	reorg(sym);
 	return sym;
 }
 
-char *DocSym_get (DocSym_t *sym, const char *name)
+char *DocSym_get (DocSym *sym, const char *name)
 {
-	DocSymEntry_t key, *ptr;
+	DocSymEntry key, *ptr;
 
 	if	(sym == NULL || sym->dim == 0)
 		return NULL;
 
 	key.key = (char *) name;
 	key.fmt = NULL;
-	ptr = bsearch(&key, sym->tab, sym->dim, sizeof(DocSymEntry_t),
-		(comp_t) sym_cmp);
+	ptr = bsearch(&key, sym->tab, sym->dim, sizeof(DocSymEntry), sym_cmp);
 	return ptr ? ptr->fmt : NULL;
 }
 
-int DocSym_print (io_t *io, DocSym_t *sym)
+int DocSym_print (IO *io, DocSym *sym)
 {
-	DocSymEntry_t *ptr;
+	DocSymEntry *ptr;
 	int i, n;
 
 	if	(sym == NULL)
@@ -137,7 +137,7 @@ int DocSym_print (io_t *io, DocSym_t *sym)
 	return n;
 }
 
-void DocSym_free (DocSym_t *sym)
+void DocSym_free (DocSym *sym)
 {
 	if	(sym)
 	{

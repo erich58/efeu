@@ -23,18 +23,18 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/efwin.h>
 #include <EFEU/ioctrl.h>
 
-static int win_put (int c, WINDOW *win);
-static int win_ctrl (WINDOW *win, int req, va_list list);
-static int win_cctrl (WINDOW *win, int req, va_list list);
+static int win_put (int c, void *ptr);
+static int win_ctrl (void *ptr, int req, va_list list);
+static int win_cctrl (void *ptr, int req, va_list list);
 
 
-io_t *io_winopen(WinSize_t *ws)
+IO *io_winopen(WinSize *ws)
 {
-	io_t *io;
+	IO *io;
 
 	io = io_alloc();
-	io->put = (io_put_t) win_put;
-	io->ctrl = (io_ctrl_t) win_cctrl;
+	io->put = win_put;
+	io->ctrl = win_cctrl;
 	io->data = NewWindow(ws);
 	scrollok(io->data, TRUE);
 	wclear(io->data);
@@ -42,13 +42,13 @@ io_t *io_winopen(WinSize_t *ws)
 	return io;
 }
 
-io_t *io_winout(WINDOW *win)
+IO *io_winout(WINDOW *win)
 {
-	io_t *io;
+	IO *io;
 
 	io = io_alloc();
-	io->put = (io_put_t) win_put;
-	io->ctrl = (io_ctrl_t) win_ctrl;
+	io->put = win_put;
+	io->ctrl = win_ctrl;
 	io->data = win;
 	scrollok(win, TRUE);
 	wclear(win);
@@ -60,8 +60,9 @@ io_t *io_winout(WINDOW *win)
 /*	Zeichen ausgeben
 */
 
-static int win_put(int c, WINDOW *win)
+static int win_put(int c, void *ptr)
 {
+	WINDOW *win = ptr;
 	waddch(win, c);
 	wrefresh(win);
 	return 1;
@@ -71,8 +72,10 @@ static int win_put(int c, WINDOW *win)
 /*	Kontrollfunktion
 */
 
-static int win_ctrl(WINDOW *win, int req, va_list list)
+static int win_ctrl(void *ptr, int req, va_list list)
 {
+	WINDOW *win = ptr;
+
 	switch (req)
 	{
 	case IO_COLUMNS:	return getmaxx(win);
@@ -84,8 +87,10 @@ static int win_ctrl(WINDOW *win, int req, va_list list)
 	}
 }
 
-static int win_cctrl(WINDOW *win, int req, va_list list)
+static int win_cctrl(void *ptr, int req, va_list list)
 {
+	WINDOW *win = ptr;
+
 	if	(req == IO_CLOSE)
 	{
 		DelWindow(win);

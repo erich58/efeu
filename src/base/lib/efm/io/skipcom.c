@@ -24,7 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	PROMPT	"/* "	/**/
 
-static void comment_line (io_t *io, strbuf_t *buf, int flag)
+static void comment_line (IO *io, StrBuf *buf, int flag)
 {
 	int c, escape;
 
@@ -50,7 +50,7 @@ static void comment_line (io_t *io, strbuf_t *buf, int flag)
 		io_ungetc(c, io);
 }
 
-static void comment_cstyle (io_t *io, strbuf_t *buf, int flag)
+static void comment_cstyle (IO *io, StrBuf *buf, int flag)
 {
 	int indent, c, depth;
 	char *prompt;
@@ -121,10 +121,10 @@ Buffers angehängt wird.
 
 Falls <flag> verschieden von 0 ist,
 wird ein dem Kommentar folgender Zeilenvorschub, bzw. der das Kommentar
-abschließende Zeilenvorschub nicht überlesen.
+abschließende Zeilenvorschub überlesen.
 */
 
-int io_skipcom (io_t *io, strbuf_t *buf, int flag)
+int io_skipcom (IO *io, StrBuf *buf, int flag)
 {
 	int c;
 

@@ -38,9 +38,8 @@ double bisection (int (*f)(void *par, double x), void *par, double x0, double x1
 
 	if	(y0 * y1 > 0)
 	{
-		reg_set(1, msprintf(SolveFmt, x0));
-		reg_set(2, msprintf(SolveFmt, x1));
-		liberror(MSG_SOLVE, 2);
+		dbg_error(NULL, "[solve:2]", "mm", msprintf(SolveFmt, x0),
+			msprintf(SolveFmt, x1));
 	}
 
 	tol = SolveEps * (x1 - x0);
@@ -49,10 +48,9 @@ double bisection (int (*f)(void *par, double x), void *par, double x0, double x1
 	{
 		if	(SolveFlag)
 		{
-			reg_set(1, msprintf("%d", i));
-			reg_set(2, msprintf(SolveFmt, x0));
-			reg_set(3, msprintf(SolveFmt, x1));
-			errmsg(MSG_SOLVE, 4);
+			dbg_note(NULL, "[solve:4]", "dmm", i,
+				msprintf(SolveFmt, x0),
+				msprintf(SolveFmt, x1));
 		}
 
 		x = .5 * (x0 + x1);
@@ -64,6 +62,6 @@ double bisection (int (*f)(void *par, double x), void *par, double x0, double x1
 		else				x1 = x, y1 = y;
 	}
 
-	errmsg(MSG_SOLVE, 3);
+	dbg_note(NULL, "[solve:3]", NULL);
 	return 0.;
 }

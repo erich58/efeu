@@ -5,7 +5,7 @@
 \title	Make und Co
 Automatisches Warten, Generieren und Aufräumen
 
-\intro
+\preface
 \margin	Zielgruppe
 Dieses Handbuch wendet sich an alle Projektarbeiter,
 die mit Datengenerierung, Aufbereitung und Formatierung
@@ -58,11 +58,11 @@ Ein neues Kapitel wurde begonnen.
 
 \appendix
 \addsrclist
-\addsrclist	\eval{EFEUTOP}/ppinclude
+\addsrclist	\eval{EFEUROOT}/ppinclude
 \mchap[1]	Kommandos
-\pipe	mkmf --help=raw
-\pipe	pp2dep --help=raw
-\pipe	ppfilter --help=raw
+\pipe	|mkmf --help=raw|
+\pipe	|pp2dep --help=raw|
+\pipe	|ppfilter --help=raw|
 \mchap[7]	Makropakete und Konventionen
 \src2doc[-g -m hdr]	*.cfg *.pph *.tpl
 \printindex

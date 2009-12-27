@@ -24,21 +24,21 @@ If not, write to the Free Software Foundation, Inc.,
 
 typedef struct {
 	OBJECT_VAR;
-	Obj_t *base;
+	EfiObj *base;
 } LCAST;
 
 
 #define	LCAST_SIZE(type) (sizeof(LCAST) + type->size)
 
-static Obj_t *lcast_alloc (Type_t *type, va_list list)
+static EfiObj *lcast_alloc (EfiType *type, va_list list)
 {
 	LCAST *lc = (LCAST *) Obj_alloc(LCAST_SIZE(type));
-	lc->base = va_arg(list, Obj_t *);
+	lc->base = va_arg(list, EfiObj *);
 	lc->data = (void *) (lc + 1);
-	return (Obj_t *) lc;
+	return (EfiObj *) lc;
 }
 
-static void lcast_free (Obj_t *obj)
+static void lcast_free (EfiObj *obj)
 {
 	LCAST *lc = (LCAST *) obj;
 	CleanData(lc->type, lc->data);
@@ -46,38 +46,39 @@ static void lcast_free (Obj_t *obj)
 	Obj_free(obj, LCAST_SIZE(lc->type));
 }
 
-static char *lcast_ident (Obj_t *obj)
+static char *lcast_ident (const EfiObj *obj)
 {
 	LCAST *lc = (LCAST *) obj;
-	return mstrcpy(lc->base->type->name);
+	return Obj_ident(lc->base);
 }
 
-static void lcast_update (Obj_t *obj)
+static void lcast_update (EfiObj *obj)
 {
 	LCAST *lc = (LCAST *) obj;
 	Obj2Data(RefObj(lc->base), lc->type, lc->data);
 }
 
-static void lcast_sync (Obj_t *obj)
+static void lcast_sync (EfiObj *obj)
 {
 	LCAST *lc = (LCAST *) obj;
 	Obj2Data(RefObj(obj), lc->base->type, lc->base->data);
+	SyncLval(lc->base);
 }
 
-static Lval_t lcast_lval = {
+static EfiLval lcast_lval = {
 	lcast_alloc, lcast_free,
 	lcast_update, lcast_sync,
 	lcast_ident,
 };
 
 
-Obj_t *KonvLval(Obj_t *obj, Type_t *type)
+EfiObj *KonvLval(EfiObj *obj, EfiType *type)
 {
 	obj = EvalObj(obj, NULL);
 
 	if	(obj == NULL || obj->lval == NULL)
 	{
-		errmsg(MSG_EFMAIN, 167);
+		dbg_note(NULL, "[efmain:167]", NULL);
 		return NULL;
 	}
 

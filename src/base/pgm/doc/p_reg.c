@@ -23,9 +23,9 @@ If not, write to the Free Software Foundation, Inc.,
 #include <efeudoc.h>
 #include <ctype.h>
 
-char *DocParseRegion (io_t *in, const char *delim)
+char *DocParseRegion (IO *in, const char *delim)
 {
-	strbuf_t *buf;
+	StrBuf *buf;
 	int last;
 	int c;
 

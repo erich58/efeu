@@ -24,16 +24,16 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/strbuf.h>
 #include <EFEU/efio.h>
 
-void SrcData_init (SrcData_t *data, io_t *ein)
+void SrcData_init (SrcData *data, IO *ein)
 {
-	memset(data, 0, sizeof(SrcData_t));
+	memset(data, 0, sizeof(SrcData));
 	DocBuf_init(&data->doc);
 	data->buf = new_strbuf(0);
 	data->ein = ein;
 }
 
 
-void SrcData_write (SrcData_t *data, io_t *io)
+void SrcData_write (SrcData *data, IO *io)
 {
 	DocBuf_write(&data->doc, io);
 	del_strbuf(data->buf);

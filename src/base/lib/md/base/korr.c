@@ -5,12 +5,12 @@
 #include <EFEU/mdmat.h>
 #include <EFEU/efutil.h>
 
-static void do_korr(mdaxis_t *axis, void *data, Konv_t *get, Konv_t *set, double val, int round);
+static void do_korr(mdaxis *axis, void *data, EfiKonv *get, EfiKonv *set, double val, int round);
 
-void md_korr(mdmat_t *md, int round)
+void md_korr(mdmat *md, int round)
 {
-	Konv_t get;
-	Konv_t set;
+	EfiKonv get;
+	EfiKonv set;
 	double val;
 
 	if	(md == NULL)	return;
@@ -24,7 +24,8 @@ void md_korr(mdmat_t *md, int round)
 	do_korr(md->axis, md->data, &get, &set, val, round);
 }
 
-static void do_korr(mdaxis_t *axis, void *data, Konv_t *get, Konv_t *set, double val, int round)
+static void do_korr(mdaxis *axis, void *data, EfiKonv *get, EfiKonv *set,
+	double val, int round)
 {
 	double *dat;
 	char *ptr;
@@ -37,7 +38,7 @@ static void do_korr(mdaxis_t *axis, void *data, Konv_t *get, Konv_t *set, double
 		return;
 	}
 
-	dat = ALLOC(axis->dim, double);
+	dat = memalloc(axis->dim * sizeof(double));
 
 /*	Werte bestimmen
 */

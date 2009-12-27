@@ -51,10 +51,10 @@ static int pixtype(FILE *file)
 }
 
 
-OldPixMap_t *load_OldPixMap(const char *name)
+OldPixMap *load_OldPixMap(const char *name)
 {
 	FILE *file;
-	OldPixMap_t *pix;
+	OldPixMap *pix;
 	unsigned rows, cols;
 	int ncol;
 
@@ -64,8 +64,7 @@ OldPixMap_t *load_OldPixMap(const char *name)
 	{
 	case 0:
 		fileclose(file);
-		reg_cpy(1, name);
-		liberror(MSG_PIXMAP, 11);
+		dbg_error(NULL, "[pixmap:11]", "s", name);
 		return NULL;
 	case 1:
 		pix = read_PPMFile(file);
@@ -79,14 +78,14 @@ OldPixMap_t *load_OldPixMap(const char *name)
 	rows = get4byte(file);
 	cols = get4byte(file);
 	pix = new_OldPixMap(rows, cols);
-	pix->colors = loadvec(file, pix->color, sizeof(Color_t), ncol);
+	pix->colors = loadvec(file, pix->color, sizeof(COLOR), ncol);
 	fread(pix->pixel, 1, rows * cols, file);
 	fileclose(file);
 	return pix;
 }
 
 
-void save_OldPixMap(OldPixMap_t *pix, const char *name)
+void save_OldPixMap(OldPixMap *pix, const char *name)
 {
 	FILE *file;
 
@@ -98,7 +97,7 @@ void save_OldPixMap(OldPixMap_t *pix, const char *name)
 	put4byte(pix->rows, file);
 	put4byte(pix->cols, file);
 
-	savevec(file, pix->color, sizeof(Color_t), pix->colors);
+	savevec(file, pix->color, sizeof(COLOR), pix->colors);
 
 	fwrite(pix->pixel, 1, pix->rows * pix->cols, file);
 	fileclose(file);

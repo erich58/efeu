@@ -28,7 +28,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	ctrl(x)	((x) & 0x1f)
 
-int WinQuestion (WinSize_t *ws, char *label, char *s1, char *s2)
+int WinQuestion (WinSize *ws, char *label, char *s1, char *s2)
 {
 	WINDOW *win;
 	int key;

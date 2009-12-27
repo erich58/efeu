@@ -324,9 +324,14 @@ der rechte Operand <expr> niemals ausgewertet.
 <|: :|> | range operator | <start> <|:|> <end> \[ <|:|> <step> \]
 [-]
 
-Es gibt keinen Bereichsoperator in C/C++. Der Vorgabewert für
-<step> ist 1 (-1 falls <end> |<| <start>). Normalerweise wird dieser
-Operator mit Ganzzahl- und Gleitkommawerten verwendet.
+Der Bereichsoperator liefert eine Liste von Werten, beginnend
+bei <start> bis einschließlich <end>.
+Je nachdem, ob <start> kleiner oder größer als <end> ist, werden
+die einzelnen Elemente um <step> erhöht bzw. verkleinert. Für
+<step> dürfen nur positive Werte angegeben werden, die
+Vorgabe ist 1. Der Operator kann überladen werden.
+Eine falsche Verwendung kann in einer Endlosschleife enden.
+Es gibt keinen Bereichsoperator in C/C++.
 
 \tab	|l|l|l|
 [-]
@@ -633,7 +638,7 @@ keine Beschränkungen bei der Konstruktion von Vektordatentypen gibt.
 Es ist klar, dass nur <n0> weggelassen werden kann.
 
 Datenfelder werden bei der Verwendung immer in ein Objekt vom Type
-|Vec_t| gepackt.
+|EfiVec| gepackt.
 Ein Datenfeld kann in eine Liste konvertiert werden und die Werte
 eines Datenfeldes können durch Zuweisung einer Liste verändert werden.
 Falls eine Liste weniger Elemente enthält, als das Datenfeld auf der
@@ -772,7 +777,7 @@ inline str f (str fmt)
 
 Die Funktion |psub| substituiert Parameter entsprechend einem
 Formatstring.
-Falls |f| nicht inline ist, ist die Variable |x| für |fpsub|
+Falls |f| nicht inline ist, ist die Variable |x| für |psub|
 unsichtbar und die Substitution |$$(x)| schlägt fehl.
 
 Funktionen haben den Datentyp |Func| und jede Funktion kann

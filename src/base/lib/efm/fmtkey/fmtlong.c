@@ -29,10 +29,10 @@ If not, write to the Free Software Foundation, Inc.,
 static char *lc_digit = "0123456789abcdef";
 static char *uc_digit = "0123456789ABCDEF";
 
-int fmt_long(io_t *io, const fmtkey_t *key, long xval)
+int fmt_long(IO *io, const FmtKey *key, long xval)
 {
-	strbuf_t *sb;
-	ulong_t val;
+	StrBuf *sb;
+	unsigned long val;
 	int n, k, sig, base;
 	int ptrval;
 	char *p, *sep, *digit, *mark;

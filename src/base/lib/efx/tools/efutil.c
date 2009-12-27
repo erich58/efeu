@@ -23,7 +23,6 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/pconfig.h>
 #include <EFEU/efutil.h>
 #include <EFEU/cmdconfig.h>
-#include <EFEU/datum.h>
 #include <EFEU/calendar.h>
 #include <EFEU/patcmp.h>
 #include <time.h>
@@ -37,74 +36,67 @@ If not, write to the Free Software Foundation, Inc.,
 #define	DOUBLE(n)	Val_double(arg[n])
 
 
-/*	Zifferndarstellung zur Basis 37
-*/
-
-CEXPR(f_a37l, RVINT = a37l(STR(0)))
-CEXPR(f_l37a, RVSTR = l37a(INT(0)))
-
-
 /*	Vergleichsfunktionen
 */
 
-static void cmp_str (Func_t *func, void *rval, void **arg)
+static void cmp_str (EfiFunc *func, void *rval, void **arg)
 {
 	RVINT = mstrcmp(STR(0), STR(1));
 }
 
-static void cmp_lex (Func_t *func, void *rval, void **arg)
+static void cmp_lex (EfiFunc *func, void *rval, void **arg)
 {
 	RVINT = lexcmp(STR(0), STR(1));
 }
 
-static void cmp_int (Func_t *func, void *rval, void **arg)
+static void cmp_int (EfiFunc *func, void *rval, void **arg)
 {
 	if	(INT(0) < INT(1))	RVINT = -1;
 	else if	(INT(0) > INT(1))	RVINT = 1;
 	else				RVINT = 0;
 }
 
-static void cmp_long (Func_t *func, void *rval, void **arg)
+static void cmp_long (EfiFunc *func, void *rval, void **arg)
 {
 	if	(LONG(0) < LONG(1))	RVINT = -1;
 	else if	(LONG(0) > LONG(1))	RVINT = 1;
 	else				RVINT = 0;
 }
 
-static void cmp_double (Func_t *func, void *rval, void **arg)
+static void cmp_double (EfiFunc *func, void *rval, void **arg)
 {
 	if	(DOUBLE(0) < DOUBLE(1))	RVINT = -1;
 	else if	(DOUBLE(0) > DOUBLE(1))	RVINT = 1;
 	else				RVINT = 0;
 }
 
-static void rcmp_str (Func_t *func, void *rval, void **arg)
+static void rcmp_str (EfiFunc *func, void *rval, void **arg)
 {
 	RVINT = mstrcmp(STR(1), STR(0));
 }
 
-static void rcmp_int (Func_t *func, void *rval, void **arg)
+static void rcmp_int (EfiFunc *func, void *rval, void **arg)
 {
 	if	(INT(1) < INT(0))	RVINT = -1;
 	else if	(INT(1) > INT(0))	RVINT = 1;
 	else				RVINT = 0;
 }
 
-static void rcmp_long (Func_t *func, void *rval, void **arg)
+static void rcmp_long (EfiFunc *func, void *rval, void **arg)
 {
 	if	(LONG(1) < LONG(0))	RVINT = -1;
 	else if	(LONG(1) > LONG(0))	RVINT = 1;
 	else				RVINT = 0;
 }
 
-static void rcmp_double (Func_t *func, void *rval, void **arg)
+static void rcmp_double (EfiFunc *func, void *rval, void **arg)
 {
 	if	(DOUBLE(1) < DOUBLE(0))	RVINT = -1;
 	else if	(DOUBLE(1) > DOUBLE(0))	RVINT = 1;
 	else				RVINT = 0;
 }
 
-static void f_inquire(Func_t *func, void *rval, void **arg)
+static void f_inquire(EfiFunc *func, void *rval, void **arg)
 {
 	char *p;
 
@@ -114,17 +106,17 @@ static void f_inquire(Func_t *func, void *rval, void **arg)
 	RVSTR = p ? p : mstrcpy(Val_str(arg[1]));
 }
 
-static void f_texquote(Func_t *func, void *rval, void **arg)
+static void f_texquote(EfiFunc *func, void *rval, void **arg)
 {
 	RVINT = TeXquote(STR(0), Val_io(arg[1]));
 }
 
-static void f_texputs(Func_t *func, void *rval, void **arg)
+static void f_texputs(EfiFunc *func, void *rval, void **arg)
 {
 	RVINT = TeXputs(STR(0), Val_io(arg[1]));
 }
 
-static void f_texputc(Func_t *func, void *rval, void **arg)
+static void f_texputc(EfiFunc *func, void *rval, void **arg)
 {
 	RVINT = TeXputc(Val_char(arg[0]), Val_io(arg[1]));
 }
@@ -133,10 +125,7 @@ static void f_texputc(Func_t *func, void *rval, void **arg)
 /*	Funktionstabelle
 */
 
-static FuncDef_t fdef[] = {
-	{ 0, &Type_int, "a37l (str)", f_a37l },
-	{ 0, &Type_str, "l37a (int)", f_l37a },
-
+static EfiFuncDef fdef[] = {
 	{ FUNC_VIRTUAL, &Type_int, "lexcmp (str, str)", cmp_lex },
 	{ FUNC_VIRTUAL, &Type_int, "cmp (str, str)", cmp_str },
 	{ FUNC_VIRTUAL, &Type_int, "cmp (int, int)", cmp_int },

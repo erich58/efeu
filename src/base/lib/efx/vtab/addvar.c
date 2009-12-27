@@ -24,27 +24,81 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	KEY_THIS	"this"
 
-static Obj_t *getvar(Var_t *var, VarTab_t *tab, const Obj_t *obj)
+static int var_cmp (const void *pa, const void *pb)
+{
+	const VarTabEntry *a = pa;
+	const VarTabEntry *b = pb;
+	return mstrcmp(a->name, b->name);
+}
+
+static void var_clean (VarTabEntry *var)
+{
+	if	(var)
+	{
+		memfree(var->desc);
+		UnrefObj(var->obj);
+
+		if	(var->clean)
+			var->clean(var->data);
+	}
+}
+
+static VarTabEntry *var_get (EfiVarTab *tab, const char *name, int mode)
+{
+	if	(tab)
+	{
+		VarTabEntry key;
+		key.name = name;
+		return vb_search(&tab->tab, &key, var_cmp, mode);
+	}
+
+	return NULL;
+}
+
+VarTabEntry *VarTab_get (EfiVarTab *tab, const char *name)
+{
+	EfiVarStack *stack;
+	VarTabEntry *ptr;
+
+	if	(tab)
+		return var_get(tab, name, VB_SEARCH);
+
+	if	((ptr = var_get(LocalVar, name, VB_SEARCH)))
+		return ptr;
+
+	for (stack = VarStack; stack != NULL; stack = stack->next)
+		if ((ptr = var_get(stack->tab, name, VB_SEARCH)))
+			return ptr;
+
+	return NULL;
+}
+
+static EfiObj *getvar (VarTabEntry *key, EfiVarTab *tab, const EfiObj *obj)
 {
 	if	(tab == NULL)	return NULL;
 
-	if	(obj && mstrcmp(var->name, KEY_THIS) == 0)
+	if	(obj && mstrcmp(key->name, KEY_THIS) == 0)
 		return RefObj(obj);
 
-	var = xsearch(&tab->tab, var, XS_FIND);
-	return var ? Var2Obj(var, obj) : NULL;	
+	key = vb_search(&tab->tab, key, var_cmp, VB_SEARCH);
+
+	if	(!key)	return NULL;
+
+	if	(key->get)
+		return key->get(obj, key->data);
+
+	return RefObj(key->obj);
 }
 
-
-Obj_t *GetVar (VarTab_t *tab, const char *name, const Obj_t *obj)
+EfiObj *GetVar (EfiVarTab *tab, const char *name, const EfiObj *obj)
 {
-	Var_t key;
-	Obj_t *x;
-	VarStack_t *stack;
+	VarTabEntry key;
+	EfiVarStack *stack;
+	EfiObj *x;
 
 	if	(name == NULL)	return NULL;
 
-	key.name = (char *) name;
+	key.name = name;
 
 	if	(tab)
 		return getvar(&key, tab, obj);
@@ -60,28 +114,72 @@ Obj_t *GetVar (VarTab_t *tab, const char *name, const Obj_t *obj)
 }
 
 
-void AddVar (VarTab_t *tab, Var_t *def, size_t dim)
+static EfiObj *vget (const EfiObj *base, void *data)
 {
-	int i;
-	Var_t *old;
+	return Var2Obj(data, base);	
+}
 
-	if	(tab == NULL)
+static void vclean (void *data)
+{
+	DelVar(data);
+}
+
+void AddVar (EfiVarTab *tab, EfiVar *def, size_t dim)
+{
+	VarTabEntry entry, *ptr;
+
+	tab = CurrentVarTab(tab);
+
+	for (; dim-- > 0; def++)
 	{
-		if	(LocalVar == NULL)
-			LocalVar = VarTab(NULL, 0);
+		if	(def->name == NULL)	continue;
 
-		tab = LocalVar;
-	}
+		entry.name = def->name;
+		entry.type = def->type;
+		entry.desc = def->desc;
+		entry.obj = NULL;
+		entry.get = vget;
+		entry.clean = vclean;
+		entry.data = def;
+		ptr = vb_search(&tab->tab, &entry, var_cmp, VB_REPLACE);
 
-	for (i = 0; i < dim; i++)
-	{
-		if	(def[i].name == NULL)	continue;
-
-		if	((old = xsearch(&tab->tab, def + i, XS_REPLACE)))
+		if	(ptr)
 		{
-			DelVar(old);
-			reg_cpy(1, def[i].name);
-			errmsg(MSG_EFMAIN, 154);
+			dbg_note(NULL, "[efmain:154]", "s", ptr->name);
+			var_clean(ptr);
 		}
+	}
+}
+
+void VarTab_add (EfiVarTab *tab, VarTabEntry *entry)
+{
+	tab = CurrentVarTab(tab);
+	var_clean(vb_search(&tab->tab, entry, var_cmp, VB_REPLACE));
+}
+
+void VarTab_xadd (EfiVarTab *tab, char *name, char *desc, EfiObj *obj)
+{
+	VarTabEntry entry;
+
+	entry.name = name;
+	entry.desc = desc;
+	entry.type = obj->type;
+	entry.obj = obj;
+	entry.get = NULL;
+	entry.clean = memfree;
+	entry.data = name;
+
+	tab = CurrentVarTab(tab);
+	var_clean(vb_search(&tab->tab, &entry, var_cmp, VB_REPLACE));
+}
+
+void VarTab_del (EfiVarTab *tab, const char *name)
+{
+	if	(tab)
+	{
+		VarTabEntry *ptr = var_get(tab, name, VB_DELETE);
+
+		if	(ptr && ptr->clean)
+			ptr->clean(ptr->data);
 	}
 }

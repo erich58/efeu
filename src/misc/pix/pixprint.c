@@ -24,7 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <ctype.h>
 #include <EFEU/oldpixmap.h>
 
-void print_OldPixMap(OldPixMap_t *pix, FILE *file)
+void print_OldPixMap(OldPixMap *pix, FILE *file)
 {
 	int i, j;
 

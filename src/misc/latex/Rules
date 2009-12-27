@@ -1,0 +1,1 @@
+sty	DFXFX	InstallFile(%s/%s.%s,$(TEXDIR),%s.%s)

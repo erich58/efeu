@@ -25,7 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/efio.h>
 
 
-size_t io_savestr(io_t *tmp, const char *str)
+size_t io_savestr(IO *tmp, const char *str)
 {
 	size_t n;
 
@@ -42,7 +42,7 @@ size_t io_savestr(io_t *tmp, const char *str)
 }
 
 
-char *io_loadstr(io_t *tmp, char **ptr)
+char *io_loadstr(IO *tmp, char **ptr)
 {
 	char *p;
 	int c;

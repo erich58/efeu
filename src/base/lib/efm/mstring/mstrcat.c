@@ -33,7 +33,7 @@ char *mstrcat(const char *delim, const char *list, ...)
 {
 	const char *x;
 	char *s;
-	strbuf_t *sb;
+	StrBuf *sb;
 	va_list k;
 
 	sb = new_strbuf(0);
@@ -61,7 +61,7 @@ Sind beide Strings Nullpointer, liefert die Funktion einen Nullpointer.
 
 char *mstrpaste(const char *delim, const char *a, const char *b)
 {
-	strbuf_t *sb;
+	StrBuf *sb;
 
 	if	(a == NULL)	return mstrcpy(b);
 	if	(b == NULL)	return mstrcpy(a);

@@ -27,8 +27,6 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/memalloc.h>
 
-typedef char *mstr_t;
-
 size_t mstrlen (const char *a);
 int mstrcmp (const char *a, const char *b);
 char *mstrchr (const char *a, const char *b);
@@ -46,18 +44,9 @@ size_t strsplit (const char *str, const char *delim, char ***ptr);
 char *nextstr (char **ptr);
 
 char *mstrcut (const char *str, char **ptr, char *delim, int flag);
-
 char *mlangcpy (const char *fmt, const char *lang);
 
-/*	Sonstige Stringshilfsfunktionen
-*/
-
-void *rmemcpy(void *dest, const void *src, size_t n);
-
-#if	REVBYTEORDER
-#define	MEMCPY	rmemcpy
-#else
-#define	MEMCPY	memcpy
-#endif
+char *mdirname (const char *path, int flag);
+char *mbasename (const char *path, char **suffix);
 
 #endif	/* EFEU/mstring.h */

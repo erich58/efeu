@@ -29,17 +29,17 @@ If not, write to the Free Software Foundation, Inc.,
 #define	HDRCFG	"term"	/* Kopfkonfiguration */
 #define	SYMTAB	"term"	/* Sonderzeichentabelle */
 
-TermPar_t TermPar;
+TermPar term_par;
 
-static VarDef_t term_var[] = {
-	{ "wpmargin", &Type_int, &TermPar.wpmargin },
-	{ "rm", &Type_str, &TermPar.rm },
-	{ "it", &Type_str, &TermPar.it },
-	{ "bf", &Type_str, &TermPar.bf },
-	{ "tt", &Type_str, &TermPar.tt },
-	{ "Name", &Type_str, &TermPar.Name },
-	{ "FigName", &Type_str, &TermPar.FigName },
-	{ "TabName", &Type_str, &TermPar.TabName },
+static EfiVarDef term_var[] = {
+	{ "wpmargin", &Type_int, &term_par.wpmargin },
+	{ "rm", &Type_str, &term_par.rm },
+	{ "it", &Type_str, &term_par.it },
+	{ "bf", &Type_str, &term_par.bf },
+	{ "tt", &Type_str, &term_par.tt },
+	{ "Name", &Type_str, &term_par.Name },
+	{ "FigName", &Type_str, &term_par.FigName },
+	{ "TabName", &Type_str, &term_par.TabName },
 };
 
 void TermPar_init(void)
@@ -48,7 +48,7 @@ void TermPar_init(void)
 
 	if	(need_init)
 	{
-		io_t *in;
+		IO *in;
 
 		in = io_findopen(CFGPATH, TPARM, CFGEXT, "r");
 		in = io_lnum(in);
@@ -61,13 +61,15 @@ void TermPar_init(void)
 	}
 }
 
-static void term_hdr (term_t *trm, int mode)
+static void term_hdr (void *drv, int mode)
 {
-	if	(mode)	DocDrv_eval(trm, HDRCFG);
+	if	(mode)	DocDrv_eval(drv, HDRCFG);
 }
 
-static void term_sym (term_t *trm, const char *name)
+static void term_sym (void *drv, const char *name)
 {
+	Term *trm = drv;
+
 	if	(mstrcmp("nbsp", name) == 0)
 	{
 		term_hmode(trm);
@@ -76,7 +78,7 @@ static void term_sym (term_t *trm, const char *name)
 	}
 	else if	(mstrcmp("shy", name) == 0)
 	{
-		if	(trm->col >= TermPar.wpmargin)
+		if	(trm->col >= term_par.wpmargin)
 		{
 			io_putc('-', trm->out);
 			term_newline(trm, 0);
@@ -93,17 +95,17 @@ static void term_sym (term_t *trm, const char *name)
 	}
 }
 
-io_t *DocOut_term (io_t *io)
+IO *DocOut_term (IO *io)
 {
-	term_t *trm = DocDrv_alloc(NAME, sizeof(term_t));
+	Term *trm = DocDrv_alloc(NAME, sizeof(Term));
 	trm->out = io;
 	trm->var.margin = 2 * TERM_INDENT;
-	trm->symtab = DocSym(SYMTAB);
-	trm->sym = (DocDrvSym_t) term_sym;
-	trm->put = (DocDrvPut_t) term_putc;
-	trm->hdr = (DocDrvHdr_t) term_hdr;
-	trm->cmd = (DocDrvCmd_t) term_cmd;
-	trm->env = (DocDrvEnv_t) term_env;
+	trm->symtab = DocSym_load(SYMTAB);
+	trm->sym = term_sym;
+	trm->put = term_putc;
+	trm->hdr = term_hdr;
+	trm->cmd = term_cmd;
+	trm->env = term_env;
 	AddVarDef(trm->vartab, term_var, tabsize(term_var));
 	DocDrv_var(trm, &Type_int, "margin", &trm->var.margin);
 	TermPar_init();

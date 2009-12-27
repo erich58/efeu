@@ -29,7 +29,7 @@ If not, write to the Free Software Foundation, Inc.,
 #define	LATIN1	1	/* Zeichen 161 - 255 unverändert ausgeben */
 
 #if	LATIN1
-#define	printable(c)	isprint(c) || ((uchar_t) (c) > 160)
+#define	printable(c)	isprint(c) || ((unsigned char) (c) > 160)
 #else
 #define	printable(c)	isprint(c)
 #endif
@@ -38,11 +38,11 @@ If not, write to the Free Software Foundation, Inc.,
 /*	String von Sonderdarstellung ausgeben
 */
 
-int io_xputs(const char *str, io_t *io, const char *delim)
+int io_xputs(const char *str, IO *io, const char *delim)
 {
 	if	(str != NULL)
 	{
-		const uchar_t *p = (const uchar_t *) str;
+		const unsigned char *p = (const unsigned char *) str;
 		int n;
 
 		for (n = 0; *p != 0; p++)
@@ -58,7 +58,7 @@ int io_xputs(const char *str, io_t *io, const char *delim)
 /*	Zeichen mit Sonderdarstellung ausgeben
 */
 
-int io_xputc(int c, io_t *io, const char *delim)
+int io_xputc(int c, IO *io, const char *delim)
 {
 	int pos;
 	int flag;
@@ -66,7 +66,7 @@ int io_xputc(int c, io_t *io, const char *delim)
 
 	pos = 0;
 	flag = 1;
-	c = (uchar_t) c;
+	c = (unsigned char) c;
 
 	switch (c)
 	{

@@ -25,7 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 char *GetString (char *prompt)
 {
 	char *p;
-	WinSize_t *ws;
+	WinSize *ws;
 
 	wmove(info_win, LASTLINE, 0);
 	wclrtobot(info_win);

@@ -5,66 +5,118 @@
 #include <EFEU/mdmat.h>
 #include <ctype.h>
 
-/*	Kopierdefinitionen für Listenelemente
-*/
-
-static iocpy_t c_name[] = {
-	{ "[", NULL, 0, NULL },
-	{ "%s=", NULL, 0, NULL },
-	{ "\\",	"%s[=\\", 0, iocpy_esc },
-};
-
-static iocpy_t c_option[] = {
-	{ "]", NULL, 0, NULL },
-	{ "[", "]", 1, iocpy_str },
-	{ "\\",	"[]\\", 1, iocpy_esc },
-};
-
-static iocpy_t c_list[] = {
-	{ "[", NULL, 0, NULL },
-	{ "%s,", NULL, 0, NULL },
-	{ "[", "]", 1, iocpy_str },
-	{ "\\",	"%s,[\\", 0, iocpy_esc },
-};
-
-static char *list_next (io_t *tmp, char **ptr);
-static size_t docopy (io_t *in, io_t *out, iocpy_t *def, size_t dim, int flag);
-
-
-/*	Listendefinition löschen
-*/
-
-void del_mdlist(mdlist_t *list)
+static int copy_opt (IO *in, StrBuf *buf)
 {
-	if	(list != NULL)
+	int c;
+	int depth;
+
+	depth = 0;
+
+	while ((c = io_mgetc(in, 1)) != EOF)
 	{
-		del_mdlist(list->next);
-		memfree(list);
+		if	(c == '[')
+		{
+			depth++;
+		}
+		else if	(c == ']')
+		{
+			if	(depth <= 0)	break;
+			else			depth--;
+		}
+		else if	(c == '\\')
+		{
+			c = io_mgetc(in, 1);
+
+			if	(!strchr("[]\\", c))
+				sb_putc('\\', buf);
+		}
+
+		sb_putc(c, buf);
 	}
+
+	return c;
+}
+
+static int copy_name (IO *in, StrBuf *buf, int delim, int flag)
+{
+	int c;
+
+	while ((c = io_mgetc(in, 1)) != EOF)
+	{
+		if	(c == '\\')
+		{
+			if	(c != '\\' && c != '[' && c != ']' &&
+					c != delim && !isspace(c))
+				sb_putc('\\', buf);
+		}
+		else if	(c == '[')
+		{
+			if	(flag)	break;
+
+			sb_putc(c, buf);
+			c = copy_opt(in, buf);
+
+			if	(c == EOF)	break;
+		}
+		else if	(c == delim || isspace(c))
+		{
+			break;
+		}
+
+		sb_putc(c, buf);
+	}
+
+	sb_putc(0, buf);
+
+	if	(c == '[')
+	{
+		copy_opt(in, buf);
+		c = io_mgetc(in, 1);
+	}
+
+	sb_putc(0, buf);
+	return c;
+}
+
+static char *list_next (char **ptr)
+{
+	char *p;
+	int c;
+
+	p = *ptr;
+
+	do
+	{
+		c = **ptr;
+		(*ptr)++;
+	}
+	while (c != 0 && c != EOF);
+
+	return (*p != 0 ? p : NULL);
 }
 
 
-/*	Neue Listendefinition lesen
+/*
+Die Funktion |$1| liest eine Achsenliste aus einer IO-Struktur
 */
 
-mdlist_t *io_mdlist(io_t *io, int flag)
+mdlist *io_mdlist (IO *io, int flag)
 {
-	io_t *tmp;
-	mdlist_t *list;
+	IO *tmp;
+	StrBuf *buf;
+	mdlist *list;
 	size_t dim, space;	
 	char *ptr;
 	int c;
 	int lflag;
 
 	if	(io_eat(io, "%s") == EOF)
-	{
 		return NULL;
-	}
 
-	tmp = io_tmpbuf(0);
-	space = docopy(io, tmp, c_name, tabsize(c_name), flag & MDLIST_NAMEOPT);
+	buf = new_strbuf(0);
+	c = copy_name(io, buf, '=', flag & MDLIST_NAMEOPT);
+	tmp = io_strbuf(buf);
 	dim = 0;
-	c = io_getc(io);
 
 	if	(c == '=')
 	{
@@ -73,60 +125,58 @@ mdlist_t *io_mdlist(io_t *io, int flag)
 			dim++;
 
 			if	(flag & MDLIST_LISTOPT)
-			{
 				lflag = 1;
-			}
 			else if	(flag & MDLIST_NEWOPT)
-			{
-				lflag = (io_eat(io, NULL) == ':');
-			}
+				lflag = (io_peek(io) == ':');
 			else	lflag = 0;
-
-			space += docopy(io, tmp, c_list, tabsize(c_list), lflag);
 		}
-		while ((c = io_mgetc(io, 1)) == ',');
+		while ((c = copy_name(io, buf, ',', lflag)) == ',');
 
 		if	(c != EOF)	io_ungetc(c, io);
 	}
 	else if	(c != EOF && !isspace(c))
 	{
-		reg_fmt(1, "%#c", iocpy_last);
-		liberror(MSG_MDMAT, 81);
+		dbg_error(NULL, "[mdmat:81]", "c", c);
 		io_close(tmp);
 		return NULL;
 	}
 	else	io_ungetc(c, io);
 
-	list = memalloc((ulong_t) sizeof(mdlist_t)
-		+ 2 * dim * sizeof(char *) + space);
+	io_close(tmp);
+	sb_putc(0, buf);
+	space = sb_size(buf);
+
+	list = memalloc(sizeof(mdlist) + 2 * dim * sizeof(char *) + space);
 	list->list = (char **) (list + 1);
 	list->lopt = list->list + dim;
 	ptr = (char *) (list->lopt + dim);
-	io_rewind(tmp);
+	memcpy(ptr, buf->data, space);
+	del_strbuf(buf);
+
 	list->next = NULL;
-	list->name = list_next(tmp, &ptr);
-	list->option = list_next(tmp, &ptr);
+	list->name = list_next(&ptr);
+	list->option = list_next(&ptr);
 	list->dim = dim;
 
 	for (dim = 0; dim < list->dim; dim++)
 	{
-		list->list[dim] = list_next(tmp, &ptr);
-		list->lopt[dim] = list_next(tmp, &ptr);
+		list->list[dim] = list_next(&ptr);
+		list->lopt[dim] = list_next(&ptr);
 	}
 
-	io_close(tmp);
 	return list;
 }
 
 
-/*	Liste aus String bestimmen
+/*
+Die Funktion |$1| generiert eine Achsenliste aus einer Zweichenkette
 */
 
-mdlist_t *mdlist(const char *str, int flag)
+mdlist *str2mdlist (const char *str, int flag)
 {
-	io_t *io;
-	mdlist_t *list;
-	mdlist_t **ptr;
+	IO *io;
+	mdlist *list;
+	mdlist **ptr;
 
 	if	(str == NULL)	return NULL;
 
@@ -142,51 +192,16 @@ mdlist_t *mdlist(const char *str, int flag)
 }
 
 
-/*	Nächsten String lesen
+/*
+Die Funktion |$1| gibt eine Achsenliste frei.
 */
 
-static char *list_next(io_t *io, char **ptr)
+void del_mdlist (mdlist *list)
 {
-	char *p;
-	int c;
-
-	p = *ptr;
-
-	do
+	if	(list != NULL)
 	{
-		c = io_getc(io);
-		**ptr = c;
-		(*ptr)++;
+		del_mdlist(list->next);
+		memfree(list);
 	}
-	while (c != 0 && c != EOF);
-
-	return (*p != 0 ? p : NULL);
 }
 
-
-static size_t docopy(io_t *in, io_t *out, iocpy_t *def, size_t dim, int flag)
-{
-	size_t space;
-
-	if	(flag)
-	{
-		space = iocpy(in, out, def, dim);
-	}
-	else	space = iocpy(in, out, def + 1, dim - 1);
-
-	space += io_nputc(0, out, 1);
-
-	if	(iocpy_last == '[')
-	{
-		io_getc(in);
-		space += iocpy(in, out, c_option, tabsize(c_option));
-
-		if	(iocpy_last == ']')
-		{
-			io_getc(in);
-		}
-	}
-
-	space += io_nputc(0, out, 1);
-	return space;
-}

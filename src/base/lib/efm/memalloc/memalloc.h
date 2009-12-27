@@ -1,5 +1,6 @@
 /*
-Speicherplatzverwaltung
+:*:memory administration
+:de:Speicherplatzverwaltung
 
 $Header	<EFEU/$1>
 
@@ -26,18 +27,68 @@ If not, write to the Free Software Foundation, Inc.,
 #define	EFEU_memalloc_h	1
 
 #include <EFEU/config.h>
-#include <EFEU/types.h>
 
+#ifndef	sizealign
 
-/*	Elementare Speicherzuweisung
+/*
+:*:The macro |$1| alligns the size <x> in times of <y>.
+:de:Der Makro |$1| dient zur Ausrichtung der Speichergröße <x> auf
+ganzzahlige Vielfache von <y>.
 */
+
+#define	sizealign(x, y)	((y) * (((x) + (y) - 1) / (y)))
+#endif
+
+#ifndef	tabsize
+
+/*
+:*:
+The macro |$1| returns the first dimension of the field <x>.
+It is used for fields, wich dimensions is only determined by the number
+of initialisation values.
+:de:
+Der Makro |$1| liefert die erste Dimension des Datenfeldes <x>.  Er wird für
+globale oder statische Felder verwendet, deren erste Dimension nicht
+vorgegebnen ist, sondern aus der Zahl der Initialisierungswerte bestimmt  wird.
+*/
+
+#define	tabsize(x)	(sizeof(x) / sizeof(x[0]))
+#endif
+
+#ifndef	tabparm
+
+/*
+:*:
+The macro |$1| returns pointer, number of elements and element size of
+field. It could be used in the argumentlist of functions like 
+|qsort| or |bsearch|.
+:de:
+Der Makro |$1| liefert den Pointer, die Zahl der Elemente und die
+Elementgröße eines Datenfeldes. Er wird typischerweise bei der Übergabe
+von Feldern an Funktionen wie |qsort| und |bsearch|.
+*/
+
+#define	tabparm(x)	(void *) (x), tabsize(x), sizeof(x[0])
+#endif
 
 void *lmalloc (size_t size);
 void lfree (void *ptr);
 void lcheck (void *ptr);
 
+/*
+:*:allocation list node |$1|
+:de:Knoten in Zuweisungsliste |$1|
+*/
+
+typedef struct AllocTabListStruct {
+	struct AllocTabListStruct *next;
+} AllocTabList;
 
 /*
+:*:
+The structure |$1| is usesd to administrate
+memmory pieces with fixed size |elsize|.
+:de:
 Die Datenstruktur |$1| definiert eine Speichersegmenttabelle zur
 Verwaltung von Speichersegmenten der Größe |elsize|.
 
@@ -52,7 +103,7 @@ entnommen und wieder hineiungestellt werden. Vergleiche dazu
 Zum Auffüllen der freien Liste wird ein Block mit |blksize| Elementen
 angefordert. Jedem Block ist eine Kettenstruktur vorangestellt (Für
 die Liste der Datenblöcke).  Der Speicherbedarf für einen Block
-beträgt |sizeof(chain_t)| + |blksize| * |elsize|.
+beträgt |sizeof(AllocTabList)| + |blksize| * |elsize|.
 Datenblöcke, die zum Füllen der freien Liste angefordert wurden,
 werden nicht mehr freigegeben.
 
@@ -66,17 +117,17 @@ typedef struct {
 	size_t elsize;
 	size_t nfree;
 	size_t nused;
-	chain_t *blklist;
-	chain_t *freelist;
-} alloctab_t;
+	AllocTabList *blklist;
+	AllocTabList *freelist;
+} AllocTab;
 
-void *new_data (alloctab_t *tab);
-int del_data (alloctab_t *tab, void *data);
-int tst_data (alloctab_t *tab, void *data);
-void check_data (alloctab_t *tab);
-void *admin_data (alloctab_t *tab, void *tg, const void *src);
+void *new_data (AllocTab *tab);
+int del_data (AllocTab *tab, void *data);
+int tst_data (AllocTab *tab, void *data);
+void check_data (AllocTab *tab);
+void *admin_data (AllocTab *tab, void *tg, const void *src);
 
-#define	ALLOCSIZE(size)		sizealign(size, sizeof(chain_t))
+#define	ALLOCSIZE(size)		sizealign(size, sizeof(AllocTabList))
 
 /*
 Der Makro |$1| liefert die Initialisierungswerte für eine Zuweisungstabelle
@@ -96,7 +147,7 @@ Durch <blk> wird die Zahl der Elemente eines Blockes festgelegt.
 Falls <blk> den Wert 0 hat, werden Standardvorgaben verwendet.
 */
 
-#define	ALLOCTAB(name,blk,size)	alloctab_t name = ALLOCDATA(blk, size)
+#define	ALLOCTAB(name,blk,size)	AllocTab name = ALLOCDATA(blk, size)
 
 
 /*	Robuste Speicherzuweisung

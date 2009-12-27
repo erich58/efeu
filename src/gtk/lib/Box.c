@@ -27,7 +27,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	STR(arg)	(Val_ptr(arg) ? Val_ptr(arg) : "")
 
-GtkWidget *Obj2GtkWidget (Obj_t *obj)
+GtkWidget *Obj2GtkWidget (EfiObj *obj)
 {
 	obj = EvalObj(obj, NULL);
 
@@ -40,7 +40,7 @@ GtkWidget *Obj2GtkWidget (Obj_t *obj)
 	return Obj2Ptr(obj, &EGtkWidgetType);
 }
 
-static GtkWidget *make_box (GtkWidget *box, ObjList_t *list)
+static GtkWidget *make_box (GtkWidget *box, EfiObjList *list)
 {
 	GtkWidget *sub;
 
@@ -56,56 +56,56 @@ static GtkWidget *make_box (GtkWidget *box, ObjList_t *list)
 	return box;
 }
 
-static void f_vbox (Func_t *func, void *rval, void **arg)
+static void f_vbox (EfiFunc *func, void *rval, void **arg)
 {
 	Val_ptr(rval) = make_box(gtk_vbox_new(TRUE, 0), Val_list(arg[0]));
 }
 
-static void f_hbox (Func_t *func, void *rval, void **arg)
+static void f_hbox (EfiFunc *func, void *rval, void **arg)
 {
 	Val_ptr(rval) = make_box(gtk_hbox_new(TRUE, 0), Val_list(arg[0]));
 }
 
-static void f_vbutton_box (Func_t *func, void *rval, void **arg)
+static void f_vbutton_box (EfiFunc *func, void *rval, void **arg)
 {
 	Val_ptr(rval) = make_box(gtk_vbutton_box_new(), Val_list(arg[0]));
 }
 
-static void f_hbutton_box (Func_t *func, void *rval, void **arg)
+static void f_hbutton_box (EfiFunc *func, void *rval, void **arg)
 {
 	Val_ptr(rval) = make_box(gtk_hbutton_box_new(), Val_list(arg[0]));
 }
 
-static void f_pack_start (Func_t *func, void *rval, void **arg)
+static void f_pack_start (EfiFunc *func, void *rval, void **arg)
 {
 	gtk_box_pack_start(Val_ptr(arg[0]), Val_ptr(arg[1]),
 		Val_bool(arg[2]), Val_bool(arg[3]), Val_uint(arg[4]));
 }
 
-static void f_pack_end (Func_t *func, void *rval, void **arg)
+static void f_pack_end (EfiFunc *func, void *rval, void **arg)
 {
 	gtk_box_pack_end(Val_ptr(arg[0]), Val_ptr(arg[1]),
 		Val_bool(arg[2]), Val_bool(arg[3]), Val_uint(arg[4]));
 }
 
-static void f_reorder (Func_t *func, void *rval, void **arg)
+static void f_reorder (EfiFunc *func, void *rval, void **arg)
 {
 	gtk_box_reorder_child(Val_ptr(arg[0]), Val_ptr(arg[1]),
 		Val_int(arg[2]));
 }
 
-static void f_layout (Func_t *func, void *rval, void **arg)
+static void f_layout (EfiFunc *func, void *rval, void **arg)
 {
 	gtk_button_box_set_layout(Val_ptr(arg[0]), Val_int(arg[1]));
 }
 
-static void f_size (Func_t *func, void *rval, void **arg)
+static void f_size (EfiFunc *func, void *rval, void **arg)
 {
 	gtk_button_box_set_child_size(Val_ptr(arg[0]),
 		Val_int(arg[1]), Val_int(arg[2]));
 }
 
-static void f_padding (Func_t *func, void *rval, void **arg)
+static void f_padding (EfiFunc *func, void *rval, void **arg)
 {
 	gtk_button_box_set_child_ipadding(Val_ptr(arg[0]),
 		Val_int(arg[1]), Val_int(arg[2]));
@@ -114,7 +114,7 @@ static void f_padding (Func_t *func, void *rval, void **arg)
 #define	PACKARG	"(GtkWidget," "bool expand = true," \
 	"bool fill = true," "unsigned padding = 0)"
 
-static FuncDef_t fdef[] = {
+static EfiFuncDef fdef[] = {
 	{ 0, NULL, "GtkVBox GtkVBox (...)", f_vbox },
 	{ 0, NULL, "GtkHBox GtkHBox (...)", f_hbox },
 	{ 0, NULL, "GtkVButtonBox GtkVButtonBox (...)", f_vbutton_box },

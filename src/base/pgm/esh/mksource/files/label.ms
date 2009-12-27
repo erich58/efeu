@@ -1,6 +1,7 @@
 /*
 Label-Tabelle generieren
 
+$Header	<$1>
 $Copyright (C) 2000 Erich Frühstück
 This file is part of EFEU.
 
@@ -30,6 +31,9 @@ struct LabelEntry {
 	str desc;
 };
 
+str LabelEntry ()
+	sprintf("{ %#s, %#s }", this.name, this.desc);
+
 struct Label {
 	str name;
 	DataBase db;
@@ -38,10 +42,10 @@ struct Label {
 virtual int dim (Label x)	dim(x.db)
 
 Label Label (str name, ...)
-	return { psub(name, va_list), DataBase(str) };
+	return { psub(name, va_list), DataBase(LabelEntry) };
 
 void Label::add (str name, str desc = NULL)
-	db += sprintf("{ %#s, %#s }", name, desc);
+	db += { name, desc };
 
 void Label::tab (bool glob = false)
 {
@@ -52,9 +56,30 @@ void Label::tab (bool glob = false)
 
 	if	(n == 0)
 	{
-		fpsub(io, "#define\t$1\tNULL\n\n");
+		fpsub(io, "#define\t$1\tNULL\n\n", name);
 	}
-	else	DeclVec(glob, "Label_t $1_tab", n, "$(db[n]:%s)");
+	else	DeclVec(glob, psub("Label $1_tab", name), n, "$(db[n]:%s)");
+}
+
+void Label::macro (bool glob = false)
+{
+	IO io = glob ? hdr : src;
+	int n = 0;
+
+	for (x in db)
+	{
+		if	(x.name == /^[[:alnum:]_]+$/)
+		{
+			fprintf(io, "#define\t%s_%s\t%d", name, x.name, n);
+
+			if	(x.desc)
+				fprintf(io, "\t/* %s */", x.desc);
+
+			io << "\n";
+		}
+
+		n++;
+	}
 }
 
 void Label::load (IO io)

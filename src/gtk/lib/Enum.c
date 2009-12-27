@@ -25,8 +25,10 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/stdtype.h>
 #include <EFEU/CmdPar.h>
 
+#define	GTK_1_2	0
+
 /* Arrow types */
-static EnumTypeDef_t arrow[] = {
+static EnumTypeDef arrow[] = {
 	{ "up", GTK_ARROW_UP },
 	{ "down", GTK_ARROW_DOWN },
 	{ "left", GTK_ARROW_LEFT },
@@ -34,14 +36,15 @@ static EnumTypeDef_t arrow[] = {
 };	/* GtkArrowType */
 
 /* Attach options (for tables) */
-static EnumTypeDef_t attach[] = {
+static EnumTypeDef attach[] = {
 	{ "expand", GTK_EXPAND },
 	{ "shrink", GTK_SHRINK },
 	{ "fill", GTK_FILL },
 };	/* GtkAttachOptions */
 
+#if	GTK_1_2
 /* Button box styles */
-static EnumTypeDef_t buttonbox[] =  {
+static EnumTypeDef buttonbox[] =  {
 	{ "default", GTK_BUTTONBOX_DEFAULT_STYLE },
 	{ "spread", GTK_BUTTONBOX_SPREAD },
 	{ "edge", GTK_BUTTONBOX_EDGE },
@@ -50,14 +53,15 @@ static EnumTypeDef_t buttonbox[] =  {
 };	/* GtkButtonBoxStyle */
 
 /* Curve types */
-static EnumTypeDef_t curve[] = {
+static EnumTypeDef curve[] = {
 	{ "linear", GTK_CURVE_TYPE_LINEAR },
 	{ "spline", GTK_CURVE_TYPE_SPLINE },
 	{ "free", GTK_CURVE_TYPE_FREE },
 };	/* GtkCurveType */
+#endif
  
 /* Focus movement types */
-static EnumTypeDef_t direction[] = {
+static EnumTypeDef direction[] = {
 	{ "forward", GTK_DIR_TAB_FORWARD },
 	{ "backward", GTK_DIR_TAB_BACKWARD },
 	{ "up", GTK_DIR_UP },
@@ -67,15 +71,17 @@ static EnumTypeDef_t direction[] = {
 };	/* GtkDirectionType */
 
 /* justification for label and maybe other widgets (text?) */
-static EnumTypeDef_t justification[] = {
+static EnumTypeDef justification[] = {
 	{ "left", GTK_JUSTIFY_LEFT },
 	{ "right", GTK_JUSTIFY_RIGHT },
 	{ "center", GTK_JUSTIFY_CENTER },
 	{ "fill", GTK_JUSTIFY_FILL },
 };	/* GtkJustification */
 
+#if	GTK_1_2
+
 /* GtkPatternSpec match types */
-static EnumTypeDef_t match[] = {
+static EnumTypeDef match[] = {
 	{ "all", GTK_MATCH_ALL },
 	{ "all_tail", GTK_MATCH_ALL_TAIL },
 	{ "head", GTK_MATCH_HEAD },
@@ -85,47 +91,51 @@ static EnumTypeDef_t match[] = {
 };	/* GtkMatchType */
 
 /* Menu keyboard movement types */
-static EnumTypeDef_t menu_dir[] = {
+static EnumTypeDef menu_dir[] = {
 	{ "parent", GTK_MENU_DIR_PARENT },
 	{ "child", GTK_MENU_DIR_CHILD },
 	{ "next", GTK_MENU_DIR_NEXT },
 	{ "prev", GTK_MENU_DIR_PREV },
 };	/* GtkMenuDirectionType */
+#endif
 
-static EnumTypeDef_t menu_factory[] = {
+static EnumTypeDef menu_factory[] = {
 	{ "menu", GTK_MENU_FACTORY_MENU },
 	{ "menu_bar", GTK_MENU_FACTORY_MENU_BAR },
 	{ "option_menu", GTK_MENU_FACTORY_OPTION_MENU },
 };	/* GtkMenuFactoryType */
 
-static EnumTypeDef_t metric[] = {
+static EnumTypeDef metric[] = {
 	{ "pixels", GTK_PIXELS },
 	{ "inch", GTK_INCHES },
 	{ "cm", GTK_CENTIMETERS },
 };	/* GtkMetricType */
 
 /* Orientation for toolbars, etc. */
-static EnumTypeDef_t orientation[] = {
+static EnumTypeDef orientation[] = {
 	{ "horizontal", GTK_ORIENTATION_HORIZONTAL },
 	{ "vertical", GTK_ORIENTATION_VERTICAL },
 };	/* GtkOrientation */
 
+#if	GTK_1_2
 /* Placement type for scrolled window */
-static EnumTypeDef_t corner[] = {
+static EnumTypeDef corner[] = {
 	{ "top_left", GTK_CORNER_TOP_LEFT },
 	{ "bottom_left", GTK_CORNER_BOTTOM_LEFT },
 	{ "top_right", GTK_CORNER_TOP_RIGHT },
 	{ "bottom_right", GTK_CORNER_BOTTOM_RIGHT },
 };	/* GtkCornerType */
+#endif
 
 /* Packing types (for boxes) */
-static EnumTypeDef_t pack[] = {
+static EnumTypeDef pack[] = {
 	{ "start", GTK_PACK_START },
 	{ "end", GTK_PACK_END },
 };	/* GtkPackType */
 
+#if	GTK_1_2
 /* priorities for path lookups */
-static EnumTypeDef_t path_prio[] = {
+static EnumTypeDef path_prio[] = {
 	{ "low", GTK_PATH_PRIO_LOWEST },
 	{ "gtk", GTK_PATH_PRIO_GTK },
 	{ "app", GTK_PATH_PRIO_APPLICATION },
@@ -135,57 +145,64 @@ static EnumTypeDef_t path_prio[] = {
 };	/* GtkPathPriorityType */
 
 /* widget path types */
-static EnumTypeDef_t path[] = {
+static EnumTypeDef path[] = {
 	{ "widget", GTK_PATH_WIDGET },
 	{ "widget_class", GTK_PATH_WIDGET_CLASS },
 	{ "class", GTK_PATH_CLASS },
 };	/* GtkPathType */
+#endif
 
 /* Scrollbar policy types (for scrolled windows) */
-static EnumTypeDef_t policy[] = {
+static EnumTypeDef policy[] = {
 	{ "always", GTK_POLICY_ALWAYS },
 	{ "auto", GTK_POLICY_AUTOMATIC },
+#if	GTK_1_2
 	{ "never", GTK_POLICY_NEVER },
+#endif
 };	/* GtkPolicyType */
 
-static EnumTypeDef_t position[] = {
+static EnumTypeDef position[] = {
 	{ "left", GTK_POS_LEFT },
 	{ "right", GTK_POS_RIGHT },
 	{ "top", GTK_POS_TOP },
 	{ "bottom", GTK_POS_BOTTOM },
 };	/* GtkPositionType */
 
-static EnumTypeDef_t preview[] = {
+static EnumTypeDef preview[] = {
 	{ "color", GTK_PREVIEW_COLOR },
 	{ "gray", GTK_PREVIEW_GRAYSCALE },
 };	/* GtkPreviewType */
 
+#if	GTK_1_2
 /* Style for buttons */
-static EnumTypeDef_t relief[] = {
+static EnumTypeDef relief[] = {
 	{ "normal", GTK_RELIEF_NORMAL },
 	{ "half", GTK_RELIEF_HALF },
 	{ "none", GTK_RELIEF_NONE },
 };	/* GtkReliefStyle */
 
 /* Resize type */
-static EnumTypeDef_t resize[] = {
+static EnumTypeDef resize[] = {
 	{ "parent", GTK_RESIZE_PARENT },
 	{ "queue", GTK_RESIZE_QUEUE },
 	{ "immediate", GTK_RESIZE_IMMEDIATE },
 };	/* GtkResizeMode */
+#endif
 
 /* signal run types */
-static EnumTypeDef_t run[] = {
+static EnumTypeDef run[] = {
 	{ "first", GTK_RUN_FIRST },
 	{ "last", GTK_RUN_LAST },
 	{ "both", GTK_RUN_BOTH },
 	{ "no_recurse", GTK_RUN_NO_RECURSE },
+#if	GTK_1_2
 	{ "action", GTK_RUN_ACTION },
 	{ "no_hooks", GTK_RUN_NO_HOOKS },
+#endif
 };	/* GtkSignalRunType */
 
 /* scrolling types */
-static EnumTypeDef_t scroll[] = {
+static EnumTypeDef scroll[] = {
 	{ "none", GTK_SCROLL_NONE },
 	{ "step_backward", GTK_SCROLL_STEP_BACKWARD },
 	{ "step_forward", GTK_SCROLL_STEP_FORWARD },
@@ -195,7 +212,7 @@ static EnumTypeDef_t scroll[] = {
 };	/* GtkScrollType */
 
 /* list selection modes */
-static EnumTypeDef_t selection[] = {
+static EnumTypeDef selection[] = {
 	{ "single", GTK_SELECTION_SINGLE },
 	{ "browse", GTK_SELECTION_BROWSE },
 	{ "multiple", GTK_SELECTION_MULTIPLE },
@@ -203,7 +220,7 @@ static EnumTypeDef_t selection[] = {
 };	/* GtkSelectionMode */
 
 /* Shadow types */
-static EnumTypeDef_t shadow[] = {
+static EnumTypeDef shadow[] = {
 	{ "none", GTK_SHADOW_NONE },
 	{ "in", GTK_SHADOW_IN },
 	{ "out", GTK_SHADOW_OUT },
@@ -212,7 +229,7 @@ static EnumTypeDef_t shadow[] = {
 };	/* GtkShadowType */
 
 /* Widget states */
-static EnumTypeDef_t state[] = {
+static EnumTypeDef state[] = {
 	{ "normal", GTK_STATE_NORMAL },
 	{ "active", GTK_STATE_ACTIVE },
 	{ "prelight", GTK_STATE_PRELIGHT },
@@ -221,26 +238,26 @@ static EnumTypeDef_t state[] = {
 };	/* GtkStateType */
 
 /* Directions for submenus */
-static EnumTypeDef_t sub_dir[] = {
+static EnumTypeDef sub_dir[] = {
 	{ "left", GTK_DIRECTION_LEFT },
 	{ "right", GTK_DIRECTION_RIGHT },
 };	/* GtkSubmenuDirection */
 
 /* Placement of submenus */
-static EnumTypeDef_t sub_place[] = {
+static EnumTypeDef sub_place[] = {
 	{ "top_bottom", GTK_TOP_BOTTOM },
 	{ "left_right", GTK_LEFT_RIGHT },
 };	/* GtkSubmenuPlacement */
 
 /* Style for toolbars */
-static EnumTypeDef_t toolbar[] = {
+static EnumTypeDef toolbar[] = {
 	{ "icons", GTK_TOOLBAR_ICONS },
 	{ "text", GTK_TOOLBAR_TEXT },
 	{ "both", GTK_TOOLBAR_BOTH },
 };	/* GtkToolbarStyle */
 
 /* Trough types for GtkRange */
-static EnumTypeDef_t through[] = {
+static EnumTypeDef through[] = {
 	{ "none", GTK_TROUGH_NONE },
 	{ "start", GTK_TROUGH_START },
 	{ "end", GTK_TROUGH_END },
@@ -248,39 +265,43 @@ static EnumTypeDef_t through[] = {
 };	/* GtkTroughType */
 
 /* Data update types (for ranges) */
-static EnumTypeDef_t update[] = {
+static EnumTypeDef update[] = {
 	{ "continuous", GTK_UPDATE_CONTINUOUS },
 	{ "discontinuous", GTK_UPDATE_DISCONTINUOUS },
 	{ "delayed", GTK_UPDATE_DELAYED },
 };	/* GtkUpdateType */
 
 /* Generic visibility flags */
-static EnumTypeDef_t visibility[] = {
+static EnumTypeDef visibility[] = {
 	{ "none", GTK_VISIBILITY_NONE },
 	{ "partial", GTK_VISIBILITY_PARTIAL },
 	{ "full", GTK_VISIBILITY_FULL },
 };	/* GtkVisibility */
 
 /* Window position types */
-static EnumTypeDef_t win_pos[] = {
+static EnumTypeDef win_pos[] = {
 	{ "none", GTK_WIN_POS_NONE },
 	{ "center", GTK_WIN_POS_CENTER },
 	{ "mouse", GTK_WIN_POS_MOUSE },
+#if	GTK_1_2
 	{ "center_always", GTK_WIN_POS_CENTER_ALWAYS },
+#endif
 };	/* GtkWindowPosition */
 
 /* Window types */
-static EnumTypeDef_t window[] = {
+static EnumTypeDef window[] = {
 	{ "toplevel", GTK_WINDOW_TOPLEVEL },
 	{ "dialog", GTK_WINDOW_DIALOG },
 	{ "popup", GTK_WINDOW_POPUP },
 };	/* GtkWindowType */
 
+#if	GTK_1_2
 /* How to sort */
-static EnumTypeDef_t sort[] = {
+static EnumTypeDef sort[] = {
 	{ "ascending", GTK_SORT_ASCENDING },
 	{ "descending", GTK_SORT_DESCENDING },
 };	/* GtkSortType */
+#endif
 
 /*
 :de:
@@ -295,24 +316,15 @@ void EGtkEnum_setup (void)
 {
 	NewEnumType("GtkArrowType", arrow, tabsize(arrow));
 	NewEnumType("GtkAttachOptions", attach, tabsize(attach));
-	NewEnumType("GtkButtonBoxStyle", buttonbox, tabsize(buttonbox));
-	NewEnumType("GtkCurveType", curve, tabsize(curve));
 	NewEnumType("GtkDirectionType", direction, tabsize(direction));
 	NewEnumType("GtkJustification", justification, tabsize(justification));
-	NewEnumType("GtkMatchType", match, tabsize(match));
-	NewEnumType("GtkMenuDirectionType", menu_dir, tabsize(menu_dir));
 	NewEnumType("GtkMenuFactoryType", menu_factory, tabsize(menu_factory));
 	NewEnumType("GtkMetricType", metric, tabsize(metric));
 	NewEnumType("GtkOrientation", orientation, tabsize(orientation));
-	NewEnumType("GtkCornerType", corner, tabsize(corner));
 	NewEnumType("GtkPackType", pack, tabsize(pack));
-	NewEnumType("GtkPathPriorityType", path_prio, tabsize(path_prio));
-	NewEnumType("GtkPathType", path, tabsize(path));
 	NewEnumType("GtkPolicyType", policy, tabsize(policy));
 	NewEnumType("GtkPositionType", position, tabsize(position));
 	NewEnumType("GtkPreviewType", preview, tabsize(preview));
-	NewEnumType("GtkReliefStyle", relief, tabsize(relief));
-	NewEnumType("GtkResizeMode", resize, tabsize(resize));
 	NewEnumType("GtkSignalRunType", run, tabsize(run));
 	NewEnumType("GtkScrollType", scroll, tabsize(scroll));
 	NewEnumType("GtkSelectionMode", selection, tabsize(selection));
@@ -326,7 +338,18 @@ void EGtkEnum_setup (void)
 	NewEnumType("GtkVisibility", visibility, tabsize(visibility));
 	NewEnumType("GtkWindowPosition", win_pos, tabsize(win_pos));
 	NewEnumType("GtkWindowType", window, tabsize(window));
+#if	GTK_1_2
+	NewEnumType("GtkButtonBoxStyle", buttonbox, tabsize(buttonbox));
+	NewEnumType("GtkCurveType", curve, tabsize(curve));
+	NewEnumType("GtkCornerType", corner, tabsize(corner));
+	NewEnumType("GtkMatchType", match, tabsize(match));
+	NewEnumType("GtkMenuDirectionType", menu_dir, tabsize(menu_dir));
+	NewEnumType("GtkPathPriorityType", path_prio, tabsize(path_prio));
+	NewEnumType("GtkPathType", path, tabsize(path));
+	NewEnumType("GtkReliefStyle", relief, tabsize(relief));
+	NewEnumType("GtkResizeMode", resize, tabsize(resize));
 	NewEnumType("GtkSortType", sort, tabsize(sort));
+#endif
 }
 
 /*

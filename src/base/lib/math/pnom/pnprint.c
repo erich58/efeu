@@ -22,7 +22,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <Math/pnom.h>
 
-int pnprint(io_t *io, pnom_t *p, const char *fmt)
+int pnprint(IO *io, Polynom *p, const char *fmt)
 {
 	int n, i, j;
 

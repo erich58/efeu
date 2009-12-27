@@ -41,7 +41,7 @@ typedef struct {
 	int icase;	/* Flag zur Fallunterscheidung */
 	char *def;	/* Definitionsstring */
 	regex_t exp;	/* übersetzter Ausdruck */
-} RegExp_t;
+} RegExp;
 
 /*
 :de:
@@ -51,12 +51,12 @@ mit |RegExp_exec| abgefragt werden können.
 
 #define	REGEXP_MAXSUB	32
 
-extern reftype_t RegExp_reftype;
+extern RefType RegExp_reftype;
 extern char *RegExp_error;
 
-RegExp_t *RegExp (const char *str, int flags);
-int RegExp_exec (RegExp_t *exp, const char *str, regmatch_t **ptr);
-char *RegExp_subst (RegExp_t *exp, const char *repl,
+RegExp *RegExp_comp (const char *str, int flags);
+int RegExp_exec (RegExp *exp, const char *str, regmatch_t **ptr);
+char *RegExp_subst (RegExp *exp, const char *repl,
 	const char *str, int glob);
 
 #endif	/* EFEU/RegExp.h */

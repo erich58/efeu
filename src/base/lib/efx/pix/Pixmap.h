@@ -32,17 +32,15 @@ typedef struct {
 	REFVAR;		/* Referenzvariablen */
 	size_t rows;	/* Zahl der Zeilen */
 	size_t cols;	/* Zahl der Spalten */
-	uchar_t *data;	/* Datenvektor */
-} Pixmap_t;
+	unsigned char *data;	/* Datenvektor */
+} EPixmap;
 
-extern reftype_t Pixmap_reftype;
+EPixmap *NewPixmap (size_t rows, size_t cols, int color);
 
-Pixmap_t *NewPixmap (size_t rows, size_t cols, int color);
+EPixmap *LoadPixmap (IO *io);
+void SavePixmap (EPixmap *pix, IO *io);
 
-Pixmap_t *LoadPixmap (io_t *io);
-void SavePixmap (Pixmap_t *pix, io_t *io);
-
-void Pixmap_vadjust (Pixmap_t *pix, int idx, int offset);
+void Pixmap_vadjust (EPixmap *pix, int idx, int offset);
 void SetupPixmap (void);
 
 #endif	/* EFEU/Pixmap.h */

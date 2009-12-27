@@ -1,5 +1,5 @@
 /*
-IO-Kopierdefinitionen
+IO-Kopierhilfsfunktionen
 
 $Header	<EFEU/$1>
 
@@ -27,43 +27,21 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/io.h>
 
-typedef struct {
-	char *key;
-	char *arg;
-	unsigned flags;
-	int (*func) (io_t *in, io_t *out, int key, const char *arg, unsigned flags);
-} iocpy_t;
-
-
-int iocpy (io_t *in, io_t *out, iocpy_t *def, size_t dim);
-char *miocpy (io_t *in, iocpy_t *def, size_t dim);
-int iocpyfmt (const char *fmt, io_t *out, iocpy_t *def, size_t dim);
-char *miocpyfmt (const char *fmt, iocpy_t *def, size_t dim);
-io_t *cpyfilter (io_t *io, iocpy_t *def, size_t dim);
-
-extern int iocpy_flag;	/* Flag für Sonderzeichen */
-extern int iocpy_last;	/* Zuletzt gelesenes Zeichen */
-
-
-/*	Standardkopierroutinen
+/*	Standardkopierroutinen
 */
 
-int iocpy_esc (io_t *in, io_t *out, int key, const char *arg, unsigned flags);
-int iocpy_mark (io_t *in, io_t *out, int key, const char *arg, unsigned flags);
-int iocpy_repl (io_t *in, io_t *out, int key, const char *arg, unsigned flags);
+int iocpy_esc (IO *in, IO *out, int key, const char *arg, unsigned flags);
+int iocpy_mark (IO *in, IO *out, int key, const char *arg, unsigned flags);
+int iocpy_repl (IO *in, IO *out, int key, const char *arg, unsigned flags);
 
-int iocpy_skip (io_t *in, io_t *out, int key, const char *arg, unsigned flags);
-int iocpy_cskip (io_t *in, io_t *out, int key, const char *arg, unsigned flags);
+int iocpy_skip (IO *in, IO *out, int key, const char *arg, unsigned flags);
+int iocpy_cskip (IO *in, IO *out, int key, const char *arg, unsigned flags);
 
-int iocpy_psub (io_t *in, io_t *out, int key, const char *arg, unsigned flags);
-int iocpy_eval (io_t *in, io_t *out, int key, const char *arg, unsigned flags);
-int iocpy_term (io_t *in, io_t *out, int key, const char *arg, unsigned flags);
+int iocpy_value (IO *in, IO *out, int key, const char *arg, unsigned flags);
+int iocpy_name (IO *in, IO *out, int key, const char *arg, unsigned flags);
+int iocpy_str (IO *in, IO *out, int key, const char *arg, unsigned flags);
+int iocpy_xstr (IO *in, IO *out, int key, const char *arg, unsigned flags);
 
-int iocpy_value (io_t *in, io_t *out, int key, const char *arg, unsigned flags);
-int iocpy_name (io_t *in, io_t *out, int key, const char *arg, unsigned flags);
-int iocpy_str (io_t *in, io_t *out, int key, const char *arg, unsigned flags);
-int iocpy_xstr (io_t *in, io_t *out, int key, const char *arg, unsigned flags);
-
-int iocpy_usage (io_t *in, io_t *out, int key, const char *arg, unsigned flags);
+int iocpy_usage (IO *in, IO *out, int key, const char *arg, unsigned flags);
 
 #endif	/* EFEU/iocpy.h */

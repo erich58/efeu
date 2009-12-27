@@ -24,13 +24,13 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/konvobj.h>
 
 typedef struct {
-	Func_t *func;	/* Konvertierungsfunktion */
-	Type_t *type;	/* Konvertierungstype */
+	EfiFunc *func;	/* Konvertierungsfunktion */
+	EfiType *type;	/* Konvertierungstype */
 	void *data;	/* Datenbuffer */
 } ARGKONV;
 
 typedef struct {
-	Func_t *func;	/* Basisfunktion */
+	EfiFunc *func;	/* Basisfunktion */
 	ARGKONV *konv;	/* Konvertierungsliste */
 	size_t dim;	/* Konvertierungsdimension */
 	char *buf;	/* Konvertierungsbuffer */
@@ -40,14 +40,14 @@ typedef struct {
 /*	Funktion für gegebene Argumente aus Funktionstabelle generieren
 */
 
-static void GetFuncEval (Func_t *func, void *rval, void **ptr);
+static void GetFuncEval (EfiFunc *func, void *rval, void **ptr);
 
 
-Func_t *XGetFunc(Type_t *type, VirFunc_t *vtab, FuncArg_t *arg, size_t narg)
+EfiFunc *XGetFunc(EfiType *type, EfiVirFunc *vtab, EfiFuncArg *arg, size_t narg)
 {
 	FUNCDEF *def;
-	Func_t *func;
-	ArgKonv_t *konv;
+	EfiFunc *func;
+	EfiArgKonv *konv;
 	size_t i, j;
 
 	if	(vtab == NULL)	return NULL;
@@ -102,12 +102,12 @@ Func_t *XGetFunc(Type_t *type, VirFunc_t *vtab, FuncArg_t *arg, size_t narg)
 	else				func->type = type;
 
 	func->name = mstrcpy(def->func->name);
-	func->arg = ALLOC(narg, FuncArg_t);
+	func->arg = memalloc(narg * sizeof(EfiFuncArg));
 	func->eval = GetFuncEval;
 	func->dim = narg;
 	func->bound = def->func->bound;
 	func->weight = def->func->weight;
-	func->virtual = def->func->virtual;
+	func->virfunc = def->func->virfunc;
 	func->vaarg = 0;
 	func->par = def;
 	func->clean = memfree;
@@ -126,10 +126,10 @@ Func_t *XGetFunc(Type_t *type, VirFunc_t *vtab, FuncArg_t *arg, size_t narg)
 }
 
 
-FuncArg_t *FuncArg(int narg, ...)
+EfiFuncArg *FuncArg(int narg, ...)
 {
 	va_list list;
-	FuncArg_t *arg;
+	EfiFuncArg *arg;
 
 	va_start(list, narg);
 	arg = VaFuncArg(narg, list);
@@ -138,18 +138,18 @@ FuncArg_t *FuncArg(int narg, ...)
 }
 
 
-FuncArg_t *VaFuncArg(int narg, va_list list)
+EfiFuncArg *VaFuncArg(int narg, va_list list)
 {
-	FuncArg_t *arg;
+	EfiFuncArg *arg;
 	int i;
 
 	if	(narg == 0)	return NULL;
 
-	arg = ALLOC(narg, FuncArg_t);
+	arg = memalloc(narg * sizeof(EfiFuncArg));
 
 	for (i = 0; i < narg; i++)
 	{
-		arg[i].type = va_arg(list, Type_t *);
+		arg[i].type = va_arg(list, EfiType *);
 		arg[i].lval = va_arg(list, int);
 		arg[i].nokonv = 0;
 		arg[i].name = NULL;
@@ -160,10 +160,10 @@ FuncArg_t *VaFuncArg(int narg, va_list list)
 }
 
 
-Func_t *GetFunc (Type_t *type, VirFunc_t *tab, int narg, ...)
+EfiFunc *GetFunc (EfiType *type, EfiVirFunc *tab, int narg, ...)
 {
-	Func_t *func;
-	FuncArg_t *arg;
+	EfiFunc *func;
+	EfiFuncArg *arg;
 	va_list list;
 
 	va_start(list, narg);
@@ -175,10 +175,10 @@ Func_t *GetFunc (Type_t *type, VirFunc_t *tab, int narg, ...)
 }
 
 
-Func_t *VaGetFunc (Type_t *type, VirFunc_t *tab, int narg, va_list list)
+EfiFunc *VaGetFunc (EfiType *type, EfiVirFunc *tab, int narg, va_list list)
 {
-	Func_t *func;
-	FuncArg_t *arg;
+	EfiFunc *func;
+	EfiFuncArg *arg;
 
 	arg = VaFuncArg(narg, list);
 	func = XGetFunc(type, tab, arg, narg);
@@ -189,19 +189,19 @@ Func_t *VaGetFunc (Type_t *type, VirFunc_t *tab, int narg, va_list list)
 /*	Auswertungsfunktion
 */
 
-static void GetFuncEval(Func_t *func, void *rval, void **ptr)
+static void GetFuncEval(EfiFunc *func, void *rval, void **ptr)
 {
 	FUNCDEF *def;
 	ARGKONV *konv;
-	FuncArg_t *arg;
-	FuncArg_t *farg;
-	ObjList_t *list, *vlist, **p;
+	EfiFuncArg *arg;
+	EfiFuncArg *farg;
+	EfiObjList *list, *vlist, **p;
 	void **arglist;
-	Obj_t *o;
+	EfiObj *o;
 	int i, n;
 
 	def = func->par;
-	arglist = ALLOC(def->func->dim, void *);
+	arglist = memalloc(def->func->dim * sizeof(void *));
 
 /*	Aufrufargumente konvertieren
 */
@@ -217,7 +217,7 @@ static void GetFuncEval(Func_t *func, void *rval, void **ptr)
 		}
 		else if	(arg[i].type == NULL)
 		{
-			Obj_t *o;
+			EfiObj *o;
 
 			o = EvalObj(RefObj(ptr[i]), farg[i].type);
 
@@ -237,7 +237,7 @@ static void GetFuncEval(Func_t *func, void *rval, void **ptr)
 		}
 		else if	(konv[i].func)
 		{
-			register Func_t *func = konv[i].func;
+			register EfiFunc *func = konv[i].func;
 
 			arglist[i] = konv[i].data;
 			memset(arglist[i], 0, farg[i].type->size);

@@ -5,7 +5,7 @@
 \title	Die Programmbibliothek md
 Handbuch für Programmierer
 
-\intro
+\preface
 Die Programmbiliothek |md| enthält sämtliche Hilfsfunktionen
 zum Arbeiten mit Datenmatrizen.
 

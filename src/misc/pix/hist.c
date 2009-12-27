@@ -22,10 +22,10 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/oldpixmap.h>
 
-void OldPixMap_Histogramm(Func_t *func, void *rval, void **arg)
+void OldPixMap_Histogramm(EfiFunc *func, void *rval, void **arg)
 {
-	OldPixMap_t *pix;
-	io_t *io;
+	OldPixMap *pix;
+	IO *io;
 	int i, size, *vec;
 
 	pix = Val_OldPixMap(arg[0]);
@@ -34,8 +34,7 @@ void OldPixMap_Histogramm(Func_t *func, void *rval, void **arg)
 	if	(pix == NULL)	return;
 
 	size = pix->rows * pix->cols;
-	vec = ALLOC(PIX_CDIM, int);
-	memset(vec, 0, PIX_CDIM * sizeof(int));
+	vec = memalloc(PIX_CDIM * sizeof(int));
 
 	for (i = 0; i < size; i++)
 		vec[pix->pixel[i]]++;

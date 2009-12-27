@@ -5,26 +5,26 @@
 #include <EFEU/mdmat.h>
 
 typedef struct {
-	mdaxis_t *axis;
-	Func_t *mul;
-	Func_t *add;
+	mdaxis *axis;
+	EfiFunc *mul;
+	EfiFunc *add;
 	void *buf;
 } GPAR;
 
-static void mainwalk (GPAR *par, mdaxis_t *x, mdaxis_t *x1, mdaxis_t *x2,
+static void mainwalk (GPAR *par, mdaxis *x, mdaxis *x1, mdaxis *x2,
 	char *p, char *p1, char *p2);
 
-static void subwalk (GPAR *par, mdaxis_t *x, char *p, char *p1, char *p2);
+static void subwalk (GPAR *par, mdaxis *x, char *p, char *p1, char *p2);
 
 
 /*	Hauptprogramm
 */
 
-mdmat_t *md_prod (mdmat_t *base)
+mdmat *md_prod (mdmat *base)
 {
-	mdaxis_t *axis, *xpre, *xpost, **ppre, **ppost;
+	mdaxis *axis, *xpre, *xpost, **ppre, **ppost;
 	GPAR par;
-	mdmat_t *md;
+	mdmat *md;
 
 	if	(base == NULL)
 		return NULL;
@@ -36,9 +36,8 @@ mdmat_t *md_prod (mdmat_t *base)
 	
 	if	(par.mul == NULL)
 	{
-		reg_set(1, type2str(base->type));
-		reg_set(2, type2str(base->type));
-		liberror(MSG_MDMAT, 64);
+		dbg_error(NULL, "[mdmat:64]", "mm",
+			type2str(base->type), type2str(base->type));
 		return NULL;
 	}
 
@@ -75,7 +74,7 @@ mdmat_t *md_prod (mdmat_t *base)
 */
 	md = new_mdmat();
 	md->axis = xpre;
-	md->type = (Type_t *) par.mul->type;
+	md->type = (EfiType *) par.mul->type;
 	md->size = md_size(md->axis, md->type->size);
 	md->data = memalloc(md->size);
 	memset(md->data, 0, (size_t) md->size);
@@ -89,7 +88,7 @@ mdmat_t *md_prod (mdmat_t *base)
 /*	Ergebnisachse durchwandern
 */
 
-static void mainwalk (GPAR *par, mdaxis_t *x, mdaxis_t *x1, mdaxis_t *x2,
+static void mainwalk (GPAR *par, mdaxis *x, mdaxis *x1, mdaxis *x2,
 	char *p, char *p1, char *p2)
 {
 	size_t s1, s2;
@@ -133,7 +132,7 @@ static void mainwalk (GPAR *par, mdaxis_t *x, mdaxis_t *x1, mdaxis_t *x2,
 /*	Eliminationsachsen durchwandern
 */
 
-static void subwalk (GPAR *par, mdaxis_t *x, char *p, char *p1, char *p2)
+static void subwalk (GPAR *par, mdaxis *x, char *p, char *p1, char *p2)
 {
 	int i;
 

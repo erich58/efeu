@@ -25,44 +25,42 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/io.h>
 #include <EFEU/ioctrl.h>
 
-static ALLOCTAB(io_tab, 0, sizeof(io_t));
+static ALLOCTAB(io_tab, 0, sizeof(IO));
 
 int io_close_stat = 0;
 
-static io_t *io_admin (io_t *tg, const io_t *src)
+static void io_clean (void *ptr)
 {
-	if	(tg)
-	{
-		io_pushback(tg);
-		io_close_stat = io_ctrl(tg, IO_CLOSE);
-
-		if	(src == NULL)
-		{
-			del_data(&io_tab, tg);
-			tg = NULL;
-		}
-	}
-	else	tg = src ? (io_t *) src : new_data(&io_tab);
-
-	return tg;
+	IO *io = ptr;
+	io_pushback(io);
+	io_close_stat = io_ctrl(io, IO_CLOSE);
+	del_data(&io_tab, io);
 }
 
-ADMINREFTYPE(io_reftype, "IO", io_ident, io_admin);
-
-
-/*	IO-Struktur generieren
-*/
-
-io_t *io_alloc (void)
+static char *io_ident (const void *ptr)
 {
-	return rd_create(&io_reftype);
+	char *name;
+
+	if	(io_ctrl((IO *) ptr, IO_IDENT, &name) != EOF)
+		return name;
+
+	return mstrcpy("<io>");
 }
+
+
+IO *io_alloc (void)
+{
+	return rd_init(&io_reftype, new_data(&io_tab));
+}
+
+
+RefType io_reftype = REFTYPE_INIT("IO", io_ident, io_clean);
 
 
 /*	IO-Struktur schließen/Referenzzähler verringern
 */
 
-int io_close (io_t *io)
+int io_close (IO *io)
 {
 	io_close_stat = 0;
 	rd_deref(io);
@@ -73,7 +71,7 @@ int io_close (io_t *io)
 /*	Gepufferte Zeichen zurückschreiben
 */
 
-int io_pushback (io_t *io)
+int io_pushback (IO *io)
 {
 	if	(io == NULL)	return 0;
 
@@ -95,24 +93,10 @@ int io_pushback (io_t *io)
 }
 
 
-/*	Identität abfragen
-*/
-
-char *io_ident (io_t *io)
-{
-	char *name;
-
-	if	(io_ctrl(io, IO_IDENT, &name) != EOF)
-		return name;
-
-	return io ? mstrcpy("<io>") : NULL;
-}
-
-
 /*	Zurücksetzen der IO-Struktur
 */
 
-int io_rewind (io_t *io)
+int io_rewind (IO *io)
 {
 	if	(io_ctrl(io, IO_REWIND) == EOF)
 		return EOF;

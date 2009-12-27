@@ -2,9 +2,10 @@
 	(c) 1995 Erich Frühstück
 */
 
-#include <EFEU/mdmat.h>
+#include <EFEU/mdtest.h>
 
-static void maineval(Obj_t *expr, mdaxis_t *axis, Var_t *var, mdaxis_t *x, unsigned mask, void *data)
+static void maineval(EfiObj *expr, mdaxis *axis, EfiVar *var,
+	mdaxis *x, unsigned mask, void *data)
 {
 	int i;
 
@@ -37,12 +38,12 @@ static void maineval(Obj_t *expr, mdaxis_t *axis, Var_t *var, mdaxis_t *x, unsig
 	}
 }
 
-static void md_xeval(mdmat_t *md, const char *name, unsigned mask, Obj_t *expr)
+static void md_xeval(mdmat *md, const char *name, unsigned mask, EfiObj *expr)
 {
-	mdaxis_t *x;
-	mdaxis_t *axis;
-	mdtest_t *test;
-	Var_t *var;
+	mdaxis *x;
+	mdaxis *axis;
+	mdtest *test;
+	EfiVar *var;
 	int i, n, dim;
 	int vdim;
 
@@ -51,13 +52,13 @@ static void md_xeval(mdmat_t *md, const char *name, unsigned mask, Obj_t *expr)
 /*	Auswertungsachse bestimmen
 */
 	dim = md_dim(md->axis);
-	test = new_test(name, dim);
+	test = mdtest_create(name, dim);
 	axis = NULL;
 
 	for (x = md->axis, n = 1; x != NULL; x = x->next, n++)
-		if (mdtest(test, x->name, n)) axis = x;
+		if (mdtest_eval(test, x->name, n)) axis = x;
 
-	del_test(test);
+	mdtest_clean(test);
 
 /*	Variablentabelle generieren
 */
@@ -70,8 +71,7 @@ static void md_xeval(mdmat_t *md, const char *name, unsigned mask, Obj_t *expr)
 	}
 	else	vdim = dim + 1;
 
-	var = ALLOC(vdim, Var_t);
-	memset(var, 0, vdim * sizeof(Var_t));
+	var = memalloc(vdim * sizeof(EfiVar));
 	n = 0;
 
 	for (x = md->axis; x != NULL; x = x->next)
@@ -116,12 +116,12 @@ static void md_xeval(mdmat_t *md, const char *name, unsigned mask, Obj_t *expr)
 	memfree(var);
 }
 
-void MF_xeval(Func_t *func, void *rval, void **arg)
+void MF_xeval(EfiFunc *func, void *rval, void **arg)
 {
-	mdmat_t *md;
+	mdmat *md;
 	/*
-	Obj_t *expr;
-	io_t *io;
+	EfiObj *expr;
+	IO *io;
 
 	io = io_cstr(Val_str(arg[2]));
 	expr = Parse_block(io, EOF);

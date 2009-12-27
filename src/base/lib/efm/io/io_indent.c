@@ -26,15 +26,17 @@ If not, write to the Free Software Foundation, Inc.,
 
 
 typedef struct {
-	io_t *io;	/* Ausgabestruktur */
+	IO *io;		/* Ausgabestruktur */
 	int c;		/* Einrückungszeichen */
 	int n;		/* Multiplikator */
 	int depth;	/* Einrücktiefe */
 	int newline;	/* Flag für neue Zeile */
 } INDENT;
 
-static int indent_put(int c, INDENT *indent)
+static int indent_put (int c, void *ptr)
 {
+	INDENT *indent = ptr;
+
 	if	(indent->newline && c != '\n')
 	{
 		io_nputc(indent->c, indent->io, indent->n * indent->depth);
@@ -45,8 +47,9 @@ static int indent_put(int c, INDENT *indent)
 	return io_putc(c, indent->io);
 }
 
-static int indent_ctrl(INDENT *indent, int req, va_list list)
+static int indent_ctrl (void *ptr, int req, va_list list)
 {
+	INDENT *indent = ptr;
 	size_t stat;
 
 	switch (req)
@@ -89,7 +92,7 @@ static int indent_ctrl(INDENT *indent, int req, va_list list)
 }
 
 
-io_t *io_indent (io_t *io, int c, int n)
+IO *io_indent (IO *io, int c, int n)
 {
 	INDENT *indent = memalloc(sizeof(INDENT));
 	indent->io = io;
@@ -98,8 +101,8 @@ io_t *io_indent (io_t *io, int c, int n)
 	indent->depth = 0;
 	indent->newline = 1;
 	io = io_alloc();
-	io->put = (io_put_t) indent_put;
-	io->ctrl = (io_ctrl_t) indent_ctrl;
+	io->put = indent_put;
+	io->ctrl = indent_ctrl;
 	io->data = indent;
 	return io;
 }

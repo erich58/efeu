@@ -23,7 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 \config	efeu
 \title	EFEU frontend to PostgreSQL
 
-\intro
+\preface
 The Library |PG| represents a frontent to the PostgreSQL database
 server in context of EFEU.
 

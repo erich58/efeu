@@ -34,20 +34,20 @@ If not, write to the Free Software Foundation, Inc.,
 
 extern void mroff_setup (void);
 extern char *mroff_par (const char *name);
-extern void mroff_addpar (VarDef_t *def, size_t dim);
-extern void mroff_cmdpar (VarTab_t *tab);
-extern void mroff_envpar (VarTab_t *tab);
+extern void mroff_addpar (EfiVarDef *def, size_t dim);
+extern void mroff_cmdpar (EfiVarTab *tab);
+extern void mroff_envpar (EfiVarTab *tab);
 
 
-typedef struct mroff_s mroff_t;
-typedef struct mroff_var_s mroff_var_t;
+typedef struct ManRoffStruct ManRoff;
+typedef struct ManRoffVarStruct ManRoffVar;
 
-struct mroff_var_s {
-	mroff_var_t *next;
-	void (*caption) (mroff_t *mr, int flag);
+struct ManRoffVarStruct {
+	ManRoffVar *next;
+	void (*caption) (ManRoff *mr, int flag);
 };
 
-struct mroff_s {
+struct ManRoffStruct {
 	DOCDRV_VAR;		/* Standardausgabevariablen */
 	char *dochead;		/* Dokumentkopf */
 	char *nextpar;		/* Nächster Absatz */
@@ -55,31 +55,30 @@ struct mroff_s {
 	unsigned space : 1;	/* Leerzeichen wird benötigt */
 	unsigned nlignore : 1;	/* Nächsten Zeilenvorschub ignorieren */
 	unsigned item : 1;	/* Flag für item */
-	mroff_var_t var;	/* Umgebungsvariablen */
-	stack_t *s_att;	/* Stack mit Attributen */
+	ManRoffVar var;	/* Umgebungsvariablen */
+	Stack *s_att;	/* Stack mit Attributen */
 	char *att;	/* Aktuelles Attribut */
 };
 
-extern io_t *DocOut_mroff (io_t *io);
+extern IO *DocOut_mroff (IO *io);
 
-extern void mroff_push (mroff_t *mr);
-extern void mroff_pop (mroff_t *mr);
+extern void mroff_push (ManRoff *mr);
+extern void mroff_pop (ManRoff *mr);
 
-extern void mroff_hdr (mroff_t *mr, int mode);
-extern int mroff_putc (mroff_t *mr, int c);
-extern int mroff_plain (mroff_t *mr, int c);
-extern int mroff_protect (mroff_t *mr, int c);
+extern void mroff_hdr (void *drv, int mode);
+extern int mroff_putc (void *drv, int c);
+extern int mroff_plain (void *drv, int c);
+extern int mroff_protect (void *drv, int c);
 
-extern void mroff_cbeg (mroff_t *mr, const char *pfx);
-extern void mroff_cend (mroff_t *mr, int flag);
+extern void mroff_cbeg (ManRoff *mr, const char *pfx);
+extern void mroff_cend (ManRoff *mr, int flag);
 
-extern void mroff_psub (mroff_t *mr, const char *name);
-extern void mroff_string (mroff_t *mr, const char *str);
-extern void mroff_newline (mroff_t *mr);
-extern void mroff_rem (mroff_t *mr, const char *rem);
-extern int mroff_cmd (mroff_t *mr, va_list list);
-extern int mroff_env (mroff_t *mr, int flag, va_list list);
-extern void mroff_cmdline (mroff_t *mr, const char *name);
-extern void mroff_cmdend (mroff_t *mr, const char *name);
+extern void mroff_string (ManRoff *mr, const char *str);
+extern void mroff_newline (ManRoff *mr);
+extern void mroff_rem (void *drv, const char *rem);
+extern int mroff_cmd (void *drv, va_list list);
+extern int mroff_env (void *drv, int flag, va_list list);
+extern void mroff_cmdline (ManRoff *mr, const char *name);
+extern void mroff_cmdend (ManRoff *mr, const char *name);
 
-#endif	/* roff.h */
+#endif	/* mroff.h */

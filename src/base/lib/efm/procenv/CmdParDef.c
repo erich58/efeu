@@ -25,13 +25,13 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/mstring.h>
 #include <EFEU/memalloc.h>
 
-static ALLOCTAB(deftab, 1024, sizeof(CmdParDef_t));
+static ALLOCTAB(deftab, 1024, sizeof(CmdParDef));
 
 /*
 Die Funktion |$1| liefert eine neue Parameterdefinition.
 */
 
-CmdParDef_t *CmdParDef_alloc (void)
+CmdParDef *CmdParDef_alloc (void)
 {
 	return new_data(&deftab);
 }
@@ -40,7 +40,7 @@ CmdParDef_t *CmdParDef_alloc (void)
 Die Funktion |$1| gibt den Inhalt einer Parameterdefinition frei.
 */
 
-void CmdParDef_free (CmdParDef_t *def)
+void CmdParDef_free (CmdParDef *def)
 {
 	if	(def == NULL)	return;
 
@@ -54,15 +54,15 @@ void CmdParDef_free (CmdParDef_t *def)
 Die Funktion |$1| erweitert die Kommandoparameter um eine Parameterdefinition.
 */
 
-void CmdPar_add (CmdPar_t *par, CmdParDef_t *def)
+void CmdPar_add (CmdPar *par, CmdParDef *def)
 {
-	CmdParKey_t *key;
+	CmdParKey *key;
 
 	if	(def == NULL)	return;
 
 	par = CmdPar_ptr(par);
 
-	((CmdParDef_t **) vb_next(&par->def))[0] = def;
+	((CmdParDef **) vb_next(&par->def))[0] = def;
 
 	for (key = def->key; key != NULL; key = key->next)
 	{
@@ -71,13 +71,13 @@ void CmdPar_add (CmdPar_t *par, CmdParDef_t *def)
 		switch (key->partype)
 		{
 		case PARTYPE_ENV:
-			((CmdParKey_t **) vb_next(&par->env))[0] = key;
+			((CmdParKey **) vb_next(&par->env))[0] = key;
 			break;
 		case PARTYPE_OPT:
-			((CmdParKey_t **) vb_next(&par->opt))[0] = key;
+			((CmdParKey **) vb_next(&par->opt))[0] = key;
 			break;
 		case PARTYPE_ARG:
-			((CmdParKey_t **) vb_next(&par->arg))[0] = key;
+			((CmdParKey **) vb_next(&par->arg))[0] = key;
 			break;
 		}
 	}
@@ -87,10 +87,10 @@ void CmdPar_add (CmdPar_t *par, CmdParDef_t *def)
 Die Funktion |$1| wertet eine Parameterdefinition aus.
 */
 
-int CmdParDef_eval (CmdPar_t *par, CmdParDef_t *def, const char *arg)
+int CmdParDef_eval (CmdPar *par, CmdParDef *def, const char *arg)
 {
 	int rval;
-	CmdParCall_t *call;
+	CmdParCall *call;
 	
 	par = CmdPar_ptr(par);
 

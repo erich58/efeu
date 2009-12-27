@@ -1,3 +1,3 @@
-Label: efeu configuration tools
-Label_de: EFEU Konfigurationswerkzeuge
+:en: efeu configuration tools
+:de: EFEU Konfigurationswerkzeuge
 Depends: .

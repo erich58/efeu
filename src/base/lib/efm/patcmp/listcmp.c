@@ -40,7 +40,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 int listcmp(const char *ptr, int c)
 {
-	const uchar_t *list;	/* Liste */
+	const unsigned char *list;	/* Liste */
 	int flag;		/* Negationsflag */
 	int n;			/* Hilfszähler */
 
@@ -48,8 +48,8 @@ int listcmp(const char *ptr, int c)
 */
 	if	(ptr == NULL)	return 0;
 
-	list = (const uchar_t *) ptr;
-	c = (uchar_t) c;
+	list = (const unsigned char *) ptr;
+	c = (unsigned char) c;
 	flag = 1;
 
 /*	Test auf Negationszeichen

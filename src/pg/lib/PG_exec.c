@@ -43,7 +43,7 @@ respected return status <stat>.
 A value of |PGRES_EMPTY_QUERY| accepts any return status except errors.
 */
 
-int PG_exec (PG_t *pg, const char *cmd, ExecStatusType stat)
+int PG_exec (PG *pg, const char *cmd, ExecStatusType stat)
 {
 	ExecStatusType res;
 
@@ -51,7 +51,7 @@ int PG_exec (PG_t *pg, const char *cmd, ExecStatusType stat)
 
 	if	(pg->lock)
 	{
-		Message("PG", DBG_ERR, M_LOCK, NULL);
+		dbg_note("PG", M_LOCK, NULL);
 		return 0;
 	}
 
@@ -64,7 +64,7 @@ int PG_exec (PG_t *pg, const char *cmd, ExecStatusType stat)
 
 	if	(pg->res == NULL)
 	{
-		Message("PG", DBG_ERR, M_NOMEM, NULL);
+		dbg_note("PG", M_NOMEM, NULL);
 		return 0;
 	}
 
@@ -75,10 +75,8 @@ int PG_exec (PG_t *pg, const char *cmd, ExecStatusType stat)
 	case PGRES_BAD_RESPONSE:
 	case PGRES_NONFATAL_ERROR:
 	case PGRES_FATAL_ERROR:
-		Message("PG", DBG_ERR, M_EXEC,
-			ArgList("nc", PQresultErrorMessage(pg->res)));
-		Message("PG", DBG_NOTE, M_CMD,
-			ArgList("nc", cmd));
+		dbg_note("PG", M_EXEC, "s", PQresultErrorMessage(pg->res));
+		dbg_note("PG", M_CMD, "s", cmd);
 		PG_clear(pg);
 		return 0;
 		break;
@@ -88,10 +86,9 @@ int PG_exec (PG_t *pg, const char *cmd, ExecStatusType stat)
 	
 	if	(stat != PGRES_EMPTY_QUERY && res != stat)
 	{
-		Message("PG", DBG_ERR, M_STAT,
-			ArgList("ncc", PQresStatus(res), PQresStatus(stat)));
-		Message("PG", DBG_NOTE, M_CMD,
-			ArgList("nc", cmd));
+		dbg_note("PG", M_STAT,
+			"ss", PQresStatus(res), PQresStatus(stat));
+		dbg_note("PG", M_CMD, "s", cmd);
 		PG_clear(pg);
 		return 0;
 	}
@@ -108,7 +105,7 @@ The function|$1| submits the query <cmd> to the database server with
 respected return status PGRES_COMMAND_OK.
 */
 
-int PG_command (PG_t *pg, const char *cmd)
+int PG_command (PG *pg, const char *cmd)
 {
 	return PG_exec(pg, cmd, PGRES_COMMAND_OK);
 }
@@ -120,7 +117,7 @@ Die Funktion |$1| löscht die Daten zur letzten SQL-Abfrage.
 The function |$1| clears the data of the last query.
 */
 
-void PG_clear (PG_t *pg)
+void PG_clear (PG *pg)
 {
 	if	(pg && pg->res && !pg->lock)
 	{
@@ -136,7 +133,7 @@ Die Funktion |$1| liefert den Status der letzten Anfrage als Zeichenkette.
 The Funktion |$1| returns the status of the last query as string.
 */
 
-const char *PG_status (PG_t *pg)
+const char *PG_status (PG *pg)
 {
 	return (pg && pg->res) ? PQresStatus(PQresultStatus(pg->res)) : NULL;
 }
@@ -151,7 +148,7 @@ The functions |PG_exec| and |PG_command| returns 1 on success
 and 0 on failure.
 
 $SeeAlso
-\mref{PG(3)},
+\mref{PG_connect(3)},
 \mref{PG_open(3)},
 \mref{PG_query(3)},
 \mref{SetupPG(3)},

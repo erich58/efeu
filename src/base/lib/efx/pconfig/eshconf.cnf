@@ -1,0 +1,38 @@
+# :*:EFEU command interpreter
+# :de:EFEU Befehlsinterpreter
+#
+# $Copyright (C) 1994, 2001 Erich Frühstück
+# This file is part of EFEU.
+# 
+# EFEU is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+# 
+# EFEU is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public
+# License along with EFEU; see the file COPYING.
+# If not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+CmdType = "esh"
+HistoryName = "~/.esh_history"
+
+@ESHPATH|IncPath:eval 'IncPath = paste(PATHSEP, IncPath, "{}")'
+	:*:define extra directories for searching script headers.
+	:de:erweitert den Suchpfad für Skriptfiles.
+I:dir|IncPath:eval 'IncPath = paste(PATHSEP, IncPath, "{}")'
+	:*:append <dir> to the search path for script headers.
+	The default setting is "$(IncPath:%s)".
+	:de:erweitert den Suchpfad für Skriptfiles um <dir>.
+	Die Vorgabe für den Suchpfad ist "$(IncPath:%s)".
+D:"name|=|val"|:eval 'copy(preproc("#define " + strsub("{}", "=", " ")), NULL);'
+	:*:define macro <name> with value <val>
+	:de:definiert den Makro <name> mit Wert <value>
+*file~<=\[=>~args(s)~<=\]=>|
+	:*:name of the script file and script parameters
+	:de:ist der Name des Skriptfiles und Skriptparameter.

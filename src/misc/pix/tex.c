@@ -24,11 +24,11 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	LINE	"\\put(%d,%d){\\rule{%d\\unitlength}{\\unitlength}}\n"
 
-void OldPixMap_TeX(Func_t *func, void *rval, void **arg)
+void OldPixMap_TeX(EfiFunc *func, void *rval, void **arg)
 {
-	OldPixMap_t *pix;
-	io_t *io;
-	uchar_t *row;
+	OldPixMap *pix;
+	IO *io;
+	unsigned char *row;
 	int i, j, n;
 	int color;
 

@@ -1,5 +1,6 @@
 /*
-Zeitreihenterme berechnen
+:*:calculate terms of time series
+:de:Zeitreihenterme berechnen
 
 $Copyright (C) 1997 Erich Frühstück
 This file is part of EFEU.
@@ -23,11 +24,11 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 #include <Math/TimeSeries.h>
 
-void AssignTimeSeries (VirFunc_t *fptr, TimeSeries_t *t1,
-	Type_t *type, void *data)
+void ts_assign (EfiVirFunc *fptr, TimeSeries *t1,
+	EfiType *type, void *data)
 {
-	Func_t *func;
-	TimeSeries_t *t2;
+	EfiFunc *func;
+	TimeSeries *t2;
 	double *p1, *p2;
 	int s2, i, n;
 
@@ -42,12 +43,12 @@ void AssignTimeSeries (VirFunc_t *fptr, TimeSeries_t *t1,
 	{
 		if	((t2 = Val_TimeSeries(data)) == NULL)
 		{
-			errmsg(MSG_TS, 22); 
+			dbg_note(NULL, "[TimeSeries:22]", NULL); 
 			return;
 		}
 		else if	(t1->base.type != t2->base.type)
 		{
-			errmsg(MSG_TS, 23); 
+			dbg_note(NULL, "[TimeSeries:23]", NULL); 
 			return;
 		}
 
@@ -83,7 +84,7 @@ void AssignTimeSeries (VirFunc_t *fptr, TimeSeries_t *t1,
 
 	if	(func == NULL)
 	{
-		errmsg(MSG_TS, 24); 
+		dbg_note(NULL, "[TimeSeries:24]", NULL); 
 		return;
 	}
 
@@ -96,21 +97,21 @@ void AssignTimeSeries (VirFunc_t *fptr, TimeSeries_t *t1,
 }
 
 
-TimeSeries_t *TimeSeriesFunc (VirFunc_t *fptr, TimeSeries_t *t1)
+TimeSeries *ts_func (EfiVirFunc *fptr, TimeSeries *t1)
 {
-	TimeSeries_t *ts;
-	Func_t *func;
+	TimeSeries *ts;
+	EfiFunc *func;
 	int i;
 
 	func = GetFunc(&Type_double, fptr, 1, &Type_double, 0);
 
 	if	(func == NULL)
 	{
-		errmsg(MSG_TS, 21); 
+		dbg_note(NULL, "[TimeSeries:21]", NULL); 
 		return NULL;
 	}
 
-	ts = NewTimeSeries(NULL, t1->base, t1->dim);
+	ts = ts_create(NULL, t1->base, t1->dim);
 
 	for (i = 0; i < t1->dim; i++)
 		CallFunc(&Type_double, ts->data + i, func, t1->data + i);
@@ -119,12 +120,12 @@ TimeSeries_t *TimeSeriesFunc (VirFunc_t *fptr, TimeSeries_t *t1)
 }
 
 
-TimeSeries_t *TimeSeriesTerm (VirFunc_t *fptr,
-	Type_t *type1, void *arg1, Type_t *type2, void *arg2)
+TimeSeries *ts_term (EfiVirFunc *fptr,
+	EfiType *type1, void *arg1, EfiType *type2, void *arg2)
 {
-	Func_t *func;
-	TimeSeries_t *ts, *t1, *t2;
-	TimeIndex_t idx;
+	EfiFunc *func;
+	TimeSeries *ts, *t1, *t2;
+	TimeIndex idx;
 	double *p1, *p2;
 	int s1, s2, n;
 
@@ -147,12 +148,12 @@ TimeSeries_t *TimeSeriesTerm (VirFunc_t *fptr,
 	{
 		if	((t2 = Val_TimeSeries(arg2)) == NULL)
 		{
-			errmsg(MSG_TS, 22); 
+			dbg_note(NULL, "[TimeSeries:22]", NULL); 
 			return NULL;
 		}
 		else if	(t1 && t1->base.type != t2->base.type)
 		{
-			errmsg(MSG_TS, 23); 
+			dbg_note(NULL, "[TimeSeries:23]", NULL); 
 			return NULL;
 		}
 	}
@@ -166,7 +167,7 @@ TimeSeries_t *TimeSeriesTerm (VirFunc_t *fptr,
 
 	if	(func == NULL)
 	{
-		errmsg(MSG_TS, 24); 
+		dbg_note(NULL, "[TimeSeries:24]", NULL); 
 		return NULL;
 	}
 
@@ -214,7 +215,7 @@ TimeSeries_t *TimeSeriesTerm (VirFunc_t *fptr,
 	}
 	else
 	{
-		idx = TimeIndex(TS_INDEX, 0);
+		idx = tindex_create(TS_INDEX, 0);
 		n = 1;
 		p1 = arg1;
 		s1 = 0;
@@ -222,7 +223,7 @@ TimeSeries_t *TimeSeriesTerm (VirFunc_t *fptr,
 		s2 = 0;
 	}
 
-	ts = NewTimeSeries(NULL, idx, n);
+	ts = ts_create(NULL, idx, n);
 
 	for (n = 0; n < ts->dim; n++)
 	{

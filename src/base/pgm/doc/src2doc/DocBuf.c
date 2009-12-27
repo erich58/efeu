@@ -43,7 +43,7 @@ static char *SecHead (int n)
 }
 
 
-void copy_protect (const char *str, io_t *io)
+void copy_protect (const char *str, IO *io)
 {
 	if	(!str || !io)	return;
 
@@ -74,11 +74,11 @@ void copy_protect (const char *str, io_t *io)
 	}
 }
 
-void DocBuf_init (DocBuf_t *doc)
+void DocBuf_init (DocBuf *doc)
 {
 	int i;
 
-	memset(doc, 0, sizeof(DocBuf_t));
+	memset(doc, 0, sizeof(DocBuf));
 	doc->synopsis = new_strbuf(0);
 	doc->source = new_strbuf(0);
 
@@ -86,7 +86,7 @@ void DocBuf_init (DocBuf_t *doc)
 		doc->tab[i] = new_strbuf(0);
 }
 
-void DocBuf_write (DocBuf_t *doc, io_t *io)
+void DocBuf_write (DocBuf *doc, IO *io)
 {
 	int i;
 

@@ -46,7 +46,7 @@ Zuweisungstabelle sind in \mref{memalloc(7)} beschrieben.
 
 #if	TRACE_MODE
 
-static void alloctab_trace (alloctab_t *tab, const char *fmt, void *ptr)
+static void alloctab_trace (AllocTab *tab, const char *fmt, void *ptr)
 {
 	static FILE *trace_file = NULL;
 	static int trace_sync = 0;
@@ -78,7 +78,7 @@ static void alloctab_trace (alloctab_t *tab, const char *fmt, void *ptr)
 #define	ERR_ILLEGAL	"free entry %p is not part of block list\n"
 
 
-static void alloctab_error (alloctab_t *tab, const char *fmt, ...)
+static void alloctab_error (AllocTab *tab, const char *fmt, ...)
 {
 	FILE *file = LogFile("alloctab", DBG_ERR);
 
@@ -94,14 +94,14 @@ static void alloctab_error (alloctab_t *tab, const char *fmt, ...)
 }
 
 
-static void load (alloctab_t *tab)
+static void load (AllocTab *tab)
 {
 	size_t n, size;
-	chain_t *p;
+	AllocTabList *p;
 
 	tab->nfree = BLKSIZE(tab);
 	size = tab->elsize * tab->nfree;
-	p = (chain_t *) lmalloc(sizeof(chain_t) + size);
+	p = (AllocTabList *) lmalloc(sizeof(AllocTabList) + size);
 	p->next = tab->blklist;
 	tab->blklist = p;
 	p++;
@@ -112,7 +112,7 @@ static void load (alloctab_t *tab)
 	{
 		p->next = tab->freelist;
 		tab->freelist = p;
-		p = (chain_t *) ((char *) p + tab->elsize);
+		p = (AllocTabList *) ((char *) p + tab->elsize);
 	}
 }
 
@@ -129,11 +129,11 @@ wird die Verarbeitung des rufenden Kommandos mit einer Fehlermeldung
 abgebrochen.
 */
 
-void *new_data (alloctab_t *tab)
+void *new_data (AllocTab *tab)
 {
 	if	(tab != NULL)
 	{
-		chain_t *x;
+		AllocTabList *x;
 
 		check_data(tab);
 
@@ -183,9 +183,9 @@ benützt werden, da ansonsten die freie Liste zerstört wird.
 Der Inhalt eines Datensegmentes wird bei der Freigabe verändert.
 */
 
-int del_data (alloctab_t *tab, void *entry)
+int del_data (AllocTab *tab, void *entry)
 {
-	chain_t *x, **ptr;
+	AllocTabList *x, **ptr;
 
 	if	(entry == NULL)
 		return 1;
@@ -223,10 +223,10 @@ table <tab>
 Zuweisungstabelle stammt und eine gültige Adressse hat.
 */
 
-int tst_data (alloctab_t *tab, void *entry)
+int tst_data (AllocTab *tab, void *entry)
 {
 	int n;
-	chain_t *p;
+	AllocTabList *p;
 	void *a, *b;
 
 	if	(tab == NULL)	return 0;
@@ -257,7 +257,7 @@ int tst_data (alloctab_t *tab, void *entry)
 static int debug_sync = 0;
 static FILE *debug_file = NULL;
 
-static void alloctab_abort (alloctab_t *tab, const char *fmt, ...)
+static void alloctab_abort (AllocTab *tab, const char *fmt, ...)
 {
 	va_list args;
 
@@ -278,9 +278,9 @@ auf debug gesetzt ist.
 Vergleiche dazu auch \mref{Debug(3)}.
 */
 
-void check_data (alloctab_t *tab)
+void check_data (AllocTab *tab)
 {
-	chain_t *p;
+	AllocTabList *p;
 	size_t n;
 
 	if	(tab == NULL)	return;

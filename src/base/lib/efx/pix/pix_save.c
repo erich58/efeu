@@ -23,7 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/Pixmap.h>
 
 
-void SavePixmap (Pixmap_t *pix, io_t *io)
+void SavePixmap (EPixmap *pix, IO *io)
 {
 	if	(!pix || !io)	return;
 

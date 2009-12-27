@@ -24,6 +24,12 @@
 # f|
 #	:*:force creation of output file
 #	:de:Forcierte Neugenerierung der Ausgabedatei
+# x|
+#	:*:consider source generation with |mksource|.
+#	:de:Berücksichtige Sourcgenerierung mit |mksource|.
+# e:pat|
+#	:*:ignore files which maches pattern <pat>
+#	:de:Dateien ignorieren, die dem Muster <pat> entsprechen
 # :top|
 #	:*:top directory of sources
 #	:de:Hauptbibliothek der Sourcen
@@ -50,31 +56,52 @@ esac
 fmt_keep="$0: %s keeped unchanged\n"
 fmt_modify="$0: %s was modified\n"
 fmt_create="create sourcelist %s\n"
-fmt_nosrc="source directory %s does not exist\n"
 
 case $LANG in
 de*)
 	fmt_keep="$0: %s wurde nicht verändert\n"
 	fmt_modify="$0: %s wurde verändert\n"
 	fmt_create="Sourceliste %s wird generiert\n"
-	fmt_nosrc="Sourcebibliothek %s existiert nicht\n"
 	;;
 esac
 
 # cleanup rules
 
 tmp=${TMPDIR:-/tmp}/sl$$
-trap "rm -f $tmp*" 0
+trap "rm -f $tmp.*" 0
 trap "exit 1" 1 2 3
+
+# create exception list
+
+cat > $tmp.except <<!
+\|~|d
+\|/old/|d
+\|/unsup/|d
+\|/save/|d
+\|/CVS/|d
+\|/core$|d
+\|/LOCALFILES$|d
+\|/READ.*ME$|d
+\|/TODO$|d
+\|/\.|d
+\|\.swp$|d
+\|\.o$|d
+\|\.a$|d
+\|\.so$|d
+!
 
 # parse command args
 
 force=0
+gensrc=0
 
-while getopts hfo: opt
+while getopts hfxe:o: opt
 do
 	case $opt in
 	f)	force=1;;
+	x)	gensrc=1;;
+	e)	echo "$OPTARG" | sed -e 's/\./\\&/g' \
+			-e 's/^.*$/\\|&|d/' >> $tmp.except;;
 	o)	name=$OPTARG;;
 	\?)	usage; exit 1;;
 	esac
@@ -123,33 +150,7 @@ fi
 
 # check source directory
 
-if
-	test ! -d $1
-then
-	printf "$fmt_nosrc" $1
-	exit 1
-fi
-
-# create exception list
-
-filter ()
-{
-	sed -e 's/[./]/\\&/g' -e 's|^.*$|/^&/d|' $1
-}
-
-cat >> $tmp.except <<!
-\|~|d
-\|/old/|d
-\|/unsup/|d
-\|/save/|d
-\|/CVS/|d
-\|/core$|d
-\|/LOCALFILES$|d
-\|/READ.*ME$|d
-\|/TODO$|d
-\|/\.|d
-\|\.swp$|d
-!
+top=`(cd $1 || exit 1; pwd)` || exit 1
 
 # :*:remove / on end of directorys name for correct interpretaion of
 # exeption list.
@@ -157,7 +158,7 @@ cat >> $tmp.except <<!
 # da ansonsten die Ausnahmefiles nicht korrekt interpretiert
 # werden.
 
-for x in `find $1 -type d -print | sed -e 's|/$||'`
+for x in `find $top -type d -print | sed -e 's|/$||'`
 do
 	if
 		test -f $x/LOCALFILES
@@ -169,13 +170,26 @@ do
 	fi
 done
 
-# :*:create file list and sort by depth !
-# This is done by creating depth with awk and removing ist
-# with cut after sort.
+# :*:create file list
+# :de:Fileliste generieren
+
+find $top -depth -type f -print | sed -f $tmp.except > $tmp.files
+rm -f $tmp.except
+
+if	[ $gensrc != 0 ]; then
+	grep '\.tpl$' $tmp.files > $tmp.new
+	sed -e 's/.tpl$//' -e 's/^.*$/\\|^&\\.|d/' $tmp.new > $tmp.except
+	sed -f $tmp.except $tmp.files >> $tmp.new
+	mv $tmp.new $tmp.files
+	rm -f $tmp.except
+fi
+
+# :*:sort file list by depth !
+# This is done by creating the depth information with awk and
+# removing it with cut after sort.
 # :de:Fileliste generieren und nach der Tiefe sortieren !!!
 # Die Tiefe wird mit einem awk-Skript dem Filenamen
 # vorangestellt und nach der Sortierung mit cut entfernt.
 	
-find $1 -depth -type f -print | sed -f $tmp.except |\
-	awk -F/ '{ printf("%03d %s\n", NF, $0) }' |\
-	sort | eval cut -c 5- $ofile
+awk -F/ '{ printf("%03d %s\n", NF, $0) }' $tmp.files |\
+sort | eval cut -c 5- $ofile

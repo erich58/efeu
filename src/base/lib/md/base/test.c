@@ -2,36 +2,36 @@
 	(c) 1994 Erich Frühstück
 */
 
-#include <EFEU/mdmat.h>
+#include <EFEU/mdtest.h>
 
-static ALLOCTAB(test_tab, 32, sizeof(mdtest_t));
+static ALLOCTAB(test_tab, 32, sizeof(mdtest));
 
-static int pcmp (mdtest_t *t, const char *s, size_t n);
-static int ncmp (mdtest_t *t, const char *s, size_t n);
-static int xcmp (mdtest_t *t, const char *s, size_t n);
+static int pcmp (mdtest *t, const char *s, size_t n);
+static int ncmp (mdtest *t, const char *s, size_t n);
+static int xcmp (mdtest *t, const char *s, size_t n);
 
 
-static int pcmp(mdtest_t *tst, const char *name, size_t idx)
+static int pcmp(mdtest *tst, const char *name, size_t idx)
 {
 	return patcmp(tst->pattern, name, NULL);
 }
 
 
-static int ncmp(mdtest_t *tst, const char *name, size_t idx)
+static int ncmp(mdtest *tst, const char *name, size_t idx)
 {
 	return (idx >= tst->minval && idx <= tst->maxval);
 }
 
 
-static int xcmp(mdtest_t *tst, const char *name, size_t idx)
+static int xcmp(mdtest *tst, const char *name, size_t idx)
 {
 	return 1;
 }
 
 
-mdtest_t *new_test(const char *def, size_t dim)
+mdtest *mdtest_create(const char *def, size_t dim)
 {
-	mdtest_t *x;;
+	mdtest *x;;
 
 	x = new_data(&test_tab);
 	x->pattern = NULL;
@@ -84,10 +84,10 @@ mdtest_t *new_test(const char *def, size_t dim)
 	return x;
 }
 
-mdtest_t *mdmktestlist(const char *list, size_t dim)
+mdtest *mdmktestlist(const char *list, size_t dim)
 {
-	mdtest_t *test, **ptr;
-	io_t *io;
+	mdtest *test, **ptr;
+	IO *io;
 	char *p;
 
 	io = io_cstr(list);
@@ -97,7 +97,7 @@ mdtest_t *mdmktestlist(const char *list, size_t dim)
 	while (io_eat(io, "%s,") != EOF)
 	{
 		p = io_mgets(io, "%s,");
-		*ptr = new_test(p, dim);
+		*ptr = mdtest_create(p, dim);
 		memfree(p);
 		ptr = &(*ptr)->next;
 	}
@@ -106,9 +106,9 @@ mdtest_t *mdmktestlist(const char *list, size_t dim)
 	return test;
 }
 
-mdtest_t *mdtestlist(char **list, size_t ldim, size_t dim)
+mdtest *mdtestlist(char **list, size_t ldim, size_t dim)
 {
-	mdtest_t *test, **ptr;
+	mdtest *test, **ptr;
 	int i;
 
 	test = NULL;
@@ -116,14 +116,14 @@ mdtest_t *mdtestlist(char **list, size_t ldim, size_t dim)
 
 	for (i = 0; i < ldim; i++)
 	{
-		*ptr = new_test(list[i], dim);
+		*ptr = mdtest_create(list[i], dim);
 		ptr = &(*ptr)->next;
 	}
 
 	return test;
 }
 
-int mdtest(mdtest_t *test, const char *str, size_t idx)
+int mdtest_eval (mdtest *test, const char *str, size_t idx)
 {
 	int flag;
 
@@ -134,31 +134,19 @@ int mdtest(mdtest_t *test, const char *str, size_t idx)
 	while (test != NULL)
 	{
 		if	(test->cmp(test, str, idx))
-		{
 			flag = test->flag;
-		}
 
 		test = test->next;
 	}
 
 	return flag;
-
-	if	(test == NULL)
-	{
-		return 0;
-	}
-	else if	(test->cmp(test, str, idx))
-	{
-		return test->flag;
-	}
-	else	return !test->flag;
 }
 
-void del_test(mdtest_t *test)
+void mdtest_clean (mdtest *test)
 {
 	if	(test)
 	{
-		del_test(test->next);
+		mdtest_clean(test->next);
 		memfree(test->pattern);
 		del_data(&test_tab, test);
 	}

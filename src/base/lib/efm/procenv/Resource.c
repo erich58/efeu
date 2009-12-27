@@ -38,7 +38,7 @@ Der Aufrufname des Kommandos in <argv>|[0]| bleibt erhalten.
 
 void ParseCommand (int *argc, char **argv)
 {
-	CmdPar_t *par;
+	CmdPar *par;
 
 	SetProgName(argv[0]);
 	par = CmdPar_ptr(NULL);

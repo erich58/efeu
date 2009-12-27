@@ -26,13 +26,13 @@ char *PrintListBegin = "{";
 char *PrintListDelim = ", ";
 char *PrintListEnd = "}";
 
-Func_t *GetPrintFunc(const Type_t *type)
+EfiFunc *GetPrintFunc(const EfiType *type)
 {
 	return GetFunc(&Type_int, GetGlobalFunc("fprint"),
 		2, &Type_io, 0, type, 0);
 }
 
-static int print_struct (io_t *io, const Var_t *list, const void *data)
+static int print_struct (IO *io, const EfiVar *list, const void *data)
 {
 	char *delim;
 	const void *ptr;
@@ -58,9 +58,9 @@ static int print_struct (io_t *io, const Var_t *list, const void *data)
 	return n;
 }
 
-int PrintVecData(io_t *io, const Type_t *type, const void *data, size_t dim)
+int PrintVecData(IO *io, const EfiType *type, const void *data, size_t dim)
 {
-	Func_t *func;
+	EfiFunc *func;
 	char *delim;
 	int i, n;
 	int buf;
@@ -90,9 +90,9 @@ int PrintVecData(io_t *io, const Type_t *type, const void *data, size_t dim)
 }
 
 
-int PrintData(io_t *io, const Type_t *type, const void *data)
+int PrintData(IO *io, const EfiType *type, const void *data)
 {
-	Func_t *func;
+	EfiFunc *func;
 
 	FuncDebugLock++;
 	func = GetPrintFunc(type);
@@ -108,13 +108,13 @@ int PrintData(io_t *io, const Type_t *type, const void *data)
 }
 
 
-int PrintObj(io_t *io, const Obj_t *obj)
+int PrintObj(IO *io, const EfiObj *obj)
 {
 	return (obj ? PrintData(io, obj->type, obj->data) : io_puts("void", io));
 }
 
 
-int PrintAny (io_t *io, const Type_t *type, const void *data)
+int PrintAny (IO *io, const EfiType *type, const void *data)
 {
 	if	(type->dim)
 	{
@@ -143,7 +143,7 @@ int PrintAny (io_t *io, const Type_t *type, const void *data)
 		n = io_printf(io, "(%s) 0x", type->name);
 
 		for (i = 0; i < type->size; i++)
-			n += io_printf(io, "%02x", ((uchar_t *) data)[i]);
+			n += io_printf(io, "%02x", ((unsigned char *) data)[i]);
 
 		return n;
 	}

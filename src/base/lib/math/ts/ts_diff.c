@@ -1,5 +1,6 @@
 /*
-Zeitreihen kopieren
+:*:calculate differences
+:de:Differenzen berechnen
 
 $Copyright (C) 1997 Erich Frühstück
 This file is part of EFEU.
@@ -26,10 +27,10 @@ If not, write to the Free Software Foundation, Inc.,
 #define	SetData(func, data, a, b, c)	\
 	CallFunc(&Type_double, (data) + (a), func, (data) + (b), (data) + (c))
 
-TimeSeries_t *DiffTimeSeries (TimeSeries_t *ts, int n, VirFunc_t *fptr)
+TimeSeries *ts_diff (TimeSeries *ts, int n, EfiVirFunc *fptr)
 {
-	Func_t *func;
-	TimeSeries_t *base;
+	EfiFunc *func;
+	TimeSeries *base;
 	int i;
 
 	if	(ts == NULL)	return NULL;
@@ -39,7 +40,7 @@ TimeSeries_t *DiffTimeSeries (TimeSeries_t *ts, int n, VirFunc_t *fptr)
 
 	if	(func == NULL)
 	{
-		errmsg(MSG_TS, 21); 
+		dbg_note(NULL, "[TimeSeries:21]", NULL); 
 		return NULL;
 	}
 
@@ -47,7 +48,7 @@ TimeSeries_t *DiffTimeSeries (TimeSeries_t *ts, int n, VirFunc_t *fptr)
 	{
 		if	(n > ts->dim)	n = ts->dim;
 
-		base = NewTimeSeries(ts->name, ts->base, n);
+		base = ts_create(ts->name, ts->base, n);
 		ts->base.value += n;
 		ts->dim -= n;
 
@@ -63,7 +64,7 @@ TimeSeries_t *DiffTimeSeries (TimeSeries_t *ts, int n, VirFunc_t *fptr)
 
 		if	(n > ts->dim)	n = ts->dim;
 
-		base = NewTimeSeries(ts->name, ts->base, n);
+		base = ts_create(ts->name, ts->base, n);
 		base->base.value += ts->dim - n;
 		ts->dim -= n;
 
@@ -78,17 +79,16 @@ TimeSeries_t *DiffTimeSeries (TimeSeries_t *ts, int n, VirFunc_t *fptr)
 }
 
 
-void CumulateTimeSeries (TimeSeries_t *ts, TimeSeries_t *base, VirFunc_t *fptr)
+void ts_cumulate (TimeSeries *ts, TimeSeries *base, EfiVirFunc *fptr)
 {
-	Func_t *func;
-	TimeIndex_t idx;
+	EfiFunc *func;
+	TimeIndex idx;
 	int i, n;
 	
 	if	(ts->base.type != base->base.type)
 	{
-		reg_fmt(1, "%#c", ts->base.type);
-		reg_fmt(2, "%#c", base->base.type);
-		errmsg(MSG_TS, 1);
+		dbg_note(NULL, "[TimeSeries:1]",
+			"cc", ts->base.type, base->base.type);
 		return;
 	}
 
@@ -96,7 +96,7 @@ void CumulateTimeSeries (TimeSeries_t *ts, TimeSeries_t *base, VirFunc_t *fptr)
 
 	if	(func == NULL)
 	{
-		errmsg(MSG_TS, 21); 
+		dbg_note(NULL, "[TimeSeries:21]", NULL); 
 		return;
 	}
 
@@ -111,7 +111,7 @@ void CumulateTimeSeries (TimeSeries_t *ts, TimeSeries_t *base, VirFunc_t *fptr)
 		n = base->base.value + base->dim;
 
 	n -= idx.value;
-	SyncTimeSeries(ts, idx, n);
+	ts_sync(ts, idx, n, 0);
 
 /*	Basis übernehmen
 */

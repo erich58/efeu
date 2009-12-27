@@ -1,0 +1,4 @@
+#include <tklib.pph>
+
+XLIBS=	LIB_MD LIB_EFX LIB_EFM $(TK_LIB) 
+CFLAGS=	$(TK_INC)

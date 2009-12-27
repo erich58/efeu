@@ -38,8 +38,8 @@ char *msprintf(const char *fmt, ...)
 
 char *mvsprintf(const char *fmt, va_list list)
 {
-	strbuf_t *sb;
-	io_t *io;
+	StrBuf *sb;
+	IO *io;
 
 	sb = new_strbuf(0);
 	io = io_strbuf(sb);

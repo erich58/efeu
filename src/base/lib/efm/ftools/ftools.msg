@@ -23,6 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 1	$!: file "$1": undefined access mode "$2".\n
 2	$!: $0("$1", "$2"): execution failed.\n
 3	$!: $0("$1", "$2"): could not open file.\n
+4	$!; $0("$1", "$2"): execution locked.\n
 5	$!: could not create temporary file.\n
 6	$!: file $1 not found.\n
 

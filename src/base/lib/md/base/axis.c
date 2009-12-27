@@ -5,29 +5,22 @@
 
 #include <EFEU/mdmat.h>
 
-static ALLOCTAB(atab, 8, sizeof(mdaxis_t));
+static ALLOCTAB(atab, 8, sizeof(mdaxis));
 
 
 /*	Achse generieren
 */
 
-mdaxis_t *new_axis(size_t dim)
+mdaxis *new_axis(size_t dim)
 {
-	mdaxis_t *x;
+	mdaxis *x;
 
 	x = new_data(&atab);
 	x->next = NULL;
 	x->name = NULL;
 	x->size = 0;
 	x->dim = dim;
-
-	if	(dim != 0)
-	{
-		x->idx = ALLOC(dim, mdidx_t);
-		memset(x->idx, 0, dim * sizeof(mdidx_t));
-	}
-	else	x->idx = NULL;
-
+	x->idx = memalloc(dim * sizeof(mdindex));
 	x->priv = NULL;
 	x->flags = 0;
 	return x;
@@ -37,9 +30,9 @@ mdaxis_t *new_axis(size_t dim)
 /*	Achse freigeben
 */
 
-void del_axis(mdaxis_t *axis)
+void del_axis(mdaxis *axis)
 {
-	mdidx_t *p;
+	mdindex *p;
 	size_t n;
 
 	if	(axis == NULL)	return;
@@ -58,9 +51,9 @@ void del_axis(mdaxis_t *axis)
 /*	Achse kopieren
 */
 
-mdaxis_t *cpy_axis(mdaxis_t *old, unsigned mask)
+mdaxis *cpy_axis(mdaxis *old, unsigned mask)
 {
-	mdaxis_t *new;
+	mdaxis *new;
 	int i, dim;
 
 	if	(old == NULL)	return NULL;

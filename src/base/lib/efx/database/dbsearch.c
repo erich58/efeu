@@ -27,7 +27,7 @@ If not, write to the Free Software Foundation, Inc.,
 /*	Vergleichsfunktion für Dateneinträge
 */
 
-static Func_t *DB_cmpfunc = NULL;
+static EfiFunc *DB_cmpfunc = NULL;
 
 static int DB_cmp(const void *a, const void *b)
 {
@@ -41,9 +41,9 @@ static int DB_cmp(const void *a, const void *b)
 /*	Eintrag suchen/ersetzen/löschen
 */
 
-void *DB_search(DataBase_t *db, void *data, int flag)
+void *DB_search(EfiDB *db, void *data, int flag)
 {
-	Func_t *save;
+	EfiFunc *save;
 
 	save = DB_cmpfunc;
 	DB_cmpfunc = db->cmp;
@@ -56,11 +56,11 @@ void *DB_search(DataBase_t *db, void *data, int flag)
 /*	Datenbank sortieren
 */
 
-void DB_sort(DataBase_t *db)
+void DB_sort(EfiDB *db)
 {
 	if	(db && db->cmp)
 	{
-		Func_t *save;
+		EfiFunc *save;
 
 		save = DB_cmpfunc;
 		DB_cmpfunc = db->cmp;

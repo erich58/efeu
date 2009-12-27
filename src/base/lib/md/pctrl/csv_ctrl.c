@@ -5,7 +5,7 @@
 #include <EFEU/pctrl.h>
 
 
-int struct_ctrl(PrFilter_t *pf, int cmd, va_list list)
+int struct_ctrl(PCTRL *pf, int cmd, va_list list)
 {
 	switch (cmd)
 	{
@@ -22,7 +22,7 @@ int struct_ctrl(PrFilter_t *pf, int cmd, va_list list)
 }
 
 
-int csv_ctrl(PrFilter_t *pf, int cmd, va_list list)
+int csv_ctrl(PCTRL *pf, int cmd, va_list list)
 {
 	switch (cmd)
 	{
@@ -39,7 +39,7 @@ int csv_ctrl(PrFilter_t *pf, int cmd, va_list list)
 }
 
 
-int csv_put(int c, PrFilter_t *pf)
+int csv_put(int c, PCTRL *pf)
 {
 	switch (c)
 	{
@@ -52,7 +52,7 @@ int csv_put(int c, PrFilter_t *pf)
 }
 
 
-int str_put(int c, PrFilter_t *pf)
+int str_put(int c, PCTRL *pf)
 {
 	switch (c)
 	{
@@ -65,7 +65,7 @@ int str_put(int c, PrFilter_t *pf)
 }
 
 
-int val_put(int c, PrFilter_t *pf)
+int val_put(int c, PCTRL *pf)
 {
 	switch (c)
 	{

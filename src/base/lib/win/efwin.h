@@ -54,17 +54,17 @@ typedef struct {
 	int flags;	/* Fensterflags */
 	int y;		/* Y - Koordinate */
 	int x;		/* X - Koordinate */
-} WinSize_t;
+} WinSize;
 
-WinSize_t *WindowSize (int height, int width, int pos, int y0, int x0);
-WinSize_t *CurrentPos (WINDOW *win, int height, int width, int pos);
-WinSize_t *CenterPos (int height, int width);
-WinSize_t *Rand48Pos (int height, int width);
-WinSize_t *CheckSize (WinSize_t *wp);
-WinSize_t *Frame (WinSize_t *wp);
+WinSize *WindowSize (int height, int width, int pos, int y0, int x0);
+WinSize *CurrentPos (WINDOW *win, int height, int width, int pos);
+WinSize *CenterPos (int height, int width);
+WinSize *Rand48Pos (int height, int width);
+WinSize *CheckSize (WinSize *wp);
+WinSize *Frame (WinSize *wp);
 
-WINDOW *NewWindow (WinSize_t *wp);
-WINDOW *FrameWindow (WinSize_t *wp);
+WINDOW *NewWindow (WinSize *wp);
+WINDOW *FrameWindow (WinSize *wp);
 void DelWindow (WINDOW *win);
 void EndWin(void);
 void InitWin(void);
@@ -76,21 +76,21 @@ void RefreshAll (void);
 
 WINDOW *StippleBackground (void);
 
-io_t *io_winopen (WinSize_t *ws);
-io_t *io_winout (WINDOW *win);
+IO *io_winopen (WinSize *ws);
+IO *io_winout (WINDOW *win);
 
-void WinConfirm (WinSize_t *ws, char *label);
-int WinQuestion (WinSize_t *ws, char *label, char *s1, char *s2);
-char *WinSelect (WinSize_t *ws, char **list, int dim, int cols);
-char *WinEdit (WinSize_t *ws, char *def);
+void WinConfirm (WinSize *ws, char *label);
+int WinQuestion (WinSize *ws, char *label, char *s1, char *s2);
+char *WinSelect (WinSize *ws, char **list, int dim, int cols);
+char *WinEdit (WinSize *ws, char *def);
 
 typedef struct {
 	int key;
 	char *label;
 	void *data;
-} WinMenu_t;
+} WinMenu;
 
-void *WinMenu (WinSize_t *ws, WinMenu_t *list, int dim, int cols);
+void *WinMenu_create (WinSize *ws, WinMenu *list, int dim, int cols);
 
 void WinTrace (int height, int width);
 void WinSystem (const char *cmd);

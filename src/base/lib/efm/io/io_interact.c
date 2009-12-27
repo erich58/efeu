@@ -30,7 +30,7 @@ If not, write to the Free Software Foundation, Inc.,
 #define	PROMPT_MARK	"> "
 
 #if	HAS_ISATTY
-extern int isatty (int field);
+int isatty (int field);
 
 #endif
 
@@ -78,7 +78,7 @@ static int ia_get (void *ptr)
 		else			p = PROMPT_STD;
 
 		line++;
-		io_psub(iostd, p);
+		io_psubarg(iostd, p, NULL);
 	}
 
 	c = getchar();
@@ -159,8 +159,8 @@ static int ia_ctrl (void *par, int req, va_list list)
 }
 
 
-io_t *(*_interact_open) (const char *prompt, const char *hist) = NULL;
-io_t *(*_interact_filter) (io_t *io) = NULL;
+IO *(*_interact_open) (const char *prompt, const char *hist) = NULL;
+IO *(*_interact_filter) (IO *io) = NULL;
 
 /*
 Die Funktion |$1| öffnet eine IO-Struktur, die |stdin| als
@@ -175,9 +175,9 @@ Falls Standardeingabe oder Standardausgabe nicht mit einem Terminal
 verbunden sind, wird kein Prompt ausgegeben.
 */
 
-io_t *io_interact (const char *prompt, const char *hist)
+IO *io_interact (const char *prompt, const char *hist)
 {
-	io_t *io;
+	IO *io;
 
 	if	(_interact_open)
 	{

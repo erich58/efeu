@@ -47,61 +47,61 @@ CEXPR(name, DOUBLE(0) op DOUBLE(1))
 /*	Funktionen
 */
 
-static void f_dbl_abs (Func_t *func, void *rval, void **arg)
+static void f_dbl_abs (EfiFunc *func, void *rval, void **arg)
 {
 	register double a = DOUBLE(0);
 	DRETVAL = a < 0 ? -a : a;
 }
 
-static void f_dbl_min (Func_t *func, void *rval, void **arg)
+static void f_dbl_min (EfiFunc *func, void *rval, void **arg)
 {
 	register double a = DOUBLE(0);
 	register double b = DOUBLE(1);
 	DRETVAL = a < b ? a : b;
 }
 
-static void f_dbl_max (Func_t *func, void *rval, void **arg)
+static void f_dbl_max (EfiFunc *func, void *rval, void **arg)
 {
 	register double a = DOUBLE(0);
 	register double b = DOUBLE(1);
 	DRETVAL = a > b ? a : b;
 }
 
-static void f_dbl_xdiv (Func_t *func, void *rval, void **arg)
+static void f_dbl_xdiv (EfiFunc *func, void *rval, void **arg)
 {
 	register double a = DOUBLE(0);
 	register double b = DOUBLE(1);
 	DRETVAL = b ? a / b : 0.;
 }
 
-static void f_dbl_xdiv1 (Func_t *func, void *rval, void **arg)
+static void f_dbl_xdiv1 (EfiFunc *func, void *rval, void **arg)
 {
 	register double a = DOUBLE(0);
 	register double b = DOUBLE(1);
 	DRETVAL = b ? a / b : 1.;
 }
 
-static void f_dbl_idx (Func_t *func, void *rval, void **arg)
+static void f_dbl_idx (EfiFunc *func, void *rval, void **arg)
 {
 	register double a = DOUBLE(0);
 	register double b = DOUBLE(1);
 	DRETVAL = b ? 100. * a / b : 0.;
 }
 
-static void f_dbl_rate (Func_t *func, void *rval, void **arg)
+static void f_dbl_rate (EfiFunc *func, void *rval, void **arg)
 {
 	register double a = DOUBLE(0);
 	register double b = DOUBLE(1);
 	DRETVAL = b ? 100. * (a - b) / b : 0.;
 }
 
-static void f_dbl_rnd (Func_t *func, void *rval, void **arg)
+static void f_dbl_rnd (EfiFunc *func, void *rval, void **arg)
 {
 	register double a = DOUBLE(0);
 	Val_int(rval) = a < 0 ? - (int) (-a + 0.5) : (int) (a + 0.5);
 }
 
-static void f_dbl_adjust (Func_t *func, void *rval, void **arg)
+static void f_dbl_adjust (EfiFunc *func, void *rval, void **arg)
 {
 	register double a = DOUBLE(0);
 	register char *b = STR(1);
@@ -165,7 +165,7 @@ ASSIGN(a_dbl_sub, -=)
 /*	Functionstabelle
 */
 
-static FuncDef_t fdef_double[] = {
+static EfiFuncDef fdef_double[] = {
 	{ FUNC_VIRTUAL, &Type_double, "abs (double)", f_dbl_abs },
 	{ FUNC_VIRTUAL, &Type_double, "min (double, double)", f_dbl_min },
 	{ FUNC_VIRTUAL, &Type_double, "max (double, double)", f_dbl_max },

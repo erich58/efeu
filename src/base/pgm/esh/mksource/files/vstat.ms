@@ -1,6 +1,7 @@
 /*
 Verarbeitungsstatistik
 
+$Header	<$1>
 $Copyright (C) 1998 Erich Frühstück
 This file is part of EFEU.
 
@@ -66,16 +67,16 @@ void VStat(str sname, str label, IO def, str pdef = NULL, bool glob = true)
 
 	if	(!pdef)	return;
 
-	f = Function("void $1_print", "io_t *out, unsigned *tab", sname)
+	f = Function("void $1_print", "IO *out, unsigned *tab", sname)
 	f.line("int n;");
 	f.line();
 	f.line("if\t(!out)\treturn;");
 	f.line();
-	f.line("for (n = 0; n < $1_dim; n++)");
+	f.line("for (n = 0; n < $1_dim; n++)", sname);
 	f.beg();
 	fmt = sname + "_fmt[n]";
 	val = "tab[n]";
-	f.body(pdef);
+	f.body(pdef, sname);
 	f.end();
 	f.write(glob);
 }

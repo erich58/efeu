@@ -15,12 +15,12 @@
 
 
 #define	MDB_FUNC(name, expr)	\
-static void name(Func_t *func, void *rval, void **arg)	\
-{ register mdmat_t *md = rd_refer(Val_mdmat(arg[0]));	\
+static void name(EfiFunc *func, void *rval, void **arg)	\
+{ register mdmat *md = rd_refer(Val_mdmat(arg[0]));	\
 expr; Val_mdmat(rval) = md; }
 
 #define	MDC_FUNC(name, expr)	\
-static void name(Func_t *func, void *rval, void **arg)	\
+static void name(EfiFunc *func, void *rval, void **arg)	\
 { Val_mdmat(rval) = expr; }
 
 MDC_FUNC(MF_load, md_fload(STR(0), STR(1), STR(2)))
@@ -28,9 +28,9 @@ MDC_FUNC(MF_read, md_read(Val_io(arg[0]), STR(1)))
 MDC_FUNC(MF_reload, md_reload(MD(0), STR(1), STR(2)))
 
 /*
-static void MF_reload(Func_t *func, void *rval, void **arg)
+static void MF_reload(EfiFunc *func, void *rval, void **arg)
 {
-	io_t *io;
+	IO *io;
 
 	io = io_tmpfile();
 	md_save(io, MD(0), MDFLAG_LOCK);
@@ -40,9 +40,9 @@ static void MF_reload(Func_t *func, void *rval, void **arg)
 }
 */
 
-static void MF_cpy(Func_t *func, void *rval, void **arg)
+static void MF_cpy(EfiFunc *func, void *rval, void **arg)
 {
-	register mdmat_t *md = MD(0);
+	register mdmat *md = MD(0);
 	register char *def = STR(1);
 
 	if	(md && def)
@@ -54,9 +54,9 @@ static void MF_cpy(Func_t *func, void *rval, void **arg)
 	else	RVMD = cpy_mdmat(md, 0);
 }
 
-static void MF_paste (Func_t *func, void *rval, void **arg)
+static void MF_paste (EfiFunc *func, void *rval, void **arg)
 {
-	register mdmat_t *md = Val_mdmat(arg[0]);
+	register mdmat *md = Val_mdmat(arg[0]);
 
 	if	(md != NULL)
 	{
@@ -120,12 +120,12 @@ MDC_FUNC(MF_mdexpr, md_term(Val_vfunc(arg[0]), MD(1),
 
 MDC_FUNC(MF_term, md_term(GetGlobalFunc(func->name), MD(0), MD(1)))
 
-static void MF_cat(Func_t *func, void *rval, void **arg)
+static void MF_cat(EfiFunc *func, void *rval, void **arg)
 {
-	mdmat_t **tab;
-	mdmat_t *md;
-	ObjList_t *list;
-	Obj_t *obj;
+	mdmat **tab;
+	mdmat *md;
+	EfiObjList *list;
+	EfiObj *obj;
 	size_t i, dim;
 
 	list = Val_list(arg[1]);
@@ -137,7 +137,7 @@ static void MF_cat(Func_t *func, void *rval, void **arg)
 	}
 
 	dim = ObjListLen(list);
-	tab = ALLOC(dim, mdmat_t *);
+	tab = memalloc(dim * sizeof(mdmat *));
 
 	for (i = 0; list != NULL; list = list->next)
 	{
@@ -155,9 +155,9 @@ static void MF_cat(Func_t *func, void *rval, void **arg)
 	RVMD = md;
 }
 
-static void MF_index(Func_t *func, void *rval, void **arg)
+static void MF_index(EfiFunc *func, void *rval, void **arg)
 {
-	mdmat_t *md = Val_mdmat(arg[0]);
+	mdmat *md = Val_mdmat(arg[0]);
 	int n = Val_int(arg[1]);
 
 	if	(md && n * md->type->size < md->size)
@@ -168,10 +168,10 @@ static void MF_index(Func_t *func, void *rval, void **arg)
 	else	Val_obj(rval) = NULL;
 }
 
-static void MF_md2vec(Func_t *func, void *rval, void **arg)
+static void MF_md2vec(EfiFunc *func, void *rval, void **arg)
 {
-	mdmat_t *md = Val_mdmat(arg[0]);
-	Vec_t *vec = rval;
+	mdmat *md = Val_mdmat(arg[0]);
+	EfiVec *vec = rval;
 
 	if	(md != NULL)
 	{
@@ -179,16 +179,16 @@ static void MF_md2vec(Func_t *func, void *rval, void **arg)
 		vec->dim = md->size / md->type->size;
 		vec->data = md->data;
 	}
-	else	memset(vec, 0, sizeof(Vec_t));
+	else	memset(vec, 0, sizeof(EfiVec));
 }
 
-extern void *md_DATA2(mdmat_t *md, unsigned mask, unsigned base, int lag);
+extern void *md_DATA2(mdmat *md, unsigned mask, unsigned base, int lag);
 
-extern void MF_valsum(Func_t *func, void *rval, void **arg);
-extern void MF_leval(Func_t *func, void *rval, void **arg);
-extern void MF_xeval(Func_t *func, void *rval, void **arg);
+extern void MF_valsum(EfiFunc *func, void *rval, void **arg);
+extern void MF_leval(EfiFunc *func, void *rval, void **arg);
+extern void MF_xeval(EfiFunc *func, void *rval, void **arg);
 
-static FuncDef_t fdef[] = {
+static EfiFuncDef fdef[] = {
 	{ 0, &Type_mdmat, "mdload (str file, str sel = NULL, str vsel = NULL)",
 		MF_load },
 	{ 0, &Type_mdmat, "mdread (IO io, str def = NULL)", MF_read },

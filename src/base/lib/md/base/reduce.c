@@ -4,10 +4,10 @@
 
 #include <EFEU/mdmat.h>
 
-void md_reduce(mdmat_t *md, const char *list)
+void md_reduce(mdmat *md, const char *list)
 {
-	mdaxis_t **ptr;
-	mdaxis_t *x;
+	mdaxis **ptr;
+	mdaxis *x;
 
 	if	(md == NULL)	return;
 

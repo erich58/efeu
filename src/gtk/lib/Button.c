@@ -48,12 +48,12 @@ static EGtkSigDef sig_toggle_button[] = {
 	{ "toggled", EGtkSigFunc_simple },
 };
 
-static void f_button (Func_t *func, void *rval, void **arg)
+static void f_button (EfiFunc *func, void *rval, void **arg)
 {
 	Val_ptr(rval) = gtk_button_new_with_label (STR(arg[0]));
 }
 
-static void f_lbutton (Func_t *func, void *rval, void **arg)
+static void f_lbutton (EfiFunc *func, void *rval, void **arg)
 {
 	GtkWidget *button = gtk_button_new_with_label (STR(arg[0]));
 	gtk_signal_connect(GTK_OBJECT(button), "clicked",
@@ -61,7 +61,7 @@ static void f_lbutton (Func_t *func, void *rval, void **arg)
 	Val_ptr(rval) = button;
 }
 
-static void f_wbutton (Func_t *func, void *rval, void **arg)
+static void f_wbutton (EfiFunc *func, void *rval, void **arg)
 {
 	GtkWidget *button = gtk_button_new ();
 	gtk_container_add(GTK_CONTAINER(button), Val_ptr(arg[0]));
@@ -70,12 +70,12 @@ static void f_wbutton (Func_t *func, void *rval, void **arg)
 	Val_ptr(rval) = button;
 }
 
-static void f_toggle_button (Func_t *func, void *rval, void **arg)
+static void f_toggle_button (EfiFunc *func, void *rval, void **arg)
 {
 	Val_ptr(rval) = gtk_toggle_button_new_with_label (STR(arg[0]));
 }
 
-static void f_check_button (Func_t *func, void *rval, void **arg)
+static void f_check_button (EfiFunc *func, void *rval, void **arg)
 {
 	Val_ptr(rval) = gtk_check_button_new_with_label (STR(arg[0]));
 }
@@ -85,18 +85,18 @@ static GSList *rgroup (void *arg)
 	return Val_ptr(arg) ? gtk_radio_button_group(Val_ptr(arg)) : NULL;
 }
 
-static void f_radio_button1 (Func_t *func, void *rval, void **arg)
+static void f_radio_button1 (EfiFunc *func, void *rval, void **arg)
 {
 	Val_ptr(rval) = gtk_radio_button_new (rgroup(arg[0]));
 }
 
-static void f_radio_button2 (Func_t *func, void *rval, void **arg)
+static void f_radio_button2 (EfiFunc *func, void *rval, void **arg)
 {
 	Val_ptr(rval) = gtk_radio_button_new_with_label (rgroup(arg[0]),
 		STR(arg[1]));
 }
 
-static FuncDef_t fdef[] = {
+static EfiFuncDef fdef[] = {
 	{ 0, NULL, "GtkButton GtkButton (GtkWidget widget, Expr_t expr)",
 		f_wbutton },
 	{ 0, NULL, "GtkButton GtkButton (str label, Expr_t expr)", f_lbutton },

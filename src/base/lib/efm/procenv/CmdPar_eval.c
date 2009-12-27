@@ -59,9 +59,9 @@ static int cmp_key (const char *a, const char *b, const char **ptr)
 	return (*a || (*b && *b != '=')) ? MATCH_PART : MATCH_FULL;
 }
 
-static CmdParKey_t *get_key (CmdPar_t *par, const char *name, const char **ptr)
+static CmdParKey *get_key (CmdPar *par, const char *name, const char **ptr)
 {
-	CmdParKey_t **kp, *key;
+	CmdParKey **kp, *key;
 	size_t n;
 
 	key = NULL;
@@ -76,7 +76,7 @@ static CmdParKey_t *get_key (CmdPar_t *par, const char *name, const char **ptr)
 		case MATCH_PART:
 			if	(key)
 			{
-				message(NULL, MSG_EFM, 33, 3,
+				dbg_note(NULL, "[efm:33]", "sss",
 					name, key->key, (*kp)->key);
 				return NULL;
 			}
@@ -88,14 +88,14 @@ static CmdParKey_t *get_key (CmdPar_t *par, const char *name, const char **ptr)
 	}
 
 	if	(key == NULL)
-		message(NULL, MSG_EFM, 32, 1, name);
+		dbg_note(NULL, "[efm:32]", "s", name);
 
 	return key;
 }
 
-static int get_option (CmdPar_t *par, int *narg, char **arg, int i)
+static int get_option (CmdPar *par, int *narg, char **arg, int i)
 {
-	CmdParKey_t *key;
+	CmdParKey *key;
 	const char *opt;
 	const char *cmdarg;
 	int flag, rval, lopt;
@@ -114,7 +114,7 @@ static int get_option (CmdPar_t *par, int *narg, char **arg, int i)
 
 		if	(flag && lopt)
 		{
-			message(NULL, MSG_EFM, 34, 1, arg[i]);
+			dbg_note(NULL, "[efm:34]", "s", arg[i]);
 			return CMDPAR_ERR;
 		}
 
@@ -124,7 +124,7 @@ static int get_option (CmdPar_t *par, int *narg, char **arg, int i)
 		{
 			if	(lopt && opt)
 			{
-				message(NULL, MSG_EFM, 34, 1, arg[i]);
+				dbg_note(NULL, "[efm:34]", "s", arg[i]);
 				return CMDPAR_ERR;
 			}
 
@@ -146,11 +146,11 @@ static int get_option (CmdPar_t *par, int *narg, char **arg, int i)
 			{
 				if	(i + 1 >= *narg)
 				{
-					message(NULL, MSG_EFM, 31, 1, key->key);
+					dbg_note(NULL, "[efm:31]", "s", key->key);
 					return CMDPAR_ERR;
 				}
 
-				cmdarg = arg[i + 1];
+				cmdarg = get_arg(arg[i + 1]);
 				skiparg(narg, arg, i + 1);
 			}
 			else	cmdarg = NULL;
@@ -159,7 +159,7 @@ static int get_option (CmdPar_t *par, int *narg, char **arg, int i)
 		{
 			if	(*opt != '=')
 			{
-				message(NULL, MSG_EFM, 34, 1, arg[i]);
+				dbg_note(NULL, "[efm:34]", "s", arg[i]);
 				return CMDPAR_ERR;
 			}
 
@@ -178,16 +178,16 @@ static int get_option (CmdPar_t *par, int *narg, char **arg, int i)
 
 #define	RMARG(x,m)	mstrncpy((x) + (m).rm_so, (m).rm_eo - (m).rm_so)
 
-static int regex_arg(CmdPar_t *par, CmdParKey_t *key,
+static int regex_arg(CmdPar *par, CmdParKey *key,
 	int *narg, char **arg, int pos, int *end)
 {
 	const char *cmdarg;
 	char *buf;
 	regmatch_t *rm;
-	RegExp_t *expr;
+	RegExp *expr;
 	int k, rval;
 
-	expr = RegExp(key->key, 0);
+	expr = RegExp_comp(key->key, 0);
 	rval = 0;
 
 	while (pos < *end)
@@ -223,7 +223,7 @@ static int regex_arg(CmdPar_t *par, CmdParKey_t *key,
 
 /*
 Die Funktion |$1| wertet die Befehlsargumente entsprechend der
-Parameterstruktur |CmdPar_t| aus. Die Befehlsargumente
+Parameterstruktur |CmdPar| aus. Die Befehlsargumente
 werden abhängig von der Parameterdefinitionen entsprechend
 modifiziert. Falls <flag> verschieden von 0 ist, wird die
 Optionsabfrage beim ersten Argument, dass nicht mit einer
@@ -234,9 +234,9 @@ verbleibenden Argumente (größer gleich 1), -1 bei einem
 Fehler und 0 bei einem Abbruch der Argumentabfrage.
 */
 
-int CmdPar_eval (CmdPar_t *par, int *narg, char **arg, int flag)
+int CmdPar_eval (CmdPar *par, int *narg, char **arg, int flag)
 {
-	CmdParKey_t **key;
+	CmdParKey **key;
 	int i, rval, start, end;
 	size_t n;
 

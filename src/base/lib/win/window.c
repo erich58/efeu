@@ -29,26 +29,27 @@ If not, write to the Free Software Foundation, Inc.,
 typedef struct {
 	WINDOW *child;
 	WINDOW *parent;
-} WinList_t;
+} WinList;
 
-static int wlist_cmp(const WinList_t *a, const WinList_t *b)
+static int wlist_cmp (const void *pa, const void *pb)
 {
+	const WinList *a = pa;
+	const WinList *b = pb;
+
 	if	(a->child < b->child)	return -1;
 	else if	(a->child > b->child)	return 1;
 	else				return 0;
 }
 
-static XTAB(winlist, 0, (comp_t) wlist_cmp);
+static VECBUF(winlist, 16, sizeof(WinList));
 
-
-void OverlayWindow(WINDOW *child, WINDOW *parent)
+void OverlayWindow (WINDOW *child, WINDOW *parent)
 {
-	WinList_t *wlist;
+	WinList key;
 
-	wlist = ALLOC(1, WinList_t);
-	wlist->child = child; 
-	wlist->parent = parent; 
-	xsearch(&winlist, wlist, XS_REPLACE);
+	key.child = child; 
+	key.parent = parent; 
+	vb_search(&winlist, &key, wlist_cmp, VB_REPLACE);
 }
 
 
@@ -104,17 +105,14 @@ static WINDOW *xnewwin(int maxy, int maxx, int begy, int begx)
 	if	(win == NULL)
 	{
 		EndWin();
-		reg_fmt(1, "%d", maxy);
-		reg_fmt(2, "%d", maxx);
-		reg_fmt(3, "%d", begy);
-		reg_fmt(4, "%d", begx);
-		liberror(MSG_EFWIN, 1);
+		dbg_error(NULL, "[efwin:1]", "dddd",
+			maxy, maxx, begy, begx);
 	}
 
 	return win;
 }
 
-static WINDOW *ws_newwin(WinSize_t *ws)
+static WINDOW *ws_newwin(WinSize *ws)
 {
 	int maxy, maxx, begy, begx;
 
@@ -142,7 +140,7 @@ static WINDOW *ws_newwin(WinSize_t *ws)
 	return xnewwin(maxy, maxx, begy, begx);
 }
 
-WINDOW *NewWindow(WinSize_t *ws)
+WINDOW *NewWindow(WinSize *ws)
 {
 	WINDOW *win;
 
@@ -156,7 +154,7 @@ WINDOW *NewWindow(WinSize_t *ws)
 	return win;
 }
 
-WINDOW *FrameWindow(WinSize_t *ws)
+WINDOW *FrameWindow(WinSize *ws)
 {
 	WINDOW *frame;
 	WINDOW *win;
@@ -177,22 +175,19 @@ WINDOW *FrameWindow(WinSize_t *ws)
 	return win;
 }
 
-void DelWindow(WINDOW *win)
+void DelWindow (WINDOW *win)
 {
-	WinList_t key, *list;
+	WinList key, *list;
 
 	if	(win == NULL)	return;
 
 	HideWindow(win);
 	key.child = win;
 
-	list = xsearch(&winlist, &key, XS_DELETE);
+	list = vb_search(&winlist, &key, wlist_cmp, VB_DELETE);
 
 	if	(list)
-	{
 		DelWindow(list->parent);
-		memfree(list);
-	}
 
 	delwin(win);
 	RefreshAll();

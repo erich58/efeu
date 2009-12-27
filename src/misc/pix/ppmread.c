@@ -63,7 +63,7 @@ static char *get_val(FILE *file)
 /*	Bitmapfile
 */
 
-static int get_pbm(FILE *file, int n)
+static int get_pbm (FILE *file, VecBuf *buf, int n)
 {
 	int c;
 
@@ -76,27 +76,22 @@ static int get_pbm(FILE *file, int n)
 	return 1;
 }
 
-static int get_pbmraw(FILE *file, int n)
+static int get_pbmraw (FILE *file, VecBuf *buf, int n)
 {
 	static int data;
 	n = n % 8;
 
 	if	(n == 0)
-	{
 		data = getc(file);
-	}
 
 	return (data & (1 << (7 - n)) ? 0 : 1);
 }
 
-static Color_t color;
-static Color_t *colordata = NULL;
-static int colordim = 0;
-static xtab_t *colortab;
-
-
-static int cmp_color(Color_t *a, Color_t *b)
+static int cmp_color (const void *pa, const void *pb)
 {
+	const COLOR *a = pa;
+	const COLOR *b = pb;
+
 	if	(a->red < b->red)	return -1;
 	else if	(a->red > b->red)	return 1;
 	else if	(a->green < b->green)	return -1;
@@ -106,82 +101,84 @@ static int cmp_color(Color_t *a, Color_t *b)
 	else				return 0;
 }
 
-static int color_value(void)
+static int color_value (VecBuf *buf, int red, int green, int blue)
 {
-	Color_t *ptr;
+	COLOR key, *ptr;
 
-	if	((ptr = xsearch(colortab, &color, XS_FIND)))
-	{
-		return (ptr - colordata);
-	}
+	key.red = red;
+	key.green = green;
+	key.blue = blue;
+	key.idx = buf->used;
+	ptr = vb_search(buf, &key, cmp_color, VB_SEARCH);
 
-	if	(colordim >= 255)
+	if	(ptr)
+		return ptr->idx;
+
+	if	(buf->used >= 255)
 	{
-		liberror(MSG_PIXMAP, 2);
+		dbg_error(NULL, "[pixmap:2]", NULL);
 		return 0;
 	}
 
-	colordata[colordim] = color;
-	xsearch(colortab, colordata + colordim, XS_ENTER);
-	return colordim++;
+	ptr = vb_search(buf, &key, cmp_color, VB_ENTER);
+	return ptr->idx;
 }
 
+static int gray_value (VecBuf *buf, int gray)
+{
+	return color_value(buf, gray, gray, gray);
+}
 
 /*	Graustufenfile
 */
 
-static int get_pgm(FILE *file, int n)
+static int get_pgm (FILE *file, VecBuf *buf, int n)
 {
-	color.red = atoi(get_val(file));
-	color.green = color.green;
-	color.blue = color.blue;
-	return color_value();
+	return gray_value(buf, atoi(get_val(file)));
 }
 
-static int get_pgmraw(FILE *file, int n)
+static int get_pgmraw (FILE *file, VecBuf *buf, int n)
 {
-	color.red = getc(file);
-	color.green = color.green;
-	color.blue = color.blue;
-	return color_value();
+	return gray_value(buf, getc(file));
 }
 
 
 /*	Farbdatei
 */
 
-static int get_ppm(FILE *file, int n)
+static int get_ppm (FILE *file, VecBuf *buf, int n)
 {
-	color.red = atoi(get_val(file));
-	color.green = atoi(get_val(file));
-	color.blue = atoi(get_val(file));
-	return color_value();
+	int red = atoi(get_val(file));
+	int green = atoi(get_val(file));
+	int blue = atoi(get_val(file));
+	return color_value(buf, red, green, blue);
 }
 
-static int get_ppmraw(FILE *file, int n)
+static int get_ppmraw (FILE *file, VecBuf *buf, int n)
 {
-	color.red = getc(file);
-	color.green = getc(file);
-	color.blue = getc(file);
-	return color_value();
+	int red = getc(file);
+	int green = getc(file);
+	int blue = getc(file);
+	return color_value(buf, red, green, blue);
 }
 
 
-OldPixMap_t *read_PPMFile(FILE *file)
+OldPixMap *read_PPMFile (FILE *file)
 {
 	int cols, rows;
 	int i, n;
 	int bitmap;
-	OldPixMap_t *pm;
+	OldPixMap *pm;
 	char *p;
 	double x;
-	int (*get) (FILE *file, int n); 
+	int (*get) (FILE *file, VecBuf *buf, int n); 
+	VecBuf buf;
 
 	p = get_val(file);
 
 	if	(p[0] != 'P')
 	{
-		liberror(MSG_PIXMAP, 1);
+		dbg_error(NULL, "[pixmap:1]", NULL);
 		return NULL;
 	}
 
@@ -193,11 +190,12 @@ OldPixMap_t *read_PPMFile(FILE *file)
 	case '4':	get = get_pbmraw; bitmap = 1; break;
 	case '5':	get = get_pgmraw; bitmap = 0; break;
 	case '6':	get = get_ppmraw; bitmap = 0; break;
-	default:	liberror(MSG_PIXMAP, 1); return NULL;
+	default:	dbg_error(NULL, "[pixmap:1]", NULL); return NULL;
 	}
 
 	cols = atoi(get_val(file));
 	rows = atoi(get_val(file));
+	vb_init(&buf, 512, sizeof(COLOR));
 
 	if	(bitmap)
 	{
@@ -211,28 +209,27 @@ OldPixMap_t *read_PPMFile(FILE *file)
 	{
 		pm = new_OldPixMap(rows, cols);
 		x = 255. / atoi(get_val(file));
-		colordata = pm->color;
-		colortab = xcreate(256, (comp_t) cmp_color);
-		colordim = 0;
 	}
 
 	n = cols *rows;
 
 	for (i = 0; i < n; i++)
-		pm->pixel[i] = get(file, i);
+		pm->pixel[i] = get(file, &buf, i);
 
 	if	(!bitmap)
 	{
-		for (i = 0; i < colordim; i++)
+		COLOR *color = buf.data;
+		
+		for (i = 0; i < buf.used; i++)
 		{
-			colordata[i].red = colordata[i].red * x + 0.5;
-			colordata[i].green = colordata[i].green * x + 0.5;
-			colordata[i].blue = colordata[i].blue * x + 0.5;
+			pm->color[i].red = color[i].red * x + 0.5;
+			pm->color[i].green = color[i].green * x + 0.5;
+			pm->color[i].blue = color[i].blue * x + 0.5;
 		}
 
-		xdestroy(colortab, NULL);
-		pm->colors = colordim;
+		pm->colors = buf.used;
 	}
 
+	vb_free(&buf);
 	return pm;
 }

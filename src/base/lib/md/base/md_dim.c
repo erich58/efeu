@@ -8,7 +8,7 @@
 /*	Achsendimension bestimmen
 */
 
-size_t md_dim(mdaxis_t *x)
+size_t md_dim(mdaxis *x)
 {
 	int n;
 
@@ -22,7 +22,7 @@ size_t md_dim(mdaxis_t *x)
 /*	Strukturgrößen berechnen
 */
 
-size_t md_size(mdaxis_t *x, size_t size)
+size_t md_size(mdaxis *x, size_t size)
 {
 	if	(x != NULL)
 	{

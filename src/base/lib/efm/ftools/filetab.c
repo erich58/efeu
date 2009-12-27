@@ -26,7 +26,10 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/patcmp.h>
 #include <EFEU/procenv.h>
 #include <EFEU/Debug.h>
+#include <EFEU/CmdPar.h>
 
+#define FMT_11	"[ftools:11]" \
+"$!: closing a file not registered by filenotice().\n"
 
 typedef struct {
 	FILE *file;
@@ -34,44 +37,47 @@ typedef struct {
 	char *mode;
 	int (*close) (FILE *file);
 	int refcount;
-} FileTab_t;
+} FileTab;
 
-static int file_cmp (const FileTab_t *a, const FileTab_t *b)
+static int file_cmp (const void *pa, const void *pb)
 {
+	const FileTab *a = pa;
+	const FileTab *b = pb;
+
 	if	(a->file < b->file)	return -1;
 	else if	(a->file > b->file)	return 1;
 	else				return 0;
 }
 
-static VECBUF(filetab, 32, sizeof(FileTab_t));
+static VECBUF(filetab, 32, sizeof(FileTab));
 
-static void file_debug (const char *type, FileTab_t *tab)
+static void file_debug (const char *type, FileTab *tab)
 {
-	io_t *io;
+	FILE *log;
 
 	if	(!tab)	return;
 
-	io = LogOut("file", DBG_TRACE);
+	log = LogFile("file", DBG_TRACE);
 
-	if	(!io)	return;
+	if	(!log)	return;
 
-	io_printf(io, "file: %s", type);
+	fprintf(log, "file: %s", type);
 
 	if	(tab->refcount)
-		io_printf(io, "[%d]", tab->refcount);
+		fprintf(log, "[%d]", tab->refcount);
 
-	io_puts(" (", io);
+	fputs(" (", log);
 
 	if	(tab->name)
-		io_printf(io, "%#s", tab->name);
-	else	io_printf(io, "%p", tab->file);
+		fprintf(log, "\"%s\"", tab->name);
+	else	fprintf(log, "%p", tab->file);
 
-	io_printf(io, ", %#s)\n", tab->mode);
+	fprintf(log, ", \"%s\")\n", tab->mode);
 }
 
 static void closeall (void)
 {
-	FileTab_t *tab;
+	FileTab *tab;
 	int i;
 
 	tab = filetab.data;
@@ -102,7 +108,7 @@ static void setup_closeall (void)
 void filenotice (const char *name, const char *mode,
 	FILE *file, int (*close) (FILE *file))
 {
-	FileTab_t tab;
+	FileTab tab;
 
 	tab.name = mstrcpy(name);
 	tab.mode = mstrcpy(mode);
@@ -110,15 +116,15 @@ void filenotice (const char *name, const char *mode,
 	tab.close = close;
 	tab.refcount = 0;
 	file_debug("open", &tab);
-	vb_search(&filetab, &tab, (comp_t) file_cmp, VB_REPLACE);
+	vb_search(&filetab, &tab, file_cmp, VB_REPLACE);
 	setup_closeall();
 }
 
 
 int fileclose (FILE *file)
 {
-	FileTab_t *tab;
-	FileTab_t key;
+	FileTab *tab;
+	FileTab key;
 	int stat;
 
 	if	(file == NULL || file == stdin ||
@@ -126,11 +132,11 @@ int fileclose (FILE *file)
 		return 0;
 
 	key.file = file;
-	tab = vb_search(&filetab, &key, (comp_t) file_cmp, VB_SEARCH);
+	tab = vb_search(&filetab, &key, file_cmp, VB_SEARCH);
 
 	if	(tab == NULL)
 	{
-		message("fileclose", MSG_FTOOLS, 11, 0);
+		dbg_note(NULL, FMT_11, NULL);
 		return EOF;
 	}
 
@@ -144,17 +150,17 @@ int fileclose (FILE *file)
 	file_debug("close", tab);
 	stat = (tab->close ? tab->close(tab->file) : 0);
 	memfree(tab->name);
-	vb_search(&filetab, &key, (comp_t) file_cmp, VB_DELETE);
+	vb_search(&filetab, &key, file_cmp, VB_DELETE);
 	return stat;
 }
 
 
 FILE *filerefer (FILE *file)
 {
-	FileTab_t key, *tab;
+	FileTab key, *tab;
 
 	key.file = file;
-	tab = vb_search(&filetab, &key, (comp_t) file_cmp, VB_SEARCH);
+	tab = vb_search(&filetab, &key, file_cmp, VB_SEARCH);
 
 	if	(tab)
 	{
@@ -176,28 +182,28 @@ char *fileident (FILE *file)
 	else if	(file == stderr)	return "<stderr>";
 	else
 	{
-		FileTab_t key, *tab;
+		FileTab key, *tab;
 
 		key.file = file;
-		tab = vb_search(&filetab, &key, (comp_t) file_cmp, VB_SEARCH);
+		tab = vb_search(&filetab, &key, file_cmp, VB_SEARCH);
 		return (tab ? tab->name : "<unknown>");
 	}
 }
 
 
-void filemessage (FILE *file, const char *name, int num, int narg, ...)
+void filedebug (FILE *file, int level, const char *fmt, const char *def, ...)
 {
 	va_list list;
-       	va_start(list, narg);
-	vmessage(fileident(file), name, num, narg, list);
+       	va_start(list, def);
+	dbg_vpsub("file", level, fmt, mstrcpy(fileident(file)), def, list);
 	va_end(list);
 }
 
-void fileerror (FILE *file, const char *name, int num, int narg, ...)
+void fileerror (FILE *file, const char *fmt, const char *def, ...)
 {
 	va_list list;
-       	va_start(list, narg);
-	vmessage(fileident(file), name, num, narg, list);
+       	va_start(list, def);
+	dbg_vpsub("file", DBG_ERR, fmt, mstrcpy(fileident(file)), def, list);
 	va_end(list);
 	exit(EXIT_FAILURE);
 }

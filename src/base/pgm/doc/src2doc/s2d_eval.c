@@ -24,11 +24,11 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/strbuf.h>
 #include <EFEU/efio.h>
 
-static void subcopy (io_t *ein, io_t *aus, int c);
-static void copy_str (io_t *ein, io_t *aus, int delim);
+static void subcopy (IO *ein, IO *aus, int c, int flag);
+static void copy_str (IO *ein, IO *aus, int delim);
 
 
-static void copy_str (io_t *ein, io_t *aus, int delim)
+static void copy_str (IO *ein, IO *aus, int delim)
 {
 	int c, flag;
 
@@ -47,48 +47,53 @@ static void copy_str (io_t *ein, io_t *aus, int delim)
 	io_protect(ein, 0);
 }
 
-static void subcopy (io_t *ein, io_t *aus, int c)
+static void subcopy (IO *ein, IO *aus, int c, int flag)
 {
-	io_putc(c, aus);
+	if	(!(flag && isspace(c)))
+		io_putc(c, aus);
 
 	switch (c)
 	{
 	case '"':
 	case '\'':	copy_str(ein, aus, c); break;
-	case '{':	copy_block(ein, aus, '}'); break;
-	case '(':	copy_block(ein, aus, ')'); break;
-	case '[':	copy_block(ein, aus, ']'); break;
+	case '{':	copy_block(ein, aus, '}', 0); break;
+	case '(':	copy_block(ein, aus, ')', 1); break;
+	case '[':	copy_block(ein, aus, ']', 1); break;
 	default:	break;
 	}
 }
 
-void copy_block (io_t *ein, io_t *aus, int end)
+void copy_block (IO *ein, IO *aus, int end, int flag)
 {
 	char *prompt;
-	int c;
+	int c, last;
 
 	prompt = io_prompt(ein, ">>> ");
+	last = 0;
 
 	while ((c = io_skipcom(ein, NULL, 0)) != EOF && c != end)
-		subcopy(ein, aus, c);
+	{
+		subcopy(ein, aus, c, (flag && last == '\n'));
+		last = c;
+	}
 
 	io_putc(end, aus);
 	io_prompt(ein, prompt);
 }
 
 
-static void skipline (SrcData_t *data, int c)
+static void skipline (SrcData *data, int c)
 {
-	SrcData_copy(data, NULL);
+	SrcData_copy(data, NULL, NULL);
 
-	do	subcopy(data->ein, NULL, c);
+	do	subcopy(data->ein, NULL, c, 0);
 	while ((c = io_skipcom(data->ein, NULL, 0)) != EOF && c != '\n');
 }
 
 /*	Präprozessorzeile umkopieren
 */
 
-void ppcopy (io_t *ein, strbuf_t *val, strbuf_t *com)
+void ppcopy (IO *ein, StrBuf *val, StrBuf *com)
 {
 	int c;
 
@@ -102,8 +107,7 @@ void ppcopy (io_t *ein, strbuf_t *val, strbuf_t *com)
 }
 
 
-
-static void ppline (SrcData_t *data)
+static void ppline (SrcData *data)
 {
 	char *name;
 	int n;
@@ -119,40 +123,41 @@ static void ppline (SrcData_t *data)
 		}
 	}
 
-	SrcData_copy(data, NULL);
+	SrcData_copy(data, NULL, NULL);
 	ppcopy(data->ein, NULL, NULL);
 }
 
-static void keyline (SrcData_t *data, int c)
+static void keyline (SrcData *data, int c)
 {
-	Decl_t *decl;
-	io_t *aus;
+	Decl *decl;
+	IO *aus;
 	decl = parse_decl(data->ein, c);
 
 	if	(decl->type & data->mask)
 	{
-		reg_set(1, mstrncpy(decl->def + decl->start,
-			decl->end - decl->start));
+		char *name = mstrncpy(decl->def + decl->start,
+				decl->end - decl->start);
 		aus = io_strbuf(data->doc.synopsis);
-		Decl_print(decl, aus);
+		Decl_print(decl, aus, name);
 		io_close(aus);
-		sb_printf(data->doc.tab[BUF_DESC], "\n/* %s */\n", reg_get(1));
-		SrcData_copy(data, data->doc.tab[BUF_DESC]);
+		sb_printf(data->doc.tab[BUF_DESC], "\n/* %s */\n", name);
+		SrcData_copy(data, data->doc.tab[BUF_DESC], name);
+		memfree(name);
 	}
-	else	SrcData_copy(data, NULL);
+	else	SrcData_copy(data, NULL, NULL);
 
 	while ((c = io_skipcom(data->ein, NULL, 0)) != EOF && c != '\n')
-		subcopy(data->ein, NULL, c);
+		subcopy(data->ein, NULL, c, 0);
 }
 
 
-static char *get_title (strbuf_t *buf)
+static char *get_title (StrBuf *buf)
 {
 	char *p;
 	size_t n;
 
 	sb_putc(0, buf);
-	p = buf->data;
+	p = (char *) buf->data;
 
 	for (n = 0; p[n] != 0; n++)
 	{
@@ -166,7 +171,7 @@ static char *get_title (strbuf_t *buf)
 	return sb2str(buf);
 }
 
-void SrcData_eval (SrcData_t *data)
+void SrcData_eval (SrcData *data, const char *name)
 {
 	int c;
 
@@ -174,8 +179,8 @@ void SrcData_eval (SrcData_t *data)
 
 	if	(sb_getpos(data->buf))
 	{
-		strbuf_t *buf = new_strbuf(0);
-		SrcData_copy(data, buf);
+		StrBuf *buf = new_strbuf(0);
+		SrcData_copy(data, buf, name);
 		memfree(data->doc.var[VAR_TITLE]);
 		data->doc.var[VAR_TITLE] = get_title(buf);
 	}
@@ -193,5 +198,5 @@ void SrcData_eval (SrcData_t *data)
 		else	skipline(data, c);
 	}
 
-	SrcData_copy(data, NULL);
+	SrcData_copy(data, NULL, name);
 }

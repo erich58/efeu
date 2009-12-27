@@ -23,7 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/efmain.h>
 #include <EFEU/efio.h>
 
-int iocpy_str(io_t *in, io_t *out, int c, const char *arg, unsigned int flags)
+int iocpy_str(IO *in, IO *out, int c, const char *arg, unsigned int flags)
 {
 	int n, escape;
 

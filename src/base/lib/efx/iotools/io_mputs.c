@@ -24,7 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/efmain.h>
 #include <EFEU/efio.h>
 
-int io_mputc(int c, io_t *io, const char *delim)
+int io_mputc(int c, IO *io, const char *delim)
 {
 	int n = 0;
 
@@ -37,11 +37,11 @@ int io_mputc(int c, io_t *io, const char *delim)
 }
 
 
-int io_mputs(const char *str, io_t *io, const char *delim)
+int io_mputs(const char *str, IO *io, const char *delim)
 {
 	if	(str != NULL)
 	{
-		const uchar_t *p = (const uchar_t *) str;
+		const unsigned char *p = (const unsigned char *) str;
 		int n;
 
 		for (n = 0; *p != 0; p++)

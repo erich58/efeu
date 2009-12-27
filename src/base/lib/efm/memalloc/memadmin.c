@@ -53,7 +53,7 @@ void *memadmin (void *tg, const void *src, size_t size)
 	return rval;
 }
 
-void *admin_data (alloctab_t *tab, void *tg, const void *src)
+void *admin_data (AllocTab *tab, void *tg, const void *src)
 {
 	void *rval;
 

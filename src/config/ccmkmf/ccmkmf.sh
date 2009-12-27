@@ -115,8 +115,8 @@ pathcfg="$top/etc/mkmf.cfg"
 defcfg="mkmf.cfg"
 cfg=""
 
-if	[ -x /usr/bin/gcc ]; then
-	CC="/usr/bin/gcc -traditional"
+if	gcc --version >/dev/null 2>&1; then
+	CC="gcc -traditional"
 fi
 
 if
@@ -127,8 +127,8 @@ fi
 
 ppfilter="$top/bin/ppfilter"
 pp2dep="$top/bin/pp2dep"
-flags="-D_EFEU_TOP=$top $ldef"
-tmp=/usr/tmp/pp$$.c
+flags="-DEFEUROOT=$top $ldef"
+tmp=${TMPDIR:-/tmp}/pp$$.c
 if=Imakefile
 of=Makefile
 id=$0
@@ -219,7 +219,7 @@ test ! -f $if && { printf "$fmt_nodef" "$if"; exit 1; }
 
 #	Test auf Bedarf einer Konfigurationsdatei
 
-if	grep -q '^#include' $if; then
+if	grep '^#include' $if >/dev/null; then
 	:
 elif	[ A$cfg = A ]; then
 	cfg=$defcfg
@@ -233,9 +233,8 @@ fi
 #echo if=$if of=$of
 
 cat > $tmp <<!
-#define	_EFEU_TOP	$top
+#define	EFEUROOT	$top
 #define	_BOOTSTRAP	$id $bootstrap
-#define	_CFGSTAMP 	$top/`uname -s`_`uname -m`
 #define	IMAKEFILE	$if
 #define	MAKEFILE	$of
 
@@ -255,6 +254,6 @@ rm -f $tmp
 #	Falls das generierte Makefeile eine depend-Regel enthält,
 #	wird diese aktiviert
 
-if	grep -q '^depend[ ]*:' $of; then
+if	grep '^depend[ ]*:' $of >/dev/null; then
 	make -f $of depend
 fi

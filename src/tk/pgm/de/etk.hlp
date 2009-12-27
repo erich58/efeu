@@ -1,0 +1,86 @@
+/*
+:*:german manpage for etk
+:de:Deutscher Handbucheintrag für etk
+
+$Copyright (C) 2002 Erich Frühstück
+This file is part of EFEU.
+
+EFEU is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+EFEU is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with EFEU; see the file COPYING.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+*/
+
+@name
+@synopsis -h
+\Description
+Das Programm |$!|
+interpretiert Skriptfiles in der Syntax des EFEU - Befehlsinterpreters
+analog zu |esh| aber mit Unterstützung von Tcl/Tk. Details der Syntax
+können im Handbuch zu |esh| nachgeschlagen werden, hier wird nur
+die spezielle Erweiterung für Tcl/Tk beschrieben.
+
+If the script is executable and the first line is
+Falls das Skript ausführbar ist und die erste Zeile die Form
+	|#!|<vollständiger Pfadname von $!>
+besitz, kann es wie ein gewöhnliches Kommando aufgerufen werden.
+
+Damit ein Skript unabhängig vom
+Installationsort von |$!| ist, kann als Interpreterkennung
+	|#!/usr/bin/env $!|
+oder
+	|#!/bin/sh|\br
+	|#* the next line restarts using $! \|\br
+	|exec $! "$$0" "$$@@"|\br
+verwendet werden.
+
+Optionen und Argumente nach dem Skriptnamen werden vom Skript selbst
+interpretiert. Der Interpreter |$!| selbst akzeptiert die folgenden
+Optionen und Argumente:
+
+@arglist
+
+\head	TCL/TK SCHNITTSTELLE
+
+@environ -h
+
+\Example
+Eines der am meisten geschriebenen Beispielprogrammeist <"Hallo Welt">.
+Hier ist die |$!| Version:
+
+---- verbatim
+#!/usr/bin/env etk
+/*	Beispielprogramm <"Hallo Welt">
+*/
+
+pconfig !
+Label = "Hallo Welt!"
+
+::label | Label
+	Ausgabetext, Vorgabe: "{Label}"
+!
+
+if	(tkinit())
+{
+	tclvar("label", Label);
+	tcl button .hello -textvariable label -command { destroy . }
+	tcl pack .hello
+	tkmain()
+}
+else	printf("%s\n", Label);
+----
+
+\SeeAlso
+\mref{esh(1)}.
+
+@copyright -h

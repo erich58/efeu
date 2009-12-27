@@ -21,19 +21,20 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/object.h>
+#include <EFEU/Op.h>
 #include <EFEU/cmdconfig.h>
 
 #define	CMPFUNC(name,op,cmp)	\
-static void name (Func_t *func, void *rval, void **arg) \
+static void name (EfiFunc *func, void *rval, void **arg) \
 { int x; Val_int(rval) = cmp(&x, arg) && (x op 0) ? 1 : 0; }
 
 
 /*	Ausdrücke auswerten
 */
 
-static void f_str2expr(Func_t *func, void *rval, void **arg)
+static void f_str2expr(EfiFunc *func, void *rval, void **arg)
 {
-	io_t *io;
+	IO *io;
 
 	io = io_cstr(Val_str(arg[0]));
 	Val_obj(rval) = Parse_cmd(io);
@@ -43,7 +44,7 @@ static void f_str2expr(Func_t *func, void *rval, void **arg)
 CEXPR(f_str2virfunc, Val_vfunc(rval) = VirFunc(GetGlobalFunc(Val_str(arg[0]))))
 CEXPR(f_xeval, Val_obj(rval) = EvalExpression(Val_obj(arg[0])))
 
-static void f_xeval2 (Func_t *func, void *rval, void **arg)
+static void f_xeval2 (EfiFunc *func, void *rval, void **arg)
 {
 	PushVarTab(RefVarTab(Val_vtab(arg[1])), NULL);
 	Val_obj(rval) = EvalExpression(Val_obj(arg[0]));
@@ -54,14 +55,14 @@ static void f_xeval2 (Func_t *func, void *rval, void **arg)
 */
 
 CEXPR(l_dim, Val_int(rval) = ObjListLen(Val_list(arg[0])))
-CEXPR(v_dim, Val_int(rval) = ((Vec_t *) arg[0])[0].dim)
+CEXPR(v_dim, Val_int(rval) = ((EfiVec *) arg[0])[0].dim)
 CEXPR(c_dim, Val_int(rval) = 1)
 
 CEXPR(v_index, Val_obj(rval) = Vector(arg[0], Val_int(arg[1])))
 
-static void v_list(Func_t *func, void *rval, void **arg)
+static void v_list(EfiFunc *func, void *rval, void **arg)
 {
-	ObjList_t *base, *list, **ptr;
+	EfiObjList *base, *list, **ptr;
 
 	base = Val_list(arg[1]);
 	list = NULL;
@@ -80,14 +81,14 @@ static void v_list(Func_t *func, void *rval, void **arg)
 /*	Zuweisungsoperatoren für allgemeine Objekte
 */
 
-static void base_assign(Func_t *func, void *rval, void **arg)
+static void base_assign(EfiFunc *func, void *rval, void **arg)
 {
 	Val_obj(rval) = AssignTerm("=", RefObj(arg[0]), RefObj(arg[1]));
 }
 
-static void assign_op(Func_t *func, void *rval, void **arg)
+static void assign_op(EfiFunc *func, void *rval, void **arg)
 {
-	Obj_t *left, *right;
+	EfiObj *left, *right;
 	char *p;
 
 	left = RefObj(arg[0]);
@@ -99,7 +100,7 @@ static void assign_op(Func_t *func, void *rval, void **arg)
 
 static int do_cmp(int *val, void **arg)
 {
-	Obj_t *x = EvalObj(BinaryTerm("cmp", RefObj(arg[0]),
+	EfiObj *x = EvalObj(BinaryTerm("cmp", RefObj(arg[0]),
 		RefObj(arg[1])), &Type_int);
 
 	if	(x)
@@ -122,22 +123,22 @@ CMPFUNC(any_gt,>,do_cmp)
 /*	Increment- und Dekrementoperatoren
 */
 
-static void f_pre_inc(Func_t *func, void *rval, void **arg)
+static void f_pre_inc(EfiFunc *func, void *rval, void **arg)
 {
 	Val_obj(rval) = EvalObj(AssignTerm("+=", RefObj(arg[0]),
 		int2Obj(1)), NULL);
 }
 
-static void f_pre_dec(Func_t *func, void *rval, void **arg)
+static void f_pre_dec(EfiFunc *func, void *rval, void **arg)
 {
 	Val_obj(rval) = EvalObj(AssignTerm("-=", RefObj(arg[0]),
 		int2Obj(1)), NULL);
 }
 
-static void f_post_inc(Func_t *func, void *rval, void **arg)
+static void f_post_inc(EfiFunc *func, void *rval, void **arg)
 {
-	Obj_t *x;
-	Obj_t *copy;
+	EfiObj *x;
+	EfiObj *copy;
 
 	x = arg[0];
 	copy = ConstObj(x->type, x->data);
@@ -145,10 +146,10 @@ static void f_post_inc(Func_t *func, void *rval, void **arg)
 	Val_obj(rval) = copy;
 }
 
-static void f_post_dec(Func_t *func, void *rval, void **arg)
+static void f_post_dec(EfiFunc *func, void *rval, void **arg)
 {
-	Obj_t *x;
-	Obj_t *copy;
+	EfiObj *x;
+	EfiObj *copy;
 
 	x = arg[0];
 	copy = ConstObj(x->type, x->data);
@@ -160,10 +161,10 @@ static void f_post_dec(Func_t *func, void *rval, void **arg)
 /*	Zuweisungsoperator für Vektoren
 */
 
-static void v_assign(Func_t *func, void *rval, void **arg)
+static void v_assign(EfiFunc *func, void *rval, void **arg)
 {
-	Vec_t *vec;
-	ObjList_t *list;
+	EfiVec *vec;
+	EfiObjList *list;
 	int i;
 
 	vec = arg[0];
@@ -174,15 +175,15 @@ static void v_assign(Func_t *func, void *rval, void **arg)
 			EvalObj(RefObj(list->obj), NULL)));
 
 	if	(list != NULL)
-		errmsg(MSG_EFMAIN, 138);
+		dbg_note(NULL, "[efmain:138]", NULL);
 
 	CopyData(&Type_vec, rval, arg[0]);
 }
 
-static void v_xassign(Func_t *func, void *rval, void **arg)
+static void v_xassign(EfiFunc *func, void *rval, void **arg)
 {
-	Vec_t *vec;
-	ObjList_t *list;
+	EfiVec *vec;
+	EfiObjList *list;
 	int i;
 
 	vec = arg[0];
@@ -193,7 +194,7 @@ static void v_xassign(Func_t *func, void *rval, void **arg)
 			EvalObj(RefObj(list->obj), NULL)));
 
 	if	(list != NULL)
-		errmsg(MSG_EFMAIN, 138);
+		dbg_note(NULL, "[efmain:138]", NULL);
 
 	CopyData(&Type_vec, rval, arg[0]);
 }
@@ -201,14 +202,14 @@ static void v_xassign(Func_t *func, void *rval, void **arg)
 /*	Verknüpfung von Listen
 */
 
-typedef Obj_t *(*list_eval)(const char *name, Obj_t *left, Obj_t *right);
+typedef EfiObj *(*list_eval)(const char *name, EfiObj *left, EfiObj *right);
 
 static void list_expr(list_eval eval, const char *name, void *rval, void **arg)
 {
-	ObjList_t *left;
-	ObjList_t *right;
-	ObjList_t *result, **ptr;
-	Obj_t *obj;
+	EfiObjList *left;
+	EfiObjList *right;
+	EfiObjList *result, **ptr;
+	EfiObj *obj;
 
 	left = Val_list(arg[0]);
 	right = Val_list(arg[1]);
@@ -264,15 +265,15 @@ static void list_expr(list_eval eval, const char *name, void *rval, void **arg)
 	Val_list(rval) = result;
 }
 
-static void list_binary(Func_t *func, void *rval, void **arg)
+static void list_binary(EfiFunc *func, void *rval, void **arg)
 {
 	list_expr(BinaryTerm, func->name, rval, arg);
 }
 
 static int do_listcmp(int *val, void **arg)
 {
-	ObjList_t *left = Val_list(arg[0]);
-	ObjList_t *right = Val_list(arg[1]);
+	EfiObjList *left = Val_list(arg[0]);
+	EfiObjList *right = Val_list(arg[1]);
 
 	while (left && right)
 	{
@@ -292,7 +293,7 @@ static int do_listcmp(int *val, void **arg)
 	return 1;
 }
 
-static void list_cmp(Func_t *func, void *rval, void **arg)
+static void list_cmp(EfiFunc *func, void *rval, void **arg)
 {
 	do_listcmp(rval, arg);
 }
@@ -304,24 +305,24 @@ CMPFUNC(list_ne,!=,do_listcmp)
 CMPFUNC(list_ge,>=,do_listcmp)
 CMPFUNC(list_gt,>,do_listcmp)
 
-static Obj_t *do_listassign(const char *name, Obj_t *left, Obj_t *right)
+static EfiObj *do_listassign(const char *name, EfiObj *left, EfiObj *right)
 {
 	return AssignObj(left, right);
 }
 
-static void list_assign(Func_t *func, void *rval, void **arg)
+static void list_assign(EfiFunc *func, void *rval, void **arg)
 {
 	list_expr(do_listassign, NULL, rval, arg);
 }
 
-static void list_xassign(Func_t *func, void *rval, void **arg)
+static void list_xassign(EfiFunc *func, void *rval, void **arg)
 {
 	list_expr(AssignTerm, func->name, rval, arg);
 }
 
-static void f_catlist(Func_t *func, void *rval, void **arg)
+static void f_catlist(EfiFunc *func, void *rval, void **arg)
 {
-	ObjList_t *list, *result, **ptr;
+	EfiObjList *list, *result, **ptr;
 
 	result = NULL;
 	ptr = &result;
@@ -341,15 +342,15 @@ static void f_catlist(Func_t *func, void *rval, void **arg)
 	Val_list(rval) = result;
 }
 
-static void f_pushlist (Func_t *func, void *rval, void **arg)
+static void f_pushlist (EfiFunc *func, void *rval, void **arg)
 {
-	ObjList_t *list, *x, *y;
+	EfiObjList *list, *x, *y;
 
 	list = Val_list(arg[0]);
 
 	for (x = Val_list(arg[1]); x != NULL; x = x->next)
 	{
-		Obj_t *obj = EvalObj(RefObj(x->obj), NULL);
+		EfiObj *obj = EvalObj(RefObj(x->obj), NULL);
 
 		if	(obj && obj->lval)
 		{
@@ -365,9 +366,9 @@ static void f_pushlist (Func_t *func, void *rval, void **arg)
 	Val_list(arg[0]) = list;
 }
 
-static void f_toplist (Func_t *func, void *rval, void **arg)
+static void f_toplist (EfiFunc *func, void *rval, void **arg)
 {
-	ObjList_t *list, **ptr, *x, *y;
+	EfiObjList *list, **ptr, *x, *y;
 
 	list = Val_list(arg[0]);
 	ptr = &list;
@@ -377,7 +378,7 @@ static void f_toplist (Func_t *func, void *rval, void **arg)
 
 	for (x = Val_list(arg[1]); x != NULL; x = x->next)
 	{
-		Obj_t *obj = EvalObj(RefObj(x->obj), NULL);
+		EfiObj *obj = EvalObj(RefObj(x->obj), NULL);
 
 		if	(obj && obj->lval)
 		{
@@ -393,28 +394,28 @@ static void f_toplist (Func_t *func, void *rval, void **arg)
 	Val_list(arg[0]) = list;
 }
 
-static void f_poplist (Func_t *func, void *rval, void **arg)
+static void f_poplist (EfiFunc *func, void *rval, void **arg)
 {
-	ObjList_t *list = Val_list(arg[0]);
+	EfiObjList *list = Val_list(arg[0]);
 	Val_obj(rval) = list ? ReduceObjList(arg[0]) : RefObj(arg[1]);
 }
 
-static void f_ldata (Func_t *func, void *rval, void **arg)
+static void f_ldata (EfiFunc *func, void *rval, void **arg)
 {
-	ObjList_t *list = Val_list(arg[0]);
+	EfiObjList *list = Val_list(arg[0]);
 	Val_obj(rval) = RefObj(list ? list->obj : arg[1]);
 }
 
-static FuncDef_t fdef_obj[] = {
+static EfiFuncDef fdef_obj[] = {
 	{ FUNC_RESTRICTED, &Type_expr, "str ()", f_str2expr },
 	{ FUNC_RESTRICTED, &Type_vfunc, "str ()", f_str2virfunc },
 	{ FUNC_VIRTUAL, &Type_obj, "eval (Expr_t)", f_xeval },
 	{ FUNC_VIRTUAL, &Type_obj, "eval (Expr_t, VarTab)", f_xeval2 },
-	{ FUNC_VIRTUAL, &Type_obj, "operator[] (Vec_t, int)", v_index },
-	{ FUNC_VIRTUAL, &Type_list, "operator[] (Vec_t, List_t)", v_list },
+	{ FUNC_VIRTUAL, &Type_obj, "operator[] (EfiVec, int)", v_index },
+	{ FUNC_VIRTUAL, &Type_list, "operator[] (EfiVec, List_t)", v_list },
 
 	{ FUNC_VIRTUAL, &Type_int, "dim (List_t)", l_dim },
-	{ FUNC_VIRTUAL, &Type_int, "dim (Vec_t)", v_dim },
+	{ FUNC_VIRTUAL, &Type_int, "dim (EfiVec)", v_dim },
 	{ FUNC_VIRTUAL, &Type_int, "dim (.)", c_dim },
 
 	{ 0, &Type_obj, "Object::operator++ & ()", f_pre_inc },
@@ -441,18 +442,18 @@ static FuncDef_t fdef_obj[] = {
 	{ 0, &Type_obj, "Object::operator^= & (.)", assign_op },
 	{ 0, &Type_obj, "Object::operator|= & (.)", assign_op },
 
-	{ 0, &Type_vec, "Vec_t::operator= (List_t)", v_assign },
-	{ 0, &Type_vec, "Vec_t::operator:= (List_t)", v_assign },
-	{ 0, &Type_vec, "Vec_t::operator*= (List_t)", v_xassign },
-	{ 0, &Type_vec, "Vec_t::operator/= (List_t)", v_xassign },
-	{ 0, &Type_vec, "Vec_t::operator%= (List_t)", v_xassign },
-	{ 0, &Type_vec, "Vec_t::operator+= (List_t)", v_xassign },
-	{ 0, &Type_vec, "Vec_t::operator-= (List_t)", v_xassign },
-	{ 0, &Type_vec, "Vec_t::operator<<= (List_t)", v_xassign },
-	{ 0, &Type_vec, "Vec_t::operator>>= (List_t)", v_xassign },
-	{ 0, &Type_vec, "Vec_t::operator&= (List_t)", v_xassign },
-	{ 0, &Type_vec, "Vec_t::operator^= (List_t)", v_xassign },
-	{ 0, &Type_vec, "Vec_t::operator|= (List_t)", v_xassign },
+	{ 0, &Type_vec, "EfiVec::operator= (List_t)", v_assign },
+	{ 0, &Type_vec, "EfiVec::operator:= (List_t)", v_assign },
+	{ 0, &Type_vec, "EfiVec::operator*= (List_t)", v_xassign },
+	{ 0, &Type_vec, "EfiVec::operator/= (List_t)", v_xassign },
+	{ 0, &Type_vec, "EfiVec::operator%= (List_t)", v_xassign },
+	{ 0, &Type_vec, "EfiVec::operator+= (List_t)", v_xassign },
+	{ 0, &Type_vec, "EfiVec::operator-= (List_t)", v_xassign },
+	{ 0, &Type_vec, "EfiVec::operator<<= (List_t)", v_xassign },
+	{ 0, &Type_vec, "EfiVec::operator>>= (List_t)", v_xassign },
+	{ 0, &Type_vec, "EfiVec::operator&= (List_t)", v_xassign },
+	{ 0, &Type_vec, "EfiVec::operator^= (List_t)", v_xassign },
+	{ 0, &Type_vec, "EfiVec::operator|= (List_t)", v_xassign },
 
 	{ FUNC_VIRTUAL, &Type_list, "operator+ (List_t, List_t)", list_binary },
 	{ FUNC_VIRTUAL, &Type_list, "operator- (List_t, List_t)", list_binary },

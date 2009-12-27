@@ -23,7 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/dbutil.h>
 
 /*
-Die Funktion |$1<| ladet einen Datenbanksatz im Textformat
+Die Funktion |$1| ladet einen Datenbanksatz im Textformat
 aus der Eingabestruktzur <io> in den Buffer <buf>. Das Argumnent
 <recl> gibt die Satzlänge an. Der Buffer <buf> muß um mindestens 1 Byte
 größer sein als die Satzlänge <recl>.
@@ -39,7 +39,7 @@ Bei einem Lesefehler oder beim Ende der Datei liefert die Funktion |$1| einen
 Nullpointer. Ansonsten wird die Adresse von <buf> zurückgegeben.
 */
 
-char *txt_load (io_t *io, char *buf, int recl)
+char *txt_load (IO *io, char *buf, int recl)
 {
 	int c, n;
 

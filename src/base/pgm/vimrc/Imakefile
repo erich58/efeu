@@ -1,0 +1,15 @@
+Destination(VIMDIR,$(EFEUTOP)/share/vim)
+ProvideDir($(VIMDIR)/syntax)
+
+#define	VIMFile(tg,src)	SEDInstall($(VIMDIR),tg,src,-e's|VIMDIR|$(VIMDIR)|g')
+
+#define	CPInstall(tg,src)	\
+NamedTarget(files,PathName($(VIMDIR),tg)) \
+CleanTarget(PathName($(VIMDIR),tg)) \
+@;PathName($(VIMDIR),tg): src \
+@;@+rm -f $@ \
+@;@+cp -f src $@ \
+@;
+
+all:: $(BINDIR)/efeu-vimrc
+	efeu-vimrc $(VIMDIR)

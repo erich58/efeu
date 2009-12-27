@@ -1,0 +1,22 @@
+Destination(DATA,$(EFEUTOP)/share/eletters)
+Destination(IMAGES,$(DATA)/images)
+Destination(AUDIO,$(DATA)/audio)
+ProvideDir($(AUDIO)/de)
+ProvideDir($(AUDIO)/en)
+
+#define	InstallImage(tg,src)	\
+NamedTarget(files,PathName($(IMAGES),tg)) \
+CleanTarget(PathName($(IMAGES),tg)) \
+@;PathName($(IMAGES),tg): src \
+@;@+rm -f $@ \
+@;@+cp -f src $@ \
+@;
+
+#define	LinkImage(dir,tg,src) \
+AllTarget(PathName(dir,tg)) \
+CleanTarget(PathName(dir,tg)) \
+@;PathName(dir,tg): PathName($(IMAGES),src) \
+@;@+if [ ! -d dir ]; then mkdir dir; fi \
+@;@+rm -f $@ \
+@;@+ln -fs PathName($(IMAGES),src) $@ \
+@;

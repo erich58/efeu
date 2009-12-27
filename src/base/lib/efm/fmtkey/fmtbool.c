@@ -22,7 +22,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/fmtkey.h>
 
-int fmt_bool(io_t *io, const fmtkey_t *key, int val)
+int fmt_bool(IO *io, const FmtKey *key, int val)
 {
 	switch (key->mode)
 	{

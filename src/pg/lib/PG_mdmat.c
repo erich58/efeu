@@ -73,15 +73,15 @@ static int getidx (PGresult *res, const char *def)
 	else	n = PQfnumber(res, def);
 
 	if	(n < 0)
-		Message("PG", DBG_ERR, M_UNDEF, ArgList("nc", def));
+		dbg_note("PG", M_UNDEF, "s", def);
 
 	return n;
 }
 
 static char *inc_lbl (const char *lbl, const char *def)
 {
-	strbuf_t *buf;
-	io_t *io;
+	StrBuf *buf;
+	IO *io;
 	char *p;
 
 	buf = new_strbuf(0);
@@ -108,11 +108,11 @@ static char *inc_lbl (const char *lbl, const char *def)
 	return p;
 }
 
-static mdaxis_t *make_axis (PGresult *res, const char *def, int n)
+static mdaxis *make_axis (PGresult *res, const char *def, int n)
 {
-	assignarg_t *args;
-	vecbuf_t xbuf;
-	mdaxis_t *axis;
+	AssignArg *args;
+	VecBuf xbuf;
+	mdaxis *axis;
 	char **xp;
 	int field;
 	IDX *idx;
@@ -216,19 +216,19 @@ Datenbankabfrage.
 The function |$1| creates a mdmat object from last query.
 */
 
-mdmat_t *PG_mdmat (PG_t *pg, const Type_t *type,
+mdmat *PG_mdmat (PG *pg, const EfiType *type,
 	const char *valdef, const char *axis)
 {
 	size_t i, n;
 	char **list;
-	mdmat_t *md;
-	mdaxis_t *p, **ptr;
+	mdmat *md;
+	mdaxis *p, **ptr;
 	char *data;
 	char *value;
 	int ntuples;
 	int field;
-	Konv_t konv;
-	Func_t *f_add;
+	EfiKonv konv;
+	EfiFunc *f_add;
 	void *buf;
 
 	if	(pg == NULL || pg->res == NULL || type == NULL)
@@ -238,7 +238,7 @@ mdmat_t *PG_mdmat (PG_t *pg, const Type_t *type,
 
 	if	(ntuples == 0)
 	{
-		Message("PG", DBG_ERR, M_NODATA, NULL);
+		dbg_note("PG", M_NODATA, NULL);
 		return NULL;
 	}
 
@@ -255,7 +255,7 @@ mdmat_t *PG_mdmat (PG_t *pg, const Type_t *type,
 /*	create mdmat-object
 */
 	md = new_mdmat();
-	md->type = (Type_t *) type;
+	md->type = (EfiType *) type;
 	md->title = msprintf("%s by %s", valdef, axis);
 	ptr = &md->axis;
 
@@ -308,7 +308,7 @@ mdmat_t *PG_mdmat (PG_t *pg, const Type_t *type,
 
 /*
 $SeeAlso
-\mref{PG(3)},
+\mref{PG_connect(3)},
 \mref{PG_query(3)},
 \mref{SetupPG(3)},
 \mref{PG(7)}, \mref{mdmat(7)}.\br

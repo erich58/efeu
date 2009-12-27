@@ -26,9 +26,9 @@ If not, write to the Free Software Foundation, Inc.,
 #include <ctype.h>
 
 
-void PrintInfo (io_t *io, InfoNode_t *base, const char *name)
+void PrintInfo (IO *io, InfoNode *base, const char *name)
 {
-	InfoNode_t *info = GetInfo(base, name);
+	InfoNode *info = GetInfo(base, name);
 
 	if	(info)
 	{
@@ -37,22 +37,21 @@ void PrintInfo (io_t *io, InfoNode_t *base, const char *name)
 
 		if	(info->label)
 		{
-			io_psub(io, info->label);
+			io_psubarg(io, info->label, "ns", info->name);
 			io_putc('\n', io);
 		}
 
 		if	(!info->func)
 		{
-			reg_cpy(1, info->name);
-			reg_cpy(2, info->label);
-			io_psub(io, info->par);
+			io_psubarg(io, info->par, "nss",
+					info->name, info->label);
 		}
 		else	info->func(io, info);
 
 		if	(info->list)
 		{
 			int i = info->list->used;
-			InfoNode_t **ip = info->list->data;
+			InfoNode **ip = info->list->data;
 
 			io_putc('\n', io);
 
@@ -63,7 +62,7 @@ void PrintInfo (io_t *io, InfoNode_t *base, const char *name)
 				if	((*ip)->label)
 				{
 					io_putc('\t', io);
-					io_psub(io, (*ip)->label);
+					io_psubarg(io, (*ip)->label, NULL);
 				}
 
 				io_putc('\n', io);

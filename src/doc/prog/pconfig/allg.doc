@@ -22,11 +22,6 @@ Das Flag \index{|POSIXLY_CORRECT|}, das bei der GNU-Version von
 |getopt| diese Erweiterung deaktiviert, wird von EFEU
 nicht unterstützt.
 
-Derzeit wird noch eine alte Version der Options- und Argumentabfrage
-verwendet. Diese erfüllt nicht die \index{X/Open-Spezifikation}, da alle
-Optionen wie lange Optionen behandelt werden. Die einzelnen Flags
-können daher nicht miteinander kombiniert werden.
-
 Shell-Skripts und einzelne Kommandos, die für ihre Arbeiten keine Funktionen
 der EFEU-Bibliotheken benötigen, verwenden weiterhin \index{|getopt|} bzw.
 \index{|getopts|}.

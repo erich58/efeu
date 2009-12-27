@@ -27,6 +27,11 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/MakeDepend.h>
 #include <EFEU/Debug.h>
 
+#define FMT_1	"[ftools:1]$!: file \"$1\": undefined access mode \"$2\".\n"
+#define FMT_2	"[ftools:2]$!: popen(\"$1\", \"$2\"): execution failed.\n"
+#define FMT_3	"[ftools:3]$!: fopen(\"$1\", \"$2\"): could not open file.\n"
+#define FMT_4	"[ftools:4]$!; fileopen(\"$1\", \"$2\"): execution locked.\n"
+
 /*
 $Description
 April 1999:
@@ -44,8 +49,9 @@ März 2000:
 static char *ftype[] = { "rb", "wb", "ab" };
 static char *ptype[] = { "r", "w", "w" };
 
+int pipe_lock = 0;
 
-/*	Komressionskommandos
+/*	Kompressionsfilter
 */
 
 static struct {
@@ -88,12 +94,9 @@ static FILE *open_pipe (const char *name, int mode)
 	FILE *file = popen(name + 1, ptype[mode]);
 	
 	if	(file == NULL)
-	{
-		message("popen", MSG_FTOOLS, 2, 2, name + 1, ptype[mode]);
-		exit(EXIT_FAILURE);
-	}
-	else	filenotice(name, ptype[mode], file, pclose);
+		dbg_error(NULL, FMT_2, "ss", name + 1, ptype[mode]);
 
+	filenotice(name, ptype[mode], file, pclose);
 	return file;
 }
 
@@ -105,12 +108,9 @@ static FILE *open_file (const char *name, int mode)
 	FILE *file = fopen(name, ftype[mode]);
 	
 	if	(file == NULL)
-	{
-		message("fopen", MSG_FTOOLS, 3, 2, name, ftype[mode]);
-		exit(EXIT_FAILURE);
-	}
-	else	filenotice(name, ftype[mode], file, fclose);
+		dbg_error(NULL, FMT_3, "ss", name, ftype[mode]);
 
+	filenotice(name, ftype[mode], file, fclose);
 	return file;
 }
 
@@ -132,8 +132,7 @@ FILE *fileopen (const char *name, const char *mode)
 	case 'w':	omode = MODE_WRITE; break;
 	case 'a':	omode = MODE_APPEND; break;
 	default:
-		message("fileopen", MSG_FTOOLS, 1, 2, name, mode);
-		exit(EXIT_FAILURE);
+		dbg_error(NULL, FMT_1, "ss", name, mode);
 		return NULL;
 	}
 
@@ -157,7 +156,12 @@ FILE *fileopen (const char *name, const char *mode)
 		return (omode == MODE_READ) ? stdin : stdout;
 
 	if	(*name == '|')
+	{
+		if	(pipe_lock)
+			dbg_error(NULL, FMT_4, "ss", name, omode);
+
 		return open_pipe(name, omode);
+	}
 
 	if	(*name == '&')
 	{

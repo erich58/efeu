@@ -33,21 +33,21 @@ If not, write to the Free Software Foundation, Inc.,
 #define	CmdEval_Break	2	/* Abbruch */
 #define	CmdEval_Return	3	/* Rücksprung */
 
-extern Obj_t *CmdEval_retval;
+extern EfiObj *CmdEval_retval;
 extern int CmdEval_stat;
 
 extern void CmdEval_setup (void);
 
-extern io_t *CmdEval_cin;
-extern io_t *CmdEval_cout;
+extern IO *CmdEval_cin;
+extern IO *CmdEval_cout;
 
 /*	Befehlsinterpreter
 */
 
-void CmdEvalFunc(io_t *in, io_t *out, int flag);
-int CmdPreProc (io_t *in, int key);
-void CmdEval (io_t *in, io_t *out);
+void CmdEvalFunc(IO *in, IO *out, int flag);
+int CmdPreProc (IO *in, int key);
+void CmdEval (IO *in, IO *out);
 
-io_t *io_cmdeval (io_t *in, const char *delim);
+IO *io_cmdeval (IO *in, const char *delim);
 
 #endif	/* EFEU/cmdeval.h */

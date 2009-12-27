@@ -5,7 +5,7 @@
 \title	Mehrdimensonale Datenmatrizen
 Benutzerhandbuch für mehrdimensionale Datenmatrizen
 
-\intro
+\preface
 Dieses Handbuch gibt einen Überblick über das Arbeiten
 mit mehrdimensionalen Datenmatrizen.
 
@@ -34,13 +34,13 @@ Datenmatrizen relevanten Handbucheinträge zusammengefaßt.
 \appendix
 \mchap[1]	Kommandos
 \include intro.1
-\addsrclist	\eval{EFEUSRC}/std/pgm/esh/script
+\addsrclist	\eval{EFEUSRC}/base/pgm/esh/script
 \eval {
 for (x in SourceList)
 	if (patcmp("*.esh", x.name))
 		input(NULL, popen(filename(x.name) + " --help=raw", "r"));
 }
-\addsrclist	\eval{EFEUSRC}/std/lib/md
+\addsrclist	\eval{EFEUSRC}/base/lib/md
 \mchap[5]	Dateiformate
 \srcinclude	*.5
 \printindex

@@ -1,0 +1,25 @@
+/*
+:*:Hello world example command
+:de:Beispielprogramm <"Hallo Welt">
+
+$Copyright (C) 2002 Erich Frühstück
+A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+*/
+
+pconfig !
+Version = $Id: hello.etk,v 1.1 2002-07-23 04:45:12 ef Exp $
+Label = :*:Hello, world:de:Hallo Welt!
+
+::label | Label
+	:*:Label to display, default: "{Label}"
+	:de:Ausgabetext, Vorgabe: "{Label}"
+!
+
+if	(tkinit())
+{
+	tclvar("label", Label);
+	tcl button .hello -textvariable label -command { destroy . }
+	tcl pack .hello
+	tkmain()
+}
+else	printf("%s\n", Label);

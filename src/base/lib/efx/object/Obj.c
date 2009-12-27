@@ -25,9 +25,9 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	MEMCHECK	0
 
-#define	SIZE_PTR	(sizeof(Obj_t))
-#define	SIZE_SMALL	(sizeof(Obj_t) + sizeof(long))
-#define	SIZE_LARGE	(sizeof(Obj_t) + 4 * sizeof(void *))
+#define	SIZE_PTR	(sizeof(EfiObj))
+#define	SIZE_SMALL	(sizeof(EfiObj) + sizeof(long))
+#define	SIZE_LARGE	(sizeof(EfiObj) + 4 * sizeof(void *))
 
 #if	MEMCHECK
 #define	CHECK_SIZE	8
@@ -49,9 +49,9 @@ static ALLOCTAB(tab_large, 50, SIZE_LARGE + CHECK_SIZE);
 static size_t stat_alloc = 0;
 static size_t stat_free = 0;
 
-Obj_t *Obj_alloc (size_t size)
+EfiObj *Obj_alloc (size_t size)
 {
-	Obj_t *obj;
+	EfiObj *obj;
 
 	if	(size <= SIZE_PTR)	obj = new_data(&tab_ptr);
 	else if	(size <= SIZE_SMALL)	obj = new_data(&tab_small);
@@ -64,7 +64,7 @@ Obj_t *Obj_alloc (size_t size)
 	return obj;
 }
 
-void Obj_free (Obj_t *obj, size_t size)
+void Obj_free (EfiObj *obj, size_t size)
 {
 	if	(size <= SIZE_PTR)	del_data(&tab_ptr, obj);
 	else if	(size <= SIZE_SMALL)	del_data(&tab_small, obj);
@@ -75,9 +75,9 @@ void Obj_free (Obj_t *obj, size_t size)
 #define	STAT_1	"%s: Size %3ld +%3ld: %5ld used, %5ld free, %5ld byte (%ldx%ldx%ld)\n"
 #define	STAT_L	"%s: Large objects: %5ld used, %5ld requests\n"
 
-static void show_alloc(alloctab_t *tab, const char *prompt)
+static void show_alloc(AllocTab *tab, const char *prompt)
 {
-	chain_t *x;
+	AllocTabList *x;
 	size_t n;
 
 	x = tab->blklist;
@@ -86,14 +86,52 @@ static void show_alloc(alloctab_t *tab, const char *prompt)
 		x = x->next;
 
 	fprintf(stderr, STAT_1, prompt,
-		(ulong_t) sizeof(Obj_t),
-		(ulong_t) (tab->elsize - sizeof(Obj_t)),
-		(ulong_t) tab->nused,
-		(ulong_t) tab->nfree,
-		(ulong_t) n * tab->blksize * tab->elsize,
-		(ulong_t) n,
-		(ulong_t) tab->blksize,
-		(ulong_t) tab->elsize);
+		(unsigned long) sizeof(EfiObj),
+		(unsigned long) (tab->elsize - sizeof(EfiObj)),
+		(unsigned long) tab->nused,
+		(unsigned long) tab->nfree,
+		(unsigned long) n * tab->blksize * tab->elsize,
+		(unsigned long) n,
+		(unsigned long) tab->blksize,
+		(unsigned long) tab->elsize);
+}
+
+/*
+Die Funktion |$1| liefert einen Identifikationsstring zum angegebenen
+Object.
+*/
+
+char *Obj_ident (const EfiObj *obj)
+{
+	if	(obj)
+	{
+		StrBuf *buf;
+			
+		buf = new_strbuf(0);
+		sb_puts(obj->type->name, buf);
+
+		if	(obj->lval)
+		{
+			sb_puts(" &", buf);
+
+			if	(obj->lval->ident)
+			{
+				char *p = obj->lval->ident(obj);
+
+				if	(p)
+				{
+					sb_puts(" (", buf);
+					sb_puts(p, buf);
+					sb_putc(')', buf);
+					memfree(p);
+				}
+			}
+		}
+
+		return sb2str(buf);
+	}
+
+	return NULL;
 }
 
 /*
@@ -111,23 +149,24 @@ void Obj_stat (const char *prompt)
 	show_alloc(&tab_large, prompt);
 
 	fprintf(stderr, STAT_L, prompt,
-		(ulong_t) (stat_alloc - stat_free), (ulong_t) stat_alloc);
+		(unsigned long) (stat_alloc - stat_free),
+		(unsigned long) stat_alloc);
 }
 
-#define	CHECK_MSG	"%s: Speicherfehler von Objekt %lx, Type %#s.\n"
+#define	CHECK_MSG	"%s: Speicherfehler von Objekt %p, Type %#s.\n"
 
 
-void Obj_check(const Obj_t *obj)
+void Obj_check(const EfiObj *obj)
 {
 #if	MEMCHECK
 	size_t size;
 	
 	if	(obj == NULL || obj->lref)	return;
 
-	size = sizeof(Obj_t) + obj->type->size;
+	size = sizeof(EfiObj) + obj->type->size;
 
 	if	(memcmp(((const char *) obj) + size, CHECK_MASK, CHECK_SIZE) != 0)
-		io_printf(ioerr, CHECK_MSG, ProgIdent, (ulong_t) obj, obj->type->name);
+		io_printf(ioerr, CHECK_MSG, ProgIdent, obj, obj->type->name);
 #else
 	;
 #endif

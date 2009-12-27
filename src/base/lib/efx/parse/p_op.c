@@ -27,22 +27,23 @@ If not, write to the Free Software Foundation, Inc.,
 static char parsebuf[IO_MAX_SAVE];
 static int parsepos = 0;
 static int prior = 0;
-static Op_t *opdef = NULL;
-static io_t *io = NULL;
+static EfiOp *opdef = NULL;
+static IO *io = NULL;
 
-static int doparse (Op_t *op);
+static int doparse (const char *name, void *data, void *par);
 static void pushback (int save);
 
 
-static int doparse(Op_t *op)
+static int doparse (const char *name, void *ptr, void *par)
 {
+	EfiOp *op = ptr;
 	int i;
 
 	for (i = 0; op->name[i] != 0; i++)
 	{
 		if	(i >= IO_MAX_SAVE)
 		{
-			return 1;	/* Weitersuchen */
+			return 0;	/* Weitersuchen */
 		}
 
 		if	(i >= parsepos)
@@ -58,7 +59,7 @@ static int doparse(Op_t *op)
 
 		if	(op->name[i] != parsebuf[i])
 		{
-			return 1;	/* Weitersuchen */
+			return 0;	/* Weitersuchen */
 		}
 	}
 
@@ -66,33 +67,31 @@ static int doparse(Op_t *op)
 */
 	if	(op->prior < prior)
 	{
-		return 0;
+		return 1;
 	}
 	else if	(op->prior == prior && op->assoc == OpAssoc_Left)
 	{
-		return 0;
+		return 1;
 	}
 
 /*	Zuviel gelesene Zeichen zurückschreiben
 */
 	opdef = op;
 	pushback(i);
-	return 0;
+	return 1;
 }
 
 
-Obj_t *Parse_op(io_t *in, int p, Obj_t *obj)
+EfiObj *Parse_op(IO *in, int p, EfiObj *obj)
 {
 	if	(io_eat(in, " \t") == EOF)
-	{
 		return NULL;
-	}
 
 	io = in;
 	parsepos = 0;
 	opdef = NULL;
 	prior = p;
-	xwalk(obj ? &PostfixTab : &PrefixTab, (visit_t) doparse);
+	nkt_rwalk(obj ? &PostfixTab : &PrefixTab, doparse, NULL);
 
 	if	(opdef == NULL)
 	{
@@ -125,17 +124,20 @@ static void pushback(int save)
 /*	Parse - Funktionen
 */
 
-Obj_t *UnaryTerm(const char *a, Obj_t *obj, int flag)
+EfiObj *UnaryTerm (const char *name, const char *ext, EfiObj *obj)
 {
-	ObjList_t *list;
-	char *p;
+	EfiObjList *list;
 	void *func;
 
 	if	(obj == NULL)	return NULL;
 
-	p = mstrcat(NULL, a, flag ? NULL : "()", NULL);
-	func = GetGlobalFunc(p);
-	memfree(p);
+	if	(ext)
+	{
+		char *p = mstrpaste(NULL, name, ext);
+		func = GetGlobalFunc(p);
+		memfree(p);
+	}
+	else	func = GetGlobalFunc(name);
 
 	if	(func == NULL)	return obj;
 
@@ -152,33 +154,33 @@ Obj_t *UnaryTerm(const char *a, Obj_t *obj, int flag)
 }
 
 
-Obj_t *PrefixOp(io_t *io, Op_t *op, Obj_t *left)
+EfiObj *PrefixOp(IO *io, EfiOp *op, EfiObj *left)
 {
 	if	((left = Parse_term(io, op->prior)) == NULL)
 	{
-		io_error(io, MSG_EFMAIN, 101, 1, op->name);
+		io_error(io, "[efmain:101]", "s", op->name);
 		return NULL;
 	}
 
-	return UnaryTerm(op->name, left, 0);
+	return UnaryTerm(op->name, "()", left);
 }
 
 
-Obj_t *PostfixOp(io_t *io, Op_t *op, Obj_t *left)
+EfiObj *PostfixOp(IO *io, EfiOp *op, EfiObj *left)
 {
-	return UnaryTerm(op->name, left, 1);
+	return UnaryTerm(op->name, NULL, left);
 }
 
 
-Obj_t *BinaryOp(io_t *io, Op_t *op, Obj_t *left)
+EfiObj *BinaryOp(IO *io, EfiOp *op, EfiObj *left)
 {
-	Obj_t *right;
+	EfiObj *right;
 
 	right = Parse_term(io, op->prior);
 
 	if	(right == NULL)
 	{
-		io_error(io, MSG_EFMAIN, 101, 1, op->name);
+		io_error(io, "[efmain:101]", "s", op->name);
 		return left;
 	}
 
@@ -186,9 +188,9 @@ Obj_t *BinaryOp(io_t *io, Op_t *op, Obj_t *left)
 }
 
 
-Obj_t *BinaryTerm(const char *name, Obj_t *left, Obj_t *right)
+EfiObj *BinaryTerm(const char *name, EfiObj *left, EfiObj *right)
 {
-	ObjList_t *list;
+	EfiObjList *list;
 	void *func;
 
 	func = GetGlobalFunc(name);
@@ -196,10 +198,7 @@ Obj_t *BinaryTerm(const char *name, Obj_t *left, Obj_t *right)
 	if	(func == NULL || left == NULL || right == NULL)
 	{
 		if	(func == NULL)
-		{
-			reg_cpy(1, name);
-			errmsg(MSG_EFMAIN, 70);
-		}
+			dbg_note(NULL, "[efmain:70]", "s", name);
 
 		UnrefObj(left);
 		UnrefObj(right);

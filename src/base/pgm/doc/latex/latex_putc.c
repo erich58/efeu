@@ -26,11 +26,11 @@ If not, write to the Free Software Foundation, Inc.,
 
 int LaTeX_indexmode = 0;
 
-static void stex_filter (int c, io_t *io)
+static void stex_filter (int c, IO *io)
 {
 	if	(c == EOF)	return;
 
-	c = (uchar_t) c;
+	c = (unsigned char) c;
 
 	switch (c)
 	{
@@ -97,8 +97,10 @@ static void stex_filter (int c, io_t *io)
 }
 
 
-int LaTeX_plain (LaTeX_t *stex, int c)
+int LaTeX_plain (void *drv, int c)
 {
+	LaTeX *stex = drv;
+
 	if	(c == ' ' && stex->last == '\n')
 		io_puts("\\strut~", stex->out);
 	else	stex_filter(c, stex->out);
@@ -106,8 +108,10 @@ int LaTeX_plain (LaTeX_t *stex, int c)
 	return c;
 }
 
-int LaTeX_putc (LaTeX_t *stex, int c)
+int LaTeX_putc (void *drv, int c)
 {
+	LaTeX *stex = drv;
+
 	if	(stex->ignorespace && isspace(c))
 		return c;
 
@@ -117,8 +121,10 @@ int LaTeX_putc (LaTeX_t *stex, int c)
 }
 
 
-int LaTeX_xputc (LaTeX_t *stex, int c)
+int LaTeX_xputc (void *drv, int c)
 {
+	LaTeX *stex = drv;
+
 	if	(isspace(c))
 	{
 		if	(stex->ignorespace)	return 0;
@@ -137,7 +143,7 @@ int LaTeX_xputc (LaTeX_t *stex, int c)
 	return c;
 }
 
-void LaTeX_puts (LaTeX_t *stex, const char *str)
+void LaTeX_puts (LaTeX *stex, const char *str)
 {
 	if	(str)
 	{
@@ -146,7 +152,7 @@ void LaTeX_puts (LaTeX_t *stex, const char *str)
 	}
 }
 
-void LaTeX_newline (LaTeX_t *stex)
+void LaTeX_newline (LaTeX *stex)
 {
 	if	(stex->last != '\n')
 		io_putc('\n', stex->out);
@@ -154,9 +160,10 @@ void LaTeX_newline (LaTeX_t *stex)
 	stex->last = '\n';
 }
 
-void LaTeX_rem (LaTeX_t *stex, const char *cmd)
+void LaTeX_rem (void *drv, const char *cmd)
 {
-	io_putc('%', stex->out);
+	LaTeX *stex = drv;
+	io_puts("% ", stex->out);
 
 	if	(cmd)
 	{
@@ -164,7 +171,7 @@ void LaTeX_rem (LaTeX_t *stex, const char *cmd)
 		{
 			io_putc(*cmd, stex->out);
 
-			if	(*cmd == '\n')	io_putc('%', stex->out);
+			if	(*cmd == '\n')	io_puts("% ", stex->out);
 		}
 	}
 

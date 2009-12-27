@@ -39,7 +39,7 @@ int DocMark_type (int c, int def)
 
 #define	mtype(x)	DocMark_type((x), DOC_ATT_IT)
 
-int DocMark_beg (stack_t **stack, io_t *out, io_t *in)
+int DocMark_beg (Stack **stack, IO *out, IO *in)
 {
 	int key = io_getc(in);
 
@@ -54,7 +54,7 @@ int DocMark_beg (stack_t **stack, io_t *out, io_t *in)
 	return key;
 }
 
-int DocMark_end (stack_t **stack, io_t *out, int key)
+int DocMark_end (Stack **stack, IO *out, int key)
 {
 	if	(*stack)
 	{
@@ -70,19 +70,19 @@ int DocMark_end (stack_t **stack, io_t *out, int key)
 */
 
 
-void Doc_begmark (Doc_t *doc, io_t *in)
+void Doc_begmark (Doc *doc, IO *in)
 {
 	Doc_hmode(doc);
 	doc->env.mark_key = DocMark_beg(&doc->env.mark, doc->out, in);
 }
 
-void Doc_endmark (Doc_t *doc)
+void Doc_endmark (Doc *doc)
 {
 	doc->env.mark_key = DocMark_end(&doc->env.mark, doc->out,
 		doc->env.mark_key);
 }
 
-void Doc_nomark (Doc_t *doc)
+void Doc_nomark (Doc *doc)
 {
 	while (doc->env.mark)
 		Doc_endmark(doc);

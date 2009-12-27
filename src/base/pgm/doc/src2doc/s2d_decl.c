@@ -23,7 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include "src2doc.h"
 #include <EFEU/parsub.h>
 
-int Decl_test (Decl_t *decl, const char *name)
+int Decl_test (Decl *decl, const char *name)
 {
 	int i;
 
@@ -33,9 +33,9 @@ int Decl_test (Decl_t *decl, const char *name)
 	return (*name == 0);
 }	
 
-void Decl_print (Decl_t *decl, io_t *io)
+void Decl_print (Decl *decl, IO *io, const char *name)
 {
-	io_psub(io, "\\index[$1]\n");
+	io_printf(io, "\\index[%s]\n", name);
 
 	switch (decl->type)
 	{

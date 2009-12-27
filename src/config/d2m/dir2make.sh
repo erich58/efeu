@@ -56,19 +56,19 @@
 # l:name |
 #	:*:name of library
 #	:de:Name der Programmbibliothek
+# s:name |
+#	:*:name of source list, default |d2m.list|
+#	:de:Name der Sourceliste, Vorgabe |d2m.list|
 # i:name |
-#	:*:name of Imakefile, default |Imakefile|
-#	:de:Name des Imakefiles, Vorgabe |Imakefile|
+#	:*:name of Imakefile, default |d2m.imake|
+#	:de:Name des Imakefiles, Vorgabe |d2m.imake|
 # m:name |
 #	:*:name of Makefiles, default |Makefile|
 #	:de:Name des Makefiles, Vorgabe |Makefile|
-# s:name |
-#	:*:name of source list, default |SourceList|
-#	:de:Name der Sourceliste, Vorgabe |SourceList|
 # p:flag |
 #	:*:flags for creating documents
 #	:de:Generierungsflags für Dokumente
-# dir |
+# :dir |
 #	:de:Bibliothek mit Sourcefiles
 #	:*:top directory of source files
 
@@ -127,7 +127,7 @@ esac
 
 # command usage
 
-tmp=/usr/tmp/s2i$$
+tmp=${TMPDIR:-/tmp}/d2m$$
 trap "rm -f $tmp*" 0
 trap "exit 1" 1 2 3
 
@@ -152,8 +152,8 @@ LIB=
 DDIR=.
 DOC=
 langlist="de"
-srclist=SourceList
-imakefile=Imakefile
+srclist=d2m.list
+imakefile=d2m.imake
 makefile=Makefile
 slflag=
 mkflag=0
@@ -165,9 +165,9 @@ pflag=NullArg
 while getopts "fnxH:A:B:I:L:D:l:d:i:m:s:p:" opt
 do
 	case $opt in
-	f)	slflag="-f";;
+	f)	slflag="$slflag -f";;
 	n)	norule=1;;
-	x)	mkflag=1;;
+	x)	slflag="$slflag -x"; mkflag=1;;
 	A)	APP=$OPTARG;;
 	B)	BIN=$OPTARG;;
 	H)	HDR=$OPTARG;;
@@ -187,11 +187,12 @@ shift `expr $OPTIND - 1`
 
 test $# -ne 1 && { usage | sed -e '/^$/q'; exit 1; }
 	
+build=`pwd`
 src=`(cd $1 || exit 1; pwd)` || exit 1
 
 # create source list
 
-mksrclist $slflag $src $srclist
+mksrclist $slflag -e $srclist -e $imakefile -e $makefile $src $srclist
 
 if [ ! -f $makefile ] ; then
 	rm -f $imakefile
@@ -238,7 +239,7 @@ $srclist $imakefile:
 $makefile: $srclist $imakefile
 	mkmf IMAKEFILE MAKEFILE
 	
-EFEUTOP=	_EFEU_TOP
+EFEUTOP=	EFEUROOT
 SRCTOP=		$src
 STDLIBDIR=	\$(EFEUTOP)/lib
 
@@ -311,9 +312,8 @@ fi
 
 # application files
 
-if [ "$APP" != "." ] ; then
+if [ "$APP" != "." -o "$build" != "$src" ] ; then
 	cat >> $imakefile << EOF
-Destination(APPDIR,$APP/app-defaults)
 Destination(CNFDIR,$APP/config)
 Destination(INFODIR,$APP/info)
 Destination(HLPDIR,$APP/help)
@@ -325,7 +325,6 @@ EOF
 	for lang in $langlist
 	do
 		cat >> $imakefile << EOF
-ProvideDir($APP/$lang/app-defaults)
 ProvideDir($APP/$lang/config)
 ProvideDir($APP/$lang/info)
 ProvideDir($APP/$lang/help)
@@ -335,11 +334,9 @@ EOF
 	done
 
 	cat >> $tmp.rules << EOF
-\/de,,app	DFXFX	InstallFile(%s/%s.%s,$APP/de/app-defaults,%s.%s)
 \/de,,cnf	DFXFX	InstallFile(%s/%s.%s,$APP/de/config,%s.%s)
 \/de,,hlp	DFXFX	InstallFile(%s/%s.%s,$APP/de/help,%s.%s)
 \/de,,msg	DFXFX	InstallFile(%s/%s.%s,$APP/de/messages,%s.%s)
-app	DFXFX	InstallFile(%s/%s.%s,\$(APPDIR),%s.%s)
 cnf	DFXFX	InstallFile(%s/%s.%s,\$(CNFDIR),%s.%s)
 hlp	DFXFX	InstallFile(%s/%s.%s,\$(HLPDIR),%s.%s)
 msg	DFXFX	InstallFile(%s/%s.%s,\$(MSGDIR),%s.%s)

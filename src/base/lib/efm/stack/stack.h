@@ -28,15 +28,15 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/config.h>
 
-typedef struct stack_s stack_t;
+typedef struct StackStruct Stack;
 
-struct stack_s {
-	stack_t *next;	/* Verweis auf Nachfolger */
+struct StackStruct {
+	Stack *next;	/* Verweis auf Nachfolger */
 	void *data;	/* Eintragung */
 };
 
-extern void pushstack (stack_t **ptr, void *data);
-extern void *popstack (stack_t **ptr, void *defval);
+extern void pushstack (Stack **ptr, void *data);
+extern void *popstack (Stack **ptr, void *defval);
 
 /*
 :*:

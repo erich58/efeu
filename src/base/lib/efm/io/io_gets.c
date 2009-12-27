@@ -23,7 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/io.h>
 
 
-char *io_gets (char *buf, int n, io_t *io)
+char *io_gets (char *buf, int n, IO *io)
 {
 	int c;
 	int k;

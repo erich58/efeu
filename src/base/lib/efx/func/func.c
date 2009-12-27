@@ -26,9 +26,9 @@ If not, write to the Free Software Foundation, Inc.,
 /*	Funktionsaufrufe
 */
 
-void Func_func (Func_t *func, void *rval, void **arg)
+void Func_func (EfiFunc *func, void *rval, void **arg)
 {
-	VarStack_t *vstack = SaveVarStack();
+	EfiVarStack *vstack = SaveVarStack();
 	LocalVar = RefVarTab(GlobalVar);
 
 	if	(ContextVar)
@@ -43,19 +43,18 @@ void Func_func (Func_t *func, void *rval, void **arg)
 }
 
 
-void Func_inline (Func_t *func, void *rval, void **arg)
+void Func_inline (EfiFunc *func, void *rval, void **arg)
 {
-	Obj_t *x;
-	Var_t *var;
-	VarTab_t *vtab;
+	EfiObj *x;
+	EfiVar *var;
+	EfiVarTab *vtab;
 	int i;
 
 /*	Variablentabelle für Argumente aufbauen
 */
 	if	(func->dim)
 	{
-		var = ALLOC(func->dim, Var_t);
-		memset(var, 0, func->dim * sizeof(Var_t));
+		var = memalloc(func->dim * sizeof(EfiVar));
 
 		for (i = 0; i < func->dim; i++)
 		{
@@ -66,7 +65,7 @@ void Func_inline (Func_t *func, void *rval, void **arg)
 
 			if	(func->arg[i].type == &Type_vec)
 			{
-				Vec_t *vec;
+				EfiVec *vec;
 
 				vec = arg[i];
 				var[i].type = vec->type;

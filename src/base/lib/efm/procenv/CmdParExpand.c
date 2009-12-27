@@ -20,7 +20,7 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include <EFEU/KeyTab.h>
+#include <EFEU/nkt.h>
 #include <EFEU/CmdPar.h>
 #include <EFEU/parsub.h>
 #include <EFEU/mstring.h>
@@ -31,7 +31,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	FMT_HEAD	"\\dhead\t$1(1)\n\\mpage[1] $1\n"
 
-static KEYTAB(ExpandTab, 32);
+static NameKeyTab ExpandTab = NKT_DATA("Expand", 32, NULL);
 static void setup_builtin (void);
 
 /*
@@ -41,10 +41,10 @@ or a NULL pointer if not defined.
 Expansionsfunktion für Beschreibungstexte.
 */
 
-CmdParExpand_t *CmdParExpand_get (const char *name)
+CmdParExpand *CmdParExpand_get (const char *name)
 {
 	setup_builtin();
-	return StrKey_get(&ExpandTab, name, NULL);
+	return nkt_fetch(&ExpandTab, name, NULL);
 }
 
 /*
@@ -54,10 +54,36 @@ with <eval>.
 Beschreibungstexte mit <def>.
 */
 
-void CmdParExpand_add (CmdParExpand_t *eval)
+void CmdParExpand_add (CmdParExpand *eval)
 {
 	setup_builtin();
-	StrKey_add(&ExpandTab, eval);
+	nkt_insert(&ExpandTab, eval->name, eval);
+}
+
+static int show_std (const char *name, void *data, void *ptr)
+{
+	CmdParExpand *eval = data;
+	char *desc = mlangcpy(eval->desc, NULL);
+	io_printf(ptr, "[%s] %#s\n", name, desc);
+	memfree(desc);
+	return 0;
+}
+
+typedef struct {
+	IO *out;
+	const char *fmt;
+	ArgList *arg;
+	CmdPar *cpar;
+} ShowPar;
+
+static int show_fmt (const char *name, void *data, void *ptr)
+{
+	CmdParEval *eval = data;
+	ShowPar *par = ptr;
+	arg_set(par->arg, 1, mstrcpy(name));
+	arg_set(par->arg, 2, mlangcpy(eval->desc, NULL));
+	CmdPar_psubout(par->cpar, par->out, par->fmt, par->arg);
+	return 0;
 }
 
 /*
@@ -67,29 +93,22 @@ the output <io>.
 Beschreibungstexte auf.
 */
 
-void CmdParExpand_show (io_t *io, const char *fmt)
+void CmdParExpand_show (IO *io, const char *fmt)
 {
-	CmdParExpand_t **p;
-	size_t n;
-
 	setup_builtin();
 
-	for (n = ExpandTab.used, p = ExpandTab.data; n-- > 0; p++)
+	if	(fmt)
 	{
-		char *desc = mlangcpy((*p)->desc, NULL);
-			
-		if	(fmt)
-		{
-			reg_cpy(1, (*p)->name);
-			reg_set(2, desc);
-			io_psub(io, fmt);
-		}
-		else
-		{
-			io_printf(io, "[%s] %#s\n", (*p)->name, desc);
-			memfree(desc);
-		}
+		ShowPar par;
+		par.out = io;
+		par.fmt = fmt;
+		par.arg = arg_create();
+		par.cpar = CmdPar_ptr(NULL);
+		arg_set(par.arg, 0, NULL);
+		nkt_walk(&ExpandTab, show_fmt, &par);
+		rd_deref(par.arg);
 	}
+	else	nkt_walk(&ExpandTab, show_std, io);
 }
 
 /*	auxiliary functions
@@ -111,7 +130,7 @@ static int testflag (const char *arg, int key)
 	return 0;
 }
 
-static void putvar (CmdPar_t *par, io_t *io, const char *name)
+static void putvar (CmdPar *par, IO *io, const char *name)
 {
 	CmdPar_psubout(par, io, CmdPar_getval(par, name, NULL), NULL);
 }
@@ -119,13 +138,12 @@ static void putvar (CmdPar_t *par, io_t *io, const char *name)
 /*	Builtin functions
 */
 
-static void f_head (CmdPar_t *par, io_t *io, const char *arg)
+static void f_head (CmdPar *par, IO *io, const char *arg)
 {
-	reg_cpy(1, par->name);
-	io_psub(io, FMT_HEAD);
+	io_psubarg(io, FMT_HEAD, "ns", par->name);
 }
 
-static void f_ident (CmdPar_t *par, io_t *io, const char *arg)
+static void f_ident (CmdPar *par, IO *io, const char *arg)
 {
 	io_puts(par->name, io);
 	io_puts(" -- ", io);
@@ -133,14 +151,14 @@ static void f_ident (CmdPar_t *par, io_t *io, const char *arg)
 	io_putc('\n', io);
 }
 
-static void f_name (CmdPar_t *par, io_t *io, const char *arg)
+static void f_name (CmdPar *par, IO *io, const char *arg)
 {
 	f_head(par, io, arg);
 	io_puts("\\Name\n", io);
 	f_ident(par, io, arg);
 }
 
-static void f_synopsis (CmdPar_t *par, io_t *io, const char *arg)
+static void f_synopsis (CmdPar *par, IO *io, const char *arg)
 {
 	if	(testflag(arg, 'h'))
 		putvar(par, io, ".synopsis.head");
@@ -151,7 +169,7 @@ static void f_synopsis (CmdPar_t *par, io_t *io, const char *arg)
 	CmdPar_synopsis(par, io);
 }
 
-static void f_arglist (CmdPar_t *par, io_t *io, const char *arg)
+static void f_arglist (CmdPar *par, IO *io, const char *arg)
 {
 	if	(testflag(arg, 'h'))
 		putvar(par, io, ".arglist.head");
@@ -162,7 +180,7 @@ static void f_arglist (CmdPar_t *par, io_t *io, const char *arg)
 	CmdPar_arglist(par, io);
 }
 
-static void f_environ (CmdPar_t *par, io_t *io, const char *arg)
+static void f_environ (CmdPar *par, IO *io, const char *arg)
 {
 	if	(testflag(arg, 'h'))
 		putvar(par, io, ".environ.head");
@@ -170,7 +188,7 @@ static void f_environ (CmdPar_t *par, io_t *io, const char *arg)
 	CmdPar_environ(par, io);
 }
 
-static void f_version (CmdPar_t *par, io_t *io, const char *arg)
+static void f_version (CmdPar *par, IO *io, const char *arg)
 {
 	char *p = CmdPar_getval(par, "Version", NULL);
 
@@ -183,7 +201,7 @@ static void f_version (CmdPar_t *par, io_t *io, const char *arg)
 	io_putc('\n', io);
 }
 
-static void f_copyright (CmdPar_t *par, io_t *io, const char *arg)
+static void f_copyright (CmdPar *par, IO *io, const char *arg)
 {
 	char *p = CmdPar_getval(par, "Copyright", NULL);
 
@@ -196,12 +214,12 @@ static void f_copyright (CmdPar_t *par, io_t *io, const char *arg)
 	io_putc('\n', io);
 }
 
-static void f_varlist (CmdPar_t *par, io_t *io, const char *arg)
+static void f_varlist (CmdPar *par, IO *io, const char *arg)
 {
 	CmdPar_showval(par, io, arg);
 }
 
-static CmdParExpand_t builtin[] = {
+static CmdParExpand builtin[] = {
 	{ "head", ":*:manpage head:de:Handbuchkopf", f_head },
 	{ "ident", ":*:caption:de:Überschrift", f_ident },
 	{ "name", ":*:manpage head with caption"
@@ -225,7 +243,7 @@ static void setup_builtin(void)
 	setup_done = 1;
 
 	for (i = 0; i < tabsize(builtin); i++)
-		StrKey_add(&ExpandTab, builtin + i);
+		nkt_insert(&ExpandTab, builtin[i].name, builtin + i);
 }
 
 

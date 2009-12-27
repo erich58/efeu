@@ -1,5 +1,23 @@
-/*	Zählerstruktur generieren
-	(c) 1994 Erich Frühstück
+/*
+Zählerstruktur generieren
+
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/mdmat.h>
@@ -7,12 +25,12 @@
 
 
 typedef struct {
-	MdInit_t init;
+	void (*init) (void *data, size_t *idx, size_t dim);
 	size_t dim;
 	size_t *idx;
-} INIT_t;
+} INIT;
 
-static void subinit (INIT_t *init, int depth, mdaxis_t *axis, char *data);
+static void subinit (INIT *init, int depth, mdaxis *axis, char *data);
 static void dummy (void *data);
 
 
@@ -25,10 +43,11 @@ static void dummy(void *data)
 /*	Zähltabelle aus IO-Struktur generieren
 */
 
-mdmat_t *md_ioctab(const char *title, io_t *io, void *gtab, MdCount_t *counter)
+mdmat *md_ioctab(const char *title, IO *io,
+	MdClassTab *gtab, MdCntObj *counter)
 {
-	mdmat_t *tab;
-	mdaxis_t **ptr;
+	mdmat *tab;
+	mdaxis **ptr;
 
 /*	Matrixheader generieren
 */
@@ -40,9 +59,7 @@ mdmat_t *md_ioctab(const char *title, io_t *io, void *gtab, MdCount_t *counter)
 /*	Matrixdimensionen initialisieren
 */
 	while ((*ptr = md_ctabaxis(io, gtab)) != NULL)
-	{
 		ptr = &(*ptr)->next;
-	}
 
 	md_ctabinit(tab, counter);
 	return tab;
@@ -52,18 +69,14 @@ mdmat_t *md_ioctab(const char *title, io_t *io, void *gtab, MdCount_t *counter)
 /*	Zähltabelle initialisieren
 */
 
-void md_ctabinit(mdmat_t *tab, MdCount_t *counter)
+void md_ctabinit (mdmat *tab, MdCntObj *counter)
 {
-/*	Parameter testen
-*/
 	if	(counter == NULL)
-	{
 		counter = stdcount;
-	}
 
 	if	(counter->add == NULL)
 	{
-		liberror(MSG_MDMAT, 41);
+		dbg_error(NULL, "[mdmat:41]", NULL);
 		counter->add = dummy;
 	}
 
@@ -76,7 +89,7 @@ void md_ctabinit(mdmat_t *tab, MdCount_t *counter)
 
 	if	(counter->init)
 	{
-		INIT_t init;
+		INIT init;
 
 		init.init = counter->init;
 		init.dim = md_dim(tab->axis);
@@ -91,10 +104,11 @@ void md_ctabinit(mdmat_t *tab, MdCount_t *counter)
 /*	Zähltabelle aus Definitionsstring generieren
 */
 
-mdmat_t *md_ctab(const char *title, const char *def, void *gtab, MdCount_t *counter)
+mdmat *md_ctab(const char *title, const char *def,
+	MdClassTab *gtab, MdCntObj *counter)
 {
-	io_t *io;
-	mdmat_t *md;
+	IO *io;
+	mdmat *md;
 
 	io = io_cstr(def);
 	md = md_ioctab(title, io, gtab, counter);
@@ -106,7 +120,7 @@ mdmat_t *md_ctab(const char *title, const char *def, void *gtab, MdCount_t *coun
 /*	Initialisierungshilfsprogramm
 */
 
-static void subinit (INIT_t *init, int depth, mdaxis_t *axis, char *ptr)
+static void subinit (INIT *init, int depth, mdaxis *axis, char *ptr)
 {
 	if	(axis != NULL)
 	{

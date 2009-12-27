@@ -1,7 +1,7 @@
 /*
 Makrodefinition
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994, 2002 Erich Frühstück
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -22,36 +22,32 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/object.h>
 #include <EFEU/preproc.h>
+#include <ctype.h>
 
-static void getmacarg (io_t *io, Macro_t *mac);
-
-static iocpy_t mdef_repl[] = {
-	{ "/", "\n", 1, iocpy_cskip },
-	{ "\\", "!", 0, iocpy_esc },
-	{ "\n", NULL, 0, NULL },
-};
+static void getmacarg (IO *io, PPMacro *mac, StrBuf *buf);
 
 
-static iocpy_t mdef_arg[] = {
-	{ "/", "\n", 1, iocpy_cskip },
-	{ "\\", "!", 0, iocpy_esc },
-	{ "%s",	NULL, 0, iocpy_repl },
-	{ ",)", NULL, 0, NULL },
-};
-
-
-Macro_t *ParseMacro(io_t *io)
+PPMacro *ParseMacro (IO *io)
 {
-	Macro_t *mac;
+	PPMacro *mac;
+	StrBuf *buf;
 	int c;
 
 	mac = NewMacro();
-	mac->name = io_mgets(io, "!%n_");
-	c = io_getc(io);
+	buf = new_strbuf(0);
+
+	while ((c = io_skipcom(io, NULL, 0)) != EOF)
+	{
+		if	(c == '_' || isalnum(c))
+			sb_putc(c, buf);
+		else	break;
+	}
+
+	mac->name = sb_strcpy(buf);
 
 	if	(c == '(')
 	{
-		getmacarg(io, mac);
+		getmacarg(io, mac, buf);
 		mac->sub = macsub_subst;
 	}
 	else
@@ -60,16 +56,30 @@ Macro_t *ParseMacro(io_t *io)
 		io_ungetc(c, io);
 	}
 
-	io_eat(io, " \t");
-	mac->repl = miocpy(io, mdef_repl, tabsize(mdef_repl));
+	sb_setpos(buf, 0);
+
+	do	c = io_skipcom(io, NULL, 0);
+	while	(c == ' ' || c == '\t');
+
+	while (c != EOF && c != '\n')
+	{
+		if	(c == '\\' && (c = io_getc(io)) == EOF)
+			c = '\\';
+
+		sb_putc(c, buf);
+		c = io_skipcom(io, NULL, 0);
+	}
+
+	io_ungetc(c, io);
+	mac->repl = sb2str(buf);
 	return mac;
 }
 
 
-static void getmacarg(io_t *io, Macro_t *mac)
+static void getmacarg (IO *io, PPMacro *mac, StrBuf *buf)
 {
-	Macro_t *x;
-	io_t *tmp;
+	PPMacro *x;
+	IO *tmp;
 	int c;
 	int i;
 
@@ -77,35 +87,44 @@ static void getmacarg(io_t *io, Macro_t *mac)
 	mac->hasarg = 1;
 	mac->dim = 0;
 	PushMacroTab(NULL);
+	sb_setpos(buf, 0);
 
-	while ((c = io_eat(io, "%s")) != EOF)
+	for (;;)
 	{
-		if	(c != ',' && c != ')')
+		c = io_skipcom(io, NULL, 0);
+
+		if	(c == ',' || c == ')' || c == EOF)
 		{
-			x = NewMacro();
-			x->name = miocpy(io, mdef_arg, tabsize(mdef_arg));
-			x->sub = macsub_repl;
-			AddMacro(x);
+			if	(sb_getpos(buf))
+			{
+				sb_putc(0, buf);
+				x = NewMacro();
+				x->name = sb_memcpy(buf);
+				x->sub = macsub_repl;
+				AddMacro(x);
+			}
+			else	x = NULL;
+
+			io_write(tmp, &x, sizeof(PPMacro *));
+			sb_setpos(buf, 0);
+			mac->dim++;
+
+			if	(c != ',')	break;
 		}
-		else	x = NULL;
-
-		io_write(tmp, &x, sizeof(Macro_t *));
-		mac->dim++;
-		c = io_getc(io);
-
-		if	(c == ')')	break;
+		else if	(!isspace(c))
+		{
+			sb_putc(c, buf);
+		}
 	}
 
 	if	(mac->dim != 0)
 	{
 		mac->tab = PopMacroTab();
-		mac->arg = ALLOC(mac->dim, Macro_t *);
+		mac->arg = memalloc(mac->dim * sizeof(PPMacro *));
 		io_rewind(tmp);
 
 		for (i = 0; i < mac->dim; i++)
-		{
-			io_read(tmp, mac->arg + i, sizeof(Macro_t *));
-		}
+			io_read(tmp, mac->arg + i, sizeof(PPMacro *));
 
 		i = mac->dim - 1;
 
@@ -113,6 +132,7 @@ static void getmacarg(io_t *io, Macro_t *mac)
 		{
 			memfree(mac->arg[i]->name);
 			mac->arg[i]->name = "va_list";
+			mac->vaarg = 1;
 		}
 	}
 

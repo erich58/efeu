@@ -24,48 +24,48 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/strbuf.h>
 #include <EFEU/mstring.h>
 
-static char *rident (Random_t *rd)
+static char *rident (const void *data)
 {
-	if	(rd && rd->type)
+	const Random *rd = data;
+
+	if	(rd->type)
 	{
-		strbuf_t *sb = new_strbuf(0);
+		StrBuf *sb = new_strbuf(0);
 		sb_puts(rd->type->name, sb);
 		sb_putc(' ', sb);
 
 		if	(rd->type->ident)
 		{
-			io_t *io = io_strbuf(sb);
+			IO *io = io_strbuf(sb);
 			rd->type->ident(io, rd->data);
 			io_close(io);
 		}
 		
 		return sb2str(sb);
 	}
-	else	return NULL;
+
+	return NULL;
 }
 
-static Random_t *radmin (Random_t *tg, const Random_t *src)
+static void rclean (void *data)
 {
-	if	(tg)
-	{
-		if	(tg->type->clean)
-			tg->type->clean(tg->data);
+	Random *tg = data;
 
-		memfree(tg);
-		return NULL;
-	}
-	else	return memalloc(sizeof(Random_t));
+	if	(tg->type->clean)
+		tg->type->clean(tg->data);
+
+	memfree(tg);
 }
 
-ADMINREFTYPE(Random_reftype, "Random", rident, radmin);
+static RefType Random_reftype = REFTYPE_INIT("Random", rident, rclean);
 
 
 /*	Initialisierungsfunktion
 */
 
-Random_t *Random (unsigned int sval, RandomType_t *type)
+Random *NewRandom (RandomType *type, unsigned int sval)
 {
-	Random_t *rand = rd_create(&Random_reftype);
+	Random *rand = memalloc(sizeof(Random));
 
 	if	(type == NULL)	type = &RandomType_std;
 
@@ -77,12 +77,12 @@ Random_t *Random (unsigned int sval, RandomType_t *type)
 	else if	(type->seed)
 		type->seed(rand->data, sval);
 
-	return rand;
+	return rd_init(&Random_reftype, rand);
 }
 
-Random_t *str2Random (const char *arg)
+Random *str2Random (const char *arg)
 {
-	RandomType_t *type = NULL;
+	RandomType *type = NULL;
 	unsigned int sval = 1;
 
 	if	(arg != NULL)
@@ -104,21 +104,21 @@ Random_t *str2Random (const char *arg)
 		sval = strtoul(arg, NULL, 0);
 	}
 
-	return Random(sval, type);
+	return NewRandom(type, sval);
 }
 
 
 /*	Zufallsgenerator kopieren
 */
 
-Random_t *CopyRandom (Random_t *src)
+Random *CopyRandom (Random *src)
 {
 	if	(src && src->type->copy)
 	{
-		Random_t *tg = rd_create(&Random_reftype);
+		Random *tg = memalloc(sizeof(Random));
 		tg->type = src->type;
 		tg->data = src->type->copy(src->data);
-		return tg;
+		return rd_init(&Random_reftype, tg);
 	}
 
 	return NULL;
@@ -130,7 +130,7 @@ Random_t *CopyRandom (Random_t *src)
 
 static unsigned int state = 1;
 
-void SeedRandom (Random_t *rd, unsigned int sval)
+void SeedRandom (Random *rd, unsigned int sval)
 {
 	if	(rd && rd->type)
 		rd->type->seed(rd->data, sval);
@@ -141,13 +141,13 @@ void SeedRandom (Random_t *rd, unsigned int sval)
 /*	Zufallszahl ermitteln
 */
 
-double UniformRandom (Random_t *rd)
+double UniformRandom (Random *rd)
 {
 	if	(rd && rd->type)
 		return rd->type->rand(rd->data);
 
       	state = ((state * 1103515245) + 12345) & 0x7fffffff;
-	return DRAND_KOEF * state;
+	return state / 2147483648.;
 }
 
 #if	0

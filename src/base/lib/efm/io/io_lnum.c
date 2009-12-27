@@ -28,17 +28,18 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 typedef struct {
-	io_t *io;		/* Eingabestruktur */
+	IO *io;		/* Eingabestruktur */
 	unsigned nl : 1;	/* Flag für neue Zeile */
-	unsigned line : (8*sizeof(unsigned) - 1);
+	unsigned line : 31;	/* Zeilennummer */
 } LNUM;
 
 
 /*	Zeichen lesen
 */
 
-static int lnum_get(LNUM *lnum)
+static int lnum_get (void *ptr)
 {
+	LNUM *lnum = ptr;
 	int c;
 
 	lnum->line += lnum->nl;
@@ -51,8 +52,9 @@ static int lnum_get(LNUM *lnum)
 /*	Kontrollfunktion
 */
 
-static int lnum_ctrl(LNUM *lnum, int req, va_list list)
+static int lnum_ctrl (void *ptr, int req, va_list list)
 {
+	LNUM *lnum = ptr;
 	int stat;
 
 	switch (req)
@@ -88,7 +90,7 @@ static int lnum_ctrl(LNUM *lnum, int req, va_list list)
 }
 
 
-io_t *io_lnum(io_t *io)
+IO *io_lnum (IO *io)
 {
 	if	(io && io_ctrl(io, IO_LINE) == EOF)
 	{
@@ -97,8 +99,8 @@ io_t *io_lnum(io_t *io)
 		lnum->nl = 0;
 		lnum->line = 1;
 		io = io_alloc();
-		io->get = (io_get_t) lnum_get;
-		io->ctrl = (io_ctrl_t) lnum_ctrl;
+		io->get = lnum_get;
+		io->ctrl = lnum_ctrl;
 		io->data = lnum;
 	}
 

@@ -23,7 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include "src2doc.h"
 #include <ctype.h>
 
-int skip_blank (io_t *ein)
+int skip_blank (IO *ein)
 {
 	int c;
 
@@ -33,7 +33,7 @@ int skip_blank (io_t *ein)
 	return EOF;
 }
 
-int skip_space (io_t *ein, strbuf_t *buf)
+int skip_space (IO *ein, StrBuf *buf)
 {
 	int c;
 
@@ -44,7 +44,7 @@ int skip_space (io_t *ein, strbuf_t *buf)
 }
 
 
-int test_key (io_t *io, const char *key)
+int test_key (IO *io, const char *key)
 {
 	int i;
 	int c;

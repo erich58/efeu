@@ -1,1 +1,15 @@
-DocTarget(_EFEU_TOP/doc/de,prog,$(SRCTOP),LANG=de efeudoc)
+DocTarget(EFEUROOT/doc/de,prog,$(SRCTOP),LANG=de efeudoc)
+
+DEP=	DEP_MD DEP_MATH DEP_EFX DEP_EFM
+LIB=	LIB_MD LIB_MATH LIB_EFX LIB_EFM
+
+#undef	Object
+#define	Object(dir,name) \
+NormalProgramTarget(name,$(INCFLG) Concat(-I,dir),\
+Source(dir,name),$(DEP),$(LIB)) \
+@;
+
+#undef	GenObject
+#define	GenObject(name) \
+NormalProgramTarget(name,$(INCFLG),SourceName(name),$(DEP),$(LIB)) \
+@;

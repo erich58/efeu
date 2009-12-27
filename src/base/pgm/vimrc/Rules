@@ -1,0 +1,4 @@
+vimrc	FXDFX	VIMFile(%s.%s,%s/%s.%s)
+syntax,,vim	FXDFX	CPInstall(syntax/%s.%s,%s/%s.%s)
+vim	FXDFX	CPInstall(%s.%s,%s/%s.%s)
+txt	FXDFX	CPInstall(%s.%s,%s/%s.%s)

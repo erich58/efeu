@@ -33,37 +33,37 @@ If not, write to the Free Software Foundation, Inc.,
 #define	IO(n)	Val_io(arg[n])
 
 
-static void f_info (Func_t *func, void *rval, void **arg)
+static void f_info (EfiFunc *func, void *rval, void **arg)
 {
 	PrintInfo(IO(1), NULL, STR(0));
 }
 
-static void f_dump (Func_t *func, void *rval, void **arg)
+static void f_dump (EfiFunc *func, void *rval, void **arg)
 {
 	DumpInfo(IO(1), GetInfo(NULL, NULL), STR(0));
 }
 
-static void f_load (Func_t *func, void *rval, void **arg)
+static void f_load (EfiFunc *func, void *rval, void **arg)
 {
 	LoadInfo(AddInfo(NULL, STR(0), NULL, NULL, NULL), STR(1));
 }
 
-static void f_getinfo (Func_t *func, void *rval, void **arg)
+static void f_getinfo (EfiFunc *func, void *rval, void **arg)
 {
-	strbuf_t *sb = new_strbuf(0);
-	io_t *io = io_strbuf(sb);
+	StrBuf *sb = new_strbuf(0);
+	IO *io = io_strbuf(sb);
 	PrintInfo(io, NULL, STR(0));
 	io_close(io);
 	Val_str(rval) = sb2str(sb);
 }
 
-static void f_addinfo (Func_t *func, void *rval, void **arg)
+static void f_addinfo (EfiFunc *func, void *rval, void **arg)
 {
 	AddInfo(NULL, STR(0), STR(1), NULL, mstrcpy(STR(2)));
 }
 
 
-static FuncDef_t fdef_info[] = {
+static EfiFuncDef fdef_info[] = {
 	{ 0, &Type_void, "Info (str name = NULL, IO io = cout)", f_info },
 	{ 0, &Type_void, "InfoDump (str name = NULL, IO io = cout)", f_dump },
 	{ 0, &Type_void, "AddInfo (str name, str label = NULL, str txt = NULL)",

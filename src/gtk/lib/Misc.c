@@ -25,6 +25,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/stdtype.h>
 #include <EFEU/CmdPar.h>
 
+#define	GTK_1_2	0
+
 #define	STR(arg)	(Val_ptr(arg) ? Val_ptr(arg) : "")
 
 
@@ -53,24 +55,28 @@ static EGtkArgDef arg_arrow[] = {
 /*	Widget Funktionen
 */
 
-static void f_label (Func_t *func, void *rval, void **arg)
+static void f_label (EfiFunc *func, void *rval, void **arg)
 {
 	Val_ptr(rval) = gtk_label_new(STR(arg[0]));
 }
 
-static void f_label_uline (Func_t *func, void *rval, void **arg)
+#if	GTK_1_2
+static void f_label_uline (EfiFunc *func, void *rval, void **arg)
 {
 	gtk_label_parse_uline(Val_ptr(arg[0]), Val_str(arg[1]));
 }
+#endif
 
-static void f_arrow (Func_t *func, void *rval, void **arg)
+static void f_arrow (EfiFunc *func, void *rval, void **arg)
 {
 	Val_ptr(rval) = gtk_arrow_new(Val_int(arg[0]), Val_int(arg[1]));
 }
 
-static FuncDef_t fdef[] = {
+static EfiFuncDef fdef[] = {
 	{ 0, NULL, "GtkLabel GtkLabel (str title)", f_label },
+#if	GTK_1_2
 	{ 0, &Type_void, "GtkLabel::parse_uline (str label)", f_label_uline },
+#endif
 	{ 0, NULL, "GtkWidget str ()", f_label },
 	{ 0, NULL, "GtkArrow GtkArrow (GtkArrowType, GtkShadowType = \"out\"",
 		f_arrow },

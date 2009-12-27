@@ -22,34 +22,34 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/object.h>
 
-static Obj_t *ptr_alloc (Type_t *type, va_list list)
+static EfiObj *ptr_alloc (EfiType *type, va_list list)
 {
-	Obj_t *obj = Obj_alloc(sizeof(Obj_t));
+	EfiObj *obj = Obj_alloc(sizeof(EfiObj));
 	obj->data = va_arg(list, void *);
 	return obj;
 }
 
-static void ptr_free (Obj_t *obj)
+static void ptr_free (EfiObj *obj)
 {
-	Obj_free(obj, sizeof(Obj_t));
+	Obj_free(obj, sizeof(EfiObj));
 }
 
-static void ptr_update (Obj_t *obj)
-{
-	;
-}
-
-static void ptr_sync (Obj_t *obj)
+static void ptr_update (EfiObj *obj)
 {
 	;
 }
 
-static char *ptr_ident (Obj_t *obj)
+static void ptr_sync (EfiObj *obj)
+{
+	;
+}
+
+static char *ptr_ident (const EfiObj *obj)
 {
 	return NULL;
 }
 
-Lval_t Lval_ptr = {
+EfiLval Lval_ptr = {
 	ptr_alloc,
 	ptr_free,
 	ptr_update,

@@ -22,9 +22,9 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <efeudoc.h>
 
-static void mac_add (InfoNode_t *info, DocMac_t *mac)
+static void mac_add (InfoNode *info, DocMac *mac)
 {
-	InfoNode_t *x = AddInfo(info, mac->name, NULL, NULL,
+	InfoNode *x = AddInfo(info, mac->name, NULL, NULL,
 		msprintf("%s\n---- verbatim\n%s//END\n----\n",
 			mac->desc, mac->fmt));
 
@@ -37,7 +37,7 @@ static void mac_add (InfoNode_t *info, DocMac_t *mac)
 	}
 }
 
-static void mac_load (InfoNode_t *info)
+static void mac_load (InfoNode *info)
 {
 	info->load = NULL;
 	info->par = NULL;
@@ -45,7 +45,7 @@ static void mac_load (InfoNode_t *info)
 	if	(GlobalDocTab)
 	{
 		size_t n = GlobalDocTab->mtab.used;
-		DocMac_t *mp = GlobalDocTab->mtab.data;
+		DocMac *mp = GlobalDocTab->mtab.data;
 
 		while (n-- > 0)
 			mac_add(info, mp++);
@@ -54,6 +54,6 @@ static void mac_load (InfoNode_t *info)
 
 void DocMacInfo (const char *name, const char *desc)
 {
-	InfoNode_t *info = AddInfo(NULL, name, desc, NULL, NULL);
+	InfoNode *info = AddInfo(NULL, name, desc, NULL, NULL);
 	info->load = mac_load;
 }

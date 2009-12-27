@@ -29,9 +29,9 @@ If not, write to the Free Software Foundation, Inc.,
 /*	Variablen
 */
 
-char *IncPath = ".:" String(_EFEU_TOP) "/lib/esh";
+char *IncPath = ".:" String(EFEUROOT) "/lib/esh";
 
-static VarDef_t pp_var[] = {
+static EfiVarDef pp_var[] = {
 	{ "IncPath",	&Type_str, &IncPath,
 		":*:search path for header files\n"
 		":de:Suchpfad für Headerdateien\n"},
@@ -42,27 +42,27 @@ static VarDef_t pp_var[] = {
 #define	STR(n)	Val_str(arg[n])
 #define	IO(n)	Val_io(arg[n])
 
-static void f_preproc (Func_t *func, void *rval, void **arg)
+static void f_preproc (EfiFunc *func, void *rval, void **arg)
 {
 	RVIO = io_cmdpreproc(io_refer(IO(0)));
 }
 
-static void f_ppopen (Func_t *func, void *rval, void **arg)
+static void f_ppopen (EfiFunc *func, void *rval, void **arg)
 {
 	RVIO = io_cmdpreproc(io_findopen(IncPath, STR(0), STR(1), "r"));
 }
 
-static void f_lastcomment (Func_t *func, void *rval, void **arg)
+static void f_lastcomment (EfiFunc *func, void *rval, void **arg)
 {
 	io_ctrl(IO(0), IOPP_COMMENT, rval);
 }
 
-static void f_clearcomment (Func_t *func, void *rval, void **arg)
+static void f_clearcomment (EfiFunc *func, void *rval, void **arg)
 {
 	io_ctrl(IO(0), IOPP_COMMENT, NULL);
 }
 
-static FuncDef_t ppfdef[] = {
+static EfiFuncDef ppfdef[] = {
 	{ 0, &Type_io, "preproc (IO io)", f_preproc },
 	{ 0, &Type_io, "ppopen (str name, str type = NULL)",
 		f_ppopen },

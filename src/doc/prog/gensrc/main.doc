@@ -1,0 +1,19 @@
+\author	Erich Frühstück
+\title	Generierte Sourcen
+
+Das Kommando |mksource| erlaubt die Generierung von C Programmcode
+mithilfe des EFEU-Interpreters aus einer Schablonendatei. Die
+Schablonendatei besteht im wesentlichen aus Befehlszeilen des
+Interpreters mit kleinen Ergänzungen.
+
+Als erstes sehen wir uns den gleich eine Schablonendatei zur Erzeugung
+des schon bekanntesn Programmbeispiels <"Hello World"> an:
+
+\include[verbatim] ghello.tpl
+
+Der Aufruf |mksource ghello.tpl| generiert daraus das C-Programm
+|ghello.c|. Bis auf den Hinweis, dass es sich um einen generierten
+Code handelt, stimmen die Sourcen mit der allerersten Version vin
+<"Hello World"> überein.
+
+\include[verbatim] ghello.c

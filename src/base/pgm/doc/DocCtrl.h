@@ -69,6 +69,7 @@ If not, write to the Free Software Foundation, Inc.,
 #define	DOC_TAB_BLINE	0x24	/* Fette Zeile */
 #define	DOC_TAB_BRULE	0x25	/* Fette Linie */
 #define	DOC_TAB_INDENT	0x26	/* Tabelleneinrückung */
+#define	DOC_TAB_SPECIAL	0x27	/* Tabellensteuerung */
 
 /*	Umgebungen werden mit DOC_BEG eingeleitet und mit DOC_END
 	beendet.  Die Umgebungskennungen werden nach inhaltlichen

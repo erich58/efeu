@@ -47,10 +47,11 @@ If not, write to the Free Software Foundation, Inc.,
 #endif
 
 @eval typedef size_t unsigned long
-@eval typedef uchar_t unsigned char
-@eval typedef ushort_t unsigned short
-@eval typedef ulong_t unsigned long
 
-@eval byteorder
+@beg -x error "Byteorder not identified."
+int x = 1;
+printf("#undef	REVBYTEORDER\n");
+printf("#define	REVBYTEORDER %d\n", ((char *) &x)[0]);
+@end
 
 #endif	/* EFEU/config.h */

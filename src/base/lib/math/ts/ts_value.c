@@ -1,5 +1,6 @@
 /*
-Zeitreihenstruktur ausgeben
+:*:get value of time series
+:de:Zeitreihenwert abfragen
 
 $Copyright (C) 1997 Erich Frühstück
 This file is part of EFEU.
@@ -23,13 +24,13 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 #include <Math/TimeSeries.h>
 
-double TimeSeriesValue (TimeSeries_t *ts, TimeIndex_t idx, double defval)
+double ts_value (TimeSeries *ts, TimeIndex idx, double defval)
 {
 	if	(ts == NULL)
 		return defval;
 
 	if	(idx.type != ts->base.type)
-		idx = TimeIndexKonv(idx, ts->base.type, 0);
+		idx = tindex_conv(idx, ts->base.type, 0);
 
 	if	(idx.value <= ts->base.value)
 		return ts->data[0];

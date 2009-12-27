@@ -28,112 +28,27 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/vecbuf.h>
 #include <EFEU/io.h>
 
-/*	Info - Datenstruktur: 1. Element ist Ausgabefunktion
-*/
-
-typedef struct Info_s Info_t;
-
-typedef void (*InfoPrint_t) (io_t *io, const Info_t *data);
-
-typedef struct {
-	admin_t admin;		/* Speicheradministration */
-	InfoPrint_t pfunc;	/* Ausgabefunktion */
-} InfoType_t;
-
-struct Info_s {
-	InfoType_t *type;
-};
-
-extern Info_t *Info_admin (Info_t *tg, const Info_t *src);
-extern void Info_print (io_t *io, const Info_t *data);
-extern void Info_subprint (io_t *io, const Info_t *data, const char *pfx);
-
-
-/*
-Der Datentype |$1| definiert eine Informationsstruktur mit einer
-Zeichenkette als Informationsquelle.
-*/
-
-typedef struct {
-	InfoType_t *type;
-	char *fmt;
-} InfoString_t;
-
-extern InfoType_t InfoType_cstr;
-extern InfoType_t InfoType_mstr;
-Info_t *InfoString_create (char *label);
-
-/*
-Der Makro |$1| erlaubt die Initialisierung einer |$1_t| Informationsstruktur
-mit der Zeichenkette <str>.
-*/
-
-#define	InfoString(str)	{ &InfoType_cstr, str }
-
-/*
-Der Datentype |$1| definiert eine Informationsstruktur mit einer
-Ausgabefunktion als Informationsquelle.
-*/
-
-typedef struct {
-	InfoType_t *type;
-	void (*func) (io_t *io);
-} InfoFunc_t;
-
-extern InfoType_t InfoType_func;
-
-/*
-Der Makro |$1| erlaubt die Initialisierung einer |$1_t| Informationsstruktur
-mit der Ausgabefunktion <func>.
-*/
-
-#define	InfoFunc(func)	{ &InfoType_func, func }
-
-/*
-Der Datentype |$1| definiert eine Informationsstruktur mit dem
-aktuellen Sourcefile als Informationsquelle.
-*/
-
-typedef struct {
-	InfoType_t *type;
-	char *name;	/* Filename */
-	int start;	/* Startzeile (wird nicht angezeigt) */
-	int end;	/* Endezeile (wird nicht angezeigt) */
-} FileLabel_t;
-
-extern InfoType_t InfoType_FileLabel;
-
-#define	Label(name)	Label_ ## name
-#define	UseLabel(x)	extern FileLabel_t Label(x)
-#define	GlobalLabel(x)	FileLabel_t Label(x) = \
-	{ &InfoType_FileLabel, __FILE__, __LINE__,
-#define	LocalLabel(x)	static GlobalLabel(x)
-#define	EndLabel	__LINE__ };
-
-
 /*	Informationsknoten
 */
 
-typedef struct InfoNode_s InfoNode_t;
-typedef void (*PrintInfo_t) (io_t *io, InfoNode_t *info);
-typedef void (*LoadInfo_t) (InfoNode_t *info);
+typedef struct InfoNodeStruct InfoNode;
 
-struct InfoNode_s {
-	PrintInfo_t func;	/* Ausgabefunktion */
+struct InfoNodeStruct {
+	void (*func) (IO *io, InfoNode *info); /* Ausgabefunktion */
 	char *name;		/* Knotenname */
 	char *label;		/* Knotenbezeichnung */
 	void *par;		/* Ausgabeparameter */
-	InfoNode_t *prev;	/* Vorgängerknoten */
-	LoadInfo_t load;	/* Ladefunktion */
-	vecbuf_t *list;		/* Unterknoten */
+	InfoNode *prev;	/* Vorgängerknoten */
+	void (*load) (InfoNode *info);	/* Ladefunktion */
+	VecBuf *list;		/* Unterknoten */
 };
 
 extern char *InfoNameToken (char **ptr);
 
-extern InfoNode_t *NewInfo (InfoNode_t *base, char *name);
-extern InfoNode_t *GetInfo (InfoNode_t *base, const char *name);
-extern InfoNode_t *AddInfo (InfoNode_t *base, const char *name,
-	const char *label, PrintInfo_t func, void *par);
+extern InfoNode *NewInfo (InfoNode *base, char *name);
+extern InfoNode *GetInfo (InfoNode *base, const char *name);
+extern InfoNode *AddInfo (InfoNode *base, const char *name,
+	const char *label, void (*func) (IO *io, InfoNode *info), void *par);
 
 #define	INFO_ESC	'\\'	/* Fluchtsymbol in Infodatenbanken */
 #define	INFO_SEP	'/'	/* Trennzeichen im Informationspfad */
@@ -145,15 +60,15 @@ extern InfoNode_t *AddInfo (InfoNode_t *base, const char *name,
 /*	Ausgabedefinitionen
 */
 
-extern int InfoName (io_t *io, InfoNode_t *base, InfoNode_t *info);
-extern void PrintInfo (io_t *io, InfoNode_t *base, const char *name);
-extern void DumpInfo (io_t *io, InfoNode_t *base, const char *name);
+extern int InfoName (IO *io, InfoNode *base, InfoNode *info);
+extern void PrintInfo (IO *io, InfoNode *base, const char *name);
+extern void DumpInfo (IO *io, InfoNode *base, const char *name);
 
 extern char *InfoPath;
 
 extern void SetInfoPath (const char *path);
-extern void LoadInfo (InfoNode_t *base, const char *name);
-extern void IOLoadInfo (InfoNode_t *base, io_t *io);
+extern void LoadInfo (InfoNode *base, const char *name);
+extern void IOLoadInfo (InfoNode *base, IO *io);
 
 
 #endif	/* EFEU/Info.h */

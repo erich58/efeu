@@ -24,10 +24,10 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/printobj.h>
 #include <ctype.h>
 
-int ShowType(io_t *io, const Type_t *type)
+int ShowType(IO *io, const EfiType *type)
 {
-	Var_t *st;
-	Type_t *last;
+	EfiVar *st;
+	EfiType *last;
 	int n;
 
 	if	(type == NULL)
@@ -73,7 +73,7 @@ int ShowType(io_t *io, const Type_t *type)
 }
 
 
-static void list_name(io_t *io, Var_t *st)
+static void list_name(IO *io, EfiVar *st)
 {
 	ShowType(io, st->type);
 
@@ -86,16 +86,16 @@ static void list_name(io_t *io, Var_t *st)
 	if	(st->dim > 1)	io_printf(io, "[%d]", st->dim);
 }
 
-static void list_func(io_t *io, const char *pfx, Func_t *func)
+static void list_func(IO *io, const char *pfx, EfiFunc *func)
 {
 	io_puts(pfx, io);
 	ListFunc(io, func);
 	io_putc('\n', io);
 }
 
-static void list_vfunc(io_t *io, const char *pfx, const vecbuf_t *tab)
+static void list_vfunc(IO *io, const char *pfx, const VecBuf *tab)
 {
-	Func_t **ftab;
+	EfiFunc **ftab;
 	int i;
 
 	io_puts(pfx, io);
@@ -106,7 +106,7 @@ static void list_vfunc(io_t *io, const char *pfx, const vecbuf_t *tab)
 		return;
 	}
 
-	ftab = (Func_t **) tab->data;
+	ftab = (EfiFunc **) tab->data;
 
 	if	(pfx == NULL)
 	{
@@ -133,7 +133,7 @@ static void list_vfunc(io_t *io, const char *pfx, const vecbuf_t *tab)
 	}
 }
 
-static void show_base (io_t *io, const Type_t *type)
+static void show_base (IO *io, const EfiType *type)
 {
 	ShowType(io, type);
 
@@ -145,9 +145,9 @@ static void show_base (io_t *io, const Type_t *type)
 	}
 }
 
-void ListType(io_t *io, const Type_t *type)
+void ListType(IO *io, const EfiType *type)
 {
-	Var_t *st;
+	EfiVar *st;
 	size_t size, tsize;
 
 	if	(type == NULL)	return;
@@ -170,7 +170,8 @@ void ListType(io_t *io, const Type_t *type)
 	}
 
 	if	(type->eval)	io_puts(", eval()", io);
-	if	(type->iodata)	io_puts(", iodata()", io);
+	if	(type->read)	io_puts(", read()", io);
+	if	(type->write)	io_puts(", write()", io);
 	if	(type->copy)	io_puts(", copy()", io);
 	if	(type->clean)	io_puts(", clean()", io);
 

@@ -22,7 +22,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 pconfig !
-Version = "$Id: htmlindex.esh,v 1.8 2001-11-06 13:19:12 ef Exp $"
+Version = "$Id: htmlindex.esh,v 1.9 2002-06-05 15:22:49 ef Exp $"
 Output = "index.html";
 MAGIC = "HTMLINDEX";
 
@@ -58,7 +58,7 @@ if	(fsearch(NULL, Output))
 
 IO out = open(Output, "w");
 
-regex_t regex = "<TITLE>(.*)</TITLE>";
+RegExp regex = "<TITLE>(.*)</TITLE>";
 
 struct Entry {
 	str name;

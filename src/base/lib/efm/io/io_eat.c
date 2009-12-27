@@ -25,9 +25,9 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/patcmp.h>
 
 
-static void c_skip (io_t *io);
+static void c_skip (IO *io);
 
-int io_eat(io_t *io, const char *wmark)
+int io_eat(IO *io, const char *wmark)
 {
 	int c;
 
@@ -52,7 +52,7 @@ int io_eat(io_t *io, const char *wmark)
 /*	Lesen bis Ende eines C - Style Kommentars
 */
 
-static void c_skip(io_t *io)
+static void c_skip(IO *io)
 {
 	int c;
 
@@ -74,7 +74,7 @@ static void c_skip(io_t *io)
 /*	C, C++ Kommentare überlesen
 */
 
-int iocpy_cskip(io_t *in, io_t *out, int c, const char *arg, unsigned int flags)
+int iocpy_cskip(IO *in, IO *out, int c, const char *arg, unsigned int flags)
 {
 	int x;
 
@@ -102,7 +102,7 @@ int iocpy_cskip(io_t *in, io_t *out, int c, const char *arg, unsigned int flags)
 /*	Zeichen überlesen
 */
 
-int iocpy_skip(io_t *in, io_t *out, int c, const char *arg, unsigned int flags)
+int iocpy_skip(IO *in, IO *out, int c, const char *arg, unsigned int flags)
 {
 	int x;
 

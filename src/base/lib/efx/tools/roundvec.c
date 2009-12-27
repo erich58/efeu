@@ -54,7 +54,7 @@ void roundvec(double *x, size_t dim, double val)
 	rdiff auf 0 justiert werden. Np und nn enthält die Zahl der nach 4/5
 	Rundung auf/abzurundenden Werte.
 */
-	y = ALLOC(dim, double);
+	y = memalloc(dim * sizeof(double));
 	rdiff = 0.;
 	nn = np = 0;
 

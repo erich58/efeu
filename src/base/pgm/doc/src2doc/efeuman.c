@@ -34,10 +34,10 @@ If not, write to the Free Software Foundation, Inc.,
 /*	Globale Variablen
 */
 
-DocBuf_t DocBuf;	/* Dokumentbuffer */
-int indent;		/* Einrücktiefe */
+DocBuf doc_buf;	/* Dokumentbuffer */
+int indent;	/* Einrücktiefe */
 
-static int f_setpar (CmdPar_t *cpar, CmdParVar_t *var,
+static int f_setpar (CmdPar *cpar, CmdParVar *var,
 	const char *par, const char *arg)
 {
 	char *p = strchr(arg, '=');
@@ -53,18 +53,18 @@ static int f_setpar (CmdPar_t *cpar, CmdParVar_t *var,
 	return 0;
 }
 
-static CmdParEval_t eval_setpar = {
+static CmdParEval eval_setpar = {
 	"setpar",
 	"Parameterwert setzen",
 	f_setpar,
 };
 
-static int f_manpage (CmdPar_t *cpar, CmdParVar_t *var,
+static int f_manpage (CmdPar *cpar, CmdParVar *var,
 	const char *par, const char *arg)
 {
 	char *name;
-	io_t *def;
-	io_t *out;
+	IO *def;
+	IO *out;
 
 	if	(arg && *arg == '@')
 	{
@@ -79,16 +79,16 @@ static int f_manpage (CmdPar_t *cpar, CmdParVar_t *var,
 	def = io_tmpbuf(BSIZE);
 	io_puts("@head\n", def);
 
-	if	(!sb_getpos(DocBuf.synopsis))
-		sb_puts("@synopsis\n", DocBuf.tab[BUF_SYN]);
+	if	(!sb_getpos(doc_buf.synopsis))
+		sb_puts("@synopsis\n", doc_buf.tab[BUF_SYN]);
 
-	if	(!sb_getpos(DocBuf.tab[BUF_DESC]))
+	if	(!sb_getpos(doc_buf.tab[BUF_DESC]))
 	{
-		sb_puts(GetResource("desc", NULL), DocBuf.tab[BUF_DESC]);
-		sb_puts("\n@arglist\n", DocBuf.tab[BUF_DESC]);
+		sb_puts(GetResource("desc", NULL), doc_buf.tab[BUF_DESC]);
+		sb_puts("\n@arglist\n", doc_buf.tab[BUF_DESC]);
 	}
 
-	DocBuf_write(&DocBuf, def);
+	DocBuf_write(&doc_buf, def);
 	io_rewind(def);
 	CmdPar_iousage (cpar, out, def);
 	io_close(def);
@@ -97,7 +97,7 @@ static int f_manpage (CmdPar_t *cpar, CmdParVar_t *var,
 	return 0;
 }
 
-static CmdParEval_t eval_manpage = {
+static CmdParEval eval_manpage = {
 	"manpage",
 	"Handbucheintrag generieren",
 	f_manpage,
@@ -106,25 +106,25 @@ static CmdParEval_t eval_manpage = {
 /*	Hilfsfunktionen
 */
 
-static void srcline (io_t *io, int c)
+static void srcline (IO *io, int c)
 {
 	while (c != EOF && c != '\n')
 	{
 		if	(c == '$')
-			sb_putc(c, DocBuf.source);
+			sb_putc(c, doc_buf.source);
 
-		sb_putc(c, DocBuf.source);
+		sb_putc(c, doc_buf.source);
 		c = io_getc(io);
 	}
 
-	if	(sb_getpos(DocBuf.source))
-		sb_putc('\n', DocBuf.source);
+	if	(sb_getpos(doc_buf.source))
+		sb_putc('\n', doc_buf.source);
 }
 
-static char *buf2var (strbuf_t *buf)
+static char *buf2var (StrBuf *buf)
 {
-	io_t *io;
-	strbuf_t *var;
+	IO *io;
+	StrBuf *var;
 	int c;
 
 	var = new_strbuf(0);
@@ -138,7 +138,7 @@ static char *buf2var (strbuf_t *buf)
 	return sb2str(var);
 }
 
-static char *getpar (strbuf_t *buf)
+static char *getpar (StrBuf *buf)
 {
 	int i, n, k;
 	char *p;
@@ -168,7 +168,7 @@ static char *getpar (strbuf_t *buf)
 }
 
 
-static void addline (io_t *io, strbuf_t *buf)
+static void addline (IO *io, StrBuf *buf)
 {
 	int c;
 	int pos;
@@ -198,15 +198,15 @@ static void addline (io_t *io, strbuf_t *buf)
 		sb_putc(c, buf);
 	}
 
-	if	(flag && !DocBuf.var[VAR_TITLE])
+	if	(flag && !doc_buf.var[VAR_TITLE])
 	{
-		DocBuf.var[VAR_TITLE] = buf2var(buf);
+		doc_buf.var[VAR_TITLE] = buf2var(buf);
 		sb_clear(buf);
 	}
 	else	sb_putc('\n', buf);
 }
 
-static int testkey (strbuf_t *buf, const char *key)
+static int testkey (StrBuf *buf, const char *key)
 {
 	int c;
 
@@ -225,7 +225,7 @@ static int testkey (strbuf_t *buf, const char *key)
 	return 1;
 }
 
-static void addbuf(strbuf_t *buf)
+static void addbuf(StrBuf *buf)
 {
 	if	(sb_getpos(buf) == 0)	return;
 
@@ -235,23 +235,23 @@ static void addbuf(strbuf_t *buf)
 	{
 		if	(testkey(buf, "$pconfig"))
 		{
-			io_t *io = io_strbuf(buf);
+			IO *io = io_strbuf(buf);
 			CmdPar_read(NULL, io, EOF, 0);
 			io_close(io);
 		}
-		else	DocBuf_copy(&DocBuf, buf, NULL);
+		else	DocBuf_copy(&doc_buf, buf, NULL, NULL);
 	}
-	else if	(DocBuf.var[VAR_TITLE] == NULL)
+	else if	(doc_buf.var[VAR_TITLE] == NULL)
 	{
-		DocBuf.var[VAR_TITLE] = getpar(buf);
-		DocBuf_copy(&DocBuf, buf, NULL);
+		doc_buf.var[VAR_TITLE] = getpar(buf);
+		DocBuf_copy(&doc_buf, buf, NULL, NULL);
 	}
 
 	sb_clear(buf);
-	sb_clear(DocBuf.source);
+	sb_clear(doc_buf.source);
 }
 
-static void eval_script (io_t *io, strbuf_t *buf)
+static void eval_script (IO *io, StrBuf *buf)
 {
 	int c;
 
@@ -285,9 +285,9 @@ static void eval_script (io_t *io, strbuf_t *buf)
 	addbuf(buf);
 }
 
-static void eval_source (io_t *io, strbuf_t *buf)
+static void eval_source (IO *io, StrBuf *buf)
 {
-	strbuf_t *ptr;
+	StrBuf *ptr;
 	int at_start;
 	int c;
 
@@ -317,10 +317,10 @@ static void eval_source (io_t *io, strbuf_t *buf)
 
 int main (int argc, char **argv)
 {
-	CmdPar_t *par;
-	strbuf_t *buf;
-	io_t *io;
-	vecbuf_t save;
+	CmdPar *par;
+	StrBuf *buf;
+	IO *io;
+	VecBuf save;
 
 	SetProgName(argv[0]);
 	SetupStd();
@@ -338,16 +338,16 @@ int main (int argc, char **argv)
 	argv++;
 
 	par = CmdPar_ptr(NULL);
-	memcpy(&save, &par->var, sizeof(vecbuf_t));
-	memset(&par->var, 0, sizeof(vecbuf_t));
+	memcpy(&save, &par->var, sizeof(VecBuf));
+	memset(&par->var, 0, sizeof(VecBuf));
 	CmdPar_clean(par);
-	memcpy(&par->var, &save, sizeof(vecbuf_t));
+	memcpy(&par->var, &save, sizeof(VecBuf));
 	CmdParEval_add(&eval_manpage);
 	SetProgName(argv[0]);
 	CmdPar_load(par, "help", 0);
 
-	DocBuf_init(&DocBuf);
-	DocBuf.var[VAR_NAME] = mstrcpy(par->name);
+	DocBuf_init(&doc_buf);
+	doc_buf.var[VAR_NAME] = mstrcpy(par->name);
 
 	io = io_lnum(io_fileopen(argv[0], "rzd"));
 	buf = new_strbuf(BSIZE);

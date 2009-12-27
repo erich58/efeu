@@ -22,27 +22,8 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/object.h>
 
-Obj_t *LvalMember(const Var_t *st, const Obj_t *obj)
-{
-	void *data = obj ? ((EvalMember_t) st->par)(obj->data) : NULL;
 
-	if	(data == NULL)	return ConstObj(st->type, st->data);
-	else if	(obj->lval)	return LvalObj(&Lval_ptr, st->type, data);
-	else			return ConstObj(st->type, data);
-}
-
-
-Obj_t *ConstMember(const Var_t *st, const Obj_t *obj)
-{
-	void *data = obj ? ((EvalMember_t) st->par)(obj->data) : NULL;
-
-	if	(data == NULL)	data = st->data;
-
-	return data ? ConstObj(st->type, data) : NULL;
-}
-
-
-Obj_t *StructMember (const Var_t *st, const Obj_t *obj)
+EfiObj *StructMember (const EfiVar *st, const EfiObj *obj)
 {
 	void *ptr;
 

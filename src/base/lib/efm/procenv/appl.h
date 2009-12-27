@@ -34,13 +34,10 @@ extern char *ApplPath;		/* Suchpfad für Hilfsdateien */
 /*	Hilfsdateitypen
 */
 
-#define	APPL_APP	1
-#define	APPL_HLP	2
-#define	APPL_TRM	3
-#define	APPL_CFG	4
-#define	APPL_CNF	5
-#define	APPL_MSG	6
+#define	APPL_CNF	1
+#define	APPL_MSG	2
+#define	APPL_HLP	3
 
-extern io_t *io_applfile (const char *name, int type);
+extern IO *io_applfile (const char *name, int type);
 
 #endif	/* EFEU/appl.h */

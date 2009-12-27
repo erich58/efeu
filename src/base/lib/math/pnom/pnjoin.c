@@ -25,8 +25,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <Math/pnom.h>
 
 
-static void mkkoef (pnom_t **p, size_t n);
-static void setkoef (double x, pnom_t **p, size_t n);
+static void mkkoef (Polynom **p, size_t n);
+static void setkoef (double x, Polynom **p, size_t n);
 static void trans (double a, double *c, size_t deg);
 
 static size_t *join_ind = NULL;
@@ -62,7 +62,7 @@ static void trans(double a, double *c, size_t k)
 /*	Speicherplatz für Koeffizientenmatrix generieren
 */
 
-static void mkkoef(pnom_t **p, size_t n)
+static void mkkoef(Polynom **p, size_t n)
 {
 	size_t size;
 	double *ptr;
@@ -91,7 +91,7 @@ static void mkkoef(pnom_t **p, size_t n)
 /*	Koeffizientenmatrix initialisieren
 */
 
-static void setkoef(double x, pnom_t **p, size_t n)
+static void setkoef(double x, Polynom **p, size_t n)
 {
 	int i, j;
 
@@ -128,7 +128,7 @@ static void setkoef(double x, pnom_t **p, size_t n)
 /*	Polynome verknüpfen
 */
 
-size_t pnjoin(pnom_t **p, size_t n, void (*op) (double, double **, size_t *, size_t))
+size_t pnjoin(Polynom **p, size_t n, void (*op) (double, double **, size_t *, size_t))
 {
 	double x = 0.;	/* Wert der Stützstelle */
 	size_t dim;	/* Zähler für Stützstellen */

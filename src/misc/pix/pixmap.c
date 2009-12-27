@@ -27,51 +27,46 @@ If not, write to the Free Software Foundation, Inc.,
 /*	Referenztype
 */
 
-static OldPixMap_t *OldPixMapAdmin(OldPixMap_t *tg, const OldPixMap_t *src)
+static void pix_clean (void *data)
 {
-	if	(tg)
-	{
-		memfree(tg->color);
-		memfree(tg->pixel);
-		memfree(tg);
-		return NULL;
-	}
-	else	return memalloc(sizeof(OldPixMap_t));
+	OldPixMap *pix = data;
+	memfree(pix->color);
+	memfree(pix->pixel);
+	memfree(pix);
 }
 
-static char *OldPixMapIdent(OldPixMap_t *pix)
+static char *pix_ident (const void *data)
 {
+	const OldPixMap *pix = data;
 	return msprintf("%dx%dx%d", pix->rows, pix->cols, pix->colors);
 }
 
-ADMINREFTYPE(OldPixMap_reftype, "OldPixMap", OldPixMapIdent, OldPixMapAdmin);
+RefType OldPixMap_reftype = REFTYPE_INIT("OldPixMap", pix_ident, pix_clean);
 
 
 /*	OldPixMap-File generieren
 */
 
-OldPixMap_t *new_OldPixMap(int rows, int cols)
+OldPixMap *new_OldPixMap(int rows, int cols)
 {
-	OldPixMap_t *pix;
-
-	pix = rd_create(&OldPixMap_reftype);
+	OldPixMap *pix = memalloc(sizeof(OldPixMap));
 	pix->rows = rows;
 	pix->cols = cols;
 	pix->colors = 0;
 	pix->pixel = memalloc(rows * cols);
-	memset(pix->color, 0, PIX_CDIM * sizeof(Color_t));
+	memset(pix->color, 0, PIX_CDIM * sizeof(COLOR));
 	memset(pix->pixel, 0, rows * cols);
-	return pix;
+	return rd_init(&OldPixMap_reftype, pix);
 }
 
 
 /*	Datentype
 */
 
-Type_t Type_OldPixMap = REF_TYPE("OldPixMap", OldPixMap_t *);
-Type_t Type_Color = SIMPLE_TYPE("Color", Color_t, NULL);
+EfiType Type_OldPixMap = REF_TYPE("OldPixMap", OldPixMap *);
+EfiType Type_Color = SIMPLE_TYPE("Color", COLOR, NULL);
 
-Color_t Buf_Color = { 0 };
+COLOR Buf_Color = { 0 };
 
 
 #define	REF(ptr)	rd_refer(Val_OldPixMap(ptr))
@@ -81,9 +76,9 @@ Color_t Buf_Color = { 0 };
 /*	Basisfunktionen
 */
 
-static void PF_rule (Func_t *func, void *rval, void **arg)
+static void PF_rule (EfiFunc *func, void *rval, void **arg)
 {
-	OldPixMap_t *pix;
+	OldPixMap *pix;
 	int x0, y0, width, height;
 	int color, i, j, n;
 
@@ -128,37 +123,37 @@ static void PF_rule (Func_t *func, void *rval, void **arg)
 	RVPIX = pix;
 }
 
-static void PF_cprint (Func_t *func, void *rval, void **arg)
+static void PF_cprint (EfiFunc *func, void *rval, void **arg)
 {
-	register Color_t color = Val_Color(arg[1]);
+	register COLOR color = Val_Color(arg[1]);
 	Val_int(rval) = io_printf(Val_io(arg[0]), "{ %5.3f, %5.3f, %5.3f }",
 		color.red / 255., color.green / 255., color.blue / 255.);
 }
 
 
-static void PF_load(Func_t *func, void *rval, void **arg)
+static void PF_load(EfiFunc *func, void *rval, void **arg)
 {
 	RVPIX = load_OldPixMap(Val_str(arg[0]));
 }
 
-static void PF_create(Func_t *func, void *rval, void **arg)
+static void PF_create(EfiFunc *func, void *rval, void **arg)
 {
 	RVPIX = new_OldPixMap(Val_int(arg[1]), Val_int(arg[0]));
 }
 
-static void PF_save(Func_t *func, void *rval, void **arg)
+static void PF_save(EfiFunc *func, void *rval, void **arg)
 {
 	save_OldPixMap(Val_OldPixMap(arg[0]), Val_str(arg[1]));
 	RVPIX = REF(arg[0]);
 }
 
-static void PF_toPPM(Func_t *func, void *rval, void **arg)
+static void PF_toPPM(EfiFunc *func, void *rval, void **arg)
 {
 	OldPixMapToPPM(Val_OldPixMap(arg[0]), Val_str(arg[1]));
 	RVPIX = REF(arg[0]);
 }
 
-static void PF_toXPM2(Func_t *func, void *rval, void **arg)
+static void PF_toXPM2(EfiFunc *func, void *rval, void **arg)
 {
 	OldPixMapToXPM2(Val_OldPixMap(arg[0]), Val_str(arg[1]));
 	RVPIX = REF(arg[0]);
@@ -168,30 +163,30 @@ static void PF_toXPM2(Func_t *func, void *rval, void **arg)
 #define	GREEN(x)	(Val_Color(x).green / 255.)
 #define	BLUE(x)		(Val_Color(x).blue / 255.)
 
-static void PF_skcolor(Func_t *func, void *rval, void **arg)
+static void PF_skcolor(EfiFunc *func, void *rval, void **arg)
 {
 	Val_Color(rval) = SetColor(Val_double(arg[0]) * RED(arg[1]),
 		Val_double(arg[0]) * GREEN(arg[1]),
 		Val_double(arg[0]) * BLUE(arg[1]));
 }
 
-static void PF_addcolor(Func_t *func, void *rval, void **arg)
+static void PF_addcolor(EfiFunc *func, void *rval, void **arg)
 {
 	Val_Color(rval) = SetColor(RED(arg[0]) + RED(arg[1]),
 		GREEN(arg[0]) + GREEN(arg[1]),
 		BLUE(arg[0]) + BLUE(arg[1]));
 }
 
-static void PF_subcolor(Func_t *func, void *rval, void **arg)
+static void PF_subcolor(EfiFunc *func, void *rval, void **arg)
 {
 	Val_Color(rval) = SetColor(RED(arg[0]) - RED(arg[1]),
 		GREEN(arg[0]) - GREEN(arg[1]),
 		BLUE(arg[0]) - BLUE(arg[1]));
 }
 
-static void PF_getcolor(Func_t *func, void *rval, void **arg)
+static void PF_getcolor(EfiFunc *func, void *rval, void **arg)
 {
-	OldPixMap_t *pix;
+	OldPixMap *pix;
 
 	if	((pix = Val_OldPixMap(arg[0])) != NULL)
 	{
@@ -200,9 +195,9 @@ static void PF_getcolor(Func_t *func, void *rval, void **arg)
 	else	Val_Color(rval) = SetColor(0., 0., 0.);
 }
 
-static void PF_newcolor(Func_t *func, void *rval, void **arg)
+static void PF_newcolor(EfiFunc *func, void *rval, void **arg)
 {
-	OldPixMap_t *pix;
+	OldPixMap *pix;
 
 	pix = Val_OldPixMap(arg[0]);
 
@@ -215,7 +210,7 @@ static void PF_newcolor(Func_t *func, void *rval, void **arg)
 }
 
 
-static FuncDef_t fdef[] = {
+static EfiFuncDef fdef[] = {
 	{ 0, &Type_OldPixMap, "LoadOldPixMap (str file)", PF_load },
 	{ 0, &Type_OldPixMap, "NewOldPixMap (int width, int height)", PF_create },
 	{ 0, &Type_OldPixMap, "OldPixMap::save(str file)", PF_save },
@@ -240,19 +235,19 @@ int height = 0, int color = 0)", PF_rule },
 /*	Konvertierungen
 */
 
-static void double2Color (const Konv_t *p, Color_t *y, double *x)
+static void double2Color (const EfiKonv *p, COLOR *y, double *x)
 {
 	y->red = ColorValue(*x);
 	y->green = y->blue = y->red;
 }
 
-static void Color2double (const Konv_t *p, double *y, Color_t *x)
+static void Color2double (const EfiKonv *p, double *y, COLOR *x)
 {
 	*y = 0.299 * RED(x) + 0.587 * GREEN(x) + 0.114 * BLUE(x);
 }
 
 
-static void List2Color (const Konv_t *p, Color_t *y, ObjList_t **x)
+static void List2Color (const EfiKonv *p, COLOR *y, EfiObjList **x)
 {
 	y->red = 0;
 	y->green = 0;
@@ -272,7 +267,7 @@ static void List2Color (const Konv_t *p, Color_t *y, ObjList_t **x)
 	}
 }
 
-static void Color2List (const Konv_t *p, ObjList_t **y, Color_t *x)
+static void Color2List (const EfiKonv *p, EfiObjList **y, COLOR *x)
 {
 	(*y) = NewObjList(Obj_double(x->red / 255.));
 	(*y)->next = NewObjList(Obj_double(x->green / 255.));
@@ -281,12 +276,12 @@ static void Color2List (const Konv_t *p, ObjList_t **y, Color_t *x)
 #endif
 
 /*
-static Konv_t konv[] = {
+static EfiKonv konv[] = {
 	{ &Type_null, &Type_OldPixMap, Konv_Goodkonv, Null2Any },
-	{ &Type_Color, &Type_double, Konv_Badkonv, (KonvFunc_t) Color2double },
-	{ &Type_double, &Type_Color, Konv_Goodkonv, (KonvFunc_t) double2Color },
-	{ &Type_list, &Type_Color, Konv_Goodkonv, (KonvFunc_t) List2Color },
-	{ &Type_Color, &Type_list, Konv_Goodkonv, (KonvFunc_t) Color2List },
+	{ &Type_Color, &Type_double, Konv_Badkonv, (KonvEfiFunc) Color2double },
+	{ &Type_double, &Type_Color, Konv_Goodkonv, (KonvEfiFunc) double2Color },
+	{ &Type_list, &Type_Color, Konv_Goodkonv, (KonvEfiFunc) List2Color },
+	{ &Type_Color, &Type_list, Konv_Goodkonv, (KonvEfiFunc) Color2List },
 };
 */
 
@@ -294,7 +289,7 @@ static Konv_t konv[] = {
 /*	Konstanten
 */
 
-static Obj_t *Const_Color (io_t *io, void *data)
+static EfiObj *Const_Color (IO *io, void *data)
 {
 	unsigned val = (size_t) data;
 	Buf_Color.idx = 0;
@@ -304,7 +299,7 @@ static Obj_t *Const_Color (io_t *io, void *data)
 	return ConstObj(&Type_Color, &Buf_Color);
 }
 
-static ParseDef_t pdef[] = {
+static EfiParseDef pdef[] = {
 	{ "White", Const_Color, (char *) 0xFFFFFF },
 	{ "Black", Const_Color, (char *) 0x000000 },
 	{ "Red", Const_Color, (char *) 0xFF0000 },
@@ -315,11 +310,9 @@ static ParseDef_t pdef[] = {
 	{ "Yellow", Const_Color, (char *) 0xFFFF00 },
 };
 
-static Obj_t *get_color (const Var_t *st, const Obj_t *obj)
+static EfiObj *get_color (const EfiObj *obj, void *data)
 {
-	OldPixMap_t *pix;
-	
-	pix = (obj ? Val_OldPixMap(obj->data) : NULL);
+	OldPixMap *pix = obj ? Val_OldPixMap(obj->data) : NULL;
 
 	if	(pix == NULL)	return NULL;
 
@@ -329,22 +322,22 @@ static Obj_t *get_color (const Var_t *st, const Obj_t *obj)
 	return NewObj(&Type_vec, &Buf_vec);
 }
 
-static int *m_cols(OldPixMap_t **pix)
+static EfiObj *m_cols (const EfiObj *obj, void *data)
 {
-	Buf_int = (*pix != NULL) ? (*pix)->cols : 0;
-	return &Buf_int;
+	int x = obj ? Val_OldPixMap(obj->data)->cols : 0;
+	return NewObj(&Type_int, &x);
 }
 
-static int *m_rows(OldPixMap_t **pix)
+static EfiObj *m_rows (const EfiObj *obj, void *data)
 {
-	Buf_int = (*pix != NULL) ? (*pix)->rows : 0;
-	return &Buf_int;
+	int x = obj ? Val_OldPixMap(obj->data)->rows : 0;
+	return NewObj(&Type_int, &x);
 }
 
-static MemberDef_t var_OldPixMap[] = {
+static EfiMember member[] = {
 	{ "color", &Type_vec, get_color, NULL },
-	{ "width", &Type_int, ConstMember, m_cols },
-	{ "height", &Type_int, ConstMember, m_rows },
+	{ "width", &Type_int, m_cols, NULL },
+	{ "height", &Type_int, m_rows, NULL },
 };
 
 
@@ -354,7 +347,7 @@ void SetupOldPixMap(void)
 	AddType(&Type_OldPixMap);
 	AddFuncDef(fdef, tabsize(fdef));
 	AddParseDef(pdef, tabsize(pdef));
-	AddMember(Type_OldPixMap.vtab, var_OldPixMap, tabsize(var_OldPixMap));
+	AddEfiMember(Type_OldPixMap.vtab, member, tabsize(member));
 	/*
 	AddParseDef(konv, tabsize(konv));
 	*/

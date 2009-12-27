@@ -22,7 +22,9 @@ If not, write to the Free Software Foundation, Inc.,
 
 
 #include <EFEU/io.h>
+#include <EFEU/ftools.h>
 #include <EFEU/MakeDepend.h>
+#include <EFEU/procenv.h>
 #include <ctype.h>
 
 #if	QC
@@ -38,14 +40,17 @@ If not, write to the Free Software Foundation, Inc.,
 FILE *popen (const char *cmd, const char *type);
 int pclose (FILE *stream);
 
-io_t *io_popen(const char *proc, const char *mode)
+IO *io_popen(const char *proc, const char *mode)
 {
-	io_t *io;
-	strbuf_t *sb;
+	IO *io;
+	StrBuf *sb;
 	FILE *file;
 	int i;
 
 	if	(proc == NULL || mode == NULL)
+		return NULL;
+
+	if	(pipe_lock)
 		return NULL;
 
 	switch (*mode)
@@ -139,7 +144,7 @@ FILE *popen(const char *name, const char *mode)
 	KEY *key, **ptr;
 	char *p;
 
-	key = ALLOC(1, KEY);
+	key = memalloc(sizeof(KEY));
 	key->next = NULL;
 	key->file = NULL;
 	key->proc = NULL;

@@ -45,14 +45,14 @@ CEXPR(name, UINT(0) op UINT(1))
 /*	Funktionen
 */
 
-static void f_uint_min (Func_t *func, void *rval, void **arg)
+static void f_uint_min (EfiFunc *func, void *rval, void **arg)
 {
 	register unsigned int a = UINT(0);
 	register unsigned int b = UINT(1);
 	URETVAL = a < b ? a : b;
 }
 
-static void f_uint_max (Func_t *func, void *rval, void **arg)
+static void f_uint_max (EfiFunc *func, void *rval, void **arg)
 {
 	register unsigned int a = UINT(0);
 	register unsigned int b = UINT(1);
@@ -119,7 +119,7 @@ ASSIGN(a_uint_or, |=)
 /*	Funktionstabelle
 */
 
-static FuncDef_t fdef_uint[] = {
+static EfiFuncDef fdef_uint[] = {
 	{ FUNC_VIRTUAL, &Type_uint, "min (unsigned, unsigned)", f_uint_min },
 	{ FUNC_VIRTUAL, &Type_uint, "max (unsigned, unsigned)", f_uint_max },
 

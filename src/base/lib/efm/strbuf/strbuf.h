@@ -46,12 +46,12 @@ ist. Ist <blksize> auf 0 gesetzt, werden Standardvorgaben verwendet.
 */
 
 typedef struct {
-	uchar_t *data;	/* Datenbuffer */
+	unsigned char *data;	/* Datenbuffer */
 	unsigned size;	/* Aktuelle Größe des Buffers */
 	unsigned blksize;	/* Blockgröße zur Buffervergrößerung */
 	int nfree;	/* Zahl der freien Zeichen */
 	int pos;	/* Aktuelle Bufferposition */
-} strbuf_t;
+} StrBuf;
 
 /*
 :de:
@@ -67,24 +67,24 @@ Der Makro |$1| deklariert das Zeichenfeld <name> und initialisiert
 es mit der Blockgröße <blk>.
 */
 
-#define	STRBUF(name, blk)	strbuf_t name = SB_DATA(blk)
+#define	STRBUF(name, blk)	StrBuf name = SB_DATA(blk)
 
-extern strbuf_t *new_strbuf (size_t blksize);
-extern int del_strbuf (strbuf_t *buf);
-extern void sb_expand (strbuf_t *buf);
-extern void sb_clear (strbuf_t *sb);
+extern StrBuf *new_strbuf (size_t blksize);
+extern int del_strbuf (StrBuf *buf);
+extern void sb_expand (StrBuf *buf);
+extern void sb_clear (StrBuf *sb);
 
-extern int sb_get (strbuf_t *sb);
-extern int sb_put (int c, strbuf_t *sb);
-extern int sb_puts (const char *str, strbuf_t *sb);
-extern int sb_rputs (const char *str, strbuf_t *sb);
-extern int sb_putstr (const char *str, strbuf_t *sb);
-extern int sb_printf (strbuf_t *sb, const char *fmt, ...);
-extern int sb_vprintf (strbuf_t *sb, const char *fmt, va_list list);
-extern int sb_setpos (strbuf_t *buf, int n);
+extern int sb_get (StrBuf *sb);
+extern int sb_put (int c, StrBuf *sb);
+extern int sb_puts (const char *str, StrBuf *sb);
+extern int sb_rputs (const char *str, StrBuf *sb);
+extern int sb_putstr (const char *str, StrBuf *sb);
+extern int sb_printf (StrBuf *sb, const char *fmt, ...);
+extern int sb_vprintf (StrBuf *sb, const char *fmt, va_list list);
+extern int sb_setpos (StrBuf *buf, int n);
 
-void sb_insert (int c, strbuf_t *sb);
-int sb_delete (strbuf_t *sb);
+void sb_insert (int c, StrBuf *sb);
+int sb_delete (StrBuf *sb);
 
 /*
 :de:
@@ -139,7 +139,7 @@ Rückgabewert.
 */
 
 #define	sb_putc(c, sb)	(--(sb)->nfree < 0 ? \
-	sb_put(c, sb) : (int) ((sb)->data[(sb)->pos++] = (uchar_t) (c)))
+	sb_put(c, sb) : (int) ((sb)->data[(sb)->pos++] = (unsigned char) (c)))
 
 /*
 :de:
@@ -150,11 +150,11 @@ am Ende 0-Zeichen eingefügt.
 
 #define	sb_align(sb, m)	while ((sb_size(sb) % (m)) != 0) sb_putc(0, sb)
 
-extern char *sb2str (strbuf_t *sb);
-extern char *sb2mem (strbuf_t *sb);
-extern char *sb_strcpy (strbuf_t *sb);
-extern char *sb_memcpy (strbuf_t *sb);
-extern char *lexsortkey (const char *base, strbuf_t *buf);
+extern char *sb2str (StrBuf *sb);
+extern char *sb2mem (StrBuf *sb);
+extern char *sb_strcpy (StrBuf *sb);
+extern char *sb_memcpy (StrBuf *sb);
+extern char *lexsortkey (const char *base, StrBuf *buf);
 
 /*
 :de:

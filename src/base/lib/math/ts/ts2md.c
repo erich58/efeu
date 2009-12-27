@@ -1,5 +1,6 @@
 /*
-Zeitreihe in Datenmatrix konvertieren
+:*:convert time series into data cube
+:de:Zeitreihe in Datenmatrix konvertieren
 
 $Copyright (C) 1997 Erich Frühstück
 This file is part of EFEU.
@@ -20,27 +21,38 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include <EFEU/object.h>
 #include <Math/TimeSeries.h>
+#include <EFEU/LangDef.h>
 
 static char *type_name(int type)
 {
-	switch (type)
+	if	(mstrcmp(LangDef.language, "de") == 0)
 	{
-	case TS_YEAR:	return "jahr";
-	case TS_QUART:	return "quart";
-	case TS_MONTH:	return "monat";
-	case TS_WEEK:	return "woche";
-	case TS_DAY:	return "tag";
-	default:	break;
+		switch (type)
+		{
+		case TS_YEAR:	return "jahr";
+		case TS_QUART:	return "quart";
+		case TS_MONTH:	return "monat";
+		case TS_WEEK:	return "woche";
+		case TS_DAY:	return "tag";
+		default:	return "index";
+		}
 	}
 
-	return "index";
+	switch (type)
+	{
+	case TS_YEAR:	return "year";
+	case TS_QUART:	return "quart";
+	case TS_MONTH:	return "month";
+	case TS_WEEK:	return "week";
+	case TS_DAY:	return "day";
+	default:	return "index";
+	}
 }
 
-mdmat_t *TimeSeries2mdmat (TimeSeries_t *ts)
+mdmat *TimeSeries2mdmat (TimeSeries *ts)
 {
-	mdmat_t *md;
+	mdmat *md;
 	double *ptr;
 	int i;
 

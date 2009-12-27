@@ -22,40 +22,41 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <term.h>
 
-static void term_sec (term_t *trm, int flag)
+static void term_sec (Term *trm, int flag)
 {
 	if	(flag)
 	{
 		term_newline(trm, 1);
 		term_push(trm);
 		trm->var.margin = 0;
-		term_att(trm, 1, TermPar.bf);
+		term_att(trm, 1, term_par.bf);
 	}
 	else
 	{
-		term_att(trm, 1, TermPar.rm);
+		term_att(trm, 1, term_par.rm);
 		term_pop(trm);
 		term_newline(trm, 0);
 	}
 }
 
-static void man_caption (term_t *trm, int flag)
+static void man_caption (Term *trm, int flag)
 {
 	if	(flag)
 	{
 		unsigned save = trm->var.margin;
 		term_newline(trm, 1);
 		trm->var.margin = 0;
-		term_att(trm, 1, TermPar.bf);
-		term_string(trm, TermPar.Name);
-		term_att(trm, 1, TermPar.rm);
+		term_att(trm, 1, term_par.bf);
+		term_string(trm, term_par.Name);
+		term_att(trm, 1, term_par.rm);
 		trm->var.margin = save;
 		term_newline(trm, 0);
 	}
 }
 
-int term_env (term_t *trm, int flag, va_list list)
+int term_env (void *drv, int flag, va_list list)
 {
+	Term *trm = drv;
 	int cmd = va_arg(list, int);
 
 	switch (cmd)
@@ -106,9 +107,9 @@ int term_env (term_t *trm, int flag, va_list list)
 			char *num = va_arg(list, char *);
 			term_newline(trm, 1);
 			term_string(trm, va_arg(list, char *));
-			trm->put((DocDrv_t *) trm, '(');
+			trm->put(trm, '(');
 			term_string(trm, num);
-			trm->put((DocDrv_t *) trm, ')');
+			trm->put(trm, ')');
 			term_newline(trm, 1);
 			term_push(trm);
 			trm->var.caption = man_caption;
@@ -119,23 +120,23 @@ int term_env (term_t *trm, int flag, va_list list)
 /*	Attribute und Anführungen
 */
 	case DOC_ATT_RM:	term_att(trm, flag, NULL); break;
-	case DOC_ATT_BF:	term_att(trm, flag, TermPar.bf); break;
-	case DOC_ATT_IT:	term_att(trm, flag, TermPar.it); break;
-	case DOC_ATT_TT:	term_att(trm, flag, TermPar.tt); break;
+	case DOC_ATT_BF:	term_att(trm, flag, term_par.bf); break;
+	case DOC_ATT_IT:	term_att(trm, flag, term_par.it); break;
+	case DOC_ATT_TT:	term_att(trm, flag, term_par.tt); break;
 	case DOC_QUOTE_SGL:	term_putc(trm, '\''); break;
 	case DOC_QUOTE_DBL:	term_putc(trm, '"'); break;
 
 /*	Verarbeitungsmodi
 */
 	case DOC_MODE_COPY:
-		trm->put = flag ? DocDrv_plain : (DocDrvPut_t) term_putc;
+		trm->put = flag ? DocDrv_plain : term_putc;
 		break;
 	case DOC_MODE_PLAIN:
 		break;
 	case DOC_MODE_VERB:
 		term_newline(trm, 0);
-		term_att(trm, flag, TermPar.tt);
-		trm->put = (DocDrvPut_t) (flag ? term_verb : term_putc);
+		term_att(trm, flag, term_par.tt);
+		trm->put = (flag ? term_verb : term_putc);
 		break;
 	case DOC_MODE_SKIP:
 	case DOC_MODE_MAN:
@@ -159,9 +160,9 @@ int term_env (term_t *trm, int flag, va_list list)
 		if	(flag)
 		{
 			term_newline(trm, 1);
-			term_att(trm, 1, TermPar.bf);
+			term_att(trm, 1, term_par.bf);
 			term_string(trm, "Vorwort");
-			term_att(trm, 0, TermPar.bf);
+			term_att(trm, 0, term_par.bf);
 			term_newline(trm, 1);
 		}
 		break;
@@ -173,7 +174,7 @@ int term_env (term_t *trm, int flag, va_list list)
 		trm->hangpar = flag;
 		break;
 	case DOC_ENV_CODE:
-		term_att(trm, flag, TermPar.tt);
+		term_att(trm, flag, term_par.tt);
 		break;
 	case DOC_ENV_FORMULA:
 		break;
@@ -181,12 +182,12 @@ int term_env (term_t *trm, int flag, va_list list)
 		if	(flag)
 		{
 			term_newline(trm, 0);
-			term_att(trm, 1, TermPar.bf);
+			term_att(trm, 1, term_par.bf);
 			trm->var.margin -= TERM_INDENT;
 		}
 		else
 		{
-			term_att(trm, 0, TermPar.bf);
+			term_att(trm, 0, term_par.bf);
 			trm->var.margin += TERM_INDENT;
 
 			if	(trm->col >= trm->var.margin)

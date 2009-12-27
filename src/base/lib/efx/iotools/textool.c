@@ -26,7 +26,7 @@ If not, write to the Free Software Foundation, Inc.,
 /*	String ausgeben
 */
 
-int TeXputs(const char *str, io_t *io)
+int TeXputs(const char *str, IO *io)
 {
 	int size;
 
@@ -41,7 +41,7 @@ int TeXputs(const char *str, io_t *io)
 /*	String unter Anführung ausgeben
 */
 
-int TeXquote(const char *str, io_t *io)
+int TeXquote(const char *str, IO *io)
 {
 	int size;
 
@@ -55,7 +55,7 @@ int TeXquote(const char *str, io_t *io)
 /*	Zeichen ausgeben
 */
 
-int TeXputc(int c, io_t *io)
+int TeXputc(int c, IO *io)
 {
 	if	(c == EOF)	return 0;
 

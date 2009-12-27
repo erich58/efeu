@@ -28,15 +28,6 @@ config -- Basiskopfdatei für EFEU-Programme
 
 REVBYTEORDER
 
-\index[uchar_t]
-typedef unsigned char uchar_t;
-
-\index[ushort_t]
-typedef unsigned short ushort_t;
-
-\index[ulong_t]
-typedef unsigned long ulong_t;
-
 tabsize(x)
 
 sizealign(x, y)
@@ -67,17 +58,6 @@ Weiters wird gewährleistet, daß der Datentype \index{|size_t|}
 Der Makro \index{|REVBYTEORDER|} dient zur Abfrage der Byteordnung des Systems.
 Hat er den Wert 1, werden niedrigsignifikante Bytes vor höhersignifikanten
 Bytes abgespeichert.
-
-Die folgenden Datentypen werden zur Verfügung gestellt:
-[|uchar_t|]
-	Vorzeichenfreie Zeichenkonstante
-[|ushort_t|]
-	Vorzeichenfreier, kurzer Ganzzahlwert
-[|ulong_t|]
-	Vorzeichenfreier, langer Ganzzahlwert
-
-Da diese Typen auf manchen Systemen (BSD-kompatiblen) bereits
-vordefiniert sind, erfolgt ihre Deklaration hier.
 
 Der Makro \index{|tabsize|} liefert die erste Dimension des
 Datenfeldes <x>.  Er wird für globale oder statische Felder verwendet,

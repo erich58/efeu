@@ -4,9 +4,9 @@
 
 #include <EFEU/mdmat.h>
 
-static mdaxis_t *make_axis(mdaxis_t *x1, mdaxis_t *x2, unsigned mask)
+static mdaxis *make_axis(mdaxis *x1, mdaxis *x2, unsigned mask)
 {
-	mdaxis_t *x, **ptr;
+	mdaxis *x, **ptr;
 
 	x = NULL;
 	ptr = &x;
@@ -15,9 +15,7 @@ static mdaxis_t *make_axis(mdaxis_t *x1, mdaxis_t *x2, unsigned mask)
 	{
 		if	(cmp_axis(x1, x2, MDXCMP_DIM) != 0)
 		{
-			reg_cpy(1, x1->name);
-			reg_cpy(2, x2->name);
-			errmsg(MSG_MDMAT, 92);
+			dbg_note(NULL, "[mdmat:92]", "ss", x1->name, x2->name);
 			*ptr = cpy_axis(x1->dim >= x2->dim ? x1 : x2, mask);
 		}
 		else	*ptr = cpy_axis(x1, mask);
@@ -45,8 +43,8 @@ static mdaxis_t *make_axis(mdaxis_t *x1, mdaxis_t *x2, unsigned mask)
 }
 
 
-static void do_md_term(Func_t *func, mdaxis_t *x, char *p, mdaxis_t *x1,
-	char *p1, mdaxis_t *x2, char *p2)
+static void do_md_term(EfiFunc *func, mdaxis *x, char *p, mdaxis *x1,
+	char *p1, mdaxis *x2, char *p2)
 {
 	int i, n;
 	size_t s, s1, s2;
@@ -94,10 +92,10 @@ static void do_md_term(Func_t *func, mdaxis_t *x, char *p, mdaxis_t *x1,
 }
 
 
-mdmat_t *md_assign (const char *name, mdmat_t *m1, mdmat_t *m2)
+mdmat *md_assign (const char *name, mdmat *m1, mdmat *m2)
 {
-	VirFunc_t *virfunc;
-	Func_t *func;
+	EfiVirFunc *virfunc;
+	EfiFunc *func;
 
 	if	(m1 == NULL)	return NULL;
 
@@ -111,8 +109,7 @@ mdmat_t *md_assign (const char *name, mdmat_t *m1, mdmat_t *m2)
 
 	if	(func == NULL)
 	{
-		reg_cpy(1, name);
-		errmsg(MSG_MDMAT, 94); 
+		dbg_note(NULL, "[mdmat:94]", "s", name); 
 	}
 	else if	(m2)
 	{
@@ -124,10 +121,10 @@ mdmat_t *md_assign (const char *name, mdmat_t *m1, mdmat_t *m2)
 }
 
 
-mdmat_t *md_term (VirFunc_t *virfunc, mdmat_t *m1, mdmat_t *m2)
+mdmat *md_term (EfiVirFunc *virfunc, mdmat *m1, mdmat *m2)
 {
-	Func_t *func;
-	mdmat_t *md;
+	EfiFunc *func;
+	mdmat *md;
 
 	if	(m1 == NULL)
 	{
@@ -141,19 +138,18 @@ mdmat_t *md_term (VirFunc_t *virfunc, mdmat_t *m1, mdmat_t *m2)
 
 	if	(func == NULL)
 	{
-		errmsg(MSG_MDMAT, 91); 
+		dbg_note(NULL, "[mdmat:91]", NULL); 
 		return rd_refer(m1);
 	}
 
 	if	(func->type == NULL)
 	{
-		reg_cpy(1, func->name);
-		errmsg(MSG_MDMAT, 93); 
+		dbg_note(NULL, "[mdmat:93]", "s", func->name); 
 		return rd_refer(m1);
 	}
 
 	md = new_mdmat();
-	md->type = (Type_t *) func->type;
+	md->type = (EfiType *) func->type;
 	md->axis = make_axis(m1->axis, m2 ? m2->axis : NULL, 0);
 	md->size = md_size(md->axis, md->type->size);
 	md->data = memalloc(md->size);

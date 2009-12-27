@@ -28,12 +28,12 @@ If not, write to the Free Software Foundation, Inc.,
 /*	Basisobjekt ohne Operatoren
 */
 
-Obj_t *Parse_obj(io_t *io, int flags)
+EfiObj *Parse_obj(IO *io, int flags)
 {
 	void *p;
-	Obj_t *obj;
-	ParseDef_t *parse;
-	Type_t *type;
+	EfiObj *obj;
+	EfiParseDef *parse;
+	EfiType *type;
 	int mode;
 
 	obj = NULL;

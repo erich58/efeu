@@ -24,67 +24,71 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/stdtype.h>
 
 
-static void clean_list (const Type_t *type, ObjList_t **tg);
-static void copy_list (const Type_t *type, ObjList_t **tg, const ObjList_t **src);
+static void clean_list (const EfiType *type, void *tg);
+static void copy_list (const EfiType *type, void *tg, const void *src);
 
-static void clean_call (const Type_t *type, Expr_t *tg);
-static void copy_call (const Type_t *type, Expr_t *tg, const Expr_t *src);
-static Obj_t *eval_call (const Type_t *type, const Expr_t *expr);
-static Obj_t *eval_list (const Type_t *type, const ObjList_t **list);
+static void clean_call (const EfiType *type, void *tg);
+static void copy_call (const EfiType *type, void *tg, const void *src);
+static EfiObj *eval_call (const EfiType *type, const void *ptr);
+static EfiObj *eval_list (const EfiType *type, const void *ptr);
 
-static void clean_ofunc (const Type_t *type, ObjFunc_t *tg);
-static void copy_ofunc (const Type_t *type, ObjFunc_t *tg, const ObjFunc_t *src);
+static void clean_ofunc (const EfiType *type, void *tg);
+static void copy_ofunc(const EfiType *st, void *tg, const void *src);
 
-Type_t Type_list = STD_TYPE("List_t", ObjList_t *, &Type_ptr,
-	(Clean_t) clean_list, (Copy_t) copy_list);
-Type_t Type_ofunc = STD_TYPE("ObjFunc", ObjFunc_t, NULL,
-	(Clean_t) clean_ofunc, (Copy_t) copy_ofunc);
-Type_t Type_explist = EVAL_TYPE("_ExprList_", ObjList_t *,
-	(Eval_t) eval_list, (Clean_t) clean_list, (Copy_t) copy_list);
-Type_t Type_call = EVAL_TYPE("_Expr_", Expr_t,
-	(Eval_t) eval_call, (Clean_t) clean_call, (Copy_t) copy_call);
+EfiType Type_list = STD_TYPE("List_t", EfiObjList *, &Type_ptr,
+	clean_list, copy_list);
+EfiType Type_ofunc = STD_TYPE("ObjFunc", EfiObjFunc, NULL,
+	clean_ofunc, copy_ofunc);
+EfiType Type_explist = EVAL_TYPE("_ExprList_", EfiObjList *,
+	eval_list, clean_list, copy_list);
+EfiType Type_call = EVAL_TYPE("_Expr_", EfiExpr,
+	eval_call, clean_call, copy_call);
 
 
-static void clean_list(const Type_t *type, ObjList_t **list)
+static void clean_list (const EfiType *type, void *data)
 {
+	EfiObjList **list = data;
 	DelObjList(*list);
 	*list = NULL;
 }
 
 
-static void clean_call(const Type_t *type, Expr_t *expr)
+static void clean_call (const EfiType *type, void *data)
 {
+	EfiExpr *expr = data;
 	DelObjList(expr->list);
 	expr->list = NULL;
 	expr->par = NULL;
 }
 
 
-static void copy_list(const Type_t *type, ObjList_t **tg, const ObjList_t **src)
+static void copy_list(const EfiType *type, void *tg, const void *src)
 {
-	*tg = RefObjList(*src);
+	Val_ptr(tg) = RefObjList(Val_ptr(src));
 }
 
 
-static void copy_call(const Type_t *type, Expr_t *tg, const Expr_t *src)
+static void copy_call(const EfiType *type, void *tptr, const void *sptr)
 {
+	EfiExpr *tg = tptr;
+	const EfiExpr *src = sptr;
 	tg->eval = src->eval;
 	tg->par = src->par;
 	tg->list = RefObjList(src->list);
 }
 
 
-static Obj_t *eval_list (const Type_t *type, const ObjList_t **src)
+static EfiObj *eval_list (const EfiType *type, const void *ptr)
 {
-	ObjList_t *list;
-
-	list = EvalObjList(*src);
+	const EfiObjList *src = Val_ptr(ptr);
+	EfiObjList *list = EvalObjList(src);
 	return NewObj(&Type_list, &list);
 }
 
 
-static Obj_t *eval_call(const Type_t *st, const Expr_t *expr)
+static EfiObj *eval_call(const EfiType *st, const void *ptr)
 {
+	const EfiExpr *expr = ptr;
 	return expr->eval ? expr->eval((void *) expr->par, expr->list) : NULL;
 }
 
@@ -93,9 +97,9 @@ static Obj_t *eval_call(const Type_t *st, const Expr_t *expr)
 */
 
 
-Obj_t *Obj_call(EvalExpr_t eval, void *par, ObjList_t *list)
+EfiObj *Obj_call(EfiObj *(*eval) (void *par, const EfiObjList *list), void *par, EfiObjList *list)
 {
-	Expr_t expr;
+	EfiExpr expr;
 
 	expr.eval = eval;
 	expr.par = par;
@@ -104,16 +108,19 @@ Obj_t *Obj_call(EvalExpr_t eval, void *par, ObjList_t *list)
 }
 
 
-static void clean_ofunc(const Type_t *st, ObjFunc_t *tg)
+static void clean_ofunc(const EfiType *st, void *tg)
 {
-	UnrefObj(tg->obj);
-	rd_deref(tg->func);
-	memset(tg, 0, st->size);
+	EfiObjFunc *ofunc = tg;
+	UnrefObj(ofunc->obj);
+	rd_deref(ofunc->func);
+	memset(ofunc, 0, st->size);
 }
 
 
-static void copy_ofunc(const Type_t *st, ObjFunc_t *tg, const ObjFunc_t *src)
+static void copy_ofunc(const EfiType *st, void *tptr, const void *sptr)
 {
+	EfiObjFunc *tg = tptr;
+	const EfiObjFunc *src = sptr;
 	tg->obj = RefObj(src->obj);
 	tg->func = rd_refer(src->func);
 }

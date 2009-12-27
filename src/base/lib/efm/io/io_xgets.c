@@ -24,10 +24,10 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/iocpy.h>
 
 
-char *io_xgets(io_t *io, const char *delim)
+char *io_xgets(IO *io, const char *delim)
 {
 	int c;
-	strbuf_t *sb;
+	StrBuf *sb;
 
 	sb = new_strbuf(0);
 	io_protect(io, 1);
@@ -41,7 +41,7 @@ char *io_xgets(io_t *io, const char *delim)
 }
 
 
-int io_xcopy(io_t *in, io_t *out, const char *delim)
+int io_xcopy(IO *in, IO *out, const char *delim)
 {
 	int n, c;
 
@@ -56,7 +56,7 @@ int io_xcopy(io_t *in, io_t *out, const char *delim)
 }
 
 
-int iocpy_xstr(io_t *in, io_t *out, int c, const char *arg, unsigned int flags)
+int iocpy_xstr(IO *in, IO *out, int c, const char *arg, unsigned int flags)
 {
 	register int n = io_xcopy(in, out, arg);
 	io_getc(in);

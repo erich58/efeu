@@ -113,7 +113,7 @@ Innerhalb dieser Umgebung wird der Text eingerückt.
 :de:Der Befehl $1 setzt eine Beschreibungsmarke in
 Schreibmaschinenschrift.
 
-\def\ttitem	newline(); cout << "[<|" << ParseLine(cin) << "|>]\n";
+\def\ttitem	newline(); cout << "[<|&;" << ParseLine(cin) << "&;|>]\n";
 
 :*:partial page
 	$1 |[|<margin>|]| <flags>

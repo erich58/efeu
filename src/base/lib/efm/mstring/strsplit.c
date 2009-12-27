@@ -39,7 +39,7 @@ char *nextstr (char **ptr)
 
 size_t strsplit(const char *str, const char *delim, char ***ptr)
 {
-	strbuf_t *sb;
+	StrBuf *sb;
 	size_t i, dim;
 	char *p;
 

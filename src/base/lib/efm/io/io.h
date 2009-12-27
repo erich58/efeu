@@ -34,26 +34,22 @@ If not, write to the Free Software Foundation, Inc.,
 #define	IO_STAT_EOF	1
 #define	IO_STAT_ERR	2
 
-typedef int (*io_get_t) (void *par);
-typedef int (*io_put_t) (int c, void *par);
-typedef int (*io_ctrl_t) (void *par, int c, va_list list);
-typedef size_t (*io_data_t) (void *par, void *data,
-	size_t recl, size_t size, size_t dim);
-
-extern reftype_t io_reftype;
+extern RefType io_reftype;
 
 typedef struct {
 	REFVAR;
-	io_get_t get;
-	io_put_t put;
-	io_ctrl_t ctrl;
-	io_data_t dbread;
-	io_data_t dbwrite;
+	int (*get) (void *par);
+	int (*put) (int c, void *par);
+	int (*ctrl) (void *par, int c, va_list list);
+	size_t (*dbread) (void *par, void *data,
+		size_t recl, size_t size, size_t dim);
+	size_t (*dbwrite) (void *par, const void *data,
+		size_t recl, size_t size, size_t dim);
 	void *data;
-	uchar_t stat;
-	uchar_t nsave;
-	uchar_t save_buf[IO_MAX_SAVE];
-} io_t;
+	unsigned char stat;
+	unsigned char nsave;
+	unsigned char save_buf[IO_MAX_SAVE];
+} IO;
 
 /*
 Der Makro |$1| dient zur Initialisierung einer komplexen IO-Struktur
@@ -72,13 +68,13 @@ COMPLEX_IODATA(get,put,ctrl,NULL,NULL,par)
 /*	Basisfunktionen
 */
 
-extern io_t *io_alloc (void);
-extern int io_getc (io_t *io);
-extern int io_putc (int c, io_t *io);
-extern int io_ctrl (io_t *io, int req, ...);
-extern int io_vctrl (io_t *io, int req, va_list list);
-extern int io_peek (io_t *io);
-extern int io_copy (io_t *in, io_t *out);
+IO *io_alloc (void);
+int io_getc (IO *io);
+int io_putc (int c, IO *io);
+int io_ctrl (IO *io, int req, ...);
+int io_vctrl (IO *io, int req, va_list list);
+int io_peek (IO *io);
+int io_copy (IO *in, IO *out);
 
 
 /*
@@ -93,23 +89,22 @@ Der Makro |$1| liest ein Zeichen aus |iostd|.
 
 #define	io_getchar()	io_getc(iostd)
 
-extern char *io_ident (io_t *io);
-extern char *io_xident (io_t *io, const char *fmt, ...);
+char *io_xident (IO *io, const char *fmt, ...);
 
-extern int io_ungetc (int c, io_t *io);
-extern int io_pushback (io_t *io);
-extern int io_rewind (io_t *io);
-extern int io_close (io_t *io);
+int io_ungetc (int c, IO *io);
+int io_pushback (IO *io);
+int io_rewind (IO *io);
+int io_close (IO *io);
 
-extern int io_close_stat;
+int io_close_stat;
 
-extern void io_push (io_t *io, io_t *tmp);
-extern io_t *io_pop (io_t *io);
+void io_push (IO *io, IO *tmp);
+IO *io_pop (IO *io);
 
-extern void io_submode (io_t *io, int flag);
-extern void io_protect (io_t *io, int flag);
-extern void io_linemark (io_t *io);
-extern char *io_prompt (io_t *io, const char *prompt);
+void io_submode (IO *io, int flag);
+void io_protect (IO *io, int flag);
+void io_linemark (IO *io);
+char *io_prompt (IO *io, const char *prompt);
 
 /*
 Der Makro |$1| erhönht den Referenzzähler der IO-Struktur <io>
@@ -120,10 +115,10 @@ Der Makro |$1| erhönht den Referenzzähler der IO-Struktur <io>
 /*	Initialisierungsfunktionen
 */
 
-extern io_t *io_string (char *str, clean_t clean);
-extern io_t *io_strbuf (strbuf_t *buf);
-extern io_t *io_tmpbuf (size_t size);
-extern io_t *io_bigbuf (size_t size, const char *pfx);
+IO *io_string (char *str, void (*clean) (void *ptr));
+IO *io_strbuf (StrBuf *buf);
+IO *io_tmpbuf (size_t size);
+IO *io_bigbuf (size_t size, const char *pfx);
 
 /*
 Der Makro |$1| liefert eine IO-Struktur auf einen konstanten String.
@@ -138,111 +133,113 @@ Dieser wird beim schließen der IO-Struktur automatisch freigegeben.
 
 #define	io_mstr(str)	io_string((char *) (str), memfree)
 
-extern io_t *io_stream (const char *name,
-	FILE *file, int (*close) (FILE *file));
-extern io_t *io_fopen (const char *name, const char *mode);
-extern io_t *io_fileopen (const char *name, const char *mode);
-extern io_t *io_findopen (const char *path, const char *name,
+IO *io_stream (const char *name, FILE *file, int (*close) (FILE *file));
+IO *io_fopen (const char *name, const char *mode);
+IO *io_fileopen (const char *name, const char *mode);
+IO *io_findopen (const char *path, const char *name,
 	const char *type, const char *mode);
-extern io_t *io_tmpfile (void);
-extern io_t *io_popen (const char *name, const char *mode);
-extern io_t *io_interact (const char *prompt, const char *hist);
-extern io_t *io_batch (void);
+IO *io_tmpfile (void);
+IO *io_popen (const char *name, const char *mode);
+IO *io_interact (const char *prompt, const char *hist);
+IO *io_batch (void);
 
-extern io_t *(*_interact_open) (const char *prompt, const char *hist);
-extern io_t *(*_interact_filter) (io_t *io);
+IO *(*_interact_open) (const char *prompt, const char *hist);
+IO *(*_interact_filter) (IO *io);
 
 
 /*	Eingabefunktionen
 */
 
-extern int io_skipcom (io_t *io, strbuf_t *buf, int flag);
-extern int io_eat (io_t *io, const char *wmark);
-extern int io_skip (io_t *io, const char *delim);
-extern int io_mgetc (io_t *io, int flag);
+int io_skipcom (IO *io, StrBuf *buf, int flag);
+int io_eat (IO *io, const char *wmark);
+int io_skip (IO *io, const char *delim);
+int io_mgetc (IO *io, int flag);
 
-extern char *io_gets (char *s, int n, io_t *io);
-extern char *io_mgets (io_t *io, const char *delim);
-extern int io_mcopy (io_t *in, io_t *out, const char *delim);
+char *io_gets (char *s, int n, IO *io);
+char *io_mgets (IO *io, const char *delim);
+int io_mcopy (IO *in, IO *out, const char *delim);
 
-extern int io_xgetc (io_t *io, const char *delim);
-extern char *io_xgets (io_t *io, const char *delim);
-extern int io_xcopy (io_t *in, io_t *out, const char *delim);
+int io_xgetc (IO *io, const char *delim);
+char *io_xgets (IO *io, const char *delim);
+int io_xcopy (IO *in, IO *out, const char *delim);
 
-extern char *getstring (io_t *io);
-extern int io_loadmsg (io_t *io, const char *name, const char *delim);
+char *getstring (IO *io);
 
 
 /*	Ausgaberoutinen
 */
 
-extern int io_nputc (int c, io_t *io, int n);
-extern int io_mputc (int c, io_t *io, const char *delim);
-extern int io_xputc (int c, io_t *io, const char *delim);
-extern int io_puts (const char *s, io_t *io);
-extern int io_nlputs (const char *s, io_t *io);
-extern int io_mputs (const char *s, io_t *io, const char *delim);
-extern int io_xputs (const char *s, io_t *io, const char *delim);
-extern int io_langputs (const char *s, io_t *io);
+int io_nputc (int c, IO *io, int n);
+int io_mputc (int c, IO *io, const char *delim);
+int io_xputc (int c, IO *io, const char *delim);
+int io_puts (const char *s, IO *io);
+int io_nlputs (const char *s, IO *io);
+int io_mputs (const char *s, IO *io, const char *delim);
+int io_xputs (const char *s, IO *io, const char *delim);
+int io_langputs (const char *s, IO *io);
 
-extern int io_vprintf (io_t *io, const char *fmt, va_list list);
-extern int io_printf (io_t *io, const char *fmt, ...);
+int io_vprintf (IO *io, const char *fmt, va_list list);
+int io_printf (IO *io, const char *fmt, ...);
 
 /*	Binäre Ein/Ausgabe
 */
 
-extern size_t io_read (io_t *io, void *buf, size_t nbyte);
-extern size_t io_rread (io_t *io, void *buf, size_t nbyte);
-extern size_t io_write (io_t *io, const void *buf, size_t nbyte);
-extern size_t io_rwrite (io_t *io, const void *buf, size_t nbyte);
-extern char *io_mread (io_t *io, size_t nbyte);
+size_t io_read (IO *io, void *buf, size_t nbyte);
+size_t io_rread (IO *io, void *buf, size_t nbyte);
+size_t io_write (IO *io, const void *buf, size_t nbyte);
+size_t io_rwrite (IO *io, const void *buf, size_t nbyte);
+char *io_mread (IO *io, size_t nbyte);
 
-extern size_t io_dbread (io_t *io, void *dp, size_t rl, size_t size, size_t n);
-extern size_t io_dbwrite (io_t *io, void *dp, size_t rl, size_t size, size_t n);
+size_t io_dbread (IO *io, void *data,
+	size_t recl, size_t size, size_t dim);
+size_t io_dbwrite (IO *io, const void *data,
+	size_t recl, size_t size, size_t dim);
 
-typedef size_t (*io_dbdata_t) (io_t *io, void *data);
+unsigned io_getval (IO *io, int n);
+char *io_getstr (IO *io);
 
-extern unsigned io_getval (io_t *io, int n);
-extern char *io_getstr (io_t *io);
+void io_putval (unsigned val, IO *io, int n);
+int io_putstr (const char *str, IO *io);
 
-extern void io_putval (unsigned val, io_t *io, int n);
-extern int io_putstr(const char *str, io_t *io);
+size_t io_getsize (IO *io);
+int io_putsize (size_t val, IO *io);
 
-extern size_t io_getsize (io_t *io);
-extern int io_putsize (size_t val, io_t *io);
+char *io_getline (IO *io, StrBuf *buf, int delim);
+char *io_mgetline (IO *io, StrBuf *buf, const char *delim);
+
 
 /*	Fehlermeldungen
 */
 
-extern void io_message (io_t *io, const char *name, int num, int narg, ...);
-extern void io_error (io_t *io, const char *name, int num, int narg, ...);
+void io_note (IO *io, const char *fmt, const char *def, ...);
+void io_error (IO *io, const char *fmt, const char *def, ...);
 
 
 /*	Standard Ein-Ausgabestrukturen
 */
 
-extern io_t *iostd;		/* Standardein/ausgabe */
-extern io_t *iomsg;		/* Ausgabe für message */
-extern io_t *ioerr;		/* Standardfehler */
-extern io_t *ionull;		/* Null-Device */
+extern IO *iostd;		/* Standardein/ausgabe */
+extern IO *iomsg;		/* Ausgabe für message */
+extern IO *ioerr;		/* Standardfehler */
+extern IO *ionull;		/* Null-Device */
 
 
 /*	Filterprogramme
 */
 
-extern io_t *io_lnum (io_t *io);	/* Zeilennummer */
-extern io_t *io_count (io_t *io);	/* Ausgabezähler */
-extern io_t *io_html (io_t *io);	/* HTML-Filter */
-extern io_t *io_indent (io_t *io, int c, int n);
-extern io_t *io_lmark (io_t *io, const char *pre, const char *post, int flag);
-extern io_t *io_cleanup (io_t *io, void (*cf) (io_t *io, void *p), void *p);
-extern io_t *langfilter (io_t *in, const char *lang);
+IO *io_lnum (IO *io);	/* Zeilennummer */
+IO *io_count (IO *io);	/* Ausgabezähler */
+IO *io_html (IO *io);	/* HTML-Filter */
+IO *io_indent (IO *io, int c, int n);
+IO *io_lmark (IO *io, const char *pre, const char *post, int flag);
+IO *io_cleanup (IO *io, void (*cf) (IO *io, void *p), void *p);
+IO *langfilter (IO *in, const char *lang);
 
 /*	Teilfileausgabe in Bibliothek
 */
 
-extern io_t *diropen(const char *name, const char *base);
-extern int io_newpart(io_t *io, const char *name, const char *repl);
-extern int io_endpart(io_t *io);
+IO *diropen (const char *name, const char *base);
+int io_newpart (IO *io, const char *name, const char *repl);
+int io_endpart (IO *io);
 
 #endif	/* EFEU/io.h */

@@ -20,7 +20,7 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-1	$!: can not expand const data buffuer.\n
+1	$!: can not expand constant data buffer.\n
 2	$!: file $0: unexpected EOF by reading data field.\n
 3	$!: formating type $1 is not defined.
 
@@ -33,3 +33,8 @@ If not, write to the Free Software Foundation, Inc.,
 32	$!: unknown option -$1.\n
 33	$!: option key -$1 is not uniq:\n\t-$2, -$3, ...\n
 34	$!: option key $1: prohibited combination\n
+
+51	$!: $0: more then one 'u' in integral constant.\n
+52	$!: $0: more then one 'l' in integral constant.\n
+
+pnoarg	$!: parsub($0): arg $1 not defined.\n

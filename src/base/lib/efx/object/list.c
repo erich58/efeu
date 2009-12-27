@@ -23,15 +23,15 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 
 
-static ALLOCTAB(list_tab, 0, sizeof(ObjList_t));
+static ALLOCTAB(list_tab, 0, sizeof(EfiObjList));
 
 
 /*	Objektliste generieren
 */
 
-ObjList_t *NewObjList(Obj_t *obj)
+EfiObjList *NewObjList(EfiObj *obj)
 {
-	ObjList_t *list;
+	EfiObjList *list;
 
 	list = new_data(&list_tab);
 	list->next = NULL;
@@ -43,7 +43,7 @@ ObjList_t *NewObjList(Obj_t *obj)
 /*	Objektliste löschen
 */
 
-void DelObjList(ObjList_t *list)
+void DelObjList(EfiObjList *list)
 {
 	if	(list != NULL)
 	{
@@ -56,7 +56,7 @@ void DelObjList(ObjList_t *list)
 /*	Länge einer Liste bestimmen
 */
 
-int ObjListLen(const ObjList_t *list)
+int ObjListLen(const EfiObjList *list)
 {
 	int n;
 
@@ -71,10 +71,10 @@ int ObjListLen(const ObjList_t *list)
 /*	Objektliste Referenzieren
 */
 
-ObjList_t *RefObjList(const ObjList_t *list)
+EfiObjList *RefObjList(const EfiObjList *list)
 {
-	ObjList_t *new_list;
-	ObjList_t **ptr;
+	EfiObjList *new_list;
+	EfiObjList **ptr;
 
 	new_list = NULL;
 	ptr = &new_list;
@@ -93,11 +93,11 @@ ObjList_t *RefObjList(const ObjList_t *list)
 /*	Objektlisten auswerten
 */
 
-ObjList_t *EvalObjList(const ObjList_t *list)
+EfiObjList *EvalObjList(const EfiObjList *list)
 {
-	ObjList_t *new_list;
-	ObjList_t **ptr;
-	Obj_t *x;
+	EfiObjList *new_list;
+	EfiObjList **ptr;
+	EfiObj *x;
 
 	new_list = NULL;
 	ptr = &new_list;
@@ -129,10 +129,10 @@ ObjList_t *EvalObjList(const ObjList_t *list)
 
 /* VARARGS 1 */
 
-ObjList_t *MakeObjList(int n, ...)
+EfiObjList *MakeObjList(int n, ...)
 {
-	ObjList_t *olist;
-	ObjList_t **ptr;
+	EfiObjList *olist;
+	EfiObjList **ptr;
 	va_list list;
 
 	olist = NULL;
@@ -141,7 +141,7 @@ ObjList_t *MakeObjList(int n, ...)
 
 	while (n-- > 0)
 	{
-		*ptr = NewObjList(va_arg(list, Obj_t *));
+		*ptr = NewObjList(va_arg(list, EfiObj *));
 		ptr = &(*ptr)->next;
 	}
 
@@ -152,10 +152,10 @@ ObjList_t *MakeObjList(int n, ...)
 /*	Liste um erstes Objekt reduzieren
 */
 
-Obj_t *ReduceObjList(ObjList_t **ptr)
+EfiObj *ReduceObjList(EfiObjList **ptr)
 {
-	ObjList_t *x;
-	Obj_t *obj;
+	EfiObjList *x;
+	EfiObj *obj;
 
 	if	((x = *ptr) != NULL)
 	{
@@ -167,7 +167,7 @@ Obj_t *ReduceObjList(ObjList_t **ptr)
 	else	return NULL;
 }
 
-void ExpandObjList (ObjList_t **list, Obj_t *obj)
+void ExpandObjList (EfiObjList **list, EfiObj *obj)
 {
 	while (*list != NULL)
 		list = &(*list)->next;

@@ -27,7 +27,7 @@ If not, write to the Free Software Foundation, Inc.,
 \title	Die Programmbibliothek efm
 Handbuch für Programmierer
 
-\intro
+\preface
 Die Programmbiliothek |efm| stellt eine Reihe von nützlichen
 Hilfsfunktionen zur verfügung. Schwerpunkt sind Funktionen
 zur Ein- und Ausgabe und der Verwaltung von dynamischen

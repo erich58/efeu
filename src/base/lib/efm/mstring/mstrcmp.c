@@ -22,7 +22,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/mstring.h>
 
-static int do_cmp (const uchar_t *a, const uchar_t *b)
+static int do_cmp (const unsigned char *a, const unsigned char *b)
 {
 	while (*a || *b)
 	{
@@ -42,7 +42,7 @@ int mstrcmp (const char *a, const char *b)
 	else if	(a == NULL)	return -1;
 	else if	(b == NULL)	return 1;
 
-	return do_cmp((const uchar_t *) a, (const uchar_t *) b);
+	return do_cmp((const unsigned char *) a, (const unsigned char *) b);
 }
 
 size_t mstrlen (const char *s)

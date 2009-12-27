@@ -35,7 +35,7 @@ If not, write to the Free Software Foundation, Inc.,
 	wird ein Temporärer Buffer generiert.
 */
 
-io_t *io_tmpfile (void)
+IO *io_tmpfile (void)
 {
 	FILE *tmp;
 
@@ -50,12 +50,12 @@ io_t *io_tmpfile (void)
 /*	Datei öffnen
 */
 
-io_t *io_fopen (const char *name, const char *mode)
+IO *io_fopen (const char *name, const char *mode)
 {
 	return io_stream(name, fopen(name, mode), fclose);
 }
 
-io_t *io_fileopen(const char *name, const char *mode)
+IO *io_fileopen(const char *name, const char *mode)
 {
 	if	(name && *name == '|')
 		return io_popen(name + 1, mode);
@@ -63,7 +63,7 @@ io_t *io_fileopen(const char *name, const char *mode)
 	return io_stream(name, fileopen(name, mode), fileclose);
 }
 
-io_t *io_findopen (const char *path, const char *name, const char *ext,
+IO *io_findopen (const char *path, const char *name, const char *ext,
 	const char *mode)
 {
 	return io_stream(name, findopen(path, NULL, name, ext, mode),
@@ -80,24 +80,26 @@ typedef struct {
 	int (*fclose) (FILE *file);
 } FILE_IO;
 
-static int f_get (FILE_IO *ptr);
-static int f_put (int c, FILE_IO *ptr);
-static int f_ctrl (FILE_IO *fio, int req, va_list list);
+static int f_get (void *ptr);
+static int f_put (int c, void *ptr);
+static int f_ctrl (void *ptr, int req, va_list list);
 
-static size_t f_dbread (FILE_IO *fio, void *p, size_t r, size_t s, size_t n)
+static size_t f_dbread (void *par, void *p, size_t r, size_t s, size_t n)
 {
+	FILE_IO *fio = par;
 	return dbread(fio->file, p, r, s, n);
 }
 
-static size_t f_dbwrite (FILE_IO *fio, void *p, size_t r, size_t s, size_t n)
+static size_t f_dbwrite (void *par, const void *p, size_t r, size_t s, size_t n)
 {
+	FILE_IO *fio = par;
 	return dbwrite(fio->file, p, r, s, n);
 }
 
 
-io_t *io_stream (const char *name, FILE *file, int (*fclose) (FILE *))
+IO *io_stream (const char *name, FILE *file, int (*fclose) (FILE *))
 {
-	io_t *io;
+	IO *io;
 	FILE_IO *fio;
 
 	if	(file == NULL)	return NULL;
@@ -108,11 +110,11 @@ io_t *io_stream (const char *name, FILE *file, int (*fclose) (FILE *))
 	fio->fclose = fclose;
 
 	io = io_alloc();
-	io->get = (io_get_t) f_get;
-	io->put = (io_put_t) f_put;
-	io->dbread = (io_data_t) f_dbread;
-	io->dbwrite = (io_data_t) f_dbwrite;
-	io->ctrl = (io_ctrl_t) f_ctrl;
+	io->get = f_get;
+	io->put = f_put;
+	io->dbread = f_dbread;
+	io->dbwrite = f_dbwrite;
+	io->ctrl = f_ctrl;
 	io->data = fio;
 	return io;
 }
@@ -121,26 +123,29 @@ io_t *io_stream (const char *name, FILE *file, int (*fclose) (FILE *))
 /*	Lesen eines Zeichens
 */
 
-static int f_get (FILE_IO *ptr)
+static int f_get (void *ptr)
 {
-	return getc(ptr->file);
+	FILE_IO *fio = ptr;
+	return getc(fio->file);
 }
 
 
 /*	Ausgabe eines Zeichens
 */
 
-static int f_put (int c, FILE_IO *ptr)
+static int f_put (int c, void *ptr)
 {
-	return putc(c, ptr->file);
+	FILE_IO *fio = ptr;
+	return putc(c, fio->file);
 }
 
 
 /*	Kontrollfunktion
 */
 
-static int f_ctrl (FILE_IO *fio, int req, va_list list)
+static int f_ctrl (void *ptr, int req, va_list list)
 {
+	FILE_IO *fio = ptr;
 	int stat;
 
 	switch (req)

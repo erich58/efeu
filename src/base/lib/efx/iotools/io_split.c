@@ -24,10 +24,10 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/efio.h>
 
 
-size_t io_split(io_t *io, const char *delim, char ***ptr)
+size_t io_split(IO *io, const char *delim, char ***ptr)
 {
-	io_t *tmp;
-	ulong_t size;
+	IO *tmp;
+	size_t size;
 	size_t i, dim;
 	char *p;
 	int c;

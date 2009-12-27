@@ -45,7 +45,7 @@ static int testkey (const char *key, const char **ptr)
 
 #define	set_type(type)	if (base) alt = type; else base = type
 
-void Doc_input (Doc_t *doc, const char *opt, io_t *in)
+void Doc_input (Doc *doc, const char *opt, IO *in)
 {
 	char *cmd = NULL;
 	char *tmp = NULL;
@@ -97,7 +97,7 @@ void Doc_input (Doc_t *doc, const char *opt, io_t *in)
 			eval = 2;
 		else
 		{
-			message(NULL, MSG_DOC, 11, 1, opt);
+			dbg_note(NULL, "[Doc:11]", "s", opt);
 			break;
 		}
 	}
@@ -108,14 +108,14 @@ void Doc_input (Doc_t *doc, const char *opt, io_t *in)
 		alt = DOC_MODE_VERB;
 	}
 
-	Doc_rem(doc, reg_fmt(1, "cmd=%#s eval=%d cfg=%d base=%s alt=%s",
-		cmd, eval, cfg, DocEnvName(base), DocEnvName(alt)));
+	Doc_rem(doc, "cmd=\"$1\" eval=$2 cfg=$3 base=$4 alt=$5", "nsddss",
+		cmd, eval, cfg, DocEnvName(base), DocEnvName(alt));
 
 /*	Eingabefilter
 */
 	if	(cmd || eval)
 	{
-		io_t *buf;
+		IO *buf;
 
 		tmp = tempnam(NULL, NULL);
 		buf = io_fileopen(tmp, "w");
@@ -172,7 +172,7 @@ void Doc_input (Doc_t *doc, const char *opt, io_t *in)
 /*	Aufräumen
 */
 	io_close(in);
-	Doc_rem(doc, "EOF");
+	Doc_rem(doc, "EOF", NULL);
 
 	if	(tmp)
 	{
@@ -182,9 +182,9 @@ void Doc_input (Doc_t *doc, const char *opt, io_t *in)
 }
 
 
-io_t *Doc_open (const char *path, const char *name, int flag)
+IO *Doc_open (const char *path, const char *name, int flag)
 {
-	io_t *in;
+	IO *in;
 	
 	if	(mstrcmp(name, ".") == 0)
 		name = MAINDOC;
@@ -202,8 +202,7 @@ io_t *Doc_open (const char *path, const char *name, int flag)
 
 		if	(stat(DocName, &buf) == EOF)
 		{
-			message(NULL, MSG_DOC, 4, 1, DocName);
-			memfree(DocName);
+			dbg_note(NULL, "[Doc:4]", "m", DocName);
 			DocName = NULL;
 			return NULL;
 		}
@@ -216,17 +215,16 @@ io_t *Doc_open (const char *path, const char *name, int flag)
 			memfree(DocName);
 			DocName = p;
 		}
-		else if	((p = strrchr(name, '/')) != NULL)
+		else if	((p = mdirname(DocName, 0)) != NULL)
 		{
-			fname_t *fn = strtofn(DocName);
 			memfree(DocPath);
-			DocPath = mstrpaste(":", fn->path, path);
-			memfree(fn);
+			DocPath = mstrpaste(":", p, path);
+			memfree(p);
 		}
 	}
 	else
 	{
-		message(NULL, MSG_DOC, 5, 1, name);
+		dbg_note(NULL, "[Doc:5]", "s", name);
 		return NULL;
 	}
 
@@ -234,12 +232,14 @@ io_t *Doc_open (const char *path, const char *name, int flag)
 
 	if	(flag)
 	{
-		fname_t *fname = strtofn(DocName);
+		char *fname, *suffix;
 
-		if	(fname && fname->type && isdigit(*fname->type))
+		fname = mbasename(DocName, &suffix);
+
+		if	(suffix && isdigit(*suffix))
 		{
 			io_push(in, io_mstr(msprintf("\\mpage[%s] %s\n",
-				fname->type, fname->name)));
+				suffix, fname)));
 		}
 
 		memfree(fname);
@@ -248,9 +248,9 @@ io_t *Doc_open (const char *path, const char *name, int flag)
 	return in;
 }
 
-void Doc_include (Doc_t *doc, const char *opt, const char *name)
+void Doc_include (Doc *doc, const char *opt, const char *name)
 {
-	io_t *io;
+	IO *io;
 	char *save_name;
 	char *save_path;
 	
@@ -259,8 +259,7 @@ void Doc_include (Doc_t *doc, const char *opt, const char *name)
 	DocName = NULL;
 	DocPath = NULL;
 	io = Doc_open(save_path, name, opt ? 0 : 1);
-	reg_set(1, io_ident(io));
-	Doc_rem(doc, "Eingabedatei: $1");
+	Doc_rem(doc, "Eingabedatei: $1", "nm", rd_ident(io));
 	Doc_input(doc, opt, io);
 	memfree(DocName);
 	memfree(DocPath);

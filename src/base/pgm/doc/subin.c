@@ -31,18 +31,19 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 typedef struct {
-	io_t *io;		/* Eingabestruktur */
+	IO *io;		/* Eingabestruktur */
 	char *key;		/* Abschlußkennung */
 	size_t save;		/* Zahl der gepufferten Zeichen */
-	strbuf_t *buf;		/* Zeichenbuffer */
+	StrBuf *buf;		/* Zeichenbuffer */
 } SUBIO;
 
 
 /*	Zeichen lesen
 */
 
-static int subio_get (SUBIO *subio)
+static int subio_get (void *ptr)
 {
+	SUBIO *subio = ptr;
 	int c;
 
 	switch (subio->save)
@@ -97,8 +98,9 @@ static int subio_get (SUBIO *subio)
 /*	Kontrollfunktion
 */
 
-static int subio_ctrl (SUBIO *subio, int req, va_list list)
+static int subio_ctrl (void *ptr, int req, va_list list)
 {
+	SUBIO *subio = ptr;
 	int stat;
 
 	switch (req)
@@ -121,7 +123,7 @@ static int subio_ctrl (SUBIO *subio, int req, va_list list)
 /*	Eingabestruktur
 */
 
-io_t *Doc_subin (io_t *io, const char *key)
+IO *Doc_subin (IO *io, const char *key)
 {
 	if	(io)
 	{
@@ -131,8 +133,8 @@ io_t *Doc_subin (io_t *io, const char *key)
 		subio->key = mstrcpy(key);
 		subio->save = 0;
 		io = io_alloc();
-		io->get = (io_get_t) subio_get;
-		io->ctrl = (io_ctrl_t) subio_ctrl;
+		io->get = subio_get;
+		io->ctrl = subio_ctrl;
 		io->data = subio;
 	}
 

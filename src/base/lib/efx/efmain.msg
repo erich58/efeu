@@ -27,7 +27,6 @@ If not, write to the Free Software Foundation, Inc.,
 5	$!: assignment table is not defined.\n
 6	$!: configuration file $1 not found.\n
 8	$!: $0: file $1 not found.\n
-9	$!: $0: loadarg unexpected.\n
 
 21	$!: file $1 not readable.\n
 22	$!: file $1 not writeable.\n
@@ -37,7 +36,7 @@ If not, write to the Free Software Foundation, Inc.,
 26	$!: could not create temporary file.\n
 
 28	$!: undefiined access.\n
-29	$!: process $(#1) not created.\n
+29	$!: process $1 not created.\n
 
 31	$!: option -$1 - missing argument.\n
 32	$!: unknown option -$1.\n
@@ -50,9 +49,6 @@ If not, write to the Free Software Foundation, Inc.,
 41	$!: can not expand const data buffuer.\n
 42	$!: file $0: unexpected EOF by reading data field.\n
 43	$!: file $0: output error by writing data field.\n
-
-51	$!: $0: more then one 'u' in integral constant.\n
-52	$!: $0: more then one 'l' in integral constant.\n
 
 60	$!: function $"
 61	$": argument $1 not defined.\n
@@ -90,7 +86,7 @@ If not, write to the Free Software Foundation, Inc.,
 91	$!: function $1: null effect.\n
 92	$!: function $1: wrong arguments.\n
 93	$!: function $1: argument $2 is not defined.\n
-94	$!: undefined default value in function call.\n
+94	$!: function $1: undefined default value for argument $2.\n
 95	$!: $0: invalid name in for-in loop.\n
 96	$!: $0: function $1: No argument for return reference defined.\n
 97	$!: function $1: ATTENTION: incompatible return reference.\n
@@ -195,3 +191,5 @@ If not, write to the Free Software Foundation, Inc.,
 402	$!: $0: syntax error in case-statement.\n
 403	$!: $0: unexpected character after default statement.\n
 404	$!: $0: command lines befor case are ignored.\n
+
+ppm	$!: $0: invalid header in pixmap file.\n

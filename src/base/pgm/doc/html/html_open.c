@@ -27,7 +27,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/MakeDepend.h>
 #include <EFEU/pconfig.h>
 #include <EFEU/patcmp.h>
-#include <EFEU/LangType.h>
+#include <EFEU/LangDef.h>
 #include <HTML.h>
 #include <DocCtrl.h>
 #include <ctype.h>
@@ -40,16 +40,16 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 typedef struct {
-	io_t *io;	/* Aktuelle Ausgabestruktur */
-	io_t *tmp;	/* Temporärer Buffer */
+	IO *io;	/* Aktuelle Ausgabestruktur */
+	IO *tmp;	/* Temporärer Buffer */
 	char *path;	/* Bibliothek */
 	char *title;	/* Dokumenttitel */
 	char *fname;	/* Aktuelle Datei */
-	strbuf_t *ref;	/* Referenz */
-	strbuf_t *toc;	/* Inhaltsverzeichnis */
-	strbuf_t *lof;	/* Übersichtsverzeichnis */
-	vecbuf_t idx;	/* Indexvektor */
-	vecbuf_t lbl;	/* Labelvektor */
+	StrBuf *ref;	/* Referenz */
+	StrBuf *toc;	/* Inhaltsverzeichnis */
+	StrBuf *lof;	/* Übersichtsverzeichnis */
+	VecBuf idx;	/* Indexvektor */
+	VecBuf lbl;	/* Labelvektor */
 	int chap;	/* Kapitelnummer */
 	int sec;	/* Abschnittsnummer */
 	int last;	/* Letztes ausgegebene Zeichen */
@@ -86,8 +86,10 @@ typedef struct {
 	char *label;	/* Bezeichnung */
 } HIDX;
 
-static int hidx_cmp (const HIDX *a, const HIDX *b)
+static int hidx_cmp (const void *pa, const void *pb)
 {
+	const HIDX *a = pa;
+	const HIDX *b = pb;
 	int n = lexcmp(a->name, b->name);
 
 	if	(n != 0)		return n;
@@ -119,8 +121,9 @@ static void hpost_lbl (HPOST *hpost, va_list list)
 /*	Zeichen ausgeben
 */
 
-static int hpost_put (int c, HPOST *hpost)
+static int hpost_put (int c, void *ptr)
 {
+	HPOST *hpost = ptr;
 	hpost->last = c;
 	return io_putc(c, hpost->tmp);
 }
@@ -193,7 +196,7 @@ static void hpost_next (HPOST *hpost)
 	fmt_prev = "<A HREF=%#s>previous</A>";
 	fmt_next = "<A HREF=%#s>next</A>";
 
-	if	(mstrcmp(LangType.language, "de") == 0)
+	if	(mstrcmp(LangDef.language, "de") == 0)
 	{
 		fmt_prev = "<A HREF=%#s>nächsten</A>";
 		fmt_next = "<A HREF=%#s>vorigen</A>";
@@ -256,7 +259,7 @@ static void hpost_ref (HPOST *hpost)
 
 static char *hpost_num(HPOST *hpost)
 {
-	strbuf_t *buf = new_strbuf(0);
+	StrBuf *buf = new_strbuf(0);
 
 	if	(hpost->chap > 0)
 		sb_printf(buf, "%d", hpost->chap);
@@ -343,7 +346,7 @@ static void hpost_create (HPOST *hpost)
 	lbl_lof = "list of figures";
 	lbl_index = "index";
 
-	if	(mstrcmp(LangType.language, "de") == 0)
+	if	(mstrcmp(LangDef.language, "de") == 0)
 	{
 		lbl_toc = "Inhalt";
 		lbl_lof = "Abbildungsverzeichnis";
@@ -356,6 +359,7 @@ static void hpost_create (HPOST *hpost)
 	io_close(hpost->tmp);
 
 	hpost_open(hpost, "toc.html", lbl_toc);
+	sb_putc(0, hpost->toc);
 	io_puts((char *) hpost->toc->data, hpost->io);
 	hpost_close(hpost);
 
@@ -363,7 +367,7 @@ static void hpost_create (HPOST *hpost)
 	io_puts((char *) hpost->lof->data, hpost->io);
 	hpost_close(hpost);
 
-	vb_qsort(&hpost->idx, (comp_t) hidx_cmp);
+	vb_qsort(&hpost->idx, hidx_cmp);
 	hpost_open(hpost, "index.html", lbl_index);
 
 	for (idx = hpost->idx.data, n = hpost->idx.used; n-- > 0; idx++)
@@ -386,8 +390,10 @@ static void hpost_create (HPOST *hpost)
 /*	Kontrollfunktion
 */
 
-static int hpost_ctrl (HPOST *hpost, int req, va_list list)
+static int hpost_ctrl (void *ptr, int req, va_list list)
 {
+	HPOST *hpost = ptr;
+
 	switch (req)
 	{
 	case IO_CLOSE:
@@ -478,10 +484,10 @@ $SeeAlso
 \mref{diropen(3)}.
 */
 
-io_t *html_open (const char *dir, const char *path)
+IO *html_open (const char *dir, const char *path)
 {
 	HPOST *par;
-	io_t *io;
+	IO *io;
 
 	create_dir(dir);
 
@@ -497,8 +503,8 @@ io_t *html_open (const char *dir, const char *path)
 	io_printf(par->tmp, "<>%s\n", par->fname);
 
 	io = io_alloc();
-	io->put = (io_put_t) hpost_put;
-	io->ctrl = (io_ctrl_t) hpost_ctrl;
+	io->put = hpost_put;
+	io->ctrl = hpost_ctrl;
 	io->data = par;
 	return io;
 }

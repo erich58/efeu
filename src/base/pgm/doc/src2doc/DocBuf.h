@@ -44,16 +44,16 @@ If not, write to the Free Software Foundation, Inc.,
 #define	VAR_DIM		5
 
 typedef struct {
-	strbuf_t *synopsis;	/* Übersicht */
-	strbuf_t *source;	/* Sourcezeilen */
-	strbuf_t *tab[BUF_DIM];	/* Stringbuffertabelle */
+	StrBuf *synopsis;	/* Übersicht */
+	StrBuf *source;	/* Sourcezeilen */
+	StrBuf *tab[BUF_DIM];	/* Stringbuffertabelle */
 	char *var[VAR_DIM];	/* Variablentabelle */
-} DocBuf_t;
+} DocBuf;
 
-extern void DocBuf_init (DocBuf_t *doc);
-extern void DocBuf_write (DocBuf_t *doc, io_t *io);
-extern void DocBuf_copy (DocBuf_t *doc, strbuf_t *buf, strbuf_t *def);
+void DocBuf_init (DocBuf *doc);
+void DocBuf_write (DocBuf *doc, IO *io);
+void DocBuf_copy (DocBuf *doc, StrBuf *buf, StrBuf *def, const char *name);
 
-extern void copy_protect (const char *str, io_t *io);
+void copy_protect (const char *str, IO *io);
 
 #endif	/* DocBuf.h */

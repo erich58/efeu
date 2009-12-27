@@ -24,12 +24,12 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/io.h>
 
 
-int sb_printf (strbuf_t *sb, const char *fmt, ...)
+int sb_printf (StrBuf *sb, const char *fmt, ...)
 {
 	if	(sb && fmt)
 	{
 		va_list args;
-		io_t *io;
+		IO *io;
 		int n;
 
 		io = io_strbuf(sb);
@@ -42,11 +42,11 @@ int sb_printf (strbuf_t *sb, const char *fmt, ...)
 	else	return 0;
 }
 
-int sb_vprintf (strbuf_t *sb, const char *fmt, va_list list)
+int sb_vprintf (StrBuf *sb, const char *fmt, va_list list)
 {
 	if	(sb && fmt)
 	{
-		io_t *io;
+		IO *io;
 		int n;
 
 		io = io_strbuf(sb);

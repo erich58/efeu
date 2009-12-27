@@ -2,34 +2,33 @@
 	(c) 1994 Erich Frühstück
 */
 
-#include <EFEU/mdmat.h>
-#include <EFEU/data.h>
+#include <EFEU/mdtest.h>
 
 typedef struct {
 	short skip;	/* Überlesen */
 	short tmpload;	/* Temporär laden */
-	ulong_t offset;	/* Datenoffset */
+	size_t offset;	/* Datenoffset */
 	size_t dim;	/* Setztiefe */
-	ulong_t *idx;	/* Indexvektor */
+	size_t *idx;	/* Indexvektor */
 } SDEF;
 
-static mdaxis_t *mkaxis (mdaxis_t *axis, mdlist_t *def);
-static void getdata (const Type_t *type, char *ptr, mdaxis_t *x, mdaxis_t *y);
-static void adddata (char *y, char *x, mdaxis_t *axis);
-static void skipdata (const Type_t *type, mdaxis_t *x);
-static void member_get (const Type_t *type, void *ptr);
-static void std_get (const Type_t *type, void *ptr);
+static mdaxis *mkaxis (mdaxis *axis, mdlist *def);
+static void getdata (const EfiType *type, char *ptr, mdaxis *x, mdaxis *y);
+static void adddata (char *y, char *x, mdaxis *axis);
+static void skipdata (const EfiType *type, mdaxis *x);
+static void member_get (const EfiType *type, void *ptr);
+static void std_get (const EfiType *type, void *ptr);
 
 /*	Variablenselektion
 */
 
 static char *data_buf = NULL;
-static Type_t *data_type = NULL;
-static io_t *load_io = NULL;
-static Func_t *f_add = NULL;
+static EfiType *data_type = NULL;
+static IO *load_io = NULL;
+static EfiFunc *f_add = NULL;
 static int need_add = 0;
 
-static void (*getval) (const Type_t *type, void *p) = NULL;
+static void (*getval) (const EfiType *type, void *p) = NULL;
 
 typedef struct {
 	size_t new_pos;
@@ -37,33 +36,33 @@ typedef struct {
 	size_t size;
 } VSEL_T;
 
-static int walk_type (const char *name, Type_t **type, int o1, int o2);
-static Var_t *getentry (Type_t *type, const char *name);
+static int walk_type (const char *name, EfiType **type, int o1, int o2);
+static EfiVar *getentry (EfiType *type, const char *name);
 
 static char **vsel_list = NULL;
 static VSEL_T *vsel_cdef = NULL;
 static size_t vsel_dim = 0;
-static Var_t *vsel_struct = NULL;
-static io_t *vsel_io = NULL;
+static EfiVar *vsel_struct = NULL;
+static IO *vsel_io = NULL;
 
 
 /*	Datenmatrix aus Datei laden
 */
 
-mdmat_t *md_fload(const char *name, const char *list, const char *var)
+mdmat *md_fload(const char *name, const char *list, const char *var)
 {
-	io_t *io;
-	mdmat_t *md;
+	IO *io;
+	mdmat *md;
 
-	io = io_fileopen(name, "rz");
+	io = io_fileopen(name, "rdz");
 	md = md_load(io, list, var);
 	io_close(io);
 	return md;
 }
 
-mdmat_t *md_reload(mdmat_t *md, const char *list, const char *var)
+mdmat *md_reload(mdmat *md, const char *list, const char *var)
 {
-	io_t *io;
+	IO *io;
 
 	io = io_tmpfile();
 	md_save(io, md, MDFLAG_LOCK);
@@ -77,12 +76,12 @@ mdmat_t *md_reload(mdmat_t *md, const char *list, const char *var)
 /*	Matrix selektiv laden
 */
 
-mdmat_t *md_load(io_t *io, const char *str, const char *odef)
+mdmat *md_load(IO *io, const char *str, const char *odef)
 {
-	mdmat_t *md;
-	mdaxis_t *axis, *x;
-	mdaxis_t **ptr;
-	mdlist_t *def;
+	mdmat *md;
+	mdaxis *axis, *x;
+	mdaxis **ptr;
+	mdlist *def;
 	int depth;
 
 /*	Dateiheader lesen
@@ -105,14 +104,14 @@ mdmat_t *md_load(io_t *io, const char *str, const char *odef)
 		memset(md->data, 0, (size_t) md->size);
 		n = md->size / md->type->size;
 		ptr = md->data;
-		IOVecData(md->type, (iofunc_t) io_dbread, load_io, n, ptr);
+		ReadVecData(md->type, n, ptr, load_io);
 		md_tsteof(io);
 		return md;
 	}
 
 /*	Achsen reorganisieren
 */
-	def = mdlist(str, MDLIST_NEWOPT);
+	def = str2mdlist(str, MDLIST_NEWOPT);
 	axis = md->axis;
 	ptr = &md->axis;
 	depth = 1;
@@ -136,9 +135,8 @@ mdmat_t *md_load(io_t *io, const char *str, const char *odef)
 
 		if	(vsel_struct == NULL)
 		{
-			reg_set(1, type2str(md->type));
-			reg_cpy(2, odef);
-			liberror(MSG_MDMAT, 15);
+			dbg_error(NULL, "[mdmat:15]", "ms",
+				type2str(md->type), odef);
 			return NULL;
 		}
 
@@ -148,17 +146,17 @@ mdmat_t *md_load(io_t *io, const char *str, const char *odef)
 #if	0
 		vsel_io = io_tmpbuf(0);
 		vsel_dim = strsplit(odef, ",%s", &vsel_list);
-		vsel_dim = walk_type(NULL, (Type_t **) &md->type, 0, 0);
+		vsel_dim = walk_type(NULL, (EfiType **) &md->type, 0, 0);
 		memfree(vsel_list);
 
 		if	(vsel_dim == 0 || md->type->size == 0)
 		{
 			io_close(vsel_io);
-			liberror(MSG_MDMAT, 15);
+			dbg_error(NULL, "[mdmat:15]", NULL);
 			return NULL;
 		}
 
-		vsel_cdef = ALLOC(vsel_dim, VSEL_T);
+		vsel_cdef = memalloc(vsel_dim * sizeof(VSEL_T));
 		io_rewind(vsel_io);
 		io_read(vsel_io, vsel_cdef, sizeof(VSEL_T) * vsel_dim);
 		io_close(vsel_io);
@@ -204,7 +202,7 @@ mdmat_t *md_load(io_t *io, const char *str, const char *odef)
 /*	Neue Achse generieren
 */
 
-static mdaxis_t *mkaxis(mdaxis_t *x, mdlist_t *def)
+static mdaxis *mkaxis(mdaxis *x, mdlist *def)
 {
 	size_t xvars;
 	int preselect;
@@ -212,11 +210,11 @@ static mdaxis_t *mkaxis(mdaxis_t *x, mdlist_t *def)
 	int anz;
 	size_t i, j;
 	size_t depth;
-	mdaxis_t *y;
+	mdaxis *y;
 	SDEF *sdef;
-	ulong_t *ptr;
-	mdtest_t *test;
-	strbuf_t *sb;
+	size_t *ptr;
+	mdtest *test;
+	StrBuf *sb;
 	char *p;
 
 	x->priv = NULL;
@@ -258,7 +256,7 @@ static mdaxis_t *mkaxis(mdaxis_t *x, mdlist_t *def)
 			continue;
 		}
 
-		test = new_test(def->list[i], x->dim);
+		test = mdtest_create(def->list[i], x->dim);
 
 		if	(test->flag)	preselect = 0;
 
@@ -284,7 +282,7 @@ static mdaxis_t *mkaxis(mdaxis_t *x, mdlist_t *def)
 			}
 		}
 
-		del_test(test);
+		mdtest_clean(test);
 		preselect = 0;
 	}
 
@@ -295,8 +293,8 @@ static mdaxis_t *mkaxis(mdaxis_t *x, mdlist_t *def)
 
 /*	Zuweisungsstruktur generieren
 */
-	sdef = memalloc((ulong_t) x->dim * sizeof(SDEF) + x->dim * depth * sizeof(ulong_t));
-	ptr = (ulong_t *) (sdef + x->dim);
+	sdef = memalloc(x->dim * sizeof(SDEF) + x->dim * depth * sizeof(size_t));
+	ptr = (size_t *) (sdef + x->dim);
 	x->priv = sdef;
 
 	for (j = 0; j < x->dim; j++)
@@ -336,7 +334,7 @@ static mdaxis_t *mkaxis(mdaxis_t *x, mdlist_t *def)
 			{
 				for (j = 0; j < x->dim; j++)
 				{
-					if	(mdtest(test, x->idx[j].name, j))
+					if	(mdtest_eval(test, x->idx[j].name, j))
 					{
 						sdef[j].skip = 0;
 						sdef[j].idx[sdef[j].dim++] = xvars;
@@ -344,7 +342,7 @@ static mdaxis_t *mkaxis(mdaxis_t *x, mdlist_t *def)
 				}
 			}
 
-			del_test(test);
+			mdtest_clean(test);
 
 			if	(def->list[i][1] != '#')
 			{
@@ -399,7 +397,7 @@ static mdaxis_t *mkaxis(mdaxis_t *x, mdlist_t *def)
 /*	Datenwerte lesen
 */
 
-static void getdata(const Type_t *type, char *data, mdaxis_t *x, mdaxis_t *y)
+static void getdata(const EfiType *type, char *data, mdaxis *x, mdaxis *y)
 {
 	size_t i, j;
 	SDEF *sdef;
@@ -444,7 +442,7 @@ static void getdata(const Type_t *type, char *data, mdaxis_t *x, mdaxis_t *y)
 	}
 }
 
-static void adddata (char *y, char *x, mdaxis_t *axis)
+static void adddata (char *y, char *x, mdaxis *axis)
 {
 	if	(axis != NULL)
 	{
@@ -460,7 +458,7 @@ static void adddata (char *y, char *x, mdaxis_t *axis)
 	else	CallVoidFunc(f_add, y, x);
 }
 
-static void skipdata(const Type_t *type, mdaxis_t *x)
+static void skipdata(const EfiType *type, mdaxis *x)
 {
 	if	(x != NULL)
 	{
@@ -469,18 +467,18 @@ static void skipdata(const Type_t *type, mdaxis_t *x)
 		for (i = 0; i < x->dim; i++)
 			skipdata(type, x->next);
 	}
-	else	IOData(data_type, (iofunc_t) io_dbread, load_io, data_buf);
+	else	ReadData(data_type, data_buf, load_io);
 }
 
 
 /*	Objektselektion generieren
 */
 
-static int walk_type(const char *name, Type_t **type, int o1, int o2)
+static int walk_type(const char *name, EfiType **type, int o1, int o2)
 {
 	int n, k;
 	int new_offset;
-	Var_t **st;
+	EfiVar **st;
 
 /*	Test auf Selektion der kompletten Struktur
 */
@@ -536,9 +534,9 @@ static int walk_type(const char *name, Type_t **type, int o1, int o2)
 	return n;
 }
 
-static Var_t *getentry (Type_t *type, const char *name)
+static EfiVar *getentry (EfiType *type, const char *name)
 {
-	Var_t *st;
+	EfiVar *st;
 
 	for (st = type->list; st != NULL; st = st->next)
 	{
@@ -552,15 +550,15 @@ static Var_t *getentry (Type_t *type, const char *name)
 /*	Lesefunktion bei Objektselektion
 */
 
-static void std_get(const Type_t *type, void *ptr)
+static void std_get(const EfiType *type, void *ptr)
 {
-	IOData(type, (iofunc_t) io_dbread, load_io, ptr);
+	ReadData(type, ptr, load_io);
 }
 
 
-static void member_get(const Type_t *type, void *ptr)
+static void member_get(const EfiType *type, void *ptr)
 {
-	IOData(data_type, (iofunc_t) io_dbread, load_io, data_buf);
+	ReadData(data_type, data_buf, load_io);
 
 	memcpy((char *) ptr, data_buf + vsel_struct->offset,
 		vsel_struct->type->size);

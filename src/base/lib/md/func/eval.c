@@ -2,7 +2,7 @@
 	(c) 1995 Erich Frühstück
 */
 
-#include <EFEU/mdmat.h>
+#include <EFEU/mdeval.h>
 
 
 static void *cpyidx(const void *idx, char *name)
@@ -17,7 +17,7 @@ static void noclean(void *idx)
 
 
 typedef struct {
-	mdmat_t *md;
+	mdmat *md;
 	void *par;
 	unsigned mask;
 	unsigned base;
@@ -25,7 +25,7 @@ typedef struct {
 } DATAPAR;
 
 typedef struct {
-	mdaxis_t *axis;
+	mdaxis *axis;
 	int mode;
 	void *idx;
 	char *data;
@@ -36,9 +36,10 @@ typedef struct {
 #define	TIME(x)		(x->flags & MDXFLAG_TIME)
 #define	HIDDEN(x)	(x->flags & MDXFLAG_HIDE)
 
-static void datawalk(const WALKPAR *walk, DATAPAR *par, mdeval_t *eval);
+static void datawalk (const WALKPAR *walk, DATAPAR *par, MdEvalDef *eval);
 
-void *md_eval(mdeval_t *eval, void *par, mdmat_t *md, unsigned mask, unsigned base, int lag)
+void *md_eval(MdEvalDef *eval, void *par, mdmat *md,
+	unsigned mask, unsigned base, int lag)
 {
 	DATAPAR data;
 	WALKPAR walk;
@@ -61,10 +62,10 @@ void *md_eval(mdeval_t *eval, void *par, mdmat_t *md, unsigned mask, unsigned ba
 }
 
 
-static void datawalk(const WALKPAR *walk, DATAPAR *data, mdeval_t *eval)
+static void datawalk (const WALKPAR *walk, DATAPAR *data, MdEvalDef *eval)
 {
 	WALKPAR next;
-	mdaxis_t *x;
+	mdaxis *x;
 	int n, k;
 	int flag;
 	void *(*newidx) (const void *idx, char *name);

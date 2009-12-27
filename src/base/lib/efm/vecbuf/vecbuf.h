@@ -25,7 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 #ifndef	EFEU_vecbuf_h
 #define	EFEU_vecbuf_h	1
 
-#include <EFEU/types.h>
+#include <EFEU/config.h>
 
 /*
 Die Datenstruktur |$1| dient zur Verwaltung eines Datenfeldes.
@@ -42,7 +42,7 @@ typedef struct {
 	size_t size;	/* Aktuelle Größe des Buffers */
 	size_t used;	/* Zahl der benützten Elemente */
 	void *data;	/* Datenbuffer */
-} vecbuf_t;
+} VecBuf;
 
 
 /*
@@ -66,39 +66,45 @@ static VECBUF(buf, 1024, sizeof(int));
 ----
 */
 
-#define	VECBUF(name, blk, size)	vecbuf_t name = VB_DATA(blk, size)
+#define	VECBUF(name, blk, size)	VecBuf name = VB_DATA(blk, size)
 
-vecbuf_t *vb_create (size_t blk, size_t size);
-void vb_destroy (vecbuf_t *vb);
+VecBuf *vb_create (size_t blk, size_t size);
+void vb_destroy (VecBuf *vb);
 
-void vb_init (vecbuf_t *buf, size_t blk, size_t size);
-void *_vb_alloc (vecbuf_t *buf, size_t dim);
-void *vb_alloc (vecbuf_t *buf, size_t dim);
-void vb_free (vecbuf_t *buf);
-void vb_clean (vecbuf_t *vb, clean_t clean);
-void *vb_realloc (vecbuf_t *buf, size_t dim);
-void *vb_next (vecbuf_t *buf);
-void *vb_data (vecbuf_t *buf, size_t pos);
-void *vb_copy (vecbuf_t *buf, void *data, size_t dim);
-void *vb_append (vecbuf_t *buf, void *data, size_t dim);
-void *vb_insert (vecbuf_t *buf, size_t pos, size_t dim);
-void *vb_delete (vecbuf_t *buf, size_t pos, size_t dim);
-void *vb_load (vecbuf_t *buf, FILE *file, size_t dim);
+void vb_init (VecBuf *buf, size_t blk, size_t size);
+void *_vb_alloc (VecBuf *buf, size_t dim);
+void *vb_alloc (VecBuf *buf, size_t dim);
+void vb_free (VecBuf *buf);
+void vb_clean (VecBuf *vb, void (*clean) (void *ptr));
+void *vb_realloc (VecBuf *buf, size_t dim);
+void *vb_next (VecBuf *buf);
+void *vb_data (VecBuf *buf, size_t pos);
+void *vb_copy (VecBuf *buf, void *data, size_t dim);
+void *vb_append (VecBuf *buf, void *data, size_t dim);
+void *vb_fetch (VecBuf *buf, void *data);
+void *vb_insert (VecBuf *buf, size_t pos, size_t dim);
+void *vb_delete (VecBuf *buf, size_t pos, size_t dim);
+void *vb_load (VecBuf *buf, FILE *file, size_t dim);
 
-void vb_qsort (vecbuf_t *buf, comp_t comp);
-void *vb_bsearch (vecbuf_t *buf, const void *key, comp_t comp);
+void vb_qsort (VecBuf *buf, int (*comp) (const void *a, const void *b));
+void *vb_bsearch (VecBuf *buf, const void *key,
+	int (*comp) (const void *a, const void *b));
 
 #define	VB_ENTER	0	/* Eintrag abfragen/ergänzen */
 #define	VB_REPLACE	1	/* Eintrag ersetzen/ergänzen */
 #define	VB_SEARCH	2	/* Eintrag abfragen */
 #define	VB_DELETE	3	/* Eintrag aus Tabelle löschen */
 
-void *vb_search (vecbuf_t *buf, void *data, comp_t comp, int mode);
+void *vb_search (VecBuf *buf, void *data,
+	int (*comp) (const void *a, const void *b), int mode);
 
 /*	Hilfsfunktionen
 */
 
-size_t vsplit (void *base, size_t dim, size_t size, test_t test);
+size_t vsplit (void *base, size_t dim, size_t size,
+	int (*test) (const void *par));
+size_t svsplit (void *base, size_t dim, size_t size,
+	int (*test) (const void *par));
 
 /*
 $SeeAlso

@@ -36,9 +36,9 @@ static VECBUF(arg_buf, 32, sizeof(char **));
 /*	Ausgabefunktionen
 */
 
-typedef void (*pfunc_t) (strbuf_t *buf, const char *arg, int flag);
+typedef void (*PutFunc) (StrBuf *buf, const char *arg, int flag);
 
-static void pf_std (strbuf_t *buf, const char *arg, int flag)
+static void pf_std (StrBuf *buf, const char *arg, int flag)
 {
 	if	(flag && arg)
 		sb_putc(' ', buf);
@@ -46,7 +46,7 @@ static void pf_std (strbuf_t *buf, const char *arg, int flag)
 	sb_puts(arg, buf);
 }
 
-static void pf_list (strbuf_t *buf, const char *arg, int flag)
+static void pf_list (StrBuf *buf, const char *arg, int flag)
 {
 	if	(flag)	sb_putc(',', buf);
 
@@ -64,14 +64,14 @@ static void pf_list (strbuf_t *buf, const char *arg, int flag)
 	}
 }
 
-static void pf_str (strbuf_t *buf, const char *arg, int flag)
+static void pf_str (StrBuf *buf, const char *arg, int flag)
 {
 	if	(flag)
 		sb_puts("\", \"", buf);
 
 	if	(arg)
 	{
-		io_t *out = io_strbuf(buf);
+		IO *out = io_strbuf(buf);
 		io_xputs(arg, out, "\"");
 		io_close(out);
 	}
@@ -83,8 +83,7 @@ static void pf_str (strbuf_t *buf, const char *arg, int flag)
 /*	Argument substituieren
 */
 
-static void arg_sub (strbuf_t *buf, io_t *io,
-	pfunc_t put, int argc, char **argv)
+static void arg_sub (StrBuf *buf, IO *io, PutFunc put, int argc, char **argv)
 {
 	int c = io_getc(io);
 
@@ -124,8 +123,8 @@ static void arg_sub (strbuf_t *buf, io_t *io,
 
 static char *mac_expand (const char *fmt, int argc, char **argv)
 {
-	strbuf_t *buf;
-	io_t *in;
+	StrBuf *buf;
+	IO *in;
 	int c, quote, depth;
 
 	if	(fmt == NULL)	return NULL;
@@ -170,10 +169,10 @@ static char *mac_expand (const char *fmt, int argc, char **argv)
 }
 
 
-DocMac_t *Doc_getmac (Doc_t *doc, const char *name)
+DocMac *Doc_getmac (Doc *doc, const char *name)
 {
-	stack_t *ptr;
-	DocMac_t *mac;
+	Stack *ptr;
+	DocMac *mac;
 
 	if	(!(doc && doc->cmd_stack))	return NULL;
 
@@ -185,9 +184,9 @@ DocMac_t *Doc_getmac (Doc_t *doc, const char *name)
 }
 
 
-void Doc_mac (Doc_t *doc, io_t *in)
+void Doc_mac (Doc *doc, IO *in)
 {
-	DocMac_t *mac;
+	DocMac *mac;
 	char *p;
 
 	p = DocParseName(in, '@');
@@ -205,7 +204,7 @@ void Doc_mac (Doc_t *doc, io_t *in)
 
 	if	(mac == NULL)
 	{
-		io_message(in, MSG_DOC, 13, 1, p);
+		io_note(in, "[Doc:13]", "s", p);
 		io_puts(p, doc->out);
 		Doc_char(doc, ';');
 		return;

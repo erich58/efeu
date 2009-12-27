@@ -29,13 +29,14 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	M_OPEN	"$!: PG_open(): unknown access mode \"$2\" for table \"$1\".\n"
 #define	M_FLUSH	"$!: PQputline() failed.\n"
+#define	M_ECOPY	"$!: PQendcopy() failed\n"
 
 #define	BSIZE	1024	/* Größe des Eingabebuffers */
 
 typedef struct {
-	PG_t *pg;	/* Datenbankstruktur */
+	PG *pg;	/* Datenbankstruktur */
 	char *cmd;	/* SQL-Kommando */
-	strbuf_t *wbuf;	/* Ausgabebuffer */
+	StrBuf *wbuf;	/* Ausgabebuffer */
 	char *rbuf;	/* Eingabebuffer */
 	char *ptr;	/* Pointer auf Eingabebuffer */
 	int flag;	/* Flag für offene Daten */
@@ -51,15 +52,17 @@ static void pg_flush (PGCOPY *par)
 
 	if      (PQputline(par->pg->conn, (char *) par->wbuf->data) != 0)
 	{
-		Message("PG", DBG_ERR, M_FLUSH, NULL);
+		dbg_note("PG", M_FLUSH, NULL);
 	}
 
 	sb_begin(par->wbuf);
 }
 				
 
-static int pg_put (int c, PGCOPY *par)
+static int pg_put (int c, void *ptr)
 {
+	PGCOPY *par = ptr;
+
 	if	(c == '\n')
 	{
 		pg_flush(par);
@@ -82,8 +85,10 @@ static void pg_load (PGCOPY *par, int flag)
 	par->flag = c;
 }
 
-static int pg_get (PGCOPY *par)
+static int pg_get (void *ptr)
 {
+	PGCOPY *par = ptr;
+
 	while (*par->ptr == 0)
 	{
 		switch (par->flag)
@@ -102,8 +107,10 @@ static int pg_get (PGCOPY *par)
 	return *par->ptr++;
 }
 
-static int pg_ctrl (PGCOPY *par, int req, va_list list)
+static int pg_ctrl (void *ptr, int req, va_list list)
 {
+	PGCOPY *par = ptr;
+
 	switch (req)
 	{
 	case IO_CLOSE:
@@ -125,7 +132,7 @@ static int pg_ctrl (PGCOPY *par, int req, va_list list)
 		}
 
 		if      (PQendcopy(par->pg->conn) != 0)
-			Message("PG", DBG_ERR, "PQendcopy() failed\n", NULL);
+			dbg_note("PG", M_ECOPY, NULL);
 
 		par->pg->lock = 0;
 		PG_clear(par->pg);
@@ -192,11 +199,11 @@ Until the IO-structure is open, the database connection <pg> is locked
 for other execution commands.
 */
 
-io_t *PG_open (PG_t *pg, const char *name, const char *mode)
+IO *PG_open (PG *pg, const char *name, const char *mode)
 {
 	PGCOPY *par;
 	const char *p;
-	io_t *io;
+	IO *io;
 	char *cmd;
 	int wflag;
 	char *oid;
@@ -226,7 +233,7 @@ io_t *PG_open (PG_t *pg, const char *name, const char *mode)
 
 	if	(wflag < 0)
 	{
-		Message("PG", DBG_ERR, M_OPEN, ArgList("ncc", name, mode));
+		dbg_note("PG", M_OPEN, "ss", name, mode);
 		rd_deref(pg);
 		return NULL;
 	}
@@ -258,16 +265,16 @@ io_t *PG_open (PG_t *pg, const char *name, const char *mode)
 	if	(wflag)
 	{
 		par->wbuf = new_strbuf(0);
-		io->put = (io_put_t) pg_put;
+		io->put = pg_put;
 	}
 	else
 	{
 		par->rbuf = memalloc(BSIZE);
 		pg_load(par, 1);
-		io->get = (io_get_t) pg_get;
+		io->get = pg_get;
 	}
 
-	io->ctrl = (io_ctrl_t) pg_ctrl;
+	io->ctrl = pg_ctrl;
 	io->data = par;
 	return io;
 }
@@ -278,7 +285,7 @@ $SeeAlso
 \mref{io_gets(3)},
 \mref{io_puts(3)},
 \mref{io_printf(3)},
-\mref{PG(3)},
+\mref{PG_connect(3)},
 \mref{PG_exec(3)},
 \mref{PG_query(3)},
 \mref{SetupPG(3)},

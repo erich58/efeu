@@ -23,7 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include "eistty.h"
 
 WINDOW *info_win = NULL;
-InfoNode_t *info_node = NULL;
+InfoNode *info_node = NULL;
 static char *search_key = NULL;
 
 #define	is_key(str)	(search_key && patcmp(search_key, str, NULL))
@@ -32,7 +32,7 @@ typedef struct INFOPAR_S INFOPAR;
 
 struct INFOPAR_S {
 	INFOPAR *prev;	/* Vorgängerknoten */
-	vecbuf_t buf;	/* Buffer */
+	VecBuf buf;	/* Buffer */
 	int active;	/* Aktiver Index */
 	int curline;	/* Aktuelle Zeile */
 	int maxline;	/* Maximale Zeilenzahl */
@@ -42,16 +42,16 @@ static INFOPAR *new_par(INFOPAR *prev)
 {
 	INFOPAR *x = memalloc(sizeof(INFOPAR));
 	memset(x, 0, sizeof(INFOPAR));
-	vb_init(&x->buf, 32, sizeof(InfoPart_t));
+	vb_init(&x->buf, 32, sizeof(InfoPart));
 	x->prev = prev;
 	return x;
 }
 
 static INFOPAR *IPAR = NULL;
 
-static InfoPart_t def_part;
+static InfoPart def_part;
 
-static void del_part(InfoPart_t *part, size_t dim)
+static void del_part(InfoPart *part, size_t dim)
 {
 	for (; dim > 0; dim--, part++)
 		memfree(part->str);
@@ -75,7 +75,7 @@ static int maxcols = 70;
 
 static void flush_buf(void)
 {
-	InfoPart_t *part;
+	InfoPart *part;
 	
 	if	(part_pos == 0)	return;
 
@@ -134,12 +134,12 @@ static int part_put (int c, void *ptr)
 	return 1;
 }
 
-static io_t io_part = STD_IODATA (NULL, part_put, NULL, NULL);
+static IO io_part = STD_IODATA (NULL, part_put, NULL, NULL);
 
-void MakePart(InfoNode_t *info)
+void MakePart(InfoNode *info)
 {
 	IPAR = new_par(IPAR);
-	memset(&def_part, 0, sizeof(InfoPart_t));
+	memset(&def_part, 0, sizeof(InfoPart));
 
 	maxcols = info_win ? info_win->_maxx - 1 : 70;
 	def_part.x = 0;
@@ -157,7 +157,7 @@ void MakePart(InfoNode_t *info)
 
 	def_part.att = A_UNDERLINE;
 	def_part.info = NULL;
-	io_psub(&io_part, info->label);
+	io_psubarg(&io_part, info->label, "ns", info->name);
 	linebreak();
 	def_part.att = 0;
 	def_part.info = NULL;
@@ -168,9 +168,7 @@ void MakePart(InfoNode_t *info)
 
 	if	(!info->func)
 	{
-		reg_cpy(1, info->name);
-		reg_cpy(2, info->label);
-		io_psub(&io_part, info->par);
+		io_psubarg(&io_part, info->par, "nss", info->name, info->label);
 	}
 	else	info->func(&io_part, info);
 
@@ -179,7 +177,7 @@ void MakePart(InfoNode_t *info)
 	if	(info->list)
 	{
 		int i = info->list->used;
-		InfoNode_t **ip = info->list->data;
+		InfoNode **ip = info->list->data;
 
 		if	(def_part.y > IPAR->maxline)
 			def_part.y++;
@@ -197,7 +195,7 @@ void MakePart(InfoNode_t *info)
 			if	((*ip)->label)
 			{
 				io_putc('\t', &io_part);
-				io_psub(&io_part, (*ip)->label);
+				io_psubarg(&io_part, (*ip)->label, NULL);
 			}
 
 			linebreak();
@@ -213,7 +211,7 @@ void MakePart(InfoNode_t *info)
 
 void ShowPart (void)
 {
-	InfoPart_t *part;
+	InfoPart *part;
 	int i, y; 
 	int att;
 
@@ -259,7 +257,7 @@ void MovePos (int offset)
 
 void MoveRef (int offset)
 {
-	InfoPart_t *part;
+	InfoPart *part;
 	int i;
 
 	part = IPAR->buf.data;
@@ -327,7 +325,7 @@ void PrevInfo (void)
 
 void NextInfo (void)
 {
-	InfoPart_t *part = IPAR->buf.data;
+	InfoPart *part = IPAR->buf.data;
 
 	if	(part[IPAR->active].info)
 		MakePart(part[IPAR->active].info);
@@ -336,7 +334,7 @@ void NextInfo (void)
 int SearchKey (char *key)
 {
 	int i, n;
-	InfoPart_t *part;
+	InfoPart *part;
 	
 	memfree(search_key);
 	search_key = key ? msprintf("%s*", key) : NULL;

@@ -22,25 +22,25 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/ArgList.h>
 #include <EFEU/mstring.h>
+#include <EFEU/Debug.h>
 #include <EFEU/io.h>
 
 #define	BLKSIZE	32
 
-static char *argl_ident (ArgList_t *par)
+static char *argl_ident (const void *data)
 {
-	if	(par && par->dim)
+	const ArgList *par = data;
+
+	if	(par->dim)
 	{
-		strbuf_t *buf = new_strbuf(0);
-		io_t *io = io_strbuf(buf);
+		StrBuf *buf = new_strbuf(0);
+		IO *io = io_strbuf(buf);
 		int i;
 
 		io_puts(par->data[0], io);
 
 		for (i = 1; i < par->dim; i++)
-		{
-			io_putc(' ', io);
-			io_puts(par->data[i], io);
-		}
+			io_printf(io, " %#s", par->data[i]);
 
 		io_close(io);
 		return sb2str(buf);
@@ -49,100 +49,44 @@ static char *argl_ident (ArgList_t *par)
 	return	mstrcpy("NULL");
 }
 
-static ArgList_t *argl_admin (ArgList_t *tg, const ArgList_t *src)
+static void argl_clean (void *data)
 {
-	if	(tg)
-	{
-		int i;
+	ArgList *argl;
+	int i;
 
-		for (i = 0; i < tg->dim; i++)
-			memfree(tg->data[i]);
+	argl = data;
 
-		tg->dim = 0;
+	for (i = 0; i < argl->dim; i++)
+		memfree(argl->data[i]);
 
-		if	(src == NULL)
-		{
-			lfree(tg->data);
-			memfree(tg);
-			tg = NULL;
-		}
-	}
-	else	tg = src ? src : memalloc(sizeof(ArgList_t));
+	argl->dim = 0;
 
-	return tg;
+	lfree(argl->data);
+	memfree(argl);
 }
 
 /*
 Die Datenstruktur |$1| definiert den Referenztype für die
-Struktur |ArgList_t|.
+Struktur |ArgList|.
 */
 
-ADMINREFTYPE(ArgList_reftype, "ArgList", argl_ident, argl_admin);
+RefType ArgList_reftype = REFTYPE_INIT("ArgList", argl_ident, argl_clean);
 
 /*
-Die Funktion |$1| generiert eine neue Argumentliste entsprechend der
-Anweisungen in <def>.  Dabei handelt es sich um eine Zeichenkette aus
-Kennbuchstaben mit der folgenden Bedeutung:
-[n]	Null Pointer (kein Argument der Liste)
-[c]	Konstante Zeichenkette
-[m]	Dynamische Zeichenkette
-[f]	Formatanweisung mit Argumenten
+Die Funktion |$1| generiert eine neue Argumentliste.
 */
 
-ArgList_t *ArgList (const char *def, ...)
+extern ArgList *arg_create (void)
 {
-	ArgList_t *args;
-	va_list list;
-
-	args = rd_create(&ArgList_reftype);
-	va_start(list, def);
-	ArgList_append(args, def, list);
-	va_end(list);
-	return args;
+	return rd_init(&ArgList_reftype, memalloc(sizeof(ArgList)));
 }
-
-
-/*
-Die Funktion |$1| erweitert eine Argumentliste entsprechend der
-Anweisungen in <def>.
-*/
-
-void ArgList_append (ArgList_t *args, const char *def, va_list list)
-{
-	char *p;
-
-	if	(def == NULL)	return;
-
-	for (; *def != 0; def++)
-	{
-		switch (*def)
-		{
-		case 'n':
-			ArgList_madd(args, NULL);
-			break;
-		case 'c':
-			ArgList_cadd(args, va_arg(list, char *));
-			break;
-		case 'm':
-			ArgList_madd(args, va_arg(list, char *));
-			break;
-		case 'f':
-			p = va_arg(list, char *);
-			ArgList_madd(args, mvsprintf(p, list));
-			break;
-		default:
-			break;
-		}
-	}
-}
-
 
 /*
 Die Funktion |$1| erweitert die Argumentliste <list> um
 den dynamisch generierten String <arg>.
 */
 
-void ArgList_madd (ArgList_t *list, char *arg)
+void arg_madd (ArgList *list, char *arg)
 {
 	if	(list)
 	{
@@ -171,9 +115,9 @@ Die Funktion |$1| erweitert die Argumentliste <list> um
 den konstanten String <arg>.
 */
 
-void ArgList_cadd (ArgList_t *list, const char *arg)
+void arg_cadd (ArgList *list, const char *arg)
 {
-	if	(list)	ArgList_madd(list, mstrcpy(arg));
+	if	(list)	arg_madd(list, mstrcpy(arg));
 }
 
 /*
@@ -184,7 +128,7 @@ Negative Werte für <n> werden vom Ende der Liste weg gerechnet, wobei
 hier der Eintrag 0 nicht abgefragt wird!
 */
 
-char *ArgList_get (ArgList_t *list, int n)
+char *arg_get (ArgList *list, int n)
 {
 	if	(list == NULL)	return NULL;
 	if	(n == 0)	return list->data[0];
@@ -195,8 +139,52 @@ char *ArgList_get (ArgList_t *list, int n)
 }
 
 /*
+Die Funktion |$1| setzt den <n>-ten Eintrag der Argumentliste <list> auf
+den dynamisch generierten String <val>. Bei Bedarf wird die Liste
+vergrößert.
+Negative Werte für <n> werden vom Ende der Liste weg gerechnet, wobei
+hier der Eintrag 0 nicht gesetzt wird!
+*/
+
+extern void arg_set (ArgList *list, int n, char *val)
+{
+	if	(list && (n >= 0 || n + list->dim > 0))
+	{
+		if	(n < 0)	n += list->dim;
+
+		if	(n + 1 >= list->size)
+		{
+			char **save;
+			size_t i;
+			
+			save = list->data;
+			list->size += BLKSIZE;
+			list->data = lmalloc(list->size * sizeof(char *));
+
+			for (i = 0; i < list->dim; i++)
+				list->data[i] = save[i];
+
+			for (i = list->dim; i < n; i++)
+				list->data[i] = NULL;
+
+			list->dim = n + 1;
+			lfree(save);
+		}
+		else if	(n >= list->dim)
+		{
+			list->dim = n + 1;
+		}
+		else	memfree(list->data[n]);
+
+		list->data[n] = val;
+	}
+	else	memfree(val);
+}
+
+/*
 $SeeAlso
-\mref{Message(3)},
+\mref{stddbg(3)},
+\mref{arg_append(3)},
 \mref{ArgList(7)}.
 */
 

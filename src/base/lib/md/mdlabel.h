@@ -30,26 +30,26 @@ If not, write to the Free Software Foundation, Inc.,
 /*	Labelstruktur
 */
 
-typedef struct MdLabel_s MdLabel_t;
+typedef struct MdLabelStruct MdLabel;
 
 
-struct MdLabel_s {
-	MdLabel_t *next;
+struct MdLabelStruct {
+	MdLabel *next;
 	char *name;	/* Name der Achse */
 	size_t len;	/* Länge des Bezeichners */
 	size_t dim;	/* Zahl der Muster */
 	char **list;	/* Liste mit Muster */
-	xtab_t *idx;	/* Tabelle mit Bezeichnern */
+	VecBuf idxtab;	/* Tabelle mit Bezeichnern */
 };
 
 
-MdLabel_t *new_label (void);
-void del_label (MdLabel_t *label);
-MdLabel_t *set_label (const char *def);
-MdLabel_t *init_label (const char *fmt, const char *def);
+MdLabel *new_label (void);
+void del_label (MdLabel *label);
+MdLabel *set_label (const char *def);
+MdLabel *init_label (const char *fmt, const char *def);
 
-int save_label (io_t *tmp, MdLabel_t *label, char *p);
-mdaxis_t *label2axis (MdLabel_t *label);
+int save_label (IO *tmp, MdLabel *label, char *p);
+mdaxis *label2axis (MdLabel *label);
 
 
 #define	ICTRL_HEAD	1	/* Wechsel in Headermodus */
@@ -57,7 +57,7 @@ mdaxis_t *label2axis (MdLabel_t *label);
 #define	ICTRL_NUM	3	/* Wechsel in numerischen Mode */
 #define	ICTRL_IGNORE	4	/* Ignorieren von Zeichen im num. Mode */
 
-io_t *rfilter (io_t *io);
+IO *rfilter (IO *io);
 
 
 #endif	/* EFEU/mdlabel.h */

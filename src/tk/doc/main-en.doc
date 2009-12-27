@@ -1,0 +1,64 @@
+/*
+Documentation of ETK Library, english version
+
+$Copyright (C) 2002 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+*/
+
+\config	efeu
+\title	EFEU interface to Tcl/Tk
+
+\preface
+The Library |ETK| represents a interface to the Tcl-Interpreter and
+provides the use of Tk-widgets in context of EFEU.
+
+The command |etk| is a version of |esh| with builtin interface to
+Tcl. On systems with shared library, |esh| could be used directly by
+activation the interface with
+	|loadlib("ETK", "SetupETK");|
+
+The interface allows the simultaneos use of Tcl and the EFEU
+interpreter language. Details to the interface are found in
+\mref{etk(1)}. An overview of the EFEU interpreter language is given in
+\mref{esh(1)}.
+
+The interface works with different versions of Tcl/Tk. Older Versions
+of Tcl use only strings for exchanging data values bewetween the two
+interpreters. Newer versions kann exchange |bool|, |int| and |double|
+valuers directly.
+
+This manpage describes primarly the interface to Tcl/Tk and does not
+replace a Tcl/Tk documentation.
+
+	Erich Frühstück\br
+	Wördern, \thedate
+\toc
+
+\addsrclist
+\getsrc		*-en.doc
+\delsrc
+
+\appendix
+\mchap[1]	Commands
+\pipe		|etk --help=raw|
+\addsrclist	@LIB
+\mchap[3]	Functions
+\src2doc[-L en]	*.c
+\mchap[7]	Macro packages and conventions
+\src2doc[-L en]	*.h *.7
+\printindex

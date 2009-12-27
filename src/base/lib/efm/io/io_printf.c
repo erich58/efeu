@@ -23,7 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/io.h>
 #include <EFEU/fmtkey.h>
 
-int io_printf(io_t *io, const char *fmt, ...)
+int io_printf(IO *io, const char *fmt, ...)
 {
 	va_list args;
 	int n;
@@ -35,9 +35,9 @@ int io_printf(io_t *io, const char *fmt, ...)
 }
 
 
-int io_vprintf(io_t *io, const char *fmt, va_list list)
+int io_vprintf(IO *io, const char *fmt, va_list list)
 {
-	fmtkey_t key;
+	FmtKey key;
 	int n;
 
 	if	(fmt == NULL)	return 0;

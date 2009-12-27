@@ -24,21 +24,21 @@ If not, write to the Free Software Foundation, Inc.,
 #include <d2m.cfg>
 
 #undef	SubMake
-#define	SubMake(name,label) \
-SubMakeRule(name,label,name,NullArg,dir2make)
+#define	SubMake(name,label,flags) \
+SubMakeRule(name,label,name,NullArg,dir2make flags)
 
 #if	LANG_de
-SubMake(make,"make und co")
-SubMake(prog,"EFEU Programmierhandbuch")
-SubMake(mdmat,"Handbuch zu den Datenmatrizen")
-SubMake(efeudoc,"Handbuch zum Dokumentkonverter")
-SubMake(user,"Benutzerhandbuch")
-SubMake(man1,"Handbucheinträge zu Kommandos")
+SubMake(make,"make und co",NullArg)
+SubMake(prog,"EFEU Programmierhandbuch",-x)
+SubMake(mdmat,"Handbuch zu den Datenmatrizen",NullArg)
+SubMake(efeudoc,"Handbuch zum Dokumentkonverter",NullArg)
+SubMake(user,"Benutzerhandbuch",NullArg)
+SubMake(man1,"Handbucheinträge zu Kommandos",NullArg)
 #else
-SubMake(make,"german documentation about mkmf")
-SubMake(prog,"german documentation about EFEU programming")
-SubMake(mdmat,"german documentation about data cubes")
-SubMake(efeudoc,"german documentation about efeudoc")
-SubMake(user,"user reference manual")
-SubMake(man1,"manpages for commands")
+SubMake(make,"german documentation about mkmf",NullArg)
+SubMake(prog,"german documentation about EFEU programming",-x)
+SubMake(mdmat,"german documentation about data cubes",NullArg)
+SubMake(efeudoc,"german documentation about efeudoc",NullArg)
+SubMake(user,"user reference manual",NullArg)
+SubMake(man1,"manpages for commands",NullArg)
 #endif

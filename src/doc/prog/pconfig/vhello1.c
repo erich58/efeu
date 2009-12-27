@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+extern int optind;
+extern char *optarg;
+
 int main (int argc, char **argv)
 {
 	char *fmt = "%s";

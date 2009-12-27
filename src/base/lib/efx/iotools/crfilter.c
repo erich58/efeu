@@ -25,16 +25,16 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/ioctrl.h>
 
 
-static int cr_get (io_t *io);
-static int cr_ctrl (io_t *io, int req, va_list list);
+static int cr_get (void *ptr);
+static int cr_ctrl (void *ptr, int req, va_list list);
 
-io_t *io_crfilter(io_t *io)
+IO *io_crfilter (IO *io)
 {
-	io_t *new;
+	IO *new;
 
 	new = io_alloc();
-	new->get = (io_get_t) cr_get;
-	new->ctrl = (io_ctrl_t) cr_ctrl;
+	new->get = cr_get;
+	new->ctrl = cr_ctrl;
 	new->data = io;
 	return new;
 }
@@ -43,11 +43,11 @@ io_t *io_crfilter(io_t *io)
 /*	Zeichen lesen
 */
 
-static int cr_get(io_t *io)
+static int cr_get (void *ptr)
 {
 	int c;
 
-	do	c = io_getc(io);
+	do	c = io_getc(ptr);
 	while	(c == '\r' || c == 32);
 
 	return c;
@@ -57,12 +57,12 @@ static int cr_get(io_t *io)
 /*	Kontrollfunktion
 */
 
-static int cr_ctrl(io_t *io, int req, va_list list)
+static int cr_ctrl (void *ptr, int req, va_list list)
 {
 	switch (req)
 	{
-	case IO_CLOSE:	return io_close(io);
-	case IO_REWIND:	return io_rewind(io);
-	default:	return io_vctrl(io, req, list);
+	case IO_CLOSE:	return io_close(ptr);
+	case IO_REWIND:	return io_rewind(ptr);
+	default:	return io_vctrl(ptr, req, list);
 	}
 }

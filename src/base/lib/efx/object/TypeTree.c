@@ -24,23 +24,22 @@ If not, write to the Free Software Foundation, Inc.,
 #include <ctype.h>
 
 typedef struct {
-	io_t *io;
+	IO *io;
 	char *pfx;
-	Type_t **ptr;
+	NameKeyEntry *entry;
 	size_t dim;
 } INFO;
 
-extern xtab_t TypeTab;
+extern NameKeyTab TypeTab;
 
-static void subfunc (io_t *io, const char *pfx, int leaf, const Type_t *type);
+static void subfunc (IO *io, const char *pfx, int leaf, const EfiType *type);
 
-static void next (INFO *info, int leaf, const Type_t *base)
+static void next (INFO *info, int leaf, const EfiType *base)
 {
-	Type_t *type;
-
 	while (info->dim-- > 0)
 	{
-		type = *(info->ptr++);
+		EfiType *type = info->entry->data;
+		info->entry++;
 
 		if	(type->base == base)
 		{
@@ -51,7 +50,7 @@ static void next (INFO *info, int leaf, const Type_t *base)
 	}
 }
 
-static void subfunc (io_t *io, const char *pfx, int leaf, const Type_t *type)
+static void subfunc (IO *io, const char *pfx, int leaf, const EfiType *type)
 {
 	INFO info;
 
@@ -64,14 +63,14 @@ static void subfunc (io_t *io, const char *pfx, int leaf, const Type_t *type)
 	io_printf(io, "%s\n", type ? type->name : "NULL");
 
 	info.io = io;
-	info.ptr = (Type_t **) TypeTab.tab;
-	info.dim = TypeTab.dim;
+	info.entry = TypeTab.tab.data;
+	info.dim = TypeTab.tab.used;
 	info.pfx = pfx ? mstrpaste(NULL, pfx, leaf ? "    " : " |  ") : "";
 	next(&info, 1, type);
 	memfree(info.pfx);
 }
 
-void TypeTree (io_t *io, const Type_t *type)
+void TypeTree (IO *io, const EfiType *type)
 {
 	subfunc(io, NULL, 1, type);
 }

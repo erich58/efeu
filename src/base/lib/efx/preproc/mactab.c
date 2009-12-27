@@ -24,12 +24,12 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/preproc.h>
 #include <EFEU/stack.h>
 
-static ALLOCTAB(macdeftab, 0, sizeof(Macro_t));
+static ALLOCTAB(macdeftab, 0, sizeof(PPMacro));
 
 
-Macro_t *NewMacro(void)
+PPMacro *NewMacro (void)
 {
-	Macro_t *mac;
+	PPMacro *mac;
 
 	mac = new_data(&macdeftab);
 	mac->name = NULL;
@@ -45,35 +45,37 @@ Macro_t *NewMacro(void)
 }
 
 
-void DelMacro(Macro_t *mac)
+void DelMacro (void *ptr)
 {
+	PPMacro *mac = ptr;
+
 	if	(mac != NULL)
 	{
 		memfree(mac->name);
 		memfree(mac->repl);
 		memfree(mac->arg);
-		xdestroy(mac->tab, (clean_t) DelMacro);
+		rd_deref(mac->tab);
 		del_data(&macdeftab, mac);
 	}
 }
 
 
-xtab_t *MacroTab = NULL;
-static stack_t *MacroStack = NULL;
+NameKeyTab *MacroTab = NULL;
+static Stack *MacroStack = NULL;
 
 
-void PushMacroTab(xtab_t *tab)
+void PushMacroTab (NameKeyTab *tab)
 {
 	pushstack(&MacroStack, MacroTab);
 	MacroTab = tab;
 }
 
 
-xtab_t *PopMacroTab(void)
+NameKeyTab *PopMacroTab (void)
 {
 	if	(MacroStack != NULL)
 	{
-		xtab_t *x = MacroTab;
+		NameKeyTab *x = MacroTab;
 		MacroTab = popstack(&MacroStack, NULL);
 		return x;
 	}
@@ -81,34 +83,32 @@ xtab_t *PopMacroTab(void)
 }
 
 
-Macro_t *GetMacro(const char *name)
+PPMacro *GetMacro (const char *name)
 {
-	Macro_t key, *mac;
-	stack_t *x;
+	PPMacro *mac;
+	Stack *x;
 
 	if	(name == NULL)	return NULL;
 
-	key.name = (char *) name;
-
-	if	((mac = xsearch(MacroTab, &key, XS_FIND)))
+	if	((mac = nkt_fetch(MacroTab, name, NULL)))
 		return mac;
 
 	if	(MacroStack == NULL)
 		return NULL;
 
 	for (x = MacroStack; x != NULL; x = x->next)
-		if ((mac = xsearch(x->data, &key, XS_FIND)) != NULL)
+		if ((mac = nkt_fetch(x->data, name, NULL)) != NULL)
 			return mac;
 
 	return NULL;
 }
 
 
-void AddMacDef(MacDef_t *def, size_t dim)
+void AddMacDef (PPMacDef *def, size_t dim)
 {
 	int i;
-	io_t *io;
-	Macro_t *mac;
+	IO *io;
+	PPMacro *mac;
 
 	for (i = 0; i < dim; i++)
 	{
@@ -124,17 +124,40 @@ void AddMacDef(MacDef_t *def, size_t dim)
 }
 
 
-void AddMacro(Macro_t *def)
+void AddMacro (PPMacro *def)
 {
-	Macro_t *old;
-
 	if	(MacroTab == NULL)
 		MacroTab = NewMacroTab(0);
 
-	if	((old = xsearch(MacroTab, def, XS_REPLACE)) != NULL)
+	if	(nkt_fetch(MacroTab, def->name, NULL))
+		dbg_note(NULL, "[preproc:211]", "s", def->name);
+
+	nkt_insert(MacroTab, def->name, def);
+}
+
+void ShowMacro (IO *io, PPMacro *mac)
+{
+	if	(!mac)	return;
+
+	io_puts(mac->name, io);
+
+	if	(mac->hasarg)
+		io_printf(io, "[%d%s]", mac->dim, mac->vaarg ? "v" : "");
+
+	io_printf(io, " %#s\n", mac->repl);
+
+	if	(mac->dim)
 	{
-		DelMacro(old);
-		reg_cpy(1, def->name);
-		errmsg(PREPROC, 211);
+		IO *sub;
+		int i;
+
+		io_puts("{\n", io);
+		sub = io_lmark(rd_refer(io), "\t", NULL, 0);
+
+		for (i = 0; i < mac->dim; i++)
+			ShowMacro(sub, mac->arg[i]);
+
+		rd_deref(sub);
+		io_puts("}\n", io);
 	}
 }

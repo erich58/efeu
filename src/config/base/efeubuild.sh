@@ -102,39 +102,6 @@ do
 	fi
 done
 
-# get value of entry name in file 
-
-get_var ()	# usage: get_var name file
-{
-	grep "^$1" $2 | ( read name val; echo "$val")
-}
-
-# get project list in order of dependence
-# depend name '.' stands for no project
-# depend name '*' stands for all other projects
-
-get_plist ()	# usage: get_plist
-{
-	( cd $top/src; for x in *
-	do
-		if	[ -f $x/DESC ]; then
-			dep=`get_var Depend $x/DESC`
-			echo "$x	$dep"
-		fi
-	done ) | awk '
-BEGIN { printf(".\t.\n") }
-/setup/ { next }
-{
-	n = split($2,dep,",")
-
-	for (i = 1; i <= n; i++)
-		printf("%s\t%s\n", dep[i], $1)
-}
-$2 ~ /\*/ { next }
-{ printf("%s\t%s\n", $1, "*") }
-' | tsort | grep -v '^[.*]$'
-}
-
 # tools for Makefile entries
 
 mf_echo ()	# usage: mf_echo name desc
@@ -156,15 +123,9 @@ mf_rule ()	# usage: mf_rule name deps rule
 
 make_project ()	# usage: make_project src name deplist
 {
-	if [ "$3" != "." ]; then
-		deplist=`echo $3 | tr ',' ' '`
-	else
-		deplist=""
-	fi
-
 	mf_target all $2
 	mf_target clean $2.clean
-	mf_rule $2 "$deplist $2.d/Makefile" "( cd $2.d; make all )"
+	mf_rule $2 "$3 $2.d/Makefile" "( cd $2.d; make all )"
 	mf_rule $2.clean $2.d/Makefile "( cd $2.d; make clean )"
 	mf_rule $2.d "$1" "if [ ! -d \$@ ]; then mkdir -p \$@; fi; touch \$@"
 
@@ -172,14 +133,14 @@ make_project ()	# usage: make_project src name deplist
 		mf_rule $2.d/Makefile "$2.d $1/Configure" \
 			"( cd $1; ./Configure \$(TOP) ) > \$@"
 	elif [ -f $1/Makefile ]; then
-		cat >> Makefile <<!
+		cat >> Makefile <<EOF
 
 $2.d/Makefile: $2.d
 	@printf "all::\n\t(cd $1; make all)\n\n" > \$@
 	@printf "clean::\n\t(cd $1; make clean)\n\n" >> \$@
-!
+EOF
 	elif [ -f $1/Imakefile ]; then
-		cat >> Makefile <<!
+		cat >> Makefile <<EOF
 
 $2.d/Imakefile: $2.d $1/Imakefile
 	echo "TOP=	$top" > \$@
@@ -188,7 +149,7 @@ $2.d/Imakefile: $2.d $1/Imakefile
 
 $2.d/Makefile: $2.d $2.d/Imakefile
 	( cd $2.d; mkmf )
-!
+EOF
 	else
 		mf_rule $2.d/Makefile $2.d "( cd $2.d; dir2make $1 )"
 	fi
@@ -219,33 +180,14 @@ mf_target all init
 
 #	Projektliste aufarbeiten
 
-plist=""
 failed=""
 
-if
-	llab=`expr "$LANG" : '\([a-z][a-z]\).*'`
-then
-	llab="Label_$llab"
-else
-	llab="Label"
-fi
-
-for name in `get_plist`
+efeuprj -d $top/src/*/DESC | (while
+	read name dep
 do
 	full_name="$top/src/$name"
 
-	if
-		grep "$llab" $full_name/DESC > /dev/null
-	then
-		desc=`get_var $llab $full_name/DESC`
-	else
-		desc=`get_var Label $full_name/DESC`
-	fi
-
-	dep=`get_var Depend $full_name/DESC`
-
-	mf_target usage ""
-	mf_echo "$name" "$desc"
+	mf_rule usage: " " "@efeuprj $full_name/DESC"
 
 	if
 		[ -x $full_name/setup ]
@@ -258,19 +200,13 @@ do
 			:
 		else
 			failed="$failed $name"
-			mf_rule $name "" "(cd $full_name; ./setup)"
+			mf_rule $name " " "-(cd $full_name; ./setup)"
 			continue
 		fi
 	fi
 
-	if expr "X$dep" : ".*\*.*" > /dev/null; then
-		dep=`echo "$dep" | sed -e "s/\*/$plist/g"`
-	else
-		plist="$plist,$name"
-	fi
-
 	make_project "$full_name" "$name" "$dep"
-done
+done)
 
 printf "\n" >&2
 printf "$msg6" $gen

@@ -29,14 +29,14 @@ If not, write to the Free Software Foundation, Inc.,
 #define	NAME_FONT	IO_ITALIC_FONT
 
 
-static int show_farg (io_t *io, FuncArg_t *arg);
+static int show_farg (IO *io, EfiFuncArg *arg);
 
-static int lf_type (io_t *io, const Type_t *type, const char *repl)
+static int lf_type (IO *io, const EfiType *type, const char *repl)
 {
 	return io_puts(type ? type->name : repl, io);
 }
 
-static int lf_name (io_t *io, const char *name)
+static int lf_name (IO *io, const char *name)
 {
 	if	(name == NULL)
 		return 0;
@@ -46,7 +46,7 @@ static int lf_name (io_t *io, const char *name)
 }
 
 
-int ListFunc(io_t *io, Func_t *func)
+int ListFunc(IO *io, EfiFunc *func)
 {
 	int i, n;
 	char *p;
@@ -56,7 +56,7 @@ int ListFunc(io_t *io, Func_t *func)
 
 	n = 0;
 
-	if	(func->virtual)
+	if	(func->virfunc)
 		n += io_puts("virtual ", io);
 
 	switch (func->weight)
@@ -113,7 +113,7 @@ int ListFunc(io_t *io, Func_t *func)
 
 
 
-static int show_farg(io_t *io, FuncArg_t *arg)
+static int show_farg(IO *io, EfiFuncArg *arg)
 {
 	int n;
 

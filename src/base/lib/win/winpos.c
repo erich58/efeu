@@ -23,9 +23,9 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/efwin.h>
 #include <EFEU/efutil.h>
 
-WinSize_t WinSize_buf = { 0, 0, 0, 0, 0 };
+WinSize WinSize_buf = { 0, 0, 0, 0, 0 };
 
-WinSize_t *CheckSize (WinSize_t *wp)
+WinSize *CheckSize (WinSize *wp)
 {
 	if	(wp)	return wp;
 
@@ -37,14 +37,14 @@ WinSize_t *CheckSize (WinSize_t *wp)
 	return &WinSize_buf;
 }
 
-WinSize_t *Frame (WinSize_t *wp)
+WinSize *Frame (WinSize *wp)
 {
 	wp = CheckSize(wp);
 	wp->flags |= W_FRAME;
 	return wp;
 }
 
-WinSize_t *WindowSize(int height, int width, int flags, int y, int x)
+WinSize *WindowSize(int height, int width, int flags, int y, int x)
 {
 	WinSize_buf.height = height;
 	WinSize_buf.width = width;
@@ -54,7 +54,7 @@ WinSize_t *WindowSize(int height, int width, int flags, int y, int x)
 	return &WinSize_buf;
 }
 
-WinSize_t *CenterPos(int height, int width)
+WinSize *CenterPos(int height, int width)
 {
 	WinSize_buf.height = height;
 	WinSize_buf.width = width;
@@ -64,7 +64,7 @@ WinSize_t *CenterPos(int height, int width)
 	return &WinSize_buf;
 }
 
-WinSize_t *Rand48Pos(int height, int width)
+WinSize *Rand48Pos(int height, int width)
 {
 	WinSize_buf.height = height;
 	WinSize_buf.width = width;
@@ -74,7 +74,7 @@ WinSize_t *Rand48Pos(int height, int width)
 	return &WinSize_buf;
 }
 
-WinSize_t *CurrentPos (WINDOW *win, int height, int width, int flags)
+WinSize *CurrentPos (WINDOW *win, int height, int width, int flags)
 {
 	WinSize_buf.height = height;
 	WinSize_buf.width = width;

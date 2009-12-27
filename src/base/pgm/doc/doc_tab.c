@@ -24,9 +24,12 @@ If not, write to the Free Software Foundation, Inc.,
 #include <ctype.h>
 
 
-static void tabcmd (Doc_t *doc, char *arg)
+static void tabcmd (Doc *doc, char *arg)
 {
-	char  *p;
+	char *p;
+
+	io_ctrl(doc->out, DOC_CMD,
+		DOC_TAB_SPECIAL, arg);
 
 	for (p = arg; *p != 0; p++)
 	{
@@ -59,7 +62,7 @@ static void tabcmd (Doc_t *doc, char *arg)
 	memfree(arg);
 }
 
-static void colend (Doc_t *doc, int flag)
+static void colend (Doc *doc, int flag)
 {
 	if	(flag & 2)
 		io_ctrl(doc->out, DOC_END, DOC_ENV_MCOL);
@@ -70,7 +73,7 @@ static void colend (Doc_t *doc, int flag)
 	doc->env.cpos = 0;
 }
 
-static void tabline (Doc_t *doc, io_t *in)
+static void tabline (Doc *doc, IO *in)
 {
 	int c, flag;
 	char *arg;
@@ -140,7 +143,7 @@ static void tabline (Doc_t *doc, io_t *in)
 	io_putc('\n', doc->out);
 }
 
-void Doc_tab (Doc_t *doc, io_t *in, const char *opt, const char *arg)
+void Doc_tab (Doc *doc, IO *in, const char *opt, const char *arg)
 {
 	int c;
 

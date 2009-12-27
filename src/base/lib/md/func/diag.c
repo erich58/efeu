@@ -4,7 +4,7 @@
 
 #include <EFEU/mdmat.h>
 
-static void do_md_diag(Type_t *type, mdaxis_t *x2, mdaxis_t *x1, char *p2, char *p1)
+static void do_md_diag(EfiType *type, mdaxis *x2, mdaxis *x1, char *p2, char *p1)
 {
 	int i;
 	size_t size;
@@ -34,10 +34,10 @@ static void do_md_diag(Type_t *type, mdaxis_t *x2, mdaxis_t *x1, char *p2, char 
 }
 
 
-mdmat_t *md_diag(mdmat_t *md, const char *def)
+mdmat *md_diag(mdmat *md, const char *def)
 {
-	mdmat_t *m2;
-	mdaxis_t *x, **ptr;
+	mdmat *m2;
+	mdaxis *x, **ptr;
 
 	if	(md == NULL)	return NULL;
 

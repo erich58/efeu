@@ -5,7 +5,7 @@
 \title	Die Readline-Schnittstelle
 Handbuch für Programmierer
 
-\intro
+\preface
 Die Programmbiliothek |iorl| definiert eine Schnittstelle
 zur Readline-Bibliothek über eine IO-Struktur.
 

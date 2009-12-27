@@ -31,9 +31,9 @@ Die Funktion |$1| filtert die zur lokalen Sprache zugehörigen Teile
 aus dem String <str> und gibt in nach <out> aus.
 */
 
-int io_langputs (const char *str, io_t *out)
+int io_langputs (const char *str, IO *out)
 {
-	io_t *in = langfilter(io_cstr(str), NULL);
+	IO *in = langfilter(io_cstr(str), NULL);
 	int n = io_copy(in, out);
 	io_close(in);
 	return n;
@@ -44,5 +44,5 @@ $SeeAlso
 \mref{langfilter(3)},
 \mref{io_puts(3)},
 \mref{io(7)},
-\mref{LangType(7)}.\br
+\mref{LangDef(7)}.\br
 */

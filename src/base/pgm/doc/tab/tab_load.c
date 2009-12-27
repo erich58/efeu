@@ -33,32 +33,32 @@ If not, write to the Free Software Foundation, Inc.,
 /*	Ladebefehle
 */
 
-typedef void (*LoadFunc_t) (DocTab_t *tab, io_t *in, strbuf_t *desc);
+typedef void (*LoadFunc) (DocTab *tab, IO *in, StrBuf *desc);
 
-static char *get_data (strbuf_t *buf)
+static char *get_data (StrBuf *buf)
 {
 	return buf->pos ? mstrncpy((char *) buf->data, buf->pos) : NULL;
 }
 
 
-static void cmd_eval (DocTab_t *tab, io_t *in, strbuf_t *desc)
+static void cmd_eval (DocTab *tab, IO *in, StrBuf *desc)
 {
-	io_t *io = io_cmdpreproc(io_mstr(DocParseExpr(in)));
+	IO *io = io_cmdpreproc(io_mstr(DocParseExpr(in)));
 	CmdEvalFunc(io, NULL, 0);
 	io_close(io);
 }
 
-static void cmd_load (DocTab_t *tab, io_t *in, strbuf_t *desc)
+static void cmd_load (DocTab *tab, IO *in, StrBuf *desc)
 {
 	char *p = DocParseLine(in, 0);
 	DocTab_fload(tab, p);
 	memfree(p);
 }
 
-static char *get_desc (strbuf_t *buf)
+static char *get_desc (StrBuf *buf)
 {
-	io_t *io;
-	strbuf_t *desc;
+	IO *io;
+	StrBuf *desc;
 	int c;
 
 	sb_setpos(buf, 0);
@@ -72,7 +72,7 @@ static char *get_desc (strbuf_t *buf)
 	return sb2str(desc);
 }
 
-void DocTab_def (DocTab_t *tab, io_t *in, strbuf_t *buf)
+void DocTab_def (DocTab *tab, IO *in, StrBuf *buf)
 {
 	char *name;
 	
@@ -84,21 +84,22 @@ void DocTab_def (DocTab_t *tab, io_t *in, strbuf_t *buf)
 		DocTab_setmac(tab, name, get_desc(buf), DocParseExpr(in));
 		break;
 	default:
-		io_message(in, MSG_DOC, 21, 0);
+		io_note(in, "[Doc:21]", NULL);
 		memfree(DocParseLine(in, 0));
 		break;
 	}
 }
 
-static void cmd_show (DocTab_t *tab, io_t *in, strbuf_t *desc)
+static void cmd_show (DocTab *tab, IO *in, StrBuf *desc)
 {
-	reg_set(1, get_data(desc));
-	io_psub(ioerr, "---- show\n$1****\n");
+	char *p = get_data(desc);
+	io_printf(ioerr, "---- show\n%s****\n", p);
+	memfree(p);
 }
 
 static struct {
 	char *name;
-	LoadFunc_t func;
+	LoadFunc func;
 } ctab[] = {
 	{ "eval",	cmd_eval },
 	{ "def",	DocTab_def },
@@ -106,7 +107,7 @@ static struct {
 	{ "show",	cmd_show },
 };
 
-static LoadFunc_t get_func (const char *name)
+static LoadFunc get_func (const char *name)
 {
 	int i;
 
@@ -118,7 +119,7 @@ static LoadFunc_t get_func (const char *name)
 }
 
 
-static void copy_verb (io_t *in, strbuf_t *buf)
+static void copy_verb (IO *in, StrBuf *buf)
 {
 	int c;
 	
@@ -145,12 +146,12 @@ static void copy_verb (io_t *in, strbuf_t *buf)
 /*	Befehlsdefinitionen laden
 */
 
-void DocTab_load (DocTab_t *tab, io_t *io)
+void DocTab_load (DocTab *tab, IO *io)
 {
 	int c, last, flag;
 	char *p;
-	strbuf_t *desc;
-	LoadFunc_t func;
+	StrBuf *desc;
+	LoadFunc func;
 
 	desc = new_strbuf(0);
 	flag = 0;
@@ -223,7 +224,7 @@ void DocTab_load (DocTab_t *tab, io_t *io)
 	io_close(io);
 }
 
-void DocTab_fload (DocTab_t *tab, const char *name)
+void DocTab_fload (DocTab *tab, const char *name)
 {
 	if	(tab && name)
 		DocTab_load(tab, io_lnum(io_findopen(CFGPATH, name,

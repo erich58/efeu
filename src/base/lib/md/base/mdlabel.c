@@ -10,61 +10,57 @@ typedef struct {
 	int idx;
 } KEY;
 
-static ALLOCTAB(key_tab, 32, sizeof(KEY));
-static ALLOCTAB(label_tab, 32, sizeof(MdLabel_t));
-
+static ALLOCTAB(label_tab, 32, sizeof(MdLabel));
 
 static void del_key (void *ptr);
-static int get_idx (xtab_t *tab, const char *name);
-static mdaxis_t *idx2axis (xtab_t *tab, const char *name);
+static int get_idx (VecBuf *tab, const char *name);
+static mdaxis *idx2axis (VecBuf *tab, const char *name);
 
-static void del_key(void *ptr)
+static void del_key (void *ptr)
 {
 	memfree(((KEY *) ptr)->name);
-	del_data(&key_tab, ptr);
 }
 
-
-static mdaxis_t *idx2axis(xtab_t *tab, const char *name)
+static int cmp_key (const void *a, const void *b)
 {
-	mdaxis_t *x;
-	int i;
+	return mstrcmp(((const KEY *) a)->name, ((const KEY *) b)->name);
+}
 
-	x = new_axis(tab->dim);
+static mdaxis *idx2axis (VecBuf *vb, const char *name)
+{
+	KEY *key;
+	mdaxis *x;
+	int n;
+
+	x = new_axis(vb->used);
 	x->name = mstrcpy(name);
 
-	for (i = 0; i < tab->dim; i++)
-	{
-		KEY *key;
-
-		key = tab->tab[i];
+	for (key = vb->data, n = vb->used; n-- > 0; key++)
 		x->idx[key->idx].name = mstrcpy(key->name);
-	}
 
 	return x;
 }
 
 
-static int get_idx(xtab_t *tab, const char *name)
+static int get_idx (VecBuf *vb, const char *name)
 {
-	KEY *x, *y;
+	if	(vb)
+	{
+		KEY key, *ptr;
 
-	if	(tab == NULL)	return 0;
-
-	x = new_data(&key_tab);
-	x->name = mstrcpy(name);
-	x->idx = tab->dim;
-	y = xsearch(tab, x, XS_ENTER);
-
-	if	(x != y)	del_key(x);
-
-	return (y ? y->idx : 0);
+		key.name = mstrcpy(name);
+		key.idx = vb->used;
+		ptr = vb_search(vb, &key, cmp_key, VB_ENTER);
+		memfree(key.name);
+		return (ptr ? ptr->idx : 0);
+	}
+	else	return 0;
 }
 
 
-MdLabel_t *new_label(void)
+MdLabel *new_label (void)
 {
-	MdLabel_t *x;
+	MdLabel *x;
 
 	x = new_data(&label_tab);
 	x->next = NULL;
@@ -72,25 +68,25 @@ MdLabel_t *new_label(void)
 	x->len = 0;
 	x->dim = 0;
 	x->list = NULL;
-	x->idx = xcreate(0, skey_cmp);
+	vb_init(&x->idxtab, 1024, sizeof(KEY));
 	return x;
 }
 
 
-void del_label(MdLabel_t *x)
+void del_label (MdLabel *x)
 {
 	del_label(x->next);
-	xdestroy(x->idx, del_key);
+	vb_clean(&x->idxtab, del_key);
 	del_data(&label_tab, x);
 }
 
 
-MdLabel_t *set_label(const char *def)
+MdLabel *set_label (const char *def)
 {
-	mdlist_t *list, *l;
-	MdLabel_t *label, **ptr;
+	mdlist *list, *l;
+	MdLabel *label, **ptr;
 
-	list = mdlist(def, MDLIST_NAMEOPT);
+	list = str2mdlist(def, MDLIST_NAMEOPT);
 	label = NULL;
 	ptr = &label;
 
@@ -108,12 +104,12 @@ MdLabel_t *set_label(const char *def)
 }
 
 
-MdLabel_t *init_label(const char *name, const char *def)
+MdLabel *init_label (const char *name, const char *def)
 {
 	int dim;
 	int i;
 	char **list;
-	MdLabel_t *label, **ptr;
+	MdLabel *label, **ptr;
 	char *fmt;
 
 	dim = strsplit(def, ".", &list);
@@ -132,16 +128,16 @@ MdLabel_t *init_label(const char *name, const char *def)
 }
 
 
-mdaxis_t *label2axis(MdLabel_t *label)
+mdaxis *label2axis (MdLabel *label)
 {
-	mdaxis_t *axis, **ptr;
+	mdaxis *axis, **ptr;
 
 	axis = NULL;
 	ptr = &axis;
 
 	while (label != NULL)
 	{
-		*ptr = idx2axis(label->idx, label->name);
+		*ptr = idx2axis(&label->idxtab, label->name);
 		ptr = &(*ptr)->next;
 		label = label->next;
 	}
@@ -150,7 +146,7 @@ mdaxis_t *label2axis(MdLabel_t *label)
 }
 
 
-int save_label(io_t *tmp, MdLabel_t *label, char *p)
+int save_label (IO *tmp, MdLabel *label, char *p)
 {
 	char *x;
 	int i;
@@ -166,7 +162,7 @@ int save_label(io_t *tmp, MdLabel_t *label, char *p)
 
 		if	(label->next == NULL)
 		{
-			i = get_idx(label->idx, p);
+			i = get_idx(&label->idxtab, p);
 			io_putc((i >> 8) & 0xFF, tmp);
 			io_putc(i & 0xFF, tmp);
 			break;
@@ -184,7 +180,7 @@ int save_label(io_t *tmp, MdLabel_t *label, char *p)
 			}
 		}
 
-		i = get_idx(label->idx, x);
+		i = get_idx(&label->idxtab, x);
 		io_putc((i >> 8) & 0xFF, tmp);
 		io_putc(i & 0xFF, tmp);
 		label = label->next;

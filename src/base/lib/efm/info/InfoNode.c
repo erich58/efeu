@@ -27,7 +27,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	INFO_BSIZE	16
 
-static InfoNode_t root = {
+static InfoNode root = {
 	NULL,
 	NULL,
 	NULL,
@@ -35,15 +35,17 @@ static InfoNode_t root = {
 	NULL,
 };
 
-static int cmp_info(const InfoNode_t **a, const InfoNode_t **b)
+static int cmp_info(const void *pa, const void *pb)
 {
+	InfoNode * const *a = pa;
+	InfoNode * const *b = pb;
 	return mstrcmp((*a)->name, (*b)->name);
 }
 
-static InfoNode_t *get_info (InfoNode_t *base, const char *name, char **nptr)
+static InfoNode *get_info (InfoNode *base, const char *name, char **nptr)
 {
 	char *ptr;
-	InfoNode_t ibuf, *info, **ip;
+	InfoNode ibuf, *info, **ip;
 
 	if	(!base || (name && *name == INFO_SEP))
 		base = &root;
@@ -81,7 +83,7 @@ static InfoNode_t *get_info (InfoNode_t *base, const char *name, char **nptr)
 		}
 
 		info = &ibuf;
-		ip = vb_search(base->list, &info, (comp_t) cmp_info, VB_SEARCH);
+		ip = vb_search(base->list, &info, cmp_info, VB_SEARCH);
 		memfree(ibuf.name);
 
 		if	(ip)
@@ -97,10 +99,10 @@ static InfoNode_t *get_info (InfoNode_t *base, const char *name, char **nptr)
 	return base;
 }
 
-InfoNode_t *GetInfo (InfoNode_t *base, const char *name)
+InfoNode *GetInfo (InfoNode *base, const char *name)
 {
 	char *ptr;
-	InfoNode_t *info;
+	InfoNode *info;
 
 	info = get_info(base, name, &ptr);
 
@@ -115,10 +117,10 @@ InfoNode_t *GetInfo (InfoNode_t *base, const char *name)
 	return info;
 }
 
-InfoNode_t *AddInfo (InfoNode_t *base, const char *name,
-	const char *label, PrintInfo_t func, void *par)
+InfoNode *AddInfo (InfoNode *base, const char *name,
+	const char *label, void (*func) (IO *io, InfoNode *info), void *par)
 {
-	InfoNode_t *info, **ip;
+	InfoNode *info, **ip;
 	char *ptr;
 
 	base = get_info(base, name, &ptr);
@@ -136,12 +138,12 @@ InfoNode_t *AddInfo (InfoNode_t *base, const char *name,
 	{
 		if	(base->list == NULL)
 		{
-			base->list = memalloc(sizeof(vecbuf_t));
-			vb_init(base->list, INFO_BSIZE, sizeof(InfoNode_t *));
+			base->list = memalloc(sizeof(VecBuf));
+			vb_init(base->list, INFO_BSIZE, sizeof(InfoNode *));
 		}
 
 		info = NewInfo(base, InfoNameToken(&ptr));
-		ip = vb_search(base->list, &info, (comp_t) cmp_info, VB_ENTER);
+		ip = vb_search(base->list, &info, cmp_info, VB_ENTER);
 		base = *ip;
 	}
 

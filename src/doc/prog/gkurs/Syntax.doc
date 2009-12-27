@@ -121,10 +121,10 @@ Die folgenden Präprozessordirektiven können verwendet werden:
 
 \ssec	Systemaufrufe
 
-Im interarktiven Modus können Systemaufrufe direkt eingegeben werden.
-Als Startzeichen ist wie für die im vorigem Kapitel beschriebenen
-readline-Kommandos ein Rufzeichen einzugeben, z.B:
-	|!ls -l|
-
-In Skripts werden Systemkommandos mit der Funktion |system|
-abgesetzt.
+Systemaufrufe können direkt in EFEU-Skripts eingebaut werden.
+Jede Zeile, die mit einem |!| beginnt, wird als Systemaufruf
+interpretiert. Ausnahmen davon sind nur readline-Kommandos
+im interaktiven Modus. In die Befehlszeile können Parameter
+mit der üblichen Parametersubstitution eingebaut werden
+(Vergleiche dazu \mref{parsub}). Alternativ dazu steht die Funktion
+|system()| zur Verfügung.

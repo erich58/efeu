@@ -23,7 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <efeudoc.h>
 #include <ctype.h>
 
-int DocSkipSpace (io_t *in, int flag)
+int DocSkipSpace (IO *in, int flag)
 {
 	int c;
 
@@ -36,7 +36,7 @@ int DocSkipSpace (io_t *in, int flag)
 	return c;
 }
 
-int DocSkipWhite (io_t *in)
+int DocSkipWhite (IO *in)
 {
 	int c;
 

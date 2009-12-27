@@ -1,5 +1,6 @@
 /*
-Zeitreihenanalyse
+:*:time series
+:de:Zeitreihenanalyse
 
 $Header <Math/$1>
 
@@ -26,7 +27,6 @@ If not, write to the Free Software Foundation, Inc.,
 #define	Math_TimeSeries_h	1
 
 #include <EFEU/config.h>
-#include <EFEU/types.h>
 #include <EFEU/refdata.h>
 #include <EFEU/object.h>
 #include <EFEU/mdmat.h>
@@ -46,58 +46,65 @@ If not, write to the Free Software Foundation, Inc.,
 typedef struct {
 	unsigned type : 8;	/* Zeiteinheit */
 	unsigned value : 24;	/* Zeitwert */
-} TimeIndex_t;
+} TimeIndex;
 
 
-int TimeIndexType (const char *name);
+int tindex_type (const char *name);
 
-TimeIndex_t TimeIndex (int type, int value);
-TimeIndex_t str2TimeIndex (const char *str);
-int PrintTimeIndex (io_t *io, TimeIndex_t idx, int offset);
-char *TimeIndex2str (TimeIndex_t idx, int offset);
-TimeIndex_t TimeIndexKonv (TimeIndex_t idx, int type, int pos);
-int DiffTimeIndex (TimeIndex_t a, TimeIndex_t b);
-int TimeIndexLength (TimeIndex_t idx);
-int TimeIndexYear (TimeIndex_t idx);
-int TimeIndexMonth (TimeIndex_t idx);
-int TimeIndexDay (TimeIndex_t idx);
-int TimeIndexFloor (TimeIndex_t idx);
-int TimeIndexCeil (TimeIndex_t idx);
+TimeIndex tindex_create (int type, int value);
+TimeIndex str2TimeIndex (const char *str);
+int tindex_print (IO *io, TimeIndex idx, int offset);
+char *TimeIndex2str (TimeIndex idx, int offset);
+TimeIndex tindex_conv (TimeIndex idx, int type, int pos);
+int tindex_diff (TimeIndex a, TimeIndex b);
+int tindex_length (TimeIndex idx);
+int tindex_year (TimeIndex idx);
+int tindex_month (TimeIndex idx);
+int tindex_day (TimeIndex idx);
+int tindex_floor (TimeIndex idx);
+int tindex_ceil (TimeIndex idx);
 
-double TimeIndex2dbl (TimeIndex_t idx, int offset, int pos);
+double TimeIndex2dbl (TimeIndex idx, int offset, int pos);
 
 
 /*	Zeitreihenstruktur
 */
 
 typedef struct {
-	REFVAR;			/* Referenzvariablen */
-	char *name;		/* Name der Zeitreihe */
-	double *data;		/* Datenwerte */
-	TimeIndex_t base;	/* Zeitbasis */
-	size_t dim;		/* Zeitreihenlänge */
-	size_t size;		/* Speicherfeldgröße */
-	char *fmt;		/* Darstellungsformat */
-} TimeSeries_t;
+	REFVAR;		/* Referenzvariablen */
+	char *name;	/* Name der Zeitreihe */
+	double *data;	/* Datenwerte */
+	TimeIndex base;	/* Zeitbasis */
+	size_t dim;	/* Zeitreihenlänge */
+	size_t size;	/* Speicherfeldgröße */
+	char *fmt;	/* Darstellungsformat */
+} TimeSeries;
 
-extern reftype_t TimeSeries_reftype;
+extern RefType TimeSeries_reftype;
 
-TimeSeries_t *NewTimeSeries (const char *name, TimeIndex_t idx, size_t dim);
-void ExpandTimeSeries (TimeSeries_t *ts, size_t dim);
-void SyncTimeSeries (TimeSeries_t *ts, TimeIndex_t idx, size_t dim);
+TimeSeries *ts_create (const char *name, TimeIndex idx, size_t dim);
+void ts_expand (TimeSeries *ts, size_t dim);
+void ts_sync (TimeSeries *ts, TimeIndex idx, size_t dim, int offset);
 
-TimeSeries_t *CopyTimeSeries (const char *name, const TimeSeries_t *ts,
+TimeSeries *ts_copy (const char *name, const TimeSeries *ts,
 	int a, int b);
-int PrintTimeSeries (io_t *io, const TimeSeries_t *ts, const char *fmt);
 
-TimeSeries_t *DiffTimeSeries (TimeSeries_t *ts, int lag, VirFunc_t *func);
-void CumulateTimeSeries (TimeSeries_t *ts, TimeSeries_t *base, VirFunc_t *func);
+TimeSeries *ts_read (IO *io);
+int ts_write (IO *io, const TimeSeries *ts);
+int ts_print (IO *io, const TimeSeries *ts, const char *fmt);
 
-TimeSeries_t *KonvTimeSeries (const char *name, TimeSeries_t *ts,
+TimeSeries *ts_diff (TimeSeries *ts, int lag, EfiVirFunc *func);
+void ts_cumulate (TimeSeries *ts, TimeSeries *base, EfiVirFunc *func);
+
+TimeSeries *ts_ma (TimeSeries *ts, int n, int adjust);
+void ts_ima (TimeSeries *ts, TimeSeries *base, int adjust);
+
+TimeSeries *ts_convert (const char *name, TimeSeries *ts,
 	int type, const char *flags);
 
-double TimeSeriesValue (TimeSeries_t *ts, TimeIndex_t idx, double defval);
-mdmat_t *TimeSeries2mdmat (TimeSeries_t *ts);
+
+double ts_value (TimeSeries *ts, TimeIndex idx, double defval);
+mdmat *TimeSeries2mdmat (TimeSeries *ts);
 
 
 /*	Lineare Regression
@@ -107,7 +114,7 @@ typedef struct {
 	char *name;	/* Variablenname */
 	double val;	/* Datenwert */
 	double se;	/* Standardfehler */
-} OLSKoef_t;
+} OLSCoeff;
 
 
 typedef struct {
@@ -119,50 +126,57 @@ typedef struct {
 	double dw;	/* Durbin Watson */
 	double see;	/* SEE */
 	size_t dim;		/* Zahl der exogenen Variablen */
-	OLSKoef_t *koef;	/* Koeffizientenvektor */
-	TimeSeries_t **exogen;	/* Exogene Variablen */
-	TimeSeries_t *res;	/* Residuen */
-	TimeIndex_t base;	/* Basis der Schätzperiode */
-	TimeIndex_t first;	/* Erster Index für Projektionen */
-	TimeIndex_t last;	/* Letzter Index für Projektionen */
-} OLSPar_t;
+	OLSCoeff *koef;	/* Koeffizientenvektor */
+	TimeSeries **exogen;	/* Exogene Variablen */
+	TimeSeries *res;	/* Residuen */
+	TimeIndex base;	/* Basis der Schätzperiode */
+	TimeIndex first;	/* Erster Index für Projektionen */
+	TimeIndex last;	/* Letzter Index für Projektionen */
+} OLSPar;
 
-OLSPar_t *NewOLSPar (size_t dim);
+OLSPar *OLSPar_create (size_t dim);
 
-void Func_OLS (Func_t *func, void *rval, void **arg);
-void Func_OLSProj (Func_t *func, void *rval, void **arg);
+void Func_OLS (EfiFunc *func, void *rval, void **arg);
+void Func_OLSProj (EfiFunc *func, void *rval, void **arg);
 
-int PrintOLSKoef (io_t *io, OLSKoef_t *koef);
-int PrintOLSPar (io_t *io, OLSPar_t *par);
+int OLSCoeff_print (IO *io, OLSCoeff *koef);
+int OLSPar_print (IO *io, OLSPar *par);
 
-extern reftype_t OLSPar_reftype;
+extern RefType OLSPar_reftype;
 
 
 /*	Schnittstelle zum Interpreter
 */
 
-extern Type_t Type_TimeSeries;
-extern Type_t Type_TimeIndex;
-extern Type_t Type_OLSKoef;
-extern Type_t Type_OLSPar;
+extern EfiType Type_TimeSeries;
+extern EfiType Type_TimeIndex;
+extern EfiType Type_OLSCoeff;
+extern EfiType Type_OLSPar;
 
-#define	Val_TimeIndex(x)	((TimeIndex_t *) x)[0]
-#define	Val_TimeSeries(x)	((TimeSeries_t **) x)[0]
-#define	Val_OLSKoef(x)		((OLSKoef_t *) x)[0]
-#define	Val_OLSPar(x)		((OLSPar_t **) x)[0]
+#define	Val_TimeIndex(x)	((TimeIndex *) x)[0]
+#define	Val_TimeSeries(x)	((TimeSeries **) x)[0]
+#define	Val_OLSCoeff(x)		((OLSCoeff *) x)[0]
+#define	Val_OLSPar(x)		((OLSPar **) x)[0]
 
 void SetupTimeSeries (void);
 
 void CmdSetup_TimeIndex (void);
 void CmdSetup_TimeSeries (void);
-void CmdSetup_OLSKoef (void);
+void CmdSetup_OLSCoeff (void);
 void CmdSetup_OLSPar (void);
 
-void AssignTimeSeries (VirFunc_t *fptr, TimeSeries_t *ts,
-	Type_t *type2, void *arg2);
-TimeSeries_t *TimeSeriesFunc (VirFunc_t *fptr, TimeSeries_t *ts);
-TimeSeries_t *TimeSeriesTerm (VirFunc_t *fptr,
-	Type_t *type1, void *arg1,
-	Type_t *type2, void *arg2);
+void ts_assign (EfiVirFunc *fptr, TimeSeries *ts,
+	EfiType *type2, void *arg2);
+TimeSeries *ts_func (EfiVirFunc *fptr, TimeSeries *ts);
+TimeSeries *ts_term (EfiVirFunc *fptr,
+	EfiType *type1, void *arg1,
+	EfiType *type2, void *arg2);
+
+TimeSeries *ts_seasonal (const char *name, const TimeSeries *ts, int p);
+
+TimeSeries *ExpSmoothing (const char *name, const TimeSeries *ts,
+	double alpha, double sw, int k);
+double ExpSmoothingError (const TimeSeries *ts, double alpha, double sw);
+double ExpSmoothingInitial (const TimeSeries *ts, double alpha);
 
 #endif	/* Math/TimeSeries.h */

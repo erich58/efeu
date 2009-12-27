@@ -23,28 +23,28 @@ If not, write to the Free Software Foundation, Inc.,
 #include <term.h>
 #include <efeudoc.h>
 
-static ALLOCTAB(stack_tab, 32, sizeof(TermVar_t));
+static ALLOCTAB(Stackab, 32, sizeof(TermVar));
 
-static void TermVar_copy(TermVar_t *tg, TermVar_t *src)
+static void TermVar_copy(TermVar *tg, TermVar *src)
 {
 	tg->next = src->next;
 	tg->margin = src->margin;
 	tg->caption = src->caption;
 }
 
-extern void term_push (term_t *trm)
+extern void term_push (Term *trm)
 {
-	TermVar_t *par = new_data(&stack_tab);
+	TermVar *par = new_data(&Stackab);
 	TermVar_copy(par, &trm->var);
 	trm->var.next = par;
 }
 
-extern void term_pop (term_t *trm)
+extern void term_pop (Term *trm)
 {
 	if	(trm->var.next)
 	{
-		TermVar_t *par = trm->var.next;
+		TermVar *par = trm->var.next;
 		TermVar_copy(&trm->var, par);
-		del_data(&stack_tab, par);
+		del_data(&Stackab, par);
 	}
 }

@@ -25,40 +25,14 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/preproc.h>
 #include <EFEU/pconfig.h>
 #include <EFEU/ioctrl.h>
+#include <EFEU/efutil.h>
 #include <ctype.h>
 
-static iocpy_t mcpy_delim[] = {
-	{ "/", "\n", 1, iocpy_cskip },
-	{ "\n", NULL, 0, NULL },
-	{ "!%s", NULL, 0, NULL },
-};
+#define	PROMPT	"( >>> "
 
-
-static iocpy_t mcpy_mac[] = {
-	{ "/", "\n", 1, iocpy_cskip },
-	{ "\\", "#", 0, iocpy_esc },
-	{ "\\", "!", 1, iocpy_esc },
-	{ "\n", NULL, 0, NULL },
-	{ "%a_", "!%n_", 0, iocpy_macsub },
-	{ "\"", "\"", 1, iocpy_str },
-	{ "'",	"'", 1, iocpy_str },
-};
-
-static iocpy_t mcpy_mac2[] = {
-	{ "/", "\n", 1, iocpy_cskip },
-	{ "\\", "#", 0, iocpy_esc },
-	{ "\\", "!", 1, iocpy_esc },
-	{ "\n", NULL, 0, NULL },
-	{ "%a_", "!%n_", 0, iocpy_macsub },
-	{ "\"", "\"", 1, iocpy_strmacsub },
-	{ "'",	"'", 1, iocpy_strmacsub },
-};
-
-
-int io_macsub(io_t *in, io_t *out, const char *delim)
+int io_macsub (IO *in, IO *out, const char *delim)
 {
-	int c;
-	int n;
+	int c, n;
 
 	n = 0;
 
@@ -85,31 +59,33 @@ int io_macsub(io_t *in, io_t *out, const char *delim)
 	return n;
 }
 
-
-int io_fmacsub(const char *fmt, io_t *out)
+int macsub_repl (PPMacro *mac, IO *out, char **arg, int narg)
 {
-	return iocpyfmt(fmt, out, mcpy_mac, tabsize(mcpy_mac));
+	IO *in;
+	int c, n;
+
+	in = io_cstr(mac->repl);
+	n = 0;
+
+	while ((c = io_skipcom(in, NULL, 0)) != EOF)
+	{
+		if	(isalpha(c) || c == '_')
+			n += iocpy_macsub(in, out, c, "!%n_", 1);
+		else if	(io_putc(c, out) != EOF)
+			n++;
+	}
+
+	io_close(in);
+	return n;
 }
 
-char *macsub(const char *fmt)
-{
-	return miocpyfmt(fmt, mcpy_mac, tabsize(mcpy_mac));
-}
-
-
-
-int macsub_repl (Macro_t *mac, io_t *io, char **arg, int narg)
-{
-	return iocpyfmt(mac->repl, io, mcpy_mac2, tabsize(mcpy_mac2));
-}
-
-int macsub_def (Macro_t *mac, io_t *io, char **arg, int narg)
+int macsub_def (PPMacro *mac, IO *io, char **arg, int narg)
 {
 	return io_puts(GetMacro(arg[0]) ? "1" : "0", io);
 }
 
 
-int macsub_subst (Macro_t *mac, io_t *io, char **arg, int narg)
+int macsub_subst (PPMacro *mac, IO *io, char **arg, int narg)
 {
 	int i, n;
 
@@ -122,7 +98,7 @@ int macsub_subst (Macro_t *mac, io_t *io, char **arg, int narg)
 	}
 
 	PushMacroTab(mac->tab);
-	n = iocpyfmt(mac->repl, io, mcpy_mac2, tabsize(mcpy_mac2));
+	n = macsub_repl(mac, io, NULL, 0);
 	PopMacroTab();
 
 	for (i = 0; i < mac->dim; i++)
@@ -135,16 +111,45 @@ int macsub_subst (Macro_t *mac, io_t *io, char **arg, int narg)
 	return n;
 }
 
-
-int iocpy_macsub(io_t *in, io_t *out, int c, const char *arg, unsigned int flags)
+static int nextarg (IO *in, StrBuf *sb)
 {
-	char *s;
+	IO *out;
+	int c;
+
+	sb_setpos(sb, 0);
+	out = io_strbuf(sb);
+
+	while ((c = io_skipcom(in, NULL, 0)) != EOF)
+	{
+		if	(isalpha(c) || c == '_')
+			iocpy_macsub(in, out, c, "!%n_", 1);
+		else if (c == '(')
+			iocpy_brace(in, out, c, ")", 1);
+		else if (c == '[')
+			iocpy_brace(in, out, c, "]", 1);
+		else if (c == '{')
+			iocpy_brace(in, out, c, "}", 1);
+		else if (c == '"')
+			iocpy_str(in, out, c, "\"", 1);
+		else if (c == '\'')
+			iocpy_str(in, out, c, "'", 1);
+		else if	(c == ',' || c == ')')
+			break;
+		else	io_putc(c, out);
+	}
+
+	rd_deref(out);
+	return c;
+}
+
+int iocpy_macsub (IO *in, IO *out, int c,
+	const char *arg, unsigned int flags)
+{
 	int n;
-	Macro_t *mac;
-	char **macarg;
-	int narg;
-	int i;
-	strbuf_t *sb;
+	PPMacro *mac;
+	char *prompt;
+	StrBuf *sb;
+	VecBuf argv;
 
 	sb = new_strbuf(0);
 	sb_putc(c, sb);
@@ -159,100 +164,58 @@ int iocpy_macsub(io_t *in, io_t *out, int c, const char *arg, unsigned int flags
 		else	sb_putc(c, sb);
 	}
 
-	s = sb2str(sb);
-	mac = GetMacro(s);
+	sb_putc(0, sb);
+	mac = GetMacro((char *) sb->data);
 
 	if	(mac == NULL || mac->lock)
 	{
-		n = io_puts(s, out);
-		memfree(s);
+		n = io_puts((char *) sb->data, out);
+		del_strbuf(sb);
 		return n;
 	}
 
-	macarg = NULL;
-	narg = 0;
+	vb_init(&argv, 64, sizeof(char *));
 
 	if	(mac->hasarg)
 	{
-		char *delim;
+		sb->pos--;
+		sb_sync(sb);
 
-		delim = miocpy(in, mcpy_delim, tabsize(mcpy_delim));
-
-		if	(iocpy_last != '(')
+		while ((c = io_skipcom(in, NULL, 1)) != EOF)
 		{
-			n = io_puts(s, out);
-			n += io_puts(delim, out);
-			memfree(s);
-			memfree(delim);
+			if	(c != ' ' && c != '\t')
+				break;
+
+			sb_putc(c, sb);
+		}
+
+		if	(c != '(')
+		{
+			io_ungetc(c, in);
+			sb_putc(0, sb);
+			n = io_puts((char *) sb->data, out);
+			del_strbuf(sb);
 			return n;
 		}
 
-		io_getc(in);
-		narg = macarglist(in, &macarg);
+		prompt = io_prompt(in, PROMPT);
+
+		do
+		{
+			char **p = vb_next(&argv);
+			c = nextarg(in, sb);
+			sb_putc(0, sb);
+			*p = sb_memcpy(sb);
+		}
+		while	(c == ',');
+
+		io_prompt(in, prompt);
 	}
 
-	if	(mac->lock)
-	{
-		n = io_puts(s, out);
-		memfree(s);
-		return n;
-	}
-
+	del_strbuf(sb);
 	mac->lock = 1;
-	n = mac->sub(mac, out, macarg, narg);
+	n = mac->sub(mac, out, argv.data, argv.used);
 	mac->lock = 0;
-
-	for (i = 0; i < narg; i++)
-		memfree(macarg[i]);
-
-	memfree(macarg);
-	memfree(s);
-	return n;
-}
-
-
-int iocpy_strmacsub(io_t *in, io_t *out, int c, const char *arg, unsigned int flags)
-{
-	int n;
-	int escape;
-
-	n = io_nputc(c, out, 1);
-	escape = 0;
-
-	while ((c = io_mgetc(in, 0)) != EOF)
-	{
-		if	(escape)
-		{
-			escape = 0;
-		}
-		else if	(listcmp(arg, c))
-		{
-			if	(flags & 2)
-			{
-				int d;
-
-				d = io_mgetc(in, 0);
-
-				if	(d == c)
-				{
-					n += io_nputc(c, out, 1);
-					continue;
-				}
-				else	io_ungetc(d, in);
-			}
-
-			n += io_nputc(c, out, 1);
-			return n;
-		}
-		else if	(c == '_' || isalpha(c))
-		{
-			n += iocpy_macsub(in, out, c, "!%n_", flags);
-			continue;
-		}
-		else	escape = (c == '\\');
-
-		n += io_nputc(c, out, 1);
-	}
-
+	vb_clean(&argv, memfree);
 	return n;
 }

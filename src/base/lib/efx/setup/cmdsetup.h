@@ -40,8 +40,8 @@ void CmdSetup_double(void);	/* Gleitkommawerte */
 void CmdSetup_str(void);	/* Zeichen und Strings */
 void CmdSetup_io(void);		/* Ein-, Ausgabestrukturen */
 void CmdSetup_print(void);	/* Ausgabefunktionen */
-void CmdSetup_reg(void);	/* Stringregister */
 void CmdSetup_obj(void);	/* Universielle Operatoren */
+void CmdSetup_range(void);	/* Bereichsfunktionen */
 void CmdSetup_pctrl(void);	/* Programmsteuerung */
 void CmdSetup_test(void);	/* Testfunktionen */
 void CmdSetup_konv(void);	/* Konvertierungen */
@@ -54,5 +54,6 @@ void CmdSetup_unix(void);	/* UNIX-Systemstrukturen */
 void CmdSetup_regex(void);	/* Reguläre Ausdrücke */
 void CmdSetup_cmdpar(void);	/* Befehlsparameter */
 void CmdSetup_dl(void);		/* Dynamische Bibliotheken */
+void CmdSetup_dbutil(void);	/* Datenbankhilfsfunktionen */
 
 #endif	/* EFEU/cmdsetup.h */

@@ -41,62 +41,62 @@ typedef struct {
 	size_t deg;	/* Grad des Polynoms */
 	double *x;	/* Stützstellen */
 	double **c;	/* Koeffizientenvektor */
-} pnom_t;
+} Polynom;
 
-extern reftype_t pnreftype;
+extern RefType pnreftype;
 
 
 /*	Basisfunktionen
 */
 
-pnom_t *pnalloc (size_t dim, size_t deg);
-pnom_t *pnconst (double x, double y);
+Polynom *pnalloc (size_t dim, size_t deg);
+Polynom *pnconst (double x, double y);
 
 #define ref_pnom(x)	rd_refer(x)
 #define unref_pnom(x)	rd_deref(x)
 
-pnom_t *pndev (pnom_t *pn, int dev);
-pnom_t *pnint (pnom_t *pn, double x, double y);
+Polynom *pndev (Polynom *pn, int dev);
+Polynom *pnint (Polynom *pn, double x, double y);
 
-double pneval (pnom_t *pn, int dev, double x);
-double pnarea (pnom_t *pn, double a, double b);
+double pneval (Polynom *pn, int dev, double x);
+double pnarea (Polynom *pn, double a, double b);
 
 
 /*	Polynomverknüpfungen
 */
 
-size_t pnjoin (pnom_t **p, size_t n, void (*op) (double x,
+size_t pnjoin (Polynom **p, size_t n, void (*op) (double x,
 	double **c, size_t *deg, size_t n));
-pnom_t *pnlincmb (pnom_t *p, ...);
-pnom_t *pnmult (double c, pnom_t *p1, pnom_t *p2);
+Polynom *pnlincmb (Polynom *p, ...);
+Polynom *pnmult (double c, Polynom *p1, Polynom *p2);
 
 
 /*	Ein-/Ausgabe von Polynomen
 */
 
-pnom_t *pnload (const char *name);
-void pnsave (pnom_t *pn, const char *name);
+Polynom *pnload (const char *name);
+void pnsave (Polynom *pn, const char *name);
 
-pnom_t *pnread (FILE *file);
-int pnprint (io_t *file, pnom_t *pn, const char *fmt);
+Polynom *pnread (FILE *file);
+int pnprint (IO *file, Polynom *pn, const char *fmt);
 
 
 /*	Interpolationsfunktionen
 */
 
-pnom_t *linint (size_t n, double *x, double *y);
-pnom_t *spline (size_t n, double *x, double *y);
-pnom_t *cspline (size_t n, double *x, double *y);
-pnom_t *dspline (size_t n, double *x, double *y, double a, double b);
+Polynom *linint (size_t n, double *x, double *y);
+Polynom *spline (size_t n, double *x, double *y);
+Polynom *cspline (size_t n, double *x, double *y);
+Polynom *dspline (size_t n, double *x, double *y, double a, double b);
 
 
 /*	Schnittstelle zu Befehlsinterpreter
 */
 
-extern Type_t Type_pnom;
+extern EfiType Type_pnom;
 
 #define	pnom2Obj(x)	NewPtrObj(&Type_pnom, (x))
-#define	Val_pnom(x)	((pnom_t **) x)[0]
+#define	Val_pnom(x)	((Polynom **) x)[0]
 
 
 /*	Initialisierung

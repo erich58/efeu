@@ -1,5 +1,23 @@
-/*	Auflisten von Selektionsdefinitionen
-	(c) 1994 Erich Frühstück
+/*
+Auflisten von Selektionsdefinitionen
+
+$Copyright (C) 1994 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/mdmat.h>
@@ -13,45 +31,35 @@
 	":*:grouping classes" \
 	":de:Selektionsklassen"
 
-#define	HEAD	getmsg(MSG_MDMAT, 1, "#Name\tDIM\tDESCRIPTION\n")
-
 char *MdClassListFormat = "$1[$3]\t$2\n";
 char *MdClassPrintHead = "$1\t$2\n";
 char *MdClassPrintEntry = "\t$1\t$2\n";
 char *MdClassPrintFoot = NULL;
 int MdClassPrintLimit = 20;
 
-void MdClassList (io_t *io, MdClass_t *cdef)
+void MdClassList (IO *io, MdClass *cdef)
 {
-	reg_cpy(1, cdef->name);
-	reg_cpy(2, cdef->desc);
-	reg_fmt(3, "%d", cdef->dim);
-	io_psub(io, MdClassListFormat);
+	io_psubarg(io, MdClassListFormat, "nssd", cdef->name,
+		cdef->desc, cdef->dim);
 }
 
-static void p_label(io_t *io, Label_t *label)
+static void p_label (IO *io, Label *label)
 {
-	reg_cpy(1, label->name);
-	reg_cpy(2, label->desc);
-	io_psub(io, MdClassPrintEntry);
+	io_psubarg(io, MdClassPrintEntry, "nss", label->name, label->desc);
 }
 
-void MdClassPrint (io_t *io, MdClass_t *cdef)
+void MdClassPrint (IO *io, MdClass *cdef)
 {
 	int i;
 
-	reg_cpy(1, cdef->name);
-	reg_cpy(2, cdef->desc);
-	reg_fmt(3, "%4d", cdef->dim);
-	io_psub(io, MdClassPrintHead);
+	io_psubarg(io, MdClassPrintHead, "nssm", cdef->name, cdef->desc,
+		msprintf("%3d", cdef->dim));
 
 	if	(MdClassPrintLimit && cdef->dim > max(4, MdClassPrintLimit))
 	{
 		p_label(io, cdef->label);
 		p_label(io, cdef->label + 1);
-		reg_cpy(1, "...");
-		reg_cpy(2, "...");
-		io_psub(io, MdClassPrintEntry);
+		io_psubarg(io, MdClassPrintEntry, "nss", "...", "...");
 		p_label(io, cdef->label + cdef->dim - 2);
 		p_label(io, cdef->label + cdef->dim - 1);
 	}
@@ -61,44 +69,34 @@ void MdClassPrint (io_t *io, MdClass_t *cdef)
 			p_label(io, cdef->label + i);
 	}
 
-	reg_cpy(1, cdef->name);
-	reg_cpy(2, cdef->desc);
-	io_psub(io, MdClassPrintFoot);
+	io_psubarg(io, MdClassPrintFoot, "nss", cdef->name, cdef->desc);
 }
 
-static char **list = NULL;
-static size_t dim = 0;
-static io_t *out = NULL;
-
-static int show_short (MdClass_t *entry)
+void MdShowClass (IO *io, MdClassTab *tab, const char *plist)
 {
-	MdClassList(out, entry);
-	return 1;
-}
-
-static int show_long(MdClass_t *entry)
-{
-	if	(patselect(entry->name, list, dim))
-		MdClassPrint(out, entry);
-
-	return 1;
-}
-
-void MdShowClass(io_t *io, xtab_t *tab, const char *plist)
-{
-	out = io;
+	MdClass **ptr;
+	size_t n;
 
 	if	(plist != NULL)
 	{
+		char **list;
+		size_t dim;
+
 		dim = strsplit(plist, ",;%s", &list);
-		xwalk(tab, (visit_t) show_long);
+
+		for (ptr = tab->tab.data, n = tab->tab.used; n-- > 0; ptr++)
+			if (patselect((*ptr)->name, list, dim))
+				MdClassPrint(io, *ptr);
+
 		memfree(list);
 	}
-	else	xwalk(tab, (visit_t) show_short);
+
+	for (ptr = tab->tab.data, n = tab->tab.used; n-- > 0; ptr++)
+		MdClassList(io, *ptr);
 }
 
 
-static void print_class(io_t *io, InfoNode_t *info)
+static void print_class (IO *io, InfoNode *info)
 {
 	char *head = MdClassPrintHead;
 	char *entry = MdClassPrintEntry;
@@ -109,17 +107,15 @@ static void print_class(io_t *io, InfoNode_t *info)
 	MdClassPrintEntry = entry;
 }
 
-static InfoNode_t *class_root = NULL;
 
-static int add_klass(MdClass_t *entry)
+void MdClassInfo (InfoNode *info, MdClassTab *tab)
 {
-	AddInfo(class_root, entry->name, entry->desc,
-		print_class, entry);
-	return 1;
-}
+	InfoNode *root;
+	MdClass **ptr;
+	size_t n;
 
-void MdClassInfo (InfoNode_t *info, xtab_t *tab)
-{
-	class_root = AddInfo(info, "class", LBL_CLASS, NULL, NULL);
-	xwalk(tab, (visit_t) add_klass);
+	root = AddInfo(info, "class", LBL_CLASS, NULL, NULL);
+
+	for (ptr = tab->tab.data, n = tab->tab.used; n-- > 0; ptr++)
+		AddInfo(root, (*ptr)->name, (*ptr)->desc, print_class, *ptr);
 }

@@ -1,1 +1,1 @@
-DocTarget(_EFEU_TOP/doc/de,efeudoc,$(SRCTOP),LANG=de efeudoc)
+DocTarget(EFEUROOT/doc/de,efeudoc,$(SRCTOP),LANG=de efeudoc)

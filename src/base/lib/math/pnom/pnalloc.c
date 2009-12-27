@@ -22,37 +22,34 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <Math/pnom.h>
 
-static char *pnident(pnom_t *p)
+static char *pnident (const void *data)
 {
+	const Polynom *p = data;
 	return msprintf("dim=%d deg=%d", p->dim, p->deg);
 }
 
-static pnom_t *pnadmin(pnom_t *tg, const pnom_t *src)
+static void pnclean (void *data)
 {
-	if	(tg)
-	{
-		memfree(tg->c);
-		memfree(tg->x);
-		memfree(tg);
-		return NULL;
-	}
-	else	return memalloc(sizeof(pnom_t));
+	Polynom *tg = data;
+	memfree(tg->c);
+	memfree(tg->x);
+	memfree(tg);
 }
 
-ADMINREFTYPE(pnreftype, "Polynom", pnident, pnadmin);
+RefType pnreftype = REFTYPE_INIT("Polynom", pnident, pnclean);
 
 
 /*	Speicherplatzgenerierung
 */
 
-pnom_t *pnalloc(size_t n, size_t deg)
+Polynom *pnalloc (size_t n, size_t deg)
 {
-	pnom_t *p;
+	Polynom *p;
 	int i;
 
 	if	(n == 0)	return NULL;
 
-	p = rd_create(&pnreftype);
+	p = memalloc(sizeof(Polynom));
 	p->refcount = 1;
 	p->dim = n;
 	p->deg = deg++;
@@ -62,7 +59,7 @@ pnom_t *pnalloc(size_t n, size_t deg)
 	for (i = 0; i < n; i++)
 		p->c[i] = p->x + n + deg * i;
 
-	return p;
+	return rd_init(&pnreftype, p);
 }
 
 
@@ -70,9 +67,9 @@ pnom_t *pnalloc(size_t n, size_t deg)
 */
 
 #if	0
-static pnom_t *cpy_pnom(const pnom_t *pn)
+static Polynom *cpy_pnom(const Polynom *pn)
 {
-	pnom_t *p2;
+	Polynom *p2;
 	int i, j;
 
 	if	(pn == NULL)	return NULL;

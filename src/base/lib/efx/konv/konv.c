@@ -23,9 +23,9 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 #include <EFEU/konvobj.h>
 
-static Func_t *Konverter(const Type_t *old, const Type_t *new)
+static EfiFunc *Konverter(const EfiType *old, const EfiType *new)
 {
-	Func_t **ftab;
+	EfiFunc **ftab;
 	int i;
 
 	ftab = old->konv.data;
@@ -37,12 +37,12 @@ static Func_t *Konverter(const Type_t *old, const Type_t *new)
 }
 
 
-static Func_t *Konstruktor(const Type_t *old, const Type_t *new)
+static EfiFunc *Konstruktor(const EfiType *old, const EfiType *new)
 {
 	if	(new->create)
 	{
-		FuncArg_t arg;
-		arg.type = (Type_t *) old;
+		EfiFuncArg arg;
+		arg.type = (EfiType *) old;
 		arg.lval = 0;
 		arg.nokonv = 0;
 		arg.name = NULL;
@@ -53,14 +53,14 @@ static Func_t *Konstruktor(const Type_t *old, const Type_t *new)
 }
 
 
-Konv_t *GetKonv(Konv_t *konv, const Type_t *old, const Type_t *new)
+EfiKonv *GetKonv(EfiKonv *konv, const EfiType *old, const EfiType *new)
 {
-	static Konv_t buf;
+	static EfiKonv buf;
 
 	if	(konv == NULL)	konv = &buf;
 
 	konv->func = NULL;
-	konv->type = (Type_t *) new;
+	konv->type = (EfiType *) new;
 	konv->dist = 0;
 
 	while (konv->type != NULL)
@@ -103,7 +103,7 @@ Konv_t *GetKonv(Konv_t *konv, const Type_t *old, const Type_t *new)
 }
 
 
-void KonvData(Konv_t *konv, void *tg, void *src)
+void KonvData(EfiKonv *konv, void *tg, void *src)
 {
 	if	(konv->func)
 	{
@@ -116,8 +116,8 @@ void KonvData(Konv_t *konv, void *tg, void *src)
 }
 
 
-int KonvDist (const Type_t *old, const Type_t *new)
+int KonvDist (const EfiType *old, const EfiType *new)
 {
-	Konv_t *konv = GetKonv(NULL, old, new);
+	EfiKonv *konv = GetKonv(NULL, old, new);
 	return konv ? konv->dist : -1;
 }

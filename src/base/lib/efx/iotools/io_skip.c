@@ -24,7 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/efio.h>
 
 
-int io_skip(io_t *io, const char *delim)
+int io_skip(IO *io, const char *delim)
 {
 	int c;
 

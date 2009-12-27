@@ -22,7 +22,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/Resource.h>
-#include <EFEU/LangType.h>
+#include <EFEU/LangDef.h>
 #include <EFEU/parsub.h>
 #include <EFEU/mstring.h>
 #include <EFEU/io.h>
@@ -30,7 +30,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	_String(x)	#x
 #define	String(x)	_String(x)
-#define	TOP		String(_EFEU_TOP)
+#define	TOP		String(EFEUROOT)
 
 static char *lang = NULL;
 static char *node = NULL;
@@ -45,7 +45,7 @@ static char *cmd = NULL;
 	":*:request failed:" \
 	":de:Anfrage nicht beantwortbar:"
 
-static void html_cmd (const char *cmd, io_t *io)
+static void html_cmd (const char *cmd, IO *io)
 {
 	io_protect(io, 1);
 	io_puts(cmd, io);
@@ -54,7 +54,7 @@ static void html_cmd (const char *cmd, io_t *io)
 
 static void cgi_arg (char **ptr, const char *arg)
 {
-	strbuf_t *sb;
+	StrBuf *sb;
 
 	sb = new_strbuf(0);
 
@@ -83,7 +83,7 @@ static void cgi_arg (char **ptr, const char *arg)
 	*ptr = sb2str(sb);
 }
 
-static void cgi_puts (const char *p, io_t *io)
+static void cgi_puts (const char *p, IO *io)
 {
 	for (; *p != 0; p++)
 	{
@@ -113,16 +113,16 @@ static void cgi_puts (const char *p, io_t *io)
 	}
 }
 
-static InfoNode_t *load_cmd (InfoNode_t *base, const char *def)
+static InfoNode *load_cmd (InfoNode *base, const char *def)
 {
 	char *name = msprintf("|%s --dump 2>/dev/null", def);
-	InfoNode_t *info = AddInfo(base, def, NULL, NULL, NULL);
+	InfoNode *info = AddInfo(base, def, NULL, NULL, NULL);
 	LoadInfo(info, name);
 	memfree(name);
 	return info;
 }
 
-static InfoNode_t *load_file (InfoNode_t *info, const char *def)
+static InfoNode *load_file (InfoNode *info, const char *def)
 {
 	info = AddInfo(info, def, NULL, NULL, NULL);
 	LoadInfo(info, def);
@@ -147,10 +147,10 @@ static void parse_arg (int narg, char **arg)
 	}
 }
 
-static void list_node (io_t *io, InfoNode_t *info,
+static void list_node (IO *io, InfoNode *info,
 	const char *key, const char *node)
 {
-	InfoNode_t **ip;
+	InfoNode **ip;
 	int i;
 	
 	html_cmd("<ul>\n", io);
@@ -182,7 +182,7 @@ static void list_node (io_t *io, InfoNode_t *info,
 	html_cmd("</ul>\n", io);
 }
 
-static void HTMLInfo (io_t *io, InfoNode_t *info, const char *key, char *node)
+static void HTMLInfo (IO *io, InfoNode *info, const char *key, char *node)
 {
 	if	(info->load)
 		info->load(info);
@@ -201,9 +201,8 @@ static void HTMLInfo (io_t *io, InfoNode_t *info, const char *key, char *node)
 
 		if	(!info->func)
 		{
-			reg_cpy(1, info->name);
-			reg_cpy(2, info->label);
-			io_psub(io, info->par);
+			io_psubarg(io, info->par, "nss",
+				info->name, info->label);
 		}
 		else	info->func(io, info);
 
@@ -217,8 +216,8 @@ static void HTMLInfo (io_t *io, InfoNode_t *info, const char *key, char *node)
 
 int main (int narg, char **arg)
 {
-	InfoNode_t *info;
-	io_t *io;
+	InfoNode *info;
+	IO *io;
 	int dim;
 	char **list;
 	char *pfx;
@@ -226,7 +225,7 @@ int main (int narg, char **arg)
 
 /*	Argumente bestimmen
 */
-	SetVersion("$Id: eis-cgi.c,v 1.6 2001-11-06 13:47:54 ef Exp $");
+	SetVersion("$Id: eis-cgi.c,v 1.12 2002-12-12 19:48:27 ef Exp $");
 	ParseCommand(&narg, arg);
 
 	parse_arg(narg - 1, arg + 1);
@@ -238,7 +237,7 @@ int main (int narg, char **arg)
 
 	if	(lang)
 	{
-		SetLangType(lang);
+		SetLangDef(lang);
 		putenv(msprintf("LANG=%s", lang));
 		pfx = msprintf("lang\t%s\n", lang);
 	}

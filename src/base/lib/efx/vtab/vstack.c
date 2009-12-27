@@ -22,19 +22,19 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/object.h>
 
-VarTab_t *GlobalVar = NULL;
-VarTab_t *LocalVar = NULL;
-Obj_t *LocalObj = NULL;
+EfiVarTab *GlobalVar = NULL;
+EfiVarTab *LocalVar = NULL;
+EfiObj *LocalObj = NULL;
 
-VarTab_t *ContextVar = NULL;
-Obj_t *ContextObj = NULL;
+EfiVarTab *ContextVar = NULL;
+EfiObj *ContextObj = NULL;
 
-VarStack_t *VarStack = NULL;
-VarStack_t *ContextStack = NULL;
+EfiVarStack *VarStack = NULL;
+EfiVarStack *ContextStack = NULL;
 
-VarStack_t *SaveVarStack (void)
+EfiVarStack *SaveVarStack (void)
 {
-	VarStack_t *save;
+	EfiVarStack *save;
 
 	PushVarTab(NULL, NULL);
 	save = VarStack;
@@ -42,17 +42,17 @@ VarStack_t *SaveVarStack (void)
 	return save;
 }
 
-void RestoreVarStack (VarStack_t *vstack)
+void RestoreVarStack (EfiVarStack *vstack)
 {
 	VarStack = vstack;
 	PopVarTab();
 }
 
 
-void PushVarTab (VarTab_t *tab, Obj_t *obj)
+void PushVarTab (EfiVarTab *tab, EfiObj *obj)
 {
-	VarStack_t *x = VarStack;
-	VarStack = memalloc(sizeof(VarStack_t));
+	EfiVarStack *x = VarStack;
+	VarStack = memalloc(sizeof(EfiVarStack));
 	VarStack->next = x;
 	VarStack->tab = LocalVar;
 	VarStack->obj = LocalObj;
@@ -60,10 +60,10 @@ void PushVarTab (VarTab_t *tab, Obj_t *obj)
 	LocalObj = obj;
 }
 
-void PushContext (VarTab_t *tab, Obj_t *obj)
+void PushContext (EfiVarTab *tab, EfiObj *obj)
 {
-	VarStack_t *x = ContextStack;
-	ContextStack = memalloc(sizeof(VarStack_t));
+	EfiVarStack *x = ContextStack;
+	ContextStack = memalloc(sizeof(EfiVarStack));
 	ContextStack->next = x;
 	ContextStack->tab = ContextVar;
 	ContextStack->obj = ContextObj;
@@ -76,7 +76,7 @@ void PopVarTab(void)
 {
 	if	(VarStack != NULL)
 	{
-		VarStack_t *x = VarStack;
+		EfiVarStack *x = VarStack;
 		VarStack = x->next;
 		DelVarTab(LocalVar);
 		UnrefObj(LocalObj);
@@ -91,7 +91,7 @@ void PopContext(void)
 {
 	if	(ContextStack)
 	{
-		VarStack_t *x = ContextStack;
+		EfiVarStack *x = ContextStack;
 		ContextStack = x->next;
 		ContextVar = x->tab;
 		DelVarTab(ContextVar);

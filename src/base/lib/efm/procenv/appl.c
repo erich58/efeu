@@ -24,11 +24,10 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/mstring.h>
 #include <EFEU/ftools.h>
 #include <EFEU/appl.h>
-#include <EFEU/LangType.h>
 
 #define	_String(x)	#x
 #define	String(x)	_String(x)
-#define	TOP		String(_EFEU_TOP)
+#define	TOP		String(EFEUROOT)
 
 /*
 Die Variable |$1| bestimmt den Suchpfad für Applikationsdateien.
@@ -44,7 +43,7 @@ initialisiert wurde, wird er von |$1| nicht verändert.
 
 void SetApplPath (const char *path)
 {
-	strbuf_t *sb;
+	StrBuf *sb;
 	char *p;
 
 	if	(ApplPath && !path)	return;
@@ -64,14 +63,12 @@ void SetApplPath (const char *path)
 
 /*	Systemsuchpfade
 */
-	if	(LangType.language != NULL)
-		sb_printf(sb, ":%s/lib/efeu/%s/%%S", TOP, LangType.language);
-
-	sb_printf(sb, ":%s/lib/efeu/%%S", TOP);
+	sb_printf(sb, ":%s/lib/efeu/%%L/%%S", TOP);
 
 	if	((p = getenv("HOME")) != NULL)
-		sb_printf(sb, ":%s/lib/efeu/%%S", p);
+		sb_printf(sb, ":%s/lib/efeu/%%L/%%S", p);
 
+	sb_puts(":./%L/%S", sb);
 	memfree(ApplPath);
 	ApplPath = sb2str(sb);
 }
@@ -84,36 +81,28 @@ und den Filezusatz.
 
 Folgende Typen sind in |<EFEU/appl.h>| vordefiniert:
 
-[APPL_APP]	Applikationsdatei <name>|.app| unter |app-defaults|
-[APPL_CFG]	Konfigurationsdate <name>|.cfg| unter |app-defaults|
 [APPL_CNF]	Konfigurationsdate <name>|.cnf| unter |config|
 [APPL_MSG]	Formatdatei <name>|.msg| unter |messages|
 [APPL_HLP]	Kommandobeschreibung <name>|.hlp| unter |help|
-[APPL_TRM]	Terminalanpassungen <name>|.trm| unter |term|
 
-Im Suchpfad wird %S durch den Teilpfad
+Im Suchpfad wird %S durch das Teilverzeichnis ersetzt.
 $Diagnostic
 Falls die Datei nicht gefunden werden konnte,
 liefert die Funktion |$1| einen Nullpointer.
-$Notes
-Terminalanpassungen sind nur noch aus Kompatiblitätsgründen definiert.
 */
 
-io_t *io_applfile (const char *name, int type)
+IO *io_applfile (const char *name, int type)
 {
 	char *p, *pfx, *sfx;
-	io_t *io;
+	IO *io;
 
 	if	(name == NULL)	return NULL;
 
 	switch (type)
 	{
-	case APPL_APP:	pfx = "app-defaults"; sfx = "app"; break;
-	case APPL_CFG:	pfx = "app-defaults"; sfx = "cfg"; break;
 	case APPL_CNF:	pfx = "config"; sfx = "cnf"; break;
 	case APPL_MSG:	pfx = "messages"; sfx = "msg"; break;
 	case APPL_HLP:	pfx = "help"; sfx = "hlp"; break;
-	case APPL_TRM:	pfx = "term"; sfx = "trm"; break;
 	default:	pfx = NULL; sfx = NULL; break;
 	}
 

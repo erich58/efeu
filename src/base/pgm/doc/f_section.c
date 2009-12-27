@@ -29,12 +29,12 @@ If not, write to the Free Software Foundation, Inc.,
 #define	THEAD	Val_str(arg[2])
 #define	HEAD	Val_str(arg[3])
 
-void DocFunc_section (Func_t *func, void *rval, void **arg)
+void DocFunc_section (EfiFunc *func, void *rval, void **arg)
 {
-	Doc_t *doc = DOC;
+	Doc *doc = DOC;
 	int type, mode;
 	char *p;
-	io_t *in;
+	IO *in;
 	
 	if	(doc == NULL)	return;
 

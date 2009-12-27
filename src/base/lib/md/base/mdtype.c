@@ -4,11 +4,11 @@
 
 #include <EFEU/mdmat.h>
 
-Type_t *mdtype(const char *str)
+EfiType *mdtype(const char *str)
 {
-	io_t *io;
-	Type_t *type;
-	Obj_t *obj;
+	IO *io;
+	EfiType *type;
+	EfiObj *obj;
 
 	if	((type = GetType(str)) != NULL)
 		return type;
@@ -17,7 +17,7 @@ Type_t *mdtype(const char *str)
 */
 	if	(strncmp(str, "struct", 6) != 0)
 	{
-		Var_t *list;
+		EfiVar *list;
 
 		io = io_cstr(str);
 		list = GetStruct(io, EOF);
@@ -34,10 +34,10 @@ Type_t *mdtype(const char *str)
 }
 
 
-char *type2str(const Type_t *type)
+char *type2str(const EfiType *type)
 {
-	strbuf_t *sb;
-	io_t *io;
+	StrBuf *sb;
+	IO *io;
 
 	sb = new_strbuf(0);
 	io = io_strbuf(sb);
@@ -47,16 +47,13 @@ char *type2str(const Type_t *type)
 }
 
 
-Konv_t *Md_KonvDef(Konv_t *buf, const Type_t *type1, const Type_t *type2)
+EfiKonv *Md_KonvDef(EfiKonv *buf, const EfiType *type1, const EfiType *type2)
 {
-	Konv_t *konv = GetKonv(buf, type1, type2);
+	EfiKonv *konv = GetKonv(buf, type1, type2);
 
 	if	(konv == NULL)
-	{
-		reg_set(1, type2str(type1));
-		reg_set(2, type2str(type2));
-		errmsg(MSG_MDMAT, 102);
-	}
+		dbg_note(NULL, "[mdmat:102]",
+			"mm", type2str(type1), type2str(type2));
 
 	return konv;
 }

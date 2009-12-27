@@ -104,7 +104,7 @@ Dokument verarbeitet werden können.
 
 \margin Vorwort und Verzeichnisse
 Das Vorwort beginnt immer auf einer rechten Seite.
-Es wird mit dem Befehl |\intro| eingeleitet.
+Es wird mit dem Befehl |\preface| eingeleitet.
 Wie jede andere Umgebung wird das Vorwort automatisch mit
 dem nächsten Glliederungsbefehl beendet, insbesonders auch
 durch den |\toc|-Befehl, mit dem das Inhaltsverzeichnis generiert

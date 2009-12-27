@@ -30,7 +30,7 @@ If not, write to the Free Software Foundation, Inc.,
 :de:Der Vektor |$1| enthält Locale zur Wertedarstellung
 */
 
-LCValue_t LCValue[] = {
+LCValueDef LCValue[] = {
 	{ "C", NULL, ".", "-", "+", " " },
 	{ "de", ".", ",", "-", "+", " " },
 	{ "TeX", ".", ",", "$-$", "$+$", " " },
@@ -71,32 +71,30 @@ static char *W_de[7] =	{
 :de:Der Vektor |$1| enthält Locale zur Datumsdarstellung
 */
 
-LCDate_t LCDate[] = {
+LCDateDef LCDate[] = {
 	{ "C", M_en, W_en },
 	{ "de_AT", M_de_AT, W_de },
 	{ "de", M_de, W_de },
 };
 
-Locale_t Locale = { LCValue, LCValue, LCDate };
+LocaleDef Locale = { LCValue, LCValue, LCDate };
 
 /*	Lokale Stack
 */
 
-typedef struct LCStack_s LCStack_t;
-
-struct LCStack_s {
-	LCStack_t *next;	/* Lokalestack */
-	Locale_t locale;	/* Lokaledaten */
+struct LCStack {
+	struct LCStack *next;	/* Lokalestack */
+	LocaleDef locale;	/* Lokaledaten */
 };
 
-static ALLOCTAB(LCTAB, 8, sizeof(LCStack_t));
+static ALLOCTAB(LCTAB, 8, sizeof(struct LCStack));
 
-static LCStack_t *LocaleStack = NULL;
+static struct LCStack *LocaleStack = NULL;
 
 
 void PushLocale(void)
 {
-	LCStack_t *x = LocaleStack;
+	struct LCStack *x = LocaleStack;
 	LocaleStack = new_data(&LCTAB);
 	LocaleStack->next = x;
 	LocaleStack->locale = Locale;
@@ -107,7 +105,7 @@ void PopLocale(void)
 {
 	if	(LocaleStack)
 	{
-		LCStack_t *x = LocaleStack;
+		struct LCStack *x = LocaleStack;
 		LocaleStack = x->next;
 		Locale = x->locale;
 		del_data(&LCTAB, x);
@@ -133,7 +131,7 @@ static int lc_comp (const char *name, const char *key)
 
 static void *lc_search (void *tab, size_t dim, size_t elsize, const char *key)
 {
-	LCKey_t *ptr;
+	struct { char *name; } *ptr;
 	int i;
 
 	if	(key == NULL)	return tab;

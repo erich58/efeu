@@ -33,3 +33,10 @@ If not, write to the Free Software Foundation, Inc.,
 32	$!: Unbekannte Option -$1.\n
 33	$!: Optionskennung -$1 ist nicht eindeutig:\n\t-$2, -$3, ...\n
 34	$!: Optionskennung $1: Unzulässige Kombination\n
+
+51	$!: $0: Mehr als ein 'u' in Ganzzahlwert.\n
+52	$!: $0: Mehr als ein 'l' in Ganzzahlwert.\n
+
+61	$!: ArgList: Unbekannte Formatanweisung $1.\n
+
+pnoarg	$!: parsub($0): Argument $1 nicht definiert.\n

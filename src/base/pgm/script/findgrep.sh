@@ -30,7 +30,7 @@
 # :dir|
 #	:*:directories
 #	:de:Verzeichnisse
-# ::"find-optons"|
+# ::"find-options"|
 #	:*:any find option
 #	:de:beliebige find - Option
 

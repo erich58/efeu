@@ -36,7 +36,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/config.h>
 
-@eval func HAS_ISATTY 'isatty(0)'
-@eval -i sys/dir.h func HAS_GETPWNAM 'getpwnam(NULL)'
+@eval success HAS_ISATTY 'isatty(0)'
+@eval -i sys/dir.h success HAS_GETPWNAM 'getpwnam(NULL)'
 
 #endif	/* EFEU/extension.h */

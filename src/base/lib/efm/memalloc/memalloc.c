@@ -30,13 +30,13 @@ If not, write to the Free Software Foundation, Inc.,
 #define	STAT_1	"%s: Blocksize %3ld: %5ld used, %5ld free, %5ld byte (%ldx%ldx%ld)\n"
 #define	STAT_L	"%s: Large blocks:  %5ld used, %5ld requests\n"
 
-static int mem_cmp (const void **a, const void **b);
+static int mem_cmp (const void *a, const void *b);
 
 /*	Zuweisungstabellen: Diese müssen mit aufsteigender Elementlänge
 	angeordnet werden.
 */
 
-static alloctab_t mem_tab[] = {
+static AllocTab mem_tab[] = {
 	ALLOCDATA(512, 1 * sizeof(void *)),
 	ALLOCDATA(256, 2 * sizeof(void *)),
 	ALLOCDATA(128, 4 * sizeof(void *)),
@@ -51,8 +51,11 @@ static size_t request = 0;
 /*	Vergleichsfunktion für Speichersegmente
 */
 
-static int mem_cmp(const void **a, const void **b)
+static int mem_cmp (const void *pa, const void *pb)
 {
+	void * const *a = pa;
+	void * const *b = pb;
+
 	if	(*a < *b)	return -1;
 	else if	(*a > *b)	return 1;
 	else			return 0;
@@ -107,7 +110,7 @@ void memfree (void *p)
 
 	if	(p == NULL)	return;
 
-	if	(vb_search(&mem_large, &p, (comp_t) mem_cmp, VB_DELETE))
+	if	(vb_search(&mem_large, &p, mem_cmp, VB_DELETE))
 	{
 		lfree(p);
 		return;
@@ -139,7 +142,7 @@ void memnotice (void *ptr)
 	{
 		request++;
 
-		if	(vb_search(&mem_large, &ptr, (comp_t) mem_cmp, VB_REPLACE) != NULL)
+		if	((vb_search(&mem_large, &ptr, mem_cmp, VB_REPLACE)))
 			fprintf(stderr, WARN_1);
 	}
 }
@@ -158,7 +161,7 @@ void memstat (const char *prompt)
 
 	for (i = 0; i < tabsize(mem_tab); i++)
 	{
-		chain_t *x;
+		AllocTabList *x;
 		size_t n;
 
 		x = mem_tab[i].blklist;
@@ -167,17 +170,17 @@ void memstat (const char *prompt)
 			x = x->next;
 
 		fprintf(stderr, STAT_1, prompt,
-			(ulong_t) mem_tab[i].elsize,
-			(ulong_t) mem_tab[i].nused,
-			(ulong_t) mem_tab[i].nfree,
-			(ulong_t) n * mem_tab[i].blksize * mem_tab[i].elsize,
-			(ulong_t) n,
-			(ulong_t) mem_tab[i].blksize,
-			(ulong_t) mem_tab[i].elsize);
+			(unsigned long) mem_tab[i].elsize,
+			(unsigned long) mem_tab[i].nused,
+			(unsigned long) mem_tab[i].nfree,
+			(unsigned long) n * mem_tab[i].blksize * mem_tab[i].elsize,
+			(unsigned long) n,
+			(unsigned long) mem_tab[i].blksize,
+			(unsigned long) mem_tab[i].elsize);
 	}
 
 	fprintf(stderr, STAT_L, prompt,
-		(ulong_t) mem_large.used, (ulong_t) request);
+		(unsigned long) mem_large.used, (unsigned long) request);
 }
 
 /*

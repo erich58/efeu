@@ -28,19 +28,18 @@ If not, write to the Free Software Foundation, Inc.,
 #include <term.h>
 #include <efeudoc.h>
 
-int term_cmd (term_t *trm, va_list list)
+int term_cmd (void *drv, va_list list)
 {
-	int cmd;
-	
-	cmd = va_arg(list, int);
+	Term *trm = drv;
+	int cmd = va_arg(list, int);
 
 	switch (cmd)
 	{
 	case DOC_CMD_TOC:
 		term_newline(trm, 1);
-		term_att(trm, 1, TermPar.bf);
+		term_att(trm, 1, term_par.bf);
 		term_string(trm, "Inhalt");
-		term_att(trm, 1, TermPar.bf);
+		term_att(trm, 1, term_par.bf);
 		term_newline(trm, 1);
 		break;
 	case DOC_CMD_BREAK:

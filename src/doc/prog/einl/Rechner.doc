@@ -93,11 +93,17 @@ Die Befehle |!history|, |!r|, |!fc| und |!eof| müssen unmittelbar
 am Zeilenanfang eingegeben werden und stehen nur im interaktiven Modus
 zur Verfügung.
 
-Die History-Zeilen werden nur dann geschrieben, wenn |esh| mit
+Die History-Zeilen werden nur dann gesichert, wenn |esh| mit
 dem Dateiendezeichen (\index{|^D|}) beendet wird. Bei einer
 Beendigung mit \index{|exit|} oder einem Abbruch mit Interrupt (\index{|^C|})
 werden sie nicht ausgegeben.
 
 Eine esh-spezifische Vervollständigung von Befehlszeilen ist
-derzeit noch nicht implementiert, lediglich die oben genannten,
-eingebauten Befehle können vervollständigt werden.
+derzeit noch nicht implementiert.
+
+\exercise
+Rufen sie |esh| auf und geben sie einzelne Terme ein.
+
+\exercise
+Wiederholen sie einzelne Befehlszeilen unter Zuhilfenahme der
+History Funktionen.

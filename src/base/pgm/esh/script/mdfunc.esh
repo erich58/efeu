@@ -26,7 +26,7 @@ Type_t Type = NULL;
 PrintListDelim = "\t";
 
 pconfig !
-Version = "$Id: mdfunc.esh,v 1.6 2001-10-18 12:11:20 ef Exp $"
+Version = "$Id: mdfunc.esh,v 1.8 2002-12-17 04:55:39 ef Exp $"
 PrintMode = true
 Mark = "#-1"
 

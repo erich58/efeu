@@ -27,7 +27,7 @@ Type_t Type = NULL;
 PrintListDelim = "\t";
 
 pconfig !
-Version = "$Id: mdcmp.esh,v 1.7 2001-10-18 12:11:20 ef Exp $"
+Version = "$Id: mdcmp.esh,v 1.9 2002-12-17 04:55:39 ef Exp $"
 
 F:file | :eval 'gload(IncPath, "{}")'
 	:*:execute command lines in file <file>

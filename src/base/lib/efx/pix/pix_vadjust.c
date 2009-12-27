@@ -22,10 +22,10 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/Pixmap.h>
 
-void Pixmap_vadjust (Pixmap_t *pix, int idx, int n)
+void Pixmap_vadjust (EPixmap *pix, int idx, int n)
 {
 	int i, j;
-	uchar_t *p1, *p0;
+	unsigned char *p1, *p0;
 
 	if	(!pix)	return;
 

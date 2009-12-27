@@ -31,13 +31,13 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/Info.h>
 #include <EFEU/ArgList.h>
 
-typedef struct CmdPar_s CmdPar_t;
-typedef struct CmdParKey_s CmdParKey_t;
-typedef struct CmdParVar_s CmdParVar_t;
-typedef struct CmdParEval_s CmdParEval_t;
-typedef struct CmdParCall_s CmdParCall_t;
-typedef struct CmdParDef_s CmdParDef_t;
-typedef struct CmdParExpand_s CmdParExpand_t;
+typedef struct CmdParStruct CmdPar;
+typedef struct CmdParKeyStruct CmdParKey;
+typedef struct CmdParVarStruct CmdParVar;
+typedef struct CmdParEvalStruct CmdParEval;
+typedef struct CmdParCallStruct CmdParCall;
+typedef struct CmdParDefStruct CmdParDef;
+typedef struct CmdParExpandStruct CmdParExpand;
 
 /*
 :de:
@@ -47,22 +47,22 @@ werden Umgebungsvariablen und Befehlszeilenparameter abgefragt.
 Weiters erlaubt sie die Ausgabe der Kommandosyntax.
 */
 
-struct CmdPar_s {
+struct CmdParStruct {
 	REFVAR;		/* Referenzvariablen */
 	char *name;	/* Aufrufname */
-	vecbuf_t var;	/* Variablentabelle */
-	vecbuf_t def;	/* Definitionstabellen */
-	vecbuf_t env;	/* Umgebungsvariablen */
-	vecbuf_t opt;	/* Optionen */
-	vecbuf_t arg;	/* Argumente */
+	VecBuf var;	/* Variablentabelle */
+	VecBuf def;	/* Definitionstabellen */
+	VecBuf env;	/* Umgebungsvariablen */
+	VecBuf opt;	/* Optionen */
+	VecBuf arg;	/* Argumente */
 };
 
-extern reftype_t CmdPar_reftype;
-extern void CmdPar_init (CmdPar_t *par);
-extern void CmdPar_clean (CmdPar_t *par);
-extern void CmdPar_info (CmdPar_t *par, InfoNode_t *node);
-extern CmdPar_t *CmdPar_alloc (const char *name);
-extern CmdPar_t *CmdPar_ptr (CmdPar_t *ptr);
+extern RefType CmdPar_reftype;
+extern void CmdPar_init (CmdPar *par);
+extern void CmdPar_clean (CmdPar *par);
+extern void CmdPar_info (CmdPar *par, InfoNode *node);
+extern CmdPar *CmdPar_alloc (const char *name);
+extern CmdPar *CmdPar_ptr (CmdPar *ptr);
 
 /*
 :de:
@@ -71,17 +71,17 @@ Programmparametern. Die Variablen werden in der Tabelle <var>
 der Kommandoparameterstruktur gespeichert.
 */
 
-struct CmdParVar_s {
+struct CmdParVarStruct {
 	char *name;	/* Variablenname */
 	char *value;	/* Variablenwerte */
 	char *desc;	/* Beschreibung */
 };
 
-extern CmdParVar_t *CmdPar_var (CmdPar_t *par, const char *name, int flag);
-extern void CmdPar_setval (CmdPar_t *par, const char *name, char *value);
-extern char *CmdPar_getval (CmdPar_t *par,
+extern CmdParVar *CmdPar_var (CmdPar *par, const char *name, int flag);
+extern void CmdPar_setval (CmdPar *par, const char *name, char *value);
+extern char *CmdPar_getval (CmdPar *par,
 	const char *name, const char *defval);
-extern void CmdPar_showval (CmdPar_t *par, io_t *io, const char *fmt);
+extern void CmdPar_showval (CmdPar *par, IO *io, const char *fmt);
 
 /**/
 
@@ -97,33 +97,33 @@ Die Datenstruktur |$1| definiert Auswertungsfunktionen zur
 Verarbeitung von Parameterdefinitionen.
 */
 
-struct CmdParEval_s {
+struct CmdParEvalStruct {
 	char *name;	/* Name der Funktion */
 	char *desc;	/* Beschreibungstext */
-	int (*func) (CmdPar_t *cmdpar, CmdParVar_t *var, const char *par,
+	int (*func) (CmdPar *cmdpar, CmdParVar *var, const char *par,
 		const char *arg);
 };
 
-extern CmdParEval_t *CmdParEval_get (const char *name);
-extern void CmdParEval_add (CmdParEval_t *eval);
-extern void CmdParEval_show (io_t *io, const char *fmt);
+extern CmdParEval *CmdParEval_get (const char *name);
+extern void CmdParEval_add (CmdParEval *eval);
+extern void CmdParEval_show (IO *io, const char *fmt);
 
 /*
 :de:
 Die Datenstruktur |$1| definiert eine Aufrufstruktur zur Auswertung.
 */
 
-struct CmdParCall_s {
-	CmdParCall_t *next;	/* Nächster Aufruf */
-	CmdParEval_t *eval;	/* Auswertungsdefinition */
+struct CmdParCallStruct {
+	CmdParCall *next;	/* Nächster Aufruf */
+	CmdParEval *eval;	/* Auswertungsdefinition */
 	char *name;		/* Resourcename */
 	char *par;		/* Auswertungsparameter */
 };
 
-extern CmdParCall_t *CmdParCall_alloc (void);
-extern void CmdParCall_free (CmdParCall_t *call);
-extern void CmdParCall_print (io_t *io, CmdParCall_t *call);
-extern int CmdParCall_eval (CmdPar_t *par, CmdParCall_t *def, const char *arg);
+extern CmdParCall *CmdParCall_alloc (void);
+extern void CmdParCall_free (CmdParCall *call);
+extern void CmdParCall_print (IO *io, CmdParCall *call);
+extern int CmdParCall_eval (CmdPar *par, CmdParCall *def, const char *arg);
 
 /**/
 
@@ -145,49 +145,49 @@ extern int CmdParCall_eval (CmdPar_t *par, CmdParCall_t *def, const char *arg);
 Die Struktur |$1| definiert einen Parameterschlüssel.
 */
 
-struct CmdParKey_s {
+struct CmdParKeyStruct {
 	short partype;		/* Parametertype */
 	short argtype;		/* Argumenttype */
 	char *key;		/* Kennung */
 	char *val; 		/* Vorgabewert */
 	char *arg; 		/* Argumentname */
-	CmdParDef_t *def;	/* Parameterdefinition */
-	CmdParKey_t *next;	/* Nächster Schlüssel */
+	CmdParDef *def;	/* Parameterdefinition */
+	CmdParKey *next;	/* Nächster Schlüssel */
 };
 
-extern CmdParKey_t *CmdParKey_alloc (void);
-extern void CmdParKey_free (CmdParKey_t *def);
-extern void CmdParKey_print (io_t *io, CmdParKey_t *key);
+extern CmdParKey *CmdParKey_alloc (void);
+extern void CmdParKey_free (CmdParKey *def);
+extern void CmdParKey_print (IO *io, CmdParKey *key);
 
 /*
 :de:
 Die Struktur |$1| definiert eine Parameterdefinition.
 */
 
-struct CmdParDef_s {
-	CmdParKey_t *key;	/* Schlüsselliste */
-	CmdParCall_t *call;	/* Aufrufliste */
+struct CmdParDefStruct {
+	CmdParKey *key;	/* Schlüsselliste */
+	CmdParCall *call;	/* Aufrufliste */
 	char *desc;		/* Beschreibungstext */
 };
 
-extern CmdParDef_t *CmdParDef_alloc (void);
-extern void CmdParDef_free (CmdParDef_t *def);
-extern void CmdParDef_print (io_t *io, CmdParDef_t *def);
-extern int CmdParDef_eval (CmdPar_t *par, CmdParDef_t *def, const char *arg);
+extern CmdParDef *CmdParDef_alloc (void);
+extern void CmdParDef_free (CmdParDef *def);
+extern void CmdParDef_print (IO *io, CmdParDef *def);
+extern int CmdParDef_eval (CmdPar *par, CmdParDef *def, const char *arg);
 
 
 /*	Standardroutinen
 */
 
-extern void CmdPar_add (CmdPar_t *par, CmdParDef_t *def);
-extern void CmdPar_read (CmdPar_t *par, io_t *io, int end, int flag);
-extern void CmdPar_write (CmdPar_t *par, io_t *io);
-extern void CmdPar_load (CmdPar_t *par, const char *name, int flag);
-extern int CmdPar_eval (CmdPar_t *par, int *narg, char **arg, int flag);
+extern void CmdPar_add (CmdPar *par, CmdParDef *def);
+extern void CmdPar_read (CmdPar *par, IO *io, int end, int flag);
+extern void CmdPar_write (CmdPar *par, IO *io);
+extern void CmdPar_load (CmdPar *par, const char *name, int flag);
+extern int CmdPar_eval (CmdPar *par, int *narg, char **arg, int flag);
 
-extern char *CmdPar_psub (CmdPar_t *par, const char *fmt, const char *arg);
-extern void CmdPar_psubout (CmdPar_t *par, io_t *out, const char *fmt,
-		ArgList_t *args);
+extern char *CmdPar_psub (CmdPar *par, const char *fmt, const char *arg);
+extern void CmdPar_psubout (CmdPar *par, IO *out, const char *fmt,
+		ArgList *args);
 
 
 /*
@@ -196,28 +196,28 @@ Die Datenstruktur |$1| definiert Auswertungsfunktionen zur
 Expansion von Beschreibungstexten.
 */
 
-struct CmdParExpand_s {
+struct CmdParExpandStruct {
 	char *name;	/* Name der Funktion */
 	char *desc;	/* Beschreibungstext */
-	void (*eval) (CmdPar_t *par, io_t *out, const char *arg);
+	void (*eval) (CmdPar *par, IO *out, const char *arg);
 };
 
-extern CmdParExpand_t *CmdParExpand_get (const char *name);
-extern void CmdParExpand_add (CmdParExpand_t *eval);
-extern void CmdParExpand_show (io_t *io, const char *fmt);
+extern CmdParExpand *CmdParExpand_get (const char *name);
+extern void CmdParExpand_add (CmdParExpand *eval);
+extern void CmdParExpand_show (IO *io, const char *fmt);
 
 
 /*	Verwendungsinformationen
 */
 
 extern int CmdPar_docmode;
-extern void CmdPar_synopsis (CmdPar_t *par, io_t *out);
-extern void CmdPar_arglist (CmdPar_t *par, io_t *out);
-extern void CmdPar_environ (CmdPar_t *par, io_t *out);
-extern void CmdPar_resource (CmdPar_t *par, io_t *out);
-extern void CmdPar_iousage (CmdPar_t *par, io_t *out, io_t *def);
-extern void CmdPar_usage (CmdPar_t *par, io_t *out, const char *fmt);
-extern void CmdPar_manpage (CmdPar_t *par, io_t *out);
+extern void CmdPar_synopsis (CmdPar *par, IO *out);
+extern void CmdPar_arglist (CmdPar *par, IO *out);
+extern void CmdPar_environ (CmdPar *par, IO *out);
+extern void CmdPar_resource (CmdPar *par, IO *out);
+extern void CmdPar_iousage (CmdPar *par, IO *out, IO *def);
+extern void CmdPar_usage (CmdPar *par, IO *out, const char *fmt);
+extern void CmdPar_manpage (CmdPar *par, IO *out);
 
 /*
 $SeeAlso

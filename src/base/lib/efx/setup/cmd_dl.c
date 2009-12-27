@@ -25,9 +25,9 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/mactools.h>
 #include <EFEU/cmdsetup.h>
 
-static char *LDPATH = ".:" String(_EFEU_TOP) "/lib";
+static char *LDPATH = ".:" String(EFEUROOT) "/lib";
 
-static VarDef_t dl_var[] = {
+static EfiVarDef dl_var[] = {
 	{ "LDPATH",	&Type_str, &LDPATH,
 		":*:search path for shared object modules\n"
 		":de:Suchpfad für shared object modules\n"},
@@ -45,7 +45,7 @@ static int libname (const char *name)
 	return 1;
 }
 
-static void f_loadlib (Func_t *func, void *rval, void **arg)
+static void f_loadlib (EfiFunc *func, void *rval, void **arg)
 {
 	char *lname = Val_str(arg[0]);
 	char *fname = Val_str(arg[1]);
@@ -95,7 +95,7 @@ static void f_loadlib (Func_t *func, void *rval, void **arg)
 
 #else
 
-static void f_loadlib(Func_t *func, void *rval, void **arg)
+static void f_loadlib(EfiFunc *func, void *rval, void **arg)
 {
 	io_printf(ioerr, "loadlib: not implemented\n");
 }

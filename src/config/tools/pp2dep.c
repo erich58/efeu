@@ -22,15 +22,15 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <stdio.h>
-#include <stdlib.h>
+#include <stdarg.h>
 #include <string.h>
+#include <stdlib.h>
 #include <unistd.h>
 
 #define	NAME_SIZE	1023	/* Maximallänge für Filenamen ohne Abschluß */
 #define	BREAK_COL	70	/* Spaltenpostion für Fortsetzungszeile */
 
-#define	ERR_MALLOC	"%s: malloc (%ld) failed.\n"
-#define ERR_SIZE	"%s: truncating name (size > %ld).\n"
+#define	ERR_MALLOC	"malloc (%ld) failed.\n"
 #define	FMT_USAGE	"usage: %s [-l] [-x name] target(s)\n"
 
 /*
@@ -52,11 +52,23 @@ static void usage (const char *arg)
 {
 	execlp("efeuman", "efeuman", "--", __FILE__, arg, NULL);
 	fprintf(stderr, FMT_USAGE, ProgName);
+	exit(arg ? 0 : 1);
+}
+
+static void error (const char *fmt, ...)
+{
+	va_list args;
+
+	fprintf(stderr, "%s: ", ProgName);
+	va_start(args, fmt);
+	vfprintf(stderr, fmt, args);
+	va_end(args);
+	exit(1);
 }
 
 /*
 $Description
-:en:
+:*:
 The command |$!| greps the names of included files from the output
 of the C preprocessor and creates a dependend list for given targets.
 :de:
@@ -64,14 +76,9 @@ Das Kommando |$!| filtert aus der Ausgabe des C--Preprozessors
 die Namen von eingebundenen Dateien und stellt daraus eine Abhängigkeitsliste
 für die angegebenen Ziele <target(s)> zusammen.
 
+@arglist -i
+
 :*:
-The following options and arguments are accepted by |$!|:
-:de:
-Folgende Optionen beeinflussen die Arbeitsweise des Kommandos:
-
-@arglist
-
-:en:
 The next lines show the typical use of |pp2dep| in a Makefiles:
 :de:
 Die typische Anwendung für |pp2dep| erfolgt in einem Makefile der
@@ -89,75 +96,11 @@ $SeeAlso
 \mref{cc(1)}, \mref{make(1)}, \mref{mkmf(1)}, \mref{ppfilter(1)}.
 */
 
-/*	Dynamische Speicherverwaltung
-*/
-
-static void *xmalloc (size_t n)
-{
-	void *data = malloc(n);
-
-	if	(data == NULL)
-	{
-		fprintf(stderr, ERR_MALLOC, ProgName, (unsigned long) n);
-		exit(1);
-	}
-
-	return data;
-}
-
-static void xfree (void *data)
-{
-	if	(data)	free(data);
-}
-
-
-/*	Filenamen lesen
-*/
-
-static size_t load_name (char *buf, size_t size)
-{
-	size_t n;
-	int c;
-
-	while ((c = getchar()) != EOF)
-	{
-		if	(c == '#')
-		{
-			while ((c = getchar()) != '"')
-				if (c == EOF) return 0;
-			
-			break;
-		}
-
-		while (c != '\n' && c != EOF)
-			c = getchar();
-	}
-
-	if	(c == EOF)	return 0;
-
-	n = 0;
-
-	while ((c = getchar()) != EOF)
-	{
-		if (c == '"' || c == '\n') break;
-
-		if	(n < size)
-			buf[n++] = c;
-		else	fprintf(stderr, ERR_SIZE, ProgName, (unsigned long) size);
-	}
-
-	while (c != '\n' && c != EOF)
-		c = getchar();
-
-	buf[n++] = 0;
-	return n;
-}
-
 
 /*	Namensliste
 */
 
-#define	TAB_BLK	512
+#define	TAB_BSIZE	512
 
 static char **name_tab = NULL;
 static size_t name_size = 0;
@@ -165,23 +108,90 @@ static size_t name_dim = 0;
 
 static void add_name (const char *buf, size_t size)
 {
-	size_t i = name_dim;
+	size_t i;
+	char *p;
 
-	while (i-- > 0)
+	for (i = name_dim; i-- > 0; )
 		if (strcmp(name_tab[i], buf) == 0) return;
 
 	if	(name_dim + 1 >= name_size)
 	{
 		char **save = name_tab;
-		name_size = TAB_BLK * (name_dim / TAB_BLK + 1);
-		name_tab = xmalloc(name_size * sizeof(char *));
+		name_size += TAB_BSIZE;
+		name_tab = realloc(name_tab, name_size * sizeof(char *));
+
+		if	(!name_tab)
+			error(ERR_MALLOC,
+				(unsigned long) name_size * sizeof(char *));
+
 		memcpy(name_tab, save, name_dim * sizeof(char *));
-		xfree(save);
 	}
 
-	name_tab[name_dim++] = memcpy(xmalloc(size), buf, size);
+	if	((p = malloc(size)) == NULL)
+		error(ERR_MALLOC, (unsigned long) size);
+
+	name_tab[name_dim++] = memcpy(p, buf, size);
 }
 
+
+/*	Filenamen lesen
+*/
+
+#define	BUF_BSIZE	250
+
+static char *buf = NULL;
+static size_t buf_size = 0;
+
+static void eval_line (void)
+{
+	size_t n;
+	int c;
+
+	do	c = getchar();
+	while	(c == ' ' || c == '\t');
+
+	if	(c == 'p')	/* pragma ignorieren */
+	{
+		do	c = getchar();
+		while	(c != '\n' && c != EOF);
+
+		return;
+	}
+
+	while (c != '"')
+	{
+		if (c == '\n' || c == EOF) return;
+
+		c = getchar();
+	}
+
+	n = 0;
+
+	while ((c = getchar()) != EOF)
+	{
+		if	(c == '"' || c == '\n')
+			break;
+
+		if	(n >= buf_size)
+		{
+			buf_size += BUF_BSIZE;
+			buf = realloc(buf, buf_size + 1);
+
+			if	(!buf)
+				error(ERR_MALLOC, (unsigned long) buf_size);
+		}
+
+		buf[n++] = c;
+	}
+
+	while (c != '\n' && c != EOF)
+		c = getchar();
+
+	buf[n++] = 0;
+
+	if	(buf[0] != '<')
+		add_name(buf, n);
+}
 
 /*	Hauptprogramm
 */
@@ -226,11 +236,15 @@ static char *local_files (char *name)
 /*	Hauptprogramm
 */
 
+extern int optind;
+extern char *optarg;
+
 int main (int narg, char **arg)
 {
-	char *buf, *name, *delim;
+	char *name, *delim;
 	char *(*select)(char *name);
 	size_t n, pos;
+	int c;
 
 	ProgName = arg[0];
 	select = all_files;
@@ -263,11 +277,20 @@ int main (int narg, char **arg)
 */
 	arg += optind;
 	narg -= optind;
-	buf = xmalloc(NAME_SIZE + 1);
 
-	while ((n = load_name(buf, NAME_SIZE)) != 0)
-		add_name(buf, n);
-	
+	while ((c = getchar()) != EOF)
+	{
+		if	(c == '#')
+		{
+			eval_line();
+		}
+		else
+		{
+			while (c != '\n' && c != EOF)
+				c = getchar();
+		}
+	}
+
 /*	Bei fehlenden Zielnamen wird eine einfache Fileliste generiert
 */
 	if	(narg == 0)

@@ -1,5 +1,6 @@
 /*
-Zeitreihenstruktur ausgeben
+:*:print time series data
+:de:Zeitreihendaten ausgeben
 
 $Copyright (C) 1997 Erich Frühstück
 This file is part of EFEU.
@@ -20,38 +21,34 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include <EFEU/object.h>
 #include <Math/TimeSeries.h>
 
-int PrintTimeSeries(io_t *io, const TimeSeries_t *ts, const char *fmt)
+int ts_print(IO *io, const TimeSeries *ts, const char *fmt)
 {
 	int i, n;
 
 	if	(ts == NULL)	return 0;
 
-	n = io_printf(io, "%s[%d] ", ts->name, ts->dim);
-	n += PrintTimeIndex(io, ts->base, 0);
+	n = io_printf(io, "TimeSeries(%#s, \"", ts->name);
+	n += tindex_print(io, ts->base, 0);
+	n += io_puts("\"", io);
 
 	if	(ts->fmt)	fmt = ts->fmt;
 	if	(!fmt)		fmt = "%#10.2f";
 
 	if	(ts->dim > 0)
 	{
-		n += io_puts(" ", io);
-		n += PrintTimeIndex(io, ts->base, ts->dim - 1);
-
 		for (i = 0; i < ts->dim; i++)
 		{
-			if	(i == 0)	n += io_puts(" {\n", io);
-			else if	(i % 6 == 0)	n += io_puts("\n", io);
-			else			n += io_puts(" ", io);
+			if	(i % 6 == 0)	n += io_puts(",\n", io);
+			else			n += io_puts(", ", io);
 
 			n += io_printf(io, fmt, ts->data[i]);
 		}
 
-		n += io_puts("\n}\n", io);
+		n += io_puts("\n", io);
 	}
-	else	n += io_puts(" { }\n", io);
 
+	n += io_puts(")\n", io);
 	return n;
 }

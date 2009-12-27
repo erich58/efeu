@@ -51,7 +51,7 @@ static char *tab_indent = NULL;
 static char *tab_boldline = NULL;
 static char *tab_boldrule = NULL;
 
-static VarDef_t cmd_tab[] = {
+static EfiVarDef cmd_tab[] = {
 	{ "break",	&Type_str, &cmd_break },
 	{ "newpage", &Type_str, &cmd_newpage },
 	{ "tableofcontents", &Type_str, &cmd_toc },
@@ -74,7 +74,7 @@ static VarDef_t cmd_tab[] = {
 	{ "boldrule", &Type_str, &tab_boldrule },
 };
 
-static void print_var (io_t *io, VarDef_t *var, size_t dim)
+static void print_var (IO *io, EfiVarDef *var, size_t dim)
 {
 	io_putc('\n', io);
 
@@ -83,7 +83,7 @@ static void print_var (io_t *io, VarDef_t *var, size_t dim)
 }
 
 
-void LaTeX_ShowCmd (io_t *io)
+void LaTeX_ShowCmd (IO *io)
 {
 	print_var(io, cmd_tab, tabsize(cmd_tab));
 }
@@ -93,7 +93,7 @@ void LaTeX_SetupCmd (void)
 	AddVarDef(LocalVar, cmd_tab, tabsize(cmd_tab));
 }
 
-static void label_cmd (LaTeX_t *ltx, const char *cmd, const char *name)
+static void label_cmd (LaTeX *ltx, const char *cmd, const char *name)
 {
 	if	(name)
 	{
@@ -122,7 +122,7 @@ static int index_mark (int c)
 	}
 }
 
-static void put_index (LaTeX_t *ltx, va_list list)
+static void put_index (LaTeX *ltx, va_list list)
 {
 	char *name = va_arg(list, char *);
 	char *label = va_arg(list, char *);
@@ -143,26 +143,31 @@ static void put_index (LaTeX_t *ltx, va_list list)
 	}
 }
 
-static void add_space (LaTeX_t *ltx, int space)
+static void add_space (LaTeX *ltx, int space)
 {
 	io_putc(space, ltx->out);
 	ltx->last = space;
 	ltx->ignorespace = 1;
 }
 
-static void line_cmd (LaTeX_t *ltx, const char *cmd)
+static void line_cmd (LaTeX *ltx, const char *cmd, char *arg)
 {
+	char *args[2];
+	args[0] = NULL;
+	args[1] = arg;
 	LaTeX_newline(ltx);
-	io_psub(ltx->out, cmd);
+	io_psubvec(ltx->out, cmd, 2, args);
 
 	if	(cmd)
 		add_space(ltx, '\n');
 }
 
 
-int LaTeX_cmd (LaTeX_t *ltx, va_list list)
+int LaTeX_cmd (void *drv, va_list list)
 {
+	LaTeX *ltx = drv;
 	int cmd = va_arg(list, int);
+	char *p;
 
 	switch (cmd)
 	{
@@ -170,27 +175,25 @@ int LaTeX_cmd (LaTeX_t *ltx, va_list list)
 		io_puts(cmd_break, ltx->out);
 		break;
 	case DOC_CMD_NPAGE:
-		line_cmd(ltx, cmd_newpage);
+		line_cmd(ltx, cmd_newpage, NULL);
 		break;
 	case DOC_CMD_TOC:
-		line_cmd(ltx, cmd_toc);
+		line_cmd(ltx, cmd_toc, NULL);
 		break;
 	case DOC_CMD_LOF:
-		line_cmd(ltx, cmd_lof);
+		line_cmd(ltx, cmd_lof, NULL);
 		break;
 	case DOC_CMD_LOT:
-		line_cmd(ltx, cmd_lot);
+		line_cmd(ltx, cmd_lot, NULL);
 		break;
 	case DOC_CMD_APP:
-		reg_cpy(1, va_arg(list, char *));
-		line_cmd(ltx, cmd_appendix);
+		line_cmd(ltx, cmd_appendix, va_arg(list, char *));
 		break;
 	case DOC_CMD_ITEM:
-		line_cmd(ltx, cmd_item);
+		line_cmd(ltx, cmd_item, NULL);
 		break;
 	case DOC_CMD_MARK:
-		reg_fmt(1, "%d", va_arg(list, int));
-		io_psub(ltx->out, cmd_mark);
+		io_psubarg(ltx->out, cmd_mark, "nd", va_arg(list, int));
 		break;
 	case DOC_CMD_IDX:
 		if	(ltx->last != '\n')
@@ -226,18 +229,19 @@ int LaTeX_cmd (LaTeX_t *ltx, va_list list)
 		add_space(ltx, '\n');
 		break;
 	case DOC_TAB_HEIGHT:
-		reg_fmt(1, "%d", va_arg(list, int));
-		line_cmd(ltx, tab_height);
+		p = msprintf("%d", va_arg(list, int));
+		line_cmd(ltx, tab_height, p);
+		memfree(p);
 		break;
 	case DOC_TAB_INDENT:
 		if	(io_puts(tab_indent, ltx->out))
 			add_space(ltx, ' ');
 		break;
 	case DOC_TAB_BLINE:
-		line_cmd(ltx, tab_boldline);
+		line_cmd(ltx, tab_boldline, NULL);
 		break;
 	case DOC_TAB_BRULE:
-		line_cmd(ltx, tab_boldrule);
+		line_cmd(ltx, tab_boldrule, NULL);
 		break;
 	default:
 		return EOF;

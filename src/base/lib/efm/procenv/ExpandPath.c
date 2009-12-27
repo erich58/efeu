@@ -40,7 +40,7 @@ der Umgebungsvariablen |HOME| ersetzt.
 
 char *ExpandPath (const char *name)
 {
-	strbuf_t *sb;
+	StrBuf *sb;
 
 	if	(name == NULL)	return NULL;
 

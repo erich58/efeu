@@ -23,7 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <efeudoc.h>
 #include <ctype.h>
 
-static void cp_verb (io_t *in, strbuf_t *buf)
+static void cp_verb (IO *in, StrBuf *buf)
 {
 	int c;
 	
@@ -47,7 +47,7 @@ static void cp_verb (io_t *in, strbuf_t *buf)
 	}
 }
 
-static int cp_minus (io_t *in, strbuf_t *buf)
+static int cp_minus (IO *in, StrBuf *buf)
 {
 	int n, c;
 
@@ -60,7 +60,7 @@ static int cp_minus (io_t *in, strbuf_t *buf)
 	return n;
 }
 
-static void cp_line (io_t *in, strbuf_t *buf)
+static void cp_line (IO *in, StrBuf *buf)
 {
 	int c;
 
@@ -72,7 +72,7 @@ static void cp_line (io_t *in, strbuf_t *buf)
 	}
 }
 
-static void cp_reg (io_t *in, strbuf_t *buf)
+static void cp_reg (IO *in, StrBuf *buf)
 {
 	int c;
 
@@ -91,11 +91,11 @@ static void cp_reg (io_t *in, strbuf_t *buf)
 	while	(c != EOF);
 }
 
-char *DocParseBlock (io_t *in, int mode, const char *beg,
+char *DocParseBlock (IO *in, int mode, const char *beg,
 	const char *end, const char *toggle)
 {
 	int nl, c, depth;
-	strbuf_t *buf;
+	StrBuf *buf;
 	char *p;
 
 	buf = (mode || toggle) ? new_strbuf(0) : NULL;

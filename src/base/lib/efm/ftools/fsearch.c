@@ -24,6 +24,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/strbuf.h>
 #include <EFEU/ftools.h>
 #include <EFEU/extension.h>
+#include <EFEU/Debug.h>
+#include <EFEU/LangDef.h>
 #include <ctype.h>
 
 int access (const char *path, int amode);
@@ -37,160 +39,167 @@ int access (const char *path, int amode);
 #endif
 
 
-/*	Statischer Buffer zum zwischenspeichern
-*/
-
+#define	USE_TERRITORY	0
 #define	FS_BSIZE	64
 
+static int do_search (StrBuf *sb, const char *path,
+	const char *sub, const char *name, int flag);
+static int try_lang (StrBuf *sb, const char *path, const char *sub,
+	const char *name);
+static int sub_search (StrBuf *sb, const char *name);
+static int need_search (const char *name);
+static char *add_tilde (StrBuf *sb, const char *path);
 
-/*	Test auf relativen Pfad
+
+/*	Filenamen an Pfad anhängen und auf Lesbarkeit testen
 */
 
-static int checkpath(const char *path)
-{
-	if	(path == NULL)		return 0;
-	else if	(path[0] == 0)		return 0;
-	else if	(path[0] == '/')	return 1;
-	else if	(path[0] != '.')	return 0;
-	else if	(strchr(path, '/'))	return 1;
-	else				return 0;
-}
-
-
-/*	Filenamen an Pfad anhängen und auf Lesbarkeit testen
-*/
-
-static char *sub_search(strbuf_t *sb, const char *name)
+static int sub_search (StrBuf *sb, const char *name)
 {
 	if	(sb->pos != 0 && sb->data[sb->pos - 1] != '/')
 		sb_putc('/', sb);
 
 	sb_puts(name, sb);
 	sb_putc(0, sb);
+	dbg_message("fsearch", DBG_TRACE, "access(\"$1\")\n", NULL, "s", sb->data);
 
 	if	(access((char *) sb->data, R_OK) == 0)
-	{
-		return sb2str(sb);
-	}
+		return 1;
 
-	return NULL;
+	return 0;
 }
 
 
-/*	Suche nach dem File
-*/
-
-char *fsearch(const char *path, const char *subpath,
-	const char *name, const char *type)
+static int need_search (const char *name)
 {
-	fname_t *fn;
-	char *fname;
-	const char *cp;
-	strbuf_t *sb;
-	char *p;
+	if	(name[0] == '/')	return 0;
+	if	(name[0] != '.')	return 1;
+	if	(name[1] == '/')	return 0;
+	if	(name[1] != '.')	return 1;
+	if	(name[2] == '/')	return 0;
 
-/*	Kein Filename oder kein Pfad und Filetype
-*/
-	if	(name == NULL)
+	return 1;
+}
+
+static char *add_tilde (StrBuf *sb, const char *path)
+{
+	path++;
+
+#if	HAS_GETPWNAM
+	if	(isalpha(*path))
 	{
-		return NULL;
-	}
-	else if	(path == NULL && type == NULL)
-	{
-		if	(access(name, R_OK) == 0)
+		int save;
+		struct passwd *pw;
+
+		save = sb_getpos(sb);
+		sb_putc(*path, sb);
+
+		while (*(++path) != 0)
 		{
-			return mstrcpy(name);
+			if	(*path == '/' || *path == ':')
+			{
+				break;
+			}
+			else	sb_putc(*path, sb);
 		}
-		else	return NULL;
+
+		sb_putc(0, sb);
+		pw = getpwnam((char *) sb->data + save);
+		sb_setpos(sb, save);
+		sb_sync(sb);
+
+		if	(pw)
+			sb_puts(pw->pw_dir, sb);
+
+		return (char *) path;
 	}
+#endif
+	sb_puts(getenv("HOME"), sb);
+	return (char *) path;
+}
 
-/*	Filename zerlegen und auf vollständige Definition prüfen.
-*/
-	fn = strtofn(name);
-
-	if	(fn->type == NULL)
+static int try_lang (StrBuf *sb, const char *path, const char *sub,
+	const char *name)
+{
+	if	(LangDef.language != NULL)
 	{
-		fn->type = (char *) type;
+		int save = sb_getpos(sb);
+
+		sb_puts(LangDef.language, sb);
+
+#if	USE_TERRITORY
+		if	(LangDef.territory != NULL)
+		{
+			int tsave = sb_getpos(sb);
+
+			sb_putc('_', sb);
+			sb_puts(LangDef.territory, sb);
+
+			if	(do_search(sb, path, sub, name, 1))
+				return 1;
+
+			sb_setpos(sb, tsave);
+			sb_sync(sb);
+		}
+#endif
+		if	(do_search(sb, path, sub, name, 1))
+			return 1;
+
+		sb_setpos(sb, save);
+		sb_sync(sb);
 	}
 
-	fname = fntostr(fn);
+	return 0;
+}
 
-	if	(path == NULL || checkpath(fn->path))
-	{
-		memfree(fn);
-
-		if	(access(fname, R_OK) == 0)	return fname;
-
-		memfree(fname);
-		return NULL;
-	}
-
-/*	Suche nach Datei
-*/
-	sb = new_strbuf(FS_BSIZE);
-
+static int do_search (StrBuf *sb, const char *path,
+	const char *sub, const char *name, int flag)
+{
 	while (*path != 0)
 	{
 		switch (*path)
 		{
 		case '~':
-
-#if	HAS_GETPWNAM
-			if	(isalpha(path[1]))
-			{
-				int save;
-				struct passwd *pw;
-
-				save = sb_getpos(sb);
-
-				while (*(++path) != 0)
-				{
-					if	(*path == '/' || *path == ':')
-					{
-						break;
-					}
-					else	sb_putc(*path, sb);
-				}
-
-				sb_putc(0, sb);
-				pw = getpwnam((char *) sb->data + save);
-				sb_setpos(sb, save);
-				sb_sync(sb);
-
-				if	(pw)
-				{
-					sb_puts(pw->pw_dir, sb);
-				}
-
-				continue;
-			}
-#endif
-			sb_puts(getenv("HOME"), sb);
-			break;
-
+			path = add_tilde(sb, path);
+			continue;
 		case '%':
+			path++;
 
-			switch (*(++path))
+			switch (*path)
 			{
-#if	0
-			case 'P':	cp = ProgName; break;
-#endif
-			case 'S':	cp = subpath; break;
-			case 'T':	cp = getenv("TERM"); break;
-			case 'H':	cp = getenv("HOME"); break;
-			case 'L':	cp = getenv("LANG"); break;
-			default:	path++; continue;
+			case 'S':
+				sb_puts(sub, sb);
+				break;
+			case 'T':
+				sb_puts(getenv("TERM"), sb);
+				break;
+			case 'H':
+				sb_puts(getenv("HOME"), sb);
+				break;
+			case 'L':
+				if	(try_lang(sb, path + 1, sub, name))
+					return 1;
+
+				break;
+			default:
+				break;
 			}
 
-			sb_puts(cp, sb);
 			break;
 		case ':':
-			if	((p = sub_search(sb, fname)) != NULL)
-				return p;
+			if	(sub_search(sb, name))
+				return 1;
+			if	(flag)
+				return 0;
 
 			sb_clear(sb);
 			break;
 
+		case '/':
+			if	(sb->pos == 0 || sb->data[sb->pos - 1] != '/')
+				sb_putc('/', sb);
+
+			break;
 		default:
 
 			sb_putc(*path, sb);
@@ -200,22 +209,49 @@ char *fsearch(const char *path, const char *subpath,
 		path++;
 	}
 
-	return sub_search(sb, fname);
+	return sub_search(sb, name);
 }
 
-char *xfsearch(const char *path, const char *subpath,
+
+/*	Suche nach dem File
+*/
+
+char *fsearch (const char *path, const char *sub,
 	const char *name, const char *type)
 {
-	fname_t *fn;
-	char *p, *fname;
+	char *tname = NULL;
 
-	if	(name == NULL)	return NULL;
+	if	(name == NULL)
+		return NULL;
+	
+	if	(type)
+	{
+		char *p = strrchr(name, '.');
 
-	fn = strtofn(name);
-	fn->type = (char *) type;
-	p = fntostr(fn);
-	memfree(fn);
-	fname = fsearch(path, subpath, p, NULL);
-	memfree(p);
-	return fname;
+		if	(p == NULL || strcmp(p + 1, type) != 0)
+		{
+			tname = mstrpaste(".", name, type);
+			name = tname;
+		}
+	}
+
+	if	(path && need_search(name))
+	{
+		StrBuf *sb = new_strbuf(FS_BSIZE);
+		int flag = do_search(sb, path, sub, name, 0);
+
+		memfree(tname);
+
+		if	(flag)	return sb2str(sb);
+
+		del_strbuf(sb);
+		return NULL;
+	}
+	else if	(access(name, R_OK) == 0)
+	{
+		return tname ? tname : mstrcpy(name);
+	}
+
+	memfree(tname);
+	return NULL;
 }

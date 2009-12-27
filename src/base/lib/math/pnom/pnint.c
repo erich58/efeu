@@ -22,9 +22,9 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <Math/pnom.h>
 
-pnom_t *pnint(pnom_t *p0, double x, double y)
+Polynom *pnint(Polynom *p0, double x, double y)
 {
-	pnom_t *p;	/* Polynomstruktur */
+	Polynom *p;	/* Polynomstruktur */
 	int i, j;	/* Hilfszähler */
 	double z;	/* Hilfsvariable */
 

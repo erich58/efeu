@@ -28,23 +28,23 @@ If not, write to the Free Software Foundation, Inc.,
 typedef struct {
 	char *name;
 	char *desc;
-	io_t *(*filter) (io_t *io);
-	io_t *(*docopen) (const char *name, const char *par);
+	IO *(*filter) (IO *io);
+	IO *(*docopen) (const char *name, const char *par);
 	char *par;
-} DocType_t;
+} DocType;
 
-extern io_t *DocOut_html (io_t *io);
-extern io_t *DocOut_test (io_t *io);
-extern io_t *DocOut_latex (io_t *io);
-extern io_t *DocOut_mroff (io_t *io);
-extern io_t *DocOut_term (io_t *io);
+extern IO *DocOut_html (IO *io);
+extern IO *DocOut_test (IO *io);
+extern IO *DocOut_latex (IO *io);
+extern IO *DocOut_mroff (IO *io);
+extern IO *DocOut_term (IO *io);
 
 extern char *DocCmdName (int key);
 extern char *DocEnvName (int key);
 
-DocType_t *GetDocType (const char *name);
-extern io_t *DocOut (DocType_t *type, const char *name);
-extern io_t *DocFilter (DocType_t *type, io_t *io);
+DocType *GetDocType (const char *name);
+extern IO *DocOut (DocType *type, const char *name);
+extern IO *DocFilter (DocType *type, IO *io);
 void DocOutInfo (const char *name, const char *desc);
 
 #endif	/* DocOut.h */

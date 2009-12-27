@@ -24,22 +24,22 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/io.h>
 #include <EFEU/ioctrl.h>
 
-void io_linemark (io_t *io)
+void io_linemark (IO *io)
 {
 	io_ctrl(io, IO_LINEMARK);
 }
 
-void io_submode (io_t *io, int flag)
+void io_submode (IO *io, int flag)
 {
 	io_ctrl(io, IO_SUBMODE, flag);
 }
 
-void io_protect (io_t *io, int flag)
+void io_protect (IO *io, int flag)
 {
 	io_ctrl(io, IO_PROTECT, flag);
 }
 
-extern char *io_prompt (io_t *io, const char *prompt)
+char *io_prompt (IO *io, const char *prompt)
 {
 	return io_ctrl(io, IO_PROMPT, &prompt) == EOF ? NULL : (char *) prompt;
 }

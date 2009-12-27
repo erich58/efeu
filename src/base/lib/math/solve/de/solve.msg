@@ -22,5 +22,5 @@ If not, write to the Free Software Foundation, Inc.,
 
 2	Keine Nullstelle im Intervall [$1, $2]\n
 3	$!: Maximale Stufenzahl von $(SolveStep) überschritten.\n
-4	Stufe $(#1:%2d): [$2, $3]\n
-5	Stufe $(#1:%2d): [$2, $3] (Gewicht: $4)\n
+4	Stufe $1: [$2, $3]\n
+5	Stufe $1: [$2, $3] (Gewicht: $4)\n

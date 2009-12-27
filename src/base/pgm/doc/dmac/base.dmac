@@ -123,7 +123,7 @@ at current position. The flags are the same as in |\include|.
 :de:Der Befehl $1 bindet die Ausgabe des Kommandos <cmd> ein.
 Die Flags <flags> sind äquivalent zu |\include|.
 
-\def\pipe	input(ParseOpt(cin, true), popen(ParseLine(cin, true), "r"))
+\def\pipe input(ParseOpt(cin, true), popen(xexpand(ParseLine(cin, true)), "r"))
 
 :*:evaluate expression
 	$1 <expr>\br
@@ -156,6 +156,20 @@ Klammern angegeben werden.
 global angelegt.
 
 \def\geval	geval(ParseExpr(cin));
+
+:*:get path of document file
+	$1 <name>\br
+	$1 |{|<name>|}|
+:de:Pfadname einer Dokumentdatei suchen
+	$1 <Name>\br
+	$1 |{|<Name>|}|
+
+:*:The command searches the file <name> relating to the current
+document path and returns the path name if found.
+:de:Der Befehl $1 sucht nach der Datei <name> in Bezug auf den
+aktuellen Dokumentpfad und liefert bei Erfolg den Pfadnamen.
+
+\def\docfile	cout << fsearch(DocPath, xexpand(ParseArg(cin)));
 
 /*	index entry
 */

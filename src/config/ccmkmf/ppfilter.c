@@ -27,6 +27,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <ctype.h>
 #include <unistd.h>
 
+#define	USAGE	"usage: %s [-c]\n"
+
 /*
 $pconfig
 c|
@@ -34,10 +36,19 @@ c|
 	:de:Konvertiert LF nach CR/LF
 */
 
-static void usage (const char *name, const char *arg)
+static char *callname = NULL;
+
+static void usage (const char *arg)
 {
 	execlp("efeuman", "efeuman", "--", __FILE__, arg, NULL);
-	fprintf(stderr, "usage: %s [-c]", name);
+	fprintf(stderr, USAGE, callname);
+	exit(arg ? 0 : 1);
+}
+
+static void error (const char *desc)
+{
+	fprintf(stderr, "%s: %s\n", callname, desc);
+	exit(1);
 }
 
 /*
@@ -64,6 +75,8 @@ $SeeAlso
 \mref{efeucc(1)}, \mref{ccmkmf(1)}, \mref{pp2dep(1)}, \mref{cc(1)}.
 */
 
+#define	DEBUG	1
+
 static int prefilter (void);
 static int expand (void);
 static int clearspace (void);
@@ -73,15 +86,78 @@ static int copystr (void);
 int cr_flag = 0;
 int str_flag = 0;
 
-typedef struct tmpstack_s tmpstack_t;
+#define	TBUF_BSIZE	250
 
-struct tmpstack_s {
-	FILE *file;
-	tmpstack_t *next;
+typedef struct tbuf_struct TBUF;
+
+struct tbuf_struct {
+	char *buf;
+	size_t size;
+	size_t pos;
+	TBUF *next;
 };
 
-static tmpstack_t *copy = NULL;
-static tmpstack_t *save = NULL;
+static TBUF *tbuf_alloc (TBUF *next)
+{
+	TBUF *x = malloc(sizeof(TBUF));
+
+	if	(x == NULL)
+		error("malloc() failed.");
+
+	x->buf = NULL;
+	x->size = 0;
+	x->pos = 0;
+	x->next = next;
+	return x;
+}
+
+static TBUF *tbuf_free (TBUF *buf)
+{
+	if	(buf)
+	{
+		TBUF *next = buf->next;
+
+		if	(buf->buf)	free(buf->buf);
+
+		free(buf);
+		return next;
+	}
+
+	return NULL;
+}
+
+static void tbuf_putc (int c, TBUF *buf)
+{
+	if	(buf->pos >= buf->size)
+	{
+		buf->size += TBUF_BSIZE;
+		buf->buf = realloc(buf->buf, buf->size);
+
+		if	(!buf->buf)
+			error("realloc() failed.");
+	}
+
+	buf->buf[buf->pos++] = c;
+}
+
+static TBUF *copy = NULL;
+static TBUF *save = NULL;
+
+static void open_tmp (void)
+{
+	copy = tbuf_alloc(copy);
+}
+
+static void close_tmp (void)
+{
+	if	(copy)
+	{
+		TBUF *x = copy;
+		copy = x->next;
+		x->next = save;
+		save = x;
+	}
+}
 
 
 /*	Hauptprogramm
@@ -91,16 +167,16 @@ int main (int narg, char **arg)
 {
 	int c;
 
+	callname = arg[0];
 	cr_flag = 0;
 
 	if	(narg > 1)
 	{
-		if	(strcmp("-?", arg[1]) == 0)
-			usage(arg[0], NULL);
-		else if	(strncmp("--help", arg[1], 6) == 0)
-			usage(arg[0], arg[1]);
-		else if	(strcmp("-c", arg[1]) == 0)
+		if	(strcmp("-c", arg[1]) == 0)
+		{
 			cr_flag = 1;
+		}
+		else	usage(arg[1]);
 	}
 
 	do	c = clearspace();
@@ -110,7 +186,7 @@ int main (int narg, char **arg)
 	{
 		if	(copy)
 		{
-			putc(c, copy->file);
+			tbuf_putc(c, copy);
 		}
 		else	postfilter(c);
 
@@ -120,41 +196,15 @@ int main (int narg, char **arg)
 	
 	while (save)
 	{
-		tmpstack_t *x = save;
-		save = x->next;
+		size_t n;
 
-		while ((c = getc(x->file)) != EOF)
-			postfilter(c);
+		for (n = 0; n < save->pos; n++)
+			postfilter(save->buf[n]);
 
-		fclose(x->file);
-		free(x);
+		save = tbuf_free(save);
 	}
 
 	return 0;
-}
-
-
-/*	Temporärer Buffer
-*/
-
-static void open_tmp (void)
-{
-	tmpstack_t *x = malloc(sizeof(tmpstack_t));
-	x->file = tmpfile();
-	x->next = copy;
-	copy = x;
-}
-
-static void close_tmp (void)
-{
-	if	(copy)
-	{
-		tmpstack_t *x = copy;
-		rewind(x->file);
-		copy = x->next;
-		x->next = save;
-		save = x;
-	}
 }
 
 

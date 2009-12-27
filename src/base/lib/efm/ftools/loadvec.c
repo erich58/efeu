@@ -24,12 +24,15 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/ftools.h>
 #include <EFEU/procenv.h>
 
+#define E21	"[ftools:21]$!: file $0: unexpected EOF.\n"
+#define E22	"[ftools:22]$!: file $0: could not write data.\n"
+
 size_t loadvec (FILE *file, void *ptr, size_t size, size_t dim)
 {
 	size_t n = fread_compat(ptr, size, dim, file);
 
 	if	(n != dim)
-		fileerror(file, MSG_FTOOLS, 21, 0);
+		fileerror(file, E21, NULL);
 
 	return n;
 }
@@ -39,7 +42,7 @@ size_t savevec (FILE *file, const void *ptr, size_t size, size_t dim)
 	size_t n = fwrite_compat(ptr, size, dim, file);
 
 	if	(n != dim)
-		fileerror(file, MSG_FTOOLS, 22, 0);
+		fileerror(file, E22, NULL);
 
 	return n;
 }

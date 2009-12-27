@@ -27,11 +27,11 @@ Es gibt jedoch einige Unterschiede:
 
 In Esh sind |long| und |unsigned| Datentypen, während es sich in C nur
 um Typmodifikatoren handelt.
-Die Bytelängen der Ganzzahldatentype sind architekturabhängig,
-sie entsprechen aber immer den gleichwertigen Datentype in C.
+Die Bytelängen der Ganzzahldatentyp sind architekturabhängig,
+sie entsprechen aber immer dem gleichwertigen Datentyp in C.
 
-In C wird für boolsche Werte der Datentype |int| verwendet.
-In |esh| wird |int| vom Datentype |bool| abgeleitet (Vererbung)
+In C wird für boolsche Werte der Datentyp |int| verwendet.
+In |esh| wird |int| vom Datentyp |bool| abgeleitet (Vererbung)
 und kann damit immer auch anstelle eines boolschen Wertes eingesetzt
 werden.
 
@@ -59,7 +59,23 @@ Zeichenkette (String) durch doppelte Anführungszeichen.
 Eine Zeichendefinition darf mehrere Zeichen enthalten, es wird aber
 nur das erste Zeichen verwendet.
 
-@TODO
+Für sehr lange Zeichenketten gibt es eine alternative Konstruktion
+über das Schlüsselwort |string| in Kombination mit |!| als
+Begrenzungsmarke.
+
+<Teil des Ausdrucks vor der Zeichenkette> |string !|\br
+<Zeichenkette>\br
+|!| <Rest des Ausdrucks nach der Zeichenkette>
+
+Zwischen |string| und |!| können beliebige Leerzeichen oder
+Tabulatoren stehen, nach |!| muss ein Zeilenvorschub folgen.
+Die Zeichenkette endet beim ersten |!| unmittelbar am Zeilenbeginn.
+
+Innerhalb der Zeichenkettendefinition werden Zeichen normal
+interpretiert, Präprozessordirektiven (z.B. |#include|) und Kommentare
+werden interpretiert.
+Eine so definierte Zeichenkette ist immer mit einem Zeilenvorschub
+abgeschlossen.
 
 \ssec	Gleitkommawerte
 
@@ -68,4 +84,9 @@ nur das erste Zeichen verwendet.
 [|float|]
 	kurze Gleitkommawerte.
 
-@TODO
+Gleitkommakonstanten sind immer vom Typ |double|. Sie werden von
+Ganzzahlkonstanten durch die Anwesenheit eines Dezimalpunktes oder
+eines Exponenten unterschieden.
+Alle Rechenoperationen werden mit |double| ausgeführt.
+Bei großen Vektoren kann damit Speicherplatz
+auf Kosten der Genauigkeit gespart werden.

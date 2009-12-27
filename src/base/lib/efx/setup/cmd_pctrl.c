@@ -33,48 +33,48 @@ If not, write to the Free Software Foundation, Inc.,
 #define	INT(n)	Val_int(arg[n])
 
 
-static void f_exit (Func_t *func, void *rval, void **arg)
+static void f_exit (EfiFunc *func, void *rval, void **arg)
 {
 	exit(INT(0));
 }
 
-static void f_system (Func_t *func, void *rval, void **arg) \
+static void f_system (EfiFunc *func, void *rval, void **arg) \
 {
 	Val_int(rval) = callproc(STR(0));
 }
 
-static void f_rename (Func_t *func, void *rval, void **arg) \
+static void f_rename (EfiFunc *func, void *rval, void **arg) \
 {
 	Val_bool(rval) = rename(STR(0), STR(1)) == 0;
 }
 
-static void f_remove (Func_t *func, void *rval, void **arg) \
+static void f_remove (EfiFunc *func, void *rval, void **arg) \
 {
 	Val_bool(rval) = remove(STR(0)) == 0;
 }
 
-static void f_perror (Func_t *func, void *rval, void **arg) \
+static void f_perror (EfiFunc *func, void *rval, void **arg) \
 {
 	char *pfx = STR(0);
 	perror(pfx ? pfx : ProgName);
 }
 
-static void f_memstat (Func_t *func, void *rval, void **arg)
+static void f_memstat (EfiFunc *func, void *rval, void **arg)
 {
 	memstat(STR(0));
 }
 
-static void f_allocstat (Func_t *func, void *rval, void **arg)
+static void f_allocstat (EfiFunc *func, void *rval, void **arg)
 {
 	Obj_stat(STR(0));
 }
 
-static void f_memcheck (Func_t *func, void *rval, void **arg)
+static void f_memcheck (EfiFunc *func, void *rval, void **arg)
 {
 	memcheck();
 }
 
-static void f_getenv (Func_t *func, void *rval, void **arg)
+static void f_getenv (EfiFunc *func, void *rval, void **arg)
 {
 	char *p = getenv(STR(0));
 	RVSTR = mstrcpy(p ? p : STR(1));
@@ -83,32 +83,36 @@ static void f_getenv (Func_t *func, void *rval, void **arg)
 /*	Zerlegung von Filenamen
 */
 
-static void f_pathname (Func_t *func, void *rval, void **arg)
+static void f_dirname (EfiFunc *func, void *rval, void **arg)
 {
-	fname_t *fn = strtofn(STR(0));
-	RVSTR = fn ? mstrcpy(fn->path ? fn->path : ".") : NULL;
-	memfree(fn);
+	RVSTR = mdirname(STR(0), Val_bool(arg[1]));
 }
 
-static void f_basename (Func_t *func, void *rval, void **arg)
+static void f_basename (EfiFunc *func, void *rval, void **arg)
 {
-	fname_t *fn = strtofn(STR(0));
-	RVSTR = fn ? mstrpaste(".", fn->name, fn->type) : NULL;
-	memfree(fn);
+	RVSTR = mbasename(STR(0), NULL);
 }
 
-static void f_filename (Func_t *func, void *rval, void **arg)
+static void f_basename2 (EfiFunc *func, void *rval, void **arg)
 {
-	fname_t *fn = strtofn(STR(0));
-	RVSTR = fn ? mstrcpy(fn->name) : NULL;
-	memfree(fn);
+	char *p;
+	RVSTR = mbasename(STR(0), &p);
+	memfree(STR(1));
+	STR(1) = mstrcpy(p);
 }
 
-static void f_filetype (Func_t *func, void *rval, void **arg)
+static void f_filename (EfiFunc *func, void *rval, void **arg)
 {
-	fname_t *fn = strtofn(STR(0));
-	RVSTR = fn ? mstrcpy(fn->type) : NULL;
-	memfree(fn);
+	char *suffix;
+	RVSTR = mbasename(STR(0), &suffix);
+}
+
+static void f_filetype (EfiFunc *func, void *rval, void **arg)
+{
+	char *name, *suffix;
+	name = mbasename(STR(0), &suffix);
+	RVSTR = mstrcpy(suffix);
+	memfree(name);
 }
 
 /*	Temporäre Filenamen
@@ -116,12 +120,12 @@ static void f_filetype (Func_t *func, void *rval, void **arg)
 
 char *tempnam(const char *path, const char *pfx);
 
-static void f_tmpnam (Func_t *func, void *rval, void **arg)
+static void f_tmpnam (EfiFunc *func, void *rval, void **arg)
 {
 	RVSTR = mstrcpy(tempnam(NULL, STR(0)));
 }
 
-static void f_tempnam (Func_t *func, void *rval, void **arg)
+static void f_tempnam (EfiFunc *func, void *rval, void **arg)
 {
 	RVSTR = mstrcpy(tempnam(STR(0), STR(1)));
 }
@@ -130,17 +134,17 @@ static void f_tempnam (Func_t *func, void *rval, void **arg)
 extern int getpid (void);
 #endif
 
-static void f_getpid (Func_t *func, void *rval, void **arg)
+static void f_getpid (EfiFunc *func, void *rval, void **arg)
 {
 	Val_int(rval) = getpid();
 }
 
-static void f_time(Func_t *func, void *rval, void **arg)
+static void f_time(EfiFunc *func, void *rval, void **arg)
 {
 	Val_int(rval) = time(NULL);
 }
 
-static void f_expand(Func_t *func, void *rval, void **arg)
+static void f_expand(EfiFunc *func, void *rval, void **arg)
 {
 	Val_str(rval) = ExpandPath(Val_str(arg[0]));
 }
@@ -149,7 +153,7 @@ static void f_expand(Func_t *func, void *rval, void **arg)
 /*	Funktionstabelle
 */
 
-static FuncDef_t fdef_pctrl[] = {
+static EfiFuncDef fdef_pctrl[] = {
 	{ 0, &Type_void, "exit (int rval = 0)", f_exit },
 	{ 0, &Type_int, "system (str cmd = NULL)", f_system },
 	{ 0, &Type_bool, "rename (str oldpath, str newpath)", f_rename },
@@ -159,8 +163,10 @@ static FuncDef_t fdef_pctrl[] = {
 	{ 0, &Type_void, "memstat (str mark = NULL)", f_memstat },
 	{ 0, &Type_void, "memcheck ()", f_memcheck },
 	{ 0, &Type_str, "getenv (str name, str def = NULL)", f_getenv },
-	{ 0, &Type_str, "pathname (str name)", f_pathname },
-	{ 0, &Type_str, "basename (str name)", f_basename },
+	{ 0, &Type_str, "dirname (str name, bool flag = false)", f_dirname },
+	{ FUNC_VIRTUAL, &Type_str, "basename (str path)", f_basename },
+	{ FUNC_VIRTUAL, &Type_str, "basename (str path, str & suffix)",
+		f_basename2 },
 	{ 0, &Type_str, "filename (str name)", f_filename },
 	{ 0, &Type_str, "filetype (str name)", f_filetype },
 	{ 0, &Type_str, "tmpnam (str pfx = NULL)", f_tmpnam },

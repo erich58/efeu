@@ -92,6 +92,19 @@ CleanTarget(PathName(dest,tg)) \
 @;
 
 /*
+Der Makro |$1| installiert die mit |sed| aufbereitete Datei <src>
+in der Bibliothek <dir> unter dem Namen <tg>. Der Parameter <flags>
+gibt die verwendeten sed - Optionen an.
+*/
+
+#define	SEDInstall(dir,tg,src,flags) \
+NamedTarget(files,PathName(dir,tg)) \
+CleanTarget(PathName(dir,tg)) \
+@;PathName(dir,tg): src \
+@;@+sed flags src > $@ \
+@;
+
+/*
 Der Makro |$1| installiert die generierte Datei <name> in der Bibliothek
 <dir> unter dem Namen <tg>.
 */

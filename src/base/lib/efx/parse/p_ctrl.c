@@ -23,9 +23,9 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 #include <EFEU/parsedef.h>
 
-Obj_t *PFunc_for (io_t *io, void *data)
+EfiObj *PFunc_for (IO *io, void *data)
 {
-	Obj_t *a, *b, *c, *d;
+	EfiObj *a, *b, *c, *d;
 
 	if	(!Parse_fmt(io, "(T", &a))
 	{
@@ -36,11 +36,11 @@ Obj_t *PFunc_for (io_t *io, void *data)
 
 	if	(io_testkey(io, "in"))
 	{
-		ObjList_t *list;
+		EfiObjList *list;
 
 		if	(a->type != &Type_name)
 		{
-			io_error(io, MSG_EFMAIN, 95, 0);
+			io_error(io, "[efmain:95]", NULL);
 		}
 
 		list = Parse_list(io, ')');
@@ -67,9 +67,9 @@ Obj_t *PFunc_for (io_t *io, void *data)
 	return NULL;
 }
 
-Obj_t *PFunc_while (io_t *io, void *data)
+EfiObj *PFunc_while (IO *io, void *data)
 {
-	Obj_t *a, *b;
+	EfiObj *a, *b;
 
 	if	(Parse_fmt(io, "(T) C", &a, &b))
 	{
@@ -78,9 +78,9 @@ Obj_t *PFunc_while (io_t *io, void *data)
 	else	return NULL;
 }
 
-Obj_t *PFunc_do (io_t *io, void *data)
+EfiObj *PFunc_do (IO *io, void *data)
 {
-	Obj_t *a, *b;
+	EfiObj *a, *b;
 
 	if	(Parse_fmt(io, "C while(T)", &a, &b))
 	{
@@ -90,9 +90,9 @@ Obj_t *PFunc_do (io_t *io, void *data)
 	else	return NULL;
 }
 
-Obj_t *PFunc_if (io_t *io, void *data)
+EfiObj *PFunc_if (IO *io, void *data)
 {
-	Obj_t *a, *b, *c;
+	EfiObj *a, *b, *c;
 
 	if	(!Parse_fmt(io, "(T) C ", &a, &b))
 		return NULL;

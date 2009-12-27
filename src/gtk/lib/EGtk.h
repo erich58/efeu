@@ -34,28 +34,28 @@ extern void EGtkInit (void);
 extern void EGtkMain (void);
 extern void EGtkObject_setup (void);
 
-extern Type_t EGtkObjectType;
-extern Type_t *EGtkType (GtkType gtktype);
-extern Obj_t *EGtkObject (GtkObject *obj);
+extern EfiType EGtkObjectType;
+extern EfiType *EGtkType (GtkType gtktype);
+extern EfiObj *EGtkObject (GtkObject *obj);
 
-extern void EGtkTypeCast (Func_t *func, void *rval, void **arg);
+extern void EGtkTypeCast (EfiFunc *func, void *rval, void **arg);
 
-extern ObjList_t *EGtkArgList (ObjList_t *base, GtkType type);
-extern void EGtkArgInfo (io_t *io, GtkType type);
+extern EfiObjList *EGtkArgList (EfiObjList *base, GtkType type);
+extern void EGtkArgInfo (IO *io, GtkType type);
 
-extern void EGtkSig_var (const char *name, Type_t *type, void *data);
+extern void EGtkSig_var (const char *name, EfiType *type, void *data);
 extern void EGtkSig_start (GtkObject **ptr);
-extern void EGtkSig_end (Obj_t *expr);
+extern void EGtkSig_end (EfiObj *expr);
 
-extern void EGtkSigFunc_simple (GtkObject *obj, Obj_t *expr);
-extern void EGtkSigFunc_child (GtkObject *obj, GtkObject *child, Obj_t *expr);
+extern void EGtkSigFunc_simple (GtkObject *obj, EfiObj *expr);
+extern void EGtkSigFunc_child (GtkObject *obj, GtkObject *child, EfiObj *expr);
 
 typedef struct {
 	char *name;
 	void *func;
 } EGtkSigDef;
 
-extern void AddEGtkSig (Type_t *type, EGtkSigDef *def, size_t dim);
+extern void AddEGtkSig (EfiType *type, EGtkSigDef *def, size_t dim);
 
 /*
 $SeeAlso

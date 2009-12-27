@@ -30,34 +30,30 @@ If not, write to the Free Software Foundation, Inc.,
 
 typedef struct {
 	char *name;
-} LCKey_t;
-
-typedef struct {
-	char *name;
 	char *thousands_sep;
 	char *decimal_point;
 	char *negative_sign;
 	char *positive_sign;
 	char *zero_sign;
-} LCValue_t;
+} LCValueDef;
 
-extern LCValue_t LCValue[];
+extern LCValueDef LCValue[];
 
 typedef struct {
 	char *name;
 	char **month;
 	char **weekday;
-} LCDate_t;
+} LCDateDef;
 
-extern LCDate_t LCDate[];
+extern LCDateDef LCDate[];
 
 typedef struct {
-	LCValue_t *scan;
-	LCValue_t *print;
-	LCDate_t *date;
-} Locale_t;
+	LCValueDef *scan;
+	LCValueDef *print;
+	LCDateDef *date;
+} LocaleDef;
 
-extern Locale_t Locale;
+extern LocaleDef Locale;
 
 void PushLocale (void);
 void PopLocale (void);

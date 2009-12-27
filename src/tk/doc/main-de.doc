@@ -1,0 +1,97 @@
+/*
+Documentation of ETK Library, german version
+
+$Copyright (C) 2002 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+*/
+
+\config	efeu
+\date	Juli 2002
+\dhead	Handbuch für Programmierer
+\dnote	Rohfassung
+\title	EFEU Schnittstelle zu Tcl/Tk
+Handbuch für Programmierer
+
+\preface
+Die Programmbibliothek |ETK| stellt eine Schnittstelle zur
+Tcl-Skriptsprache dar und erlaubt die Verwendung von Tk-Widgets in
+esh-Skripts.
+
+Das Kommande |etk| ist eine Version des |esh|-Interpreters mit
+bereits eingebauter Schnittstelle. Alternativ dazu kann bei
+Verwendung gemeinsam genutzter Bibliotheken die Schnittstelle
+in |esh| mit
+	|loadlib("ETK", "SetupETK");|
+aktiviert werden.
+
+Die Schnittstelle erlaubt die gleichzeitige Verwendung des
+Tcl-Interpreters und des EFEU-Interpreters.
+
+Auf der EFEU-Seite wird die Tcl-Schnittstelle im wesentlichen über die
+Schlüsselwörter |tcl| und |tclfunc| realisiert, wobei |tcl| die
+direkte Eingabe einer Tcl-Befehlsfolge erlaubt und |tclfunc| zur
+Definition von Tcl-Kommandos in der Syntax des EFEU-Interpreters
+erlaubt. Daneben gibt es noch die
+Hilfsfunktionen |tclset|, |tclget| und |tclvar| zur
+Manipulation von Rückgabewerten und Variablen.
+
+Auf der Tcl-Seite gibt es die vordefinierten Befehle |@expr| und |@eval|,
+mit denen auf den EFEU-Interpreter zugegriffen werden kenn.
+
+Details zur Schnittstelle sind im Handbucheintrag \mref{etk(1)}
+beschrieben. Ein kurzer Überblick überblick über den EFEU-Befehlsinterpreter
+kann im Handbucheintrag \mref{esh(1)} nachgeschlagen werden.
+
+Die Tk-Erweiterung zu Tcl steht erst nach Aufruf von |tkinit()|
+zur Verfügung. Nach der Definition der einzelnen Widgets wird die
+Anwendung mit |tkmain()| aktiviert.
+/*
+Nach Rückkehr aus |tkmain()|
+kann eine neue Anwendung mit |tkinit()| gestartet werden.
+*/
+
+Die Schnittstelle arbeitet mit verschiedenen Versionen von Tcl/Tk
+zusammen. Zum Teil ergeben sich Unterschiede im Verhalten
+der Schnittstelle. Tcl-Versionen vor 8.0 verwenden ausschließlich
+Zeichenketten für den Wertaustusch zwischen Tcl- und EFEU-Interpreter.
+Spätere Versionen nutzen die Möglichkeit von Tcl-Objekten und
+konnen |bool|, |int| und |double| Werte direkt austauschen.
+
+Dieses Handbuch beschränkt sich auf die Beschreibung der Schnittstelle
+und setzt Kenntnisse im Arbeiten mit Tcl/Tk vorraus.
+
+	Erich Frühstück\br
+	Wördern, \thedate
+
+\toc
+
+\addsrclist
+\getsrc		*-de.doc
+\delsrc
+
+\appendix
+\mchap[1]	Kommandos
+\pipe		|etk --help=raw|
+\addsrclist	@LIB
+\mchap[3]	Funktionen
+\src2doc[-L de]	*.c
+\mchap[7]	Makropakete und Konventionen
+\src2doc[-L de]	*.h *.7
+\printindex
+
+@Impressum(2002)

@@ -41,8 +41,8 @@ b)      Funktion ist periodisch,
 c)      1. Ableitung an den Randpunkten ist vorgegeben.
 */
 
-static void koef (pnom_t *p, size_t n, double *x, double *y, double m);
-static pnom_t *init (size_t n, double *x, double *y);
+static void koef (Polynom *p, size_t n, double *x, double *y, double m);
+static Polynom *init (size_t n, double *x, double *y);
 
 /*	Differenzoperator
 */
@@ -117,7 +117,7 @@ D(i) = 3 * ---------------.
 	der Werte für DX, DY, A, B und D.
 */
 
-static void do_init(pnom_t *p, double *x, double *y)
+static void do_init(Polynom *p, double *x, double *y)
 {
 	double z;	/* Hilfsvariable */
 	int i;		/* Hilfszähler */
@@ -137,9 +137,9 @@ static void do_init(pnom_t *p, double *x, double *y)
 	}
 }
 
-static pnom_t *init(size_t n, double *x, double *y)
+static Polynom *init(size_t n, double *x, double *y)
 {
-	pnom_t *p = pnalloc(n, 3);
+	Polynom *p = pnalloc(n, 3);
 	do_init(p, x, y);
 	return p;
 }
@@ -152,7 +152,7 @@ DY und C1, bzw. DX und X0. Da der Vektor M nur n Werte fassen kann,
 muss das n-te Moment explizit übergeben werden.
 */
 
-static void koef(pnom_t *p, size_t n, double *x, double *y, double m)
+static void koef(Polynom *p, size_t n, double *x, double *y, double m)
 {
 	double z;	/* Hilfsvariable */
 	int i;		/* Hilfszähler */
@@ -174,9 +174,9 @@ static void koef(pnom_t *p, size_t n, double *x, double *y, double m)
 Die Momente an der Stelle x[0] und x[n] sind 0.
 */
 
-pnom_t *spline(size_t n, double *x, double *y)
+Polynom *spline(size_t n, double *x, double *y)
 {
-	pnom_t *p;	/* Polynomstruktur */
+	Polynom *p;	/* Polynomstruktur */
 	double z;	/* Hilfsvariable */
 	int i;		/* Hilfszähler */
 
@@ -238,9 +238,9 @@ Achtung: Das Gleichungssystem ist nicht Tridiagonal, wie bei den
 anderen Splineinterpolationen. Die Auflösung ist daher komplexer.
 */
 
-pnom_t *cspline(size_t n, double *x, double *y)
+Polynom *cspline(size_t n, double *x, double *y)
 {
-	pnom_t *p;	/* Polynomstruktur */
+	Polynom *p;	/* Polynomstruktur */
 	double z;	/* Hilfsvariable */
 	int i;		/* Hilfszähler */
 
@@ -324,9 +324,9 @@ Gleichung wird daher gesondert behandelt und M(n) in der Variablen
 m zwischengespeichert.
 */
 
-pnom_t *dspline(size_t n, double *x, double *y, double a, double b)
+Polynom *dspline(size_t n, double *x, double *y, double a, double b)
 {
-	pnom_t *p;	/* Polynomstruktur */
+	Polynom *p;	/* Polynomstruktur */
 	double z;	/* Hilfsvariable */
 	double m;	/* Moment an der Stelle x[n] */
 	int i;		/* Hilfszähler */

@@ -29,7 +29,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	BREAK_COL	70	/* Spaltenpostion für Fortsetzungszeile */
 
-void MakeDependList (io_t *io, const char *name)
+void MakeDependList (IO *io, const char *name)
 {
 	int n, p;
 	char **ptr;
@@ -64,24 +64,24 @@ void MakeDependList (io_t *io, const char *name)
 	io_putc('\n', io);
 }
 
-void Func_target (Func_t *func, void *rval, void **arg)
+void Func_target (EfiFunc *func, void *rval, void **arg)
 {
 	AddTarget(Val_str(arg[0]));
 }
 
-void Func_depend (Func_t *func, void *rval, void **arg)
+void Func_depend (EfiFunc *func, void *rval, void **arg)
 {
 	AddDepend(Val_str(arg[0]));
 }
 
-void Func_makedepend (Func_t *func, void *rval, void **arg)
+void Func_makedepend (EfiFunc *func, void *rval, void **arg)
 {
 	MakeDependList(Val_io(arg[1]), Val_str(arg[0]));
 }
 
-static ObjList_t *make_list (vecbuf_t *buf)
+static EfiObjList *make_list (VecBuf *buf)
 {
-	ObjList_t *list, **ptr;
+	EfiObjList *list, **ptr;
 	int n;
 	char **dep;
 
@@ -97,12 +97,12 @@ static ObjList_t *make_list (vecbuf_t *buf)
 	return list;
 }
 
-void Func_dependlist (Func_t *func, void *rval, void **arg)
+void Func_dependlist (EfiFunc *func, void *rval, void **arg)
 {
 	Val_list(rval) = make_list(&DependList);
 }
 
-void Func_targetlist (Func_t *func, void *rval, void **arg)
+void Func_targetlist (EfiFunc *func, void *rval, void **arg)
 {
 	Val_list(rval) = make_list(&TargetList);
 }

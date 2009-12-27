@@ -34,8 +34,8 @@ unbestimmt.
 
 void memswap(void *ap, void *bp, size_t n)
 {
-	register uchar_t *a, *b;
-	register uchar_t c;
+	register unsigned char *a, *b;
+	register unsigned char c;
 
 	a = ap;
 	b = bp;

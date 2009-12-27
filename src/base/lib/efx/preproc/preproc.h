@@ -27,50 +27,50 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/efio.h>
 #include <EFEU/object.h>
+#include <EFEU/nkt.h>
 
 #define	PREPROC	"preproc"
 
 extern char *IncPath;
 
-io_t *io_ptrpreproc (io_t *io, char **pptr);
-io_t *io_cmdpreproc (io_t *io);
+IO *io_ptrpreproc (IO *io, char **pptr);
+IO *io_cmdpreproc (IO *io);
 
 void AddDepend (const char *name);
-void MakeDependList (io_t *io, const char *name);
+void MakeDependList (IO *io, const char *name);
 
-void Func_target (Func_t *func, void *rval, void **arg);
-void Func_depend (Func_t *func, void *rval, void **arg);
-void Func_dependlist (Func_t *func, void *rval, void **arg);
-void Func_targetlist (Func_t *func, void *rval, void **arg);
-void Func_makedepend (Func_t *func, void *rval, void **arg);
+void Func_target (EfiFunc *func, void *rval, void **arg);
+void Func_depend (EfiFunc *func, void *rval, void **arg);
+void Func_dependlist (EfiFunc *func, void *rval, void **arg);
+void Func_targetlist (EfiFunc *func, void *rval, void **arg);
+void Func_makedepend (EfiFunc *func, void *rval, void **arg);
 
-typedef struct Macro_s Macro_t;
+typedef struct PPMacroStruct PPMacro;
 
-struct Macro_s {
+struct PPMacroStruct {
 	char *name;		/* Makroname */
 	char *repl;		/* Makrodefinition */
 	unsigned hasarg : 1;	/* Makro mit Argumenten */
 	unsigned lock : 15;	/* Sperrflag gegen rekursive Auflösung */
 	unsigned vaarg : 1;	/* Makro mit variabler Argumentzahl */
 	unsigned dim : 15;	/* Zahl der Argumente */
-	Macro_t **arg;		/* Argumentliste */
-	xtab_t *tab;		/* Makrotabelle mit Argumenten */
-	int (*sub) (Macro_t *mac, io_t *io, char **arg, int narg);
+	PPMacro **arg;		/* Argumentliste */
+	NameKeyTab *tab;	/* Makrotabelle mit Argumenten */
+	int (*sub) (PPMacro *mac, IO *io, char **arg, int narg);
 };
 
 
-int macsub_repl (Macro_t *mac, io_t *io, char **arg, int narg);
-int macsub_subst (Macro_t *mac, io_t *io, char **arg, int narg);
-int macsub_def (Macro_t *mac, io_t *io, char **arg, int narg);
+int macsub_repl (PPMacro *mac, IO *io, char **arg, int narg);
+int macsub_subst (PPMacro *mac, IO *io, char **arg, int narg);
+int macsub_def (PPMacro *mac, IO *io, char **arg, int narg);
 
-size_t macarglist (io_t *io, char ***ptr);
+PPMacro *NewMacro (void);
+void DelMacro (void *ptr);
+PPMacro *GetMacro (const char *name);
 
-Macro_t *NewMacro (void);
-void DelMacro (Macro_t *macro);
-Macro_t *GetMacro (const char *name);
-
-void AddMacro (Macro_t *macro);
-Macro_t *ParseMacro (io_t *io);
+void AddMacro (PPMacro *macro);
+PPMacro *ParseMacro (IO *io);
+void ShowMacro (IO *io, PPMacro *macro);
 
 
 /*	Makrodefinitionen
@@ -78,36 +78,33 @@ Macro_t *ParseMacro (io_t *io);
 
 typedef struct {
 	char *def;	/* Makrodefinition */
-	int (*sub) (Macro_t *mac, io_t *io, char **arg, int narg);
-} MacDef_t;
+	int (*sub) (PPMacro *mac, IO *io, char **arg, int narg);
+} PPMacDef;
 
-void AddMacDef (MacDef_t *macdef, size_t dim);
+void AddMacDef (PPMacDef *macdef, size_t dim);
 
 
 /*	Makrotabellen
 */
 
-extern xtab_t *MacroTab;
+extern NameKeyTab *MacroTab;
 
-xtab_t *NewMacroTab (size_t dim);
-void DelMacroTab (xtab_t *tab);
-void PushMacroTab (xtab_t *tab);
-xtab_t *PopMacroTab (void);
+NameKeyTab *NewMacroTab (size_t dim);
+void DelMacroTab (NameKeyTab *tab);
+void PushMacroTab (NameKeyTab *tab);
+NameKeyTab *PopMacroTab (void);
 
-#define	NewMacroTab(dim)	xcreate(dim, skey_cmp)
-#define	DelMacroTab(tab)	xdestroy(tab, (clean_t) DelMacro)
+#define	NewMacroTab(dim)	nkt_create("Macro", dim, DelMacro)
+#define	DelMacroTab(tab)	rd_deref(tab)
 
 
 /*	Substitutionsfunktionen
 */
 
-int io_macsub (io_t *in, io_t *out, const char *delim);
-int io_fmacsub (const char *fmt, io_t *out);
-char *macsub (const char *fmt);
-int io_egetc(io_t *io, const char *delim);
+int io_macsub (IO *in, IO *out, const char *delim);
+int io_egetc(IO *io, const char *delim);
 
-int iocpy_macsub (io_t *in, io_t *out, int key, const char *arg, unsigned flags);
-int iocpy_strmacsub (io_t *in, io_t *out, int key, const char *arg, unsigned flags);
+int iocpy_macsub (IO *in, IO *out, int key, const char *arg, unsigned flags);
 
 void SetupPreproc (void);
 

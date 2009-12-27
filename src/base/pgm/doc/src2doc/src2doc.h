@@ -27,58 +27,59 @@ If not, write to the Free Software Foundation, Inc.,
 #include <ctype.h>
 #include "DocBuf.h"
 
-typedef void (*S2DEval_t) (const char *name, io_t *ein, io_t *aus);
+typedef void (*S2DEval) (const char *name, IO *ein, IO *aus);
 
-extern S2DEval_t S2DName_get (const char *name);
-extern S2DEval_t S2DMode_get (const char *name);
-extern void S2DMode_list (io_t *io);
+S2DEval S2DName_get (const char *name);
+S2DEval S2DMode_get (const char *name);
+void S2DMode_list (IO *io);
 
-extern void s2d_hdr (const char *name, io_t *ein, io_t *aus);
-extern void s2d_src (const char *name, io_t *ein, io_t *aus);
-extern void s2d_std (const char *name, io_t *ein, io_t *aus);
-extern void s2d_com (const char *name, io_t *ein, io_t *aus);
-extern void s2d_doc (const char *name, io_t *ein, io_t *aus);
-extern void s2d_man (const char *name, io_t *ein, io_t *aus);
+void s2d_hdr (const char *name, IO *ein, IO *aus);
+void s2d_src (const char *name, IO *ein, IO *aus);
+void s2d_cmd (const char *name, IO *ein, IO *aus);
+void s2d_std (const char *name, IO *ein, IO *aus);
+void s2d_com (const char *name, IO *ein, IO *aus);
+void s2d_doc (const char *name, IO *ein, IO *aus);
+void s2d_man (const char *name, IO *ein, IO *aus);
 
-extern int skip_blank (io_t *ein);
-extern int skip_space (io_t *ein, strbuf_t *buf);
-extern int test_key (io_t *ein, const char *key);
+int skip_blank (IO *ein);
+int skip_space (IO *ein, StrBuf *buf);
+int test_key (IO *ein, const char *key);
 
-extern strbuf_t *parse_open (void);
-extern char *parse_close (strbuf_t *buf);
+StrBuf *parse_open (void);
+char *parse_close (StrBuf *buf);
 
-extern char *parse_name (io_t *io, int c);
-extern char *parse_block (io_t *io, int beg, int end);
+char *parse_name (IO *io, int c);
+char *parse_block (IO *io, int beg, int end, int flag);
 
-extern void copy_block (io_t *ein, io_t *aus, int end);
-extern void ppcopy (io_t *ein, strbuf_t *val, strbuf_t *com);
+void copy_block (IO *ein, IO *aus, int end, int flag);
+void ppcopy (IO *ein, StrBuf *val, StrBuf *com);
 
 /*	Sourcefileanalyse
 */
 
-typedef struct SrcData_s SrcData_t;
+typedef struct SrcDataStruct SrcData;
 
 typedef struct {
 	char *name;
-	void (*eval) (SrcData_t *data, const char *name);
-} SrcCmd_t;
+	void (*eval) (SrcData *data, const char *name);
+} SrcCmd;
 
 
-struct SrcData_s {
+struct SrcDataStruct {
 	int hdr;	/* Flag für Header */
-	io_t *ein;	/* Eingabestruktur */
-	strbuf_t *buf;	/* Stringbuffer */
-	DocBuf_t doc;	/* Dokumentbuffer */
-	SrcCmd_t *ppdef;	/* Preprozessordefinitionen */
+	IO *ein;	/* Eingabestruktur */
+	StrBuf *buf;	/* Stringbuffer */
+	DocBuf doc;	/* Dokumentbuffer */
+	SrcCmd *ppdef;	/* Preprozessordefinitionen */
 	size_t ppdim;	/* Zahl der Preprozessdefinitionen */
 	unsigned mask;	/* Maske für Deklarationen */
 };
 
-extern void SrcData_init (SrcData_t *data, io_t *ein);
-extern void SrcData_head (SrcData_t *data, const char *name, int sec);
-extern void SrcData_eval (SrcData_t *data);
-extern void SrcData_copy (SrcData_t *data, strbuf_t *buf);
-extern void SrcData_write (SrcData_t *data, io_t *io);
+void SrcData_init (SrcData *data, IO *ein);
+void SrcData_head (SrcData *data, const char *name, int sec);
+void SrcData_eval (SrcData *data, const char *name);
+void SrcData_copy (SrcData *data, StrBuf *buf, const char *name);
+void SrcData_write (SrcData *data, IO *io);
 
 #define	DECL_VAR	01	/* Variable */
 #define	DECL_FUNC	02	/* Funktion */
@@ -93,11 +94,11 @@ typedef struct {
 	char *arg;	/* Vektordimenson/Argumentliste */
 	int start;	/* Beginn des letzten Namens */
 	int end;	/* Ende des letzten Namens */
-} Decl_t;
+} Decl;
 
-extern int Decl_test (Decl_t *decl, const char *name);
-extern void Decl_print (Decl_t *decl, io_t *io);
-extern Decl_t *parse_decl (io_t *io, int c);
+int Decl_test (Decl *decl, const char *name);
+void Decl_print (Decl *decl, IO *io, const char *name);
+Decl *parse_decl (IO *io, int c);
 
 extern char *Secnum;
 extern char *IncFmt;

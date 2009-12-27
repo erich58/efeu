@@ -3,15 +3,120 @@
 */
 
 #include <EFEU/pctrl.h>
-#include <EFEU/texutil.h>
+#include <EFEU/locale.h>
 
 static int quote_flag = 0;
-static TeXfont_t *font = NULL;
-static TeXpgfmt_t *pgfmt = NULL;
 
-int tex_ctrl(PrFilter_t *pf, int cmd, va_list list)
+/*	Fontdefinitionen
+*/
+
+typedef struct {
+	int size;	/* Basisgröße */
+	char *name;	/* Schriftname */
+	double width;	/* Ziffernbreite in mm */
+	double height;	/* Zeilenhöhe in mm */
+} TEXFONT;
+
+
+static TEXFONT fontdef[] = {
+	{  6,	"tiny",		1.29,	2.6 },
+	{  8,	"scriptsize",	1.50,	3.5 },
+	{  9,	"footnotesize",	1.63,	4.0 },
+	{ 10,	"small",	1.76,	4.3 },
+	{ 11,	"normalsize",	1.94,	4.9 },
+	{ 12,	"large",	2.11,	5.0 },
+	{ 14,	"Large",	2.44,	6.4 },
+	{ 17,	"LARGE",	3.05,	7.8 },
+};
+
+
+static TEXFONT *font = NULL;
+
+static TEXFONT *TeXfont(int psize)
 {
-	if	(!pgfmt)	pgfmt = TeXpgfmt(pctrl_pgfmt);
+	int n;
+
+	n = tabsize(fontdef);
+
+	while (--n > 0 && psize < fontdef[n].size)
+		;
+
+	return fontdef + n;
+}
+
+
+/*	Seitenformat
+*/
+
+typedef struct {
+	char *name;	/* Papiername */
+	double margin;	/* Linker Rand in mm */
+	double topskip;	/* Oberer Rand in mm */
+	double width;	/* Papierbreite in mm */
+	double height;	/* Papierhöhe in mm */
+} PGFMT;
+
+
+static PGFMT pgfmttab[] = {
+	{ "a4",		16.,	19.,	170.,	245. },
+	{ "a4r",	15.,	18.,	250.,	160. },
+	{ "schmal",	20.,	10.,	50.,	220. },
+	{ "kurz",	20.,	15.,	220.,	50. },
+	{ "klein",	20.,	10.,	50.,	50. },
+};
+
+static PGFMT *pgfmt = NULL;
+
+
+static PGFMT *texpgfmt(const char *name)
+{
+	int i;
+
+	for (i = 0; i < tabsize(pgfmt); i++)
+		if (strcmp(name, pgfmttab[i].name) == 0)
+			return (pgfmttab + i);
+
+	return pgfmttab;
+}
+
+static int TeXcompletion = 1;
+
+static void TeXbegin(IO *io, PGFMT *pgfmt)
+{
+	if	(TeXcompletion)
+	{
+		io_puts("\\documentclass[11pt,a4paper]{article}\n", io);
+		io_puts("\\usepackage[latin1]{inputenc}\n", io);
+		io_puts("\\usepackage{german}\n", io);
+		io_puts("\\dateaustrian\n", io);
+
+		PushLocale();
+		SetLocale(LOC_PRINT, "us");
+		io_printf(io, "\\topmargin=%gmm\n", pgfmt->topskip);
+		io_printf(io, "\\oddsidemargin=%gmm\n", pgfmt->margin);
+		io_printf(io, "\\textwidth=%gmm\n", pgfmt->width);
+		io_printf(io, "\\textheight=%gmm\n", pgfmt->height);
+		PopLocale();
+
+		io_puts("\\voffset=-25mm\\hoffset=-25mm\n", io);
+		io_puts("\\headheight=0mm\\headsep=0mm\n", io);
+		io_puts("\\evensidemargin=\\oddsidemargin\n", io);
+		io_puts("\\footskip=15mm\n", io);
+		io_puts("\\parskip\\baselineskip\n", io);
+		io_puts("\\begin{document}\n", io);
+		io_puts("\\raggedright\n", io);
+	}
+}
+
+static void TeXend(IO *io)
+{
+	if	(TeXcompletion)
+		io_puts("\\end{document}\n", io);
+}
+
+int tex_ctrl(PCTRL *pf, int cmd, va_list list)
+{
+	if	(!pgfmt)	pgfmt = texpgfmt(pctrl_pgfmt);
 	if	(!font)		font = TeXfont(pctrl_fsize);
 
 	switch (cmd)
@@ -26,7 +131,7 @@ int tex_ctrl(PrFilter_t *pf, int cmd, va_list list)
 
 	case PCTRL_BEGIN:
 
-		pgfmt = TeXpgfmt(pctrl_pgfmt);
+		pgfmt = texpgfmt(pctrl_pgfmt);
 		font = TeXfont(pctrl_fsize);
 		pf->delim = " & ";
 		TeXbegin(pf->io, pgfmt);
@@ -84,14 +189,14 @@ int tex_ctrl(PrFilter_t *pf, int cmd, va_list list)
 	return 0;
 }
 
-int tab_ctrl(PrFilter_t *pf, int cmd, va_list list)
+int tab_ctrl(PCTRL *pf, int cmd, va_list list)
 {
 	TeXcompletion = 0;
 	return tex_ctrl(pf, cmd, list);
 }
 
 
-int tex_put(int c, PrFilter_t *pf)
+int tex_put(int c, PCTRL *pf)
 {
 	switch (c)
 	{

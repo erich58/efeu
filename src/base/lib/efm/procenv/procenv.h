@@ -43,25 +43,27 @@ extern char *InfoPath;		/* Suchpfad für Informationsdateien */
 extern char *Pager;		/* Seitenfilter */
 extern char *Shell;		/* Shell */
 
-#define	MSG_EFM	"efm"
-
 /*	Programmnamen initialisieren
 */
 
-extern void SetProgName (const char *name);
-extern void SetApplPath (const char *path);
-extern void SetInfoPath (const char *path);
+void SetProgName (const char *name);
+void SetApplPath (const char *path);
+void SetInfoPath (const char *path);
 
-extern char *ExpandPath (const char *name);
+char *ExpandPath (const char *name);
 
 /*	Fehlermeldungen
 */
 
-extern char *MessageHandler;		/* Meldungsverwalter */
+void dbg_note (const char *cl, const char *fmt, const char *argdef, ...);
+void dbg_error (const char *cl, const char *fmt, const char *argdef, ...);
 
-extern void message (const char *id, const char *name, int num,
-	int narg, ...);
-extern void vmessage (const char *id, const char *name, int num,
-	int narg, va_list list);
+/*	Systemaufrufe
+*/
+
+int callproc (const char *cmd);
+extern int callproc_lock;
+void (*callproc_init) (void);
+void (*callproc_exit) (void);
 
 #endif	/* EFEU/procenv.h */

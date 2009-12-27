@@ -5,6 +5,8 @@ dircmp
 dircpy
 edf
 efeu-magic
+efeu-xlib
+efeuconfig
 efeubuild
 efeucc
 efeudoc
@@ -45,4 +47,6 @@ ppfilter
 sc2md
 src2doc
 tex2ps
+unblock
 undump
+zip2gz

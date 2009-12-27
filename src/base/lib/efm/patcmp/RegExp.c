@@ -22,28 +22,45 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/memalloc.h>
 #include <EFEU/mstring.h>
+#include <EFEU/strbuf.h>
 #include <EFEU/RegExp.h>
 
 static char err_buf[256];
 
-static char *re_ident (RegExp_t *exp)
+static char *re_ident (const void *ptr)
 {
-	return msprintf("%s%#s", (exp->icase ? "ICASE " : NULL), exp->def);
-}
+	const RegExp *exp;
+	StrBuf *sb;
+	char *p;
 
-static RegExp_t *re_admin (RegExp_t *tg, const RegExp_t *src)
-{
-	if	(tg)
+	exp = ptr;
+	sb = new_strbuf(0);
+	sb_putc('/', sb);
+
+	for (p = exp->def; *p != 0; p++)
 	{
-		regfree(&tg->exp);
-		memfree(tg->def);
-		memfree(tg);
-		return NULL;
+		if	(*p == '/')	sb_putc('\\', sb);
+
+		sb_putc(*p, sb);
 	}
-	else	return memalloc(sizeof(RegExp_t));
+
+	sb_putc('/', sb);
+
+	if	(exp->icase)
+		sb_putc('i', sb);
+
+	return sb2str(sb);
 }
 
-ADMINREFTYPE(RegExp_reftype, "RegExp", re_ident, re_admin);
+static void re_clean (void *ptr)
+{
+	RegExp *tg = ptr;
+	regfree(&tg->exp);
+	memfree(tg->def);
+	memfree(tg);
+}
+
+RefType RegExp_reftype = REFTYPE_INIT("RegExp", re_ident, re_clean);
 
 char *RegExp_error = NULL;
 
@@ -62,7 +79,7 @@ Falls <flag> verschieden von 0 ist, wird zwischen Groß- und Kleinschreibung
 nicht unterschieden.
 */
 
-RegExp_t *RegExp (const char *str, int flag)
+RegExp *RegExp_comp (const char *str, int flag)
 {
 	regex_t buf;
 	int n;
@@ -75,11 +92,11 @@ RegExp_t *RegExp (const char *str, int flag)
 
 	if	(n == 0)
 	{
-		RegExp_t *x = rd_create(&RegExp_reftype);
+		RegExp *x = memalloc(sizeof(RegExp));
 		x->exp = buf;
 		x->def = mstrcpy(str);
 		x->icase = flag;
-		return x;
+		return rd_init(&RegExp_reftype, x);
 	}
 
 	regerror(n, &buf, err_buf, sizeof(err_buf));
@@ -106,7 +123,7 @@ ACHTUNG: Falls sowohl <exp> als auch <str> ein Nullpointer ist,
 wird <ptr> auf |NULL| gesetzt und die Funktion liefert 1 und nicht 0!
 */
 
-int RegExp_exec (RegExp_t *exp, const char *str, regmatch_t **ptr)
+int RegExp_exec (RegExp *exp, const char *str, regmatch_t **ptr)
 {
 	int n;
 

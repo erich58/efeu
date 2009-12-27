@@ -25,19 +25,19 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	NODE_BSIZE	64
 
-static InfoNode_t *node_free = NULL;
+static InfoNode *node_free = NULL;
 static int node_used = 0;
 static int node_alloc = 0;
 
-InfoNode_t *NewInfo (InfoNode_t *root, char *name)
+InfoNode *NewInfo (InfoNode *root, char *name)
 {
-	InfoNode_t *node;
+	InfoNode *node;
 
 	if	(node_free == NULL)
 	{
 		int i;
 
-		node = node_free = lmalloc(NODE_BSIZE * sizeof(InfoNode_t));
+		node = node_free = lmalloc(NODE_BSIZE * sizeof(InfoNode));
 
 		for (i = 1; i < NODE_BSIZE; i++)
 		{
@@ -53,7 +53,7 @@ InfoNode_t *NewInfo (InfoNode_t *root, char *name)
 	node_free = node->prev;
 	node_used++;
 
-	memset(node, 0, sizeof(InfoNode_t));
+	memset(node, 0, sizeof(InfoNode));
 	node->prev = root;
 	node->name = name;
 	return node;

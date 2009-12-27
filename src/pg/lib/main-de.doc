@@ -27,7 +27,7 @@ If not, write to the Free Software Foundation, Inc.,
 \title	EFEU Schnittstelle zu PostgreSQL
 Handbuch für Programmierer
 
-\intro
+\preface
 Die Programmbibliothek |PG| stellt eine Oberfläche für SQL-Anfragen
 an einen PostgreSQL Datenbankserver zur Verfügung.
 Diese können sowohl in C-Programmen als auch in esh-Skripts

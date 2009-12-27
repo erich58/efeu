@@ -33,29 +33,18 @@ If not, write to the Free Software Foundation, Inc.,
 /*	Ausgabefilter und Druckerkontrolle
 */
 
-typedef struct PrFilter_s PrFilter_t;
-typedef struct PrCtrl_s PrCtrl_t;
+typedef struct PCTRLStruct PCTRL;
 
-struct PrCtrl_s {
-	char *name;	/* Name */
-	char *desc;	/* Beschreibung */
-	const char *nc;	/* Neue Spalte */
-	const char *nl;	/* Neue Zeile */
-	const char *nf;	/* Neue Seite */
-	int (*ctrl) (PrFilter_t *io, int cmd, va_list list);
-};
-
-struct PrFilter_s {
-	io_t *io;		/* Eingabestruktur */
-	PrCtrl_t *pc;		/* Kontrollstruktur */
+struct PCTRLStruct {
+	IO *io;		/* Eingabestruktur */
 	int col;		/* Spalte */
 	int line;		/* Zeile */
 	int page;		/* Seite */
 	const char *delim;	/* Trennzeichen */
 	const char *nl;		/* Zeilenvorschub */
 	const char *nf;		/* Seitenvorschub */
-	int (*put) (int c, PrFilter_t *pf);
-	int (*ctrl) (PrFilter_t *io, int cmd, va_list list);
+	int (*put) (int c, PCTRL *pf);
+	int (*ctrl) (PCTRL *io, int cmd, va_list list);
 };
 
 
@@ -84,29 +73,28 @@ struct PrFilter_s {
 #define	PCTRL_YPOS	(PCTRL_MASK|0x24)	/* Aktuelle Zeile bestimmen */
 
 
-PrCtrl_t *PrCtrl (const char *name);
-io_t *io_PrCtrl (io_t *io, PrCtrl_t *pc);
+IO *io_pctrl (IO *io, const char *name);
 
 
 /*	Spezifische Ausgabe und Steuerprogramme
 */
 
-int std_put (int c, PrFilter_t *pf);
-int tst_put (int c, PrFilter_t *pf);
-int val_put (int c, PrFilter_t *pf);
-int csv_put (int c, PrFilter_t *pf);
-int str_put (int c, PrFilter_t *pf);
-int tex_put (int c, PrFilter_t *pf);
-int sc_put (int c, PrFilter_t *pf);
+int std_put (int c, PCTRL *pf);
+int tst_put (int c, PCTRL *pf);
+int val_put (int c, PCTRL *pf);
+int csv_put (int c, PCTRL *pf);
+int str_put (int c, PCTRL *pf);
+int tex_put (int c, PCTRL *pf);
+int sc_put (int c, PCTRL *pf);
 
-int std_ctrl (PrFilter_t *pf, int cmd, va_list list);
-int csv_ctrl (PrFilter_t *pf, int cmd, va_list list);
-int struct_ctrl (PrFilter_t *pf, int cmd, va_list list);
-int data_ctrl (PrFilter_t *pf, int cmd, va_list list);
-int tex_ctrl (PrFilter_t *pf, int cmd, va_list list);
-int tab_ctrl (PrFilter_t *pf, int cmd, va_list list);
-int sc_ctrl (PrFilter_t *pf, int cmd, va_list list);
-int tst_ctrl (PrFilter_t *pf, int cmd, va_list list);
+int std_ctrl (PCTRL *pf, int cmd, va_list list);
+int csv_ctrl (PCTRL *pf, int cmd, va_list list);
+int struct_ctrl (PCTRL *pf, int cmd, va_list list);
+int data_ctrl (PCTRL *pf, int cmd, va_list list);
+int tex_ctrl (PCTRL *pf, int cmd, va_list list);
+int tab_ctrl (PCTRL *pf, int cmd, va_list list);
+int sc_ctrl (PCTRL *pf, int cmd, va_list list);
+int tst_ctrl (PCTRL *pf, int cmd, va_list list);
 
 
 /*	Globale Anpassungsvariablen

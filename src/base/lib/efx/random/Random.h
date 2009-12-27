@@ -28,26 +28,15 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/refdata.h>
 #include <EFEU/io.h>
 
-#if	_AIX
-
-extern int random (void);
-extern void srandom (unsigned int sval);
-extern char *initstate (unsigned sval, char *state, int dim);
-extern char *setstate (char *state);
-
-#endif
-
-#define	DRAND_KOEF	(1. / 2147483648.)	/* 2^-31 */
-
 /*	Zufallsgeneratortype
 */
 
-typedef struct RandomType_s RandomType_t;
+typedef struct RandomTypeStruct RandomType;
 
-struct RandomType_s {
+struct RandomTypeStruct {
 	char *name;
 	char *desc;
-	void (*ident) (io_t *io, void *data);
+	void (*ident) (IO *io, void *data);
 	void *(*init) (unsigned int sval);
 	void *(*copy) (const void *data);
 	void (*clean) (void *data);
@@ -55,20 +44,19 @@ struct RandomType_s {
 	double (*rand) (void *data);
 };
 
-extern RandomType_t RandomType_48;
-extern RandomType_t RandomType_x48;
-extern RandomType_t RandomType_std;
-extern RandomType_t RandomType_old;
-extern RandomType_t RandomType_r0;
-extern RandomType_t RandomType_r1;
-extern RandomType_t RandomType_r2;
-extern RandomType_t RandomType_r3;
-extern RandomType_t RandomType_r4;
+extern RandomType RandomType_d48;
+extern RandomType RandomType_std;
+extern RandomType RandomType_old;
+extern RandomType RandomType_r0;
+extern RandomType RandomType_r1;
+extern RandomType RandomType_r2;
+extern RandomType RandomType_r3;
+extern RandomType RandomType_r4;
 
-void AddRandomType (RandomType_t *type);
-void ListRandomType (io_t *io);
+void AddRandomType (RandomType *type);
+void ListRandomType (IO *io);
 
-RandomType_t *GetRandomType (const char *str);
+RandomType *GetRandomType (const char *str);
 
 
 /*	Zufallsgenerator
@@ -76,27 +64,25 @@ RandomType_t *GetRandomType (const char *str);
 
 typedef struct {
 	REFVAR;
-	RandomType_t *type;
+	RandomType *type;
 	void *data;
-} Random_t;
+} Random;
 
-extern reftype_t Random_reftype;
+Random *NewRandom (RandomType *type, unsigned int sval);
+Random *str2Random (const char *str);
+Random *CopyRandom (Random *rd);
 
-Random_t *Random (unsigned int sval, RandomType_t *type);
-Random_t *str2Random (const char *str);
-Random_t *CopyRandom (Random_t *rd);
-
-void SeedRandom (Random_t *rd, unsigned int sval);
-double UniformRandom (Random_t *rd);
+void SeedRandom (Random *rd, unsigned int sval);
+double UniformRandom (Random *rd);
 
 /*	Zufallsfunktionen
 */
 
-double LinearRandom (Random_t *rd, double z);
-double NormalRandom (Random_t *rd);
-int PoissonRandom (Random_t *rd, double mw);
-int RoundRandom (Random_t *rd, double val);
-size_t RandomIndex (Random_t *rd, size_t dim);
+double LinearRandom (Random *rd, double z);
+double NormalRandom (Random *rd);
+int PoissonRandom (Random *rd, double mw);
+int RandomRound (Random *rd, double val);
+size_t RandomIndex (Random *rd, size_t dim);
 
 /*	Initialisierung für esh-Interpreter
 */

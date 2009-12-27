@@ -31,7 +31,9 @@ A\-3423 St.Andrä/Wördern\br
 Telefon (02242) 310 99
 !, false);
 
+	str exname = langcpy(":*:Exercise:de:Aufgabe");
 	latex::preamble += string !
+
 %% EFEU - adaption
 
 \voffset=-1in
@@ -79,6 +81,10 @@ Telefon (02242) 310 99
 	\vfill
 	\strut
 	\clearpage}}
+\newcounter{exnum}[chapter]
+\def\exercisename{$(exname)}
+\def\exercise{\par\stepcounter{exnum}{\bf
+	\exercisename\arabic{chapter}-\arabic{exnum}.}}
 %% END
 !;
 	latex::margin = "EDmanhead";
@@ -86,6 +92,18 @@ Telefon (02242) 310 99
 	latex::tt = "\\tt\\color{Blue}";
 	latex::rm = "\\rm\\color{Black}";
 	latex::code = "\\begin{code}\\color{Blue}%"
+}
+
+:*:Exercise
+	$1
+:de:Aufgabe
+	$1
+
+:de:Der Makro beginnt eine neue Übungsaufgabe.
+
+\def\exercise{
+	if (!plaintex("\n\\exercise{}"))
+		fprintf(cout, "\n<*%s:*>", exname);
 }
 
 :*:impressum

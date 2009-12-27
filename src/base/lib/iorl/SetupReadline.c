@@ -28,19 +28,15 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/procenv.h>
 #include <EFEU/parsub.h>
 
-#define	HAS_READLINE	1	/* Readline verwenden */
-#define	RL_COMPLETION	0	/* Readline completion verwenden */
-#define	NEED_STTYCALL	0	/* Fix für alte curses-Bibliothek */
+#include <EFEU/rl_config.h>
 
 #if	HAS_READLINE
-
-#include <unistd.h>
-#include <readline.h>
-#include <history.h>
 
 #define	PROMPT_STD	"$!: "
 #define	PROMPT_SUB	"> "
 #define	PROMPT_MARK	"> "
+
+#define	DO_COMPLETION	0	/* Noch nicht implementiert */
 
 typedef struct {
 	int line;
@@ -53,9 +49,9 @@ typedef struct {
 	int key;
 	int hsize;
 	int filename_completion;
-} RLBuf_t;
+} RLBUF;
 
-static RLBuf_t *current_buf = NULL;
+static RLBUF *current_buf = NULL;
 
 int iorl_begin_of_line = 0;
 int iorl_line_offset = 0;
@@ -78,9 +74,10 @@ int iorl_line_offset = 0;
 
 #define	RL_DEF_LIST	16
 
-#if	RL_COMPLETION
+#if	DO_COMPLETION
 static char *builtin_tab[] = {
-	"eof", "history", "fc", "r"
+	"eof",
+	"history", "fc", "r"
 };
 
 static int test_builtin (const char *text, const char *name)
@@ -225,10 +222,10 @@ static char *iorl_fc (int mode, const char *args)
 	HIST_ENTRY **list;
 	int i, n;
 	int start, end;
-	strbuf_t *buf;
+	StrBuf *buf;
 	char *p;
 	char *tname;
-	io_t *io;
+	IO *io;
 
 	list = history_list();
 
@@ -302,9 +299,6 @@ static char *iorl_fc (int mode, const char *args)
 		io = io_fileopen(tname, "r");
 		p = msprintf("vi %s", tname);
 		system(p);
-#if	NEED_STTYCALL
-		system("stty min 1");
-#endif
 		memfree(p);
 
 		while ((i = io_getc(io)) != EOF)
@@ -344,23 +338,24 @@ static char *iorl_builtin (char *line)
 /*	Readline - Interface
 */
 
-static int iorl_get (RLBuf_t *rlbuf);
-static int iorl_put (int c, RLBuf_t *rlbuf);
-static int iorl_ctrl (RLBuf_t *rlbuf, int req, va_list list);
+static int iorl_get (void *ptr);
+static int iorl_put (int c, void *ptr);
+static int iorl_ctrl (void *ptr, int req, va_list list);
 
 
 /*	Lesen von der Standardeingabe
 */
 
-static int iorl_get(RLBuf_t *rlbuf)
+static int iorl_get (void *ptr)
 {
+	RLBUF *rlbuf = ptr;
+
 	while (rlbuf->buf == NULL)
 	{
 		char *p;
-#if	RL_COMPLETION
+#if	DO_COMPLETION
 		void *save_func;
 #endif
-
 		rlbuf->line++;
 
 		if	(rlbuf->mark)	p = PROMPT_MARK;
@@ -368,14 +363,14 @@ static int iorl_get(RLBuf_t *rlbuf)
 		else if	(rlbuf->prompt)	p = rlbuf->prompt;
 		else			p = PROMPT_STD;
 
-		p = parsub(p);
+		p = mpsubvec(p, 0, NULL);
 		current_buf = rlbuf;
-#if	RL_COMPLETION
+#if	DO_COMPLETION
 		save_func = rl_attempted_completion_function;
 		rl_attempted_completion_function = iorl_completion;
 #endif
 		rlbuf->buf = readline(p);
-#if	RL_COMPLETION
+#if	DO_COMPLETION
 		rl_attempted_completion_function = save_func;
 #endif
 		memfree(p);
@@ -420,7 +415,7 @@ static int iorl_get(RLBuf_t *rlbuf)
 /*	Zeichen zur Standardausgabe schreiben
 */
 
-static int iorl_put(int c, RLBuf_t *rlbuf)
+static int iorl_put(int c, void *ptr)
 {
 	putchar(c);
 	return 1;
@@ -430,8 +425,9 @@ static int iorl_put(int c, RLBuf_t *rlbuf)
 /*	Kontrollfunktion
 */
 
-static int iorl_ctrl (RLBuf_t *rlbuf, int req, va_list list)
+static int iorl_ctrl (void *rlptr, int req, va_list list)
 {
+	RLBUF *rlbuf = rlptr;
 	char **ptr;
 
 	switch (req)
@@ -469,6 +465,7 @@ static int iorl_ctrl (RLBuf_t *rlbuf, int req, va_list list)
 
 	case IO_CLOSE:
 
+#if	HAS_HISTORY
 		if	(rlbuf->histname)
 		{
 			if	(rlbuf->hsize > 0)
@@ -476,7 +473,7 @@ static int iorl_ctrl (RLBuf_t *rlbuf, int req, va_list list)
 
 			write_history(rlbuf->histname);
 		}
-
+#endif
 		memfree(rlbuf->prompt);
 		memfree(rlbuf->buf);
 		memfree(rlbuf);
@@ -506,28 +503,26 @@ static int iorl_ctrl (RLBuf_t *rlbuf, int req, va_list list)
 	return EOF;
 }
 
-static io_t *iorl_open (const char *prompt, const char *histname)
+static IO *iorl_open (const char *prompt, const char *histname)
 {
-	io_t *io;
-	RLBuf_t *rlbuf;
+	IO *io;
+	RLBUF *rlbuf;
 
-	rlbuf = memalloc(sizeof(RLBuf_t));
+	rlbuf = memalloc(sizeof(RLBUF));
 	rlbuf->prompt = mstrcpy(prompt);
 	rlbuf->histname = histname ? ExpandPath(histname) : NULL;
 	rlbuf->key = RL_KEY;
 	rlbuf->hsize = RL_HSIZE;
-#if	NEED_STTYCALL
-	system("stty min 1");
-#endif
-	rl_initialize();
 
+#if	HAS_HISTORY
 	if	(rlbuf->histname)
 		read_history(rlbuf->histname);
+#endif
 
 	io = io_alloc();
-	io->get = (io_get_t) iorl_get;
-	io->put = (io_put_t) iorl_put;
-	io->ctrl = (io_ctrl_t) iorl_ctrl;
+	io->get = iorl_get;
+	io->put = iorl_put;
+	io->ctrl = iorl_ctrl;
 	io->data = rlbuf;
 	return io;
 }
@@ -551,8 +546,8 @@ als Historyfile von |readline| verwendet.
 
 void SetupReadline ()
 {
-#if	HAS_READLINE
 	if	(isatty(0) && isatty(1))
+#if	HAS_READLINE
 		_interact_open = iorl_open;
 #else
 	;

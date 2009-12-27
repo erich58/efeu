@@ -101,7 +101,7 @@ if
 	read x
 	test "$x" != "n"
 then
-	tmp=/usr/tmp/xvi$$
+	tmp=${TMPDIR:-/tmp}/xvi$$
 	mkdump $1 $tmp
 	vi $tmp
 

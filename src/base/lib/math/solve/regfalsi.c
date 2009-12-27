@@ -24,7 +24,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 
 
-double regfalsi (double (*f)(void *par, double x), void *par, double x0, double x1)
+double regfalsi (double (*f)(void *par, double x),
+	void *par, double x0, double x1)
 {
 	double tol;	/* Fehlerintervall */
 	double weight;	/* Gewicht des Sekantenanteils */
@@ -39,9 +40,8 @@ double regfalsi (double (*f)(void *par, double x), void *par, double x0, double 
 
 	if	(y0 * y1 >= 0.)
 	{
-		reg_set(1, msprintf(SolveFmt, x0));
-		reg_set(2, msprintf(SolveFmt, x1));
-		liberror(MSG_SOLVE, 2);
+		dbg_error(NULL, "[solve:2]", "mm", msprintf(SolveFmt, x1),
+			msprintf(SolveFmt, x1));
 		return 0.5 * (x0 + x1);
 	}
 
@@ -52,11 +52,10 @@ double regfalsi (double (*f)(void *par, double x), void *par, double x0, double 
 	{
 		if	(SolveFlag)
 		{
-			reg_set(1, msprintf("%d", i));
-			reg_set(2, msprintf(SolveFmt, x0));
-			reg_set(3, msprintf(SolveFmt, x1));
-			reg_set(4, msprintf("%g", weight));
-			errmsg(MSG_SOLVE, 5);
+			dbg_note(NULL, "[solve:5]", "dmmm", i,
+				msprintf(SolveFmt, x0),
+				msprintf(SolveFmt, x1),
+				msprintf("%g", weight));
 		}
 
 		x = x0 - y0 * (x1 - x0) / (y1 - y0);
@@ -75,6 +74,6 @@ double regfalsi (double (*f)(void *par, double x), void *par, double x0, double 
 		else if	(z < 0.5)	weight = (1. + weight) / 2.;
 	}
 
-	errmsg(MSG_SOLVE, 3);
+	dbg_note(NULL, "[solve:3]", NULL);
 	return x;
 }

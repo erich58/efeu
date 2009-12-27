@@ -1,6 +1,7 @@
 /*
-Hilfsfunktionen zur Makrogenerierung
+Konstruktion von Makrodefinitionen
 
+$Header	<$1>
 $Copyright (C) 1996 Erich Frühstück
 This file is part of EFEU.
 
@@ -23,11 +24,31 @@ If not, write to the Free Software Foundation, Inc.,
 #ifndef	macro_ms
 #define	macro_ms	1
 
-void Macro(IO io, str name, str args, str def, ...)
+/*
+Die Funktion |$1| dient zur Konstruktion einer Makrofunktion.
+Als Argumente wird der Makroname <name>, die Argumentliste
+<args> und der Makrorumpf <def> übergeben.
+Die Makrodefinition wird in die Datei <io> geschrieben. Hier wird
+wahlweise |hdr| oder |src| eingesetzt.
+
+Wird als Argumentliste ein Nullpointer übergeben, wird ein Makro
+ohne Argument generiert. Bei einem Leerstring wird ein
+Makro mit 0 Argumenten generiert.
+
+Die zusätzlichen Argumente werden als der Reihe nach in den
+Stringregistern beginnend bei 1 gespeichert und können damit
+über Parametersubstitution, die auf die drei anderen Argumente
+angewendet wird, eingebaut werden.
+
+Bei Zeilenvorschüben im Makrorumpf werden automatisch entsprechende
+Fortsetzungszeilen in der Makrodefinition generiert.
+*/
+
+void Macro (IO io, str name, str args, str def, ...)
 {
 	name = psub(name, va_list);
-	args = strlen(args) ? psub(args) : args;
-	def = psub(def);
+	args = strlen(args) ? psub(args, va_list) : args;
+	def = psub(def, va_list);
 	fprintf(io, "#define\t%s", name);
 
 	if	(args)
@@ -38,33 +59,39 @@ void Macro(IO io, str name, str args, str def, ...)
 	for (x in split(def, "\n"))
 	{
 		if	(strlen(x))
-		{
-			io << delim;
-			io << x;
-			delim = "\t\\\n\t";
-		}
+			io << delim << x;
+
+		delim = "\t\\\n\t";
 	}
 
 	io << "\n";
 }
 
-void Define(IO io, IO def, ...)
+/*
+Die Funktion |$1| erlaubt die Konstruktion einfacher Makrodefinitionen.
+Jede Zeile der Eingabestruktur <def> besteht aus dem
+Makronamen, dem Ersetzungstext und einem Beschreibungstext.
+Besteht der Ersetzungstext aus mehr als einem Word, muß er unter
+Anführung gestellt werden.
+*/
+
+void Define (IO io, IO def, ...)
 {
-	fpsub(io, "\n", va_list);
+	io << "\n";
 
 	str name, desc;
 
 	while (getline(def, name, desc))
 	{
 		io << "#define\t";
-		fpsub(io, name);
+		fpsub(io, name, va_list);
 		io << "\t";
-		fpsub(io, xstrcut(desc, "%s"));
+		fpsub(io, xstrcut(desc, "%s"), va_list);
 
 		if	(strlen(desc))
 		{
 			io << "\t/* ";
-			fpsub(io, desc);
+			fpsub(io, desc, va_list);
 			io << " */";
 		}
 
@@ -74,21 +101,31 @@ void Define(IO io, IO def, ...)
 	io << '\n';
 }
 
-void Include(IO io, str def, ...)
+/*
+Die Funktion |$1| generiert für jedes übergebene Argument
+ein |#include|-Statement. Enthält das Argument keine spitzen Klammern,
+wird es unter Anführung gestellt.
+*/
+
+void Include (IO io, ...)
 {
-	fpsub(io, "\n", va_list);
-
-	for (x in split(psub(def, va_list), "%s"))
+	for (x in va_list)
 	{
-		if	(strlen(x) == 0)	continue;
-
-		io << "#include ";
-		fprintf(io, (x[0] == '<' ? "%s" : "%#s"), x);
-		io << '\n';
+		if	(strlen(x))
+		{
+			io << "#include ";
+			fprintf(io, (x[0] == '<' ? "%s" : "%#s"), x);
+			io << '\n';
+		}
 	}
 
 	io << '\n';
 }
+
+/*
+Die Funktion |$1| generiert für jedes übergebene Argument
+ein |#include|-Statement der Form |#include <|<arg>|.h>|.
+*/
 
 void StdInclude (IO io, ...)
 {
@@ -97,5 +134,35 @@ void StdInclude (IO io, ...)
 
 	io << '\n';
 }
+
+/*
+$Example
+Das nachfolgende Beispiel zeigt die Anwendung der obigen Funktionen.
+
+\ms_example
+config hdr
+
+#include <macro.ms>
+
+Include(hdr, "<EFEU/config.h>", "local.h");
+StdInclude(hdr, "EFEU/mstring", "ctype");
+
+Define(hdr, string !
+FLAG_A	0x1	Flag A
+FLAG_B	0x2	Flag B
+FLAG_C	0x4	Flag C
+FLAG_X	"FLAG_B | FLAG_C"	Flag B oder C
+!);
+
+Macro(hdr, "Einfach", NULL, "1.5");
+Macro(hdr, "Test\$1", "x,y", "((x) + \$1 * (y))", 5);
+Macro(hdr, "Print_\$1", "", string !
+printf(
+"\$1: %s\\n", 
+\$1)
+!, "Var");
+\end
+
+*/
 
 #endif	/* macro.ms */

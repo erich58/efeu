@@ -25,7 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 #ifndef	EFEU_ebcdic_h
 #define	EFEU_ebcdic_h	1
 
-#include <EFEU/types.h>
+#include <EFEU/config.h>
 
 #define	SPACE		0x40	/* Leerzeichen */
 

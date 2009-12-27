@@ -30,7 +30,7 @@ Die Funktion |$1| kopiert <dim> Datenelemente von der Speicheradresse
 Datenbuffer kompatibel sein.
 */
 
-void *vb_copy (vecbuf_t *buf, void *data, size_t dim)
+void *vb_copy (VecBuf *buf, void *data, size_t dim)
 {
 	if	(buf)
 	{
@@ -48,7 +48,7 @@ Die Funktion |$1| kopiert <dim> Datenelemente von der Speicheradresse
 Datenbuffer kompatibel sein.
 */
 
-void *vb_append (vecbuf_t *buf, void *data, size_t dim)
+void *vb_append (VecBuf *buf, void *data, size_t dim)
 {
 	if	(buf)
 	{
@@ -59,6 +59,33 @@ void *vb_append (vecbuf_t *buf, void *data, size_t dim)
 		return buf->data;
 	}
 	else	return NULL;
+}
+
+/*
+Die Funktion |$1| kopiert die in <buf> vorhandenen Datenelemente
+auf die Speicheradresse <data>. Falls anstelle von <data> ein
+Nullpointer übergeben wurde, wird der benötigte Speicherbereich
+mit |memalloc| generiert. Ansonsten muß <data> auf einen 
+Speicherbereich zeigen, der genügend groß ist um alle in <buf>
+gespeicherten Werte zu übernehmen.
+
+Falls anstelle von <buf> ein Nullpointer übergeben wurde, liefert
+liefert die Funktion einen Nullpointer.
+Falls keine Daten zu kopieren sind, liefert die Funktion <data> ohne
+darauf zuzugreifen.
+Sind Daten zu kopieren, liefert die Funktion <data> oder den bei
+bedarf eingericheten Speicherbereich.
+*/
+
+void *vb_fetch (VecBuf *buf, void *data)
+{
+	if	(!buf)		return NULL;
+	if	(!buf->used)	return data;
+
+	if	(!data)	data = memalloc(buf->used * buf->elsize);
+
+	memcpy(data, buf->data, buf->used * buf->elsize);
+	return data;
 }
 
 /*

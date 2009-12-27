@@ -25,26 +25,30 @@ If not, write to the Free Software Foundation, Inc.,
 
 
 typedef struct {
-	io_t *io;	/* Ausgabestruktur */
+	IO *io;		/* Ausgabestruktur */
 	size_t count;	/* Zahl der ausgegebenen Zeichen */
 } COUNT;
 
-static int std_put(int c, COUNT *count)
+static int std_put (int c, void *ptr)
 {
+	COUNT *count = ptr;
+
 	if	((c = io_putc(c, count->io)) != EOF)
 		count->count++;
 
 	return c;
 }
 
-static int dummy_put(int c, COUNT *count)
+static int dummy_put (int c, void *ptr)
 {
+	COUNT *count = ptr;
 	count->count++;
 	return c;
 }
 
-static int count_ctrl(COUNT *count, int req, va_list list)
+static int count_ctrl (void *ptr, int req, va_list list)
 {
+	COUNT *count = ptr;
 	size_t stat;
 
 	switch (req)
@@ -75,14 +79,14 @@ static int count_ctrl(COUNT *count, int req, va_list list)
 }
 
 
-io_t *io_count (io_t *io)
+IO *io_count (IO *io)
 {
 	COUNT *count = memalloc(sizeof(COUNT));
 	count->io = io;
 	count->count = 0;
 	io = io_alloc();
-	io->put = (io_put_t) (io ? std_put : dummy_put);
-	io->ctrl = (io_ctrl_t) count_ctrl;
+	io->put = (io ? std_put : dummy_put);
+	io->ctrl = count_ctrl;
 	io->data = count;
 	return io;
 }

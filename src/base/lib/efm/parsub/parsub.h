@@ -26,32 +26,22 @@ If not, write to the Free Software Foundation, Inc.,
 #define	EFEU_parsub_h	1
 
 #include <EFEU/iocpy.h>
+#include <EFEU/strbuf.h>
+#include <EFEU/ArgList.h>
 
-typedef int (*iocopy_t) (io_t *in, io_t *out, void *par);
+void psubfunc (int key, int (*copy) (IO *in, IO *out, void *par), void *par);
+char *psubexpand (StrBuf *buf, IO *in, int argc, char **argv);
 
-typedef struct {
-	int key;
-	iocopy_t copy;
-	void *par;
-} copydef_t;
+IO *psubfilter (IO *io, ArgList *list);
 
-int iocopystr (const char *fmt, io_t *out, iocopy_t copy, void *arg);
-char *miocopy (io_t *in, iocopy_t copy, void *arg);
-char *miocopystr (const char *fmt, iocopy_t copy, void *arg);
+int io_pcopy (IO *in, IO *out, int delim, int argc, char **argv);
+int io_psubvarg (IO *io, const char *fmt, const char *argdef, va_list list);
+int io_psubarg (IO *io, const char *fmt, const char *argdef, ...);
+int io_psubvec (IO *io, const char *fmt, int argc, char **argv);
 
-char *parsub (const char *fmt);
-void psubfunc (int key, iocopy_t copy, void *par);
-int io_pcopy (io_t *in, io_t *out, void *par);
-char *mpcopy (io_t *in);
-int io_psub (io_t *io, const char *fmt);
-
-extern int psub_key;
-
-char *reg_get (int n);
-char *reg_set (int n, char *arg);
-char *reg_cpy (int n, const char *arg);
-char *reg_str (int n, const char *arg);
-char *reg_fmt (int n, const char *fmt, ...);
-void reg_clear (void);
+char *mpcopy (IO *in, int delim, int argc, char **argv);
+char *mpsubvarg (const char *fmt, const char *argdef, va_list list);
+char *mpsubarg (const char *fmt, const char *argdef, ...);
+char *mpsubvec (const char *fmt, int argc, char **argv);
 
 #endif	/* EFEU/parsub.h */

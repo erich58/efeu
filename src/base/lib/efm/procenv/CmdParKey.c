@@ -25,13 +25,13 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/mstring.h>
 #include <EFEU/memalloc.h>
 
-static ALLOCTAB(keytab, 1024, sizeof(CmdParKey_t));
+static ALLOCTAB(keytab, 1024, sizeof(CmdParKey));
 
 /*
 Die Funktion |$1| liefert eine neue Parameterkennung
 */
 
-CmdParKey_t *CmdParKey_alloc (void)
+CmdParKey *CmdParKey_alloc (void)
 {
 	return new_data(&keytab);
 }
@@ -40,7 +40,7 @@ CmdParKey_t *CmdParKey_alloc (void)
 Die Funktion |$1| gibt den Inhalt einer Parameterkennung frei.
 */
 
-void CmdParKey_free (CmdParKey_t *key)
+void CmdParKey_free (CmdParKey *key)
 {
 	if	(key == NULL)	return;
 

@@ -26,22 +26,24 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/Info.h>
 #include <EFEU/procenv.h>
 
-static VECBUF(TypeTab, 16, sizeof(RandomType_t *));
+static VECBUF(TypeTab, 16, sizeof(RandomType *));
 
-static int cmp_type (const RandomType_t **a, const RandomType_t **b)
+static int cmp_type (const void *pa, const void *pb)
 {
+	RandomType * const *a = pa;
+	RandomType * const *b = pb;
 	return mstrcmp(a[0]->name, b[0]->name);
 }
 
-void AddRandomType (RandomType_t *type)
+void AddRandomType (RandomType *type)
 {
 	if	(type)
-		vb_search(&TypeTab, &type, (comp_t) cmp_type, VB_REPLACE);
+		vb_search(&TypeTab, &type, cmp_type, VB_REPLACE);
 }
 
-void ListRandomType (io_t *io)
+void ListRandomType (IO *io)
 {
-	RandomType_t **type;
+	RandomType **type;
 	size_t n;
 
 	for (n = TypeTab.used, type = TypeTab.data; n-- > 0; type++)
@@ -54,29 +56,23 @@ void ListRandomType (io_t *io)
 }
 
 
-RandomType_t *GetRandomType (const char *name)
+RandomType *GetRandomType (const char *name)
 {
 	size_t n;
-	RandomType_t **type;
+	RandomType **type;
 
 	if	(TypeTab.used == 0)
 	{
 		AddRandomType(&RandomType_std);
 		AddRandomType(&RandomType_old);
-	/*
-		AddRandomType(&RandomType_r0);
-		AddRandomType(&RandomType_r1);
-		AddRandomType(&RandomType_r2);
-		AddRandomType(&RandomType_r3);
-		AddRandomType(&RandomType_r4);
-	*/
+		AddRandomType(&RandomType_d48);
 	}
 
 	for (n = TypeTab.used, type = TypeTab.data; n-- > 0; type++)
 		if (mstrcmp(name, (*type)->name) == 0) return *type;
 
 	if	(name)
-		message(NULL, "efmain", 301, 1, name);
+		dbg_note(NULL, "[efmain:301]", "s", name);
 
 	return NULL;
 }

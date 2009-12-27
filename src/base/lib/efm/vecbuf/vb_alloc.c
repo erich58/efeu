@@ -24,6 +24,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/memalloc.h>
 #include <EFEU/procenv.h>
 
+#define	E_NEXP "[efm:1]$!: can not expand constant data buffer.\n"
+
 /*
 Die Funktion |$1| sorgt dafür, daß im Vektorbuffer <buf> mindestens
 <dim> Elemente zur Verfügung stehen. Die Funktion liefert
@@ -31,7 +33,7 @@ den Pointer auf das Speicherfeld. Die Komponente <used> wird auf 0
 gesetzt.
 */
 
-void *vb_alloc (vecbuf_t *buf, size_t dim)
+void *vb_alloc (VecBuf *buf, size_t dim)
 {
 	lfree(_vb_alloc(buf, dim));
 	buf->used = 0;
@@ -45,7 +47,7 @@ Die Funktion |$1| sorgt dafür, daß im Vektorbuffer <buf> mindestens
 Datenelemente unverändert bleiben.
 */
 
-void *vb_realloc (vecbuf_t *buf, size_t dim)
+void *vb_realloc (VecBuf *buf, size_t dim)
 {
 	void *save;
 
@@ -69,7 +71,7 @@ Der alte Datenbuffer kann mit |lfree| freigegeben werden.
 Der neue Datenbuffer wird nicht initialisiert!
 */
 
-void *_vb_alloc (vecbuf_t *buf, size_t dim)
+void *_vb_alloc (VecBuf *buf, size_t dim)
 {
 	if	(dim > buf->size)
 	{
@@ -83,8 +85,7 @@ void *_vb_alloc (vecbuf_t *buf, size_t dim)
 			return save;
 		}
 
-		message("vecbuf", MSG_EFM, 1, 0);
-		exit(1);
+		dbg_error(NULL, E_NEXP, NULL);
 	}
 
 	return NULL;

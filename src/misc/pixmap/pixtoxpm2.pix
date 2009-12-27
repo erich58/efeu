@@ -1,12 +1,17 @@
-Ident = "Pixmap-File in PPM-File konvertieren";
-Version = "1.0";
-Copyright = "(c) 1995 Erich Frühstück";
+/*
+Pixmap-File in XPM2-File konvertieren
 
-str Input = NULL;
-str Output = NULL;
+$Copyright (C) 1995, 2002 Erich Frühstück
+A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+*/
 
-PgmArg("pixmap", "Input=#1", "Pixmapfile");
-PgmOptArg("ppmfile", "Output=#1", "PPM-File");
+pconfig !
+Version = "$Id: pixtoxpm2.pix,v 1.2 2002-11-11 14:54:59 ef Exp $"
 
-loadarg();
+:pixmap | Input
+	Pixmapfile
+::ppmfile | Output
+	PPM-File
+!
+
 LoadPixmap(Input).XPM2save(Output);

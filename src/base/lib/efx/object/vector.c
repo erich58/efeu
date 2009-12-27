@@ -24,15 +24,15 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/stdtype.h>
 
 
-Type_t Type_vec = STD_TYPE("Vec_t", Vec_t, NULL, NULL, NULL);
-Vec_t Buf_vec = { NULL, NULL, 0 };
+EfiType Type_vec = STD_TYPE("EfiVec", EfiVec, NULL, NULL, NULL);
+EfiVec Buf_vec = { NULL, NULL, 0 };
 
 
-Obj_t *Vector(Vec_t *vec, size_t idx)
+EfiObj *Vector(EfiVec *vec, size_t idx)
 {
 	if	(idx >= vec->dim)
 	{
-		errmsg(MSG_EFMAIN, 155);
+		dbg_note(NULL, "[efmain:155]", NULL);
 		return NULL;
 	}
 

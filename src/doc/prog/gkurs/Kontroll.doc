@@ -1,6 +1,6 @@
 \sec	Kontrollstrukturen
 
-@TODO
+\ssec	Schleifen
 
 [<|while (<cond>) <cmd>|>]
 	~
@@ -22,6 +22,11 @@
 	Anstelle von <list> kann auch ein einzelnes Objekt stehen,
 	das in eine Liste konvertierbar ist (z.B: ein Vektor).
 
+Bei Schleifen kann ein Block vorzeitig mit der |break| Anweisung
+verlassen werden. Die |continue| Anweisung startet einen neuen Zyklus.
+
+\shead	Bedingungen
+
 \ttitem	if (<cond>) <cmd1>
 	~
 \ttitem if (<cond>) <cmd1> else~<cmd2>
@@ -29,7 +34,7 @@
 	ansonsten wird, falls das Schlüsselwort |else| angegeben ist,
 	<cmd2> ausgeführt.
 
-\ssec	Switch
+\ssec	Switch-Anweisung
 
 Ein Switch-Statement hat die Syntax:
 
@@ -57,6 +62,6 @@ von |default| verwendet.
 
 Anders als in C sind in esh beliebige Datentypen für Switch-Statements
 erlaubt. Die einzige Bedingung ist, daß der Operator |==| für diesen
-Datentype definiert ist. So können in esh z.B. Zeichenketten in
-Switch-Statements verwendet werden.
+Datentype definiert ist. So können in esh z.B. Zeichenketten oder
+Reguläre Ausdrücke in Switch-Statements verwendet werden.
 Nicht jeder Datentyp eignet sich gut für Switch-Statements.

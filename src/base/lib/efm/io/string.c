@@ -23,21 +23,22 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/io.h>
 #include <EFEU/ioctrl.h>
+#include <EFEU/mstring.h>
 
 /*	Stringstruktur
 */
 
 typedef struct {
-	clean_t clean;
-	uchar_t *str;
+	void (*clean) (void *ptr);
+	unsigned char *str;
 	unsigned pos;
 } STRIO;
 
-static STRIO *new_strio (char *str, clean_t clean)
+static STRIO *new_strio (char *str, void (*clean) (void *ptr))
 {
 	STRIO *s = memalloc(sizeof(STRIO));
 	s->clean = clean;
-	s->str = (uchar_t *) str;
+	s->str = (unsigned char *) str;
 	s->pos = 0;
 	return s;
 }
@@ -50,32 +51,49 @@ static void del_strio (STRIO *s)
 }
 
 
+static char *strio_ident (STRIO *s)
+{
+	if	(strlen((char *) s->str) > 20)
+	{
+		char *a = msprintf("%.20s...", (char *) s->str);
+		char *b = msprintf("%#s:%d", a, s->pos);
+		memfree(a);
+		return b;
+	}
+
+	return msprintf("%#s:%d", (char *) s->str, s->pos);
+}
+
+	
 /*	IO - Struktur
 */
 
-static int str_get (STRIO *s)
+static int str_get (void *ptr)
 {
+	STRIO *s = ptr;
 	return s->str[s->pos] ? (int) s->str[s->pos++] : EOF;
 }
 
-static int str_ctrl (STRIO *s, int req, va_list list)
+static int str_ctrl (void *ptr, int req, va_list list)
 {
+	STRIO *s = ptr;
+
 	switch (req)
 	{
 	case IO_CLOSE:	del_strio(s); return 0;
 	case IO_REWIND:	s->pos = 0; return 0;
-	case IO_IDENT:	*va_arg(list, char **) = "<string>"; return 0;
+	case IO_IDENT:	*va_arg(list, char **) = strio_ident(s); return 0;
 	default:	return EOF;
 	}
 }
 
-io_t *io_string (char *str, clean_t clean)
+IO *io_string (char *str, void (*clean) (void *ptr))
 {
 	if	(str)
 	{
-		io_t *io = io_alloc();
-		io->get = (io_get_t) str_get;
-		io->ctrl = (io_ctrl_t) str_ctrl;
+		IO *io = io_alloc();
+		io->get = str_get;
+		io->ctrl = str_ctrl;
 		io->data = new_strio(str, clean);
 		return io;
 	}

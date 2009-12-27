@@ -24,17 +24,16 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/stdtype.h>
 #include <EFEU/Op.h>
 
-static void d_vdef (const Type_t *type, VarDecl_t *tg);
-static void c_vdef (const Type_t *type, VarDecl_t *tg, const VarDecl_t *src);
-static Obj_t *e_vdef (const Type_t *type, const VarDecl_t *def);
+static void d_vdef (const EfiType *type, void *tg);
+static void c_vdef (const EfiType *type, void *tg, const void *src);
+static EfiObj *e_vdef(const EfiType *type, const void *ptr);
 
-Type_t Type_vdef = EVAL_TYPE("_VarDecl_", VarDecl_t,
-	(Eval_t) e_vdef, (Clean_t) d_vdef, (Copy_t) c_vdef);
+EfiType Type_vdef = EVAL_TYPE("_VarDecl_", EfiVarDecl, e_vdef, d_vdef, c_vdef);
 
 /*	Scope-Namen lesen
 */
 
-Name_t *Parse_sname (io_t *io, Name_t *buf)
+EfiName *Parse_sname (IO *io, EfiName *buf)
 {
 	int c;
 
@@ -53,7 +52,7 @@ Name_t *Parse_sname (io_t *io, Name_t *buf)
 
 		if	(io_peek(io) == ':')
 		{
-			Type_t *type;
+			EfiType *type;
 
 			if	(buf->name == NULL)
 			{
@@ -93,7 +92,7 @@ Name_t *Parse_sname (io_t *io, Name_t *buf)
 	if	(buf->obj)
 	{
 		UnrefObj(buf->obj);
-		io_error(io, MSG_EFMAIN, 81, 0);
+		io_error(io, "[efmain:81]", NULL);
 	}
 
 	return NULL;
@@ -103,10 +102,10 @@ Name_t *Parse_sname (io_t *io, Name_t *buf)
 /*	Index lesen
 */
 
-ObjList_t *Parse_idx (io_t *io)
+EfiObjList *Parse_idx (IO *io)
 {
-	ObjList_t *list;
-	ObjList_t **ptr;
+	EfiObjList *list;
+	EfiObjList **ptr;
 	int c;
 
 	list = NULL;
@@ -126,13 +125,46 @@ ObjList_t *Parse_idx (io_t *io)
 /*	Variablendefinition lesen
 */
 
-
-Obj_t *Parse_vdef(io_t *io, Type_t *type, int flag)
+static EfiType *get_type (IO *io, char *name)
 {
-	VarDecl_t vdef;
-	ObjList_t **ptr;
-	Obj_t *obj;
+	EfiType *type;
+
+	if	((type = GetType(name)) == NULL)
+		io_error(io, "[efmain:83]", "s", name);
+
+	return Parse_type(io, type);
+}
+
+
+EfiObj *Parse_vdef (IO *io, EfiType *type, int flag)
+{
+	EfiVarDecl vdef;
+	EfiObjList **ptr;
+	EfiObj *obj;
 	int c;
+
+/*	Datentype bestimmen
+*/
+	while (type == NULL)
+	{
+		char *tname;
+
+		if	((tname = io_getname(io)) == NULL)
+		{
+			io_error(io, "[efmain:82]", NULL);
+			return NULL;
+		}
+
+		if	(strcmp("const", tname) == 0)
+			flag |= VDEF_CONST;
+		else if	((type = get_type(io, tname)) == NULL)
+			return NULL;
+
+		memfree(tname);
+	}
+
+	vdef.type = type;
+	vdef.cnst = (flag & VDEF_CONST) ? 1 : 0;
 
 /*	Variablenname bestimmen
 */
@@ -143,11 +175,10 @@ Obj_t *Parse_vdef(io_t *io, Type_t *type, int flag)
 
 	if	(c == '&' || c == '(')
 		return Parse_func(io, type, &vdef.name,
-			(flag & 0x2) ? FUNC_LRETVAL : 0);
+			(flag & VDEF_LVAL) ? FUNC_LRETVAL : 0);
 
 /*	Indexliste generieren
 */
-	vdef.type = type;
 	vdef.idx = NULL;
 	ptr = &vdef.idx;
 	
@@ -171,47 +202,47 @@ Obj_t *Parse_vdef(io_t *io, Type_t *type, int flag)
 
 	obj = NewObj(&Type_vdef, &vdef);
 
-/*	Bei Flag: Weitere Variablen zum gleichen Type bestimmen
+/*	Bei VDEF_REPEAT: Weitere Variablen zum gleichen Type bestimmen
 */
-	if	((flag & 0x1) && c == ',')
+	if	((flag & VDEF_REPEAT) && c == ',')
 	{
 		io_getc(io);
-		obj = CommaTerm(obj, Parse_vdef(io, type, 1));
+		obj = CommaTerm(obj, Parse_vdef(io, type, flag));
 	}
 
 	return obj;
 }
 
 
-ObjList_t *VarDefList(io_t *io, int delim)
+EfiObjList *VarDefList (IO *io, int delim)
 {
-	ObjList_t *list, **ptr;
-	Type_t *type;
-	Obj_t *obj;
-	int err;
+	EfiObjList *list, **ptr;
+	EfiType *type;
+	EfiObj *obj;
+	char *err;
 	int c;
 
 	list = NULL;
 	ptr = &list;
-	err = 0;
+	err = NULL;
 
-	while (err == 0 && (c = io_eat(io, "%s;")) != delim)
+	while (!err && (c = io_eat(io, "%s;")) != delim)
 	{
 		if	(c == EOF)
 		{
-			err = 121;
+			err = "[efmain:121]";
 			break;
 		}
 
 		if	((obj = Parse_obj(io, SCAN_NAME)) == NULL)
 		{
-			err = 122;
+			err = "[efmain:122]";
 			break;
 		}
 
 		if	(obj->type != &Type_type)
 		{
-			err = 122;
+			err = "[efmain:122]";
 			UnrefObj(obj);
 			break;
 		}
@@ -225,7 +256,7 @@ ObjList_t *VarDefList(io_t *io, int delim)
 
 			if	(obj == NULL)
 			{
-				err = 122;
+				err = "[efmain:122]";
 				break;
 			}
 
@@ -243,7 +274,7 @@ ObjList_t *VarDefList(io_t *io, int delim)
 
 	if	(err)
 	{
-		io_error(io, MSG_EFMAIN, err, 0);
+		io_error(io, err, NULL);
 		DelObjList(list);
 		return NULL;
 	}
@@ -252,18 +283,21 @@ ObjList_t *VarDefList(io_t *io, int delim)
 }
 
 
-static void d_vdef(const Type_t *type, VarDecl_t *tg)
+static void d_vdef (const EfiType *type, void *data)
 {
+	EfiVarDecl *tg = data;
 	UnrefObj(tg->name.obj);
 	memfree(tg->name.name);
 	DelObjList(tg->idx);
 	UnrefObj(tg->defval);
-	memset(tg, 0, sizeof(VarDecl_t));
+	memset(tg, 0, sizeof(EfiVarDecl));
 }
 
 
-static void c_vdef(const Type_t *type, VarDecl_t *tg, const VarDecl_t *src)
+static void c_vdef (const EfiType *type, void *tptr, const void *sptr)
 {
+	EfiVarDecl *tg = tptr;
+	const EfiVarDecl *src = sptr;
 	tg->type = src->type;
 	tg->name.obj = RefObj(src->name.obj);
 	tg->name.name = mstrcpy(src->name.name);
@@ -275,27 +309,32 @@ static void c_vdef(const Type_t *type, VarDecl_t *tg, const VarDecl_t *src)
 /*	Variablendefinition auswerten
 */
 
-static Obj_t *e_vdef(const Type_t *type, const VarDecl_t *vdef)
+static EfiObj *e_vdef(const EfiType *type, const void *ptr)
 {
-	Var_t *var;
-	Obj_t *x, *defval;
-	Type_t *vartype;
-	VarTab_t *vtab;
+	const EfiVarDecl *vdef;
+	EfiVar *var;
+	EfiObj *obj, *defval;
+	EfiType *vartype;
+	EfiVarTab *vtab;
+	char *name;
 	size_t dim;
 
+	vdef = ptr;
 	vartype = vdef->type;
 	defval = EvalObj(RefObj(vdef->defval), NULL);
+	name = vdef->name.name;
+	vtab = Obj2Ptr(RefObj(vdef->name.obj), &Type_vtab);
 
 	if	(vdef->idx)
 	{
 		defval = EvalObj(defval, &Type_list);
 		vartype = VecType(vartype, vdef->idx->next);
-		x = EvalObj(RefObj(vdef->idx->obj), &Type_int);
+		obj = EvalObj(RefObj(vdef->idx->obj), &Type_int);
 
-		if	(x)	
+		if	(obj)	
 		{
-			dim = Val_int(x->data);
-			UnrefObj(x);
+			dim = Val_int(obj->data);
+			UnrefObj(obj);
 		}
 		else if	(defval)
 		{
@@ -305,19 +344,33 @@ static Obj_t *e_vdef(const Type_t *type, const VarDecl_t *vdef)
 		
 		if	(dim == 0)
 		{
-			errmsg(MSG_EFMAIN, 302);
+			dbg_note(NULL, "[efmain:302]", NULL);
 			return NULL;
 		}
 	}
+	else if	(vdef->cnst)
+	{
+		defval = EvalObj(defval, vartype);
+
+		if	(defval)
+		{
+			obj = ConstObj(vartype, defval->data);
+			UnrefObj(defval);
+			defval = NULL;
+		}
+		else	obj = NewObj(vartype, NULL);
+
+		VarTab_xadd(vtab, mstrcpy(name), NULL, RefObj(obj));
+		return obj;
+	}
 	else	dim = 0;
 
-	vtab = Obj2Ptr(RefObj(vdef->name.obj), &Type_vtab);
-	var = NewVar(vartype, vdef->name.name, dim);
+	var = NewVar(vartype, name, dim);
 	AddVar(vtab, var, 1);
-	x = Var2Obj(var, NULL);
+	obj = Var2Obj(var, NULL);
 
 	if	(defval)
-		return AssignObj(x, defval);
+		return AssignObj(obj, defval);
 
-	return x;
+	return obj;
 }

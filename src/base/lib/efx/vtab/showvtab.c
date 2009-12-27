@@ -36,7 +36,7 @@ static int name_is_std (const char *str)
 	return 1;
 }
 
-static int var_is_func (Type_t *type)
+static int var_is_func (EfiType *type)
 {
 	if	(type == &Type_func)	return 1;
 	if	(type == &Type_vfunc)	return 1;
@@ -44,10 +44,10 @@ static int var_is_func (Type_t *type)
 	return 0;
 }
 
-int ShowVarTab(io_t *io, const char *pfx, VarTab_t *vtab)
+int ShowVarTab (IO *io, const char *pfx, EfiVarTab *vtab)
 {
 	int i, n, k, pos;
-	Var_t *var;
+	VarTabEntry *var;
 
 	if	(vtab == NULL)	return io_puts("NULL", io);
 
@@ -57,11 +57,10 @@ int ShowVarTab(io_t *io, const char *pfx, VarTab_t *vtab)
 
 	n += io_puts(" = {", io);
 	pos = MAX_POS;
+	var = vtab->tab.data;
 
-	for (i = 0; i < vtab->tab.dim; i++)
+	for (i = vtab->tab.used; i-- > 0; var++)
 	{
-		var = vtab->tab.tab[i];
-
 		if	(var->name == NULL)	continue;
 
 		if	(pos + strlen(var->name) > MAX_POS)

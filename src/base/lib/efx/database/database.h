@@ -35,24 +35,22 @@ If not, write to the Free Software Foundation, Inc.,
 
 typedef struct {
 	REFVAR;		/* Referenzzähler */
-	Type_t *type;	/* Datentype */
-	Func_t *cmp;	/* Vergleichsfunktion */
-	vecbuf_t buf;	/* Datenbuffer */
-} DataBase_t;
+	EfiType *type;	/* Datentype */
+	EfiFunc *cmp;	/* Vergleichsfunktion */
+	VecBuf buf;	/* Datenbuffer */
+} EfiDB;
 
-extern reftype_t DB_reftype;
+EfiDB *DB_create (EfiType *type, size_t blk);
 
-DataBase_t *DB_create (Type_t *type, size_t blk);
+void DB_load (IO *io, EfiDB *db, EfiObj *expr);
+void DB_xload (IO *io, EfiDB *db, EfiObj *expr);
 
-void DB_load (io_t *io, DataBase_t *db, Obj_t *expr);
-void DB_xload (io_t *io, DataBase_t *db, Obj_t *expr);
+void DB_save (IO *io, EfiDB *db, int mode, EfiVirFunc *test, char *list);
 
-void DB_save (io_t *io, DataBase_t *db, int mode, VirFunc_t *test, char *list);
+void *DB_search (EfiDB *db, void *data, int flag);
+void DB_sort (EfiDB *db);
 
-void *DB_search (DataBase_t *db, void *data, int flag);
-void DB_sort (DataBase_t *db);
-
-extern Type_t Type_DB;
+extern EfiType Type_DB;
 
 void SetupDataBase (void);
 

@@ -27,25 +27,29 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 typedef struct {
-	void (*clean) (io_t *io, void *par);
-	io_t *io;	/* Eingabestruktur */
+	void (*clean) (IO *io, void *par);
+	IO *io;	/* Eingabestruktur */
 	void *par;	/* Aufräumfunktion */
 } CLPAR;
 
 
-static int clpar_get (CLPAR *clpar)
+static int clpar_get (void *ptr)
 {
+	CLPAR *clpar = ptr;
 	return io_getc(clpar->io);
 }
 
-static int clpar_put (int c, CLPAR *clpar)
+static int clpar_put (int c, void *ptr)
 {
+	CLPAR *clpar = ptr;
 	return io_putc(c, clpar->io);
 }
 
 
-static int clpar_ctrl (CLPAR *clpar, int req, va_list list)
+static int clpar_ctrl (void *ptr, int req, va_list list)
 {
+	CLPAR *clpar = ptr;
+
 	if	(req == IO_CLOSE)
 	{
 		int stat;
@@ -60,7 +64,7 @@ static int clpar_ctrl (CLPAR *clpar, int req, va_list list)
 }
 
 
-io_t *io_cleanup (io_t *io, void (*cf) (io_t *io, void *p), void *p)
+IO *io_cleanup (IO *io, void (*cf) (IO *io, void *p), void *p)
 {
 	if	(io && cf)
 	{
@@ -69,9 +73,9 @@ io_t *io_cleanup (io_t *io, void (*cf) (io_t *io, void *p), void *p)
 		clpar->io = io;
 		clpar->par = p;
 		io = io_alloc();
-		io->get = (io_get_t) clpar_get;
-		io->put = (io_put_t) clpar_put;
-		io->ctrl = (io_ctrl_t) clpar_ctrl;
+		io->get = clpar_get;
+		io->put = clpar_put;
+		io->ctrl = clpar_ctrl;
 		io->data = clpar;
 	}
 

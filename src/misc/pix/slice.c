@@ -22,10 +22,10 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/oldpixmap.h>
 
-void OldPixMap_Slice(Func_t *func, void *rval, void **arg)
+void OldPixMap_Slice(EfiFunc *func, void *rval, void **arg)
 {
-	OldPixMap_t *pix, *newpix;
-	ObjList_t *list;
+	OldPixMap *pix, *newpix;
+	EfiObjList *list;
 	int size;
 	int i, n;
 

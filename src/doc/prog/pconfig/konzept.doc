@@ -100,7 +100,7 @@ ersetzt. Meist wird ein einzelnes Minus anstelle eines Dateinamens
 stellvertretend für die Standardeingabe bzw. Standardausgabe
 verwendet.
 Beginnt ein Argument mit einem Schrägstrich, wird er entfernt und das
-darauffolgende Zeichen nicht interpretiert.
+darauffolgende Zeichen wird nicht interpretiert.
 
 Diese Regeln gelten auch für Argumente von Optionen, aber nicht für
 Umgebungsvariablen und reguläre Ausdrücke.
@@ -193,7 +193,7 @@ Falls das Funktionsargument NULL ist, wird es durch
 den Parameterwert ersetzt.
 
 Ein Dollar |$| leitet eine Parametersubstitution im Sinne
-von |parsub()| ein. Die möglichen Formate sind konfigurationsabhängig.
+von |parsub(3)| ein. Die möglichen Formate sind konfigurationsabhängig.
 Ein Ausdruck \index{Substitutionsdefinition}en der Form
 |{|<name>|}| wird durch den Resourcewert von <name> ersetzt.
 Ein leerer Ausdruck |{}| wird durch den Parameterwert der Kennung
@@ -206,7 +206,7 @@ Vergleiche dazu \mref{CmdPar_psub(3)}.
 
 \ssec	Zusatzinformationen
 Sämtliche Konfigurationsparameter werden in einer Struktur vom
-Type \index{|CmdPar_t|} gespeichert. Die Funktionen |ParseCommand|
+Type \index{|CmdPar|} gespeichert. Die Funktionen |ParseCommand|
 und |GetResource| arbeiten nur mit einer global definierten Struktur
 dieses Types. Es besteht aber die Möglichkeit, mehrere solcher
 Strukturen zu verwalten und auszuwerten. Detailierte Informationen

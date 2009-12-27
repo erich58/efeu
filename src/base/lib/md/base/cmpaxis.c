@@ -5,7 +5,7 @@
 #include <EFEU/mdmat.h>
 
 
-int cmp_axis(mdaxis_t *x1, mdaxis_t *x2, int flag)
+int cmp_axis(mdaxis *x1, mdaxis *x2, int flag)
 {
 	size_t i, dim;
 	int rflag;

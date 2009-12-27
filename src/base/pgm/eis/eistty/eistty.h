@@ -27,7 +27,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/efwin.h>
 
 extern WINDOW *info_win;
-extern InfoNode_t *info_node;
+extern InfoNode *info_node;
 
 #define	LASTLINE 	(info_win->_maxy - 1)
 
@@ -36,10 +36,10 @@ typedef struct {
 	int x;		/* Spaltenposition */
 	int att;	/* Attribut */
 	char *str;	/* Zeichenkette */
-	InfoNode_t *info;	/* Verzweigungsknoten */
-} InfoPart_t;
+	InfoNode *info;	/* Verzweigungsknoten */
+} InfoPart;
 
-void MakePart (InfoNode_t *info);
+void MakePart (InfoNode *info);
 void ShowPart (void);
 
 void MovePos (int val);

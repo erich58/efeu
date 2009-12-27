@@ -1,6 +1,7 @@
 /*
-Hilfsfunktionen zur Funktionsgenerierung
+Konstruktion von Funktionen
 
+$Header	<$1>
 $Copyright (C) 1996 Erich Frühstück
 This file is part of EFEU.
 
@@ -23,23 +24,13 @@ If not, write to the Free Software Foundation, Inc.,
 #ifndef	function_ms
 #define	function_ms	1
 
-struct FunctionLine {
-	int margin;	/* Rand */
-	str line;	/* Zeilentext */
-};
-
-void FunctionLine::write()
-{
-	if	(strlen(line))
-	{
-		for (int i = 0; i < margin; i++)
-			src << '\t';
-
-		src << line;
-	}
-
-	src << '\n';
-}
+/*
+Der Datentyp |$1| dient zur Generierung einer C-Funktion.
+Einige Komponenten beginnen mit |_| um Namenskonflikte bei
+der Parametersubstitution zu vermeiden.
+Alle Komponentenfunktionen mit Parametersubstitution sind inline,
+damit auf lokale Variablen zugegriffen werden kann.
+*/
 
 struct Function {
 	str _name;
@@ -50,22 +41,70 @@ struct Function {
 	DataBase lines;
 };
 
+/*
+Der Konverter auf |bool| testet, ob die Struktur eine
+Funktionsdefinition enthält.
+*/
+
 restricted bool Function ()
 	return (bool) _name
 
-str Function()	
+/*
+Der Konverter auf |str| liefert den Prototype der Funktion.
+*/
+
+str Function ()	
 	return _name ? sprintf("%s(%s)", _name, _arg ? _arg : "void") : NULL;
 
-Function Function(str _name)
-	return { psub(_name), NULL, 1, false, false, DataBase(FunctionLine) };
+/*
+Der Datentyp |$1| definert eine Zeile in der konstruierten Funktion.
+Dabei ist <margin> die zugehörige Einrücktiefe und <line> der
+Zeilentext.
+*/
 
-inline Function Function(str _name, str _args, ...)
+struct FunctionLine {
+	int margin;	/* Rand */
+	str line;	/* Zeilentext */
+};
+
+/*
+Die Funktion |$1| schreibt eine Funktionszeile in das Sourcefile.
+*/
+
+void FunctionLine::write ()
 {
-	_name = psub(_name, va_list);
-	return { _name, psub(_args), 1, false, false, DataBase(FunctionLine) };
+	if	(strlen(line))
+		src << "\t" * margin << line;
+
+	src << '\n';
 }
 
-void Function::write(bool global = false)
+/*
+Beim Konstruktor |$1| gibt die Variable <_name> den Datentyp und Namen der
+Funktion an. Das Argument <_args> bestimmt die Argumentliste der Funktion.
+Auf <_name> und <_args> wird eine Parametersubstitution angewendet.
+Alle weiteren Argumente setzen Stringregister,
+die bei der Parametersubstitution zur Verfügung stehen.
+*/
+
+Function Function (str _name)
+	return { psub(_name), NULL, 1, false, false, DataBase(FunctionLine) };
+
+inline Function Function (str _name, str _args, ...)
+{
+	_name = psub(_name, va_list);
+	_args = psub(_args, va_list);
+	return { _name, _args, 1, false, false, DataBase(FunctionLine) };
+}
+
+/*
+Mit Hilfe der Funktion |$1| wird die C-Funktion
+ausgegeben. Das Argument <global> bestimmt, ob die Funktionsdefinition
+global oder statisch erfolgen soll. Bei einer globalen Definition wird
+auch ein Prototyp in die Headerdatei geschrieben.
+*/
+
+void Function::write (bool global = false)
 {
 	if	(!_name)	return;
 
@@ -87,11 +126,14 @@ void Function::write(bool global = false)
 	src << "}\n\n";
 }
 
-void Function::newpar & (void)
-	need_par = allow_par;
+/*
+Die folgenden Hilfsfunktionen dienen zum Einfügen und Gliederen
+der generierten Sourcezeilen:
 
-void Function::ignorepar & (void)
-	need_par = allow_par = false;
+\ttitem	$1
+	wird zu Beginn jeder Zeile aufgerufen und fügt bei Bedarf eine
+	Leerzeile ein.
+*/
 
 void Function::startline & (void)
 {
@@ -104,6 +146,28 @@ void Function::startline & (void)
 	allow_par = true;
 }
 
+/*
+\ttitem	$1
+	fügt eine Absatztrennung ein.
+*/
+
+void Function::newpar & (void)
+	need_par = allow_par;
+
+/*
+\ttitem	$1
+	ignoriert nachfolgende Absatztrennungen.
+*/
+
+void Function::ignorepar & (void)
+	need_par = allow_par = false;
+
+/*
+\ttitem	$1
+	Erweitert die Liste der Zeilen um <cmd>. Bei einer Leerzeile
+	wird |newpar| aufgerufen.
+*/
+
 void Function::add_line & (int dp, str cmd)
 {
 	if	(strlen(cmd))
@@ -114,18 +178,42 @@ void Function::add_line & (int dp, str cmd)
 	else	newpar();
 }
 
+/*
+\shead	Konstruktion von Sourcezeilen
+Zur Konstruktion von Sourcezeilen stehen eine Reihe von Funktionen
+zur Verfügung. Die Sourcezeilen werden mit einem Formatargument <fmt>
+übergeben, das mit Paramatersubstitution überarbeitet wird.
 
-void Function::beg & (str _fmt = NULL)
-	startline(), lines += { depth++, psub(_fmt) + "{" }, ignorepar();
-
-void Function::end & (str _fmt = NULL)
-	lines += { --depth, "}" + psub(_fmt) }, newpar();
+\ttitem	$1
+	fügt eine Befehlszeile ein.
+*/
 
 void Function::line & (str _fmt = NULL, ...)
 	add_line(depth, psub(_fmt, va_list));
 
+/*
+\ttitem	$1
+	fügt eine Befehlszeile ein. Der Formatstring <fmt> wird
+	jedoch nicht mit Parametersubstitution, sondern mit |sprintf|
+	formatiert. Die Stringregister werden nicht verändert.
+*/
+
+void Function::fline & (str fmt, ...)
+	add_line(depth, sprintf(fmt, va_list));
+
+/*
+\ttitem	$1
+	fügt eine Zeile ohne Einrückung ein und wird vorzugsweise für
+	Preprozessorzeilen verwendet.
+*/
+
 void Function::ppline & (str _fmt = NULL, ...)
 	add_line(0, psub(_fmt, va_list));
+
+/*
+\ttitem	$1
+	fügt einen Kommentar ein.
+*/
 
 inline void Function::comment & (str _fmt = NULL, ...)
 {
@@ -135,48 +223,47 @@ inline void Function::comment & (str _fmt = NULL, ...)
 	newpar();
 }
 
-void Function::fline & (str fmt, ...)
-	add_line(depth, sprintf(fmt, va_list));
-
-/*	Switch - Anweisungen
+/*
+\ttitem	$1
+	zerlegt den Formatstring <_fmt> in einzelne Zeilen
+	und fügt sie in der Datenstruktur ein.
 */
-
-void Function::switch & (str _expr, ...)
-	line("switch (" + _expr + ")", va_list), beg();
-
-inline void Function::case & (str _key, str _cmd = NULL, ...)
-{
-	_cmd = psub(_cmd, va_list);
-	_key = _key ? "case " + psub(_key) : "default";
-	add_line(depth - 1, paste("\t", _key + ":", _cmd));
-}
-
-inline void Function::cblock & (str _key, str _cmd, ...)
-{
-	_cmd = psub(_cmd, va_list);
-	_key = _key ? "case " + psub(_key) : "default";
-
-	add_line(depth - 1, _key + ":");
-
-	for (x in split(_cmd, "\n"))
-		add_line(depth, x);
-}
-
 
 inline void Function::body & (str _fmt = NULL, ...)
 	for (x in split(psub(_fmt, va_list), "\n"))
 		add_line(depth, x);
 
-void Function::byte_order_dep & (str _fmt, str std, str rev, ...)
-{
-	ppline("#if\tREVBYTEORDER");
-	setreg(0, rev);
-	body(_fmt, va_list);
-	ppline("#else");
-	setreg(0, std);
-	body(_fmt, va_list)
-	ppline("#endif");
-}
+/*
+\shead	Blockstrukturen
+
+Um einen gut strukturierten Block zu erhalten, sind
+vor den Befehlszeilen je nach Blocktiefe entsprechend
+viele Tabulatoren einzufügen.
+
+Die nachfolgenden Funktionen erleichtern die zeilenweise Konstruktion
+von Blöcken. Die Einrücktiefe wird automatisch adjustiert.
+
+\ttitem	$1
+	beginnt einen Funktionsblock. Das Argument <_fmt>
+	wird vor der öffnenden Klammer eingefügt.
+*/
+
+void Function::beg & (str _fmt = NULL)
+	startline(), lines += { depth++, psub(_fmt) + "{" }, ignorepar();
+
+/*
+\ttitem	$1
+	schließt einen Funktionsblock.
+	Das Argument <_fmt> wird nach der schließenden Klammer eingefügt.
+*/
+
+void Function::end & (str _fmt = NULL)
+	lines += { --depth, "}" + psub(_fmt) }, newpar();
+
+/*
+\ttitem	$1
+	generiert eine Blockstruktur mit Kopf <head> und Körper <body> 
+*/
 
 void Function::block & (str head, str body, ...)
 {
@@ -194,176 +281,109 @@ void Function::block & (str head, str body, ...)
 	newpar();
 }
 
-int Function::pfbody & (IO def, str fname, str vardef, bool in_switch = false)
-{
-	str key, fmt;
-	bool need_break = false;
-	bool parflag = false;
-
-	while (getline(def, key, fmt))
-	{
-		if	(parflag)
-		{
-			newpar();
-			parflag = false;
-		}
-
-		if	(key[0] == '@')
-		{
-			key = substr(key, 1);
-
-			if	(key == "if")
-			{
-				newpar();
-				line("if\t(" + fmt + ")");
-				beg();
-				pfbody(def, fname, vardef);
-				parflag = true;
-			}
-			else if	(key == "elif")
-			{
-				end();
-				line("else if\t(" + fmt + ")");
-				beg();
-			}
-			else if	(key == "switch")
-			{
-				line();
-				line("switch (" + fmt + ")");
-				beg();
-				pfbody(def, fname, vardef, true);
-				parflag = true;
-			}
-			else if	(key == "else")
-			{
-				end();
-				line("else");
-				beg();
-			}
-			else if	(key == "case")
-			{
-				if	(need_break) line("break;");
-
-				this.case(fmt);
-				need_break = false;
-				continue;
-			}
-			else if	(key == "default")
-			{
-				if	(need_break) line("break;");
-
-				this.case(NULL);
-				need_break = false;
-				continue;
-			}
-			else if	(key == "end")
-			{
-				if	(need_break) line("break;");
-
-				in_switch = false;
-				end();
-				return;
-			}
-
-			continue;
-		}
-
-		if	(key == ".")	key = NULL;
-		else if	(vardef)	key = psub(vardef, key);
-		else			key = psub(key);
-
-		if	(fmt == NULL)
-		{
-			line();
-			continue;
-		}
-		else if	(fmt[0] == '$')
-		{
-			fline("io_puts(%s, %s);",
-				psub(substr(fmt, 1), key), fname);
-		}
-		else if	(fmt[0] == '"')
-		{
-			fline("io_puts(%s, %s);", fmt, fname);
-		}
-		else if	(fmt[0] == '\'')
-		{
-			fline("io_putc(%s, %s);", fmt, fname);
-		}
-		else if	(fmt[0] == '@')
-		{
-			fline("io_puts(%#s, %s);", substr(fmt, 1), fname);
-		}
-		else if	(fmt[0] == '#')
-		{
-			fline("io_printf(%s, %#s, %s);", fname,
-				substr(fmt, 1), key);
-		}
-		else if	(fmt[0] == '?')
-		{
-			int n = 1;
-
-			while (fmt[n] == ' ')
-				n++;
-
-			fmt = substr(fmt, n);
-
-			if	(fmt[0] == '\'')
-				fline("io_putc(%s ? %s, %s);", key, fmt, fname);
-			else if	(fmt[0] == '"')
-				fline("io_puts(%s ? %s, %s);", key, fmt, fname);
-			else
-			{
-				str v1 = strcut(fmt, ":");
-				fline("io_printf(%s, %s ? %#s : %#s, %s);",
-					fname, key, v1, fmt, key);
-			}
-		}
-		else if	(fmt[0] == '=')
-		{
-			int n = 1;
-			str k = "default";
-			line();
-			line("switch ($1)", key);
-			line("{");
-
-			for (z in split(substr(fmt, 1), ","))
-			{
-				fline("%s:\tio_puts(%#s, %s); break;",
-					k, z, fname);
-				k = sprintf("case %2d", n++);
-			}
-
-			line("}");
-			line();
-		}
-		else if	(fmt[0] == '\\')
-		{
-			line(substr(fmt, 1) + ";", key, fname);
-		}
-		else	line(fmt + ";", key, fname);
-
-		need_break = in_switch;
-	}
-
-	return parflag;
-}
-
-/*	Einfache Funktionsdefinitionen
+/*
+\ttitem	$1
+	erzeugt den Kopf einer Switch-Anweisung.
 */
 
-inline void LocalFunction (str _name, str _args, str _body, ...)
+void Function::switch & (str _expr, ...)
+	line("switch (" + _expr + ")", va_list), beg();
+
+/*
+\ttitem	$1
+	erzeugt eine |case|-Anweisung mit zugehörigem Kommando <_cmd>.
+	Ist <_key> der Null-String, wird eine |default| Anweisung
+	generiert. Die |case|-Label stehen auf der gleichen
+	Einrücktiefe wie die Blockklammern der |switch|-Struktur.
+*/
+
+inline void Function::case & (str _key, str _cmd = NULL, ...)
 {
-	Function f = Function(_name, _args, va_list);
-	f.body(_body);
-	f.write(false);
+	_cmd = psub(_cmd, va_list);
+	_key = _key ? "case " + psub(_key, va_list) : "default";
+	add_line(depth - 1, paste("\t", _key + ":", _cmd));
 }
+
+/*
+\ttitem	$1
+	erzeugt eine |case|-Anweisung mit einem Block von
+	Befehlszeilen.
+*/
+
+inline void Function::cblock & (str _key, str _cmd, ...)
+{
+	_cmd = psub(_cmd, va_list);
+	_key = _key ? "case " + psub(_key) : "default";
+
+	add_line(depth - 1, _key + ":");
+
+	for (x in split(_cmd, "\n"))
+		add_line(depth, x);
+}
+
+/*
+Einfache C-Funktionen können mit den Funktionen |GlobalFunction| und
+|LocalFunction| konstruiert werden. Das Argument <_body> bestimmt den
+Funktionsrumpf. Auch auf ihn wird Parametersubstitution angewendet.
+Für alle anderen Argumente gilt das bei der Beschreibung
+des Konstruktors gesagte.
+*/
 
 inline void GlobalFunction (str _name, str _args, str _body, ...)
 {
 	Function f = Function(_name, _args, va_list);
-	f.body(_body);
+	f.body(_body, va_list);
 	f.write(true);
 }
+
+inline void LocalFunction (str _name, str _args, str _body, ...)
+{
+	Function f = Function(_name, _args, va_list);
+	f.body(_body, va_list);
+	f.write(false);
+}
+
+/*
+$Examples
+
+Das erste Beispiel zeigt die Generierung des Kommandos
+<"Hello World"> mit Hilfe des Datentypes |Function|.
+
+\ms_example hello
+config src 
+#include <macro.ms>
+#include <function.ms>
+
+StdInclude(src, "stdio");
+
+GlobalFunction("int main", "int argc, char **argv", string !
+printf("Hello World!\n");
+return 0;
+!);
+\end
+
+Das zweite Beispiel zeigt die Konstruktion eines |switch|-Blocks
+mit einzelnen Funktionsaufrufen.
+
+\ms_example switch
+config hdr src 
+#include <function.ms>
+
+Function f = Function("int test", "int key, int mode");
+f.switch("key");
+f.case("1");
+f.case("2", "return 1;");
+f.cblock("3", string !
+if	(mode)	return 2;
+else		return 3;
+!);
+f.case(NULL, "return 0;");
+f.end();
+f.write(true);
+\end
+
+$SeeAlso
+\mref{mksource(1)}, \mref{printfunc(7)}.
+*/
 
 #endif	/* function.ms */

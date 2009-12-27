@@ -23,30 +23,77 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 #include <EFEU/stdtype.h>
 
-size_t IOData (const Type_t *t, iofunc_t f, void *p, void *d)
+size_t ReadData (const EfiType *type, void *data, IO *io)
 {
-	if	(t->iodata)
+	CleanData(type, data);
+
+	if	(type->read)
 	{
-		return t->iodata(t, f, p, d, 1);
+		return type->read(type, data, io);
 	}
-	else	return f(p, d, t->recl, t->size, 1);
-}
-
-size_t IOVecData (const Type_t *t, iofunc_t f, void *p, size_t n, void *d)
-{
-	if	(t->iodata)
+	else if	(type->recl)
 	{
-		return t->iodata(t, f, p, d, n);
+		return io_dbread(io, data, type->recl, type->size, 1);
 	}
-	else	return f(p, d, t->recl, t->size, n);
+	else	return 0;
 }
 
-size_t IOData_std (const Type_t *t, iofunc_t f, void *p, void *d, size_t n)
+size_t ReadVecData (const EfiType *type, size_t dim, void *data, IO *io)
 {
-	return f(p, d, t->recl, t->size, n);
+	CleanVecData(type, dim, data);
+
+	if	(type->read)
+	{
+		size_t n = 0;
+
+		while (dim > 0)
+		{
+			n += type->read(type, data, io);
+			data = ((char *) data) + type->size;
+			dim--;
+		}
+
+		return n;
+	}
+	else if	(type->recl)
+	{
+		return io_dbread(io, data, type->recl, type->size, dim);
+	}
+	else	return 0;
 }
 
-size_t IOData_str (const Type_t *t, iofunc_t f, void *p, void *d, size_t n)
+
+size_t WriteData (const EfiType *type, const void *data, IO *io)
 {
-	return mstr_iodata(f, p, d, n);
+	if	(type->write)
+	{
+		return type->write(type, data, io);
+	}
+	else if	(type->recl)
+	{
+		return io_dbwrite(io, data, type->recl, type->size, 1);
+	}
+	else	return 0;
+}
+
+size_t WriteVecData (const EfiType *type, size_t dim, const void *data, IO *io)
+{
+	if	(type->write)
+	{
+		size_t n = 0;
+
+		while (dim > 0)
+		{
+			n += type->write(type, data, io);
+			data = ((const char *) data) + type->size;
+			dim--;
+		}
+
+		return n;
+	}
+	else if	(type->recl)
+	{
+		return io_dbwrite(io, data, type->recl, type->size, dim);
+	}
+	else	return 0;
 }

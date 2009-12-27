@@ -4,7 +4,7 @@
 
 #include <EFEU/pctrl.h>
 
-int data_ctrl(PrFilter_t *pf, int cmd, va_list list)
+int data_ctrl(PCTRL *pf, int cmd, va_list list)
 {
 	switch (cmd)
 	{

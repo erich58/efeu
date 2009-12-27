@@ -59,18 +59,18 @@ static int std_ctrl (void *ptr, int c, va_list list)
 	}
 }
 
-static io_t ios_batch = STD_IODATA(std_get, std_put,
+static IO ios_batch = STD_IODATA(std_get, std_put,
 	std_ctrl, "<stdin,stdout>");
 
-static io_t ios_err = STD_IODATA(NULL, err_put,
+static IO ios_err = STD_IODATA(NULL, err_put,
 	std_ctrl, "<stderr>");
 
-io_t *io_batch (void)
+IO *io_batch (void)
 {
 	return rd_refer(&ios_batch);
 }
 
-io_t *iostd = &ios_batch;
-io_t *iomsg = &ios_batch;
-io_t *ioerr = &ios_err;
+IO *iostd = &ios_batch;
+IO *iomsg = &ios_batch;
+IO *ioerr = &ios_err;
 

@@ -27,19 +27,19 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/locale.h>
 
 
-static void list_vtab(io_t *io, VarTab_t *tab, int limit)
+static void list_vtab(IO *io, EfiVarTab *tab, int limit)
 {
-	if	(tab == NULL || tab->tab.dim <= limit)
+	if	(tab == NULL || tab->tab.used <= limit)
 		ShowVarTab(io, NULL, tab);
 	else if	(tab->name)
-		io_printf(io, "%s[%d]", tab->name, tab->tab.dim);
-	else	io_printf(io, "%#p[%d]", tab, tab->tab.dim);
+		io_printf(io, "%s[%d]", tab->name, tab->tab.used);
+	else	io_printf(io, "%#p[%d]", tab, tab->tab.used);
 }
 
-static void f_vtabstack (Func_t *func, void *rval, void **arg)
+static void f_vtabstack (EfiFunc *func, void *rval, void **arg)
 {
-	VarStack_t *stack; 
-	io_t *io;
+	EfiVarStack *stack; 
+	IO *io;
 	int limit;
 
 	limit = Val_int(arg[0]);
@@ -56,7 +56,7 @@ static void f_vtabstack (Func_t *func, void *rval, void **arg)
 }
 
 
-static void f_typedist (Func_t *func, void *rval, void **arg)
+static void f_typedist (EfiFunc *func, void *rval, void **arg)
 {
 	Val_int(rval) = KonvDist(Val_type(arg[0]), Val_type(arg[1]));
 }
@@ -77,10 +77,10 @@ static struct {
 	{ D_PROMOTE, "PROMOTE" },
 };
 
-static void f_showkonv (Func_t *func, void *rval, void **arg)
+static void f_showkonv (EfiFunc *func, void *rval, void **arg)
 {
-	Type_t *old, *new;
-	Konv_t konv;
+	EfiType *old, *new;
+	EfiKonv konv;
 
 	old = Val_type(arg[0]);
 	new = Val_type(arg[1]);
@@ -113,9 +113,9 @@ static void f_showkonv (Func_t *func, void *rval, void **arg)
 	else	io_puts("-1 REJECT\n", iostd);
 }
 
-static void f_lcshow (Func_t *func, void *rval, void **arg)
+static void f_lcshow (EfiFunc *func, void *rval, void **arg)
 {
-	io_t *io = Val_io(arg[0]);
+	IO *io = Val_io(arg[0]);
 
 	if	(Locale.scan)
 	{
@@ -140,9 +140,9 @@ static void f_lcshow (Func_t *func, void *rval, void **arg)
 	}
 }
 
-static void f_locale (Func_t *func, void *rval, void **arg)
+static void f_locale (EfiFunc *func, void *rval, void **arg)
 {
-	io_t *io = Val_io(arg[0]);
+	IO *io = Val_io(arg[0]);
 
 	if	(Locale.scan)
 		io_printf(io, "LC_SCAN=%#s\n", Locale.scan->name);
@@ -154,7 +154,7 @@ static void f_locale (Func_t *func, void *rval, void **arg)
 		io_printf(io, "LC_DATE=%#s\n", Locale.date->name);
 }
 
-static void f_parselist (Func_t *func, void *rval, void **arg)
+static void f_parselist (EfiFunc *func, void *rval, void **arg)
 {
 	ListParseDef(Val_io(arg[0]));
 }

@@ -62,7 +62,7 @@ static char *lextab[] = {
 static STRBUF(lexbuf1, 64);
 static STRBUF(lexbuf2, 64);
 
-char *lexsortkey (const char *base, strbuf_t *buf)
+char *lexsortkey (const char *base, StrBuf *buf)
 {
 	if	(!base)	return NULL;
 	if	(!buf)	buf = &lexbuf1;
@@ -70,7 +70,7 @@ char *lexsortkey (const char *base, strbuf_t *buf)
 	sb_clear(buf);
 
 	for (; *base != 0; base++)
-		sb_puts(lextab[(uchar_t) *base], buf);
+		sb_puts(lextab[(unsigned char) *base], buf);
 
 	sb_putc(0, buf);
 	return buf->data;

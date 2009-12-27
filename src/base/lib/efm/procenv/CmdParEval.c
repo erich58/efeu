@@ -20,7 +20,7 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include <EFEU/KeyTab.h>
+#include <EFEU/nkt.h>
 #include <EFEU/CmdPar.h>
 #include <EFEU/parsub.h>
 #include <EFEU/mstring.h>
@@ -28,7 +28,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/Info.h>
 #include <EFEU/appl.h>
 
-static KEYTAB(EvalTab, 32);
+static NameKeyTab EvalTab = NKT_DATA("CmdParEval", 32, NULL);
 static void setup_builtin (void);
 
 /*
@@ -36,10 +36,10 @@ Die Funktion |$1| liefert die durch <name> definierte
 Auswertungsfunktion für Befehlszeilenparameter.
 */
 
-CmdParEval_t *CmdParEval_get (const char *name)
+CmdParEval *CmdParEval_get (const char *name)
 {
 	setup_builtin();
-	return StrKey_get(&EvalTab, name, NULL);
+	return nkt_fetch(&EvalTab, name, NULL);
 }
 
 /*
@@ -47,10 +47,34 @@ Die Funktion |$1| erweitert die Auswertungsfunktionen für
 Befehlszeilenparameter mit <def>.
 */
 
-void CmdParEval_add (CmdParEval_t *eval)
+void CmdParEval_add (CmdParEval *eval)
 {
 	setup_builtin();
-	StrKey_add(&EvalTab, eval);
+	nkt_insert(&EvalTab, eval->name, eval);
+}
+
+static int show_std (const char *name, void *data, void *ptr)
+{
+	CmdParEval *eval = data;
+	io_printf(ptr, "[%s] %#s\n", name, eval->desc);
+	return 0;
+}
+
+typedef struct {
+	IO *out;
+	const char *fmt;
+	ArgList *arg;
+	CmdPar *cpar;
+} ShowPar;
+
+static int show_fmt (const char *name, void *data, void *ptr)
+{
+	CmdParEval *eval = data;
+	ShowPar *par = ptr;
+	arg_set(par->arg, 1, mstrcpy(name));
+	arg_set(par->arg, 2, mstrcpy(eval->desc));
+	CmdPar_psubout(par->cpar, par->out, par->fmt, par->arg);
+	return 0;
 }
 
 /*
@@ -58,30 +82,29 @@ Die Funktion |$1| listet die Auswertungsfunktionen für
 Befehlszeilenparameter auf.
 */
 
-void CmdParEval_show (io_t *io, const char *fmt)
+void CmdParEval_show (IO *io, const char *fmt)
 {
-	CmdParEval_t **p;
-	size_t n;
-
 	setup_builtin();
 
-	for (n = EvalTab.used, p = EvalTab.data; n-- > 0; p++)
+	if	(fmt)
 	{
-		if	(fmt)
-		{
-			reg_cpy(1, (*p)->name);
-			reg_cpy(2, (*p)->desc);
-			io_psub(io, fmt);
-		}
-		else	io_printf(io, "[%s] %#s\n", (*p)->name, (*p)->desc);
+		ShowPar par;
+		par.out = io;
+		par.fmt = fmt;
+		par.arg = arg_create();
+		par.cpar = CmdPar_ptr(NULL);
+		arg_set(par.arg, 0, NULL);
+		nkt_walk(&EvalTab, show_fmt, &par);
+		rd_deref(par.arg);
 	}
+	else	nkt_walk(&EvalTab, show_std, io);
 }
 
 
 /*	Eingebaute Funktionen
 */
 
-static int f_test (CmdPar_t *cpar, CmdParVar_t *var,
+static int f_test (CmdPar *cpar, CmdParVar *var,
 	const char *par, const char *arg)
 {
 	char *p;
@@ -94,7 +117,7 @@ static int f_test (CmdPar_t *cpar, CmdParVar_t *var,
 }
 
 
-static int f_message (CmdPar_t *cpar, CmdParVar_t *var,
+static int f_message (CmdPar *cpar, CmdParVar *var,
 	const char *par, const char *arg)
 {
 	char *p = CmdPar_psub(cpar, par, arg);
@@ -103,7 +126,7 @@ static int f_message (CmdPar_t *cpar, CmdParVar_t *var,
 	return 0;
 }
 
-static int f_set (CmdPar_t *cpar, CmdParVar_t *var,
+static int f_set (CmdPar *cpar, CmdParVar *var,
 	const char *par, const char *arg)
 {
 	char *p = CmdPar_psub(cpar, par, arg);
@@ -112,7 +135,13 @@ static int f_set (CmdPar_t *cpar, CmdParVar_t *var,
 	return 0;
 }
 
-static int f_lset (CmdPar_t *cpar, CmdParVar_t *var,
+static int f_vset (CmdPar *cpar, CmdParVar *var,
+	const char *par, const char *arg)
+{
+	return f_set(cpar, var, CmdPar_getval(cpar, par, NULL), arg);
+}
+
+static int f_lset (CmdPar *cpar, CmdParVar *var,
 	const char *par, const char *arg)
 {
 	char *p = CmdPar_psub(cpar, par, arg);
@@ -122,7 +151,7 @@ static int f_lset (CmdPar_t *cpar, CmdParVar_t *var,
 	return 0;
 }
 
-static int f_insert (CmdPar_t *cpar, CmdParVar_t *var,
+static int f_insert (CmdPar *cpar, CmdParVar *var,
 	const char *par, const char *arg)
 {
 	char *x = var->value;
@@ -132,7 +161,7 @@ static int f_insert (CmdPar_t *cpar, CmdParVar_t *var,
 }
 
 
-static int f_append (CmdPar_t *cpar, CmdParVar_t *var,
+static int f_append (CmdPar *cpar, CmdParVar *var,
 	const char *par, const char *arg)
 {
 	char *x = var->value;
@@ -141,7 +170,7 @@ static int f_append (CmdPar_t *cpar, CmdParVar_t *var,
 	return 0;
 }
 
-static int f_usage (CmdPar_t *cpar, CmdParVar_t *var,
+static int f_usage (CmdPar *cpar, CmdParVar *var,
 	const char *par, const char *arg)
 {
 	char *fmt = CmdPar_psub(cpar, par, arg);
@@ -150,7 +179,7 @@ static int f_usage (CmdPar_t *cpar, CmdParVar_t *var,
 	return 0;
 }
 
-static int f_manpage (CmdPar_t *cpar, CmdParVar_t *var,
+static int f_manpage (CmdPar *cpar, CmdParVar *var,
 	const char *par, const char *arg)
 {
 	if	(arg && *arg == '@')
@@ -160,7 +189,7 @@ static int f_manpage (CmdPar_t *cpar, CmdParVar_t *var,
 	else
 	{
 		char *name = CmdPar_psub(cpar, par, arg);
-		io_t *io = io_fileopen(name, "w");
+		IO *io = io_fileopen(name, "w");
 		memfree(name);
 		CmdPar_manpage(cpar, io);
 		io_close(io);
@@ -169,11 +198,11 @@ static int f_manpage (CmdPar_t *cpar, CmdParVar_t *var,
 	return 0;
 }
 
-static int f_config (CmdPar_t *cpar, CmdParVar_t *var,
+static int f_config (CmdPar *cpar, CmdParVar *var,
 	const char *par, const char *arg)
 {
 	char *name;
-	io_t *io;
+	IO *io;
 
 	name = CmdPar_psub(cpar, par, arg);
 
@@ -181,27 +210,27 @@ static int f_config (CmdPar_t *cpar, CmdParVar_t *var,
 	{
 		CmdPar_read (cpar, io, EOF, 0);
 		io_close(io);
+		memfree(name);
 	}
-	else	message(NULL, MSG_EFM, 22, 1, name);
+	else	dbg_note(NULL, "[efm:22]", "m", name);
 
-	memfree(name);
 	return 0;
 }
 
-static int f_break (CmdPar_t *cpar, CmdParVar_t *var,
+static int f_break (CmdPar *cpar, CmdParVar *var,
 	const char *par, const char *arg)
 {
 	return CMDPAR_BREAK;
 }
 
-static int f_exit (CmdPar_t *cpar, CmdParVar_t *var,
+static int f_exit (CmdPar *cpar, CmdParVar *var,
 	const char *par, const char *arg)
 {
 	exit(par ? atoi(par) : 0);
 	return 0;
 }
 
-static int f_info (CmdPar_t *cpar, CmdParVar_t *var,
+static int f_info (CmdPar *cpar, CmdParVar *var,
 	const char *par, const char *arg)
 {
 	char *node = CmdPar_psub(cpar, par, arg);
@@ -210,7 +239,7 @@ static int f_info (CmdPar_t *cpar, CmdParVar_t *var,
 	return 0;
 }
 
-static int f_dump (CmdPar_t *cpar, CmdParVar_t *var,
+static int f_dump (CmdPar *cpar, CmdParVar *var,
 	const char *par, const char *arg)
 {
 	char *node = CmdPar_psub(cpar, par, arg);
@@ -219,10 +248,11 @@ static int f_dump (CmdPar_t *cpar, CmdParVar_t *var,
 	return 0;
 }
 
-static CmdParEval_t builtin[] = {
+static CmdParEval builtin[] = {
 	 { "test", "Testauswertungsfunktion", f_test },
 	 { "set", "Wert setzen", f_set },
 	 { "lset", "Wert mit Sprachfilter setzen", f_lset },
+	 { "vset", "Wert mit Variable als Format setzen", f_vset },
 	 { "message", "Meldung ausgeben", f_message },
 	 { "insert", "Argument mit Trennzeichen einfügen", f_insert },
 	 { "append", "Argument mit Trennzeichen anhängen", f_append },
@@ -246,7 +276,7 @@ static void setup_builtin(void)
 	setup_done = 1;
 
 	for (i = 0; i < tabsize(builtin); i++)
-		StrKey_add(&EvalTab, builtin + i);
+		nkt_insert(&EvalTab, builtin[i].name, builtin + i);
 }
 
 

@@ -23,34 +23,122 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 #include <EFEU/cmdsetup.h>
 #include <EFEU/RegExp.h>
+#include <EFEU/Op.h>
 
-static Type_t Type_regex = REF_TYPE("regex_t", RegExp_t *);
+static EfiType Type_regex = REF_TYPE("RegExp", RegExp *);
 
-static void str2regex (Func_t *func, void *rval, void **arg)
+static void str2regex (EfiFunc *func, void *rval, void **arg)
 {
-	Val_ptr(rval) = RegExp(Val_str(arg[0]), 0);
+	Val_ptr(rval) = RegExp_comp(Val_str(arg[0]), 0);
 }
 
-static void f_regex (Func_t *func, void *rval, void **arg)
+static EfiObj *parse_regex(IO *io, EfiOp *op, EfiObj *left)
 {
-	Val_ptr(rval) = RegExp(Val_str(arg[0]), Val_int(arg[1]));
+	StrBuf *sb;
+	EfiObj *obj;
+	int c;
+	int flag;
+
+	sb = new_strbuf(0);
+	io_protect(io, 1);
+
+	while ((c = io_getc(io)) != EOF)
+	{
+		if	(c == '\\')
+		{
+			c = io_getc(io);
+
+			if	(c != '/')
+				sb_putc('\\', sb);
+
+			if	(c == EOF)	break;
+		}
+		else if	(c == '/')	break;
+
+		sb_putc(c, sb);
+	}
+
+	io_protect(io, 0);
+	sb_putc(0, sb);
+
+	switch (io_peek(io))
+	{
+	case 'i':
+	case 'I':
+		io_getc(io);
+		flag = 1;
+		break;
+	default:
+		flag = 0;
+		break;
+	}
+
+	obj = NewPtrObj(&Type_regex, RegExp_comp((char *) sb->data, flag));
+	del_strbuf(sb);
+	return obj;
 }
 
-static void f_regexec (Func_t *func, void *rval, void **arg)
+static EfiOp op_regex[] = {
+	{ "/", OpPrior_Unary, OpAssoc_Right, parse_regex },
+};
+
+static void f_regex (EfiFunc *func, void *rval, void **arg)
+{
+	Val_ptr(rval) = RegExp_comp(Val_str(arg[0]), Val_int(arg[1]));
+}
+
+static int sub_cmp (RegExp *a, RegExp *b)
+{
+	if	(a == b)	return 1;
+	else if	(!a || !b)	return 0;
+	else if	(a->icase != b->icase)	return 0;
+	else if	(mstrcmp(a->def, b->def) == 0)	return 1;
+	else			return 0;
+}
+
+static void f_regcmp (EfiFunc *func, void *rval, void **arg)
+{
+	Val_int(rval) = sub_cmp (Val_ptr(arg[0]), Val_ptr(arg[1]));
+}
+
+static void f_nregcmp (EfiFunc *func, void *rval, void **arg)
+{
+	Val_int(rval) = sub_cmp (Val_ptr(arg[0]), Val_ptr(arg[1]));
+}
+
+static void f_regexec (EfiFunc *func, void *rval, void **arg)
 {
 	Val_int(rval) = RegExp_exec(Val_ptr(arg[0]),
 		Val_str(arg[1]), NULL);
 }
 
-static void f_regsub (Func_t *func, void *rval, void **arg)
+static void f_iregexec (EfiFunc *func, void *rval, void **arg)
+{
+	Val_int(rval) = RegExp_exec(Val_ptr(arg[1]),
+		Val_str(arg[0]), NULL);
+}
+
+static void f_nregexec (EfiFunc *func, void *rval, void **arg)
+{
+	Val_int(rval) = ! RegExp_exec(Val_ptr(arg[0]),
+		Val_str(arg[1]), NULL);
+}
+
+static void f_niregexec (EfiFunc *func, void *rval, void **arg)
+{
+	Val_int(rval) = ! RegExp_exec(Val_ptr(arg[1]),
+		Val_str(arg[0]), NULL);
+}
+
+static void f_regsub (EfiFunc *func, void *rval, void **arg)
 {
 	Val_str(rval) = RegExp_subst(Val_ptr(arg[0]),
 		Val_str(arg[1]), Val_str(arg[2]), Val_int(arg[3]));
 }
 
-static ObjList_t *match_to_list(const char *str, regmatch_t *match, size_t n)
+static EfiObjList *match_to_list(const char *str, regmatch_t *match, size_t n)
 {
-	ObjList_t *list, **ptr;
+	EfiObjList *list, **ptr;
 
 	if	(!match)
 		return NewObjList(str2Obj(NULL));
@@ -68,7 +156,7 @@ static ObjList_t *match_to_list(const char *str, regmatch_t *match, size_t n)
 	return list;
 }
 
-static void f_regmatch (Func_t *func, void *rval, void **arg)
+static void f_regmatch (EfiFunc *func, void *rval, void **arg)
 {
 	regmatch_t *match;
 	char *str;
@@ -82,16 +170,28 @@ static void f_regmatch (Func_t *func, void *rval, void **arg)
 /*	Funktionstabelle
 */
 
-static FuncDef_t func_regex[] = {
-	{ 0, &Type_regex, "regex_t (str expr)", str2regex },
-	{ 0, &Type_regex, "regex_t (str expr, bool icase = false)", f_regex },
-	{ 0, &Type_bool, "regex_t::exec (str s)", f_regexec },
-	{ 0, &Type_list, "regex_t::match (str s)", f_regmatch },
-	{ 0, &Type_str, "regex_t::sub (str repl, str s, bool glob = false)",
+static EfiFuncDef func_regex[] = {
+	{ 0, &Type_regex, "RegExp (str expr)", str2regex },
+	{ 0, &Type_regex, "RegExp (str expr, bool icase = false)", f_regex },
+	{ 0, &Type_bool, "RegExp::exec (str s)", f_regexec },
+	{ 0, &Type_list, "RegExp::match (str s)", f_regmatch },
+	{ 0, &Type_str, "RegExp::sub (str repl, str s, bool glob = false)",
 		f_regsub },
-	{ 0, &Type_bool, "regexec (regex_t re, str s)", f_regexec },
-	{ 0, &Type_list, "regmatch (regex_t re, str s)", f_regmatch },
-	{ 0, &Type_str, "regsub (regex_t re, str r, str s, bool glob = false)",
+	{ 0, &Type_bool, "regexec (RegExp re, str s)", f_regexec },
+	{ FUNC_VIRTUAL, &Type_bool, "operator== (RegExp a, RegExp b)",
+		f_regcmp },
+	{ FUNC_VIRTUAL, &Type_bool, "operator== (RegExp re, str s)",
+		f_regexec },
+	{ FUNC_VIRTUAL, &Type_bool, "operator== (str s, RegExp re)",
+		f_iregexec },
+	{ FUNC_VIRTUAL, &Type_bool, "operator!= (RegExp a, RegExp b)",
+		f_nregcmp },
+	{ FUNC_VIRTUAL, &Type_bool, "operator!= (RegExp re, str s)",
+		f_nregexec },
+	{ FUNC_VIRTUAL, &Type_bool, "operator!= (str s, RegExp re)",
+		f_niregexec },
+	{ 0, &Type_list, "regmatch (RegExp re, str s)", f_regmatch },
+	{ 0, &Type_str, "regsub (RegExp re, str r, str s, bool glob = false)",
 		f_regsub },
 };
 
@@ -99,5 +199,6 @@ static FuncDef_t func_regex[] = {
 void CmdSetup_regex(void)
 {
 	AddType(&Type_regex);
+	AddOpDef(&PrefixTab, op_regex, tabsize(op_regex));
 	AddFuncDef(func_regex, tabsize(func_regex));
 }

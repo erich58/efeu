@@ -59,29 +59,30 @@ If not, write to the Free Software Foundation, Inc.,
 #define	OpAssoc_Left	0	/* Links Assoziativ */
 #define	OpAssoc_Right	1	/* Rechts Assoziativ */
 
-typedef struct Op_s {
+typedef struct EfiOpStruct EfiOp;
+
+struct EfiOpStruct {
 	char *name;	/* Operatorname */
 	char prior;	/* Priorität */
 	char assoc;	/* Assoziativität */
-	Obj_t *(*parse) (io_t *io, struct Op_s *op, Obj_t *left);
-} Op_t;
+	EfiObj *(*parse) (IO *io, EfiOp *op, EfiObj *left);
+};
 
-Obj_t *PrefixOp (io_t *io, Op_t *op, Obj_t *left);
-Obj_t *PostfixOp (io_t *io, Op_t *op, Obj_t *left);
-Obj_t *BinaryOp (io_t *io, Op_t *op, Obj_t *left);
-Obj_t *AssignOp (io_t *io, Op_t *op, Obj_t *left);
+EfiObj *PrefixOp (IO *io, EfiOp *op, EfiObj *left);
+EfiObj *PostfixOp (IO *io, EfiOp *op, EfiObj *left);
+EfiObj *BinaryOp (IO *io, EfiOp *op, EfiObj *left);
+EfiObj *AssignOp (IO *io, EfiOp *op, EfiObj *left);
 
 void StdOpDef (void);
-void AddOpDef (xtab_t *tab, Op_t *def, size_t dim);
+void AddOpDef (NameKeyTab *tab, EfiOp *def, size_t dim);
 
-extern xtab_t PrefixTab;
-extern xtab_t PostfixTab;
+extern NameKeyTab PrefixTab;
+extern NameKeyTab PostfixTab;
 
 
-Obj_t *CondTerm (Obj_t *test, Obj_t *ifpart, Obj_t *elsepart);
-Obj_t *RangeTerm (Obj_t *first, Obj_t *last, Obj_t *step);
-Obj_t *CommaTerm (Obj_t *left, Obj_t *right);
-Obj_t *UnaryTerm (const char *a, Obj_t *obj, int flag);
-Obj_t *BinaryTerm (const char *a, Obj_t *left, Obj_t *right);
+EfiObj *CondTerm (EfiObj *test, EfiObj *ifpart, EfiObj *elsepart);
+EfiObj *CommaTerm (EfiObj *left, EfiObj *right);
+EfiObj *UnaryTerm (const char *a, const char *ext, EfiObj *obj);
+EfiObj *BinaryTerm (const char *a, EfiObj *left, EfiObj *right);
 
 #endif	/* EFEU/Op.h */

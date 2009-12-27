@@ -27,7 +27,7 @@ If not, write to the Free Software Foundation, Inc.,
 /*	Einsetzen eines Wertes
 */
 
-int iocpy_repl(io_t *in, io_t *out, int c, const char *arg, unsigned int flags)
+int iocpy_repl(IO *in, IO *out, int c, const char *arg, unsigned int flags)
 {
 	return io_puts(arg, out);
 }
@@ -36,7 +36,7 @@ int iocpy_repl(io_t *in, io_t *out, int c, const char *arg, unsigned int flags)
 /*	Zeichen Markieren
 */
 
-int iocpy_mark(io_t *in, io_t *out, int c, const char *arg, unsigned int flags)
+int iocpy_mark(IO *in, IO *out, int c, const char *arg, unsigned int flags)
 {
 	int n;
 
@@ -49,7 +49,7 @@ int iocpy_mark(io_t *in, io_t *out, int c, const char *arg, unsigned int flags)
 /*	Namen kopieren
 */
 
-int iocpy_name(io_t *in, io_t *out, int c, const char *arg, unsigned int flags)
+int iocpy_name(IO *in, IO *out, int c, const char *arg, unsigned int flags)
 {
 	int n;
 
@@ -73,7 +73,7 @@ int iocpy_name(io_t *in, io_t *out, int c, const char *arg, unsigned int flags)
 /*	Escape - Zeichen
 */
 
-int iocpy_esc(io_t *in, io_t *out, int c, const char *arg, unsigned int flags)
+int iocpy_esc(IO *in, IO *out, int c, const char *arg, unsigned int flags)
 {
 	int x;
 	int n;

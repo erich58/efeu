@@ -46,6 +46,8 @@ char *GetFormat (const char *def)
 {
 	char nbuf[SIGLEN + 1];
 	const char *p;
+	char *key;
+	char *fmt;
 	int flag;
 	int i;
 
@@ -63,22 +65,31 @@ char *GetFormat (const char *def)
 
 	if	(flag)	p++;
 
+	key = flag ? nbuf : NULL;
+
 	for (i = 0; *p && *p != ']'; p++)
 	{
 		if	(*p == 0)	return (char *) def;
-		if	(i < SIGLEN)	nbuf[i++] = *p;
+		if	(i >= SIGLEN)	continue;
+
+		if	(*p == ':' && key == NULL)
+		{
+			nbuf[i++] = 0;
+			key = nbuf + i;
+		}
+		else	nbuf[i++] = *p;
 	}
 
 	nbuf[i] = 0;
 	p++;
 
+	if	(*p == 0)	p = NULL;
+
 	if	(flag)
 		return GetResource(nbuf, p);
 
-	/*
-	io_printf(ioerr, "name=%#s\n", nbuf);
-	*/
-	return (char *) p;
+	fmt = key ? FormatTabEntry(nbuf, key) : FormatTabEntry(NULL, nbuf);
+	return fmt ? fmt : (char *) p;
 }
 
 /*

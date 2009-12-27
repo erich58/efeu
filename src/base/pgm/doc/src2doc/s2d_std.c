@@ -34,7 +34,7 @@ If not, write to the Free Software Foundation, Inc.,
 #define	BEG "\n---- verbatim\n"
 #define	END "----\n\n"
 
-static void copyline (io_t *ein, io_t *aus)
+static void copyline (IO *ein, IO *aus)
 {
 	int c;
 
@@ -45,9 +45,9 @@ static void copyline (io_t *ein, io_t *aus)
 }
 
 
-static void subcopy (const char *name, io_t *ein, io_t *aus, io_t *src)
+static void subcopy (const char *name, IO *ein, IO *aus, IO *src)
 {
-	strbuf_t *buf;
+	StrBuf *buf;
 	int c, flag, nlcount;
 
 	buf = new_strbuf(0);
@@ -73,7 +73,7 @@ static void subcopy (const char *name, io_t *ein, io_t *aus, io_t *src)
 			}
 		}
 
-		io_psub(aus, (char *) buf->data);
+		io_psubvec(aus, (char *) buf->data, 0, NULL);
 		sb_clear(buf);
 	}
 	else if	(name)
@@ -90,7 +90,7 @@ static void subcopy (const char *name, io_t *ein, io_t *aus, io_t *src)
 
 			sb_putc(0, buf);
 			io_putc('\n', aus);
-			io_psub(aus, (char *) buf->data);
+			io_psubvec(aus, (char *) buf->data, 0, NULL);
 			sb_clear(buf);
 			flag = 0;
 		}
@@ -119,30 +119,32 @@ static void subcopy (const char *name, io_t *ein, io_t *aus, io_t *src)
 	del_strbuf(buf);
 }
 
-void s2d_std (const char *name, io_t *ein, io_t *aus)
+void s2d_std (const char *name, IO *ein, IO *aus)
 {
 	subcopy(name, ein, aus, aus);
 }
 
-void s2d_com (const char *name, io_t *ein, io_t *aus)
+void s2d_com (const char *name, IO *ein, IO *aus)
 {
 	subcopy(name, ein, aus, NULL);
 }
 
-void s2d_doc (const char *name, io_t *ein, io_t *aus)
+void s2d_doc (const char *name, IO *ein, IO *aus)
 {
 	io_copy(ein, aus);
 }
 
-void s2d_man (const char *name, io_t *ein, io_t *aus)
+void s2d_man (const char *name, IO *ein, IO *aus)
 {
-	fname_t *fn = strtofn(name);
+	char *fname, *suffix;
 
-	if	(fn)
+	fname = mbasename(name, &suffix);
+
+	if	(fname)
 	{
-		io_printf(aus, "\\mpage[%s] %s\n", Secnum ? Secnum : fn->type,
-			fn->name);
-		memfree(fn);
+		io_printf(aus, "\\mpage[%s] %s\n",
+			Secnum ? Secnum : suffix, fname);
+		memfree(fname);
 	}
 
 	io_copy(ein, aus);

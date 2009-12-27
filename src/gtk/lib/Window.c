@@ -54,7 +54,7 @@ void EGtkMain (void)
 }
 
 
-static void f_toplevel (Func_t *func, void *rval, void **arg)
+static void f_toplevel (EfiFunc *func, void *rval, void **arg)
 {
 	char *title;
 	GtkWidget *TopLevel;
@@ -77,7 +77,7 @@ static void f_toplevel (Func_t *func, void *rval, void **arg)
 	Val_ptr(rval) = TopLevel;
 }
 
-static FuncDef_t fdef[] = {
+static EfiFuncDef fdef[] = {
 	{ 0, NULL, "GtkWindow GtkTopLevel"
 		"(str title = NULL, GtkWidget = NULL)", f_toplevel },
 };

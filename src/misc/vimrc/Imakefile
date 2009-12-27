@@ -1,0 +1,6 @@
+Destination(VIM,$(EFEUTOP)/share/vim)
+
+#define	VIMFile(tg,src)	SEDInstall($(VIM),tg,src,-e's|VIM|$(VIM)|g')
+
+all::
+	efeu-vimrc $(VIM)

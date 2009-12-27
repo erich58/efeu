@@ -23,9 +23,9 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 
 
-void SetFunc(unsigned flags, Type_t *type, const char *fmt, FuncEval_t eval)
+void SetFunc(unsigned flags, EfiType *type, const char *fmt, void (*eval) (EfiFunc *func, void *rval, void **arg))
 {
-	Func_t *func = Prototype(fmt, type, NULL, flags);
+	EfiFunc *func = Prototype(fmt, type, NULL, flags);
 
 	if	(func)
 	{
@@ -34,14 +34,14 @@ void SetFunc(unsigned flags, Type_t *type, const char *fmt, FuncEval_t eval)
 	}
 }
 
-void AddFuncDef(FuncDef_t *def, size_t dim)
+void AddFuncDef(EfiFuncDef *def, size_t dim)
 {
 	for (; dim-- != 0; def++)
 		SetFunc(def->flags, def->type, def->prot, def->eval);
 }
 
 
-void DelFuncArg(FuncArg_t *arg, size_t dim)
+void DelFuncArg(EfiFuncArg *arg, size_t dim)
 {
 	if	(arg)
 	{

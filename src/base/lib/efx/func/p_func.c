@@ -27,10 +27,10 @@ If not, write to the Free Software Foundation, Inc.,
 /*	Prototype - Generierung
 */
 
-static Obj_t *get_func(Func_t *func)
+static EfiObj *get_func(EfiFunc *func)
 {
-	Func_t *f;
-	VirFunc_t *vf;
+	EfiFunc *f;
+	EfiVirFunc *vf;
 
 	if	(func->bound)
 		vf = GetTypeFunc(func->arg[0].type, func->name);
@@ -39,16 +39,20 @@ static Obj_t *get_func(Func_t *func)
 	f = XGetFunc(func->type, vf, func->arg, func->dim);
 
 	if	(f && f->refcount == 1)
-		f->virtual = func->virtual;
+		f->virfunc = func->virfunc;
 
 	rd_deref(func);
 	return NewObj(&Type_func, &f);
 }
 
-
-Obj_t *Parse_func(io_t *io, Type_t *type, Name_t *name, int flags)
+static void pfunc_clean (void *data)
 {
-	Func_t *func;
+	UnrefObj(data);
+}
+
+EfiObj *Parse_func(IO *io, EfiType *type, EfiName *name, int flags)
+{
+	EfiFunc *func;
 	char *prompt;
 	int c;
 
@@ -81,7 +85,7 @@ Obj_t *Parse_func(io_t *io, Type_t *type, Name_t *name, int flags)
 			func->eval = Func_inline;
 		}
 
-		func->clean = (clean_t) UnrefObj;
+		func->clean = pfunc_clean;
 		AddFunc(func);
 	}
 

@@ -31,9 +31,9 @@ Funktion in den n Intervallen.
 #define	DIFF(x, i) (x[i+1] - x[i])	/* Differenzoperator */
 
 
-pnom_t *linint(size_t n, double *x, double *y)
+Polynom *linint(size_t n, double *x, double *y)
 {
-	pnom_t *p;	/* Polynomstruktur */
+	Polynom *p;	/* Polynomstruktur */
 	int i;		/* Hilfszähler */
 
 /*	Spezialfälle

@@ -30,14 +30,14 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 
 
-Func_t *GetPrintFunc (const Type_t *type);
-int PrintData (io_t *io, const Type_t *type, const void *data);
-int PrintVecData (io_t *io, const Type_t *type, const void *data, size_t dim);
+EfiFunc *GetPrintFunc (const EfiType *type);
+int PrintData (IO *io, const EfiType *type, const void *data);
+int PrintVecData (IO *io, const EfiType *type, const void *data, size_t dim);
 
-int PrintObj (io_t *io, const Obj_t *obj);
-int PrintFmtList (io_t *io, const char *fmt, ObjList_t *list);
-int PrintFmtObj (io_t *io, const char *fmt, const Obj_t *obj);
-int PrintAny (io_t *io, const Type_t *type, const void *data);
+int PrintObj (IO *io, const EfiObj *obj);
+int PrintFmtList (IO *io, const char *fmt, EfiObjList *list);
+int PrintFmtObj (IO *io, const char *fmt, const EfiObj *obj);
+int PrintAny (IO *io, const EfiType *type, const void *data);
 
 extern char *PrintListBegin;
 extern char *PrintListDelim;

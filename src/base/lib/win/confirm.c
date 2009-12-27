@@ -23,7 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/efwin.h>
 #include <EFEU/efutil.h>
 
-void WinConfirm (WinSize_t *ws, char *label)
+void WinConfirm (WinSize *ws, char *label)
 {
 	WINDOW *win;
 	int height;

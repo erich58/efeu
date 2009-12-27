@@ -1,6 +1,7 @@
-Ident = "Programmbeispiel: Hello World"
-Version = "$Revision: 1.1 $"
-Copyright = "(c) 2001 Erich Frühstück"
+# Programmbeispiel: Hello World
+
+# $Copyright (C) 2001 Erich Frühstück
+# A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
 
 Format = "%s"
 	Formatierungsanweisung für den Ausgabetext.

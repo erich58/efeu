@@ -1,10 +1,13 @@
 bool EshScript = false;
+bool International = true;
 
 pconfig !
 Ident = "Alte Kommondosyntaxdateien konvertieren"
-Version = "$Revision: 1.2 $"
+Version = "$Revision: 1.5 $"
 Copyright = "(c) 2001 Erich Frühstück"
 
+x | :eval International = false
+	Keine internationalen Beschreibungstexte
 e | :eval EshScript = true
 	Esh Script verarbeiten
 ::file|Input
@@ -20,14 +23,14 @@ void ShowHead(void)
 #if	EshScript
 	Ident = strsub(Ident, "\n", " ");
 	printf("pconfig !\n");
-	printf("#if	Lang == %#s\n", "de");
-	printf("Ident = %#s\n", Ident);
-	printf("#else\nIdent = \n#endif\n", Ident);
+	printf("Version = \"$%s:$\"\n", "Id");
+/*
 #else
 	printf("Ident = %#s\n", Ident);
-#endif
 	printf("Version = %#s\n", Version);
 	printf("Copyright = %#s\n", Copyright);
+*/
+#endif
 	printf("\n");
 	head_done = 1;
 }
@@ -48,7 +51,7 @@ void PrintCmd(str cmd)
 
 void PrintDesc(IO io)
 {
-	str pfx = "\t:*:XXX\n\t:de:";
+	str pfx = International ? "\t:*:XXX\n\t:de:" : "\t";
 	str line;
 
 	while (getline(io, line))

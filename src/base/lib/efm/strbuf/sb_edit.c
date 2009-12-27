@@ -26,7 +26,7 @@ If not, write to the Free Software Foundation, Inc.,
 Die Funktion |$1| löscht das Zeichen an der aktuellen Position.
 */
 
-int sb_delete (strbuf_t *sb)
+int sb_delete (StrBuf *sb)
 {
 	int i, c, n;
 
@@ -49,7 +49,7 @@ int sb_delete (strbuf_t *sb)
 Die Funktion |$1| fügt das Zeichen <c> an der aktuellen Position ein.
 */
 
-void sb_insert (int c, strbuf_t *sb)
+void sb_insert (int c, StrBuf *sb)
 {
 	int i;
 

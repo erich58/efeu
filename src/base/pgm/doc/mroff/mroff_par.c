@@ -33,46 +33,48 @@ If not, write to the Free Software Foundation, Inc.,
 	":*:mroff configuration parameter" \
 	":de:mroff-Konfigurationsparameter"
 
-static VarTab_t *mroff_tab = NULL;
+static EfiVarTab *ManRoff_tab = NULL;
 
-static VarDef_t vardef[] = {
-	{ NAME,	&Type_vtab, &mroff_tab },
+static EfiVarDef vardef[] = {
+	{ NAME,	&Type_vtab, &ManRoff_tab },
 };
 
 char *mroff_par (const char *name)
 {
-	return Obj2str(GetVar(mroff_tab, name, NULL));
+	return Obj2str(GetVar(ManRoff_tab, name, NULL));
 }
 
-static void var_desc (io_t *io, Var_t *var)
+static void var_desc (IO *io, const char *desc)
 {
 	io = io_lmark(io_refer(io), "\t", NULL, 0);
-	io_puts(var->desc, io);
+	io_puts(desc, io);
 	io_close(io);
 }
 
-static void par_info (io_t *io, InfoNode_t *info)
+static void par_info (IO *io, InfoNode *info)
 {
-	int i;
+	VarTabEntry *p;
+	size_t n;
 
-	for (i = 0; i < mroff_tab->tab.dim; i++)
+	for (p = ManRoff_tab->tab.data, n = ManRoff_tab->tab.used; n-- > 0; p++)
 	{
-		Var_t *var = mroff_tab->tab.tab[i];
+		EfiObj *obj = p->get ? p->get(NULL, p->data) : RefObj(p->obj);
 
-		io_printf(io, "\n%s %s = ", var->type->name, var->name);
-		PrintObj(io, Var2Obj(var, NULL));
+		io_printf(io, "\n%s %s = ", p->type->name, p->name);
+		PrintObj(io, obj);
+		UnrefObj(obj);
 		io_putc('\n', io);
-		var_desc(io, var);
+		var_desc(io, p->desc);
 	}
 }
 
 
-void mroff_addpar (VarDef_t *def, size_t dim)
+void mroff_addpar (EfiVarDef *def, size_t dim)
 {
-	if	(mroff_tab == NULL)
-		mroff_tab = VarTab(NAME, 64);
+	if	(ManRoff_tab == NULL)
+		ManRoff_tab = VarTab(NAME, 64);
 
-	AddVarDef(mroff_tab, def, dim);
+	AddVarDef(ManRoff_tab, def, dim);
 }
 
 void mroff_setup (void)
@@ -81,13 +83,13 @@ void mroff_setup (void)
 
 	if	(need_setup)
 	{
-		io_t *in;
+		IO *in;
 
-		mroff_tab = VarTab(NAME, 64);
-		mroff_cmdpar(mroff_tab);
-		mroff_envpar(mroff_tab);
+		ManRoff_tab = VarTab(NAME, 64);
+		mroff_cmdpar(ManRoff_tab);
+		mroff_envpar(ManRoff_tab);
 		AddVarDef(NULL, vardef, tabsize(vardef));
-		PushVarTab(RefVarTab(mroff_tab), NULL);
+		PushVarTab(RefVarTab(ManRoff_tab), NULL);
 		AddInfo(NULL, NAME, INFO_LABEL, par_info, NULL);
 
 		in = io_findopen(CFGPATH, CFGNAME, CFGEXT, "rd");

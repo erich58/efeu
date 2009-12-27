@@ -1,6 +1,7 @@
 /*
 Datenbank - Datenfelder
 
+$Header	<$1>
 $Copyright (C) 1998 Erich Frühstück
 This file is part of EFEU.
 
@@ -25,7 +26,8 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <var.ms>
 #include <macro.ms>
-#include <function.ms>
+#include <printfunc.ms>
+#include <DataType.ms>
 
 /*	Datenstrukturvariablen
 */
@@ -42,7 +44,7 @@ void DBDataVar::typeline(IO io)
 {
 	if	(name == NULL)	return;
 
-	if	(base)	fprintf(io, "\t%s_t ", base);
+	if	(base)	fprintf(io, "\t%s ", base);
 	else if	(type)	fprintf(io, "\t%s ", type);
 	else		io << '\t';
 
@@ -91,7 +93,7 @@ DBDataDef DBDataDef(str name, str label, bool glob = true)
 	name = psub(name);
 	label = psub(label);
 
-	if	(!label)	label = psub("Datenstruktur $1_t", name);
+	if	(!label)	label = psub("Datenstruktur $1", name);
 	if	(glob)		fprintf(hdr, "\n/*\t%s\n*/\n", label);
 
 	fprintf(src, "\n/*\t%s\n*/\n\n", label);
@@ -110,27 +112,38 @@ void DBDataDef::typedef(bool flag = true)
 	int n = dim(var);
 	int i;
 
+	DataTypeHeader(flag);
 	io << "\ntypedef struct {\n";
 
 	for (i = 0; i < n; i++)
 		var[i].typeline(io);
 
-	fprintf(io, "} %s_t;\n\n", name);
+	fprintf(io, "} %s;\n\n", name);
+
+	if	(flag)
+	{
+		fpsub(hdr, "extern EfiType Type_$1;\n", name);
+	}
+	else	src << "static ";
+
+	fpsub(src, "EfiType Type_$1 = SIMPLE_TYPE(\"$1\", $1, NULL);\n", name);
+
 	Macro(io, "$1_recl", NULL, (fix ? "($2)" : "0"), name, recl);
-	Macro(io, "$1_size", NULL, "sizeof($1_t)", name, recl);
+	Macro(io, "$1_size", NULL, "sizeof($1)", name, recl);
 
 	if	(!read_body)
 		Macro(io, "$1_read", "io, data, dim",
-			"io_dbread(io, data, $1_recl, $1_size, dim)");
+			"io_dbread(io, data, $1_recl, $1_size, dim)", name);
 	
 	if	(!write_body)
 		Macro(io, "$1_write", "io, data, dim",
-			"io_dbwrite(io, data, $1_recl, $1_size, dim)");
+			"io_dbwrite(io, data, $1_recl, $1_size, dim)", name);
 
 	if	(!clear_body)
 		Macro(io, "$1_clear", "data, dim",
-			"memset(data, 0, (dim) * $1_size)");
+			"memset(data, 0, (dim) * $1_size)", name);
 
+	Macro(io, "$1_setup", "", "", name);
 	io << "\n";
 }
 
@@ -140,10 +153,9 @@ void DBDataDef::typedef(bool flag = true)
 void DBDataDef::makefunc(bool glob = true)
 {
 	Function f;
-	setreg(1, name);
 
-	str arg_io = "io_t *io, $1_t *data, size_t n";
-	str arg_reorg = "$1_t *data, size_t n";
+	str arg_io = "IO *io, $1 *data, size_t n";
+	str arg_reorg = "$1 *data, size_t n";
 	str var_reorg = paste(", ", "data, n", arglist);
 
 	str space_set;
@@ -153,12 +165,11 @@ void DBDataDef::makefunc(bool glob = true)
 	{
 		if	(!x.vdim)	continue;
 
-		setreg(2, x.name);
-		setreg(3, "data->" + x.vdim);
+		List_t args = { name, x.name, "data->" + x.vdim };
 
 		if	(slist[x.name])
 		{
-			space_set += psub("$3 = $2_buf - data->$2;\n");
+			space_set += psub("$3 = $2_buf - data->$2;\n", args);
 		}
 		else
 		{
@@ -170,7 +181,7 @@ if	(data->$2)
 		$2_buf[i] = data->$2[i];
 }
 else	memset($2_buf, 0, $3 * sizeof($2_buf[0]));
-!);
+!, args);
 		}
 	}
 
@@ -178,12 +189,13 @@ else	memset($2_buf, 0, $3 * sizeof($2_buf[0]));
 */
 	if	(read_body)
 	{
-		f = Function("size_t $1_read", paste(", ", arg_io, argdecl));
+		f = Function("size_t $1_read",
+			paste(", ", arg_io, argdecl), name);
 		f.body(varlist + "register size_t s;");
 		f.line();
 		f.line("for (s = 0; n-- > 0; data++)");
 		f.beg();
-		f.body(read_body);
+		f.body(read_body, name);
 		f.end();
 		f.line();
 		f.line("return s;");
@@ -194,12 +206,12 @@ else	memset($2_buf, 0, $3 * sizeof($2_buf[0]));
 */
 	if	(write_body)
 	{
-		f = Function("size_t $1_write", arg_io);
+		f = Function("size_t $1_write", arg_io, name);
 		f.line("register size_t s = 0;");
 		f.line();
 		f.line("for (s = 0; n-- > 0; data++)");
 		f.beg();
-		f.body(write_body);
+		f.body(write_body, name);
 		f.end();
 		f.line("return s;");
 		f.write(glob);
@@ -209,11 +221,11 @@ else	memset($2_buf, 0, $3 * sizeof($2_buf[0]));
 */
 	if	(clear_body)
 	{
-		f = Function("void $1_clear", "$1_t *data, size_t n");
+		f = Function("void $1_clear", "$1 *data, size_t n", name);
 		f.body("while (n-- > 0)");
 		f.beg();
 		f.body(clear_body);
-		f.line("memset(data, 0, sizeof($1_t));");
+		f.line("memset(data, 0, sizeof($1));", name);
 		f.body("data++;");
 		f.end();
 		f.write(glob);
@@ -223,7 +235,7 @@ else	memset($2_buf, 0, $3 * sizeof($2_buf[0]));
 */
 	if	(alloc_body)
 	{
-		f = Function("void $1_alloc", arg_reorg);
+		f = Function("void $1_alloc", arg_reorg, name);
 		f.line("for (; n-- > 0; data++)");
 		f.beg();
 		f.body(alloc_body);
@@ -235,35 +247,37 @@ else	memset($2_buf, 0, $3 * sizeof($2_buf[0]));
 */
 	if	(space_body)
 	{
-		f = Function("void $1_space", paste(", ", arg_reorg, argdecl));
-		f.body(varlist);
+		f = Function("void $1_space",
+			paste(", ", arg_reorg, argdecl), name);
+		f.body(varlist, name);
 		f.line()
 		f.line("for (; n-- > 0; data++)");
 		f.beg();
-		f.body(space_body);
-		f.body(space_set);
+		f.body(space_body, name);
+		f.body(space_set, name);
 		f.end();
 		f.write(glob);
 	}
-	else	Macro(src, "$1_space", "data, dim", NULL);
+	else	Macro(src, "$1_space", "data, dim", NULL, name);
 
 	if	(sync_copy)
 		syncvar += "register size_t i;\n";
 		
 	if	(sync_body)
 	{
-		f = Function("void $1_sync", paste(", ", arg_reorg, argdecl));
-		f.body(varlist + syncvar);
+		f = Function("void $1_sync",
+			paste(", ", arg_reorg, argdecl), name);
+		f.body(varlist + syncvar, name);
 		f.line("for (; n-- > 0; data++)");
 		f.beg();
-		f.body(sync_head);
-		f.body(sync_copy);
-		f.body(sync_body);
-		f.body(sync_foot);
+		f.body(sync_head, name);
+		f.body(sync_copy, name);
+		f.body(sync_body, name);
+		f.body(sync_foot, name);
 		f.end();
 		f.write(glob);
 	}
-	else	Macro(src, "$1_sync", "data, dim", NULL);
+	else	Macro(src, "$1_sync", "data, dim", NULL, name);
 }
 
 
@@ -272,7 +286,7 @@ else	memset($2_buf, 0, $3 * sizeof($2_buf[0]));
 
 void DBDataDef::typeinfo()
 {
-	fpsub(info, "@$1_t:$2\n", name, label);
+	fpsub(info, "@$1:$2\n", name, label);
 
 	for (x in var)
 		fprintf(info, "%s %s\t%s\n", x.type, x.name, x.desc)
@@ -287,17 +301,34 @@ void DBDataDef::typeinfo()
 void DBDataDef::std & (str type, str name, str desc)
 {
 	var += { NULL, type, name, desc };
-	setreg(3, psub("sizeof($1)", type, name));
-	read_body += psub("s += io_dbread(io, &data->$2, $3, $3, 1);\n");
-	write_body += psub("s += io_dbwrite(io, &data->$2, $3, $3, 1);\n");
+	str size = sprintf("sizeof(%s)", type);
+	read_body += sprintf("s += io_dbread(io, &data->%s, %s, %s, 1);\n",
+		name, size, size);
+	write_body += sprintf("s += io_dbwrite(io, &data->%s, %s, %s, 1);\n",
+		name, size, size);
 
 	if	(fix)
-		recl = paste(" + ", recl, psub("$3"));
+		recl = paste(" + ", recl, size);
 }
 
 
 void DBDataDef::ext & (str type, str name, str desc)
 	var += { NULL, (type == "." ? NULL : type), name, desc };
+
+/*	Zeichenketten
+*/
+
+void DBDataDef::str & (str size, str name, str desc)
+{
+	var += { NULL, "char", psub("$1[$2]", name, size), desc };
+	read_body += sprintf("s += io_read(io, &data->%s, %s);\n",
+		name, size);
+	write_body += sprintf("s += io_write(io, &data->%s, %s);\n",
+		name, size);
+
+	if	(fix)
+		recl = paste(" + ", recl, size);
+}
 
 /*	Teildatentype mit Standardnamenskonvention
 */
@@ -306,11 +337,7 @@ void DBDataDef::sub & (str base, str ndef, str desc, bool flag)
 {
 	str vname = xstrcut(ndef, ",");
 
-	setreg(0, name);	/* Datentypename */
-	setreg(1, base);	/* Basisname des Variablentypes */
-	setreg(2, vname);	/* Variablenname */
-
-	var += { base, base + "_t", vname, desc };
+	var += { base, base, vname, desc };
 
 	str xarg;
 
@@ -320,32 +347,31 @@ void DBDataDef::sub & (str base, str ndef, str desc, bool flag)
 		xarg += sprintf(", &%s_buf", x);
 	}
 
-	setreg(3, "1");
-	setreg(5, xarg);
+	List_t args = { base, vname, "1", xarg };
 
 	if	(ndef)
 	{
-		space_body += psub("$1_space(&data->$2, $3$5);\n");
-		sync_body += psub("$1_sync(&data->$2, $3$5);\n");
+		space_body += psub("$1_space(&data->$2, $3$4);\n", args);
+		sync_body += psub("$1_sync(&data->$2, $3$4);\n", args);
 	}
 
-	read_body += psub("s += $1_read(io, &data->$2, $3$5);\n");
-	write_body += psub("s += $1_write(io, &data->$2, 1);\n");
+	read_body += psub("s += $1_read(io, &data->$2, $3$4);\n", args);
+	write_body += psub("s += $1_write(io, &data->$2, 1);\n", args);
 
 	if	(flag)
 	{
-		clear_body += psub("$1_clear(&data->$2, 1);\n");
+		clear_body += psub("$1_clear(&data->$2, 1);\n", args);
 		fix = false;
 	}
 	else if	(fix)
 	{
-		recl = paste(" + ", recl, psub("$1_recl"));
+		recl = paste(" + ", recl, psub("$1_recl", args));
 	}
 }
 
 void DBDataDef::cond & (str key, str base, str name, str desc)
 {
-	var += { base, base + "_t", name, desc };
+	var += { base, base, name, desc };
 
 	str expr = xstrcut(key, "=");
 	str x = paste("->", "data", xstrcut(expr, ":"));
@@ -370,12 +396,14 @@ void DBDataDef::cond & (str key, str base, str name, str desc)
 		end_key = "\n\n";
 	}
 
-	setreg(1, base);
-	setreg(2, name);
-	read_body += psub(beg_key + "\ts += $1_read(io, &data->$2, 1);\n");
-	read_body += psub(else_key + "\t$1_clear(&data->$2, 1);\n");
+	List_t args = { base, name };
+	read_body += beg_key;
+	read_body += psub("\ts += $1_read(io, &data->$2, 1);\n", args);
+	read_body += else_key;
+	read_body += psub("\t$1_clear(&data->$2, 1);\n", args);
 	read_body += end_key;
-	write_body += psub(beg_key + "\ts += $1_write(io, &data->$2, 1);\n");
+	write_body += beg_key;
+	write_body += psub("\ts += $1_write(io, &data->$2, 1);\n", args);
 	write_body += end_key;
 	fix = false;
 	recl = NULL;
@@ -391,38 +419,39 @@ void DBDataDef::vec & (str key, str base, str ndef, str desc,
 
 	str vname = xstrcut(ndef, ",");
 
-	var += { base, base + "_t", vname, desc, vecdim };
-
-	setreg(0, name);	/* Datentypename */
-	setreg(1, base);	/* Basisname des Variablentypes */
-	setreg(2, vname);	/* Variablenname */
-	setreg(3, "data->" + vecdim);	/* Vektordimension */
+	var += { base, base, vname, desc, vecdim };
 
 	Function f;
-	str clear;
 
-	varlist += psub("$1_t *$2_buf;\n");
+	ArgList arg = ArgList(name, base, vname, "data->" + vecdim, NULL, NULL);
+	varlist += psub("$1 *$2_buf;\n", arg);
 
 	if	(key)
 	{
 		str vecsize = vname + "_size";
 		var += { NULL, "size_t", vecsize, NULL };
-		setreg(4, "data->" + vecsize);
-		setreg(5, key);
+		arg.set(4, "data->" + vecsize);
+		arg.set(5, key);
+
+		str clear;
+		str realloc;
 
 		if	(flag)
 			clear = "$1_clear(data->$2, $4);\n";
 
-		clear += psub("lfree(data->$2);\n");
+		clear += "lfree(data->$2);\n";
 
-		str realloc = "$4 = sizealign($3, $5);";
-		realloc += "\ndata->$2 = lmalloc($4 * sizeof($1_t));";
+		realloc = "$4 = sizealign($3, $5);";
+		realloc += "\ndata->$2 = lmalloc($4 * sizeof($1));";
 
 		if	(flag)
-			realloc += "\nmemset(data->$2, 0, $4 * sizeof($1_t));";
+			realloc += "\nmemset(data->$2, 0, $4 * sizeof($1));";
 
-		f = Function("void $0_$2_realloc", "$0_t *data");
-		f.line("if\t($3 > $4)");
+		clear = psub(clear, arg);
+		realloc = psub(realloc, arg);
+
+		f = Function("void $1_$2_realloc", "$1 *data", name, vname);
+		f.fline("if\t(%s > %s)", arg[3], arg[4]);
 		f.beg();
 		f.body(clear);
 		f.body(realloc);
@@ -430,30 +459,30 @@ void DBDataDef::vec & (str key, str base, str ndef, str desc,
 		f.write(false);
 
 		clear_body += clear;
-		alloc_body += psub("$0_$2_realloc(data);\n");
-		read_body += psub("$0_$2_realloc(data);\n");
-		syncvar += psub("$1_t *$2_save;\n");
+		alloc_body += psub("$0_$2_realloc(data);\n", arg);
+		read_body += psub("$0_$2_realloc(data);\n", arg);
+		syncvar += psub("$1 *$2_save;\n", arg);
 
-		sync_head += psub("\n$2_save = $4 ? data->$2 : NULL;\n");
-		sync_head += psub("$4 = sizealign($3, $5);\n");
-		sync_head += psub("$2_buf = lmalloc($4 * sizeof($1_t));\n");
-		sync_foot += psub("lfree($2_save);\n");
+		sync_head += psub("\n$2_save = $4 ? data->$2 : NULL;\n", arg);
+		sync_head += psub("$4 = sizealign($3, $5);\n", arg);
+		sync_head += psub("$2_buf = lmalloc($4 * sizeof($1));\n", arg);
+		sync_foot += psub("lfree($2_save);\n", arg);
 	}
 	else
 	{
-		argdecl = paste(", ", argdecl, psub("$1_t **$2_ptr"));
-		arglist = paste(", ", arglist, psub("$2_ptr"));
+		argdecl = paste(", ", argdecl, psub("$1 **$2_ptr", arg));
+		arglist = paste(", ", arglist, psub("$2_ptr", arg));
 
-		space_body += psub("*$2_ptr += $3;\n");
-		read_body += psub("data->$2 = *$2_ptr;\n*$2_ptr += $3;\n");
-		sync_head += psub("\n$2_buf = *$2_ptr;\n*$2_ptr += $3;\n");
+		space_body += psub("*$2_ptr += $3;\n", arg);
+		read_body += psub("data->$2 = *$2_ptr;\n*$2_ptr += $3;\n", arg);
+		sync_head += psub("\n$2_buf = *$2_ptr;\n*$2_ptr += $3;\n", arg);
 	}
 
-	read_body += psub("$2_buf = data->$2;\n");
-	space_body += psub("$2_buf = data->$2;\n");
-	sync_body += psub("data->$2 = $2_buf;\n");
+	read_body += psub("$2_buf = data->$2;\n", arg);
+	space_body += psub("$2_buf = data->$2;\n", arg);
+	sync_body += psub("data->$2 = $2_buf;\n", arg);
 
-	str xarg;
+	str xarg = NULL;
 
 	for (x in split(ndef, ","))
 	{
@@ -461,18 +490,18 @@ void DBDataDef::vec & (str key, str base, str ndef, str desc,
 		xarg += sprintf(", &%s_buf", x);
 	}
 
-	setreg(5, xarg);
+	arg.set(5, xarg);
 
 	if	(ndef)
 	{
-		space_body += psub("$1_space(data->$2, $3$5);\n");
-		sync_body += psub("$1_sync(data->$2, $3$5);\n");
+		space_body += psub("$1_space(data->$2, $3$5);\n", arg);
+		sync_body += psub("$1_sync(data->$2, $3$5);\n", arg);
 	}
 
 	if	(iofunc)
 	{
-		read_body += psub("s += $1_read(io, data->$2, $3$5);\n");
-		write_body += psub("s += $1_write(io, data->$2, $3);\n");
+		read_body += psub("s += $1_read(io, data->$2, $3$5);\n", arg);
+		write_body += psub("s += $1_write(io, data->$2, $3);\n", arg);
 	}
 
 	fix = false;
@@ -506,6 +535,8 @@ void DBData(str Name, str Desc, IO Def, bool glob = true)
 
 		if	(key == "std")
 			x.std(type, name, desc);
+		else if	(key == "str")
+			x.str(type, name, desc);
 		else if	(key == "ext")
 			x.ext(type, name, desc);
 		else if	(key == "ptr")
@@ -534,7 +565,7 @@ void DBPrintFunc (str type, str xdecl, IO def, bool nl = true, bool glob = true)
 {
 	type = psub(type);
 	Function f = Function("int $1_print",
-		paste(", ", "io_t *out, $1_t *x, size_t dim", xdecl), type);
+		paste(", ", "IO *out, $1 *x, size_t dim", xdecl), type);
 	f.line("register int n;");
 	f.line();
 	f.line("for (n = 0; dim-- > 0; x++)");

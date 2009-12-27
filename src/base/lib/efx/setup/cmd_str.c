@@ -40,8 +40,8 @@ CEXPR(name, Val_int(rval) = mstrcmp(STR(0), STR(1)) op 0)
 */
 
 CEXPR(k_char2int, Val_int(rval) = CHAR(0))
-CEXPR(k_int2char, Val_char(rval) = (uchar_t) Val_int(arg[0]))
-CEXPR(k_long2char, Val_char(rval) = (uchar_t) Val_long(arg[0]))
+CEXPR(k_int2char, Val_char(rval) = (unsigned char) Val_int(arg[0]))
+CEXPR(k_long2char, Val_char(rval) = (unsigned char) Val_long(arg[0]))
 
 CEXPR(k_str2int, Val_int(rval) = STR(0) ? (int) strtol(STR(0), NULL, 0) : 0)
 CEXPR(k_str2long, Val_long(rval) = STR(0) ? strtol(STR(0), NULL, 0) : 0)
@@ -67,7 +67,7 @@ COMPARE(b_str_gt, >)
 
 static char *strmul (const char *str, int n)
 {
-	strbuf_t *sb;
+	StrBuf *sb;
 
 	if	(!str || n <= 0)	return NULL;
 
@@ -90,7 +90,7 @@ CEXPR(f_strlen, Val_int(rval) = STR(0) ? strlen(STR(0)) : 0)
 /*	Spezialfunktionen
 */
 
-static void k_nchar2str (Func_t *func, void *rval, void **arg)
+static void k_nchar2str (EfiFunc *func, void *rval, void **arg)
 {
 	int i, n, c;
 	char *s;
@@ -107,20 +107,20 @@ static void k_nchar2str (Func_t *func, void *rval, void **arg)
 	Val_str(rval) = s;
 }
 
-static void k_type2str (Func_t *func, void *rval, void **arg)
+static void k_type2str (EfiFunc *func, void *rval, void **arg)
 {
-	Type_t *type = Val_type(arg[0]);
+	EfiType *type = Val_type(arg[0]);
 	Val_str(rval) = type ? mstrcpy(type->name) : NULL;
 }
 
-static void f_str_index (Func_t *func, void *rval, void **arg)
+static void f_str_index (EfiFunc *func, void *rval, void **arg)
 {
 	register char *s = STR(0);
 	register int i = Val_int(arg[1]);
 	Val_char(rval) = (s && i < strlen(s)) ? s[i] : 0;
 }
 
-static void f_substr (Func_t *func, void *rval, void **arg)
+static void f_substr (EfiFunc *func, void *rval, void **arg)
 {
 	char *s;
 	int pos, len;
@@ -136,7 +136,7 @@ static void f_substr (Func_t *func, void *rval, void **arg)
 	else	RVSTR = mstrcpy(s + pos);
 }
 
-static void f_strcut (Func_t *func, void *rval, void **arg)
+static void f_strcut (EfiFunc *func, void *rval, void **arg)
 {
 	char *s;
 	char *p;
@@ -170,11 +170,11 @@ static void f_strcut (Func_t *func, void *rval, void **arg)
 	STR(0) = NULL;
 }
 
-static void f_xstrcut (Func_t *func, void *rval, void **arg)
+static void f_xstrcut (EfiFunc *func, void *rval, void **arg)
 {
-	strbuf_t *sb;
+	StrBuf *sb;
 	char *delim, *base;
-	io_t *in, *out;
+	IO *in, *out;
 	int c;
 
 	if	((base = STR(0)) == NULL)
@@ -233,13 +233,13 @@ static void f_xstrcut (Func_t *func, void *rval, void **arg)
 	memfree(base);
 }
 
-static void f_strsub (Func_t *func, void *rval, void **arg)
+static void f_strsub (EfiFunc *func, void *rval, void **arg)
 {
 	char *s, *p;
 	char *repl;
 	char *in;
 	int flag;
-	strbuf_t *sb;
+	StrBuf *sb;
 
 	if	((s = STR(0)) == NULL)
 	{
@@ -279,7 +279,7 @@ static void f_strsub (Func_t *func, void *rval, void **arg)
 	RVSTR = sb2str(sb);
 }
 
-static void f_upper (Func_t *func, void *rval, void **arg)
+static void f_upper (EfiFunc *func, void *rval, void **arg)
 {
 	if	((RVSTR = mstrcpy(STR(0))) != NULL)
 	{
@@ -298,7 +298,7 @@ static void f_upper (Func_t *func, void *rval, void **arg)
 	}
 }
 
-static void f_lower (Func_t *func, void *rval, void **arg)
+static void f_lower (EfiFunc *func, void *rval, void **arg)
 {
 	if	((RVSTR = mstrcpy(STR(0))) != NULL)
 	{
@@ -317,12 +317,12 @@ static void f_lower (Func_t *func, void *rval, void **arg)
 	}
 }
 
-static void f_lexsortkey (Func_t *func, void *rval, void **arg)
+static void f_lexsortkey (EfiFunc *func, void *rval, void **arg)
 {
 	RVSTR = mstrcpy(lexsortkey(Val_str(arg[0]), NULL));
 }
 
-static FuncDef_t func_str[] = {
+static EfiFuncDef func_str[] = {
 	{ FUNC_PROMOTION, &Type_int, "char ()", k_char2int },
 	{ 0, &Type_char, "char (int)", k_int2char },
 	{ 0, &Type_char, "char (long)", k_long2char },

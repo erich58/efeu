@@ -27,39 +27,23 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/ioctrl.h>
 #include <ctype.h>
 
-Obj_t *CmdEval_retval = NULL;
+EfiObj *CmdEval_retval = NULL;
 int CmdEval_stat = 0;
 
-io_t *CmdEval_cin = NULL;
-io_t *CmdEval_cout = NULL;
+IO *CmdEval_cin = NULL;
+IO *CmdEval_cout = NULL;
 
-static Obj_t *expr_io (void *par, const ObjList_t *list)
+static EfiObj *expr_io (void *par, const EfiObjList *list)
 {
 	return ConstObj(&Type_io, par);
 }
 
-static Obj_t *cpar_io (io_t *io, void *data)
+static EfiObj *cpar_io (IO *io, void *data)
 {
 	return Obj_call(expr_io, data, NULL);
 }
 
-/*
-static Obj_t *cpar_cin (io_t *io, void *data)
-{
-	return ConstObj(&Type_io, &CmdEval_cin);
-}
-
-static Obj_t *cpar_cout (io_t *io, void *data)
-{
-	return ConstObj(&Type_io, &CmdEval_cout);
-}
-*/
-
-static ParseDef_t parse_def[] = {
-	/*
-	{ "cin", cpar_cin, NULL },
-	{ "cout", cpar_cout, NULL },
-	*/
+static EfiParseDef parse_def[] = {
 	{ "cin", cpar_io, &CmdEval_cin },
 	{ "cout", cpar_io, &CmdEval_cout },
 };
@@ -70,61 +54,29 @@ extern void CmdEval_setup (void)
 	AddParseDef(parse_def, tabsize(parse_def));
 }
 
-static iocpy_t cmdline[] = {
-	{ "\n", NULL, 0, NULL },
-	{ "$", NULL, 0, iocpy_psub },
-};
-
-static int c_system(io_t *in)
+int CmdPreProc (IO *in, int key)
 {
 	char *p;
 
-	io_getc(in);
-	p = miocpy(in, cmdline, tabsize(cmdline));
-
-	if	(p != NULL)
-	{
-		system(p);
-		memfree(p);
-	}
-	else if	(Shell != NULL)
-	{
-		system(Shell);
-	}
-
-	return 1;
-}
-
-/*
-static int c_preproc(io_t *in)
-{
-	char *p;
-
-	p = miocpy(in, cmdline, tabsize(cmdline));
-	io_printf(ioerr, "PPLINE\t%s\n", p);
-	memfree(p);
-	return 1;
-}
-*/
-
-int CmdPreProc (io_t *in, int key)
-{
 	switch (key)
 	{
-	case '!':	return c_system(in);
-/*
-	case '#':	return c_preproc(in);
-*/
-	default:	break;
+	case '!':
+		io_getc(in);
+		p = mpcopy(in, '\n', 0, NULL);
+		callproc(p);
+		memfree(p);
+		return 1;
+	default:
+		break;
 	}
 
 	return 0;
 }
 
-void CmdEvalFunc(io_t *in, io_t *out, int flag)
+void CmdEvalFunc (IO *in, IO *out, int flag)
 {
 	int at_start, c;
-	io_t *save_cout;
+	IO *save_cout;
 
 	save_cout = CmdEval_cout;
 	CmdEval_cout = io_refer(out);
@@ -132,7 +84,7 @@ void CmdEvalFunc(io_t *in, io_t *out, int flag)
 
 	while ((c = io_eat(in, "%s")) != EOF)
 	{
-		Obj_t *obj;
+		EfiObj *obj;
 
 		if	(c == '{')
 		{
@@ -179,9 +131,9 @@ void CmdEvalFunc(io_t *in, io_t *out, int flag)
 	CmdEval_cout = save_cout;
 }
 
-void CmdEval(io_t *in, io_t *out)
+void CmdEval (IO *in, IO *out)
 {
-	io_t *save_cin;
+	IO *save_cin;
 
 	save_cin = CmdEval_cin;
 	CmdEval_cin = rd_refer(in);

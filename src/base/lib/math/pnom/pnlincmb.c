@@ -26,7 +26,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 static void lc_sub (double c, double **a, size_t *deg, size_t n);
 
-static pnom_t *lc_pn;	/* Polynompointer */
+static Polynom *lc_pn;	/* Polynompointer */
 static size_t lc_dim;	/* Polynomdimension */
 static double *lc_m;	/* Multiplikatoren */
 
@@ -55,10 +55,10 @@ static void lc_sub(double x, double **c, size_t *deg, size_t n)
 
 /* VARARGS 1 */
 
-pnom_t *pnlincmb(pnom_t *p, ...)
+Polynom *pnlincmb(Polynom *p, ...)
 {
-	pnom_t *x;
-	pnom_t **pl;
+	Polynom *x;
+	Polynom **pl;
 	size_t n;
 	size_t deg;
 	va_list k;
@@ -67,7 +67,7 @@ pnom_t *pnlincmb(pnom_t *p, ...)
 */
 	va_start(k, p);
 
-	for (n = 0, x = p; x != NULL; n++, x = va_arg(k, pnom_t *))
+	for (n = 0, x = p; x != NULL; n++, x = va_arg(k, Polynom *))
 		(void) va_arg(k, double);
 
 	va_end(k);
@@ -77,11 +77,11 @@ pnom_t *pnlincmb(pnom_t *p, ...)
 /*	Vektoren aufbauen
 */
 	lc_m = memalloc(n * sizeof(double));
-	pl = memalloc(n * sizeof(pnom_t *));
+	pl = memalloc(n * sizeof(Polynom *));
 	va_start(k, p);
 	deg = 0;
 
-	for (n = 0, x = p; x != NULL; n++, x = va_arg(k, pnom_t *))
+	for (n = 0, x = p; x != NULL; n++, x = va_arg(k, Polynom *))
 	{
 		lc_m[n] = va_arg(k, double);
 		pl[n] = x;

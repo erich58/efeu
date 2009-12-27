@@ -27,13 +27,13 @@ If not, write to the Free Software Foundation, Inc.,
 #define M_PI        3.14159265358979323846264338327950288
 #endif
 
-size_t RandomIndex (Random_t *rd, size_t dim)
+size_t RandomIndex (Random *rd, size_t dim)
 {
 	size_t k = dim * UniformRandom(rd);
 	return (k < dim) ? k : dim - 1;
 }
 
-double LinearRandom (Random_t *rd, double z)
+double LinearRandom (Random *rd, double z)
 {
 	double x = UniformRandom(rd);
 
@@ -44,7 +44,7 @@ double LinearRandom (Random_t *rd, double z)
 	return 0.5 * (z - 1. + sqrt(z * (z - 2. + 4. * x) + 1.)) / z;
 }
 
-double NormalRandom (Random_t *rd)
+double NormalRandom (Random *rd)
 {
 	double x;
 
@@ -59,7 +59,7 @@ double NormalRandom (Random_t *rd)
 
 #define	POISSON_MAX	20.5 	/* 9 <= x <= 700 */
 
-int PoissonRandom (Random_t *rd, double mw)
+int PoissonRandom (Random *rd, double mw)
 {
 	double x, lim;
 	int n;
@@ -79,7 +79,7 @@ int PoissonRandom (Random_t *rd, double mw)
 /*	Zufallsrundung
 */
 
-int RoundRandom (Random_t *rd, double x)
+int RandomRound (Random *rd, double x)
 {
 	int val;
 	double rval;

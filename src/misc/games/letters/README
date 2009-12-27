@@ -1,0 +1,32 @@
+EFEU letters and Numbers
+
+This is a script replacement of Kirk Ismay's Linux Letters and Numbers,
+written from scratch.
+
+The original game can be found at:
+ http://www.netidea.com/~captain/
+ http://lln.sourceforge.net/
+
+I wanted to implement Linux Letters and Numbers for my childrens
+Anneliese and Ulrich, but there is/was no german version of this Games
+avaliable and the coding sheme of the pictures does not harmonize
+with the german spelling rules.
+
+On the other hand, the method of the game is quite simple and
+herewith a good example for my command interpreter with tcl/tk support.
+So I wrote my own version of the game.
+
+EFEU Letters and Numbers honores the LANG environment.
+Currently it comes with German and English. Support to other
+languages is quite easy. Have a look at the Imakefile's in the
+subdirectories |de| and |en| and create your own for your favorite
+language.
+
+In the script, messages and labels are coded with keys like
+ :*:Letters and Numbers
+ :de:Buchstaben und Nummern
+where :*: stands for the default language and :de: for german.
+Just search for :de: in the script and add your translation.
+
+Most of the pictures are taken from Kirk Ismay's Linux Letters and Numbers.
+I added some pictures to saturate all letters in the german environment.

@@ -22,7 +22,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/ftools.h>
 #include <EFEU/efmain.h>
-#include <EFEU/KeyTab.h>
+#include <EFEU/nkt.h>
 #include <EFEU/efio.h>
 #include <EFEU/object.h>
 #include <EFEU/preproc.h>
@@ -40,76 +40,80 @@ If not, write to the Free Software Foundation, Inc.,
 #define	PPS_END		2	/* Ende der Selektion (nach PP_ELSE) */
 
 
-typedef struct pptest_s {
-	struct pptest_s *next;	/* Verweis auch nächsten Eintrag */
-	int depth;		/* Falsch - Verschachtelungstiefe */
-	int stat;		/* Status */
-	int start;		/* Startzeile */
-} pptest_t;
+typedef struct PPTestStruct PPTest;
+
+struct PPTestStruct {
+	PPTest *next;	/* Verweis auch nächsten Eintrag */
+	int depth;	/* Falsch - Verschachtelungstiefe */
+	int stat;	/* Status */
+	int start;	/* Startzeile */
+};
 
 
 /*	Eingabekette
 */
 
-typedef struct ppinput_s {
-	struct ppinput_s *next;	/* Verweis auch nächsten Eintrag */
-	io_t *io;		/* Eingabestruktur */
-	pptest_t *test;		/* Testliste */
-	int crflag;		/* Flag für '\r' in Eingabefile */
-} ppinput_t;
+typedef struct PPInputStruct PPInput;
+
+struct PPInputStruct {
+	PPInput *next;	/* Verweis auch nächsten Eintrag */
+	IO *io;		/* Eingabestruktur */
+	PPTest *test;	/* Testliste */
+	int crflag;	/* Flag für '\r' in Eingabefile */
+};
 
 
 /*	Filterstruktur
 */
 
 typedef struct {
-	char *ident;		/* Buffer mit Identifikation */
-	char **pptr;		/* Pointer auf Include-Pfad */
-	ppinput_t *input;	/* Eingabeliste */
-	strbuf_t *buf;		/* Zwischenbuffer */
-	strbuf_t *combuf;	/* Kommentarbuffer */
-	int at_start;		/* Flag für Zeilenbeginn */
-	int save;		/* Zahl der gebufferten Zeichen */
+	char *ident;	/* Buffer mit Identifikation */
+	char **pptr;	/* Pointer auf Include-Pfad */
+	PPInput *input;	/* Eingabeliste */
+	StrBuf *buf;	/* Zwischenbuffer */
+	StrBuf *combuf;	/* Kommentarbuffer */
+	int at_start;	/* Flag für Zeilenbeginn */
+	int save;	/* Zahl der gebufferten Zeichen */
 #if	NEED_PROTECT
-	int protect;		/* Abbruchschutz */
+	int protect;	/* Abbruchschutz */
 #endif
-	int expand;		/* Flag für String und Makrointerpretation */
-} pp_t;
+	int expand;	/* Flag für String und Makrointerpretation */
+} PPData;
 
 
 /*	Hilfsfunktionen
 */
 
-static int pp_get (pp_t *ptr);
-static int pp_ctrl (pp_t *ptr, int req, va_list list);
+static int pp_get (void *ptr);
+static int pp_ctrl (void *ptr, int req, va_list list);
 
-static void pptest_start (ppinput_t *input, int flag);
-static void pptest_end (ppinput_t *input);
+static void pptest_start (PPInput *input, int flag);
+static void pptest_end (PPInput *input);
 
-static ppinput_t *new_input (io_t *io);
-static int subclose (pp_t *pp);
+static PPInput *new_input (IO *io);
+static int subclose (PPData *pp);
 
-static ALLOCTAB(pptest_tab, 0, sizeof(pptest_t));
+static ALLOCTAB(pptest_tab, 0, sizeof(PPTest));
 
-static void pp_cmd (pp_t *pp);
-static void pp_subcmd (pp_t *pp, int code);
+static void pp_cmd (PPData *pp);
+static void pp_subcmd (PPData *pp, int code);
 
-static MacDef_t pp_macdef[] = {
+static PPMacDef pp_macdef[] = {
 	{ "defined(x)", macsub_def },
 };
 
-static xtab_t *pp_macrotab = NULL;
+static NameKeyTab *pp_macrotab = NULL;
 
 
 /*	Preprozess - Filter: Anhand von IOPP_COMMENT wird geprüft,
 	ob er bereits vorgeschalten wurde.
 */
 
-io_t *io_ptrpreproc (io_t *io, char **pptr)
+IO *io_ptrpreproc (IO *io, char **pptr)
 {
 	if	(io && io_ctrl(io, IOPP_COMMENT, NULL) == EOF)
 	{
-		pp_t *pp = memalloc(sizeof(pp_t));
+		PPData *pp = memalloc(sizeof(PPData));
 		pp->pptr = pptr;
 		pp->ident = NULL;
 		pp->input = new_input(io);
@@ -122,8 +126,8 @@ io_t *io_ptrpreproc (io_t *io, char **pptr)
 		pp->protect = 0;
 #endif
 		io = io_alloc();
-		io->get = (io_get_t) pp_get;
-		io->ctrl = (io_ctrl_t) pp_ctrl;
+		io->get = pp_get;
+		io->ctrl = pp_ctrl;
 		io->data = pp;
 	}
 
@@ -137,7 +141,7 @@ io_t *io_ptrpreproc (io_t *io, char **pptr)
 	nach einem Kommentar folgender Zeilenvorschub entfernt.
 */
 
-static int pp_eat (ppinput_t *in, strbuf_t *buf, int flag)
+static int pp_eat (PPInput *in, StrBuf *buf, int flag)
 {
 	int c;
 
@@ -158,7 +162,7 @@ static int pp_eat (ppinput_t *in, strbuf_t *buf, int flag)
 	if	(c == '\r')
 	{
 		if	(!in->crflag)
-			io_message(in->io, PREPROC, 199, 0);
+			io_note(in->io, "[preproc:199]", NULL);
 
 		in->crflag = 1;
 		c = io_getc(in->io);
@@ -168,7 +172,7 @@ static int pp_eat (ppinput_t *in, strbuf_t *buf, int flag)
 }
 
 
-static void pp_skip (io_t *io, int flag)
+static void pp_skip (IO *io, int flag)
 {
 	int c;
 
@@ -193,10 +197,11 @@ static void pp_skip (io_t *io, int flag)
 /*	Zeichen lesen
 */
 
-static int pp_get(pp_t *pp)
+static int pp_get (void *ptr)
 {
-	ppinput_t *x;
-	io_t *tmp;
+	PPData *pp = ptr;
+	PPInput *x;
+	IO *tmp;
 	int flag;
 	int c;
 
@@ -212,9 +217,8 @@ static int pp_get(pp_t *pp)
 		{
 			if	(x->test)
 			{
-				char *p = msprintf("%d", x->test->start);
-				io_error(x->io, PREPROC, 196, 1, p);
-				memfree(p);
+				io_error(x->io, "[preproc:196]",
+					"d", x->test->start);
 			}
 
 			subclose(pp);
@@ -338,11 +342,11 @@ static int pp_get(pp_t *pp)
 /*	Neue Eingabestruktur generieren
 */
 
-static ppinput_t *new_input(io_t *io)
+static PPInput *new_input(IO *io)
 {
-	ppinput_t *x;
+	PPInput *x;
 
-	x = ALLOC(1, ppinput_t);
+	x = memalloc(sizeof(PPInput));
 	x->io = io_lnum(io);
 	x->next = NULL;
 	x->test = NULL;
@@ -354,10 +358,10 @@ static ppinput_t *new_input(io_t *io)
 /*	Aufraumen
 */
 
-static int subclose(pp_t *pp)
+static int subclose(PPData *pp)
 {
-	ppinput_t *x;
-	pptest_t *t;
+	PPInput *x;
+	PPTest *t;
 	int stat;
 
 	x = pp->input;
@@ -379,8 +383,9 @@ static int subclose(pp_t *pp)
 /*	Kontrollfunktion
 */
 
-static int pp_ctrl(pp_t *pp, int req, va_list list)
+static int pp_ctrl (void *ptr, int req, va_list list)
 {
+	PPData *pp = ptr;
 	int stat;
 	char **p;
 
@@ -470,13 +475,13 @@ static int pp_ctrl(pp_t *pp, int req, va_list list)
 typedef struct {
 	char *name;
 	int code;
-} pp_cmd_t;
+} PPCmd;
 
 
 /*	Standard Includenamen
 */
 
-static pp_cmd_t pp_cdef[] = {
+static PPCmd pp_cdef[] = {
 	{ "include", PP_INCL },
 	{ "return", PP_RETURN },
 	{ "expand", PP_EXPAND },
@@ -492,21 +497,21 @@ static pp_cmd_t pp_cdef[] = {
 	{ "endif", PP_ENDIF },
 };
 
-static vecbuf_t *pp_tab = NULL;
+static NameKeyTab *pp_tab = NULL;
 
-static void cmd_include (pp_t *pp);
-static void cmd_undef (io_t *io);
-static int cmd_testval (io_t *io);
-static int cmd_isdef (io_t *io);
+static void cmd_include (PPData *pp);
+static void cmd_undef (IO *io);
+static int cmd_testval (IO *io);
+static int cmd_isdef (IO *io);
 
 
 /*	Direktiven ausführen
 */
 
-static void pp_cmd(pp_t *pp)
+static void pp_cmd (PPData *pp)
 {
-	ppinput_t *x;
-	pp_cmd_t *cmd;
+	PPInput *x;
+	PPCmd *cmd;
 	char *name;
 
 	x = pp->input;
@@ -514,14 +519,17 @@ static void pp_cmd(pp_t *pp)
 
 	if	(pp_tab == NULL)
 	{
-		pp_tab = KeyTab(16);
-		StrKey_append(pp_tab, tabparm(pp_cdef));
+		int i;
+
+		pp_tab = nkt_create("PPCmd", 16, NULL);
+
+		for (i = 0; i < tabsize(pp_cdef); i++)
+			nkt_insert(pp_tab, pp_cdef[i].name, pp_cdef + i);
 	}
 
-	if	((cmd = StrKey_get(pp_tab, name, NULL)) == NULL)
+	if	((cmd = nkt_fetch(pp_tab, name, NULL)) == NULL)
 	{
-		io_error(x->io, PREPROC, 191, 1, name);
-		memfree(name);
+		io_error(x->io, "[preproc:191]", "m", name);
 		return;
 	}
 
@@ -553,7 +561,7 @@ static void pp_cmd(pp_t *pp)
 		}
 		else if	(x->test->stat == PPS_END)
 		{
-			io_error(x->io, PREPROC, 193, 0);
+			io_error(x->io, "[preproc:193]", NULL);
 		}
 		else if	(cmd_testval(x->io))
 		{
@@ -567,7 +575,7 @@ static void pp_cmd(pp_t *pp)
 		switch (x->test->stat)
 		{
 		case PPS_PRE:	x->test->depth = 0; break;
-		case PPS_END:	io_error(x->io, PREPROC, 194, 0); break;
+		case PPS_END:	io_error(x->io, "[preproc:194]", NULL); break;
 		default:	x->test->depth = 1; break;
 		}
 
@@ -602,9 +610,9 @@ static void pp_cmd(pp_t *pp)
 /*	Preprozessorbefehle
 */
 
-static void pp_subcmd(pp_t *pp, int code)
+static void pp_subcmd (PPData *pp, int code)
 {
-	io_t *io;
+	IO *io;
 
 	io = pp->input->io;
 
@@ -613,9 +621,9 @@ static void pp_subcmd(pp_t *pp, int code)
 	case PP_IF:	pptest_start(pp->input, cmd_testval(io)); break;
 	case PP_IFDEF:	pptest_start(pp->input, cmd_isdef(io)); break;
 	case PP_IFNDEF:	pptest_start(pp->input, !cmd_isdef(io)); break;
-	case PP_ELIF:	io_error(io, PREPROC, 193, 0); break;
-	case PP_ELSE:	io_error(io, PREPROC, 194, 0); break;
-	case PP_ENDIF:	io_error(io, PREPROC, 195, 0); break;
+	case PP_ELIF:	io_error(io, "[preproc:193]", NULL); break;
+	case PP_ELSE:	io_error(io, "[preproc:194]", NULL); break;
+	case PP_ENDIF:	io_error(io, "[preproc:195]", NULL); break;
 	case PP_INCL:	cmd_include(pp); break;
 	case PP_RETURN: subclose(pp); break;
 	case PP_EXPAND: pp->expand = 1; break;
@@ -630,9 +638,9 @@ static void pp_subcmd(pp_t *pp, int code)
 }
 
 
-static void pptest_start(ppinput_t *input, int flag)
+static void pptest_start (PPInput *input, int flag)
 {
-	pptest_t *t;
+	PPTest *t;
 
 	t = new_data(&pptest_tab);
 	t->start = io_ctrl(input->io, IO_LINE);
@@ -652,19 +660,19 @@ static void pptest_start(ppinput_t *input, int flag)
 }
 
 
-static void pptest_end(ppinput_t *input)
+static void pptest_end (PPInput *input)
 {
-	pptest_t *t;
+	PPTest *t;
 
 	t = input->test;
 	input->test = t->next;
 	del_data(&pptest_tab, t);
 }
 
-static io_t *open_include(const char *path, const char *name)
+static IO *open_include (const char *path, const char *name)
 {
 	char *fname;
-	io_t *io;
+	IO *io;
 
 	if	((fname = fsearch(path, NULL, name, NULL)) != NULL)
 	{
@@ -676,11 +684,11 @@ static io_t *open_include(const char *path, const char *name)
 	return NULL;
 }
 
-static void cmd_include(pp_t *pp)
+static void cmd_include (PPData *pp)
 {
-	io_t *io;
+	IO *io;
 	int flag;
-	io_t *tmp;
+	IO *tmp;
 	char *name;
 
 	tmp = io_tmpbuf(0);
@@ -716,7 +724,7 @@ static void cmd_include(pp_t *pp)
 
 	if	(name == NULL)
 	{
-		io_error(io, PREPROC, 198, 0);
+		io_error(io, "[preproc:198]", NULL);
 		return;
 	}
 
@@ -727,23 +735,23 @@ static void cmd_include(pp_t *pp)
 
 	if	(io != NULL)
 	{
-		ppinput_t *x;
+		PPInput *x;
 
 		x = new_input(io);
 		x->next = pp->input;
 		pp->input = x;
 	}
-	else	io_error(pp->input->io, PREPROC, 197, 1, name);
+	else	io_error(pp->input->io, "[preproc:197]", "s", name);
 
 	memfree(name);
 }
 
 
-static int cmd_testval(io_t *io)
+static int cmd_testval (IO *io)
 {
-	Obj_t *obj;
+	EfiObj *obj;
 	int flag;
-	io_t *tmp;
+	IO *tmp;
 
 	tmp = io_tmpbuf(0);
 	PushMacroTab(pp_macrotab);
@@ -765,28 +773,23 @@ static int cmd_testval(io_t *io)
 }
 
 
-static void cmd_undef(io_t *io)
+static void cmd_undef (IO *io)
 {
-	Macro_t key;
-
-	key.name = io_mgets(io, "%s");
-	DelMacro(xsearch(MacroTab, &key, XS_DELETE));
-	memfree(key.name);
+	char *name = io_mgets(io, "%s");
+	nkt_delete(MacroTab, name);
+	memfree(name);
 }
 
 
-static int cmd_isdef(io_t *io)
+static int cmd_isdef (IO *io)
 {
-	Macro_t key;
-	int flag;
-
-	key.name = io_mgets(io, "%s");
-	flag = (xsearch(MacroTab, &key, XS_FIND) != NULL);
-	memfree(key.name);
+	char *name = io_mgets(io, "%s");
+	int flag = nkt_fetch(MacroTab, name, NULL) ? 1 : 0;
+	memfree(name);
 	return flag;
 }
 
-io_t *io_cmdpreproc (io_t *io)
+IO *io_cmdpreproc (IO *io)
 {
 	return io_ptrpreproc(io, &IncPath);
 }

@@ -25,48 +25,52 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	VIRFUNC_BSIZE	16
 
-static ALLOCTAB(tab_virfunc, 0, sizeof(VirFunc_t));
+static ALLOCTAB(tab_virfunc, 0, sizeof(EfiVirFunc));
 
-static VirFunc_t *virfunc_admin(VirFunc_t *tg, const VirFunc_t *src)
+static void virfunc_clean (void *data)
 {
-	if	(tg)
-	{
-		int i;
-		Func_t **func;
+	EfiVirFunc *tg = data;
+	int i;
+	EfiFunc **func;
 
-		func = tg->tab.data;
+	func = tg->tab.data;
 
-		for (i = 0; i < tg->tab.used; i++)
-			rd_deref(func[i]);
+	for (i = 0; i < tg->tab.used; i++)
+		rd_deref(func[i]);
 
-		vb_free(&tg->tab);
-		del_data(&tab_virfunc, tg);
-		return NULL;
-	}
-	else	return new_data(&tab_virfunc);
+	vb_free(&tg->tab);
+	del_data(&tab_virfunc, tg);
 }
 
 
-static char *virfunc_ident(VirFunc_t *func)
+static char *virfunc_ident (const void *data)
 {
+	const EfiVirFunc *func = data;
 	return func->tab.used ?
-		rd_ident(((Func_t **) func->tab.data)[0]) : NULL;
+		rd_ident(((EfiFunc **) func->tab.data)[0]) : NULL;
 }
 
-ADMINREFTYPE(VirFuncRefType, "VirFunc", virfunc_ident, virfunc_admin);
+static const RefType VirFuncRefType = REFTYPE_INIT("VirFunc",
+	virfunc_ident, virfunc_clean);
 
-VirFunc_t *VirFunc(Func_t *func)
+int IsVirFunc (void *ptr)
 {
-	VirFunc_t *vf;
+	EfiVirFunc *func = ptr;
+	return (func && func->reftype == &VirFuncRefType);
+}
 
-	if	(func && func->reftype == &VirFuncRefType)
+EfiVirFunc *VirFunc (EfiFunc *func)
+{
+	EfiVirFunc *vf;
+
+	if	(IsVirFunc(func))
 		return rd_refer(func);
 
-	vf = rd_create(&VirFuncRefType);
-	vb_init(&vf->tab, VIRFUNC_BSIZE, sizeof(Func_t *));
+	vf = new_data(&tab_virfunc);
+	vb_init(&vf->tab, VIRFUNC_BSIZE, sizeof(EfiFunc *));
 
-	if	(func && func->reftype == &FuncRefType)
+	if	(IsFunc(func))
 		Val_func(vb_next(&vf->tab)) = func;
 
-	return vf;
+	return rd_init(&VirFuncRefType, vf);
 }

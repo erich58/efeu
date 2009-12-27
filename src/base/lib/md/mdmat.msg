@@ -29,16 +29,15 @@ If not, write to the Free Software Foundation, Inc.,
 14	$!: worng size of type $1.\n
 15	$!: type $1 has no component $2.\n
 16	$!: can not add values of type $1 (operator += not defined).\n
-17	$!: ATTENTION: type $1 has variable record length.\n
 
 18	$!: binary operator $1 ($2, $3) is not defined.\n
 19	$!: assignment operator $2::$1 & ($3) is not defined.\n
 
 21	$!: object type $1 is not defined.\n
 22	$!: can not read objects of type $1.\n
-23	$!: can not read a component of type $(#1:%#s).\n
+23	$!: can not read a component of type "$1".\n
 24	$!: can not write objects of type $1.\n
-25	$!: can not write a component of type $(#1:%#s).\n
+25	$!: can not write a component of type "$1".\n
 
 31	$!: wrong key in data file.\n
 32	$!: error in dimension.\n
@@ -49,22 +48,22 @@ If not, write to the Free Software Foundation, Inc.,
 43	$!: missing grouping information.\n
 44	$!: undefined group $1.\n
 
-51	$!: $(#1:%#s) is not of type double.\n
-52	$!: filed of type double $(#1:%#s) - wrong object size.\n
-53	$!: multiplication of $(#1:%#s) with $(#2:%#s):\n\
+51	$!: "$1" is not of type double.\n
+52	$!: filed of type double "$1" - wrong object size.\n
+53	$!: multiplication of "$1" with "$1":\n\
 dimension not compatible.\n
-54	$!: multiplication of $(#1:%#s) with $(#2:%#s):\n\
+54	$!: multiplication of "$1" with "$1":\n\
 index values not compatible.\n
 
 61	$!: mdmul: empty data cube(s).\n
-62	$!: mdmul: axis $(#1:%#s) - $(#2:%#s) are not compatible (flags=$3).\n
+62	$!: mdmul: axis "$1" - "$1" are not compatible (flags=$3).\n
 63	$!: mdmul: incompatible number of axis.\n
 64	$!: mdmul: can not multiply $1 with $2.\n
 65	$!: mdmul: cann not add values of type $1.\n
 
 71	$!: $0: missing column label.\n
 72	$!: $0: incomplete line.\n
-73	$!: $0: extra character: $(#1:%#s).\n
+73	$!: $0: extra character: "$1".\n
 
 81	$!: Character $1 in list where '=' is expected.\n
 
@@ -74,19 +73,19 @@ index values not compatible.\n
 94	$!: mdterm: function "$1" is not defined.\n
 95	$!: function $1 is not appropirate for queryng data of type $2.\n
 
-101	$!: data cube has no component $(#1:%#s).\n
-102	$!: can not convert type $(#1:%#s) into $(#2:%#s).\n
-103	$!: can not round data cube of type $(#1:%#s).\n
+101	$!: data cube has no component "$1".\n
+102	$!: can not convert type "$1" into "$1".\n
+103	$!: can not round data cube of type "$1".\n
 
 191	$!: $0: incomplete line.\n
 192	$!: $0: unexpected end of file, no data.\n
 193	$!: $0: missing column seperator.\n
-194	$!: $0: different labels ($(#1:%#s) - $(#2:%#s))\nby equal values.\n
+194	$!: $0: different labels ("$1" - "$1")\nby equal values.\n
 195	$!: $0: incomplete axis label.\n
 196	$!: $0: extra values in data file.\n
-197	$!: $0: illegal character sequence $(#1:%#s) in values.\n
+197	$!: $0: illegal character sequence "$1" in values.\n
 
 201	$!: empty data cube by inversion.\n
-202	$!: could not convert $(#1:%#s) into double.\n
+202	$!: could not convert "$1" into double.\n
 203	$!: inversion of data cube: not a square field.\n
 204	$!: inversion of data cube: singulary data cube (dim=$1, range=$2).\n

@@ -28,9 +28,10 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/CmdPar.h>
 #include <EFEU/pconfig.h>
 #include <EFEU/MakeDepend.h>
-#include <EFEU/LangType.h>
+#include <EFEU/LangDef.h>
 #include <EFEU/printobj.h>
 #include <EFEU/Debug.h>
+#include <EFEU/Op.h>
 #include <ctype.h>
 
 #define LBL_VAR	":*:global variables" \
@@ -39,51 +40,51 @@ If not, write to the Free Software Foundation, Inc.,
 #define LBL_FUNC ":*:global functions" \
 		":de:Globale Funktionen"
 
-static void var_desc (io_t *io, Var_t *var)
+static void var_desc (IO *io, VarTabEntry *var)
 {
 	io = io_lmark(io_refer(io), "\t", NULL, 0);
 	io_puts(var->desc, io);
 	io_close(io);
 }
 
-static void var_info (io_t *io, InfoNode_t *info)
+static void var_info (IO *io, InfoNode *info)
 {
-	VarTab_t *tab = info->par;
-	int i;
+	EfiVarTab *tab = info->par;
+	VarTabEntry *p = tab->tab.data;
+	size_t n = tab->tab.used;
 
-	for (i = 0; i < tab->tab.dim; i++)
+	for (; n-- > 0; p++)
 	{
-		Var_t *var = tab->tab.tab[i];
+		if	(p->type == &Type_vfunc)	continue;
+		if	(p->type == &Type_func)	continue;
+		if	(p->type == &Type_vtab)	continue;
 
-		if	(var->type == &Type_vfunc)	continue;
-		if	(var->type == &Type_func)	continue;
-		if	(var->type == &Type_vtab)	continue;
-
-		io_printf(io, "\n%s %s\n", var->type->name, var->name);
-		var_desc(io, var);
+		io_printf(io, "\n%s %s\n", p->type->name, p->name);
+		var_desc(io, p);
 	}
 }
 
-static void func_info (io_t *io, InfoNode_t *info)
+static void func_info (IO *io, InfoNode *info)
 {
-	VarTab_t *tab = info->par;
-	int i;
+	EfiVarTab *tab = info->par;
+	VarTabEntry *p = tab->tab.data;
+	size_t n = tab->tab.used;
 
-	for (i = 0; i < tab->tab.dim; i++)
+	for (; n-- > 0; p++)
 	{
-		Var_t *var = tab->tab.tab[i];
+		if	(p->obj == NULL)	continue;
 
-		if	(var->type == &Type_vfunc)
+		if	(p->obj->type == &Type_vfunc)
 		{
-			io_printf(io, "%s\n", var->name);
-			PrintData(io, var->type, var->data);
-			io_printf(io, "%s\n", var->desc);
+			io_printf(io, "%s\n", p->name);
+			PrintData(io, p->obj->type, p->obj->data);
+			io_printf(io, "%s\n", p->desc);
 		}
-		else if	(var->type == &Type_func)
+		else if	(p->obj->type == &Type_func)
 		{
-			io_printf(io, "%s\n", var->name);
-			PrintData(io, var->type, var->data);
-			io_printf(io, "%s\n", var->desc);
+			io_printf(io, "%s\n", p->name);
+			PrintData(io, p->obj->type, p->obj->data);
+			io_printf(io, "%s\n", p->desc);
 		}
 	}
 }
@@ -91,7 +92,7 @@ static void func_info (io_t *io, InfoNode_t *info)
 /*	Schlüsselwörter
 */
 
-static Obj_t *pf_operator (io_t *io, void *data)
+static EfiObj *pf_operator (IO *io, void *data)
 {
 	void *p;
 
@@ -104,60 +105,41 @@ static Obj_t *pf_operator (io_t *io, void *data)
 	return NewPtrObj(&Type_name, p);
 }
 
-static Obj_t *pf_func (io_t *io, void *data)
+static EfiObj *pf_func (IO *io, void *data)
 {
 	return Parse_func(io, NULL, NULL, (int) (size_t) data);
 }
 
-static Obj_t *pf_expression (io_t *io, void *data)
+static EfiObj *pf_expression (IO *io, void *data)
 {
-	Message(NULL, DBG_NOTE,
-		"WARNING: expression obsolete, use [...] instead.\n", NULL);
+	dbg_note(NULL, "WARNING: expression obsolete, use [...] instead.\n",
+		NULL);
 	return expr2Obj(Parse_cmd(io));
 }
 
-static Obj_t *pf_string (io_t *io, void *data)
+static EfiObj *pf_string (IO *io, void *data)
 {
 	return str2Obj(getstring(io));
 }
 
-static Obj_t *pf_msgtab (io_t *io, void *data)
+static EfiObj *pf_const (IO *io, void *data)
 {
-	if	(io_eat(io, "%s") == '{')
-	{
-		io_getc(io);
-		io_loadmsg(io, NULL, "}");
-	}
-
-	return NULL;
-}
-
-
-static Obj_t *do_psub(void *par, const ObjList_t *list)
-{
-	return str2Obj(parsub(Val_str(list->obj->data)));
-}
-
-static Obj_t *pf_parsub (io_t *io, void *data)
-{
-	return Obj_call(do_psub, NULL, NewObjList(str2Obj(getstring(io))));
-}
-
-static Obj_t *pf_const (io_t *io, void *data)
-{
+	/*
 	return EvalObj(Parse_term(io, 0), NULL);
+	*/
+	return EvalObj(Parse_vdef(io, NULL, VDEF_REPEAT|VDEF_CONST), NULL);
 }
 
-static Obj_t *pf_static (io_t *io, void *data)
+static EfiObj *pf_static (IO *io, void *data)
 {
 	UnrefEval(Parse_term(io, 0)); return Obj_noop();
 }
 
-static Obj_t *p_interact (io_t *io, void *data)
+static EfiObj *p_interact (IO *io, void *data)
 {
 	char *prompt;
 	char *hist;
-	io_t *in;
+	IO *in;
 
 	prompt = Obj2str(Parse_term(io, 0));
 	hist = Obj2str(Parse_term(io, 0));
@@ -169,13 +151,13 @@ static Obj_t *p_interact (io_t *io, void *data)
 	return NULL;
 }
 
-static Obj_t *p_local (io_t *io, void *data)
+static EfiObj *p_local (IO *io, void *data)
 {
 	return NewPtrObj(&Type_vtab, rd_refer(LocalVar));
 }
 
 
-static ParseDef_t pdef[] = {
+static EfiParseDef pdef[] = {
 	{ "for", PFunc_for, NULL },
 	{ "while", PFunc_while, NULL },
 	{ "do", PFunc_do, NULL },
@@ -197,8 +179,6 @@ static ParseDef_t pdef[] = {
 
 	{ "expression", pf_expression, NULL },
 	{ "string", pf_string, NULL },
-	{ "msgtab", pf_msgtab, NULL },
-	{ "parsub", pf_parsub, NULL },
 	{ "static", pf_static, NULL },
 	{ "const", pf_const, NULL },
 
@@ -214,22 +194,20 @@ static ParseDef_t pdef[] = {
 /*	Komponenten von Listen
 */
 
-static Obj_t *list_obj (const Var_t *st, const Obj_t *obj)
+static EfiObj *list_obj (const EfiObj *obj, void *data)
 {
-	register ObjList_t *list = obj ? Val_list(obj->data) : NULL;
+	EfiObjList *list = obj ? Val_list(obj->data) : NULL;
 	return list ? RefObj(list->obj) : ptr2Obj(NULL);
 }
 
-static Obj_t *list_next (const Var_t *st, const Obj_t *obj)
+static EfiObj *list_next (const EfiObj *obj, void *data)
 {
-	register ObjList_t *list = obj ? Val_list(obj->data) : NULL;
-
+	EfiObjList *list = obj ? Val_list(obj->data) : NULL;
 	list = list ? RefObjList(list->next) : NULL;
 	return NewPtrObj(&Type_list, list);
 }
 
-
-static MemberDef_t list_member[] = {
+static EfiMember list_member[] = {
 	{ "next", &Type_list, list_next, NULL },
 	{ "obj", NULL, list_obj, NULL },
 };
@@ -237,34 +215,34 @@ static MemberDef_t list_member[] = {
 /*	Komponenten von Typen
 */
 
-static Obj_t *type_default (const Var_t *st, const Obj_t *obj)
+static EfiObj *type_default (const EfiObj *obj, void *data)
 {
-	Type_t *type = Val_type(obj->data);
+	EfiType *type = Val_type(obj->data);
 
 	if	(type == NULL)	return NULL;
 	else if	(type->defval)	return LvalObj(&Lval_ptr, type, type->defval);
 	else			return NewObj(type, NULL);
 }
 
-static MemberDef_t type_member[] = {
+static EfiMember type_member[] = {
 	{ "default", NULL, type_default, NULL },
 };
 
 /*	Komponenten von Referenzen
 */
 
-static Obj_t *ref_refcount (const Var_t *st, const Obj_t *obj)
+static EfiObj *ref_refcount (const EfiObj *obj, void *data)
 {
-	refdata_t *rd = Val_ptr(obj->data);
+	RefData *rd = Val_ptr(obj->data);
 	return int2Obj(rd ? rd->refcount : 0);
 }
 
-static Obj_t *ref_ident (const Var_t *st, const Obj_t *obj)
+static EfiObj *ref_ident (const EfiObj *obj, void *data)
 {
 	return str2Obj(rd_ident(Val_ptr(obj->data)));
 }
 
-static MemberDef_t ref_member[] = {
+static EfiMember ref_member[] = {
 	{ "ident", &Type_str, ref_ident, NULL },
 	{ "refcount", &Type_int, ref_refcount, NULL },
 };
@@ -272,17 +250,44 @@ static MemberDef_t ref_member[] = {
 /*	Parametersubstitution
 */
 
-static int c_term(io_t *in, io_t *out, void *arg)
+static int c_term(IO *in, IO *out, void *arg)
 {
-	return iocpy_term(in, out, '(', ")", 0);
+	EfiObj *obj;
+	EfiObjList *list;
+	char *fmt;
+	int c;
+
+	obj = EvalObj(Parse_term(in, OpPrior_Cond), NULL);
+	c = io_getc(in);
+
+	fmt = (c == ':') ? io_xgets(in, arg) : NULL;
+
+	if	(!listcmp(arg, c))
+		iocpy_skip(in, NULL, c, arg, 0);
+
+	if	(obj && fmt)
+	{
+		list = NewObjList(obj);
+		c = PrintFmtList(out, fmt, list);
+		DelObjList(list);
+	}
+	else if	(obj)
+	{
+		c = PrintObj(out, obj);
+		UnrefObj(obj);
+	}
+	else	c = 0;
+
+	memfree(fmt);
+	return c;
 }
 
-static int c_eval(io_t *in, io_t *out, void *arg)
+static int c_eval(IO *in, IO *out, void *arg)
 {
 	return iocpy_eval(in, out, 0, "}", 0);
 }
 
-static int f_eval (CmdPar_t *cpar, CmdParVar_t *var,
+static int f_eval (CmdPar *cpar, CmdParVar *var,
 	const char *par, const char *arg)
 {
 	char *p = CmdPar_psub(cpar, par, arg);
@@ -291,16 +296,16 @@ static int f_eval (CmdPar_t *cpar, CmdParVar_t *var,
 	return 0;
 }
 
-static CmdParEval_t cpar_eval = { "eval", "Ausdruck auswerten", f_eval };
+static CmdParEval cpar_eval = { "eval", "Ausdruck auswerten", f_eval };
 
 
-static void f_proto (CmdPar_t *par, io_t *io, const char *arg)
+static void f_proto (CmdPar *par, IO *io, const char *arg)
 {
 	char *ident;
 	char *name;
 	char *type;
-	VirFunc_t *tab;
-	Func_t **ftab;
+	EfiVirFunc *tab;
+	EfiFunc **ftab;
 	int i;
 
 	if	(arg == NULL)	return;
@@ -355,15 +360,14 @@ static void f_proto (CmdPar_t *par, io_t *io, const char *arg)
 	io_putc('\n', io);
 }
 
-static CmdParExpand_t cexp_proto = { "proto", "Prototype ausgeben", f_proto };
+static CmdParExpand cexp_proto = { "proto", "Prototype ausgeben", f_proto };
 
 extern int float_align;
 
 char *PS1 = "$!: ";
 char *PS2 = "> ";
-extern char *MessageHandler;
 
-static VarDef_t vardef[] = {
+static EfiVarDef vardef[] = {
 	{ "MakeDepend",	&Type_bool, &MakeDepend,
 		":*:flag for creating dependence lists\n"
 		":de:Flag zur Generierung von Abhängigkeitslisten\n" },
@@ -385,9 +389,6 @@ static VarDef_t vardef[] = {
 	{ "Pager",	&Type_str, &Pager,
 		":*:default pager\n"
 		":de:Standardpager\n" },
-	{ "MessageHandler",	&Type_str, &MessageHandler,
-		":*:default message haendler\n"
-		":de:Standardhändler für Fehlermeldungen\n" },
 	{ "PS1",	&Type_str, &PS1,
 		":*:prompt 1\n"
 		":de:Prompt 1\n" },
@@ -403,20 +404,13 @@ static VarDef_t vardef[] = {
 	{ "context",	&Type_vtab, &ContextVar,
 		":*:context variable tab\n"
 		":de:Kontextvariablentabelle\n" },
-	{ "Lang", &Type_str, &LangType.language,
+	{ "Lang", &Type_str, &LangDef.language,
 		":*:language code of LANG environment\n"
 		":de:Sprachkode der Umgebungsvariable LANG\n" },
-	{ "Territory", &Type_str, &LangType.territory,
+	{ "Territory", &Type_str, &LangDef.territory,
 		":*:territory code of LANG environment\n"
 		":de:Regionalcode der Umgebungsvariable LANG\n" },
 };
-
-#if	0
-static Var_t test_var[] = {
-	{ "Test_str", &Type_str, NULL, 0, 0, ResourceVar, "XYZ" },
-	{ "Test_int", &Type_int, NULL, 0, 0, ResourceVar, "XYZ" },
-};
-#endif
 
 void SetupStd(void)
 {
@@ -454,13 +448,13 @@ void SetupStd(void)
 	AddType(&Type_vdef);
 
 	CmdSetup_obj();
-	CmdSetup_reg();
 	CmdSetup_pctrl();
 	CmdSetup_test();
 
 	CmdSetup_konv();
 	CmdSetup_print();
 	CmdSetup_func();
+	CmdSetup_range();
 	CmdSetup_op();
 	CmdSetup_info();
 	CmdSetup_strbuf();
@@ -469,14 +463,12 @@ void SetupStd(void)
 	CmdSetup_cmdpar();
 	CmdSetup_unix();
 	CmdSetup_dl();
+	CmdSetup_dbutil();
 
-	AddMember(Type_list.vtab, list_member, tabsize(list_member));
-	AddMember(Type_type.vtab, type_member, tabsize(type_member));
-	AddMember(Type_ref.vtab, ref_member, tabsize(ref_member));
+	AddEfiMember(Type_list.vtab, list_member, tabsize(list_member));
+	AddEfiMember(Type_type.vtab, type_member, tabsize(type_member));
+	AddEfiMember(Type_ref.vtab, ref_member, tabsize(ref_member));
 	AddVarDef(NULL, vardef, tabsize(vardef));
-#if	0
-	AddVar(NULL, test_var, tabsize(test_var));
-#endif
 
 	psubfunc('(', c_term, ")");
 	psubfunc('{', c_eval, "}");

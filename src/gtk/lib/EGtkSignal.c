@@ -27,9 +27,9 @@ If not, write to the Free Software Foundation, Inc.,
 
 static char connect_pfx[] = "connect";
 
-void EGtkSig_var (const char *name, Type_t *type, void *data)
+void EGtkSig_var (const char *name, EfiType *type, void *data)
 {
-	VarDef_t vdef;
+	EfiVarDef vdef;
 	vdef.name = (char *) name;
 	vdef.type = type;
 	vdef.data = data;
@@ -43,36 +43,36 @@ void EGtkSig_start (GtkObject **ptr)
 	EGtkSig_var("this", EGtkType(GTK_OBJECT_TYPE(*ptr)), ptr);
 }
 
-void EGtkSig_end (Obj_t *expr)
+void EGtkSig_end (EfiObj *expr)
 {
 	UnrefEval(RefObj(expr));
 	PopVarTab();
 }
 
-void EGtkSigFunc_simple (GtkObject *obj, Obj_t *expr)
+void EGtkSigFunc_simple (GtkObject *obj, EfiObj *expr)
 {
 	EGtkSig_start(&obj);
 	EGtkSig_end(expr);
 }
 
-void EGtkSigFunc_child (GtkObject *obj, GtkObject *child, Obj_t *expr)
+void EGtkSigFunc_child (GtkObject *obj, GtkObject *child, EfiObj *expr)
 {
 	EGtkSig_start(&obj);
 	EGtkSig_var("child", EGtkType(GTK_OBJECT_TYPE(child)), &child);
 	EGtkSig_end(expr);
 }
 
-static void Func_connect (Func_t *func, void *rval, void **arg)
+static void Func_connect (EfiFunc *func, void *rval, void **arg)
 {
 	Val_int(rval) = gtk_signal_connect(Val_ptr(arg[0]),
 		func->name + sizeof(connect_pfx), GTK_SIGNAL_FUNC(func->par),
 		RefObj(Val_obj(arg[1])));
 }
 
-void AddEGtkSig (Type_t *type, EGtkSigDef *def, size_t dim)
+void AddEGtkSig (EfiType *type, EGtkSigDef *def, size_t dim)
 {
 	char *p;
-	Func_t *func;
+	EfiFunc *func;
 
 	for (; dim-- > 0; def++)
 	{

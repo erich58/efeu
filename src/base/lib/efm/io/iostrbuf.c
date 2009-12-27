@@ -24,47 +24,22 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/ioctrl.h>
 #include <EFEU/strbuf.h>
 
-static int sb_cctrl(strbuf_t *sb, int req, va_list list);
-static int sb_nctrl(strbuf_t *sb, int req, va_list list);
-
-io_t *io_tmpbuf (size_t size)
+static int sbuf_get (void *ptr)
 {
-	io_t *io;
-
-	io = io_alloc();
-	io->get = (io_get_t) sb_get;
-	io->put = (io_put_t) sb_put;
-	io->data = new_strbuf(size);
-	io->ctrl = (io_ctrl_t) sb_cctrl;
-	return io;
+	StrBuf *sb = ptr;
+	return sb_getc(sb);
 }
 
-io_t *io_strbuf (strbuf_t *buf)
+static int sbuf_put (int c, void *ptr)
 {
-	io_t *io;
-
-	io = io_alloc();
-	io->get = (io_get_t) sb_get;
-	io->put = (io_put_t) sb_put;
-
-	if	(buf == NULL)
-	{
-		io->data = new_strbuf(0);
-		io->ctrl = (io_ctrl_t) sb_cctrl;
-	}
-	else
-	{
-		io->data = buf;
-		io->ctrl = (io_ctrl_t) sb_nctrl;
-	}
-
-	return io;
+	StrBuf *sb = ptr;
+	return sb_putc(c, sb);
 }
 
-
-
-static int sb_nctrl (strbuf_t *sb, int req, va_list list)
+static int sb_nctrl (void *ptr, int req, va_list list)
 {
+	StrBuf *sb = ptr;
+
 	switch (req)
 	{
 	case IO_REWIND:	sb->pos = 0; return 0;
@@ -74,9 +49,10 @@ static int sb_nctrl (strbuf_t *sb, int req, va_list list)
 	}
 }
 
-
-static int sb_cctrl (strbuf_t *sb, int req, va_list list)
+static int sb_cctrl (void *ptr, int req, va_list list)
 {
+	StrBuf *sb = ptr;
+
 	switch (req)
 	{
 	case IO_REWIND:	sb->pos = 0; return 0;
@@ -84,4 +60,36 @@ static int sb_cctrl (strbuf_t *sb, int req, va_list list)
 	case IO_IDENT:	*va_arg(list, char **) = "<tmpbuf>"; return 0;
 	default:	return EOF;
 	}
+}
+
+IO *io_tmpbuf (size_t size)
+{
+	IO *io;
+
+	io = io_alloc();
+	io->get = sbuf_get;
+	io->put = sbuf_put;
+	io->data = new_strbuf(size);
+	io->ctrl = sb_cctrl;
+	return io;
+}
+
+IO *io_strbuf (StrBuf *buf)
+{
+	IO *io = io_alloc();
+	io->get = sbuf_get;
+	io->put = sbuf_put;
+
+	if	(buf)
+	{
+		io->data = buf;
+		io->ctrl = sb_nctrl;
+	}
+	else
+	{
+		io->data = new_strbuf(0);
+		io->ctrl = sb_cctrl;
+	}
+
+	return io;
 }

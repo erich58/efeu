@@ -2,7 +2,7 @@
 :*:standard library names
 :de:Standardbibliotheksnamen
 
-$Copyright (C) 1999 Erich Frühstück
+$Copyright (C) 1999, 2002 Erich Frühstück
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -21,45 +21,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	_stdlib_pph
-#define	_stdlib_pph	1
-
-/*
-$Description
-Für die wichtigsten vom EFEU-Projekt verwalteten Programmbibliotheken
-gibt es sowohl die zugehörigen Link-Optionen (|LIB_|<name>> Makros)
-als auch die vollen Pfadnamen der Programmbibliotheken
-(|DEP_|<name> Makros) als Makro vordefiniert.
-Zusätzlich sind auch häufig gebrauchte Standardbibliotheken als
-Makro vordefiniert.
-
-Fehlende Makros für EFEU-Projektbibliotheken können durch <|StdLib(<name>)|>
-(Link-Option) und <|LinkName(<name>)|> (Pfadname) ersetzt werden.
-*/
-
-#ifndef	LIB_M
-/*
-Der Makro |$1| definiert die Programmbibliothek für mathematische Funktionen.
-*/
-#define	LIB_M		-lm
-#endif
-
-#if	__linux__
-/*
-Der Makro |$1| definiert die Curses-Programmbibliothek.
-*/
-#define	LIB_CURSES	-lncurses
-#else
-#define	LIB_CURSES	-lcurses
-#endif
-
-#include <readline.pph>
-
-#if	__linux__
-#define	LIB_X11	-L/usr/X11R6/lib -lX11
-#else
-#define	LIB_X11	-L/usr/lib/X11 -lX11
-#endif
+#ifndef	stdlib_pph
+#define	stdlib_pph	1
 
 /*
 $Synopsis
@@ -78,6 +41,13 @@ $Synopsis
 \index{|DEP_MATH|}
 
 $Description
+Für die wichtigsten vom EFEU-Projekt verwalteten Programmbibliotheken
+gibt es sowohl die zugehörigen Link-Optionen (|LIB_|<name>> Makros)
+als auch die vollen Pfadnamen der Programmbibliotheken
+(|DEP_|<name> Makros) als Makro vordefiniert.
+Zusätzlich sind auch häufig gebrauchte Standardbibliotheken als
+Makro vordefiniert.
+
 Makros für EFEU-Programmbibliotheken:
 [|EFM|]
 	Basisprogrammbibliothek mit elementaren
@@ -93,10 +63,12 @@ Makros für EFEU-Programmbibliotheken:
 [|MATH|]
 	mathematisches Erweiterungspaket,
 	umfaßt derzeit Polynom- und Zeitreihenfunktionen.
+
+Fehlende Makros für EFEU-Projektbibliotheken können durch <|StdLib(<name>)|>
+(Link-Option) und <|LinkName(<name>)|> (Pfadname) ersetzt werden.
 */
 
-#if	0	/* src2doc needs */
-#endif		/* this two lines */
+#include <readline.pph>
 
 #define	DEP_EFM		StdLib(efm)
 #define	DEP_EFX		StdLib(efx)
@@ -106,7 +78,7 @@ Makros für EFEU-Programmbibliotheken:
 #define	DEP_MATH	StdLib(efmath)
 
 #define	LIB_EFM		LinkName(efm)
-#define	LIB_EFX		LinkName(efx) LIB_M
+#define	LIB_EFX		LinkName(efx) LinkName(m)
 #define	LIB_IORL	LinkName(iorl) $(RL_LIB)
 #define	LIB_MD		LinkName(md)
 #define	LIB_WIN		LinkName(efwin)

@@ -5,7 +5,7 @@ BDIR=	$(EFEUTOP)/build
 #if	_AIX
 CTAGS=	ctags -tw
 #else
-CTAGS=	ctags
+CTAGS=	ctags -w
 #endif
 
 #define	PLIST(x)	Concat3($(BDIR)/,x,.d)
@@ -32,6 +32,7 @@ SourceBase:
 
 SourceList: SourceBase
 	-grep SourceList SourceBase | xargs sort -u > $@
+	-grep d2m.list SourceBase | xargs sort -u >> $@
 	-grep @"'\\.[ch]$$'" SourceBase | sort -u >> $@
 	-grep @"'\\.[0-9]$$'" SourceBase | sort -u >> $@
 
@@ -40,7 +41,7 @@ clean::
 
 @!	Filelisten
 
-FILES= C H TPL DEF MS ESH MSG APP DOC MAN
+FILES= C H TPL DEF MS ESH MSG CNF DOC MAN
 
 files:: $(FILES)
 
@@ -55,7 +56,7 @@ DEF: SourceList; -grep @"'\\.def$$'" SourceList > $@
 MS: SourceList; -grep @"'\\.ms$$'" SourceList > $@
 ESH: SourceList; -grep @"'\\.esh$$'" SourceList > $@
 MSG: SourceList; -grep @"'\\.msg$$'" SourceList > $@
-APP: SourceList; -grep @"'\\.app$$'" SourceList > $@
+CNF: SourceList; -grep @"'\\.cnf$$'" SourceList > $@
 DOC: SourceList; -grep @"'\\.doc$$'" SourceList > $@
 MAN: SourceList; -grep @"'\\.[0-9]$$'" SourceList > $@
 

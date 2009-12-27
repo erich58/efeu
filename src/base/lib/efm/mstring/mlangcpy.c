@@ -37,8 +37,8 @@ char *mlangcpy (const char *str, const char *lang)
 {
 	if	(str != NULL)
 	{
-		io_t *io;
-		strbuf_t *buf;
+		IO *io;
+		StrBuf *buf;
 		int c;
 
 		io = langfilter(io_cstr(str), lang);

@@ -26,9 +26,9 @@ If not, write to the Free Software Foundation, Inc.,
 #include <ctype.h>
 
 
-assignarg_t *assignarg (const char *arg, char **ptr, const char *delim)
+AssignArg *assignarg (const char *arg, char **ptr, const char *delim)
 {
-	assignarg_t *x;
+	AssignArg *x;
 	char *p;
 	size_t n, po, pe, pa;
 	int depth;
@@ -88,7 +88,7 @@ assignarg_t *assignarg (const char *arg, char **ptr, const char *delim)
 		}
 	}
 
-	x = (assignarg_t *) memalloc(sizeof(assignarg_t) + n + 1);
+	x = (AssignArg *) memalloc(sizeof(AssignArg) + n + 1);
 	p = strncpy((char *) (x + 1), arg, n);
 	p[n] = 0;
 	x->name = p;

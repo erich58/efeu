@@ -26,11 +26,11 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/preproc.h>
 
 
-void Doc_eval (Doc_t *doc, io_t *in, const char *expr)
+void Doc_eval (Doc *doc, IO *in, const char *expr)
 {
-	strbuf_t *buf;
-	io_t *save_cin;
-	io_t *io, *out;
+	StrBuf *buf;
+	IO *save_cin;
+	IO *io, *out;
 
 	if	(expr == NULL)	return;
 
@@ -57,10 +57,10 @@ void Doc_eval (Doc_t *doc, io_t *in, const char *expr)
 	else	del_strbuf(buf);
 }
 
-void Doc_cmd (Doc_t *doc, io_t *in)
+void Doc_cmd (Doc *doc, IO *in)
 {
 	char *p;
-	DocMac_t *mac;
+	DocMac *mac;
 	int c;
 
 	c = io_getc(in);
@@ -99,7 +99,7 @@ void Doc_cmd (Doc_t *doc, io_t *in)
 
 	if	(mac == NULL)
 	{
-		io_message(in, MSG_DOC, 12, 1, p);
+		io_note(in, "[Doc:12]", "s", p);
 		io_puts(p, doc->out);
 		Doc_char(doc, ';');
 	}

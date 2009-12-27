@@ -24,24 +24,24 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/Op.h>
 #include <EFEU/parsedef.h>
 
-static Var_t *get_struct (io_t *io, Type_t *type);
+static EfiVar *get_struct (IO *io, EfiType *type);
 
 
 /*	Typedefinition: Falls kein Vektortype angegeben ist, wird nur
 	ein Aliasname generiert.
 */
 
-static void DummyKonv (Func_t *func, void *rval, void **arg)
+static void DummyKonv (EfiFunc *func, void *rval, void **arg)
 {
 	CopyData(func->type, rval, arg[0]);
 }
 
-extern void CopyKonv(Type_t *type, Type_t *base);
+extern void CopyKonv(EfiType *type, EfiType *base);
 
-Obj_t *PFunc_typedef(io_t *io, void *arg)
+EfiObj *PFunc_typedef(IO *io, void *arg)
 {
-	Type_t *type;
-	Var_t *st;
+	EfiType *type;
+	EfiVar *st;
 	char *def;
 
 	if	((st = get_struct(io, NULL)) == NULL)
@@ -54,7 +54,8 @@ Obj_t *PFunc_typedef(io_t *io, void *arg)
 	type->clean = type->base->clean;
 	type->size = type->base->size;
 	type->recl = type->base->recl;
-	type->iodata = type->base->iodata;
+	type->read = type->base->read;
+	type->write = type->base->write;
 	type->defval = st->data;
 	st->data = NULL;
 	DelVar(st);
@@ -71,10 +72,10 @@ Obj_t *PFunc_typedef(io_t *io, void *arg)
 /*	Strukturkomponente bestimmen
 */
 
-static Var_t *get_struct(io_t *io, Type_t *type)
+static EfiVar *get_struct(IO *io, EfiType *type)
 {
-	Var_t *st;
-	Obj_t *obj;
+	EfiVar *st;
+	EfiObj *obj;
 	void *name;
 	size_t dim;
 	int n;
@@ -85,7 +86,7 @@ static Var_t *get_struct(io_t *io, Type_t *type)
 
 	if	((name = io_getname(io)) == NULL)
 	{
-		io_error(io, MSG_EFMAIN, 123, 0);
+		io_error(io, "[efmain:123]", NULL);
 		return NULL;
 	}
 
@@ -100,8 +101,7 @@ static Var_t *get_struct(io_t *io, Type_t *type)
 
 		if	(n <= 0)
 		{
-			io_error(io, MSG_EFMAIN, 124, 1, name);
-			memfree(name);
+			io_error(io, "[efmain:124]", "m", name);
 			return NULL;
 		}
 		else if	(dim)
@@ -128,10 +128,10 @@ static Var_t *get_struct(io_t *io, Type_t *type)
 /*	Strukturliste generieren
 */
 
-Var_t *GetStruct (io_t *io, int delim)
+EfiVar *GetStruct (IO *io, int delim)
 {
-	Type_t *type;
-	Var_t *st, **ptr;
+	EfiType *type;
+	EfiVar *st, **ptr;
 	int c;
 
 	type = NULL;
@@ -145,7 +145,7 @@ Var_t *GetStruct (io_t *io, int delim)
 		case EOF:
 
 			DelVar(st);
-			io_error(io, MSG_EFMAIN, 121, 0);
+			io_error(io, "[efmain:121]", NULL);
 			return NULL;
 
 		case '\n':

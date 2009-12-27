@@ -1,2 +1,0 @@
-cfg	DFXFX	InstallFile(%s/%s.%s,$(APPDIR),%s.%s)
-trm	DFXFX	InstallFile(%s/%s.%s,$(TRMDIR),%s.%s)

@@ -27,35 +27,37 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/io.h>
 
-#define	MSG_DB		"db"
-
 
 /*	EBCDIC-Konvertierungshilfsprogramme
 */
 
-uchar_t *db_offset (const uchar_t *buf, int pos, int len);
-int db_isblank (const uchar_t *buf, int pos, int len);
-int db_iskey (const uchar_t *buf, int key, int pos, int len);
-unsigned db_xcval (const uchar_t *buf, int pos, int len);
-unsigned db_cval (const uchar_t *buf, int pos, int len);
-unsigned db_pval (const uchar_t *buf, int pos, int len);
-unsigned db_xval (const uchar_t *buf, int pos, int len);
-unsigned db_bcdval (const uchar_t *buf, int pos, int len);
-unsigned db_a37l (const uchar_t *buf, int pos, int len);
-unsigned db_char (const uchar_t *buf, int pos, int len);
-char *db_str (const uchar_t *buf, int pos, int len);
-double db_double (const uchar_t *buf, int pos, int len);
+unsigned char *db_offset (const unsigned char *buf, int pos, int len);
+int db_isblank (const unsigned char *buf, int pos, int len);
+int db_iskey (const unsigned char *buf, int key, int pos, int len);
+unsigned db_xcval (const unsigned char *buf, int pos, int len);
+unsigned db_cval (const unsigned char *buf, int pos, int len);
+unsigned db_pval (const unsigned char *buf, int pos, int len);
+unsigned db_xval (const unsigned char *buf, int pos, int len);
+unsigned db_bcdval (const unsigned char *buf, int pos, int len);
+unsigned db_a37l (const unsigned char *buf, int pos, int len);
+unsigned db_char (const unsigned char *buf, int pos, int len);
+char *db_str (const unsigned char *buf, int pos, int len);
+double db_double (const unsigned char *buf, int pos, int len);
 
-void set_cval (uchar_t *buf, int pos, int len, unsigned val);
-void set_scval (uchar_t *buf, int pos, int len, unsigned val);
-void set_pval (uchar_t *buf, int pos, int len, unsigned val);
-void set_char (uchar_t *buf, int pos, int len, unsigned val);
-void set_blank (uchar_t *buf, int pos, int len);
+void set_cval (unsigned char *buf, int pos, int len, unsigned val);
+void set_scval (unsigned char *buf, int pos, int len, unsigned val);
+void set_pval (unsigned char *buf, int pos, int len, unsigned val);
+void set_char (unsigned char *buf, int pos, int len, unsigned val);
+void set_blank (unsigned char *buf, int pos, int len);
+
+int ebcdic2ascii (int x);
+
 
 /*	ASCII-Konvertierungshilfsprogramme
 */
 
-char *txt_load (io_t *io, char *buf, int recl);
+char *txt_load (IO *io, char *buf, int recl);
+int txt_isblank (const char *buf, int pos, int len);
 unsigned txt_unsigned (const char *buf, int pos, int len);
 unsigned txt_base37 (const char *buf, int pos, int len);
 char *txt_str (const char *buf, int pos, int len);
@@ -106,6 +108,15 @@ char *l37a (unsigned x);
 #define	DIG37_Y		35
 #define	DIG37_Z		36
 
-int ebcdic2ascii (int x);
+/*	Textdatenfelder
+*/
+
+#ifndef	char_recl
+#define	char_recl			1
+#define	char_size			1
+#define	char_read(io, data, dim)	io_read(io, data, dim)
+#define	char_write(io, data, dim)	io_write(io, data, dim)
+#define	char_clear(data, dim)		memset(data, 0, dim)
+#endif
 
 #endif	/* EFEU/dbutil.h */

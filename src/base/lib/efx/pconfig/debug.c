@@ -31,15 +31,15 @@ If not, write to the Free Software Foundation, Inc.,
 typedef struct {
 	char *name;
 	char *desc;
-	void (*eval) (io_t *io);
-} CmdDef_t;
+	void (*eval) (IO *io);
+} CmdDef;
 
-static void f_help(io_t *io);
-static void f_print(io_t *io);
-static void f_quit(io_t *io);
-static void f_int(io_t *io);
+static void f_help(IO *io);
+static void f_print(IO *io);
+static void f_quit(IO *io);
+static void f_int(IO *io);
 
-static CmdDef_t CmdTab[] = {
+static CmdDef CmdTab[] = {
 	{ "?", "Befehle auflisten", f_help },
 	{ "h", "Befehle auflisten", f_help },
 	{ "help", "Befehle auflisten", f_help },
@@ -51,7 +51,7 @@ static CmdDef_t CmdTab[] = {
 	{ "sigint", "Interrupt an Programm senden (gdb-Schnittstelle)", f_int },
 };
 
-static CmdDef_t *GetCmd(const char *name)
+static CmdDef *GetCmd(const char *name)
 {
 	int i;
 
@@ -62,7 +62,7 @@ static CmdDef_t *GetCmd(const char *name)
 	return NULL;
 }
 
-static void f_help(io_t *io)
+static void f_help(IO *io)
 {
 	int i;
 
@@ -70,20 +70,20 @@ static void f_help(io_t *io)
 		io_printf(io, "%s\t%s\n", CmdTab[i].name, CmdTab[i].desc);
 }
 
-static void f_quit(io_t *io)
+static void f_quit(IO *io)
 {
 	io_close(io);
 	exit(0);
 }
 
-static void f_int(io_t *io)
+static void f_int(IO *io)
 {
 	raise(SIGINT);
 }
 
-static void f_print(io_t *io)
+static void f_print(IO *io)
 {
-	Obj_t *obj;
+	EfiObj *obj;
 
 	obj = Parse_term(io, 0);
 	obj = EvalObj(obj, NULL);
@@ -98,9 +98,9 @@ static void f_print(io_t *io)
 }
 
 
-static void CmdDebug(io_t *io)
+static void CmdDebug(IO *io)
 {
-	CmdDef_t *cmd;
+	CmdDef *cmd;
 	char *p;
 	int c;
 
@@ -129,10 +129,10 @@ static void CmdDebug(io_t *io)
 /*	Abbruch von Schleifen
 */
 
-static Obj_t *do_bpoint(void *ptr, const ObjList_t *list)
+static EfiObj *do_bpoint(void *ptr, const EfiObjList *list)
 {
-	io_t *io;
-	Obj_t *obj;
+	IO *io;
+	EfiObj *obj;
 
 	if	(list->next->obj)
 	{
@@ -153,9 +153,9 @@ static Obj_t *do_bpoint(void *ptr, const ObjList_t *list)
 }
 
 
-static Obj_t *parse_bpoint(io_t *io, void *data)
+static EfiObj *parse_bpoint(IO *io, void *data)
 {
-	Obj_t *obj;
+	EfiObj *obj;
 
 	switch (io_eat(io, " \t"))
 	{
@@ -170,10 +170,10 @@ static Obj_t *parse_bpoint(io_t *io, void *data)
 	}
 
 	return Obj_call(do_bpoint, NULL,
-		MakeObjList(2, str2Obj(io_ident(io)), obj));
+		MakeObjList(2, str2Obj(rd_ident(io)), obj));
 }
 
-static ParseDef_t pdef[] = {
+static EfiParseDef pdef[] = {
 	{ "breakpoint", parse_bpoint, NULL },
 };
 

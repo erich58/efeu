@@ -3,19 +3,18 @@
 */
 
 #include <EFEU/mdmat.h>
-#include <EFEU/data.h>
 
 #define	STRLEN(x)	(x ? strlen(x) + 1 : 1)
 
-static size_t putstr (const char *str, io_t *io);
+static size_t putstr (const char *str, IO *io);
 
-static void put_2byte(unsigned x, io_t *io)
+static void put_2byte(unsigned x, IO *io)
 {
 	io_putc((x >> 8) & 0xFF, io);
 	io_putc(x & 0xFF, io);
 }
 
-static void put_4byte(unsigned x, io_t *io)
+static void put_4byte(unsigned x, IO *io)
 {
 	io_putc((x >> 24) & 0xFF, io);
 	io_putc((x >> 16) & 0xFF, io);
@@ -23,17 +22,17 @@ static void put_4byte(unsigned x, io_t *io)
 	io_putc(x & 0xFF, io);
 }
 
-void md_puthdr(io_t *io, mdmat_t *md, unsigned mask)
+void md_puthdr(IO *io, mdmat *md, unsigned mask)
 {
-	mdaxis_t *x;
-	ulong_t n;
+	mdaxis *x;
+	unsigned n;
 	size_t j;
 	int k;
 	char *oname;
-	ulong_t dim;
-	ulong_t space;
-	ulong_t recl;
-	ulong_t nel;
+	unsigned dim;
+	unsigned space;
+	unsigned recl;
+	unsigned nel;
 
 /*	Stringlänge und Zahl der Elemente bestimmen
 */
@@ -108,7 +107,7 @@ void md_puthdr(io_t *io, mdmat_t *md, unsigned mask)
 /*	String ausgeben
 */
 
-static size_t putstr(const char *str, io_t *io)
+static size_t putstr(const char *str, IO *io)
 {
 	size_t n;
 
@@ -117,7 +116,7 @@ static size_t putstr(const char *str, io_t *io)
 	return n + 1;
 }
 
-void md_puteof(io_t *io)
+void md_puteof(IO *io)
 {
 	io_write(io, MD_EOFMARK, 4);
 }
@@ -126,7 +125,7 @@ void md_puteof(io_t *io)
 /*	Daten ausgeben
 */
 
-void md_putdata(io_t *io, const Type_t *type, mdaxis_t *x,
+void md_putdata(IO *io, const EfiType *type, mdaxis *x,
 	unsigned mask, void *data)
 {
 	if	(x != NULL)
@@ -141,34 +140,30 @@ void md_putdata(io_t *io, const Type_t *type, mdaxis_t *x,
 			data = ((char *) data) + x->size;
 		}
 	}
-	else	IOData(type, (iofunc_t) io_dbwrite, io, data);
+	else	WriteData(type, data, io);
 }
 
 
-void md_save(io_t *io, mdmat_t *md, unsigned mask)
+void md_save(IO *io, mdmat *md, unsigned mask)
 {
 	if	(md)
 	{
-		if	(md->type->iodata)
+		if	(md->type->write || md->type->recl)
 		{
 			md_puthdr(io, md, mask);
 			md_putdata(io, md->type, md->axis, mask, md->data);
 			md_puteof(io);
 		}
-		else
-		{
-			reg_set(1, type2str(md->type));
-			errmsg(MSG_MDMAT, 24);
-		}
+		else	dbg_note(NULL, "[mdmat:24]", "m", type2str(md->type));
 	}
 }
 
 
-void md_fsave(const char *name, mdmat_t *md, unsigned mask)
+void md_fsave(const char *name, mdmat *md, unsigned mask)
 {
-	io_t *io;
+	IO *io;
 
-	io = io_fileopen(name, "wz");
+	io = io_fileopen(name, "wdz");
 	md_save(io, md, mask);
 	io_close(io);
 }

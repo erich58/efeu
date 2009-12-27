@@ -24,7 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/io.h>
 
 
-unsigned io_getval (io_t *io, int n)
+unsigned io_getval (IO *io, int n)
 {
 	unsigned val;
 	int c;
@@ -43,7 +43,7 @@ unsigned io_getval (io_t *io, int n)
 	return val;
 }
 
-void io_putval (unsigned val, io_t *io, int n)
+void io_putval (unsigned val, IO *io, int n)
 {
 	while (n-- > 0)
 	{
@@ -58,10 +58,10 @@ void io_putval (unsigned val, io_t *io, int n)
 /*	Gepackten String einlesen
 */
 
-char *io_getstr(io_t *io)
+char *io_getstr(IO *io)
 {
 	int byte;
-	ulong_t size;
+	size_t size;
 
 	byte = io_getc(io);
 
@@ -74,9 +74,9 @@ char *io_getstr(io_t *io)
 /*	Gepackte Ausgabe eines Strings mit Längenangabe
 */
 
-int io_putstr(const char *str, io_t *io)
+int io_putstr(const char *str, IO *io)
 {
-	ulong_t size;
+	size_t size;
 	int byte;
 	int n;
 

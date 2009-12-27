@@ -29,7 +29,7 @@ mdmat OLSPar()
 /*	Koeffizienten im Synthesis-Stil ausgeben
 */
 
-virtual void SynFig::tabline(OLSKoef x)
+virtual void SynFig::tabline(OLSCoeff x)
 	this.printf("%s | %.5g | %.5g | %.6f\n", x.name, x.val, x.se, x.t);
 
 virtual void SynFig::tab(OLSPar par, str width = "3.5")

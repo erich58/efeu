@@ -34,9 +34,10 @@ typedef struct {
 	int width;	/* Feldbreite */
 	int prec;	/* Präzession */
 	char *list;	/* Zeichenliste */
-} fmtkey_t;
+} FmtKey;
 
-int fmtkey (const char *str, fmtkey_t *key);
+int io_fmtkey (IO *io, FmtKey *key);
+int fmtkey (const char *fmt, FmtKey *key);
 
 #define	FMT_BLANK	0x1	/* Blank bei positiven Werten */
 #define	FMT_SIGN	0x2	/* Vorzeichen immer ausgeben */
@@ -51,13 +52,13 @@ int fmtkey (const char *str, fmtkey_t *key);
 #define	FMT_LONG	0x400	/* Langer Datenwert */
 #define	FMT_XLONG	0x800	/* Sehr Langer Datenwert */
 
-void ftool_addsig (strbuf_t *buf, int sig, int flags);
-int ftool_ioalign (io_t *io, strbuf_t *sb, const fmtkey_t *key);
+void ftool_addsig (StrBuf *buf, int sig, int flags);
+int ftool_ioalign (IO *io, StrBuf *sb, const FmtKey *key);
 
-int fmt_bool (io_t *io, const fmtkey_t *key, int val);
-int fmt_char (io_t *io, const fmtkey_t *key, int val);
-int fmt_str (io_t *io, const fmtkey_t *key, const char *val);
-int fmt_long (io_t *io, const fmtkey_t *key, long val);
-int fmt_double (io_t *io, const fmtkey_t *key, double val);
+int fmt_bool (IO *io, const FmtKey *key, int val);
+int fmt_char (IO *io, const FmtKey *key, int val);
+int fmt_str (IO *io, const FmtKey *key, const char *val);
+int fmt_long (IO *io, const FmtKey *key, long val);
+int fmt_double (IO *io, const FmtKey *key, double val);
 
 #endif	/* EFEU/fmtkey.h */

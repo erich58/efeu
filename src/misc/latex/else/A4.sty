@@ -1,0 +1,38 @@
+%	A4 - Seitenformat
+%	(c) 1990 Erich Fruehstueck
+%	A-1090 Wien, Waehringer Strasse 64/6
+
+\message{Dokumentstil `A4' Version 1.0 vom Juni 1991}
+
+% vertikale Seitenabmessung
+
+\if@compatibility
+\else
+	\newdimen\footheight
+\fi
+
+\voffset=-2.2cm          % Justierung des oberen Randes
+\topmargin=1.5cm
+\headheight=1cm
+\headsep=1.5cm
+\topskip=5mm
+\textheight=20cm         % Texhoehe 20 cm
+\footskip=2cm
+\footheight=1cm
+\marginparpush=5mm
+
+% horizontale Seitenabmessung
+
+\hoffset=-2.5cm          % Justierung des linken Randes
+\oddsidemargin=3cm
+\evensidemargin=\oddsidemargin
+\textwidth=15cm          % Textbreite 15 cm
+\marginparsep=5mm
+\marginparwidth=15mm
+
+% Layoutparameter
+
+\pagenumbering{arabic}
+\parskip=1.5ex plus 0.5ex minus 0.5ex
+\parindent=0em
+\frenchspacing

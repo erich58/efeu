@@ -34,41 +34,32 @@ If not, write to the Free Software Foundation, Inc.,
 #include "DocSym.h"
 
 
-typedef struct DocDrv_s DocDrv_t;
-
-typedef void (*DocDrvSym_t) (DocDrv_t *drv, const char *symbol);
-typedef void (*DocDrvRem_t) (DocDrv_t *drv, const char *remark);
-typedef void (*DocDrvHdr_t) (DocDrv_t *drv, int mode);
-typedef int (*DocDrvCmd_t) (DocDrv_t *drv, va_list list);
-typedef int (*DocDrvEnv_t) (DocDrv_t *drv, int mode, va_list list);
-typedef int (*DocDrvPut_t) (DocDrv_t *drv, int c);
-
 #define	DOCDRV_VAR		\
 	const char *name;	\
 	unsigned submode : 22;	\
 	unsigned skip : 1;	\
 	unsigned hflag : 1;	\
 	char last;		\
-	io_t *out;		\
-	VarTab_t *vartab;	\
-	vecbuf_t varbuf;	\
-	DocSym_t *symtab;	\
-	DocDrvPut_t put;	\
-	DocDrvSym_t sym;	\
-	DocDrvRem_t rem;	\
-	DocDrvHdr_t hdr;	\
-	DocDrvCmd_t cmd;	\
-	DocDrvEnv_t env		\
+	IO *out;		\
+	EfiVarTab *vartab;	\
+	VecBuf varbuf;		\
+	DocSym *symtab;	\
+	int (*put) (void *drv, int c); \
+	void (*sym) (void *drv, const char *symbol); \
+	void (*rem) (void *drv, const char *remark); \
+	void (*hdr) (void *drv, int mode); \
+	int (*cmd) (void *drv, va_list list); \
+	int (*env) (void *drv, int mode, va_list list)
 
-struct DocDrv_s {
+typedef struct {
 	DOCDRV_VAR;
-};
+} DocDrv;
 
 extern void *DocDrv_alloc (const char *name, size_t size);
 extern void DocDrv_free (void *drv);
-extern void DocDrv_var (void *drv, Type_t *type, const char *name, void *ptr);
+extern void DocDrv_var (void *drv, EfiType *type, const char *name, void *ptr);
 extern void DocDrv_eval (void *ptr, const char *name);
-extern io_t *DocDrv_io (void *drv);
-extern int DocDrv_plain (DocDrv_t *drv, int c);
+extern IO *DocDrv_io (void *drv);
+extern int DocDrv_plain (void *drv, int c);
 
 #endif	/* DocDrv.h */

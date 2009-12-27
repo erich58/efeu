@@ -16,15 +16,15 @@ static int count_len = 0;
 
 static char *label = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-static int put_xpos (io_t *io, int pos);
-static int val2_put (int c, PrFilter_t *pf);
+static int put_xpos (IO *io, int pos);
+static int val2_put (int c, PCTRL *pf);
 
 #define newline(pf)	io_puts(pf->nl, pf->io)
 
 
 #define	SC_HEAD	"#       Aufbereitete Datenmatrix fuer Spreadsheet Calculator."
 
-int sc_ctrl(PrFilter_t *pf, int cmd, va_list list)
+int sc_ctrl(PCTRL *pf, int cmd, va_list list)
 {
 	char *a;
 	int i;
@@ -75,7 +75,7 @@ int sc_ctrl(PrFilter_t *pf, int cmd, va_list list)
 				max_width, max_prec);
 		}
 
-		io_psub(pf->io, "goto A0\n");
+		io_puts("goto A0\n", pf->io);
 		return 0;
 
 	case PCTRL_LEFT:	a = "leftstring "; break;
@@ -119,7 +119,7 @@ int sc_ctrl(PrFilter_t *pf, int cmd, va_list list)
 }
 
 
-static int put_xpos(io_t *io, int pos)
+static int put_xpos(IO *io, int pos)
 {
 	char buf[3];
 
@@ -138,7 +138,7 @@ static int put_xpos(io_t *io, int pos)
 }
 
 
-int sc_put(int c, PrFilter_t *pf)
+int sc_put(int c, PCTRL *pf)
 {
 	switch (c)
 	{
@@ -172,7 +172,7 @@ int sc_put(int c, PrFilter_t *pf)
 }
 
 
-static int val2_put(int c, PrFilter_t *pf)
+static int val2_put(int c, PCTRL *pf)
 {
 	switch (c)
 	{

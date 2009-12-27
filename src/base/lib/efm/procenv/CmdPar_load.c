@@ -29,7 +29,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/appl.h>
 #include <ctype.h>
 
-static void skipline (io_t *io)
+static void skipline (IO *io)
 {
 	int c;
 
@@ -37,7 +37,7 @@ static void skipline (io_t *io)
 	while	(c != EOF && c != '\n');
 }
 
-static void addline (io_t *io, strbuf_t *buf, int end)
+static void addline (IO *io, StrBuf *buf, int end)
 {
 	int c;
 
@@ -51,11 +51,11 @@ static void addline (io_t *io, strbuf_t *buf, int end)
 	sb_putc(end, buf);
 }
 
-static void buf2var(CmdPar_t *par, const char *name, strbuf_t *buf)
+static void buf2var(CmdPar *par, const char *name, StrBuf *buf)
 {
-	io_t *io;
-	CmdParVar_t *var;
-	strbuf_t *vbuf;
+	IO *io;
+	CmdParVar *var;
+	StrBuf *vbuf;
 	int c;
 
 	vbuf = new_strbuf(0);
@@ -73,9 +73,9 @@ static void buf2var(CmdPar_t *par, const char *name, strbuf_t *buf)
 	sb_clear(buf);
 }
 
-static void langsub (strbuf_t *sb)
+static void langsub (StrBuf *sb)
 {
-	io_t *io;
+	IO *io;
 	int c;
 
 	io = langfilter(io_mstr(sb_strcpy(sb)), NULL);
@@ -90,7 +90,7 @@ static void langsub (strbuf_t *sb)
 /*	Beschreibungstext kopieren
 */
 
-static char *copy_desc (io_t *io, strbuf_t *sb)
+static char *copy_desc (IO *io, StrBuf *sb)
 {
 	int c, flag;
 
@@ -151,7 +151,7 @@ static char *copy_desc (io_t *io, strbuf_t *sb)
 /*	Regulären Ausdruck kopieren
 */
 
-static char *copy_expr (io_t *io, strbuf_t *sb)
+static char *copy_expr (IO *io, StrBuf *sb)
 {
 	int c;
 
@@ -170,7 +170,7 @@ static char *copy_expr (io_t *io, strbuf_t *sb)
 /*	String kopieren
 */
 
-static void copy_str (io_t *io, strbuf_t *sb, int key)
+static void copy_str (IO *io, StrBuf *sb, int key)
 {
 	char delim[2];
 	int c;
@@ -187,7 +187,7 @@ static void copy_str (io_t *io, strbuf_t *sb, int key)
 }
 
 
-static void set_desc (CmdParVar_t *var, char *desc)
+static void set_desc (CmdParVar *var, char *desc)
 {
 	if	(var && desc)
 	{
@@ -198,7 +198,7 @@ static void set_desc (CmdParVar_t *var, char *desc)
 }
 
 
-static int get_argtype (io_t *io)
+static int get_argtype (IO *io)
 {
 	if	(io_peek(io) == ':')
 	{
@@ -209,9 +209,9 @@ static int get_argtype (io_t *io)
 }
 
 
-static CmdParKey_t *create_key (CmdParKey_t *buf, strbuf_t *sb)
+static CmdParKey *create_key (CmdParKey *buf, StrBuf *sb)
 {
-	CmdParKey_t *key;
+	CmdParKey *key;
 
 	if	(!buf->key && buf->partype != PARTYPE_ARG)
 	{
@@ -240,7 +240,7 @@ static CmdParKey_t *create_key (CmdParKey_t *buf, strbuf_t *sb)
 /*	Zuweisungswert bestimmen
 */
 
-static char *getval (strbuf_t *sb, int flag)
+static char *getval (StrBuf *sb, int flag)
 {
 	char *p;
 
@@ -278,10 +278,10 @@ static char *getval (strbuf_t *sb, int flag)
 	return p;
 }
 
-static void key2call (CmdParCall_t *call, CmdParKey_t *key,
-	io_t *io, strbuf_t *sb, int flag)
+static void key2call (CmdParCall *call, CmdParKey *key,
+	IO *io, StrBuf *sb, int flag)
 {
-	memset(call, 0, sizeof(CmdParCall_t));
+	memset(call, 0, sizeof(CmdParCall));
 	memfree(key->val);
 	call->name = key->key;
 
@@ -312,12 +312,12 @@ static void key2call (CmdParCall_t *call, CmdParKey_t *key,
 		call->eval = CmdParEval_get((char *) sb->data);
 
 		if	(!call->eval)
-			io_error(io, MSG_EFM, 21, 1, sb->data);
+			io_error(io, "[efm:21]", "s", sb->data);
 	}
 }
 
 
-static void eval_call (CmdPar_t *par, CmdParCall_t *call)
+static void eval_call (CmdPar *par, CmdParCall *call)
 {
 	if	(call->eval || call->par)
 	{
@@ -330,10 +330,10 @@ static void eval_call (CmdPar_t *par, CmdParCall_t *call)
 }
 
 
-static void parse_line (CmdPar_t *par, io_t *io, strbuf_t *sb)
+static void parse_line (CmdPar *par, IO *io, StrBuf *sb)
 {
-	CmdParKey_t *key, **kp;
-	CmdParCall_t *call, **cp;
+	CmdParKey *key, **kp;
+	CmdParCall *call, **cp;
 	int c;
 
 	key = NULL;
@@ -343,16 +343,16 @@ static void parse_line (CmdPar_t *par, io_t *io, strbuf_t *sb)
 
 	while ((c = io_getc(io)) != EOF)
 	{
-		CmdParKey_t kbuf;
-		CmdParCall_t cbuf;
-		CmdParDef_t *def;
-		CmdParVar_t *var;
+		CmdParKey kbuf;
+		CmdParCall cbuf;
+		CmdParDef *def;
+		CmdParVar *var;
 		int needspace;
 		int ignorespace;
 		int checknull;
 
 		sb_begin(sb);
-		memset(&kbuf, 0, sizeof(CmdParKey_t));
+		memset(&kbuf, 0, sizeof(CmdParKey));
 		needspace = 0;
 		ignorespace = 1;
 		checknull = 0;
@@ -448,7 +448,7 @@ static void parse_line (CmdPar_t *par, io_t *io, strbuf_t *sb)
 				else	eval_call(par, &cbuf);
 
 				sb_begin(sb);
-				memset(&kbuf, 0, sizeof(CmdParKey_t));
+				memset(&kbuf, 0, sizeof(CmdParKey));
 				needspace = 0;
 				ignorespace = 1;
 				continue;
@@ -528,10 +528,10 @@ Falls <flag> gesetzt ist, wird Bezeichnung und Kopierrechtsinformat
 aus dem Kommentarkopf extrahiert.
 */
 
-void CmdPar_read (CmdPar_t *par, io_t *io, int end, int flag)
+void CmdPar_read (CmdPar *par, IO *io, int end, int flag)
 {
-	strbuf_t *sb;
-	strbuf_t *cbuf;
+	StrBuf *sb;
+	StrBuf *cbuf;
 	int c;
 
 	if	(io == NULL)	return;
@@ -565,8 +565,13 @@ void CmdPar_read (CmdPar_t *par, io_t *io, int end, int flag)
 			{
 				addline(io, sb, 0);
 
-				if	(sb->data[0] == 'C')
+				switch (sb->data[0])
+				{
+				case 'C':
+				case 'c':
 					buf2var(par, "Copyright", sb);
+					break;
+				}
 				
 				sb_clear(sb);
 			}
@@ -608,13 +613,13 @@ void CmdPar_read (CmdPar_t *par, io_t *io, int end, int flag)
 the name <name>. If <flag> is set, ident and copyright informations
 are extracted from comment head.
 :de:Die Funktion |$1| ladet Kommandoparameter zu dem Kommandonamen <name>.
-Falls <flag> gesetzt ist, wird Bezeichnung und Kopierrechtsinformat
+Falls <flag> gesetzt ist, wird Bezeichnung und Kopierrechtsinformation
 aus dem Kommentarkopf extrahiert.
 */
 
-void CmdPar_load (CmdPar_t *par, const char *name, int flag)
+void CmdPar_load (CmdPar *par, const char *name, int flag)
 {
-	io_t *io = io_applfile(name, APPL_CNF);
+	IO *io = io_applfile(name, APPL_CNF);
 	CmdPar_read (par, io, EOF, flag);
 	io_close(io);
 }

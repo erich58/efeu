@@ -10,40 +10,19 @@
 #include <EFEU/cmdeval.h>
 #include <EFEU/efutil.h>
 #include <EFEU/oldpixmap.h>
+#include <EFEU/Debug.h>
+#include <EFEU/CmdPar.h>
 
-static char *Input = NULL;	/* Eingabefile */
-
-#define	HNAME	".pix_history"
-
-Var_t vardef[] = {
-	{ "Input",	&Type_str, &Input },
-};
-
-
-int main(int narg, char **arg)
+int main (int narg, char **arg)
 {
-	io_t *in;
+	SetProgName(arg[0]);
+	SetVersion("$Id: pixmap.c,v 1.5 2002-11-13 06:18:50 ef Exp $");
 
-	libinit(arg[0]);
+	SetupStd();
 	SetupUtil();
 	SetupPreproc();
+	SetupReadline();
 	SetupOldPixMap();
 
-	if	(!EshConfig(&narg, arg))
-	{
-		SetupReadline();
-		pconfig(NULL, vardef, tabsize(vardef));
-		loadarg(&narg, arg);
-		in = Input ? io_fileopen(Input, "r") : io_interact(NULL, HNAME);
-	}
-	else if	((in = io_fileopen(arg[0], "r")) == NULL)
-	{
-		reg_set(1, arg[0]);
-		liberror(NULL, 1);
-	}
-
-	in = io_cmdpreproc(in);
-	CmdEval(in, iomsg);
-	io_close(in);
-	return 0;
+	return EshEval(&narg, arg);
 }

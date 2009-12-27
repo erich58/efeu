@@ -5,7 +5,7 @@
 #include <EFEU/pctrl.h>
 
 
-int std_ctrl(PrFilter_t *pf, int cmd, va_list list)
+int std_ctrl(PCTRL *pf, int cmd, va_list list)
 {
 	if	(cmd & PCTRL_FMASK)	pf->put = std_put;
 
@@ -13,7 +13,7 @@ int std_ctrl(PrFilter_t *pf, int cmd, va_list list)
 }
 
 
-int std_put(int c, PrFilter_t *pf)
+int std_put(int c, PCTRL *pf)
 {
 	switch (c)
 	{
@@ -27,7 +27,7 @@ int std_put(int c, PrFilter_t *pf)
 }
 
 
-int tst_ctrl(PrFilter_t *pf, int cmd, va_list list)
+int tst_ctrl(PCTRL *pf, int cmd, va_list list)
 {
 	char *a;
 	int flag;
@@ -60,7 +60,7 @@ int tst_ctrl(PrFilter_t *pf, int cmd, va_list list)
 }
 
 
-int tst_put(int c, PrFilter_t *pf)
+int tst_put(int c, PCTRL *pf)
 {
 	return (c == EOF) ? io_puts(")", pf->io) : io_mputc(c, pf->io, "()");
 }

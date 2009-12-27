@@ -25,11 +25,11 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	LIST_DEPTH	4
 
-static ALLOCTAB(env_tab, 32, sizeof(DocEnv_t));
+static ALLOCTAB(env_tab, 32, sizeof(DocEnv));
 
-void Doc_newenv (Doc_t *doc, int depth, ...)
+void Doc_newenv (Doc *doc, int depth, ...)
 {
-	DocEnv_t *env;
+	DocEnv *env;
 	va_list list;
 
 	Doc_start(doc);
@@ -40,7 +40,7 @@ void Doc_newenv (Doc_t *doc, int depth, ...)
 	env = new_data(&env_tab);
 	*env = doc->env;
 	pushstack(&doc->env_stack, env);
-	memset(&doc->env, 0, sizeof(DocEnv_t));
+	memset(&doc->env, 0, sizeof(DocEnv));
 	doc->env.indent = doc->indent;
 	doc->env.cpos = env->cpos;
 	doc->env.depth = env->depth + depth;
@@ -53,9 +53,9 @@ void Doc_newenv (Doc_t *doc, int depth, ...)
 }
 
 
-void Doc_endenv (Doc_t *doc)
+void Doc_endenv (Doc *doc)
 {
-	DocEnv_t *env;
+	DocEnv *env;
 
 	if	(doc->env_stack)
 	{
@@ -82,7 +82,7 @@ static int testtype(int type, int mode)
 	return 1;
 }
 
-void Doc_endall (Doc_t *doc, int mode)
+void Doc_endall (Doc *doc, int mode)
 {
 	Doc_start(doc);
 
@@ -92,7 +92,7 @@ void Doc_endall (Doc_t *doc, int mode)
 	Doc_par(doc);
 }
 
-static void end_list (Doc_t *doc)
+static void end_list (Doc *doc)
 {
 	Doc_endenv(doc);
 
@@ -105,7 +105,7 @@ static void end_list (Doc_t *doc)
 */
 }
 
-static void list_item (Doc_t *doc)
+static void list_item (Doc *doc)
 {
 	doc->env.pflag = 0;
 
@@ -129,9 +129,9 @@ static void list_item (Doc_t *doc)
 	Doc_hmode(doc);
 }
 
-int Doc_islist (Doc_t *doc)
+int Doc_islist (Doc *doc)
 {
-	DocEnv_t *env;
+	DocEnv *env;
 
 	if	(DOC_IS_LIST(doc->env.type))	return 0;
 	if	(doc->env_stack == NULL)	return 0;
@@ -140,7 +140,7 @@ int Doc_islist (Doc_t *doc)
 	return (DOC_IS_LIST(env->type) && env->indent == doc->indent);
 }
 
-void Doc_item (Doc_t *doc, int type)
+void Doc_item (Doc *doc, int type)
 {
 	if	(Doc_islist(doc))
 		Doc_endenv(doc);
@@ -165,7 +165,7 @@ void Doc_item (Doc_t *doc, int type)
 	doc->env.par_beg = list_item;
 }
 
-void Doc_endlist (Doc_t *doc)
+void Doc_endlist (Doc *doc)
 {
 	while (doc->env_stack && !DOC_IS_LIST(doc->env.type))
 		Doc_endenv(doc);

@@ -23,9 +23,9 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 #include <EFEU/konvobj.h>
 
-static Func_t *KonvFunc(const Type_t *old, const Type_t *new)
+static EfiFunc *KonvFunc(const EfiType *old, const EfiType *new)
 {
-	Func_t **ftab;
+	EfiFunc **ftab;
 	int i;
 
 	if	(old == NULL)	return NULL;
@@ -38,9 +38,9 @@ static Func_t *KonvFunc(const Type_t *old, const Type_t *new)
 	return NULL;
 }
 
-ArgKonv_t *GetArgKonv(const Type_t *old, const Type_t *new)
+EfiArgKonv *GetArgKonv(const EfiType *old, const EfiType *new)
 {
-	static ArgKonv_t buf;
+	static EfiArgKonv buf;
 
 	buf.type = NULL;
 	buf.dist = 0;
@@ -69,14 +69,14 @@ ArgKonv_t *GetArgKonv(const Type_t *old, const Type_t *new)
 			return &buf;
 		}
 
-		buf.type = (Type_t *) new;
+		buf.type = (EfiType *) new;
 		buf.dist = D_EXPAND;
 	}
 
 	return NULL;
 }
 
-void ArgKonv(ArgKonv_t *konv, void *tg, void *src)
+void ArgKonv(EfiArgKonv *konv, void *tg, void *src)
 {
 	if	(konv->func)
 	{
@@ -88,8 +88,8 @@ void ArgKonv(ArgKonv_t *konv, void *tg, void *src)
 	}
 }
 
-int ArgKonvDist (const Type_t *old, const Type_t *new)
+int ArgKonvDist (const EfiType *old, const EfiType *new)
 {
-	ArgKonv_t *konv = GetArgKonv(old, new);
+	EfiArgKonv *konv = GetArgKonv(old, new);
 	return konv ? konv->dist : D_RESTRICTED;
 }

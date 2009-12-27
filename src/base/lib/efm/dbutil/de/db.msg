@@ -20,18 +20,14 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-1	$!: Datenfile $0: Lesen nicht möglich.\n
-2	$!: Datenfile $0: Ausgabe nicht möglich.\n
-3	$!: Datenfile $0: Ausgabefehler.\n
-4	$!: $0: Ungültige Satzlänge.\n
-5	$!: $0: Fehler im Satzlängenfeld.\n
+pos	$!: DBData: Feldposition $1, Breite $2 nicht zulässig (recl = $3).\n
+idx	$!: DBData: Feldindex $1 nicht zulässig (dim = $2).\n
 
-11	$!: Spalte $0: Ungültige Ziffer $1 in Zahlenwert.\n
-12	$!: Spalte $0: Fehler in BCD-Wert (HIGH)\n
-13	$!: Spalte $0: Fehler in BCD-Wert (LOW)\n
-14	$!: Spalte $0: Fehler in BCD-Wert (SIGNUM).\n
-15	$!: Spalte $0: Zeichen $1 nicht alphanumerisch.\n
+11	$!: Spalte $1: Ungültige Ziffer $2 in Zahlenwert.\n
+12	$!: Spalte $1: Fehler in BCD-Wert $2 (HIGH)\n
+13	$!: Spalte $1: Fehler in BCD-Wert $2 (LOW)\n
+14	$!: Spalte $1: Fehler in BCD-Wert $2 (SIGNUM).\n
+15	$!: Spalte $1: Zeichen $2 nicht alphanumerisch.\n
 
-31	$!: $0: tempnam() fehlgeschlagen.\n
-32	$!: $0: Ausgabefehler in Datei $1: Nur $1 von $2 Sätzen ausgegeben.\n
-33	$!: $0: Mehr als 8 Dateien können nicht gemischt werden.\n
+21	$!: Spalte $1: Ungültige Ziffer $2 in Zahlenwert.\n
+25	$!: Spalte $1: Zeichen $2 nicht alphanumerisch.\n

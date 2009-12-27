@@ -1,4 +1,4 @@
-\sec	Entwicklung des esh-Interpreters
+\sec	Entwicklung des EFEU-Interpreters
 
 Die EFEU-Shell |esh| steht nicht nur für das Kommando gleichen Namens,
 sondern auch für einen Interpreter, der über C-Bibliotheksfunktion
@@ -39,7 +39,7 @@ dass vom Interpreter direkt auf C-Datenstrukturen zugegriffen werden
 kann und einfache Schnittstellen zu C-Bibliotheksfunktionen
 bestehen.
 
-Im Jahr 1994 war der |esh|-Interpreter einsetzbar, und es stand
+Im Jahr 1994 war der EFEU-Interpreter einsetzbar, und es stand
 auch das |esh|-Kommando zur Verfügung. Seine erste wichtige Anwendung
 war die Umstellung des \index{Wohnungsmarktmodell}es auf esh. Dabei kommt
 eine Version des Interpreters mit zusätzlichen Funktionen speziell

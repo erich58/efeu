@@ -45,20 +45,20 @@ CEXPR(name, LONG(0) op LONG(1))
 /*	Funktionen
 */
 
-static void f_long_abs (Func_t *func, void *rval, void **arg)
+static void f_long_abs (EfiFunc *func, void *rval, void **arg)
 {
 	register int a = LONG(0);
 	LRETVAL = a < 0 ? -a : a;
 }
 
-static void f_long_min (Func_t *func, void *rval, void **arg)
+static void f_long_min (EfiFunc *func, void *rval, void **arg)
 {
 	register long a = LONG(0);
 	register long b = LONG(1);
 	LRETVAL = a < b ? a : b;
 }
 
-static void f_long_max (Func_t *func, void *rval, void **arg)
+static void f_long_max (EfiFunc *func, void *rval, void **arg)
 {
 	register long a = LONG(0);
 	register long b = LONG(1);
@@ -125,7 +125,7 @@ ASSIGN(a_long_or, |=)
 /*	Funktionstabelle
 */
 
-static FuncDef_t fdef_long[] = {
+static EfiFuncDef fdef_long[] = {
 	{ FUNC_VIRTUAL, &Type_long, "abs (long)", f_long_abs },
 	{ FUNC_VIRTUAL, &Type_long, "min (long, long)", f_long_min },
 	{ FUNC_VIRTUAL, &Type_long, "max (long, long)", f_long_max },

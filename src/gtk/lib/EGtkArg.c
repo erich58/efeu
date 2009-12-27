@@ -28,16 +28,16 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	LVAL_SIZE(type) (sizeof(EGtkArg) + type->size)
 
-Obj_t *EGtkLval_alloc (Type_t *type, va_list list)
+EfiObj *EGtkLval_alloc (EfiType *type, va_list list)
 {
 	EGtkArg *obj = (EGtkArg *) Obj_alloc(LVAL_SIZE(type));
 	obj->obj = va_arg(list, GtkObject *);
 	obj->arg.name = mstrcpy(va_arg(list, char *));
 	obj->data = (void *) (obj + 1);
-	return (Obj_t *) obj;
+	return (EfiObj *) obj;
 }
 
-void EGtkLval_free (Obj_t *ptr)
+void EGtkLval_free (EfiObj *ptr)
 {
 	EGtkArg *obj = (EGtkArg *) ptr;
 	CleanData(obj->type, obj->data);
@@ -45,21 +45,21 @@ void EGtkLval_free (Obj_t *ptr)
 	Obj_free(ptr, LVAL_SIZE(obj->type));
 }
 
-char *EGtkLval_ident (Obj_t *obj)
+char *EGtkLval_ident (const EfiObj *obj)
 {
 	EGtkArg *arg = (EGtkArg *) obj;
 	return arg->arg.name ? mstrcpy(arg->arg.name) : NULL;
 }
 
-Obj_t *EGtkObject (GtkObject *obj)
+EfiObj *EGtkObject (GtkObject *obj)
 {
 	return NewPtrObj(GetType(gtk_type_name(GTK_OBJECT_TYPE(obj))), obj);
 }
 
-Obj_t *EGtkArg2Obj (GtkArg *arg)
+EfiObj *EGtkArg2Obj (GtkArg *arg)
 {
 	GtkType gtype;
-	Type_t *otype;
+	EfiType *otype;
 	char *s;
 	
 	if	(!arg)	return NULL;
@@ -107,7 +107,7 @@ Obj_t *EGtkArg2Obj (GtkArg *arg)
 	return NULL;
 }
 
-static void EGtkArg_update (Obj_t *obj)
+static void EGtkArg_update (EfiObj *obj)
 {
 	EGtkArg *base = (EGtkArg *) obj;
 	gtk_object_arg_get(base->obj, &base->arg, NULL);
@@ -115,7 +115,7 @@ static void EGtkArg_update (Obj_t *obj)
 	Obj2Data(obj, base->type, base->data);
 }
 
-static void EGtkArg_sync (Obj_t *obj)
+static void EGtkArg_sync (EfiObj *obj)
 {
 	EGtkArg *base = (EGtkArg *) obj;
 	RefObj(obj);
@@ -162,10 +162,10 @@ static void EGtkArg_sync (Obj_t *obj)
 
 static EGTK_LVAL(EGtkArg_lval, EGtkArg_update, EGtkArg_sync);
 
-Obj_t *EGtkArg2Lval (GtkObject *gtkobj, const char *name)
+EfiObj *EGtkArg2Lval (GtkObject *gtkobj, const char *name)
 {
 	GtkArg gtkarg;
-	Obj_t *obj;
+	EfiObj *obj;
 	EGtkArg *lval;
 	
 	gtkarg.name = (char *) name;
@@ -184,10 +184,10 @@ Obj_t *EGtkArg2Lval (GtkObject *gtkobj, const char *name)
 	lval->type = obj->type;
 	lval->lval = &EGtkArg_lval;
 	Obj2Data(obj, lval->type, lval->data);
-	return (Obj_t *) lval;
+	return (EfiObj *) lval;
 }
 
-Obj_t *GetEGtkArg (const Var_t *st, const Obj_t *obj)
+EfiObj *GetEGtkArg (const EfiVar *st, const EfiObj *obj)
 {
 	if	(!obj)
 		return ConstObj(st->type, NULL);
@@ -195,7 +195,7 @@ Obj_t *GetEGtkArg (const Var_t *st, const Obj_t *obj)
 	return LvalObj(&EGtkArg_lval, st->type, Val_ptr(obj->data), st->par);
 }
 
-static Obj_t *ConstEGtkArg (const Var_t *st, const Obj_t *obj)
+static EfiObj *ConstEGtkArg (const EfiVar *st, const EfiObj *obj)
 {
 	if	(obj)
 	{
@@ -209,9 +209,9 @@ static Obj_t *ConstEGtkArg (const Var_t *st, const Obj_t *obj)
 	return NULL;
 }
 
-void AddEGtkArg(Type_t *type, EGtkArgDef *def, size_t dim)
+void AddEGtkArg(EfiType *type, EGtkArgDef *def, size_t dim)
 {
-	Var_t *var;
+	EfiVar *var;
 	char *p;
 
 	while (dim-- > 0)

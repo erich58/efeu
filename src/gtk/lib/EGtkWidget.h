@@ -28,11 +28,11 @@ If not, write to the Free Software Foundation, Inc.,
 #include <GUI/EGtk.h>
 #include <EFEU/stdtype.h>
 
-extern Type_t EGtkWidgetType;
-extern Type_t EGtkDataType;
+extern EfiType EGtkWidgetType;
+extern EfiType EGtkDataType;
 
-extern GtkWidget *Obj2GtkWidget (Obj_t *obj);
-extern void AddEGtkWidgetType (Type_t *type);
+extern GtkWidget *Obj2GtkWidget (EfiObj *obj);
+extern void AddEGtkWidgetType (EfiType *type);
 
 extern void EGtkEnum_setup (void);
 extern void EGtkWidget_setup (void);
@@ -44,8 +44,8 @@ extern void EGtkEditable_setup (void);
 extern void EGtkMisc_setup (void);
 extern void EGtkWindow_setup (void);
 
-extern Obj_t *EGtkArg2Obj (GtkArg *arg);
-extern Obj_t *EGtkArg2Lval (GtkObject *obj, const char *name);
+extern EfiObj *EGtkArg2Obj (GtkArg *arg);
+extern EfiObj *EGtkArg2Lval (GtkObject *obj, const char *name);
 
 typedef struct {
 	OBJECT_VAR;
@@ -53,24 +53,24 @@ typedef struct {
 	GtkArg arg;
 } EGtkArg;
 
-extern Obj_t *GetEGtkArg (const Var_t *st, const Obj_t *obj);
-extern Obj_t *EGtkObjectArg (GtkObject *obj, Type_t *type, const char *name);
+extern EfiObj *GetEGtkArg (const EfiVar *st, const EfiObj *obj);
+extern EfiObj *EGtkObjectArg (GtkObject *obj, EfiType *type, const char *name);
 
 typedef struct {
 	char *type;
 	char *name;
 } EGtkArgDef;
 
-extern void AddEGtkArg(Type_t *type, EGtkArgDef *def, size_t dim);
+extern void AddEGtkArg(EfiType *type, EGtkArgDef *def, size_t dim);
 extern void EGtkWidgetClass(GtkType type, EGtkArgDef *arg, size_t narg,
 	EGtkSigDef *sig, size_t nsig);
 
-extern Obj_t *EGtkLval_alloc (Type_t *type, va_list list);
-extern void EGtkLval_free (Obj_t *obj);
-extern char *EGtkLval_ident (Obj_t *obj);
+extern EfiObj *EGtkLval_alloc (EfiType *type, va_list list);
+extern void EGtkLval_free (EfiObj *obj);
+extern char *EGtkLval_ident (const EfiObj *obj);
 
 #define	EGTK_LVAL(name, update, sync)	\
-Lval_t name = { EGtkLval_alloc, EGtkLval_free, update, sync, EGtkLval_ident }
+EfiLval name = { EGtkLval_alloc, EGtkLval_free, update, sync, EGtkLval_ident }
 
 /*
 $SeeAlso

@@ -2,18 +2,21 @@
 	(c) 1994 Erich Frühstück
 */
 
-#include <EFEU/mdmat.h>
+#include <EFEU/mdtest.h>
 
 typedef struct {
 	unsigned oldpos;
 	unsigned newpos;
-	mdaxis_t *axis;
+	mdaxis *axis;
 } XDATA;
 
-#define	TEST(test, x) ((x).newpos == 0 && mdtest(test, (x).axis->name, (x).oldpos))
+#define	TEST(test, x) ((x).newpos == 0 && mdtest_eval(test, (x).axis->name, (x).oldpos))
 
-static int cmp_data(const XDATA *a, const XDATA *b)
+static int cmp_data(const void *pa, const void *pb)
 {
+	const XDATA *a = pa;
+	const XDATA *b = pb;
+
 	if	(a->newpos < b->newpos)	return 1;
 	else if	(a->newpos > b->newpos)	return -1;
 	else if	(a->oldpos < b->oldpos)	return -1;
@@ -21,13 +24,13 @@ static int cmp_data(const XDATA *a, const XDATA *b)
 	else				return	0;
 }
 
-void md_permut(mdmat_t *md, const char *str)
+void md_permut(mdmat *md, const char *str)
 {
 	char **list;
 	size_t dim;
 	size_t mdim;
-	mdaxis_t *axis, **ptr;
-	mdtest_t *test;
+	mdaxis *axis, **ptr;
+	mdtest *test;
 	XDATA *tab;
 	int i, j;
 
@@ -42,7 +45,7 @@ void md_permut(mdmat_t *md, const char *str)
 
 	if	(dim == 0)	return;
 
-	tab = ALLOC(mdim, XDATA);
+	tab = memalloc(mdim * sizeof(XDATA));
 
 	for (j = 0, axis = md->axis; axis != NULL; axis = axis->next, j++)
 	{
@@ -53,17 +56,17 @@ void md_permut(mdmat_t *md, const char *str)
 
 	for (i = 0; i < dim; i++)
 	{
-		test = new_test(list[i], mdim);
+		test = mdtest_create(list[i], mdim);
 
 		for (j = 0; j < mdim; j++)
 			if (TEST(test, tab[j])) tab[j].newpos = dim - i;
 
-		del_test(test);
+		mdtest_clean(test);
 	}
 
 	memfree(list);
 
-	qsort(tab, mdim, sizeof(XDATA), (comp_t) cmp_data);
+	qsort(tab, mdim, sizeof(XDATA), cmp_data);
 
 	ptr = &md->axis;
 

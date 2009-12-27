@@ -26,7 +26,7 @@ If not, write to the Free Software Foundation, Inc.,
 /*	Hilfskommandos
 */
 
-static void put_att (HTML_t *html, int flag, char *att)
+static void put_att (HTML *html, int flag, char *att)
 {
 	if	(html->copy)	att = NULL;
 	if	(html->att)	io_printf(html->out, "</%s>", html->att);
@@ -41,7 +41,7 @@ static void put_att (HTML_t *html, int flag, char *att)
 	if	(html->att)	io_printf(html->out, "<%s>", html->att);
 }
 
-static void put_env (HTML_t *html, int flag, const char *name, int nl)
+static void put_env (HTML *html, int flag, const char *name, int nl)
 {
 	HTML_newline(html, 0);
 	io_putc('<', html->out);
@@ -56,7 +56,7 @@ static void put_env (HTML_t *html, int flag, const char *name, int nl)
 		html->last = io_putc('\n', html->out);
 }
 
-static void put_sect (HTML_t *html, int flag, int type)
+static void put_sect (HTML *html, int flag, int type)
 {
 	HTML_newline(html, 0);
 
@@ -65,6 +65,7 @@ static void put_sect (HTML_t *html, int flag, int type)
 		io_puts("<P>\n", html->out);
 		sb_clear(html->buf);
 		io_push(html->out, io_strbuf(html->buf));
+		HTML_cpush(html, NULL, 0);
 	}
 	else
 	{
@@ -72,10 +73,13 @@ static void put_sect (HTML_t *html, int flag, int type)
 		sb_putc(0, html->buf);
 		io_ctrl(html->out, type, html->buf->data);
 		io_puts("<BR>\n", html->out);
+
+		while (html->s_cmd)
+			HTML_cpop(html);
 	}
 }
 
-static void list_env (HTML_t *html, int flag, const char *name)
+static void list_env (HTML *html, int flag, const char *name)
 {
 	HTML_newline(html, 0);
 
@@ -89,8 +93,9 @@ static void list_env (HTML_t *html, int flag, const char *name)
 	put_env(html, flag, name, 1);
 }
 
-int HTML_env (HTML_t *html, int flag, va_list list)
+int HTML_env (void *drv, int flag, va_list list)
 {
+	HTML *html = drv;
 	int cmd = va_arg(list, int);
 
 	switch (cmd)
@@ -183,7 +188,7 @@ int HTML_env (HTML_t *html, int flag, va_list list)
 		break;
 	case DOC_MODE_HTML:
 	case DOC_MODE_PLAIN:
-		html->put = flag ? DocDrv_plain : (DocDrvPut_t) HTML_putc;
+		html->put = flag ? DocDrv_plain : HTML_putc;
 		break;
 	case DOC_MODE_TEX:
 	case DOC_MODE_MAN:
@@ -191,7 +196,7 @@ int HTML_env (HTML_t *html, int flag, va_list list)
 		break;
 	case DOC_MODE_VERB:
 		put_env(html, flag, "PRE", 1);
-		html->put = (DocDrvPut_t) (flag ? HTML_plain : HTML_putc);
+		html->put = flag ? HTML_plain : HTML_putc;
 		break;
 	case DOC_ENV_FORMULA:
 		break;

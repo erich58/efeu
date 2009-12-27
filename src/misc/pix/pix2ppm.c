@@ -22,10 +22,10 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/oldpixmap.h>
 
-void OldPixMapToPPM(OldPixMap_t *pm, const char *name)
+void OldPixMapToPPM(OldPixMap *pm, const char *name)
 {
 	int i, j;
-	uchar_t *p;
+	unsigned char *p;
 	FILE *file;
 
 	if	(pm == NULL)	return;

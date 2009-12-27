@@ -36,20 +36,20 @@ static char *bname (const char *name)
 /*	Präprozessorbefehle
 */
 
-static void pp_include (SrcData_t *data, const char *name)
+static void pp_include (SrcData *data, const char *name)
 {
-	SrcData_copy(data, NULL);
+	SrcData_copy(data, NULL, NULL);
 
 	if	(!data->doc.var[VAR_HEAD])
 	{
 		sb_puts("$header ", data->buf);
 		ppcopy(data->ein, data->buf, NULL);
-		SrcData_copy(data, NULL);
+		SrcData_copy(data, NULL, NULL);
 	}
 	else	ppcopy(data->ein, NULL, NULL);
 }
 
-static void pp_define (SrcData_t *data, const char *name)
+static void pp_define (SrcData *data, const char *name)
 {
 	char *p;
 
@@ -57,7 +57,6 @@ static void pp_define (SrcData_t *data, const char *name)
 
 	if	(sb_getpos(data->buf) && *p != '_')
 	{
-		reg_cpy(1, p);
 		sb_puts("\\index[", data->doc.synopsis);
 		sb_puts(p, data->doc.synopsis);
 		sb_puts("]\n", data->doc.synopsis);
@@ -65,16 +64,16 @@ static void pp_define (SrcData_t *data, const char *name)
 
 		if	(io_peek(data->ein) == '(')
 		{
-			io_t *aus = io_strbuf(data->doc.synopsis);
+			IO *aus = io_strbuf(data->doc.synopsis);
 			sb_putc(io_getc(data->ein), data->doc.synopsis);
-			copy_block(data->ein, aus, ')');
+			copy_block(data->ein, aus, ')', 1);
 			io_close(aus);
 		}
 
 		sb_puts("\n\n", data->doc.synopsis);
-		SrcData_copy(data, data->doc.tab[BUF_DESC]);
+		SrcData_copy(data, data->doc.tab[BUF_DESC], p);
 	}
-	else	SrcData_copy(data, NULL);
+	else	SrcData_copy(data, NULL, p);
 
 	ppcopy(data->ein, NULL, NULL);
 }
@@ -82,13 +81,13 @@ static void pp_define (SrcData_t *data, const char *name)
 /*	Headerfiles
 */
 
-static SrcCmd_t hdr_ppdef[] = {
+static SrcCmd hdr_ppdef[] = {
 	{ "define", pp_define },
 };
 
-void s2d_hdr (const char *name, io_t *ein, io_t *aus)
+void s2d_hdr (const char *name, IO *ein, IO *aus)
 {
-	SrcData_t data;
+	SrcData data;
 
 	SrcData_init(&data, ein);
 	data.doc.var[VAR_NAME] = bname(name);
@@ -98,8 +97,7 @@ void s2d_hdr (const char *name, io_t *ein, io_t *aus)
 	data.mask = DECL_TYPE|DECL_STRUCT;
 	io_printf(aus, "\\mpage[%s] %s\n", Secnum ? Secnum : "7",
 		data.doc.var[VAR_NAME]);
-	reg_cpy(1, name);
-	SrcData_eval(&data);
+	SrcData_eval(&data, name);
 	SrcData_write(&data, aus);
 }
 
@@ -107,13 +105,13 @@ void s2d_hdr (const char *name, io_t *ein, io_t *aus)
 /*	Sourcefiles
 */
 
-static SrcCmd_t src_ppdef[] = {
+static SrcCmd src_ppdef[] = {
 	{ "include", pp_include },
 };
 
-void s2d_src (const char *name, io_t *ein, io_t *aus)
+void s2d_src (const char *name, IO *ein, IO *aus)
 {
-	SrcData_t data;
+	SrcData data;
 
 	SrcData_init(&data, ein);
 	data.doc.var[VAR_NAME] = bname(name);
@@ -122,7 +120,28 @@ void s2d_src (const char *name, io_t *ein, io_t *aus)
 	data.mask = DECL_VAR|DECL_FUNC;
 	io_printf(aus, "\\mpage[%s] %s\n", Secnum ? Secnum : "3",
 		data.doc.var[VAR_NAME]);
-	reg_cpy(1, name);
-	SrcData_eval(&data);
+	SrcData_eval(&data, name);
+	SrcData_write(&data, aus);
+}
+
+/*	Scriptfiles
+*/
+
+static SrcCmd cmd_ppdef[] = {
+	{ "define", pp_define },
+};
+
+void s2d_cmd (const char *name, IO *ein, IO *aus)
+{
+	SrcData data;
+
+	SrcData_init(&data, ein);
+	data.doc.var[VAR_NAME] = bname(name);
+	data.ppdef = cmd_ppdef;
+	data.ppdim = tabsize(cmd_ppdef);
+	data.mask = DECL_TYPE|DECL_STRUCT|DECL_VAR|DECL_FUNC;
+	io_printf(aus, "\\mpage[%s] %s\n", Secnum ? Secnum : "7",
+		data.doc.var[VAR_NAME]);
+	SrcData_eval(&data, name);
 	SrcData_write(&data, aus);
 }

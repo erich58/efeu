@@ -5,8 +5,8 @@
 
 #include <EFEU/oldpixmap.h>
 
-static void useourowncmap(OldPixMap_t *im);
-static void setcolormap(OldPixMap_t *im);
+static void useourowncmap(OldPixMap *im);
+static void setcolormap(OldPixMap *im);
 static void makewindow(char *geomstring);
 
 #ifndef	rindex
@@ -55,7 +55,7 @@ int main(int ac, char **av)
 	unsigned int	w2, bytes_per_line;
 	int		x, y, val, upsidedown, wreal, mag = 1;
 	unsigned char	*line;
-	OldPixMap_t	*im;
+	OldPixMap	*im;
 	XEvent		event;
 	XVisualInfo	visualinfo;
 	char		*geomstring, *displaystring;
@@ -337,7 +337,7 @@ image upside down */
 }
 
 
-static int trydefaultcmap(OldPixMap_t *im)
+static int trydefaultcmap(OldPixMap *im)
 {
 	int i, num;
 	XColor	tmp;
@@ -388,7 +388,7 @@ static int trydefaultcmap(OldPixMap_t *im)
 	return(1);
 }
 
-static void useourowncmap(OldPixMap_t *im)
+static void useourowncmap(OldPixMap *im)
 {
 	int		i;
 	unsigned int	size;
@@ -419,7 +419,7 @@ static void useourowncmap(OldPixMap_t *im)
 	free(cols);
 }
 
-static void setcolormap(OldPixMap_t *im)
+static void setcolormap(OldPixMap *im)
 {
 	if (forcecmap)
 		useourowncmap(im);

@@ -4,7 +4,7 @@
 
 #include <EFEU/mdmat.h>
 
-static unsigned get_2byte(io_t *io)
+static unsigned get_2byte(IO *io)
 {
 	int a, b;
 
@@ -17,17 +17,17 @@ static unsigned get_2byte(io_t *io)
 	return 0;
 }
 
-static unsigned get_4byte(io_t *io)
+static unsigned get_4byte(IO *io)
 {
 	unsigned a = get_2byte(io);
 	return (a << 16) + get_2byte(io);
 }
 
-mdmat_t *md_gethdr(io_t *io)
+mdmat *md_gethdr(IO *io)
 {
-	mdmat_t *md;
-	mdaxis_t *x;
-	mdaxis_t **ptr;
+	mdmat *md;
+	mdaxis *x;
+	mdaxis **ptr;
 	char *strbuf;
 	size_t j;
 	char *p;
@@ -43,11 +43,10 @@ mdmat_t *md_gethdr(io_t *io)
 
 	if	(n == MD_OLDMAGIC)
 	{
-		ushort_t k;
+		unsigned short k;
 
-		reg_set(0, io_ident(io));
-		errmsg(MSG_MDMAT, 10);
-		exit(EXIT_SUCCESS);
+		io_error(io, "[mdmat:10]", NULL);
+		exit(EXIT_FAILURE);
 		get_LSBF(io, &k, 2);
 		dim = k;
 		get_LSBF(io, &space, 4);
@@ -63,7 +62,7 @@ mdmat_t *md_gethdr(io_t *io)
 	}
 	else
 	{
-		liberror(MSG_MDMAT, 11);
+		io_error(io, "[mdmat:11]", NULL);
 		return NULL;
 	}
 
@@ -103,16 +102,9 @@ mdmat_t *md_gethdr(io_t *io)
 		}
 		else
 		{
-			reg_cpy(1, oname);
-			liberror(MSG_MDMAT, 14);
+			dbg_error(NULL, "[mdmat:14]", "s", oname);
 			return NULL;
 		}
-	}
-
-	if	(recl == 0)
-	{
-		reg_cpy(1, oname);
-		errmsg(MSG_MDMAT, 17);
 	}
 
 /*	Achsen initialisieren

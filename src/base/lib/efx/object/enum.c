@@ -23,50 +23,39 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 #include <EFEU/stdtype.h>
 
-static Obj_t *enum_member (const Var_t *member, const Obj_t *obj)
+void AddEnumKey (EfiType *type, char *name, int val)
 {
-	int val = (int) member->par;
-	return NewObj(member->type, &val);
+	VarTab_xadd(type->vtab, name, NULL, NewObj(type, &val));
 }
 
-void AddEnumKey (Type_t *type, const char *name, int val)
+char *EnumKeyLabel (const EfiType *type, int val, int flag)
 {
-	MemberDef_t member;
-	member.name = (char *) name;
-	member.type = type;
-	member.member = enum_member;
-	member.par = (void *) val;
-	member.desc = NULL;
-	AddMember(type->vtab, &member, 1);
-}
-
-char *EnumKeyLabel (const Type_t *type, int val, int flag)
-{
-	xtab_t *tab;
-	Var_t *var;
-	const Type_t *t;
-	int i;
+	VarTabEntry *p;
+	const EfiType *t;
+	size_t n;
 
 	for (t = type; t != NULL; t = t->base)
 	{ 
 		if	(t->vtab == NULL)	continue;
 
-		tab = &t->vtab->tab;
+		p = t->vtab->tab.data;
+		n = t->vtab->tab.used;
 
-		for (i = 0; i < tab->dim; i++)
+		for (; n-- > 0; p++)
 		{
-			var = tab->tab[i];
-
-			if	(var->type != t)
+			if	(p->obj == NULL)
 				continue;
 
-			if	((int) var->par != val)
+			if	(p->obj->type != t)
+				continue;
+
+			if	(Val_int(p->obj->data) != val)
 				continue;
 
 			if	(flag)
-				return mstrpaste("::", t->name, var->name);
+				return mstrpaste("::", t->name, p->name);
 
-			return mstrcpy(var->name);
+			return mstrcpy(p->name);
 		}
 	}
 
@@ -76,59 +65,53 @@ char *EnumKeyLabel (const Type_t *type, int val, int flag)
 	return msprintf("%d", val);
 }
 
-static ObjList_t **add_key (ObjList_t **ptr, Type_t *type)
+static EfiObjList **add_key (EfiObjList **ptr, EfiType *type)
 {
 	if	(type == NULL)		return NULL;
 	if	(type == &Type_enum)	return ptr;
 
 	ptr = add_key(ptr, type->base);
 
-	if	(ptr)
+	if	(ptr && type->vtab)
 	{
-		xtab_t *tab;
-		Var_t *var;
-		int i;
+		VarTabEntry *p;
+		size_t n;
 
-		if	(type->vtab == NULL)	return ptr;
+		p = type->vtab->tab.data;
+		n = type->vtab->tab.used;
 
-		tab = &type->vtab->tab;
-
-		for (i = 0; i < tab->dim; i++)
+		for (; n-- > 0; p++)
 		{
-			var = tab->tab[i];
-
-			if	(var->type != type)
-				continue;
-
-			*ptr = NewObjList(enum_member(var, NULL));
-			ptr = &(*ptr)->next;
+			if	(p->obj && p->obj->type == type)
+			{
+				*ptr = NewObjList(RefObj(p->obj));
+				ptr = &(*ptr)->next;
+			}
 		}
 	}
 
 	return ptr;
 }
 
-ObjList_t *EnumKeyList (Type_t *type)
+EfiObjList *EnumKeyList (EfiType *type)
 {
-	ObjList_t *list = NULL;
+	EfiObjList *list = NULL;
 	add_key(&list, type);
 	return list;
 }
 
-int EnumKeyCode (const Type_t *type, const char *name)
+int EnumKeyCode (const EfiType *type, const char *name)
 {
-	Var_t key, *var;
+	VarTabEntry *var;
 
 	if	(!name || !type->vtab)	return 0;
 
-	key.name = (char *) name;
-
 	while (type != NULL)
 	{
-		var = xsearch(&type->vtab->tab, &key, XS_FIND);
+		var = VarTab_get(type->vtab, name);
 
-		if	(var && var->type == type)
-			return (int) var->par;
+		if	(var && var->obj && var->obj->type == type)
+			return Val_int(var->obj->data);
 
 		type = type->base;
 	}
@@ -136,17 +119,17 @@ int EnumKeyCode (const Type_t *type, const char *name)
 	return 0;
 }
 
-static void ikonv (Func_t *func, void *rval, void **arg)
+static void ikonv (EfiFunc *func, void *rval, void **arg)
 {
 	Val_int(rval) = Val_int(arg[0]);
 }
 
-static void str2enum (Func_t *func, void *rval, void **arg)
+static void str2enum (EfiFunc *func, void *rval, void **arg)
 {
 	Val_int(rval) = EnumKeyCode(func->type, Val_str(arg[0]));
 }
 
-static void enum2str (Func_t *func, void *rval, void **arg)
+static void enum2str (EfiFunc *func, void *rval, void **arg)
 {
 	int val = Val_int(arg[0]);
 	Val_str(rval) = EnumKeyLabel(func->arg[0].type, val, 0);
@@ -154,7 +137,7 @@ static void enum2str (Func_t *func, void *rval, void **arg)
 
 static struct {
 	char *fmt;
-	FuncEval_t func;
+	void (*func) (EfiFunc *func, void *rval, void **arg);
 } fdef[] = {
 	{ "$1 int ()", ikonv },
 	{ "restricted int $1 ()", ikonv },
@@ -163,29 +146,31 @@ static struct {
 };
 
 
-Type_t *NewEnumType (const char *name, EnumTypeDef_t *def, size_t dim)
+EfiType *NewEnumType (const char *name, EnumTypeDef *def, size_t dim)
 {
-	Type_t *type;
+	char *arg[2];
+	EfiType *type;
 	int n;
 	
 	type = NewType(mstrcpy(name));
 	type->size = sizeof(int);
 	type->recl = sizeof(int);
-	type->iodata = IOData_std;
 	type->base = &Type_enum;
 	AddType(type);
 
 	for (; dim-- > 0; def++)
-		AddEnumKey(type, def->name, def->val);
+		AddEnumKey(type, mstrcpy(def->name), def->val);
 
-	reg_set(1, mstrcpy(type->name));
+	arg[0] = NULL;
+	arg[1] = mstrcpy(type->name);
 
 	for (n = tabsize(fdef); n-- > 0;)
 	{
-		char *p = parsub(fdef[n].fmt);
+		char *p = mpsubvec(fdef[n].fmt, 2, arg);
 		SetFunc(0, NULL, p, fdef[n].func);
 		memfree(p);
 	}
 
+	memfree(arg[1]);
 	return type;
 }

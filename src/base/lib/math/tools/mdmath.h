@@ -29,7 +29,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	MSG_MDMATH	"mdmath"
 
-mdmat_t *mdinv (mdmat_t *base);
+mdmat *mdinv (mdmat *base);
 
 void SetupMdMath (void);
 

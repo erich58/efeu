@@ -26,7 +26,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <efeudoc.h>
 
 
-void Doc_verb (Doc_t *doc, io_t *in, int base, int alt)
+void Doc_verb (Doc *doc, IO *in, int base, int alt)
 {
 	int c;
 	int pos;

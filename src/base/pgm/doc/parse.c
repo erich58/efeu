@@ -42,7 +42,7 @@ static char *parse_data (void)
 /*	Anführungen
 */
 
-static void copy_quote (io_t *in, strbuf_t *buf, int key)
+static void copy_quote (IO *in, StrBuf *buf, int key)
 {
 	int c;
 
@@ -60,7 +60,7 @@ static void copy_quote (io_t *in, strbuf_t *buf, int key)
 	}
 }
 
-static void test_quote (io_t *in, strbuf_t *buf, int key)
+static void test_quote (IO *in, StrBuf *buf, int key)
 {
 	if	(io_peek(in) == key)
 	{
@@ -70,7 +70,7 @@ static void test_quote (io_t *in, strbuf_t *buf, int key)
 	else	copy_quote(in, buf, key);
 }
 
-static char *quote_arg (io_t *in, int c)
+static char *quote_arg (IO *in, int c)
 {
 	sb_clear(&parse_buf);
 	copy_quote(in, &parse_buf, c);
@@ -82,7 +82,7 @@ static char *quote_arg (io_t *in, int c)
 /*	Argument mit Testfunktion
 */
 
-static char *parse_arg (io_t *in, strbuf_t *buf, int (*test)(int c))
+static char *parse_arg (IO *in, StrBuf *buf, int (*test)(int c))
 {
 	int c;
 
@@ -111,7 +111,7 @@ static char *parse_arg (io_t *in, strbuf_t *buf, int (*test)(int c))
 
 static int macarg_end (int c) { return (c == ',' || c == ')'); }
 
-char *DocParseMacArg (io_t *in)
+char *DocParseMacArg (IO *in)
 {
 	return parse_arg(in, &parse_buf, macarg_end);
 }
@@ -120,7 +120,7 @@ char *DocParseMacArg (io_t *in)
 /*	Rest der Zeile lesen
 */
 
-char *DocParseLine (io_t *in, int flag)
+char *DocParseLine (IO *in, int flag)
 {
 	int c, d;
 
@@ -150,7 +150,7 @@ char *DocParseLine (io_t *in, int flag)
 /*	Absatz lesen
 */
 
-char *DocParsePar (io_t *in)
+char *DocParsePar (IO *in)
 {
 	int c, flag;
 
@@ -181,7 +181,7 @@ char *DocParsePar (io_t *in)
 /*	Block Lesen: Einzelne Zeile oder geklammert
 */
 
-static void copy_str (io_t *in, strbuf_t *buf, int end)
+static void copy_str (IO *in, StrBuf *buf, int end)
 {
 	int c, escape;
 	
@@ -197,7 +197,7 @@ static void copy_str (io_t *in, strbuf_t *buf, int end)
 	}
 }
 
-static void copy_brace (io_t *in, strbuf_t *buf)
+static void copy_brace (IO *in, StrBuf *buf)
 {
 	int c = 0;
 	int depth = 0;
@@ -228,7 +228,7 @@ static void copy_brace (io_t *in, strbuf_t *buf)
 }
 
 
-char *DocParseExpr (io_t *in)
+char *DocParseExpr (IO *in)
 {
 	int c;
 
@@ -261,7 +261,7 @@ char *DocParseExpr (io_t *in)
 
 static int word_end (int c) { return isspace(c); }
 
-static char *do_parse (io_t *in, int beg, int end)
+static char *do_parse (IO *in, int beg, int end)
 {
 	int c, depth;
 
@@ -337,7 +337,7 @@ static char *do_parse (io_t *in, int beg, int end)
 	return sb_memcpy(&parse_buf);
 }
 
-char *DocParseArg (io_t *in, int beg, int end, int flag)
+char *DocParseArg (IO *in, int beg, int end, int flag)
 {
 	char *p = do_parse(in, beg, end);
 
@@ -359,7 +359,7 @@ char *DocParseArg (io_t *in, int beg, int end, int flag)
 	werden, liefert die Funktion den Buffer anstelle einer Kopie.
 */
 
-char *DocParseName (io_t *in, int key)
+char *DocParseName (IO *in, int key)
 {
 	int c;
 
@@ -399,7 +399,7 @@ char *DocParseName (io_t *in, int key)
 /*	Ganzzahlwert ohne Vorzeichen einlesen.
 */
 
-int DocParseNum (io_t *in)
+int DocParseNum (IO *in)
 {
 	int c;
 
@@ -427,7 +427,7 @@ int DocParseNum (io_t *in)
 /*	Steuerflags einlesen: Diese werden nur temporär verwendet
 */
 
-char *DocParseFlags (io_t *in)
+char *DocParseFlags (IO *in)
 {
 	int c;
 

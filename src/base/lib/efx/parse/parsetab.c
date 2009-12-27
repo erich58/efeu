@@ -23,17 +23,17 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/parsedef.h>
 #include <EFEU/stack.h>
 
-static xtab_t *ParseTab = NULL;
-static stack_t *ParseStack = NULL;
+static NameKeyTab *ParseTab = NULL;
+static Stack *ParseStack = NULL;
 
 void *NewParseTab (size_t dim)
 {
-	return xcreate(dim, skey_cmp);
+	return nkt_create("Parse", dim, NULL);
 }
 
 void DelParseTab (void *tab)
 {
-	xdestroy(tab, NULL);
+	rd_deref(tab);
 }
 
 void PushParseTab (void *tab)
@@ -49,61 +49,62 @@ void *PopParseTab (void)
 	return x;
 }
 
-void AddParseDef (ParseDef_t *pdef, size_t dim)
+void AddParseDef (EfiParseDef *pdef, size_t dim)
 {
 	if	(ParseTab == NULL)
 		ParseTab = NewParseTab(0);
 
-	xappend(ParseTab, pdef, dim, sizeof(ParseDef_t), XS_REPLACE);
+	for (; dim--; pdef++)
+		nkt_insert(ParseTab, pdef->name, pdef);
 }
 
-ParseDef_t *GetParseDef (const char *name)
+EfiParseDef *GetParseDef (const char *name)
 {
-	ParseDef_t *p;
-	stack_t *stack;
+	EfiParseDef *p;
+	Stack *stack;
 
-	p = skey_find(ParseTab, name);
+	p = nkt_fetch(ParseTab, name, NULL);
 
 	for (stack = ParseStack; stack && !p; stack = stack->next)
-		p = skey_find(stack->data, name);
+		p = nkt_fetch(stack->data, name, NULL);
 
 	return p;
 }
 
 #define	MAX_POS	79
 
-static void print_tab (io_t *io, xtab_t *tab, int depth)
+static void print_tab (IO *io, NameKeyTab *tab, int depth)
 {
-	int i, pos;
+	int n, pos;
 
 	io_printf(io, "Schlüsselwörter der Tiefe %d:", depth);
 	pos = MAX_POS;
 
 	if	(tab)
 	{
-		for (i = 0; i < tab->dim; i++)
+		NameKeyEntry *ptr = tab->tab.data;
+
+		for (n = tab->tab.used; n-- > 0; ptr++)
 		{
-			char *name = ((ParseDef_t *) tab->tab[i])->name;
+			if	(ptr->name == NULL)	continue;
 
-			if	(name == NULL)	continue;
-
-			if	(pos + strlen(name) > MAX_POS)
+			if	(pos + strlen(ptr->name) > MAX_POS)
 			{
 				io_puts("\n\t", io);
 				pos = 8;
 			}
 			else	pos += io_puts(" ", io);
 
-			pos += io_puts(name, io);
+			pos += io_puts(ptr->name, io);
 		}
 	}
 
 	io_putc('\n', io);
 }
 
-void ListParseDef (io_t *io)
+void ListParseDef (IO *io)
 {
-	stack_t *x;
+	Stack *x;
 	int depth = 0;
 
 	print_tab(io, ParseTab, depth++);

@@ -41,46 +41,47 @@ typedef struct {
 	char *Name;	/* Name im Handbucheintrag */
 	char *TabName;	/* Name in der Tabellenüberschrift */
 	char *FigName;	/* Name in der Abbildungsüberschrift */
-} TermPar_t;
+} TermPar;
 
 #define	TERM_INDENT	4	/* Einrücktiefe */
 
-extern TermPar_t TermPar;
+extern TermPar term_par;
 void TermPar_init(void);
 
-typedef struct term_s term_t;
-typedef struct TermVar_s TermVar_t;
+typedef struct TermStruct Term;
+typedef struct TermVarStruct TermVar;
 
-struct TermVar_s {
-	TermVar_t *next;
+struct TermVarStruct {
+	TermVar *next;
 	unsigned margin;
-	void (*caption) (term_t *trm, int flag);
+	void (*caption) (Term *trm, int flag);
 };
 
-struct term_s {
+struct TermStruct {
 	DOCDRV_VAR;		/* Standardausgabevariablen */
 	unsigned col;		/* Aktuelle Spalte */
 	unsigned space;		/* Leerzeichen ausgeben */
 	unsigned mode;		/* Leerzeichenmodus */
 	unsigned hangpar;	/* Hängende Absätze */
 	unsigned hang;		/* Einrücktiefe nach Umbruch */
-	TermVar_t var;		/* Umgebungsvariablen */
-	stack_t *s_att;		/* Stack mit Attributen */
+	TermVar var;		/* Umgebungsvariablen */
+	Stack *s_att;		/* Stack mit Attributen */
 	char *att;		/* Aktuelles Attribut */
 };
 
-extern io_t *DocOut_term (io_t *io);
+extern IO *DocOut_term (IO *io);
 
-extern void term_push (term_t *trm);
-extern void term_pop (term_t *trm);
+extern void term_push (Term *trm);
+extern void term_pop (Term *trm);
 
-extern void term_att (term_t *trm, int flag, char *att);
-extern int term_putc (term_t *mr, int c);
-extern int term_verb (term_t *mr, int c);
-extern void term_string (term_t *mr, const char *str);
-extern void term_newline (term_t *mr, int flag);
-extern void term_hmode (term_t *mr);
-extern int term_cmd (term_t *mr, va_list list);
-extern int term_env (term_t *mr, int flag, va_list list);
+extern void term_att (Term *trm, int flag, char *att);
+extern void term_string (Term *mr, const char *str);
+extern void term_newline (Term *mr, int flag);
+extern void term_hmode (Term *mr);
+
+extern int term_verb (void *drv, int c);
+extern int term_putc (void *drv, int c);
+extern int term_cmd (void *drv, va_list list);
+extern int term_env (void *drv, int flag, va_list list);
 
 #endif	/* term.h */

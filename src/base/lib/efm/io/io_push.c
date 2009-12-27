@@ -25,11 +25,11 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/mstring.h>
 
 typedef struct {
-	io_t save;
-	io_t *tmp;
+	IO save;
+	IO *tmp;
 } PUSHPAR;
 
-static PUSHPAR *push_create (io_t *io, io_t *tmp)
+static PUSHPAR *push_create (IO *io, IO *tmp)
 {
 	PUSHPAR *par = memalloc(sizeof(PUSHPAR));
 	par->save = *io;
@@ -41,8 +41,8 @@ static PUSHPAR *push_create (io_t *io, io_t *tmp)
 
 static int push_restore (PUSHPAR *par, va_list list)
 {
-	io_t *io = va_arg(list, io_t *);
-	io_t **ptr = va_arg(list, io_t **);
+	IO *io = va_arg(list, IO *);
+	IO **ptr = va_arg(list, IO **);
 	int i;
 
 	for (i = 0; i < io->nsave; i++)
@@ -65,8 +65,8 @@ static int push_ident (PUSHPAR *par, char **ptr)
 {
 	if	(ptr)
 	{
-		char *base = io_ident(&par->save);
-		char *name = io_ident(par->tmp);
+		char *base = rd_ident(&par->save);
+		char *name = rd_ident(par->tmp);
 		*ptr = mstrpaste(", ", base, name);
 		memfree(base);
 		memfree(name);
@@ -79,18 +79,22 @@ static int push_ident (PUSHPAR *par, char **ptr)
 /*	IO - Funktionen
 */
 
-static int push_get (PUSHPAR *par)
+static int push_get (void *ptr)
 {
+	PUSHPAR *par = ptr;
 	return io_getc(par->tmp);
 }
 
-static int push_put (int c, PUSHPAR *par)
+static int push_put (int c, void *ptr)
 {
+	PUSHPAR *par = ptr;
 	return io_putc(c, par->tmp);
 }
 
-static int push_ctrl (PUSHPAR *par, int req, va_list list)
+static int push_ctrl (void *ptr, int req, va_list list)
 {
+	PUSHPAR *par = ptr;
+
 	switch (req)
 	{
 	case IO_RESTORE:	return push_restore(par, list);
@@ -104,14 +108,14 @@ static int push_ctrl (PUSHPAR *par, int req, va_list list)
 /*	IO-Struktur vorsetzen
 */
 
-void io_push (io_t *io, io_t *tmp)
+void io_push (IO *io, IO *tmp)
 {
 	if	(io && tmp)
 	{
 		io->data = push_create(io, tmp);
-		io->get = (io_get_t) push_get;
-		io->put = (io_put_t) push_put;
-		io->ctrl = (io_ctrl_t) push_ctrl;
+		io->get = push_get;
+		io->put = push_put;
+		io->ctrl = push_ctrl;
 	}
 	else	rd_deref(tmp);
 }
@@ -119,7 +123,7 @@ void io_push (io_t *io, io_t *tmp)
 /*	Vorgesetzte Struktur entfernen
 */
 
-io_t *io_pop (io_t *io)
+IO *io_pop (IO *io)
 {
 	return (io_ctrl(io, IO_RESTORE, io, &io) != EOF) ? io : NULL;
 }

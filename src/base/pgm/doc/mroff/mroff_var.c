@@ -23,27 +23,27 @@ If not, write to the Free Software Foundation, Inc.,
 #include <mroff.h>
 #include <efeudoc.h>
 
-static ALLOCTAB(stack_tab, 32, sizeof(mroff_var_t));
+static ALLOCTAB(Stackab, 32, sizeof(ManRoffVar));
 
-static void copy_var(mroff_var_t *tg, mroff_var_t *src)
+static void copy_var(ManRoffVar *tg, ManRoffVar *src)
 {
 	tg->next = src->next;
 	tg->caption = src->caption;
 }
 
-extern void mroff_push (mroff_t *mr)
+extern void mroff_push (ManRoff *mr)
 {
-	mroff_var_t *par = new_data(&stack_tab);
+	ManRoffVar *par = new_data(&Stackab);
 	copy_var(par, &mr->var);
 	mr->var.next = par;
 }
 
-extern void mroff_pop (mroff_t *mr)
+extern void mroff_pop (ManRoff *mr)
 {
 	if	(mr->var.next)
 	{
-		mroff_var_t *par = mr->var.next;
+		ManRoffVar *par = mr->var.next;
 		copy_var(&mr->var, par);
-		del_data(&stack_tab, par);
+		del_data(&Stackab, par);
 	}
 }

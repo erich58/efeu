@@ -75,7 +75,8 @@ Als Modus <mode> ist eines der folgenden Werte zulässig:
 	Ansonsten wird ein Nullpointer zurückgegeben.
 */
 
-void *vb_search (vecbuf_t *buf, void *data, comp_t comp, int mode)
+void *vb_search (VecBuf *buf, void *data,
+	int (*comp) (const void *a, const void *b), int mode)
 {
 	char *p1;
 	int i, i1, i2, v;
@@ -114,13 +115,13 @@ void *vb_search (vecbuf_t *buf, void *data, comp_t comp, int mode)
 			case VB_REPLACE:
 
 				{
-					register uchar_t *a = data;
-					register uchar_t *b = (uchar_t *) p1;
+					register unsigned char *a = data;
+					register unsigned char *b = (unsigned char *) p1;
 					register size_t n = buf->elsize;
 
 					while (n--)
 					{
-						register uchar_t c = *a;
+						register unsigned char c = *a;
 						*a++ = *b;
 						*b++ = c;
 					}
@@ -156,7 +157,7 @@ Die Funktion |$1| sortiert die Daten eines Vektorbuffers
 mit der Bibliotheksfunktion |qsort|.
 */
 
-void vb_qsort (vecbuf_t *buf, comp_t comp)
+void vb_qsort (VecBuf *buf, int (*comp) (const void *a, const void *b))
 {
 	if	(buf && buf->used > 1)
 		qsort(buf->data, buf->used, buf->elsize, comp);
@@ -168,7 +169,8 @@ Die Funktion |$1| verwendet die Bibliotheksfunktion
 |vb_search| mit Flag |VB_SEARCH|.
 */
 
-void *vb_bsearch (vecbuf_t *buf, const void *key, comp_t comp)
+void *vb_bsearch (VecBuf *buf, const void *key,
+	int (*comp) (const void *a, const void *b))
 {
 	if	(buf && buf->used > 0)
 		return bsearch(key, buf->data, buf->used, buf->elsize, comp);

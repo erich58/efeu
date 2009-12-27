@@ -35,14 +35,14 @@ static void swap_data(size_t size, char *a, char *b)
 }
 
 
-Obj_t *AssignTerm(const char *name, Obj_t *left, Obj_t *right)
+EfiObj *AssignTerm (const char *name, EfiObj *left, EfiObj *right)
 {
 	void *func;
-	ObjList_t *list;
+	EfiObjList *list;
 
 	if	(left == NULL)
 	{
-		errmsg(MSG_EFMAIN, 211);
+		dbg_note(NULL, "[efmain:211]", NULL);
 		UnrefObj(right);
 		return NULL;
 	}
@@ -56,9 +56,8 @@ Obj_t *AssignTerm(const char *name, Obj_t *left, Obj_t *right)
 	}
 	else
 	{
-		reg_cpy(1, name);
-		reg_cpy(2, left->type->name);
-		errmsg(MSG_EFMAIN, left->lval ? 215 : 213);
+		dbg_note(NULL, left->lval ? "[efmain:215]" : "[efmain:213]",
+			"ss", name, left->type->name);
 		UnrefObj(right);
 		UnrefObj(left);
 		return NULL;
@@ -66,7 +65,7 @@ Obj_t *AssignTerm(const char *name, Obj_t *left, Obj_t *right)
 }
 
 
-Obj_t *AssignObj(Obj_t *left, Obj_t *right)
+EfiObj *AssignObj(EfiObj *left, EfiObj *right)
 {
 	if	(left == NULL || left->lval == NULL)
 		return AssignTerm("=", left, right);
@@ -75,7 +74,7 @@ Obj_t *AssignObj(Obj_t *left, Obj_t *right)
 
 	if	(right == NULL)
 	{
-		errmsg(MSG_EFMAIN, 212);
+		dbg_note(NULL, "[efmain:212]", NULL);
 	}
 	else if	(right->lval == NULL && right->refcount == 1)
 	{
@@ -89,7 +88,7 @@ Obj_t *AssignObj(Obj_t *left, Obj_t *right)
 }
 
 
-void Obj2Data(Obj_t *obj, Type_t *type, void *ptr)
+void Obj2Data(EfiObj *obj, EfiType *type, void *ptr)
 {
 	if	(type == NULL)
 	{
@@ -118,7 +117,7 @@ void Obj2Data(Obj_t *obj, Type_t *type, void *ptr)
 }
 
 
-void *Obj2Ptr(Obj_t *obj, Type_t *type)
+void *Obj2Ptr(EfiObj *obj, EfiType *type)
 {
 	void *ptr = NULL;
 	Obj2Data(obj, type, &ptr);

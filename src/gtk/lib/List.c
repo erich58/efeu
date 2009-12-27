@@ -28,7 +28,7 @@ If not, write to the Free Software Foundation, Inc.,
 #define	STR(arg)	(Val_ptr(arg) ? Val_ptr(arg) : "")
 
 
-static void f_mode (Func_t *func, void *rval, void **arg)
+static void f_mode (EfiFunc *func, void *rval, void **arg)
 {
 	gtk_list_set_selection_mode(Val_ptr(arg[0]), Val_int(arg[1]));
 }
@@ -36,21 +36,21 @@ static void f_mode (Func_t *func, void *rval, void **arg)
 /*	Listeneinträge
 */
 
-static void f_item (Func_t *func, void *rval, void **arg)
+static void f_item (EfiFunc *func, void *rval, void **arg)
 {
 	Val_ptr(rval) = gtk_list_item_new_with_label(STR(arg[0]));
 }
 
-static void f_witem (Func_t *func, void *rval, void **arg)
+static void f_witem (EfiFunc *func, void *rval, void **arg)
 {
 	Val_ptr(rval) = gtk_list_item_new();
 	gtk_container_add(Val_ptr(rval), Val_ptr(arg[0]));
 }
 
-static GList *item_list (ObjList_t *olist)
+static GList *item_list (EfiObjList *olist)
 {
 	GList *ilist;
-	Type_t *type;
+	EfiType *type;
 	void *p;
 	
 	type = EGtkType(gtk_list_item_get_type());
@@ -62,18 +62,18 @@ static GList *item_list (ObjList_t *olist)
 	return ilist;
 }
 
-static void f_append (Func_t *func, void *rval, void **arg)
+static void f_append (EfiFunc *func, void *rval, void **arg)
 {
 	gtk_list_append_items(Val_ptr(arg[0]), item_list(Val_list(arg[1])));
 }
 
-static void f_index (Func_t *func, void *rval, void **arg)
+static void f_index (EfiFunc *func, void *rval, void **arg)
 {
 	Val_int(rval) = gtk_list_child_position(Val_ptr(arg[0]),
 		Val_ptr(arg[1]));
 }
 
-static FuncDef_t fdef[] = {
+static EfiFuncDef fdef[] = {
 	{ 0, NULL, "GtkListItem GtkListItem (str label)", f_item },
 	{ 0, NULL, "GtkListItem GtkListItem (GtkWidget widget)", f_witem },
 	{ 0, NULL, "GtkList GtkList::mode (GtkSelectionMode mode)", f_mode },

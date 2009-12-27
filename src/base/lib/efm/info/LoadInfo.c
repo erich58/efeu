@@ -27,9 +27,9 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/ftools.h>
 #include <ctype.h>
 
-static void load (InfoNode_t *base, io_t *io);
+static void load (InfoNode *base, IO *io);
 
-static void add_entry(InfoNode_t *node, strbuf_t *sb)
+static void add_entry(InfoNode *node, StrBuf *sb)
 {
 	if	(sb == NULL)	return;
 
@@ -40,9 +40,9 @@ static void add_entry(InfoNode_t *node, strbuf_t *sb)
 	else	del_strbuf(sb);
 }
 
-static int get_key(io_t *io, char **p)
+static int get_key(IO *io, char **p)
 {
-	strbuf_t *sb;
+	StrBuf *sb;
 	int c;
 
 	sb = new_strbuf(0);
@@ -85,9 +85,9 @@ static int get_key(io_t *io, char **p)
 	return c;
 }
 
-static int get_label(io_t *io, char **p)
+static int get_label(IO *io, char **p)
 {
-	strbuf_t *sb;
+	StrBuf *sb;
 	int c;
 
 	sb = new_strbuf(0);
@@ -129,9 +129,9 @@ static int get_label(io_t *io, char **p)
 	return c;
 }
 
-static char *get_name(io_t *io)
+static char *get_name(IO *io)
 {
-	strbuf_t *sb;
+	StrBuf *sb;
 	int c;
 
 	sb = new_strbuf(0);
@@ -164,7 +164,7 @@ static char *get_name(io_t *io)
 	return sb2str(sb);
 }
 
-static void do_load (InfoNode_t *info)
+static void do_load (InfoNode *info)
 {
 	char *fname = info->par;
 	info->par = NULL;
@@ -177,7 +177,7 @@ static void do_load (InfoNode_t *info)
 	}
 }
 
-static InfoNode_t *get_node(io_t *io, InfoNode_t *node)
+static InfoNode *get_node(IO *io, InfoNode *node)
 {
 	char *p;
 	int c;
@@ -237,10 +237,10 @@ static InfoNode_t *get_node(io_t *io, InfoNode_t *node)
 /*	Einträge laden
 */
 
-static void load (InfoNode_t *base, io_t *io)
+static void load (InfoNode *base, IO *io)
 {
-	strbuf_t *buf;
-	InfoNode_t *node;
+	StrBuf *buf;
+	InfoNode *node;
 	int last, c;
 
 	if	(io == NULL)	return;
@@ -282,14 +282,14 @@ static void load (InfoNode_t *base, io_t *io)
 	io_close(io);
 }
 
-void IOLoadInfo (InfoNode_t *base, io_t *io)
+void IOLoadInfo (InfoNode *base, IO *io)
 {
 	load(base, io_refer(io));
 }
 
-void LoadInfo (InfoNode_t *base, const char *fname)
+void LoadInfo (InfoNode *base, const char *fname)
 {
-	io_t *io;
+	IO *io;
 
 	if	(!fname)	return;
 

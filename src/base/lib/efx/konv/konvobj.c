@@ -24,9 +24,10 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/konvobj.h>
 
 
-Obj_t *KonvObj(const Obj_t *obj, Type_t *def)
+EfiObj *KonvObj (const EfiObj *obj, EfiType *def)
 {
-	Konv_t konv;
+	EfiKonv konv;
+	char *p;
 
 	if	(obj == NULL)
 		return NULL;
@@ -36,7 +37,7 @@ Obj_t *KonvObj(const Obj_t *obj, Type_t *def)
 
 	if	(GetKonv(&konv, obj->type, def))
 	{
-		Obj_t *x = NewObj(def, NULL);
+		EfiObj *x = NewObj(def, NULL);
 		KonvData(&konv, x->data, obj->data);
 		return x;
 	}
@@ -44,13 +45,11 @@ Obj_t *KonvObj(const Obj_t *obj, Type_t *def)
 /*	Konvertierung nicht möglich
 */
 	if	(obj->type == NULL)
-		reg_set(1, NULL);
+		p = NULL;
 	else if	(obj->type == &Type_undef)
-		reg_set(1, msprintf("(%s) %s", obj->type->name,
-			Val_str(obj->data)));
-	else	reg_cpy(1, obj->type->name);
+		p = msprintf("(%s) %s", obj->type->name, Val_str(obj->data));
+	else	p = mstrcpy(obj->type->name);
 
-	reg_cpy(2, def ? def->name : NULL);
-	errmsg(MSG_EFMAIN, 161);
+	dbg_note(NULL, "[efmain:161]", "ms", p, def ? def->name : NULL);
 	return NULL;
 }

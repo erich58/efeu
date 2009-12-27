@@ -25,24 +25,24 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	STACK_BSIZE	63	/* Blockgröße für Stacksegmente */
 
-static ALLOCTAB(stack_tab, STACK_BSIZE, sizeof(stack_t));
+static ALLOCTAB(Stackab, STACK_BSIZE, sizeof(Stack));
 
-void pushstack (stack_t **ptr, void *data)
+void pushstack (Stack **ptr, void *data)
 {
-	stack_t *par = new_data(&stack_tab);
+	Stack *par = new_data(&Stackab);
 	par->next = *ptr;
 	par->data = data;
 	*ptr = par;
 }
 
-void *popstack (stack_t **ptr, void *data)
+void *popstack (Stack **ptr, void *data)
 {
 	if	(*ptr)
 	{
-		stack_t *par = *ptr;
+		Stack *par = *ptr;
 		*ptr = par->next;
 		data = par->data;
-		del_data(&stack_tab, par);
+		del_data(&Stackab, par);
 	}
 
 	return data;

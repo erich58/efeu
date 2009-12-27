@@ -25,30 +25,27 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/procenv.h>
 #include <EFEU/strbuf.h>
 #include <EFEU/mstring.h>
+#include <EFEU/Debug.h>
 
+#define FMT_11	"[db:11]$!: column $1: invalid digit $2 in value.\n"
+#define FMT_12	"[db:12]$!: column $1: error in BCD-value $2 (HIGH)\n"
+#define FMT_13	"[db:13]$!: column $1: error in BCD-value $2 (LOW)\n"
+#define FMT_14	"[db:14]$!: column $1: error in BCD-value $2 (SIGNUM).\n"
+#define FMT_15	"[db:15]$!: column $1: character $2 not alphanumeric.\n"
 
-static void val_error(int pos, int num, const uchar_t *ptr)
-{
-	char buf[32];
-
-	sprintf(buf, "%d", pos);
-	message(buf, MSG_DB, num, 1,
-		ptr ? msprintf("%#c", db_char(ptr, pos, 1)) : NULL);
-	exit(EXIT_FAILURE);
-}
 
 /*	Datenoffset
 */
 
-uchar_t *db_offset (const uchar_t *buf, int pos, int len)
+unsigned char *db_offset (const unsigned char *buf, int pos, int len)
 {
-	return (uchar_t *) buf + pos - 1;
+	return (unsigned char *) buf + pos - 1;
 }
 
 /*	Test auf Leerfeld
 */
 
-int db_isblank(const uchar_t *buf, int pos, int len)
+int db_isblank(const unsigned char *buf, int pos, int len)
 {
 	for (buf += pos - 1; len-- > 0; buf++)
 		if (*buf != SPACE) return 0;
@@ -56,7 +53,7 @@ int db_isblank(const uchar_t *buf, int pos, int len)
 	return 1;
 }
 
-int db_iskey(const uchar_t *buf, int key, int pos, int len)
+int db_iskey(const unsigned char *buf, int key, int pos, int len)
 {
 	for (buf += pos - 1; len-- > 0; buf++)
 		if (*buf != key) return 0;
@@ -67,7 +64,7 @@ int db_iskey(const uchar_t *buf, int key, int pos, int len)
 /*	Test eines Feldes auf 0 oder Blank
 */
 
-static int test_null(const uchar_t *buf, int len)
+static int test_null(const unsigned char *buf, int len)
 {
 	for(; len-- > 0; buf++)
 		if (*buf != 0 && *buf != SPACE) return 0;
@@ -79,7 +76,7 @@ static int test_null(const uchar_t *buf, int len)
 /*	Zahlenwerte im Hexadezimalformat
 */
 
-unsigned db_xval(const uchar_t *buf, int pos, int len)
+unsigned db_xval(const unsigned char *buf, int pos, int len)
 {
 	unsigned val;
 
@@ -99,7 +96,7 @@ unsigned db_xval(const uchar_t *buf, int pos, int len)
 /*	Zahlenwerte im Zeichenformat
 */
 
-unsigned db_cval(const uchar_t *buf, int pos, int len)
+unsigned db_cval(const unsigned char *buf, int pos, int len)
 {
 	unsigned val;
 
@@ -125,7 +122,8 @@ unsigned db_cval(const uchar_t *buf, int pos, int len)
 		case LETTER_X:	val = 16 * val + 15; break;
 		default:
 
-			val_error(pos, 11, buf);
+			dbg_error(NULL, FMT_11, "dc", pos,
+				db_char(buf, pos, 1));
 			break;
 		}
 	}
@@ -133,18 +131,18 @@ unsigned db_cval(const uchar_t *buf, int pos, int len)
 	return val;
 }
 
-unsigned db_xcval (const uchar_t *buf, int pos, int len)
+unsigned db_xcval (const unsigned char *buf, int pos, int len)
 {
 	return (buf[pos - 1] != 0xFF) ? db_cval(buf, pos, len) : 0;
 }
 
 
-static uchar_t cval_tab[10] = {
+static unsigned char cval_tab[10] = {
 	DIGIT_0, DIGIT_1, DIGIT_2, DIGIT_3, DIGIT_4,
 	DIGIT_5, DIGIT_6, DIGIT_7, DIGIT_8, DIGIT_9,
 };
 
-void set_cval (uchar_t *buf, int pos, int len, unsigned val)
+void set_cval (unsigned char *buf, int pos, int len, unsigned val)
 {
 	buf += pos - 1;
 
@@ -155,7 +153,7 @@ void set_cval (uchar_t *buf, int pos, int len, unsigned val)
 	}
 }
 
-void set_scval (uchar_t *buf, int pos, int len, unsigned val)
+void set_scval (unsigned char *buf, int pos, int len, unsigned val)
 {
 	buf += pos - 1;
 
@@ -173,7 +171,7 @@ void set_scval (uchar_t *buf, int pos, int len, unsigned val)
 /*	Zahlenwerte in gepackter Form
 */
 
-unsigned db_pval(const uchar_t *buf, int pos, int len)
+unsigned db_pval(const unsigned char *buf, int pos, int len)
 {
 	unsigned val;
 	int c;
@@ -192,7 +190,7 @@ unsigned db_pval(const uchar_t *buf, int pos, int len)
 
 		if	((c = (buf[pos] >> 4)) > 9)
 		{
-			val_error(pos + 1, 12, NULL);
+			dbg_error(NULL, FMT_12, "dx", pos + 1, buf[pos]);
 		}
 		else	val += c;
 
@@ -200,7 +198,7 @@ unsigned db_pval(const uchar_t *buf, int pos, int len)
 
 		if	((c = (buf[pos] & 0xF)) > 9)
 		{
-			val_error(pos + 1, 13, NULL);
+			dbg_error(NULL, FMT_13, "dx", pos + 1, buf[pos]);
 		}
 		else	val += c;
 
@@ -211,7 +209,7 @@ unsigned db_pval(const uchar_t *buf, int pos, int len)
 
 	if	((c = (buf[pos] >> 4)) > 9)
 	{
-		val_error(pos, 12, NULL);
+		dbg_error(NULL, FMT_12, "dx", pos, buf[pos]);
 	}
 	else	val += c;
 
@@ -220,13 +218,13 @@ unsigned db_pval(const uchar_t *buf, int pos, int len)
 	case 0xD:	val = - (long) val; break;
 	case 0xC:
 	case 0xF:	break;
-	default:	val_error(pos + 1, 14, NULL); break;
+	default:	dbg_error(NULL, FMT_14, "dx", pos + 1, buf[pos]); break;
 	}
 
 	return val;
 }
 
-void set_pval (uchar_t *buf, int pos, int len, unsigned val)
+void set_pval (unsigned char *buf, int pos, int len, unsigned val)
 {
 	buf += pos - 1;
 	len--;
@@ -245,7 +243,7 @@ void set_pval (uchar_t *buf, int pos, int len, unsigned val)
 /*	Zahlenwerte in BCD-Verschlüsselung
 */
 
-unsigned db_bcdval(const uchar_t *buf, int pos, int len)
+unsigned db_bcdval(const unsigned char *buf, int pos, int len)
 {
 	unsigned val;
 	int c;
@@ -259,7 +257,7 @@ unsigned db_bcdval(const uchar_t *buf, int pos, int len)
 
 		if	((c = (buf[pos] >> 4)) > 9)
 		{
-			val_error(pos + 1, 12, NULL);
+			dbg_error(NULL, FMT_12, "dx", pos + 1, buf[pos]);
 		}
 		else	val += c;
 
@@ -267,7 +265,7 @@ unsigned db_bcdval(const uchar_t *buf, int pos, int len)
 
 		if	((c = (buf[pos] & 0xF)) > 9)
 		{
-			val_error(pos + 1, 13, NULL);
+			dbg_error(NULL, FMT_13, "dx", pos + 1, buf[pos]);
 		}
 		else	val += c;
 
@@ -280,7 +278,7 @@ unsigned db_bcdval(const uchar_t *buf, int pos, int len)
 /*	Zeichenkette zur Basis 37
 */
 
-unsigned db_a37l(const uchar_t *buf, int pos, int len)
+unsigned db_a37l(const unsigned char *buf, int pos, int len)
 {
 	unsigned val;
 
@@ -333,7 +331,7 @@ unsigned db_a37l(const uchar_t *buf, int pos, int len)
 		case LETTER_Z:	val += 36; break;
 		default:
 
-			val_error(pos, 15, buf);
+			dbg_error(NULL, FMT_15, "dc", pos, db_char(buf, pos, 1));
 			break;
 		}
 	}
@@ -341,24 +339,24 @@ unsigned db_a37l(const uchar_t *buf, int pos, int len)
 	return val;
 }
 
-unsigned db_char(const uchar_t *buf, int pos, int len)
+unsigned db_char(const unsigned char *buf, int pos, int len)
 {
 	return ebcdic2ascii(buf[pos - 1]);
 }
 
-void set_char (uchar_t *buf, int pos, int len, unsigned val)
+void set_char (unsigned char *buf, int pos, int len, unsigned val)
 {
 	buf[pos - 1] = ascii2ebcdic(val);
 }
 
-void set_blank (uchar_t *buf, int pos, int len)
+void set_blank (unsigned char *buf, int pos, int len)
 {
 	memset(buf + pos - 1, SPACE, len);
 }
 
-static strbuf_t buf_str = SB_DATA(64);
+static StrBuf buf_str = SB_DATA(64);
 
-char *db_str (const uchar_t *buf, int pos, int len)
+char *db_str (const unsigned char *buf, int pos, int len)
 {
 	sb_clear(&buf_str);
 

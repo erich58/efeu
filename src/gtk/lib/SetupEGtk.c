@@ -25,18 +25,18 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/CmdPar.h>
 #include <EFEU/parsedef.h>
 
-static void f_init (Func_t *func, void *rval, void **arg)
+static void f_init (EfiFunc *func, void *rval, void **arg)
 {
 	EGtkInit();
 }
 
-static void f_gtkres (Func_t *func, void *rval, void **arg)
+static void f_gtkres (EfiFunc *func, void *rval, void **arg)
 {
 	EGtkInit();
 	gtk_rc_parse_string(Val_str(arg[0]));
 }
 
-static FuncDef_t fdef[] = {
+static EfiFuncDef fdef[] = {
 	{ 0, &Type_void, "gtkinit ()", f_init },
 	{ 0, &Type_void, "gtkres (str def)", f_gtkres },
 };

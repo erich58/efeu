@@ -26,21 +26,21 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/CmdPar.h>
 
 
-static void f_add (Func_t *func, void *rval, void **arg)
+static void f_add (EfiFunc *func, void *rval, void **arg)
 {
 	gtk_container_add(Val_ptr(arg[0]), Val_ptr(arg[1]));
 	gtk_widget_show_all(Val_ptr(arg[0]));
 }
 
-static void f_remove (Func_t *func, void *rval, void **arg)
+static void f_remove (EfiFunc *func, void *rval, void **arg)
 {
 	gtk_container_remove(Val_ptr(arg[0]), Val_ptr(arg[1]));
 }
 
-static void f_children (Func_t *func, void *rval, void **arg)
+static void f_children (EfiFunc *func, void *rval, void **arg)
 {
 	GList *glist;
-	ObjList_t **ptr;
+	EfiObjList **ptr;
 	
 	glist = gtk_container_children(Val_ptr(arg[0]));
 	ptr = rval;
@@ -54,24 +54,24 @@ static void f_children (Func_t *func, void *rval, void **arg)
 	}
 }
 
-static void f_focus (Func_t *func, void *rval, void **arg)
+static void f_focus (EfiFunc *func, void *rval, void **arg)
 {
 	Val_int(rval) = gtk_container_focus(Val_ptr(arg[0]), Val_int(arg[1]));
 }
 
-static void f_put (Func_t *func, void *rval, void **arg)
+static void f_put (EfiFunc *func, void *rval, void **arg)
 {
 	gtk_fixed_put(Val_ptr(arg[0]), Val_ptr(arg[1]),
 		(gint16) Val_int(arg[2]), (gint16) Val_int(arg[3]));
 }
 
-static void f_move (Func_t *func, void *rval, void **arg)
+static void f_move (EfiFunc *func, void *rval, void **arg)
 {
 	gtk_fixed_move(Val_ptr(arg[0]), Val_ptr(arg[1]),
 		(gint16) Val_int(arg[2]), (gint16) Val_int(arg[3]));
 }
 
-static FuncDef_t fdef[] = {
+static EfiFuncDef fdef[] = {
 	{ 0, &Type_void, "GtkContainer::add (GtkWidget)", f_add },
 	{ 0, &Type_void, "GtkContainer::operator+= (GtkWidget)", f_add },
 	{ 0, &Type_void, "GtkContainer::remove (GtkWidget)", f_remove },

@@ -26,12 +26,12 @@ If not, write to the Free Software Foundation, Inc.,
 /*	Kontrollfunktion
 */
 
-int io_vctrl (io_t *io, int req, va_list list)
+int io_vctrl (IO *io, int req, va_list list)
 {
 	return (io && io->ctrl) ? io->ctrl(io->data, req, list) : EOF;
 }
 
-int io_ctrl (io_t *io, int req, ...)
+int io_ctrl (IO *io, int req, ...)
 {
 	if	(io && io->ctrl)
 	{

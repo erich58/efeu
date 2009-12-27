@@ -24,15 +24,15 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/konvobj.h>
 
 
-void UnrefEval(Obj_t *obj)
+void UnrefEval(EfiObj *obj)
 {
 	UnrefObj(EvalObj(obj, NULL));
 }
 
 
-Obj_t *EvalObj(Obj_t *x, Type_t *type)
+EfiObj *EvalObj(EfiObj *x, EfiType *type)
 {
-	Obj_t *y;
+	EfiObj *y;
 
 	while (x && x->type)
 	{
@@ -48,8 +48,8 @@ Obj_t *EvalObj(Obj_t *x, Type_t *type)
 
 			if	(x == y)
 			{
-				reg_cpy(1, x->type->name);
-				errmsg(MSG_EFMAIN, 137);
+				dbg_note(NULL, "[efmain:137]",
+					"s", x->type->name);
 				UnrefObj(x);
 				x = NULL;
 			}

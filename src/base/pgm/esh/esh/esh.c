@@ -35,19 +35,13 @@ If not, write to the Free Software Foundation, Inc.,
 #include <Math/TimeSeries.h>
 #include <Math/pnom.h>
 #include <Math/mdmath.h>
-
-#define	HNAME	"~/.esh_history"
-#define	EFMAIN	"efmain"
-
-#define	CMDTYPE	GetResource("CmdType", NULL)
+#include <Math/func.h>
 
 
-int main(int narg, char **arg)
+int main (int narg, char **arg)
 {
-	CmdPar_t *par;
-	io_t *in;
-
 	SetProgName(arg[0]);
+	SetVersion("$Id: esh.c,v 1.14 2002-11-13 06:18:48 ef Exp $");
 
 	SetupStd();
 	SetupUtil();
@@ -55,60 +49,15 @@ int main(int narg, char **arg)
 
 	SetupDataBase();
 	SetupTimeSeries();
-	SetupRand48();
 	SetupRandom();
 	SetupMdMat();
 	SetupMath();
 	SetupMdMath();
 	SetupPnom();
-	SetupSC();
+	SetupMathFunc();
 	SetupPixmap();
 	SetupReadline();
 	SetupDebug();
 
-	par = CmdPar_alloc(ProgName);
-	CmdPar_load(par, "efm", 0);
-	CmdPar_load(par, par->name, 1);
-
-	if	(CmdPar_eval(par, &narg, arg, 1) <= 0)
-		exit(EXIT_FAILURE);
-
-	DebugMode(CmdPar_getval(par, "Debug", NULL));
-
-	pconfig_init();
-	applfile(EFMAIN, APPL_APP);
-	pconfig_exit();
-
-	if	(!EshConfig(&narg, arg))
-	{
-		if	(narg > 1)
-			skiparg(&narg, arg, 1);
-
-		in = io_interact(NULL, HNAME);
-	}
-	else
-	{
-		char *type = CmdPar_getval(par, "CmdType", NULL);
-		char *fname = fsearch(IncPath, NULL, arg[0], type);
-		in = io_fileopen(fname ? fname : arg[0], "r");
-		memfree(fname);
-	}
-
-	in = io_cmdpreproc(in);
-
-	if	(atoi(CmdPar_getval(par, "PPOnly", "0")))
-	{
-		int c;
-
-		while ((c = io_getc(in)) != EOF)
-			io_putc(c, iomsg);
-	}
-	else
-	{
-		EshIdent(in);
-		CmdEval(in, iomsg);
-	}
-
-	io_close(in);
-	return 0;
+	return EshEval(&narg, arg);
 }

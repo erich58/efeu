@@ -24,7 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 #define	_Name_pph	1
 /*
 $Description
-Die Namensmakros liefern hängen an einen Basisnamen den
+Die Namensmakros hängen an einen Basisnamen den
 typischen Filezusatz an. Ihre Verwendung garantiert eine
 Kompatiblität der Imakefiles auf verschiedene Systeme.
 $SeeAlso
@@ -95,40 +95,6 @@ Verzeichnisses mit Programmbibliotheken.
 Unter Unix liefert er <|-L<name>|>.
 */
 #define	StaticLibdirName(name)	Concat(-L,name)
-#endif
-
-/*
-$Description
-Die folgenden Makros für Programmbibliotheken
-hängen vom Flag |DoSharedLib| ab. Falls es gesetzt ist,
-werden die Makros für dynamische Programmbibliotheken herangozeogen,
-ansonsten für statische Programmbibliotheken.
-*/
-
-#if	DoSharedLib
-
-/*
-Der Makro |$1| definiert ein Standard-Programmbibliothek.
-Die Definition ist von |DoSharedLib| abhängig.
-*/
-#define	StdLib(name)		PathName($(STDLIBDIR),SharedLibName(name))
-
-/*
-Der Makro |$1| definiert eine lokale Programmbibliothek.
-*/
-#define	LocalLib(dir,name)	PathName(dir,SharedLibName(name))
-/*
-Der Makro |$1| definiert die Kompilierungsoption zur Angabe eines
-Verzeichnisses mit Programmbibliotheken.
-*/
-#define	LibdirName(name)	SharedLibdirName(name)
-
-#else
-
-#define	StdLib(name)		PathName($(STDLIBDIR),StaticLibName(name))
-#define	LocalLib(dir,name)	PathName(dir,StaticLibName(name))
-#define	LibdirName(name)	StaticLibdirName(name)
-
 #endif
 
 #ifndef	LinkName

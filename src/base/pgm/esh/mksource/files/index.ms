@@ -1,6 +1,8 @@
 /*
-Indexfunktion
+:*:create index functions
+:de:Konstruktion von Indexfunktionen
 
+$Header	<$1>
 $Copyright (C) 1999 Erich Frühstück
 This file is part of EFEU.
 
@@ -26,6 +28,13 @@ If not, write to the Free Software Foundation, Inc.,
 #include <function.ms>
 #include <label.ms>
 
+/*
+Der Datentyp |$1| dient zur Generierung einer Indexfunktion und
+einer zugehörigen Indextabelle.
+Indexfunktionen werden primär zur Konstruktion von Zählklassen
+verwendet.
+*/
+
 struct IndexFunc {
 	Function func;
 	Label lbl;
@@ -33,10 +42,23 @@ struct IndexFunc {
 	str lblsep;
 };
 
+/*
+Beim Konstruktor |$1| gibt <_name> den Namen
+und <_args> die Argumentliste der Indexfunktion an.
+Auf <_name> und <_args> wird eine Parametersubstitution angewendet.
+Alle weiteren Argumente setzen Stringregister,
+die bei der Parametersubstitution zur Verfügung stehen.
+*/
 
-IndexFunc IndexFunc (str name, str args, ...)
-	return { Function("int " + name + "_idx", args, va_list),
-		Label(name), "_", ", " }
+IndexFunc IndexFunc (str _name, str _args, ...)
+	return { Function("int " + _name + "_idx", _args, va_list),
+		Label(_name), "_", ", " }
+
+/*
+Mit Hilfe der Funktion |$1| wird die Indexfunktion und die Indextabelle
+ausgegeben. Das Argument <glob> bestimmt, ob die Funktion und die Tabelle
+global oder statisch eingerichtet werden soll.
+*/
 
 void IndexFunc::write (bool glob = true)
 {
@@ -44,11 +66,18 @@ void IndexFunc::write (bool glob = true)
 	lbl.tab(glob);
 }
 
-void IndexFunc::line (str fmt = NULL, ...)
+static void IndexFunc::line (str fmt = NULL, ...)
 	func.line(fmt, va_list)
 
-void IndexFunc::fline (str fmt = NULL, ...)
+static void IndexFunc::fline (str fmt = NULL, ...)
 	func.fline(fmt, va_list)
+
+/*
+Die Funktion |$1| generiert den Funktionsrumpf der Indexfunktion
+und die zugehörigen Einträge in die Indextabelle. Die einzelnen
+Zeilen der Definitionsstruktur <_io> bestehen aus Steueranweisungen
+und Indexeinträgen.
+*/
 
 inline void IndexFunc::body(IO _io)
 {
@@ -66,7 +95,9 @@ inline void IndexFunc::body(IO _io)
 		func.fline("return %d;", dim(lbl));
 }
 
-/*	Hilfsfunktionen zur Konstruktion von Einträgen
+/*
+Der Datentyp |$1| wird intern für den aktuellen Status der
+Indexgenerierung verwendet.
 */
 
 struct IndexPar {
@@ -143,7 +174,9 @@ inline void IndexFunc::end (IndexPar &par, str fmt = "return %d;")
 	par.mode = 0;
 }
 
-/*	Kontrollfunktion
+/*
+Die Funktion |$1| testet die Steueranweisung |cmd| und ruft die
+entsprechende Teilfunktion auf.
 */
 
 inline bool IndexFunc::subfunc (IO _io, str cmd, IndexPar base = NULL)
@@ -165,7 +198,9 @@ inline bool IndexFunc::subfunc (IO _io, str cmd, IndexPar base = NULL)
 }
 
 
-/*	Standardeintrag
+/*
+\ttitem	$1
+	Standardeintrag
 */
 
 inline bool IndexFunc::defval (str label, IndexPar base = NULL)
@@ -177,7 +212,9 @@ inline bool IndexFunc::defval (str label, IndexPar base = NULL)
 }
 
 
-/*	Testblock
+/*
+\ttitem	$1
+	Testblock
 */
 
 inline bool IndexFunc::test (str fmt, IO _io, IndexPar base = NULL)
@@ -257,8 +294,11 @@ inline bool IndexFunc::test (str fmt, IO _io, IndexPar base = NULL)
 }
 
 
-/*	Switch-Block
+/*
+\ttitem $1
+	Switch-Block
 */
+
 
 inline bool IndexFunc::switch (str expr, str fmt, IO _io, IndexPar base = NULL)
 {
@@ -313,5 +353,33 @@ inline bool IndexFunc::switch (str expr, str fmt, IO _io, IndexPar base = NULL)
 	func.end();
 	return retval;
 }
+
+/*
+Standardisierte Indexfunktionen können mit den Funktionen
+|GlobalIndexFunc| und |LocalIndexFunc| konstruiert werden.
+Das Argument <_body> bestimmt den Funktionsrumpf, der mit
+|IndexFunc::body| aufbereitet wird.
+Für alle anderen Argumente gilt das bei der Beschreibung
+des Konstruktors gesagte.
+*/
+
+inline void GlobalIndexFunc (str _name, str _args, str _body, ...)
+{
+	IndexFunc f = IndexFunc(_name, _args, va_list);
+	f.body(_body);
+	f.write(true);
+}
+
+inline void LocalIndexFunc (str _name, str _args, str _body, ...)
+{
+	IndexFunc f = IndexFunc(_name, _args, va_list);
+	f.body(_body);
+	f.write(false);
+}
+
+/*
+$SeeAlso
+\mref{mksource(1)}, \mref{function(7)}, \mref{label(7)}.
+*/
 
 #endif	/* index.ms */

@@ -1,3 +1,140 @@
 \sec	Funktionen und Operatoren
 
-@TODO
+Eine Funktionsdefinition hat die allgemeine Form
+	<type> <name> |(| <arglist> |)|\br
+	~~~~~~~~<expr>
+
+Normalerweise ist <expr> ein Block von Ausdrücken, in |$!| kann aber
+auch ein einzelner (nicht leerer) Ausdruck stehen. Falls die Funktion
+keinen Wert zurückliefern soll, ist als Datentyp |void| zu verwenden.
+
+Die folgenden Funktionsdefinitionen sind gleichwertig:
+
+---- verbatim
+int f (int x) x + 1;
+int f (int x) return x + 1;
+inline int f (int x) { return x + 1; }
+----
+
+Im EFEU-Befehlsinterpreter hat das Schlüsselwort |inline|
+primär etwas mit Sichtbarkeit zu tun. Eine inline Funktion sieht alle
+Variablentabellen, die auch in der Zeile mit dem Funktionsaufruf
+sichtbar waren. Alle Funktionen, die nur aus einem einzelnen Ausdruck
+bestehen, gelten als inline Funktionen.
+
+Wie in C++ können Funktionsargumente Vorgabewerte besitzen. Diese
+müssen dann beim Aufruf nicht angegeben werden.
+Die allgemeine Form eines Funktionsarguments ist:
+	<type> [ |&| ] <name> [ |=| <value> ]
+
+Das |&| zeigt an, dass das Argument ein gültiger L-Wert sein muss.
+Eine Tilde |...| anstelle des
+Funktionsarguments steht für eine variable Argumentliste. Auf sie kann
+innerhalb der Funktion unter dem Namen |va_list| zugegriffen werden.
+
+\shead	Virtuelle Funktionen
+
+Wie in C++ können Funktionen mit verschiedenen Argumentlisten
+überladen werden. Überladene Funktionen werden mit dem Schlüsselwort
+|virtual| deklariert. Der Datentyp solcher Funktionen ist |VirFunc|.
+Jede Funktion kann in eine virtuelle Funktion konvertiert werden.
+
+Eine virtuelle Funktion kann auch in eine gewöhnliche Funktion
+umgewandelt werden. Dies gechieht mit einem Prototype-Cast wie im
+folgendem Beispiel:
+
+---- verbatim
+Func f = operator+ (int a, int b);;
+----
+
+Nun kann f zur Addition von zwei Ganzzahlwerten verwendet werden.
+Beachte die zwei Strichpunkte am Ende der Zuweisung: Der erste gehört
+zum Prototype (und unterscheidet ihn von einer Funktionsdefinition,
+der zweite schließt den Ausdruck ab.
+
+\shead	Typgebundene Funktionen
+
+Funktionen können auch an einen Datentyp gebunden werden. Sie haben
+die allgemeine Form:
+
+	<type> <btype>::<name> [ |&| ] |(| <arglist> |)|\br
+	~~~~~~~~<expr>
+
+Falls nach dem Funktionsnamen ein |&| steht, kann die Funktion nur
+für L-Werte verwendet werden.
+Eine gebundene Funktion wird folgend aufgerufen:
+
+	<obj>|.|<name>(<args>)
+
+Dabei ist <obj> ein Objekt vom Type <btype>.
+Der Datentyp einer typgebundenen Funktion ist |ObjFunc|. Dabei
+kann es sich sowohl um eine virtuelle, als auch um eine gewöhnliche
+Funktion handeln.
+
+In gebundenen Funktionen kann mit dem Schlüsselwort |this| auf
+das zugehörige Datenobjekt zugegriffen werden.
+
+\shead	Operatoren
+
+Operatoren werden intern wie Funktionen behandelt. Mit dem Schlüsselwort
+|operator| kann ein Operatorname direkt angesprochen werden.
+Folgende Schreibweisen sind zulässig:
+
+\code
+	operator <op>\br
+	operator \"<op>\"
+\end
+
+Bei der ersten Schreibweise muß nach <op> ein Leerzeichen folgen,
+vor <op> kann ein Leerzeichen stehen.
+
+Damit linke Operatoren von rechten unterscheidbar sind, werden sie
+intern mit dem Zusatz |()| versehen (z.B: |-()| für die Negation.
+Dies ist bei der Definition von Funktionen zu beachten.
+
+Folgende Terme sind gleichwertig:
+
+\code
+	a + b\br
+	operator+ (a, b)
+\end
+
+Operatoren sind in der Regel virtuelle Funktionen.
+Alle Zuweisungsoperatoren sind gebundene, virtuelle Funktionen.
+
+\shead	Spezielle Funktionen
+
+Funktionen, die den gleichen Namen wie ein zuvor definierter Datentyp
+haben, definieren Konstruktoren und Konverter. Konverter werden meist
+indirekt bei Zuweisungen, der Wertübergabe bei Funktionsaufrufen oder durch
+explizite Typumwandlungen (casts) aufgerufen.
+
+Konstruktoren haben die Form
+	virtual <type> <type> |(| <arglist> |)|
+
+Die spezielle Form
+	<type> <type> |()|
+wird Copy-Konstruktor genannt. Ist er definiert, wird er jedesmal beim
+Kopieren eines Datenelementes aufgerufen.
+
+Im Gegensatz dazu ist
+	<type> <type> |(void)|
+ein gewöhnlicher Konstruktor ohne Argumente.
+
+Konverter haben die Form
+	<tg_type> <src_type> |()|
+mit einer leeren Argumentliste.
+
+Die Ausgangsdaten werden unter dem Namen |this| referiert.
+Falls der Zieldatentype |void| ist, definiert die Funktion
+den Destruktor für den Datentyp, der jedesmal aufgerufen wird,
+wenn ein Objekt diesen Types gelöscht wird.
+
+Copy-Konstruktor und Destruktor können als Spezalfall eines Konverters
+gesehen werden.
+Wegen der internen Speicherbereinigung werden sie
+kaum benötigt. Bei ihrer Definition
+ist besondere Vorsicht notwendig: Sobald ein Objekt dieses Types
+kopiert wird (z.B. bei der Weitergabe an eine andere Funktion),
+führt der Aufruf dieser Funktion zu einer endlosen Rekursion.
+

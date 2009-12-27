@@ -22,7 +22,9 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/ftools.h>
 #include <EFEU/procenv.h>
+#include <EFEU/Debug.h>
 
+#define	FMT_ERR	"[ftools:5]$!: could not create temporary file.\n"
 
 FILE *tempopen (void)
 {
@@ -30,8 +32,7 @@ FILE *tempopen (void)
 
 	if	((file = tmpfile()) == NULL)
 	{
-		message("tempopen", MSG_FTOOLS, 5, 0);
-		exit(EXIT_FAILURE);
+		dbg_error(NULL, FMT_ERR, NULL);
 		return NULL;
 	}
 	

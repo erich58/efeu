@@ -19,7 +19,7 @@
 # If not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-:eval 'IncPath = paste(PATHSEP, IncPath, EFEUTOP + "/lib/mksource")'
+:eval 'IncPath = paste(PATHSEP, IncPath, EFEULIB + "/mksource")'
 :eval 'IncPath = paste(PATHSEP, IncPath, getenv("ESHPATH"))'
 :eval 'fmt_str = "%*s"'
 :eval 'VerboseMode = 1'

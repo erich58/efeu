@@ -22,17 +22,18 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
 #define LEN	60
 
 /*
-#define	AUFRUF	"Aufruf: %s Ein Aus\n"
+#define	USAGE	"Aufruf: %s Ein Aus\n"
 #define	NOREAD	"%s: File %s nicht lesbar.\n"
 #define	NOWRITE	"%s: File %s nicht beschreibbar.\n"
 */
-#define	AUFRUF	"usage: %s in out\n"
+#define	USAGE	"usage: %s in out\n"
 #define	NOREAD	"%s: file %s not readable.\n"
 #define	NOWRITE	"%s: file %s not writeable.\n"
 
@@ -49,7 +50,8 @@ $pconfig
 static void usage (const char *name, const char *arg)
 {
 	execlp("efeuman", "efeuman", "--", __FILE__, arg, NULL);
-	fprintf(stderr, AUFRUF, name);
+	fprintf(stderr, USAGE, name);
+	exit(EXIT_SUCCESS);
 }
 
 /*	Ausgabe eines Zeichens

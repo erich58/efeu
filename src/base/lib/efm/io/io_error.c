@@ -1,6 +1,8 @@
 /*
 Fehlermeldung mit IO-Struktur
 
+$Name io_note, io_error
+
 $Copyright (C) 1999 Erich Frühstück
 This file is part of EFEU.
 
@@ -23,27 +25,49 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/io.h>
 #include <EFEU/ioctrl.h>
 #include <EFEU/procenv.h>
+#include <EFEU/Debug.h>
+#include <EFEU/CmdPar.h>
 
-void io_message(io_t *io, const char *name, int num, int narg, ...)
+/*
+Die Funktion |$1| gibt eine Meldung zur Fehlerklasse |IO| vom Level
+|DBG_NOTE| aus. Der Parameter 0 enthält wird mit |io_ident()|
+auf die Kennung der IO-Struktur <io> gesetzt.
+*/
+
+void io_note (IO *io, const char *fmt, const char *def, ...)
 {
-	char *id = io_ident(io);
 	va_list list;
-	va_start(list, narg);
-	vmessage(id, name, num, narg, list);
-	memfree(id);
+
+	va_start(list, def);
+	dbg_vpsub("IO", DBG_NOTE, fmt, rd_ident(io), def, list);
 	va_end(list);
 }
 
-void io_error(io_t *io, const char *name, int num, int narg, ...)
+/*
+Die Funktion |$1| gibt eine Meldung zur Fehlerklasse |IO| vom Level
+|DBG_NOTE| aus. Der Parameter 0 enthält wird mit |io_ident()|
+auf die Kennung der IO-Struktur <io> gesetzt. Nach der Ausgabe der Meldung
+wird |io_ctrl| mit dem Parameter |IO_ERROR| aufgerufen. Falls die
+IO-Struktur keine eigene Fehlerbehandlung kennt, wird das Programm mit
+|exit(EXIT_FAILURE)| abgebrochen.
+*/
+
+void io_error (IO *io, const char *fmt, const char *def, ...)
 {
-	char *id = io_ident(io);
 	va_list list;
-	va_start(list, narg);
-	vmessage(id, name, num, narg, list);
-	memfree(id);
+
+	va_start(list, def);
+	dbg_vpsub("IO", DBG_ERR, fmt, rd_ident(io), def, list);
 	va_end(list);
 
 	if	(io_ctrl(io, IO_ERROR) == EOF)
 		exit(EXIT_FAILURE);
 }
+
+/*
+$SeeAlso
+\mref{Debug(3)},
+\mref{stdbg(3)},
+\mref{ioctrl(7)}.
+*/
 

@@ -1,6 +1,7 @@
 /*
 Zählerdefintion generieren
 
+$Header	<$1>
 $Copyright (C) 2000 Erich Frühstück
 This file is part of EFEU.
 
@@ -28,12 +29,21 @@ If not, write to the Free Software Foundation, Inc.,
 #include <index.ms>
 #include <cntobj.ms>
 
+/*
+Die Struktur |$1| dient zur Konstruktion von Zählobjekten und
+Zählklassifikationen. Sämtliche Hilfsfunktionen und Hilfstabellen
+werden statisch eingerichtet. Der Zugriff erfolgt über
+Initialisierungsfunktionen, die wahlweise statisch oder global
+eingerichtet werden.
+*/
+
 struct CntDef {
 	bool glob;	/* Flag für globale Definition */
 	str pfx;	/* Namensprefix */
 	str cntarg;	/* Argumentliste der Zählerfunktionen */
 	str ctype;	/* Type der Klassendefinitionen */
 	str idxarg;	/* Argumentliste der Klassenfunktionen */
+	str idxvar;	/* Variablendeklaration der Klassenfunktionen */
 	str ptr;	/* Pointer mit Klassifikationsvariablen */
 	str var_type;	/* Variablentype */
 	str var_name;	/* Variablenname */
@@ -44,20 +54,30 @@ struct CntDef {
 };
 
 
-/*	Parameter über Datenpointer
+/*
+Die erste Form des Konstruktors richtet
+Zähldefinitionen ein, die Parameterwerte ausschließlich über
+globale Variablen oder über den mit |md_count| übergebenen Datenpointer
+erhalten. Die Variable <type> gibt den Datentype des Datenpointers an.
+wird ein Nullstring übergeben, wird <"|const void *|"> verwendet.
 */
 
 virtual inline CntDef CntDef (str type = NULL, bool glob = true,
 	str pfx = NULL)
 {
-	str arg = (type ? psub(type) : "const void") + " *data";
+	str arg = type ? psub("const $1 *ptr = data;", type) : NULL;
+	str decl = type ? psub("const $1 *ptr = data;", type) : NULL;
 	return (CntDef) { glob, psub(pfx), arg,
-		"MdClass_t", "MdClass_t *c, " + arg, "data",
-		NULL, NULL, 0, DataBase(str),
+		"MdClass", "MdClass *c, const void *data",
+		decl, (type ? "ptr" : "data"), NULL, NULL, 0, DataBase(str),
 		DataBase(LabelEntry), DataBase(LabelEntry) };
 }
 
-/*	Parameter über interne Variable
+/*
+Der zweite Konstruktor verwendet einen Schnittstellenvektor der
+Dimension <n> zur Kommunikation mit den Zählfunktionen.
+Die Datenstruktur <name> wird mit mithile von |Struct|
+(Vergleiche dazu \mref{struct(7)}) aus <def> generiert.
 */
 
 virtual inline CntDef CntDef (str name, int n, str def,
@@ -66,7 +86,13 @@ virtual inline CntDef CntDef (str name, int n, str def,
 	name = psub(name);
 
 	if	(def)
-		Struct(name, "Klassifikationsvariablen", def, glob);
+	{
+		Struct st = Struct(NULL, name)
+		st.addentry(psubfilter(def, name));
+		IO out = glob ? hdr : src;
+		out << "\n/*\tKlassifikationsvariablen\n*/\n";
+		st.type(out, name);
+	}
 
 	if	(!vname)
 	{
@@ -77,39 +103,39 @@ virtual inline CntDef CntDef (str name, int n, str def,
 	{
 		src << "static ";
 	}
-	else	fpsub(hdr, "extern $1_t $2[$3];\n", name, vname, n);
+	else	fpsub(hdr, "extern $1 $2[$3];\n", name, vname, n);
 
-	fpsub(src, "$1_t $2[$3];\n", name, vname, n);
-	Struct("$1_class", "Klassifikationstype", string !
-@macro	MDCLASS_VAR	Basisvariablen
-$1_t	*ptr		Variablenpointer
-!, false);
-	str type = psub("$1_class_t", name);
+	fpsub(src, "$1 $2[$3];\n", name, vname, n);
+	str decl = psub("$1 *ptr = ((MdPtrClass *) c)->ptr;", name);
 
-	return (CntDef) { glob, psub(pfx), "const void *data",
-		type, type + " *c, const void *data", "c->ptr",
-		name + "_t", vname, n, DataBase(str),
+	return (CntDef) { glob, psub(pfx), NULL,
+		"MdPtrClass", "MdClass *c, const void *data",
+		decl, "ptr", name, vname, n, DataBase(str),
 		DataBase(LabelEntry), DataBase(LabelEntry) };
 }
 
 
-/*	Initialisierungsfunktion für Variablenvektor
+/*
+Mithilfe von |CntDef::init| kann eine
+Initialisierungsfunktion für die Zählvariablen eingerichtet werden.
+Die Initialisierungsfunktion hat als erstes Argument den Index auf
+den Schnittstellenvektor und liefert den entsprechenden Pointer.
 */
 
 void CntDef::init(str name, str args = NULL, str body = NULL)
 {
-	Function f = Function("$1 *" + name, paste(", ", "int n", args),
-		var_type, var_name, var_dim);
-	f.line("static $1 buf, *ptr;");
+	List_t parg = {var_type, var_name, var_dim ? var_dim : 1};
+	Function f = Function("$1 *" + name, paste(", ", "int n", args), parg);
+	f.line("static $1 buf, *ptr;", parg);
 	f.newpar();
-	f.line("ptr = n < $3 ? $2 + n : &buf;");
-	f.line("memset(ptr, 0, sizeof($1));");
+	f.line("ptr = n < $3 ? $2 + n : &buf;", parg);
+	f.line("memset(ptr, 0, sizeof($1));", parg);
 
 	if	(body)
 	{
 		f.line();
 		f.beg();
-		f.body(body);
+		f.body(body, parg);
 		f.end();
 		f.line();
 	}
@@ -118,13 +144,12 @@ void CntDef::init(str name, str args = NULL, str body = NULL)
 	f.write(glob);
 }
 
-
 void CntDef::ctab(str name, str fmt = NULL, str pext = NULL, str xdesc = NULL)
 {
 	src << "\n/*\tKlassifikationstabelle\n*/\n\n";
 	name = psub(name);
 
-	if	(pext)	pext = ", " + psub(pext);
+	if	(pext)	pext = ", " + psub(pext, name);
 
 	fprintf(src, "static %s %s[] = {\n", ctype, name);
 
@@ -134,40 +159,54 @@ void CntDef::ctab(str name, str fmt = NULL, str pext = NULL, str xdesc = NULL)
 		str fname = paste("_", pfx, x.name);
 		fprintf(src, "\t{ %#s, %#s,\n\t", cname,
 			paste(", ", x.desc, xdesc)); 
-		fpsub(src, "\t$1_dim, $1_tab, (MdClassify_t) $1_idx", fname);
+		fpsub(src, "\t$1_dim, $1_tab, $1_idx", fname);
 		src << pext << " },\n";
 	}
 
 	src << "};\n\n";
 }
 
+/*
+Die Funktion |CntDef::setup| richtet statische Vektoren mit den
+Zählobjekten und den Klassifikationen ein. Weiters konstruiert
+sie eine Funktion zum Eintragen der entsprechenden Einträge
+in die Zähldatenbanken.
+*/
+
 void CntDef::setup(str name, str lblpfx = NULL, ...)
 {
-	Function add = Function("void $1_addclass",
-		"xtab_t *class, int n", name);
+	name = psub(name, va_list);
+	Function f_ext = var_type && (glob || var_dim) ? \
+		Function("void $1_extend",
+		"MdClassTab *class, const char *ext, $2 *ptr",
+		name, var_type) : NULL;
+	Function f_add = Function("void $1_addclass",
+		"MdClassTab *class, int n", name);
 	Function f = Function("void $1_setup",
-		"xtab_t *count, xtab_t *class, int n", name);
+		"MdCntObjTab *count, MdClassTab *class, int n", name);
 
 	for (x in ini)
 		f.line(x);
 
+	ini.delete(0, dim(ini));
+
 	if	(dim(cnt))
 	{
 		src << "\n/*\tZählertabelle\n*/\n\n";
-		fprintf(src, "static MdCount_t %s_cnt[] = {\n", name);
+		fprintf(src, "static MdCntObj %s_cnt[] = {\n", name);
 
 		for (x in cnt)
 		{
 			fprintf(src, "\t{ %#s, ", x.name); 
 			fprintf(src, "CT_%s, ", x.name); 
 			fprintf(src, "%#s,\n\t\t", x.desc); 
-			fprintf(src, "(MdSet_t) set_%s, ", x.name);
-			fprintf(src, "(MdInit_t) ini_%s, ", x.name);
-			fprintf(src, "(MdAdd_t) add_%s },\n", x.name);
+			fprintf(src, "set_%s, ", x.name);
+			fprintf(src, "ini_%s, ", x.name);
+			fprintf(src, "add_%s },\n", x.name);
 		}
 
 		src << "};\n\n";
-		f.line("XAPPEND(count, $1_cnt, XS_ENTER);", name);
+		f.line("MdCntObj_add(count, $1_cnt, tabsize($1_cnt));", name);
 		cnt.delete(0, dim(cnt));
 	}
 
@@ -181,9 +220,12 @@ void CntDef::setup(str name, str lblpfx = NULL, ...)
 		str lbl = paste(".", fmt, ext == "." ? NULL : ext);
 		str cname = name + "_class";
 
+		f_add.switch("n");
+		f_add.case("0", "$1_add(class, $2_class0, $3); break;",
+			ctype, name, n);
+
 		f.line("$1_addclass(class, 0);", name);
-		psub(NULL, cname, 0);
-		ctab("$1$2", lbl, var_dim ? var_name : NULL, xdesc);
+		ctab(cname + "0", lbl, var_name, xdesc);
 
 		if	(var_dim > 1)
 		{
@@ -197,32 +239,30 @@ void CntDef::setup(str name, str lblpfx = NULL, ...)
 			xdesc = va_list.pop();
 			ext = strcut(xdesc, "%s");
 
-			if	(ext && ext != ".")
-				lbl = paste(".", fmt, ext);
-			else	lbl = sprintf("%s.%d", fmt, i + 1);
+			if	(!ext || ext == ".")
+				ext = sprintf("%d", i + 1); 
 
-			psub(NULL, cname, i);
-			ctab("$1$2", lbl, var_name + " + $2", xdesc);
+			str var = sprintf("%s + %d", var_name, i);
+			f_add.case(i, "$1_extend(class, $2); break;",
+				name, sprintf("%#s, %s", ext, var));
 		}
 
-		fprintf(src, "#define %s_size %d\n\n", cname, n);
-		fprintf(src, "static %s *%s[] = {\n", ctype, cname);
-		fprintf(src, "\t%s0,\n", cname);
+		f_add.case(NULL, "break;");
+		f_add.end();
 
-		for (i = 1; i < var_dim; i++)
-			fprintf(src, "\t%s%d,\n", cname, i);
-
-		src << "};\n\n";
-
-		add.fline("if\t(n < %d)", var_dim ? var_dim : 1);
-		add.line("\txappend(class, $1[n], $1_size,", cname);
-		add.line("\t\tsizeof($1), XS_ENTER);", ctype);
+		f_ext.line("$1_xadd(class, $2_class0, $3, ext, ptr);",
+			ctype, name, n);
 
 		class.delete(0, dim(class));
 	}
-	else	add.line(";");
+	else
+	{
+		f_ext.line(";");
+		f_add.line(";");
+	}
 
-	add.write(glob);
+	f_ext.write(glob);
+	f_add.write(glob);
 	f.write(glob);
 }
 
@@ -255,7 +295,12 @@ void CntDef::use(...)
 	}
 }
 
-/*	Zählobjekt definieren
+/*
+\shead	Zählobjekt
+
+Ein Zählobjekt wird mit der Funktion |CntDef::cntobj| eingerichtet.
+Dies erfolgt mit der Funktion |CntObj| (Vergleiche dazu
+\mref{cntobj(7)}).
 */
 
 void CntDef::cntobj(str name, str desc, Type_t type, IO def)
@@ -266,18 +311,40 @@ void CntDef::cntobj(str name, str desc, Type_t type, IO def)
 }
 
 
-/*	Klassifikationsfunktion generieren
+/*
+\shead	Klassifikationsfunktionen
 */
 
-Function CntDef::func(str name, ...)
-	Function("int " + name + "_idx", idxarg, va_list)
+inline Function CntDef::func(str name, ...)
+{
+	Function f = Function("int " + name + "_idx", idxarg, va_list)
+	f.line(idxvar);
+	return f;
+}
+
+inline IndexFunc CntDef::idxfunc(str name)
+{
+	IndexFunc f = IndexFunc(paste("_", pfx, name), idxarg);
+	f.func.line(idxvar);
+	return f;
+}
 
 void CntDef::stdfunc(str name, str fdef, ...)
 {
 	Function f = func(name, va_list);
-	f.body(fdef);
+	f.body(fdef, va_list);
 	f.write(false);
 }
+
+/*
+[|CntDef::classfunc|]
+	definiert eine frei gestaltete Klassifikationsfunktion.
+	Die Variable <fdef> definiert den Funktionsrumpf und
+	die Eingabestruktur <def> definiert die Klassenkennungen.
+	Jede Zeile von <def> enthält eine Kennung und einen
+	Beschreibungstext.
+
+*/
 
 void CntDef::classfunc(str name, str desc, str fdef, IO def)
 {
@@ -288,6 +355,14 @@ void CntDef::classfunc(str name, str desc, str fdef, IO def)
 	lbl.load(def);
 	lbl.tab(false);
 }
+
+/*
+[|CntDef::simple|]
+	generiert eine einfache Klassifikationsfunktion mit <n>
+	Klassen. Der Rückgabewert der Funktion wird vom Ausdruck
+	<expr> bestimmt. Die Variablen <fmt> und <lbl> dienen zur
+	Konstruktion der Kennungen und Beschreibungen.
+*/
 
 void CntDef::simple(str name, str desc, str expr, int n,
 	str fmt = NULL, str label = NULL)
@@ -300,6 +375,12 @@ void CntDef::simple(str name, str desc, str expr, int n,
 	lbl.tab(false);
 }
 
+/*
+[|CntDef::limit|]
+	generiert eine lineare Klassifikation mit einer offenen Klasse
+	am Ende. Der Ausdruck <expr> liefert den Klassenindex.
+*/
+
 void CntDef::limit(str name, str desc, str expr, int n,
 	str fmt = NULL, str label = NULL)
 {
@@ -311,6 +392,14 @@ void CntDef::limit(str name, str desc, str expr, int n,
 	lbl.range(fmt, label, 0, n - 1);
 	lbl.tab(false);
 }
+
+/*
+[|CntDef::range|]
+	generiert eine lineare Klassifikation mit einer offenen Klasse
+	am Anfang und am Ende. Der Ausdruck <expr> liefert den Klassenindex.
+	Die Variablen <first> und <last> bestimmen die untere, bzw.
+	obere Grenze für die zwei offenen Klassen.
+*/
 
 void CntDef::range(str name, str desc, str expr, int first, int last,
 	str fmt = NULL, str label = NULL)
@@ -329,6 +418,12 @@ return $3 - $2;
 	lbl.tab(false);
 }
 
+/*
+[|CntDef::flag|]
+	liefert eine Klassifikation mit einer Ausprägung,
+	die nur Daten zählt, für die der Ausdruck <expr> wahr ist.
+*/
+
 void CntDef::flag(str name, str desc, str expr, str fmt = NULL)
 {
 	add_class(name, desc);
@@ -339,10 +434,16 @@ void CntDef::flag(str name, str desc, str expr, str fmt = NULL)
 	lbl.tab(false);
 }
 
+/*
+[|CntDef::switch|]
+	konstruiert eine Klassifikation mithilfe eines
+	|switch|-Blocks.
+*/
+
 virtual void CntDef::switch(str name, str desc, str expr, str fmt, IO def)
 {
 	add_class(name, desc);
-	IndexFunc f = IndexFunc(paste("_", pfx, name), idxarg);
+	IndexFunc f = idxfunc(name);
 
 	if	(!f.switch(expr, fmt, def))
 		f.func.fline("return %d;", dim(f.lbl));
@@ -353,10 +454,16 @@ virtual void CntDef::switch(str name, str desc, str expr, str fmt, IO def)
 virtual void CntDef::switch(str name, str desc, str expr, IO def)
 	this.switch(name, desc, expr, "$(key)", def);
 
+/*
+[|CntDef::test|]
+	konstruiert eine Klassifikation mithilfe von
+	|if|-Anweisungen.
+*/
+
 virtual void CntDef::test(str name, str desc, str init, str fmt, IO def)
 {
 	add_class(name, desc);
-	IndexFunc f = IndexFunc(paste("_", pfx, name), idxarg);
+	IndexFunc f = idxfunc(name);
 	f.func.body(init);
 
 	if	(!f.test(fmt, def))
@@ -368,13 +475,89 @@ virtual void CntDef::test(str name, str desc, str init, str fmt, IO def)
 virtual void CntDef::test(str name, str desc, str init, IO def)
 	test(name, desc, init, "$(key)", def);
 
+/*
+[|CntDef::complex|]
+	erlaubt die Konstruktion einer Klassifikation, bei der
+	|switch|-Blöcke und |if|-Anweisungen beliebig kombiniert
+	und verschachtelt werden können.
+*/
 
 void CntDef::complex(str name, str desc, IO def)
 {
 	add_class(name, desc);
-	IndexFunc x = IndexFunc(paste("_", pfx, name), idxarg);
-	x.body(def);
-	x.write(false);
+	IndexFunc f = idxfunc(name);
+	f.body(def);
+	f.write(false);
 }
+
+/*
+$Examples
+Das erste Beispiel zeigt die Konstruktion eines Zählobjektes für
+Fälle und eine Klasse für die Gesamtheit.
+
+\ms_example
+config hdr src
+
+#include <macro.ms>
+#include <cntdef.ms>
+
+StdInclude(hdr, "EFEU/mdcount")
+Include(src, HeaderName)
+
+CntDef cdef = CntDef()
+cdef.cntobj("ges", "Fallzähler", int, ". . 1");
+cdef.classfunc("ges", "Gesamtheit", "return 0;", "GES Gesamtheit");
+cdef.setup("Simple");
+\end
+
+Das zweite Beispiel zeigt eine Zähldefinition mit einer
+Zählvariablenstruktur.
+
+\ms_example	eink
+config hdr src
+
+#include <macro.ms>
+#include <cntdef.ms>
+
+StdInclude(hdr, "EFEU/mdcount")
+Include(src, HeaderName)
+
+CntDef cdef = CntDef("EKData", 1, string !
+int	btag	Beitragstage
+int	satz	Einkommenssatz
+!);
+
+cdef.init("SetEK", "unsigned btag, unsigned satz", string !
+ptr->btag = btag;
+ptr->satz = satz;
+!);
+
+struct DezilBasis {
+	double anz;
+	double val;
+};
+
+cdef.cntobj("eink", "Einkommenszähler", DezilBasis, string !
+.	anz	1.
+.	val	$(ptr)->satz
+return 	.	$(ptr)->satz ? 1 : 0
+!);
+
+cdef.test("std", "Standardklassen",
+	"int x = $(ptr)->satz;", "x <= $(key)", string !
+0
+@test	$(ptr)->btag == $(key)
+0	B0	Keine Beitragstage
+*	E0	Kein Einkommen
+@end
+10000	E$(key)	Einkommen $((int) last + 1) bis zu $(key)
+20000	E$(key)	Einkommen $((int) last + 1) bis zu $(key)
+50000	E$(key)	Einkommen $((int) last + 1) bis zu $(key)
+*	EXXX	Einkommen über $(last)
+!);
+
+cdef.setup("EK", "ek");
+\end
+*/
 
 #endif	/* cntdef.ms */

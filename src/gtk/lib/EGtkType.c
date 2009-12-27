@@ -25,20 +25,20 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/CmdPar.h>
 #include <EFEU/parsedef.h>
 
-void EGtkTypeCast (Func_t *func, void *rval, void **arg)
+void EGtkTypeCast (EfiFunc *func, void *rval, void **arg)
 {
 	Val_ptr(rval) = Val_ptr(arg[0]);
 }
 
-static void create_object (Func_t *func, void *rval, void **arg)
+static void create_object (EfiFunc *func, void *rval, void **arg)
 {
 	GtkType type = gtk_type_from_name(func->type->name);
 	Val_ptr(rval) = gtk_object_new(type, NULL);
 }
 
-Type_t *EGtkType (GtkType gtktype)
+EfiType *EGtkType (GtkType gtktype)
 {
-	Type_t *type;
+	EfiType *type;
 	char *p, *name;
 
 	if	(!gtk_type_is_a(gtktype, GTK_TYPE_OBJECT))

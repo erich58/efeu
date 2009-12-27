@@ -29,60 +29,60 @@ If not, write to the Free Software Foundation, Inc.,
 
 static void MakeGlobalFunc(const char *p)
 {
-	Var_t *var = NewVar(&Type_vfunc, p, 0);
+	EfiVar *var = NewVar(&Type_vfunc, p, 0);
 	Val_vfunc(var->data) = VirFunc(NULL);
 	AddVar(GlobalVar, var, 1);
 }
 
-static void f_prior (Func_t *func, void *rval, void **arg)
+static void f_prior (EfiFunc *func, void *rval, void **arg)
 {
-	register Op_t *op = skey_find(&PostfixTab, STR(0));
+	register EfiOp *op = nkt_fetch(&PostfixTab, STR(0), NULL);
 	Val_int(rval) = op ? op->prior : 0;
 }
 
-static void f_leftop (Func_t *func, void *rval, void **arg)
+static void f_leftop (EfiFunc *func, void *rval, void **arg)
 {
-	Op_t *op;
+	EfiOp *op;
 	char *p;
 
-	op = ALLOC(1, Op_t);
+	op = memalloc(sizeof(EfiOp));
 	op->name = mstrcpy(STR(0));
 	op->prior = OpPrior_Unary;
 	op->assoc = OpAssoc_Left;
 	op->parse = PrefixOp;
-	xsearch(&PrefixTab, op, XS_REPLACE);
+	AddOpDef(&PrefixTab, op, 1);
 	p = mstrcat(NULL, op->name, "()", NULL);
 	MakeGlobalFunc(p);
 	memfree(p);
 }
 
-static void f_rightop (Func_t *func, void *rval, void **arg)
+static void f_rightop (EfiFunc *func, void *rval, void **arg)
 {
-	Op_t *op;
+	EfiOp *op;
 
-	op = ALLOC(1, Op_t);
+	op = memalloc(sizeof(EfiOp));
 	op->name = mstrcpy(STR(0));
 	op->prior = OpPrior_Unary;
 	op->assoc = OpAssoc_Left;
 	op->parse = PostfixOp;
-	xsearch(&PostfixTab, op, XS_REPLACE);
+	AddOpDef(&PostfixTab, op, 1);
 	MakeGlobalFunc(op->name);
 }
 
-static void f_binop (Func_t *func, void *rval, void **arg)
+static void f_binop (EfiFunc *func, void *rval, void **arg)
 {
-	Op_t *op;
+	EfiOp *op;
 
-	op = ALLOC(1, Op_t);
+	op = memalloc(sizeof(EfiOp));
 	op->name = mstrcpy(STR(0));
 	op->prior = Val_int(arg[1]);
 	op->assoc = Val_bool(arg[2]) ? OpAssoc_Left : OpAssoc_Right;
 	op->parse = BinaryOp;
-	xsearch(&PostfixTab, op, XS_REPLACE);
+	AddOpDef(&PostfixTab, op, 1);
 	MakeGlobalFunc(op->name);
 }
 
-static FuncDef_t fdef_op[] = {
+static EfiFuncDef fdef_op[] = {
 	{ 0, &Type_int, "Prior (str op)", f_prior },
 	{ 0, &Type_void, "RightOp (str op)", f_rightop },
 	{ 0, &Type_void, "LeftOp (str op)", f_leftop },

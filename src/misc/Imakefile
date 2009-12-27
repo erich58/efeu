@@ -3,7 +3,7 @@
 
 #include <d2m.cfg>
 
-TOPDIR = _EFEU_TOP
+TOPDIR = EFEUROOT
 BINDIR = $(TOPDIR)/bin
 LIBDIR = $(TOPDIR)/lib
 APPDIR = $(TOPDIR)/lib/efeu
@@ -14,14 +14,12 @@ DIR2MAKE = dir2make -B $(BINDIR) -L $(LIBDIR) -A $(APPDIR) -D $(DOCDIR)
 BaseInc = -H $(TOPDIR)/include/EFEU
 MathInc = -H $(TOPDIR)/include/Math
 
-#if	__linux__
-SubMake(Linux,"Lokale Programme für Linux",pgm/Linux,NullArg,NullArg)
-#endif
-
 SubMake(script,"Shell-Scripts",pgm/script,NullArg,NullArg)
 SubMake(tools,"Einfache Hilfsprogramme",pgm/tools,NullArg,NullArg)
+SubMake(latex,"Latex-Stylefiles",latex,NullArg,NullArg)
+SubMake(vimrc,"vim-Konfigurationsdateien",vimrc,NullArg,NullArg)
+SubMake(local,"Lokale Ergänzungen",local,NullArg,NullArg)
 
 SubMake(pix,"Pixelfiles",lib/pix,$(BaseInc) -lpix,NullArg)
 
-SubMake(xprint,"Druckerausgabe",pgm/xprint,NullArg,NullArg)
-SubMake(pixmap,"Hilfsprogrammei für Pixeldateien",pgm/pixmap,NullArg,pix)
+SubMake(pixmap,"Hilfsprogramme für Pixeldateien",pgm/pixmap,NullArg,pix)

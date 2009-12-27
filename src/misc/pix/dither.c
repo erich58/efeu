@@ -25,10 +25,10 @@ If not, write to the Free Software Foundation, Inc.,
 #define LIMIT	128
 #define MAXVAL	256
 
-void OldPixMap_Dither(Func_t *func, void *rval, void **arg)
+void OldPixMap_Dither(EfiFunc *func, void *rval, void **arg)
 {
-	OldPixMap_t *pix, *npix;
-	Color_t *color;
+	OldPixMap *pix, *npix;
+	COLOR *color;
 	int size;
 	int i;
 	int idx;

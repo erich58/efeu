@@ -27,8 +27,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/Debug.h>
 
 #define	M_NODATA	"no data available.\n"
-#define	M_NF	"$0: field number $1 is out of range 0..$2.\n"
-#define	M_NT	"$0: tuple number $1 is out of range 0..$2.\n"
+#define	M_NF	"PG_head: field number $1 is out of range 0..$2.\n"
+#define	M_NT	"PG_head: tuple number $1 is out of range 0..$2.\n"
 
 /*
 :*:
@@ -45,7 +45,7 @@ The function |$1| returns 1 on success and 0 on failure.
 Die Funktion |$1| liefert 1 bei Erfolg und 0 bei Mißerfolg.
 */
 
-int PG_query (PG_t *pg, const char *cmd)
+int PG_query (PG *pg, const char *cmd)
 {
 	return PG_exec(pg, cmd, PGRES_TUPLES_OK);
 }
@@ -57,7 +57,7 @@ Die Funktion |$1| liefert die Zahl der Tupel der letzten Datenbankanfrage.
 The function |$1| returns the number of tuples of last request.
 */
 
-int PG_ntuples (PG_t *pg)
+int PG_ntuples (PG *pg)
 {
 	return (pg && pg->res) ? PQntuples(pg->res) : 0;
 }
@@ -69,7 +69,7 @@ Die Funktion |$1| liefert die Zahl der Felder der letzten Datenbankanfrage.
 The function |$1| returns the number of fields of last request.
 */
 
-int PG_nfields (PG_t *pg)
+int PG_nfields (PG *pg)
 {
 	return (pg && pg->res) ? PQnfields(pg->res) : 0;
 }
@@ -82,14 +82,13 @@ der letzten Datenbankanfrage.
 The function |$1| returns the label of field <field> of last request.
 */
 
-char *PG_fname (PG_t *pg, int field)
+char *PG_fname (PG *pg, int field)
 {
 	int nfields = (pg && pg->res) ? PQnfields(pg->res) : 0;
 
 	if	(field < 0 || field >= nfields)
 	{
-		Message("PG", DBG_NOTE, M_NF,
-			ArgList("cff", "PG_head", "%d", field, "%d", nfields));
+		dbg_note("PG", M_NF, "dd", field, nfields);
 		return NULL;
 	}
 
@@ -105,22 +104,20 @@ The function |$1| returns the value of field <field> in tuple <tuple>
 of last request.
 */
 
-char *PG_value (PG_t *pg, int tuple, int field)
+char *PG_value (PG *pg, int tuple, int field)
 {
 	int ntuples = (pg && pg->res) ? PQntuples(pg->res) : 0;
 	int nfields = (pg && pg->res) ? PQnfields(pg->res) : 0;
 
 	if	(tuple < 0 || tuple >= ntuples)
 	{
-		Message("PG", DBG_NOTE, M_NT,
-			ArgList("cff", "PG_head", "%d", tuple, "%d", ntuples));
+		dbg_note("PG", M_NT, "dd", tuple, ntuples);
 		return NULL;
 	}
 
 	if	(field < 0 || field >= nfields)
 	{
-		Message("PG", DBG_NOTE, M_NF,
-			ArgList("cff", "PG_head", "%d", field, "%d", nfields));
+		dbg_note("PG", M_NF, "dd", field, nfields);
 		return NULL;
 	}
 
@@ -129,7 +126,7 @@ char *PG_value (PG_t *pg, int tuple, int field)
 
 /*
 $SeeAlso
-\mref{PG(3)},
+\mref{PG_connect(3)},
 \mref{PG_exec(3)},
 \mref{PG_open(3)},
 \mref{SetupPG(3)},

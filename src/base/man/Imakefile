@@ -1,6 +1,6 @@
-LDIR=	_EFEU_TOP/src/base/lib
-DE_DOC=	_EFEU_TOP/doc/de
-EN_DOC=	_EFEU_TOP/doc/de
+LDIR=	EFEUROOT/src/base/lib
+DE_DOC=	EFEUROOT/doc/de
+EN_DOC=	EFEUROOT/doc/de
 
 ProvideDocDir($(DE_DOC))
 

@@ -23,7 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/memalloc.h>
 #include <EFEU/refdata.h>
-#include <EFEU/io.h>
+#include <EFEU/ftools.h>
 #include <EFEU/parsub.h>
 #include <EFEU/Debug.h>
 
@@ -40,15 +40,15 @@ If not, write to the Free Software Foundation, Inc.,
 	Die Funktion entfernt gleichzeitig eine const-Qualifikation
 */
 
-static refdata_t *rd_check (const void *data, const char *name)
+static RefData *rd_check (const void *data, const char *name)
 {
-	refdata_t *rd = (refdata_t *) data;
+	RefData *rd = (RefData *) data;
 
 	if	(rd && rd->reftype)
 	{
 		if	(rd->refcount == 0)
 		{
-			fprintf(stderr, ERR, name, (ulong_t) rd);
+			fprintf(stderr, ERR, name, (unsigned long) rd);
 			exit(EXIT_FAILURE);
 			return NULL;
 		}
@@ -61,58 +61,81 @@ static refdata_t *rd_check (const void *data, const char *name)
 */
 
 static int debug_depth = 0;
+static int debug_lock = 0;
 
-static void debug_id (io_t *log, const refdata_t *rd, const char *cmd)
+static void debug_id (FILE *log, const RefData *rd, const char *cmd)
 {
-	io_nputc('\t', log, debug_depth);
-	io_printf(log, "%s(", cmd);
+	int i;
+
+	for (i = 0; i < debug_depth; i++)
+		putc('\t', log);
+
+	fputs(cmd, log);
+	putc('(', log);
 
 	if	(rd->reftype->label)
-		io_printf(log, "%s ", rd->reftype->label);
+	{
+		fputs(rd->reftype->label, log);
+		putc(' ', log);
+	}
 
-	io_printf(log, "%#lx)", (ulong_t) rd);
+	fprintf(log, "%p)", rd);
 }
 
-static io_t *debug_log (const refdata_t *rd)
+static FILE *debug_log (const RefData *rd)
 {
-	reftype_t *type = (reftype_t *) rd->reftype;
+	RefType *type = (RefType *) rd->reftype;
+
+	if	(debug_lock)
+		return NULL;
 
 	if	(type->sync < DebugChangeCount)
 	{
 		type->sync = DebugChangeCount;
-		io_printf(type->log, "STOP debugging %s\n", type->label);
-		rd_deref(type->log);
-		type->log = rd_refer(LogOut(type->label, DBG_DEBUG));
-		io_printf(type->log, "START debugging %s\n", type->label);
+
+		if	(type->log)
+		{
+			fprintf(type->log, "STOP debugging %s\n", type->label);
+			fileclose(type->log);
+		}
+
+		type->log = filerefer(LogFile(type->label, DBG_DEBUG));
+
+		if	(type->log)
+			fprintf(type->log, "START debugging %s\n", type->label);
 	}
 
 	return type->log;
 }
 
-static void std_debug (const refdata_t *rd, const char *cmd)
+static void std_debug (const RefData *rd, const char *cmd)
 {
-	io_t *log = debug_log(rd);
+	FILE *log = debug_log(rd);
 
 	if	(log)
 	{
-		char *ident = rd_ident(rd);
-
+		char *ident;
+		
+		debug_lock++;
+		ident = rd_ident(rd);
 		debug_id(log, rd, cmd);
 
 		if	(ident)
 		{
-			io_printf(log, " %s", ident);
-			memfree(ident);
+			putc(' ', log);
+			fputs(ident, log);
 		}
 
-		io_putc('\n', log);
+		putc('\n', log);
+		memfree(ident);
+		debug_lock--;
 	}
 }
 
 void rd_debug (const void *data, const char *fmt, ...)
 {
-	const refdata_t *rd = data;
-	io_t *log = rd ? debug_log(rd) : NULL;
+	const RefData *rd = data;
+	FILE *log = rd ? debug_log(rd) : NULL;
 
 	if	(log)
 	{
@@ -123,12 +146,12 @@ void rd_debug (const void *data, const char *fmt, ...)
 			va_list args;
 
 			va_start(args, fmt);
-			io_putc(' ', log);
-			io_vprintf(log, fmt, args);
+			putc(' ', log);
+			vfprintf(log, fmt, args);
 			va_end(args);
 		}
 			
-		io_putc('\n', log);
+		putc('\n', log);
 	}
 }
 
@@ -137,7 +160,7 @@ void rd_debug (const void *data, const char *fmt, ...)
 
 char *rd_ident (const void *data)
 {
-	refdata_t *rd = rd_check(data, "rd_ident");
+	RefData *rd = rd_check(data, "rd_ident");
 	return (rd && rd->reftype->ident) ? rd->reftype->ident(rd) : NULL;
 }
 
@@ -145,9 +168,9 @@ char *rd_ident (const void *data)
 /*	Datenobjekt initialisieren
 */
 
-void *rd_init (const reftype_t *type, void *data)
+void *rd_init (const RefType *type, void *data)
 {
-	refdata_t *rd = data;
+	RefData *rd = data;
 
 	if	(rd)
 	{
@@ -160,35 +183,12 @@ void *rd_init (const reftype_t *type, void *data)
 }
 
 
-/*	Datenobjekt generieren
-*/
-
-void *rd_create (const reftype_t *type)
-{
-	if	(type && type->admin)
-	{
-		refdata_t *rd = type->admin(NULL, NULL);
-
-		if	(rd)
-		{
-			rd->reftype = type;
-			rd->refcount = 1;
-			std_debug(rd, KEY_ALLOC);
-		}
-
-		return rd;
-	}
-
-	return NULL;
-}
-
-
 /*	Referenzzähler erhöhen
 */
 
 void *rd_refer (const void *data)
 {
-	refdata_t *rd = rd_check(data, "rd_refer");
+	RefData *rd = rd_check(data, "rd_refer");
 
 	if	(rd != NULL)
 	{
@@ -204,7 +204,7 @@ void *rd_refer (const void *data)
 
 void rd_deref (void *data)
 {
-	refdata_t *rd = rd_check(data, "rd_deref");
+	RefData *rd = rd_check(data, "rd_deref");
 
 	if	(rd == NULL)	return;
 
@@ -222,12 +222,8 @@ void rd_deref (void *data)
 
 		debug_depth += indent;
 
-		if	(rd->reftype == NULL)
-			;
-		else if	(rd->reftype->clean)
+		if	(rd->reftype->clean)
 			rd->reftype->clean(data);
-		else if	(rd->reftype->admin)
-			rd->reftype->admin(data, NULL);
 
 		debug_depth -= indent;
 	}

@@ -34,66 +34,66 @@ If not, write to the Free Software Foundation, Inc.,
 
 typedef struct {
 #if	REVBYTEORDER
-	uchar_t blue;
-	uchar_t green;
-	uchar_t red;
-	uchar_t idx;
+	unsigned char blue;
+	unsigned char green;
+	unsigned char red;
+	unsigned char idx;
 #else
-	uchar_t idx;
-	uchar_t red;
-	uchar_t green;
-	uchar_t blue;
+	unsigned char idx;
+	unsigned char red;
+	unsigned char green;
+	unsigned char blue;
 #endif
-} Color_t;
+} COLOR;
 
 int ColorValue(double x);
-Color_t SetColor(double x, double y, double z);
-int GetColor(Color_t color, Color_t *tab, size_t dim);
+COLOR SetColor(double x, double y, double z);
+int GetColor(COLOR color, COLOR *tab, size_t dim);
 
 typedef struct {
 	REFVAR;		/* Referenzzähler */
 	int colors;	/* Farbenzahl */
 	int rows;	/* Zeilenzahl */
 	int cols;	/* Spaltenzahl */
-	Color_t color[PIX_CDIM];	/* Farbvektor */
-	uchar_t *pixel;	/* Punktefeld */
-} OldPixMap_t;
+	COLOR color[PIX_CDIM];	/* Farbvektor */
+	unsigned char *pixel;	/* Punktefeld */
+} OldPixMap;
 
-extern reftype_t OldPixMap_reftype;
+extern RefType OldPixMap_reftype;
 
-OldPixMap_t *new_OldPixMap (int rows, int cols);
+OldPixMap *new_OldPixMap (int rows, int cols);
 
 #define	refer_OldPixMap(pix)	rd_refer(pix)
 #define	deref_OldPixMap(pix)	rd_deref(pix)
 
-OldPixMap_t *load_OldPixMap (const char *name);
-void save_OldPixMap (OldPixMap_t *pix, const char *name);
-void print_OldPixMap (OldPixMap_t *pix, FILE *file);
+OldPixMap *load_OldPixMap (const char *name);
+void save_OldPixMap (OldPixMap *pix, const char *name);
+void print_OldPixMap (OldPixMap *pix, FILE *file);
 
-OldPixMap_t *read_PPMFile (FILE *file);
-void OldPixMapToPPM (OldPixMap_t *pix, const char *name);
-void OldPixMapToXPM2 (OldPixMap_t *pix, const char *name);
+OldPixMap *read_PPMFile (FILE *file);
+void OldPixMapToPPM (OldPixMap *pix, const char *name);
+void OldPixMapToXPM2 (OldPixMap *pix, const char *name);
 
 
 /*	Schnittstelle zu Befehlsinterpreter
 */
 
-extern Type_t Type_OldPixMap;
-extern Type_t Type_Color;
+extern EfiType Type_OldPixMap;
+extern EfiType Type_Color;
 
-extern Color_t Buf_Color;
+extern COLOR Buf_Color;
 
 #define	Obj_OldPixMap(x)	NewPtrObj(&Type_OldPixMap, (x))
 #define	Obj_Color(x)	NewObj(&Type_Color, (Buf_Color = (x), &Buf_Color))
 
-#define	Val_OldPixMap(x)	((OldPixMap_t **) x)[0]
-#define	Val_Color(x)	((Color_t *) x)[0]
+#define	Val_OldPixMap(x)	((OldPixMap **) x)[0]
+#define	Val_Color(x)	((COLOR *) x)[0]
 
 
-void OldPixMap_Histogramm (Func_t *func, void *rval, void **arg);
-void OldPixMap_Slice (Func_t *func, void *rval, void **arg);
-void OldPixMap_Dither (Func_t *func, void *rval, void **arg);
-void OldPixMap_TeX (Func_t *func, void *rval, void **arg);
+void OldPixMap_Histogramm (EfiFunc *func, void *rval, void **arg);
+void OldPixMap_Slice (EfiFunc *func, void *rval, void **arg);
+void OldPixMap_Dither (EfiFunc *func, void *rval, void **arg);
+void OldPixMap_TeX (EfiFunc *func, void *rval, void **arg);
 
 
 /*	Initialisierung

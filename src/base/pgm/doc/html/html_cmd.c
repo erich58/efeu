@@ -28,13 +28,22 @@ If not, write to the Free Software Foundation, Inc.,
 #include <HTML.h>
 #include <efeudoc.h>
 
-
-int HTML_cmd (HTML_t *html, va_list list)
+static void pcmd_label (HTML *html, void *data)
 {
-	int cmd;
+	io_ctrl(html->out, DOC_REF_LABEL, data);
+
+	if	(html->last == '\n');
+		io_putc('\n', html->out);
+
+	memfree(data);
+}
+
+int HTML_cmd (void *drv, va_list list)
+{
+	HTML *html = drv;
+	int cmd = va_arg(list, int);
 	int n;
 	
-	cmd = va_arg(list, int);
 
 	switch (cmd)
 	{
@@ -71,11 +80,24 @@ int HTML_cmd (HTML_t *html, va_list list)
 	case DOC_CMD_APP:
 		return io_vctrl(html->out, cmd, list);
 	case DOC_CMD_IDX:
-	case DOC_REF_LABEL:
 		io_vctrl(html->out, cmd, list);
 
 		if	(html->last == '\n');
 			io_putc('\n', html->out);
+		break;
+	case DOC_REF_LABEL:
+		if	(html->s_cmd)
+		{
+			HTML_cpush(html, pcmd_label,
+				mstrcpy(va_arg(list, char *)));
+		}
+		else
+		{
+			io_vctrl(html->out, cmd, list);
+
+			if	(html->last == '\n');
+				io_putc('\n', html->out);
+		}
 		break;
 	case DOC_CMD_MARK:
 		n = va_arg(list, int);

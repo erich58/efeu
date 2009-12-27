@@ -59,6 +59,7 @@ CEXPR(f_close, RVINT = io_close(IO(0)); IO(0) = NULL)
 CEXPR(f_rewind, RVINT = io_rewind(IO(0)))
 
 CEXPR(f_getc, RVINT = io_getc(IO(0)))
+CEXPR(f_peek, RVINT = io_peek(IO(0)))
 CEXPR(f_ungetc, RVINT = io_ungetc(INT(1), IO(0)))
 CEXPR(f_putc, RVINT = io_putc(INT(1), IO(0)))
 CEXPR(f_puts, RVINT = io_puts(STR(1), IO(0)))
@@ -73,7 +74,7 @@ CEXPR(f_mgetc, RVINT = io_mgetc(IO(0), INT(1)))
 CEXPR(f_xgets, RVSTR = io_xgets(IO(0), STR(1)))
 CEXPR(f_mgets, RVSTR = io_mgets(IO(0), STR(1)))
 
-static ObjList_t **end_scan(strbuf_t *sb, ObjList_t **ptr)
+static EfiObjList **end_scan(StrBuf *sb, EfiObjList **ptr)
 {
 	char *p;
 	int n;
@@ -89,13 +90,13 @@ static ObjList_t **end_scan(strbuf_t *sb, ObjList_t **ptr)
 	return &(*ptr)->next;
 }
 
-static void f_scanline (Func_t *func, void *rval, void **arg)
+static void f_scanline (EfiFunc *func, void *rval, void **arg)
 {
-	ObjList_t *list, **ptr;
+	EfiObjList *list, **ptr;
 	char *delim, *end;
-	strbuf_t *sb;
+	StrBuf *sb;
 	char *p;
-	io_t *io;
+	IO *io;
 	int c;
 
 	io = IO(0);
@@ -159,11 +160,11 @@ static void f_scanline (Func_t *func, void *rval, void **arg)
 	Val_list(rval) = list;
 }
 
-static void f_getline (Func_t *func, void *rval, void **arg)
+static void f_getline (EfiFunc *func, void *rval, void **arg)
 {
-	io_t *io;
-	ObjList_t *list;
-	Obj_t *obj;
+	IO *io;
+	EfiObjList *list;
+	EfiObj *obj;
 	char *p;
 	int c;
 
@@ -197,8 +198,7 @@ static void f_getline (Func_t *func, void *rval, void **arg)
 
 		if	(list->obj == NULL || list->obj->lval == NULL)
 		{
-			reg_cpy(1, func->name);
-			errmsg(MSG_EFMAIN, 88);
+			dbg_note(NULL, "[efmain:88]", "s", func->name);
 			memfree(p);
 			continue;
 		}
@@ -218,10 +218,10 @@ static void f_getline (Func_t *func, void *rval, void **arg)
 	Val_bool(rval) = 1;
 }
 
-static void f_fgets (Func_t *func, void *rval, void **arg)
+static void f_fgets (EfiFunc *func, void *rval, void **arg)
 {
-	io_t *in;
-	strbuf_t *sb;
+	IO *in;
+	StrBuf *sb;
 	int c, end;
 
 	in = IO(0);
@@ -243,9 +243,9 @@ static void f_fgets (Func_t *func, void *rval, void **arg)
 	RVSTR = sb2str(sb);
 }
 
-static void f_ngets (Func_t *func, void *rval, void **arg)
+static void f_ngets (EfiFunc *func, void *rval, void **arg)
 {
-	io_t *in = IO(0);
+	IO *in = IO(0);
 	int n = Val_int(arg[1]);
 	char *buf = memalloc(n);
 
@@ -253,10 +253,10 @@ static void f_ngets (Func_t *func, void *rval, void **arg)
 		memfree(buf);
 }
 
-static void f_copy (Func_t *func, void *rval, void **arg)
+static void f_copy (EfiFunc *func, void *rval, void **arg)
 {
 	int c, n;
-	io_t *in, *out;
+	IO *in, *out;
 
 	in = IO(0);
 	out = IO(1);
@@ -268,12 +268,12 @@ static void f_copy (Func_t *func, void *rval, void **arg)
 	RVINT = n;
 }
 
-static void f_filter (Func_t *func, void *rval, void **arg)
+static void f_filter (EfiFunc *func, void *rval, void **arg)
 {
-	io_t *io;
+	IO *io;
 	char *name;
 	char *cmd;
-	strbuf_t *buf;
+	StrBuf *buf;
 	int flag, c;
 
 	if	((cmd = STR(0)) == NULL)
@@ -315,7 +315,7 @@ static void f_filter (Func_t *func, void *rval, void **arg)
 */
 
 
-static FuncDef_t fdef_io[] = {
+static EfiFuncDef fdef_io[] = {
 	{ FUNC_RESTRICTED, &Type_io, "str ()", k_str2io },
 	{ 0, &Type_io, "tmpfile ()", f_tmpfile },
 	{ 0, &Type_io, "open (str name, str mode)", f_open },
@@ -334,16 +334,18 @@ str post = NULL, bool flag = false)", f_lmark },
 	{ 0, &Type_int, "IO::newpart (str name, str repl = NULL)", f_newpart },
 	{ 0, &Type_int, "IO::endpart (void)", f_endpart },
 	{ FUNC_VIRTUAL, &Type_int, "close (IO & io)", f_close },
-	{ 0, &Type_int, "rewind (IO io)", f_rewind },
-	{ 0, &Type_int, "copy (IO in, IO out)", f_copy },
+	{ FUNC_VIRTUAL, &Type_int, "rewind (IO io)", f_rewind },
+	{ FUNC_VIRTUAL, &Type_int, "copy (IO in, IO out)", f_copy },
 
 	{ 0, &Type_int, "IO::getc ()", f_getc },
+	{ 0, &Type_int, "IO::peek ()", f_peek },
 	{ 0, &Type_int, "IO::ungetc (int x)", f_ungetc },
 	{ 0, &Type_int, "IO::putc (int x)", f_putc },
 
 	{ 0, &Type_int, "IO::mgetc (bool flag = true)", f_mgetc },
 	{ 0, &Type_int, "IO::xgetc (str delim = NULL)", f_xgetc },
 
+	{ 0, &Type_str, "IO::gets (int end = '\n')", f_fgets },
 	{ 0, &Type_str, "IO::mgets (str delim = NULL)", f_mgets },
 	{ 0, &Type_str, "IO::xgets (str delim = NULL)", f_xgets },
 
@@ -356,6 +358,7 @@ str post = NULL, bool flag = false)", f_lmark },
 	{ 0, &Type_list, "scanline (IO io, str delim = \"%s\", \
 str end = \"\\n\")", f_scanline },
 	{ 0, &Type_bool, "getline (IO io, ...)", f_getline },
+	{ 0, &Type_str, "fgetc (IO io)", f_getc },
 	{ 0, &Type_str, "fgets (IO io, int end = '\n')", f_fgets },
 	{ 0, &Type_str, "ngets (IO io, int n)", f_ngets },
 

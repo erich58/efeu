@@ -1,5 +1,5 @@
 /*
-Dokumentstruktur
+Dokumentstruktur einrichten
 
 $Copyright (C) 1999 Erich Frühstück
 This file is part of EFEU.
@@ -22,39 +22,28 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <efeudoc.h>
 
-/*	Referenzstruktur
-*/
-
-static Doc_t *doc_admin (Doc_t *tg, const Doc_t *src)
+static void doc_clean (void *data)
 {
-	if	(tg)
-	{
-		io_close(tg->out);
+	Doc *tg = data;
+	io_close(tg->out);
 
-		if	(tg->buf)
-			del_strbuf(tg->buf);
+	if	(tg->buf)
+		del_strbuf(tg->buf);
 
-		while (tg->cmd_stack)
-			rd_deref(popstack(&tg->cmd_stack, NULL));
+	while (tg->cmd_stack)
+		rd_deref(popstack(&tg->cmd_stack, NULL));
 
-		memfree(tg);
-		return NULL;
-	}
-
-	tg = memalloc(sizeof(Doc_t));
-	tg->buf = new_strbuf(0);
-	tg->out = NULL;
-	tg->nl = 1;
-	pushstack(&tg->cmd_stack, rd_refer(GlobalDocTab));
-	return tg;
+	memfree(tg);
 }
 
-static char *doc_ident (Doc_t *doc)
+static char *doc_ident (const void *data)
 {
-	strbuf_t *sb;
-	io_t *io;
+	const Doc *doc;
+	StrBuf *sb;
+	IO *io;
 	char *p;
 
+	doc = data;
 	sb = new_strbuf(0);
 	io = io_strbuf(sb);
 	io_printf(io, "type = %#s", doc->type ? doc->type->name : NULL);
@@ -67,11 +56,15 @@ static char *doc_ident (Doc_t *doc)
 	return sb2str(sb);
 }
 
-ADMINREFTYPE(Doc_reftype, "Doc", doc_ident, doc_admin);
+static RefType doc_reftype = REFTYPE_INIT("Doc", doc_ident, doc_clean);
 
-Doc_t *Doc (const char *type)
+Doc *Doc_create (const char *type)
 {
-	Doc_t *doc = rd_create(&Doc_reftype);
+	Doc *doc = memalloc(sizeof(Doc));
 	doc->type = GetDocType(type);
-	return doc;
+	doc->buf = new_strbuf(0);
+	doc->out = NULL;
+	doc->nl = 1;
+	pushstack(&doc->cmd_stack, rd_refer(GlobalDocTab));
+	return rd_init(&doc_reftype, doc);
 }

@@ -45,7 +45,7 @@ static double sub(double x, double *c, size_t n)
 /*	Integrieren
 */
 
-double pnarea(pnom_t *p, double a, double b)
+double pnarea(Polynom *p, double a, double b)
 {
 
 	int k1, k2;

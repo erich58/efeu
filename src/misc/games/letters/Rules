@@ -1,0 +1,2 @@
+etk	FDFX	EtkScript(%s,%s/%s.%s)
+gif	FXDFX	InstallImage(%s.%s,%s/%s.%s)

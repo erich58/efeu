@@ -31,13 +31,15 @@ If not, write to the Free Software Foundation, Inc.,
 #define	CTRL_TEXT	0x4
 
 typedef struct {
-	io_t *io;	/* Ausgabestruktur */
-	int (*put) (int c, io_t *io);	/* Ausgabefunktion */
+	IO *io;		/* Ausgabestruktur */
+	int (*put) (int c, IO *io);	/* Ausgabefunktion */
 	int last;	/* Letztes ausgegebene Zeichen */
 } FILTER;
 
-static int filter_put(int c, FILTER *filter)
+static int filter_put (int c, void *ptr)
 {
+	FILTER *filter = ptr;
+
 	if	(c == '$' || (c == INFO_KEY && filter->last == '\n'))
 		io_putc(c, filter->io);
 
@@ -46,7 +48,7 @@ static int filter_put(int c, FILTER *filter)
 	return c;
 }
 
-static int key_put(int c, io_t *io)
+static int key_put (int c, IO *io)
 {
 	switch (c)
 	{
@@ -63,7 +65,7 @@ static int key_put(int c, io_t *io)
 	return io_putc(c, io);
 }
 
-static int label_put(int c, io_t *io)
+static int label_put (int c, IO *io)
 {
 	switch (c)
 	{
@@ -77,8 +79,10 @@ static int label_put(int c, io_t *io)
 	return io_putc(c, io);
 }
 
-static int filter_ctrl(FILTER *filter, int req, va_list list)
+static int filter_ctrl (void *ptr, int req, va_list list)
 {
+	FILTER *filter = ptr;
+
 	switch (req)
 	{
 	case IO_CLOSE:
@@ -111,7 +115,7 @@ static int filter_ctrl(FILTER *filter, int req, va_list list)
 	return io_vctrl(filter->io, req, list);
 }
 
-static void dump_info (io_t *io, InfoNode_t *base, InfoNode_t *info)
+static void dump_info (IO *io, InfoNode *base, InfoNode *info)
 {
 	if	(info->load)
 		info->load(info);
@@ -124,16 +128,14 @@ static void dump_info (io_t *io, InfoNode_t *base, InfoNode_t *info)
 	if	(info->label)
 	{
 		io_putc(' ', io);
-		io_psub(io, info->label);
+		io_psubarg(io, info->label, "ns", info->name);
 	}
 
 	io_ctrl(io, CTRL_TEXT);
 
 	if	(!info->func)
 	{
-		reg_cpy(1, info->name);
-		reg_cpy(2, info->label);
-		io_psub(io, info->par);
+		io_psubarg(io, info->par, "nss", info->name, info->label);
 	}
 	else	info->func(io, info);
 
@@ -142,7 +144,7 @@ static void dump_info (io_t *io, InfoNode_t *base, InfoNode_t *info)
 	if	(info->list)
 	{
 		int i = info->list->used;
-		InfoNode_t **ip = info->list->data;
+		InfoNode **ip = info->list->data;
 
 		for (; i > 0; i--, ip++)
 			dump_info(io, base, *ip);
@@ -150,9 +152,9 @@ static void dump_info (io_t *io, InfoNode_t *base, InfoNode_t *info)
 }
 
 
-void DumpInfo (io_t *io, InfoNode_t *base, const char *name)
+void DumpInfo (IO *io, InfoNode *base, const char *name)
 {
-	InfoNode_t *info = GetInfo(base, name);
+	InfoNode *info = GetInfo(base, name);
 
 	if	(info)
 	{
@@ -162,8 +164,8 @@ void DumpInfo (io_t *io, InfoNode_t *base, const char *name)
 		filter.put = io_putc;
 		filter.last = '\n';
 		io = io_alloc();
-		io->put = (io_put_t) filter_put;
-		io->ctrl = (io_ctrl_t) filter_ctrl;
+		io->put = filter_put;
+		io->ctrl = filter_ctrl;
 		io->data = &filter;
 		dump_info(io, name ? info : base, info);
 		io_close(io);

@@ -47,27 +47,27 @@ CEXPR(name, INT(0) op INT(1))
 /*	Funktionen
 */
 
-static void f_int_abs (Func_t *func, void *rval, void **arg)
+static void f_int_abs (EfiFunc *func, void *rval, void **arg)
 {
 	register int a = INT(0);
 	IRETVAL = a < 0 ? -a : a;
 }
 
-static void f_int_min (Func_t *func, void *rval, void **arg)
+static void f_int_min (EfiFunc *func, void *rval, void **arg)
 {
 	register int a = INT(0);
 	register int b = INT(1);
 	IRETVAL = a < b ? a : b;
 }
 
-static void f_int_max (Func_t *func, void *rval, void **arg)
+static void f_int_max (EfiFunc *func, void *rval, void **arg)
 {
 	register int a = INT(0);
 	register int b = INT(1);
 	IRETVAL = a > b ? a : b;
 }
 
-static void f_int_adjust (Func_t *func, void *rval, void **arg)
+static void f_int_adjust (EfiFunc *func, void *rval, void **arg)
 {
 	register int a = INT(0);
 	register char *b = STR(1);
@@ -154,7 +154,7 @@ ASSIGN(a_int_or, |=)
 /*	Funktionstabelle
 */
 
-static FuncDef_t fdef_int[] = {
+static EfiFuncDef fdef_int[] = {
 	{ FUNC_VIRTUAL, &Type_int, "abs (int)", f_int_abs },
 	{ FUNC_VIRTUAL, &Type_int, "min (int, int)", f_int_min },
 	{ FUNC_VIRTUAL, &Type_int, "max (int, int)", f_int_max },

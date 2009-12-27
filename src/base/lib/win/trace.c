@@ -22,13 +22,13 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/efwin.h>
 
-extern io_t *wio;
+extern IO *wio;
 
 static char *list[] = {
 	"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"
 };
 
-static WinMenu_t menu[] = {
+static WinMenu menu[] = {
 	{ 0, "<Sonderzeichen>", NULL },
 	{ '*', "<*> Stern", "*" },
 	{ '+', "<+> Plus", "+" },

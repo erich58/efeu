@@ -1,4 +1,4 @@
-\intro
+\preface
 Dieses Buch wendet sich an Programmentwickler und Anwender unter UNIX,
 die für ihre Arbeit die Werkzeuge und Programmbibliotheken von EFEU
 nutzen wollen.
@@ -22,7 +22,7 @@ Besondere Eigenschaften:
 	(\LaTeX, HTML, roff, &ldots;).
 \endlist
 
-Die EFEU-Implementierung bei Synthesis enthält zusätzlich 
+Die EFEU-Implementierung bei Synthesis enthält zusätzlich
 noch eine Reihe von Programmbibliotheken und Kommandos zur
 Auswertung und Verwaltung von administrativen Daten und für
 Modellrechnungen. Diese zum Teil sehr umfangreichen Module
@@ -30,10 +30,11 @@ werden in eigenen Handbüchern behandelt.
 
 In der ursprünglichen Form sollte dieses Handbuch den Schwerpunkt
 C-Programmierung haben, nach Rücksprache mit Mitarbeitern
-des Instiutes habe ich den esh-Interpreter in den
+des Instiutes habe ich den EFEU-Interpreter in den
 Vordergrund gestellt.
+
 Trotzdem werden weiterhin einige Ausführungen zur C-Programmierung
-ins Handbuch einfließen. Zum einen weist der esh-Interpreter eine starke
+ins Handbuch einfließen. Zum einen weist der EFEU-Interpreter eine starke
 Affinität zu C/C++ auf, zum anderen ergeben sich dadurch tiefere
 Einblicke in die zugrundeliegenden Programmbibliotheken.
 
@@ -41,7 +42,6 @@ Einblicke in die zugrundeliegenden Programmbibliotheken.
 Zum Verständnis dieses Buches sind Grundkenntnisse in der Arbeit
 mit UNIX-Systemen sowie in der Programmiersprache C förderlich.
 */
-
 	Erich Frühstück\br
 	Wördern, \thedate
 

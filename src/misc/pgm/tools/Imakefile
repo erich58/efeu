@@ -1,4 +1,5 @@
 DEP=	DEP_IORL DEP_EFX DEP_EFM
 LIB=	LIB_IORL LIB_EFX LIB_EFM
 
-Program($(BINDIR),man2html,man2html.o,$(DEP),$(LIB))
+Program($(BINDIR),gethostbyname,gethostbyname.o,$(DEP),$(LIB))
+Program($(BINDIR),listnames,listnames.o,$(DEP),$(LIB))

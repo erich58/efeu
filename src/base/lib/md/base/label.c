@@ -4,12 +4,12 @@
 
 #include <EFEU/mdmat.h>
 
-void MF_label(Func_t *func, void *rval, void **arg)
+void MF_label(EfiFunc *func, void *rval, void **arg)
 {
-	ObjList_t *list, **ptr;
-	Obj_t *obj;
-	mdmat_t *md;
-	mdaxis_t *x;
+	EfiObjList *list, **ptr;
+	EfiObj *obj;
+	mdmat *md;
+	mdaxis *x;
 	int i;
 	int flag;
 

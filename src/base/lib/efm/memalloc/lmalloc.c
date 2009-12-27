@@ -109,7 +109,7 @@ void *lmalloc(size_t size)
 	if	((p = malloc(size)) == NULL)
 #endif
 	{
-		fprintf(stderr, ERR, (ulong_t) size);
+		fprintf(stderr, ERR, (unsigned long) size);
 		exit(EXIT_FAILURE);
 	}
 

@@ -90,9 +90,7 @@ mf_hdr ()	# usage: mf_hdr dir src
 	src='$(SRC)/'$2
 	name=`basename $2`
 	tg="\$($1)/$name"
-	awk="\$(SRC)/mkhdr.awk"
-	cmd="\$(SRC)/mkhdr.sh"
 	mf_all "$tg"
-	mf_rule "$tg" "$src $awk $cmd" \
-		"awk -f $awk -v 'eval=$cmd' $src > \$@"
+	mf_rule "$tg" "$src" \
+		"efeuconfig file $src > \$@"
 }

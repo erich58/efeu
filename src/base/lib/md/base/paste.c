@@ -4,14 +4,14 @@
 
 #include <EFEU/mdmat.h>
 
-static mdidx_t *idx;
+static mdindex *idx;
 
-static void mkindex (const char *delim, mdaxis_t *x, char *last, int n);
+static void mkindex (const char *delim, mdaxis *x, char *last, int n);
 
-static size_t getdim (mdaxis_t *x, int n);
+static size_t getdim (mdaxis *x, int n);
 
 
-static size_t getdim(mdaxis_t *x, int n)
+static size_t getdim(mdaxis *x, int n)
 {
 	if	(n > 0)
 	{
@@ -21,7 +21,7 @@ static size_t getdim(mdaxis_t *x, int n)
 }
 
 
-static void mkindex(const char *delim, mdaxis_t *x, char *last, int n)
+static void mkindex(const char *delim, mdaxis *x, char *last, int n)
 {
 	if	(--n >= 0)
 	{
@@ -45,17 +45,17 @@ static void mkindex(const char *delim, mdaxis_t *x, char *last, int n)
 }
 
 
-void md_paste(mdmat_t *md, const char *name, const char *delim, int pos, int n)
+void md_paste(mdmat *md, const char *name, const char *delim, int pos, int n)
 {
-	mdaxis_t *old, *new;
-	mdaxis_t **ptr;
+	mdaxis *old, *new;
+	mdaxis **ptr;
 	int i;
 
 	if	(n == 0)	return;
 
 	if	(pos + n > md_dim(md->axis))
 	{
-		liberror(MSG_MDMAT, 41);
+		dbg_error(NULL, "[mdmat:41]", NULL);
 		return;
 	}
 

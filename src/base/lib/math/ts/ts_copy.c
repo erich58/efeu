@@ -1,5 +1,6 @@
 /*
-Zeitreihen kopieren
+:*:copy time series
+:de:Zeitreihen kopieren
 
 $Copyright (C) 1997 Erich Frühstück
 This file is part of EFEU.
@@ -24,16 +25,20 @@ If not, write to the Free Software Foundation, Inc.,
 #include <Math/TimeSeries.h>
 
 
-TimeSeries_t *CopyTimeSeries (const char *name, const TimeSeries_t *ts,
+TimeSeries *ts_copy (const char *name, const TimeSeries *ts,
 	int a, int b)
 {
-	TimeSeries_t *x;
+	TimeSeries *x;
 	int i;
 
 	if	(ts == NULL)	return NULL;
 	if	(b < a)		b = a + 1;
 
-	x = NewTimeSeries(name ? name : ts->name, ts->base, b - a);
+	x = ts_create(NULL, ts->base, b - a);
+
+	if	(name)
+		x->name = mpsubarg(name, "ns", ts->name);
+
 	x->fmt = mstrcpy(ts->fmt);
 	x->base.value += a;
 

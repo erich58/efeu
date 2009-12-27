@@ -1,0 +1,55 @@
+%	Makrodefinitionen für mit mksource generierte Dokumente
+%	(c) 1996 Erich Frühstück
+%	A-1090 Wien, Währinger Straße 64/6
+
+\message{Dokumentstil `mksource' Version 1.0 vom Juni 1991}
+
+\def\SetName#1#2#3{\expandafter\def\csname#1@#2\endcsname{#3}}
+\def\UseName#1#2{\csname#1@#2\endcsname}
+
+\def\SetBitfield#1#2#3{\SetName{#1}{hdr}{#2}\SetName{#1}{tab}{#3}}
+
+\newcommand{\UseBitfield}[2][tpb]{%
+	\begin{table}[#1]
+	\centering
+	\caption{\UseName{#2}{hdr}\label{#2}}
+	\def\Entry##1##2##3{##1 & ##2 & ##3\\}
+	{\LatinIndex\index{\UseName{#2}{hdr}}}\index{#2\_t}
+	\vspace{0.5\baselineskip}
+	\begin{tabular}{|r|l|l|}
+	\hline
+	\Entry{Bits}{Name}{Beschreibung}
+	\hline
+	\UseName{#2}{tab}
+	\hline
+	\end{tabular}
+	\end{table}}
+
+\def\SetDataType#1#2#3{\SetName{#1}{hdr}{#2}\SetName{#1}{tab}{#3}}
+
+\newcommand{\UseDataType}[2][tpb]{%
+	\begin{table}[#1]
+	\centering
+	\caption{\UseName{#2}{hdr}\label{#2}}
+	\def\Entry##1##2##3{##1 & ##2 & ##3\\}
+	{\LatinIndex\index{\UseName{#2}{hdr}}}\index{#2\_t}
+	\vspace{0.5\baselineskip}
+	\begin{tabular}{|r|l|l|}
+	\hline
+	\Entry{Type}{Name}{Beschreibung}
+	\hline
+	\UseName{#2}{tab}
+	\hline
+	\end{tabular}
+	\end{table}}
+
+\def\SetClassDef#1#2#3{\SetName{#1}{CDhead}{#2}\SetName{#1}{CDlist}{#3}}
+\def\ClassDefHead#1{\UseName{#1}{CDhead}\ignorespaces}
+\def\ClassDefList#1{\UseName{#1}{CDlist}\ignorespaces}
+
+\newcommand{\ClassDef}[1]{%
+	#1: \ClassDefHead{#1}
+	\begin{description}
+	\def\Entry##1##2{\item[##1] ##2}
+	\ClassDefList{#1}
+	\end{description}}

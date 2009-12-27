@@ -24,16 +24,16 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	SB_SIZE	1024
 
-static ALLOCTAB(sb_tab, 32, sizeof(strbuf_t));
+static ALLOCTAB(sb_tab, 32, sizeof(StrBuf));
 
 /*
 Die Funktion |$1| liefert ein neues Zeichenfeld
 mit Buffergrˆﬂe <blksize>.
 */
 
-strbuf_t *new_strbuf (size_t blksize)
+StrBuf *new_strbuf (size_t blksize)
 {
-	strbuf_t *buf = new_data(&sb_tab);
+	StrBuf *buf = new_data(&sb_tab);
 	buf->blksize = blksize;
 	return buf;
 }
@@ -43,7 +43,7 @@ Die Funktion |$1| gibt ein mit |new_strbuf| angefordertes Zeichenfeld
 wieder frei.
 */
 
-int del_strbuf (strbuf_t *buf)
+int del_strbuf (StrBuf *buf)
 {
 	if	(buf)
 	{
@@ -58,15 +58,15 @@ int del_strbuf (strbuf_t *buf)
 Die Funktion |$1| vergrˆﬂert ein Zeichenfeld um die Blockgrˆﬂe.
 */
 
-void sb_expand (strbuf_t *buf)
+void sb_expand (StrBuf *buf)
 {
 	if	(buf)
 	{
-		uchar_t *p;
+		unsigned char *p;
 		size_t n;
 
 		n = (buf->blksize ? buf->blksize : SB_SIZE);
-		p = lmalloc((ulong_t) buf->size + n);
+		p = lmalloc(buf->size + n);
 		memcpy(p, buf->data, buf->size);
 		lfree(buf->data);
 		buf->data = p;
@@ -77,11 +77,10 @@ void sb_expand (strbuf_t *buf)
 
 
 /*
-Die Funktion |$1| setzt die Grˆﬂe des Zeichenfeldes auf 0
-und gibt den Speicher frei.
+Die Funktion |$1| setzt die Grˆﬂe des Zeichenfeldes auf 0.
 */
 
-void sb_clear (strbuf_t *sb)
+void sb_clear (StrBuf *sb)
 {
 	if	(sb)
 	{
@@ -97,7 +96,7 @@ Sie ist Funktionsgleich mit dem Makro |sb_getc| erlaubt aber
 einen Nullpointer als Argument. In diesem Fall liefert sie immer EOF.
 */
 
-int sb_get (strbuf_t *sb)
+int sb_get (StrBuf *sb)
 {
 	return sb ? sb_getc(sb) : EOF;
 }
@@ -110,14 +109,14 @@ Gegen¸ber dem Makro |sb_putc| f¸hrt |$1| immer eine Synchronisation
 der Zeichenfeldgrˆﬂe mit der aktuellen Position durch.
 */
 
-int sb_put (int c, strbuf_t *sb)
+int sb_put (int c, StrBuf *sb)
 {
 	if	(!sb)	return 0;
 
 	if	(sb->pos >= sb->size)
 		sb_expand(sb);
 
-	c = sb->data[sb->pos++] = (uchar_t) c;
+	c = sb->data[sb->pos++] = (unsigned char) c;
 	sb->nfree = sb->size - sb->pos;
 	return c;
 }
@@ -128,7 +127,7 @@ Die Funktion |$1| setzt die aktuelle Position des Stringbuffers <sb>
 auf <pos>.
 */
 
-int sb_setpos (strbuf_t *sb, int pos)
+int sb_setpos (StrBuf *sb, int pos)
 {
 	if	(!sb)			return 0;
 	else if	(pos <= 0)		sb->pos = 0;
@@ -143,7 +142,7 @@ int sb_setpos (strbuf_t *sb, int pos)
 Die Funktion |$1| schreibt den String <str> in das Zeichenfeld <sb>.
 */
 
-int sb_puts (const char *str, strbuf_t *buf)
+int sb_puts (const char *str, StrBuf *buf)
 {
 	if	(str && buf)
 	{
@@ -162,7 +161,7 @@ Die Funktion |$1| schreibt den String <str> in umgekehrter
 Reihenfolge (das letzte Zeichen zuerst) in das Zeichenfeld <sb>.
 */
 
-int sb_rputs (const char *str, strbuf_t *buf)
+int sb_rputs (const char *str, StrBuf *buf)
 {
 	if	(str && buf)
 	{
@@ -182,7 +181,7 @@ Die Funktion |$1| schreibt den String <str> mit dem abschlieﬂenden
 0-Zeichen in das Zeichenfeld <sb>.
 */
 
-int sb_putstr (const char *str, strbuf_t *buf)
+int sb_putstr (const char *str, StrBuf *buf)
 {
 	if	(buf)
 	{
@@ -198,7 +197,7 @@ int sb_putstr (const char *str, strbuf_t *buf)
 Die Funktion |$1| liefert eine Stringkopie (0-Abschluﬂ) des Zeichenfeldes.
 */
 
-char *sb_strcpy (strbuf_t *buf)
+char *sb_strcpy (StrBuf *buf)
 {
 	register int n = buf ? sb_getpos(buf) : 0;
 
@@ -218,7 +217,7 @@ Die Funktion |$1| gibt das Zeichenfeld <sb> frei und liefert
 eine Stringkopie (0-Abschluﬂ).
 */
 
-char *sb2str (strbuf_t *buf)
+char *sb2str (StrBuf *buf)
 {
 	if	(buf)
 	{
@@ -234,7 +233,7 @@ char *sb2str (strbuf_t *buf)
 Die Funktion |$1| liefert eine Speicherkopie des Zeichenfeldes.
 */
 
-char *sb_memcpy (strbuf_t *buf)
+char *sb_memcpy (StrBuf *buf)
 {
 	register int n = buf ? sb_getpos(buf) : 0;
 	return n ? memcpy(memalloc(n), buf->data, n) : NULL;
@@ -245,7 +244,7 @@ Die Funktion |$1| gibt das Zeichenfeld <sb> frei und liefert
 eine Speicherkopie.
 */
 
-char *sb2mem (strbuf_t *buf)
+char *sb2mem (StrBuf *buf)
 {
 	if	(buf)
 	{

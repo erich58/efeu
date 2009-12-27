@@ -28,19 +28,20 @@ If not, write to the Free Software Foundation, Inc.,
 #include <ctype.h>
 
 typedef struct {
-	io_t *io;	/* Eingabestruktur */
-	strbuf_t *buf;	/* Zwischenbuffer */
+	IO *io;	/* Eingabestruktur */
+	StrBuf *buf;	/* Zwischenbuffer */
 	char *delim;	/* Abschlußzeichen */
-	io_t *cin;	/* Zwischensicherung von CmdEval_cin */
-	io_t *cout;	/* Zwischensicherung von CmdEval_cout */
+	IO *cin;	/* Zwischensicherung von CmdEval_cin */
+	IO *cout;	/* Zwischensicherung von CmdEval_cout */
 	unsigned save : 31;	/* Zahl der gespeicherten Zeichen */
 	unsigned eof : 1; 	/* EOF - Flag */
 } CEPAR;
 
-static int ce_get (CEPAR *par)
+static int ce_get (void *ptr)
 {
-	Obj_t *obj;
-	io_t *io;
+	CEPAR *par = ptr;
+	EfiObj *obj;
+	IO *io;
 	int c;
 
 	while (par->save == 0)
@@ -101,8 +102,9 @@ static int ce_get (CEPAR *par)
 	return sb_getc(par->buf);
 }
 
-static int ce_ctrl (CEPAR *par, int req, va_list list)
+static int ce_ctrl (void *ptr, int req, va_list list)
 {
+	CEPAR *par = ptr;
 	int stat;
 
 	switch (req)
@@ -128,7 +130,7 @@ static int ce_ctrl (CEPAR *par, int req, va_list list)
 	return stat;
 }
 
-io_t *io_cmdeval (io_t *io, const char *delim)
+IO *io_cmdeval (IO *io, const char *delim)
 {
 	if	(io != NULL)
 	{
@@ -145,8 +147,8 @@ io_t *io_cmdeval (io_t *io, const char *delim)
 		CmdEval_cout = io_strbuf(par->buf);
 
 		io = io_alloc();
-		io->get = (io_get_t) ce_get;
-		io->ctrl = (io_ctrl_t) ce_ctrl;
+		io->get = ce_get;
+		io->ctrl = ce_ctrl;
 		io->data = par;
 	}
 

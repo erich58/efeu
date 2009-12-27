@@ -25,14 +25,14 @@ If not, write to the Free Software Foundation, Inc.,
 #include <ctype.h>
 
 
-static int do_copy (io_t *io, io_t *tmp);
+static int do_copy (IO *io, IO *tmp);
 
-static Type_t *get_type(io_t *io, char *name)
+static EfiType *get_type(IO *io, char *name)
 {
-	Type_t *type;
+	EfiType *type;
 
 	if	((type = GetType(name)) == NULL)
-		io_error(io, MSG_EFMAIN, 83, 1, name);
+		io_error(io, "[efmain:83]", "s", name);
 
 	return Parse_type(io, type);
 }
@@ -41,10 +41,10 @@ static Type_t *get_type(io_t *io, char *name)
 /*	Funktionsprototyp aus String generieren
 */
 
-Func_t *Prototype(const char *fmt, Type_t *type, Name_t *name, unsigned flags)
+EfiFunc *Prototype(const char *fmt, EfiType *type, EfiName *name, unsigned flags)
 {
-	io_t *io;
-	Func_t *func;
+	IO *io;
+	EfiFunc *func;
 
 	io = io_cstr(fmt);
 	func = MakePrototype(io, type, name, flags);
@@ -56,25 +56,25 @@ Func_t *Prototype(const char *fmt, Type_t *type, Name_t *name, unsigned flags)
 /*	Funktionsprototyp einlesen
 */
 
-Func_t *MakePrototype(io_t *io, Type_t *type, Name_t *nptr, unsigned flags)
+EfiFunc *MakePrototype(IO *io, EfiType *type, EfiName *nptr, unsigned flags)
 {
 	char *name;
-	Func_t *func;
-	FuncEval_t eval;
-	Type_t *otype;
-	VarTab_t *vtab;
-	FuncArg_t arg;
-	io_t *tmp;
+	EfiFunc *func;
+	void (*eval) (EfiFunc *func, void *rval, void **arg);
+	EfiType *otype;
+	EfiVarTab *vtab;
+	EfiFuncArg arg;
+	IO *tmp;
 	int rflag;	/* Rückgabe von L-Wert */
 	int lflag;	/* L-Wert funktion */
 	int weight;
-	int virtual;
+	int virfunc;
 	int n;
 	int c;
 
 	lflag = 0;
 	rflag = (flags & FUNC_LRETVAL) ? 1 : 0;
-	virtual = (flags & FUNC_VIRTUAL) ? 1 : 0;
+	virfunc = (flags & FUNC_VIRTUAL) ? 1 : 0;
 
 	if	(flags & FUNC_RESTRICTED)	weight = KONV_RESTRICTED;
 	else if	(flags & FUNC_PROMOTION)	weight = KONV_PROMOTION;
@@ -90,7 +90,7 @@ Func_t *MakePrototype(io_t *io, Type_t *type, Name_t *nptr, unsigned flags)
 
 		if	((tname = io_getname(io)) == NULL)
 		{
-			io_error(io, MSG_EFMAIN, 82, 0);
+			io_error(io, "[efmain:82]", NULL);
 			return NULL;
 		}
 
@@ -99,7 +99,7 @@ Func_t *MakePrototype(io_t *io, Type_t *type, Name_t *nptr, unsigned flags)
 		else if	(strcmp("restricted", tname) == 0)
 			weight = KONV_RESTRICTED;
 		else if	(strcmp("virtual", tname) == 0)
-			virtual = 1;
+			virfunc = 1;
 		else if	(strcmp("inline", tname) == 0)
 			eval = Func_inline;
 		else if	((type = get_type(io, tname)) == NULL)
@@ -126,7 +126,7 @@ Func_t *MakePrototype(io_t *io, Type_t *type, Name_t *nptr, unsigned flags)
 
 	if	(nptr == NULL)
 	{
-		io_error(io, MSG_EFMAIN, 81, 0);
+		io_error(io, "[efmain:81]", NULL);
 		return NULL;
 	}
 
@@ -148,7 +148,8 @@ Func_t *MakePrototype(io_t *io, Type_t *type, Name_t *nptr, unsigned flags)
 		}
 		else
 		{
-			io_error(io, MSG_EFMAIN, 225, 1, nptr->obj->type->name);
+			io_error(io, "[efmain:225]", "s",
+				nptr->obj->type->name);
 			UnrefObj(nptr->obj);
 			memfree(nptr->name);
 			return NULL;
@@ -180,7 +181,7 @@ Func_t *MakePrototype(io_t *io, Type_t *type, Name_t *nptr, unsigned flags)
 */
 	if	(c != '(')
 	{
-		io_error(io, MSG_EFMAIN, 87, 1, name);
+		io_error(io, "[efmain:87]", "s", name);
 		DelVarTab(vtab);
 		memfree(name);
 		return NULL;
@@ -193,13 +194,13 @@ Func_t *MakePrototype(io_t *io, Type_t *type, Name_t *nptr, unsigned flags)
 */
 	if	(name == NULL)
 	{
-		virtual = 1;
+		virfunc = 1;
 
 		if	(c == ')')	;
 		else if	(otype == type)	otype = NULL; /* Konstruktor */
 		else
 		{
-			io_error(io, MSG_EFMAIN, 223, 1, type->name);
+			io_error(io, "[efmain:223]", "s", type->name);
 			return NULL;
 		}
 	}
@@ -210,7 +211,7 @@ Func_t *MakePrototype(io_t *io, Type_t *type, Name_t *nptr, unsigned flags)
 	{
 		if	(io_eat(io, "%s") != ')')
 		{
-			io_error(io, MSG_EFMAIN, 224, 1, type->name);
+			io_error(io, "[efmain:224]", "s", type->name);
 			return NULL;
 		}
 	}
@@ -228,7 +229,7 @@ Func_t *MakePrototype(io_t *io, Type_t *type, Name_t *nptr, unsigned flags)
 		arg.nokonv = 1;
 		arg.cnst = (arg.lval == 0);
 		arg.defval = NULL;
-		io_write(tmp, &arg, sizeof(FuncArg_t));
+		io_write(tmp, &arg, sizeof(EfiFuncArg));
 		n++;
 	}
 
@@ -245,7 +246,7 @@ Func_t *MakePrototype(io_t *io, Type_t *type, Name_t *nptr, unsigned flags)
 */
 	if	(rflag && n == 0)
 	{
-		io_error(io, MSG_EFMAIN, 96, 1, name);
+		io_error(io, "[efmain:96]", "s", name);
 		io_close(tmp);
 		return NULL;
 	}
@@ -256,7 +257,7 @@ Func_t *MakePrototype(io_t *io, Type_t *type, Name_t *nptr, unsigned flags)
 	func->scope = vtab;
 	func->name = name;
 	func->bound = (otype ? 1 : 0);
-	func->virtual = virtual;
+	func->virfunc = virfunc;
 	func->weight = weight;
 	func->eval = eval;
 
@@ -271,19 +272,19 @@ Func_t *MakePrototype(io_t *io, Type_t *type, Name_t *nptr, unsigned flags)
 		arg.nokonv = 0;
 		arg.cnst = 0;
 		arg.defval = NULL;
-		io_write(tmp, &arg, sizeof(FuncArg_t));
+		io_write(tmp, &arg, sizeof(EfiFuncArg));
 		n++;
 	}
 
 	func->dim = n;
-	func->arg = ALLOC(n, FuncArg_t);
+	func->arg = memalloc(n * sizeof(EfiFuncArg));
 	io_rewind(tmp);
-	io_read(tmp, func->arg, n * sizeof(FuncArg_t));
+	io_read(tmp, func->arg, n * sizeof(EfiFuncArg));
 	io_close(tmp);
 
 	if	(rflag && (func->type != func->arg[0].type))
 	{
-		message(NULL, MSG_EFMAIN, 97, 1, name);
+		dbg_note(NULL, "[efmain:97]", "s", name);
 	}
 
 	return func;
@@ -293,21 +294,21 @@ Func_t *MakePrototype(io_t *io, Type_t *type, Name_t *nptr, unsigned flags)
 /*	Argumentwert kopieren
 */
 
-static int do_copy(io_t *io, io_t *tmp)
+static int do_copy(IO *io, IO *tmp)
 {
-	FuncArg_t arg;
+	EfiFuncArg arg;
 	int flag;
 
 	flag = ParseFuncArg(io, &arg);
 
 	if	(flag == FARG_STDARG)
-		io_write(tmp, &arg, sizeof(FuncArg_t));
+		io_write(tmp, &arg, sizeof(EfiFuncArg));
 
 	return flag;
 }
 
 
-int ParseFuncArg(io_t *io, FuncArg_t *arg)
+int ParseFuncArg(IO *io, EfiFuncArg *arg)
 {
 	void *p;
 	int c;
@@ -343,14 +344,12 @@ int ParseFuncArg(io_t *io, FuncArg_t *arg)
 
 				memfree(p);
 				p = io_mgets(io, ")");
-				io_error(io, MSG_EFMAIN, 84, 1, p);
-				memfree(p);
+				io_error(io, "[efmain:84]", "m", p);
 				return FARG_ERROR;
 			}
 			else if	(strcmp(p, ".") != 0)
 			{
-				io_error(io, MSG_EFMAIN, 85, 1, p);
-				memfree(p);
+				io_error(io, "[efmain:85]", "m", p);
 				return FARG_ERROR;
 			}
 
@@ -361,7 +360,7 @@ int ParseFuncArg(io_t *io, FuncArg_t *arg)
 		{
 			if	((p = io_getname(io)) == NULL)
 			{
-				errmsg(MSG_EFMAIN, 89);
+				dbg_note(NULL, "[efmain:89]", NULL);
 				return FARG_ERROR;
 			}
 
@@ -402,8 +401,7 @@ int ParseFuncArg(io_t *io, FuncArg_t *arg)
 	{
 		if	(arg->lval)
 		{
-			reg_cpy(1, arg->name);
-			errmsg(MSG_EFMAIN, 86);
+			dbg_note(NULL, "[efmain:86]", "s", arg->name);
 			return FARG_ERROR;
 		}
 
@@ -422,11 +420,11 @@ int ParseFuncArg(io_t *io, FuncArg_t *arg)
 /*	Funktionsargumente abfragen
 */
 
-size_t GetFuncArg(io_t *io, FuncArg_t **arg)
+size_t GetFuncArg(IO *io, EfiFuncArg **arg)
 {
 	size_t n;
 	int c;
-	io_t *tmp;
+	IO *tmp;
 
 	tmp = io_tmpbuf(0);
 	n = 0;
@@ -441,13 +439,11 @@ size_t GetFuncArg(io_t *io, FuncArg_t **arg)
 	}
 
 	if	(c == FARG_ELLIPSE)
-	{
-		errmsg(MSG_EFMAIN, 146);
-	}
+		dbg_note(NULL, "[efmain:146]", NULL);
 
-	*arg = ALLOC(n, FuncArg_t);
+	*arg = memalloc(n * sizeof(EfiFuncArg));
 	io_rewind(tmp);
-	io_read(tmp, *arg, n * sizeof(FuncArg_t));
+	io_read(tmp, *arg, n * sizeof(EfiFuncArg));
 	io_close(tmp);
 	return n;
 }

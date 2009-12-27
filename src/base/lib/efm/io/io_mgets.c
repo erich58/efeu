@@ -25,7 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/patcmp.h>
 
 
-int io_mcopy(io_t *in, io_t *out, const char *delim)
+int io_mcopy(IO *in, IO *out, const char *delim)
 {
 	int n, c;
 
@@ -59,9 +59,9 @@ int io_mcopy(io_t *in, io_t *out, const char *delim)
 }
 
 
-char *io_mgets(io_t *io, const char *delim)
+char *io_mgets(IO *io, const char *delim)
 {
-	strbuf_t *sb;
+	StrBuf *sb;
 	int c;
 
 	sb = new_strbuf(0);

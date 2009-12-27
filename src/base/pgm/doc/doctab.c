@@ -23,14 +23,14 @@ If not, write to the Free Software Foundation, Inc.,
 #include "efeudoc.h"
 #include <ctype.h>
 
-static int testtab (const char *name, DocTab_t *tab)
+static int testtab (const char *name, DocTab *tab)
 {
 	return (name == NULL || (tab && mstrcmp(name, tab->name) == 0));
 }
 
-DocTab_t *Doc_gettab (Doc_t *doc, const char *name)
+DocTab *Doc_gettab (Doc *doc, const char *name)
 {
-	stack_t *ptr;
+	Stack *ptr;
 
 	if	(!(doc && doc->cmd_stack))	return NULL;
 
@@ -40,29 +40,29 @@ DocTab_t *Doc_gettab (Doc_t *doc, const char *name)
 	return NULL;
 }
 
-void Doc_pushvar (Doc_t *doc)
+void Doc_pushvar (Doc *doc)
 {
 	PushVarTab(RefVarTab(Type_Doc.vtab), ConstObj(&Type_Doc, &doc));
 
 	if	(doc && doc->cmd_stack)
 	{
-		DocTab_t *tab = doc->cmd_stack->data;
+		DocTab *tab = doc->cmd_stack->data;
 		PushVarTab(RefVarTab(tab->var), NULL);
 	}
 	else	PushVarTab(NULL, NULL);
 }
 
-void Doc_popvar (Doc_t *doc)
+void Doc_popvar (Doc *doc)
 {
 	PopVarTab();
 	PopVarTab();
 }
 
-VarTab_t *Doc_vartab (Doc_t *doc)
+EfiVarTab *Doc_vartab (Doc *doc)
 {
 	if	(doc && doc->cmd_stack)
 	{
-		DocTab_t *tab = doc->cmd_stack->data;
+		DocTab *tab = doc->cmd_stack->data;
 		return tab->var;
 	}
 	else	return NULL;

@@ -21,7 +21,7 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include <EFEU/LangType.h>
+#include <EFEU/LangDef.h>
 #include <EFEU/strbuf.h>
 #include <EFEU/mstring.h>
 #include <EFEU/ioctrl.h>
@@ -41,15 +41,15 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 typedef struct {
-	io_t *io;		/* Eingabestruktur */
-	char *lang;		/* Sprachkennung */
-	strbuf_t *buf;		/* Zeichenbuffer */
-	int nsave;		/* Gepufferte Zeichen */
-	int nlflag;		/* Flag für neue Zeile */
+	IO *io;		/* Eingabestruktur */
+	char *lang;	/* Sprachkennung */
+	StrBuf *buf;	/* Zeichenbuffer */
+	int nsave;	/* Gepufferte Zeichen */
+	int nlflag;	/* Flag für neue Zeile */
 } LFPAR;
 
-static int lf_get (LFPAR *lf);
-static int lf_ctrl (LFPAR *lf, int req, va_list list);
+static int lf_get (void *ptr);
+static int lf_ctrl (void *ptr, int req, va_list list);
 
 /*
 :de:
@@ -85,12 +85,12 @@ Steht ein Tag am Zeilenanfang, werden nachfolgende Leerzeichen und Tabulatoren
 sowie ein einzelner Zeilenvorschub entfernt.
 
 $SeeAlso
-\mref{LangType(7)}.\br
+\mref{LangDef(7)}.\br
 \mref{getenv(3)},
 \mref{setlocale(3)} @PRM.
 */
 
-io_t *langfilter (io_t *io, const char *lang)
+IO *langfilter (IO *io, const char *lang)
 {
 	if	(io != NULL)
 	{
@@ -99,8 +99,8 @@ io_t *langfilter (io_t *io, const char *lang)
 
 		if	(lang == NULL)
 		{
-			par->lang = mstrpaste("_", LangType.language,
-				LangType.territory);
+			par->lang = mstrpaste("_", LangDef.language,
+				LangDef.territory);
 		}
 		else	par->lang = mstrcpy(lang);
 	
@@ -111,8 +111,8 @@ io_t *langfilter (io_t *io, const char *lang)
 		par->nsave = 0;
 		par->nlflag = 1;
 		io = io_alloc();
-		io->get = (io_get_t) lf_get;
-		io->ctrl = (io_ctrl_t) lf_ctrl;
+		io->get = lf_get;
+		io->ctrl = lf_ctrl;
 		io->data = par;
 	}
 
@@ -205,7 +205,7 @@ static int lf_key (LFPAR *lf)
 	return type;
 }
 
-static int lf_test (io_t *io)
+static int lf_test (IO *io)
 {
 	int c = io_peek(io);
 	return (c != '*' && c != '_' && !isalpha(c));
@@ -312,8 +312,10 @@ static int lf_fill (LFPAR *lf)
 /*	Zeichen lesen
 */
 
-static int lf_get (LFPAR *lf)
+static int lf_get (void *ptr)
 {
+	LFPAR *lf = ptr;
+
 	if	(lf->nsave == 0)
 	{
 		lf->nsave = lf_fill(lf);
@@ -331,8 +333,9 @@ static int lf_get (LFPAR *lf)
 /*	Kontrollfunktion
 */
 
-static int lf_ctrl (LFPAR *lf, int req, va_list list)
+static int lf_ctrl (void *ptr, int req, va_list list)
 {
+	LFPAR *lf = ptr;
 	int stat;
 
 	switch (req)

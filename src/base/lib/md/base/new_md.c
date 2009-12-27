@@ -6,24 +6,22 @@
 #include <EFEU/mdmat.h>
 
 
-static mdmat_t *md_admin(mdmat_t *tg, const mdmat_t *src)
+static void md_clean (void *data)
 {
-	if	(tg)
-	{
-		del_axis(tg->axis);
-		memfree(tg->title);
-		memfree(tg->data);
-		memfree(tg);
-		return NULL;
-	}
-	else	return memalloc(sizeof(mdmat_t));
+	mdmat *tg = data;
+	del_axis(tg->axis);
+	memfree(tg->title);
+	memfree(tg->data);
+	memfree(tg);
 }
 
-char *md_ident(mdmat_t *md)
+static char *md_ident (const void *data)
 {
-	strbuf_t *sb;
-	io_t *io;
+	const mdmat *md;
+	StrBuf *sb;
+	IO *io;
 
+	md = data;
 	sb = new_strbuf(0);
 	io = io_strbuf(sb);
 	io_printf(io, "name=%#s, type=", md->title);
@@ -34,18 +32,18 @@ char *md_ident(mdmat_t *md)
 	return sb2str(sb);
 }
 
-ADMINREFTYPE(md_reftype, "MD", md_ident, md_admin);
+RefType md_reftype = REFTYPE_INIT("MD", md_ident, md_clean);
 
 
-mdmat_t *new_mdmat(void)
+mdmat *new_mdmat(void)
 {
-	return rd_create(&md_reftype);
+	return rd_init(&md_reftype, memalloc(sizeof(mdmat)));
 }
 
 /*	Datenmatrix kopieren
 */
 
-static void do_copy(mdaxis_t *y, mdaxis_t *x, size_t size, char *py, char *px, unsigned mask)
+static void do_copy(mdaxis *y, mdaxis *x, size_t size, char *py, char *px, unsigned mask)
 {
 	int i;
 
@@ -68,10 +66,10 @@ static void do_copy(mdaxis_t *y, mdaxis_t *x, size_t size, char *py, char *px, u
 }
 
 
-mdmat_t *cpy_mdmat(const mdmat_t *md, unsigned mask)
+mdmat *cpy_mdmat(const mdmat *md, unsigned mask)
 {
-	mdmat_t *m2;
-	mdaxis_t *x, **ptr;
+	mdmat *m2;
+	mdaxis *x, **ptr;
 
 	if	(md == NULL)	return NULL;
 

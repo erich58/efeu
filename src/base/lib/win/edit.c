@@ -25,10 +25,10 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	ctrl(x)	((x) & 0x1f)
 
-char *WinEdit (WinSize_t *ws, char *defval)
+char *WinEdit (WinSize *ws, char *defval)
 {
 	WINDOW *win;
-	strbuf_t *sb;
+	StrBuf *sb;
 	int i;
 	int key;
 

@@ -38,6 +38,6 @@ static int null_ctrl (void *ptr, int c, va_list list)
 	}
 }
 
-static io_t ios_null = STD_IODATA (NULL, null_put, null_ctrl, "<null>");
+static IO ios_null = STD_IODATA (NULL, null_put, null_ctrl, "<null>");
 
-io_t *ionull = &ios_null;
+IO *ionull = &ios_null;

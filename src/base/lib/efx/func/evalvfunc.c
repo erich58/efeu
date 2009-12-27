@@ -23,16 +23,16 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 #include <EFEU/konvobj.h>
 
-static void clean_arg (FuncArg_t *arg, size_t narg);
-static int set_arg (Func_t *func, FuncArg_t *arg, size_t narg, Obj_t *obj);
+static void clean_arg (EfiFuncArg *arg, size_t narg);
+static int set_arg (EfiFunc *func, EfiFuncArg *arg, size_t narg, EfiObj *obj);
 
 
-Obj_t *Expr_virfunc (void *par, const ObjList_t *list)
+EfiObj *Expr_virfunc (void *par, const EfiObjList *list)
 {
 	return EvalVirFunc(par, list);
 }
 
-Obj_t *Expr_void(void *par, const ObjList_t *list)
+EfiObj *Expr_void(void *par, const EfiObjList *list)
 {
 	while (list != NULL)
 	{
@@ -44,23 +44,23 @@ Obj_t *Expr_void(void *par, const ObjList_t *list)
 }
 
 
-Obj_t *EvalVirFunc(VirFunc_t *vtab, const ObjList_t *list)
+EfiObj *EvalVirFunc(EfiVirFunc *vtab, const EfiObjList *list)
 {
-	ArgKonv_t *fkonv;
-	Func_t *func, **ftab;
-	FuncArg_t *arg;
+	EfiArgKonv *fkonv;
+	EfiFunc *func, **ftab;
+	EfiFuncArg *arg;
 	size_t argdim;
 	size_t maxdim;
 	size_t fargdim;
-	Obj_t *obj;
+	EfiObj *obj;
 	int i;
 
 	if	(vtab == NULL || vtab->tab.used == 0)
 		return NULL;
 
-	if	(vtab->reftype != &VirFuncRefType)
+	if	(!IsVirFunc(vtab))
 	{
-		liberror(MSG_EFMAIN, 65);
+		dbg_error(NULL, "[efmain:65]", NULL);
 		return NULL;
 	}
 
@@ -80,8 +80,7 @@ Obj_t *EvalVirFunc(VirFunc_t *vtab, const ObjList_t *list)
 
 /*	Funktionsargumente auswerten
 */
-	arg = ALLOC(maxdim, FuncArg_t);
-	memset(arg, 0, maxdim * sizeof(FuncArg_t));
+	arg = memalloc(maxdim * sizeof(EfiFuncArg));
 
 	for (i = 0; list != NULL; i++)
 	{
@@ -99,7 +98,7 @@ Obj_t *EvalVirFunc(VirFunc_t *vtab, const ObjList_t *list)
 */
 	if	(func == NULL || func->eval == NULL)
 	{
-		strbuf_t *sb;
+		StrBuf *sb;
 		char *delim;
 
 		sb = new_strbuf(0);
@@ -123,8 +122,8 @@ Obj_t *EvalVirFunc(VirFunc_t *vtab, const ObjList_t *list)
 		}
 
 		sb_putc(')', sb);
-		reg_set(1, sb2str(sb));
-		errmsg(MSG_EFMAIN, func ? 91 : 92);
+		dbg_note(NULL, func ? "[efmain:91]" : "[efmain:92]",
+			"m", sb2str(sb));
 		clean_arg(arg, argdim);
 		return NULL;
 	}
@@ -158,7 +157,7 @@ Obj_t *EvalVirFunc(VirFunc_t *vtab, const ObjList_t *list)
 	if	(func->vaarg && (argdim != func->dim ||
 		arg[fargdim].defval->type != &Type_list))
 	{
-		ObjList_t *vlist, *x;
+		EfiObjList *vlist, *x;
 
 		vlist = NULL;
 
@@ -194,7 +193,7 @@ Obj_t *EvalVirFunc(VirFunc_t *vtab, const ObjList_t *list)
 */
 	if	(argdim)
 	{
-		void **arglist = ALLOC(argdim, void *);
+		void **arglist = memalloc(argdim * sizeof(void *));
 
 		for (i = 0; i < argdim; i++)
 		{
@@ -202,7 +201,7 @@ Obj_t *EvalVirFunc(VirFunc_t *vtab, const ObjList_t *list)
 				arg[i].defval->data : arg[i].defval;
 		}
 
-		obj = MakeRetVal(func, arg[i].defval, arglist);
+		obj = MakeRetVal(func, arg[0].defval, arglist);
 		memfree(arglist);
 
 		for (i = 0; i < argdim; i++)
@@ -221,13 +220,12 @@ Obj_t *EvalVirFunc(VirFunc_t *vtab, const ObjList_t *list)
 /*	Argument initialisieren
 */
 
-static int set_arg (Func_t *func, FuncArg_t *arg, size_t narg, Obj_t *obj)
+static int set_arg (EfiFunc *func, EfiFuncArg *arg, size_t narg, EfiObj *obj)
 {
 	if	(obj == NULL)
 	{
-		reg_str(1, func->name);
-		reg_fmt(2, "%d", narg + 1 - func->bound);
-		errmsg(MSG_EFMAIN, 94);
+		dbg_note(NULL, "[efmain:94]", "sd", func->name,
+			narg + 1 - func->bound);
 		clean_arg(arg, narg);
 		return 0;
 	}
@@ -243,7 +241,7 @@ static int set_arg (Func_t *func, FuncArg_t *arg, size_t narg, Obj_t *obj)
 /*	Argumentvektor Aufräumen
 */
 
-static void clean_arg (FuncArg_t *arg, size_t narg)
+static void clean_arg (EfiFuncArg *arg, size_t narg)
 {
 	int i;
 

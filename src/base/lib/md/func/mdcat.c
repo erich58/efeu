@@ -4,28 +4,28 @@
 
 #include <EFEU/mdmat.h>
 
-static mdaxis_t *add_axis(mdaxis_t **tab, size_t dim);
-static void setval(Konv_t *konv, mdaxis_t *x, char *px,
-	mdaxis_t *y, char *py);
+static mdaxis *add_axis(mdaxis **tab, size_t dim);
+static void setval(EfiKonv *konv, mdaxis *x, char *px,
+	mdaxis *y, char *py);
 
-mdmat_t *md_cat(const char *def, mdmat_t **tab, size_t dim)
+mdmat *md_cat(const char *def, mdmat **tab, size_t dim)
 {
 	size_t i;
-	mdmat_t *md;
-	mdlist_t *list;
-	strbuf_t *sb;
-	mdaxis_t **x;
+	mdmat *md;
+	mdlist *list;
+	StrBuf *sb;
+	mdaxis **x;
 	char *p;
-	mdaxis_t **ptr;
-	Konv_t konv;
+	mdaxis **ptr;
+	EfiKonv konv;
 	size_t ndim;
 
 	if	(dim == 0)	return NULL;
 
-	list = mdlist(def, 0);
+	list = str2mdlist(def, 0);
 	md = new_mdmat();
 
-	if	(list == NULL)	list = mdlist("X", 0);
+	if	(list == NULL)	list = str2mdlist("X", 0);
 
 /*	Hauptachse und Datentype bestimmen, Achsenpointer setzen
 */
@@ -33,7 +33,7 @@ mdmat_t *md_cat(const char *def, mdmat_t **tab, size_t dim)
 	sb_putstr(list->name, sb);
 	md->type = NULL;
 	ndim = max(dim, list->dim);
-	x = ALLOC(ndim, mdaxis_t *);
+	x = memalloc(ndim * sizeof(mdaxis *));
 
 	for (i = 0; i < ndim; i++)
 	{
@@ -106,10 +106,10 @@ mdmat_t *md_cat(const char *def, mdmat_t **tab, size_t dim)
 }
 
 
-static mdaxis_t *add_axis(mdaxis_t **tab, size_t dim)
+static mdaxis *add_axis(mdaxis **tab, size_t dim)
 {
 	int i;
-	mdaxis_t *axis;
+	mdaxis *axis;
 
 	axis = NULL;
 
@@ -126,8 +126,8 @@ static mdaxis_t *add_axis(mdaxis_t **tab, size_t dim)
 	return cpy_axis(axis, 0);
 }
 
-static void setval(Konv_t *konv, mdaxis_t *x, char *px,
-	mdaxis_t *y, char *py)
+static void setval(EfiKonv *konv, mdaxis *x, char *px,
+	mdaxis *y, char *py)
 {
 	if	(x != NULL)
 	{

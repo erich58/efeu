@@ -22,7 +22,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include "efeudoc.h"
 
-char *ListArg_str (ObjList_t *list, int n)
+char *ListArg_str (EfiObjList *list, int n)
 {
 	while (n-- > 0 && list != NULL)
 		list = list->next;
@@ -30,7 +30,7 @@ char *ListArg_str (ObjList_t *list, int n)
 	return list ? Obj2str(RefObj(list->obj)) : NULL;
 }
 
-int ListArg_int (ObjList_t *list, int n)
+int ListArg_int (EfiObjList *list, int n)
 {
 	while (n-- > 0 && list != NULL)
 		list = list->next;

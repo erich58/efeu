@@ -26,14 +26,14 @@ If not, write to the Free Software Foundation, Inc.,
 
 
 typedef struct {
-	ushort_t dim;
-	ushort_t deg;
+	unsigned short dim;
+	unsigned short deg;
 } HEADER;
 
 
-void pnsave(pnom_t *p, const char *name)
+void pnsave(Polynom *p, const char *name)
 {
-	io_t *aus;
+	IO *aus;
 	HEADER hdr;
 
 	aus = io_fileopen(name, "wb");
@@ -55,10 +55,10 @@ void pnsave(pnom_t *p, const char *name)
 }
 
 
-pnom_t *pnload(const char *name)
+Polynom *pnload(const char *name)
 {
-	pnom_t *p;
-	io_t *ein;
+	Polynom *p;
+	IO *ein;
 	HEADER hdr;
 
 	ein = io_fileopen(name, "rb");

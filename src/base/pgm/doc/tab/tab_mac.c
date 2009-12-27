@@ -22,7 +22,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <efeudoc.h>
 
-void DocMac_clean (DocMac_t *mac)
+void DocMac_clean (DocMac *mac)
 {
 	memfree(mac->name);
 	memfree(mac->desc);
@@ -30,16 +30,14 @@ void DocMac_clean (DocMac_t *mac)
 }
 
 
-void DocMac_print (io_t *io, DocMac_t *mac, int mode)
+void DocMac_print (IO *io, DocMac *mac, int mode)
 {
 	if	(io && mac && mac->desc)
 	{
-		reg_fmt(1, "|%s|", mac->name);
-
 		if	(mode & 0x1)
-			io_psub(io, "\n\\margin $1\n");
+			io_printf(io, "\n\\margin |%s|\n",  mac->name);
 
-		io_psub(io, mac->desc);
+		io_psubarg(io, mac->desc, "nm", msprintf("|%s|", mac->name));
 
 		if	(mode & 0x2)
 		{
@@ -50,29 +48,31 @@ void DocMac_print (io_t *io, DocMac_t *mac, int mode)
 	}
 }
 
-static int mac_cmp (DocMac_t *a, DocMac_t *b)
+static int mac_cmp (const void *pa, const void *pb)
 {
+	const DocMac *a = pa;
+	const DocMac *b = pb;
 	return mstrcmp(a->name, b->name);
 }
 
-DocMac_t *DocTab_getmac (DocTab_t *tab, const char *name)
+DocMac *DocTab_getmac (DocTab *tab, const char *name)
 {
 	if	(tab)
 	{
-		DocMac_t key;
+		DocMac key;
 		key.name = (char *) name;
-		return vb_search(&tab->mtab, &key, (comp_t) mac_cmp, VB_SEARCH);
+		return vb_search(&tab->mtab, &key, mac_cmp, VB_SEARCH);
 	}
 	else	return NULL;
 }
 
-void DocTab_setmac (DocTab_t *tab, char *name, char *desc, char *fmt)
+void DocTab_setmac (DocTab *tab, char *name, char *desc, char *fmt)
 {
-	DocMac_t key;
+	DocMac key;
 
 	key.name = name;
 	key.desc = desc;
 	key.fmt = fmt;
-	vb_search(&tab->mtab, &key, (comp_t) mac_cmp, VB_REPLACE);
+	vb_search(&tab->mtab, &key, mac_cmp, VB_REPLACE);
 	DocMac_clean(&key);
 }

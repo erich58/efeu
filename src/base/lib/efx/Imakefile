@@ -5,4 +5,3 @@
 #endif
 
 XLIBS=	LIB_EFM LIB_DL
-Destination(TRMDIR,$(EFEULIB)/term)

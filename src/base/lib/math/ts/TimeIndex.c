@@ -1,5 +1,6 @@
 /*
-Zeitreihenindex
+:*:index of time series
+:de:Zeitreihenindex
 
 $Copyright (C) 1997 Erich Frühstück
 This file is part of EFEU.
@@ -25,6 +26,9 @@ If not, write to the Free Software Foundation, Inc.,
 #include <Math/TimeSeries.h>
 #include <ctype.h>
 
+#define	YLIM_2000	50	/* Jahresgrenze für 2000 - Offset */
+#define	YLIM_1900	100	/* Jahresgrenze für 1900 - Offset */
+
 /*
 #	#Index
 y	Jahr
@@ -32,29 +36,38 @@ q	Jahr:Quartal
 w	Woche/Jahr
 m	Monat.Jahr
 d	Tag.Monat.Jahr
+d	Jahr-Monat-Tag
 */
 
 #define	MONTAG(woche)	(7 * (woche) + 0)
 #define	MITTWOCH(woche)	(7 * (woche) + 3)
 #define	SONNTAG(woche)	(7 * (woche) + 6)
 
-static int WeekIndex(int y, int w)
+static int WeekIndex (int y, int w)
 {
 	return CalendarIndex(1, 1, y) / 7 + w - 1;
 }
 
-TimeIndex_t TimeIndex (int type, int value)
+TimeIndex tindex_create (int type, int value)
 {
-	TimeIndex_t idx;
+	TimeIndex idx;
 
 	idx.type = type;
 	idx.value = value;
 	return idx;
 }
 
-TimeIndex_t str2TimeIndex (const char *str)
+static int add_century(int year)
 {
-	TimeIndex_t idx;
+	if	(year < YLIM_2000)	year += 2000;
+	else if	(year < YLIM_1900)	year += 1900;
+
+	return year;
+}
+
+TimeIndex str2TimeIndex (const char *str)
+{
+	TimeIndex idx;
 	char *p;
 
 	idx.type = TS_INDEX;
@@ -76,23 +89,19 @@ TimeIndex_t str2TimeIndex (const char *str)
 
 	if	(p == NULL)
 	{
-		if	(idx.value < 100)	idx.value += 1900;
+		idx.value = add_century(idx.value);
 	}
 	else if	(*p == '/')
 	{
-		int jahr = strtol(p + 1, NULL, 10);
-
-		if	(jahr < 100)	jahr += 1900;
-
+		int year = add_century(strtol(p + 1, NULL, 10));
 		idx.type = TS_WEEK;
-		idx.value = WeekIndex(jahr, idx.value);
+		idx.value = WeekIndex(year, idx.value);
 	}
 	else if	(*p == ':')
 	{
-		if	(idx.value < 100)	idx.value += 1900;
-
+		idx.value = add_century(idx.value);
 		idx.type = TS_QUART;
-		idx.value = 4 * idx.value + (strtol(p + 1, NULL, 10) - 1) % 4;
+		idx.value = 4 * idx.value + strtol(p + 1, NULL, 10) - 1;
 	}
 	else if	(*p == '.')
 	{
@@ -100,28 +109,43 @@ TimeIndex_t str2TimeIndex (const char *str)
 
 		if	(p && *p == '.')
 		{
-			int jahr = strtol(p + 1, &p, 10);
-
+			int year = add_century(strtol(p + 1, NULL, 10));
 			idx.type = TS_DAY;
-			idx.value = CalendarIndex(idx.value, b, jahr);
+			idx.value = CalendarIndex(idx.value, b, year);
 		}
 		else
 		{
-			if	(b < 100)	b += 1900;
-
+			b = add_century(b);
 			idx.type = TS_MONTH;
-			idx.value = 12 * b + (idx.value - 1) % 12;
+			idx.value = 12 * b + idx.value - 1;
 		}
 	}
-	else if	(idx.value < 100)	idx.value += 1900;
+	else if	(*p == '-')
+	{
+		int month = strtol(p + 1, &p, 10);
+		idx.value = add_century(idx.value);
+
+		if	(p && *p == '-')
+		{
+			int day = strtol(p + 1, NULL, 10);
+			idx.type = TS_DAY;
+			idx.value = CalendarIndex(day, month, idx.value);
+		}
+		else
+		{
+			idx.type = TS_MONTH;
+			idx.value = 12 * idx.value + month - 1;
+		}
+	}
+	else	idx.value = add_century(idx.value);
 
 	return idx;
 }
 
 
-int PrintTimeIndex (io_t *io, TimeIndex_t idx, int offset)
+int tindex_print (IO *io, TimeIndex idx, int offset)
 {
-	Calendar_t cal;
+	CalInfo cal;
 	int week;
 
 	idx.value += offset;
@@ -130,8 +154,8 @@ int PrintTimeIndex (io_t *io, TimeIndex_t idx, int offset)
 	{
 	case TS_DAY:
 		Calendar(idx.value, &cal);
-		return io_printf(io, "%d.%d.%d",
-			cal.day, cal.month, cal.year);
+		return io_printf(io, "%d-%d-%d",
+			cal.year, cal.month, cal.day);
 	case TS_WEEK:
 		Calendar(MITTWOCH(idx.value), &cal);
 		week = idx.value - WeekIndex(cal.year, 0);
@@ -149,19 +173,19 @@ int PrintTimeIndex (io_t *io, TimeIndex_t idx, int offset)
 	}
 }
 
-char *TimeIndex2str (TimeIndex_t idx, int offset)
+char *TimeIndex2str (TimeIndex idx, int offset)
 {
-	strbuf_t *buf = new_strbuf(0);
-	io_t *io = io_strbuf(buf);
+	StrBuf *buf = new_strbuf(0);
+	IO *io = io_strbuf(buf);
 
-	PrintTimeIndex(io, idx, offset);
+	tindex_print(io, idx, offset);
 	io_close(io);
 	return sb2str(buf);
 }
 
-static double dat2dbl(unsigned idx, int pos)
+static double dat2dbl (unsigned idx, int pos)
 {
-	Calendar_t cal;
+	CalInfo cal;
 	double width;
 
 	Calendar(idx, &cal);
@@ -169,7 +193,7 @@ static double dat2dbl(unsigned idx, int pos)
 	return cal.year + (cal.yday + 0.5 * pos - 1.0) / width;
 }
 
-static double week2dbl(unsigned idx, int pos)
+static double week2dbl (unsigned idx, int pos)
 {
 	if	(pos == 0)	idx = MONTAG(idx);
 	else if	(pos == 1)	idx = MITTWOCH(idx);
@@ -178,7 +202,7 @@ static double week2dbl(unsigned idx, int pos)
 	return dat2dbl(idx, pos);
 }
 
-double TimeIndex2dbl (TimeIndex_t idx, int offset, int pos)
+double TimeIndex2dbl (TimeIndex idx, int offset, int pos)
 {
 	idx.value += offset;
 
@@ -199,7 +223,7 @@ double TimeIndex2dbl (TimeIndex_t idx, int offset, int pos)
 	}
 }
 
-static int mlength(unsigned first, unsigned width)
+static int mlength (unsigned first, unsigned width)
 {
 	int month = 1 + first % 12;
 	int year = first / 12;
@@ -217,7 +241,7 @@ static int mlength(unsigned first, unsigned width)
 	return CalendarIndex(1, month, year) - first;
 }
 
-int TimeIndexLength (TimeIndex_t idx)
+int tindex_length (TimeIndex idx)
 {
 	switch (idx.type)
 	{
@@ -230,7 +254,7 @@ int TimeIndexLength (TimeIndex_t idx)
 	}
 }
 
-int TimeIndexYear (TimeIndex_t idx)
+int tindex_year (TimeIndex idx)
 {
 	switch (idx.type)
 	{
@@ -243,7 +267,7 @@ int TimeIndexYear (TimeIndex_t idx)
 	}
 }
 
-int TimeIndexMonth (TimeIndex_t idx)
+int tindex_month (TimeIndex idx)
 {
 	switch (idx.type)
 	{
@@ -257,7 +281,7 @@ int TimeIndexMonth (TimeIndex_t idx)
 
 #define	 month2day(x)	CalendarIndex(1, 1 + (x) % 12, (x) / 12)
 
-int TimeIndexFloor (TimeIndex_t idx)
+int tindex_floor (TimeIndex idx)
 {
 	switch (idx.type)
 	{
@@ -270,7 +294,7 @@ int TimeIndexFloor (TimeIndex_t idx)
 	}
 }
 
-int TimeIndexCeil (TimeIndex_t idx)
+int tindex_ceil (TimeIndex idx)
 {
 	switch (idx.type)
 	{
@@ -283,21 +307,19 @@ int TimeIndexCeil (TimeIndex_t idx)
 	}
 }
 
-int DiffTimeIndex (TimeIndex_t a, TimeIndex_t b)
+int tindex_diff (TimeIndex a, TimeIndex b)
 {
 	if	(a.type != b.type)
 	{
-		reg_fmt(1, "%#c", a.type);
-		reg_fmt(2, "%#c", b.type);
-		errmsg(MSG_TS, 1);
-		b = TimeIndexKonv(b, a.type, 0);
+		dbg_note(NULL, "[TimeSeries:1]", "cc", a.type, b.type);
+		b = tindex_conv(b, a.type, 0);
 	}
 
 	return (int) b.value - (int) a.value;
 }
 
 
-int TimeIndexType(const char *name)
+int tindex_type (const char *name)
 {
 	if	(name == NULL)	return 0;
 
@@ -324,7 +346,6 @@ int TimeIndexType(const char *name)
 		return TS_DAY;
 	}
 
-	reg_cpy(1, name);
-	errmsg(MSG_TS, 2);
+	dbg_note(NULL, "[TimeSeries:2]", "s", name);
 	return 0;
 }

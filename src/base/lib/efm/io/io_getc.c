@@ -26,7 +26,7 @@ If not, write to the Free Software Foundation, Inc.,
 /*	Zeichen lesen
 */
 
-int io_getc (io_t *io)
+int io_getc (IO *io)
 {
 	if	(io == NULL || io->stat != IO_STAT_OK)
 		return EOF;
@@ -53,7 +53,7 @@ int io_getc (io_t *io)
 /*	Zeichen testen
 */
 
-int io_peek (io_t *io)
+int io_peek (IO *io)
 {
 	register int c;
 
@@ -69,7 +69,7 @@ int io_peek (io_t *io)
 	if	(io->get)
 	{
 		if	((c = (*io->get)(io->data)) != EOF)
-			return io->save_buf[io->nsave++] = (uchar_t) c;
+			return io->save_buf[io->nsave++] = (unsigned char) c;
 
 		if	(io_ctrl(io, IO_RESTORE, io, NULL) != EOF)
 			return io_peek(io);
@@ -83,7 +83,7 @@ int io_peek (io_t *io)
 /*	Zeichen zurückschreiben
 */
 
-int io_ungetc (int c, io_t *io)
+int io_ungetc (int c, IO *io)
 {
 	if	(io == NULL || c == EOF)
 		return 0;
@@ -104,6 +104,6 @@ int io_ungetc (int c, io_t *io)
 			io->save_buf[i] = io->save_buf[i + 1];
 	}
 
-	io->save_buf[io->nsave++] = (uchar_t) c;
+	io->save_buf[io->nsave++] = (unsigned char) c;
 	return 1;
 }

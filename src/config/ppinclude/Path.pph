@@ -40,14 +40,6 @@ Unter Unix liefert er <|<dir>/<name>|>.
 #define	PathName(dir,name)	Concat3(dir,/,name)
 #endif
 
-#ifndef ApplPath
-/*
-Der Makro |$1| generiert einen Bibliothekspfad für Applikationsdateien
-Unter Unix liefert er <|<dir>/app-defaults/<name>|>.
-*/
-#define	ApplPath(dir,name)	Concat3(dir,/app-defaults/,name)
-#endif
-
 #ifndef MsgPath
 /*
 Der Makro |$1| generiert einen Bibliothekspfad für Fehlermeldungsdateien.
@@ -70,14 +62,6 @@ Der Makro |$1| generiert einen Bibliothekspfad für Hilfetexte.
 Unter Unix liefert er <|<dir>/help/<name>|>.
 */
 #define	HelpPath(dir,name)	Concat3(dir,/help/,name)
-#endif
-
-#ifndef TermPath
-/*
-Der Makro |$1| generiert einen Bibliothekspfad für Terminalanpassungsdateien.
-Unter Unix liefert er <|<dir>/term/<name>|>.
-*/
-#define	TermPath(dir,name)	Concat3(dir,/term/,name)
 #endif
 
 /*

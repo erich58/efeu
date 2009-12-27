@@ -28,7 +28,7 @@ EFEU besteht aus:
 [efeugen]
 	ruft make in einem globalen, durch die Umgebungsvariable
 	EFEUGEN definiertem, Generierungsverzeichnis auf.
-	In EFEU ist die generierung von Bibliotheken und Kommandos
+	In EFEU ist die Generierung von Bibliotheken und Kommandos
 	vollständig von den Sourcen getrennt.
 [efeubuild]
 	generiert das Hauptmakefile zur Generierung und Installation
@@ -110,10 +110,10 @@ EFEU besteht aus:
 	mit efeudoc. Dieses Werkzeug erlaubt die Integration der
 	Dokumentation in den Sourcecode.
 [eis]
-	ist ein Informationssystem zum durchsuchen von ein Befehlen
+	ist ein Informationssystem zum Durchsuchen von in Befehlen
 	eingebauten Informationen. Jede Form von Informationen kann
 	dargestellt werden, sofern das Programm eine
-	Darstellungsfunktion zur Verfügung stellt und sie Regristriert.
+	Darstellungsfunktion zur Verfügung stellt und sie regristriert.
 	Es gibt eine curses basierende Version und eine cgi basierende
 	Version (Web Server) von eis.
 
@@ -126,11 +126,11 @@ rufe einfach make auf.
 
 *	EFEU benötigt teTeX und readline development.
 *	Die aktuellen Dokumentationen sind in Deutsch, englische
-	Versionen werden kommen.
+	Versionen sind in arbeit.
 *	Weitere Dokumentationen sind in arbeit.
 *	Diese Datei ist im efeudoc Format geschrieben.
-*	Lies die Sourcen und hab freude daran !
+*	Lies die Sourcen und hab Freude daran!
 
 Bitte melde Fehler in EFEU direkt dem Autor:
 
-Erich Frühstück <ef@synthesis.co.at>
+Erich Frühstück <ef\@synthesis.co.at>

@@ -22,6 +22,9 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/ftools.h>
 
+#define E21	"[ftools:21]$!: file $0: unexpected EOF.\n"
+#define E22	"[ftools:22]$!: file $0: could not write data.\n"
+
 #if	REVBYTEORDER
 #define	DATA(ptr,size)	(unsigned char *) ptr + size - 1
 #define	SET(ptr,val)	*(ptr--) = val
@@ -43,7 +46,7 @@ size_t dbread (FILE *file, void *dptr, size_t recl, size_t size, size_t n)
 	if	(recl == size)
 	{
 		if	(fread_compat(dptr, size, n, file) != n)
-			fileerror(file, MSG_FTOOLS, 21, 0);
+			fileerror(file, E21, NULL);
 
 		return n;
 	}
@@ -55,7 +58,7 @@ size_t dbread (FILE *file, void *dptr, size_t recl, size_t size, size_t n)
 		for (j = 0; j < recl; j++)
 		{
 			if	((c = getc(file)) == EOF)
-				fileerror(file, MSG_FTOOLS, 21, 0);
+				fileerror(file, E21, NULL);
 
 			SET(data, c);
 		}
@@ -73,7 +76,7 @@ size_t dbread (FILE *file, void *dptr, size_t recl, size_t size, size_t n)
 /*	Datensätze ausgeben
 */
 
-size_t dbwrite (FILE *file, void *dptr, size_t recl, size_t size, size_t n)
+size_t dbwrite (FILE *file, const void *dptr, size_t recl, size_t size, size_t n)
 {
 	register size_t i, j;
 	register int c;
@@ -81,7 +84,7 @@ size_t dbwrite (FILE *file, void *dptr, size_t recl, size_t size, size_t n)
 	if	(recl == size)
 	{
 		if	(fwrite_compat(dptr, size, n, file) != n)
-			fileerror(file, MSG_FTOOLS, 22, 0);
+			fileerror(file, E22, NULL);
 
 		return n;
 	}
@@ -95,7 +98,7 @@ size_t dbwrite (FILE *file, void *dptr, size_t recl, size_t size, size_t n)
 			c = GET(data);
 
 			if	(putc(c, file) == EOF)
-				fileerror(file, MSG_FTOOLS, 22, 0);
+				fileerror(file, E22, NULL);
 		}
 
 		dptr = (char *) dptr + size;

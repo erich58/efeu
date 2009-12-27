@@ -27,39 +27,40 @@ If not, write to the Free Software Foundation, Inc.,
 #define	VAR_BLKSIZE	32
 
 
-static DocTab_t *tab_admin (DocTab_t *tg, const DocTab_t *src)
+static void subclean (void *data)
 {
-	if	(tg)
-	{
-		memfree(tg->name);
-		DelVarTab(tg->var);
-		vb_clean(&tg->mtab, (clean_t) DocMac_clean);
-		vb_free(&tg->mtab);
-		memfree(tg);
-		return NULL;
-	}
-
-	tg = memalloc(sizeof(DocTab_t));
-	tg->var = VarTab(VAR_NAME, VAR_BLKSIZE);
-	vb_init(&tg->mtab, MACTABSIZE, sizeof(DocMac_t));
-	return tg;
+	DocMac_clean(data);
 }
 
-static char *tab_ident (DocTab_t *tab)
+static void tab_clean (void *data)
 {
+	DocTab *doc = data;
+	memfree(doc->name);
+	DelVarTab(doc->var);
+	vb_clean(&doc->mtab, subclean);
+	vb_free(&doc->mtab);
+	memfree(doc);
+}
+
+static char *tab_ident (const void *data)
+{
+	const DocTab *tab = data;
+
 	if	(tab->name)
 		return msprintf("%s[%d,%d]", tab->name,
-			tab->var->tab.dim, tab->mtab.used);
+			tab->var->tab.used, tab->mtab.used);
 
 	return msprintf("%p[%d,%d]", tab,
-		tab->var->tab.dim, tab->mtab.used);
+		tab->var->tab.used, tab->mtab.used);
 }
 
-ADMINREFTYPE(DocTab_reftype, "DocTab", tab_ident, tab_admin);
+RefType DocTab_reftype = REFTYPE_INIT("DocTab", tab_ident, tab_clean);
 
-DocTab_t *DocTab (const char *name)
+DocTab *DocTab_create (const char *name)
 {
-	DocTab_t *x = rd_create(&DocTab_reftype);
+	DocTab *x = memalloc(sizeof(DocTab));
 	x->name = mstrcpy(name);
-	return x;
+	x->var = VarTab(VAR_NAME, VAR_BLKSIZE);
+	vb_init(&x->mtab, MACTABSIZE, sizeof(DocMac));
+	return rd_init(&DocTab_reftype, x);
 }

@@ -8,11 +8,11 @@
 
 static char *XNames = NULL;
 static char *YNames = NULL;
-static Type_t *Type = NULL;
+static EfiType *Type = NULL;
 static int has_magic = 0;
 static int need_magic = 0;
 
-static unsigned getshort(io_t *io)
+static unsigned getshort(IO *io)
 {
 	int a, b;
 
@@ -79,12 +79,10 @@ static void set_par(const char *def)
 #define	H_MAGIC		6
 
 
-typedef struct {
+static struct {
 	char *name;
 	int code;
-} head_t;
-
-static head_t head[] = {
+} head[] = {
 	{ "MD*",	H_MAGIC },
 	{ "[Tt]it*",	H_TITLE },
 	{ "[Oo]bj*",	H_TYPE },
@@ -98,7 +96,7 @@ static head_t head[] = {
 
 #define	SETPAR(name)	(save = name, name = p, p = save)
 
-static char *get_header(io_t *io)
+static char *get_header(IO *io)
 {
 	char *p, *save;
 	char *title;
@@ -159,7 +157,7 @@ static char *get_header(io_t *io)
 	return title;
 }
 
-static int new_line(io_t *io)
+static int new_line(IO *io)
 {
 	int c;
 
@@ -183,9 +181,75 @@ static int new_line(io_t *io)
 	return c;
 }
 
+static void sub_copy (IO *io, StrBuf *sb, int beg, int end)
+{
+	int c;
+
+	sb_putc(beg, sb);
+
+	while ((c = io_mgetc(io, 0)) != EOF)
+	{
+		switch (c)
+		{
+		case '(':	sub_copy(io, sb, c, ')'); continue;
+		case '{':	sub_copy(io, sb, c, '}'); continue;
+		case '[':	sub_copy(io, sb, c, ']'); continue;
+		default:	break;
+		}
+
+		sb_putc(c, sb);
+
+		if	(c == end)	break;
+	}
+}
+
+static void do_scan (IO *io, StrBuf *sb)
+{
+	int c;
+
+	while ((c = io_mgetc(io, 0)) != EOF)
+	{
+		switch (c)
+		{
+		case '\\':
+			c = io_mgetc(io, 0);
+
+			switch (c)
+			{
+			case EOF:
+				c = '\\';
+				break;
+			case ' ':
+			case '\t':
+			case '\n':
+			case ':':
+			case ';':
+				break; default:
+				sb_putc('\\', sb);
+				break;
+			}
+
+			break;
+		case ' ':
+		case '\t':
+		case '\n':
+		case ':':
+		case ';':
+			io_ungetc(c, io);
+			return;
+		case '(':	sub_copy(io, sb, c, ')'); continue;
+		case '{':	sub_copy(io, sb, c, '}'); continue;
+		case '[':	sub_copy(io, sb, c, ']'); continue;
+		default:	break;
+		}
+
+		sb_putc(c, sb);
+	}
+}
+
 static int mdgetstat = 0;
 
-static char *mdscan(io_t *io)
+static char *mdscan(IO *io)
 {
 	int c;
 	int flag;
@@ -210,7 +274,12 @@ static char *mdscan(io_t *io)
 			io_getc(io);
 			flag = 1;
 		}
-		else	return io_mgets(io, " \t\n:;");
+		else
+		{
+			StrBuf *sb = new_strbuf(0);
+			do_scan(io, sb);
+			return sb2str(sb);
+		}
 	}
 
 	mdgetstat = EOF;
@@ -244,12 +313,12 @@ static void clr_oname(char *p, const char *name)
 
 
 
-static char *get_col(io_t *io, const char *name, Type_t *type, int n)
+static char *get_col(IO *io, const char *name, EfiType *type, int n)
 {
 	char *last;
 	char *p;
 	char *subname;
-	Var_t *st;
+	EfiVar *st;
 
 	if	(type->list == NULL)
 	{
@@ -266,7 +335,7 @@ static char *get_col(io_t *io, const char *name, Type_t *type, int n)
 			do	memfree(mdscan(io));
 			while	(mdgetstat != EOF);
 #else
-			io_error(io, MSG_MDMAT, 193, 0);
+			io_error(io, "[mdmat:193]", NULL);
 			p = msprintf("%d", n);
 #endif
 		}
@@ -288,7 +357,7 @@ static char *get_col(io_t *io, const char *name, Type_t *type, int n)
 
 		if	(p == NULL)
 		{
-			io_error(io, MSG_MDMAT, 193, 0);
+			io_error(io, "[mdmat:193]", NULL);
 			p = msprintf("%d", n);
 		}
 
@@ -298,8 +367,7 @@ static char *get_col(io_t *io, const char *name, Type_t *type, int n)
 		}
 		else if	(strcmp(last, p) != 0)
 		{
-			io_error(io, MSG_MDMAT, 194, 2, last, p);
-			memfree(p);
+			io_error(io, "[mdmat:194]", "sm", last, p);
 		}
 		else	memfree(p);
 	}
@@ -308,10 +376,10 @@ static char *get_col(io_t *io, const char *name, Type_t *type, int n)
 }
 
 
-static int get_val(io_t *io, Type_t *type, char *ptr)
+static int get_val(IO *io, EfiType *type, char *ptr)
 {
-	Var_t *st;
-	Obj_t *obj;
+	EfiVar *st;
+	EfiObj *obj;
 	char *p;
 
 	memset(ptr, 0, type->size);
@@ -339,12 +407,12 @@ static int get_val(io_t *io, Type_t *type, char *ptr)
 }
 
 
-static mdmat_t *textmode(io_t *io, char *title)
+static mdmat *textmode(IO *io, char *title)
 {
-	io_t *tmp;
-	mdmat_t *md;
-	MdLabel_t *xlabel, *ylabel;
-	mdaxis_t **ptr, *xaxis, *x;
+	IO *tmp;
+	mdmat *md;
+	MdLabel *xlabel, *ylabel;
+	mdaxis **ptr, *xaxis, *x;
 	long *offset;
 	size_t linedim, coldim;
 	char *p, *buf;
@@ -365,7 +433,7 @@ static mdmat_t *textmode(io_t *io, char *title)
 
 	if	(new_line(io) == EOF)
 	{
-		io_error(io, MSG_MDMAT, 192, 0);
+		io_error(io, "[mdmat:192]", 0);
 		del_mdmat(md);
 		return NULL;
 	}
@@ -379,13 +447,13 @@ static mdmat_t *textmode(io_t *io, char *title)
 			xlabel = init_label("x", p);
 
 		if	(save_label(tmp, xlabel, p))
-			io_error(io, MSG_MDMAT, 195, 0);
+			io_error(io, "[mdmat:195]", NULL);
 
 		memfree(p);
 		coldim++;
 	}
 
-	offset = ALLOC(coldim, long);
+	offset = memalloc(coldim * sizeof(long));
 	xaxis = label2axis(xlabel);
 	md_size(xaxis, md->type->size);
 	io_rewind(tmp);
@@ -413,7 +481,7 @@ static mdmat_t *textmode(io_t *io, char *title)
 			ylabel = init_label("y", p);
 
 		if	(save_label(tmp, ylabel, p))
-			io_error(io, MSG_MDMAT, 195, 0);
+			io_error(io, "[mdmat:195]", NULL);
 
 		memfree(p);
 
@@ -422,7 +490,7 @@ static mdmat_t *textmode(io_t *io, char *title)
 			if	(i < coldim)
 				io_write(tmp, buf, md->type->size);
 #if	0
-			else	io_error(io, MSG_MDMAT, 196, 0);
+			else	io_error(io, "[mdmat:196]", NULL);
 #endif
 		}
 
@@ -469,10 +537,10 @@ static mdmat_t *textmode(io_t *io, char *title)
 }
 
 
-mdmat_t *md_read(io_t *io, const char *def)
+mdmat *md_read(IO *io, const char *def)
 {
 	int m1, m2;
-	mdmat_t *md;
+	mdmat *md;
 	char *title;
 
 	if	((m1 = io_getc(io)) == EOF)

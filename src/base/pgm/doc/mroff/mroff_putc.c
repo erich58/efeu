@@ -24,14 +24,14 @@ If not, write to the Free Software Foundation, Inc.,
 #include <efeudoc.h>
 #include <ctype.h>
 
-static int mr_ignore (mroff_t *mr, int c)
+static int mr_ignore (ManRoff *mr, int c)
 {
 	int flag = (c == '\n' && mr->nlignore);
 	mr->nlignore = flag;
 	return flag;
 }
 
-static int mr_filter (int c, io_t *io)
+static int mr_filter (int c, IO *io)
 {
 	if	(c == '\\')
 		io_putc(c, io);
@@ -41,8 +41,10 @@ static int mr_filter (int c, io_t *io)
 }
 
 
-int mroff_protect (mroff_t *mr, int c)
+int mroff_protect (void *drv, int c)
 {
+	ManRoff *mr = drv;
+
 	if	(isspace(c) && mr->last != '\n')
 	{
 		mr->space = 1;
@@ -64,7 +66,7 @@ int mroff_protect (mroff_t *mr, int c)
 	return c;
 }
 
-void mroff_cbeg (mroff_t *mr, const char *pfx)
+void mroff_cbeg (ManRoff *mr, const char *pfx)
 {
 	if	(pfx)
 	{
@@ -75,12 +77,12 @@ void mroff_cbeg (mroff_t *mr, const char *pfx)
 	mr->last = '\n';
 	mr->space = 0;
 	mr->copy = 1;
-	mr->put = (DocDrvPut_t) mroff_protect;
+	mr->put = mroff_protect;
 }
 
-void mroff_cend (mroff_t *mr, int flag)
+void mroff_cend (ManRoff *mr, int flag)
 {
-	mr->put = (DocDrvPut_t) mroff_putc;
+	mr->put = mroff_putc;
 	mr->copy = 0;
 
 	if	(flag)
@@ -91,23 +93,18 @@ void mroff_cend (mroff_t *mr, int flag)
 	}
 }
 
-void mroff_psub (mroff_t *mr, const char *name)
-{
-	char *fmt = mroff_par(name);
-	io_psub(mr->out, fmt);
-	memfree(fmt);
-}
-
-void mroff_string (mroff_t *mr, const char *str)
+void mroff_string (ManRoff *mr, const char *str)
 {
 	if	(str == NULL)	return;
 
 	for (; *str != 0; str++)
-		mr->put((DocDrv_t *) mr, *str);
+		mr->put(mr, *str);
 }
 
-int mroff_plain (mroff_t *mr, int c)
+int mroff_plain (void *drv, int c)
 {
+	ManRoff *mr = drv;
+
 	if	(mr_ignore(mr, c))
 		return '\n';
 
@@ -130,8 +127,10 @@ int mroff_plain (mroff_t *mr, int c)
 	return mr_filter(c, mr->out);
 }
 
-int mroff_putc (mroff_t *mr, int c)
+int mroff_putc (void *drv, int c)
 {
+	ManRoff *mr = drv;
+
 	if	(mr_ignore(mr, c))
 		return '\n';
 
@@ -153,7 +152,7 @@ int mroff_putc (mroff_t *mr, int c)
 	return mr_filter(c, mr->out);
 }
 
-void mroff_newline (mroff_t *mr)
+void mroff_newline (ManRoff *mr)
 {
 	if	(mr->last != '\n')
 		io_putc('\n', mr->out);
@@ -162,8 +161,10 @@ void mroff_newline (mroff_t *mr)
 	mr->last = '\n';
 }
 
-void mroff_rem (mroff_t *mr, const char *cmd)
+void mroff_rem (void *drv, const char *cmd)
 {
+	ManRoff *mr = drv;
+
 	if	(mr->last == '\n')
 		io_putc('.', mr->out);
 
@@ -184,13 +185,13 @@ void mroff_rem (mroff_t *mr, const char *cmd)
 	mr->nlignore = 1;
 }
 
-void mroff_cmdline (mroff_t *mr, const char *line)
+void mroff_cmdline (ManRoff *mr, const char *line)
 {
 	mroff_newline(mr);
 	mroff_cmdend(mr, line);
 }
 
-void mroff_cmdend (mroff_t *mr, const char *line)
+void mroff_cmdend (ManRoff *mr, const char *line)
 {
 	io_puts(line, mr->out);
 	io_putc('\n', mr->out);

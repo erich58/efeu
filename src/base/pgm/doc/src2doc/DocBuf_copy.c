@@ -51,26 +51,28 @@ static int cmp (const char *name, const char *arg)
 	return 0;
 }
 
-static strbuf_t *set_var (DocBuf_t *doc, int par, io_t *io, strbuf_t *buf)
+static char *set_args[2] = { NULL, NULL };
+
+static StrBuf *set_var (DocBuf *doc, int par, IO *io, StrBuf *buf)
 {
 	char *p = io_mgets(io, "\n");
 	memfree(doc->var[par]);
-	doc->var[par] = parsub(p);
+	doc->var[par] = mpsubvec(p, 2, set_args);
 	memfree(p);
 	return NULL;
 }
 
-static strbuf_t *get_buf (DocBuf_t *doc, int par, io_t *io, strbuf_t *buf)
+static StrBuf *get_buf (DocBuf *doc, int par, IO *io, StrBuf *buf)
 {
 	return doc->tab[par];
 }
 
-static strbuf_t *get_synopsis (DocBuf_t *doc, int par, io_t *io, strbuf_t *buf)
+static StrBuf *get_synopsis (DocBuf *doc, int par, IO *io, StrBuf *buf)
 {
 	return doc->synopsis;
 }
 
-static strbuf_t *cpy_source (DocBuf_t *doc, int par, io_t *io, strbuf_t *buf)
+static StrBuf *cpy_source (DocBuf *doc, int par, IO *io, StrBuf *buf)
 {
 	size_t n;
 	char *p;
@@ -97,7 +99,7 @@ static strbuf_t *cpy_source (DocBuf_t *doc, int par, io_t *io, strbuf_t *buf)
 
 static struct {
 	char *key;
-	strbuf_t *(*eval) (DocBuf_t *doc, int par, io_t *io, strbuf_t *buf);
+	StrBuf *(*eval) (DocBuf *doc, int par, IO *io, StrBuf *buf);
 	int par;
 } evaltab[] = {
 	{ "head[er]",		set_var, VAR_HEAD },
@@ -115,8 +117,7 @@ static struct {
 	{ "source",		cpy_source, 0 },
 };
 
-static strbuf_t *eval_key (DocBuf_t *doc, const char *key,
-	io_t *io, strbuf_t *buf)
+static StrBuf *eval_key (DocBuf *doc, const char *key, IO *io, StrBuf *buf)
 {
 	int i;
 
@@ -127,10 +128,10 @@ static strbuf_t *eval_key (DocBuf_t *doc, const char *key,
 	return NULL;
 }
 
-void DocBuf_copy (DocBuf_t *doc, strbuf_t *base, strbuf_t *buf)
+void DocBuf_copy (DocBuf *doc, StrBuf *base, StrBuf *buf, const char *name)
 {
 	int need_nl;
-	io_t *io;
+	IO *io;
 	int c;
 
 	need_nl = (buf && sb_getpos(buf));
@@ -156,25 +157,29 @@ void DocBuf_copy (DocBuf_t *doc, strbuf_t *base, strbuf_t *buf)
 		}
 		else if	(c == '$')
 		{
-			void *p;
+			c = io_peek(io);
 
-			switch (io_scan(io, SCAN_INT|SCAN_NAME, &p))
+			if	(c == '1')
 			{
-			case SCAN_INT:
-				if	(buf)
-					sb_puts(reg_get(*((int *) p)), buf);
+				io_getc(io);
+				sb_puts(name, buf);
 				continue;
-			case SCAN_NAME:
+			}
+			else if	(isalpha(c) || c == '_')
+			{
+				char *p = io_getname(io);
 
 				do	c = io_getc(io);
 				while	(isspace(c));
 
 				io_ungetc(c, io);
+				set_args[1] = (char *) name;
 				buf = eval_key(doc, p, io, buf);
 				memfree(p);
 				need_nl = (buf && sb_getpos(buf));
 				continue;
 			}
+			else	c = '$';
 		}
 
 		if	(buf)

@@ -23,7 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <Math/pnom.h>
 
 
-double pneval(pnom_t *p, int dev, double x)
+double pneval(Polynom *p, int dev, double x)
 {
 
 	int i, j, k;

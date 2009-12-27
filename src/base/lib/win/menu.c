@@ -62,7 +62,7 @@ static void show_label(WINDOW *win, int y, int x, char *label, int flag)
 
 }
 
-static int valpos(WinMenu_t *win, int dim, int pos, int step)
+static int valpos(WinMenu *win, int dim, int pos, int step)
 {
 	for (;;)
 	{
@@ -77,7 +77,7 @@ static int valpos(WinMenu_t *win, int dim, int pos, int step)
 	}
 }
 
-static int newpos(WinMenu_t *menu, int dim, int old, int height, int width, int y, int x)
+static int newpos(WinMenu *menu, int dim, int old, int height, int width, int y, int x)
 {
 	int pos;
 
@@ -90,7 +90,7 @@ static int newpos(WinMenu_t *menu, int dim, int old, int height, int width, int 
 	else				return valpos(menu, dim, pos, 1);
 }
 
-void *WinMenu (WinSize_t *ws, WinMenu_t *menu, int dim, int cols)
+void *WinMenu_create (WinSize *ws, WinMenu *menu, int dim, int cols)
 {
 	WINDOW *win;
 	int key;

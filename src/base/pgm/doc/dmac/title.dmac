@@ -37,7 +37,7 @@ If not, write to the Free Software Foundation, Inc.,
 :de:Dokumentart
 	$1 <Stil>
 
-:*:The command $2 sets the style of the document.
+:*:The command $1 sets the style of the document.
 :de:Der Befehl $1 setzt die Dokumentart.
 
 \def\style	DocStyle = xexpand(ParseLine(cin));
@@ -109,7 +109,7 @@ verwendet wird.
 
 \def\title	{{
 	str opt = ParseOpt(cin, true);
-	str main = ParseLine(cin);
+	str main = ParseLine(cin, true);
 	str sub = ParsePar(cin);
 
 	if	(stat)	section('C', opt, main);
@@ -155,12 +155,23 @@ addr = expand(addr ? addr : ParsePar(cin), false);
 }
 
 :*:introduction
-:de:Vorwort/Einführung
+:de:Einführung
 
 :*:The command $1 starts the introduction
+:de:Der Befehl $1 beginnt die Einführung
+
+\def\intro	{
+	fprintf(ioerr, "\\intro ist veraltet, durch \\preface ersetzen!\n");
+	newenv('i');
+}
+
+:*:preface
+:de:Vorwort
+
+:*:The command $1 starts the preface
 :de:Der Befehl $1 beginnt das Vorwort
 
-\def\intro	newenv('i');
+\def\preface	newenv('i');
 
 :*:start bibliography
 :de:Literaturverzeichnis
@@ -197,5 +208,5 @@ addr = expand(addr ? addr : ParsePar(cin), false);
 
 	if	(opt)	opt = "[" + opt + "]";
 
-	plaintex(sprintf("\\cite%s{%s}\n", opt, name));
+	plaintex(sprintf("\\cite%s{%s}", opt, name));
 }}

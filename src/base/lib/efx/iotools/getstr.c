@@ -22,7 +22,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/efio.h>
 
-static char *substring(io_t *io, int delim)
+static char *substring(IO *io, int delim)
 {
 	char *p;
 	char buf[2];
@@ -35,11 +35,11 @@ static char *substring(io_t *io, int delim)
 	return p;
 }
 
-static char *loadstring(io_t *io, int delim)
+static char *loadstring(IO *io, int delim)
 {
 	int no_nl;
 	int at_begin;
-	strbuf_t *buf;
+	StrBuf *buf;
 	int c;
 
 	io_getc(io);
@@ -85,7 +85,7 @@ static char *loadstring(io_t *io, int delim)
 }
 
 
-char *getstring(io_t *io)
+char *getstring(IO *io)
 {
 	int c;
 

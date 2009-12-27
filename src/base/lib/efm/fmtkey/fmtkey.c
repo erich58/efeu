@@ -24,10 +24,10 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/strbuf.h>
 #include <ctype.h>
 
-
-int fmtkey(const char *fmt, fmtkey_t *key)
+int io_fmtkey(IO *io, FmtKey *key)
 {
-	fmtkey_t buf;
+	FmtKey buf;
+	int c;
 	int n;
 
 	if	(key == NULL)	key = &buf;
@@ -37,57 +37,67 @@ int fmtkey(const char *fmt, fmtkey_t *key)
 	key->width = 0;
 	key->prec = 0;
 	key->list = NULL;
-	n = 0;
+	c = io_getc(io);
+	n = 1;
 
 /*	Steuerflags
 */
 	for (;;)
 	{
-		if	(fmt[n] == ' ')	key->flags |= FMT_BLANK;
-		else if	(fmt[n] == '+')	key->flags |= FMT_SIGN|FMT_BLANK;
-		else if	(fmt[n] == '-')	key->flags &= ~FMT_RIGHT;
-		else if	(fmt[n] == '0')	key->flags |= FMT_ZEROPAD;
-		else if	(fmt[n] == '#')	key->flags |= FMT_ALTMODE;
+		if	(c == ' ')	key->flags |= FMT_BLANK;
+		else if	(c == '+')	key->flags |= FMT_SIGN|FMT_BLANK;
+		else if	(c == '-')	key->flags &= ~FMT_RIGHT;
+		else if	(c == '0')	key->flags |= FMT_ZEROPAD;
+		else if	(c == '#')	key->flags |= FMT_ALTMODE;
 		else			break;
 
+		c = io_getc(io);
 		n++;
 	}
 
 /*	Feldbreite
 */
-	while (isdigit(fmt[n]))
+	while (isdigit(c))
 	{
 		key->width *= 10;
-		key->width += fmt[n++] - '0';
+		key->width += c - '0';
+		c = io_getc(io);
+		n++;
 	}
 
-	if	(fmt[n] == '*')
+	if	(c == '*')
 	{
 		key->flags |= FMT_NEED_WIDTH;
+		c = io_getc(io);
 		n++;
 	}
 
 /*	Genauigkeit
 */
-	if	(fmt[n] == '.')
+	if	(c == '.')
 	{
+		c = io_getc(io);
 		n++;
 
-		if	(fmt[n] == '-')
+		if	(c == '-')
 		{
 			key->flags |= FMT_NEGPREC;
+			c = io_getc(io);
 			n++;
 		}
 
-		while (isdigit(fmt[n]))
+		while (isdigit(c))
 		{
 			key->prec *= 10;
-			key->prec += fmt[n++] - '0';
+			key->prec += c - '0';
+			c = io_getc(io);
+			n++;
 		}
 
-		if	(fmt[n] == '*')
+		if	(c == '*')
 		{
 			key->flags |= FMT_NEED_PREC;
+			c = io_getc(io);
 			n++;
 		}
 	}
@@ -97,44 +107,58 @@ int fmtkey(const char *fmt, fmtkey_t *key)
 */
 	for (;;)
 	{
-		if	(fmt[n] == 'h')	key->flags |= FMT_SHORT;
-		else if	(fmt[n] == 'l')	key->flags |= FMT_LONG;
-		else if	(fmt[n] == 'L')	key->flags |= FMT_XLONG;
+		if	(c == 'h')	key->flags |= FMT_SHORT;
+		else if	(c == 'l')	key->flags |= FMT_LONG;
+		else if	(c == 'L')	key->flags |= FMT_XLONG;
 		else			break;
 
+		c = io_getc(io);
 		n++;
 	}
 
-	key->mode = fmt[n];
+	if	(c == EOF)
+		return n - 1;
 
-	if	(key->mode != 0)	n++;
+	key->mode = c;
 
 	if	(key->mode == '[')
 	{
-		strbuf_t *sb;
+		StrBuf *sb;
 		int escape;
 
 		sb = new_strbuf(0);
 		escape = 0;
 
-		while (fmt[n] != 0)
+		while ((c = io_getc(io)) != EOF)
 		{
-			if	(fmt[n] == '\\')
+			n++;
+
+			if	(c == '\\')
 			{
-				if	(fmt[n + 1] == ']')	n++;
-			}
-			else if	(fmt[n] == ']')
-			{
+				c = io_getc(io);
 				n++;
+
+				if	(c != ']')
+					sb_putc('\\', sb);
+			}
+			else if	(c == ']')
+			{
 				break;
 			}
-			else if	(fmt[n] == 0)		break;
 
-			sb_putc(fmt[n++], sb);
+			sb_putc(c, sb);
 		}
 
 		key->list = sb2str(sb);
 	}
 
+	return n;
+}
+
+int fmtkey(const char *fmt, FmtKey *key)
+{
+	IO *io = io_cstr(fmt);
+	int n = io_fmtkey(io, key);
+	io_close(io);
 	return n;
 }

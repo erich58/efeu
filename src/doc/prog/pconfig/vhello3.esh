@@ -1,9 +1,13 @@
 #!/usr/bin/env esh
+/*
+Programmbeispiel: Hello World!
+
+$Copyright (C) 2002 Erich Frühstück
+A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+*/
 
 pconfig !
-Ident = "Programmbeispiel: Hello World"
-Version = "$Revision: 1.1 $"
-Copyright = "(c) 2001 Erich Frühstück"
+Version = "$Id: vhello3.esh,v 1.2 2003-01-17 11:25:02 ef Exp $"
 
 Format = "%s"
 	Formatierungsanweisung für den Ausgabetext.

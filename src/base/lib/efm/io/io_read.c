@@ -23,31 +23,31 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/io.h>
 
 
-size_t io_read(io_t *io, void *buf, size_t nbyte)
+size_t io_read(IO *io, void *buf, size_t nbyte)
 {
-	uchar_t *p;
+	unsigned char *p;
 	size_t n;
 	int c;
 
-	p = (uchar_t *) buf;
+	p = (unsigned char *) buf;
 
 	for (n = 0; n < nbyte && (c = io_getc(io)) != EOF; n++)
-		p[n] = (uchar_t) c;
+		p[n] = (unsigned char) c;
 
 	return n;
 }
 
 
-size_t io_rread(io_t *io, void *buf, size_t nbyte)
+size_t io_rread(IO *io, void *buf, size_t nbyte)
 {
-	uchar_t *p;
+	unsigned char *p;
 	size_t n;
 	int c;
 
-	p = (uchar_t *) buf;
+	p = (unsigned char *) buf;
 
 	for (n = 1; n <= nbyte && (c = io_getc(io)) != EOF; n++)
-		p[nbyte - n] = (uchar_t) c;
+		p[nbyte - n] = (unsigned char) c;
 
 	return n - 1;
 }
@@ -56,7 +56,7 @@ size_t io_rread(io_t *io, void *buf, size_t nbyte)
 /*	Daten in dynamischen Buffer lesen
 */
 
-char *io_mread(io_t *io, size_t size)
+char *io_mread(IO *io, size_t size)
 {
 	char *buf;
 

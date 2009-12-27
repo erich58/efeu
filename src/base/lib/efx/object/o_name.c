@@ -27,20 +27,19 @@ If not, write to the Free Software Foundation, Inc.,
 /*	Kopier und Auswertungsfunktionen
 */
 
-static void n_clean (const Type_t *type, Name_t *tg);
-static void n_copy (const Type_t *type, Name_t *tg, const Name_t *src);
-static Obj_t *n_meval (const Type_t *type, const Name_t *ptr);
-static Obj_t *n_seval (const Type_t *type, const Name_t *ptr);
+static void n_clean (const EfiType *type, void *data);
+static void n_copy (const EfiType *type, void *tg, const void *src);
+static EfiObj *n_meval (const EfiType *type, const void *ptr);
+static EfiObj *n_seval (const EfiType *type, const void *ptr);
 
-Type_t Type_mname = EVAL_TYPE("_MemberName_", Name_t,
-	(Eval_t) n_meval, (Clean_t) n_clean, (Copy_t) n_copy);
-Type_t Type_sname = EVAL_TYPE("_ScopeName_", Name_t,
-	(Eval_t) n_seval, (Clean_t) n_clean, (Copy_t) n_copy);
+EfiType Type_mname = EVAL_TYPE("_MemberName_", EfiName, n_meval, n_clean, n_copy);
+EfiType Type_sname = EVAL_TYPE("_ScopeName_", EfiName, n_seval, n_clean, n_copy);
 
-Name_t Buf_name = { NULL, NULL };
+EfiName Buf_name = { NULL, NULL };
 
-static void n_clean(const Type_t *type, Name_t *tg)
+static void n_clean(const EfiType *type, void *data)
 {
+	EfiName *tg = data;
 	memfree(tg->name);
 	UnrefObj(tg->obj);
 	tg->name = NULL;
@@ -48,8 +47,10 @@ static void n_clean(const Type_t *type, Name_t *tg)
 }
 
 
-static void n_copy(const Type_t *type, Name_t *tg, const Name_t *src)
+static void n_copy(const EfiType *type, void *tptr, const void *sptr)
 {
+	EfiName *tg = tptr;
+	const EfiName *src = sptr;
 	tg->name = mstrcpy(src->name);
 	tg->obj = RefObj(src->obj);
 }
@@ -58,17 +59,19 @@ static void n_copy(const Type_t *type, Name_t *tg, const Name_t *src)
 /*	Namen auswerten
 */
 
-static Obj_t *n_meval(const Type_t *type, const Name_t *name)
+static EfiObj *n_meval(const EfiType *type, const void *ptr)
 {
+	const EfiName *name = ptr;
 	return GetMember(RefObj(name->obj), name->name);
 }
 
-static Obj_t *n_seval(const Type_t *type, const Name_t *name)
+static EfiObj *n_seval(const EfiType *type, const void *ptr)
 {
+	const EfiName *name = ptr;
 	return GetScope(RefObj(name->obj), name->name);
 }
 
-Obj_t *Var2Obj (Var_t *var, const Obj_t *obj)
+EfiObj *Var2Obj (EfiVar *var, const EfiObj *obj)
 {
 	if	(var == NULL)
 		return NULL;
@@ -99,10 +102,10 @@ Obj_t *Var2Obj (Var_t *var, const Obj_t *obj)
 }
 
 
-Obj_t *GetMember (Obj_t *obj, const char *name)
+EfiObj *GetMember (EfiObj *obj, const char *name)
 {
-	Type_t *type;
-	Obj_t *x;
+	EfiType *type;
+	EfiObj *x;
 
 	obj = EvalObj(obj, NULL);
 
@@ -120,16 +123,14 @@ Obj_t *GetMember (Obj_t *obj, const char *name)
 		if	(type->dim)	break;
 	}
 
-	reg_cpy(1, obj->type->name);
-	reg_cpy(2, name);
-	errmsg(MSG_EFMAIN, 164);
+	dbg_note(NULL, "[efmain:164]", "ss", obj->type->name, name);
 	return NULL;
 }
 
 
-Obj_t *GetScope (Obj_t *obj, const char *name)
+EfiObj *GetScope (EfiObj *obj, const char *name)
 {
-	VarTab_t *tab = Obj2Ptr(obj, &Type_vtab);
+	EfiVarTab *tab = Obj2Ptr(obj, &Type_vtab);
 
 	if	(tab)
 	{
@@ -139,6 +140,6 @@ Obj_t *GetScope (Obj_t *obj, const char *name)
 		if	(obj)	return obj;
 	}
 
-	message(NULL, MSG_EFMAIN, 166, 1, name);
+	dbg_note(NULL, "[efmain:166]", "s", name);
 	return NULL;
 }

@@ -26,7 +26,6 @@ If not, write to the Free Software Foundation, Inc.,
 #define	MATH_linalg_h	1
 
 #include <EFEU/config.h>
-#include <EFEU/types.h>
 
 size_t GaussJordan (double *data, size_t dim);
 

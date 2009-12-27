@@ -20,79 +20,18 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#if	defined(__FreeBSD__)
-#define	EMULATE_FTW	1
-#else
-#define	EMULATE_FTW	0
-#endif
-
 #include <EFEU/object.h>
 #include <EFEU/cmdsetup.h>
 #include <EFEU/refdata.h>
 #include <EFEU/calendar.h>
 #include <EFEU/cmdeval.h>
+#include <EFEU/vecbuf.h>
 #include <time.h>
 #include <pwd.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
-
-#if	EMULATE_FTW
-
-#ifndef	PATH_MAX
-#define	PATH_MAX	4096
-#endif
-
-#define FTW_F	1
-#define FTW_D	2
-#define FTW_DNR	3
-#define FTW_NS	4
-#define FTW_SL	5
-
-typedef int (*ftw_func_t) (const char *name, const struct stat *sb, int flag);
-
-static int ftw (const char *dir, ftw_func_t func, int depth)
-{
-	char *p;
-	int rval, flag;
-	char buf[PATH_MAX];
-	struct stat sb;
-	FILE *file;
-
-	p = msprintf("|find %s -print", dir);
-	file = fileopen(p, "r");
-	memfree(p);
-	rval = 0;
-
-	while (rval == 0 && fgets(buf, PATH_MAX, file) != NULL)
-	{
-		if	((p = strchr(buf, '\n')) == NULL)
-			continue;
-
-		*p = 0;
-
-		if	(stat(buf, &sb) != EOF)
-		{
-			if	(S_ISDIR(sb.st_mode))
-			{
-				flag = FTW_D;
-			}
-			else	flag = FTW_F;
-		}
-		else	flag = FTW_NS;
-
-		rval = func(buf, &sb, flag);
-	}
-
-	fileclose(file);
-	return rval;
-}
-
-#else
-
-#include <ftw.h>
-
-#endif
+#include <dirent.h>
 
 /*	Filestatus
 */
@@ -102,51 +41,79 @@ typedef struct {
 	unsigned uid;
 	unsigned gid;
 	unsigned mode;
-	ulong_t size;
-	Time_t mtime;
-} fstat_t;
+	long size;
+	CalTimeIndex mtime;
+} FileStat;
 
-#define	Val_fstat(x)	((fstat_t *) (x))[0]
+#define	Val_fstat(x)	((FileStat *) (x))[0]
 
-static void fstat_clean (const Type_t *st, void *data)
+static void fstat_clean (const EfiType *st, void *data)
 {
 	memfree(Val_fstat(data).path);
 	memset(data, 0, st->size);
 }
 
-static void fstat_copy (const Type_t *st, void *tg, const void *src)
+static void fstat_copy (const EfiType *st, void *tg, const void *src)
 {
 	memcpy(tg, src, st->size);
 	Val_fstat(tg).path = mstrcpy(Val_fstat(src).path);
 }
 
-Type_t Type_fstat = STD_TYPE("FileStat", fstat_t, NULL,
+EfiType Type_fstat = STD_TYPE("FileStat", FileStat, NULL,
 	fstat_clean, fstat_copy);
 
-static char **fstat_path (fstat_t *fstat) { return &fstat->path; }
-static int *fstat_uid (fstat_t *fstat) { return &fstat->uid; }
-static int *fstat_gid (fstat_t *fstat) { return &fstat->gid; }
-static int *fstat_mode (fstat_t *fstat) { return &fstat->mode; }
-static long *fstat_size (fstat_t *fstat) { return &fstat->size; }
-static Time_t *fstat_mtime (fstat_t *fstat) { return &fstat->mtime; }
+static EfiObj *fstat_path (const EfiObj *base, void *data)
+{
+	return str2Obj(base ? ((FileStat *) base->data)->path : NULL);
+}
 
-static MemberDef_t fstat_var[] = {
-	{ "path", &Type_str, ConstMember, fstat_path },
-	{ "uid", &Type_int, ConstMember, fstat_uid },
-	{ "gid", &Type_int, ConstMember, fstat_gid },
-	{ "mode", &Type_int, ConstMember, fstat_mode },
-	{ "size", &Type_long, ConstMember, fstat_size },
-	{ "mtime", &Type_Time, ConstMember, fstat_mtime },
+static EfiObj *fstat_uid (const EfiObj *base, void *data)
+{
+	return int2Obj(base ? ((FileStat *) base->data)->uid : 0);
+}
+
+static EfiObj *fstat_gid (const EfiObj *base, void *data)
+{
+	return int2Obj(base ? ((FileStat *) base->data)->gid : 0);
+}
+
+static EfiObj *fstat_mode (const EfiObj *base, void *data)
+{
+	return int2Obj(base ? ((FileStat *) base->data)->mode : 0);
+}
+
+static EfiObj *fstat_size (const EfiObj *base, void *data)
+{
+	return long2Obj(base ? ((FileStat *) base->data)->size : 0);
+}
+
+static EfiObj *fstat_mtime (const EfiObj *base, void *data)
+{
+	if	(base)
+	{
+		FileStat *fstat = base->data;
+		return NewObj(&Type_Time, &fstat->mtime);
+	}
+	else	return NewObj(&Type_Time, NULL);
+}
+
+static EfiMember fstat_var[] = {
+	{ "path", &Type_str, fstat_path, NULL },
+	{ "uid", &Type_int, fstat_uid, NULL },
+	{ "gid", &Type_int, fstat_gid, NULL },
+	{ "mode", &Type_int, fstat_mode, NULL },
+	{ "size", &Type_long, fstat_size, NULL },
+	{ "mtime", &Type_Time, fstat_mtime, NULL },
 };
 
-static void str2fstat (Func_t *func, void *rval, void **arg)
+static void str2fstat (EfiFunc *func, void *rval, void **arg)
 {
 	struct stat buf;
 	struct tm *x;
 
 	if	(stat(Val_str(arg[0]), &buf) != EOF)
 	{
-		fstat_t *fstat = rval;
+		FileStat *fstat = rval;
 		fstat->path = mstrcpy(Val_str(arg[0]));
 		fstat->uid = buf.st_uid;
 		fstat->gid = buf.st_gid;
@@ -162,13 +129,13 @@ static void str2fstat (Func_t *func, void *rval, void **arg)
 		}
 		else	fstat->mtime = CurrentTime();
 	}
-	else	memset(rval, 0, sizeof(fstat_t));
+	else	memset(rval, 0, sizeof(FileStat));
 }
 
-static void fprint_fstat (Func_t *func, void *rval, void **arg)
+static void fprint_fstat (EfiFunc *func, void *rval, void **arg)
 {
-	io_t *io = Val_io(arg[0]);
-	fstat_t *fstat = arg[1];
+	IO *io = Val_io(arg[0]);
+	FileStat *fstat = arg[1];
 
 	if	(fstat->path)
 	{
@@ -184,9 +151,9 @@ static void fprint_fstat (Func_t *func, void *rval, void **arg)
 	else	Val_int(rval) = io_puts("(unknown)", io);
 }
 
-static void fstat2bool (Func_t *func, void *rval, void **arg)
+static void fstat2bool (EfiFunc *func, void *rval, void **arg)
 {
-	Val_bool(rval) = ((fstat_t *) arg[0])->path != NULL;
+	Val_bool(rval) = ((FileStat *) arg[0])->path != NULL;
 }
 
 /*	Paßworteintrag
@@ -199,11 +166,11 @@ typedef struct {
 	char *shell;
 	unsigned uid;
 	unsigned gid;
-} pwd_t;
+} PWD;
 
-static void pwd_clean (const Type_t *type, void *data)
+static void pwd_clean (const EfiType *type, void *data)
 {
-	register pwd_t *pwd = data;
+	register PWD *pwd = data;
 	memfree(pwd->name);
 	memfree(pwd->gecos);
 	memfree(pwd->home);
@@ -211,10 +178,10 @@ static void pwd_clean (const Type_t *type, void *data)
 	memset(data, 0, type->size);
 }
 
-static void pwd_copy (const Type_t *st, void *tp, const void *sp)
+static void pwd_copy (const EfiType *st, void *tp, const void *sp)
 {
-	register pwd_t *tg = tp;
-	register const pwd_t *src = sp;
+	register PWD *tg = tp;
+	register const PWD *src = sp;
 	tg->name = mstrcpy(src->name);
 	tg->gecos = mstrcpy(src->gecos);
 	tg->home = mstrcpy(src->home);
@@ -223,26 +190,55 @@ static void pwd_copy (const Type_t *st, void *tp, const void *sp)
 	tg->gid = src->gid;
 }
 
-Type_t Type_pwd = STD_TYPE("passwd", pwd_t, NULL, pwd_clean, pwd_copy);
+EfiType Type_pwd = STD_TYPE("passwd", PWD, NULL, pwd_clean, pwd_copy);
 
-static char **pwd_name (pwd_t *pwd) { return &pwd->name; }
-static char **pwd_gecos (pwd_t *pwd) { return &pwd->gecos; }
-static char **pwd_home (pwd_t *pwd) { return &pwd->home; }
-static char **pwd_shell (pwd_t *pwd) { return &pwd->shell; }
-static int *pwd_uid (pwd_t *pwd) { return &pwd->uid; }
-static int *pwd_gid (pwd_t *pwd) { return &pwd->gid; }
+static EfiObj *pwd_name (const EfiObj *obj, void *data)
+{
+	PWD *pwd = obj->data;
+	return ConstObj(&Type_str, &pwd->name);
+}
 
-static MemberDef_t pwd_var[] = {
-	{ "name", &Type_str, ConstMember, pwd_name },
-	{ "gecos", &Type_str, ConstMember, pwd_gecos },
-	{ "home", &Type_str, ConstMember, pwd_home },
-	{ "shell", &Type_str, ConstMember, pwd_shell },
-	{ "uid", &Type_int, ConstMember, pwd_uid },
-	{ "gid", &Type_int, ConstMember, pwd_gid },
+static EfiObj *pwd_gecos (const EfiObj *obj, void *data)
+{
+	PWD *pwd = obj->data;
+	return ConstObj(&Type_str, &pwd->gecos);
+}
+
+static EfiObj *pwd_home (const EfiObj *obj, void *data)
+{
+	PWD *pwd = obj->data;
+	return ConstObj(&Type_str, &pwd->home);
+}
+
+static EfiObj *pwd_shell (const EfiObj *obj, void *data)
+{
+	PWD *pwd = obj->data;
+	return ConstObj(&Type_str, &pwd->shell);
+}
+
+static EfiObj *pwd_uid (const EfiObj *obj, void *data)
+{
+	PWD *pwd = obj->data;
+	return int2Obj(pwd->uid);
+}
+
+static EfiObj *pwd_gid (const EfiObj *obj, void *data)
+{
+	PWD *pwd = obj->data;
+	return int2Obj(pwd->gid);
+}
+
+static EfiMember pwd_var[] = {
+	{ "name", &Type_str, pwd_name, NULL },
+	{ "gecos", &Type_str, pwd_gecos, NULL },
+	{ "home", &Type_str, pwd_home, NULL },
+	{ "shell", &Type_str, pwd_shell, NULL },
+	{ "uid", &Type_int, pwd_uid, NULL },
+	{ "gid", &Type_int, pwd_gid, NULL },
 };
 
 
-static void set_pwd (pwd_t *pwd, struct passwd *base)
+static void set_pwd (PWD *pwd, struct passwd *base)
 {
 	if	(!base)	return;
 
@@ -254,115 +250,113 @@ static void set_pwd (pwd_t *pwd, struct passwd *base)
 	pwd->gid = base->pw_gid;
 }
 
-static void f_pwd_str (Func_t *func, void *rval, void **arg)
+static void f_pwd_str (EfiFunc *func, void *rval, void **arg)
 {
 	set_pwd(rval, getpwnam(Val_str(arg[0])));
 }
 
-static void f_pwd_int (Func_t *func, void *rval, void **arg)
+static void f_pwd_int (EfiFunc *func, void *rval, void **arg)
 {
 	set_pwd(rval, getpwuid(Val_int(arg[0])));
 }
 
-static void f_pwd_void (Func_t *func, void *rval, void **arg)
+static void f_pwd_void (EfiFunc *func, void *rval, void **arg)
 {
 	set_pwd(rval, getpwuid(getuid()));
 }
 
-static void fprint_pwd (Func_t *func, void *rval, void **arg)
+static void fprint_pwd (EfiFunc *func, void *rval, void **arg)
 {
-	io_t *io = Val_io(arg[0]);
-	pwd_t *pwd = arg[1];
+	IO *io = Val_io(arg[0]);
+	PWD *pwd = arg[1];
 
 	Val_int(rval) = pwd->name ?
 		io_printf(io, "%s (%s)", pwd->name, pwd->gecos) :
 		io_puts("(unknown)", io);
 }
 
-static void pwd2bool (Func_t *func, void *rval, void **arg)
+static void pwd2bool (EfiFunc *func, void *rval, void **arg)
 {
-	Val_bool(rval) = ((pwd_t *) arg[0])->name != NULL;
+	Val_bool(rval) = ((PWD *) arg[0])->name != NULL;
 }
 
-static void f_getuid (Func_t *func, void *rval, void **arg)
+static void f_getuid (EfiFunc *func, void *rval, void **arg)
 {
 	Val_int(rval) = getuid();
 }
 
-/*	Bibliothekbaum durchwandern
-*/
 
-static Obj_t *ftw_expr = NULL;
-
-static int ftw_eval (const char *name, const struct stat *sb, int flag)
+static int skip_name (const char *name)
 {
-	int rval;
-
-	if	(flag == FTW_F)
-	{
-		Obj_t *save = LocalObj;
-		LocalObj = str2Obj(mstrcpy(name));
-
-		UnrefObj(CmdEval_retval);
-		CmdEval_retval = NULL;
-		UnrefEval(RefObj(ftw_expr));
-		rval = Obj2int(CmdEval_retval);
-		CmdEval_retval = NULL;
-		CmdEval_stat = 0;
-		LocalObj = save;
-	}
-	else	rval = 0;
-
-	return rval;
-}
-
-static void f_ftw (Func_t *func, void *rval, void **arg)
-{
-	char *dir = Val_str(arg[0]);
-	Obj_t *save = ftw_expr;
-	ftw_expr = Val_obj(arg[1]);
-	Val_int(rval) = ftw(dir ? dir : ".", ftw_eval, Val_int(arg[2]));
-	ftw_expr = save;
-}
-
-static char *flist_pat = NULL;
-static ObjList_t **flist_ptr = NULL;
-
-static int flist_test (const char *name)
-{
-	char *p;
-
-	if	(!flist_pat)	return 1;
-	if	(!name)		return 0;
-
-	p = strrchr(name, '/');
-	return patcmp(flist_pat, p ? p + 1 : name, NULL);
-}
-
-static int flist_eval (const char *name, const struct stat *sb, int flag)
-{
-	if	(flag == FTW_F)
-	{
-		if	(flist_test(name))
-		{
-			*flist_ptr = NewObjList(str2Obj(mstrcpy(name)));
-			flist_ptr = &(*flist_ptr)->next;
-		}
-	}
+	if	(name[0] != '.')	return 0;
+	if	(name[1] == 0)		return 1;
+	if	(name[1] != '.')	return 0;
+	if	(name[2] == 0)		return 1;
 
 	return 0;
 }
 
-static void f_flist (Func_t *func, void *rval, void **arg)
+static EfiObjList **do_flist (EfiObjList **ptr, const char *path,
+	const char *pat)
 {
-	char *dir = Val_str(arg[0]);
-	flist_ptr = (ObjList_t **) rval;
-	*flist_ptr = NULL;
-	flist_pat = Val_str(arg[1]);
-	ftw(dir ? dir : ".", flist_eval, Val_int(arg[2]));
+	DIR *dir;
+	struct dirent *entry;
+	struct stat statbuf;
+	VecBuf *dir_buf;
+	char *p, **dp;
+	size_t n;
+	
+	if	((dir = opendir(path)) == NULL)
+		return ptr;
+
+	dir_buf = vb_create(1024, sizeof(char *));
+
+	while ((entry = readdir(dir)) != NULL)
+	{
+		if	(skip_name(entry->d_name))	continue;
+
+		p = mstrpaste("/", path, entry->d_name);
+
+		if	(stat(p, &statbuf) != 0)
+		{
+			memfree(p);
+		}
+		else if (S_ISDIR(statbuf.st_mode))
+		{
+			dp = vb_next(dir_buf);
+			*dp = p;
+		}
+		else if (!S_ISREG(statbuf.st_mode))
+		{
+			memfree(p);
+		}
+		else if	(!pat || patcmp(pat, entry->d_name, NULL))
+		{
+			*ptr = NewObjList(str2Obj(p));
+			ptr = &(*ptr)->next;
+		}
+	}
+
+	closedir(dir);
+
+	for (dp = dir_buf->data, n = dir_buf->used; n--; dp++)
+	{
+		ptr = do_flist(ptr, *dp, pat);
+		memfree(*dp);
+	}
+
+	vb_destroy(dir_buf);
+	return ptr;
 }
 
-static void f_mkdir (Func_t *func, void *rval, void **arg) \
+static void f_flist (EfiFunc *func, void *rval, void **arg)
+{
+	EfiObjList **ptr = (EfiObjList **) rval;
+	*ptr = NULL;
+	do_flist(ptr, Val_str(arg[0]), Val_str(arg[1]));
+}
+
+static void f_mkdir (EfiFunc *func, void *rval, void **arg) \
 {
 	Val_bool(rval) = mkdir(Val_str(arg[0]), (mode_t) 0777) == 0;
 }
@@ -370,7 +364,7 @@ static void f_mkdir (Func_t *func, void *rval, void **arg) \
 /*	Funktionstabelle
 */
 
-static FuncDef_t func_unix[] = {
+static EfiFuncDef func_unix[] = {
 	{ 0, &Type_fstat, "FileStat (str path)", str2fstat },
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, FileStat)", fprint_fstat },
 	{ FUNC_RESTRICTED, &Type_bool, "FileStat ()", fstat2bool },
@@ -380,8 +374,7 @@ static FuncDef_t func_unix[] = {
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, passwd)", fprint_pwd },
 	{ FUNC_RESTRICTED, &Type_bool, "passwd ()", pwd2bool },
 	{ 0, &Type_int, "getuid ()", f_getuid },
-	{ 0, &Type_int, "ftw (str path, Expr_t expr = NULL, int depth = 1)", f_ftw },
-	{ 0, &Type_list, "flist (str path, str pat = NULL, int depth = 1)", f_flist },
+	{ 0, &Type_list, "flist (str path, str pat = NULL)", f_flist },
 	{ 0, &Type_bool, "mkdir (str path)", f_mkdir },
 };
 
@@ -389,8 +382,8 @@ static FuncDef_t func_unix[] = {
 void CmdSetup_unix(void)
 {
 	AddType(&Type_fstat);
-	AddMember(Type_fstat.vtab, fstat_var, tabsize(fstat_var));
+	AddEfiMember(Type_fstat.vtab, fstat_var, tabsize(fstat_var));
 	AddType(&Type_pwd);
-	AddMember(Type_pwd.vtab, pwd_var, tabsize(pwd_var));
+	AddEfiMember(Type_pwd.vtab, pwd_var, tabsize(pwd_var));
 	AddFuncDef(func_unix, tabsize(func_unix));
 }

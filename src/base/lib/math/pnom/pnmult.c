@@ -26,7 +26,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 static void mul_sub (double c, double **a, size_t *deg, size_t n);
 
-static pnom_t *mul_pn;	/* Polynompointer */
+static Polynom *mul_pn;	/* Polynompointer */
 static size_t mul_dim;	/* Polynomdimension */
 static double mul_m;	/* Multiplikator */
 
@@ -63,9 +63,9 @@ static void mul_sub(double x, double **c, size_t *deg, size_t n)
 /*	Polynome multiplizieren
 */
 
-pnom_t *pnmult(double c, pnom_t *p1, pnom_t *p2)
+Polynom *pnmult(double c, Polynom *p1, Polynom *p2)
 {
-	pnom_t *p[2];
+	Polynom *p[2];
 	size_t deg;
 
 	if	(c == 0. || p1 == NULL || p2 == NULL)

@@ -25,7 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/ioctrl.h>
 
 
-int io_mgetc (io_t *io, int flag)
+int io_mgetc (IO *io, int flag)
 {
 	register int c, sflag;
 

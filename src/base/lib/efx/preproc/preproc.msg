@@ -20,14 +20,14 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-191	$!: $0: undefined directive $(#1:%#s).\n
+191	$!: $0: undefined directive "$1".\n
 192	$!: $0: invalid character in macro argument.\n
 193	$!: $0: unexpected ELIF.\n
 194	$!: $0: unexpected ELSE.\n
 195	$!: $0: unexpected ENDIF.\n
 196	$!: $0: EOF in control block (start at line $1).\n
-197	$!: $0: file $(#1:%#s) not found.\n
+197	$!: $0: file "$1" not found.\n
 198	$!: $0: missing filename.\n
 199	$!: $0: carriage return in input file, (MSDOS file ?).\n
 
-211	$!: WARNING: macro $(#1:%#s) redefined.\n
+211	$!: WARNING: macro "$1" redefined.\n

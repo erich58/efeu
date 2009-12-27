@@ -43,25 +43,25 @@ typedef struct {
 	PGresult *res;	/* Ergebnisdaten */
 	FILE *trace;	/* Trace File */
 	int lock;	/* Sperre für exec-Befehle */
-} PG_t;
+} PG;
 
-extern PG_t *PG (const char *def);
-extern int PG_print (io_t *io, PG_t *pg);
+extern PG *PG_connect (const char *def);
+extern int PG_print (IO *io, PG *pg);
 
-extern void PG_clear (PG_t *pg);
-extern int PG_exec (PG_t *pg, const char *cmd, ExecStatusType type);
-extern const char *PG_status (PG_t *pg);
-extern int PG_command (PG_t *pg, const char *cmd);
+extern void PG_clear (PG *pg);
+extern int PG_exec (PG *pg, const char *cmd, ExecStatusType type);
+extern const char *PG_status (PG *pg);
+extern int PG_command (PG *pg, const char *cmd);
 
-extern int PG_query (PG_t *pg, const char *cmd);
-extern int PG_ntuples (PG_t *pg);
-extern int PG_nfields (PG_t *pg);
-extern char *PG_fname (PG_t *pg, int field);
-extern char *PG_value (PG_t *pg, int tuple, int field);
+extern int PG_query (PG *pg, const char *cmd);
+extern int PG_ntuples (PG *pg);
+extern int PG_nfields (PG *pg);
+extern char *PG_fname (PG *pg, int field);
+extern char *PG_value (PG *pg, int tuple, int field);
 
-extern io_t *PG_open (PG_t *pg, const char *name, const char *mode);
+extern IO *PG_open (PG *pg, const char *name, const char *mode);
 
-extern mdmat_t *PG_mdmat (PG_t *pg, const Type_t *type,
+extern mdmat *PG_mdmat (PG *pg, const EfiType *type,
 	const char *value, const char *axis);
 
 extern int PG_expandlim;
@@ -71,7 +71,7 @@ extern void _init (void);
 /*
 $SeeAlso
 \mref{refdata(3)},
-\mref{PG(3)},
+\mref{PG_connect(3)},
 \mref{PG_exec(3)},
 \mref{PG_open(3)},
 \mref{PG_query(3)},

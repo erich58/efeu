@@ -30,14 +30,14 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/io.h>
 
 extern int MakeDepend;
-extern vecbuf_t DependList;
-extern vecbuf_t TargetList;
+extern VecBuf DependList;
+extern VecBuf TargetList;
 
 void AddTarget (const char *name);
 void AddDepend (const char *name);
-void MakeDependRule (io_t *io);
-void MakeTargetRule (io_t *io, const char *cmd);
-void MakeTaskRule (io_t *io, const char *name);
-void MakeCleanRule (io_t *io, const char *name);
+void MakeDependRule (IO *io);
+void MakeTargetRule (IO *io, const char *cmd);
+void MakeTaskRule (IO *io, const char *name);
+void MakeCleanRule (IO *io, const char *name);
 
 #endif	/* EFEU/MakeDepend.h */

@@ -61,7 +61,7 @@ Die Funktion |$1| liest eine kompakte Größenangabe
 aus der Eingabestruktur <io>.
 */
 
-size_t io_getsize (io_t *io)
+size_t io_getsize (IO *io)
 {
 	int c;
 	
@@ -80,7 +80,7 @@ Die Funktion |$1| liefert die Zahl der ausgegebenen Byte oder
 EOF bei einem Ausgabefehler.
 */
 
-int io_putsize (size_t val, io_t *io)
+int io_putsize (size_t val, IO *io)
 {
 	if	(io && io->put)
 	{

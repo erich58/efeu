@@ -25,15 +25,153 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	COLSEP	";"
 
+/*
+Indexwert abtesten
+*/
+
+struct IDXCMP {
+	struct IDXCMP *next;	/* Für Verkettungen */
+	char *pattern;		/* Musterkennung */
+	int flag;		/* Negationsflag */
+	size_t minval;		/* Minimalwert */
+	size_t maxval;		/* Maximalwert */
+	int (*cmp) (struct IDXCMP *t, const char *s, size_t n);
+};
+
+static struct IDXCMP *new_idxcmp (const char *def, size_t dim);
+static void del_idxcmp (struct IDXCMP *ic);
+static struct IDXCMP *idxcmplist (char **list, size_t ldim, size_t dim);
+static int idxcmp (struct IDXCMP *ic, const char *name, size_t idx);
+
+
+static ALLOCTAB(idxcmp_tab, 32, sizeof(struct IDXCMP));
+
+static int pcmp (struct IDXCMP *t, const char *s, size_t n);
+static int ncmp (struct IDXCMP *t, const char *s, size_t n);
+static int xcmp (struct IDXCMP *t, const char *s, size_t n);
+
+
+static int pcmp(struct IDXCMP *tst, const char *name, size_t idx)
+{
+	return patcmp(tst->pattern, name, NULL);
+}
+
+
+static int ncmp(struct IDXCMP *tst, const char *name, size_t idx)
+{
+	return (idx >= tst->minval && idx <= tst->maxval);
+}
+
+
+static int xcmp(struct IDXCMP *tst, const char *name, size_t idx)
+{
+	return 1;
+}
+
+
+static struct IDXCMP *new_idxcmp(const char *def, size_t dim)
+{
+	struct IDXCMP *x;;
+
+	if	(def == NULL)	return NULL;
+
+	x = new_data(&idxcmp_tab);
+	memset(x, 0, sizeof(struct IDXCMP));
+	x->flag = 1;
+	x->cmp = xcmp;
+
+	switch (*def)
+	{	
+		case '-':	x->flag = 0; def++; break;
+		case '+':	def++; break;
+		default:	break;
+	}
+
+	if	(*def == '#')
+	{
+		long a;
+		char *p;
+
+		a = strtol(def + 1, &p, 0);
+
+		if	(-a > (long) dim)	a = 0;
+		else if	(a < 0)			a += 1 + (long) dim;
+
+		x->minval = a;
+
+		if	(*p == ':')
+		{
+			a = strtol(p + 1, NULL, 0);
+		}
+		else	a = x->minval;
+
+		if	(-a > (long) dim)	a = 0;
+		else if	(a <= 0)		a += 1 + (long) dim;
+
+		x->maxval = a;
+		x->cmp = ncmp;
+	}
+	else if	(*def != 0)
+	{
+		x->pattern = mstrcpy(def);
+		x->cmp = pcmp;
+	}
+
+	return x;
+}
+
+
+static struct IDXCMP *idxcmplist(char **list, size_t ldim, size_t dim)
+{
+	struct IDXCMP *test, **ptr;
+	int i;
+
+	test = NULL;
+	ptr = &test;
+
+	for (i = 0; i < ldim; i++)
+	{
+		*ptr = new_idxcmp(list[i], dim);
+		ptr = &(*ptr)->next;
+	}
+
+	return test;
+}
+
+
+static int idxcmp(struct IDXCMP *test, const char *str, size_t idx)
+{
+	if	(test)
+	{
+		int flag;
+
+		for (flag = !test->flag; test != NULL; test = test->next)
+			if (test->cmp(test, str, idx)) flag = test->flag;
+
+		return flag;
+	}
+	else	return 1;
+}
+
+static void del_idxcmp(struct IDXCMP *test)
+{
+	if	(test)
+	{
+		del_idxcmp(test->next);
+		memfree(test->pattern);
+		del_data(&idxcmp_tab, test);
+	}
+}
+
 /*	Variablenliste zur Ausgabe generieren
 */
 
-static size_t make_list (Var_t *st, char *list, Var_t ***ptr)
+static size_t make_list (EfiVar *st, char *list, EfiVar ***ptr)
 {
 	size_t dim, idim;
 	char **ilist;
-	Var_t *x;
-	idxcmp_t *cmp;
+	EfiVar *x;
+	struct IDXCMP *cmp;
 
 	*ptr = NULL;
 
@@ -45,7 +183,7 @@ static size_t make_list (Var_t *st, char *list, Var_t ***ptr)
 	idim = strsplit(list, "%s,;", &ilist);
 	cmp = idxcmplist(ilist, idim, dim);
 	memfree(ilist);
-	*ptr = ALLOC(dim, Var_t *);
+	*ptr = memalloc(dim * sizeof(EfiVar *));
 	dim = 0;
 
 	for (x = st, dim = 0; x != NULL; x = x->next)
@@ -62,7 +200,7 @@ static size_t make_list (Var_t *st, char *list, Var_t ***ptr)
 /*	Header ausgeben
 */
 
-static void print_header (io_t *io, Var_t **ptr, size_t dim)
+static void print_header (IO *io, EfiVar **ptr, size_t dim)
 {
 	char *delim;
 	int i;
@@ -84,7 +222,7 @@ static void print_header (io_t *io, Var_t **ptr, size_t dim)
 /*	Daten ausgeben
 */
 
-static void print_data (io_t *io, int mode, char *data, Var_t **ptr, size_t dim)
+static void print_data (IO *io, int mode, char *data, EfiVar **ptr, size_t dim)
 {
 	char *delim;
 	int i;
@@ -113,13 +251,13 @@ static void print_data (io_t *io, int mode, char *data, Var_t **ptr, size_t dim)
 /*	Datenbankwerte ausgeben
 */
 
-void DB_save(io_t *io, DataBase_t *db, int mode, VirFunc_t *test, char *list)
+void DB_save(IO *io, EfiDB *db, int mode, EfiVirFunc *test, char *list)
 {
 	size_t dim;
-	Var_t **ptr;
+	EfiVar **ptr;
 	char *data;
 	char *delim;
-	Func_t *func;
+	EfiFunc *func;
 	int testval;
 	int i;
 

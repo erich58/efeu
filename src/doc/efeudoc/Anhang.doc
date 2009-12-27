@@ -2,7 +2,7 @@
 
 \mchap[1]	Kommandos
 
-\pipe	efeudoc --help=raw
+\pipe	|efeudoc --help=raw|
 
 \mchap[7]	Makropakete
 

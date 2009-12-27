@@ -36,7 +36,7 @@ Bei verschiedenen Datentype wird das Funktionsgewicht berücksichtigt.
 int FuncComp (const void *pa, const void *pb)
 {
 	int i;
-	Func_t *a, *b;
+	EfiFunc *a, *b;
 
 	a = Val_func(pa);
 	b = Val_func(pb);

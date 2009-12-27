@@ -30,32 +30,32 @@ If not, write to the Free Software Foundation, Inc.,
 
 static char *dochead = NULL;
 
-static VarDef_t vardef[] = {
+static EfiVarDef vardef[] = {
 	{ "dochead", &Type_str, &dochead },
 };
 
-extern void mroff_cmdpar (VarTab_t *tab)
+extern void mroff_cmdpar (EfiVarTab *tab)
 {
 	AddVarDef(tab, vardef, tabsize(vardef));
 }
 
-void mroff_hdr (mroff_t *mr, int mode)
+void mroff_hdr (void *drv, int mode)
 {
+	ManRoff *mr = drv;
 	mroff_newline(mr);
 
 	if	(mode)
 	{
-		io_psub(mr->out, dochead);
+		io_psubvec(mr->out, dochead, 0, NULL);
 		mr->nlignore = 1;
 	}
 }
 
 
-int mroff_cmd (mroff_t *mr, va_list list)
+int mroff_cmd (void *drv, va_list list)
 {
-	int cmd;
-	
-	cmd = va_arg(list, int);
+	ManRoff *mr = drv;
+	int cmd = va_arg(list, int);
 
 	switch (cmd)
 	{

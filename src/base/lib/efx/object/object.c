@@ -29,8 +29,8 @@ If not, write to the Free Software Foundation, Inc.,
 /*	Die folgenden Fehlermeldungen weisen auf einen Programmfehler hin
 */
 
-#define	ERR_MSG1	"%s: fatal error: use of a deleted object (%lx)\n"
-#define	ERR_MSG2	"%s: fatal error: unkown size of object (%lx)\n"
+#define	ERR_MSG1	"%s: fatal error: use of a deleted object (%p)\n"
+#define	ERR_MSG2	"%s: fatal error: unkown size of object (%p)\n"
 
 extern char *ProgIdent;
 
@@ -39,9 +39,9 @@ extern char *ProgIdent;
 static int odebug_depth = 0;
 static int odebug_flag = 0;
 static int odebug_sync = 0;
-static io_t *odebug_log = NULL;
+static IO *odebug_log = NULL;
 
-static void do_debug (int flag, char *fmt, const Obj_t *obj);
+static void do_debug (int flag, char *fmt, const EfiObj *obj);
 #else
 #define do_debug(flag, fmt, obj)
 #endif
@@ -50,9 +50,9 @@ static void do_debug (int flag, char *fmt, const Obj_t *obj);
 /*	Zuweisungsobjekt generieren
 */
 
-Obj_t *LvalObj (Lval_t *lval, Type_t *type, ...)
+EfiObj *LvalObj (EfiLval *lval, EfiType *type, ...)
 {
-	Obj_t *x;
+	EfiObj *x;
 	va_list args;
 
 	va_start(args, type);
@@ -68,7 +68,7 @@ Obj_t *LvalObj (Lval_t *lval, Type_t *type, ...)
 	return x;
 }
 
-void SyncLval (Obj_t *obj)
+void SyncLval (EfiObj *obj)
 {
 	if	(obj && obj->lval && obj->lval->sync)
 		obj->lval->sync(obj);
@@ -77,14 +77,14 @@ void SyncLval (Obj_t *obj)
 /*	Neues Objekt generieren
 */
 
-static Obj_t *newobj(Type_t *type, void *data, const void *defval)
+static EfiObj *newobj(EfiType *type, void *data, const void *defval)
 {
-	Obj_t *obj;
+	EfiObj *obj;
 	size_t size;
 
 	if	(type == NULL)	return NULL;
 
-	size = type->size + sizeof(Obj_t);
+	size = type->size + sizeof(EfiObj);
 	obj = Obj_alloc(size);
 	obj->reftype = NULL;
 	obj->refcount = 1;
@@ -110,17 +110,17 @@ static Obj_t *newobj(Type_t *type, void *data, const void *defval)
 	return obj;
 }
 
-Obj_t *NewObj(Type_t *type, void *data)
+EfiObj *NewObj(EfiType *type, void *data)
 {
 	return newobj(type, data, NULL);
 }
 
-Obj_t *ConstObj(Type_t *type, const void *data)
+EfiObj *ConstObj(EfiType *type, const void *data)
 {
 	return newobj(type, NULL, data);
 }
 
-Obj_t *NewPtrObj(Type_t *type, const void *data)
+EfiObj *NewPtrObj(EfiType *type, const void *data)
 {
 	return newobj(type, &data, NULL);
 }
@@ -129,7 +129,7 @@ Obj_t *NewPtrObj(Type_t *type, const void *data)
 /*	Referenzzähler erhöhen
 */
 
-Obj_t *RefObj(const Obj_t *obj)
+EfiObj *RefObj(const EfiObj *obj)
 {
 	Obj_check(obj);
 
@@ -139,13 +139,13 @@ Obj_t *RefObj(const Obj_t *obj)
 
 		if	(obj->refcount == 0)
 		{
-			fprintf(stderr, ERR_MSG1, ProgIdent, (ulong_t) obj);
+			fprintf(stderr, ERR_MSG1, ProgIdent, obj);
 			abort();
 			exit(EXIT_FAILURE);
 		}
 
-		((Obj_t *) obj)->refcount++;
-		return (Obj_t *) obj;
+		((EfiObj *) obj)->refcount++;
+		return (EfiObj *) obj;
 	}
 
 	return NULL;
@@ -155,12 +155,12 @@ Obj_t *RefObj(const Obj_t *obj)
 /*	Referenzzähler verringern/Objekt freigeben
 */
 
-static void del_obj(Obj_t *obj, int cleanup)
+static void del_obj(EfiObj *obj, int cleanup)
 {
 	if	(obj->refcount == 0)
 	{
 		do_debug(0, "delete ", obj);
-		fprintf(stderr, ERR_MSG1, ProgIdent, (ulong_t) obj);
+		fprintf(stderr, ERR_MSG1, ProgIdent, obj);
 		abort();
 		exit(EXIT_FAILURE);
 	}
@@ -179,18 +179,18 @@ static void del_obj(Obj_t *obj, int cleanup)
 	}
 	else if	(obj->type)
 	{
-		Obj_free(obj, sizeof(Obj_t) + obj->type->size);
+		Obj_free(obj, sizeof(EfiObj) + obj->type->size);
 	}
 	else
 	{
-		fprintf(stderr, ERR_MSG2, ProgIdent, (ulong_t) obj);
+		fprintf(stderr, ERR_MSG2, ProgIdent, obj);
 		abort();
 		exit(EXIT_FAILURE);
 	}
 }
 
 
-void UnrefObj(Obj_t *obj)
+void UnrefObj(EfiObj *obj)
 {
 	Obj_check(obj);
 
@@ -210,7 +210,7 @@ void UnrefObj(Obj_t *obj)
 /*	Objekt löschen
 */
 
-void DeleteObj(Obj_t *obj)
+void DeleteObj(EfiObj *obj)
 {
 	Obj_check(obj);
 
@@ -229,7 +229,7 @@ void DeleteObj(Obj_t *obj)
 
 #if	DEBUG_FLAG
 
-static void do_debug(int flag, char *fmt, const Obj_t *obj)
+static void do_debug(int flag, char *fmt, const EfiObj *obj)
 {
 	int i;
 
@@ -268,7 +268,7 @@ static void do_debug(int flag, char *fmt, const Obj_t *obj)
 
 	if	(flag != 1)
 	{
-		io_printf(odebug_log, " (%lx)", (ulong_t) obj);
+		io_printf(odebug_log, " (%p)", obj);
 
 		if	(obj->type)
 		{
@@ -276,7 +276,7 @@ static void do_debug(int flag, char *fmt, const Obj_t *obj)
 
 			for (i = 0; i < obj->type->size; i++)
 				io_printf(odebug_log, "%02x",
-					((uchar_t *) obj->data)[i]);
+					((unsigned char *) obj->data)[i]);
 
 			if	(obj->type == &Type_str)
 				io_printf(odebug_log, "(%#s)",

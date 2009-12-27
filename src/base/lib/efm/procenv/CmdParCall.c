@@ -25,13 +25,13 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/mstring.h>
 #include <EFEU/memalloc.h>
 
-static ALLOCTAB(calltab, 100, sizeof(CmdParCall_t));
+static ALLOCTAB(calltab, 100, sizeof(CmdParCall));
 
 /*
 Die Funktion |$1| liefert eine neue Aufrufdefinition
 */
 
-CmdParCall_t *CmdParCall_alloc (void)
+CmdParCall *CmdParCall_alloc (void)
 {
 	return new_data(&calltab);
 }
@@ -40,7 +40,7 @@ CmdParCall_t *CmdParCall_alloc (void)
 Die Funktion |$1| gibt eine Aufrufdefinition frei.
 */
 
-void CmdParCall_free (CmdParCall_t *call)
+void CmdParCall_free (CmdParCall *call)
 {
 	if	(call == NULL)	return;
 
@@ -54,19 +54,19 @@ void CmdParCall_free (CmdParCall_t *call)
 Die Funktion |$1| wertet eine Aufrufdefinition aus.
 */
 
-int CmdParCall_eval (CmdPar_t *par, CmdParCall_t *def, const char *arg)
+int CmdParCall_eval (CmdPar *par, CmdParCall *def, const char *arg)
 {
-	CmdParVar_t *var;
+	CmdParVar *var;
 	
 	par = CmdPar_ptr(par);
 	var = CmdPar_var(par, def->name, 1);
 
 	if	(def->eval)
 	{
-		CmdParVar_t buf;
+		CmdParVar buf;
 		int rval;
 
-		memset(&buf, 0, sizeof(CmdParVar_t));
+		memset(&buf, 0, sizeof(CmdParVar));
 
 		if	(var == NULL)	var = &buf;
 

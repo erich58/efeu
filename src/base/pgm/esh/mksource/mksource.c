@@ -1,5 +1,6 @@
 /*
-Programmgenerierung
+:*:program generator
+:de:Programmgenerierung
 
 $Copyright (C) 1994 Erich Frühstück
 This file is part of EFEU.
@@ -30,6 +31,10 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/Random.h>
 #include <EFEU/MakeDepend.h>
 #include <EFEU/cmdeval.h>
+#include <Math/TimeSeries.h>
+#include <Math/pnom.h>
+#include <Math/mdmath.h>
+#include <Math/func.h>
 #include <ctype.h>
 
 #define	HEADLINE	"Nicht editieren, Datei wurde automatisch generiert."
@@ -48,22 +53,21 @@ If not, write to the Free Software Foundation, Inc.,
 
 typedef struct {
 	char *name;	/* Name */
-	char *pname;	/* Parsename */
 	char *ext;	/* Filezusatz */
 	char *cfmt;	/* Kommentarformat */
 	int protect;	/* Schutzflag */
 	char *fname;	/* Filename */
 	int flag;	/* Steuerflag */
-	io_t *io;	/* IO - Struktur */
+	IO *io;		/* IO - Struktur */
 	int inc;	/* Flag für eingebundene Dateien */
 } OUTPUT;
 
 static OUTPUT output[] = {
-	{ "hdr", "header", "h", "/*\t$1\n*/\n", 1, NULL, 0, NULL, 0 },
-	{ "src", "source", "c", "/*\t$1\n*/\n", 0, NULL, 0, NULL, 0 },
-	{ "tex", "texdoc", "tex", "% $1\n", 0, NULL, 0, NULL, 0 },
-	{ "doc", NULL, "doc", "/*\t$1\n*/\n", 0, NULL, 0, NULL, 0 },
-	{ "info", NULL, "info", "/*\t$1\n*/\n", 0, NULL, 0, NULL, 0 },
+	{ "hdr", "h", "/*\t$1\n*/\n", 1, NULL, 0, NULL, 0 },
+	{ "src", "c", "/*\t$1\n*/\n", 0, NULL, 0, NULL, 0 },
+	{ "tex", "tex", "% $1\n", 0, NULL, 0, NULL, 0 },
+	{ "doc", "doc", "/*\t$1\n*/\n", 0, NULL, 0, NULL, 0 },
+	{ "info", "info", "/*\t$1\n*/\n", 0, NULL, 0, NULL, 0 },
 };
 
 static OUTPUT *get_output(const char *name)
@@ -83,7 +87,7 @@ static OUTPUT *get_output(const char *name)
 static char *BaseName = NULL;	/* Basisname */
 static int Verbose = 0;		/* Protokollmodus */
 
-static VarDef_t globvar[] = {
+static EfiVarDef globvar[] = {
 	{ "HeaderName",		&Type_str, &output[OUT_HDR].fname },
 	{ "BaseName",		&Type_str, &BaseName },
 	{ "VerboseMode",	&Type_int, &Verbose },
@@ -103,7 +107,7 @@ static int MakeRule = 0;	/* Regel generieren */
 static int MakeList = 0;	/* Liste generieren */
 static int LockFlag = 0;	/* Sperrflag */
 
-static VarDef_t locvar[] = {
+static EfiVarDef locvar[] = {
 	{ "Template",	&Type_str, &Template },
 	{ "DependName",	&Type_str, &DependName },
 	{ "ListName",	&Type_str, &ListName },
@@ -117,7 +121,7 @@ static VarDef_t locvar[] = {
 };
 
 
-static void protect_name (const char *name, io_t *io)
+static void protect_name (const char *name, IO *io)
 {
 	io_puts(PROTECTKEY, io);
 
@@ -160,8 +164,7 @@ static void open_output(OUTPUT *out, const char *name)
 
 	if	(out->cfmt)
 	{
-		reg_set(1, HEADLINE);
-		io_psub(out->io, out->cfmt);
+		io_psubarg(out->io, out->cfmt, "ns", HEADLINE);
 		io_putc('\n', out->io);
 	}
 
@@ -217,8 +220,7 @@ static void include_output(OUTPUT *out, const char *name)
 
 		if	(out->cfmt)
 		{
-			reg_set(1, HEADLINE);
-			io_psub(out->io, out->cfmt);
+			io_psubarg(out->io, out->cfmt, "ns", HEADLINE);
 			io_putc('\n', out->io);
 		}
 	}
@@ -226,44 +228,19 @@ static void include_output(OUTPUT *out, const char *name)
 #endif
 
 
-/*	Substitutionsfunktionen
-*/
-
-static Obj_t *do_psub(void *par, const ObjList_t *list)
-{
-	io_psub(((OUTPUT *) par)->io, Val_str(list->obj->data));
-	return NULL;
-}
-
-static Obj_t *p_psub (io_t *io, void *data)
-{
-	return Obj_call(do_psub, data, NewObjList(str2Obj(getstring(io))));
-}
-
 /*	Ausgabedefinition initialisieren
 */
 
 static void add_output(OUTPUT *out)
 {
-	Var_t *var;
-	ParseDef_t *pdef;
+	EfiVar *var;
 
-	var = memalloc(sizeof(Var_t));
-	memset(var, 0, sizeof(Var_t));
+	var = memalloc(sizeof(EfiVar));
+	memset(var, 0, sizeof(EfiVar));
 	var->name = out->name;
 	var->type = &Type_io;
 	var->data = &out->io;
 	AddVar(NULL, var, 1);
-
-	if	(out->pname)
-	{
-		pdef = memalloc(sizeof(ParseDef_t));
-		memset(pdef, 0, sizeof(ParseDef_t));
-		pdef->name = out->pname;
-		pdef->func = p_psub;
-		pdef->data = out;
-		AddParseDef(pdef, tabsize(pdef));
-	}
 }
 
 /*	Konfiguration
@@ -271,12 +248,15 @@ static void add_output(OUTPUT *out)
 
 static int eval_stat = 1;
 
-static Obj_t *p_config (io_t *io, void (*func) (OUTPUT *out, const char *name))
+static EfiObj *p_config (IO *io, void *data)
 {
+	void (*func) (OUTPUT *out, const char *name);
 	char *name, *p, *arg;
 	OUTPUT *out;
 	int c;
 	
+	func = data;
+
 	while ((c = io_eat(io, " \t")) != EOF)
 	{
 		if	(c == '\n')	break;
@@ -286,7 +266,7 @@ static Obj_t *p_config (io_t *io, void (*func) (OUTPUT *out, const char *name))
 		if	((c = io_getc(io)) == '=')
 		{
 			p = io_mgets(io, "%s");
-			arg = parsub(p);
+			arg = mpsubvec(p, 0, NULL);
 			memfree(p);
 		}
 		else
@@ -307,8 +287,7 @@ static Obj_t *p_config (io_t *io, void (*func) (OUTPUT *out, const char *name))
 		}
 		else
 		{
-			reg_cpy(1, name);
-			errmsg(NULL, 1);
+			dbg_note(NULL, "[1]", "s", name);
 		}
 
 		memfree(name);
@@ -324,17 +303,17 @@ static Obj_t *p_config (io_t *io, void (*func) (OUTPUT *out, const char *name))
 }
 
 
-static ParseDef_t pdef[] = {
-	{ "config", (ParseFunc_t) p_config, open_output },
+static EfiParseDef pdef[] = {
+	{ "config", p_config, open_output },
 #if	ALLOW_SPLIT
-	{ "include", (ParseFunc_t) p_config, include_output },
+	{ "include", p_config, include_output },
 #endif
 };
 
 static void eval_file(const char *name)
 {
 	char *fname;
-	io_t *save_cin;
+	IO *save_cin;
 
 	fname = fsearch(IncPath, NULL, name, NULL);
 
@@ -356,24 +335,23 @@ static void eval_file(const char *name)
 	CmdEval_cin = save_cin;
 }
 
-static void f_include (Func_t *func, void *rval, void **arg)
+static void f_include (EfiFunc *func, void *rval, void **arg)
 {
 	if	(Val_str(arg[0]) != NULL)
 		eval_file(Val_str(arg[0])); 
 }
 
-static FuncDef_t fdef[] = {
+static EfiFuncDef fdef[] = {
 	{ 0, &Type_void, "include (str)", f_include },
 };
 
 
-int main(int narg, char **arg)
+int main (int narg, char **arg)
 {
-	fname_t *fn;
 	char *bootstrap;
 	int i;
 
-	SetVersion("$Id: mksource.c,v 1.7 2002-01-04 05:28:33 ef Exp $");
+	SetVersion("$Id: mksource.c,v 1.19 2003-01-04 09:43:51 ef Exp $");
 	SetProgName(arg[0]);
 	bootstrap = listcat(" ", arg, narg);
 
@@ -382,10 +360,14 @@ int main(int narg, char **arg)
 	SetupPreproc();
 
 	SetupDataBase();
-	SetupRand48();
+	SetupTimeSeries();
 	SetupRandom();
 	SetupMdMat();
 	SetupMath();
+	SetupMdMath();
+	SetupPnom();
+	SetupMathFunc();
+	SetupReadline();
 	SetupDebug();
 
 	AddParseDef(pdef, tabsize(pdef));
@@ -404,24 +386,35 @@ int main(int narg, char **arg)
 
 /*	Standardnamen bestimmen
 */
-	if	((fn = strtofn(Template)) != NULL)
+	if	(Template)
 	{
-		if	(fn->path)
+		char *dname, *suffix;
+		dname = mdirname(Template, 0);
+		BaseName = mbasename(Template, &suffix);
+
+		if	(dname)
 		{
-			char *p;
-			p = IncPath;
-			IncPath = mstrpaste(":", p, fn->path);
+			char *p = IncPath;
+			IncPath = mstrpaste(":", p, dname);
 			memfree(p);
 		}
 
-		if	(fn->type == NULL)
-			fn->type = "tpl";
+		if	(suffix == NULL)
+		{
+			StrBuf *sb = new_strbuf(0);
 
-		Template = fntostr(fn);
-		fn->path = NULL;
-		fn->type = NULL;
-		BaseName = fntostr(fn);
-		memfree(fn);
+			if	(dname)
+			{
+				sb_puts(dname, sb);
+				sb_putc('/', sb);
+			}
+
+			sb_puts(BaseName, sb);
+			sb_puts(".tpl", sb);
+
+			memfree(Template);
+			Template = sb2str(sb);
+		}
 	}
 
 	if	(MakeDep || MakeRule)	MakeDepend = 1;

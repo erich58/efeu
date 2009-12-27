@@ -28,9 +28,9 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/Resource.h>
 #include <EFEU/Debug.h>
 
-void EshIdent (io_t *in)
+void EshIdent (IO *in)
 {
-	CmdPar_t *par;
+	CmdPar *par;
 	char *desc;
 	char *p, *s;
 

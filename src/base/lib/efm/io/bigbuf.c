@@ -24,19 +24,27 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/ioctrl.h>
 #include <EFEU/ftools.h>
 #include <EFEU/procenv.h>
+#include <EFEU/Debug.h>
 #include <fcntl.h>
+
+#define FMT_31	"[ftools:31]$!: could not create tempoaray file $1.\n"
+#define FMT_32	"[ftools:32]$!: could not truncate file $1.\n"
+#define FMT_33	"[ftools:33]$!: output error in file $1.\n"
+#define FMT_34	"[ftools:34]$!: input error in file $1.\n"
+#define FMT_35	"[ftools:35]$!: seeking in file $1 failed.\n"
 
 #define	DEF_SIZE	0x10000	/* 65 kB */
 
 #define	TMP_PFX		"Buf"
 #define	TMP_DIR		NULL
 
-extern char *tempnam (const char *, const char *);
+char *tempnam (const char *, const char *);
+int ftruncate (int fd, off_t length);
 
 typedef struct {
 	char *name;	/* Name der temporären Zwischendatei */
 	int fd;		/* Filedeskriptor */
-	uchar_t *buf;	/* Datenbuffer */
+	unsigned char *buf;	/* Datenbuffer */
 	unsigned size;	/* Buffergröße */
 	unsigned pos;	/* Aktuelle Position */
 	unsigned end;	/* Bufferende */
@@ -44,18 +52,14 @@ typedef struct {
 	unsigned blk_end;	/* Zahl der Blöcke */
 } BIGBUF;
 
-int bigbuf_debug = 0;
-
 static void bb_debug (BIGBUF *bb, const char *cmd)
 {
-	if	(bigbuf_debug)
-		io_printf(ioerr, "bigbuf: %s(%s)\n", cmd,  bb->name);
+	dbg_message("bigbuf", DBG_TRACE, "$1($2)\n", NULL, "ss", cmd, bb->name);
 }
 
-static void bb_error (BIGBUF *bb, int err)
+static void bb_error (BIGBUF *bb, const char *fmt)
 {
-	message("bigbuf", MSG_FTOOLS, err, 1, bb->name);
-	exit(EXIT_FAILURE);
+	dbg_error(NULL, fmt, "s", bb->name);
 }
 
 static void bb_flush (BIGBUF *bb)
@@ -68,26 +72,28 @@ static void bb_flush (BIGBUF *bb)
 		bb->fd = open(bb->name, O_RDWR|O_CREAT|O_TRUNC, 0600);
 
 		if	(bb->fd == EOF)
-			bb_error(bb, 31);
+			bb_error(bb, FMT_31);
 
 		bb_debug(bb, "open");
 	}
 	else if	(bb->blk_pos < bb->blk_end)
 	{
 		if	(ftruncate(bb->fd, bb->blk_pos * bb->size) < 0)
-			bb_error(bb, 32);
+			bb_error(bb, FMT_32);
 	}
 
 	if	(write(bb->fd, bb->buf, bb->pos) != bb->pos)
-		bb_error(bb, 33);
+		bb_error(bb, FMT_33);
 
 	bb->blk_pos++;
 	bb->blk_end = bb->blk_pos;
 	bb->end = bb->pos = 0;
 }
 
-static int bb_ctrl (BIGBUF *bb, int req, va_list list)
+static int bb_ctrl (void *ptr, int req, va_list list)
 {
+	BIGBUF *bb = ptr;
+
 	switch (req)
 	{
 	case IO_IDENT:
@@ -103,7 +109,7 @@ static int bb_ctrl (BIGBUF *bb, int req, va_list list)
 			bb_flush(bb);
 
 			if	(lseek(bb->fd, 0, SEEK_SET) < 0)
-				bb_error(bb, 35);
+				bb_error(bb, FMT_35);
 		}
 
 		bb->blk_end = bb->blk_pos;
@@ -137,8 +143,10 @@ static int bb_ctrl (BIGBUF *bb, int req, va_list list)
 	}
 }
 
-static int bb_put (int c, BIGBUF *bb)
+static int bb_put (int c, void *ptr)
 {
+	BIGBUF *bb = ptr;
+
 	if	(bb->pos >= bb->size)
 		bb_flush(bb);
 
@@ -146,8 +154,10 @@ static int bb_put (int c, BIGBUF *bb)
 	return c;
 }
 
-static int bb_get (BIGBUF *bb)
+static int bb_get (void *ptr)
 {
+	BIGBUF *bb = ptr;
+
 	while (bb->pos >= bb->end)
 	{
 		bb->pos = 0;
@@ -158,7 +168,7 @@ static int bb_get (BIGBUF *bb)
 		bb->end = read(bb->fd, bb->buf, bb->size);
 
 		if	(bb->end < 0)
-			bb_error(bb, 34);
+			bb_error(bb, FMT_34);
 
 		bb->blk_pos++;
 	}
@@ -167,18 +177,20 @@ static int bb_get (BIGBUF *bb)
 }
 
 
-io_t *io_bigbuf(size_t size, const char *pfx)
+IO *io_bigbuf (size_t size, const char *pfx)
 {
-	io_t *io;
+	IO *io;
 	BIGBUF *bb;
-	fname_t *fname;
 
 	bb = memalloc(sizeof(BIGBUF));
 
-	if	((fname = strtofn(pfx)) != NULL)
+	if	(pfx)
 	{
-		bb->name = tempnam(fname->path, fname->name);
-		memfree(fname);
+		char *dir = mdirname(pfx, 0);
+		char *name = mbasename(pfx, NULL);
+		bb->name = tempnam(dir, name);
+		memfree(dir);
+		memfree(name);
 	}
 
 	bb->fd = EOF;
@@ -187,8 +199,8 @@ io_t *io_bigbuf(size_t size, const char *pfx)
 
 	io = io_alloc();
 	io->data = bb;
-	io->get = (io_get_t) bb_get;
-	io->put = (io_put_t) bb_put;
-	io->ctrl = (io_ctrl_t) bb_ctrl;
+	io->get = bb_get;
+	io->put = bb_put;
+	io->ctrl = bb_ctrl;
 	return io;
 }

@@ -26,7 +26,7 @@ _sbr	""
 amp	\\&
 lt	<
 gt	>
-bullet	\\bullet
+bullet	\\bullet{}
 minus	$-$
 plus	$+$
 dash	{-}
@@ -34,11 +34,11 @@ ndash	{--}
 mdash	{---}
 ntilde	\\~n
 egrave	\\`e
-euro	{\\euro}
+euro	{\\texteuro}
 aacute	\\'a
 eacute	\\'e
 
-ldots	\\ldots
-cdots	\\cdots
-ddots	\\ddots
-vdots	\\vdots
+ldots	\\ldots{}
+cdots	\\cdots{}
+ddots	\\ddots{}
+vdots	\\vdots{}

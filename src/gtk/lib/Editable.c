@@ -27,13 +27,13 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	STR(arg)	(Val_ptr(arg) ? Val_ptr(arg) : "")
 
-static void get_text (Obj_t *obj)
+static void get_text (EfiObj *obj)
 {
 	char *p = gtk_entry_get_text(Val_ptr(obj + 1));
 	Obj2Data(str2Obj(mstrcpy(p)), obj->type, obj->data);
 }
 
-static void set_text (Obj_t *obj)
+static void set_text (EfiObj *obj)
 {
 	char *p = Val_str(obj->data);
 	gtk_entry_set_text(GTK_ENTRY(Val_ptr(obj + 1)), p ? p : "");
@@ -42,7 +42,7 @@ static void set_text (Obj_t *obj)
 static EGTK_LVAL(lval_text, get_text, set_text);
 
 
-static void f_entry (Func_t *func, void *rval, void **arg)
+static void f_entry (EfiFunc *func, void *rval, void **arg)
 {
 	GtkWidget *entry;
 
@@ -52,16 +52,16 @@ static void f_entry (Func_t *func, void *rval, void **arg)
 	Val_ptr(rval) = entry;
 }
 
-static Obj_t *text_var (const Var_t *st, const Obj_t *obj)
+static EfiObj *text_var (const EfiObj *obj, void *data)
 {
-	return LvalObj(&lval_text, st->type, Val_ptr(obj->data), NULL);
+	return LvalObj(&lval_text, &Type_str, Val_ptr(obj->data), NULL);
 }
 
-static MemberDef_t entry_member[] = {
+static EfiMember entry_member[] = {
 	{ "text", &Type_str, text_var, NULL, "GtkEntry::text" },
 };
 
-static FuncDef_t fdef[] = {
+static EfiFuncDef fdef[] = {
 	{ 0, NULL, "GtkEntry GtkEntry (str text = NULL)", f_entry },
 };
 
@@ -77,7 +77,7 @@ void EGtkEditable_setup (void)
 {
 	EGtkWidgetClass(gtk_editable_get_type(), NULL, 0, NULL, 0);
 	EGtkWidgetClass(gtk_entry_get_type(), NULL, 0, NULL, 0);
-	AddMember(GetType("GtkEntry")->vtab,
+	AddEfiMember(GetType("GtkEntry")->vtab,
 		entry_member, tabsize(entry_member));
 	AddFuncDef(fdef, tabsize(fdef));
 }

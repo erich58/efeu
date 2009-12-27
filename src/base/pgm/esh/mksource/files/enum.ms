@@ -1,6 +1,7 @@
 /*
-Aufzählungen
+Konstruktion einer Aufzählungsdefinition
 
+$Header	<$1>
 $Copyright (C) 1998 Erich Frühstück
 This file is part of EFEU.
 
@@ -25,11 +26,26 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <function.ms>
 
-regex_t Enum_name = "^[[:alnum:]_]+$";
+/*
+$Description
+Eine Aufzählungsdefinition erlaubt die Konvertierung von
+Schlüsselwörtern in einen Indexwert.
+Die folgenden Funktionen werden definiert:
 
-void Enum_macro (IO io, str ename, str name, int n, str desc)
+\ttitem	unsigned <enum>Index (const char *<key>);
+	liefert den Index der Aufzählung mit Kennung <key>.
+\ttitem	char *<enum>Label (unsigned <index>);
+	liefert den Namen der Aufzählung mit Index <index>.
+\ttitem	<enum>Dim
+	ist ein Makro mit der Zahl der Ausprägungen.
+
+Bei nicht definierten Argumenten (Index außerhalb des zulässigen Bereichs,
+unbekannter Schlüssel) wird immer die erste Aufzählungsdefinition verwendet.
+*/
+
+static void Enum_macro (IO io, str ename, str name, int n, str desc)
 {
-	if	(regexec(Enum_name, name))
+	if	(name == /^[[:alnum:]_]+$/)
 	{
 		fprintf(io, "#define\t%s_%s\t%d", ename, name, n);
 
@@ -39,6 +55,28 @@ void Enum_macro (IO io, str ename, str name, int n, str desc)
 		io << "\n";
 	}
 }
+
+/*
+Die Funktion |$1| generiert eine Aufzählungsdefinition
+mit dem Namen <ename>. Falls Flag <glob> wahr ist,
+wird die Auszählungsdefinition global, ansonsten lokal generiert.
+
+Die IO-Struktur <def> enthält Definitionszeilen der Form:
+	<key> <desc>
+
+wobei <key> ein Aufzählungsschlüssel und <desc> der zugehörige
+Beschreibungstext ist. Die einzelnen Einträge werden beginned bei 0
+durchnummeriert.
+
+Falls <key> ein gültiger C-Name ist,
+wird eine Makro mit dem Namen <ename>|_|<key>}
+und der Laufnummer als Wert konstruiert.
+
+Einem Schlüssel können beliebig viele Kennungen der Form |[|<name>|]|
+vorangestellt werden. Für jede dieser Kennungen wird ein Makro mit
+der aktuellen Laufnummer generiert. Damit lassen sich Makros für
+nichtnumerische Aufzählungsschlüssel definieren.
+*/
 
 void Enum(str ename, str label, IO def, bool glob = true)
 {
@@ -54,7 +92,7 @@ void Enum(str ename, str label, IO def, bool glob = true)
 		fprintf(hdr, "\n/*\t%s\n*/\n\n", label);
 
 	fprintf(src, "\n/*\t%s\n*/\n\n", label);
-	fprintf(src, "static Label_t %sTab[] = {\n", ename);
+	fprintf(src, "static Label %sTab[] = {\n", ename);
 
 	for (n = 0; getline(def, name, desc); n++)
 	{
@@ -83,15 +121,36 @@ void Enum(str ename, str label, IO def, bool glob = true)
 	f = Function("unsigned $1Index", "const char *name", ename);
 	f.line("register int i;");
 	f.line();
-	f.line("for (i = 0; i < $1Dim; i++)");
-	f.line("\tif (mstrcmp(name, $1Tab[i].name) == 0) return i;");
+	f.line("for (i = 0; i < $1Dim; i++)", ename);
+	f.line("\tif (mstrcmp(name, $1Tab[i].name) == 0) return i;", ename);
 	f.line();
 	f.line("return 0;");
 	f.write(glob);
 
 	f = Function("char *$1Label", "unsigned n", ename);
-	f.line("return $1Tab[n < $1Dim ? n : 0].name;");
+	f.line("return $1Tab[n < $1Dim ? n : 0].name;", ename);
 	f.write(glob);
 }
+
+/*
+$Example
+Im nachfolgenden Beispiel wird eine Aufzählungsstruktur für
+das Geschlecht generiert.
+
+\ms_example
+config hdr src
+
+#include <macro.ms>
+#include <enum.ms>
+
+Include(src, HeaderName);
+
+Enum("Geschl", "Geschlecht", string !
+-	Unbekannt
+M	Männer
+W	Frauen
+!);
+\end
+*/
 
 #endif	/* enum.ms */

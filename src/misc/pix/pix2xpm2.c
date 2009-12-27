@@ -22,7 +22,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/oldpixmap.h>
 
-void OldPixMapToXPM2(OldPixMap_t *pix, const char *name)
+void OldPixMapToXPM2(OldPixMap *pix, const char *name)
 {
 	int i, j;
 	char *fmt;

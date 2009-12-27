@@ -29,7 +29,7 @@ static int newpos(int old, int height, int width, int y, int x)
 	return y * width + x;
 }
 
-char *WinSelect (WinSize_t *ws, char **list, int dim, int cols)
+char *WinSelect (WinSize *ws, char **list, int dim, int cols)
 {
 	WINDOW *win;
 	int key;

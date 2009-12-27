@@ -37,28 +37,25 @@ typedef struct {
 	DOCDRV_VAR;		/* Standardausgabevariablen */
 	int ignorespace;	/* Leerzeichen ignorieren */
 	int space;		/* Leerzeichen vor Text */
-} LaTeX_t;
+} LaTeX;
 
-extern io_t *DocOut_latex (io_t *io);
+extern IO *DocOut_latex (IO *io);
 
 extern int LaTeX_indexmode;
-extern int LaTeX_putc (LaTeX_t *ltx, int c);
-extern int LaTeX_xputc (LaTeX_t *ltx, int c);
-extern int LaTeX_plain (LaTeX_t *ltx, int c);
-extern void LaTeX_puts (LaTeX_t *ltx, const char *str);
-extern void LaTeX_iputs (LaTeX_t *ltx, const char *str);
-extern void LaTeX_newline (LaTeX_t *ltx);
-extern void LaTeX_rem (LaTeX_t *ltx, const char *rem);
-extern int LaTeX_cmd (LaTeX_t *ltx, va_list list);
-extern int LaTeX_env (LaTeX_t *ltx, int flag, va_list list);
+extern int LaTeX_putc (void *drv, int c);
+extern int LaTeX_xputc (void *drv, int c);
+extern int LaTeX_plain (void *drv, int c);
+extern void LaTeX_puts (LaTeX *ltx, const char *str);
+extern void LaTeX_iputs (LaTeX *ltx, const char *str);
+extern void LaTeX_newline (LaTeX *ltx);
+extern void LaTeX_rem (void *drv, const char *rem);
+extern int LaTeX_cmd (void *drv, va_list list);
+extern int LaTeX_env (void *drv, int flag, va_list list);
 
 extern void LaTeX_setup (void);
 extern void LaTeX_SetupEnv (void);
 extern void LaTeX_SetupCmd (void);
-void LaTeX_ShowEnv (io_t *io);
-void LaTeX_ShowCmd (io_t *io);
-
-extern char *LaTeX_var (const char *name);
-extern void LaTeX_psub (LaTeX_t *ltx, const char *name);
+void LaTeX_ShowEnv (IO *io);
+void LaTeX_ShowCmd (IO *io);
 
 #endif	/* LaTeX.h */

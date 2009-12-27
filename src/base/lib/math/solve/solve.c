@@ -32,16 +32,16 @@ double SolveEps = 0.000001;
 int SolveStep = 25;
 char *SolveFmt = "%12lG";
 
-static VarDef_t solve_var[] = {
+static EfiVarDef solve_var[] = {
 	{ "debug", 	&Type_bool, &SolveFlag },
 	{ "epsilon", 	&Type_double, &SolveEps },
 	{ "maxstep", 	&Type_int, &SolveStep },
 	{ "fmt", 	&Type_str, &SolveFmt },
 };
 
-VarTab_t *SolvePar = NULL;
+EfiVarTab *SolvePar = NULL;
 
-static VarDef_t glob_var[] = {
+static EfiVarDef glob_var[] = {
 	{ "SolvePar", &Type_vtab, &SolvePar,
 		":*:solve parameter tab\n"
 		":de:Lösungsparametertabelle\n" },
@@ -66,25 +66,25 @@ static double solve_dblval(void *par, double x)
 	return z;
 }
 
-static void solve_bisection(Func_t *func, void *rval, void **arg)
+static void solve_bisection(EfiFunc *func, void *rval, void **arg)
 {
-	Func_t *f;
+	EfiFunc *f;
 
 	f = GetFunc(&Type_int, Val_vfunc(arg[0]), 1, &Type_double, 0);
 	Val_double(rval) = bisection(solve_intval, f,
 		Val_double(arg[1]), Val_double(arg[2]));
 }
 
-static void solve_regfalsi(Func_t *func, void *rval, void **arg)
+static void solve_regfalsi(EfiFunc *func, void *rval, void **arg)
 {
-	Func_t *f;
+	EfiFunc *f;
 
 	f = GetFunc(&Type_double, Val_vfunc(arg[0]), 1, &Type_double, 0);
 	Val_double(rval) = regfalsi(solve_dblval, f,
 		Val_double(arg[1]), Val_double(arg[2]));
 }
 
-static FuncDef_t solve_Func[] = {
+static EfiFuncDef solve_Func[] = {
 	{  0, &Type_double, "bisection(VirFunc func, double a, double b)", solve_bisection },
 	{ 0, &Type_double, "regfalsi(VirFunc func, double a, double b)", solve_regfalsi },
 };

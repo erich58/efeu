@@ -31,16 +31,17 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 typedef struct {
-	io_t *io;	/* Ausgabestruktur */
-	char *path;	/* Bibliothek */
+	IO *io;		/* Ausgabestruktur */
+	char *path;	/* Verzeichnis */
 } DOPEN;
 
 
 /*	Zeichen ausgeben
 */
 
-static int dopen_put(int c, DOPEN *dopen)
+static int dopen_put (int c, void *ptr)
 {
+	DOPEN *dopen = ptr;
 	return io_putc(c, dopen->io);
 }
 
@@ -48,10 +49,11 @@ static int dopen_put(int c, DOPEN *dopen)
 /*	Kontrollfunktion
 */
 
-static int dopen_ctrl(DOPEN *dopen, int req, va_list list)
+static int dopen_ctrl (void *ptr, int req, va_list list)
 {
+	DOPEN *dopen = ptr;
 	int stat;
-	char *p;
+	char *p, *arg;
 
 	switch (req)
 	{
@@ -64,12 +66,12 @@ static int dopen_ctrl(DOPEN *dopen, int req, va_list list)
 
 	case IO_NEWPART:
 
-		reg_cpy(1, va_arg(list, char *));
-		p = parsub(va_arg(list, char *));
+		arg = va_arg(list, char *);
+		p = mpsubarg(va_arg(list, char *), "ns", arg);
 		io_puts(p, dopen->io);
 		memfree(p);
 
-		p = mstrpaste("/", dopen->path, reg_get(1));
+		p = mstrpaste("/", dopen->path, arg);
 		io_push(dopen->io, io_fileopen(p, "wdz"));
 		memfree(p);
 		return 0;
@@ -119,10 +121,10 @@ $SeeAlso
 \mref{io_newpart(3)}.
 */
 
-io_t *diropen (const char *dir, const char *name)
+IO *diropen (const char *dir, const char *name)
 {
 	DOPEN *par;
-	io_t *io;
+	IO *io;
 	char *p;
 
 	if	(!name)
@@ -139,8 +141,8 @@ io_t *diropen (const char *dir, const char *name)
 	par->io = io;
 
 	io = io_alloc();
-	io->put = (io_put_t) dopen_put;
-	io->ctrl = (io_ctrl_t) dopen_ctrl;
+	io->put = dopen_put;
+	io->ctrl = dopen_ctrl;
 	io->data = par;
 	return io;
 }
@@ -151,7 +153,7 @@ In die Basisdatei wird stellvertretend <repl> eingesetzt. Dabei
 wird Parametersubstitution durchgeführt und Register 1 auf <name> gesetzt.
 */
 
-extern int io_newpart(io_t *io, const char *name, const char *repl)
+int io_newpart(IO *io, const char *name, const char *repl)
 {
 	return io_ctrl(io, IO_NEWPART, name, repl);
 }
@@ -161,7 +163,7 @@ Die Funktion |$1| schließt eine zuvor mit |io_newpart|
 generierte Teilausgabedatei.
 */
 
-extern int io_endpart(io_t *io)
+int io_endpart(IO *io)
 {
 	return io_ctrl(io, IO_ENDPART);
 }

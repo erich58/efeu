@@ -25,17 +25,17 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/CmdPar.h>
 #include <EFEU/parsedef.h>
 
-Type_t EGtkObjectType = STD_TYPE("GtkObject", GtkObject *,
+EfiType EGtkObjectType = STD_TYPE("GtkObject", GtkObject *,
 	&Type_ptr, NULL, NULL);
 
-Type_t EGtkDataType = STD_TYPE("GtkData", GtkData *,
+EfiType EGtkDataType = STD_TYPE("GtkData", GtkData *,
 	&EGtkObjectType, NULL, NULL);
 
 #define	TYPE_NAME(ptr) gtk_type_name(GTK_OBJECT_TYPE(ptr))
 
-static void f_arglist (Func_t *func, void *rval, void **arg)
+static void f_arglist (EfiFunc *func, void *rval, void **arg)
 {
-	ObjList_t *list;
+	EfiObjList *list;
 	GtkObject *obj;
 	GtkType type;
 
@@ -52,9 +52,9 @@ static void f_arglist (Func_t *func, void *rval, void **arg)
 	Val_list(rval) = list;
 }
 
-static void f_arginfo (Func_t *func, void *rval, void **arg)
+static void f_arginfo (EfiFunc *func, void *rval, void **arg)
 {
-	io_t *io;
+	IO *io;
 	GtkObject *obj;
 	GtkType type;
 
@@ -69,57 +69,57 @@ static void f_arginfo (Func_t *func, void *rval, void **arg)
 	}
 }
 
-static void f_fprint (Func_t *func, void *rval, void **arg)
+static void f_fprint (EfiFunc *func, void *rval, void **arg)
 {
 	GtkObject *ptr = Val_ptr(arg[1]);
-	io_t *io = Val_io(arg[0]);
+	IO *io = Val_io(arg[0]);
 
 	Val_int(rval) = ptr ?
 		io_printf(io, "(%s) %p", TYPE_NAME(ptr), ptr) :
 		io_printf(io, "(%s) NULL", func->arg[1].type->name);
 }
 
-static void f_gtkobj (Func_t *func, void *rval, void **arg)
+static void f_gtkobj (EfiFunc *func, void *rval, void **arg)
 {
 	GtkType type = gtk_type_from_name(Val_str(arg[0]));
 	Val_ptr(rval) = gtk_object_new(type, NULL);
 }
 
-static void f_objarg (Func_t *func, void *rval, void **arg)
+static void f_objarg (EfiFunc *func, void *rval, void **arg)
 {
 	Val_obj(rval) = EGtkArg2Lval(Val_ptr(arg[0]), Val_str(arg[1]));
 }
 
-static void f_set (Func_t *func, void *rval, void **arg)
+static void f_set (EfiFunc *func, void *rval, void **arg)
 {
 	gtk_object_set_data_full(Val_ptr(arg[0]), Val_str(arg[1]),
 		(gpointer) RefObj(arg[2]), (GtkDestroyNotify) UnrefObj);
 }
 
-static void f_get (Func_t *func, void *rval, void **arg)
+static void f_get (EfiFunc *func, void *rval, void **arg)
 {
 	Val_obj(rval) = RefObj(gtk_object_get_data(Val_ptr(arg[0]),
 		Val_str(arg[1])));
 }
 
-static void f_signal (Func_t *func, void *rval, void **arg)
+static void f_signal (EfiFunc *func, void *rval, void **arg)
 {
 	Val_int(rval) = gtk_signal_connect(Val_ptr(arg[0]),
 		Val_str(arg[1]), GTK_SIGNAL_FUNC(EGtkSigFunc_simple),
 		RefObj(Val_obj(arg[2])));
 }
 
-static void f_disconnect (Func_t *func, void *rval, void **arg)
+static void f_disconnect (EfiFunc *func, void *rval, void **arg)
 {
 	gtk_signal_disconnect(Val_ptr(arg[0]), Val_int(arg[1]));
 }
 
-static void f_disconnect_data (Func_t *func, void *rval, void **arg)
+static void f_disconnect_data (EfiFunc *func, void *rval, void **arg)
 {
 	gtk_signal_disconnect_by_data(Val_ptr(arg[0]), Val_obj(arg[1]));
 }
 
-static FuncDef_t fdef[] = {
+static EfiFuncDef fdef[] = {
 	{ 0, &Type_list, "arglist (GtkObject)", f_arglist },
 	{ 0, &Type_void, "arginfo (GtkObject, IO = iostd)", f_arginfo },
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, GtkObject)", f_fprint },

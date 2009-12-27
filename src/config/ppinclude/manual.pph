@@ -32,16 +32,12 @@ Concat(html_,name)
 #define	HTMLDir(dir,name)	\
 PathName(PathName(dir,html),name)
 
-#define	DocSrcLink(dir,name)	\
-PathName(PathName(dir,src),name)
-
 /*
 Der Makro |$1| sorgt für die Einrichtung der Verzeichnisse
 zur Installation von Dokumenten unter <dir>.
 */
 
 #define	ProvideDocDir(dir) \
-ProvideDir(PathName(dir,src)) \
 ProvideDir(PathName(dir,ps)) \
 ProvideDir(PathName(dir,html))
 
@@ -53,10 +49,6 @@ Dokumentationssourcen.
 */
 
 #define	DocTarget(dir,name,base,cmd) \
-AllTarget(DocSrcLink(dir,name)) \
-@;DocSrcLink(dir,name): base \
-@;@+ln -fs base $@ \
-@;\
 AllTarget(PSDocName(dir,name)) \
 @;@;PSDocName(dir,name): \
 @;@+cmd -p PathName(base,main.doc) | gzip > $@ \

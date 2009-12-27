@@ -42,9 +42,9 @@ typedef struct {
 	char *name;
 	char *fmt;
 	int lbreak;
-} NAME_t;
+} NAME;
 
-static NAME_t cmd_tab[] = {
+static NAME cmd_tab[] = {
 	{ DOC_CMD_BREAK, "newline", NULL, 0 },
 	{ DOC_CMD_NPAGE, "newpage", NULL, 0 },
 	{ DOC_CMD_TOC, "toc", NULL, 0 },
@@ -67,9 +67,10 @@ static NAME_t cmd_tab[] = {
 	{ DOC_TAB_BLINE, "boldline", NULL, 0 },
 	{ DOC_TAB_BRULE, "boldrule", NULL, 0 },
 	{ DOC_TAB_INDENT, "indent", NULL, 0 },
+	{ DOC_TAB_SPECIAL, "tabspecial", "%s", 0 },
 };
 
-static NAME_t env_tab[] = {
+static NAME env_tab[] = {
 	{ ENV_UNDEF, "_null_", NULL, 1 },
 	{ DOC_PAR_STD, "p", NULL, 1 },
 	{ DOC_PAR_ITEM, "item", NULL, 1 },
@@ -126,10 +127,10 @@ static NAME_t env_tab[] = {
 };
 
 
-static NAME_t *get_def (int key, NAME_t *tab, size_t dim)
+static NAME *get_def (int key, NAME *tab, size_t dim)
 {
 	static char str_buf[32];
-	static NAME_t name_buf = { 0, str_buf, NULL, 1 };
+	static NAME name_buf = { 0, str_buf, NULL, 1 };
 
 	for (; dim-- > 0; tab++)
 		if (key == tab->key) return tab;
@@ -153,20 +154,20 @@ char *DocEnvName (int key)
 /*	Darstellungsfunktionen
 */
 
-static void show_var (io_t *out, VarTab_t *tab)
+static void show_var (IO *out, EfiVarTab *tab)
 {
+	VarTabEntry *p;
 	size_t n;
 
 	if	(!tab)	return;
 
 	io_printf(out, "\t%s: \\\n", tab->name);
 
-	for (n = 0; n < tab->tab.dim; n++)
+	for (p = tab->tab.data, n = tab->tab.used; n-- > 0; p++)
 	{
-		Var_t *var = tab->tab.tab[n];
-		Obj_t *obj = Var2Obj(var, NULL);
+		EfiObj *obj = p->get ? p->get(NULL, p->data) : RefObj(p->obj);
 
-		io_printf(out, "\t%s = ", var->name);
+		io_printf(out, "\t%s = ", p->name);
 		PrintObj(out, obj);
 		UnrefObj(obj);
 		io_puts(" \\\n", out);
@@ -177,8 +178,8 @@ static void show_var (io_t *out, VarTab_t *tab)
 */
 
 typedef struct {
-	io_t *out;
-	stack_t *env;
+	IO *out;
+	Stack *env;
 	int plain;
 } TPAR;
 
@@ -202,9 +203,10 @@ static void show_par (TPAR *par, const char *fmt, va_list list)
 /*	Steuerzeichen ausgeben
 */
 
-static int test_ctrl (TPAR *par, int req, va_list list)
+static int test_ctrl (void *ptr, int req, va_list list)
 {
-	NAME_t *name;
+	TPAR *par = ptr;
+	NAME *name;
 	int last, lbreak;
 
 	switch (req)
@@ -277,8 +279,10 @@ static int test_ctrl (TPAR *par, int req, va_list list)
 /*	Zeichen ausgeben
 */
 
-static int test_put (int c, TPAR *par)
+static int test_put (int c, void *ptr)
 {
+	TPAR *par = ptr;
+
 	if	(par->plain)
 		return io_putc(c, par->out);
 
@@ -295,7 +299,7 @@ static int test_put (int c, TPAR *par)
 	return c;
 }
 
-io_t *DocOut_test (io_t *io)
+IO *DocOut_test (IO *io)
 {
 	if	(io)
 	{
@@ -303,8 +307,8 @@ io_t *DocOut_test (io_t *io)
 		par->out = io;
 
 		io = io_alloc();
-		io->put = (io_put_t) test_put;
-		io->ctrl = (io_ctrl_t) test_ctrl;
+		io->put = test_put;
+		io->ctrl = test_ctrl;
 		io->data = par;
 	}
 

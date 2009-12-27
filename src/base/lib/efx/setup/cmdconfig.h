@@ -30,11 +30,11 @@ If not, write to the Free Software Foundation, Inc.,
 #define	MAKE_ASSIGN_OP	1
 
 #define	CEXPR(name, expr)	\
-static void name (Func_t *func, void *rval, void **arg) \
+static void name (EfiFunc *func, void *rval, void **arg) \
 { expr; }
 
 #define	LEXPR(name, expr)	\
-static void name (Func_t *func, void *rval, void **arg) \
+static void name (EfiFunc *func, void *rval, void **arg) \
 { expr; Val_ptr(rval) = arg[0]; }
 
 #endif	/* EFEU/cmdconfig.h */

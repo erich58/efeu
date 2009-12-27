@@ -22,5 +22,5 @@ If not, write to the Free Software Foundation, Inc.,
 
 2	no radical in interval [$1, $2]\n
 3	$!: reached maximal number ($(SolveStep)) of steps.\n
-4	step $(#1:%2d): [$2, $3]\n
-5	step $(#1:%2d): [$2, $3] (weight: $4)\n
+4	step $1: [$2, $3]\n
+5	step $1: [$2, $3] (weight: $4)\n

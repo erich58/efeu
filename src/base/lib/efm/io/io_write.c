@@ -23,11 +23,11 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/io.h>
 
 
-size_t io_write(io_t *io, const void *buf, size_t nbyte)
+size_t io_write(IO *io, const void *buf, size_t nbyte)
 {
 	if	(io && io->put)
 	{
-		const uchar_t *ptr = buf;
+		const unsigned char *ptr = buf;
 		size_t n;
 
 		for (n = 0; n < nbyte; ptr++, n++)
@@ -39,11 +39,11 @@ size_t io_write(io_t *io, const void *buf, size_t nbyte)
 }
 
 
-size_t io_rwrite(io_t *io, const void *buf, size_t nbyte)
+size_t io_rwrite(IO *io, const void *buf, size_t nbyte)
 {
 	if	(io && io->put)
 	{
-		const uchar_t *ptr = buf;
+		const unsigned char *ptr = buf;
 		size_t n;
 
 		for (n = 0, ptr += nbyte - 1; n < nbyte; ptr--, n++)

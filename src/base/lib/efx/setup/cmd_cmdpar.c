@@ -25,63 +25,96 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/CmdPar.h>
 #include <EFEU/RegExp.h>
 #include <EFEU/Resource.h>
-#include <EFEU/ArgList.h>
+#include <EFEU/parsub.h>
+#include <EFEU/Debug.h>
 
-static Type_t Type_cpar = REF_TYPE("CmdPar", CmdPar_t *);
-static Type_t Type_argl = REF_TYPE("ArgList", ArgList_t *);
+#define	E_PROTO	"[efi:proto]$!: Function $1: Prototype not compatible.\n"
 
-static void f_null (Func_t *func, void *rval, void **arg)
+static EfiType Type_cpar = REF_TYPE("CmdPar", CmdPar *);
+static EfiType Type_argl = REF_TYPE("ArgList", ArgList *);
+
+ArgList *arg_list (const char *base, EfiObjList *list)
+{
+	if	(base || list)
+	{
+		ArgList *argl = arg_create();
+		arg_cadd(argl, base);
+
+		for (; list != NULL; list = list->next)
+			arg_madd(argl, Obj2str(RefObj(list->obj)));
+
+		return argl;
+	}
+	else	return NULL;
+}
+
+ArgList *arg_func (EfiFunc *func, int n, void **arg)
+{
+	if	(!func || func->dim <= n)
+		return NULL;
+
+	if	(func->vaarg)
+		return arg_list(NULL, Val_list(arg[func->dim - 1]));
+
+	if	(func->arg[n].type == &Type_argl)
+		return rd_refer(Val_ptr(arg[n]));
+
+	dbg_note(NULL, E_PROTO, "s", func->name);
+	return NULL;
+}
+
+static void f_null (EfiFunc *func, void *rval, void **arg)
 {
 	Val_ptr(rval) = NULL;
 }
 
-static void f_ptr (Func_t *func, void *rval, void **arg)
+static void f_ptr (EfiFunc *func, void *rval, void **arg)
 {
 	Val_ptr(rval) = rd_refer(CmdPar_ptr(NULL));
 }
 
-static void f_create (Func_t *func, void *rval, void **arg)
+static void f_create (EfiFunc *func, void *rval, void **arg)
 {
 	Val_ptr(rval) = CmdPar_alloc(Val_str(arg[0]));
 }
 
-static void f_usage (Func_t *func, void *rval, void **arg)
+static void f_usage (EfiFunc *func, void *rval, void **arg)
 {
 	CmdPar_usage(Val_ptr(arg[0]), Val_io(arg[1]), Val_str(arg[2]));
 }
 
-static void f_iousage (Func_t *func, void *rval, void **arg)
+static void f_iousage (EfiFunc *func, void *rval, void **arg)
 {
 	CmdPar_iousage(Val_ptr(arg[0]), Val_io(arg[1]), Val_io(arg[2]));
 }
 
-static void f_manpage (Func_t *func, void *rval, void **arg)
+static void f_manpage (EfiFunc *func, void *rval, void **arg)
 {
 	CmdPar_manpage(Val_ptr(arg[0]), Val_io(arg[1]));
 }
 
-static void f_read (Func_t *func, void *rval, void **arg)
+static void f_read (EfiFunc *func, void *rval, void **arg)
 {
-	CmdPar_t *par = rd_refer(Val_ptr(arg[0]));
+	CmdPar *par = rd_refer(Val_ptr(arg[0]));
 	CmdPar_read (par, Val_io(arg[1]), EOF, Val_bool(arg[2]));
 	Val_ptr(rval) = par;
 }
 
-static void f_write (Func_t *func, void *rval, void **arg)
+static void f_write (EfiFunc *func, void *rval, void **arg)
 {
 	CmdPar_write (Val_ptr(arg[0]), Val_io(arg[1]));
 }
 
-static void f_load (Func_t *func, void *rval, void **arg)
+static void f_load (EfiFunc *func, void *rval, void **arg)
 {
 	CmdPar_load (Val_ptr(arg[0]), Val_str(arg[1]), 
 		Val_bool(arg[2]));
 }
 
-static ObjList_t *do_eval (CmdPar_t *par, ObjList_t *arglist, int flag)
+static EfiObjList *do_eval (CmdPar *par, EfiObjList *arglist, int flag)
 {
-	ObjList_t *list, **ptr;
-	vecbuf_t *buf;
+	EfiObjList *list, **ptr;
+	VecBuf *buf;
 	char **argptr;
 	int dim;
 
@@ -112,53 +145,53 @@ static ObjList_t *do_eval (CmdPar_t *par, ObjList_t *arglist, int flag)
 	return list;
 }
 
-static void f_eval (Func_t *func, void *rval, void **arg)
+static void f_eval (EfiFunc *func, void *rval, void **arg)
 {
 	Val_list(rval) = do_eval(Val_ptr(arg[0]), Val_list(arg[1]), 0);
 }
 
-static void f_xeval (Func_t *func, void *rval, void **arg)
+static void f_xeval (EfiFunc *func, void *rval, void **arg)
 {
 	Val_list(rval) = do_eval(Val_ptr(arg[0]), Val_list(arg[1]), 1);
 }
 
-static void f_get (Func_t *func, void *rval, void **arg)
+static void f_get (EfiFunc *func, void *rval, void **arg)
 {
 	Val_str(rval) = mstrcpy(CmdPar_getval(Val_ptr(arg[0]),
 		Val_str(arg[1]), Val_str(arg[2])));
 }
 
-static void f_set (Func_t *func, void *rval, void **arg)
+static void f_set (EfiFunc *func, void *rval, void **arg)
 {
 	CmdPar_setval(Val_ptr(arg[0]),
 		Val_str(arg[1]), mstrcpy(Val_str(arg[2])));
 }
 
-static void f_setres (Func_t *func, void *rval, void **arg)
+static void f_setres (EfiFunc *func, void *rval, void **arg)
 {
 	CmdPar_setval(NULL, Val_str(arg[0]), mstrcpy(Val_str(arg[1])));
 }
 
-static void f_getres (Func_t *func, void *rval, void **arg)
+static void f_getres (EfiFunc *func, void *rval, void **arg)
 {
 	Val_str(rval) = mstrcpy(CmdPar_getval(NULL,
 		Val_str(arg[0]), Val_str(arg[1])));
 }
 
-static void f_flagres (Func_t *func, void *rval, void **arg)
+static void f_flagres (EfiFunc *func, void *rval, void **arg)
 {
 	Val_int(rval) = GetFlagResource(Val_str(arg[0]));
 }
 
-static void f_getfmt (Func_t *func, void *rval, void **arg)
+static void f_getfmt (EfiFunc *func, void *rval, void **arg)
 {
 	Val_str(rval) = mstrcpy(GetFormat(Val_str(arg[0])));
 }
 
-static ObjList_t *listres (CmdPar_t *par, RegExp_t *expr)
+static EfiObjList *listres (CmdPar *par, RegExp *expr)
 {
-	ObjList_t *list, **ptr;
-	CmdParVar_t *var;
+	EfiObjList *list, **ptr;
+	CmdParVar *var;
 	size_t n;
 
 	list = NULL;
@@ -177,20 +210,20 @@ static ObjList_t *listres (CmdPar_t *par, RegExp_t *expr)
 	return list;
 }
 
-static void f_list (Func_t *func, void *rval, void **arg)
+static void f_list (EfiFunc *func, void *rval, void **arg)
 {
 	Val_list(rval) = listres(Val_ptr(arg[0]), Val_ptr(arg[1]));
 }
 
 
-static void f_psub (Func_t *func, void *rval, void **arg)
+static void cpar_psub (EfiFunc *func, void *rval, void **arg)
 {
-	ObjList_t *list;
-	ArgList_t *argl;
-	CmdPar_t *par;
-	strbuf_t *sb;
+	EfiObjList *list;
+	ArgList *argl;
+	CmdPar *par;
+	StrBuf *sb;
 	char *fmt;
-	io_t *out;
+	IO *out;
 
 	if	((fmt = Val_str(arg[1])) == NULL)
 	{
@@ -199,10 +232,11 @@ static void f_psub (Func_t *func, void *rval, void **arg)
 	}
 
 	par = CmdPar_ptr(Val_ptr(arg[0]));
-	argl = ArgList("c", par->name);
+	argl = arg_create();
+	arg_cadd(argl, par->name);
 
 	for (list = Val_list(arg[2]); list != NULL; list = list->next)
-		ArgList_madd(argl, Obj2str(RefObj(list->obj)));
+		arg_madd(argl, Obj2str(RefObj(list->obj)));
 
 	sb = new_strbuf(0);
 	out = io_strbuf(sb);
@@ -212,49 +246,93 @@ static void f_psub (Func_t *func, void *rval, void **arg)
 	rd_deref(argl);
 }
 
-static void f_listres (Func_t *func, void *rval, void **arg)
+static void f_listres (EfiFunc *func, void *rval, void **arg)
 {
 	Val_list(rval) = listres(NULL, Val_ptr(arg[0]));
 }
 
-static void f_argl_str (Func_t *func, void *rval, void **arg)
+static void f_argl_str (EfiFunc *func, void *rval, void **arg)
 {
-	Val_ptr(rval) = ArgList("c", Val_str(arg[0]));
+	Val_ptr(rval) = arg_list(Val_str(arg[0]), NULL);
 }
 
-static void f_argl_list (Func_t *func, void *rval, void **arg)
+static void f_argl_list (EfiFunc *func, void *rval, void **arg)
 {
-	ObjList_t *list;
-	ArgList_t *argl;
-
-	argl = ArgList("c", Val_str(arg[0]));
-
-	for (list = Val_list(arg[1]); list != NULL; list = list->next)
-		ArgList_madd(argl, Obj2str(RefObj(list->obj)));
-
-	Val_ptr(rval) = argl;
+	Val_ptr(rval) = arg_list(Val_str(arg[0]), Val_list(arg[1]));
 }
 
-static void f_argl_add (Func_t *func, void *rval, void **arg)
+static void f_argl_add (EfiFunc *func, void *rval, void **arg)
 {
-	ArgList_cadd(Val_ptr(arg[0]), Val_str(arg[1]));
+	arg_cadd(Val_ptr(arg[0]), Val_str(arg[1]));
 }
 
-static void f_argl_dim (Func_t *func, void *rval, void **arg)
+static void f_argl_set (EfiFunc *func, void *rval, void **arg)
 {
-	ArgList_t *argl = Val_ptr(arg[0]);
+	arg_set(Val_ptr(arg[0]), Val_int(arg[1]), mstrcpy(Val_str(arg[2])));
+}
+
+static void f_argl_dim (EfiFunc *func, void *rval, void **arg)
+{
+	ArgList *argl = Val_ptr(arg[0]);
 	Val_int(rval) = argl ? argl->dim : 0;
 }
 
-static void f_argl_index (Func_t *func, void *rval, void **arg)
+static void f_argl_index (EfiFunc *func, void *rval, void **arg)
 {
-	Val_ptr(rval) = mstrcpy(ArgList_get(Val_ptr(arg[0]), Val_int(arg[1])));
+	Val_ptr(rval) = mstrcpy(arg_get(Val_ptr(arg[0]), Val_int(arg[1])));
 }
+
+static void f_fmt_show (EfiFunc *func, void *rval, void **arg)
+{
+	FormatTabShow(Val_io(arg[0]), Val_str(arg[1]), Val_str(arg[2]));
+}
+
+static void f_error (EfiFunc *func, void *rval, void **arg)
+{
+	char *fmt = Val_str(arg[0]);
+	ArgList *argl = arg_list(NULL, Val_list(arg[1]));
+	dbg_psub(NULL, DBG_ERR, fmt, argl);
+	rd_deref(argl);
+	exit(EXIT_FAILURE);
+}
+
+static void f_message (EfiFunc *func, void *rval, void **arg)
+{
+	char *fmt = Val_str(arg[0]);
+	ArgList *argl = arg_list(NULL, Val_list(arg[1]));
+	dbg_psub(NULL, DBG_NOTE, fmt, argl);
+	rd_deref(argl);
+}
+
+static void f_psubfilter (EfiFunc *func, void *rval, void **arg)
+{
+	IO *io = rd_refer(Val_io(arg[0]));
+	ArgList *args = arg_func(func, 1, arg);
+	Val_io(rval) = psubfilter(io, args);
+}
+
+static void f_psub (EfiFunc *func, void *rval, void **arg)
+{
+	char *fmt = Val_str(arg[0]);
+	ArgList *argl = arg_func(func, 1, arg);
+	Val_str(rval) = argl ? mpsubvec(fmt, argl->dim, argl->data) :
+		mpsubvec(fmt, 0, NULL);
+}
+
+static void f_fpsub (EfiFunc *func, void *rval, void **arg)
+{
+	IO *io= Val_io(arg[0]);
+	char *fmt = Val_str(arg[1]);
+	ArgList *argl = arg_func(func, 2, arg);
+	Val_int(rval) = argl ? io_psubvec(io, fmt, argl->dim, argl->data) :
+		io_psubvec(io, fmt, 0, NULL);
+}
+
 
 /*	Funktionstabelle
 */
 
-static FuncDef_t func_cpar[] = {
+static EfiFuncDef func_cpar[] = {
 	{ FUNC_RESTRICTED, &Type_cpar, "_Ptr_ ()", f_null },
 	{ 0, &Type_cpar, "CmdPar (void)", f_ptr },
 	{ FUNC_RESTRICTED, &Type_cpar, "CmdPar (str name)", f_create },
@@ -270,21 +348,44 @@ static FuncDef_t func_cpar[] = {
 	{ 0, &Type_list, "CmdPar::xeval (List_t list)", f_xeval },
 	{ 0, &Type_str, "CmdPar::get (str name, str def = NULL)", f_get },
 	{ 0, &Type_void, "CmdPar::set (str name, str val = NULL)", f_set },
-	{ 0, &Type_list, "CmdPar::list (regex_t select = NULL)", f_list },
-	{ 0, &Type_str, "CmdPar::psub (str fmt, ...)", f_psub },
+	{ 0, &Type_list, "CmdPar::list (RegExp select = NULL)", f_list },
+	{ 0, &Type_str, "CmdPar::psub (str fmt, ...)", cpar_psub },
 	{ 0, &Type_void, "setres (str name, str val = NULL)", f_setres },
 	{ 0, &Type_str, "getres (str name, str def = NULL)", f_getres },
 	{ 0, &Type_bool, "flagres (str name)", f_flagres },
-	{ 0, &Type_list, "listres (regex_t select = NULL)", f_listres },
+	{ 0, &Type_list, "listres (RegExp select = NULL)", f_listres },
 	{ 0, &Type_str, "getfmt (str def)", f_getfmt },
 
 	{ FUNC_RESTRICTED, &Type_argl, "_Ptr_ ()", f_null },
 	{ FUNC_RESTRICTED, &Type_argl, "str ()", f_argl_str },
 	{ 0, &Type_argl, "ArgList (str name, ...)", f_argl_list },
 	{ 0, &Type_void, "ArgList::operator+= (str arg)", f_argl_add },
+	{ 0, &Type_void, "ArgList::set (int n, str arg = NULL)", f_argl_set },
 	{ FUNC_VIRTUAL, &Type_int, "dim (ArgList list)", f_argl_dim },
 	{ FUNC_VIRTUAL, &Type_str, "operator[] (ArgList list, int n)",
 		f_argl_index },
+
+	{ FUNC_VIRTUAL, &Type_io,
+		"psubfilter (IO io)", f_psubfilter },
+	{ FUNC_VIRTUAL, &Type_io,
+		"psubfilter (IO io, ...)", f_psubfilter },
+	{ FUNC_VIRTUAL, &Type_io,
+		"psubfilter (IO io, ArgList args)", f_psubfilter },
+
+	{ FUNC_VIRTUAL, &Type_str, "psub (str fmt)", f_psub },
+	{ FUNC_VIRTUAL, &Type_str, "psub (str fmt, ...)", f_psub },
+	{ FUNC_VIRTUAL, &Type_str, "psub (str fmt, ArgList args)", f_psub },
+
+	{ FUNC_VIRTUAL, &Type_int,
+		"fpsub (IO io, str fmt)", f_fpsub },
+	{ FUNC_VIRTUAL, &Type_int,
+		"fpsub (IO io, str fmt, ...)", f_fpsub },
+	{ FUNC_VIRTUAL, &Type_int,
+		"fpsub (IO io, str fmt, ArgList args)", f_fpsub },
+
+	{ 0, &Type_void, "message (str fmt, ...)", f_message },
+	{ 0, &Type_void, "error (str fmt, ...)", f_error },
+	{ 0, &Type_void, "ShowFmtTab (IO io, str name, str fmt)", f_fmt_show },
 };
 
 

@@ -23,9 +23,9 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 
 
-Obj_t *MakeRetVal(Func_t *func, Obj_t *firstarg, void **arg)
+EfiObj *MakeRetVal(EfiFunc *func, EfiObj *firstarg, void **arg)
 {
-	Obj_t *obj;
+	EfiObj *obj;
 
 	if	(func->lretval)
 	{
@@ -47,9 +47,9 @@ Obj_t *MakeRetVal(Func_t *func, Obj_t *firstarg, void **arg)
 }
 
 
-Obj_t *ConstRetVal (Func_t *func, void **args)
+EfiObj *ConstRetVal (EfiFunc *func, void **args)
 {
-	Obj_t *obj;
+	EfiObj *obj;
 
 	if	(func->lretval)
 	{

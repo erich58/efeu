@@ -23,7 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include "efeudoc.h"
 #include <ctype.h>
 
-int DocVerb (io_t *in, io_t *out)
+int DocVerb (IO *in, IO *out)
 {
 	int c, n;
 	
@@ -51,7 +51,7 @@ int DocVerb (io_t *in, io_t *out)
 	return n;
 }
 
-static void signum (io_t *in, io_t *out, int sig)
+static void signum (IO *in, IO *out, int sig)
 {
 	if	(isdigit(io_peek(in)))
 	{
@@ -62,18 +62,18 @@ static void signum (io_t *in, io_t *out, int sig)
 	else	io_putc(sig, out);
 }
 
-static void nbsp (io_t *out)
+static void nbsp (IO *out)
 {
 	if	(io_ctrl(out, DOC_SYM, "nbsp") == EOF)
 		io_putc(' ', out);
 }
 
 
-void DocCopy (io_t *in, io_t *out)
+void DocCopy (IO *in, IO *out)
 {
 	int c;
 	int key;
-	stack_t *stack;
+	Stack *stack;
 
 	key = 0;
 	stack = NULL;

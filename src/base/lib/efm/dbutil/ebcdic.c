@@ -22,7 +22,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/ebcdic.h>
 
-static uchar_t ebcdic[] = {
+static unsigned char ebcdic[] = {
 	  0,	  1,	  2,	  3,	156,	  9,	134,	127,
 	151,	141,	142,	 11,	 12,	 13,	 14,	 15,
 	 16,	 17,	 18,	 19,	157,	133,	  8,	135,
@@ -57,7 +57,7 @@ static uchar_t ebcdic[] = {
 	 56,	 57,	250,	251,	252,	253,	254,	255,
 };
 
-static uchar_t ascii[] = {
+static unsigned char ascii[] = {
 	  0,	  1,	  2,	  3,	 55,	 45,	 46,	 47,
 	 22,	  5,	 37,	 11,	 12,	 13,	 14,	 15,
 	 16,	 17,	 18,	 19,	 60,	 61,	 50,	 38,

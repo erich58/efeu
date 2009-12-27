@@ -27,11 +27,11 @@ If not, write to the Free Software Foundation, Inc.,
 /*	Abfragefunktionen
 */
 
-static Obj_t *getarg (ObjList_t **ptr)
+static EfiObj *get_arg (EfiObjList **ptr)
 {
 	if	(*ptr != NULL)
 	{
-		register Obj_t *x = RefObj((*ptr)->obj);
+		register EfiObj *x = RefObj((*ptr)->obj);
 		*ptr = (*ptr)->next;
 		return x;
 	}
@@ -39,9 +39,9 @@ static Obj_t *getarg (ObjList_t **ptr)
 }
 
 
-int PrintFmtObj (io_t *io, const char *fmt, const Obj_t *obj)
+int PrintFmtObj (IO *io, const char *fmt, const EfiObj *obj)
 {
-	ObjList_t *list;
+	EfiObjList *list;
 	int n;
 
 	list = NewObjList(RefObj(obj));
@@ -54,10 +54,10 @@ int PrintFmtObj (io_t *io, const char *fmt, const Obj_t *obj)
 /*	Formatierungsfunktion
 */
 
-int PrintFmtList (io_t *io, const char *fmt, ObjList_t *list)
+int PrintFmtList (IO *io, const char *fmt, EfiObjList *list)
 {
-	fmtkey_t key;
-	Obj_t *obj;
+	FmtKey key;
+	EfiObj *obj;
 	long lval;
 	int n;
 
@@ -80,7 +80,7 @@ int PrintFmtList (io_t *io, const char *fmt, ObjList_t *list)
 
 		if	(key.flags & FMT_NEED_WIDTH)
 		{
-			key.width = Obj2long(getarg(&list));
+			key.width = Obj2long(get_arg(&list));
 
 			if	(key.width < 0)
 			{
@@ -91,7 +91,7 @@ int PrintFmtList (io_t *io, const char *fmt, ObjList_t *list)
 
 		if	(key.flags & FMT_NEED_PREC)
 		{
-			key.prec = Obj2long(getarg(&list));
+			key.prec = Obj2long(get_arg(&list));
 
 			if	(key.prec < 0)
 			{
@@ -105,7 +105,7 @@ int PrintFmtList (io_t *io, const char *fmt, ObjList_t *list)
 		case 's':
 		case 'S':
 		
-			if	((obj = EvalObj(getarg(&list), &Type_str)))
+			if	((obj = EvalObj(get_arg(&list), &Type_str)))
 			{
 				n += fmt_str(io, &key, Val_str(obj->data));
 				UnrefObj(obj);
@@ -116,7 +116,7 @@ int PrintFmtList (io_t *io, const char *fmt, ObjList_t *list)
 		case 'c':
 		case 'C':
 
-			n += fmt_char(io, &key, Obj2char(getarg(&list)));
+			n += fmt_char(io, &key, Obj2char(get_arg(&list)));
 			break;
 
 		case 'i':
@@ -127,7 +127,7 @@ int PrintFmtList (io_t *io, const char *fmt, ObjList_t *list)
 		case 'x':
 		case 'X':
 
-			obj = getarg(&list);
+			obj = get_arg(&list);
 
 			if	(key.flags & FMT_LONG)
 				lval = Obj2long(obj);
@@ -144,24 +144,24 @@ int PrintFmtList (io_t *io, const char *fmt, ObjList_t *list)
 		case 'g':
 		case 'G':
 
-			obj = getarg(&list);
+			obj = get_arg(&list);
 			n += fmt_double(io, &key, Obj2double(obj));
 			break;
 
 		case 'p':
 
-			obj = getarg(&list);
+			obj = get_arg(&list);
 			n += fmt_long(io, &key, (obj ? (long) obj : 0));
 			memfree(obj);
 			break;
 
 		case 'n':
 
-			obj = getarg(&list);
+			obj = get_arg(&list);
 
 			if	(obj && obj->lval)
 			{
-				Obj_t *x;
+				EfiObj *x;
 
 				if	((x = EvalObj(long2Obj(n), obj->type)))
 				{

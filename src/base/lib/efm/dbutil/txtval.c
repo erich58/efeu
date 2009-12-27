@@ -25,20 +25,19 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/procenv.h>
 #include <EFEU/strbuf.h>
 #include <EFEU/mstring.h>
+#include <EFEU/Debug.h>
 
-/*	Fehlermeldungen generieren
-*/
+#define FMT_21	"[db:11]$!: column $1: invalid digit $2 in value.\n"
+#define FMT_25	"[db:15]$!: column $1: character $2 not alphanumeric.\n"
 
-static void val_error (int pos, int num, const char *ptr)
+
+int txt_isblank (const char *buf, int pos, int len)
 {
-	char buf[32];
+	for (buf += pos - 1; len-- > 0; buf++)
+		if (*buf != ' ') return 0;
 
-	sprintf(buf, "%d", pos);
-	message(buf, MSG_DB, num, 1,
-		ptr ? msprintf("%#c", ptr[pos - 1]) : NULL);
-	exit(EXIT_FAILURE);
+	return 1;
 }
-
 
 /*	Zahlenwerte im Zeichenformat
 */
@@ -54,8 +53,8 @@ unsigned txt_unsigned (const char *buf, int pos, int len)
 	{
 		switch (buf[pos++])
 		{
-		case 0:
-		case ' ':
+		case   0:	/* FALLTHROUGH */
+		case ' ':	/* FALLTHROUGH */
 		case '0':	val = 10 * val; break;
 		case '1':	val = 10 * val + 1; break;
 		case '2':	val = 10 * val + 2; break;
@@ -66,9 +65,11 @@ unsigned txt_unsigned (const char *buf, int pos, int len)
 		case '7':	val = 10 * val + 7; break;
 		case '8':	val = 10 * val + 8; break;
 		case '9':	val = 10 * val + 9; break;
+		case '.':	/* FALLTHROUGH */
+		case ',':	break;
 		default:
-
-			val_error(pos, 11, buf);
+			dbg_error(NULL, FMT_21, "dc", pos,
+				txt_char(buf, pos, 1));
 			break;
 		}
 	}
@@ -132,7 +133,8 @@ unsigned txt_base37 (const char *buf, int pos, int len)
 		case 'Z': case 'z':	val += 36; break;
 		default:
 
-			val_error(pos, 15, buf);
+			dbg_error(NULL, FMT_25, "dc", pos,
+				txt_char(buf, pos, 1));
 			break;
 		}
 	}
@@ -140,7 +142,7 @@ unsigned txt_base37 (const char *buf, int pos, int len)
 	return val;
 }
 
-static strbuf_t buf_str = SB_DATA(64);
+static StrBuf buf_str = SB_DATA(64);
 
 char *txt_str (const char *buf, int pos, int len)
 {

@@ -32,7 +32,7 @@ and inserts the created Makefile in verbatim mode.
 an und bindet das Makefile wortwörtlich ein.
 
 \def\mkmf {{
-str fname = fsearch(DocPath, expand(ParseLine(cin)), NULL);
+str fname = fsearch(DocPath, xexpand(ParseLine(cin)), NULL);
 
 if	(fname)
 {

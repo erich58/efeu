@@ -23,6 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 1	$!: Datei "$1": Unbekannter Zugriff "$2".\n
 2	$!: $0("$1", "$2"): Ausführung fehlgeschlagen.\n
 3	$!: $0("$1", "$2"): Datei kann nicht geöffnet werden.\n
+4	$!: $0("$1", "$2"): Ausführung gesperrt.\n
 5	$!: Temporäre Datei kann nicht generiert werden.\n
 6	$!: Datei $1 nicht gefunden.\n
 

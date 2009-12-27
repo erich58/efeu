@@ -30,7 +30,7 @@ If not, write to the Free Software Foundation, Inc.,
 char *InfoNameToken (char **pptr)
 {
 	char *ptr;
-	strbuf_t *sb;
+	StrBuf *sb;
 
 	if	(pptr == NULL || *pptr == NULL)
 		return NULL;
@@ -56,7 +56,7 @@ char *InfoNameToken (char **pptr)
 	return sb2str(sb);
 }
 
-int InfoName(io_t *io, InfoNode_t *base, InfoNode_t *info)
+int InfoName(IO *io, InfoNode *base, InfoNode *info)
 {
 	if	(info && info != base)
 	{

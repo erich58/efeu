@@ -22,66 +22,169 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/vecbuf.h>
 #include <EFEU/parsub.h>
+#include <EFEU/Debug.h>
+#include <EFEU/fmtkey.h>
 #include <ctype.h>
 
-int psub_key = '$';
+#define	PSUBKEY	'$'
+
+#define E_NOARG	"[efm:pnoarg]$!: parsub($0): arg $1 not defined.\n"
+#define E_ILKEY	"[efm:pilkey]$!: parsub($0): illegal format key $1.\n"
 
 /*	Tabelle mit Substitutionsfunktionen
 */
 
-static VECBUF(psubtab, 32, sizeof(copydef_t));
+typedef struct {
+	int key;
+	int (*copy) (IO *in, IO *out, void *par);
+	void *par;
+} COPYDEF;
 
-static int pdef_cmp(copydef_t *a, copydef_t *b)
+
+static VECBUF(psubtab, 32, sizeof(COPYDEF));
+
+static int pdef_cmp (const void *pa, const void *pb)
 {
+	const COPYDEF *a = pa;
+	const COPYDEF *b = pb;
 	return (b->key - a->key);
 }
 
-void psubfunc(int key, iocopy_t copy, void *par)
+void psubfunc (int key, int (*copy) (IO *in, IO *out, void *par), void *par)
 {
-	copydef_t cdef;
+	COPYDEF cdef;
 
 	cdef.key = key;
 	cdef.copy = copy;
 	cdef.par = par;
-	vb_search(&psubtab, &cdef, (comp_t) pdef_cmp, copy ? VB_REPLACE : VB_DELETE);
+	vb_search(&psubtab, &cdef, pdef_cmp, copy ? VB_REPLACE : VB_DELETE);
 }
 
 
 /*	Kopierfunktion
 */
 
-int iocpy_psub(io_t *in, io_t *out, int c, const char *arg, unsigned int flags)
-{
-	copydef_t def, *ptr;
+static STRBUF(expand_buf, 1024);
 
+static void psubfmt (StrBuf *buf, IO *in, const char *par)
+{
+	FmtKey key;
+	IO *out;
+
+	out = io_strbuf(buf);
+	io_fmtkey(in, &key);
+
+	switch (key.mode)
+	{
+	case 's':
+	case 'S':
+		fmt_str(out, &key, par);
+		break;
+	case 'c':
+	case 'C':
+		fmt_char(out, &key, par ? par[0] : 0);
+		break;
+	case 'i':
+	case 'd':
+		fmt_long(out, &key, par ? strtol(par, NULL, 10) : 0);
+		break;
+	case 'b':
+	case 'o':
+	case 'u':
+	case 'x':
+	case 'X':
+		fmt_long(out, &key, par ? strtoul(par, NULL, 10) : 0);
+		break;
+	case 'f':
+	case 'e':
+	case 'E':
+	case 'g':
+	case 'G':
+		fmt_double(out, &key, par ? strtod(par, NULL) : 0.);
+		break;
+	default:
+		io_note(in, E_ILKEY, "c", key.mode);
+		/* FALLTHROUGH */
+	case 0:
+		sb_puts(par, buf);
+		break;
+	}
+
+	io_close(out);
+}
+
+char *psubexpand (StrBuf *buf, IO *in, int argc, char **argv)
+{
+	COPYDEF def, *ptr;
+	char *par;
+
+	if	(!buf)	buf = &expand_buf;
+
+	sb_setpos(buf, 0);
 	def.key = io_getc(in);
-	ptr = vb_search(&psubtab, &def, (comp_t) pdef_cmp, VB_SEARCH);
+	ptr = vb_search(&psubtab, &def, pdef_cmp, VB_SEARCH);
 
 	if	(ptr && ptr->copy)
 	{
-		return ptr->copy(in, out, ptr->par);
+		IO *tmp = io_strbuf(buf);
+		ptr->copy(in, tmp, ptr->par);
+		io_close(tmp);
 	}
 	else if	(isdigit(def.key))
 	{
-		char *arg = reg_get(def.key - '0');
-		return flags ? io_xputs(arg, out, "\"") : io_puts(arg, out);
+		int n = 0;
+
+		do
+		{
+			n = 10 * n + def.key - '0';
+			def.key = io_getc(in);
+		}
+		while	(isdigit(def.key));
+
+		if	(n >= argc)
+		{
+			io_note(in, E_NOARG, "d", n);
+			par = NULL;
+		}
+		else	par = argv[n];
+
+		if	(def.key != '%')
+		{
+			io_ungetc(def.key, in);
+			sb_puts(par, buf);
+		}
+		else	psubfmt(buf, in, par);
 	}
-	else	return (io_putc(def.key, out) != EOF) ? 1 : 0;
+	else if	(def.key != EOF)
+	{
+		sb_putc(def.key, buf);
+	}
+
+	sb_putc(0, buf);
+	return (char *) buf->data;
 }
 
-
-int io_pcopy(io_t *in, io_t *out, void *arg)
+int io_pcopy (IO *in, IO *out, int delim, int argc, char **argv)
 {
+	StrBuf *buf;
+	char *arg;
 	int c, n, flag;
 
 	n = 0;
 	flag = 0;
+	buf = NULL;
 
-	while ((c = io_mgetc(in, 1)) != EOF)
+	while ((c = io_mgetc(in, 1)) != delim && c != EOF)
 	{
-		if	(c == psub_key)
+		if	(c == PSUBKEY)
 		{
-			n += iocpy_psub(in, out, c, NULL, flag);
+			if	(!buf)	buf = new_strbuf(1024);
+
+			arg = psubexpand(buf, in, argc, argv);
+
+			if	(flag)
+				n += io_xputs(arg, out, "\"");
+			else	n += io_puts(arg, out);
 		}
 		else
 		{
@@ -91,22 +194,97 @@ int io_pcopy(io_t *in, io_t *out, void *arg)
 		}
 	}
 
+	del_strbuf(buf);
 	return n;
 }
 
-char *mpcopy(io_t *in)
+char *mpcopy (IO *in, int delim, int argc, char **argv)
 {
-	return miocopy(in, io_pcopy, NULL);
+	StrBuf *sb = new_strbuf(0);
+	IO *out = io_strbuf(sb);
+	io_pcopy(in, out, delim, argc, argv);
+	io_close(out);
+	return sb2str(sb);
 }
 
 
-int io_psub(io_t *out, const char *str)
+int io_psubvec (IO *out, const char *fmt, int argc, char **argv)
 {
-	return iocopystr(str, out, io_pcopy, NULL);
+	if	(fmt)
+	{
+		IO *in = io_cstr(fmt);
+		int n = io_pcopy(in, out, EOF, argc, argv);
+		io_close(in);
+		return n;
+	}
+	else	return 0;
 }
 
-
-char *parsub(const char *str)
+int io_psubvarg (IO *out, const char *fmt, const char *argdef, va_list list)
 {
-	return miocopystr(str, io_pcopy, NULL);
+	int n;
+
+	if	(argdef)
+	{
+		ArgList *args = arg_create();
+		arg_append(args, argdef, list);
+		n = io_psubvec(out, fmt, args->dim, args->data);
+		rd_deref(args);
+	}
+	else	n = io_psubvec(out, fmt, 0, NULL);
+
+	return n;
+}
+
+int io_psubarg (IO *out, const char *fmt, const char *argdef, ...)
+{
+	va_list list;
+	int n;
+
+	va_start(list, argdef);
+	n = io_psubvarg(out, fmt, argdef, list);
+	va_end(list);
+	return n;
+}
+
+char *mpsubvec (const char *fmt, int argc, char **argv)
+{
+	if	(fmt)
+	{
+		StrBuf *sb = new_strbuf(0);
+		IO *in = io_cstr(fmt);
+		IO *out = io_strbuf(sb);
+		io_pcopy(in, out, EOF, argc, argv);
+		io_close(out);
+		io_close(in);
+		return sb2str(sb);
+	}
+	else	return NULL;
+}
+
+char *mpsubvarg (const char *fmt, const char *argdef, va_list list)
+{
+	char *p;
+
+	if	(argdef)
+	{
+		ArgList *args = arg_create();
+		arg_append(args, argdef, list);
+		p = mpsubvec(fmt, args->dim, args->data);
+		rd_deref(args);
+	}
+	else	p = mpsubvec(fmt, 0, NULL);
+
+	return p;
+}
+
+char *mpsubarg (const char *fmt, const char *argdef, ...)
+{
+	va_list list;
+	char *p;
+
+	va_start(list, argdef);
+	p = mpsubvarg(fmt, argdef, list);
+	va_end(list);
+	return p;
 }

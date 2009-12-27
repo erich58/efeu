@@ -24,12 +24,12 @@ If not, write to the Free Software Foundation, Inc.,
 #include <Math/mdmath.h>
 
 
-static void f_mdinv (Func_t *func, void *rval, void **arg)
+static void f_mdinv (EfiFunc *func, void *rval, void **arg)
 {
 	Val_mdmat(rval) = mdinv(Val_mdmat(arg[0]));
 }
 
-static FuncDef_t fdef[] = {
+static EfiFuncDef fdef[] = {
 	{ 0, &Type_mdmat, "mdinv (mdmat a)", f_mdinv },
 };
 

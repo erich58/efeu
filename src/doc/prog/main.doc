@@ -7,12 +7,13 @@ Programmentwicklung mit EFEU
 
 \include Vorwort.doc
 \toc
-\include einl/main.doc
-\include gkurs/main.doc
-\include pconfig/main.doc
+\include einl
+\include pconfig
+\include gkurs
+\include mksource
 \appendix
 \mchap[1]	Kommandos
-\pipe	efeuscript --help=raw
+\pipe	|efeuscript --help=raw|
 \include Literatur.doc
 \printindex
 @Impressum(2001)

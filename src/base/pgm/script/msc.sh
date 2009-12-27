@@ -114,13 +114,13 @@ tmp=${TMPDIR:-/tmp}/msc$$
 printf "$msg4" "$name"
 
 if
-	echo mdprint -sc $name $tmp/data "$@"
+	echo mdprint --sc $name $tmp/data "$@"
 	printf "$msg5" 1>&2
 	read x
 	test "$x" != "n"
 then
 	mkdir $tmp
-	mdprint -sc $name $tmp/data "$@"
+	mdprint --sc $name $tmp/data "$@"
 	sc $tmp/data
 
 	if

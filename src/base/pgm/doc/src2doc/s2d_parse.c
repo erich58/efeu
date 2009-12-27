@@ -25,13 +25,13 @@ If not, write to the Free Software Foundation, Inc.,
 
 static STRBUF(parse_buf, 1024);
 
-strbuf_t *parse_open (void)
+StrBuf *parse_open (void)
 {
 	sb_clear(&parse_buf);
 	return &parse_buf;
 }
 
-char *parse_close (strbuf_t *buf)
+char *parse_close (StrBuf *buf)
 {
 	if	(sb_getpos(buf))
 	{
@@ -41,7 +41,7 @@ char *parse_close (strbuf_t *buf)
 	else	return NULL;
 }
 
-static void add_name (strbuf_t *buf, io_t *io, int c)
+static void add_name (StrBuf *buf, IO *io, int c)
 {
 	while (isalnum(c) || c == '_')
 	{
@@ -52,19 +52,19 @@ static void add_name (strbuf_t *buf, io_t *io, int c)
 	io_ungetc(c, io);
 }
 
-static void add_block (strbuf_t *buf, io_t *io, int c)
+static void add_block (StrBuf *buf, IO *io, int c, int flag)
 {
-	io_t *aus = io_strbuf(buf);
-	copy_block(io, aus, c);
+	IO *aus = io_strbuf(buf);
+	copy_block(io, aus, c, flag);
 	io_close(aus);
 }
 
 /*	Namen abfragen
 */
 
-char *parse_name (io_t *io, int c)
+char *parse_name (IO *io, int c)
 {
-	strbuf_t *buf = parse_open();
+	StrBuf *buf = parse_open();
 	add_name(buf, io, c);
 	return parse_close(buf);
 }
@@ -72,11 +72,11 @@ char *parse_name (io_t *io, int c)
 /*	Block abfragen
 */
 
-char *parse_block (io_t *io, int beg, int end)
+char *parse_block (IO *io, int beg, int end, int flag)
 {
-	strbuf_t *buf = parse_open();
+	StrBuf *buf = parse_open();
 	sb_putc(beg, buf);
-	add_block(buf, io, end);
+	add_block(buf, io, end, flag);
 	return parse_close(buf);
 }
 
@@ -84,26 +84,26 @@ char *parse_block (io_t *io, int beg, int end)
 /*	Deklaration parsen
 */
 
-static void name_start (Decl_t *decl, strbuf_t *buf)
+static void name_start (Decl *decl, StrBuf *buf)
 {
 	if	(decl->end < sb_getpos(buf))
 		decl->start = sb_getpos(buf);
 }
 
-static void name_end (Decl_t *decl, strbuf_t *buf)
+static void name_end (Decl *decl, StrBuf *buf)
 {
 	decl->end = sb_getpos(buf);
 	decl->def = (char *) buf->data;
 }
 
-Decl_t *parse_decl (io_t *io, int c)
+Decl *parse_decl (IO *io, int c)
 {
-	static Decl_t decl;
-	strbuf_t *buf;
+	static Decl decl;
+	StrBuf *buf;
 	int n, flag, sflag, cflag;
 	int argpos;
 
-	memset(&decl, 0, sizeof(Decl_t));
+	memset(&decl, 0, sizeof(Decl));
 	buf = parse_open();
 	n = 0;
 	flag = sflag = cflag = 0;
@@ -125,6 +125,8 @@ Decl_t *parse_decl (io_t *io, int c)
 			name_end(&decl, buf);
 
 			if	(Decl_test(&decl, "static"))
+				cflag = 1;
+			else if	(Decl_test(&decl, "return"))
 				cflag = 1;
 			else if	(Decl_test(&decl, "typedef"))
 				decl.type = DECL_TYPE;
@@ -151,7 +153,7 @@ Decl_t *parse_decl (io_t *io, int c)
 			sb_putc(0, buf);
 			argpos = sb_getpos(buf);
 			sb_putc(c, buf);
-			add_block(buf, io, ']');
+			add_block(buf, io, ']', 1);
 			break;
 		}
 		else if	(c == '(')
@@ -159,7 +161,7 @@ Decl_t *parse_decl (io_t *io, int c)
 			if	(flag)
 			{
 				sb_putc(c, buf);
-				add_block(buf, io, ')');
+				add_block(buf, io, ')', 1);
 			}
 			else
 			{
@@ -174,7 +176,7 @@ Decl_t *parse_decl (io_t *io, int c)
 					argpos = sb_getpos(buf);
 					sb_putc('(', buf);
 					io_ungetc(c, io);
-					add_block(buf, io, ')');
+					add_block(buf, io, ')', 1);
 
 					if	(!decl.type)
 						decl.type = decl.start ?
@@ -191,7 +193,7 @@ Decl_t *parse_decl (io_t *io, int c)
 		else if	(sflag && c == '{')
 		{
 			sb_putc(c, buf);
-			add_block(buf, io, '}'),
+			add_block(buf, io, '}', 0),
 			sflag = 0;
 		}
 		else if	(c == '*' || c == '&')

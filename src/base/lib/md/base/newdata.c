@@ -10,10 +10,10 @@
 #define	M_TIME	3	/* Zeitpunktvergleich */
 
 typedef struct {
-	mdaxis_t *axis;
-	Type_t *type;
-	ObjList_t **ptr;
-	Func_t *func;
+	mdaxis *axis;
+	EfiType *type;
+	EfiObjList **ptr;
+	EfiFunc *func;
 	int imode;
 	int lag;
 } EVALPAR;
@@ -21,16 +21,16 @@ typedef struct {
 
 static void add_data(EVALPAR *par, void *data, void *base);
 
-static void stdwalk(EVALPAR *par, int mode, mdaxis_t *x,
+static void stdwalk(EVALPAR *par, int mode, mdaxis *x,
 	char *data, char *base);
 
 
-void MF_data(Func_t *func, void *rval, void **arg)
+void MF_data(EfiFunc *func, void *rval, void **arg)
 {
 	EVALPAR par;
-	ObjList_t *list;
-	VirFunc_t *vtab;
-	mdmat_t *md;
+	EfiObjList *list;
+	EfiVirFunc *vtab;
+	mdmat *md;
 
 	Val_list(rval) = NULL;
 
@@ -46,7 +46,7 @@ void MF_data(Func_t *func, void *rval, void **arg)
 
 	if	(vtab && vtab->tab.used)
 	{
-		Func_t **ftab;
+		EfiFunc **ftab;
 		int i, dim;
 
 		ftab = vtab->tab.data;
@@ -72,9 +72,8 @@ void MF_data(Func_t *func, void *rval, void **arg)
 
 		if	(par.func == NULL)
 		{
-			reg_cpy(1, ftab[0]->name);
-			reg_cpy(2, md->type->name);
-			errmsg(MSG_MDMAT, 95);
+			dbg_note(NULL, "[mdmat:95]",
+				"ss", ftab[0]->name, md->type->name);
 			return;
 		}
 	}
@@ -95,7 +94,7 @@ void MF_data(Func_t *func, void *rval, void **arg)
 /*	Primärschleife für Standardauswertung
 */
 
-static void stdwalk(EVALPAR *par, int mode, mdaxis_t *x, char *data, char *base)
+static void stdwalk(EVALPAR *par, int mode, mdaxis *x, char *data, char *base)
 {
 	char *ptr;
 	int i, k;
@@ -177,7 +176,7 @@ static void stdwalk(EVALPAR *par, int mode, mdaxis_t *x, char *data, char *base)
 
 static void add_data(EVALPAR *par, void *data, void *base)
 {
-	Obj_t *obj;
+	EfiObj *obj;
 	void *arg[2];
 
 	if	(par->func)

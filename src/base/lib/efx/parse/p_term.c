@@ -29,10 +29,10 @@ If not, write to the Free Software Foundation, Inc.,
 /*	Term bestimmen
 */
 
-Obj_t *Parse_term(io_t *io, int prior)
+EfiObj *Parse_term(IO *io, int prior)
 {
-	Obj_t *left;
-	Obj_t *a;
+	EfiObj *left;
+	EfiObj *a;
 
 	if	((io_eat(io, " \t")) == EOF)
 		return NULL;
@@ -45,12 +45,12 @@ Obj_t *Parse_term(io_t *io, int prior)
 
 	if	(left->type == &Type_type)
 	{
-		int flag = 0x1;
+		int flag = VDEF_REPEAT;
 
 		if	(io_eat(io, " \t") == '&')
 		{
 			io_getc(io);
-			flag |= 0x2;
+			flag |= VDEF_LVAL;
 		}
 
 		if	((a = Parse_vdef(io, Val_type(left->data), flag)))
@@ -58,7 +58,7 @@ Obj_t *Parse_term(io_t *io, int prior)
 			UnrefObj(left);
 			left = a;
 		}
-		else if	(flag & 0x2)
+		else if	(flag & VDEF_LVAL)
 		{
 			left->type = &Type_lval;
 		}
@@ -71,10 +71,10 @@ Obj_t *Parse_term(io_t *io, int prior)
 }
 
 
-Obj_t *strterm(const char *str)
+EfiObj *strterm(const char *str)
 {
-	io_t *io;
-	Obj_t *obj;
+	IO *io;
+	EfiObj *obj;
 
 	io = io_cstr(str);
 	obj = Parse_term(io, 0);
@@ -86,13 +86,12 @@ Obj_t *strterm(const char *str)
 /*	Liste parsen
 */
 
-ObjList_t *Parse_list(io_t *io, int endchar)
+EfiObjList *Parse_list(IO *io, int endchar)
 {
-	Obj_t *obj;
-	ObjList_t *list;
-	ObjList_t **ptr;
+	EfiObj *obj;
+	EfiObjList *list;
+	EfiObjList **ptr;
 	char *prompt;
-	char *p;
 	char *eatdef;
 	int flag;
 	int c;
@@ -115,7 +114,7 @@ ObjList_t *Parse_list(io_t *io, int endchar)
 		}
 		else if	(c == EOF)
 		{
-			io_error(io, MSG_EFMAIN, 181, 0);
+			io_error(io, "[efmain:181]", NULL);
 			break;
 		}
 		else if	(flag)
@@ -132,9 +131,7 @@ ObjList_t *Parse_list(io_t *io, int endchar)
 			}
 			else
 			{
-				p = msprintf("%#c", c);
-				io_error(io, MSG_EFMAIN, 183, 1, p);
-				memfree(p);
+				io_error(io, "[efmain:183]", "c", c);
 				break;
 			}
 		}
@@ -148,9 +145,8 @@ ObjList_t *Parse_list(io_t *io, int endchar)
 		{
 			if	(endchar != EOF)
 			{
-				p = io_mgets(io, "%s");
-				io_error(io, MSG_EFMAIN, 182, 1, p);
-				memfree(p);
+				io_error(io, "[efmain:182]",
+					"m", io_mgets(io, "%s"));
 			}
 
 			break;
@@ -159,36 +155,4 @@ ObjList_t *Parse_list(io_t *io, int endchar)
 
 	io_prompt(io, prompt);
 	return list;
-}
-
-
-int iocpy_term(io_t *in, io_t *out, int c, const char *arg, unsigned int flags)
-{
-	Obj_t *obj;
-	ObjList_t *list;
-	char *fmt;
-
-	obj = EvalObj(Parse_term(in, OpPrior_Cond), NULL);
-	c = io_getc(in);
-
-	fmt = (c == ':') ? io_xgets(in, arg) : NULL;
-
-	if	(!listcmp(arg, c))
-		iocpy_skip(in, NULL, c, arg, 0);
-
-	if	(obj && fmt)
-	{
-		list = NewObjList(obj);
-		c = PrintFmtList(out, fmt, list);
-		DelObjList(list);
-	}
-	else if	(obj)
-	{
-		c = PrintObj(out, obj);
-		UnrefObj(obj);
-	}
-	else	c = 0;
-
-	memfree(fmt);
-	return c;
 }

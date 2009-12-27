@@ -5,7 +5,7 @@
 #include <EFEU/mdmat.h>
 
 
-mdlist_t *mdlistcmp(const char *name, int depth, mdlist_t *list)
+mdlist *mdlistcmp(const char *name, int depth, mdlist *list)
 {
 	for ( ; list != NULL; list = list->next)
 	{

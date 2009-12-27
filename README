@@ -37,7 +37,7 @@ EFEU consists of
 	*	Robust memory allocation tools.
 	*	Functions to concatenate and copy strings with memory
 		allocation.
-	*	Buffers for dynamik growing strings and fields.
+	*	Buffers for dynamic growing strings and fields.
 	*	Data structures with reference counters and
 		garbage collection.
 	*	File tools, that allows you to specify pipes wherever

@@ -29,9 +29,11 @@ des EFEU-Befehlsinterpreters.
 
 Bei der Eingabedatei handelt es sich um ein Skriptfile für den
 Befehlsinterpreter. Die Ausgabe erfolgt in die folgenden
-drei IO-Strukturen:
+IO-Strukturen:
 [|hdr|]	C-Headerfile
 [|src|]	C-Sourcefile
+[|info|]	Infodatei für |eis|
+[|tex|]	LaTeX-Dokumentation (siehe Anmerkung am Ende)
 [|doc|]	Dokumentationsfile (siehe Anmerkung am Ende)
 
 Ob die mit den Ausgabestrukturen verbundenen Dateien auch

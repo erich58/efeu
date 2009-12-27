@@ -34,7 +34,7 @@ If not, write to the Free Software Foundation, Inc.,
 /*	Neue Zeile beginnen
 */
 
-static int nextline (io_t *io)
+static int nextline (IO *io)
 {
 	int c;
 	int flag;
@@ -75,15 +75,15 @@ static int nextline (io_t *io)
 /*	Datenwert in Datenbank eintragen
 */
 
-static void addtodb(DataBase_t *db, void *buf, Obj_t *expr)
+static void addtodb(EfiDB *db, void *buf, EfiObj *expr)
 {
 	void *ptr;
 
 	if	(expr && (ptr = DB_search(db, buf, VB_SEARCH)))
 	{
-		Var_t z[2];
+		EfiVar z[2];
 
-		memset(z, 0, 2 * sizeof(Var_t));
+		memset(z, 0, 2 * sizeof(EfiVar));
 		z[0].name = "y";
 		z[0].type = db->type;
 		z[0].data = ptr;
@@ -105,7 +105,7 @@ static void addtodb(DataBase_t *db, void *buf, Obj_t *expr)
 /*	Komplexe Datenbankeinträge
 */
 
-static void add_complex(DataBase_t *db, Var_t *var, Obj_t *expr)
+static void add_complex(EfiDB *db, EfiVar *var, EfiObj *expr)
 {
 	AssignData(db->type, var[LAST].data, var[THIS].data);
 
@@ -116,7 +116,7 @@ static void add_complex(DataBase_t *db, Var_t *var, Obj_t *expr)
 	}
 }
 
-static void load_complex(io_t *io, DataBase_t *db, Var_t *var, Obj_t *expr)
+static void load_complex(IO *io, EfiDB *db, EfiVar *var, EfiObj *expr)
 {
 	int c;
 
@@ -145,10 +145,10 @@ static void load_complex(io_t *io, DataBase_t *db, Var_t *var, Obj_t *expr)
 /*	Kompakte Datenbankeinträge
 */
 
-static void load_compact(io_t *io, DataBase_t *db, Var_t *var, Obj_t *expr)
+static void load_compact(IO *io, EfiDB *db, EfiVar *var, EfiObj *expr)
 {
-	ObjList_t *list, *x, **ptr;
-	Obj_t *obj;
+	EfiObjList *list, *x, **ptr;
+	EfiObj *obj;
 	int last;
 	int c;
 	int header;
@@ -211,13 +211,13 @@ static void load_compact(io_t *io, DataBase_t *db, Var_t *var, Obj_t *expr)
 /*	Datenbankwerte laden
 */
 
-void DB_load(io_t *io, DataBase_t *db, Obj_t *expr)
+void DB_load(IO *io, EfiDB *db, EfiObj *expr)
 {
-	Var_t *var;
+	EfiVar *var;
 	char *buf;
 	int nvar;
 	int addentry;
-	Var_t *st;
+	EfiVar *st;
 
 	if	(io == NULL || db == NULL)	return;
 
@@ -230,8 +230,7 @@ void DB_load(io_t *io, DataBase_t *db, Obj_t *expr)
 	for (st = db->type->list; st != NULL; st = st->next)
 		nvar++;
 
-	var = ALLOC(nvar, Var_t);
-	memset(var, 0, nvar * sizeof(Var_t));
+	var = memalloc(nvar * sizeof(EfiVar));
 	var[THIS].type = db->type;
 	var[THIS].name = "this";
 	var[THIS].data = buf + THIS * db->type->size;

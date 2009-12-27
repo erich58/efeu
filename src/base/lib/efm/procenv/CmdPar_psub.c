@@ -20,7 +20,7 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include <EFEU/KeyTab.h>
+#include <EFEU/vecbuf.h>
 #include <EFEU/CmdPar.h>
 #include <EFEU/parsub.h>
 #include <EFEU/mstring.h>
@@ -30,11 +30,11 @@ If not, write to the Free Software Foundation, Inc.,
 #define	MODE_STR	0x1
 #define	MODE_VERB	0x2
 
-static int do_copy (CmdPar_t *par, io_t *in, io_t *out,
-	ArgList_t *args, int mode, int end);
-static char *do_vsub (CmdPar_t *par, io_t *in,
-	ArgList_t *args, int mode, int end);
-static void do_psub (io_t *in, io_t *out, ArgList_t *args, int mode);
+static int do_copy (CmdPar *par, IO *in, IO *out,
+	ArgList *args, int mode, int end);
+static char *do_vsub (CmdPar *par, IO *in,
+	ArgList *args, int mode, int end);
+static void do_psub (IO *in, IO *out, ArgList *args, int mode);
 
 /*
 Die Funktion |$1| führt eine Parametersubstitution für das Format
@@ -59,13 +59,13 @@ Die Zeichen |"| und |||| haben keinen Einfluß auf die Analyse
 der Formatanweisung.
 */
 
-char *CmdPar_psub (CmdPar_t *par, const char *fmt, const char *arg)
+char *CmdPar_psub (CmdPar *par, const char *fmt, const char *arg)
 {
 	if	(fmt)
 	{
-		io_t *in;
+		IO *in;
 		char *p;
-		ArgList_t args;
+		ArgList args;
 
 		in = io_cstr(fmt);
 		args.data = (char **) &arg;
@@ -80,22 +80,21 @@ char *CmdPar_psub (CmdPar_t *par, const char *fmt, const char *arg)
 /*
 Die Funktion |$1| ist etwas allgemeiner als |CmdPar_psub|.
 Das Resultat wird in die Ausgabestruktur <out> geschrieben. Anstelle
-eines einzelnen Arguments wird der Pointer auf eine |ArgList_t| Struktur
+eines einzelnen Arguments wird der Pointer auf eine |ArgList| Struktur
 übergeben. Bei einem Nullstring als Formatangabe erfolgt keine Ausgabe.
 */
 
-void CmdPar_psubout (CmdPar_t *par, io_t *out, const char *fmt,
-		ArgList_t *args)
+void CmdPar_psubout (CmdPar *par, IO *out, const char *fmt, ArgList *args)
 {
 	if	(fmt && out)
 	{
-		io_t *in = io_cstr(fmt);
+		IO *in = io_cstr(fmt);
 		do_copy(CmdPar_ptr(par), in, out, args, 0, EOF);
 		io_close(in);
 	}
 }
 
-static void f_putc (int c, io_t *io, int mode)
+static void f_putc (int c, IO *io, int mode)
 {
 	if	(c == EOF)	return;
 
@@ -109,7 +108,7 @@ static void f_putc (int c, io_t *io, int mode)
 }
 
 
-static void f_puts (const char *str, io_t *io, int mode)
+static void f_puts (const char *str, IO *io, int mode)
 {
 	if	(str)
 	{
@@ -118,8 +117,8 @@ static void f_puts (const char *str, io_t *io, int mode)
 	}
 }
 
-static int do_copy (CmdPar_t *par, io_t *in, io_t *out,
-	ArgList_t *args, int mode, int end)
+static int do_copy (CmdPar *par, IO *in, IO *out,
+	ArgList *args, int mode, int end)
 {
 	char *name;
 	int c;
@@ -192,35 +191,19 @@ static int do_copy (CmdPar_t *par, io_t *in, io_t *out,
 }
 
 
-static void do_psub (io_t *in, io_t *out, ArgList_t *args, int mode)
+static void do_psub (IO *in, IO *out, ArgList *args, int mode)
 {
-	int c = io_getc(in);
-
-	if	(isdigit(c))
-	{
-		f_puts(ArgList_get(args, c - '0'), out, mode);
-	}
-	else
-	{
-		strbuf_t *sb;
-		io_t *tmp;
-
-		io_ungetc(c, in);
-		sb = new_strbuf(0);
-		tmp = io_strbuf(sb);
-		iocpy_psub(in, tmp, 0, NULL, 0);
-		io_close(tmp);
-		sb_putc(0, sb);
-		f_puts(sb->data, out, mode);
-		del_strbuf(sb);
-	}
+	StrBuf *sb = new_strbuf(0);
+	f_puts(args ? psubexpand(sb, in, args->dim, args->data) :
+		psubexpand(sb, in, 0, NULL), out, mode);
+	del_strbuf(sb);
 }
 
-static char *do_vsub (CmdPar_t *par, io_t *in, ArgList_t *args,
+static char *do_vsub (CmdPar *par, IO *in, ArgList *args,
 	int mode, int end)
 {
-	strbuf_t *sb;
-	io_t *out;
+	StrBuf *sb;
+	IO *out;
 
 	sb = new_strbuf(0);
 	out = io_strbuf(sb);

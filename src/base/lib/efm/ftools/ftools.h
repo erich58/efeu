@@ -27,8 +27,6 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/mstring.h>
 
-#define	MSG_FTOOLS	"ftools"
-
 #ifndef	SEEK_SET
 #define	SEEK_SET	0
 #define	SEEK_CUR	1
@@ -37,24 +35,13 @@ If not, write to the Free Software Foundation, Inc.,
 
 extern FILE *popen (const char *cmd, const char *type);
 extern int pclose (FILE *stream);
-
+extern int pipe_lock;
 
 /*	Dateien suchen
 */
 
-typedef struct {
-	char *path;	/* Bibliotheksname */
-	char *name;	/* Filename */
-	char *type;	/* Filetyp */
-} fname_t;
-
-extern fname_t *strtofn (const char *name);
-extern char *fntostr (const fname_t *fname);
 extern char *fsearch (const char *path, const char *pfx,
 	const char *name, const char *ext);
-extern char *xfsearch (const char *path, const char *pfx,
-	const char *name, const char *ext);
-
 
 /*	Datenfiles öffnen
 */
@@ -65,11 +52,13 @@ extern FILE *findopen (const char *path, const char *pfx,
 	const char *name, const char *ext, const char *mode);
 extern int fileclose (FILE *file);
 extern char *fileident (FILE *file);
-extern void filemessage (FILE *file, const char *name, int num, int narg, ...);
-extern void fileerror (FILE *file, const char *name, int num, int narg, ...);
 extern void filenotice (const char *name, const char *mode,
 	FILE *file, int (*close) (FILE *file));
 extern FILE *filerefer (FILE *file);
+extern void filedebug (FILE *file, int level, const char *fmt,
+	const char *argdef, ...);
+extern void fileerror (FILE *file, const char *fmt,
+	const char *argdef, ...);
 
 /*	Binäre Ein/Ausgabe von Datenfiles
 */
@@ -104,6 +93,6 @@ extern char *loadstr (FILE *file);
 extern void savestr (const char *str, FILE *file);
 
 extern size_t dbread (FILE *file, void *dp, size_t rl, size_t size, size_t n);
-extern size_t dbwrite (FILE *file, void *dp, size_t rl, size_t size, size_t n);
+extern size_t dbwrite (FILE *file, const void *dp, size_t rl, size_t size, size_t n);
 
 #endif	/* EFEU/ftools.h */

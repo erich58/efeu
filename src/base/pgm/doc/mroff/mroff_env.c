@@ -34,19 +34,19 @@ static char *Name = "NAME";
 static char *FigName = "figure";
 static char *TabName = "table";
 
-static VarDef_t envpar[] = {
+static EfiVarDef envpar[] = {
 	{ "Name", &Type_str, &Name },
 	{ "FigName", &Type_str, &FigName },
 	{ "TabName", &Type_str, &TabName },
 };
 
-extern void mroff_envpar (VarTab_t *tab)
+extern void mroff_envpar (EfiVarTab *tab)
 {
 	AddVarDef(tab, envpar, tabsize(envpar));
 }
 
 
-static void put_env (mroff_t *mr, int flag, const char *cmd)
+static void put_env (ManRoff *mr, int flag, const char *cmd)
 {
 	if	(flag)
 	{
@@ -57,7 +57,7 @@ static void put_env (mroff_t *mr, int flag, const char *cmd)
 }
 
 
-static void put_att (mroff_t *mr, int flag, char *att)
+static void put_att (ManRoff *mr, int flag, char *att)
 {
 	if	(mr->copy)	att = NULL;
 
@@ -71,7 +71,7 @@ static void put_att (mroff_t *mr, int flag, char *att)
 	mr->att = att;
 }
 
-static void man_caption (mroff_t *mr, int flag)
+static void man_caption (ManRoff *mr, int flag)
 {
 	if	(flag)
 	{
@@ -84,8 +84,9 @@ static void man_caption (mroff_t *mr, int flag)
 /*	Umgebung beginnen/beenden
 */
 
-int mroff_env (mroff_t *mr, int flag, va_list list)
+int mroff_env (void *drv, int flag, va_list list)
 {
+	ManRoff *mr = drv;
 	int cmd = va_arg(list, int);
 
 	switch (cmd)
@@ -178,7 +179,7 @@ int mroff_env (mroff_t *mr, int flag, va_list list)
 		break;
 	case DOC_MODE_MAN:
 	case DOC_MODE_PLAIN:
-		mr->put = flag ? DocDrv_plain : (DocDrvPut_t) mroff_putc;
+		mr->put = flag ? DocDrv_plain : mroff_putc;
 		break;
 	case DOC_MODE_TEX:
 	case DOC_MODE_HTML:
@@ -186,7 +187,7 @@ int mroff_env (mroff_t *mr, int flag, va_list list)
 		break;
 	case DOC_MODE_VERB:
 		mroff_newline(mr);
-		mr->put = (DocDrvPut_t) (flag ? mroff_plain : mroff_putc);
+		mr->put = flag ? mroff_plain : mroff_putc;
 		break;
 
 /*	Listen

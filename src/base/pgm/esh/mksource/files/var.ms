@@ -1,6 +1,7 @@
 /*
 Hilfsfunktionen zur Variablendefinition
 
+$Header	<$1>
 $Copyright (C) 1996 Erich Frühstück
 This file is part of EFEU.
 
@@ -34,8 +35,8 @@ inline void DeclVar (bool _glob = true, str _decl,
 {
 	_decl = psub(_decl, va_list);
 
-	if	(_val)	_val = " = " + psub(_val);
-	if	(_desc)	_desc = "\t/* " + psub(_desc) + " */";
+	if	(_val)	_val = " = " + psub(_val, va_list);
+	if	(_desc)	_desc = "\t/* " + psub(_desc, va_list) + " */";
 
 	if	(_glob)
 		fprintf(hdr, "extern %s;%s\n", _decl, _desc);
@@ -62,7 +63,7 @@ inline void DeclVec (bool glob = true, str _decl, int _dim,
 
 	if	(_desc)
 	{
-		_desc = "/*\t" + psub(_desc) + "\n*/\n";
+		_desc = "/*\t" + psub(_desc, va_list) + "\n*/\n";
 
 		if	(glob)	hdr << _desc;
 
@@ -84,11 +85,11 @@ inline void DeclVec (bool glob = true, str _decl, int _dim,
 		if	(_dim)
 		{
 			for (int n = 0; n < _dim; n++)
-				src << "\t" << psub(_val) << ",\n";
+				src << "\t" << psub(_val, va_list) << ",\n";
 		}
 		else
 		{
-			for (x in split(psub(_val), "\n"))
+			for (x in split(psub(_val, va_list), "\n"))
 				src << "\t" << x << ",\n";
 		}
 

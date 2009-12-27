@@ -58,7 +58,7 @@ unsigned get1byte (FILE *file)
 
 unsigned get2byte (FILE *file)
 {
-	uchar_t byte[2];
+	unsigned char byte[2];
 
 	if	(fread(byte, 1, 2, file) != 2)
 		input_error();
@@ -68,7 +68,7 @@ unsigned get2byte (FILE *file)
 
 unsigned get3byte (FILE *file)
 {
-	uchar_t byte[3];
+	unsigned char byte[3];
 
 	if	(fread(byte, 1, 3, file) != 3)
 		input_error();
@@ -78,7 +78,7 @@ unsigned get3byte (FILE *file)
 
 unsigned get4byte (FILE *file)
 {
-	uchar_t byte[4];
+	unsigned char byte[4];
 
 	if	(fread(byte, 1, 4, file) != 4)
 		input_error();

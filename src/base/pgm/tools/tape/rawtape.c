@@ -21,7 +21,7 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifdef	_EFEU_TOP
+#ifdef	EFEUROOT
 #define	EFEUCFG	1
 #define	FDEF(name,def)	GetFormat("[%" name "]" def)
 #else
@@ -39,9 +39,7 @@ If not, write to the Free Software Foundation, Inc.,
 #define	MSG3	FDEF("msg.3", "%d bytes write.\n")
 #define	MSG4	FDEF("msg.4", "%d defect blocks.\n")
 
-#if	_AIX
 #define _XOPEN_SOURCE 1
-#endif
 
 #include <stdio.h>
 #include <sys/types.h>
@@ -170,9 +168,7 @@ static FILE *open_output(char *name, int compress, int recover)
 
 	if	(file == NULL)
 	{
-		sprintf(str_buf, "%s: Ausgabefile %s nicht generierbar",
-			PgmName, Output);
-		perror(str_buf);
+		perror(name);
 		return NULL;
 	}
 
@@ -213,7 +209,7 @@ int main (int narg, char **arg)
 	PgmName = arg[0];
 
 #if	EFEUCFG
-	SetVersion("$Id: rawtape.c,v 1.4 2001-11-06 13:53:10 ef Exp $");
+	SetVersion("$Id: rawtape.c,v 1.7 2002-04-03 07:08:21 ef Exp $");
 	ParseCommand(&narg, arg);
 	varblock = GetFlagResource("varblock");
 	recover = GetFlagResource("recover");

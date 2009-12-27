@@ -23,26 +23,24 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 #include <EFEU/refdata.h>
 
-static ALLOCTAB(tab_func, 0, sizeof(Func_t));
+static ALLOCTAB(tab_func, 0, sizeof(EfiFunc));
 
-static Func_t *func_admin(Func_t *tg, const Func_t *src)
+static void func_clean (void *data)
 {
-	if	(tg)
-	{
-		DelFuncArg(tg->arg, tg->dim);
-		memfree(tg->name);
+	EfiFunc *tg = data;
 
-		if	(tg->clean)
-			tg->clean(tg->par);
+	DelFuncArg(tg->arg, tg->dim);
+	memfree(tg->name);
 
-		del_data(&tab_func, tg);
-		return NULL;
-	}
-	else	return new_data(&tab_func);
+	if	(tg->clean)
+		tg->clean(tg->par);
+
+	del_data(&tab_func, tg);
 }
 
-static char *func_ident(Func_t *func)
+static char *func_ident (const void *data)
 {
+	const EfiFunc *func = data;
 	char *p;
 
 	if	(func->name)	p = func->name;
@@ -52,10 +50,16 @@ static char *func_ident(Func_t *func)
 	return msprintf("%s()", p);
 }
 
-ADMINREFTYPE(FuncRefType, "Func", func_ident, func_admin);
+static const RefType FuncRefType = REFTYPE_INIT("Func",
+	func_ident, func_clean);
 
-
-Func_t *NewFunc(void)
+int IsFunc (void *ptr)
 {
-	return rd_create(&FuncRefType);
+	EfiFunc *func = ptr;
+	return (func && func->reftype == &FuncRefType);
+}
+
+EfiFunc *NewFunc (void)
+{
+	return rd_init(&FuncRefType, new_data(&tab_func));
 }

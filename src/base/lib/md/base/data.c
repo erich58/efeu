@@ -2,7 +2,7 @@
 	(c) 1995 Erich Frühstück
 */
 
-#include <EFEU/mdmat.h>
+#include <EFEU/mdeval.h>
 #include <EFEU/printobj.h>
 
 /*	Datenwerte ausgeben
@@ -23,7 +23,7 @@ static void s_end(void *par)
 	io_putc('\n', par);
 }
 
-static void s_data(void *par, Type_t *type, void *ptr, void *base)
+static void s_data(void *par, EfiType *type, void *ptr, void *base)
 {
 	io_putc('\t', par);
 	PrintData(par, type, ptr);
@@ -36,7 +36,7 @@ static void s_data(void *par, Type_t *type, void *ptr, void *base)
 	}
 }
 
-static mdeval_t s_eval = {
+static MdEvalDef s_eval = {
 	NULL, NULL,
 	s_newidx, memfree,
 	s_start,
@@ -48,20 +48,20 @@ static mdeval_t s_eval = {
 /*	Datenwerte generieren
 */
 
-static ObjList_t *idx_list = NULL;
+static EfiObjList *idx_list = NULL;
 
 static void *d_newidx(const void *idx, char *name)
 {
 	if	(idx == NULL)	idx = &idx_list;
 
-	*((ObjList_t **) idx) = NewObjList(str2Obj(mstrcpy(name)));
-	return &(*((ObjList_t **) idx))->next;
+	*((EfiObjList **) idx) = NewObjList(str2Obj(mstrcpy(name)));
+	return &(*((EfiObjList **) idx))->next;
 }
 
 static void d_clridx(void *idx)
 {
-	DelObjList(*((ObjList_t **) idx));
-	*((ObjList_t **) idx) = NULL;
+	DelObjList(*((EfiObjList **) idx));
+	*((EfiObjList **) idx) = NULL;
 }
 
 static void d_start(void *par, const void *idx)
@@ -70,7 +70,7 @@ static void d_start(void *par, const void *idx)
 }
 
 
-static mdeval_t d_eval = {
+static MdEvalDef d_eval = {
 	NULL, NULL,
 	d_newidx, d_clridx,
 	d_start,
@@ -79,15 +79,15 @@ static mdeval_t d_eval = {
 };
 
 
-void *md_SHOW(mdmat_t *md, unsigned mask, unsigned base, int lag);
-void *md_DATA(mdmat_t *md, unsigned mask, unsigned base, int lag);
+void *md_SHOW(mdmat *md, unsigned mask, unsigned base, int lag);
+void *md_DATA(mdmat *md, unsigned mask, unsigned base, int lag);
 
-void *md_SHOW(mdmat_t *md, unsigned mask, unsigned base, int lag)
+void *md_SHOW(mdmat *md, unsigned mask, unsigned base, int lag)
 {
 	return md_eval(&s_eval, iostd, md, mask, base, lag);
 }
 
-void *md_DATA(mdmat_t *md, unsigned mask, unsigned base, int lag)
+void *md_DATA(mdmat *md, unsigned mask, unsigned base, int lag)
 {
 	return md_eval(&d_eval, iostd, md, mask, base, lag);
 }

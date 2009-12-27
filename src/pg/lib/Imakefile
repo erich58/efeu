@@ -3,8 +3,8 @@
 XLIBS=	$(PQLIB) LIB_MD LIB_EFX LIB_EFM
 CFLAGS=	$(PQINC)
 
-DE_DOC=	_EFEU_TOP/doc/de
-EN_DOC=	_EFEU_TOP/doc/en
+DE_DOC=	EFEUROOT/doc/de
+EN_DOC=	EFEUROOT/doc/en
 
 ProvideDocDir($(DE_DOC))
 ProvideDocDir($(EN_DOC))

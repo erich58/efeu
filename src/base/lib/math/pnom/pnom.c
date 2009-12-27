@@ -25,9 +25,9 @@ If not, write to the Free Software Foundation, Inc.,
 #include <Math/pnom.h>
 
 
-Type_t Type_pnom = REF_TYPE("Polynom", pnom_t *);
+EfiType Type_pnom = REF_TYPE("Polynom", Polynom *);
 
-pnom_t *Buf_pnom = NULL;
+Polynom *Buf_pnom = NULL;
 
 #define	REF(ptr)	rd_refer(Val_pnom(ptr))
 
@@ -35,10 +35,10 @@ pnom_t *Buf_pnom = NULL;
 /*	Funktionen
 */
 
-static void PF_create(Func_t *func, void *rval, void **arg)
+static void PF_create(EfiFunc *func, void *rval, void **arg)
 {
-	pnom_t *pn;
-	ObjList_t *list;
+	Polynom *pn;
+	EfiObjList *list;
 	int i;
 
 	Val_pnom(rval) = pnconst(0., Val_double(arg[0]));
@@ -54,25 +54,25 @@ static void PF_create(Func_t *func, void *rval, void **arg)
 }
 
 
-static void PF_load(Func_t *func, void *rval, void **arg)
+static void PF_load(EfiFunc *func, void *rval, void **arg)
 {
 	Val_pnom(rval) = pnload(Val_str(arg[0]));
 }
 
-static void PF_save(Func_t *func, void *rval, void **arg)
+static void PF_save(EfiFunc *func, void *rval, void **arg)
 {
-	register pnom_t *pn = Val_pnom(arg[0]);
+	register Polynom *pn = Val_pnom(arg[0]);
 	pnsave(pn, Val_str(arg[1]));
 	Val_pnom(rval) = pn;
 }
 
-static void PF_print (Func_t *func, void *rval, void **arg)
+static void PF_print (EfiFunc *func, void *rval, void **arg)
 {
 	Val_int(rval) = pnprint(Val_io(arg[1]), Val_pnom(arg[0]),
 		Val_str(arg[2]));
 }
 
-static size_t make_xy(Vec_t *v1, Vec_t *v2, double **x, double **y)
+static size_t make_xy(EfiVec *v1, EfiVec *v2, double **x, double **y)
 {
 	size_t i, dim;
 
@@ -92,7 +92,7 @@ static size_t make_xy(Vec_t *v1, Vec_t *v2, double **x, double **y)
 	return dim;
 }
 
-static void PF_linint (Func_t *func, void *rval, void **arg)
+static void PF_linint (EfiFunc *func, void *rval, void **arg)
 {
 	size_t dim;
 	double *x, *y;
@@ -104,7 +104,7 @@ static void PF_linint (Func_t *func, void *rval, void **arg)
 }
 
 
-static void PF_spline (Func_t *func, void *rval, void **arg)
+static void PF_spline (EfiFunc *func, void *rval, void **arg)
 {
 	size_t dim;
 	double *x, *y;
@@ -116,7 +116,7 @@ static void PF_spline (Func_t *func, void *rval, void **arg)
 }
 
 
-static void PF_dspline (Func_t *func, void *rval, void **arg)
+static void PF_dspline (EfiFunc *func, void *rval, void **arg)
 {
 	size_t dim;
 	double *x, *y;
@@ -128,9 +128,9 @@ static void PF_dspline (Func_t *func, void *rval, void **arg)
 	memfree(y);
 }
 
-static void PF_eval(Func_t *func, void *rval, void **arg)
+static void PF_eval(EfiFunc *func, void *rval, void **arg)
 {
-	ObjList_t *list;
+	EfiObjList *list;
 	double x;
 	int deg;
 
@@ -150,10 +150,10 @@ static void PF_eval(Func_t *func, void *rval, void **arg)
 }
 
 
-static FuncDef_t fdef[] = {
-	{ 0, &Type_pnom, "linint (Vec_t x, Vec_t y)", PF_linint },
-	{ 0, &Type_pnom, "spline (Vec_t x, Vec_t y)", PF_spline },
-	{ 0, &Type_pnom, "dspline (Vec_t x, Vec_t y, double a = 0., double b = 0.)", PF_dspline },
+static EfiFuncDef fdef[] = {
+	{ 0, &Type_pnom, "linint (EfiVec x, EfiVec y)", PF_linint },
+	{ 0, &Type_pnom, "spline (EfiVec x, EfiVec y)", PF_spline },
+	{ 0, &Type_pnom, "dspline (EfiVec x, EfiVec y, double a = 0., double b = 0.)", PF_dspline },
 	{ 0, &Type_pnom, "Polynom (...)", PF_create },
 	{ 0, &Type_pnom, "pnload (str file)", PF_load },
 	{ 0, &Type_pnom, "Polynom::save (str file)", PF_save },

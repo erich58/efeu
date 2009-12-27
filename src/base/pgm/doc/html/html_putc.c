@@ -24,7 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <efeudoc.h>
 #include <ctype.h>
 
-static int html_filter(int c, io_t *io)
+static int html_filter(int c, IO *io)
 {
 	switch (c)
 	{
@@ -39,7 +39,7 @@ static int html_filter(int c, io_t *io)
 	return c;
 }
 
-void HTML_puts (HTML_t *html, const char *str)
+void HTML_puts (HTML *html, const char *str)
 {
 	if	(str)
 	{
@@ -49,14 +49,18 @@ void HTML_puts (HTML_t *html, const char *str)
 }
 
 
-int HTML_plain (HTML_t *html, int c)
+int HTML_plain (void *drv, int c)
 {
+	HTML *html = drv;
+
 	html_filter(c, html->out);
 	return c;
 }
 
-int HTML_putc (HTML_t *html, int c)
+int HTML_putc (void *drv, int c)
 {
+	HTML *html = drv;
+
 	if	(isspace(c) && html->last == '\n')
 		return '\n';
 
@@ -64,7 +68,7 @@ int HTML_putc (HTML_t *html, int c)
 	return c;
 }
 
-void HTML_newline(HTML_t *html, int n)
+void HTML_newline(HTML *html, int n)
 {
 	if	(html->last != '\n')
 		io_putc('\n', html->out);
@@ -75,8 +79,10 @@ void HTML_newline(HTML_t *html, int n)
 		io_putc('\n', html->out);
 }
 
-void HTML_rem (HTML_t *html, const char *cmd)
+void HTML_rem (void *drv, const char *cmd)
 {
+	HTML *html = drv;
+
 	io_puts("<!-- ", html->out);
 	HTML_puts(html, cmd);
 	io_puts(" -->", html->out);
@@ -85,8 +91,9 @@ void HTML_rem (HTML_t *html, const char *cmd)
 		io_putc('\n', html->out);
 }
 
-void HTML_sym (HTML_t *html, const char *name)
+void HTML_sym (void *drv, const char *name)
 {
+	HTML *html = drv;
 	char *sym = DocSym_get(html->symtab, name);
 
 	if	(sym)	io_puts(sym, html->out);

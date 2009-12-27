@@ -1,6 +1,7 @@
 /*
 Bitfield - Datenstrukturen generieren
 
+$Header	<$1>
 $Copyright (C) 1995 Erich Frühstück
 This file is part of EFEU.
 
@@ -24,20 +25,21 @@ If not, write to the Free Software Foundation, Inc.,
 #define	bitfield_ms	1
 
 #include <macro.ms>
+#include <DataType.ms>
 
-struct BitfieldVar {
+static struct BitfieldVar {
 	int size;	/* Variablenlänge */
 	str name;	/* Variablenname */
 	str desc;	/* Beschreibungstext */
 };
 
-BitfieldVar BitfieldVar (int size, str name, str desc)
+static BitfieldVar BitfieldVar (int size, str name, str desc)
 	return { size, name, desc }
 
-BitfieldVar BitfieldVar (int size, int num)
+static BitfieldVar BitfieldVar (int size, int num)
 	BitfieldVar (size, sprintf("_D%d", num), "Ausrichtungsdummy");
 
-void BitfieldVar::typeline(IO io)
+static void BitfieldVar::typeline(IO io)
 {
 	fprintf(io, "\tunsigned %s : %d;", name, size)
 
@@ -47,7 +49,36 @@ void BitfieldVar::typeline(IO io)
 }
 
 
-/*	Sourcefile öffnen und Strukturdefinition laden
+/*
+:*:The function |$1| creates a bitfield data type and accordingly macros
+for use in context of EFEU.
+:de:Die Funktion |$1| generiert eine Bitfeldstruktur.
+Dabei gibt <Name> den Namen der Struktur, <Def> eine Eingabestruktur
+mit Variablendefinitionen und <Desc> eine Kurzbezeichnung
+der Struktur an.
+
+Eine Definitionszeile in der Eingabestruktur hat die Gestalt:
+	Bitlänge Name Beschreibungstext
+
+Die Struktur wird unter dem Namen <Name> generiert.
+Zur Ausrichtung auf ganze Wörter (32 Bit) werden bei Bedarf
+Dummyvariablen eingeführt.
+
+Neben der Strukturdefinition werden die folgenden Makros definiert:
+[<name>|_size|]
+	gibt die Bytelänge der Struktur an
+[<name>|_recl|]
+	gibt die für die binäre Ein/Ausgabe verwendete
+	Satzlänge an. Diese kann kleiner als <name>|_recl| sein.
+[<name><|_read(<io>, <data>, <dim>)|>]
+	liest <dim> Datensätze aus <io> in den Buffer <data>.
+[<name><|_write(<io>, <data>, <dim>)|>]
+	gibt <dim> Datensätze des Buffers <data> nach <io> aus.
+[<name><|_clear(<data>, <dim>)|>]
+	setzt den Datenbuffer <buf> mit <dim> Elementen auf 0.
+
+Die Funktion |$1| generiert nur Headerdefinitionen, es werden
+keine Sourcezeilen ausgegeben.
 */
 
 void Bitfield(str Name, str Desc, IO Def, bool flag = true)
@@ -105,6 +136,8 @@ void Bitfield(str Name, str Desc, IO Def, bool flag = true)
 	}
 	else	unused = 0;
 
+	DataType type = DataType(Name, NULL);
+
 /*	Header ausgeben
 */
 	IO io = flag ? hdr : src;
@@ -124,26 +157,40 @@ void Bitfield(str Name, str Desc, IO Def, bool flag = true)
 
 	io << "#endif\n";
 
-	fpsub(io, "} $1_t;\n\n");
-	Macro(io, "$1_recl", NULL, sprintf("%d", recl));
-	Macro(io, "$1_size", NULL, "sizeof($1_t)");
-	io << "\n";
-	Macro(io, "$1_read", "io, data, dim",
-		"io_dbread(io, data, $1_recl, $1_size, dim)");
-	Macro(io, "$1_write", "io, data, dim",
-		"io_dbwrite(io, data, $1_recl, $1_size, dim)");
-	Macro(io, "$1_clear", "data, dim",
-		"memset(data, 0, (dim) * $1_size)");
-	io << "\n";
+	fpsub(io, "} $1;\n\n", Name);
+
+	type.dt_recl = sprintf("%d", recl);
+	type.write();
 
 /*	Dokumentation ausgeben
 */
-	fpsub(info, "@$1_t:$2\n");
+	fpsub(info, "@$1:$2\n", Name, Desc);
 
 	for (x in db)
 		fprintf(info, "unsigned %s : %d\t%s\n", x.name, x.size, x.desc)
 
 	info << '\n';
 }
+
+/*
+$Example
+Das folgende Beispiel zeigt die Definition einer einfachen
+Bitfeldstruktur:
+
+\ms_example
+config hdr src
+
+#include <bitfield.ms>
+
+Bitfield("foo", "Test", string !
+12	x	Variable 1
+8	y	Variable 2
+4	z	Variable 3
+!);
+\end
+
+$SeeAlso
+\mref{mksource(1)}, \mref{DataType(7)}.
+*/
 
 #endif	/* bitfield.ms */

@@ -1,0 +1,5 @@
+Destination(TEXMF,$(EFEUTOP)/share/texmf)
+Destination(TEXDIR,$(TEXMF)/tex/latex/misc)
+
+all::
+	-texhash $(TEXMF)

@@ -1,0 +1,48 @@
+%	Briefkopf
+%	(c) 1991 Erich Fruehstueck
+%	A-1090 Wien, Waehringer Strasse 64/6
+
+\newfont{\L@fonda}{cmss17 scaled \magstep2}
+\newfont{\L@fondb}{cmss12}
+\newfont{\L@fondc}{cmss8}
+
+\newbox\L@tmpboxa
+\newbox\L@tmpboxb
+\newbox\L@tmpboxc
+\newbox\L@tmpboxd
+\newbox\L@tmpboxe
+
+\def\L@name{\L@fonda Erich Fr\"uhst\"uck}
+\def\L@addressa{\L@fondb W\"ahringer Stra\ss e 64/6}
+\def\L@addressb{\L@fondc 1090 Wien\hfill$\ast$\hfill (0222) 319 12 27}
+
+\def\letterhead{\@ifstar{\@sletterhead}{\@sletterhead{\hsize}}}
+
+\def\@sletterhead#1{\@ifnextchar [{\@letterhead{#1}}{\@letterhead{#1}[c]}}
+
+\def\@letterhead#1[#2]{%
+	\setbox\L@tmpboxa=\hbox{\L@name}%
+	\setbox\L@tmpboxb=\hbox{\L@addressa}%
+	\setbox\L@tmpboxc=\hbox to \wd\L@tmpboxb {\L@addressb}%
+	\setbox\L@tmpboxd=\vbox spread 4pt {\vss\box\L@tmpboxa\vss}%
+	\setbox\L@tmpboxe=\vbox to \ht\L@tmpboxd {%
+		\box\L@tmpboxb\vss\box\L@tmpboxc
+	}%
+	\vbox to 0pt {%
+		\if #2t\relax\else\vss\fi
+		\hrule height 1pt
+		\vskip 4pt
+		\hbox to #1 {%
+			\box\L@tmpboxd \hfill \box\L@tmpboxe
+		}%
+		\vskip 2pt
+		\hrule height 1pt
+		\if #2b\relax\else\vss\fi
+	}%
+}%
+
+\def\ps@letterhead{\def\@oddhead{\letterhead[c]}
+	\let\@evenhead\@oddhead
+	\def\@oddfoot{}
+	\let\@evenfoot\@oddfoot
+}

@@ -23,10 +23,12 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 
 
-static ALLOCTAB(deftab, 0, sizeof(Var_t));
+static ALLOCTAB(deftab, 0, sizeof(EfiVar));
 
-static void data_clean (Var_t *var)
+static void data_clean (void *data)
 {
+	EfiVar *var = data;
+
 	if	(var->type && var->data)
 	{
 		if	(var->dim)
@@ -38,12 +40,12 @@ static void data_clean (Var_t *var)
 	memfree((char *) var->name);
 }
 
-Var_t *NewVar (Type_t *type, const char *name, size_t dim)
+EfiVar *NewVar (EfiType *type, const char *name, size_t dim)
 {
-	Var_t *var;
+	EfiVar *var;
 
 	var = new_data(&deftab);
-	memset(var, 0, sizeof(Var_t));
+	memset(var, 0, sizeof(EfiVar));
 	var->name = mstrcpy(name);
 	var->type = type;
 	var->dim = dim;
@@ -52,7 +54,7 @@ Var_t *NewVar (Type_t *type, const char *name, size_t dim)
 	{
 		dim = dim ? dim : 1;
 		var->data = memalloc(type->size * dim);
-		var->clean = (clean_t) data_clean;
+		var->clean = data_clean;
 
 		if	(type->defval)
 		{
@@ -71,21 +73,22 @@ Var_t *NewVar (Type_t *type, const char *name, size_t dim)
 	return var;
 }
 
-static void ovar_clean (Var_t *var)
+static void ovar_clean (void *data)
 {
+	EfiVar *var = data;
 	memfree((char *) var->name);
 	memfree((char *) var->desc);
 	UnrefObj(var->par);
 }
 
-static Obj_t *ovar_get (const Var_t *var, const Obj_t *obj)
+static EfiObj *ovar_get (const EfiVar *var, const EfiObj *obj)
 {
 	return RefObj(var->par);
 }
 
-Var_t *Obj2Var (const char *name, Obj_t *obj)
+EfiVar *Obj2Var (const char *name, EfiObj *obj)
 {
-	Var_t *var;
+	EfiVar *var;
 
 	if	(!obj)	return NULL;
 
@@ -95,11 +98,11 @@ Var_t *Obj2Var (const char *name, Obj_t *obj)
 	var->member = ovar_get;
 	var->par = obj;
 	var->desc = NULL;
-	var->clean = (clean_t) ovar_clean;
+	var->clean = ovar_clean;
 	return var;
 }
 
-void DelVar (Var_t *var)
+void DelVar (EfiVar *var)
 {
 	if	(var == NULL)		return;
 

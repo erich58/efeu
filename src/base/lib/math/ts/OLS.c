@@ -1,5 +1,6 @@
 /*
-Regression durchführen
+:*:calculate OLS regression
+:de:OLS Regression durchführen
 
 $Copyright (C) 1997 Erich Frühstück
 This file is part of EFEU.
@@ -28,10 +29,10 @@ If not, write to the Free Software Foundation, Inc.,
 typedef struct {
 	char *name;
 	double *data;
-	TimeSeries_t *ts;
-	TimeIndex_t base;
+	TimeSeries *ts;
+	TimeIndex base;
 	int dim;
-} Extern_t;
+} Exogen;
 
 static double DurbinWatson (double *x, size_t nr)
 {
@@ -54,11 +55,11 @@ static double DurbinWatson (double *x, size_t nr)
 	return dw / s;
 }
 
-static void SetExtern(Extern_t *ext, Type_t *type, void *data)
+static void Exogen_set(Exogen *ext, EfiType *type, void *data)
 {
 	if	(type == &Type_TimeSeries)
 	{
-		TimeSeries_t *ts = Val_TimeSeries(data);
+		TimeSeries *ts = Val_TimeSeries(data);
 
 		if	(ts != NULL)
 		{
@@ -74,11 +75,11 @@ static void SetExtern(Extern_t *ext, Type_t *type, void *data)
 	ext->ts = NULL;
 	ext->name = NULL;
 	ext->data = NULL;
-	ext->base = TimeIndex(TS_INDEX, 0);
+	ext->base = tindex_create(TS_INDEX, 0);
 	ext->dim = 0;
 }
 
-static void SyncExtern (Extern_t *ext, int value)
+static void Exogen_sync (Exogen *ext, int value)
 {
 	int n = value - (int) ext->base.value;
 
@@ -96,7 +97,7 @@ static void SyncExtern (Extern_t *ext, int value)
 	}
 }
 
-static int MakeExtern (ObjList_t *list, Extern_t **ptr)
+static int Exogen_create (EfiObjList *list, Exogen **ptr)
 {
 	int dim;
 	int i;
@@ -109,20 +110,20 @@ static int MakeExtern (ObjList_t *list, Extern_t **ptr)
 		return 0;
 	}
 
-	*ptr = memalloc(dim * sizeof(Extern_t));
+	*ptr = memalloc(dim * sizeof(Exogen));
 
 	for (i = 0; list != NULL; list = list->next, i++)
 	{
-		Obj_t *obj;
+		EfiObj *obj;
 
 		obj = EvalObj(RefObj(list->obj), NULL);
 
 		if	(obj)
 		{
-			SetExtern(*ptr + i, obj->type, obj->data);
+			Exogen_set(*ptr + i, obj->type, obj->data);
 			UnrefObj(obj);
 		}
-		else	SetExtern(*ptr + i, NULL, NULL);
+		else	Exogen_set(*ptr + i, NULL, NULL);
 
 		if	((*ptr)[i].name == NULL)
 			(*ptr)[i].name = msprintf("x%d", i + 1);
@@ -131,29 +132,29 @@ static int MakeExtern (ObjList_t *list, Extern_t **ptr)
 	return dim;
 }
 
-static double *get_data(TimeSeries_t *ts, unsigned base)
+static double *get_data(TimeSeries *ts, unsigned base)
 {
 	return ts->data + (base - ts->base.value);
 }
 
-void Func_OLS (Func_t *func, void *rval, void **arg)
+void Func_OLS (EfiFunc *func, void *rval, void **arg)
 {
-	OLSPar_t *par;
-	TimeIndex_t base, first, last;
-	Extern_t y;
-	Extern_t *ext;
+	OLSPar *par;
+	TimeIndex base, first, last;
+	Exogen y;
+	Exogen *ext;
 	double *z, *p, *yb, *res;
 	double ym, ys, x, sigma;
 	int i, j, k;
 	int nr, df, dim;
 
 	Val_OLSPar(rval) = NULL;
-	SetExtern(&y, func->arg[0].type, arg[0]);
-	dim = MakeExtern(Val_list(arg[1]), &ext);
+	Exogen_set(&y, func->arg[0].type, arg[0]);
+	dim = Exogen_create(Val_list(arg[1]), &ext);
 
 	if	(dim == 0)
 	{
-		errmsg(MSG_TS, 31);
+		dbg_note(NULL, "[TimeSeries:31]", NULL);
 		memfree(ext);
 		return;
 	}
@@ -169,7 +170,7 @@ void Func_OLS (Func_t *func, void *rval, void **arg)
 	{
 		if	(ext[i].base.type != base.type)
 		{
-			errmsg(MSG_TS, 32);
+			dbg_note(NULL, "[TimeSeries:32]", NULL);
 			memfree(ext);
 			return;
 		}
@@ -184,12 +185,12 @@ void Func_OLS (Func_t *func, void *rval, void **arg)
 			last.value = ext[i].base.value + ext[i].dim - 1;
 	}
 
-	SyncExtern(&y, base.value);
+	Exogen_sync(&y, base.value);
 	nr = y.dim;
 
 	for (i = 0; i < dim; i++)
 	{
-		SyncExtern(ext + i, base.value);
+		Exogen_sync(ext + i, base.value);
 
 		if	(nr > ext[i].dim)
 			nr = ext[i].dim;
@@ -197,7 +198,7 @@ void Func_OLS (Func_t *func, void *rval, void **arg)
 
 	if	(nr < dim)
 	{
-		errmsg(MSG_TS, 33);
+		dbg_note(NULL, "[TimeSeries:33]", NULL);
 		memfree(ext);
 		return;
 	}
@@ -224,7 +225,7 @@ void Func_OLS (Func_t *func, void *rval, void **arg)
 
 	if	(GaussJordan(z, dim) != dim)
 	{
-		errmsg(MSG_TS, 34);
+		dbg_note(NULL, "[TimeSeries:34]", NULL);
 		memfree(ext);
 		memfree(z);
 		return;
@@ -232,7 +233,7 @@ void Func_OLS (Func_t *func, void *rval, void **arg)
 
 /*	Koeffizienten berechnen
 */
-	par = NewOLSPar(dim);
+	par = OLSPar_create(dim);
 	par->nr = nr;
 	par->df = df;
 	par->base = base;
@@ -282,8 +283,7 @@ void Func_OLS (Func_t *func, void *rval, void **arg)
 
 /*	Residuen und Streuungsquadratsumme
 */
-	par->res = NewTimeSeries(mstrcpy(y.name), first,
-		last.value - first.value + 1);
+	par->res = ts_create(y.name, first, last.value - first.value + 1);
 	res = get_data(par->res, base.value);
 	sigma = 0.;
 
@@ -327,11 +327,11 @@ void Func_OLS (Func_t *func, void *rval, void **arg)
 }
 
 
-void Func_OLSProj (Func_t *func, void *rval, void **arg)
+void Func_OLSProj (EfiFunc *func, void *rval, void **arg)
 {
-	TimeSeries_t *ts;
-	TimeIndex_t idx;
-	OLSPar_t *par;
+	TimeSeries *ts;
+	TimeIndex idx;
+	OLSPar *par;
 	double **data, *res;
 	int i, j, nr;
 
@@ -341,12 +341,12 @@ void Func_OLSProj (Func_t *func, void *rval, void **arg)
 		return;
 
 	idx = func->dim > 1 ? Val_TimeIndex(arg[1]) : par->first;
-	i = nr = DiffTimeIndex(idx, par->last) + 1;
+	i = nr = tindex_diff(idx, par->last) + 1;
 
 	if	(func->dim > 2)
 	{
 		if	(func->arg[2].type == &Type_TimeIndex)
-			i = DiffTimeIndex(idx, Val_TimeIndex(arg[2])) + 1;
+			i = tindex_diff(idx, Val_TimeIndex(arg[2])) + 1;
 		else if	(func->arg[2].type == &Type_int)
 			i = Val_int(arg[2]);
 
@@ -361,7 +361,7 @@ void Func_OLSProj (Func_t *func, void *rval, void **arg)
 		data[j] = get_data(par->exogen[j], idx.value);
 
 	res = get_data(par->res, idx.value);
-	ts = NewTimeSeries(NULL, idx, nr);
+	ts = ts_create(NULL, idx, nr);
 
 	for (i = 0; i < nr; i++)
 	{
@@ -374,4 +374,5 @@ void Func_OLSProj (Func_t *func, void *rval, void **arg)
 	}
 
 	Val_TimeSeries(rval) = ts;
+	memfree(data);
 }

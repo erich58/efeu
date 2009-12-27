@@ -24,15 +24,15 @@ If not, write to the Free Software Foundation, Inc.,
 #include <Math/pnom.h>
 
 
-pnom_t *pnread(FILE *file)
+Polynom *pnread(FILE *file)
 {
-	pnom_t *p;
+	Polynom *p;
 	int n, k;
 	int i, j;
 
 	if	(fscanf(file, "%d%d", &n, &k) != 2)
 	{
-		liberror(PNOM, 11);
+		dbg_error(NULL, "[pnom:11]", NULL);
 	}
 
 	p = pnalloc((size_t) n, (size_t) k);
@@ -41,14 +41,14 @@ pnom_t *pnread(FILE *file)
 	{
 		if	(fscanf(file, "%lf", p->x + i) != 1)
 		{
-			liberror(PNOM, 11);
+			dbg_error(NULL, "[pnom:11]", NULL);
 		}
 
 		for (j = 0; j <= k; ++j)
 		{
 			if	(fscanf(file, "%lf", p->c[i] + j) != 1)
 			{
-				liberror(PNOM, 11);
+				dbg_error(NULL, "[pnom:11]", NULL);
 			}
 		}
 	}

@@ -25,6 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 #ifndef	EFEU_Debug_h
 #define	EFEU_Debug_h	1
 
+#include <EFEU/Resource.h>
 #include <EFEU/ArgList.h>
 #include <EFEU/io.h>
 
@@ -40,17 +41,25 @@ If not, write to the Free Software Foundation, Inc.,
 extern int DebugKey (const char *name);
 extern char *DebugLabel (int type);
 extern void DebugMode (const char *def);
-extern FILE *LogFile (const char *class, int level);
+extern FILE *LogFile (const char *cl, int level);
 extern FILE *ParseLogFile (const char *def);
-extern io_t *LogOut (const char *class, int level);
-extern io_t *ParseLogOut (const char *def);
-
-extern void Message (const char *class, int level,
-	const char *fmt, ArgList_t *args);
-extern void VMessage (const char *class, int level,
-	const char *fmt, int narg, ...);
+extern IO *LogOut (const char *cl, int level);
+extern IO *ParseLogOut (const char *def);
 
 extern int DebugChangeCount;
+
+extern char *FormatTabEntry (const char *name, const char *key);
+extern void FormatTabLoad (IO *io, const char *name, int endkey);
+extern void FormatTabShow (IO *io, const char *name, const char *fmt);
+
+void dbg_psub (const char *cl, int level, const char *fmt,
+	ArgList *list);
+void dbg_vpsub (const char *cl, int level, const char *fmt,
+	char *id, const char *argdef, va_list);
+void dbg_message (const char *cl, int level, const char *fmt,
+	char *id, const char *argdef, ...);
+void dbg_error (const char *cl, const char *fmt, const char *argdef, ...);
+void dbg_note (const char *cl, const char *fmt, const char *argdef, ...);
 
 /*
 $SeeAlso

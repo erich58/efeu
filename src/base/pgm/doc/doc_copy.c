@@ -24,14 +24,14 @@ If not, write to the Free Software Foundation, Inc.,
 #include <ctype.h>
 
 
-static void copy_verb (Doc_t *doc, io_t *in)
+static void copy_verb (Doc *doc, IO *in)
 {
 	Doc_hmode(doc);
 	doc->env.cpos += DocVerb(in, doc->out);
 }
 
 /*
-void Doc_psub (Doc_t *doc, io_t *in)
+void Doc_psub (Doc *doc, IO *in)
 {
 	char *p = DocParseExpr(in);
 	Doc_eval(doc, in, p);
@@ -39,9 +39,9 @@ void Doc_psub (Doc_t *doc, io_t *in)
 }
 */
 
-static char *copy_item (Doc_t *doc, io_t *in, int beg, int end)
+static char *copy_item (Doc *doc, IO *in, int beg, int end)
 {
-	strbuf_t *buf = new_strbuf(0);
+	StrBuf *buf = new_strbuf(0);
 	int depth, c;
 	
 	doc->indent++;
@@ -94,7 +94,7 @@ static char *copy_item (Doc_t *doc, io_t *in, int beg, int end)
 	return sb2mem(buf);
 }
 
-void Doc_sig (Doc_t *doc, int sig, io_t *in)
+void Doc_sig (Doc *doc, int sig, IO *in)
 {
 	int c = io_peek(in);
 
@@ -110,7 +110,7 @@ void Doc_sig (Doc_t *doc, int sig, io_t *in)
 }
 
 
-void Doc_minus (Doc_t *doc, io_t *in)
+void Doc_minus (Doc *doc, IO *in)
 {
 	if	(io_peek(in) == '-')
 	{
@@ -126,7 +126,7 @@ void Doc_minus (Doc_t *doc, io_t *in)
 	else	Doc_sig (doc, '-', in);
 }
 
-static int doc_space (Doc_t *doc, int c)
+static int doc_space (Doc *doc, int c)
 {
 	switch (c)
 	{
@@ -158,7 +158,7 @@ static int doc_space (Doc_t *doc, int c)
 	}
 }
 
-void Doc_key (Doc_t *doc, io_t *in, int c)
+void Doc_key (Doc *doc, IO *in, int c)
 {
 	switch (c)
 	{
@@ -179,7 +179,7 @@ void Doc_key (Doc_t *doc, io_t *in, int c)
 	}
 }
 
-void Doc_xcopy (Doc_t *doc, io_t *in, int delim)
+void Doc_xcopy (Doc *doc, IO *in, int delim)
 {
 	int c;
 
@@ -202,7 +202,7 @@ void Doc_xcopy (Doc_t *doc, io_t *in, int delim)
 	}
 }
 
-static int input_mark(io_t *in)
+static int input_mark(IO *in)
 {
 	int n, c;
 
@@ -221,7 +221,7 @@ static int input_mark(io_t *in)
 	else	return 1;
 }
 
-void Doc_copy (Doc_t *doc, io_t *in)
+void Doc_copy (Doc *doc, IO *in)
 {
 	int c;
 
@@ -302,16 +302,16 @@ void Doc_copy (Doc_t *doc, io_t *in)
 	}
 }
 
-void Doc_scopy (Doc_t *doc, const char *str)
+void Doc_scopy (Doc *doc, const char *str)
 {
-	io_t *in = io_cstr(str);
+	IO *in = io_cstr(str);
 	Doc_copy(doc, in);
 	io_close(in);
 }
 
-void Doc_mcopy (Doc_t *doc, char *str)
+void Doc_mcopy (Doc *doc, char *str)
 {
-	io_t *in = io_mstr(str);
+	IO *in = io_mstr(str);
 	Doc_copy(doc, in);
 	io_close(in);
 }

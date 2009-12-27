@@ -26,11 +26,13 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	VBSIZE	32
 
+#define	E_MAGIC	"[efmain:ppm]$!: $0: invalid header in pixmap file.\n"
+
 static int color_maxval = 255;
 static double color_scale = 1.;
 
 
-static int get_val (io_t *io)
+static int get_val (IO *io)
 {
 	static char buf[VBSIZE];
 	int pos;
@@ -62,7 +64,7 @@ static int get_val (io_t *io)
 /*	Bitmapfile
 */
 
-static int pbm_color(io_t *io)
+static int pbm_color(IO *io)
 {
 	for (;;)
 	{
@@ -76,19 +78,19 @@ static int pbm_color(io_t *io)
 	}
 }
 
-static void load_pbm (io_t *io, Pixmap_t *pix)
+static void load_pbm (IO *io, EPixmap *pix)
 {
 	size_t n;
-	uchar_t *p;
+	unsigned char *p;
 
 	for (p = pix->data, n = pix->rows * pix->cols; n-- > 0; p += 3)
 		p[0] = p[1] = p[2] = pbm_color(io);
 }
 
-static void load_pbmraw (io_t *io, Pixmap_t *pix)
+static void load_pbmraw (IO *io, EPixmap *pix)
 {
 	size_t i, j, k, data;
-	uchar_t *p;
+	unsigned char *p;
 
 	data = 0;
 	p = pix->data;
@@ -111,19 +113,19 @@ static void load_pbmraw (io_t *io, Pixmap_t *pix)
 /*	Graustufenfile
 */
 
-static void load_pgm (io_t *io, Pixmap_t *pix)
+static void load_pgm (IO *io, EPixmap *pix)
 {
 	size_t n;
-	uchar_t *p;
+	unsigned char *p;
 
 	for (p = pix->data, n = pix->rows * pix->cols; n-- > 0; p += 3)
 		p[0] = p[1] = p[2] = color_scale * get_val(io) + 0.5;
 }
 
-static void load_pgmraw (io_t *io, Pixmap_t *pix)
+static void load_pgmraw (IO *io, EPixmap *pix)
 {
 	size_t n;
-	uchar_t *p;
+	unsigned char *p;
 
 	for (p = pix->data, n = pix->rows * pix->cols; n-- > 0; p += 3)
 		p[0] = p[1] = p[2] = color_scale * io_getc(io) + 0.5;
@@ -133,39 +135,39 @@ static void load_pgmraw (io_t *io, Pixmap_t *pix)
 /*	Farbdatei
 */
 
-static void load_ppm (io_t *io, Pixmap_t *pix)
+static void load_ppm (IO *io, EPixmap *pix)
 {
 	size_t n;
-	uchar_t *p;
+	unsigned char *p;
 
 	for (p = pix->data, n = pix->rows * pix->cols * 3; n-- > 0; p++)
 		*p = color_scale * get_val(io) + 0.5;
 }
 
-static void load_ppmraw (io_t *io, Pixmap_t *pix)
+static void load_ppmraw (IO *io, EPixmap *pix)
 {
 	io_dbread(io, pix->data, 1, 1, pix->rows * pix->cols * 3);
 
 	if	(color_maxval != 255)
 	{
 		size_t n = pix->rows * pix->cols * 3;
-		uchar_t *p = pix->data;
+		unsigned char *p = pix->data;
 
 		for (; n-- > 0; p++)
 			*p = color_scale * *p + 0.5;
 	}
 }
 
-Pixmap_t *LoadPixmap (io_t *io)
+EPixmap *LoadPixmap (IO *io)
 {
-	Pixmap_t *pix;
+	EPixmap *pix;
 	size_t rows, cols;
-	void (*load) (io_t *io, Pixmap_t *pix); 
+	void (*load) (IO *io, EPixmap *pix); 
 	int flag;
 
 	if	(io_getc(io) != 'P')
 	{
-		io_error(io, NULL, 1, 0);
+		io_error(io, E_MAGIC, NULL);
 		return NULL;
 	}
 
@@ -177,7 +179,7 @@ Pixmap_t *LoadPixmap (io_t *io)
 	case '4':	load = load_pbmraw; flag = 0; break;
 	case '5':	load = load_pgmraw; flag = 1; break;
 	case '6':	load = load_ppmraw; flag = 1; break;
-	default:	io_error(io, NULL, 1, 0); return NULL;
+	default:	io_error(io, E_MAGIC, NULL); return NULL;
 	}
 
 	rows = cols = 0;

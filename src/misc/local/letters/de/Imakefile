@@ -1,0 +1,7 @@
+Destination(DE,$(DATA)/de)
+LinkImage($(DE)/A,Anneliese.gif,Anneliese.gif)
+LinkImage($(DE)/E,Erich.gif,Erich.gif)
+LinkImage($(DE)/L,Liselotte.gif,Liselotte.gif)
+LinkImage($(DE)/U,Ulrich.gif,Ulrich.gif)
+LinkImage($(DE)/P,Der_Pauli.gif,Pauli.gif)
+LinkImage($(DE)/W,Der_Wuffi.gif,Wuffi.gif)

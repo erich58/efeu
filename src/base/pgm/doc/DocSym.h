@@ -36,17 +36,17 @@ If not, write to the Free Software Foundation, Inc.,
 typedef struct {
 	char *key;	/* Symbolkennung */
 	char *fmt;	/* Symbolformat */
-} DocSymEntry_t;
+} DocSymEntry;
 
 typedef struct {
-	strbuf_t buf;	/* Stringbuffer */
+	StrBuf buf;	/* Stringbuffer */
 	size_t dim;	/* Zahl der Einträge */
-	DocSymEntry_t *tab;	/* Symbolvektor */
-} DocSym_t;
+	DocSymEntry *tab;	/* Symbolvektor */
+} DocSym;
 
-DocSym_t *DocSym (const char *name);
-int DocSym_print (io_t *io, DocSym_t *sym);
-char *DocSym_get (DocSym_t *sym, const char *name);
-void DocSym_free (DocSym_t *sym);
+DocSym *DocSym_load (const char *name);
+int DocSym_print (IO *io, DocSym *sym);
+char *DocSym_get (DocSym *sym, const char *name);
+void DocSym_free (DocSym *sym);
 
 #endif	/* DocSym.h */

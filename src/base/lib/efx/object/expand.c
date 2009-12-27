@@ -23,9 +23,9 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 
 
-ObjList_t *Expand_vec (Type_t *type, const void *data, size_t dim)
+EfiObjList *Expand_vec (EfiType *type, const void *data, size_t dim)
 {
-	ObjList_t *list, **ptr;
+	EfiObjList *list, **ptr;
 
 	list = NULL;
 	ptr = &list;
@@ -41,7 +41,7 @@ ObjList_t *Expand_vec (Type_t *type, const void *data, size_t dim)
 }
 
 
-void Assign_vec (Type_t *type, void *data, size_t dim, const ObjList_t *list)
+void Assign_vec (EfiType *type, void *data, size_t dim, const EfiObjList *list)
 {
 	while (list != NULL && dim != 0)
 	{
@@ -52,16 +52,16 @@ void Assign_vec (Type_t *type, void *data, size_t dim, const ObjList_t *list)
 	}
 
 	if	(list != NULL)
-		errmsg(MSG_EFMAIN, 138);
+		dbg_note(NULL, "[efmain:138]", NULL);
 }
 
 
-void Struct2List (Func_t *func, void *rval, void **arg)
+void Struct2List (EfiFunc *func, void *rval, void **arg)
 {
-	ObjList_t *list, **ptr;
-	Var_t *st;
+	EfiObjList *list, **ptr;
+	EfiVar *st;
 	const char *p;
-	Obj_t *obj;
+	EfiObj *obj;
 	char *data;
 
 	list = NULL;
@@ -88,12 +88,12 @@ void Struct2List (Func_t *func, void *rval, void **arg)
 }
 
 
-void List2Struct (Func_t *func, void *rval, void **arg)
+void List2Struct (EfiFunc *func, void *rval, void **arg)
 {
-	ObjList_t *list;
-	Var_t *st;
+	EfiObjList *list;
+	EfiVar *st;
 	char *p;
-	Obj_t *obj;
+	EfiObj *obj;
 
 	st = func->type->list;
 	list = Val_list(arg[0]);

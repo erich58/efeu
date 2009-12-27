@@ -34,19 +34,19 @@ char *DocName = NULL;
 char *Secnum = NULL;
 char *IncFmt = NULL;
 
-VarDef_t globvar[] = {
+EfiVarDef globvar[] = {
 	{ "DocName", &Type_str, &DocName },
 	{ "Secnum",	&Type_str, &Secnum },
 	{ "IncFmt",	&Type_str, &IncFmt },
 };
 
 
-static void f_list (Func_t *func, void *rval, void **arg)
+static void f_list (EfiFunc *func, void *rval, void **arg)
 {
 	S2DMode_list(Val_io(arg[0]));
 }
 
-static FuncDef_t fdef[] = {
+static EfiFuncDef fdef[] = {
 	{ FUNC_VIRTUAL, &Type_void, "ListMode (IO io = iostd)", f_list },
 };
 
@@ -56,13 +56,13 @@ static FuncDef_t fdef[] = {
 
 int main (int narg, char **arg)
 {
-	io_t *ein;
-	io_t *aus;
+	IO *ein;
+	IO *aus;
 	char *Name;
 	char *Mode;
-	S2DEval_t eval;
+	S2DEval eval;
 
-	SetVersion("$Id: src2doc.c,v 1.11 2001-11-06 13:21:20 ef Exp $");
+	SetVersion("$Id: src2doc.c,v 1.17 2002-12-20 17:50:19 ef Exp $");
 	SetProgName(arg[0]);
 	SetupStd();
 	SetupReadline();
@@ -70,27 +70,21 @@ int main (int narg, char **arg)
 	AddFuncDef(fdef, tabsize(fdef));
 	ParseCommand(&narg, arg);
 
+	if	(DocName && DocName[0] == 0)
+	{
+		memfree(DocName);
+		DocName = NULL;
+	}
+
 	Name = GetResource("Name", NULL);
 	Mode = GetResource("Mode", NULL);
 	eval = Mode ? S2DMode_get(Mode) : S2DName_get(DocName);
 
 	if	(eval == NULL)
-	{
-		message(NULL, NULL, 1, 1, Mode);
-		exit(EXIT_FAILURE);
-	}
+		dbg_error(NULL, "[1]", "s", Mode);
 
-	if	(!Name && DocName)
-	{
-		fname_t *fn = strtofn(DocName);
-
-		if	(fn)
-		{
-			fn->path = NULL;
-			Name = fntostr(fn);
-			memfree(fn);
-		}
-	}
+	if	(!Name) 
+		Name = mbasename(DocName, NULL);
 
 	ein = DocName ? io_fileopen(DocName, "rzd") :
 		io_interact(NULL, "s2d_hist");

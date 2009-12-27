@@ -29,14 +29,14 @@ If not, write to the Free Software Foundation, Inc.,
 /*	Abbruch von Schleifen
 */
 
-static Obj_t *do_break(void *ptr, const ObjList_t *list)
+static EfiObj *do_break(void *ptr, const EfiObjList *list)
 {
 	CmdEval_stat = (int) (size_t) ptr;
 	return NULL;
 }
 
 
-Obj_t *PFunc_break(io_t *io, void *data)
+EfiObj *PFunc_break(IO *io, void *data)
 {
 	return Obj_call(do_break,
 		(void *) (size_t) (data ? CmdEval_Cont : CmdEval_Break), NULL);
@@ -46,9 +46,9 @@ Obj_t *PFunc_break(io_t *io, void *data)
 /*	Beenden eines Funktionsaufrufes
 */
 
-static Obj_t *do_return(void *ptr, const ObjList_t *list)
+static EfiObj *do_return(void *ptr, const EfiObjList *list)
 {
-	Obj_t *x;
+	EfiObj *x;
 
 	UnrefObj(CmdEval_retval);
 	x = list ? EvalObj(RefObj(list->obj), NULL) : NULL;
@@ -65,7 +65,7 @@ static Obj_t *do_return(void *ptr, const ObjList_t *list)
 }
 
 
-Obj_t *PFunc_return(io_t *io, void *data)
+EfiObj *PFunc_return(IO *io, void *data)
 {
 	return Obj_call(do_return, NULL, NewObjList(Parse_term(io, 0)));
 }
@@ -74,30 +74,30 @@ Obj_t *PFunc_return(io_t *io, void *data)
 /*	Blockstruktur
 */
 
-static Obj_t *e_block (const Type_t *st, const void *ptr);
-static void d_block (const Type_t *st, void *tg);
-static void c_block (const Type_t *st, void *tg, const void *source);
-Type_t Type_block = EVAL_TYPE("_Block_", Block_t, e_block, d_block, c_block);
+static EfiObj *e_block (const EfiType *st, const void *ptr);
+static void d_block (const EfiType *st, void *tg);
+static void c_block (const EfiType *st, void *tg, const void *source);
+EfiType Type_block = EVAL_TYPE("_Block_", EfiBlock, e_block, d_block, c_block);
 
 
-static void d_block(const Type_t *st, void *tg)
+static void d_block(const EfiType *st, void *tg)
 {
-	DelVarTab(((Block_t *) tg)->tab);
-	DelObjList(((Block_t *) tg)->list);
-	((Block_t *) tg)->tab = NULL;
-	((Block_t *) tg)->list = NULL;
+	DelVarTab(((EfiBlock *) tg)->tab);
+	DelObjList(((EfiBlock *) tg)->list);
+	((EfiBlock *) tg)->tab = NULL;
+	((EfiBlock *) tg)->list = NULL;
 }
 
 
-static void c_block(const Type_t *st, void *tg, const void *src)
+static void c_block(const EfiType *st, void *tg, const void *src)
 {
-	liberror(MSG_EFMAIN, 144);
+	dbg_error(NULL, "[efmain:144]", NULL);
 }
 
 
-Obj_t *EvalExpression(const Obj_t *obj)
+EfiObj *EvalExpression(const EfiObj *obj)
 {
-	Obj_t *x;
+	EfiObj *x;
 
 	UnrefObj(CmdEval_retval);
 	CmdEval_retval = NULL;
@@ -115,15 +115,15 @@ Obj_t *EvalExpression(const Obj_t *obj)
 }
 
 
-static Obj_t *e_block(const Type_t *st, const void *ptr)
+static EfiObj *e_block(const EfiType *st, const void *ptr)
 {
-	ObjList_t *l;
+	EfiObjList *l;
 
-	PushVarTab(RefVarTab(((Block_t *) ptr)->tab), NULL);
+	PushVarTab(RefVarTab(((EfiBlock *) ptr)->tab), NULL);
 	PushVarTab(NULL, NULL);
 	CmdEval_stat = 0;
 
-	for (l = ((Block_t *) ptr)->list; l && !CmdEval_stat; l = l->next)
+	for (l = ((EfiBlock *) ptr)->list; l && !CmdEval_stat; l = l->next)
 		UnrefEval(RefObj(l->obj));
 
 	PopVarTab();
@@ -135,11 +135,11 @@ static Obj_t *e_block(const Type_t *st, const void *ptr)
 /*	Schleifen
 */
 
-Obj_t *Expr_for(void *par, const ObjList_t *list)
+EfiObj *Expr_for(void *par, const EfiObjList *list)
 {
-	Obj_t *test;
-	Obj_t *step;
-	Obj_t *body;
+	EfiObj *test;
+	EfiObj *step;
+	EfiObj *body;
 
 	CmdEval_stat = 0;
 	UnrefEval(RefObj(list->obj));
@@ -160,7 +160,7 @@ Obj_t *Expr_for(void *par, const ObjList_t *list)
 	{
 		if	(test)
 		{
-			Obj_t *obj;
+			EfiObj *obj;
 			int flag;
 
 			CmdEval_stat = 0;
@@ -185,14 +185,14 @@ Obj_t *Expr_for(void *par, const ObjList_t *list)
 }
 
 
-Obj_t *Expr_forin(void *par, const ObjList_t *list)
+EfiObj *Expr_forin(void *par, const EfiObjList *list)
 {
-	Var_t var;
-	Obj_t *body;
-	Obj_t *lobj;
-	Obj_t *x;
+	EfiVar var;
+	EfiObj *body;
+	EfiObj *lobj;
+	EfiObj *x;
 
-	memset(&var, 0, sizeof(Var_t));
+	memset(&var, 0, sizeof(EfiVar));
 	var.name = Val_str(list->obj->data);
 	var.dim = 0;
 	list = list->next;
@@ -218,11 +218,17 @@ Obj_t *Expr_forin(void *par, const ObjList_t *list)
 		var.data = NULL;
 		UnrefObj(x);
 
-		if	(CmdEval_stat == CmdEval_Return) return NULL;
-		if	(CmdEval_stat == CmdEval_Break) break;
+		if	(CmdEval_stat == CmdEval_Return)
+			break;
+
+		if	(CmdEval_stat == CmdEval_Break)
+		{
+			CmdEval_stat = 0;
+			break;
+		}
+		else	CmdEval_stat = 0;
 	}
 
-	CmdEval_stat = 0;
 	UnrefObj(lobj);
 	PopVarTab();
 	return NULL;

@@ -26,7 +26,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/CmdPar.h>
 #include <EFEU/parsub.h>
 #include <EFEU/ioctrl.h>
-#include <EFEU/LangType.h>
+#include <EFEU/LangDef.h>
 
 /*	Systemabhängige Parameter:
 
@@ -63,18 +63,18 @@ Seitenorientierte ausgabe.
 
 char *Pager = S_PGM_PAGER;
 
-static int c_name (io_t *in, io_t *out, void *arg)
+static int c_name (IO *in, IO *out, void *arg)
 {
 	return io_puts(ProgName, out);
 }
 
-static int c_id (io_t *in, io_t *out, void *arg)
+static int c_id (IO *in, IO *out, void *arg)
 {
 	return io_puts(ProgIdent, out);
 }
 
 /*
-static int c_font(io_t *in, io_t *out, void *arg)
+static int c_font(IO *in, IO *out, void *arg)
 {
 	int n;
 
@@ -94,33 +94,32 @@ void SetProgName (const char *name)
 {
 	static int need_setup = 1;
 	static int need_config = 1;
-	fname_t *pgname;
 
 	if	(need_setup)
 	{
-		SetLangType(NULL);
+		SetLangDef(NULL);
 		psubfunc('!', c_name, NULL);
 		psubfunc('%', c_id, NULL);
-		/*
-		psubfunc('R', c_font, (void *) IO_ROMAN_FONT);
-		psubfunc('B', c_font, (void *) IO_BOLD_FONT);
-		psubfunc('I', c_font, (void *) IO_ITALIC_FONT);
-		*/
 		need_setup = 0;
 	}
 
-	if	((pgname = strtofn(name)) != NULL)
+	if	(name && *name)
 	{
-		CmdPar_t *par = CmdPar_ptr(NULL);
+		CmdPar *par;
+		char *path;
+		
+		path = mdirname(name, 0);
+		SetApplPath(path);
+		memfree(path);
+
+		par = CmdPar_ptr(NULL);
+		memfree(par->name);
+		par->name = mbasename(name, NULL);
 
 		memfree(ProgName);
 		memfree(ProgIdent);
-		ProgName = mstrcpy(pgname->name);
-		ProgIdent = mstrcpy(ProgName);
-		SetApplPath(pgname->path);
-		memfree(pgname);
-		memfree(par->name);
-		par->name = mstrcpy(ProgName);
+		ProgName = mstrcpy(par->name);
+		ProgIdent = mstrcpy(par->name);
 
 		if	(need_config)
 		{

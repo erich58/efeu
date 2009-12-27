@@ -26,43 +26,55 @@ If not, write to the Free Software Foundation, Inc.,
 #define	EFEU_mdcount_h	1
 
 #include <EFEU/mdmat.h>
+#include <EFEU/vecbuf.h>
+#include <EFEU/label.h>
 #include <EFEU/Info.h>
 
 /*	Zählerdefinition
 */
 
-typedef int (*MdSet_t) (const void *data);
-typedef void (*MdAdd_t) (void *data);
-typedef void (*MdInit_t) (void *data, size_t *idx, size_t dim);
-
 typedef struct {
 	char *name;
 	char *type;
 	char *desc;
-	MdSet_t set;
-	MdInit_t init;
-	MdAdd_t add;
-} MdCount_t;
+	int (*set) (const void *data);
+	void (*init) (void *data, size_t *idx, size_t dim);
+	void (*add) (void *data);
+} MdCntObj;
 
-void MdCountInfo (InfoNode_t *info, xtab_t *tab);
+typedef struct {
+	REFVAR;
+	VecBuf tab;
+} MdCntObjTab;
+
+MdCntObjTab * MdCntObjTab_create (void);
+MdCntObj *MdCntObj_get (MdCntObjTab *tab, const char *name);
+void MdCntObj_add (MdCntObjTab *tab, MdCntObj *entry, size_t dim);
+void MdCntObjInfo (InfoNode *info, MdCntObjTab *tab);
 
 
 /*	Klassifikationsdefinitionen
 */
 
-typedef struct MdClass_s MdClass_t;
-typedef int (*MdClassify_t) (MdClass_t *cdef, const void *ptr);
+typedef struct MdClassStruct MdClass;
 
 #define	MDCLASS_VAR \
 	char *name; \
 	char *desc; \
 	size_t dim; \
-	Label_t *label; \
-	MdClassify_t classify
+	Label *label; \
+	int (*classify) (MdClass *cdef, const void *ptr)
 
-struct MdClass_s {
+struct MdClassStruct {
 	MDCLASS_VAR;
 };
+
+typedef struct {
+	REFVAR;
+	VecBuf tab;
+} MdClassTab;
+
+MdClassTab * MdClassTab_create (void);
 
 /*
 Der Makro $1 bestimmt den Index einer Klassifikationsdefinition
@@ -78,47 +90,56 @@ extern char *MdClassPrintEntry;
 extern char *MdClassPrintFoot;
 extern int MdClassPrintLimit;
 
-void MdClassList (io_t *io, MdClass_t *cdef);
-void MdClassPrint (io_t *io, MdClass_t *cdef);
-void MdShowClass (io_t *io, xtab_t *tab, const char *plist);
-void MdClassInfo (InfoNode_t *info, xtab_t *tab);
+void MdClassList (IO *io, MdClass *cdef);
+void MdClassPrint (IO *io, MdClass *cdef);
+void MdShowClass (IO *io, MdClassTab *tab, const char *plist);
+void MdClassInfo (InfoNode *info, MdClassTab *tab);
 
+void MdClass_add (MdClassTab *class, MdClass *tab, size_t dim);
 
-/*	Unterklassen
+MdClass *md_subclass (MdClass *base, const char *def);
+
+/*	Pointerklassen
 */
 
 typedef struct {
 	MDCLASS_VAR;
-	MdClass_t *main;
-	int *idx;
-} MdSubClass_t;
+	void *ptr;
+} MdPtrClass;
 
-MdSubClass_t *MdSubClass (MdClass_t *class);
+MdPtrClass *MdPtrClass_copy (MdPtrClass *tab, size_t dim,
+	const char *ext, void *ptr);
+void MdPtrClass_add (MdClassTab *class, MdPtrClass *tab, size_t dim);
+void MdPtrClass_xadd (MdClassTab *class, MdPtrClass *tab, size_t dim,
+	const char *ext, void *ptr);
+MdClass *MdClass_get (MdClassTab *tab, const char *name);
 
 
 /*	Zählgruppe
 */
 
-typedef struct cgrp_s {
-	struct cgrp_s *next;	/* Nächste Definition */
-	MdClass_t *cdef;	/* Klassifikationsdefinition */
+typedef struct MdCntGrpStruct {
+	struct MdCntGrpStruct *next;	/* Nächste Definition */
+	MdClass *cdef;		/* Klassifikationsdefinition */
 	int flag;		/* Selektionsflag */
 	int idx;		/* Selektionsindex */
-} cgrp_t;
+} MdCntGrp;
 
 
 /*	Zähltabellen
 */
 
-mdaxis_t *md_classaxis (const char *name, ...);
-mdaxis_t *md_ctabaxis (io_t *io, void *stab);
-mdmat_t *md_ctab (const char *titel, const char *def, void *gtab, MdCount_t *counter);
-mdmat_t *md_ioctab (const char *titel, io_t *io, void *gtab, MdCount_t *counter);
+mdaxis *md_classaxis (const char *name, ...);
+mdaxis *md_ctabaxis (IO *io, MdClassTab *stab);
+mdmat *md_ctab (const char *titel, const char *def,
+	MdClassTab *gtab, MdCntObj *counter);
+mdmat *md_ioctab (const char *titel, IO *io,
+	MdClassTab *gtab, MdCntObj *counter);
 
-void md_ctabinit (mdmat_t *md, MdCount_t *counter);
-void md_count (mdmat_t *tab, const void *data);
-void md_showcnt (io_t *io, xtab_t *tab);
+void md_ctabinit (mdmat *md, MdCntObj *counter);
+void md_count (mdmat *tab, const void *data);
+void md_showcnt (IO *io, MdCntObjTab *tab);
 
-extern MdCount_t *stdcount;	/* Standardzähler mit long - Werten */
+extern MdCntObj *stdcount;	/* Standardzähler mit long - Werten */
 
 #endif	/* EFEU/mdcount.h */

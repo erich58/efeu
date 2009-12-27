@@ -1,8 +1,8 @@
 \sec	Konfigurierbare Version von Hello World
 
 Zur Veranschaulichung der Programmkonfiguration wollen wir uns
-nun der <"Vanille"> Version des Programmbeispiels
-<"Hello World"> widmen. Diese erlaubt eine Konfiguration von
+nun der konfigurierbaren Version des Programmbeispiels
+<"Hello World"> widmen. Diese erlaubt die Bestimmung von
 Ausgabeformat und Ausgabetext über Kommandozeilenparameter.
 
 Der Ausgabetext wird dabei durch das erste (optionale) Argument
@@ -22,7 +22,7 @@ Die Abfrage der Optionen erfolgt mit der Bibliotheksfunktion
 erläutert. Sie kann dem entsprechenden Handbuch entnommen werden,
 oder bei \cite[Kapitel 4]{matthew} nachgelesen werden.
 
-\ssec	EFEU - Version
+\ssec	EFEU-Version
 
 Nun wollen wir uns die Implementation von <"Hello World"> unter EFEU
 anschauen.
@@ -68,6 +68,17 @@ Syntax wie |vhello1| sorgt:
 
 \include[verbatim] vhello2.cnf
 
+Das erste Kommentar in der Konfigurationsdatei wird gesondert behandelt.
+Alle Zeilen bis zur ersten Leerzeile bestimmen die Resource |Ident|
+(Programmtitel).
+
+Beginnt eine der folgenden Zeilen mit der Kennung |$C| oder |$c|,
+bestimmt der Rest der Zeile (Inklusive dem |C| oder |c| aber ohne |$|)
+die Resource |Copyright|.
+
+Damit können diese beiden Resourcen über das Kommentar
+gesetzt werden. Der Titel kann auch mehrsprachig spezifiziert werden.
+Details dazu koönnen unter \mref{langfilter(3)} nachgeschlagen werden-
 Die genaue Syntaxbeschreibung der Konfigurationsdatei folgt im
 nächsten Kapitel.
 
@@ -86,9 +97,9 @@ folgenden Kommandozeilen ausgeführt wird:
 [|eis -p vhello2|]
 	erlaubt eine Abfrage der Kommandoparameter mit |eis|.
 
-\ssec	Esh - Version
+\ssec	Esh-Version
 
-Zum Abschluß wird hier die Esh-Version von <"Vanilla Hello World">
+Zum Abschluß wird hier die Esh-Version vom konfigurierbaren <"Hello World">
 vorgestellt.
 
 \include[verbatim] vhello3.esh
@@ -103,3 +114,6 @@ der Konfigurationszzeilen automatisch die Funktion |ParseCommand| auf.
 Die nachfolgenden Befehlszeilen unterscheiden sich kaum
 von der C-Verson |vhello2.c|. Im Verhalten des Kommandos gibt es
 keinen Unterschied zu |vhello2|.
+
+Auch hier wird das erste Kommemtar im Skript zur Bestimmung von |Ident| und
+|Copyright| herangezogen.

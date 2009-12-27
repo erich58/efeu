@@ -49,7 +49,7 @@ Eingabedatei genommen.
 \def\addsrclist {{
 str path = xexpand(ParseLine(cin));
 
-if	(!path)	path = pathname(DocName);
+if	(!path)	path = dirname(DocName);
 
 path = path ? path + "/" : ".";
 

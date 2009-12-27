@@ -31,9 +31,9 @@ Die Funktion |$1| liefert einen neuen Vektorbuffer
 mit Buffergröße <blk> und Elementgröße <size>.
 */
 
-vecbuf_t *vb_create (size_t blk, size_t size)
+VecBuf *vb_create (size_t blk, size_t size)
 {
-	vecbuf_t *vb = memalloc(sizeof(vecbuf_t));
+	VecBuf *vb = memalloc(sizeof(VecBuf));
 	vb_init(vb, blk ? blk : BLKSIZE, size);
 	return vb;
 }
@@ -43,7 +43,7 @@ Die Funktion |$1| gibt einen mit |vb_create| angeforderten Vektorbuffer
 wieder frei.
 */
 
-void vb_destroy (vecbuf_t *vb)
+void vb_destroy (VecBuf *vb)
 {
 	if	(vb)
 	{

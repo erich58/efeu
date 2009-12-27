@@ -28,7 +28,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 /**/
 
-static void put_name (const char *name, io_t *io)
+static void put_name (const char *name, IO *io)
 {
 	if	(!name)	return;
 
@@ -72,7 +72,7 @@ static void put_name (const char *name, io_t *io)
 
 /**/
 
-static void put_desc (const char *desc, io_t *io)
+static void put_desc (const char *desc, IO *io)
 {
 	int last;
 
@@ -95,7 +95,7 @@ static void put_desc (const char *desc, io_t *io)
 Die Funktion |$1| gibt eine Parameterkenung aus
 */
 
-void CmdParKey_print (io_t *io, CmdParKey_t *key)
+void CmdParKey_print (IO *io, CmdParKey *key)
 {
 	if	(!key)	return;
 
@@ -152,7 +152,7 @@ void CmdParKey_print (io_t *io, CmdParKey_t *key)
 Die Funktion |$1| gibt eine Parameterauswertung aus
 */
 
-void CmdParCall_print (io_t *io, CmdParCall_t *call)
+void CmdParCall_print (IO *io, CmdParCall *call)
 {
 	if	(!call)	return;
 
@@ -177,10 +177,10 @@ void CmdParCall_print (io_t *io, CmdParCall_t *call)
 Die Funktion |$1| gibt eine Parameterdefinition aus
 */
 
-void CmdParDef_print (io_t *io, CmdParDef_t *def)
+void CmdParDef_print (IO *io, CmdParDef *def)
 {
-	CmdParKey_t *key;
-	CmdParCall_t *call;
+	CmdParKey *key;
+	CmdParCall *call;
 
 	if	(!def)	return;
 
@@ -206,11 +206,11 @@ void CmdParDef_print (io_t *io, CmdParDef_t *def)
 Die Funktion |$1| schreibt Kommandoparameter in die IO-Struktur <io>.
 */
 
-void CmdPar_write (CmdPar_t *par, io_t *io)
+void CmdPar_write (CmdPar *par, IO *io)
 {
 	size_t n;
-	CmdParDef_t **ptr;
-	CmdParVar_t *var;
+	CmdParDef **ptr;
+	CmdParVar *var;
 
 	if	(io == NULL)	return;
 

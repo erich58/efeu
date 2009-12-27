@@ -1,5 +1,23 @@
-/*	Auflisten von Zählerdefinitionen
-	(c) 1995 Erich Frühstück
+/*
+Auflisten von Zählerdefinitionen
+
+$Copyright (C) 1995 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/mdmat.h>
@@ -9,29 +27,28 @@
 	":*:counter types" \
 	":de:Zählerdefinitionen"
 
-void md_showcnt(io_t *io, xtab_t *tab)
+void md_showcnt(IO *io, MdCntObjTab *tab)
 {
-	int i;
-	MdCount_t *cnt;
+	MdCntObj **cnt;
+	size_t n;
 
-	for (i = 0; i < tab->dim; i++)
+	for (cnt = tab->tab.data, n = tab->tab.used; n-- > 0; cnt++)
 	{
-		cnt = tab->tab[i];
-		io_puts(cnt->name, io);
+		io_puts((*cnt)->name, io);
 		io_putc('\t', io);
 		/*
-		io_puts(cnt->type, io);
+		io_puts((*cnt)->type, io);
 		io_putc('\t', io);
 		*/
-		io_puts(cnt->desc, io);
+		io_puts((*cnt)->desc, io);
 		io_putc('\n', io);
 	}
 }
 
 
-static void print_count(io_t *io, InfoNode_t *info)
+static void print_count(IO *io, InfoNode *info)
 {
-	MdCount_t *cnt = info->par;
+	MdCntObj *cnt = info->par;
 	/*
 	ListType(io, mdtype(cnt->type));
 	*/
@@ -39,17 +56,14 @@ static void print_count(io_t *io, InfoNode_t *info)
 	io_putc('\n', io);
 }
 
-static InfoNode_t *count_root = NULL;
-
-static int add_count(MdCount_t *entry)
+void MdCntObjInfo (InfoNode *info, MdCntObjTab *tab)
 {
-	AddInfo(count_root, entry->name, entry->desc,
-		print_count, entry);
-	return 1;
-}
+	InfoNode *root;
+	MdCntObj **cnt;
+	size_t n;
 
-void MdCountInfo (InfoNode_t *info, xtab_t *tab)
-{
-	count_root = AddInfo(info, "count", LBL_COUNT, NULL, NULL);
-	xwalk(tab, (visit_t) add_count);
+	root = AddInfo(info, "count", LBL_COUNT, NULL, NULL);
+
+	for (cnt = tab->tab.data, n = tab->tab.used; n-- > 0; cnt++)
+		AddInfo(root, (*cnt)->name, (*cnt)->desc, print_count, *cnt);
 }

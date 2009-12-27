@@ -1,6 +1,6 @@
 #include <d2m.cfg>
 
-TOPDIR = _EFEU_TOP
+TOPDIR = EFEUROOT
 CFGDIR = $(TOPDIR)/ppinclude
 INCDIR = $(TOPDIR)/include/DB
 BINDIR = $(TOPDIR)/bin

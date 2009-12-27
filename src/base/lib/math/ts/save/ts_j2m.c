@@ -23,16 +23,16 @@ If not, write to the Free Software Foundation, Inc.,
 #include <Math/TimeSeries.h>
 #include <Math/pnom.h>
 
-static pnom_t *intpol(double *y, size_t dim)
+static Polynom *intpol (double *y, size_t dim)
 {
 	double *a;
 	double *b;
-	pnom_t *pn;
+	Polynom *pn;
 	int i;
 
 	pn = pnalloc(dim, 2);
-	a = ALLOC(dim + 1, double);
-	b = ALLOC(dim + 1, double);
+	a = memalloc((dim + 1) * sizeof(double));
+	b = memalloc((dim + 1) * sizeof(double));
 	b[0] = 0.;
 
 	for (i = 1; i < dim; i++)
@@ -60,22 +60,24 @@ static pnom_t *intpol(double *y, size_t dim)
 		pn->c[i][2] = (b[i+1] - b[i]) / 12.;
 	}
 
+	memfree(a);
+	memfree(b);
 	return pn;
 }
 
-void TimeSeriesKonv_j2m (TimeSeries_t *ts)
+void TimeSeriesKonv_j2m (TimeSeries *ts)
 {
-	pnom_t *pn;
+	Polynom *pn;
 	int i;
 
 	if	(ts == NULL || ts->base.type != TS_YEAR)
 	{
-		errmsg(MSG_TS, 12);
+		dbg_note(NULL, "[TimeSeries:12]", NULL);
 		return;
 	}
 
 	pn = intpol(ts->data, ts->dim);
-	ExpandTimeSeries(ts, ts->dim * 12);
+	ts_expand(ts, ts->dim * 12);
 	ts->base.type = TS_MONTH;
 	ts->base.value *= 12;
 

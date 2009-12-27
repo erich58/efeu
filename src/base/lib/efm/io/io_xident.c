@@ -25,13 +25,13 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/io.h>
 #include <EFEU/ioctrl.h>
 
-char *io_xident (io_t *io, const char *fmt, ...)
+char *io_xident (IO *io, const char *fmt, ...)
 {
-	strbuf_t *buf;
+	StrBuf *buf;
 	char *id, *p;
 	va_list list;
 
-	id = io_ident(io);
+	id = rd_ident(io);
 
 	if	(fmt == NULL)	return id;
 

@@ -45,14 +45,14 @@ CEXPR(name, SIZE(0) op SIZE(1))
 /*	Funktionen
 */
 
-static void f_size_min (Func_t *func, void *rval, void **arg)
+static void f_size_min (EfiFunc *func, void *rval, void **arg)
 {
 	register unsigned long a = SIZE(0);
 	register unsigned long b = SIZE(1);
 	SRETVAL = a < b ? a : b;
 }
 
-static void f_size_max (Func_t *func, void *rval, void **arg)
+static void f_size_max (EfiFunc *func, void *rval, void **arg)
 {
 	register unsigned long a = SIZE(0);
 	register unsigned long b = SIZE(1);
@@ -119,7 +119,7 @@ ASSIGN(a_size_or, |=)
 /*	Funktionstabelle
 */
 
-static FuncDef_t fdef_size[] = {
+static EfiFuncDef fdef_size[] = {
 	{ FUNC_VIRTUAL, &Type_size, "min (size_t, size_t)", f_size_min },
 	{ FUNC_VIRTUAL, &Type_size, "max (size_t, size_t)", f_size_max },
 

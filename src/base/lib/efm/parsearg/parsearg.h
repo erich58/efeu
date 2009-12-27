@@ -33,10 +33,10 @@ typedef struct {
 	char *name;	/* Argumentname */
 	char *opt;	/* Optionsstring */
 	char *arg;	/* Argument */
-} assignarg_t;
+} AssignArg;
 
 extern char *argval (const char *arg);
-extern assignarg_t *assignarg (const char *arg, char **ptr, const char *delim);
+extern AssignArg *assignarg (const char *arg, char **ptr, const char *delim);
 
 extern void skiparg (int *narg, char **arg, int n);
 

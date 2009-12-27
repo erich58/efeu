@@ -29,8 +29,10 @@ If not, write to the Free Software Foundation, Inc.,
 #define	SYMTAB	"latex"		/* Sonderzeichentabelle */
 
 
-static void ltx_hdr (LaTeX_t *ltx, int mode)
+static void ltx_hdr (void *drv, int mode)
 {
+	LaTeX *ltx = drv;
+
 	if	(mode)
 	{
 		DocDrv_eval(ltx, HDRCFG);
@@ -39,16 +41,16 @@ static void ltx_hdr (LaTeX_t *ltx, int mode)
 }
 
 
-io_t *DocOut_latex (io_t *io)
+IO *DocOut_latex (IO *io)
 {
-	LaTeX_t *ltx = DocDrv_alloc(NAME, sizeof(LaTeX_t));
+	LaTeX *ltx = DocDrv_alloc(NAME, sizeof(LaTeX));
 	ltx->out = io;
 	ltx->last = '\n';
-	ltx->symtab = DocSym(SYMTAB);
-	ltx->put = (DocDrvPut_t) LaTeX_putc;
-	ltx->hdr = (DocDrvHdr_t) ltx_hdr;
-	ltx->rem = (DocDrvRem_t) LaTeX_rem;
-	ltx->cmd = (DocDrvCmd_t) LaTeX_cmd;
-	ltx->env = (DocDrvEnv_t) LaTeX_env;
+	ltx->symtab = DocSym_load(SYMTAB);
+	ltx->put = LaTeX_putc;
+	ltx->hdr = ltx_hdr;
+	ltx->rem = LaTeX_rem;
+	ltx->cmd = LaTeX_cmd;
+	ltx->env = LaTeX_env;
 	return DocDrv_io(ltx);
 }

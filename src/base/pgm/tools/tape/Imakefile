@@ -1,1 +1,2 @@
 Program($(BINDIR),rawtape,rawtape.o,DEP_EFM,LIB_EFM)
+Program($(BINDIR),unblock,unblock.o,DEP_EFM,LIB_EFM)

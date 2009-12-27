@@ -3,4 +3,3 @@ LIB=	LIB_IORL LIB_EFX LIB_EFM
 
 Program($(BINDIR),mkdump,mkdump.o,NullArg,NullArg)
 Program($(BINDIR),undump,undump.o,NullArg,NullArg)
-Program($(BINDIR),PrintMessage,PrintMessage.o,$(DEP),$(LIB))

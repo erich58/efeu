@@ -36,6 +36,11 @@ mf_script d2m/dir2make.sh
 
 mf_dir PPINC "\$(TOP)/ppinclude"
 
+for x in ppcfg/*.pph
+do
+	mf_hdr PPINC $x
+done
+
 for x in ppinclude/*.cfg ppinclude/*.pph
 do
 	mf_file PPINC $x
@@ -43,7 +48,9 @@ done
 
 mf_dir	INC	'$(TOP)/include/EFEU'
 
-mf_hdr INC header/config.h
-mf_hdr INC header/extension.h
+for x in header/*.h
+do
+	mf_hdr INC $x
+done
 
 mf_dir	ETC	'$(TOP)/etc'

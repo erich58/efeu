@@ -24,13 +24,15 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/ftools.h>
 #include <EFEU/procenv.h>
 
-void *vb_load (vecbuf_t *buf, FILE *file, size_t dim)
+#define	E2	"[efm:2]"
+
+void *vb_load (VecBuf *buf, FILE *file, size_t dim)
 {
 	vb_realloc(buf, dim);
 	buf->used = fread_compat(buf->data, buf->elsize, dim, file);
 
 	if	(buf->used != dim)
-		fileerror(file, MSG_EFM, 2, 0);
+		fileerror(file, E2, NULL);
 
 	return buf->data;
 }

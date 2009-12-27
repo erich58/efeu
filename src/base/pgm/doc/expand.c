@@ -23,10 +23,10 @@ If not, write to the Free Software Foundation, Inc.,
 #include "efeudoc.h"
 #include <ctype.h>
 
-char *Doc_expand (Doc_t *doc, io_t *in, int flag)
+char *Doc_expand (Doc *doc, IO *in, int flag)
 {
-	strbuf_t *buf;
-	Doc_t save;
+	StrBuf *buf;
+	Doc save;
 	
 	buf = new_strbuf(0);
 	save = *doc;
@@ -38,7 +38,7 @@ char *Doc_expand (Doc_t *doc, io_t *in, int flag)
 	doc->stat = 1;
 	doc->indent = 0;
 	doc->nl = 1;
-	memset(&doc->env, 0, sizeof(DocEnv_t));
+	memset(&doc->env, 0, sizeof(DocEnv));
 	doc->env_stack = NULL;
 
 	if	(flag)
@@ -71,9 +71,9 @@ char *Doc_expand (Doc_t *doc, io_t *in, int flag)
 	return sb2str(buf);
 }
 
-char *Doc_xexpand (Doc_t *doc, io_t *in)
+char *Doc_xexpand (Doc *doc, IO *in)
 {
-	DocType_t *save;
+	DocType *save;
 	char *p;
 
 	save = doc->type;

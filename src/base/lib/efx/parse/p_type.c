@@ -22,9 +22,9 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/object.h>
 
-Type_t *Parse_type(io_t *io, Type_t *type)
+EfiType *Parse_type(IO *io, EfiType *type)
 {
-	Obj_t *obj;
+	EfiObj *obj;
 
 	if	(type == NULL)
 	{
@@ -37,7 +37,7 @@ Type_t *Parse_type(io_t *io, Type_t *type)
 	}
 
 	if	(type == NULL)
-		io_error(io, MSG_EFMAIN, 123, 0);
+		io_error(io, "[efmain:123]", NULL);
 
 	while (io_eat(io, " \t") == '[')
 	{

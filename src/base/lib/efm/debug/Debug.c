@@ -26,7 +26,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/Resource.h>
 #include <EFEU/parsearg.h>
 #include <EFEU/ftools.h>
-#include <EFEU/KeyTab.h>
+#include <EFEU/vecbuf.h>
 
 /*
 :de:
@@ -40,7 +40,7 @@ int DebugChangeCount = 0;
 typedef struct {
 	char *name;
 	FILE *file;
-	io_t *out;
+	IO *out;
 	int level;
 } LOGDEF;
 
@@ -53,8 +53,9 @@ static int log_cmp (const void *a, const void *b)
 	return mstrcmp(((LOGDEF *) a)->name, ((LOGDEF *) b)->name);
 }
 
-static void log_clean (LOGDEF *log)
+static void log_clean (void *data)
 {
+	LOGDEF *log = data;
 	io_close(log->out);
 	fileclose(log->file);
 	log->out = NULL;
@@ -63,11 +64,11 @@ static void log_clean (LOGDEF *log)
 
 static void cleanup (void)
 {
-	vb_clean(&log_tab, (clean_t) log_clean);
+	vb_clean(&log_tab, log_clean);
 	log_clean(&log_all);
 }
 
-static void add_log (char *name, FILE *file, io_t *out, int level)
+static void add_log (char *name, FILE *file, IO *out, int level)
 {
 	LOGDEF key, *log;
 
@@ -131,7 +132,7 @@ void DebugMode (const char *def)
 
 	if	(!cleanup_registered)
 	{
-	/*	Die Aufräumfunktion setup() muß nach der Aufräumfunktion
+	/*	Die Aufräumfunktion cleanup() muß nach der Aufräumfunktion
 		für Dateien registriert werden. Der Aufruf fileident(NULL)
 		erzwingt die Registrierung.
 	*/
@@ -146,10 +147,10 @@ void DebugMode (const char *def)
 
 	for (i = 0; i < n; i++)
 	{
-		assignarg_t *x;
+		AssignArg *x;
 		char *name, *ptr;
 		FILE *file;
-		io_t *out;
+		IO *out;
 
 		if	(strchr(list[i], '=') == NULL)
 		{
@@ -253,7 +254,7 @@ Die Funktion |$1| ist äquivalent zu |LogFile|, jedoch wird anstelle
 einer FILE-Struktur die zugehörige IO-Struktur geliefert.
 */
 
-io_t *LogOut (const char *class, int level)
+IO *LogOut (const char *class, int level)
 {
 	LOGDEF *log = LogDef(class, level);
 	return log ? (log->out ? log->out : ioerr) : NULL;
@@ -279,7 +280,7 @@ Die Funktion |$1| ist äquivalent zu |ParseLogFile|, jedoch wird anstelle
 einer FILE-Struktur die zugehörige IO-Struktur geliefert.
 */
 
-io_t *ParseLogOut (const char *def)
+IO *ParseLogOut (const char *def)
 {
 	LOGDEF *log = ParseLogDef(def);
 	return log ? (log->out ? log->out : ioerr) : NULL;

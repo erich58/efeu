@@ -22,43 +22,43 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/object.h>
 
-static Obj_t *ref_alloc (Type_t *type, va_list list)
+static EfiObj *ref_alloc (EfiType *type, va_list list)
 {
-	Obj_t *obj = Obj_alloc(sizeof(Obj_t) + sizeof(refdata_t *));
-	refdata_t **ptr = (void *) (obj + 1);
+	EfiObj *obj = Obj_alloc(sizeof(EfiObj) + sizeof(RefData *));
+	RefData **ptr = (void *) (obj + 1);
 
 	*ptr = rd_refer(va_arg(list, void *));
 	obj->data = va_arg(list, void *);
 	return obj;
 }
 
-static void ref_free (Obj_t *obj)
+static void ref_free (EfiObj *obj)
 {
-	refdata_t **ptr = (void *) (obj + 1);
+	RefData **ptr = (void *) (obj + 1);
 	rd_deref(*ptr);
-	Obj_free(obj, sizeof(Obj_t) + sizeof(refdata_t *));
+	Obj_free(obj, sizeof(EfiObj) + sizeof(RefData *));
 }
 
-static void ref_update (Obj_t *obj)
+static void ref_update (EfiObj *obj)
 {
 	;
 }
 
-static void ref_sync (Obj_t *obj)
+static void ref_sync (EfiObj *obj)
 {
 	;
 }
 
-static char *ref_ident (Obj_t *obj)
+static char *ref_ident (const EfiObj *obj)
 {
-	refdata_t **ptr = (void *) (obj + 1);
+	RefData **ptr = (void *) (obj + 1);
 	char *p = rd_ident(*ptr);
 	char *id = msprintf("%s: %s", (*ptr)->reftype->label, p);
 	memfree(p);
 	return id;
 }
 
-Lval_t Lval_ref = {
+EfiLval Lval_ref = {
 	ref_alloc,
 	ref_free,
 	ref_update,

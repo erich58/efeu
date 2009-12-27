@@ -1,9 +1,22 @@
-Version 1.1.1
+Version 2.0
+
+*	Fixed incompatibilities of |pp2dep| with gcc 3.2
+*	Renamed all data types ending in |_t| to avoid
+	conflicts with reserved POSIX names.
+*	Added Tcl/Tk interface for EFEU-Interpreter.
+*	Rework on message handling.
+*	Added command |unblock| and |zip2gz| to distribution.
+*	Vim syntax files for EFEU filetypes.
+*	Replaced |tmpfile()| with string buffers in |ppfilter|.
+*	Rework on EFEU configuration.
+
+Version 1.1-1
 
 *	Fixed incorrect representation of negativ long values.
 *	New keyword |enum| for enum data types.
 *	Standardization of header identificators.
-*	Fixed conflict in searching readline.h with guile-readline/readline.h
+*	Fixed conflict in searching |readline.h| with
+	|guile-readline/readline.h|
 *	Cast operator for lvalues.
 *	New operator |[|<expr>|]| for expressions - replacement
 	for |expression| keyword.

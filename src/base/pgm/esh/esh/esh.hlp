@@ -77,15 +77,15 @@ results in the outermost level allows to use |$!| as a
 comfortable desc calculator.
 
 The complete EFEU interpreter language is implemented with C library
-functions. |$1| is a simple command which uses this functions.
+functions. |$!| is a simple command which uses this functions.
 The interpreter shares data pointers directly with
 C functions. You can add your own functions and types to the interpreter.
 So it is easy to use this language for configuration files or to
 test functions with it.
 
 If EFEU is build with shared libraries (e.g. on linux) you can expand
-|$1| at run time. If shared libraries are not available,
-you can take a copy of |$1.c| and add your extensions there.
+|$!| at run time. If shared libraries are not available,
+you can take a copy of |$!.c| and add your extensions there.
 
 \shead	Options
 
@@ -305,10 +305,11 @@ the right operand <expr> is never evaluated.
 <|: :|> | range operator | <start> <|:|> <end> \[ <|:|> <step> \]
 [-]
 
-There is no range operator in C/C++. The default value for step is
-1 (-1 if <end> |<| <start>). Normally this operator is used for
-integral and floating numbers. Wrong use of this operator may
+The range operator creates a list of variables, starting by <start>
+and ending by <end>. For numbers, the value of <step> must be positive
+the default value is 1. Wrong use of this operator may
 result in an infinite loop.
+There is no range operator in C/C++.
 
 \tab	|l|l|l|
 [-]
@@ -598,7 +599,7 @@ because data fields can only have one dimension, but there is no
 limit on creating vector types.
 It is clear that only <n0> may be ommitted.
 
-Data fields are always packed into a object of type |Vec_t| on use.
+Data fields are always packed into a object of type |EfiVec| on use.
 A data field can always
 be converted to a list and you can assign values to a data field
 with a list. If the list has less elements than the data field, only
@@ -723,7 +724,7 @@ inline str f (str fmt)
 ----
 
 The function |psub| substitutes parameter according to a format
-string. If |f| is not inline, |fpsub| does not see the variable |x|
+string. If |f| is not inline, |psub| does not see the variable |x|
 and the substitution |$$(x)| would fail.
 
 Functions have the type |Func| and you can use it like function

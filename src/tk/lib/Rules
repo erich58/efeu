@@ -1,0 +1,1 @@
+hcfg	FDFX	UpdateHeaderFile(files,$(INCDIR)/%s.h,%s/%s.%s)

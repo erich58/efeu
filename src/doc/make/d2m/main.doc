@@ -8,7 +8,7 @@ lästig werden und man möchte diesen Schritt automatisieren.
 Betrachtet man z.B: die Definition einer Programmbibliothek.
 Die einzelönen Funktionen der Programmbibliothek sind auf verschiedene
 Sourcefiles aufgeteilt. Das Imakefile für die Programmbibliothek
-benötigt im wesentlichen nicht mehjr als den Namen der
+benötigt im wesentlichen nicht mehr als den Namen der
 Programmbibliothek, ein paar Zusatzinformationen über den
 Installationsort und eine Liste der involvierten Dateien.
 

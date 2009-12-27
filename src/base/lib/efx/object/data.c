@@ -23,7 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 
 
-void CleanData(const Type_t *type, void *tg)
+void CleanData(const EfiType *type, void *tg)
 {
 	if	(type->fclean)
 		type->fclean->eval(type->fclean, NULL, &tg);
@@ -32,7 +32,7 @@ void CleanData(const Type_t *type, void *tg)
 	else			memset(tg, 0, type->size);
 }
 
-void CopyData(const Type_t *type, void *tg, const void *src)
+void CopyData(const EfiType *type, void *tg, const void *src)
 {
 	if	(type->copy)	type->copy(type, tg, src);
 	else			memcpy(tg, src, type->size);
@@ -45,7 +45,7 @@ void CopyData(const Type_t *type, void *tg, const void *src)
 }
 
 
-void AssignData(const Type_t *type, void *tg, const void *src)
+void AssignData(const EfiType *type, void *tg, const void *src)
 {
 	if	(tg == src)	return;
 
@@ -57,7 +57,7 @@ void AssignData(const Type_t *type, void *tg, const void *src)
 /*	Vektordaten
 */
 
-void CleanVecData(const Type_t *type, size_t dim, void *tg)
+void CleanVecData(const EfiType *type, size_t dim, void *tg)
 {
 	while (dim > 0)
 	{
@@ -68,7 +68,7 @@ void CleanVecData(const Type_t *type, size_t dim, void *tg)
 }
 
 
-void CopyVecData(const Type_t *type, size_t dim, void *tg, const void *src)
+void CopyVecData(const EfiType *type, size_t dim, void *tg, const void *src)
 {
 	while (dim > 0)
 	{
@@ -80,7 +80,7 @@ void CopyVecData(const Type_t *type, size_t dim, void *tg, const void *src)
 }
 
 
-void AssignVecData(const Type_t *type, size_t dim, void *tg, const void *src)
+void AssignVecData(const EfiType *type, size_t dim, void *tg, const void *src)
 {
 	if	(tg != src)
 	{

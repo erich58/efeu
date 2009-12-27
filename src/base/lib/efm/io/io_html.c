@@ -27,13 +27,15 @@ If not, write to the Free Software Foundation, Inc.,
 #define	CTRL_CMD	0x2
 
 typedef struct {
-	io_t *io;	/* Ausgabestruktur */
+	IO *io;		/* Ausgabestruktur */
 	int last;	/* Letztes ausgegebene Zeichen */
 	int protect;	/* Schutzmodus */
 } FILTER;
 
-static int filter_put (int c, FILTER *filter)
+static int filter_put (int c, void *ptr)
 {
+	FILTER *filter = ptr;
+
 	if	(filter->protect)
 		return io_putc(c, filter->io);
 
@@ -60,8 +62,9 @@ static int filter_put (int c, FILTER *filter)
 	return c;
 }
 
-static int filter_ctrl(FILTER *filter, int req, va_list list)
+static int filter_ctrl (void *ptr, int req, va_list list)
 {
+	FILTER *filter = ptr;
 	char *fmt;
 
 	switch (req)
@@ -95,7 +98,7 @@ static int filter_ctrl(FILTER *filter, int req, va_list list)
 }
 
 
-io_t *io_html (io_t *io)
+IO *io_html (IO *io)
 {
 	if	(io)
 	{
@@ -107,8 +110,8 @@ io_t *io_html (io_t *io)
 		filter->protect = 0;
 		io_puts("<HTML><BODY>\n", io);
 		io = io_alloc();
-		io->put = (io_put_t) filter_put;
-		io->ctrl = (io_ctrl_t) filter_ctrl;
+		io->put = filter_put;
+		io->ctrl = filter_ctrl;
 		io->data = filter;
 	}
 

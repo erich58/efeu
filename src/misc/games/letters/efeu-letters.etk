@@ -1,0 +1,236 @@
+/*
+:*:	Letters and Numbers
+:de:	Buchstaben und Nummern
+
+$Copyright (C) 2002 Erich Frühstück
+This file is part of EFEU.
+
+EFEU is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+EFEU is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with EFEU; see the file COPYING.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+*/
+
+pconfig !
+Version = "$Id: efeu-letters.etk,v 1.9 2003-01-17 11:19:09 ef Exp $"
+Dir: set $(EFEUROOT:%s)/share/eletters
+Audio = false
+DisplayHourglass = false
+err.top = \
+	:*:$!: image directory $1 not found.\n\
+	:de:$!: Bildverzeichnis $1 nicht gefunden.\n
+
+d:dir | Dir
+	:*:defines the top directory with images and sounds,
+	the default value is {Dir}.
+	:de:definiert das Verzeichniss mit den Bildern und
+	Sprachtexten, die Vorgabe ist {Dir}.
+h | -hourglass | DisplayHourglass = true
+	:*:show hourglass while waiting for image.
+	:de:Stundenglas beim Warten auf Bild anzeigen.
+a | -audio | Audio = true
+	:*:enables audio support
+	:de:aktiviert die Sprachausgabe.
+!
+
+str top = fsearch(Dir, Lang);
+
+if	(!top && Lang != "en")
+	top = fsearch(Dir, "en");
+
+if	(!top)
+	top = fsearch(Dir, ".");
+
+if	(!top)
+{
+	fpsub(ioerr, getres("err.top"), Dir);
+	exit(1);
+}
+
+str audio = fsearch(Dir, "audio") + "/%L";
+Random rng = Random(time());
+
+
+if	(!tkinit())
+{
+	fpsub(ioerr, "$!: $1\n", tclget());
+	exit(1);
+}
+
+#if	(flagres("DisplayHourglass"))
+str hglass = fsearch(EFEUROOT + "/share/eletters/images", "hourglass", "gif");
+
+if	(hglass)
+	tclexpr("image create photo hourglass -file $1", hglass)
+#endif
+
+if	(!top)
+	top = EFEUROOT + "/share/eletters/en";
+
+tcl option add "*font" {Helvetica 24 bold}
+
+struct DATA {
+	double gew;
+	str name;
+	str path;
+	str image;
+	str audio;
+};
+
+int dcmp (DATA a, DATA b)
+	return cmp(a.gew, b.gew);
+
+DATA str() {
+	str fname = filename(this);
+	return { 
+		rng.drand(),
+		strsub(strsub(fname, "_", " "), "[0-9]", ""),
+		this, NULL,
+#if	flagres("Audio")
+		fsearch(audio, fname, "au"),
+#endif
+	};
+}
+
+DataBase keytab[37];
+int i;
+
+for (i = 0; i < 37; i++)
+	keytab[i] = DataBase(DATA);
+
+for (x in flist(top, "*.gif"))
+{
+	int key = a37l(substr(basename(dirname(x)), 0, 1)) % 37;
+	keytab[key] += x;
+}
+
+tcl wm title . [@expr Ident]
+
+bool showflag = false;
+
+tclfunc unshow ()
+{
+	if	(showflag)
+		tcl destroy .show
+
+	showflag = false;
+}
+
+tclfunc showkey (str key)
+{
+	if	(showflag)
+	{
+		tcl destroy .show
+		tcl update
+		showflag = false;
+	}
+
+	int n = a37l(key) % 37;
+	DataBase db = keytab[n];
+	int k = dim(keytab[n]);
+
+	if	(k)
+	{
+		db.sort(dcmp);
+		printf("%s\n", db[0].name);
+
+		if	(!db[0].image)
+		{
+			fprintf(ioerr, "loading %s as %s\n",
+				db[0].path, db[0].image);
+
+			tcl label .msg -image hourglass
+			tcl place .msg -relx 0.5 -rely 0.5 -anchor center
+			tcl update idletask
+			db[0].image = tclexpr("image create photo -file $1",
+				db[0].path);
+			tcl destroy .msg
+			tcl update idletask
+		}
+
+		tcleval(string !
+toplevel .show
+wm title .show "$1"
+button .show.im -command { unshow } -image "$2" -background lightblue
+pack .show.im
+button .show.text -command { unshow } -text "$1"
+pack .show.text
+bind .show <Button-1> { unshow }
+!, db[0].name, db[0].image);
+		showflag = true;
+#if	flagres("Audio")
+		if	(db[0].audio)
+			system("play " + db[0].audio + " &");
+#endif
+		db[0].gew += 0.5 + rng.drand();
+	}
+	else	tcl bell
+}
+
+str ctab[] = {
+	"#ff7", "#f7f", "#7ff",
+	"#ffa", "#faf", "#aff",
+	"#77f", "#7f7", "#f77",
+	"#7af", "#7fa", "#f7a",
+	"#a7f", "#af7", "#fa7",
+	"#aaf", "#afa", "#faa",
+};
+
+void AddKey (str key, int row, int col)
+{
+	int k = dim(ctab);
+	k = int(rng.drand() * k) % k;
+	tcleval(string !
+button .key_$1 -width 4 -height 3 -text $1 -bg $4 -command { showkey $1 }
+grid .key_$1 -padx 5 -pady 5 -row $2 -column $3
+!, key, row, col, ctab[k]);
+}
+
+int key = 2;
+
+void AddKeyList(int row, int col, int n)
+{
+	while (n-- > 0)
+		AddKey(l37a(key++), row, col++)
+}
+
+AddKeyList(1, 1, 9);
+AddKeyList(2, 1, 9);
+AddKeyList(3, 1, 9);
+AddKeyList(4, 1, 8);
+
+/*	quit button and functions
+*/
+
+tclfunc do_esc ()
+{
+	if	(showflag)
+		tcl destroy .show
+	else	tcl destroy .
+
+	showflag = false;
+}
+
+tcl button .quit -width 4 -height 3 -activebackground red
+tcl grid .quit -row 4 -column 9
+tcl bind .quit <Button-1> { destroy . }
+
+tcl canvas .quit.im -width 50 -height 60
+tcl .quit.im create line 5 50 45 50 
+tcl .quit.im create rectangle 13 10 37 50 -fill white
+tcl .quit.im create line 30 30 35 30 -width 3
+tcl bind .quit.im <Button-1> { destroy . }
+tcl place .quit.im -relx 0.5 -rely 0.5 -anchor center
+
+tcl bind all <Escape> { do_esc } 
+tkmain()

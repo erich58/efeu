@@ -40,14 +40,14 @@ typedef struct {
 	size_t size;
 	size_t dim;
 	char **data;
-} ArgList_t;
+} ArgList;
 
-extern char *ArgList_get (ArgList_t *args, int n);
-extern void ArgList_append (ArgList_t *args, const char *fmt, va_list list);
-extern void ArgList_cadd (ArgList_t *args, const char *arg);
-extern void ArgList_madd (ArgList_t *args, char *arg);
-
-extern ArgList_t *ArgList (const char *def, ...);
+extern ArgList *arg_create (void);
+extern void arg_append (ArgList *args, const char *fmt, va_list list);
+extern void arg_cadd (ArgList *args, const char *arg);
+extern void arg_madd (ArgList *args, char *arg);
+extern void arg_set (ArgList *args, int n, char *val);
+extern char *arg_get (ArgList *args, int n);
 
 /*
 $SeeAlso

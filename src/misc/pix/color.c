@@ -29,9 +29,9 @@ int ColorValue(double x)
 	else			return (int) (255. * x + 0.5);
 }
 
-Color_t SetColor(double red, double green, double blue)
+COLOR SetColor(double red, double green, double blue)
 {
-	Color_t color;
+	COLOR color;
 
 	color.red = ColorValue(red);
 	color.green = ColorValue(green);
@@ -51,7 +51,7 @@ static int dist (int a, int b)
 }
 
 
-int GetColor(Color_t color, Color_t *tab, size_t dim)
+int GetColor(COLOR color, COLOR *tab, size_t dim)
 {
 	int i, n, d, last;
 

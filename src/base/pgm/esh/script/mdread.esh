@@ -24,7 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 PrintListDelim = "\t";
 
 pconfig !
-Version = "$Id: mdread.esh,v 1.9 2001-11-12 07:49:38 ef Exp $"
+Version = "$Id: mdread.esh,v 1.10 2002-12-02 14:27:52 ef Exp $"
 PrintMode = true
 
 x:name | Flags: set "{Flags} x={}"
@@ -67,10 +67,6 @@ T:title | Title
 	:de:Name der Ausgabedatei
 !
 
-msgtab {
-	1, "$!: Datei $(Input) ist keine Datenmatrix.\n"
-}
-
 if	(Locale)	setlocale(LC_ALL, Locale);
 
 mdmat md;
@@ -86,7 +82,8 @@ if	(flagres("SCFlag"))
 }
 else	md = mdread(open(Input, "rz"), Flags);
 
-if	(md == NULL)	error(NULL, 1);
+if	(md == NULL)
+	error("$!: Datei $1 ist keine Datenmatrix.\n", Input);
 
 if	(SelDef || VarDef)	md = reload(md, SelDef, VarDef);
 

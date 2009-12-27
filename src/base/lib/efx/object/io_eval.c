@@ -26,12 +26,12 @@ If not, write to the Free Software Foundation, Inc.,
 #include <ctype.h>
 
 
-int iocpy_eval(io_t *in, io_t *out, int c, const char *arg, unsigned int flags)
+int iocpy_eval(IO *in, IO *out, int c, const char *arg, unsigned int flags)
 {
-	Obj_t *obj;
+	EfiObj *obj;
 	int n, flag;
-	io_t *save_cin;
-	io_t *save_cout;
+	IO *save_cin;
+	IO *save_cout;
 
 	save_cin = CmdEval_cin;
 	save_cout = CmdEval_cout;
@@ -87,7 +87,7 @@ int iocpy_eval(io_t *in, io_t *out, int c, const char *arg, unsigned int flags)
 	return n;
 }
 
-void io_eval(io_t *io, const char *delim)
+void io_eval(IO *io, const char *delim)
 {
 	iocpy_eval(io, NULL, 0, delim, 0);
 }
@@ -100,7 +100,7 @@ void streval(const char *list)
 {
 	if	(list)
 	{
-		io_t *io;
+		IO *io;
 
 		io = io_cstr(list);
 		iocpy_eval(io, NULL, 0, NULL, 0);

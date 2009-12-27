@@ -75,7 +75,7 @@ Debug = note
 
 -debug::mode[debug]|Debug
 	:*:set debug level for command
-	:de:Setzt den Debug-Level für das Kommando.
+	:de:setzt den Debug-Level für das Kommando.
 #	Folgende Angaben sind möglich:
 #	[none]	Keine Meldungen ausgeben;
 #	[err]	Fehlermeldungen ausgeben;
@@ -87,5 +87,5 @@ Debug = note
 
 -verbose|Debug = stat
 	:*:set debug level to |stat|.
-	:de:Setzt den Debug-Level auf |stat|.
+	:de:setzt den Debug-Level auf |stat|.
 

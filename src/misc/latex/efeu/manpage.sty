@@ -1,0 +1,168 @@
+%	Handbucheinträge
+%	(c) 1997 Erich Frühstück
+%	A-1090 Wien, Währinger Straße 64/6
+
+%\NeedsTeXFormat{LaTeX2e}
+%\ProvidesPackage{manpage}[1997 `manpage' Version 1.0]
+
+\input{isogerman}
+%\usepackage{german}
+%\usepackage[isolatin]{inputenc}
+
+%\if@compatibility
+%\else
+%	\newdimen\footheight
+%\fi
+
+\newdimen\MP@TempDim
+\newbox\MP@TempBox
+
+\newcommand{\MPindent}{6}
+\newcommand{\MPwidth}[2]{\settowidth{#1}{n}\multiply #1 by #2\ignorespaces}
+
+\MPwidth{\leftmargini}{\MPindent}
+\MPwidth{\leftmarginii}{\MPindent}
+\MPwidth{\leftmarginiii}{\MPindent}
+\MPwidth{\leftmarginiv}{\MPindent}
+\MPwidth{\leftmarginv}{\MPindent}
+\MPwidth{\leftmarginvi}{\MPindent}
+
+\newdimen\MP@LabelSep
+\MPwidth{\MP@LabelSep}{1}
+
+%	Abschnitt
+
+\def\MP@secnum{}
+\def\MP@Foot{}
+
+\def\MPchapter{\clearpage\@dblarg{\MP@chapter}}
+
+\def\MP@chapter[#1]#2{\chapter*{#2}%
+	\thispagestyle{empty}%
+	\addcontentsline{toc}{chapter}{\protect\numberline{\arabic{chapter}}#1}%
+	\markright{#1}%
+	\gdef\MP@secnum{(\thechapter)}
+	\clearpage}
+	
+%	Indexeinträge
+%	Kopfzeile und Markierung
+
+\def\MP@Head{}
+\def\MP@Name{}
+
+\def\MPsecnum#1{\gdef\MP@secnum{(#1)}\ignorespaces}
+
+\def\MPentry{\clearpage\@ifnextchar[{\MP@entryA}{\MP@entryB}}
+\def\MP@entryA[#1]#2{\gdef\MP@Head{#1}\gdef\MP@Name{#2}\ignorespaces}
+\def\MP@entryB#1{\gdef\MP@Head{#1}\gdef\MP@Name{#1}\ignorespaces}
+
+%	Überschrift
+
+\def\MPcaption#1{\refstepcounter{section}%
+	\addcontentsline{toc}{section}{\MP@Name\ -- #1}%
+	\MP@Name\ -- #1
+	{\LatinIndex\index{\MP@Name}\index{#1}}%
+	\par}
+
+%	Indexeinträge
+
+\def\MPindex#1{{\LatinIndex\index{#1}}\ignorespaces}
+\def\ttindex#1{\index{#1@\texttt{#1}}\ignorespaces}
+%\def\MPindex#1{\ignorespaces}
+
+%	Abschnitte
+
+\newcommand{\MPsection}[1]{\par{\hskip-\leftmargin \bf #1\par
+	\vspace{-\parsep}}}
+\newcommand{\MPsubsection}[1]{\par{\hskip-0.5\leftmargin \bf #1\par
+	\vspace{-\parsep}}}
+
+%	Auflistungen
+
+\def\MPitem#1{\item[{#1}]\strut\ignorespaces}
+
+\newcommand{\MP@listlabel}[1]{%
+%	\sbox{\MP@TempBox}{\normalfont\bfseries #1\hskip\MP@LabelSep}%
+	\sbox{\MP@TempBox}{\normalfont #1\hskip\MP@LabelSep}%
+	\MP@TempDim\leftmargin
+	\ifdim\wd\MP@TempBox > \leftmargin
+		\advance\MP@TempDim by \linewidth
+	\fi
+	\makebox[\MP@TempDim][l]{\usebox{\MP@TempBox}}%
+	\ignorespaces}
+
+\newenvironment{MPlist}[1][\MPindent]
+	{\list{}{\MPwidth{\leftmargin}{#1}
+		\labelwidth\leftmargin
+		\labelsep\z@
+		\let\makelabel\MP@listlabel}}
+	{\endlist}
+
+%	Hervorhebung
+
+\newenvironment{MPquote}[1][\MPindent]
+	{\list{}{\MPwidth{\leftmargin}{#1}
+		\topsep\z@
+		\partopsep\z@
+		\parsep\parskip
+		\itemsep\z@
+		\labelwidth\z@
+		\labelsep\z@
+		\itemindent\z@
+		\listparindent\z@
+		\let\makelabel\@gobble
+	}\item\relax}
+	{\endlist}
+
+%	Hängender Absatz
+
+\long\def\MPhangpar@item#1{#1\par\ignorespaces}
+
+\newenvironment{MPhangpar}[1][\MPindent]
+	{\list{}{\MPwidth{\leftmargin}{#1}
+		\topsep\z@
+		\partopsep\z@
+		\parsep\parskip
+		\itemsep\z@
+		\labelwidth\z@
+		\labelsep\z@
+		\itemindent-\leftmargin
+		\listparindent-\leftmargin
+		\let\makelabel\@gobble
+		\let\MPitem\MPhangpar@item
+	}\item\relax}
+	{\endlist}
+
+%	Auffüllen abschalten
+
+\def\MPnofill{\trivlist
+	\tt
+	\raggedright
+	\parskip\z@
+	\obeylines
+	\obeyspaces
+	\item\relax}
+\def\endMPnofill{\endtrivlist}
+
+%	Handbuchumgebung
+
+\newenvironment{manpage}
+	{\clearpage\list{}{%
+		\pagestyle{manpage}
+		\MPwidth{\leftmargin}{\MPindent}
+		\parsep0.5\baselineskip
+		\parskip\parsep
+		\itemsep\parsep
+		\itemindent=0pt
+	}\item\relax}
+	{\clearpage\endlist}
+
+\def\ps@manpage{%
+	\def\@oddhead{\MP@Head\MP@secnum\hfil\MP@Head\MP@secnum}%
+	\let\@evenhead\@oddhead
+	\def\@oddfoot{\rightmark\hfil\thepage}
+	\let\@evenfoot\@oddfoot
+	\let\@mkboth\@gobbletwo
+	\let\chaptermark\@gobble
+	\let\sectionmark\@gobble
+}

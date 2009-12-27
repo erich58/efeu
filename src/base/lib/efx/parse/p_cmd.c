@@ -27,9 +27,9 @@ If not, write to the Free Software Foundation, Inc.,
 /*	Befehlszeile
 */
 
-Obj_t *Parse_cmd(io_t *io)
+EfiObj *Parse_cmd(IO *io)
 {
-	Obj_t *obj;
+	EfiObj *obj;
 
 	if	(io_eat(io, "%s") == '{')
 	{
@@ -54,12 +54,12 @@ Obj_t *Parse_cmd(io_t *io)
 /*	Blöcke
 */
 
-Obj_t *Parse_block(io_t *io, int endchar)
+EfiObj *Parse_block(IO *io, int endchar)
 {
-	ObjList_t *list;
-	ObjList_t **ptr;
-	Obj_t *obj;
-	Block_t block;
+	EfiObjList *list;
+	EfiObjList **ptr;
+	EfiObj *obj;
+	EfiBlock block;
 	char *prompt;
 	int c;
 
@@ -79,7 +79,7 @@ Obj_t *Parse_block(io_t *io, int endchar)
 		}
 		else if	(c == EOF)
 		{
-			io_error(io, MSG_EFMAIN, 110, 0);
+			io_error(io, "[efmain:110]", NULL);
 			break;
 		}
 		else if	(c == '{')
@@ -102,14 +102,13 @@ Obj_t *Parse_block(io_t *io, int endchar)
 
 		if	(obj == NULL)
 		{
-			io_error(io, MSG_EFMAIN, 117, 0);
+			io_error(io, "[efmain:117]", NULL);
 			break;
 		}
 		else if	(obj->type->eval == NULL)
 		{
 			UnrefObj(obj);
-			reg_set(0, io_ident(io));
-			errmsg(MSG_EFMAIN, 113);
+			io_note(io, "[efmain:113]", NULL);
 		}
 		else
 		{

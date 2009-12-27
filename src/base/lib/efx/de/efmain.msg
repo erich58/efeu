@@ -27,7 +27,6 @@ If not, write to the Free Software Foundation, Inc.,
 5	$!: Zuweisungstabelle ist nicht definiert.\n
 6	$!: Konfigurationsdatei $1 nicht gefunden.\n
 8	$!: $0: Datei $1 nicht gefunden.\n
-9	$!: $0: loadarg unerwartet.\n
 
 21	$!: Datei $1 nicht lesbar.\n
 22	$!: Datei $1 nicht beschreibbar.\n
@@ -38,7 +37,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 27	$!: Alle temporären Dateinamen in Verwendung.\n
 28	$!: Unbekannter Zugriff auf Datei.\n
-29	$!: Prozess $(#1) nicht generierbar.\n
+29	$!: Prozess $1 nicht generierbar.\n
 
 31	$!: Option $1 - fehlendes Argument.\n
 32	$!: Unbekannte Option $1.\n
@@ -51,9 +50,6 @@ If not, write to the Free Software Foundation, Inc.,
 41	$!: Konstanter Datenbuffer kann nicht vergrößert werden.\n
 42	$!: File $0: Vorzeitiges Fileende beim Lesen eines Vektorfeldes.\n
 43	$!: File $0: Ausgabefehler beim Schreiben eines Vektorfeldes.\n
-
-51	$!: $0: Mehr als ein 'u' in Ganzzahlwert.\n
-52	$!: $0: Mehr als ein 'l' in Ganzzahlwert.\n
 
 60	$!: Funktion $"
 61	$": Argument $1 nicht definiert.\n
@@ -91,7 +87,7 @@ If not, write to the Free Software Foundation, Inc.,
 91	$!: Funktion $1: Kein Effekt.\n
 92	$!: Funktion $1: Falsche Argumente.\n
 93	$!: Funktion $1: Argument $2 ist nicht definiert.\n
-94	$!: Undefinierter Vorgabewert in Funktionsaufruf.\n
+94	$!: Funktion $1: Undefinierter Vorgabewert für Argument $2.\n
 95	$!: $0: Ungültiger Name in for-in Schleife.\n
 96	$!: $0: Funktion $1: Kein Argument für Rückgabereferenz definiert.\n
 97	$!: Funktion $1: ACHTUNG: Inkompatible Rückgabereferenz.\n
@@ -197,3 +193,5 @@ If not, write to the Free Software Foundation, Inc.,
 402	$!: $0: Syntaxfehler in case-Statement.\n
 403	$!: $0: Unerwartetes Zeichen nach default-Statement.\n
 404	$!: $0: Befehlszeilen vor Klausel werden ignoriert.\n
+
+ppm	$!: $0: Ungültiger Header in Pixmap-Datei.\n

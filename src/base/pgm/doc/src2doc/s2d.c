@@ -27,12 +27,13 @@ If not, write to the Free Software Foundation, Inc.,
 typedef struct {
 	char *name;
 	char *desc;
-	S2DEval_t eval;
-} S2DMode_t;
+	S2DEval eval;
+} S2DMode;
 
-static S2DMode_t tab[] = {
+static S2DMode tab[] = {
 	{ "hdr", "Handbucheintrag für Headerfile", s2d_hdr },
 	{ "src", "Handbucheintrag für Sourcefile", s2d_src },
+	{ "cmd", "Handbucheintrag für Scriptdateien", s2d_cmd },
 	{ "std", "Sourcen mit Erläuterung", s2d_std },
 	{ "com", "Kommentare der Datei", s2d_com },
 	{ "doc", "Direkteinbindung der Datei", s2d_doc },
@@ -40,19 +41,21 @@ static S2DMode_t tab[] = {
 
 typedef struct {
 	char *pat;
-	S2DEval_t eval;
-} S2DName_t;
+	S2DEval eval;
+} S2DName;
 
-static S2DName_t ntab[] = {
+static S2DName ntab[] = {
 	{ "*.h", s2d_hdr },
 	{ "*.pph", s2d_hdr },
 	{ "*.c", s2d_src },
 	{ "*.doc", s2d_doc },
+	{ "*.ms", s2d_cmd },
+	{ "*.hdr", s2d_cmd },
 	{ "*.[0-9]*", s2d_man },
 	{ "*Imakefile", s2d_std },
 };
 
-S2DEval_t S2DName_get (const char *name)
+S2DEval S2DName_get (const char *name)
 {
 	int i;
 
@@ -63,7 +66,7 @@ S2DEval_t S2DName_get (const char *name)
 }
 
 
-S2DEval_t S2DMode_get (const char *name)
+S2DEval S2DMode_get (const char *name)
 {
 	int i;
 
@@ -73,7 +76,7 @@ S2DEval_t S2DMode_get (const char *name)
 	return NULL;
 }
 
-void S2DMode_list (io_t *io)
+void S2DMode_list (IO *io)
 {
 	int i, j, k;
 

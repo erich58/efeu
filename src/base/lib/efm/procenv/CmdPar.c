@@ -1,5 +1,6 @@
 /*
-Verwalten Kommandoparameterstrukturen
+:*:administation of command parameters
+:de:Verwalten von Kommandoparameterstrukturen
 
 $Copyright (C) 2001 Erich Frühstück
 This file is part of EFEU.
@@ -21,7 +22,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/CmdPar.h>
-#include <EFEU/KeyTab.h>
+#include <EFEU/vecbuf.h>
 #include <EFEU/mstring.h>
 #include <EFEU/io.h>
 #include <EFEU/Info.h>
@@ -35,49 +36,41 @@ If not, write to the Free Software Foundation, Inc.,
 #define	LBL_ENV	":*:environment" \
 		":de:Umgebungsvariablen"
 
-static char *cpar_ident (CmdPar_t *par)
+static char *cpar_ident (const void *data)
 {
-	return par ? mstrcpy(par->name) : NULL;
+	const CmdPar *par = data;
+	return mstrcpy(par->name);
 }
 
-static CmdPar_t *cpar_admin (CmdPar_t *tg, const CmdPar_t *src)
+static void cpar_clean (void *ptr)
 {
-	if	(tg)
-	{
-		CmdPar_clean(tg);
-
-		if	(src == NULL)
-		{
-			memfree(tg);
-			tg = NULL;
-		}
-	}
-	else	tg = src ? src : memalloc(sizeof(CmdPar_t));
-
-	CmdPar_init(tg);
-	return tg;
+	CmdPar_clean(ptr);
+	memfree(ptr);
 }
 
 /*
-Die Datenstruktur |$1| definiert den Referenztype für die Struktur |CmdPar_t|.
+Die Datenstruktur |$1| definiert den Referenztype für die Struktur |CmdPar|.
 */
-ADMINREFTYPE(CmdPar_reftype, "CmdPar", cpar_ident, cpar_admin);
+
+RefType CmdPar_reftype = REFTYPE_INIT("CmdPar", cpar_ident, cpar_clean);
 
 
 /*	Hilfsfunktionen
 */
 
 /**/
-static void var_clean (CmdParVar_t *var)
+static void var_clean (void *data)
 {
+	CmdParVar *var = data;
 	memfree(var->name);
 	memfree(var->value);
 	memfree(var->desc);
 }
 
 /**/
-static void def_clean (CmdParDef_t **def)
+static void def_clean (void *data)
 {
+	CmdParDef **def = data;
 	CmdParDef_free(*def);
 }
 
@@ -85,16 +78,16 @@ static void def_clean (CmdParDef_t **def)
 Die Funktion |$1| initialisiert die Kommandoparameterstruktur <par>.
 */
 
-void CmdPar_init (CmdPar_t *par)
+void CmdPar_init (CmdPar *par)
 {
 	if	(!par)	return;
 
 	par->name = NULL;
-	vb_init(&par->var, 32, sizeof(CmdParVar_t));
-	vb_init(&par->def, 32, sizeof(CmdParDef_t *));
-	vb_init(&par->env, 32, sizeof(CmdParKey_t *));
-	vb_init(&par->opt, 32, sizeof(CmdParKey_t *));
-	vb_init(&par->arg, 32, sizeof(CmdParKey_t *));
+	vb_init(&par->var, 32, sizeof(CmdParVar));
+	vb_init(&par->def, 32, sizeof(CmdParDef *));
+	vb_init(&par->env, 32, sizeof(CmdParKey *));
+	vb_init(&par->opt, 32, sizeof(CmdParKey *));
+	vb_init(&par->arg, 32, sizeof(CmdParKey *));
 }
 
 /*
@@ -102,15 +95,15 @@ Die Funktion |$1| löscht alle in der Kommandoparameterstruktur <par>
 gespeicherten Daten und stellt den Zustand nach |CmdPar_init| her.
 */
 
-void CmdPar_clean (CmdPar_t *par)
+void CmdPar_clean (CmdPar *par)
 {
 	if	(!par)	return;
 
 	memfree(par->name);
 	par->name = NULL;
-	vb_clean(&par->var, (clean_t) var_clean);
+	vb_clean(&par->var, var_clean);
 	vb_free(&par->var);
-	vb_clean(&par->def, (clean_t) def_clean);
+	vb_clean(&par->def, def_clean);
 	vb_free(&par->def);
 	vb_free(&par->env);
 	vb_free(&par->opt);
@@ -122,11 +115,12 @@ Die Funktion |$1| liefert den Pointer auf eine dynamisch generierte und
 initialisierte Kommandoparameterstruktur.
 */
 
-CmdPar_t *CmdPar_alloc (const char *name)
+CmdPar *CmdPar_alloc (const char *name)
 {
-	CmdPar_t *par = rd_create(&CmdPar_reftype);
+	CmdPar *par = memalloc(sizeof(CmdPar));
+	CmdPar_init(par);
 	par->name = mstrcpy(name);
-	return par;
+	return rd_init(&CmdPar_reftype, par);
 }
 
 /*
@@ -138,21 +132,21 @@ Diese wird bei der ersten Verwendung automatisch initialisiert.
 Ansonsten liefert die Funktion <ptr>.
 */
 
-CmdPar_t *CmdPar_ptr (CmdPar_t *ptr)
+CmdPar *CmdPar_ptr (CmdPar *ptr)
 {
-	static CmdPar_t *defpar = NULL;
+	static CmdPar *defpar = NULL;
 
 	if	(ptr)	return ptr;
 
 	if	(!defpar)
-		defpar = rd_create(&CmdPar_reftype);
+		defpar = CmdPar_alloc(NULL);
 
 	return defpar;
 }
 
 #define	WELCOME	"{} - {Ident}\n{Copyright}\n"
 
-static void arg_info (io_t *io, InfoNode_t *info)
+static void arg_info (IO *io, InfoNode *info)
 {
 	int save = CmdPar_docmode;
 	CmdPar_docmode = 0;
@@ -160,7 +154,7 @@ static void arg_info (io_t *io, InfoNode_t *info)
 	CmdPar_docmode = save;
 }
 
-static void env_info (io_t *io, InfoNode_t *info)
+static void env_info (IO *io, InfoNode *info)
 {
 	int save = CmdPar_docmode;
 	CmdPar_docmode = 0;
@@ -168,7 +162,7 @@ static void env_info (io_t *io, InfoNode_t *info)
 	CmdPar_docmode = save;
 }
 
-static void var_info (io_t *io, InfoNode_t *info)
+static void var_info (IO *io, InfoNode *info)
 {
 	int save = CmdPar_docmode;
 	CmdPar_docmode = 0;
@@ -184,7 +178,7 @@ Unterpunkte für den Informationsknoten <node>:
 [Env]	Umgebungsvariablen
 */
 
-void CmdPar_info (CmdPar_t *par, InfoNode_t *node)
+void CmdPar_info (CmdPar *par, InfoNode *node)
 {
 	par = CmdPar_ptr(NULL);
 	node = GetInfo(node, NULL);

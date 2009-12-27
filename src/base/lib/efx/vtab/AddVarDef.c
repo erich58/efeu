@@ -22,32 +22,26 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/object.h>
 
-static void var_clean (Var_t *var)
+/*
+Die Funktion |$1| erweitert fie Variablentabelle <tab> um die
+Variablendefinitionen <def>. Die Variablendefinitionen müssen
+über die gesamte Laufzeit der Tabelle <tab> verfügbar sein.
+*/
+
+void AddVarDef (EfiVarTab *tab, EfiVarDef *def, size_t dim)
 {
-	memfree((char *) var->name);
-	memfree((char *) var->desc);
-}
+	tab = CurrentVarTab(tab);
 
-void AddVarDef (VarTab_t *tab, VarDef_t *def, size_t dim)
-{
-	Var_t *var;
-
-	if	(tab == NULL)
+	for (; dim-- > 0; def++)
 	{
-		if	(LocalVar == NULL)
-			LocalVar = VarTab(NULL, 0);
-
-		tab = LocalVar;
-	}
-
-	while (dim-- > 0)
-	{
-		var = NewVar(NULL, def->name, 0);
-		var->type = def->type;
-		var->data = def->data;
-		var->desc = mlangcpy(def->desc, NULL);
-		var->clean = (clean_t) var_clean;
-		AddVar(tab, var, 1);
-		def++;
+		VarTabEntry entry;
+		entry.name = def->name;
+		entry.desc = mlangcpy(def->desc, NULL);
+		entry.type = def->type;
+		entry.obj = LvalObj(&Lval_ptr, def->type, def->data);
+		entry.get = NULL;
+		entry.data = def;
+		entry.clean = NULL;
+		VarTab_add(tab, &entry);
 	}
 }

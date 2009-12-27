@@ -25,19 +25,19 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/efutil.h>
 
 
-static int f_get(io_t *io)
+static int f_get(IO *io)
 {
 	return io_egetc(io, NULL);
 }
 
-static int f_mget(io_t *io)
+static int f_mget(IO *io)
 {
 	return io_mgetc(io, 1);
 }
 
-int iocpy_brace(io_t *in, io_t *out, int c, const char *arg, unsigned int flags)
+int iocpy_brace(IO *in, IO *out, int c, const char *arg, unsigned int flags)
 {
-	int (*get) (io_t *io);
+	int (*get) (IO *io);
 	int n;
 
 	n = io_nputc(c, out, 1);

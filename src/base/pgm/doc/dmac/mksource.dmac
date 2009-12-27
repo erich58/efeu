@@ -21,6 +21,11 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
+\eval	{
+	int ms_exnum = 1;	// Laufnummer für Beispiele 
+}
+
+
 :*:create sourcefile
 	$1 <file>
 :de:Sourcefile generieren
@@ -32,7 +37,7 @@ and includes the created files in verbatim mode.
 an und bindet die Ergebnisdateien wortwörtlich ein.
 
 \def\mksource {{
-str fname = fsearch(DocPath, expand(ParseLine(cin)), NULL);
+str fname = fsearch(DocPath, xexpand(ParseLine(cin)), NULL);
 
 if	(fname)
 {
@@ -55,6 +60,52 @@ if	(fname)
 
 	system("rm -rf " + tmp);
 }
+}}
+
+:*:execute |mksource| example
+	$1 <name>
+	<example script>
+	|\\end|
+:de:Beispiel für |mksource| ausführen
+	$1 <name>
+	<Beispielskript>
+	|\\end|
+
+:*:The command $1 calls |mksource| with the given example script
+and includes it together with all created files in verbatim mode.
+:de:Der Befehl $1 wendet |mksource| auf das Beispielskript
+an und bindet dieses mit allen Ergebnisdateien wortwörtlich ein.
+
+\def\ms_example	{{
+	str desc = ParseLine(cin);
+	str name = strcut(desc, "%s");
+	str body = ParseRegion(cin, "\\\\end");
+
+	if	(!name)
+		name = sprintf("ex%d", ms_exnum++);
+
+	fprintf(cout, "\n\n<*%s.tpl*>\n\n", name);
+	cout << "---- verbatim\n";
+	copy(body, cout);
+	cout << "----\n\n";
+
+	str tmp = tmpnam("ms_");
+	system("mkdir " + tmp);
+	puts(body, open(sprintf("%s/%s.tpl", tmp, name), "w"));
+
+	str list = filter(sprintf("( cd %s; mksource -s -l %s.tpl )",
+		tmp, name));
+	system(sprintf("( cd %s; mksource -s %s.tpl )", tmp, name));
+
+	for (x in split(list, "%s"))
+	{
+		fprintf(cout, "<*%s*>\n\n", x);
+		cout << "---- verbatim\n";
+		copy(open(sprintf("%s/%s", tmp, x), "r"), cout);
+		cout << "----\n\n";
+	}
+
+	system("rm -rf " + tmp);
 }}
 
 :*:include mksource example

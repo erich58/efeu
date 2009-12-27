@@ -28,13 +28,13 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/locale.h>
 #include <EFEU/preproc.h>
 #include <EFEU/Debug.h>
-#include <EFEU/LangType.h>
+#include <EFEU/LangDef.h>
 
 
 /*	Die eingebauten Funktionen werden über Makros definiert
 */
 
-#define	BUILTIN(name)	static void name (Func_t *func, void *rval, void **arg)
+#define	BUILTIN(name)	static void name (EfiFunc *func, void *rval, void **arg)
 
 #define	F_INT(N, E)	BUILTIN(N) { Val_int(rval) = (E); }
 #define	F_STR(N, E)	BUILTIN(N) { Val_str(rval) = (E); }
@@ -43,16 +43,16 @@ If not, write to the Free Software Foundation, Inc.,
 /*	Test auf Variablendefinition
 */
 
-F_INT(c_sizeof, ((Obj_t *) arg[0])->type->size)
+F_INT(c_sizeof, ((EfiObj *) arg[0])->type->size)
 F_INT(u_sizeof, 0)
 F_INT(t_sizeof, Val_type(arg[0])->size)
 
-CEXPR(c_typeof, Val_type(rval) = ((Obj_t *) arg[0])->type)
+CEXPR(c_typeof, Val_type(rval) = ((EfiObj *) arg[0])->type)
 
 BUILTIN(f_declare)
 {
-	strbuf_t *sb;
-	io_t *tmp;
+	StrBuf *sb;
+	IO *tmp;
 
 	sb = new_strbuf(0);
 	tmp = io_strbuf(sb);
@@ -63,34 +63,14 @@ BUILTIN(f_declare)
 
 BUILTIN(f_whatis)
 {
-	Obj_t *obj = arg[0];
-
-	if	(obj)
-	{
-		if	(obj->lval)
-		{
-			char *p = obj->lval->ident ? 
-				obj->lval->ident(obj) : NULL;
-
-			if	(p)
-			{
-				Val_str(rval) = msprintf("%s & (%s)",
-					obj->type->name, p);
-				memfree(p);
-			}
-			else	Val_str(rval) = msprintf("%s &", obj->type->name);
-		}
-		else	Val_str(rval) = mstrcpy(obj->type->name);
-	}
-	else	Val_str(rval) = mstrcpy(NULL);
-
+	Val_str(rval) = Obj_ident(arg[0]);
 }
 
 BUILTIN(f_align)
 {
-	register int sig = 1;
-	register int n = Val_int(arg[0]);
-	register int k = Val_int(arg[1]);
+	int sig = 1;
+	int n = Val_int(arg[0]);
+	int k = Val_int(arg[1]);
 
 	if	(n == 0 || k == 0)
 	{
@@ -106,10 +86,11 @@ BUILTIN(f_align)
 
 BUILTIN(f_offset)
 {
-	register Obj_t *base = arg[0];
-	register Obj_t *obj = arg[1];
+	EfiObj *base = arg[0];
+	EfiObj *obj = arg[1];
 
-	Val_int(rval) = (base && obj) ? ((char *) obj->data - (char *) base->data) : 0;
+	Val_int(rval) = (base && obj) ?
+		((char *) obj->data - (char *) base->data) : 0;
 }
 
 /*	Funktionsauswertung
@@ -117,9 +98,9 @@ BUILTIN(f_offset)
 
 BUILTIN(f_ofunc)
 {
-	ObjFunc_t *x;
-	ObjList_t *list;
-	Obj_t *obj;
+	EfiObjFunc *x;
+	EfiObjList *list;
+	EfiObj *obj;
 
 	x = arg[0];
 
@@ -149,13 +130,13 @@ BUILTIN(f_vfunc)
 
 BUILTIN(f_tfunc)
 {
-	Type_t *type = Val_type(arg[0]);
-	ObjList_t *list = Val_list(arg[1]);
-	Type_t *x;
+	EfiType *type = Val_type(arg[0]);
+	EfiObjList *list = Val_list(arg[1]);
+	EfiType *x;
 
 	for (x = type; x != NULL; x = x->base)
 	{
-		VirFunc_t *ftab = type->create;
+		EfiVirFunc *ftab = type->create;
 
 		if	(ftab && ftab->tab.used)
 		{
@@ -174,8 +155,7 @@ BUILTIN(f_tfunc)
 	}
 	else
 	{
-		reg_cpy(1, Val_type(arg[0])->name);
-		errmsg(MSG_EFMAIN, 71);
+		dbg_note(NULL, "[efmain:71]", "s", Val_type(arg[0])->name);
 	}
 }
 
@@ -185,8 +165,8 @@ BUILTIN(f_tfunc)
 
 BUILTIN(get_op)
 {
-	Obj_t *var;
-	Obj_t *obj;
+	EfiObj *var;
+	EfiObj *obj;
 
 	var = arg[1];
 	io_eat(Val_io(arg[0]), "%s");
@@ -226,8 +206,8 @@ BUILTIN(f_fprintf)
 
 BUILTIN(f_sprintf)
 {
-	strbuf_t *sb;
-	io_t *io;
+	StrBuf *sb;
+	IO *io;
 
 	sb = new_strbuf(0);
 	io = io_strbuf(sb);
@@ -266,7 +246,7 @@ BUILTIN(f_geval)
 
 BUILTIN(f_cmdeval)
 {
-	io_t *io = io_cmdpreproc(io_refer(Val_io(arg[0])));
+	IO *io = io_cmdpreproc(io_refer(Val_io(arg[0])));
 
 	if	(Val_int(arg[2]))
 	{
@@ -286,9 +266,10 @@ BUILTIN(f_ioeval)
 
 BUILTIN(f_load)
 {
-	io_t *io;
+	IO *io;
 
-	if	((io = io_findopen(Val_str(arg[0]), Val_str(arg[1]), Val_str(arg[2]), "r")))
+	if	((io = io_findopen(Val_str(arg[0]), Val_str(arg[1]),
+			Val_str(arg[2]), "rd")))
 	{
 		io = io_cmdpreproc(io);
 		CmdEval(io, NULL);
@@ -300,9 +281,10 @@ BUILTIN(f_load)
 
 BUILTIN(f_gload)
 {
-	io_t *io;
+	IO *io;
 
-	if	((io = io_findopen(Val_str(arg[0]), Val_str(arg[1]), Val_str(arg[2]), "r")))
+	if	((io = io_findopen(Val_str(arg[0]), Val_str(arg[1]),
+			Val_str(arg[2]), "rd")))
 	{
 		io = io_cmdpreproc(io);
 		PushVarTab(RefVarTab(GlobalVar), NULL);
@@ -314,53 +296,19 @@ BUILTIN(f_gload)
 	else	Val_int(rval) = 0;
 }
 
-F_STR(f_fsearch, fsearch(Val_str(arg[0]), NULL, Val_str(arg[1]), Val_str(arg[2])))
-
-F_STR(f_psub, parsub(Val_str(arg[0])))
-
-BUILTIN(f_vpsub)
-{
-	ObjList_t *l;
-	int i;
-
-	for (i = 1, l = Val_list(arg[1]); l != NULL; i++, l = l->next)
-		reg_set(i, Obj2str(RefObj(l->obj)));
-
-	Val_str(rval) = parsub(Val_str(arg[0]));
-}
-
-BUILTIN(f_vfpsub)
-{
-	ObjList_t *l;
-	int i;
-
-	for (i= 1, l = Val_list(arg[2]); l != NULL; i++, l = l->next)
-		reg_set(i, Obj2str(RefObj(l->obj)));
-
-	Val_int(rval) = io_psub(Val_io(arg[0]), Val_str(arg[1]));
-}
-
-BUILTIN(f_iopsub)
-{
-	Message(NULL, DBG_NOTE,
-		"WARNING: psub() instead of fpsub().\n", NULL);
-	Val_int(rval) = io_psub(Val_io(arg[0]), Val_str(arg[1]));
-}
+F_STR(f_fsearch, fsearch(Val_str(arg[0]), NULL,
+	Val_str(arg[1]), Val_str(arg[2])))
 
 F_INT(f_texputs, TeXputs(Val_str(arg[1]), Val_io(arg[0])))
-F_INT(f_pcopy, io_pcopy(Val_io(arg[0]), Val_io(arg[1]), NULL))
-F_STR(f_mpcopy, mpcopy(Val_io(arg[0])))
-
-CEXPR(f_errmsg, errmsg(Val_str(arg[0]), Val_int(arg[1])))
-CEXPR(f_error, liberror(Val_str(arg[0]), Val_int(arg[1])))
-CEXPR(f_message, errmsg(Val_str(arg[0]), Val_int(arg[1])))
-F_STR(f_getmsg, mstrcpy(getmsg(Val_str(arg[0]), Val_int(arg[1]), Val_str(arg[2]))))
+F_INT(f_pcopy, io_pcopy(Val_io(arg[0]), Val_io(arg[1]),
+	Val_int(arg[2]), 0, NULL))
+F_STR(f_mpcopy, mpcopy(Val_io(arg[0]), Val_int(arg[1]), 0, NULL))
 
 BUILTIN(f_cat)
 {
-	strbuf_t *sb;
+	StrBuf *sb;
 	char *delim;
-	ObjList_t *l;
+	EfiObjList *l;
 	char *s;
 
 	sb = new_strbuf(0);
@@ -400,7 +348,7 @@ BUILTIN(f_listcmp)
 BUILTIN(f_pselect)
 {
 	char *name, *pat, *p;
-	ObjList_t *l;
+	EfiObjList *l;
 	int mode, flag;
 
 	flag = 2;
@@ -432,7 +380,7 @@ BUILTIN(f_split)
 {
 	size_t i, n;
 	char **list;
-	ObjList_t **ptr;
+	EfiObjList **ptr;
 
 	n = strsplit(Val_str(arg[0]), Val_str(arg[1]), &list);
 	ptr = rval;
@@ -466,52 +414,58 @@ BUILTIN(f_index)
 }
 
 
-static void f_typelist (Func_t *func, void *rval, void **arg)
+typedef struct {
+	EfiObjList **ptr;
+} WPTR;
+
+static int add_entry (const char *name, void *data, void *ptr)
 {
-	int i;
-	ObjList_t *list, **ptr;
-	extern xtab_t TypeTab;
+	WPTR *wp = ptr;
+	*wp->ptr = NewObjList(type2Obj(data));
+	wp->ptr = &(*wp->ptr)->next;
+	return 0;
+}
+
+static void f_typelist (EfiFunc *func, void *rval, void **arg)
+{
+	extern NameKeyTab TypeTab;
+	EfiObjList *list;
+	WPTR wp;
 
 	list = NULL;
-	ptr = &list;
-
-	for (i = 0; i < TypeTab.dim; i++)
-	{
-		*ptr = NewObjList(type2Obj(TypeTab.tab[i]));
-		ptr = &(*ptr)->next;
-	}
-
+	wp.ptr = &list;
+	nkt_walk(&TypeTab, add_entry, &wp);
 	Val_list(rval) = list;
 }
 
-static void f_enumlist (Func_t *func, void *rval, void **arg)
+static void f_enumlist (EfiFunc *func, void *rval, void **arg)
 {
 	Val_list(rval) = EnumKeyList(Val_type(arg[0]));
 }
 
-static void f_typetree (Func_t *func, void *rval, void **arg)
+static void f_typetree (EfiFunc *func, void *rval, void **arg)
 {
 	TypeTree(Val_io(arg[1]), Val_type(arg[0]));
 }
 
-static void f_typeclass (Func_t *func, void *rval, void **arg)
+static void f_typeclass (EfiFunc *func, void *rval, void **arg)
 {
 	Val_bool(rval) = IsTypeClass(Val_type(arg[0]), Val_type(arg[1]));
 }
 
-static void f_setlocale (Func_t *func, void *rval, void **arg)
+static void f_setlocale (EfiFunc *func, void *rval, void **arg)
 {
 	SetLocale(Val_int(arg[0]), Val_str(arg[1]));
 }
 
-static void f_setlang (Func_t *func, void *rval, void **arg)
+static void f_setlang (EfiFunc *func, void *rval, void **arg)
 {
-	SetLangType(Val_str(arg[0]));
+	SetLangDef(Val_str(arg[0]));
 }
 
-static void f_printparam (Func_t *func, void *rval, void **arg)
+static void f_printparam (EfiFunc *func, void *rval, void **arg)
 {
-	Locale.print = memalloc(sizeof(LCValue_t));
+	Locale.print = memalloc(sizeof(LCValueDef));
 	Locale.print->name = NULL;
 	Locale.print->thousands_sep = mstrcpy(Val_str(arg[0]));
 	Locale.print->decimal_point = mstrcpy(Val_str(arg[1]));
@@ -520,27 +474,27 @@ static void f_printparam (Func_t *func, void *rval, void **arg)
 	Locale.print->zero_sign = mstrcpy(Val_str(arg[4]));
 }
 
-static void f_lcpush (Func_t *func, void *rval, void **arg)
+static void f_lcpush (EfiFunc *func, void *rval, void **arg)
 {
 	PushLocale();
 }
 
-static void f_lcpop (Func_t *func, void *rval, void **arg)
+static void f_lcpop (EfiFunc *func, void *rval, void **arg)
 {
 	PopLocale();
 }
 
-static void f_pushcontext (Func_t *func, void *rval, void **arg)
+static void f_pushcontext (EfiFunc *func, void *rval, void **arg)
 {
 	PushContext(LocalVar, RefObj(LocalObj));
 }
 
-static void f_popcontext (Func_t *func, void *rval, void **arg)
+static void f_popcontext (EfiFunc *func, void *rval, void **arg)
 {
 	PopContext();
 }
 
-static FuncDef_t fdef_func[] = {
+static EfiFuncDef fdef_func[] = {
 	{ FUNC_VIRTUAL, &Type_obj, "operator() (Func, List_t)", f_func },
 	{ FUNC_VIRTUAL, &Type_obj, "operator() (VirFunc, List_t)", f_vfunc },
 	{ FUNC_VIRTUAL, &Type_obj, "operator() (ObjFunc, List_t)", f_ofunc },
@@ -570,13 +524,9 @@ static FuncDef_t fdef_func[] = {
 	{ 0, &Type_void, "debug (str def, str fmt, ...)", f_debug },
 	{ 0, &Type_void, "DebugMode (str def)", f_DebugMode },
 
-	{ FUNC_VIRTUAL, &Type_str, "psub (str fmt)", f_psub },
-	{ FUNC_VIRTUAL, &Type_int, "psub (IO io, str fmt)", f_iopsub },
-	{ FUNC_VIRTUAL, &Type_str, "psub (str fmt, ...)", f_vpsub },
-	{ 0, &Type_int, "fpsub (IO io, str fmt, ...)", f_vfpsub },
-
-	{ FUNC_VIRTUAL, &Type_int, "pcopy (IO in, IO out)", f_pcopy },
-	{ FUNC_VIRTUAL, &Type_str, "pcopy (IO in)", f_mpcopy },
+	{ FUNC_VIRTUAL, &Type_int, "pcopy (IO in, IO out, int delim = EOF)",
+		f_pcopy },
+	{ FUNC_VIRTUAL, &Type_str, "pcopy (IO in, int delim = EOF)", f_mpcopy },
 	{ 0, &Type_int, "TeXputs (IO io, str s)", f_texputs },
 
 	{ FUNC_VIRTUAL, &Type_obj, "expr (str expr)", f_expr },
@@ -586,10 +536,6 @@ static FuncDef_t fdef_func[] = {
 	{ FUNC_VIRTUAL, &Type_void, "eval (IO io, str delim = NULL)", f_ioeval },
 	{ 0, &Type_bool, "load (str path, str name, str type = NULL)", f_load },
 	{ 0, &Type_bool, "gload (str path, str name, str type = NULL)", f_gload },
-	{ 0, &Type_void, "error (str name, int num)", f_error },
-	{ 0, &Type_void, "errmsg (str name, int num)", f_errmsg },
-	{ 0, &Type_void, "message (str name, int num)", f_message },
-	{ 0, &Type_str, "getmsg (str name, int num, str defval = NULL)", f_getmsg },
 	{ 0, &Type_str, "fsearch (str path, str name, str type = NULL)", f_fsearch },
 	{ FUNC_VIRTUAL, &Type_bool, "patcmp (str pat, str s)", f_patcmp },
 	{ FUNC_VIRTUAL, &Type_bool, "patcmp (str pat, str s, str &t)", f_patcmp },

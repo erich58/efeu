@@ -47,8 +47,8 @@ void SetupMdTest (void);
 /*	Typedefinition für multidimensionale Matrizen
 */
 
-Type_t *mdtype (const char *str);
-char *type2str (const Type_t *type);
+EfiType *mdtype (const char *str);
+char *type2str (const EfiType *type);
 
 
 
@@ -58,26 +58,27 @@ char *type2str (const Type_t *type);
 typedef struct {
 	char *name;	/* Achsenbezeichner */
 	unsigned flags;	/* Selektionsflags */
-} mdidx_t;
+} mdindex;
 
 
 /*	Achsenstruktur
 */
 
-typedef struct md_s {
-	struct md_s *next;	/* Verweis auf nächstes Element */
-	size_t size;		/* Datengröße eines Elementes */
-	size_t dim;		/* Zahl der Elemente */
-	char *name;		/* Achsenname */
-	mdidx_t *idx;		/* Indexvektor */
-	unsigned flags;		/* Steuerflags */
-	void *priv;		/* Private Daten */
-} mdaxis_t;
+typedef struct mdaxis_struct mdaxis;
 
-mdaxis_t *new_axis (size_t dim);
-mdaxis_t *cpy_axis (mdaxis_t *axis, unsigned mask);
-void del_axis (mdaxis_t *axis);
-int check_axis (mdaxis_t *axis);
+struct mdaxis_struct {
+	mdaxis *next;	/* Verweis auf nächstes Element */
+	size_t size;	/* Datengröße eines Elementes */
+	size_t dim;	/* Zahl der Elemente */
+	char *name;	/* Achsenname */
+	mdindex *idx;	/* Indexvektor */
+	unsigned flags;	/* Steuerflags */
+	void *priv;	/* Private Daten */
+};
+
+mdaxis *new_axis (size_t dim);
+mdaxis *cpy_axis (mdaxis *axis, unsigned mask);
+void del_axis (mdaxis *axis);
 
 #define	MDFLAG_LOCK	1	/* Index ist gesperrt */
 #define	MDFLAG_BASE	2	/* Basis für Indexzahlen */
@@ -93,7 +94,7 @@ int check_axis (mdaxis_t *axis);
 /*	Achsenvergleich
 */
 
-int cmp_axis (mdaxis_t *a, mdaxis_t *b, int flag);
+int cmp_axis (mdaxis *a, mdaxis *b, int flag);
 
 #define	MDXCMP_NAME	1	/* Achsennamen vergleichen */
 #define	MDXCMP_DIM	2	/* Dimensionen vergleichen */
@@ -107,15 +108,14 @@ int cmp_axis (mdaxis_t *a, mdaxis_t *b, int flag);
 typedef struct {
 	REFVAR;		/* Referenzzähler */
 	char *title;	/* Titel der Matrix */
-	Type_t *type;	/* Datentype */
-	mdaxis_t *axis;	/* Achsenkette */
+	EfiType *type;	/* Datentype */
+	mdaxis *axis;	/* Achsenkette */
 	size_t size;	/* Speicherbedarf für Datenfeld */
 	void *data;	/* Datenfeld */
 	void *priv;	/* Private Daten */
-} mdmat_t;
+} mdmat;
 
-extern reftype_t md_reftype;
-char *md_ident(mdmat_t *md);
+extern RefType md_reftype;
 
 /*
 Der Makro $1 erhöht den Referenzzähler der Datenmatrix um 1
@@ -134,22 +134,24 @@ und gibt die Datenstruktur bei Bedarf frei.
 /*	Datenstrukturen anfordern/kopieren/freigeben
 */
 
-mdmat_t *new_mdmat (void);
-mdmat_t *cpy_mdmat (const mdmat_t *md, unsigned mask);
-mdmat_t *md_skalar (const Type_t *type, const void *data);
+mdmat *new_mdmat (void);
+mdmat *cpy_mdmat (const mdmat *md, unsigned mask);
+mdmat *md_skalar (const EfiType *type, const void *data);
 
 
 /*	Hilffunktionen zur Listenzerlegung
 */
 
-typedef struct mdlist_s {
-	struct mdlist_s *next;	/* Verweis auf nächstes Element */
-	char *name;		/* Achsenname */
-	char *option;		/* Option */
-	size_t dim;		/* Zahl der Listenelemente */
-	char **list;		/* Wertepointer für Liste */
-	char **lopt;		/* Optionsangaben zur Liste */
-} mdlist_t;
+typedef struct mdlist_struct mdlist;
+
+struct mdlist_struct {
+	mdlist *next;	/* Verweis auf nächstes Element */
+	char *name;	/* Achsenname */
+	char *option;	/* Option */
+	size_t dim;	/* Zahl der Listenelemente */
+	char **list;	/* Wertepointer für Liste */
+	char **lopt;	/* Optionsangaben zur Liste */
+};
 
 
 #define	MDLIST_NAMEOPT	0x1	/* Name mit Option */
@@ -157,25 +159,25 @@ typedef struct mdlist_s {
 #define	MDLIST_ANYOPT	0x3	/* Alle Optionen */
 #define	MDLIST_NEWOPT	0x4	/* Achsenerweiterung */
 
-mdlist_t *io_mdlist (io_t *io, int flag);
-void del_mdlist (mdlist_t *list);
+mdlist *io_mdlist (IO *io, int flag);
+void del_mdlist (mdlist *list);
 
-mdlist_t *mdlist (const char *str, int flag);
-mdlist_t *mdlistcmp (const char *name, int depth, mdlist_t *list);
+mdlist *str2mdlist (const char *str, int flag);
+mdlist *mdlistcmp (const char *name, int depth, mdlist *list);
 
 
 /*	Hilfsfunktionen
 */
 
-size_t md_dim (mdaxis_t *axis);
-size_t md_size (mdaxis_t *axis, size_t size);
+size_t md_dim (mdaxis *axis);
+size_t md_size (mdaxis *axis, size_t size);
 
-typedef unsigned (*mdsetflag_t) (unsigned old, int flag, unsigned val);
-
-void md_allflag(mdmat_t *md, unsigned mask,
-	mdsetflag_t fx, unsigned vx, mdsetflag_t fi, unsigned vi);
-void md_setflag(mdmat_t *md, const char *def, unsigned mask,
-	mdsetflag_t fx, unsigned vx, mdsetflag_t fi, unsigned vi);
+void md_allflag(mdmat *md, unsigned mask,
+	unsigned (*fx) (unsigned old, int flag, unsigned val), unsigned vx,
+	unsigned (*fi) (unsigned old, int flag, unsigned val), unsigned vi);
+void md_setflag(mdmat *md, const char *def, unsigned mask,
+	unsigned (*fx) (unsigned old, int flag, unsigned val), unsigned vx,
+	unsigned (*fi) (unsigned old, int flag, unsigned val), unsigned vi);
 
 unsigned mdsf_mark (unsigned old, int flag, unsigned val);
 unsigned mdsf_lock (unsigned old, int flag, unsigned val);
@@ -186,136 +188,94 @@ unsigned mdsf_toggle (unsigned old, int flag, unsigned val);
 /*	Ein - Ausgabe von multidim. Matrizen
 */
 
-Func_t *get_iofunc(const Type_t *type, const char *name, int flag);
+EfiFunc *get_iofunc(const EfiType *type, const char *name, int flag);
 
-mdmat_t *md_read (io_t *io, const char *par);
-mdmat_t *md_load (io_t *io, const char *def, const char *odef);
-mdmat_t *md_fload (const char *name, const char *def, const char *odef);
-mdmat_t *md_reload (mdmat_t *md, const char *def, const char *odef);
+mdmat *md_read (IO *io, const char *par);
+mdmat *md_load (IO *io, const char *def, const char *odef);
+mdmat *md_fload (const char *name, const char *def, const char *odef);
+mdmat *md_reload (mdmat *md, const char *def, const char *odef);
 
-mdmat_t *md_gethdr (io_t *io);
-void md_tsteof (io_t *io);
+mdmat *md_gethdr (IO *io);
+void md_tsteof (IO *io);
 
-void md_walk (mdmat_t *md, const char *def, void (*visit)(mdmat_t *md, mdaxis_t *x, int idx));
+void md_walk (mdmat *md, const char *def, void (*visit)(mdmat *md, mdaxis *x, int idx));
 
-void md_puthdr (io_t *io, mdmat_t *md, unsigned mask);
-void md_putdata (io_t *io, const Type_t *type, mdaxis_t *axis,
+void md_puthdr (IO *io, mdmat *md, unsigned mask);
+void md_putdata (IO *io, const EfiType *type, mdaxis *axis,
 	unsigned mask, void *data);
-void md_puteof (io_t *io);
+void md_puteof (IO *io);
 
-void md_print (io_t *io, mdmat_t *md, const char *par);
-void md_save (io_t *io, mdmat_t *md, unsigned mask);
-void md_fsave (const char *name, mdmat_t *md, unsigned mask);
-void md_ssave (io_t *io, mdmat_t *md, int (*cmp) (mdidx_t *a, mdidx_t *b),
+void md_print (IO *io, mdmat *md, const char *par);
+void md_save (IO *io, mdmat *md, unsigned mask);
+void md_fsave (const char *name, mdmat *md, unsigned mask);
+void md_ssave (IO *io, mdmat *md, int (*cmp) (mdindex *a, mdindex *b),
 	char **list, size_t dim);
 
 /*	Schnittstelle zu Befehlsinterpreter
 */
 
-extern Type_t Type_mdmat;
-extern Type_t Type_mdaxis;
-extern Type_t Type_mdidx;
+extern EfiType Type_mdmat;
+extern EfiType Type_mdaxis;
+extern EfiType Type_mdidx;
 
-extern mdmat_t *Buf_mdmat;
-extern mdaxis_t *Buf_mdaxis;
-extern mdidx_t Buf_mdidx;
+extern mdmat *Buf_mdmat;
+extern mdaxis *Buf_mdaxis;
+extern mdindex Buf_mdidx;
 
 #define	Obj_mdmat(x)	NewPtrObj(&Type_mdmat, (x))
 #define	Obj_mdaxis(x)	NewPtrObj(&Type_mdaxis, (x))
 
-#define	Val_mdmat(x)	((mdmat_t **) x)[0]
-#define	Val_mdaxis(x)	((mdaxis_t **) x)[0]
-#define	Val_mdidx(x)	((mdidx_t *) x)[0]
+#define	Val_mdmat(x)	((mdmat **) x)[0]
+#define	Val_mdaxis(x)	((mdaxis **) x)[0]
+#define	Val_mdidx(x)	((mdindex *) x)[0]
 
 void MdFuncDef (void);
 
 
-Func_t *mdfunc_add (const Type_t *type);
-Func_t *md_addfunc (const char *op, const Type_t *t1, const Type_t *t2);
-Func_t *md_binop (const char *op, const Type_t *t1, const Type_t *t2);
-Func_t *md_assignop (const char *op, const Type_t *t1, const Type_t *t2);
+EfiFunc *mdfunc_add (const EfiType *type);
+EfiFunc *md_addfunc (const char *op, const EfiType *t1, const EfiType *t2);
 
-double MdValSum(mdaxis_t *x, void *data, Konv_t *get, unsigned mask);
-void MdRound(mdaxis_t *x, void *data, Konv_t *get, Konv_t *set, double val,
+double MdValSum(mdaxis *x, void *data, EfiKonv *get, unsigned mask);
+void MdRound(mdaxis *x, void *data, EfiKonv *get, EfiKonv *set, double val,
 	double factor, unsigned mask);
 
 
 /*	Matrixmanipulationen
 */
 
-void md_paste (mdmat_t *md, const char *name, const char *fmt, int pos, int n);
-void md_change (mdmat_t *md, const char *name1, const char *name2);
+void md_paste (mdmat *md, const char *name, const char *fmt, int pos, int n);
+void md_change (mdmat *md, const char *name1, const char *name2);
 
-int md_konv (mdmat_t *md, const Type_t *type);
-void md_reduce (mdmat_t *md, const char *list);
-void md_permut (mdmat_t *md, const char *list);
-void md_round (mdmat_t *md, double factor, unsigned mask);
-void md_adjust (mdmat_t *md, double val, unsigned mask);
-mdmat_t *md_prod (mdmat_t *md);
-mdmat_t *md_mul (mdmat_t *m1, mdmat_t *m2, int flag);
-mdmat_t *md_sum (mdmat_t *md, const char *str);
-mdmat_t *md_diag (mdmat_t *md, const char *str);
-mdmat_t *md_create (Type_t *type, const char *def);
-mdmat_t *md_assign (const char *name, mdmat_t *m1, mdmat_t *m2);
-mdmat_t *md_term (VirFunc_t *func, mdmat_t *m1, mdmat_t *m2);
-mdmat_t *md_cat (const char *name, mdmat_t **md, size_t dim);
-void md_korr (mdmat_t *md, int rflag);
-
-
-/*	Daten auswerten
-*/
-
-typedef struct {
-	void *(*init) (void *par, Type_t *type);
-	void *(*exit) (void *par);
-	void *(*newidx) (const void *idx, char *name);
-	void (*clridx) (void *idx);
-	void (*start) (void *par, const void *idx);
-	void (*end) (void *par);
-	void (*data) (void *par, Type_t *type, void *ptr, void *base);
-} mdeval_t;
-
-void *md_eval(mdeval_t *eval, void *par, mdmat_t *md, unsigned mask, unsigned base, int lag);
-
-
-/*	Teststruktur für Achsennamen
-*/
-
-typedef struct mdtest_s {
-	struct mdtest_s *next;	/* Für Verkettungen */
-	char *pattern;		/* Musterkennung */
-	int flag;		/* Negationsflag */
-	size_t minval;		/* Minimalwert */
-	size_t maxval;		/* Maximalwert */
-	int (*cmp) (struct mdtest_s *t, const char *s, size_t n);
-} mdtest_t;
-
-mdtest_t *new_test (const char *def, size_t dim);
-void del_test (mdtest_t *test);
-mdtest_t *mdmktestlist (const char *list, size_t dim);
-mdtest_t *mdtestlist (char **list, size_t ldim, size_t dim);
-int mdtest (mdtest_t *test, const char *name, size_t idx);
+int md_konv (mdmat *md, const EfiType *type);
+void md_reduce (mdmat *md, const char *list);
+void md_permut (mdmat *md, const char *list);
+void md_round (mdmat *md, double factor, unsigned mask);
+void md_adjust (mdmat *md, double val, unsigned mask);
+mdmat *md_prod (mdmat *md);
+mdmat *md_mul (mdmat *m1, mdmat *m2, int flag);
+mdmat *md_sum (mdmat *md, const char *str);
+mdmat *md_diag (mdmat *md, const char *str);
+mdmat *md_create (EfiType *type, const char *def);
+mdmat *md_assign (const char *name, mdmat *m1, mdmat *m2);
+mdmat *md_term (EfiVirFunc *func, mdmat *m1, mdmat *m2);
+mdmat *md_cat (const char *name, mdmat **md, size_t dim);
+void md_korr (mdmat *md, int rflag);
 
 
 /*	Datenkonvertierung
 */
 
-Konv_t *Md_KonvDef (Konv_t *buf, const Type_t *t1, const Type_t *t2);
+EfiKonv *Md_KonvDef (EfiKonv *buf, const EfiType *t1, const EfiType *t2);
 
-long Md_getlong(Konv_t *konv, void *data);
-double Md_getdbl(Konv_t *konv, void *data);
-void Md_setlong(Konv_t *konv, void *data, long int val);
-void Md_setdbl(Konv_t *konv, void *data, double val);
+long Md_getlong(EfiKonv *konv, void *data);
+double Md_getdbl(EfiKonv *konv, void *data);
+void Md_setlong(EfiKonv *konv, void *data, long int val);
+void Md_setdbl(EfiKonv *konv, void *data, double val);
 
-void MF_valsum (Func_t *func, void *rval, void **arg);
-void MF_leval (Func_t *func, void *rval, void **arg);
-void MF_xeval (Func_t *func, void *rval, void **arg);
-void MF_data (Func_t *func, void *rval, void **arg);
-void MF_label (Func_t *func, void *rval, void **arg);
-
-/*	Bibliothekinitialisierung
-*/
-
-extern void *mdmat;
+void MF_valsum (EfiFunc *func, void *rval, void **arg);
+void MF_leval (EfiFunc *func, void *rval, void **arg);
+void MF_xeval (EfiFunc *func, void *rval, void **arg);
+void MF_data (EfiFunc *func, void *rval, void **arg);
+void MF_label (EfiFunc *func, void *rval, void **arg);
 
 #endif	/* EFEU/mdmat.h */

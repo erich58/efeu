@@ -22,11 +22,11 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/mstring.h>
 #include <EFEU/Info.h>
-#include <EFEU/LangType.h>
+#include <EFEU/LangDef.h>
 
 #define	_String(x)	#x
 #define	String(x)	_String(x)
-#define	TOP		String(_EFEU_TOP)
+#define	TOP		String(EFEUROOT)
 
 /*
 Die Variable |$1| bestimmt den Suchpfad für Informationsdateien.
@@ -42,7 +42,7 @@ initialisiert wurde, wird er von |$1| nicht verändert.
 
 void SetInfoPath (const char *path)
 {
-	strbuf_t *sb;
+	StrBuf *sb;
 
 	if	(InfoPath && !path)	return;
 
@@ -63,18 +63,10 @@ void SetInfoPath (const char *path)
 
 /*	Systemsuchpfade
 */
-	if	(LangType.language != NULL)
-	{
-		if	(sb_getpos(sb))	sb_putc(':', sb);
-
-		sb_printf(sb, "%s/lib/eis/%s", TOP, LangType.language);
-		sb_printf(sb, ":%s/lib/efeu/%s/info", TOP, LangType.language);
-	}
-
 	if	(sb_getpos(sb))	sb_putc(':', sb);
 
-	sb_printf(sb, "%s/lib/eis", TOP);
-	sb_printf(sb, ":%s/lib/efeu/info", TOP);
+	sb_printf(sb, "%s/lib/eis/%%L/", TOP);
+	sb_printf(sb, ":%s/lib/efeu/%%L/info", TOP);
 
 	memfree(InfoPath);
 	InfoPath = sb2str(sb);

@@ -5,6 +5,7 @@ usage::
 	@echo
 	@echo "config	create Makefile in build"
 	@echo "all	build all (running make all in build)"
+	@echo "purge	remove build directory"
 	@echo "clean	remove all target directories"
 
 #	The following macro sets the environment needed for some
@@ -20,5 +21,8 @@ config::
 all:: config
 	($(SETENV); cd build; make all)
 
+purge::
+	rm -rf build
+
 clean::
-	rm -rf include ppinclude build lib bin doc man
+	rm -rf include ppinclude build lib bin share doc man

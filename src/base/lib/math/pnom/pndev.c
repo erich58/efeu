@@ -26,9 +26,9 @@ If not, write to the Free Software Foundation, Inc.,
 /*	Ableitung eines Polynoms
 */
 
-pnom_t *pndev(pnom_t *p0, int dev)
+Polynom *pndev(Polynom *p0, int dev)
 {
-	pnom_t *p;
+	Polynom *p;
 	int i, j, k;
 
 	if	(dev < 0)	return NULL;

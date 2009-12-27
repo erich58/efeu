@@ -67,7 +67,7 @@ size_t rfwrite (const void *ptr, size_t size, size_t nitems, FILE *file)
 	if	(size > 1)
 	{
 		size_t n, k;
-		const uchar_t *p;
+		const unsigned char *p;
 
 		p = ptr;
 

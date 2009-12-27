@@ -23,24 +23,24 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 #include <EFEU/konvobj.h>
 
-Obj_t *Expr_func (void *par, const ObjList_t *list)
+EfiObj *Expr_func (void *par, const EfiObjList *list)
 {
 	return EvalFunc(par, list);
 }
 
 
 typedef struct {
-	Func_t *func;
-	Obj_t **obj;
+	EfiFunc *func;
+	EfiObj **obj;
 	void **arg;
 } FUNCPAR;
 
 
-static void fpar_init(FUNCPAR *par, Func_t *func)
+static void fpar_init(FUNCPAR *par, EfiFunc *func)
 {
 	par->func = func;
-	par->obj = ALLOC(func->dim, Obj_t *);
-	par->arg = ALLOC(func->dim, void *);
+	par->obj = memalloc(func->dim * sizeof(EfiObj *));
+	par->arg = memalloc(func->dim * sizeof(void *));
 }
 
 static void fpar_clear(FUNCPAR *par, int n)
@@ -59,19 +59,18 @@ static void fpar_clear(FUNCPAR *par, int n)
 	memfree(par->arg);
 }
 
-static int fpar_error(FUNCPAR *par, int n, int num)
+static int fpar_error(FUNCPAR *par, const char *fmt, int n)
 {
-	errmsg(MSG_EFMAIN, 60);
+	dbg_note(NULL, "[efmain:60]", NULL);
 	ListFunc(ioerr, par->func);
-	reg_fmt(1, "%d", n);
-	errmsg(MSG_EFMAIN, num);
+	dbg_note(NULL, fmt, "d", n);
 	fpar_clear(par, n);
 	return 1;
 }
 
-static int test_lval (const Obj_t *obj, const Type_t *type)
+static int test_lval (const EfiObj *obj, const EfiType *type)
 {
-	const Type_t *old;
+	const EfiType *old;
 
 	if	(obj == NULL)		return 1;
 	if	(obj->lval == NULL)	return 1;
@@ -84,23 +83,23 @@ static int test_lval (const Obj_t *obj, const Type_t *type)
 }
 
 
-static int fpar_set(FUNCPAR *par, int n, Obj_t *obj)
+static int fpar_set(FUNCPAR *par, int n, EfiObj *obj)
 {
-	register FuncArg_t *arg = par->func->arg + n;
+	register EfiFuncArg *arg = par->func->arg + n;
 
 	if	(arg->lval)
 	{
 		par->obj[n] = EvalObj(RefObj(obj), NULL);
 
 		if	(test_lval(par->obj[n], arg->type))
-			return fpar_error(par, n, 62);
+			return fpar_error(par, "[efmain:62]", n);
 	}
 	else
 	{
 		par->obj[n] = EvalObj(RefObj(obj), arg->type);
 
 		if	(par->obj[n] == NULL)
-			return fpar_error(par, n, 61);
+			return fpar_error(par, "[efmain:61]", n);
 	}
 
 	par->arg[n] = arg->type ? par->obj[n]->data : par->obj[n];
@@ -110,21 +109,21 @@ static int fpar_set(FUNCPAR *par, int n, Obj_t *obj)
 #define	listtype(type)	((type) == &Type_list || (type) == &Type_explist)
 #define	is_list(obj)	((obj) && listtype((obj)->type))
 
-Obj_t *EvalFunc(Func_t *func, const ObjList_t *list)
+EfiObj *EvalFunc (EfiFunc *func, const EfiObjList *list)
 {
 	FUNCPAR par;
-	Obj_t *obj, *firstarg;
+	EfiObj *obj, *firstarg;
 	int i, dim;
 
 	if	(func == NULL)
 		return NULL;
 
-	if	(func->reftype == &VirFuncRefType)
+	if	(IsVirFunc(func))
 		return EvalVirFunc((void *) func, list);
 
-	if	(func->reftype != &FuncRefType)
+	if	(!IsFunc(func))
 	{
-		liberror(MSG_EFMAIN, 65);
+		dbg_error(NULL, "[efmain:65]", NULL);
 		return NULL;
 	}
 
@@ -135,7 +134,8 @@ Obj_t *EvalFunc(Func_t *func, const ObjList_t *list)
 		if	(list != NULL)
 		{
 			fpar_init(&par, func);
-			return fpar_error(&par, 0, 63), NULL;
+			fpar_error(&par, "[efmain:63]", 0);
+			return NULL;
 		}
 
 		return MakeRetVal(func, NULL, NULL);
@@ -165,9 +165,13 @@ Obj_t *EvalFunc(Func_t *func, const ObjList_t *list)
 			list->obj->data : &list;
 	}
 	else if	(list != NULL)
-		return fpar_error(&par, dim, 63), NULL;
+	{
+		fpar_error(&par, "[efmain:63]", dim);
+		return NULL;
+	}
 
 	obj = MakeRetVal(func, firstarg, par.arg);
 	fpar_clear(&par, dim);
+	DelObjList((EfiObjList *) list);
 	return obj;
 }

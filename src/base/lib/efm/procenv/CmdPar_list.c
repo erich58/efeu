@@ -37,13 +37,13 @@ Steuerinformationen die Lesbarkeit stark beeinträchtigen.
 
 int CmdPar_docmode = 1;
 
-static void doc_key (const char *key, io_t *io)
+static void doc_key (const char *key, IO *io)
 {
 	if	(CmdPar_docmode)
 		io_puts(key, io);
 }
 
-static void verbatim (const char *str, io_t *io)
+static void verbatim (const char *str, IO *io)
 {
 	if	(!str)	return;
 
@@ -57,7 +57,7 @@ static void verbatim (const char *str, io_t *io)
 }
 
 
-static void argkey (CmdParKey_t *key, io_t *io)
+static void argkey (CmdParKey *key, IO *io)
 {
 	if	(key->arg)
 	{
@@ -67,7 +67,7 @@ static void argkey (CmdParKey_t *key, io_t *io)
 	}
 }
 
-static void optkey (CmdParKey_t *key, io_t *io)
+static void optkey (CmdParKey *key, IO *io)
 {
 	doc_key("|", io);
 	io_putc('-', io);
@@ -94,7 +94,7 @@ static void optkey (CmdParKey_t *key, io_t *io)
 	}
 }
 
-static void show_opt (CmdParKey_t *key, io_t *io)
+static void show_opt (CmdParKey *key, IO *io)
 {
 	io_puts("\n", io);
 	io_puts("\\[~", io);
@@ -102,7 +102,7 @@ static void show_opt (CmdParKey_t *key, io_t *io)
 	io_puts("~]", io);
 }
 
-static void show_arg (CmdParKey_t *key, io_t *io)
+static void show_arg (CmdParKey *key, IO *io)
 {
 	io_puts("\n", io);
 
@@ -125,16 +125,16 @@ static void show_arg (CmdParKey_t *key, io_t *io)
 	}
 }
 
-static void show_desc (CmdPar_t *par, const char *desc, io_t *io)
+static void show_desc (CmdPar *par, const char *desc, IO *io)
 {
 	io = io_lmark(io_refer(io), "\t", NULL, 0);
 	CmdPar_psubout(par, io, desc, NULL);
 	io_close(io);
 }
 
-static void list_def (CmdPar_t *par, CmdParDef_t *def, io_t *io)
+static void list_def (CmdPar *par, CmdParDef *def, IO *io)
 {
-	CmdParKey_t *key;
+	CmdParKey *key;
 	char *pfx;
 	int flag;
 
@@ -183,10 +183,10 @@ Die Funktion |$1| generiert eine Aufrufsyntax aus den
 Kommandoparametern <par> und gibt sie nach <io> aus.
 */
 
-void CmdPar_synopsis (CmdPar_t *par, io_t *io)
+void CmdPar_synopsis (CmdPar *par, IO *io)
 {
 	size_t n;
-	CmdParKey_t **key;
+	CmdParKey **key;
 
 	if	(io == NULL)	return;
 
@@ -218,10 +218,10 @@ Die Funktion |$1| generiert eine Liste der Optionen und Argumente aus den
 Kommandoparametern <par> und gibt sie nach <io> aus.
 */
 
-void CmdPar_arglist (CmdPar_t *par, io_t *io)
+void CmdPar_arglist (CmdPar *par, IO *io)
 {
 	size_t n;
-	CmdParDef_t **def;
+	CmdParDef **def;
 
 	if	(io == NULL)	return;
 
@@ -236,10 +236,10 @@ Die Funktion |$1| generiert eine Liste der Umgebungsvariablen aus den
 Kommandoparametern <par> und gibt sie nach <io> aus.
 */
 
-void CmdPar_environ (CmdPar_t *par, io_t *io)
+void CmdPar_environ (CmdPar *par, IO *io)
 {
 	size_t n;
-	CmdParKey_t **key;
+	CmdParKey **key;
 
 	if	(io == NULL)	return;
 
@@ -258,10 +258,10 @@ void CmdPar_environ (CmdPar_t *par, io_t *io)
 	}
 }
 
-void CmdPar_resource (CmdPar_t *par, io_t *io)
+void CmdPar_resource (CmdPar *par, IO *io)
 {
 	size_t n;
-	CmdParVar_t *var;
+	CmdParVar *var;
 
 	if	(io == NULL)	return;
 

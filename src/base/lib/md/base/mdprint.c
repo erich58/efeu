@@ -33,14 +33,14 @@ static int max_col = 0;
 extern int PrintFieldWidth;
 extern int PrintFloatPrec;
 
-static PrCtrl_t *set_pctrl(const char *def)
+static IO *set_pctrl(IO *io, const char *def)
 {
 	char *p, **list;
-	PrCtrl_t *pctrl;
+	IO *out;
 	size_t dim;
 	int i;
 
-	pctrl = PrCtrl(NULL);
+	out = NULL;
 	dim = strsplit(def, "%s", &list);
 
 	for (i = 0; i < dim; i++)
@@ -75,15 +75,15 @@ static PrCtrl_t *set_pctrl(const char *def)
 			pctrl_fsize = atoi(list[i]);
 		else if	(patcmp("font=", list[i], &p))
 			pctrl_fsize = atoi(p);
-		else if	(patcmp("mode=", list[i], &p))
-			pctrl = PrCtrl(p);
+		else if	(patcmp("mode=", list[i], &p) && !out)
+			out = io_pctrl(io, p);
 	}
 
 	memfree(list);
-	return pctrl;
+	return out ? out : io_pctrl(io, NULL);
 }
 
-static void put_label(io_t *io, const char *key, const char *arg)
+static void put_label(IO *io, const char *key, const char *arg)
 {
 	if	(arg)
 	{
@@ -94,7 +94,7 @@ static void put_label(io_t *io, const char *key, const char *arg)
 	}
 }
 
-static void show_axis(io_t *io, const char *label, mdaxis_t *axis, int flag)
+static void show_axis(IO *io, const char *label, mdaxis *axis, int flag)
 {
 	char *delim;
 
@@ -115,7 +115,7 @@ static void show_axis(io_t *io, const char *label, mdaxis_t *axis, int flag)
 }
 
 
-static void show_header(io_t *io, mdmat_t *md)
+static void show_header(IO *io, mdmat *md)
 {
 	put_label(io, H_MAGIC, H_VERSION);
 	put_label(io, H_TITLE, md->title);
@@ -133,7 +133,7 @@ static void show_header(io_t *io, mdmat_t *md)
 }
 
 
-static int vardim(Type_t *type, size_t dim)
+static int vardim(EfiType *type, size_t dim)
 {
 	if	(dim)
 	{
@@ -145,7 +145,7 @@ static int vardim(Type_t *type, size_t dim)
 	}
 	else if	(type->list)
 	{
-		Var_t *st;
+		EfiVar *st;
 		int n;
 
 		for (n = 0, st = type->list; st != NULL; st = st->next)
@@ -156,9 +156,9 @@ static int vardim(Type_t *type, size_t dim)
 	else	return 1;
 }
 
-static int headdim(mdmat_t *md)
+static int headdim(mdmat *md)
 {
-	mdaxis_t *x;
+	mdaxis *x;
 	int n;
 
 	for (n = 1, x = md->axis; x != NULL; x = x->next)
@@ -167,9 +167,9 @@ static int headdim(mdmat_t *md)
 	return n * vardim(md->type, 0);
 }
 
-static void headline(io_t *io, mdaxis_t *x, Type_t *type, const char *str);
+static void headline(IO *io, mdaxis *x, EfiType *type, const char *str);
 
-static void headline2(io_t *io, size_t dim, Type_t *type, const char *str)
+static void headline2(IO *io, size_t dim, EfiType *type, const char *str)
 {
 	int i;
 	char *p;
@@ -183,7 +183,7 @@ static void headline2(io_t *io, size_t dim, Type_t *type, const char *str)
 }
 
 
-static void headline(io_t *io, mdaxis_t *x, Type_t *type, const char *str)
+static void headline(IO *io, mdaxis *x, EfiType *type, const char *str)
 {
 	while (x != NULL && !(x->flags & XMARK))
 		x = x->next;
@@ -206,7 +206,7 @@ static void headline(io_t *io, mdaxis_t *x, Type_t *type, const char *str)
 	}
 	else if	(type->list != NULL)
 	{
-		Var_t *st;
+		EfiVar *st;
 		char *p;
 
 		for (st = type->list; st != NULL; st = st->next)
@@ -229,7 +229,7 @@ static void headline(io_t *io, mdaxis_t *x, Type_t *type, const char *str)
 	}
 }
 
-static void put_header(io_t *io, mdmat_t *md)
+static void put_header(IO *io, mdmat *md)
 {
 	int hd = headdim(md);
 
@@ -255,7 +255,7 @@ static void put_header(io_t *io, mdmat_t *md)
 /*	Spalten durchwandern
 */
 
-static void t_walk(io_t *io, Type_t *type, size_t dim, char *ptr)
+static void t_walk(IO *io, EfiType *type, size_t dim, char *ptr)
 {
 	if	(dim)
 	{
@@ -273,7 +273,7 @@ static void t_walk(io_t *io, Type_t *type, size_t dim, char *ptr)
 	}
 	else if	(type->list)
 	{
-		Var_t *st;
+		EfiVar *st;
 
 		for (st = type->list; st != NULL; st = st->next)
 			t_walk(io, st->type, st->dim, ptr + st->offset);
@@ -286,7 +286,7 @@ static void t_walk(io_t *io, Type_t *type, size_t dim, char *ptr)
 	else	io_ctrl(io, PCTRL_EMPTY);
 }
 
-static void c_walk(io_t *io, mdaxis_t *x, Type_t *type, char *ptr)
+static void c_walk(IO *io, mdaxis *x, EfiType *type, char *ptr)
 {
 	while (x != NULL && !(x->flags & XMARK))
 		x = x->next;
@@ -308,7 +308,7 @@ static void c_walk(io_t *io, mdaxis_t *x, Type_t *type, char *ptr)
 /*	Zeilen durchwandern
 */
 
-static void l_walk(io_t *io, mdmat_t *md, mdaxis_t *x, const char *label, char *ptr)
+static void l_walk(IO *io, mdmat *md, mdaxis *x, const char *label, char *ptr)
 {
 	while (x != NULL && (x->flags & XMARK))
 		x = x->next;
@@ -345,7 +345,7 @@ static void l_walk(io_t *io, mdmat_t *md, mdaxis_t *x, const char *label, char *
 }
 
 
-static void show_data(io_t *io, mdmat_t *md)
+static void show_data(IO *io, mdmat *md)
 {
 	put_header(io, md);
 	cur_line = 0;
@@ -355,11 +355,11 @@ static void show_data(io_t *io, mdmat_t *md)
 	io_ctrl(io, PCTRL_EDATA);
 }
 
-void md_print(io_t *io, mdmat_t *md, const char *def)
+void md_print(IO *io, mdmat *md, const char *def)
 {
 	if	(md == NULL)	return;
 
-	io = io_PrCtrl(io, set_pctrl(def));
+	io = set_pctrl(io, def);
 
 	switch (head_flag)
 	{

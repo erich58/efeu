@@ -23,16 +23,16 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 #include <EFEU/cmdconfig.h>
 
-void Ptr2bool (Func_t *func, void *rval, void **arg)
+void Ptr2bool (EfiFunc *func, void *rval, void **arg)
 {
 	Val_int(rval) = Val_ptr(arg[0]) != NULL;
 }
 
-void Vec2List (Func_t *func, void *rval, void **arg)
+void Vec2List (EfiFunc *func, void *rval, void **arg)
 {
 	long i, start, end;
-	ObjList_t *list, **ptr;
-	Vec_t *vec;
+	EfiObjList *list, **ptr;
+	EfiVec *vec;
 
 	list = NULL;
 	ptr = &list;
@@ -62,39 +62,40 @@ void Vec2List (Func_t *func, void *rval, void **arg)
 	Val_list(rval) = list;
 }
 
-static void Type2vtab (Func_t *func, void *rval, void **arg)
+static void Type2vtab (EfiFunc *func, void *rval, void **arg)
 {
-	Type_t *type = Val_type(arg[0]);
+	EfiType *type = Val_type(arg[0]);
 	Val_vtab(rval) = type ? rd_refer(type->vtab) : NULL;
 }
 
-static void vtab2List (Func_t *func, void *rval, void **arg)
+static void vtab2List (EfiFunc *func, void *rval, void **arg)
 {
-	ObjList_t *list, **ptr;
-	VarTab_t *vtab;
-	int i;
+	EfiObjList *list, **ptr;
+	EfiVarTab *vtab;
 	
 	vtab = Val_vtab(arg[0]);
 	list = NULL;
 	ptr = &list;
 
-	for (i = 0; i < vtab->tab.dim; i++)
+	if	(vtab)
 	{
-		char *name = ((Var_t *) vtab->tab.tab[i])->name;
+		VarTabEntry *p = vtab->tab.data;
+		size_t n = vtab->tab.used;
 
-		if	(name == NULL)	continue;
-
-		*ptr = NewObjList(str2Obj(mstrcpy(name)));
-		ptr = &(*ptr)->next;
+		for (; n-- > 0; p++)
+		{
+			*ptr = NewObjList(str2Obj(mstrcpy(p->name)));
+			ptr = &(*ptr)->next;
+		}
 	}
 
 	Val_list(rval) = list;
 }
 
 /*
-static void any2obj (Func_t *func, void *rval, void **arg)
+static void any2obj (EfiFunc *func, void *rval, void **arg)
 {
-	Obj_t *x = arg[0];
+	EfiObj *x = arg[0];
 	Val_obj(rval) = ConstObj(x->type, x->data);
 }
 */
@@ -175,7 +176,7 @@ CEXPR(k_double2float, Val_float(rval) = Val_double(arg[0]))
 CEXPR(k_float2double, Val_double(rval) = Val_float(arg[0]))
 
 
-static FuncDef_t konv_func[] = {
+static EfiFuncDef konv_func[] = {
 /*	Ganzzahlkonvertierungen
 */
 	{ FUNC_RESTRICTED, &Type_bool, "byte ()", k_byte2bool },
@@ -254,9 +255,9 @@ static FuncDef_t konv_func[] = {
 	/*
 	{ FUNC_RESTRICTED, &Type_bool, "_Ptr_ ()", Ptr2bool },
 	*/
-	{ FUNC_RESTRICTED, &Type_list, "Vec_t ()", Vec2List },
-	{ 0, &Type_list, "List_t (Vec_t, int start)", Vec2List },
-	{ 0, &Type_list, "List_t (Vec_t, int start, int dim)", Vec2List },
+	{ FUNC_RESTRICTED, &Type_list, "EfiVec ()", Vec2List },
+	{ 0, &Type_list, "List_t (EfiVec, int start)", Vec2List },
+	{ 0, &Type_list, "List_t (EfiVec, int start, int dim)", Vec2List },
 	{ FUNC_RESTRICTED, &Type_list, "VarTab ()", vtab2List },
 	/*
 	{ FUNC_RESTRICTED, &Type_obj, "Object (.)", any2obj },

@@ -1,0 +1,21 @@
+#include <d2m.cfg>
+
+TOPDIR = EFEUROOT
+CFGDIR = $(TOPDIR)/ppinclude
+INCDIR = $(TOPDIR)/include/GUI
+BINDIR = $(TOPDIR)/bin
+LIBDIR = $(TOPDIR)/lib
+APPDIR = $(TOPDIR)/lib/efeu
+
+DIR2MAKE = dir2make -H $(INCDIR) -B $(BINDIR) -L $(LIBDIR) -A $(APPDIR)
+
+config::
+	(cd $(SRC); ./setup)
+
+all:: config
+
+SubMake(lib,"TCL/TK-interface",lib,-lETK,config)
+SubMake(pgm,"etk-interpreter",pgm,NullArg,lib)
+SubMake(ex,"examples",examples,NullArg,pgm)
+SubMakeRule(doc,"documentation",doc,ex,dir2make)
+

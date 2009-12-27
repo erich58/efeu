@@ -27,14 +27,14 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	ESCEXT	0	/* \e=^[ und \d=^? - Erweiterung verwenden */
 
-static int get_oct (io_t *io, int first);
-static int get_hex (io_t *io);
+static int get_oct (IO *io, int first);
+static int get_hex (IO *io);
 
 
 /*	Zeichen lesen
 */
 
-int io_xgetc (io_t *io, const char *delim)
+int io_xgetc (IO *io, const char *delim)
 {
 	int c;
 
@@ -92,7 +92,7 @@ int io_xgetc (io_t *io, const char *delim)
 /*	Oktales Zeichen lesen
 */
 
-static int get_oct (io_t *io, int c)
+static int get_oct (IO *io, int c)
 {
 	char buf[4];
 	int i;
@@ -123,7 +123,7 @@ static int get_oct (io_t *io, int c)
 /*	Hexadezimales Zeichen lesen
 */
 
-static int get_hex (io_t *io)
+static int get_hex (IO *io)
 {
 	char buf[3];
 	int i, c;

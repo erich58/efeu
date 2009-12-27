@@ -21,6 +21,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <LaTeX.h>
+#include <EFEU/ArgList.h>
 
 /*	Konfigurationsparameter
 */
@@ -46,7 +47,7 @@ static char *sec_margin = NULL;
 static char *sec_note = "footnote";
 static char *sec_fignote = NULL;
 
-static VarDef_t sec_tab[] = {
+static EfiVarDef sec_tab[] = {
 	{ "part",	&Type_str, &sec_part },
 	{ "chapter",	&Type_str, &sec_chapter },
 	{ "manchapter",	&Type_str, &sec_manchapter },
@@ -65,7 +66,7 @@ static VarDef_t sec_tab[] = {
 static ENV quote_sgl = { "quote", NULL, "\\lq{}", "\\rq{}" };
 static ENV quote_dbl = { "qquote", NULL, "\\lq{}", "\\rq{}" };
 
-static VarDef_t quote_tab[] = {
+static EfiVarDef quote_tab[] = {
 	{ "lq",		&Type_str, &quote_sgl.beg },
 	{ "rq",		&Type_str, &quote_sgl.end },
 	{ "lqq",	&Type_str, &quote_dbl.beg },
@@ -77,11 +78,17 @@ static char *att_bf = "\\bf{}";
 static char *att_it = "\\it{}";
 static char *att_tt = "\\tt{}";
 
-static VarDef_t att_tab[] = {
+static EfiVarDef att_tab[] = {
 	{ "rm",		&Type_str, &att_rm },
 	{ "bf",		&Type_str, &att_bf },
 	{ "it",		&Type_str, &att_it },
 	{ "tt",		&Type_str, &att_tt },
+};
+
+static EfiFunc *cenv_tabular = NULL;
+
+static EfiVarDef cenv_tab[] = {
+	{ "mktabular",	&Type_func, &cenv_tabular },
 };
 
 static ENV list_item = { "itemize", NULL,
@@ -139,9 +146,9 @@ static ENV *env_tab[] = {
 };
 
 
-static void add_env (VarTab_t *tab, ENV **env, size_t dim)
+static void add_env (EfiVarTab *tab, ENV **env, size_t dim)
 {
-	Var_t *var;
+	EfiVar *var;
 
 	for (; dim-- > 0; env++)
 	{
@@ -159,7 +166,7 @@ static void add_env (VarTab_t *tab, ENV **env, size_t dim)
 	}
 }
 
-static void print_var (io_t *io, VarDef_t *var, size_t dim)
+static void print_var (IO *io, EfiVarDef *var, size_t dim)
 {
 	io_putc('\n', io);
 
@@ -167,7 +174,19 @@ static void print_var (io_t *io, VarDef_t *var, size_t dim)
 		io_printf(io, "%s = %#s;\n", var->name, Val_str(var->data));
 }
 
-static void print_env (io_t *io, ENV **p, size_t dim)
+static void print_cenv (IO *io, EfiVarDef *var, size_t dim)
+{
+	io_putc('\n', io);
+
+	for (; dim-- > 0; var++)
+	{
+		io_printf(io, "%s = ", var->name);
+		ListFunc(io, Val_func(var->data));
+		io_puts(";\n", io);
+	}
+}
+
+static void print_env (IO *io, ENV **p, size_t dim)
 {
 	for (; dim-- > 0; p++)
 	{
@@ -178,11 +197,12 @@ static void print_env (io_t *io, ENV **p, size_t dim)
 	}
 }
 
-void LaTeX_ShowEnv (io_t *io)
+void LaTeX_ShowEnv (IO *io)
 {
 	print_var(io, sec_tab, tabsize(sec_tab));
 	print_var(io, quote_tab, tabsize(quote_tab));
 	print_var(io, att_tab, tabsize(att_tab));
+	print_cenv(io, cenv_tab, tabsize(cenv_tab));
 	print_env(io, env_tab, tabsize(env_tab));
 }
 
@@ -191,6 +211,7 @@ void LaTeX_SetupEnv (void)
 	AddVarDef(LocalVar, sec_tab, tabsize(sec_tab));
 	AddVarDef(LocalVar, quote_tab, tabsize(quote_tab));
 	AddVarDef(LocalVar, att_tab, tabsize(att_tab));
+	AddVarDef(LocalVar, cenv_tab, tabsize(cenv_tab));
 	add_env(LocalVar, env_tab, tabsize(env_tab));
 }
 
@@ -198,42 +219,54 @@ void LaTeX_SetupEnv (void)
 /*	Ausgabefunktionen
 */
 
-static int env_par (const char *fmt, va_list list)
+static ArgList *env_par (const char *fmt, va_list list)
 {
+	ArgList *arg;
 	char *p;
-	int n;
 
-	for (n = 1; *fmt != 0; fmt++, n++)
+	arg = arg_create();
+
+	if	(!fmt)	return arg;
+
+	arg_madd(arg, NULL);
+
+	for (; *fmt != 0; fmt++)
 	{
 		switch (*fmt)
 		{
 		case 'o':
 			p = va_arg(list, char *);
-			reg_set(n, p ? msprintf("[%s]", p) : NULL);
+			arg_madd(arg, p ? msprintf("[%s]", p) : NULL);
 			break;
 		case 's':
-			reg_cpy(n, va_arg(list, char *));
+			arg_cadd(arg, va_arg(list, char *));
 			break;
 		case 'c':
-			reg_fmt(n, "%c", va_arg(list, int));
+			arg_madd(arg, msprintf("%c", va_arg(list, int)));
 			break;
 		case 'd':
-			reg_fmt(n, "%d", va_arg(list, int));
+			arg_madd(arg, msprintf("%d", va_arg(list, int)));
 			break;
 		default:
 			break;
 		}
 	}
 
-	return n;
+	return arg;
 }
 
-static void put_env (LaTeX_t *ltx, int mode, ENV *env, va_list list)
+static void put_env (LaTeX *ltx, int mode, ENV *env, va_list list)
 {
 	if	(mode)
 	{
-		if	(env->args)	env_par(env->args, list);
-		if	(env->beg)	io_psub(ltx->out, env->beg);
+		ArgList *args = env->args ? env_par(env->args, list) : NULL;
+
+		if	(args)
+		{
+			io_psubvec(ltx->out, env->beg, args->dim, args->data);
+			rd_deref(args);
+		}
+		else	io_psubvec(ltx->out, env->beg, 0, NULL);
 	}
 	else
 	{
@@ -241,17 +274,31 @@ static void put_env (LaTeX_t *ltx, int mode, ENV *env, va_list list)
 	}
 }
 
-static void put_xenv (LaTeX_t *ltx, int mode, ENV *env, va_list list)
+static Stack *stack = NULL;
+
+static void env_push(void *end)
+{
+	pushstack(&stack, end);
+}
+
+static void env_pop(LaTeX *ltx)
+{
+	char *cmd = popstack(&stack, NULL);
+	io_puts(cmd, ltx->out);
+	memfree(cmd);
+}
+
+static void put_xenv (LaTeX *ltx, int mode, ENV *env, va_list list)
 {
 	LaTeX_newline(ltx);
 
 	if	(mode)
 	{
-		int n = env->args ? env_par(env->args, list) : 0;
+		ArgList *args = env_par(env->args, list);
 
 		if	(env->beg)
 		{
-			io_psub(ltx->out, env->beg);
+			io_psubvec(ltx->out, env->beg, args->dim, args->data);
 		}
 		else
 		{
@@ -259,9 +306,12 @@ static void put_xenv (LaTeX_t *ltx, int mode, ENV *env, va_list list)
 
 			io_printf(ltx->out, "%% beg{%s}", env->name);
 
-			for (i = 1; i < n; i++)
-				io_printf(ltx->out, " #%d=%#s", i, reg_get(i));
+			for (i = 1; i < args->dim; i++)
+				io_printf(ltx->out, " #%d=%#s",
+					i, args->data[i]);
 		}
+
+		rd_deref(args);
 	}
 	else
 	{
@@ -273,7 +323,7 @@ static void put_xenv (LaTeX_t *ltx, int mode, ENV *env, va_list list)
 	io_putc('\n', ltx->out);
 }
 
-static void put_att (LaTeX_t *ltx, int mode, char *att)
+static void put_att (LaTeX *ltx, int mode, char *att)
 {
 	if	(mode)
 	{
@@ -283,7 +333,7 @@ static void put_att (LaTeX_t *ltx, int mode, char *att)
 	else	io_puts("\\/}", ltx->out);
 }
 
-static void put_sec (LaTeX_t *ltx, int mode, const char *name, va_list list)
+static void put_sec (LaTeX *ltx, int mode, const char *name, va_list list)
 {
 	if	(mode)
 	{
@@ -312,7 +362,7 @@ static void put_sec (LaTeX_t *ltx, int mode, const char *name, va_list list)
 	}
 }
 
-static void put_xsec (LaTeX_t *ltx, int mode, const char *name, va_list list)
+static void put_xsec (LaTeX *ltx, int mode, const char *name, va_list list)
 {
 	if	(mode)
 	{
@@ -331,11 +381,12 @@ static void put_xsec (LaTeX_t *ltx, int mode, const char *name, va_list list)
 /*	Umgebung beginnen/beenden
 */
 
-int LaTeX_env (LaTeX_t *ltx, int flag, va_list list)
+int LaTeX_env (void *drv, int flag, va_list list)
 {
-	int cmd;
+	LaTeX *ltx = drv;
+	int cmd = va_arg(list, int);
 
-	switch ((cmd = va_arg(list, int)))
+	switch (cmd)
 	{
 	case DOC_PAR_STD:
 		LaTeX_newline(ltx);
@@ -350,7 +401,7 @@ int LaTeX_env (LaTeX_t *ltx, int flag, va_list list)
 		{
 			io_puts("\\item[{", ltx->out);
 			/*
-			ltx->put = (DocDrvPut_t) LaTeX_xputc;
+			ltx->put = LaTeX_xputc;
 			*/
 			ltx->last = 0;
 			ltx->ignorespace = 1;
@@ -359,7 +410,7 @@ int LaTeX_env (LaTeX_t *ltx, int flag, va_list list)
 		{
 			io_puts("}]\n", ltx->out);
 			/*
-			ltx->put = (DocDrvPut_t) LaTeX_putc;
+			ltx->put = LaTeX_putc;
 			*/
 			ltx->last = '\n';
 			ltx->space = 0;
@@ -429,7 +480,7 @@ int LaTeX_env (LaTeX_t *ltx, int flag, va_list list)
 		break;
 	case DOC_MODE_TEX:
 	case DOC_MODE_PLAIN:
-		ltx->put = flag ? DocDrv_plain : (DocDrvPut_t) LaTeX_putc;
+		ltx->put = flag ? DocDrv_plain : LaTeX_putc;
 		break;
 	case DOC_MODE_HTML:
 	case DOC_MODE_MAN:
@@ -437,7 +488,7 @@ int LaTeX_env (LaTeX_t *ltx, int flag, va_list list)
 		break;
 	case DOC_MODE_VERB:
 		put_xenv(ltx, flag, &env_verbatim, list);
-		ltx->put = flag ? DocDrv_plain : (DocDrvPut_t) LaTeX_putc;
+		ltx->put = flag ? DocDrv_plain : LaTeX_putc;
 		break;
 	case DOC_LIST_ITEM:
 		put_xenv(ltx, flag, &list_item, list);
@@ -479,7 +530,18 @@ int LaTeX_env (LaTeX_t *ltx, int flag, va_list list)
 		put_xenv(ltx, flag, &env_bib, list);
 		break;
 	case DOC_ENV_TAB:
-		put_xenv(ltx, flag, &env_tabular, list);
+		if	(flag)
+		{
+			char *end = NULL;
+			char *opt = va_arg(list, char *);
+			char *arg = va_arg(list, char *);
+
+			CallFunc(&Type_str, &end, cenv_tabular,
+				&ltx->out, &opt, &arg);
+			env_push(end);
+		}
+		else	env_pop(ltx);
+
 		break;
 	case DOC_ENV_MCOL:
 		put_env(ltx, flag, &env_multicol, list);

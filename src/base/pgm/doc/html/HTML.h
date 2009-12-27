@@ -40,25 +40,33 @@ typedef struct {
 	DOCDRV_VAR;	/* Standardausgabevariablen */
 	int class;	/* Dokumentklasse */
 	int copy;	/* Kopiermodus */
-	strbuf_t *buf;	/* Temporärer Buffer */
+	StrBuf *buf;	/* Temporärer Buffer */
 	char *nextpar;	/* Absatzkennung */
 	char *enditem;	/* Item - Endekemnnung */
-	stack_t *s_att;	/* Stack mit Attributen */
+	Stack *s_att;	/* Stack mit Attributen */
 	char *att;	/* Aktuelles Attribute */
 	int bline;	/* Flag für fette Tabellenzeile */
-} HTML_t;
+	Stack *s_cmd; /* Befehlsstack */
+} HTML;
 
-extern io_t *DocOut_html (io_t *io);
+typedef void (*HTMLCmd) (HTML *html, void *data); 
 
-extern int HTML_putc (HTML_t *html, int c);
-extern int HTML_plain (HTML_t *html, int c);
-extern void HTML_puts (HTML_t *html, const char *str);
-extern void HTML_newline (HTML_t *html, int n);
-extern void HTML_rem (HTML_t *html, const char *rem);
-extern void HTML_sym (HTML_t *html, const char *sym);
-extern int HTML_cmd (HTML_t *html, va_list list);
-extern int HTML_env (HTML_t *html, int flag, va_list list);
+extern void HTMLCMD_note (HTML *html, void *data);
+extern void HTML_cpush (HTML *html, HTMLCmd cmd, void *data);
+extern void HTML_cpop (HTML *html);
 
-extern io_t *html_open (const char *dir, const char *path);
+extern IO *DocOut_html (IO *io);
+
+extern void HTML_puts (HTML *html, const char *str);
+extern void HTML_newline (HTML *html, int n);
+
+extern void HTML_sym (void *drv, const char *sym);
+extern int HTML_putc (void *drv, int c);
+extern int HTML_plain (void *drv, int c);
+extern void HTML_rem (void *drv, const char *rem);
+extern int HTML_cmd (void *drv, va_list list);
+extern int HTML_env (void *drv, int flag, va_list list);
+
+extern IO *html_open (const char *dir, const char *path);
 
 #endif	/* HTML.h */

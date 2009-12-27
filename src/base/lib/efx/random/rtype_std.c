@@ -26,7 +26,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <limits.h>
 #include <stddef.h>
 
-static void ident_std (io_t *io, void *data)
+static void ident_std (IO *io, void *data)
 {
 	io_printf(io, "%#08x", ((int *) data)[0]);
 }
@@ -52,10 +52,10 @@ static double rand_std (void *data)
 {
 	int *state = data;
       	*state = ((*state * 1103515245) + 12345) & 0x7fffffff;
-	return DRAND_KOEF * *state;
+	return *state / 2147483648.;
 }
 
-RandomType_t RandomType_std = {
+RandomType RandomType_std = {
 	"std", ":*:standard random number generator:de:Standardgenerator",
 	ident_std, init_std, copy_std, memfree, seed_std, rand_std
 };

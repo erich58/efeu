@@ -23,42 +23,42 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 #include <EFEU/Resource.h>
 
-static Obj_t *res_alloc (Type_t *type, va_list list)
+static EfiObj *res_alloc (EfiType *type, va_list list)
 {
-	Obj_t *obj = Obj_alloc(sizeof(Obj_t) + sizeof(char **) + type->size);
+	EfiObj *obj = Obj_alloc(sizeof(EfiObj) + sizeof(char **) + type->size);
 	char **name = (void *) (obj + 1);
 	obj->data = (void *) (name + 1);
 	*name = mstrcpy(va_arg(list, char *));
 	return obj;
 }
 
-static void res_free (Obj_t *obj)
+static void res_free (EfiObj *obj)
 {
 	char **name = (void *) (obj + 1);
 	memfree(*name);
 	CleanData(obj->type, obj->data);
-	Obj_free(obj, sizeof(Obj_t) + sizeof(char **) + obj->type->size);
+	Obj_free(obj, sizeof(EfiObj) + sizeof(char **) + obj->type->size);
 }
 
-static void res_update (Obj_t *obj)
+static void res_update (EfiObj *obj)
 {
 	char *p = mstrcpy(GetResource(Val_str(obj + 1), NULL));
 	Obj2Data(str2Obj(p), obj->type, obj->data);
 }
 
-static void res_sync (Obj_t *obj)
+static void res_sync (EfiObj *obj)
 {
 	char *p = Obj2str(ConstObj(obj->type, obj->data));
 	SetResource(Val_str(obj + 1), p);
 }
 
-static char *res_ident (Obj_t *obj)
+static char *res_ident (const EfiObj *obj)
 {
 	char **name = (void *) (obj + 1);
 	return msprintf("Resource: %s", *name);
 }
 
-static Lval_t Lval_res = {
+static EfiLval Lval_res = {
 	res_alloc,
 	res_free,
 	res_update,
@@ -67,12 +67,7 @@ static Lval_t Lval_res = {
 };
 
 
-Obj_t *ResourceVar (const Var_t *st, const Obj_t *obj)
-{
-	return LvalObj(&Lval_res, st->type, st->par);
-}
-
-Obj_t *ResourceObj (Type_t *type, const char *name)
+EfiObj *ResourceObj (EfiType *type, const char *name)
 {
 	return LvalObj(&Lval_res, type, name);
 }

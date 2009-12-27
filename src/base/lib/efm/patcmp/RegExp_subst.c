@@ -28,7 +28,7 @@ If not, write to the Free Software Foundation, Inc.,
 #define	MAXSUB	10	/* Maximale Zahl der Teilstrings */
 
 
-static void put_match (strbuf_t *sb, const char *str, regmatch_t *match)
+static void put_match (StrBuf *sb, const char *str, regmatch_t *match)
 {
 	int i;
 
@@ -38,7 +38,7 @@ static void put_match (strbuf_t *sb, const char *str, regmatch_t *match)
 		sb_putc(str[i], sb);
 }
 
-static void do_repl (strbuf_t *sb, const char *repl,
+static void do_repl (StrBuf *sb, const char *repl,
 	const char *str, regmatch_t *match)
 {
 	if	(!repl)	return;
@@ -85,10 +85,10 @@ enthalten, die jeweils durch das entsprechende Teilmuster von <exp> definiert
 werden.
 */
 
-char *RegExp_subst (RegExp_t *exp, const char *repl, const char *str, int glob)
+char *RegExp_subst (RegExp *exp, const char *repl, const char *str, int glob)
 {
 	regmatch_t match[MAXSUB];
-	strbuf_t *sb;
+	StrBuf *sb;
 	size_t i, n;
 	int flag;
 

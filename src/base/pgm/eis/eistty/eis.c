@@ -23,6 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/pconfig.h>
 #include <EFEU/preproc.h>
 #include <EFEU/Resource.h>
+#include <EFEU/Debug.h>
 #include "eistty.h"
 
 #define	CONFIRM_QUIT	0
@@ -33,11 +34,11 @@ If not, write to the Free Software Foundation, Inc.,
 
 static int eval(int c);
 
-static InfoNode_t *LoadCommand(InfoNode_t *info, const char *def)
+static InfoNode *LoadCommand(InfoNode *info, const char *def)
 {
 	char *name = strrchr(def, '/');
 	char *cmd = msprintf("%s --dump", def);
-	io_t *io = io_popen(cmd, "r");
+	IO *io = io_popen(cmd, "r");
 
 	info = AddInfo(info, name ? name + 1 : def, NULL, NULL, NULL);
 	IOLoadInfo(info, io);
@@ -46,21 +47,18 @@ static InfoNode_t *LoadCommand(InfoNode_t *info, const char *def)
 	return info;
 }
 
-static InfoNode_t *load(InfoNode_t *info, const char *def)
+static InfoNode *load(InfoNode *info, const char *def)
 {
-	io_t *io;
+	IO *io;
 	char *name;
 	
-	name = fsearch(InfoPath, NULL, def, NULL);
+	name = fsearch(InfoPath, NULL, def, "info");
 
 	if	(name == NULL)
-		name = fsearch(InfoPath, NULL, def, "info");
+		name = fsearch(InfoPath, NULL, def, NULL);
 
 	if	(name == NULL)
-	{
-		message("findopen", MSG_FTOOLS, 6, 1, def);
-		exit(EXIT_FAILURE);
-	}
+		dbg_error(NULL, "[eftools:6]", "s", def);
 
 	io = io_fileopen(name, "rz");
 	info = AddInfo(info, def, NULL, NULL, NULL);
@@ -79,9 +77,9 @@ int main(int narg, char **arg)
 	int i, Lines;
 	int key;
 	int flag;
-	InfoNode_t *info;
+	InfoNode *info;
 
-	SetVersion("$Id: eis.c,v 1.1 2001-11-12 12:23:35 ef Exp $");
+	SetVersion("$Id: eis.c,v 1.6 2002-12-20 16:40:00 ef Exp $");
 	SetupStd();
 	SetupWin();
 	ParseCommand(&narg, arg);

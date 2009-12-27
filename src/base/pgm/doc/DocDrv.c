@@ -32,8 +32,8 @@ If not, write to the Free Software Foundation, Inc.,
 
 void *DocDrv_alloc (const char *name, size_t size)
 {
-	DocDrv_t *drv = memalloc(size);
-	vb_init(&drv->varbuf, BLKS, sizeof(Var_t));
+	DocDrv *drv = memalloc(size);
+	vb_init(&drv->varbuf, BLKS, sizeof(EfiVar));
 	drv->vartab = VarTab(name, BLKS);
 	DocDrv_var(drv, &Type_io, "plain", &drv->out);
 	drv->name = name;
@@ -42,7 +42,7 @@ void *DocDrv_alloc (const char *name, size_t size)
 
 void DocDrv_free (void *ptr)
 {
-	DocDrv_t *drv = ptr;
+	DocDrv *drv = ptr;
 
 	DelVarTab(drv->vartab);
 	vb_free(&drv->varbuf);
@@ -53,11 +53,11 @@ void DocDrv_free (void *ptr)
 /*	Hilfsfunktionen
 */
 
-void DocDrv_var (void *ptr, Type_t *type, const char *name, void *data)
+void DocDrv_var (void *ptr, EfiType *type, const char *name, void *data)
 {
-	DocDrv_t *drv = ptr;
-	Var_t *var = vb_next(&drv->varbuf);
-	memset(var, 0, sizeof(Var_t));
+	DocDrv *drv = ptr;
+	EfiVar *var = vb_next(&drv->varbuf);
+	memset(var, 0, sizeof(EfiVar));
 	var->name = (char *) name;
 	var->type = type;
 	var->data = data;
@@ -67,8 +67,8 @@ void DocDrv_var (void *ptr, Type_t *type, const char *name, void *data)
 
 void DocDrv_eval (void *ptr, const char *name)
 {
-	io_t *in, *out;
-	DocDrv_t *drv;
+	IO *in, *out;
+	DocDrv *drv;
 	
 	drv = ptr;
 	drv->submode++;
@@ -83,8 +83,9 @@ void DocDrv_eval (void *ptr, const char *name)
 	drv->submode--;
 }
 
-extern int DocDrv_plain (DocDrv_t *drv, int c)
+extern int DocDrv_plain (void *ptr, int c)
 {
+	DocDrv *drv = ptr;
 	io_putc(c, drv->out);
 	return c;
 }
@@ -92,15 +93,17 @@ extern int DocDrv_plain (DocDrv_t *drv, int c)
 /*	Ausgabestruktur
 */
 
-static int drv_put (int c, DocDrv_t *drv)
+static int drv_put (int c, void *ptr)
 {
+	DocDrv *drv = ptr;
+
 	if	(drv->skip)	return c;
 
 	drv->last = drv->put ? drv->put(drv, c) : c;
 	return c;
 }
 
-static int drv_sym (DocDrv_t *drv, const char *name)
+static int drv_sym (DocDrv *drv, const char *name)
 {
 	if	(!drv->sym)
 	{
@@ -115,8 +118,9 @@ static int drv_sym (DocDrv_t *drv, const char *name)
 	return 0;
 }
 
-static int drv_ctrl (DocDrv_t *drv, int req, va_list list)
+static int drv_ctrl (void *ptr, int req, va_list list)
 {
+	DocDrv *drv = ptr;
 	int stat;
 
 	switch (req)
@@ -159,11 +163,11 @@ static int drv_ctrl (DocDrv_t *drv, int req, va_list list)
 }
 
 
-io_t *DocDrv_io (void *drv)
+IO *DocDrv_io (void *drv)
 {
-	io_t *io = io_alloc();
-	io->put = (io_put_t) drv_put;
-	io->ctrl = (io_ctrl_t) drv_ctrl;
+	IO *io = io_alloc();
+	io->put = drv_put;
+	io->ctrl = drv_ctrl;
 	io->data = drv;
 	return io;
 }

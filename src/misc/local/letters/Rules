@@ -1,0 +1,3 @@
+gif	FXDFX	InstallImage(%s.%s,%s/%s.%s)
+de,,au	DFXFX	InstallFile(%s/%s.%s,$(AUDIO)/de,%s.%s)
+en,,au	DFXFX	InstallFile(%s/%s.%s,$(AUDIO)/en,%s.%s)

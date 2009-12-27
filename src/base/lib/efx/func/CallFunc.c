@@ -23,7 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 
 
-static void **make_args (Func_t *func, va_list list)
+static void **make_args (EfiFunc *func, va_list list)
 {
 	if	(func->dim)
 	{
@@ -42,11 +42,11 @@ static void **make_args (Func_t *func, va_list list)
 }
 
 
-Obj_t *CallFuncObj (Func_t *func, ...)
+EfiObj *CallFuncObj (EfiFunc *func, ...)
 {
 	va_list list;
 	void **args;
-	Obj_t *obj;
+	EfiObj *obj;
 
 	if	(func == NULL)	return NULL;
 
@@ -60,7 +60,7 @@ Obj_t *CallFuncObj (Func_t *func, ...)
 }
 
 
-void CallFunc (Type_t *type, void *ptr, Func_t *func, ...)
+void CallFunc (EfiType *type, void *ptr, EfiFunc *func, ...)
 {
 	va_list list;
 	void **args;
@@ -81,7 +81,7 @@ void CallFunc (Type_t *type, void *ptr, Func_t *func, ...)
 }
 
 
-void CallVoidFunc (Func_t *func, ...)
+void CallVoidFunc (EfiFunc *func, ...)
 {
 	va_list list;
 	void **args;
@@ -98,7 +98,7 @@ void CallVoidFunc (Func_t *func, ...)
 	}
 	else if	(func->type == NULL)
 	{
-		Obj_t *obj = NULL;
+		EfiObj *obj = NULL;
 		func->eval(func, &obj, args);
 		UnrefObj(obj);
 	}

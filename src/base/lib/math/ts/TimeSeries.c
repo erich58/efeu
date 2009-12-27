@@ -1,5 +1,6 @@
 /*
-Referenztype der Zeitreihenstruktur
+:de:reference type for time series
+:de:Referenztype der Zeitreihenstruktur
 
 $Copyright (C) 1997 Erich Frühstück
 This file is part of EFEU.
@@ -25,72 +26,62 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	TS_BLKSIZE	32
 
-static ALLOCTAB(ts_tab, 0, sizeof(TimeSeries_t));
+static ALLOCTAB(ts_tab, 0, sizeof(TimeSeries));
 
-static TimeSeries_t *ts_admin (TimeSeries_t *tg, const TimeSeries_t *src)
+static void ts_clean (void *data)
 {
-	if	(tg)
-	{
-		lfree(tg->data);
-		memfree(tg->name);
-		memfree(tg->fmt);
-		del_data(&ts_tab, tg);
-		return NULL;
-	}
-	else	return new_data(&ts_tab);
+	TimeSeries *tg = data;
+	lfree(tg->data);
+	memfree(tg->name);
+	memfree(tg->fmt);
+	del_data(&ts_tab, tg);
 }
 
-static void ts_alloc (TimeSeries_t *ts, size_t dim)
+static void ts_alloc (TimeSeries *ts, size_t dim)
 {
 	ts->size = TS_BLKSIZE * ((dim + TS_BLKSIZE - 1) / TS_BLKSIZE);
 	ts->data = lmalloc(ts->size * sizeof(double));
 	memset(ts->data, 0, ts->size * sizeof(double));
 }
 
-static char *ts_ident (const TimeSeries_t *ts)
+static char *ts_ident (const void *data)
 {
-	if	(ts)
+	const TimeSeries *ts = data;
+	StrBuf *buf = new_strbuf(0);
+	IO *io = io_strbuf(buf);
+
+	io_printf(io, "%s[%d] ", ts->name, ts->dim);
+	tindex_print(io, ts->base, 0);
+
+	if	(ts->dim)
 	{
-		strbuf_t *buf = new_strbuf(0);
-		io_t *io = io_strbuf(buf);
-		io_printf(io, "%s[%d] ", ts->name, ts->dim);
-		PrintTimeIndex(io, ts->base, 0);
-
-		if	(ts->dim)
-		{
-			io_putc(' ', io);
-			PrintTimeIndex(io, ts->base, ts->dim - 1);
-		}
-
-		io_close(io);
-		return sb2str(buf);
+		io_putc(' ', io);
+		tindex_print(io, ts->base, ts->dim - 1);
 	}
-	else	return mstrcpy("NULL");
+
+	io_close(io);
+	return sb2str(buf);
 }
 
 
-ADMINREFTYPE(TimeSeries_reftype, "TimeSeries", ts_ident, ts_admin);
+RefType TimeSeries_reftype = REFTYPE_INIT("TimeSeries", ts_ident, ts_clean);
 
 
 /*	Zeitreihe generieren
 */
 
-int TimeSeriesPrec = 2.;
-
-TimeSeries_t *NewTimeSeries (const char *name, TimeIndex_t idx, size_t dim)
+TimeSeries *ts_create (const char *name, TimeIndex idx, size_t dim)
 {
-	TimeSeries_t *ts;
-
-	ts = rd_create(&TimeSeries_reftype);
+	TimeSeries *ts = new_data(&ts_tab);
 	ts->name = mstrcpy(name);
 	ts->base = idx;
 	ts->dim = dim;
 	ts_alloc(ts, dim);
-	return ts;
+	return rd_init(&TimeSeries_reftype, ts);
 }
 
 
-void ExpandTimeSeries(TimeSeries_t *ts, size_t dim)
+void ts_expand(TimeSeries *ts, size_t dim)
 {
 	if	(ts->size < dim)
 	{
@@ -109,7 +100,8 @@ void ExpandTimeSeries(TimeSeries_t *ts, size_t dim)
 	ts->dim = dim;
 }
 
-void SyncTimeSeries(TimeSeries_t *ts, TimeIndex_t base, size_t dim)
+
+void ts_sync (TimeSeries *ts, TimeIndex base, size_t dim, int offset)
 {
 	int i, k;
 	unsigned tsend, end;
@@ -117,9 +109,8 @@ void SyncTimeSeries(TimeSeries_t *ts, TimeIndex_t base, size_t dim)
 
 	if	(ts->base.type != base.type)
 	{
-		reg_fmt(1, "%#c", ts->base.type);
-		reg_fmt(2, "%#c", base.type);
-		errmsg(MSG_TS, 1);
+		dbg_note(NULL, "[TimeSeries:1]",
+			"cc", ts->base.type, base.type);
 		return;
 	}
 
@@ -178,6 +169,27 @@ void SyncTimeSeries(TimeSeries_t *ts, TimeIndex_t base, size_t dim)
 
 		for (i = ts->dim + k; i < ts->size; i++)
 			ts->data[i] = 0.;
+	}
+
+/*	Werte fortschreiben
+*/
+	if	(offset > 0)
+	{
+		if	(k && offset < ts->dim + k)
+		{
+			i = (offset > ts->dim) ? (ts->dim + k) - offset : k;
+
+			while (i-- > 0)
+				ts->data[i] = ts->data[i + offset];
+		}
+
+		i = ts->dim + k;
+
+		if	(i < offset)
+			i = offset;
+
+		for (; i < dim; i++)
+			ts->data[i] = ts->data[i - offset];
 	}
 
 	ts->base.value = base.value;

@@ -23,26 +23,25 @@ If not, write to the Free Software Foundation, Inc.,
 #include <Math/mdmath.h>
 #include <Math/linalg.h>
 
-static void getdata (Konv_t *konv, mdaxis_t *x, mdaxis_t *x1, mdaxis_t *x2,
+static void getdata (EfiKonv *konv, mdaxis *x, mdaxis *x1, mdaxis *x2,
 	char *p, char *data);
 
-mdmat_t *mdinv (mdmat_t *base)
+mdmat *mdinv (mdmat *base)
 {
-	mdaxis_t *axis, *xpre, *xpost, **ppre, **ppost;
-	Konv_t konv;
-	mdmat_t *md;
+	mdaxis *axis, *xpre, *xpost, **ppre, **ppost;
+	EfiKonv konv;
+	mdmat *md;
 	int lines, cols;
 
 	if	(base == NULL)
 	{
-		liberror(MSG_MDMATH, 1);
+		dbg_error(NULL, "[mdmath:1]", NULL);
 		return NULL;
 	}
 
 	if	(GetKonv(&konv, base->type, &Type_double) == NULL)
 	{
-		reg_set(1, type2str(base->type));
-		errmsg(MSG_MDMATH, 2);
+		dbg_note(NULL, "[mdmath:2]", "m", type2str(base->type));
 		return NULL;
 	}
 
@@ -76,7 +75,7 @@ mdmat_t *mdinv (mdmat_t *base)
 
 	if	(lines != cols)
 	{
-		liberror(MSG_MDMATH, 3);
+		dbg_error(NULL, "[mdmath:3]", NULL);
 		return NULL;
 	}
 
@@ -93,9 +92,7 @@ mdmat_t *mdinv (mdmat_t *base)
 	if	((cols = GaussJordan(md->data, lines)) != lines)
 	{
 		del_mdmat(md);
-		reg_fmt(1, "%d", lines);
-		reg_fmt(2, "%d", cols);
-		liberror(MSG_MDMATH, 4);
+		dbg_error(NULL, "[mdmath:4]", "dd", lines, cols);
 		return NULL;
 	}
 
@@ -107,7 +104,7 @@ mdmat_t *mdinv (mdmat_t *base)
 }
 
 
-static void getdata (Konv_t *konv, mdaxis_t *x, mdaxis_t *x1, mdaxis_t *x2,
+static void getdata (EfiKonv *konv, mdaxis *x, mdaxis *x1, mdaxis *x2,
 	char *p, char *data)
 {
 	if	(x != NULL)

@@ -29,12 +29,12 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/MakeDepend.h>
 
 
-extern io_t *html_open(const char *dir, const char *pfx);
+extern IO *html_open(const char *dir, const char *pfx);
 
 /*	Postfilterausgabe
 */
 
-static io_t *post_open (const char *name, const char *par)
+static IO *post_open (const char *name, const char *par)
 {
 	if	(MakeDepend)
 	{
@@ -45,7 +45,7 @@ static io_t *post_open (const char *name, const char *par)
 	if	(name)
 	{
 		char *p = mstrpaste(*name == '|' ? NULL : " > ", par, name);
-		io_t *io = io_popen(p, "w");
+		IO *io = io_popen(p, "w");
 		memfree(p);
 		return io;
 	}
@@ -56,7 +56,7 @@ static io_t *post_open (const char *name, const char *par)
 /*	Tabelle mit Ausgabefunktionen
 */
 
-static DocType_t TypeTab[] = {
+static DocType TypeTab[] = {
 	{ "test", ":*:test output"
 		":de:Testausgabe",
 		DocOut_test, NULL, NULL },
@@ -81,7 +81,7 @@ static DocType_t TypeTab[] = {
 };
 
 
-DocType_t *GetDocType (const char *name)
+DocType *GetDocType (const char *name)
 {
 	int i;
 
@@ -95,7 +95,7 @@ DocType_t *GetDocType (const char *name)
 /*	Ausgabefilter auflisten
 */
 
-static void print_type (io_t *io, InfoNode_t *base)
+static void print_type (IO *io, InfoNode *base)
 {
 	int i;
 
@@ -117,14 +117,14 @@ void DocOutInfo (const char *name, const char *desc)
 /*	Dokumentausgabe öffnen
 */
 
-io_t *DocFilter (DocType_t *type, io_t *io)
+IO *DocFilter (DocType *type, IO *io)
 {
 	return (type && type->filter) ? type->filter(io) : io;
 }
 
-io_t *DocOut (DocType_t *type, const char *name)
+IO *DocOut (DocType *type, const char *name)
 {
-	io_t *io;
+	IO *io;
 
 	if	(type == NULL)
 		return io_fileopen(name, "wzd");

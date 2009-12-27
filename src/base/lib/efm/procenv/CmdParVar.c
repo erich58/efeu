@@ -27,8 +27,8 @@ If not, write to the Free Software Foundation, Inc.,
 /**/
 static int var_cmp (const void *a, const void *b)
 {
-	const CmdParVar_t *va = a;
-	const CmdParVar_t *vb = b;
+	const CmdParVar *va = a;
+	const CmdParVar *vb = b;
 	return mstrcmp(va->name, vb->name);
 }
 
@@ -41,9 +41,9 @@ Die Komponente |name| darf nicht verändert werden, da sie als Sortierschlüssel
 dient!
 */
 
-CmdParVar_t *CmdPar_var (CmdPar_t *par, const char *name, int flag)
+CmdParVar *CmdPar_var (CmdPar *par, const char *name, int flag)
 {
-	CmdParVar_t var, *ptr;
+	CmdParVar var, *ptr;
 
 	if	(name == NULL)	return NULL;
 
@@ -68,15 +68,15 @@ durch <defval> ersetzt. Die von |$1| zurückgegebene Zeichenkette
 darf nicht verändert werden!
 */
 
-char *CmdPar_getval (CmdPar_t *par, const char *name, const char *defval)
+char *CmdPar_getval (CmdPar *par, const char *name, const char *defval)
 {
 	if	(name)
 	{
-		CmdParVar_t *var = CmdPar_var(par, name, 0);
+		CmdParVar *var = CmdPar_var(par, name, 0);
 
 		if	(var && var->value)	return var->value;
 	}
-	else if	(par->name)
+	else if	(par && par->name)
 	{
 		return par->name;
 	}
@@ -93,9 +93,9 @@ Für <value> sollte nur ein dynamisch generierter
 String übergeben werden (Vergleiche dazu \mref{mstring(3)}).
 */
 
-void CmdPar_setval (CmdPar_t *par, const char *name, char *value)
+void CmdPar_setval (CmdPar *par, const char *name, char *value)
 {
-	CmdParVar_t *var;
+	CmdParVar *var;
 
 	par = CmdPar_ptr(par);
 	var = CmdPar_var(par, name, 1);
@@ -122,9 +122,9 @@ Wird als Formatangabe ein Nullpointer angegeben, erfolgt eine
 Standardausgabe der Form <|<name>="<value>"|>.
 */
 
-void CmdPar_showval (CmdPar_t *par, io_t *io, const char *fmt)
+void CmdPar_showval (CmdPar *par, IO *io, const char *fmt)
 {
-	CmdParVar_t *var;
+	CmdParVar *var;
 	size_t n;
 
 	par = CmdPar_ptr(par);
@@ -133,9 +133,7 @@ void CmdPar_showval (CmdPar_t *par, io_t *io, const char *fmt)
 	{
 		if	(fmt)
 		{
-			reg_cpy(1, var->name);
-			reg_cpy(2, var->value);
-			io_psub(io, fmt);
+			io_psubarg(io, fmt, "nss", var->name, var->value);
 		}
 		else	io_printf(io, "%s=%#s\n", var->name, var->value);
 	}

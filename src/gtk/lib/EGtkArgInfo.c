@@ -24,9 +24,9 @@ If not, write to the Free Software Foundation, Inc.,
 #include <GUI/EGtkWidget.h>
 
 
-ObjList_t *EGtkArgList (ObjList_t *base, GtkType type)
+EfiObjList *EGtkArgList (EfiObjList *base, GtkType type)
 {
-	ObjList_t *list, **ptr;
+	EfiObjList *list, **ptr;
 	GtkArg *args;
 	guint i, nargs;
 	
@@ -48,7 +48,7 @@ ObjList_t *EGtkArgList (ObjList_t *base, GtkType type)
 }
 
 
-void EGtkArgInfo (io_t *io, GtkType type)
+void EGtkArgInfo (IO *io, GtkType type)
 {
 	GtkArg *args;
 	guint i, nargs;

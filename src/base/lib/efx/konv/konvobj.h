@@ -53,35 +53,35 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 typedef struct {
-	Func_t *func;
-	Type_t *type;
+	EfiFunc *func;
+	EfiType *type;
 	int dist;
-} ArgKonv_t;
+} EfiArgKonv;
 
-ArgKonv_t *GetArgKonv (const Type_t *old, const Type_t *new);
-int ArgKonvDist (const Type_t *old, const Type_t *new);
+EfiArgKonv *GetArgKonv (const EfiType *old, const EfiType *new);
+int ArgKonvDist (const EfiType *old, const EfiType *new);
 
-Obj_t *KonvObj (const Obj_t *obj, Type_t *def);
-Obj_t *KonvLval (Obj_t *obj, Type_t *def);
-void ArgKonv (ArgKonv_t *konv, void *tg, void *src);
+EfiObj *KonvObj (const EfiObj *obj, EfiType *def);
+EfiObj *KonvLval (EfiObj *obj, EfiType *def);
+void ArgKonv (EfiArgKonv *konv, void *tg, void *src);
 
-Func_t *SearchFunc (VirFunc_t *tab, FuncArg_t *arg,
-	size_t narg, ArgKonv_t **konv);
+EfiFunc *SearchFunc (EfiVirFunc *tab, EfiFuncArg *arg,
+	size_t narg, EfiArgKonv **konv);
 
-Func_t *GetKonvFunc(const Type_t *old, const Type_t *new);
+EfiFunc *GetKonvFunc(const EfiType *old, const EfiType *new);
 
 
 /*	Objekte konvertieren
 */
 
 typedef struct {
-	Func_t *func;	/* Konvertierungsfunktion */
-	Type_t *type;	/* Konvertierungsbasis */
+	EfiFunc *func;	/* Konvertierungsfunktion */
+	EfiType *type;	/* Konvertierungsbasis */
 	int dist;	/* Konvertierungsdistanz */
-} Konv_t;
+} EfiKonv;
 
-Konv_t *GetKonv (Konv_t *buf, const Type_t *otype, const Type_t *ntype);
-void KonvData (Konv_t *konv, void *tg, void *src);
-int KonvDist (const Type_t *old, const Type_t *new);
+EfiKonv *GetKonv (EfiKonv *buf, const EfiType *otype, const EfiType *ntype);
+void KonvData (EfiKonv *konv, void *tg, void *src);
+int KonvDist (const EfiType *old, const EfiType *new);
 
 #endif	/* EFEU/konvobj.h */

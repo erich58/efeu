@@ -27,7 +27,7 @@ If not, write to the Free Software Foundation, Inc.,
 /*	Zeichen Ausgeben
 */
 
-int io_putc(int c, io_t *io)
+int io_putc (int c, IO *io)
 {
 	return (io && io->put) ? io->put(c, io->data) : 0;
 }
@@ -36,7 +36,7 @@ int io_putc(int c, io_t *io)
 /*	Zeichen wiederholt ausgeben
 */
 
-int io_nputc (int c, io_t *io, int n)
+int io_nputc (int c, IO *io, int n)
 {
 	if	(n > 0 && io && io->put)
 	{
@@ -54,14 +54,14 @@ int io_nputc (int c, io_t *io, int n)
 /*	String ausgeben
 */
 
-int io_puts (const char *str, io_t *io)
+int io_puts (const char *str, IO *io)
 {
 	if	(io && io->put && str)
 	{
-		register const uchar_t *p;
+		register const unsigned char *p;
 		register int n;
 
-		p = (const uchar_t *) str;
+		p = (const unsigned char *) str;
 
 		for (n = 0; *p != 0; p++, n++)
 			if (io->put(*p, io->data) == EOF) break;
@@ -74,14 +74,14 @@ int io_puts (const char *str, io_t *io)
 /*	String mit Zeilenvorschub ausgeben
 */
 
-int io_nlputs(const char *str, io_t *io)
+int io_nlputs(const char *str, IO *io)
 {
 	if	(io && io->put && str)
 	{
-		register const uchar_t *p;
+		register const unsigned char *p;
 		register int n, last;
 
-		p = (const uchar_t *) str;
+		p = (const unsigned char *) str;
 		last = '\n';
 
 		for (n = 0; *p != 0; last = *(p++), n++)
@@ -98,7 +98,7 @@ int io_nlputs(const char *str, io_t *io)
 /*	IO-Struktur umkopieren
 */
 
-int io_copy (io_t *in, io_t *out)
+int io_copy (IO *in, IO *out)
 {
 	int c, n;
 

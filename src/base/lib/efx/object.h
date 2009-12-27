@@ -28,47 +28,47 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/efmain.h>
 #include <EFEU/efio.h>
 #include <EFEU/vecbuf.h>
-#include <EFEU/data.h>
+#include <EFEU/ftools.h>
+#include <EFEU/nkt.h>
 
 /*	Typedefinitionen für Objekte
 */
 
-typedef struct Obj_s Obj_t;
-typedef struct Type_s Type_t;
-typedef struct Func_s Func_t;
-typedef struct Lval_s Lval_t;
+typedef struct EfiObjStruct EfiObj;
+typedef struct EfiTypeStruct EfiType;
+typedef struct EfiFuncStruct EfiFunc;
+typedef struct EfiLvalStruct EfiLval;
 
 
 /*	Vektoren
 */
 
 typedef struct {
-	Type_t *type;	/* Variablentype */
+	EfiType *type;	/* Variablentype */
 	void *data;	/* Datenpointer */
 	size_t dim;	/* Vektordimension */
-} Vec_t;
+} EfiVec;
 
 
 /*	Variablen
 */
 
-typedef struct Var_s Var_t;
-typedef Obj_t *(*GetMember_t) (const Var_t *member, const Obj_t *obj);
+typedef struct EfiVarStruct EfiVar;
 
-struct Var_s {
+struct EfiVarStruct {
 	char *name;		/* Variablenname */
-	Type_t *type;		/* Variablentype */
+	EfiType *type;		/* Variablentype */
 	void *data;		/* Datenpointer */
 	size_t dim;		/* Variablendimension */
 	size_t offset;		/* Datenoffset */
-	GetMember_t member;	/* Abfragefunktion */
+	EfiObj *(*member) (const EfiVar *member, const EfiObj *obj);
 	void *par;		/* Strukturparameter */
-	Var_t *next;		/* Nächster Eintrag */
+	EfiVar *next;		/* Nächster Eintrag */
 	char *desc;		/* Beschreibungstext */
-	clean_t clean;		/* Aufräumfunktion */
+	void (*clean) (void *ptr);	/* Aufräumfunktion */
 };
 
-Obj_t *Var2Obj (Var_t *var, const Obj_t *obj);
+EfiObj *Var2Obj (EfiVar *var, const EfiObj *obj);
 
 
 /*	Variablendefinition
@@ -76,87 +76,92 @@ Obj_t *Var2Obj (Var_t *var, const Obj_t *obj);
 
 typedef struct {
 	char *name;		/* Variablenname */
-	Type_t *type;		/* Variablentype */
+	EfiType *type;		/* Variablentype */
 	void *data;		/* Datenpointer */
 	char *desc;		/* Beschreibungstext */
-} VarDef_t;
-
-/*	Mitgliederdefinitionen
-*/
-
-typedef struct {
-	char *name;		/* Variablenname */
-	Type_t *type;		/* Variablentype */
-	GetMember_t member;	/* Abfragefunktion */
-	void *par;		/* Strukturparameter */
-	char *desc;		/* Beschreibungstext */
-} MemberDef_t;
+} EfiVarDef;
 
 /*	Variablentabellen
 */
 
 typedef struct {
+	const char *name;
+	char *desc;
+	EfiType *type;
+	EfiObj *obj;
+	EfiObj *(*get) (const EfiObj *base, void *data);
+	void (*clean) (void *data);
+	void *data;
+} VarTabEntry;
+
+typedef struct {
 	REFVAR;
 	char *name;
-	xtab_t tab;
-} VarTab_t;
+	VecBuf tab;
+} EfiVarTab;
 
+extern EfiVarTab *GlobalVar;
+extern EfiVarTab *LocalVar;
+extern EfiVarTab *ContextVar;
+extern EfiObj *LocalObj;
+extern EfiObj *ContextObj;
 
-extern reftype_t VarTabRefType;
+EfiVarTab *VarTab (const char *name, size_t dim);
+EfiVarTab *CurrentVarTab (EfiVarTab *tab);
+int ShowVarTab (IO *io, const char *pfx, EfiVarTab *vtab);
 
-extern VarTab_t *GlobalVar;
-extern VarTab_t *LocalVar;
-extern VarTab_t *ContextVar;
-extern Obj_t *LocalObj;
-extern Obj_t *ContextObj;
-
-VarTab_t *VarTab (const char *name, size_t dim);
-int ShowVarTab (io_t *io, const char *pfx, VarTab_t *vtab);
+VarTabEntry *VarTab_get (EfiVarTab *tab, const char *name);
+void VarTab_add (EfiVarTab *tab, VarTabEntry *entry);
+void VarTab_xadd (EfiVarTab *tab, char *name, char *desc, EfiObj *obj);
+void VarTab_del (EfiVarTab *tab, const char *name);
 
 #define	RefVarTab(tab)	rd_refer(tab)
 #define	DelVarTab(tab)	rd_deref(tab)
+
+typedef struct {
+	const char *name;
+	EfiType *type;
+	EfiObj *(*get) (const EfiObj *base, void *data);
+	void *par;
+	const char *desc;
+} EfiMember;
+
+void AddEfiMember (EfiVarTab *tab, EfiMember *def, size_t dim);
+
 
 /*	Virtuelle Funktionen
 */
 
 typedef struct {
 	REFVAR;
-	vecbuf_t tab;
-} VirFunc_t;
+	VecBuf tab;
+} EfiVirFunc;
 
-extern reftype_t VirFuncRefType;
-
-VirFunc_t *VirFunc(Func_t *func);
+EfiVirFunc *VirFunc (EfiFunc *func);
+int IsVirFunc (void *data);
 
 
 /*	Objekttype
 */
 
-typedef Obj_t *(*Eval_t) (const Type_t *type, const void *src);
-typedef void (*Clean_t) (const Type_t *type, void *tg);
-typedef void (*Copy_t) (const Type_t *type, void *tg, const void *src);
-typedef size_t (*IOData_t) (const Type_t *t, iofunc_t fdnc, void *ptr,
-	void *data, size_t dim);
-
-
-struct Type_s {
+struct EfiTypeStruct {
 	char *name;	/* Typename */
 	size_t size;	/* Datenlänge */
 	size_t recl;	/* Satzlänge */
-	IOData_t iodata;	/* Ein/Ausgabefunktion */
-	Type_t *base;	/* Basisobjekt (Vektor, Vererbung) */
-	Eval_t eval;	/* Auswertungsfunktion */
-	Clean_t clean;	/* Löschfunktion */
-	Copy_t copy;	/* Kopierfunktion */
+	size_t (*read) (const EfiType *type, void *data, IO *io);
+	size_t (*write) (const EfiType *type, const void *data, IO *io);
+	EfiType *base;	/* Basisobjekt (Vektor, Vererbung) */
+	EfiObj *(*eval) (const EfiType *type, const void *src);
+	void (*clean) (const EfiType *type, void *tg);
+	void (*copy) (const EfiType *type, void *tg, const void *src);
 	size_t dim;	/* Vektordimension */
-	Var_t *list;	/* Strukturelemente */
-	VarTab_t *vtab;	/* Variablentabelle */
-	Func_t *fclean; /* Destruktor, nicht überladbar */
-	Func_t *fcopy;	/* Kopierfunktion, nicht überladbar */
-	vecbuf_t konv;	/* Konvertierungen */
-	VirFunc_t *create;	/* Konstruktor, überladbar */
+	EfiVar *list;	/* Strukturelemente */
+	EfiVarTab *vtab;	/* Variablentabelle */
+	EfiFunc *fclean; /* Destruktor, nicht überladbar */
+	EfiFunc *fcopy;	/* Kopierfunktion, nicht überladbar */
+	VecBuf konv;	/* Konvertierungen */
+	EfiVirFunc *create;	/* Konstruktor, überladbar */
 	void *defval;	/* Vorgabewert */
-	void *priv;	/* Private Daten des Types */
 };
 
 
@@ -164,106 +169,110 @@ struct Type_s {
 */
 
 #define	LVAL_VAR \
-	Obj_t *(*alloc) (Type_t *type, va_list list); \
-	void (*free) (Obj_t *obj); \
-	void (*update) (Obj_t *obj); \
-	void (*sync) (Obj_t *obj); \
-	char *(*ident) (Obj_t *obj)
+	EfiObj *(*alloc) (EfiType *type, va_list list); \
+	void (*free) (EfiObj *obj); \
+	void (*update) (EfiObj *obj); \
+	void (*sync) (EfiObj *obj); \
+	char *(*ident) (const EfiObj *obj)
 
 #define	LVAL_DATA(alloc,free,update,sync,ident) \
 	alloc, free, update, sync, ident
 
-struct Lval_s {
+struct EfiLvalStruct {
 	LVAL_VAR;
 };
 
-extern Lval_t Lval_ptr;
-extern Lval_t Lval_ref;
+extern EfiLval Lval_ptr;
+extern EfiLval Lval_ref;
+extern EfiLval Lval_obj;
 
 /*
 Objektvariablen
 */
 
-#define	OBJECT_VAR	REFVAR; Type_t *type; Lval_t *lval; void *data
+#define	OBJECT_VAR	REFVAR; EfiType *type; EfiLval *lval; void *data
 
-struct Obj_s {
+struct EfiObjStruct {
 	OBJECT_VAR;
 };
 
-extern Obj_t *Obj_alloc (size_t size);
-extern void Obj_free (Obj_t *obj, size_t size);
-extern void Obj_stat (const char *prompt);
-extern void Obj_check (const Obj_t *obj);
+EfiObj *Obj_alloc (size_t size);
+void Obj_free (EfiObj *obj, size_t size);
+void Obj_stat (const char *prompt);
+void Obj_check (const EfiObj *obj);
+char *Obj_ident (const EfiObj *obj);
 
 /*	Neue Datentypen
 */
 
-Type_t *NewType (char *name);
+EfiType *NewType (char *name);
 
 typedef struct {
 	char *name;
 	int val;
-} EnumTypeDef_t;
+} EnumTypeDef;
 
-Type_t *NewEnumType (const char *name, EnumTypeDef_t *def, size_t dim);
-void AddEnumKey (Type_t *type, const char *name, int val);
-char *EnumKeyLabel (const Type_t *type, int val, int flag);
-int EnumKeyCode (const Type_t *type, const char *key);
+EfiType *NewEnumType (const char *name, EnumTypeDef *def, size_t dim);
+void AddEnumKey (EfiType *type, char *name, int val);
+char *EnumKeyLabel (const EfiType *type, int val, int flag);
+int EnumKeyCode (const EfiType *type, const char *key);
 
 
 /*	Makro zur Typedefinition
 */
 
-void AddType (Type_t *type);
-Type_t *GetType (const char *name);
-int IsTypeClass (const Type_t *type, const Type_t *base);
+void AddType (EfiType *type);
+EfiType *GetType (const char *name);
+int IsTypeClass (const EfiType *type, const EfiType *base);
 
 
 /*	Initialisierungsfunktionen
 */
 
-Var_t *GetStruct (io_t *io, int delim);
-Type_t *FindStruct (Var_t *list, size_t size);
-Type_t *MakeStruct (char *name, Var_t *base, Var_t *list);
+EfiVar *GetStruct (IO *io, int delim);
+EfiType *FindStruct (EfiVar *list, size_t size);
+EfiType *MakeStruct (char *name, EfiVar *base, EfiVar *list);
 
-Obj_t *LvalObj (Lval_t *lval, Type_t *type, ...);
-Obj_t *NewObj (Type_t *type, void *data);
-Obj_t *ConstObj (Type_t *type, const void *data);
-Obj_t *RefObj (const Obj_t *obj);
-void DeleteObj (Obj_t *obj);
-void UnrefObj (Obj_t *obj);
-void SyncLval (Obj_t *obj);
-Obj_t *AssignTerm (const char *name, Obj_t *left, Obj_t *right);
-Obj_t *AssignObj (Obj_t *left, Obj_t *right);
+EfiObj *LvalObj (EfiLval *lval, EfiType *type, ...);
+EfiObj *NewObj (EfiType *type, void *data);
+EfiObj *ConstObj (EfiType *type, const void *data);
+EfiObj *RefObj (const EfiObj *obj);
+void DeleteObj (EfiObj *obj);
+void UnrefObj (EfiObj *obj);
+void SyncLval (EfiObj *obj);
+EfiObj *AssignTerm (const char *name, EfiObj *left, EfiObj *right);
+EfiObj *AssignObj (EfiObj *left, EfiObj *right);
 
-Obj_t *EvalObj (Obj_t *obj, Type_t *type);
-void UnrefEval (Obj_t *obj);
+EfiObj *EvalObj (EfiObj *obj, EfiType *type);
+void UnrefEval (EfiObj *obj);
 
-int TypeComp (const Type_t *def1, const Type_t *def2);
+int TypeComp (const EfiType *def1, const EfiType *def2);
 
-size_t IOData (const Type_t *type, iofunc_t func, void *ptr, void *dat);
-void CleanData (const Type_t *type, void *tg);
-void CopyData (const Type_t *type, void *tg, const void *src);
-void AssignData (const Type_t *type, void *tg, const void *src);
+void CleanData (const EfiType *type, void *tg);
+void CopyData (const EfiType *type, void *tg, const void *src);
+size_t ReadData (const EfiType *type, void *data, IO *io);
+size_t WriteData (const EfiType *type, const void *data, IO *io);
+void AssignData (const EfiType *type, void *tg, const void *src);
 
-size_t IOVecData (const Type_t *type, iofunc_t f, void *p, size_t n, void *dat);
-void CleanVecData (const Type_t *type, size_t dim, void *tg);
-void CopyVecData (const Type_t *type, size_t dim, void *tg, const void *src);
-void AssignVecData (const Type_t *type, size_t dim, void *tg, const void *src);
+void CleanVecData (const EfiType *type, size_t dim, void *tg);
+void CopyVecData (const EfiType *type, size_t dim, void *tg, const void *src);
+size_t ReadVecData (const EfiType *type, size_t dim, void *data, IO *io);
+size_t WriteVecData (const EfiType *type, size_t dim, const void *data, IO *io);
+void AssignVecData (const EfiType *type, size_t dim, void *tg, const void *src);
 
-void Obj2Data (Obj_t *obj, Type_t *type, void *ptr);
+void Obj2Data (EfiObj *obj, EfiType *type, void *ptr);
 
-int ShowType (io_t *io, const Type_t *type);
-void ListType (io_t *io, const Type_t *type);
-void TypeTree (io_t *io, const Type_t *type);
+int ShowType (IO *io, const EfiType *type);
+void ListType (IO *io, const EfiType *type);
+void TypeTree (IO *io, const EfiType *type);
 
-extern Type_t Type_void;	/* Leerer Type */
+extern EfiType Type_void;	/* Leerer Type */
 
 
 /*	Ganzzahlobjekte
 */
 
-extern uchar_t Buf_char;	/* Buffer für Zeichenkonstante */
+extern unsigned char Buf_char;	/* Buffer für Zeichenkonstante */
 extern char Buf_byte;		/* Buffer für Byteswert */
 extern short Buf_short;		/* Buffer für kurze Ganzzahlkonstante */
 extern int Buf_int;		/* Buffer für normale Ganzzahlkonstante */
@@ -271,19 +280,19 @@ extern long Buf_long;		/* Buffer für lange Ganzzahlkonstante */
 extern unsigned Buf_uint;	/* Buffer für Vorzeichenfreie Ganzzahlk. */
 extern unsigned long Buf_size;	/* Buffer für Größenangaben */
 
-extern Type_t Type_char;	/* Zeichenkonstante */
-extern Type_t Type_bool;	/* Logische Konstante */
-extern Type_t Type_byte;	/* 1 Byte Ganzzahlkonstante */
-extern Type_t Type_short;	/* Kurze Ganzzahlkonstante */
-extern Type_t Type_int;		/* Normale Ganzzahlkonstante */
-extern Type_t Type_long;	/* Lange Ganzzahlkonstante */
-extern Type_t Type_uint;	/* Vorzeichenfreie Ganzzahlkonstante */
-extern Type_t Type_size;	/* Größenangaben */
-extern Type_t Type_Date;	/* Datumsindex */
-extern Type_t Type_Time;	/* Zeitindex */
+extern EfiType Type_char;	/* Zeichenkonstante */
+extern EfiType Type_bool;	/* Logische Konstante */
+extern EfiType Type_byte;	/* 1 Byte Ganzzahlkonstante */
+extern EfiType Type_short;	/* Kurze Ganzzahlkonstante */
+extern EfiType Type_int;		/* Normale Ganzzahlkonstante */
+extern EfiType Type_long;	/* Lange Ganzzahlkonstante */
+extern EfiType Type_uint;	/* Vorzeichenfreie Ganzzahlkonstante */
+extern EfiType Type_size;	/* Größenangaben */
+extern EfiType Type_Date;	/* Datumsindex */
+extern EfiType Type_Time;	/* Zeitindex */
 
 #define	Val_bool(x)	((int *) (x))[0]
-#define	Val_char(x)	((uchar_t *) (x))[0]
+#define	Val_char(x)	((unsigned char *) (x))[0]
 #define	Val_byte(x)	((char *) (x))[0]
 #define	Val_short(x)	((short *) (x))[0]
 #define	Val_int(x)	((int *) (x))[0]
@@ -317,8 +326,8 @@ extern Type_t Type_Time;	/* Zeitindex */
 extern float Buf_float;		/* Buffer für kurze Gleitkommakonstante */
 extern double Buf_double;	/* Buffer für Gleitkommakonstante */
 
-extern Type_t Type_float;	/* Kurze Gleitkommakonstante */
-extern Type_t Type_double;	/* Gleitkommakonstante */
+extern EfiType Type_float;	/* Kurze Gleitkommakonstante */
+extern EfiType Type_double;	/* Gleitkommakonstante */
 
 #define	float2Obj(x)	NewObj(&Type_float, (Buf_float = (x), &Buf_float))
 #define	double2Obj(x)	NewObj(&Type_double, (Buf_double = (x), &Buf_double))
@@ -333,22 +342,22 @@ extern Type_t Type_double;	/* Gleitkommakonstante */
 /*	Pointerobjekte
 */
 
-Obj_t *NewPtrObj (Type_t *type, const void *data);
-void *Obj2Ptr (Obj_t *obj, Type_t *type);
+EfiObj *NewPtrObj (EfiType *type, const void *data);
+void *Obj2Ptr (EfiObj *obj, EfiType *type);
 
-extern Type_t Type_ptr;		/* Pointerobjekt */
-extern Type_t Type_ref;		/* Referenzobjekt */
-extern Type_t Type_enum;	/* Aufzählungsobjekt */
-extern Type_t Type_str;		/* Stringkonstante */
-extern Type_t Type_obj;		/* Objektpointer */
-extern Type_t Type_expr;	/* Objektpointer mit Ausdruck */
-extern Type_t Type_type;	/* Datentype */
-extern Type_t Type_lval;	/* Lval-Datentype */
-extern Type_t Type_info;	/* Informationsknoten */
-extern Type_t Type_io;		/* IO - Struktur */
-extern Type_t Type_vtab;	/* Variablentabelle */
-extern Type_t Type_undef;	/* Nicht definierter Name */
-extern Type_t Type_name;	/* Name */
+extern EfiType Type_ptr;		/* Pointerobjekt */
+extern EfiType Type_ref;		/* Referenzobjekt */
+extern EfiType Type_enum;	/* Aufzählungsobjekt */
+extern EfiType Type_str;		/* Stringkonstante */
+extern EfiType Type_obj;		/* Objektpointer */
+extern EfiType Type_expr;	/* Objektpointer mit Ausdruck */
+extern EfiType Type_type;	/* Datentype */
+extern EfiType Type_lval;	/* Lval-Datentype */
+extern EfiType Type_info;	/* Informationsknoten */
+extern EfiType Type_io;		/* IO - Struktur */
+extern EfiType Type_vtab;	/* Variablentabelle */
+extern EfiType Type_undef;	/* Nicht definierter Name */
+extern EfiType Type_name;	/* Name */
 
 #define	ptr2Obj(x)	NewPtrObj(&Type_ptr, x)
 #define	str2Obj(x)	NewPtrObj(&Type_str, x)
@@ -359,17 +368,17 @@ extern Type_t Type_name;	/* Name */
 
 #define	Val_ptr(x)	((void **) (x))[0]
 #define	Val_str(x)	((char **) (x))[0]
-#define	Val_io(x)	((io_t **) (x))[0]
-#define	Val_obj(x)	((Obj_t **) (x))[0]
-#define	Val_xobj(x)	((Obj_t **) (x))[0]
-#define	Val_type(x)	((Type_t **) (x))[0]
-#define	Val_func(x)	((Func_t **) (x))[0]
-#define	Val_vfunc(x)	((VirFunc_t **) (x))[0]
-#define	Val_vtab(x)	((VarTab_t **) (x))[0]
+#define	Val_io(x)	((IO **) (x))[0]
+#define	Val_obj(x)	((EfiObj **) (x))[0]
+#define	Val_xobj(x)	((EfiObj **) (x))[0]
+#define	Val_type(x)	((EfiType **) (x))[0]
+#define	Val_func(x)	((EfiFunc **) (x))[0]
+#define	Val_vfunc(x)	((EfiVirFunc **) (x))[0]
+#define	Val_vtab(x)	((EfiVarTab **) (x))[0]
 
 #define	Obj2ptr(x)	Obj2Ptr((x), &Type_ptr)
 #define	Obj2str(x)	((char *) Obj2Ptr((x), &Type_str))
-#define	Obj2obj(x)	((Obj_t *) Obj2Ptr((x), &Type_obj))
+#define	Obj2obj(x)	((EfiObj *) Obj2Ptr((x), &Type_obj))
 
 
 /*	Struktur für Member/Scope - Namensdefinition
@@ -377,191 +386,174 @@ extern Type_t Type_name;	/* Name */
 
 typedef struct {
 	char *name;
-	Obj_t *obj;
-} Name_t;
+	EfiObj *obj;
+} EfiName;
 
-extern Name_t Buf_name;		/* Zwischenbuffer */
-extern Type_t Type_mname;	/* Member-Name */
-extern Type_t Type_sname;	/* Scope-Name */
+extern EfiName Buf_name;		/* Zwischenbuffer */
+extern EfiType Type_mname;	/* Member-Name */
+extern EfiType Type_sname;	/* Scope-Name */
 
 
 /*	Vektoren
 */
 
-Obj_t *Vector (Vec_t *vec, size_t idx);
+EfiObj *Vector (EfiVec *vec, size_t idx);
 
-extern Type_t Type_vec;		/* Vektorstruktur */
-extern Vec_t Buf_vec;		/* Buffer für Vektorstruktur */
-
-
-Obj_t *StructMember (const Var_t *st, const Obj_t *obj);
-Obj_t *LvalMember (const Var_t *st, const Obj_t *obj);
-Obj_t *ConstMember (const Var_t *st, const Obj_t *obj);
-Obj_t *TransMember (const Var_t *st, const Obj_t *obj);
-
-typedef struct {
-	void (*get) (void *data, void *buf);
-	void (*set) (void *data, void *buf);
-} TransPar_t;
-
-Obj_t *ResourceVar (const Var_t *st, const Obj_t *obj);
-Obj_t *ResourceObj (Type_t *type, const char *name);
+extern EfiType Type_vec;		/* Vektorstruktur */
+extern EfiVec Buf_vec;		/* Buffer für Vektorstruktur */
 
 
-typedef void *(*EvalMember_t) (const void *data);
+EfiObj *StructMember (const EfiVar *st, const EfiObj *obj);
+EfiObj *ResourceObj (EfiType *type, const char *name);
 
-Var_t *NewVar (Type_t *type, const char *name, size_t dim);
-Var_t *Obj2Var (const char *name, Obj_t *obj);
-void DelVar (Var_t *var);
+EfiVar *NewVar (EfiType *type, const char *name, size_t dim);
+EfiVar *Obj2Var (const char *name, EfiObj *obj);
+void DelVar (EfiVar *var);
 
 
 /*	Variablenstack
 */
 
-typedef struct VarStack_s VarStack_t;
+typedef struct EfiVarStackStruct EfiVarStack;
 
-struct VarStack_s {
-	VarStack_t *next;
-	VarTab_t *tab;
-	Obj_t *obj;
+struct EfiVarStackStruct {
+	EfiVarStack *next;
+	EfiVarTab *tab;
+	EfiObj *obj;
 };
 
-extern VarStack_t *VarStack;
-extern VarStack_t *ContextStack;
+extern EfiVarStack *VarStack;
+extern EfiVarStack *ContextStack;
 
-VarStack_t *SaveVarStack (void);
-void RestoreVarStack (VarStack_t *stack);
+EfiVarStack *SaveVarStack (void);
+void RestoreVarStack (EfiVarStack *stack);
 
-void PushVarTab (VarTab_t *tab, Obj_t *obj);
+void PushVarTab (EfiVarTab *tab, EfiObj *obj);
 void PopVarTab (void);
-void PushContext (VarTab_t *tab, Obj_t *obj);
+void PushContext (EfiVarTab *tab, EfiObj *obj);
 void PopContext (void);
 
-void AddVarDef (VarTab_t *tab, VarDef_t *def, size_t dim);
-void AddMember (VarTab_t *tab, MemberDef_t *def, size_t dim);
-void AddVar (VarTab_t *tab, Var_t *def, size_t dim);
-Obj_t *GetVar (VarTab_t *tab, const char *name, const Obj_t *obj);
-void SetVar (VarTab_t *tab, const char *name, const char *value);
+void AddVarDef (EfiVarTab *tab, EfiVarDef *def, size_t dim);
+void AddVar (EfiVarTab *tab, EfiVar *def, size_t dim);
+EfiObj *GetVar (EfiVarTab *tab, const char *name, const EfiObj *obj);
+void SetVar (EfiVarTab *tab, const char *name, const char *value);
 
-Obj_t *GetMember (Obj_t *obj, const char *name);
-Obj_t *GetScope (Obj_t *obj, const char *name);
+EfiObj *GetMember (EfiObj *obj, const char *name);
+EfiObj *GetScope (EfiObj *obj, const char *name);
 
 
 /*	Objektlisten
 */
 
-typedef struct ObjList_s {
-	struct ObjList_s *next;
-	Obj_t *obj;
-} ObjList_t;
+typedef struct EfiObjListStruct {
+	struct EfiObjListStruct *next;
+	EfiObj *obj;
+} EfiObjList;
 
-extern Type_t Type_list;
+extern EfiType Type_list;
 
 #define	Obj_list(x)	NewPtrObj(&Type_list, x)
 
-#define	Val_list(x)	((ObjList_t **) (x))[0]
+#define	Val_list(x)	((EfiObjList **) (x))[0]
 
-ObjList_t *NewObjList (Obj_t *obj);
-void DelObjList (ObjList_t *list);
-Obj_t *ReduceObjList (ObjList_t **ptr);
-void ExpandObjList (ObjList_t **list, Obj_t *obj);
-ObjList_t *RefObjList (const ObjList_t *list);
-ObjList_t *EvalObjList (const ObjList_t *list);
-ObjList_t *MakeObjList (int n, ...);
-ObjList_t *Expand_vec (Type_t *type, const void *data, size_t dim);
-void Assign_vec (Type_t *type, void *data, size_t dim, const ObjList_t *list);
-int ObjListLen (const ObjList_t *list);
-
-typedef struct {
-	Type_t *type;	/* Variablentype */
-	Name_t name;	/* Namensdefinition */
-	ObjList_t *idx;	/* Indexliste */
-	Obj_t *defval;	/* Initialisierungswert */
-} VarDecl_t;
-
-ObjList_t *VarDefList (io_t *io, int delim);
-void DelType (Type_t *type);
-ObjList_t *EnumKeyList (Type_t *type);
-
+EfiObjList *NewObjList (EfiObj *obj);
+void DelObjList (EfiObjList *list);
+EfiObj *ReduceObjList (EfiObjList **ptr);
+void ExpandObjList (EfiObjList **list, EfiObj *obj);
+EfiObjList *RefObjList (const EfiObjList *list);
+EfiObjList *EvalObjList (const EfiObjList *list);
+EfiObjList *MakeObjList (int n, ...);
+EfiObjList *Expand_vec (EfiType *type, const void *data, size_t dim);
+void Assign_vec (EfiType *type, void *data, size_t dim, const EfiObjList *list);
+int ObjListLen (const EfiObjList *list);
 
 typedef struct {
-	VarTab_t *tab;
-	ObjList_t *list;
-} Block_t;
+	EfiType *type;	/* Variablentype */
+	EfiName name;	/* Namensdefinition */
+	int cnst : 1;	/* Konstante */
+	EfiObjList *idx; /* Indexliste */
+	EfiObj *defval;	/* Initialisierungswert */
+} EfiVarDecl;
 
-extern Type_t Type_block;	/* Befehlsblock */
-extern Type_t Type_vdef;	/* Variablendefinition */
+EfiObjList *VarDefList (IO *io, int delim);
+EfiObjList *EnumKeyList (EfiType *type);
+
+
+typedef struct {
+	EfiVarTab *tab;
+	EfiObjList *list;
+} EfiBlock;
+
+extern EfiType Type_block;	/* Befehlsblock */
+extern EfiType Type_vdef;	/* Variablendefinition */
 
 
 #define	Obj_noop()		Obj_call(NULL, NULL, NULL)
 
-Type_t *VecType(Type_t *type, ObjList_t *idx);
-Type_t *NewVecType(Type_t *type, int dim);
+EfiType *VecType(EfiType *type, EfiObjList *idx);
+EfiType *NewVecType(EfiType *type, int dim);
 
 
 /*	Ausdrücke und Terme
 */
 
-typedef Obj_t *(*EvalExpr_t) (void *par, const ObjList_t *list);
-
 typedef struct {
-	EvalExpr_t eval;	/* Auswertungsfunktion */
+	EfiObj *(*eval) (void *par, const EfiObjList *list);	/* Auswertungsfunktion */
 	const void *par;	/* Auswertungsparameter */
-	ObjList_t *list;	/* Argumentliste */
-} Expr_t;
+	EfiObjList *list;	/* Argumentliste */
+} EfiExpr;
 
 
-extern Type_t Type_explist;
-extern Type_t Type_call;
-extern Type_t Type_func;
-extern Type_t Type_vfunc;
-extern Type_t Type_ofunc;
+extern EfiType Type_explist;
+extern EfiType Type_call;
+extern EfiType Type_func;
+extern EfiType Type_vfunc;
+extern EfiType Type_ofunc;
 
-Obj_t *Obj_call (EvalExpr_t func, void *par, ObjList_t *l);
+EfiObj *Obj_call (EfiObj *(*func) (void *par, const EfiObjList *list), void *par, EfiObjList *l);
 
-Obj_t *Expr_func (void *par, const ObjList_t *list);
-Obj_t *Expr_virfunc (void *par, const ObjList_t *list);
-Obj_t *Expr_void (void *par, const ObjList_t *list);
-Obj_t *Expr_for (void *par, const ObjList_t *list);
-Obj_t *Expr_forin (void *par, const ObjList_t *list);
+EfiObj *Expr_func (void *par, const EfiObjList *list);
+EfiObj *Expr_virfunc (void *par, const EfiObjList *list);
+EfiObj *Expr_void (void *par, const EfiObjList *list);
+EfiObj *Expr_for (void *par, const EfiObjList *list);
+EfiObj *Expr_forin (void *par, const EfiObjList *list);
 
-Obj_t *CondTerm (Obj_t *test, Obj_t *ifpart, Obj_t *elsepart);
-Obj_t *CommaTerm (Obj_t *left, Obj_t *right);
-Obj_t *UnaryTerm (const char *a, Obj_t *obj, int flag);
-Obj_t *BinaryTerm (const char *a, Obj_t *left, Obj_t *right);
+EfiObj *CondTerm (EfiObj *test, EfiObj *ifpart, EfiObj *elsepart);
+EfiObj *CommaTerm (EfiObj *left, EfiObj *right);
+EfiObj *UnaryTerm (const char *a, const char *ext, EfiObj *obj);
+EfiObj *BinaryTerm (const char *a, EfiObj *left, EfiObj *right);
+
+void RangeFunc (EfiFunc *func, void *rval, void **arg);
 
 
 /*	Objektkonvertierungen
 */
 
-void Ptr2bool (Func_t *func, void *rval, void **arg);
-void Vec2List (Func_t *func, void *rval, void **arg);
-void Struct2List (Func_t *func, void *rval, void **arg);
-void List2Struct (Func_t *func, void *rval, void **arg);
-
+void Ptr2bool (EfiFunc *func, void *rval, void **arg);
+void Vec2List (EfiFunc *func, void *rval, void **arg);
+void Struct2List (EfiFunc *func, void *rval, void **arg);
+void List2Struct (EfiFunc *func, void *rval, void **arg);
 
 /*	Operatordefinitionen
 */
 
 void StdOpDef (void);
 
-extern xtab_t PrefixTab;
-extern xtab_t PostfixTab;
+extern NameKeyTab PrefixTab;
+extern NameKeyTab PostfixTab;
 
 
 /*	Funktionsdefinition
 */
 
 typedef struct {
-	Type_t *type;		/* Argumenttype */
+	EfiType *type;		/* Argumenttype */
 	char *name;		/* Argumentname */
-	Obj_t *defval;		/* Vorgabewert */
+	EfiObj *defval;		/* Vorgabewert */
 	unsigned lval : 1;	/* L-Wert erforderlich */
 	unsigned nokonv : 1;	/* Keine Konvertierung erlaubt */
 	unsigned cnst : 1;	/* Konstante */
-} FuncArg_t;
-
-typedef void (*FuncEval_t) (Func_t *func, void *rval, void **arg);
+} EfiFuncArg;
 
 #define	KONV_PROMOTION	0
 #define	KONV_STANDARD	1
@@ -578,60 +570,67 @@ typedef void (*FuncEval_t) (Func_t *func, void *rval, void **arg);
 
 #define	FUNC_BUFSIZE	sizeof(double)
 
-extern reftype_t FuncRefType;
-
-struct Func_s {
+struct EfiFuncStruct {
 	REFVAR;	
 	char *name;		/* Funktionsname */
-	VarTab_t *scope;	/* Funktionsumgebung */
-	Type_t *type;		/* Rückgabetype */
-	FuncArg_t *arg;		/* Argumentliste */
-	FuncEval_t eval;	/* Auswertungsfunktion */
+	EfiVarTab *scope;	/* Funktionsumgebung */
+	EfiType *type;		/* Rückgabetype */
+	EfiFuncArg *arg;	/* Argumentliste */
+	void (*eval) (EfiFunc *func, void *rval, void **arg);
 	unsigned dim : 24;	/* Zahl der Argumente */
 	unsigned lretval : 1;	/* Flag für Rückgabe von L-Wert */
 	unsigned bound : 1;	/* Flag für Objektbindung */
 	unsigned vaarg : 1;	/* Flag für variable Argumentzahl */
-	unsigned virtual : 1;	/* Virtuelle Funktion */
+	unsigned virfunc : 1;	/* Virtuelle Funktion */
 	unsigned weight : 4;	/* Konvertierungsgewicht */
 	void *par;		/* Funktionsparameter */
-	clean_t clean;		/* Aufräumfunktion */
+	void (*clean) (void *ptr);		/* Aufräumfunktion */
 };
 
-size_t GetFuncArg (io_t *io, FuncArg_t **arg);
-void DelFuncArg (FuncArg_t *arg, size_t dim);
-FuncArg_t *VaFuncArg (int narg, va_list list);
-FuncArg_t *FuncArg (int narg, ...);
+size_t GetFuncArg (IO *io, EfiFuncArg **arg);
+void DelFuncArg (EfiFuncArg *arg, size_t dim);
+EfiFuncArg *VaFuncArg (int narg, va_list list);
+EfiFuncArg *FuncArg (int narg, ...);
 
-int ParseFuncArg(io_t *io, FuncArg_t *ptr);
+int ParseFuncArg(IO *io, EfiFuncArg *ptr);
+int IsFunc (void *data);
 
 #define	FARG_END	1	/* Ende der Argumentliste */
 #define	FARG_ERROR	2	/* Fehlerhaftes Argument */
 #define	FARG_STDARG	3	/* Normales Argument */
 #define	FARG_ELLIPSE	4	/* Ellipse */
 
-Func_t *MakePrototype (io_t *io, Type_t *type, Name_t *name, unsigned flags);
-Func_t *Prototype (const char *fmt, Type_t *type, Name_t *name, unsigned flags);
+EfiFunc *MakePrototype (IO *io, EfiType *type, EfiName *name, unsigned flags);
+EfiFunc *Prototype (const char *fmt, EfiType *type,
+	EfiName *name, unsigned flags);
 
-void SetFunc (unsigned flags, Type_t *type, const char *fmt, FuncEval_t eval);
+void SetFunc (unsigned flags, EfiType *type, const char *fmt,
+	void (*eval) (EfiFunc *func, void *rval, void **arg));
 
-int ListFunc (io_t *io, Func_t *func);
+ArgList *arg_list (const char *base, EfiObjList *list);
+ArgList *arg_func (EfiFunc *func, int n, void **arg);
+
+int ListFunc (IO *io, EfiFunc *func);
 int FuncComp (const void *a, const void *b);
-void FuncDebug (Func_t *func, const char *pfx);
+void FuncDebug (EfiFunc *func, const char *pfx);
 extern int FuncDebugLock;
 
 
-Func_t *GetFunc (Type_t *type, VirFunc_t *tab, int narg, ...);
-Func_t *VaGetFunc (Type_t *type, VirFunc_t *tab, int narg, va_list list);
-Func_t *XGetFunc (Type_t *type, VirFunc_t *tab, FuncArg_t *arg, size_t narg);
+EfiFunc *GetFunc (EfiType *type, EfiVirFunc *tab,
+	int narg, ...);
+EfiFunc *VaGetFunc (EfiType *type, EfiVirFunc *tab,
+	int narg, va_list list);
+EfiFunc *XGetFunc (EfiType *type, EfiVirFunc *tab,
+	EfiFuncArg *arg, size_t narg);
 
-Func_t *NewFunc (void);
-void DelFunc (Func_t *func);
-void AddFunc (Func_t *func);
+EfiFunc *NewFunc (void);
+void DelFunc (EfiFunc *func);
+void AddFunc (EfiFunc *func);
 
 typedef struct {
-	Obj_t *obj;	/* Objekt */
+	EfiObj *obj;	/* Objekt */
 	void *func;	/* Funktionspointer */
-} ObjFunc_t;
+} EfiObjFunc;
 
 
 /*	Funktionstabelle
@@ -639,32 +638,32 @@ typedef struct {
 
 typedef struct {
 	unsigned flags;		/* Funktionsflags */
-	Type_t *type;		/* Datentype */
+	EfiType *type;		/* Datentype */
 	char *prot;		/* Prototype */
-	FuncEval_t eval;	/* Auswertungsfunktion */
-} FuncDef_t;
+	void (*eval) (EfiFunc *func, void *rval, void **arg);	/* Auswertungsfunktion */
+} EfiFuncDef;
 
-void AddFuncDef (FuncDef_t *def, size_t dim);
+void AddFuncDef (EfiFuncDef *def, size_t dim);
 
 
 /*	Funktionen auswerten
 */
 
-void Func_inline (Func_t *func, void *rval, void **arg);
-void Func_func (Func_t *func, void *rval, void **arg);
+void Func_inline (EfiFunc *func, void *rval, void **arg);
+void Func_func (EfiFunc *func, void *rval, void **arg);
 
-Obj_t *EvalFunc (Func_t *func, const ObjList_t *list);
-Obj_t *EvalVirFunc (VirFunc_t *func, const ObjList_t *list);
+EfiObj *EvalFunc (EfiFunc *func, const EfiObjList *list);
+EfiObj *EvalVirFunc (EfiVirFunc *func, const EfiObjList *list);
 
-Obj_t *MakeRetVal (Func_t *func, Obj_t *firstarg, void **arg);
-Obj_t *ConstRetVal (Func_t *func, void **arg);
+EfiObj *MakeRetVal (EfiFunc *func, EfiObj *firstarg, void **arg);
+EfiObj *ConstRetVal (EfiFunc *func, void **arg);
 
-void CallFunc (Type_t *type, void *ptr, Func_t *func, ...);
-void CallVoidFunc (Func_t *func, ...);
-Obj_t *CallFuncObj (Func_t *func, ...);
+void CallFunc (EfiType *type, void *ptr, EfiFunc *func, ...);
+void CallVoidFunc (EfiFunc *func, ...);
+EfiObj *CallFuncObj (EfiFunc *func, ...);
 
-void *GetTypeFunc (const Type_t *type, const char *name);
-void *GetStdFunc (VarTab_t *tab, const char *name);
+void *GetTypeFunc (const EfiType *type, const char *name);
+void *GetStdFunc (EfiVarTab *tab, const char *name);
 
 #define	GetGlobalFunc(name)	GetStdFunc(GlobalVar, name)
 
@@ -681,39 +680,43 @@ void StdFuncDef (void);
 void StdPrintDef (void);
 void StdIoDef (void);
 void SetupStd (void);
-void SetupSC (void);
 void SetupSearchTab (void);
 
-void CmdEval (io_t *in, io_t *out);
+void CmdEval (IO *in, IO *out);
+int iocpy_eval (IO *in, IO *out, int key, const char *arg, unsigned flags);
 
 
 /*	Parse - Funktionen
 */
 
-char *Parse_name (io_t *io);
-Name_t *Parse_sname (io_t *io, Name_t *buf);
-Type_t *Parse_type (io_t *io, Type_t *type);
-Obj_t *Parse_obj (io_t *io, int flags);
-Obj_t *Parse_term (io_t *io, int prior);
-Obj_t *Parse_index (io_t *io);
-Obj_t *strterm (const char *str);
-ObjList_t *Parse_list (io_t *io, int endchar);
-ObjList_t *Parse_clist (io_t *io, int endchar);
-ObjList_t *Parse_idx(io_t *io);
+char *Parse_name (IO *io);
+EfiName *Parse_sname (IO *io, EfiName *buf);
+EfiType *Parse_type (IO *io, EfiType *type);
+EfiObj *Parse_obj (IO *io, int flags);
+EfiObj *Parse_term (IO *io, int prior);
+EfiObj *Parse_index (IO *io);
+EfiObj *strterm (const char *str);
+EfiObjList *Parse_list (IO *io, int endchar);
+EfiObjList *Parse_clist (IO *io, int endchar);
+EfiObjList *Parse_idx(IO *io);
 
-Obj_t *Parse_op (io_t *io, int prior, Obj_t *left);
-Obj_t *Parse_cmd (io_t *io);
+EfiObj *Parse_op (IO *io, int prior, EfiObj *left);
+EfiObj *Parse_cmd (IO *io);
 
-Obj_t *Parse_vdef (io_t *io, Type_t *var, int flag);
-Obj_t *Parse_func (io_t *io, Type_t *type, Name_t *name, int flags);
-int Parse_fmt (io_t *io, const char *fmt, ...);
+#define	VDEF_REPEAT	0x1	/* Fortgesetzte Definition */
+#define	VDEF_LVAL	0x2	/* LVal Flag */
+#define	VDEF_CONST	0x4	/* Konstante */
+
+EfiObj *Parse_vdef (IO *io, EfiType *var, int flag);
+EfiObj *Parse_func (IO *io, EfiType *type, EfiName *name, int flags);
+int Parse_fmt (IO *io, const char *fmt, ...);
 
 /*	Blockstrukturen
 */
 
-Obj_t *Parse_cmd(io_t *io);
-Obj_t *Parse_block(io_t *io, int endchar);
+EfiObj *Parse_cmd(IO *io);
+EfiObj *Parse_block(IO *io, int endchar);
 
-Obj_t *EvalExpression (const Obj_t *obj);
+EfiObj *EvalExpression (const EfiObj *obj);
 
 #endif	/* EFEU/object.h */

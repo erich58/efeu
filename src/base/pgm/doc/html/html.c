@@ -29,8 +29,9 @@ If not, write to the Free Software Foundation, Inc.,
 #define	SYMTAB	"html"	/* Sonderzeichentabelle */
 
 
-static void html_hdr (HTML_t *html, int mode)
+static void html_hdr (void *drv, int mode)
 {
+	HTML *html = drv;
 	HTML_newline(html, 0);
 
 	if	(!mode)	return;
@@ -41,19 +42,19 @@ static void html_hdr (HTML_t *html, int mode)
 }
 
 
-io_t *DocOut_html (io_t *io)
+IO *DocOut_html (IO *io)
 {
-	HTML_t *html = DocDrv_alloc(NAME, sizeof(HTML_t));
+	HTML *html = DocDrv_alloc(NAME, sizeof(HTML));
 	html->out = io;
 	html->class = 0;
 	html->last = '\n';
-	html->symtab = DocSym(SYMTAB);
-	html->sym = (DocDrvSym_t) HTML_sym;
-	html->put = (DocDrvPut_t) HTML_putc;
-	html->hdr = (DocDrvHdr_t) html_hdr;
-	html->rem = (DocDrvRem_t) HTML_rem;
-	html->cmd = (DocDrvCmd_t) HTML_cmd;
-	html->env = (DocDrvEnv_t) HTML_env;
+	html->symtab = DocSym_load(SYMTAB);
+	html->sym = HTML_sym;
+	html->put = HTML_putc;
+	html->hdr = html_hdr;
+	html->rem = HTML_rem;
+	html->cmd = HTML_cmd;
+	html->env = HTML_env;
 	html->buf = new_strbuf(0);
 	DocDrv_var(html, &Type_int, "class", &html->class);
 	return DocDrv_io(html);

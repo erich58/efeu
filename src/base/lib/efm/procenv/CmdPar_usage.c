@@ -42,10 +42,10 @@ If not, write to the Free Software Foundation, Inc.,
 #define	ERR_OUT		io_popen("efeudoc -Tterm - 1>&2", "w")
 
 
-static void expand_func (CmdPar_t *par, io_t *in, io_t *out, int c)
+static void expand_func (CmdPar *par, IO *in, IO *out, int c)
 {
-	strbuf_t *sb;
-	CmdParExpand_t *eval;
+	StrBuf *sb;
+	CmdParExpand *eval;
 	char *arg;
 
 	sb = new_strbuf(0);
@@ -90,13 +90,13 @@ static void expand_func (CmdPar_t *par, io_t *in, io_t *out, int c)
 	del_strbuf(sb);
 }
 
-static void subcopy (CmdPar_t *par, io_t *in, io_t *out, int delim);
+static void subcopy (CmdPar *par, IO *in, IO *out, int delim);
 
-static void expand_var (CmdPar_t *par, io_t *in, io_t *out, int key)
+static void expand_var (CmdPar *par, IO *in, IO *out, int key)
 {
-	strbuf_t *sb;
+	StrBuf *sb;
 	char *name;
-	io_t *io;
+	IO *io;
 
 	sb = new_strbuf(0);
 	io = io_strbuf(sb);
@@ -114,7 +114,7 @@ static void expand_var (CmdPar_t *par, io_t *in, io_t *out, int key)
 	sb_delete(sb);
 }
 
-static void expand (CmdPar_t *par, io_t *in, io_t *out)
+static void expand (CmdPar *par, IO *in, IO *out)
 {
 	int c = io_getc(in);
 
@@ -138,9 +138,13 @@ static void expand (CmdPar_t *par, io_t *in, io_t *out)
 	else	expand_func(par, in, out, c);
 }
 
-static void subcopy (CmdPar_t *par, io_t *in, io_t *out, int delim)
+static void subcopy (CmdPar *par, IO *in, IO *out, int delim)
 {
+	StrBuf *buf;
+	char *p;
 	int c;
+
+	buf = NULL;
 
 	while ((c = io_getc(in)) != delim)
 	{
@@ -149,7 +153,11 @@ static void subcopy (CmdPar_t *par, io_t *in, io_t *out, int delim)
 		case EOF:
 			return;
 		case '$':
-			iocpy_psub(in, out, c, NULL, 0);
+			if	(!buf)
+				buf = new_strbuf(1024);
+
+			p = psubexpand(buf, in, 0, NULL);
+			io_puts(p, out);
 			break;
 		case '@':
 			expand(par, in, out);
@@ -159,31 +167,33 @@ static void subcopy (CmdPar_t *par, io_t *in, io_t *out, int delim)
 			break;
 		}
 	}
+
+	del_strbuf(buf);
 }
 
 
-void CmdPar_iousage (CmdPar_t *par, io_t *out, io_t *def)
+void CmdPar_iousage (CmdPar *par, IO *out, IO *def)
 {
 	if	(out && def)
 		subcopy(CmdPar_ptr(par), def, out, EOF);
 }
 
-void CmdPar_usage (CmdPar_t *par, io_t *out, const char *fmt)
+void CmdPar_usage (CmdPar *par, IO *out, const char *fmt)
 {
-	io_t *def = io_cstr(fmt ? fmt : USAGE_FMT);
+	IO *def = io_cstr(fmt ? fmt : USAGE_FMT);
 	out = out ? io_refer(out) : ERR_OUT;
 	subcopy(CmdPar_ptr(par), def, out, EOF);
 	io_close(def);
 	io_close(out);
 }
 
-void CmdPar_manpage (CmdPar_t *par, io_t *out)
+void CmdPar_manpage (CmdPar *par, IO *out)
 {
 	char *p;
-	io_t *def;
+	IO *def;
 
 	par = CmdPar_ptr(par);
-	p = xfsearch(ApplPath, HLP_PFX, par->name, HLP_SFX);
+	p = fsearch(ApplPath, HLP_PFX, par->name, HLP_SFX);
 	def = p ? io_fileopen(p, "r") : io_cstr(HLP_FMT);
 	memfree(p);
 	out = out ? io_refer(out) : STD_OUT;

@@ -1,5 +1,6 @@
 /*
-Referenztype der OLS-Schätzparameter
+:*:parameter of OLS estimation
+:de:OLS-Schätzparameter
 
 $Copyright (C) 1997 Erich Frühstück
 This file is part of EFEU.
@@ -23,50 +24,67 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 #include <Math/TimeSeries.h>
 
-static ALLOCTAB(par_tab, 0, sizeof(OLSPar_t));
+static ALLOCTAB(par_tab, 0, sizeof(OLSPar));
 
-static OLSPar_t *par_admin (OLSPar_t *tg, const OLSPar_t *src)
+static char *par_ident (const void *ptr)
 {
-	if	(tg)
-	{
-		int i;
-
-		for (i = 0; i < tg->dim; i++)
-		{
-			memfree(tg->koef[i].name);
-			rd_deref(tg->exogen[i]);
-		}
-
-		memfree(tg->koef);
-		memfree(tg->exogen);
-		rd_deref(tg->res);
-		del_data(&par_tab, tg);
-		return NULL;
-	}
-	else	return new_data(&par_tab);
+	const OLSPar *ts = ptr;
+	return msprintf("%d", ts->dim);
 }
 
-static char *par_ident (const OLSPar_t *ts)
+static void par_clean (void *ptr)
 {
-	if	(ts)
+	OLSPar *tg = ptr;
+	int i;
+
+	for (i = 0; i < tg->dim; i++)
 	{
-		return msprintf("%d", ts->dim);
+		memfree(tg->koef[i].name);
+		rd_deref(tg->exogen[i]);
 	}
-	else	return mstrcpy("NULL");
+
+	memfree(tg->koef);
+	memfree(tg->exogen);
+	rd_deref(tg->res);
+	del_data(&par_tab, tg);
 }
 
-ADMINREFTYPE(OLSPar_reftype, "OLSPar", par_ident, par_admin);
+RefType OLSPar_reftype = REFTYPE_INIT("OLSPar", par_ident, par_clean);
 
-
-OLSPar_t *NewOLSPar (size_t dim)
+OLSPar *OLSPar_create (size_t dim)
 {
-	OLSPar_t *par;
+	OLSPar *par;
 
-	par = rd_create(&OLSPar_reftype);
+	par = new_data(&par_tab);
 	par->dim = dim;
-	par->koef = memalloc(par->dim * sizeof(OLSKoef_t));
-	par->exogen = memalloc(par->dim * sizeof(TimeSeries_t *));
-	memset(par->koef, 0, par->dim * sizeof(OLSKoef_t));
-	memset(par->exogen, 0, par->dim * sizeof(TimeSeries_t *));
-	return par;
+	par->koef = memalloc(par->dim * sizeof(OLSCoeff));
+	par->exogen = memalloc(par->dim * sizeof(TimeSeries *));
+	return rd_init(&OLSPar_reftype, par);
+}
+
+int OLSPar_print (IO *io, OLSPar *par)
+{
+	int i, n;
+	char *p1, *p2;
+
+	if	(par == NULL)	return 0;
+
+	p1 = TimeIndex2str(par->base, 0);
+	p2 = TimeIndex2str(par->base, par->nr - 1);
+	n  = io_printf(io, "Schätzzeitraum:%10s\t%25s\n", p1, p2);
+	memfree(p1);
+	memfree(p2);
+	n += io_printf(io, "Beobachtungen: %10d\t", par->nr);
+	n += io_printf(io, "Freiheitsgrade:%10d\n", par->df);
+	n += io_printf(io, "R**2:          %10.6f\t", par->r2);
+	n += io_printf(io, "RBAR**2:       %10.6f\n", par->rbar2);
+	n += io_printf(io, "Durbin Watson: %10.6f\t", par->dw);
+	n += io_printf(io, "SEE:           %10.3f\n", par->see);
+	n += io_printf(io, "%-9s %15s %15s %15s\n", "Variable",
+		"Koeffizient", "Standardfehler", "T-Statistic");
+
+	for (i = 0; i < par->dim; i++)
+		n += OLSCoeff_print(io, par->koef + i);
+
+	return n;
 }

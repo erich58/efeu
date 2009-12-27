@@ -30,12 +30,14 @@ int MakeDepend = 0;
 VECBUF(TargetList, 16, sizeof(char *));
 VECBUF(DependList, 16, sizeof(char *));
 
-static int cmp_name (const char **a, const char **b)
+static int cmp_name (const void *pa, const void *pb)
 {
+	char * const *a = pa;
+	char * const *b = pb;
 	return mstrcmp(*a, *b);
 }
 
-static void add_name (vecbuf_t *tab, const char *name)
+static void add_name (VecBuf *tab, const char *name)
 {
 	char *p, **ptr;
 
@@ -43,7 +45,7 @@ static void add_name (vecbuf_t *tab, const char *name)
 	if	(*name == '|')	return;
 
 	p = mstrcpy(name);
-	ptr = vb_search(tab, &p, (comp_t) cmp_name, VB_REPLACE); 
+	ptr = vb_search(tab, &p, cmp_name, VB_REPLACE); 
 
 	if	(ptr)	memfree(*ptr);
 }
@@ -58,7 +60,7 @@ void AddDepend (const char *name)
 	add_name(&DependList, name);
 }
 
-static int put_name (io_t *io, int col, const char *name)
+static int put_name (IO *io, int col, const char *name)
 {
 	if	(col)
 	{
@@ -75,7 +77,7 @@ static int put_name (io_t *io, int col, const char *name)
 	return col + io_puts(name, io);
 }
 
-void MakeTaskRule (io_t *io, const char *name)
+void MakeTaskRule (IO *io, const char *name)
 {
 	int n, p;
 	char **ptr;
@@ -90,7 +92,7 @@ void MakeTaskRule (io_t *io, const char *name)
 	io_putc('\n', io);
 }
 
-void MakeCleanRule (io_t *io, const char *name)
+void MakeCleanRule (IO *io, const char *name)
 {
 	int n, p;
 	char **ptr;
@@ -106,7 +108,7 @@ void MakeCleanRule (io_t *io, const char *name)
 	io_putc('\n', io);
 }
 
-void MakeTargetRule (io_t *io, const char *cmd)
+void MakeTargetRule (IO *io, const char *cmd)
 {
 	int n, p;
 	char **ptr;
@@ -137,7 +139,7 @@ void MakeTargetRule (io_t *io, const char *cmd)
 	}
 }
 
-void MakeDependRule (io_t *io)
+void MakeDependRule (IO *io)
 {
 	MakeTargetRule(io, NULL);
 }

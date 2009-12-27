@@ -29,7 +29,7 @@ Die Funktion |vb_init| initialisiert den Vektorbuffer <buf>
 mit Blockgröße <blk> und Datengröße <size>.
 */
 
-void vb_init (vecbuf_t *buf, size_t blk, size_t size)
+void vb_init (VecBuf *buf, size_t blk, size_t size)
 {
 	if	(!buf)	return;
 
@@ -46,7 +46,7 @@ verwendeten Datenelemente im Vektorbuffer <buf> an und setzt
 die Komponente |used| auf 0.
 */
 
-void vb_clean (vecbuf_t *buf, clean_t clean)
+void vb_clean (VecBuf *buf, void (*clean) (void *ptr))
 {
 	if	(!buf)	return;
 
@@ -65,7 +65,7 @@ Vektorbuffer verwendete Speicherfeld frei. Die Komponenten
 |data|, |size| und |used| werden auf 0 gesetzt.
 */
 
-void vb_free (vecbuf_t *buf)
+void vb_free (VecBuf *buf)
 {
 	if	(!buf)	return;
 
@@ -86,7 +86,7 @@ initialisiert. Die Komponente |used| wird um 1 erhöht.
 Bei Bedarf wird der Buffer vergrößert.
 */
 
-void *vb_next (vecbuf_t *buf)
+void *vb_next (VecBuf *buf)
 {
 	if	(!buf)	return NULL;
 
@@ -102,7 +102,7 @@ Die Funktion |$1| liefert das Element an Position <pos> des Vektorbuffers
 <dim> oder einen Nullpointer, falls weniger Elemente enthalten sind.
 */
 
-void *vb_data (vecbuf_t *buf, size_t pos)
+void *vb_data (VecBuf *buf, size_t pos)
 {
 	if	(!buf || pos >= buf->used)	return NULL;
 
@@ -117,7 +117,7 @@ Wert 0 hat, wird kein Element eingefügt und die Funktion
 liefert einen Nullpointer.
 */
 
-void *vb_insert (vecbuf_t *buf, size_t pos, size_t dim)
+void *vb_insert (VecBuf *buf, size_t pos, size_t dim)
 {
 	char *ptr, *save;
 	size_t i, n, offset;
@@ -169,7 +169,7 @@ wird kein Element gelöscht und die Funktion
 liefert einen Nullpointer.
 */
 
-void *vb_delete (vecbuf_t *buf, size_t pos, size_t dim)
+void *vb_delete (VecBuf *buf, size_t pos, size_t dim)
 {
 	char *ptr;
 	size_t i, j, size;

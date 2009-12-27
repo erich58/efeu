@@ -2,18 +2,18 @@
 	(c) 1995 Erich Frühstück
 */
 
-#include <EFEU/mdmat.h>
+#include <EFEU/mdeval.h>
 
 typedef struct {
-	Func_t *func;
+	EfiFunc *func;
 	char *label;
-	ObjList_t *list;
-	ObjList_t **ptr;
+	EfiObjList *list;
+	EfiObjList **ptr;
 } LEVAL;
 
 #define	PAR	((LEVAL *) (par))
 
-static void *leval_init(void *op, Type_t *type)
+static void *leval_init(void *op, EfiType *type)
 {
 	LEVAL *par;
 
@@ -40,13 +40,13 @@ static void leval_end(void *par)
 	DelObjList(PAR->list);
 }
 
-static void leval_data(void *par, Type_t *type, void *ptr, void *base)
+static void leval_data(void *par, EfiType *type, void *ptr, void *base)
 {
 	*PAR->ptr = NewObjList(LvalObj(&Lval_ptr, type, ptr));
 	PAR->ptr = &(*PAR->ptr)->next;
 }
 
-static mdeval_t leval_eval = {
+static MdEvalDef leval_eval = {
 	leval_init, NULL,
 	leval_newidx, memfree,
 	leval_start, leval_end,
@@ -54,9 +54,9 @@ static mdeval_t leval_eval = {
 };
 
 
-void MF_leval(Func_t *func, void *rval, void **arg)
+void MF_leval(EfiFunc *func, void *rval, void **arg)
 {
-	mdmat_t *md;
+	mdmat *md;
 
 	md = Val_mdmat(arg[0]);
 	md_setflag(md, Val_str(arg[2]), 0, mdsf_mark, MDXFLAG_MARK, mdsf_lock, MDFLAG_TEMP);

@@ -24,9 +24,15 @@ If not, write to the Free Software Foundation, Inc.,
 PrintListDelim = "\t";
 
 pconfig !
-Version = "$Id: mdmul.esh,v 1.8 2001-10-18 12:11:21 ef Exp $"
+Version = "$Id: mdmul.esh,v 1.9 2002-05-30 12:14:34 ef Exp $"
 PrintMode = true
 
+F:file | :eval 'gload(IncPath, "{}")'
+	:*:execute command lines in file <file>
+	:de:Datei <file> mit Befehlszeilen laden
+E:expr | :eval 'geval("{}")'
+	:*:evaluate expression <expr>
+	:de:Ausdruck <expr> auswerten
 r | Reduce = true
 	:*:remove singulary axis
 	:de:Entfernen von singulären Achsen

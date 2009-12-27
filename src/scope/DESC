@@ -1,3 +1,3 @@
-Label: rules for tag files and name tables
-Label_de: Sourcelisten und TAG-File zusammenstellen
+:en: rules for tag files and name tables
+:de: Sourcelisten und TAG-File zusammenstellen
 Depends: *

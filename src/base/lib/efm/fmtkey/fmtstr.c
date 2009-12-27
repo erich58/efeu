@@ -23,7 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/fmtkey.h>
 
-int fmt_str(io_t *io, const fmtkey_t *key, const char *str)
+int fmt_str(IO *io, const FmtKey *key, const char *str)
 {
 	int n, k;
 
