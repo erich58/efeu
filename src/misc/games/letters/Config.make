@@ -1,3 +1,7 @@
+# :en: EFEU Letters and Numbers
+# :de: EFEU-Version von Buchstaben und Zahlen
+##Depends: .
+
 include efeu.smh
 mf_dir BIN=$TOP/bin
 foreach -m BIN -s etk 'mf_script -e -c etk $tg $src'

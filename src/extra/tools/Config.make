@@ -1,3 +1,7 @@
+# :en: simple tools
+# :de: Einfache Hilfsprogramme
+##Depends: .
+
 include efeu.smh
 
 mf_var CFLAGS -DEFEUCFG

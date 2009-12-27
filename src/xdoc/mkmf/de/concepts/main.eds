@@ -1,3 +1,6 @@
 \chap	\label{concepts}Konzepte
 
-\sec	Kapitel in Arbeit
+\config shmkmf
+\include intro.eds
+\include design.eds
+\include integ.eds

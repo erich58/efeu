@@ -1,0 +1,17 @@
+\sec	Integration des Buildsystems in einem Projekt
+
+Bisher wurde davon ausgegangen, das am jeweiligen Arbeitsrechner das
+Build-System |shmkmf| installiert ist. Sollen die Sourcen auf einem
+anderen Rechner übertragen und kompiliert werden, muss dort |shmkmf|
+verfügbar sein, z. B. durch Installation von |efeu|.
+
+Es besteht aber auch die Möglichkeit, |shmkmf| in ein Projekt
+so zu integrieren, dass eine Installation des Buildsystems
+nicht notwendig ist.
+
+Dazu richten wir zunächst im Hauptverzeichnis des Projektes das Verzeichnis
+|shmkmf| mit den Skriptfiles von |shmkmf| ein. Die Skriptfiles für
+|shmkmf| können einer aktuellen EFEU-Distribution entnommen werden.
+Quelle: |http://efeu.cybertec.at|, Unterverzeichnis: |src/config/shmkmf|.
+
+\pipe[verbatim] cd ../../../src/config/shmkmf; ls -CR -I CVS

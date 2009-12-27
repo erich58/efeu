@@ -177,7 +177,7 @@ Zuweisungstabelle stammt, liefert die Funktion den Wert 0, ansonsten 1.
 
 $Warnings
 :*:If a data segment is used after freeing, the internal free
-list may be destroied.
+list may be destroyed.
 :de:Nach der Freigabe eines Datensegmentes darf dieses nicht mehr
 benützt werden, da ansonsten die freie Liste zerstört wird.
 Der Inhalt eines Datensegmentes wird bei der Freigabe verändert.
@@ -315,7 +315,7 @@ void check_data (AllocTab *tab)
 
 /*
 $Notes
-:*:This functions relievs the dynamic memmory allocation and
+:*:This functions relieves the dynamic memmory allocation and
 reduces fragmentation by small objects.
 :de:Die Funktionen entlasten die dynamische Speicherplatzverwaltung
 und verhindern eine Zerstückelung von Speichersegmenten bei kleinen

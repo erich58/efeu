@@ -1,3 +1,7 @@
+# :en: esh, mksource and scripts
+# :de: esh, mksource und Scripts
+##Depends: efm efx md math iorl
+
 include efeu.smh
 include readline.smh
 mf_dir BIN=$TOP/bin

@@ -1,3 +1,7 @@
+# :en: edb commands
+# :de: edb  Kommandos
+##Depends: efm efx md math iorl esh
+
 include efeu.smh
 include readline.smh
 mf_dir BIN=$TOP/bin

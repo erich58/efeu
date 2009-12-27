@@ -1,5 +1,6 @@
 /*
-Dokumentation aus Shell-Skript generieren
+:*:Create documentation from shell skript
+:de:Dokumentation aus Shell-Skript generieren
 
 $Copyright (C) 2004 Erich Frühstück
 This file is part of EFEU.
@@ -124,7 +125,9 @@ static void sh_eval (SrcData *data, const char *name)
 	{
 		if	(c == '#')
 		{
-			if	(io_peek(data->ein) == '!')
+			c = io_peek(data->ein);
+
+			if	(c == '!' || c == '#')
 			{
 				do	c = io_getc(data->ein);
 				while	(c != EOF && c != '\n');

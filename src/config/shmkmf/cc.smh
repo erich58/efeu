@@ -1,10 +1,10 @@
-# :*:functions for compile rules
+# :*:functions to write compile rules
 # :de:Hilfsfunktionen für Kompilierungsregeln
 #
 # $Synopsis
 # include $1
 #
-# $Copyright (C) 2004 Erich Frühstück
+# $Copyright (C) 2004, 2009 Erich Frühstück
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -25,31 +25,163 @@
 test $_cc_smh && return
 _cc_smh=1
 
-: ${CC:=cc}
-STDCFLAGS=
-CC_SHARED=
-CPP2DEP=
+_cc_config_done=
+gcc_wflags="-Wall -Wmissing-prototypes -Wpointer-arith"
 
-mf_comm "CC configuration"
-config cc.cfg
-mf_var -n CC "$CC"
-mf_var -n CONFIG_CFLAGS "$STDCFLAGS $PROJECT_CFLAGS"
-mf_var -n CONFIG_LDFLAGS "$PROJECT_LDFLAGS"
 
-if
-	test -n "$CPP2DEP"
-then
-	cc_mkdep="$CPP2DEP "
-elif
-	_name=`fsearch $IncludePath pp2dep.awk`
-then
-	mf_var -n PP2DEP "$_name"
-	cc_mkdep='-E | awk -f $(PP2DEP) -v tg='
-else
-	cc_mkdep=""
-fi
+# $alias
+# $pconfig !
+# *cflags|
+#	:*:default compile flags, assigned to |cc_cflags| if available.
+#	:de:Standardcompilerflags, werden bei Verfügbarkeit der Variablen
+#	|cc_cflags| zugewiesen.
+# !
+# :*:
+# The function $! initializes parameters for the C-compiler and checks
+# the availability of compile flags given as arguments. 
+# The following variables are set by $!:
+# [CC]
+#	invokation of C-compiler
+# [cc_shared]
+#	flag informing about availability of shared objects
+# [cc_cflags]
+#	checked compile flags
+# :de:
+# Die Funktion $! initialisiert Parameter für den C-Compiler und prüft
+# die Verfügbarkeit von Compilerflags.
+# Falls keine speziellen Kompilerflags benötigt werden, kann der Aufruf von
+# von $1 entfallen, da diese Funktion implizit bei fehlender Initialisierung
+# aufgerufen wird.
+# Die folgenden Variablen werden von $! gesetzt:
+# [CC]
+#	Aufruf des C-Kompilers
+# [cc_shared]
+#	Flag für die Verfügbarkeit von shared objects (gemeinsam genutzte
+#	Bibliotheken).
+# [cc_flags]
+#	Verfügbare Compilerflags.
 
-mf_comm -n "End of CC configuration"
+cc_config ()
+{
+	_w=$TMP/cc_config
+	mkdir -p $_w
+
+	if [ $CC ]
+	then
+		case "$CC" in
+		gcc)	CC="$CC $gcc_wflags";;
+		*)	;;
+		esac
+	elif
+		fsearch $PATH gcc > /dev/null
+	then
+		CC="gcc $gcc_wflags"
+	else
+		CC=cc
+	fi
+	
+	# create a simple application with one header file and
+	# two source files.
+
+	cat > $_w/test.h <<!
+#include <stdio.h>
+int test(void);
+!
+	cat > $_w/test.c <<!
+#include "test.h"
+int test(void) { return 1; }
+!
+	cat > $_w/main.c <<!
+#include "test.h"
+int main (void) { return test(); }
+!
+	# test creating of shared libraries
+
+	check_shlib ()
+	{
+		$CC -c -o test.o test.c 2>/dev/null || return 1
+		$CC -shared -Wl,-soname,libtest.so -o libtest.so \
+			test.o 2>/dev/null || return 1
+		$CC main.c -L. -ltest 2>/dev/null || return 1
+		echo 1
+		return 0
+	}
+
+	# test creating makefile rules by CC
+
+	check_mkdep ()
+	{
+		x=`$CC main.c -MM -MT TARGET 2> /dev/null` || return 1
+		expr "$x" : "TARGET:" > /dev/null || return 1
+		echo "-MM -MT "
+		return 0
+	}
+
+	# get awk script to designate dependence
+
+	get_pp2dep ()
+	{
+		if
+			pp2dep=`fsearch $IncludePath pp2dep.awk`
+		then
+			echo "-E | awk -f $pp2dep -v tg="
+		fi
+	}
+
+	# test compile flags
+
+	test_flags ()
+	{
+		f=""
+
+		for x
+		do
+			$CC $x -c -o test.o test.c 2>/dev/null && f="$f $x"
+		done
+
+		echo $f
+	}
+
+	cc_shared="`cd $_w; check_shlib`"
+	cc_cflags=`cd $_w; test_flags "$@"`
+	_cc_mkdep=`cd $_w; check_mkdep` || _cc_mkdep=`get_pp2dep`
+	_cc_config_done=1
+	rm -rf $_w
+}
+
+_cc_setup_done=
+
+# $alias
+# $pconfig !
+# !
+# :de:Die Funktion $1 generiert Makefile-Makros für den
+# C-Kompiler. Sie wird implizit von den anderen Funktionen aufgerufen.
+# Die Funktion ist gegen Mehrfachaufrufe abgesichert und wird implizit
+# von anderen Funktionen aufgerufen.
+#
+# :de:Folgende Makros werden im Makefile definiert:
+# [CC]
+#	Aufruf des C-Kompilers.
+# [CONFIG_CFLAGS]
+#	Standardcompilierungsflags, setzt sich aus den von |cc_config|
+#	generierten Flags und den Inhalt von |PROJECT_CFLAGS| zusammen.
+# [CONFIG_LDFLAGS]
+#	Standardlinkflags, wird von der Shell-Variablen |PROJECT_LDFLAGS|
+#	übernommen.
+
+cc_setup ()
+{
+	[ $_cc_setup_done ] && return
+	[ $_cc_config_done ] || cc_config -g
+
+	mf_comm "CC configuration"
+	mf_var -n CC "$CC"
+	mf_var -n CONFIG_CFLAGS "$cc_cflags $PROJECT_CFLAGS"
+	mf_var -n CONFIG_LDFLAGS "$PROJECT_LDFLAGS"
+	mf_comm -n "End of CC configuration"
+	_cc_setup_done=1
+}
+
 cc_objlist=$TMP/objlist
 
 # $alias
@@ -138,6 +270,8 @@ mf_cc ()
 	_cc_obj=""
 	_cc_strip=
 
+	cc_setup
+
 	while [ -n "$1" ]
 	do
 		case "$1" in
@@ -209,8 +343,8 @@ mf_cc ()
 		"\$(CC) $_cc_cflags -o \$@ $_cc_src$_cc_obj $_cc_lflags"
 	test "$_cc_strip" && printf "\t%s\n" "$_cc_strip"
 
-	test -n "$_cc_src" -a -n "$cc_mkdep" && mf_depend -d "$_cc_src" \
-		"\$(CC) $_cc_cflags$_cc_src $cc_mkdep$_cc_out >> $Makefile"
+	test -n "$_cc_src" -a -n "$_cc_mkdep" && mf_depend -d "$_cc_src" \
+		"\$(CC) $_cc_cflags$_cc_src $_cc_mkdep$_cc_out >> $Makefile"
 }
 
 # $alias
@@ -344,6 +478,8 @@ mf_lib ()
 	rn=
 	strip=
 
+	cc_setup
+
 	while [ -n "$1" ]
 	do
 		case "$1" in
@@ -386,7 +522,7 @@ mf_lib ()
 		obj="\$($x)"
 	fi
 
-	if [ "$CC_SHARED" ]; then
+	if [ "$cc_shared" ]; then
 		oname=lib$name.so
 
 		if [ -n "$vn" ]; then

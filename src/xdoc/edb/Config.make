@@ -1,3 +1,7 @@
+# :en: The EDB interface
+# :de: Die EDB-Datenschnittstelle
+##Depends: .
+
 include efeu.smh
 AllTarget=files
 foreach -s esh 'mf_script -e -c esh $tg $src'

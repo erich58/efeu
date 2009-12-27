@@ -54,6 +54,7 @@ void Doc_input (Doc *doc, const char *opt, IO *in)
 	int code = 0;
 	int base = 0;
 	int alt = 0;
+	int wrap = 0;
 
 	if	(!opt)
 	{
@@ -77,6 +78,12 @@ void Doc_input (Doc *doc, const char *opt, IO *in)
 
 		if	(isspace(*opt) || *opt == ',')
 			opt++;
+		else if	(testkey("fold", &opt))
+		{
+			base = alt = DOC_MODE_VERB;
+			wrap = (*opt == '=') ? strtoul(opt + 1,
+				(char **) &opt, 10) : 80;
+		}
 		else if	(testkey("verbatim", &opt))
 			base = alt, alt = DOC_MODE_VERB;
 		else if	(testkey("ignore", &opt))
@@ -158,7 +165,7 @@ void Doc_input (Doc *doc, const char *opt, IO *in)
 	}
 	else if	(base)
 	{
-		Doc_verb(doc, in, base, alt);
+		Doc_verb(doc, in, base, alt, wrap);
 	}
 	else if	(code)
 	{

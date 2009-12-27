@@ -1,0 +1,306 @@
+\sec	Projektstrukturierung
+
+\smh_init
+
+Bisher mussten wir noch für jede einzelne Zieldatei eine Regel in der
+Konfigurationsdatei eintragen. Bei geeigneter Strukturierung der
+Sourcen ist das nicht mehr notwendig. Das Kommando |shmkmf|
+unterstützt eine automatisierte Regelgenerierung abhängig vom
+Filezusatz.
+
+Vorraussetzung dafür ist, dass Dateien mit gleichem Namenszusatz auch
+gleich behandelt werden. Das gilt z.B. für alle Sourcen einer
+Programmbibliothek.
+
+\ssec	Verzeichnisstruktur
+
+Im folgenden werden wir das Projekt entsprechend strukturieren.
+Diese mag dann zwar für diese einfache Aufgabe etwas übertrieben
+wirken, stellt aber die Basis für ein Großprojekt dar.
+
+Anstelle alle Arbeiten in einem Verzeichnis durchzuführen, wird
+eine Aufteilung in Sourcen, Arbeitsbereich und Zieldateien
+durchgeführt. Folgende Strukturierung wird verwendet:
+
+[src]	Sourcen und Generierungsregeln;
+[build] Arbeitsbereich für generierte Zwischendateien, z.B. Objektdateien;
+[include]
+	Installationsort für Headerfiles;
+[lib]	Installationsort für Bibliotheken und andere Dateien;
+[bin]	Installationsort für Programme;
+[doc]	Installationsort für generierte Dokumente.
+
+Nur |src| wird eingerichtet, die anderen Verzeichnisse werden im Zuge
+des build-Prozesses generiert.
+
+Unser Projektszenario kann in drei Arbeitsbereiche gegliedert werden:
+*	Programmbibliothek
+*	Hilfsprogramm
+*	Dokumentgenerierung
+
+Nach diesen Arbeitsbereichen wird das Source-Verzeichnis weiter
+untergliedert:
+
+[binom]
+	Sourcen für die Programmbibliothek |binom|;
+[tools]
+	Sourcen für das Hilfsprogramm;
+[pasctrian]
+	Documentsourcen
+
+\smh_exec mkdir src
+\smh_exec mkdir src/binom src/tools src/pasctrian
+\smh_exec cp $src/binom.h src/binom
+\smh_exec cp $src/factorial.c src/binom
+\smh_exec cp $src/bincoef.c src/binom
+\smh_exec cp $src/pasctrian.c src/tools
+\smh_exec cp $src/pasctrian.tex src/pasctrian
+
+Die Sourcen für unser Beispielprojekt wurden wie folgend strukturiert:
+\smh_exec[verbatim] find src -type f -print | sort #|
+
+\ssec	Buildsystem
+
+Als Basis für das Build-System erstellen wir zunächst die
+Konfigurationsdatei für |shmkmf|. Diese hat den Namen |shmkmf.cfg|
+und wird im Hauptverzeichnis angelegt.
+Hier werden Anpassungen für das gesamte Build-System festgelegt.
+Insbesonders können die Suchpfade für Konfigurationsdateien
+erweitert oder geändert werden.
+Achtung: Die Funktionen zur Konstruktion der Regeln stehen beim
+Einbinden dieser Datei noch nicht zur verfügung, können aber notfalls
+mit |include base.smh| aktiviert werden. Die in |shmkmf.cfg|
+definierten Anweisungen werden für jedes innerhalb des Projektes
+generierte |Makefile| ausgeführt.
+
+---- config
+\def\smh_create {{
+	str name = ParseLine(cin, true);
+	str data = ParseRegion(cin, "\\\\end");
+
+	if	(smh_temp)
+	{
+		IO out = open(paste("/", smh_temp, name), "w");
+		puts(data, out);
+		close(out);
+	}
+
+	cout << "\n\n---- verbatim\n";
+//	fprintf(cout, "$ cat %s\n", name);
+	puts(data, cout);
+	cout << "----\n\n";
+}}
+----
+
+Wir binden hier zur Aktivierung der Funktion |submake| die Headerdatei
+|submake.smh| ein. Zusätzlich werden noch Variablen mit den
+Installationspfaden festgelegt:
+\smh_create shmkmf.cfg
+include submake.smh
+INC=$TOP/include
+LIB=$TOP/lib
+BIN=$TOP/bin
+DOC=$TOP/doc
+\end
+
+Die Konfigurationsdatei |Config.make| für das Hauptmakefile ist
+denkbar einfach, sie besteht nur aus der Anweisung:
+\smh_create Config.make
+submake -s src -w build
+\end
+
+Die Optionen |-s| und |-w| sorgen für die Trennung zwischen
+Source-Zweig und Build-Zweig.
+
+<*Regeln für die Programmbibliothek*>
+
+Das Buildsystem |shmkmf| bietet Konzepte, mit denen die Regeln für
+eine Programmbibliothek unabhängig von den dabei benötigten
+Quelldateien ist. Dazu wird mit Hilfe von |mf_srclist| eine
+Dateiliste des Verzeichnsbaumes erstellt. Mithilfe von |foreach|
+werden dann für alle Einträge zu einem bestimmten Filezusatz die Regeln
+erstellt. Die Dateiliste wird bei jedem Aufruf von |make| auf
+Aktualität geprüft und die Regeln bei Bedarf angepasst. Die Funktion
+|mf_srclist| wird gleich zu Beginn der Konfigurationsdatei aufgerufen.
+
+Da Programmbibliothek und Programme an unabhängigen Orten definiert
+sind, müssen die Headerfiles an einem Standardort (Vordefiniert mit
+der Variablen |INC|) installiert werden, damit sie beim Kompilieren
+der Programme, die die Bibliothek nutzen, gefunden werden.
+
+Da die Headerfiles bereits bei der Bestimmung der Abhängigkeiten beim
+Erstellen des Makefiles benötigt werden, erfolgt die Installation
+mit dem Pseudoziel |depend|, welches für die Generierung der
+Abhängigkeiten vordefiniert ist.
+
+Damit aber sichergestellt wird, dass das Primärziel des Makefiles
+das Pseudoziel |all| ist, wird eine entsprechende
+Leerregel vorangestellt.
+
+Der Name der Programmbibliothek wird nicht vorgegeben, sondern aus dem
+Basisnamen des Verzeichnisses ermittelt.
+Die Bibliothek wird in dem mit |LIB| vordefinierten Verzeichnis
+installiert.
+
+Die Konfigurationsdatei |src/binom/Config.make| hat damit folgenden
+Aufbau:
+
+\smh_create src/binom/Config.make
+# Bibliotheksregeln
+
+include cc.smh
+mf_srclist
+mf_rule -d all
+
+# Headerfiles
+
+foreach -A depend -c $INC -S h 'mf_file $tg $src'
+
+# Objektdateien
+
+foreach -s c 'mf_cc -I$INC -c $src'
+mf_objlist OBJ
+
+# Programmbibliothek
+
+name=`basename $SRC`
+mf_lib -c $LIB -v 1 -r 0 $name -mo OBJ
+\end
+
+Anstelle der |mf_cc| Anweisungen für jede einzelne Quelldatei tritt
+jetzt ein impliziter Aufruf von |mf_cc| mit der Funktion |foreach|.
+Die Funktion |foreach|
+generiert dann für jeden Eintrag der Liste mit einem vorgegebenen
+Filezusatz (Option |-s| bzw. |-S|) die angegebene Regel. Bei der
+Auswertung der Regel steht in der Variablen |src| der Name der
+Ausangsadatei und in |tg| der Name des Zielnamens.
+Bei |-S| bleibt der Filezusatz im Zielnamen erhalten,
+bei |-s| wird er vom Zielnamen entfernt. Mit Option |-c| wird ein
+Installationsverzeichnis für die Zieldatei angegeben, welches bei
+Bedarf automatisch eingerichtet wird.
+
+<*Regeln für die Hilfsprogramme*>
+
+Die Programme können erst gebaut werden, wenn die benötigten
+Bibliotheken bereits existieren. Es ist daher notwendig, diese
+Abhängigkeit an einer Stelle einzutragen. Benötigt wird diese
+Information beim generieren des Hauptmakefiles der Anwendung,
+bekannt ist sie im Verzeichnis für die Programme. Eingetragen wird
+die Abhängigkeit in die Konfigurationsdatei als Kommentarzeile mit
+dem Schlüsselwort |Depends:|. Als Kommentar deswegen, weils sie ja
+nichts zum |Makefile| der aktuellen Bibliothek beiträgt. Die Zeile
+wird von |submake| im Hauptverzeichnis bei der Zusammenstellung der
+Teilziele geparst.
+Ein solches Kommentar wird mit einem doppelten Gitter gekennzeichnet.
+Dies dient dazu, dass
+Werkzeuge, die aus den Kommentaren der Konfigurationsdatei eine
+Dokumentation generieren, diese Zeile ausblenden können.
+
+Bei den Regeln für die Hilfsprogramme wird angenommen, dass jedes
+Programm durch eine einzelne Quelldatei definiert ist. Die Optionen
+zum Kompilieren werden über die |make|-Variable |CFLAGS| definiert.
+Diese Variable wird Standardmäßig beim kompilieren verwendet und hat
+keinen vordefinierten Wert. Alternativ könnten die Optionen auch
+direkt bei |mf_cc| angegeben werden.
+
+Die Konfigurationsdatei |src/tools/Config.make| hat folgenden Aufbau:
+\smh_create src/tools/Config.make
+# Hilfsprogramme
+##Depends: binom
+
+include cc.smh
+mf_srclist
+mf_var CFLAGS "-I$INC -Wl,-rpath,$LIB -L$LIB -lbinom"
+foreach -c $BIN -s c 'mf_cc -o $tg $src'
+\end
+
+<*Regeln für die Dokumentgenerierung*>
+
+Hier wird angenommen, das das Verzeichnis nur die Regeln für ein
+spezifisches Dokument enthalten. Die Regeln unterscheiden sich
+gegenüber der Version im Einleitungskapitel nur durch die zusätzliche
+Angabe des Quellverzeichnisses |SRC| und des Zielverzeichnisses |DOC|.
+
+Um die Dokumentation zu erstellen, muss die Programmbibliothek und das
+Hilfsprogramm bereits verfügbar sein. Es genügt aber, als Abhängigkeit
+das Verzeichnis |tools| anzugeben.
+
+Die Konfigurationsdatei |src/tools/Config.make| hat folgenden Aufbau:
+\smh_create src/pasctrian/Config.make
+# Dokumentgenerierung
+##Depends: tools
+
+mf_dir -q -c $DOC
+mf_rule -a tab.tex $BIN/pasctrian \
+	"%1 12 '\C{%d}' | sed -e 's/\$\$/\\\\\\\\/' > %@"
+mf_rule -a pasctrian.dvi "$SRC/pasctrian.tex tab.tex" "latex %1"
+mf_rule -a $DOC/pasctrian.ps pasctrian.dvi "dvips -o %@ %1"
+\end
+//|// Kommentar zur Korrektur der Syntaxhervorhebung.
+
+\ssec	Generierung
+
+Nun sind die Queldateien und die Konfigurationsdateien eingerichtet
+und der Build-Prozess kann beginnen. Zur Initialisierung wird |shmkmf| im
+Hauptverzeichnis des Projektes aufgerufen.
+
+\smh_exec[ignore] shmkmf
+
+Die Verarbeitung ist still, da hier kein |make|-Aufruf zur Bestimmung
+der Abhängigkeiten notwendig ist. Das Makefile hat folgenden Aufbau:
+
+\smh_exec[fold] cat Makefile
+
+Gleich zu Beginn steht eine Regeln zur Zusammenstellung der Projektliste
+|ProjectList| von |submake|. Diese Datei wird beim Aufruf von
+|shmkmf| angelegt und bei jedem Aufruf von |make| auf Aktualität
+geprüft.
+
+Anschließend folgen die einzelnen Teilaufgaben in alphabetischer
+Reihenfolge. Für jede Teilaufgabe gibt es Pseudoziele der Form
+<name>|.all|, <name>|.clean|. Diese Liste der Pseudoziele kann durch
+geeignete Konfiguration von |submake| nach Bedarf erweitert werden.
+
+\smh_exec[fold] make 2>&1
+
+Nach dem Aufruf von |make| enthält das Projektverzeichnis die
+folgenden Dateien und Verzeichnisse:
+
+\smh_exec[verbatim] ls -CR
+
+\ssec	Zusammenfassung
+
+Das so konstruierte Buildsystem ist sehr flexibel und benötigt bei
+einer Erweiterung nur geringe Eingriffe.
+
+Soll z.B. die Programmbibliothek um eine zusätzliche Funktion
+erweitert werden, genügt es, die entsprechende Quelldate irgendwo
+unterhalb des Verzeichnisses |src/binom| abzulegen.
+
+Wird eine weitere Programmbibliothek benötigt, wird einfach ein neues
+Verzeichnis dafür angelegt. Die dafür notwendige Konfigurationsdatei
+kann direkt von |binom| kopiert werden, Anpassungen sind in der Regel
+nicht notwendig. Nur wenn diese neue Programmbibliothek Headerfiles
+von |binom| benötigt, muss ein entsprechender |##Depends:| Eintrag
+ergänzt werden.
+
+Die genaue Syntax der verwndeten Funktionen zur Konstruktion der
+Regeln kann im Anhang nachgeschlagen werden.
+
+Der Build-Prozess wird normalerweise vom Hauptverzeichnis des Projektes
+aus gestartet. Manchmal möchte man jedoch nur die gerade bearbetete
+Teilaufgabe erneuern (z.B: Eine Programmbibliothek, ein einzelnes
+Programm). Hier stehen zwei Möglichkeiten zur Verfügung:
+
+*	In einem zweiten Fenster/Konsole wird in das zum
+	Quellverzeichnis korrespondierende Build-Verzeichnis
+	gewechselt. Ein Aufruf von |make| in diesem Verzeichnis
+	generiert die Teilaufgabe.
+*	Durch Aufruf des Hilfskommandos |comake| aus dem
+	Quellverzeichnis heraus. Dieses Skript sucht nach dem
+	korrespondierenden Build-Verzeichnis und ruft dort |make| auf.
+	Zusätzlich kann mit der Option |-t| auch |make| im
+	Hauptverzeichnis aufgerufen werden.
+
+\smh_clean
+

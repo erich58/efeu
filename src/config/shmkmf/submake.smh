@@ -22,8 +22,23 @@
 # If not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-test $submake_smh && return
-submake_smh=1
+test $_submake_smh && return
+_submake_smh=1
+
+include rule.smh
+include update.smh
+
+# Determine list command
+
+x=`dirname $0`
+
+if [ -x $x/shmkmf-list ]; then
+	_submake_list="$x/shmkmf-list"
+elif [ -f $x/shmkmf-config.sh ]; then
+	_submake_list="sh $x/shmkmf-list.sh"
+else
+	_submake_list=shmkmf-list
+fi
 
 submake_build="all"
 submake_clean="clean"
@@ -45,6 +60,12 @@ submake_clean="clean"
 # p|
 #	:*:is a shortcut for |-c purge|
 #	:de: ist eine Kurzform für |-c purge|
+# s:name|
+#	:*:search for subdirectories in <name>
+#	:de:Verarbeite Unterverzeichnisse in <name>
+# w:name|
+#	:*:use <name> as work directory
+#	:de:Verwende <name> als Arbeitsverzeichnis
 # !
 # :de:
 # Die Funktion |$1| generiert für jedes Unterverzeichnis
@@ -72,6 +93,8 @@ submake ()
 	usage=
 	build="$submake_build"
 	clean="$submake_clean"
+	work=""
+	src="$SRC"
 	printf "%%::" > $tpl
 
 	while [ -n "$1" ]
@@ -84,6 +107,8 @@ submake ()
 			clean="$clean uninstall";
 			shift 1;;
 		-p)	clean="$clean purge"; shift 1;;
+		-w)	work="$2"; shift 2;;
+		-s)	src="$SRC/$2"; shift 2;;
 		--)	shift; break;;
 		-*)	shmkmf_invop mf_rule "$1";;
 		*)	break;;
@@ -95,17 +120,22 @@ submake ()
 	test "$usage" && mf_rule -d usage "" \
 		"@echo 'usage: make <target> | <project>[.target]'"
 
-	mf_update ProjectList ls "$SRC/*/Config.make"
-	add_depend ProjectList
+	$_submake_list $SRC > ProjectList
+	mf_update -w "$work" ProjectList $_submake_list $SRC
+	test -n "$work" && work=$work/
+	add_depend ${work}ProjectList
 
-	for cfg in $SRC/*/Config.make
+	for prj in `cat ProjectList`
 	do
+		dir=$SRC/$prj
+		cfg=$dir/Config.make
+
 		printf "\n# %s\n" "$cfg"
-		grep '^#' $cfg
+		sed -n -e '/^$/q' -e '/^#.*Depends:/d' -e '/^#/p' $cfg
 		add_depend $cfg
 
-		_d=`dirname $cfg`
-		name=`basename $_d`
+		name=`basename $prj`
+		wdir=$work$name
 		printf " %s.%%" $name >> $tpl
 
 		test "$usage" && mf_rule -r -d usage "" <<!
@@ -113,8 +143,24 @@ submake ()
 @(grep '^#' $cfg || @/
 echo '# <no description>') | sed -e 's/^#[ 	]*/	/'
 !
-		mf_rule $name/Makefile $cfg "test -d $name || mkdir -p $name" \
-			"cd $name; $shmkmf -t $TOP $cfg"
+		mf_rule $wdir/Makefile $cfg "test -d $wdir || mkdir -p $wdir" \
+			"cd $wdir; $shmkmf -t $TOP $cfg"
+
+		if [ -f $dir/Depends ]
+		then
+			add_depend $dir/Depends
+
+			for dep in `sed -e 's/#.*//' $dir/Depends`
+			do
+				mf_rule $wdir/Makefile $dep/Makefile
+
+				for tg in $build
+				do
+					printf "%s:: %s\n" \
+						"$name.$tg" "$dep.$tg"
+				done
+			done
+		fi
 
 		for dep in `grep '^#.*Depends:' $cfg | sed -e 's/.*Depends://'`
 		do
@@ -126,13 +172,13 @@ echo '# <no description>') | sed -e 's/^#[ 	]*/	/'
 			done
 		done
 
-		printf "\n%s::%s\n" "$name" "$name/Makefile"
-		printf "%s::; %s\n" "$name" "cd $name; make"
+		printf "\n%s:: %s\n" "$name" "$wdir/Makefile"
+		printf "%s::\n\t%s\n" "$name" "cd $wdir; make"
 
 		for tg in $build $clean
 		do
-			printf "%s::%s; %s\n" "$name.$tg" "$name/Makefile" \
-				"cd $name; make $tg"
+			printf "%s:: %s\n\t%s\n" "$name.$tg" "$wdir/Makefile" \
+				"cd $wdir; make $tg"
 		done
 	done
 

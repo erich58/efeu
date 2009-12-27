@@ -1,3 +1,7 @@
+# :en: makefile generator based on cpp
+# :de: Makefile Generator, basierend auf cpp
+##Depends: .
+
 include efeu.smh
 mf_dir BIN=$TOP/bin
 mf_dir PPINC=$TOP/ppinclude

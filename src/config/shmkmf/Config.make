@@ -1,3 +1,7 @@
+# :en: create Makefile from shell
+# :de: Makefile mithilfe der Shell generieren
+##Depends: .
+
 mf_srclist
 mf_dir $TOP/etc/shmkmf
 foreach -p $TOP/bin -s sh 'mf_file -x $tg $src'

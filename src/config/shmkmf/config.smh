@@ -110,6 +110,8 @@ mf_config ()
 		esac
 	done
 
+	cc_setup
+
 	if [ -n "$_config_update" ]; then
 		mf_rule -d $_config_flg "$1" "" \
 			"CC='$CC' $_config_cmd $_config_opt update $2 \$@"

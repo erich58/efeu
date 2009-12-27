@@ -1,3 +1,7 @@
+# :en: readline interface
+# :de: Readline-Schnittstelle
+##Depends: efm
+
 NAME=iorl
 
 include efeu.smh

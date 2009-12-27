@@ -1,12 +1,12 @@
 \sec Konstruktionsfunktion
 
-Eine alternative zur Deklarierung eines Datentyps stellt die
+Eine Alternative zur Deklarierung eines Datentyps stellt die
 Ableitung eines Datentyps über eine Konstruktionsfunktion dar.
 Die einzelnen Komponenten der Struktur werden über Terme definiert.
 Die Angabe des resultierenden Datentyps und der Komponentenname sind
-dabei optional, falls sie sich aus dem Ausdruck iableiten lassen.
+dabei optional, falls sie sich aus dem Ausdruck ableiten lassen.
 
-Die allgemeine Syntax zur einrichtung eines Datentyps mit einer
+Die allgemeine Syntax zur Einrichtung eines Datentyps mit einer
 Konstruktionsfunktion lautet:
 
 |construct| <name> [ |:| <args> ] |{| <vardef> |}|
@@ -19,4 +19,4 @@ Ausdrücken der Form:
 \[ <type> <name> |=| ] <expr>
 
 Die einzelnen Ausdrücke können durch ein Komma, einen
-Strichpunkt oder  ein Leerzeichen getrennt sein.
+Strichpunkt oder ein Leerzeichen getrennt sein.

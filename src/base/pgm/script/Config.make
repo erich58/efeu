@@ -1,3 +1,7 @@
+# :en: shell scripts
+# :de: Shell-Scripts
+##Depends: .
+
 include efeu.smh
 mf_var -x BIN $TOP/bin
 mf_dir $BIN

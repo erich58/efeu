@@ -1,3 +1,7 @@
+# :en: german documentation about EFEU programming
+# :de: EFEU Programmierhandbuch
+##Depends: .
+
 include efeu.smh
 APPLDIR=.
 mf_rule -d all commands

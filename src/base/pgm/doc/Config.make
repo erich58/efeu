@@ -1,3 +1,7 @@
+# :en: document generator
+# :de: Dokumentgenerator
+##Depends: esh
+
 include efeu.smh
 include readline.smh
 

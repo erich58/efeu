@@ -1,3 +1,7 @@
+# :en: curses tools
+# :de: Fensterhilfsprogramme
+##Depends: efm efx
+
 NAME=efwin
 STAT=win.stat
 

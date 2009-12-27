@@ -1,3 +1,7 @@
+# :en: manpages for commands
+# :de: Handbucheinträge zu Kommandos
+##Depends: .
+
 include efeu.smh
 
 mf_var BIN $TOP/bin

@@ -26,10 +26,12 @@ If not, write to the Free Software Foundation, Inc.,
 #include <efeudoc.h>
 
 
-void Doc_verb (Doc *doc, IO *in, int base, int alt)
+void Doc_verb (Doc *doc, IO *in, int base, int alt, int wrap)
 {
 	int32_t c;
 	int pos;
+	unsigned lim1;
+	unsigned lim2;
 
 	Doc_start(doc);
 
@@ -37,6 +39,13 @@ void Doc_verb (Doc *doc, IO *in, int base, int alt)
 		io_ctrl(doc->out, DOC_BEG, base, alt);
 
 	pos = 0;
+
+	if	(wrap)
+	{
+		lim1 = 1 + 2 * (wrap / 3);
+		lim2 = wrap - 1;
+	}
+	else	lim1 = lim2 = ~0;
 
 	while ((c = io_getucs(in)) != EOF)
 	{
@@ -53,10 +62,37 @@ void Doc_verb (Doc *doc, IO *in, int base, int alt)
 			io_putc(c, doc->out);
 			pos = 0;
 			break;
+		case ' ':
+			io_putc(' ', doc->out);
+			pos++;
+
+			if	(pos >= lim1)
+			{
+				io_putc('\\', doc->out);
+				io_putc('\n', doc->out);
+				pos = 0;
+			}
+
+			break;
 		case '\t':
 			pos += io_nputc(' ', doc->out, 8 - pos % 8);
+
+			if	(pos >= lim1)
+			{
+				io_putc('\\', doc->out);
+				io_putc('\n', doc->out);
+				pos = 0;
+			}
+
 			break;
 		default:
+			if	(pos >= lim2)
+			{
+				io_putc('\\', doc->out);
+				io_putc('\n', doc->out);
+				pos = 0;
+			}
+
 			io_putucs(c, doc->out);
 			pos++;
 			break;

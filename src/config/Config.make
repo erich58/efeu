@@ -1,3 +1,7 @@
+# :en: efeu configuration tools
+# :de: EFEU Konfigurationswerkzeuge
+##Depends: .
+
 # target rules for efeu configuration scripts
 #
 # $Copyright (C) 2001 Erich Frühstück

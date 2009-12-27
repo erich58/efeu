@@ -1,3 +1,7 @@
+# :en: EFEU specific tools
+# :de: EFEU spezifische Werkzeuge
+##Depends: tools
+
 mf_srclist
 
 mkprog ()

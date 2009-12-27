@@ -22,7 +22,7 @@
 # A-3423 St. Andrä/Wördern, Südtirolergasse 17-21/5
 
 # $pconfig
-# Version="$Id: shmkmf.sh,v 1.88 2008-10-10 18:00:52 ef Exp $"
+# Version="$Id: shmkmf.sh,v 1.90 2009-03-15 21:09:07 ef Exp $"
 # Config=Config.make
 # Makefile=Makefile
 #
@@ -121,9 +121,9 @@ case "$0" in
 esac
 
 TOP=.
-bootstrap="$shmkmf"
 Config=Config.make
 Makefile=Makefile
+bootstrap="$shmkmf"
 
 _cmd=
 _to_stdout=0
@@ -242,6 +242,8 @@ _shmkmf_fsearch ()
 
 fsearch ()	# usage: fsearch path file
 {
+	[ $# -eq 2 ] || return 1
+
 	case "$2" in
 	[./]*)
 		if [ -f "$2" ]; then
@@ -501,9 +503,38 @@ postpone ()	#usage: postpone cmd arg(s)
 	echo "$_post_cmd" >> $shmkmf_post
 }
 
+# create and load config file
+
+mkconfig ()	#usage: mkconfig [-c] [-C clean] cmd arg(s)
+{
+	_clean=""
+	_name=""
+
+	while [ -n "$1" ]
+	do
+		case "$1" in
+		-c)	_clean="$CleanTarget"; shift 1;;
+		-C)	_clean="$2"; shift 2;;
+		-*)	shmkmf_invop mkconfig "$1";;
+		*)	_name="$1"; shift 1; break;;
+		esac
+	done
+
+	if [ -n "$_clean" ]; then
+		postpone printf "\n%s::\n\trm -f %s\n" "$_clean" "$_name" 
+	fi
+
+	if [ ! -f $_name ]; then
+		printf "# $fmt_head\n\n" "$bootstrap" > $_name
+		"$@" >> $_name
+	fi
+	
+	. $_name
+}
+
 mf_bootstrap ()
 {
-	printf "\n%s: " $Makefile
+	printf "\n%s: " "$Makefile"
 	sort -u $_deplist | sed -e '$!s/$/ \\/' -e '1!s/^/  /'
 	printf "\t%s\n" "$bootstrap"
 	printf "\nupdate::\n\t%s\n" "$bootstrap"

@@ -1,3 +1,7 @@
+# :en: Makefile generation
+# :de: Generieren von Makefiles
+##Depends: .
+
 include efeu.smh
 
 AllTarget=files

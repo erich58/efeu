@@ -21,6 +21,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/object.h>
+#include <EFEU/printobj.h>
 #include <EFEU/cmdsetup.h>
 #include <EFEU/parsedef.h>
 #include <EFEU/konvobj.h>

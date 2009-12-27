@@ -1,3 +1,6 @@
+# :de: Einfache Hilfsprogramme
+##Depends: .
+
 include efeu.smh
 include readline.smh
 mf_dir BIN=$TOP/bin

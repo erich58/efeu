@@ -1,3 +1,6 @@
+# :de: Lokale Ergänzungen
+##Depends: .
+
 include efeu.smh
 mf_dir BIN=$TOP/bin
 foreach -m BIN -s tcl 'mf_script -e -c wish $tg $src'

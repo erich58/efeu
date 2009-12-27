@@ -29,6 +29,9 @@ include dir.smh
 
 # $alias
 # $pconfig !
+# w:dir |
+#	:*:creates the file in the working directory <dir>.
+#	:de:Generiert die Datei im Arbeitsverzeichnis <dir>.
 # n |
 #	:*:clears options passed to |mf_rule|.
 #	:de:Löscht die Optionen für |mf_rule|.
@@ -45,7 +48,7 @@ include dir.smh
 #	:*:show commands on updating a target.
 #	:de:Kommandos beim aktualisieren eines Zieles ausgeben.
 # m:mode |
-#	:*:set the permissions of target to the given <mode>.
+#	:*:sets the permissions of target to the given mode <mode>.
 #	:de:setzt die Zugriffsrechte für das Ziel entsprechend von <mode>.
 # /%*=*/%name=repl |
 #	:*:substituten rule, passed to |mf_rule|.
@@ -58,7 +61,7 @@ include dir.smh
 #	:de:ist eine Abkürzung für |-m a+x|.
 # :tg |
 #	:*:is the name of the target file.
-#	:de:Ist der Name der Zieldatei
+#	:de:ist der Name der Zieldatei
 # :cmd |
 #	:*:specifies the command to create the target, see below.
 #	:de:definiert den Befehl zur Erzeugung der Zieldatei, siehe weiter
@@ -86,43 +89,52 @@ include dir.smh
 # @arglist
 
 mf_update ()
-{
-	_update_echo="@"
-	_update_flg="-a"
-	_update_mode=
+{(
+	echoing="@"
+	flg="-a"
+	mode=
+	work=
 
 	while [ -n "$1" ]
 	do
 		case "$1" in
-		-n)	_update_flg=""; shift 1;;
-		-i)	_update_flg="$_update_flg $1"; shift 1;;
-		-[AC])	_update_flg="$_update_flg $1 $2"; shift 2;;
-		-[AC]*)	_update_flg="$_update_flg $1"; shift 1;;
-		%*=*)	_update_flg="$_update_flg $1"; shift 1;;
-		-v)	_update_echo=""; shift 1;;
-		-x)	_update_mode="a+x"; shift 1;;
-		-m)	_update_mode="$2"; shift 2;;
-		-m*)	_update_mode=`expr "$1" : '..\(.*\)'`; shift 1;;
+		-w)	work="$2"; shift 2;;
+		-n)	flg=""; shift 1;;
+		-i)	flg="$flg $1"; shift 1;;
+		-[AC])	flg="$flg $1 $2"; shift 2;;
+		-[AC]*)	flg="$flg $1"; shift 1;;
+		%*=*)	flg="$flg $1"; shift 1;;
+		-v)	echoing=""; shift 1;;
+		-x)	mode="a+x"; shift 1;;
+		-m)	mode="$2"; shift 2;;
+		-m*)	mode=`expr "$1" : '..\(.*\)'`; shift 1;;
 		-*)	shmkmf_invop mf_file "$1";;
 		*)	break;;
 		esac
 	done
 
 	test "$#" -gt 1 || shmkmf_warg mf_update
-	_update_tg="$1"
+	tg="$1"
 	shift 1
 
-	if [ -n "$_update_mode" ]; then
-		_update_post="; chmod $_update_mode \$@"
+	if [ -n "$work" ]; then
+		tg="$work/$tg"
+		pre="${echoing}test -d $work || mkdir -p $work"
 	else
-		_update_post=
+		pre=""
 	fi
 
-	mf_rule -d $_update_flg "$_update_tg" "" \
-		"$_update_echo$* > \$@~" \
-		"${_update_echo}if cmp -s \$@~ \$@; then rm -f \$@~; \\" \
-		"else mv -f \$@~ \$@$_update_post; fi"
-}
+	if [ -n "$mode" ]; then
+		post="; chmod $mode \$@"
+	else
+		post=
+	fi
+
+	mf_rule -d $flg "$tg" "" \
+		"$pre" "${echoing}$* > \$@~" \
+		"${echoing}if cmp -s \$@~ \$@; then rm -f \$@~; \\" \
+		"else mv -f \$@~ \$@$post; fi"
+)}
 
 # $Examples
 # \config shmkmf

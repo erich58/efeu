@@ -1,3 +1,7 @@
+# :en: rules for tag files and name tables
+# :de: Sourcelisten und TAG-File zusammenstellen
+##Depends: *
+
 include efeu.smh
 include usage.smh
 

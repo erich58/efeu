@@ -1,3 +1,7 @@
+# :en: manpages for libraries
+# :de: Handbucheinträge zu Bibliotheken
+##Depends: .
+
 include efeu.smh
 
 mf_dir MAN=$TOP/man

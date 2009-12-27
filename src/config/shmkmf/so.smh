@@ -26,6 +26,7 @@ test $_so_smh && return
 _so_smh=1
 
 include cc.smh
+cc_setup
 
 : ${MKSOURCE:=mksource}
 
@@ -65,7 +66,7 @@ mf_srclist -c mksrclist
 
 so_cc ()
 {(
-	if [ -z "$CC_SHARED" ]; then
+	if [ -z "$cc_shared" ]; then
 		so_undef so_cc "$@"
 		return
 	fi
@@ -110,7 +111,7 @@ so_mksource ()
 	inc=
 	lib=.
 	
-	if [ -z "$CC_SHARED" ]; then
+	if [ -z "$cc_shared" ]; then
 		so_undef so_mksource "$@"
 		return;
 	fi

@@ -1,3 +1,7 @@
+# :en: PostgreSQL-interface
+# :de: Schnittstelle zu PostgreSQL
+##Depends: config
+
 include efeu.smh
 xinclude libpq.smh
 
@@ -6,7 +10,7 @@ efeu_library -x -u -h DB PG -d libpq.stat -lmd -ml EFX_LIB -ml PQ_LIB
 
 foreach -p $TOP/lib/esh -S hdr 'mf_file $tg $src'
 
-if [ "$CC_SHARED" ]; then
+if [ "$cc_shared" ]; then
 mf_dir -q $TOP/lib/esh/types
 mf_rule -a $TOP/lib/esh/types/PG.so '$(LIB)' "ln -s %1 %@"
 mf_rule -a $TOP/lib/esh/types/PG_Grp.so '$(LIB)' "ln -s %1 %@"

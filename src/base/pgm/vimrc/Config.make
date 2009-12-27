@@ -1,3 +1,7 @@
+# :en: vim configuration files
+# :de: vim Konfigurationsdateien
+##Depends: .
+
 include efeu.smh
 mf_dir BIN=$TOP/bin VIMDIR=$TOP/share/vim -p $TOP/share/vim/syntax
 

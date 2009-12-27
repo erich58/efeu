@@ -51,6 +51,16 @@ static void comment_line (IO *io, StrBuf *buf)
 {
 	int c, escape;
 
+	c = io_peek(io);
+
+	if	(c == '#' || c == '!')
+	{
+		do	c = io_getc(io);
+		while	(c != '\n' && c != EOF);
+
+		return;
+	}
+
 	do	c = io_getc(io);
 	while	(c == ' ' || c == '\t');
 

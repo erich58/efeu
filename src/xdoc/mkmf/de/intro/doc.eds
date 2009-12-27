@@ -36,6 +36,15 @@ mf_rule -a tab.tex pasctrian \
 	"./pasctrian 12 '\C{%d}' | sed -e 's/\$\$/\\\\\\\\/' > %@"
 \end
 
+//|
+Der Streameditor |sed| verwendet den Backslash als Fluchtsymbol, daher
+muss er im |Makefile| verdoppelt werden. Da aber auch |shmkmf| (shell)
+den Backslash als Fluchtsymbol verwendet, muss die Zahl der
+Backslashes nocheinmal verdoppelt werden. Auch der Dollar hat eine
+Sonderbedeutung: Im Makefile wird er durch einen weitern Dollar
+maskiert, in der Konfigurationsdatei muss jeder von ihnen mit einem
+Backslash maskiert werden.
+
 Jetzt fehlen nur noch die Regeln zur Formatierung des Dokuments und
 die Umformung in eine PostScript-Datei. Dies erfolgt mit den
 Kommandos |latex| und |dvips|.

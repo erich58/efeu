@@ -94,13 +94,6 @@ static void *checkrealloc (void *ptr, size_t size)
 
 #endif
 
-/*
-Die Variable |$1| dient zur Aktivierung der Ablaufkontrolle
-für die Speicherverwaltung.
-*/
-
-int memtrace = 0;
-
 #if	MEMTRACE
 
 #define	TRACE_BSIZE	1000
@@ -180,60 +173,6 @@ static void trace_add (void *ptr, size_t size)
 #endif
 
 /*
-Die Funktion |$1| listet alle noch in Verwendung stehenden
-Speicherfelder auf.
-*/
-
-void meminfo (const char *pfx)
-{
-#if	MEMTRACE
-	TRACE *p;
-	size_t n;
-
-	if	(!pfx)	pfx = "meminfo()";
-
-	for (p = trace_tab, n = trace_dim; n-- > 0; p++)
-	{
-		if	(p->size)
-		{
-			fprintf(stderr, "%s:\t%p\t%u\t%lu\n", pfx,
-				p->ptr, p->idx, (unsigned long) p->size);
-			lcheck(p->ptr);
-		}
-	}
-#else
-	;
-#endif
-}
-
-/*
-Die Funktion |$1| listet alle Änderungen in der Speicherverwaltung
-seit dem letzten Aufruf auf.
-*/
-
-void memchange (const char *pfx)
-{
-#if	MEMTRACE
-	TRACE *p;
-	size_t n;
-
-	if	(!pfx)	pfx = "memchange()";
-
-	for (p = trace_tab, n = trace_dim; n-- > 0; p++)
-	{
-		if	(p->change)
-		{
-			p->change = 0;
-			fprintf(stderr, "%s:\t%p\t%u\t%lu\n", pfx,
-				p->ptr, p->idx, (unsigned long) p->size);
-		}
-	}
-#else
-	;
-#endif
-}
-
-/*
 :de:
 Die Funktion |$1| reserviert einen Speicherplatz der
 Größe <size>. Durch |lfree| kann der Speicherplatz
@@ -241,7 +180,8 @@ wieder freigegeben werden.
 
 $Warnings
 :*:
-If the end of mewomory
+If the end of the memory segment is overwritten and may result in
+a segmentation fault on a later call to |$1|.
 :de:
 Falls über das Ende eines reservierten Speicherplatzes
 hinausgeschrieben wird, kommt
@@ -335,8 +275,10 @@ void *lrealloc (void *ptr, size_t size)
 
 
 /*
+
+:de:
 Die Funktion |$1| testet ein Speichersegment, ob sein Anfang oder sein
-Ende überschrieben wurde. Vorraussetzung ist dabei, daß vorm Kompilieren
+Ende überschrieben wurde. Vorraussetzung ist dabei, daß vor dem Kompilieren
 der Makro |MEMCHECK| auf 1 gesetzt wurde.
 */
 
@@ -382,13 +324,98 @@ void lcheckall (void)
 }
 
 /*
+:*:
+The following functions are only active, is the library is compiled
+with |MEMTRACE| set to 1.
+:de:
+Die folgenden Funktionen sind nur aktiv, wenn beim kompilieren der Bibliothek
+der Makro |MEMTRACE| auf 1 gesetzt wurde.
+
+:*:
+The variable |memtrace| activates the trace option.
+:de:
+Die Variable |$1| dient zur Aktivierung der Ablaufkontrolle
+für die Speicherverwaltung.
+*/
+
+int memtrace = 0;
+
+/*
+:*:If memtrace is activated, the function |$1| lists all memory
+segments currently in use.
+:de:
+Falls die Speicherablaufverfolgung aktiviert wurde, listet
+die Funktion |$1| alle noch in Verwendung stehenden
+Speicherfelder auf.
+*/
+
+void meminfo (const char *pfx)
+{
+#if	MEMTRACE
+	TRACE *p;
+	size_t n;
+
+	if	(!pfx)	pfx = "meminfo()";
+
+	for (p = trace_tab, n = trace_dim; n-- > 0; p++)
+	{
+		if	(p->size)
+		{
+			fprintf(stderr, "%s:\t%p\t%u\t%lu\n", pfx,
+				p->ptr, p->idx, (unsigned long) p->size);
+			lcheck(p->ptr);
+		}
+	}
+#else
+	;
+#endif
+}
+
+/*
+:*:
+If memtrace is activated, the function |$1| lists all changes in
+memory allocation since last call.
+:de:
+Falls die Ablaufverfolgung aktiviert wurde, listet die
+Funktion |$1| alle Änderungen in der Speicherverwaltung
+seit dem letzten Aufruf auf.
+*/
+
+void memchange (const char *pfx)
+{
+#if	MEMTRACE
+	TRACE *p;
+	size_t n;
+
+	if	(!pfx)	pfx = "memchange()";
+
+	for (p = trace_tab, n = trace_dim; n-- > 0; p++)
+	{
+		if	(p->change)
+		{
+			p->change = 0;
+			fprintf(stderr, "%s:\t%p\t%u\t%lu\n", pfx,
+				p->ptr, p->idx, (unsigned long) p->size);
+		}
+	}
+#else
+	;
+#endif
+}
+
+/*
 $Notes
+:*:
+For small memory segments, the functions |memalloc| and |memfree| should
+be used instead.
+:de:
 Für kleine Speichersegmente sollten
 die Funktionen |memalloc| und |memfree| eingesetzt
 werden.
 
 $Warnings
-Bei Übergabe eines Pointers an die Funktion
+:*:
+:de:Bei Übergabe eines Pointers an die Funktion
 |lfree|, der nicht durch einen vorangegangenen Aufruf von
 |lmalloc| stammt, ist das Verhalten unbestimmt und kann
 zu einem Programmabsturz führen.
@@ -397,3 +424,4 @@ $SeeAlso
 \mref{alloctab(3)}, \mref{memalloc(3)}.\br
 \mref{malloc(3S)} @PRM.
 */
+

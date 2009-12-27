@@ -4,13 +4,9 @@
 :*:\mchap[1]	Commands
 :de:\mchap[1]	Kommandos
 
-\pipe	|shmkmf-config --help=raw|
-\pipe	|efeuscript --help=raw|
-\pipe	|efeu-xlib --help=raw|
-\pipe	|mkmf --help=raw|
-\pipe	|mksrclist --help=raw|
-\pipe	|pp2dep --help=raw|
 \pipe	|shmkmf --help=raw|
+\pipe	|shmkmf-cflags --help=raw|
+\pipe	|shmkmf-config --help=raw|
 
 \langpar
 :*:\mchap[7]	Supplemental |shmkmf|-functions

@@ -27,11 +27,13 @@ _efeu_smh=1
 
 : ${MKSOURCE:=mksource}
 : ${EFEUDOC:=efeudoc}
+CC=efeucc
 
 include base.smh
 include config.smh
 include script.smh
 include cc.smh
+cc_setup
 include dl.smh
 config latex.cfg
 
@@ -265,7 +267,7 @@ efeu_library ()
 
 	mf_var LIBNAME "-D 'LIBNAME=\"$name\"'"
 
-	if [ "$CC_SHARED" ]; then
+	if [ "$cc_shared" ]; then
 		mf_var LIB $lib/lib$name.so
 	else
 		mf_var LIB $lib/lib$name.a
@@ -343,7 +345,7 @@ efeu_libvar ()
 	dep=
 	lib=
 
-	if [ "$CC_SHARED" ]; then
+	if [ "$cc_shared" ]; then
 		sfx=".so"
 	else
 		sfx=".a"

@@ -1,3 +1,7 @@
+# :en: Gtk+ interface
+# :de:Gtk+ Interface
+##Depends: config
+
 include efeu.smh
 include gtk.smh
 

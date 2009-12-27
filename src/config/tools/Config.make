@@ -1,3 +1,7 @@
+# :en: tools for creating makefiles
+# :de: Hilfsfunktuonen zur Erzeugung von Makefiles
+##Depends: shmkmf
+
 mf_srclist
 
 mf_rule -d all files

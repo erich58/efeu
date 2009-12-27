@@ -260,6 +260,8 @@ int io_putucs_latin9 (int32_t c, IO *io);
 int io_putucs_xml (int32_t c, IO *io);
 int io_putucs_utf8 (int32_t c, IO *io);
 
+IO *io_ucs2latin9 (IO *base);
+
 /*	Fehlermeldungen
 */
 

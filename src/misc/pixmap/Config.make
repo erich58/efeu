@@ -1,3 +1,6 @@
+# :de: Hilfsprogramme für Pixeldateien
+##Depends: pix
+
 include efeu.smh
 include readline.smh
 include X11.smh

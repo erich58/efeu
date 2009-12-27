@@ -1,3 +1,6 @@
+# :de: etk-interpreter
+##Depends: lib
+
 include efeu.smh
 include readline.smh
 xinclude tklib.smh

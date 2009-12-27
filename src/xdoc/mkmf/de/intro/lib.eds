@@ -106,7 +106,7 @@ deutlich sichtbar.
 <*Achtung:*> Überlange Zeilen werden bei der Darstellung
 umgebrochen.
 
-\smh_exec[verbatim] fold -s Makefile
+\smh_exec[fold] cat Makefile
 
 \ssec	Bauen der Programmbibliothek
 

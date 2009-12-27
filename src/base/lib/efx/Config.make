@@ -1,3 +1,7 @@
+# :en: extension library
+# :de: Erweiterungsbibliothek
+##Depends: efm
+
 include efeu.smh
 include dl.smh
 efeu_library -c -h EFEU efx -ml LD_DL

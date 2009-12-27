@@ -74,7 +74,7 @@ Variablen und legt sie am Tabellenstack ab.
 
 :*:The command $1 inserts file <name> at current position.
 The following control flags could be used:
-[|verb|]
+[|verbatim|]
 	verbatim text without interpretation of special characters.
 	Tabulators are replaced by spaces.
 [|latex|]
@@ -92,7 +92,7 @@ The following control flags could be used:
 	variables are created global.
 :de:Der Befehl $1 bindet die Datei <file> an der aktuellen Position ein.
 Folgende Steuerflags können angegeben werden:
-[|verb|]
+[|verbatim|]
 	Wortwörtlicher Text ohne Interpretation von Sonderzeichen.
 	Tabulatoren werden durch Leerzeichen ersetzt.
 [|latex|]

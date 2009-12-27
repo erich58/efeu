@@ -102,7 +102,7 @@ void Doc_copy (Doc *doc, IO *in);
 void Doc_key (Doc *doc, IO *in, int c);
 char *Doc_expand (Doc *doc, IO *in, int flag);
 char *Doc_xexpand (Doc *doc, IO *in);
-void Doc_verb (Doc *doc, IO *in, int base, int alt);
+void Doc_verb (Doc *doc, IO *in, int base, int alt, int wrap);
 void Doc_scopy (Doc *doc, const char *str);
 void Doc_mcopy (Doc *doc, char *str);
 void Doc_xcopy (Doc *doc, IO *in, int c);

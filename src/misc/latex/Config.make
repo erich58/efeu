@@ -1,3 +1,6 @@
+# :de: Latex-Stylefiles
+##Depends: .
+
 include efeu.smh
 
 mf_dir TEXMF=$TOP/share/texmf

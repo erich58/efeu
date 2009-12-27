@@ -1,3 +1,6 @@
+# :de: TCL/TK-interface
+##Depends: config
+
 include efeu.smh
 xinclude tklib.smh
 

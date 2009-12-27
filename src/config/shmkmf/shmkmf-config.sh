@@ -1,8 +1,8 @@
 #!/bin/sh
-# :*:configuration tool for EFEU
-# :de:Konfigurationswerkzeug für EFEU
+# :*:configuration tool for shmkmf
+# :de:Konfigurationswerkzeug für shmkmf
 #
-# $Copyright (C) 2002 Erich Frühstück
+# $Copyright (C) 2002, 2008 Erich Frühstück
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or modify
@@ -33,7 +33,7 @@ de*)
 esac
 
 # $pconfig
-# Version="$Id: shmkmf-config.sh,v 1.3 2008-08-27 19:41:05 ef Exp $"
+# Version="$Id: shmkmf-config.sh,v 1.4 2009-02-17 21:33:24 ef Exp $"
 # v|
 #	:*:display this help and exit
 #	:de:Fehlermeldungen ausgeben
