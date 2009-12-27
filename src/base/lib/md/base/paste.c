@@ -4,8 +4,6 @@
 
 #include <EFEU/mdmat.h>
 
-static mdindex *idx;
-
 static void mkindex (const char *delim, mdaxis *x, char *last, int n);
 
 static size_t getdim (mdaxis *x, int n);
@@ -20,6 +18,9 @@ static size_t getdim(mdaxis *x, int n)
 	else	return 1;
 }
 
+
+static mdindex *idx;
+static StrPool *sbuf;
 
 static void mkindex (const char *delim, mdaxis *x, char *last, int n)
 {
@@ -38,7 +39,7 @@ static void mkindex (const char *delim, mdaxis *x, char *last, int n)
 	}
 	else
 	{
-		idx->i_name = StrPool_add(x->sbuf, last);
+		idx->i_name = StrPool_add(sbuf, last);
 		idx->flags = 0;
 		idx++;
 	}
@@ -82,6 +83,7 @@ void md_paste(mdmat *md, const char *name, const char *delim, int pos, int n)
 
 	new->size = old->size;
 	idx = new->idx;
+	sbuf = new->sbuf;
 	mkindex(delim, old, NULL, n);
 	*ptr = new;
 

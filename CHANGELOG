@@ -1,3 +1,7 @@
+Version 3.2-6
+
+*	Fixed a bug in pasting axes of a data cube.
+
 Version 3.2-5
 
 *	Minor enhancements in document creation.

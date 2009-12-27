@@ -33,8 +33,8 @@ auf die Daten des vorherigen Beispiels zurückgreift:
 
 \include[verbatim]	mpers.edb
 
-Ein Datentyp muss nicht angegeben werden, da er ja durch die
-eingebundene Datei |pers.edb| definiert wird. Diese Form von
+Der Datentyp muss hier nicht angegeben werden, da er ja durch die
+eingebundene Datei |pers.edb| bereits definiert wird. Diese Form von
 Metadatenfiles findet man bei großen Datenmengen, die sich nicht mehr
 als einzelne Datei abspeichern lassen. Die einzelnen Teile werden dann
 mithilfe eines Metadatenfiles und der \index{|@file|-Anweisung}

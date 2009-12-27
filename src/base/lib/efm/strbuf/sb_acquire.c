@@ -23,6 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/strbuf.h>
 
 #define	FULL_TRACE	0
+#define	PART_TRACE	0
 
 static struct {
 	int lock;
@@ -31,7 +32,7 @@ static struct {
 	{ 0, SB_DATA(0) },
 	{ 0, SB_DATA(0) },
 	{ 0, SB_DATA(0) },
-#if	0
+#if	1
 	{ 0, SB_DATA(0) },
 #endif
 };
@@ -67,7 +68,9 @@ StrBuf *sb_acquire (void)
 	buf = memalloc(sizeof *buf);
 	depth++;
 	flag = 1;
+#if	PART_TRACE
 	fprintf(stderr, "sb_acquire[%p] %d %d\n", buf, count, depth);
+#endif
 	sb_init(buf, 0);
 	return buf;
 }
@@ -87,6 +90,7 @@ void sb_release (StrBuf *buf)
 	{
 		if	(&tmp_tab[i].buf == buf)
 		{
+#if	PART_TRACE
 #if	FULL_TRACE
 #else
 			if	(flag || count - tmp_tab[i].lock > 100)
@@ -99,13 +103,16 @@ void sb_release (StrBuf *buf)
 				if	(i == 0)
 					flag = 0;
 			}
+#endif
 
 			tmp_tab[i].lock = 0;
 			return;
 		}
 	}
 	
+#if	PART_TRACE
 	fprintf(stderr, "sb_release[%p] %d %d\n", buf, count, depth);
+#endif
 	depth--;
 	sb_free(buf);
 	memfree(buf);

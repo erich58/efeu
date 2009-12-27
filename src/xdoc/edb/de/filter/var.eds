@@ -42,7 +42,6 @@ input(NULL, "liefert");
 input("verbatim", popen(cmd, "r"));
 }
 ----
-/pattern
 
 \ssec	Strukturierung
 
