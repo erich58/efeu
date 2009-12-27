@@ -25,6 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/io.h>
 #include <EFEU/strbuf.h>
+#include <EFEU/CmdPar.h>
 
 #define	BUF_SYN		0
 #define	BUF_DESC	1
@@ -44,8 +45,9 @@ If not, write to the Free Software Foundation, Inc.,
 #define	VAR_DIM		5
 
 typedef struct {
+	CmdPar *cmdpar;		/* Kommandoparameter */
 	StrBuf *synopsis;	/* Übersicht */
-	StrBuf *source;	/* Sourcezeilen */
+	StrBuf *source;		/* Sourcezeilen */
 	StrBuf *tab[BUF_DIM];	/* Stringbuffertabelle */
 	char *var[VAR_DIM];	/* Variablentabelle */
 } DocBuf;

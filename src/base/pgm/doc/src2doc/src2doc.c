@@ -33,6 +33,7 @@ If not, write to the Free Software Foundation, Inc.,
 char *DocName = NULL;
 char *Secnum = NULL;
 char *IncFmt = NULL;
+int InsertCode = 0;
 
 EfiVarDef globvar[] = {
 	{ "DocName", &Type_str, &DocName },
@@ -62,7 +63,7 @@ int main (int narg, char **arg)
 	char *Mode;
 	S2DEval eval;
 
-	SetVersion("$Id: src2doc.c,v 1.17 2002-12-20 17:50:19 ef Exp $");
+	SetVersion("$Id: src2doc.c,v 1.18 2003-07-28 08:26:01 ef Exp $");
 	SetProgName(arg[0]);
 	SetupStd();
 	SetupReadline();
@@ -78,6 +79,7 @@ int main (int narg, char **arg)
 
 	Name = GetResource("Name", NULL);
 	Mode = GetResource("Mode", NULL);
+	InsertCode = GetFlagResource("InsertCode");
 	eval = Mode ? S2DMode_get(Mode) : S2DName_get(DocName);
 
 	if	(eval == NULL)

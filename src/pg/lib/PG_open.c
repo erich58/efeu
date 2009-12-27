@@ -27,6 +27,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/ioctrl.h>
 #include <EFEU/Debug.h>
 
+#if	HAS_PQ
+
 #define	M_OPEN	"$!: PG_open(): unknown access mode \"$2\" for table \"$1\".\n"
 #define	M_FLUSH	"$!: PQputline() failed.\n"
 #define	M_ECOPY	"$!: PQendcopy() failed\n"
@@ -120,7 +122,7 @@ static int pg_ctrl (void *ptr, int req, va_list list)
 			pg_flush(par);
 			sb_puts("\\.", par->wbuf);
 			pg_flush(par);
-			del_strbuf(par->wbuf);
+			sb_destroy(par->wbuf);
 		}
 
 		if	(par->rbuf)
@@ -161,18 +163,17 @@ durch und liefert eine IO-Struktur zur Übermittlung/Abfrage
 von Daten. Die Verbindungsstruktur <pg> sollte danach nicht mehr
 verwendet werden, außer der Referenzzähler wurde zuvor mit |rd_refer|
 erhöht.
-
-Der Parameter <mode> beginnt mit dem Kennbuchstaben
-|r| (Daten fom Server lesen)
-oder |w| (Daten zum Server schreiben) und der optionalen Kennung
-|o| (mit Objektidentifikation).
 :*:
 The function |$1| performs a COPY command and returns an IO-structure
 for copying data to/from the backend.
 You should not use <pg> after calling |$1|, except you have incremented the
 reference counter of <pg> with |rd_refer| before.
 
-The parameter <mode> starts with the key
+:de:Der Parameter <mode> beginnt mit dem Kennbuchstaben
+|r| (Daten fom Server lesen)
+oder |w| (Daten zum Server schreiben) und der optionalen Kennung
+|o| (mit Objektidentifikation).
+:*:The parameter <mode> starts with the key
 |r| (read data from server) or |w| (write data to server) and the
 optional key |o| (copy the internal uniq object id for each row).
 
@@ -264,7 +265,7 @@ IO *PG_open (PG *pg, const char *name, const char *mode)
 
 	if	(wflag)
 	{
-		par->wbuf = new_strbuf(0);
+		par->wbuf = sb_create(0);
 		io->put = pg_put;
 	}
 	else
@@ -278,6 +279,8 @@ IO *PG_open (PG *pg, const char *name, const char *mode)
 	io->data = par;
 	return io;
 }
+
+#endif
 
 /*
 $SeeAlso

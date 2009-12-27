@@ -1,0 +1,5 @@
+\chap	Schnittstellen
+
+\include intro.doc
+\include pg.doc
+\docpart[syndb] syndb.doc

@@ -25,6 +25,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/stdtype.h>
 #include <EFEU/ArgList.h>
 
+#if	HAS_PQ
+
 EfiType Type_PG = REF_TYPE("PG", PG *);
 
 static EfiObj *pg_status (const EfiObj *obj, void *data)
@@ -80,8 +82,6 @@ static EfiMember pg_memb[] = {
 	{ "label", &Type_list, pg_label, NULL },
 };
 
-/*	Funktionen
-*/
 
 static void f_print (EfiFunc *func, void *rval, void **arg)
 {
@@ -92,7 +92,11 @@ static void f_conn (EfiFunc *func, void *rval, void **arg)
 {
 	char *def = Val_str(arg[0]);
 
-	if	(strchr(def, '=') == NULL)
+	if	(def == NULL)
+	{
+		Val_ptr(rval) = NULL;
+	}
+	else if	(strchr(def, '=') == NULL)
 	{
 		char *p = mstrpaste("=", "dbname", def);
 		Val_ptr(rval) = PG_connect(p);
@@ -115,7 +119,7 @@ static void f_vconn (EfiFunc *func, void *rval, void **arg)
 		return;
 	}
 
-	sb = new_strbuf(0);
+	sb = sb_create(0);
 	sb_printf(sb, "dbname=%s", s);
 
 	for (l = Val_list(arg[1]); l != NULL; l = l->next)
@@ -128,7 +132,7 @@ static void f_vconn (EfiFunc *func, void *rval, void **arg)
 
 	sb_putc(0, sb);
 	Val_ptr(rval) = PG_connect(sb->data);
-	del_strbuf(sb);
+	sb_destroy(sb);
 }
 
 static void do_exec (void *rval, void **arg, ExecStatusType stat)
@@ -269,15 +273,15 @@ static EfiFuncDef pg_func[] = {
 	{ FUNC_VIRTUAL, &Type_void, "close (PG & pg)", f_close },
 };
 
+#endif
+
 /*
 :de:
 Die Funktion |$1| erweitert den esh-Interpreter mit Schnittstellenfunktionen
-zum PostgreSQL Datenbankserver. Diese Funktion wird implizit beim
-Laden der gemeinsam genutzen Programmbibliothek aufgerufen.
+zum PostgreSQL Datenbankserver.
 :*:
 The function |$1| expands the esh-Interpreter with the frontend
-to PostgreSQL. This function is implicitly called on loading the
-shared library.
+to PostgreSQL.
 */
 
 void SetupPG (void)
@@ -289,15 +293,17 @@ void SetupPG (void)
 	setup_done = 1;
 	SetupStd();
 	SetupMdMat();
+	SetupEDB();
+#if	HAS_PQ
 	AddType(&Type_PG);
 	AddVarDef(Type_PG.vtab, pg_var, tabsize(pg_var));
 	AddEfiMember(Type_PG.vtab, pg_memb, tabsize(pg_memb));
 	AddFuncDef(pg_func, tabsize(pg_func));
-}
-
-void _init (void)
-{
-	SetupPG();
+	PG_edb();
+#else
+	fprintf(stderr, "sorry: PostgreSQL interface not available.\n");
+	exit(EXIT_FAILURE);
+#endif
 }
 
 /*

@@ -27,6 +27,12 @@ If not, write to the Free Software Foundation, Inc.,
 
 static EfiType Type_regex = REF_TYPE("RegExp", RegExp *);
 
+static void regex2str (EfiFunc *func, void *rval, void **arg)
+{
+	RegExp *x = Val_ptr(arg[0]);
+	Val_ptr(rval) = x ? mstrcpy(x->def) : NULL;
+}
+
 static void str2regex (EfiFunc *func, void *rval, void **arg)
 {
 	Val_ptr(rval) = RegExp_comp(Val_str(arg[0]), 0);
@@ -39,7 +45,7 @@ static EfiObj *parse_regex(IO *io, EfiOp *op, EfiObj *left)
 	int c;
 	int flag;
 
-	sb = new_strbuf(0);
+	sb = sb_create(0);
 	io_protect(io, 1);
 
 	while ((c = io_getc(io)) != EOF)
@@ -74,7 +80,7 @@ static EfiObj *parse_regex(IO *io, EfiOp *op, EfiObj *left)
 	}
 
 	obj = NewPtrObj(&Type_regex, RegExp_comp((char *) sb->data, flag));
-	del_strbuf(sb);
+	sb_destroy(sb);
 	return obj;
 }
 
@@ -136,6 +142,24 @@ static void f_regsub (EfiFunc *func, void *rval, void **arg)
 		Val_str(arg[1]), Val_str(arg[2]), Val_int(arg[3]));
 }
 
+static void f_match (EfiFunc *func, void *rval, void **arg)
+{
+	regmatch_t *match;
+	char *str;
+	int n;
+
+	str = Val_str(arg[0]);
+	n = RegExp_exec(Val_ptr(arg[1]), str, &match);
+
+	if	(n)
+	{
+		n--;
+		Val_str(rval) = mstrncpy(str + match[n].rm_so,
+			match->rm_eo - match[n].rm_so);
+	}
+	else	Val_str(rval) = NULL;
+}
+
 static EfiObjList *match_to_list(const char *str, regmatch_t *match, size_t n)
 {
 	EfiObjList *list, **ptr;
@@ -171,6 +195,7 @@ static void f_regmatch (EfiFunc *func, void *rval, void **arg)
 */
 
 static EfiFuncDef func_regex[] = {
+	{ FUNC_RESTRICTED, &Type_str, "RegExp ()", regex2str },
 	{ 0, &Type_regex, "RegExp (str expr)", str2regex },
 	{ 0, &Type_regex, "RegExp (str expr, bool icase = false)", f_regex },
 	{ 0, &Type_bool, "RegExp::exec (str s)", f_regexec },
@@ -178,18 +203,27 @@ static EfiFuncDef func_regex[] = {
 	{ 0, &Type_str, "RegExp::sub (str repl, str s, bool glob = false)",
 		f_regsub },
 	{ 0, &Type_bool, "regexec (RegExp re, str s)", f_regexec },
-	{ FUNC_VIRTUAL, &Type_bool, "operator== (RegExp a, RegExp b)",
+	{ FUNC_VIRTUAL, &Type_bool,
+		"operator== (restricted RegExp a, restricted RegExp b)",
 		f_regcmp },
-	{ FUNC_VIRTUAL, &Type_bool, "operator== (RegExp re, str s)",
+	{ FUNC_VIRTUAL, &Type_bool,
+		"operator== (restricted RegExp re, promotion str s)",
 		f_regexec },
-	{ FUNC_VIRTUAL, &Type_bool, "operator== (str s, RegExp re)",
+	{ FUNC_VIRTUAL, &Type_bool,
+		"operator== (promotion str s, restricted RegExp re)",
 		f_iregexec },
-	{ FUNC_VIRTUAL, &Type_bool, "operator!= (RegExp a, RegExp b)",
+	{ FUNC_VIRTUAL, &Type_bool,
+		"operator!= (restricted RegExp a, restricted RegExp b)",
 		f_nregcmp },
-	{ FUNC_VIRTUAL, &Type_bool, "operator!= (RegExp re, str s)",
+	{ FUNC_VIRTUAL, &Type_bool,
+		"operator!= (restricted RegExp re, promotion str s)",
 		f_nregexec },
-	{ FUNC_VIRTUAL, &Type_bool, "operator!= (str s, RegExp re)",
+	{ FUNC_VIRTUAL, &Type_bool,
+		"operator!= (promotion str s, restricted RegExp re)",
 		f_niregexec },
+	{ FUNC_VIRTUAL, &Type_str,
+		"operator: (promotion str s, restricted RegExp re)",
+		f_match },
 	{ 0, &Type_list, "regmatch (RegExp re, str s)", f_regmatch },
 	{ 0, &Type_str, "regsub (RegExp re, str r, str s, bool glob = false)",
 		f_regsub },

@@ -63,7 +63,7 @@ static void put_sect (HTML *html, int flag, int type)
 	if	(flag)
 	{
 		io_puts("<P>\n", html->out);
-		sb_clear(html->buf);
+		sb_clean(html->buf);
 		io_push(html->out, io_strbuf(html->buf));
 		HTML_cpush(html, NULL, 0);
 	}
@@ -95,7 +95,10 @@ static void list_env (HTML *html, int flag, const char *name)
 
 int HTML_env (void *drv, int flag, va_list list)
 {
+	static int sec_flag = 0;
 	HTML *html = drv;
+	char *p;
+
 	int cmd = va_arg(list, int);
 
 	switch (cmd)
@@ -135,6 +138,26 @@ int HTML_env (void *drv, int flag, va_list list)
 		break;
 	case DOC_SEC_MCHAP:
 	case DOC_SEC_CHAP:
+		if	(flag)
+		{
+			p = va_arg(list, char *);
+
+			if	(mstrcmp(p, "*") == 0)
+			{
+				HTML_newline(html, 0);
+				io_puts("\n<P><B>", html->out);
+				sec_flag = 1;
+				break;
+			}
+		}
+		else if	(sec_flag)
+		{
+			sec_flag = 0;
+			HTML_newline(html, 0);
+			io_puts("</B><BR>\n", html->out);
+			break;
+		}
+
 		put_sect(html, flag, HTML_CHAP);
 		break;
 	case DOC_SEC_SECT:

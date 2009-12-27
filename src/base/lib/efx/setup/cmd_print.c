@@ -32,14 +32,61 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 int PrintFieldWidth = 0;
-int PrintFloatPrec = 2;
+int PrintFloatPrec = 5;
+int PrintTypeVerbosity = 3;
 
 static char *v_fmt_str = "%#*s";
-static char *v_fmt_float = "%*.*f";
+static char *v_fmt_float = "%#*.*g";
 static char *v_fmt_int = "%*i";
-static char *v_fmt_long = "%*lil";
-static char *v_fmt_uint = "%*uu";
-static char *v_fmt_size = "%*lulu";
+static char *v_fmt_uint = "%*u";
+static char *v_fmt_size = "%*lu";
+static char *v_fmt_int64 = "%*lli";
+static char *v_fmt_uint64 = "%*llu";
+
+void SetFloatPrec (const char *str)
+{
+	char *p;
+	char *flg;
+	static char fmt_buf[8];
+
+	if	(!str)	return;
+
+	if	(*str == '#')
+	{
+		flg = "#";
+		str++;
+	}
+	else	flg = "";
+
+	PrintFloatPrec = strtol(str, &p, 0);
+
+	switch (*p)
+	{
+	case 'e': case 'E':
+	case 'f': case 'F':
+	case 'g': case 'G':
+		sprintf(fmt_buf, "%%%s*.*%c", flg, *p);
+		break;
+	default:
+		sprintf(fmt_buf, "%%%s*.*g", flg);
+		break;
+	}
+
+	memfree(v_fmt_float);
+	v_fmt_float = fmt_buf;
+}
+
+int PrintDouble (IO *out, double val)
+{
+	return io_printf(out, v_fmt_float,
+		PrintFieldWidth, PrintFloatPrec, val);
+}
+
+char *DoubleToString (double val)
+{
+	return msprintf(v_fmt_float,
+		PrintFieldWidth, PrintFloatPrec, val);
+}
 
 static EfiVarDef var_print[] = {
 	{ "field_width", &Type_int, &PrintFieldWidth,
@@ -48,6 +95,9 @@ static EfiVarDef var_print[] = {
 	{ "float_prec", &Type_int, &PrintFloatPrec,
 		":*:floating point precission\n"
 		":de:Genauigkeit von Gleitkommawerten\n" },
+	{ "PrintTypeVerbosity", &Type_int, &PrintTypeVerbosity,
+		":*:verbosity of type representation\n"
+		":de:Darstellungsausführlichkeit von Datentypen\n" },
 	{ "fmt_str", &Type_str, &v_fmt_str,
 		":*:format key for strings\n"
 		":de:Formatdefinition für Zeichenketten\n" },
@@ -57,12 +107,15 @@ static EfiVarDef var_print[] = {
 	{ "fmt_int", &Type_str, &v_fmt_int,
 		":*:format key for integer\n"
 		":de:Formatdefinition für Ganzzahlwerte\n" },
-	{ "fmt_long", &Type_str, &v_fmt_long,
-		":*:format key for long integer\n"
-		":de:Formatdefinition für lange Ganzzahlwerte\n" },
 	{ "fmt_unsigned", &Type_str, &v_fmt_uint,
 		":*:format key for unsigned integer\n"
 		":de:Formatdefinition für vorzeichenfreie Ganzzahlwerte\n" },
+	{ "fmt_int64", &Type_str, &v_fmt_int64,
+		":*:format key for 64 bit integer\n"
+		":de:Formatdefinition für 64-Bit Ganzzahlwerte\n" },
+	{ "fmt_uint64", &Type_str, &v_fmt_uint64,
+		":*:format key for unsigned 64 bit integer\n"
+		":de:Formatdefinition für vorzeichenfreie 64-Bit Ganzzahlwerte\n" },
 	{ "fmt_size", &Type_str, &v_fmt_size,
 		":*:format key for size integer\n"
 		":de:Formatdefinition für Größenzahlen\n" },
@@ -94,9 +147,7 @@ static void fprint_ptr(EfiFunc *func, void *rval, void **arg)
 
 static void fprint_type(EfiFunc *func, void *rval, void **arg)
 {
-	IO *io = io_count(io_refer(Val_io(arg[0])));
-	ListType(io, Val_type(arg[1]));
-	RV = io_close(io);
+	RV = PrintType(Val_io(arg[0]), Val_type(arg[1]), PrintTypeVerbosity);
 }
 
 static void fprint_bool(EfiFunc *func, void *rval, void **arg)
@@ -110,28 +161,27 @@ static void fprint_int(EfiFunc *func, void *rval, void **arg)
 		PrintFieldWidth, Val_int(arg[1]));
 }
 
-static void fprint_long(EfiFunc *func, void *rval, void **arg)
-{
-	RV = io_printf(Val_io(arg[0]), v_fmt_long,
-		PrintFieldWidth, Val_long(arg[1]));
-}
-
 static void fprint_uint(EfiFunc *func, void *rval, void **arg)
 {
 	RV = io_printf(Val_io(arg[0]), v_fmt_uint,
 		PrintFieldWidth, Val_uint(arg[1]));
 }
 
-static void fprint_size(EfiFunc *func, void *rval, void **arg)
+static void fprint_int64(EfiFunc *func, void *rval, void **arg)
 {
-	RV = io_printf(Val_io(arg[0]), v_fmt_size,
-		PrintFieldWidth, (unsigned long) Val_size(arg[1]));
+	RV = io_printf(Val_io(arg[0]), v_fmt_int64,
+		PrintFieldWidth, *((int64_t *) arg[1]));
+}
+
+static void fprint_uint64(EfiFunc *func, void *rval, void **arg)
+{
+	RV = io_printf(Val_io(arg[0]), v_fmt_uint64,
+		PrintFieldWidth, *((uint64_t *) arg[1]));
 }
 
 static void fprint_double(EfiFunc *func, void *rval, void **arg)
 {
-	RV = io_printf(Val_io(arg[0]), v_fmt_float,
-		PrintFieldWidth, PrintFloatPrec, Val_double(arg[1]));
+	RV = PrintDouble(Val_io(arg[0]), Val_double(arg[1]));
 }
 
 static void fprint_char(EfiFunc *func, void *rval, void **arg)
@@ -282,28 +332,42 @@ static void fprint_any(EfiFunc *func, void *rval, void **arg)
 
 	io = Val_io(arg[0]);
 	obj = arg[1];
-	RV = (obj && io) ? PrintAny(io, obj->type, obj->data) : 0;
+	RV = (obj && io) ? ShowAny(io, obj->type, obj->data) : 0;
 }
 
+static void fprint_obj (EfiFunc *func, void *rval, void **arg)
+{
+	IO *io;
+	EfiObj *obj;
+
+	io = Val_io(arg[0]);
+	obj = Val_obj(arg[1]);
+
+	if	(obj)
+	{
+		RV = io_puts("(Object) ", io);
+		RV += PrintObj(io, obj);
+	}
+	else	RV = 0;
+}
 
 static void fprint_vec(EfiFunc *func, void *rval, void **arg)
 {
 	char *delim;
 	EfiVec *vec;
 	IO *io;
-	int i, n;
+	int i, n, dim;
 
 	io = Val_io(arg[0]);
-	vec = (EfiVec *) arg[1];
+	vec = Val_ptr(arg[1]);
+	dim = vec ? vec->buf.used : 0;
 
 	n = io_puts(PrintListBegin, io);
 	delim = NULL;
 
-	for (i = 0; i < vec->dim; i++)
+	for (i = 0; i < dim; i++)
 	{
-		EfiObj *obj;
-
-		obj = Vector(vec, i);
+		EfiObj *obj = Vector(vec, i);
 		n += io_puts(delim, io);
 		n += PrintObj(io, obj);
 		UnrefObj(obj);
@@ -362,34 +426,6 @@ static void fprint_va_list(EfiFunc *func, void *rval, void **arg)
 	RV = p_va_list(Val_io(arg[0]), Val_list(arg[1]), " ");
 }
 
-static void print_list(EfiFunc *func, void *rval, void **arg)
-{
-	RV = p_list(iostd, Val_list(arg[0]));
-}
-
-static void print_va_list(EfiFunc *func, void *rval, void **arg)
-{
-	RV = p_va_list(iostd, Val_list(arg[0]), " ");
-}
-
-static void sprint_list(EfiFunc *func, void *rval, void **arg)
-{
-	StrBuf *sb = new_strbuf(0);
-	IO *io = io_strbuf(sb);
-	p_list(io, Val_list(arg[0]));
-	io_close(io);
-	Val_str(rval) = sb2str(sb);
-}
-
-static void sprint_va_list(EfiFunc *func, void *rval, void **arg)
-{
-	StrBuf *sb = new_strbuf(0);
-	IO *io = io_strbuf(sb);
-	p_va_list(io, Val_list(arg[0]), " ");
-	io_close(io);
-	Val_str(rval) = sb2str(sb);
-}
-
 static void put_str(EfiFunc *func, void *rval, void **arg)
 {
 	io_puts(Val_str(arg[1]), Val_io(arg[0]));
@@ -404,16 +440,9 @@ static void put_char(EfiFunc *func, void *rval, void **arg)
 	Val_io(rval) = Val_io(arg[0]);
 }
 
-static void put_long(EfiFunc *func, void *rval, void **arg)
-{
-	io_printf(Val_io(arg[0]), "%*li", PrintFieldWidth, Val_long(arg[1]));
-	rd_refer(Val_io(arg[0]));
-	Val_io(rval) = Val_io(arg[0]);
-}
-
 static void put_obj(EfiFunc *func, void *rval, void **arg)
 {
-	PrintObj(Val_io(arg[0]), arg[1]);
+	ShowObj(Val_io(arg[0]), arg[1]);
 	rd_refer(Val_io(arg[0]));
 	Val_io(rval) = Val_io(arg[0]);
 }
@@ -422,9 +451,9 @@ static void put_obj(EfiFunc *func, void *rval, void **arg)
 static EfiFuncDef fdef_print[] = {
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, bool)", fprint_bool },
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, int)", fprint_int },
-	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, long)", fprint_long },
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, unsigned)", fprint_uint },
-	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, size_t)", fprint_size },
+	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, varint)", fprint_int64 },
+	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, varsize)", fprint_uint64 },
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, double)", fprint_double },
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, char)", fprint_char },
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, str)", fprint_str },
@@ -433,9 +462,10 @@ static EfiFuncDef fdef_print[] = {
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, _MemberName_)", fprint_mname },
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, _ScopeName_)", fprint_sname },
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, _undef_)", fprint_undef },
-	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, _Ptr_ *)", fprint_ptr },
+	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, restricted _Ptr_)", fprint_ptr },
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, _Ref_)", fprint_ref },
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, Type_t)", fprint_type },
+	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, Object)", fprint_obj },
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, EfiVec)", fprint_vec },
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, List_t)", fprint_list },
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, VarTab)", fprint_vtab },
@@ -445,13 +475,7 @@ static EfiFuncDef fdef_print[] = {
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, .)", fprint_any },
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, ...)", fprint_va_list },
 
-	{ FUNC_VIRTUAL, &Type_int, "print (List_t)", print_list },
-	{ FUNC_VIRTUAL, &Type_int, "print (...)", print_va_list },
-	{ FUNC_VIRTUAL, &Type_str, "sprint (List_t)", sprint_list },
-	{ FUNC_VIRTUAL, &Type_str, "sprint (...)", sprint_va_list },
-
 	{ FUNC_VIRTUAL, &Type_io, "operator<< (IO, char)", put_char },
-	{ FUNC_VIRTUAL, &Type_io, "operator<< (IO, long)", put_long },
 	{ FUNC_VIRTUAL, &Type_io, "operator<< (IO, str)", put_str },
 	{ FUNC_VIRTUAL, &Type_io, "operator<< (IO, .)", put_obj },
 };

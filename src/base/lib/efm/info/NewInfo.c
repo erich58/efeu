@@ -25,36 +25,40 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	NODE_BSIZE	64
 
-static InfoNode *node_free = NULL;
-static int node_used = 0;
-static int node_alloc = 0;
+static ALLOCTAB(info_tab, 0, sizeof(InfoNode));
+
+static void entry_clean (void *data)
+{
+	rd_deref(*((InfoNode **) data));
+}
+
+static void info_clean (void *ptr)
+{
+	InfoNode *info = ptr;
+	memfree(info->name);
+	memfree(info->label);
+	rd_deref(info->prev);
+	vb_clean(info->list, entry_clean);
+	del_data(&info_tab, info);
+}
+
+static char *info_ident (const void *ptr)
+{
+	StrBuf *sb = sb_create(0);
+	IO *io = io_strbuf(sb);
+	InfoName(io, NULL, (InfoNode *) ptr);
+	io_close(io);
+	return sb2str(sb);
+}
+
+RefType Info_reftype = REFTYPE_INIT("InfoNode", info_ident, info_clean);
 
 InfoNode *NewInfo (InfoNode *root, char *name)
 {
 	InfoNode *node;
-
-	if	(node_free == NULL)
-	{
-		int i;
-
-		node = node_free = lmalloc(NODE_BSIZE * sizeof(InfoNode));
-
-		for (i = 1; i < NODE_BSIZE; i++)
-		{
-			node->prev = node + 1;
-			node++;
-		}
-
-		node->prev = NULL;
-		node_alloc += NODE_BSIZE;
-	}
-
-	node = node_free;
-	node_free = node->prev;
-	node_used++;
-
-	memset(node, 0, sizeof(InfoNode));
-	node->prev = root;
+	
+	node = rd_init(&Info_reftype, new_data(&info_tab));
+	node->prev = rd_refer(root);
 	node->name = name;
 	return node;
 }

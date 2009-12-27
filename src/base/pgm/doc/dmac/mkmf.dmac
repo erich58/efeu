@@ -37,13 +37,12 @@ str fname = fsearch(DocPath, xexpand(ParseLine(cin)), NULL);
 if	(fname)
 {
 	str name = filename(fname);
-	str tmp = tmpnam("mkmf_");
-	system("mkdir " + tmp);
+	str tmp = newtempdir("mkmf_");
 	copy(open(fname, "r"), open(tmp + "/Imakefile", "w"));
 	system(sprintf("( cd %s; mkmf >&2 )", tmp));
 	cout << "\n---- verbatim\n";
 	copy(open(tmp + "/Makefile", "r"), cout);
 	cout << "----\n\n";
-	system("rm -rf " + tmp);
+	deltempdir(tmp);
 }
 }}

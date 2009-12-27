@@ -26,13 +26,13 @@ char *PrintListBegin = "{";
 char *PrintListDelim = ", ";
 char *PrintListEnd = "}";
 
-EfiFunc *GetPrintFunc(const EfiType *type)
+EfiFunc *GetPrintFunc (const EfiType *type)
 {
 	return GetFunc(&Type_int, GetGlobalFunc("fprint"),
 		2, &Type_io, 0, type, 0);
 }
 
-static int print_struct (IO *io, const EfiVar *list, const void *data)
+static int show_struct (IO *io, const EfiVar *list, const void *data)
 {
 	char *delim;
 	const void *ptr;
@@ -51,14 +51,14 @@ static int print_struct (IO *io, const EfiVar *list, const void *data)
 		{
 			n += PrintVecData(io, list->type, ptr, list->dim);
 		}
-		else	n += PrintData(io, list->type, ptr);
+		else	n += ShowData(io, list->type, ptr);
 	}
 
 	n += io_puts(PrintListEnd, io);
 	return n;
 }
 
-int PrintVecData(IO *io, const EfiType *type, const void *data, size_t dim)
+int ShowVecData (IO *io, const EfiType *type, const void *data, size_t dim)
 {
 	EfiFunc *func;
 	char *delim;
@@ -80,7 +80,7 @@ int PrintVecData(IO *io, const EfiType *type, const void *data, size_t dim)
 			CallFunc(&Type_int, &buf, func, &io, data);
 			n += buf;
 		}
-		else	n += PrintData(io, type, data);
+		else	n += ShowData(io, type, data);
 
 		data = (const char *) data + type->size;
 	}
@@ -90,31 +90,18 @@ int PrintVecData(IO *io, const EfiType *type, const void *data, size_t dim)
 }
 
 
-int PrintData(IO *io, const EfiType *type, const void *data)
+int ShowObj (IO *io, const EfiObj *obj)
 {
-	EfiFunc *func;
-
-	FuncDebugLock++;
-	func = GetPrintFunc(type);
-	FuncDebugLock--;
-
-	if	(func != NULL)
-	{
-		int n = 0;
-		CallFunc(&Type_int, &n, func, &io, data);
-		return n;
-	}
-	else	return PrintAny(io, type, data);
+#if	1
+	return (obj ? ShowData(io, obj->type, obj->data) :
+		io_puts("void", io));
+#else
+	return (obj ? PrintData(io, obj->type, obj->data) :
+		io_puts("void", io));
+#endif
 }
 
-
-int PrintObj(IO *io, const EfiObj *obj)
-{
-	return (obj ? PrintData(io, obj->type, obj->data) : io_puts("void", io));
-}
-
-
-int PrintAny (IO *io, const EfiType *type, const void *data)
+int ShowAny (IO *io, const EfiType *type, const void *data)
 {
 	if	(type->dim)
 	{
@@ -122,7 +109,7 @@ int PrintAny (IO *io, const EfiType *type, const void *data)
 	}
 	else if	(type->list)
 	{
-		return print_struct(io, type->list, data);
+		return show_struct(io, type->list, data);
 	}
 	else if	(IsTypeClass(type, &Type_enum))
 	{
@@ -131,21 +118,7 @@ int PrintAny (IO *io, const EfiType *type, const void *data)
 		memfree(p);
 		return n;
 	}
-	else if	(type->base)
-	{
-		int n = io_printf(io, "(%s) ", type->name);
-		return n + PrintData(io, type->base, data);
-	}
-	else if	(type->size)
-	{
-		int i, n;
 
-		n = io_printf(io, "(%s) 0x", type->name);
-
-		for (i = 0; i < type->size; i++)
-			n += io_printf(io, "%02x", ((unsigned char *) data)[i]);
-
-		return n;
-	}
-	else	return io_printf(io, "%s()", type->name);
+	return PrintData(io, type, data);
 }
+

@@ -79,7 +79,7 @@ Zeilen der Definitionsstruktur <_io> bestehen aus Steueranweisungen
 und Indexeinträgen.
 */
 
-inline void IndexFunc::body(IO _io)
+inline void IndexFunc::body(IO _io, ...)
 {
 	str _cmd;
 	bool rval = false;
@@ -88,11 +88,11 @@ inline void IndexFunc::body(IO _io)
 	{
 		if	(_cmd[0] == '@')
 			rval = subfunc(_io, _cmd);
-		else	func.line(_cmd);
+		else	func.line(_cmd, va_list);
 	}
 
 	if	(!rval)
-		func.fline("return %d;", dim(lbl));
+		func.fline("return %d;", lbl.entry.dim);
 }
 
 /*
@@ -114,7 +114,7 @@ void IndexPar::operator+= (str fmt)
 
 inline int IndexFunc::beg (IndexPar &par, str key, str label, IndexPar base)
 {
-	par.val = dim(lbl);
+	par.val = lbl.entry.dim;
 	str name = xstrcut(label, "%s");
 
 	if	(name)
@@ -191,6 +191,8 @@ inline bool IndexFunc::subfunc (IO _io, str cmd, IndexPar base = NULL)
 		return this.switch(xstrcut(cmd, "%s"), cmd, _io, base);
 	else if	(key == "@default")
 		return this.defval(cmd, base);
+	else if	(key == "@range")
+		return this.range(cmd, base);
 	else if	(key == "@eval")
 		eval(cmd);
 
@@ -208,6 +210,44 @@ inline bool IndexFunc::defval (str label, IndexPar base = NULL)
 	IndexPar par;
 	beg(par, NULL, label, base);
 	end(par, "return %d;");
+	return true;
+}
+
+/*
+\ttitem	$1
+	Bereichstest
+*/
+
+inline bool IndexFunc::range (str & label, IndexPar base = NULL)
+{
+	str expr = xstrcut(label, "%s");
+	int first = xstrcut(label, "%s");
+	int last = xstrcut(label, "%s");
+	str fmt = label ? xstrcut(label, "%s") : "$(n)";
+
+	func.beg();
+	func.line("int x = (" + expr + psub(") - $(first);"));
+	func.line();
+	func.line("if (x < 0)	x = 0;");
+	func.line("if (x > $1)	x = $1;", last - first);
+	func.line();
+
+	if	(!base.mode)
+	{
+		base.val = lbl.entry.dim;
+		base.mode = 1;
+	}
+	else	first++;
+
+	for (int n = first; n <= last; n++)
+	{
+		str name = paste(keysep, base.name, psub(fmt));
+		str desc = paste(lblsep, base.desc, psub(label ? label : fmt));
+		lbl.add(name, desc);
+	}
+		
+	end(base, "return x + %d;");
+	func.end();
 	return true;
 }
 
@@ -366,20 +406,39 @@ des Konstruktors gesagte.
 inline void GlobalIndexFunc (str _name, str _args, str _body, ...)
 {
 	IndexFunc f = IndexFunc(_name, _args, va_list);
-	f.body(_body);
+	f.body(_body, va_list);
 	f.write(true);
 }
 
 inline void LocalIndexFunc (str _name, str _args, str _body, ...)
 {
 	IndexFunc f = IndexFunc(_name, _args, va_list);
-	f.body(_body);
+	f.body(_body, va_list);
 	f.write(false);
 }
 
 /*
+$Examples
+Das Beispiel zeigt die Konstruktion einer Indexfunktion für das
+Geschlecht.
+
+\ms_example	index
+config hdr src
+
+#include <index.ms>
+
+LocalIndexFunc("geschl", "const char *key", string !
+@switch key[0]
+*	UBKG	Unbekanntes Geschlecht
+'M'	MANN	Männer
+'F'	FRAU	Frauen
+@end
+!);
+
+\end
+
 $SeeAlso
-\mref{mksource(1)}, \mref{function(7)}, \mref{label(7)}.
+\mref{mksource(1)}, \mref{cntdef(7)}, \mref{function(7)}, \mref{label(7)}.
 */
 
 #endif	/* index.ms */

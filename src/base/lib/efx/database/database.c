@@ -34,12 +34,8 @@ static char *db_ident (const void *data)
 
 static void db_clean (void *data)
 {
-	EfiDB *db;
-	int i;
-
-	for (i = 0, db = data; i < db->buf.used; i++)
-		CleanData(db->type, (char *) db->buf.data + i * db->type->size);
-
+	EfiDB *db = data;
+	DestroyVecData(db->type, db->buf.used, db->buf.data);
 	vb_free(&db->buf);
 	memfree(db);
 }
@@ -389,20 +385,22 @@ static EfiFuncDef db_func[] = {
 		f_db_load },
 	{ 0, &Type_DB, "DataBase::fload (str name, Expr_t expr = NULL)",
 		f_db_fload },
-	{ 0, &Type_DB, "DataBase::save (IO io, bool mode = false, \
-VirFunc test = NULL, str list = NULL)", f_db_save },
-	{ 0, &Type_DB, "DataBase::fsave (str name, bool = false, \
-VirFunc	test = NULL, str list = NULL)", f_db_fsave },
+	{ 0, &Type_DB, "DataBase::save (IO io, bool mode = false, "
+		"VirFunc test = NULL, str list = NULL)", f_db_save },
+	{ 0, &Type_DB, "DataBase::fsave (str name, bool = false, "
+		"VirFunc test = NULL, str list = NULL)", f_db_fsave },
 	{ 0, &Type_obj, "DataBase::operator+= (.)", f_db_replace },
 	{ 0, &Type_obj, "DataBase::operator-= (.)", f_db_remove },
 	{ 0, &Type_obj, "DataBase::find (.)", f_db_find },
 	{ 0, &Type_obj, "DataBase::get (.)", f_db_get },
 	{ 0, &Type_obj, "DataBase::replace (.)", f_db_replace },
 	{ 0, &Type_obj, "DataBase::remove (.)", f_db_remove },
-	{ FUNC_VIRTUAL, &Type_obj, "operator[] (DataBase *, int * n)",
-		f_db_index },
-	{ FUNC_VIRTUAL, &Type_obj, "operator[] (DataBase *, .)", f_db_find },
-	{ FUNC_VIRTUAL, &Type_obj, "operator() (DataBase *, .)", f_db_get },
+	{ FUNC_VIRTUAL, &Type_obj, "operator[] (restricted DataBase, "
+		"restricted int n)", f_db_index },
+	{ FUNC_VIRTUAL, &Type_obj,
+		"operator[] (restricted DataBase, .)", f_db_find },
+	{ FUNC_VIRTUAL, &Type_obj, "operator() (restricted DataBase, .)",
+		f_db_get },
 	{ 0, &Type_int, "DataBase::index (.)", f_db_getindex },
 	{ 0, &Type_DB, "DataBase::insert (int, int = 1)", f_db_insert },
 	{ 0, &Type_DB, "DataBase::delete (int, int = 1)", f_db_delete },
@@ -414,6 +412,12 @@ VirFunc	test = NULL, str list = NULL)", f_db_fsave },
 
 void SetupDataBase(void)
 {
+	static int init_done = 0;
+
+	if	(init_done)	return;
+
+	init_done = 1;
+
 	AddType(&Type_DB);
 	AddFuncDef(db_func, tabsize(db_func));
 }

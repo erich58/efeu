@@ -22,7 +22,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 pconfig !
-Version = "$Id: edf.esh,v 1.5 2001-11-06 13:51:43 ef Exp $"
+Version = "$Id: edf.esh,v 1.9 2006-03-15 09:20:55 ef Exp $"
 Unit = 1000
 LBL_DEV = Filesystem
 LBL_SIZE = :*:size:de:Größe MB
@@ -52,7 +52,7 @@ virtual void DATA::operator+= & (DATA b)
 }
 
 str fmt_hdr = "%-14s %10s %13s %13s  %s\n";
-str fmt_dat = "%-16s %8.2f %8.2f %3.0f%% %8.2f %3.0f%%  %s\n";
+str fmt_dat = "%-16s %8.1f %8.1f %3.0f%% %8.1f %3.0f%%  %s\n";
 
 virtual int fprint(IO io, DATA x)
 {
@@ -69,7 +69,7 @@ DATA str ()
 	str x[] = split(this);
 	double size = x[1];
 
-#if	UNAME == "Linux"
+#if	UNAME == "Linux" || UNAME == "FreeBSD"
 	double free = x[3];
 	double used = x[2];
 #else
@@ -84,9 +84,9 @@ scale = 1024. / (scale * scale);
 printf(fmt_hdr, LBL_DEV, LBL_SIZE, LBL_USED, LBL_AVAIL, LBL_MOUNT);
 
 #if	UNAME == "Linux"
-IO io = open("|df -P", "r");
+IO io = open("|LANG=en_US df -P", "r");
 #else
-IO io = open("|df", "r");
+IO io = open("|LANG=en_US df", "r");
 #endif
 
 str line;
@@ -98,9 +98,9 @@ while (getline(io, line))
 		continue;
 
 	DATA x = line;
-	iostd << x;
+	fprint(iostd, x);
 	ges += x;
 }
 
-iostd << ges;
+fprint(iostd, ges);
 

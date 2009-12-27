@@ -107,7 +107,7 @@ char *Obj_ident (const EfiObj *obj)
 	{
 		StrBuf *buf;
 			
-		buf = new_strbuf(0);
+		buf = sb_create(0);
 		sb_puts(obj->type->name, buf);
 
 		if	(obj->lval)

@@ -35,6 +35,7 @@ static void var_clean (VarTabEntry *var)
 {
 	if	(var)
 	{
+		memfree((char *) var->name);
 		memfree(var->desc);
 		UnrefObj(var->obj);
 
@@ -119,11 +120,6 @@ static EfiObj *vget (const EfiObj *base, void *data)
 	return Var2Obj(data, base);	
 }
 
-static void vclean (void *data)
-{
-	DelVar(data);
-}
-
 void AddVar (EfiVarTab *tab, EfiVar *def, size_t dim)
 {
 	VarTabEntry entry, *ptr;
@@ -139,8 +135,12 @@ void AddVar (EfiVarTab *tab, EfiVar *def, size_t dim)
 		entry.desc = def->desc;
 		entry.obj = NULL;
 		entry.get = vget;
-		entry.clean = vclean;
-		entry.data = def;
+		entry.clean = rd_deref;
+#if 1
+		entry.data = def; /* !!!! */
+#else
+		entry.data = rd_refer(def); /* !!!! */
+#endif
 		ptr = vb_search(&tab->tab, &entry, var_cmp, VB_REPLACE);
 
 		if	(ptr)
@@ -151,6 +151,27 @@ void AddVar (EfiVarTab *tab, EfiVar *def, size_t dim)
 	}
 }
 
+VarTabEntry *VarTab_xget (EfiVarTab *tab, const char *name)
+{
+	VarTabEntry entry, *ptr;
+
+	entry.name = name;
+	entry.desc = NULL;
+	entry.type = NULL;
+	entry.obj = NULL;
+	entry.get = NULL;
+	entry.clean = NULL;
+	entry.data = NULL;
+
+	tab = CurrentVarTab(tab);
+	ptr = vb_search(&tab->tab, &entry, var_cmp, VB_ENTER);
+
+	if	(ptr->name == name)
+		ptr->name = mstrcpy(name);
+
+	return ptr;
+}
+
 void VarTab_add (EfiVarTab *tab, VarTabEntry *entry)
 {
 	tab = CurrentVarTab(tab);
@@ -159,7 +180,7 @@ void VarTab_add (EfiVarTab *tab, VarTabEntry *entry)
 
 void VarTab_xadd (EfiVarTab *tab, char *name, char *desc, EfiObj *obj)
 {
-	VarTabEntry entry;
+	VarTabEntry entry, *ptr;
 
 	entry.name = name;
 	entry.desc = desc;
@@ -170,7 +191,13 @@ void VarTab_xadd (EfiVarTab *tab, char *name, char *desc, EfiObj *obj)
 	entry.data = name;
 
 	tab = CurrentVarTab(tab);
-	var_clean(vb_search(&tab->tab, &entry, var_cmp, VB_REPLACE));
+	ptr = vb_search(&tab->tab, &entry, var_cmp, VB_REPLACE);
+
+	if	(ptr)
+	{
+		dbg_note(NULL, "[efmain:154]", "s", ptr->name);
+		var_clean(ptr);
+	}
 }
 
 void VarTab_del (EfiVarTab *tab, const char *name)

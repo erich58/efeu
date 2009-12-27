@@ -57,16 +57,18 @@ int pipe_lock = 0;
 static struct {
 	int mode;
 	char *ext;
+	char *res;
 	char *cmd;
 } ztab[] = {
-	{ 'r',  "gz",	"|gzip -cdf" },
-	{ 'w',  "gz",	"|gzip -1 -c >" },
-	{ 'a',  "gz",	"|gzip -1 -c >>" },
-	{ 'r',  "bz2",	"|bzip2 -cd" },
-	{ 'w',  "bz2",	"|bzip2 -c >" },
+	{ 'r',  "gz",	NULL,	"|gzip -cdf $1" },
+	{ 'w',  "gz",	"GZIP", "|gzip $2 -c > $1" },
+	{ 'a',  "gz",	"GZIP",	"|gzip $2 -c >> $1" },
+	{ 'r',  "bz2",	NULL,	"|bzip2 -cd $1" },
+	{ 'w',  "bz2",	NULL,	"|bzip2 -c > $1" },
 };
 
 #define	zcmp(x,m,e)	((x).mode == (m) && strcmp((x).ext, (e)) == 0)
+#define zres(x)		((x).res ? GetResource((x).res, NULL) : NULL)
 
 static char *zcmd (const char *name, const char *mode)
 {
@@ -78,8 +80,13 @@ static char *zcmd (const char *name, const char *mode)
 		ext++;
 
 		for (i = 0; i < tabsize(ztab); i++)
-			if (zcmp(ztab[i], mode[0], ext))
-				return mstrpaste(" ", ztab[i].cmd, name);
+		{
+			if	(zcmp(ztab[i], mode[0], ext))
+			{
+				return mpsubarg(ztab[i].cmd, "nss",
+					name, zres(ztab[i]));
+			}
+		}
 	}
 
 	return NULL;
@@ -91,7 +98,7 @@ static char *zcmd (const char *name, const char *mode)
 
 static FILE *open_pipe (const char *name, int mode)
 {
-	FILE *file = popen(name + 1, ptype[mode]);
+	FILE *file = popen((char *) name + 1, ptype[mode]);
 	
 	if	(file == NULL)
 		dbg_error(NULL, FMT_2, "ss", name + 1, ptype[mode]);

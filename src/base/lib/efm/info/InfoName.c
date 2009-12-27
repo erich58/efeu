@@ -35,7 +35,7 @@ char *InfoNameToken (char **pptr)
 	if	(pptr == NULL || *pptr == NULL)
 		return NULL;
 
-	sb = new_strbuf(0);
+	sb = sb_create(0);
 
 	for (ptr = *pptr; *ptr != 0; ptr++)
 	{

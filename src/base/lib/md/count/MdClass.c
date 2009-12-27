@@ -24,52 +24,32 @@ A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
 
 #include <EFEU/mdcount.h>
 
-#define	BSIZE	1000
-
-static char *rt_ident (const void *ptr)
-{
-	const MdClassTab *tab = ptr;
-	return msprintf("%s[%d]", tab->reftype->label, tab->tab.used);
-}
-
-static void rt_clean (void *ptr)
-{
-	MdClassTab *tab = ptr;
-	vb_clean(&tab->tab, NULL);
-	memfree(tab);
-}
-
-static const RefType reftype = REFTYPE_INIT("MdClassTab", rt_ident, rt_clean);
-
-MdClassTab* MdClassTab_create (void)
-{
-	MdClassTab *tab = memalloc(sizeof(MdClassTab));
-	vb_init(&tab->tab, BSIZE, sizeof(MdClass *));
-	return rd_init(&reftype, tab);
-}
-
-static int cmp (const void *pa, const void *pb)
+static int cmp_ctab (const void *pa, const void *pb)
 {
 	MdClass * const *a = pa;
 	MdClass * const *b = pb;
 	return mstrcmp((*a)->name, (*b)->name);
 }
 
-void MdClass_add (MdClassTab *tab, MdClass *entry, size_t dim)
+void MdClass_add (MdCountTab *tab, MdClass *entry, size_t dim)
 {
-	for (; dim-- > 0; entry++)
+	if	(tab)
 	{
-		MdClass *key = entry;
-		vb_search(&tab->tab, &key, cmp, VB_REPLACE);
+		for (; dim-- > 0; entry++)
+		{
+			MdClass *key = entry;
+			vb_search(&tab->ctab, &key, cmp_ctab, VB_REPLACE);
+		}
 	}
+	else	dbg_note("md", "[mdmat:302]", NULL);
 }
 
-MdClass *MdClass_get (MdClassTab *tab, const char *name)
+MdClass *MdClass_get (MdCountTab *tab, const char *name)
 {
 	MdClass buf, *key, **ptr;
 	buf.name = (char *) name;
 	key = &buf;
-	ptr = vb_search(&tab->tab, &key, cmp, VB_SEARCH);
+	ptr = vb_search(&tab->ctab, &key, cmp_ctab, VB_SEARCH);
 	return ptr ? *ptr : NULL;
 }
 

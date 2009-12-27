@@ -59,6 +59,9 @@ n:lim | blklim
 b:size | blksize
 	:*:block size
 	:de:Maximale Blockgröße, Vorgabe {blksize}
+s:size | splitsize
+	:*:split size
+	:de:Aufspaltgröße für Ausgabedatei, Vorgabe {splitsize}
 :dev |
 	:*:tape device
 	:de:Bandlaufwerk

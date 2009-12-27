@@ -1,0 +1,6 @@
+\sec	Allgemeines
+
+Die Funktionalität von EDB läßt sich durch Einbinden von gemeinam genutzen
+Bibliotheken erweitern. Insbesonders können damit auch
+Ein/Ausgabefunktionen für einen direkten Datenaustausch mit anderen
+Datenbanksystemen geladen werden.

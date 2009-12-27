@@ -166,7 +166,7 @@ static void f_synopsis (CmdPar *par, IO *io, const char *arg)
 	if	(testflag(arg, 'i'))
 		putvar(par, io, ".synopsis.intro");
 
-	CmdPar_synopsis(par, io);
+	CmdPar_synopsis(par, io, testflag(arg, 'x'));
 }
 
 static void f_arglist (CmdPar *par, IO *io, const char *arg)
@@ -178,6 +178,11 @@ static void f_arglist (CmdPar *par, IO *io, const char *arg)
 		putvar(par, io, ".arglist.intro");
 
 	CmdPar_arglist(par, io);
+}
+
+static void f_options (CmdPar *par, IO *io, const char *arg)
+{
+	CmdPar_options(par, io);
 }
 
 static void f_environ (CmdPar *par, IO *io, const char *arg)
@@ -226,6 +231,7 @@ static CmdParExpand builtin[] = {
 		":de:Handbuchkopf mit Überschrift", f_name },
 	{ "synopsis", ":*:Synopsis:de:Übersicht", f_synopsis },
 	{ "arglist", ":*:command parameters:de:Programmparameter", f_arglist },
+	{ "options", ":*:command options:de:Programmoptionen", f_options },
 	{ "environ", ":*:Environment:de:Umgebungsvariablen", f_environ },
 	{ "varlist", ":*:List of variables:de:Variablenliste", f_varlist },
 	{ "version", ":*:version number:de:Versionsnummer", f_version },

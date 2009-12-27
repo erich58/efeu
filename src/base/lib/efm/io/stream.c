@@ -87,13 +87,13 @@ static int f_ctrl (void *ptr, int req, va_list list);
 static size_t f_dbread (void *par, void *p, size_t r, size_t s, size_t n)
 {
 	FILE_IO *fio = par;
-	return dbread(fio->file, p, r, s, n);
+	return r * dbread(fio->file, p, r, s, n);
 }
 
 static size_t f_dbwrite (void *par, const void *p, size_t r, size_t s, size_t n)
 {
 	FILE_IO *fio = par;
-	return dbwrite(fio->file, p, r, s, n);
+	return r * dbwrite(fio->file, p, r, s, n);
 }
 
 
@@ -147,6 +147,7 @@ static int f_ctrl (void *ptr, int req, va_list list)
 {
 	FILE_IO *fio = ptr;
 	int stat;
+	long offset;
 
 	switch (req)
 	{
@@ -157,9 +158,26 @@ static int f_ctrl (void *ptr, int req, va_list list)
 		memfree(fio);
 		return stat;
 
+	case IO_FLUSH:
+
+		return fflush(fio->file);
+
 	case IO_REWIND:
 	
 		return fseek(fio->file, 0l, SEEK_SET);
+
+	case IO_GETPOS:
+
+		if	((offset = ftell(fio->file)) < 0)
+			return EOF;
+
+		*va_arg(list, unsigned *) = offset;
+		return 0;
+
+	case IO_SETPOS:
+
+		offset = *va_arg(list, unsigned *);
+		return fseek(fio->file, offset, SEEK_SET);
 
 	case IO_STAT:
 

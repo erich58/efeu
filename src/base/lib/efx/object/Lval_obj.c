@@ -41,12 +41,14 @@ static void obj_free (EfiObj *obj)
 
 static void obj_update (EfiObj *obj)
 {
-	;
+	EfiObj **ptr = (void *) (obj + 1);
+	UpdateLval(*ptr);
 }
 
 static void obj_sync (EfiObj *obj)
 {
-	;
+	EfiObj **ptr = (void *) (obj + 1);
+	SyncLval(*ptr);
 }
 
 static char *obj_ident (const EfiObj *obj)

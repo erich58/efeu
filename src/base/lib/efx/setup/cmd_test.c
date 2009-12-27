@@ -50,6 +50,10 @@ static void f_vtabstack (EfiFunc *func, void *rval, void **arg)
 	{
 		io_puts(", ", io);
 		list_vtab(io, stack->tab, limit);
+
+		if	(stack->obj)
+			io_printf(io, "(%s)", stack->obj->type->name);
+
 	}
 
 	io_putc('\n', io);
@@ -159,6 +163,27 @@ static void f_parselist (EfiFunc *func, void *rval, void **arg)
 	ListParseDef(Val_io(arg[0]));
 }
 
+static void f_typehead (EfiFunc *func, void *rval, void **arg)
+{
+	Val_str(rval) = TypeHead(Val_type(arg[0]));
+}
+
+static void f_getconv (EfiFunc *func, void *rval, void **arg)
+{
+	EfiKonv *konv = GetKonv(NULL, Val_type(arg[0]), Val_type(arg[1]));
+	Val_func(rval) = konv ? rd_refer(konv->func) : NULL;
+}
+
+static EfiObj *func_type (const EfiObj *base, void *data)
+{
+	EfiFunc *func = base ? Val_ptr(base->data) : NULL;
+	return func ? ConstObj(&Type_type, &func->type) : NULL;
+}
+
+static EfiMember var_func[] = {
+	{ "type", &Type_type, func_type, NULL },
+};
+
 /*	Initialisierung
 */
 
@@ -167,7 +192,11 @@ void CmdSetup_test(void)
 	SetFunc(0, &Type_void, "vtabstack (int = 0, IO = iostd)", f_vtabstack);
 	SetFunc(0, &Type_int, "dist (Type_t a, Type_t b)", f_typedist);
 	SetFunc(0, &Type_void, "showkonv (Type_t a, Type_t b)", f_showkonv);
+	SetFunc(0, &Type_func, "getconv (Type_t a, Type_t b)", f_getconv);
+	SetFunc(0, &Type_func, "Type_t::getconv (Type_t b)", f_getconv);
 	SetFunc(0, &Type_void, "lcshow (IO = iostd)", f_lcshow);
 	SetFunc(0, &Type_void, "locale (IO = iostd)", f_locale);
 	SetFunc(0, &Type_void, "parselist (IO = iostd)", f_parselist);
+	SetFunc(0, &Type_str, "typehead (Type_t type)", f_typehead);
+	AddEfiMember(Type_func.vtab, var_func, tabsize(var_func));
 }

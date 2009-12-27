@@ -42,7 +42,7 @@ char *mlangcpy (const char *str, const char *lang)
 		int c;
 
 		io = langfilter(io_cstr(str), lang);
-		buf = new_strbuf(0);
+		buf = sb_create(0);
 
 		while ((c = io_getc(io)) != EOF)
 			sb_putc(c, buf);

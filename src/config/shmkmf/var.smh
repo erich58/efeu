@@ -1,0 +1,122 @@
+# :*:output variable assignments
+# :de:Ausgabe von Variablenzuweisungen
+#
+# $Synopsis
+# <=[=> include $1 <=]=>
+#
+# $Copyright (C) 2004 Erich Frühstück
+# This file is part of EFEU.
+# 
+# EFEU is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+# 
+# EFEU is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public
+# License along with EFEU; see the file COPYING.
+# If not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+test $_var_smh && return
+_var_smh=1
+
+# $pconfig !
+# n |
+# 	:*:suppress empty line before assignment
+#	:de:Leerezeile vor Variablenzuweisung unterdrücken
+# x |
+#	:*:create additional shell variable with same name
+#	and value <"|$$(|<name>|)|">.
+#	:de:Zusätzlich Shell-Variable gleichen Namens und Wert
+#	<"|$$(|<name>|)|"> einrichten.
+# :name |
+#	:*:name variable
+#	:de:Name der Variablen
+# *val |
+#	:*:list of assignment values
+#	:de:Liste von Zuweisungswerten
+# !
+# :*:
+# The funktion $! creates a variable assignment for |make|.
+# The following arguments are accepted:
+# :de:
+# Die Funktion $! gibt eine Variablenzuweisung für |make| aus.
+# Folgende Optionen und Argumente werden akzeptiert:
+#
+# @arglist
+#
+# :*:
+# If more than one assignment argument is given, the assignment
+# is broken into several continuation lines. See the examples below.
+# :de:
+# Falls mehr als ein Zuweisungsargument angegeben wurde, wird die
+# Zuweisung auf mehrere Fortsetzungszeilen aufgeteilt. Vergleiche dazu die
+# untenstehenden Beispiele.
+
+mf_var ()
+{
+	_var_fmt="\n%s="
+	_var_set=
+
+	while [ -n "$1" ]
+	do
+		case "$1" in
+		-n)	_var_fmt="%s="; shift;;
+		-x)	_var_set=1; shift;;
+		--)	shift;;
+		-*)	shmkmf_invop "mf_var" "$1"; exit 1;;
+		*)	break;;
+		esac
+	done
+
+	test -n "$_var_set" && eval "$1='\$($1)'"
+
+	printf "$_var_fmt" "$1"
+	shift
+
+	if [ "$#" -gt 0 ]; then
+		printf " %s" "$1"
+		shift
+
+		for _x
+		do
+			if [ "$_x" ]; then
+				printf " %s\n\t%s" "\\" "$_x"
+			fi
+		done
+	fi
+
+	printf "\n"
+}
+
+# $Example
+# \config shmkmf
+# :*:
+# The following lines
+# \shmkmf[-x] creates the output
+# mf_var v1
+# mf_var -n v2 "defination"
+# mf_var v3 "first argument" "second argument"
+# \end
+# :de:
+# Die folgenden Zeilen
+# \shmkmf[-x] generieren die Ausgabe
+# mf_var v1
+# mf_var -n v2 "Definition"
+# mf_var v3 "Erstes Argument" "Zweites Argument"
+# \end
+
+# $Note
+# :*:The header |$1| is preloaded by |shmkmf|.
+# :de:Die Headerdatei |$1| wird bereits von |shmkmf| geladen.
+
+# $SeeAlso
+# \mref{shmkmf(1)}, 
+# \mref{comment.smh(7)},
+# \mref{rule.smh(7)},
+# \mref{base.smh(7)}.

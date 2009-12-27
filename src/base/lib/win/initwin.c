@@ -98,5 +98,10 @@ void InitWin(void)
 
 void SetupWin(void)
 {
-	;
+	static int setup_done = 0;
+
+	if	(setup_done)	return;
+
+	setup_done = 1;
+	InfoBrowser = WinInfo;
 }

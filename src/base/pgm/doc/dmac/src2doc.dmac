@@ -163,5 +163,6 @@ cmd = cmd ? "|" + cmd : "$1";
 
 for (x in SourceList)
 	if (pselect(x.name, list))
-		copy(open(psub(cmd, x.path), "rzd"), cout);
+		MakeDepend ? depend(x.path) : \
+			copy(open(psub(cmd, x.path), "rz"), cout);
 }}

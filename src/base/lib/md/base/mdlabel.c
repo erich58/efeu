@@ -112,7 +112,7 @@ MdLabel *init_label (const char *name, const char *def)
 	MdLabel *label, **ptr;
 	char *fmt;
 
-	dim = strsplit(def, ".", &list);
+	dim = mstrsplit(def, ".", &list);
 	label = NULL;
 	ptr = &label;
 	fmt = (dim > 1 ? "%s%d" : "%s");
@@ -124,6 +124,7 @@ MdLabel *init_label (const char *name, const char *def)
 		ptr = &(*ptr)->next;
 	}
 
+	memfree(list);
 	return label;
 }
 

@@ -48,7 +48,7 @@ static void expand_func (CmdPar *par, IO *in, IO *out, int c)
 	CmdParExpand *eval;
 	char *arg;
 
-	sb = new_strbuf(0);
+	sb = sb_create(0);
 
 	while (!isspace(c) && c != EOF)
 	{
@@ -62,7 +62,7 @@ static void expand_func (CmdPar *par, IO *in, IO *out, int c)
 	if	(eval == NULL)
 	{
 		io_ungetc(c, in);
-		io_putc('@', in);
+		io_putc('@', out);
 		io_puts((char *) sb->data, out);
 		sb_delete(sb);
 		return;
@@ -87,7 +87,7 @@ static void expand_func (CmdPar *par, IO *in, IO *out, int c)
 	else	arg = NULL;
 
 	eval->eval(par, out, arg);
-	del_strbuf(sb);
+	sb_destroy(sb);
 }
 
 static void subcopy (CmdPar *par, IO *in, IO *out, int delim);
@@ -98,7 +98,7 @@ static void expand_var (CmdPar *par, IO *in, IO *out, int key)
 	char *name;
 	IO *io;
 
-	sb = new_strbuf(0);
+	sb = sb_create(0);
 	io = io_strbuf(sb);
 	subcopy(par, in, io, key);
 	io_close(io);
@@ -114,9 +114,17 @@ static void expand_var (CmdPar *par, IO *in, IO *out, int key)
 	sb_delete(sb);
 }
 
-static void expand (CmdPar *par, IO *in, IO *out)
+void CmdPar_expand (CmdPar *par, IO *in, IO *out)
 {
-	int c = io_getc(in);
+	int c;
+
+	if	(par == NULL)
+	{
+		io_putc('@', out);
+		return;
+	}
+
+	c = io_getc(in);
 
 	if	(isspace(c))
 	{
@@ -154,13 +162,13 @@ static void subcopy (CmdPar *par, IO *in, IO *out, int delim)
 			return;
 		case '$':
 			if	(!buf)
-				buf = new_strbuf(1024);
+				buf = sb_create(1024);
 
 			p = psubexpand(buf, in, 0, NULL);
 			io_puts(p, out);
 			break;
 		case '@':
-			expand(par, in, out);
+			CmdPar_expand(par, in, out);
 			break;
 		default:
 			io_putc(c, out);
@@ -168,7 +176,7 @@ static void subcopy (CmdPar *par, IO *in, IO *out, int delim)
 		}
 	}
 
-	del_strbuf(buf);
+	sb_destroy(buf);
 }
 
 
@@ -187,6 +195,12 @@ void CmdPar_usage (CmdPar *par, IO *out, const char *fmt)
 	io_close(out);
 }
 
+char *CmdPar_hpath (CmdPar *par)
+{
+	par = CmdPar_ptr(par);
+	return fsearch(ApplPath, HLP_PFX, par->name, HLP_SFX);
+}
+
 void CmdPar_manpage (CmdPar *par, IO *out)
 {
 	char *p;
@@ -194,6 +208,14 @@ void CmdPar_manpage (CmdPar *par, IO *out)
 
 	par = CmdPar_ptr(par);
 	p = fsearch(ApplPath, HLP_PFX, par->name, HLP_SFX);
+
+	if	(!p)
+	{
+		char *base = mbasename(par->name, &p);
+		p = fsearch(ApplPath, HLP_PFX, base, HLP_SFX);
+		memfree(base);
+	}
+
 	def = p ? io_fileopen(p, "r") : io_cstr(HLP_FMT);
 	memfree(p);
 	out = out ? io_refer(out) : STD_OUT;

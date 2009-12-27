@@ -27,6 +27,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/Debug.h>
 #include <EFEU/preproc.h>
 
+#define	ESH_PFX	"scripts"
+
 static int *pgm_argc = NULL;
 static char **pgm_argv = NULL;
 
@@ -44,10 +46,7 @@ static EfiObj *expr_argc (void *par, const EfiObjList *list)
 
 static EfiObj *expr_argv (void *par, const EfiObjList *list)
 {
-	Buf_vec.type = &Type_str;
-	Buf_vec.data = pgm_argv;
-	Buf_vec.dim = *pgm_argc;
-	return NewObj(&Type_vec, &Buf_vec);
+	return EfiVecObj(&Type_str, pgm_argv, *pgm_argc);
 }
 
 static EfiParseDef esh_pdef[] = {
@@ -64,6 +63,7 @@ int EshEval (int *narg, char **arg)
 	int i;
 	CmdPar *par;
 	char *name;
+	char *p;
 	IO *in;
 
 	SetProgName(arg[0]);
@@ -84,7 +84,11 @@ int EshEval (int *narg, char **arg)
 	pgm_argc = narg;
 	pgm_argv = arg;
 
-	if	(*narg > 1 && pgm_argv[1][0] != '-')
+	if	((p = CmdPar_getval(par, "CmdString", NULL)))
+	{
+		in = io_mstr(mstrcpy(p));
+	}
+	else if	(*narg > 1 && pgm_argv[1][0] != '-')
 	{
 		(*pgm_argc)--;
 
@@ -102,7 +106,7 @@ int EshEval (int *narg, char **arg)
 		}
 		else	ProgName = mstrcpy(pgm_argv[0]);
 
-		name = fsearch(IncPath, NULL, arg[0], 
+		name = fsearch(IncPath, ESH_PFX, arg[0], 
 			CmdPar_getval(par, "CmdType", NULL));
 		in = io_fileopen(name ? name : arg[0], "r");
 		memfree(name);

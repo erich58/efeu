@@ -32,6 +32,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/MakeDepend.h>
 #include <EFEU/cmdeval.h>
 #include <Math/TimeSeries.h>
+#include <Math/StatData.h>
 #include <Math/pnom.h>
 #include <Math/mdmath.h>
 #include <Math/func.h>
@@ -43,13 +44,15 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	ALLOW_SPLIT	0	/* Ausgabeaufspaltung zulassen */
 
-#define	OUT_HDR	0
-#define	OUT_SRC	1
-#define	OUT_DOC	2
-#define	OUT_TEX	3
+/*	Globale Variablen
+*/
+
+static char *BaseName = NULL;	/* Basisname */
+static int Verbose = 0;		/* Protokollmodus */
 
 /*	Ausgabedefinitionen
 */
+
 
 typedef struct {
 	char *name;	/* Name */
@@ -64,28 +67,48 @@ typedef struct {
 
 static OUTPUT output[] = {
 	{ "hdr", "h", "/*\t$1\n*/\n", 1, NULL, 0, NULL, 0 },
+	{ "top", NULL, NULL, 0, NULL, 0, NULL, 0 },
 	{ "src", "c", "/*\t$1\n*/\n", 0, NULL, 0, NULL, 0 },
 	{ "tex", "tex", "% $1\n", 0, NULL, 0, NULL, 0 },
 	{ "doc", "doc", "/*\t$1\n*/\n", 0, NULL, 0, NULL, 0 },
 	{ "info", "info", "/*\t$1\n*/\n", 0, NULL, 0, NULL, 0 },
 };
 
+#define	OUT_HDR	0
+#define	OUT_TOP	1
+#define	OUT_SRC	2
+
+static void divide_src (void)
+{
+	if	(!output[OUT_SRC].io)	return;
+
+	if	(!output[OUT_HDR].io)
+	{
+		if	(Verbose)
+			io_printf(ioerr, "%s == %s\n", output[OUT_HDR].name,
+				output[OUT_SRC].name);
+
+		output[OUT_HDR].io = output[OUT_SRC].io;
+		output[OUT_SRC].io = io_divide(output[OUT_HDR].io, 0);
+	}
+
+	if	(!output[OUT_TOP].io)
+	{
+		output[OUT_TOP].io = output[OUT_SRC].io;
+		output[OUT_SRC].io = io_divide(output[OUT_TOP].io, 0);
+	}
+}
+
 static OUTPUT *get_output(const char *name)
 {
 	int i;
 
 	for (i = 0; i < tabsize(output); i++)
-		if (mstrcmp(name,output[i].name) == 0)
+		if	(output[i].ext && mstrcmp(name, output[i].name) == 0)
 			return output + i;
 
 	return NULL;
 }
-
-/*	Globale Variablen
-*/
-
-static char *BaseName = NULL;	/* Basisname */
-static int Verbose = 0;		/* Protokollmodus */
 
 static EfiVarDef globvar[] = {
 	{ "HeaderName",		&Type_str, &output[OUT_HDR].fname },
@@ -135,7 +158,7 @@ static void protect_name (const char *name, IO *io)
 
 static int SetupOutput = 1;
 
-static void open_output(OUTPUT *out, const char *name)
+static void open_output (OUTPUT *out, const char *name)
 {
 	if	(out->io)	return;
 
@@ -178,7 +201,7 @@ static void open_output(OUTPUT *out, const char *name)
 	}
 }
 
-static void close_output(OUTPUT *out)
+static void close_output (OUTPUT *out)
 {
 	if	(!out->fname)	out->flag = 0;
 	if	(!out->io)	return;
@@ -199,7 +222,7 @@ static void close_output(OUTPUT *out)
 }
 
 #if	ALLOW_SPLIT
-static void include_output(OUTPUT *out, const char *name)
+static void include_output (OUTPUT *out, const char *name)
 {
 	if	(out->flag)
 		AddTarget(name); 
@@ -233,14 +256,8 @@ static void include_output(OUTPUT *out, const char *name)
 
 static void add_output(OUTPUT *out)
 {
-	EfiVar *var;
-
-	var = memalloc(sizeof(EfiVar));
-	memset(var, 0, sizeof(EfiVar));
-	var->name = out->name;
-	var->type = &Type_io;
-	var->data = &out->io;
-	AddVar(NULL, var, 1);
+	EfiObj *obj = LvalObj(&Lval_ptr, &Type_io, &out->io);
+	VarTab_xadd(NULL, mstrcpy(out->name), NULL, obj);
 }
 
 /*	Konfiguration
@@ -299,6 +316,7 @@ static EfiObj *p_config (IO *io, void *data)
 		eval_stat = 0;
 #endif
 
+	divide_src();
 	return NULL;
 }
 
@@ -335,31 +353,22 @@ static void eval_file(const char *name)
 	CmdEval_cin = save_cin;
 }
 
-static void f_include (EfiFunc *func, void *rval, void **arg)
-{
-	if	(Val_str(arg[0]) != NULL)
-		eval_file(Val_str(arg[0])); 
-}
-
-static EfiFuncDef fdef[] = {
-	{ 0, &Type_void, "include (str)", f_include },
-};
-
 
 int main (int narg, char **arg)
 {
 	char *bootstrap;
 	int i;
 
-	SetVersion("$Id: mksource.c,v 1.19 2003-01-04 09:43:51 ef Exp $");
+	SetVersion("$Id: mksource.c,v 1.31 2006-09-07 10:35:24 ef Exp $");
 	SetProgName(arg[0]);
-	bootstrap = listcat(" ", arg, narg);
+	bootstrap = mtabcat(" ", arg, narg);
 
 	SetupStd();
 	SetupUtil();
 	SetupPreproc();
 
 	SetupDataBase();
+	SetupEDB();
 	SetupTimeSeries();
 	SetupRandom();
 	SetupMdMat();
@@ -367,11 +376,11 @@ int main (int narg, char **arg)
 	SetupMdMath();
 	SetupPnom();
 	SetupMathFunc();
+	SetupStatData();
 	SetupReadline();
 	SetupDebug();
 
 	AddParseDef(pdef, tabsize(pdef));
-	AddFuncDef(fdef, tabsize(fdef));
 	AddVarDef(NULL, globvar, tabsize(globvar));
 
 	SetupOutput = 1;
@@ -401,7 +410,7 @@ int main (int narg, char **arg)
 
 		if	(suffix == NULL)
 		{
-			StrBuf *sb = new_strbuf(0);
+			StrBuf *sb = sb_create(0);
 
 			if	(dname)
 			{
@@ -427,6 +436,7 @@ int main (int narg, char **arg)
 		add_output(output + i);
 	}
 
+	divide_src();
 	eval_file(Template);
 
 	for (i = 0; i < tabsize(output); i++)
@@ -450,7 +460,7 @@ int main (int narg, char **arg)
 */
 	if	(!DependName)
 	{
-		DependName = listcat(" ", TargetList.data, TargetList.used);
+		DependName = mtabcat(" ", TargetList.data, TargetList.used);
 		
 		if	(!DependName)	return 0;
 	}
@@ -461,12 +471,12 @@ int main (int narg, char **arg)
 			printf("\n%s:: %s\n", AllTarget, DependName);
 
 		if	(DependTarget)
-			printf("\n%s:: %s\n\t%s -d %s >> MAKEFILE\n",
+			printf("\n%s:: %s\n\t%s -d %s >> $(MAKEFILE)\n",
 				DependTarget, Template, ProgName, Template);
 
 		if	(CleanTarget)
 		{
-			printf("\n%s::\n\t$(RM)", CleanTarget);
+			printf("\n%s::\n\trm -f", CleanTarget);
 
 			for (i = 0; i < tabsize(output); i++)
 				if	(output[i].flag)

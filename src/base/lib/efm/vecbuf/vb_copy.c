@@ -69,7 +69,7 @@ mit |memalloc| generiert. Ansonsten muß <data> auf einen
 Speicherbereich zeigen, der genügend groß ist um alle in <buf>
 gespeicherten Werte zu übernehmen.
 
-Falls anstelle von <buf> ein Nullpointer übergeben wurde, liefert
+Falls anstelle von <buf> ein Nullpointer übergeben wurde,
 liefert die Funktion einen Nullpointer.
 Falls keine Daten zu kopieren sind, liefert die Funktion <data> ohne
 darauf zuzugreifen.

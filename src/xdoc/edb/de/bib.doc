@@ -1,0 +1,32 @@
+\bibliography
+
+\bibitem interp
+Erich Frühstück.
+Der EFEU Interpreter.
+EFEU--Handbuch
+
+\bibitem mdmat
+Erich Frühstück.
+Mehrdimensionale
+Datenmatrizen.
+EFEU--Handbuch
+
+\bibitem eisen
+Peter Eisentraut.
+PostgreSQL ge-packt.
+Bonn: mitp, 2005
+
+\bibitem geschwinde
+Ewald Geschwinde and Hans-Jürgen Schönig.
+PostgreSQL: developer's handbook.
+Indianapolis: Sams Publishing, 2001
+
+\bibitem heuer
+Andreas Heuer, Gunter Saake.
+Datenbanken: Konzepte und Sprachen.
+Bonn: MITP-Verlag, 2000
+
+\bibitem momjian
+Bruce Momjian.
+PostgeSQL Einführung und Konzepte.
+München Boston: Addison-Wesley 20004

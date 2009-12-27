@@ -21,6 +21,71 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/object.h>
+#include <EFEU/preproc.h>
+#include <EFEU/parsedef.h>
+
+#define	INC_PFX	"types"
+
+EfiType *XGetType (const char *p)
+{
+	EfiType *type;
+	char *fname;
+
+	if	((type = GetType(p)))
+		return type;
+
+	if	((fname = fsearch(IncPath, INC_PFX, p, "so")))
+	{
+		char *setup = mstrpaste("_", p, "setup");
+		loadlib(fname, setup);
+		memfree(setup);
+		memfree(fname);
+	}
+	else if	((fname = fsearch(IncPath, INC_PFX, p, "hdr")))
+	{
+		Efi *interp = Efi_ptr(NULL);
+		IO *io = io_cmdpreproc(io_fileopen(fname, "rd"));
+
+		PushVarTab(RefVarTab(GlobalVar), NULL);
+		EfiSrc_hdr(interp, fname);
+		CmdEval(io, NULL);
+		EfiSrc_pop(interp);
+		PopVarTab();
+		io_close(io);
+		memfree(fname);
+	}
+
+	return GetType(p);
+}
+
+static EfiType *get_type (IO *io)
+{
+	EfiParseDef *parse;
+	EfiType *type;
+	void *p;
+
+	type = NULL;
+
+	if	(!io_scan(io, SCAN_NAME, &p))
+		return NULL;
+
+	if	((parse = GetParseDef(p)) != NULL)
+	{
+		EfiObj *obj = (*parse->func)(io, parse->data);
+
+		if	(obj && obj->type == &Type_type)
+			type = Val_type(obj->data);
+
+		UnrefObj(obj);
+		return type;
+	}
+
+	if	((type = XGetType(p)))
+		return type;
+
+	io_error(io, "[efmain:128]", "s", p);
+	return NULL;
+}
 
 EfiType *Parse_type(IO *io, EfiType *type)
 {
@@ -28,26 +93,31 @@ EfiType *Parse_type(IO *io, EfiType *type)
 
 	if	(type == NULL)
 	{
-		obj = Parse_obj(io, SCAN_NAME);
-
-		if	(obj && obj->type == &Type_type)
-			type = Val_type(obj->data);
-
-		UnrefObj(obj);
+		if	(!(type = get_type(io)))
+		{
+			io_error(io, "[efmain:123]", NULL);
+			return NULL;
+		}
 	}
-
-	if	(type == NULL)
-		io_error(io, "[efmain:123]", NULL);
 
 	while (io_eat(io, " \t") == '[')
 	{
 		io_getc(io);
-		obj = EvalObj(Parse_index(io), &Type_int);
 
-		if	(obj == NULL)	return NULL;
+		if	(io_eat(io, " \t") == ']')
+		{
+			io_getc(io);
+			type = NewVecType(type, 0);
+		}
+		else
+		{
+			obj = EvalObj(Parse_index(io), &Type_int);
 
-		type = NewVecType(type, Val_int(obj->data));
-		UnrefObj(obj);
+			if	(obj == NULL)	return NULL;
+
+			type = NewVecType(type, Val_int(obj->data));
+			UnrefObj(obj);
+		}
 	}
 
 	return type;

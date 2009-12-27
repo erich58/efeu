@@ -26,18 +26,29 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/Debug.h>
 #include "eistty.h"
 
-#define	CONFIRM_QUIT	0
+#if	USE_EFWIN
 
 #define	ctrl(c)	((c) & 0x1f)
 
-#define	PSIZE ((info_win->_maxy - 2) / 2)
+#define	PSIZE	((info_win->_maxy - 2) / 2)
 
-static int eval(int c);
+#define	GET()	wgetch(info_win)
+#define	WINKEY(x)	case x:
+
+#else
+
+#define	PSIZE	((Lines - 2) / 2)
+#define	GET()	io_getc(iostd)
+#define	WINKEY(x)
+
+#endif
+
+static int eval(void);
 
 static InfoNode *LoadCommand(InfoNode *info, const char *def)
 {
 	char *name = strrchr(def, '/');
-	char *cmd = msprintf("%s --dump", def);
+	char *cmd = msprintf("%s --info=dump:", def);
 	IO *io = io_popen(cmd, "r");
 
 	info = AddInfo(info, name ? name + 1 : def, NULL, NULL, NULL);
@@ -62,7 +73,7 @@ static InfoNode *load(InfoNode *info, const char *def)
 
 	io = io_fileopen(name, "rz");
 	info = AddInfo(info, def, NULL, NULL, NULL);
-	io = io_ptrpreproc(io, &InfoPath);
+	io = io_ptrpreproc(io, &InfoPath, NULL);
 	IOLoadInfo(info, io);
 	io_close(io);
 	memfree(name);
@@ -74,14 +85,15 @@ static InfoNode *load(InfoNode *info, const char *def)
 
 int main(int narg, char **arg)
 {
-	int i, Lines;
-	int key;
+	int i;
 	int flag;
 	InfoNode *info;
 
-	SetVersion("$Id: eis.c,v 1.6 2002-12-20 16:40:00 ef Exp $");
+	SetVersion("$Id: eis.c,v 1.13 2006-01-04 18:28:24 ef Exp $");
 	SetupStd();
+#if	USE_EFWIN
 	SetupWin();
+#endif
 	ParseCommand(&narg, arg);
 	SetInfoPath(GetResource("Path", NULL));
 
@@ -98,96 +110,74 @@ int main(int narg, char **arg)
 	if	(narg == 1)	info = load(NULL, GetResource("Top", NULL));
 	if	(narg > 2)	info = NULL;
 	
-	Lines = GetIntResource("Lines", 0);
-	InitWin();
+	Lines = GetIntResource("Lines", Lines);
+	ShowInit();
 
-	if	(Lines)
-	{
-		info_win = NewWindow(WindowSize(Lines, COLS, 0, 0, 0));
-	}
-	else	info_win = NewWindow(NULL);
-
-	keypad(info_win, TRUE);
-	scrollok(info_win, FALSE);
-	leaveok(info_win, TRUE);
-	ShowWindow(info_win);
-
-	key = '\f';
 	MakePart(GetInfo(info, GetResource("Node", NULL)));
+	ShowPart();
 
-	while (eval(key))
-		key = wgetch(info_win);
+	while (eval());
 
-	DelWindow(info_win);
-	EndWin();
+	ShowExit();
 	exit(EXIT_SUCCESS);
 	return 0;
 }
 
-static int eval(int key)
+static int eval(void)
 {
 	char *p;
+	int key;
+
+	key = GET();
 
 	switch (key)
 	{
 	case '\f':
+#if	USE_EFWIN
 		wclear(info_win);
 		wrefresh(info_win);
+#endif
 		break;
-	case 'q':
-#if	CONFIRM_QUIT
-		wmove(info_win, LASTLINE, 0);
-		wclrtobot(info_win);
-		wattrset(info_win, 0);
-		leaveok(info_win, FALSE);
-		waddstr(info_win, "Programm beenden ? j\b");
-		wrefresh(info_win);
-		leaveok(info_win, TRUE);
-
-		switch (wgetch(info_win))
-		{
-		case '\n':
-		case '\r':
-		case 'j':
-		case 'J':
-			return 0;
-		default:
-			break;
-		}
-
-		break;
-#else
+#if	!USE_EFWIN
+	case EOF:
+		io_putc('\n', iostd);
 		return 0;
 #endif
+	case 'q':
+		return 0;
 	case 'h':
-	case KEY_HOME:
+	WINKEY(KEY_HOME)
 		GotoHome(); break;
 	case 'e':
-	case KEY_END:
+	WINKEY(KEY_END)
 		GotoEnd(); break;
 	case 'f':
 	case '\n':
 	case '\r':
-	case KEY_RIGHT:
+	WINKEY(KEY_RIGHT)
 		NextInfo(); break;
 	case 'b':
-	case KEY_LEFT:
+	WINKEY(KEY_LEFT)
 		PrevInfo(); break;
 	case 'd':
-	case KEY_DOWN:
+	WINKEY(KEY_DOWN)
 		MoveRef(1); break;
 	case 'u':
-	case KEY_UP:
+	WINKEY(KEY_UP)
 		MoveRef(-1); break;
 	case 'n':
-	case KEY_NPAGE:
+	WINKEY(KEY_NPAGE)
 		MovePos(PSIZE); break;
 	case 'p':
-	case KEY_PPAGE:
+	WINKEY(KEY_PPAGE)
 		MovePos(-PSIZE); break;
+#if	USE_EFWIN
 	case ctrl('H'):
-	case KEY_BREAK:
-	case KEY_BACKSPACE:
+#else
+	case '\b':
+#endif
+	WINKEY(KEY_BREAK)
+	WINKEY(KEY_BACKSPACE)
 	case 127:
 	case 'k':
 		MovePos(-1); break;
@@ -201,40 +191,48 @@ static int eval(int key)
 		MakePart(NULL);
 		break;
 	case ':':
-		if	((p = GetString("Knoten: ")) != NULL)
+		if	((p = GetString("node: ")) != NULL)
 		{
 			MakePart(GetInfo(NULL, p));
 			memfree(p);
 		}
 		break;
 	case '<':
-		if	((p = GetString("Datenfile: ")) != NULL)
+		if	((p = GetString("file: ")) != NULL)
 		{
-			WinMessage("%s --dump", p);
+			WinMessage("file: %s", p);
 			MakePart(load(0, p));
 			memfree(p);
 		}
 
 		break;
 	case '|':
-		if	((p = GetString("Kommando: ")) != NULL)
+		if	((p = GetString("command: ")) != NULL)
 		{
-			WinMessage("|%s --dump", p);
+			WinMessage("|%s --info=dump:", p);
 			MakePart(LoadCommand(NULL, p));
 			memfree(p);
 		}
 
 		break;
 	case '/':
-		SearchKey(GetString("Suche: "));
+		SearchKey(GetString("search: "));
 		break;
 	default:
+#if	USE_EFWIN
 		beep();
 		return 1;
+#else
+		io_putc('\a', iostd);
+		break;
+#endif
 	}
 
-	werase(info_win);
 	ShowPart();
-	wrefresh(info_win);
+
+#if	!USE_EFWIN
+	while (key != EOF && key != '\n')
+		key = io_getc(iostd);
+#endif
 	return 1;
 }

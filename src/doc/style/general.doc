@@ -1,0 +1,68 @@
+\title	Allgemeines
+
+\sec	Zeilenlängen
+
+Grundsätzlich sollten die Zeilen von C-Sourcen, EFEU-Scripts und
+Imakefiles auf 80 Zeichen begrenzt werden. Längere Zeilen machen
+Probleme bei der Ausgabe am Drucker oder bei der Ansicht am Terminal.
+Auch können solche Programme schlecht in Dokumente eingearbeitet
+werden.
+
+Automatische Umbrüche bei der Darstellung können zu
+Fehlinterpretationen führen, da insbesonders bei EFEU-Scripts und bei
+Imakefiles Zeilenumbrüche anders als Leerzeichen oder Tabulatoren
+behandelt werden.
+
+Um die Zeilenlängen zu verringern, stehen folgende Möglichkeiten
+offen:
+
+*	Die Vermeidung von langen Zeilen durch umstrukturieren des Codes.
+*	Das Einfugen eines Zeilenvorschubs an einer Stelle, wo er sich
+	nicht störend auf die Syntax und die Lesbarkeit auswirkt.
+	Bei EFEU-Scripts werden z.B. Zeilenvorschübe zwischen den Argumenten
+	einer Argumentliste wie Leerzeichen behandelt.
+*	Durch das Voranstellen eines Gegenschrägstrichs |\|
+	unmittelbar vor dem Zeilenvorschub. Dies kann an einer
+	beliebigen Stelle des Codes erfolgen.
+
+Werden Codezeilen umgebrochen, sollten nachfolgende Zeilen zur
+besseren Lesbarkeit zusätzlich Eingerückt werden. Daher sollten
+Zeilenumbrüche nach Möglichkeit nur an solchen Stellen gesetzt werden,
+wo beliebig viele Tabulatoren oder Leerzeichen folgen dürfen.
+
+\sec	Einrückungen
+
+Einrückungen erfolgen Grundsätzlich mit Tabulatoren und nicht mit
+Leerzeichen. Zu beachten ist auch, dass bei Imakefiles eine Einrückung
+mit einem Tabulator syntaktisch etwas anderes ist als eine Einrückung
+mit Leerzeichen. Details zu den Einrückregeln bei bestimmten
+syntaktischen Elementen folgen später.
+
+Tiefe Verschachtelungen sind durch Zerlegen des Codes in kleinere
+Hilfsfunktionen zu vermeiden.
+
+\sec	Headerkennungen
+
+Headerdateien werden in der Regel gegen mehrfaches Einbinden durch
+Definition und Test eines Hilfsmakros abgesichert. In EFEU wird als
+Name des Hilfsmakros der gleiche Name wie beim Einbinden des Headers
+verwendet, wobei Sonderzeichen durch |_| ersetzt werden.
+
+Eine Headerdatei, die mit
+---- verbatim
+#include <foo/bar.hdr>
+----
+eingebunden wird, hat den folgenden Aufbau:
+
+---- verbatim
+/*
+Titel, Copyright
+*/
+
+#ifndef	foo_bar_hdr
+#define	foo_bar_hdr	1
+
+Headerdefinitionen
+
+#endif	/* foo/bar.hdr */
+----

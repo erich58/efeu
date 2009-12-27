@@ -1,0 +1,90 @@
+/*
+:*:	concattenuation of efeu-datafiles
+:de:	Zusammenhängen von Efeu-Datenfiles
+
+$Copyright (C) 2004 Erich Frühstück
+This file is part of EFEU.
+
+EFEU is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+EFEU is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with EFEU; see the file COPYING.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+*/
+
+Date::fmt = "%d.%m.%Y";
+
+pconfig !
+Version = "$Id: edbcat.esh,v 1.1 2005-05-18 13:45:03 ef Exp $"
+PrintMode = NULL
+PreFilter = NULL
+PostFilter = NULL
+Limit = 10
+Merge = false
+Sort = false
+str Comp = NULL
+
+:config gzip
+
+E:expr | :eval 'geval("{}")'
+	:*:evaluate expression <expr>
+	:de:Ausdruck <expr> auswerten
+F:file | :eval 'gload(IncPath, "{}")'
+	:*:execute command lines in file <file>
+	:de:Datei <file> mit Befehlszeilen laden
+T:title | Title
+	:*:set title of output file
+	:de:Titel der Ausgabedatei setzen
+p:mode | PrintMode
+	:*:output mode
+	:de:Ausgabemodus
+n:lim | Limit
+	:*:Limit of output data lines
+	:de:Begrenzung der ausgegebenen Datenzeilen
+a:list | -pre_filter:list | PreFilter: append " "
+	:*:applay filter <def> on every input file
+	:de:Filter <def> auf jede Eingabedatei anwenden
+b:list | -post_filter:list | PostFilter: append " "
+	:*:applay filter <def> on concatenuated files
+	:de:Filter <def> auf Ergebnisdatei anwenden
+m:cmp | -merge:cmp | Comp; Merge = true;
+	mischt die Dateien mit der Vergleichsfunktion <cmp>.
+s:cmp | -sort:cmp | Comp; Merge = true; Sort = true
+	sortiert die Dateien mit der Vergleichsfunktion <cmp>
+	vor dem mischen/verknüpfen.
+o:out | Output
+	:*:output file name
+	:de:Name der Ausgabedatei 
++list | 
+	:*:list of input files
+	:de:Liste der Eingabedateien
+!
+
+if	(PrintMode == "csv")
+	setlocale(LC_PRINT, Lang);
+
+List_t list;
+
+for (int i = 1; i < argc; i++)
+	list.top(EDB(open(argv[i], "rz")).filter(PreFilter));
+
+#if	flagres("Merge")
+EDB edb = edbmerge(Comp, flagres("Sort"), list);
+#else
+EDB edb = edbcat(list);
+#endif
+
+list = NULL;
+edb = edb.filter(PostFilter);
+edb.fout(Output, PrintMode);
+edb.copy(Limit);
+edb = NULL;

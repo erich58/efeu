@@ -24,7 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 PrintListDelim = "\t";
 
 pconfig !
-Version = "$Id: mdpermut.esh,v 1.7 2001-10-18 12:11:21 ef Exp $"
+Version = "$Id: mdpermut.esh,v 1.8 2005-07-24 05:12:41 ef Exp $"
 
 r | Reduce = true
 	:*:remove singulary axis
@@ -38,7 +38,7 @@ T:title | Title
 :file | Input
 	:*:input file
 	:de:Name der Eingabedatei
-/.*=.*/name=var | SelDef: append " "
+/.*=.*/<name>=<var> | SelDef: append " "
 	:*:selection parameter
 	:de:Selektionsparameter
 ::out | Output

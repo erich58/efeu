@@ -31,6 +31,7 @@ Bei der Eingabedatei handelt es sich um ein Skriptfile für den
 Befehlsinterpreter. Die Ausgabe erfolgt in die folgenden
 IO-Strukturen:
 [|hdr|]	C-Headerfile
+[|top|]	Kopzeilen im C-Sourcefile
 [|src|]	C-Sourcefile
 [|info|]	Infodatei für |eis|
 [|tex|]	LaTeX-Dokumentation (siehe Anmerkung am Ende)
@@ -40,13 +41,17 @@ Ob die mit den Ausgabestrukturen verbundenen Dateien auch
 generiert werden, hängt von einer Konfigurationszeile zu Beginn
 des Skripts ab. Sie hat die Gestalt:
 
-|config| <list>
+|config| <list>\[|=|<filename>\]
 
 wobei <list> die gewünschten Ausgabestrukturen enthält, für die
 auch eine Datei generiert werden soll. Der Basisname der
 Ausgabedateien wird vom Basisnamen des Skriptfiles bestimmt.
 Es gibt aber auch die Möglichkeit, die Namen der Ausgabedateien
-explizit vorzugeben.
+explizit vorzugeben. Die Ausgabestruktur <top> kann nicht angesprochen
+werden, sie ist mit <src> gekoppelt.
+
+Falls keine Headerdatei <hdr> konfiguriert wurde, werden die Ausgaben
+nach <hdr> in den Kopf der Sourcedatei geschrieben.
 
 Das Kommando erlaubt auch die Generierung von Makefileregeln.
 Falls eines der entsprechenden Flags gesetzt ist, werden keine

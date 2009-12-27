@@ -55,7 +55,7 @@ IO *DocOut_html (IO *io)
 	html->rem = HTML_rem;
 	html->cmd = HTML_cmd;
 	html->env = HTML_env;
-	html->buf = new_strbuf(0);
+	html->buf = sb_create(0);
 	DocDrv_var(html, &Type_int, "class", &html->class);
 	return DocDrv_io(html);
 }

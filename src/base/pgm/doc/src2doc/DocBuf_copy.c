@@ -25,6 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/mstring.h>
 #include <EFEU/efio.h>
 #include <EFEU/CmdPar.h>
+#include <EFEU/object.h>
 #include <ctype.h>
 
 
@@ -76,6 +77,7 @@ static StrBuf *cpy_source (DocBuf *doc, int par, IO *io, StrBuf *buf)
 {
 	size_t n;
 	char *p;
+	int c;
 
 	if	(!buf)	return NULL;
 
@@ -88,13 +90,43 @@ static StrBuf *cpy_source (DocBuf *doc, int par, IO *io, StrBuf *buf)
 	while (n && p[n - 1] == '\n')
 		n--;
 
-	sb_puts("---- verbatim\n", buf);
+	sb_puts("---- verbatim", buf);
+
+	while ((c = io_getc(io)) != '\n' && c != EOF)
+		sb_putc(c, buf);
+
+	sb_putc('\n', buf);
 
 	for (; n-- > 0; p++)
 		sb_putc(*p, buf);
 
 	sb_puts("\n----\n", buf);
 	return buf;
+}
+
+static StrBuf *set_cmdpar (DocBuf *doc, int par, IO *io, StrBuf *buf)
+{
+	int c;
+
+	do	c = io_getc(io);
+	while	(c == ' ' || c == '\n');
+
+	rd_deref(doc->cmdpar);
+	doc->cmdpar = NULL;
+
+	if	(c == '!')
+	{
+		doc->cmdpar = CmdPar_alloc(set_args[1]);
+		io_protect(io, 1);
+		CmdPar_read(doc->cmdpar, io, '!', 0);
+		io_protect(io, 0);
+
+		io = io_strbuf(doc->tab[BUF_SYN]);
+		CmdPar_synopsis(doc->cmdpar, io, 1);
+		io_close(io);
+	}
+	
+	return buf ? buf : doc->tab[BUF_DESC];
 }
 
 static struct {
@@ -115,6 +147,7 @@ static struct {
 	{ "copyright",		set_var, VAR_COPYRIGHT },
 	{ "syn[opsis]",		get_synopsis, 0 },
 	{ "source",		cpy_source, 0 },
+	{ "pconfig",		set_cmdpar, 0 },
 };
 
 static StrBuf *eval_key (DocBuf *doc, const char *key, IO *io, StrBuf *buf)
@@ -128,15 +161,34 @@ static StrBuf *eval_key (DocBuf *doc, const char *key, IO *io, StrBuf *buf)
 	return NULL;
 }
 
+static int desc_par (IO *io, int c, void *par)
+{
+	int *protect = par;
+
+	if	(c == '$' || c == '@')
+	{
+		*protect = 1;
+		return 1;
+	}
+	else if	(*protect)
+	{
+		*protect = 0;
+		return 1;
+	}
+	else	return 0;
+}
+
 void DocBuf_copy (DocBuf *doc, StrBuf *base, StrBuf *buf, const char *name)
 {
 	int need_nl;
 	IO *io;
 	int c;
+	int protect;
 
 	need_nl = (buf && sb_getpos(buf));
 	sb_begin(base);
-	io = langfilter(io_strbuf(base), NULL);
+	protect = 0;
+	io = xlangfilter(io_strbuf(base), NULL, desc_par, &protect);
 
 	while ((c = io_getc(io)) != EOF)
 	{
@@ -147,6 +199,8 @@ void DocBuf_copy (DocBuf *doc, StrBuf *base, StrBuf *buf, const char *name)
 			switch (c)
 			{
 			case '$':
+			case '/':
+			case '*':
 			case '\\':
 				break;
 			default:
@@ -165,6 +219,17 @@ void DocBuf_copy (DocBuf *doc, StrBuf *base, StrBuf *buf, const char *name)
 				sb_puts(name, buf);
 				continue;
 			}
+			else if	(c == '$')
+			{
+				io_getc(io);
+			}
+			else if	(doc->cmdpar && c == '!')
+			{
+				io_getc(io);
+				sb_printf(buf, "\\index{|%s|}",
+					doc->cmdpar->name);
+				continue;
+			}
 			else if	(isalpha(c) || c == '_')
 			{
 				char *p = io_getname(io);
@@ -179,7 +244,22 @@ void DocBuf_copy (DocBuf *doc, StrBuf *base, StrBuf *buf, const char *name)
 				need_nl = (buf && sb_getpos(buf));
 				continue;
 			}
+			else if	(c == '(' || c == '{')
+			{
+				char *p = psubexpand(NULL, io, 0, NULL);
+				IO *out = io_strbuf(buf);
+				copy_protect(p, out);
+				io_close(out);
+				continue;
+			}
 			else	c = '$';
+		}
+		else if	(doc->cmdpar && c == '@')
+		{
+			IO *out = io_strbuf(buf);
+			CmdPar_expand(doc->cmdpar, io, out);
+			io_close(out);
+			continue;
 		}
 
 		if	(buf)
@@ -195,5 +275,5 @@ void DocBuf_copy (DocBuf *doc, StrBuf *base, StrBuf *buf, const char *name)
 	}
 
 	io_close(io);
-	sb_clear(base);
+	sb_clean(base);
 }

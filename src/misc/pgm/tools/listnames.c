@@ -65,11 +65,11 @@ int main (int argc, char **argv)
 	StrBuf *buf;
 
 	ParseCommand(&argc, argv);
-	buf = new_strbuf(1024);
+	buf = sb_create(1024);
 
 	for (i = 1; i < argc; i++)
 		eval(buf, argv[i]);
 
-	del_strbuf(buf);
+	sb_destroy(buf);
 	return EXIT_SUCCESS;
 }

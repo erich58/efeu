@@ -99,7 +99,8 @@ EfiObj *PFunc_if (IO *io, void *data)
 
 	if	(!io_testkey(io, "else"))
 	{
-		io_ungetc('\n', io);	/* !!! */
+		if	(io_peek(io) != ']')
+			io_ungetc('\n', io);	/* !!! */
 		c = NULL;
 	}
 	else	c = Parse_cmd(io);

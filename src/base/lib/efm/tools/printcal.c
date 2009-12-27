@@ -165,7 +165,7 @@ static char *cal2str (const char *fmt, CalInfo *cal)
 	StrBuf *sb;
 	IO *io;
 
-	sb = new_strbuf(0);
+	sb = sb_create(0);
 	io = io_strbuf(sb);
 	print_cal(io, fmt, cal);
 	io_close(io);

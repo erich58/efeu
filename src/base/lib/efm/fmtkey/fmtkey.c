@@ -107,10 +107,21 @@ int io_fmtkey(IO *io, FmtKey *key)
 */
 	for (;;)
 	{
-		if	(c == 'h')	key->flags |= FMT_SHORT;
-		else if	(c == 'l')	key->flags |= FMT_LONG;
-		else if	(c == 'L')	key->flags |= FMT_XLONG;
-		else			break;
+		if	(c == 'h')
+		{
+			key->flags |= (key->flags & FMT_SHORT) ?
+				FMT_BYTE : FMT_SHORT;
+		}
+		else if	(c == 'l')
+		{
+			key->flags |= (key->flags & FMT_LONG) ?
+				FMT_XLONG : FMT_LONG;
+		}
+		else if	(c == 'L')
+		{
+			key->flags |= FMT_XLONG;
+		}
+		else	break;
 
 		c = io_getc(io);
 		n++;
@@ -126,7 +137,7 @@ int io_fmtkey(IO *io, FmtKey *key)
 		StrBuf *sb;
 		int escape;
 
-		sb = new_strbuf(0);
+		sb = sb_create(0);
 		escape = 0;
 
 		while ((c = io_getc(io)) != EOF)

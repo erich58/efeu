@@ -193,10 +193,10 @@ static int do_copy (CmdPar *par, IO *in, IO *out,
 
 static void do_psub (IO *in, IO *out, ArgList *args, int mode)
 {
-	StrBuf *sb = new_strbuf(0);
+	StrBuf *sb = sb_create(0);
 	f_puts(args ? psubexpand(sb, in, args->dim, args->data) :
 		psubexpand(sb, in, 0, NULL), out, mode);
-	del_strbuf(sb);
+	sb_destroy(sb);
 }
 
 static char *do_vsub (CmdPar *par, IO *in, ArgList *args,
@@ -205,7 +205,7 @@ static char *do_vsub (CmdPar *par, IO *in, ArgList *args,
 	StrBuf *sb;
 	IO *out;
 
-	sb = new_strbuf(0);
+	sb = sb_create(0);
 	out = io_strbuf(sb);
 	do_copy(par, in, out, args, mode, end);
 	io_close(out);

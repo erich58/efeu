@@ -29,10 +29,15 @@ If not, write to the Free Software Foundation, Inc.,
 static char *lc_digit = "0123456789abcdef";
 static char *uc_digit = "0123456789ABCDEF";
 
-int fmt_long(IO *io, const FmtKey *key, long xval)
+int fmt_uint64 (IO *io, const FmtKey *key, uint64_t xval)
+{
+	return fmt_int64(io, key, ((int64_t *) &xval)[0]);
+}
+
+int fmt_int64 (IO *io, const FmtKey *key, int64_t xval)
 {
 	StrBuf *sb;
-	unsigned long val;
+	uint64_t val;
 	int n, k, sig, base;
 	int ptrval;
 	char *p, *sep, *digit, *mark;
@@ -64,7 +69,7 @@ int fmt_long(IO *io, const FmtKey *key, long xval)
 
 /*	Datenwert setzen
 */
-	if	(ptrval || key->flags & FMT_LONG)
+	if	(ptrval || key->flags & FMT_XLONG)
 	{
 		if	(sig && xval < 0)
 		{
@@ -73,40 +78,50 @@ int fmt_long(IO *io, const FmtKey *key, long xval)
 		}
 		else	val = xval;
 	}
-	else if	(key->flags & FMT_SHORT)
+	else if	(key->flags & FMT_BYTE)
 	{
-		short x = xval;
+		val = (uint8_t) xval;
 
-		if	(!sig)
+		if	(sig && (int8_t) val < 0)
 		{
-			val = (unsigned short) x;
-		}
-		else if	(x < 0)
-		{
-			val = -x;
+			val = (uint8_t) - val;
 			sig = -1;
 		}
-		else	val = x;
+	}
+	else if	(key->flags & FMT_SHORT)
+	{
+		val = (uint16_t) xval;
+
+		if	(sig && (int16_t) val < 0)
+		{
+			val = (uint16_t) - val;
+			sig = -1;
+		}
+	}
+	else if	(key->flags & FMT_LONG)
+	{
+		val = (uint32_t) xval;
+
+		if	(sig && (int32_t) val < 0)
+		{
+			val = (uint32_t) - val;
+			sig = -1;
+		}
 	}
 	else
 	{
-		int x = xval;
+		val = (unsigned int) xval;
 
-		if	(!sig)
+		if	(sig && (int) val < 0)
 		{
-			val = (unsigned int) x;
-		}
-		else if	(x < 0)
-		{
-			val = -x;
+			val = (unsigned int) - val;
 			sig = -1;
 		}
-		else	val = x;
 	}
 
 /*	Ziffern zwischenspeichern (Verkehrte Reihenfolge !)
 */
-	sb = new_strbuf(32);
+	sb = sb_create(32);
 	p = NULL;
 
 	for (n = 0; val != 0; n++)
@@ -177,4 +192,9 @@ int fmt_long(IO *io, const FmtKey *key, long xval)
 	sb_rputs(mark, sb);
 	ftool_addsig (sb, sig, key->flags);
 	return ftool_ioalign (io, sb, key);
+}
+
+int fmt_long(IO *io, const FmtKey *key, long xval)
+{
+	return fmt_int64(io, key, (int64_t) xval);
 }

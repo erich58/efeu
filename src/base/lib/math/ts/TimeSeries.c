@@ -47,7 +47,7 @@ static void ts_alloc (TimeSeries *ts, size_t dim)
 static char *ts_ident (const void *data)
 {
 	const TimeSeries *ts = data;
-	StrBuf *buf = new_strbuf(0);
+	StrBuf *buf = sb_create(0);
 	IO *io = io_strbuf(buf);
 
 	io_printf(io, "%s[%d] ", ts->name, ts->dim);

@@ -1,0 +1,13 @@
+\appendix
+
+\if	Lang == "de"
+\mchap[1]	Kommandos
+\else
+\mchap[1]	Commands
+\endif
+
+\pipe	|efeuscript --help=raw|
+\pipe	|esh --help=raw|
+
+\include bib@ext.doc
+\printindex

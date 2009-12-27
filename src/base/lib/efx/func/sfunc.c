@@ -101,6 +101,8 @@ EfiFunc *SearchFunc (EfiVirFunc *vtab, EfiFuncArg *arg,
 	if	(vtab == NULL || vtab->tab.used == 0)
 		return NULL;
 
+	if	(ptr)	*ptr = NULL;
+
 	if	(!IsVirFunc(vtab))
 	{
 		dbg_error(NULL, "[efmain:65]", NULL);
@@ -125,23 +127,28 @@ EfiFunc *SearchFunc (EfiVirFunc *vtab, EfiFuncArg *arg,
 		curfunc = ftab[i];
 		curdist = get_konvdef(curfunc, narg, arg, curkonv);
 
-		if	(func && debug_mode())
-			show_dist(iostd, curfunc, curdist, curkonv, narg);
+		if	(debug_mode())
+			show_dist(ioerr, curfunc, curdist, curkonv, narg);
 
 		switch (curdist)
 		{
 		case D_REJECT:
 			continue;
 		case D_MATCH:
+			if	(ptr && narg != curfunc->dim)
+			{
+				*ptr = curkonv;
+			}
+			else	memfree(curkonv);
+
 			memfree(konv);
-			memfree(curkonv);
-
-			if	(ptr)	*ptr = NULL;
-
 			return curfunc;
 		default:
 			break;
 		}
+
+		if	(curdist >= D_RESTRICTED)
+			continue;
 
 		if	(dist > curdist)
 		{
@@ -188,22 +195,33 @@ static int get_konvdef(EfiFunc *func, size_t narg,
 		if	(i >= (func->dim - func->vaarg))
 			konv[i].dist = D_VAARG;
 		else if	(func->arg[i].lval && !arg[i].lval)
-			return D_REJECT;
+			return konv[i].dist = D_REJECT;
 		else if	(func->arg[i].type == arg[i].type)
 			konv[i].dist = D_MATCH;
 		else if	(func->arg[i].type == NULL)
 			konv[i].dist = D_ACCEPT;
-		/*
-		else if	(func->arg[i].lval || func->arg[i].nokonv)
-			return D_REJECT;
-		*/
-		else if	(test_base(arg[i].type, func->arg[i].type))
-			konv[i].dist = D_BASE;
-		else if	(func->arg[i].lval || func->arg[i].nokonv)
-			return D_REJECT;
+		else if	(func->arg[i].nokonv)
+			return konv[i].dist = D_REJECT;
+		else if	(func->arg[i].lval)
+		{
+			if	(test_base(arg[i].type, func->arg[i].type))
+				konv[i].dist = D_BASE;
+			else	return konv[i].dist = D_REJECT;
+		}
 		else if	((x = GetArgKonv(arg[i].type, func->arg[i].type)))
+		{
+			if	((x->dist & D_RESTRICTED) &&
+					(func->arg[i].promote ||
+					func->weight == KONV_PROMOTION))
+				x->dist = D_KONVERT | D_PROMOTE;
+
 			konv[i] = *x;
-		else	return D_REJECT;
+		}
+		else if	(test_base(arg[i].type, func->arg[i].type))
+		{
+			konv[i].dist = D_BASE;
+		}
+		else	return konv[i].dist = D_REJECT;
 
 		if	(dist < konv[i].dist)	dist = konv[i].dist;
 	}

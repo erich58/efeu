@@ -32,5 +32,7 @@ extern int listcmp (const char *list, int c);
 extern int patcmp (const char *pat, const char *str, char **ptr);
 extern int patselect (const char *name, char **list, size_t dim);
 extern int lexcmp (const char *a, const char *b);
+extern int alnumcmp (const char *a, const char *b);
+extern int alphacmp (const char *a, const char *b);
 
 #endif	/* EFEU/patcmp.h */

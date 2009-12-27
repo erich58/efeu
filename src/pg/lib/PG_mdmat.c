@@ -28,6 +28,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/Debug.h>
 #include <EFEU/parsearg.h>
 
+#if	HAS_PQ
+
 #define	M_NODATA	"no data available.\n"
 #define	M_UNDEF	"undefined field \"$1\".\n"
 #define	M_NF	"$0: field number $1 is out of range 0..$2.\n"
@@ -84,7 +86,7 @@ static char *inc_lbl (const char *lbl, const char *def)
 	IO *io;
 	char *p;
 
-	buf = new_strbuf(0);
+	buf = sb_create(0);
 
 	for (; *def != 0; def++)
 	{
@@ -104,7 +106,7 @@ static char *inc_lbl (const char *lbl, const char *def)
 	io = io_strbuf(buf);
 	p = Obj2str(Parse_term(io, 0));
 	io_close(io);
-	del_strbuf(buf);
+	sb_destroy(buf);
 	return p;
 }
 
@@ -259,7 +261,7 @@ mdmat *PG_mdmat (PG *pg, const EfiType *type,
 	md->title = msprintf("%s by %s", valdef, axis);
 	ptr = &md->axis;
 
-	n = strsplit(axis, ",", &list);
+	n = mstrsplit(axis, ",", &list);
 
 	for (i = 0; i < n; i++)
 	{
@@ -294,7 +296,7 @@ mdmat *PG_mdmat (PG *pg, const EfiType *type,
 
 /*	clean private data
 */
-	CleanData(type, buf);
+	DestroyData(type, buf);
 	memfree(buf);
 
 	for (p = md->axis; p != NULL; p = p->next)
@@ -305,6 +307,8 @@ mdmat *PG_mdmat (PG *pg, const EfiType *type,
 
 	return md;
 }
+
+#endif
 
 /*
 $SeeAlso

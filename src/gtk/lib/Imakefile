@@ -1,5 +1,0 @@
-#include <gtk.pph>
-
-XLIBS=	LIB_EFX LIB_EFM $(GTKLIB)
-CFLAGS=	$(GTKINC)
-

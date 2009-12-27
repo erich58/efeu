@@ -7,8 +7,8 @@
 #include <EFEU/stdtype.h>
 
 EfiType Type_mdmat = REF_TYPE("mdmat", mdmat *);
-EfiType Type_mdaxis = SIMPLE_TYPE("mdaxis", mdaxis *, &Type_ptr);
-EfiType Type_mdidx = SIMPLE_TYPE("mdidx", mdindex, NULL);
+EfiType Type_mdaxis = SIMPLE_TYPE("mdaxis", mdaxis *, &Type_ptr, NULL);
+EfiType Type_mdidx = SIMPLE_TYPE("mdidx", mdindex, NULL, NULL);
 
 mdmat *Buf_mdmat = NULL;
 mdaxis *Buf_mdaxis = NULL;
@@ -59,20 +59,14 @@ static EfiMember var_mdmat[] = {
 static EfiObj *x_index (const EfiObj *base, void *data)
 {
 	mdaxis *x = base ? Val_mdaxis(base->data) : NULL;
-
-	if	(x == NULL)	return NULL;
-
-	Buf_vec.type = &Type_mdidx;
-	Buf_vec.dim = x->dim;
-	Buf_vec.data = x->idx;
-	return NewObj(&Type_vec, &Buf_vec);
+	return x ? EfiVecObj(&Type_mdidx, x->idx, x->dim) : NULL;
 }
 
 static EfiObj *x_name (const EfiObj *base, void *data)
 {
 	if	(base)
 	{
-		mdaxis *x = base->data;
+		mdaxis *x = Val_ptr(base->data);
 		return LvalObj(&Lval_obj, &Type_str, base, &x->name);
 	}
 	else	return NULL;
@@ -217,7 +211,9 @@ void SetupMdMat(void)
 	if	(setup_done)	return;
 
 	setup_done = 1;
+
 	SetupStd();
+	SetupEDB();
 	AddType(&Type_mdmat);
 	AddType(&Type_mdaxis);
 	AddType(&Type_mdidx);
@@ -226,5 +222,7 @@ void SetupMdMat(void)
 	AddEfiMember(Type_mdmat.vtab, var_mdmat, tabsize(var_mdmat));
 	AddEfiMember(Type_mdaxis.vtab, var_mdaxis, tabsize(var_mdaxis));
 	AddEfiMember(Type_mdidx.vtab, var_mdidx, tabsize(var_mdidx));
-	MdFuncDef();
+	MdSetup_count();
+	MdSetup_func();
+	Setup_edb2md();
 }

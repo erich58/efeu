@@ -36,7 +36,7 @@ char *io_xident (IO *io, const char *fmt, ...)
 	if	(fmt == NULL)	return id;
 
 	va_start(list, fmt);
-	buf = new_strbuf(0);
+	buf = sb_create(0);
 
 	for (; *fmt != 0; fmt++)
 	{

@@ -192,7 +192,7 @@ static int do_search (StrBuf *sb, const char *path,
 			if	(flag)
 				return 0;
 
-			sb_clear(sb);
+			sb_clean(sb);
 			break;
 
 		case '/':
@@ -237,14 +237,14 @@ char *fsearch (const char *path, const char *sub,
 
 	if	(path && need_search(name))
 	{
-		StrBuf *sb = new_strbuf(FS_BSIZE);
+		StrBuf *sb = sb_create(FS_BSIZE);
 		int flag = do_search(sb, path, sub, name, 0);
 
 		memfree(tname);
 
 		if	(flag)	return sb2str(sb);
 
-		del_strbuf(sb);
+		sb_destroy(sb);
 		return NULL;
 	}
 	else if	(access(name, R_OK) == 0)

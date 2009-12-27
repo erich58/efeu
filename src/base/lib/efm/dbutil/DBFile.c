@@ -29,7 +29,7 @@ static char *ref_ident (const void *data)
 	StrBuf *sb;
 	char *p;
 
-	sb = new_strbuf(0);
+	sb = sb_create(0);
 	p = rd_ident(file->io);
 	sb_puts(p, sb);
 	memfree(p);
@@ -40,6 +40,7 @@ static char *ref_ident (const void *data)
 	case DBFILE_EBCDIC: sb_puts("ebcdic", sb); break;
 	case DBFILE_CONV: sb_puts("conv", sb); break;
 	case DBFILE_TEXT: sb_puts("text", sb); break;
+	case DBFILE_QTEXT: sb_puts("qtext", sb); break;
 	}
 
 	sb_printf(sb, " recl=%d", file->recl);
@@ -92,6 +93,13 @@ int DBFile_next (DBFile *file)
 
 		DBData_conv(&file->data);
 		break;
+
+	case DBFILE_QTEXT:
+
+		if	(!DBData_qtext(&file->data, file->io, NULL))
+			return 0;
+
+		return 1;
 
 	default:
 

@@ -22,14 +22,12 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/database.h>
 
-#define	THIS		0	/* Aktueller Datensatz */
-#define	DEFAULT		1	/* Vorgabewert */
-#define	LAST		2	/* Letzter Eintrag */
-#define	DB_VAR		3	/* Datenbankvariablen */
-
-#define	ADDENTRY	3	/* Flag zur Eintragssteuerung */
-#define	EXTRA_VAR	1	/* Zusatzvariablen */
-
+typedef struct {
+	EfiObj *data;	/* Aktueller Datensatz */
+	EfiObj *def;	/* Vorgabewert */
+	EfiObj *last;	/* Letzter Eintrag */
+	EfiObj *flag;	/* Flag zur Eintragssteuerung */
+} LPAR;
 
 /*	Neue Zeile beginnen
 */
@@ -75,25 +73,15 @@ static int nextline (IO *io)
 /*	Datenwert in Datenbank eintragen
 */
 
-static void addtodb(EfiDB *db, void *buf, EfiObj *expr)
+static void addtodb (EfiDB *db, void *buf, EfiObj *expr)
 {
 	void *ptr;
 
 	if	(expr && (ptr = DB_search(db, buf, VB_SEARCH)))
 	{
-		EfiVar z[2];
-
-		memset(z, 0, 2 * sizeof(EfiVar));
-		z[0].name = "y";
-		z[0].type = db->type;
-		z[0].data = ptr;
-		z[0].dim = 0;
-		z[1].name = "x";
-		z[1].type = db->type;
-		z[1].data = buf;
-		z[1].dim = 0;
 		PushVarTab(NULL, NULL);
-		AddVar(NULL, z, 2);
+		VarTab_xadd(NULL, "x", NULL, LvalObj(&Lval_ptr, db->type, buf));
+		VarTab_xadd(NULL, "y", NULL, LvalObj(&Lval_ptr, db->type, ptr));
 		UnrefEval(RefObj(expr));
 		PopVarTab();
 		CleanData(db->type, buf);
@@ -105,18 +93,7 @@ static void addtodb(EfiDB *db, void *buf, EfiObj *expr)
 /*	Komplexe Datenbankeinträge
 */
 
-static void add_complex(EfiDB *db, EfiVar *var, EfiObj *expr)
-{
-	AssignData(db->type, var[LAST].data, var[THIS].data);
-
-	if	(Val_bool(var[ADDENTRY].data))
-	{
-		addtodb(db, var[THIS].data, expr);
-		Val_bool(var[ADDENTRY].data) = 0;
-	}
-}
-
-static void load_complex(IO *io, EfiDB *db, EfiVar *var, EfiObj *expr)
+static void load_complex (IO *io, EfiDB *db, LPAR *lpar, EfiObj *expr)
 {
 	int c;
 
@@ -125,12 +102,21 @@ static void load_complex(IO *io, EfiDB *db, EfiVar *var, EfiObj *expr)
 		if	(c == '\n')
 		{
 			io_getc(io);
-			add_complex(db, var, expr);
-			AssignData(db->type, var[THIS].data, var[DEFAULT].data);
+			
+			if	(Val_bool(lpar->flag->data))
+			{
+				AssignData(db->type, lpar->last->data,
+					lpar->data->data);
+				addtodb(db, lpar->data->data, expr);
+				Val_bool(lpar->flag->data) = 0;
+			}
+
+			AssignData(db->type, lpar->data->data,
+				lpar->def->data);
 		}
 		else
 		{
-			Val_bool(var[ADDENTRY].data) = 1;
+			Val_bool(lpar->flag->data) = 1;
 			UnrefEval(Parse_cmd(io));
 
 			if	(io_eat(io, " \t;") == '\n')
@@ -138,14 +124,15 @@ static void load_complex(IO *io, EfiDB *db, EfiVar *var, EfiObj *expr)
 		}
 	}
 
-	add_complex(db, var, expr);
+	if	(Val_bool(lpar->flag->data))
+		addtodb(db, lpar->data->data, expr);
 }
 
 
 /*	Kompakte Datenbankeinträge
 */
 
-static void load_compact(IO *io, EfiDB *db, EfiVar *var, EfiObj *expr)
+static void load_compact (IO *io, EfiDB *db, LPAR *lpar, EfiObj *expr)
 {
 	EfiObjList *list, *x, **ptr;
 	EfiObj *obj;
@@ -156,23 +143,23 @@ static void load_compact(IO *io, EfiDB *db, EfiVar *var, EfiObj *expr)
 	x = list = NULL;
 	header = 0;
 	ptr = NULL;
-	Val_bool(var[ADDENTRY].data) = 0;
+	Val_bool(lpar->flag->data) = 0;
 
 	for (last = '\n'; (c = io_eat(io, " \t")) != EOF; last = c)
 	{
 		if	(c == '\n')
 		{
-			if	(Val_bool(var[ADDENTRY].data))
+			if	(Val_bool(lpar->flag->data))
 			{
-				AssignData(db->type, var[LAST].data,
-					var[THIS].data);
-				addtodb(db, var[THIS].data, expr);
+				AssignData(db->type, lpar->last->data,
+					lpar->data->data);
+				addtodb(db, lpar->data->data, expr);
 			}
 
 			io_getc(io);
 			x = list;
 			header = 0;
-			Val_bool(var[ADDENTRY].data) = 0;
+			Val_bool(lpar->flag->data) = 0;
 		}
 		else if	(c == ':' || c == ';')
 		{
@@ -200,7 +187,7 @@ static void load_compact(IO *io, EfiDB *db, EfiVar *var, EfiObj *expr)
 			else if	(x && x->obj)
 			{
 				AssignObj(x->obj, obj);
-				Val_bool(var[ADDENTRY].data) = 1;
+				Val_bool(lpar->flag->data) = 1;
 			}
 			else	UnrefEval(obj);
 		}
@@ -211,72 +198,37 @@ static void load_compact(IO *io, EfiDB *db, EfiVar *var, EfiObj *expr)
 /*	Datenbankwerte laden
 */
 
-void DB_load(IO *io, EfiDB *db, EfiObj *expr)
+void DB_load (IO *io, EfiDB *db, EfiObj *expr)
 {
-	EfiVar *var;
-	char *buf;
-	int nvar;
-	int addentry;
-	EfiVar *st;
+	LPAR lpar;
 
 	if	(io == NULL || db == NULL)	return;
 
-/*	Variablentabelle aufbauen
+/*	Variablen zusammenstellen
 */
-	buf = memalloc(DB_VAR * db->type->size);
-	memset(buf, 0, DB_VAR * db->type->size);
-	nvar = DB_VAR + EXTRA_VAR;
+	lpar.data = LvalObj(NULL, db->type);
+	lpar.def = LvalObj(NULL, db->type);
+	lpar.last = LvalObj(NULL, db->type);
+	lpar.flag = LvalObj(NULL, &Type_bool);
 
-	for (st = db->type->list; st != NULL; st = st->next)
-		nvar++;
-
-	var = memalloc(nvar * sizeof(EfiVar));
-	var[THIS].type = db->type;
-	var[THIS].name = "this";
-	var[THIS].data = buf + THIS * db->type->size;
-	var[THIS].dim = 0;
-	var[DEFAULT].type = db->type;
-	var[DEFAULT].name = "default";
-	var[DEFAULT].data = buf + DEFAULT * db->type->size;
-	var[DEFAULT].dim = 0;
-	var[LAST].type = db->type;
-	var[LAST].name = "last";
-	var[LAST].data = buf + LAST * db->type->size;
-	var[LAST].dim = 0;
-	var[ADDENTRY].type = &Type_bool;
-	var[ADDENTRY].name = "addentry";
-	var[ADDENTRY].data = &addentry;
-	var[ADDENTRY].dim = 0;
-	nvar = DB_VAR + EXTRA_VAR;
-
-	for (st = db->type->list; st != NULL; st = st->next)
-	{
-		var[nvar].type = st->type;
-		var[nvar].name = st->name;
-		var[nvar].data = buf + st->offset;
-		var[nvar].dim = st->dim;
-		nvar++;
-	}
-
+	PushVarTab(RefVarTab(db->type->vtab), lpar.data);
 	PushVarTab(NULL, NULL);
-	AddVar(NULL, var, nvar);
+	VarTab_xadd(NULL, "default", NULL, lpar.def);
+	VarTab_xadd(NULL, "last", NULL, lpar.last);
+	VarTab_xadd(NULL, "addentry", NULL, lpar.flag);
 	PushContext(RefVarTab(LocalVar), NULL);
 
 /*	Datenbankeinträge lesen
 */
 	if	(io_eat(io, ";%s") == '#')
 	{
-		load_compact(io, db, var, expr);
+		load_compact(io, db, &lpar, expr);
 	}
-	else	load_complex(io, db, var, expr);
+	else	load_complex(io, db, &lpar, expr);
 
 /*	Aufräumen
 */
-	CleanData(db->type, var[THIS].data);
-	CleanData(db->type, var[DEFAULT].data);
-	CleanData(db->type, var[LAST].data);
 	PopContext();
 	PopVarTab();
-	memfree(var);
-	memfree(buf);
+	PopVarTab();
 }

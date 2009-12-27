@@ -23,52 +23,52 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/Info.h>
 #include <EFEU/mstring.h>
 #include <EFEU/parsub.h>
+#include <EFEU/ioctrl.h>
+#include <EFEU/Debug.h>
+#include <EFEU/procenv.h>
+#include <EFEU/dl.h>
 #include <ctype.h>
 
-
-void PrintInfo (IO *io, InfoNode *base, const char *name)
+void PrintInfo (IO *io, InfoNode *info)
 {
-	InfoNode *info = GetInfo(base, name);
+	if	(!info || !io)
+		return;
 
-	if	(info)
+	SetupInfo(info);
+
+	if	(info->label)
 	{
-		if	(info->load)
-			info->load(info);
+		io_psubarg(io, info->label, "ns", info->name);
+		io_putc('\n', io);
+	}
 
-		if	(info->label)
+	if	(!info->func)
+	{
+		io_psubarg(io, info->par, "nss",
+				info->name, info->label);
+	}
+	else	info->func(io, info);
+
+	if	(info->list)
+	{
+		int i = info->list->used;
+		InfoNode **ip = info->list->data;
+
+		io_putc('\n', io);
+
+		while (i > 0)
 		{
-			io_psubarg(io, info->label, "ns", info->name);
-			io_putc('\n', io);
-		}
+			InfoName(io, info, *ip);
 
-		if	(!info->func)
-		{
-			io_psubarg(io, info->par, "nss",
-					info->name, info->label);
-		}
-		else	info->func(io, info);
-
-		if	(info->list)
-		{
-			int i = info->list->used;
-			InfoNode **ip = info->list->data;
-
-			io_putc('\n', io);
-
-			while (i > 0)
+			if	((*ip)->label)
 			{
-				InfoName(io, info, *ip);
-
-				if	((*ip)->label)
-				{
-					io_putc('\t', io);
-					io_psubarg(io, (*ip)->label, NULL);
-				}
-
-				io_putc('\n', io);
-				i--;
-				ip++;
+				io_putc('\t', io);
+				io_psubarg(io, (*ip)->label, NULL);
 			}
+
+			io_putc('\n', io);
+			i--;
+			ip++;
 		}
 	}
 }

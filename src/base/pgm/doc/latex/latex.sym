@@ -26,7 +26,7 @@ _sbr	""
 amp	\\&
 lt	<
 gt	>
-bullet	\\bullet{}
+bullet	$\\bullet{}$
 minus	$-$
 plus	$+$
 dash	{-}

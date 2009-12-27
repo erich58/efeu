@@ -1,1 +1,0 @@
-DocTarget(EFEUROOT/doc/de,mdmat,$(SRCTOP),LANG=de efeudoc)

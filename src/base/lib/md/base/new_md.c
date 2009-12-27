@@ -22,7 +22,7 @@ static char *md_ident (const void *data)
 	IO *io;
 
 	md = data;
-	sb = new_strbuf(0);
+	sb = sb_create(0);
 	io = io_strbuf(sb);
 	io_printf(io, "name=%#s, type=", md->title);
 	ShowType(io, md->type);

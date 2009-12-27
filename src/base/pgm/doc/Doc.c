@@ -28,7 +28,7 @@ static void doc_clean (void *data)
 	io_close(tg->out);
 
 	if	(tg->buf)
-		del_strbuf(tg->buf);
+		sb_destroy(tg->buf);
 
 	while (tg->cmd_stack)
 		rd_deref(popstack(&tg->cmd_stack, NULL));
@@ -44,7 +44,7 @@ static char *doc_ident (const void *data)
 	char *p;
 
 	doc = data;
-	sb = new_strbuf(0);
+	sb = sb_create(0);
 	io = io_strbuf(sb);
 	io_printf(io, "type = %#s", doc->type ? doc->type->name : NULL);
 	p = rd_ident(doc->out);
@@ -62,7 +62,7 @@ Doc *Doc_create (const char *type)
 {
 	Doc *doc = memalloc(sizeof(Doc));
 	doc->type = GetDocType(type);
-	doc->buf = new_strbuf(0);
+	doc->buf = sb_create(0);
 	doc->out = NULL;
 	doc->nl = 1;
 	pushstack(&doc->cmd_stack, rd_refer(GlobalDocTab));

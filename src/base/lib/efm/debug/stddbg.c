@@ -109,7 +109,7 @@ void dbg_vpsub (const char *cl, int level, const char *fmt,
 /*
 Die Funktion |$1| ist eine allgemeine Funktion zur Ausgabe von
 Fehlermeldungen. Sie akzeptiert die gleichen Argumente wie |dbg_vpsub|,
-jedoch werden die Parameter als variable Argumentlioste übergeben.
+jedoch werden die Parameter als variable Argumentliste übergeben.
 */
 
 void dbg_message (const char *cl, int level, const char *fmt,
@@ -131,7 +131,7 @@ void dbg_note (const char *cl, const char *fmt, const char *argdef, ...)
 {
 	va_list list;
 	va_start(list, argdef);
-	dbg_vpsub(cl, DBG_ERR, fmt, NULL, argdef, list);
+	dbg_vpsub(cl, DBG_NOTE, fmt, NULL, argdef, list);
 	va_end(list);
 }
 

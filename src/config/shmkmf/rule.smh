@@ -1,0 +1,320 @@
+# :*:output of a general rule 
+# :de:Ausgabe einer allgemeinen Regel
+#
+# $Synopsis
+# <=[=> include $1 <=]=>
+#
+# $Copyright (C) 2004 Erich Frühstück
+# This file is part of EFEU.
+# 
+# EFEU is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+# 
+# EFEU is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public
+# License along with EFEU; see the file COPYING.
+# If not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+test $_rule_smh && return
+_rule_smh=1
+
+# $Synopsis
+# AllTarget\br
+# CleanTarget\br
+#
+# $Description
+# :*:The variables |AllTarget| and |CleanTarget| defines the names
+# for the standard phony targets for creating and cleaining. The default
+# setting is |all| respective |clean|.
+# :de:Die Variablen |AllTarget| und |CleanTarget| definieren die Namen
+# für die Standardziele zur Generierung und zum Aufräumen.
+# Die Standardvorgabe ist |all| beziehungsweise |clean|.
+
+AllTarget=all
+CleanTarget=clean
+
+# $pconfig !
+# A:name |
+# 	:*:create extra rule for letting phony target <name> depending on <tg>.
+#	:de:erzeugt für das Scheinziel <name> eine Abhängigkeit von <tg>.
+# C:name |
+# 	:*:create extra rule for phony target <name> to remove <tg>.
+#	:de:erzeugt für das Scheinziel <name> eine Löschregel für <tg>.
+# c |
+#	:*:is an abbreviation for |-C $$CleanTarget|.
+#	:de:ist eine Abkürzung für |-C $$CleanTarget|.
+# a |
+#	:*:is an abbreviation for |-A $$AllTarget -C $$CleanTarget|.
+#	:de:ist eine Abkürzung für |-A $$AllTarget -C $$CleanTarget|.
+# i |
+#	:*:is an abbreviation for |-A install -C uninstall|.
+#	:de:ist eine Abkürzung für |-A install -C uninstall|.
+# d |
+#	:*:create a double-colon rule insteat of a single-colon rule.
+#	:de:erzeugt eine Doppel-Colon Regel anstelle einer Enfach-Colon Regel.
+# r |
+#	:*:read additional commamd lines from standard input (as
+#	here-document).
+#	:de:liest zusätzliche Kommandos von der Standardeingabe (als
+#	Here-Dokument).
+# /%*=*/%<name>=<repl> |
+#	:*:creates a substitution rule for |%|<name> with <repl>
+#	:de:definiert eine Ersetzungsregel für |%|<name> mit <repl>
+# :tg |
+# 	:*:defines the target list.
+#	:de:gibt die Liste der Ziele an.
+# ::dep |
+# 	:*:defines the dependence list.
+#	:de:gibt die Liste der Abhängigkeiten an.
+# *command(s) |
+# 	:*:defines the list of commands.
+#	Every argument is written as an extra line.
+#	Empty arguments are ignored.
+#	:de:gibt die Liste der Befehle an.
+#	Jedes Argument bildet eine eigene Befehlszeile.
+#	Leere Argumente werden ignoriert.
+# !
+# :*:
+# The function $! creates a simple rule for |make|.
+# The following options are accepted:
+# :de:
+# Die Funktion $! generiert eine einfache Regel für |make|.
+# Die folgenden Optionen und Argumente werden akzeptiert:
+#
+# @arglist
+#
+# :*:
+# The |-r| flag allows the commands of the rules as here document.
+# The character sequence |@/| at end of a line is translated in an
+# Backslash |\\|. This allwows you to write continuation lines in the
+# makefile.
+# \par
+# The examples below show the use of this function. It is frequently used
+# by other functions to write the |make| rules. Some of them are just
+# wrappers for $!.
+# :de:
+# Die Option |-r| erlaubt die Spezifikation der Befehlszeilen über ein
+# Here-Dokument. Die Zeichensequenz |@/| am Ende einer Zeile wird in einen
+# Gegenschrägstrich |\\| umgewandelt. Dies erlaubt die Ausgabe von
+# Fortsetzungszeilen im Makefile.
+# \par
+# Die untenstehenden Beispiele zeigen die Verwendung der Funktion.
+# Sie wird häufig von anderen Funktionen für die eigentliche Regelgenerierung
+# eingesetzt. Manche von diesen sind einfach nur Hüllen für $!.
+
+mf_rule ()
+{
+	_a=""
+	_c=""
+	_s=":"
+	_rule_stdin=
+	_rule_sed=$TMP/.rule.sed
+	printf "%s\n" 's|@/$|\\|' > $_rule_sed
+
+	while [ -n "$1" ]
+	do
+		case "$1" in
+		%*=*)	echo "s=$1=g" >> $_rule_sed; shift;;
+		-A)	_a="$2"; shift 2;;
+		-A*)	_a=`expr "$1" : '..\(.*\)'`; shift;;
+		-C)	_c="$2"; shift 2;;
+		-C*)	_c=`expr "$1" : '..\(.*\)'`; shift;;
+		-c)	_c="$CleanTarget"; shift;;
+		-a)	_a="$AllTarget"; _c="$CleanTarget"; shift;;
+		-i)	_a="install"; _c="uninstall"; shift;;
+		-r)	_rule_stdin=1; shift;;
+		-d)	_s="::"; shift;;
+		--)	shift; break;;
+		-*)	shmkmf_invop mf_rule "$1";;
+		*)	break;;
+		esac
+	done
+
+	test "$#" -gt 0 || shmkmf_warg mf_rule
+	_t=$1
+	test -n "$_t" || shmkmf_error rule "mf_rule: empty target."
+	shift
+
+	echo "$1" | awk '{
+		gsub("=", "\\=")
+		for (i = NF; i >= 0; i--)
+			printf "s=%%%d=%s=g\n", i, $i
+	}' > $_rule_sed.r
+	awk '{ printf "%07d:%s\n", NR, $0 }' $_rule_sed | \
+		sort -r | cut -d: -f2- >> $_rule_sed.r
+	mv $_rule_sed.r $_rule_sed
+	echo 's/%@/$@/g' >> $_rule_sed
+	echo 's/%=/%/g' >> $_rule_sed
+
+#	nl $_rule_sed | sed -e "s/^/# /"
+
+	test -n "$_a" && printf "\n%s:: %s\n" "$_a" "$_t" |
+		sed -f $_rule_sed
+	test -n "$_c" && printf "\n%s::\n\trm -f %s\n" "$_c" "$_t" |
+		sed -f $_rule_sed
+
+	if [ "$#" -gt 0 ]; then
+		printf "\n%s%s %s\n" "$_t" "$_s" "$1" | sed -f $_rule_sed
+		shift
+		
+		for _rule_cmd
+		do
+			if [ -n "$_rule_cmd" ]; then
+				printf "\t%s\n" "$_rule_cmd" |
+					sed -f $_rule_sed
+			fi
+		done
+	else
+		printf "\n%s%s\n" "$_t" "$_s" | sed -f $_rule_sed
+	fi
+
+	if [ "$_rule_stdin" ]; then
+		while read _rule_cmd
+		do
+			if [ -n "$_rule_cmd" ]; then
+				printf "\t%s\n" "$_rule_cmd"
+			fi
+		done | sed -f $_rule_sed
+	fi
+
+	rm -f $_rule_sed
+}
+
+# $pconfig !
+# C:name |
+# 	:*:use phony target <name> insteat of $$CleanTarget.
+#	:de:verwende Pseudoziel <name> anstelle von $$CleanTarget.
+# *list |
+# 	:*:list of files to clean up.
+#	:de:Liste der aufzuräumenden Dateien.
+# !
+# :*:
+# The function crates cleanup rules for the given target(s).
+# The following options are accepted:
+# :de:
+# Die Funktion $! erzeugt Aufräumregeln für die gegebenen Ziele.
+# Die folgenden Optionen und Argumente werden akzeptiert:
+#
+# @arglist
+
+mf_clean ()
+{
+	_c="$CleanTarget"
+
+	while [ -n "$1" ]
+	do
+		case "$1" in
+		-C)	_c="$2"; shift 2;;
+		-C*)	_c=`expr "$1" : '..\(.*\)'`; shift;;
+		--)	shift; break;;
+		-*)	shmkmf_invop mf_clean "$1";;
+		*)	break;;
+		esac
+	done
+
+	test "$#" -gt 0 || shmkmf_warg mf_clean
+	printf "\n%s::\n\trm -f %s\n" "$_c" "$*"
+}
+
+# $Description
+# :de:
+# \shead Ersetzungsregeln
+# Bei der Ausgabe der Regeln werden mithilfe von |sed| Ersetzungen
+# durchgeführt. Insbesonders stehen Abkürzungen für die einzelnen
+# Dateien der Abhängigkeitsliste zur Verfügung. Ersetzungskennungen
+# werden mit einem Prozentzeichen eingeleitet.
+# [|%0|] Komplette Liste der Abhängigkeiten
+# [|%1|] Erste Datei aus der Liste der Abhängigkeiten
+# [|%|<n>] <n>-te Datei aus der Liste der Abhängigkeiten
+# [|%=|] Das Prozentzeichen selbst
+# [|%@|] Die Sequenz |\$@| (vermeidet das Quotieren von |\$|)
+# \end
+# Zusätzlich können noch mit |%|<name>|=|<repl> beliebige Ersetzungen
+# definiert werden. Die Ersetzungsregeln können mit den Optionen
+# beliebig gemischt werden, müssen aber vor den Argumenten angegeben
+# werden. Bereits definierte Ersetzungen können in den Ersetzungsregeln
+# verwendet werden. Sie werden auch bei der Zieldatei und der
+# Abhängigkeitsliste berücksichtigt.
+
+# $Examples
+# \config shmkmf
+# :*:
+# The following line defines a rule to copy |foo| to |bar|.
+# \shmkmf[-x] The output has the form:
+# mf_rule bar foo 'cp foo \$@'
+# \end
+# \par
+# With the additional flag |-a|, the line
+# \shmkmf[-x] creates the output:
+# mf_rule -a bar foo 'cp foo \$@'
+# \end
+# \par
+# The following line
+# \shmkmf[-x] is an example for a simple double-colon rule:
+# mf_rule -d all
+# \end
+# \par
+# The next example shows a more general application
+# \shmkmf[-x] gives
+# mf_rule -i bar "foo foo.ch" 'rm -f \$@' 'sed -f %2 %1 > %@'
+# \end
+# \par
+# The last example shows the use of the |-r| option and a
+# substitution rule (|%x| fpr |foo|):
+# \shmkmf[-x] gives
+# mf_rule %x=foo -a -r bar "%x %x.ch" << EOF
+# rm -f %@
+# echo "#!/bin/sh" > %@
+# sed -f %2 %1 >> %@
+# chmod a+x %@
+# EOF
+# \end
+# :de:
+# Die folgende Zeile definiert eine Regel zum Kopieren
+# der Datei |foo| nach |bar|:
+# \shmkmf[-x] Die generierte Regel hat die Form:
+# mf_rule bar foo 'cp foo \$@'
+# \end
+# \par
+# Wird zusätzlich das Flag |-a| verwendet, liefert die Zeile
+# \shmkmf[-x] die Ausgabe:
+# mf_rule -a bar foo 'cp foo \$@'
+# \end
+# \par
+# Die folgende Zeile
+# \shmkmf[-x] ist ein Beispiel für eine einfache Doppel-Colon Regel:
+# mf_rule -d all
+# \end
+# \par
+# Das nächste Beispiel zeigt eine allgemeinere Anwendung.
+# \shmkmf[-x] liefert
+# mf_rule -i bar "foo foo.ch" 'rm -f \$@' 'sed -f %2 %1 > \$@'
+# \end
+# \par
+# Den Abschluß bildet eine mehrzeile Regel unter Einsatz der |-r| Option
+# und einer Substitutionsregel (|%x| für |foo|).
+# \shmkmf[-x] liefert
+# mf_rule %x=foo -a -r bar "%x %x.ch" << EOF
+# rm -f %@
+# echo "#!/bin/sh" > %@
+# sed -f %2 %1 >> %@
+# chmod a+x %@
+# EOF
+# \end
+
+# $Note
+# :*:The header |$1| is preloaded by |shmkmf|.
+# :de:Die Headerdatei |$1| wird bereits von |shmkmf| geladen.
+
+# $SeeAlso
+# \mref{shmkmf(1)}, 
+# \mref{comment.smh(7)},
+# \mref{var.smh(7)},
+# \mref{base.smh(7)}.

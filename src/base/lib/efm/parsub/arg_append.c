@@ -31,6 +31,7 @@ Anweisungen in <def>.
 Dabei handelt es sich um eine Zeichenkette aus
 Kennbuchstaben mit der folgenden Bedeutung:
 [n]	Null Pointer (kein Argument der Liste)
+[p]	Pointer Adresse
 [s]	Konstante Zeichenkette
 [m]	Dynamische Zeichenkette
 [d]	Ganzzahlwert
@@ -43,6 +44,7 @@ void arg_append (ArgList *args, const char *def, va_list list)
 {
 	int val;
 	unsigned uval;
+	void *ptr;
 
 	if	(def == NULL)	return;
 
@@ -58,6 +60,10 @@ void arg_append (ArgList *args, const char *def, va_list list)
 			break;
 		case 'm':
 			arg_madd(args, va_arg(list, char *));
+			break;
+		case 'p':
+			ptr = va_arg(list, void *);
+			arg_madd(args, msprintf("%p", ptr));
 			break;
 		case 'd':
 			val = va_arg(list, int);

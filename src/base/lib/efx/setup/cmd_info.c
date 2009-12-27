@@ -32,15 +32,102 @@ If not, write to the Free Software Foundation, Inc.,
 #define	INT(n)	Val_int(arg[n])
 #define	IO(n)	Val_io(arg[n])
 
+/*	InfoNode Datentyp
+*/
+
+static EfiType Type_inode = REF_TYPE("InfoNode", InfoNode *);
+
+static EfiObj *inode_prev (const EfiObj *base, void *data)
+{
+	InfoNode *inode = base ? Val_ptr(base->data) : NULL;
+	InfoNode *prev = inode ? (inode->prev ? inode->prev : inode) : NULL;
+	return NewPtrObj(&Type_inode, rd_refer(prev));
+}
+
+static EfiObj *inode_name (const EfiObj *base, void *data)
+{
+	InfoNode *inode = base ? Val_ptr(base->data) : NULL;
+	return str2Obj(mstrcpy(inode->name));
+}
+
+static EfiObj *inode_label (const EfiObj *base, void *data)
+{
+	InfoNode *inode = base ? Val_ptr(base->data) : NULL;
+	return str2Obj(inode && inode->label ?
+		mpsubarg(inode->label, "ns", inode->name) : NULL);
+}
+
+static EfiObj *inode_desc (const EfiObj *base, void *data)
+{
+	InfoNode *info = base ? Val_ptr(base->data) : NULL;
+	char *res;
+	
+	if	(!info)
+	{
+		res = NULL;
+	}
+	else if	(!info->func)
+	{
+		res = mpsubarg(info->par, "nss", info->name, info->label);
+	}
+	else
+	{
+		StrBuf *sb = sb_create(0);
+		IO *io = io_strbuf(sb);
+		info->func(io, info);
+		io_close(io);
+		res = sb2str(sb);
+	}
+	
+	return str2Obj(res);
+}
+
+static EfiObj *inode_dim (const EfiObj *base, void *data)
+{
+	InfoNode *info = base ? Val_ptr(base->data) : NULL;
+	return int2Obj(info && info->list ? info->list->used : 0);
+}
+
+static EfiMember inode_var[] = {
+	{ "prev", &Type_inode, inode_prev, NULL },
+	{ "name", &Type_str, inode_name, NULL },
+	{ "label", &Type_str, inode_label, NULL },
+	{ "desc", &Type_str, inode_desc, NULL },
+	{ "dim", &Type_int, inode_dim, NULL },
+};
+
+static void f_inode (EfiFunc *func, void *rval, void **arg)
+{
+	Val_ptr(rval) = GetInfo(NULL, Val_str(arg[0]));
+}
+
+static void f_index (EfiFunc *func, void *rval, void **arg)
+{
+	InfoNode *info = Val_ptr(arg[0]);
+	int n = Val_int(arg[1]);
+
+	if	(info && info->list && n < info->list->used)
+		info = ((InfoNode **) info->list->data)[n];
+
+	SetupInfo(info);
+	Val_ptr(rval) = rd_refer(info);
+}
+
+
+/*
+Abfragefunktionen
+*/
 
 static void f_info (EfiFunc *func, void *rval, void **arg)
 {
-	PrintInfo(IO(1), NULL, STR(0));
+	BrowseInfo(STR(0));
 }
 
-static void f_dump (EfiFunc *func, void *rval, void **arg)
+static void f_cinfo (EfiFunc *func, void *rval, void **arg)
 {
-	DumpInfo(IO(1), GetInfo(NULL, NULL), STR(0));
+	if	(InfoBrowser)
+		InfoBrowser(STR(0));
+	else	StdInfoBrowser(STR(0));
 }
 
 static void f_load (EfiFunc *func, void *rval, void **arg)
@@ -50,9 +137,9 @@ static void f_load (EfiFunc *func, void *rval, void **arg)
 
 static void f_getinfo (EfiFunc *func, void *rval, void **arg)
 {
-	StrBuf *sb = new_strbuf(0);
+	StrBuf *sb = sb_create(0);
 	IO *io = io_strbuf(sb);
-	PrintInfo(io, NULL, STR(0));
+	PrintInfo(io, GetInfo(NULL, STR(0)));
 	io_close(io);
 	Val_str(rval) = sb2str(sb);
 }
@@ -63,9 +150,15 @@ static void f_addinfo (EfiFunc *func, void *rval, void **arg)
 }
 
 
+/*
+Funktionstabelle
+*/
+
 static EfiFuncDef fdef_info[] = {
-	{ 0, &Type_void, "Info (str name = NULL, IO io = cout)", f_info },
-	{ 0, &Type_void, "InfoDump (str name = NULL, IO io = cout)", f_dump },
+	{ 0, &Type_inode, "InfoNode (str name)", f_inode },
+	{ FUNC_VIRTUAL, &Type_inode, "operator[] (InfoNode, int)", f_index },
+	{ 0, &Type_void, "Info (str name = NULL)", f_info },
+	{ 0, &Type_void, "ConsoleInfoBrowser (str name = NULL)", f_cinfo },
 	{ 0, &Type_void, "AddInfo (str name, str label = NULL, str txt = NULL)",
 		f_addinfo },
 	{ 0, &Type_str, "GetInfo (str name)", f_getinfo },
@@ -73,7 +166,13 @@ static EfiFuncDef fdef_info[] = {
 };
 
 
+/*
+Initialisierung
+*/
+
 void CmdSetup_info(void)
 {
+	AddType(&Type_inode);
+	AddEfiMember(Type_inode.vtab, inode_var, tabsize(inode_var));
 	AddFuncDef(fdef_info, tabsize(fdef_info));
 }

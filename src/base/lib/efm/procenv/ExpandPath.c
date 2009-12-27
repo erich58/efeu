@@ -44,7 +44,7 @@ char *ExpandPath (const char *name)
 
 	if	(name == NULL)	return NULL;
 
-	sb = new_strbuf(0);
+	sb = sb_create(0);
 
 	while (*name != 0)
 	{

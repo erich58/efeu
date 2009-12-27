@@ -23,6 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/DBData.h>
 #include <EFEU/Debug.h>
 #include <EFEU/calendar.h>
+#include <EFEU/ioscan.h>
 #include <ctype.h>
 
 #define	BSIZE	2040
@@ -110,7 +111,7 @@ static void DBData_expand (DBData *db)
 /*
 Die Funktion |$1| ladet eine Datenzeile im Textformat.
 Ein Wagenrücklauf in der Eingabedatei wird ignoriert.
-Ein NUL-Zeichen wird durch ein Leerzeichen esrsetzt.
+Ein NUL-Zeichen wird durch ein Leerzeichen ersetzt.
 Falls eine Liste von Trennzeichen <delim> angegeben wurde,
 wird der Datensatz in Datenfelder aufgespalten.
 Bei erfolgreichem Lesen liefert die Funktion einen
@@ -152,6 +153,147 @@ DBData *DBData_text (DBData *db, IO *io, const char *delim)
 
 	if	(delim)
 		DBData_split (db, delim);
+
+	return db;
+}
+
+static void add_qfield (DBData *db, IO *io)
+{
+	int c;
+
+	while ((c = io_getc(io)) != EOF)
+	{
+		if	(c == '\n')
+		{
+			io_ungetc(c, io);
+			return;
+		}
+
+		if	(c == '"')
+		{
+			if	((c = io_getc(io)) != '"')
+			{
+				io_ungetc(c, io);
+				return;
+			}
+		}
+
+		if	(db->buf_size <= db->recl)
+			DBData_expand(db);
+
+		db->buf[db->recl++] = c;
+	}
+}
+
+/*
+Die Funktion |$1| ladet eine Datenzeile im Textformat und
+spaltet sie nach den Trennzeichen auf. Im Unterschied zu
+|DBData_text| werden Anführungszeichen berücksichtigt.
+Die Aufspaltung erfolgt bereits beim Laden der Datenzeile.
+*/
+
+DBData *DBData_qtext (DBData *db, IO *io, const char *delim)
+{
+	char *p;
+	int mode;
+	int need_space;
+	int c;
+	int i;
+
+	if	(db == NULL)
+		db = &DBDataBuf;
+	
+	if	(delim == NULL)	delim = " \t;";
+
+	db->recl = 0;
+	db->dim = 0;
+	db->ebcdic = 0;
+	db->fixed = 0;
+
+	if	(io_peek(io) == EOF)
+		return NULL;
+
+	mode = 0;
+	need_space = 0;
+
+	while (mode != EOF)
+	{
+		c = io_getc(io);
+
+		if	(c == '\r')	continue;
+		if	(c == 0)	c = ' ';
+
+		if	(mode == 0 && c == ' ')	
+			continue;
+
+		if	(c == '\n' || c == EOF)
+		{
+			db->dim++;
+			mode = EOF;
+			c = 0;
+		}
+		else if	(strchr(delim, c))
+		{
+			db->dim++;
+			mode = 0;
+
+			while (c == ' ' || c == '\t')
+				c = io_getc(io);
+
+			if	(c == '\n' || c == EOF)
+				mode = EOF;
+			else if	(strchr(delim, c) == NULL)
+				io_ungetc(c, io);
+
+			need_space = 0;
+			c = 0;
+		}
+		else if	(mode == 0 && c == '"')
+		{
+			add_qfield(db, io);
+			mode = 1;
+			need_space = 0;
+			continue;
+		}
+		else if	(c == ' ')
+		{
+			need_space = 1;
+			continue;
+		}
+		else	mode = 1;
+
+		if	(need_space)
+		{
+			if	(db->buf_size <= db->recl)
+				DBData_expand(db);
+
+			db->buf[db->recl++] = ' ';
+			need_space = 0;
+		}
+
+		if	(db->buf_size <= db->recl)
+			DBData_expand(db);
+
+		db->buf[db->recl++] = c;
+	}
+
+	if	(db->tab_size < db->dim)
+	{
+		db->tab_size = sizealign(db->dim, BSIZE);
+		lfree(db->tab);
+		db->tab = lmalloc(db->tab_size * sizeof (char *));
+	}
+
+	p = db->buf;
+	db->tab[0] = p;
+
+	for (i = 1; i < db->dim; i++)
+	{
+		while (*p != 0)
+			p++;
+
+		db->tab[i] = ++p;
+	}
 
 	return db;
 }
@@ -310,7 +452,7 @@ unsigned char *DBData_ptr (DBData *data, int pos, int len)
 Die Funktion |$1| liefert das Datenfeld mit Index <idx>.
 Falls <data> ein Nullpointer ist, wird ein Nullpointer
 zurückgegeben. Falls Index <idx> außerhalb des zulässigen Bereichs liegt,
-wird Ein Leerstring zurückgegeben.
+wird ein Leerstring zurückgegeben.
 */
 
 char *DBData_field (DBData *data, int idx)
@@ -365,6 +507,26 @@ int DBData_date (DBData *data, int idx, int flag)
 	return 0;
 }
 
+/*
+Gleitkommawert lesen
+*/
+
+double DBData_field_double (DBData *data, int pos)
+{
+	char *p = DBData_field(data, pos);
+
+	if	(p && *p)
+	{
+		IO *io = io_cstr(p);
+		void *ptr = NULL;
+
+		io_valscan(io, SCAN_DOUBLE, &ptr);
+		io_close(io);
+		return *((double *) ptr);
+	}
+
+	return 0.;
+}
 
 /*	Test auf Leerzeichen
 */
@@ -379,6 +541,31 @@ int DBData_isblank (DBData *data, int pos, int len)
 
 		while (len-- > 0)
 			if (*ptr++ != space) return 0;
+	}
+
+	return 1;
+}
+
+/* Test auf Zahlebnwert
+*/
+
+int DBData_isdigit (DBData *data, int pos, int len)
+{
+	unsigned char *ptr = DBData_ptr(data, pos, len);
+
+	if	(!ptr)	return 1;
+
+	if	(data->ebcdic)
+	{
+		for (; len-- > 0; ptr++)
+			if (*ptr != 0x40 && !(*ptr & 0xF0))
+				return 0;
+	}
+	else
+	{
+		for (; len-- > 0; ptr++)
+			if (*ptr != ' ' && !isdigit(*ptr))
+				return 0;
 	}
 
 	return 1;
@@ -415,6 +602,17 @@ char *DBData_str (DBData *data, int pos, int len)
 		return db_str(data->buf, pos, len);
 
 	return txt_str((char *) data->buf, pos, len);
+}
+
+char *DBData_xstr (DBData *data, int pos, int len)
+{
+	if	(DBData_check(data, pos, len))
+		return 0;
+
+	if	(data->ebcdic)
+		return db_str(data->buf, pos, len);
+
+	return txt_xstr((char *) data->buf, pos, len);
 }
 
 int DBData_char (DBData *data, int pos, int len)

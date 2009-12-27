@@ -26,13 +26,15 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	NAME_KEY	"operator"
 
-char *Parse_name (IO *io)
+char *Parse_name (IO *io, int flag)
 {
 	void *name;
 
 	if	((name = io_getname(io)) == NULL)
 	{
-		io_error(io, "[efmain:81]", NULL);
+		if	(flag)
+			io_error(io, "[efmain:81]", NULL);
+
 		return NULL;
 	}
 

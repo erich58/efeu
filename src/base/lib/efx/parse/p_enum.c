@@ -24,12 +24,14 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/parsedef.h>
 #include <EFEU/stdtype.h>
 #include <EFEU/Op.h>
+#include <EFEU/ioctrl.h>
+#include <ctype.h>
 
 #define	PROMPT	"enum { >>> "
 
 #define	ALIGN(x, y)	((y) * (((x) + (y) - 1) / (y)))
 
-static int get_start (EfiType *type, int start)
+int NextEnumCode (const EfiType *type, int start)
 {
 	if	(type && type->vtab)
 	{
@@ -47,9 +49,29 @@ static int get_start (EfiType *type, int start)
 			}
 		}
 
-		return get_start(type->base, start);
+		return NextEnumCode(type->base, start);
 	}
 	else	return start;
+}
+
+static void clearspace (char *p)
+{
+	int i, k;
+
+	if	(!p)	return;
+
+	i = k = 0;
+
+	while (isspace((unsigned char) p[i]))
+		i++;
+
+	while (p[i] != 0)
+		p[k++] = p[i++];
+
+	p[k] = 0;
+
+	while (k && isspace((unsigned char) p[k-1]))
+		p[--k] = 0;
 }
 
 static void add_key (EfiType *type, IO *io, int delim)
@@ -58,9 +80,11 @@ static void add_key (EfiType *type, IO *io, int delim)
 	int c;
 	char *name;
 
-	start = get_start(type->base, 0);
+	start = NextEnumCode(type->base, 0);
+	c = io_eat(io, " \t\n,");
+	io_ctrl(io, IOPP_COMMENT, NULL);
 
-	while ((c = io_eat(io, " \t\n,")) != EOF)
+	while (c != EOF)
 	{
 		if	(c == delim)
 		{
@@ -68,7 +92,20 @@ static void add_key (EfiType *type, IO *io, int delim)
 			return;
 		}
 
-		name = io_getname(io);
+		if	(c == '"')
+		{
+			io_getc(io);
+			name = io_xgets(io, "\"");
+			io_getc(io);
+		}
+		else	name = io_getname(io);
+
+		if	(name == NULL)
+		{
+			io_error(io, "[efmain:185]", NULL);
+			break;
+		}
+
 		c = io_eat(io, " \t");
 
 		if	(c == '=')
@@ -78,9 +115,14 @@ static void add_key (EfiType *type, IO *io, int delim)
 				&Type_int, &start);
 		}
 
+		c = io_eat(io, " \t\n,");
+
 		if	(name)
 		{
-			AddEnumKey(type, name, start);
+			char *p = NULL;
+			io_ctrl(io, IOPP_COMMENT, &p);
+			clearspace(p);
+			AddEnumKey(type, name, p, start);
 			start++;
 		}
 	}
@@ -120,7 +162,7 @@ EfiObj *PFunc_enum (IO *io, void *data)
 		return NULL;
 	}
 
-	type = NewEnumType(name, NULL, 0);
+	type = NewEnumType(name);
 	memfree(name);
 
 	if	(base)
@@ -130,5 +172,5 @@ EfiObj *PFunc_enum (IO *io, void *data)
 	prompt = io_prompt(io, PROMPT);
 	add_key(type, io, '}');
 	io_prompt(io, prompt);
-	return type2Obj(type);
+	return type2Obj(AddEnumType(type));
 }

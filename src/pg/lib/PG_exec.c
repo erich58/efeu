@@ -26,6 +26,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/strbuf.h>
 #include <EFEU/Debug.h>
 
+#if	HAS_PQ
+
 #define	M_LOCK	"$!: exec is locked.\n"
 #define	M_NOMEM	"$!: not enough memmory to create data.\n"
 #define	M_EXEC	"PQexec() failed.\n$1"
@@ -137,6 +139,8 @@ const char *PG_status (PG *pg)
 {
 	return (pg && pg->res) ? PQresStatus(PQresultStatus(pg->res)) : NULL;
 }
+
+#endif
 
 /*
 $Diagnostic

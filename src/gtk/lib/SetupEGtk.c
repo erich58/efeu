@@ -25,6 +25,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/CmdPar.h>
 #include <EFEU/parsedef.h>
 
+#if	HAS_GTK
+
 static void f_init (EfiFunc *func, void *rval, void **arg)
 {
 	EGtkInit();
@@ -40,6 +42,8 @@ static EfiFuncDef fdef[] = {
 	{ 0, &Type_void, "gtkinit ()", f_init },
 	{ 0, &Type_void, "gtkres (str def)", f_gtkres },
 };
+
+#endif
 
 /*
 :de:
@@ -59,15 +63,13 @@ void SetupEGtk (void)
 
 	setup_done = 1;
 	SetupStd();
+#if	HAS_GTK
 	EGtkRes(ProgName);
 	AddFuncDef(fdef, tabsize(fdef));
-}
-
-void _init (void);
-
-void _init (void)
-{
-	SetupEGtk();
+#else
+	fprintf(stderr, "sorry: Gtk+ interface not available.\n");
+	exit(EXIT_FAILURE);
+#endif
 }
 
 /*

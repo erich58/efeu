@@ -1,0 +1,95 @@
+\sec	Konfigurierbare Version von Hello World
+
+Zur Veranschaulichung der Programmkonfiguration wollen wir uns
+nun der konfigurierbaren Version des Programmbeispiels
+<"Hello World"> widmen. Diese erlaubt die Bestimmung von
+Ausgabeformat und Ausgabetext über Kommandozeilenparameter.
+
+Der Ausgabetext wird dabei durch das erste (optionale) Argument
+festgelegt, während das Ausgabeformat über die folgenden zwei Optionen
+gesteuert wird:
+[|-q|]
+	Der Ausgabetext wird unter Anführung gestellt.
+[|-f| <fmt>]
+	Das Ausgabeformat kann beliebig vorgegeben werden.
+
+
+/*
+Sehen wir uns zuerst den Quellcode der Datei |vhello2.c| an:
+
+\include[verbatim] vhello2.c
+
+Die Funktion |ParseCommand| lädt die oben genannte
+Konfigurationsdatei, analysiert die Kommandoargumente und setzt
+<"Resourcen"> in einer internen Struktur. Der Argumentvektor <argv> wird
+dabei umgeschrieben, nur <argv>|[0]| wird dabei nicht verändert.
+
+Die Abfrage der <"Resourcen"> erfolgt mit der Funktion |GetResource|,
+wobei das erste Argument den Namen der Resource angibt und das zweite
+Argument den Vorgabewert bestimmt, falls die Resource nicht definiert
+wurde.
+
+In EFEU-Programmen wird |exit| grundsätzlich nur mit einem der
+beiden (ANSI C) Makros |EXIT_SUCCESS| bzw. |EXIT_FAILURE|
+aufgerufen. Diese sind in der automatisch immer eingebundenen
+Headerdatei |<stdlib.h>| definiert.
+
+Kompiliert wird das Programm mit dem Befehl
+	|efeucc -o vhello2 vhello2.c -lefm|
+
+Das Kommando |efeucc| implementiert |cc| und sorgt dafür, das die
+Suchpfade für Headerdateien und Programmbibliotheken entsprechend
+von EFEU erweitert werden. Abgesehen von der Angabe der
+Programmbibliothek |efm| und dem anderen Kompilernamen gibt es hier
+keine Überraschungen.
+
+Ohne Konfigurationsdatei -- diese haben den gleichen Basisnamen wie das
+Kommando und den \index[Filezusatz <"|.cnf|">]Zusatz <"|.cnf|"> --
+verhält sich das Kommando wie |hello1|. Im folgenden ist nun die
+Konfigurationsdatei |vhello2.cnf| abgebildet, die nun für die gleiche
+Syntax wie |vhello1| sorgt:
+
+\include[verbatim] vhello2.cnf
+
+Das erste Kommentar in der Konfigurationsdatei wird gesondert behandelt.
+Alle Zeilen bis zur ersten Leerzeile bestimmen die Resource |Ident|
+(Programmtitel).
+
+Beginnt eine der folgenden Zeilen mit der Kennung |$C| oder |$c|,
+bestimmt der Rest der Zeile (Inklusive dem |C| oder |c| aber ohne |$|)
+die Resource |Copyright|.
+
+Damit können diese beiden Resourcen über das Kommentar
+gesetzt werden. Der Titel kann auch mehrsprachig spezifiziert werden.
+Details dazu koönnen unter \mref{langfilter(3)} nachgeschlagen werden-
+Die genaue Syntaxbeschreibung der Konfigurationsdatei folgt im
+nächsten Kapitel.
+
+Die Vorteile der EFEU-Version werden sichtbar, wenn eines der
+folgenden Kommandozeilen ausgeführt wird:
+
+[|vhello2 -?|]
+	gibt einen Überblick über die zulässigen Optionen und
+	Argumente;
+[|vhello2 --help|]
+	generiert einen Handbucheintrag für das Kommando;
+[|vhello2 --help=lp|]
+	schickt den Handbucheintrag zum Drucker;
+[|vhello2 --version|]
+	liefert die Versionsinformationen zum Kommando;
+[|eis -p vhello2|]
+	erlaubt eine Abfrage der Kommandoparameter mit |eis|.
+*/
+
+\include[verbatim] hello2.esh
+
+Die Konfiguration des Kommandos ist mit der speziellen
+Kontrollstruktur
+	|pconfig !|\br
+	<Konfigurationszeilen>\br
+	|!|
+im Skript integriert. Diese ruft nach der Interpretation
+der Konfigurationszzeilen automatisch die Funktion |ParseCommand| auf.
+
+Auch hier wird das erste Kommemtar im Skript zur Bestimmung von |Ident| und
+|Copyright| herangezogen.

@@ -1,0 +1,22 @@
+\config	efeu
+\config docpart
+
+\langpar
+:*:
+\dnote	Draft
+\date	August 2004
+\title	Makefile generation
+An overview
+:de:
+\dnote	Rohfassung
+\date	August 2004
+\title	Generierung von Makefiles
+Ein Überblick
+
+\author	Erich Frühstück
+
+@Copyright(2004)
+
+\docpart preface.doc
+\toc
+\docpart appendix

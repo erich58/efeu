@@ -94,7 +94,7 @@ static int psub_ctrl (void *ptr, int req, va_list list)
 	case IO_CLOSE:
 
 		rd_deref(par->args);
-		del_strbuf(par->buf);
+		sb_destroy(par->buf);
 		stat = io_close(par->io);
 		memfree(par);
 		return stat;
@@ -121,7 +121,7 @@ IO *psubfilter (IO *io, ArgList *args)
 		PSUB *par = memalloc(sizeof(PSUB));
 		par->io = io;
 		par->args = args;
-		par->buf = new_strbuf(1024);
+		par->buf = sb_create(1024);
 		par->ptr = NULL;
 		par->mode = 0;
 

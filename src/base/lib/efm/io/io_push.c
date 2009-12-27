@@ -27,6 +27,7 @@ If not, write to the Free Software Foundation, Inc.,
 typedef struct {
 	IO save;
 	IO *tmp;
+	int lock;
 } PUSHPAR;
 
 static PUSHPAR *push_create (IO *io, IO *tmp)
@@ -34,6 +35,7 @@ static PUSHPAR *push_create (IO *io, IO *tmp)
 	PUSHPAR *par = memalloc(sizeof(PUSHPAR));
 	par->save = *io;
 	par->tmp = tmp;
+	par->lock = 0;
 	io->stat = 0;
 	io->nsave = 0;
 	return par;
@@ -82,26 +84,57 @@ static int push_ident (PUSHPAR *par, char **ptr)
 static int push_get (void *ptr)
 {
 	PUSHPAR *par = ptr;
-	return io_getc(par->tmp);
+	int c;
+
+	if	(par->lock)
+		return io_getc(&par->save);
+
+	par->lock++;
+	c = io_getc(par->tmp);
+	par->lock--;
+	return c;
 }
 
 static int push_put (int c, void *ptr)
 {
 	PUSHPAR *par = ptr;
-	return io_putc(c, par->tmp);
+
+	if	(par->lock)
+		return io_putc(c, &par->save);
+
+	par->lock++;
+	c = io_putc(c, par->tmp);
+	par->lock--;
+	return c;
 }
 
 static int push_ctrl (void *ptr, int req, va_list list)
 {
 	PUSHPAR *par = ptr;
+	int stat;
+
+	if	(par->lock)
+		return io_vctrl(&par->save, req, list);
+
+	par->lock++;
 
 	switch (req)
 	{
-	case IO_RESTORE:	return push_restore(par, list);
-	case IO_UNGETC:		return io_ungetc(va_arg(list, int), par->tmp);
-	case IO_IDENT:		return push_ident(par, va_arg(list, char **));
-	default:		return io_vctrl(par->tmp, req, list);
+	case IO_RESTORE:
+		stat = push_restore(par, list);
+		break;
+	case IO_UNGETC:	
+		stat = io_ungetc(va_arg(list, int), par->tmp);
+		break;
+	case IO_IDENT:	
+		stat = push_ident(par, va_arg(list, char **));
+		break;
+	default:
+		stat = io_vctrl(par->tmp, req, list);
 	}
+
+	par->lock--;
+	return stat;
 }
 
 

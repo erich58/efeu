@@ -44,6 +44,16 @@ static void cmp_str (EfiFunc *func, void *rval, void **arg)
 	RVINT = mstrcmp(STR(0), STR(1));
 }
 
+static void cmp_alnum (EfiFunc *func, void *rval, void **arg)
+{
+	RVINT = alnumcmp(STR(0), STR(1));
+}
+
+static void cmp_alpha (EfiFunc *func, void *rval, void **arg)
+{
+	RVINT = alphacmp(STR(0), STR(1));
+}
+
 static void cmp_lex (EfiFunc *func, void *rval, void **arg)
 {
 	RVINT = lexcmp(STR(0), STR(1));
@@ -53,13 +63,6 @@ static void cmp_int (EfiFunc *func, void *rval, void **arg)
 {
 	if	(INT(0) < INT(1))	RVINT = -1;
 	else if	(INT(0) > INT(1))	RVINT = 1;
-	else				RVINT = 0;
-}
-
-static void cmp_long (EfiFunc *func, void *rval, void **arg)
-{
-	if	(LONG(0) < LONG(1))	RVINT = -1;
-	else if	(LONG(0) > LONG(1))	RVINT = 1;
 	else				RVINT = 0;
 }
 
@@ -82,12 +85,6 @@ static void rcmp_int (EfiFunc *func, void *rval, void **arg)
 	else				RVINT = 0;
 }
 
-static void rcmp_long (EfiFunc *func, void *rval, void **arg)
-{
-	if	(LONG(1) < LONG(0))	RVINT = -1;
-	else if	(LONG(1) > LONG(0))	RVINT = 1;
-	else				RVINT = 0;
-}
 
 static void rcmp_double (EfiFunc *func, void *rval, void **arg)
 {
@@ -127,13 +124,17 @@ static void f_texputc(EfiFunc *func, void *rval, void **arg)
 
 static EfiFuncDef fdef[] = {
 	{ FUNC_VIRTUAL, &Type_int, "lexcmp (str, str)", cmp_lex },
+	{ FUNC_VIRTUAL, &Type_int, "alnumcmp (str, str)", cmp_alnum },
+	{ FUNC_VIRTUAL, &Type_int, "alphacmp (str, str)", cmp_alpha },
 	{ FUNC_VIRTUAL, &Type_int, "cmp (str, str)", cmp_str },
-	{ FUNC_VIRTUAL, &Type_int, "cmp (int, int)", cmp_int },
-	{ FUNC_VIRTUAL, &Type_int, "cmp (long, long)", cmp_long },
+	{ FUNC_VIRTUAL, &Type_int, "cmp (_Enum_, _Enum_)", cmp_int },
+	{ FUNC_VIRTUAL, &Type_int, "cmp (int, _Enum_)", cmp_int },
+	{ FUNC_VIRTUAL, &Type_int, "cmp (_Enum_, int)", cmp_int },
 	{ FUNC_VIRTUAL, &Type_int, "cmp (double, double)", cmp_double },
 	{ FUNC_VIRTUAL, &Type_int, "rcmp (str, str)", rcmp_str },
-	{ FUNC_VIRTUAL, &Type_int, "rcmp (int, int)", rcmp_int },
-	{ FUNC_VIRTUAL, &Type_int, "rcmp (long, long)", rcmp_long },
+	{ FUNC_VIRTUAL, &Type_int, "rcmp (_Enum_, _Enum_)", rcmp_int },
+	{ FUNC_VIRTUAL, &Type_int, "rcmp (int, _Enum_)", rcmp_int },
+	{ FUNC_VIRTUAL, &Type_int, "rcmp (_Enum_, int)", rcmp_int },
 	{ FUNC_VIRTUAL, &Type_int, "rcmp (double, double)", rcmp_double },
 
 	{ 0, &Type_str, "inquire (str p = \">>>\", str def = NULL)",
@@ -150,5 +151,11 @@ static EfiFuncDef fdef[] = {
 
 void SetupUtil(void)
 {
+	static int init_done = 0;
+
+	if	(init_done)	return;
+
+	init_done = 1;
+
 	AddFuncDef(fdef, tabsize(fdef));
 }

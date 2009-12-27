@@ -48,11 +48,20 @@ void RestoreVarStack (EfiVarStack *vstack)
 	PopVarTab();
 }
 
+#define	USE_ALLOCTAB	0
+
+#if	USE_ALLOCTAB
+static ALLOCTAB(stack_tab, 64, sizeof(EfiVarStack));
+#endif
 
 void PushVarTab (EfiVarTab *tab, EfiObj *obj)
 {
 	EfiVarStack *x = VarStack;
+#if	USE_ALLOCTAB
+	VarStack = new_data(&stack_tab);
+#else
 	VarStack = memalloc(sizeof(EfiVarStack));
+#endif
 	VarStack->next = x;
 	VarStack->tab = LocalVar;
 	VarStack->obj = LocalObj;
@@ -63,7 +72,11 @@ void PushVarTab (EfiVarTab *tab, EfiObj *obj)
 void PushContext (EfiVarTab *tab, EfiObj *obj)
 {
 	EfiVarStack *x = ContextStack;
+#if	USE_ALLOCTAB
+	ContextStack = new_data(&stack_tab);
+#else
 	ContextStack = memalloc(sizeof(EfiVarStack));
+#endif
 	ContextStack->next = x;
 	ContextStack->tab = ContextVar;
 	ContextStack->obj = ContextObj;
@@ -82,7 +95,11 @@ void PopVarTab(void)
 		UnrefObj(LocalObj);
 		LocalVar = x->tab;
 		LocalObj = x->obj;
+#if	USE_ALLOCTAB
+		del_data(&stack_tab, x);
+#else
 		memfree(x);
+#endif
 	}
 }
 
@@ -97,6 +114,10 @@ void PopContext(void)
 		DelVarTab(ContextVar);
 		UnrefObj(ContextObj);
 		ContextObj = x->obj;
+#if	USE_ALLOCTAB
+		del_data(&stack_tab, x);
+#else
 		memfree(x);
+#endif
 	}
 }

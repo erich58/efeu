@@ -25,7 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <ctype.h>
 
 
-static int do_copy (IO *io, IO *tmp);
+static int do_copy (IO *io, IO *tmp, int delim);
 
 static EfiType *get_type(IO *io, char *name)
 {
@@ -227,13 +227,14 @@ EfiFunc *MakePrototype(IO *io, EfiType *type, EfiName *nptr, unsigned flags)
 		arg.type = (otype == &Type_obj) ? NULL : otype;
 		arg.lval = lflag;
 		arg.nokonv = 1;
+		arg.promote = 0;
 		arg.cnst = (arg.lval == 0);
 		arg.defval = NULL;
 		io_write(tmp, &arg, sizeof(EfiFuncArg));
 		n++;
 	}
 
-	while ((c = do_copy(io, tmp)) == FARG_STDARG)
+	while ((c = do_copy(io, tmp, ')')) == FARG_STDARG)
 		n++;
 
 	if	(c == FARG_ERROR)
@@ -270,6 +271,7 @@ EfiFunc *MakePrototype(IO *io, EfiType *type, EfiName *nptr, unsigned flags)
 		arg.type = &Type_list;
 		arg.lval = 0;
 		arg.nokonv = 0;
+		arg.promote = 0;
 		arg.cnst = 0;
 		arg.defval = NULL;
 		io_write(tmp, &arg, sizeof(EfiFuncArg));
@@ -294,12 +296,12 @@ EfiFunc *MakePrototype(IO *io, EfiType *type, EfiName *nptr, unsigned flags)
 /*	Argumentwert kopieren
 */
 
-static int do_copy(IO *io, IO *tmp)
+static int do_copy(IO *io, IO *tmp, int delim)
 {
 	EfiFuncArg arg;
 	int flag;
 
-	flag = ParseFuncArg(io, &arg);
+	flag = ParseFuncArg(io, &arg, delim);
 
 	if	(flag == FARG_STDARG)
 		io_write(tmp, &arg, sizeof(EfiFuncArg));
@@ -308,7 +310,7 @@ static int do_copy(IO *io, IO *tmp)
 }
 
 
-int ParseFuncArg(IO *io, EfiFuncArg *arg)
+int ParseFuncArg(IO *io, EfiFuncArg *arg, int delim)
 {
 	void *p;
 	int c;
@@ -319,12 +321,13 @@ int ParseFuncArg(IO *io, EfiFuncArg *arg)
 	arg->lval = 0;
 	arg->nokonv = 0;
 	arg->cnst = 0;
+	arg->promote = 0;
 
 	for (;;)
 	{
 		c = io_eat(io, "%s");
 
-		if	(c == EOF || c == ')')
+		if	(c == EOF || c == delim)
 		{
 			io_getc(io);
 			return FARG_END;
@@ -336,7 +339,7 @@ int ParseFuncArg(IO *io, EfiFuncArg *arg)
 
 			if	(strcmp(p, "...") == 0)
 			{
-				if	(c == EOF || c == ')')
+				if	(c == EOF || c == delim)
 				{
 					io_getc(io);
 					return FARG_ELLIPSE;
@@ -370,6 +373,18 @@ int ParseFuncArg(IO *io, EfiFuncArg *arg)
 				p = NULL;
 				arg->cnst = 1;
 			}
+			else if (mstrcmp("restricted", p) == 0)
+			{
+				memfree(p);
+				p = NULL;
+				arg->nokonv = 1;
+			}
+			else if (mstrcmp("promotion", p) == 0)
+			{
+				memfree(p);
+				p = NULL;
+				arg->promote = 1;
+			}
 			else
 			{
 				arg->type = get_type(io, p);
@@ -388,13 +403,17 @@ int ParseFuncArg(IO *io, EfiFuncArg *arg)
 		c = io_eat(io, "%s");
 
 		if	(c == '&')	arg->lval = 1;
+#if	1
 		else if	(c == '*')	arg->nokonv = 1;
+#else
+		else if	(c == '*')	abort();
+#endif
 		else			break;
 
 		io_getc(io);
 	}
 
-	arg->name = io_mgets(io, "=,%s)");
+	arg->name = Parse_name(io, 0);
 	c = io_eat(io, "%s");
 
 	if	(c == '=')
@@ -420,7 +439,7 @@ int ParseFuncArg(IO *io, EfiFuncArg *arg)
 /*	Funktionsargumente abfragen
 */
 
-size_t GetFuncArg(IO *io, EfiFuncArg **arg)
+size_t GetFuncArg(IO *io, EfiFuncArg **arg, int delim)
 {
 	size_t n;
 	int c;
@@ -429,7 +448,7 @@ size_t GetFuncArg(IO *io, EfiFuncArg **arg)
 	tmp = io_tmpbuf(0);
 	n = 0;
 
-	while ((c = do_copy(io, tmp)) == FARG_STDARG)
+	while ((c = do_copy(io, tmp, delim)) == FARG_STDARG)
 		n++;
 
 	if	(c == FARG_ERROR)

@@ -33,7 +33,7 @@ static char *argl_ident (const void *data)
 
 	if	(par->dim)
 	{
-		StrBuf *buf = new_strbuf(0);
+		StrBuf *buf = sb_create(0);
 		IO *io = io_strbuf(buf);
 		int i;
 

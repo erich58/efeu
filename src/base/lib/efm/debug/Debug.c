@@ -27,6 +27,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/parsearg.h>
 #include <EFEU/ftools.h>
 #include <EFEU/vecbuf.h>
+#include <EFEU/procenv.h>
 
 /*
 :de:
@@ -62,7 +63,7 @@ static void log_clean (void *data)
 	log->file = NULL;
 }
 
-static void cleanup (void)
+static void cleanup (void *par)
 {
 	vb_clean(&log_tab, log_clean);
 	log_clean(&log_all);
@@ -137,13 +138,13 @@ void DebugMode (const char *def)
 		erzwingt die Registrierung.
 	*/
 		fileident(NULL); 
-		atexit(cleanup);
+		proc_clean(cleanup, NULL);
 		cleanup_registered = 1;
 	}
 
 	if	(def == NULL)	return;
 
-	n = strsplit(def, " \t\n;:", &list);
+	n = mstrsplit(def, " \t\n;:", &list);
 
 	for (i = 0; i < n; i++)
 	{
@@ -164,7 +165,14 @@ void DebugMode (const char *def)
 
 		if	(x->opt)
 		{
-			file = fileopen(x->opt, "az");
+			if	(x->opt[0] == '+')
+			{
+				x->opt++;
+				file = fileopen(x->opt, "az");
+				fprintf(file, "----\n");
+			}
+			else	file = fileopen(x->opt, "wz");
+
 			out = io_stream(x->opt, file, fileclose);
 		}
 

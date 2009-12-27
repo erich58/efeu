@@ -1,1 +1,0 @@
-#define	WishScript(tg,src)	InstallCmdScript(tg,src,-e -c wish8.0)

@@ -23,6 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <GUI/EGtkWidget.h>
 
+#if	HAS_GTK
 
 EfiObjList *EGtkArgList (EfiObjList *base, GtkType type)
 {
@@ -64,3 +65,5 @@ void EGtkArgInfo (IO *io, GtkType type)
 	if	(args)
 		g_free(args);
 }
+
+#endif

@@ -44,6 +44,7 @@ typedef struct {
 
 DBData *DBData_ebcdic (DBData *db, IO *io, int recl);
 DBData *DBData_text (DBData *db, IO *io, const char *delim);
+DBData *DBData_qtext (DBData *db, IO *io, const char *delim);
 
 void DBData_conv (DBData *db);
 void DBData_sync (DBData *db, int recl, int c);
@@ -52,17 +53,33 @@ int DBData_split (DBData *db, const char *delim);
 int DBData_check (DBData *data, int pos, int len);
 unsigned char *DBData_ptr (DBData *data, int pos, int len);
 int DBData_isblank (DBData *data, int pos, int len);
+int DBData_isdigit (DBData *data, int pos, int len);
 unsigned DBData_base37 (DBData *data, int pos, int len);
 unsigned DBData_uint (DBData *data, int pos, int len);
 char *DBData_str (DBData *data, int pos, int len);
+char *DBData_xstr (DBData *data, int pos, int len);
 int DBData_char (DBData *data, int pos, int len);
 unsigned DBData_packed (DBData *data, int pos, int len);
 unsigned DBData_bcdval (DBData *data, int pos, int len);
 unsigned DBData_binary (DBData *data, int pos, int len);
 
-char *DBData_field (DBData *data, int pos);
-char *DBData_xfield (DBData *data, int pos);
+char *DBData_field (DBData *data, int idx);
+char *DBData_xfield (DBData *data, int idx);
 int DBData_date (DBData *data, int pos, int flag);
+
+#define	DBData_field_unsigned(db,idx,base)	\
+	strtoul(DBData_field(db, idx), NULL, base)
+
+#define	DBData_field_uint64(db,idx,base)	\
+	mstr2uint64(DBData_field(db, idx), NULL, base)
+
+#define	DBData_xfield_unsigned(db,idx,base)	\
+	strtoul(DBData_xfield(db, idx), NULL, base)
+
+#define	DBData_xfield_uint64(db,idx,base)	\
+	mstr2uint64(DBData_xfield(db, idx), NULL, base)
+
+double DBData_field_double (DBData *data, int pos);
 
 typedef struct {
 	REFVAR;
@@ -76,6 +93,7 @@ typedef struct {
 #define	DBFILE_TEXT	0
 #define	DBFILE_EBCDIC	1
 #define	DBFILE_CONV	2
+#define	DBFILE_QTEXT	3
 
 extern RefType DBFile_reftype;
 

@@ -81,7 +81,7 @@ static int get_mode(const char *str)
 	if	(str == NULL)	return 0;
 
 	flags = 0;
-	dim = strsplit(str, "%s", &list);
+	dim = mstrsplit(str, "%s", &list);
 
 	for (i = 0; i < dim; i++)
 	{

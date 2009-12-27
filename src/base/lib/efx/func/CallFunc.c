@@ -81,16 +81,9 @@ void CallFunc (EfiType *type, void *ptr, EfiFunc *func, ...)
 }
 
 
-void CallVoidFunc (EfiFunc *func, ...)
+void CallVoidFuncVec (EfiFunc *func, void **args)
 {
-	va_list list;
-	void **args;
-
 	if	(func == NULL)	return;
-
-	va_start(list, func);
-	args = make_args(func, list);
-	va_end(list);
 
 	if	(func->lretval || func->type == &Type_void)
 	{
@@ -117,9 +110,20 @@ void CallVoidFunc (EfiFunc *func, ...)
 		func->eval(func, data, args);
 		CleanData(func->type, data);
 	}
-
-	memfree(args);
 }
 
+void CallVoidFunc (EfiFunc *func, ...)
+{
+	if	(func)
+	{
+		va_list list;
+		void **args;
 
+		va_start(list, func);
+		args = make_args(func, list);
+		va_end(list);
+		CallVoidFuncVec(func, args);
+		memfree(args);
+	}
+}
 

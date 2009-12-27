@@ -33,8 +33,8 @@ double bisection (int (*f)(void *par, double x), void *par, double x0, double x1
 
 	if	(x0 > x1)	x = x0, x0 = x1, x1 = x;
 
-	if	((y0 = (*f)(par, x0)) == 0)	return x0;
-	if	((y1 = (*f)(par, x1)) == 0)	return x1;
+	if	((y0 = f(par, x0)) == 0)	return x0;
+	if	((y1 = f(par, x1)) == 0)	return x1;
 
 	if	(y0 * y1 > 0)
 	{

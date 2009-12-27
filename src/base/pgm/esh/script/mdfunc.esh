@@ -26,7 +26,7 @@ Type_t Type = NULL;
 PrintListDelim = "\t";
 
 pconfig !
-Version = "$Id: mdfunc.esh,v 1.8 2002-12-17 04:55:39 ef Exp $"
+Version = "$Id: mdfunc.esh,v 1.10 2005-07-24 05:12:41 ef Exp $"
 PrintMode = true
 Mark = "#-1"
 
@@ -75,7 +75,7 @@ p:prec | :eval 'float_prec = {}'
 :file | Input
 	:*:input file
 	:de:Name der Eingabedatei
-/.*=.*/name=var | SelDef: append " "
+/.*=.*/<name>=<var> | SelDef: append " "
 	:*:selection parameter
 	:de:Selektionsparameter
 ::out | Output; PrintMode = false
@@ -92,7 +92,7 @@ if	(Expr)
 	if	(Type == NULL)
 	{
 		eval(sprintf("%s x;", md.type));
-		Type = typeof(expr(Expr));
+		Type = expr("typeof(" + Expr + ")");
 	}
 
 	eval(sprintf("virtual %s _EVALFUNC(%s x) return (%s);",

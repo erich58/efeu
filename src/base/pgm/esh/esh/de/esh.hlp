@@ -25,7 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 @synopsis -h
 \Description
 Das Programm |$!|
-interpretiert Skriptfiles in der Syntax des EFEU - Befehlsinterpreters.
+interpretiert Skriptfiles in der Syntax des EFEU-Befehlsinterpreters.
 Die Syntax der Sprache ist ähnlich zu C/C++. Wer damit vertraut ist,
 sollte keine Schwierigkeiten haben, diese Sprache zu lernen.
 
@@ -204,13 +204,302 @@ verwendet.
 
 Ein Makrodefinition kann mit der |#undef| Direktive gelöscht werden.
 
+\head	VARIABLEN UND KONSTANTEN
+
+Im Gegensatz zu anderen Interpretersprachen müssen in |$!| Variablen
+wie in C/C++ vor ihrer Verwendung deklariert werden. Die Deklaration
+kann an beliebiger Stelle (mit Berücksichtigung der aktuellen Hierarchie
+der Variablentabellen) im Skript erfolgen. Eine Deklaration liefert
+als Rückgabewert den Initialisierungswert der deklarierten Variablen.
+
+Zum Beispiel deklariert
+---- verbatim
+int x;
+double a, b;
+x = (int y = 5);
+----
+zunächst die Ganzzahlvariable <x> und die Gleitkommavariablen <a> und
+<b>. Anschließend wird die Gaanzzahlvariable <y> mit dem
+Initialisierungswert 5 eingerichtet und der Rückgabewert (der Wert 5)
+der Variablen <x> zugewiesen.
+
+Variablen werden in einer Hierarchie von Variablentabellen gespeichert.
+An oberster Stelle steht die globale Variablentabelle, an unterster Stelle
+die lokale oder aktuelle Variablentabelle. Neue Variablen werden in der
+lokalen Variablentabelle generiert. Die Suche von Variablen
+erfolgt von unten nach oben. Im äußersten Verarbeitungsmodus stimmt die
+lokale Variablentabelle mit der globalen Variablentabelle überein.
+
+Zu jedem vordefinierten Datentyp im EFEU-Interpreter gibt es einen
+zugehörigen Datentyp in C. Der Interpreter kennt keine Pointer, aber
+manche Datentypen werden durch Pointer auf C-Datentypen repräsentiert.
+
+Der Interpreter unterscheidet zwischen L-Werten und Konstanten. Ein
+L-Wert ist alles, was auf der linken Seite einer Zuweisung stehen
+darf. Typische L-Werte sind Variablen. Das Resultat eines Terms oder
+eines Funktionsaufwertes kann ein L-Wert sein.
+
+\shead	Ganzzahltypen
+
+Wie in C/C++ gibt es eine Reihe von Ganzzahldatentypen. Die folgende
+Tabelle listet die Ganzzahltypen und ihre Äquivalente in C auf.
+
+\tab	|l|l|
+[-]
+<*esh Type*> | <*C Type*>
+[-]
+byte | signed char
+short | short int
+bool | int
+int | int
+unsigned | unsigned int
+long | long int
+size_t | long unsigned int
+[-]
+
+Die Schlüsselwörter |short|, |unsigned| und |long| sind Datentypnamen und
+keine Typqualifikatoren wie in C.
+Der Datentyp |int| ist eine Unterklasse von |bool|, daher kann |int|
+immer auch dort verwendet werden, wo |bool| erwartet wird.
+
+Die Syntax von Ganzzahlkonstanten ist wie in C/C++.
+Die Schlüsselworter |true| (Ganzzahlwert~0) und |false|
+(Ganzzahlwert~1) werden für boolsche Werte verwendet.
+
+\shead	Gleitkommatypen
+
+Der EFEU-Befehlsinterpreter verwendet die Gleitkommatypen |float| und
+|double| wie in C/C++. Alle Gleitkommakonstanten sind vom Type |double|.
+Die gesamte Arithmetik wird mit |double| durchgeführt, |float|
+wurde nur aus Gründen der Vollständigkeit und für große Datenfelder,
+wo die Genauigkeit der Werte nicht so wichtig ist, eingerichtet.
+
+\shead	Zeichen und Zeichenketten
+
+Ein Zeichen in |$!| ist vom Type |char| und sein Kodewert wird als
+vorzeichenlos interpretiert (Wertebereich 0 ... 255).
+
+Zeichenketten (Strings) werden in |$!| völlig anders als in C implementiert.
+Sie werden nicht als Felder vom Type |char| eingerichtet, sondern
+haben den Datentyp |str|, der über einen |char| Pointer eingerichtet
+wird. Falls einem String ein Wert zugeordnet wird, wird die gesamte
+Zeichenkette und nicht die Adresse kopiert. Stringkopien erfolgen immer
+mit dynamischer Speicherzuweisung und es gibt eine
+Speicherbereinigung (Garbage-Collection) für Strings und generell für
+alle Objekte mit dynamisch zugewiesenem Speicherbereich.
+
+Zeichenkonstanten werden von einfachen,
+Stringkonstanten von doppelten Hochkommas begrenzt.
+Der Gegenschrägstrich wird wie in C als Fluchtsymbol verwendet.
+
+Für lange Stringkonstanten gibt es das Schlüsselwort |string|, welches
+in der folgenden Form verwendet wird:
+
+	|string !|\br
+	Inhalt des Strings\br
+	|!|
+
+unmittelbar nach |!| muß ein Zeilenvorschub stehen und |!| muss
+das erste Zeichen der letzten Zeile sein. Eine so definierte
+Zeichenkonstante enthält immer einen Zeilenvorschub am Ende.
+Der Gegenschrägstrich wird nur mehr zum Schutz eines |!| am Anfang
+einer Zeile verwendet. Diese Konstruktion kann an beliebiger Stelle
+innerhalb eines Ausdrucks stehen.
+
+Innerhalb solcher Stringdefinitionen werden Kommentare im C/C++-Style
+überlesen und Präprozessor-Direktiven interpretiert.
+
+So kann zum Beispiel mit
+
+	|str s = string !|\br
+	|#include "|<file>|"|\br
+	|!;|
+
+der Inhalt der Datei <file> in den String <s> geladen werden.
+Aber Achtung: Die Datei <file> wird vom Präprozessor überarbeitet.
+
+<*Anmerkung:*> In EFEU (und damit auch in |$!|) können Nullstrings
+(Zeichenpointer auf |NULL|) wie gewöhnliche Strings verwendet werden.
+Nullstrings werden jedoch anders als Leerstrings (Zeichenketten, die
+nur aus der Abschlußnull bestehen) behandelt. Die EFEU-Bibliotheken
+beinhalten eine Reihe von Hilfsfunktionen zur Handhabung von
+Zeichenketten mit dynamisch zugewiesenem Speicher. Auch können sie mit
+Stringkonstanten gemischt werden. Die Speicherverwaltungsfunktionen
+von EFEU wissen, ob der Speicher eines Strings freigegeben werden
+kann.
+
+\shead	Pointertypen
+
+Datentypen, die über Pointer implementiert werden, kopieren bei einer
+Zuweisung nur die Adresse und nicht die Daten (Zeichenketten sind
+eine Ausnahme). Aber sie benutzen einen Referenzzähler für
+die Speicherbereinigung, der beim kopieren erhöht wird.
+Alle diese Datentypen sind von der Basisklasse |_Ref_| abgeleitet.
+
+Der Datentyp |_Ref_| und alle anderen Datentypen mit
+Pointerrepräsentation (wie |str|) sind wiederum vom Datentyp |_Ptr_|
+abgeleitet, dieser ist auch der Typ der Konstanten |NULL|.
+
+Datentypen mit einem Unterstreichungszeichen am Anfang und Ende des
+Namens sind für die interne Verwendung reserviert. Normalerweise
+werden keine Variablen dieser Typen deklariert. Aber sie können in
+Argumentlisten von virtuellen Funktionen auftreten, etwa um zwischen
+der Konstanten |NULL| (vom Type |_Ptr_|) und einer Zeichenkette,
+die mit |NULL| initialisiert wurde, zu unterscheiden.
+
+\shead	Listen
+
+Listen sind geordnete Mengen von Objekten beliebiger Datentypen.
+Sie haben den Type |List_t|. Es gibt drei Methoden, um Listen zu
+erzeugen:
+#	Mit dem Gruppierungsoperator: |{ 3, 5 }|. Er kann nicht zu
+	Beginn eines Ausdrucks verwendet werden, da |{| ... |}| auch
+	für Blöcke verwendet wird.
+#	Mit dem Listenoperator: |3, 5|. Beachte die niedrige Priorität
+	des Operators. In Termen muß er geklammert werden.  Es können
+	nur Listen mit mindestens zwei Elementen erzeugt werden.
+#	Mit dem Bereichsoperator: |3 : 5 : 2|. Alle Mitglieder haben
+	den gleichen Datentyp.
+
+Jedes Objekt vom Type |List_t| hat die folgenden Komponenten:
+\ttitem	obj
+	liefert den ersten Eintrag der Liste oder |NULL| bei leeren
+	Listen.
+\ttitem	next
+	liefert die Teilliste, die beim zweiten Element startet oder
+	eine leere Liste, falls keine Elemente mehr existieren.
+
+\shead	Datenfelder
+
+Datenfelder können auf zwei Arten deklariert werden:
+
+[<type> <name>|[|<dim>|]|]
+	deklariert <name> als Datenfeld vom Type <type>.
+[<type>|[|<dim>|]| <name>]
+	deklariert <name> als Skalar vom Type <type>|[|<dim>|]|.
+
+Im ersten Fall, und falls das Datenfeld mit einer Liste von Werten
+initialisiert wird, kann <dim> entfallen und die Größe des Datenfeldes
+wird durch die Zahl der Elemente der Liste bestimmt.
+Im zweiten Fall wird implizit ein neuer Datentyp eingerichtet.
+Falls hier keine Größe oder 0 angegeben wird, handelt es sich um einen
+Vektor variabler Länge. Die Größe wird dynamisch angepaßt.
+
+Falls mehr als eine Dimension benötigt wird, wird eine Deklaration der
+Form:
+	<type> <name>|[|<n0>|][|<n1>|]...[|<nk>|];|
+in
+	<type>|[|<nk>|]...[|<n1>|]| <name>|[|<n0>|];|
+
+konvertiert, da Datenfelder nur eindimensional sein können, aber es
+keine Beschränkungen bei der Konstruktion von Vektordatentypen gibt.
+Es ist klar, dass nur <n0> weggelassen werden kann.
+
+Datenfelder werden bei der Verwendung immer in ein Objekt vom Type
+|EfiVec| gepackt.
+Ein Datenfeld kann in eine Liste konvertiert werden und die Werte
+eines Datenfeldes können durch Zuweisung einer Liste verändert werden.
+Falls eine Liste weniger Elemente enthält, als das Datenfeld auf der
+linken Seite, werden nur die zugehörigen Elemente verändert.
+
+Neben den gewöhnlichen Datenfeldern stehen in EFEU noch die folgenden
+Datentypen für ein mächtigeres Hantieren mit Daten zur Verfügung:
+
+\ttitem	EDB
+	ist eine Datenschnittstelle zur Manipulation großer Datenmengen.
+\ttitem TimeSeries
+	sind dynamische Datenfelder vom Type |double| mit einem
+	Zeitindex.
+\ttitem	mdmat
+	verwaltet einen Datenwürfel beliebigen Types und beliebiger
+	Zahl an Dimensionen. Seine Größe wird nur durch den verfügbaren
+	Speicher begrenzt. EFEU enthält eine Reihe von Hilfswerkzeugen
+	zur Manipulation solcher Datenwürfel.
+
+\shead	Abgeleitete Datentypen
+
+Der einfachste Weg um einen neuen Datentyp einzurichten, ist
+|typedef|, z.B:
+	|typedef int myint;|
+
+Der neue Datentyp |myint| wird
+von |int| als Basisklasse abgeleitet (Vererbung).
+Damit kann |myint| wie |int| verwendet werden. Es handelt
+sich aber nicht nur um einen neuen Namen für |int|.
+
+Strukturen werden mit der |struct| Anweisung erzeugt. Die Syntax ist
+	|struct| <type> [|:| <base> [ <name> ]] |{| Deklarationen |}|
+analog zu C++. Fals <base> definiert ist, wird <type> von <base> abgeleitet.
+Nur ein Basistype kann angegeben werden.
+
+Die folgenden zwei Datentypen
+
+---- verbatim
+struct T1 {
+	int a;
+	int b;
+}
+
+struct T2 : int a {
+	int b;
+}
+----
+haben gleiche Komponenten, aber nur |T2| kann stellvertretend für ein
+|int| verwendet werden.
+
+Jeder zuvor definierte Datentyp kann bei der Definition einer
+Datenstruktur verwendet werden. Es gibt aber keine
+Vorwärtsdeklaration.
+
+Jedes Objekt mit einem Strukturdatentype kann in eine Liste
+umgewandelt werden und jede Liste läßt sich in ein Strukturobjekt
+konvertieren.
+
+Beispiel für eine etwas komplexere Struktur:
+
+---- verbatim
+struct MyDataType {
+	int i;
+	double d;
+	str s;
+	int v[10];
+};
+----
+
+Der EFEU Interpreter unterstützt Aufzählungstypen. Die Syntax ist:
+	|enum| <type> [|:| <base> [ <name> ]] |{| Kennungsliste |}|
+mit einer durch Komma getrennten Liste von Kennungen mit optionalen
+Zuweisungswert. Die Kennungen werden an den Aufzählungstype gebunden.
+Sie können unmittelbar nach ihrer Deklaration (also bereits für die
+nächste Kennung innerhalb der Aufzählungsdeklaration) verwendet
+werden.
+
+Die folgende Anweisung:
+	|enum Color { Red, Green = 5, Blue };|
+erzeugt einen Aufzählungstype mit Namen |Color| und den Kennungen
+|Color::Red|, |Color::Green| und |Color::Blue|. Die zugehörigen Ganzzahlwerte
+sind 0, 5 und 6. Für jeden Aufzählungstype werden Konverter
+von/nach |int|/|str| eingerichtet. Daher sind die folgenden
+Zuweisungen alle gültig:
+
+---- verbatim
+Color c1 = "Red";
+Color c2 = 0;
+str s = Color::Red;
+int n = Color::Red;
+----
+
+Die Funktion |enumlist(|<Typ>|)| liefert eine Liste aller Kennungen
+des Aufzählungstypes <Typ> oder eine leere Liste, falls <Typ> keine
+Kennungen hat oder kein Aufzählungstype ist.
+
 \head	AUSDRÜCKE
 
 Konstanten und Variablen können mit Operatoren zu einfachen
 Ausdrücken verknüpft werden.
 
 Die nachfolgenden Tabellen zeigen die verfügbaren Operatoren von |$!|,
-sie sind absteigend nach Priorität aufgelistet. Operatoren, die
+sie sind absteigend nach ihrer Priorität aufgelistet. Operatoren, die
 nicht durch eine horizontale Linie voneinander getrennt sind, haben
 die gleiche Priorität.
 
@@ -229,6 +518,7 @@ die gleiche Priorität.
 <|(|> | grouping | <|(|> <expr> <|)|>
 <|\[|> | expression | <|[|> <expr> <|]|>
 <|()|> | cast (type conversion) | <|(|><type><|)|> <expr>
+<|()|> | lvalue cast | <|(|><type> <|\&)|> <expr>
 [-]
 
 Der <"list grouping"> Operator generiert eine Liste von Werten.
@@ -238,6 +528,21 @@ Initialisierung von Variablen in Deklarationen beschränkt.
 Der <"expression"> Operator liefert einen Ausdruck ohne ihn
 Auszuwerten. Er kann einer Variablen zugewiesen oder einer
 Funktion für eine spätere Auswertung übergeben werden.
+
+Ein Datentyp, der von runden Klammern eingeschlossen ist,
+bildet einen Cast-Operator, der eine Umwandlung des nachfolgenden
+Terms auf den gewünschten Datentyp erzwingt.
+
+Der EFEU-Interpreter erlaubt auch casts von L-Werten. Diese sind für
+alle Datentypen zulässig, für die es wechselseitige Konvertierungen
+gibt.
+
+Beispiel: Durch die Anweisungen
+---- verbatim
+str s = "5";
+(int &) s++;
+----
+wird die Zeichenkette |s| auf |"6"| gesetzt.
 
 \tab	|l|l|l|
 [-]
@@ -368,10 +673,6 @@ Falls der Rückgabewert des Komma-Operators nicht verwendet wird (die
 übliche Anwendung), gibt es keinen Unterschied im Verhalten zum
 Listentrenner.
 
-Ein Datentyp, der von runden Klammern eingeschlossen ist,
-bildet einen Cast-Operator, der eine Umwandlung des nachfolgenden
-Terms auf den gewünschten Datentyp erzwingt.
-
 \shead	Schleifen
 
 \ttitem	while (<cond>) <cmd>
@@ -447,295 +748,6 @@ inneren (oder statischen) Variablentabelle eingerichtet werden.
 Die Verwendung von |static| ist aber nicht auf Variablendeklarationen
 beschränkt.
 
-\head	VARIABLEN UND KONSTANTEN
-
-Im Gegensatz zu anderen Interpretersprachen müssen in |$!| Variablen
-wie in C/C++ vor ihrer Verwendung deklariert werden. Die Deklaration
-kann an beliebiger Stelle (mit Berücksichtigung der aktuellen Hierarchie
-der Variablentabellen) im Skript erfolgen. Eine Deklaration liefert
-als Rückgabewert den Initialisierungswert der deklarierten Variablen.
-
-Zum Beispiel deklariert
----- verbatim
-int x;
-double a, b;
-x = (int y = 5);
-----
-zunächst die Ganzzahlvariable <x> und die Gleitkommavariablen <a> und
-<b>. Anschließend wird die Gaanzzahlvariable <y> mit dem
-Initialisierungswert 5 eingerichtet und der Rückgabewert (der Wert 5)
-der Variablen <x> zugewiesen.
-
-Variablen werden in einer Hierarchie von Variablentabellen gespeichert.
-An oberster Stelle steht die globale Variablentabelle, an unterster Stelle
-die lokale oder aktuelle Variablentabelle. Neue Variablen werden in der
-lokalen Variablentabelle generiert. Die Suche von Variablen
-erfolgt von unten nach oben. Im äußersten Verarbeitungsmodus stimmt die
-lokale Variablentabelle mit der globalen Variablentabelle überein.
-
-Zu jedem vordefinierten Datentyp im EFEU-Interpreter gibt es einen
-zugehörigen Datentyp in C. Der Interpreter kennt keine Pointer, aber
-manche Datentypen werden durch Pointer auf C-Datentypen repräsentiert.
-
-Der Interpreter unterscheidet zwischen L-Werten und Konstanten. Ein
-L-Wert ist alles, was auf der linken Seite einer Zuweisung stehen
-darf. Typische L-Werte sind Variablen. Das Resultat eines Terms oder
-eines Funktionsaufwertes kann ein L-Wert sein.
-
-\shead	Ganzzahltypen
-
-Wie in C/C++ gibt es eine Reihe von Ganzzahldatentypen. Die folgende
-Tabelle listet die Ganzzahltypen und ihre Äquivalente in C auf.
-
-\tab	|l|l|
-[-]
-<*esh Type*> | <*C Type*>
-[-]
-byte | signed char
-short | short int
-bool | int
-int | int
-unsigned | unsigned int
-long | long int
-size_t | long unsigned int
-[-]
-
-Die Schlüsselwörter |short|, |unsigned| und |long| sind Datentypnamen und
-keine Typqualifikatoren wie in C.
-Der Datentyp |int| ist eine Unterklasse von |bool|, daher kann |int|
-immer auch dort verwendet werden, wo |bool| erwartet wird.
-
-Die Syntax von Ganzzahlkonstanten ist wie in C/C++.
-Die Schlüsselworter |true| (Ganzzahlwert~0) und |false|
-(Ganzzahlwert~1) werden für boolsche Werte verwendet.
-
-\shead	Gleitkommatypen
-
-Der EFEU-Befehlsinterpreter verwendet die Gleitkommatypen |float| und
-|double| wie in C/C++. Alle Gleitkommakonstanten sind vom Type |double|.
-Die gesamte Arithmetik wird mit |double| durchgeführt, |float|
-wurde nur aus Gründen der Vollständigkeit und für große Datenfelder,
-wo die Genauigkeit der Werte nicht so wichtig ist, eingerichtet.
-
-\shead	Zeichen und Zeichenketten
-
-Ein Zeichen in |$!| ist vom Type |char| und sein Kodewert wird als
-vorzeichenlos interpretiert (Wertebereich 0 ... 255).
-
-Zeichenketten (Strings) werden in |$!| völlig anders als in C implementiert.
-Sie werden nicht als Felder vom Type |char| eingerichtet, sondern
-haben den Datentyp |str|, der über einen |char| Pointer eingerichtet
-wird. Falls einem String ein Wert zugeordnet wird, wird die gesamte
-Zeichenkette und nicht die Adresse kopiert. Stringkopien erfolgen immer
-mit dynamischer Speicherzuweisung und es gibt eine
-Speicherbereinigung (Garbage-Collection) für Strings und generell für
-alle Objekte mit dynamisch zugewiesenem Speicherbereich.
-
-Zeichenkonstanten werden von einfachen,
-Stringkonstanten von doppelten Hochkommas begrenzt.
-Der Gegenschrägstrich wird wie in C als Fluchtsymbol verwendet.
-
-Für lange Stringkonstanten gibt es das Schlüsselwort |string|, welches
-in der folgenden Form verwendet wird:
-
-	|string !|\br
-	Inhalt des Strings\br
-	|!|
-
-unmittelbar nach |!| muß ein Zeilenvorschub stehen und |!| muss
-das erste Zeichen der letzten Zeile sein. Eine so definierte
-Zeichenkonstante enthält immer einen Zeilenvorschub am Ende.
-Der Gegenschrägstrich wird nur mehr zum Schutz eines |!| am Anfang
-einer Zeile verwendet. Diese Konstruktion kann an beliebiger Stelle
-innerhalb eines Ausdrucks stehen.
-
-Innerhalb solcher Stringdefinitionen werden Kommentare im C/C++-Style
-überlesen und Präprozessor-Direktiven interpretiert.
-
-So kann zum Beispiel mit
-
-	|str s = string !|\br
-	|#include "|<file>|"|\br
-	|!;|
-
-der Inhalt der Datei <file> in den String <s> geladen werden.
-Aber Achtung: Die Datei <file> wird vom Präprozessor überarbeitet.
-
-<*ANMERKUNG:*> In EFEU (und damit auch in |$!|) können NULL-Strings
-(Zeichenpointer auf NULL) wie gewöhnliche Strings verwendet werden.
-Nullstrings werden jedoch anders als Leerstrings (Zeichenketten, die
-nur aus der Abschlußnull bestehen) behandelt. Die EFEU-Bibliotheken
-beinhalten eine Reihe von Hilfsfunktionen zur Handhabung von
-Zeichenketten mit dynamisch zugewiesenem Speicher. Auch können sie mit
-Stringkonstanten gemischt werden. Die Speicherverwaltungsfunktionen
-von EFEU wissen, ob der Speicher eines Strings freigegeben werden
-kann.
-
-\shead	Pointertypen
-
-Datentypen, die über Pointer implementiert werden, kopieren bei einer
-Zuweisung nur die Adresse und nicht die Daten (Zeichenketten sind
-eine Ausnahme). Aber sie benutzen einen Referenzzähler für
-die Speicherbereinigung, der beim kopieren erhöht wird.
-Alle diese Datentypen sind von der Basisklasse |_Ref_| abgeleitet.
-
-Der Datentyp |_Ref_| und alle anderen Datentypen mit
-Pointerrepräsentation (wie |str|) sind wiederum vom Datentyp |_Ptr_|
-abgeleitet, dieser ist auch der Type der Konstanten |NULL|.
-
-Datentypen mit einem Unterstreichungszeichen am Anfang und Ende des
-Namens sind für die interne Verwendung reserviert. Normalerweise
-werden keine Variablen dieser Typen deklariert. Aber sie können in
-Argumentlisten von virtuellen Funktionen auftreten, etwa um zwischen
-der Konstanten |NULL| (vom Type |_Ptr_|) und einer Zeichenkette,
-die mit |NULL| initialisiert wurde, zu unterscheiden.
-
-\shead	Listen
-
-Listen sind geordnete Mengen von Objekten beliebiger Datentypen.
-Sie haben den Type |List_t|. Es gibt drei Methoden, um Listen zu
-erzeugen:
-#	Mit dem Gruppierungsoperator: |{ 3, 5 }|. Er kann nicht zu
-	Beginn eines Ausdrucks verwendet werden, da |{| ... |}| auch
-	für Blöcke verwendet wird.
-#	Mit dem Listenoperator: |3, 5|. Beachte die niedrige Priorität
-	des Operators. In Termen muß er geklammert werden.  Es können
-	nur Listen mit mindestens zwei Elementen erzeugt werden.
-#	Mit dem Bereichsoperator: |3 : 5 : 2|. Alle Mitglieder haben
-	den gleichen Datentyp.
-
-Jedes Objekt vom Type |List_t| hat die folgenden Komponenten:
-\ttitem	obj
-	liefert den ersten Eintrag der Liste oder |NULL| bei leeren
-	Listen.
-\ttitem	next
-	liefert die Teilliste, die beim zweiten Element startet oder
-	eine leere Liste, falls keine Elemente mehr existieren.
-
-\shead	Datenfelder
-
-Datenfelder können auf zwei Arten deklariert werden:
-
-[<type> <name>|[|<dim>|]|]
-	deklariert <name> als Datenfeld vom Type <type>.
-[<type>|[|<dim>|]| <name>]
-	deklariert <name> als Skalar vom Type <type>|[|<dim>|]|.
-
-Im ersten Fall, und falls das Datenfeld mit einer Liste von Werten
-initialisiert wird, kann <dim> entfallen und die Größe des Datenfeldes
-wird durch die Zahl der Elemente der Liste bestimmt.
-Im zweiten Fall wird implizit ein neuer Datentyp eingerichtet.
-Die Größenangabe kann nicht entfallen.
-
-Falls mehr als eine Dimension benötigt wird, wird eine Deklaration der
-Form:
-	<type> <name>|[|<n0>|][|<n1>|]...[|<nk>|];|
-in
-	<type>|[|<nk>|]...[|<n1>|]| <name>|[|<n0>|];|
-
-konvertiert, da Datenfelder nur eindimensional sein können, aber es
-keine Beschränkungen bei der Konstruktion von Vektordatentypen gibt.
-Es ist klar, dass nur <n0> weggelassen werden kann.
-
-Datenfelder werden bei der Verwendung immer in ein Objekt vom Type
-|EfiVec| gepackt.
-Ein Datenfeld kann in eine Liste konvertiert werden und die Werte
-eines Datenfeldes können durch Zuweisung einer Liste verändert werden.
-Falls eine Liste weniger Elemente enthält, als das Datenfeld auf der
-linken Seite, werden nur die zugehörigen Elemente verändert.
-
-Neben den gewöhnlichen Datenfeldern stehen in EFEU noch die folgenden
-Datentypen für ein mächtigeres Hantieren mit Daten zur Verfügung:
-
-\ttitem	DataBase
-	ist ein dynamisches Datenfeld mit einer optionalen
-	Sortierordnung. Einträge können eingefügt, gesucht und
-	gelöscht werden.
-\ttitem TimeSeries
-	sind dynamische Datenfelder vom Type |double| mit einem
-	Zeitindex.
-\ttitem	mdmat
-	verwaltet einen Datenwürfel beliebigen Types und beliebiger
-	Zahl an Dimensionen. Seine Größe wird nur durch den verfügbaren
-	Speicher begrenzt. EFEU enthält eine Reihe von Hilfswerkzeugen
-	zur Manipulation solcher Datenwürfel.
-
-\shead	Abgeleitete Datentypen
-
-Der einfachste Weg um einen neuen Datentyp einzurichten, ist
-|typedef|, z.B:
-	|typedef int myint;|
-
-Der neue Datentyp |myint| wird
-von |int| als Basisklasse abgeleitet (Vererbung).
-Damit kann |myint| wie |int| verwendet werden. Es handelt
-sich aber nicht nur um einen neuen Namen für |int|.
-
-Strukturen werden mit der |struct| Anweisung erzeugt. Die Syntax ist
-	|struct| <type> [|:| <base> [ <name> ]] |{| Deklarationen |}|
-analog zu C++. Fals <base> definiert ist, wird <type> von <base> abgeleitet.
-Nur ein Basistype kann angegeben werden.
-
-Die folgenden zwei Datentypen
-
----- verbatim
-struct T1 {
-	int a;
-	int b;
-}
-
-struct T2 : int a {
-	int b;
-}
-----
-haben gleiche Komponenten, aber nur |T2| kann stellvertretend für ein
-|int| verwendet werden.
-
-Jeder zuvor definierte Datentyp kann bei der Definition einer
-Datenstruktur verwendet werden. Es gibt aber keine
-Vorwärtsdeklaration.
-
-Jedes Objekt mit einem Strukturdatentype kann in eine Liste
-umgewandelt werden und jede Liste läßt sich in ein Strukturobjekt
-konvertieren.
-
-Beispiel für eine etwas komplexere Struktur:
-
----- verbatim
-struct MyDataType {
-	int i;
-	double d;
-	str s;
-	int v[10];
-};
-----
-
-Der EFEU Interpreter unterstützt Aufzählungstypen. Die Syntax ist:
-	|enum| <type> [|:| <base> [ <name> ]] |{| Kennungsliste |}|
-mit einer durch Komma getrennten Liste von Kennungen mit optionalen
-Zuweisungswert. Die Kennungen werden an den Aufzählungstype gebunden.
-Siwe können unmittelbar nach ihrer Deklaration (also bereits für den
-nächstec Kennung innerhald der Aufzählungsdeklaration) verwendet
-werden.
-
-Die folgende Anweisung:
-	|enum Color { Red, Green = 5, Blue };|
-erzeugt einen Aufzählungstype mit Namen |Color| und den Kennungen
-|Color::Red|, |Color::Green| und |Color::Blue|. Die zugehörigen Ganzzahlwerte
-sind 0, 5 und 6. Für jeden Aufzählungstype werden Konverter
-von/nach |int|/|str| eingerichtet. Daher sind die folgenden
-Zuweisungen alle gültig:
-
----- verbatim
-Color c1 = "Red";
-Color c2 = 0;
-str s = Color::Red;
-int n = Color::Red;
-----
-
-Die Funktion |enumlist(|<Typ>|)| liefert eine Liste aller Kennungen
-des Aufzählungstypes <Typ> oder eine leere Liste, falls <Typ> keine
-Kennungen hat oder kein Aufzählungstype ist.
 
 \head	FUNKTIONEN
 
@@ -803,7 +815,7 @@ Wie in C++ können Funktionen mit verschiedenen Argumentlisten
 Jede Funktion kann in eine virtuelle Funktion konvertiert werden.
 
 Eine virtuelle Funktion kann auch in eine gewöhnliche Funktion
-umgewandelt werden. Dies gechieht mit einem Prototype-Cast wie im
+umgewandelt werden. Dies erfolgt mit einem Prototyp-Cast wie im
 folgendem Beispiel:
 
 ---- verbatim
@@ -812,7 +824,7 @@ Func f = operator+ (int a, int b);;
 
 Nun kann f zur Addition von zwei Ganzzahlwerten verwendet werden.
 Beachte die zwei Strichpunkte am Ende der Zuweisung: Der erste gehört
-zum Prototype (und unterscheidet ihn von einer Funktionsdefinition,
+zum Prototyp (und unterscheidet ihn von einer Funktionsdefinition),
 der zweite schließt den Ausdruck ab.
 
 \shead	Typgebundene Funktionen
@@ -843,10 +855,8 @@ Operatoren werden intern wie Funktionen behandelt. Mit dem Schlüsselwort
 |operator| kann ein Operatorname direkt angesprochen werden.
 Folgende Schreibweisen sind zulässig:
 
-\code
-	operator <op>\br
-	operator \"<op>\"
-\end
+	|operator| <op>\br
+	|operator "|<op>|"|
 
 Bei der ersten Schreibweise muß nach <op> ein Leerzeichen folgen,
 vor <op> kann ein Leerzeichen stehen.
@@ -857,10 +867,8 @@ Dies ist bei der Definition von Funktionen zu beachten.
 
 Folgende Terme sind gleichwertig:
 
-\code
-	a + b\br
-	operator+ (a, b)
-\end
+	|a + b|\br
+	|operator+ (a, b)|
 
 Operatoren sind in der Regel virtuelle Funktionen.
 Alle Zuweisungsoperatoren sind gebundene, virtuelle Funktionen.
@@ -893,13 +901,13 @@ Falls der Zieldatentype |void| ist, definiert die Funktion
 den Destruktor für den Datentyp, der jedesmal aufgerufen wird,
 wenn ein Objekt diesen Types gelöscht wird.
 
-Copy-Konstruktor und Destruktor können als Spezalfall eines Konverters
+Copy-Konstruktor und Destruktor können als Spezialfall eines Konverters
 gesehen werden.
 Wegen der internen Speicherbereinigung werden sie
 kaum benötigt. Bei ihrer Definition
-ist besondere Vorsicht notwendig: Sobald ein Objekt dieses Types
+ist besondere Vorsicht notwendig: Sobald hier ein Objekt dieses Types
 kopiert wird (z.B. bei der Weitergabe an eine andere Funktion),
-führt der Aufruf dieser Funktion zu einer endlosen Rekursion.
+führt der Aufruf des Konstruktors/Destruktors zu einer endlosen Rekursion.
 
 \Notes
 
@@ -909,12 +917,9 @@ gearbeitet. Einzelne Kapitel dieses Buches sind bereits in den Dokumentationen
 zu EFEU enthalten.
 
 Zusätzliche Informationen können mit |$!| selbst abgerufen werden.
-Die Optionen |--info| und |--dump|
-liefern eine Schnittstelle zu eingebauten Informationen.
-Im Interpreter kann auf diese Informationen mit den Funktionen |Info()| bzw.
-|InfoDump()| zugegriffen werden.
-Die komfortabelste Nutzung dieser Schnittstelle ist |eis|. Dazu muss
-nur |eis -p $!| aufgerufen werden.
+Die Option |--info| liefert eine Schnittstelle zu eingebauten Informationen.
+Im Interpreter kann auf diese Informationen mit der Funktion |Info()|
+zugegriffen werden.
 
 Die Nutzung der eingebauten Informationen hat den Vorteil, dass sie
 immer vollständig und aktuell sind. Allerdings sind die zugehörigen
@@ -924,18 +929,14 @@ Falls die Verwendung einer Funktion nicht klar ist: Durch Eingabe des
 Funktionsnamens wird der Prototype (bei virtuellen Funktionen auch alle
 Überladungen) angezeigt.
 
-Informationen zu einem Datentyp werden durch Eingabe des Datentypes
-ausgegeben. So liefert z.B. die Eingabe von |int| die Ausgabe:
+Informationen zu einem Datentyp <foo> können interaktiv mithilfe von
+<foo>|.info(|[|"|<mode>|"|]|)| abgerufen werden.
+Diese Anweisung entspricht dem Aufruf von |esh| mit der Option
+|--info=|[<mode>|:|]|/Type/|<foo>. Die Angabe von <mode> ist optional.
 
----- eval verbatim
-int
-----
-
-Diese Form der Darstellung erfolgt im äußeren Modus. Innerhalb eines
-Blocks oder einer Funktion kann die gleiche Ausgabe mit |print| oder
-|fprint| erzeugt werden:
-	|print(|<fname>|)|\br
-	|fprint(iostd,| <type>|)|
+Einzelne Parameter eines Datentyps können auch über Komponenten
+abgerufen werden. Eine Liste aller verfügbaren Komponenten kann mit
+|Type_t.var| abgerufen werden.
 
 Weitere nützliche Variablen und Funktionen:
 

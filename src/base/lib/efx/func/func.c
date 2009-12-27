@@ -1,5 +1,5 @@
 /*
-Funktionen auswerten},
+Funktionen auswerten
 
 $Copyright (C) 1994 Erich Frühstück
 This file is part of EFEU.
@@ -65,12 +65,10 @@ void Func_inline (EfiFunc *func, void *rval, void **arg)
 
 			if	(func->arg[i].type == &Type_vec)
 			{
-				EfiVec *vec;
-
-				vec = arg[i];
+				EfiVec *vec = Val_ptr(arg[i]);
 				var[i].type = vec->type;
-				var[i].data = vec->data;
-				var[i].dim = vec->dim;
+				var[i].data = vec->buf.data;
+				var[i].dim = vec->buf.used;
 			}
 			else if	(func->arg[i].type == NULL)
 			{

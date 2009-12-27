@@ -49,9 +49,9 @@ $pconfig
 
 static void usage (const char *name, const char *arg)
 {
-	execlp("efeuman", "efeuman", "--", __FILE__, arg, NULL);
+	execlp("efeuman", "efeuman", "-s", __FILE__, "--", name, arg, NULL);
 	fprintf(stderr, USAGE, name);
-	exit(EXIT_SUCCESS);
+	exit(arg ? 0 : 1);
 }
 
 /*	Ausgabe eines Zeichens

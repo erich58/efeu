@@ -1,0 +1,304 @@
+# :*:call function for a list of source files
+# :de:Funktion für eine Liste von Sourcefiles aufrufen
+#
+# $Synopsis
+# <=[=> include $1 <=]=>
+#
+# $Copyright (C) 2004 Erich Frühstück
+# This file is part of EFEU.
+# 
+# EFEU is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+# 
+# EFEU is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public
+# License along with EFEU; see the file COPYING.
+# If not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+test $_foreach_smh && return
+_foreach_smh=1
+
+include dir.smh
+include srclist.smh
+
+# $pconfig !
+# A:name |
+#	:*:sets the variablale |AllTarget| to <name>.
+#	:de:setzt die Variable |AllTarget| auf <name>.
+# C:name |
+#	:*:sets the variablale |CleanTarget| to <name>.
+#	:de:setzt die Variable |CleanTarget| auf <name>.
+# i |
+#	:*:is an abbreviation for |-A install -C uninstall|.
+# 	:de:setzt die Variablen |AllTarget| auf |install| und |CleanTarget|
+#	auf |uninstall|.
+# d:dir |
+#	:*:install files in the directory <dir>.
+#	:de:installiere Dateien im Verzeichniss <dir>.
+# m:name |
+#	:*:use the directory defined by macro <name> for target files.
+#	:de:verwendet das durch den Makronamen <name> definierte
+#	Verzeichnis für Zieldateien.
+# p:dir |
+#	:*:like |-d|, create additional creation rule for directory <dir>
+#	with phony target |$$AllTarget|.
+#	:de:wie |-d|, generiert aber zusätzlich noch eine Regel zum Einrichten
+#	von <dir> mit Scheinziel |$$AllTarget|.
+# c:dir |
+#	:*:like |-p|, create additional cleaning rules for directory <dir>
+#	(and possibly needed subdirectories) with phony target |$$CleanTarget|.
+#	:de:wie |-p|, generiert aber zusätzlich noch eine Regel zum Löschen
+#	von <dir> (und möglicher Unterverzeichnisse) mit Scheinziel
+#	|$$CleanTarget|.
+# M:maplist |
+#	:*:
+#	determines the name of the target sub directory from the
+#	basename of the source directory.
+#	\par
+#	The argument <maplist> consists of a list of
+#	expressions with syntax <pattern>[|=|<repl>]. If the base name
+#	of the source directory matches the Pattern <pattern>, the
+#	target file would be installed in the subdirectory <repl>.
+#	If |=|<repl> is missing, <pattern> is used. In this case,
+# 	<pattern> must not contain any wildcards. Notice, that an empty
+# 	String <repl> is handled different and means not to use a subdirectory.
+#	This is also the default behaviour for source directories not
+#	matching any pattern.
+#	\par
+#	In combination with option |-c| or |-p| the corresponding rules
+#	for the used subdirectories are created, where |-m| implies |-p|
+#	for subdirectories.
+#	:de:
+#	bestimmt aus dem Namen des Verzeichnisses der Sourcedatei das
+#	Unterverzeichnis für die Zieldatei.
+#	\par
+#	Das Argument <maplist> besteht aus einer liste von
+#	Ausdrücken der Form <pattern>[|=|<repl>]. Wenn der
+#	Basisname des Verzeichnisses der Quelldatei dem 
+#	Dateimuster <pattern>  entspricht, wird für die Zieldatei das
+#	Unterverzeichnis <repl> verwendet. Fehlt die Angabe von |=|<repl>,
+#	wird <pattern> verwendet. In diesem Fall darf <pattern> keine
+#	Jokerzeichen enthalten. Beachte, dass ein leerer String für
+#	<repl> anders behandelt wird und bedeutet, dass kein
+#	Unterverzeichnis zu verwenden ist. Das ist auch das
+#	Standardverhalten für Quellverzeichnisse, die keinem Muster
+#	entsprechen.
+#	\par
+#	In Kombination mit Option |-c|
+#	oder |-p| werden auch entsprechende Regeln für die Unterverzeichnisse
+#	generiert, wobei die Option |-m| ein |-p| für die Unterverzeichnisse
+#	impliziert.
+# x:sub |
+#	:*:install files in the subdirectory <sub>. Will be used in combination
+#	with |-m| or |-M|.
+#	:de:installiere Dateien im Unterverzeichnis <sub>. Wird in Kompination
+#	mit |-m| oder |-M| verwendet.
+# s:suffix |
+#	:*:select files with suffix <suffix> and remove it from the
+#	target name.
+#	:de:Wähle Dateien mit Zusatz <suffix> aus, wobei für die
+#	Zieldatei der Zusatz <suffix> vom Dateinamen entfernt wird.
+# S:suffix |
+#	:*:select files with suffix <suffix> and remove it from the
+#	target name.
+#	:de:Wähle Dateien mit Zusatz <suffix> aus ohne den Zusatz vom
+#	Namen der Zieldatei zu entfernen.
+# e:expr |
+#	:*:select files with regular expression <expr>. Attention: the
+#	expression is also set with option |-s| or |-S| to
+#	|\\.|<suffix>|$$|.
+#	:de:wähle Datei entsprechend dem Regulären Ausdruck <expr> aus.
+#	Achtung: Der Ausdruck wird von den Optionen |-s| und |-S|
+#	auf (|\\.|<suffix>|$$|) gesetzt.
+# :cmd |
+#	:*:defines the command to create the rule. The full source name
+#	is in Variable |src|, the basename is in variable |name| and the
+#	target name is in the variable |tg| available.
+#	:de:gibt die Regelfunktion für die ausgewählten Dateien an.
+#	Bei der Ausführung steht der volle Pfadname der Quelldatei in der
+#	Variablen |src|, der Basisname in der Variablen |name| und der
+#	Zielname in der Variablen |tg| zur Verfügung.
+# *path |
+#	:*:list of source files or source directories. Not nessesary in
+#	conjunction with |mf_srclist|.
+#	:de:gibt die Liste der Quelldateien und Quellverzeichnisse an.
+#	Ist in Verbindung mit |mf_srclist| nicht notwendig.
+# !
+# :*:
+# The function @! allows the execution of <cmd> for a list of files. These list
+# is collected by |tmplist| from <path>. If the source list is predefined by
+# |mf_srclist|, no path is nessesary (see \mref{srclist.smh(7)} for details).
+# The following options and arguments are accepted by @!:
+# :de:
+# Die Funktion @! dient zur Ausführung von <cmd> für eine Liste von
+# Dateien. Die Dateiliste wird mithilfe von |tmplist| aus den Pfadangaben
+# <path> zusammengestellt. Wurde mit
+# |mf_srclist| eine Dateiliste definiert, ist die Angabe von Pfadnamen optional.
+# Vergleiche dazu \mref{srclist.smh(7)}.
+# Die folgenden Optionen und Argumente werden von @! akzeptiert:
+#
+# @arglist
+
+foreach ()
+{(
+	test -n "$shmkmf_verbose" && mf_comm "foreach $*"
+	_pfx=""
+	_sfx=""
+	_exp="."
+	_map=""
+	_mdir=:
+	_sub=
+	_dir=
+
+	while [ -n "$1" ]
+	do
+		case "$1" in
+		-i)	AllTarget=install; CleanTarget=uninstall; shift 1;;
+		-A)	AllTarget="$2"; shift 2;;
+		-C)	CleanTarget="$2"; shift 2;;
+
+		-d)	_pfx="$2/"; shift 2;;
+		-p)	_pfx="$2/"; _dir="$2"; _mdir="mf_dir -q -p"; shift 2;;
+		-c)	_pfx="$2/"; _dir="$2"; _mdir="mf_dir -q -c"; shift 2;;
+		-m)	_pfx="\$($2)/"; _mdir="mf_dir -q -p"; shift 2;;
+		-M)	_map="$2"; shift 2;;
+		-x)	_sub="$2/"; shift 2;;
+
+		-s)	_sfx=".$2"; _exp="\\.$2\$"; shift 2;;
+		-S)	_sfx=""; _exp="\\.$2\$"; shift 2;;
+		-e)	_exp="$2"; shift 2;;
+
+		--)	break;;
+		-*)	shmkmf_invop "foreach" "$1"; exit 1;;
+		*)	break;;
+		esac
+	done
+
+	_cmd="$1"
+	shift
+	tmplist -d "$@"
+	_list=`srclist_get "$_exp"`
+	tmplist -d
+	test -n "$_list" || return
+
+	if	[ -n "$_sub" ]; then
+		$_mdir "$_pfx$_sub"
+	else
+		$_mdir "$_dir"
+	fi
+
+	if [ -n "$_map" ]; then
+		_mcmd='dir=`dirname $src`; case `basename $dir` in'
+
+		for x in $_map
+		do
+			case "$x" in
+			*=*)	
+				a=`expr "$x" : '\(.*\)=.*'`
+				b=`expr "$x" : '.*=\(.*\)'`
+				;;
+				
+			*)
+				a="$x"
+				b="$x"
+				;;
+			esac
+
+			test -n "$b" && $_mdir "$_pfx$b/$_sub"
+			_mcmd="$_mcmd $a) name=\"$b/$_sub\$name\";;"
+		done
+
+		_mcmd="$_mcmd *) name=\"$_sub\$name\";; esac"
+	elif	[ -n "$_sub" ]; then
+		_mcmd="name=\"$_sub\$name\""
+	else
+		_mcmd=:
+	fi
+
+	for src in $_list
+	do
+		name=`basename $src $_sfx`
+		eval "$_mcmd"
+		tg="$_pfx$name"
+		eval "$_cmd"
+	done
+)}
+
+# $Example
+# \config shmkmf
+# \smh_init
+# \smh_head include foreach.smh
+#
+# :*:
+# For the shown examples wie assume the following directory structure:
+# :de:
+# Für die gezeigten Anwendungsbeispiele gehen wir von der folgenden
+# Verzeichnisstruktur aus:  
+#
+# \smh_exec mkdir src files en de files/de
+# \smh_exec touch Config.make src/foo.sh src/bar.sh files/foo.cfg files/bar.cfg
+# \smh_exec touch en/foo.hlp files/bar.hlp de/foo.hlp files/de/bar.hlp
+# \smh_exec[verbatim] ls -xR
+#
+# :*:
+# We want to install the commands (extension |.sh|) in |\$(BIN)| and the
+# configuration files (extension |.cfg|) in directory |\$(CFG)|. This could be
+# done with the lines:
+# \shmkmf[-x] The created rules have the form:
+# foreach -m BIN -s sh 'mf_file -x \$tg \$src' .
+# foreach -m CFG -S cfg 'mf_file \$tg \$src' .
+# \end
+# :de:
+# Die Programme (Zusatz |.sh|) sollen im Verzeichnis |\$(BIN)| und die
+# Konfigurationsdateien (Zusatz |.cfg|) im Verzeichnis |\$(CFG)| installiert
+# werden. Dies erfolgt einfach mit den Zeilen:
+# \shmkmf[-x] Die generierten Regeln lauten:
+# foreach -m BIN -s sh 'mf_file -x \$tg \$src' .
+# foreach -m CFG -S cfg 'mf_file \$tg \$src' .
+# \end
+#
+# :*:
+# The help files with suffix |.hlp| should be divided in different
+# target directories. Files in subdirectories with name |de| belongs to
+# |$(LIB)/de/help| and all other belongs to |$(LIB)/help|. The folowing
+# rule
+# \shmkmf[-x] provides the wanted division:
+# foreach -m LIB -M 'de=de/help *=help' -S hlp 'mf_file \$tg \$src' .
+# \end
+# :de:
+# Die Hilfe-Dateien mit Zusatz |.hlp| sind je nach Sprachkennung in
+# unterschiedliche Verzeichnisse zu verteilen. Dabei sollen alle
+# Handbucheinträge der Unterverzeichnisse |de| in |$(LIB)/de/help| und alle
+# anderen in |$(LIB)/help| installiert werden. Dies Aufteilung erfolgt mithilfe
+# der Mapping-Option |-M|. Die folgende Regel
+# \shmkmf[-x] liefert die gewünschte Aufteilung:
+# foreach -m LIB -M 'de=de/help *=help' -S hlp 'mf_file \$tg \$src' .
+# \end
+#
+# :*:
+# The folowing command line is equivalent:
+# :de:
+# Die folgende Befehlszeile ist äquivalent:
+#
+# ---- verbatim
+# foreach -m LIB -M de -x help -S hlp 'mf_file \$tg \$src' .
+# ----
+# \smh_clean
+
+# $Note
+# :*:The header |$1| is preloaded by |shmkmf|.
+# :de:Die Headerdatei |$1| wird bereits von |shmkmf| geladen.
+
+# $SeeAlso
+# \mref{shmkmf(1)},
+# \mref{dir.smh(7)},
+# \mref{rule.smh(7)},
+# \mref{file.smh(7)},
+# \mref{srclist.smh(7)}.

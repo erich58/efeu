@@ -24,14 +24,11 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/Op.h>
 #include <EFEU/parsedef.h>
 
-static EfiVar *get_struct (IO *io, EfiType *type);
-
-
 /*	Typedefinition: Falls kein Vektortype angegeben ist, wird nur
 	ein Aliasname generiert.
 */
 
-static void DummyKonv (EfiFunc *func, void *rval, void **arg)
+void CopyDataFunc (EfiFunc *func, void *rval, void **arg)
 {
 	CopyData(func->type, rval, arg[0]);
 }
@@ -44,7 +41,7 @@ EfiObj *PFunc_typedef(IO *io, void *arg)
 	EfiVar *st;
 	char *def;
 
-	if	((st = get_struct(io, NULL)) == NULL)
+	if	((st = GetStructEntry(io, NULL)) == NULL)
 		return NULL;
 
 	type = NewType(st->name);
@@ -52,6 +49,7 @@ EfiObj *PFunc_typedef(IO *io, void *arg)
 	type->base = st->dim ? NewVecType(st->type, st->dim) : st->type;
 	type->copy = type->base->copy;
 	type->clean = type->base->clean;
+	type->destroy = type->base->destroy;
 	type->size = type->base->size;
 	type->recl = type->base->recl;
 	type->read = type->base->read;
@@ -63,7 +61,7 @@ EfiObj *PFunc_typedef(IO *io, void *arg)
 	CopyKonv(type, type->base);
 	AddType(type);
 	def = msprintf("%s ()", type->name);
-	SetFunc(FUNC_PROMOTION, type->base, def, DummyKonv);
+	SetFunc(FUNC_PROMOTION, type->base, def, CopyDataFunc);
 	memfree(def);
 	return type2Obj(type);
 }
@@ -72,7 +70,7 @@ EfiObj *PFunc_typedef(IO *io, void *arg)
 /*	Strukturkomponente bestimmen
 */
 
-static EfiVar *get_struct(IO *io, EfiType *type)
+EfiVar *GetStructEntry(IO *io, EfiType *type)
 {
 	EfiVar *st;
 	EfiObj *obj;
@@ -95,6 +93,14 @@ static EfiVar *get_struct(IO *io, EfiType *type)
 	while ((c = io_eat(io, " \t")) == '[')
 	{
 		io_getc(io);
+
+		if	((io_eat(io, " \t") == ']'))
+		{
+			io_getc(io);
+			type = NewVecType(type, 0);
+			continue;
+		}
+
 		obj = EvalObj(Parse_index(io), &Type_int);
 		n = obj ? Val_int(obj->data) : 0;
 		UnrefObj(obj);
@@ -154,7 +160,7 @@ EfiVar *GetStruct (IO *io, int delim)
 		default:	break;
 		}
 
-		if	((*ptr = get_struct(io, type)) == NULL)
+		if	((*ptr = GetStructEntry(io, type)) == NULL)
 		{
 			DelVar(st);
 			return NULL;

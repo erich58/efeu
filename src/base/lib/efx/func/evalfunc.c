@@ -49,9 +49,7 @@ static void fpar_clear(FUNCPAR *par, int n)
 
 	for (i = 0; i < n; i++)
 	{
-		if	(par->func->arg[i].lval)
-			SyncLval(par->obj[i]);
-
+		SyncLval(par->obj[i]);
 		UnrefObj(par->obj[i]);
 	}
 
@@ -172,6 +170,7 @@ EfiObj *EvalFunc (EfiFunc *func, const EfiObjList *list)
 
 	obj = MakeRetVal(func, firstarg, par.arg);
 	fpar_clear(&par, dim);
+	SyncObjList((EfiObjList *) list);
 	DelObjList((EfiObjList *) list);
 	return obj;
 }

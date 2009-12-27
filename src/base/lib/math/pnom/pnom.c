@@ -72,11 +72,14 @@ static void PF_print (EfiFunc *func, void *rval, void **arg)
 		Val_str(arg[2]));
 }
 
-static size_t make_xy(EfiVec *v1, EfiVec *v2, double **x, double **y)
+static size_t make_xy (void *p1, void *p2, double **x, double **y)
 {
+	EfiVec *v1, *v2;
 	size_t i, dim;
 
-	dim = min(v1->dim, v2->dim);
+	v1 = Val_ptr(p1);
+	v2 = Val_ptr(p2);
+	dim = (v1 && v2) ? min(v1->buf.used, v2->buf.used) : 0;
 
 	if	(dim == 0)	return 0;
 
@@ -163,8 +166,14 @@ static EfiFuncDef fdef[] = {
 };
 
 
-void SetupPnom(void)
+void SetupPnom (void)
 {
+	static int init_done = 0;
+
+	if	(init_done)	return;
+
+	init_done = 1;
+
 	AddType(&Type_pnom);
 	AddFuncDef(fdef, tabsize(fdef));
 }

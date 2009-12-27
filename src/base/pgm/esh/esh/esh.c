@@ -32,22 +32,25 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/Random.h>
 #include <EFEU/Pixmap.h>
 #include <EFEU/Debug.h>
+#include <EFEU/EDB.h>
 #include <Math/TimeSeries.h>
 #include <Math/pnom.h>
 #include <Math/mdmath.h>
 #include <Math/func.h>
+#include <Math/StatData.h>
 
 
 int main (int narg, char **arg)
 {
 	SetProgName(arg[0]);
-	SetVersion("$Id: esh.c,v 1.14 2002-11-13 06:18:48 ef Exp $");
+	SetVersion("$Id: esh.c,v 1.16 2006-04-10 04:36:57 ef Exp $");
 
 	SetupStd();
 	SetupUtil();
 	SetupPreproc();
 
 	SetupDataBase();
+	SetupEDB();
 	SetupTimeSeries();
 	SetupRandom();
 	SetupMdMat();
@@ -55,6 +58,7 @@ int main (int narg, char **arg)
 	SetupMdMath();
 	SetupPnom();
 	SetupMathFunc();
+	SetupStatData();
 	SetupPixmap();
 	SetupReadline();
 	SetupDebug();

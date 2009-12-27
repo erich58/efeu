@@ -38,6 +38,8 @@ If not, write to the Free Software Foundation, Inc.,
 #define	IO_RESTORE		(IO_STDCTRL|0x07)
 #define	IO_PEEK			(IO_STDCTRL|0x08)
 #define	IO_STAT			(IO_STDCTRL|0x09)
+#define	IO_GETPOS		(IO_STDCTRL|0x0a)
+#define	IO_SETPOS		(IO_STDCTRL|0x0b)
 
 #define	IO_IDENT		(IO_STDCTRL|0x11)
 #define	IO_LINE			(IO_STDCTRL|0x12)

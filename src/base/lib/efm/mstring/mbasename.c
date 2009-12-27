@@ -92,9 +92,9 @@ char *mdirname (const char *path, int flag)
 :*:
 The function |$1| returns the name of the file <path> with all leading
 directory components removed. if <suffix> is not |NULL|, the filesuffix
-is detached from the basename ans stored in <suffix>.
+is detached from the basename and stored in <suffix>.
 :de:
-Die funktion |$1| liefert den Basisnamen einer Datei. Falls für <suffix>
+Die Funktion |$1| liefert den Basisnamen einer Datei. Falls für <suffix>
 kein Nullpointer übergeben wurde, wird der Filezusatz abgetrennt und in
 <suffix> gespeichert.
 */

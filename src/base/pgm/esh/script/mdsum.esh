@@ -22,7 +22,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 pconfig !
-Version = "$Id: mdsum.esh,v 1.8 2001-11-12 07:49:38 ef Exp $"
+Version = "$Id: mdsum.esh,v 1.9 2005-07-24 05:12:41 ef Exp $"
 
 r | Reduce = true
 	:*:remove singulary axis
@@ -39,7 +39,7 @@ T:title | Title
 :out | Output
 	:*:output file name
 	:de:Name der Ausgabedatei
-/.*=.*/name=var | SelDef: append " "
+/.*=.*/<name>=<var> | SelDef: append " "
 	:*:selection parameter
 	:de:Selektionsparameter
 *name(s) | 

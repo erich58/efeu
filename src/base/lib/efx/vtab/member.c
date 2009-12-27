@@ -34,10 +34,7 @@ EfiObj *StructMember (const EfiVar *st, const EfiObj *obj)
 
 	if	(st->dim)
 	{
-		Buf_vec.type = st->type;
-		Buf_vec.data = ptr;
-		Buf_vec.dim = st->dim;
-		return NewObj(&Type_vec, &Buf_vec);
+		return EfiVecObj(st->type, ptr, st->dim);
 	}
 	else if	(obj->lval)
 	{

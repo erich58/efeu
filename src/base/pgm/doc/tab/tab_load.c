@@ -28,7 +28,9 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	FILE_EXT	"dmac"
 #define	PROTECT		"protect"
+#define	BREAK		"break"
 
+#define FMT	"[ftools:6]$!: file $1 not found.\n"
 
 /*	Ladebefehle
 */
@@ -43,7 +45,7 @@ static char *get_data (StrBuf *buf)
 
 static void cmd_eval (DocTab *tab, IO *in, StrBuf *desc)
 {
-	IO *io = io_cmdpreproc(io_mstr(DocParseExpr(in)));
+	IO *io = Doc_preproc(io_mstr(DocParseExpr(in)));
 	CmdEvalFunc(io, NULL, 0);
 	io_close(io);
 }
@@ -63,7 +65,7 @@ static char *get_desc (StrBuf *buf)
 
 	sb_setpos(buf, 0);
 	io = langfilter(io_strbuf(buf), NULL);
-	desc = new_strbuf(0);
+	desc = sb_create(0);
 
 	while ((c = io_getc(io)) != EOF)
 		sb_putc(c, desc);
@@ -97,6 +99,46 @@ static void cmd_show (DocTab *tab, IO *in, StrBuf *desc)
 	memfree(p);
 }
 
+static void cmd_if (DocTab *tab, IO *in, StrBuf *desc)
+{
+	IO *io;
+	int mode;
+	
+	io = Doc_preproc(io_mstr(DocParseLine(in, 0)));
+	mode = Obj2bool(Parse_term(io, 0));
+	io_close(io);
+	io_push(in, io_mstr(DocParseBlock(in, mode, "if*", "endif", "else")));
+}
+
+static int is_defined (DocTab *tab, IO *in)
+{
+	char *name;
+
+	switch (DocSkipSpace(in, 0))
+	{
+	case '@':
+	case '\\':
+		name = DocParseName(in, io_getc(in));
+		return DocTab_getmac(tab, name) != NULL;
+	default:
+		break;
+	}
+
+	return 0;
+}
+
+static void cmd_ifdef (DocTab *tab, IO *in, StrBuf *desc)
+{
+	int mode = is_defined(tab, in);
+	io_push(in, io_mstr(DocParseBlock(in, mode, "if*", "endif", "else")));
+}
+
+static void cmd_ifndef (DocTab *tab, IO *in, StrBuf *desc)
+{
+	int mode = !is_defined(tab, in);
+	io_push(in, io_mstr(DocParseBlock(in, mode, "if*", "endif", "else")));
+}
+
 static struct {
 	char *name;
 	LoadFunc func;
@@ -105,6 +147,9 @@ static struct {
 	{ "def",	DocTab_def },
 	{ "include",	cmd_load },
 	{ "show",	cmd_show },
+	{ "if",		cmd_if },
+	{ "ifdef",	cmd_ifdef },
+	{ "ifndef",	cmd_ifndef },
 };
 
 static LoadFunc get_func (const char *name)
@@ -153,7 +198,7 @@ void DocTab_load (DocTab *tab, IO *io)
 	StrBuf *desc;
 	LoadFunc func;
 
-	desc = new_strbuf(0);
+	desc = sb_create(0);
 	flag = 0;
 	last = '\n';
 	PushVarTab(RefVarTab(tab->var), NULL);
@@ -175,10 +220,14 @@ void DocTab_load (DocTab *tab, IO *io)
 				flag = 1;
 				last = c;
 			}
+			else if	(mstrcmp(BREAK, p) == 0)
+			{
+				break;
+			}
 			else if	((func = get_func(p)) != NULL)
 			{
 				func(tab, io, desc);
-				sb_clear(desc);
+				sb_clean(desc);
 				flag = 0;
 				last = '\n';
 			}
@@ -220,13 +269,26 @@ void DocTab_load (DocTab *tab, IO *io)
 	}
 
 	PopVarTab();
-	del_strbuf(desc);
+	sb_destroy(desc);
 	io_close(io);
 }
 
 void DocTab_fload (DocTab *tab, const char *name)
 {
-	if	(tab && name)
-		DocTab_load(tab, io_lnum(io_findopen(CFGPATH, name,
-			FILE_EXT, "rzd")));
+	char *fname;
+
+	if	(!tab || !name)
+		return;
+
+	fname = fsearch(DocPath, NULL, name, FILE_EXT);
+
+	if	(!fname)
+		fname = fsearch(CFGPATH, NULL, name, FILE_EXT);
+
+	if	(fname)
+	{
+		DocTab_load(tab, io_lnum(io_fileopen(fname, "rd")));
+		memfree(fname);
+	}
+	else	dbg_error(NULL, FMT, "m", mstrpaste(".", name, FILE_EXT));
 }

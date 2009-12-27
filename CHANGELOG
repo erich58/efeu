@@ -1,3 +1,22 @@
+Version 3.0-1
+
+*	Added fixed size integer types and 64-Bit integer arithmetic.
+*	Added configuration checks to be independend of missing
+	packages, which are not essential to build EFEU.
+*	Replaced |dir2make|, |ccmkmf| by |shmkmf| to build EFEU-projects.
+*	New makefile generator |shmkmf| using |/bin/sh|.
+*	Added library functions to handle temporay files in a save way.
+*	New data file concept EDB (still in work).
+*	Fixed invalid conversions for dates later than 1.1.3000.
+*	Support for default values in structur construction.
+*	Implementation of dynamic vector types.
+*	Replaced object/data macros by functions and removed
+	global data buffers.
+*	Fixed a memory hole.
+*	Added debugging functions to locate memory holes.
+*	Fixed updating of extented lvalues in variable argument lists.
+*	Modified assignarg to do not separate arguments inside braces.
+
 Version 2.0
 
 *	Fixed incompatibilities of |pp2dep| with gcc 3.2
@@ -43,9 +62,9 @@ Version 1.0-4
 
 *	New documentation: user reference manual
 *	|efeudoc|: adapted some formats for HTML output to get
-	correct english documents,
-	append language setting to bootstrap resource to
-	get html-documents created in the correct language.
+	correct english documents, append language setting to
+	bootstrap resource to get html-documents created in the
+	correct language.
 
 Version 1.0-3
 

@@ -27,8 +27,8 @@ If not, write to the Free Software Foundation, Inc.,
 static Label glabel = { "GES", "Insgesamt" };
 
 static MdClass gsel = {
-	"GES",		/* name */
-	"Insgesamt",	/* desc */
+	NULL,		/* name */
+	NULL,		/* desc */
 	1,		/* dim */
 	&glabel,	/* label */
 	NULL,		/* classify */
@@ -100,7 +100,7 @@ mdaxis *md_classaxis (const char *name, ...)
 	return grp;
 }
 
-mdaxis *md_ctabaxis (IO *io, MdClassTab *gtab)
+mdaxis *md_ctabaxis (IO *io, MdCountTab *gtab)
 {
 	mdaxis *grp;
 	MdCntGrp *sdef, **x;
@@ -114,7 +114,7 @@ mdaxis *md_ctabaxis (IO *io, MdClassTab *gtab)
 	if	((def = io_mdlist(io, MDLIST_LISTOPT)) == NULL)
 		return NULL;
 
-/*	Zählerliste aufbauen
+/*	Klassifikationsliste aufbauen
 */
 	sdef = NULL;
 	x = &sdef;
@@ -124,11 +124,13 @@ mdaxis *md_ctabaxis (IO *io, MdClassTab *gtab)
 
 	for (i = 0; i < def->dim; i++)
 	{
-		MdClass *s = MdClass_get(gtab, def->list[i]);
+		MdClass *s;
+		
+		if	(def->list[i] == NULL)	continue;
 
-		if	(s == NULL || s->dim == 0)
+		if	((s = MdClass_get(gtab, def->list[i])) == NULL)
 		{
-			dbg_note(NULL, "[mdmat:44]", "m", def->list[i]);
+			dbg_error("md", "[mdmat:44]", "s", def->list[i]);
 			continue;
 		}
 
@@ -150,11 +152,11 @@ mdaxis *md_ctabaxis (IO *io, MdClassTab *gtab)
 */
 	if	(dim == 0)
 	{
-		sdef = new_data(&sdef_tab);
-		sdef->next = NULL;
-		sdef->cdef = &gsel;
-		sdef->flag = 0;
-		sdef->idx = 0;
+		*x = new_data(&sdef_tab);
+		(*x)->next = NULL;
+		(*x)->cdef = &gsel;
+		(*x)->flag = 0;
+		(*x)->idx = 0;
 		dim = gsel.dim;
 		io_putstr(NULL, tmp);
 	}

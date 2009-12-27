@@ -15,6 +15,7 @@ mdmat *md_cat(const char *def, mdmat **tab, size_t dim)
 	mdlist *list;
 	StrBuf *sb;
 	mdaxis **x;
+	char *fmt;
 	char *p;
 	mdaxis **ptr;
 	EfiKonv konv;
@@ -27,9 +28,14 @@ mdmat *md_cat(const char *def, mdmat **tab, size_t dim)
 
 	if	(list == NULL)	list = str2mdlist("X", 0);
 
+	fmt = NULL;
+
+	if	(list->name && (fmt = strchr(list->name, '%')))
+		*fmt++ = 0;
+
 /*	Hauptachse und Datentype bestimmen, Achsenpointer setzen
 */
-	sb = new_strbuf(0);
+	sb = sb_create(0);
 	sb_putstr(list->name, sb);
 	md->type = NULL;
 	ndim = max(dim, list->dim);
@@ -39,7 +45,14 @@ mdmat *md_cat(const char *def, mdmat **tab, size_t dim)
 	{
 		if	(i >= list->dim)
 		{
-			p = msprintf("%s%d", list->name, i + 1);
+			if	(fmt)
+			{
+				p = mpsubarg(fmt, "ssd",
+					tab[i] ? tab[i]->title : NULL,
+					list->name, i + 1);
+			}
+			else	p = msprintf("%s%d", list->name, i + 1);
+
 			sb_putstr(p, sb);
 			memfree(p);
 		}
@@ -69,7 +82,7 @@ mdmat *md_cat(const char *def, mdmat **tab, size_t dim)
 
 	if	(md->type == NULL)	md->type = &Type_ptr;
 
-	del_strbuf(sb);
+	sb_destroy(sb);
 
 /*	Teilachsen bestimmen
 */

@@ -1,0 +1,16 @@
+\sec	Use as desc calculator
+
+If |esh| is called without arguments, he starts in interactive mode
+with the prompt <"|esh: |">.
+The following lines shows a typical dialog with |esh|:
+
+---- verbatim
+esh: 3*5
+15
+esh: double x = sqrt(2)
+1.41421
+esh: 1 / x
+0.707107
+esh:
+----
+

@@ -1,0 +1,102 @@
+\title	Kommentare
+
+\sec	C-Style Kommentare
+
+In C, EFEU-Scripts und Imakefiles werden Kommentare
+mit den Markierungen |/*| und |*/| begrenzt. Dabei wird zwischen
+nebenstehenden und freistehenden Kommentaren unterschieden.
+
+Nebenstehende Kommentare dienen zur Erläuterung einzelner Codezeilen
+und bestehen nur aus einem kurzen Text.
+Nebenstehende Kommentare müssen vorzugsweise mit einem Tabulator oder einem
+Leerzeichen (bei Platzmangel) vom Code getrennt sein. Nach der
+Startmarkierung |/*| und vor der Endemarkierung |*/| ist ein
+Leerzeichen einzufügen. Start- und Endemarkierung stehen in der
+gleichen Zeile.
+
+Ist nicht genügend Platz für ein nebenstehendes Kommentar,
+ist ein freistehendes Kommentar vor der betreffenden Kodezeile einzufügen.
+
+Freistehende Kommentare werden in der Form
+
+---- verbatim
+/*	1. Kommentarzeile
+	2. Kommentarzeile
+	3. Kommentarzeile
+*/
+----
+
+oder
+
+---- verbatim
+/*
+1. Kommentarzeile
+2. Kommentarzeile
+3. Kommentarzeile
+*/
+----
+
+gesetzt. Bei Kommentaren außerhalb eines Funktionsblocks oder
+in Konfigurationsdateien, stehen die Marken immer am Anfang der Zeile.
+Innerhalb eines Funktionsblocks können die Kommentare entsprechend dem
+umgebenden Code eingerückt werden. Die korresspondierenden Marken |/*|
+und |*/| stehen aber immer an der selben Spaltenposition.
+Die Version mit der Einrückung sollte nur für kurze, vorzugsweise
+einzeilige Komentare verwendet werden.
+
+Freistehende Kommentare stehen grundsätzlich vor dem zu
+kommentierenden Code.
+
+\sec	Nebenbedingungen
+
+Kommentare dienen nicht nur zur Erläuterung des nebenstehenden Codes,
+sondern erlauben gleichzeitig auch die Generierierung von
+Handbucheinträgen. Dazu steht das Hilfsprogramm |src2doc| zur
+Verfügung. Es erstellt aus einer Sourcedatei (C, EFEU-Script,
+Imakfile, Header) einen Handbucheintrag.
+
+Damit dieser Vorgang reibungslos abläuft, müssen Kommentartexte
+gewissen Regeln entsprechen.
+
+<*NOCH NICHT AUSGEFÜHRT*>
+
+\sec	Andere Kommentare
+
+C++ (bzw. C99) Kommentare, die von |//| und einem Zeilenende begrenzt sind,
+sind nur für EFEU-Scripts und Konfigurationsdateien erlaubt. Obwohl diese
+auch von den meisten C-Kompilern akzeptiert werden, sind sie
+in EFEU wegen C89-Kompatiblität verboten. Imakefiles werden zur Zeit
+mit einem traditionellen C-Preprozessor aufbereitet, der
+|//|-Kommentare nicht kennt.
+
+Nebenstehende Kommentare sind mit einem weissen Zeichen
+(vorzugsweise Tabulator) vom Code abzugrenzen.
+Der Kommentartext ist von der Marke ebenfalls mit einem Tabulator
+(vorzugsweise bei frestehenden Kommentaren) oder einem Leerzeichen
+(bei nebenstehenden Kommentaren) zu trennen.
+
+\sec	Deaktivieren von Code
+
+Sollen einzelene Codeteile deaktiviert werden, ist der Einsatz von
+Präprozessordirektiven der Form
+
+---- verbatim
+#if	0
+Deaktivierter Code
+#endif
+----
+
+einer Herauskommentierung mit
+
+---- verbatim
+/*
+Deaktivierter Code
+*/
+----
+
+vorzuziehen.
+Die Vortiele liegen auf der Hand: Der Code kann einerseits durch Ändern von
+0 auf 1 leicht aktiviert werden und andererseits kann der deaktivierte
+Code selbst Kommentare enthalten (Was beim Herauskommentieren zu einem
+Konflikt führt, da Kommentare nicht verschachtelt werden können).
+

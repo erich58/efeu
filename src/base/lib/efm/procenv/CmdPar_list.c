@@ -43,16 +43,32 @@ static void doc_key (const char *key, IO *io)
 		io_puts(key, io);
 }
 
-static void verbatim (const char *str, IO *io)
+static void verbatim (const char *str, IO *io, int protect)
 {
 	if	(!str)	return;
 
-	while (*str != 0)
+	for (; *str != 0; str++)
 	{
 		if	(CmdPar_docmode && *str == '|')
 			io_putc('|', io);
 
-		io_putc(*str++, io);
+		if	(protect)
+		{
+			switch (*str)
+			{
+			case '"':
+				io_putc('\n', io);
+				break;
+			case '\n':
+				io_puts("\\n", io);
+				continue;
+			case '\t':
+				io_puts("\\t", io);
+				continue;
+			}
+		}
+
+		io_putc(*str, io);
 	}
 }
 
@@ -71,7 +87,7 @@ static void optkey (CmdParKey *key, IO *io)
 {
 	doc_key("|", io);
 	io_putc('-', io);
-	verbatim(key->key, io);
+	verbatim(key->key, io, 0);
 	doc_key("|", io);
 
 	switch (key->argtype)
@@ -132,7 +148,7 @@ static void show_desc (CmdPar *par, const char *desc, IO *io)
 	io_close(io);
 }
 
-static void list_def (CmdPar *par, CmdParDef *def, IO *io)
+static void list_def (CmdPar *par, CmdParDef *def, IO *io, int showarg)
 {
 	CmdParKey *key;
 	char *pfx;
@@ -154,6 +170,8 @@ static void list_def (CmdPar *par, CmdParDef *def, IO *io)
 			optkey(key, io);
 			break;
 		case PARTYPE_ARG:
+			if	(!showarg)	continue;
+
 			io_puts(pfx, io);
 
 			if	(key->argtype == ARGTYPE_REGEX)
@@ -178,37 +196,60 @@ static void list_def (CmdPar *par, CmdParDef *def, IO *io)
 	show_desc(par, def->desc, io);
 }
 
+static void show_def (CmdPar *par, CmdParDef *def, IO *io)
+{
+	CmdParKey *key;
+
+	for (key = def->key; key != NULL; key = key->next)
+	{
+		switch (key->partype) 
+		{
+		case PARTYPE_OPT:	show_opt(key, io); break;
+		case PARTYPE_ARG:	show_arg(key, io); break;
+		default:		break;
+		}
+	}
+}
+
 /*
-Die Funktion |$1| generiert eine Aufrufsyntax aus den
-Kommandoparametern <par> und gibt sie nach <io> aus.
+Die Funktion |$1| generiert eine Aufrufsyntax aus den Kommandoparametern <par>
+und gibt sie nach <io> aus. Falls <flag> ungleich 0 ist, werden die Optionen
+und Argumente in der Reihenfolge der Definition ausgegeben.
 */
 
-void CmdPar_synopsis (CmdPar *par, IO *io)
+void CmdPar_synopsis (CmdPar *par, IO *io, int flag)
 {
 	size_t n;
-	CmdParKey **key;
 
 	if	(io == NULL)	return;
 
 	par = CmdPar_ptr(par);
 	io_puts("\\hang\n|", io);
-	verbatim(par->name, io);
+	verbatim(par->name, io, 0);
 	io_puts("|", io);
 	
-/*	Optionen
-*/
-	for (n = par->opt.used, key = par->opt.data; n-- > 0; key++)
-		if ((*key)->def->desc) show_opt(*key, io);
+	if	(flag)
+	{
+		CmdParDef **def;
 
-/*	Argumente: PTYPE_LAST wird in umgekehrter Reihenfolge ausgegeben
-*/
-	for (n = par->arg.used, key = par->arg.data; n-- > 0; key++)
-		if ((*key)->def->desc && (*key)->argtype != ARGTYPE_LAST)
-			show_arg(*key, io);
+		for (n = par->def.used, def = par->def.data; n-- > 0; def++)
+			if ((*def)->desc) show_def(par, *def, io);
+	}
+	else
+	{
+		CmdParKey **p;
 
-	for (n = par->arg.used, key--; n-- > 0; key--)
-		if ((*key)->def->desc && (*key)->argtype == ARGTYPE_LAST)
-			show_arg(*key, io);
+		for (n = par->opt.used, p = par->opt.data; n-- > 0; p++)
+			if ((*p)->def->desc) show_opt(*p, io);
+
+		for (n = par->arg.used, p = par->arg.data; n-- > 0; p++)
+			if ((*p)->def->desc && (*p)->argtype != ARGTYPE_LAST)
+				show_arg(*p, io);
+
+		for (n = par->arg.used, p--; n-- > 0; p--)
+			if ((*p)->def->desc && (*p)->argtype == ARGTYPE_LAST)
+				show_arg(*p, io);
+	}
 
 	io_puts("\n\\end\n", io);
 }
@@ -228,7 +269,27 @@ void CmdPar_arglist (CmdPar *par, IO *io)
 	par = CmdPar_ptr(par);
 	
 	for (n = par->def.used, def = par->def.data; n-- > 0; def++)
-		if ((*def)->desc) list_def(par, *def, io);
+		if ((*def)->desc) list_def(par, *def, io, 1);
+
+	io_puts("\\end\n", io);
+}
+
+/*
+Die Funktion |$1| generiert eine Liste der Optionen aus den
+Kommandoparametern <par> und gibt sie nach <io> aus.
+*/
+
+void CmdPar_options (CmdPar *par, IO *io)
+{
+	size_t n;
+	CmdParDef **def;
+
+	if	(io == NULL)	return;
+
+	par = CmdPar_ptr(par);
+	
+	for (n = par->def.used, def = par->def.data; n-- > 0; def++)
+		if ((*def)->desc) list_def(par, *def, io, 0);
 }
 
 /*
@@ -250,7 +311,7 @@ void CmdPar_environ (CmdPar *par, IO *io)
 		if	((*key)->def->desc)
 		{
 			doc_key("[|", io);
-			verbatim((*key)->key, io);
+			verbatim((*key)->key, io, 0);
 			doc_key("|]", io);
 			io_putc('\n', io);
 			show_desc(par, (*key)->def->desc, io);
@@ -272,12 +333,13 @@ void CmdPar_resource (CmdPar *par, IO *io)
 		if	(var->desc)
 		{
 			doc_key("[|", io);
-			verbatim(var->name, io);
+			verbatim(var->name, io, 0);
 
 			if	(var->value)
 			{
-				io_puts(" = ", io);
-				verbatim(var->value, io);
+				io_puts(" = \"", io);
+				verbatim(var->value, io, 1);
+				io_putc('"', io);
 			}
 
 			doc_key("|]", io);

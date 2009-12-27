@@ -91,7 +91,7 @@ char *io_getname(IO *io)
 
 	if	(isalpha(c) || c == '_')
 	{
-		StrBuf *sb = new_strbuf(0);
+		StrBuf *sb = sb_create(0);
 		c = io_getc(io);
 
 		while (isalnum(c) || c == '_')

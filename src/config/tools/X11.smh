@@ -1,0 +1,62 @@
+#:*:configuration file for X11 library
+#:de:Konfigurationsdatei für X11 Bibliothek
+#
+# $Synopsis
+# include $1
+# \par
+# \$(LD_X11)
+#
+# $Copyright (C) 2004 Erich Frühstück
+# This file is part of EFEU.
+# 
+# EFEU is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+# 
+# EFEU is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public
+# License along with EFEU; see the file COPYING.
+# If not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+test $_X11_smh && return
+_X11_smh=1
+
+# $Description
+# :*:
+# Including the header |$1| defines the |make|-makro \index{|LD_X11|}
+# with link flags needed for X11 applications.
+# The configuration is done with the command line:
+# :de:
+# Durch Einbinden der Headerdatei |$1| wird der |make|-Makro
+# \index{|LD_X11|} mit link-Flags für X11-Anwendungen definiert.
+# Die Konfiguration erfolgt mit der Befehlszeile:
+#
+# $source
+
+efeu-xlib -mLD_X11 -L/usr/X11R6/lib:/usr/lib/X11 -lX11
+
+# $Examples
+# \config shmkmf
+# :*:
+# The line
+# \shmkmf[-x] creates the output:
+# include $1
+# \end
+# The assignment value depends on the machine architecture.
+# :de:
+# Die Zeile
+# \shmkmf[-x] generiert die Ausgabe:
+# include $1
+# \end
+# Der Zuweisungswert hängt von der Rechnerarchitektur ab.
+
+# $SeeAlso
+# \mref{shmkmf(1)},
+# \mref{efeu-xlib(1)},
+# \mref{cc.smh(7)}.

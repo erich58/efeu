@@ -819,12 +819,12 @@ is copied inside the function.
 \head	MISSING SOMETHING
 
 If you are missing something in the documentation, you may get it
-from esh. The options |--info| and |--dump| provides an interface
+from esh. The option |--info| provide an interface
 to builtin informations.
 The best way to visit this information is |eis|.
 Just enter the command |eis -p esh|.
 In esh, you can get the
-information with |Info()| or |InfoDump()| also.
+information with |Info()|.
 
 If you want to know how a function is used, just enter
 the function name and the prototype is displayed.

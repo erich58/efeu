@@ -34,6 +34,9 @@ Copyright = NULL
 Debug = note
 	:*:debug level for messages
 	:de:Debug-Level für Meldungsausgabe
+GZIP = "-n1"
+	:*:compression mode for gzip
+	:de:Komprimierungsgrad für gzip
 
 # :*:dummy entries for direct evaluated environments
 # :de:Dummy-Einträge für direkt abgefragte Umgebungsvariablen
@@ -53,22 +56,6 @@ Debug = note
 -info::entry|:info; :exit 0
 	:*:show command information
 	:de:listet verfügbare Informationseinträge des Kommandos auf.
-
--dump::entry|:dump; :exit 0
-	:*:dump command information to standard output.
-	:de:schreibt sämtliche Informationseinträge des Kommandos zur
-	Standardausgabe.
-#	Das optionale Argument <entry> erlaubt eine
-#	Teilselektion der Einträge.
-
-# :*:version information
-# :de:Versionsausgabe
-
-.version.fmt = "@ident\n\n@version\n\n@copyright\n"
-
--version|:usage {.version.fmt}; :exit 0
-	:*:show version information
-	:de:gibt die Versionsnummer des Kommandos aus.
 
 # :*:debug-level
 # :de:Debug-Modus

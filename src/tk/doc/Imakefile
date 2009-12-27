@@ -1,9 +1,0 @@
-DE_DOC=	EFEUROOT/doc/de
-EN_DOC=	EFEUROOT/doc/en
-LIB=	$(SRCTOP)/../lib
-
-ProvideDocDir($(DE_DOC))
-ProvideDocDir($(EN_DOC))
-
-DocTarget($(DE_DOC),tk,$(SRCTOP),LANG=de efeudoc -H @@LIB=$(LIB))
-DocTarget($(EN_DOC),tk,$(SRCTOP),LANG=en efeudoc -H @@LIB=$(LIB))

@@ -21,7 +21,9 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/object.h>
+#include <EFEU/Debug.h>
 
+#define	TRACE	0
 
 static ALLOCTAB(deftab, 0, sizeof(EfiVar));
 
@@ -32,19 +34,47 @@ static void data_clean (void *data)
 	if	(var->type && var->data)
 	{
 		if	(var->dim)
-			CleanVecData(var->type, var->dim, var->data);
-		else	CleanData(var->type, var->data);
+			DestroyVecData(var->type, var->dim, var->data);
+		else	DestroyData(var->type, var->data);
 	}
 
 	memfree(var->data);
 	memfree((char *) var->name);
 }
 
+static char *var_ident (const void *data)
+{
+	const EfiVar *var = data;
+	return mstrpaste(" ", var->type->name, var->name);
+}
+
+static void var_clean (void *data)
+{
+	EfiVar *var = data;
+
+	if	(var->clean)
+		var->clean(var);
+
+#if	TRACE
+	dbg_message("NewVar", DBG_TRACE, "DelVar[$2]: $1\n", NULL, "pu",
+			var, (unsigned) deftab.nused);
+#endif
+	del_data(&deftab, var);
+}
+
+static RefType var_reftype = REFTYPE_INIT("EfiVar", var_ident, var_clean);
+
 EfiVar *NewVar (EfiType *type, const char *name, size_t dim)
 {
 	EfiVar *var;
 
 	var = new_data(&deftab);
+	var->reftype = NULL;
+	var->refcount = 0;
+#if	TRACE
+	dbg_message("NewVar", DBG_TRACE, "NewVar[$2]: $1\n", NULL, "pu",
+			var, (unsigned) deftab.nused);
+#endif
 	memset(var, 0, sizeof(EfiVar));
 	var->name = mstrcpy(name);
 	var->type = type;
@@ -70,7 +100,7 @@ EfiVar *NewVar (EfiType *type, const char *name, size_t dim)
 		else	memset(var->data, 0, (size_t) type->size * dim);
 	}
 
-	return var;
+	return rd_init(&var_reftype, var);
 }
 
 static void ovar_clean (void *data)
@@ -102,12 +132,22 @@ EfiVar *Obj2Var (const char *name, EfiObj *obj)
 	return var;
 }
 
-void DelVar (EfiVar *var)
+
+EfiVar *RefVarList (const EfiVar *var)
 {
-	if	(var == NULL)		return;
+	const EfiVar *p;
 
-	if	(var->clean)
-		var->clean(var);
+	for (p = var; p; p = p->next)
+		rd_refer(p);
 
-	del_data(&deftab, var);
+	return (EfiVar *) var;
+}
+
+void DelVarList (EfiVar *var)
+{
+	if	(var)
+	{
+		DelVarList(var->next);
+		DelVar(var);
+	}
 }

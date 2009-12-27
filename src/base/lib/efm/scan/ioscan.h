@@ -26,32 +26,43 @@ If not, write to the Free Software Foundation, Inc.,
 #define	EFEU_ioscan_h	1
 
 #include <EFEU/io.h>
+#include <EFEU/stdint.h>
 
 char *io_getname (IO *io);
 int io_testkey (IO *io, const char *str);
 int io_scan (IO *io, unsigned flags, void **ptr);
 int io_valscan (IO *io, unsigned flags, void **ptr);
 
+int64_t mstr2int64 (const char *str, char **ptr, int base);
+uint64_t mstr2uint64 (const char *str, char **ptr, int base);
+
 #define	SCAN_BINVAL	0x1	/* Binärwert */
 #define	SCAN_OCTVAL	0x2	/* Oktalwert */
 #define	SCAN_HEXVAL	0x4	/* Hexadezimalwert */
 #define	SCAN_UNSIGNED	0x8	/* Vorzeichenfreier Wert */
+
 #define	SCAN_MODEMASK	0xf	/* Maske für Modifikationsflags */
 
 #define	SCAN_INT	0x10	/* Normaler Ganzzahlwert */
-#define	SCAN_LONG	0x20	/* Langer Ganzzahlwert */
-#define	SCAN_INTEGER	0x3f	/* Beliebiger Ganzzahlwert */
-#define	SCAN_DOUBLE	0x40	/* Gleitkommazahl */
-#define	SCAN_VALMASK	0x70	/* Maske für Zahlenwerte */
-#define	SCAN_ANYVAL	0x7f	/* Beliebiger Zahlenwert */
+#define	SCAN_INT32	0x20	/* 32-Bit Ganzzahlwert */
+#define	SCAN_INT64	0x40	/* 64-Bit Ganzzahlwert */
+#define	SCAN_INTEGER	0xff	/* Beliebiger Ganzzahlwert */
+#define	SCAN_INTMASK	0xf0	/* Maske für Ganzzahlwerte */
 
-#define	SCAN_CHAR	0x100	/* Zeichendefinition (einfache Anführung) */
-#define	SCAN_STR	0x200	/* String (doppelte Anführung oder NULL) */
-#define	SCAN_NULL	0x400	/* NULL - Key */
-#define	SCAN_NAME	0x800	/* Name */
+#define	SCAN_FLOAT	0x100	/* Gleitkommazahl, einfache Genauigkeit */
+#define	SCAN_DOUBLE	0x200	/* Gleitkommazahl, doppelte Genauigkeit */
+#define	SCAN_FLTMASK	0x300	/* Maske für Gleitkommawerte */
 
-#define	SCAN_TYPEMASK	0xff0	/* Maske für Werttype */
+#define	SCAN_VALMASK	0xff0	/* Maske für Zahlenwerte */
+#define	SCAN_ANYVAL	0xfff	/* Beliebiger Zahlenwert */
 
-#define	SCAN_ANYTYPE	0xfff	/* Beliebiger Type */
+#define	SCAN_CHAR	0x1000	/* Zeichendefinition (einfache Anführung) */
+#define	SCAN_STR	0x2000	/* String (doppelte Anführung oder NULL) */
+#define	SCAN_NULL	0x4000	/* NULL - Key */
+#define	SCAN_NAME	0x8000	/* Name */
+
+#define	SCAN_TYPEMASK	0xfff0	/* Maske für Werttype */
+
+#define	SCAN_ANYTYPE	0xffff	/* Beliebiger Type */
 
 #endif	/* EFEU/ioscan.h */

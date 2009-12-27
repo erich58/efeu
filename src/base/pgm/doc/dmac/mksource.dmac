@@ -1,5 +1,5 @@
 /*
-:*:commands  to include created source files
+:*:commands to include created source files
 :de:Befehle zur Sourcefilegenerierung
 
 $Copyright (C) 2000 Erich Frühstück
@@ -42,8 +42,7 @@ str fname = fsearch(DocPath, xexpand(ParseLine(cin)), NULL);
 if	(fname)
 {
 	str name = filename(fname);
-	str tmp = tmpnam("ms_");
-	system("mkdir " + tmp);
+	str tmp = newtempdir("ms_");
 	copy(open(fname, "r"), open(sprintf("%s/%s.tpl", tmp, name), "w"));
 
 	str list = filter(sprintf("( cd %s; mksource -s -l %s.tpl | sort -r )",
@@ -58,7 +57,7 @@ if	(fname)
 		cout << "----\n";
 	}
 
-	system("rm -rf " + tmp);
+	deltempdir(tmp);
 }
 }}
 
@@ -89,8 +88,7 @@ an und bindet dieses mit allen Ergebnisdateien wortwörtlich ein.
 	copy(body, cout);
 	cout << "----\n\n";
 
-	str tmp = tmpnam("ms_");
-	system("mkdir " + tmp);
+	str tmp = newtempdir("ms_");
 	puts(body, open(sprintf("%s/%s.tpl", tmp, name), "w"));
 
 	str list = filter(sprintf("( cd %s; mksource -s -l %s.tpl )",
@@ -105,7 +103,7 @@ an und bindet dieses mit allen Ergebnisdateien wortwörtlich ein.
 		cout << "----\n\n";
 	}
 
-	system("rm -rf " + tmp);
+	deltempdir(tmp);
 }}
 
 :*:include mksource example

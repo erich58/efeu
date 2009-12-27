@@ -26,8 +26,13 @@ If not, write to the Free Software Foundation, Inc.,
 #define	DB_PG_h	1
 
 #include <EFEU/refdata.h>
+#include <EFEU/vecbuf.h>
 #include <EFEU/mdmat.h>
 #include <EFEU/io.h>
+#include <DB/pq_config.h>
+
+#if	HAS_PQ
+
 #include <libpq-fe.h>
 
 /*
@@ -47,6 +52,7 @@ typedef struct {
 
 extern PG *PG_connect (const char *def);
 extern int PG_print (IO *io, PG *pg);
+extern void PG_info (PG *pg, const char *fmt, ...);
 
 extern void PG_clear (PG *pg);
 extern int PG_exec (PG *pg, const char *cmd, ExecStatusType type);
@@ -59,14 +65,21 @@ extern int PG_nfields (PG *pg);
 extern char *PG_fname (PG *pg, int field);
 extern char *PG_value (PG *pg, int tuple, int field);
 
+void *PGType_create (PG *pg);
+char *PGType_name (void *handle, Oid oid);
+void PGType_clean (void *handle);
+void PGType_list (void *handle, IO *out);
+
 extern IO *PG_open (PG *pg, const char *name, const char *mode);
 
 extern mdmat *PG_mdmat (PG *pg, const EfiType *type,
 	const char *value, const char *axis);
 
+extern void PG_edb (void);
 extern int PG_expandlim;
+#endif
+
 extern void SetupPG (void);
-extern void _init (void);
 
 /*
 $SeeAlso

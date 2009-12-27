@@ -1,0 +1,200 @@
+# :*:rules for directories
+# :de:Regeln für Verzeichnisse
+#
+# $Synopsis
+# <=[=> include $1 <=]=>
+#
+# $Copyright (C) 2004 Erich Frühstück
+# This file is part of EFEU.
+# 
+# EFEU is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+# 
+# EFEU is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public
+# License along with EFEU; see the file COPYING.
+# If not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+test $_dir_smh && return
+_dir_smh=1
+
+# $pconfig !
+# q |
+#	:*:supresses echoing for the following directory rules.
+#	:de:unterdrückt das Echo von Befehlsaufrufen für nachfolgende
+#	Verzeichnisregeln.
+# v |
+#	:*:activates echoing for the following directory rules.
+#	:de:aktiviert das Echo von Befehlsaufrufen für nachfolgende
+#	Verzeichnisregeln.
+# c |
+#	:*:creates additional cleaning rules for the following directories
+#	with phony target |$$CleanTarget|.
+#	:de:erzeugt zusätzliche Aufräumregeln für die nachfolgenden
+#	Verzeichnisse unter Verwendung des Scheinziels |$$CleanTarget|.
+# C:name |
+#	:*:creates additional cleaning rules for the following directories
+#	with phony target <name>.
+#	:de:erzeugt zusätzliche Aufräumregeln für die nachfolgenden
+#	Verzeichnisse unter Verwendung des Scheinziels <name>.
+# p |
+#	:*:do not create create cleaning rules for the following directories.
+#	:de:erzeugt keine Aufräumregeln für die nachfolgenden Verzeichnisse.
+# a |
+#	:*:sets the name of the phony target to create directories to
+#	|$$AllTarget|.
+#	:de:Setzt den Namen des Scheinzeils für Verzeichnisse auf |$$AllTarget|.
+# A:name |
+#	:*:sets the name of the phony target to create directories to
+#	<name>.
+#	:de:Setzt den Namen des Scheinzeils für Verzeichnisse auf <name>.
+# x |
+#	:de:Falls eine make-Variable für das Verzeichnis angegeben wurde,
+#	wird eine zusätzlich Shell-Variable gleichen Namens eingerichtet.
+#	Vergleiche dazu \mref\{var.smh(3)}.
+# :dir |
+#	:*:name of a directory
+#	:de:Regel für Verzeichnis <dir> einrichten.
+# //<name>=<dir> |
+#	:de:richtet für das Verzeichnis <dir> zusätzlich eine make-Variable
+#	mit Namen <name> ein.
+# !
+# :*:
+# The function $! creates rules for directorie targets.
+# More than one directory may specified. The directories my be given by
+# either <dir> or <name>|=|<dir>. In the later form, a assignment line
+# for the |make|-variable <name> with value <dir> is crerated.
+# If <dir> is the acutal directory <".">, no rule is created.
+# This does not effect the output of a variable assignment.
+# :de:
+# Die Funktion $! generiert Regeln zum Einrichten von Verzeichnissen.
+# Es können beliebig viele Verzeichnisse angegeben werden.
+# Die Verzeichnisse werden entweder in der Form <dir> oder <name>|=|<dir>
+# angegeben. Im zweiten Fall wird zusätzlich eine |make|-Variable für das
+# Verzeichnis angelegt.
+# Für das aktuelle Verzeichnis <"."> wird keine Regel generiert.
+# Eine Variablendefinition wird aber immer ausgegeben.
+#
+# :*:
+# The function $! use double-colon rules for creating directories.
+# So it is save to define the rule for a directory more than once.
+# This allows to provide a directory wherever it is needed,
+# no matter if this is already done before.
+# The disadvantage is, that the command to create the directory is
+# executed more than onces and even if the directory already exists.
+# So |test| is used to check the existence of the
+# directory and the echoing of the the command may be disabled.
+# See the examples below.
+# :de:
+# Die Funktion $! verwendet eine Doppel-Colon Regel zur Bereitstellung
+# der Verzeichnisse. Dadurch kann ein Verzeichnis mehr als einmal
+# angegeben werden und erlaubt die implizite Bereitstellung der
+# Verzeichnisse wann immer es nötig ist.
+# Von Nachteil ist, dass der Befehl zur Bereitstellung mehr als einmal
+# und auch wenn das Verzeichnis bereits existiert ausgeführt wird.
+# Daher wird |test| zur Überprüfung der Existenz des Verzeichnisses
+# eingesetzt und das Echo für das Kommando kann abgestellt werden.
+# Vergleiche dazu untenstehende Beispiele.
+#
+# :*:
+# The cleaning rules are placed with |postpone| on the end of the
+# Makefile to get sure, that all cleaning rules for installed files
+# are processesed first.
+# :de:
+# Die Aufräumregeln für Verzeichnisse werden mithilfe von |postpone| ans
+# Ende des Makefiles gestellt. Damit wird sichergestellt, dass alle
+# nachfolgenden Aufräumregeln zur Installation von Dateien zuerst
+# ausgegführt werden.
+#
+# :*:
+# The following options are switches, which may intermixed with
+# directory names. They have the following meaning:
+# :de:
+# Bei den Optionen handelt es sich um Schalter, die beliebig mit
+# Verzeichnisnamen kombiniert werden können. Sie haben folgende Bedeutung:
+#
+# @options
+#
+# :*:
+# The default setting is |-v -p -a|.
+# :de:
+# Die Voreinstellung ist |-v -p -a|.
+
+mf_dir ()
+{
+	_dir_all="$AllTarget"
+	_dir_clean=
+	_dir_key=
+	_dir_flg=
+
+	while [ -n "$1" ]
+	do
+		case "$1" in
+		-q)	_dir_key=@; shift; continue;;
+		-v)	_dir_key=; shift; continue;;
+		-c)	_dir_clean=$CleanTarget; shift; continue;;
+		-C)	_dir_clean="$2"; shift 2; continue;;
+		-C*)	_dir_clean=`expr "$1" : '..\(.*\)'`; shift; continue;;
+		-p)	_dir_clean=; shift; continue;;
+		-a)	_dir_all="$AllTarget"; shift 1; continue;;
+		-A)	_dir_all="$2"; shift 2; continue;;
+		-A*)	_dir_all=`expr "$1" : '..\(.*\)'`; shift; continue;;
+		-x)	_dir_flg="-x"; shift; continue;;
+		-*)	shmkmf_invop "mf_cp" "$1"; exit 1;;
+		.)	shift; continue;;
+		*=.)	_dir_var=`expr "$1" : '\(.*\)=.*'`
+			mf_var $_dir_flg "$_dir_var" "."
+			shift; continue;;
+		*=./)	_dir_var=`expr "$1" : '\(.*\)=.*'`
+			mf_var $_dir_flg "$_dir_var" "."
+			shift; continue;;
+		*=*)	_dir_var=`expr "$1" : '\(.*\)=.*'`
+			_dir_path=`expr "$1" : '.*=\(.*\)'`
+			mf_var $_dir_flg "$_dir_var" "$_dir_path"
+			_dir_name="\$($_dir_var)";;
+		*)	_dir_name="$1";;
+		esac
+
+		shift
+
+		case "$_dir_name" in
+		[./])	continue;;
+		./)	continue;;
+		*/)	_dir_name=`expr "$_dir_name" : '\(.*\)/$'`;;
+		esac
+
+		mf_rule -d -A "$_dir_all" "$_dir_name" "" \
+			"${_dir_key}test -d \$@ || mkdir -p \$@"
+		test -n "$_dir_clean" && postpone mf_rule -d "$_dir_clean" \
+			"" "-test -d $_dir_name && rmdir $_dir_name"
+	done
+}
+
+# $Examples
+# \config shmkmf
+# :*:
+# The following line
+# \shmkmf[-x] creates the output
+# mf_dir BIN=/usr/local/bin -q -c foodir
+# \end
+# :de:
+# Die folgende Zeile
+# \shmkmf[-x] generiert die Ausgabe
+# mf_dir BIN=/usr/local/bin -q -c foodir
+# \end
+
+# $Note
+# :*:The header |$1| is preloaded by |shmkmf|.
+# :de:Die Headerdatei |$1| wird bereits von |shmkmf| geladen.
+
+# $SeeAlso
+# \mref{shmkmf(1)},
+# \mref{rule.smh(7)},
+# \mref{base.smh(7)}.

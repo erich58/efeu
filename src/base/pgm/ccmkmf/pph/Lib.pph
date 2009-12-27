@@ -1,0 +1,125 @@
+/*
+Regeln für Programmbibliotheken
+
+$Copyright (C) 2001 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+*/
+
+#ifndef	_Lib_pph
+#define	_Lib_pph	1
+
+/*
+$Description
+Die folgenden Makros für Programmbibliotheken
+hängen vom Flag |DoSharedLib| ab. Falls es gesetzt ist,
+werden die Makros für dynamische Programmbibliotheken herangozeogen,
+ansonsten für statische Programmbibliotheken.
+*/
+
+#if	DoSharedLib
+
+/*
+Der Makro |$1| definiert ein Standard-Programmbibliothek.
+Die Definition ist von |DoSharedLib| abhängig.
+*/
+#define	StdLib(name)		PathName($(STDLIBDIR),SharedLibName(name))
+
+/*
+Der Makro |$1| definiert eine lokale Programmbibliothek.
+*/
+#define	LocalLib(dir,name)	PathName(dir,SharedLibName(name))
+/*
+Der Makro |$1| definiert die Kompilierungsoption zur Angabe eines
+Verzeichnisses mit Programmbibliotheken.
+*/
+#define	LibdirName(name)	SharedLibdirName(name)
+
+#else
+
+#define	StdLib(name)		PathName($(STDLIBDIR),StaticLibName(name))
+#define	LocalLib(dir,name)	PathName(dir,StaticLibName(name))
+#define	LibdirName(name)	StaticLibdirName(name)
+
+#endif
+
+#define NormalMemberTarget(libname,flags,src,dep)	\
+@;@;depend:: \
+@;@+$(CPP) $(STDDEFINES) $(CFLAGS) $(STDCFLAGS) $(SYSCFLAGS) \
+flags -c SourceName(src) | \
+$(CPP2DEP) libname >> $(MAKEFILE) \
+@;@;libname:: SourceName(src) dep					@;\
+@+$(CC) $(STDDEFINES) $(CFLAGS) $(STDCFLAGS) $(SYSCFLAGS) \
+flags -c SourceName(src)	@;\
+@+ar -rv libname ObjectName(src)				@;\
+@+ranlib libname						@;\
+@+rm -f ObjectName(src)						@;
+
+#define SimpleMemberTarget(libname,src,dep) \
+	NormalMemberTarget(libname,NullArg,src,dep)
+
+#define	StaticLibRule(dir,name,obj) \
+@;PathName(dir,StaticLibName(name)): obj \
+@;@+ar rv $@ $? \
+@;@+ranlib $@ \
+@;
+
+#define	StaticLibTarget(dir,name,obj) \
+@;AllTarget(PathName(dir,StaticLibName(name))) \
+@;StaticLibRule(dir,name,obj) \
+@;
+
+#if	DoSharedLib
+
+#define	SharedLibRule(dir,name,obj,libs) \
+@;PathName(dir,SharedLibName(name)): obj \
+@;@+efeucc -shared -nostdlib Concat3(-Wl@:-soname@:lib,name,.so) -o $@ obj $(SYSLFLAGS) libs \
+@;
+
+#define	SharedLibTarget(dir,name,obj,libs) \
+@;AllTarget(PathName(dir,SharedLibName(name))) \
+@;SharedLibRule(dir,name,obj,libs) \
+@;
+
+#else	/* !DoSharedLib */
+
+#define	SharedLibRule(dir,name,obj,libs)
+#define	SharedLibTarget(dir,name,obj,libs)
+
+#endif	/* DoSharedLib */
+
+#if	DoSharedLib
+#define	LibRule(dir,name,obj,libs)	SharedLibRule(dir,name,obj,libs)
+/*
+Der Makro |$1| definiert die Generierungsregel für eine Programmbibliothek.
+*/
+#define	LibTarget(dir,name,obj,libs)	SharedLibTarget(dir,name,obj,libs)
+#else
+#define	LibRule(dir,name,obj,libs)	StaticLibRule(dir,name,obj)
+#define	LibTarget(dir,name,obj,libs)	StaticLibTarget(dir,name,obj)
+#endif
+
+/*
+$Notes
+Die Regeln zur Generierung von Programmbibliotheken werden
+derzeit nicht genutzt und sind veraltet.
+
+$SeeAlso
+\mref{mkmf(1)}.
+*/
+
+#endif	/* Lib.pph */

@@ -1,2 +1,0 @@
-vimrc	FXDFX	VIMFile(%s.%s,%s/%s.%s)
-txt	DFXFX	InstallFile(%s/%s.%s,$(VIM),%s.%s)

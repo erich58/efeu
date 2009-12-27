@@ -27,7 +27,7 @@ static STRBUF(parse_buf, 1024);
 
 StrBuf *parse_open (void)
 {
-	sb_clear(&parse_buf);
+	sb_clean(&parse_buf);
 	return &parse_buf;
 }
 
@@ -209,13 +209,24 @@ Decl *parse_decl (IO *io, int c)
 		c = io_mgetc(io, 1);
 	}
 
-	if	(cflag)
-		decl.type = 0;
-	else if	(!decl.type && decl.start)
+	if	(!decl.type && decl.start)
 		decl.type = DECL_VAR;
 
+	if	(cflag)
+	{
+		switch (decl.type)
+		{
+		case DECL_VAR:	decl.type = DECL_SVAR; break;
+		case DECL_FUNC:	decl.type = DECL_SFUNC; break;
+		default:	decl.type = 0; break;
+		}
+	}
+		
 	while (buf->pos && isspace(buf->data[buf->pos - 1]))
+	{
 		buf->pos--;
+		io_ungetc(buf->data[buf->pos], io);
+	}
 
 	decl.def = parse_close(buf);
 	decl.arg = argpos ? decl.def + argpos : NULL;

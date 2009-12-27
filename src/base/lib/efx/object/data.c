@@ -23,7 +23,16 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 
 
-void CleanData(const EfiType *type, void *tg)
+void DestroyData (const EfiType *type, void *tg)
+{
+	if	(type->fclean)
+		type->fclean->eval(type->fclean, NULL, &tg);
+
+	if	(type->clean)	type->clean(type, tg);
+	if	(type->destroy)	type->destroy(type, tg);
+}
+
+void CleanData (const EfiType *type, void *tg)
 {
 	if	(type->fclean)
 		type->fclean->eval(type->fclean, NULL, &tg);
@@ -32,10 +41,21 @@ void CleanData(const EfiType *type, void *tg)
 	else			memset(tg, 0, type->size);
 }
 
-void CopyData(const EfiType *type, void *tg, const void *src)
+void CopyData (const EfiType *type, void *tg, const void *src)
 {
-	if	(type->copy)	type->copy(type, tg, src);
-	else			memcpy(tg, src, type->size);
+	if	(type->copy)
+	{
+		type->copy(type, tg, src);
+	}
+	else if	(type->read && type->write)
+	{
+		IO *io = io_tmpbuf(0);
+		type->write(type, src, io);
+		io_rewind(io);
+		type->read(type, tg, io);
+		io_close(io);
+	}
+	else	memcpy(tg, src, type->size);
 
 	if	(type->fcopy)
 	{
@@ -45,7 +65,7 @@ void CopyData(const EfiType *type, void *tg, const void *src)
 }
 
 
-void AssignData(const EfiType *type, void *tg, const void *src)
+void AssignData (const EfiType *type, void *tg, const void *src)
 {
 	if	(tg == src)	return;
 
@@ -57,7 +77,17 @@ void AssignData(const EfiType *type, void *tg, const void *src)
 /*	Vektordaten
 */
 
-void CleanVecData(const EfiType *type, size_t dim, void *tg)
+void DestroyVecData (const EfiType *type, size_t dim, void *tg)
+{
+	while (dim > 0)
+	{
+		DestroyData(type, tg);
+		tg = ((char *) tg) + type->size;
+		dim--;
+	}
+}
+
+void CleanVecData (const EfiType *type, size_t dim, void *tg)
 {
 	while (dim > 0)
 	{
@@ -68,7 +98,7 @@ void CleanVecData(const EfiType *type, size_t dim, void *tg)
 }
 
 
-void CopyVecData(const EfiType *type, size_t dim, void *tg, const void *src)
+void CopyVecData (const EfiType *type, size_t dim, void *tg, const void *src)
 {
 	while (dim > 0)
 	{
@@ -80,7 +110,7 @@ void CopyVecData(const EfiType *type, size_t dim, void *tg, const void *src)
 }
 
 
-void AssignVecData(const EfiType *type, size_t dim, void *tg, const void *src)
+void AssignVecData (const EfiType *type, size_t dim, void *tg, const void *src)
 {
 	if	(tg != src)
 	{

@@ -43,7 +43,8 @@ typedef struct {
 static void GetFuncEval (EfiFunc *func, void *rval, void **ptr);
 
 
-EfiFunc *XGetFunc(EfiType *type, EfiVirFunc *vtab, EfiFuncArg *arg, size_t narg)
+EfiFunc *XGetFunc (EfiType *type, EfiVirFunc *vtab,
+	EfiFuncArg *arg, size_t narg)
 {
 	FUNCDEF *def;
 	EfiFunc *func;
@@ -126,7 +127,7 @@ EfiFunc *XGetFunc(EfiType *type, EfiVirFunc *vtab, EfiFuncArg *arg, size_t narg)
 }
 
 
-EfiFuncArg *FuncArg(int narg, ...)
+EfiFuncArg *FuncArg (int narg, ...)
 {
 	va_list list;
 	EfiFuncArg *arg;
@@ -138,7 +139,7 @@ EfiFuncArg *FuncArg(int narg, ...)
 }
 
 
-EfiFuncArg *VaFuncArg(int narg, va_list list)
+EfiFuncArg *VaFuncArg (int narg, va_list list)
 {
 	EfiFuncArg *arg;
 	int i;
@@ -189,7 +190,7 @@ EfiFunc *VaGetFunc (EfiType *type, EfiVirFunc *tab, int narg, va_list list)
 /*	Auswertungsfunktion
 */
 
-static void GetFuncEval(EfiFunc *func, void *rval, void **ptr)
+static void GetFuncEval (EfiFunc *func, void *rval, void **ptr)
 {
 	FUNCDEF *def;
 	ARGKONV *konv;
@@ -231,7 +232,8 @@ static void GetFuncEval(EfiFunc *func, void *rval, void **ptr)
 		{
 			if	(farg[i].lval)
 			{
-				arglist[i] = LvalObj(&Lval_ptr, arg[i].type, ptr[i]);
+				arglist[i] = LvalObj(&Lval_ptr, arg[i].type,
+					ptr[i]);
 			}
 			else	arglist[i] = ConstObj(arg[i].type, ptr[i]);
 		}

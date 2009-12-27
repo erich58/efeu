@@ -25,6 +25,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/CmdPar.h>
 #include <EFEU/parsedef.h>
 
+#if	HAS_GTK
+
 EfiType EGtkWidgetType = STD_TYPE("GtkWidget", GtkWidget *,
 	&EGtkObjectType, NULL, NULL);
 
@@ -154,6 +156,8 @@ void EGtkWidget_setup (void)
 
 	AddFuncDef(fdef, tabsize(fdef));
 }
+
+#endif
 
 /*
 $SeeAlso

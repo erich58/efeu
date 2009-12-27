@@ -27,11 +27,10 @@ If not, write to the Free Software Foundation, Inc.,
 #define	STR(n)	Val_str(arg[n])
 
 
-static void MakeGlobalFunc(const char *p)
+static void MakeGlobalFunc(char *p)
 {
-	EfiVar *var = NewVar(&Type_vfunc, p, 0);
-	Val_vfunc(var->data) = VirFunc(NULL);
-	AddVar(GlobalVar, var, 1);
+	VarTab_xadd(GlobalVar, p, NULL,
+		NewPtrObj(&Type_vfunc, VirFunc(NULL)));
 }
 
 static void f_prior (EfiFunc *func, void *rval, void **arg)
@@ -43,7 +42,6 @@ static void f_prior (EfiFunc *func, void *rval, void **arg)
 static void f_leftop (EfiFunc *func, void *rval, void **arg)
 {
 	EfiOp *op;
-	char *p;
 
 	op = memalloc(sizeof(EfiOp));
 	op->name = mstrcpy(STR(0));
@@ -51,9 +49,7 @@ static void f_leftop (EfiFunc *func, void *rval, void **arg)
 	op->assoc = OpAssoc_Left;
 	op->parse = PrefixOp;
 	AddOpDef(&PrefixTab, op, 1);
-	p = mstrcat(NULL, op->name, "()", NULL);
-	MakeGlobalFunc(p);
-	memfree(p);
+	MakeGlobalFunc(mstrcat(NULL, op->name, "()", NULL));
 }
 
 static void f_rightop (EfiFunc *func, void *rval, void **arg)
@@ -66,7 +62,7 @@ static void f_rightop (EfiFunc *func, void *rval, void **arg)
 	op->assoc = OpAssoc_Left;
 	op->parse = PostfixOp;
 	AddOpDef(&PostfixTab, op, 1);
-	MakeGlobalFunc(op->name);
+	MakeGlobalFunc(mstrcpy(op->name));
 }
 
 static void f_binop (EfiFunc *func, void *rval, void **arg)
@@ -79,14 +75,14 @@ static void f_binop (EfiFunc *func, void *rval, void **arg)
 	op->assoc = Val_bool(arg[2]) ? OpAssoc_Left : OpAssoc_Right;
 	op->parse = BinaryOp;
 	AddOpDef(&PostfixTab, op, 1);
-	MakeGlobalFunc(op->name);
+	MakeGlobalFunc(mstrcpy(op->name));
 }
 
 static EfiFuncDef fdef_op[] = {
 	{ 0, &Type_int, "Prior (str op)", f_prior },
 	{ 0, &Type_void, "RightOp (str op)", f_rightop },
 	{ 0, &Type_void, "LeftOp (str op)", f_leftop },
-	{ 0, &Type_void, "BinOp (str op, long prior, bool assoc = false)",
+	{ 0, &Type_void, "BinOp (str op, int prior, bool assoc = false)",
 		f_binop },
 };
 

@@ -1,0 +1,150 @@
+/*
+:*:commands to include created Makefiles
+:de:Befehle zur Einbindung generierter Makefiles
+
+$Copyright (C) 2004 Erich Frühstück
+This file is part of EFEU.
+
+EFEU is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+EFEU is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with EFEU; see the file COPYING.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+*/
+
+\ifdef\shmkmf\break\endif
+
+\eval {
+	str smh_temp = NULL;
+	str smh_head = NULL;
+}
+
+:*:$1[|[|<options>|]|] <phrase>\br
+<command lines>\br
+|\end|\br
+:de:$1[|[|<Optionen>|]|] <Text>\br
+<Befehlszeilen>\br
+|\end|
+
+:*:The command $1 calls |shmkmf| with the following command lines.
+These lines and the created Makefile are included in verbatim mode
+with <phrase> as intermediate text.
+:de:Der Befehl $1 wendet |shmkmf| auf die angegebenen Befehlszeilen an
+und bindet diese und das generierte Makefile wortwörtlich ein.
+Dazwischen wird der Verbindungstext <Text> eingeschoben.
+
+\def\shmkmf {{
+	str flags = ParseOpt(cin, true);
+	str desc = ParseLine(cin);
+	str body = ParseRegion(cin, "\\\\end");
+
+	if	(desc)
+	{
+		cout << "\n\n---- verbatim\n";
+		copy(body, cout);
+		cout << "----\n\n";
+		cout << desc;
+	}
+	
+	str cfg, cmd;
+
+	if	(smh_temp)
+	{
+		cfg = smh_temp + "/Config.make";
+		cmd = "(cd " + smh_temp + "; shmkmf -p " + flags + ")";
+	}
+	else
+	{
+		cfg = newtemp("smf_");
+		cmd = cat(" ", "shmkmf -p", flags, cfg);
+	}
+
+	cout << "\n\n---- verbatim\n";
+	IO io = open(cfg, "w");
+	puts(smh_head, io);
+	puts(body, io);
+	close(io);
+	copy(popen(cmd, "r"), cout);
+
+	if	(smh_temp)
+ 	{
+		remove(cfg);
+	}
+	else	deltemp(cfg);
+
+	cout << "----\n\n";
+}}
+
+:*:$1 <headline>
+:de:$1 <Kopfzeile>
+
+:*:The command $1 expands the headlines used by all following
+|shmkmf| examples. The headlines are stored in a variable |smh_head|.
+:de:Das Kommando $1 erweitert die Kopfzeilen für alle nachfolgenden
+|shmkmf| Beispiele. Die Kopfzeilen werden in der Variablen |smh_head|
+gespeichert.
+
+\def\smh_head {
+	smh_head += ParseLine(cin) + "\n";
+}
+
+$1
+
+:*:The command $1 creates a temporary directory for |shmkmf| examples.
+The name of the directory is stored in in the variable |smh_temp|.
+:de:Das Kommando $1 generiert ein temporäres Verzeichnis
+für |shmkmf|-Beispiele. Der Name des Verzeichnisses wird in der
+Variablen |smh_temp| gespeichert.
+
+\def\smh_init {
+	smh_temp = newtempdir();
+}
+
+$1[|[|<mode>|]|] <cmd>
+
+:*:The command $1 executes <cmd> in the temporary directory |smh_temp|.
+Possible outputs are inserted with mode <mode> (same statements as in
+|\include|).
+:de:Das Kommando $1 ruft <cmd> im temporären Arbeitsverzeichnis
+|smh_temp| auf. Eventuelle Ausgaben werden mit Darstellungsmode <mode>
+(Angaben wie bei |\include|) eingebunden.
+
+\def\smh_exec {{
+	str mode = ParseOpt(cin, true);
+	str cmd = ParseLine(cin, true);
+
+	if	(smh_temp)
+	{
+		str res = filter("sh", "cd " + smh_temp + "\n" + cmd);
+
+		if	(res)
+			input(mode, res);
+	}
+}}
+
+$1
+
+:*:The command $1 removes the temporary directory for |shmkmf| examples
+and clears all predefined headlines.
+:de:Das Kommando $1 entfernt das temporäres Verzeichnis für |shmkmf|-Beispiele
+und löscht alle vordefinierten Kopfzeilen.
+
+\def\smh_clean {
+	if	(smh_temp)
+	{
+		deltempdir(smh_temp);
+		smh_temp = NULL;
+	}
+
+	smh_head = NULL;
+}
+

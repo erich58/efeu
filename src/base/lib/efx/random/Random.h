@@ -83,6 +83,8 @@ double NormalRandom (Random *rd);
 int PoissonRandom (Random *rd, double mw);
 int RandomRound (Random *rd, double val);
 size_t RandomIndex (Random *rd, size_t dim);
+size_t RandomChoice (Random *rd, void *base, size_t dim, size_t size,
+	size_t lim);
 
 /*	Initialisierung für esh-Interpreter
 */

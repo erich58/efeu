@@ -1,5 +1,6 @@
 /*
-Namensschlüsseltabellen
+:*:Name key tables
+:de:Namensschlüsseltabellen
 
 $Header	<EFEU/$1>
 
@@ -44,7 +45,7 @@ extern const RefType nkt_reftype;
 
 /*
 Der Makro |$1| liefert die Initialisierungswerte für eine Schlüsseltabelle
-mit Namen |name|, Blockgröße |bsize| und Löschfunktion |ckean|.
+mit Namen |name|, Blockgröße |bsize| und Löschfunktion |clean|.
 */
 
 #define	NKT_DATA(name, bsize, clean)	\

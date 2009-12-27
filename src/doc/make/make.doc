@@ -13,8 +13,9 @@ verwendet, eignet sich aber auch sehr gut für Projektarbeiten.
 Die Grundlage für das Kommando |make| bilden Rechenregeln
 mit den folgenden Komponenten:
 *	Das Ziel: Das ist der Name der zu generierenden Datei oder einer
-	Teilaufgabe (z.B: Aufräumen).
-*	Die Abhängigkeiten: daß ist eine Liste aller Dateien, die das Ergebnis
+	Teilaufgabe (z.B. Aufräumen).
+*	Die Abhängigkeiten: Das ist eine Liste aller Dateien, die das Ergebnis
+	bestimmen.
 *	Die Befehle: Das ist eine Liste von Befehlsaufrufen, die
 	zur Generierung des Ergebnises notwendig sind.
 
@@ -31,7 +32,7 @@ wird die aktuelle Zieldatei gelöscht.
 Die von |make| ausgeführten Befehle werden angezeigt.
 
 Die Abhängigkeiten werden rekursiv geprüft, wenn also eine Datei A von
-der Datei B abhängt un diese wiederum von C, so wird vor A zunächst
+der Datei B abhängt und diese wiederum von C, so wird vor A zunächst
 B auf den letzten Stand gebracht.
 
 \margin	Beschreibungsdatei
@@ -45,23 +46,19 @@ Beim Aufruf von |make| werden die gewünschten Ziele
 als Argument übergeben. Wird |make| ohne Argument aufgerufen,
 wird das erste Ziel in der Beschreibungsdatei generiert.
 
-Die vorliegende Kurzeinführung in die Funktionsweise von |make|
-erhebt keinen Anspruch auf Vollständigkeit.
-Für die normalen Aufgaben sollten sie jedoch ausreichend sein.
-Weitere Informationen zu |make| können interaktiv
-im Info-Explorer oder mit |man| abgerufen werden.
-Es gibt auch umfangreiche Literatur zur Verwendung von |make|.
+Wird |make| mit der Option |-n| aufgerufen, werden die zur
+Aktualisierung notwendige Befehle nicht durchgeführt,
+sondern nur angezeigt.
 
-Im Folgenden seien noch die wichtigsten Flags für das |make|--Kommando
-angeführt.
-[|-n|]
-	Befehle werden nicht durchgeführt, sondern nur angezeigt.
-[|-q|]
-	Liefert den Status, ob das Ziel bereits auf dem letzten Stand ist.
-	Es werden keine Befehle durchgeführt.
-[|-t|]
-	Anstelle der Befehlsausführung wird nur der Zeitstempel der Zieldatei
-	auf das aktuelle Datum gesetzt.
+Die vorliegende Kurzeinführung in die Funktionsweise von |make|
+erhebt keinen Anspruch auf Vollständigkeit. Es wurden bewußt
+Aspekte ausgeklammert, die zwar für <"handgeschriebene"> Makefiles
+wichtig sind, aber im Kontext generierter Makefiles keine Rolle
+spielen.
+
+Weitere Informationen zu |make| können interaktiv mit |man make|
+bzw. |info make| abgerufen werden.
+Es gibt auch umfangreiche Literatur zur Verwendung von |make|.
 
 \sec	Syntax
 
@@ -73,8 +70,8 @@ Ein Gegenschrägstrich vor einem Zeilenvorschub hebt diesen auf,
 die nachfolgende Zeile gilt dann als Fortsetzung der vorangegangenen
 Zeile. Damit können lange Zeilen umgebrochen werden.
 
-<*Achtung:*> Zwischen Gegenschrägstrich Zeilenvorschub
-darf kein Leerzeichen oder Tabulator (unsichtbar!) stehen.
+<*Achtung:*> Zwischen dem Gegenschrägstrich und den Zeilenvorschub
+darf kein Leerzeichen oder Tabulator (unsichtbar im Editor!) stehen.
 
 \margin	Kommentare
 Eine Kommentarzeile beginnt mit einem Gittersymbol und endet
@@ -83,21 +80,22 @@ beim nächsten Zeilenvorschub.
 \margin	Regel
 Eine Regel besteht aus einer nichtleren, durch Leerzeichen
 getrennte Liste von Zielen, die mit einem einfachen <"|:|"> oder
-<"|::|"> Doppelpunkt abgeschlossen wird.
+zweifachen <"|::|"> Doppelpunkt abgeschlossen wird.
 Danach folgt optional in der gleichen Zeile eine Liste
 von Abhängigkeiten, die wahlweise mit einem Strichpunkt
 oder einem Zeilenvorschub abgeschlossen wird.
 Den Abschluß der Regel bilden die einzelnen Befehlszeilen,
 die entweder durch einen Strichpunkt <"|;|"> oder durch die
 Kombination Zeilenvorschub Tabulator getrennt werden.
-Die Befehlszeilen sind optional.
+Sowohl Abhängigkeiten, als auch Befehlszeilen sind optional.
 
 Die erste, nichtleere Zeile, die nicht mit einem Tabulator oder einer
 Kommentarkennung beginnt, beendet eine Regel.
 Shell Befehlszeilen können mit einem Gegenschrägstrich über mehrere
 Zeilen fortgesetzt werden. Die Befehlszeilen werden unverändert der
-Shell übergeben. Lediglich der Tabulator zu Beginn einer Befehlszeile
-wird entfernt.
+Shell übergeben. Lediglich der Tabulator und spezielle, weiter unten
+angeführte Schalter zu Beginn einer Befehlszeile
+werden entfernt.
 
 <*Achtung:*> Tabulatoren können nicht durch Leerzeichen ersetzt
 werden!
@@ -106,7 +104,7 @@ Die einzelnen Befehlszeilen werden einzeln in der angegebenen
 Reihenfolge von der unix-Shell ausgewertet. Im Regelfall
 wird jeder von |make| ausgeführte Befehl ausgegeben. Falls
 der Rückgabewert der Befehls verschieden von 0 ist, erfolgt ein
-Abbruch der Verarbeitung und die aktuellen Ziele(e) werden, falls sie
+Abbruch der Verarbeitung und die aktuellen Ziele werden, falls sie
 bereits existieren, gelöscht. Dieses Verhalten kann mit speziellen
 Schaltern zu Beginn der Befehlszeile verändert werden
 
@@ -117,8 +115,8 @@ Kombination stehen:
 [|@|]
 	Die Befehlszeile wird bei der Ausführung nicht dargestellt.
 [|+|]
-	Die Befehlszeile wird ausgeführt, auch wenn |make| mit einer der
-	Optionen |-n|, |-q|, oder |-t| aufgerufen wurde.
+	Die Befehlszeile wird ausgeführt, auch wenn |make| mit der
+	Optionen |-n| aufgerufen wurde.
 
 \margin	Pseudoziele
 Im Regelfall handelt es sich bei den Zielen um Dateien, die
@@ -129,9 +127,6 @@ Pseudoziele werden für Aktivitäten wie <"alles generieren"> oder
 <"aufräumen"> verwendet. Da nie eine entsprechende Datei generiert
 wird, sind Pseudoziele nie am letzten Stand und die entsprechenden
 Befehlszeilen, sofern welche existieren, werden immer ausgeführt.
-
-<*Achtung:*> Bei Verwendung von Pseudozielen darf |make| nicht mit
-der Option |-t| aufgerufen werden.
 
 \margin	Einfachregeln
 Einfachregeln sind durch einen einfachen Doppelpunkt als Abschluß
@@ -150,10 +145,10 @@ Es werden nur jene ausgeführt,
 deren Abhängigkeitslisten es erforderlich machen.
 Eine fehlende
 Abhängigkeitsliste führt im Unterschied zu einer Einfachregel
-immer zur Ausführung der Befehlszeilen.
+immer zur Ausführung der zugehörigen Befehlszeilen.
 
 Ein einzelnes Ziel kann nicht mit Einfachregeln und mit
-Mehrfachregeln definiert werden.
+Mehrfachregeln gleichzeitig definiert werden.
 Mehrfachregeln werden in der Regel
 für Pseudoziele verwendet.
 

@@ -35,12 +35,29 @@ If not, write to the Free Software Foundation, Inc.,
 #define	DOUBLE(n)	Val_double(arg[n])
 #define	TIME(x)		((CalTimeIndex *) (x))[0]
 
+static EfiVarDef vardef[] = {
+	{ "CenturyLimit", &Type_int, &CenturyLimit,
+		":*:century delimitation for two digit year notation\n"
+		":de:Jahrhundertabgrenzung bei zwestelligen Jahresangaben\n" },
+};
 
 /*	Datums- und Zeittype
 */
 
-EfiType Type_Date = SIMPLE_TYPE("Date", int, &Type_int);
-EfiType Type_Time = SIMPLE_TYPE("Time", CalTimeIndex, NULL);
+static int print_Date (const EfiType *type, const void *data, IO *io)
+{
+	return Val_int(data) ? PrintCalendar(io, "Date(%d,%m,%Y)",
+		Val_int(data)) : io_puts("Date(0)", io);
+}
+
+static int print_Time (const EfiType *type, const void *data, IO *io)
+{
+	return PrintTime(io, "Time(\"%Y-%m-%d %H:%M:%S\")",
+		((CalTimeIndex *) data)[0]);
+}
+
+EfiType Type_Date = SIMPLE_TYPE("Date", int, &Type_int, print_Date);
+EfiType Type_Time = SIMPLE_TYPE("Time", CalTimeIndex, NULL, print_Time);
 
 static char *Date_fmt = NULL;
 static char *Time_fmt = NULL;
@@ -138,7 +155,7 @@ static void f_Date2str (EfiFunc *func, void *rval, void **arg)
 	Val_str(rval) = Calendar2str(Date_fmt, Val_Date(arg[0]));
 }
 
-static void f_Date_konv (EfiFunc *func, void *rval, void **arg)
+static void f_Date_conv (EfiFunc *func, void *rval, void **arg)
 {
 	Val_str(rval) = Calendar2str(Val_str(arg[1]), Val_Date(arg[0]));
 }
@@ -152,6 +169,11 @@ static void f_Date_print (EfiFunc *func, void *rval, void **arg)
 static void f_Date2int (EfiFunc *func, void *rval, void **arg)
 {
 	Val_int(rval) = Val_Date(arg[0]);
+}
+
+static void f_Date2bool (EfiFunc *func, void *rval, void **arg)
+{
+	Val_int(rval) = Val_Date(arg[0]) ? 1 : 0;
 }
 
 static void f_Date2dbl (EfiFunc *func, void *rval, void **arg)
@@ -177,6 +199,21 @@ static void f_str2Date(EfiFunc *func, void *rval, void **arg)
 	Val_Date(rval) = str2Calendar(Val_str(arg[0]), NULL, Val_bool(arg[1]));
 }
 
+static void f_datecut (EfiFunc *func, void *rval, void **arg)
+{
+	char *s = Val_str(arg[0]);
+
+	if	(s)
+	{
+		char *p = NULL;
+		Val_Date(rval) = str2Calendar(s, &p, Val_bool(arg[1]));
+		Val_str(arg[0]) = (p && *p) ? mstrcpy(p) : NULL;
+		memfree(s);
+	}
+	else	Val_Date(rval) = 0;
+}
+
+
 static void f_today(EfiFunc *func, void *rval, void **arg)
 {
 	Val_Date(rval) = TodayIndex() + Val_int(arg[0]);
@@ -185,6 +222,11 @@ static void f_today(EfiFunc *func, void *rval, void **arg)
 static void f_Date_dist (EfiFunc *func, void *rval, void **arg)
 {
 	Val_int(rval) = Val_Date(arg[0]) - Val_Date(arg[1]);
+}
+
+static void f_Date_jdiff (EfiFunc *func, void *rval, void **arg)
+{
+	Val_int(rval) = Calendar_jdiff(Val_Date(arg[0]), Val_Date(arg[1]));
 }
 
 static void f_Date_cmp (EfiFunc *func, void *rval, void **arg)
@@ -214,7 +256,7 @@ static void f_Time2dbl (EfiFunc *func, void *rval, void **arg)
 }
 
 
-static void f_Time_konv (EfiFunc *func, void *rval, void **arg)
+static void f_Time_conv (EfiFunc *func, void *rval, void **arg)
 {
 	Val_str(rval) = Time2str(Val_str(arg[1]), TIME(arg[0]));
 }
@@ -300,7 +342,6 @@ static void f_LeapYear_Time (EfiFunc *func, void *rval, void **arg)
 	Val_bool(rval) = LeapYear(x->year);
 }
 
-
 /*	Funktionstabelle
 */
 
@@ -308,20 +349,24 @@ static EfiFuncDef fdef[] = {
 	{ 0, &Type_Date, "Date (int t, int m, int j)", f_Date },
 	{ 0, &Type_Date, "Date (int b1900)", f_StdDate },
 	{ 0, &Type_Date, "Date (str s, bool end = false)", f_str2Date },
+	{ 0, &Type_Date, "datecut (str &s, bool end = false)", f_datecut },
 	{ FUNC_PROMOTION, &Type_int, "Date ()", f_Date2int },
-	{ FUNC_RESTRICTED, &Type_str, "Date ()", f_Date2str },
+	{ 0, &Type_bool, "Date ()", f_Date2bool },
+	{ 0, &Type_str, "str (Date date)", f_Date2str },
+	{ 0, &Type_str, "str (Date date, str fmt)", f_Date_conv },
 	{ FUNC_RESTRICTED, &Type_double, "Date ()", f_Date2dbl },
-	{ 0, &Type_str, "Date::konv (str fmt = NULL)", f_Date_konv },
+	{ 0, &Type_str, "Date::konv (str fmt = NULL)", f_Date_conv },
 	{ 0, &Type_int, "Date::print (IO out, str fmt = NULL)", f_Date_print },
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, Date)", f_fprint_Date },
 	{ FUNC_VIRTUAL, &Type_int, "operator- (Date, Date)", f_Date_dist },
 	{ FUNC_VIRTUAL, &Type_int, "cmp (Date, Date)", f_Date_cmp },
 	{ 0, &Type_Date, "today (int offset = 0)", f_today },
+	{ 0, &Type_int, "jdiff (Date d1, Date d2)", f_Date_jdiff },
 
 	{ 0, &Type_Time, "Time (str s, bool end = false)", f_str2Time },
 	{ FUNC_RESTRICTED, &Type_str, "Time ()", f_Time2str },
 	{ FUNC_RESTRICTED, &Type_double, "Time ()", f_Time2dbl },
-	{ 0, &Type_str, "Time::konv (str fmt = NULL)", f_Time_konv },
+	{ 0, &Type_str, "Time::konv (str fmt = NULL)", f_Time_conv },
 	{ 0, &Type_int, "Time::print (IO out, str fmt = NULL)", f_Time_print },
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, Time)", f_fprint_Time },
 	{ 0, &Type_Time, "localtime (int offset = 0)", f_localtime },
@@ -347,6 +392,7 @@ static EfiFuncDef fdef[] = {
 
 void CmdSetup_date(void)
 {
+	AddVarDef(NULL, vardef, tabsize(vardef));
 	AddType(&Type_Date);
 	AddVarDef(Type_Date.vtab, v_Date, tabsize(v_Date));
 	AddEfiMember(Type_Date.vtab, m_Date, tabsize(m_Date));

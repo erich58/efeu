@@ -42,13 +42,17 @@ MdPtrClass *MdPtrClass_copy (MdPtrClass *src, size_t dim,
 	return tg;
 }
 
-void MdPtrClass_add (MdClassTab *tab, MdPtrClass *entry, size_t dim)
+void MdPtrClass_add (MdCountTab *tab, MdPtrClass *entry, size_t dim)
 {
-	for (; dim-- > 0; entry++)
-		MdClass_add(tab, (MdClass *) entry, 1);
+	if	(tab)
+	{
+		for (; dim-- > 0; entry++)
+			MdClass_add(tab, (MdClass *) entry, 1);
+	}
+	else	dbg_note("md", "[mdmat:302]", NULL);
 }
 
-void MdPtrClass_xadd (MdClassTab *tab, MdPtrClass *entry, size_t dim,
+void MdPtrClass_xadd (MdCountTab *tab, MdPtrClass *entry, size_t dim,
 	const char *ext, void *ptr)
 {
 	MdPtrClass_add(tab, MdPtrClass_copy(entry, dim, ext, ptr), dim);

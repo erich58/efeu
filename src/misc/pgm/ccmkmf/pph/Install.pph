@@ -1,0 +1,108 @@
+/*
+Installation von Dateien
+
+$Copyright (C) 2001 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+*/
+
+#ifndef	_Install_pph
+#define	_Install_pph	1
+
+/*
+Der Makro |$1| generiert eine Regel zur Installation der
+Datei <base> unter den Namen <name> für das Pseudoziel <target>
+und eine Aufräumregel für das Pseudoziel |clean|.
+*/
+#define	InstallFile(target,name,base)	@;\
+NamedTarget(target,name)		@;\
+CleanTarget(name)		@;\
+name: base			@;\
+@+rm -f $@			@;\
+@+cp -f base $@			@;
+
+/*
+Der Makro |$1| generiert eine Regel zur Installation des
+Skripts <base> unter den Namen <name> für das Pseudoziel |all|
+und eine Aufräumregel für das Pseudoziel |clean|.
+*/
+#define	InstallScript(name,base)	@;\
+AllTarget(name)			@;\
+name: base			@;\
+@+rm -f $@			@;\
+@+cp -f base $@			@;\
+@+chmod a+x $@			@;
+
+/*
+Der Makro |$1| generiert eine Regel zur Installation des
+Skripts <base> unter den Namen <name> mithilfe des Kommandos
+|efeuscript|. Mit dem Argument <flags> werden Installationsflags übergeben.
+*/
+#define	InstallCmdScript(name,base,flags)	@;\
+AllTarget(name)			@;\
+name: base			@;\
+@+efeuscript flags base name	@;
+
+/*
+Der Makro |$1| generiert eine Regel zur Konfiguration der
+Headerdatei <name> aus der Definitionsdatei <base> mithilfe
+des Kommandos |efeuconfig|.
+Die Regel wird für das Pseudoziel <target> eingetragen.
+*/
+
+#define	ConfigHeaderFile(target,name,base)	@;\
+NamedTarget(target,name)			@;\
+CleanTarget(name)		@;\
+name: base			@;\
+@+efeuconfig file base > $@	@;
+
+/*
+Der Makro |$1| generiert eine Regel zur Erneuerung der
+Headerdatei <name> aus der Definitionsdatei <base> mithilfe
+des Kommandos |efeuconfig|.
+Die Regel wird für das Pseudoziel <target> eingetragen.
+Im Unterschied zu |ConfigHeaderFile| wird |efeuconfig|
+auch dann aufgerufen, wenn sich <base> nicht verändert hat.
+Damit kann auf eine Veränderung der Systemumgebung (Installation
+von zusätzlicher Software) reagiert werden.
+*/
+
+#define	UpdateHeaderFile(target,name,base)	@;\
+NamedTarget(target,name)			@;\
+CleanTarget(name)		@;\
+name:: 				@;\
+@+efeuconfig update base $@	@;
+
+#define	InstallLocalHeaderFile(t,p,f)	InstallFile(t,PathName(p,f),f)
+#define	InstallLocalApplFile(t,p,f)	InstallFile(t,ApplPath(p,f),f)
+#define	InstallLocalMsgFile(t,p,f)	InstallFile(t,MsgPath(p,f),f)
+#define	InstallLocalDocFile(t,p,f)	InstallFile(t,DocPath(p,f),f)
+#define	InstallLocalHelpFile(t,p,f)	InstallFile(t,HelpPath(p,f),f)
+
+#define	InstallHeaderFile(f)	InstallLocalHeaderFile(header,$(STDINCDIR),f)
+#define	InstallApplFile(f)	InstallLocalApplFile(files,$(EFEULIB),f)
+#define	InstallMsgFile(f)	InstallLocalMsgFile(files,$(EFEULIB),f)
+#define	InstallDocFile(f)	InstallLocalDocFile(files,$(EFEULIB),f)
+#define	InstallHelpFile(f)	InstallLocalHelpFile(files,$(EFEULIB),f)
+
+/*
+$SeeAlso
+\mref{mkmf(1)}, \mref{efeuscript(1)}, \mref{efeuconfig(1)},
+\mref{Name(7)}, \mref{Path(7)}.
+*/
+
+#endif	/* Install.pph */

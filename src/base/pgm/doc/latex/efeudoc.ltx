@@ -19,7 +19,7 @@
 
 %% Standardpakete
 
-\usepackage{textcomp}
+%\usepackage{textcomp}
 \usepackage{verbatim}
 \usepackage{graphicx}
 \usepackage[dvips,usenames]{color}
@@ -89,7 +89,7 @@
 
 \newcommand{\EDmanchapter}[2][1]{\cleardoublepage
 	\addcontentsline{toc}{chapter}{#2}%
-	\markright{#2}%
+	\markboth{\MakeUppercase{#2}}{}%
 	\chapter*{#2}
 	\clearpage}
 
@@ -109,7 +109,7 @@
 	\addcontentsline{toc}{section}{#1}#2\newline}
 
 \newenvironment{EDmanpage}[2][1]{\cleardoublepage
-	\markright{#2(#1)}\let\caption\EDcaption}{}
+	\markboth{#2(#1)}{#2(#1)}\let\caption\EDcaption}{}
 
 \def\atpoint#1{\hbox to 0pt{\vbox to 0pt{\vss #1}\hss}\ignorespaces}%
 

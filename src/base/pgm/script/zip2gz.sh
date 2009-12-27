@@ -21,6 +21,7 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 # $pconfig
+# Version="$Id: zip2gz.sh,v 1.6 2005-04-11 15:03:48 ef Exp $"
 # a|
 #	:*:get data in text mode (default)
 #	:de:Daten im Textmodus auslesen (default)
@@ -44,6 +45,7 @@ usage ()
 
 case "$1" in
 -\?|--help*)	usage $1; exit 0;;
+--version)	efeuman -- $0 $1 || grep 'Version="[$]Id:'; exit 0;;
 esac
 
 # $Description
@@ -62,7 +64,7 @@ esac
 # parse command args
 
 unzip_opt="-pa"
-gzip_opt="-1"
+gzip_opt="-9"
 
 while getopts ab0123456789 opt
 do
@@ -81,4 +83,4 @@ if [ $# -ne 2 ]; then
 	exit 1
 fi
 
-exec unzip $unzip_opt $1 | gzip $gzip_opt > $2
+exec unzip $unzip_opt $1 | gzip -n $gzip_opt > $2

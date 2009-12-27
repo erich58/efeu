@@ -1,0 +1,43 @@
+\sec	Kombination von Datenschnittstellen
+
+EDB-Datenschnittstellen können auf die folgende Weise miteinander
+kombiniert werden:
+*	Einfaches Aneinanderhängen gleicher Datenstrukturen,
+*	Zusammenmischen vorsortierter Teildaten,
+*	Verknüpfen verschiedener Tabellen über einen Schlüssel.
+
+\ssec	Zusammenhängen von Datenfiles
+
+Datenfiles können mithilfe von \index{|edbcat|} zusammengehängt werden.
+Standardmäßig werden die Dateien der Reihe nach abgearbeitet.
+Alternativ können die Dateien auch bezüglich einer
+Vergleichsdefinition (Option |-m| <cmp>) gemischt werden.
+Zusätzlich kann auch eine \index{Sortierung} der Einzeldateien (Angabe von
+|-s| <cmp> anstelle von |-m| <cmp>) verlangt werden.
+Die Spezifikation einer Vergleichsdefinition wird in Abschnitt
+\ref{cmp}, Seite \pref{cmp} beschrieben.
+
+Falls die Dateien nur gemischt werden sollen und diese nicht bereits
+sortiert sind, ist das Ergebnis undefiniert.
+Weitere Details zu diesem Kommando stehen unter \mref{edbcat(1)}.
+
+\ssec	Verknüpfen von Datenfiles
+
+Das Kommando \index{|edbjoin|} erlaubt das Verknüpfen zweier Datenfiles
+über einen gemeinsamen Schlüssel. Im Anhang (\mref{edbjoin(1)}) wird das
+Kommando ausführlich beschrieben.
+
+Die Verknüpfung zweier Datenfiles kann alternativ auch über ein
+EDB-Metadatenfile oder mithilfe des Filters \index{|join|} definiert
+werden.
+
+Die folgenden Zeilen zeigen die Datei \index{|data.edb|}
+mit Epiosodendaten zu den in \index{|pers.edb|} definierten Personen.
+
+\include[verbatim]	data.edb
+
+Diese beiden Tabellen können einfach mit dem Befehl
+|edbjoin -n0 pers.edb data.edb| verknüpft werden.
+Die Ausgabe ist
+
+\pipe[verbatim] |edbjoin -n0 pers.edb data.edb|

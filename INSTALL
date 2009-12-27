@@ -9,7 +9,7 @@ The following packages are needed:
 The following packages are recommanded:
 
 *	postgresql development
-*	sc Spreadsheet Calculator
+*	tcl/tk development
 
 All Files of EFEU are build relative to the main directory of the
 release, from now on we refer it with <TOP>. The subdirectories
@@ -33,6 +33,7 @@ EFEU comes with the following projects:
 [base]		libraries and commands;
 [doc]		documentations;
 [pg]		front end to PostgreSQL;
+[tk]		tcl/tk-interface
 [scope]		rules for tag files and name tabels.
 
 If postgresql-development is not installed, the project pg is not
@@ -47,10 +48,10 @@ The following steps are performed for building EFEU:
 	cvs access to efeu, this updates yor sources);
 #	run <TOP>/config/setup, if it exists (installs basic scripts,
 	needed for the next steps);
-#	run efeubuild to create <TOP>/build/Makefile;
+#	run shmkmf to create <TOP>/build/Makefile;
 #	run make in <TOP>/build/Makefile (the main work).
 
 The script efeugen calls make in <TOP>/build or any subdirectory
-of it. You need to set either the environment EFEUBUILD to <TOP>/build
+of it. You need to set either the environment EFEUGEN to <TOP>/build
 or the environment EFEUTOP to <TOP>, as long as <TOP> is not your
 HOME directory.

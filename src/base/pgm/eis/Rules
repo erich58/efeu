@@ -1,2 +1,0 @@
-\/de,,eis	DFXF	InstallFile(%s/%s.%s,$(EISDIR)/de,%s.info)
-eis		DFXF	InstallFile(%s/%s.%s,$(EISDIR),%s.info)

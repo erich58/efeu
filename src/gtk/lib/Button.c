@@ -25,6 +25,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/stdtype.h>
 #include <EFEU/CmdPar.h>
 
+#if	HAS_GTK
+
 #define	STR(arg)	(Val_ptr(arg) ? Val_ptr(arg) : "")
 
 static EGtkArgDef arg_button[] = {
@@ -134,6 +136,8 @@ void EGtkButton_setup (void)
 		NULL, 0, NULL, 0);
 	AddFuncDef(fdef, tabsize(fdef));
 }
+
+#endif
 
 /*
 $SeeAlso

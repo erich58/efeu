@@ -24,7 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 PrintListDelim = "\t";
 
 pconfig !
-Version = "$Id: mdselect.esh,v 1.8 2001-10-18 12:11:21 ef Exp $"
+Version = "$Id: mdselect.esh,v 1.10 2005-07-24 05:12:41 ef Exp $"
 PrintMode = true
 Reduce = false
 
@@ -37,6 +37,9 @@ E:expr | :eval 'geval("{}")'
 r | Reduce = true
 	:*:remove singulary axis
 	:de:Entfernen von singulären Achsen
+s:list | SumList: append " "
+	:*:accumulate list of axis
+	:de:Achsen aufsummieren
 v:[name::]var | VarDef: append " "
 	:*:select type components
 	:de:Variablenselektion
@@ -46,7 +49,7 @@ T:title | Title
 :ein | Input
 	:*:input file
 	:de:Name der Eingabedatei
-/.*=.*/name=var | SelDef: append " "
+/.*=.*/<name>=<var> | SelDef: append " "
 	:*:selection parameter
 	:de:Selektionsparameter
 ::aus | Output; PrintMode = false
@@ -55,6 +58,9 @@ T:title | Title
 !
 
 mdmat md = mdload(Input, SelDef, VarDef);
+
+if	(SumList)
+	md = sumaxis(md, strsub(SumList, ",", " ", true));
 
 if	(flagres("Reduce"))	md.reduce();
 if	(Title)			md.title = Title;

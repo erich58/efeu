@@ -88,7 +88,10 @@ static EfiObj *koef_tstat (const EfiObj *base, void *data)
 	if	(base)
 	{
 		OLSCoeff *koef = base->data;
+		/*
 		double t = koef->se ? koef->val / koef->se : 0.;
+		*/
+		double t = koef->val / koef->se;
 		return NewObj(&Type_double, &t);
 	}
 
@@ -131,6 +134,10 @@ void CmdSetup_OLSCoeff (void)
 
 int OLSCoeff_print (IO *io, OLSCoeff *koef)
 {
+	/*
 	return io_printf(io, CFMT, koef->name,
 		koef->val, koef->se, koef->se ? koef->val / koef->se : 0.);
+	*/
+	return io_printf(io, CFMT, koef->name,
+		koef->val, koef->se, koef->val / koef->se);
 }

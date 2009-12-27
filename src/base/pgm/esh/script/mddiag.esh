@@ -24,7 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 PrintListDelim = "\t";
 
 pconfig !
-Version = "$Id: mddiag.esh,v 1.7 2001-10-18 12:11:20 ef Exp $"
+Version = "$Id: mddiag.esh,v 1.8 2005-07-24 05:12:41 ef Exp $"
 PrintMode = true
 Axis = "#1"
 
@@ -40,7 +40,7 @@ T:title | Title
 :ein | Input
 	:*:input file
 	:de:Name der Eingabedatei
-/.*=.*/name=var | SelDef: append " "
+/.*=.*/<name>=<var> | SelDef: append " "
 	:*:selection parameter
 	:de:Selektionsparameter
 ::aus | Output; PrintMode = false

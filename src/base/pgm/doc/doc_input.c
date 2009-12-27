@@ -117,7 +117,7 @@ void Doc_input (Doc *doc, const char *opt, IO *in)
 	{
 		IO *buf;
 
-		tmp = tempnam(NULL, NULL);
+		tmp = newtemp(NULL, NULL);
 		buf = io_fileopen(tmp, "w");
 
 		if	(eval)
@@ -127,7 +127,7 @@ void Doc_input (Doc *doc, const char *opt, IO *in)
 			if	(eval > 1)
 				PushVarTab(RefVarTab(GlobalVar), NULL);
 
-			in = io_cmdpreproc(in);
+			in = Doc_preproc(in);
 			CmdEvalFunc(in, buf, 0);
 
 			if	(eval > 1)
@@ -175,10 +175,7 @@ void Doc_input (Doc *doc, const char *opt, IO *in)
 	Doc_rem(doc, "EOF", NULL);
 
 	if	(tmp)
-	{
-		remove(tmp);
-		free(tmp);
-	}
+		deltemp(tmp);
 }
 
 

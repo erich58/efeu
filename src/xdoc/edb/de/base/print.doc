@@ -1,0 +1,21 @@
+\sec	Ausgabefunktionen
+
+\index[Ausgabefunktionen]
+Es gibt verschiedene Möglichkeiten, Daten über die
+EDB-Datenschnittstelle auszugeben. Dabei kann zunächst einmal
+grundsätzlich unterschieden werden, ob die Daten wiederum als
+EDB-Datenfile verfügbar sind, oder ob sie für andere Anwendungen
+exportiert werden.
+
+Das \index{Ausgabeformat} wird über eine Zeichenkette mit Parametern bestimmt.
+Dabei handelt es sich einerseits um Schlüsselwörter, die das
+Grundformat bestimmen und andererseits um optionale Parameter, die
+eine zusätzliche Variation der Ausgabe bestimmen. Einzelne
+Schlüsselwörter sind Aliasnamen für eine bestimmte Kombination von
+Parametern.
+
+Bei den EDB-Kommandos wird die Ausgabefunktion über die Option |-p|
+festgelegt. Standardmäßig werden nur die ersten 10 Datensätze
+ausgegeben. Mithilfe der Option |-n|<num> kann dieses
+\index[Ausgabelimit]Limit auf einen anderen Wert gesetzt, oder gänzlich
+aufgehoben werden (|-n0|).

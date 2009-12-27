@@ -55,6 +55,9 @@ EfiObj *LvalObj (EfiLval *lval, EfiType *type, ...)
 	EfiObj *x;
 	va_list args;
 
+	if	(!lval)
+		lval = &Lval_data;
+
 	va_start(args, type);
 	x = lval->alloc(type, args);
 	va_end(args);
@@ -68,16 +71,34 @@ EfiObj *LvalObj (EfiLval *lval, EfiType *type, ...)
 	return x;
 }
 
+void UpdateLval (EfiObj *obj)
+{
+	if	(obj && obj->lval && obj->lval->update)
+		obj->lval->update(obj);
+}
+
 void SyncLval (EfiObj *obj)
 {
 	if	(obj && obj->lval && obj->lval->sync)
 		obj->lval->sync(obj);
 }
 
+void UpdateObjList (EfiObjList *list)
+{
+	for (; list != NULL; list = list->next)
+		UpdateLval(list->obj);
+}
+
+void SyncObjList (EfiObjList *list)
+{
+	for (; list != NULL; list = list->next)
+		SyncLval(list->obj);
+}
+
 /*	Neues Objekt generieren
 */
 
-static EfiObj *newobj(EfiType *type, void *data, const void *defval)
+static EfiObj *newobj (EfiType *type, void *data, const void *defval)
 {
 	EfiObj *obj;
 	size_t size;
@@ -110,17 +131,17 @@ static EfiObj *newobj(EfiType *type, void *data, const void *defval)
 	return obj;
 }
 
-EfiObj *NewObj(EfiType *type, void *data)
+EfiObj *NewObj (EfiType *type, void *data)
 {
 	return newobj(type, data, NULL);
 }
 
-EfiObj *ConstObj(EfiType *type, const void *data)
+EfiObj *ConstObj (EfiType *type, const void *data)
 {
 	return newobj(type, NULL, data);
 }
 
-EfiObj *NewPtrObj(EfiType *type, const void *data)
+EfiObj *NewPtrObj (EfiType *type, const void *data)
 {
 	return newobj(type, &data, NULL);
 }
@@ -129,12 +150,11 @@ EfiObj *NewPtrObj(EfiType *type, const void *data)
 /*	Referenzzähler erhöhen
 */
 
-EfiObj *RefObj(const EfiObj *obj)
+EfiObj *RefObj (const EfiObj *obj)
 {
-	Obj_check(obj);
-
 	if	(obj)
 	{
+		Obj_check(obj);
 		do_debug(0, "ref[%d] ", obj);
 
 		if	(obj->refcount == 0)
@@ -155,7 +175,7 @@ EfiObj *RefObj(const EfiObj *obj)
 /*	Referenzzähler verringern/Objekt freigeben
 */
 
-static void del_obj(EfiObj *obj, int cleanup)
+static void del_obj (EfiObj *obj, int cleanup)
 {
 	if	(obj->refcount == 0)
 	{
@@ -168,7 +188,7 @@ static void del_obj(EfiObj *obj, int cleanup)
 	do_debug(1, "delete ", obj);
 
 	if	(obj->lval == NULL && cleanup)
-		CleanData(obj->type, obj->data);
+		DestroyData(obj->type, obj->data);
 
 	obj->refcount = 0;
 	do_debug(2, NULL, obj);
@@ -190,7 +210,7 @@ static void del_obj(EfiObj *obj, int cleanup)
 }
 
 
-void UnrefObj(EfiObj *obj)
+void UnrefObj (EfiObj *obj)
 {
 	Obj_check(obj);
 
@@ -210,7 +230,7 @@ void UnrefObj(EfiObj *obj)
 /*	Objekt löschen
 */
 
-void DeleteObj(EfiObj *obj)
+void DeleteObj (EfiObj *obj)
 {
 	Obj_check(obj);
 
@@ -229,7 +249,7 @@ void DeleteObj(EfiObj *obj)
 
 #if	DEBUG_FLAG
 
-static void do_debug(int flag, char *fmt, const EfiObj *obj)
+static void do_debug (int flag, char *fmt, const EfiObj *obj)
 {
 	int i;
 
@@ -270,7 +290,7 @@ static void do_debug(int flag, char *fmt, const EfiObj *obj)
 	{
 		io_printf(odebug_log, " (%p)", obj);
 
-		if	(obj->type)
+		if	(obj->type && obj->data)
 		{
 			io_puts(" = 0x", odebug_log);
 

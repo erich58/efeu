@@ -34,7 +34,7 @@ static char *re_ident (const void *ptr)
 	char *p;
 
 	exp = ptr;
-	sb = new_strbuf(0);
+	sb = sb_create(0);
 	sb_putc('/', sb);
 
 	for (p = exp->def; *p != 0; p++)

@@ -1,10 +1,11 @@
 " basic vim extensions
 
 augroup filetype
-  au BufNewFile,BufRead	Imakefile	set ft=epp
+  au BufNewFile,BufRead	Imakefile,*imake	set ft=epp
   au BufNewFile,BufRead	*.pph		set ft=epp
   au BufNewFile,BufRead	*.src	set ft=cpp
   au BufNewFile,BufRead	*.sh	set ft=sh
+  au BufNewFile,BufRead	*.make,*.smh	set ft=sh
   au BufNewFile,BufRead	*.app,*.esh,*.cfg,*.hdr	set ft=esh
   au BufNewFile,BufRead	*.tpl,*.def,*.ms	set ft=esh
   au BufNewFile,BufRead	*.etk			set ft=esh

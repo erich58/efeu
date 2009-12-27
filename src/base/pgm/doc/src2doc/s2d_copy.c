@@ -28,6 +28,23 @@ If not, write to the Free Software Foundation, Inc.,
 
 void SrcData_copy (SrcData *data, StrBuf *buf, const char *name)
 {
-	if	(sb_getpos(data->buf) != 0)
-		DocBuf_copy(&data->doc, data->buf, buf, name);
+	if	(sb_getpos(data->buf) == 0)	return;
+
+	if	(strncmp("$include", data->buf->data, 8) == 0)
+	{
+		char *p, *q;
+
+		sb_putc(0, data->buf);
+		p = data->buf->data + 8;
+
+		while (*p && (*p == ' ' || *p == '\n'))
+			p++;
+
+		if	((q = strchr(p, '\n')))
+			*q = 0;
+
+		io_push(data->ein, io_fileopen(p ,"rzd"));
+		sb_clean(data->buf);
+	}
+	else	DocBuf_copy(&data->doc, data->buf, buf, name);
 }

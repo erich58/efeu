@@ -33,14 +33,25 @@ If not, write to the Free Software Foundation, Inc.,
 EfiFunc *GetPrintFunc (const EfiType *type);
 int PrintData (IO *io, const EfiType *type, const void *data);
 int PrintVecData (IO *io, const EfiType *type, const void *data, size_t dim);
+int ShowData (IO *io, const EfiType *type, const void *data);
+int ShowVecData (IO *io, const EfiType *type, const void *data, size_t dim);
 
+int ShowObj (IO *io, const EfiObj *obj);
 int PrintObj (IO *io, const EfiObj *obj);
 int PrintFmtList (IO *io, const char *fmt, EfiObjList *list);
 int PrintFmtObj (IO *io, const char *fmt, const EfiObj *obj);
-int PrintAny (IO *io, const EfiType *type, const void *data);
+int ShowAny (IO *io, const EfiType *type, const void *data);
+
+int PrintType (IO *io, const EfiType *type, int verbosity);
+void TypeInfo (const EfiType *type, const char *mode);
 
 extern char *PrintListBegin;
 extern char *PrintListDelim;
 extern char *PrintListEnd;
+extern int PrintFieldWidth;
+
+void SetFloatPrec (const char *def);
+int PrintDouble (IO *io, double val);
+
 
 #endif	/* EFEU/printobj.h */

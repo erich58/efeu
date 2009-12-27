@@ -43,6 +43,7 @@ typedef struct {
 	int sec;	/* Sekunde */
 } CalInfo;
 
+extern int CenturyLimit;
 int LeapYear (int jahr);
 int CalendarIndex (int tag, int monat, int jahr);
 int CalendarIndex1900 (int tag, int monat, int jahr);
@@ -53,7 +54,7 @@ CalInfo *Calendar (int idx, CalInfo *buf);
 int PrintCalendar (IO *io, const char *fmt, int idx);
 char *Calendar2str (const char *fmt, int idx);
 int str2Calendar (const char *str, char **endptr, int flag);
-
+int Calendar_jdiff (unsigned t1, unsigned t2);
 
 /*	Umrechnung in alte Kalenderbasis
 */

@@ -1,0 +1,801 @@
+/*
+:*:EDB interface
+:de:EDB-Schnittstelle
+
+$Copyright (C) 2006 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+*/
+
+#include <DB/PG.h>
+#include <EFEU/EDB.h>
+#include <EFEU/EDBMeta.h>
+#include <EFEU/printobj.h>
+#include <EFEU/stdtype.h>
+#include <EFEU/calendar.h>
+#include <EFEU/Debug.h>
+#include <EFEU/stack.h>
+
+#if	HAS_PQ
+
+#define	E_NAME	"$!: table name must be specified.\n"
+#define	M_FLUSH	"$!: PQputline() failed.\n"
+#define	M_ECOPY	"$!: PQendcopy() failed\n"
+#define	E_FETCH	"$!: could not fetch data type\n"
+
+static Stack *epg_stack = NULL;
+static PG *epg = NULL;
+
+static PG *epg_connect (const char *arg, int force)
+{
+	PG *x;
+
+	if	(epg && !force && !arg)
+		return rd_refer(epg);
+
+	if	(!arg || *arg == 0)
+	{
+		x = PG_connect("");
+	}
+	else if	(strchr(arg, '=') != NULL)
+	{
+		x = PG_connect(arg);
+	}
+	else
+	{
+		char *p = mstrpaste("=", "dbname", arg);
+		x = PG_connect(p);
+		memfree(p);
+	}
+
+	if	(force)
+	{
+		if	(epg)
+			pushstack(&epg_stack, epg);
+
+		epg = rd_refer(x);
+	}
+
+	return x;
+}
+
+static void epg_close(void)
+{
+	rd_deref(epg);
+	epg = popstack(&epg_stack, NULL);
+}
+
+static void edb_closeall (void *par)
+{
+	while (epg)
+		epg_close();
+}
+
+static char *parse_query (IO *io, StrBuf *buf);
+
+static int pfunc_int (IO *out, const EfiType *type, const void *data)
+{
+	return io_printf(out, "%d", Val_int(data));
+}
+
+static void conv_int (EfiType *type, void *data, const char *def)
+{
+	Val_int(data) = strtol(def, NULL, 10);
+}
+
+static int pfunc_uint (IO *out, const EfiType *type, const void *data)
+{
+	return io_printf(out, "%u", Val_uint(data));
+}
+
+static void conv_uint (EfiType *type, void *data, const char *def)
+{
+	Val_uint(data) = strtoul(def, NULL, 10);
+}
+
+static int pfunc_int64 (IO *out, const EfiType *type, const void *data)
+{
+	return io_printf(out, "%lld", *((int64_t *) data));
+}
+
+static int pfunc_uint64 (IO *out, const EfiType *type, const void *data)
+{
+	return io_printf(out, "%llu", *((uint64_t *) data));
+}
+
+static int pfunc_str (IO *out, const EfiType *type, const void *data)
+{
+	return Print_str(type, data, out);
+}
+
+static int pfunc_date (IO *out, const EfiType *type, const void *data)
+{
+	return PrintCalendar(out, "%Y-%m-%d", Val_Date(data));
+}
+
+static void conv_date (EfiType *type, void *data, const char *def)
+{
+	Val_Date(data) = str2Calendar(def, NULL, 0);
+}
+
+static void conv_str (EfiType *type, void *data, const char *def)
+{
+	Val_str(data) = mstrcpy(def);
+}
+
+static void conv_any (EfiType *type, void *data, const char *def)
+{
+	Obj2Data(strterm(def), type, data);
+}
+
+static int IsType (const EfiType *type, const EfiType *base)
+{
+	return (type == base);
+}
+
+static int IsAny (const EfiType *type, const EfiType *base)
+{
+	return 1;
+}
+
+static struct {
+	EfiType *type;
+	int (*test) (const EfiType *type, const EfiType *base);
+	char *pg_type;
+	int (*pfunc)(IO *out, const EfiType *type, const void *data);
+	void (*conv)(EfiType *type, void *data, const char *def);
+} conv_tab[] = {
+	{ &Type_int, IsType, "integer", pfunc_int, conv_int },
+	{ &Type_uint, IsType, "int8", pfunc_uint, conv_uint },
+	{ &Type_double, IsType, "float", PrintData, conv_any },
+	{ &Type_str, IsType, "text", pfunc_str, conv_str },
+	{ &Type_Date, IsType, "date", pfunc_date, conv_date },
+
+	{ &Type_enum, IsTypeClass, "integer", pfunc_int, conv_int },
+	{ &Type_bool, IsType, "integer", pfunc_int, conv_int },
+	{ &Type_char, IsType, "integer", pfunc_int, conv_int },
+	{ &Type_int8, IsType, "integer", PrintData, conv_any },
+	{ &Type_int16, IsType, "integer", PrintData, conv_any },
+	{ &Type_int32, IsType, "integer", PrintData, conv_any },
+	{ &Type_int64, IsType, "int8", pfunc_int64, conv_any },
+	{ &Type_varint, IsType, "int8", pfunc_int64, conv_any },
+	{ &Type_uint8, IsType, "integer", PrintData, conv_any },
+	{ &Type_uint16, IsType, "integer", PrintData, conv_any },
+	{ &Type_uint32, IsType, "int8", PrintData, conv_any },
+	{ &Type_uint64, IsType, "int8", pfunc_uint64, conv_any },
+	{ &Type_varsize, IsType, "int8", pfunc_uint64, conv_any },
+	{ &Type_float, IsType, "float", PrintData, conv_any },
+
+	{ NULL, IsAny, "text", PrintData, conv_any },
+};
+
+typedef struct {
+	char *db;
+	char *name;
+	char *par;
+	int drop;
+	int nocon;
+} PARG;
+
+static PARG *parg_alloc (const char *opt, const char *arg)
+{
+	PARG *parg;
+	char *db;
+	char *p;
+
+	if	(!arg)		return NULL;
+
+	if	(*arg == ':')
+	{
+		arg++;
+		db = NULL;
+	}
+	else if	((p = strchr(arg, ':')))
+	{
+		db = mstrncpy(arg, p - arg);
+		arg = p + 1;
+	}
+	else	db = NULL;
+
+	if	(!*arg)		return NULL;
+
+	parg = memalloc(sizeof *parg);
+	parg->db = db;
+
+	if	(opt)
+	{
+		for (; *opt; opt++)
+		{
+			switch (*opt)
+			{
+			case 'd':	parg->drop = 1; break;
+			case 'n':	parg->nocon = 1; break;
+			default:	break;
+			}
+		}
+	}
+
+	if	((p = strchr(arg, ';')))
+	{
+		parg->name = mstrncpy(arg, p - arg);
+		parg->par = mstrcpy(p + 1);
+	}
+	else
+	{
+		parg->name = mstrcpy(arg);
+		parg->par = NULL;
+	}
+
+	return parg;
+}
+
+static void parg_free (PARG *parg)
+{
+	memfree(parg->db);
+	memfree(parg->name);
+	memfree(parg->par);
+	memfree(parg);
+}
+
+typedef struct {
+	EfiType *type;
+	char *name;
+	char *pg_type;
+	int offset;
+	int (*pfunc)(IO *out, const EfiType *type, const void *data);
+	void (*conv)(EfiType *type, void *data, const char *def);
+} CONVARG;
+
+static void conv_free (void *ptr)
+{
+	CONVARG *conv = ptr;
+	memfree(conv->name);
+}
+
+typedef struct {
+	REFVAR;	/* Referenzvariablen */
+	PG *pg;	/* Serverzugriff */
+	IO *io;	/* COPY-Zugriff */
+	VecBuf conv;
+	StrBuf buf;
+	int endline;
+	int copy;
+} EDB2PG;
+
+static void edb2pg_clean (void *data)
+{
+	EDB2PG *par = data;
+
+	if	(par->endline && PQputline(par->pg->conn, "\\.\n"))
+		dbg_note("PG", M_FLUSH, NULL);
+
+	if      (par->copy)
+	{
+		if	(PQendcopy(par->pg->conn) != 0)
+			dbg_note("PG", M_ECOPY, NULL);
+	}
+	else
+	{
+		PG_command(par->pg, "CLOSE tmpcursor");
+		PG_command(par->pg, "COMMIT");
+	}
+
+	rd_deref(par->pg);
+	io_close(par->io);
+	vb_clean(&par->conv, conv_free);
+	vb_free(&par->conv);
+	sb_free(&par->buf);
+	memfree(par);
+}
+
+static RefType edb2pg_reftype = REFTYPE_INIT("EDB2PG", NULL, edb2pg_clean);
+
+static EDB2PG *edb2pg_create (void)
+{
+	EDB2PG *par = memalloc(sizeof *par);
+	vb_init(&par->conv, 100, sizeof(CONVARG));
+	sb_init(&par->buf, 0);
+	par->io = io_strbuf(&par->buf);
+	return rd_init(&edb2pg_reftype, par);
+}
+
+static char *edb2pg_get (EDB2PG *par)
+{
+	io_putc(0, par->io);
+	io_rewind(par->io);
+	sb_clean(&par->buf);
+	return (char *) par->buf.data;
+}
+
+static int edb2pg_cmd (EDB2PG *par)
+{
+	char *p = edb2pg_get(par);
+	PG_info(par->pg, p);
+	return PG_command(par->pg, p);
+}
+
+static void add_pdef (EDB2PG *par, EfiType *type, const char *name, int offset)
+{
+	CONVARG *p;
+	int n;
+	
+	if	(type->list)
+	{
+		EfiVar *x;
+
+		for (x = type->list; x; x = x->next)
+		{
+			size_t off = offset + x->offset;
+
+			if	(x->dim)
+			{
+				int pos, n;
+
+				if	(name)
+				{
+					sb_puts(name, &par->buf);
+					sb_putc('_', &par->buf);
+				}
+
+				sb_puts(x->name, &par->buf);
+				pos = par->buf.pos;
+
+				for (n = 1; n <= x->dim; n++)
+				{
+					par->buf.pos = pos;
+					io_printf(par->io, "_%d", n);
+					sb_putc(0, &par->buf);
+					add_pdef(par, x->type, 
+						(char *) par->buf.data, off);
+					off += x->type->size;
+				}
+
+				sb_clean(&par->buf);
+			}
+			else if	(name)
+			{
+				sb_puts(name, &par->buf);
+				sb_putc('_', &par->buf);
+				sb_puts(x->name, &par->buf);
+				sb_putc(0, &par->buf);
+				add_pdef(par, x->type, 
+					(char *) par->buf.data, off);
+				sb_clean(&par->buf);
+			}
+			else	add_pdef(par, x->type, x->name, off);
+		}
+
+		return;
+	}
+
+	p = vb_next(&par->conv);
+	p->name = mstrcpy(name ? name : "this");
+	p->type = type;
+	p->offset = offset;
+	p->pfunc = PrintData;
+	p->conv = conv_any;
+
+	for (n = 0; n < tabsize(conv_tab); n++)
+	{
+		if	(conv_tab[n].test(type, conv_tab[n].type))
+		{
+			p->pg_type = conv_tab[n].pg_type;
+			p->pfunc = conv_tab[n].pfunc;
+			p->conv = conv_tab[n].conv;
+			break;
+		}
+	}
+}
+
+static size_t write_pg (EfiType *type, void *data, void *p_par)
+{
+	EDB2PG *par = p_par;
+	char *delim = NULL;
+	CONVARG *put;
+	size_t n;
+	
+	for (n = par->conv.used, put = par->conv.data; n-- > 0; put++)
+	{
+		sb_puts(delim, &par->buf);
+		put->pfunc(par->io, put->type, (char *) data + put->offset);
+		delim = "\t";
+	}
+
+	sb_putc('\n', &par->buf);
+
+	if	(PQputline(par->pg->conn, edb2pg_get(par)) != 0)
+		dbg_note("PG", M_FLUSH, NULL);
+
+	return 1;
+}
+
+static void init_pg (EDB *edb, EDBPrintMode *mode, IO *io)
+{
+	PARG *arg = mode->par;
+
+	if	(!arg->nocon)
+	{
+		EfiType *type = edb->obj->type;
+		EDB2PG *par = edb2pg_create();
+		CONVARG *p;
+		char *cmd;
+		size_t n;
+
+		par->pg = epg_connect(arg->db, 0);
+
+		if	(!par->pg)
+			exit(EXIT_FAILURE);
+
+		add_pdef(par, type, NULL, 0);
+
+		if	(arg->drop)
+		{
+			io_printf(par->io, "DROP TABLE %s", arg->name);
+			edb2pg_cmd(par);
+		}
+
+		io_printf(par->io, "CREATE TABLE %s (", arg->name);
+
+		for (n = 0, p = par->conv.data; n < par->conv.used; n++)
+			io_printf(par->io, "%s%s %s", n ? ", " : "",
+				p[n].name, p[n].pg_type);
+		
+		if	(arg->par)
+		{
+			io_puts(", ", par->io);
+			io_puts(arg->par, par->io);
+		}
+
+		io_puts(")", par->io);
+
+		if	(!edb2pg_cmd(par))
+			exit(EXIT_FAILURE);
+
+		io_printf(par->io, "COPY %s FROM stdin", arg->name);
+		cmd = edb2pg_get(par);
+		PG_info(par->pg, cmd);
+		PG_exec(par->pg, cmd, PGRES_COPY_IN);
+		par->endline = 1;
+		par->copy = 1;
+		edb->write = write_pg;
+		edb->opar = par;
+	}
+
+	edb_head(edb, io, mode->header > 1);
+	io_puts("@head\n", io);
+	io_puts("#include <pg.hdr>\n", io);
+	io_puts("@pg_copy ", io);
+
+	if	(arg->db)
+	{
+		io_puts(arg->db, io);
+		io_putc(':', io);
+	}
+
+	io_puts(arg->name, io);
+	io_putc('\n', io);
+
+	parg_free(mode->par);
+	mode->par = NULL;
+}
+
+static void pset_pg (EDBPrintMode *mode, const EDBPrintDef *def,
+	const char *opt, const char *arg)
+{
+	if	((mode->par = parg_alloc(opt, arg)))
+	{
+		mode->name = def->name;
+		mode->init = init_pg;
+		mode->split = 0;
+	}
+	else	dbg_error(NULL, E_NAME, NULL);
+}
+
+static EDBPrintDef pdef_pg = { "pg", pset_pg, NULL,
+	":*:write out as PostrgeSQL table"
+	":de:Ausgabe in eine PostgreSQL-Tabelle"
+};
+
+
+static int read_pg (EfiType *type, void *data, void *p_par)
+{
+	EDB2PG *par = p_par;
+	CONVARG *get;
+	size_t n;
+	char *p;
+	int c;
+	
+	sb_clean(&par->buf);
+
+	if	(!par->buf.nfree)
+		sb_expand(&par->buf);
+
+	while ((c = PQgetline(par->pg->conn, 
+		(char *) par->buf.data + par->buf.pos, par->buf.nfree)) == 1)
+	{
+		par->buf.pos += par->buf.nfree - 1;
+		par->buf.nfree = 1;
+		sb_expand(&par->buf);
+	}
+
+	if	(c == EOF)	return 0;
+
+	p = par->buf.data;
+
+	if	(p[0] == '\\' && p[1] == '.')
+		return 0;
+
+	n = 0;
+	get = par->conv.data;
+
+	while (*p && n < par->conv.used)
+	{
+		char *arg = p;
+
+		for (; *p; p++)
+		{
+			if	(*p == '\t')
+			{
+				*p = 0;
+				p++;
+				break;
+			}
+		}
+
+		get[n].conv(get[n].type, (char *) data + get[n].offset, arg);
+		n++;
+	}
+
+	for (; n < par->conv.used; n++)
+		CleanData(get[n].type, (char *) data + get[n].offset);
+
+	return 1;
+}
+
+static void meta_copy (EDBMetaDef *def, EDBMeta *meta, const char *arg)
+{
+	EDB2PG *par = edb2pg_create();
+	char *p, *db;
+
+	if	((p = strrchr(arg, ':')) != 0)
+	{
+		db = mstrncpy(arg, p - arg);
+		arg = p + 1;
+	}
+	else	db = NULL;
+
+	par->pg = epg_connect(db, 0);
+	memfree(db);
+
+	io_printf(par->io, "COPY %S TO stdin", arg);
+	PG_exec(par->pg, edb2pg_get(par), PGRES_COPY_OUT);
+	par->endline = 0;
+	par->copy = 1;
+
+	add_pdef(par, meta->cur->obj->type, NULL, 0);
+	edb_input(meta->cur, read_pg, par);
+}
+
+static void set_data (EDB2PG *par, EfiType *type, void *data)
+{
+	PGresult *res; 
+	CONVARG *get;
+	int i, n;
+
+	res = par->pg->res;
+	get = par->conv.data;
+	n = PQnfields(res);
+
+	for (i = 0; i < n && i < par->conv.used; i++)
+		get[i].conv(get[i].type, (char *) data + get[i].offset,
+			PQgetvalue(res, 0, i));
+
+	for (; i < par->conv.used; i++)
+		CleanData(get[i].type, (char *) data + get[i].offset);
+}
+
+static int read_query (EfiType *type, void *data, void *p_par)
+{
+	EDB2PG *par = p_par;
+	PGresult *res;
+
+	PG_query(par->pg, "FETCH 1 IN tmpcursor");
+	res = par->pg->res;
+
+	if	(!res || PQntuples(res) == 0)
+		return 0;
+
+	set_data(par, type, data);
+	return 1;
+}
+
+static char *parse_query (IO *io, StrBuf *buf)
+{
+	int newline = 1;
+	int c;
+
+	while ((c = io_skipcom(io, NULL, newline)) != EOF)
+	{
+		if	(c == '@' && newline)
+		{
+			io_ungetc(c, io);
+			break;
+		}
+
+		newline = (c == '\n');
+		sb_putc(newline ? ' ' : c, buf);
+	}
+
+	sb_putc(0, buf);
+	buf->pos--;
+
+	while (buf->pos && buf->data[buf->pos - 1] == ' ')
+		buf->data[--buf->pos] = 0;
+
+	return buf->data;
+}
+
+static void meta_query (EDBMetaDef *def, EDBMeta *meta, const char *arg)
+{
+	EDB2PG *par = edb2pg_create();
+	void *tinfo;
+	
+	par->pg = epg_connect(arg, 0);
+
+	if	(meta->cur && meta->cur->read)
+	{
+		meta->prev = edb_paste(meta->prev, meta->cur);
+		meta->cur = NULL;
+	}
+
+	tinfo = meta->cur ? NULL : PGType_create(par->pg);
+
+	PG_command(par->pg, "BEGIN");
+	par->endline = 0;
+	sb_clean(&meta->buf);
+	sb_puts("DECLARE tmpcursor CURSOR FOR ", &meta->buf);
+	PG_command(par->pg, parse_query(meta->ctrl, &meta->buf));
+
+	if	(!meta->cur)
+	{
+		PGresult *res;
+		int i, nfields;
+		EfiVar *var, **ptr;
+		CONVARG *conv;
+		EfiType *type;
+		IO *log;
+
+		PG_query(par->pg, "FETCH 0 IN tmpcursor");
+		res = par->pg->res;
+		log = LogOut(NULL, DBG_INFO);
+
+		if	(!res)
+		{
+			dbg_error(NULL, E_FETCH, NULL);
+			return;
+		}
+
+		nfields = PQnfields(res);
+		var = NULL;
+		ptr = &var;
+
+		for (i = 0; i < nfields; i++)
+		{
+			conv = vb_next(&par->conv);
+			conv->name = mstrcpy(PQfname(res, i));
+			conv->pg_type = PGType_name(tinfo, PQftype(res, i));
+			conv->type = &Type_str;
+			conv->offset = 0;
+			conv->pfunc = PrintData;
+			conv->conv = conv_str;
+
+			if	(mstrcmp(conv->pg_type, "int4") == 0)
+			{
+				conv->type = &Type_int;
+				conv->conv = conv_int;
+			}
+			else if	(mstrcmp(conv->pg_type, "int8") == 0)
+			{
+				conv->type = &Type_varint;
+				conv->conv = conv_any;
+			}
+			else if	(mstrcmp(conv->pg_type, "date") == 0)
+			{
+				conv->type = &Type_Date;
+				conv->conv = conv_date;
+			}
+			else if	(strncmp(conv->pg_type, "float", 5) == 0)
+			{
+				conv->type = &Type_double;
+				conv->conv = conv_any;
+			}
+			else if	(mstrcmp(conv->pg_type, "text") == 0)
+			{
+				conv->type = &Type_str;
+				conv->conv = conv_any;
+			}
+
+			io_printf(log, "%s: %s: %s -> %s\n", def->name,
+				conv->name, conv->pg_type, conv->type->name);
+			*ptr = NewVar(conv->type, conv->name, 0);
+			ptr = &(*ptr)->next;
+		}
+
+		type = MakeStruct(NULL, NULL, var);
+		conv = par->conv.data;
+
+		for (var = type->list; var; var = var->next, conv++)
+			conv->offset = var->offset;
+
+		meta->cur = edb_create(LvalObj(NULL, type), meta->desc);
+		meta->desc = NULL;
+	}
+	else	add_pdef(par, meta->cur->obj->type, NULL, 0);
+
+	PGType_clean(tinfo);
+	edb_input(meta->cur, read_query, par);
+}
+
+static void meta_connect (EDBMetaDef *def, EDBMeta *meta, const char *arg)
+{
+	rd_deref(epg_connect(arg, 1));
+}
+
+static void meta_close (EDBMetaDef *def, EDBMeta *meta, const char *arg)
+{
+	epg_close();
+}
+
+static void meta_exec (EDBMetaDef *def, EDBMeta *meta, const char *arg)
+{
+	PG *pg = epg_connect(arg, 0);
+	sb_clean(&meta->buf);
+	PG_command(pg, parse_query(meta->ctrl, &meta->buf));
+	rd_deref(pg);
+}
+
+static EDBMetaDef mdef[] = {
+	{ "pg_copy", meta_copy, 1,
+		":*:read data from postgresql table"
+		":de:Daten aus PostgreSQL tabelle lesen"
+	},
+	{ "pg_query", meta_query, 0,
+		":*:read data from postgresql query"
+		":de:Daten über SQL-Abfrage holen"
+	},
+	{ "pg_connect", meta_connect, 0,
+		":*:create persistent connection to postgresql server"
+		":de:Beständige Verbindung zum PostgeSQL-Server aufbauen"
+	},
+	{ "pg_close", meta_close, 0,
+		":*:close persistent connection to postgresql server"
+		":de:Beständige Verbindung zum PostgeSQL-Server schließen"
+	},
+	{ "pg_exec", meta_exec, 0,
+		":*:send SQL-query to server"
+		":de:SQL-Kommando zum Server senden"
+	},
+};
+
+void PG_edb (void)
+{
+	AddEDBPrintDef(&pdef_pg, 1);
+	AddEDBMetaDef(mdef, tabsize(mdef));
+	proc_clean(edb_closeall, NULL);
+}
+
+#endif

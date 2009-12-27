@@ -3,12 +3,26 @@
 */
 
 #include <EFEU/mdmat.h>
+#include <EFEU/preproc.h>
 
 EfiType *mdtype(const char *str)
 {
 	IO *io;
 	EfiType *type;
 	EfiObj *obj;
+
+	if	(str[0] == '[')
+	{
+		char *head;
+		char *name;
+		IO *cin;
+
+		head = mstrcut(str + 1, &name, "]", 0);
+		cin = io_cmdpreproc(io_mstr(head));
+		CmdEval(cin, NULL);
+		io_close(cin);
+		str = name;
+	}
 
 	if	((type = GetType(str)) != NULL)
 		return type;
@@ -39,7 +53,7 @@ char *type2str(const EfiType *type)
 	StrBuf *sb;
 	IO *io;
 
-	sb = new_strbuf(0);
+	sb = sb_create(0);
 	io = io_strbuf(sb);
 	ShowType(io, type);
 	io_close(io);

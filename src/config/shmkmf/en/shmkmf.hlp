@@ -1,0 +1,51 @@
+/*
+shmkmf manpage
+
+$Copyright (C) 2004 Erich Frühstück
+This file is part of EFEU.
+
+EFEU is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+EFEU is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with EFEU; see the file COPYING.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+*/
+
+@name
+@synopsis -h
+
+\Description
+The command |$!| creates a Makefile from the script Config.make.
+The following options and arguments are accepted from command |$!|:
+
+The following optionms and arguments are accepted by |$!|:
+
+@arglist
+
+For normal use, |$!| is called without arguments.
+
+\shead Predefined variables
+
+IncludePath
+	Search Path for include files.
+Config
+	Name of Configuartion file.
+Makefile
+	Name of target file.
+CC
+	Name of C-compiler
+
+All predefined functions to generate make-rules starts with `mf_'.
+Names starting with `_' are reserved for internal use.
+
+\SeeAlso
+ccmkmf(1).

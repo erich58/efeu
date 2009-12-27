@@ -23,11 +23,13 @@ If not, write to the Free Software Foundation, Inc.,
 #include "DocBuf.h"
 
 
+static char *syn_head = "\\Synopsis\n";
+
 static char *SecHead (int n)
 {
 	switch (n)
 	{
-	case BUF_SYN:	return "\\Synopsis\n";
+	case BUF_SYN:	return syn_head;
 	case BUF_DESC:	return "\\Description\n";
 	case BUF_EX:	return "\\Examples\n";
 	case BUF_SEE:	return "\\SeeAlso\n";
@@ -78,12 +80,13 @@ void DocBuf_init (DocBuf *doc)
 {
 	int i;
 
-	memset(doc, 0, sizeof(DocBuf));
-	doc->synopsis = new_strbuf(0);
-	doc->source = new_strbuf(0);
+	memset(doc, 0, sizeof *doc);
+	doc->cmdpar = NULL;
+	doc->synopsis = sb_create(0);
+	doc->source = sb_create(0);
 
 	for (i = 0; i < BUF_DIM; i++)
-		doc->tab[i] = new_strbuf(0);
+		doc->tab[i] = sb_create(0);
 }
 
 void DocBuf_write (DocBuf *doc, IO *io)
@@ -96,7 +99,9 @@ void DocBuf_write (DocBuf *doc, IO *io)
 
 	if	(doc->var[VAR_HEAD] || sb_getpos(doc->synopsis))
 	{
-		io_puts("\\Synopsis\n\\code\n", io);
+		io_puts(syn_head, io);
+		syn_head = "\n";
+		io_puts("\\code\n", io);
 
 		if	(doc->var[VAR_HEAD])
 		{
@@ -123,11 +128,11 @@ void DocBuf_write (DocBuf *doc, IO *io)
 			io_puts((char *) doc->tab[i]->data, io);
 		}
 
-		del_strbuf(doc->tab[i]);
+		sb_destroy(doc->tab[i]);
 	}
 
-	del_strbuf(doc->synopsis);
-	del_strbuf(doc->source);
+	sb_destroy(doc->synopsis);
+	sb_destroy(doc->source);
 
 	if	(doc->var[VAR_COPYRIGHT])
 		io_printf(io, "\\Copyright\nCopyright %s\n",

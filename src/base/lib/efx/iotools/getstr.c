@@ -48,7 +48,7 @@ static char *loadstring(IO *io, int delim)
 	if	(c == delim)	return NULL;
 
 	io_protect(io, 1);
-	buf = new_strbuf(0);
+	buf = sb_create(0);
 	at_begin = 1;
 	no_nl = 1;
 

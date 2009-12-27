@@ -95,10 +95,7 @@ static EfiObj *par_koef (const EfiObj *obj, void *data)
 
 	if	(x == NULL)	return NULL;
 
-	Buf_vec.type = &Type_OLSCoeff;
-	Buf_vec.dim = x->dim;
-	Buf_vec.data = x->koef;
-	return NewObj(&Type_vec, &Buf_vec);
+	return EfiVecObj(&Type_OLSCoeff, x->koef, x->dim);
 }
 
 static EfiObj *par_exogen (const EfiObj *obj, void *data)
@@ -107,10 +104,7 @@ static EfiObj *par_exogen (const EfiObj *obj, void *data)
 
 	if	(x == NULL)	return NULL;
 
-	Buf_vec.type = &Type_TimeSeries;
-	Buf_vec.dim = x->dim;
-	Buf_vec.data = x->exogen;
-	return NewObj(&Type_vec, &Buf_vec);
+	return EfiVecObj(&Type_TimeSeries, x->exogen, x->dim);
 }
 
 
@@ -205,6 +199,8 @@ static void f_adjust (EfiFunc *func, void *rval, void **arg)
 
 static EfiFuncDef func[] = {
 	{ FUNC_VIRTUAL, &Type_OLSPar, "OLS (TimeSeries y, ...)",
+		Func_OLS },
+	{ FUNC_VIRTUAL, &Type_OLSPar, "OLS (TimeSeries y, List_t list)",
 		Func_OLS },
 	{ FUNC_VIRTUAL, &Type_TimeSeries,
 		"OLSPar::symres ()", f_symres },

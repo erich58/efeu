@@ -49,7 +49,7 @@ static int is_interactive (void)
 static int line = 0;
 static int mode_depth = 0;
 static int iflag = 1;
-static int mark = 1;
+static int mark = 0;
 static char *prompt = NULL;
 
 
@@ -79,6 +79,7 @@ static int ia_get (void *ptr)
 
 		line++;
 		io_psubarg(iostd, p, NULL);
+		mark = 0;
 	}
 
 	c = getchar();
@@ -175,13 +176,13 @@ Falls Standardeingabe oder Standardausgabe nicht mit einem Terminal
 verbunden sind, wird kein Prompt ausgegeben.
 */
 
-IO *io_interact (const char *prompt, const char *hist)
+IO *io_interact (const char *xprompt, const char *hist)
 {
 	IO *io;
 
 	if	(_interact_open)
 	{
-		io = _interact_open(prompt, hist);
+		io = _interact_open(xprompt, hist);
 	}
 	else if	(is_interactive())
 	{
@@ -189,7 +190,7 @@ IO *io_interact (const char *prompt, const char *hist)
 		io->get = ia_get;
 		io->put = ia_put;
 		io->ctrl = ia_ctrl;
-		prompt = mstrcpy(prompt);
+		prompt = mstrcpy(xprompt);
 	}
 	else	io = io_batch();
 

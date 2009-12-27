@@ -32,11 +32,16 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/printobj.h>
 #include <EFEU/Debug.h>
 #include <EFEU/Op.h>
+#include <EFEU/CmpDef.h>
+#include <EFEU/TestDef.h>
+#include <EFEU/tms.h>
 #include <ctype.h>
 
+#define	KEY_VAR	"Var"
 #define LBL_VAR	":*:global variables" \
 		":de:Globale Variablen"
 
+#define	KEY_FUNC "Func"
 #define LBL_FUNC ":*:global functions" \
 		":de:Globale Funktionen"
 
@@ -122,6 +127,16 @@ static EfiObj *pf_string (IO *io, void *data)
 	return str2Obj(getstring(io));
 }
 
+static EfiObj *do_psub(void *par, const EfiObjList *list)
+{
+	return str2Obj(mpsubvec(Val_str(list->obj->data), 0, NULL));
+}
+
+static EfiObj *pf_parsub (IO *io, void *data)
+{
+	return Obj_call(do_psub, NULL, NewObjList(str2Obj(getstring(io))));
+}
+
 static EfiObj *pf_const (IO *io, void *data)
 {
 	/*
@@ -133,6 +148,31 @@ static EfiObj *pf_const (IO *io, void *data)
 static EfiObj *pf_static (IO *io, void *data)
 {
 	UnrefEval(Parse_term(io, 0)); return Obj_noop();
+}
+
+static EfiObj *pf_typeof (IO *io, void *data)
+{
+	EfiObj *obj = NULL;
+	EfiType *type = NULL;
+	
+	if	(io_eat(io, " \t") == '(')
+	{
+		Parse_fmt(io, "(T)", &obj);
+	}
+	else	obj = EvalObj(Parse_term(io, OpPrior_Unary), NULL);
+
+	if	((obj = EvalObj(obj, NULL)))
+	{
+		type = obj->type;
+		UnrefObj(obj);
+	}
+
+	return type2Obj(Parse_type(io, type));
+}
+
+static EfiObj *pf_provide (IO *io, void *data)
+{
+	return type2Obj(Parse_type(io, NULL));
 }
 
 static EfiObj *p_interact (IO *io, void *data)
@@ -156,6 +196,10 @@ static EfiObj *p_local (IO *io, void *data)
 	return NewPtrObj(&Type_vtab, rd_refer(LocalVar));
 }
 
+static EfiObj *p_cinterp (IO *io, void *data)
+{
+	return NewPtrObj(&Type_efi, rd_refer(Efi_ptr(NULL)));
+}
 
 static EfiParseDef pdef[] = {
 	{ "for", PFunc_for, NULL },
@@ -179,15 +223,20 @@ static EfiParseDef pdef[] = {
 
 	{ "expression", pf_expression, NULL },
 	{ "string", pf_string, NULL },
+	{ "parsub", pf_parsub, NULL },
 	{ "static", pf_static, NULL },
 	{ "const", pf_const, NULL },
 
 	{ "struct", PFunc_struct, NULL },
+	{ "construct", PFunc_construct, NULL },
 	{ "enum", PFunc_enum, NULL },
 	{ "typedef", PFunc_typedef, NULL },
+	{ "typeof", pf_typeof, NULL },
+	{ "provide", pf_provide, NULL },
 
 	{ "interactive", p_interact, NULL },
 	{ "local", p_local, NULL },
+	{ "cinterp", p_cinterp, NULL },
 };
 
 
@@ -212,22 +261,6 @@ static EfiMember list_member[] = {
 	{ "obj", NULL, list_obj, NULL },
 };
 
-/*	Komponenten von Typen
-*/
-
-static EfiObj *type_default (const EfiObj *obj, void *data)
-{
-	EfiType *type = Val_type(obj->data);
-
-	if	(type == NULL)	return NULL;
-	else if	(type->defval)	return LvalObj(&Lval_ptr, type, type->defval);
-	else			return NewObj(type, NULL);
-}
-
-static EfiMember type_member[] = {
-	{ "default", NULL, type_default, NULL },
-};
-
 /*	Komponenten von Referenzen
 */
 
@@ -250,6 +283,64 @@ static EfiMember ref_member[] = {
 /*	Parametersubstitution
 */
 
+static int c_ptr (IO *in, IO *out, void *arg)
+{
+	EfiObj *base;
+	char *p;
+	int c;
+	int n;
+
+	p = Parse_name(in, 1);
+
+	if	(!p)
+		return iocpy_skip(in, NULL, 0, arg, 0);
+
+	n = 0;
+	base = GetVar(NULL, p, NULL);
+	base = EvalObj(base, NULL);
+	c = io_getc(in);
+
+	if	(base && c == '.')
+	{
+		EfiObj *a;
+		EfiObj *obj;
+
+		obj = RefObj(base);
+		io_ungetc(c, in);
+
+		while ((a = Parse_op(in, OpPrior_Unary, obj)) != NULL)
+			obj = a;
+
+		c = io_getc(in);
+		obj = EvalObj(obj, NULL);
+
+		n += io_printf(out, "((%s *) ((char *) %s->data",
+			obj && obj->type->cname ? obj->type->cname : "void", p);
+
+		if	(base && obj)
+			n += io_printf(out, " + %d",
+				(char *) obj->data - (char *) base->data);
+
+		UnrefObj(obj);
+
+		n += io_puts("))", out);
+	}
+	else if	(base && base->type->cname)
+	{
+		n += io_printf(out, "((%s *) %s->data)",
+			base->type->cname, p);
+	}
+	else	n += io_printf(out, "%s->data", p);
+
+	UnrefObj(base);
+	memfree(p);
+	
+	if	(!listcmp(arg, c))
+		iocpy_skip(in, NULL, c, arg, 0);
+
+	return n;
+}
+
 static int c_term(IO *in, IO *out, void *arg)
 {
 	EfiObj *obj;
@@ -257,6 +348,12 @@ static int c_term(IO *in, IO *out, void *arg)
 	char *fmt;
 	int c;
 
+	c = io_getc(in);
+
+	if	(c == '&')
+		return c_ptr(in, out, arg);
+
+	io_ungetc(c, in);
 	obj = EvalObj(Parse_term(in, OpPrior_Cond), NULL);
 	c = io_getc(in);
 
@@ -273,7 +370,7 @@ static int c_term(IO *in, IO *out, void *arg)
 	}
 	else if	(obj)
 	{
-		c = PrintObj(out, obj);
+		c = ShowObj(out, obj);
 		UnrefObj(obj);
 	}
 	else	c = 0;
@@ -286,6 +383,7 @@ static int c_eval(IO *in, IO *out, void *arg)
 {
 	return iocpy_eval(in, out, 0, "}", 0);
 }
+
 
 static int f_eval (CmdPar *cpar, CmdParVar *var,
 	const char *par, const char *arg)
@@ -410,7 +508,11 @@ static EfiVarDef vardef[] = {
 	{ "Territory", &Type_str, &LangDef.territory,
 		":*:territory code of LANG environment\n"
 		":de:Regionalcode der Umgebungsvariable LANG\n" },
+	{ "memtrace", &Type_bool, &memtrace,
+		":*:flag to control allocation tracing\n"
+		":de:Flag zur Ablaufverfolgung der Speicherverwaltung\n" },
 };
+
 
 void SetupStd(void)
 {
@@ -430,23 +532,39 @@ void SetupStd(void)
 
 	CmdSetup_const();
 	CmdSetup_base();
+
 	CmdSetup_int();
-	CmdSetup_long();
 	CmdSetup_uint();
-	CmdSetup_size();
+	CmdSetup_varint();
+	CmdSetup_varsize();
+	CmdSetup_float();
 	CmdSetup_double();
 	CmdSetup_str();
 	CmdSetup_io();
+	CmdSetup_stat();
+
+	CmdSetup_int8();
+	CmdSetup_int16();
+	CmdSetup_int32();
+	CmdSetup_int64();
+
+	CmdSetup_uint8();
+	CmdSetup_uint16();
+	CmdSetup_uint32();
+	CmdSetup_uint64();
 
 	AddType(&Type_name);
 	AddType(&Type_mname);
 	AddType(&Type_sname);
 	AddType(&Type_undef);
-	AddType(&Type_vec);
 	AddType(&Type_list);
 	AddType(&Type_explist);
 	AddType(&Type_vdef);
 
+	SetupCmpDef();
+	SetupTestDef();
+
+	CmdSetup_vec();
 	CmdSetup_obj();
 	CmdSetup_pctrl();
 	CmdSetup_test();
@@ -462,11 +580,11 @@ void SetupStd(void)
 	CmdSetup_regex();
 	CmdSetup_cmdpar();
 	CmdSetup_unix();
+	CmdSetup_tms();
 	CmdSetup_dl();
 	CmdSetup_dbutil();
 
 	AddEfiMember(Type_list.vtab, list_member, tabsize(list_member));
-	AddEfiMember(Type_type.vtab, type_member, tabsize(type_member));
 	AddEfiMember(Type_ref.vtab, ref_member, tabsize(ref_member));
 	AddVarDef(NULL, vardef, tabsize(vardef));
 
@@ -475,6 +593,7 @@ void SetupStd(void)
 
 	CmdParEval_add(&cpar_eval);
 	CmdParExpand_add(&cexp_proto);
-	AddInfo(NULL, "Var", LBL_VAR, var_info, RefVarTab(GlobalVar));
-	AddInfo(NULL, "Func", LBL_FUNC, func_info, RefVarTab(GlobalVar));
+	AddInfo(NULL, KEY_VAR, LBL_VAR, var_info, RefVarTab(GlobalVar));
+	AddInfo(NULL, KEY_FUNC, LBL_FUNC, func_info, RefVarTab(GlobalVar));
+	CmdSetup_type();
 }

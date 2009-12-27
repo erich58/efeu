@@ -1,0 +1,8 @@
+\langpar
+:*:\title	An synopsis in examples
+:de:\title	Eine Übersicht in Beispielen
+
+\include intro@ext.doc
+\include calc@ext.doc
+\include hello@ext.doc
+\include table@ext.doc

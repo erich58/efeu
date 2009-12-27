@@ -24,7 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 PrintListDelim = "\t";
 
 pconfig !
-Version = "$Id: mdpaste.esh,v 1.7 2001-10-18 12:11:21 ef Exp $"
+Version = "$Id: mdpaste.esh,v 1.8 2005-07-24 05:12:41 ef Exp $"
 PrintMode = true
 Name = "#1"
 
@@ -61,7 +61,7 @@ o:aus | Output; PrintMode = false
 	:*:output file
 	:de:definiert die Ausgabedatei. Fehlt die Option, wird die resultierende
 	Datenmatrix im ASCII-Format zur Standardausgabe geschrieben.
-/.*=.*/name=var | SelDef: append " "
+/.*=.*/<name>=<var> | SelDef: append " "
 	:*:selection parameter
 	:de:Selektionsparameter
 +file(s) ... | 

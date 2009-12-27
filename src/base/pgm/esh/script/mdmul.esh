@@ -24,7 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 PrintListDelim = "\t";
 
 pconfig !
-Version = "$Id: mdmul.esh,v 1.9 2002-05-30 12:14:34 ef Exp $"
+Version = "$Id: mdmul.esh,v 1.12 2006-10-29 08:52:09 ef Exp $"
 PrintMode = true
 
 F:file | :eval 'gload(IncPath, "{}")'
@@ -42,28 +42,34 @@ v:[name::]var | VarDef: append " "
 T:title | Title
 	:*:set title of output file
 	:de:Titel der Ausgabedatei setzen
-n:dim | x1: set "#-{}"; x2: set "#{}"
+n:dim | x1: set "#-{}:"; x2: set "#:{}"
 	:*:number of common axis
 	:de:Zahl der gemeinsamen Achsen
 x:axis | x1; x2
 	:*:name of common axis
 	:de:Name der gemeinsamen Achse
+a:name\|=\|var | SelDef1: append " "
+	:*:selection parameter for first input file
+	:de:Selektionsparameter für die erste Datei
+b:name\|=\|var | SelDef2: append " "
+	:*:selection parameter for second input file
+	:de:Selektionsparameter für die zweite Datei
 :file1 | Ein1
 	:*:name of first data cube
 	:de:Name der 1. Eingabedatei
 :file2 | Ein2
 	:*:name of second data cube
 	:de:Name der 2. Eingabedatei
-/.*=.*/name=var | SelDef: append " "
-	:*:selection parameter
-	:de:Selektionsparameter
+/.*=.*/<name>=<var> | SelDef: append " "
+	:*:selection parameter for both data files
+	:de:Selektionsparameter für beide Datenfiles
 ::out | Output; PrintMode = false
 	:*:output file
 	:de:Name der Ausgabedatei
 !
 
-mdmat md1 = mdload(Ein1, SelDef, VarDef);
-mdmat md2 = mdload(Ein2, SelDef, VarDef);
+mdmat md1 = mdload(Ein1, paste(" ", SelDef1, SelDef), VarDef);
+mdmat md2 = mdload(Ein2, paste(" ", SelDef2, SelDef), VarDef);
 
 if	(flagres("Reduce"))
 {

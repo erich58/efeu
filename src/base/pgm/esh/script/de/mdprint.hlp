@@ -1,0 +1,44 @@
+@name
+@synopsis -h
+\Description
+Das Kommando |$!| dient zur Ausgabe einer Datenmatrix in Textformat.
+
+@arglist -i
+
+Beim Aufspalten einer Datenmatrix nach Achsen werden Dateinamen der
+Form
+	\[<pfx>|_|]<name1>[|_|<name2>][|.|<sfx>]
+konstruiert. Dabei gibt <namei> jeweils die aktuelle Ausprägung der
+Achse <i> an. Das Trennzeichen |_| kann mit |--paste-delim| <delim>
+geändert werden. Die Namensteile <pfx> und <sfx> werden aus dem
+Ausgabenamen nach folgenden Regeln bestimmt:
+
+/*
+\tab[l|l]
+Muster | Vorgabewerte
+NULL | pfx = NULL; sfx = <default>
+<pfx> | sfx = <default>
+.<sfx> | pfx = NULL
+<pfx>. | sfx = NULL
+<pfx>.<sfx> | ~
+*/
+\ttitem -
+	(oder keine Angabe) pfx = NULL; sfx = <default>
+\ttitem <a>
+	pfx = <a>, sfx = <default>
+\ttitem .<b>
+	pfx = NULL, sfx = <b>
+\ttitem <a>.
+	pfx = <a>, sfx = NULL
+\ttitem <a>.<b>
+	pfx = <a>, sfx = <b>
+
+Der Defaultwert für <sfx> wird von der Option |--csv| auf |csv| gesetzt
+und ist ansonsten |NULL|.
+
+@environ -h
+
+\SeeAlso
+\mref{esh(1)}.
+
+@copyright -h

@@ -37,9 +37,6 @@ If not, write to the Free Software Foundation, Inc.,
 /*	Ein/Ausgabe auf File
 */
 
-FILE *popen (const char *cmd, const char *type);
-int pclose (FILE *stream);
-
 IO *io_popen(const char *proc, const char *mode)
 {
 	IO *io;
@@ -71,7 +68,7 @@ IO *io_popen(const char *proc, const char *mode)
 
 	if	(!file)	return NULL;
 
-	sb = new_strbuf(32);
+	sb = sb_create(32);
 	sb_puts("<!", sb);
 
 	for (i = 0; proc[i] && !isspace(proc[i]); i++)
@@ -80,7 +77,7 @@ IO *io_popen(const char *proc, const char *mode)
 	sb_puts(">", sb);
 	sb_putc(0, sb);
 	io = io_stream((char *) sb->data, file, pclose);
-	del_strbuf(sb);
+	sb_destroy(sb);
 	return io;
 }
 
@@ -124,8 +121,7 @@ int pclose(FILE *file)
 				memfree(entry->proc);
 			}
 
-			remove(entry->name);
-			memfree(entry->name);
+			deltemp(entry->name);
 			memfree(entry);
 			return 0;
 		}
@@ -148,7 +144,7 @@ FILE *popen(const char *name, const char *mode)
 	key->next = NULL;
 	key->file = NULL;
 	key->proc = NULL;
-	key->name = mstrcpy(tmpnam(NULL));
+	key->name = newtemp(NULL, NULL);
 
 	switch (*mode)
 	{

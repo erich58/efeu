@@ -1,5 +1,6 @@
 /*
-Dynamisches Zeichenfeld editieren
+:*:editing dynamic string buffer
+:de:Dynamisches Zeichenfeld editieren
 
 $Copyright (C) 1996 Erich Frühstück
 This file is part of EFEU.
@@ -23,6 +24,9 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/strbuf.h>
 
 /*
+:*:
+The function |$1| deletes the character at the actual position.
+:de:
 Die Funktion |$1| löscht das Zeichen an der aktuellen Position.
 */
 
@@ -46,6 +50,9 @@ int sb_delete (StrBuf *sb)
 }
 
 /*
+:*:
+The function |$1| inserts the character <c> at the actual position.
+:de:
 Die Funktion |$1| fügt das Zeichen <c> an der aktuellen Position ein.
 */
 
@@ -70,5 +77,6 @@ void sb_insert (int c, StrBuf *sb)
 
 /*
 $SeeAlso
-\mref{strbuf(3)}, \mref{sb_getc(3)}, \mref{sb_putc(3)}.\br
+\mref{strbuf(3)},
+\mref{strbuf(7)}.
 */

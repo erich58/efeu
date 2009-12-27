@@ -1,0 +1,5 @@
+EDB	1.0
+double
+@expr
+static Random rng = Random(time());
+this = rng.normal();

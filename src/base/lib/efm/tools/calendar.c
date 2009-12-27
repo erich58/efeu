@@ -27,9 +27,10 @@ If not, write to the Free Software Foundation, Inc.,
 #define	OFFSET_LIMIT	0xFFFF	/* Limit für Offset */
 #define	SEC_OF_DAY	(24 * 60 * 60)
 
-#define	YLIM_2000	50	/* Jahresgrenze für 2000 - Offset */
-#define	YLIM_1900	100	/* Jahresgrenze für 1900 - Offset */
+int CenturyLimit = 50;
 
+#define	YLIM_2000	CenturyLimit	/* Grenze für 2000 - Offset */
+#define	YLIM_1900	100		/* Grenze für 1900 - Offset */
 
 /*	leap year -- account for gregorian reformation in 1752
 */
@@ -151,12 +152,12 @@ static CalInfo *set_date (int idx, CalInfo *buf)
 	if	(idx <= OFFSET_LIMIT)
 		idx += CALENDAR_OFFSET_1900;
 
-	buf->year = (idx + 0.5) / 365.247;
+	buf->year = idx / 365;
 	n = last_day_of_year(buf->year);
 
-	if	(n >= idx)
+	while	(n >= idx)
 	{
-		buf->year--;
+		buf->year -= 1 + (n - idx) / 366;
 		n = last_day_of_year(buf->year);
 	}
 
@@ -336,4 +337,20 @@ int Time_dist (CalTimeIndex t1, CalTimeIndex t2)
 	i1 = (t1.date - n) * SEC_OF_DAY + t1.time;
 	i2 = (t2.date - n) * SEC_OF_DAY + t2.time;
 	return i2 - i1;
+}
+
+int Calendar_jdiff (unsigned t1, unsigned t2)
+{
+	CalInfo cal1, cal2;
+	int jdiff;
+
+	Calendar(t1, &cal1);
+	Calendar(t2, &cal2);
+	jdiff = cal1.year - cal2.year;
+
+	if	(cal1.month < cal2.month)	return jdiff - 1;
+	if	(cal1.month > cal2.month)	return jdiff;
+	if	(cal1.day < cal2.day)		return jdiff - 1;
+
+	return jdiff;
 }

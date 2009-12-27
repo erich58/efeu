@@ -47,6 +47,7 @@ void ListParseDef (IO *io);
 
 EfiObj *PFunc_typedef (IO *io, void *data);
 EfiObj *PFunc_struct (IO *io, void *data);
+EfiObj *PFunc_construct (IO *io, void *data);
 EfiObj *PFunc_enum (IO *io, void *data);
 
 EfiObj *PFunc_bool (IO *io, void *data);

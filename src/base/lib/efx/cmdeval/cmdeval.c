@@ -114,7 +114,7 @@ void CmdEvalFunc (IO *in, IO *out, int flag)
 
 		if	(obj && out && c != ';')
 		{
-			PrintObj(out, obj);
+			ShowObj(out, obj);
 
 			if	(c != EOF)
 				io_putc(c, out);

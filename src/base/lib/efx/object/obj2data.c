@@ -116,6 +116,31 @@ void Obj2Data(EfiObj *obj, EfiType *type, void *ptr)
 	}
 }
 
+void Obj2VecData(EfiObj *obj, EfiType *type, size_t dim, void *ptr)
+{
+	EfiObjList *list;
+
+	if	(type == NULL || dim == 0 || ptr == NULL)
+	{
+		UnrefObj(obj);
+		return;
+	}
+
+	obj = EvalObj(obj, &Type_list);
+	list = obj ? Val_list(obj->data) : NULL;
+
+	while (list && dim)
+	{
+		Obj2Data(RefObj(list->obj), type, ptr);
+		ptr = (char *) ptr + type->size;
+		list = list->next;
+		dim--;
+	}
+
+	CleanVecData(type, dim, ptr);
+	UnrefObj(obj);
+}
+
 
 void *Obj2Ptr(EfiObj *obj, EfiType *type)
 {

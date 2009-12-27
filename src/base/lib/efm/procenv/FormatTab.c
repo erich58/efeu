@@ -83,7 +83,7 @@ static IO *ftab_open (const char *name)
 
 	if	(p == NULL)
 	{
-		io_printf(LOG(DBG_ERR), ERRMSG, ProgName, name);
+		io_printf(LOG(DBG_NOTE), ERRMSG, ProgName, name);
 		return NULL;
 	}
 
@@ -133,7 +133,7 @@ static void ftab_load (IO *io, MainEntry *entry, int endmark)
 	char *p;
 	int c;
 
-	buf = new_strbuf(1024);
+	buf = sb_create(1024);
 	entry->dim = 0;
 
 	while ((c = io_skipcom(io, NULL, 0)) != EOF)
@@ -231,7 +231,7 @@ char *FormatTabEntry (const char *name, const char *key)
 
 	if	(s == NULL)
 	{
-		io_printf(LOG(DBG_ERR), M_NOKEY,
+		io_printf(LOG(DBG_NOTE), M_NOKEY,
 			ProgName, key, name);
 		return NULL;
 	}

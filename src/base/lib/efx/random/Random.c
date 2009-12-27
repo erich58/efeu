@@ -30,7 +30,7 @@ static char *rident (const void *data)
 
 	if	(rd->type)
 	{
-		StrBuf *sb = new_strbuf(0);
+		StrBuf *sb = sb_create(0);
 		sb_puts(rd->type->name, sb);
 		sb_putc(' ', sb);
 

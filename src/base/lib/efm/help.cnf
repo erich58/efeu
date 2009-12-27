@@ -57,3 +57,11 @@
 .environ.head = "\\Environment\n"
 .copyright.head = "\\Copyright\n"
 
+# :*:version information
+# :de:Versionsausgabe
+
+.version.fmt = "@ident\n\n@version\n\n@copyright\n"
+
+-version|:usage {.version.fmt}; :exit 0
+	:*:show version information
+	:de:gibt die Versionsnummer des Kommandos aus.

@@ -1,0 +1,13 @@
+# :*:options controlling compression mode
+# :de:Steuerflags zur Kompressionskontrolle
+
+GZIP = "-n1"
+	:*:compression mode for gzip
+	:de:Komprimierungsmodus für gzip
+
+1 | -fast | GZIP = -n1
+	:*:use fast compression by writing with |gzip|.
+	:de:verwendet schnelle Komprimierung bei der Ausgabe mit |gzip|.
+9 | -best | GZIP = -n9
+	:*:use best compression by writing with |gzip|.
+	:de:verwendet optimale Komprimierung bei der Ausgabe mit |gzip|.

@@ -26,7 +26,9 @@ static void del_func (EfiFunc **func)
 {
 	if	(func && func[0])
 	{
-		dbg_note(NULL, "[efmain:203]", "s", func[0]->name);
+		dbg_note(NULL, "[efmain:203]", "s",
+			func[0]->name ? func[0]->name :
+			(func[0]->type ? func[0]->type->name : NULL));
 		rd_deref(func[0]);
 	}
 }

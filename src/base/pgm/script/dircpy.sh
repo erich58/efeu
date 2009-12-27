@@ -21,13 +21,14 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 # $pconfig
+# Version="$Id: dircpy.sh,v 1.3 2005-10-07 05:46:46 ef Exp $"
 # :src|
 #	:*:source directory
 #	:de:Ausgangsverzeichnis
 # :tg|
 #	:*:target directory
 #	:de:Zielverzeichnis
-# ::"find-optons"|
+# ::"find-options"|
 #	:*:any find option
 #	:de:beliebige find - Option
 
@@ -38,6 +39,7 @@ usage ()
 
 case "$1" in
 -\?|--help*)	usage $1; exit 0;;
+--version)	efeuman -- $0 $1 || grep 'Version="[$]Id:'; exit 0;;
 esac
 
 # $Description
@@ -52,7 +54,7 @@ esac
 # Das Kommando |\$!| verwendet |find| und |cpio| zum Kopieren des
 # Verzeichnisbaumes <src> nach <tg>|/|<src>.
 # Attribute und Zugriffszeiten werden mitkopiert. Die Zugriffszeiten
-# der Ausgangsdateien bleiben unverändert. Dateien werden nur Überschrieben,
+# der Ausgangsdateien bleiben unverändert. Dateien werden nur überschrieben,
 # wenn die zugehörige Ausgangsdatei eine neuere Modifikationszeit aufweist.
 
 # $SeeAlso

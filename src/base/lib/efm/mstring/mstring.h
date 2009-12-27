@@ -35,12 +35,12 @@ char *mstrcat (const char *delim, const char *str1, ...);
 char *mstrcpy (const char *str);
 char *mstrncpy (const char *str, size_t len);
 char *mstrpaste (const char *delim, const char *a, const char * b);
-char *listcat (const char *delim, char **list, size_t dim);
+char *mtabcat (const char *delim, char **list, size_t dim);
 
 char *mvsprintf (const char *fmt, va_list list);
 char *msprintf (const char *fmt, ...);
 
-size_t strsplit (const char *str, const char *delim, char ***ptr);
+size_t mstrsplit (const char *str, const char *delim, char ***ptr);
 char *nextstr (char **ptr);
 
 char *mstrcut (const char *str, char **ptr, char *delim, int flag);

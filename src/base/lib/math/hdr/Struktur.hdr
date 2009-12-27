@@ -187,7 +187,7 @@ virtual void fprint(IO io, Struktur x)
 conversion (Struktur_t x, mdmat y, 1)
 {
 	double n, b, d;
-	str name = tempnam();
+	str name = newtemp();
 	IO tmp = open(name, "w");
 	tmp << "##Type\tdouble\n";
 	tmp << "##Spalten\tvar\n";
@@ -205,7 +205,7 @@ conversion (Struktur_t x, mdmat y, 1)
 
 	close(tmp);
 	y = mdload(sprintf("|mdread %s -", name));
-	remove(name);
+	deltemp(name);
 }
 
 inline void SynTable_t::Struktur(str name, Struktur_t st)

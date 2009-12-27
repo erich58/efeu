@@ -26,11 +26,13 @@ If not, write to the Free Software Foundation, Inc.,
 #define	GUI_EGtk_h	1
 
 #include <EFEU/object.h>
+#include <GUI/gtk_config.h>
+
+#if	HAS_GTK
 #include <gtk/gtk.h>
 
-extern void SetupEGtk (void);
-extern void EGtkRes (const char *str);
 extern void EGtkInit (void);
+extern void EGtkRes (const char *str);
 extern void EGtkMain (void);
 extern void EGtkObject_setup (void);
 
@@ -56,6 +58,9 @@ typedef struct {
 } EGtkSigDef;
 
 extern void AddEGtkSig (EfiType *type, EGtkSigDef *def, size_t dim);
+#endif
+
+extern void SetupEGtk (void);
 
 /*
 $SeeAlso

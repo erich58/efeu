@@ -48,7 +48,7 @@ void SetApplPath (const char *path)
 
 	if	(ApplPath && !path)	return;
 
-	sb = new_strbuf(0);
+	sb = sb_create(0);
 
 /*	Basispfade
 */

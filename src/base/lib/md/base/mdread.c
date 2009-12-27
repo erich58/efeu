@@ -1,10 +1,29 @@
-/*	Multidimensionale Matrix einlesen
-	(c) 1994 Erich Frühstück
+/*
+Multidimensionale Matrix einlesen
+
+$Copyright (C) 1994, 2005 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/mdmat.h>
 #include <EFEU/mdlabel.h>
 #include <EFEU/locale.h>
+#include <EFEU/preproc.h>
 
 static char *XNames = NULL;
 static char *YNames = NULL;
@@ -12,7 +31,7 @@ static EfiType *Type = NULL;
 static int has_magic = 0;
 static int need_magic = 0;
 
-static unsigned getshort(IO *io)
+static unsigned getshort (IO *io)
 {
 	int a, b;
 
@@ -25,13 +44,13 @@ static unsigned getshort(IO *io)
 	return 0;
 }
 
-static void clr_par(void)
+static void clr_par (void)
 {
 	memfree(XNames);
 	memfree(YNames);
 }
 
-static void set_par(const char *def)
+static void set_par (const char *def)
 {
 	char *p, **list;
 	size_t dim;
@@ -41,7 +60,7 @@ static void set_par(const char *def)
 	YNames = NULL;
 	Type = &Type_double;
 
-	dim = strsplit(def, "%s", &list);
+	dim = mstrsplit(def, "%s", &list);
 
 	for (i = 0; i < dim; i++)
 	{
@@ -51,6 +70,8 @@ static void set_par(const char *def)
 			XNames = mstrcpy(p);
 		else if	(patcmp("y=", list[i], &p))
 			YNames = mstrcpy(p);
+		else if	(patcmp("locale=", list[i], &p))
+			SetLocale(LOC_SCAN, p);
 		else if	(patcmp("de", list[i], NULL))
 			SetLocale(LOC_SCAN, "de");
 		else if	(patcmp("us", list[i], NULL))
@@ -72,11 +93,12 @@ static void set_par(const char *def)
 
 #define	H_COMMENT	0
 #define	H_TITLE		1
-#define	H_TYPE		2
-#define	H_LINES		3
-#define	H_COLUMNS	4
-#define	H_LOCALE	5
-#define	H_MAGIC		6
+#define	H_HEAD		2
+#define	H_TYPE		3
+#define	H_ROWS		4
+#define	H_COLUMNS	5
+#define	H_LOCALE	6
+#define	H_MAGIC		7
 
 
 static struct {
@@ -85,16 +107,25 @@ static struct {
 } head[] = {
 	{ "MD*",	H_MAGIC },
 	{ "[Tt]it*",	H_TITLE },
+	{ "[Hh]ead*",	H_HEAD },
 	{ "[Oo]bj*",	H_TYPE },
 	{ "[Tt]yp*",	H_TYPE },
-	{ "[Ll]in*",	H_LINES },
-	{ "[Zz]ei*",	H_LINES },
+	{ "[Ll]in*",	H_ROWS },
+	{ "[Zz]ei*",	H_ROWS },
+	{ "[Rr]ow*",	H_ROWS },
 	{ "[Cc]ol*",	H_COLUMNS },
 	{ "[Ss]pal*",	H_COLUMNS },
 	{ "[Ll]oc*",	H_LOCALE },
 };
 
 #define	SETPAR(name)	(save = name, name = p, p = save)
+
+static void eval_head (const char *head)
+{
+	IO *cin = io_cmdpreproc(io_cstr(head));
+	CmdEval(cin, NULL);
+	io_close(cin);
+}
 
 static char *get_header(IO *io)
 {
@@ -139,8 +170,9 @@ static char *get_header(IO *io)
 			switch (c)
 			{
 			case H_MAGIC:	has_magic = 1; break;
+			case H_HEAD:	eval_head(p); break;
 			case H_TITLE:	SETPAR(title); break;
-			case H_LINES:	SETPAR(YNames); break;
+			case H_ROWS:	SETPAR(YNames); break;
 			case H_COLUMNS:	SETPAR(XNames); break;
 			case H_TYPE:	Type = mdtype(p); break;
 			case H_LOCALE:	SetLocale(LOC_SCAN, p); break;
@@ -276,7 +308,7 @@ static char *mdscan(IO *io)
 		}
 		else
 		{
-			StrBuf *sb = new_strbuf(0);
+			StrBuf *sb = sb_create(0);
 			do_scan(io, sb);
 			return sb2str(sb);
 		}
@@ -551,8 +583,9 @@ mdmat *md_read(IO *io, const char *def)
 
 	io_ungetc(m2, io);
 	io_ungetc(m1, io);
+	m1 = (m1 << 8) + m2;
 
-	if	((m1 << 8) + m2 == MD_MAGIC)
+	if	(m1 == MD_MAGIC1 || m1 == MD_MAGIC2)
 		return md_load(io, NULL, NULL);
 
 	PushLocale();

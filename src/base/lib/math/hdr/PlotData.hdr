@@ -8,7 +8,7 @@ double PlotDataGew = 1.;
 
 str _PlotDataFile (List_t list)
 {
-	str name = tempnam();
+	str name = newtemp();
 	IO io = open(name, "w");
 
 	TimeIndex i = list.obj.first;
@@ -59,7 +59,7 @@ str _PlotDataFile (List_t list)
 virtual void PlotData(str out, str name, ...)
 {
 	str datafile = _PlotDataFile(va_list);
-	str script = tempnam();
+	str script = newtemp();
 	IO io = open(script, "w");
 
 	if	(out)
@@ -90,8 +90,8 @@ virtual void PlotData(str out, str name, ...)
 
 	close(io);
 	system("gnuplot " + script);
-	remove(script);
-	remove(datafile);
+	deltemp(script);
+	deltemp(datafile);
 }
 
 virtual void PlotData(str name, ...)

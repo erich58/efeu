@@ -33,25 +33,49 @@ If not, write to the Free Software Foundation, Inc.,
 /*	Zählerdefinition
 */
 
-typedef struct {
-	char *name;
-	char *type;
-	char *desc;
-	int (*set) (const void *data);
-	void (*init) (void *data, size_t *idx, size_t dim);
-	void (*add) (void *data);
-} MdCntObj;
+typedef struct MdCountStruct MdCount;
+
+#define	MDCOUNT_VAR \
+	char *name; \
+	char *type; \
+	char *desc; \
+	int (*set) (MdCount *cnt, void *buf, const void *data); \
+	void (*init) (MdCount *cnt, void *data, size_t *idx, size_t dim); \
+	void (*add) (MdCount *cnt, void *data, void *buf)
+
+struct MdCountStruct {
+	MDCOUNT_VAR;
+};
+
+typedef struct MdCountListStruct {
+	REFVAR;
+	MdCount *cnt;
+	EfiType *type;
+	size_t offset;
+	int flag;
+	void *data;
+	struct MdCountListStruct *next;
+} MdCountList;
+
+MdCountList *MdCountList_create (MdCount *cnt);
+MdCountList *MdCountList_add (MdCountList *list, MdCount *cnt);
 
 typedef struct {
 	REFVAR;
-	VecBuf tab;
-} MdCntObjTab;
+	VecBuf vtab;	/* Variablentabelle */
+	VecBuf ctab;	/* Klassifikationstabelle */
+} MdCountTab;
+	
+MdCountTab *MdCountTab_create (void);
 
-MdCntObjTab * MdCntObjTab_create (void);
-MdCntObj *MdCntObj_get (MdCntObjTab *tab, const char *name);
-void MdCntObj_add (MdCntObjTab *tab, MdCntObj *entry, size_t dim);
-void MdCntObjInfo (InfoNode *info, MdCntObjTab *tab);
 
+MdCount *MdCount_get (MdCountTab *tab, const char *name);
+MdCountList *MdCountList_get (MdCountTab *tab, const char *name);
+void MdCount_add (MdCountTab *tab, MdCount *entry, size_t dim);
+void MdCountInfo (InfoNode *info, MdCountTab *tab);
+
+extern EfiType Type_cotab;
+extern EfiType Type_cntobj;
 
 /*	Klassifikationsdefinitionen
 */
@@ -69,13 +93,6 @@ struct MdClassStruct {
 	MDCLASS_VAR;
 };
 
-typedef struct {
-	REFVAR;
-	VecBuf tab;
-} MdClassTab;
-
-MdClassTab * MdClassTab_create (void);
-
 /*
 Der Makro $1 bestimmt den Index einer Klassifikationsdefinition
 bei gegebenenParameterwerten.
@@ -92,15 +109,27 @@ extern int MdClassPrintLimit;
 
 void MdClassList (IO *io, MdClass *cdef);
 void MdClassPrint (IO *io, MdClass *cdef);
-void MdShowClass (IO *io, MdClassTab *tab, const char *plist);
-void MdClassInfo (InfoNode *info, MdClassTab *tab);
+void MdShowClass (IO *io, MdCountTab *tab, const char *plist);
+void MdClassInfo (InfoNode *info, MdCountTab *tab);
 
-void MdClass_add (MdClassTab *class, MdClass *tab, size_t dim);
+void MdClass_add (MdCountTab *class, MdClass *tab, size_t dim);
+MdClass *MdClass_get (MdCountTab *tab, const char *name);
 
 MdClass *md_subclass (MdClass *base, const char *def);
 
-/*	Pointerklassen
+/*	Pointerzähler und Pointerklassen
 */
+
+typedef struct {
+	MDCOUNT_VAR;
+	void *ptr;
+} MdPtrCount;
+
+MdPtrCount *MdPtrCount_copy (MdPtrCount *tab, size_t dim,
+	const char *ext, void *ptr);
+void MdPtrCount_add (MdCountTab *tab, MdPtrCount *entry, size_t dim);
+void MdPtrCount_xadd (MdCountTab *tab, MdPtrCount *entry, size_t dim,
+	const char *ext, void *ptr);
 
 typedef struct {
 	MDCLASS_VAR;
@@ -109,11 +138,9 @@ typedef struct {
 
 MdPtrClass *MdPtrClass_copy (MdPtrClass *tab, size_t dim,
 	const char *ext, void *ptr);
-void MdPtrClass_add (MdClassTab *class, MdPtrClass *tab, size_t dim);
-void MdPtrClass_xadd (MdClassTab *class, MdPtrClass *tab, size_t dim,
+void MdPtrClass_add (MdCountTab *tab, MdPtrClass *entry, size_t dim);
+void MdPtrClass_xadd (MdCountTab *tab, MdPtrClass *entry, size_t dim,
 	const char *ext, void *ptr);
-MdClass *MdClass_get (MdClassTab *tab, const char *name);
-
 
 /*	Zählgruppe
 */
@@ -130,16 +157,41 @@ typedef struct MdCntGrpStruct {
 */
 
 mdaxis *md_classaxis (const char *name, ...);
-mdaxis *md_ctabaxis (IO *io, MdClassTab *stab);
+mdaxis *md_ctabaxis (IO *io, MdCountTab *stab);
 mdmat *md_ctab (const char *titel, const char *def,
-	MdClassTab *gtab, MdCntObj *counter);
+	MdCountTab *gtab, MdCount *counter);
 mdmat *md_ioctab (const char *titel, IO *io,
-	MdClassTab *gtab, MdCntObj *counter);
+	MdCountTab *gtab, MdCount *counter);
 
-void md_ctabinit (mdmat *md, MdCntObj *counter);
+int md_ctabinit (mdmat *md, MdCountList *list);
 void md_count (mdmat *tab, const void *data);
-void md_showcnt (IO *io, MdCntObjTab *tab);
+void md_showcnt (IO *io, MdCountTab *tab);
+void md_count_add (MdCountList *clist, mdaxis *x, char *ptr);
 
-extern MdCntObj *stdcount;	/* Standardzähler mit long - Werten */
+extern void (*md_count_hook) (MdCountList *clist, mdmat *md);
+
+extern MdCount *stdcount;	/* Standardzähler mit long - Werten */
+
+void MdSetup_count (void);
+
+/*	Zähldefinitionsstruktur
+*/
+
+typedef struct {
+	MDCLASS_VAR;
+	EfiObj *expr;
+	EfiObj *obj;
+} MdEfiClass;
+
+typedef struct {
+	REFVAR;
+	EfiObj *obj;	/* Basisobjekt */
+	char *pfx;	/* Prefix für Klassifikationen */
+	VecBuf cltab;	/* Klassifikationstabelle */
+} MdCntDef;
+
+MdCntDef* MdCntDef_create (EfiType *type, const char *pfx);
+void MdCntDef_expr (EfiFunc *funv, void *rval, void **arg);
+void MdCntDef_cadd (EfiFunc *func, void *rval, void **arg);
 
 #endif	/* EFEU/mdcount.h */

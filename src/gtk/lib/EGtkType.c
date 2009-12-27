@@ -25,6 +25,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/CmdPar.h>
 #include <EFEU/parsedef.h>
 
+#if	HAS_GTK
+
 void EGtkTypeCast (EfiFunc *func, void *rval, void **arg)
 {
 	Val_ptr(rval) = Val_ptr(arg[0]);
@@ -69,3 +71,5 @@ EfiType *EGtkType (GtkType gtktype)
 	memfree(p);
 	return type;
 }
+
+#endif

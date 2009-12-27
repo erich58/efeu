@@ -29,8 +29,6 @@ If not, write to the Free Software Foundation, Inc.,
 #define	NAME_FONT	IO_ITALIC_FONT
 
 
-static int show_farg (IO *io, EfiFuncArg *arg);
-
 static int lf_type (IO *io, const EfiType *type, const char *repl)
 {
 	return io_puts(type ? type->name : repl, io);
@@ -102,7 +100,7 @@ int ListFunc(IO *io, EfiFunc *func)
 	while (i < func->dim)
 	{
 		n += io_puts(p, io);
-		n += show_farg(io, func->arg + i);
+		n += PrintFuncArg(io, func->arg + i);
 		p = ", ";
 		i++;
 	}
@@ -113,18 +111,19 @@ int ListFunc(IO *io, EfiFunc *func)
 
 
 
-static int show_farg(IO *io, EfiFuncArg *arg)
+int PrintFuncArg(IO *io, EfiFuncArg *arg)
 {
 	int n;
 
 	n = 0;
 
+	if	(arg->nokonv)	n += io_puts("restricted ", io);
+	if	(arg->promote)	n += io_puts("promotion ", io);
 	if	(arg->cnst)	n += io_puts("const ", io);
 
 	n += lf_type(io, arg->type, ".");
 
 	if	(arg->lval)	n += io_puts(" &", io);
-	if	(arg->nokonv)	n += io_puts(" *", io);
 
 	if	(arg->name)
 	{

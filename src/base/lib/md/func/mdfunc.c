@@ -4,6 +4,8 @@
 
 #include <EFEU/object.h>
 #include <EFEU/mdmat.h>
+#include <EFEU/mdcount.h>
+#include <EFEU/stdtype.h>
 
 
 #define	RVMD	Val_mdmat(rval)
@@ -25,7 +27,7 @@ static void name(EfiFunc *func, void *rval, void **arg)	\
 
 MDC_FUNC(MF_load, md_fload(STR(0), STR(1), STR(2)))
 MDC_FUNC(MF_read, md_read(Val_io(arg[0]), STR(1)))
-MDC_FUNC(MF_reload, md_reload(MD(0), STR(1), STR(2)))
+MDC_FUNC(MF_reload, md_reload(rd_refer(MD(0)), STR(1), STR(2)))
 
 /*
 static void MF_reload(EfiFunc *func, void *rval, void **arg)
@@ -171,15 +173,19 @@ static void MF_index(EfiFunc *func, void *rval, void **arg)
 static void MF_md2vec(EfiFunc *func, void *rval, void **arg)
 {
 	mdmat *md = Val_mdmat(arg[0]);
-	EfiVec *vec = rval;
 
-	if	(md != NULL)
-	{
-		vec->type = md->type;
-		vec->dim = md->size / md->type->size;
-		vec->data = md->data;
-	}
-	else	memset(vec, 0, sizeof(EfiVec));
+	Val_ptr(rval) = md ? NewEfiVec(md->type, md->data,
+		md->size / md->type->size) : NULL;
+}
+
+static void MF_md2edb(EfiFunc *func, void *rval, void **arg)
+{
+	Val_ptr(rval) = md2edb(Val_mdmat(arg[0]));
+}
+
+static void MF_show(EfiFunc *func, void *rval, void **arg)
+{
+	md_show(Val_io(arg[1]), Val_mdmat(arg[0]));
 }
 
 extern void *md_DATA2(mdmat *md, unsigned mask, unsigned base, int lag);
@@ -213,6 +219,7 @@ static EfiFuncDef fdef[] = {
 	{ 0, &Type_mdmat, "mdmat::operator/= (mdmat)", MF_assign },
 
 	{ FUNC_RESTRICTED, &Type_vec, "mdmat ()", MF_md2vec },
+	{ FUNC_RESTRICTED, &Type_EDB, "mdmat ()", MF_md2edb },
 	{ FUNC_VIRTUAL, &Type_obj, "operator[] (mdmat, int)", MF_index },
 	{ FUNC_VIRTUAL, &Type_mdmat, "operator+ (mdmat, mdmat)", MF_term },
 	{ FUNC_VIRTUAL, &Type_mdmat, "operator- (mdmat, mdmat)", MF_term },
@@ -230,7 +237,7 @@ static EfiFuncDef fdef[] = {
 	{ 0, &Type_mdmat, "mdmat::round (double factor = 1.)", MF_round },
 	{ 0, &Type_mdmat, "mdmat::adjust (double val = 0.)", MF_adjust },
 	{ 0, &Type_mdmat, "mdmat::korr (bool round = false)", MF_korr },
-	{ 0, &Type_mdmat, "mdmat::reduce (str keep = NULL)", MF_reduce },
+	{ 0, &Type_mdmat, "mdmat::reduce (str list = NULL)", MF_reduce },
 	{ 0, &Type_mdmat, "mdmat::permut (str list)", MF_permut },
 	{ 0, &Type_mdmat, "mdmat::paste (str name, int pos, int n, str delim = \".\")",
 		MF_paste },
@@ -251,10 +258,12 @@ int lag = 0)", MF_data },
 	{ 0, &Type_mdmat, "mdmat::leval (VirFunc op, str def = NULL)",
 		MF_leval },
 	{ 0, &Type_mdmat, "mdmat::eval (str axis, Expr_t cmd)", MF_xeval },
+	{ 0, &Type_void, "mdmat::show (IO io = iostd)",
+		MF_show },
 };
 
 
-void MdFuncDef(void)
+void MdSetup_func (void)
 {
 	AddFuncDef(fdef, tabsize(fdef));
 }

@@ -68,7 +68,7 @@ static char *callname = NULL;
 
 static void usage (const char *arg)
 {
-	execlp("efeuman", "efeuman", "--", __FILE__, arg, NULL);
+	execlp("efeuman", "efeuman", "-s", __FILE__, "--", callname, arg, NULL);
 	fprintf(stderr, USAGE, callname);
 	exit(arg ? 0 : 1);
 }
@@ -119,31 +119,28 @@ $SeeAlso
 efeuconfig(1).
 */
 
-/*	string tools
+/*	memmory allocation
 */
 
-static void *xrealloc (void *buf, size_t n)
+static void *xmalloc (void *data, size_t size)
 {
-	void *p = realloc(buf, n);
+	char *p;
 
-	if	(p)	return p;
+	if	(!(p = realloc(data, size)))
+		fprintf(stderr, "realloc(%p, %lu) failed.\n",
+			data, (unsigned long) size);
 
-	fprintf(stderr, "%s: memmory allocation failed.\n", callname);
-	exit(EXIT_FAILURE);
+	return p;
 }
 
-static void xfree (void *p)
+static void xfree (void *data)
 {
-	if	(p)	free(p);
+	if	(data)	free(data);
 }
 
-static char *mstrncpy (const char *str, size_t n)
-{
-	char *tg = xrealloc(NULL, n + 1);
-	strncpy(tg, str, n);
-	tg[n] = 0;
-	return tg;
-}
+
+/*	string tools
+*/
 
 static char *catpath (const char *base, const char *sub)
 {
@@ -159,7 +156,7 @@ static char *catpath (const char *base, const char *sub)
 
 	n2 = strlen(sub);
 
-	tg = xrealloc(NULL, n1 + n2 + 2);
+	tg = xmalloc(NULL, n1 + n2 + 2);
 	strncpy(tg, base, n1);
 	tg[n1] = '/';
 	strncpy(tg + n1 + 1, sub, n2);
@@ -179,12 +176,20 @@ static char *expand (char *base, const char *sub)
 
 	s1 = base ? strlen(base) : 0;
 	s2 = strlen(sub);
-	base = xrealloc(base, s1 + s2 + 2);
+	base = xmalloc(base, s1 + s2 + 2);
 
 	if	(s1)	base[s1++] = ':';
 
 	strcpy(base + s1, sub);
 	return base;
+}
+
+static char *substr (const char *str, size_t size)
+{
+	char *tg = xmalloc(NULL, size + 1);
+	strncpy(tg, str, size);
+	tg[size] = 0;
+	return tg;
 }
 
 /*	test functions
@@ -204,7 +209,7 @@ static int test_list (const char *path)
 
 static int test_hdr (const char *path)
 {
-	test_buf = xrealloc(test_buf, strlen(path) + strlen(name) + 2);
+	test_buf = xmalloc(test_buf, strlen(path) + strlen(name) + 2);
 	sprintf(test_buf, "%s/%s", path, name);
 
 	if	(access(test_buf, R_OK) != 0)
@@ -355,7 +360,7 @@ static int search (int depth, const char *path)
 	{
 		if	(p[0] == '/' && p[1] == '/')
 		{
-			sub = mstrncpy(path, p - path);
+			sub = substr(path, p - path);
 			p += 2;
 			path = sub;
 			break;
@@ -375,7 +380,7 @@ static int psearch (const char *path)
 
 	while ((p = strchr(path, ':')) != NULL)
 	{
-		char *sub = mstrncpy(path, p - path);
+		char *sub = substr(path, p - path);
 		int flag = search(0, sub);
 		path = p + 1;
 

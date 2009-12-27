@@ -27,12 +27,12 @@ If not, write to the Free Software Foundation, Inc.,
 	":*:counter types" \
 	":de:Zählerdefinitionen"
 
-void md_showcnt(IO *io, MdCntObjTab *tab)
+void md_showcnt(IO *io, MdCountTab *tab)
 {
-	MdCntObj **cnt;
+	MdCount **cnt;
 	size_t n;
 
-	for (cnt = tab->tab.data, n = tab->tab.used; n-- > 0; cnt++)
+	for (cnt = tab->vtab.data, n = tab->vtab.used; n-- > 0; cnt++)
 	{
 		io_puts((*cnt)->name, io);
 		io_putc('\t', io);
@@ -48,7 +48,7 @@ void md_showcnt(IO *io, MdCntObjTab *tab)
 
 static void print_count(IO *io, InfoNode *info)
 {
-	MdCntObj *cnt = info->par;
+	MdCount *cnt = info->par;
 	/*
 	ListType(io, mdtype(cnt->type));
 	*/
@@ -56,14 +56,14 @@ static void print_count(IO *io, InfoNode *info)
 	io_putc('\n', io);
 }
 
-void MdCntObjInfo (InfoNode *info, MdCntObjTab *tab)
+void MdCountInfo (InfoNode *info, MdCountTab *tab)
 {
 	InfoNode *root;
-	MdCntObj **cnt;
+	MdCount **cnt;
 	size_t n;
 
 	root = AddInfo(info, "count", LBL_COUNT, NULL, NULL);
 
-	for (cnt = tab->tab.data, n = tab->tab.used; n-- > 0; cnt++)
+	for (cnt = tab->vtab.data, n = tab->vtab.used; n-- > 0; cnt++)
 		AddInfo(root, (*cnt)->name, (*cnt)->desc, print_count, *cnt);
 }

@@ -27,6 +27,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	ALIGN(x, y)	((y) * (((x) + (y) - 1) / (y)))
 
+static void StDestroy (const EfiType *type, void *tg);
 static void StClean (const EfiType *type, void *tg);
 static void StCopy (const EfiType *type, void *tg, const void *src);
 static size_t StRead (const EfiType *type, void *data, IO *io);
@@ -81,7 +82,7 @@ EfiObj *PFunc_struct(IO *io, void *data)
 	}
 	else	type = MakeStruct(p, NULL, st);
 
-	return type2Obj(type);
+	return type2Obj(Parse_type(io, type));
 }
 
 
@@ -97,15 +98,20 @@ EfiType *MakeStruct(char *name, EfiVar *base, EfiVar *list)
 	EfiVar *st;
 	size_t tsize, size, recl;
 	int vrecl;
+	void (*destroy) (const EfiType *type, void *data);
 	void (*clean) (const EfiType *type, void *data);
 	void (*copy) (const EfiType *type, void *tg, const void *src);
 	size_t (*read) (const EfiType *type, void *data, IO *io);
 	size_t (*write) (const EfiType *type, const void *data, IO *io);
 	char *p;
 	
+	if	(!list)
+		return &Type_void;
+
 	tsize = 0;
 	copy = NULL;
 	clean = NULL;
+	destroy = NULL;
 	read = StRead;
 	write = StWrite;
 	recl = 0;
@@ -119,8 +125,11 @@ EfiType *MakeStruct(char *name, EfiVar *base, EfiVar *list)
 
 	for (st = list; st != NULL; st = st->next)
 	{
+		st->member = StructMember;
+
 		if	(st->type->copy)	copy = StCopy;
 		if	(st->type->clean)	clean = StClean;
+		if	(st->type->destroy)	destroy = StDestroy;
 
 		if	(!st->type->recl)
 		{
@@ -133,9 +142,11 @@ EfiType *MakeStruct(char *name, EfiVar *base, EfiVar *list)
 
 		size = st->type->size * (st->dim ? st->dim : 1);
 
-		if	(st->type->size < sizeof(size_t))
+		if	(st->type->size > sizeof(size_t))
+			st->offset = ALIGN(tsize, sizeof(size_t));
+		else if	(st->type->size)
 			st->offset = ALIGN(tsize, st->type->size);
-		else	st->offset = ALIGN(tsize, sizeof(size_t));
+		else	st->offset = tsize;
 
 		tsize = st->offset + size;
 	}
@@ -147,18 +158,22 @@ EfiType *MakeStruct(char *name, EfiVar *base, EfiVar *list)
 	if	((type = FindStruct(list, tsize)) != NULL)
 	{
 		if	(name == NULL || mstrcmp(name, type->name) == 0)
+		{
+			DelVarList(list);
 			return type;
+		}
 	}
 
 /*	Bei fehlenden Namen: Standardnamen generieren
 */
 	if	(name == NULL)
 	{
-		StrBuf *sb = new_strbuf(0);
+		StrBuf *sb = sb_create(0);
 		IO *io = io_strbuf(sb);
 
 		for (st = list; st != NULL; st = st->next)
-			io_printf(io, "_%s%d", st->type->name, st->dim);
+			io_printf(io, "_%s_%s_%d", st->type->name,
+				st->name, st->dim);
 
 		io_close(io);
 		name = sb2str(sb);
@@ -170,14 +185,26 @@ EfiType *MakeStruct(char *name, EfiVar *base, EfiVar *list)
 	type->read = read;
 	type->write = write;
 	type->eval = NULL;
+	type->destroy = destroy;
 	type->clean = clean;
 	type->copy = copy;
 	type->list = list;
 	type->base = base ? base->type : NULL;
 	type->vtab = VarTab(mstrcpy(name), 0);
+	type->defval = memalloc(type->size);
 
 	for (st = list; st != NULL; st = st->next)
+	{
+		p = (char *) type->defval + st->offset;
+
+		if	(st->dim)
+		{
+			CopyVecData(st->type, st->dim, p, st->data);
+		}
+		else	CopyData(st->type, p, st->data);
+
 		AddVar(type->vtab, st, 1);
+	}
 
 	AddType(type);
 	p = msprintf("%s ()", type->name);
@@ -197,6 +224,59 @@ EfiType *MakeStruct(char *name, EfiVar *base, EfiVar *list)
 	return type;
 }
 
+void AddMemberFunc (EfiType *type)
+{
+	EfiVar *st;
+	int vrecl;
+	size_t recl;
+	char *p;
+
+	void (*destroy) (const EfiType *type, void *data);
+	void (*clean) (const EfiType *type, void *data);
+	void (*copy) (const EfiType *type, void *tg, const void *src);
+	size_t (*read) (const EfiType *type, void *data, IO *io);
+	size_t (*write) (const EfiType *type, const void *data, IO *io);
+
+	if	(!type->list)	return;
+
+	copy = NULL;
+	clean = NULL;
+	destroy = NULL;
+	read = StRead;
+	write = StWrite;
+	recl = 0;
+	vrecl = 0;
+
+	for (st = type->list; st != NULL; st = st->next)
+	{
+		if	(st->type->copy)	copy = StCopy;
+		if	(st->type->clean)	clean = StClean;
+		if	(st->type->destroy)	destroy = StDestroy;
+
+		if	(!st->type->recl)
+		{
+			if	(!st->type->read)	read = NULL;
+			if	(!st->type->write)	write = NULL;
+
+			vrecl = 1;
+		}
+		else	recl += st->type->recl * (st->dim ? st->dim : 1);
+	}
+
+	type->recl = vrecl ? 0 : recl;
+	type->read = read;
+	type->write = write;
+	type->copy = copy;
+	type->clean = clean;
+	type->destroy = destroy;
+
+	p = msprintf("%s ()", type->name);
+	SetFunc(FUNC_RESTRICTED, &Type_list, p, Struct2List);
+	memfree(p);
+	p = msprintf("%s (List_t)", type->name);
+	SetFunc(0, type, p, List2Struct);
+	memfree(p);
+}
 
 
 /*	Kopierfunktion für Strukturtypen
@@ -220,6 +300,20 @@ static void StCopy(const EfiType *type, void *tg, const void *src)
 /*	Löschfunktion für Strukturtypen
 */
 
+static void StDestroy(const EfiType *type, void *tg)
+{
+	EfiVar *st;
+
+	for (st = type->list; st != NULL; st = st->next)
+	{
+		if	(st->dim)
+			DestroyVecData(st->type, st->dim,
+				(char *) tg + st->offset);
+		else	DestroyData(st->type, (char *) tg + st->offset);
+	}
+}
+
+
 static void StClean(const EfiType *type, void *tg)
 {
 	EfiVar *st;
@@ -227,7 +321,8 @@ static void StClean(const EfiType *type, void *tg)
 	for (st = type->list; st != NULL; st = st->next)
 	{
 		if	(st->dim)
-			CleanVecData(st->type, st->dim, (char *) tg + st->offset);
+			CleanVecData(st->type, st->dim,
+				(char *) tg + st->offset);
 		else	CleanData(st->type, (char *) tg + st->offset);
 	}
 }

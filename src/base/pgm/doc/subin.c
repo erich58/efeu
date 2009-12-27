@@ -107,7 +107,7 @@ static int subio_ctrl (void *ptr, int req, va_list list)
 	{
 	case IO_CLOSE:
 		stat = io_close(subio->io);
-		del_strbuf(subio->buf);
+		sb_destroy(subio->buf);
 		memfree(subio->key);
 		memfree(subio);
 		return stat;
@@ -129,7 +129,7 @@ IO *Doc_subin (IO *io, const char *key)
 	{
 		SUBIO *subio = memalloc(sizeof(SUBIO));
 		subio->io = io;
-		subio->buf = new_strbuf(0);
+		subio->buf = sb_create(0);
 		subio->key = mstrcpy(key);
 		subio->save = 0;
 		io = io_alloc();

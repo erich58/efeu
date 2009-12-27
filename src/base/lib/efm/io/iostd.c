@@ -53,6 +53,18 @@ static int std_ctrl (void *ptr, int c, va_list list)
 {
 	switch (c)
 	{
+	case IO_FLUSH:	return fflush(stdout);
+	case IO_CLOSE:	return 0;
+	case IO_IDENT:	*va_arg(list, char **) = ptr; return 0;
+	default:	return EOF;
+	}
+}
+
+static int err_ctrl (void *ptr, int c, va_list list)
+{
+	switch (c)
+	{
+	case IO_FLUSH:	return fflush(stderr);
 	case IO_CLOSE:	return 0;
 	case IO_IDENT:	*va_arg(list, char **) = ptr; return 0;
 	default:	return EOF;
@@ -63,7 +75,7 @@ static IO ios_batch = STD_IODATA(std_get, std_put,
 	std_ctrl, "<stdin,stdout>");
 
 static IO ios_err = STD_IODATA(NULL, err_put,
-	std_ctrl, "<stderr>");
+	err_ctrl, "<stderr>");
 
 IO *io_batch (void)
 {

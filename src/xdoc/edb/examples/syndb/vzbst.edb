@@ -1,0 +1,9 @@
+EDB	1.0
+@head
+#include <syndb.hdr>
+str DB = paste("/", DBGEN, "work");
+@file
+|syncnt -Rb $(DB)/VZB.db -e bst -r 2000..2004 \
+	-c dgnr,penr,val grp=ges,pn.geschl
+@filter
+sum=val

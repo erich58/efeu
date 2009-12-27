@@ -1,0 +1,58 @@
+# :*:configuration file for dynamik linking loader
+# :de:Konfigurationsdatei für dynamisches Einbinden
+#
+# $Synopsis
+# include $1
+#
+# \index{|LD_DL|}
+#
+# $Copyright (C) 2005 Erich Frühstück
+# This file is part of EFEU.
+# 
+# EFEU is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+# 
+# EFEU is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public
+# License along with EFEU; see the file COPYING.
+# If not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+test $_dl_smh && return
+_dl_smh=1
+
+# $Description
+# :de:
+# Durch Einbinden der Headerdatei |$1| wird der Makro
+# |LD_DL| mit link-Flags für dynamische ladbare module definiert.
+
+mf_comm "dl configuration from $FILE"
+efeu-xlib -mLD_DL -ldl
+mf_comm -n "End of dl configuration"
+
+# $Examples
+# \config shmkmf
+# :*:
+# A typical output (depinding on library versions and
+# machine architecture) of including the
+# headerfile with
+# \shmkmf[-x] has the form:
+# include $1
+# \end
+# :de:
+# Eine typische Ausgabe (abhängig von Bibliotheksversion und
+# Rechnerarchitektur) für das Einbinden der Headerdatei mit
+# \shmkmf[-x] hat die Form:
+# include $1
+# \end
+
+# $SeeAlso
+# \mref{shmkmf(1)},
+# \mref{efeu-xlib(1)},
+# \mref{cc.smh(7)}.

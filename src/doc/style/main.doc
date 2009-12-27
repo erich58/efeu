@@ -1,0 +1,13 @@
+\config	efeu
+\date	Mai 2003
+\dhead	Handbuch
+\dnote	Rohfassung
+\title	EFEU Style Guide
+Standards zur Programmierung mit EFEU
+
+\include intro.doc
+\toc
+\include general.doc
+\include comment.doc
+\printindex
+@Impressum(2003)

@@ -1,0 +1,67 @@
+\sec	Kontrollstrukturen
+
+\ssec	Schleifen
+
+[<|while (<cond>) <cmd>|>]
+	~
+[<|do <cmd> while (<cond>)|>]
+	Definiert eine Schleife. Der Ausdruck <cmd> wird solange ausgeführt,
+	wie <cond> logisch wahr ist. Bei <cmd> handelt es sich entweder um
+	eine einfache Befehlszeile oder einen Block. Bei der zweiten Form wird
+	<cmd> zumindest einmal ausgeführt.
+
+\ttitem	for (<a>; <cond>; <b>) <cmd>
+	Zu Beginn der Verarbeitung wird <a> ausgeführt.
+	Der Ausdruck <cmd> wird solange ausgeführt, wie <cond>
+	wahr ist. Nach jedem Schleifendurchlauf wird <b> ausgeführt.
+
+\ttitem	for (<name> in~<list>) <cmd>
+	Für jedes Element der Liste <list> wird <cmd>
+	ausgeführt. <Name> ist der Name einer temporären Variablen,
+	die das aktuelle Element der Liste enthält.
+	Anstelle von <list> kann auch ein einzelnes Objekt stehen,
+	das in eine Liste konvertierbar ist (z.B: ein Vektor).
+
+Bei Schleifen kann ein Block vorzeitig mit der |break| Anweisung
+verlassen werden. Die |continue| Anweisung startet einen neuen Zyklus.
+
+\shead	Bedingungen
+
+\ttitem	if (<cond>) <cmd1>
+	~
+\ttitem if (<cond>) <cmd1> else~<cmd2>
+	Falls die Bedingung <cond> wahr ist, wird <cmd1> ausgeführt,
+	ansonsten wird, falls das Schlüsselwort |else| angegeben ist,
+	<cmd2> ausgeführt.
+
+\ssec	Switch-Anweisung
+
+Ein Switch-Statement hat die Syntax:
+
+\code
+switch (<expr>)\br
+{\br
+<label>:\br
+~~~~~~~~<cmdlist>\br
+<label>:\br
+~~~~~~~~<cmdlist>\br
+...\br
+}\br
+\end
+
+Bei <label> handelt es sich um einen Label der Form <|case~<val>|>
+oder |default|. Der Ausdruck <val> wird bereits beim Lesen des
+Switch-Statements berechnet. Der Ausdruck <expr> wird der Reihe nach
+mit allen Labels verglichen. Stimmt er mit <val> überein, wird die
+nachfolgende Liste von Ausdrücken ausgewertet.
+Falls in der Liste keine
+|break|-, |continue|- oder |return|-Anweisung vorkommt, werden die
+Ausdrücke des nachfolgenden Labels mit ausgewertet.
+Stimmt <expr> mit keinem Wert <val> der Labels überein, werden die Ausdrücke
+von |default| verwendet.
+
+Anders als in C sind in esh beliebige Datentypen für Switch-Statements
+erlaubt. Die einzige Bedingung ist, daß der Operator |==| für diesen
+Datentype definiert ist. So können in esh z.B. Zeichenketten oder
+Reguläre Ausdrücke in Switch-Statements verwendet werden.
+Nicht jeder Datentyp eignet sich gut für Switch-Statements.

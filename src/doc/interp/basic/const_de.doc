@@ -1,0 +1,92 @@
+\sec	Konstanten
+
+\ssec Ganzzahlwerte
+
+Wie in C gibt es auch in esh eine Reihe von Ganzzahldatentypen.
+Es gibt jedoch einige Unterschiede:
+
+[|bool|]
+	ist ein Ganzzahltyp für logische Ergebnisse mit den
+	Ausprägungen 0 (false) und 1 (true).
+	Sie sind über den C-Datentyp |int| implementiert.
+[|byte|]
+	ist ein Ganzzahltyp mit einem Wertebereich von -128 bis 127.
+	Er entspricht dem C-Datentyp |signed char|.
+[|short|]
+	entspricht dem C-Datentyp |short|.
+[|int|]
+	entspricht dem C-Datentyp |int|.
+[|long|]
+	entspricht dem C-Datentyp |long int|.
+[|unsigned|]
+	entspricht dem C-Datentyp |unsigned int|.
+[|size_t|]
+	entspricht dem C-Datentyp |long unsigned int|, der in der
+	Regel mit dem C-Datentyp |size_t| kompatibel sein sollte,
+	aber nicht immer so definiert ist.
+
+In Esh sind |long| und |unsigned| Datentypen, während es sich in C nur
+um Typmodifikatoren handelt.
+Die Bytelängen der Ganzzahldatentyp sind architekturabhängig,
+sie entsprechen aber immer dem gleichwertigen Datentyp in C.
+
+In C wird für boolsche Werte der Datentyp |int| verwendet.
+In |esh| wird |int| vom Datentyp |bool| abgeleitet (Vererbung)
+und kann damit immer auch anstelle eines boolschen Wertes eingesetzt
+werden.
+
+Ganzzahlkonstanten können wahlweise Dezimal, Oktal oder Hexadezimal
+angegeben werden. Eine Hexadezimalzahl beginnt mit <"|0x|">,
+gefolgt von den Hexadezimalziffern (0-9, a-f). Die Buchstaben können
+wahlweise groß oder klein geschrieben werden. Eine Oktalzahl wird
+von einer Dezimalzahl durch eine führende 0 unterschieden.
+Sollte aber eine der Ziffern 8 oder 9 vorkommen, wird die Konstante
+als Dezimalzahl interpretiert.
+
+Ein nachgestelltes <"l"> symbolisiert einen langen Datenwert, ein
+nachgestelltes <"u"> einen vorzeichenfreien Datenwert. Diese beiden
+Flags können beliebig kombiniert werden und wahlweise groß oder klein
+geschrieben werden.
+
+Boolsche Konstanten werden durch die Schlüsselwörter |true| und
+|false| dargestellt. Es gibt keine Ganzzahlkonstanten vom Typ |byte|
+oder |short|.
+
+\ssec	Zeichenketten
+
+Ein einzelnes Zeichen wird durch einfache Anführungszeichen definiert, eine
+Zeichenkette (String) durch doppelte Anführungszeichen.
+Eine Zeichendefinition darf mehrere Zeichen enthalten, es wird aber
+nur das erste Zeichen verwendet.
+
+Für sehr lange Zeichenketten gibt es eine alternative Konstruktion
+über das Schlüsselwort |string| in Kombination mit |!| als
+Begrenzungsmarke.
+
+<Teil des Ausdrucks vor der Zeichenkette> |string !|\br
+<Zeichenkette>\br
+|!| <Rest des Ausdrucks nach der Zeichenkette>
+
+Zwischen |string| und |!| können beliebige Leerzeichen oder
+Tabulatoren stehen, nach |!| muss ein Zeilenvorschub folgen.
+Die Zeichenkette endet beim ersten |!| unmittelbar am Zeilenbeginn.
+
+Innerhalb der Zeichenkettendefinition werden Zeichen normal
+interpretiert, Präprozessordirektiven (z.B. |#include|) und Kommentare
+werden interpretiert.
+Eine so definierte Zeichenkette ist immer mit einem Zeilenvorschub
+abgeschlossen.
+
+\ssec	Gleitkommawerte
+
+[|double|]
+	normale Gleitkommawerte.
+[|float|]
+	kurze Gleitkommawerte.
+
+Gleitkommakonstanten sind immer vom Typ |double|. Sie werden von
+Ganzzahlkonstanten durch die Anwesenheit eines Dezimalpunktes oder
+eines Exponenten unterschieden.
+Alle Rechenoperationen werden mit |double| ausgeführt.
+Bei großen Vektoren kann damit Speicherplatz
+auf Kosten der Genauigkeit gespart werden.

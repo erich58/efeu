@@ -32,10 +32,10 @@ If not, write to the Free Software Foundation, Inc.,
 	":de:Selektionsklassen"
 
 char *MdClassListFormat = "$1[$3]\t$2\n";
-char *MdClassPrintHead = "$1\t$2\n";
+char *MdClassPrintHead = "$1[$3]\t$2\n";
 char *MdClassPrintEntry = "\t$1\t$2\n";
 char *MdClassPrintFoot = NULL;
-int MdClassPrintLimit = 20;
+int MdClassPrintLimit = 40;
 
 void MdClassList (IO *io, MdClass *cdef)
 {
@@ -52,10 +52,14 @@ void MdClassPrint (IO *io, MdClass *cdef)
 {
 	int i;
 
-	io_psubarg(io, MdClassPrintHead, "nssm", cdef->name, cdef->desc,
-		msprintf("%3d", cdef->dim));
+	io_psubarg(io, MdClassPrintHead, "nssd", cdef->name,
+		cdef->desc, cdef->dim);
 
-	if	(MdClassPrintLimit && cdef->dim > max(4, MdClassPrintLimit))
+	if	(MdClassPrintLimit == 1)
+	{
+		;
+	}
+	else if	(MdClassPrintLimit && cdef->dim > max(4, MdClassPrintLimit))
 	{
 		p_label(io, cdef->label);
 		p_label(io, cdef->label + 1);
@@ -72,27 +76,29 @@ void MdClassPrint (IO *io, MdClass *cdef)
 	io_psubarg(io, MdClassPrintFoot, "nss", cdef->name, cdef->desc);
 }
 
-void MdShowClass (IO *io, MdClassTab *tab, const char *plist)
+void MdShowClass (IO *io, MdCountTab *tab, const char *plist)
 {
 	MdClass **ptr;
 	size_t n;
 
-	if	(plist != NULL)
+	if	(plist)
 	{
 		char **list;
 		size_t dim;
 
-		dim = strsplit(plist, ",;%s", &list);
+		dim = mstrsplit(plist, ",;%s", &list);
 
-		for (ptr = tab->tab.data, n = tab->tab.used; n-- > 0; ptr++)
+		for (ptr = tab->ctab.data, n = tab->ctab.used; n-- > 0; ptr++)
 			if (patselect((*ptr)->name, list, dim))
 				MdClassPrint(io, *ptr);
 
 		memfree(list);
 	}
-
-	for (ptr = tab->tab.data, n = tab->tab.used; n-- > 0; ptr++)
-		MdClassList(io, *ptr);
+	else
+	{
+		for (ptr = tab->ctab.data, n = tab->ctab.used; n-- > 0; ptr++)
+			MdClassList(io, *ptr);
+	}
 }
 
 
@@ -102,13 +108,13 @@ static void print_class (IO *io, InfoNode *info)
 	char *entry = MdClassPrintEntry;
 	MdClassPrintHead = NULL;
 	MdClassPrintEntry = "$1\t$2\n";
-	MdClassPrint(iostd, info->par);
+	MdClassPrint(io, info->par);
 	MdClassPrintHead = head;
 	MdClassPrintEntry = entry;
 }
 
 
-void MdClassInfo (InfoNode *info, MdClassTab *tab)
+void MdClassInfo (InfoNode *info, MdCountTab *tab)
 {
 	InfoNode *root;
 	MdClass **ptr;
@@ -116,6 +122,6 @@ void MdClassInfo (InfoNode *info, MdClassTab *tab)
 
 	root = AddInfo(info, "class", LBL_CLASS, NULL, NULL);
 
-	for (ptr = tab->tab.data, n = tab->tab.used; n-- > 0; ptr++)
+	for (ptr = tab->ctab.data, n = tab->ctab.used; n-- > 0; ptr++)
 		AddInfo(root, (*ptr)->name, (*ptr)->desc, print_class, *ptr);
 }

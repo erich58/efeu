@@ -1,0 +1,318 @@
+# :*: arrange source lists
+# :de: Zusammenstellung von Dateilisten
+#
+# $Synopsis
+# <=[=> include $1 <=]=>
+#
+# $Copyright (C) 2004 Erich Frühstück
+# This file is part of EFEU.
+# 
+# EFEU is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+# 
+# EFEU is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public
+# License along with EFEU; see the file COPYING.
+# If not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+test $_srclist_smh && return
+_srclist_smh=1
+
+_srclist=/dev/null
+_tmplist=$TMP/.tmplist
+
+# $pconfig !
+# c:cmd |
+#	:*:determines the command <cmd> to collect source files. The default
+#	value is |find|.
+#	:de:bestimmt das Kommando zum Zusammenstellen der Liste. Der
+#	Vorgabewert ist |find|.
+# p:arg |
+#	:*:defines additional parameters or filters to the collect command.
+#	The default value is |-type f -name \"*[!~]\" -print || sort|
+#	The parameter list is cleard by Option |-c|.
+#	:de:bestimmt zusätzliche Parameter oder Filter für die
+#	Zusammenstellung der Dateien. Der Vorgabewert ist 
+#	|-type f -name \"*[!~]\" -print || sort|.
+#	Die Parameterliste wird von der Option |-c| gelöscht.
+# n:name |
+#	:*:collects files which match the file pattern <name>.
+#	This is aquvalent to
+#	|-c find -p '-name| <name> |-print ||sort'|.
+#	:de:stellt Dateien zusammen, die dem Muester <name> entsprechen.
+#	Das ist gleichwertig mit der Angabe
+#	|-c find -p '-name| <name> |-print ||sort'|.
+# ::name |
+# 	:*:name of source list, default |SourceList|
+#	:de:name der Dateiliste, die Vorgabe ist |SourceList|.
+# ::dir |
+#	:*:gives the directory where to collect.
+#	:de:definiert das Verzeichnis von dem die Dateien
+#	zusammenzustellen sind.
+# !
+# :*:
+# The function @! creates rules to administrate a list of sourcefiles,
+# which are collected with <find> or a similar command. At every call
+# of |make| the contents of the source list is checked. If anything
+# has changed, the Makefile is updated. The first version of the source
+# list is created by |shmkmf| self.
+# The following options and arguments are accepted by @!:
+# :de:
+# Die Funktion @! generiert Regeln zur Verwaltung einer
+# Liste von Sourcefiles, die mit |find| oder einem ähnlichen Kommando
+# zusammengestellt werden. Bei jedem Aufruf von |make| wird die Dateiliste
+# auf eine Veränderung geprüft. Sobald sich die Dateiliste verändert,
+# wird das Makefile neu generiert. Eine erste Version der Dateiliste
+# wird bereits von |shmkmf| angelegt.
+# Die folgenden Optionen und Argumente werden von @! akzeptiert:
+#
+# @arglist
+#
+# :*:
+# The collection of the file list is done with the following command:
+#	<cmd> <dir> <arg(s)> |> $@|
+# The default setting searches for regulary files not ending with a
+# tilde. The resulting list ist sortet.
+# :de:
+# Die Zusammenstellung der Dateiliste erfolgt mit folgendem Kommando:
+#	<cmd> <dir> <arg(s)> |> $@|
+# In der Standardvorgabe werden nur reguläre Dateien, die nicht mit
+# einer Tilde enden gesucht. Die resultierende Liste ist sortiert.
+
+mf_srclist ()
+{
+	_srclist=SourceList
+	_srclist_cmd=find
+	_srclist_top="$SRC"
+	_srclist_post="-type f -name \"*[!~]\" -print | sort"
+
+	while [ -n "$1" ]
+	do
+		case "$1" in
+		-c)	_srclist_cmd="$2"; _srclist_post=""; shift 2;;
+		-p)	_srclist_post="$_srclist_post $2"; shift 2;;
+		-n)	_srclist_cmd="find";
+			_srclist_post="-name \"$2\" -print | sort";
+			shift 2;;
+		--)	shift 1; break;;
+		-*)	shmkmf_invop "mf_srclist" "$1"; exit 1;;
+		*)	_srclist="$1"; shift 1; break;;
+		esac
+	done
+
+	case "$#" in
+	0)	;;
+	1)	_srclist_top="$1";;
+	*)	shmkmf_warg mf_srclist;;
+	esac
+
+	eval $_srclist_cmd $_srclist_top $_srclist_post > $_srclist
+
+	add_depend $_srclist
+
+	postpone mf_rule -d $_srclist "" \
+		"@$_srclist_cmd $_srclist_top $_srclist_post > \$@~" \
+		'@if cmp -s $@~ $@; then rm -f $@~; else mv -f $@~ $@; fi'
+}
+
+# $pconfig !
+# :tg |
+#	:*:name of the target list
+#	:*:Name der Zielliste
+# :src |
+#	:*:name of the basic list
+#	:*:Name der Basisliste
+# ::cmd |
+#	:*:specifies the command to create the target.
+#	:de:definiert den Befehl zur Erzeugung der Zieldatei.
+# ::args(s) |
+#	:*:specifies additional arguments/filters to <cmd>, see below.
+#	:de:definiert zusätzliche Argumente/Filter zur Erzeugung der Zieldatei,
+#	siehe weiter unten.
+# !
+# :*:
+# The Funktion @! allows to creat a partial list from a basic list.
+# The partial list is checked like the basic list and the first
+# version is also created by |shmkmf|.
+# The following command line is used to create the target:
+#	<cmd> <src> <arg(s)> |> $@|
+# :de:
+# Die Funktion @! erlaubt die Konstruktion einer Teiliste aus einer
+# Basisliste. Die Teilliste wird wir die Basisliste bei jedem Aufruf
+# auf Veränderungen geprüft. Die erste Version wird ebenfalls bereits von
+# |shmkmf| angelegt.
+# Die Befehlszeile zur Generierung der Zieldatei hat die Form:
+#	<cmd> <src> <arg(s)> |> $@|
+
+mf_sublist ()
+{
+	test "$#" -lt 3 && shmkmf_warg mf_sublist
+	test -f $2 || shmkmf_error srclist "file %s not found." $2
+
+	_sublist="$1"
+	_sublist_src="$2"
+	_sublist_cmd="$3"
+	shift 3
+
+	test -f $_sublist || eval $_sublist_cmd $_sublist_src $@ > $_sublist
+	add_depend $_sublist
+	postpone mf_rule -d $_sublist "" \
+		"@$_sublist_cmd $_sublist_src $* > \$@~" \
+		'@if cmp -s $@~ $@; then rm -f $@~; else mv -f $@~ $@; fi'
+}
+
+# $pconfig !
+# d |
+#	:*:deletes the temporary list of filenames (if existing). 
+#	:de:löscht eine vorhandene temporäre Dateiliste.
+# n |
+#	:*:checks the existence of a temporary or the last by |mf_srclist|
+#	arranged file list and returns here name. If none of them exists,
+#	|/dev/null| is returned.
+#	:de:prüft auf Existenz einer temporären Dateiliste bzw.
+#	auf die zuletzt mit |mf_srclist| eingerichtete Dateiliste und
+#	liefert ihren Namen. Ist keine Dateiliste vorhanden, wird |/dev/null|
+#	zurückgegeben.
+# :name |
+#	:*:name of file to append to the list. If <name> is an existing
+#	directory, all files found in this directory and subdirectories are
+#	appended.
+#	:de:ist eine Liste von Namen, um die die temporäre Dateiliste erweitert
+#	wird. Falls es sich dabei um ein Verzeichnis
+#	handelt, werden alle Dateien des Verzeichnisses angehängt.
+# !
+# :*:
+# The function @! controlls a temporary list of file names.
+# The following options and arguments are accepted:
+# :de:
+# Die Funktion @! verwaltet eine temporäre Liste von Dateinamen.
+# Die folgenden Optionen und Argumente werden von @! akzeptiert:
+#
+# @arglist
+
+tmplist ()
+{
+	for _tmplist_arg
+	do
+		case "$_tmplist_arg" in
+		-d)
+			rm -f $_tmplist;;
+		-n)	
+			if	[ -f $_tmplist ]; then
+				echo $_tmplist
+			elif	[ -f $_srclist ]; then
+				echo $_srclist
+			else
+				echo /dev/null
+			fi
+			;;
+		--)	
+			;;
+		-*)
+			shmkmf_invop tmplist "$1";;
+		*)
+			if [ -d "$_tmplist_arg" ]; then
+				find "$_tmplist_arg" -type f -print | \
+					sort >> $_tmplist
+			else
+				echo "$_tmplist_arg" >> $_tmplist
+			fi
+			;;
+		esac
+
+		shift
+	done
+}
+
+# $pconfig !
+# :expr |
+#	:*:gives the regular expression <expr> to select files.
+#	:de:bestimmt den regulären Ausdruck <expr> zur Auswahl von Dateien.
+# ::list |
+#	:*:name of lists where to extract files.
+#	:de:gibt die Namen von Dateilisten an, aus denen die Dateien
+#	auszuwählen sind.
+# !
+# :*:
+# The function @! selects file names from the list files <list> with regular
+# expression <expr>. If no list  file is given, the function @! searches
+# for a list created by |tmplist| and then for a list created by
+# |mf_srclist|.
+# The following options and arguments are accepted by @!:
+# :de:
+# Die Funktion @! liefert alle in den Dateilisten <list>
+# vorkommenden Dateien, die dem Muster <expr> entsprechen.
+# Falls keine Dateiliste angegeben wurde, wird zuerst nach der mit
+# |tmplist| generierten Liste und anschließend nach der mit
+# |mf_srclist| verwalteten Liste gesucht.
+# Die folgenden Optionen und Argumente werden von @! akzeptiert:
+#
+# @arglist
+
+srclist_get ()
+{
+	if	[ "$#" -gt 1 ]; then
+		grep -h -e "$@"
+	elif	[ -f $_tmplist ]; then
+		grep -h -e "$1" $_tmplist
+	else
+		grep -h -e "$1" $_srclist
+	fi
+}
+
+# $pconfig !
+# ::name |
+#	:*:name of lists where to extract files.
+#	:de:Namen der Dateilise, aus denen Dateien auszuwählen sind.
+# !
+# :*:
+# The function @! sets the actual file list to <name> for commands using
+# |srclist_get|. This allows to switch between differnt, with |mf_srclist|
+# created file lists. If no argument is given or if the file <name> does not
+# exists, |/dev/null| is used.
+# :de:
+# Die Funktion @! setzt die aktuelle Fileliste auf <name>. Dies beeinflußt
+# alle nachfolgenden Kommandos, die Dateien mit |srclist_get| abrufen.
+# Damit kann zwischen mehreren, mit |mf_srclist| generierten Dateien
+# gewechselt werden. Falls die Funktion ohne Argument aufgerufen wurde,
+# oder die angegebene Datei nicht existiert, wird |/dev/null| verwendet.
+
+use_srclist ()
+{
+	if [ -f "$1" ]; then
+		_srclist=$1
+	else	
+		_srclist=/dev/null
+	fi
+}
+
+# $Example
+# \config shmkmf
+# \smh_init
+# :*:
+# The command line
+# \shmkmf[-x] creates the rules:
+# mf_srclist list .
+# \end
+# :de:
+# Die Befehlszeile
+# \shmkmf[-x] generiert die Regel:
+# mf_srclist list .
+# \end
+# :_:
+# \smh_clean
+
+# $Note
+# :*:The header |$1| is preloaded by |shmkmf|.
+# :de:Die Headerdatei |$1| wird bereits von |shmkmf| geladen.
+
+# $SeeAlso
+# \mref{shmkmf(1)},
+# \mref{foreach.smh(7)}.

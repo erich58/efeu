@@ -25,6 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/stdtype.h>
 #include <EFEU/parsedef.h>
 #include <EFEU/ArgList.h>
+#include <EFEU/Info.h>
 #include <ctype.h>
 
 static ETK *etk = NULL;
@@ -197,7 +198,7 @@ static void f_tcleval (EfiFunc *func, void *rval, void **arg)
 	}
 	else	argl = NULL;
 
-	sb = new_strbuf(0);
+	sb = sb_create(0);
 	in = io_cstr(Val_str(arg[0]));
 	out = io_strbuf(sb);
 	flag = 0;
@@ -208,7 +209,7 @@ static void f_tcleval (EfiFunc *func, void *rval, void **arg)
 		if	(c == '$')
 		{
 			if	(!tmp)
-				tmp = new_strbuf(0);
+				tmp = sb_create(0);
 
 			p = argl ? psubexpand(tmp, in, argl->dim, argl->data) :
 				psubexpand(tmp, in, 0, NULL);
@@ -226,11 +227,11 @@ static void f_tcleval (EfiFunc *func, void *rval, void **arg)
 		}
 	}
 
-	del_strbuf(tmp);
+	sb_destroy(tmp);
 	io_close(out);
 	sb_putc(0, sb);
 	ETK_eval(etk, (char *) sb->data);
-	del_strbuf(sb);
+	sb_destroy(sb);
 	rd_deref(argl);
 }
 
@@ -290,6 +291,7 @@ void SetupETK (void)
 	AddParseDef(pdef, tabsize(pdef));
 #if	HAS_TCL
 	AddFuncDef(fdef, tabsize(fdef));
+	XInfoBrowser = ETKInfo;
 #endif
 }
 

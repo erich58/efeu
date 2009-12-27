@@ -70,7 +70,7 @@ zusammen. Zum Teil ergeben sich Unterschiede im Verhalten
 der Schnittstelle. Tcl-Versionen vor 8.0 verwenden ausschließlich
 Zeichenketten für den Wertaustusch zwischen Tcl- und EFEU-Interpreter.
 Spätere Versionen nutzen die Möglichkeit von Tcl-Objekten und
-konnen |bool|, |int| und |double| Werte direkt austauschen.
+können |bool|, |int| und |double| Werte direkt austauschen.
 
 Dieses Handbuch beschränkt sich auf die Beschreibung der Schnittstelle
 und setzt Kenntnisse im Arbeiten mit Tcl/Tk vorraus.

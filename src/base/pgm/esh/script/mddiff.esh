@@ -24,8 +24,14 @@ If not, write to the Free Software Foundation, Inc.,
 PrintListDelim = "\t";
 
 pconfig !
-Version = "$Id: mddiff.esh,v 1.8 2001-10-18 12:11:20 ef Exp $"
+Version = "$Id: mddiff.esh,v 1.11 2006-04-07 03:39:42 ef Exp $"
 
+E:expr | :eval 'geval("{}")'
+	:*:evaluate expression <expr>
+	:de:Ausdruck <expr> auswerten
+F:file | :eval 'gload(IncPath, "{}")'
+	:*:execute command lines in file <file>
+	:de:Datei <file> mit Befehlszeilen laden
 r | Reduce = true
 	:*:remove singulary axis
 	:de:Entfernen von singulären Achsen
@@ -41,7 +47,7 @@ p:prec | :eval 'float_prec = {}'
 :file2 | Ein2
 	:*:name of second data cube
 	:de:Name der 2. Eingabedatei
-/.*=.*/name=var | SelDef: append " "
+/.*=.*/<name>=<var> | SelDef: append " "
 	:*:selection parameter
 	:de:Selektionsparameter
 ::out | Output
@@ -58,12 +64,12 @@ if	(flagres("Reduce"))
 	md2.reduce();
 }
 
-str tn1 = tmpnam("mdd");
-str tn2 = tmpnam("mdd");
+str tn1 = newtemp(NULL, "mdd");
+str tn2 = newtemp(NULL, "mdd");
 md1.print(open(tn1, "w"), "nohead");
 md2.print(open(tn2, "w"), "nohead");
 system(paste(" > ", sprintf("diff %s %s", tn1, tn2), Output));
-remove(tn1);
-remove(tn2);
+deltemp(tn1);
+deltemp(tn2);
 free(md1);
 free(md2);

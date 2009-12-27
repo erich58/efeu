@@ -1,0 +1,17 @@
+/*
+:*:Insert document parts depending of language and availability
+:de:Dokumentteile abhängig von Sprache und Verfügbarkeit einfügen
+*/
+
+\def\docpart {{
+	str opt = ParseOpt(cin, true);
+	str name = xexpand(ParseLine(cin));
+
+	str fname = fsearch(DocPath, paste("/", Lang, name));
+
+	if	(!fname)
+		fname = fsearch(DocPath, name);
+
+	if	(fname)
+		include(NULL, fname);
+}}

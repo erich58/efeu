@@ -1,5 +1,6 @@
 /*
-Dynamisches Zeichenfeld (Stringbuffer)
+:*:dymamic string buffer
+:de:Dynamisches Zeichenfeld (Stringbuffer)
 
 $Header	<EFEU/$1>
 
@@ -28,21 +29,37 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/memalloc.h>
 
 /*
+:*:
+The data structure |$1| provides a easy way to construct character
+field. It has an read/write interface similiar to streams and
+allows to insert/delete characters at any position (edit functions).
+The size of the character field is exanded on demand.
 :de:
 Mithilfe der Datenstruktur |$1| kann auf einfache Weise eine
 Zeichenkette aufgebaut werden. Es gibt ähnliche Schreib- und
 Lesefunktionen wie für Dateien. Zusätzlich können auch
-Zeichen innerhalb der Zeicheinkette eingefügt oder gelöscht werden
+Zeichen innerhalb der Zeichenkette eingefügt oder gelöscht werden
 (Editierfunktion).
 Der Speicherbedarf der Zeichenkette
 wird bei Bedarf automatisch vergrößert.
-\par
+
+:*:
+The string buffer |$1| contains the character field <data> of
+size <size>. The componend <nfree> shows how many characters
+could be stored with out expansion of the character, while
+<pos> gives the aktual position in the character field.
+On expansion, the size of the character field groes with the
+amount of the component <blksize>.
+If the value is zero, a starting value is used and the size
+is doubled on each expansion.
+:de:
 Das dynamische Zeichenfeld |$1| enthält einen Zeichenvektor <data>
 der Größe <size>. Die Komponente <nfree> gibt die Zahl der
 freien Zeichen an, während <pos> die aktuelle Position
 angibt. Die Variable <blksize> bestimmt, um wieviel der
 Zeichenvektor vergrößert werden soll, wenn nicht mehr genug Platz
-ist. Ist <blksize> auf 0 gesetzt, werden Standardvorgaben verwendet.
+ist. Ist <blksize> auf 0 gesetzt, wird mit einem Startwert
+begonnen und anschließend die aktuelle Größe immer verdoppelt.
 */
 
 typedef struct {
@@ -54,6 +71,9 @@ typedef struct {
 } StrBuf;
 
 /*
+:*:
+The macro |$1| initializes the components of a string buffer
+with blocksize <blk>.
 :de:
 Der Makro |$1| initialisiert die Strukturkomponenten des
 Zeichenfeldes. Als Argument wird die Blockgröße benötigt.
@@ -62,6 +82,9 @@ Zeichenfeldes. Als Argument wird die Blockgröße benötigt.
 #define	SB_DATA(blk)		{ NULL, 0, blk, 0, 0 }
 
 /*
+:*:
+The Mmacro |$1| declares the string buffer variable <name> and initializes
+it with blocksize <blk>.
 :de:
 Der Makro |$1| deklariert das Zeichenfeld <name> und initialisiert
 es mit der Blockgröße <blk>.
@@ -69,31 +92,39 @@ es mit der Blockgröße <blk>.
 
 #define	STRBUF(name, blk)	StrBuf name = SB_DATA(blk)
 
-extern StrBuf *new_strbuf (size_t blksize);
-extern int del_strbuf (StrBuf *buf);
-extern void sb_expand (StrBuf *buf);
-extern void sb_clear (StrBuf *sb);
+StrBuf *sb_create (size_t blksize);
+int sb_destroy (StrBuf *buf);
+void sb_init (StrBuf *buf, size_t blksize);
 
-extern int sb_get (StrBuf *sb);
-extern int sb_put (int c, StrBuf *sb);
-extern int sb_puts (const char *str, StrBuf *sb);
-extern int sb_rputs (const char *str, StrBuf *sb);
-extern int sb_putstr (const char *str, StrBuf *sb);
-extern int sb_printf (StrBuf *sb, const char *fmt, ...);
-extern int sb_vprintf (StrBuf *sb, const char *fmt, va_list list);
-extern int sb_setpos (StrBuf *buf, int n);
+void sb_expand (StrBuf *buf);
+void sb_clean (StrBuf *sb);
+void sb_free (StrBuf *sb);
+
+int sb_get (StrBuf *sb);
+int sb_put (int c, StrBuf *sb);
+int sb_puts (const char *str, StrBuf *sb);
+int sb_rputs (const char *str, StrBuf *sb);
+int sb_putstr (const char *str, StrBuf *sb);
+int sb_printf (StrBuf *sb, const char *fmt, ...);
+int sb_vprintf (StrBuf *sb, const char *fmt, va_list list);
+int sb_setpos (StrBuf *buf, int n);
 
 void sb_insert (int c, StrBuf *sb);
 int sb_delete (StrBuf *sb);
 
 /*
+:*:
+The macro |$1| returns the nummber of valid characters stored in
+the string buffer.
 :de:
-Der Makro |$1| liefert die aktuelle Größe des Zeichenfeldes.
+Der Makro |$1| liefert die Zahl der gültigen Zeichen des Zeichenfeldes.
 */
 
 #define	sb_size(sb)	((sb)->size - (sb)->nfree)
 
 /*
+:*:
+The macro |$1| returns the actual position in the string buffer.
 :de:
 Der Makro |$1| liefert die aktuelle Position im Zeichenfeld.
 */
@@ -101,6 +132,8 @@ Der Makro |$1| liefert die aktuelle Position im Zeichenfeld.
 #define	sb_getpos(sb)	((sb)->pos)
 
 /*
+:*:
+The macro |$1| sets the actual position to the beginn of the string buffer.
 :de:
 Der Makro |$1| positionert auf den Anfang des Zeichenfeld.
 */
@@ -108,6 +141,8 @@ Der Makro |$1| positionert auf den Anfang des Zeichenfeld.
 #define	sb_begin(sb)	((sb)->pos = 0)
 
 /*
+:*:
+The macro |$1| sets the actual position to the end of the string buffer.
 :de:
 Der Makro |$1| positionert auf das Ende des Zeichenfelds.
 */
@@ -115,6 +150,8 @@ Der Makro |$1| positionert auf das Ende des Zeichenfelds.
 #define	sb_end(sb)	((sb)->pos = (sb)->size - (sb)->nfree)
 
 /*
+:*:
+The macro |$1| sets the number of valid characters to the actual position.
 :de:
 Der Makro |$1| setzt die Größe des Zeichenfeldes auf
 die aktuelle Position.
@@ -123,6 +160,9 @@ die aktuelle Position.
 #define	sb_sync(sb)	((sb)->nfree = (sb)->size - (sb)->pos)
 
 /*
+:*:
+The macro |$1| reads a character form the string buffer <sb>.
+If the end of valid characters is reachd, |EOF| is returned.
 :de:
 Der Makro |$1| liest ein Zeichen aus dem Zeichenfeld <sb>.
 Wurde das Ende des Zeichenfeldes erreicht, liefert er EOF.
@@ -132,6 +172,9 @@ Wurde das Ende des Zeichenfeldes erreicht, liefert er EOF.
 	(int) (sb)->data[(sb)->pos++] : EOF)
 
 /*
+:*:
+The macro |$1| writes the character <c> to string buffer <sb>
+und returns the code of the character.
 :de:
 Der Makro |$1| schreibt das Zeichen <c>
 in das Zeichenfeld <sb> und liefert das geschriebene Zeichen als
@@ -142,6 +185,10 @@ Rückgabewert.
 	sb_put(c, sb) : (int) ((sb)->data[(sb)->pos++] = (unsigned char) (c)))
 
 /*
+:*:
+The macro |$1| worrya about a correct allignment of the valid
+characters to a whole-numbered multiple of <m>. If nessesary,
+'\0'-characters are inserted at end of the character field.
 :de:
 Der Makro |$1| sorgt für eine Ausrichtung der Zeichenfeldgröße
 auf ein ganzzahliges Vielfaches von <m>. Bei Bedarf werden
@@ -150,30 +197,42 @@ am Ende 0-Zeichen eingefügt.
 
 #define	sb_align(sb, m)	while ((sb_size(sb) % (m)) != 0) sb_putc(0, sb)
 
-extern char *sb2str (StrBuf *sb);
-extern char *sb2mem (StrBuf *sb);
-extern char *sb_strcpy (StrBuf *sb);
-extern char *sb_memcpy (StrBuf *sb);
-extern char *lexsortkey (const char *base, StrBuf *buf);
+char *sb_str (StrBuf *sb, int pos);
+char *sb2str (StrBuf *sb);
+char *sb2mem (StrBuf *sb);
+char *sb_strcpy (StrBuf *sb);
+char *sb_memcpy (StrBuf *sb);
+char *lexsortkey (const char *base, StrBuf *buf);
 
 /*
-:de:
 $Warning
+:*:
+The macros evaluates <sb> more than once and may produce side
+effects if terms are inserted for <sb>.
+:de:
 Die Makros werten den Ausdruck <sb> mehrfach aus.
 Damit es zu keinen Seiteneffekten kommt, sollten hier keine
 komplexen Terme eingesetzt werden, insbesonders dürfen
 Increment oder Decrementoperatoren nicht verwendet werden.
 So ist das Resultat des Ausdruck |sb_getc(buf++)| undefiniert. 
 Ein Nullpointer ist ebenfalls nicht zulässig.
-\par
+
+:*:
+On writing, it is assumed, that the position points to the end of the
+character field. On reading or editing, the position is uncoupled
+from the end of the character field. So writing after reading or editing
+needs a synchronisation of the position either with |sb_clean|, |sb_sync|
+or |sb_end|.
+:de:
 Beim Schreiben wird vorrausgesetzt, daß der Positionszeiger am Ende des
 Zeichenfeldes steht. Beim Lesen oder Editieren wird der Positionszeiger
 vom Ende des Zeichenfeldes abgekoppelt.
 Soll nach einem Lese- oder Editiervorgang wieder geschrieben werden,
-muß daher entweder |sb_end| oder |sb_sync| aufgerufen werden.
+muß daher entweder |sb_clean| (Anfang) |sb_sync| (aktuelle Position) oder
+|sb_end| (Ende) aufgerufen werden.
 
 $SeeAlso
-\mref{strbuf(3)}, \mref{sb_getc(3)}, \mref{sb_putc(3)}.\br
+\mref{strbuf(3)}, \mref{sb_getc(3)}, \mref{sb_putc(3)}.
 */
 
 #endif	/* EFEU/strbuf.h */

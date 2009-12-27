@@ -1,0 +1,71 @@
+/*	Introduction to edb manual, german version
+
+$Copyright (C) 2005 Erich Frühstück
+This file is part of EFEU.
+
+EFEU is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+EFEU is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with EFEU; see the file COPYING.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+*/
+
+\preface
+
+Dieses Handbuch beschreibt das Arbeiten mit EDB-Datenfiles und der
+EDB-Datenschnittstelle.
+
+Die EDB-Datenschnittstelle bildet zusammen mit den EDB-Datenfiles eine
+Art Datenbanksystem, das Tabellen als Einheit betrachtet. Dabei wird
+die Verwaltung an das Betriebssystem delegiert. Im EDB-Konzept
+sind Tabellen einfach Dateien mit einem speziellen Datenformat.
+
+Die Verwaltung wird damit wesentlich vereinfacht und kann durch
+gewöhnliche Funktionen zur Dateimanipulation ersetzt werden. Was
+bleibt, sind Funktionen zur Selektion, Transformation und Verknüpfung
+von Datenbanken. Diese bilden den Kern der Datenschnittstelle.
+
+Durch die Verlegung der Verwaltung auf die Dateiebene lassen sich
+allgemeine Werkzeuge zur Datengenerierung einsetzen.
+So kann z.B. der Aufbau von Tabellen aus Basisdateien über |make| gesteuert
+werden. Ändert sich eine Tabelle, werden nur die davon abhängigen
+Tabellen und Auswertungen neu zusammengestellt und generiert.
+
+Der wesentliche Unterschied zu einem herkömmlichen Datenbanksystem ist,
+dass eine Tabelle nicht direkt geändert werden kann, sondern jede
+Form der Manipulation, sei es auch nur ein einzelner Datensatz, in
+einer neuen Tabelle (ist gleich Datei) resultiert. Nach Abschluß der
+Verarbeitung kann die ursprüngliche Tabelle durch die neue Version
+ersetzt werden. Transaktionen betreffen also immer die gesamte
+Tabelle.
+
+EDB ersetzt kein Datenbanksystem, sondern ergänzt es im Bereich der
+Auswertungen, Data Warehouse und Data Mining.
+
+EDB ist nicht auf relationale Tabellen beschränkt. Durch die
+Verwendung nicht normalisierter Datenbanken läßt sich eine schnelle
+Verarbeitung erzielen.
+
+Auf eine Datenschnittstelle können Transformationen aufgesetzt
+werden, die wieder als Datenschnittstellen sichtbar werden.
+
+EDB setzt auf den EFEU-Interpreter auf. Es können beliebige Datentypen
+des Interpreters verwendet werden. Neue Datentypen lassen sich innerhalb
+des Interpreters oder durch Einbinden von C-Bibliotheken erweitern.
+Vektoren mit fixer und variabler Länge werden unterstützt.
+Auf die Datenschnittstelle kann vom Interpreter aus zugegriffen werden.
+
+Der Umfang der Dokumentation hängt von den lokal installierten
+EFEU-Projekten und der Dokumentsprache ab.
+
+	Erich Frühstück\br
+	Wördern, \thedate

@@ -24,192 +24,63 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/cmdconfig.h>
 #include <ctype.h>
 
-/*	Funktionsmakros
+
+#define	S	"double"
+#define	T	double
+
+#include "float.src"
+
+/*	Zusätzliche Funktionen
 */
 
-#define	DOUBLE(n)	Val_double(arg[n])
-#define	STR(n)		Val_str(arg[n])
-#define	DRETVAL		Val_double(rval)
-
-#define	EXPR(name, expr)	\
-CEXPR(name, DRETVAL = expr)
-
-#define	BINARY(name, op)	\
-EXPR(name, DOUBLE(0) op DOUBLE(1))
-
-#define	COMPARE(name, op)	\
-CEXPR(name, Val_int(rval) = DOUBLE(0) op DOUBLE(1))
-
-#define	ASSIGN(name, op)	\
-CEXPR(name, DOUBLE(0) op DOUBLE(1))
-
-
-/*	Funktionen
-*/
-
-static void f_dbl_abs (EfiFunc *func, void *rval, void **arg)
+static void f_xdiv (EfiFunc *func, void *rval, void **arg)
 {
-	register double a = DOUBLE(0);
-	DRETVAL = a < 0 ? -a : a;
+	T a = *((T *) arg[0]);
+	T b = *((T *) arg[1]);
+	*((T *) rval) = b ? a / b : 0.;
 }
 
-static void f_dbl_min (EfiFunc *func, void *rval, void **arg)
+static void f_xdiv1 (EfiFunc *func, void *rval, void **arg)
 {
-	register double a = DOUBLE(0);
-	register double b = DOUBLE(1);
-	DRETVAL = a < b ? a : b;
+	T a = *((T *) arg[0]);
+	T b = *((T *) arg[1]);
+	*((T *) rval) = b ? a / b : 1.;
 }
 
-static void f_dbl_max (EfiFunc *func, void *rval, void **arg)
+static void f_idx (EfiFunc *func, void *rval, void **arg)
 {
-	register double a = DOUBLE(0);
-	register double b = DOUBLE(1);
-	DRETVAL = a > b ? a : b;
+	T a = *((T *) arg[0]);
+	T b = *((T *) arg[1]);
+	*((T *) rval) = b ? 100. * a / b : 0.;
 }
 
-static void f_dbl_xdiv (EfiFunc *func, void *rval, void **arg)
+static void f_rate (EfiFunc *func, void *rval, void **arg)
 {
-	register double a = DOUBLE(0);
-	register double b = DOUBLE(1);
-	DRETVAL = b ? a / b : 0.;
+	T a = *((T *) arg[0]);
+	T b = *((T *) arg[1]);
+	*((T *) rval) = b ? 100. * (a - b) / b : 0.;
 }
 
-static void f_dbl_xdiv1 (EfiFunc *func, void *rval, void **arg)
+static void f_rnd (EfiFunc *func, void *rval, void **arg)
 {
-	register double a = DOUBLE(0);
-	register double b = DOUBLE(1);
-	DRETVAL = b ? a / b : 1.;
+	T a = *((T *) arg[0]);
+	*((int *) rval) = a < 0. ? - (int) (-a + 0.5) : (int) (a + 0.5);
 }
 
-static void f_dbl_idx (EfiFunc *func, void *rval, void **arg)
-{
-	register double a = DOUBLE(0);
-	register double b = DOUBLE(1);
-	DRETVAL = b ? 100. * a / b : 0.;
-}
 
-static void f_dbl_rate (EfiFunc *func, void *rval, void **arg)
-{
-	register double a = DOUBLE(0);
-	register double b = DOUBLE(1);
-	DRETVAL = b ? 100. * (a - b) / b : 0.;
-}
-
-static void f_dbl_rnd (EfiFunc *func, void *rval, void **arg)
-{
-	register double a = DOUBLE(0);
-	Val_int(rval) = a < 0 ? - (int) (-a + 0.5) : (int) (a + 0.5);
-}
-
-static void f_dbl_adjust (EfiFunc *func, void *rval, void **arg)
-{
-	register double a = DOUBLE(0);
-	register char *b = STR(1);
-
-	if	(b == NULL)
-	{
-		DRETVAL = a;
-		return;
-	}
-
-	while (isspace(*b))
-		b++;
-
-	if	(*b == '+')	DRETVAL = a + atof(b + 1);
-	else if	(*b == '-')	DRETVAL = a - atof(b + 1);
-	else if	(isdigit(*b))	DRETVAL = atof(b);
-	else			DRETVAL = a;
-}
-
-/*	Unäre Operatoren
-*/
-
-CEXPR(l_dbl_not, Val_bool(rval) = DOUBLE(0) == 0.)
-EXPR(l_dbl_minus, -DOUBLE(0))
-EXPR(l_dbl_plus, DOUBLE(0))
-
-/*	Binäre Operatoren
-*/
-
-BINARY(b_dbl_mul, *)
-BINARY(b_dbl_div, /)
-BINARY(b_dbl_add, +)
-BINARY(b_dbl_sub, -)
-
-/*	Vergleichsoperatoren
-*/
-
-COMPARE(b_dbl_lt, <)
-COMPARE(b_dbl_le, <=)
-COMPARE(b_dbl_eq, ==)
-COMPARE(b_dbl_ne, !=)
-COMPARE(b_dbl_ge, >=)
-COMPARE(b_dbl_gt, >)
-
-/*	Zuweisungsoperatoren
-*/
-
-#if	MAKE_ASSIGN_OP
-CEXPR(l_dbl_inc, ++DOUBLE(0))
-CEXPR(l_dbl_dec, --DOUBLE(0))
-EXPR(r_dbl_inc, DOUBLE(0)++)
-EXPR(r_dbl_dec, DOUBLE(0)--)
-
-ASSIGN(a_dbl_mul, *=)
-ASSIGN(a_dbl_div, /=)
-ASSIGN(a_dbl_add, +=)
-ASSIGN(a_dbl_sub, -=)
-#endif
-
-
-/*	Functionstabelle
-*/
-
-static EfiFuncDef fdef_double[] = {
-	{ FUNC_VIRTUAL, &Type_double, "abs (double)", f_dbl_abs },
-	{ FUNC_VIRTUAL, &Type_double, "min (double, double)", f_dbl_min },
-	{ FUNC_VIRTUAL, &Type_double, "max (double, double)", f_dbl_max },
-	{ FUNC_VIRTUAL, &Type_double, "adjust (double, str)", f_dbl_adjust },
-	{ 0, &Type_double, "xdiv (double, double)", f_dbl_xdiv },
-	{ 0, &Type_double, "xdiv1 (double, double)", f_dbl_xdiv1 },
-	{ 0, &Type_double, "idx (double, double)", f_dbl_idx },
-	{ 0, &Type_double, "rate (double, double)", f_dbl_rate },
-	{ 0, &Type_int, "rnd (double)", f_dbl_rnd },
-
-	{ FUNC_VIRTUAL, &Type_bool, "operator!() (double)", l_dbl_not },
-	{ FUNC_VIRTUAL, &Type_double, "operator+() (double)", l_dbl_plus },
-	{ FUNC_VIRTUAL, &Type_double, "operator-() (double)", l_dbl_minus },
-
-	{ FUNC_VIRTUAL, &Type_double, "operator* (double, double)", b_dbl_mul },
-	{ FUNC_VIRTUAL, &Type_double, "operator/ (double, double)", b_dbl_div },
-	{ FUNC_VIRTUAL, &Type_double, "operator+ (double, double)", b_dbl_add },
-	{ FUNC_VIRTUAL, &Type_double, "operator- (double, double)", b_dbl_sub },
-
-	{ FUNC_VIRTUAL, &Type_bool, "operator< (double, double)", b_dbl_lt },
-	{ FUNC_VIRTUAL, &Type_bool, "operator<= (double, double)", b_dbl_le },
-	{ FUNC_VIRTUAL, &Type_bool, "operator== (double, double)", b_dbl_eq },
-	{ FUNC_VIRTUAL, &Type_bool, "operator!= (double, double)", b_dbl_ne },
-	{ FUNC_VIRTUAL, &Type_bool, "operator>= (double, double)", b_dbl_ge },
-	{ FUNC_VIRTUAL, &Type_bool, "operator> (double, double)", b_dbl_gt },
-
-#if	MAKE_ASSIGN_OP
-	{ FUNC_VIRTUAL, &Type_double, "operator++ (double &)", r_dbl_inc },
-	{ FUNC_VIRTUAL, &Type_double, "operator-- (double &)", r_dbl_dec },
-	{ 0, &Type_double, "& double::operator++ & ()", l_dbl_inc },
-	{ 0, &Type_double, "& double::operator-- & ()", l_dbl_dec },
-
-	{ 0, &Type_double, "& double::operator*= & (double)", a_dbl_mul },
-	{ 0, &Type_double, "& double::operator/= & (double)", a_dbl_div },
-	{ 0, &Type_double, "& double::operator+= & (double)", a_dbl_add },
-	{ 0, &Type_double, "& double::operator-= & (double)", a_dbl_sub },
-#endif
+static EfiFuncDef ftab_ext[] = {
+	{ 0, NULL, S " xdiv (" S ", " S ")", f_xdiv },
+	{ 0, NULL, S " xdiv1 (" S ", " S ")", f_xdiv1 },
+	{ 0, NULL, S " idx (" S ", " S ")", f_idx },
+	{ 0, NULL, S " rate (" S ", " S ")", f_rate },
+	{ 0, &Type_int, "rnd (" S ")", f_rnd },
 };
-
 
 /*	Initialisierung
 */
 
 void CmdSetup_double(void)
 {
-	AddFuncDef(fdef_double, tabsize(fdef_double));
+	AddFuncDef(ftab, tabsize(ftab));
+	AddFuncDef(ftab_ext, tabsize(ftab_ext));
 }

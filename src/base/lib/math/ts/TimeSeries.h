@@ -59,6 +59,7 @@ TimeIndex tindex_conv (TimeIndex idx, int type, int pos);
 int tindex_diff (TimeIndex a, TimeIndex b);
 int tindex_length (TimeIndex idx);
 int tindex_year (TimeIndex idx);
+int tindex_quart (TimeIndex idx);
 int tindex_month (TimeIndex idx);
 int tindex_day (TimeIndex idx);
 int tindex_floor (TimeIndex idx);

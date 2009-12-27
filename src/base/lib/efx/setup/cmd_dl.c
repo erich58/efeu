@@ -24,84 +24,19 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 #include <EFEU/mactools.h>
 #include <EFEU/cmdsetup.h>
-
-static char *LDPATH = ".:" String(EFEUROOT) "/lib";
+#include <EFEU/procenv.h>
+#include <EFEU/dl.h>
 
 static EfiVarDef dl_var[] = {
-	{ "LDPATH",	&Type_str, &LDPATH,
+	{ "LDPATH",	&Type_str, &so_path,
 		":*:search path for shared object modules\n"
-		":de:Suchpfad für shared object modules\n"},
+		":de:Suchpfad für shared object modules\n" },
 };
-
-#if	__linux__
-
-#include <dlfcn.h>
-
-static int libname (const char *name)
-{
-	if	(strchr(name, '/') || patcmp("lib*.so*", name, NULL))
-		return 0;
-
-	return 1;
-}
 
 static void f_loadlib (EfiFunc *func, void *rval, void **arg)
 {
-	char *lname = Val_str(arg[0]);
-	char *fname = Val_str(arg[1]);
-	char *path;
-	void *handle;
-	void (*init)(void);
-
-	if	(lname == NULL)	return;
-
-	path = fsearch(LDPATH, NULL, lname, "so");
-
-	if	(!path && libname(lname))
-	{
-		char *p = msprintf("lib%s", lname);
-		path = fsearch(LDPATH, NULL, p, "so");
-		memfree(p);
-	}
-
-	if	(path)
-	{
-		handle = dlopen(path, RTLD_GLOBAL|RTLD_NOW);
-		memfree(path);
-	}
-	else if	(libname(lname))
-	{
-		char *p = msprintf("lib%s.so", lname);
-		handle = dlopen(p, RTLD_GLOBAL|RTLD_NOW);
-		memfree(p);
-	}
-	else	handle = dlopen(lname, RTLD_GLOBAL|RTLD_NOW);
-
-	if	(handle == NULL)
-	{
-		io_printf(ioerr, "dlopen: %s\n", dlerror());
-	}
-	else if	(fname == NULL)
-	{
-		;
-	}
-	else if	((init = dlsym(handle, fname)) == NULL)
-	{
-		io_printf(ioerr, "dlsym: %s\n", dlerror());
-		dlclose(handle);
-	}
-	else	init();
+	loadlib(Val_str(arg[0]), Val_str(arg[1]));
 }
-
-#else
-
-static void f_loadlib(EfiFunc *func, void *rval, void **arg)
-{
-	io_printf(ioerr, "loadlib: not implemented\n");
-}
-
-#endif
-
 
 /*
 :*:

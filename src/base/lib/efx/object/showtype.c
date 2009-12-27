@@ -24,177 +24,198 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/printobj.h>
 #include <ctype.h>
 
-int ShowType(IO *io, const EfiType *type)
+static int not_a_name (const char *name)
+{
+	if	(name == NULL)	return 1;
+
+	if	(!(*name == '_' || isalpha((unsigned char) *name)))
+		return 1;
+
+	for (; *name; name++)
+		if (!(*name == '_' || isalnum((unsigned char) *name)))
+			return 1;
+
+	return 0;
+}
+
+static int show_enum (IO *io, const EfiType *type, int verbosity)
+{
+	int n;
+	char *delim;
+
+	n = io_puts("enum", io);
+
+	if	(type->name && type->name[0] != '_')
+	{
+		n += io_nputc(' ', io, 1);
+		n += io_puts(type->name, io);
+	}
+
+	delim = verbosity > 1 ? "\n\t" : " ";
+
+	if	(type->base != &Type_enum)
+	{
+		n += io_puts(" : ", io);
+		n += show_enum(io, type->base, verbosity);
+	}
+
+	n += io_puts(" {", io);
+
+	if	(type->vtab)
+	{
+		VarTabEntry *p;
+		size_t k;
+
+		p = type->vtab->tab.data;
+		k = type->vtab->tab.used;
+
+		for (; k-- > 0; p++)
+		{
+			if	(p->obj && p->obj->type == type)
+			{
+				n += io_puts(delim, io);
+
+				if	(not_a_name(p->name))
+				{
+					n += io_puts("\"", io);
+					n += io_xputs(p->name, io, "\"");
+					n += io_puts("\"", io);
+				}
+				else	n += io_puts(p->name, io);
+
+				n += io_printf(io, " = %d,",
+					Val_int(p->obj->data));
+
+				if	(p->desc && verbosity > 1)
+					n += io_printf(io, "\t/* %s */",
+						p->desc);
+			}
+		}
+	}
+
+	n += io_puts(verbosity > 1 ? "\n}" : " }", io);
+	return n;
+}
+
+static int show_struct (IO *io, const EfiType *type, int verbosity)
 {
 	EfiVar *st;
 	EfiType *last;
+	char *delim;
+	char *desc;
 	int n;
 
-	if	(type == NULL)
-		return io_puts(".", io);
+	n = io_puts("struct", io);
 
-	n = 0;
-
-	if	(type->list)
-		n += io_puts("struct ", io);
-
-	if	(type->name)
-		n += io_puts(type->name, io);
-	
-	if	(type->list)
+	if	(type->name && type->name[0] != '_')
 	{
-		n += io_puts(" { ", io);
-		last = NULL;
-
-		for (st = type->list; st != NULL; st = st->next)
-		{
-			if	(st->type != last)
-			{
-				if	(last != NULL)
-					n += io_puts("; ", io);
-
-				n += ShowType(io, st->type);
-			}
-			else	n += io_nputc(',', io, 1);
-
-			n += io_nputc(' ', io, 1);
-			n += io_puts(st->name, io);
-
-			if	(st->dim > 1)
-				n += io_printf(io, "[%d]", st->dim);
-
-			last = st->type;
-		}
-
-		n += io_puts(" }", io);
+		n += io_nputc(' ', io, 1);
+		n += io_puts(type->name, io);
 	}
+
+	if	(type->base)
+	{
+		n += io_puts(" : ", io);
+		n += PrintType(io, type->base, verbosity);
+	}
+
+	n += io_puts(" {", io);
+	delim = verbosity > 1 ? "\n\t" : " ";
+	n += io_puts(delim, io);
+	last = NULL;
+	desc = NULL;
+
+	for (st = type->list; st != NULL; st = st->next)
+	{
+		if	(!st->name)	continue;
+
+		if	(verbosity > 1 || st->type != last)
+		{
+			if	(last != NULL)
+			{
+				n += io_puts(";", io);
+
+				if	(desc)
+				{
+					n += io_puts(" /* ", io);
+					n += io_puts(desc, io);
+					n += io_puts(" */", io);
+				}
+
+				n += io_puts(delim, io);
+			}
+
+			if	(st->type == type->base)
+				n += io_puts(st->type->name, io);
+			else	n += ShowType(io, st->type);
+		}
+		else	n += io_nputc(',', io, 1);
+
+		n += io_nputc(' ', io, 1);
+		n += io_puts(st->name, io);
+
+		if	(st->dim > 1)
+			n += io_printf(io, "[%d]", st->dim);
+
+		last = st->type;
+
+		if	(verbosity > 1)
+			desc = st->desc;
+	}
+
+	if	(verbosity > 1)
+	{
+		if	(last)
+			n += io_nputc(';', io, 1);
+
+		if	(desc)
+		{
+			n += io_puts(" /* ", io);
+			n += io_puts(desc, io);
+			n += io_puts(" */", io);
+		}
+		
+		n += io_puts("\n}", io);
+	}
+	else	n += io_puts(" }", io);
 
 	return n;
 }
 
 
-static void list_name(IO *io, EfiVar *st)
+int PrintType (IO *io, const EfiType *type, int verbosity)
 {
-	ShowType(io, st->type);
+	if	(type == NULL)
+		return io_puts(".", io);
 
-	if	(st->name == NULL)
-		io_puts(" <noname>", io);
-	else if	(isalpha(st->name[0]) || st->name[0] == '_')
-		io_printf(io, " %s", st->name);
-	else	io_printf(io, " operator%s", st->name);
+	if	(verbosity <= 0)
+		return io_puts(type->name, io);
 
-	if	(st->dim > 1)	io_printf(io, "[%d]", st->dim);
+	if	(IsTypeClass(type, &Type_enum) && type != &Type_enum)
+		return show_enum(io, type, verbosity);
+
+	if	(type->list)
+		return show_struct(io, type, verbosity);
+
+	if	(type->dim)
+	{
+		int n = PrintType(io, type->base, 1);
+		n += io_printf(io, "[%d]", type->dim);
+		return n;
+	}
+
+	if	(type->base == &Type_vec)
+	{
+		EfiVec *vec = Val_ptr(type->defval);
+		int n = PrintType(io, vec->type, 1);
+		n += io_puts("[]", io);
+		return n;
+	}
+
+	return io_puts(type->name, io);
 }
 
-static void list_func(IO *io, const char *pfx, EfiFunc *func)
+int ShowType (IO *io, const EfiType *type)
 {
-	io_puts(pfx, io);
-	ListFunc(io, func);
-	io_putc('\n', io);
-}
-
-static void list_vfunc(IO *io, const char *pfx, const VecBuf *tab)
-{
-	EfiFunc **ftab;
-	int i;
-
-	io_puts(pfx, io);
-
-	if	(tab == NULL)
-	{
-		io_puts("NULL\n", io);
-		return;
-	}
-
-	ftab = (EfiFunc **) tab->data;
-
-	if	(pfx == NULL)
-	{
-		for (i = 0; i < tab->used; i++)
-			list_func(io, NULL, ftab[i]);
-	}
-	else if	(tab->used > 1)
-	{
-		io_puts("{\n", io);
-
-		for (i = 0; i < tab->used; i++)
-			list_func(io, "\t", ftab[i]);
-
-		io_puts("}\n", io);
-	}
-	else
-	{
-		io_puts("{ ", io);
-
-		if	(tab->used)
-			ListFunc(io, ftab[0]);
-
-		io_puts(" }\n", io);
-	}
-}
-
-static void show_base (IO *io, const EfiType *type)
-{
-	ShowType(io, type);
-
-	if	(type->base)
-	{
-		io_putc('(', io);
-		show_base(io, type->base);
-		io_putc(')', io);
-	}
-}
-
-void ListType(IO *io, const EfiType *type)
-{
-	EfiVar *st;
-	size_t size, tsize;
-
-	if	(type == NULL)	return;
-
-	io_puts("name = ", io);
-	ShowType(io, type);
-	io_printf(io, ", size = %d", type->size);
-	io_printf(io, ", recl = %d", type->recl);
-
-	if	(type->base)
-	{
-		io_puts(", base = ", io);
-		show_base(io, type->base);
-	}
-
-	if	(type->defval)
-	{
-		io_puts(", defval = ", io);
-		PrintData(io, type, type->defval);
-	}
-
-	if	(type->eval)	io_puts(", eval()", io);
-	if	(type->read)	io_puts(", read()", io);
-	if	(type->write)	io_puts(", write()", io);
-	if	(type->copy)	io_puts(", copy()", io);
-	if	(type->clean)	io_puts(", clean()", io);
-
-	io_putc('\n', io);
-	tsize = 0;
-
-	for (st = type->list; st != NULL; st = st->next)
-	{
-		if	(tsize != st->offset)
-			io_printf(io, "@%d:%d\n", tsize, st->offset - tsize);
-
-		size = st->type->size * (st->dim ? st->dim : 1);
-		tsize = st->offset + size;
-		io_printf(io, "@%d:%d\t", st->offset, size);
-		list_name(io, st);
-		io_putc('\n', io);
-	}
-
-	if	(type->fcopy)	list_func(io, "copy = ", type->fcopy);
-	if	(type->fclean)	list_func(io, "clean = ", type->fclean);
-	if	(type->create)	list_vfunc(io, "create = ", &type->create->tab);
-
-	list_vfunc(io, "konv = ", &type->konv);
-	ShowVarTab(io, "var", type->vtab);
-	io_putc('\n', io);
+	return PrintType(io, type, 1);
 }

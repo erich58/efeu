@@ -72,7 +72,7 @@ static void test_quote (IO *in, StrBuf *buf, int key)
 
 static char *quote_arg (IO *in, int c)
 {
-	sb_clear(&parse_buf);
+	sb_clean(&parse_buf);
 	copy_quote(in, &parse_buf, c);
 	sb_putc(0, &parse_buf);
 	return sb_memcpy(&parse_buf);
@@ -86,7 +86,7 @@ static char *parse_arg (IO *in, StrBuf *buf, int (*test)(int c))
 {
 	int c;
 
-	sb_clear(&parse_buf);
+	sb_clean(&parse_buf);
 
 	while ((c = io_skipcom(in, NULL, 0)) != EOF)
 	{
@@ -124,7 +124,7 @@ char *DocParseLine (IO *in, int flag)
 {
 	int c, d;
 
-	sb_clear(&parse_buf);
+	sb_clean(&parse_buf);
 
 	while ((c = io_skipcom(in, NULL, 0)) != EOF)
 	{
@@ -154,7 +154,7 @@ char *DocParsePar (IO *in)
 {
 	int c, flag;
 
-	sb_clear(&parse_buf);
+	sb_clean(&parse_buf);
 	flag = 1;
 
 	while ((c = io_skipcom(in, NULL, flag)) != EOF)
@@ -244,7 +244,7 @@ char *DocParseExpr (IO *in)
 
 		if	(c == '}')	return NULL;
 
-		sb_clear(&parse_buf);
+		sb_clean(&parse_buf);
 		copy_brace(in, &parse_buf);
 		return parse_data();
 	case '\n':
@@ -303,7 +303,7 @@ static char *do_parse (IO *in, int beg, int end)
 			return quote_arg(in, beg);
 	}
 
-	sb_clear(&parse_buf);
+	sb_clean(&parse_buf);
 	depth = 0;
 
 	while ((c = io_skipcom(in, NULL, 0)) != EOF)
@@ -368,7 +368,7 @@ char *DocParseName (IO *in, int key)
 	if	(!isalpha(c) && c != '_')
 		return key ? msprintf("%c", key) : NULL;
 
-	sb_clear(&parse_buf);
+	sb_clean(&parse_buf);
 
 	if	(key)	sb_putc(key, &parse_buf);
 
@@ -403,7 +403,7 @@ int DocParseNum (IO *in)
 {
 	int c;
 
-	sb_clear(&parse_buf);
+	sb_clean(&parse_buf);
 
 	while ((c = io_getc(in)) != EOF)
 	{
@@ -431,7 +431,7 @@ char *DocParseFlags (IO *in)
 {
 	int c;
 
-	sb_clear(&parse_buf);
+	sb_clean(&parse_buf);
 
 	while ((c = io_getc(in)) != EOF)
 	{

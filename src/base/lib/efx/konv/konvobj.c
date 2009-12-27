@@ -35,6 +35,12 @@ EfiObj *KonvObj (const EfiObj *obj, EfiType *def)
 	if	(obj->type == def || def == NULL)
 		return RefObj(obj);
 
+	if	(def == &Type_obj)
+		return obj2Obj(RefObj(obj));
+
+	if	(obj->type == &Type_obj)
+		return KonvObj(Val_obj(obj->data), def);
+
 	if	(GetKonv(&konv, obj->type, def))
 	{
 		EfiObj *x = NewObj(def, NULL);

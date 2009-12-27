@@ -38,3 +38,4 @@ If not, write to the Free Software Foundation, Inc.,
 52	$!: $0: more then one 'l' in integral constant.\n
 
 pnoarg	$!: parsub($0): arg $1 not defined.\n
+imode	$!: info mode $1 not defined.\n

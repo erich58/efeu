@@ -51,6 +51,9 @@ l|Type = "LaTeX"
 p|Type = "tex2ps"
 	:*:PostScript document over LaTeX
 	:de:PostScript-Dokument über LaTeX
+-pdf|Type = "tex2pdf"
+	:*:PDF document over LaTeX
+	:de:PDF-Dokument über LaTeX
 h|Type = "html"
 	:*:html document
 	:de:HTML-Dokument

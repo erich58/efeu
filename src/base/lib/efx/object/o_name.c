@@ -83,20 +83,10 @@ EfiObj *Var2Obj (EfiVar *var, const EfiObj *obj)
 		return ConstObj(var->type, NULL);
 
 	if	(var->dim)
-	{
-		Buf_vec.type = var->type;
-		Buf_vec.data = var->data;
-		Buf_vec.dim = var->dim;
-		return NewObj(&Type_vec, &Buf_vec);
-	}
+		return EfiVecObj(var->type, var->data, var->dim);
 
 	if	(var->type->dim)
-	{
-		Buf_vec.type = var->type->base;
-		Buf_vec.dim = var->type->dim;
-		Buf_vec.data = var->data;
-		return NewObj(&Type_vec, &Buf_vec);
-	}
+		return EfiVecObj(var->type->base, var->data, var->type->dim);
 
 	return LvalObj(&Lval_ptr, var->type, var->data);
 }

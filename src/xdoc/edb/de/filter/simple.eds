@@ -1,0 +1,102 @@
+\sec	Standardfilter
+
+Neben den bereits erwähnten Filtern |script|, |trans| und |cut| stehen
+noch die folgenden Filter standardmäßig zur Verfügung:
+
+\ssec \index[Datensatzselektion]\index{Teildatensätze auswählen}
+
+|test=|<expr>
+
+\index[Filter |test|]
+Der Filter \index{|test|} führt eine einfache Datensatzselektion mithilfe
+eines Testausdrucks dar. Datensätze, für die der Ausdruck <expr>
+logisch falsch liefert, werden ignoriert. Der folgende Aufruf
+selektiert alle Frauen aus der Beispieldatei |pers.edb|:
+	|edb -f test=gender==2 pers.edb|
+
+\ssec \index{Beschränken der Datensätze}
+
+|clip=|<skip>[|,|<lim>]
+
+\index[Filter |clip|]
+Der Filter \index{|clip|} beschränkt die Datenbank auf <lim> Datensätze, wobei
+die ersten <skip> Datensätze überlesen werden. Falls <lim> fehlt, oder
+0 spezifiziert würde, wird die Datenbank nicht beschränkt, es werden
+nur <skip> Datensätze überlesen.
+
+\ssec \index{Doppelte Datensätze entfernen}
+
+|uniq|
+
+\index[Filter |uniq|]
+Der Filter \index{|uniq|} reduziert mehrere aufeinanderfolgende, idente
+Datensätze auf einen einzelnen Datensatz.
+
+\ssec \index{Aggregation von Datensätzen}
+
+|sum=|<name>,&ldots;
+
+\index[Filter |sum|]
+Der Filter \index{|sum|} dient zur Aggregation einzelner Datenzeilen.
+Als Argument wird die Liste der aufzusummierenden Variablen
+angegeben. Summiert wird über alle Datensätze, die bis auf die
+angegebenen Variablen identisch sind. Bei der Zusammenfassung
+von Datenzeilen in ein Aggregatfile ist vorher eine geeignete
+Sortierung vorzunehmen.
+
+Neben dieser einfachen Form von Aggregation besteht die Möglichkeit,
+ein EDB-Datenfile als Datenmatrix auszugeben. Vergleiche dazu
+Abschnitt \ref{md}, Seite \pref{md}.
+
+\ssec \index{Sortieren von Datensätzen}
+
+|sort|[|=|<cmp>]
+
+\index[Filter |sort|]
+Der Filter \index{|sort|} dient zum Sortieren eines Datenfiles.
+Als Argument wird die Sortierdefinition übergeben. Ohne Angabe einer
+Sortierdefinition wird die binäre Repräsentation der Datensätze
+verglichen.
+
+Der folgende Aufruf:
+	|edb pers.edb -f sort=name|
+sortiert die Daten der Beispieldatei |pers.edb| nach dem Namen der
+Personen.
+
+\ssec	\index{Verknüpfen von Datensätzen}
+
+|join[|<par>|]=|<file>
+
+\index[Filter |join|]
+Der Filter \index{|join|} verknüpft die Datensätze mit dem EDB-Datenfile <file>.
+Er stellt eine Alternative zur Verwendung des Kommandos
+\index{|edbjoin|} dar und erlaubt das Einbinden von Daten innerhalb einer
+\index{Filterkette}.
+
+Die folgenden beiden Aufrufe zur Verknüfung der Beispieldateien
+|pers.edb| und |data.edb| sind gleichwertig:
+
+---- verbatim
+edbjoin -j key=num pers.edb data.edb
+edb -f join[key=num]=data.edb pers.edb
+---- verbatim
+
+\ssec	\index{Duplizieren von Datensätzen}
+
+|dup=|<name>[|=|<val>],&ldots;
+
+\index[Filter |dup|]
+Der Filter \index{|dup|} dupliziert für jedes Element der Komponentenliste die
+einzelnen Datenzeilen, wobei für die Komponente <name> der
+Vorgabewert <val> eingesetzt wird. Falls <val> fehlt, wird der
+Defaultwert des Datentyps verwendet. Der Filter dient zur
+Konstruktion von Randsummen beim Aufbau von Aggregatfiles.
+
+\ssec	\index{Datenkopie in Datei ablegen}
+
+|tee[|<mode>|]=|<path>
+
+\index[Filter |tee|]
+Der Filter \index{|tee|} legt für alle Datensätze eine Kopie in der
+Datei <path> ab. Durch <mode> wird der Ausgabemodus festgelegt. Damit
+können Zwischenstufen einer komplexen \index{Filterkette} ausgegeben werden.

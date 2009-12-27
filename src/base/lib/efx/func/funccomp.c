@@ -22,6 +22,29 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/object.h>
 
+static int cmp_type (EfiType *a, EfiType *b)
+{
+	int r;
+
+	if	(a == b)	return 0;
+	if	(a == NULL)	return -1;
+	if	(b == NULL)	return 1;
+
+	if	((r = cmp_type(a->base, b->base)))
+		return r;
+
+	if	(a->dim < b->dim)	return -1;
+	if	(a->dim > b->dim)	return 1;
+
+	if	(a->order < b->order)	return -1;
+	if	(a->order > b->order)	return 1;
+
+	if	(a->size < b->size)	return -1;
+	if	(a->size > b->size)	return 1;
+
+	return strcmp(a->name, b->name);
+}
+
 /*
 Die Sortierordnung bestimmt die Funktionssuche.
 Funktionen mit fixer Argumentzahl kommen vor Funktionen mit variabler
@@ -30,6 +53,9 @@ Funktionen mit variabler Argumentzahl werden nach absteigender
 Argumentzahl sortiert.
 Bei gleichem Datentype werden L-Werte vor Konstanten gereiht.
 Bei verschiedenen Datentype wird das Funktionsgewicht berücksichtigt.
+
+Datentypen werden folgend gereiht:
+Kleine (size) Datentypen werden vorgereiht
 */
 
 
@@ -73,18 +99,12 @@ int FuncComp (const void *pa, const void *pb)
 		}
 		else if	(a->arg[i].type != b->arg[i].type)
 		{
-			/*
-			if (a->arg[i].type == NULL)	return 1;
-			if (b->arg[i].type == NULL)	return -1;
-			*/
 			if (a->weight < b->weight)	return -1;
 			if (a->weight > b->weight)	return 1;
 
-			if (a->arg[i].type < b->arg[i].type) return 1;
-
-			return -1;
+			return cmp_type(a->arg[i].type, b->arg[i].type);
 		}
 	}
 
-	return 0;
+	return cmp_type(a->type, b->type);
 }

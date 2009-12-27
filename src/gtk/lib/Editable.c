@@ -25,6 +25,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/stdtype.h>
 #include <EFEU/CmdPar.h>
 
+#if	HAS_GTK
+
 #define	STR(arg)	(Val_ptr(arg) ? Val_ptr(arg) : "")
 
 static void get_text (EfiObj *obj)
@@ -81,6 +83,8 @@ void EGtkEditable_setup (void)
 		entry_member, tabsize(entry_member));
 	AddFuncDef(fdef, tabsize(fdef));
 }
+
+#endif
 
 /*
 $SeeAlso

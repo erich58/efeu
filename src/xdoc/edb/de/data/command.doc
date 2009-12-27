@@ -1,0 +1,91 @@
+\sec	Anweisungen
+
+\ssec	Allgemeine Anweisungen
+
+|@head|\br
+<Befehlszeilen>
+
+Die \index{|@head|-Anweisung} dient zur Ausführung von einzelnen
+Befehlszeilen des \index{EFEU-Interpreter}s. In der Regel werden dabei
+\index{Headerdateien} und \index{gemeinsam genutzte Programmbibliotheken}
+geladen, die zur Abarbeitung des Datenfiles notwendig sind.
+
+|@end|
+
+Die \index{|@end|-Anweisung} ist eine \index{Leeranweisung}. Sie erlaubt das
+Einfügen von Kommentaren und Leerzeilen nach dem Datenteil einer
+Anweisung, weil sie, so wie jede andere Anweisung auch, den Datenteil
+der vorangehenden Anweisung abschließt.
+
+\ssec	Konstruktion von Datenschnittstellen
+
+|@type|\br
+<Typedefinition>
+
+Die \index{|@type|-Anweisung} richtet eine neue Datenschnittstelle mit dem
+angegebenen Datentyp ein. Die Syntax wird
+im Abschnitt \ref{type}, Seite \pref{type} beschrieben.
+
+|@expr|\br
+<Ausdruck>
+
+Die \index{|@expr|-Anweisung} definiert einen \index{Eingabekanal} über einen
+Ausdruck. Bei jedem Lesezugriff auf die Datenschnittstelle wird der
+Ausdruck abgearbeitet. Die Verarbeitung kann bei der Erreichung eines
+bestimmten Zustands abgebrochen werden.
+
+|@data| <mode>\br
+<Daten>
+
+Die \index{|@data|-Anweisung} startet den Datenteil für die aktuelle
+Datenschnittstelle. Der Modus <mode> gibt den Verarbeitungsmodus an.
+Der Datenteil dieser Anweisung endet beim Ende der Datei und kann
+wahlweise Binär- oder Textdaten enthalten.
+Weitere Informationen dazu stehen im Abschnitt \ref{read}, Seite \pref{read}.
+
+\ssec	Einbinden anderer EDB-Datenfiles
+
+|@file| [|merge|[=<key>] \| |sort|[=<key>]]\br
+<Dateiliste>
+
+Die \index{|@file|-Anweisung} erzeugt eine Datenschnittstelle durch
+Zusammenfügen von einzelnen EDB-Datenfiles. Jede Zeile des Datenteils
+enthält den Namen einer Datei oder eines Befehlsausdrucks (Pipe-Symbol
+am Anfang der Zeile).
+\index[Umbrechen langer Zeilen]Lange Zeilen können mittels eines
+\index{Gegenschrägstrich}s vor dem Zeilenumbruch umgebrochen werden.
+Vor der Auswertung der Dateinamen wird eine \index{Parametersubstitution}
+durchgeführt. Damit können Variablen eingebaut werden.
+
+Falls als Argument \index{|merge|} oder \index{|sort|} angegeben
+wurde, werden die einzelnen Dateien nicht hintereinandergehängt,
+sondern bezüglich der \index{Vergleichsdefinition} <key> gemischt.
+Bei |sort| werden die einzelnen Dateien zuvor noch sortiert.
+
+Falls eine aktuelle Datenschnittstelle existiert und noch keine
+Eingabedefinition aufweist, werden für diese die Eingabedefinitionen
+übernommen.
+
+\ssec	Manipulation von Datenschnittstellen
+
+|@paste| [|merge|[=<key>] \| |sort|[=<key>]]\br
+
+\index[Zusammenhängen von Datenschnittstellen]
+Die \index{|@paste|-Anweisung} hängt die vorhergehende
+Datenschnittstelle mit der aktuellen zusammen. Die Argumente haben die
+gleiche Bedeutung wie bei der \index{|@file|-Anweisung}.
+
+|@join|\br
+<Parameter>
+
+\index[Verknüpfen von Datenschnittstellen]
+Die \index{|@join|-Anweisung} verknüpft die vorhergehende
+Datenschnittstelle mit der aktuellen (Details zu den
+Verknüpfungsparametern folgen).
+
+|@filter|\br
+<Filteranweisungen>
+
+Mithilfe der \index{|@filter|-Anweisung} können beliebige \index{Filter}
+auf die aktuelle Datenschnittstelle gesetzt werden. Die Syntax ist wie bei
+einem Filterskript, Abschnitt \ref{fscript}, Seite \pref{fscript}.

@@ -1,0 +1,49 @@
+\preface
+The EFEU-shell |esh| stands not only for a command with the same name
+but also for a interpreter, which is called by a C-library function.
+He plays a central role in the context of EFEU and is an importand
+tool used over years by the Synthesis Research Institute for data analysis.
+
+My first attempt to write a command interpreter was in the early
+eighties. I did it as fun on programming in the years of study.
+At that time, I did'nt yet know UNIX and C and used Fortran.
+There is nothing left back from this version beside some recollections.
+
+At the erarly nineties I worked on the automatic document generating
+from data cubes. A simple data collection does not suffice all
+requirements and I needed some calculating. I needed a command
+interpreter on the fast. Motivated from some expirience in
+PostScript, I implemented a stack orientated interpreter.
+
+A stasck orientated interpreter is easy to implement, but horrible
+to use. The resole of terms and the right order of function calls
+remains by the user. Over and over you need to thougth over the
+order of the arguments on the stacks, how they are needed by the
+next function call and how do reorder it.
+
+So I startet again the work on an command interpreter.
+The syntax should by similiar to C, because I had many years of
+experience in C and I learned to love this language.
+
+This document gives you a brief introduction to the use of
+the EFEU-interpreter. The interpreter may be invoked either by the
+command |esh| (the EFEU shell) or by calling a C library function.
+The main usage should be the interpretation of configuration scripts.
+The interpreter should be able to use directly C data structrures and
+provide a simple interface to C written functions.
+
+1994 were the interpreter and the |esh| command applicable. The first
+application was a simulation model of the vienna house market.
+The nearness to C was beneficial, time expansive algorithmen could
+be stepwise replaced by C functions to improve the run time of the
+model.
+
+In the next years I encanced the interpreter by several functions.
+A collection of commands to manipulate data cubes were replaced by
+|esh| scripts. The driving forces were the house market modell and
+the report generating.
+
+The documentation is in work.
+
+	Erich Frühstück\br
+	Wördern, \thedate

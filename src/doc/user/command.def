@@ -7,7 +7,6 @@ edf
 efeu-magic
 efeu-xlib
 efeuconfig
-efeubuild
 efeucc
 efeudoc
 efeugen
@@ -15,7 +14,6 @@ efeuscript
 efeutop
 efile
 eis
-eis-cgi
 esh
 findgrep
 globcvs
@@ -45,6 +43,7 @@ mvi
 pp2dep
 ppfilter
 sc2md
+shmkmf
 src2doc
 tex2ps
 unblock

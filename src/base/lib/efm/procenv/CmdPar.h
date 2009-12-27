@@ -211,13 +211,16 @@ extern void CmdParExpand_show (IO *io, const char *fmt);
 */
 
 extern int CmdPar_docmode;
-extern void CmdPar_synopsis (CmdPar *par, IO *out);
+extern void CmdPar_synopsis (CmdPar *par, IO *out, int flag);
 extern void CmdPar_arglist (CmdPar *par, IO *out);
+extern void CmdPar_options (CmdPar *par, IO *out);
 extern void CmdPar_environ (CmdPar *par, IO *out);
 extern void CmdPar_resource (CmdPar *par, IO *out);
+extern void CmdPar_expand (CmdPar *par, IO *in, IO *out);
 extern void CmdPar_iousage (CmdPar *par, IO *out, IO *def);
 extern void CmdPar_usage (CmdPar *par, IO *out, const char *fmt);
 extern void CmdPar_manpage (CmdPar *par, IO *out);
+extern char *CmdPar_hpath (CmdPar *par);
 
 /*
 $SeeAlso

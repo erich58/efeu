@@ -1,0 +1,125 @@
+/*
+:de:Headerdatei für eistk
+
+$Copyright (C) 2006 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+*/
+
+#ifndef	EisTk_hdr
+#define	EisTk_hdr	1
+
+loadlib("ETK", "SetupETK");
+
+InfoNode EisTk_node = InfoNode(NULL);
+
+tclfunc prev_node ()
+{
+	EisTk_node = EisTk_node.prev;
+	EisTk_show();
+}
+
+tclfunc select_node (int arg)
+{
+	EisTk_node = EisTk_node[arg];
+	EisTk_show();
+}
+
+tcl set last_pos 1.0
+
+tcl proc set_pos {key value pos} {
+	global last_pos
+	set last_pos $pos
+}
+
+tcl proc set_tag {name} {
+	global last_pos
+	.text tag add $name $last_pos insert
+	.text tag configure $name -foreground blue
+	.text tag bind $name <Enter> \
+		".text tag configure $name -foreground coral"
+	.text tag bind $name <Leave> \
+		".text tag configure $name -foreground blue"
+	.text tag bind $name <Button-1> "select_node $name" 
+}
+
+void EisTk_show ()
+{
+	tclvar("label", EisTk_node.label);
+	tcl .text configure -state normal
+	tcl .text delete 1.0 end
+	tcl update idletask
+	tcl .text insert end [ @expr EisTk_node.desc ]
+	tcl .text insert end "\n"
+	tcl update idletask
+
+	for (int i = 0; i < EisTk_node.dim; i++)
+	{
+		InfoNode x = EisTk_node[i];
+		tcl .text dump -mark -command set_pos insert
+		tcl .text insert end [ @expr x.name ]
+		tcl .text insert end "\t"
+		tcl set_tag [ @expr i ]
+		tcl .text insert end [ @expr x.label ]
+		tcl .text insert end "\n"
+		tcl update idletask
+	}
+
+	tcl .text configure -state disabled
+}
+
+void EisTk (str name)
+{
+	if	(!tkinit())
+	{
+		loadlib("efwin", "SetupWin");
+		ConsoleInfoBrowser(name);
+		return;
+	}
+
+	tcl frame .head
+	tcl frame .desc
+	tcl pack .head -side top -expand 0 -fill x
+	tcl pack .desc -side top -expand 1 -fill both
+
+	tcl button .back -text Back -command prev_node
+	tcl button .quit -text Quit -command { destroy . }
+
+	tcl label .label -textvariable label -justify right
+
+	tcl pack .quit .back -in .head -side right
+	tcl pack .label -in .head -side left
+
+	tcl text .text -relief raised -bd 2 \
+		-yscrollcommand ".scroll set"
+	tcl scrollbar .scroll -command ".text yview"
+	tcl pack .scroll -in .desc -side right -fill y
+	tcl pack .text -in .desc -side left -expand 1 -fill both
+
+//	tcl bind . <Key> { puts "Key %K" }
+	tcl bind . <Key> { bell }
+	tcl bind all <q> { destroy . }
+	tcl bind all <Escape> { destroy . }
+	tcl bind all <Left> { prev_node }
+	tcl bind all <Button-3> { prev_node }
+
+	EisTk_node = InfoNode(name);
+	EisTk_show();
+	tkmain();
+}
+
+#endif	/* EisTk_hdr */

@@ -25,6 +25,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/CmdPar.h>
 #include <EFEU/parsedef.h>
 
+#if	HAS_GTK
+
 static char connect_pfx[] = "connect";
 
 void EGtkSig_var (const char *name, EfiType *type, void *data)
@@ -88,3 +90,5 @@ void AddEGtkSig (EfiType *type, EGtkSigDef *def, size_t dim)
 		AddFunc(func);
 	}
 }
+
+#endif

@@ -90,6 +90,27 @@ static void skipline (SrcData *data, int c)
 	while ((c = io_skipcom(data->ein, NULL, 0)) != EOF && c != '\n');
 }
 
+static void srcline (SrcData *data, char *head, int c)
+{
+	StrBuf *buf = data->doc.tab[BUF_DESC];
+	IO *aus = io_strbuf(buf);
+
+	if	(sb_getpos(data->buf))
+		DocBuf_copy(&data->doc, data->buf, buf, NULL);
+
+	if	(buf->pos && buf->data[buf->pos - 1] != '\n')
+		sb_putc('\n', buf);
+
+	sb_puts("---- verbatim\n", buf);
+	sb_puts(head, buf);
+
+	do	subcopy(data->ein, aus, c, 0);
+	while ((c = io_skipcom(data->ein, NULL, 0)) != EOF && c != '\n');
+
+	io_close(aus);
+	sb_puts("\n----\n", buf);
+}
+
 /*	Präprozessorzeile umkopieren
 */
 
@@ -127,27 +148,109 @@ static void ppline (SrcData *data)
 	ppcopy(data->ein, NULL, NULL);
 }
 
+static void subcopy2 (IO *ein, IO *aus, int delim)
+{
+	int c;
+
+	while ((c = io_skipcom(ein, NULL, 0)) != EOF && c != delim)
+		subcopy(ein, aus, c, 0);
+
+	io_ungetc(c, ein);
+}
+
 static void keyline (SrcData *data, int c)
 {
 	Decl *decl;
 	IO *aus;
+	char *name;
 	decl = parse_decl(data->ein, c);
+
+	name = mstrncpy(decl->def + decl->start, decl->end - decl->start);
+
+	if	(InsertCode)
+	{
+		StrBuf *buf = data->doc.tab[BUF_DESC];
+
+		if	(decl->type & data->mask)
+		{
+			aus = io_strbuf(data->doc.synopsis);
+			Decl_print(decl, aus, name);
+			io_close(aus);
+		}
+
+		sb_printf(data->doc.tab[BUF_DESC], "\n/* %s */\n", name);
+		SrcData_copy(data, buf, name);
+		aus = io_strbuf(buf);
+		io_puts("---- verbatim\n", aus);
+		io_puts(decl->def, aus);
+
+		switch (decl->type)
+		{
+		case DECL_VAR:
+		case DECL_SVAR:
+		case DECL_TYPE:
+		case DECL_STRUCT:
+			subcopy2(data->ein, aus, ';');
+			break;
+		default:
+			break;
+		}
+
+		subcopy2(data->ein, aus, '\n');
+
+		switch (decl->type)
+		{
+		case DECL_FUNC:
+		case DECL_SFUNC:
+			io_putc(' ', aus);
+			io_puts(decl->arg, aus);
+
+			while ((c = io_skipcom(data->ein, NULL, 0)) == '\n')
+				subcopy(data->ein, aus, c, 0);
+
+			if	(c != EOF)
+			{
+				subcopy(data->ein, aus, c, 0);
+				subcopy2(data->ein, aus, '\n');
+			}
+
+			break;
+		default:
+			break;
+		}
+
+		sb_puts("\n----\n", buf);
+		io_close(aus);
+		memfree(name);
+		return;
+	}
 
 	if	(decl->type & data->mask)
 	{
-		char *name = mstrncpy(decl->def + decl->start,
-				decl->end - decl->start);
 		aus = io_strbuf(data->doc.synopsis);
 		Decl_print(decl, aus, name);
 		io_close(aus);
+
 		sb_printf(data->doc.tab[BUF_DESC], "\n/* %s */\n", name);
 		SrcData_copy(data, data->doc.tab[BUF_DESC], name);
-		memfree(name);
+	}
+	else if	(sb_getpos(data->buf) && (decl->type & data->xmask))
+	{
+		sb_printf(data->doc.tab[BUF_DESC], "\n/* %s */\n", name);
+		SrcData_copy(data, data->doc.tab[BUF_DESC], name);
+
+		aus = io_strbuf(data->doc.tab[BUF_DESC]);
+		io_puts("\n\\code\n", aus);
+		Decl_print(decl, aus, name);
+		io_puts("\\end\n", aus);
+		io_close(aus);
 	}
 	else	SrcData_copy(data, NULL, NULL);
 
 	while ((c = io_skipcom(data->ein, NULL, 0)) != EOF && c != '\n')
 		subcopy(data->ein, NULL, c, 0);
+
+	memfree(name);
 }
 
 
@@ -171,6 +274,17 @@ static char *get_title (StrBuf *buf)
 	return sb2str(buf);
 }
 
+void SrcData_title (SrcData *data, const char *name)
+{
+	if	(sb_getpos(data->buf))
+	{
+		StrBuf *buf = sb_create(0);
+		SrcData_copy(data, buf, name);
+		memfree(data->doc.var[VAR_TITLE]);
+		data->doc.var[VAR_TITLE] = get_title(buf);
+	}
+}
+
 void SrcData_eval (SrcData *data, const char *name)
 {
 	int c;
@@ -179,7 +293,7 @@ void SrcData_eval (SrcData *data, const char *name)
 
 	if	(sb_getpos(data->buf))
 	{
-		StrBuf *buf = new_strbuf(0);
+		StrBuf *buf = sb_create(0);
 		SrcData_copy(data, buf, name);
 		memfree(data->doc.var[VAR_TITLE]);
 		data->doc.var[VAR_TITLE] = get_title(buf);
@@ -194,6 +308,10 @@ void SrcData_eval (SrcData *data, const char *name)
 		else if	(isalpha(c) || c == '_')
 		{
 			keyline(data, c);
+		}
+		else if	(InsertCode)
+		{
+			srcline(data, NULL, c);
 		}
 		else	skipline(data, c);
 	}

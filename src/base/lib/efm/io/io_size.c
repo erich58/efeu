@@ -26,7 +26,7 @@ If not, write to the Free Software Foundation, Inc.,
 /*
 $Description
 
-Die kompakte Darstellung einer Größenangabe erlaubt eine Dichte
+Die kompakte Darstellung einer Größenangabe erlaubt eine dichte
 Darstellung von Datenwerten unterschiedlicher Größenordnung.
 Die Zahl der benötigten Byte hängt vom Größenwert ab.
 
@@ -36,7 +36,7 @@ Diese werden beginnend beim niedrigsignifikantesten Wert ausgegeben,
 wobei das 8. Bit als Flag dient und anzeigt, ob noch ein zusätzliches Tupel
 benötigt wird.
 
-Die folgende Tabelle zeigt Beispielhaft die Umkodierung:
+Die folgende Tabelle zeigt beispielhaft die Umkodierung:
 ---- verbatim
 0	00000000
 1	00000001
@@ -59,16 +59,30 @@ Die folgende Tabelle zeigt Beispielhaft die Umkodierung:
 /*
 Die Funktion |$1| liest eine kompakte Größenangabe
 aus der Eingabestruktur <io>.
+
+$Diagnostic
+Die Funktion |$1| liefert die Zahl der gelesenen Byte.
 */
 
-size_t io_getsize (IO *io)
+size_t io_read_size (size_t *ptr, IO *io)
 {
+	size_t val = 0;
+	size_t n = 0;
+	int shift = 0;
 	int c;
-	
-	if	((c = io_getc(io)) == EOF)
-		return 0;
 
-	return (c & M_FLAG) ? (io_getsize(io) << SHIFT) + (c & M_DATA) : c;
+	while ((c = io_getc(io)) != EOF)
+	{
+		val += (c & M_DATA) << shift;
+		shift += 7;
+		n++;
+
+		if	(!(c & M_FLAG))	break;
+	}
+
+	if	(*ptr)	*ptr = val;
+
+	return n;
 }
 
 /*
@@ -76,25 +90,19 @@ Die Funktion |$1| schreibt eine Größenangabe
 in kompakter Form in die Ausgabestruktur <io>.
 
 $Diagnostic
-Die Funktion |$1| liefert die Zahl der ausgegebenen Byte oder
-EOF bei einem Ausgabefehler.
+Die Funktion |$1| liefert die Zahl der ausgegebenen Byte.
 */
 
-int io_putsize (size_t val, IO *io)
+size_t io_write_size (size_t val, IO *io)
 {
-	if	(io && io->put)
+	int n = 0;
+
+	for (n = 0; val > M_DATA; n++)
 	{
-		int n = 0;
-
-		while (val > M_DATA)
-		{
-			io->put(M_FLAG | (val & M_DATA), io->data);
-			val >>= SHIFT;
-			n++;
-		}
-
-		io->put(val, io->data);
-		return n + 1;
+		io_putc(M_FLAG | (val & M_DATA), io);
+		val >>= SHIFT;
 	}
-	else	return 0;
+
+	io_putc(val, io);
+	return n + 1;
 }

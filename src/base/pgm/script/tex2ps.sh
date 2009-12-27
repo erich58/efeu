@@ -1,5 +1,5 @@
 #!/bin/sh
-# :*:convert TeX-document to PostScript
+# :*:process TeX-document
 # :de:TeX-Formatierung
 #
 # $Copyright (C) 1993, 2001 Erich Frühstück
@@ -21,6 +21,7 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 # $pconfig
+# Version="$Id: tex2ps.sh,v 1.9 2005-09-23 07:37:39 ef Exp $"
 # q |
 #	:*:landscape
 #	:de:Landscape
@@ -32,10 +33,10 @@
 #	:de:Auflösung
 # :src |
 #	:*:source
-#	:de:Ausgabefile
+#	:de:Definitionsfile
 # ::ps |
 #	:*:target
-#	:de:Definitionsfile
+#	:de:Ausgabefile
 
 usage ()
 {
@@ -46,6 +47,7 @@ EOF
 
 case "$1" in
 -\?|--help*)	usage $1; exit 0;;
+--version)	efeuman -- $0 $1 || grep 'Version="[$]Id:'; exit 0;;
 esac
 
 #	parse command line
@@ -75,6 +77,9 @@ then
 	exit 1
 fi
 
+trap "rm -rf $name.*" 0
+trap "exit 1" 1 2 3
+
 #	create input file
 
 if
@@ -99,7 +104,7 @@ else
 fi
 
 
-#	formatting mit tex oder latex
+#	formatting with tex or latex
 
 if
 	fgrep -c documentstyle $texfile > /dev/null
@@ -113,6 +118,13 @@ else
 	cmd=tex
 	echo "\\\\end" >> $texfile
 fi
+
+case `basename $0` in
+	tex2pdf) 
+		cmd="pdf$cmd"
+		dvifile=$name.pdf
+		;;
+esac
 
 echo "formatting..." >&2
 
@@ -156,7 +168,3 @@ then
 else
 	cp $outfile $2
 fi
-
-#	cleanup
-
-rm -f $name.*

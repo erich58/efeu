@@ -53,8 +53,9 @@ double NormalRandom (Random *rd)
 	return x;
 }
 
-/*	Poissonverteilung: bei groﬂem Mittelwert wird Normalverteilung
-	verwendet. Ab 9 ann‰hernd Normalverteilt, ab 700 ‹berlauf.
+/*	Poissonverteilung: Bei groﬂem Mittelwert wird eine Normalverteilung
+	verwendet. Ab 9 sind die Werte ann‰hernd normalverteilt, ab 700
+	kommt es zu einem ‹berlauf bei der Berechnung.
 */
 
 #define	POISSON_MAX	20.5 	/* 9 <= x <= 700 */

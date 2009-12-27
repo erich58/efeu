@@ -28,6 +28,14 @@ static void d_vdef (const EfiType *type, void *tg);
 static void c_vdef (const EfiType *type, void *tg, const void *src);
 static EfiObj *e_vdef(const EfiType *type, const void *ptr);
 
+typedef struct {
+	EfiType *type;	/* Variablentype */
+	EfiName name;	/* Namensdefinition */
+	unsigned cnst;	/*  Flag für Konstante */
+	EfiObjList *idx; /* Indexliste */
+	EfiObj *defval;	/* Initialisierungswert */
+} EfiVarDecl;
+
 EfiType Type_vdef = EVAL_TYPE("_VarDecl_", EfiVarDecl, e_vdef, d_vdef, c_vdef);
 
 /*	Scope-Namen lesen
@@ -156,9 +164,19 @@ EfiObj *Parse_vdef (IO *io, EfiType *type, int flag)
 		}
 
 		if	(strcmp("const", tname) == 0)
+		{
 			flag |= VDEF_CONST;
+		}
+		else if	(strcmp("typeof", tname) == 0)
+		{
+			EfiObj *obj = EvalObj(Parse_term(io, 0), NULL);
+			type = obj ? obj->type : NULL;
+			UnrefObj(obj);
+		}
 		else if	((type = get_type(io, tname)) == NULL)
+		{
 			return NULL;
+		}
 
 		memfree(tname);
 	}
@@ -313,6 +331,7 @@ static EfiObj *e_vdef(const EfiType *type, const void *ptr)
 {
 	const EfiVarDecl *vdef;
 	EfiVar *var;
+	VarTabEntry *entry;
 	EfiObj *obj, *defval;
 	EfiType *vartype;
 	EfiVarTab *vtab;
@@ -365,9 +384,29 @@ static EfiObj *e_vdef(const EfiType *type, const void *ptr)
 	}
 	else	dim = 0;
 
-	var = NewVar(vartype, name, dim);
-	AddVar(vtab, var, 1);
-	obj = Var2Obj(var, NULL);
+	vtab = CurrentVarTab(vtab);
+	entry = VarTab_get(vtab, name);
+
+	if	(entry)
+	{
+		if	(entry->type != vartype)
+			dbg_note(NULL, "[efmain:154b]", "s", name);
+
+		if	(entry->get)
+			obj = entry->get(NULL, entry->data);
+		else	obj = RefObj(entry->obj);
+	}
+	else if (dim)
+	{
+		var = NewVar(vartype, name, dim);
+		AddVar(vtab, var, 1);
+		obj = Var2Obj(var, NULL);
+	}
+	else
+	{
+		obj = LvalObj(NULL, vartype);
+		VarTab_xadd(vtab, mstrcpy(name), NULL, RefObj(obj));
+	}
 
 	if	(defval)
 		return AssignObj(obj, defval);

@@ -99,7 +99,8 @@ MdClass *md_subclass (MdClass *base, const char *def)
 	if	(def == NULL)	return base;
 
 	sub = memalloc(sizeof(MdSubClass) + base->dim * sizeof(int));
-	sub->name = NULL;
+	sub->name = msprintf("%s[%s]", base->name, def);
+	sub->desc = msprintf("subclass of %s", base->desc);
 	sub->dim = 0;
 	sub->label = NULL;
 	sub->classify = subclassify;
@@ -111,7 +112,7 @@ MdClass *md_subclass (MdClass *base, const char *def)
 
 	io = io_cstr(def);
 	buf_label.used = 0;
-	buf = new_strbuf(0);
+	buf = sb_create(0);
 
 	while ((c = io_eat(io, "%s;")) != EOF)
 	{
@@ -127,7 +128,7 @@ MdClass *md_subclass (MdClass *base, const char *def)
 			c = scan_name(io, buf, ";");
 		}
 
-		dim = strsplit((char *) buf->data, ",", &list);
+		dim = mstrsplit((char *) buf->data, ",", &list);
 
 		for (i = 0; i < base->dim; i++)
 		{
@@ -159,8 +160,11 @@ MdClass *md_subclass (MdClass *base, const char *def)
 		memfree(list);
 	}
 
+	if	(sub->dim == 0)
+		dbg_error(NULL, "[mdmat:46]", NULL);
+
 	io_close(io);
-	del_strbuf(buf);
+	sb_destroy(buf);
 	sub->label = memalloc(sub->dim * sizeof(Label));
 	memcpy(sub->label, buf_label.data, sub->dim * sizeof(Label));
 	return (MdClass *) sub;

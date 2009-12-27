@@ -120,6 +120,7 @@ void Include (IO io, ...)
 	}
 
 	io << '\n';
+	io.flush();
 }
 
 /*
@@ -133,6 +134,7 @@ void StdInclude (IO io, ...)
 		fprintf(io, "#include <%s.h>\n", x);
 
 	io << '\n';
+	io.flush();
 }
 
 /*

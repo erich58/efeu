@@ -25,7 +25,15 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/stdtype.h>
 #include <Math/TimeSeries.h>
 
-EfiType Type_TimeIndex = SIMPLE_TYPE("TimeIndex", TimeIndex, NULL);
+static int idx_print (const EfiType *st, const void *data, IO *io)
+{
+	int n = io_puts("TimeIndex(\"", io);
+	n += tindex_print(io, Val_TimeIndex(data), 0);
+	n += io_puts("\")", io);
+	return n;
+}
+
+EfiType Type_TimeIndex = SIMPLE_TYPE("TimeIndex", TimeIndex, NULL, idx_print);
 
 /*	Komponentenfunktionen
 */
@@ -39,6 +47,12 @@ static EfiObj *idx_length (const EfiObj *base, void *data)
 static EfiObj *idx_year (const EfiObj *base, void *data)
 {
 	int x = base ? tindex_year(*((TimeIndex *) base->data)) : 0;
+	return NewObj(&Type_int, &x);
+}
+
+static EfiObj *idx_quart (const EfiObj *base, void *data)
+{
+	int x = base ? tindex_quart(*((TimeIndex *) base->data)) : 0;
 	return NewObj(&Type_int, &x);
 }
 
@@ -75,6 +89,7 @@ static EfiObj *idx_ceil (const EfiObj *base, void *data)
 static EfiMember member[] = {
 	{ "length", &Type_int, idx_length, NULL },
 	{ "year", &Type_int, idx_year, NULL },
+	{ "quart", &Type_int, idx_quart, NULL },
 	{ "month", &Type_int, idx_month, NULL },
 	{ "beg", &Type_Date, idx_beg, NULL },
 	{ "end", &Type_Date, idx_end, NULL },
@@ -191,11 +206,12 @@ static EfiFuncDef func[] = {
 
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, TimeIndex)", f_fprint_idx },
 
-	{ FUNC_VIRTUAL, &Type_TimeIndex, "operator+ (TimeIndex *x, int n)",
-		f_add_idx },
-	{ FUNC_VIRTUAL, &Type_TimeIndex, "operator- (TimeIndex *x, int n)",
-		f_sub_idx },
-	{ FUNC_VIRTUAL, &Type_int, "operator- (TimeIndex *a, TimeIndex *b)",
+	{ FUNC_VIRTUAL, &Type_TimeIndex,
+		"operator+ (restricted TimeIndex x, int n)", f_add_idx },
+	{ FUNC_VIRTUAL, &Type_TimeIndex,
+		"operator- (restricted TimeIndex x, int n)", f_sub_idx },
+	{ FUNC_VIRTUAL, &Type_int,
+		"operator- (restricted TimeIndex a, restricted TimeIndex b)",
 		f_diff_idx },
 
 	{ FUNC_VIRTUAL, &Type_bool, "operator< (TimeIndex, TimeIndex)",

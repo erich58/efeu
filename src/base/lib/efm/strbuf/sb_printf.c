@@ -1,5 +1,6 @@
 /*
-Printf für Stringbuffer
+:*:printf for string buffer
+:de:Printf für Stringbuffer
 
 $Copyright (C) 1994 Erich Frühstück
 This file is part of EFEU.
@@ -23,6 +24,14 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/strbuf.h>
 #include <EFEU/io.h>
 
+/*
+:*:
+The function |$1| allows formatted printing to string buffers.
+See |io_printf| for a detailed description.
+:de:
+The Funktion |$1| erlaubt formatierte Ausgaben in den Stringbuffer <sb>.
+Vergleiche dazu |io_printf| für eine detailierte Beschreibung.
+*/
 
 int sb_printf (StrBuf *sb, const char *fmt, ...)
 {
@@ -42,6 +51,16 @@ int sb_printf (StrBuf *sb, const char *fmt, ...)
 	else	return 0;
 }
 
+/*
+:*:
+The function |$1| does the same as |sb_printf| with an argument of |va_list|
+instead of a variable argument list.
+:de:
+Die Funktion |$1| hat die selbe Funktionalität wie |sb_printf|, nur wird
+ein Argument vom Typ |va_list| anstelle einer variablen Argumentliste
+verwendet.
+*/
+
 int sb_vprintf (StrBuf *sb, const char *fmt, va_list list)
 {
 	if	(sb && fmt)
@@ -56,3 +75,10 @@ int sb_vprintf (StrBuf *sb, const char *fmt, va_list list)
 	}
 	else	return 0;
 }
+
+/*
+$SeeAlso
+\mref{io_printf(3)},
+\mref{strbuf(3)},
+\mref{strbuf(7)}.
+*/

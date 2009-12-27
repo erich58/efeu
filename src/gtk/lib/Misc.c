@@ -25,6 +25,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/stdtype.h>
 #include <EFEU/CmdPar.h>
 
+#if	HAS_GTK
+
 #define	GTK_1_2	0
 
 #define	STR(arg)	(Val_ptr(arg) ? Val_ptr(arg) : "")
@@ -102,6 +104,8 @@ void EGtkMisc_setup (void)
 	EGtkWidgetClass(gtk_pixmap_get_type(), NULL, 0, NULL, 0);
 	AddFuncDef(fdef, tabsize(fdef));
 }
+
+#endif
 
 /*
 $SeeAlso

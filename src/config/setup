@@ -22,172 +22,43 @@
 
 # get top directory (absolut path needed)
 
-if [ $# -ge 1 ]; then
+if [ "$#" -ge 1 ]; then
 	top=$1
 else
 	top="../.."
 fi
 
-top=`(cd $top; pwd)`
 src=`pwd`
-call_name="$src/setup"
+top=`cd $top; pwd`
 
-# create bin directory
+# create bin directory and expand PATH
 
 bin=$top/bin
 
 if [ ! -d $bin ]; then
-	mkdir $bin || exit 1
+	mkdir -p $bin || exit 1
 fi
 
-# install basic scripts
+PATH=$bin:$PATH
+export PATH
 
-for x in mksrclist efeuconfig efeubuild efeugen efeuscript
-do
-	if
-		cmp -s base/$x.sh $bin/$x
-	then
-#		echo "$bin/$x is up to date"
-		:
-	else
-#		echo "cp base/$x.sh $bin/$x"
-		cp base/$x.sh $bin/$x || exit 1
-		chmod a+x $bin/$x
-	fi
-done
+# preinstall config tools
 
-mkscript ()
-{
-	tmp=${TMPDIR:-/tmp}/x$$
-	cat > $tmp << EOF
-#!/bin/sh
-##Do not edit, file created by $call_name
+sh $src/shmkmf/shmkmf.sh -r all -t $top $src/shmkmf/Config.make
+shmkmf -r all -t $top $src/tools/Config.make
+shmkmf -r all -t $top $src/efeu/Config.make
 
-call_name=\$0
+# initialize build directory
 
-usage ()
-{
-	efeuman -- \$call_name \$1 || echo "usage: \$call_name $2"
-}
+src=`cd ..; pwd`
+build=$top/build
+test -d $build || mkdir -p $build
 
-case "\$1" in
--\\?|--help*)	usage \$1; exit 0;;
-esac
-
-EOF
-	cat >> $tmp
-	cat >> $tmp << EOF
-
-# \$Note
-# :*:This command was created by |$call_name| on installing EFEU.
-# :de:Dieses Kommando wurde mit |$call_name| bei der Installation
-# von EFEU generiert.
-EOF
-	if
-		cmp -s $tmp $1
-	then
-		echo "$1 is up to date"
-	else
-		echo "new version of $1 created"
-		cp $tmp $1
-		chmod a+x $1
-	fi
-
-	rm $tmp
-}
-
-# create efeutop command
-
-mkscript $top/bin/efeutop << EOF
-# :*:display top directory of efeu
-# :de:gibt Hauptverzeichnis von efeu aus
-
-# \$Description
-# :*:The command |\\\$!| displays the top directory of efeu.
-# It is used in scripts to determine the installation point of efeu.
-# :*:Das Kommando |\\\$!| zeigt das Hauptverzeichnis der
-# EFEU-Implementation an. 
-# Es wird in Skripts zur Bestimmung des Installationsortes von EFEU
-# verwendet.
-
-echo $top
+cd $build
+cat > Config.make << EOF
+TOP=$top
+SRC=$src
+include efeuprj.smh
 EOF
 
-# determine C compiler
-
-if [ "$CC" != "" ]; then
-	:
-elif	gcc --version >/dev/null 2>&1; then
-	CC="gcc -O -fPIC -Wall -Wmissing-prototypes"
-else
-	case `uname -s` in
-	AIX)	CC="xlc -qsrcmsg";;
-	*)	CC="cc";;
-	esac
-fi
-
-# test compiler
-
-tmp=${TMPDIR:-/tmp}/cf$$
-trap "rm -f $tmp*" 0
-trap "exit 1" 1 2 3
-
-cat > $tmp.c << !
-#include <stdio.h>
-
-int main (void)
-{
-#if	__STDC__
-	return 0;
-#else
-	return 1;
-#endif
-}
-!
-
-$CC -o $tmp $tmp.c || { echo "$0: C compiler not available"; exit 1; }
-$tmp || { echo "$0: EFEU needs ANSI C compiler"; exit 1; }
-rm -f $tmp $tmp.c
-
-# create efeucc command
-
-mkscript $top/bin/efeucc "[cc options and arguments]" << EOF
-# :*:run C compiler with efeu specific parameters
-# :de:EFEU spezifische Implementation des C-Kompilers
-
-# \$Description
-# :*:The command |\\\$!| sets some default compiler options
-# for cc and expands the include path and |LD_RUN_PATH|
-# according to the EFEU top directory. Just have a look to
-# the command |$top/bin/efeucc| to see the settings.
-# |\\\$!| defines the macro |EFEUROOT| with the top directory
-# of the EFEU-implementation. It allows programms to determine the
-# installation place of efeu.
-# :de:Das Kommando |\\\$!| setzt einige default Optionen für
-# def C-Kompiler und erweitert die Suchpfade für Einbindedateien
-# und Bibliotheken entsprechend dem Hauptverzeichnis von EFEU.
-# Die aktuelle Setzung kann direkt dem Kommando |$top/bin/efeucc|
-# entnommen werden.
-# |\\\$!| definiert den Makro |EFEUROOT| mit der Hauptbibliothek
-# der EFEU-Implementation. Damit kann in Programmen der installationsort
-# von Dateien ermittelt werden.
-# \$SeeAlso
-# cc(1).
-
-LD_RUN_PATH="\$LD_RUN_PATH:$top/lib"; export LD_RUN_PATH
-exec $CC -D_XOPEN_SOURCE -DEFEUROOT=$top -I$top/include -L$top/lib \$@
-EOF
-
-# install basic C programs
-
-printf "CC=\t%s/efeucc -g\n\n" $bin > $tmp
-
-for x in efeu-xlib efeuprj
-do
-	printf "all: %s\n\n" $bin/$x >> $tmp
-	printf "%s: %s\n" $bin/$x $src/tools/$x.c >> $tmp
-	printf "\t\$(CC) -o \$@ %s\n\n" $src/tools/$x.c >> $tmp
-done
-
-make -f $tmp
-rm -f $tmp
+shmkmf

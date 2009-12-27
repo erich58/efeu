@@ -25,7 +25,7 @@ double Value = 1.;
 PrintListDelim = "\t";
 
 pconfig !
-Version = "$Id: mdround.esh,v 1.8 2001-11-12 07:49:38 ef Exp $"
+Version = "$Id: mdround.esh,v 1.9 2005-07-24 05:12:41 ef Exp $"
 PrintMode = true
 
 r | Reduce = true
@@ -46,7 +46,7 @@ m:val | :eval Value = {}
 :file | Input
 	:*:input file
 	:de:Name der Eingabedatei
-/.*=.*/name=var | SelDef: append " "
+/.*=.*/<name>=<var> | SelDef: append " "
 	:*:selection parameter
 	:de:Selektionsparameter
 ::out | Output; PrintMode = false

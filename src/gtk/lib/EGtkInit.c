@@ -30,6 +30,7 @@ If not, write to the Free Software Foundation, Inc.,
 #define	SET_LOCALE	1
 #define	ARG_BSIZE	32
 
+#if	HAS_GTK
 static int arg_size = 0;
 static int arg_dim = 0;
 static char **arg_data = NULL;
@@ -117,8 +118,11 @@ void EGtkInit (void)
 		gtk_set_locale();
 		setlocale(LC_NUMERIC, "C");
 #endif
-		gtk_init(&arg_dim, &arg_data);
 		need_init = 0;
+		gtk_init(&arg_dim, &arg_data);
 		EGtkObject_setup();
 	}
 }
+
+#endif
+

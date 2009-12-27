@@ -1,0 +1,66 @@
+#!/bin/sh
+# :*:create efeutop script
+# :de:efeutop Script generieren
+#
+# $Copyright (C) 2004 Erich Frühstück
+# This file is part of EFEU.
+# 
+# EFEU is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+# 
+# EFEU is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public
+# License along with EFEU; see the file COPYING.
+# If not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+# get top directory
+
+case "$#" in
+1)	top=`cd $1; pwd`;;
+*)	echo "usage: $0 top"; exit 1;;
+esac
+
+# output configuration file
+
+cat << EOF
+#!/bin/sh
+# :*:display top directory of efeu
+# :de:gibt Hauptverzeichnis von efeu aus
+
+# \$Note
+# :*:This command was created by |$0| on installing EFEU.
+# :de:Dieses Kommando wurde mit |$0| bei der Installation
+# von EFEU generiert.
+
+# \$pconfig
+# Version="\$Id: efeutop.gencmd,v 1.1 2004-11-27 17:19:28 ef Exp $"
+
+usage ()
+{
+	efeuman -- \$0 \$1 || \
+		echo "usage: \$0"
+}
+
+case "\$1" in
+-\\?|--help*)	usage \$1; exit 0;;
+--version)	efeuman -- \$0 \$1 || grep 'Version="[\$]Id:'; exit 0;;
+?*)		usage -?; exit 1;;
+esac
+
+# \$Description
+# :*:The command |\\\$!| displays the top directory of efeu.
+# It is used in scripts to determine the installation point of efeu.
+# :de:Das Kommando |\\\$!| zeigt das Hauptverzeichnis der
+# EFEU-Implementation an. 
+# Es wird in Skripts zur Bestimmung des Installationsortes von EFEU
+# verwendet.
+
+echo $top
+EOF

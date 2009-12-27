@@ -78,6 +78,20 @@ size_t Write_str (const EfiType *st, const void *data, IO *io)
 	return io_putstr(Val_str(data), io);
 }
 
+int Print_str (const EfiType *st, const void *data, IO *io)
+{
+	char *str = Val_str(data);
+
+	if	(str)
+	{
+		int n = io_puts("\"", io);
+		n += io_xputs(str, io, "\"");
+		n += io_puts("\"", io);
+		return n;
+	}
+	else	return io_puts("NULL", io);
+}
+
 void Clean_str(const EfiType *st, void *data)
 {
 	memfree(Val_str(data));
@@ -113,13 +127,14 @@ static EfiObj *Eval_name(const EfiType *type, const void *data)
 /*	Einfache Pointertypen
 */
 
-EfiType Type_void = COMPLEX_TYPE("void", 0, 0, NULL, NULL, \
-	NULL, Eval_void, NULL, NULL);
+EfiType Type_void = COMPLEX_TYPE("void", NULL, 0, 0, NULL, NULL, NULL, \
+	NULL, Eval_void, NULL, NULL, NULL);
 EfiType Type_ptr = STD_TYPE("_Ptr_", void *, NULL, NULL, NULL);
 EfiType Type_obj = STD_TYPE("Object", EfiObj *, &Type_ptr, Clean_obj, Copy_obj);
 EfiType Type_expr = STD_TYPE("Expr_t", EfiObj *, &Type_ptr, Clean_obj, Copy_obj);
-EfiType Type_str = COMPLEX_TYPE("str", sizeof(char *), 0, Read_str, Write_str,
-	&Type_ptr, NULL, Clean_str, Copy_str);
+EfiType Type_str = COMPLEX_TYPE("str", "char *", sizeof(char *), 0,
+	Read_str, Write_str, Print_str,
+	&Type_ptr, NULL, NULL, Clean_str, Copy_str);
 EfiType Type_type = STD_TYPE("Type_t", EfiType *, &Type_ptr, NULL, NULL);
 EfiType Type_lval = STD_TYPE("Lval_t", EfiType *, &Type_type, NULL, NULL);
 EfiType Type_name = EVAL_TYPE("_Name_", char *, Eval_name, Clean_str, Copy_str);
@@ -129,6 +144,7 @@ EfiType Type_undef = STD_TYPE("_undef_", char *, NULL, Clean_str, Copy_str);
 */
 
 EfiType Type_ref = STD_TYPE("_Ref_", void *, &Type_ptr, Clean_ref, Copy_ref);
+EfiType Type_efi = REF_TYPE ("Efi", Efi *);
 EfiType Type_func = REF_TYPE("Func", EfiFunc *);
 EfiType Type_vfunc = REF_TYPE("VirFunc", EfiVirFunc *);
 EfiType Type_vtab = REF_TYPE("VarTab", EfiVarTab *);
@@ -138,27 +154,43 @@ EfiType Type_io = REF_TYPE ("IO", IO *);
 /*	Datentypen
 */
 
-EfiType Type_enum = SIMPLE_TYPE("_Enum_", int, NULL);
-EfiType Type_bool = SIMPLE_TYPE("bool", int, NULL);
-EfiType Type_char = SIMPLE_TYPE("char", unsigned char, NULL);
-EfiType Type_byte = SIMPLE_TYPE("byte", char, NULL);
-EfiType Type_short = SIMPLE_TYPE("short", short, NULL);
-EfiType Type_int = SIMPLE_TYPE("int", int, &Type_bool);
-EfiType Type_uint = SIMPLE_TYPE("unsigned", unsigned, NULL);
-EfiType Type_long = SIMPLE_TYPE("long", long, NULL);
-EfiType Type_size = SIMPLE_TYPE("size_t", unsigned long, NULL);
-EfiType Type_float = SIMPLE_TYPE("float", float, NULL);
-EfiType Type_double = SIMPLE_TYPE("double", double, NULL);
+static int print_bool (const EfiType *type, const void *data, IO *io)
+{
+	return io_puts(Val_bool(data) ? "true" : "false", io);
+}
 
-unsigned char Buf_char = 0;
-char Buf_byte = 0;
-short Buf_short = 0;
-int Buf_int = 0;
-unsigned Buf_uint = 0;
-long Buf_long = 0;
-unsigned long Buf_size = 0;
-float Buf_float = 0.;
-double Buf_double = 0.;
+static int print_char (const EfiType *type, const void *data, IO *io)
+{
+	return io_printf(io, "%#c", Val_char(data));
+}
+
+static int print_int (const EfiType *type, const void *data, IO *io)
+{
+	return io_printf(io, "%d", Val_int(data));
+}
+
+static int print_uint (const EfiType *type, const void *data, IO *io)
+{
+	return io_printf(io, "%uu", Val_uint(data));
+}
+
+static int print_float (const EfiType *type, const void *data, IO *io)
+{
+	return io_printf(io, "%.8g", Val_float(data));
+}
+
+static int print_double (const EfiType *type, const void *data, IO *io)
+{
+	return io_printf(io, "%.16g", Val_double(data));
+}
+
+EfiType Type_enum = SIMPLE_TYPE("_Enum_", int, NULL, print_int);
+EfiType Type_bool = SIMPLE_TYPE("bool", int, NULL, print_bool);
+EfiType Type_char = SIMPLE_TYPE("char", unsigned char, NULL, print_char);
+EfiType Type_int = SIMPLE_TYPE("int", int, NULL, print_int);
+EfiType Type_uint = SIMPLE_TYPE("unsigned", unsigned, NULL, print_uint);
+EfiType Type_float = SIMPLE_TYPE("float", float, NULL, print_float);
+EfiType Type_double = SIMPLE_TYPE("double", double, NULL, print_double);
 
 
 /*	Funktionen
@@ -226,6 +258,7 @@ void CmdSetup_base(void)
 	AddType(&Type_obj);
 	AddType(&Type_ptr);
 	AddType(&Type_ref);
+	AddType(&Type_efi);
 	AddType(&Type_type);
 	AddType(&Type_lval);
 	AddType(&Type_func);
@@ -235,14 +268,25 @@ void CmdSetup_base(void)
 
 	AddType(&Type_enum);
 	AddType(&Type_bool);
-	AddType(&Type_byte);
-	AddType(&Type_short);
+
+	AddType(&Type_int8);
+	AddType(&Type_uint8);
+	AddType(&Type_int16);
+	AddType(&Type_uint16);
 	AddType(&Type_int);
-	AddType(&Type_long);
 	AddType(&Type_uint);
-	AddType(&Type_size);
+
+	AddType(&Type_int32);
+	AddType(&Type_uint32);
+
+	AddType(&Type_int64);
+	AddType(&Type_varint);
+	AddType(&Type_uint64);
+	AddType(&Type_varsize);
+
 	AddType(&Type_float);
 	AddType(&Type_double);
+
 	AddType(&Type_char);
 	AddType(&Type_str);
 	AddType(&Type_io);

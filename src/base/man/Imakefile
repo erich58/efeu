@@ -1,9 +1,0 @@
-LDIR=	EFEUROOT/src/base/lib
-DE_DOC=	EFEUROOT/doc/de
-EN_DOC=	EFEUROOT/doc/de
-
-ProvideDocDir($(DE_DOC))
-
-DocTarget($(DE_DOC),efm,$(LDIR)/efm,LANG=de efeudoc)
-DocTarget($(DE_DOC),iorl,$(LDIR)/iorl,LANG=de efeudoc)
-DocTarget($(DE_DOC),md,$(LDIR)/md,LANG=de efeudoc)

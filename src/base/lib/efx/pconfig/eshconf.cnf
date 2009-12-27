@@ -20,6 +20,7 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 CmdType = "esh"
+CmdString = NULL
 HistoryName = "~/.esh_history"
 
 @ESHPATH|IncPath:eval 'IncPath = paste(PATHSEP, IncPath, "{}")'
@@ -29,10 +30,16 @@ I:dir|IncPath:eval 'IncPath = paste(PATHSEP, IncPath, "{}")'
 	:*:append <dir> to the search path for script headers.
 	The default setting is "$(IncPath:%s)".
 	:de:erweitert den Suchpfad für Skriptfiles um <dir>.
-	Die Vorgabe für den Suchpfad ist "$(IncPath:%s)".
+	Die Vorgabe für den Suchpfad ist:\br "|$(IncPath:%s)|".
 D:"name|=|val"|:eval 'copy(preproc("#define " + strsub("{}", "=", " ")), NULL);'
 	:*:define macro <name> with value <val>
 	:de:definiert den Makro <name> mit Wert <value>
-*file~<=\[=>~args(s)~<=\]=>|
-	:*:name of the script file and script parameters
-	:de:ist der Name des Skriptfiles und Skriptparameter.
+c:string|CmdString
+	:*:process commands from <string>.
+	:de:liest Befehle vom String <string>.
+::file|
+	:*:name of the script file.
+	:de:ist der Name des Skriptfiles.
+*arg(s)|
+	:*:script parameters.
+	:de:sind die Skriptparameter.

@@ -111,6 +111,15 @@ Folgende Steuerflags können angegeben werden:
 
 \def\include	include(ParseOpt(cin, true), xexpand(ParseLine(cin)));
 
+:*:include script file
+	$1 |"|<name>|"|
+	$1 |<|<name>|>|
+:de:Befehlsscript einbinden
+	$1 |"|<name>|"|
+	$1 |<|<name>|>|
+
+\def\cmdinclude	eval("#include " + ParseLine(cin));
+
 :*:include output of command
 	$1 |[|<flags>|]| <cmd>
 	~~~~...
@@ -169,7 +178,11 @@ document path and returns the path name if found.
 :de:Der Befehl $1 sucht nach der Datei <name> in Bezug auf den
 aktuellen Dokumentpfad und liefert bei Erfolg den Pfadnamen.
 
-\def\docfile	cout << fsearch(DocPath, xexpand(ParseArg(cin)));
+\def\docfile	{{
+	str fname = fsearch(DocPath, xexpand(ParseArg(cin)));
+	depend(fname);
+	cout << fname;
+}}
 
 /*	index entry
 */

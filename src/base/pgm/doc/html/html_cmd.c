@@ -32,7 +32,7 @@ static void pcmd_label (HTML *html, void *data)
 {
 	io_ctrl(html->out, DOC_REF_LABEL, data);
 
-	if	(html->last == '\n');
+	if	(html->last == '\n')
 		io_putc('\n', html->out);
 
 	memfree(data);
@@ -82,7 +82,7 @@ int HTML_cmd (void *drv, va_list list)
 	case DOC_CMD_IDX:
 		io_vctrl(html->out, cmd, list);
 
-		if	(html->last == '\n');
+		if	(html->last == '\n')
 			io_putc('\n', html->out);
 		break;
 	case DOC_REF_LABEL:
@@ -95,7 +95,7 @@ int HTML_cmd (void *drv, va_list list)
 		{
 			io_vctrl(html->out, cmd, list);
 
-			if	(html->last == '\n');
+			if	(html->last == '\n')
 				io_putc('\n', html->out);
 		}
 		break;

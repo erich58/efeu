@@ -1,1 +1,0 @@
-hdr	DFXF	InstallFile(%s/%s.%s,$(TSHDR),%s)

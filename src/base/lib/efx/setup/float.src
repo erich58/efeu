@@ -1,0 +1,136 @@
+/*
+Schablonendatei für Gleitkommaobjekte
+
+$Copyright (C) 2006 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+*/
+
+/*
+Die folgenden Makros müssen vordefiniert sein:
+
+S	Datentypname als String
+T	C-Datentyp
+*/
+
+static void f_abs (EfiFunc *func, void *rval, void **arg)
+{
+	T a = *((T *) arg[0]);
+	*((T *) rval) = a < 0. ? -a : a;
+}
+
+static void f_min (EfiFunc *func, void *rval, void **arg)
+{
+	T a = *((T *) arg[0]);
+	T b = *((T *) arg[1]);
+	*((T *) rval) = a < b ? a : b;
+}
+
+static void f_max (EfiFunc *func, void *rval, void **arg)
+{
+	T a = *((T *) arg[0]);
+	T b = *((T *) arg[1]);
+	*((T *) rval) = a > b ? a : b;
+}
+
+#define	LEFTOP(t, name, op, t1)	\
+static void name (EfiFunc *func, void *rval, void **arg) \
+{ *((t *) rval) = op *((t1 *) arg[0]); }
+
+LEFTOP(int, to_bool, !!, T)
+LEFTOP(int, l_not, !, T)
+LEFTOP(T, l_minus, -, T)
+LEFTOP(T, l_plus, +, T)
+
+#define	BINARY(t, name, t1, op, t2)	\
+static void name (EfiFunc *func, void *rval, void **arg) \
+{ *((t *) rval) = *((t1 *) arg[0]) op *((t2 *) arg[1]); }
+
+BINARY(T, b_mul, T, *, T)
+BINARY(T, b_div, T, /, T)
+BINARY(T, b_add, T, +, T)
+BINARY(T, b_sub, T, -, T)
+
+BINARY(int, b_lt, T, <, T)
+BINARY(int, b_le, T, <=, T)
+BINARY(int, b_eq, T, ==, T)
+BINARY(int, b_ne, T, !=, T)
+BINARY(int, b_ge, T, >=, T)
+BINARY(int, b_gt, T, >, T)
+
+static void r_inc (EfiFunc *func, void *rval, void **arg)
+{
+	*((T *) rval) = (*((T *) arg[0])) ++;
+}
+
+static void r_dec (EfiFunc *func, void *rval, void **arg)
+{
+	*((T *) rval) = (*((T *) arg[0])) --;
+}
+
+static void l_inc (EfiFunc *func, void *rval, void **arg)
+{
+	++ *((T *) arg[0]);
+}
+
+static void l_dec (EfiFunc *func, void *rval, void **arg)
+{
+	-- *((T *) arg[0]);
+}
+
+#define	ASSIGN(name, t1, op, t2)	\
+static void name (EfiFunc *func, void *rval, void **arg) \
+{ *((t1 *) arg[0]) op *((t2 *) arg[1]); }
+
+ASSIGN(a_mul, T, *=, T)
+ASSIGN(a_div, T, /=, T)
+ASSIGN(a_add, T, +=, T)
+ASSIGN(a_sub, T, -=, T)
+
+static EfiFuncDef ftab[] = {
+	{ FUNC_VIRTUAL, NULL, S " abs (" S ")", f_abs },
+	{ FUNC_VIRTUAL, NULL, S " min (" S ", " S ")", f_min },
+	{ FUNC_VIRTUAL, NULL, S " max (" S ", " S ")", f_max },
+
+	{ FUNC_RESTRICTED, &Type_bool, S " ()", to_bool },
+	{ FUNC_VIRTUAL, &Type_bool, "operator!() (" S ")", l_not },
+	{ FUNC_VIRTUAL, NULL, S " operator+() (" S ")", l_plus },
+	{ FUNC_VIRTUAL, NULL, S " operator-() (" S ")", l_minus },
+
+	{ FUNC_VIRTUAL, NULL, S " operator* (" S ", " S ")", b_mul },
+	{ FUNC_VIRTUAL, NULL, S " operator/ (" S ", " S ")", b_div },
+	{ FUNC_VIRTUAL, NULL, S " operator+ (" S ", " S ")", b_add },
+	{ FUNC_VIRTUAL, NULL, S " operator- (" S ", " S ")", b_sub },
+
+	{ FUNC_VIRTUAL, &Type_bool, "operator< (" S ", " S ")", b_lt },
+	{ FUNC_VIRTUAL, &Type_bool, "operator<= (" S ", " S ")", b_le },
+	{ FUNC_VIRTUAL, &Type_bool, "operator== (" S ", " S ")", b_eq },
+	{ FUNC_VIRTUAL, &Type_bool, "operator!= (" S ", " S ")", b_ne },
+	{ FUNC_VIRTUAL, &Type_bool, "operator>= (" S ", " S ")", b_ge },
+	{ FUNC_VIRTUAL, &Type_bool, "operator> (" S ", " S ")", b_gt },
+
+	{ FUNC_VIRTUAL, NULL, S " operator++ (" S " &)", r_inc },
+	{ FUNC_VIRTUAL, NULL, S " operator-- (" S " &)", r_dec },
+	
+	{ 0, NULL, S " & " S "::operator++ & ()", l_inc },
+	{ 0, NULL, S " & " S "::operator-- & ()", l_dec },
+	
+	{ 0, NULL, S " & " S "::operator*= & (" S ")", a_mul },
+	{ 0, NULL, S " & " S "::operator/= & (" S ")", a_div },
+	{ 0, NULL, S " & " S "::operator+= & (" S ")", a_add },
+	{ 0, NULL, S " & " S "::operator-= & (" S ")", a_sub },
+};

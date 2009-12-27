@@ -27,13 +27,8 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	INFO_BSIZE	16
 
-static InfoNode root = {
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-};
+
+static InfoNode root = STD_INFO(NULL, NULL);
 
 static int cmp_info(const void *pa, const void *pb)
 {
@@ -47,11 +42,14 @@ static InfoNode *get_info (InfoNode *base, const char *name, char **nptr)
 	char *ptr;
 	InfoNode ibuf, *info, **ip;
 
+	SetupInfo(base);
+	*nptr = NULL;
+
+	if	(name == NULL || *name == 0)
+		return base ? base : &root;
+
 	if	(!base || (name && *name == INFO_SEP))
 		base = &root;
-
-	if	(base->load)
-		base->load(base);
 
 	ptr = (char *) name;
 
@@ -89,14 +87,22 @@ static InfoNode *get_info (InfoNode *base, const char *name, char **nptr)
 		if	(ip)
 		{
 			base = *ip;
-
-			if	(base->load)
-				base->load(base);
+			SetupInfo(base);
 		}
 		else	break;
 	}
 
 	return base;
+}
+
+void SetupInfo (InfoNode *node)
+{
+	if	(node && node->setup)
+	{
+		void (*setup) (InfoNode *info) = node->setup;
+		node->setup = NULL;
+		setup(node);
+	}
 }
 
 InfoNode *GetInfo (InfoNode *base, const char *name)
@@ -114,7 +120,7 @@ InfoNode *GetInfo (InfoNode *base, const char *name)
 		return NULL;
 	}
 
-	return info;
+	return rd_refer(info);
 }
 
 InfoNode *AddInfo (InfoNode *base, const char *name,

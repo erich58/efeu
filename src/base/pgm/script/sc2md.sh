@@ -21,6 +21,7 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 # $pconfig
+# Version="$Id: sc2md.sh,v 1.5 2004-10-25 05:46:27 ef Exp $"
 # r |
 # 	:*:remove singulary axis
 # 	:de:Entfernen von singulären Achsen
@@ -38,6 +39,7 @@ usage ()
 
 case "$1" in
 -\?|--help*)	usage $1; exit 0;;
+--version)	efeuman -- $0 $1 || grep 'Version="[$]Id:'; exit 0;;
 esac
 
 flags=

@@ -85,7 +85,7 @@ static int ce_get (void *ptr)
 		if	(c != ';')
 		{
 			if	(obj)
-				PrintObj(CmdEval_cout, obj);
+				ShowObj(CmdEval_cout, obj);
 			else if	(isspace(c))
 				c = EOF;
 			
@@ -114,7 +114,7 @@ static int ce_ctrl (void *ptr, int req, va_list list)
 		CmdEval_cout = par->cout;
 		CmdEval_cin = par->cin;
 		stat = io_close(par->io);
-		del_strbuf(par->buf);
+		sb_destroy(par->buf);
 		memfree(par->delim);
 		memfree(par);
 		break;
@@ -137,7 +137,7 @@ IO *io_cmdeval (IO *io, const char *delim)
 		CEPAR *par = memalloc(sizeof(CEPAR));
 		par->io = io;
 		par->delim = mstrcpy(delim);
-		par->buf = new_strbuf(0);
+		par->buf = sb_create(0);
 		par->save = 0;
 		par->eof = 0;
 		par->cin = CmdEval_cin;

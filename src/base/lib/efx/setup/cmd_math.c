@@ -88,6 +88,21 @@ static void f_rnd125 (EfiFunc *func, void *rval, void **arg)
 	Val_double(rval) = sig * a * b;
 }
 
+static void f_frexp (EfiFunc *func, void *rval, void **arg)
+{
+	Val_double(rval) = frexp(Val_double(arg[0]), arg[1]);
+}
+
+static void f_ldexp (EfiFunc *func, void *rval, void **arg)
+{
+	Val_double(rval) = ldexp(Val_double(arg[0]), Val_int(arg[1]));
+}
+
+static void f_modf (EfiFunc *func, void *rval, void **arg)
+{
+	Val_double(rval) = modf(Val_double(arg[0]), arg[1]);
+}
+
 static EfiFuncDef fdef_math[] = {
 	{ FUNC_VIRTUAL, &Type_double, "log (double)", f_log },
 	{ FUNC_VIRTUAL, &Type_double, "xlog (double)", f_xlog },
@@ -105,6 +120,9 @@ static EfiFuncDef fdef_math[] = {
 	{ FUNC_VIRTUAL, &Type_double, "sqrt (double)", f_sqrt },
 	{ FUNC_VIRTUAL, &Type_double, "operator% (double, double)", f_fmod },
 	{ FUNC_VIRTUAL, &Type_double, "rnd125 (double)", f_rnd125 },
+	{ FUNC_VIRTUAL, &Type_double, "frexp (double, int &)", f_frexp },
+	{ FUNC_VIRTUAL, &Type_double, "ldexp (double, int)", f_ldexp },
+	{ FUNC_VIRTUAL, &Type_double, "modf (double, double &)", f_modf },
 };
 
 
@@ -113,5 +131,11 @@ static EfiFuncDef fdef_math[] = {
 
 void SetupMath(void)
 {
+	static int init_done = 0;
+
+	if	(init_done)	return;
+
+	init_done = 1;
+
 	AddFuncDef(fdef_math, tabsize(fdef_math));
 }

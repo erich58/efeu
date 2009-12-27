@@ -346,7 +346,11 @@ static void put_sec (LaTeX *ltx, int mode, const char *name, va_list list)
 
 			p = va_arg(list, char *);
 
-			if	(p)
+			if	(mstrcmp(p, "*") == 0)
+			{
+				io_putc('*', ltx->out);
+			}
+			else if	(p)
 			{
 				io_puts("[{", ltx->out);
 				io_puts(p, ltx->out);

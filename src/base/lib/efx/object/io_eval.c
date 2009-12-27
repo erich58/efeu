@@ -71,7 +71,7 @@ int iocpy_eval(IO *in, IO *out, int c, const char *arg, unsigned int flags)
 
 		if	(obj && out && c != ';')
 		{
-			n += PrintObj(out, obj);
+			n += ShowObj(out, obj);
 
 			if	(flag)
 				n += io_nputc(c, out, 1);

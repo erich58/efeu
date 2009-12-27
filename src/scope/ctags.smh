@@ -1,0 +1,15 @@
+cd $TMP
+src=ctags_test.c
+touch $src
+
+if
+	ctags -twa $src 2>/dev/null
+then
+	echo "CTAGS=	ctags -twa"
+elif
+	ctags -wa $src 2>/dev/null
+then
+	echo "CTAGS=	ctags -wa" 
+fi
+
+rm -f $src tags

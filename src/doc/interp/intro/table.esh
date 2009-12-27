@@ -1,0 +1,18 @@
+/*
+Print table of squares and square roots
+*/
+
+int lower = 1;
+int upper = 10;
+int step = 1;
+
+printf("%6s", "n");
+printf(" %6s", "n*n");
+printf(" %10s\n", "sqrt(n)");
+
+for (int i = lower; i <= upper; i += step)
+{
+	printf("%6d", i);
+	printf(" %6d", i * i);
+	printf(" %10.5f\n", sqrt(i));
+}

@@ -26,17 +26,23 @@ If not, write to the Free Software Foundation, Inc.,
 
 typedef struct {
 	char *name;
-	char *desc;
 	S2DEval eval;
+	char *desc;
 } S2DMode;
 
 static S2DMode tab[] = {
-	{ "hdr", "Handbucheintrag für Headerfile", s2d_hdr },
-	{ "src", "Handbucheintrag für Sourcefile", s2d_src },
-	{ "cmd", "Handbucheintrag für Scriptdateien", s2d_cmd },
-	{ "std", "Sourcen mit Erläuterung", s2d_std },
-	{ "com", "Kommentare der Datei", s2d_com },
-	{ "doc", "Direkteinbindung der Datei", s2d_doc },
+	{ "hdr", s2d_hdr, "Handbucheintrag für Headerfile"},
+	{ "src", s2d_src, "Handbucheintrag für Sourcefile"},
+	{ "cmd", s2d_cmd, "Handbucheintrag für Scriptdateien"},
+	{ "sh", s2d_sh, "Handbucheintrag für Shellfunktionen"},
+	{ "std", s2d_std, "C-Style Sourcen mit Erläuterung"},
+	{ "xstd", s2d_xstd,
+		"C-Style Sourcen mit Erläuterung ohne Kopfdefinition"},
+	{ "script", s2d_script, "sh-Style Sourcen mit Erläuterung"},
+	{ "xscript", s2d_xscript,
+		"sh-Style Sourcen mit Erläuterung ohne Kopfdefinition"},
+	{ "com", s2d_com, "Kommentare der Datei"},
+	{ "doc", s2d_doc, "Direkteinbindung der Datei"},
 };
 
 typedef struct {
@@ -51,8 +57,11 @@ static S2DName ntab[] = {
 	{ "*.doc", s2d_doc },
 	{ "*.ms", s2d_cmd },
 	{ "*.hdr", s2d_cmd },
+	{ "*.smh", s2d_sh },
 	{ "*.[0-9]*", s2d_man },
 	{ "*Imakefile", s2d_std },
+	{ "*.imake", s2d_xstd },
+	{ "*Config.make", s2d_script },
 };
 
 S2DEval S2DName_get (const char *name)

@@ -27,6 +27,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/ftools.h>
 #include <EFEU/Debug.h>
 
+#if	HAS_PQ
+
 #define	M_NOMEM	"$!: not enough memory to create data.\n"
 #define	M_BAD	"$!: connection to database server failed.\n"
 
@@ -42,6 +44,8 @@ static void pg_clean (void *ptr)
 		PQuntrace(pg->conn);
 		fileclose(pg->trace);
 	}
+
+	PG_info(pg, "FINISH");
 
 	if	(pg->conn)
 		PQfinish(pg->conn);
@@ -92,11 +96,7 @@ int PG_print (IO *io, PG *pg)
 static char *pg_ident (const void *ptr)
 {
 	const PG *pg = ptr;
-	StrBuf *sb = new_strbuf(0);
-	IO *io = io_strbuf(sb);
-	conn_info(io, pg->conn);
-	io_close(io);
-	return sb2str(sb);
+	return msprintf("postgres[%s]", PQdb(pg->conn));
 }
 
 static RefType pg_reftype = REFTYPE_INIT("PG", pg_ident, pg_clean);
@@ -140,18 +140,46 @@ PG *PG_connect (const char *def)
 	}
 	else
 	{
-		PG *pg = memalloc(sizeof(PG));
+		PG *pg = memalloc(sizeof *pg);
 		pg->conn = conn;
 		pg->res = NULL;
 		pg->lock = 0;
+
+		rd_init(&pg_reftype, pg);
+		PG_info(pg, "CONNECT");
 		pg->trace = filerefer(LogFile("PG", DBG_TRACE));
 
 		if	(pg->trace)
 			PQtrace(pg->conn, pg->trace);
 
-		return rd_init(&pg_reftype, pg);
+		return pg;
 	}
 }
+
+/*
+:*:The function |$1| displays a report to error class |PG| and level |DBG_INFO|.
+:de:Die Funktion |$1| gibt eine Meldung zur Fehlerklasse |IO| vom Level
+|DBG_INFO| aus. Der Parameter 0 enthält wird mit |io_ident()|
+auf die Kennung der IO-Struktur <io> gesetzt.
+*/
+
+void PG_info (PG *pg, const char *fmt, ...)
+{
+	IO *io = LogOut("PG", DBG_INFO);
+
+	if	(io && fmt)
+	{
+		va_list list;
+		io_printf(io, "postgres[%s]: ", PQdb(pg->conn));
+		va_start(list, fmt);
+		io_vprintf(io, fmt, list);
+		va_end(list);
+		io_putc('\n', io);
+	}
+}
+
+
+#endif
 
 /*
 $SeeAlso

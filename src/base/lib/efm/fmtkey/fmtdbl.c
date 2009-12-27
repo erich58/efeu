@@ -59,7 +59,7 @@ int fmt_double(IO *io, const FmtKey *key, double val)
 	}
 	else	sig = 1;
 
-	sb = new_strbuf(32);
+	sb = sb_create(32);
 
 	switch (key->mode)
 	{
@@ -259,7 +259,7 @@ static void put_mantisse(StrBuf *sb, double val, int prec, int flags)
 			if	(sb->pos || (flags & FMT_ALTMODE))
 				sb_rputs(DP_KEY, sb);
 		}
-		else if	(ts && prec % 3 == 0 && sb->pos)
+		else if	(ts && prec % 3 == 0 && sb->pos && prec < 0)
 		{
 			sb_rputs(ts, sb);
 		}

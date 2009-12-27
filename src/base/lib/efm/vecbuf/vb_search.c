@@ -26,10 +26,18 @@ static void move (char *a, char *b, size_t n)
 {
 	while (n-- > 0)
 	{
-		*a = *b;
-		*b = 0;
-		a++;
-		b++;
+		*(a++) = *b;
+		*(b++) = 0;
+	}
+}
+
+static void swap (char *a, char *b, size_t n)
+{
+	while (n-- > 0)
+	{
+		char c = *a;
+		*(a++) = *b;
+		*(b++) = c;
 	}
 }
 
@@ -54,11 +62,12 @@ Als Modus <mode> ist eines der folgenden Werte zulässig:
 	den Pointer auf den Eintrag, ansonsten einen Nullpointer.
 	Der Suchschlüssel wird nicht verändert.
 [|VB_ENTER|]
-	Falls der Eintrag noch nicht vorhanden ist,
-	wird ein neuer Eintrag generiert
-	und die Daten vom Suchschlüssel übernommen.
-	Der Suchschlüssel wird anschließend gelöscht.
-	Die Funktion liefert den Pointer auf den (neuen) Eintrag.
+	Falls der Eintrag gefunden wurde, liefert die Funktion den
+	Pointer auf den Eintrag. Der Suchschlüssel wird nicht
+	verändert. Falls der Eintrag noch nicht vorhanden ist, wird
+	ein neuer Eintrag generiert und die Daten vom Suchschlüssel
+	übernommen. Der Suchschlüssel wird anschließend gelöscht.
+	Die Funktion liefert den Pointer auf den neuen Eintrag.
 [|VB_REPLACE|]
 	Falls der Eintrag bereits vorhanden ist,
 	werden die Daten mit dem Suchschlüssel ausgetauscht,
@@ -114,19 +123,7 @@ void *vb_search (VecBuf *buf, void *data,
 
 			case VB_REPLACE:
 
-				{
-					register unsigned char *a = data;
-					register unsigned char *b = (unsigned char *) p1;
-					register size_t n = buf->elsize;
-
-					while (n--)
-					{
-						register unsigned char c = *a;
-						*a++ = *b;
-						*b++ = c;
-					}
-				}
-
+				swap(p1, data, buf->elsize);
 				return data;
 
 			default:
@@ -161,6 +158,15 @@ void vb_qsort (VecBuf *buf, int (*comp) (const void *a, const void *b))
 {
 	if	(buf && buf->used > 1)
 		qsort(buf->data, buf->used, buf->elsize, comp);
+}
+
+/*
+Die Funktion |$1| reduziert die Daten bezüglich gleicher Einträge.
+*/
+
+void vb_uniq (VecBuf *buf, int (*comp) (const void *a, const void *b))
+{
+	buf->used = vuniq(buf->data, buf->used, buf->elsize, comp);
 }
 
 /*

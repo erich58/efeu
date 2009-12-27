@@ -64,7 +64,7 @@ OldPixMap *new_OldPixMap(int rows, int cols)
 */
 
 EfiType Type_OldPixMap = REF_TYPE("OldPixMap", OldPixMap *);
-EfiType Type_Color = SIMPLE_TYPE("Color", COLOR, NULL);
+EfiType Type_Color = SIMPLE_TYPE("Color", COLOR, NULL, NULL);
 
 COLOR Buf_Color = { 0 };
 
@@ -313,13 +313,7 @@ static EfiParseDef pdef[] = {
 static EfiObj *get_color (const EfiObj *obj, void *data)
 {
 	OldPixMap *pix = obj ? Val_OldPixMap(obj->data) : NULL;
-
-	if	(pix == NULL)	return NULL;
-
-	Buf_vec.type = &Type_Color;
-	Buf_vec.dim = pix->colors;
-	Buf_vec.data = pix->color;
-	return NewObj(&Type_vec, &Buf_vec);
+	return pix ? EfiVecObj(&Type_Color, pix->color, pix->colors) : NULL;
 }
 
 static EfiObj *m_cols (const EfiObj *obj, void *data)

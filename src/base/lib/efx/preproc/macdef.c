@@ -34,7 +34,7 @@ PPMacro *ParseMacro (IO *io)
 	int c;
 
 	mac = NewMacro();
-	buf = new_strbuf(0);
+	buf = sb_create(0);
 
 	while ((c = io_skipcom(io, NULL, 0)) != EOF)
 	{
@@ -63,8 +63,14 @@ PPMacro *ParseMacro (IO *io)
 
 	while (c != EOF && c != '\n')
 	{
-		if	(c == '\\' && (c = io_getc(io)) == EOF)
-			c = '\\';
+		if	(c == '\\')
+		{
+			if	((c = io_getc(io)) == EOF)
+			{
+				c = '\\';
+			}
+			else	sb_putc('\\', buf);
+		}
 
 		sb_putc(c, buf);
 		c = io_skipcom(io, NULL, 0);

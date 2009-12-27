@@ -29,7 +29,7 @@ char *DocParseRegion (IO *in, const char *delim)
 	int last;
 	int c;
 
-	buf = new_strbuf(0);
+	buf = sb_create(0);
 	last = 0;
 
 	while ((c = io_getc(in)) != EOF)

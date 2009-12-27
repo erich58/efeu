@@ -41,22 +41,45 @@ CEXPR(name, Val_int(rval) = mstrcmp(STR(0), STR(1)) op 0)
 
 CEXPR(k_char2int, Val_int(rval) = CHAR(0))
 CEXPR(k_int2char, Val_char(rval) = (unsigned char) Val_int(arg[0]))
-CEXPR(k_long2char, Val_char(rval) = (unsigned char) Val_long(arg[0]))
 
-CEXPR(k_str2int, Val_int(rval) = STR(0) ? (int) strtol(STR(0), NULL, 0) : 0)
-CEXPR(k_str2long, Val_long(rval) = STR(0) ? strtol(STR(0), NULL, 0) : 0)
+CEXPR(k_str2int, Val_int(rval) = STR(0) ?
+		(int) strtol(STR(0), NULL, 0) : 0)
+CEXPR(k_str2uint, Val_uint(rval) = STR(0) ?
+		(unsigned) strtoul(STR(0), NULL, 0) : 0)
 CEXPR(c_str2int, Val_int(rval) = STR(0) ?
 	(int) strtol(STR(0), NULL, Val_int(arg[1])) : 0)
-CEXPR(c_str2long, Val_long(rval) = STR(0) ?
-	strtol(STR(0), NULL, Val_int(arg[1])) : 0)
-CEXPR(k_str2double, Val_double(rval) = STR(0) ? strtod(STR(0), NULL) : 0.)
+CEXPR(c_str2uint, Val_uint(rval) = STR(0) ?
+	(unsigned) strtoul(STR(0), NULL, Val_int(arg[1])) : 0)
+CEXPR(k_str2double, Val_double(rval) = STR(0) ?
+		strtod(STR(0), NULL) : 0.)
 
 EXPR(k_ptr2str, NULL)
 EXPR(k_char2str, msprintf("%c", Val_char(arg[0])))
-EXPR(k_int2str, msprintf("%i", Val_int(arg[0])))
-EXPR(k_long2str, msprintf("%li", Val_long(arg[0])))
 EXPR(k_double2str, msprintf("%g", Val_double(arg[0])))
 
+static void to_int32 (EfiFunc *func, void *rval, void **arg)
+{
+	*((int32_t *) rval) = mstr2int64(Val_str(arg[0]), NULL,
+		func->dim > 1 ? Val_int(arg[1]) : 0);
+}
+
+static void to_int64 (EfiFunc *func, void *rval, void **arg)
+{
+	*((int64_t *) rval) = mstr2int64(Val_str(arg[0]), NULL,
+		func->dim > 1 ? Val_int(arg[1]) : 0);
+}
+
+static void to_uint32 (EfiFunc *func, void *rval, void **arg)
+{
+	*((uint32_t *) rval) = mstr2uint64(Val_str(arg[0]), NULL,
+		func->dim > 1 ? Val_int(arg[1]) : 0);
+}
+
+static void to_uint64 (EfiFunc *func, void *rval, void **arg)
+{
+	*((uint64_t *) rval) = mstr2uint64(Val_str(arg[0]), NULL,
+		func->dim > 1 ? Val_int(arg[1]) : 0);
+}
 
 COMPARE(b_str_lt, <)
 COMPARE(b_str_le, <=)
@@ -71,7 +94,7 @@ static char *strmul (const char *str, int n)
 
 	if	(!str || n <= 0)	return NULL;
 
-	sb = new_strbuf(0);
+	sb = sb_create(0);
 
 	for (; n > 0; n--)
 		sb_puts(str, sb);
@@ -185,7 +208,7 @@ static void f_xstrcut (EfiFunc *func, void *rval, void **arg)
 
 	in = io_cstr(base);
 	delim = STR(1);
-	sb = new_strbuf(0);
+	sb = sb_create(0);
 	out = io_strbuf(sb);
 
 	while ((c = io_getc(in)) != EOF)
@@ -250,7 +273,7 @@ static void f_strsub (EfiFunc *func, void *rval, void **arg)
 	repl = STR(1);
 	in = STR(2);
 	flag = ! Val_bool(arg[3]);
-	sb = new_strbuf(0);
+	sb = sb_create(0);
 
 	while (*s != 0)
 	{
@@ -325,16 +348,28 @@ static void f_lexsortkey (EfiFunc *func, void *rval, void **arg)
 static EfiFuncDef func_str[] = {
 	{ FUNC_PROMOTION, &Type_int, "char ()", k_char2int },
 	{ 0, &Type_char, "char (int)", k_int2char },
-	{ 0, &Type_char, "char (long)", k_long2char },
 
 	{ 0, &Type_int, "int (str)", k_str2int },
-	{ 0, &Type_long, "long (str)", k_str2long },
 	{ 0, &Type_int, "int (str, int base)", c_str2int },
-	{ 0, &Type_long, "long (str, int base)", c_str2long },
+	{ 0, &Type_uint, "unsigned (str)", k_str2uint },
+	{ 0, &Type_uint, "unsigned (str, int base)", c_str2uint },
+
+	{ 0, &Type_int32, "int32_t (str)", to_int32 },
+	{ 0, &Type_int32, "int32_t (str, int base)", to_int32 },
+	{ 0, &Type_uint32, "uint32_t (str)", to_uint32 },
+	{ 0, &Type_uint32, "uint32_t (str, int base)", to_uint32 },
+
+	{ 0, &Type_int64, "int64_t (str)", to_int64 },
+	{ 0, &Type_int64, "int64_t (str, int base)", to_int64 },
+	{ 0, &Type_varint, "varint (str)", to_int64 },
+	{ 0, &Type_varint, "varint (str, int base)", to_int64 },
+	{ 0, &Type_uint64, "uint64_t (str)", to_uint64 },
+	{ 0, &Type_uint64, "uint64_t (str, int base)", to_uint64 },
+	{ 0, &Type_varsize, "varsize (str)", to_uint64 },
+	{ 0, &Type_varsize, "varsize (str, int base)", to_uint64 },
+
 	{ 0, &Type_double, "double (str)", k_str2double },
 	{ 0, &Type_str, "char ()", k_char2str },
-	{ 0, &Type_str, "str (int)", k_int2str },
-	{ 0, &Type_str, "str (long)", k_long2str },
 	{ 0, &Type_str, "str (double)", k_double2str },
 	{ 0, &Type_str, "str (char, int = 1)", k_nchar2str },
 	{ 0, &Type_str, "str (Type_t)", k_type2str },

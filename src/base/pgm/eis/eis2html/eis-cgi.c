@@ -56,7 +56,7 @@ static void cgi_arg (char **ptr, const char *arg)
 {
 	StrBuf *sb;
 
-	sb = new_strbuf(0);
+	sb = sb_create(0);
 
 	for (; *arg != 0; arg++)
 	{
@@ -115,7 +115,7 @@ static void cgi_puts (const char *p, IO *io)
 
 static InfoNode *load_cmd (InfoNode *base, const char *def)
 {
-	char *name = msprintf("|%s --dump 2>/dev/null", def);
+	char *name = msprintf("|%s --info=dump: 2>/dev/null", def);
 	InfoNode *info = AddInfo(base, def, NULL, NULL, NULL);
 	LoadInfo(info, name);
 	memfree(name);
@@ -143,7 +143,6 @@ static void parse_arg (int narg, char **arg)
 			cgi_arg(&file, *arg + 5);
 		else if	(strncmp("node=", *arg, 5) == 0)
 			cgi_arg(&node, *arg + 5);
-		else	;
 	}
 }
 
@@ -157,6 +156,7 @@ static void list_node (IO *io, InfoNode *info,
 
 	for (i = info->list->used, ip = info->list->data; i > 0; i--, ip++)
 	{
+		SetupInfo(*ip);
 		io_protect(io, 1);
 		io_puts("<li><a HREF=\"/cgi-bin/eis-cgi?", io);
 		cgi_puts(key, io);
@@ -184,9 +184,7 @@ static void list_node (IO *io, InfoNode *info,
 
 static void HTMLInfo (IO *io, InfoNode *info, const char *key, char *node)
 {
-	if	(info->load)
-		info->load(info);
-
+	SetupInfo(info);
 	html_cmd("<h3 ALIGN=center>", io);
 	io_langputs(FMT_HEAD, io);
 	html_cmd("</h3>\n", io);
@@ -225,11 +223,11 @@ int main (int narg, char **arg)
 
 /*	Argumente bestimmen
 */
-	SetVersion("$Id: eis-cgi.c,v 1.12 2002-12-12 19:48:27 ef Exp $");
+	SetVersion("$Id: eis-cgi.c,v 1.17 2006-03-01 10:08:19 ef Exp $");
 	ParseCommand(&narg, arg);
 
 	parse_arg(narg - 1, arg + 1);
-	dim = strsplit(getenv("QUERY_STRING"), "&", &list);
+	dim = mstrsplit(getenv("QUERY_STRING"), "&", &list);
 	parse_arg(dim, list);
 	memfree(list);
 

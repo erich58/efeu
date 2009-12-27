@@ -1,5 +1,6 @@
 /*
-Speicherplatzanforderung
+:*:memmory allocation
+:de:Speicherplatzanforderung
 
 $Copyright (C) 1996 Erich Frühstück
 This file is part of EFEU.
@@ -34,8 +35,10 @@ diese eventuell selbst ein Speichersegment anfordern müssen.
 */
 
 #define	MEMCHECK	0
+#define	MEMTRACE	1
 
 #define	ERR	"sorry: malloc(%lu) failed\n"
+#define	ERR2	"sorry: realloc(%p, %lu) failed\n"
 
 
 #if	MEMCHECK
@@ -43,8 +46,8 @@ diese eventuell selbst ein Speichersegment anfordern müssen.
 #define	CHECK_SIZE	8
 #define	CHECK_MASK	"12345678"
 
-#define	MSG1	"lcheck(%p): Anfangsmarkierung wurde überschrieben.\n"
-#define	MSG2	"lcheck(%p): Endemarkierung wurde überschrieben.\n"
+#define	MSG1	"lcheck(%p): start marker destroyed.\n"
+#define	MSG2	"lcheck(%p): end marker destroyed.\n"
 
 typedef struct {
 #if	REFBYTEORDER
@@ -56,7 +59,7 @@ typedef struct {
 #endif
 } MEMHEAD;
 
-static void *checkmalloc(size_t size)
+static void *checkmalloc (size_t size)
 {
 	MEMHEAD *head;
 	char *p;
@@ -74,14 +77,171 @@ static void *checkmalloc(size_t size)
 	else	return NULL;
 }
 
+static void *checkrealloc (void *ptr, size_t size)
+{
+	size_t osize;
+	void *p;
+	
+	osize = ((MEMHEAD *) ptr)[-1].size;
+
+	if	(osize > size)	osize = size;
+
+	p = checkmalloc(size);
+	memcpy(p, ptr, osize);
+	lfree(ptr);
+	return p;
+}
+
 #endif
 
 /*
+Die Variable |$1| dient zur Aktivierung der Ablaufkontrolle
+für die Speicherverwaltung.
+*/
+
+int memtrace = 0;
+
+#if	MEMTRACE
+
+#define	TRACE_BSIZE	1000
+
+typedef struct {
+	void *ptr;
+	unsigned idx;
+	size_t size;
+	int change;
+} TRACE;
+
+static TRACE *trace_tab = NULL;
+static size_t trace_size = 0;
+static size_t trace_dim = 0;
+static unsigned trace_idx = 0;
+
+static void trace_add (void *ptr, size_t size)
+{
+	int i, i1, i2;
+
+	if	(!memtrace)	return;
+
+	i1 = 0;
+	i2 = trace_dim;
+	trace_idx++;
+
+	while (i1 != i2)
+	{
+		i = (i1 + i2) / 2;
+
+		if	(trace_tab[i].ptr < ptr)	i1 = i + 1;
+		else if	(trace_tab[i].ptr > ptr)	i2 = i;
+		else
+		{
+			trace_tab[i].idx = trace_idx;
+			trace_tab[i].size = size;
+			trace_tab[i].change++;
+			return;
+		}
+	}
+
+	if	(trace_dim >= trace_size)
+	{
+		TRACE *save = trace_tab;
+
+		trace_size += TRACE_BSIZE;
+		trace_tab = malloc(trace_size * sizeof(TRACE));
+
+		if	(!trace_tab)
+		{
+			fprintf(stderr, "malloc(%lu) failed.\n",
+				(unsigned long) trace_size * sizeof(TRACE));
+			exit(EXIT_FAILURE);
+		}
+
+		for (i = 0; i < i1; i++)
+			trace_tab[i] = save[i];
+
+		for (i = trace_dim; i > i1; i--)
+			trace_tab[i] = save[i - 1];
+
+		if	(save)
+			free(save);
+	}
+	else
+	{
+		for (i = trace_dim; i > i1; i--)
+			trace_tab[i] = trace_tab[i - 1];
+	}
+
+	trace_tab[i1].ptr = ptr;
+	trace_tab[i1].idx = trace_idx;
+	trace_tab[i1].size = size;
+	trace_tab[i1].change = 1;
+	trace_dim++;
+}
+#endif
+
+/*
+Die Funktion |$1| listet alle noch in Verwendung stehenden
+Speicherfelder auf.
+*/
+
+void meminfo (const char *pfx)
+{
+#if	MEMTRACE
+	TRACE *p;
+	size_t n;
+
+	if	(!pfx)	pfx = "meminfo()";
+
+	for (p = trace_tab, n = trace_dim; n-- > 0; p++)
+	{
+		if	(p->size)
+		{
+			fprintf(stderr, "%s:\t%p\t%u\t%lu\n", pfx,
+				p->ptr, p->idx, (unsigned long) p->size);
+		}
+	}
+#else
+	;
+#endif
+}
+
+/*
+Die Funktion |$1| listet alle Änderungen in der Speicherverwaltung
+seit dem letzten Aufruf auf.
+*/
+
+void memchange (const char *pfx)
+{
+#if	MEMTRACE
+	TRACE *p;
+	size_t n;
+
+	if	(!pfx)	pfx = "memchange()";
+
+	for (p = trace_tab, n = trace_dim; n-- > 0; p++)
+	{
+		if	(p->change)
+		{
+			p->change = 0;
+			fprintf(stderr, "%s:\t%p\t%u\t%lu\n", pfx,
+				p->ptr, p->idx, (unsigned long) p->size);
+		}
+	}
+#else
+	;
+#endif
+}
+
+/*
+:de:
 Die Funktion |$1| reserviert einen Speicherplatz der
 Größe <size>. Durch |lfree| kann der Speicherplatz
 wieder freigegeben werden.
 
 $Warnings
+:*:
+If the end of mewomory
+:de:
 Falls über das Ende eines reservierten Speicherplatzes
 hinausgeschrieben wird, kommt
 es zu einem unkontrollierten Fehlverhalten.
@@ -89,6 +249,7 @@ Meistens führt ein späterer Aufruf von |$1| zu einem
 Absturz des Programms.
 
 $Diagnostics
+:de:
 Wird ein Speicherfeld der Größe 0 angefordert, liefert
 die Funktion |$1| einen Nullpointer.
 Kann der gewünschte Speicherplatz nicht reserviert werden,
@@ -97,7 +258,7 @@ abgebrochen. Der Rückgabewert von |$1| muß daher nicht überprüft
 werden.
 */
 
-void *lmalloc(size_t size)
+void *lmalloc (size_t size)
 {
 	void *p;
 
@@ -113,6 +274,9 @@ void *lmalloc(size_t size)
 		exit(EXIT_FAILURE);
 	}
 
+#if	MEMTRACE
+	trace_add(p, size);
+#endif
 	return p;
 }
 
@@ -121,7 +285,7 @@ Die Funktion |$1| gibt einen von |lmalloc| angeforderten
 Speicherbereich wieder frei. Ein Nullpointer ist als Argument zulässig.
 */
 
-void lfree(void *p)
+void lfree (void *p)
 {
 #if	MEMCHECK
 	lcheck(p);
@@ -129,7 +293,44 @@ void lfree(void *p)
 	if	(p != NULL)
 		free(p);
 #endif
+#if	MEMTRACE
+	if	(p)
+		trace_add(p, 0);
+#endif
 }
+
+/*
+Die Funktion |$1| ändert die Größe eines zuvor mit |lmalloc| angeforderten
+Speicherfeldes auf <size> und liefert die Adresse des möglicherweise
+verschobenen Speicherfeldes. Falls als <ptr> ein Nullpointer übergeben wurde,
+ist die Funktion äquivalent zu |lmalloc|, falls <size> 0 ist, ist die
+Funktion äquivalent zu |lfree| und liefert einen Nullpointer.
+*/
+
+void *lrealloc (void *ptr, size_t size)
+{
+	char *p;
+
+	if	(ptr == NULL)	return lmalloc(size);
+	if	(size == 0)	return lfree(ptr), NULL;
+
+#if	MEMCHECK
+	if	((p = checkrealloc(ptr, size)) == NULL)
+#else
+	if	((p = realloc(ptr, size)) == NULL)
+#endif
+	{
+		fprintf(stderr, ERR2, ptr, (unsigned long) size);
+		exit(EXIT_FAILURE);
+	}
+
+#if	MEMTRACE
+	trace_add(ptr, 0);
+	trace_add(p, size);
+#endif
+	return p;
+}
+
 
 /*
 Die Funktion |$1| testet ein Speichersegment, ob sein Anfang oder sein
@@ -137,7 +338,7 @@ Ende überschrieben wurde. Vorraussetzung ist dabei, daß vorm Kompilieren
 der Makro |MEMCHECK| auf 1 gesetzt wurde.
 */
 
-void lcheck(void *p)
+void lcheck (void *p)
 {
 #if	MEMCHECK
 	MEMHEAD *head;
@@ -166,7 +367,7 @@ $Warnings
 Bei Übergabe eines Pointers an die Funktion
 |lfree|, der nicht durch einen vorangegangenen Aufruf von
 |lmalloc| stammt, ist das Verhalten unbestimmt und kann
-ebenfalls zu einem Programmabsturz führen.
+zu einem Programmabsturz führen.
 Die Funktionen |memalloc| und |memfree| sind diesbezüglich robust.
 $SeeAlso
 \mref{alloctab(3)}, \mref{memalloc(3)}.\br

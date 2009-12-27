@@ -36,7 +36,7 @@ static void res_free (EfiObj *obj)
 {
 	char **name = (void *) (obj + 1);
 	memfree(*name);
-	CleanData(obj->type, obj->data);
+	DestroyData(obj->type, obj->data);
 	Obj_free(obj, sizeof(EfiObj) + sizeof(char **) + obj->type->size);
 }
 

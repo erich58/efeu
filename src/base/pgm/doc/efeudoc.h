@@ -93,6 +93,7 @@ struct DocStruct {
 Doc *Doc_create (const char *type);
 
 IO *Doc_open (const char *path, const char *name, int flag);
+IO *Doc_preproc (IO *io);
 
 char *Doc_lastcomment (Doc *doc);
 void Doc_rem (Doc *doc, const char *fmt, const char *argdef, ...);

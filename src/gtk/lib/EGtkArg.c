@@ -23,6 +23,8 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <GUI/EGtkWidget.h>
 
+#if	HAS_GTK
+
 /*	L-Wert Zugriff auf Widget Argumente
 */
 
@@ -40,7 +42,7 @@ EfiObj *EGtkLval_alloc (EfiType *type, va_list list)
 void EGtkLval_free (EfiObj *ptr)
 {
 	EGtkArg *obj = (EGtkArg *) ptr;
-	CleanData(obj->type, obj->data);
+	DestroyData(obj->type, obj->data);
 	memfree(obj->arg.name);
 	Obj_free(ptr, LVAL_SIZE(obj->type));
 }
@@ -60,6 +62,8 @@ EfiObj *EGtkArg2Obj (GtkArg *arg)
 {
 	GtkType gtype;
 	EfiType *otype;
+	int64_t i64;
+	uint64_t u64;
 	char *s;
 	
 	if	(!arg)	return NULL;
@@ -71,9 +75,11 @@ EfiObj *EGtkArg2Obj (GtkArg *arg)
 	case GTK_TYPE_INT:
 		return int2Obj(GTK_VALUE_INT(*arg));
 	case GTK_TYPE_LONG:
-		return long2Obj(GTK_VALUE_LONG(*arg));
+		i64 = GTK_VALUE_LONG(*arg);
+		return NewObj(&Type_int64, &i64);
 	case GTK_TYPE_ULONG:
-		return size2Obj(GTK_VALUE_ULONG(*arg));
+		u64 = GTK_VALUE_ULONG(*arg);
+		return NewObj(&Type_uint64, &u64);
 	case GTK_TYPE_BOOL:
 		return bool2Obj((GTK_VALUE_BOOL(*arg) == TRUE));
 	case GTK_TYPE_FLOAT:
@@ -95,8 +101,8 @@ EfiObj *EGtkArg2Obj (GtkArg *arg)
 
 	if	(IsTypeClass(otype, &Type_enum))
 	{
-		Buf_int = GTK_VALUE_ENUM(*arg);
-		return NewObj(otype, &Buf_int);
+		int val = GTK_VALUE_ENUM(*arg);
+		return NewObj(otype, &val);
 	}
 
 	if	(IsTypeClass(otype, &EGtkObjectType))
@@ -118,6 +124,8 @@ static void EGtkArg_update (EfiObj *obj)
 static void EGtkArg_sync (EfiObj *obj)
 {
 	EGtkArg *base = (EGtkArg *) obj;
+	int64_t i64;
+	uint64_t u64;
 	RefObj(obj);
 
 	if	(IsTypeClass(obj->type, &Type_enum))
@@ -133,10 +141,12 @@ static void EGtkArg_sync (EfiObj *obj)
 		GTK_VALUE_INT(base->arg) = Obj2int(obj);
 		break;
 	case GTK_TYPE_LONG:
-		GTK_VALUE_LONG(base->arg) = Obj2long(obj);
+		Obj2Data(obj, &Type_int64, &i64);
+		GTK_VALUE_LONG(base->arg) = i64;
 		break;
 	case GTK_TYPE_ULONG:
-		GTK_VALUE_ULONG(base->arg) = Obj2size(obj);
+		Obj2Data(obj, &Type_uint64, &u64);
+		GTK_VALUE_ULONG(base->arg) = u64;
 		break;
 	case GTK_TYPE_BOOL:
 		GTK_VALUE_BOOL(base->arg) = Obj2bool(obj) ? TRUE : FALSE;
@@ -231,3 +241,5 @@ void AddEGtkArg(EfiType *type, EGtkArgDef *def, size_t dim)
 		def++;
 	}
 }
+
+#endif

@@ -22,13 +22,17 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 pconfig !
-Version = "$Id: mdfile.esh,v 1.6 2001-10-18 12:11:20 ef Exp $"
+Version = "$Id: mdfile.esh,v 1.8 2006-10-24 19:57:01 ef Exp $"
 AllStat = false
 ListAxis = false
+ShowStruct = false
 
 a | AllStat = true
 	:*:status of all files
 	:de:Status zu allen Dateien
+s | ShowStruct = true
+	:*:show structure of data cube
+	:de:Achsenstruktur ausgeben
 x | ListAxis = true
 	:*:show labels
 	:de:Achsen auflisten
@@ -47,14 +51,14 @@ void list_axis(mdmat md)
 	{
 		int n = printf("%s:", x.name);
 
-		for (y in md.label(x.name))
+		for (y in x.index)
 		{
 			if	(n > 70)
 			{
 				iostd << "\n\t";
-				n = 8 + printf("%s", y);
+				n = 8 + printf("%s", y.name);
 			}
-			else	n += printf(" %s", y);
+			else	n += printf(" %s", y.name);
 		}
 
 		iostd << "\n";
@@ -84,8 +88,15 @@ for (i = 1; i < argc; i++)
 		mdaxis x;
 		str delim;
 
-		printf("%s: %s[%d",
-			name, (str) md.type, md.size / sizeof(md.type));
+		printf("%s:", name);
+
+#if	flagres("ShowStruct")
+		for (x = md.axis; x != NULL; x = x.next)
+			printf(" %s[%d]", x.name, x.dim);
+
+		printf(" %s\n", (str) md.type);
+#else
+		printf(" %s[%d", (str) md.type, md.size / sizeof(md.type));
 
 		delim = "=";
 
@@ -96,6 +107,7 @@ for (i = 1; i < argc; i++)
 		}
 
 		printf("] %#s\n", md.title);
+#endif
 		list_axis(md);
 		free(md);
 	}

@@ -358,7 +358,7 @@ static StrBuf buf_str = SB_DATA(64);
 
 char *db_str (const unsigned char *buf, int pos, int len)
 {
-	sb_clear(&buf_str);
+	sb_clean(&buf_str);
 
 	for (buf += pos - 1; len-- > 0; buf++)
 		sb_putc(ebcdic2ascii(*buf), &buf_str);

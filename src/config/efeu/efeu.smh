@@ -1,0 +1,600 @@
+# :*:tools to create makefiles for EFEU projects
+# :de:Hilfsfunktionen zur Makefilegenerierung für EFEU-Projekte
+#
+# $Synopsis
+# include $1
+#
+# $Copyright (C) 2004 Erich Frühstück
+# This file is part of EFEU.
+# 
+# EFEU is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+# 
+# EFEU is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public
+# License along with EFEU; see the file COPYING.
+# If not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+test $_efeu_smh && return
+_efeu_smh=1
+
+include base.smh
+include config.smh
+include script.smh
+include cc.smh
+include dl.smh
+config latex.cfg
+
+# $Synopsis
+# include $1
+#
+# \index{|EFM_LIB|}\br
+# \index{|EFX_LIB|}\br
+
+mf_var -n EFM_LIB '-lefm $(LD_DL)'
+mf_var -n EFX_LIB '-lefx $(EFM_LIB) -lm'
+
+# $Description
+# :de:
+# Durch Einbinden der Headerdatei |$1| werden eine Reihe von
+# Funktionen zur Makefilegenerierung für EFEU-Projekte vordefiniert.
+# \par
+# Die Grundregeln werden um das zusätzliche Scheinziel |files| erweitert.
+# Dieses dient zur Installation von generierten Sourcen. Sowohl |all|
+# als auch |depend| hängen von |files| ab. Alle für |files|
+# eingetragenen Ziele werden damit bereits bei der Makefilegenerierung 
+# im Zuge der Abhängigkeitsermittlung erzeugt.
+# \par
+# Die Funktion |mf_srclist| zur Generierung einer Dateiliste wird
+# automatisch aufgerufen. Anstelle von |find| werden die Dateien mit
+# |mksrclist| zusammengestellt.
+
+if [ $_stdrules ]; then
+	mf_rule -d all files
+	mf_rule -d depend files
+	mf_rule -d files
+	mf_srclist -c mksrclist
+fi
+
+# $Description
+# :de:
+# Für Konfigurations-, Hilfetext- und Formatdateien 
+# werden automatisch Regeln zu ihrer Installation erzeugt.
+# Nachstehnde Tabelle zeigt die Vorgaben für die Installation:
+# \par
+# \tab	|l|l|
+# [-]
+# Dateimuster | Verzeichniss
+# [-]
+# <|/de/\\*.cfg|> | <|\$APPLDIR/de/config|>
+# <|*.cfg|> | <|\$APPLDIR/config|>
+# <|/de/\\*.hlp|> | <|\$APPLDIR/de/help|>
+# <|*.hlp|> | <|\$APPLDIR/help|>
+# <|/de/\\*.msg|> | <|\$APPLDIR/de/messages|>
+# <|*.msg|> | <|\$APPLDIR/messages|>
+# [-]
+# 
+# :de:
+# Hier ist |APPLDIR| mit |\$TOP/lib/efeu| vordefiniert, wobei |TOP| auf das
+# Hauptverzeichnis der |efeu|-Installation verweist. Falls |APPLDIR| auf
+# einen leeren String gesetzt wird, erfolgt keine Installation der Dateien.
+# Die Regeln werden am Ende des Makefiles eingefügt.
+
+APPLDIR=$TOP/lib/efeu
+
+_efeu_post ()
+{
+	_appl_flg=""
+
+	case "$APPLDIR" in
+	.)	_appl_flg="-c .";;
+	?*)	mf_dir -q APPLDIR=$APPLDIR; _appl_flg="-m APPLDIR";;
+	*)	return;;
+	esac
+
+	mf_comm "Rules for appplication files"
+	foreach $_appl_flg -M de -x config -S cnf 'mf_file $tg $src'
+	foreach $_appl_flg -M de -x help -S hlp 'mf_file $tg $src'
+	foreach $_appl_flg -M de -x messages -S msg 'mf_file $tg $src'
+}
+
+if [ $_stdrules ]; then
+	postpone _efeu_post
+fi
+
+# $pconfig !
+# I:path |
+#	:*:install information files in the directory <path>.
+#	:de:installiere Informationsdateien im Verzeichnis <path>.
+# H:path |
+#	:*:install header files in the directory <path>.
+#	:de:installiere Headerdateien im Verzeichnis <path>.
+# p |
+#	:*:create commands and not only objectfiles from sources.
+#	:de:erzeugt fertige Programme und nicht nur Objektdateien aus
+#	den Sourcen.
+# :tpl |
+#	:*:name of template file.
+#	:de:Name der Schablonendatei.
+# *args |
+#	:*:additional arguments for |mf_cc| to compile sources.
+#	:de:zusätzliche Argumente für |mf_cc| zum kompilieren der
+#	Sourcen.
+# !
+# :*:
+# The following options and arguments are accepted by @!:
+# :de:
+# Die Funktion @! erzeugt Regeln für mit |mksource| generierte Dateien.
+# Die generierten Dateien werden für das Scheinziel |files| eingetragen.
+# Für generierte Sourcefiles werden mithilfe von |mf_cc| auch Regeln zur
+# Kompilierung erzeugt.
+# \par
+# Die folgenden Optionen und Argumente werden von @! akzeptiert:
+#
+# @arglist
+
+efeu_gensrc ()
+{(
+	pflag=
+	tpl=
+	inc=
+	info=
+
+	while [ -n "$1" ]
+	do
+		case "$1" in
+		-I)	info="$2"; shift 2;;
+		-H)	inc="$2"; shift 2;;
+		-p)	pflag=1; shift 1;;
+		--)	shift 1;;
+		*)	tpl=$1; shift 1; break;;
+		esac
+	done
+
+	test "$tpl" || shmkmf_warg "efeu_gensrc"
+
+	mksource --all=files -r $tpl
+
+	for x in `mksource -l $tpl`
+	do
+		case "$x" in
+		*.c)
+			if [ "$pflag" ]; then
+				tg=`basename $x .c`
+				mf_cc -I. -I$SRC -o $tg $x "$@"
+			else
+				mf_cc -I. -I$SRC -c $x "$@"
+			fi
+			;;
+		*.h)
+			if [ -n "$inc" ]; then
+				mf_file -A files "$inc/$x" "$x"
+			fi
+			;;
+		*.info)
+			if [ -n "$info" ]; then
+				mf_file -A files "$info/$x" "$x"
+			fi
+			;;
+		esac
+	done
+)}
+
+# $pconfig !
+# t:top |
+#	definiert das Hauptverzeichniss für die Installation, die
+#	Vorgabe ist |TOP| von |shmkmf|.
+# h:sub |
+#	installiert Headerdateien in <top>|/include/|<sub>.
+# H:path |
+#	installiert Headerdateien in <path>.
+# L:path |
+#	installiert die Programmbibliothek in <path>.
+# c |
+#	erzeugt Installationsregeln für konfigurierbare Headerdateien
+#	(Filezusatz |.hcfg|).
+# u |
+#	erzeugt Erneuerungsregeln anstelle von Installationsregeln
+#	für konfigurierbare Headerdateien.
+# r:hdr |
+#	erzeugt Installationsregeln für konfigurierbare Headerdateien
+#	(Filezusatz |.hcfg|) unter Verwendung der Regeldatei <hdr>.
+# x |
+#	ruft |mf_gensrc| für alle verfügbaren Schablonendateien auf.
+# :name |
+#	Name der Programmbibliothek
+# *args |
+#	:*:additional arguments for |mf_cc| to create libraries.
+#	:de:zusätzliche Argumente für |mf_cc| zum Generieren der
+#	Bibliothek.
+# !
+# :*:
+# The following options and arguments are accepted by @!:
+# :de:
+# Die Funktion @! generiert Regeln zum Aufbau
+# einer Programmbibliothek.
+# \par
+# Die folgenden Optionen und Argumente werden von @! akzeptiert:
+#
+# @arglist
+#
+# :de:
+# Wurde kein Installationsverzeichnis für Heasderdateien angegeben,m
+# wird <top>|/include| verwendet, wurde kein Installationsverzeichnis
+# für die Bibliothek angegeben, wird <top>|/lib| verwendet.
+
+efeu_library ()
+{(
+	top="$TOP"
+	inc=
+	lib=
+	cfg=
+	name=`basename $SRC`
+	xflag=
+	info=
+
+	while [ -n "$1" ]
+	do
+		case "$1" in
+		-t)	top="$2"; shift 2;;
+		-c)	cfg="mf_config"; shift 1;;
+		-u)	cfg="mf_config -u"; shift 1;;
+		-r)	cfg="mf_config -u -r $2"; shift 2;;
+		-h)	inc="$top/include/$2"; shift 2;;
+		-H)	inc="$2"; shift 2;;
+		-L)	lib="$2"; shift 2;;
+		-x)	xflag=1; shift 1;;
+		-*)	shmkmf_invop "efeu_library" "$1"; shift 1;;
+		*)	name="$1"; shift 1; break;;
+		esac
+	done
+
+	test -n "$inc" || inc="$top/include"
+	test -n "$lib" || lib="$top/lib"
+
+	mf_var LIBNAME "-D 'LIBNAME=\"$name\"'"
+
+	foreach -A files -p $inc -S h 'mf_file $tg $src'
+	test -n "$cfg" && foreach -A files -p $inc -s hcfg "$cfg \$tg.h \$src"
+
+	if	[ -n "$xflag" ]; then
+		case "$APPLDIR" in
+		.)	;;
+		?*)	(AllTarget=files; mf_dir -q INFODIR=$APPLDIR/info);
+			info="-I '\$(INFODIR)'";;
+		*)	;;
+		esac
+
+		foreach -s tpl "efeu_gensrc $info -H $inc \$src -mc LIBNAME"
+	fi
+
+	foreach -s c 'mf_cc -c -mc LIBNAME $src'
+	foreach -s S 'mf_cc -c $src'
+	mf_objlist OBJLIST
+	mf_lib -p $lib $name -mo OBJLIST "$@"
+)}
+
+# $pconfig !
+# p:name |
+#	verwende |DEP_|<name> und |LIB_|<name> als Variablennamen
+#	anstelle von |DEP| und |LIB|.
+# L:path | 
+#	setzt das aktuelle Verzeichnis <ldir> für Programmbibliotheken auf
+#	<path> und erweitert die Link-Flags um |-L|<path>.
+# l:name |
+#	erweitert die Link-Flags um |-l|<name>. Der Name <name> kann
+#	unmittelbatan die Option angehängt wrrden.
+# xd:dep |
+#	erweitert die Abhängigkeiten um <dep>.
+# md:name |
+#	ist eine Abkürzung für |-xd '$$(|<name>|)'|.
+# xl:flag |
+#	erweitert die Link-Flags mit <flag>.
+# ml:name |
+#	ist eine Abkürzung für |-xl '$$(|<name>|)'|.
+# s:name |
+#	Erweitert die Abhängigkeiten um |'$$(DEP_|<name>|)'| und die
+#	Link Flags um |'$$(LIB_|<name>|)'|, entspricht
+#	|-md DEP_|<name> |-ml LIB_|<name>
+# sl:name |
+#	Erweitert die Link Flags um |'$$(LIB_|<name>|)'|, entspricht
+#	|-ml LIB_|<name>
+# //name |
+#	Erweitert die Abhängigkeiten um <ldir>|/lib<name>|<sfx> und die
+#	Link-Flags um |-l|<name>. Der Zusatz <sfx> hängt davon ab, ob das
+#	system gemeinsam genutzte Bibliotheken unterstützt oder nut statische
+#	Bibliotheken verfügbar sind.
+# !
+# :*:
+# The following options and arguments are accepted by @!:
+# :de:
+# Die Funktion @! generiert aus Bibliotheksnamen Variablen mit
+# Anhängigkeitsnamen und Link-Flags.
+# \par
+# Die folgenden Optionen und Argumente werden von @! akzeptiert:
+#
+# @arglist
+
+efeu_libvar ()
+{(
+	ldir="$TOP/lib"
+	dep_var="DEP"
+	lib_var="LIB"
+	dep=
+	lib=
+
+	if [ "$CC_SHARED" ]; then
+		sfx=".so"
+	else
+		sfx=".a"
+	fi
+
+	while [ -n "$1" ]
+	do
+		case "$1" in
+		-p)	dep_var="DEP_$2"; lib_var="LIB_$2"; shift 2;;
+		-l)	lib="$lib $1$2"; shift 2;;
+		-l*)	lib="$lib $1"; shift 1;;
+		-L)	ldir="$2"; lib="$lib $1$2"; shift 2;;
+		-xd)	dep="$dep $2"; shift 2;;
+		-md)	dep="$dep \$($2)"; shift 2;;
+		-xl)	lib="$lib $2"; shift 2;;
+		-ml)	lib="$lib \$($2)"; shift 2;;
+		-s)	dep="$dep \$(DEP_$2)"; lib="$lib \$(LIB_$2)"; shift 2;;
+		-sl)	lib="$lib \$(LIB_$2)"; shift 2;;
+		*)	dep="$dep $ldir/lib$1$sfx"; lib="$lib -l$1"; shift 1;;
+		esac
+	done
+
+	mf_var "$dep_var" $dep
+	mf_var "$lib_var" "$lib"
+)}
+
+# $pconfig !
+# t:top |
+#	definiert das Hauptverzeichniss für die Installation, die
+#	Vorgabe ist |TOP| von |shmkmf|.
+# c |
+#	erzeugt Installationsregeln für konfigurierbare Headerdateien
+#	(Filezusatz |.hcfg|).
+# u |
+#	erzeugt Erneuerungsregeln anstelle von Installationsregeln
+#	für konfigurierbare Headerdateien.
+# b:bin |
+#	installiert das Programm im Verzeichnis <bin>.
+# x |
+#	ruft |mf_gensrc| für alle verfügbaren Schablonendateien auf.
+# :name |
+#	Name des Programms
+# *args |
+#	zusätzliche Argumente werden an |mf_libvar| übergeben.
+# !
+# :*:
+# The following options and arguments are accepted by @!:
+# :de:
+# Die Funktion @! generiert Regeln zum Aufbau
+# eines einzelnen Programms aus mehreren Sourcefiles.
+# \par
+# Die folgenden Optionen und Argumente werden von @! akzeptiert:
+#
+# @arglist
+
+efeu_stdprog ()
+{(
+	top="$TOP"
+	bin="$TOP/bin"
+	cfg=
+	name=`basename $SRC`
+	xflag=
+
+	while [ -n "$1" ]
+	do
+		case "$1" in
+		-t)	top="$2"; shift 2;;
+		-c)	cfg="mf_config"; shift 1;;
+		-u)	cfg="mf_config -u"; shift 1;;
+		-b)	bin="$2"; shift 2;;
+		-x)	xflag=1; shift 1;;
+		-*)	shmkmf_invop "efeu_library" "$1"; shift 1;;
+		*)	name="$1"; shift 1; break;;
+		esac
+	done
+
+	test -n "$bin" || bin="$top/bin"
+
+	mf_dir -q BIN=$bin
+	efeu_libvar "$@"
+	test -n "$cfg" && foreach -A files -s hcfg "$cfg \$tg.h \$src"
+	test -n "$xflag" && foreach -s tpl "efeu_gensrc \$src"
+	foreach -s c "mf_cc -I. -I$SRC -c \$src"
+	mf_objlist OBJ
+	mf_cc -o "\$(BIN)/$name" -mo OBJ -md DEP -ml LIB
+)}
+
+# $pconfig !
+# d |
+#	:*:delete an existing note file. No rule is generated.
+#	:de:Lösche eine bestehende Anmerkungsdatei. Es wird keine
+#	Regel generieret
+# :name |
+# 	:*:Name of note file, default is basename of source directory
+#	:de:Name der Anmerkungsdatei, Vorgabe ist der Basisname des
+#	Sourceverzeichnisses.
+# !
+# :*:
+# The function \index{@!} creates a note file about the building of
+# a specific target and shows the contents every time make is called
+# with target $$AllTarget. This function is used on commenting problems.
+# :de:
+# Die Funktion \index{|mf_usage|} generiert eine Anmerkungsdatei und gibt
+# dessen Inhalt bei jedem Aufruf von |make| mit dem Ziel $$AllTarget aus. Sie
+# wird zur Kommentierunmg von Problemen verwendet.
+#
+# $@arglist
+
+efeu_note ()
+{(
+	dir=$TOP/note
+	name=`basename $SRC`
+	dflag=0
+
+	while [ -n "$1" ]
+	do
+		case "$1" in
+		-d)	dflag=1; shift 1;;
+		-*)	shmkmf_invop "efeu_note" "$1"; shift 1;;
+		--)	shift 1;;
+		*)	name=$1; shift 1; break;;
+		esac
+	done
+
+	path=$dir/$name
+
+	if [ "$dflag" -eq 1 ]; then
+		mf_rule -d $AllTarget "" "@-test ! -f $path || rm -f $path"
+		return
+	fi
+
+	mf_dir -q $dir
+	printf "\n%s::\n" $path
+	printf "\t@echo '%s: src=%s build=%s' > \$@\n" "$name" $SRC `pwd`
+
+	while read line
+	do
+		printf "\t@echo '\t%s' >> \$@\n" "$line"
+	done
+
+	mf_rule -d $AllTarget $path '@cat %1'
+)}
+
+case "$LANG" in
+de*)	efeu_deflang=de;;
+*)	efeu_deflang=en;;
+esac
+
+# $pconfig !
+# l:lang |
+#	definiert die Sprachen für die die Dokumentation generiert werden
+#	soll.
+# H::hdr |
+#	:*:this option is passed to |efeudoc|.
+#	:de:Diese Option wird an |efeudoc| weitergereicht.
+# ::tg |
+#	Name des Dokuments
+# ::src |
+#	Verzeichnis mit den Dokumentsourcen
+# !
+# :*:
+# The following options and arguments are accepted by @!:
+# :de:
+# Die Funktion @! generiert Dokumentationen mithile von |efeudoc|.
+# \par
+# Die folgenden Optionen und Argumente werden von @! akzeptiert:
+#
+# @arglist
+
+efeu_doc ()
+{(
+	flg=
+	lng=$efeu_deflang
+	mdir="mf_dir -p"
+
+	while [ -n "$1" ]
+	do
+		case "$1" in
+		-l)	lng="$2"; shift 2;;
+		-H)	flg="$flg $1 '$2'"; shift 2;;
+		--)	break;;
+		-*)	shmkmf_invop "efeu_doc" "$1"; exit 1;;
+		*)	break;;
+		esac
+	done
+
+	case "$#" in
+	0)	tg=`basename $SRC`; src=$SRC;;
+	1)	tg=$1; src=$SRC;;
+	2)	tg=$1; src=$2;;
+	*)	shmkmf_warg "efeu_doc";;
+	esac
+
+	for l in $lng
+	do
+		cmd="LANG=$l efeudoc $flg"
+		dir=$TOP/doc/$l
+
+		if [ "$HAS_LATEX" = 1 ]; then
+			$mdir $dir/ps
+			ps=$dir/ps/$tg.ps.gz
+			mf_rule -a $ps "" "$cmd -p $src | gzip > \$@"
+			mf_depend "$cmd -d -p -o $ps $src >> $Makefile"
+
+			if [ "$HAS_PS2PDF" = 1 ]; then
+				$mdir $dir/pdf
+				pdf=$dir/pdf/$tg.pdf
+				mf_rule -a $pdf "$ps" \
+					"zcat $ps | ps2pdf - \$@"
+			fi
+		fi
+
+		h=$dir/html
+		$mdir $h
+		n=html_${tg}_$l
+		mf_rule -d all $n "(cd $h; htmlindex )"
+		mf_rule -d $n
+		mf_rule -d clean "" "rm -rf $h/$tg"
+		mf_depend "$cmd -r $n -h -o $h/$tg $src >> $Makefile"
+	done
+)}
+
+case `uname -s` in
+AIX)	man_ext=""; man_filter="";;
+*)	man_ext=".gz"; man_filter="| gzip";;
+esac
+
+# $pconfig !
+# l:lang |
+#	definiert die Sprachen, für die das Handbuch generiert werden
+#	soll.
+# s:sec |
+#	gibt den Abschnitt für die Handbucheinträge vor.
+# !
+# :*:
+# The following options and arguments are accepted by @!:
+# :de:
+# Die Funktion @! installiert Handbucheinträge.
+# \par
+# Die folgenden Optionen und Argumente werden von @! akzeptiert:
+#
+# @arglist
+
+efeu_man ()
+{(
+	lng=$efeu_deflang
+	sec=1
+
+	while [ -n "$1" ]
+	do
+		case "$1" in
+		-l)	lng="$2"; shift 2;;
+		-s)	sec="$2"; shift 2;;
+		*)	break;;
+		esac
+	done
+
+	mf_rule -a "$1.$sec$man_ext" "$2" \
+		"LANG=$lng src2doc $2 | efeudoc -Tman - $man_filter > \$@"
+)}
+
+# $SeeAlso
+# \mref{shmkmf(1)},
+# \mref{rule.smh(7)},
+# \mref{cc.smh(7)},
+# \mref{srclist.smh(7)},
+# \mref{foreach.smh(7)}.

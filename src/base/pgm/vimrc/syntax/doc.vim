@@ -14,15 +14,15 @@ syn match docSpecial	"&[_[:alpha:]][_[:alnum:]]*;"
 syn match docError	"&[^_[:alnum:]]"
 syn match docSpecial	"&[-&;]"
 
-syn match docTabKey	"\[.*\]"
-syn match docTabKey	"#[[:digit:]]*"
-syn match docTabKey	"#[[:digit:]]*[lrc]"
+syn match docTabKey	"\[.*\]"	contained
+syn match docTabKey	"#[[:digit:]]*"	contained
+syn match docTabKey	"#[[:digit:]]*[lrc]"	contained
 
 "Listenmarken
 syn match docEsc	"\\[\\\[\]]"
 syn match docItem	"^[ \t]*[*][[:space:]]\+"
 syn match docItem	"^[ \t]*[#][[:space:]]\+"
-syn region docSubItem	matchgroup=Delimiter start="\[" end="\]" contains=docEsc,docSubItem
+syn region docSubItem	matchgroup=Delimiter start="\[" end="\]" contained contains=docEsc,docSubItem
 syn region docItem	matchgroup=Delimiter start="^[ \t]*\[" end="\]" contains=docEsc,docSubItem
 
 "Textmakros
@@ -37,7 +37,7 @@ syn region docArg	matchgroup=Delimiter start="{" end="}" contained contains=ALL
 
 " Befehle
 syn match docCommand	"\\[_[:alpha:]][_[:alnum:]]*[ \t]*"
-syn match docCommand	"\\[_[:alpha:]][_[:alnum:]]*[ \t]*\[.*\]"
+syn match docCommand	"\\[_[:alpha:]][_[:alnum:]]*[ \t]*\[[^][]*\]"
 syn match docCommand	"\\[_[:alpha:]][_[:alnum:]]*;"
 syn match docCommand	"\\[^_[:alnum:]]"
 syn match docContinue	"\\$"

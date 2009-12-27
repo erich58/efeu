@@ -1,5 +1,23 @@
-/*	Multidimensionale Matrix standardisiert ausgeben
-	(c) 1994 Erich Frühstück
+/*
+Multidimensionale Matrix standardisiert ausgeben
+
+$Copyright (C) 1994, 2005 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <EFEU/printobj.h>
@@ -8,11 +26,12 @@
 #include <EFEU/locale.h>
 
 #define H_MAGIC		"##MDMAT   "
-#define H_TITLE		"##Titel   "
+#define H_TITLE		"##Title   "
 #define H_TYPE		"##Type    "
+#define H_HEAD		"##Head    "
 #define H_LOCALE	"##Locale  "
-#define H_LINES		"##Zeilen  "
-#define H_COLUMNS	"##Spalten "
+#define H_ROWS		"##Rows    "
+#define H_COLUMNS	"##Columns "
 #define H_VERSION	"2.0"
 
 #define	LLABEL	"."
@@ -41,7 +60,7 @@ static IO *set_pctrl(IO *io, const char *def)
 	int i;
 
 	out = NULL;
-	dim = strsplit(def, "%s", &list);
+	dim = mstrsplit(def, "%s", &list);
 
 	for (i = 0; i < dim; i++)
 	{
@@ -115,10 +134,34 @@ static void show_axis(IO *io, const char *label, mdaxis *axis, int flag)
 }
 
 
+static void put_head (IO *io, char *head)
+{
+	char *p;
+
+	for (; head; head = p)
+	{
+		if	((p = strchr(head, '\n')))
+		{
+			*p = 0;
+			p++;
+		}
+
+		put_label(io, H_HEAD, head);
+	}
+}
+
 static void show_header(IO *io, mdmat *md)
 {
+	char *head;
+
 	put_label(io, H_MAGIC, H_VERSION);
 	put_label(io, H_TITLE, md->title);
+
+	if	((head = TypeHead(md->type)))
+	{
+		put_head(io, head);
+		memfree(head);
+	}
 
 	io_ctrl(io, PCTRL_LEFT);
 	io_puts(H_TYPE, io);
@@ -128,12 +171,12 @@ static void show_header(IO *io, mdmat *md)
 	if	(Locale.print)
 		put_label(io, H_LOCALE, Locale.print->name);
 
-	show_axis(io, H_LINES, md->axis, 0);
+	show_axis(io, H_ROWS, md->axis, 0);
 	show_axis(io, H_COLUMNS, md->axis, XMARK);
 }
 
 
-static int vardim(EfiType *type, size_t dim)
+static int vardim (EfiType *type, size_t dim)
 {
 	if	(dim)
 	{
@@ -156,13 +199,24 @@ static int vardim(EfiType *type, size_t dim)
 	else	return 1;
 }
 
+static int axis_dim(mdaxis *x)
+{
+	int i, k;
+
+	for (i = k = 0; i < x->dim; i++)
+		if	(!(x->idx[i].flags & MDFLAG_LOCK))
+			k++;
+
+	return k;
+}
+
 static int headdim(mdmat *md)
 {
 	mdaxis *x;
 	int n;
 
 	for (n = 1, x = md->axis; x != NULL; x = x->next)
-		if (x->flags & XMARK) n *= x->dim;
+		if (x->flags & XMARK) n *= axis_dim(x);
 
 	return n * vardim(md->type, 0);
 }
@@ -195,6 +249,9 @@ static void headline(IO *io, mdaxis *x, EfiType *type, const char *str)
 
 		for (i = 0; i < x->dim; i++)
 		{
+			if	(x->idx[i].flags & MDFLAG_LOCK)
+				continue;
+
 			p = mstrpaste(".", str, x->idx[i].name);
 			headline(io, x->next, type, p);
 			memfree(p);
@@ -281,7 +338,7 @@ static void t_walk(IO *io, EfiType *type, size_t dim, char *ptr)
 	else if	(zero_flag || Obj2bool(ConstObj(type, ptr)))
 	{
 		io_ctrl(io, PCTRL_VALUE);
-		PrintData(io, type, ptr);
+		ShowData(io, type, ptr);
 	}
 	else	io_ctrl(io, PCTRL_EMPTY);
 }
@@ -297,8 +354,10 @@ static void c_walk(IO *io, mdaxis *x, EfiType *type, char *ptr)
 
 		for (i = 0; i < x->dim; i++)
 		{
-			c_walk(io, x->next, type, ptr);
-			ptr += x->size;
+			if	(x->idx[i].flags & MDFLAG_LOCK)
+				continue;
+
+			c_walk(io, x->next, type, ptr + i * x->size);
 		}
 	}
 	else	t_walk(io, type, 0, ptr);
@@ -320,10 +379,12 @@ static void l_walk(IO *io, mdmat *md, mdaxis *x, const char *label, char *ptr)
 
 		for (i = 0; i < x->dim; i++)
 		{
+			if	(x->idx[i].flags & MDFLAG_LOCK)
+				continue;
+
 			p = mstrpaste(".", label, x->idx[i].name);
-			l_walk(io, md, x->next, p, ptr);
+			l_walk(io, md, x->next, p, ptr + i * x->size);
 			memfree(p);
-			ptr += x->size;
 		}
 	}
 	else

@@ -25,6 +25,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/CmdPar.h>
 #include <EFEU/parsedef.h>
 
+#if	HAS_GTK
+
 EfiType EGtkObjectType = STD_TYPE("GtkObject", GtkObject *,
 	&Type_ptr, NULL, NULL);
 
@@ -150,6 +152,8 @@ void EGtkObject_setup (void)
 	AddFuncDef(fdef, tabsize(fdef));
 	EGtkWidget_setup();
 }
+
+#endif
 
 /*
 $SeeAlso

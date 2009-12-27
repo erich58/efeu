@@ -1,0 +1,73 @@
+/*
+Konstruktion von Pfadnamen
+
+$Copyright (C) 2001 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+*/
+
+#ifndef	_Path_pph
+#define	_Path_pph	1
+/*
+$Description
+Zur Konstruktion von Pfadnamen stehen eine Reihe von Hilfsfunktionen
+zur Verfügung.
+Ihre Verwendung garantiert eine
+Kompatiblität der Imakefiles auf verschiedene Systeme.
+$SeeAlso
+\mref{mkmf(1)}, \mref{Name(7)}.
+*/
+
+#ifndef PathName
+/*
+Der Makro |$1| hängt Bibliotheksnamen und Filenamen zusammen.
+Unter Unix liefert er <|<dir>/<name>|>.
+*/
+#define	PathName(dir,name)	Concat3(dir,/,name)
+#endif
+
+#ifndef MsgPath
+/*
+Der Makro |$1| generiert einen Bibliothekspfad für Fehlermeldungsdateien.
+Unter Unix liefert er <|<dir>/messages/<name>|>.
+*/
+#define	MsgPath(dir,name)	Concat3(dir,/messages/,name)
+#endif
+
+#ifndef DocPath
+/*
+Der Makro |$1| generiert einen Bibliothekspfad für Dokumentationen.
+Unter Unix liefert er <|<dir>/help/<name>|>.
+*/
+#define	DocPath(dir,name)	Concat3(dir,/doc/,name)
+#endif
+
+#ifndef HelpPath
+/*
+Der Makro |$1| generiert einen Bibliothekspfad für Hilfetexte.
+Unter Unix liefert er <|<dir>/help/<name>|>.
+*/
+#define	HelpPath(dir,name)	Concat3(dir,/help/,name)
+#endif
+
+/*
+Der Makro |$1| definiert den Pfadnamen einer Standardheaderdatei.
+Unter Unix ist er <|$(STDINCDIR)/<name>|>.
+*/
+#define	StdInclude(name)	PathName($(STDINCDIR),name)
+
+#endif	/* Path.pph */

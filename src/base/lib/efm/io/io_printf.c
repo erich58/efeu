@@ -103,11 +103,15 @@ int io_vprintf(IO *io, const char *fmt, va_list list)
 		case 'x':
 		case 'X':
 
-			if	(key.flags & FMT_LONG)
+			if	(key.flags & FMT_XLONG)
 			{
-				n += fmt_long(io, &key, va_arg(list, long));
+				n += fmt_int64(io, &key, va_arg(list, int64_t));
 			}
-			else	n += fmt_long(io, &key, va_arg(list, int));
+			else if	(key.flags & FMT_LONG)
+			{
+				n += fmt_int64(io, &key, va_arg(list, int32_t));
+			}
+			else	n += fmt_int64(io, &key, va_arg(list, int));
 
 			break;
 
@@ -123,19 +127,30 @@ int io_vprintf(IO *io, const char *fmt, va_list list)
 		case 'p':
 		case 'P':
 
-			n += fmt_long(io, &key, (long) va_arg(list, void *));
+			n += fmt_uint64(io, &key,
+				(uint64_t) (size_t) va_arg(list, void *));
 			break;
 
 		case 'n':
 
-			if	(key.flags & FMT_LONG)
+			if	(key.flags & FMT_XLONG)
 			{
-				long *ptr = va_arg(list, long *);
+				int64_t *ptr = va_arg(list, int64_t *);
+				*ptr = n;
+			}
+			else if	(key.flags & FMT_LONG)
+			{
+				int32_t *ptr = va_arg(list, int32_t *);
+				*ptr = n;
+			}
+			else if	(key.flags & FMT_BYTE)
+			{
+				int8_t *ptr = va_arg(list, int8_t *);
 				*ptr = n;
 			}
 			else if	(key.flags & FMT_SHORT)
 			{
-				short *ptr = va_arg(list, short *);
+				int16_t *ptr = va_arg(list, int16_t *);
 				*ptr = n;
 			}
 			else

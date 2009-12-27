@@ -1,0 +1,29 @@
+/*
+:*:Insert document parts depending of language and availability
+:de:Dokumentteile abhängig von Sprache und Verfügbarkeit einfügen
+*/
+
+\eval {
+	str[] ptab;
+
+	if	(system("syndb --version 2>/dev/null") == 0)
+		ptab[ptab.dim] = "syndb";
+
+	qsort(ptab, "");
+}
+
+\def\docpart {{
+	str opt = ParseOpt(cin, true);
+	str name = xexpand(ParseLine(cin));
+
+	if	(!opt || ptab.bsearch(opt, cmp))
+	{
+		str fname = fsearch(DocPath, paste("/", Lang, name));
+
+		if	(!fname)
+			fname = fsearch(DocPath, name);
+
+		if	(fname)
+			include(NULL, fname);
+	}
+}}

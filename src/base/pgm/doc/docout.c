@@ -69,6 +69,9 @@ static DocType TypeTab[] = {
 	{ "tex2ps", ":*:PostScript over LaTeX"
 		":de:PostScript-Dokument über LaTeX",
 		DocOut_latex, post_open, "tex2ps -n3 -" },
+	{ "tex2pdf", ":*:PDF over LaTeX"
+		":de:PDF-Dokument über LaTeX",
+		DocOut_latex, post_open, "tex2pdf -n3 -" },
 	{ "man", ":*:man source"
 		":de:Handbuchsource",
 		DocOut_mroff, NULL },

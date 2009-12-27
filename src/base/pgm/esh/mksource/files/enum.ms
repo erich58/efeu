@@ -36,6 +36,8 @@ Die folgenden Funktionen werden definiert:
 	liefert den Index der Aufzählung mit Kennung <key>.
 \ttitem	char *<enum>Label (unsigned <index>);
 	liefert den Namen der Aufzählung mit Index <index>.
+\ttitem	char *<enum>Desc (unsigned <index>);
+	liefert die Beschreibung der Aufzählung mit Index <index>.
 \ttitem	<enum>Dim
 	ist ein Makro mit der Zahl der Ausprägungen.
 
@@ -69,7 +71,7 @@ Beschreibungstext ist. Die einzelnen Einträge werden beginned bei 0
 durchnummeriert.
 
 Falls <key> ein gültiger C-Name ist,
-wird eine Makro mit dem Namen <ename>|_|<key>}
+wird eine Makro mit dem Namen <ename>|_|<key>
 und der Laufnummer als Wert konstruiert.
 
 Einem Schlüssel können beliebig viele Kennungen der Form |[|<name>|]|
@@ -83,7 +85,7 @@ void Enum(str ename, str label, IO def, bool glob = true)
 	str name, desc;
 	Function f;
 	int n;
-	IO io = glob ? hdr : src;
+	IO io = glob ? hdr : top;
 
 	ename = psub(ename);
 	label = psub(label);
@@ -130,6 +132,10 @@ void Enum(str ename, str label, IO def, bool glob = true)
 	f = Function("char *$1Label", "unsigned n", ename);
 	f.line("return $1Tab[n < $1Dim ? n : 0].name;", ename);
 	f.write(glob);
+
+	f = Function("char *$1Desc", "unsigned n", ename);
+	f.line("return $1Tab[n < $1Dim ? n : 0].desc;", ename);
+	f.write(glob);
 }
 
 /*
@@ -146,7 +152,7 @@ config hdr src
 Include(src, HeaderName);
 
 Enum("Geschl", "Geschlecht", string !
--	Unbekannt
+[X]-	Unbekannt
 M	Männer
 W	Frauen
 !);

@@ -1,0 +1,18 @@
+/*
+Ausgabe einer Tabelle mit Quadraten und Quadratwurzeln
+*/
+
+int lower = 1;	// Startwert der Tabelle
+int upper = 10;	// Letzter Eintrag der Tabelle
+int step = 1;	// Schrittbreite
+
+printf("%6s", "n");
+printf(" %6s", "n*n");
+printf(" %10s\n", "sqrt(n)");
+
+for (int i = lower; i <= upper; i += step)
+{
+	printf("%6d", i);
+	printf(" %6d", i * i);
+	printf(" %10.5f\n", sqrt(i));
+}

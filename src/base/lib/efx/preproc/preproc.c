@@ -29,6 +29,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/ioctrl.h>
 #include <ctype.h>
 
+#define	INC_PFX		"include"
+
 #define	NEED_PROTECT	0	/* Schutzmode vorläufig nicht benötigt */
 
 /*	Teststruktur: Die Variable depth gibt die Verschachtelungstiefe
@@ -68,7 +70,8 @@ struct PPInputStruct {
 
 typedef struct {
 	char *ident;	/* Buffer mit Identifikation */
-	char **pptr;	/* Pointer auf Include-Pfad */
+	char **pptr;	/* Pointer auf globalen Include-Pfad */
+	char **lptr;	/* Pointer auf localen Include-Pfad */
 	PPInput *input;	/* Eingabeliste */
 	StrBuf *buf;	/* Zwischenbuffer */
 	StrBuf *combuf;	/* Kommentarbuffer */
@@ -109,16 +112,17 @@ static NameKeyTab *pp_macrotab = NULL;
 	ob er bereits vorgeschalten wurde.
 */
 
-IO *io_ptrpreproc (IO *io, char **pptr)
+IO *io_ptrpreproc (IO *io, char **pptr, char **lptr)
 {
 	if	(io && io_ctrl(io, IOPP_COMMENT, NULL) == EOF)
 	{
 		PPData *pp = memalloc(sizeof(PPData));
 		pp->pptr = pptr;
+		pp->lptr = lptr;
 		pp->ident = NULL;
 		pp->input = new_input(io);
-		pp->buf = new_strbuf(0);
-		pp->combuf = new_strbuf(0);
+		pp->buf = sb_create(0);
+		pp->combuf = sb_create(0);
 		pp->at_start = 1;
 		pp->expand = 1;
 		pp->save = 0;
@@ -398,8 +402,8 @@ static int pp_ctrl (void *ptr, int req, va_list list)
 		while (pp->input != NULL)
 			if (subclose(pp) != 0) stat = EOF;
 
-		del_strbuf(pp->buf);
-		del_strbuf(pp->combuf);
+		sb_destroy(pp->buf);
+		sb_destroy(pp->combuf);
 		memfree(pp->ident);
 		memfree(pp);
 		return stat;
@@ -430,7 +434,7 @@ static int pp_ctrl (void *ptr, int req, va_list list)
 		if	((p = va_arg(list, char **)) != NULL)
 			*p = sb_strcpy(pp->combuf);
 
-		sb_clear(pp->combuf);
+		sb_clean(pp->combuf);
 		return 0;
 
 /*	Gesperrte Steuersequenzen
@@ -674,7 +678,7 @@ static IO *open_include (const char *path, const char *name)
 	char *fname;
 	IO *io;
 
-	if	((fname = fsearch(path, NULL, name, NULL)) != NULL)
+	if	((fname = fsearch(path, INC_PFX, name, NULL)) != NULL)
 	{
 		io = io_fileopen(fname, "r");
 		AddDepend(fname);
@@ -728,7 +732,7 @@ static void cmd_include (PPData *pp)
 		return;
 	}
 
-	io = flag ? open_include(NULL, name) : NULL;
+	io = flag ? open_include(pp->lptr ? *pp->lptr : NULL, name) : NULL;
 
 	if	(io == NULL)
 		io = open_include(pp->pptr ? *pp->pptr : NULL, name);
@@ -791,5 +795,5 @@ static int cmd_isdef (IO *io)
 
 IO *io_cmdpreproc (IO *io)
 {
-	return io_ptrpreproc(io, &IncPath);
+	return io_ptrpreproc(io, &IncPath, NULL);
 }

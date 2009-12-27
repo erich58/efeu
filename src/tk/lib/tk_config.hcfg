@@ -39,7 +39,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/config.h>
 #include <unistd.h>
 
-@set -r tklib.pph -f '$(TK_INC)' -f '$(TK_LIB)' -i tk.h
+@set -r tklib.smh -f '-mc TK_INC -ml TK_LIB' -i tk.h
 @eval success HAS_TCL  'Tcl_CreateInterp()'
 @eval success HAS_TCL_OBJ  'Tcl_Obj *obj = NULL'
 @eval success HAS_TCL_VAR2EX  'Tcl_GetVar2Ex(NULL, NULL, NULL, 0)'

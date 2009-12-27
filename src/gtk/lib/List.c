@@ -25,6 +25,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/stdtype.h>
 #include <EFEU/CmdPar.h>
 
+#if	HAS_GTK
+
 #define	STR(arg)	(Val_ptr(arg) ? Val_ptr(arg) : "")
 
 
@@ -109,6 +111,8 @@ void EGtkList_setup (void)
 	*/
 	AddFuncDef(fdef, tabsize(fdef));
 }
+
+#endif
 
 /*
 $SeeAlso

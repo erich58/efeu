@@ -42,10 +42,13 @@ If not, write to the Free Software Foundation, Inc.,
 
 typedef struct {
 	IO *io;		/* Eingabestruktur */
+	int (*newpar) (IO *io, int c, void *par); /* Test auf neuen Absatz */
+	void *par;	/* Parameter für Absatztest */
 	char *lang;	/* Sprachkennung */
 	StrBuf *buf;	/* Zeichenbuffer */
 	int nsave;	/* Gepufferte Zeichen */
 	int nlflag;	/* Flag für neue Zeile */
+	int protect;	/* Schutzflag */
 } LFPAR;
 
 static int lf_get (void *ptr);
@@ -64,7 +67,7 @@ Form <L>|_|<T>, wobei <L> den ISO 639 Sprachcode und <T> den ISO 3166
 Ländercode angibt. Der Ländercode ist optional.
 \par
 Zunächst werden alle Zeichen unverändert kopiert. Mit der ersten Sprachmarke
-beginnt die bedingte Verarbeitung. Eine Leerzeile oder die spezielle
+beginnt die bedingte Verarbeitung. Eine neue Zeile oder die spezielle
 Marke |:_:| schließt einen Verarbeitungsblock ab.
 \par
 Ein Tag der Form |:|<L>|_*:| steht für ein anderes Land der Sprache <L>,
@@ -92,6 +95,22 @@ $SeeAlso
 
 IO *langfilter (IO *io, const char *lang)
 {
+	return xlangfilter(io, lang, NULL, NULL);
+}
+
+/*
+:de:
+Die Funktion |$1| ist eine erweiterte Version von |langfilter|, bei der
+eine zusätzliche Abgrenzung der Verarbeitungsblöcke mithilfe einer Testfunktion
+bestimmt wird. Die Testfunktion wird zu Beginn jeder Zeile mit dem ersten
+Zeichen der Zeile aufgerufen. Falls sie einen Wert ungleich 0 liefert,
+gilt der Verarbeitungsblock als abgeschlossen. Die Testfunktion kann mithilfe
+von <par> parametrisiert werden.
+*/
+
+IO *xlangfilter (IO *io, const char *lang,
+	int (*isnewpar) (IO *io, int c, void *par), void *tpar)
+{
 	if	(io != NULL)
 	{
 		LFPAR *par = memalloc(sizeof(LFPAR));
@@ -107,7 +126,9 @@ IO *langfilter (IO *io, const char *lang)
 		if	(par->lang == NULL)
 			par->lang = memalloc(1);
 
-		par->buf = new_strbuf(0);
+		par->buf = sb_create(0);
+		par->newpar = isnewpar;
+		par->par = tpar;
 		par->nsave = 0;
 		par->nlflag = 1;
 		io = io_alloc();
@@ -118,7 +139,6 @@ IO *langfilter (IO *io, const char *lang)
 
 	return io;
 }
-
 
 /*	Hilfsfunktionen
 */
@@ -227,6 +247,29 @@ static int lf_fill (LFPAR *lf)
 
 	while ((c = io_getc(lf->io)) != EOF)
 	{
+		if	(lf->protect)
+		{
+			sb_putc(c, lf->buf);
+
+			if	(c == '\n')
+			{
+				lf->nlflag = (c == '\n');
+				break;
+			}
+
+			continue;
+		}
+
+		if	(lf->nlflag && lf->newpar &&
+				lf->newpar(lf->io, c, lf->par))
+		{
+			if	(sb_getpos(lf->buf))
+			{
+				io_ungetc(c, lf->io);
+				break;
+			}
+		}
+
 		if	(c == '|')
 		{
 			vstat = !vstat;
@@ -243,11 +286,6 @@ static int lf_fill (LFPAR *lf)
 				sb_putc('\\', lf->buf);
 
 			if	(c == EOF)	break;
-		}
-		else if	(c == '\n' && lf->nlflag)
-		{
-			sb_putc(c, lf->buf);
-			break;
 		}
 		else if	(c == LANG_BEG && lf_test(lf->io))
 		{
@@ -299,6 +337,11 @@ static int lf_fill (LFPAR *lf)
 
 			continue;
 		}
+		else if	(lf->nlflag && c == '\n')
+		{
+			sb_putc(c, lf->buf);
+			break;
+		}
 
 		if	(mode)
 			sb_putc(c, lf->buf);
@@ -344,7 +387,7 @@ static int lf_ctrl (void *ptr, int req, va_list list)
 
 		stat = io_close(lf->io);
 		memfree(lf->lang);
-		del_strbuf(lf->buf);
+		sb_destroy(lf->buf);
 		memfree(lf);
 		return stat;
 
@@ -357,6 +400,18 @@ static int lf_ctrl (void *ptr, int req, va_list list)
 		*va_arg(list, char **) = io_xident(lf->io,
 			"[%s]%*", lf->lang);
 		return 0;
+
+	case IO_PROTECT:
+
+		stat = va_arg(list, int);
+
+		if	(lf->io)
+			io_protect(lf->io, stat);
+
+		if	(stat)		lf->protect++;
+		else if	(lf->protect)	lf->protect--;
+
+		return lf->protect;
 
 	default:
 

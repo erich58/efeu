@@ -151,7 +151,7 @@ int iocpy_macsub (IO *in, IO *out, int c,
 	StrBuf *sb;
 	VecBuf argv;
 
-	sb = new_strbuf(0);
+	sb = sb_create(0);
 	sb_putc(c, sb);
 
 	while ((c = io_getc(in)) != EOF)
@@ -170,7 +170,7 @@ int iocpy_macsub (IO *in, IO *out, int c,
 	if	(mac == NULL || mac->lock)
 	{
 		n = io_puts((char *) sb->data, out);
-		del_strbuf(sb);
+		sb_destroy(sb);
 		return n;
 	}
 
@@ -194,7 +194,7 @@ int iocpy_macsub (IO *in, IO *out, int c,
 			io_ungetc(c, in);
 			sb_putc(0, sb);
 			n = io_puts((char *) sb->data, out);
-			del_strbuf(sb);
+			sb_destroy(sb);
 			return n;
 		}
 
@@ -212,7 +212,7 @@ int iocpy_macsub (IO *in, IO *out, int c,
 		io_prompt(in, prompt);
 	}
 
-	del_strbuf(sb);
+	sb_destroy(sb);
 	mac->lock = 1;
 	n = mac->sub(mac, out, argv.data, argv.used);
 	mac->lock = 0;

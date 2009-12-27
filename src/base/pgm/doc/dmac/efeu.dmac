@@ -22,7 +22,9 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 \eval	{
-	DocStyle = "report";
+	if	(!DocStyle)
+		DocStyle = "report";
+
 	author = expand("Erich Frühstück");
 	addr = expand(string !
 Erich Frühstück\br
@@ -53,25 +55,24 @@ Telefon (02242) 310 99
 %\marginparwidth=2cm
 %\newcommand{\margin}[2][]{\mbox{}\marginpar{\bf#2}\ignorespaces}
 
+\makeatletter
 \long\def\maketitle{{%
 	\clearpage
-	\makeatletter
 	\if@twoside \setcounter{page}{-1}
 	\else \setcounter{page}{0}
 	\fi
-	\makeatother
 	\thispagestyle{empty}
 	\unitlength1cm
 	\strut
 	\vfill
 	\begin{picture}(15,21)
 	\put(-2,0){\includegraphics[%draft,
-		width=6cm,height=21cm]{$(cfgname("efeu.eps"))}}
+		width=6cm,height=21cm]{$(cfgname("efeu.eps"):%s)}}
 	\put(4,14){\parbox[t]{10cm}{\raggedright
-		{\huge\bf\color{Red}{$(title)}\par}%
+		{\huge\bf\color{Red}{$(title:%s)}\par}%
 		\vskip \baselineskip
-		\strut $(subtitle)}}
-	\put(4,4){\parbox[b]{10cm}{\raggedright\bf $(author)}}
+		\strut $(subtitle:%s)}}
+	\put(4,4){\parbox[b]{10cm}{\raggedright\bf $(author:%s)}}
 	\put(11,0){\rotatebox{90}{\small
 		{\color{Red}\Huge E}rich
 		{\color{Red}\Huge F}\hspace{-0.5em}rühstück
@@ -80,9 +81,14 @@ Telefon (02242) 310 99
 	\end{picture}
 	\vfill
 	\strut
-	\clearpage}}
+	\clearpage
+	\if@twoside 
+	\thispagestyle{empty}
+	\clearpage
+	\fi}}
+\makeatother
 \newcounter{exnum}[chapter]
-\def\exercisename{$(exname)}
+\def\exercisename{$(exname:%s)}
 \def\exercise{\par\stepcounter{exnum}{\bf
 	\exercisename\arabic{chapter}-\arabic{exnum}.}}
 %% END

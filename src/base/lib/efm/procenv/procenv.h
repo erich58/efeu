@@ -52,11 +52,25 @@ void SetInfoPath (const char *path);
 
 char *ExpandPath (const char *name);
 
+/*	Prozesssteuerung
+*/
+
+void proc_clean (void (*clean) (void *par), void *par);
+void proc_doclean (void);
+
 /*	Fehlermeldungen
 */
 
 void dbg_note (const char *cl, const char *fmt, const char *argdef, ...);
 void dbg_error (const char *cl, const char *fmt, const char *argdef, ...);
+
+/*	shared objects
+*/
+
+extern char *so_path;
+void *so_open (const char *name);
+void so_close (void *handle);
+void loadlib (const char *name, const char *init);
 
 /*	Systemaufrufe
 */

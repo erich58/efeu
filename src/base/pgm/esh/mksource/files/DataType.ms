@@ -65,8 +65,8 @@ struct DataType {
 	str dt_def;
 	str dt_base;
 	Function dt_setup;
-	str dt_size;
 	str dt_recl;
+	str dt_print;
 };
 
 void DataType::DBMacros (IO out)
@@ -74,8 +74,7 @@ void DataType::DBMacros (IO out)
 	fprintf(out, "\n/* compatibility macros, may be removed */\n");
 	Macro(out, "$1_recl", NULL,
 		dt_recl ? dt_recl : "sizeof($1)", dt_name);
-	Macro(out, "$1_size", NULL,
-		dt_size ? dt_size : "sizeof($1)", dt_name);
+	Macro(out, "$1_size", NULL, "sizeof($1)", dt_name);
 	Macro(out, "$1_read", "io, data, dim",
 		"\nio_dbread(io, data, $1_recl, $1_size, dim)", dt_name);
 	Macro(out, "$1_write", "io, data, dim",
@@ -110,9 +109,11 @@ DataType DataType (str Name, str def = NULL, str base = NULL)
 	setup.line();
 	setup.line("setup_done = 1;");
 	setup.line("AddType(&Type_$1);", Name);
-	return (DataType) { Name, def, base, setup };
+	return (DataType) { Name, def, base, setup, DataBase(str) };
 }
 
+void DataType::setup (str fmt = NULL, ...)
+	dt_setup.line(fmt, va_list)
 
 /*
 Die Funktion |$1| generiert die Datentypdefinition
@@ -125,7 +126,7 @@ void DataType::write (bool glob = true)
 	DataTypeHeader(glob);
 
 	if	(dt_def)
-		fprintf(glob ? hdr : src, "%s\n", dt_def);
+		fprintf(glob ? hdr : top, "%s\n", dt_def);
 
 	if	(glob)
 	{
@@ -133,11 +134,26 @@ void DataType::write (bool glob = true)
 	}
 	else	src << "static ";
 
-	fpsub(src, "EfiType Type_$1 = SIMPLE_TYPE(\"$1\", $1, $2);\n",
-		dt_name, dt_base ? dt_base : "NULL");
+	fpsub(src, "EfiType Type_$1 = COMPLEX_TYPE($1%#s, $1%#s, ", dt_name);
+	fpsub(src, "sizeof($1), ", dt_name);
+
+	if	(dt_recl)
+	{
+		fprintf(src, "%s,\n\t", dt_recl);
+	}
+	else
+	{
+		fprintf(src, "sizeof(%s),\n\t", dt_name);
+	}
+
+	src << "NULL, NULL, ";
+	src << (dt_print ? dt_print : "NULL");
+	src << ", ";
+	src << (dt_base ? dt_base : "NULL");
+	src << ", NULL, NULL, NULL, NULL);\n";
 
 	dt_setup.write(glob);
-	DBMacros(glob ? hdr : src);
+	DBMacros(glob ? hdr : top);
 	dt_name = NULL;
 }
 

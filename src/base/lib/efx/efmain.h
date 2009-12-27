@@ -63,7 +63,7 @@ char *argval (const char *arg);
 
 #include <EFEU/mstring.h>
 
-size_t strsplit (const char *str, const char *delim, char ***ptr);
+size_t mstrsplit (const char *str, const char *delim, char ***ptr);
 char *nextstr (char **ptr);
 int xstrcmp(const char *a, const char *b);
 int mscanf (const char *str, const char *fmt, ...);

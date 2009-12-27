@@ -23,18 +23,23 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/mdmat.h>
 #include <EFEU/mdcount.h>
 
-static void add(void *data)
+static void add (MdCount *cnt, void *data, void *buf)
 {
 	Val_int(data)++;
 }
 
-static MdCntObj counter = {
-	"std",
+static MdCount counter = {
+	"count",
 	"int",
-	"Standardzähler",
+	"standard counter",
 	NULL,
 	NULL,
 	add,
 };
 
-MdCntObj *stdcount = &counter;
+/*
+Die globale Variable |$1| definiert einen Standartzähler
+mit |int| als Datentyp.
+*/
+
+MdCount *stdcount = &counter;

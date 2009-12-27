@@ -95,7 +95,7 @@ char *RegExp_subst (RegExp *exp, const char *repl, const char *str, int glob)
 	if	(str == NULL)	return NULL;
 	if	(exp == NULL)	return mstrcpy(str);
 
-	sb = new_strbuf(0);
+	sb = sb_create(0);
 	flag = 0;
 
 	while (*str && regexec(&exp->exp, str, MAXSUB, match, flag) == 0)

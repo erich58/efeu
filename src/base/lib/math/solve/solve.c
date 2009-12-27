@@ -49,10 +49,8 @@ static EfiVarDef glob_var[] = {
 
 static int solve_intval(void *par, double x)
 {
-	long n;
-
-	n = 0;
-	CallFunc(&Type_long, &n, par, &x);
+	int n = 0;
+	CallFunc(&Type_int, &n, par, &x);
 	return n;
 }
 
@@ -85,8 +83,10 @@ static void solve_regfalsi(EfiFunc *func, void *rval, void **arg)
 }
 
 static EfiFuncDef solve_Func[] = {
-	{  0, &Type_double, "bisection(VirFunc func, double a, double b)", solve_bisection },
-	{ 0, &Type_double, "regfalsi(VirFunc func, double a, double b)", solve_regfalsi },
+	{  0, &Type_double, "bisection(VirFunc func, double a, double b)",
+		solve_bisection },
+	{ 0, &Type_double, "regfalsi(VirFunc func, double a, double b)",
+		solve_regfalsi },
 };
 
 

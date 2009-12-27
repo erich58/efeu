@@ -14,25 +14,13 @@ EFEU besteht aus:
 
 \sec	Entwicklungswerkzeuge
 
-[mkmf]
-	generiert ein Makefile aus einem Imakefile analog zu
-	xmkmf (X11 development).
-[dir2make]
-	generiert ein Makefile direkt aus dem Sourcebaum.
-	Es werden nur wenige Konfigurationsparameter benötigt.
-	Alles andere wird automatisch von make durchgeführt,
-	wobei vollständige Abhängigkeitsdefinitionen generiert werden.
-	Falls eine Bibliothek erweitert wird, genügt es, die
-	Verzeichnisstruktur um die entsprechenden Sourcedatei zu
-	erweitern.
+[shmkmf]
+	generiert ein Makefile aus einem Skriptfile mithilfe der Shell.
 [efeugen]
 	ruft make in einem globalen, durch die Umgebungsvariable
 	EFEUGEN definiertem, Generierungsverzeichnis auf.
 	In EFEU ist die Generierung von Bibliotheken und Kommandos
 	vollständig von den Sourcen getrennt.
-[efeubuild]
-	generiert das Hauptmakefile zur Generierung und Installation
-	der Programme und Dateien.
 
 \sec	C Bibliotheken
 
@@ -109,13 +97,6 @@ EFEU besteht aus:
 	extrahiert Kommentare aus Sourcedateien zur weiterverarbeitung
 	mit efeudoc. Dieses Werkzeug erlaubt die Integration der
 	Dokumentation in den Sourcecode.
-[eis]
-	ist ein Informationssystem zum Durchsuchen von in Befehlen
-	eingebauten Informationen. Jede Form von Informationen kann
-	dargestellt werden, sofern das Programm eine
-	Darstellungsfunktion zur Verfügung stellt und sie regristriert.
-	Es gibt eine curses basierende Version und eine cgi basierende
-	Version (Web Server) von eis.
 
 \sec	Installation von EFEU
 
@@ -133,4 +114,4 @@ rufe einfach make auf.
 
 Bitte melde Fehler in EFEU direkt dem Autor:
 
-Erich Frühstück <ef\@synthesis.co.at>
+Erich Frühstück <ef\@cybertec.at>

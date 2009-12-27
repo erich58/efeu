@@ -1,3 +1,0 @@
-#include <curses.pph>
-
-XLIBS=	LIB_EFM $(LD_CURSES)

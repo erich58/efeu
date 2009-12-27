@@ -34,7 +34,9 @@ static EfiObj *get_func(EfiFunc *func)
 
 	if	(func->bound)
 		vf = GetTypeFunc(func->arg[0].type, func->name);
-	else	vf = GetGlobalFunc(func->name);
+	else if	(func->name)
+		vf = GetGlobalFunc(func->name);
+	else	vf = rd_refer(func->type->create);
 
 	f = XGetFunc(func->type, vf, func->arg, func->dim);
 

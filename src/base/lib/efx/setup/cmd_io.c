@@ -21,9 +21,11 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/object.h>
+#include <EFEU/ioctrl.h>
 #include <EFEU/cmdconfig.h>
 #include <EFEU/printobj.h>
 #include <EFEU/pconfig.h>
+#include <EFEU/Debug.h>
 
 
 /*	Funktionsmakros
@@ -46,20 +48,27 @@ CEXPR(f_iaopen, RVIO = io_interact(STR(0), STR(1)))
 CEXPR(f_diropen, RVIO = diropen(STR(0), STR(1)))
 
 CEXPR(f_bigbuf, RVIO = io_bigbuf(INT(0), STR(1)))
+CEXPR(f_logout, RVIO = io_refer(ParseLogOut(STR(0))))
 CEXPR(f_tmpfile, RVIO = io_tmpfile())
+CEXPR(f_tmpbuf, RVIO = io_tmpbuf(*((uint32_t *) arg[0])))
 CEXPR(f_langfilter, RVIO = langfilter(io_refer(IO(0)), STR(1)))
+CEXPR(f_lnum, RVIO = io_lnum(io_refer(IO(0))))
 CEXPR(f_lmark, RVIO = io_lmark(io_refer(IO(0)), STR(1), STR(2), INT(3)))
 CEXPR(f_indent, RVIO = io_indent(io_refer(IO(0)), INT(1), INT(2)))
 CEXPR(f_pushio, io_push(IO(0), io_refer(IO(1))))
 CEXPR(f_popio, RVIO = io_pop(IO(0)))
+CEXPR(f_divide, RVIO = io_divide(IO(0), Val_uint(arg[1])))
 CEXPR(f_newpart, RVINT = io_newpart(IO(0), STR(1), STR(2)))
 CEXPR(f_endpart, RVINT = io_endpart(IO(0)))
 
 CEXPR(f_close, RVINT = io_close(IO(0)); IO(0) = NULL)
 CEXPR(f_rewind, RVINT = io_rewind(IO(0)))
+CEXPR(f_io_rewind, RVINT = io_rewind(IO(0)) != EOF)
+CEXPR(f_io_flush, RVINT = io_ctrl(IO(0), IO_FLUSH) != EOF)
 
 CEXPR(f_getc, RVINT = io_getc(IO(0)))
 CEXPR(f_peek, RVINT = io_peek(IO(0)))
+CEXPR(f_eat, RVINT = io_eat(IO(0), STR(1)))
 CEXPR(f_ungetc, RVINT = io_ungetc(INT(1), IO(0)))
 CEXPR(f_putc, RVINT = io_putc(INT(1), IO(0)))
 CEXPR(f_puts, RVINT = io_puts(STR(1), IO(0)))
@@ -67,6 +76,22 @@ CEXPR(f_xputs, RVINT = io_xputs(STR(1), IO(0), STR(2)))
 CEXPR(f_mputs, RVINT = io_mputs(STR(1), IO(0), STR(2)))
 CEXPR(f_protect, io_protect(IO(0), INT(1)))
 CEXPR(f_submode, io_submode(IO(0), INT(1)))
+
+static void f_getpos (EfiFunc *func, void *rval, void **arg)
+{
+	RVINT = io_ctrl(IO(0), IO_GETPOS, arg[1]) != EOF;
+}
+
+static void f_setpos (EfiFunc *func, void *rval, void **arg)
+{
+	IO *io = IO(0);
+
+	if ((RVINT = io_ctrl(io, IO_SETPOS, arg[1]) != EOF))
+	{
+		io->nsave = 0;
+		io->stat = 0;
+	}
+}
 
 CEXPR(f_xgetc, RVINT = io_xgetc(IO(0), STR(1)))
 CEXPR(f_mgetc, RVINT = io_mgetc(IO(0), INT(1)))
@@ -115,7 +140,7 @@ static void f_scanline (EfiFunc *func, void *rval, void **arg)
 
 	list = NULL;
 	ptr = &list;
-	sb = new_strbuf(0);
+	sb = sb_create(0);
 
 	for (;;)
 	{
@@ -156,7 +181,7 @@ static void f_scanline (EfiFunc *func, void *rval, void **arg)
 		else	sb_putc(c, sb);
 	}
 
-	del_strbuf(sb);
+	sb_destroy(sb);
 	Val_list(rval) = list;
 }
 
@@ -225,7 +250,7 @@ static void f_fgets (EfiFunc *func, void *rval, void **arg)
 	int c, end;
 
 	in = IO(0);
-	sb = new_strbuf(0);
+	sb = sb_create(0);
 	end = Val_int(arg[1]);
 
 	while ((c = io_mgetc(in, 1)) != EOF)
@@ -282,15 +307,19 @@ static void f_filter (EfiFunc *func, void *rval, void **arg)
 		return;
 	}
 
-	name = tmpnam(NULL);
-	io = io_fileopen(name, "w");
-	io_puts(STR(1), io);
-	io_putc('\n', io);
-	io_close(io);
+	if	(STR(1))
+	{
+		name = newtemp(NULL, "tmp");
+		io = io_fileopen(name, "w");
+		io_puts(STR(1), io);
+		io_putc('\n', io);
+		io_close(io);
+		cmd = mstrcat(" ", "cat", name, "|", cmd, NULL);
+	}
+	else	name = NULL;
 
-	cmd = mstrcat(" < ", cmd, name, NULL);
 	io = io_popen(cmd, "r");
-	buf = new_strbuf(0);
+	buf = sb_create(0);
 	flag = 0;
 
 	while ((c = io_getc(io)) != EOF)
@@ -306,9 +335,35 @@ static void f_filter (EfiFunc *func, void *rval, void **arg)
 	}
 
 	io_close(io);
-	memfree(cmd);
-	remove(name);
+
+	if	(name)
+	{
+		memfree(cmd);
+		deltemp(name);
+	}
+
 	Val_str(rval) = sb2str(buf);
+}
+
+static void f_read (EfiFunc *func, void *rval, void **arg)
+{
+	EfiObj *obj = arg[1];
+	*((uint32_t *) rval) = obj ? ReadData(obj->type,
+		obj->data, Val_ptr(arg[0])) : 0;
+}
+
+static void f_write (EfiFunc *func, void *rval, void **arg)
+{
+	EfiObj *obj = arg[1];
+	*((uint32_t *) rval) = obj ? WriteData(obj->type,
+		obj->data, Val_ptr(arg[0])) : 0;
+}
+
+static void f_print (EfiFunc *func, void *rval, void **arg)
+{
+	EfiObj *obj = arg[1];
+	Val_int(rval) = obj ? PrintData(Val_ptr(arg[0]), obj->type,
+		obj->data) : 0;
 }
 
 /*	Dokumentkontrolle
@@ -318,26 +373,32 @@ static void f_filter (EfiFunc *func, void *rval, void **arg)
 static EfiFuncDef fdef_io[] = {
 	{ FUNC_RESTRICTED, &Type_io, "str ()", k_str2io },
 	{ 0, &Type_io, "tmpfile ()", f_tmpfile },
+	{ 0, &Type_io, "tmpbuf (uint32_t size = 0)", f_tmpbuf },
 	{ 0, &Type_io, "open (str name, str mode)", f_open },
 	{ 0, &Type_io, "popen (str name, str mode)", f_popen },
 	{ 0, &Type_io, "iaopen (str prompt, str hist = NULL)", f_iaopen },
 	{ 0, &Type_io, "diropen (str dir, str base)", f_diropen },
 	{ 0, &Type_io, "bigbuf (int size, str pfx = NULL)", f_bigbuf },
+	{ 0, &Type_io, "logout (str def)", f_logout },
 	{ 0, &Type_io, "findopen (str path, str name, str type = NULL, \
 str mode = \"r\")", f_findopen },
+	{ 0, &Type_io, "lnum (IO io)", f_lnum },
 	{ 0, &Type_io, "langfilter (IO io, str lang = NULL)", f_langfilter },
 	{ 0, &Type_io, "linemark (IO io, str pre = \"%4d\t\", \
 str post = NULL, bool flag = false)", f_lmark },
 	{ 0, &Type_io, "indent (IO io, char c = '\t', int n = 1)", f_indent },
 	{ 0, &Type_void, "IO::push (IO io)", f_pushio },
 	{ 0, &Type_io, "IO::pop (void)", f_popio },
+	{ 0, &Type_io, "IO::divide (unsigned bsize = 0)", f_divide },
 	{ 0, &Type_int, "IO::newpart (str name, str repl = NULL)", f_newpart },
 	{ 0, &Type_int, "IO::endpart (void)", f_endpart },
 	{ FUNC_VIRTUAL, &Type_int, "close (IO & io)", f_close },
 	{ FUNC_VIRTUAL, &Type_int, "rewind (IO io)", f_rewind },
-	{ FUNC_VIRTUAL, &Type_int, "copy (IO in, IO out)", f_copy },
+	{ FUNC_VIRTUAL, &Type_int,
+		"copy (promotion IO in, IO out)", f_copy },
 
 	{ 0, &Type_int, "IO::getc ()", f_getc },
+	{ 0, &Type_int, "IO::eat (str delim)", f_eat },
 	{ 0, &Type_int, "IO::peek ()", f_peek },
 	{ 0, &Type_int, "IO::ungetc (int x)", f_ungetc },
 	{ 0, &Type_int, "IO::putc (int x)", f_putc },
@@ -354,6 +415,10 @@ str post = NULL, bool flag = false)", f_lmark },
 	{ 0, &Type_int, "IO::xputs (str s, str delim = NULL)", f_xputs },
 	{ 0, &Type_void, "IO::protect (bool mode)", f_protect },
 	{ 0, &Type_void, "IO::submode (bool mode)", f_submode },
+	{ 0, &Type_bool, "IO::getpos (unsigned &offset)", f_getpos },
+	{ 0, &Type_bool, "IO::setpos (unsigned offset)", f_setpos },
+	{ 0, &Type_bool, "IO::rewind (void)", f_io_rewind },
+	{ 0, &Type_bool, "IO::flush (void)", f_io_flush },
 
 	{ 0, &Type_list, "scanline (IO io, str delim = \"%s\", \
 str end = \"\\n\")", f_scanline },
@@ -363,6 +428,10 @@ str end = \"\\n\")", f_scanline },
 	{ 0, &Type_str, "ngets (IO io, int n)", f_ngets },
 
 	{ 0, &Type_str, "filter (str cmd, str par = NULL)", f_filter },
+
+	{ 0, &Type_uint32, "read (IO io, . &)", f_read },
+	{ 0, &Type_uint32, "write (IO io, .)", f_write },
+	{ 0, &Type_int, "print (IO io, .)", f_print },
 };
 
 

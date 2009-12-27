@@ -146,12 +146,34 @@ static StrBuf buf_str = SB_DATA(64);
 
 char *txt_str (const char *buf, int pos, int len)
 {
-	sb_clear(&buf_str);
+	sb_clean(&buf_str);
 
 	for (buf += pos - 1; len-- > 0; buf++)
 		sb_putc(*buf, &buf_str);
 
 	sb_putc(0, &buf_str);
+	return (char *) buf_str.data;
+}
+
+char *txt_xstr (const char *buf, int pos, int len)
+{
+	sb_clean(&buf_str);
+
+	buf += pos - 1;
+
+	while (len && *buf == ' ')
+		buf++, len--;
+
+	for (pos = 0; len-- > 0; buf++)
+	{
+		sb_putc(*buf, &buf_str);
+
+		if	(*buf != ' ')
+			pos = buf_str.pos;
+	}
+
+	sb_putc(0, &buf_str);
+	buf_str.data[pos] = 0;
 	return (char *) buf_str.data;
 }
 

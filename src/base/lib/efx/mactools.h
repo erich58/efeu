@@ -34,8 +34,8 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	String(x)	_String(x)
 #define	Concat2(a,b)	_Concat2(a,b)
-#define	Concat3(a,b)	_Concat3(a,b,c)
-#define	Concat4(a,b)	_Concat4(a,b,c,d)
+#define	Concat3(a,b,c)	_Concat3(a,b,c)
+#define	Concat4(a,b,c,d)	_Concat4(a,b,c,d)
 
 #else
 

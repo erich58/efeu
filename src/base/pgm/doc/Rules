@@ -1,7 +1,0 @@
-enc	DFXFX	InstallFile(%s/%s.%s,$(CFGDIR),%s.%s)
-sym	DFXFX	InstallFile(%s/%s.%s,$(CFGDIR),%s.%s)
-dmac	DFXFX	InstallFile(%s/%s.%s,$(CFGDIR),%s.%s)
-cfg	DFXFX	InstallFile(%s/%s.%s,$(CFGDIR),%s.%s)
-eps	DFXFX	InstallFile(%s/%s.%s,$(CFGDIR),%s.%s)
-ltx	DFXFX	InstallFile(%s/%s.%s,$(CFGDIR),%s.%s)
-hdr	DFXFX	InstallFile(%s/%s.%s,$(ESHLIB),%s.%s)

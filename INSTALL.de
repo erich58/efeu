@@ -8,6 +8,7 @@ Folgende Softwarepakete werden benötigt:
 Folgende Softwarepakete werden empfohlen:
 *	postgresql-Development
 *	sc Spreadsheet Calculator
+*	tcl/tk-Development
 
 Alle Dateien von EFEU werden relativ zum Hauptverzeichnis
 der Veröffentlichung, im folgenden mit <TOP> bezeichnet, generiert.
@@ -34,6 +35,7 @@ Folgende Module gehören zur Grundkonfiguration von efeu:
 [base]		EFEU-Basisbibliotheken/Standardkommandos;
 [doc]		Handbücher;
 [pg]		Schnittstellenfunktionen zu PostgreSQL;
+[tk]		Schnittstelle für TCL/TK;
 [scope]		Sorcelisten und TAG-Files zusammenstellen.
 
 Bei fehlender Installation von PostgreSQL-Development
@@ -51,9 +53,9 @@ durchgeführt:
 	dort make aufgerufen (falls die Sourcen mit checkout aus einem
 	cvs Archiv geholt werden).
 #	Falls das script <TOP>/config/setup existiert, wird dieses
-	aufgerufen (installiert Basisscripts, die für die nächsten
+	aufgerufen (installiert Basisskripts, die für die nächsten
 	Schritte benötigt werden).
-#	Das Makefile <TOP>/build/Makefile wird mit efeubuild generiert.
+#	Das Makefile <TOP>/build/Makefile wird mit shmkmf generiert.
 #	Schlußendlich wird make in <TOP>/build aufgerufen um alle
 	Programme und Bibliotheken zu generieren und die benötigten
 	Dateien zu installieren.
@@ -61,7 +63,7 @@ durchgeführt:
 Das Skript efeugen ruft make in <TOP>/build oder einem Unterverzeichnis
 auf. Falls <TOP> nicht mit dem HOME-Verzeichnis übereinstimmt, sollte
 entweder die Umgebungsvariable EFEUTOP auf <TOP> gesetzt werden oder
-die Umgebungsvariable EFEUBUILD auf <TOP>/build.
+die Umgebungsvariable EFEUGEN auf <TOP>/build.
 
 Nach einer Umstrukturierung der Sourcen von EFEU empfiehlt sich
 der Aufruf von "make clean" in <TOP>, damit "Installationsleichen"

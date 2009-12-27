@@ -1,0 +1,62 @@
+# :*:standard functions for creating makefiles
+# :de:Basisfunktionen zur Makefile-Generierung
+#
+# $Synopsis
+# <=[=> include $1 <=]=>
+#
+# $Copyright (C) 2004 Erich Frühstück
+# This file is part of EFEU.
+# 
+# EFEU is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+# 
+# EFEU is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public
+# License along with EFEU; see the file COPYING.
+# If not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+test $_base_smh && return
+_base_smh=1
+
+# $Description
+# :*:
+# The headerfile |base.smh| provides the predefinied functions of |shmkmf|
+# by including the folowing list of header files:
+# :de:
+# Die Headerdatei |base.smh| stellt die vordefinierten Funktionen von |shmkmf|
+# durch Einbinden der folgenden Headerfiles
+#
+# $source | sed -e 's/include //'
+#
+# :de:
+# zur Verfügung.
+
+include comment.smh
+include var.smh
+include rule.smh
+include dir.smh
+include file.smh
+include update.smh
+include srclist.smh
+include foreach.smh
+
+# $Note
+# :*:The header |$1| is preloaded by |shmkmf|.
+# :de:Die Headerdatei |$1| wird bereits von |shmkmf| geladen.
+
+# $SeeAlso
+# \mref{shmkmf(1)},
+# \mref{comment.smh(7)},
+# \mref{var.smh(7)},
+# \mref{rule.smh(7)},
+# \mref{dir.smh(7)},
+# \mref{file.smh(7)},
+# \mref{srclist.smh(7)},
+# \mref{foreach.smh(7)}.

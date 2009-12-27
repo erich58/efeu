@@ -6,6 +6,6 @@ Copyright (C) 1998 Erich Frühstück
 q		Abbruch
 
 @efeu:Standardkommandos
-@efeu/esh|esh --dump
-@efeu/mksource|mksource --dump
-@efeu/efeudoc|efeudoc --dump
+@efeu/esh|esh --info=dump:
+@efeu/mksource|mksource --info=dump:
+@efeu/efeudoc|efeudoc --info=dump:

@@ -1,0 +1,33 @@
+/*
+:*:program example: Hello World!
+:de:Programmbeispiel: Hello World!
+
+$Copyright (C) 2002 Erich Frühstück
+A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+*/
+
+pconfig !
+Version = "$Id: hello2.esh,v 1.1 2003-10-10 10:32:42 ef Exp $"
+
+Format = "%s"
+	:*:format specification
+	:de:Formatierungsanweisung für den Ausgabetext.
+Label = "Hello World!"
+	:*:output text
+	:de:Ausgabetext.
+
+q|-quote|Format = "\"%s\""
+	:*:print text with quotes
+	:de:Gibt den Ausgabetext unter Anführung aus.
+f:fmt|-format:fmt|Format
+	:*:sets output format, default `{Format}'
+	:de:Setzt das Ausgabeformat, die Vorgabe ist |{Format}|.
+::arg|Label
+	:*:output text, default `{Label}'
+	:de:Bestimmt den Ausgabetext, die Vorgabe ist <"{Label}">.
+!
+
+str fmt = getres("Format", "%s");
+str label = getres("Label", "Hello World!");
+printf(fmt, label);
+putc('\n');

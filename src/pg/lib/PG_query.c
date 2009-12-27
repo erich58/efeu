@@ -26,6 +26,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/strbuf.h>
 #include <EFEU/Debug.h>
 
+#if	HAS_PQ
+
 #define	M_NODATA	"no data available.\n"
 #define	M_NF	"PG_head: field number $1 is out of range 0..$2.\n"
 #define	M_NT	"PG_head: tuple number $1 is out of range 0..$2.\n"
@@ -123,6 +125,8 @@ char *PG_value (PG *pg, int tuple, int field)
 
 	return PQgetvalue(pg->res, tuple, field);
 }
+
+#endif
 
 /*
 $SeeAlso

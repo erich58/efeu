@@ -1,0 +1,109 @@
+\sec	\label{type}\index{Datentypen}
+
+Grundsätzlich können beliebige Datentypen des EFEU-Interpreters
+verwendet werden. Es gibt aber gewisse Grundanforderungen:
+*	Für den Datentyp muss eine \index{binäre Lese- und Schreibfunktion}
+	existieren, damit Daten binär gelesen und gespeichert werden können.
+*	Für den Datentyp muss eine \index{Textrepräsentation} existieren,
+	damit Daten im Textformat gelesen und gespeichert werden
+	können.
+
+Für \index{zusammengesetzte Datentypen} gilt, dass diese Vorraussetzungen
+automatisch erfüllt sind, wenn sie für die einzelnen Komponenten
+erfüllt sind. Datentypen, die obige Anforderungen nicht erfüllen,
+werden in der Regel aber nicht für Datenfiles benötigt. Dazu gehören
+z.B. Funktionen, Ausdrücke und Listen.
+
+\ssec	\index{Elementare Datentypen}
+
+Die folgenden elementaren Datentypen können für EDB-Datenfiles
+verwendet werden:
+
+*	\index{|byte|}, \index{|short|}, \index{|bool|}, \index{|int|},
+	\index{|unsigned|}, \index{|long|}, \index{|size_t|} für
+	Ganzzahlwerte,
+*	\index{|float|} oder \index{|double|} für Gleitkommawerte,
+*	\index{|char|} für Zeichenkonstanten und
+*	\index{|str|} für Zeichenketten.
+
+In der Regel beschränkt man sich auf |int|, |unsigned|, |double| und |str|.
+
+\ssec	\index{Strukturen}
+
+Aus bereits deklarierten Datentypen können Strukturen gebildet werden.
+Im EFEU-Interpreter werden Strukturen mithilfe des Schlüsselwortes
+\index{|struct|} -- gefolgt von der Liste der Komponenten -- erzeugt. Die
+Komponentenliste besteht aus einer Reihe von Variablendeklarationen,
+die in geschwungene Klammern gesetzt ist. Strukturen können geschachtelt
+werden.
+
+In einem EDB-Datenfile kann die Angabe des Schlüsselwortes |struct| und der
+geschwungenen Klammern entfallen. Sobald einem Datentyp ein
+Variablenname folgt, wird der Ausdruck als Strukturkomponente
+aufgefasst.
+
+Die im Kapitel \ref{base} verwendete Beispieldatei \index{|pers.edb|}
+definiert eine Datenstruktur mit den Komponenten |num|, |first_name|,
+|last_name|, |birth_year| und |gender|.
+
+\index[benannte Strukturen]
+Normalerweise werden Strukturen in EFEU-Skripts benannt, d.h. es wird
+ein symbolischer Name\note Dieser wird optional nach dem Schlüsselwort |struct|
+	angegeben.
+vergeben, der stellvertretend für die
+Strukturdefinition verwendet werden kann. In EDB-Datenfiles werden in
+der Regel zur Vermeidung von Namenskonflikten \index{namenlose Strukturen}
+verwendet.
+\index[Strukturvergleich]Zwei Strukturen gelten als gleich, wenn ihre
+Komponenten jeweils gleichen Datentyp und Namen aufweisen.
+
+\ssec	\index{Aufzählungstypen}
+
+Eine besondere Form von abgeleiteteten Datentypen sind Aufzählungstypen.
+Dabei handelt es sich um Ganzzahlwerte mit einer begrenzten Zahl von
+Ausprägungen, denen ein symbolischer Name zugeordnet ist.
+
+In der Beispieldatei \index{|pers.edb|} wird mit
+	|enum { m = 1, f = 2 }|
+ein Aufzählungstyp für die Komponente |gender| eingerichtet.
+Auch hier kann optional ein symbolischer Name für den Aufzählungstyp
+angegeben werden.
+\index[Vergleich von Aufzählungstypen]Zwei Aufzählungstypen gelten als
+gleich, wenn die möglichen Ausprägungen bezüglich Wert und
+symbolischer Namen übereinstimmen.
+
+Aufzählungstypen und Strukturen, die ausschließlich Komponenten mit
+Aufzählungstypen aufweisen, kommt bei der \index{Aggregation} eines
+EDB-Datenfiles zu einem \index{Datenwürfel} eine besondere Rolle zu: Sie
+bestimmen die Achsen des Datenwürfels.
+
+\ssec	\index{Datenfelder}
+
+\index[Datenfelder variabler Länge]
+Strukturen können Datenfelder mit fixer und variabler Länge enthalten.
+
+Datenfelder können auf zwei Arten deklariert werden:
+
+[<type> <name>|[|<dim>|]|]
+	deklariert <name> als Datenfeld vom Type <type>.
+[<type>|[|<dim>|]| <name>]
+	deklariert <name> als Skalar vom \index{Vektordatentyp}
+	<type>|[|<dim>|]|.
+
+\index[Datenfelder variabler Länge]
+Mit <type>|[]| (oder <type>|[0]|) wird ein Datenfeld variabler Länge
+eingerichtet.
+
+Falls mehr als eine Dimension benötigt wird, wird eine Deklaration der
+Form:
+	<type> <name>|[|<n0>|][|<n1>|]...[|<nk>|];|
+in
+	<type>|[|<nk>|]...[|<n1>|]| <name>|[|<n0>|];|
+
+konvertiert, da Datenfelder nur eindimensional sein können, es aber
+keine Beschränkungen bei der Konstruktion von Vektordatentypen gibt.
+
+\index[Schachtelung von Datenfeldern]
+Eine mehrfache Schachtelung von Datenfeldern mit variablen Längen ist
+möglich, weist aber einen hohen \index{Speicherverwaltungsaufwand} auf und
+kann daher bei größeren Datenmengen zu Performanceproblemen führen.

@@ -21,9 +21,11 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include "eistty.h"
+#include <EFEU/ioctrl.h>
 
 char *GetString (char *prompt)
 {
+#if	USE_EFWIN
 	char *p;
 	WinSize *ws;
 
@@ -40,11 +42,15 @@ char *GetString (char *prompt)
 	wclrtobot(info_win);
 	wrefresh(info_win);
 	return p;
+#else
+	return io_mgets(iostd, "\n");
+#endif
 }
 
 void WinMessage (char *fmt, ...)
 {
 	va_list list;
+#if	USE_EFWIN
 	char *p;
 
 	wmove(info_win, LASTLINE, 0);
@@ -55,4 +61,10 @@ void WinMessage (char *fmt, ...)
 	memfree(p);
 	va_end(list);
 	wrefresh(info_win);
+#else
+	va_start(list, fmt);
+	io_vprintf(iostd, fmt, list);
+	va_end(list);
+	io_putc('\n', iostd);
+#endif
 }

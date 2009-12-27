@@ -25,6 +25,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/stdtype.h>
 #include <EFEU/CmdPar.h>
 
+#if	HAS_GTK
+
 #define	GTK_1_2	0
 
 /* Arrow types */
@@ -314,43 +316,45 @@ Gtk+ enum types.
 
 void EGtkEnum_setup (void)
 {
-	NewEnumType("GtkArrowType", arrow, tabsize(arrow));
-	NewEnumType("GtkAttachOptions", attach, tabsize(attach));
-	NewEnumType("GtkDirectionType", direction, tabsize(direction));
-	NewEnumType("GtkJustification", justification, tabsize(justification));
-	NewEnumType("GtkMenuFactoryType", menu_factory, tabsize(menu_factory));
-	NewEnumType("GtkMetricType", metric, tabsize(metric));
-	NewEnumType("GtkOrientation", orientation, tabsize(orientation));
-	NewEnumType("GtkPackType", pack, tabsize(pack));
-	NewEnumType("GtkPolicyType", policy, tabsize(policy));
-	NewEnumType("GtkPositionType", position, tabsize(position));
-	NewEnumType("GtkPreviewType", preview, tabsize(preview));
-	NewEnumType("GtkSignalRunType", run, tabsize(run));
-	NewEnumType("GtkScrollType", scroll, tabsize(scroll));
-	NewEnumType("GtkSelectionMode", selection, tabsize(selection));
-	NewEnumType("GtkShadowType", shadow, tabsize(shadow));
-	NewEnumType("GtkStateType", state, tabsize(state));
-	NewEnumType("GtkSubmenuDirection", sub_dir, tabsize(sub_dir));
-	NewEnumType("GtkSubmenuPlacement", sub_place, tabsize(sub_place));
-	NewEnumType("GtkToolbarStyle", toolbar, tabsize(toolbar));
-	NewEnumType("GtkTroughType", through, tabsize(through));
-	NewEnumType("GtkUpdateType", update, tabsize(update));
-	NewEnumType("GtkVisibility", visibility, tabsize(visibility));
-	NewEnumType("GtkWindowPosition", win_pos, tabsize(win_pos));
-	NewEnumType("GtkWindowType", window, tabsize(window));
+	MakeEnumType("GtkArrowType", arrow, tabsize(arrow));
+	MakeEnumType("GtkAttachOptions", attach, tabsize(attach));
+	MakeEnumType("GtkDirectionType", direction, tabsize(direction));
+	MakeEnumType("GtkJustification", justification, tabsize(justification));
+	MakeEnumType("GtkMenuFactoryType", menu_factory, tabsize(menu_factory));
+	MakeEnumType("GtkMetricType", metric, tabsize(metric));
+	MakeEnumType("GtkOrientation", orientation, tabsize(orientation));
+	MakeEnumType("GtkPackType", pack, tabsize(pack));
+	MakeEnumType("GtkPolicyType", policy, tabsize(policy));
+	MakeEnumType("GtkPositionType", position, tabsize(position));
+	MakeEnumType("GtkPreviewType", preview, tabsize(preview));
+	MakeEnumType("GtkSignalRunType", run, tabsize(run));
+	MakeEnumType("GtkScrollType", scroll, tabsize(scroll));
+	MakeEnumType("GtkSelectionMode", selection, tabsize(selection));
+	MakeEnumType("GtkShadowType", shadow, tabsize(shadow));
+	MakeEnumType("GtkStateType", state, tabsize(state));
+	MakeEnumType("GtkSubmenuDirection", sub_dir, tabsize(sub_dir));
+	MakeEnumType("GtkSubmenuPlacement", sub_place, tabsize(sub_place));
+	MakeEnumType("GtkToolbarStyle", toolbar, tabsize(toolbar));
+	MakeEnumType("GtkTroughType", through, tabsize(through));
+	MakeEnumType("GtkUpdateType", update, tabsize(update));
+	MakeEnumType("GtkVisibility", visibility, tabsize(visibility));
+	MakeEnumType("GtkWindowPosition", win_pos, tabsize(win_pos));
+	MakeEnumType("GtkWindowType", window, tabsize(window));
 #if	GTK_1_2
-	NewEnumType("GtkButtonBoxStyle", buttonbox, tabsize(buttonbox));
-	NewEnumType("GtkCurveType", curve, tabsize(curve));
-	NewEnumType("GtkCornerType", corner, tabsize(corner));
-	NewEnumType("GtkMatchType", match, tabsize(match));
-	NewEnumType("GtkMenuDirectionType", menu_dir, tabsize(menu_dir));
-	NewEnumType("GtkPathPriorityType", path_prio, tabsize(path_prio));
-	NewEnumType("GtkPathType", path, tabsize(path));
-	NewEnumType("GtkReliefStyle", relief, tabsize(relief));
-	NewEnumType("GtkResizeMode", resize, tabsize(resize));
-	NewEnumType("GtkSortType", sort, tabsize(sort));
+	MakeEnumType("GtkButtonBoxStyle", buttonbox, tabsize(buttonbox));
+	MakeEnumType("GtkCurveType", curve, tabsize(curve));
+	MakeEnumType("GtkCornerType", corner, tabsize(corner));
+	MakeEnumType("GtkMatchType", match, tabsize(match));
+	MakeEnumType("GtkMenuDirectionType", menu_dir, tabsize(menu_dir));
+	MakeEnumType("GtkPathPriorityType", path_prio, tabsize(path_prio));
+	MakeEnumType("GtkPathType", path, tabsize(path));
+	MakeEnumType("GtkReliefStyle", relief, tabsize(relief));
+	MakeEnumType("GtkResizeMode", resize, tabsize(resize));
+	MakeEnumType("GtkSortType", sort, tabsize(sort));
 #endif
 }
+
+#endif
 
 /*
 $SeeAlso

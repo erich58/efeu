@@ -22,19 +22,20 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/mdmat.h>
 #include <EFEU/mdcount.h>
+#include <ctype.h>
+#include <EFEU/preproc.h>
 
 
 typedef struct {
-	void (*init) (void *data, size_t *idx, size_t dim);
+	MdCount *cnt;
+	void (*init) (MdCount *cnt, void *data, size_t *idx, size_t dim);
 	size_t dim;
 	size_t *idx;
 } INIT;
 
 static void subinit (INIT *init, int depth, mdaxis *axis, char *data);
-static void dummy (void *data);
 
-
-static void dummy(void *data)
+static void dummy (MdCount *cnt, void *data, void *buf)
 {
 	;
 }
@@ -43,8 +44,8 @@ static void dummy(void *data)
 /*	Zähltabelle aus IO-Struktur generieren
 */
 
-mdmat *md_ioctab(const char *title, IO *io,
-	MdClassTab *gtab, MdCntObj *counter)
+mdmat *md_ioctab (const char *title, IO *io,
+	MdCountTab *gtab, MdCount *counter)
 {
 	mdmat *tab;
 	mdaxis **ptr;
@@ -61,51 +62,135 @@ mdmat *md_ioctab(const char *title, IO *io,
 	while ((*ptr = md_ctabaxis(io, gtab)) != NULL)
 		ptr = &(*ptr)->next;
 
-	md_ctabinit(tab, counter);
+	md_ctabinit(tab, MdCountList_create(counter));
 	return tab;
 }
 
+static void put_name (const char *name, IO *io)
+{
+	if	(isdigit((unsigned char) *name))
+		io_putc('_', io);
+
+	for (; *name; ++name)
+		io_putc((*name == '_' || isalnum((unsigned char) *name)) ?
+			*name : '_', io);
+}
+
+static void put_type (const char *str, IO *io)
+{
+	if	(str[0] == '[')
+	{
+		char *head;
+		char *name;
+		IO *cin;
+
+		head = mstrcut(str + 1, &name, "]", 0);
+		cin = io_cmdpreproc(io_mstr(head));
+		CmdEval(cin, NULL);
+		io_close(cin);
+		str = name;
+	}
+
+	io_puts(str, io);
+}
 
 /*	Zähltabelle initialisieren
 */
 
-void md_ctabinit (mdmat *tab, MdCntObj *counter)
+int md_ctabinit (mdmat *tab, MdCountList *list)
 {
-	if	(counter == NULL)
-		counter = stdcount;
+	MdCountList *cl;
+	int need_init;
 
-	if	(counter->add == NULL)
+	if	(list == NULL)
+		list = MdCountList_create(stdcount);
+
+	if	(list->cnt->add == NULL)
 	{
 		dbg_error(NULL, "[mdmat:41]", NULL);
-		counter->add = dummy;
+		list->cnt->add = dummy;
 	}
+
+	need_init = 0;
 
 /*	Datenmatrix initialisieren
 */
-	tab->type = mdtype(counter->type);
-	tab->priv = counter;
+	if	(list->next)
+	{
+		EfiVar *vlist;
+		IO *io;
+
+		io = io_tmpbuf(0);
+
+		for (cl = list; cl != NULL; cl = cl->next)
+		{
+			if	(cl->cnt->init)
+				need_init = 1;
+
+			put_type(cl->cnt->type, io);
+			io_puts(" ", io);
+			put_name(cl->cnt->name, io);
+			io_puts(";", io);
+		}
+
+		io_rewind(io);
+		io = io_lnum(io);
+		vlist = GetStruct(io, EOF);
+		io_close(io);
+		tab->type = MakeStruct(NULL, NULL, vlist);
+
+		vlist = tab->type->list;
+
+		for (cl = list; cl != NULL; cl = cl->next)
+		{
+			cl->offset = vlist->offset;
+			vlist = vlist->next;
+		}
+	}
+	else
+	{
+		if	(list->cnt->init)
+			need_init = 1;
+
+		tab->type = mdtype(list->cnt->type);
+	}
+
+	tab->x_priv = list;
 	tab->size = md_size(tab->axis, tab->type->size);
 	tab->data = memalloc(tab->size);
 
-	if	(counter->init)
+	if	(need_init)
 	{
 		INIT init;
 
-		init.init = counter->init;
 		init.dim = md_dim(tab->axis);
 		init.idx = memalloc(init.dim * sizeof(size_t));
 		memset(init.idx, 0, init.dim * sizeof(size_t));
 
-		subinit(&init, 0, tab->axis, (char *) tab->data);
+		for (cl = list; cl != NULL; cl = cl->next)
+		{
+			if	(cl->cnt->init)
+			{
+				init.cnt = cl->cnt;
+				init.init = cl->cnt->init;
+				subinit(&init, 0, tab->axis,
+					(char *) tab->data + cl->offset);
+			}
+		}
+
+		memfree(init.idx);
+		return 1;
 	}
+
+	return 0;
 }
 
 
 /*	Zähltabelle aus Definitionsstring generieren
 */
 
-mdmat *md_ctab(const char *title, const char *def,
-	MdClassTab *gtab, MdCntObj *counter)
+mdmat *md_ctab (const char *title, const char *def,
+	MdCountTab *gtab, MdCount *counter)
 {
 	IO *io;
 	mdmat *md;
@@ -133,5 +218,5 @@ static void subinit (INIT *init, int depth, mdaxis *axis, char *ptr)
 			ptr += axis->size;
 		}
 	}
-	else	init->init(ptr, init->idx, init->dim);
+	else	init->init(init->cnt, ptr, init->idx, init->dim);
 }

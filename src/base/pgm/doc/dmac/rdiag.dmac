@@ -1,0 +1,178 @@
+/*
+:*:create figuers with R
+
+$Copyright (C) 2006 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+*/
+
+\ifdef\rdiag\break\endif
+
+\eval {
+	str rdiag_temp = NULL;
+	str rdiag_head = NULL;
+	str rdiag_data = NULL;
+}
+
+
+$1
+
+:*:The command $1 creates a temporary directory for |R| examples.
+
+\def\rdiag_init {
+	rdiag_temp = newtempdir();
+}
+
+$1 <headline>
+
+:*:The command $1 expands the headlines used by all following
+|R| examples. The headlines are stored in a variable |rdata_head|.
+
+\def\rdiag_head {
+	rdiag_head += ParseLine(cin) + "\n";
+}
+
+$1
+
+:*:The command $1 removes the temporary directory for |rdiag| examples
+and clears all predefined headlines.
+
+\def\rdiag_clean {
+	if	(rdiag_temp)
+	{
+		deltempdir(rdiag_temp);
+	}
+
+	rdiag_temp = NULL;
+	rdiag_head = NULL;
+	rdiag_data = NULL;
+}
+
+$1[|[|<mode>|]|] <cmd>
+
+:*:The command $1 executes <cmd> in the temporary directory |rdiag_temp|.
+Possible outputs are inserted with mode <mode> (same statements as in
+|\include|).
+
+\def\rdiag_exec {{
+	str mode = ParseOpt(cin, true);
+	str cmd = ParseLine(cin, true);
+
+	if	(rdiag_temp)
+	{
+		str res = filter("sh", "cd " + rdiag_temp + "\n" + cmd);
+
+		if	(res)
+			input(mode, res + "\n");
+	}
+}}
+
+$1[|[|]<name>|]|] <data>\br
+<filter commands>\br
+|\end|
+
+:*:The command $1 creates a data filei from |EDB|-base.
+
+\def\rdiag_edb {{
+	str name = ParseOpt(cin, true);
+	str path = ParseLine(cin);
+
+	if	(rdiag_data)
+		remove(rdiag_data);
+
+	depend(path);
+
+	if	(path && !MakeDepend)
+	{
+		str fscript = paste("/", rdiag_temp, "rdiag.filter");
+		copy(ParseRegion(cin, "\\\\end"), open(fscript, "w"));
+		EDB edb = edbopen(path, "script=" + fscript);
+		rdiag_data = paste("/", rdiag_temp, "rdiag.dat");
+		edb.fout(rdiag_data, "data,nosplit,prec=5");
+		edb.copy(0);
+		edb = NULL;
+		remove(fscript);
+	}
+	else	rdiag_data = NULL;
+}}
+
+$1[|[|]<scale>|]|] <caption>\br
+<R commands>\br
+|\end|
+
+:*:The command $1 creates a data file from |EDB|-base.
+
+\def\rdiag_fig {{
+	str prec = ParseOpt(cin, true);
+	str desc = ParseLine(cin);
+	bool tclean = !rdiag_temp;
+
+	if	(tclean)
+		rdiag_temp = newtempdir();
+
+	if	(prec)	prec = "-m " + prec;
+
+	str rcmd = paste("/", rdiag_temp, "rdiag.R");
+	IO io = open(rcmd, "w");
+	io << "library(graphics)\n";
+	io << "library(lattice)\n";
+	io << rdiag_head;
+	io << "xfig(\"rdiag.fig\", paper = \"a4\");\n";
+
+	if	(rdiag_data)
+	{
+		fprintf(io, "v <- read.table(%#s,\n", rdiag_data);
+		io << "\tsep=\";\", header = TRUE, row.names = 1);\n";
+		io << "attach(v);\n";
+	}
+
+	io << ParseRegion(cin, "\\\\end");
+	io << "dev.off()\n";
+	close(io);
+	/*
+	fprintf(cout, "\n---- verbatim\n");
+	copy(open(rcmd, "r"), cout);
+	fprintf(cout, "----\n\n");
+	*/
+
+	if	(!MakeDepend)
+		filter("bash", psub(string !
+set -x
+cd $(rdiag_temp:%s)
+R CMD BATCH --vanilla rdiag.R && \
+	fig2dev -L latex $(prec:%s) rdiag.fig rdiag.tex
+!));
+
+	fprintf(cout, "\\fig[hb]\n");
+	str x = fsearch(rdiag_temp, "rdiag.tex");
+
+	if	(x)
+	{
+		cout << "---- latex\n";
+		copy(open(x, "r"), cout);
+		cout << "----\n";
+		remove(x);
+	}
+
+	fprintf(cout, "\\caption %s\n\\end\n", desc);
+
+	if	(tclean)
+	{
+		deltempdir(rdiag_temp);
+		rdiag_temp = NULL;
+	}
+}}

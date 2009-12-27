@@ -28,6 +28,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/memalloc.h>
 #include <EFEU/refdata.h>
 #include <EFEU/strbuf.h>
+#include <EFEU/stdint.h>
 
 #define	IO_MAX_SAVE	6
 #define	IO_STAT_OK	0
@@ -100,6 +101,7 @@ int io_close_stat;
 
 void io_push (IO *io, IO *tmp);
 IO *io_pop (IO *io);
+IO *io_divide (IO *io, size_t bsize);
 
 void io_submode (IO *io, int flag);
 void io_protect (IO *io, int flag);
@@ -197,12 +199,18 @@ size_t io_dbwrite (IO *io, const void *data,
 
 unsigned io_getval (IO *io, int n);
 char *io_getstr (IO *io);
+char *io_getarg (IO *io, int beg, int end);
 
 void io_putval (unsigned val, IO *io, int n);
 int io_putstr (const char *str, IO *io);
 
-size_t io_getsize (IO *io);
-int io_putsize (size_t val, IO *io);
+size_t io_llread (IO *io, int64_t *data, size_t dim);
+size_t io_llwrite (IO *io, const int64_t *data, size_t dim);
+size_t io_ullread (IO *io, uint64_t *data, size_t dim);
+size_t io_ullwrite (IO *io, const uint64_t *data, size_t dim);
+
+size_t io_write_size (size_t val, IO *io);
+size_t io_read_size (size_t *buf, IO *io);
 
 char *io_getline (IO *io, StrBuf *buf, int delim);
 char *io_mgetline (IO *io, StrBuf *buf, const char *delim);
@@ -230,9 +238,12 @@ extern IO *ionull;		/* Null-Device */
 IO *io_lnum (IO *io);	/* Zeilennummer */
 IO *io_count (IO *io);	/* Ausgabezähler */
 IO *io_html (IO *io);	/* HTML-Filter */
+IO *io_crlf (IO *io);	/* CRLF Filter */
 IO *io_indent (IO *io, int c, int n);
 IO *io_lmark (IO *io, const char *pre, const char *post, int flag);
 IO *io_cleanup (IO *io, void (*cf) (IO *io, void *p), void *p);
+IO *xlangfilter (IO *in, const char *lang,
+	int (*newpar) (IO *io, int c, void *par), void *par);
 IO *langfilter (IO *in, const char *lang);
 
 /*	Teilfileausgabe in Bibliothek

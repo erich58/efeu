@@ -64,8 +64,8 @@ extern EfiObj *ETK_obj (Tcl_Obj *obj);
 extern int ETK_eval (ETK *etk, char *cmd);
 extern EfiObj *ETK_result (ETK *etk);
 
+extern void ETKInfo (const char *name);
 extern void SetupETK (void);
-extern void _init (void);
 
 /*
 $SeeAlso

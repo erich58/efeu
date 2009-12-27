@@ -34,7 +34,7 @@ EfiType Type_strbuf = STD_TYPE("strbuf", StrBuf *, &Type_ptr, NULL, NULL);
 
 static void f_create (EfiFunc *func, void *rval, void **arg)
 {
-	SB(rval) = new_strbuf(Val_int(arg[0]));
+	SB(rval) = sb_create(Val_int(arg[0]));
 }
 
 static void f_fprint(EfiFunc *func, void *rval, void **arg)
@@ -74,7 +74,7 @@ static void f_free (EfiFunc *func, void *rval, void **arg)
 {
 	if	(SB(arg[0]))
 	{
-		del_strbuf(SB(arg[0]));
+		sb_destroy(SB(arg[0]));
 		SB(arg[0]) = NULL;
 	}
 }
@@ -86,7 +86,12 @@ static void f_getc (EfiFunc *func, void *rval, void **arg)
 
 static void f_putc (EfiFunc *func, void *rval, void **arg)
 {
-	Val_int(rval) = SB(arg[0]) ? sb_put(Val_int(arg[1]), SB(arg[0])) : EOF;
+	Val_int(rval) = sb_put(Val_int(arg[1]), SB(arg[0]));
+}
+
+static void f_puts (EfiFunc *func, void *rval, void **arg)
+{
+	Val_int(rval) = sb_puts(Val_str(arg[1]), SB(arg[0]));
 }
 
 static void f_pos (EfiFunc *func, void *rval, void **arg)
@@ -153,6 +158,13 @@ static void f_sb2str (EfiFunc *func, void *rval, void **arg)
 	else	Val_str(rval) = NULL;
 }
 
+static void f_index (EfiFunc *func, void *rval, void **arg)
+{
+	StrBuf *sb = SB(arg[0]);
+	int i = Val_int(arg[1]);
+	Val_char(rval) = (sb && i < sb_size(sb)) ? sb->data[i] : 0;
+}
+
 static EfiFuncDef fdef_strbuf[] = {
 	{ 0, &Type_strbuf, "strbuf (int bsize = 0)", f_create },
 	{ FUNC_VIRTUAL, &Type_void, "free (strbuf & sb)", f_free },
@@ -161,11 +173,13 @@ static EfiFuncDef fdef_strbuf[] = {
 	{ 0, &Type_int, "strbuf::pos ()", f_pos },
 	{ 0, &Type_void, "strbuf::sync ()", f_sync },
 	{ 0, &Type_int, "strbuf::putc (char c)", f_putc },
+	{ 0, &Type_int, "strbuf::puts (str s)", f_puts },
 	{ 0, &Type_int, "strbuf::getc ()", f_getc },
 	{ 0, &Type_void, "strbuf::insert (char c)", f_insert },
 	{ 0, &Type_int, "strbuf::delete (void)", f_delete },
 	{ 0, &Type_io, "strbuf ()", f_sb2io },
 	{ 0, &Type_str, "strbuf ()", f_sb2str },
+	{ FUNC_VIRTUAL, &Type_char, "operator[] (strbuf, int)", f_index },
 };
 
 void CmdSetup_strbuf(void)

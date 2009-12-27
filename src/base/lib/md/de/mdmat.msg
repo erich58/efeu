@@ -47,6 +47,8 @@ If not, write to the Free Software Foundation, Inc.,
 42	$!: Additionsfunktion nicht definiert.\n
 43	$!: Gruppendefinitionen fehlen.\n
 44	$!: Gruppendefinition $1 nicht gefunden.\n
+45	$!: Zähler $1 nicht gefunden.\n
+46	$!: Kein passender Bezeichner für Teilklassifikation.\n
 
 51	$!: "$1" ist keine Gleitkommamatrix.\n
 52	$!: Gleitkommamatrix "$1" - falsche Objektgröße.\n
@@ -56,7 +58,7 @@ Dimensionenszahlen sind nicht kompatibel.\n
 Achsenindizes sind nicht kompatibel.\n
 
 61	$!: Leere Matrize(n) bei Matrixmultiplikation.\n
-62	$!: Matrixmultiplikation: Achsen "$1" - "$1" sind nicht kompatibel (flags=$3).\n
+62	$!: Matrixmultiplikation: Achsen "$1" - "$2" sind nicht kompatibel (flags=$3).\n
 63	$!: Matrixmultiplikation: Inkompatible Achsenzahl.\n
 64	$!: Matrixmultiplikation: Datentype $1 nicht mit $2 multiplizierbar.\n
 65	$!: Matrixmultiplikation: Datentype $1 nicht addierbar.\n
@@ -89,3 +91,8 @@ Achsenindizes sind nicht kompatibel.\n
 202	$!: Type "$1" nicht in double konvertierbar.\n
 203	$!: Matrixinversion: Matrix nicht Quadratisch.\n
 204	$!: Matrixinversion: Datenmatrix ist singulär (dim=$1, rang=$2).\n
+
+301	$!: Zähltyptabelle ist nicht initialisiert.\n
+302	$!: Klassifikationstabelle ist nicht initialisiert.\n
+303	$!: Datenmatrix nicht für Auszählungen vorbereitet.\n
+304	$!: Abweichender Datentyp für zusätzliche Klassifikationenen.\n

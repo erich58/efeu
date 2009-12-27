@@ -47,6 +47,8 @@ If not, write to the Free Software Foundation, Inc.,
 42	$!: accumulation function is not defined.\n
 43	$!: missing grouping information.\n
 44	$!: undefined group $1.\n
+45	$!: undefined counter $1.\n
+46	$!: no matching label for partial classification.\n
 
 51	$!: "$1" is not of type double.\n
 52	$!: filed of type double "$1" - wrong object size.\n
@@ -56,7 +58,7 @@ dimension not compatible.\n
 index values not compatible.\n
 
 61	$!: mdmul: empty data cube(s).\n
-62	$!: mdmul: axis "$1" - "$1" are not compatible (flags=$3).\n
+62	$!: mdmul: axis "$1" - "$2" are not compatible (flags=$3).\n
 63	$!: mdmul: incompatible number of axis.\n
 64	$!: mdmul: can not multiply $1 with $2.\n
 65	$!: mdmul: cann not add values of type $1.\n
@@ -89,3 +91,8 @@ index values not compatible.\n
 202	$!: could not convert "$1" into double.\n
 203	$!: inversion of data cube: not a square field.\n
 204	$!: inversion of data cube: singulary data cube (dim=$1, range=$2).\n
+
+301	$!: count object table is not initialized.\n
+302	$!: classification table is not initialized.\n
+303	$!: data cube nor prepared for counting.\n
+304	$!: differing data type for additional classifications.\n

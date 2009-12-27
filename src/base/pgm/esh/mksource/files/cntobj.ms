@@ -45,19 +45,15 @@ definiert:
 	Datenmatrix. Wird keine besondere Initialisierungsfunktion
 	benötigt, wird stellvertretend ein gleichnamiger Makro
 	mit dem Wert |NULL| eingerichtet.
-\ttitem	CB_<name>
-	ist ein statischer Buffer zur Aufnahme der Daten eines
-	Objekts vom Type <type>.
 \ttitem	set_<name>
-	ist eine Funktion zum Setzen der Werte des statischen
-	Buffers |CB_|<name>.
+	ist eine Funktion zum Setzen der Werte in einem Buffer.
 \ttitem	add_<name>
-	ist eine Funktion, die den Wert des statischen Buffers
+	ist eine Funktion, die den Wert des Buffers
 	in eine Zelle der Datenmatrix addiert.
 
 Alle Makros und Funktionen werden statisch generiert, da sie
 nie direkt verwendet werden sondern nur zur Initialisierung
-einer Variablen vom Type |MdCntObj| dienen.
+einer Variablen vom Type |MdCount| dienen.
 
 Die einzelnen Zeilen der Eingabestruktur <def> bestehen aus
 einem Schlüsselwort <key>, einer Komponentenkennung <var>
@@ -98,17 +94,28 @@ sichtbar bleiben.
 
 inline void CntObj(str name, Type_t type, IO def, str arg = NULL)
 {
-	fprintf(src, "\n#define\tCT_%s\t%#s\n", name, declare(type));
+	fprintf(src, "\n#define\tCT_%s", name);
+
+	str head = typehead(type);
+
+	if	(head)
+		fprintf(src, "\t%#s\\\n", "[" + head + "]");
+
+	fprintf(src, "\t%#s\n", declare(type, true));
 	
-	Function f_set = Function("int set_" + name, "const void *data");
+	Function f_set = Function("int set_" + name,
+		"MdCount *cnt, void *opaque_buf, const void *data");
+	f_set.line("char *buf = opaque_buf;");
 
 	if	(arg)	f_set.line(arg);
 
 	Function f_ini = Function("void ini_" + name,
-		"void *opaque_ptr, size_t *idx, size_t dim");
+		"MdCount *cnt, void *opaque_ptr, size_t *idx, size_t dim");
 	f_ini.line("char *ptr = opaque_ptr;");
-	Function f_add = Function("void add_" + name, "void *opaque_ptr");
+	Function f_add = Function("void add_" + name,
+		"MdCount *cnt, void *opaque_ptr, void *opaque_buf");
 	f_add.line("char *ptr = opaque_ptr;");
+	f_add.line("char *buf = opaque_buf;");
 	bool need_ini = false;
 	bool need_ret = true;
 
@@ -121,45 +128,56 @@ inline void CntObj(str name, Type_t type, IO def, str arg = NULL)
 			expr(paste(" ", type, "x"));
 			var = sprintf("x.%s[0]", psub(substr(var, 1)));
 			fmt = sprintf("((%s *) (%%s + %d))",
-				typeof(expr(var)), offset(x, expr(var)));
+				expr("typeof(" + var + ").cname"),
+				offset(x, expr(var)));
 		}
-		else if	(var != ".")
+		else if	(var[0] != ".")
 		{
 			expr(paste(" ", type, "x"));
 			var = paste(".", "x", psub(var));
 			fmt = sprintf("((%s *) (%%s + %d))[0]",
-				typeof(expr(var)), offset(x, expr(var)));
+				expr("typeof(" + var + ").cname"),
+				offset(x, expr(var)));
 		}
-		else	fmt = sprintf("((%s *) (%%s))[0]", (str) type);
-
-		List_t args = { sprintf(fmt, "ptr"),
-			sprintf(fmt, "CB_" + name) };
-
-		if	(key == "return")
+		else if	(strlen(var) > 1)
 		{
+			fmt = sprintf("((%s *) (%%s))->%s", type.cname,
+				substr(var, 1));
+		}
+		else	fmt = sprintf("((%s *) (%%s))[0]", type.cname);
+
+		List_t args = { sprintf(fmt, "ptr"), sprintf(fmt, "buf") };
+
+		switch (key)
+		{
+		case "return":
 			need_ret = false;
 			f_set.line("return " + cmd + ";", args);
-		}
-		else if	(key == "set")
-		{
+			break;
+		case "set":
 			f_set.line(cmd + ";", args);
-		}
-		else if	(key == "ini")
-		{
+			break;
+		case "ini":
 			need_ini = true;
 			f_ini.line(cmd + ";", args);
-		}
-		else if	(key == "add")
-		{
+			break;
+		case "add":
 			f_add.line(cmd + ";", args);
-		}
-		else
-		{
+			break;
+		case "assign":
+			f_set.line("CleanData(&Type_$1, buf);", type);
+			f_set.line("Val_$1(buf) = " + cmd + ";", type);
+			f_add.line("AssignData(&Type_$1, ptr, buf);", type);
+			break;
+		default:
 			f_ini.line("$1 = 0;", args);
 			f_set.line("$2 = " + cmd + ";", args);
 			f_add.line("$1 += $2;", args);
+			break;
 		}
 	}
+
+	f_set.line("buf = NULL;");
 
 	if	(need_ret)
 		f_set.line("return 1;");
@@ -168,7 +186,8 @@ inline void CntObj(str name, Type_t type, IO def, str arg = NULL)
 		f_ini.write(false);
 	else	fprintf(src, "#define\tini_%s\tNULL\n", name);
 
-	fprintf(src, "\nstatic char *CB_%s[%d];\n", name, sizeof(type));
+	f_add.line("ptr = NULL;");
+	f_add.line("buf = NULL;");
 	f_set.write(false);
 	f_add.write(false);
 }

@@ -46,7 +46,7 @@ void SetInfoPath (const char *path)
 
 	if	(InfoPath && !path)	return;
 
-	sb = new_strbuf(0);
+	sb = sb_create(0);
 
 /*	Basispfade
 */

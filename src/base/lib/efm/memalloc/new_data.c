@@ -25,7 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/ftools.h>
 #include <EFEU/Debug.h>
 
-#define	TRACE_MODE	1	/* enable trace control */
+#define	TRACE_MODE	0	/* enable trace control */
 
 #define	DEF_BLK		16
 

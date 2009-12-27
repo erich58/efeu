@@ -21,6 +21,7 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 # $pconfig
+# Version="$Id: rsed.sh,v 1.5 2004-10-25 05:46:27 ef Exp $"
 # d|
 #	:*:show differences after editing without replacing
 #	the orignial file.
@@ -47,6 +48,7 @@ usage ()
 
 case "$1" in
 -\?|--help*)	usage $1; exit 0;;
+--version)	efeuman -- $0 $1 || grep 'Version="[$]Id:'; exit 0;;
 esac
 
 # $Description

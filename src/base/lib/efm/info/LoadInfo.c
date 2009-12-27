@@ -37,7 +37,7 @@ static void add_entry(InfoNode *node, StrBuf *sb)
 	{
 		node->par = sb2str(sb);
 	}
-	else	del_strbuf(sb);
+	else	sb_destroy(sb);
 }
 
 static int get_key(IO *io, char **p)
@@ -45,7 +45,7 @@ static int get_key(IO *io, char **p)
 	StrBuf *sb;
 	int c;
 
-	sb = new_strbuf(0);
+	sb = sb_create(0);
 
 	while ((c = io_getc(io)) != EOF)
 	{
@@ -90,7 +90,7 @@ static int get_label(IO *io, char **p)
 	StrBuf *sb;
 	int c;
 
-	sb = new_strbuf(0);
+	sb = sb_create(0);
 
 	do	c = io_getc(io);
 	while	(c == ' ' || c == '\t');
@@ -134,7 +134,7 @@ static char *get_name(IO *io)
 	StrBuf *sb;
 	int c;
 
-	sb = new_strbuf(0);
+	sb = sb_create(0);
 
 	do	c = io_getc(io);
 	while	(c == ' ' || c == '\t');
@@ -168,7 +168,6 @@ static void do_load (InfoNode *info)
 {
 	char *fname = info->par;
 	info->par = NULL;
-	info->load = NULL;
 
 	if	(fname)
 	{
@@ -216,7 +215,7 @@ static InfoNode *get_node(IO *io, InfoNode *node)
 	{
 		if	((p = get_name(io)) != NULL)
 		{
-			node->load = do_load;
+			node->setup = do_load;
 			node->par = fsearch(InfoPath, NULL, p, NULL);
 			memfree(p);
 		}
@@ -225,7 +224,7 @@ static InfoNode *get_node(IO *io, InfoNode *node)
 	{
 		if	((p = get_name(io)) != NULL)
 		{
-			node->load = do_load;
+			node->setup = do_load;
 			node->par = msprintf("|%s", p);
 			memfree(p);
 		}
@@ -248,7 +247,7 @@ static void load (InfoNode *base, IO *io)
 	last = '\n';
 	buf = NULL;
 	node = (base && !base->func && !base->par) ? base : NULL;
-	buf = node ? new_strbuf(0) : NULL;
+	buf = node ? sb_create(0) : NULL;
 
 	while ((c = io_getc(io)) != EOF)
 	{
@@ -267,7 +266,7 @@ static void load (InfoNode *base, IO *io)
 					node = get_node(io, base);
 				}
 
-				buf = node ? new_strbuf(0) : NULL;
+				buf = node ? sb_create(0) : NULL;
 				last = '\n';
 				continue;
 			}

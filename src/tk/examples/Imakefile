@@ -1,5 +1,0 @@
-Destination(EXDIR,$(EFEUTOP)/share/examples)
-Destination(ETKEX,$(EXDIR)/etk)
-
-#define	EtkExample(name,src)	\
-InstallCmdScript(PathName($(ETKEX),name),src,-ec etk)

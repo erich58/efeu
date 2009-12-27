@@ -28,7 +28,7 @@ char *Doc_expand (Doc *doc, IO *in, int flag)
 	StrBuf *buf;
 	Doc save;
 	
-	buf = new_strbuf(0);
+	buf = sb_create(0);
 	save = *doc;
 	doc->out = io_strbuf(buf);
 

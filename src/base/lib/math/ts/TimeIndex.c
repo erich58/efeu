@@ -175,7 +175,7 @@ int tindex_print (IO *io, TimeIndex idx, int offset)
 
 char *TimeIndex2str (TimeIndex idx, int offset)
 {
-	StrBuf *buf = new_strbuf(0);
+	StrBuf *buf = sb_create(0);
 	IO *io = io_strbuf(buf);
 
 	tindex_print(io, idx, offset);
@@ -267,6 +267,22 @@ int tindex_year (TimeIndex idx)
 	}
 }
 
+int tindex_quart (TimeIndex idx)
+{
+	int mon;
+
+	switch (idx.type)
+	{
+	case TS_DAY:	mon = Calendar(idx.value, NULL)->month; break;
+	case TS_WEEK:	mon = Calendar(MITTWOCH(idx.value), NULL)->month; break;
+	case TS_MONTH:	mon = 1 + idx.value % 12; break;
+	case TS_QUART:	return 1 + (idx.value % 4);
+	default:	return 0;
+	}
+
+	return 1 + (mon - 1) / 3;
+}
+
 int tindex_month (TimeIndex idx)
 {
 	switch (idx.type)
@@ -274,7 +290,7 @@ int tindex_month (TimeIndex idx)
 	case TS_DAY:	return Calendar(idx.value, NULL)->month;
 	case TS_WEEK:	return Calendar(MITTWOCH(idx.value), NULL)->month;
 	case TS_MONTH:	return 1 + idx.value % 12;
-	case TS_QUART:	return 2 + idx.value % 4;
+	case TS_QUART:	return 2 + 3 * (idx.value % 4);
 	default:	return 0;
 	}
 }

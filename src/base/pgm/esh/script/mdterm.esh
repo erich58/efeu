@@ -24,9 +24,11 @@ If not, write to the Free Software Foundation, Inc.,
 VirFunc Function = NULL;
 Type_t Type = NULL;
 PrintListDelim = "\t";
+fmt_float = "%*.*f";
+float_prec = 2;
 
 pconfig !
-Version = "$Id: mdterm.esh,v 1.9 2002-12-19 05:35:39 ef Exp $"
+Version = "$Id: mdterm.esh,v 1.13 2006-06-07 08:45:19 ef Exp $"
 PrintMode = true
 
 F:file | :eval 'gload(IncPath, "{}")'
@@ -80,7 +82,7 @@ T:title | Title
 :file2 | Ein2
 	:*:name of second data cube
 	:de:Name der 2. Eingabedatei
-/.*=.*/name=var | SelDef: append " "
+/.*=.*/<name>=<var> | SelDef: append " "
 	:*:selection parameter
 	:de:Selektionsparameter
 ::out | Output; PrintMode = false
@@ -102,7 +104,7 @@ if	(Expr)
 	if	(Type == NULL)
 	{
 		eval(sprintf("%s x; %s y;", md1.type, md2.type));
-		Type = typeof(expr(Expr));
+		Type = expr("typeof(" + Expr + ")");
 	}
 
 	eval(sprintf("virtual %s _EVALFUNC(%s x, %s y) return (%s);",

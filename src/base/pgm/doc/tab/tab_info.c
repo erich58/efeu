@@ -39,7 +39,6 @@ static void mac_add (InfoNode *info, DocMac *mac)
 
 static void mac_load (InfoNode *info)
 {
-	info->load = NULL;
 	info->par = NULL;
 
 	if	(GlobalDocTab)
@@ -55,5 +54,5 @@ static void mac_load (InfoNode *info)
 void DocMacInfo (const char *name, const char *desc)
 {
 	InfoNode *info = AddInfo(NULL, name, desc, NULL, NULL);
-	info->load = mac_load;
+	info->setup = mac_load;
 }

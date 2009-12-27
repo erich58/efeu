@@ -66,5 +66,11 @@ static EfiFuncDef fdef[] = {
 
 void SetupMathFunc(void)
 {
+	static int init_done = 0;
+
+	if	(init_done)	return;
+
+	init_done = 1;
+
 	AddFuncDef(fdef, tabsize(fdef));
 }

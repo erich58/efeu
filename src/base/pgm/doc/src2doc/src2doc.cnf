@@ -33,6 +33,9 @@ t|Output = "|efeudoc -t -"
 	:*:PostScript output
 	:de:PostScript-Aufbereitung
 
+c|InsertCode = true
+	:*:insert program code
+	:de:Programmcode einbinden
 n:name|Name
 	:*:output name
 	:de:Ausgabename

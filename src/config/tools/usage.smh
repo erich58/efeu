@@ -1,0 +1,118 @@
+# :*:tools for usage informations
+# :de:Hilfsfunktionen zur Ausgabe von Anwendungsinformationen
+#
+# $Synopsis
+# include $1
+#
+# $Copyright (C) 2004 Erich Frühstück
+# This file is part of EFEU.
+# 
+# EFEU is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+# 
+# EFEU is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public
+# License along with EFEU; see the file COPYING.
+# If not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+test $usage_smh && return
+usage_smh=1
+
+# $Synopsis
+# \index[mf_usage]
+# mf_usage -f <fmt> <arg(s)>
+#
+# mf_usage -c <desc>
+#
+# mf_usage |<<| <mark>\br
+# ...\br
+# <mark>
+#
+# $Description
+# :*:
+# The function \index{|mf_usage|} creates usage imformation of |make|
+# for the actual |Makefile|. The first variant (option |-f|)
+# allows formatted output with |printf|. The second variant (option
+# |-c|) uses |echo| to print the description. The third variant reads
+# description text from standard input (as here document) und creats 
+# output rules for every line. See examples below.
+# All rules belongs to the phony target |usage|.
+# :de:
+# Die Funktion \index{|mf_usage|} generiert Informationen zur Verwendung von
+# |make| für das aktuelle |Makefile|. Die erste Variante (Option |-f|)
+# erlaubt eine formatierte Ausgabe mit |printf|. Bei der zweiten
+# Variante (Option |-c|) wird der Beschreibungstext <desc> mit |echo|
+# ausgebeben. Die dritte Variante übernimmt den Beschreibungstext von
+# der Standardeingabe (als here-Document) und generiert Ausgabebefehle
+# für jede einzelne Zeile. Vergleiche dazu die Beispiele weiter unten.
+# Alle Ausgaben werden für das Pseudoziel |usage| eingetragen.
+
+mf_usage ()
+{
+	printf "\nusage::\n"
+
+	case "$1" in
+	-f)
+		shift
+		printf "\t@printf"
+		printf ' "%s"' "$@"
+		printf "\n"
+		;;
+	-c)
+		shift
+		printf "\t@echo '%s'\n" "$*"
+		;;
+	*)
+		while read _usage_line
+		do
+			printf "\t@echo '%s'\n" "$_usage_line"
+		done
+	esac
+}
+
+# $Example
+# \config shmkmf
+# \smh_head include usage.smh
+# :*:
+# The following lines
+# \shmkmf[-x] creates the rules
+# mf_usage -c "usage: make all | clean"
+# mf_usage -f "%s\t%s\n" "all" "create all"
+# mf_usage -f "%s\t%s\n" "clean" "clean up"
+# \end
+# \par
+# The second example shows the use of a here-document. The lines
+# \shmkmf[-x] creates the rule
+# mf_usage << EOF
+# usage: make all | clean
+# all	create all
+# clean	clean up
+# EOF
+# \end
+# :de:
+# Die folgenden Anweisungen
+# \shmkmf[-x] generieren die Regeln
+# mf_usage -c "Aufruf: make all | clean"
+# mf_usage -f "%s\t%s\n" "all" "Alles generieren"
+# mf_usage -f "%s\t%s\n" "clean" "Aufräumen"
+# \end
+# \par
+# Das zweite Beispiel zeigt die Übergabe mithilfe
+# eines here-Dokuments. Die Zeilen
+# \shmkmf[-x] generieren die Regel
+# mf_usage << EOF
+# Aufruf:	make all | clean
+# all	Alles generieren
+# clean	Aufräumen
+# EOF
+# \end
+#
+# $SeeAlso
+# \mref{shmkmf(1)}.

@@ -69,6 +69,7 @@ void DelWindow (WINDOW *win);
 void EndWin(void);
 void InitWin(void);
 void SetupWin(void);
+void WinInfo (const char *name);
 
 void ShowWindow (WINDOW *win);
 void HideWindow (WINDOW *win);

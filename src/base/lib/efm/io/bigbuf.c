@@ -33,12 +33,11 @@ If not, write to the Free Software Foundation, Inc.,
 #define FMT_34	"[ftools:34]$!: input error in file $1.\n"
 #define FMT_35	"[ftools:35]$!: seeking in file $1 failed.\n"
 
-#define	DEF_SIZE	0x10000	/* 65 kB */
+#define	DEF_SIZE	0xfff0	/* 65 kB - 16 */
 
 #define	TMP_PFX		"Buf"
 #define	TMP_DIR		NULL
 
-char *tempnam (const char *, const char *);
 int ftruncate (int fd, off_t length);
 
 typedef struct {
@@ -67,7 +66,7 @@ static void bb_flush (BIGBUF *bb)
 	if	(bb->fd == EOF)
 	{
 		if	(bb->name == NULL)
-			bb->name = tempnam(TMP_DIR, TMP_PFX);
+			bb->name = newtemp(TMP_DIR, TMP_PFX);
 
 		bb->fd = open(bb->name, O_RDWR|O_CREAT|O_TRUNC, 0600);
 
@@ -128,10 +127,7 @@ static int bb_ctrl (void *ptr, int req, va_list list)
 		}
 
 		if	(bb->name)
-		{
-			remove(bb->name);
-			free(bb->name);
-		}
+			deltemp(bb->name);
 
 		lfree(bb->buf);
 		memfree(bb);
@@ -160,16 +156,18 @@ static int bb_get (void *ptr)
 
 	while (bb->pos >= bb->end)
 	{
+		int nread;
 		bb->pos = 0;
 
 		if	(bb->blk_pos >= bb->blk_end)
 			return EOF;
 
-		bb->end = read(bb->fd, bb->buf, bb->size);
+		nread = read(bb->fd, bb->buf, bb->size);
 
-		if	(bb->end < 0)
+		if	(nread < 0)
 			bb_error(bb, FMT_34);
 
+		bb->end = nread;
 		bb->blk_pos++;
 	}
 
@@ -188,7 +186,7 @@ IO *io_bigbuf (size_t size, const char *pfx)
 	{
 		char *dir = mdirname(pfx, 0);
 		char *name = mbasename(pfx, NULL);
-		bb->name = tempnam(dir, name);
+		bb->name = newtemp(dir, name);
 		memfree(dir);
 		memfree(name);
 	}

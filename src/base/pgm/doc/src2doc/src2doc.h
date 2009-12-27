@@ -37,9 +37,13 @@ void s2d_hdr (const char *name, IO *ein, IO *aus);
 void s2d_src (const char *name, IO *ein, IO *aus);
 void s2d_cmd (const char *name, IO *ein, IO *aus);
 void s2d_std (const char *name, IO *ein, IO *aus);
+void s2d_xstd (const char *name, IO *ein, IO *aus);
+void s2d_script (const char *name, IO *ein, IO *aus);
+void s2d_xscript (const char *name, IO *ein, IO *aus);
 void s2d_com (const char *name, IO *ein, IO *aus);
 void s2d_doc (const char *name, IO *ein, IO *aus);
 void s2d_man (const char *name, IO *ein, IO *aus);
+void s2d_sh (const char *name, IO *ein, IO *aus);
 
 int skip_blank (IO *ein);
 int skip_space (IO *ein, StrBuf *buf);
@@ -72,11 +76,13 @@ struct SrcDataStruct {
 	DocBuf doc;	/* Dokumentbuffer */
 	SrcCmd *ppdef;	/* Preprozessordefinitionen */
 	size_t ppdim;	/* Zahl der Preprozessdefinitionen */
-	unsigned mask;	/* Maske für Deklarationen */
+	unsigned mask;	/* Maske für SYNOPSIS-Deklarationen */
+	unsigned xmask;	/* Maske für beschriebene Deklarationen */
 };
 
 void SrcData_init (SrcData *data, IO *ein);
 void SrcData_head (SrcData *data, const char *name, int sec);
+void SrcData_title (SrcData *data, const char *name);
 void SrcData_eval (SrcData *data, const char *name);
 void SrcData_copy (SrcData *data, StrBuf *buf, const char *name);
 void SrcData_write (SrcData *data, IO *io);
@@ -84,9 +90,11 @@ void SrcData_write (SrcData *data, IO *io);
 #define	DECL_VAR	01	/* Variable */
 #define	DECL_FUNC	02	/* Funktion */
 #define	DECL_LABEL	04	/* Label */
-#define	DECL_CALL	010	/* Makroaufruf */
-#define	DECL_TYPE	020	/* Typedefinition */
-#define	DECL_STRUCT	040	/* Strukturdefinition */
+#define	DECL_SVAR	010	/* statische Variable */
+#define	DECL_SFUNC	020	/* statische Funktion */
+#define	DECL_CALL	040	/* Makroaufruf */
+#define	DECL_TYPE	0100	/* Typedefinition */
+#define	DECL_STRUCT	0200	/* Strukturdefinition */
 
 typedef struct {
 	int type;	/* Deklarationstype */
@@ -102,5 +110,6 @@ Decl *parse_decl (IO *io, int c);
 
 extern char *Secnum;
 extern char *IncFmt;
+extern int InsertCode;
 
 #endif	/* src2doc.h */

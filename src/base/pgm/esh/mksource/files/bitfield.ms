@@ -83,18 +83,37 @@ keine Sourcezeilen ausgegeben.
 
 void Bitfield(str Name, str Desc, IO Def, bool flag = true)
 {
-	str name, desc;
+	str name, gname, desc;
 	int i, n, unused;
 	int size = 0;
 	int recl = 0;
 	int ndummy = 0;
+	Function f;
 
 	Name = psub(Name);
 	Desc = Desc ? psub(Desc) : "Bitfeldstruktur " + Name;
 
 /*	Bitfeldeinträge generieren
 */
+	DataType type = DataType(Name, NULL);
 	DataBase db = DataBase(BitfieldVar);
+	str mtab;
+
+	Function x2list = Function("void $1_to_list",
+		"EfiFunc *func, void *rval, void **arg", Name);
+	x2list.line("$1 *data = arg[0];", Name);
+	x2list.line("EfiObjList **ptr = rval;");
+
+	type.dt_print = psub("$1_plain_print", Name);
+	Function xprint = Function("int $1_plain_print",
+		"const EfiType *type, const void *opaque_data, IO *io", Name);
+	xprint.line("const $1 *data = opaque_data;", Name);
+	xprint.line("int n = io_puts(\"{\", io);", Name);
+
+	Function list2x = Function("void $1_from_list",
+		"EfiFunc *func, void *rval, void **arg", Name);
+	list2x.line("$1 *data = rval;", Name);
+	list2x.line("EfiObjList *list = Val_list(arg[0]);");
 
 	while (getline(Def, n, name, desc))
 	{
@@ -110,6 +129,26 @@ void Bitfield(str Name, str Desc, IO Def, bool flag = true)
 		}
 
 		db += BitfieldVar(n, name, desc);
+
+		x2list.line("*ptr = NewObjList(uint2Obj(data->$1));", name);
+		x2list.line("ptr = &(*ptr)->next;");
+		xprint.line("n += io_printf(io, \" %uu,\", data->$1);", name);
+
+		list2x.newpar();
+		list2x.line("if	(list)");
+		list2x.beg();
+		list2x.line("data->$1 = Obj2uint(RefObj(list->obj));", name);
+		list2x.line("list = list->next;");
+		list2x.end();
+		list2x.ignorepar();
+		list2x.line("else	data->$1 = 0;", name);
+
+		LocalFunction("void $1_$2_get", "unsigned *data, void *ptr",
+			"*data = (($1 *) ptr)->$2;", Name, name);
+		LocalFunction("void $1_$2_set", "unsigned *data, void *ptr",
+			"(($1 *) ptr)->$2 = *data;", Name, name);
+		mtab += psub("\t{ $2%#s, $3%#s, $1_$2_get, $1_$2_set },\n",
+			Name, name, desc);
 		size += n;
 
 		if	(size == 32)
@@ -118,6 +157,12 @@ void Bitfield(str Name, str Desc, IO Def, bool flag = true)
 			size = 0;
 		}
 	}
+
+	x2list.write(false);
+	xprint.line("n += io_puts(\" }\", io);");
+	xprint.line("return n;");
+	xprint.write(false);
+	list2x.write(false);
 
 /*	Ungenützte Bytes bestimmen
 */
@@ -136,11 +181,10 @@ void Bitfield(str Name, str Desc, IO Def, bool flag = true)
 	}
 	else	unused = 0;
 
-	DataType type = DataType(Name, NULL);
 
 /*	Header ausgeben
 */
-	IO io = flag ? hdr : src;
+	IO io = flag ? hdr : top;
 	n = dim(db);
 
 	fpsub(io, "\n/*\t$2\n*/\n", Name, Desc);
@@ -159,6 +203,16 @@ void Bitfield(str Name, str Desc, IO Def, bool flag = true)
 
 	fpsub(io, "} $1;\n\n", Name);
 
+	if	(mtab)
+	{
+		fprintf(src, "static EfiBFMember %s_mtab[] = {\n%s};\n\n",
+			Name, mtab);
+		type.setup("AddEfiBFMember(Type_$1.vtab, \
+$1_mtab, tabsize($1_mtab));", Name);
+	}
+
+	type.setup("SetFunc(0, &Type_$1, \"$1(List_t)\", $1_from_list);", Name);
+	type.setup("SetFunc(0, &Type_list, \"$1()\", $1_to_list);", Name);
 	type.dt_recl = sprintf("%d", recl);
 	type.write();
 

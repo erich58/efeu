@@ -24,14 +24,33 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/parsearg.h>
 #include <EFEU/memalloc.h>
 #include <ctype.h>
+#include <EFEU/io.h>
 
+
+static int subcopy (const char *arg, int delim)
+{
+	int n;
+
+	for (n = 1; arg[n] != delim; n++)
+	{
+		switch (arg[n])
+		{
+		case  0:	return n;
+		case '{':	n += subcopy(arg + n, '}'); break;
+		case '[':	n += subcopy(arg + n, ']'); break;
+		case '(':	n += subcopy(arg + n, ')'); break;
+		default:	break;
+		}
+	}
+
+	return n;
+}
 
 AssignArg *assignarg (const char *arg, char **ptr, const char *delim)
 {
 	AssignArg *x;
 	char *p;
 	size_t n, po, pe, pa;
-	int depth;
 
 	if	(ptr)	*ptr = NULL;
 
@@ -40,25 +59,29 @@ AssignArg *assignarg (const char *arg, char **ptr, const char *delim)
 	while (isspace(*arg))
 		arg++;
 
-	depth = 0;
+	if	(*arg == '{')
+	{
+		x = assignarg(arg + 1, ptr, "}");
+
+		if	(ptr && *ptr && **ptr && delim && strchr(delim, **ptr))
+		{
+			(*ptr)++;
+
+			while (**ptr == ' ')
+				(*ptr)++;
+			
+			if	(**ptr && strchr(delim, **ptr))
+				(*ptr)++;
+		}
+
+		return x;
+	}
+
 	po = pe = pa = 0;
 
 	for (n = 0; arg[n] != 0; n++)
 	{
-		if	(depth)
-		{
-			if	(arg[n] == '[')
-			{
-				depth++;
-			}
-			else if	(arg[n] == ']')
-			{
-				depth--;
-
-				if	(depth == 0)	pe = n;
-			}
-		}
-		else if	(delim && strchr(delim, arg[n]))
+		if	(delim && strchr(delim, arg[n]))
 		{
 			if	(ptr)
 			{
@@ -75,12 +98,23 @@ AssignArg *assignarg (const char *arg, char **ptr, const char *delim)
 		}
 		else if	(pa)
 		{
-			;
+			switch (arg[n])
+			{
+			case '{':	n += subcopy(arg + n, '}'); break;
+			case '[':	n += subcopy(arg + n, ']'); break;
+			case '(':	n += subcopy(arg + n, ')'); break;
+			default:	break;
+			}
 		}
 		else if	(arg[n] == '[')
 		{
 			po = n + 1;
-			depth = 1;
+			n += subcopy(arg + n, ']');
+			pe = n;
+		}
+		else if	(arg[n] == '{')
+		{
+			n += subcopy(arg + n, '}');
 		}
 		else if	(arg[n] == '=')
 		{

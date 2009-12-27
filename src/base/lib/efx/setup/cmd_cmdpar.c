@@ -238,7 +238,7 @@ static void cpar_psub (EfiFunc *func, void *rval, void **arg)
 	for (list = Val_list(arg[2]); list != NULL; list = list->next)
 		arg_madd(argl, Obj2str(RefObj(list->obj)));
 
-	sb = new_strbuf(0);
+	sb = sb_create(0);
 	out = io_strbuf(sb);
 	CmdPar_psubout(par, out, fmt, argl);
 	io_close(out);
@@ -366,11 +366,11 @@ static EfiFuncDef func_cpar[] = {
 		f_argl_index },
 
 	{ FUNC_VIRTUAL, &Type_io,
-		"psubfilter (IO io)", f_psubfilter },
+		"psubfilter (promotion IO io)", f_psubfilter },
 	{ FUNC_VIRTUAL, &Type_io,
-		"psubfilter (IO io, ...)", f_psubfilter },
+		"psubfilter (promotion IO io, ...)", f_psubfilter },
 	{ FUNC_VIRTUAL, &Type_io,
-		"psubfilter (IO io, ArgList args)", f_psubfilter },
+		"psubfilter (promotion IO io, ArgList args)", f_psubfilter },
 
 	{ FUNC_VIRTUAL, &Type_str, "psub (str fmt)", f_psub },
 	{ FUNC_VIRTUAL, &Type_str, "psub (str fmt, ...)", f_psub },

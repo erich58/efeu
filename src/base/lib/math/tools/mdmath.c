@@ -33,13 +33,12 @@ static EfiFuncDef fdef[] = {
 	{ 0, &Type_mdmat, "mdinv (mdmat a)", f_mdinv },
 };
 
-void SetupMdMath(void)
+void SetupMdMath (void)
 {
-	static int need_setup = 1;
+	static int init_done = 0;
 
-	if	(need_setup)
-	{
-		AddFuncDef(fdef, tabsize(fdef));
-		need_setup = 0;
-	}
+	if	(init_done)	return;
+
+	init_done = 1;
+	AddFuncDef(fdef, tabsize(fdef));
 }

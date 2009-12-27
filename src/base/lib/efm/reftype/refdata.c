@@ -26,8 +26,10 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/ftools.h>
 #include <EFEU/parsub.h>
 #include <EFEU/Debug.h>
+#include <assert.h>
 
-#define	ERR	"fatal error in %s: use of a deleted object (%lx).\n"
+#define	ERR	"fatal error in %s: use of a deleted object (%p).\n"
+#define	ERR2	"fatal error in %s: object (%p): undefined reference type.\n"
 
 #define	KEY_ALLOC	"alloc"
 #define	KEY_REFER	"refer"
@@ -44,17 +46,28 @@ static RefData *rd_check (const void *data, const char *name)
 {
 	RefData *rd = (RefData *) data;
 
-	if	(rd && rd->reftype)
+	if	(rd == NULL)
+		return NULL;
+
+	if	(rd->reftype == NULL)
 	{
-		if	(rd->refcount == 0)
-		{
-			fprintf(stderr, ERR, name, (unsigned long) rd);
-			exit(EXIT_FAILURE);
-			return NULL;
-		}
-		else	return rd;
+/*
+		fprintf(stderr, ERR2, name, rd);
+		abort();
+		exit(EXIT_FAILURE);
+*/
+		return NULL;
 	}
-	else	return NULL;
+
+
+	if	(rd->refcount == 0)
+	{
+		fprintf(stderr, ERR, name, rd);
+		exit(EXIT_FAILURE);
+		return NULL;
+	}
+
+	return rd;
 }
 
 /*	Debug - Information
@@ -79,7 +92,7 @@ static void debug_id (FILE *log, const RefData *rd, const char *cmd)
 		putc(' ', log);
 	}
 
-	fprintf(log, "%p)", rd);
+	fprintf(log, "%d %p)", rd->refcount, rd);
 }
 
 static FILE *debug_log (const RefData *rd)

@@ -46,6 +46,7 @@ mdmat *md_sum(mdmat *md, const char *def)
 
 	md_setflag(md, def, 0, mdsf_mark, MDXFLAG_TEMP, NULL, 0);
 	m2 = new_mdmat();
+	m2->title = mstrcpy(md->title);
 	m2->axis = NULL;
 	m2->type = md->type;
 

@@ -92,22 +92,26 @@ void List2Struct (EfiFunc *func, void *rval, void **arg)
 {
 	EfiObjList *list;
 	EfiVar *st;
-	char *p;
+	char *p, *s;
 	EfiObj *obj;
 
-	st = func->type->list;
 	list = Val_list(arg[0]);
 	memset(rval, 0, func->type->size);
 
-	while (st != NULL && list != NULL)
+	for (st = func->type->list; st != NULL; st = st->next)
 	{
-		obj = EvalObj(RefObj(list->obj),
-			st->dim ? &Type_list : st->type);
+		p = (char *) rval + st->offset;
 
-		if	(obj != NULL)
+		if	(list)
 		{
-			p = (char *) rval + st->offset;
+			obj = EvalObj(RefObj(list->obj),
+				st->dim ? &Type_list : st->type);
+			list = list->next;
+		}
+		else	obj = NULL;
 
+		if	(obj)
+		{
 			if	(st->dim)
 			{
 				Assign_vec(st->type, p, st->dim,
@@ -117,8 +121,19 @@ void List2Struct (EfiFunc *func, void *rval, void **arg)
 
 			UnrefObj(obj);
 		}
+		else
+		{
+			if	(func->type->defval)
+			{
+				s = (char *) func->type->defval + st->offset;
+			}
+			else	s = st->data;
 
-		list = list->next;
-		st = st->next;
+			if	(st->dim)
+			{
+				CopyVecData(st->type, st->dim, p, s);
+			}
+			else	CopyData(st->type, p, s);
+		}
 	}
 }

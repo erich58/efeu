@@ -21,6 +21,7 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 # $pconfig
+# Version="$Id: efeu-vimrc.sh,v 1.6 2004-10-25 05:46:27 ef Exp $"
 # :dir|
 #	:*:directory with configuration files
 #	:de:Verzeichnis mit Konfigurationsdateien
@@ -32,6 +33,7 @@ usage ()
 
 case "$1" in
 -\?|--help*)	usage $1; exit 0;;
+--version)	efeuman -- $0 $1 || grep 'Version="[$]Id:'; exit 0;;
 esac
 
 # $SeeAlso
@@ -85,7 +87,7 @@ do
 done
 
 printf "endif\n\n" >> $tmp
-printf 'set tags=%s/build/scope.d/tags\\ ./tags\n' $top >> $tmp
+printf 'set tags=./tags\\ %s/build/scope.d/tags\n' $top >> $tmp
 
 if
 	cmp -s vimrc $tmp

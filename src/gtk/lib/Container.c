@@ -25,6 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/stdtype.h>
 #include <EFEU/CmdPar.h>
 
+#if	HAS_GTK
 
 static void f_add (EfiFunc *func, void *rval, void **arg)
 {
@@ -120,6 +121,8 @@ void EGtkContainer_setup (void)
 	EGtkWindow_setup();
 	AddFuncDef(fdef, tabsize(fdef));
 }
+
+#endif
 
 /*
 $SeeAlso

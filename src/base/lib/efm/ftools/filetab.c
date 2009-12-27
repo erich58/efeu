@@ -75,7 +75,7 @@ static void file_debug (const char *type, FileTab *tab)
 	fprintf(log, ", \"%s\")\n", tab->mode);
 }
 
-static void closeall (void)
+static void closeall (void *par)
 {
 	FileTab *tab;
 	int i;
@@ -101,7 +101,7 @@ static void setup_closeall (void)
 
 	if	(closeall_registered)	return;
 
-	atexit(closeall);
+	proc_clean(closeall, NULL);
 	closeall_registered = 1;
 }
 

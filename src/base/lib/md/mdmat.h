@@ -31,9 +31,11 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/konvobj.h>
 #include <EFEU/pconfig.h>
 #include <EFEU/refdata.h>
+#include <EFEU/EDB.h>
 
-#define	MD_MAGIC	0xEFD1		/* Kennung einer Datenmatrix */
-#define	MD_OLDMAGIC	0xEFD0		/* Alte Kennung (Revers Byteorder) */
+#define	MD_MAGIC0	0xEFD0		/* Alte Kennung (Revers Byteorder) */
+#define	MD_MAGIC1	0xEFD1		/* Datenmatrix, Version 1 */
+#define	MD_MAGIC2	0xEFD2		/* Datenmatrix, Version 2 */
 #define	MD_EOFMARK	"*EOF"		/* Eofmarke */
 
 
@@ -73,7 +75,7 @@ struct mdaxis_struct {
 	char *name;	/* Achsenname */
 	mdindex *idx;	/* Indexvektor */
 	unsigned flags;	/* Steuerflags */
-	void *priv;	/* Private Daten */
+	void *priv;	/* Private Referenzdaten */
 };
 
 mdaxis *new_axis (size_t dim);
@@ -112,7 +114,7 @@ typedef struct {
 	mdaxis *axis;	/* Achsenkette */
 	size_t size;	/* Speicherbedarf für Datenfeld */
 	void *data;	/* Datenfeld */
-	void *priv;	/* Private Daten */
+	void *x_priv;	/* Private Daten */
 } mdmat;
 
 extern RefType md_reftype;
@@ -195,16 +197,26 @@ mdmat *md_load (IO *io, const char *def, const char *odef);
 mdmat *md_fload (const char *name, const char *def, const char *odef);
 mdmat *md_reload (mdmat *md, const char *def, const char *odef);
 
+mdmat *edb2md (EDB *edb);
+EDB *md2edb (mdmat *md);
+void Setup_edb2md (void);
+
 mdmat *md_gethdr (IO *io);
 void md_tsteof (IO *io);
 
-void md_walk (mdmat *md, const char *def, void (*visit)(mdmat *md, mdaxis *x, int idx));
+void md_walk (mdmat *md, const char *def,
+	void (*visit)(EfiType *type, void *data));
+void md_xwalk (mdmat *md, const char *def,
+	void (*visit)(EfiType *type, void *data, void *base));
+void md_twalk (mdmat *md, const char *def, int lag,
+	void (*visit)(EfiType *type, void *data, void *base));
 
 void md_puthdr (IO *io, mdmat *md, unsigned mask);
 void md_putdata (IO *io, const EfiType *type, mdaxis *axis,
 	unsigned mask, void *data);
 void md_puteof (IO *io);
 
+void md_show (IO *io, mdmat *md);
 void md_print (IO *io, mdmat *md, const char *par);
 void md_save (IO *io, mdmat *md, unsigned mask);
 void md_fsave (const char *name, mdmat *md, unsigned mask);
@@ -229,7 +241,7 @@ extern mdindex Buf_mdidx;
 #define	Val_mdaxis(x)	((mdaxis **) x)[0]
 #define	Val_mdidx(x)	((mdindex *) x)[0]
 
-void MdFuncDef (void);
+void MdSetup_func (void);
 
 
 EfiFunc *mdfunc_add (const EfiType *type);

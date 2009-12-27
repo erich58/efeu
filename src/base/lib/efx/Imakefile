@@ -1,7 +1,0 @@
-#if	__linux__
-#define LIB_DL	LinkName(dl)
-#else
-#define	LIB_DL
-#endif
-
-XLIBS=	LIB_EFM LIB_DL

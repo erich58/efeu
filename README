@@ -1,9 +1,9 @@
 \title	Welcome to the EFEU source release
-\author	Erich Frühstück
+\author	Erich Fruehstueck
 
 \sec	Introduction
 
-EFEU was designed by Erich Frühstück. It is the environment for his
+EFEU was designed by Erich Fruehstueck. It is the environment for his
 programming work in projects of the synthesis research institute.
 
 EFEU consists of
@@ -13,21 +13,12 @@ EFEU consists of
 
 \sec	Development tools
 
-[mkmf]
-	creates a Makefile from Imakefile similar to xmkmf (X11 development).
-[dir2make]
-	creates a Makefile directly from source tree. There are only
-	a few configuration parameters neccessary. All other work
-	is done by make, with a correct list of dependencies.
-	If you expand a library, you just add the source files
-	to the defining directory tree.
+[shmkmf]
+	creates a Makefile from configuration using the shell.
 [efeugen]
 	runs make on a global building place, definend by environemt.
 	In EFEU the building of libraries and commands is
 	completly separated from source.
-[efeubuild]
-	creates a master Makefile for building and installing your
-	programms.
 
 \sec	C libraries
 
@@ -95,12 +86,6 @@ EFEU consists of
 	extracts comments from source file to be processed with
 	efeudoc. This tool allows you to integrate the documentation
 	in the source code.
-[eis]
-	is a information system for browsing builtin informations of
-	commands. Every information could be displayed, as long
-	as the programm supports a display function and registers it.
-	There is an curses-based and a cgi-based frontend to browse
-	through this informations.
 
 \sec	Installing EFEU
 
@@ -113,8 +98,8 @@ Read the instructions in INSTALL or just try make.
 	english versions are coming.
 *	Lots of more documentation is coming.
 *	The format of this file is efeudoc.
-*	Read the source, have fun !
+*	Read the source, have fun!
 
 Please report any bugs in EFEU to the author:
 
-Erich Frühstück <ef@synthesis.co.at>
+Erich Fruehstueck <ef\@cybertec.at>

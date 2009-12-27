@@ -180,7 +180,7 @@ static size_t make_list (EfiVar *st, char *list, EfiVar ***ptr)
 	for (x = st, dim = 0; x != NULL; x = x->next)
 		dim++;
 
-	idim = strsplit(list, "%s,;", &ilist);
+	idim = mstrsplit(list, "%s,;", &ilist);
 	cmp = idxcmplist(ilist, idim, dim);
 	memfree(ilist);
 	*ptr = memalloc(dim * sizeof(EfiVar *));

@@ -27,6 +27,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/io.h>
 #include <EFEU/strbuf.h>
+#include <EFEU/stdint.h>
 
 typedef struct {
 	int mode;	/* Formatierungsmodus */
@@ -48,9 +49,10 @@ int fmtkey (const char *fmt, FmtKey *key);
 #define	FMT_NEED_PREC	0x40	/* Genauigkeit muﬂ abgefragt werden */
 #define	FMT_NOPREC	0x80	/* Keine Genauigkeit angegeben */
 #define	FMT_NEGPREC	0x100	/* negative Genauigkeit */
-#define	FMT_SHORT	0x200	/* Kurzer Datenwert */
-#define	FMT_LONG	0x400	/* Langer Datenwert */
-#define	FMT_XLONG	0x800	/* Sehr Langer Datenwert */
+#define	FMT_BYTE	0x200	/* 1 Byte Datenwert */
+#define	FMT_SHORT	0x400	/* Kurzer Datenwert */
+#define	FMT_LONG	0x800	/* Langer Datenwert */
+#define	FMT_XLONG	0x1000	/* Sehr Langer Datenwert */
 
 void ftool_addsig (StrBuf *buf, int sig, int flags);
 int ftool_ioalign (IO *io, StrBuf *sb, const FmtKey *key);
@@ -60,5 +62,7 @@ int fmt_char (IO *io, const FmtKey *key, int val);
 int fmt_str (IO *io, const FmtKey *key, const char *val);
 int fmt_long (IO *io, const FmtKey *key, long val);
 int fmt_double (IO *io, const FmtKey *key, double val);
+int fmt_int64 (IO *io, const FmtKey *key, int64_t val);
+int fmt_uint64 (IO *io, const FmtKey *key, uint64_t val);
 
 #endif	/* EFEU/fmtkey.h */

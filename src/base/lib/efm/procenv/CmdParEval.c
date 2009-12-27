@@ -129,7 +129,7 @@ static int f_message (CmdPar *cpar, CmdParVar *var,
 static int f_set (CmdPar *cpar, CmdParVar *var,
 	const char *par, const char *arg)
 {
-	char *p = CmdPar_psub(cpar, par, arg);
+	char *p = par ? CmdPar_psub(cpar, par, arg) : NULL;
 	memfree(var->value);
 	var->value = p;
 	return 0;
@@ -138,7 +138,11 @@ static int f_set (CmdPar *cpar, CmdParVar *var,
 static int f_vset (CmdPar *cpar, CmdParVar *var,
 	const char *par, const char *arg)
 {
-	return f_set(cpar, var, CmdPar_getval(cpar, par, NULL), arg);
+	char *fmt = CmdPar_getval(cpar, par, NULL);
+	char *p = fmt ? CmdPar_psub(cpar, fmt, arg) : NULL;
+	memfree(var->value);
+	var->value = p;
+	return 0;
 }
 
 static int f_lset (CmdPar *cpar, CmdParVar *var,
@@ -234,16 +238,7 @@ static int f_info (CmdPar *cpar, CmdParVar *var,
 	const char *par, const char *arg)
 {
 	char *node = CmdPar_psub(cpar, par, arg);
-	PrintInfo(iostd, NULL, node);
-	memfree(node);
-	return 0;
-}
-
-static int f_dump (CmdPar *cpar, CmdParVar *var,
-	const char *par, const char *arg)
-{
-	char *node = CmdPar_psub(cpar, par, arg);
-	DumpInfo(iostd, GetInfo(NULL, NULL), node);
+	BrowseInfo(node);
 	memfree(node);
 	return 0;
 }
@@ -262,7 +257,6 @@ static CmdParEval builtin[] = {
 	 { "break", "Optionsabfrage abbrechen", f_break },
 	 { "exit", "Verarbeitung abbrechen", f_exit },
 	 { "info", "Informationseintrag abrufen", f_info },
-	 { "dump", "Informationsdatenbank ausgeben", f_dump },
 };
 
 

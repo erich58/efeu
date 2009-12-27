@@ -39,7 +39,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/config.h>
 #include <unistd.h>
 
-@set -r readline.pph -f '$(RL_INC)' -f '$(RL_LIB)'
+@set -r readline.smh -f '-mc RL_INC -ml RL_LIB'
 @eval include readline.h
 @add -i readline.h
 @eval success HAS_READLINE  'readline(NULL);'

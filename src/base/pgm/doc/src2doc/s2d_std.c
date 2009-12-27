@@ -45,18 +45,47 @@ static void copyline (IO *ein, IO *aus)
 }
 
 
-static void subcopy (const char *name, IO *ein, IO *aus, IO *src)
+static int (*skipcom)(IO *ein, StrBuf *buf, int flag) = io_skipcom;
+
+static void comment_line (IO *io, StrBuf *buf)
 {
-	StrBuf *buf;
-	int c, flag, nlcount;
+	int c, escape;
 
-	buf = new_strbuf(0);
-	flag = 0;
-	nlcount = 0;
+	do	c = io_getc(io);
+	while	(c == ' ' || c == '\t');
 
-/*	Das erste Kommentar wird gesondert behandelt
+	escape = 0;
+
+	while (escape || c != '\n')
+	{
+		if	(c == EOF)	return;
+		if	(c == '\n')	io_linemark(io);
+
+		if	(buf)	sb_putc(c, buf);
+
+		escape = (c == '\\') ? !escape : 0;
+		c = io_getc(io);
+	}
+	
+	if	(buf)	sb_putc(c, buf);
+}
+
+static int skipcom_script (IO *io, StrBuf *buf, int flag)
+{
+	int c;
+
+	while ((c = io_getc(io)) == '#')
+		comment_line(io, buf);
+
+	return c;
+}
+
+/*	Dateikopf aus erstem Kommentar bestimmen
 */
-	c = io_skipcom(ein, buf, 1);
+
+static void std_head (const char *name, StrBuf *buf, IO *ein, IO *aus)
+{
+	int c = skipcom(ein, buf, 1);
 
 	if	(sb_getpos(buf))
 	{
@@ -73,15 +102,25 @@ static void subcopy (const char *name, IO *ein, IO *aus, IO *src)
 			}
 		}
 
-		io_psubvec(aus, (char *) buf->data, 0, NULL);
-		sb_clear(buf);
+		io_psubarg(aus, (char *) buf->data, "ns", name);
+		sb_clean(buf);
 	}
 	else if	(name)
 	{
-		io_printf(aus, "\\title\t%s\n\n");
+		io_printf(aus, "\\title\t%s\n\n", name);
 	}
 
-	do
+	io_ungetc(c, ein);
+}
+
+static void std_copy (const char *name, StrBuf *buf, IO *ein, IO *aus, IO *src)
+{
+	int c, flag, nlcount;
+
+	flag = 0;
+	nlcount = 0;
+
+	while ((c = skipcom(ein, buf, 1)) != EOF)
 	{
 		if	(sb_getpos(buf))
 		{
@@ -90,8 +129,8 @@ static void subcopy (const char *name, IO *ein, IO *aus, IO *src)
 
 			sb_putc(0, buf);
 			io_putc('\n', aus);
-			io_psubvec(aus, (char *) buf->data, 0, NULL);
-			sb_clear(buf);
+			io_psubarg(aus, (char *) buf->data, "ns", name);
+			sb_clean(buf);
 			flag = 0;
 		}
 
@@ -111,22 +150,52 @@ static void subcopy (const char *name, IO *ein, IO *aus, IO *src)
 		}
 		else	nlcount++;
 	}
-	while ((c = io_skipcom(ein, buf, 1)) != EOF);
 
 	if	(flag)
 		io_puts(END, src);
 
-	del_strbuf(buf);
+	if	(sb_getpos(buf))
+	{
+		sb_putc(0, buf);
+		io_putc('\n', aus);
+		io_psubarg(aus, (char *) buf->data, "ns", name);
+		sb_clean(buf);
+	}
 }
 
 void s2d_std (const char *name, IO *ein, IO *aus)
 {
-	subcopy(name, ein, aus, aus);
+	StrBuf *buf = sb_create(0);
+	std_head(name, buf, ein, aus);
+	std_copy(name, buf, ein, aus, aus);
+	sb_destroy(buf);
+}
+
+void s2d_xstd (const char *name, IO *ein, IO *aus)
+{
+	StrBuf *buf = sb_create(0);
+	std_copy(name, buf, ein, aus, aus);
+	sb_destroy(buf);
+}
+
+void s2d_script (const char *name, IO *ein, IO *aus)
+{
+	skipcom = skipcom_script;
+	s2d_std(name, ein, aus);
+}
+
+void s2d_xscript (const char *name, IO *ein, IO *aus)
+{
+	skipcom = skipcom_script;
+	s2d_xstd(name, ein, aus);
 }
 
 void s2d_com (const char *name, IO *ein, IO *aus)
 {
-	subcopy(name, ein, aus, NULL);
+	StrBuf *buf = sb_create(0);
+	std_head(name, buf, ein, aus);
+	std_copy(name, buf, ein, aus, NULL);
+	sb_destroy(buf);
 }
 
 void s2d_doc (const char *name, IO *ein, IO *aus)

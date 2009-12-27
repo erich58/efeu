@@ -87,10 +87,11 @@ static EfiOp std_prefix[] = {
 static EfiOp std_postfix[] = {
 	{ "::", OpPrior_Scope, OpAssoc_Left, scope_op },
 	{ ".", OpPrior_Member, OpAssoc_Left, member_op },
-	{ "(", OpPrior_Unary, OpAssoc_Right, funcarg },
-	{ "[", OpPrior_Unary, OpAssoc_Right, vecindex },
-	{ "++", OpPrior_Unary, OpAssoc_Right, PostfixOp },
-	{ "--", OpPrior_Unary, OpAssoc_Right, PostfixOp },
+	{ "[", OpPrior_Member, OpAssoc_Left, vecindex },
+	{ "(", OpPrior_Member, OpAssoc_Left, funcarg },
+
+	{ "++", OpPrior_Unary, OpAssoc_Left, PostfixOp },
+	{ "--", OpPrior_Unary, OpAssoc_Left, PostfixOp },
 
 	{ "*", OpPrior_Mult, OpAssoc_Left, BinaryOp },
 	{ "/", OpPrior_Mult, OpAssoc_Left, BinaryOp },
@@ -263,7 +264,7 @@ static EfiObj *globvar(IO *io, EfiOp *op, EfiObj *left)
 {
 	char *p;
 
-	if	((p = Parse_name(io)) != NULL)
+	if	((p = Parse_name(io, 1)) != NULL)
 		return GetVar(GlobalVar, p, NULL);
 
 	io_error(io, E196, NULL);
@@ -359,7 +360,7 @@ static EfiObj *name_obj (IO *io, EfiType *type, EfiObj *obj)
 	name.obj = obj;
 	name.name = NULL;
 
-	if	((name.name = Parse_name(io)) != NULL)
+	if	((name.name = Parse_name(io, 1)) != NULL)
 		return NewObj(type, &name);
 
 	UnrefObj(obj);

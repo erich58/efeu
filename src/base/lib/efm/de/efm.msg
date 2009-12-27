@@ -40,3 +40,4 @@ If not, write to the Free Software Foundation, Inc.,
 61	$!: ArgList: Unbekannte Formatanweisung $1.\n
 
 pnoarg	$!: parsub($0): Argument $1 nicht definiert.\n
+imode	$!: info mode $1 not defined.\n

@@ -80,6 +80,7 @@ int OLSPar_print (IO *io, OLSPar *par)
 	n += io_printf(io, "RBAR**2:       %10.6f\n", par->rbar2);
 	n += io_printf(io, "Durbin Watson: %10.6f\t", par->dw);
 	n += io_printf(io, "SEE:           %10.3f\n", par->see);
+	n += io_printf(io, "\n");
 	n += io_printf(io, "%-9s %15s %15s %15s\n", "Variable",
 		"Koeffizient", "Standardfehler", "T-Statistic");
 

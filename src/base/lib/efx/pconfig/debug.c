@@ -173,8 +173,15 @@ static EfiObj *parse_bpoint(IO *io, void *data)
 		MakeObjList(2, str2Obj(rd_ident(io)), obj));
 }
 
+static EfiObj *parse_sigint(IO *io, void *data)
+{
+	raise(SIGINT);
+	return NULL;
+}
+
 static EfiParseDef pdef[] = {
 	{ "breakpoint", parse_bpoint, NULL },
+	{ "sigint", parse_sigint, NULL },
 };
 
 void SetupDebug ()

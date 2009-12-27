@@ -25,6 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/stdtype.h>
 #include <EFEU/CmdPar.h>
 
+#if	HAS_GTK
 
 /*	Toplevel - Widget
 */
@@ -96,6 +97,8 @@ void EGtkWindow_setup (void)
 		NULL, 0, NULL, 0);
 	AddFuncDef(fdef, tabsize(fdef));
 }
+
+#endif
 
 /*
 $SeeAlso

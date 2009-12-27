@@ -21,16 +21,23 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/object.h>
+#include <EFEU/EfiStat.h>
+#include <EFEU/EfiPar.h>
 #include <ctype.h>
 
-static void DelType (void *ptr)
+void DelType (EfiType *type)
 {
-	EfiType *type = ptr;
 	DelVarTab(type->vtab);
 	memfree(type->name);
 }
 
-NameKeyTab TypeTab = NKT_DATA("Type", 60, DelType);
+static void del_type (void *ptr)
+{
+	DelType(ptr);
+}
+
+NameKeyTab TypeTab = NKT_DATA("Type", 60, del_type);
+unsigned TypeTabChangeCount = 0;
 
 
 /*	Neuen Type generieren
@@ -41,18 +48,22 @@ EfiType *NewType (char *name)
 	EfiType *type;
 
 	type = memalloc(sizeof(EfiType));
-	/*
-	type->name = name ? name : msprintf("T%#p", type);
-	*/
+	memset(type, 0, sizeof *type);
 	type->name = name;
 	vb_init(&type->konv, 8, sizeof(EfiFunc *));
+	vb_init(&type->par, 16, sizeof(EfiParClass *));
 	return type;
 }
 
-
 void AddType (EfiType *type)
 {
+	EfiStat *efi = Efi_ptr(NULL);
+
+	if	(type == NULL)		return;
 	if	(type->name == NULL)	return;
+	if	(type->order)		return;
+
+	AddType(type->base);
 
 	if	(type->vtab == NULL)
 		type->vtab = VarTab(mstrcpy(type->name), 0);
@@ -63,10 +74,17 @@ void AddType (EfiType *type)
 		memset(type->defval, 0, type->size);
 	}
 
+	if	(!type->src)
+		type->src = rd_refer(efi->src);
+
+	TypeTabChangeCount++;
+
+	if	(!type->order)
+		type->order = TypeTabChangeCount;
+
 	if	(nkt_insert(&TypeTab, type->name, type))
 		dbg_note(NULL, "[efmain:157]", "s", type->name);
 }
-
 
 EfiType *GetType (const char *name)
 {
@@ -80,7 +98,6 @@ int IsTypeClass (const EfiType *type, const EfiType *base)
 
 	return 0;
 }
-
 
 static int cmp_struct (EfiVar *a, EfiVar *b)
 {
@@ -115,6 +132,73 @@ EfiType *FindStruct (EfiVar *list, size_t size)
 			return type;
 		}
 	}
+
+	return NULL;
+}
+
+static int cmp_entry (VarTabEntry *a, VarTabEntry *b, size_t dim)
+{
+	for (; dim-- > 0; a++, b++)
+	{
+		if	(mstrcmp(a->name, b->name) != 0)
+			return 0;
+
+		if	(!IsTypeClass(a->type, &Type_enum))
+			return 0;
+
+		if	(Val_int(a->obj->data) != Val_int(b->obj->data))
+			return 0;
+	}
+
+	return 1;
+}
+
+static int test_type (EfiType *type, VarTabEntry *tab, size_t dim)
+{
+	if	(!IsTypeClass(type, &Type_enum))
+		return 0;
+
+	if	(!type->vtab)
+		return 0;
+	
+	if	(type->vtab->tab.used != dim)
+		return 0;
+
+	if	(cmp_entry(type->vtab->tab.data, tab, dim))
+		return 1;
+
+	return 0;
+}
+
+EfiType *FindEnum (EfiType *base)
+{
+	VarTabEntry *entry;
+	size_t dim;
+	EfiType *type;
+	NameKeyEntry *ptr;
+	size_t n;
+
+	if	(!base->vtab)
+		return NULL;
+
+	entry = base->vtab->tab.data;
+	dim = base->vtab->tab.used;
+
+	for (n = 0; n < dim; n++)
+		if (!IsTypeClass(entry[n].type, &Type_enum))
+			return NULL;
+
+	if	(base->name && (type = GetType(base->name)))
+	{
+		if	(test_type(type, entry, dim))
+			return type;
+
+		return NULL;
+	}
+
+	for (ptr = TypeTab.tab.data, n = TypeTab.tab.used; n-- > 0; ptr++)
+		if (test_type(ptr->data, entry, dim))
+			return ptr->data;
 
 	return NULL;
 }

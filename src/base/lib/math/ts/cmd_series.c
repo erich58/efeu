@@ -589,7 +589,6 @@ static void f_index (EfiFunc *func, void *rval, void **arg)
 	if	(ts == NULL || n < 0 || n >= ts->dim)
 	{
 		dbg_note(NULL, "[TimeSeries:11]", NULL);
-		Buf_double = 0.;
 
 		if	(!func->type)
 		{

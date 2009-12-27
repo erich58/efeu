@@ -33,7 +33,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 extern char *IncPath;
 
-IO *io_ptrpreproc (IO *io, char **pptr);
+IO *io_ptrpreproc (IO *io, char **pptr, char **lptr);
 IO *io_cmdpreproc (IO *io);
 
 void AddDepend (const char *name);

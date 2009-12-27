@@ -1,5 +1,6 @@
 /*
-Arbeiten mit dynamischen Zeichenfeldern
+:*:	Dynamic string buffer
+:de:	Arbeiten mit dynamischen Zeichenfeldern
 
 $Copyright (C) 1996 Erich Frühstück
 This file is part of EFEU.
@@ -22,65 +23,61 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/strbuf.h>
 
-#define	SB_SIZE	1024
+#define	SB_SIZE	1000
 
 static ALLOCTAB(sb_tab, 32, sizeof(StrBuf));
 
 /*
-Die Funktion |$1| liefert ein neues Zeichenfeld
-mit Buffergröße <blksize>.
+:*:
+The Function |$1| initializes the dynamic string with the blocksize <bsize>.
+:de:
+Die Funktion |$1| initialisiert den Stringbuffer <sb>
+mit der Blockgröße <bsize>.
 */
 
-StrBuf *new_strbuf (size_t blksize)
+void sb_init (StrBuf *sb, size_t bsize)
 {
-	StrBuf *buf = new_data(&sb_tab);
-	buf->blksize = blksize;
-	return buf;
-}
-
-/*
-Die Funktion |$1| gibt ein mit |new_strbuf| angefordertes Zeichenfeld
-wieder frei.
-*/
-
-int del_strbuf (StrBuf *buf)
-{
-	if	(buf)
+	if	(sb)
 	{
-		lfree(buf->data);
-		return (del_data(&sb_tab, buf) ? 0 : EOF);
-	}
-	else	return 0;
-}
-
-
-/*
-Die Funktion |$1| vergrößert ein Zeichenfeld um die Blockgröße.
-*/
-
-void sb_expand (StrBuf *buf)
-{
-	if	(buf)
-	{
-		unsigned char *p;
-		size_t n;
-
-		n = (buf->blksize ? buf->blksize : SB_SIZE);
-		p = lmalloc(buf->size + n);
-		memcpy(p, buf->data, buf->size);
-		lfree(buf->data);
-		buf->data = p;
-		buf->size += n;
-		buf->nfree += n;
+		sb->data = NULL;
+		sb->size = 0;
+		sb->blksize = bsize;
+		sb->nfree = 0;
+		sb->pos = 0;
 	}
 }
 
-
 /*
-Die Funktion |$1| setzt die Größe des Zeichenfeldes auf 0.
+:*:
+The function |$1| sets the actual size of the string buffer <sb> to zero
+and frees the memory used by the string buffer <sb>.
+:de:
+Die Funktion |$1| setzt die Größe des Stringbuffers auf 0 und
+gibt das vom Stringbuffer verwendete Speicherfeld frei.
 */
 
-void sb_clear (StrBuf *sb)
+void sb_free (StrBuf *sb)
+{
+	if	(sb)
+	{
+		lfree(sb->data);
+		sb->data = NULL;
+		sb->size = 0;
+		sb->nfree = 0;
+		sb->pos = 0;
+	}
+}
+
+/*
+:*:
+The function |$1| sets the actual size of the string buffer to zero
+without freeing any memory used by the buffer.
+:de:
+Die Funktion |$1| setzt die Größe des Zeichenfeldes auf 0 ohne
+Speicherbereich freizugeben.
+*/
+
+void sb_clean (StrBuf *sb)
 {
 	if	(sb)
 	{
@@ -89,7 +86,71 @@ void sb_clear (StrBuf *sb)
 	}
 }
 
+
 /*
+:*:
+The function |$1| creates a new string buffer with blocksize <bsize>.
+:de:
+Die Funktion |$1| liefert ein neues Zeichenfeld mit Buffergröße <blksize>.
+*/
+
+StrBuf *sb_create (size_t blksize)
+{
+	StrBuf *buf = new_data(&sb_tab);
+	sb_init(buf, blksize);
+	return buf;
+}
+
+/*
+:*:
+The function |$1| frees the memory space from a string buffer created
+with |sb_create|.
+:de:
+Die Funktion |$1| gibt ein mit |sb_create| angefordertes Zeichenfeld
+wieder frei.
+*/
+
+int sb_destroy (StrBuf *buf)
+{
+	if	(buf)
+	{
+		sb_free(buf);
+		return (del_data(&sb_tab, buf) ? 0 : EOF);
+	}
+	else	return 0;
+}
+
+
+/*
+:*:
+The function |$1| expands the memory field used to store date in the
+string buffer.
+:de:
+Die Funktion |$1| vergrößert das Zeichenfeld entsprechend der Blockgröße.
+*/
+
+void sb_expand (StrBuf *buf)
+{
+	if	(buf)
+	{
+		size_t n;
+
+		if	(buf->blksize)	n = buf->blksize;
+		else if	(buf->size)	n = buf->size;
+		else			n = SB_SIZE;
+
+		buf->size += n;
+		buf->nfree += n;
+		buf->data = lrealloc(buf->data, buf->size);
+	}
+}
+
+
+/*
+:*:
+The function |$1| reads the next character from the string field <sb>.
+If the end of previously written data is reached, |EOF| is returned.
+:de:
 Die Funktion |$1| liest ein Zeichen aus dem Zeichenfeld <sb>.
 Wurde das Ende des Zeichenfeldes erreicht, liefert er EOF.
 Sie ist Funktionsgleich mit dem Makro |sb_getc| erlaubt aber
@@ -102,6 +163,12 @@ int sb_get (StrBuf *sb)
 }
 
 /*
+:*:
+The function |$1| writes the character <c> in the string buffer <sb>
+and returns the character value. If nessesary, the string buffer
+is expandet. In opposite to the macro |sb_putc| the position in the
+string buffer is always synchronized.
+:de:
 Die Funktion |$1| schreibt das Zeichen <c> in das Zeichenfeld <sb> und
 liefert das geschriebene Zeichen als Rückgabewert. Das Zeichenfeld
 wird bei Bedarf mit |sb_expand| vergrößert.
@@ -111,7 +178,8 @@ der Zeichenfeldgröße mit der aktuellen Position durch.
 
 int sb_put (int c, StrBuf *sb)
 {
-	if	(!sb)	return 0;
+	if	(c == EOF || sb == NULL)
+		return EOF;
 
 	if	(sb->pos >= sb->size)
 		sb_expand(sb);
@@ -123,6 +191,10 @@ int sb_put (int c, StrBuf *sb)
 
 
 /*
+:*:
+The function |$1| sets the actual position of the string buffer <sb>
+to <pos>.
+:de:
 Die Funktion |$1| setzt die aktuelle Position des Stringbuffers <sb>
 auf <pos>.
 */
@@ -139,6 +211,9 @@ int sb_setpos (StrBuf *sb, int pos)
 
 
 /*
+:*:
+The function |$1| writes the string <str> to the string buffer <sb>.
+:de:
 Die Funktion |$1| schreibt den String <str> in das Zeichenfeld <sb>.
 */
 
@@ -157,6 +232,10 @@ int sb_puts (const char *str, StrBuf *buf)
 }
 
 /*
+:*:
+The function |$1| writes the string <str> in reverse order
+to the string buffer <sb>.
+:de:
 Die Funktion |$1| schreibt den String <str> in umgekehrter
 Reihenfolge (das letzte Zeichen zuerst) in das Zeichenfeld <sb>.
 */
@@ -177,6 +256,10 @@ int sb_rputs (const char *str, StrBuf *buf)
 }
 
 /*
+:*:
+The function |$1| writes the string <str> with terminating '\0'
+to the string buffer <sb>.
+:de:
 Die Funktion |$1| schreibt den String <str> mit dem abschließenden
 0-Zeichen in das Zeichenfeld <sb>.
 */
@@ -192,9 +275,34 @@ int sb_putstr (const char *str, StrBuf *buf)
 	else	return 0;
 }
 
+/*
+:*:
+The function |$1| returns the adresss of the string buffer at position
+<pos> as string. The return value is only a valid string,
+if a '\0'-character is written after the position <pos>.
+:de:
+Die Funktion |$1| liefert die Adresse des Zeichenfelds bei Position <pos>
+als String. Der Rückgabewert ist nur dann ein gültiger String, wenn ein
+0-Zeichen nach der Position <pos> geschrieben wurde.
+*/
+
+char *sb_str (StrBuf *buf, int pos)
+{
+	if	(buf && buf->pos)
+	{
+		return (char *) buf->data + pos;
+	}
+	else	return NULL;
+}
 
 /*
+:*:
+The function |$1| returns a '\0'-terminated string copy of the characters
+stored in the string buffer. If no characters are stored, a Nullpointer is
+returned.
+:de:
 Die Funktion |$1| liefert eine Stringkopie (0-Abschluß) des Zeichenfeldes.
+Falls kein Zeichen gespeichert wurde, liefert die Funktion einen Nullpointer.
 */
 
 char *sb_strcpy (StrBuf *buf)
@@ -213,8 +321,11 @@ char *sb_strcpy (StrBuf *buf)
 }
 
 /*
-Die Funktion |$1| gibt das Zeichenfeld <sb> frei und liefert
-eine Stringkopie (0-Abschluß).
+:*:
+The function |$1| converts the string buffer to a string.
+:de:
+Die Funktion |$1| konvertiert einen Strungbuffer in einen String mit
+0-Abschluß.
 */
 
 char *sb2str (StrBuf *buf)
@@ -222,7 +333,7 @@ char *sb2str (StrBuf *buf)
 	if	(buf)
 	{
 		char *p = sb_strcpy(buf);
-		del_strbuf(buf);
+		sb_destroy(buf);
 		return p;
 	}
 
@@ -230,7 +341,12 @@ char *sb2str (StrBuf *buf)
 }
 
 /*
-Die Funktion |$1| liefert eine Speicherkopie des Zeichenfeldes.
+:*:
+The function |$1| returns ia copy of the characters stored in the string
+without '\0'-termination.
+:de:
+Die Funktion |$1| liefert eine Kopie der Zeichen im Stringbuffer
+ohne 0-Abschluß.
 */
 
 char *sb_memcpy (StrBuf *buf)
@@ -240,8 +356,12 @@ char *sb_memcpy (StrBuf *buf)
 }
 
 /*
-Die Funktion |$1| gibt das Zeichenfeld <sb> frei und liefert
-eine Speicherkopie.
+:*:
+The function |$1| converts the string buffer to a character field
+without '\0'-termination.
+:de:
+Die Funktion |$1| konvertiert einen Strungbuffer in ein Zeichenfels
+ohne 0-Abschluß.
 */
 
 char *sb2mem (StrBuf *buf)
@@ -249,9 +369,15 @@ char *sb2mem (StrBuf *buf)
 	if	(buf)
 	{
 		char *p = sb_memcpy(buf);
-		del_strbuf(buf);
+		sb_destroy(buf);
 		return p;
 	}
 
 	return NULL;
 }
+
+/*
+$SeeAlso
+\mref{strbuf(7)},
+\mref{memalloc(7)}.
+*/

@@ -33,8 +33,6 @@ If not, write to the Free Software Foundation, Inc.,
 #define	SEEK_END	2
 #endif
 
-extern FILE *popen (const char *cmd, const char *type);
-extern int pclose (FILE *stream);
 extern int pipe_lock;
 
 /*	Dateien suchen
@@ -59,6 +57,16 @@ extern void filedebug (FILE *file, int level, const char *fmt,
 	const char *argdef, ...);
 extern void fileerror (FILE *file, const char *fmt,
 	const char *argdef, ...);
+
+/*
+temporay files
+*/
+
+char *newtemp (const char *dir, const char *pfx);
+char *newtempdir (const char *dir, const char *pfx);
+int deltemp (char *path);
+int deltempdir (char *path);
+void tempstat (void);
 
 /*	Binäre Ein/Ausgabe von Datenfiles
 */

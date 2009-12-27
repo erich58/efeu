@@ -1,0 +1,53 @@
+EDB	1.0
+int num;
+str first_name;
+str family_name;
+int birth_year;
+enum { m = 1, f = 2 } gender;
+//int year;
+Date bdat
+Date edat
+double income;
+@expr
+str line = fgets(data);
+str s;
+
+if (!line) break;
+
+switch (line[0])
+{
+case '#':
+	continue;
+case 'P':
+	strcut(line, " \t");
+	num = int(strcut(line, " \t"), 10);
+	s = strcut(line, " \t");
+	gender = (/^[Mm]/ == s) ? "m" : "f";
+	birth_year = int(strcut(line, " \t"), 10);
+	first_name = strcut(line, " \t");
+	family_name = line;
+	continue;
+default:
+	bdat = strcut(line, " \t");
+	edat = strcut(line, " \t");
+	income = line;
+	break;
+}
+@data
+#comment line
+P 113 m 1970 John Gray
+2000-02-01 2000-02-28 800
+P 217 f 1962 Mary Rose
+2001-01-01 2001-03-31 3000
+2001-07-01 2001-08-31 2000
+2001-10-01 2001-12-31 3000
+2002-01-01 2001-01-31 1000
+P 218 f 1959 John Rose
+2001-01-01 2001-12-31 12000
+P 326 m 1962 Peter Black
+2000-10-01 2000-12-31 7000
+2001-01-01 2001-12-31 22000
+2002-01-01 2002-07-31 11500
+P 327 f 1977 Anna Green
+2000-07-12 2000-12-31 6500
+2001-01-01 2001-12-31 14000

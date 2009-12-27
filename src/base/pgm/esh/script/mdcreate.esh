@@ -24,7 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 PrintListDelim = "\t";
 
 pconfig !
-Version = "$Id: mdcreate.esh,v 1.7 2001-10-18 12:11:20 ef Exp $"
+Version = "$Id: mdcreate.esh,v 1.9 2005-07-24 05:12:41 ef Exp $"
 PrintMode = true
 
 v:value | Value
@@ -36,7 +36,7 @@ T:title | Title
 :type | Type
 	:*:type of data
 	:de:Datentype
-/.*=.*/name=var | List: append " "
+/.*=.*/<name>=<var> | List: append " "
 	:*:list of axis
 	:de:Achsendefinitionen
 ::aus | Output; PrintMode = false
@@ -71,6 +71,8 @@ for (x in split(List, " "))
 
 	md = mdcat(x, list);
 }
+
+md.title = Title;
 
 if	(flagres("PrintMode"))
 	md.mark("#-1").print(iostd, "nohead");

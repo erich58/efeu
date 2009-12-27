@@ -165,7 +165,7 @@ Für Literaturhinweise gibt es keinen Standard im Synthesis-Layout.
 Der Befehl \index{|\label|} setzt einen Label im laufendem Text,
 der Referenziert werden kann. Dabei kann sowohl die Seite als
 auch der aktuelle Kontext (Kapitelnummer, Bereichsnummer oder
-Übersichtsnummer) abgefrtagt werden.
+Übersichtsnummer) abgefragt werden.
 
 Der Befehl \index{|\ref|} liefert den Kontext eines Labels.
 

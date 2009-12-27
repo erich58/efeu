@@ -147,7 +147,10 @@ If not, write to the Free Software Foundation, Inc.,
 152	$!: $0: Syntaxfehler in Variablendefinition.\n
 153	$!: $0: Unbekannter Datentype $1.\n
 154	$!: ACHTUNG: Variable $1 neu definiert.\n
+154b	$!: ACHTUNG: Variable $1 bereits definiert.\n
 155	$!: Vektorindex außerhalb des zulässigen Bereichs.\n
+255	$!: Vektor ist nicht initialisiert.\n
+256	$!: Vektorgröße kann nicht verändert werden.\n
 156	$!: $0: Syntaxfehler in Strukturdefinition.\n
 157	$!: ACHTUNG: Struktur $1 neu definiert.\n
 158	$!: Speichergröße von $1 ist nicht definiert.\n
@@ -195,3 +198,4 @@ If not, write to the Free Software Foundation, Inc.,
 404	$!: $0: Befehlszeilen vor Klausel werden ignoriert.\n
 
 ppm	$!: $0: Ungültiger Header in Pixmap-Datei.\n
+nocmp	$!: Vergleichsfunktion ist nicht definiert.\n

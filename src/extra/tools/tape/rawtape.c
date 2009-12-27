@@ -69,6 +69,7 @@ If not, write to the Free Software Foundation, Inc.,
 \t-x\trecover tape\n\
 \t-n count\tread only count blocks\n\
 \t-b size\tblock size, default %u\n\
+\t-s size\tsplit size, default %u\n\
 "
 
 #define	BLKSIZE	0x8000
@@ -138,13 +139,13 @@ static int test_bsize (char *buf, int n)
 
 static int open_count = 0;
 
-static FILE *open_output(char *name, int compress, int recover)
+static FILE *open_output (char *name, int compress, int recover)
 {
 	FILE *file;
 
 	if	(name == NULL)
 	{
-		file = compress ? popen(COMPRESS, "wb") : stdout;
+		file = compress ? popen(COMPRESS, "w") : stdout;
 	}
 	else if	(compress)
 	{
@@ -156,7 +157,7 @@ static FILE *open_output(char *name, int compress, int recover)
 		}
 		else	sprintf(str_buf, "%s > %s.gz", COMPRESS, name);
 
-		file = popen(str_buf, "wb");
+		file = popen(str_buf, "w");
 	}
 	else if	(recover)
 	{
@@ -175,13 +176,30 @@ static FILE *open_output(char *name, int compress, int recover)
 	return file;
 }
 
-static void close_output(FILE *file, int compress)
+static void close_output (FILE *file, int compress)
 {
 	if	(file == NULL)		;
 	else if	(compress)		pclose(file);
 	else if	(file != stdout)	fclose(file);
 }
 
+
+static unsigned get_size (const char *str, unsigned defval)
+{
+	char *p;
+	unsigned s;
+
+	if	(!str)	return defval;
+
+	s = strtoul(str, &p, 10);
+
+	if	(p == NULL)	;
+	else if	(*p == 'k')	s *= 1024;
+	else if	(*p == 'M')	s *= 1024 * 1024;
+	else if	(*p == 'G')	s *= 1024 * 1024 * 1024;
+
+	return s;
+}
 
 /*	Hauptprogramm
 */
@@ -199,6 +217,7 @@ int main (int narg, char **arg)
 	int blksize;
 	int compress;
 	int varblock;
+	unsigned splitsize;
 	unsigned blkread, blklim;
 	int recover;
 	int n;
@@ -209,13 +228,14 @@ int main (int narg, char **arg)
 	PgmName = arg[0];
 
 #if	EFEUCFG
-	SetVersion("$Id: rawtape.c,v 1.7 2002-04-03 07:08:21 ef Exp $");
+	SetVersion("$Id: rawtape.c,v 1.9 2006-03-01 10:00:43 ef Exp $");
 	ParseCommand(&narg, arg);
 	varblock = GetFlagResource("varblock");
 	recover = GetFlagResource("recover");
 	compress = GetFlagResource("compress");
-	blksize = GetIntResource("blksize", BLKSIZE);
-	blklim = GetIntResource("blklim", 0);
+	blksize = get_size(GetResource("blksize", NULL), BLKSIZE);
+	blklim = get_size(GetResource("blklim", NULL), 0);
+	splitsize = get_size(GetResource("splitsize", NULL), 0);
 	arg++;
 	narg--;
 #else
@@ -227,8 +247,9 @@ int main (int narg, char **arg)
 	recover = 0;
 	blksize = BLKSIZE;
 	blklim = 0;
+	splitsize = 0;
 
-	while ((n = getopt(narg, arg, "hvfxzn:b:")) != EOF)
+	while ((n = getopt(narg, arg, "hvfxzn:b:s:")) != EOF)
 	{
 		switch (n)
 		{
@@ -240,8 +261,9 @@ int main (int narg, char **arg)
 		case 'f': varblock = 0; break;
 		case 'x': recover = 1; break;
 		case 'z': compress = 1; break;
-		case 'n': blklim = atoi(optarg); break;
-		case 'b': blksize = atoi(optarg); break;
+		case 'b': blksize = get_size(optarg, BLKSIZE); break;
+		case 'n': blklim = get_size(optarg, 0); break;
+		case 's': splitsize = get_size(optarg, 0); break;
 		}
 	}
 
@@ -293,11 +315,12 @@ int main (int narg, char **arg)
 /*	Ausgabefile
 */
 	put = varblock ? put_var : put_fix;
+	str_buf[0] = 0;
 
 	if	(narg == 2)
 	{
 		Output = (arg[1][0] == '-' && arg[1][1] == 0) ? NULL : arg[1];
-		ofile = open_output(Output, compress, recover);
+		ofile = open_output(Output, compress, splitsize || recover);
 
 		if	(ofile == NULL)
 		{
@@ -330,7 +353,7 @@ int main (int narg, char **arg)
 				break;
 
 			close_output(ofile, compress);
-			ofile = open_output(Output, compress, recover);
+			ofile = open_output(Output, compress, 1);
 
 			if	(!ofile)	break;
 
@@ -340,6 +363,20 @@ int main (int narg, char **arg)
 		if	(varblock && test_bsize(buf, n))
 		{
 			break;
+		}
+
+		if	(splitsize && splitsize < nout + n)
+		{
+			close_output(ofile, compress);
+
+			if	(str_buf[0])
+				fprintf(stderr, "%s: ", str_buf);
+
+			fprintf(stderr, MSG3, nout);
+			ofile = open_output(Output, compress, 1);
+			nout = 0;
+
+			if	(!ofile)	break;
 		}
 
 		if	(maxblk < n)
@@ -374,12 +411,12 @@ int main (int narg, char **arg)
 
 /*	Statistik ausgeben
 */
-	if	(Output)
-		fprintf(stderr, "%s: ", Output);
+	if	(str_buf[0])
+		fprintf(stderr, "%s: ", str_buf);
 
+	fprintf(stderr, MSG3, nout);
 	fprintf(stderr, MSG1, maxblk);
 	fprintf(stderr, MSG2, nblk, nshort);
-	fprintf(stderr, MSG3, nout);
 
 	if	(nerr)
 		fprintf(stderr, MSG4, nerr);

@@ -56,7 +56,7 @@ static void comment_cstyle (IO *io, StrBuf *buf, int flag)
 	char *prompt;
 
 	if	(buf)
-		sb_clear(buf);
+		sb_clean(buf);
 
 	prompt = io_prompt(io, PROMPT);
 	c = io_getc(io);

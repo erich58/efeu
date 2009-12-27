@@ -12,7 +12,7 @@ typedef struct {
 
 #define	TEST(test, x) ((x).newpos == 0 && mdtest_eval(test, (x).axis->name, (x).oldpos))
 
-static int cmp_data(const void *pa, const void *pb)
+static int cmp_xdata(const void *pa, const void *pb)
 {
 	const XDATA *a = pa;
 	const XDATA *b = pb;
@@ -41,7 +41,7 @@ void md_permut(mdmat *md, const char *str)
 
 	if	(mdim <= 1)	return;
 
-	dim = strsplit(str, "%s,;", &list);
+	dim = mstrsplit(str, "%s,;", &list);
 
 	if	(dim == 0)	return;
 
@@ -66,7 +66,7 @@ void md_permut(mdmat *md, const char *str)
 
 	memfree(list);
 
-	qsort(tab, mdim, sizeof(XDATA), cmp_data);
+	qsort(tab, mdim, sizeof(XDATA), cmp_xdata);
 
 	ptr = &md->axis;
 

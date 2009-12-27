@@ -29,7 +29,12 @@ If not, write to the Free Software Foundation, Inc.,
 FILE *findopen (const char *path, const char *pfx,
 	const char *name, const char *ext, const char *mode)
 {
-	char *fname = fsearch(path, pfx, name, ext);
+	char *fname;
+	
+	if	(name && *name == '|')
+		return fileopen(name, mode);
+
+	fname = fsearch(path, pfx, name, ext);
 
 	if	(fname != NULL)
 	{

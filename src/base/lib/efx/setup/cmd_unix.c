@@ -20,6 +20,10 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#if	_AIX
+#define	_ALL_SOURCE
+#endif
+
 #include <EFEU/object.h>
 #include <EFEU/cmdsetup.h>
 #include <EFEU/refdata.h>
@@ -33,6 +37,42 @@ If not, write to the Free Software Foundation, Inc.,
 #include <unistd.h>
 #include <dirent.h>
 
+static void mode_putc (IO *out, int mode, const char *xkey)
+{
+	io_putc((mode & 04) ? 'r' : '-', out);
+	io_putc((mode & 02) ? 'w' : '-', out);
+	io_putc(xkey[(mode & 01) ? 1 : 0], out);
+}
+
+static int io_mode (IO *out, int mode)
+{
+	switch (mode & S_IFMT)
+	{
+	case S_IFREG:	io_putc('-', out); break;
+	case S_IFDIR:	io_putc('d', out); break;
+	case S_IFCHR:	io_putc('c', out); break;
+	case S_IFBLK:	io_putc('b', out); break;
+	case S_IFIFO:	io_putc('p', out); break;
+	case S_IFLNK:	io_putc('l', out); break;
+/*
+	case S_IFSOCK:	io_putc('s', out); break;
+*/
+	default:	io_putc('?', out); break;
+	}
+
+	mode_putc(out, (mode >> 6) & 07, (mode & S_ISUID) ? "Ss" : "-x");
+	mode_putc(out, (mode >> 3) & 07, (mode & S_ISGID) ? "Ss" : "-x");
+	mode_putc(out, mode & 07, (mode & S_ISVTX) ? "Tt" : "-x");
+	return 9;
+}
+
+static int print_mode (const EfiType *type, const void *data, IO *io)
+{
+	return io_mode(io, Val_uint(data));
+}
+
+EfiType Type_mode = SIMPLE_TYPE("mode_t", unsigned, &Type_uint, print_mode);
+
 /*	Filestatus
 */
 
@@ -41,7 +81,7 @@ typedef struct {
 	unsigned uid;
 	unsigned gid;
 	unsigned mode;
-	long size;
+	int64_t size;
 	CalTimeIndex mtime;
 } FileStat;
 
@@ -64,7 +104,7 @@ EfiType Type_fstat = STD_TYPE("FileStat", FileStat, NULL,
 
 static EfiObj *fstat_path (const EfiObj *base, void *data)
 {
-	return str2Obj(base ? ((FileStat *) base->data)->path : NULL);
+	return str2Obj(base ? mstrcpy(((FileStat *) base->data)->path) : NULL);
 }
 
 static EfiObj *fstat_uid (const EfiObj *base, void *data)
@@ -79,12 +119,37 @@ static EfiObj *fstat_gid (const EfiObj *base, void *data)
 
 static EfiObj *fstat_mode (const EfiObj *base, void *data)
 {
-	return int2Obj(base ? ((FileStat *) base->data)->mode : 0);
+	unsigned mode = base ? ((FileStat *) base->data)->mode : 0;
+	return NewObj(&Type_mode, &mode);
+}
+
+static EfiObj *fstat_type (const EfiObj *base, void *data)
+{
+	unsigned mode;
+	unsigned char c;
+	
+	mode = base ? ((FileStat *) base->data)->mode : 0;
+
+	if	(S_ISREG(mode))		c = 'f';
+	else if	(S_ISDIR(mode))		c = 'd';
+	else if	(S_ISCHR(mode))		c = 'c';
+	else if	(S_ISBLK(mode))		c = 'b';
+	else if	(S_ISFIFO(mode))	c = 'p';
+#ifdef	S_ISLNK
+	else if	(S_ISLNK(mode))		c = 'l';
+#endif
+#ifdef	S_ISSOCK
+	else if	(S_ISSOCK(mode))	c = 's';
+#endif
+	else				c = '?';
+
+	return NewObj(&Type_char, &c);
 }
 
 static EfiObj *fstat_size (const EfiObj *base, void *data)
 {
-	return long2Obj(base ? ((FileStat *) base->data)->size : 0);
+	int64_t val = base ? ((FileStat *) base->data)->size : 0;
+	return NewObj(&Type_int64, &val);
 }
 
 static EfiObj *fstat_mtime (const EfiObj *base, void *data)
@@ -102,7 +167,8 @@ static EfiMember fstat_var[] = {
 	{ "uid", &Type_int, fstat_uid, NULL },
 	{ "gid", &Type_int, fstat_gid, NULL },
 	{ "mode", &Type_int, fstat_mode, NULL },
-	{ "size", &Type_long, fstat_size, NULL },
+	{ "type", &Type_char, fstat_type, NULL },
+	{ "size", &Type_int64, fstat_size, NULL },
 	{ "mtime", &Type_Time, fstat_mtime, NULL },
 };
 
@@ -132,6 +198,25 @@ static void str2fstat (EfiFunc *func, void *rval, void **arg)
 	else	memset(rval, 0, sizeof(FileStat));
 }
 
+static void f_mode2str (EfiFunc *func, void *rval, void **arg)
+{
+	StrBuf *buf = sb_create(0);
+	IO *out = io_strbuf(buf);
+	io_mode(out, Val_uint(arg[0]));
+	io_close(out);
+	Val_str(rval) = sb2str(buf);
+}
+
+static void f_mode2int (EfiFunc *func, void *rval, void **arg)
+{
+	Val_int(rval) = Val_uint(arg[0]);
+}
+
+static void fprint_mode (EfiFunc *func, void *rval, void **arg)
+{
+	Val_int(rval) = io_mode(Val_io(arg[0]), Val_uint(arg[1]));
+}
+
 static void fprint_fstat (EfiFunc *func, void *rval, void **arg)
 {
 	IO *io = Val_io(arg[0]);
@@ -145,7 +230,7 @@ static void fprint_fstat (EfiFunc *func, void *rval, void **arg)
 		n += io_printf(io, "%#o ", fstat->mode);
 		n += io_printf(io, "%d-", fstat->uid);
 		n += io_printf(io, "%d ", fstat->gid);
-		n += io_printf(io, "%ld)", fstat->size);
+		n += io_printf(io, "%lld)", fstat->size);
 		Val_int(rval) = n;
 	}
 	else	Val_int(rval) = io_puts("(unknown)", io);
@@ -285,6 +370,10 @@ static void f_getuid (EfiFunc *func, void *rval, void **arg)
 	Val_int(rval) = getuid();
 }
 
+static void f_umask (EfiFunc *func, void *rval, void **arg)
+{
+	Val_int(rval) = umask(Val_int(arg[0]));
+}
 
 static int skip_name (const char *name)
 {
@@ -296,8 +385,8 @@ static int skip_name (const char *name)
 	return 0;
 }
 
-static EfiObjList **do_flist (EfiObjList **ptr, const char *path,
-	const char *pat)
+static EfiObjList **do_flist (EfiObjList **ptr, size_t offset,
+	const char *path, const char *pat)
 {
 	DIR *dir;
 	struct dirent *entry;
@@ -306,7 +395,7 @@ static EfiObjList **do_flist (EfiObjList **ptr, const char *path,
 	char *p, **dp;
 	size_t n;
 	
-	if	((dir = opendir(path)) == NULL)
+	if	((dir = opendir(path ? path : ".")) == NULL)
 		return ptr;
 
 	dir_buf = vb_create(1024, sizeof(char *));
@@ -326,13 +415,21 @@ static EfiObjList **do_flist (EfiObjList **ptr, const char *path,
 			dp = vb_next(dir_buf);
 			*dp = p;
 		}
+		/*
 		else if (!S_ISREG(statbuf.st_mode))
 		{
 			memfree(p);
 		}
+		*/
 		else if	(!pat || patcmp(pat, entry->d_name, NULL))
 		{
-			*ptr = NewObjList(str2Obj(p));
+			if	(offset)
+			{
+				*ptr = NewObjList(str2Obj(mstrcpy(p + offset)));
+				memfree(p);
+			}
+			else	*ptr = NewObjList(str2Obj(p));
+
 			ptr = &(*ptr)->next;
 		}
 	}
@@ -341,7 +438,7 @@ static EfiObjList **do_flist (EfiObjList **ptr, const char *path,
 
 	for (dp = dir_buf->data, n = dir_buf->used; n--; dp++)
 	{
-		ptr = do_flist(ptr, *dp, pat);
+		ptr = do_flist(ptr, offset, *dp, pat);
 		memfree(*dp);
 	}
 
@@ -352,8 +449,17 @@ static EfiObjList **do_flist (EfiObjList **ptr, const char *path,
 static void f_flist (EfiFunc *func, void *rval, void **arg)
 {
 	EfiObjList **ptr = (EfiObjList **) rval;
+	char *path = Val_str(arg[0]);
+
+	if	(!path)	path = ".";
+
 	*ptr = NULL;
-	do_flist(ptr, Val_str(arg[0]), Val_str(arg[1]));
+
+	if	(Val_bool(arg[2]))
+	{
+		do_flist(ptr, strlen(path) + 1, path, Val_str(arg[1]));
+	}
+	else	do_flist(ptr, 0, path, Val_str(arg[1]));
 }
 
 static void f_mkdir (EfiFunc *func, void *rval, void **arg) \
@@ -365,6 +471,10 @@ static void f_mkdir (EfiFunc *func, void *rval, void **arg) \
 */
 
 static EfiFuncDef func_unix[] = {
+	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, mode_t)", fprint_mode },
+	{ FUNC_RESTRICTED, &Type_str, "mode_t ()", f_mode2str },
+	{ FUNC_RESTRICTED, &Type_int, "mode_t ()", f_mode2int },
+	{ FUNC_PROMOTION, &Type_uint, "mode_t ()", CopyDataFunc },
 	{ 0, &Type_fstat, "FileStat (str path)", str2fstat },
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, FileStat)", fprint_fstat },
 	{ FUNC_RESTRICTED, &Type_bool, "FileStat ()", fstat2bool },
@@ -374,13 +484,16 @@ static EfiFuncDef func_unix[] = {
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, passwd)", fprint_pwd },
 	{ FUNC_RESTRICTED, &Type_bool, "passwd ()", pwd2bool },
 	{ 0, &Type_int, "getuid ()", f_getuid },
-	{ 0, &Type_list, "flist (str path, str pat = NULL)", f_flist },
+	{ 0, &Type_int, "umask (int mask)", f_umask },
+	{ 0, &Type_list, "flist (str path, str pat = NULL, bool rel = false)",
+		f_flist },
 	{ 0, &Type_bool, "mkdir (str path)", f_mkdir },
 };
 
 
 void CmdSetup_unix(void)
 {
+	AddType(&Type_mode);
 	AddType(&Type_fstat);
 	AddEfiMember(Type_fstat.vtab, fstat_var, tabsize(fstat_var));
 	AddType(&Type_pwd);

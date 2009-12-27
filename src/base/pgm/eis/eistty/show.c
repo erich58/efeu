@@ -20,10 +20,22 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#include <EFEU/mstring.h>
+#include <EFEU/parsub.h>
+#include <EFEU/patcmp.h>
 #include "eistty.h"
 
+int Lines = 24;
+
+#if	USE_EFWIN
 WINDOW *info_win = NULL;
 InfoNode *info_node = NULL;
+#else
+static char *smso = NULL;
+static char *rmso = NULL;
+static int solen = 0;
+#endif
+
 static char *search_key = NULL;
 
 #define	is_key(str)	(search_key && patcmp(search_key, str, NULL))
@@ -140,8 +152,9 @@ void MakePart(InfoNode *info)
 {
 	IPAR = new_par(IPAR);
 	memset(&def_part, 0, sizeof(InfoPart));
-
+#if	USE_EFWIN
 	maxcols = info_win ? info_win->_maxx - 1 : 70;
+#endif
 	def_part.x = 0;
 	def_part.y = 0;
 	def_part.att = 0;
@@ -152,10 +165,21 @@ void MakePart(InfoNode *info)
 	if	(!info)
 		info = GetInfo(NULL, NULL);
 
-	if	(info->load)
-		info->load(info);
+#if	USE_EFWIN
+	werase(info_win);
+	wmove(info_win, LASTLINE, 0);
+	wattrset(info_win, 0);
+	waddstr(info_win, "eis: ");
+	wprintw(info_win, "Knoten laden");
+	wrefresh(info_win);
+#endif
+	SetupInfo(info);
 
+#if	USE_EFWIN
 	def_part.att = A_UNDERLINE;
+#else
+	def_part.att = 0;
+#endif
 	def_part.info = NULL;
 	io_psubarg(&io_part, info->label, "ns", info->name);
 	linebreak();
@@ -185,7 +209,10 @@ void MakePart(InfoNode *info)
 		while (i > 0)
 		{
 			flush_buf();
+			SetupInfo(*ip);
+#if	USE_EFWIN
 			def_part.att = A_UNDERLINE;
+#endif
 			def_part.info = *ip;
 			io_puts((*ip)->name, &io_part);
 			flush_buf();
@@ -213,9 +240,23 @@ void ShowPart (void)
 {
 	InfoPart *part;
 	int i, y; 
+#if	USE_EFWIN
 	int att;
+#else
+	int cur_y;
+	int cur_x;
+#endif
 
+#if	USE_EFWIN
 	if	(!info_win)	return;
+
+	werase(info_win);
+#else
+	y = cur_y = cur_x = 0;
+
+	for (i = 0; i < 25; i++)
+		io_putc('\n', iostd);
+#endif
 
 	for (i = 0, part = IPAR->buf.data; i < IPAR->buf.used; i++, part++)
 	{
@@ -224,6 +265,7 @@ void ShowPart (void)
 		if	(y < 0)		continue;
 		if	(y >= LASTLINE)	break;
 
+#if	USE_EFWIN
 		if	(i == IPAR->active)	att = A_STANDOUT;
 		else if	(is_key(part->str))	att = A_BOLD;
 		else				att = part->att;
@@ -231,8 +273,28 @@ void ShowPart (void)
 		wattrset(info_win, att);
 		wmove(info_win, y, part->x);
 		waddstr(info_win, part->str);
+#else
+		while (cur_y < y)
+		{
+			io_putc('\n', iostd);
+			cur_y++;
+			cur_x = 0;
+		}
+
+		cur_x += io_nputc(' ', iostd, part->x - cur_x);
+
+		if	(i == IPAR->active)
+		{
+			io_puts(smso, iostd);
+			cur_x += io_puts(part->str, iostd);
+			io_puts(rmso, iostd);
+			cur_x += solen;
+		}
+		else	cur_x += io_puts(part->str, iostd);
+#endif
 	}
 
+#if	USE_EFWIN
 	wmove(info_win, LASTLINE, 0);
 	wattrset(info_win, 0);
 	waddstr(info_win, "eis: ");
@@ -242,10 +304,19 @@ void ShowPart (void)
 	if	(y > IPAR->maxline)	y = IPAR->maxline;
 
 	wprintw(info_win, "Zeile %d von %d", y, IPAR->maxline);
+	wrefresh(info_win);
+#else
+	io_putc('\n', iostd);
+	io_printf(iostd, "Zeile %d von %d: ", y, IPAR->maxline);
+#endif
 }
 
 void MovePos (int offset)
 {
+	InfoPart *part;
+	int i;
+
+	part = IPAR->buf.data;
 	IPAR->curline += offset;
 
 	if	(IPAR->curline + LASTLINE > IPAR->maxline)
@@ -253,6 +324,35 @@ void MovePos (int offset)
 
 	if	(IPAR->curline < 0)
 		IPAR->curline = 0;
+
+	if	(offset > 0)
+	{
+		for (i = IPAR->active; i < IPAR->buf.used; i++)
+		{
+			if	(part[i].info)
+			{
+				IPAR->active = i;
+
+				if	(part[i].y >= IPAR->curline)
+					break;
+			}
+		}
+	}
+	else if	(offset < 0)
+	{
+		int pos = IPAR->curline + LASTLINE - 1;
+
+		for (i = IPAR->active; i >= 0; i--)
+		{
+			if	(part[i].info)
+			{
+				IPAR->active = i;
+
+				if	(part[i].y <= pos)
+					break;
+			}
+		}
+	}
 }
 
 void MoveRef (int offset)
@@ -333,7 +433,7 @@ void NextInfo (void)
 
 int SearchKey (char *key)
 {
-	int i, n;
+	int i, n, ref;
 	InfoPart *part;
 	
 	memfree(search_key);
@@ -343,15 +443,21 @@ int SearchKey (char *key)
 	if	(search_key == NULL)	return 0;
 
 	part = IPAR->buf.data;
+	ref = IPAR->active;
 
 	for (i = n = 0; i < IPAR->buf.used; i++)
 	{
+		if	(part[i].info)
+			ref = i;
+
 		if	(is_key(part[i].str))
 		{
 			if	(n++)	continue;
 
 			if	(IPAR->curline > part[i].y)
 				IPAR->curline = part[i].y;
+
+			IPAR->active = ref;
 
 			if	(IPAR->curline + LASTLINE <= i)
 				IPAR->curline = part[i].y - LASTLINE + 1;
@@ -362,4 +468,36 @@ int SearchKey (char *key)
 	}
 
 	return n;
+}
+
+void ShowInit(void)
+{
+#if	USE_EFWIN
+	InitWin();
+
+	if	(Lines)
+	{
+		info_win = NewWindow(WindowSize(Lines, COLS, 0, 0, 0));
+	}
+	else	info_win = NewWindow(NULL);
+
+	keypad(info_win, TRUE);
+	scrollok(info_win, FALSE);
+	leaveok(info_win, TRUE);
+	ShowWindow(info_win);
+#else
+	smso = "<";
+	rmso = ">";
+	solen = 2;
+#endif
+}
+
+void ShowExit(void)
+{
+#if	USE_EFWIN
+	DelWindow(info_win);
+	EndWin();
+#else
+	;
+#endif
 }

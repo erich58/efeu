@@ -27,7 +27,7 @@ Type_t Type = NULL;
 PrintListDelim = "\t";
 
 pconfig !
-Version = "$Id: mdcmp.esh,v 1.9 2002-12-17 04:55:39 ef Exp $"
+Version = "$Id: mdcmp.esh,v 1.10 2005-07-24 05:12:41 ef Exp $"
 
 F:file | :eval 'gload(IncPath, "{}")'
 	:*:execute command lines in file <file>
@@ -58,7 +58,7 @@ T:title | Title
 :file2 | Ein2
 	:*:name of second data cube
 	:de:Name der 2. Eingabedatei
-/.*=.*/name=var | SelDef: append " "
+/.*=.*/<name>=<var> | SelDef: append " "
 	:*:selection parameter
 	:de:Selektionsparameter
 ::aus | Output; PrintMode = false

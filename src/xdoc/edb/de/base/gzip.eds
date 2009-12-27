@@ -1,0 +1,22 @@
+\sec	Komprimierte Dateien
+
+Die EFEU-Programmbibliotheken unterstützen mit \index{|gzip|} oder
+\index{|bzip2|} komprimierte Dateien. Dies gilt auch für EDB-Datenfiles.
+Die Aktivierung der Kompression/Dekompression erfolgt über den
+Filezusatz. Endet eine Datei auf |.gz| wird |gzip| verwendet, bei
+|.bz2| wird |bzip2| verwendet.
+
+Der \index{Kompressionsgrad} bei der Ausgabe mit |gzip| kann über
+Optionen gesteuert werden. Diese werden von allen |edb|-Kommandos
+unterstützt.
+
+[|-1|, |--fast]
+	verwendet \index{schnelle Komprimierung} bei der Ausgabe mittels
+	|gzip|. Das ist die Voreinstellung für EFEU-Komandos.
+[|-9|, |--best]
+	verwendet \index{optimale Komprimierung} bei der Ausgabe. Die
+	Kompression dauert hier deutlich länger, die Größenreduktion
+	ist nur gering. Daher wird diese Einstellung selten verwendet.
+
+Eine Kompression mit |bzip2| liefert kleinere Dateien als |gzip|, die
+Rechenzeit ist dafür deutlich höher.

@@ -23,6 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include "src2doc.h"
 #include <EFEU/strbuf.h>
 #include <EFEU/efio.h>
+#include <EFEU/CmdPar.h>
 
 /*	Basisname
 */
@@ -118,6 +119,7 @@ void s2d_src (const char *name, IO *ein, IO *aus)
 	data.ppdef = src_ppdef;
 	data.ppdim = tabsize(src_ppdef);
 	data.mask = DECL_VAR|DECL_FUNC;
+	data.xmask = DECL_SVAR|DECL_SFUNC|DECL_TYPE|DECL_STRUCT;
 	io_printf(aus, "\\mpage[%s] %s\n", Secnum ? Secnum : "3",
 		data.doc.var[VAR_NAME]);
 	SrcData_eval(&data, name);

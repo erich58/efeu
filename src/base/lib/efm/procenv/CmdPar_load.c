@@ -58,7 +58,7 @@ static void buf2var(CmdPar *par, const char *name, StrBuf *buf)
 	StrBuf *vbuf;
 	int c;
 
-	vbuf = new_strbuf(0);
+	vbuf = sb_create(0);
 	sb_setpos(buf, 0);
 	io = langfilter(io_strbuf(buf), NULL);
 
@@ -70,7 +70,7 @@ static void buf2var(CmdPar *par, const char *name, StrBuf *buf)
 	var = CmdPar_var(par, name, 1);
 	memfree(var->value);
 	var->value = sb2str(vbuf);
-	sb_clear(buf);
+	sb_clean(buf);
 }
 
 static void langsub (StrBuf *sb)
@@ -278,12 +278,23 @@ static char *getval (StrBuf *sb, int flag)
 	return p;
 }
 
+static int f_assign (CmdPar *cpar, CmdParVar *var,
+	const char *par, const char *arg)
+{
+	memfree(var->value);
+	var->value = mstrcpy(par);
+	return 0;
+}
+
+static CmdParEval eval_assign = { NULL, NULL, f_assign };
+
 static void key2call (CmdParCall *call, CmdParKey *key,
 	IO *io, StrBuf *sb, int flag)
 {
 	memset(call, 0, sizeof(CmdParCall));
 	memfree(key->val);
 	call->name = key->key;
+	call->eval = NULL;
 
 	if	(key->argtype == 0)
 	{
@@ -292,6 +303,7 @@ static void key2call (CmdParCall *call, CmdParKey *key,
 	else if	(key->argtype == ARGTYPE_VALUE)
 	{
 		call->par = getval(sb, flag);
+		call->eval = &eval_assign;
 	}
 	else if	(sb_getpos(sb))
 	{
@@ -537,7 +549,7 @@ void CmdPar_read (CmdPar *par, IO *io, int end, int flag)
 	if	(io == NULL)	return;
 
 	par = CmdPar_ptr(par);
-	sb = new_strbuf(0);
+	sb = sb_create(0);
 	io = io_lnum(io_refer(io));
 	cbuf = flag ? sb : NULL;
 
@@ -573,7 +585,7 @@ void CmdPar_read (CmdPar *par, IO *io, int end, int flag)
 					break;
 				}
 				
-				sb_clear(sb);
+				sb_clean(sb);
 			}
 			else	skipline(io);
 
@@ -603,7 +615,7 @@ void CmdPar_read (CmdPar *par, IO *io, int end, int flag)
 		}
 	}
 
-	del_strbuf(sb);
+	sb_destroy(sb);
 	io_close(io);
 }
 

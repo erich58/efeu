@@ -1,5 +1,5 @@
 /*
-Bestätigung
+Editierfenster
 
 $Copyright (C) 1995 Erich Frühstück
 This file is part of EFEU.
@@ -41,7 +41,7 @@ char *WinEdit (WinSize *ws, char *defval)
 	scrollok(win, TRUE);
 	leaveok(win, FALSE);
 	ShowWindow(win);
-	sb = new_strbuf(0);
+	sb = sb_create(0);
 	sb_puts(defval, sb);
 	sb->pos = 0;
 	key = '\f';
@@ -54,13 +54,14 @@ char *WinEdit (WinSize *ws, char *defval)
 		case '\r':
 
 			DelWindow(win);
+			sb->pos = sb_size(sb);
 			return sb2str(sb);
 
 		case ctrl('G'):
 		case KEY_ESC:
 
 			DelWindow(win);
-			del_strbuf(sb);
+			sb_destroy(sb);
 			return NULL;
 
 		case ctrl('K'):

@@ -43,6 +43,8 @@ static int sb_nctrl (void *ptr, int req, va_list list)
 	switch (req)
 	{
 	case IO_REWIND:	sb->pos = 0; return 0;
+	case IO_GETPOS:	*va_arg(list, unsigned *) = sb->pos; return 0;
+	case IO_SETPOS:	sb->pos = *va_arg(list, unsigned *); return 0;
 	case IO_CLOSE:	return 0;
 	case IO_IDENT:	*va_arg(list, char **) = "<strbuf>"; return 0;
 	default:	return EOF;
@@ -56,7 +58,9 @@ static int sb_cctrl (void *ptr, int req, va_list list)
 	switch (req)
 	{
 	case IO_REWIND:	sb->pos = 0; return 0;
-	case IO_CLOSE:	return del_strbuf(sb);
+	case IO_GETPOS:	*va_arg(list, unsigned *) = sb->pos; return 0;
+	case IO_SETPOS:	sb->pos = *va_arg(list, unsigned *); return 0;
+	case IO_CLOSE:	return sb_destroy(sb);
 	case IO_IDENT:	*va_arg(list, char **) = "<tmpbuf>"; return 0;
 	default:	return EOF;
 	}
@@ -69,7 +73,7 @@ IO *io_tmpbuf (size_t size)
 	io = io_alloc();
 	io->get = sbuf_get;
 	io->put = sbuf_put;
-	io->data = new_strbuf(size);
+	io->data = sb_create(size);
 	io->ctrl = sb_cctrl;
 	return io;
 }
@@ -87,7 +91,7 @@ IO *io_strbuf (StrBuf *buf)
 	}
 	else
 	{
-		io->data = new_strbuf(0);
+		io->data = sb_create(0);
 		io->ctrl = sb_cctrl;
 	}
 

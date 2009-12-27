@@ -23,12 +23,14 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/Info.h>
 #include <EFEU/ioctrl.h>
 #include <EFEU/parsub.h>
+#include <EFEU/procenv.h>
 #include <ctype.h>
 
 #define	CTRL_NL		0x1
 #define	CTRL_KEY	0x2
 #define	CTRL_LABEL	0x3
 #define	CTRL_TEXT	0x4
+#define	CTRL_CMD	0x5
 
 typedef struct {
 	IO *io;		/* Ausgabestruktur */
@@ -108,6 +110,9 @@ static int filter_ctrl (void *ptr, int req, va_list list)
 		filter->last = '\n';
 		filter->put = io_putc;
 		return 0;
+	case CTRL_CMD:
+		filter->put = io_putc;
+		return 0;
 	default:
 		break;
 	}
@@ -115,14 +120,24 @@ static int filter_ctrl (void *ptr, int req, va_list list)
 	return io_vctrl(filter->io, req, list);
 }
 
-static void dump_info (IO *io, InfoNode *base, InfoNode *info)
+static void dump_info (IO *io, InfoNode *base, InfoNode *info, int flag)
 {
-	if	(info->load)
-		info->load(info);
-
+	SetupInfo(info);
 	io_ctrl(io, CTRL_NL);
 	io_ctrl(io, CTRL_KEY);
 	InfoName(io, base, info);
+
+	if	(!flag && base != info)
+	{
+		io_ctrl(io, CTRL_CMD);
+		io_putc('|', io);
+		io_puts(ProgIdent, io);
+		io_puts(" --info=dump:", io);
+		InfoName(io, NULL, info);
+		io_ctrl(io, CTRL_NL);
+		return;
+	}
+
 	io_ctrl(io, CTRL_LABEL);
 
 	if	(info->label)
@@ -147,14 +162,14 @@ static void dump_info (IO *io, InfoNode *base, InfoNode *info)
 		InfoNode **ip = info->list->data;
 
 		for (; i > 0; i--, ip++)
-			dump_info(io, base, *ip);
+			dump_info(io, base, *ip, flag);
 	}
 }
 
 
-void DumpInfo (IO *io, InfoNode *base, const char *name)
+void DumpInfo (IO *io, const char *name, int flag)
 {
-	InfoNode *info = GetInfo(base, name);
+	InfoNode *info = GetInfo(NULL, name);
 
 	if	(info)
 	{
@@ -167,7 +182,7 @@ void DumpInfo (IO *io, InfoNode *base, const char *name)
 		io->put = filter_put;
 		io->ctrl = filter_ctrl;
 		io->data = &filter;
-		dump_info(io, name ? info : base, info);
+		dump_info(io, info, info, flag);
 		io_close(io);
 	}
 }

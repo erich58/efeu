@@ -1,0 +1,45 @@
+\sec	\label{read}\index{Lesefunktionen}
+
+Mit der \index{|@data|-Anweisung} wird der Datenteil begonnen. Als Modus
+stehen drei Varianten zur Verfügung:
+
+[\index{|plain|}]
+	Für jede Komponente der Datenstruktur wird ein \index{Term} gelesen,
+	ausgewertet und in den entsprechenden Datentyp konvertiert.
+	Die einzelnen Terme sind durch einen Strichpunkt getrennt.
+	Falls innerhalb der Terme  Zeilenvorschübe zulässig sind (z.B.
+	innerhalb von Klammern, kann sich ein Datensatz auch über
+	mehrere Zeilen erstrecken.
+[\index{|label|}]
+	Die Datenzeile enthält einzelne, durch einen Strichpunkt
+	getrennte Felder, die zunächst als Zeichenkette geladen
+	und anschließend in den entsprechenden Datentyp umgewandelt werden.
+	Ausdrücke werden nicht berechnet, Zeichenketten mussen aber
+	nicht wie bei |plain| unter Anführung stehen.
+[\index{|binary|}]
+	Die Daten sind binär gespeichert.
+
+Der Standardmodus ist |plain|. Dieser wird auch bei Angabe eines
+unbekannten Modus verwendet.
+
+Falls vor der \index{|@data|-Anweisung} ein Ausdruck mithilfe der
+\index{|@expr|-Anweisung} definiert wurde, wird der Modus ignoriert. Auf die
+Daten wird über die \index{IO-Struktur} |data| vom Ausdruck aus
+zugegriffen.
+
+Mit der Kombination |@expr| und |@data| lassen sich beliebige
+Eingabeformate verarbeiten. In der folgenden Beispieldatei |epi.edb| sind
+abwechselnd Stamm- und Epiosodendaten enthalten.
+
+\include[verbatim] epi.edb
+
+Die Daten werden Zeilenweise mit \index{|fgets|} gelesen. Die
+einzelnen Satzarten werden in einer \index{|switch|-Anweisung} anhand
+des ersten Zeichens identifiziert. Kommentare sind mit |#| und
+Stammdaten mit einem |P| gekennzeichnet. Alle anderen Zeilen enthalten
+Episodendaten. Die Zerlegung der Zeilen erfolgt mithilfe der Funktion
+\index{|strcut|},
+
+Der Aufruf |edb -n0 epi.edb| liefert die folgende Ausgabe:
+
+\pipe[verbatim] |edb -n0 epi.edb|

@@ -29,7 +29,9 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/preproc.h>
 #include <EFEU/Debug.h>
 #include <EFEU/LangDef.h>
+#include <ctype.h>
 
+#define	INC_PFX	"include"
 
 /*	Die eingebauten Funktionen werden über Makros definiert
 */
@@ -40,6 +42,11 @@ If not, write to the Free Software Foundation, Inc.,
 #define	F_STR(N, E)	BUILTIN(N) { Val_str(rval) = (E); }
 
 
+F_INT(f_isdigit, isdigit(Val_int(arg[0])) ? 1 : 0)
+F_INT(f_isalpha, isalpha(Val_int(arg[0])) ? 1 : 0)
+F_INT(f_isalnum, isalnum(Val_int(arg[0])) ? 1 : 0)
+F_INT(f_isspace, isspace(Val_int(arg[0])) ? 1 : 0)
+
 /*	Test auf Variablendefinition
 */
 
@@ -47,16 +54,14 @@ F_INT(c_sizeof, ((EfiObj *) arg[0])->type->size)
 F_INT(u_sizeof, 0)
 F_INT(t_sizeof, Val_type(arg[0])->size)
 
-CEXPR(c_typeof, Val_type(rval) = ((EfiObj *) arg[0])->type)
-
 BUILTIN(f_declare)
 {
 	StrBuf *sb;
 	IO *tmp;
 
-	sb = new_strbuf(0);
+	sb = sb_create(0);
 	tmp = io_strbuf(sb);
-	ShowType(tmp, Val_type(arg[0]));
+	PrintType(tmp, Val_type(arg[0]), Val_bool(arg[1]) ? 1 : 2);
 	io_close(tmp);
 	Val_str(rval) = sb2str(sb);
 }
@@ -209,7 +214,7 @@ BUILTIN(f_sprintf)
 	StrBuf *sb;
 	IO *io;
 
-	sb = new_strbuf(0);
+	sb = sb_create(0);
 	io = io_strbuf(sb);
 	PrintFmtList(io, Val_str(arg[0]), Val_list(arg[1]));
 	io_close(io);
@@ -296,6 +301,27 @@ BUILTIN(f_gload)
 	else	Val_int(rval) = 0;
 }
 
+static void f_include (EfiFunc *func, void *rval, void **arg)
+{
+	IO *io;
+	Efi *interp;
+	char *name;
+
+	interp = Efi_ptr(NULL);
+	name = Val_str(arg[0]);
+
+	io = io_cmdpreproc(io_stream(name,
+		findopen(IncPath, INC_PFX, name, NULL, "rd"),
+		fileclose));
+
+	PushVarTab(RefVarTab(GlobalVar), NULL);
+	EfiSrc_hdr(interp, name);
+	CmdEval(io, NULL);
+	EfiSrc_pop(interp);
+	PopVarTab();
+	io_close(io);
+}
+
 F_STR(f_fsearch, fsearch(Val_str(arg[0]), NULL,
 	Val_str(arg[1]), Val_str(arg[2])))
 
@@ -311,7 +337,7 @@ BUILTIN(f_cat)
 	EfiObjList *l;
 	char *s;
 
-	sb = new_strbuf(0);
+	sb = sb_create(0);
 	delim = NULL;
 
 	for (l = Val_list(arg[1]); l != NULL; l = l->next)
@@ -382,7 +408,7 @@ BUILTIN(f_split)
 	char **list;
 	EfiObjList **ptr;
 
-	n = strsplit(Val_str(arg[0]), Val_str(arg[1]), &list);
+	n = mstrsplit(Val_str(arg[0]), Val_str(arg[1]), &list);
 	ptr = rval;
 	*ptr = NULL;
 
@@ -402,7 +428,7 @@ BUILTIN(f_index)
 
 	s = Val_str(arg[0]);
 	c = Val_char(arg[1]);
-	Val_long(rval) = 0;
+	Val_int(rval) = 0;
 
 	if	(s != NULL)
 	{
@@ -505,12 +531,17 @@ static EfiFuncDef fdef_func[] = {
 	{ FUNC_VIRTUAL, &Type_obj, "call (ObjFunc, ...)", f_ofunc },
 	{ FUNC_VIRTUAL, &Type_obj, "call (Type_t, ...)", f_tfunc },
 
+	{ FUNC_VIRTUAL, &Type_bool, "isdigit (int)", f_isdigit },
+	{ FUNC_VIRTUAL, &Type_bool, "isalpha (int)", f_isalpha },
+	{ FUNC_VIRTUAL, &Type_bool, "isalnum (int)", f_isalnum },
+	{ FUNC_VIRTUAL, &Type_bool, "isspace (int)", f_isspace },
+
 	{ FUNC_VIRTUAL, &Type_int, "sizeof (.)", c_sizeof },
 	{ FUNC_VIRTUAL, &Type_int, "sizeof (_undef_)", u_sizeof },
 	{ FUNC_VIRTUAL, &Type_int, "sizeof (Type_t)", t_sizeof },
-	{ 0, &Type_type, "typeof (.)", c_typeof },
 	{ 0, &Type_str, "whatis (.)", f_whatis },
-	{ 0, &Type_str, "declare (Type_t)", f_declare },
+	{ 0, &Type_str, "declare (Type_t type, bool compact = false)",
+		f_declare },
 	{ FUNC_VIRTUAL, &Type_int, "offset (., .)", f_offset },
 	{ FUNC_VIRTUAL, &Type_int, "align (int, int)", f_align },
 	
@@ -536,6 +567,7 @@ static EfiFuncDef fdef_func[] = {
 	{ FUNC_VIRTUAL, &Type_void, "eval (IO io, str delim = NULL)", f_ioeval },
 	{ 0, &Type_bool, "load (str path, str name, str type = NULL)", f_load },
 	{ 0, &Type_bool, "gload (str path, str name, str type = NULL)", f_gload },
+	{ 0, &Type_void, "include (str name)", f_include },
 	{ 0, &Type_str, "fsearch (str path, str name, str type = NULL)", f_fsearch },
 	{ FUNC_VIRTUAL, &Type_bool, "patcmp (str pat, str s)", f_patcmp },
 	{ FUNC_VIRTUAL, &Type_bool, "patcmp (str pat, str s, str &t)", f_patcmp },

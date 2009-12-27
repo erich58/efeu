@@ -187,6 +187,7 @@ int mroff_env (void *drv, int flag, va_list list)
 		break;
 	case DOC_MODE_VERB:
 		mroff_newline(mr);
+		io_puts(flag ? "\n.nf\n" : ".fi\n\n", mr->out);
 		mr->put = flag ? mroff_plain : mroff_putc;
 		break;
 
@@ -212,14 +213,21 @@ int mroff_env (void *drv, int flag, va_list list)
 	case DOC_ENV_CODE:
 		put_att(mr, flag, ATT_TT);
 		break;
+	case DOC_ENV_HANG:
+		if	(flag)
+			mroff_cmdline(mr, ".HP");
+		mr->nextpar = flag ? NULL : ".PP";
+		break;
 	case DOC_ENV_FORMULA:
 		break;
 	case DOC_ENV_TABLE:
-		mroff_cmdline(mr, ".SS Table");
+		if	(flag)
+			mroff_cmdline(mr, ".SS Table");
 		mr->skip = flag;
 		break;
 	case DOC_ENV_FIG:
-		mroff_cmdline(mr, ".SS Figure");
+		if	(flag)
+			mroff_cmdline(mr, ".SS Figure");
 		mr->skip = flag;
 		break;
 	default:

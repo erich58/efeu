@@ -42,7 +42,7 @@ static RefType etk_reftype = REFTYPE_INIT("TK", etk_ident, etk_clean);
 static int proc_expr (ClientData data, Tcl_Interp *interp,
 		int argc, char **argv)
 {
-	IO *io = io_mstr(listcat(" ", argv + 1, argc - 1));
+	IO *io = io_mstr(mtabcat(" ", argv + 1, argc - 1));
 	UnrefObj(UnaryTerm("tclset", NULL, EvalObj(Parse_term(io, 0), NULL)));
 	io_close(io);
 	return TCL_OK;
@@ -51,7 +51,7 @@ static int proc_expr (ClientData data, Tcl_Interp *interp,
 static int proc_eval (ClientData data, Tcl_Interp *interp,
 		int argc, char **argv)
 {
-	IO *io = io_mstr(listcat(" ", argv + 1, argc - 1));
+	IO *io = io_mstr(mtabcat(" ", argv + 1, argc - 1));
 	CmdEval(io, NULL);
 	io_close(io);
 	return TCL_OK;
@@ -93,7 +93,7 @@ ETK *ETK_create (void)
 	Tcl_CreateCommand(etk->interp, "@eval", proc_eval, NULL, NULL);
 	return rd_init(&etk_reftype, etk);
 #else
-	fprintf(stderr, "sorry: tcl/tk interface not available.\n");
+	fprintf(stderr, "sorry: tcl/tk interface is not available.\n");
 	exit(EXIT_FAILURE);
 	return NULL;
 #endif

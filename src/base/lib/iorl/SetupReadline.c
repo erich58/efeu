@@ -27,6 +27,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/patcmp.h>
 #include <EFEU/procenv.h>
 #include <EFEU/parsub.h>
+#include <EFEU/ftools.h>
 
 #include <EFEU/rl_config.h>
 
@@ -202,6 +203,7 @@ static char **iorl_completion (char *text, int start, int end)
 }
 #endif
 
+#if	HAS_HISTORY
 static void iorl_addentry (char *line)
 {
 	if	(line && *line)
@@ -279,12 +281,12 @@ static char *iorl_fc (int mode, const char *args)
 		return NULL;
 	}
 
-	buf = new_strbuf(512);
+	buf = sb_create(512);
 	tname = NULL;
 
 	if	(mode == RL_MODE_EDIT)
 	{
-		tname = mstrcpy(tmpnam(NULL));
+		tname = newtemp(NULL, "fc");
 		io = io_fileopen(tname, "w");
 	}
 	else	io = io_strbuf(buf);
@@ -296,16 +298,16 @@ static char *iorl_fc (int mode, const char *args)
 
 	if	(mode == RL_MODE_EDIT)
 	{
-		io = io_fileopen(tname, "r");
 		p = msprintf("vi %s", tname);
 		system(p);
 		memfree(p);
+		io = io_fileopen(tname, "r");
 
 		while ((i = io_getc(io)) != EOF)
 			sb_putc(i, buf);
 
 		io_close(io);
-		remove(tname);
+		deltemp(tname);
 	}
 
 	n = sb_size(buf);
@@ -333,6 +335,7 @@ static char *iorl_builtin (char *line)
 
 	return line;
 }
+#endif
 
 
 /*	Readline - Interface
@@ -389,13 +392,17 @@ static int iorl_get (void *ptr)
 				return EOF;
 			}
 
+#if	HAS_HISTORY
 			rlbuf->buf = iorl_builtin(rlbuf->buf);
+#endif
 
 			if	(rlbuf->buf == NULL)
 				continue;
 		}
 
+#if	HAS_HISTORY
 		iorl_addentry(rlbuf->buf);
+#endif
 		rlbuf->pos = 0;
 		rlbuf->mark = 0;
 	}

@@ -34,20 +34,27 @@ If not, write to the Free Software Foundation, Inc.,
 typedef struct InfoNodeStruct InfoNode;
 
 struct InfoNodeStruct {
-	void (*func) (IO *io, InfoNode *info); /* Ausgabefunktion */
+	REFVAR;			/* Referenzvariablen */
 	char *name;		/* Knotenname */
 	char *label;		/* Knotenbezeichnung */
-	void *par;		/* Ausgabeparameter */
-	InfoNode *prev;	/* Vorgängerknoten */
-	void (*load) (InfoNode *info);	/* Ladefunktion */
+	InfoNode *prev;		/* Vorgängerknoten */
 	VecBuf *list;		/* Unterknoten */
+	void (*setup) (InfoNode *info);	/* Ladefunktion */
+	void (*func) (IO *io, InfoNode *info); /* Ausgabefunktion */
+	void *par;		/* Ausgabeparameter */
 };
 
-extern char *InfoNameToken (char **ptr);
+extern RefType Info_reftype;
 
-extern InfoNode *NewInfo (InfoNode *base, char *name);
-extern InfoNode *GetInfo (InfoNode *base, const char *name);
-extern InfoNode *AddInfo (InfoNode *base, const char *name,
+#define	STD_INFO(name,label)	\
+{ REFDATA(&Info_reftype), name, label, NULL, NULL, NULL, NULL, NULL }
+
+char *InfoNameToken (char **ptr);
+
+void SetupInfo (InfoNode *node);
+InfoNode *NewInfo (InfoNode *base, char *name);
+InfoNode *GetInfo (InfoNode *base, const char *name);
+InfoNode *AddInfo (InfoNode *base, const char *name,
 	const char *label, void (*func) (IO *io, InfoNode *info), void *par);
 
 #define	INFO_ESC	'\\'	/* Fluchtsymbol in Infodatenbanken */
@@ -60,15 +67,19 @@ extern InfoNode *AddInfo (InfoNode *base, const char *name,
 /*	Ausgabedefinitionen
 */
 
-extern int InfoName (IO *io, InfoNode *base, InfoNode *info);
-extern void PrintInfo (IO *io, InfoNode *base, const char *name);
-extern void DumpInfo (IO *io, InfoNode *base, const char *name);
+int InfoName (IO *io, InfoNode *base, InfoNode *info);
+void PrintInfo (IO *io, InfoNode *node);
+void DumpInfo (IO *io, const char *name, int flag);
+void BrowseInfo (const char *name);
+
+extern void (*InfoBrowser) (const char *name);
+extern void (*XInfoBrowser) (const char *name);
+extern void StdInfoBrowser (const char *name);
 
 extern char *InfoPath;
 
-extern void SetInfoPath (const char *path);
-extern void LoadInfo (InfoNode *base, const char *name);
-extern void IOLoadInfo (InfoNode *base, IO *io);
-
+void SetInfoPath (const char *path);
+void LoadInfo (InfoNode *base, const char *name);
+void IOLoadInfo (InfoNode *base, IO *io);
 
 #endif	/* EFEU/Info.h */

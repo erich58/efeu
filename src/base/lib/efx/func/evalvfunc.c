@@ -22,117 +22,150 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/object.h>
 #include <EFEU/konvobj.h>
+#include <EFEU/printobj.h>
 
-static void clean_arg (EfiFuncArg *arg, size_t narg);
-static int set_arg (EfiFunc *func, EfiFuncArg *arg, size_t narg, EfiObj *obj);
+/*	Argumentvektor aufräumen
+*/
 
-
-EfiObj *Expr_virfunc (void *par, const EfiObjList *list)
+static void clean_arg (EfiFuncArg *arg, size_t narg)
 {
-	return EvalVirFunc(par, list);
-}
-
-EfiObj *Expr_void(void *par, const EfiObjList *list)
-{
-	while (list != NULL)
-	{
-		UnrefEval(RefObj(list->obj));
-		list = list->next;
-	}
-
-	return NULL;
-}
-
-
-EfiObj *EvalVirFunc(EfiVirFunc *vtab, const EfiObjList *list)
-{
-	EfiArgKonv *fkonv;
-	EfiFunc *func, **ftab;
-	EfiFuncArg *arg;
-	size_t argdim;
-	size_t maxdim;
-	size_t fargdim;
-	EfiObj *obj;
 	int i;
 
+	for (i = 0; i < narg; i++)
+		UnrefObj(arg[i].defval);
+
+	memfree(arg);
+}
+
+
+/*	Argument initialisieren
+*/
+
+static int set_arg (EfiFunc *func, EfiFuncArg *arg, size_t narg, EfiObj *obj)
+{
+	if	(obj == NULL)
+	{
+		dbg_note(NULL, "[efmain:94]", "sd", func->name,
+			narg + 1 - func->bound);
+		clean_arg(arg, narg);
+		return 0;
+	}
+
+	arg[narg].defval = obj;
+	arg[narg].type = obj->type;
+	arg[narg].lval = obj->lval ? 1 : 0;
+	arg[narg].nokonv = 1;
+	return 1;
+}
+
+/*	Test auf virtuelle Funktion
+*/
+
+static int not_a_vfunc (EfiVirFunc *vtab)
+{
 	if	(vtab == NULL || vtab->tab.used == 0)
-		return NULL;
+		return 1;
 
-	if	(!IsVirFunc(vtab))
-	{
-		dbg_error(NULL, "[efmain:65]", NULL);
-		return NULL;
-	}
+	if	(IsVirFunc(vtab))	return 0;
 
-/*	Argumentzahl und maximale Dimension bestimmen
+	dbg_error(NULL, "[efmain:65]", NULL);
+	return 1;
+}
+
+/*	Maximale Dimension bestimmen
 */
-	argdim = ObjListLen(list);
-	maxdim = argdim;
-	func = NULL;
-	ftab = vtab->tab.data;
 
-	for (i = 0; i < vtab->tab.used; i++)
-	{
-		func = ftab[i];
+static size_t get_maxdim (EfiVirFunc *vtab, size_t maxdim)
+{
+	EfiFunc **func;
+	size_t n;
 
-		if (maxdim < func->dim)	maxdim = func->dim;
-	}
+	for (func = vtab->tab.data, n = vtab->tab.used; n-- > 0; func++)
+		if (maxdim < (*func)->dim) maxdim = (*func)->dim;
 
-/*	Funktionsargumente auswerten
+	return maxdim;
+}
+
+
+/*	Argumentliste aus Objektliste bestimmen
 */
-	arg = memalloc(maxdim * sizeof(EfiFuncArg));
+
+static EfiFuncArg *farg_list (EfiVirFunc *vtab,
+	const EfiObjList *list, size_t dim)
+{
+	EfiFuncArg *arg;
+	EfiFunc *func;
+	int i;
+
+	arg = memalloc(dim * sizeof(EfiFuncArg));
+	func = ((EfiFunc **) vtab->tab.data)[0];
 
 	for (i = 0; list != NULL; i++)
 	{
-		if	(!set_arg(func, arg, i, EvalObj(RefObj(list->obj), NULL)))
+		if	(!set_arg(func, arg, i,
+				EvalObj(RefObj(list->obj), NULL)))
 			return NULL;
 
 		list = list->next;
 	}
 
-/*	Funktion mit minimaler Distanz suchen
-*/
-	func = SearchFunc(vtab, arg, argdim, &fkonv);
+	return arg;
+}
 
-/*	Keine Funktion für passende Argumente: Fehlermeldung generieren
+/*	Funktion bestimmen
 */
-	if	(func == NULL || func->eval == NULL)
+
+static EfiFunc *get_func (EfiVirFunc *vtab, EfiFuncArg *arg,
+	size_t narg, EfiArgKonv **ptr)
+{
+	EfiFunc *func;
+	StrBuf *sb;
+	char *delim;
+	int i;
+
+	func = SearchFunc(vtab, arg, narg, ptr);
+
+	if	(func && func->eval)	return func;
+
+	sb = sb_create(0);
+	sb_puts(((EfiFunc **) vtab->tab.data)[0]->name, sb);
+	sb_putc('(', sb);
+	delim = NULL;
+
+	for (i = 0; i < narg; i++)
 	{
-		StrBuf *sb;
-		char *delim;
+		sb_puts(delim, sb);
 
-		sb = new_strbuf(0);
-		sb_puts(ftab[0]->name, sb);
-		sb_putc('(', sb);
-		delim = NULL;
-
-		for (i = 0; i < argdim; i++)
+		if	(arg[i].type == &Type_undef)
 		{
-			sb_puts(delim, sb);
-
-			if	(arg[i].type == &Type_undef)
-			{
-				sb_puts(Type_undef.name, sb);
-				sb_putc(' ', sb);
-				sb_puts(Val_str(arg[i].defval->data), sb);
-			}
-			else	sb_puts(arg[i].type->name, sb);
-
-			delim = ", ";
+			sb_puts(Type_undef.name, sb);
+			sb_putc(' ', sb);
+			sb_puts(Val_str(arg[i].defval->data), sb);
 		}
+		else	sb_puts(arg[i].type->name, sb);
 
-		sb_putc(')', sb);
-		dbg_note(NULL, func ? "[efmain:91]" : "[efmain:92]",
-			"m", sb2str(sb));
-		clean_arg(arg, argdim);
-		return NULL;
+		delim = ", ";
 	}
 
-/*	Argumente konvertieren
+	sb_putc(')', sb);
+	dbg_note(NULL, func ? "[efmain:91]" : "[efmain:92]", "m", sb2str(sb));
+	clean_arg(arg, narg);
+	return NULL;
+}
+
+/*	Funktion auswerten
 */
-	if	(fkonv != NULL)
+
+static EfiObj *eval_func (EfiFunc *func, EfiArgKonv *fkonv,
+	EfiFuncArg *arg, size_t narg)
+{
+	size_t fargdim;
+	EfiObj *obj;
+	int i;
+
+	if	(fkonv)
 	{
-		for (i = 0; i < argdim; i++)
+		for (i = 0; i < narg; i++)
 		{
 			if	(fkonv[i].func || fkonv[i].type)
 			{
@@ -154,99 +187,125 @@ EfiObj *EvalVirFunc(EfiVirFunc *vtab, const EfiObjList *list)
 
 /*	Bei variablen Argumenten Liste generieren
 */
-	if	(func->vaarg && (argdim != func->dim ||
+	if	(func->vaarg && (narg != func->dim ||
 		arg[fargdim].defval->type != &Type_list))
 	{
 		EfiObjList *vlist, *x;
 
 		vlist = NULL;
 
-		while (argdim > fargdim)
+		while (narg > fargdim)
 		{
-			argdim--;
-			x = NewObjList(arg[argdim].defval);
+			narg--;
+			x = NewObjList(arg[narg].defval);
 			x->next = vlist;
 			vlist = x;
 		}
 
-		set_arg(func, arg, argdim, Obj_list(vlist));
-		argdim++;
+		set_arg(func, arg, narg, Obj_list(vlist));
+		narg++;
 	}
 
 /*	Vorgabewerte einsetzen
 */
-	while (argdim < fargdim)
+	while (narg < fargdim)
 	{
-		obj = EvalObj(RefObj(func->arg[argdim].defval),
-			func->arg[argdim].type);
+		obj = EvalObj(RefObj(func->arg[narg].defval),
+			func->arg[narg].type);
 
-		if	(set_arg(func, arg, argdim, obj))
-		{
-			argdim++;
-		}
-		else	return NULL;
+		if	(!set_arg(func, arg, narg, obj))
+			return NULL;
+
+		narg++;
 	}
 
 	FuncDebug(func, "eval");
 
 /*	Funktion ausführen
 */
-	if	(argdim)
+	if	(narg)
 	{
-		void **arglist = memalloc(argdim * sizeof(void *));
+		void **arglist = memalloc(narg * sizeof(void *));
 
-		for (i = 0; i < argdim; i++)
-		{
+		for (i = 0; i < narg; i++)
 			arglist[i] = func->arg[i].type ?
 				arg[i].defval->data : arg[i].defval;
-		}
 
 		obj = MakeRetVal(func, arg[0].defval, arglist);
 		memfree(arglist);
 
-		for (i = 0; i < argdim; i++)
-		{
-			if	(func->arg[i].lval)
-				SyncLval(arg[i].defval);
-		}
+		for (i = 0; i < narg; i++)
+			SyncLval(arg[i].defval);
 	}
 	else	obj = MakeRetVal(func, NULL, NULL);
 
-	clean_arg(arg, argdim);
+	clean_arg(arg, narg);
 	return obj;
 }
 
 
-/*	Argument initialisieren
-*/
-
-static int set_arg (EfiFunc *func, EfiFuncArg *arg, size_t narg, EfiObj *obj)
+EfiObj *EvalVirFunc (EfiVirFunc *vtab, const EfiObjList *list)
 {
-	if	(obj == NULL)
-	{
-		dbg_note(NULL, "[efmain:94]", "sd", func->name,
-			narg + 1 - func->bound);
-		clean_arg(arg, narg);
-		return 0;
-	}
+	EfiArgKonv *fkonv;
+	EfiFuncArg *arg;
+	EfiFunc *func;
+	size_t argdim;
+	size_t maxdim;
 
-	arg[narg].defval = obj;
-	arg[narg].type = obj->type;
-	arg[narg].lval = obj->lval ? 1 : 0;
-	arg[narg].nokonv = 1;
-	return 1;
+	if	(not_a_vfunc(vtab))
+		return NULL;
+
+	argdim = ObjListLen(list);
+	maxdim = get_maxdim(vtab, argdim);
+	arg = NULL;
+
+	if	(maxdim && !(arg = farg_list(vtab, list, maxdim)))
+		return NULL;
+
+	if	(!(func = get_func(vtab, arg, argdim, &fkonv)))
+		return NULL;
+
+	return eval_func(func, fkonv, arg, argdim);
 }
 
 
-/*	Argumentvektor Aufräumen
-*/
-
-static void clean_arg (EfiFuncArg *arg, size_t narg)
+int ShowData (IO *io, const EfiType *type, const void *data)
 {
-	int i;
+	EfiVirFunc *vtab;
+	EfiFunc *func;
+	EfiArgKonv *fkonv;
+	EfiFuncArg *arg;
+	size_t maxdim;
 
-	for (i = 0; i < narg; i++)
-		UnrefObj(arg[i].defval);
+	vtab = GetGlobalFunc("fprint");
 
-	memfree(arg);
+	if	(not_a_vfunc(vtab))
+		return ShowAny(io, type, data);
+
+	maxdim = get_maxdim(vtab, 2);
+	arg = memalloc(maxdim * sizeof(EfiFuncArg));
+	func = ((EfiFunc **) vtab->tab.data)[0];
+	set_arg(func, arg, 0, LvalObj(&Lval_ptr, &Type_io, &io));
+	set_arg(func, arg, 1, LvalObj(&Lval_ptr, (EfiType *) type, data));
+
+	if	((func = get_func(vtab, arg, 2, &fkonv)))
+		return Obj2int(eval_func(func, fkonv, arg, 2));
+
+	return ShowAny(io, type, data);
+}
+
+EfiObj *Expr_virfunc (void *par, const EfiObjList *list)
+{
+	return EvalVirFunc(par, list);
+}
+
+EfiObj *Expr_void (void *par, const EfiObjList *list)
+{
+	while (list != NULL)
+	{
+		UnrefEval(RefObj(list->obj));
+		list = list->next;
+	}
+
+	return NULL;
 }

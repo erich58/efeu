@@ -1,2 +1,0 @@
-XLIBS=	LIB_MD LIB_EFX LIB_EFM
-Destination(TSHDR,$(ESHLIB)/TimeSeries)

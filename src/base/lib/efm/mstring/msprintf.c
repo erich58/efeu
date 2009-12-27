@@ -41,7 +41,7 @@ char *mvsprintf(const char *fmt, va_list list)
 	StrBuf *sb;
 	IO *io;
 
-	sb = new_strbuf(0);
+	sb = sb_create(0);
 	io = io_strbuf(sb);
 	io_vprintf(io, fmt, list);
 	io_close(io);

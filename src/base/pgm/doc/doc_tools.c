@@ -35,7 +35,7 @@ char *Doc_lastcomment (Doc *doc)
 	{
 		char *p = mstrncpy((char *) doc->buf->data,
 			sb_getpos(doc->buf));
-		sb_clear(doc->buf);
+		sb_clean(doc->buf);
 		return p;
 	}
 	else	return NULL;

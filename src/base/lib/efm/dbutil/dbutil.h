@@ -61,6 +61,7 @@ int txt_isblank (const char *buf, int pos, int len);
 unsigned txt_unsigned (const char *buf, int pos, int len);
 unsigned txt_base37 (const char *buf, int pos, int len);
 char *txt_str (const char *buf, int pos, int len);
+char *txt_xstr (const char *buf, int pos, int len);
 char txt_char (const char *buf, int pos, int len);
 
 

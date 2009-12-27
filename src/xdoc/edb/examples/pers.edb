@@ -1,0 +1,12 @@
+EDB	1.0
+int num;
+str first_name;
+str family_name;
+int birth_year;
+enum { m = 1, f = 2 } gender;
+@data
+113; "John"; "Gray"; 1970; 1
+217; "Mary"; "Rose"; 1962; "f"
+218; "John"; "Rose"; 1959; "f"
+326; "Peter"; "Black"; 1962; "m"
+327; "Anna"; "Green"; 1977; 2

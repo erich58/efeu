@@ -1,0 +1,14 @@
+\preface
+Dieses Buch wendet sich an Programmentwickler und Anwender unter UNIX,
+die Erweiterungen an den Programmbibliotheken von EFEU durchführen.
+
+Für jedes größere Projekt gibt es Richtinien zur Gestaltung der
+Sourcefiles. Diese dienen zur Vereinheitlichung und leichteren
+Lesbarkeit der Sourcen. Dieses Handbuch legt die Richtlinien für die
+Programmierung mit EFEU fest.
+
+Die Richtlinien gelten generell für C-Sourcen, EFEU-Scripts und im
+beschränkten Umfang auch für Imakefiles.
+
+	Erich Frühstück\br
+	Wördern, \thedate

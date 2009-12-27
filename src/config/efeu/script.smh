@@ -1,0 +1,86 @@
+# :*:installation of command scripts
+# :de:Installation von Kommandoskripts
+#
+# $Synopsis
+# include $1
+#
+# $Copyright (C) 2004 Erich Frühstück
+# This file is part of EFEU.
+# 
+# EFEU is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+# 
+# EFEU is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public
+# License along with EFEU; see the file COPYING.
+# If not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+test $_script_smh && return
+_script_smh=1
+
+include dir.smh
+include srclist.smh
+
+# $pconfig !
+# u | g | e | r | c:arg | s:arg |
+#	:*:These flages are passed to |efeuscript|.
+#	See \mref{efeuscript(1)} for details.
+#	:de:Diese Flags werden an |efeuscript| weitergereicht.
+#	Vergleiche dazu \mref{efeuscript(1)}.
+# :tg |
+#	:*:is the name of the target file.
+#	:de:Ist der Name der Zieldatei
+# :src |
+#	:*:is the name of the source file.
+#	:de:Ist der Name der Quelldatei.
+# !
+# :*:
+# The function @! creates rules for installing scripts with |efeuscript|.
+# :de:
+# Die Funktion @! generiert Regeln zur Installation von Script-Dateien
+# mithilfe von |efeuscript|.
+
+mf_script ()
+{
+	_flg=""
+
+	while [ -n "$1" ]
+	do
+		case "$1" in
+		-[uger]) _flg="$_flg $1"; shift 1;;
+		-[cs])	_flg="$_flg $1 '$2'"; shift 2;;
+		-*)	shmkmf_invop mf_script "$1";;
+		*)	break;;
+		esac
+	done
+
+	mf_rule -a "$1" "$2" "efeuscript $_flg $2 \$@" 
+}
+
+# $Examples
+# \config shmkmf
+# :*:
+# The following lines
+# \shmkmf[-x] creates the output
+# include script.smh
+# mf_script -c sh '\$(BIN)/foo' foo.sh
+# \end
+# :de:
+# Die folgenden Zeilen
+# \shmkmf[-x] generieren die Ausgabe
+# include script.smh
+# mf_script -c sh '\$(BIN)/foo' foo.sh
+# \end
+
+# $SeeAlso
+# \mref{shmkmf(1)}, 
+# \mref{efeuscript(1)},
+# \mref{srclist.smh(7)},
+# \mref{foreach.smh(7)}.

@@ -86,14 +86,14 @@ static void psubfmt (StrBuf *buf, IO *in, const char *par)
 		break;
 	case 'i':
 	case 'd':
-		fmt_long(out, &key, par ? strtol(par, NULL, 10) : 0);
+		fmt_int64(out, &key, par ? strtol(par, NULL, 10) : 0);
 		break;
 	case 'b':
 	case 'o':
 	case 'u':
 	case 'x':
 	case 'X':
-		fmt_long(out, &key, par ? strtoul(par, NULL, 10) : 0);
+		fmt_uint64(out, &key, par ? strtoul(par, NULL, 10) : 0);
 		break;
 	case 'f':
 	case 'e':
@@ -178,7 +178,7 @@ int io_pcopy (IO *in, IO *out, int delim, int argc, char **argv)
 	{
 		if	(c == PSUBKEY)
 		{
-			if	(!buf)	buf = new_strbuf(1024);
+			if	(!buf)	buf = sb_create(1024);
 
 			arg = psubexpand(buf, in, argc, argv);
 
@@ -194,13 +194,13 @@ int io_pcopy (IO *in, IO *out, int delim, int argc, char **argv)
 		}
 	}
 
-	del_strbuf(buf);
+	sb_destroy(buf);
 	return n;
 }
 
 char *mpcopy (IO *in, int delim, int argc, char **argv)
 {
-	StrBuf *sb = new_strbuf(0);
+	StrBuf *sb = sb_create(0);
 	IO *out = io_strbuf(sb);
 	io_pcopy(in, out, delim, argc, argv);
 	io_close(out);
@@ -251,7 +251,7 @@ char *mpsubvec (const char *fmt, int argc, char **argv)
 {
 	if	(fmt)
 	{
-		StrBuf *sb = new_strbuf(0);
+		StrBuf *sb = sb_create(0);
 		IO *in = io_cstr(fmt);
 		IO *out = io_strbuf(sb);
 		io_pcopy(in, out, EOF, argc, argv);

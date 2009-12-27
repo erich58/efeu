@@ -25,6 +25,12 @@ If not, write to the Free Software Foundation, Inc.,
 
 void SetupTimeSeries (void)
 {
+	static int init_done = 0;
+
+	if	(init_done)	return;
+
+	init_done = 1;
+
 	CmdSetup_TimeIndex();
 	CmdSetup_TimeSeries();
 	CmdSetup_OLSCoeff();

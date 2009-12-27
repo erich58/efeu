@@ -22,14 +22,16 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 PrintListDelim = "\t";
-fmt_long = "%*li";
 fmt_float = "%*.*f";
+float_prec = 2;
 
 pconfig !
-Version = "$Id: mdprint.esh,v 1.9 2001-11-12 07:49:38 ef Exp $"
+Version = "$Id: mdprint.esh,v 1.17 2006-06-07 08:45:19 ef Exp $"
 Mark = "#-1"
 mode = "std"
 Locale = "en"
+PasteDelim = "_";
+Suffix = NULL;
 .LP = "|tex2ps - | lpr -h "
 .LPQ = "|tex2ps -q - | lpr -h "
 .PS = "|tex2ps -"
@@ -47,7 +49,7 @@ M:mode | mode
 -ascii | mode = ascii
 	:*:preparate as ascii file
 	:de:Aufbereitung als ASCII-Datei
--csv | mode = csv; Locale = NULL
+-csv | mode = csv; Suffix = "csv"; Locale = NULL
 	:*:preparation for excel
 	:de:Aufbereitung für excel
 -tex | mode = tex
@@ -126,22 +128,34 @@ e | :eval 'fmt_float="%*.*e"'
 x:list | Mark
 	:*:mark axis as column
 	:de:Achsenliste für Spalten
-s:list | SumList
+s:list | SumList: append " "
 	:*:accumulate list of axis
 	:de:Achsen aufsummieren
-r | Reduce = true
+r | Reduce = " "
 	:*:remove singulary axis
 	:de:Entfernen von singulären Achsen
+R:list | Reduce: append " "
+	:*:remove singulary axis from List <list>
+	:de:Entfernen von singulären Achsen aus der Liste <list>
 v:[name::]var | VarDef: append " "
 	:*:select type components
 	:de:Variablenselektion
 T:title | Title
 	:*:set title of output file
 	:de:Titel der Ausgabedatei setzen
+P:name\|=\|list | -paste:name\|=\|list | Paste: append " "
+	:*:paste list <list> of axis to new axis <name>
+	:de:Liste <list> von Achsen zu neuer Achse <name> zusammenfassen
+-paste-delim:key | PasteDelim
+	:*:delimiter for pasting axis, default: {PasteDelim}
+	:de:Begrenzer für das Verkleben von Achsen, Vorgabe {PasteDelim}
+S:list | -split:list | Split: append ","
+	:*:split datamatrix by axis <list>.
+	:de:Datenmatrix nach Achse(n) <list> aufspalten.
 :file | Input
 	:*:input file
 	:de:Name der Eingabedatei
-/.*=.*/name=var | SelDef: append " "
+/.*=.*/<name>=<var> | SelDef: append " "
 	:*:selection parameter
 	:de:Selektionsparameter
 ::out | Output
@@ -149,14 +163,31 @@ T:title | Title
 	:de:Name der Ausgabedatei
 !
 
-mdmat md = mdload(Input, SelDef, VarDef);
+mdmat md;
+
+if	(Paste)
+{
+	md = mdload(Input, NULL, VarDef);
+
+	for (x in split(Paste, " "))
+	{
+		str name = strcut(x, "=");
+		int n = dim(split(x, ","));
+		md.permut(x);
+		md = reload(md);
+		md.paste(name, 0, n, PasteDelim);
+	}
+	
+	md = reload(md, SelDef);
+}
+else	md = mdload(Input, SelDef, VarDef);
 
 if	(SumList)
 	md = sumaxis(md, strsub(SumList, ",", " ", true));
 
-if	(flagres("Reduce"))	md.reduce();
-if	(Title)			md.title = Title;
-if	(mode)			Flags = paste(" ", Flags, "mode=" + mode);
+if	(Reduce)	md.reduce(Reduce);
+if	(Title)		md.title = Title;
+if	(mode)		Flags = paste(" ", Flags, "mode=" + mode);
 
 if	(mode == "tex" ||  mode == "tab")
 {
@@ -166,6 +197,61 @@ if	(mode == "tex" ||  mode == "tab")
 
 setlocale(LC_PRINT, Locale ? Locale : Lang);
 
-md.mark(strsub(Mark, ",", " ", true));
-md.print(open(Output, "wz"), Flags);
+void subsplit (mdmat md, str pfx, str ext, ...)
+{
+	str name = va_list.pop();
+
+	if	(name == NULL)
+	{
+		md.mark(strsub(Mark, ",", " ", true));
+		md.print(open(paste(".", pfx, ext), "wz"), Flags);
+		return;
+	}
+
+	for (z in md.label(name))
+	{
+		mdmat x = reload(md, paste("=", name, z));
+		x.reduce();
+		subsplit(x, paste(PasteDelim, pfx, z), ext, va_list);
+		free(x);
+	}
+}
+
+if	(Split)
+{
+	str pfx, sfx;
+
+	pfx = basename(Output, sfx);
+
+	if	(sfx == "")
+	{
+		sfx = NULL;
+	}
+	else if	(sfx)
+	{
+		;
+	}
+	else if	(pfx == ".")
+	{
+		pfx = NULL;
+	}
+	else if	(pfx == /[.]$/)
+	{
+		pfx = substr(pfx, 0, strlen(pfx) - 1);
+	}
+	else if	(pfx == /^[.]./)
+	{
+		sfx = substr(pfx, 1);
+		pfx = NULL;
+	}
+	else	sfx = Suffix;
+
+	subsplit(md, paste("/", dirname(Output), pfx), sfx, split(Split, ","));
+}
+else
+{
+	md.mark(strsub(Mark, ",", " ", true));
+	md.print(open(Output, "wz"), Flags);
+}
+
 free(md);

@@ -1,1 +1,0 @@
-DocTarget(EFEUROOT/doc/de,make,$(SRCTOP),LANG=de efeudoc)

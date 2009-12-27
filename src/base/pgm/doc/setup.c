@@ -190,7 +190,7 @@ static void f_def (EfiFunc *func, void *rval, void **arg)
 {
 	Doc *doc = Val_ptr(arg[0]);
 	DocTab_def(doc->cmd_stack->data, Val_io(arg[1]), doc->buf);
-	sb_clear(doc->buf);
+	sb_clean(doc->buf);
 }
 
 static void f_include (EfiFunc *func, void *rval, void **arg)
@@ -433,11 +433,6 @@ static void f_xexpand (EfiFunc *func, void *rval, void **arg)
 
 static void f_eval (EfiFunc *func, void *rval, void **arg)
 {
-	/*
-	IO *io = io_cmdpreproc(io_refer(Val_io(arg[1])));
-	CmdEvalFunc(io, CmdEval_cout, 0);
-	io_close(io);
-	*/
 	Doc_eval(Val_ptr(arg[0]), CmdEval_cin, Val_ptr(arg[1]));
 }
 
@@ -564,7 +559,7 @@ static EfiFuncDef func_doc[] = {
 	{ 0, &Type_bool, "Doc::plaintex (str cmd = NULL)", f_plaintex },
 	{ 0, &Type_void, "Doc::plain (str arg = NULL)", f_plain },
 	{ 0, &Type_void, "Doc::comment (str comment)", f_comment },
-	{ 0, &Type_void, "Doc::label (int type, str name)", f_label },
+	{ 0, &Type_void, "Doc::label (char type, str name)", f_label },
 	{ 0, &Type_void, "Doc::url (str name, str label)", f_url },
 	{ 0, &Type_void, "Doc::index (str name, str label)", f_index },
 	{ 0, &Type_void, "Doc::newenv (char type, ...)", f_newenv },
@@ -616,6 +611,7 @@ void SetupDoc (void)
 	SetupUtil();
 	SetupPreproc();
 	SetupDataBase();
+	SetupEDB();
 	SetupTimeSeries();
 	SetupRandom();
 	SetupMdMat();

@@ -37,11 +37,15 @@ EfiObj *Parse_term(IO *io, int prior)
 	if	((io_eat(io, " \t")) == EOF)
 		return NULL;
 
+#if	0
 	if	((left = Parse_obj(io, SCAN_ANYTYPE)) == NULL)
-	{
 		if	((left = Parse_op(io, 0, NULL)) == NULL)
 			return NULL;
-	}
+#else
+	if	((left = Parse_op(io, 0, NULL)) == NULL)
+		if	((left = Parse_obj(io, SCAN_ANYTYPE)) == NULL)
+			return NULL;
+#endif
 
 	if	(left->type == &Type_type)
 	{

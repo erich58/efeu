@@ -171,9 +171,6 @@ Folgende Funktionen sind definiert:
 	Formatierungskommandos.
 [info <name>]
 	ruft spezifische Informationseinträge über das Kommando ab.
-[dump <name>]
-	ruft Informationseinträge über das Kommando für eine
-	Weiterverarbeitung mit \index{|eis|} ab.
 [exit <val>]
 	bricht das Kommando mit Exit-Status <val> ab. Wird
 	meist mit Informationsabfragen über das Kommando kombiniert.

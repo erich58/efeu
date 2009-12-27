@@ -38,6 +38,7 @@ EfiType Type_Random = REF_TYPE("Random", Random *);
 #define	STR(n)	Val_str(arg[n])
 #define	DBL(n)	Val_double(arg[n])
 
+CEXPR(f_null, Val_Random(rval) = NULL)
 CEXPR(f_newrand, Val_Random(rval) = NewRandom(GetRandomType(STR(1)), INT(0)))
 CEXPR(f_int2rand, Val_Random(rval) = NewRandom(NULL, INT(0)))
 CEXPR(f_str2rand, Val_Random(rval) = str2Random(STR(0)))
@@ -53,7 +54,15 @@ CEXPR(f_prand, Val_int(rval) = PoissonRandom(RAND(0), DBL(1)))
 CEXPR(f_rdround, Val_int(rval) = RandomRound(RAND(0), DBL(1)))
 CEXPR(f_rindex, Val_int(rval) = RandomIndex(RAND(0), Val_uint(arg[1])))
 
+static void f_choice (EfiFunc *func, void *rval, void **arg)
+{
+	EfiVec *vec = Val_ptr(arg[1]);
+	Val_int(rval) = RandomChoice(RAND(0), vec->buf.data, vec->buf.used,
+		vec->buf.elsize, Val_uint(arg[2]));
+}
+
 static EfiFuncDef fdef[] = {
+	{ FUNC_RESTRICTED, &Type_Random, "_Ptr_ ()", f_null },
 	{ 0, &Type_Random, "Random (str rdef)", f_str2rand },
 	{ 0, &Type_Random, "Random (str type, int seed)", f_newrand },
 	{ 0, &Type_Random, "Random (int seed)", f_int2rand },
@@ -67,6 +76,7 @@ static EfiFuncDef fdef[] = {
 	{ 0, &Type_int, "Random::poisson (double mw)", f_prand },
 	{ 0, &Type_int, "Random::round (double x)", f_rdround },
 	{ 0, &Type_int, "Random::index (unsigned x)", f_rindex },
+	{ 0, &Type_int, "Random::choice (EfiVec vec, unsigned lim)", f_choice },
 
 	{ 0, &Type_int, "rand (Random rand = NULL)", f_rand },
 	{ 0, &Type_void, "srand (int val = 1, Random rand = NULL)", f_srand },
@@ -88,6 +98,8 @@ void SetupRandom()
 	static int setup_done = 0;
 
 	if	(setup_done)	return;
+
+	setup_done = 1;
 
 	GetRandomType(NULL);
 	AddType(&Type_Random);

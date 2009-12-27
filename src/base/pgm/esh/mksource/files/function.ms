@@ -24,37 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 #ifndef	function_ms
 #define	function_ms	1
 
-/*
-Der Datentyp |$1| dient zur Generierung einer C-Funktion.
-Einige Komponenten beginnen mit |_| um Namenskonflikte bei
-der Parametersubstitution zu vermeiden.
-Alle Komponentenfunktionen mit Parametersubstitution sind inline,
-damit auf lokale Variablen zugegriffen werden kann.
-*/
-
-struct Function {
-	str _name;
-	str _arg;
-	int depth;
-	bool need_par;
-	bool allow_par;
-	DataBase lines;
-};
-
-/*
-Der Konverter auf |bool| testet, ob die Struktur eine
-Funktionsdefinition enthält.
-*/
-
-restricted bool Function ()
-	return (bool) _name
-
-/*
-Der Konverter auf |str| liefert den Prototype der Funktion.
-*/
-
-str Function ()	
-	return _name ? sprintf("%s(%s)", _name, _arg ? _arg : "void") : NULL;
+#include <macro.ms>
 
 /*
 Der Datentyp |$1| definert eine Zeile in der konstruierten Funktion.
@@ -80,6 +50,41 @@ void FunctionLine::write ()
 }
 
 /*
+Der Datentyp |$1| dient zur Generierung einer C-Funktion.
+Einige Komponentennamen beginnen mit |_| um Namenskonflikte bei
+der Parametersubstitution zu vermeiden.
+Alle Komponentenfunktionen mit Parametersubstitution sind inline,
+damit auf lokale Variablen zugegriffen werden kann.
+*/
+
+struct Function {
+	str _name;
+	str _arg;
+	int depth;
+	bool need_par;
+	bool allow_par;
+	int _nb;
+	int _nh;
+	FunctionLine[] _body;
+	FunctionLine[] _head;
+};
+
+/*
+Der Konverter auf |bool| testet, ob die Struktur eine
+Funktionsdefinition enthält.
+*/
+
+restricted bool Function ()
+	return (bool) _name
+
+/*
+Der Konverter auf |str| liefert den Prototype der Funktion.
+*/
+
+str Function ()	
+	return _name ? sprintf("%s(%s)", _name, _arg ? _arg : "void") : NULL;
+
+/*
 Beim Konstruktor |$1| gibt die Variable <_name> den Datentyp und Namen der
 Funktion an. Das Argument <_args> bestimmt die Argumentliste der Funktion.
 Auf <_name> und <_args> wird eine Parametersubstitution angewendet.
@@ -88,13 +93,13 @@ die bei der Parametersubstitution zur Verfügung stehen.
 */
 
 Function Function (str _name)
-	return { psub(_name), NULL, 1, false, false, DataBase(FunctionLine) };
+	return { psub(_name), NULL, 1, false, false };
 
 inline Function Function (str _name, str _args, ...)
 {
 	_name = psub(_name, va_list);
 	_args = psub(_args, va_list);
-	return { _name, _args, 1, false, false, DataBase(FunctionLine) };
+	return { _name, _args, 1, false, false };
 }
 
 /*
@@ -108,20 +113,33 @@ void Function::write (bool global = false)
 {
 	if	(!_name)	return;
 
-	str fname = sprintf("%s (%s)", _name, _arg ? _arg : "void");
+	str proto = sprintf("%s (%s)", _name, _arg ? _arg : "void");
 
 	if	(global)
 	{
-		hdr << "extern " << fname << ";\n";
+		hdr << "extern " << proto << ";\n";
 	}
-	else	fname = "static " + fname;
+	else
+	{
+		proto = "static " + proto;
+		top << proto << ";\n";
+	}
 
 	src << "\n";
-	src << fname;
+	src << proto;
 	src << "\n{\n";
 
-	for (x in lines)
+	for (x in _head)
 		x.write();
+
+	if	(dim(_head))
+		src << "\n";
+
+	for (x in _body)
+		x.write();
+
+	if	(!dim(_head) && !dim(_body))
+		src << ";";
 
 	src << "}\n\n";
 }
@@ -139,7 +157,7 @@ void Function::startline & (void)
 {
 	if	(need_par)
 	{
-		lines += { 0, NULL };
+		_body[_nb++] += { 0, NULL };
 		need_par = false;
 	}
 
@@ -173,7 +191,7 @@ void Function::add_line & (int dp, str cmd)
 	if	(strlen(cmd))
 	{
 		startline();
-		lines += { dp, cmd };
+		_body[_nb++] = { dp, cmd };
 	}
 	else	newpar();
 }
@@ -218,8 +236,8 @@ void Function::ppline & (str _fmt = NULL, ...)
 inline void Function::comment & (str _fmt = NULL, ...)
 {
 	startline();
-	lines += { 0, "/*\t" + psub(_fmt, va_list) };
-	lines += { 0, "*/" };
+	_body[_nb++] += { 0, "/*\t" + psub(_fmt, va_list) };
+	_body[_nb++] += { 0, "*/" };
 	newpar();
 }
 
@@ -232,6 +250,19 @@ inline void Function::comment & (str _fmt = NULL, ...)
 inline void Function::body & (str _fmt = NULL, ...)
 	for (x in split(psub(_fmt, va_list), "\n"))
 		add_line(depth, x);
+
+/*
+\shead	Kopfdeklarationen
+
+Grundsätzlich können Deklarationen zu Beginn einer Funktion
+wie gewöhnliche Zeilen definiert werden. Die Funktion |$1| erlaubt
+aber, Kopfdeklarationen im laufenden Text zu ergänzen. Alle mit
+|$1| eingetragenen Datenzeilen werden vor allen anderen Datenzeilen
+ausgegeben.
+*/
+
+void Function::head & (str _fmt = NULL, ...)
+	_head[_nh++] = { 1, psub(_fmt, va_list) };
 
 /*
 \shead	Blockstrukturen
@@ -249,7 +280,7 @@ von Blöcken. Die Einrücktiefe wird automatisch adjustiert.
 */
 
 void Function::beg & (str _fmt = NULL)
-	startline(), lines += { depth++, psub(_fmt) + "{" }, ignorepar();
+	startline(), _body[_nb++] = { depth++, psub(_fmt) + "{" }, ignorepar();
 
 /*
 \ttitem	$1
@@ -258,7 +289,7 @@ void Function::beg & (str _fmt = NULL)
 */
 
 void Function::end & (str _fmt = NULL)
-	lines += { --depth, "}" + psub(_fmt) }, newpar();
+	_body[_nb++] += { --depth, "}" + psub(_fmt) }, newpar();
 
 /*
 \ttitem	$1
@@ -270,14 +301,14 @@ void Function::block & (str head, str body, ...)
 	startline();
 
 	if	(head)
-		lines += { depth, psub(head, va_list) };
+		_body[_nb++] += { depth, psub(head, va_list) };
 
-	lines += { depth++, "{" };
+	_body[_nb++] += { depth++, "{" };
 
 	for (x in split(psub(body), "\n"))
-		lines += { depth, x };
+		_body[_nb++] += { depth, x };
 
-	lines += { --depth, "}" };
+	_body[_nb++] += { --depth, "}" };
 	newpar();
 }
 
@@ -313,7 +344,7 @@ inline void Function::case & (str _key, str _cmd = NULL, ...)
 inline void Function::cblock & (str _key, str _cmd, ...)
 {
 	_cmd = psub(_cmd, va_list);
-	_key = _key ? "case " + psub(_key) : "default";
+	_key = _key ? "case " + psub(_key, va_list) : "default";
 
 	add_line(depth - 1, _key + ":");
 
@@ -354,7 +385,7 @@ config src
 #include <macro.ms>
 #include <function.ms>
 
-StdInclude(src, "stdio");
+StdInclude(hdr, "stdio");
 
 GlobalFunction("int main", "int argc, char **argv", string !
 printf("Hello World!\n");
@@ -367,7 +398,10 @@ mit einzelnen Funktionsaufrufen.
 
 \ms_example switch
 config hdr src 
+#include <macro.ms>
 #include <function.ms>
+
+Include(src, HeaderName);
 
 Function f = Function("int test", "int key, int mode");
 f.switch("key");
@@ -383,7 +417,7 @@ f.write(true);
 \end
 
 $SeeAlso
-\mref{mksource(1)}, \mref{printfunc(7)}.
+\mref{mksource(1)}, \mref{macro(7)}, \mref{printfunc(7)}.
 */
 
 #endif	/* function.ms */

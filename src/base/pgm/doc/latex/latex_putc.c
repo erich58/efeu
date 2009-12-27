@@ -24,6 +24,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <efeudoc.h>
 #include <ctype.h>
 
+#define	USE_TEXTCOMP	0
+
 int LaTeX_indexmode = 0;
 
 static void stex_filter (int c, IO *io)
@@ -62,6 +64,7 @@ static void stex_filter (int c, IO *io)
 		io_putc(c, io);
 		break;
 
+#if	USE_TEXTCOMP
 	case 0xa1:	io_puts("!", io); break;
 	case 0xa7:	io_puts("{\\textsection}", io); break;
 	case 0xa9:	io_puts("{\\textcopyright}", io); break;
@@ -83,6 +86,7 @@ static void stex_filter (int c, IO *io)
 	case 0xf0:	io_putc('d', io); break;
 	case 0xf7:	io_puts("{\\textdiv}", io); break;
 	case 0xfe:	io_puts("t", io); break;
+#endif
 
 	default:
 

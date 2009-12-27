@@ -32,12 +32,12 @@ static void name (EfiFunc *func, void *rval, void **arg) \
 /*	Ausdrücke auswerten
 */
 
-static void f_str2expr(EfiFunc *func, void *rval, void **arg)
+static void f_str2expr (EfiFunc *func, void *rval, void **arg)
 {
 	IO *io;
 
 	io = io_cstr(Val_str(arg[0]));
-	Val_obj(rval) = Parse_cmd(io);
+	Val_obj(rval) = Parse_block(io, EOF);
 	io_close(io);
 }
 
@@ -55,28 +55,8 @@ static void f_xeval2 (EfiFunc *func, void *rval, void **arg)
 */
 
 CEXPR(l_dim, Val_int(rval) = ObjListLen(Val_list(arg[0])))
-CEXPR(v_dim, Val_int(rval) = ((EfiVec *) arg[0])[0].dim)
 CEXPR(c_dim, Val_int(rval) = 1)
 
-CEXPR(v_index, Val_obj(rval) = Vector(arg[0], Val_int(arg[1])))
-
-static void v_list(EfiFunc *func, void *rval, void **arg)
-{
-	EfiObjList *base, *list, **ptr;
-
-	base = Val_list(arg[1]);
-	list = NULL;
-	ptr = &list;
-
-	while (base != NULL)
-	{
-		*ptr = NewObjList(Vector(arg[0], Obj2int(RefObj(base->obj))));
-		ptr = &(*ptr)->next;
-		base = base->next;
-	}
-
-	Val_list(rval) = list;
-}
 
 /*	Zuweisungsoperatoren für allgemeine Objekte
 */
@@ -111,6 +91,11 @@ static int do_cmp(int *val, void **arg)
 
 	*val = 0;
 	return 0;
+}
+
+static void any_not (EfiFunc *func, void *rval, void **arg)
+{
+	Val_bool(rval) = ! Obj2bool(RefObj(arg[0]));
 }
 
 CMPFUNC(any_lt,<,do_cmp)
@@ -157,47 +142,6 @@ static void f_post_dec(EfiFunc *func, void *rval, void **arg)
 	Val_obj(rval) = copy;
 }
 
-
-/*	Zuweisungsoperator für Vektoren
-*/
-
-static void v_assign(EfiFunc *func, void *rval, void **arg)
-{
-	EfiVec *vec;
-	EfiObjList *list;
-	int i;
-
-	vec = arg[0];
-	list = Val_ptr(arg[1]);
-
-	for (i = 0; i < vec->dim && list; i++, list = list->next)
-		UnrefEval(AssignObj(Vector(vec, i),
-			EvalObj(RefObj(list->obj), NULL)));
-
-	if	(list != NULL)
-		dbg_note(NULL, "[efmain:138]", NULL);
-
-	CopyData(&Type_vec, rval, arg[0]);
-}
-
-static void v_xassign(EfiFunc *func, void *rval, void **arg)
-{
-	EfiVec *vec;
-	EfiObjList *list;
-	int i;
-
-	vec = arg[0];
-	list = Val_ptr(arg[1]);
-
-	for (i = 0; i < vec->dim && list; i++, list = list->next)
-		UnrefEval(AssignTerm(func->name, Vector(vec, i),
-			EvalObj(RefObj(list->obj), NULL)));
-
-	if	(list != NULL)
-		dbg_note(NULL, "[efmain:138]", NULL);
-
-	CopyData(&Type_vec, rval, arg[0]);
-}
 
 /*	Verknüpfung von Listen
 */
@@ -406,22 +350,158 @@ static void f_ldata (EfiFunc *func, void *rval, void **arg)
 	Val_obj(rval) = RefObj(list ? list->obj : arg[1]);
 }
 
+/*	sorting and seraching
+*/
+
+static EfiVirFunc *list_qsort_func = NULL;
+
+static int list_qsort_cmp (const void *ap, const void *bp)
+{
+	EfiObj * const *a = ap;
+	EfiObj * const *b = bp;
+	EfiObjList list[2];
+
+	list[0].obj = *a;
+	list[0].next = list + 1;
+	list[1].obj = *b;
+	list[1].next = NULL;
+
+	return Obj2int(EvalVirFunc(list_qsort_func, list));
+}
+
+static void list_qsort (EfiFunc *func, void *rval, void **arg)
+{
+	EfiObjList *list, *p;
+	EfiObj **tab;
+	EfiVirFunc *save;
+	size_t n;
+	
+	list = Val_ptr(arg[0]);
+	n = ObjListLen(list);
+
+	if	(n < 1)	return;
+
+	if	(!Val_vfunc(arg[1]))
+	{
+		dbg_note(NULL, "[efmain:nocmp]", NULL);
+		return;
+	}
+
+	save = list_qsort_func;
+	list_qsort_func = Val_vfunc(arg[1]);
+
+	tab = lmalloc(n * sizeof *tab);
+
+	for (n = 0, p = list; p != NULL; p = p->next)
+		tab[n++] = p->obj;
+
+	qsort(tab, n, sizeof tab[0], list_qsort_cmp);
+
+	for (n = 0, p = list; p != NULL; p = p->next)
+		p->obj = tab[n++];
+
+	lfree(tab);
+	list_qsort_func = save;
+}
+
+static void list_uniq (EfiFunc *func, void *rval, void **arg)
+{
+	EfiObjList *list, *p;
+	EfiObj **tab;
+	EfiVirFunc *save;
+	size_t n, k;
+	
+	list = Val_ptr(arg[0]);
+
+	for (n = 0, p = list; p != NULL; p = p->next)
+		n++;
+
+	if	(n < 2)	return;
+
+	if	(!Val_vfunc(arg[1]))
+	{
+		dbg_note(NULL, "[efmain:nocmp]", NULL);
+		return;
+	}
+
+	tab = lmalloc(n * sizeof *tab);
+
+	for (n = 0, p = list; p != NULL; p = p->next)
+		tab[n++] = p->obj;
+
+	save = list_qsort_func;
+	list_qsort_func = Val_vfunc(arg[1]);
+	k = vuniq(tab, n, sizeof tab[0], list_qsort_cmp);
+	list_qsort_func = save;
+	
+	for (n = 0, p = list; p != NULL; p = p->next)
+		p->obj = tab[n++];
+
+	lfree(tab);
+
+	if	(k < n)
+	{
+		p = list;
+
+		for (n = 1; n < k; n++)
+			p = p->next;
+
+		DelObjList(p->next);
+		p->next = NULL;
+	}
+}
+
+static void list_bsearch (EfiFunc *func, void *rval, void **arg)
+{
+	EfiObjList *list, *p;
+	EfiObj *obj, **tab, **ptr;
+	EfiVirFunc *save;
+	size_t n;
+	
+	list = Val_ptr(arg[0]);
+	obj = arg[1];
+	n = ObjListLen(list);
+	Val_obj(rval) = NULL;
+
+	if	(n < 2)	return;
+
+	if	(!Val_vfunc(arg[2]))
+	{
+		dbg_note(NULL, "[efmain:nocmp]", NULL);
+		return;
+	}
+
+	save = list_qsort_func;
+	list_qsort_func = Val_vfunc(arg[2]);
+
+	tab = lmalloc(n * sizeof *tab);
+
+	for (n = 0, p = list; p != NULL; p = p->next)
+		tab[n++] = p->obj;
+
+	if	((ptr = bsearch(&obj, tab, n, sizeof tab[0], list_qsort_cmp)))
+		Val_obj(rval) = RefObj(*ptr);
+	else	Val_obj(rval) = ptr2Obj(NULL);
+
+	lfree(tab);
+	list_qsort_func = save;
+}
+
 static EfiFuncDef fdef_obj[] = {
 	{ FUNC_RESTRICTED, &Type_expr, "str ()", f_str2expr },
 	{ FUNC_RESTRICTED, &Type_vfunc, "str ()", f_str2virfunc },
 	{ FUNC_VIRTUAL, &Type_obj, "eval (Expr_t)", f_xeval },
 	{ FUNC_VIRTUAL, &Type_obj, "eval (Expr_t, VarTab)", f_xeval2 },
-	{ FUNC_VIRTUAL, &Type_obj, "operator[] (EfiVec, int)", v_index },
-	{ FUNC_VIRTUAL, &Type_list, "operator[] (EfiVec, List_t)", v_list },
 
 	{ FUNC_VIRTUAL, &Type_int, "dim (List_t)", l_dim },
-	{ FUNC_VIRTUAL, &Type_int, "dim (EfiVec)", v_dim },
 	{ FUNC_VIRTUAL, &Type_int, "dim (.)", c_dim },
 
 	{ 0, &Type_obj, "Object::operator++ & ()", f_pre_inc },
 	{ 0, &Type_obj, "Object::operator-- & ()", f_pre_dec },
 	{ FUNC_VIRTUAL, &Type_obj, "operator++ (. &)", f_post_inc },
 	{ FUNC_VIRTUAL, &Type_obj, "operator-- (. &)", f_post_dec },
+
+	{ FUNC_VIRTUAL, &Type_bool, "operator!() (.)", any_not },
 
 	{ FUNC_VIRTUAL, &Type_bool, "operator< (., . )", any_lt },
 	{ FUNC_VIRTUAL, &Type_bool, "operator<= (., . )", any_le },
@@ -442,32 +522,31 @@ static EfiFuncDef fdef_obj[] = {
 	{ 0, &Type_obj, "Object::operator^= & (.)", assign_op },
 	{ 0, &Type_obj, "Object::operator|= & (.)", assign_op },
 
-	{ 0, &Type_vec, "EfiVec::operator= (List_t)", v_assign },
-	{ 0, &Type_vec, "EfiVec::operator:= (List_t)", v_assign },
-	{ 0, &Type_vec, "EfiVec::operator*= (List_t)", v_xassign },
-	{ 0, &Type_vec, "EfiVec::operator/= (List_t)", v_xassign },
-	{ 0, &Type_vec, "EfiVec::operator%= (List_t)", v_xassign },
-	{ 0, &Type_vec, "EfiVec::operator+= (List_t)", v_xassign },
-	{ 0, &Type_vec, "EfiVec::operator-= (List_t)", v_xassign },
-	{ 0, &Type_vec, "EfiVec::operator<<= (List_t)", v_xassign },
-	{ 0, &Type_vec, "EfiVec::operator>>= (List_t)", v_xassign },
-	{ 0, &Type_vec, "EfiVec::operator&= (List_t)", v_xassign },
-	{ 0, &Type_vec, "EfiVec::operator^= (List_t)", v_xassign },
-	{ 0, &Type_vec, "EfiVec::operator|= (List_t)", v_xassign },
+	{ FUNC_VIRTUAL|FUNC_PROMOTION, &Type_list,
+		"operator+ (List_t, List_t)", list_binary },
+	{ FUNC_VIRTUAL|FUNC_PROMOTION, &Type_list,
+		"operator- (List_t, List_t)", list_binary },
+	{ FUNC_VIRTUAL|FUNC_PROMOTION, &Type_list,
+		"operator* (List_t, List_t)", list_binary },
+	{ FUNC_VIRTUAL|FUNC_PROMOTION, &Type_list,
+		"operator/ (List_t, List_t)", list_binary },
+	{ FUNC_VIRTUAL|FUNC_PROMOTION, &Type_list,
+		"operator% (List_t, List_t)", list_binary },
 
-	{ FUNC_VIRTUAL, &Type_list, "operator+ (List_t, List_t)", list_binary },
-	{ FUNC_VIRTUAL, &Type_list, "operator- (List_t, List_t)", list_binary },
-	{ FUNC_VIRTUAL, &Type_list, "operator* (List_t, List_t)", list_binary },
-	{ FUNC_VIRTUAL, &Type_list, "operator/ (List_t, List_t)", list_binary },
-	{ FUNC_VIRTUAL, &Type_list, "operator% (List_t, List_t)", list_binary },
-
-	{ FUNC_VIRTUAL, &Type_int, "cmp (List_t, List_t)", list_cmp },
-	{ FUNC_VIRTUAL, &Type_bool, "operator< (List_t, List_t)", list_lt },
-	{ FUNC_VIRTUAL, &Type_bool, "operator<= (List_t, List_t)", list_le },
-	{ FUNC_VIRTUAL, &Type_bool, "operator== (List_t, List_t)", list_eq },
-	{ FUNC_VIRTUAL, &Type_bool, "operator!= (List_t, List_t)", list_ne },
-	{ FUNC_VIRTUAL, &Type_bool, "operator> (List_t, List_t)", list_gt },
-	{ FUNC_VIRTUAL, &Type_bool, "operator>= (List_t, List_t)", list_ge },
+	{ FUNC_VIRTUAL|FUNC_PROMOTION, &Type_int,
+		"cmp (List_t, List_t)", list_cmp },
+	{ FUNC_VIRTUAL|FUNC_PROMOTION, &Type_bool,
+		"operator< (List_t, List_t)", list_lt },
+	{ FUNC_VIRTUAL|FUNC_PROMOTION, &Type_bool,
+		"operator<= (List_t, List_t)", list_le },
+	{ FUNC_VIRTUAL|FUNC_PROMOTION, &Type_bool,
+		"operator== (List_t, List_t)", list_eq },
+	{ FUNC_VIRTUAL|FUNC_PROMOTION, &Type_bool,
+		"operator!= (List_t, List_t)", list_ne },
+	{ FUNC_VIRTUAL|FUNC_PROMOTION, &Type_bool,
+		"operator> (List_t, List_t)", list_gt },
+	{ FUNC_VIRTUAL|FUNC_PROMOTION, &Type_bool,
+		"operator>= (List_t, List_t)", list_ge },
 
 	{ 0, &Type_list, "List_t::operator= (List_t)", list_assign },
 	{ 0, &Type_list, "List_t::operator+= (List_t)", list_xassign },
@@ -478,6 +557,15 @@ static EfiFuncDef fdef_obj[] = {
 	{ 0, &Type_void, "List_t::top (...)", f_toplist },
 	{ 0, &Type_obj, "List_t::pop (. def = NULL)", f_poplist },
 	{ 0, &Type_obj, "List_t::data (. def = NULL)", f_ldata },
+	{ FUNC_VIRTUAL, &Type_void, "qsort (List_t list, VirFunc f)",
+		list_qsort },
+	{ 0, &Type_void, "List_t::qsort (VirFunc f)", list_qsort },
+	{ FUNC_VIRTUAL, &Type_void, "uniq (List_t list, VirFunc f)",
+		list_uniq },
+	{ 0, &Type_void, "List_t::uniq (VirFunc f)", list_uniq },
+	{ FUNC_VIRTUAL, &Type_obj, "bsearch (List_t list, . key, VirFunc f)",
+		list_bsearch },
+	{ 0, &Type_obj, "List_t::bsearch (. key, VirFunc f)", list_bsearch },
 };
 
 

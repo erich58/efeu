@@ -18,9 +18,8 @@ So I wrote my own version of the game.
 
 EFEU Letters and Numbers honores the LANG environment.
 Currently it comes with German and English. Support to other
-languages is quite easy. Have a look at the Imakefile's in the
-subdirectories |de| and |en| and create your own for your favorite
-language.
+languages is quite easy. Have a look at the files |de.rules| and
+|en.rules| and create your own rule file for your favorite language.
 
 In the script, messages and labels are coded with keys like
  :*:Letters and Numbers
@@ -30,3 +29,7 @@ Just search for :de: in the script and add your translation.
 
 Most of the pictures are taken from Kirk Ismay's Linux Letters and Numbers.
 I added some pictures to saturate all letters in the german environment.
+
+There are no audio files added in this distribution.
+Audio files are searched in $(DATA)/Lang with extension |.au|
+and must have the same basename as the corresponding image file.

@@ -3,6 +3,7 @@
 */
 
 #include <EFEU/mdmat.h>
+#include <EFEU/preproc.h>
 
 static unsigned get_2byte(IO *io)
 {
@@ -32,6 +33,7 @@ mdmat *md_gethdr(IO *io)
 	size_t j;
 	char *p;
 	char *oname;
+	size_t magic;
 	size_t n;
 	size_t dim;
 	size_t space;
@@ -39,29 +41,24 @@ mdmat *md_gethdr(IO *io)
 
 /*	Header laden
 */
-	n = get_2byte(io);
-
-	if	(n == MD_OLDMAGIC)
+	switch ((magic = get_2byte(io)))
 	{
-		unsigned short k;
-
+	case MD_MAGIC0:
 		io_error(io, "[mdmat:10]", NULL);
 		exit(EXIT_FAILURE);
-		get_LSBF(io, &k, 2);
-		dim = k;
-		get_LSBF(io, &space, 4);
-		get_LSBF(io, &recl, 4);
-		(void) get_4byte(io);
-	}
-	else if	(n == MD_MAGIC)
-	{
+		break;
+	case MD_MAGIC1:
 		dim = get_2byte(io);
 		space = get_4byte(io);
 		recl = get_4byte(io);
 		(void) get_4byte(io);
-	}
-	else
-	{
+		break;
+	case MD_MAGIC2:
+		dim = get_2byte(io);
+		space = get_4byte(io);
+		recl = get_4byte(io);
+		break;
+	default:
 		io_error(io, "[mdmat:11]", NULL);
 		return NULL;
 	}
@@ -89,22 +86,23 @@ mdmat *md_gethdr(IO *io)
 	io_read(io, strbuf, (size_t) space);
 	p = strbuf;
 	md->title = mstrcpy(nextstr(&p));
+
+	if	(magic == MD_MAGIC2)
+	{
+		IO *cin = io_cmdpreproc(io_cstr(nextstr(&p)));
+		CmdEval(cin, NULL);
+		io_close(cin);
+	}
+
 	oname = nextstr(&p);
 	md->type = mdtype(oname);
 
-/*	Kompatiblitätsprüfung und Korrektur des Ganzzahldatentypes
+/*	Kompatiblitätsprüfung
 */
 	if	(md->type->recl != recl)
 	{
-		if	(md->type == &Type_long && recl == Type_int.recl)
-		{
-			md->type = &Type_int;
-		}
-		else
-		{
-			dbg_error(NULL, "[mdmat:14]", "s", oname);
-			return NULL;
-		}
+		dbg_error(NULL, "[mdmat:14]", "s", oname);
+		return NULL;
 	}
 
 /*	Achsen initialisieren

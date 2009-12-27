@@ -23,43 +23,69 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/mdmat.h>
 #include <EFEU/mdcount.h>
 
-static void subadd (mdaxis *x, char *ptr, MdCntObj *cnt);
-
+void (*md_count_hook) (MdCountList *clist, mdmat *md) = NULL;
 
 void md_count (mdmat *ctab, const void *data)
 {
 	register MdCntGrp *s;
 	register mdaxis *x;
-	MdCntObj *cnt;
+	MdCount *cnt;
+	MdCountList *list;
+	int flag;
+
+	if	(!ctab)	return;
+
+	if	(!ctab->x_priv)
+	{
+		dbg_note("md", "[mdmat:303]", NULL);
+		return;
+	}
 
 /*	Zähler setzen
 */
-	cnt = ctab->priv;
+	flag = 0;
 
-	if	(cnt->set && cnt->set(data) == 0)
-		return;
+	for (list = ctab->x_priv; list != NULL; list = list->next)
+	{
+		list->flag = (!list->cnt->set ||
+			list->cnt->set(list->cnt, list->data, data));
+		flag |= list->flag;
+	}
+
+	if	(!flag)	return;
 
 /*	Selektionsindizes setzen
 */
 	for (x = ctab->axis; x && x->priv; x = x->next)
 	{
+		flag = 0;
+
 		for (s = x->priv; s != NULL; s = s->next)
 		{
 			s->idx = MdClassify(s->cdef, data);
 			s->flag = (s->idx >= 0 && s->idx < s->cdef->dim);
+			flag |= s->flag;
 		}
+
+		if	(!flag)	return;
 	}
 
 /*	Addition durchführen
 */
-	subadd(ctab->axis, (char *) ctab->data, cnt);
+	list = ctab->x_priv;
+	cnt = list->cnt;
+
+	if	(md_count_hook)
+		md_count_hook(list, ctab);
+	else
+		md_count_add(list, ctab->axis, ctab->data);
 }
 
 
 /*	Additionshilfsprogramm
 */
 
-static void subadd (mdaxis *x, char *ptr, MdCntObj *cnt)
+void md_count_add (MdCountList *cl, mdaxis *x, char *ptr)
 {
 	if	(x && x->priv)
 	{
@@ -68,12 +94,19 @@ static void subadd (mdaxis *x, char *ptr, MdCntObj *cnt)
 		for (s = x->priv; s != NULL; s = s->next)
 		{
 			if	(s->flag)
-			{
-				subadd(x->next, ptr + s->idx * x->size, cnt);
-			}
+				md_count_add(cl, x->next,
+					ptr + s->idx * x->size);
 	
 			ptr += s->cdef->dim * x->size;
 		}
 	}
-	else	cnt->add(ptr);
+	else
+	{
+		for (; cl; cl = cl->next)
+		{
+			if	(cl->flag)
+				cl->cnt->add(cl->cnt, ptr + cl->offset,
+					cl->data);
+		}
+	}
 }

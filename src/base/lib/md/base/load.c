@@ -67,6 +67,7 @@ mdmat *md_reload(mdmat *md, const char *list, const char *var)
 	io = io_tmpfile();
 	md_save(io, md, MDFLAG_LOCK);
 	io_rewind(io);
+	rd_deref(md);
 	md = md_load(io, list, var);
 	io_close(io);
 	return md;
@@ -83,6 +84,20 @@ mdmat *md_load(IO *io, const char *str, const char *odef)
 	mdaxis **ptr;
 	mdlist *def;
 	int depth;
+	int c;
+
+	c = io_getc(io);
+	io_ungetc(c, io);
+
+	if	(c == 'E')
+	{
+		md = edb2md(edb_open(rd_refer(io)));
+
+		if	(str || odef)
+			md = md_reload(md, str, odef);
+
+		return md;
+	}
 
 /*	Dateiheader lesen
 */
@@ -145,7 +160,7 @@ mdmat *md_load(IO *io, const char *str, const char *odef)
 		
 #if	0
 		vsel_io = io_tmpbuf(0);
-		vsel_dim = strsplit(odef, ",%s", &vsel_list);
+		vsel_dim = mstrsplit(odef, ",%s", &vsel_list);
 		vsel_dim = walk_type(NULL, (EfiType **) &md->type, 0, 0);
 		memfree(vsel_list);
 
@@ -295,7 +310,7 @@ static mdaxis *mkaxis(mdaxis *x, mdlist *def)
 */
 	sdef = memalloc(x->dim * sizeof(SDEF) + x->dim * depth * sizeof(size_t));
 	ptr = (size_t *) (sdef + x->dim);
-	x->priv = sdef;
+	x->priv = (void *) sdef;
 
 	for (j = 0; j < x->dim; j++)
 	{
@@ -310,7 +325,7 @@ static mdaxis *mkaxis(mdaxis *x, mdlist *def)
 /*	Neue Achsenbezeichner zusammenstellen
 */
 	y = new_axis(xvars);
-	sb = new_strbuf(32);
+	sb = sb_create(32);
 	sb_putstr(x->name, sb);
 	y->priv = NULL;
 	xvars = 0;
@@ -389,7 +404,7 @@ static mdaxis *mkaxis(mdaxis *x, mdlist *def)
 	for (j = 0; j < y->dim; j++)
 		y->idx[j].name = mstrcpy(nextstr(&p));
 
-	del_strbuf(sb);
+	sb_destroy(sb);
 	return y;
 }
 
@@ -409,7 +424,7 @@ static void getdata(const EfiType *type, char *data, mdaxis *x, mdaxis *y)
 	}
 	else if	(x->priv)
 	{
-		sdef = x->priv;
+		sdef = (void *) x->priv;
 
 		for (i = 0; i < x->dim; i++)
 		{
@@ -421,7 +436,7 @@ static void getdata(const EfiType *type, char *data, mdaxis *x, mdaxis *y)
 
 			if	(sdef[i].tmpload)
 			{
-				p = y->priv;
+				p = (void *) y->priv;
 				memset(p, 0, y->size);
 			}
 			else	p = data + sdef[i].offset * y->size;

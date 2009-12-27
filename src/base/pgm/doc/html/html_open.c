@@ -182,7 +182,7 @@ static void hpost_close (HPOST *hpost)
 	io_puts("</HTML>\n", hpost->io);
 	io_close(hpost->io);
 	hpost->io = NULL;
-	sb_clear(hpost->ref);
+	sb_clean(hpost->ref);
 }
 
 static void hpost_next (HPOST *hpost)
@@ -259,7 +259,7 @@ static void hpost_ref (HPOST *hpost)
 
 static char *hpost_num(HPOST *hpost)
 {
-	StrBuf *buf = new_strbuf(0);
+	StrBuf *buf = sb_create(0);
 
 	if	(hpost->chap > 0)
 		sb_printf(buf, "%d", hpost->chap);
@@ -398,9 +398,9 @@ static int hpost_ctrl (void *ptr, int req, va_list list)
 	{
 	case IO_CLOSE:
 		hpost_create(hpost);
-		del_strbuf(hpost->toc);
-		del_strbuf(hpost->lof);
-		del_strbuf(hpost->ref);
+		sb_destroy(hpost->toc);
+		sb_destroy(hpost->lof);
+		sb_destroy(hpost->ref);
 		memfree(hpost->path);
 		memfree(hpost->title);
 		memfree(hpost->fname);
@@ -494,9 +494,9 @@ IO *html_open (const char *dir, const char *path)
 	par = memalloc(sizeof(HPOST));
 	par->tmp = io_bigbuf(BUF_SIZE, TMP_PFX);
 	par->path = mstrcpy(dir);
-	par->ref = new_strbuf(0);
-	par->toc = new_strbuf(0);
-	par->lof = new_strbuf(0);
+	par->ref = sb_create(0);
+	par->toc = sb_create(0);
+	par->lof = sb_create(0);
 	vb_init(&par->idx, 512, sizeof(HIDX));
 	vb_init(&par->lbl, 512, sizeof(HIDX));
 	par->fname = mstrcpy("main.html");

@@ -41,7 +41,7 @@ void Doc_psub (Doc *doc, IO *in)
 
 static char *copy_item (Doc *doc, IO *in, int beg, int end)
 {
-	StrBuf *buf = new_strbuf(0);
+	StrBuf *buf = sb_create(0);
 	int depth, c;
 	
 	doc->indent++;
@@ -248,8 +248,11 @@ void Doc_copy (Doc *doc, IO *in)
 			case '-':
 				if	(input_mark(in))
 				{
-					char *opt = DocParseLine(in, 0);
-					char *arg = DocParseRegion(in, "----*");
+					char *opt, *arg;
+
+					opt = io_mgets(in, "\n");
+					io_getc(in);
+					arg = DocParseRegion(in, "----*");
 					Doc_input(doc, opt, io_mstr(arg));
 					memfree(opt);
 					continue;

@@ -28,6 +28,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <GUI/EGtk.h>
 #include <EFEU/stdtype.h>
 
+#if	HAS_GTK
+
 extern EfiType EGtkWidgetType;
 extern EfiType EGtkDataType;
 
@@ -71,6 +73,8 @@ extern char *EGtkLval_ident (const EfiObj *obj);
 
 #define	EGTK_LVAL(name, update, sync)	\
 EfiLval name = { EGtkLval_alloc, EGtkLval_free, update, sync, EGtkLval_ident }
+
+#endif
 
 /*
 $SeeAlso

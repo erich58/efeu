@@ -23,7 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 
 /*
-Die Funktion |$1| erweitert fie Variablentabelle <tab> um die
+Die Funktion |$1| erweitert die Variablentabelle <tab> um die
 Komponentendefinitionen <def>. Die Komponentendefinitionen müssen
 über die gesamte Laufzeit der Tabelle <tab> verfügbar sein.
 */

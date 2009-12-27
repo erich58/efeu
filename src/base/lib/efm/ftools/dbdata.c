@@ -38,7 +38,8 @@ If not, write to the Free Software Foundation, Inc.,
 /*	Datensätze lesen
 */
 
-size_t dbread (FILE *file, void *dptr, size_t recl, size_t size, size_t n)
+size_t dbread (FILE *file, void *dptr,
+	size_t recl, size_t size, size_t n)
 {
 	register size_t i, j;
 	register int c;
@@ -69,14 +70,15 @@ size_t dbread (FILE *file, void *dptr, size_t recl, size_t size, size_t n)
 		dptr = (char *) dptr + size;
 	}
 
-	return recl * n;
+	return n;
 }
 
 
 /*	Datensätze ausgeben
 */
 
-size_t dbwrite (FILE *file, const void *dptr, size_t recl, size_t size, size_t n)
+size_t dbwrite (FILE *file, const void *dptr,
+	size_t recl, size_t size, size_t n)
 {
 	register size_t i, j;
 	register int c;
@@ -104,5 +106,5 @@ size_t dbwrite (FILE *file, const void *dptr, size_t recl, size_t size, size_t n
 		dptr = (char *) dptr + size;
 	}
 
-	return recl;
+	return n;
 }

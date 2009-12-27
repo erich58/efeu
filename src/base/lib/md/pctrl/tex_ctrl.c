@@ -198,7 +198,7 @@ int tab_ctrl(PCTRL *pf, int cmd, va_list list)
 
 int tex_put(int c, PCTRL *pf)
 {
-	switch (c)
+	switch ((char) c)
 	{
 	case '%': case '$': case '#': case '_':
 	case '&': case '{': case '}':
@@ -230,6 +230,7 @@ int tex_put(int c, PCTRL *pf)
 	case '\\': io_puts("$\\backslash$", pf->io); break;
 	case '*':  io_puts("$\\ast$", pf->io); break;
 
+/*
 	case 'Ä': io_puts("\"A", pf->io); break;
 	case 'Ö': io_puts("\"O", pf->io); break;
 	case 'Ü': io_puts("\"U", pf->io); break;
@@ -237,7 +238,22 @@ int tex_put(int c, PCTRL *pf)
 	case 'ö': io_puts("\"o", pf->io); break;
 	case 'ü': io_puts("\"u", pf->io); break;
 	case 'ß': io_puts("\"s", pf->io); break;
-	case EOF:	break;
+*/
+	case 'Ä': case 'Ö': case 'Ü':
+	case 'ä': case 'ö': case 'ü': case 'ß':
+	case '\t':
+
+		io_putc(c, pf->io);
+		break;
+
+	case '\n':
+
+		io_puts("~\\\\\n", pf->io);
+		break;
+
+	case EOF:
+
+		break;
 
 	default:
 

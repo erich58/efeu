@@ -26,12 +26,12 @@ static void s_end(void *par)
 static void s_data(void *par, EfiType *type, void *ptr, void *base)
 {
 	io_putc('\t', par);
-	PrintData(par, type, ptr);
+	ShowData(par, type, ptr);
 
 	if	(base)
 	{
 		io_putc('[', par);
-		PrintData(par, type, base);
+		ShowData(par, type, base);
 		io_putc(']', par);
 	}
 }
@@ -66,7 +66,7 @@ static void d_clridx(void *idx)
 
 static void d_start(void *par, const void *idx)
 {
-	PrintData(iostd, &Type_list, &idx_list);
+	ShowData(iostd, &Type_list, &idx_list);
 }
 
 

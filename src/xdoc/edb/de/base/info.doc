@@ -1,0 +1,10 @@
+\sec	Informationsabfragen
+
+Mithilfe der Option \index{|--info|} können \index{Programminformationen} von
+EDB-Kommandos abgefragt werden. Dabei wird direkt auf interne
+Tabellenstrukturen zugegriffen und damit der aktuelle Stand der
+Funktionen ausgegeben.
+
+Dabei werden über Header nachgeladene Erweiterungen ebenfalls
+dargestellt. Die entsprechenden Optionen (z.B. |-F|) müssen vor
+|--info| angegeben werden.

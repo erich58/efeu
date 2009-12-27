@@ -91,6 +91,22 @@ static void cp_reg (IO *in, StrBuf *buf)
 	while	(c != EOF);
 }
 
+static int test_key (const char *key, const char *name)
+{
+	if	(key == NULL)	return 0;
+
+	while (*key != 0)
+	{
+		if	(*key == '*')	return 1;
+		if	(*key != *name)	return 0;
+
+		key++;
+		name++;
+	}
+
+	return (*name == 0);
+}
+
 char *DocParseBlock (IO *in, int mode, const char *beg,
 	const char *end, const char *toggle)
 {
@@ -98,7 +114,7 @@ char *DocParseBlock (IO *in, int mode, const char *beg,
 	StrBuf *buf;
 	char *p;
 
-	buf = (mode || toggle) ? new_strbuf(0) : NULL;
+	buf = (mode || toggle) ? sb_create(0) : NULL;
 	nl = 1;
 	depth = 0;
 
@@ -113,7 +129,7 @@ char *DocParseBlock (IO *in, int mode, const char *beg,
 				io_ungetc(c, in);
 				p = DocParseName(in, 0);
 
-				if	(mstrcmp(p, end) == 0)
+				if	(test_key(end, p))
 				{
 					if	(depth == 0)
 					{
@@ -122,11 +138,11 @@ char *DocParseBlock (IO *in, int mode, const char *beg,
 					}
 					else	depth--;
 				}
-				else if	(mstrcmp(p, beg) == 0)
+				else if	(test_key(beg, p))
 				{
 					depth++;
 				}
-				else if	(depth == 0 && mstrcmp(p, toggle) == 0)
+				else if	(depth == 0 && test_key(toggle, p))
 				{
 					DocSkipSpace(in, 1);
 					toggle = NULL;

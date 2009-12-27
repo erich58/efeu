@@ -57,7 +57,7 @@ static void f_ebcdic (EfiFunc *func, void *rval, void **arg)
 
 static void f_febcdic (EfiFunc *func, void *rval, void **arg)
 {
-	IO *io = io_fopen(Val_ptr(arg[0]), "rdz");
+	IO *io = io_fileopen(Val_ptr(arg[0]), "rdz");
 	int mode = Val_bool(arg[2]) ? DBFILE_CONV : DBFILE_EBCDIC;
 	Val_ptr(rval) = DBFile_open(io, mode, Val_int(arg[1]), NULL);
 }
@@ -65,15 +65,23 @@ static void f_febcdic (EfiFunc *func, void *rval, void **arg)
 static void f_text (EfiFunc *func, void *rval, void **arg)
 {
 	IO *io = io_refer(Val_ptr(arg[0]));
-	Val_ptr(rval) = DBFile_open(io, DBFILE_TEXT,
-		Val_int(arg[2]), Val_str(arg[1]));
+
+	if	(func->dim > 2)
+		Val_ptr(rval) = DBFile_open(io, DBFILE_TEXT,
+			Val_int(arg[2]), Val_str(arg[1]));
+	else	Val_ptr(rval) = DBFile_open(io, DBFILE_QTEXT,
+			0, Val_str(arg[1]));
 }
 
 static void f_ftext (EfiFunc *func, void *rval, void **arg)
 {
-	IO *io = io_fopen(Val_ptr(arg[0]), "rdz");
-	Val_ptr(rval) = DBFile_open(io, DBFILE_TEXT,
-		Val_int(arg[2]), Val_str(arg[1]));
+	IO *io = io_fileopen(Val_ptr(arg[0]), "rdz");
+
+	if	(func->dim > 2)
+		Val_ptr(rval) = DBFile_open(io, DBFILE_TEXT,
+			Val_int(arg[2]), Val_str(arg[1]));
+	else	Val_ptr(rval) = DBFile_open(io, DBFILE_QTEXT,
+			0, Val_str(arg[1]));
 }
 
 /*	Datensatz laden und darstellen
@@ -82,6 +90,12 @@ static void f_ftext (EfiFunc *func, void *rval, void **arg)
 static void f_next (EfiFunc *func, void *rval, void **arg)
 {
 	Val_int(rval) = DBFile_next(Val_ptr(arg[0]));
+}
+
+static void f_qtext (EfiFunc *func, void *rval, void **arg)
+{
+	DBFile *dbf = Val_ptr(arg[0]);
+	Val_int(rval) = (dbf && DBData_qtext(&dbf->data, dbf->io, dbf->delim));
 }
 
 static void f_show (EfiFunc *func, void *rval, void **arg)
@@ -184,6 +198,13 @@ static void f_str (EfiFunc *func, void *rval, void **arg)
 		POS, LEN)) : NULL;
 }
 
+static void f_xstr (EfiFunc *func, void *rval, void **arg)
+{
+	DBFile *file = Val_ptr(arg[0]);
+	Val_str(rval) = file ? mstrcpy(DBData_xstr(&file->data,
+		POS, LEN)) : NULL;
+}
+
 static void f_char (EfiFunc *func, void *rval, void **arg)
 {
 	DBFile *file = Val_ptr(arg[0]);
@@ -195,30 +216,35 @@ static void f_char (EfiFunc *func, void *rval, void **arg)
 
 static void f_a37l (EfiFunc *func, void *rval, void **arg)
 {
-	Val_int(rval) = a37l(Val_str(arg[0]));
+	Val_uint(rval) = a37l(Val_str(arg[0]));
 }
 
 static void f_l37a (EfiFunc *func, void *rval, void **arg)
 {
-	Val_str(rval) = l37a(Val_int(arg[0]));
+	Val_str(rval) = l37a(Val_uint(arg[0]));
 }
 
 /*	Funktionstabelle und Initialisierung
 */
 
 static EfiFuncDef fdef[] = {
-	{ 0, &Type_int, "a37l (str)", f_a37l },
-	{ 0, &Type_str, "l37a (int)", f_l37a },
+	{ 0, &Type_uint, "a37l (str)", f_a37l },
+	{ 0, &Type_str, "l37a (unsigned)", f_l37a },
 	{ FUNC_VIRTUAL, &Type_DBFile,
-		"DBFile (IO io, str delim = NULL, int sync = 0)", f_text },
+		"DBFile (IO io, str delim = NULL)", f_text },
 	{ FUNC_VIRTUAL, &Type_DBFile,
-		"DBFile (str name, str delim = NULL, int sync = 0)", f_ftext },
+		"DBFile (str name, str delim = NULL)", f_ftext },
+	{ FUNC_VIRTUAL, &Type_DBFile,
+		"DBFile (IO io, str delim, int sync)", f_text },
+	{ FUNC_VIRTUAL, &Type_DBFile,
+		"DBFile (str name, str delim, int sync)", f_ftext },
 	{ FUNC_VIRTUAL, &Type_DBFile,
 		"DBFile (IO io, int recl, bool flag = false)", f_ebcdic },
 	{ FUNC_VIRTUAL, &Type_DBFile,
 		"DBFile (str name, int recl, bool flag = false)", f_febcdic },
 	{ FUNC_RESTRICTED, &Type_list, "DBFile ()", f_list },
 	{ 0, &Type_int, "DBFile::next ()", f_next },
+	{ 0, &Type_int, "DBFile::qtext ()", f_qtext },
 	{ 0, &Type_void, "DBFile::sync (int recl, char c = ' ')", f_sync },
 	{ 0, &Type_void, "DBFile::show (IO io = iostd)", f_show },
 	{ 0, &Type_uint, "DBFile::packed (int pos, int len)", f_packed },
@@ -229,6 +255,7 @@ static EfiFuncDef fdef[] = {
 	{ 0, &Type_int, "DBFile::base37 (int pos, int len)", f_base37 },
 	{ 0, &Type_int, "DBFile::int (int pos, int len)", f_int },
 	{ 0, &Type_str, "DBFile::str (int pos, int len)", f_str },
+	{ 0, &Type_str, "DBFile::xstr (int pos, int len)", f_xstr },
 	{ 0, &Type_char, "DBFile::char (int pos, int len)", f_char },
 	{ FUNC_VIRTUAL, &Type_str, "operator[] (DBFile dbf, int pos)", f_field },
 };

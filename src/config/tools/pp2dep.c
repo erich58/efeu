@@ -30,8 +30,52 @@ If not, write to the Free Software Foundation, Inc.,
 #define	NAME_SIZE	1023	/* Maximallänge für Filenamen ohne Abschluß */
 #define	BREAK_COL	70	/* Spaltenpostion für Fortsetzungszeile */
 
-#define	ERR_MALLOC	"malloc (%ld) failed.\n"
 #define	FMT_USAGE	"usage: %s [-l] [-x name] target(s)\n"
+
+#define	E_MALLOC	"sorry: malloc(%lu) failed\n"
+#define	E_REALLOC	"sorry: realloc(%p, %lu) failed\n"
+
+static void *ecfg_malloc (size_t size)
+{
+	if	(size)
+	{
+		void *data = malloc(size);
+
+		if	(data)	return data;
+
+		fprintf(stderr, E_MALLOC, (unsigned long) size);
+		exit(EXIT_FAILURE);
+	}
+
+	return NULL;
+}
+
+static void ecfg_free (void *data)
+{
+	if	(data)
+		free(data);
+}
+
+static void *ecfg_realloc (void *data, size_t size)
+{
+	char *p;
+
+	if	(data == NULL)
+	{
+		return ecfg_malloc(size);
+	}
+	else if	(size == 0)
+	{
+		ecfg_free(data);
+		return NULL;
+	}
+	else if	((p = realloc(data, size)) == NULL)
+	{
+		fprintf(stderr, E_REALLOC, data, (unsigned long) size);
+		exit(EXIT_FAILURE);
+	}
+	else	return p;
+}
 
 /*
 $pconfig
@@ -50,20 +94,9 @@ char *ProgName = "";
 
 static void usage (const char *arg)
 {
-	execlp("efeuman", "efeuman", "--", __FILE__, arg, NULL);
+	execlp("efeuman", "efeuman", "-s", __FILE__, "--", ProgName, arg, NULL);
 	fprintf(stderr, FMT_USAGE, ProgName);
 	exit(arg ? 0 : 1);
-}
-
-static void error (const char *fmt, ...)
-{
-	va_list args;
-
-	fprintf(stderr, "%s: ", ProgName);
-	va_start(args, fmt);
-	vfprintf(stderr, fmt, args);
-	va_end(args);
-	exit(1);
 }
 
 /*
@@ -116,20 +149,12 @@ static void add_name (const char *buf, size_t size)
 
 	if	(name_dim + 1 >= name_size)
 	{
-		char **save = name_tab;
 		name_size += TAB_BSIZE;
-		name_tab = realloc(name_tab, name_size * sizeof(char *));
-
-		if	(!name_tab)
-			error(ERR_MALLOC,
-				(unsigned long) name_size * sizeof(char *));
-
-		memcpy(name_tab, save, name_dim * sizeof(char *));
+		name_tab = ecfg_realloc(name_tab,
+			name_size * sizeof name_tab[0]);
 	}
 
-	if	((p = malloc(size)) == NULL)
-		error(ERR_MALLOC, (unsigned long) size);
-
+	p = ecfg_malloc(size);
 	name_tab[name_dim++] = memcpy(p, buf, size);
 }
 
@@ -175,10 +200,7 @@ static void eval_line (void)
 		if	(n >= buf_size)
 		{
 			buf_size += BUF_BSIZE;
-			buf = realloc(buf, buf_size + 1);
-
-			if	(!buf)
-				error(ERR_MALLOC, (unsigned long) buf_size);
+			buf = ecfg_realloc(buf, buf_size + 1);
 		}
 
 		buf[n++] = c;
@@ -187,10 +209,11 @@ static void eval_line (void)
 	while (c != '\n' && c != EOF)
 		c = getchar();
 
-	buf[n++] = 0;
-
-	if	(buf[0] != '<')
+	if	(n && buf[0] != '<' && buf[n - 1] != '/')
+	{
+		buf[n++] = 0;
 		add_name(buf, n);
+	}
 }
 
 /*	Hauptprogramm

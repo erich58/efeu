@@ -29,6 +29,7 @@ void md_puthdr(IO *io, mdmat *md, unsigned mask)
 	size_t j;
 	int k;
 	char *oname;
+	char *head;
 	unsigned dim;
 	unsigned space;
 	unsigned recl;
@@ -36,9 +37,11 @@ void md_puthdr(IO *io, mdmat *md, unsigned mask)
 
 /*	Stringlänge und Zahl der Elemente bestimmen
 */
+	head = TypeHead(md->type);
 	oname = type2str(md->type);
 	dim = md_dim(md->axis);
 	space = STRLEN(md->title);
+	space += STRLEN(head);
 	space += STRLEN(oname);
 	recl = md->type->recl;
 	nel = 1;
@@ -62,11 +65,10 @@ void md_puthdr(IO *io, mdmat *md, unsigned mask)
 
 /*	Header ausgeben
 */
-	put_2byte(MD_MAGIC, io);
+	put_2byte(MD_MAGIC2, io);
 	put_2byte(dim, io);
 	put_4byte(space, io);
 	put_4byte(recl, io);
-	put_4byte(nel, io);
 
 /*	Gruppendimensionen ausgeben
 */
@@ -83,6 +85,7 @@ void md_puthdr(IO *io, mdmat *md, unsigned mask)
 /*	Textteil ausgeben
 */
 	n = putstr(md->title, io);
+	n += putstr(head, io);
 	n += putstr(oname, io);
 	x = md->axis;
 

@@ -129,7 +129,7 @@ static char *mac_expand (const char *fmt, int argc, char **argv)
 
 	if	(fmt == NULL)	return NULL;
 
-	buf = new_strbuf(0);
+	buf = sb_create(0);
 	in = io_cstr(fmt);
 	quote = 0;
 	depth = 0;

@@ -1,5 +1,5 @@
 /*
-Zusammenfügen von Strings
+Zusammenfügen einer variablen Liste von Strings
 
 $Copyright (C) 1996 Erich Frühstück
 This file is part of EFEU.
@@ -36,7 +36,7 @@ char *mstrcat(const char *delim, const char *list, ...)
 	StrBuf *sb;
 	va_list k;
 
-	sb = new_strbuf(0);
+	sb = sb_create(0);
 	va_start(k, list);
 	x = NULL;
 
@@ -66,7 +66,7 @@ char *mstrpaste(const char *delim, const char *a, const char *b)
 	if	(a == NULL)	return mstrcpy(b);
 	if	(b == NULL)	return mstrcpy(a);
 
-	sb = new_strbuf(0);
+	sb = sb_create(0);
 	sb_puts(a, sb);
 	sb_puts(delim, sb);
 	sb_puts(b, sb);

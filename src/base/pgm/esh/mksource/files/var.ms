@@ -24,10 +24,15 @@ If not, write to the Free Software Foundation, Inc.,
 #ifndef	var_ms
 #define	var_ms	1
 
-/*	Die Deklarationsfunktionen sind vom Type inline, damit bei der
-	Parametersubstitution der Argumente auch lokale Variablen sichtbar
-	bleiben. Die internen Namen werden zur Vermeidung von
-	Sichtbarkeitskonflikten mit "_" gekennzeichnet.
+/*
+Die Deklarationsfunktionen sind vom Type inline, damit bei der
+Parametersubstitution der Argumente auch lokale Variablen sichtbar
+bleiben. Die internen Namen werden zur Vermeidung von
+Sichtbarkeitskonflikten mit "_" gekennzeichnet.
+
+Die Funktion |$1| richtet eine Variable ein. Falls <_glob> den Wert
+true hat, wird sie mit externer Verknüpfbarkeit und ansonsten
+statisch eingerichtet.
 */
 
 inline void DeclVar (bool _glob = true, str _decl,
@@ -45,18 +50,29 @@ inline void DeclVar (bool _glob = true, str _decl,
 	fprintf(src, "%s%s;%s\n", _decl, _val, _desc);
 }
 
+/*
+Die Funktion |$1| richtet eine Variable mit externer Verknüpfbarkeit ein.
+*/
+
 void GlobalVar (str _decl, str _val = NULL, str _desc = NULL, ...)
 	DeclVar(true, _decl, _val, _desc, va_list);
+
+/*
+Die Funktion |$1| richtet eine statische Variable ein.
+*/
 
 void LocalVar (str _decl, str _val = NULL, str _desc = NULL, ...)
 	DeclVar(false, _decl, _val, _desc, va_list);
 
 
-/*	Bei der Vektordefinition kann der Laufindex n in der Wertedefinition
-	verwendet werden.
+/*
+Die Funktion |$1| richtet einen Vektor ein. Falls <glob> den Wert
+true hat, wird der Vektor mit externer Verknüpfbarkeit und ansonsten
+statisch eingerichtet. Der Laufindex |n| kann bei der Wertedefinition
+verwendet werden.
 */
 
-inline void DeclVec (bool glob = true, str _decl, int _dim,
+inline void DeclVec (bool _glob = true, str _decl, int _dim,
 	str _val = NULL, str _desc = NULL, ...)
 {
 	_decl = psub(_decl, va_list) + sprintf("[%.0d]", _dim);
@@ -65,14 +81,14 @@ inline void DeclVec (bool glob = true, str _decl, int _dim,
 	{
 		_desc = "/*\t" + psub(_desc, va_list) + "\n*/\n";
 
-		if	(glob)	hdr << _desc;
+		if	(_glob)	hdr << _desc;
 
 		src << _desc;
 	}
 
 	src << "\n";
 
-	if	(glob)
+	if	(_glob)
 		fprintf(hdr, "extern %s;\n", _decl);
 	else	src << "static ";
 
@@ -99,10 +115,36 @@ inline void DeclVec (bool glob = true, str _decl, int _dim,
 	src << ";\n\n";
 }
 
+/*
+Die Funktion |$1| richtet einen Vektor mit externer Verknüpfbarkeit ein.
+*/
+
 void GlobalVec (str _decl, int _dim, str _val = NULL, str _desc = NULL, ...)
 	DeclVec(true, _decl, _dim, _val, _desc, va_list);
 
+/*
+Die Funktion |$1| richtet einen statischen Vektor ein.
+*/
+
 void LocalVec (str _decl, int _dim, str _val = NULL, str _desc = NULL, ...)
 	DeclVec(false, _decl, _dim, _val, _desc, va_list);
+
+/*
+$Example
+Das folgende Beispiel zeigt die Verwendung der Deklarationsfunktionen:
+
+\ms_example	var
+config hdr src
+
+#include <var.ms>
+GlobalVar("int x", "12", "Variable x");
+LocalVar("int \$1_x", "12", "Variable \$1_x", "pfx");
+LocalVec("int z", 10, "$(n)", "Vektor z");
+GlobalVec("double l", 10, "$(log(n + 1.):%.8f", "Tabelle l");
+\end
+
+$SeeAlso
+\mref{mksource(1)}.
+*/
 
 #endif	/* var.ms */

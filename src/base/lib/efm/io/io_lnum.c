@@ -59,6 +59,11 @@ static int lnum_ctrl (void *ptr, int req, va_list list)
 
 	switch (req)
 	{
+	case IO_UNGETC:
+
+		lnum->nl = 0;
+		return io_ungetc(va_arg(list, int), lnum->io);
+
 	case IO_CLOSE:
 
 		stat = io_close(lnum->io);

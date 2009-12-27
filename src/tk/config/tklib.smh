@@ -1,0 +1,78 @@
+# :*:configuration file for tk interface
+# :de:Konfigurationsdatei für tk Schnittstelle
+#
+# $Synopsis
+# include $1
+# \par
+# \$(TK_INC)\br
+# \$(TK_LIB)
+#
+# $Copyright (C) 2004 Erich Frühstück
+# This file is part of EFEU.
+# 
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Library General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+# 
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU Library General Public License for more details.
+# 
+# You should have received a copy of the GNU Library General Public
+# License along with this library; see the file COPYING.Library.
+# If not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+test $_tklib_smh && return 
+_tklib_smh=1
+
+# $Description
+# :*:
+# Including the header |$1| defines the |make|-makros \index{|TK_INC|}
+# and \index{|TK_LIB|} with compile and link flags needed for Tcl/Tk
+# applications.
+# The configuration is done with the command lines:
+# :de:
+# Durch Einbinden der Headerdatei |$1| werden die |make|-Makros
+# \index{|TK_INC|} und \index{|TK_LIB|} mit Kompiler und Linkeroptionen
+# für Tcl/Tk Anwendungen definiert.
+# Die Konfiguration erfolgt mit den Befehlszeilen:
+#
+# $source
+
+mf_comm "TCL/TK configuration from $FILE"
+efeu-xlib -mCPP_TCL -I/usr/include//:/usr/local/include tcl.h
+efeu-xlib -mCPP_TK -I/usr/include//:/usr/local/include tk.h
+
+mf_var -n TK_INC '$(CPP_TK) $(CPP_TCL)'
+
+efeu-xlib -mLD_TCL -L/usr/lib:/usr/local/lib -l'tcl[0-9.]*'
+efeu-xlib -mLD_TK -L/usr/lib:/usr/local/lib -l'tk[0-9.]*'
+efeu-xlib -mLD_X11 -L/usr/X11R6/lib:/usr/local/lib -lX11
+efeu-xlib -mLD_EXT -lm -lld
+
+mf_var -n TK_LIB '$(LD_TK) $(LD_TCL) $(LD_X11) $(LD_EXT)'
+mf_comm -n "End of TCL/TK configuration"
+
+# $Examples
+# \config shmkmf
+# :*:
+# A typical output (depinding on library versions and
+# machine architecture) of including the
+# headerfile with
+# \shmkmf[-x] has the form:
+# include $1
+# \end
+# :de:
+# Eine typische Ausgabe (abhängig von Bibliotheksversion und
+# Rechnerarchitektur) für das Einbinden der Headerdatei mit
+# \shmkmf[-x] hat die Form:
+# include $1
+# \end
+
+# $SeeAlso
+# \mref{shmkmf(1)},
+# \mref{efeu-xlib(1)},
+# \mref{cc.smh(7)}.

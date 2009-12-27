@@ -48,6 +48,7 @@ static void vtab_clean (void *data)
 	EfiVarTab *tg = data;
 	memfree(tg->name);
 	vb_clean(&tg->tab, vtab_subclean);
+	vb_free(&tg->tab);
 	del_data(&tab_vtab, tg);
 }
 

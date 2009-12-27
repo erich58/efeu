@@ -1,7 +1,0 @@
-DEP=	DEP_IORL DEP_MD DEP_MATH DEP_EFX DEP_EFM
-LIB=	LIB_IORL LIB_MD LIB_MATH LIB_EFX LIB_EFM
-
-#define	EshProg(name,obj)	Program($(BINDIR),name,obj,$(DEP),$(LIB))
-
-EshProg(esh,esh.o)
-EshProg(mksource,mksource.o)

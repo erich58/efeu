@@ -80,10 +80,32 @@ static int str_ctrl (void *ptr, int req, va_list list)
 
 	switch (req)
 	{
-	case IO_CLOSE:	del_strio(s); return 0;
-	case IO_REWIND:	s->pos = 0; return 0;
-	case IO_IDENT:	*va_arg(list, char **) = strio_ident(s); return 0;
-	default:	return EOF;
+	case IO_CLOSE:
+		del_strio(s);
+		return 0;
+	case IO_REWIND:
+		s->pos = 0;
+		return 0;
+	case IO_GETPOS:
+		*va_arg(list, unsigned *) = s->pos;
+		return 0;
+	case IO_SETPOS:
+		{
+			int n = strlen((char *) s->str);
+			int pos = *va_arg(list, unsigned *);
+
+			if	(pos < n)
+			{
+				s->pos = pos;
+				return 0;
+			}
+			else	return EOF;
+		}
+	case IO_IDENT:
+		*va_arg(list, char **) = strio_ident(s);
+		return 0;
+	default:
+		return EOF;
 	}
 }
 

@@ -113,7 +113,7 @@ If not, write to the Free Software Foundation, Inc.,
 121	$!: $0: unexpected end of file.\n
 122	$!: $0: syntax error in structure declaration.\n
 123	$!: $0: syntax error in type declaration.\n
-124	$!: $0: memmorry size of $1 is not defined.\n
+124	$!: $0: memory size of $1 is not defined.\n
 125	$!: undefined object $1 in argument list.\n
 126	$!: undefined default value in function call.\n
 127	$!: $0: type of function is missing.\n
@@ -146,7 +146,10 @@ If not, write to the Free Software Foundation, Inc.,
 152	$!: $0: syntax error in variable declaration.\n
 153	$!: $0: undefined data type$1.\n
 154	$!: ATTENTION: variable $1 new declared.\n
+154b	$!: ATTENTION: variable $1 allready declared.\n
 155	$!: vector index out of bounds.\n
+255	$!: vector not initialized.\n
+256	$!: immutable vector size.\n
 156	$!: $0: syntax error in structure declaration.\n
 157	$!: ATTENTION: new declaration of structure $1.\n
 158	$!: allocation size of $1 is not defined.\n
@@ -193,3 +196,4 @@ If not, write to the Free Software Foundation, Inc.,
 404	$!: $0: command lines befor case are ignored.\n
 
 ppm	$!: $0: invalid header in pixmap file.\n
+nocmp	$!: compare function not defined.\n

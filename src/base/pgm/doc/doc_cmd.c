@@ -25,6 +25,10 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/cmdeval.h>
 #include <EFEU/preproc.h>
 
+IO *Doc_preproc (IO *io)
+{
+	return io_ptrpreproc(io, &IncPath, &DocPath);
+}
 
 void Doc_eval (Doc *doc, IO *in, const char *expr)
 {
@@ -34,13 +38,13 @@ void Doc_eval (Doc *doc, IO *in, const char *expr)
 
 	if	(expr == NULL)	return;
 
-	buf = new_strbuf(0);
+	buf = sb_create(0);
 
 	save_cin = CmdEval_cin;
 	CmdEval_cin = rd_refer(in);
 
 	Doc_pushvar(doc);
-	io = io_cmdpreproc(io_cstr(expr));
+	io = Doc_preproc(io_cstr(expr));
 	out = io_strbuf(buf);
 	CmdEvalFunc(io, out, 0);
 	io_close(io);
@@ -54,7 +58,7 @@ void Doc_eval (Doc *doc, IO *in, const char *expr)
 	{
 		io_push(in, io_mstr(sb2str(buf)));
 	}
-	else	del_strbuf(buf);
+	else	sb_destroy(buf);
 }
 
 void Doc_cmd (Doc *doc, IO *in)

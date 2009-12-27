@@ -35,7 +35,7 @@ char *io_lgets(IO *io, const char *end)
 
 	if	(io == NULL)	return NULL;
 
-	sb = new_strbuf(BSIZE);
+	sb = sb_create(BSIZE);
 	save = 0;
 	len = end ? strlen(end) : -1;
 
