@@ -1,0 +1,10 @@
+^build
+^include
+^ppinclude
+^bin
+^lib
+^man
+^share
+^doc
+^note
+^etc
