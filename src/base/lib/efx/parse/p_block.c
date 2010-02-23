@@ -192,6 +192,7 @@ EfiObj *Expr_forin (void *par, const EfiObjList *list)
 	EfiObj *lobj;
 	EfiObj *x;
 
+	x = NULL;
 	PushVarTab(NULL, NULL);
 	entry.name = Val_str(list->obj->data);
 	entry.desc = NULL;
