@@ -44,7 +44,7 @@ typedef struct {
 #define	FMT_BLANK	0x1	/* Blank bei positiven Werten */
 #define	FMT_SIGN	0x2	/* Vorzeichen immer ausgeben */
 #define	FMT_ALTMODE	0x4	/* Alternative Form */
-#define	FMT_ZEROPAD	0x8	/* Auffüllen mit Leerzeichen */
+#define	FMT_ZEROPAD	0x8	/* Auffüllen mit 0 */
 #define	FMT_RIGHT	0x10	/* Rechtsbündige Ausrichtung */
 #define	FMT_NEED_WIDTH	0x20	/* Feldbreite muß abgefragt werden */
 #define	FMT_NEED_PREC	0x40	/* Genauigkeit muß abgefragt werden */
