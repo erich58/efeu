@@ -37,7 +37,7 @@ static void f_fmt (StrBuf *sb, const FmtKey *key, int *sig, double val);
 static void x_fmt (StrBuf *sb, const FmtKey *key, int *sig, double val);
 
 static void put_exponent (StrBuf *sb, int exponent, int mode);
-static void put_mantisse (StrBuf *sb, double val, int prec, int flags);
+static void put_mantisse (StrBuf *sb, double val, int prec, int len, int flags);
 
 int fmt_double (StrBuf *sb, const FmtKey *key, double val)
 {
@@ -174,7 +174,7 @@ static void x_fmt (StrBuf *sb, const FmtKey *key, int *sig, double val)
 
 /*	Mantisse formatieren
 */
-	put_mantisse(sb, val, prec, key->flags);
+	put_mantisse(sb, val, prec, 0, key->flags);
 }
 
 
@@ -201,7 +201,15 @@ static void f_fmt (StrBuf *sb, const FmtKey *key, int *sig, double val)
 	if	(val == 0.)		*sig = 0;
 	if	(val > DBL_MAX)		val = DBL_MAX;	/* Test auf INFINITY !!! */
 
-	put_mantisse(sb, val, prec, key->flags);
+	if	(key->flags & FMT_ZEROPAD)
+	{
+		n = key->width;
+
+		if	(*sig == -1 || (key->flags & FMT_BLANK))	n--;
+	}
+	else	n = 0;
+
+	put_mantisse(sb, val, prec, n, key->flags);
 }
 
 
@@ -230,12 +238,14 @@ static void put_exponent (StrBuf *sb, int exponent, int mode)
 	sb_putc(isupper(mode) ? 'E' : 'e', sb);
 }
 
-static void put_mantisse (StrBuf *sb, double val, int prec, int flags)
+static void put_mantisse (StrBuf *sb, double val, int prec, int len, int flags)
 {
 	char *ts;
 	double tmp;
 	int n;
+	int pos;
 
+	pos = sb->pos;
 	ts = LOCALE(thousands_sep);
 
 /*	Ziffern (und Trennzeichen) zwischenspeichern
@@ -256,7 +266,7 @@ static void put_mantisse (StrBuf *sb, double val, int prec, int flags)
 		}
 	}
 
-	while (val || prec >= 0)
+	while (val || prec >= 0 || pos + len > sb->pos)
 	{
 		if	(prec == 0)
 		{
