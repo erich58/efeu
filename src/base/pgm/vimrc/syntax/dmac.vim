@@ -5,7 +5,7 @@
 
 " Remove any old syntax stuff hanging around
 syn clear
-syn case ignore
+syn case match
 
 " Read the C syntax to start with
 source <sfile>:p:h/doc.vim

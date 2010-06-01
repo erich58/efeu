@@ -5,7 +5,7 @@
 
 " Remove any old syntax stuff hanging around
 syn clear
-syn case ignore
+syn case match
 
 "Sonderzeichen
 "syn match docError	"&[_[:alnum:]]*"
