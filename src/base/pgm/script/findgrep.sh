@@ -25,7 +25,7 @@
 # ::"grep-options"|
 #	:*:any grep option
 #	:de:beliebige grep - Option
-# ::"<=<pat>~\|~|-e|~<pat>~\|~|-f|~<file>=>"|
+# ::"<=<pat>~\|~|-e|~<pat>~\|~|-F|~<pat>~\|~|-f|~<file>=>"|
 #	:*:search pattern or file
 #	:de:Suchmuster oder Datei
 # :dir|
@@ -80,7 +80,7 @@ while [ $# -gt 0 ]
 do
 	case $1 in
 	-[AB])	gopt="$gopt $1 $2"; shift 2;;
-	-[-ef])	gopt="$gopt $1"; shift; break;;
+	-[-efF])	gopt="$gopt $1"; shift; break;;
 	-*)	gopt="$gopt $1"; shift;;
 	*)	break;;
 	esac
