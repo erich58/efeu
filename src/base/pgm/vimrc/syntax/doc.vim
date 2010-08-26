@@ -12,6 +12,7 @@ syn case match
 syn match docSpecial	"&[_[:alpha:]][_[:alnum:]]*[ \t]*"
 syn match docSpecial	"&[_[:alpha:]][_[:alnum:]]*;"
 syn match docError	"&[^_[:alnum:]]"
+syn match docSpecial	"&#[[:digit:]]*;"
 syn match docSpecial	"&[-&;]"
 
 syn match docTabKey	"\[.*\]"	contained
