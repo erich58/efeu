@@ -91,7 +91,7 @@ void Doc_hmode (Doc *doc)
 		if	(!doc->env.par_beg)
 		{
 			if	(doc->env.pflag)
-				io_putc('\n', doc->out);
+				io_putucs('\n', doc->out);
 
 			io_ctrl(doc->out, DOC_BEG, doc->env.par_type);
 			doc->env.hmode = 1;
@@ -137,7 +137,7 @@ void Doc_newline (Doc *doc)
 	if	(doc->nl == 0)
 	{
 		if	(doc->env.cpos)
-			io_putc('\n', doc->out);
+			io_putucs('\n', doc->out);
 
 		doc->env.cpos = 0;
 	}

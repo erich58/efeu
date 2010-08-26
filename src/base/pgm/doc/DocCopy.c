@@ -29,7 +29,7 @@ int DocVerb (IO *in, IO *out)
 	
 	io_ctrl(out, DOC_BEG, DOC_ATT_TT);
 
-	for (n = 0; (c = io_getc(in)) != EOF; n++)
+	for (n = 0; (c = io_getucs(in)) != EOF; n++)
 	{
 		if	(c == '|')
 		{
@@ -43,8 +43,8 @@ int DocVerb (IO *in, IO *out)
 		}
 
 		if	(isspace(c))
-			io_putc(' ', out);
-		else	io_putc(c, out);
+			io_putucs(' ', out);
+		else	io_putucs(c, out);
 	}
 
 	io_ctrl(out, DOC_END, DOC_ATT_TT);

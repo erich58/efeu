@@ -30,6 +30,7 @@ void Doc_verb (Doc *doc, IO *in, int base, int alt, int wrap)
 {
 	int32_t c;
 	int pos;
+	int n;
 	unsigned lim1;
 	unsigned lim2;
 
@@ -59,28 +60,32 @@ void Doc_verb (Doc *doc, IO *in, int base, int alt, int wrap)
 		case '\v':
 			continue;
 		case '\n':
-			io_putc(c, doc->out);
+			io_putucs(c, doc->out);
 			pos = 0;
 			break;
 		case ' ':
-			io_putc(' ', doc->out);
+			io_putucs(' ', doc->out);
 			pos++;
 
 			if	(pos >= lim1)
 			{
-				io_putc('\\', doc->out);
-				io_putc('\n', doc->out);
+				io_putucs('\\', doc->out);
+				io_putucs('\n', doc->out);
 				pos = 0;
 			}
 
 			break;
 		case '\t':
-			pos += io_nputc(' ', doc->out, 8 - pos % 8);
+			n = 8 - pos % 8;
+			pos += n;
+
+			while (n--)
+				io_putucs(' ', doc->out);
 
 			if	(pos >= lim1)
 			{
-				io_putc('\\', doc->out);
-				io_putc('\n', doc->out);
+				io_putucs('\\', doc->out);
+				io_putucs('\n', doc->out);
 				pos = 0;
 			}
 
@@ -88,8 +93,8 @@ void Doc_verb (Doc *doc, IO *in, int base, int alt, int wrap)
 		default:
 			if	(pos >= lim2)
 			{
-				io_putc('\\', doc->out);
-				io_putc('\n', doc->out);
+				io_putucs('\\', doc->out);
+				io_putucs('\n', doc->out);
 				pos = 0;
 			}
 
