@@ -296,6 +296,32 @@ static int test_put (int c, IO *io)
 	return c;
 }
 
+static int test_putucs (int32_t c, IO *io)
+{
+	TPAR *par = io->data;
+
+	if	(par->plain)
+		return io_putucs(c, par->out);
+
+	if	(c >= 127)
+	{
+		io_printf(par->out, "&#%d;", c);
+		return c;
+	}
+
+	switch (c)
+	{
+	case '\t':	io_puts("\\t", par->out); break;
+	case '<':	io_puts("\\<", par->out); break;
+	case '|':	io_puts("\\|", par->out); break;
+	case '>':	io_puts("\\>", par->out); break;
+	case '\\':	io_puts("\\\\", par->out); break;
+	default:	io_putc(c, par->out); break;
+	}
+
+	return c;
+}
+
 IO *DocOut_test (IO *io)
 {
 	if	(io)
@@ -305,6 +331,7 @@ IO *DocOut_test (IO *io)
 
 		io = io_alloc();
 		io->put = test_put;
+		io->putucs = test_putucs;
 		io->ctrl = test_ctrl;
 		io->data = par;
 	}
