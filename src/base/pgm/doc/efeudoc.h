@@ -31,8 +31,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/stack.h>
 #include <EFEU/Info.h>
 #include <EFEU/object.h>
-#include "DocOut.h"
-#include "DocCtrl.h"
+#include <efeudoc/DocOut.h>
+#include <efeudoc/DocCtrl.h>
 
 #ifndef	MSG_DOC
 #define	MSG_DOC	"Doc"

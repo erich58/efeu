@@ -42,6 +42,7 @@ extern IO *DocOut_term (IO *io);
 extern char *DocCmdName (int key);
 extern char *DocEnvName (int key);
 
+void AddDocType (DocType *type);
 DocType *GetDocType (const char *name);
 extern IO *DocOut (DocType *type, const char *name);
 extern IO *DocFilter (DocType *type, IO *io);

@@ -27,9 +27,32 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/ioctrl.h>
 #include <EFEU/Info.h>
 #include <EFEU/MakeDepend.h>
+#include <EFEU/Debug.h>
+#include <EFEU/ftools.h>
+#include <EFEU/preproc.h>
 
+extern char *CFGPath;
+
+static VECBUF(type_tab, 32, sizeof(DocType *));
+
+void AddDocType (DocType *type)
+{
+	vb_append(&type_tab, &type, 1);
+}
+
+static DocType *get_type (const char *name)
+{
+	size_t n;
+	DocType **p;
+
+	for (n = type_tab.used, p = type_tab.data; n--; p++)
+		if (mstrcmp(name, (*p)->name) == 0) return *p;
+
+	return NULL;
+}
 
 extern IO *html_open(const char *dir, const char *pfx);
+static void print_type (IO *io, InfoNode *base);
 
 /*	Postfilterausgabe
 */
@@ -84,15 +107,58 @@ static DocType TypeTab[] = {
 };
 
 
+static void SetupDocType (void)
+{
+	static int setup_done = 0;
+
+	if	(!setup_done)
+	{
+		int i;
+
+		for (i = 0; i < tabsize(TypeTab); i++)
+			AddDocType(TypeTab + i);
+
+		setup_done = 1;
+	}
+}
+
 DocType *GetDocType (const char *name)
 {
-	int i;
+	DocType *type;
 
-	for (i = 0; i < tabsize(TypeTab); i++)
-		if	(mstrcmp(name, TypeTab[i].name) == 0)
-			return TypeTab + i;
+	if	(!name)	return NULL;
 
-	return NULL;
+	SetupDocType();
+
+	if	(*name == '?')
+	{
+		print_type(iostd, NULL);
+		exit(EXIT_SUCCESS);
+	}
+
+	if	(!(type = get_type(name)))
+	{
+		char *fname;
+
+		if	((fname = fsearch(CFGPath, NULL, name, "so")))
+		{
+			char *setup = mstrpaste("_", name, "setup");
+			loadlib(fname, setup);
+			memfree(setup);
+			memfree(fname);
+			type = get_type(name);
+		}
+	}
+
+	if	(!type)
+	{
+		log_psubarg(ErrLog, "[Doc:1]", NULL, "s", name);
+		print_type(ioerr, NULL);
+		exit(EXIT_FAILURE);
+	}
+
+
+	return type;
 }
 
 /*	Ausgabefilter auflisten
@@ -100,13 +166,14 @@ DocType *GetDocType (const char *name)
 
 static void print_type (IO *io, InfoNode *base)
 {
-	int i;
+	size_t n;
+	DocType **p;
 
-	for (i = 0; i < tabsize(TypeTab); i++)
+	for (n = type_tab.used, p = type_tab.data; n--; p++)
 	{
-		io_puts(TypeTab[i].name, io);
+		io_puts((*p)->name, io);
 		io_putc('\t', io);
-		io_langputs(TypeTab[i].desc, io);
+		io_langputs((*p)->desc, io);
 		io_putc('\n', io);
 	}
 }

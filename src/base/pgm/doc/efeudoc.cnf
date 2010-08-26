@@ -30,8 +30,8 @@ I:dir|CFGPath:eval 'CFGPath = paste(PATHSEP, CFGPath, "{}")'; Bootstrap: set '{B
 	:de:erweitert den Suchpfad für Konfigurationsdateien um <dir>.
 	Die Vorgabe für den Suchpfad ist:\br \url |$(CFGPath:%s)|.
 T:type|Type:
-	:*:document type
-	:de:Ausgabetype
+	:*:document type, |?| gives a listing.
+	:de:Ausgabetype, |?| liefert eine Auflistung.
 C:cfg|Config:
 	:*:configuration file
 	:de:Konfigurationsfile

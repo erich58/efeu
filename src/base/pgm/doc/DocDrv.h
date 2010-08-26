@@ -30,8 +30,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/stack.h>
 #include <EFEU/vecbuf.h>
 #include <EFEU/object.h>
-#include "DocCtrl.h"
-#include "DocSym.h"
+#include <efeudoc/DocCtrl.h>
+#include <efeudoc/DocSym.h>
 
 
 #define	DOCDRV_VAR		\

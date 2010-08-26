@@ -2,17 +2,22 @@
 # :de: Dokumentgenerator
 ##Depends: esh
 
+include cc.smh
+cc_config -g -rdynamic
+
 include efeu.smh
 include readline.smh
 
 mf_dir CFGDIR=$TOP/lib/efeudoc
 mf_dir ESHLIB=$TOP/lib/esh
 mf_dir BIN=$TOP/bin
+mf_dir INC=$TOP/include/efeudoc
 
+mf_var CFLAGS -I'$(INC)'
 efeu_libvar -p DOC iorl -ml RL_LIB md efmath efx efm -lm
 
-foreach -A files -d . -S h 'mf_file $tg $src'
-foreach -s c 'mf_cc -I. -c $src'
+foreach -A files -m INC -S h 'mf_file $tg $src'
+foreach -s c 'mf_cc -c $src'
 
 mf_var OBJ "efeudoc.o skip.o parse.o p_reg.o p_block.o DocCopy.o docsym.o" \
 	"doctab.o doc_cmd.o doc_mac.o" \
