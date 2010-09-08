@@ -11,7 +11,7 @@ include readline.smh
 mf_dir CFGDIR=$TOP/lib/efeudoc
 mf_dir ESHLIB=$TOP/lib/esh
 mf_dir BIN=$TOP/bin
-mf_dir INC=$TOP/include/efeudoc
+mf_dir -A files INC=$TOP/include/efeudoc
 
 mf_var CFLAGS -I'$(INC)'
 efeu_libvar -p DOC iorl -ml RL_LIB md efmath efx efm -lm
