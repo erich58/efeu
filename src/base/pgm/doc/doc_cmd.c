@@ -103,7 +103,7 @@ void Doc_cmd (Doc *doc, IO *in)
 	if	(mac == NULL)
 	{
 		io_note(in, "[Doc:12]", "s", p);
-		io_puts(p, doc->out);
+		Doc_str(doc, p);
 		Doc_char(doc, ';');
 	}
 	else	Doc_eval(doc, in, mac->fmt);
