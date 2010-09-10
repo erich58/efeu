@@ -95,7 +95,12 @@ static int drv_put (int c, IO *io)
 
 	if	(drv->skip)	return c;
 
-	drv->last = drv->put ? drv->put(drv, c) : c;
+	if	(drv->put)
+		drv->last = drv->put(drv, c);
+	else if	(drv->putucs)
+		drv->last = drv->putucs(drv, c);
+	else	drv->last = c;
+
 	return c;
 }
 
