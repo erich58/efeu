@@ -107,5 +107,5 @@ esac
 # cc(1).
 
 LD_RUN_PATH="\$LD_RUN_PATH:$top/lib"; export LD_RUN_PATH
-exec $CC -D_XOPEN_SOURCE -I$top/include -L$top/lib "\$@"
+exec $CC -D_XOPEN_SOURCE=500 -I$top/include -L$top/lib "\$@"
 EOF
