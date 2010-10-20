@@ -2,6 +2,7 @@
 #define	EFEU_xml_h	1
 
 #include <EFEU/strbuf.h>
+#include <EFEU/io.h>
 
 typedef enum {
 	xml_pi,		/* Process instruction */
@@ -47,7 +48,7 @@ void *XMLBuf_data (XMLBuf *xml, const char *data);
 void *XMLBuf_end (XMLBuf *xml);
 void *XMLBuf_entry (XMLBuf *xml, const char *tag, const char *data);
 void *XMLBuf_close (XMLBuf *xml);
-void *XMLBuf_parse (XMLBuf *xml, int32_t (*get) (void *par), void *par);
+void *XMLBuf_parse (XMLBuf *xml, IO *io);
 
 void *xml_print (XMLBuf *xml, const char *name, const char *data, void *par);
 void *xml_compact (XMLBuf *xml, const char *name, const char *data, void *par);
@@ -57,6 +58,5 @@ void *xml_tlist (XMLBuf *xml, const char *name, const char *data, void *par);
 
 void *xml_simple_print (XMLBuf *xml, const char *name,
 		const char *data, void *par);
-void *xml_simple_parse (XMLBuf *xml, int32_t (*get) (void *par), void *par);
 
 #endif /* EFEU/xml.h */

@@ -130,21 +130,9 @@ static void f_close (EfiFunc *func, void *rval, void **arg)
 }
 
 
-static int32_t xml_get (void *data)
-{
-	return io_getucs(data);
-}
-
 static void f_parse (EfiFunc *func, void *rval, void **arg)
 {
-	IO *io = Val_io(arg[1]);
-	XMLBuf_parse(arg[0], xml_get, io);
-}
-
-static void f_parse_simple (EfiFunc *func, void *rval, void **arg)
-{
-	IO *io = Val_io(arg[1]);
-	xml_simple_parse(arg[0], xml_get, io);
+	XMLBuf_parse(arg[0], Val_io(arg[1]));
 }
 
 static void f_beg (EfiFunc *func, void *rval, void **arg)
@@ -177,7 +165,6 @@ static EfiFuncDef fdef_xml[] = {
 	{ 0, &Type_void, "XML::end ()", f_end },
 	{ 0, &Type_obj, "XML::close ()", f_close },
 	{ 0, &Type_void, "XML::parse (IO in)", f_parse },
-	{ 0, &Type_void, "XML::simple (IO in)", f_parse_simple },
 };
 
 void CmdSetup_xml(void)

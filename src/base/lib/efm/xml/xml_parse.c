@@ -10,11 +10,11 @@
 #define	STAT_BEG	2
 #define	STAT_DATA	3
 
-static void skip_tag (XMLBuf *xml, int32_t (*get) (void *par), void *par)
+static void skip_tag (XMLBuf *xml, IO *io)
 {
 	int32_t c;
 
-	do	c = get(par);
+	do	c = io_getucs(io);
 	while	(c != EOF && c != '>');
 }
 
@@ -24,8 +24,7 @@ static void trim (StrBuf *sb)
 		sb->pos--;
 }
 
-static void *entry (XMLBuf *xml, int32_t c,
-	int32_t (*get) (void *par), void *par)
+static void *entry (XMLBuf *xml, int32_t c, IO *io)
 {
 	void *res;
 	int open_tag;
@@ -37,7 +36,7 @@ static void *entry (XMLBuf *xml, int32_t c,
 	while (c != EOF && !END_NAME(c))
 	{
 		sb_putucs(c, &xml->sbuf);
-		c = get(par);
+		c = io_getucs(io);
 	}
 
 	last = XMLBuf_next(xml);
@@ -48,12 +47,12 @@ static void *entry (XMLBuf *xml, int32_t c,
 		open_tag = 1;
 
 		while (c == ' ' || c == '\t')
-			c = get(par);
+			c = io_getucs(io);
 
 		while (c != EOF && c != '>')
 		{
 			sb_putucs(c, &xml->sbuf);
-			c = get(par);
+			c = io_getucs(io);
 		}
 
 		res = XMLBuf_action(xml, xml_beg);
@@ -66,16 +65,16 @@ static void *entry (XMLBuf *xml, int32_t c,
 
 	pending = 0;
 
-	while ((c = get(par)) != EOF)
+	while ((c = io_getucs(io)) != EOF)
 	{
 		if	(c == '<')
 		{
-			c = get(par);
+			c = io_getucs(io);
 
 			if	(c == '/')
 			{
 				while (c != EOF && c != '>')
-					c = get(par);
+					c = io_getucs(io);
 
 				break;
 			}
@@ -102,13 +101,13 @@ static void *entry (XMLBuf *xml, int32_t c,
 
 			if	(c == '?')
 			{
-				skip_tag(xml, get, par);
+				skip_tag(xml, io);
 			}
 			else if	(c == '!')
 			{
-				skip_tag(xml, get, par);
+				skip_tag(xml, io);
 			}
-			else if	((res = entry(xml, c, get, par)))
+			else if	((res = entry(xml, c, io)))
 			{
 				return res;
 			}
@@ -156,35 +155,36 @@ static void *entry (XMLBuf *xml, int32_t c,
 	return res;
 }
 
-void *XMLBuf_parse (XMLBuf *xml, int32_t (*get) (void *par), void *par)
+void *XMLBuf_parse (XMLBuf *xml, IO *io)
 {
 	int32_t c;
 
-	if	(!xml || !get)
+	if	(!xml || !io)
 		return NULL;
 
-	while ((c = get(par)) != EOF)
+	while ((c = io_getucs(io)) != EOF)
 	{
 		if	(c == '<')
 		{
-			c = get(par);
+			c = io_getucs(io);
 
 			if	(c == '?')
 			{
-				skip_tag(xml, get, par);
+				skip_tag(xml, io);
 			}
 			else if	(c == '!')
 			{
-				skip_tag(xml, get, par);
+				skip_tag(xml, io);
 			}
 			else if	(c == '/')
 			{
 				break;
 			}
-			else	return entry(xml, c, get, par);
+			else	return entry(xml, c, io);
 		}
 		else if	(!SPACE(c))
 		{
+			io_ungetucs(c, io);
 			break;
 		}
 	}
