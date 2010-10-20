@@ -183,7 +183,7 @@ void *XMLBuf_parse (XMLBuf *xml, int32_t (*get) (void *par), void *par)
 			}
 			else	return entry(xml, c, get, par);
 		}
-		else if	(c != ' ' || c != '\t' || c != '\r' || c != '\n')
+		else if	(c != ' ' && c != '\t' && c != '\r' && c != '\n')
 		{
 			break;
 		}
