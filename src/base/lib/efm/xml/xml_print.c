@@ -64,6 +64,11 @@ void *xml_print (XMLBuf *xml, const char *name, const char *data, void *par)
 		out_data(out, data);
 		out_end(out, name);
 		break;
+	case xml_err:
+		out_data(out, "<!--\nERROR: ");
+		out_data(out, data);
+		out_data(out, "\n-->");
+		break;
 	default:
 		break;
 	}

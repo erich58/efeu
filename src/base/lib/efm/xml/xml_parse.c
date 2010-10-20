@@ -5,6 +5,9 @@
 #define	SPACE(c)	(BLANK(c) || c == '\n' || c == '\r')
 #define	END_NAME(c)	((c) == '>' || BLANK(c))
 
+#define E_EOF   "unexpected end of file"
+#define E_CHAR  "unexpected character %#x"
+
 #define	STAT_SKIP	0
 #define	STAT_END	1
 #define	STAT_BEG	2
@@ -185,6 +188,7 @@ void *XMLBuf_parse (XMLBuf *xml, IO *io)
 		else if	(!SPACE(c))
 		{
 			io_ungetucs(c, io);
+			return XMLBuf_err(xml, E_CHAR, c);
 			break;
 		}
 	}

@@ -153,3 +153,15 @@ void *XMLBuf_entry (XMLBuf *xml, const char *tag, const char *data)
 	XMLBuf_prev(xml, last);
 	return res;
 }
+
+void *XMLBuf_err (XMLBuf *xml, const char *fmt, ...)
+{
+	va_list args;
+	void *res;
+
+	XMLBuf_start(xml);
+	va_start(args, fmt);
+	sb_vprintf(&xml->sbuf, fmt, args);
+	va_end(args);
+	return XMLBuf_action(xml, xml_err);
+}
