@@ -135,6 +135,11 @@ static void f_parse (EfiFunc *func, void *rval, void **arg)
 	XMLBuf_parse(arg[0], Val_io(arg[1]));
 }
 
+static void f_tag (EfiFunc *func, void *rval, void **arg)
+{
+	XMLBuf_tag(arg[0], Val_str(arg[1]), Val_str(arg[2]));
+}
+
 static void f_beg (EfiFunc *func, void *rval, void **arg)
 {
 	XMLBuf_beg(arg[0], Val_str(arg[1]), Val_str(arg[2]));
@@ -159,6 +164,7 @@ static EfiFuncDef fdef_xml[] = {
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, XML)", f_fprint },
 	{ FUNC_VIRTUAL, &Type_void,
 		"XML::open (IO out, str method = NULL)", f_open_io },
+	{ 0, &Type_void, "XML::tag (str tag, str opt = NULL)", f_tag },
 	{ 0, &Type_void, "XML::beg (str tag, str opt = NULL)", f_beg },
 	{ 0, &Type_void, "XML::data (str data)", f_data },
 	{ 0, &Type_void, "XML::entry (str name, str data)", f_entry },

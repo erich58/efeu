@@ -12,6 +12,7 @@ typedef enum {
 	xml_end,
 	xml_entry,	/* Kombination aus beg, data und end */
 	xml_err,
+	xml_tag,	/* Tag ohne Daten */
 } XMLStatus;
 
 typedef struct XMLBuf XMLBuf;
@@ -44,6 +45,7 @@ void XMLBuf_prev (XMLBuf *xml, int last);
 int XMLBuf_last (XMLBuf *xml);
 
 void *XMLBuf_action (XMLBuf *xml, XMLStatus which);
+void *XMLBuf_tag (XMLBuf *xml, const char *tag, const char *opt);
 void *XMLBuf_beg (XMLBuf *xml, const char *tag, const char *opt);
 void *XMLBuf_data (XMLBuf *xml, const char *data);
 void *XMLBuf_end (XMLBuf *xml);

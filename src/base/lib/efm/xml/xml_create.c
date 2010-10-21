@@ -140,6 +140,20 @@ void *XMLBuf_end (XMLBuf *xml)
 	return res;
 }
 
+void *XMLBuf_tag (XMLBuf *xml, const char *tag, const char *opt)
+{
+	void *res;
+	int last;
+
+	XMLBuf_start(xml);
+	sb_puts(tag, &xml->sbuf);
+	last = XMLBuf_next(xml);
+	sb_puts(opt, &xml->sbuf);
+	res = XMLBuf_action(xml, xml_tag);
+	XMLBuf_prev(xml, last);
+	return res;
+}
+
 void *XMLBuf_entry (XMLBuf *xml, const char *tag, const char *data)
 {
 	void *res;

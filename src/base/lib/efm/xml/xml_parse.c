@@ -3,7 +3,7 @@
 
 #define	BLANK(c)	((c) == ' ' || c == '\t')
 #define	SPACE(c)	(BLANK(c) || c == '\n' || c == '\r')
-#define	END_NAME(c)	((c) == '>' || BLANK(c))
+#define	END_NAME(c)	((c) == '>' || (c) == '/' || BLANK(c))
 
 #define E_EOF   "unexpected end of file"
 #define E_CHAR  "unexpected character %#x"
@@ -33,6 +33,7 @@ static void *entry (XMLBuf *xml, int32_t c, IO *io)
 	int open_tag;
 	int pending;
 	int last;
+	int quote;
 
 	XMLBuf_start(xml);
 
@@ -41,6 +42,12 @@ static void *entry (XMLBuf *xml, int32_t c, IO *io)
 		sb_putucs(c, &xml->sbuf);
 		c = io_getucs(io);
 	}
+
+	while (c == ' ' || c == '\t')
+		c = io_getucs(io);
+
+	if	(c == EOF)
+		return XMLBuf_err(xml, E_EOF);
 
 	last = XMLBuf_next(xml);
 	open_tag = 0;
@@ -52,9 +59,41 @@ static void *entry (XMLBuf *xml, int32_t c, IO *io)
 		while (c == ' ' || c == '\t')
 			c = io_getucs(io);
 
-		while (c != EOF && c != '>')
+		quote = 0;
+
+		while (c != EOF)
 		{
-			sb_putucs(c, &xml->sbuf);
+			if	(c == '"')
+			{
+				quote = !quote;
+				sb_putucs(c, &xml->sbuf);
+			}
+			else if	(quote)
+			{
+				sb_putucs(c, &xml->sbuf);
+			}
+			else if	(c == '/')
+			{
+				c = io_getucs(io);
+
+				if	(c == EOF)
+				{
+					return XMLBuf_err(xml, E_EOF);
+				}
+				else if	(c != '>')
+				{
+					return XMLBuf_err(xml, E_CHAR, c);
+				}
+
+				res = XMLBuf_action(xml, xml_tag);
+				XMLBuf_prev(xml, last);
+				return res;
+			}
+			else if	(c == '>')
+			{
+				break;
+			}
+
 			c = io_getucs(io);
 		}
 
