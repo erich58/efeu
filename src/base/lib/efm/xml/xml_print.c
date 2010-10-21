@@ -115,6 +115,9 @@ void *xml_compact (XMLBuf *xml, const char *name, const char *data, void *par)
 
 	switch (xml->stat)
 	{
+	case xml_tag:
+		out_tag(out, "<", name, data, "/>");
+		break;
 	case xml_beg:
 		out_beg(out, name, data);
 		break;

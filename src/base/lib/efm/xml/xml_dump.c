@@ -42,6 +42,7 @@ void *xml_dump (XMLBuf *xml, const char *name, const char *data, void *par)
 
 	switch (xml->stat)
 	{
+	case xml_tag:	out_puts("tag  ", out); break;
 	case xml_beg:	out_puts("beg  ", out); break;
 	case xml_end:	out_puts("end  ", out); break;
 	case xml_data:	out_puts("data ", out); break;
