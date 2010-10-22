@@ -13,6 +13,7 @@ typedef enum {
 	xml_entry,	/* Kombination aus beg, data und end */
 	xml_err,
 	xml_tag,	/* Tag ohne Daten */
+	xml_decl,	/* Deklarationen */
 } XMLStatus;
 
 typedef struct XMLBuf XMLBuf;

@@ -99,6 +99,16 @@ void *xml_print (XMLBuf *xml, const char *name, const char *data, void *par)
 		out_data(out, data);
 		out_data(out, "\n-->");
 		break;
+	case xml_comment:
+		out_data(out, "<!--");
+		out_data(out, data);
+		out_data(out, "-->");
+		break;
+	case xml_pi:
+		out_data(out, "<?");
+		out_data(out, data);
+		out_data(out, "?>");
+		break;
 	default:
 		break;
 	}
@@ -133,6 +143,7 @@ void *xml_compact (XMLBuf *xml, const char *name, const char *data, void *par)
 		out_end(out, name);
 		break;
 	case xml_pi:
+		out_data(out, data);
 	default:
 		break;
 	}

@@ -13,6 +13,108 @@
 #define	STAT_BEG	2
 #define	STAT_DATA	3
 
+
+/*
+Die Funktion parst einen Markup-Bereich, der durch mindestens
+<lim> hintereinanderfolgende Zeichen <key> abgeschlossen wird.
+Wird für Verarbeitungsanweisungen, Kommentare und CDATA benötigt.
+Das Flag <entity> bestimmt, ob Entitys interpretiert werden.
+*/
+
+static void parse_markup (XMLBuf *xml, IO *in, int key, int lim, int entity)
+{
+	int cnt;
+	int32_t c;
+
+	XMLBuf_start(xml);
+	cnt = 0;
+
+	while ((c = io_getucs(in)) != EOF)
+	{
+		if	(cnt >= lim && c == '>')
+		{
+			xml->sbuf.pos -= cnt;
+			break;
+		}
+
+#if	0
+		/* TODO */
+		if	(c == '&' && entity)
+		{
+			parse_entity(xml, in);
+			cnt = 0;
+			continue;
+		}
+#endif
+		sb_putucs(c, &xml->sbuf);
+
+		if	(c == key)	cnt++;
+		else			cnt = 0;
+	}
+}
+
+static void *parse_instruction (XMLBuf *xml, IO *in)
+{
+	char *res;
+	int last;
+
+	last = XMLBuf_next(xml);
+	parse_markup(xml, in, '?', 1, 1);
+	res = XMLBuf_action(xml, xml_pi);
+	XMLBuf_prev(xml, last);
+	return res;
+}
+
+static void *parse_comment (XMLBuf *xml, IO *in)
+{
+	parse_markup(xml, in, '-', 2, 1);
+	return XMLBuf_action(xml, xml_comment);
+}
+
+static void *parse_special (XMLBuf *xml, IO *in)
+{
+	int32_t c = io_getucs(in);
+
+	if	(c == '-')
+	{
+		c = io_getucs(in);
+
+		if	(c == '-')
+			return parse_comment(xml, in);
+
+		sb_putucs(c, &xml->sbuf);
+		c = '-';
+	}
+
+	sb_putucs(c, &xml->sbuf);
+	
+	while ((c = io_getucs(in)) != EOF && c != '>')
+	{
+#if	0
+		if	(c == '[')
+		{
+			char *p = sbuf_nul(&xml->sbuf) + xml->data;
+
+			if	(strcmp(p, "[CDATA") == 0)
+			{
+				nxml_start(xml);
+				return parse_cdata(xml, in);
+			}
+		}
+
+		if	(c == '&')
+		{
+			parse_entity(xml, in);
+		}
+		else	sb_putucs(c, &xml->sbuf);
+#else
+		sb_putucs(c, &xml->sbuf);
+#endif
+	}
+
+	return XMLBuf_action(xml, xml_decl);
+}
+
 static void skip_tag (XMLBuf *xml, IO *io)
 {
 	int32_t c;
@@ -212,11 +314,11 @@ void *XMLBuf_parse (XMLBuf *xml, IO *io)
 
 			if	(c == '?')
 			{
-				skip_tag(xml, io);
+				parse_instruction(xml, io);
 			}
 			else if	(c == '!')
 			{
-				skip_tag(xml, io);
+				parse_special(xml, io);
 			}
 			else if	(c == '/')
 			{
