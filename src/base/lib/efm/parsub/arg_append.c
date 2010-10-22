@@ -24,6 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/mstring.h>
 #include <EFEU/Debug.h>
 #include <EFEU/io.h>
+#include <errno.h>
 
 /*
 Die Funktion |$1| erweitert eine Argumentliste entsprechend der
@@ -31,9 +32,10 @@ Anweisungen in <def>.
 Dabei handelt es sich um eine Zeichenkette aus
 Kennbuchstaben mit der folgenden Bedeutung:
 [n]	Null Pointer (kein Argument der Liste)
-[p]	Pointer Adresse
+[e]	aktueller Wert von strerror(errno) (kein Argument der Liste)
 [s]	Konstante Zeichenkette
 [m]	Dynamische Zeichenkette
+[p]	Pointer Adresse
 [d]	Ganzzahlwert
 [u]	Vorzeichenloser Ganzzahlwert
 [z]	size_t Ganzzahlwert
@@ -58,6 +60,9 @@ void arg_append (ArgList *args, const char *def, va_list list)
 		{
 		case 'n':
 			arg_cadd(args, NULL);
+			break;
+		case 'e':
+			arg_cadd(args, strerror(errno));
 			break;
 		case 's':
 			arg_cadd(args, va_arg(list, char *));
