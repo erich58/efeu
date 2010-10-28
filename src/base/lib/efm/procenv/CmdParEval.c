@@ -116,6 +116,13 @@ static int f_test (CmdPar *cpar, CmdParVar *var,
 	return 0;
 }
 
+static int f_setlocale (CmdPar *cpar, CmdParVar *var,
+	const char *par, const char *arg)
+{
+	char *p = CmdPar_psub(cpar, par, arg);
+	ChangeLocale(p);
+	return 0;
+}
 
 static int f_message (CmdPar *cpar, CmdParVar *var,
 	const char *par, const char *arg)
@@ -245,6 +252,7 @@ static int f_info (CmdPar *cpar, CmdParVar *var,
 
 static CmdParEval builtin[] = {
 	 { "test", "Testauswertungsfunktion", f_test },
+	 { "setlocale", "Lokale setzen", f_setlocale },
 	 { "set", "Wert setzen", f_set },
 	 { "lset", "Wert mit Sprachfilter setzen", f_lset },
 	 { "vset", "Wert mit Variable als Format setzen", f_vset },
