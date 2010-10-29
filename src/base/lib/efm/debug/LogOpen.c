@@ -181,7 +181,11 @@ static int log_close (LOGOUT *log)
 	sb_putc(0, log->buf);
 
 	for (entry = log->ctrl->entry; entry; entry = entry->next)
+	{
+		if	(!entry->out)	continue;
+
 		entry->out->write(entry->out, reorg(log, entry->flags));
+	}
 
 	sb_release(log->buf);
 	memfree(log);
