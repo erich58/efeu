@@ -148,6 +148,20 @@ void rd_debug (const void *data, const char *fmt, ...)
 	}
 }
 
+void rd_log (const void *data, const char *fmt, const char *def, ...)
+{
+	const RefData *rd = data;
+	va_list list;
+
+	if	(rd && rd->reftype->log)
+	{
+		char *id = rd->reftype->ident ? rd->reftype->ident(rd) : NULL;
+		va_start(list, def);
+		log_psubvarg(rd->reftype->log, fmt, id, def, list);
+		va_end(list);
+	}
+}
+
 /*	Identifikation generieren
 */
 
