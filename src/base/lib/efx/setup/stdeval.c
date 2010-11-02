@@ -271,13 +271,14 @@ static EfiMember list_member[] = {
 
 static EfiObj *ref_refcount (const EfiObj *obj, void *data)
 {
-	RefData *rd = Val_ptr(obj->data);
+	RefData *rd = obj ? Val_ptr(obj->data) : NULL;
 	return int2Obj(rd ? rd->refcount : 0);
 }
 
 static EfiObj *ref_ident (const EfiObj *obj, void *data)
 {
-	return str2Obj(rd_ident(Val_ptr(obj->data)));
+	RefData *rd = obj ? Val_ptr(obj->data) : NULL;
+	return str2Obj(rd_ident(rd));
 }
 
 static EfiMember ref_member[] = {
