@@ -150,15 +150,23 @@ void rd_debug (const void *data, const char *fmt, ...)
 
 void rd_log (const void *data, const char *fmt, const char *def, ...)
 {
-	const RefData *rd = data;
 	va_list list;
+
+	va_start(list, def);
+	rd_vlog(data, fmt, def, list);
+	va_end(list);
+}
+
+void rd_vlog (const void *data, const char *fmt, const char *def, va_list list)
+{
+	const RefData *rd = data;
 
 	if	(rd && rd->reftype->log)
 	{
-		char *id = rd->reftype->ident ? rd->reftype->ident(rd) : NULL;
-		va_start(list, def);
+		char *id = msprintf("%s(%p %d)", 
+			rd->reftype->label ? rd->reftype->label : "",
+			rd->refcount);
 		log_psubvarg(rd->reftype->log, fmt, id, def, list);
-		va_end(list);
 	}
 }
 

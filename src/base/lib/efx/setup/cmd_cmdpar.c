@@ -310,6 +310,23 @@ static void f_message (EfiFunc *func, void *rval, void **arg)
 	rd_deref(argl);
 }
 
+static void f_ref_debug (EfiFunc *func, void *rval, void **arg)
+{
+	const RefData *rd = Val_ptr(arg[0]);
+	char *fmt = Val_str(arg[1]);
+
+	if	(rd)
+	{
+		char *id = msprintf("%s(%p %d)", 
+			rd->reftype->label ? rd->reftype->label : "",
+			rd, rd->refcount);
+		ArgList *argl = arg_list(id, Val_list(arg[2]));
+		log_psub(rd->reftype->log ? rd->reftype->log : NoteLog,
+			fmt, argl);
+		rd_deref(argl);
+	}
+}
+
 static void f_psubfilter (EfiFunc *func, void *rval, void **arg)
 {
 	IO *io = rd_refer(Val_io(arg[0]));
@@ -414,6 +431,7 @@ static EfiFuncDef func_cpar[] = {
 
 	{ 0, &Type_void, "message (str fmt, ...)", f_message },
 	{ 0, &Type_void, "error (str fmt, ...)", f_error },
+	{ 0, &Type_void, "_Ref_::debug (str fmt, ...)", f_ref_debug },
 	{ 0, &Type_void, "ShowFmtTab (IO io, str name, str fmt)", f_fmt_show },
 	{ 0, &Type_str, "mkpath (str ext)", f_mkpath },
 };

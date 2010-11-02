@@ -129,7 +129,8 @@ void rd_clean (void *data);
 
 char *rd_ident (const void *data);
 void rd_debug (const void *data, const char *fmt, ...);
-void rd_log (const void *data, const char *fmt, const char *argdev, ...);
+void rd_log (const void *data, const char *fmt, const char *def, ...);
+void rd_vlog (const void *data, const char *fmt, const char *def, va_list arg);
 
 void *rd_alloc (size_t size);
 void *rd_wrap (void *data, void (*clean) (void *data));
