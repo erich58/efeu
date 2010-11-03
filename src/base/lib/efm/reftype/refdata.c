@@ -165,7 +165,7 @@ void rd_vlog (const void *data, const char *fmt, const char *def, va_list list)
 	{
 		char *id = msprintf("%s(%p %d)", 
 			rd->reftype->label ? rd->reftype->label : "",
-			rd->refcount);
+			rd, rd->refcount);
 		log_psubvarg(rd->reftype->log, fmt, id, def, list);
 	}
 }
