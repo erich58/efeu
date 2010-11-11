@@ -57,7 +57,7 @@ if	(fsearch(NULL, Output))
 
 IO out = open(Output, "w");
 
-RegExp regex = "<TITLE>(.*)</TITLE>";
+RegExp regex = RegExp("<TITLE>(.*)</TITLE>", true);
 
 struct Entry {
 	str name;
@@ -70,7 +70,7 @@ DataBase db = DataBase(Entry);
 
 for (x in list)
 {
-	str head = filter("sed -e '/<\/TITLE>/q' " + x);
+	str head = filter("sed -e '/<\/[tT][iI][tT][lL][eE]>/q' " + x);
 	db += { substr(x, 2), regex.match(head).next.obj };
 }
 
