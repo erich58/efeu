@@ -47,6 +47,9 @@ void *xml_dump (XMLBuf *xml, const char *name, const char *data, void *par)
 	case xml_end:	out_puts("end  ", out); break;
 	case xml_data:	out_puts("data ", out); break;
 	case xml_entry:	out_puts("entry", out); break;
+	case xml_err:	out_puts("err  ", out); break;
+	case xml_decl:	out_puts("decl ", out); break;
+	case xml_pi:	out_puts("pi   ", out); break;
 	default:	break;
 	}
 
