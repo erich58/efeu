@@ -5,16 +5,21 @@
 #include <EFEU/io.h>
 
 typedef enum {
-	xml_pi,		/* Process instruction */
-	xml_comment,	/* Kommentar */
-	xml_beg,
-	xml_data,
-	xml_end,
-	xml_entry,	/* Kombination aus beg, data und end */
-	xml_err,
-	xml_tag,	/* Tag ohne Daten */
+	xml_pi = 1,	/* Process instruction */
+
+	xml_DTDbeg,	/* DTD-Beginn */
 	xml_decl,	/* Deklarationen */
-} XMLStatus;
+	xml_DTDend,	/* DTD-Ende */
+
+	xml_beg,	/* Element-Beginn */
+	xml_att,	/* Attribut */
+	xml_data,	/* Daten */
+	xml_cdata,	/* Zeichendaten (kein Markup) */
+	xml_end,	/* Element-Ende */
+
+	xml_comm,	/* Kommentar */
+	xml_err,	/* Fehlerkennung (spezielles Kommentar) */
+} XMLType;
 
 typedef struct XMLBuf XMLBuf;
 
@@ -30,7 +35,7 @@ struct XMLBuf {
 	StrBuf sbuf;
 	XMLAction action;
 	void *par;
-	XMLStatus stat;
+	XMLType stat;
 	int depth;
 	int tag;
 	int data;
@@ -45,10 +50,14 @@ int XMLBuf_next (XMLBuf *xml);
 void XMLBuf_prev (XMLBuf *xml, int last);
 int XMLBuf_last (XMLBuf *xml);
 
-void *XMLBuf_action (XMLBuf *xml, XMLStatus which);
+void *XMLBuf_element (XMLBuf *xml, XMLType which,
+	const char *name, const char *data);
+void *XMLBuf_action (XMLBuf *xml, XMLType which);
+
 void *XMLBuf_tag (XMLBuf *xml, const char *tag, const char *opt);
 void *XMLBuf_beg (XMLBuf *xml, const char *tag, const char *opt);
-void *XMLBuf_data (XMLBuf *xml, const char *data);
+void *XMLBuf_att (XMLBuf *xml, const char *name, const char *data);
+void *XMLBuf_data (XMLBuf *xml, XMLType which, const char *data);
 void *XMLBuf_end (XMLBuf *xml);
 void *XMLBuf_err (XMLBuf *xml, const char *fmt, ...);
 void *XMLBuf_entry (XMLBuf *xml, const char *tag, const char *data);
@@ -60,8 +69,5 @@ void *xml_compact (XMLBuf *xml, const char *name, const char *data, void *par);
 void *xml_list (XMLBuf *xml, const char *name, const char *data, void *par);
 void *xml_dump (XMLBuf *xml, const char *name, const char *data, void *par);
 void *xml_tlist (XMLBuf *xml, const char *name, const char *data, void *par);
-
-void *xml_simple_print (XMLBuf *xml, const char *name,
-		const char *data, void *par);
 
 #endif /* EFEU/xml.h */

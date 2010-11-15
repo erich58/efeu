@@ -59,7 +59,7 @@ int XMLBuf_last (XMLBuf *xml)
 	return 0;
 }
 
-void *XMLBuf_action (XMLBuf *xml, XMLStatus which)
+void *XMLBuf_action (XMLBuf *xml, XMLType which)
 {
 	void *res = NULL;
 
@@ -82,12 +82,13 @@ void *XMLBuf_action (XMLBuf *xml, XMLStatus which)
 
 static void xml_init (XMLBuf *xml, XMLAction action, void *par)
 {
-	sb_trunc(&xml->sbuf);
-	sb_putc(0, &xml->sbuf);
 	xml->action = action;
 	xml->par = par;
 	xml->depth = 0;
+
+	sb_trunc(&xml->sbuf);
 	xml->tag = xml->sbuf.pos;
+	sb_putc(0, &xml->sbuf);
 	xml->data = xml->sbuf.pos;
 	sb_nul(&xml->sbuf);
 }
@@ -123,11 +124,11 @@ void *XMLBuf_beg (XMLBuf *xml, const char *tag, const char *opt)
 	return XMLBuf_action(xml, xml_beg);
 }
 
-void *XMLBuf_data (XMLBuf *xml, const char *data)
+void *XMLBuf_data (XMLBuf *xml, XMLType type, const char *data)
 {
 	XMLBuf_start(xml);
 	sb_puts(data, &xml->sbuf);
-	return XMLBuf_action(xml, xml_data);
+	return XMLBuf_action(xml, type);
 }
 
 void *XMLBuf_end (XMLBuf *xml)
@@ -140,38 +141,70 @@ void *XMLBuf_end (XMLBuf *xml)
 	return res;
 }
 
-void *XMLBuf_tag (XMLBuf *xml, const char *tag, const char *opt)
+void *XMLBuf_att (XMLBuf *xml, const char *name, const char *data)
 {
 	void *res;
 	int last;
 
 	XMLBuf_start(xml);
-	sb_puts(tag, &xml->sbuf);
+	sb_puts(name, &xml->sbuf);
 	last = XMLBuf_next(xml);
-	sb_puts(opt, &xml->sbuf);
-	res = XMLBuf_action(xml, xml_tag);
+	sb_puts(data, &xml->sbuf);
+	res = XMLBuf_action(xml, xml_att);
 	XMLBuf_prev(xml, last);
 	return res;
 }
 
-void *XMLBuf_entry (XMLBuf *xml, const char *tag, const char *data)
+void *XMLBuf_element (XMLBuf *xml, XMLType which,
+	const char *name, const char *data)
 {
-	void *res;
 	int last;
+	void *res;
+
+	switch (which)
+	{
+	case xml_pi:
+	case xml_att:
+	case xml_decl:
+		if	(!name)
+			return XMLBuf_err(xml, "Name fehlt");
+		break;
+
+	case xml_comm:
+	case xml_err:
+	case xml_data:
+	case xml_cdata:
+		if	(name)
+			return XMLBuf_err(xml, "Name nicht zulässig");
+
+		break;
+	case xml_DTDbeg:
+	case xml_DTDend:
+	case xml_beg:
+	case xml_end:
+		return XMLBuf_err(xml, "Elementtyp nicht zulässig");
+	}
 
 	XMLBuf_start(xml);
-	sb_puts(tag, &xml->sbuf);
-	last = XMLBuf_next(xml);
+
+	if	(name)
+	{
+		sb_puts(name, &xml->sbuf);
+		last = XMLBuf_next(xml);
+	}
+
 	sb_puts(data, &xml->sbuf);
-	res = XMLBuf_action(xml, xml_entry);
-	XMLBuf_prev(xml, last);
+	res = XMLBuf_action(xml, which);
+
+	if	(name)
+		XMLBuf_prev(xml, last);
+
 	return res;
 }
 
 void *XMLBuf_err (XMLBuf *xml, const char *fmt, ...)
 {
 	va_list args;
-	void *res;
 
 	XMLBuf_start(xml);
 	va_start(args, fmt);

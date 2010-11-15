@@ -42,15 +42,17 @@ void *xml_dump (XMLBuf *xml, const char *name, const char *data, void *par)
 
 	switch (xml->stat)
 	{
-	case xml_tag:	out_puts("tag  ", out); break;
-	case xml_beg:	out_puts("beg  ", out); break;
-	case xml_end:	out_puts("end  ", out); break;
-	case xml_data:	out_puts("data ", out); break;
-	case xml_entry:	out_puts("entry", out); break;
-	case xml_err:	out_puts("err  ", out); break;
-	case xml_decl:	out_puts("decl ", out); break;
-	case xml_pi:	out_puts("pi   ", out); break;
-	default:	break;
+	case	xml_pi:		out_puts("pi   ", out); break;
+	case	xml_DTDbeg:	out_puts("DTDbeg", out); break;
+	case	xml_DTDend:	out_puts("DTDend", out); break;
+	case	xml_decl:	out_puts("decl  ", out); break;
+	case	xml_beg:	out_puts("beg   ", out); break;
+	case	xml_end:	out_puts("end   ", out); break;
+	case	xml_data:	out_puts("data  ", out); break;
+	case	xml_cdata:	out_puts("cdata ", out); break;
+	case	xml_err:	out_puts("err   ", out); break;
+	case	xml_att:	out_puts("att   ", out); break;
+	case	xml_comm:	out_puts("comm  ", out); break;
 	}
 
 	sprintf(buf, " %2d", xml->depth);

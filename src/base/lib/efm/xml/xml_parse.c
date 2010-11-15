@@ -68,7 +68,7 @@ static void *parse_instruction (XMLBuf *xml, IO *in)
 static void *parse_comment (XMLBuf *xml, IO *in)
 {
 	parse_markup(xml, in, '-', 2, 1);
-	return XMLBuf_action(xml, xml_comment);
+	return XMLBuf_action(xml, xml_comm);
 }
 
 static void *parse_special (XMLBuf *xml, IO *in)
@@ -132,12 +132,13 @@ static void trim (StrBuf *sb)
 static void *entry (XMLBuf *xml, int32_t c, IO *io)
 {
 	void *res;
-	int open_tag;
 	int pending;
 	int last;
 	int quote;
+	int open_tag;
 
 	XMLBuf_start(xml);
+	res = NULL;
 
 	while (c != EOF && !END_NAME(c))
 	{
@@ -152,7 +153,12 @@ static void *entry (XMLBuf *xml, int32_t c, IO *io)
 		return XMLBuf_err(xml, E_EOF);
 
 	last = XMLBuf_next(xml);
-	open_tag = 0;
+	pending = 0;
+
+	res = XMLBuf_action(xml, xml_beg);
+
+	if	(res)
+		return res;
 
 	if	(c != EOF && c != '>')
 	{
@@ -187,7 +193,7 @@ static void *entry (XMLBuf *xml, int32_t c, IO *io)
 					return XMLBuf_err(xml, E_CHAR, c);
 				}
 
-				res = XMLBuf_action(xml, xml_tag);
+				res = XMLBuf_action(xml, xml_end);
 				XMLBuf_prev(xml, last);
 				return res;
 			}
@@ -198,15 +204,9 @@ static void *entry (XMLBuf *xml, int32_t c, IO *io)
 
 			c = io_getucs(io);
 		}
-
-		res = XMLBuf_action(xml, xml_beg);
-
-		if	(res)
-			return res;
-
-		XMLBuf_start(xml);
 	}
 
+	XMLBuf_start(xml);
 	pending = 0;
 
 	while ((c = io_getucs(io)) != EOF)
@@ -214,24 +214,6 @@ static void *entry (XMLBuf *xml, int32_t c, IO *io)
 		if	(c == '<')
 		{
 			c = io_getucs(io);
-
-			if	(c == '/')
-			{
-				while (c != EOF && c != '>')
-					c = io_getucs(io);
-
-				break;
-			}
-
-			if	(!open_tag)
-			{
-				res = XMLBuf_action(xml, xml_beg);
-
-				if	(res)
-					return res;
-
-				open_tag = 1;
-			}
 
 			if	(pending)
 			{
@@ -243,58 +225,58 @@ static void *entry (XMLBuf *xml, int32_t c, IO *io)
 				XMLBuf_start(xml);
 			}
 
+			if	(c == '/')
+			{
+				while (c != EOF && c != '>')
+					c = io_getucs(io);
+
+				break;
+			}
+
+			res = NULL;
+
 			if	(c == '?')
 			{
+//				res = parse_instruction(xml, in);
 				skip_tag(xml, io);
 			}
 			else if	(c == '!')
 			{
+//				res = parse_special(xml, in);
 				skip_tag(xml, io);
 			}
-			else if	((res = entry(xml, c, io)))
-			{
+			else	res = entry(xml, c, io);
+
+			if	(res)
 				return res;
-			}
+
+			XMLBuf_start(xml);
 		}
 		else if	(pending || !SPACE(c))
 		{
-			sb_putucs(c, &xml->sbuf);
+			/*
+			if	(c == '&')
+			{
+				parse_entity(xml, in);
+			}
+			else */ sb_putucs(c, &xml->sbuf);
+
 			pending = 1;
 		}
-		else if	(c == '\n' && !open_tag)
-		{
-			res = XMLBuf_action(xml, xml_beg);
-
-			if	(res)
-				return res;
-
-			open_tag = 1;
-			XMLBuf_start(xml);
-		}
 	}
 
-	if	(open_tag)
-	{
-		if	(pending)
-		{
-			trim(&xml->sbuf);
-			res = XMLBuf_action(xml, xml_data);
-
-			if	(res)
-				return res;
-
-			XMLBuf_start(xml);
-			pending = 0;
-		}
-
-		res = XMLBuf_action(xml, xml_end);
-	}
-	else
+	if	(pending)
 	{
 		trim(&xml->sbuf);
-		res = XMLBuf_action(xml, xml_entry);
+		res = XMLBuf_action(xml, xml_data);
+
+		if	(res)
+			return res;
+
+		XMLBuf_start(xml);
 	}
 
+	res = XMLBuf_action(xml, xml_end);
 	XMLBuf_prev(xml, last);
 	return res;
 }

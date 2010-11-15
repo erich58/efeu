@@ -17,7 +17,7 @@ void *xml_list (XMLBuf *xml, const char *name, const char *data, void *par)
 	switch (xml->stat)
 	{
 	case xml_data:
-	case xml_entry:
+	case xml_cdata:
 		out_data(out, (char *) xml->sbuf.data);
 		out->put('=', out->par);
 		out_data(out, data);

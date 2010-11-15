@@ -30,6 +30,7 @@ static void out_data (XMLOutput *out, const char *name)
 	}
 }
 
+#define	out_pi(out, name, opt)	out_tag(out, "<?", name, opt, "?>")
 #define	out_beg(out, name, opt)	out_tag(out, "<", name, opt, ">")
 #define	out_end(out, name)	out_tag(out, "</", name, NULL, ">")
 
@@ -77,8 +78,8 @@ void *xml_print (XMLBuf *xml, const char *name, const char *data, void *par)
 
 	switch (xml->stat)
 	{
-	case xml_tag:
-		out_tag(out, "<", name, data, "/>");
+	case xml_pi:
+		out_tag(out, "<?", name, data, "?>");
 		break;
 	case xml_beg:
 		out_tag(out, "<", name, data, ">");
@@ -89,25 +90,15 @@ void *xml_print (XMLBuf *xml, const char *name, const char *data, void *par)
 	case xml_end:
 		out_tag(out, "</", name, NULL, ">");
 		break;
-	case xml_entry:
-		out_tag(out, "<", name, NULL, ">");
-		out_data(out, data);
-		out_tag(out, "</", name, NULL, ">");
-		break;
 	case xml_err:
 		out_data(out, "<!--\nERROR: ");
 		out_data(out, data);
 		out_data(out, "\n-->");
 		break;
-	case xml_comment:
+	case xml_comm:
 		out_data(out, "<!--");
 		out_data(out, data);
 		out_data(out, "-->");
-		break;
-	case xml_pi:
-		out_data(out, "<?");
-		out_data(out, data);
-		out_data(out, "?>");
 		break;
 	default:
 		break;
@@ -125,9 +116,8 @@ void *xml_compact (XMLBuf *xml, const char *name, const char *data, void *par)
 
 	switch (xml->stat)
 	{
-	case xml_tag:
-		out_tag(out, "<", name, data, "/>");
-		break;
+	case xml_pi:
+		out_tag(out, "<?", name, data, "?>");
 	case xml_beg:
 		out_beg(out, name, data);
 		break;
@@ -137,13 +127,6 @@ void *xml_compact (XMLBuf *xml, const char *name, const char *data, void *par)
 	case xml_end:
 		out_end(out, name);
 		break;
-	case xml_entry:
-		out_beg(out, name, NULL);
-		out_data(out, data);
-		out_end(out, name);
-		break;
-	case xml_pi:
-		out_data(out, data);
 	default:
 		break;
 	}

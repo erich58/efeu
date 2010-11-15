@@ -16,9 +16,6 @@ void *xml_tlist (XMLBuf *xml, const char *name, const char *data, void *par)
 
 	switch (xml->stat)
 	{
-	case xml_entry:
-		out_data(out, name);
-		/* FALLTROUGH */
 	case xml_data:
 		out->put('\t', out->par);
 		out_data(out, data);
