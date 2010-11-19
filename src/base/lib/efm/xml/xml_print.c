@@ -76,7 +76,7 @@ void *xml_print (XMLBuf *xml, const char *name, const char *data, void *par)
 	for (i = 2 * xml->depth; i > 0; i--)
 		out->put(' ', out->par);
 
-	switch (xml->stat)
+	switch (xml->type)
 	{
 	case xml_pi:
 		out_tag(out, "<?", name, data, "?>");
@@ -114,7 +114,7 @@ void *xml_compact (XMLBuf *xml, const char *name, const char *data, void *par)
 
 	if	(!out || !out->put)	return NULL;
 
-	switch (xml->stat)
+	switch (xml->type)
 	{
 	case xml_pi:
 		out_tag(out, "<?", name, data, "?>");

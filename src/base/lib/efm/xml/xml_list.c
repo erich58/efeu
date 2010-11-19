@@ -14,7 +14,7 @@ void *xml_list (XMLBuf *xml, const char *name, const char *data, void *par)
 
 	if	(!out || !out->put)	return NULL;
 
-	switch (xml->stat)
+	switch (xml->type)
 	{
 	case xml_data:
 	case xml_cdata:

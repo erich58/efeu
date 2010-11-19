@@ -35,7 +35,7 @@ struct XMLBuf {
 	StrBuf sbuf;
 	XMLAction action;
 	void *par;
-	XMLType stat;
+	XMLType type;
 	int depth;
 	int tag;
 	int data;

@@ -66,7 +66,7 @@ void *XMLBuf_action (XMLBuf *xml, XMLType which)
 	if	(which == xml_end)
 		xml->depth--;
 
-	xml->stat = which;
+	xml->type = which;
 
 	if	(xml->action)
 	{

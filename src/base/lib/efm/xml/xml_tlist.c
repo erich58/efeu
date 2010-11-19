@@ -14,7 +14,7 @@ void *xml_tlist (XMLBuf *xml, const char *name, const char *data, void *par)
 
 	if	(!out || !out->put)	return NULL;
 
-	switch (xml->stat)
+	switch (xml->type)
 	{
 	case xml_data:
 		out->put('\t', out->par);

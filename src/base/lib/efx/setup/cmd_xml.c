@@ -29,17 +29,21 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/pconfig.h>
 #include <EFEU/xml.h>
 
-static EnumTypeDef xmltyp[] = {
+static EnumTypeDef xmltype[] = {
 	{ "pi",		xml_pi,		"Process instruction" },
+
+	{ "DTDbeg",	xml_DTDbeg,	"DTD Beginn" },
 	{ "decl",	xml_decl,	"Deklarationen" },
-	{ "comm",	xml_comm,	"comment" },
-	{ "err",	xml_err,	"Error" },
+	{ "DTDend",	xml_DTDend,	"DTD end" },
 
 	{ "beg",	xml_beg,	"begin tag" },
 	{ "att",	xml_att,	"Attribut" },
 	{ "data",	xml_data,	"data" },
 	{ "cdata",	xml_cdata,	"cdata" },
 	{ "end",	xml_end,	"end tag" },
+
+	{ "comm",	xml_comm,	"comment" },
+	{ "err",	xml_err,	"Error" },
 };
 
 static size_t t_read (const EfiType *st, void *data, IO *io)
@@ -229,7 +233,7 @@ static EfiFuncDef fdef_xml[] = {
 
 void CmdSetup_xml(void)
 {
-	MakeEnumType("XMLTyp", xmltyp, tabsize(xmltyp));
+	MakeEnumType("XMLType", xmltype, tabsize(xmltype));
 	AddType(&Type_XML);
 	AddFuncDef(fdef_xml, tabsize(fdef_xml));
 }
