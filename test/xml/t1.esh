@@ -1,0 +1,19 @@
+pconfig !
+Mode = dump;
+
+c| Mode = compact
+	Kompakt
+b| Mode = beautified
+	Verschönert
+t| Mode = tag
+	Tagliste
+!
+
+XML xml;
+
+xml.open(iostd, Mode);
+xml.beg("a");
+xml.att("name", "value");
+xml.data("Daten");
+xml.cdata("Zeichenaten");
+xml.end();
