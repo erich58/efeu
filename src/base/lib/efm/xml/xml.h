@@ -34,6 +34,7 @@ struct XMLBuf {
 	void *par;
 	XMLType type;
 	int depth;
+	int open_tag;
 	int tag;
 	int data;
 };

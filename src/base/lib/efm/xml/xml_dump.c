@@ -55,7 +55,7 @@ void *xml_dump (XMLBuf *xml, const char *name, const char *data, void *par)
 	case	xml_err:	out_puts("err  ", out); break;
 	}
 
-	sprintf(buf, " %2d", xml->depth);
+	sprintf(buf, " %2d %d", xml->depth, xml->open_tag);
 	out_puts(buf, out);
 
 	out_puts(" path=", out);

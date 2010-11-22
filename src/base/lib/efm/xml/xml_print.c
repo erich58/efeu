@@ -1,154 +1,151 @@
 #include <EFEU/xml.h>
 
-static void out_tag (XMLOutput *out, const char *start,
-	const char *name, const char *opt, const char *end)
+#define	out_char(out, c)	out->put(c, out->par)
+
+static void out_str (XMLOutput *out, const char *name)
 {
-	while (*start)
-		out->put(*start++, out->par);
+	if	(!name)	return;
 
 	while (*name)
 		out->put(*name++, out->par);
+}
 
-	if	(opt && *opt)
-	{
+static void out_indent (XMLBuf *xml, XMLOutput *out, int base)
+{
+	for (base += 2 * xml->depth; base > 0; base--)
 		out->put(' ', out->par);
-
-		while (*opt)
-			out->put(*opt++, out->par);
-	}
-
-	while (*end)
-		out->put(*end++, out->par);
 }
 
-static void out_data (XMLOutput *out, const char *name)
+static void *do_print (XMLBuf *xml, const char *name, const char *data,
+	XMLOutput *out, int beautified)
 {
-	if	(name)
-	{
-		while (*name)
-			out->put(*name++, out->par);
-	}
-}
-
-#define	out_pi(out, name, opt)	out_tag(out, "<?", name, opt, "?>")
-#define	out_beg(out, name, opt)	out_tag(out, "<", name, opt, ">")
-#define	out_end(out, name)	out_tag(out, "</", name, NULL, ">")
-
-#if	0
-static void out_beg (XMLOutput *out, const char *name, const char *opt)
-{
-	out->put('<', out->par);
-
-	while (*name)
-		out->put(*name++, out->par);
-
-	if	(opt && *opt)
-	{
-		out->put(' ', out->par);
-
-		while (*opt)
-			out->put(*opt++, out->par);
-	}
-
-	out->put('>', out->par);
-}
-
-static void out_end (XMLOutput *out, const char *name)
-{
-	out->put('<', out->par);
-	out->put('/', out->par);
-
-	while (*name)
-		out->put(*name++, out->par);
-
-	out->put('>', out->par);
-}
-
-#endif
-
-void *xml_print (XMLBuf *xml, const char *name, const char *data, void *par)
-{
-	XMLOutput *out = par;
-	int i;
+	int need_newline = beautified;
 
 	if	(!out || !out->put)	return NULL;
 
-	for (i = 2 * xml->depth; i > 0; i--)
-		out->put(' ', out->par);
+	if	(xml->open_tag)
+	{
+		switch (xml->type)
+		{
+		case xml_end:
+			out_str(out, "/>");
+
+			if	(beautified)
+				out_char(out, '\n');
+
+			return NULL;
+		case xml_att:
+			out_char(out, ' ');
+			break;
+		default:
+			out_char(out, '>');
+
+			if	(beautified)
+			{
+				out_char(out, '\n');
+				out_indent(xml, out, 0);
+			}
+
+			break;
+		}
+	}
+	else if	(beautified)
+	{
+		out_indent(xml, out, 0);
+	}
 
 	switch (xml->type)
 	{
 	case xml_pi:
-		out_tag(out, "<?", name, data, "?>");
-		break;
-	case xml_dtd:
+		out_str(out, "<?");
+		out_str(out, name);
+
 		if	(data && *data)
 		{
-			out_tag(out, "<!DOCTYPE ", name, NULL, "\n[\n");
-			out_tag(out, "", data, NULL, "\n]>");
+			out_char(out, ' ');
+			out_str(out, data);
 		}
-		else	out_tag(out, "<!DOCTYPE ", name, NULL, ">");
 
+		out_str(out, "?>");
+		need_newline = 1;
+		break;
+	case xml_dtd:
+		out_str(out, "<!DOCTYPE ");
+		out_str(out, name);
+
+		if	(data && *data)
+		{
+			out_str(out, "\n[\n");
+			out_str(out, data);
+			out_str(out, "\n]");
+		}
+
+		out_char(out, '>');
+		need_newline = 1;
 		break;
 	case xml_beg:
-		out_tag(out, "<", name, data, ">");
+		out_char(out, '<');
+		out_str(out, name);
+		need_newline = 0;
 		break;
 	case xml_data:
-		out_data(out, data);
+		out_str(out, data);
+		break;
+	case xml_cdata:
+		out_str(out, "<![CDATA[");
+		out_str(out, data);
+		out_str(out, "]]>");
 		break;
 	case xml_end:
-		out_tag(out, "</", name, NULL, ">");
+		if	(xml->open_tag)	return NULL;
+
+		out_str(out, "</");
+		out_str(out, name);
+		out_char(out, '>');
 		break;
 	case xml_err:
-		out_data(out, "<!--\nERROR: ");
-		out_data(out, data);
-		out_data(out, "\n-->");
+		if	(beautified)
+		{
+			out_str(out, "<!--\nERROR: ");
+			out_str(out, data);
+			out_str(out, "\n");
+			out_indent(xml, out, 0);
+			out_str(out, "-->");
+		}
+		else	return NULL;
+
 		break;
 	case xml_comm:
-		out_data(out, "<!--");
-		out_data(out, data);
-		out_data(out, "-->");
+		if	(beautified)
+		{
+			out_str(out, "<!--");
+			out_str(out, data);
+			out_str(out, "-->");
+		}
+		else	return NULL;
+
 		break;
-	default:
+	case xml_att:
+		out_str(out, name);
+		out_str(out, "=\"");
+		out_str(out, data);
+		out_str(out, "\"");
+		need_newline = 0;
 		break;
 	}
 
-	out->put('\n', out->par);
+	if	(need_newline)
+		out_char(out, '\n');
+		
 	return NULL;
+}
+
+void *xml_print (XMLBuf *xml, const char *name, const char *data, void *par)
+{
+	return do_print(xml, name, data, par, 1);
 }
 
 void *xml_compact (XMLBuf *xml, const char *name, const char *data, void *par)
 {
-	XMLOutput *out = par;
-
-	if	(!out || !out->put)	return NULL;
-
-	switch (xml->type)
-	{
-	case xml_pi:
-		out_tag(out, "<?", name, data, "?>\n");
-		break;
-	case xml_dtd:
-		if	(data && *data)
-		{
-			out_tag(out, "<!DOCTYPE ", name, NULL, "\n[\n");
-			out_tag(out, "", data, NULL, "\n]>\n");
-		}
-		else	out_tag(out, "<!DOCTYPE ", name, NULL, ">\n");
-
-		break;
-	case xml_beg:
-		out_beg(out, name, data);
-		break;
-	case xml_data:
-		out_data(out, data);
-		break;
-	case xml_end:
-		out_end(out, name);
-		break;
-	default:
-		break;
-	}
-
-	return NULL;
+	return do_print(xml, name, data, par, 0);
 }

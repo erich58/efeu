@@ -168,20 +168,29 @@ static void f_pi (EfiFunc *func, void *rval, void **arg)
 	XMLBuf_pi(arg[0], Val_str(arg[1]), Val_str(arg[2]));
 }
 
-static void f_rem (EfiFunc *func, void *rval, void **arg)
+static void do_fmt (XMLBuf *xml, XMLType type,
+	const char *fmt, EfiObjList *list)
 {
-	XMLBuf *xml = arg[0];
-
 	if	(xml)
 	{
 		IO *io;
 	       
 		XMLBuf_start(xml, NULL);
 		io = io_strbuf(&xml->sbuf);
-		PrintFmtList(io, Val_str(arg[1]), Val_list(arg[2]));
+		PrintFmtList(io, fmt, list);
 		io_close(io);
-		XMLBuf_action(xml, xml_comm, 0);
+		XMLBuf_action(xml, type, -1);
 	}
+}
+
+static void f_rem (EfiFunc *func, void *rval, void **arg)
+{
+	do_fmt(arg[0], xml_comm, Val_str(arg[1]), Val_list(arg[2]));
+}
+
+static void f_err (EfiFunc *func, void *rval, void **arg)
+{
+	do_fmt(arg[0], xml_err, Val_str(arg[1]), Val_list(arg[2]));
 }
 
 static void f_dtd (EfiFunc *func, void *rval, void **arg)
@@ -201,7 +210,7 @@ static void f_data (EfiFunc *func, void *rval, void **arg)
 
 static void f_cdata (EfiFunc *func, void *rval, void **arg)
 {
-	XMLBuf_data(arg[0], xml_data, Val_str(arg[1]));
+	XMLBuf_data(arg[0], xml_cdata, Val_str(arg[1]));
 }
 
 static EfiFuncDef fdef_xml[] = {
@@ -214,6 +223,7 @@ static EfiFuncDef fdef_xml[] = {
 	{ 0, &Type_void, "XML::dtd (str name, str id, str decl = NULL)", f_dtd },
 	{ 0, &Type_void, "XML::pi (str name, str data)", f_pi },
 	{ 0, &Type_void, "XML::rem (str fmt, ...)", f_rem },
+	{ 0, &Type_void, "XML::err (str fmt, ...)", f_err },
 
 	{ 0, &Type_void, "XML::entry (str tag, str data)", f_entry },
 	{ 0, &Type_void, "XML::beg (str tag)", f_beg },

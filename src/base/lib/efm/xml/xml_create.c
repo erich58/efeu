@@ -43,7 +43,7 @@ int XMLBuf_last (XMLBuf *xml)
 
 	if	(xml->tag)
 	{
-		for (last = xml->tag - 2; last > 0; last--)
+		for (last = xml->tag - 2; last >= 0; last--)
 		{
 			if	(xml->sbuf.data[last] == TAG_DELIM)
 			{
@@ -72,7 +72,14 @@ void *XMLBuf_action (XMLBuf *xml, XMLType which, int prev)
 	}
 
 	if	(which == xml_beg)
+	{
 		xml->depth++;
+		xml->open_tag = 1;
+	}
+	else if	(which != xml_att)
+	{
+		xml->open_tag = 0;
+	}
 
 	if	(prev >= 0)
 		XMLBuf_prev(xml, prev);
@@ -86,6 +93,7 @@ static void xml_init (XMLBuf *xml, XMLAction action, void *par)
 	xml->action = action;
 	xml->par = par;
 	xml->depth = 0;
+	xml->open_tag = 0;
 
 	sb_trunc(&xml->sbuf);
 	xml->tag = xml->sbuf.pos;
