@@ -12,8 +12,34 @@ t| Mode = tag
 XML xml;
 
 xml.open(iostd, Mode);
+
+xml.pi("xml", string !
+version="1.0"
+encoding="ISO-8859-1"
+!);
+
+#if	0
+#if	1
+xml.dtd("HTML", string !
+PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+	"http://www.w3.org/TR/html4/loose.dtd"
+!);
+#else
+xml.dtd("HTML", string !
+PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+	"http://www.w3.org/TR/html4/loose.dtd"
+!, string !
+<!ENTITY kap2 SYSTEM "kap02.xml">
+!);
+#endif
+#endif
+
+xml.rem("Anmerkung");
 xml.beg("a");
-xml.att("name", "value");
+xml.att("a1", "v1");
+xml.att("a2", "v2");
 xml.data("Daten");
-xml.cdata("Zeichenaten");
+xml.rem("Anmerkung");
+xml.cdata("Zeichendaten");
+xml.entry("name", "value");
 xml.end();

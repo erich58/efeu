@@ -81,6 +81,15 @@ void *xml_print (XMLBuf *xml, const char *name, const char *data, void *par)
 	case xml_pi:
 		out_tag(out, "<?", name, data, "?>");
 		break;
+	case xml_dtd:
+		if	(data && *data)
+		{
+			out_tag(out, "<!DOCTYPE ", name, NULL, "\n[\n");
+			out_tag(out, "", data, NULL, "\n]>");
+		}
+		else	out_tag(out, "<!DOCTYPE ", name, NULL, ">");
+
+		break;
 	case xml_beg:
 		out_tag(out, "<", name, data, ">");
 		break;
@@ -117,7 +126,17 @@ void *xml_compact (XMLBuf *xml, const char *name, const char *data, void *par)
 	switch (xml->type)
 	{
 	case xml_pi:
-		out_tag(out, "<?", name, data, "?>");
+		out_tag(out, "<?", name, data, "?>\n");
+		break;
+	case xml_dtd:
+		if	(data && *data)
+		{
+			out_tag(out, "<!DOCTYPE ", name, NULL, "\n[\n");
+			out_tag(out, "", data, NULL, "\n]>\n");
+		}
+		else	out_tag(out, "<!DOCTYPE ", name, NULL, ">\n");
+
+		break;
 	case xml_beg:
 		out_beg(out, name, data);
 		break;

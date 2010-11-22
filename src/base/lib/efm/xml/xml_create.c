@@ -4,13 +4,13 @@
 
 static XML_DECL(create_buf);
 
-int XMLBuf_next (XMLBuf *xml)
+int XMLBuf_next (XMLBuf *xml, int concat)
 {
 	int last = xml->tag;
 
 	xml->tag = xml->data;
 
-	if	(xml->tag)
+	if	(xml->tag && concat)
 		xml->sbuf.data[xml->tag - 1] = TAG_DELIM;
 
 	sb_putc(0, &xml->sbuf);
@@ -26,18 +26,15 @@ void XMLBuf_prev (XMLBuf *xml, int last)
 	if	(xml->data)
 		xml->sbuf.data[xml->data - 1] = 0;
 
-#if	0
-	printf("tag=%d, data=%d, path=%s, name=%s\n", xml->tag, xml->data,
-		xml->sbuf.data, xml->sbuf.data + xml->tag);
-#endif
 	xml->sbuf.pos = xml->data;
 }
 
 
-void XMLBuf_start (XMLBuf *xml)
+void XMLBuf_start (XMLBuf *xml, const char *name)
 {
 	xml->sbuf.pos = xml->data;
 	sb_sync(&xml->sbuf);
+	sb_puts(name, &xml->sbuf);
 }
 
 int XMLBuf_last (XMLBuf *xml)
@@ -59,7 +56,7 @@ int XMLBuf_last (XMLBuf *xml)
 	return 0;
 }
 
-void *XMLBuf_action (XMLBuf *xml, XMLType which)
+void *XMLBuf_action (XMLBuf *xml, XMLType which, int prev)
 {
 	void *res = NULL;
 
@@ -77,8 +74,12 @@ void *XMLBuf_action (XMLBuf *xml, XMLType which)
 	if	(which == xml_beg)
 		xml->depth++;
 
+	if	(prev >= 0)
+		XMLBuf_prev(xml, prev);
+
 	return res;
 }
+
 
 static void xml_init (XMLBuf *xml, XMLAction action, void *par)
 {
@@ -115,100 +116,99 @@ XMLBuf *xml_create (XMLBuf *xml, XMLAction action, void *par)
 }
 
 
-void *XMLBuf_beg (XMLBuf *xml, const char *tag, const char *opt)
+/*
+Konstruktion von Elementen
+*/
+
+void *XMLBuf_beg (XMLBuf *xml, const char *tag)
 {
-	XMLBuf_start(xml);
-	sb_puts(tag, &xml->sbuf);
-	XMLBuf_next(xml);
-	sb_puts(opt, &xml->sbuf);
-	return XMLBuf_action(xml, xml_beg);
+	XMLBuf_start(xml, tag);
+	XMLBuf_next(xml, 1);
+	return XMLBuf_action(xml, xml_beg, -1);
 }
 
 void *XMLBuf_data (XMLBuf *xml, XMLType type, const char *data)
 {
-	XMLBuf_start(xml);
-	sb_puts(data, &xml->sbuf);
-	return XMLBuf_action(xml, type);
+	XMLBuf_start(xml, data);
+	return XMLBuf_action(xml, type, -1);
 }
 
 void *XMLBuf_end (XMLBuf *xml)
 {
-	void *res;
+	XMLBuf_start(xml, NULL);
+	return XMLBuf_action(xml, xml_end, XMLBuf_last(xml));
+}
 
-	XMLBuf_start(xml);
-	res = XMLBuf_action(xml, xml_end);
-	XMLBuf_prev(xml, XMLBuf_last(xml));
-	return res;
+void *XMLBuf_entry (XMLBuf *xml, const char *name, const char *data)
+{
+	void *res;
+	int last;
+
+	XMLBuf_start(xml, name);
+	last = XMLBuf_next(xml, 1);
+
+	if	((res = XMLBuf_action(xml, xml_beg, -1)))	return res;
+
+	XMLBuf_start(xml, data);
+
+	if	((res = XMLBuf_action(xml, xml_data, -1)))	return res;
+
+	XMLBuf_start(xml, NULL);
+	return XMLBuf_action(xml, xml_end, last);
+}
+
+
+void *XMLBuf_fmt (XMLBuf *xml, XMLType type, const char *fmt, ...)
+{
+	va_list args;
+
+	XMLBuf_start(xml, NULL);
+	va_start(args, fmt);
+	sb_vprintf(&xml->sbuf, fmt, args);
+	va_end(args);
+	return XMLBuf_action(xml, type, -1);
+}
+
+static void *entry (XMLBuf *xml, XMLType type, int concat,
+	const char *name, const char *data)
+{
+	int last;
+
+	XMLBuf_start(xml, name);
+	last = XMLBuf_next(xml, concat);
+	XMLBuf_puts(xml, NULL, data);
+	return XMLBuf_action(xml, type, last);
 }
 
 void *XMLBuf_att (XMLBuf *xml, const char *name, const char *data)
 {
-	void *res;
-	int last;
-
-	XMLBuf_start(xml);
-	sb_puts(name, &xml->sbuf);
-	last = XMLBuf_next(xml);
-	sb_puts(data, &xml->sbuf);
-	res = XMLBuf_action(xml, xml_att);
-	XMLBuf_prev(xml, last);
-	return res;
+	return entry(xml, xml_att, 0, name, data);
 }
 
-void *XMLBuf_element (XMLBuf *xml, XMLType which,
-	const char *name, const char *data)
+void *XMLBuf_pi (XMLBuf *xml, const char *name, const char *data)
+{
+	return entry(xml, xml_pi, 0, name, data);
+}
+
+void *XMLBuf_dtd (XMLBuf *xml, const char *name,
+	const char *id, const char *decl)
 {
 	int last;
-	void *res;
 
-	switch (which)
-	{
-	case xml_pi:
-	case xml_att:
-	case xml_decl:
-		if	(!name)
-			return XMLBuf_err(xml, "Name fehlt");
-		break;
-
-	case xml_comm:
-	case xml_err:
-	case xml_data:
-	case xml_cdata:
-		if	(name)
-			return XMLBuf_err(xml, "Name nicht zulässig");
-
-		break;
-	case xml_DTDbeg:
-	case xml_DTDend:
-	case xml_beg:
-	case xml_end:
-		return XMLBuf_err(xml, "Elementtyp nicht zulässig");
-	}
-
-	XMLBuf_start(xml);
-
-	if	(name)
-	{
-		sb_puts(name, &xml->sbuf);
-		last = XMLBuf_next(xml);
-	}
-
-	sb_puts(data, &xml->sbuf);
-	res = XMLBuf_action(xml, which);
-
-	if	(name)
-		XMLBuf_prev(xml, last);
-
-	return res;
+	XMLBuf_start(xml, name);
+	XMLBuf_puts(xml, " ", id);
+	last = XMLBuf_next(xml, 0);
+	XMLBuf_puts(xml, NULL, decl);
+	return XMLBuf_action(xml, xml_dtd, last);
 }
 
 void *XMLBuf_err (XMLBuf *xml, const char *fmt, ...)
 {
 	va_list args;
 
-	XMLBuf_start(xml);
+	XMLBuf_start(xml, NULL);
 	va_start(args, fmt);
 	sb_vprintf(&xml->sbuf, fmt, args);
 	va_end(args);
-	return XMLBuf_action(xml, xml_err);
+	return XMLBuf_action(xml, xml_err, -1);
 }

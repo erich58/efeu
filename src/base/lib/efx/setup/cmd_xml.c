@@ -31,19 +31,16 @@ If not, write to the Free Software Foundation, Inc.,
 
 static EnumTypeDef xmltype[] = {
 	{ "pi",		xml_pi,		"Process instruction" },
-
-	{ "DTDbeg",	xml_DTDbeg,	"DTD Beginn" },
-	{ "decl",	xml_decl,	"Deklarationen" },
-	{ "DTDend",	xml_DTDend,	"DTD end" },
+	{ "dtd",	xml_dtd,	"Document type declaration" },
 
 	{ "beg",	xml_beg,	"begin tag" },
-	{ "att",	xml_att,	"Attribut" },
+	{ "att",	xml_att,	"attribut" },
 	{ "data",	xml_data,	"data" },
 	{ "cdata",	xml_cdata,	"cdata" },
 	{ "end",	xml_end,	"end tag" },
 
 	{ "comm",	xml_comm,	"comment" },
-	{ "err",	xml_err,	"Error" },
+	{ "err",	xml_err,	"error" },
 };
 
 static size_t t_read (const EfiType *st, void *data, IO *io)
@@ -153,7 +150,12 @@ static void f_parse (EfiFunc *func, void *rval, void **arg)
 
 static void f_beg (EfiFunc *func, void *rval, void **arg)
 {
-	XMLBuf_beg(arg[0], Val_str(arg[1]), Val_str(arg[2]));
+	XMLBuf_beg(arg[0], Val_str(arg[1]));
+}
+
+static void f_entry (EfiFunc *func, void *rval, void **arg)
+{
+	XMLBuf_entry(arg[0], Val_str(arg[1]), Val_str(arg[2]));
 }
 
 static void f_att (EfiFunc *func, void *rval, void **arg)
@@ -163,23 +165,7 @@ static void f_att (EfiFunc *func, void *rval, void **arg)
 
 static void f_pi (EfiFunc *func, void *rval, void **arg)
 {
-	XMLBuf *xml = arg[0];
-
-	if	(xml)
-	{
-		IO *io;
-		int last;
-	       
-		XMLBuf_start(xml);
-		sb_puts(Val_str(arg[1]), &xml->sbuf);
-
-		last = XMLBuf_next(xml);
-		io = io_strbuf(&xml->sbuf);
-		PrintFmtList(io, Val_str(arg[2]), Val_list(arg[3]));
-		io_close(io);
-		XMLBuf_action(xml, xml_pi);
-		XMLBuf_prev(xml, last);
-	}
+	XMLBuf_pi(arg[0], Val_str(arg[1]), Val_str(arg[2]));
 }
 
 static void f_rem (EfiFunc *func, void *rval, void **arg)
@@ -190,12 +176,17 @@ static void f_rem (EfiFunc *func, void *rval, void **arg)
 	{
 		IO *io;
 	       
-		XMLBuf_start(xml);
+		XMLBuf_start(xml, NULL);
 		io = io_strbuf(&xml->sbuf);
 		PrintFmtList(io, Val_str(arg[1]), Val_list(arg[2]));
 		io_close(io);
-		XMLBuf_action(xml, xml_comm);
+		XMLBuf_action(xml, xml_comm, 0);
 	}
+}
+
+static void f_dtd (EfiFunc *func, void *rval, void **arg)
+{
+	XMLBuf_dtd(arg[0], Val_str(arg[1]), Val_str(arg[2]), Val_str(arg[3]));
 }
 
 static void f_end (EfiFunc *func, void *rval, void **arg)
@@ -220,10 +211,12 @@ static EfiFuncDef fdef_xml[] = {
 	{ 0, &Type_obj, "XML::close ()", f_close },
 	{ 0, &Type_void, "XML::parse (IO in)", f_parse },
 
-	{ 0, &Type_void, "XML::pi (str name, str fmt, ...)", f_pi },
+	{ 0, &Type_void, "XML::dtd (str name, str id, str decl = NULL)", f_dtd },
+	{ 0, &Type_void, "XML::pi (str name, str data)", f_pi },
 	{ 0, &Type_void, "XML::rem (str fmt, ...)", f_rem },
 
-	{ 0, &Type_void, "XML::beg (str tag, str opt = NULL)", f_beg },
+	{ 0, &Type_void, "XML::entry (str tag, str data)", f_entry },
+	{ 0, &Type_void, "XML::beg (str tag)", f_beg },
 	{ 0, &Type_void, "XML::att (str name, str value)", f_att },
 	{ 0, &Type_void, "XML::data (str data)", f_data },
 	{ 0, &Type_void, "XML::cdata (str data)", f_cdata },

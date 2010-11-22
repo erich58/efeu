@@ -42,27 +42,26 @@ void *xml_dump (XMLBuf *xml, const char *name, const char *data, void *par)
 
 	switch (xml->type)
 	{
-	case	xml_pi:		out_puts("pi    ", out); break;
-	case	xml_DTDbeg:	out_puts("DTDbeg", out); break;
-	case	xml_decl:	out_puts("decl  ", out); break;
-	case	xml_DTDend:	out_puts("DTDend", out); break;
+	case	xml_pi:		out_puts("pi   ", out); break;
+	case	xml_dtd:	out_puts("dtd  ", out); break;
 
-	case	xml_beg:	out_puts("beg   ", out); break;
-	case	xml_att:	out_puts("att   ", out); break;
-	case	xml_data:	out_puts("data  ", out); break;
-	case	xml_cdata:	out_puts("cdata ", out); break;
-	case	xml_end:	out_puts("end   ", out); break;
+	case	xml_beg:	out_puts("beg  ", out); break;
+	case	xml_att:	out_puts("att  ", out); break;
+	case	xml_data:	out_puts("data ", out); break;
+	case	xml_cdata:	out_puts("cdata", out); break;
+	case	xml_end:	out_puts("end  ", out); break;
 
-	case	xml_comm:	out_puts("comm  ", out); break;
-	case	xml_err:	out_puts("err   ", out); break;
+	case	xml_comm:	out_puts("comm ", out); break;
+	case	xml_err:	out_puts("err  ", out); break;
 	}
 
 	sprintf(buf, " %2d", xml->depth);
 	out_puts(buf, out);
-	out_puts(" name=", out);
-	out_xputs(name, out);
+
 	out_puts(" path=", out);
 	out_xputs((char *) xml->sbuf.data, out);
+	out_puts(" name=", out);
+	out_xputs(name, out);
 	out_puts(" data=", out);
 	out_xputs(data, out);
 	out_putc('\n', out);

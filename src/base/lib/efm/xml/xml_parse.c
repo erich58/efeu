@@ -26,7 +26,7 @@ static void parse_markup (XMLBuf *xml, IO *in, int key, int lim, int entity)
 	int cnt;
 	int32_t c;
 
-	XMLBuf_start(xml);
+	XMLBuf_start(xml, NULL);
 	cnt = 0;
 
 	while ((c = io_getucs(in)) != EOF)
@@ -55,20 +55,17 @@ static void parse_markup (XMLBuf *xml, IO *in, int key, int lim, int entity)
 
 static void *parse_instruction (XMLBuf *xml, IO *in)
 {
-	char *res;
 	int last;
 
-	last = XMLBuf_next(xml);
+	last = XMLBuf_next(xml, 0);
 	parse_markup(xml, in, '?', 1, 1);
-	res = XMLBuf_action(xml, xml_pi);
-	XMLBuf_prev(xml, last);
-	return res;
+	return XMLBuf_action(xml, xml_pi, last);
 }
 
 static void *parse_comment (XMLBuf *xml, IO *in)
 {
 	parse_markup(xml, in, '-', 2, 1);
-	return XMLBuf_action(xml, xml_comm);
+	return XMLBuf_action(xml, xml_comm, -1);
 }
 
 static void *parse_special (XMLBuf *xml, IO *in)
@@ -112,7 +109,7 @@ static void *parse_special (XMLBuf *xml, IO *in)
 #endif
 	}
 
-	return XMLBuf_action(xml, xml_decl);
+	return XMLBuf_action(xml, xml_comm, -1);
 }
 
 static void skip_tag (XMLBuf *xml, IO *io)
@@ -137,7 +134,7 @@ static void *entry (XMLBuf *xml, int32_t c, IO *io)
 	int quote;
 	int open_tag;
 
-	XMLBuf_start(xml);
+	XMLBuf_start(xml, NULL);
 	res = NULL;
 
 	while (c != EOF && !END_NAME(c))
@@ -152,10 +149,10 @@ static void *entry (XMLBuf *xml, int32_t c, IO *io)
 	if	(c == EOF)
 		return XMLBuf_err(xml, E_EOF);
 
-	last = XMLBuf_next(xml);
+	last = XMLBuf_next(xml, 1);
 	pending = 0;
 
-	res = XMLBuf_action(xml, xml_beg);
+	res = XMLBuf_action(xml, xml_beg, -1);
 
 	if	(res)
 		return res;
@@ -193,9 +190,7 @@ static void *entry (XMLBuf *xml, int32_t c, IO *io)
 					return XMLBuf_err(xml, E_CHAR, c);
 				}
 
-				res = XMLBuf_action(xml, xml_end);
-				XMLBuf_prev(xml, last);
-				return res;
+				return XMLBuf_action(xml, xml_end, last);
 			}
 			else if	(c == '>')
 			{
@@ -206,7 +201,7 @@ static void *entry (XMLBuf *xml, int32_t c, IO *io)
 		}
 	}
 
-	XMLBuf_start(xml);
+	XMLBuf_start(xml, NULL);
 	pending = 0;
 
 	while ((c = io_getucs(io)) != EOF)
@@ -217,12 +212,12 @@ static void *entry (XMLBuf *xml, int32_t c, IO *io)
 
 			if	(pending)
 			{
-				res = XMLBuf_action(xml, xml_data);
+				res = XMLBuf_action(xml, xml_data, -1);
 
 				if	(res)
 					return res;
 
-				XMLBuf_start(xml);
+				XMLBuf_start(xml, NULL);
 			}
 
 			if	(c == '/')
@@ -250,7 +245,7 @@ static void *entry (XMLBuf *xml, int32_t c, IO *io)
 			if	(res)
 				return res;
 
-			XMLBuf_start(xml);
+			XMLBuf_start(xml, NULL);
 		}
 		else if	(pending || !SPACE(c))
 		{
@@ -268,17 +263,14 @@ static void *entry (XMLBuf *xml, int32_t c, IO *io)
 	if	(pending)
 	{
 		trim(&xml->sbuf);
-		res = XMLBuf_action(xml, xml_data);
 
-		if	(res)
+		if	((res = XMLBuf_action(xml, xml_data, -1)))
 			return res;
 
-		XMLBuf_start(xml);
+		XMLBuf_start(xml, NULL);
 	}
 
-	res = XMLBuf_action(xml, xml_end);
-	XMLBuf_prev(xml, last);
-	return res;
+	return XMLBuf_action(xml, xml_end, last);
 }
 
 void *XMLBuf_parse (XMLBuf *xml, IO *io)
