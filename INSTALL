@@ -4,7 +4,12 @@ The following packages are needed:
 
 *	C development
 *	readline development
-*	teTeX
+*	teTeX or texlive
+
+texlive benötigt:
+
+*	texlive-lang-german
+*	texlive-latex-extra
 
 The following packages are recommended:
 
