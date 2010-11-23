@@ -7,6 +7,7 @@
 
 #define E_EOF   "unexpected end of file"
 #define E_CHAR  "unexpected character %#x"
+#define E_SEQ	"unexpected character sequence '%s'"
 
 #define	STAT_SKIP	0
 #define	STAT_END	1
@@ -276,6 +277,7 @@ static void *entry (XMLBuf *xml, int32_t c, IO *io)
 void *XMLBuf_parse (XMLBuf *xml, IO *io)
 {
 	int32_t c;
+	void *res;
 
 	if	(!xml || !io)
 		return NULL;
@@ -288,15 +290,17 @@ void *XMLBuf_parse (XMLBuf *xml, IO *io)
 
 			if	(c == '?')
 			{
-				parse_instruction(xml, io);
+				if	((res = parse_instruction(xml, io)))
+					return res;
 			}
 			else if	(c == '!')
 			{
-				parse_special(xml, io);
+				if	((res = parse_special(xml, io)))
+					return res;
 			}
 			else if	(c == '/')
 			{
-				break;
+				return XMLBuf_err(xml, E_SEQ, "</");
 			}
 			else	return entry(xml, c, io);
 		}
