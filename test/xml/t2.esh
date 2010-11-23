@@ -1,0 +1,25 @@
+pconfig !
+Mode = dump;
+DTD = false
+
+-dtd| DTD = true
+	Document Type Declaraton generieren
+c| Mode = compact
+	Kompakt
+b| Mode = beautified
+	Verschönert
+t| Mode = tlist
+	Tagliste
+:file | Input
+	Eingabedatei
+!
+
+XML xml;
+
+xml.open(iostd, Mode);
+IO io = open(Input, "r");
+xml.parse(open(Input, "r"));
+xml.close();
+printf("\n-----\n");
+copy(io, iostd);
+close(io);
