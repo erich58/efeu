@@ -48,6 +48,7 @@ xml.att("a", "v");
 xml.end();
 xml.end();
 xml.data("Daten");
+xml.att("a3", "v3");
 xml.rem("Anmerkung");
 xml.data("Daten");
 xml.cdata(string !

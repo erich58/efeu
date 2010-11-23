@@ -190,6 +190,10 @@ static void *entry (XMLBuf *xml, XMLType type, int concat,
 
 void *XMLBuf_att (XMLBuf *xml, const char *name, const char *data)
 {
+	if	(!xml->open_tag)
+		return XMLBuf_err(xml, "unexpected attribut %s='%s'",
+			name, data);
+
 	return entry(xml, xml_att, 0, name, data);
 }
 
