@@ -106,7 +106,7 @@ void *XMLBuf_close (XMLBuf *xml)
 {
 	void *par;
 
-	while (xml->tag > 1)
+	while (xml->tag >= 1)
 		XMLBuf_end(xml);
 
 	par = xml->par;
