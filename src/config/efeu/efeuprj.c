@@ -155,7 +155,7 @@ static char *catpath (const char *dir, const char *name)
 	return p;
 }
 
-static char *getline (FILE *file)
+static char *get_line (FILE *file)
 {
 	static char linebuf[MAXLINE + 1];
 	int c, n;
@@ -274,7 +274,7 @@ static void desc_file (const char *name)
 	desc->lock = 0;
 	desc->flag = 0;
 
-	while ((p = getline(file)))
+	while ((p = get_line(file)))
 	{
 		if	((key = getkey(&p)) == NULL)
 		{
