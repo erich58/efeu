@@ -66,7 +66,6 @@ void *XMLBuf_err (XMLBuf *xml, const char *fmt, ...);
 
 void *xml_print (XMLBuf *xml, const char *name, const char *data, void *par);
 void *xml_compact (XMLBuf *xml, const char *name, const char *data, void *par);
-void *xml_list (XMLBuf *xml, const char *name, const char *data, void *par);
 void *xml_dump (XMLBuf *xml, const char *name, const char *data, void *par);
 void *xml_tlist (XMLBuf *xml, const char *name, const char *data, void *par);
 

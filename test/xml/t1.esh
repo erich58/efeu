@@ -8,7 +8,7 @@ c| Mode = compact
 	Kompakt
 b| Mode = beautified
 	Verschönert
-t| Mode = tag
+t| Mode = tlist
 	Tagliste
 !
 
