@@ -1,6 +1,9 @@
 pconfig !
 Mode = dump;
+DTD = false
 
+-dtd| DTD = true
+	Document Type Declaraton generieren
 c| Mode = compact
 	Kompakt
 b| Mode = beautified
@@ -15,11 +18,12 @@ xml.open(iostd, Mode);
 
 xml.pi("xml", string !
 version="1.0"
-encoding="ISO-8859-1"
+//encoding="ISO-8859-1"
+encoding="UTF-8"
 !);
 
+#if	flagres("DTD")
 #if	0
-#if	1
 xml.dtd("HTML", string !
 PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 	"http://www.w3.org/TR/html4/loose.dtd"
@@ -44,10 +48,13 @@ xml.att("a", "v");
 xml.end();
 xml.end();
 xml.data("Daten");
-xml.data("Daten");
 xml.rem("Anmerkung");
-xml.cdata("Zeichendaten");
+xml.data("Daten");
+xml.cdata(string !
+Zeichendaten
+!);
 xml.entry("name", "value");
 xml.err("Fehler x=%d", 42);
+xml.beg("z");
 xml.data("Daten");
-xml.end();
+xml.close();
