@@ -15,6 +15,30 @@
 #define	STAT_DATA	3
 
 
+static void parse_entity (XMLBuf *xml, IO *in)
+{
+	int pos;
+	int c;
+	char *p;
+	
+	pos = xml->sbuf.pos;
+	sb_putc('&', &xml->sbuf);
+
+	while ((c = io_getucs(in)) != EOF && c != ';')
+		sb_putucs(c, &xml->sbuf);
+
+	p = sb_nul(&xml->sbuf);
+
+	if	((p = XMLBuf_entity(xml, p + pos + 1)))
+	{
+		xml->sbuf.pos = pos;
+		sb_sync(&xml->sbuf);
+		sb_puts(p, &xml->sbuf);
+	}
+	else
+
+	sb_putc(';', &xml->sbuf);
+}
 /*
 Die Funktion parst einen Markup-Bereich, der durch mindestens
 <lim> hintereinanderfolgende Zeichen <key> abgeschlossen wird.
@@ -38,15 +62,13 @@ static void parse_markup (XMLBuf *xml, IO *in, int key, int lim, int entity)
 			break;
 		}
 
-#if	0
-		/* TODO */
 		if	(c == '&' && entity)
 		{
 			parse_entity(xml, in);
 			cnt = 0;
 			continue;
 		}
-#endif
+
 		sb_putucs(c, &xml->sbuf);
 
 		if	(c == key)	cnt++;
@@ -56,17 +78,44 @@ static void parse_markup (XMLBuf *xml, IO *in, int key, int lim, int entity)
 
 static void *parse_instruction (XMLBuf *xml, IO *in)
 {
-	int last;
-
-	last = XMLBuf_next(xml, 0);
+	int last = XMLBuf_next(xml, 0);
 	parse_markup(xml, in, '?', 1, 1);
 	return XMLBuf_action(xml, xml_pi, last);
+}
+
+static void *parse_dtd (XMLBuf *xml, IO *in)
+{
+	int last;
+	int c;
+
+	XMLBuf_start(xml, NULL);
+
+	while ((c = io_getucs(in)) != EOF && c != '>')
+	{
+		if	(c == '[')
+		{
+
+			last = XMLBuf_next(xml, 0);
+			parse_markup(xml, in, ']', 1, 0);
+			return XMLBuf_action(xml, xml_dtd, last);
+		}
+		else	sb_putucs(c, &xml->sbuf);
+	}
+
+	last = XMLBuf_next(xml, 0);
+	return XMLBuf_action(xml, xml_dtd, last);
 }
 
 static void *parse_comment (XMLBuf *xml, IO *in)
 {
 	parse_markup(xml, in, '-', 2, 1);
 	return XMLBuf_action(xml, xml_comm, -1);
+}
+
+static void *parse_cdata (XMLBuf *xml, IO *in)
+{
+	parse_markup(xml, in, ']', 2, 0);
+	return XMLBuf_action(xml, xml_cdata, -1);
 }
 
 static void *parse_special (XMLBuf *xml, IO *in)
@@ -84,30 +133,30 @@ static void *parse_special (XMLBuf *xml, IO *in)
 		c = '-';
 	}
 
+	XMLBuf_start(xml, NULL);
 	sb_putucs(c, &xml->sbuf);
 	
 	while ((c = io_getucs(in)) != EOF && c != '>')
 	{
-#if	0
-		if	(c == '[')
+		if	(SPACE(c))
 		{
-			char *p = sbuf_nul(&xml->sbuf) + xml->data;
+			char *p = sb_nul(&xml->sbuf) + xml->data;
+
+			if	(strcmp(p, "DOCTYPE") == 0)
+				return parse_dtd(xml, in);
+		}
+		else if	(c == '[')
+		{
+			char *p = sb_nul(&xml->sbuf) + xml->data;
 
 			if	(strcmp(p, "[CDATA") == 0)
-			{
-				nxml_start(xml);
 				return parse_cdata(xml, in);
-			}
 		}
-
-		if	(c == '&')
+		else if	(c == '&')
 		{
 			parse_entity(xml, in);
 		}
 		else	sb_putucs(c, &xml->sbuf);
-#else
-		sb_putucs(c, &xml->sbuf);
-#endif
 	}
 
 	return XMLBuf_action(xml, xml_comm, -1);

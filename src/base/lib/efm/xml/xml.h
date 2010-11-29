@@ -48,6 +48,8 @@ void XMLBuf_start (XMLBuf *xml, const char *name);
 int XMLBuf_next (XMLBuf *xml, int concat);
 void XMLBuf_prev (XMLBuf *xml, int last);
 int XMLBuf_last (XMLBuf *xml);
+char *XMLBuf_entity (XMLBuf *buf, const char *name);
+
 void *XMLBuf_action (XMLBuf *xml, XMLType which, int prev);
 void *XMLBuf_close (XMLBuf *xml);
 void *XMLBuf_parse (XMLBuf *xml, IO *io);
