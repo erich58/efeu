@@ -2,8 +2,6 @@ pconfig !
 Mode = dump;
 DTD = false
 
--dtd| DTD = true
-	Document Type Declaraton generieren
 c| Mode = compact
 	Kompakt
 b| Mode = beautified
@@ -18,7 +16,7 @@ XML xml;
 
 xml.open(iostd, Mode);
 IO io = open(Input, "r");
-xml.parse(open(Input, "r"));
+xml.parse(io);
 xml.close();
 printf("\n-----\n");
 copy(io, iostd);
