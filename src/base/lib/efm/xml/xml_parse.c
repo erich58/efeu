@@ -3,16 +3,12 @@
 
 #define	BLANK(c)	((c) == ' ' || c == '\t')
 #define	SPACE(c)	(BLANK(c) || c == '\n' || c == '\r')
-#define	END_NAME(c)	((c) == '>' || (c) == '/' || SPACE(c))
+#define	END_NAME(c)	((c) == '>' || (c) == '/' || (c) == '=' || SPACE(c))
 
 #define E_EOF   "unexpected end of file"
-#define E_CHAR  "unexpected character %#x"
+#define E_CHAR  "unexpected character '%c'"
+#define E_XCHAR  "unexpected character %#x"
 #define E_SEQ	"unexpected character sequence '%s'"
-
-#define	STAT_SKIP	0
-#define	STAT_END	1
-#define	STAT_BEG	2
-#define	STAT_DATA	3
 
 static void *err_char (XMLBuf *xml, unsigned c)
 {
@@ -20,7 +16,24 @@ static void *err_char (XMLBuf *xml, unsigned c)
 	{
 		return XMLBuf_err(xml, E_EOF);
 	}
-	else	return XMLBuf_err(xml, E_CHAR, c);
+	else if	(c > ' ' && c < 127)
+	{
+		return XMLBuf_err(xml, E_CHAR, c);
+	}
+	else	return XMLBuf_err(xml, E_XCHAR, c);
+}
+
+static int parse_name (XMLBuf *xml, IO *in, int c)
+{
+	XMLBuf_start(xml, NULL);
+
+	while (c != EOF && !SPACE(c) && !strchr("<>[]()!?=", c))
+	{
+		sb_putucs(c, &xml->sbuf);
+		c = io_getucs(in);
+	}
+
+	return c;
 }
 
 static void parse_entity (XMLBuf *xml, IO *in)
@@ -87,7 +100,19 @@ static void parse_markup (XMLBuf *xml, IO *in, int key, int lim, int entity)
 
 static void *parse_instruction (XMLBuf *xml, IO *in)
 {
-	int last = XMLBuf_next(xml, 0);
+	int last;
+	int c;
+
+	c = parse_name(xml, in, io_getucs(in));
+
+	while (SPACE(c))
+		c = io_getucs(in);
+
+	if	(c == EOF)
+		return XMLBuf_err(xml, E_EOF);
+
+       	last = XMLBuf_next(xml, 0);
+	io_ungetucs(c, in);
 	parse_markup(xml, in, '?', 1, 1);
 	return XMLBuf_action(xml, xml_pi, last);
 }
@@ -103,7 +128,6 @@ static void *parse_dtd (XMLBuf *xml, IO *in)
 	{
 		if	(c == '[')
 		{
-
 			last = XMLBuf_next(xml, 0);
 			parse_markup(xml, in, ']', 1, 0);
 			return XMLBuf_action(xml, xml_dtd, last);
@@ -171,6 +195,7 @@ static void *parse_special (XMLBuf *xml, IO *in)
 	return XMLBuf_action(xml, xml_comm, -1);
 }
 
+#if	0
 static void skip_tag (XMLBuf *xml, IO *io)
 {
 	int32_t c;
@@ -178,6 +203,7 @@ static void skip_tag (XMLBuf *xml, IO *io)
 	do	c = io_getucs(io);
 	while	(c != EOF && c != '>');
 }
+#endif
 
 static void trim (StrBuf *sb)
 {
@@ -185,40 +211,58 @@ static void trim (StrBuf *sb)
 		sb->pos--;
 }
 
+static void *parse_att (XMLBuf *xml, IO *in, int32_t c)
+{
+	int32_t quote;
+	int last;
+
+	if	((c = parse_name(xml, in, c)) != '=')
+		return err_char(xml, c);
+
+	quote = io_getucs(in);
+
+	if	(quote != '\'' && quote != '"')
+		return err_char(xml, quote);
+
+       	last = XMLBuf_next(xml, 0);
+
+	while ((c = io_getucs(in)) != quote)
+	{
+		if	(c == EOF)
+		{
+			return XMLBuf_err(xml, E_EOF);
+		}
+		else if	(c == '&')
+		{
+			parse_entity(xml, in);
+		}
+		else	sb_putucs(c, &xml->sbuf);
+	}
+
+	return XMLBuf_action(xml, xml_att, last);
+}
+
 static void *entry (XMLBuf *xml, int32_t c, IO *io)
 {
 	void *res;
-	int pending;
 	int last;
-	int quote;
-	int open_tag;
+	int pending;
 
 /*	Tag bestimmen
 */
 	XMLBuf_start(xml, NULL);
-	res = NULL;
 
-	while (!END_NAME(c))
-	{
-		if	(c == EOF)
-			return XMLBuf_err(xml, E_EOF);
-
-		sb_putucs(c, &xml->sbuf);
-		c = io_getucs(io);
-	}
+	if	((c = parse_name(xml, io, c)) == EOF)
+		return XMLBuf_err(xml, E_EOF);
 
 	last = XMLBuf_next(xml, 1);
-	pending = 0;
 
-	res = XMLBuf_action(xml, xml_beg, -1);
-
-	if	(res)
+	if	((res = XMLBuf_action(xml, xml_beg, -1)))
 		return res;
 
-	/*	Optionen parsen
-	*/
-
-	for (;;)
+/*	Attribute parsen
+*/
+	while (c != '>')
 	{
 		if	(c == EOF)
 		{
@@ -226,12 +270,7 @@ static void *entry (XMLBuf *xml, int32_t c, IO *io)
 		}
 		else if	(c == ' ' || c == '\t')
 		{
-			c = io_getucs(io);
-		}
-		else if	(c == '>')
-		{
-			// parse_data() ;
-			break;
+			;
 		}
 		else if	(c == '/')
 		{
@@ -242,58 +281,20 @@ static void *entry (XMLBuf *xml, int32_t c, IO *io)
 
 			return XMLBuf_action(xml, xml_end, last);
 		}
-
-		XMLBuf_start(xml, NULL);
-
-		while (c != '=' && !END_NAME(c))
+		else if	(c == '=' || c == '\'' || c == '\"')
 		{
-			if	(c == EOF)
-				return XMLBuf_err(xml, E_EOF);
-
-			sb_putucs(c, &xml->sbuf);
-			c = io_getucs(io);
-		}
-
-		if	(c != '=')
 			return err_char(xml, c);
-
-		quote = 0;
-
-		while (c != EOF)
-		{
-			if	(c == '"')
-			{
-				quote = !quote;
-				sb_putucs(c, &xml->sbuf);
-			}
-			else if	(quote)
-			{
-				sb_putucs(c, &xml->sbuf);
-			}
-			else if	(c == '/')
-			{
-				c = io_getucs(io);
-
-				if	(c == EOF)
-				{
-					return XMLBuf_err(xml, E_EOF);
-				}
-				else if	(c != '>')
-				{
-					return XMLBuf_err(xml, E_CHAR, c);
-				}
-
-				return XMLBuf_action(xml, xml_end, last);
-			}
-			else if	(c == '>')
-			{
-				break;
-			}
-
-			c = io_getucs(io);
 		}
+		else if	((res = parse_att(xml, io, c)))
+		{
+			return res;
+		}
+
+		c = io_getucs(io);
 	}
 
+/*	Daten parsen
+*/
 	XMLBuf_start(xml, NULL);
 	pending = 0;
 
@@ -301,37 +302,32 @@ static void *entry (XMLBuf *xml, int32_t c, IO *io)
 	{
 		if	(c == '<')
 		{
-			c = io_getucs(io);
-
 			if	(pending)
 			{
 				res = XMLBuf_action(xml, xml_data, -1);
 
 				if	(res)
 					return res;
-
-				XMLBuf_start(xml, NULL);
 			}
+
+			c = io_getucs(io);
 
 			if	(c == '/')
 			{
-				while (c != EOF && c != '>')
-					c = io_getucs(io);
+				do	c = io_getucs(io);
+				while	(c != EOF && c != '>');
 
-				break;
+				XMLBuf_start(xml, NULL);
+				return XMLBuf_action(xml, xml_end, last);
 			}
-
-			res = NULL;
 
 			if	(c == '?')
 			{
-//				res = parse_instruction(xml, in);
-				skip_tag(xml, io);
+				res = parse_instruction(xml, io);
 			}
 			else if	(c == '!')
 			{
-//				res = parse_special(xml, in);
-				skip_tag(xml, io);
+				res = parse_special(xml, io);
 			}
 			else	res = entry(xml, c, io);
 
@@ -339,31 +335,21 @@ static void *entry (XMLBuf *xml, int32_t c, IO *io)
 				return res;
 
 			XMLBuf_start(xml, NULL);
+			pending = 0;
 		}
 		else if	(pending || !SPACE(c))
 		{
-			/*
 			if	(c == '&')
 			{
-				parse_entity(xml, in);
+				parse_entity(xml, io);
 			}
-			else */ sb_putucs(c, &xml->sbuf);
+			else	sb_putucs(c, &xml->sbuf);
 
 			pending = 1;
 		}
 	}
 
-	if	(pending)
-	{
-		trim(&xml->sbuf);
-
-		if	((res = XMLBuf_action(xml, xml_data, -1)))
-			return res;
-
-		XMLBuf_start(xml, NULL);
-	}
-
-	return XMLBuf_action(xml, xml_end, last);
+	return XMLBuf_err(xml, E_EOF);
 }
 
 
@@ -377,6 +363,8 @@ void *XMLBuf_parse (XMLBuf *xml, IO *io)
 
 	if	(!xml || !io)
 		return NULL;
+
+	XMLBuf_start(xml, NULL);
 
 	while ((c = io_getucs(io)) != EOF)
 	{

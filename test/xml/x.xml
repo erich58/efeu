@@ -3,14 +3,15 @@
 <!ENTITY kap2 SYSTEM "kap02.xml">
 ]>
 <!--Anmerkung-->
-<a a1="v1" a2="v2">
+<a a1="v1" a2='v2'>
   <![CDATA[Zeichendaten
 ]]>
-  <?test name="val"?>
+  <?test?>
   <b>
     <c a="v"/>
   </b>
-  Daten
+  Anfang
   <![CDATA[Zeichendaten
 ]]>
+  Ende
 </a>

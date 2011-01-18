@@ -18,6 +18,8 @@ xml.open(iostd, Mode);
 IO io = open(Input, "r");
 xml.parse(io);
 xml.close();
+#if	0
 printf("\n-----\n");
 copy(io, iostd);
 close(io);
+#endif
