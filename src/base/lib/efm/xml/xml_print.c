@@ -75,9 +75,9 @@ static void *do_print (XMLBuf *xml, const char *name, const char *data,
 
 		if	(data && *data)
 		{
-			out_str(out, "\n[\n");
+			out_str(out, "[");
 			out_str(out, data);
-			out_str(out, "\n]");
+			out_str(out, "]");
 		}
 
 		out_char(out, '>');
