@@ -27,7 +27,7 @@ static int parse_name (XMLBuf *xml, IO *in, int c)
 {
 	XMLBuf_start(xml, NULL);
 
-	while (c != EOF && !SPACE(c) && !strchr("<>[]()!?=", c))
+	while (c != EOF && !SPACE(c) && !strchr("</>[]()!?='\"", c))
 	{
 		sb_putucs(c, &xml->sbuf);
 		c = io_getucs(in);
@@ -205,12 +205,6 @@ static void skip_tag (XMLBuf *xml, IO *io)
 }
 #endif
 
-static void trim (StrBuf *sb)
-{
-	while (sb->pos && SPACE(sb->data[sb->pos - 1]))
-		sb->pos--;
-}
-
 static void *parse_att (XMLBuf *xml, IO *in, int32_t c)
 {
 	int32_t quote;
@@ -246,7 +240,7 @@ static void *entry (XMLBuf *xml, int32_t c, IO *io)
 {
 	void *res;
 	int last;
-	int pending;
+	int char_pos;
 
 /*	Tag bestimmen
 */
@@ -296,13 +290,13 @@ static void *entry (XMLBuf *xml, int32_t c, IO *io)
 /*	Daten parsen
 */
 	XMLBuf_start(xml, NULL);
-	pending = 0;
+	char_pos = xml->sbuf.pos;
 
 	while ((c = io_getucs(io)) != EOF)
 	{
 		if	(c == '<')
 		{
-			if	(pending)
+			if	(char_pos > xml->data)
 			{
 				res = XMLBuf_action(xml, xml_data, -1);
 
@@ -335,17 +329,19 @@ static void *entry (XMLBuf *xml, int32_t c, IO *io)
 				return res;
 
 			XMLBuf_start(xml, NULL);
-			pending = 0;
+			char_pos = xml->sbuf.pos;
 		}
-		else if	(pending || !SPACE(c))
+		else if	(c == '&')
 		{
-			if	(c == '&')
-			{
-				parse_entity(xml, io);
-			}
-			else	sb_putucs(c, &xml->sbuf);
+			parse_entity(xml, io);
+			char_pos = xml->sbuf.pos;
+		}
+		else
+		{
+			sb_putucs(c, &xml->sbuf);
 
-			pending = 1;
+			if	(!SPACE(c))
+				char_pos = xml->sbuf.pos;
 		}
 	}
 
