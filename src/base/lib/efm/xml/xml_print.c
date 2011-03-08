@@ -2,6 +2,10 @@
 
 #define	out_char(out, c)	out->put(c, out->par)
 
+typedef struct {
+	int beautified;
+} PCTRL;
+
 static void out_str (XMLOutput *out, const char *name)
 {
 	if	(!name)	return;
@@ -17,9 +21,9 @@ static void out_indent (XMLBuf *xml, XMLOutput *out, int base)
 }
 
 static void *do_print (XMLBuf *xml, const char *name, const char *data,
-	XMLOutput *out, int beautified)
+	XMLOutput *out, PCTRL *ctrl)
 {
-	int need_newline = beautified;
+	int need_newline = ctrl->beautified;
 
 	if	(!out || !out->put)	return NULL;
 
@@ -30,7 +34,7 @@ static void *do_print (XMLBuf *xml, const char *name, const char *data,
 		case xml_end:
 			out_str(out, "/>");
 
-			if	(beautified)
+			if	(ctrl->beautified)
 				out_char(out, '\n');
 
 			return NULL;
@@ -40,7 +44,7 @@ static void *do_print (XMLBuf *xml, const char *name, const char *data,
 		default:
 			out_char(out, '>');
 
-			if	(beautified)
+			if	(ctrl->beautified)
 			{
 				out_char(out, '\n');
 				out_indent(xml, out, 0);
@@ -49,7 +53,7 @@ static void *do_print (XMLBuf *xml, const char *name, const char *data,
 			break;
 		}
 	}
-	else if	(beautified)
+	else if	(ctrl->beautified)
 	{
 		out_indent(xml, out, 0);
 	}
@@ -104,7 +108,7 @@ static void *do_print (XMLBuf *xml, const char *name, const char *data,
 		out_char(out, '>');
 		break;
 	case xml_err:
-		if	(beautified)
+		if	(ctrl->beautified)
 		{
 			out_str(out, "<!--\nERROR: ");
 			out_str(out, data);
@@ -116,7 +120,7 @@ static void *do_print (XMLBuf *xml, const char *name, const char *data,
 
 		break;
 	case xml_comm:
-		if	(beautified)
+		if	(ctrl->beautified)
 		{
 			out_str(out, "<!--");
 			out_str(out, data);
@@ -142,10 +146,12 @@ static void *do_print (XMLBuf *xml, const char *name, const char *data,
 
 void *xml_print (XMLBuf *xml, const char *name, const char *data, void *par)
 {
-	return do_print(xml, name, data, par, 1);
+	PCTRL pctrl = { 1 };
+	return do_print(xml, name, data, par, &pctrl);
 }
 
 void *xml_compact (XMLBuf *xml, const char *name, const char *data, void *par)
 {
-	return do_print(xml, name, data, par, 0);
+	PCTRL pctrl = { 0 };
+	return do_print(xml, name, data, par, &pctrl);
 }
