@@ -14,12 +14,12 @@ static struct {
 	{ "Auml", "\xC3\x84" },
 	{ "Ouml", "\xC3\x96" },
 	{ "Uuml", "\xC3\x9C" },
-	{ "auml", "\xE4" },
-	{ "ouml", "\xF6" },
-	{ "uuml", "\xFC" },
-	{ "szlig", "\xDF" },
+	{ "auml", "\xC3\xA4" },
+	{ "ouml", "\xC3\xB6" },
+	{ "uuml", "\xC3\xBC" },
+	{ "szlig", "\xC3\x9F" },
 
-	{ "euro", "\xA4" },
+	{ "euro", "\xE2\x82\xAC" },
 };
 
 #define	DIM	(sizeof tab / sizeof tab[0])
