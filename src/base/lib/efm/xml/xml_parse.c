@@ -195,16 +195,6 @@ static void *parse_special (XMLBuf *xml, IO *in)
 	return XMLBuf_action(xml, xml_comm, -1);
 }
 
-#if	0
-static void skip_tag (XMLBuf *xml, IO *io)
-{
-	int32_t c;
-
-	do	c = io_getucs(io);
-	while	(c != EOF && c != '>');
-}
-#endif
-
 static void *parse_att (XMLBuf *xml, IO *in, int32_t c)
 {
 	int32_t quote;
@@ -388,7 +378,6 @@ void *XMLBuf_parse (XMLBuf *xml, IO *io)
 		{
 			io_ungetucs(c, io);
 			return XMLBuf_err(xml, E_CHAR, c);
-			break;
 		}
 	}
 
