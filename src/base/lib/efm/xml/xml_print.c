@@ -14,6 +14,47 @@ static void out_str (XMLOutput *out, const char *name)
 		out->put(*name++, out->par);
 }
 
+static void out_data (XMLOutput *out, const char *name)
+{
+	if	(!name)	return;
+
+	while (*name)
+	{
+		switch (*name)
+		{
+		case '&':	out_str(out, "&amp;"); break;
+		case '<':	out_str(out, "&lt;"); break;
+		case '>':	out_str(out, "&gt;"); break;
+		default:	out_char(out, *name); break;
+		}
+
+		++name;
+	}
+}
+
+static void out_att (XMLOutput *out, const char *name)
+{
+	if	(!name)	name = "";
+
+	out_char(out, '"');
+
+	while (*name)
+	{
+		switch (*name)
+		{
+		case '&':	out_str(out, "&amp;"); break;
+		case '<':	out_str(out, "&lt;"); break;
+		case '>':	out_str(out, "&gt;"); break;
+		case '"':	out_str(out, "&quot;"); break;
+		default:	out_char(out, *name); break;
+		}
+
+		++name;
+	}
+
+	out_char(out, '"');
+}
+
 static void out_indent (XMLBuf *xml, XMLOutput *out, int base)
 {
 	for (base += 2 * xml->depth; base > 0; base--)
@@ -93,7 +134,7 @@ static void *do_print (XMLBuf *xml, const char *name, const char *data,
 		need_newline = 0;
 		break;
 	case xml_data:
-		out_str(out, data);
+		out_data(out, data);
 		break;
 	case xml_cdata:
 		out_str(out, "<![CDATA[");
@@ -131,9 +172,8 @@ static void *do_print (XMLBuf *xml, const char *name, const char *data,
 		break;
 	case xml_att:
 		out_str(out, name);
-		out_str(out, "=\"");
-		out_str(out, data);
-		out_str(out, "\"");
+		out_char(out, '=');
+		out_att(out, data);
 		need_newline = 0;
 		break;
 	}
