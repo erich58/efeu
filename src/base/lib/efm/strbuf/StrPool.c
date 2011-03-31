@@ -193,6 +193,24 @@ void StrPool_expand (StrPool *pool, size_t s)
 	pool->mdata = lrealloc(pool->mdata, pool->msize);
 }
 
+size_t StrPool_nadd (StrPool *pool, const char *str, size_t len)
+{
+	if	(pool && str)
+	{
+		size_t n;
+		
+		if	(pool->used + len + 1 >= pool->msize)
+			StrPool_expand(pool, len + 1);
+
+		n = pool->used;
+		strncpy(pool->mdata + pool->used, str, len);
+		pool->used += len;
+		pool->mdata[pool->used++] = 0;
+		return pool->csize + n;
+	}
+	else	return 0;
+}
+
 size_t StrPool_add (StrPool *pool, const char *str)
 {
 	if	(pool && str)

@@ -58,6 +58,7 @@ void StrPool_save (StrPool *pool, const char *path);
 void StrPool_expand (StrPool *pool, size_t s);
 size_t StrPool_offset (StrPool *pool);
 size_t StrPool_add (StrPool *pool, const char *str);
+size_t StrPool_nadd (StrPool *pool, const char *str, size_t len);
 size_t StrPool_xadd (StrPool *pool, const char *str);
 size_t StrPool_vprintf (StrPool *pool, const char *fmt, va_list args);
 size_t StrPool_printf (StrPool *pool, const char *fmt, ...);
