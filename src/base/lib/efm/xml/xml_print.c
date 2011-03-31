@@ -4,6 +4,7 @@
 
 typedef struct {
 	int beautified;
+	int open_tag;
 } PCTRL;
 
 static void out_str (XMLOutput *out, const char *name)
@@ -131,6 +132,7 @@ static void *do_print (XMLBuf *xml, const char *name, const char *data,
 	case xml_beg:
 		out_char(out, '<');
 		out_str(out, name);
+		ctrl->open_tag = 1;
 		need_newline = 0;
 		break;
 	case xml_data:
