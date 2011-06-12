@@ -109,6 +109,17 @@ size_t svsplit (void *base, size_t dim, size_t size,
 size_t vuniq (void *base, size_t dim, size_t size,
 	int (*comp) (const void *a, const void *b));
 
+/*	Indexbereich bestimmen
+*/
+
+typedef struct {
+	size_t start;
+	size_t end;
+} VecMatch;
+
+VecMatch vmatch (void *key, void *base, size_t dim, size_t size,
+	int (*comp) (const void *a, const void *b));
+
 /*
 $SeeAlso
 \mref{vecbuf(3)}, \mref{vb_alloc(3)}, \mref{vb_create(3)},
