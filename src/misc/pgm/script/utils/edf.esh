@@ -23,15 +23,26 @@ If not, write to the Free Software Foundation, Inc.,
 
 pconfig !
 Version = ":VN:"
-Unit = 1000
+Power = 1000
+Unit = GB
+All = false
 LBL_DEV = Filesystem
-LBL_SIZE = :*:size:de:Größe MB
+LBL_SIZE = :*:size:de:Größe
 LBL_USED = :*:used:de:Verbraucht
 LBL_AVAIL = :*:available:de:Verfügbar
 LBL_MOUNT = :*:mount point:de:Mountpunkt
 LBL_GES = :*:total:de:Insgesamt
 
-m | Unit = 1024
+a | All = true
+	:*:display also filesystems without type.
+	:de:Auch Dateisysteme ohne Typ ausgeben.
+g | Unit = GB
+	:*:display size in GB.
+	:de:Gößen in GB ausgeben.
+m | Unit = MB
+	:*:display size in MB.
+	:de:Gößen in MB ausgeben.
+H | Power = 1024
 	:*:use powers of 1024 instead of 1000
 	:de:Verwende 1024 anstelle von 1000 als einheit
 !
@@ -51,8 +62,9 @@ virtual void DATA::operator+= & (DATA b)
 	free += b.free;
 }
 
-str fmt_hdr = "%-14s %10s %13s %13s  %s\n";
-str fmt_dat = "%-16s %8.1f %8.1f %3.0f%% %8.1f %3.0f%%  %s\n";
+str fmt_hdr = "%-14s %10s %13s %13s %s\n";
+str fmt_dat1 = "%-16s %8.1f %8.1f %3.0f%% %8.1f %3.0f%% %s\n";
+str fmt_dat2 = "%-16s %8.3f %8.3f %3.0f%% %8.3f %3.0f%% %s\n";
 
 virtual int fprint(IO io, DATA x)
 {
@@ -79,9 +91,18 @@ DATA str ()
 	return (DATA) { x[0], x[dim(x) - 1], size, used, free };
 }
 
-double scale = Unit;
-scale = 1024. / (scale * scale);
-printf(fmt_hdr, LBL_DEV, LBL_SIZE, LBL_USED, LBL_AVAIL, LBL_MOUNT);
+double power = Power;
+double scale = 1024. / (power * power);
+str fmt_dat = fmt_dat1;
+
+if	(Unit == "GB")
+{
+	scale /= power;
+	fmt_dat =fmt_dat2;
+}
+
+printf(fmt_hdr, LBL_DEV, paste(" ", LBL_SIZE, Unit),
+	LBL_USED, LBL_AVAIL, LBL_MOUNT);
 
 #if	UNAME == "Linux"
 IO io = open("|LANG=C df -P", "r");
@@ -96,6 +117,11 @@ while (getline(io, line))
 {
 	if	(regexec("^File", line))
 		continue;
+
+#if !flagres("All")
+	if	(regexec("none", line))
+		continue;
+#endif
 
 	DATA x = line;
 	fprint(iostd, x);
