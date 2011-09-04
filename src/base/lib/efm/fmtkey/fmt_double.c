@@ -180,7 +180,6 @@ static void x_fmt (StrBuf *sb, const FmtKey *key, int *sig, double val)
 
 static void f_fmt (StrBuf *sb, const FmtKey *key, int *sig, double val)
 {
-	char *dp;
 	int prec;
 	int n;
 
@@ -191,7 +190,6 @@ static void f_fmt (StrBuf *sb, const FmtKey *key, int *sig, double val)
 /*	Wert auf vorgegebene Genauigkeit standardisieren
 */
 	n = prec;
-	dp = (prec > 0 || (key->flags & FMT_ALTMODE)) ? DP_KEY : NULL;
 
 	for (; n < 0; n++) val /= 10.;
 	for (; n > 0; n--) val *= 10.;
@@ -270,7 +268,7 @@ static void put_mantisse (StrBuf *sb, double val, int prec, int len, int flags)
 	{
 		if	(prec == 0)
 		{
-			if	(sb->pos || (flags & FMT_ALTMODE))
+			if	(sb->pos > pos || (flags & FMT_ALTMODE))
 				sb_rputs(DP_KEY, sb);
 		}
 		else if	(ts && prec % 3 == 0 && sb->pos && prec < 0)
