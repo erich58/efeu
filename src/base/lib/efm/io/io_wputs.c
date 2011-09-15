@@ -1,7 +1,7 @@
 /*
-Datenwerte formatieren
+UTF8-Zeichen/String ausgeben
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 2011 Erich Frühstück
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -20,50 +20,18 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include <EFEU/object.h>
-#include <EFEU/printobj.h>
-#include <EFEU/fmtkey.h>
+#include <EFEU/io.h>
 
-/*	Abfragefunktionen
-*/
-
-int PrintFmtObj (IO *io, const char *fmt, const EfiObj *obj)
+int io_wputs (const char *src, IO *io)
 {
-	if	(io && fmt)
+	if	(io && src)
 	{
-		EfiObjList *list;
-		StrBuf *sb;
 		int n;
 
-		list = NewObjList(RefObj(obj));
-		sb = sb_acquire();
-		StrBufFmtList(sb, fmt, list);
-		n = io_puts(sb_nul(sb), io);
-		sb_release(sb);
-		DelObjList(list);
+		for (n = 0; *src; n++)
+			io_putucs(pgetucs((char **) &src, 4), io);
+
 		return n;
 	}
-
-	return 0;
-}
-
-
-/*	Formatierungsfunktion
-*/
-
-int PrintFmtList (IO *io, const char *fmt, EfiObjList *list)
-{
-	if	(io && fmt)
-	{
-		StrBuf *sb;
-		int n;
-
-		sb = sb_acquire();
-		StrBufFmtList(sb, fmt, list);
-		n = io_wputs(sb_nul(sb), io);
-		sb_release(sb);
-		return n;
-	}
-
-	return 0;
+	else	return 0;
 }

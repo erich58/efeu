@@ -192,6 +192,7 @@ int io_nputc (int c, IO *io, int n);
 int io_mputc (int c, IO *io, const char *delim);
 int io_xputc (int c, IO *io, const char *delim);
 int io_puts (const char *s, IO *io);
+int io_wputs (const char *s, IO *out);
 int io_nlputs (const char *s, IO *io);
 int io_mputs (const char *s, IO *io, const char *delim);
 int io_xputs (const char *s, IO *io, const char *delim);
