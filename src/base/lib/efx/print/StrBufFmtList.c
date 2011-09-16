@@ -98,7 +98,7 @@ int StrBufFmtList (StrBuf *sb, const char *fmt, EfiObjList *list)
 		
 			if	((obj = EvalObj(get_arg(&list), &Type_str)))
 			{
-				n += fmt_str(sb, key, Val_str(obj->data));
+				n += fmt_mbstr(sb, key, Val_str(obj->data));
 				UnrefObj(obj);
 			}
 
@@ -119,7 +119,7 @@ int StrBufFmtList (StrBuf *sb, const char *fmt, EfiObjList *list)
 			{
 				unsigned char c;
 				Obj2Data(obj, &Type_char, &c);
-				n += fmt_char(sb, key, c);
+				n += fmt_ucs(sb, key, c);
 			}
 
 			break;
@@ -189,7 +189,7 @@ int StrBufFmtList (StrBuf *sb, const char *fmt, EfiObjList *list)
 		case 'p':
 
 			obj = get_arg(&list);
-			n += fmt_long(sb, key, (obj ? (long) obj : 0));
+			n += fmt_uintmax(sb, key, (obj ? (uintmax_t) obj : 0));
 			memfree(obj);
 			break;
 
@@ -200,7 +200,7 @@ int StrBufFmtList (StrBuf *sb, const char *fmt, EfiObjList *list)
 			if	(obj && obj->lval)
 			{
 				EfiObj *x = int2Obj(key->flags & FMT_ALTMODE ?
-					n : sb->pos - pos);
+					sb->pos - pos : n);
 
 				if	((x = EvalObj(x, obj->type)))
 				{
@@ -215,12 +215,13 @@ int StrBufFmtList (StrBuf *sb, const char *fmt, EfiObjList *list)
 
 		case '[':
 
-			n += fmt_str(sb, key, (char *) key->buf.data);
+			n += fmt_mbstr(sb, key, (char *) key->buf.data);
 			break;
 
 		default:
 
-			if	(sb_putc(key->mode, sb) != EOF)	n++;
+			if	(sb_putucs(key->mode, sb) != EOF)
+				n++;
 
 			break;
 		}
