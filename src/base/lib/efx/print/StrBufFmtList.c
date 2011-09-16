@@ -60,6 +60,7 @@ int StrBufFmtList (StrBuf *sb, const char *fmt, EfiObjList *list)
 		if	(*fmt != '%')
 		{
 			sb_putucs(fmtkey_pgetucs(&fmt), sb);
+			n++;
 			continue;
 		}
 
