@@ -38,7 +38,7 @@ int PrintFmtObj (IO *io, const char *fmt, const EfiObj *obj)
 		list = NewObjList(RefObj(obj));
 		sb = sb_acquire();
 		StrBufFmtList(sb, fmt, list);
-		n = io_puts(sb_nul(sb), io);
+		n = io_wputs(sb_nul(sb), io);
 		sb_release(sb);
 		DelObjList(list);
 		return n;
