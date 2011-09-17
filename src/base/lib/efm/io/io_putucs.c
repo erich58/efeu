@@ -139,9 +139,6 @@ void io_ucswmode (IO *io, const char *def)
 {
 	int i;
 
-	if	(def == NULL && io->putucs)
-		return;
-
 	if	(def == NULL || *def == 0)
 	{
 #if	HAS_NL_LANGINFO
