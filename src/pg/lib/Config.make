@@ -2,8 +2,8 @@
 # :de: Schnittstelle zu PostgreSQL
 ##Depends: config
 
-include efeu.smh
 xinclude libpq.smh
+include efeu.smh
 
 mf_var CFLAGS '$(PQ_INC)'
 efeu_library -x -u -h DB PG -d libpq.stat -lmd -ml EFX_LIB -ml PQ_LIB

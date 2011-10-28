@@ -5,8 +5,8 @@
 NAME=efwin
 STAT=win.stat
 
-include efeu.smh
 xinclude $SRC/win.smh $STAT
+include efeu.smh
 efeu_note -d $NAME
 
 if

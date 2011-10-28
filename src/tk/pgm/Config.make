@@ -1,9 +1,9 @@
 # :de: etk-interpreter
 ##Depends: lib
 
-include efeu.smh
-include readline.smh
 xinclude tklib.smh
+xinclude readline.smh
+include efeu.smh
 
 mf_dir -p BIN=$TOP/bin
 efeu_libvar -p ETK ETK -ml TK_LIB iorl -ml RL_LIB md efmath efx efm -lm

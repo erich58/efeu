@@ -4,8 +4,8 @@
 
 NAME=iorl
 
-include efeu.smh
 xinclude readline.smh
+include efeu.smh
 
 mf_var CFLAGS '$(RL_INC)'
 efeu_library -u -h EFEU $NAME -d readline.stat -lefm -ml RL_LIB

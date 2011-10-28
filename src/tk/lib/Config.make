@@ -1,8 +1,8 @@
 # :de: TCL/TK-interface
 ##Depends: config
 
-include efeu.smh
 xinclude tklib.smh
+include efeu.smh
 
 mf_var CFLAGS '$(TK_INC)'
 efeu_library -u -h GUI ETK -d tklib.stat -lmd -ml EFX_LIB -ml TK_LIB
