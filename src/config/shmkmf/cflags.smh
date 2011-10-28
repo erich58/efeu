@@ -31,7 +31,7 @@ include cc.smh
 
 _cflags_path ()
 {
-	expr "$*" : '..\(.*\)' | tr : ' '
+	splitpath `expr "$*" : '..\(.*\)'` | tr : ' '
 }
 
 
@@ -70,7 +70,7 @@ _cflags_incdir ()
 
 	for x
 	do
-		if [ -e $x/$name ]; then
+		if [ -f $x/$name ]; then
 			printf -- " -I%s" $x
 			return 0
 		fi
@@ -78,7 +78,7 @@ _cflags_incdir ()
 
 	for x in /usr/include
 	do
-		if [ -e $x/$name ]; then
+		if [ -f $x/$name ]; then
 			return 0
 		fi
 	done
