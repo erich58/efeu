@@ -30,10 +30,10 @@ _efeu_smh=1
 CC=efeucc
 
 include base.smh
-include config.smh
-include script.smh
 include cc.smh
 cc_setup
+include config.smh
+include script.smh
 include dl.smh
 config latex.cfg
 

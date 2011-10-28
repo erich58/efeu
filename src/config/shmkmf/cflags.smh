@@ -25,6 +25,8 @@
 test $_cflags_smh && return
 _cflags_smh=1
 
+include cc.smh
+
 # Pfad aufspalten
 
 _cflags_path ()
