@@ -69,8 +69,11 @@ cc_config ()
 	if [ "$CC" ]
 	then
 		case "$CC" in
-		gcc)	CC="$CC $gcc_wflags";;
-		*)	;;
+		gcc|*-gcc|gcc-*|*-gcc-*)
+			CC="$CC $gcc_wflags"
+			;;
+		*)
+			;;
 		esac
 	elif
 		fsearch $PATH gcc > /dev/null
@@ -142,6 +145,21 @@ int main (void) { return test(); }
 		echo $f
 	}
 
+	_cc_mkpath ()
+	{(
+		awk -F= "/^$1/ { printf \"%s\\n\", \$2 }" $2 |
+			tr : '\n' | while read _dir
+		do
+			[ -d $_dir ] && printf "%s\n" `cd $_dir; pwd`
+		done | sort -u | tr '\n' ' '
+	)}
+
+	if
+		$CC --print-search-dirs 2>/dev/null > $_w/search_dirs
+	then
+		_cc_lpath=`_cc_mkpath libraries $_w/search_dirs`
+	fi
+
 	cc_shared="`cd $_w; check_shlib`"
 	cc_cflags=`cd $_w; test_flags "$@"`
 	_cc_mkdep=`cd $_w; check_mkdep` || _cc_mkdep=`get_pp2dep`
@@ -177,6 +195,7 @@ cc_setup ()
 	mf_var -n CC "$CC"
 	mf_var -n CONFIG_CFLAGS "$cc_cflags $PROJECT_CFLAGS"
 	mf_var -n CONFIG_LDFLAGS "$PROJECT_LDFLAGS"
+	mf_comm -n "LPATH=$_cc_lpath"
 	mf_comm -n "End of CC configuration"
 	_cc_setup_done=1
 }
