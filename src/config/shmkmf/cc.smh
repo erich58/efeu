@@ -46,6 +46,8 @@ gcc_wflags="-Wall -Wmissing-prototypes -Wpointer-arith"
 #	flag informing about availability of shared objects
 # [cc_cflags]
 #	checked compile flags
+# [cc_lpath]
+#	default search path for libraries
 # :de:
 # Die Funktion $! initialisiert Parameter für den C-Compiler und prüft
 # die Verfügbarkeit von Compilerflags.
@@ -60,6 +62,8 @@ gcc_wflags="-Wall -Wmissing-prototypes -Wpointer-arith"
 #	Bibliotheken).
 # [cc_cflags]
 #	Verfügbare Compilerflags.
+# [cc_lpath]
+#	Standardsuchpfad für Bibliotheken
 
 cc_config ()
 {
@@ -145,19 +149,21 @@ int main (void) { return test(); }
 		echo $f
 	}
 
-	_cc_mkpath ()
-	{(
-		awk -F= "/^$1/ { printf \"%s\\n\", \$2 }" $2 |
+	_cc_get_lpath ()
+	{
+		awk -F= '/^libraries/ { printf "%s\n", $2 }' $1 |
 			tr : '\n' | while read _dir
 		do
 			[ -d $_dir ] && printf "%s\n" `cd $_dir; pwd`
 		done | sort -u | tr '\n' ' '
-	)}
+	}
 
 	if
 		$CC --print-search-dirs 2>/dev/null > $_w/search_dirs
 	then
-		_cc_lpath=`_cc_mkpath libraries $_w/search_dirs`
+		cc_lpath=`_cc_get_lpath $_w/search_dirs`
+	else
+		cc_lpath="/lib /usr/lib"
 	fi
 
 	cc_shared="`cd $_w; check_shlib`"
@@ -195,7 +201,6 @@ cc_setup ()
 	mf_var -n CC "$CC"
 	mf_var -n CONFIG_CFLAGS "$cc_cflags $PROJECT_CFLAGS"
 	mf_var -n CONFIG_LDFLAGS "$PROJECT_LDFLAGS"
-	mf_comm -n "LPATH=$_cc_lpath"
 	mf_comm -n "End of CC configuration"
 	_cc_setup_done=1
 }

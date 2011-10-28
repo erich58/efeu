@@ -25,19 +25,11 @@
 test $_cflags_smh && return
 _cflags_smh=1
 
-# Pfad erweitern
+# Pfad aufspalten
 
 _cflags_path ()
 {
-	arg=`expr "$2" : '..\(.*\)'`
-
-	if [ -z "$arg" ]; then
-		echo ""
-	elif [ -z "$1" ]; then
-		printf "%s" "$arg"
-	else
-		printf "%s:%s" "$1" "$arg"
-	fi
+	expr "$*" : '..\(.*\)' | tr : ' '
 }
 
 
@@ -45,11 +37,21 @@ _cflags_path ()
 
 _cflags_name ()
 {
-	while read dir
+	name=$1
+	shift
+
+	for x
 	do
-		if [ -r $dir/$1 ]
-		then
-			printf -- " %s" $dir/$1
+		if [ -f $x/$name ]; then
+			printf " %s" $x/$name
+			return 0
+		fi
+	done
+
+	for x in $cc_lpath
+	do
+		if [ -f $x/$name ]; then
+			printf " %s" $x/$name
 			return 0
 		fi
 	done
@@ -61,17 +63,20 @@ _cflags_name ()
 
 _cflags_incdir ()
 {
-	while read dir
-	do
-		if [ -r $dir/$1 ]
-		then
-			case "$dir" in
-			/usr/include//)	;;
-			/usr/include/)	;;
-			/usr/include)	;;
-			*)		printf -- " -I%s" $dir;;
-			esac
+	name=$1
+	shift
 
+	for x
+	do
+		if [ -e $x/$name ]; then
+			printf -- " -I%s" $x
+			return 0
+		fi
+	done
+
+	for x in /usr/include
+	do
+		if [ -e $x/$name ]; then
 			return 0
 		fi
 	done
@@ -81,45 +86,27 @@ _cflags_incdir ()
 
 # Link-Flags bestimmen
 
-_cflags_libname ()
-{
-	while read name
-	do
-		case "$name" in
-		*.a)	lib=`expr "$name" : '.*/lib\(.*\).a$'`;;
-		*.so)	lib=`expr "$name" : '.*/lib\(.*\).so$'`;;
-		*)	continue;
-		esac
-
-		printf -- "-l%s\n" "$lib"
-		return 0
-	done
-
-	return 1
-}
-
 _cflags_lib ()
 {
 	name=`expr "$1" : '..\(.*\)'`
+	shift
 
-	while read dir
+	for x
 	do
-		[ ! -d $dir ] && continue
-		d=`cd $dir; pwd`
-
-		if
-			lib=`ls -d $d/lib$name.* 2>/dev/null | _cflags_libname`
-		then
-			case "$d" in
-			/lib)		;;
-			/usr/lib)	;;
-			*)		printf -- " -L%s" $d;;
-			esac
-
-			printf " %s" "$lib"
+		if [ -e $x/lib$name.so -o -e $x/lib$name.a ]; then
+			printf -- " -L%s -l%s" $x $name
 			return 0
 		fi
 	done
+
+	for x in $cc_lpath
+	do
+		if [ -e $x/lib$name.so -o -e $x/lib$name.a ]; then
+			printf -- " -l%s" $name
+			return 0
+		fi
+	done
+
 	return 1
 }
 
@@ -129,11 +116,11 @@ _cflags_lib ()
 #	:*:name <name> of macro with found flags.
 #	:de:Name <name> des Makros für die gefundenen Flags.
 # I::path |
-#	:*:path to search header files (default: |/usr/include|).
-#	:de:Suchpfad für Kopfdateien, Vorgabe: |/usr/include|.
+#	:*:additionaly path to search header files.
+#	:de:Zusätzlicher Suchpfad für Kopfdateien.
 # L::path |
-#	:*:path to search libraries (default: |/lib:/usr/lib|).
-#	:de:Suchpfad für Bibliotheken, Vorgabe: |/lib:/usr/lib|.
+#	:*:additionaly path to search libraries.
+#	:de:Zusätzlicher Suchpfad für Bibliotheken.
 # a |
 #	:*:try next search only if last search was successfull.
 #	:de:Nächste Suche nur durchführen, wenn letzte Suche erfolgreich war.
@@ -142,22 +129,22 @@ _cflags_lib ()
 #	:de:Nächste Suche nur durchführen, wenn letzte Suche fehlschlug.
 # l:lib |
 #	:*:search for libraray corresponding to the regular
-#	expression |^lib(|<lib>|)\.(a||so)$$|. On asuccess, print out
+#	expression |^lib(|<lib>|)\.(a||so)$$|. On success, print out
 #	the |-l|<name> flag for linking the library. If the library is
-#	in an other place than |/lib| or |/usr/lib| an |-L|<dir> flag is
-#	also generated.
+#	not in the default place of the compiler an |-L|<dir> flag is also
+#	generated.
 #	:de:Suche nach der Bibliothek, die dem regulären
-#	Ausdruck |^lib(|<lib>|)\.(a||so)$$| entspricht. Liefer bei
+#	Ausdruck |^lib(|<lib>|)\.(a||so)$$| entspricht. Liefert bei
 #	Erfolg das entsprechende |-l| flag und falls die Bibliothek
-#	nicht in einem der beiden Verzeichnisse |/lib| oder |usr/lib|
-#	liegt, optional auch ein eintsprechendes |-L|<dir> flag. 
+#	nicht im Standarsuchpfad des Kompilers liegt,
+#	optional auch ein eintsprechendes |-L|<dir> flag. 
 # ::hdr |
 #	:*:search directory <dir> which contains header <hdr>, where <hdr> may
 #	contain directory parts as in |X11/X.h|. If <dir> is different from
 #	|/usr/include|, print out the option |-I|<dir>.
 #	:de:Suche nach dem Verzeichnis <dir>, welches die Kopfdatei <hdr>
 #	enthält, wobei <name> Pfadteile enthalten kann (z.B: |X11/X.h|)
-#	Falls <dir> verschieden von |/usr/include| ist, wird ein Kompileflag
+#	Falls <dir> verschieden von |/usr/include| ist, wird ein Kompilerflag
 #	der Form |-I|<dir> erzeugt.
 # !
 # :*:
@@ -170,9 +157,11 @@ _cflags_lib ()
 # @arglist
 
 mf_cflags ()
-{(
-	ipath=/usr/include
-	lpath=/lib:/usr/lib
+{
+	cc_setup
+(
+	ipath=
+	lpath=
 
 	test "$#" -gt 0 || shmkmf_warg mf_cflags
 	printf "%s=" "$1"
@@ -183,14 +172,14 @@ mf_cflags ()
 		case "$1" in
 		-a)	shift; [ $last -ne 0 ] && shift;;
 		-o)	shift; [ $last -eq 0 ] && shift;;
-		-I*)	ipath=`_cflags_path "$ipath" "$1"`; shift;;
-		-L*)	lpath=`_cflags_path "$lpath" "$1"`; shift;;
-		-l*)	splitpath "$lpath" | _cflags_lib "$1"
+		-I*)	ipath="$ipath `_cflags_path $1`"; shift;;
+		-L*)	lpath="$lpath `_cflags_path $1`"; shift;;
+		-l*)	_cflags_lib "$1" $lpath
 			last=$?; shift;;
 		-*)	shmkmf_invop "mf_cflags" "$1";;
-		*.so)	splitpath "$lpath" | _cflags_name "$1"
+		*.so)	_cflags_name "$1" $lpath
 			last=$?; shift;;
-		*)	splitpath "$ipath" | _cflags_incdir "$1"
+		*)	_cflags_incdir "$1" $ipath
 			last=$?; shift;;
 		esac
 	done

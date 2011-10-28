@@ -41,8 +41,7 @@ include cflags.smh
 #
 # $source
 
-mf_cflags LD_X11 -L/usr/X11R6/lib:/usr/lib/X11 \
-	-L/usr/lib/i386-linux-gnu -lX11
+mf_cflags LD_X11 -L/usr/X11R6/lib:/usr/lib/X11 -lX11
 
 # $Examples
 # \config shmkmf
