@@ -88,26 +88,37 @@ _cflags_incdir ()
 
 # Link-Flags bestimmen
 
+_cflags_libname ()
+{
+	while read name
+	do
+		case "$name" in
+		*.a)	lib=`expr "$name" : '.*/lib\(.*\).a$'`;;
+		*.so)	lib=`expr "$name" : '.*/lib\(.*\).so$'`;;
+		*)	continue;
+		esac
+
+		case "$1" in
+		-L)	printf -- " -L%s -l%s" `dirname $name` "$lib";;
+		*)	printf -- " -l%s" "$lib";;
+		esac
+
+		return 0
+	done
+
+	return 1
+}
+
 _cflags_lib ()
 {
 	name=`expr "$1" : '..\(.*\)'`
 	shift
 
-	for x
-	do
-		if [ -e $x/lib$name.so -o -e $x/lib$name.a ]; then
-			printf -- " -L%s -l%s" $x $name
-			return 0
-		fi
-	done
+	find $* -maxdepth 1 -name "lib$name.*" |
+		_cflags_libname -L && return 0
 
-	for x in $cc_lpath
-	do
-		if [ -e $x/lib$name.so -o -e $x/lib$name.a ]; then
-			printf -- " -l%s" $name
-			return 0
-		fi
-	done
+	find $cc_lpath -maxdepth 1 -name "lib$name.*" |
+		_cflags_libname && return 0
 
 	return 1
 }
