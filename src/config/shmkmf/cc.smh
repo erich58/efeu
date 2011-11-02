@@ -159,7 +159,7 @@ int main (void) { return test(); }
 	}
 
 	if
-		$CC --print-search-dirs 2>/dev/null > $_w/search_dirs
+		LANG=C $CC --print-search-dirs 2>/dev/null > $_w/search_dirs
 	then
 		cc_lpath=`_cc_get_lpath $_w/search_dirs`
 	else
