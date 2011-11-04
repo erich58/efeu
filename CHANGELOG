@@ -1,3 +1,11 @@
+EFEU 3.3-1
+
+*	Functions to calculate MD5 checksums.
+*	Minor enhancements in documentation and formatting.
+*	Fixed a bug in formatting integer values with wrong precission.
+*	Added XML-parser.
+*	Script to check current version of EFEU.
+
 EFEU 3.3
 
 *	Conversion from cvs to mercurial.

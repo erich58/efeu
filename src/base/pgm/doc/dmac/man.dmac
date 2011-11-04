@@ -1,0 +1,54 @@
+/*
+:*:manpage configuration
+:de:Handbuchformat
+
+$Copyright (C) 2011 Erich Frühstück
+This file is part of EFEU.
+
+EFEU is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+EFEU is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with EFEU; see the file COPYING.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+*/
+
+\eval	{
+//	if	(!DocStyle)
+//		DocStyle = "report";
+//
+	latex::preamble += string !
+
+%% manpage - adaption
+\voffset=-1in
+\topmargin=1.5cm
+\headheight=5mm
+\headsep=1.5cm
+\textheight=23cm
+\topskip=5mm
+\footskip=1.5cm
+
+\hoffset=-1in
+\oddsidemargin=4.5cm
+\evensidemargin=2.5cm
+\textwidth=15cm
+
+\reversemarginpar
+\marginparwidth=2cm
+%\newcommand{\margin}[2][]{\mbox{}\marginpar{\bf#2}\ignorespaces}
+%% END
+!;
+	latex::margin = "marginpar";
+	latex::it = "\\it\\color{Red}";
+	latex::tt = "\\tt\\color{RoyalBlue}";
+	latex::rm = "\\rm\\color{Black}";
+	latex::code = "\\begin{code}\\color{RoyalBlue}%"
+}
