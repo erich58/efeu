@@ -143,20 +143,19 @@ done
 
 if [ -d doc ]; then
 	echo "Preparing files in doc"
-	( cd doc; find . -depth | \
-		cpio -padm -R root:root $doc )
+	( cd doc; find . -depth | cpio -padm -R 0:0 $doc )
 fi
 
 if [ -d etc ]; then
 	echo "Preparing files in etc"
-	find etc -depth | cpio -padm -R root:root $TMP/$config
+	find etc -depth | cpio -padm -R 0:0 $TMP/$config
 fi
 
 for x in bin lib man include
 do
 	test -d $x || continue
 	echo "Preparing files in $x"
-	find $x -depth | cpio -padm -R root:root $TMP/$data
+	find $x -depth | cpio -padm -R 0:0 $TMP/$data
 done
 
 chmod -R go-w $TMP
