@@ -3,7 +3,7 @@
 ##Depends: efm
 
 include efeu.smh
-efeu_library -c -h EFEU efx -ml EFM_LIB
+efeu_library -c -h EFEU efx -ml EFM_LIB -lm
 
 mf_dir MAGIC=$TOP/etc/efeu/magic.d
 foreach -m MAGIC -s magic 'mf_file $tg $src'
