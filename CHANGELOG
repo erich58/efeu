@@ -1,5 +1,6 @@
 EFEU 3.3-1
 
+*	Compatibility adaptions to newer gcc version.
 *	Functions to calculate MD5 checksums.
 *	Minor enhancements in documentation and formatting.
 *	Fixed a bug in formatting integer values with wrong precission.
