@@ -21,6 +21,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/io.h>
+#include <EFEU/unicode.h>
 
 int io_wputs (const char *src, IO *io)
 {

@@ -246,12 +246,13 @@ int HTML_env (void *drv, int flag, va_list list)
 
 		if	(flag)
 		{
-			char *opt = va_arg(list, char *);
-			char *def = va_arg(list, char *);
+			char *def;
+
+			va_arg(list, char *);
+			def = va_arg(list, char *);
 			HTML_coldef(html, def);
 			io_printf(html->out,
 				"<TABLE frame=\"box\" rules=\"all\">\n");
-			opt = NULL;
 		}
 		else
 		{

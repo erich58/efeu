@@ -122,6 +122,7 @@ static int testflag (const char *arg, int key)
 	{
 		if	(*arg == '-')	flag = 1;
 		else if	(isspace(*arg))	flag = 0;
+		else if	(flag == 0)	;
 		else if (*arg == key)	return 1;
 	}
 

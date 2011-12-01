@@ -21,6 +21,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/io.h>
+#include <EFEU/Debug.h>
 
 static void show_tab (AllocTab *tab, void *par)
 {

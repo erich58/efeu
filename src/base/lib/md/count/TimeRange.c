@@ -317,7 +317,6 @@ static int time_cmp (const void *a_ptr, const void *b_ptr)
 int IOTimeRange (VecBuf *buf, IO *io)
 {
 	DAT a, b;
-	TimeRange *range;
 	char *p;
 	int c;
 	int mintype;
@@ -343,7 +342,7 @@ int IOTimeRange (VecBuf *buf, IO *io)
 
 			if	(a.val <= b.val)
 			{
-				range = new_range(buf, &a, &b, 1, p);
+				new_range(buf, &a, &b, 1, p);
 				p = NULL;
 			}
 
@@ -366,7 +365,7 @@ int IOTimeRange (VecBuf *buf, IO *io)
 			p = io_getarg(io, '[', ']');
 		
 			for (sync_dat(&a, &b); a.val <= b.val; a.val++)
-				range = new_range(buf, &a, &a, 0, p);
+				new_range(buf, &a, &a, 0, p);
 
 			last = 0;
 		}
@@ -374,7 +373,7 @@ int IOTimeRange (VecBuf *buf, IO *io)
 		{
 			if	(a.type > DAT_TAG)
 			{
-				range = new_range(buf, &a, &a, 0, p);
+				new_range(buf, &a, &a, 0, p);
 				p = NULL;
 				last = 0;
 			}
@@ -382,13 +381,13 @@ int IOTimeRange (VecBuf *buf, IO *io)
 			{
 				b = a;
 				a.val = last + 1;
-				range = new_range(buf, &a, &b, 2, p);
+				new_range(buf, &a, &b, 2, p);
 				p = NULL;
 				last = (c != ';' && c != EOF) ? b.val : 0;
 			}
 			else if	(c == ';' || c == EOF)
 			{
-				range = new_range(buf, &a, &a, 0, p);
+				new_range(buf, &a, &a, 0, p);
 				p = NULL;
 				last = 0;
 			}

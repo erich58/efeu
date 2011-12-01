@@ -59,12 +59,10 @@ void Struct2List (EfiFunc *func, void *rval, void **arg)
 	EfiObjList *list, **ptr;
 	EfiStruct *st;
 	EfiObj *base;
-	char *data;
 
 	list = NULL;
 	ptr = &list;
 	st = func->arg[0].type->list;
-	data = arg[0];
 
 	if	(func->arg[0].lval)
 		base = LvalObj(&Lval_ptr, func->arg[0].type, arg[0]);

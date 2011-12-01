@@ -355,10 +355,9 @@ static STRBUF(rule_buf, 0);
 
 static EfiObj *p_rule (IO *io, void *data)
 {
-	int c;
 	char *p;
 
-	c = io_eat(io, " \t");
+	io_eat(io, " \t");
 	sb_putc('\n', &rule_buf);
 	p = getstring(io);
 	sb_puts(p, &rule_buf);

@@ -32,7 +32,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 static void write_syslog (LogOutput *out, const char *msg)
 {
-	syslog((int) out->data, "%s", msg);
+	syslog((int) (size_t) out->data, "%s", msg);
 }
 
 #endif
@@ -78,7 +78,7 @@ void LogOutputStat (void)
 
 	for (n = buf.used, ptr = buf.data; n--; ptr++)
 	{
-		fprintf(stderr, "%s %d\n",
+		fprintf(stderr, "%s %zd\n",
 			(*ptr)->name, (*ptr)->refcount);
 	}
 }

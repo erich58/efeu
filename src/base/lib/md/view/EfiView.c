@@ -308,7 +308,6 @@ Set time range
 static void set_range (EfiView *view, const char *def)
 {
 	EfiType *type;
-	TimeRange *range;
 	size_t n;
 
 	vb_init(&view->range_buf, 32, sizeof(TimeRange));
@@ -320,7 +319,6 @@ static void set_range (EfiView *view, const char *def)
 	if	(!view->range_dim)	return;
 
 	type = NewEnumType(NULL, EnumTypeRecl(view->range_dim + 1));
-	range = view->range_buf.data;
 
 	for (n = 0; n < view->range_dim; n++)
 		AddEnumKey(type, mstrcpy(view->range[n].label), NULL, n);

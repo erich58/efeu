@@ -34,13 +34,11 @@ char *EnumKeyLabel (const EfiType *type, int val, int flag)
 	VarTabEntry *p;
 	const EfiType *t;
 	size_t n;
-	int mode;
 
 	for (t = type; t != NULL; t = t->base)
 	{ 
 		if	(t->vtab == NULL)	continue;
 
-		mode = (t->name && t->name[0] != '_');
 		p = t->vtab->tab.data;
 		n = t->vtab->tab.used;
 

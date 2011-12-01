@@ -56,7 +56,7 @@ static void list_member (IO *io, EfiType *type, const char *pfx)
 }
 
 
-static EfiObj *cnt_obj (EfiObj *base, char *name)
+static EfiObj *cnt_obj (EfiObj *base, const char *name)
 {
 	/*
 	char *p;

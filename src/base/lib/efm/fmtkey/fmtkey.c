@@ -125,10 +125,8 @@ FmtKey *fmtkey (FmtKey *key, int32_t (*get) (void *data), void *data)
 	if	(key->mode == '[')
 	{
 		StrBuf *sb;
-		int escape;
 
 		sb = &key->buf;
-		escape = 0;
 
 		while ((c = get(data)) != EOF)
 		{

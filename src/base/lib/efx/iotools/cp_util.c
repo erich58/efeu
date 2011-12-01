@@ -76,10 +76,8 @@ int iocpy_name(IO *in, IO *out, int c, const char *arg, unsigned int flags)
 int iocpy_esc(IO *in, IO *out, int c, const char *arg, unsigned int flags)
 {
 	int x;
-	int n;
 
 	x = io_getc(in);
-	n = 0;
 
 	if	(!listcmp(arg, x))
 	{

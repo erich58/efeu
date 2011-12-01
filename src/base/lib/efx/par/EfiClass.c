@@ -81,7 +81,6 @@ extern EfiClass EfiClass_grp;
 void SetupEfiClass (void)
 {
 	static int init_done = 0;
-	InfoNode *info;
 
 	if	(init_done)	return;
 
@@ -91,5 +90,4 @@ void SetupEfiClass (void)
 	AddEfiPar(NULL, &EfiClass_test);
 	AddEfiPar(NULL, &EfiClass_switch);
 	EfiClassEnum();
-	info = GetInfo(NULL, NULL);
 }

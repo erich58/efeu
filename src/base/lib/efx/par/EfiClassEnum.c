@@ -51,12 +51,14 @@ static int cmp_idx (const void *ap, const void *bp)
 	return 0;
 }
 
+#if	0
 static int map_update (const EfiObj *obj, void *opaque_par)
 {
 	SPar *par = opaque_par;
 	int idx = Val_int(obj->data);
 	return (idx >= 0 && idx <= par->dim) ? par->map[idx] : 0;
 }
+#endif
 
 static int sub_update (const EfiObj *obj, void *opaque_par)
 {

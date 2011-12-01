@@ -56,14 +56,17 @@ typedef struct {
 	size_t size;
 } VSEL_T;
 
-static int walk_type (const char *name, EfiType **type, int o1, int o2);
 static EfiStruct *getentry (EfiType *type, const char *name);
 
+#if	0
+static int walk_type (const char *name, EfiType **type, int o1, int o2);
 static char **vsel_list = NULL;
-static VSEL_T *vsel_cdef = NULL;
 static size_t vsel_dim = 0;
-static EfiStruct *vsel_struct = NULL;
 static IO *vsel_io = NULL;
+#endif
+
+static VSEL_T *vsel_cdef = NULL;
+static EfiStruct *vsel_struct = NULL;
 
 
 /*	Datenmatrix aus Datei laden

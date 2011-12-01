@@ -226,14 +226,12 @@ static void f_fprint (EfiFunc *func, void *rval, void **arg)
 static void f_expand (EfiFunc *func, void *rval, void **arg)
 {
 	TimeSeries *ts;
-	int i, n;
+	int n;
 
 	ts = Val_TimeSeries(arg[0]);
 	Val_TimeSeries(rval) = rd_refer(ts);
 
 	if	(ts == NULL)	return;
-
-	i = ts->dim;
 
 	if	(func->arg[1].type == &Type_TimeIndex)
 		n = tindex_diff(ts->base, Val_TimeIndex(arg[1])) + 1;

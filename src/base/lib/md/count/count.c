@@ -31,7 +31,6 @@ void md_count (mdmat *ctab, const void *data)
 {
 	register MdCntGrp *s;
 	register mdaxis *x;
-	MdCount *cnt;
 	MdCountList *list;
 	int flag;
 
@@ -75,7 +74,6 @@ void md_count (mdmat *ctab, const void *data)
 /*	Addition durchführen
 */
 	list = ctab->x_priv;
-	cnt = list->cnt;
 
 	if	(md_count_hook)
 		md_count_hook(list, ctab);

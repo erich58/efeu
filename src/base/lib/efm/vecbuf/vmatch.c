@@ -49,7 +49,6 @@ static VecMatch mval (size_t start, size_t end)
 VecMatch vmatch (void *key, void *base, size_t dim, size_t size,
 	int (*comp) (const void *a, const void *b))
 {
-	VecMatch match;
 	int i, i0, i1, i2, i3;
 	int k;
 

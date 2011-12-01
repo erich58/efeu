@@ -25,6 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/pconfig.h>
 #include <EFEU/cmdsetup.h>
 #include <EFEU/procenv.h>
+#include <EFEU/Debug.h>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -118,7 +119,7 @@ static void f_allocstat (EfiFunc *func, void *rval, void **arg)
 
 static void f_AllocTab_stat (EfiFunc *func, void *rval, void **arg)
 {
-	AllocTab_stat(Val_io(arg[0]), NULL);
+	AllocTab_stat(Val_io(arg[0]), NULL, 1);
 }
 
 static void f_memcheck (EfiFunc *func, void *rval, void **arg)

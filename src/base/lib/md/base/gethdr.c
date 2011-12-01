@@ -93,7 +93,6 @@ mdmat *md_gethdr(IO *io, int flag)
 	mdaxis **ptr;
 	size_t j;
 	size_t idx;
-	char *oname;
 	size_t magic;
 	size_t n;
 	size_t dim;
@@ -171,7 +170,7 @@ mdmat *md_gethdr(IO *io, int flag)
 	if	(md->type->recl != recl)
 	{
 		if	(flag)
-			log_error(NULL, "[mdmat:14]", "s", oname);
+			log_error(NULL, "[mdmat:14]", "s", md->type->name);
 
 		rd_deref(md);
 		return NULL;
