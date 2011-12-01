@@ -53,7 +53,7 @@ int main(int ac, char **av)
 	char		*mem, *mmem, *data;
 	register int	i, j;
 	unsigned int	w2, bytes_per_line;
-	int		x, y, val, upsidedown, wreal, mag = 1;
+	int		x, y, upsidedown, wreal, mag = 1;
 	unsigned char	*line;
 	OldPixMap	*im;
 	XEvent		event;
@@ -242,7 +242,6 @@ image upside down */
 
 	y = h - 1;
 	x = 0;
-	val = -1;
 
 	while (y >= 0)
 	{
