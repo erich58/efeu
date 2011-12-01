@@ -46,8 +46,8 @@ for (i = 0; i < par->dim; i++)
 return i + 1;
 !, ID, BaseName);
 
-StdFunc("static void $1_create",
-	"EfiClassArg *def, const char *opt, const char *arg, void *pptr",
+StdFunc("static void $1_create", "EfiClassArg *def, const EfiType *ttype, \
+const char *opt, const char *arg, void *pptr",
 	string !
 EfiObjList *list;
 EfiType *type;
