@@ -2,4 +2,4 @@
 ##Depends: .
 
 include efeu.smh
-efeu_library -h EFEU pix -lefm
+efeu_library -h EFEU pix -ml EFX_LIB
