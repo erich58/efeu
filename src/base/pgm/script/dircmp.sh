@@ -43,6 +43,9 @@
 # :dir2|
 #	:*:second directory
 #	:de:2. Verzeichnis
+# ::"find-options"|
+#	:*:any find option for first directory
+#	:de:beliebige find - Optionen für das 1. Verzeichnis
 
 usage ()
 {
@@ -110,7 +113,7 @@ done
 
 shift `expr $OPTIND - 1`
 
-if [ $# -ne 2 ]; then
+if [ $# -lt 2 ]; then
 	usage -?
 	exit 1
 elif [ ! -d $1 ]; then
