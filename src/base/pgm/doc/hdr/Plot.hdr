@@ -26,7 +26,7 @@ Plot Plot(str name, str file = NULL)
 	}
 	else	pause = true;
 
-	io << "set data style line\n";
+	io << "set style data lines\n";
 
 	if	(name)
 		fprintf(io, "set title %#s\n", name);
