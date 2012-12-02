@@ -128,8 +128,8 @@ shift 2
 ( cd $source; find . -type f "$@" -print) | sed -e '/[/]CVS[/]/d' | while read x
 do
 	if [ $verbose -gt 0 ]; then
-		echo $pgm $popt $source/$x $target/$x
+		echo $pgm $popt "$source/$x" "$target/$x"
 	fi
 
-	$pgm $popt $source/$x $target/$x
+	$pgm $popt "$source/$x" "$target/$x"
 done
