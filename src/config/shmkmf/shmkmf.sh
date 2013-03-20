@@ -219,7 +219,8 @@ splitpath ()
 			;;
 		esac
 	done
-)}
+) | LANG=C sort
+}
 
 # Absoluten Dateinamen bestimmen.
 
