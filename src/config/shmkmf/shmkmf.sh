@@ -200,7 +200,7 @@ splitpath ()
 			a=`expr $d : '\(.*/\)/'`
 			b=`expr $d : '.*//\([^/]*\)'`
 			c=`expr $d : '.*//[^/]*\(/.*\)'`
-			find $a -type d -name "$b" \
+			find -L $a -type d -name "$b" \
 				-exec test -d \{\}$c \; \
 				-print 2>/dev/null |\
 				sed -e "s|\$|$c|"
@@ -208,11 +208,11 @@ splitpath ()
 		?*//?*)
 			a=`expr $d : '\(.*/\)/'`
 			b=`expr $d : '.*//\(.*\)'`
-			find $a -type d -name "$b" -print 2>/dev/null
+			find -L $a -type d -name "$b" -print 2>/dev/null
 			;;
 		*//)	
 			a=`expr $d : '\(.*/\)/$'`
-			find $a -type d -print 2>/dev/null | sed -e 's|/$||'
+			find -L $a -type d -print 2>/dev/null | sed -e 's|/$||'
 			;;
 		*)	
 			printf "%s\n" $d
