@@ -594,7 +594,13 @@ static unsigned encoding(void)
 	{
 		char *p = getenv("LANG");
 
-		if	(p && strstr(p, "UTF-8"))
+		if	(!p)	return LOGFLAG_LATIN9;
+
+		if	(strstr(p, "UTF-8"))
+			enc = LOGFLAG_UTF8;
+		else if	(strstr(p, "UTF8"))
+			enc = LOGFLAG_UTF8;
+		else if	(strstr(p, "utf8"))
 			enc = LOGFLAG_UTF8;
 		else	enc = LOGFLAG_LATIN9;
 	}
