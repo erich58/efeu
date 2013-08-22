@@ -114,10 +114,10 @@ _cflags_lib ()
 	name=`expr "$1" : '..\(.*\)'`
 	shift
 
-	find $* -maxdepth 1 -name "lib$name.*" |
+	find $* -maxdepth 1 -name "lib$name.*" | sort |
 		_cflags_libname -L && return 0
 
-	find $cc_lpath -maxdepth 1 -name "lib$name.*" |
+	find $cc_lpath -maxdepth 1 -name "lib$name.*" | sort |
 		_cflags_libname && return 0
 
 	return 1
