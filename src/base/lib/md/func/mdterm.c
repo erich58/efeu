@@ -1,5 +1,5 @@
 /*	Funktion mit mdmat - Argumenten aufrufen
-	(c) 1995 Erich Frühstück
+	(c) 1995 Erich FrÃ¼hstÃ¼ck
 */
 
 #include <EFEU/mdmat.h>

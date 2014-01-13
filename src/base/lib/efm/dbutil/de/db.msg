@@ -1,7 +1,7 @@
 /*
-Fehlermeldungen für Datenbankfiles
+Fehlermeldungen fÃ¼r Datenbankfiles
 
-$Copyright (C) 1995 Erich Frühstück
+$Copyright (C) 1995 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -20,11 +20,11 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-pos	$!: DBData: Feldposition $1, Breite $2 nicht zulässig (recl = $3).\n
-idx	$!: DBData: Feldindex $1 nicht zulässig (dim = $2).\n
-recl	$!: DBData: Ungültiges Satzlängenfeld.\n
+pos	$!: DBData: Feldposition $1, Breite $2 nicht zulÃ¤ssig (recl = $3).\n
+idx	$!: DBData: Feldindex $1 nicht zulÃ¤ssig (dim = $2).\n
+recl	$!: DBData: UngÃ¼ltiges SatzlÃ¤ngenfeld.\n
 
-11	$!: Spalte $1: Ungültige Ziffer $2 in Zahlenwert.\n
+11	$!: Spalte $1: UngÃ¼ltige Ziffer $2 in Zahlenwert.\n
 12	$!: Spalte $1: Fehler in BCD-Wert $2 (HIGH)\n
 13	$!: Spalte $1: Fehler in BCD-Wert $2 (LOW)\n
 14	$!: Spalte $1: Fehler in BCD-Wert $2 (SIGNUM).\n

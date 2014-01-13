@@ -4,7 +4,7 @@
 
 $Header	<EFEU/$1>
 
-$Copyright (C) 2007 Erich Frühstück
+$Copyright (C) 2007 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -35,12 +35,12 @@ typedef struct MatchPar MatchPar;
 
 struct MatchPar {
 	REFVAR;
-	MatchPar *next;	/* Für Verkettungen */
+	MatchPar *next;	/* FÃ¼r Verkettungen */
 	char *pattern;	/* Musterkennung */
 	int flag;	/* Negationsflag */
 	size_t minval;	/* Minimalwert */
 	size_t maxval;	/* Maximalwert */
-	regex_t exp;	/* übersetzter Ausdruck */
+	regex_t exp;	/* Ã¼bersetzter Ausdruck */
 	int (*cmp) (MatchPar *par, const char *s, size_t n);
 };
 

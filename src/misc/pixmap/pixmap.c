@@ -1,6 +1,6 @@
 /*	Befehlsinterpreter
-	(c) 1994 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+	(c) 1994 Erich FrÃ¼hstÃ¼ck
+	A-1090 Wien, WÃ¤hringer StraÃŸe 64/6
 
 	Version 3.0
 */

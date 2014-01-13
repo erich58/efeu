@@ -2,7 +2,7 @@
 :de:	SQL-Abfragefunktionen
 :*:	query execution functions
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -36,9 +36,9 @@ If not, write to the Free Software Foundation, Inc.,
 
 /*
 :de:
-Die Funktion |$1| übermittelt die Datenbankanfrage <cmd> an den
-Datenbankserver mit erwarteten Rückgabestatus <stat>. Ein Statuswert
-von |PGRES_EMPTY_QUERY| akzeptiert jeden Rückgabestatus außer Fehler.
+Die Funktion |$1| Ã¼bermittelt die Datenbankanfrage <cmd> an den
+Datenbankserver mit erwarteten RÃ¼ckgabestatus <stat>. Ein Statuswert
+von |PGRES_EMPTY_QUERY| akzeptiert jeden RÃ¼ckgabestatus auÃŸer Fehler.
 :*:
 The function|$1| submits the query <cmd> to the database server with
 respected return status <stat>.
@@ -101,8 +101,8 @@ int PG_exec (PG *pg, const char *cmd, ExecStatusType stat)
 
 /*
 :de:
-Die Funktion |$1| übermittelt die Datenbankanfrage <cmd> an den
-Datenbankserver mit erwarteten Rückgabestatus PGRES_COMMAND_OK.
+Die Funktion |$1| Ã¼bermittelt die Datenbankanfrage <cmd> an den
+Datenbankserver mit erwarteten RÃ¼ckgabestatus PGRES_COMMAND_OK.
 :*:
 The function|$1| submits the query <cmd> to the database server with
 respected return status PGRES_COMMAND_OK.
@@ -124,7 +124,7 @@ void PG_serialize (PG *pg)
 
 /*
 :de:
-Die Funktion |$1| löscht die Daten zur letzten SQL-Abfrage.
+Die Funktion |$1| lÃ¶scht die Daten zur letzten SQL-Abfrage.
 :*:
 The function |$1| clears the data of the last query.
 */
@@ -156,7 +156,7 @@ const char *PG_status (PG *pg)
 $Diagnostic
 :de:
 Die Funktionen |PG_exec| und |PG_command| liefern 1 bei Erfolg
-und 0 bei Mißerfolg.
+und 0 bei MiÃŸerfolg.
 :*:
 The functions |PG_exec| and |PG_command| returns 1 on success
 and 0 on failure.

@@ -1,5 +1,5 @@
 # :en: man pages for installed files
-# :de: Handbucheinträge aus installierten Dateien generieren
+# :de: HandbucheintrÃ¤ge aus installierten Dateien generieren
 ##Depends: .
 
 include efeu.smh

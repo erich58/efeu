@@ -1,6 +1,6 @@
 /*	Strukturprognose
-	(c) 1997 Erich Fr¸hst¸ck
-	A-1090 Wien, W‰hringer Straﬂe 64/6
+	(c) 1997 Erich Fr√ºhst√ºck
+	A-1090 Wien, W√§hringer Stra√üe 64/6
 */
 
 #ifndef	_Include_Struktur
@@ -9,7 +9,7 @@
 #include <TimeSeries/OLS>
 
 #if	0
-/*	Residuentabelle bei Differenzsch‰tzung
+/*	Residuentabelle bei Differenzsch√§tzung
 */
 
 virtual void SynTab::residuen(str name, tsEfiVec B, tsEfiVec DB, tsEfiVec DBS,
@@ -29,8 +29,8 @@ virtual void SynTab::residuen(str name, tsEfiVec B, tsEfiVec DB, tsEfiVec DBS,
 \norule & \multicol{4}{Bestand} & \multicol{4}{Betroffenheit} \cr
 \lineheight{2}
 \boldline
-\norule	& Absolut\-wert & Zu\-wachs & Sch‰tz\-wert & Fehler\\ in \%
-	& Absolut\-wert & Zu\-wachs & Sch‰tz\-wert & Fehler\\ in \% \cr
+\norule	& Absolut\-wert & Zu\-wachs & Sch√§tz\-wert & Fehler\\ in \%
+	& Absolut\-wert & Zu\-wachs & Sch√§tz\-wert & Fehler\\ in \% \cr
 !
 
 	double n, dn, b, db;
@@ -116,8 +116,8 @@ inline void SynTable_t::residuen(str name, tsEfiVec B, tsEfiVec BS, tsEfiVec N, 
 \norule & \multicol{3}{Bestand} & \multicol{3}{Betroffenheit} \cr
 \lineheight{2}
 \boldline
-\norule	& Beobach\-tung & Sch‰tz\-wert & Fehler\\ in \%
-	& Beobach\-tung & Sch‰tz\-wert & Fehler\\ in \% \cr
+\norule	& Beobach\-tung & Sch√§tz\-wert & Fehler\\ in \%
+	& Beobach\-tung & Sch√§tz\-wert & Fehler\\ in \% \cr
 !
 	int jahr;
 	double b, n;
@@ -157,7 +157,7 @@ inline void SynTable_t::residuen(str name, tsEfiVec B, tsEfiVec BS, tsEfiVec N, 
 #endif
 
 
-/*	Struktursch‰tzung
+/*	Struktursch√§tzung
 */
 
 struct Struktur {
@@ -270,14 +270,14 @@ function Struktur_t Struktur(IO io, str name, tsEfiVec B, tsEfiVec DB, OLSPar_t 
 	SynTable_t tab;
 
 	tab = SynTable(io, 0);
-	tab.caption("%s: Sch‰tzen des Bestands %d bis %d", name, DB.first(), DB.last());
+	tab.caption("%s: Sch√§tzen des Bestands %d bis %d", name, DB.first(), DB.last());
 	tab.printf("\\vskip-\\baselineskip\n");
 	tab.koef(BPar);
 	tab.printf("\\vskip\\baselineskip\n");
 	tab.close();
 
 	tab = SynTable(io, 0);
-	tab.caption("%s: Sch‰tzen der Betroffenheit %d bis %d", name, DN.first(), DN.last());
+	tab.caption("%s: Sch√§tzen der Betroffenheit %d bis %d", name, DN.first(), DN.last());
 	tab.printf("\\vskip-\\baselineskip\n");
 	tab.koef(NPar);
 	tab.printf("\\vskip\\baselineskip\n");
@@ -297,12 +297,12 @@ function Struktur_t Struktur(IO io, str name, tsEfiVec B, OLSPar_t BPar,
 	SynTable_t tab;
 
 	tab = SynTable(io, 0);
-	tab.caption("%s: Sch‰tzen des Bestandes %d--%d", name, B.first(), B.last());
+	tab.caption("%s: Sch√§tzen des Bestandes %d--%d", name, B.first(), B.last());
 	tab.koef(BPar);
 	tab.close();
 
 	tab = SynTable(io, 0);
-	tab.caption("%s: Sch‰tzen der Betroffenheit %d--%d", name, N.first(), N.last());
+	tab.caption("%s: Sch√§tzen der Betroffenheit %d--%d", name, N.first(), N.last());
 	tab.koef(NPar);
 	tab.close();
 

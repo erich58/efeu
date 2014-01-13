@@ -2,7 +2,7 @@
 :*:	dynamik loading of libraries
 :de:	Dynamisches Laden von Bibliotheken
 
-$Copyright (C) 2000, 2001 Erich Frühstück
+$Copyright (C) 2000, 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -29,7 +29,7 @@ If not, write to the Free Software Foundation, Inc.,
 static EfiVarDef dl_var[] = {
 	{ "LDPATH",	&Type_str, &so_path,
 		":*:search path for shared object modules\n"
-		":de:Suchpfad für shared object modules\n" },
+		":de:Suchpfad fÃ¼r shared object modules\n" },
 };
 
 static void f_loadlib (EfiFunc *func, void *rval, void **arg)

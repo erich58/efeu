@@ -3,7 +3,7 @@ Arbeiten mit multidimensionalen Matrizen
 
 $Header <EFEU/$1>
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -50,14 +50,14 @@ void SetupMdTest (void);
 extern LogControl *md_err;
 extern LogControl *md_note;
 
-/*	Typedefinition für multidimensionale Matrizen
+/*	Typedefinition fÃ¼r multidimensionale Matrizen
 */
 
 EfiType *mdtype (const char *str);
 char *type2str (const EfiType *type);
 
 
-/*	Struktur für Achsenbezeichner
+/*	Struktur fÃ¼r Achsenbezeichner
 */
 
 typedef struct {
@@ -74,7 +74,7 @@ typedef struct mdaxis_struct mdaxis;
 
 typedef struct {
 	REFVAR;		/* Referenzvariablen */
-	StrPool *sbuf;	/* Stringpool für Namen */
+	StrPool *sbuf;	/* Stringpool fÃ¼r Namen */
 	size_t idx;	/* Spaltenindex */
 	size_t cols;	/* Zahl der Spalten */
 	size_t dim;	/* Indexdimension */
@@ -82,11 +82,11 @@ typedef struct {
 } mdx_lbl;
 
 struct mdaxis_struct {
-	mdaxis *next;	/* Verweis auf nächstes Element */
-	StrPool *sbuf;	/* Stringpool für Namen */
+	mdaxis *next;	/* Verweis auf nÃ¤chstes Element */
+	StrPool *sbuf;	/* Stringpool fÃ¼r Namen */
 	size_t i_name;	/* Index des Achsennamens */
 	size_t i_desc;	/* Index der Achsenbeschreibung */
-	size_t size;	/* Datengröße eines Elementes */
+	size_t size;	/* DatengrÃ¶ÃŸe eines Elementes */
 	size_t dim;	/* Zahl der Elemente */
 	mdindex *idx;	/* Indexvektor */
 	unsigned flags;	/* Steuerflags */
@@ -99,14 +99,14 @@ mdaxis *cpy_axis (StrPool *sbuf, mdaxis *axis, unsigned mask);
 void del_axis (mdaxis *axis);
 
 #define	MDFLAG_LOCK	1	/* Index ist gesperrt */
-#define	MDFLAG_BASE	2	/* Basis für Indexzahlen */
+#define	MDFLAG_BASE	2	/* Basis fÃ¼r Indexzahlen */
 #define	MDFLAG_HIDE	4	/* Index nicht ausgeben */
-#define	MDFLAG_TEMP	8	/* Temporäre Sperre */
+#define	MDFLAG_TEMP	8	/* TemporÃ¤re Sperre */
 
 #define	MDXFLAG_MARK	1	/* Markierte Achse */
 #define	MDXFLAG_TIME	2	/* Zeitachse */
-#define	MDXFLAG_HIDE	4	/* Achsenlabel unterdrücken */
-#define	MDXFLAG_TEMP	8	/* Temporäre Markierung */
+#define	MDXFLAG_HIDE	4	/* Achsenlabel unterdrÃ¼cken */
+#define	MDXFLAG_TEMP	8	/* TemporÃ¤re Markierung */
 
 void mdx_init (mdaxis *axis);
 void mdx_choice (mdaxis *axis, const char *def);
@@ -129,29 +129,29 @@ int cmp_axis (mdaxis *a, mdaxis *b, int flag);
 */
 
 typedef struct {
-	REFVAR;		/* Referenzzähler */
+	REFVAR;		/* ReferenzzÃ¤hler */
 	MapFile *map;	/* Mapfile */
 	StrPool *sbuf;	/* Stringpool */
 	size_t i_name;	/* Index des Matrixnamens */
 	size_t i_desc;	/* Index der Matrixbeschreibung */
 	EfiType *type;	/* Datentype */
 	mdaxis *axis;	/* Achsenkette */
-	size_t size;	/* Speicherbedarf für Datenfeld */
+	size_t size;	/* Speicherbedarf fÃ¼r Datenfeld */
 	void *data;	/* Datenfeld */
 	void *x_priv;	/* Private Daten */
-	void *x_data;	/* Referenzobjekt für Daten */
+	void *x_data;	/* Referenzobjekt fÃ¼r Daten */
 } mdmat;
 
 extern RefType md_reftype;
 
 /*
-Der Makro $1 erhöht den Referenzzähler der Datenmatrix um 1
+Der Makro $1 erhÃ¶ht den ReferenzzÃ¤hler der Datenmatrix um 1
 */
 
 #define	ref_mdmat(x)	rd_refer(x)
 
 /*
-Der Makro $1 verringert den Referenzzähler der Datenmatrix um 1
+Der Makro $1 verringert den ReferenzzÃ¤hler der Datenmatrix um 1
 und gibt die Datenstruktur bei Bedarf frei.
 */
 
@@ -172,11 +172,11 @@ mdmat *md_skalar (const EfiType *type, const void *data);
 typedef struct mdlist_struct mdlist;
 
 struct mdlist_struct {
-	mdlist *next;	/* Verweis auf nächstes Element */
+	mdlist *next;	/* Verweis auf nÃ¤chstes Element */
 	char *name;	/* Achsenname */
 	char *option;	/* Option */
 	size_t dim;	/* Zahl der Listenelemente */
-	char **list;	/* Wertepointer für Liste */
+	char **list;	/* Wertepointer fÃ¼r Liste */
 	char **lopt;	/* Optionsangaben zur Liste */
 };
 

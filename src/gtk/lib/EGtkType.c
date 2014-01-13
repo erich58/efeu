@@ -2,7 +2,7 @@
 :*:	get/create EFEU type from Gtk+ type
 :de:	EFEU Datentype aus Gtk+ Datentype ableiten
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or

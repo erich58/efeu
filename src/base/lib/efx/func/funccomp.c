@@ -1,7 +1,7 @@
 /*
-Sortierfunktion für Funktionen
+Sortierfunktion fÃ¼r Funktionen
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -52,7 +52,7 @@ Argumentzahl und werden mit aufsteigender Argumentzahl sortiert.
 Funktionen mit variabler Argumentzahl werden nach absteigender
 Argumentzahl sortiert.
 Bei gleichem Datentype werden L-Werte vor Konstanten gereiht.
-Bei verschiedenen Datentype wird das Funktionsgewicht berücksichtigt.
+Bei verschiedenen Datentype wird das Funktionsgewicht berÃ¼cksichtigt.
 
 Datentypen werden folgend gereiht:
 Kleine (size) Datentypen werden vorgereiht

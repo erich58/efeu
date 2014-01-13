@@ -1,7 +1,7 @@
 /*
-Fehlermeldungen für edb-Funktionen
+Fehlermeldungen fÃ¼r edb-Funktionen
 
-$Copyright (C) 2005 Erich Frühstück
+$Copyright (C) 2005 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -23,23 +23,23 @@ If not, write to the Free Software Foundation, Inc.,
 cmd	$!: Unbekanntes Kommando \"$1\"\n
 cmp	$!: Sortierfehler bei Datenbank $1.\n
 conv	$!: Datentyp $1 nicht in $2 konvertierbar.\n
-aggr	$!: Aggregatfunktion $1 für Datentyp $2 ist nicht defininiert.\n
-dbi	$!: Ungültige Datenfileangabe $1.\n
-inc	$!: Schlüssel $1 nicht kompatibel.\n
-key	$!: Schlüssel ist nicht definiert.\n
+aggr	$!: Aggregatfunktion $1 fÃ¼r Datentyp $2 ist nicht defininiert.\n
+dbi	$!: UngÃ¼ltige Datenfileangabe $1.\n
+inc	$!: SchlÃ¼ssel $1 nicht kompatibel.\n
+key	$!: SchlÃ¼ssel ist nicht definiert.\n
 mem	$!: Datentype $1 hat keine Komponente $2.\n
 mhdr	$0: Falsche Dateikennung.\n
-noc	$!: Verwendung eines C-Ausdruck ist nicht verfügbar.\n
-ord	$!: Unzulässige Reihenfolge der Verknüpfungsparameter.\n
+noc	$!: Verwendung eines C-Ausdruck ist nicht verfÃ¼gbar.\n
+ord	$!: UnzulÃ¤ssige Reihenfolge der VerknÃ¼pfungsparameter.\n
 type	$0: Datentyp ist nicht definiert.\n
 typ	$!: Unbekannter Datentyp $1.\n
 uchar	$0: Uberwartetes Zeichen $1.\n
 use	$!: Name $1 ist bereits verwendet.\n
-var	$!: Ungültige Variablendefinition $1.\n
-vec	$!: Vektor kann nur zur Gänze selektiert werden.\n
+var	$!: UngÃ¼ltige Variablendefinition $1.\n
+vec	$!: Vektor kann nur zur GÃ¤nze selektiert werden.\n
 xchar 	$0: Extra Zeichen im Header ignoriert.\n
 print	$!: Datentyp $1: Unbekannte Ausgabedefinition $[2;%#s].\n
 input	$!: Datentyp $1: Unbekannte Eingabedefinition $[2;%#s].\n
 
-nread	$0: $1 Datensätze gelesen.\n
-nwrite	$0: $1 Datensätze geschrieben.\n
+nread	$0: $1 DatensÃ¤tze gelesen.\n
+nwrite	$0: $1 DatensÃ¤tze geschrieben.\n

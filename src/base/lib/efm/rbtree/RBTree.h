@@ -1,10 +1,10 @@
 /*
 :*:red black trees with reference counter
-:de:Rot-Schwarz-Bäume mit Refernzzähler
+:de:Rot-Schwarz-BÃ¤ume mit RefernzzÃ¤hler
 
 $Header	<EFEU/$1>
 
-$Copyright (C) 2008 Erich Frühstück
+$Copyright (C) 2008 Erich FrÃ¼hstÃ¼ck
 
 This code is based on tsearch.c from the GNU C Library.
 Copyright (C) 1995, 1996, 1997, 2000 Free Software Foundation, Inc.

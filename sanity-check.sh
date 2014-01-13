@@ -1,8 +1,8 @@
 #!/bin/sh
 # :*:sanity check for compiling EFEU
-# :de:Vorraussetzungsprüfung für die EFEU Kompilation
+# :de:VorraussetzungsprÃ¼fung fÃ¼r die EFEU Kompilation
 #
-# $Copyright (C) 2008 Erich Frühstück
+# $Copyright (C) 2008 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or

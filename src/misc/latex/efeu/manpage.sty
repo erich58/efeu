@@ -1,6 +1,6 @@
-%	Handbucheintr‰ge
-%	(c) 1997 Erich Fr¸hst¸ck
-%	A-1090 Wien, W‰hringer Straﬂe 64/6
+%	Handbucheintr√§ge
+%	(c) 1997 Erich Fr√ºhst√ºck
+%	A-1090 Wien, W√§hringer Stra√üe 64/6
 
 %\NeedsTeXFormat{LaTeX2e}
 %\ProvidesPackage{manpage}[1997 `manpage' Version 1.0]
@@ -44,7 +44,7 @@
 	\gdef\MP@secnum{(\thechapter)}
 	\clearpage}
 	
-%	Indexeintr‰ge
+%	Indexeintr√§ge
 %	Kopfzeile und Markierung
 
 \def\MP@Head{}
@@ -56,7 +56,7 @@
 \def\MP@entryA[#1]#2{\gdef\MP@Head{#1}\gdef\MP@Name{#2}\ignorespaces}
 \def\MP@entryB#1{\gdef\MP@Head{#1}\gdef\MP@Name{#1}\ignorespaces}
 
-%	‹berschrift
+%	√úberschrift
 
 \def\MPcaption#1{\refstepcounter{section}%
 	\addcontentsline{toc}{section}{\MP@Name\ -- #1}%
@@ -64,7 +64,7 @@
 	{\LatinIndex\index{\MP@Name}\index{#1}}%
 	\par}
 
-%	Indexeintr‰ge
+%	Indexeintr√§ge
 
 \def\MPindex#1{{\LatinIndex\index{#1}}\ignorespaces}
 \def\ttindex#1{\index{#1@\texttt{#1}}\ignorespaces}
@@ -114,7 +114,7 @@
 	}\item\relax}
 	{\endlist}
 
-%	H‰ngender Absatz
+%	H√§ngender Absatz
 
 \long\def\MPhangpar@item#1{#1\par\ignorespaces}
 
@@ -133,7 +133,7 @@
 	}\item\relax}
 	{\endlist}
 
-%	Auff¸llen abschalten
+%	Auff√ºllen abschalten
 
 \def\MPnofill{\trivlist
 	\tt

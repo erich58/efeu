@@ -1,6 +1,6 @@
 /*	Aggregationsfilter
 
-$Copyright (C) 2004 Erich Frühstück
+$Copyright (C) 2004 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -241,5 +241,5 @@ static EDB *fdef_sum (EDBFilter *filter, EDB *base,
 EDBFilter EDBFilter_sum = EDB_FILTER(NULL,
 	"sum", "=list", fdef_sum, NULL,
 	":*:summing records"
-	":de:Aufsummieren von Datensätzen"
+	":de:Aufsummieren von DatensÃ¤tzen"
 );

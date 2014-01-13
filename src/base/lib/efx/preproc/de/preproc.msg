@@ -1,7 +1,7 @@
 /*
-Standardfehlermeldungen für Preprozessor
+Standardfehlermeldungen fÃ¼r Preprozessor
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -28,6 +28,6 @@ If not, write to the Free Software Foundation, Inc.,
 196	$!: $0: EOF in Testblock (Start bei Zeile $1).\n
 197	$!: $0: Datei "$1" wurde nicht gefunden.\n
 198	$!: $0: Dateiname fehlt.\n
-199	$!: $0: Wagenrücklauf in Eingabefile, (MSDOS File ?).\n
+199	$!: $0: WagenrÃ¼cklauf in Eingabefile, (MSDOS File ?).\n
 
 211	$!: ACHTUNG: Makro "$1" wurde neu definiert.\n

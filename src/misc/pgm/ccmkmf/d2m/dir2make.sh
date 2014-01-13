@@ -1,7 +1,7 @@
 # :*:create Makefile from source tree
 # :de:Imakefile aus Sourcebibliothek generieren
 #
-# $Copyright (C) 2000 Erich Frühstück
+# $Copyright (C) 2000 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -25,8 +25,8 @@
 # Version=":VN:"
 # r |
 #	:*:call make if Makefile has changed. Must be the first option!
-#	:de:Aufruf von make, wenn sich Makefile geändert hat.
-#	Muß als erste Option angegeben werden!
+#	:de:Aufruf von make, wenn sich Makefile geÃ¤ndert hat.
+#	MuÃŸ als erste Option angegeben werden!
 # f |
 #	:*:force creation of files
 #	:de:Erneuerung aller Dateien forcieren
@@ -38,19 +38,19 @@
 #	:de:Keine Standardregeln verwenden
 # H:dir |
 #	:*:directory to install header files
-#	:de:Installationsverzeichnis für Include-Dateien
+#	:de:Installationsverzeichnis fÃ¼r Include-Dateien
 # A:dir |
 #	:*:directory to install application files.
-#	:de:Installationsverzeichnis für Applikationsfiles.
+#	:de:Installationsverzeichnis fÃ¼r Applikationsfiles.
 # B:dir |
 #	:*:directory to install executables.
-#	:de:Installationsverzeichnis für Kommandos.
+#	:de:Installationsverzeichnis fÃ¼r Kommandos.
 # L:dir |
 #	:*:directory to install libraries.
-#	:de:Installationsverzeichnis für Programmbibliothek.
+#	:de:Installationsverzeichnis fÃ¼r Programmbibliothek.
 # D:dir |
 #	:*:directory to install documents.
-#	:de:Installationsverzeichnis für Dokumente.
+#	:de:Installationsverzeichnis fÃ¼r Dokumente.
 # d:name |
 #	:*:name of documentation
 #	:de:Name der Dokumentationsbibliothek
@@ -68,13 +68,13 @@
 #	:de:Name des Makefiles, Vorgabe |Makefile|
 # p:flag |
 #	:*:flags for creating documents
-#	:de:Generierungsflags für Dokumente
+#	:de:Generierungsflags fÃ¼r Dokumente
 # :dir |
 #	:de:Bibliothek mit Sourcefiles
 #	:*:top directory of source files
 
 # :*:The default directories for installing files is <"|.|">.
-# :de:Die Standardvorgabe für die Installationsverzeichnisse ist <"|.|">.
+# :de:Die Standardvorgabe fÃ¼r die Installationsverzeichnisse ist <"|.|">.
 
 # $SeeAlso
 # mkmf(1), mksrclist(1).
@@ -122,8 +122,8 @@ de*)
 	fmt_rmobj="Die folgenden Objektfiles wurden entfernt:\n"
 	fmt_rmlib="Programmbibliothek %s wurde entfernt\n"
 	fmt_mcreate="\n*** %s wird generiert ***\n\n"
-	fmt_mkeep="%s ist unverändert\n"
-	fmt_mupdate="\n*** %s wurde verändert ***\n\n"
+	fmt_mkeep="%s ist unverÃ¤ndert\n"
+	fmt_mupdate="\n*** %s wurde verÃ¤ndert ***\n\n"
 	;;
 esac
 
@@ -480,7 +480,7 @@ END { printf("\n\n") };
 
 rm -f $tmp.obj $tmp.lst
 
-# :de:Bibliotheskregeln anhängen
+# :de:Bibliotheskregeln anhÃ¤ngen
 
 if	test $LIB
 then
@@ -490,7 +490,7 @@ LibTarget(\$(LIBDIR),$LIB,\$(OBJLIST),\$(XLIBS))
 EOF
 fi
 
-# :de:Dokumentregel anhängen
+# :de:Dokumentregel anhÃ¤ngen
 
 if	[ "$DOC" -a -f $src/main.doc ]
 then
@@ -501,7 +501,7 @@ DocTarget(\$(DOCDIR),$DOC,$src,efeudoc $pflag)
 EOF
 fi
 
-# :de:Aufräumregel: Läßt nur das Makefile ohne Abhängigkeiten zurück
+# :de:AufrÃ¤umregel: LÃ¤ÃŸt nur das Makefile ohne AbhÃ¤ngigkeiten zurÃ¼ck
 
 cat >> $imakefile << EOF
 

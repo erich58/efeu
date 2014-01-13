@@ -1,7 +1,7 @@
 /*
 Kommandoparameter auflisten
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -30,10 +30,10 @@ If not, write to the Free Software Foundation, Inc.,
 
 /*
 Die globale Variable |$1| steuert die Formatierung der Darstellungsfunktionen
-für die Syntax. Ist die Variable verschieden von 0 (Standardeinstellung),
+fÃ¼r die Syntax. Ist die Variable verschieden von 0 (Standardeinstellung),
 werden |efeudoc|-Steuersequenzen ausgegeben.
-Bei der |eis|-Aufbereitung wird |$1| vorübergehend auf 0 gesetzt, da die
-Steuerinformationen die Lesbarkeit stark beeinträchtigen.
+Bei der |eis|-Aufbereitung wird |$1| vorÃ¼bergehend auf 0 gesetzt, da die
+Steuerinformationen die Lesbarkeit stark beeintrÃ¤chtigen.
 */
 
 int CmdPar_docmode = 1;

@@ -5,20 +5,20 @@
 [<|while (<cond>) <cmd>|>]
 	~
 [<|do <cmd> while (<cond>)|>]
-	Definiert eine Schleife. Der Ausdruck <cmd> wird solange ausgeführt,
+	Definiert eine Schleife. Der Ausdruck <cmd> wird solange ausgefÃ¼hrt,
 	wie <cond> logisch wahr ist. Bei <cmd> handelt es sich entweder um
 	eine einfache Befehlszeile oder einen Block. Bei der zweiten Form wird
-	<cmd> zumindest einmal ausgeführt.
+	<cmd> zumindest einmal ausgefÃ¼hrt.
 
 \ttitem	for (<a>; <cond>; <b>) <cmd>
-	Zu Beginn der Verarbeitung wird <a> ausgeführt.
-	Der Ausdruck <cmd> wird solange ausgeführt, wie <cond>
-	wahr ist. Nach jedem Schleifendurchlauf wird <b> ausgeführt.
+	Zu Beginn der Verarbeitung wird <a> ausgefÃ¼hrt.
+	Der Ausdruck <cmd> wird solange ausgefÃ¼hrt, wie <cond>
+	wahr ist. Nach jedem Schleifendurchlauf wird <b> ausgefÃ¼hrt.
 
 \ttitem	for (<name> in~<list>) <cmd>
-	Für jedes Element der Liste <list> wird <cmd>
-	ausgeführt. <Name> ist der Name einer temporären Variablen,
-	die das aktuelle Element der Liste enthält.
+	FÃ¼r jedes Element der Liste <list> wird <cmd>
+	ausgefÃ¼hrt. <Name> ist der Name einer temporÃ¤ren Variablen,
+	die das aktuelle Element der Liste enthÃ¤lt.
 	Anstelle von <list> kann auch ein einzelnes Objekt stehen,
 	das in eine Liste konvertierbar ist (z.B: ein Vektor).
 
@@ -30,9 +30,9 @@ verlassen werden. Die |continue| Anweisung startet einen neuen Zyklus.
 \ttitem	if (<cond>) <cmd1>
 	~
 \ttitem if (<cond>) <cmd1> else~<cmd2>
-	Falls die Bedingung <cond> wahr ist, wird <cmd1> ausgeführt,
-	ansonsten wird, falls das Schlüsselwort |else| angegeben ist,
-	<cmd2> ausgeführt.
+	Falls die Bedingung <cond> wahr ist, wird <cmd1> ausgefÃ¼hrt,
+	ansonsten wird, falls das SchlÃ¼sselwort |else| angegeben ist,
+	<cmd2> ausgefÃ¼hrt.
 
 \ssec	Switch-Anweisung
 
@@ -52,16 +52,16 @@ switch (<expr>)\br
 Bei <label> handelt es sich um einen Label der Form <|case~<val>|>
 oder |default|. Der Ausdruck <val> wird bereits beim Lesen des
 Switch-Statements berechnet. Der Ausdruck <expr> wird der Reihe nach
-mit allen Labels verglichen. Stimmt er mit <val> überein, wird die
-nachfolgende Liste von Ausdrücken ausgewertet.
+mit allen Labels verglichen. Stimmt er mit <val> Ã¼berein, wird die
+nachfolgende Liste von AusdrÃ¼cken ausgewertet.
 Falls in der Liste keine
 |break|-, |continue|- oder |return|-Anweisung vorkommt, werden die
-Ausdrücke des nachfolgenden Labels mit ausgewertet.
-Stimmt <expr> mit keinem Wert <val> der Labels überein, werden die Ausdrücke
+AusdrÃ¼cke des nachfolgenden Labels mit ausgewertet.
+Stimmt <expr> mit keinem Wert <val> der Labels Ã¼berein, werden die AusdrÃ¼cke
 von |default| verwendet.
 
-Anders als in C sind in esh beliebige Datentypen für Switch-Statements
-erlaubt. Die einzige Bedingung ist, daß der Operator |==| für diesen
-Datentype definiert ist. So können in esh z.B. Zeichenketten oder
-Reguläre Ausdrücke in Switch-Statements verwendet werden.
-Nicht jeder Datentyp eignet sich gut für Switch-Statements.
+Anders als in C sind in esh beliebige Datentypen fÃ¼r Switch-Statements
+erlaubt. Die einzige Bedingung ist, daÃŸ der Operator |==| fÃ¼r diesen
+Datentype definiert ist. So kÃ¶nnen in esh z.B. Zeichenketten oder
+RegulÃ¤re AusdrÃ¼cke in Switch-Statements verwendet werden.
+Nicht jeder Datentyp eignet sich gut fÃ¼r Switch-Statements.

@@ -1,7 +1,7 @@
 /*
 Vektortypen
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -130,7 +130,7 @@ EfiType *NewVecType (EfiType *type, int dim)
 }
 
 
-/*	Kopierfunktion für Vektortypen
+/*	Kopierfunktion fÃ¼r Vektortypen
 */
 
 static void VecCopy (const EfiType *type, void *tg, const void *src)
@@ -160,7 +160,7 @@ static void V0Copy (const EfiType *type, void *tg, const void *src)
 }
 
 
-/*	Löschfunktion für Vektortypen
+/*	LÃ¶schfunktion fÃ¼r Vektortypen
 */
 
 static void VecClean (const EfiType *type, void *tg, int mode)

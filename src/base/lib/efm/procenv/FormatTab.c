@@ -2,7 +2,7 @@
 :*: table with format strings
 :de: Tabelle mit Formatdefinitionen
 
-$Copyright (C) 2002 Erich Frühstück
+$Copyright (C) 2002 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -38,7 +38,7 @@ If not, write to the Free Software Foundation, Inc.,
 #define	W_KEY	"%s: key %#s not found in message catalog %#s.\n"
 #define	M_LOAD	"%s: loading message catalog %#s.\n"
 
-#define	UNICODE	1	/* Flag für Unicode-Speicherung */
+#define	UNICODE	1	/* Flag fÃ¼r Unicode-Speicherung */
 
 static LogControl msg_warn = LOG_CONTROL("msg", LOGLEVEL_WARN);
 static LogControl msg_debug = LOG_CONTROL("msg", LOGLEVEL_DEBUG);
@@ -60,13 +60,13 @@ static int SubEntry_comp (const void *ap, const void *bp)
 }
 
 
-/*	Haupteinträge
+/*	HaupteintrÃ¤ge
 */
 
 typedef struct {
 	char *name;	/* Formatname */
 	SubEntry *tab;	/* Formattabelle */
-	size_t dim;	/* Zahl der Einträge */
+	size_t dim;	/* Zahl der EintrÃ¤ge */
 } MainEntry;
 
 static int MainEntry_comp (const void *ap, const void *bp)

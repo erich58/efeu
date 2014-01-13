@@ -3,7 +3,7 @@ Arbeiten mit Datenbankdaten
 
 $Header	<EFEU/$1>
 
-$Copyright (C) 1995 Erich Frühstück
+$Copyright (C) 1995 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -30,14 +30,14 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/refdata.h>
 
 typedef struct {
-	unsigned recl;		/* Satzlänge */
+	unsigned recl;		/* SatzlÃ¤nge */
 	unsigned dim;		/* Felddimension */
 	unsigned char *buf;	/* Datenbuffer */
 	char **tab;		/* Feldvektor */
-	unsigned buf_size;	/* Buffergröße */
-	unsigned tab_size;	/* Tabellengröße */
-	short ebcdic;		/* Flag für EBCDIC-Daten */
-	short fixed;		/* Flag für Fixe Satzlänge */
+	unsigned buf_size;	/* BuffergrÃ¶ÃŸe */
+	unsigned tab_size;	/* TabellengrÃ¶ÃŸe */
+	short ebcdic;		/* Flag fÃ¼r EBCDIC-Daten */
+	short fixed;		/* Flag fÃ¼r Fixe SatzlÃ¤nge */
 } DBData;
 
 #define	DBDATA(name)	DBData name = { 0, 0, NULL, NULL, 0, 0 }
@@ -86,7 +86,7 @@ typedef struct {
 	IO *io;
 	DBData data;
 	int mode;
-	int save;	/* Flag für Zurückschreiben */
+	int save;	/* Flag fÃ¼r ZurÃ¼ckschreiben */
 	size_t recl;
 	char *delim;
 } DBFile;

@@ -1,7 +1,7 @@
 /*
-Handbücher mit efeudoc
+HandbÃ¼cher mit efeudoc
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -33,7 +33,7 @@ Concat(html_,name)
 PathName(PathName(dir,html),name)
 
 /*
-Der Makro |$1| sorgt für die Einrichtung der Verzeichnisse
+Der Makro |$1| sorgt fÃ¼r die Einrichtung der Verzeichnisse
 zur Installation von Dokumenten unter <dir>.
 */
 

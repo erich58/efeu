@@ -1,7 +1,7 @@
 /*
 Programmsteuerung
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -173,7 +173,7 @@ static void f_filetype (EfiFunc *func, void *rval, void **arg)
 	memfree(name);
 }
 
-/*	Temporäre Dateien und Verzeichnisse
+/*	TemporÃ¤re Dateien und Verzeichnisse
 */
 
 static void f_tempstat (EfiFunc *func, void *rval, void **arg)

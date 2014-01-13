@@ -1,7 +1,7 @@
 /*
 Verwalten von Argumentlisten
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -58,7 +58,7 @@ static void argl_clean (void *data)
 }
 
 /*
-Die Datenstruktur |$1| definiert den Referenztype für die
+Die Datenstruktur |$1| definiert den Referenztype fÃ¼r die
 Struktur |ArgList|.
 */
 
@@ -146,9 +146,9 @@ void arg_printf (ArgList *list, const char *fmt, ...)
 
 /*
 Die Funktion |$1| fragt den  <n>-ten Eintrag der Argumentliste <list> ab.
-Falls <list> nicht definiert ist, oder außerhalb des zulässigen Bereichs
+Falls <list> nicht definiert ist, oder auÃŸerhalb des zulÃ¤ssigen Bereichs
 liegt, liefert |$1| einen Nullpointer.
-Negative Werte für <n> werden vom Ende der Liste weg gerechnet, wobei
+Negative Werte fÃ¼r <n> werden vom Ende der Liste weg gerechnet, wobei
 hier der Eintrag 0 nicht abgefragt wird!
 */
 
@@ -174,8 +174,8 @@ int arg_test (ArgList *list, int n)
 
 /*
 Die Funktion |$1| setzt den <n>-ten Eintrag der Argumentliste <list> auf
-<val>. Bei Bedarf wird die Liste vergrößert.
-Negative Werte für <n> werden vom Ende der Liste weg gerechnet, wobei
+<val>. Bei Bedarf wird die Liste vergrÃ¶ÃŸert.
+Negative Werte fÃ¼r <n> werden vom Ende der Liste weg gerechnet, wobei
 hier der Eintrag 0 nicht gesetzt wird!
 */
 

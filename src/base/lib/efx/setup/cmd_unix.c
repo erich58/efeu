@@ -1,7 +1,7 @@
 /*
 UNIX-Spezifische Funktionen und Strukturen
 
-$Copyright (C) 1999 Erich Frühstück
+$Copyright (C) 1999 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -243,7 +243,7 @@ static void fstat2bool (EfiFunc *func, void *rval, void **arg)
 	Val_bool(rval) = ((FileStat *) arg[0])->path != NULL;
 }
 
-/*	Paßworteintrag
+/*	PaÃŸworteintrag
 */
 
 typedef struct {

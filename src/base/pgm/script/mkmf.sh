@@ -1,8 +1,8 @@
 #!/bin/sh
 # :*:wraper for makefile-generators
-# :de:Hülle für Makefile-Generatoren
+# :de:HÃ¼lle fÃ¼r Makefile-Generatoren
 #
-# $Copyright (C) 2004 Erich Frühstück
+# $Copyright (C) 2004 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -24,7 +24,7 @@
 # Version=":VN:"
 # n |
 #	:*:print out the selected Makefile-generator without executing it.
-#	:de:zeige den ausgewählten Makefile-Generator ohne ihn
+#	:de:zeige den ausgewÃ¤hlten Makefile-Generator ohne ihn
 #	aufzurufen.
 
 usage ()
@@ -41,9 +41,9 @@ esac
 # :*:The command |$!| is a wrapper for different Makefile-generators.
 # It searches for typical configuration files and runs the according
 # command.
-# :de:Das Kommando |$!| ist ein Startprogramm für verschiedene
+# :de:Das Kommando |$!| ist ein Startprogramm fÃ¼r verschiedene
 # Makefile-Generatoren. Es sucht nach typischen Konfigurationsdateien
-# und startet das zugehörige Kommando.
+# und startet das zugehÃ¶rige Kommando.
 #
 # @arglist -i
 
@@ -68,14 +68,14 @@ fi
 
 # $Description
 # :de:
-# Das Kommando |$!| prüft der Reihe nach die folgenden Regeln, bis der
+# Das Kommando |$!| prÃ¼ft der Reihe nach die folgenden Regeln, bis der
 #	Makefile-Generator identifiziert wurde:
 # *	Falls die Datei |Config.make| existiert, wird |shmkmf| verwendet.
-# *	Falls die Datei |Imakefile| exisitiert, wird zunächst nach einer Zeile,
+# *	Falls die Datei |Imakefile| exisitiert, wird zunÃ¤chst nach einer Zeile,
 # 	die mit |XCOMM| beginnt gesucht. Wenn vorhanden, wird |xmkmf| und
 # 	ansonsten |ccmkmf| verwendet.
-# *	Falls eine ausführbare Datei |configure| existiert, wird diese
-#	ausgeführt.
+# *	Falls eine ausfÃ¼hrbare Datei |configure| existiert, wird diese
+#	ausgefÃ¼hrt.
 # *	Falls ein |Makefile| existiert, wird mit |make Makefile| eine
 #	Erneuerung des Makefiles probiert.
 # *	Ansonsten wird eine Fehlermeldung ausgegeben.

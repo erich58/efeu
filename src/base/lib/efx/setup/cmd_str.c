@@ -1,7 +1,7 @@
 /*
 Zeichen und Strings
 
-$Copyright (C) 1994, 2001 Erich Frühstück
+$Copyright (C) 1994, 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -381,9 +381,9 @@ static void f_upper (EfiFunc *func, void *rval, void **arg)
 		{
 			switch (*s)
 			{
-			case 'ä':	*s = 'Ä'; break;
-			case 'ö':	*s = 'Ö'; break;
-			case 'ü':	*s = 'Ü'; break;
+			case 'Ã¤':	*s = 'Ã„'; break;
+			case 'Ã¶':	*s = 'Ã–'; break;
+			case 'Ã¼':	*s = 'Ãœ'; break;
 			default:	*s = toupper(*s); break;
 			}
 		}
@@ -400,9 +400,9 @@ static void f_lower (EfiFunc *func, void *rval, void **arg)
 		{
 			switch (*s)
 			{
-			case 'Ä':	*s = 'ä'; break;
-			case 'Ö':	*s = 'ö'; break;
-			case 'Ü':	*s = 'ü'; break;
+			case 'Ã„':	*s = 'Ã¤'; break;
+			case 'Ã–':	*s = 'Ã¶'; break;
+			case 'Ãœ':	*s = 'Ã¼'; break;
 			default:	*s = tolower(*s); break;
 			}
 		}

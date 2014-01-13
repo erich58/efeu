@@ -2,7 +2,7 @@
 # :*:file command with efeu extensions
 # :de:file Kommando mit EFEU-Anpassung
 #
-# $Copyright (C) 2001, 2008 Erich Frühstück
+# $Copyright (C) 2001, 2008 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or

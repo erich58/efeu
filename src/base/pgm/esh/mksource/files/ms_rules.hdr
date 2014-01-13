@@ -2,7 +2,7 @@
 Makros zur Konstruktion von Regeln in Makefiles
 
 $Header	<$1>
-$Copyright (C) 2007 Erich Frühstück
+$Copyright (C) 2007 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -26,14 +26,14 @@ If not, write to the Free Software Foundation, Inc.,
 
 /*
 $Description
-Die Headerdatei $1 enthält eine Reihe von Makrodefinitionen zur
+Die Headerdatei $1 enthÃ¤lt eine Reihe von Makrodefinitionen zur
 Erzeugung von Makefileregeln im Kontext von |mksource|. Sie
-können bei der |rule|-Anweisung verwendet werden.
+kÃ¶nnen bei der |rule|-Anweisung verwendet werden.
 
 $Notes
-Die Makrodefinitionen können allgemein zur Erzeugung von Regeln mithilfe
+Die Makrodefinitionen kÃ¶nnen allgemein zur Erzeugung von Regeln mithilfe
 des EFI-Interpreters eingesetzt werden. Dabei ist zu beachten, dass
-eine mit diesen Regeln überarbeitete Definitionsdatei die
+eine mit diesen Regeln Ã¼berarbeitete Definitionsdatei die
 Nachbearbeitung mittels Parametersubstitution erfordert.
 */
 
@@ -41,8 +41,8 @@ fmt_str = "%*s";
 
 /*
 Der Makro |$1|
-generiert eine Liste von zu löschenden Dateien für das
-Aufräumziel |clean|.
+generiert eine Liste von zu lÃ¶schenden Dateien fÃ¼r das
+AufrÃ¤umziel |clean|.
 */
 
 #define	CleanTarget(x)	\
@@ -50,16 +50,16 @@ clean::$("\n\t")rm -f x
 
 /*
 Der Makro |$1|
-generiert für die Datei <name> eine Abhängigkeit für das Pseudoziel
-|all| und eine Aufräumregel für das Aufräumziel |clean|.
+generiert fÃ¼r die Datei <name> eine AbhÃ¤ngigkeit fÃ¼r das Pseudoziel
+|all| und eine AufrÃ¤umregel fÃ¼r das AufrÃ¤umziel |clean|.
 */
 
 #define	AllTarget(x)	all:: x$("\n\n")CleanTarget(x)
 
 /*
-Wird der Makro |$1| als Ziel einer Regel angeführt, wird automatisch
-auch eine Abhängigkeit für das Pseudoziel
-|all| und eine Aufräumregel für das Pseudoziel |clean| generiert.
+Wird der Makro |$1| als Ziel einer Regel angefÃ¼hrt, wird automatisch
+auch eine AbhÃ¤ngigkeit fÃ¼r das Pseudoziel
+|all| und eine AufrÃ¤umregel fÃ¼r das Pseudoziel |clean| generiert.
 */
 
 #define Target(x)	AllTarget(x)$("\n\n")x
@@ -67,7 +67,7 @@ auch eine Abhängigkeit für das Pseudoziel
 /*
 Der Makro |$1|
 generiert eine einfache Makefileregel. <Name> ist
-der Name der Zieldatei, <dep> ist die Liste der Abhängigkeiten
+der Name der Zieldatei, <dep> ist die Liste der AbhÃ¤ngigkeiten
 und <cmd> ist die Befehlszeile.
 */
 
@@ -75,9 +75,9 @@ und <cmd> ist die Befehlszeile.
 
 /*
 Der Makro |$1|
-nimmt zusätzlich <name> in die Abhängigkeitsliste
+nimmt zusÃ¤tzlich <name> in die AbhÃ¤ngigkeitsliste
 des Pseudoziels |all| auf. Weiters wird <name> in die
-Aufräumliste des Pseudoziels |clean| eingetragen.
+AufrÃ¤umliste des Pseudoziels |clean| eingetragen.
 */
 
 #define	StdRule(tg,src,cmd)	Target(tg): src$("\n\t")cmd

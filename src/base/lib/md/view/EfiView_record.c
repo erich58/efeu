@@ -1,7 +1,7 @@
 /*
 Datensicht auf Datensatz
 
-$Copyright (C) 2007 Erich Frühstück
+$Copyright (C) 2007 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -29,5 +29,5 @@ static void rec_create (EfiView *view, const char *opt, const char *arg)
 
 EfiViewPar EfiView_record = EFI_VIEW (NULL, "record", NULL, rec_create,
 	":*:record view"
-	":de:Sicht auf Datensätze"
+	":de:Sicht auf DatensÃ¤tze"
 );

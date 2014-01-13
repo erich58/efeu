@@ -1,7 +1,7 @@
 /*
 Eingabe von UCS-Zeichen
 
-$Copyright (C) 2007 Erich Frühstück
+$Copyright (C) 2007 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -96,9 +96,9 @@ int32_t io_getucs_utf8 (IO *io)
 #define U3(c)	((c & 0xf0) == 0xe0)	/* Test auf 3-Byte Sequenz */
 #define	U4(c)	((c & 0xf8) == 0xf0)	/* Test auf 4-Byte Sequenz */
 
-#define	V2(c)	(c & 0x1f)	/* Startbits für 2-Byte Sequenz */
-#define	V3(c)	(c & 0xf)	/* Startbits für 3-Byte Sequenz */
-#define	V4(c)	(c & 0x7)	/* Startbits für 4-Byte Sequenz */
+#define	V2(c)	(c & 0x1f)	/* Startbits fÃ¼r 2-Byte Sequenz */
+#define	V3(c)	(c & 0xf)	/* Startbits fÃ¼r 3-Byte Sequenz */
+#define	V4(c)	(c & 0x7)	/* Startbits fÃ¼r 4-Byte Sequenz */
 
 #define	UF(c)	((c & 0xc0) == 0x80)	/* Test auf Folgezeichen */
 #define	VF(c)	(c & 0x3f)		/* Datenbits des Folgezeichens */

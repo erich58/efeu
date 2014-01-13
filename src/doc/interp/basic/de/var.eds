@@ -3,29 +3,29 @@
 \ssec	Namen
 
 Ein Name besteht aus einer Folge von Buchstaben und Ziffern.
-Das erste Zeichen muß ein Buchstabe sein. Ein Unterstreichungszeichen
+Das erste Zeichen muÃŸ ein Buchstabe sein. Ein Unterstreichungszeichen
 <"|_|"> gilt als Buchstabe.
 
-Mit Hilfe des Schlüsselwortes
-\index{|operator|} können auch beliebige Namen angesprochen werden.
-Der Name wird dabei entweder unter doppelte Anführung gesetzt oder
-durch Leerzeichen bzw. Tabulatoren begrenzt. Nach dem Schlüsselwort
-dürfen Leerzeichen und Tabulatoren stehen. Obwohl diese
+Mit Hilfe des SchlÃ¼sselwortes
+\index{|operator|} kÃ¶nnen auch beliebige Namen angesprochen werden.
+Der Name wird dabei entweder unter doppelte AnfÃ¼hrung gesetzt oder
+durch Leerzeichen bzw. Tabulatoren begrenzt. Nach dem SchlÃ¼sselwort
+dÃ¼rfen Leerzeichen und Tabulatoren stehen. Obwohl diese
 Konstruktion allgemein verwendet werden kann, sollte sie nur
 zur Definition von Operatorfunktionen (Funktionen, deren Aufruf
 durch einen Operator bewirkt wird) verwendet werden.
 
 \label{static}
-Variablendefinitionen, denen das Schlüsselwort \index{|static|}
+Variablendefinitionen, denen das SchlÃ¼sselwort \index{|static|}
 vorangestellt ist,
 werden sofort beim Parsen der Befehlszeilen eingerichtet.
-Innerhalb eines Blocks wird für statische Variablen eine andere
-Variablentabelle als für dynamische Variablen (solche die erst bei
+Innerhalb eines Blocks wird fÃ¼r statische Variablen eine andere
+Variablentabelle als fÃ¼r dynamische Variablen (solche die erst bei
 der Abarbeitung des Blocks angelegt werden) verwendet.
 
 Die innerhalb eines Blocks definierten Variablen (statisch oder
-dynamisch) sind außerhalb des Blocks nicht sichtbar.
+dynamisch) sind auÃŸerhalb des Blocks nicht sichtbar.
 
-Steht vor einer Variablendefinition das Schlüsselwort \index{|const|},
+Steht vor einer Variablendefinition das SchlÃ¼sselwort \index{|const|},
 wird damit eine Konstante eingerichtet. Der mit der Zuweisung
-festgelegte Wert kann nicht mehr verändert werden.
+festgelegte Wert kann nicht mehr verÃ¤ndert werden.

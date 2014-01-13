@@ -8,9 +8,9 @@ Das Kommando |$!| dient zur Ausgabe einer Datenmatrix in Textformat.
 Beim Aufspalten einer Datenmatrix nach Achsen werden Dateinamen der
 Form
 	\[<pfx>|_|]<name1>[|_|<name2>][|.|<sfx>]
-konstruiert. Dabei gibt <namei> jeweils die aktuelle Auspr‰gung der
+konstruiert. Dabei gibt <namei> jeweils die aktuelle Auspr√§gung der
 Achse <i> an. Das Trennzeichen |_| kann mit |--paste-delim| <delim>
-ge‰ndert werden. Die Namensteile <pfx> und <sfx> werden aus dem
+ge√§ndert werden. Die Namensteile <pfx> und <sfx> werden aus dem
 Ausgabenamen nach folgenden Regeln bestimmt:
 
 /*
@@ -33,7 +33,7 @@ NULL | pfx = NULL; sfx = <default>
 \ttitem <a>.<b>
 	pfx = <a>, sfx = <b>
 
-Der Defaultwert f¸r <sfx> wird von der Option |--csv| auf |csv| gesetzt
+Der Defaultwert f√ºr <sfx> wird von der Option |--csv| auf |csv| gesetzt
 und ist ansonsten |NULL|.
 
 @environ -h

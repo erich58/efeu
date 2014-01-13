@@ -1,5 +1,5 @@
 /*	Datentype einer Matrix bestimmen
-	(c) 1994 Erich Frühstück
+	(c) 1994 Erich FrÃ¼hstÃ¼ck
 */
 
 #include <EFEU/mdmat.h>
@@ -30,7 +30,7 @@ EfiType *mdtype (const char *str)
 	if	((type = edb_type(str)) != NULL)
 		return type;
 
-/*	Wegen Kompatibilität
+/*	Wegen KompatibilitÃ¤t
 */
 	if	(strncmp(str, "struct", 6) != 0)
 	{

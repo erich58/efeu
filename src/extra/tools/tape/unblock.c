@@ -1,8 +1,8 @@
 /*
 :*:	remove block size of a variable blocked file
-:de:	Blocklängenfeld eines variabel geblockten Datenfiles auflösen
+:de:	BlocklÃ¤ngenfeld eines variabel geblockten Datenfiles auflÃ¶sen
 
-$Copyright (C) 1999, 2002 Erich Frühstück
+$Copyright (C) 1999, 2002 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or

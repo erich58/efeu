@@ -1,71 +1,71 @@
 /*
-Handbucheintrag für Redbsyncnt
+Handbucheintrag fÃ¼r Redbsyncnt
 
-$Copyright (C) 2007 Erich Frühstück
-A-3423 St.Andrä/Wördern, Wildenhaggasse 38
+$Copyright (C) 2007 Erich FrÃ¼hstÃ¼ck
+A-3423 St.AndrÃ¤/WÃ¶rdern, Wildenhaggasse 38
 */
 
 @name
 @synopsis -h
 \Description
 Das Kommando |$!|
-dient zum auszählen eines EDB-Datenfiles zu einer mehrdimensionalen
+dient zum auszÃ¤hlen eines EDB-Datenfiles zu einer mehrdimensionalen
 Datenmatrix.
 
-Alternativ zum Aufsummieren der einzelnen Zählereignisse, können diese
+Alternativ zum Aufsummieren der einzelnen ZÃ¤hlereignisse, kÃ¶nnen diese
 auch aufgezeichnet werden. Die Ausgabe ist dann eine Datei eine
 EDB-Datei. Details dazu werden im Abschnitt
 Aufzeichnungsmodus behandelt.
 
-Für eine Zählung werden die folgenden Parameter benötigt:
+FÃ¼r eine ZÃ¤hlung werden die folgenden Parameter benÃ¶tigt:
 *	Auswertungsfunktion
-*	Zähler
+*	ZÃ¤hler
 *	Zeitbereich
 *	Klassifikationen
 
 \shead	Auswertungs&-funktion
-Die Auswertungsfunktion bestimmt die Art der Zählung.
-Die verfügbaren Auswertungsfunktionen hängen vom
+Die Auswertungsfunktion bestimmt die Art der ZÃ¤hlung.
+Die verfÃ¼gbaren Auswertungsfunktionen hÃ¤ngen vom
 jeweiligen Datenbanktype ab.
 
 Eine Auswertungsfunktion
 wird durch ihren Namen <name> und den optionalen Parametern
 <opt> und <arg> festgelegt.
-Die allgemeine Syntax für eine Auswertungsfunktion ist
+Die allgemeine Syntax fÃ¼r eine Auswertungsfunktion ist
 
 	<name>|[|<opt>|]=|<arg>
 
-Die eckigen Klammern gehören zum Parameter <opt>, das
+Die eckigen Klammern gehÃ¶ren zum Parameter <opt>, das
 Zuweisungszeichen~|=| zum Argument.
-Die Bedeutung der Parameter hängt von der jeweiligen
+Die Bedeutung der Parameter hÃ¤ngt von der jeweiligen
 Auswertungsfunktion ab. Nur wenige Auswertungsfunktionen
-benötigen Parameter.
+benÃ¶tigen Parameter.
 
-\shead	Zähler
-Der Zähler legt fest, welche Variable(n) gezählt wird (werden).
-Er bestimmt den Type der Datenmatrix. Die verfügbaren Zähler hängen
+\shead	ZÃ¤hler
+Der ZÃ¤hler legt fest, welche Variable(n) gezÃ¤hlt wird (werden).
+Er bestimmt den Type der Datenmatrix. Die verfÃ¼gbaren ZÃ¤hler hÃ¤ngen
 von der Auswertungsfunktion ab. Es gibt eine Reihe von
-Standardzählern, die für jede Auswertungsfunktion verwendet
-werden können.
+StandardzÃ¤hlern, die fÃ¼r jede Auswertungsfunktion verwendet
+werden kÃ¶nnen.
 
-Die meisten Zähler berücksichtigen ein Hochrechnungsgewicht, dass
-bei der Auszählung angegeben werden kann. Damit können
+Die meisten ZÃ¤hler berÃ¼cksichtigen ein Hochrechnungsgewicht, dass
+bei der AuszÃ¤hlung angegeben werden kann. Damit kÃ¶nnen
 Stichprobenauswertungen ohne Nachbearbeitung verwendet werden.
 
 \shead	Zeitbereich
-Manche Auswertungsfunktionen benötigen Zeitintervalle
-für die Zählung. Der Zeitbereich legt die Zeitintervalle fest.
-Benötigt die Auswertungsfunktion keinen Zeitbereich, wird
+Manche Auswertungsfunktionen benÃ¶tigen Zeitintervalle
+fÃ¼r die ZÃ¤hlung. Der Zeitbereich legt die Zeitintervalle fest.
+BenÃ¶tigt die Auswertungsfunktion keinen Zeitbereich, wird
 eine Warnung ausgegeben und die Angabe ignoriert.
 
-Für jedes Zeitintervall wird eine unabhängige Zählung durchgeführt.
-Die dazugehörende Zeitachse wird immer als erste Achse in der
+FÃ¼r jedes Zeitintervall wird eine unabhÃ¤ngige ZÃ¤hlung durchgefÃ¼hrt.
+Die dazugehÃ¶rende Zeitachse wird immer als erste Achse in der
 Datenmatrix angelegt.
-Der Achsenname hängt von den Zeitdefinitionen ab: Bei Jahresangaben
+Der Achsenname hÃ¤ngt von den Zeitdefinitionen ab: Bei Jahresangaben
 wird |jahr|, bei Monatsangaben wird |monat| und ansonsten wird |time|
 verwendet.
 
-Folgende Datumswerte können angegeben werden:
+Folgende Datumswerte kÃ¶nnen angegeben werden:
 [<jahr>]
 	Jahr, bei zweistelligen Angaben wird bei Werten unter 50
 	2000 addiert, ansonsten 1900.
@@ -76,116 +76,116 @@ Folgende Datumswerte können angegeben werden:
 [<tag>|.|<monat>|.|<jahr>]
 	Tag
 
-Mehrere Datumswerte können folgend kombiniert werden:
+Mehrere Datumswerte kÃ¶nnen folgend kombiniert werden:
 [<dat1>|-|<dat2>]
 	Zeitintervall, dass durch den ersten Tag der ersten
 	Datumsangabe und dem letzten Tag der letzten Datumsangabe
 	festgelegt wird.
 [<dat1>|..|<dat2>]
 	Alle aufeinanderfolgende Zeitintervalle, beginnend
-	bei <dat1> bis einschließlich <dat2>.
+	bei <dat1> bis einschlieÃŸlich <dat2>.
 [<dat1>|,|<dat2>|,|...|,|<datn>]
-	Handelt es sich um Tagesangaben, erfolgt die Zählung für alle
+	Handelt es sich um Tagesangaben, erfolgt die ZÃ¤hlung fÃ¼r alle
 	zwischen den Tagen liegenden Intervalle, wobei das rechtsstehende
 	Datum zum Intervall gerechnet wird.
-	Ansonsten erfolgt die Auszählung für die aufgelisteten
+	Ansonsten erfolgt die AuszÃ¤hlung fÃ¼r die aufgelisteten
 	Zeitbereiche.
 
-Weiters besteht die Möglichkeit, verschiedene, typischerweise nicht
+Weiters besteht die MÃ¶glichkeit, verschiedene, typischerweise nicht
 kompatible Datumsangaben mit einem Strichpunkt aneinanderzureihen.
-Hier ist zu beachten, daß der Strichpunkt von der Shell interpretiert
-wird und daher die Datumsangabe unter Anführung gestellt werden muß.
+Hier ist zu beachten, daÃŸ der Strichpunkt von der Shell interpretiert
+wird und daher die Datumsangabe unter AnfÃ¼hrung gestellt werden muÃŸ.
 
 \shead	Klassifikationen
 Zu jeder Auswertungsfunktion gibt es eine Reihe von
-Klassifikationen, nach denen gezählt werden kann.
+Klassifikationen, nach denen gezÃ¤hlt werden kann.
 Mithilfe der Klassifikationen werden die Achsen der
 resultierenden Datenmatrix festgelegt.
 
-Die Syntax für eine Achsendefinition lautet:
+Die Syntax fÃ¼r eine Achsendefinition lautet:
 	<name>=<k1>,<k2>,...,<kn>
 
-wobei <name> den Achsennamen (frei wählbar) festlegt und die
+wobei <name> den Achsennamen (frei wÃ¤hlbar) festlegt und die
 <k1>, ..., <kn> beliebige Klassifikationen der Auswertungsfunktion
 sind.
 
-Die einzelnen Klassifikationen können beliebig kombiniert werden.
-Man sollte jedoch beachten, daß die resultierende Datenmatrix
-nicht zu groß wird und lieber mehrere kleine, als eine große
-Zählung durchführen.
+Die einzelnen Klassifikationen kÃ¶nnen beliebig kombiniert werden.
+Man sollte jedoch beachten, daÃŸ die resultierende Datenmatrix
+nicht zu groÃŸ wird und lieber mehrere kleine, als eine groÃŸe
+ZÃ¤hlung durchfÃ¼hren.
 
 Die einzelnen Achsendefinitionen werden dem Kommando
-|syncnt| als Argument übergeben und an dem Zuweisungszeichen
-|=| erkannt. Dementsprechend dürfen Datenbankname und
+|syncnt| als Argument Ã¼bergeben und an dem Zuweisungszeichen
+|=| erkannt. Dementsprechend dÃ¼rfen Datenbankname und
 Ausgabedatei kein |=| enthalten.
-Mehrere Achsendefinitionen dürfen, durch weiße Zeichen getrennt,
-zu einem Argument zusammengefaßt werden.
+Mehrere Achsendefinitionen dÃ¼rfen, durch weiÃŸe Zeichen getrennt,
+zu einem Argument zusammengefaÃŸt werden.
 
 \shead	Aufzeichnungsmodus
 
 Im Aufzeichnungsmodus jede Addition in die Tabelle durch die
-Ausgabe eines Datensatzes ersetzt. Damit eröffnet sich eine sehr
-flexible Generierung von Datenfiles für viele Anforderungen.
+Ausgabe eines Datensatzes ersetzt. Damit erÃ¶ffnet sich eine sehr
+flexible Generierung von Datenfiles fÃ¼r viele Anforderungen.
 
-Für den Aufzeichnungsmodus ist die Verteilung der Zählklassen auf
+FÃ¼r den Aufzeichnungsmodus ist die Verteilung der ZÃ¤hlklassen auf
 Achsen nicht relevant. Da aber intern eine Datenmatrix aufgebaut wird,
 empfiehlt es sich, alle Klassen zu einer Achse zusammenzufassen (die
-interne Datenmatrix hat dann eine minimale Größe).
+interne Datenmatrix hat dann eine minimale GrÃ¶ÃŸe).
 
-Durch spezielle Dummy-Zählklassen können auch Datenwerte eingebunden werden.
-Dazu wird eine Klassifikation mit 0 Ausprägungen definiert. Bei einer
-Zählung liegen alle möglichen Rückgabewerte außerhalb des zulässigen
+Durch spezielle Dummy-ZÃ¤hlklassen kÃ¶nnen auch Datenwerte eingebunden werden.
+Dazu wird eine Klassifikation mit 0 AusprÃ¤gungen definiert. Bei einer
+ZÃ¤hlung liegen alle mÃ¶glichen RÃ¼ckgabewerte auÃŸerhalb des zulÃ¤ssigen
 Bereichs und werden ignoriert, im Aufzeichnungsmodus wird der Wert ohne
 Modifikation ausgegeben.
 
 Die Ausgabedatei besteht aus einem Header und einen Datenteil.
 Im Header stehen Informationen zu den Klassifikationen und zum
-Datentyp des Zählers.
-Der Datenteil enthält die einzelnen Datensätze und kann in drei
+Datentyp des ZÃ¤hlers.
+Der Datenteil enthÃ¤lt die einzelnen DatensÃ¤tze und kann in drei
 verschiedenen Formaten ausgegeben werden:
 
 [binary]
-	Die Datensätze werden binär ausgegeben. Je nach Zahl der
-	Klassifikation werden dafür 1, 2, 3 oder 4 Byte für die
+	Die DatensÃ¤tze werden binÃ¤r ausgegeben. Je nach Zahl der
+	Klassifikation werden dafÃ¼r 1, 2, 3 oder 4 Byte fÃ¼r die
 	Klassenindizes verwendet. Bei einer Klassenzahl von 0
 	werden 4 Byte verwendet, ansonsten die kleinste Zahl, bei
 	der der Index noch ausgegeben werden kann.
 [index]
-	Die Datensätze werden im Textformat ausgegeben, wobei für
-	jede Zählklasse der Index ausgegeben wird.
+	Die DatensÃ¤tze werden im Textformat ausgegeben, wobei fÃ¼r
+	jede ZÃ¤hlklasse der Index ausgegeben wird.
 [label]
-	Die Datensätze werden im Textformat ausgegeben, wobei
-	anstelle der Indexwerte der Ausprägungsname ausgegeben wird.
+	Die DatensÃ¤tze werden im Textformat ausgegeben, wobei
+	anstelle der Indexwerte der AusprÃ¤gungsname ausgegeben wird.
 
 Indexwerte beginnen bei eins. Fehlende Werte werden durch 0, bzw.
-einem Leerstring (bei label) repräsentiert. Datenwerte
-(Zählklassifikationen mit 0 Ausprägungen) werden unverändert
+einem Leerstring (bei label) reprÃ¤sentiert. Datenwerte
+(ZÃ¤hlklassifikationen mit 0 AusprÃ¤gungen) werden unverÃ¤ndert
 ausgegeben.
 
-Am Ende des Datensatzes steht jeweils der aktuelle Wert des Zählers,
-je nach Ausgabeformat entweder binär oder als Text (bei index und
+Am Ende des Datensatzes steht jeweils der aktuelle Wert des ZÃ¤hlers,
+je nach Ausgabeformat entweder binÃ¤r oder als Text (bei index und
 label).
 
 \shead	Optionen
 Folgende Optionen und Argumente werden vom Kommando |syncnt| akzeptiert:
 @arglist
 
-Eine Reihe von Optionen erlaubt die Abfrage von Zählmöglichkeiten.
-Da diese vom  jeweiligen Datenbanktype abhängen, muß auf jedem Fall
-eine Datenbank angegeben werden. Sollen nur Zählmöglichkeiten
+Eine Reihe von Optionen erlaubt die Abfrage von ZÃ¤hlmÃ¶glichkeiten.
+Da diese vom  jeweiligen Datenbanktype abhÃ¤ngen, muÃŸ auf jedem Fall
+eine Datenbank angegeben werden. Sollen nur ZÃ¤hlmÃ¶glichkeiten
 abgefragt/getestet werden, kann als Datenbank <type>|:|
-angegeben werden. Diese Definition steht stellvertretend für
+angegeben werden. Diese Definition steht stellvertretend fÃ¼r
 eine leere Datenbank des angegebenen Types <type>.
 
 \shead	Parameterdatei
-Die einzelnen Optionen können auch über eine oder mehrere Dateien
+Die einzelnen Optionen kÃ¶nnen auch Ã¼ber eine oder mehrere Dateien
 definiert werden. Es handelt sich dabei um esh-Skripts, die
 mithilfe der Option |-f| geladen werden.
 In der Regel wird nur einzelnen Variablen ein Wert zugewiesen.
-Es gibt aber auch Auswertungsfunktionen, die zusätzliche
-Parameter benötigen, die nur über eine solche Skriptdatei
-definiert werden konnen. Ein Beispiel dafür ist das Zählgewicht
-für VZ-Datenbankauszählungen.
+Es gibt aber auch Auswertungsfunktionen, die zusÃ¤tzliche
+Parameter benÃ¶tigen, die nur Ã¼ber eine solche Skriptdatei
+definiert werden konnen. Ein Beispiel dafÃ¼r ist das ZÃ¤hlgewicht
+fÃ¼r VZ-DatenbankauszÃ¤hlungen.
 
 Folgende Variablen werden von |edbcnt| verwendet:
 [Filter]
@@ -193,7 +193,7 @@ Folgende Variablen werden von |edbcnt| verwendet:
 [Eval]
 	Auswertungsfunktion
 [Counter]
-	Liste der Zähler
+	Liste der ZÃ¤hler
 [Range]
 	Zeitbereich
 [Title]
@@ -203,20 +203,20 @@ Folgende Variablen werden von |edbcnt| verwendet:
 [DBName]
 	Name der Datenbank
 [Grpdef]
-	Liste der Zählgruppen (Achsen der Datenmatrix)
+	Liste der ZÃ¤hlgruppen (Achsen der Datenmatrix)
 [Post]
 	Liste der Postfilter, muss mit |||| beginnen.
 
 Die Optionen werden in der Reihenfolge ihrer Angabe abgearbeitet.
-Die einzelnen Parameter können dabei beliebig oft verwendet werden.
+Die einzelnen Parameter kÃ¶nnen dabei beliebig oft verwendet werden.
 Relevant ist nur der letzte Wert. Wird die Auswertungsfunktion
-sowohl über eine Option, als über eine Parameterdatei definiert,
-hängt es davon ab, ob zuerst die Parameterdatei oder zuerst die
-Auswertungsfunktion als Option übergeben wurde.
+sowohl Ã¼ber eine Option, als Ã¼ber eine Parameterdatei definiert,
+hÃ¤ngt es davon ab, ob zuerst die Parameterdatei oder zuerst die
+Auswertungsfunktion als Option Ã¼bergeben wurde.
 
 Eine Sonderstellung nimmt |DBName| ein. Diese Variable wird nur
 verwendet, wenn beim Aufruf von |edbcnt| ein <"|-|"> als Datenbankname
-(notwendiges Argument!) übergeben wird. Falls ein <"|-|"> als Argument
+(notwendiges Argument!) Ã¼bergeben wird. Falls ein <"|-|"> als Argument
 verwendet wird, und |DBName| nicht gesetzt wurde, wird von der
 Standardeingabe gelesen.
 
@@ -226,7 +226,7 @@ Variable |Post| jedoch schon.
 
 \Environment
 [|TMPDIR|]
-	Bibliothek zur Ablage von temporären Dateien.
+	Bibliothek zur Ablage von temporÃ¤ren Dateien.
 	Falls die Variable nicht definiert ist, wird |.| verwendet.
 
 @copyright -h

@@ -2,7 +2,7 @@
 :*:commands to create Makefiles
 :de:Befehle zur Makefilegenerierung
 
-$Copyright (C) 2000 Erich Frühstück
+$Copyright (C) 2000 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -29,7 +29,7 @@ If not, write to the Free Software Foundation, Inc.,
 :*:The command $1 calls |mkmf|  with the given Imakefile
 and inserts the created Makefile in verbatim mode.
 :de:Der Befehl $1 wendet |mkmf| auf das angegebene Imakefile
-an und bindet das Makefile wortwörtlich ein.
+an und bindet das Makefile wortwÃ¶rtlich ein.
 
 \def\mkmf {{
 str fname = fsearch(DocPath, xexpand(ParseLine(cin)), NULL);

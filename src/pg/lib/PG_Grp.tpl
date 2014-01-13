@@ -13,14 +13,14 @@ StdInclude(top, "ctype");
 str NAME = BaseName;
 
 TypeDef def = TypeDef(NAME,
-	"Gruppendefinition für die Würfelkonstruktion", string !
+	"Gruppendefinition fÃ¼r die WÃ¼rfelkonstruktion", string !
 str name	Gruppenname
-int mode	Methode für Bezeichner
+int mode	Methode fÃ¼r Bezeichner
 str query	Abfragekommando
-str key		Schlüssel
+str key		SchlÃ¼ssel
 str code	Kode
-str label	Format für Label
-str head	Format für Kopf
+str label	Format fÃ¼r Label
+str head	Format fÃ¼r Kopf
 str delim	Trennzeichen
 !);
 

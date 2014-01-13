@@ -4,7 +4,7 @@
 
 $Header	<EFEU/$1>
 
-$Copyright (C) 1996 Erich Frühstück
+$Copyright (C) 1996 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -37,12 +37,12 @@ allows to insert/delete characters at any position (edit functions).
 The size of the character field is exanded on demand.
 :de:
 Mithilfe der Datenstruktur |$1| kann auf einfache Weise eine
-Zeichenkette aufgebaut werden. Es gibt ähnliche Schreib- und
-Lesefunktionen wie für Dateien. Zusätzlich können auch
-Zeichen innerhalb der Zeichenkette eingefügt oder gelöscht werden
+Zeichenkette aufgebaut werden. Es gibt Ã¤hnliche Schreib- und
+Lesefunktionen wie fÃ¼r Dateien. ZusÃ¤tzlich kÃ¶nnen auch
+Zeichen innerhalb der Zeichenkette eingefÃ¼gt oder gelÃ¶scht werden
 (Editierfunktion).
 Der Speicherbedarf der Zeichenkette
-wird bei Bedarf automatisch vergrößert.
+wird bei Bedarf automatisch vergrÃ¶ÃŸert.
 
 :*:
 The string buffer |$1| contains the character field <data> of
@@ -54,19 +54,19 @@ amount of the component <blksize>.
 If the value is zero, a starting value is used and the size
 is doubled on each expansion.
 :de:
-Das dynamische Zeichenfeld |$1| enthält einen Zeichenvektor <data>
-der Größe <size>. Die Komponente <nfree> gibt die Zahl der
-freien Zeichen an, während <pos> die aktuelle Position
+Das dynamische Zeichenfeld |$1| enthÃ¤lt einen Zeichenvektor <data>
+der GrÃ¶ÃŸe <size>. Die Komponente <nfree> gibt die Zahl der
+freien Zeichen an, wÃ¤hrend <pos> die aktuelle Position
 angibt. Die Variable <blksize> bestimmt, um wieviel der
-Zeichenvektor vergrößert werden soll, wenn nicht mehr genug Platz
+Zeichenvektor vergrÃ¶ÃŸert werden soll, wenn nicht mehr genug Platz
 ist. Ist <blksize> auf 0 gesetzt, wird mit einem Startwert
-begonnen und anschließend die aktuelle Größe immer verdoppelt.
+begonnen und anschlieÃŸend die aktuelle GrÃ¶ÃŸe immer verdoppelt.
 */
 
 typedef struct {
 	unsigned char *data;	/* Datenbuffer */
-	unsigned size;	/* Aktuelle Größe des Buffers */
-	unsigned blksize;	/* Blockgröße zur Buffervergrößerung */
+	unsigned size;	/* Aktuelle GrÃ¶ÃŸe des Buffers */
+	unsigned blksize;	/* BlockgrÃ¶ÃŸe zur BuffervergrÃ¶ÃŸerung */
 	int nfree;	/* Zahl der freien Zeichen */
 	int pos;	/* Aktuelle Bufferposition */
 } StrBuf;
@@ -77,7 +77,7 @@ The macro |$1| initializes the components of a string buffer
 with blocksize <blk>.
 :de:
 Der Makro |$1| initialisiert die Strukturkomponenten des
-Zeichenfeldes. Als Argument wird die Blockgröße benötigt.
+Zeichenfeldes. Als Argument wird die BlockgrÃ¶ÃŸe benÃ¶tigt.
 */
 
 #define	SB_DATA(blk)	{ NULL, 0, blk, 0, 0 }
@@ -88,7 +88,7 @@ The Mmacro |$1| declares the string buffer variable <name> and initializes
 it with blocksize <blk>.
 :de:
 Der Makro |$1| deklariert das Zeichenfeld <name> und initialisiert
-es mit der Blockgröße <blk>.
+es mit der BlockgrÃ¶ÃŸe <blk>.
 */
 
 #define	STRBUF(name, blk)	StrBuf name = SB_DATA(blk)
@@ -154,7 +154,7 @@ Vergleiche dazu auch \mref{sbuf_nul}.
 The macro |$1| returns the nummber of valid characters stored in
 the string buffer.
 :de:
-Der Makro |$1| liefert die Zahl der gültigen Zeichen des Zeichenfeldes.
+Der Makro |$1| liefert die Zahl der gÃ¼ltigen Zeichen des Zeichenfeldes.
 */
 
 #define	sb_size(sb)	((sb)->size - (sb)->nfree)
@@ -190,7 +190,7 @@ Der Makro |$1| positionert auf das Ende des Zeichenfelds.
 :*:
 The macro |$1| sets the number of valid characters to the actual position.
 :de:
-Der Makro |$1| setzt die Größe des Zeichenfeldes auf
+Der Makro |$1| setzt die GrÃ¶ÃŸe des Zeichenfeldes auf
 die aktuelle Position.
 */
 
@@ -215,7 +215,7 @@ und returns the code of the character.
 :de:
 Der Makro |$1| schreibt das Zeichen <c>
 in das Zeichenfeld <sb> und liefert das geschriebene Zeichen als
-Rückgabewert. 
+RÃ¼ckgabewert. 
 */
 
 #define	sb_putc(c, sb)	(--(sb)->nfree < 0 ? \
@@ -227,9 +227,9 @@ The macro |$1| worry about a correct allignment of the valid
 characters to a whole-numbered multiple of <m>. If nessesary,
 '\0'-characters are inserted at end of the character field.
 :de:
-Der Makro |$1| sorgt für eine Ausrichtung der Zeichenfeldgröße
+Der Makro |$1| sorgt fÃ¼r eine Ausrichtung der ZeichenfeldgrÃ¶ÃŸe
 auf ein ganzzahliges Vielfaches von <m>. Bei Bedarf werden
-am Ende 0-Zeichen eingefügt.
+am Ende 0-Zeichen eingefÃ¼gt.
 */
 
 #define	sb_align(sb, m)	while ((sb_size(sb) % (m)) != 0) sb_putc(0, sb)
@@ -248,10 +248,10 @@ effects if terms are inserted for <sb>.
 :de:
 Die Makros werten den Ausdruck <sb> mehrfach aus.
 Damit es zu keinen Seiteneffekten kommt, sollten hier keine
-komplexen Terme eingesetzt werden, insbesonders dürfen
+komplexen Terme eingesetzt werden, insbesonders dÃ¼rfen
 Increment oder Decrementoperatoren nicht verwendet werden.
 So ist das Resultat des Ausdruck |sb_getc(buf++)| undefiniert. 
-Ein Nullpointer ist ebenfalls nicht zulässig.
+Ein Nullpointer ist ebenfalls nicht zulÃ¤ssig.
 
 :*:
 On writing, it is assumed, that the position points to the end of the
@@ -260,11 +260,11 @@ from the end of the character field. So writing after reading or editing
 needs a synchronisation of the position either with |sb_clean|, |sb_sync|
 or |sb_end|.
 :de:
-Beim Schreiben wird vorrausgesetzt, daß der Positionszeiger am Ende des
+Beim Schreiben wird vorrausgesetzt, daÃŸ der Positionszeiger am Ende des
 Zeichenfeldes steht. Beim Lesen oder Editieren wird der Positionszeiger
 vom Ende des Zeichenfeldes abgekoppelt.
 Soll nach einem Lese- oder Editiervorgang wieder geschrieben werden,
-muß daher entweder |sb_clean| (Anfang) |sb_sync| (aktuelle Position) oder
+muÃŸ daher entweder |sb_clean| (Anfang) |sb_sync| (aktuelle Position) oder
 |sb_end| (Ende) aufgerufen werden.
 
 $SeeAlso

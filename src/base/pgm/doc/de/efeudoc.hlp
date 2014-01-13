@@ -1,6 +1,6 @@
 /*	Dokumentgenerierung
 
-$Copyright (C) 2001, 2009 Erich Frühstück
+$Copyright (C) 2001, 2009 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -31,9 +31,9 @@ verwendet und erlaubt Datenauswertungen direkt im Dokument.
 @arglist -h
 
 Die Beschreibungssprache ist ein Textformat mit Steueranweisungen,
-bei dem zusätzlich auch Strukturierungen und Einrückungen
-berücksichtigt werden. Der Beschreibungstext soll dabei schon ein
-grobes Bild der gewünschten Formatierung liefern. Am nachstehenden
+bei dem zusÃ¤tzlich auch Strukturierungen und EinrÃ¼ckungen
+berÃ¼cksichtigt werden. Der Beschreibungstext soll dabei schon ein
+grobes Bild der gewÃ¼nschten Formatierung liefern. Am nachstehenden
 Beispiel der Konstruktion vo Listen wird dies deutlich:
 
 \_example= {{
@@ -48,41 +48,41 @@ Beispiel der Konstruktion vo Listen wird dies deutlich:
 }}
 
 \_example
-Beispiel für eine Aufzählungsliste:
-*	Listeneintrag mit einem längeren Absatz zur
+Beispiel fÃ¼r eine AufzÃ¤hlungsliste:
+*	Listeneintrag mit einem lÃ¤ngeren Absatz zur
 	Demonstration der Funktionsweise von
-	Einrückungen.
+	EinrÃ¼ckungen.
 
-	Ein neuer Absatz mit einer Aufzählung:
+	Ein neuer Absatz mit einer AufzÃ¤hlung:
 	#	Eintrag 1
 	#	Eintrag 2
 *	Ein weiterer Listeneintrag
 
-Text nach der Aufzählung.
+Text nach der AufzÃ¤hlung.
 \_end
 
 \shead	Zeichensatz
 Ein Dokument kann gemischt Zeichen in UTF8 oder ISO~8859-15 enthalten.
-Die Interpretation von UTF8-Sequenzen ist vorrangig. Gehört ein Byte
+Die Interpretation von UTF8-Sequenzen ist vorrangig. GehÃ¶rt ein Byte
 nicht zu einer UTF8-Sequenz, wird es als Zeichen im Zeichensatz
 ISO~8859-15 interpretiert.
 
 Intern werden die Zeichen im Unicode gespeichert.
 
-Von den weißen Zeichen wird nur das Leerzeichen, der Tabulator und
+Von den weiÃŸen Zeichen wird nur das Leerzeichen, der Tabulator und
 der Zeilenvorschub interpretiert.
 Tabulatoren werden automatisch in
 Leerzeichen expandiert. Tabulatorbreite ist dabei 8 Zeichen.
 Mehrere aufeinanderfolgende Leerzeichen gelten im Regelfall wie
 ein einzelnes Leerzeichen.
-Eine Leerzeile trennt einzelne Absätze.
+Eine Leerzeile trennt einzelne AbsÃ¤tze.
 
-\shead	Einrücktiefe
+\shead	EinrÃ¼cktiefe
 Leerzeichen und Tabulatoren am Anfang einer Zeile werden
-nicht ausgegeben, sondern bestimmen die aktuelle \index{Einrücktiefe}.
-Diese dient zur automatischen Verwaltung von listenähnlichen
+nicht ausgegeben, sondern bestimmen die aktuelle \index{EinrÃ¼cktiefe}.
+Diese dient zur automatischen Verwaltung von listenÃ¤hnlichen
 Strukturen. Bei Tabellenzeilen und bei Befehlen mit langen Argumenten
-dient die Einrückung zur Kennzeichnung von Fortsetzungszeilen.
+dient die EinrÃ¼ckung zur Kennzeichnung von Fortsetzungszeilen.
 
 \shead	Kommentare
 Eine Beschreibungsdatei kann \index{Kommentare} im C++-Stil enthalten.
@@ -91,14 +91,14 @@ begrenzt, wobei der Zeilenvorschub selbst nicht zum Kommentar
 gerechnet wird.
 
 Beginnt ein Kommentar unmittelbar am Zeilenanfang, wird ein dem
-Kommentar folgender Zeilenvorschub unterdrückt.  Bei der Entfernung
+Kommentar folgender Zeilenvorschub unterdrÃ¼ckt.  Bei der Entfernung
 eines Kommentars aus dem Eingabestrom kann damit nie eine Leerzeile
 (Absatztrennung!) entstehen.
 
 \shead	Namen
 Befehle, Makros und Sonderzeichen werden durch einen \index{Namen}
 gekennzeichnet.
-Dieser muß mit einem Buchstaben beginnen und darf nur aus Buchstaben
+Dieser muÃŸ mit einem Buchstaben beginnen und darf nur aus Buchstaben
 und Ziffern bestehen. Ein \index{Unterstreichungssymbol} gilt als Buchstabe.
 
 Folgt auf einem Namen ein Leerzeichen oder ein Tabulator, werden alle
@@ -116,7 +116,7 @@ sind definiert:
 	Strich -- und drei aufeinanderfolgende Minuszeichen \index{|---|}
 	werden als langer Strich --- gesetzt.
 *	Drei aufeinanderfolgende Punkte werden mit einem breiteren Abstand
-	gesetzt. Alternativ kann dafür |&ldots;| eingesetzt werden.
+	gesetzt. Alternativ kann dafÃ¼r |&ldots;| eingesetzt werden.
 *	Ein Plus |-| oder ein Minus \index{|+|} vor einer Ziffer wird im
 	mathematischen Modus gesetzt.
 
@@ -124,54 +124,54 @@ sind definiert:
 
 Der Dokumentgenerator kennt eine Reihe von Steuerzeichen.
 Zu ihrer Ausgabe wird als \index{Fluchtsymbol} der
-\index{Gegenschrägstrich}~|\|
+\index{GegenschrÃ¤gstrich}~|\|
 verwendet. Dieser dient auch zur Kennung eines Dokumentbefehls.
-Grundsätzlich gilt: folgt einem Gegenschrägstrich ein
+GrundsÃ¤tzlich gilt: folgt einem GegenschrÃ¤gstrich ein
 alphanumerisches Zeichen oder ein Unterstreichungssymbol, handelt es
 sich um einen Dokumentbefehl, ansonsten wird das nachfolgende Zeichen
-wie ein gewöhnliches Zeichen behandelt, unabhängig davon ob es sich
+wie ein gewÃ¶hnliches Zeichen behandelt, unabhÃ¤ngig davon ob es sich
 um ein Sonderzeichen handelt oder nicht.
 
-Für die Maskierung mit dem Fluchtsymbol gelten folgende Regeln:
+FÃ¼r die Maskierung mit dem Fluchtsymbol gelten folgende Regeln:
 *	Die Zeichen |\|, |@|, |&|, |<|, |>|, |||| und |~|
-	benötigen immer das Fluchtsymbol.
+	benÃ¶tigen immer das Fluchtsymbol.
 *	Ein Zuweisungszeichen |=| nach einem Befehl- oder Makronamen
-	benötigt das Fluchtsymbol.
-*	Die Zeichen |*|, |#| und |[| benötigen am Anfang einer Zeile
+	benÃ¶tigt das Fluchtsymbol.
+*	Die Zeichen |*|, |#| und |[| benÃ¶tigen am Anfang einer Zeile
 	oder im Tabellensatz das Fluchtsymbol.
-*	Einzelne Steuerzeichen oder Befehle können die syntaktische
-	Bedeutung einzelner Zeichen vorübergehend ändern.
+*	Einzelne Steuerzeichen oder Befehle kÃ¶nnen die syntaktische
+	Bedeutung einzelner Zeichen vorÃ¼bergehend Ã¤ndern.
 *	Damit eine Kommentarkennung |/*| und |//| nicht interpretiert wird,
 	ist eines der Zeichen zu maskieren.
-*	Ligaturen können wahlweise durch Maskierung eines Zeichens
-	oder durch Einfügen von leeren Kommentaren |/**/| aufgehoben werden.
+*	Ligaturen kÃ¶nnen wahlweise durch Maskierung eines Zeichens
+	oder durch EinfÃ¼gen von leeren Kommentaren |/**/| aufgehoben werden.
 *	Bei Befehls- und Makroargumenten gelten eigene
 	Maskierungsregeln, sie werden im Abschnitt \vref{macro}
 	beschrieben.
 
 \shead	Sonderzeichen
 Satztechnische Zeichen (z.B: Umbruchstellen)
-und schwer über die Standardtastatur
+und schwer Ã¼ber die Standardtastatur
 eingebbare Zeichen werden als \index{Sonderzeichen} bezeichnet.
 
 Ein Sonderzeichen wird mit dem Steuerzeichen \index{|&|} eingeleitet,
 danach folgt der Name des Sonderzeichens oder ein einzelnes,
 nichtnumerisches Zeichen. Als Namenskonvention werden die in HTML
-üblichen Namen für Character Entitäten verwendet.
+Ã¼blichen Namen fÃ¼r Character EntitÃ¤ten verwendet.
 
-Die nichtnumerischen Zeichen werden für
-häufig verwendete Sonderzeichen eingesetzt. Ist die entsprechende
+Die nichtnumerischen Zeichen werden fÃ¼r
+hÃ¤ufig verwendete Sonderzeichen eingesetzt. Ist die entsprechende
 Zeichenkombination nicht definiert, wirkt |&| wie ein Fluchtsymbol.
-Derzeit wird nur |&-| für das Sonderzeichen \index{|&shy;|}, das eine
+Derzeit wird nur |&-| fÃ¼r das Sonderzeichen \index{|&shy;|}, das eine
 Umbruchstelle markiert, verwendet. Die Kombination |&;| gilt als
 Leerzeichein und kann z.B. zum Aufbrechen einer Ligatur verwendet
 werden.
 
-Für das häufig benötigte Leerzeichen ohne Umbrucherlaubnis wird
+FÃ¼r das hÃ¤ufig benÃ¶tigte Leerzeichen ohne Umbrucherlaubnis wird
 das Steuerzeichen \index{|~|} (entspricht \index{|&nbsp;|}) verwendet.
 
-\shead	Absätze
-Die Grundelemente eines Dokumentes sind Absätze. Diese werden
+\shead	AbsÃ¤tze
+Die Grundelemente eines Dokumentes sind AbsÃ¤tze. Diese werden
 voneinander durch Leerzeilen getrennt. Bei Befehlen, die einen
 neuen Absatz erzwingen, kann die Leerzeile entfallen. Die Zahl
 der Leerzeilen zwischen einem Absatz ist beliebig.
@@ -181,18 +181,18 @@ der Leerzeilen zwischen einem Absatz ist beliebig.
 Dieser Abschnitt listet alle vordefinierten Anweisungen
 von |$!| auf.
 
-Bezüglich der Argumentdarstellung von Befehlen gilt folgende Konvention:
-*	Gibt es mehrere Varianten der Argumentübergabe, werden diese
+BezÃ¼glich der Argumentdarstellung von Befehlen gilt folgende Konvention:
+*	Gibt es mehrere Varianten der ArgumentÃ¼bergabe, werden diese
 	der Reihe nach angegeben. Eine Befehlsvariante beginnt immer
 	mit dem Befehlswort selbst.
-*	Mit Klammern versehene Ausdrücke müssen auch mit den entsprechenden
-	Klammern eingegeben werden. Sie sind optional und können mit
-	den zugehörigen Klammern weggelassen werden.
+*	Mit Klammern versehene AusdrÃ¼cke mÃ¼ssen auch mit den entsprechenden
+	Klammern eingegeben werden. Sie sind optional und kÃ¶nnen mit
+	den zugehÃ¶rigen Klammern weggelassen werden.
 *	Ein Argument ohne Klammerung in der gleichen Zeile des Befehls
-	wird mit dem nächsten Zeilenvorschub abgeschlossen.
-*	Eingerückte Punkte in der nächsten Zeile deuten eine
-	Fortsetzbarkeit des Arguments mit eingerückten Zeilen an.
-*	Ein Argument in der nächsten Zeile bedeutet einen
+	wird mit dem nÃ¤chsten Zeilenvorschub abgeschlossen.
+*	EingerÃ¼ckte Punkte in der nÃ¤chsten Zeile deuten eine
+	Fortsetzbarkeit des Arguments mit eingerÃ¼ckten Zeilen an.
+*	Ein Argument in der nÃ¤chsten Zeile bedeutet einen
 	physikalischen Absatz, d.h. die Anweisung endet bei der ersten
 	Leerzeile.
 
@@ -208,7 +208,7 @@ for (x in mac_tab)
 
 \head	MAKROS
 
-Dieser Abschnitt enthält eine Auflistung aller vordefinierten
+Dieser Abschnitt enthÃ¤lt eine Auflistung aller vordefinierten
 Makros von |$!|.
 
 ---- eval

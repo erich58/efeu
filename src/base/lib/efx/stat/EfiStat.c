@@ -2,7 +2,7 @@
 :*:administation of interpreter status
 :de:Verwalten des Interpreterstatus
 
-$Copyright (C) 2005 Erich Frühstück
+$Copyright (C) 2005 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -64,7 +64,7 @@ static void stat_clean (void *ptr)
 }
 
 /*
-Die Datenstruktur |$1| definiert den Referenztype für die Struktur |EfiStat|.
+Die Datenstruktur |$1| definiert den Referenztype fÃ¼r die Struktur |EfiStat|.
 */
 
 RefType EfiStat_reftype = REFTYPE_INIT("EfiStat", stat_ident, stat_clean);
@@ -84,9 +84,9 @@ EfiStat *EfiStat_alloc (const char *name)
 
 /*
 Die Funktion |$1| wird intern zur Bestimmung eines Vorgabewertes
-für den Pointer <ptr> auf eine Kommandostruktur verwendet.
-Falls für <ptr> ein Nullpointer übergeben wird, liefert die
-die Funktion |$1| den Pointer auf eine interne Datenstruktur zurück.
+fÃ¼r den Pointer <ptr> auf eine Kommandostruktur verwendet.
+Falls fÃ¼r <ptr> ein Nullpointer Ã¼bergeben wird, liefert die
+die Funktion |$1| den Pointer auf eine interne Datenstruktur zurÃ¼ck.
 Diese wird bei der ersten Verwendung automatisch initialisiert.
 Ansonsten liefert die Funktion <ptr>.
 */
@@ -104,11 +104,11 @@ Efi *Efi_ptr (Efi *ptr)
 /*
 $Note
 Die hier beschriebenen Funktionen werden von einem Kommando nur
-dann benötigt, wenn es mit mehr als einer Interpreterinstanz
+dann benÃ¶tigt, wenn es mit mehr als einer Interpreterinstanz
 arbeitet. Alle anderen Funktionen zur Verwaltung des Interpreters
-kännen mit einen Nullpointer anstelle der Statusstruktur
+kÃ¤nnen mit einen Nullpointer anstelle der Statusstruktur
 aufgerufen werden, da sie mithilfe von |Efi_ptr| auf
-eine interne Variable zurückgreifen.
+eine interne Variable zurÃ¼ckgreifen.
 
 $SeeAlso
 \mref{Resource(3)},

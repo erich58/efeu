@@ -3,7 +3,7 @@
 :de:Konstruktion von Indexfunktionen
 
 $Header	<$1>
-$Copyright (C) 1999 Erich Frühstück
+$Copyright (C) 1999 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -30,8 +30,8 @@ If not, write to the Free Software Foundation, Inc.,
 
 /*
 Der Datentyp |$1| dient zur Generierung einer Indexfunktion und
-einer zugehörigen Indextabelle.
-Indexfunktionen werden primär zur Konstruktion von Zählklassen
+einer zugehÃ¶rigen Indextabelle.
+Indexfunktionen werden primÃ¤r zur Konstruktion von ZÃ¤hlklassen
 verwendet.
 */
 
@@ -48,7 +48,7 @@ Beim Konstruktor |$1| gibt <_name> den Namen
 und <_args> die Argumentliste der Indexfunktion an.
 Auf <_name> und <_args> wird eine Parametersubstitution angewendet.
 Alle weiteren Argumente setzen Stringregister,
-die bei der Parametersubstitution zur Verfügung stehen.
+die bei der Parametersubstitution zur VerfÃ¼gung stehen.
 */
 
 IndexFunc IndexFunc (str _name, str _args, ...)
@@ -75,9 +75,9 @@ static void IndexFunc::fline (str fmt = NULL, ...)
 
 /*
 Die Funktion |$1| generiert den Funktionsrumpf der Indexfunktion
-und die zugehörigen Einträge in die Indextabelle. Die einzelnen
+und die zugehÃ¶rigen EintrÃ¤ge in die Indextabelle. Die einzelnen
 Zeilen der Definitionsstruktur <_io> bestehen aus Steueranweisungen
-und Indexeinträgen.
+und IndexeintrÃ¤gen.
 */
 
 inline void IndexFunc::body(IO _io, ...)
@@ -98,7 +98,7 @@ inline void IndexFunc::body(IO _io, ...)
 }
 
 /*
-Der Datentyp |$1| wird intern für den aktuellen Status der
+Der Datentyp |$1| wird intern fÃ¼r den aktuellen Status der
 Indexgenerierung verwendet.
 */
 
@@ -397,11 +397,11 @@ inline bool IndexFunc::switch (str expr, str fmt, IO _io, IndexPar base = NULL)
 }
 
 /*
-Standardisierte Indexfunktionen können mit den Funktionen
+Standardisierte Indexfunktionen kÃ¶nnen mit den Funktionen
 |GlobalIndexFunc| und |LocalIndexFunc| konstruiert werden.
 Das Argument <_body> bestimmt den Funktionsrumpf, der mit
 |IndexFunc::body| aufbereitet wird.
-Für alle anderen Argumente gilt das bei der Beschreibung
+FÃ¼r alle anderen Argumente gilt das bei der Beschreibung
 des Konstruktors gesagte.
 */
 
@@ -421,7 +421,7 @@ inline void LocalIndexFunc (str _name, str _args, str _body, ...)
 
 /*
 $Examples
-Das Beispiel zeigt die Konstruktion einer Indexfunktion für das
+Das Beispiel zeigt die Konstruktion einer Indexfunktion fÃ¼r das
 Geschlecht.
 
 \ms_example	index
@@ -432,7 +432,7 @@ config hdr src
 LocalIndexFunc("geschl", "const char *key", string !
 @switch key[0]
 *	UBKG	Unbekanntes Geschlecht
-'M'	MANN	Männer
+'M'	MANN	MÃ¤nner
 'F'	FRAU	Frauen
 @end
 !);

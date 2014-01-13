@@ -4,7 +4,7 @@
 # $Synopsis
 # include $1
 #
-# $Copyright (C) 2008 Erich Frühstück
+# $Copyright (C) 2008 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -61,7 +61,7 @@ _cflags_name ()
 	return 1
 }
 
-# Include-Verzeichnis für Header bestimmen.
+# Include-Verzeichnis fÃ¼r Header bestimmen.
 
 _cflags_incdir ()
 {
@@ -127,26 +127,26 @@ _cflags_lib ()
 # $pconfig !
 # :name |
 #	:*:name <name> of macro with found flags.
-#	:de:Name <name> des Makros für die gefundenen Flags.
+#	:de:Name <name> des Makros fÃ¼r die gefundenen Flags.
 # I::path |
 #	:*:additionaly path to search header files.
-#	:de:Zusätzlicher Suchpfad für Kopfdateien.
+#	:de:ZusÃ¤tzlicher Suchpfad fÃ¼r Kopfdateien.
 # L::path |
 #	:*:additionaly path to search libraries.
-#	:de:Zusätzlicher Suchpfad für Bibliotheken.
+#	:de:ZusÃ¤tzlicher Suchpfad fÃ¼r Bibliotheken.
 # a |
 #	:*:try next search only if last search was successfull.
-#	:de:Nächste Suche nur durchführen, wenn letzte Suche erfolgreich war.
+#	:de:NÃ¤chste Suche nur durchfÃ¼hren, wenn letzte Suche erfolgreich war.
 # o |
 #	:*:try next search only if last search failed.
-#	:de:Nächste Suche nur durchführen, wenn letzte Suche fehlschlug.
+#	:de:NÃ¤chste Suche nur durchfÃ¼hren, wenn letzte Suche fehlschlug.
 # l:lib |
 #	:*:search for libraray corresponding to the regular
 #	expression |^lib(|<lib>|)\.(a||so)$$|. On success, print out
 #	the |-l|<name> flag for linking the library. If the library is
 #	not in the default place of the compiler an |-L|<dir> flag is also
 #	generated.
-#	:de:Suche nach der Bibliothek, die dem regulären
+#	:de:Suche nach der Bibliothek, die dem regulÃ¤ren
 #	Ausdruck |^lib(|<lib>|)\.(a||so)$$| entspricht. Liefert bei
 #	Erfolg das entsprechende |-l| flag und falls die Bibliothek
 #	nicht im Standarsuchpfad des Kompilers liegt,
@@ -156,7 +156,7 @@ _cflags_lib ()
 #	contain directory parts as in |X11/X.h|. If <dir> is different from
 #	|/usr/include|, print out the option |-I|<dir>.
 #	:de:Suche nach dem Verzeichnis <dir>, welches die Kopfdatei <hdr>
-#	enthält, wobei <name> Pfadteile enthalten kann (z.B: |X11/X.h|)
+#	enthÃ¤lt, wobei <name> Pfadteile enthalten kann (z.B: |X11/X.h|)
 #	Falls <dir> verschieden von |/usr/include| ist, wird ein Kompilerflag
 #	der Form |-I|<dir> erzeugt.
 # !

@@ -1,5 +1,5 @@
 /*	Funktionen abfragen
-	(c) 1994 Erich Frühstück
+	(c) 1994 Erich FrÃ¼hstÃ¼ck
 */
 
 #include <EFEU/mdmat.h>

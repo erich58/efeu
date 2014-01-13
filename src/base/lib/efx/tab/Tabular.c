@@ -1,7 +1,7 @@
 /*
 Tabellenkonstruktion
 
-$Copyright (C) 2008 Erich Frühstück
+$Copyright (C) 2008 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -22,10 +22,10 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/Tabular.h>
 
-#define	BS_TEXT		1000	/* Buffergröße für Text */
-#define	BS_COL		10	/* Buffergröße für Spalten */
-#define	BS_ROW		50	/* Buffergröße für Reihen */
-#define	BS_ENTRY	250	/* Buffergröße für Einträge */
+#define	BS_TEXT		1000	/* BuffergrÃ¶ÃŸe fÃ¼r Text */
+#define	BS_COL		10	/* BuffergrÃ¶ÃŸe fÃ¼r Spalten */
+#define	BS_ROW		50	/* BuffergrÃ¶ÃŸe fÃ¼r Reihen */
+#define	BS_ENTRY	250	/* BuffergrÃ¶ÃŸe fÃ¼r EintrÃ¤ge */
 
 static void set_entry(Tabular *tab);
 

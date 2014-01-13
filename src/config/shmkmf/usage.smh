@@ -4,7 +4,7 @@
 # $Synopsis
 # include $1
 #
-# $Copyright (C) 2004 Erich Frühstück
+# $Copyright (C) 2004 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -47,13 +47,13 @@ usage_smh=1
 # All rules belongs to the phony target |usage|.
 # :de:
 # Die Funktion \index{|mf_usage|} generiert Informationen zur Verwendung von
-# |make| für das aktuelle |Makefile|. Die erste Variante (Option |-f|)
+# |make| fÃ¼r das aktuelle |Makefile|. Die erste Variante (Option |-f|)
 # erlaubt eine formatierte Ausgabe mit |printf|. Bei der zweiten
 # Variante (Option |-c|) wird der Beschreibungstext <desc> mit |echo|
-# ausgebeben. Die dritte Variante übernimmt den Beschreibungstext von
+# ausgebeben. Die dritte Variante Ã¼bernimmt den Beschreibungstext von
 # der Standardeingabe (als here-Document) und generiert Ausgabebefehle
-# für jede einzelne Zeile. Vergleiche dazu die Beispiele weiter unten.
-# Alle Ausgaben werden für das Pseudoziel |usage| eingetragen.
+# fÃ¼r jede einzelne Zeile. Vergleiche dazu die Beispiele weiter unten.
+# Alle Ausgaben werden fÃ¼r das Pseudoziel |usage| eingetragen.
 
 mf_usage ()
 {
@@ -102,16 +102,16 @@ mf_usage ()
 # \shmkmf[-x] generieren die Regeln
 # mf_usage -c "Aufruf: make all | clean"
 # mf_usage -f "%s\t%s\n" "all" "Alles generieren"
-# mf_usage -f "%s\t%s\n" "clean" "Aufräumen"
+# mf_usage -f "%s\t%s\n" "clean" "AufrÃ¤umen"
 # \end
 # \par
-# Das zweite Beispiel zeigt die Übergabe mithilfe
+# Das zweite Beispiel zeigt die Ãœbergabe mithilfe
 # eines here-Dokuments. Die Zeilen
 # \shmkmf[-x] generieren die Regel
 # mf_usage << EOF
 # Aufruf:	make all | clean
 # all	Alles generieren
-# clean	Aufräumen
+# clean	AufrÃ¤umen
 # EOF
 # \end
 #

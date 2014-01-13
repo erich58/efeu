@@ -1,6 +1,6 @@
-/*	Hilfsprogramme zur OLS-Sch‰tzung
-	(c) 1995 Erich Fr¸hst¸ck
-	A-1090 Wien, W‰hringer Straﬂe 64/6
+/*	Hilfsprogramme zur OLS-Sch√§tzung
+	(c) 1995 Erich Fr√ºhst√ºck
+	A-1090 Wien, W√§hringer Stra√üe 64/6
 */
 
 #ifndef	_Include_OLS

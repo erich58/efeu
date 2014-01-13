@@ -2,29 +2,29 @@
 
 Die erste Anweisung eines Dokuments ist zumeinst eine Anweisung zum
 Laden einer Konfigurationsdatei. In dieser werden Styleeinstellungen
-festgelegt und zusätzliche Makros definiert.
-Die Syntax dafür ist:
+festgelegt und zusÃ¤tzliche Makros definiert.
+Die Syntax dafÃ¼r ist:
 	|\config| <name>
 wobei <name> der Name der Konfigurationsdatei ist.
-Für EFEU-Handbücher wird die Konfigurationsdatei |efeu| verwendet.
+FÃ¼r EFEU-HandbÃ¼cher wird die Konfigurationsdatei |efeu| verwendet.
 
 Konfigurationsdateien haben den Filezusatz |.dmac| und werden
 nach einem vordefiniertem Suchpfad gesucht.
 
 Im Vorspann des Dokuments wird der Bearbeitungsstil und die Titelseite
-festgelegt. Bei Handbucheinträgen kann er vollständig entfallen.
+festgelegt. Bei HandbucheintrÃ¤gen kann er vollstÃ¤ndig entfallen.
 Bei kleinen Dokumenten sollte zumindest der Titel gesetzt werden.
 Fehlende Parameter der Titelseite werden mit Dateiattributen und dem
-Datum der Formatierung vervollständigt. Die Reihenfolge der
-Vorspannbefehle ist nicht relevant. Mit ihnen werden zunächst nur
+Datum der Formatierung vervollstÃ¤ndigt. Die Reihenfolge der
+Vorspannbefehle ist nicht relevant. Mit ihnen werden zunÃ¤chst nur
 interne Variablen belegt.
 Erst beim ersten druckbaren Zeichen
 werden diese Parameter verwendet und ausgewertet.
 
 \ssec	Dokumentart
 
-\LaTeX; benötigt für die Verarbeitung die Vorgabe einer Dokumentart.
-Folgende Angaben sind möglich:
+\LaTeX; benÃ¶tigt fÃ¼r die Verarbeitung die Vorgabe einer Dokumentart.
+Folgende Angaben sind mÃ¶glich:
 [|article|]
 	liefert ein einfaches Dokument ohne Titelblatt und ohne
 	Kapiteleinteilung. Das ist der Standard bei fehlender
@@ -35,26 +35,26 @@ Folgende Angaben sind möglich:
 	liefert ein zweiseitiges Dokument. Kapitel beginnen immer
 	auf einer rechten Seite.
 [|letter|]
-	ist für Briefe reserviert.
+	ist fÃ¼r Briefe reserviert.
 
 Bei Verwendung der Konfigurationsdatei |efeu| wird |report| vorgegeben,
 ansonsten wird |article| verwendet.
 Mit dem Befehl
 	\index{|\style|} <typ>
-kann sie geändert werden.
+kann sie geÃ¤ndert werden.
 
-Der Befehl |\addflg| legt zusätzliche Dokumentoptionen fest.
+Der Befehl |\addflg| legt zusÃ¤tzliche Dokumentoptionen fest.
 Unbekannte Optionen werden ignoriert. Nicht alle Optionen werden von allen
-Ausgabetreibern berücksichtigt. Manche Optionen werden in
+Ausgabetreibern berÃ¼cksichtigt. Manche Optionen werden in
 Konfigurationsdateien bereits vordefiniert.
 
 \tab |l|l|
 ---
 Option | Bedeutung
 ---
-10pt | Schriftgröße 10 Punkt
-11pt | Schriftgröße 11 Punkt
-12pt | Schriftgröße 12 Punkt
+10pt | SchriftgrÃ¶ÃŸe 10 Punkt
+11pt | SchriftgrÃ¶ÃŸe 11 Punkt
+12pt | SchriftgrÃ¶ÃŸe 12 Punkt
 a4paper | A4-Papier
 oneside | Einseitiges Dokument
 twoside | Zweiseitiges Dokument
@@ -62,28 +62,28 @@ twocolumn | Zweispaltiges Dokument
 maketitle | Titelblatt generieren
 ---
 
-Die Dokumentflags können auf mehrere |\addflg|-Befehle aufgeteilt
+Die Dokumentflags kÃ¶nnen auf mehrere |\addflg|-Befehle aufgeteilt
 werden. Die einzelnen Flags sind mit Komma zu trennen.
-Bei sich gegenseitig ausschließenden Optionen gilt der letzte Wert.
+Bei sich gegenseitig ausschlieÃŸenden Optionen gilt der letzte Wert.
 
-Der Befehl |\package| erlaubt das Laden zusätzlicher Makropakete für
+Der Befehl |\package| erlaubt das Laden zusÃ¤tzlicher Makropakete fÃ¼r
 den \LaTeX;-Treiber.
-Zusatzpakete bieten die Möglichkeit der Umdefinition
-einzelner Befehle oder Parameter um eine Änderung des Layouts zu erwirken.
+Zusatzpakete bieten die MÃ¶glichkeit der Umdefinition
+einzelner Befehle oder Parameter um eine Ã„nderung des Layouts zu erwirken.
 
 \ssec	Titelblatt
 
 Die Gestaltung der Titelseite ist Sache des Layouts. Im Dokument
 selbst werden lediglich einzelne Textteile (Dokumentname, Autor)
-festgelegt, die dann entsprechend dem gewählten Layout in einer
+festgelegt, die dann entsprechend dem gewÃ¤hlten Layout in einer
 Titelseite (oder Titelseiten) eingebaut werden. Die Titelseite wird
 derzeit nur in der \LaTeX;-Version generiert.
 
-In der Konfigurationsdatei wird dabei der Vorspann für die \LaTeX;-Ausgabe
-mit einer Neudefinition des \LaTeX;-Makros \index{|\maketitle|} ergänzt.
+In der Konfigurationsdatei wird dabei der Vorspann fÃ¼r die \LaTeX;-Ausgabe
+mit einer Neudefinition des \LaTeX;-Makros \index{|\maketitle|} ergÃ¤nzt.
 
-Standardmäßig (erweiterbar durch eine Konfigurationsdatei) sind die folgenden
-Variablen für den Einbau in die Titelseite vorgesehen:
+StandardmÃ¤ÃŸig (erweiterbar durch eine Konfigurationsdatei) sind die folgenden
+Variablen fÃ¼r den Einbau in die Titelseite vorgesehen:
 
 \tab	|l|r|
 ---
@@ -103,14 +103,14 @@ for (x in "\\title", "\\date", "\\author")
 	showmac(x, cout, 1);
 ----
 
-Der Befehl |\title| unterstützt die Zerlegung eines Dokumentes in
+Der Befehl |\title| unterstÃ¼tzt die Zerlegung eines Dokumentes in
 Teildokumente. Im Vorspann setzt er den Dokumententitel, sobald
 der laufende Text begonnen wurde, wirkt er wie ein |\chapter|-Befehl
 zum Start eines neuen Kapitels. Der Untertitel wird dabei ignoriert.
 
 Teildokumente, die ein Kapitel darstellen, sollten daher immer |\title|
 anstelle von |\chapter| verwenden, damit sie auch als alleinstehendes
-Dokument vom Typ |article| verarbeitet werden können.
+Dokument vom Typ |article| verarbeitet werden kÃ¶nnen.
 
 Der Vorspann endet, sobald das erste Zeichen des laufenden Textes
 auszugeben ist.

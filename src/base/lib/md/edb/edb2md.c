@@ -1,6 +1,6 @@
-/*	Multidimensiomnale Datenmatrix über EDB-Datenfile laden
-	$Copyright (C) 2005 Erich Frühstück
-	A-3423 St.Andrä/Wördern, Wildenhaggasse 38
+/*	Multidimensiomnale Datenmatrix Ã¼ber EDB-Datenfile laden
+	$Copyright (C) 2005 Erich FrÃ¼hstÃ¼ck
+	A-3423 St.AndrÃ¤/WÃ¶rdern, Wildenhaggasse 38
 */
 
 #include <EFEU/mdmat.h>

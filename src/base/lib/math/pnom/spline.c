@@ -1,7 +1,7 @@
 /*
 Splineinterpolation mit Polynomstruktur
 
-$Copyright (C) 1991 Erich Frühstück
+$Copyright (C) 1991 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -23,18 +23,18 @@ If not, write to the Free Software Foundation, Inc.,
 #include <Math/pnom.h>	    /* Polynomstruktur */
 
 /*
-Gegeben sind n+1 Stützpunkte x[i], i=0,..,n mit den zugehörigen
+Gegeben sind n+1 StÃ¼tzpunkte x[i], i=0,..,n mit den zugehÃ¶rigen
 Funktionswerten y[i]. Gesucht ist eine Interpolation der Funktion
-in den n Intervallen mit stückweisen Polynomen 3. Grades.
-Achtung: Der Aufrufparameter n gibt die Zahl der Stützstellen an
+in den n Intervallen mit stÃ¼ckweisen Polynomen 3. Grades.
+Achtung: Der Aufrufparameter n gibt die Zahl der StÃ¼tzstellen an
 und muss daher um 1 reduziert werden, um der obigen Bedeutung zu
 entsprechen.
 In allen Programmen wird p als Name der Polynomstruktur verwendet.
-Die Koeffizienten werden durch Makros repräsentiert um eine
+Die Koeffizienten werden durch Makros reprÃ¤sentiert um eine
 bessere Lesbarkeit der Routinen zu erreichen. Bei der Spline-
-interpolation werden einzelne Koeffizientenvektoren für Zwischen-
-ergebnisse benötigt. Um die Übersichtlichkeit zu bewahren,
-werden sie über Makros unter anderen Namen angesprochen.
+interpolation werden einzelne Koeffizientenvektoren fÃ¼r Zwischen-
+ergebnisse benÃ¶tigt. Um die Ãœbersichtlichkeit zu bewahren,
+werden sie Ã¼ber Makros unter anderen Namen angesprochen.
 Die Splineinterpolation wird in 3 Varianten angeboten:
 a)      2. Ableitung an den Randpunkten ist 0,
 b)      Funktion ist periodisch,
@@ -49,17 +49,17 @@ static Polynom *init (size_t n, double *x, double *y);
 
 #define	DIFF(x, i)	(x[i+1] - x[i])
 
-/*	Zugriffmakros für Koeffizientenvektoren
+/*	Zugriffmakros fÃ¼r Koeffizientenvektoren
 */
 
-#define	X0(i)	p->x[i]		/* Stützstellen */
+#define	X0(i)	p->x[i]		/* StÃ¼tzstellen */
 
 #define	C0(i)	p->c[i][0]	/* konstanter Term */
 #define	C1(i)	p->c[i][1]	/* linearer Term */
 #define	C2(i)	p->c[i][2]	/* quadratischer Term */
 #define	C3(i)	p->c[i][3]	/* kubischer Term */
 
-#define	DX(i)	p->x[i]		/* Intervallänge */
+#define	DX(i)	p->x[i]		/* IntervallÃ¤nge */
 #define	DY(i)	p->c[i][1]	/* Zuwachsrate */
 
 #define	M(i)	p->c[i][2]	/* Momente der Splinefunktion */
@@ -86,10 +86,10 @@ C2(i) = M(i) / 2,
 C3(i) = -------------,
 	  6 * DX(i)
 
-wobei zusätzlich DY(i) = (y[i+1] - y[i]) / (x[i+1] - x[i])
+wobei zusÃ¤tzlich DY(i) = (y[i+1] - y[i]) / (x[i+1] - x[i])
 und DX(i) = x[i+1] - x[i] definiert wurde.
 
-In allen 3 Varianten der Splineinterpolation ergeben sich für
+In allen 3 Varianten der Splineinterpolation ergeben sich fÃ¼r
 i=1,..n-1 die Gleichungen:
 
 B(i) * M(i-1) + M(i) + A(i) * M(i+1) = D(i),
@@ -114,13 +114,13 @@ D(i) = 3 * ---------------.
 
 
 /*	Generierung einer Polynomstruktur und Initialisierung
-	der Werte für DX, DY, A, B und D.
+	der Werte fÃ¼r DX, DY, A, B und D.
 */
 
 static void do_init(Polynom *p, double *x, double *y)
 {
 	double z;	/* Hilfsvariable */
-	int i;		/* Hilfszähler */
+	int i;		/* HilfszÃ¤hler */
 
 	for (i = 0; i < p->dim; ++i)
 	{
@@ -149,13 +149,13 @@ static Polynom *init(size_t n, double *x, double *y)
 
 Achtung: M und C2 haben dieselbe Speicheradresse, ebenso
 DY und C1, bzw. DX und X0. Da der Vektor M nur n Werte fassen kann,
-muss das n-te Moment explizit übergeben werden.
+muss das n-te Moment explizit Ã¼bergeben werden.
 */
 
 static void koef(Polynom *p, size_t n, double *x, double *y, double m)
 {
 	double z;	/* Hilfsvariable */
-	int i;		/* Hilfszähler */
+	int i;		/* HilfszÃ¤hler */
 
 	for (i = 0; i < n; ++i)
 	{
@@ -178,9 +178,9 @@ Polynom *spline(size_t n, double *x, double *y)
 {
 	Polynom *p;	/* Polynomstruktur */
 	double z;	/* Hilfsvariable */
-	int i;		/* Hilfszähler */
+	int i;		/* HilfszÃ¤hler */
 
-/*	Sonderfälle behandeln
+/*	SonderfÃ¤lle behandeln
 */
 	if	(n == 0)	return NULL;
 	if	(n == 1)	return pnconst(x[0], y[0]);
@@ -215,7 +215,7 @@ Polynom *spline(size_t n, double *x, double *y)
 
 /*	Splineinterpolation - periodische Funktion
 
-Im Fall einer periodischen Funktion ergibt sich die zusätzliche
+Im Fall einer periodischen Funktion ergibt sich die zusÃ¤tzliche
 Gleichung:
 
 M(0) + A(0) * M(1) + B(0) * M(n-1) = D(0),
@@ -235,16 +235,16 @@ D(0) = 3 * ---------------.
 	   DX(0) + DX(n-1)
 
 Achtung: Das Gleichungssystem ist nicht Tridiagonal, wie bei den
-anderen Splineinterpolationen. Die Auflösung ist daher komplexer.
+anderen Splineinterpolationen. Die AuflÃ¶sung ist daher komplexer.
 */
 
 Polynom *cspline(size_t n, double *x, double *y)
 {
 	Polynom *p;	/* Polynomstruktur */
 	double z;	/* Hilfsvariable */
-	int i;		/* Hilfszähler */
+	int i;		/* HilfszÃ¤hler */
 
-/*	Sonderfälle behandeln
+/*	SonderfÃ¤lle behandeln
 */
 	if	(n == 0)	return NULL;
 	if	(n == 1)	return pnconst(x[0], y[0]);
@@ -300,8 +300,8 @@ Polynom *cspline(size_t n, double *x, double *y)
 
 /*	Splineinterpolation - Ableitung an den Randpunkten
 
-Gegenüber der einfachen Splineinterpolation ergeben sich zwei
-zusätzliche Gleichungen der Form:
+GegenÃ¼ber der einfachen Splineinterpolation ergeben sich zwei
+zusÃ¤tzliche Gleichungen der Form:
 
 M(0) + A(0) * M(1) = D(0), und
 
@@ -319,7 +319,7 @@ B(n) = .5, und
 D(n) = 3 * ------------------.
 		 DX(n-1)
 
-Achtung: Die Vektoren können nur n-1 Werte fassen. Die letzte
+Achtung: Die Vektoren kÃ¶nnen nur n-1 Werte fassen. Die letzte
 Gleichung wird daher gesondert behandelt und M(n) in der Variablen
 m zwischengespeichert.
 */
@@ -329,9 +329,9 @@ Polynom *dspline(size_t n, double *x, double *y, double a, double b)
 	Polynom *p;	/* Polynomstruktur */
 	double z;	/* Hilfsvariable */
 	double m;	/* Moment an der Stelle x[n] */
-	int i;		/* Hilfszähler */
+	int i;		/* HilfszÃ¤hler */
 
-/*	Sonderfälle behandeln
+/*	SonderfÃ¤lle behandeln
 */
 	if	(n == 0)	return NULL;
 
@@ -361,7 +361,7 @@ Polynom *dspline(size_t n, double *x, double *y, double a, double b)
 		D(i) *= z;
 	}
 
-/*	Berechnung der Momente: Beachte, daß die Vektoren M und D
+/*	Berechnung der Momente: Beachte, daÃŸ die Vektoren M und D
 	auf die gleiche Speicheradresse verweisen.
 */
 	m = 3. * (b - DY(n-1)) / DX(n-1) - .5 * D(n-1);

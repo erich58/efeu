@@ -1,5 +1,5 @@
 /*
-Daten über Ausdruck generieren
+Daten Ã¼ber Ausdruck generieren
 */
 
 #include <EFEU/EDB.h>

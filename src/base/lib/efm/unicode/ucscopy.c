@@ -2,7 +2,7 @@
 :*:copy unicode character sequences (latin or UTF-8) as utf-8 character
 :de:Unicode-Zeichensequencen (codiert als Latin oder UTF-8) kopieren.
 
-$Copyright (C) 2009 Erich Frühstück
+$Copyright (C) 2009 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -39,24 +39,24 @@ the conversion.
 If <tg> is not a null pointer and <size> is greater then 0, there is always
 written a terminating |'\0'| to <tg>.
 :de:Die Funktionen |ucscpy_utf8| und |ucscpy_latin9| interpretieren den
-String <src> als Unicode-Zeichensequenz und kopieren ihn in der gewünschten
+String <src> als Unicode-Zeichensequenz und kopieren ihn in der gewÃ¼nschten
 Codesequenz. Der Ausgangsstring <src> kann wahlweise in latin9 oder UTF-8
 kodiert sein. Vergleiche dazu \mref{pgetucs(3)}.
-Die Funktionen liefern die Zahl der benötigten Zeichen bei vollständiger
-Konvertierungi inklusive der abschließenden |'\0'|.
-Ein Rückgabewert größer als <size> bedeutet also, das das
+Die Funktionen liefern die Zahl der benÃ¶tigten Zeichen bei vollstÃ¤ndiger
+Konvertierungi inklusive der abschlieÃŸenden |'\0'|.
+Ein RÃ¼ckgabewert grÃ¶ÃŸer als <size> bedeutet also, das das
 Reslultat abgeschnitten wurde.
-Ein Nullpointer für <src> wird wie ein Leerstring behandelt.
-Ein Nullpointer für <tg> ist zulässig. In diesem Fall errechnet die Funktion
-nur die Zahl der benötigten Bytes.
+Ein Nullpointer fÃ¼r <src> wird wie ein Leerstring behandelt.
+Ein Nullpointer fÃ¼r <tg> ist zulÃ¤ssig. In diesem Fall errechnet die Funktion
+nur die Zahl der benÃ¶tigten Bytes.
 Falls <tg> kein Nullpointer und <size> ungleich 0 ist, wird zumindest
-die Abschlußnull in den Ausgabestring geschrieben.
+die AbschluÃŸnull in den Ausgabestring geschrieben.
 
 :*:The function |$1| copies the source string <src> as utf-8 code sequence to
 the target buffer of size <size>. The memory areas should not overlap.
 :de:Die Funktion |$1| kopiert den Ausgangsstring <src>
-als UTF-8 Sequenz in den Buffer <tg> der Länge <size>.
-Die Speicherbereiche dürfen sich nicht überlappen.
+als UTF-8 Sequenz in den Buffer <tg> der LÃ¤nge <size>.
+Die Speicherbereiche dÃ¼rfen sich nicht Ã¼berlappen.
 */
 
 int ucscopy_utf8 (char *tg, size_t size, const char *src)
@@ -102,11 +102,11 @@ While the resluting string is always equal or less the original
 string, the conversion may be done in place by using the same Pointer for
 <tg> as for <src>. It is save to use |~0| for <size>.
 :de:Die Funktion |$1| kopiert den Ausgangsstring
-als UTF-8 Sequenz in den Stringbuffer <tg> der Länge <size>.
+als UTF-8 Sequenz in den Stringbuffer <tg> der LÃ¤nge <size>.
 Da der resultierende String stets kleiner oder gleich dem Ausgangsstring ist,
-erlaubt die Funktion die Konvertierung eines Strings "in place", indem für <tg>
-der gleiche Pointer wie für <src> angegeben wird. Falls die Buffergröße
-unbekannt ist, kann für <size> der Wert |~0| angegeben werden.
+erlaubt die Funktion die Konvertierung eines Strings "in place", indem fÃ¼r <tg>
+der gleiche Pointer wie fÃ¼r <src> angegeben wird. Falls die BuffergrÃ¶ÃŸe
+unbekannt ist, kann fÃ¼r <size> der Wert |~0| angegeben werden.
 */
 
 int ucscopy_latin9 (char *tg, size_t size, const char *src)

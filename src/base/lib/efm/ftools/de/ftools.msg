@@ -1,7 +1,7 @@
 /*
 Fehlermeldungen der Filehilfsprogramme
 
-$Copyright (C) 1997 Erich Frühstück
+$Copyright (C) 1997 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -21,18 +21,18 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 1	$!: Datei "$1": Unbekannter Zugriff "$2".\n
-2	$!: $0("$1", "$2"): Ausführung fehlgeschlagen.\n
-3	$!: $0("$1", "$2"): Datei kann nicht geöffnet werden.\n
-4	$!: $0("$1", "$2"): Ausführung gesperrt.\n
-5	$!: Temporäre Datei kann nicht generiert werden.\n
+2	$!: $0("$1", "$2"): AusfÃ¼hrung fehlgeschlagen.\n
+3	$!: $0("$1", "$2"): Datei kann nicht geÃ¶ffnet werden.\n
+4	$!: $0("$1", "$2"): AusfÃ¼hrung gesperrt.\n
+5	$!: TemporÃ¤re Datei kann nicht generiert werden.\n
 6	$!: Datei $1 nicht gefunden.\n
 
-11	$!: Schließen einer nicht mit fileopen() göffneten Datei.\n
+11	$!: SchlieÃŸen einer nicht mit fileopen() gÃ¶ffneten Datei.\n
 
 21	$!: File $0: Unerwartetes Fileende beim Lesen.\n
 22	$!: File $0: Daten konnten nicht ausgegeben werden.\n
 
-31	$!: $0: Temporäre Datei $1 kann nicht generiert werden.\n
+31	$!: $0: TemporÃ¤re Datei $1 kann nicht generiert werden.\n
 32	$!: $0: Datei $1 kann nicht abgeschnitten werden.\n
 33	$!: $0: Ausgabefehler in Datei $1.\n
 34	$!: $0: Eingabefehler in Datei $1.\n

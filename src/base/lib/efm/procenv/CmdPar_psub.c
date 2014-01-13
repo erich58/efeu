@@ -1,7 +1,7 @@
 /*
-Standardaufbereitung der Argumente für Auswertungsfunktionen
+Standardaufbereitung der Argumente fÃ¼r Auswertungsfunktionen
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -37,25 +37,25 @@ static char *do_vsub (CmdPar *par, IO *in,
 static void do_psub (IO *in, IO *out, ArgList *args, int mode);
 
 /*
-Die Funktion |$1| führt eine Parametersubstitution für das Format
+Die Funktion |$1| fÃ¼hrt eine Parametersubstitution fÃ¼r das Format
 <fmt> im Kontext der Befehlsparameter <par> und dem Argument <arg>
 durch. Mit einem Dollarsymbol wird eine klassische Parametersubstitution
-eingeleitet. Vergleiche dazu \mref{parsub(3)}. Zusätzlich werden noch
-Ausdrücke der Form |{|<name>|}| durch den Wert der Resourcedefinition
+eingeleitet. Vergleiche dazu \mref{parsub(3)}. ZusÃ¤tzlich werden noch
+AusdrÃ¼cke der Form |{|<name>|}| durch den Wert der Resourcedefinition
 <name> von <par> ersetzt.
 Eine leerer Klammerausdruck wird gegen <arg> ersetzt. Die
-Klammerausdrücke können geschachtelt werden, z.B: bewirkt |{.help.{}}|.
+KlammerausdrÃ¼cke kÃ¶nnen geschachtelt werden, z.B: bewirkt |{.help.{}}|.
 das die Variable |.help.|<arg> abgefragt wird.
-Klammerausdrücke können eine klassische Parametersubstitution beinhalten,
+KlammerausdrÃ¼cke kÃ¶nnen eine klassische Parametersubstitution beinhalten,
 aber nicht umgekehrt.
 
-Die Funktion |$1| berücksichtigt String- und Attributdefinitionen
-und sorgt für eine korrekte Verwendung von benötigten Fluchtsymbolen
+Die Funktion |$1| berÃ¼cksichtigt String- und Attributdefinitionen
+und sorgt fÃ¼r eine korrekte Verwendung von benÃ¶tigten Fluchtsymbolen
 im resultierendem Text.
 
-Der Backslash wirkt als Fluchtsymbol für die
+Der Backslash wirkt als Fluchtsymbol fÃ¼r die
 Sonderzeichen |$|, |{|, |}|, |"|, ||||, |<| und |\\|.
-Die Zeichen |"| und |||| haben keinen Einfluß auf die Analyse
+Die Zeichen |"| und |||| haben keinen EinfluÃŸ auf die Analyse
 der Formatanweisung.
 */
 
@@ -85,7 +85,7 @@ char *CmdPar_psub (CmdPar *par, const char *fmt, const char *arg)
 Die Funktion |$1| ist etwas allgemeiner als |CmdPar_psub|.
 Das Resultat wird in die Ausgabestruktur <out> geschrieben. Anstelle
 eines einzelnen Arguments wird der Pointer auf eine |ArgList| Struktur
-übergeben. Bei einem Nullstring als Formatangabe erfolgt keine Ausgabe.
+Ã¼bergeben. Bei einem Nullstring als Formatangabe erfolgt keine Ausgabe.
 */
 
 void CmdPar_psubout (CmdPar *par, IO *out, const char *fmt, ArgList *args)

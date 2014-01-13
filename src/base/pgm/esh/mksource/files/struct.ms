@@ -3,7 +3,7 @@
 :de:Einfache Datenstrukturen generieren
 
 $Header	<$1>
-$Copyright (C) 1998 Erich Frühstück
+$Copyright (C) 1998 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -41,7 +41,7 @@ static struct Struct {
 	str s_setup;
 	str s_read;	/* Lesefunktion */
 	str s_write;	/* Schreibfunktion */
-	str s_clean;	/* Löschfunktion */
+	str s_clean;	/* LÃ¶schfunktion */
 	str up_init;
 	str up_body;
 	str sync_init;
@@ -63,7 +63,7 @@ Struct Struct (str _name, ...)
 
 /*
 :*:The function |$1| provides include statements for type definitions.
-:de:Die Funktion |$1| sorgt für die zur Typedefinition notwendigen
+:de:Die Funktion |$1| sorgt fÃ¼r die zur Typedefinition notwendigen
 Headerdateien.
 */
 
@@ -237,11 +237,11 @@ static void Struct::extvar (str type, str def)
 :*:The function |$1| adds structure members to the structur
 definition.
 :de:Die Funktion |$1| erweitert die Strukturdefinitionen entsprechend
-der Einträge in <def>. Eine einzelne Zeile hat die Form
+der EintrÃ¤ge in <def>. Eine einzelne Zeile hat die Form
 	<type> <name> <desc>
 wobei <type> der Datentyp, <name> der Variablenname und <desc> der
 Beschreibungstext ist. Eine Zahl anstelle von <type> generiert einen
-Bitfeldeintrag der entsprechenden Größe.
+Bitfeldeintrag der entsprechenden GrÃ¶ÃŸe.
 Ein . oder das Schlusselwort
 |@macro| anstelle von <type> erzeugt einen Eintrag der Form |"|<name>|;"|.
 Vergleiche dazu untenstehendes Beispiel.
@@ -250,9 +250,9 @@ handelt es sich um eine Steueranweisung oder einen Spezialeintrag.
 Folgende Anweisungen sind definiert:
 \ttitem \@efitype
 Es wird ein EFEU-Kompatibler Datentyp eingerichtet. Als Typbezeichner
-müssen EFEU-Datentypen angegeben werden.
+mÃ¼ssen EFEU-Datentypen angegeben werden.
 \end
-(Liste unvollständig)
+(Liste unvollstÃ¤ndig)
 */
 
 void Struct::addentry (IO in)
@@ -511,7 +511,7 @@ void Struct::mkinfo (str name, str desc)
 static void Struct::mkstrbuf (str name, str size, int bsize)
 {
 	addvar("char *", name, "Textbuffer");
-	addvar("size_t", name + "_size", "Aktuelle Größe des Textbuffers");
+	addvar("size_t", name + "_size", "Aktuelle GrÃ¶ÃŸe des Textbuffers");
 
 	s_func += psub(string !
 static void $$1_$1_clean ($$1 *data)

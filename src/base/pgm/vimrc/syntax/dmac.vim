@@ -1,6 +1,6 @@
 " Vim syntax file
 " Language:	efeudoc / Befehlsdefinitionen
-" Maintainer:	Erich Frühstück
+" Maintainer:	Erich FrÃ¼hstÃ¼ck
 " Last change:	1999/09/24
 
 " Remove any old syntax stuff hanging around

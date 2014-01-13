@@ -1,5 +1,5 @@
 # :*:configuration file for readline library
-# :de:Konfigurationsdatei für readline Bibliothek
+# :de:Konfigurationsdatei fÃ¼r readline Bibliothek
 #
 # $Synopsis
 # include $1
@@ -7,7 +7,7 @@
 # \index{|RL_INC|}\br
 # \index{|RL_LIB|}
 #
-# $Copyright (C) 2004 Erich Frühstück
+# $Copyright (C) 2004 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -34,14 +34,14 @@ include curses.smh
 # :de:
 # Durch Einbinden der Headerdatei |$1| werden folgende Makros definiert:
 # \ttitem CPP_READLINE
-#	Compile-Flag für readline-Headerfiles
+#	Compile-Flag fÃ¼r readline-Headerfiles
 # \ttitem LD_READLINE
-#	Link-Flags für readline-Programmbinliothek
+#	Link-Flags fÃ¼r readline-Programmbinliothek
 # \ttitem RL_INC
-#	Compile-Flags für readline-Programme (ident zu |CPP_READLINE|)
+#	Compile-Flags fÃ¼r readline-Programme (ident zu |CPP_READLINE|)
 # \ttitem RL_LIB
-#	Link-Flags für readline-Programme (|LD_READLINE| und |LD_CURSES|).
-# Da readline-Programme auch curses benötigen, wird automatisch auch die
+#	Link-Flags fÃ¼r readline-Programme (|LD_READLINE| und |LD_CURSES|).
+# Da readline-Programme auch curses benÃ¶tigen, wird automatisch auch die
 # Konfiguration von curses mit eingebunden.
 
 mf_comm "Readline configuration from $FILE"
@@ -63,8 +63,8 @@ mf_comm -n "End of readline configuration"
 # include $1
 # \end
 # :de:
-# Eine typische Ausgabe (abhängig von Bibliotheksversion und
-# Rechnerarchitektur) für das Einbinden der Headerdatei mit
+# Eine typische Ausgabe (abhÃ¤ngig von Bibliotheksversion und
+# Rechnerarchitektur) fÃ¼r das Einbinden der Headerdatei mit
 # \shmkmf[-x] hat die Form:
 # include $1
 # \end

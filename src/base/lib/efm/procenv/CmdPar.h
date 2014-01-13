@@ -4,7 +4,7 @@
 
 $Header	<EFEU/$1>
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -42,7 +42,7 @@ typedef struct CmdParExpandStruct CmdParExpand;
 /*
 :de:
 Die Datenstruktur |$1| dient zur Konfiguration der Parameter
-für ein ausführbares Programm. Mithilfe dieser Datenstruktur
+fÃ¼r ein ausfÃ¼hrbares Programm. Mithilfe dieser Datenstruktur
 werden Umgebungsvariablen und Befehlszeilenparameter abgefragt.
 Weiters erlaubt sie die Ausgabe der Kommandosyntax.
 */
@@ -114,7 +114,7 @@ Die Datenstruktur |$1| definiert eine Aufrufstruktur zur Auswertung.
 */
 
 struct CmdParCallStruct {
-	CmdParCall *next;	/* Nächster Aufruf */
+	CmdParCall *next;	/* NÃ¤chster Aufruf */
 	CmdParEval *eval;	/* Auswertungsdefinition */
 	char *name;		/* Resourcename */
 	char *par;		/* Auswertungsparameter */
@@ -137,12 +137,12 @@ extern int CmdParCall_eval (CmdPar *par, CmdParCall *def, const char *arg);
 #define	ARGTYPE_LAST	3	/* Letztes Argument */
 #define	ARGTYPE_VA0	4	/* Variable Argumentliste >= 0 */
 #define	ARGTYPE_VA1	5	/* Variable Argumentliste >= 1 */
-#define	ARGTYPE_REGEX	6	/* Regulärer Ausdruck */
+#define	ARGTYPE_REGEX	6	/* RegulÃ¤rer Ausdruck */
 #define	ARGTYPE_VALUE	7	/* Zuweisungswert */
 
 /*
 :de:
-Die Struktur |$1| definiert einen Parameterschlüssel.
+Die Struktur |$1| definiert einen ParameterschlÃ¼ssel.
 */
 
 struct CmdParKeyStruct {
@@ -152,7 +152,7 @@ struct CmdParKeyStruct {
 	char *val; 		/* Vorgabewert */
 	char *arg; 		/* Argumentname */
 	CmdParDef *def;	/* Parameterdefinition */
-	CmdParKey *next;	/* Nächster Schlüssel */
+	CmdParKey *next;	/* NÃ¤chster SchlÃ¼ssel */
 };
 
 extern CmdParKey *CmdParKey_alloc (void);
@@ -165,7 +165,7 @@ Die Struktur |$1| definiert eine Parameterdefinition.
 */
 
 struct CmdParDefStruct {
-	CmdParKey *key;	/* Schlüsselliste */
+	CmdParKey *key;	/* SchlÃ¼sselliste */
 	CmdParCall *call;	/* Aufrufliste */
 	char *desc;		/* Beschreibungstext */
 };

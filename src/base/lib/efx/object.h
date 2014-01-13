@@ -3,7 +3,7 @@ Objektdefinitionen
 
 $Header <EFEU/$1>
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -33,7 +33,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/stdint.h>
 #include <EFEU/StrPool.h>
 
-/*	Typedefinitionen für Objekte
+/*	Typedefinitionen fÃ¼r Objekte
 */
 
 typedef struct EfiObjStruct EfiObj;
@@ -96,10 +96,10 @@ struct EfiStruct {
 	EfiObj *defval;		/* Vorgabewert */
 	size_t dim;		/* Variablendimension */
 	size_t offset;		/* Datenoffset */
-	EfiStruct *next;	/* Nächster Eintrag */
+	EfiStruct *next;	/* NÃ¤chster Eintrag */
 	EfiObj *(*member) (const EfiStruct *member, const EfiObj *obj);
 	void *par;		/* Strukturparameter */
-	void (*clean) (void *ptr);	/* Aufräumfunktion */
+	void (*clean) (void *ptr);	/* AufrÃ¤umfunktion */
 };
 
 EfiObj *Var2Obj (EfiStruct *var, const EfiObj *obj);
@@ -192,8 +192,8 @@ struct EfiTypeStruct {
 	char *name;		/* Typename */
 	char *cname;		/* C-Datentyp */
 	char *desc;		/* Beschreibungstext */
-	size_t size;		/* Datenlänge */
-	size_t recl;		/* Satzlänge */
+	size_t size;		/* DatenlÃ¤nge */
+	size_t recl;		/* SatzlÃ¤nge */
 	size_t (*read) (const EfiType *type, void *data, IO *io);
 	size_t (*write) (const EfiType *type, const void *data, IO *io);
 	int (*print) (const EfiType *type, const void *data, IO *io);
@@ -206,11 +206,11 @@ struct EfiTypeStruct {
 	size_t dim;		/* Vektordimension */
 	EfiStruct *list;	/* Strukturelemente */
 	EfiVarTab *vtab;	/* Variablentabelle */
-	EfiFunc *fclean;	/* Destruktor, nicht überladbar */
-	EfiFunc *fcopy;		/* Kopierfunktion, nicht überladbar */
+	EfiFunc *fclean;	/* Destruktor, nicht Ã¼berladbar */
+	EfiFunc *fcopy;		/* Kopierfunktion, nicht Ã¼berladbar */
 	VecBuf konv;		/* Konvertierungen */
 	VecBuf par;		/* Parametertabelle */
-	EfiVirFunc *create;	/* Konstruktor, überladbar */
+	EfiVirFunc *create;	/* Konstruktor, Ã¼berladbar */
 	void *defval;		/* Vorgabewert */
 	EfiSrc *src;		/* Quelle */
 };
@@ -429,7 +429,7 @@ void *Obj2Ptr (EfiObj *obj, EfiType *type);
 extern EfiType Type_ptr;		/* Pointerobjekt */
 extern EfiType Type_ref;		/* Referenzobjekt */
 extern EfiType Type_efi;		/* Interpreterobjekt */
-extern EfiType Type_enum;	/* Aufzählungsobjekt */
+extern EfiType Type_enum;	/* AufzÃ¤hlungsobjekt */
 extern EfiType Type_str;		/* Stringkonstante */
 extern EfiType Type_varstr;		/* Stringkonstante, Version 2 */
 extern EfiType Type_obj;		/* Objektpointer */
@@ -463,7 +463,7 @@ extern EfiType Type_name;	/* Name */
 #define	Obj2obj(x)	((EfiObj *) Obj2Ptr((x), &Type_obj))
 
 
-/*	Struktur für Member/Scope - Namensdefinition
+/*	Struktur fÃ¼r Member/Scope - Namensdefinition
 */
 
 typedef struct {
@@ -564,7 +564,7 @@ EfiType *VecType(EfiType *type, EfiObjList *idx);
 EfiType *NewVecType(EfiType *type, int dim);
 
 
-/*	Ausdrücke und Terme
+/*	AusdrÃ¼cke und Terme
 */
 
 typedef struct {
@@ -625,7 +625,7 @@ typedef struct {
 	EfiObj *defval;		/* Vorgabewert */
 	unsigned lval : 1;	/* L-Wert erforderlich */
 	unsigned cnst : 1;	/* Konstante */
-	unsigned promote : 1;	/* Geförderte Konvertierung */
+	unsigned promote : 1;	/* GefÃ¶rderte Konvertierung */
 	unsigned nokonv : 29;	/* Keine Konvertierung erlaubt */
 } EfiFuncArg;
 
@@ -633,10 +633,10 @@ typedef struct {
 #define	KONV_STANDARD	1
 #define	KONV_RESTRICTED	2
 
-#define	FUNC_PROMOTION	0x1	/* Geförderte Konvertierung */
-#define	FUNC_RESTRICTED	0x2	/* Eingeschränkte Konvertierung */
-#define	FUNC_LRETVAL	0x4	/* Rückgabe eines L-Wertes */
-#define	FUNC_XRETVAL	0x8	/* Rückgabe eines Objektpointers */
+#define	FUNC_PROMOTION	0x1	/* GefÃ¶rderte Konvertierung */
+#define	FUNC_RESTRICTED	0x2	/* EingeschrÃ¤nkte Konvertierung */
+#define	FUNC_LRETVAL	0x4	/* RÃ¼ckgabe eines L-Wertes */
+#define	FUNC_XRETVAL	0x8	/* RÃ¼ckgabe eines Objektpointers */
 #define	FUNC_VIRTUAL	0x10	/* Virtuelle Funktion */
 #define	FUNC_BOUND	0x20	/* Typegebundene Funktiomn */
 #define	FUNC_VAARG	0x40	/* Variable Argumentzahl */
@@ -648,17 +648,17 @@ struct EfiFuncStruct {
 	REFVAR;	
 	char *name;		/* Funktionsname */
 	EfiVarTab *scope;	/* Funktionsumgebung */
-	EfiType *type;		/* Rückgabetype */
+	EfiType *type;		/* RÃ¼ckgabetype */
 	EfiFuncArg *arg;	/* Argumentliste */
 	EfiFuncCall eval;	/* Funktionsaufruf */
 	unsigned dim : 24;	/* Zahl der Argumente */
-	unsigned lretval : 1;	/* Flag für Rückgabe von L-Wert */
-	unsigned bound : 1;	/* Flag für Objektbindung */
-	unsigned vaarg : 1;	/* Flag für variable Argumentzahl */
+	unsigned lretval : 1;	/* Flag fÃ¼r RÃ¼ckgabe von L-Wert */
+	unsigned bound : 1;	/* Flag fÃ¼r Objektbindung */
+	unsigned vaarg : 1;	/* Flag fÃ¼r variable Argumentzahl */
 	unsigned virfunc : 1;	/* Virtuelle Funktion */
 	unsigned weight : 4;	/* Konvertierungsgewicht */
 	void *par;		/* Funktionsparameter */
-	void (*clean) (void *ptr);		/* Aufräumfunktion */
+	void (*clean) (void *ptr);		/* AufrÃ¤umfunktion */
 };
 
 size_t GetFuncArg (IO *io, EfiFuncArg **arg, int delim);

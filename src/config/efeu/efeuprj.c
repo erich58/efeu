@@ -2,7 +2,7 @@
 :*:	evaluate project description files
 :de: 	Auswerten von Projektbeschreibungsdateien
 
-$Copyright (C) 2002 Erich Frühstück
+$Copyright (C) 2002 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or

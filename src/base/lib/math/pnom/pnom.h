@@ -1,9 +1,9 @@
 /*
-Arbeiten mit stückweisen Polynomen
+Arbeiten mit stÃ¼ckweisen Polynomen
 
 $Header <Math/$1>
 
-$Copyright (C) 1992 Erich Frühstück
+$Copyright (C) 1992 Erich FrÃ¼hstÃ¼ck
 This file is part of Math.
 
 This library is free software; you can redistribute it and/or
@@ -37,9 +37,9 @@ If not, write to the Free Software Foundation, Inc.,
 
 typedef struct {
 	REFVAR;		/* Referenzvariablen */
-	size_t dim;	/* Zahl der Stützstellen */
+	size_t dim;	/* Zahl der StÃ¼tzstellen */
 	size_t deg;	/* Grad des Polynoms */
-	double *x;	/* Stützstellen */
+	double *x;	/* StÃ¼tzstellen */
 	double **c;	/* Koeffizientenvektor */
 } Polynom;
 
@@ -62,7 +62,7 @@ double pneval (Polynom *pn, int dev, double x);
 double pnarea (Polynom *pn, double a, double b);
 
 
-/*	Polynomverknüpfungen
+/*	PolynomverknÃ¼pfungen
 */
 
 size_t pnjoin (Polynom **p, size_t n, void (*op) (double x,

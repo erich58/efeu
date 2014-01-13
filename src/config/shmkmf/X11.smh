@@ -1,12 +1,12 @@
 #:*:configuration file for X11 library
-#:de:Konfigurationsdatei für X11 Bibliothek
+#:de:Konfigurationsdatei fÃ¼r X11 Bibliothek
 #
 # $Synopsis
 # include $1
 # \par
 # \$(LD_X11)
 #
-# $Copyright (C) 2004 Erich Frühstück
+# $Copyright (C) 2004 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -36,7 +36,7 @@ include cflags.smh
 # The configuration is done with the command line:
 # :de:
 # Durch Einbinden der Headerdatei |$1| wird der |make|-Makro
-# \index{|LD_X11|} mit link-Flags für X11-Anwendungen definiert.
+# \index{|LD_X11|} mit link-Flags fÃ¼r X11-Anwendungen definiert.
 # Die Konfiguration erfolgt mit der Befehlszeile:
 #
 # $source
@@ -56,7 +56,7 @@ mf_cflags LD_X11 -L/usr/X11R6/lib:/usr/lib/X11 -lX11
 # \shmkmf[-x] generiert die Ausgabe:
 # include $1
 # \end
-# Der Zuweisungswert hängt von der Rechnerarchitektur ab.
+# Der Zuweisungswert hÃ¤ngt von der Rechnerarchitektur ab.
 
 # $SeeAlso
 # \mref{shmkmf(1)},

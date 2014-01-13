@@ -1,7 +1,7 @@
 /*
 Sicht auf ein Efeu-Datenobjekt
 
-$Copyright (C) 2007 Erich Frühstück
+$Copyright (C) 2007 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -47,7 +47,7 @@ struct EfiView {
 	REFVAR;			/* Referenzvariablen */
 	EfiVarTab *vtab;	/* Variablentabelle */
 	EfiObj *data;		/* Datenobjekt */
-	EfiObj *base;		/* Basisobjekt für Methode */
+	EfiObj *base;		/* Basisobjekt fÃ¼r Methode */
 	EDB *edb;		/* EDB-Dateneingabe */
 
 	VecBuf range_buf;	/* Zeitbereich */
@@ -55,7 +55,7 @@ struct EfiView {
 	int range_dim;		/* Zeitbereichsdimension */
 	int range_idx;		/* Zeitbereichsindex */
 
-	EfiStruct *st;		/* Struktureinträge */
+	EfiStruct *st;		/* StruktureintrÃ¤ge */
 	EfiFunc *func;		/* Konstruktionsfunktion */
 	EfiObj *tg;		/* Zielobjekt */
 
@@ -69,7 +69,7 @@ struct EfiView {
 	void *eval_par;
 	EfiObj *eval_obj;
 
-	size_t nsave;	/* Zahl der geschriebenen Datensätze */
+	size_t nsave;	/* Zahl der geschriebenen DatensÃ¤tze */
 	IO *out;	/* Ausgabestruktur */
 };
 

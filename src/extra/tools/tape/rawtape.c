@@ -2,7 +2,7 @@
 :*:read tape file
 :de:Lesen eines Magnetbandes
 
-$Copyright (C) 1998, 2001 Erich Frühstück
+$Copyright (C) 1998, 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -106,7 +106,7 @@ static int put_var (FILE *file, char *buf, size_t n)
 	return (fwrite(buf + 4, n - 4, 1, file) == 1) ? n - 4 : EOF;
 }
 
-/*	Blocklängenfeld testen
+/*	BlocklÃ¤ngenfeld testen
 */
 
 static int test_bsize (char *buf, int n)
@@ -130,7 +130,7 @@ static int test_bsize (char *buf, int n)
 	return 0;
 }
 
-/*	Ausgabefile öffnen/schließen
+/*	Ausgabefile Ã¶ffnen/schlieÃŸen
 */
 
 static int open_count = 0;
@@ -276,7 +276,7 @@ int main (int narg, char **arg)
 
 #endif
 
-/*	Blocklänge testen
+/*	BlocklÃ¤nge testen
 */
 	if	(blksize == 0)
 	{
@@ -399,7 +399,7 @@ int main (int narg, char **arg)
 			break;
 	}
 
-/*	Dateien schließen
+/*	Dateien schlieÃŸen
 */
 	if	(idev != EOF)		close(idev);
 

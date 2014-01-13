@@ -2,7 +2,7 @@
 :*:	create data cube
 :de:	Datenmatrix generieren
 
-$Copyright (C) 1997, 2001 Erich Frühstück
+$Copyright (C) 1997, 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -29,7 +29,7 @@ MapMode = false
 
 v:value | Value
 	:*:default value
-	:de:Vorgabewert für Datenwerte
+	:de:Vorgabewert fÃ¼r Datenwerte
 T:title | Title
 	:*:set title of output file
 	:de:Titel der Ausgabedatei setzen

@@ -1,7 +1,7 @@
 /*
-Auswertungsfunktion für Sourcefiles
+Auswertungsfunktion fÃ¼r Sourcefiles
 
-$Copyright (C) 2000 Erich Frühstück
+$Copyright (C) 2000 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -53,7 +53,7 @@ static void srcline (SrcData *data, char *head, int c)
 	sb_puts("\n----\n", buf);
 }
 
-/*	Präprozessorzeile umkopieren
+/*	PrÃ¤prozessorzeile umkopieren
 */
 
 void ppcopy (IO *ein, StrBuf *val, StrBuf *com)

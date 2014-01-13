@@ -3,7 +3,7 @@
 Datentypen des Efeu-Interpreters stellen Klassen im Sinne der
 Objektorientierten Programmierung dar. Diese beschreiben die
 gemeinsame Struktur und das gemeinsame Verhalten der Objekte.
-Objekte sind im EDB-Konzept die einzelnen Datensätze eines
+Objekte sind im EDB-Konzept die einzelnen DatensÃ¤tze eines
 EDB-Datenfiles.
 
 In den Datentypen werden nicht nur die Attribute, sondern auch die
@@ -13,33 +13,33 @@ gespeichert:
 	Einfachvererbung.} bei einer abgeleiteten Klasse.
 *	Eine geordnete Liste mit den Komponenten der Struktur.
 	Diese beschreiben die Attribute der Datenstruktur.
-*	Eine Tabelle mit Variablen: Sie enthält Referenzen auf die
+*	Eine Tabelle mit Variablen: Sie enthÃ¤lt Referenzen auf die
 	Strukturelemente, abgeleitete Attribute, Komponentenfunktionen
 	und sonstige Variablen, die nicht von den konkreten
-	Werten eines Objektes abhängen.
-*	Eine Tabelle von Parametern mit ergänzenden Eigenschaften des
+	Werten eines Objektes abhÃ¤ngen.
+*	Eine Tabelle von Parametern mit ergÃ¤nzenden Eigenschaften des
 	Datentyps und nicht unmittelbar auf ein einzelnes Objekt
 	anwendbare Methoden, wie Eingabedefinitionen, Ausgabedefinitionen
 	und Filter.
 
-Während die Komponenten eines Datentyps festgelegt sind, kann die
+WÃ¤hrend die Komponenten eines Datentyps festgelegt sind, kann die
 Variablentabelle oder die Parametertabelle beliebig erweitert werden.
 
 Ein Datentyp ist selbst ein Objekt der Klasse <"Datentyp"> mit den
 Attributen Basistyp, Komponentenstruktur, Variablentabelle und
 Parametertabelle.
-Grundsätzlich gilt für den Efeu-Interpreter: <"Alles ist ein Objekt">.
+GrundsÃ¤tzlich gilt fÃ¼r den Efeu-Interpreter: <"Alles ist ein Objekt">.
 
 \ssec	\label{par}\index{Datentyp-Parameter}
 
-Jeder Datentyp enthält eine Tabelle zur Ablage von Parametern.
-Hier können beliebige Objekte abgelegt werden. Die Klasse wird durch
+Jeder Datentyp enthÃ¤lt eine Tabelle zur Ablage von Parametern.
+Hier kÃ¶nnen beliebige Objekte abgelegt werden. Die Klasse wird durch
 einen Namen festgelegt. Die innere Struktur der Parameter bleibt dem
-Interpreter verborgen. Parameternamen müssen nur innerhalb einer
+Interpreter verborgen. Parameternamen mÃ¼ssen nur innerhalb einer
 Klasse eindeutig sein.
 
 Folgende Parameterklassen werden im Rahmen der EDB-Auswertungen
-berücksichtigt:
+berÃ¼cksichtigt:
 
 [control]
 	Allgemeine Steuerparameter mit einem String als Attribut.
@@ -48,10 +48,10 @@ berücksichtigt:
 		Versionsnummer des Datentyps. Falls definiert, wird
 		die aktuelle Versionsnummer mit der in dem
 		EDB-Datenfile gespeicherten Versionsnummer verglichen.
-		Stimmt die Versionsnummer nicht überein, wird der
+		Stimmt die Versionsnummer nicht Ã¼berein, wird der
 		Zugriff auf die Daten verweigert.
 	[EDBPrintMode]
-		Vorgabe für die Ausgabe eines EDB-Datenfiles.
+		Vorgabe fÃ¼r die Ausgabe eines EDB-Datenfiles.
 [class]
 	Methoden zur Konstruktion von Klassifikationen.
 [input]
@@ -65,20 +65,20 @@ berücksichtigt:
 
 Parameter werden durch die Angabe der Parameterklasse und des
 Parameternamens abgefragt. Die Suche erfolgt entsprechend
-der Klassenhierarchie. Es gibt eine universelle Parametertabelle für
+der Klassenhierarchie. Es gibt eine universelle Parametertabelle fÃ¼r
 allgemeine Methoden. Die Vererbbarkeit von Parametern kann individuell
-festgelegt werden, d.h. für einen Parameter kann angegeben werden, ob
-er nur für eine Basisklasse, oder auch für alle davon abgeleiteten
+festgelegt werden, d.h. fÃ¼r einen Parameter kann angegeben werden, ob
+er nur fÃ¼r eine Basisklasse, oder auch fÃ¼r alle davon abgeleiteten
 Subklassen gilt.
 
 Bei der Interpretation von Parameterdefinitionen wird der aktuelle
 Datentyp und nicht der Basisdatentyp herangezogen. Es erfolgt keine
-Einschränkung der Verarbeitung auf die Basisattribute.
-Damit stellen vererbbare Parameter allgemeine Methoden für eine
-eingeschränkte Gruppe von Klassen zur Verfügung.
+EinschrÃ¤nkung der Verarbeitung auf die Basisattribute.
+Damit stellen vererbbare Parameter allgemeine Methoden fÃ¼r eine
+eingeschrÃ¤nkte Gruppe von Klassen zur VerfÃ¼gung.
 
 \ssec Vektordatentypen und Vererbung
 
-Der Efeu-Interpreter kennt Vektordatentypen variabler Länge. Die
-Syntax dafür ist <type>|[]|. Falls <foo> eine Unterklasse von <bar>
+Der Efeu-Interpreter kennt Vektordatentypen variabler LÃ¤nge. Die
+Syntax dafÃ¼r ist <type>|[]|. Falls <foo> eine Unterklasse von <bar>
 ist, so ist auch <foo>|[]| eine Unterklasse von <bar>|[]|.

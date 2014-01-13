@@ -1,8 +1,8 @@
 /*
 :*:calculate OLS regression
-:de:OLS Regression durchführen
+:de:OLS Regression durchfÃ¼hren
 
-$Copyright (C) 1997 Erich Frühstück
+$Copyright (C) 1997 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -318,7 +318,7 @@ void Func_OLS (EfiFunc *func, void *rval, void **arg)
 	for (i = 0; i < dim; i++)
 		par->koef[i].se = sqrt(sigma * z[i * dim + i]);
 
-/*	Aufräumen
+/*	AufrÃ¤umen
 */
 	memfree(z);
 	memfree(yb);

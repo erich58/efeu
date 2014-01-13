@@ -1,7 +1,7 @@
 /*
-EDB-Datenbankverknüpfung
+EDB-DatenbankverknÃ¼pfung
 
-$Copyright (C) 2007 Erich Frühstück
+$Copyright (C) 2007 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -29,7 +29,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	INFO_HEAD	\
 	":*:data base join definitions" \
-	":de:Datenbankverknüpfungen"
+	":de:DatenbankverknÃ¼pfungen"
 
 static VECBUF(join_buf, 128, sizeof(EDBJoin *));
 

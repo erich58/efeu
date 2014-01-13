@@ -1,6 +1,6 @@
-/*	Zähldefinitionen initialisieren
-	$Copyright (C) 2007 Erich Frühstück
-	A-3423 St.Andrä/Wördern, Wildenhaggasse 38
+/*	ZÃ¤hldefinitionen initialisieren
+	$Copyright (C) 2007 Erich FrÃ¼hstÃ¼ck
+	A-3423 St.AndrÃ¤/WÃ¶rdern, Wildenhaggasse 38
 */
 
 #include <EFEU/EfiCount.h>

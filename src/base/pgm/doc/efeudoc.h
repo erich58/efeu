@@ -1,7 +1,7 @@
 /*
 Dokumentgenerator
 
-$Copyright (C) 1999 Erich Frühstück
+$Copyright (C) 1999 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -84,7 +84,7 @@ struct DocStruct {
 	IO *out;		/* Ausgabestruktur */
 	unsigned stat : 1;	/* Statusflag */
 	unsigned nl : 15;	/* Zahl der gelesenen Leerzeilen */
-	unsigned indent : 15;	/* Aktuelle Einrückung */
+	unsigned indent : 15;	/* Aktuelle EinrÃ¼ckung */
 	DocEnv env;		/* Aktuelle Umgebung */
 	Stack *env_stack;	/* Stack mit Umgebungen */
 	Stack *cmd_stack;	/* Stack mit Befehlstabellen */

@@ -1,7 +1,7 @@
 # :*:EFEU command interpreter
 # :de:EFEU Befehlsinterpreter
 #
-# $Copyright (C) 1994, 2001 Erich Frühstück
+# $Copyright (C) 1994, 2001 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -24,5 +24,5 @@ HistoryName = "~/.esh_history"
 
 E|PPOnly = 1
 	:*:preprocess only, do not evaluate commands.
-	:de:es wird nur der Präprozessor verwendet, das Skriptfile wird nicht
+	:de:es wird nur der PrÃ¤prozessor verwendet, das Skriptfile wird nicht
 	verarbeitet.

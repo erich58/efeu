@@ -1,7 +1,7 @@
 #:*:	remove block size of a variable blocked file
-#:de:	Blocklängenfeld eines variabel geblockten Datenfiles auflösen
+#:de:	BlocklÃ¤ngenfeld eines variabel geblockten Datenfiles auflÃ¶sen
 #
-# $Copyright (C) 1999, 2002 Erich Frühstück
+# $Copyright (C) 1999, 2002 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -28,10 +28,10 @@
 
 err.beof = \
 	:*:unexpected end of file in block size field.\
-	:de:Unerwartetes Fileende im Blocklängenfeld.
+	:de:Unerwartetes Fileende im BlocklÃ¤ngenfeld.
 err.binv = \
 	:*:invalid block size field.\
-	:de:Ungültige Zeichen im Blocklängenfeld.
+	:de:UngÃ¼ltige Zeichen im BlocklÃ¤ngenfeld.
 err.read = \
 	:*:unexpected end of file.\
 	:de:Unerwartetes Fileende.
@@ -41,7 +41,7 @@ err.write = \
 
 msg.nblk = \
 	:*:%u blocks read (maxblksize = %d).\n\
-	:de:%u gelesende Blöcke (maxblksize = %d).\n
+	:de:%u gelesende BlÃ¶cke (maxblksize = %d).\n
 msg.nout = \
 	:*:%u chars written.\n\
 	:de:%u ausgegebene Zeichen.\n

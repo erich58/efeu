@@ -1,7 +1,7 @@
 /*
 Daten in Vektorbuffer kopieren
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -26,7 +26,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 /*
 Die Funktion |$1| kopiert <dim> Datenelemente von der Speicheradresse
-<data> in den Vektorbuffer <buf>. Der Datentype von <data> muß zum
+<data> in den Vektorbuffer <buf>. Der Datentype von <data> muÃŸ zum
 Datenbuffer kompatibel sein.
 */
 
@@ -44,7 +44,7 @@ void *vb_copy (VecBuf *buf, void *data, size_t dim)
 
 /*
 Die Funktion |$1| kopiert <dim> Datenelemente von der Speicheradresse
-<data> ans Ende des Vektorbuffers <buf>. Der Datentype von <data> muß zum
+<data> ans Ende des Vektorbuffers <buf>. Der Datentype von <data> muÃŸ zum
 Datenbuffer kompatibel sein.
 */
 
@@ -64,12 +64,12 @@ void *vb_append (VecBuf *buf, void *data, size_t dim)
 /*
 Die Funktion |$1| kopiert die in <buf> vorhandenen Datenelemente
 auf die Speicheradresse <data>. Falls anstelle von <data> ein
-Nullpointer übergeben wurde, wird der benötigte Speicherbereich
-mit |memalloc| generiert. Ansonsten muß <data> auf einen 
-Speicherbereich zeigen, der genügend groß ist um alle in <buf>
-gespeicherten Werte zu übernehmen.
+Nullpointer Ã¼bergeben wurde, wird der benÃ¶tigte Speicherbereich
+mit |memalloc| generiert. Ansonsten muÃŸ <data> auf einen 
+Speicherbereich zeigen, der genÃ¼gend groÃŸ ist um alle in <buf>
+gespeicherten Werte zu Ã¼bernehmen.
 
-Falls anstelle von <buf> ein Nullpointer übergeben wurde,
+Falls anstelle von <buf> ein Nullpointer Ã¼bergeben wurde,
 liefert die Funktion einen Nullpointer.
 Falls keine Daten zu kopieren sind, liefert die Funktion <data> ohne
 darauf zuzugreifen.

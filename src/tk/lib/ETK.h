@@ -3,7 +3,7 @@
 :de:	Schnittstelle zu Tcl/Tk
 
 $Header <GUI/ETK.h>
-$Copyright (C) 2002 Erich Frühstück
+$Copyright (C) 2002 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -35,7 +35,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 /*
 :de:
-Der Datentyp |$1| repräsentiert eine Verbindung zum Tcl/Tk Interpreter.
+Der Datentyp |$1| reprÃ¤sentiert eine Verbindung zum Tcl/Tk Interpreter.
 :*:
 The structure |$1| represents a connection to the Tcl/Tk interpreter.
 */

@@ -1,18 +1,18 @@
 //\fig[0]	Tabellenbeispiel
-Beispiel für das Setzen einer Tabelle mit |efeudoc|.
+Beispiel fÃ¼r das Setzen einer Tabelle mit |efeudoc|.
 
 \label{bsptab}
 \tab[2]	lrrrrrr
 [1*] | #5c Zentrierter Kopf
-[3*] | #2l Linksbündig | #2r Rechtsbündig | Summe
+[3*] | #2l LinksbÃ¼ndig | #2r RechtsbÃ¼ndig | Summe
 [*] | Spalte 1 | Spalte 2 | Spalte 3  | Spalte 4 |
 Beschriftungstext\br der Zeile 1 | 1.1 | 1.2 | 1.3 | 1.4 | <*1.5*>
 Beschriftungstext\br der Zeile 2 | +2.1 | 2.2 | 2.3 | 2.4 | <*2.5*>
 Beschriftungstext\br der Zeile 3 | -3.1 | 3.2 | 3.3 | 3.4 | <*3.5*>
 []
-Text <"mit Anführung"> | 4.1 | 4.2 | 4.3 | 4.4 | <*4.5*>
+Text <"mit AnfÃ¼hrung"> | 4.1 | 4.2 | 4.3 | 4.4 | <*4.5*>
 Zeile mit fetter Linie | 5.1 | 5.2 | 5.3 | 5.4 | <*5.5*>
-Unvollständige Zeile
+UnvollstÃ¤ndige Zeile
 //\end
 
 XXX

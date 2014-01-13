@@ -2,7 +2,7 @@
 # :*:Ersetze den CVS-Root Namen in einer Arbeitskopie
 # :de:change repository name in a working directory
 #
-# $Copyright (C) 2002 Erich Frühstück
+# $Copyright (C) 2002 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -47,7 +47,7 @@ esac
 # durch den neuen Namen <root> in allen |CVS|-Unterverzeichnissen der 
 # aktuellen Bibliothek. Falls keine Name angegeben wurde,
 # wird der aktuelle Name angeszeigt.
-# Wird mehr als ein Name angezeigt, gehören nicht alle Arbeitskopien
+# Wird mehr als ein Name angezeigt, gehÃ¶ren nicht alle Arbeitskopien
 # zum gleichen Archiv.
 
 # $SeeAlso

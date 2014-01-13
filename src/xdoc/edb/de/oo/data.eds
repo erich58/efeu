@@ -3,11 +3,11 @@
 Zur Darstellung der Episodendaten wird die Datenstruktur |DATA| in der
 Headerdatei |DATA.hdr| definiert.
 
-Teil der EFEU-Entwicklungsumgebung ist der Datentyp \index{|Period|} für einen
-Zeitbereich. Dieser eignet sich gut als Basistyp für die
-Episodendaten. Für Vektoren vom Typ |Period| stehen eine Reihe von
-Auswertungskonzepten für den Datenbankfilter |view| zur Verfügung.
-Diese können dank Vektorvererbung von einem Episodenvektor genutzt
+Teil der EFEU-Entwicklungsumgebung ist der Datentyp \index{|Period|} fÃ¼r einen
+Zeitbereich. Dieser eignet sich gut als Basistyp fÃ¼r die
+Episodendaten. FÃ¼r Vektoren vom Typ |Period| stehen eine Reihe von
+Auswertungskonzepten fÃ¼r den Datenbankfilter |view| zur VerfÃ¼gung.
+Diese kÃ¶nnen dank Vektorvererbung von einem Episodenvektor genutzt
 werden.
 
 Im folgenden ist die Headerdatei |DATA.hdr| aufgelistet:
@@ -18,7 +18,7 @@ Zur Vereinfachung der Datenkonvertierung wurde ein
 Konstruktor definiert.
 
 Analog zu den Personendaten wird das Metadatenfile |ex2_data.edb|
-zur Konvertierung verwendet. Die Episoden werden anschließend mit
+zur Konvertierung verwendet. Die Episoden werden anschlieÃŸend mit
 |nest| zu Vektoren zusammengefasst.
 
 \include[verbatim]	ex2_data.edb
@@ -28,16 +28,16 @@ in der Komponentendefinition
 ---- verbatim
 data = DATA(beg, end, income),
 ----
-wäre auch der Ausdruck
+wÃ¤re auch der Ausdruck
 ---- verbatim
 data = (DATA) { { beg, end }, income},
 ----
-möglich. Dieser nutzt die implizit für jede Struktur definierte
+mÃ¶glich. Dieser nutzt die implizit fÃ¼r jede Struktur definierte
 Listenkonvertierung.
 
 Die nachstehende Ausgabe zeigt die Daten mit Ausgabemodus |plain|:
 
 \pipe[fold]  |edb -I. -n0 ex2_data.edb|
 
-überlange Zeilen wurden umgebrochen. Die Umbruchstellen sind mit einem
-Gegenschrägstrich am Zeilenende gekennzeichnet.
+Ã¼berlange Zeilen wurden umgebrochen. Die Umbruchstellen sind mit einem
+GegenschrÃ¤gstrich am Zeilenende gekennzeichnet.

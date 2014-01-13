@@ -1,7 +1,7 @@
 /*
 Funktionen
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -37,7 +37,7 @@ typedef struct {
 } FUNCDEF;
 
 
-/*	Funktion für gegebene Argumente aus Funktionstabelle generieren
+/*	Funktion fÃ¼r gegebene Argumente aus Funktionstabelle generieren
 */
 
 static void GetFuncEval (EfiFunc *func, void *rval, void **ptr);
@@ -298,7 +298,7 @@ static void GetFuncEval (EfiFunc *func, void *rval, void **ptr)
 	if	(def->func->vaarg)
 		arglist[n] = &vlist;
 
-/*	Auswerten und Aufräumen
+/*	Auswerten und AufrÃ¤umen
 */
 	if	(def->func->lretval)
 	{

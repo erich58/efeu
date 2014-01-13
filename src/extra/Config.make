@@ -1,5 +1,5 @@
 # :en: Extra commands for specific tasks
-# :de: Zusatzprogramme für spezifische Aufgaben
+# :de: Zusatzprogramme fÃ¼r spezifische Aufgaben
 ##Depends: base
 
 include efeuprj.smh

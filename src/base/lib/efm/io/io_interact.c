@@ -1,7 +1,7 @@
 /*
 Interaktive Ein/Ausgabe
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -43,7 +43,7 @@ static int is_interactive (void)
 #endif
 }
 
-/*	Hilfsvariablen für Standardeingabe
+/*	Hilfsvariablen fÃ¼r Standardeingabe
 */
 
 static int line = 0;
@@ -164,11 +164,11 @@ IO *(*_interact_open) (const char *prompt, const char *hist) = NULL;
 IO *(*_interact_filter) (IO *io) = NULL;
 
 /*
-Die Funktion |$1| öffnet eine IO-Struktur, die |stdin| als
-Eingabe und |stdout| für die Ausgabe verwendet. Das Argument
-<prompt> legt den Prompt für die Eingabe fest.
+Die Funktion |$1| Ã¶ffnet eine IO-Struktur, die |stdin| als
+Eingabe und |stdout| fÃ¼r die Ausgabe verwendet. Das Argument
+<prompt> legt den Prompt fÃ¼r die Eingabe fest.
 
-Falls <histname> verschieden von Null ist und eine Unterstützung
+Falls <histname> verschieden von Null ist und eine UnterstÃ¼tzung
 von History-Zeilen vorhanden ist, wird die entsprechende Datei
 als Historyfile verwendet.
 

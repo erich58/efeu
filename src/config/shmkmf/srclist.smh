@@ -4,7 +4,7 @@
 # $Synopsis
 # <=[=> include $1 <=]=>
 #
-# $Copyright (C) 2004 Erich Fr¸hst¸ck
+# $Copyright (C) 2004 Erich Fr√ºhst√ºck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -42,10 +42,10 @@ _tmplist=$TMP/.tmplist
 #	:*:defines additional parameters or filters to the collect command.
 #	The default value is |-type f -name \"[!.]*[!~]\" -print || sort|
 #	The parameter list is cleard by Option |-c|.
-#	:de:bestimmt zus‰tzliche Parameter oder Filter f¸r die
+#	:de:bestimmt zus√§tzliche Parameter oder Filter f√ºr die
 #	Zusammenstellung der Dateien. Der Vorgabewert ist 
 #	|-type f -name \"[!.]*[!~]\" -print || sort|.
-#	Die Parameterliste wird von der Option |-c| gelˆscht.
+#	Die Parameterliste wird von der Option |-c| gel√∂scht.
 # n:name |
 #	:*:collects files which match the file pattern <name>.
 #	This is aquvalent to
@@ -70,9 +70,9 @@ _tmplist=$TMP/.tmplist
 # The following options and arguments are accepted by $!:
 # :de:
 # Die Funktion $! generiert Regeln zur Verwaltung einer
-# Liste von Sourcefiles, die mit |find| oder einem ‰hnlichen Kommando
+# Liste von Sourcefiles, die mit |find| oder einem √§hnlichen Kommando
 # zusammengestellt werden. Bei jedem Aufruf von |make| wird die Dateiliste
-# auf eine Ver‰nderung gepr¸ft. Sobald sich die Dateiliste ver‰ndert,
+# auf eine Ver√§nderung gepr√ºft. Sobald sich die Dateiliste ver√§ndert,
 # wird das Makefile neu generiert. Eine erste Version der Dateiliste
 # wird bereits von |shmkmf| angelegt.
 # Die folgenden Optionen und Argumente werden von $! akzeptiert:
@@ -87,7 +87,7 @@ _tmplist=$TMP/.tmplist
 # :de:
 # Die Zusammenstellung der Dateiliste erfolgt mit folgendem Kommando:
 #	<cmd> <dir> <arg(s)> |> $@|
-# In der Standardvorgabe werden nur regul‰re Dateien, die nicht mit
+# In der Standardvorgabe werden nur regul√§re Dateien, die nicht mit
 # einem Punkt beginnen oder mit einer Tilde enden, gesucht. Die
 # resultierende Liste ist sortiert.
 
@@ -148,7 +148,7 @@ mf_srclist ()
 #	:de:definiert den Befehl zur Erzeugung der Zieldatei.
 # ::args(s) |
 #	:*:specifies additional arguments/filters to <cmd>, see below.
-#	:de:definiert zus‰tzliche Argumente/Filter zur Erzeugung der Zieldatei,
+#	:de:definiert zus√§tzliche Argumente/Filter zur Erzeugung der Zieldatei,
 #	siehe weiter unten.
 # !
 # :*:
@@ -160,7 +160,7 @@ mf_srclist ()
 # :de:
 # Die Funktion $! erlaubt die Konstruktion einer Teiliste aus einer
 # Basisliste. Die Teilliste wird wir die Basisliste bei jedem Aufruf
-# auf Ver‰nderungen gepr¸ft. Die erste Version wird ebenfalls bereits von
+# auf Ver√§nderungen gepr√ºft. Die erste Version wird ebenfalls bereits von
 # |shmkmf| angelegt.
 # Die Befehlszeile zur Generierung der Zieldatei hat die Form:
 #	<cmd> <src> <arg(s)> |> $@|
@@ -186,28 +186,28 @@ mf_sublist ()
 # $pconfig !
 # d |
 #	:*:deletes the temporary list of filenames (if existing). 
-#	:de:lˆscht eine tempor‰re Dateiliste (falls sie existiert).
+#	:de:l√∂scht eine tempor√§re Dateiliste (falls sie existiert).
 # n |
 #	:*:checks the existence of a temporary or the last by |mf_srclist|
 #	arranged file list and returns here name. If none of them exists,
 #	|/dev/null| is returned.
-#	:de:pr¸ft auf Existenz einer tempor‰ren Dateiliste bzw.
+#	:de:pr√ºft auf Existenz einer tempor√§ren Dateiliste bzw.
 #	auf die zuletzt mit |mf_srclist| eingerichtete Dateiliste und
 #	liefert ihren Namen. Ist keine Dateiliste vorhanden, wird |/dev/null|
-#	zur¸ckgegeben.
+#	zur√ºckgegeben.
 # :name |
 #	:*:name of file to append to the list. If <name> is an existing
 #	directory, all files found in this directory and subdirectories are
 #	appended.
-#	:de:ist eine Liste von Namen, um die die tempor‰re Dateiliste erweitert
+#	:de:ist eine Liste von Namen, um die die tempor√§re Dateiliste erweitert
 #	wird. Falls es sich dabei um ein Verzeichnis
-#	handelt, werden alle Dateien des Verzeichnisses angeh‰ngt.
+#	handelt, werden alle Dateien des Verzeichnisses angeh√§ngt.
 # !
 # :*:
 # The function $! controlls a temporary list of file names.
 # The following options and arguments are accepted:
 # :de:
-# Die Funktion $! verwaltet eine tempor‰re Liste von Dateinamen.
+# Die Funktion $! verwaltet eine tempor√§re Liste von Dateinamen.
 # Die folgenden Optionen und Argumente werden von $! akzeptiert:
 #
 # @arglist
@@ -250,11 +250,11 @@ tmplist ()
 # $pconfig !
 # :expr |
 #	:*:gives the regular expression <expr> to select files.
-#	:de:bestimmt den regul‰ren Ausdruck <expr> zur Auswahl von Dateien.
+#	:de:bestimmt den regul√§ren Ausdruck <expr> zur Auswahl von Dateien.
 # ::list |
 #	:*:name of lists where to extract files.
 #	:de:gibt die Namen von Dateilisten an, aus denen die Dateien
-#	auszuw‰hlen sind.
+#	auszuw√§hlen sind.
 # !
 # :*:
 # The function $! selects file names from the list files <list> with regular
@@ -266,7 +266,7 @@ tmplist ()
 # Die Funktion $! liefert alle in den Dateilisten <list>
 # vorkommenden Dateien, die dem Muster <expr> entsprechen.
 # Falls keine Dateiliste angegeben wurde, wird zuerst nach der mit
-# |tmplist| generierten Liste und anschlieﬂend nach der mit
+# |tmplist| generierten Liste und anschlie√üend nach der mit
 # |mf_srclist| verwalteten Liste gesucht.
 # Die folgenden Optionen und Argumente werden von $! akzeptiert:
 #
@@ -287,7 +287,7 @@ srclist_get ()
 # $pconfig !
 # ::name |
 #	:*:name of lists where to extract files.
-#	:de:Namen der Dateilise, aus denen Dateien auszuw‰hlen sind.
+#	:de:Namen der Dateilise, aus denen Dateien auszuw√§hlen sind.
 # !
 # :*:
 # The function $! sets the actual file list to <name> for commands using
@@ -295,7 +295,7 @@ srclist_get ()
 # created file lists. If no argument is given or if the file <name> does not
 # exists, |/dev/null| is used.
 # :de:
-# Die Funktion $! setzt die aktuelle Fileliste auf <name>. Dies beeinfluﬂt
+# Die Funktion $! setzt die aktuelle Fileliste auf <name>. Dies beeinflu√üt
 # alle nachfolgenden Kommandos, die Dateien mit |srclist_get| abrufen.
 # Damit kann zwischen mehreren, mit |mf_srclist| generierten Dateien
 # gewechselt werden. Falls die Funktion ohne Argument aufgerufen wurde,

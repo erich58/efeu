@@ -1,8 +1,8 @@
 /*
-Zählvariablen generieren
+ZÃ¤hlvariablen generieren
 
 $Header	<$1>
-$Copyright (C) 2000 Erich Frühstück
+$Copyright (C) 2000 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -27,7 +27,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <function.ms>
 
 /*
-Die Funktion |$1| dient zur Konstruktion einer Zählvariable.
+Die Funktion |$1| dient zur Konstruktion einer ZÃ¤hlvariable.
 Sie wurde |inline| definiert, damit die
 lokalen Variablen der rufenden Funktion bei der Parametersubstitution
 sichtbar bleiben.

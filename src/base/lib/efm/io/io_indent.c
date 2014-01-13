@@ -1,7 +1,7 @@
 /*
-Ausgabezeilen einrücken
+Ausgabezeilen einrÃ¼cken
 
-$Copyright (C) 1998 Erich Frühstück
+$Copyright (C) 1998 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -27,10 +27,10 @@ If not, write to the Free Software Foundation, Inc.,
 
 typedef struct {
 	IO *io;		/* Ausgabestruktur */
-	int c;		/* Einrückungszeichen */
+	int c;		/* EinrÃ¼ckungszeichen */
 	int n;		/* Multiplikator */
-	int depth;	/* Einrücktiefe */
-	int newline;	/* Flag für neue Zeile */
+	int depth;	/* EinrÃ¼cktiefe */
+	int newline;	/* Flag fÃ¼r neue Zeile */
 } INDENT;
 
 static int indent_put (int c, IO *io)

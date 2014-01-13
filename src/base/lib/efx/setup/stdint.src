@@ -1,7 +1,7 @@
 /*
-Schablonendatei für Ganzzahlobjekte
+Schablonendatei fÃ¼r Ganzzahlobjekte
 
-$Copyright (C) 2006 Erich Frühstück
+$Copyright (C) 2006 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -21,9 +21,9 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 /*
-Die folgenden Makros müssen vordefiniert sein:
+Die folgenden Makros mÃ¼ssen vordefiniert sein:
 
-SIG	Testflag für Vorzeichen
+SIG	Testflag fÃ¼r Vorzeichen
 S	Datentypname als String
 T	C-Datentyp
 

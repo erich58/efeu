@@ -1,7 +1,7 @@
 /*
 Bitfeldkomponenten registrieren
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -82,8 +82,8 @@ static EfiObj *bf_get (const EfiObj *base, void *data)
 
 /*
 Die Funktion |$1| erweitert fie Variablentabelle <tab> um die
-Bitfelddefinitionen <def>. Die Bitfelddefinitionen müssen
-über die gesamte Laufzeit der Tabelle <tab> verfügbar sein.
+Bitfelddefinitionen <def>. Die Bitfelddefinitionen mÃ¼ssen
+Ã¼ber die gesamte Laufzeit der Tabelle <tab> verfÃ¼gbar sein.
 */
 
 void AddEfiBFMember (EfiVarTab *tab, EfiBFMember *def, size_t dim)

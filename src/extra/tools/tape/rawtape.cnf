@@ -1,7 +1,7 @@
 # :*:read tape file
 # :de:Lesen eines Magnetbandes
 #
-# $Copyright (C) 1998, 2001 Erich Frühstück
+# $Copyright (C) 1998, 2001 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -21,22 +21,22 @@
 
 varblock = false
 	:*:variable blocking flag
-	:de:Flag für variable Statzlänge.
+	:de:Flag fÃ¼r variable StatzlÃ¤nge.
 recover = false
 	:*:recover flag
-	:de:Flag für Datenrestaurierung
+	:de:Flag fÃ¼r Datenrestaurierung
 compress = false
 	:*:compression flag
-	Flag für Datenkompression
+	Flag fÃ¼r Datenkompression
 blklim = 0
 	:*:block limit
 	:de:Blocklimit
 blksize = 0x8000
 	:*:block size
-	:de:Blockgröße, Vorgabe {blksize}
+	:de:BlockgrÃ¶ÃŸe, Vorgabe {blksize}
 Device
 	:*:tape device
-	:de:Bandgerät
+	:de:BandgerÃ¤t
 Output
 	:*:output file
 	:de:Ausgabefile
@@ -52,16 +52,16 @@ z | compress = true
 	:de:Komprimierung der Ausgabedatei
 x | recover = true
 	:*:recover mode
-	:de:Rekonstruierung fehlerhafter Bänder
+	:de:Rekonstruierung fehlerhafter BÃ¤nder
 n:lim | blklim
 	:*:maximal number of blocks to read, 0 = all
-	:de:Maximalzahl der zu lesenden Blöcke, 0 = alle
+	:de:Maximalzahl der zu lesenden BlÃ¶cke, 0 = alle
 b:size | blksize
 	:*:block size
-	:de:Maximale Blockgröße, Vorgabe {blksize}
+	:de:Maximale BlockgrÃ¶ÃŸe, Vorgabe {blksize}
 s:size | splitsize
 	:*:split size
-	:de:Aufspaltgröße für Ausgabedatei, Vorgabe {splitsize}
+	:de:AufspaltgrÃ¶ÃŸe fÃ¼r Ausgabedatei, Vorgabe {splitsize}
 :dev |
 	:*:tape device
 	:de:Bandlaufwerk
@@ -71,13 +71,13 @@ s:size | splitsize
 
 err.1 = \
 	:*:%s: wrong block size (%d != %d).\n\
-	:de:%s: Falsche Blocklänge (%d != %d).\n
+	:de:%s: Falsche BlocklÃ¤nge (%d != %d).\n
 err.2 = \
 	:*:%s: error in block size (%d, %d).\n\
-	:de:%s: Fehler im Blocklängenfeld (%d, %d).\n
+	:de:%s: Fehler im BlocklÃ¤ngenfeld (%d, %d).\n
 err.3 = \
 	:*:%s: block size not defined.\n\
-	:de:%s: Blockgröße ist nicht definiert.\n
+	:de:%s: BlockgrÃ¶ÃŸe ist nicht definiert.\n
 err.4 = \
 	:*:%s: malloc(%d) failed.\n\
 	:de:%s: malloc(%d) fehlgeschlagen.\n
@@ -86,14 +86,14 @@ err.5 = \
 	:de:%s: Eingabefile %s nicht lesbar
 msg.1 = \
 	:*:max. block size %d.\n\
-	:de:Maximale Blockgröße %d.\n
+	:de:Maximale BlockgrÃ¶ÃŸe %d.\n
 msg.2 = \
 	:*:%d+%d blocks read.\n\
-	:de:%d+%d gelesene Blöcke.\n
+	:de:%d+%d gelesene BlÃ¶cke.\n
 msg.3 = \
 	:*:%d bytes write.\n\
 	:de:%d ausgegebene Zeichen.\n
 msg.4 = \
 	:*:%d defect blocks.\n\
-	:de:%d Blöcke fehlerhaft.\n
+	:de:%d BlÃ¶cke fehlerhaft.\n
 

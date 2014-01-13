@@ -1,7 +1,7 @@
 /*
-Standardzähler
+StandardzÃ¤hler
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -38,7 +38,7 @@ static MdCount counter = {
 };
 
 /*
-Die globale Variable |$1| definiert einen Standardzähler
+Die globale Variable |$1| definiert einen StandardzÃ¤hler
 mit |int| als Datentyp.
 */
 

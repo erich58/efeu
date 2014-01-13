@@ -4,7 +4,7 @@
 # $Synopsis
 # <=[=> include $1 <=]=>
 #
-# $Copyright (C) 2004 Erich Frühstück
+# $Copyright (C) 2004 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -34,14 +34,14 @@ include dir.smh
 #	:de:Generiert die Datei im Arbeitsverzeichnis <dir>.
 # n |
 #	:*:clears options passed to |mf_rule|.
-#	:de:Löscht die Optionen für |mf_rule|.
+#	:de:LÃ¶scht die Optionen fÃ¼r |mf_rule|.
 # i | A:name | C:name |
 #	:*:These flages are passed to |mf_rule|. They determines
 #	the names of the phony targets for creating/cleaning.
 #	The |-a| flag of |mf_rule| is predefined.
 #	See \mref\{rule.smh(7)\} for details.
 #	:de:Diese Flags werden an |mf_rule| weitergereicht. Sie
-#	bestimmen die Namen der Scheinziele zum Generieren/Aufräumen.
+#	bestimmen die Namen der Scheinziele zum Generieren/AufrÃ¤umen.
 #	Das |-a| Flag von |mf_rule| ist vordefiniert.
 #	Vergleiche dazu \mref\{rule.smh(7)\}.
 # v |
@@ -49,7 +49,7 @@ include dir.smh
 #	:de:Kommandos beim aktualisieren eines Zieles ausgeben.
 # m:mode |
 #	:*:sets the permissions of target to the given mode <mode>.
-#	:de:setzt die Zugriffsrechte für das Ziel entsprechend von <mode>.
+#	:de:setzt die Zugriffsrechte fÃ¼r das Ziel entsprechend von <mode>.
 # /%*=*/%name=repl |
 #	:*:substituten rule, passed to |mf_rule|.
 #	See \mref\{rule.smh(7)\} for details.
@@ -58,7 +58,7 @@ include dir.smh
 #	Vergleiche dazu \mref\{rule.smh(7)\}.
 # x |
 #	:*:is an abbreviation for |-m a+x|.
-#	:de:ist eine Abkürzung für |-m a+x|.
+#	:de:ist eine AbkÃ¼rzung fÃ¼r |-m a+x|.
 # :tg |
 #	:*:is the name of the target file.
 #	:de:ist der Name der Zieldatei
@@ -68,7 +68,7 @@ include dir.smh
 #	unten.
 # ::args(s) |
 #	:*:specifies additional arguments/filters to <cmd>, see below.
-#	:de:definiert zusätzliche Argumente/Filter zur Erzeugung der Zieldatei,
+#	:de:definiert zusÃ¤tzliche Argumente/Filter zur Erzeugung der Zieldatei,
 #	siehe weiter unten.
 # !
 # :*:
@@ -81,9 +81,9 @@ include dir.smh
 # :de:
 # Die Funktion $! erzeugt eine Regel zur Aktualisierung der Datei <tg> mit dem
 # Kommando <cmd> und den angegebenen Argumenten.
-# Das Ziel wird dabei temporär erstellt und mit der aktuellen
-# Version verglichen. Bei einer Veränderung wird die Zieldatei
-# überschrieben. Vergleiche dazu untenstehendes Beispiel.
+# Das Ziel wird dabei temporÃ¤r erstellt und mit der aktuellen
+# Version verglichen. Bei einer VerÃ¤nderung wird die Zieldatei
+# Ã¼berschrieben. Vergleiche dazu untenstehendes Beispiel.
 # Die folgenden Argumente werden akzeptiert:
 #
 # @arglist

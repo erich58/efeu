@@ -1,6 +1,6 @@
 #	message file for shmkmf
-#	$Copyright (C) 2005 Erich Frühstück
-#	A-3423 St.Andrä/Wördern, Wildenhaggasse 38
+#	$Copyright (C) 2005 Erich FrÃ¼hstÃ¼ck
+#	A-3423 St.AndrÃ¤/WÃ¶rdern, Wildenhaggasse 38
 
 *	Do not edit, file was created with\\n# %s
 de	Nicht editieren, Datei wurde mit\\n# %s\\n# generiert.
@@ -13,13 +13,13 @@ de	Definitionsfile "%s" nicht definiert.
 de	Aufgeschobene Regeln:
 
 *	Rules added by %s
-de	Von %s ergänzte Regeln:
+de	Von %s ergÃ¤nzte Regeln:
 
 *	Creation of %s aborted.
 de	Die Generierung vom %s wurde abgebrochen.
 
 *	abortion: %s deleted.
-de	Abbruch: %s gelöscht.
+de	Abbruch: %s gelÃ¶scht.
 
 *	file %s not found (Path=%s).
 de	Datei %s nicht gefunden (Path=%s).
@@ -28,4 +28,4 @@ de	Datei %s nicht gefunden (Path=%s).
 de	Funktion %s: Falsche Zahl an Argumenten.
 
 *	function %s: invalid option %s.
-de	Funktion %s: Ungültige Option %s.
+de	Funktion %s: UngÃ¼ltige Option %s.

@@ -3,7 +3,7 @@
 :de:Ausgabefunktionen
 
 $Header	<$1>
-$Copyright (C) 1997 Erich Frühstück
+$Copyright (C) 1997 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -30,18 +30,18 @@ If not, write to the Free Software Foundation, Inc.,
 /*
 Die Funktion |$1| dient zur Konstruktion von
 Ausgabefunktionen.
-Die Eingabestruktur <def> enthält die
-einzelnen Definitionszeilen für den Funktionsrumpf.
-Das Argument <fname> ist der Name, der für die
+Die Eingabestruktur <def> enthÃ¤lt die
+einzelnen Definitionszeilen fÃ¼r den Funktionsrumpf.
+Das Argument <fname> ist der Name, der fÃ¼r die
 Ausgabestruktur eingesetzt wird.
-Das Argument <vardef> enthält eine Formatdefinition zur Aufbereitung
+Das Argument <vardef> enthÃ¤lt eine Formatdefinition zur Aufbereitung
 des Datenwertes einer Definitionszeile.
-Die Variable <in_switch> wird für einen rekursiven
+Die Variable <in_switch> wird fÃ¼r einen rekursiven
 Aufruf von |$1| innerhalb eines Switch-Bereichs
-benötigt.
+benÃ¶tigt.
 
-Falls der Rückgabewert verschieden von 0 ist, empfiehlt sich
-aus rein optischen Gründen das Einfügen einer Leerzeile in den
+Falls der RÃ¼ckgabewert verschieden von 0 ist, empfiehlt sich
+aus rein optischen GrÃ¼nden das EinfÃ¼gen einer Leerzeile in den
 Funktionsrumpf.
 */
 
@@ -202,8 +202,8 @@ int Function::pfbody & (IO def, str fname, str vardef, bool in_switch = false)
 
 /*
 Die Funktion |$1| erzeugt eine einfache Ausgabefunktionen mit
-Rückgabetype und Namen <name>, einer IO-Struktur mit Namen |out| als erstes
-Argument und den zusätzlichen Variablen <args>.
+RÃ¼ckgabetype und Namen <name>, einer IO-Struktur mit Namen |out| als erstes
+Argument und den zusÃ¤tzlichen Variablen <args>.
 */
 
 void PrintFunc (str name, str args, IO def, ...)
@@ -216,17 +216,17 @@ void PrintFunc (str name, str args, IO def, ...)
 /*
 $Description
 \shead	Syntax
-Die einzelnen Definitionszeilen bestehen aus einem Schlüsselwort <key>
-und einem Formatstring <fmt>. Soll das Schlüsselwort Leerzeichen oder
-Tabulatoren enthalten, müssen diese mit einem Backslash markiert
+Die einzelnen Definitionszeilen bestehen aus einem SchlÃ¼sselwort <key>
+und einem Formatstring <fmt>. Soll das SchlÃ¼sselwort Leerzeichen oder
+Tabulatoren enthalten, mÃ¼ssen diese mit einem Backslash markiert
 werden.
-Der Formatstring beginnt beim ersten nichtweißen Zeichen nach
-dem Schlüsselwort und kann beliebig viele Leerzeichen oder Tabulatoren
+Der Formatstring beginnt beim ersten nichtweiÃŸen Zeichen nach
+dem SchlÃ¼sselwort und kann beliebig viele Leerzeichen oder Tabulatoren
 enthalten.
-Die Befehlszeilen können beliebig eingerückt werden.
+Die Befehlszeilen kÃ¶nnen beliebig eingerÃ¼ckt werden.
 
 Befehlszeilen, die mit einem Klammeraffen beginnen, dienen
-zur Konstruktion von Testblöcken und Switch-Anweisungen.
+zur Konstruktion von TestblÃ¶cken und Switch-Anweisungen.
 [|@if|]
 	leitet einen Testblock ein. Der Formatstring definiert
 	den Testausdruck.
@@ -234,7 +234,7 @@ zur Konstruktion von Testblöcken und Switch-Anweisungen.
 	definiert eine Alternative (optional). Der Formatstring definiert
 	den Testausdruck.
 [|@else|]
-	definiert die sonstigen Fälle (optional).
+	definiert die sonstigen FÃ¤lle (optional).
 [|@end|]
 	beendet einen Testblock oder eine Switch-Anweisung.
 
@@ -242,22 +242,22 @@ zur Konstruktion von Testblöcken und Switch-Anweisungen.
 	leitet ein Switch-Anweisung ein. Der Formatstring definiert
 	den Schaltwert.
 [|@case|]
-	definiert eine spezielle Ausprägung.
+	definiert eine spezielle AusprÃ¤gung.
 [|@default|]
-	definiert die sonstigen Fälle in der Switch-Anweisung.
+	definiert die sonstigen FÃ¤lle in der Switch-Anweisung.
 
 Bei allen anderen Zeilen definiert der Formatstring die Befehlszeile
-im Funktionsrumpf und das Schlüsselwort den Datenwert.
+im Funktionsrumpf und das SchlÃ¼sselwort den Datenwert.
 Dabei gelten folgende Regeln:
-*	Bei einem Punkt als Schlüsselwert wird der Datenwert auf NULL gesetzt.
-	(Platzhalter, wenn kein Datenwert benötigt wird)
+*	Bei einem Punkt als SchlÃ¼sselwert wird der Datenwert auf NULL gesetzt.
+	(Platzhalter, wenn kein Datenwert benÃ¶tigt wird)
 *	Falls <vardef> verschieden von Null ist, wird
 	Parametersubstitution auf <vardef> angewendet, wobei Register 1
-	mit dem Schlüsselwort belegt wird.
-*	Ansonsten wird Parametersubstitution auf das Schlüsselwort
+	mit dem SchlÃ¼sselwort belegt wird.
+*	Ansonsten wird Parametersubstitution auf das SchlÃ¼sselwort
 	angewendet.
 
-Das erste Zeichen im Formatstring gilt als Steuerzeichen und gehört
+Das erste Zeichen im Formatstring gilt als Steuerzeichen und gehÃ¶rt
 nicht zum eigentlichen Format.
 [|\$|]
 	Der Datenwert wird mit Parametersubstitution im Format
@@ -271,16 +271,16 @@ nicht zum eigentlichen Format.
 [|#|]
 	Die Ausgabe erfolgt mit |io_xprintf|
 [|?|]
-	Der Datenwert liefert einen Testausdruck, das Format muß
+	Der Datenwert liefert einen Testausdruck, das Format muÃŸ
 	von der Form |"|<str1>|" : "|<str2>|"| , |'|<a>|' : '|<b>|'| oder
 	<fmt1>|:|<fmt2> sein. Im letzten Fall kann |:| <fmt2>
 	entfallen (wird durch NULL ersetzt) und <fmt1> bzw. <fmt2>
 	wird mit |io_xprintf| ausgegeben. Der Datenwert kann eingebaut
-	werden! Achtung: Leerzeichen gehören zum jeweiligen Format.
+	werden! Achtung: Leerzeichen gehÃ¶ren zum jeweiligen Format.
 [|=|]
 	Das Format besteht aus einer Liste von Strings, der Datenwert bestimmt
 	den Index (beginnend bei 0). Der erste String ist Vorgabewert
-	für Indexwerte außerhalb des zulässigen Bereichs.
+	fÃ¼r Indexwerte auÃŸerhalb des zulÃ¤ssigen Bereichs.
 
 Beginnt das Format mit keinem dieser Zeichen, wird der Datenwert mit
 Parametersubstitution eingebaut und das Resultat liefert den Ausdruck

@@ -4,7 +4,7 @@
 
 $Header	<EFEU/$1>
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -29,7 +29,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/procenv.h>
 #include <EFEU/io.h>
 
-extern char *ApplPath;		/* Suchpfad für Hilfsdateien */
+extern char *ApplPath;		/* Suchpfad fÃ¼r Hilfsdateien */
 
 /*	Hilfsdateitypen
 */

@@ -1,8 +1,8 @@
 /*
-:de:Vektoren bezüglich gleicher Einträge reduzieren
+:de:Vektoren bezÃ¼glich gleicher EintrÃ¤ge reduzieren
 :en:reduce array regarding to uniq entries
 
-$Copyright (C) 2006 Erich Frühstück
+$Copyright (C) 2006 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -25,8 +25,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/memalloc.h>
 
 /*
-Die Funktion |$1| reduziert den Vektor <base> der Größe <dim>
-bezüglich gleicher Einträge.
+Die Funktion |$1| reduziert den Vektor <base> der GrÃ¶ÃŸe <dim>
+bezÃ¼glich gleicher EintrÃ¤ge.
 */
 
 size_t vuniq (void *base, size_t dim, size_t size,

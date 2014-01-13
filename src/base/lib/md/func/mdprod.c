@@ -1,5 +1,5 @@
 /*	Produktmatrix generieren
-	(c) 1997 Erich Frühstück
+	(c) 1997 Erich FrÃ¼hstÃ¼ck
 */
 
 #include <EFEU/mdmat.h>

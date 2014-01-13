@@ -1,17 +1,17 @@
 \sec	Kontrollstrukturen
 
 Mithilfe der Befehle \index{|\if|}, \index{|\else|} und
-\index{|endif|} ist eine \index{bedingte Verarbeitung} möglich.
-Nach |\if| kommt ein esh-Ausdruck für den
-die gleichen Syntaxregeln wie für die Makrodefinitionen gelten.
-Ist der Ausdruck wahr, wird alles bis zu Schlüsselwort |\else|,
+\index{|endif|} ist eine \index{bedingte Verarbeitung} mÃ¶glich.
+Nach |\if| kommt ein esh-Ausdruck fÃ¼r den
+die gleichen Syntaxregeln wie fÃ¼r die Makrodefinitionen gelten.
+Ist der Ausdruck wahr, wird alles bis zu SchlÃ¼sselwort |\else|,
 ansonsten alles nach |\else| verarbeitet. Der Testbereich endet
-bei |\endif|. Das Schlüsselwort |\else| kann entfallen.
+bei |\endif|. Das SchlÃ¼sselwort |\else| kann entfallen.
 
-Testblöcke können beliebig verschachtelt werden. Eingabebereiche
-innerhalb eines Testblocks werden unverändert übernommen.
+TestblÃ¶cke kÃ¶nnen beliebig verschachtelt werden. Eingabebereiche
+innerhalb eines Testblocks werden unverÃ¤ndert Ã¼bernommen.
 
 Der Textmakro |@if| mit den drei Argumenten <expr>, <ifpart> und
-<elsepart> stellt einen bedingten Ausdruck dar. Er kann für
+<elsepart> stellt einen bedingten Ausdruck dar. Er kann fÃ¼r
 einfachere Testabfragen verwendet werden.
 

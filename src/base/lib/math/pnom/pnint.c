@@ -1,7 +1,7 @@
 /*
-Stammfunktion eines stückweisen Polynoms
+Stammfunktion eines stÃ¼ckweisen Polynoms
 
-$Copyright (C) 1991 Erich Frühstück
+$Copyright (C) 1991 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -25,7 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 Polynom *pnint(Polynom *p0, double x, double y)
 {
 	Polynom *p;	/* Polynomstruktur */
-	int i, j;	/* Hilfszähler */
+	int i, j;	/* HilfszÃ¤hler */
 	double z;	/* Hilfsvariable */
 
 /*	Nullpolynom

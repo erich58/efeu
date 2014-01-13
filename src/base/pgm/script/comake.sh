@@ -2,7 +2,7 @@
 # :*:calling make in corresponding build directory
 # :de:Make im korriespondierenden build-Verzeichnis aufrufen
 #
-# $Copyright (C) 2008 Erich Frühstück
+# $Copyright (C) 2008 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -31,7 +31,7 @@
 # n|
 #	:*:Print  the  commands  that  would  be executed, but do not execute
 #	them. This Option is passed through to make.
-#	:de:Aktionen nur Anzeigen und nicht durchführen. Diese Option wird an
+#	:de:Aktionen nur Anzeigen und nicht durchfÃ¼hren. Diese Option wird an
 #	make weitergereicht.
 # s:dir|
 #	:*:run make in the subdirectory <dir> of the top directory.
@@ -91,7 +91,7 @@ do
 done
 
 if [ "$name" != "src" ]; then
-	echo "Aufruf außerhalb des src-Zweiges!"
+	echo "Aufruf auÃŸerhalb des src-Zweiges!"
 	exit 1;
 fi
 

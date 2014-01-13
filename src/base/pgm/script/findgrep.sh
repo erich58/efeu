@@ -2,7 +2,7 @@
 # :*:search pattern in files of directories
 # :de:Dateien eines Verzeichnisses nach Mustern durchsuchen.
 #
-# $Copyright (C) 2001 Erich Frühstück
+# $Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -56,10 +56,10 @@ esac
 # The grep options are passed through and not checked.
 # :de:
 # Das Kommando |\$!| stellt mit |find| eine Liste von Dateien
-# zusammen, die anschließend mit |grep| nach dem Muster <Muster>
-# durchsucht werden. Damit der Umgebungspeicher nicht überläuft, wird
+# zusammen, die anschlieÃŸend mit |grep| nach dem Muster <Muster>
+# durchsucht werden. Damit der Umgebungspeicher nicht Ã¼berlÃ¤uft, wird
 # |xargs| zum Aufruf von |grep| verwendet.
-# Die grep-Optionen werden nicht geprüft, sondern nur durchgeschleußt.
+# Die grep-Optionen werden nicht geprÃ¼ft, sondern nur durchgeschleuÃŸt.
 #
 # :*:
 # Find is called with the flags |-type f| and |-print|.
@@ -67,8 +67,8 @@ esac
 # This allows to handle files with special characters like spaces.
 # :de:
 # Find wird automatisch mit den Flags |-type f| und |-print| aufgerufen.
-# Falls find |-print0| ünterstützt, wird diese Option anstelle von |-print|
-# verwendet. Daduch können auch Dateien mit Leerzeichen und anderen
+# Falls find |-print0| Ã¼nterstÃ¼tzt, wird diese Option anstelle von |-print|
+# verwendet. Daduch kÃ¶nnen auch Dateien mit Leerzeichen und anderen
 # Sonderzeichen im Namen verarbeitet werden.
 
 # $SeeAlso

@@ -1,7 +1,7 @@
 # :*:common options of EFEU-commands
-# :de:Basisoptionen für EFEU-Kommandos
+# :de:Basisoptionen fÃ¼r EFEU-Kommandos
 
-# Copyright (C) 2001 Erich Frühstück
+# Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # This library is free software; you can redistribute it and/or
@@ -33,20 +33,20 @@ Copyright
 	:de:Copyright-Informationen
 Debug = note
 	:*:debug level for messages
-	:de:Debug-Level für Meldungsausgabe
+	:de:Debug-Level fÃ¼r Meldungsausgabe
 GZIP = "-n1"
 	:*:compression mode for gzip
-	:de:Komprimierungsgrad für gzip
+	:de:Komprimierungsgrad fÃ¼r gzip
 
 # :*:dummy entries for direct evaluated environments
-# :de:Dummy-Einträge für direkt abgefragte Umgebungsvariablen
+# :de:Dummy-EintrÃ¤ge fÃ¼r direkt abgefragte Umgebungsvariablen
 
 @APPLPATH|
 	:*:path for configuration files.
-	:de:definiert zusätzliche Verzeichnisse für Konfigurationsdateien.
+	:de:definiert zusÃ¤tzliche Verzeichnisse fÃ¼r Konfigurationsdateien.
 @LANG|
 	:*:locale information
-	:de:bestimmt die Sprache für Meldungen und Hilfetexte.
+	:de:bestimmt die Sprache fÃ¼r Meldungen und Hilfetexte.
 
 :config help
 
@@ -55,7 +55,7 @@ GZIP = "-n1"
 
 -info::entry|:info; :exit 0
 	:*:show command information
-	:de:listet verfügbare Informationseinträge des Kommandos auf.
+	:de:listet verfÃ¼gbare InformationseintrÃ¤ge des Kommandos auf.
 
 # :*:debug-level
 # :de:Debug-Modus
@@ -63,7 +63,7 @@ GZIP = "-n1"
 -debug::mode[.debug]|Debug
 	:*:set debug level for command
 	See \mref{LogConfig(3)} for details.
-	:de:setzt den Protokollmodus für das Kommando.
+	:de:setzt den Protokollmodus fÃ¼r das Kommando.
 	Vergleiche dazu \mref{LogConfig(3)}.
 
 -verbose|Debug = .info

@@ -1,7 +1,7 @@
 /*
-Auswertungsfunktionen für Kommandoparameter abfragen/definieren
+Auswertungsfunktionen fÃ¼r Kommandoparameter abfragen/definieren
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -33,7 +33,7 @@ static void setup_builtin (void);
 
 /*
 Die Funktion |$1| liefert die durch <name> definierte
-Auswertungsfunktion für Befehlszeilenparameter.
+Auswertungsfunktion fÃ¼r Befehlszeilenparameter.
 */
 
 CmdParEval *CmdParEval_get (const char *name)
@@ -43,7 +43,7 @@ CmdParEval *CmdParEval_get (const char *name)
 }
 
 /*
-Die Funktion |$1| erweitert die Auswertungsfunktionen für
+Die Funktion |$1| erweitert die Auswertungsfunktionen fÃ¼r
 Befehlszeilenparameter mit <def>.
 */
 
@@ -78,7 +78,7 @@ static int show_fmt (const char *name, void *data, void *ptr)
 }
 
 /*
-Die Funktion |$1| listet die Auswertungsfunktionen für
+Die Funktion |$1| listet die Auswertungsfunktionen fÃ¼r
 Befehlszeilenparameter auf.
 */
 
@@ -257,8 +257,8 @@ static CmdParEval builtin[] = {
 	 { "lset", "Wert mit Sprachfilter setzen", f_lset },
 	 { "vset", "Wert mit Variable als Format setzen", f_vset },
 	 { "message", "Meldung ausgeben", f_message },
-	 { "insert", "Argument mit Trennzeichen einfügen", f_insert },
-	 { "append", "Argument mit Trennzeichen anhängen", f_append },
+	 { "insert", "Argument mit Trennzeichen einfÃ¼gen", f_insert },
+	 { "append", "Argument mit Trennzeichen anhÃ¤ngen", f_append },
 	 { "config", "Konfigurationsdatei laden", f_config },
 	 { "usage", "Aufrufverwendung generieren", f_usage },
 	 { "manpage", "Handbucheintrag generieren", f_manpage },

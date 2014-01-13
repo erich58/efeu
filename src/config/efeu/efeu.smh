@@ -1,10 +1,10 @@
 # :*:tools to create makefiles for EFEU projects
-# :de:Hilfsfunktionen zur Makefilegenerierung für EFEU-Projekte
+# :de:Hilfsfunktionen zur Makefilegenerierung fÃ¼r EFEU-Projekte
 #
 # $Synopsis
 # include $1
 #
-# $Copyright (C) 2004 Erich Frühstück
+# $Copyright (C) 2004 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -48,13 +48,13 @@ mf_var -n EFX_LIB '-lefx $(EFM_LIB) -lm'
 # $Description
 # :de:
 # Durch Einbinden der Headerdatei |$1| werden eine Reihe von
-# Funktionen zur Makefilegenerierung für EFEU-Projekte vordefiniert.
+# Funktionen zur Makefilegenerierung fÃ¼r EFEU-Projekte vordefiniert.
 # \par
-# Die Grundregeln werden um das zusätzliche Scheinziel |files| erweitert.
+# Die Grundregeln werden um das zusÃ¤tzliche Scheinziel |files| erweitert.
 # Dieses dient zur Installation von generierten Sourcen. Sowohl |all|
-# als auch |depend| hängen von |files| ab. Alle für |files|
+# als auch |depend| hÃ¤ngen von |files| ab. Alle fÃ¼r |files|
 # eingetragenen Ziele werden damit bereits bei der Makefilegenerierung 
-# im Zuge der Abhängigkeitsermittlung erzeugt.
+# im Zuge der AbhÃ¤ngigkeitsermittlung erzeugt.
 # \par
 # Die Funktion |mf_srclist| zur Generierung einer Dateiliste wird
 # automatisch aufgerufen. Anstelle von |find| werden die Dateien mit
@@ -69,9 +69,9 @@ fi
 
 # $Description
 # :de:
-# Für Konfigurations-, Hilfetext- und Formatdateien 
+# FÃ¼r Konfigurations-, Hilfetext- und Formatdateien 
 # werden automatisch Regeln zu ihrer Installation erzeugt.
-# Nachstehnde Tabelle zeigt die Vorgaben für die Installation:
+# Nachstehnde Tabelle zeigt die Vorgaben fÃ¼r die Installation:
 # \par
 # \tab	|l|l|
 # ---
@@ -89,7 +89,7 @@ fi
 # Hier ist |APPLDIR| mit |\$TOP/lib/efeu| vordefiniert, wobei |TOP| auf das
 # Hauptverzeichnis der |efeu|-Installation verweist. Falls |APPLDIR| auf
 # einen leeren String gesetzt wird, erfolgt keine Installation der Dateien.
-# Die Regeln werden am Ende des Makefiles eingefügt.
+# Die Regeln werden am Ende des Makefiles eingefÃ¼gt.
 
 APPLDIR=$TOP/lib/efeu
 
@@ -130,15 +130,15 @@ fi
 #	:de:Name der Schablonendatei.
 # *args |
 #	:*:additional arguments for |mf_cc| to compile sources.
-#	:de:zusätzliche Argumente für |mf_cc| zum kompilieren der
+#	:de:zusÃ¤tzliche Argumente fÃ¼r |mf_cc| zum kompilieren der
 #	Sourcen.
 # !
 # :*:
 # The following options and arguments are accepted by $!:
 # :de:
-# Die Funktion $! erzeugt Regeln für mit |mksource| generierte Dateien.
-# Die generierten Dateien werden für das Scheinziel |files| eingetragen.
-# Für die generierten Sourcefiles werden mithilfe von |mf_cc| auch Regeln zur
+# Die Funktion $! erzeugt Regeln fÃ¼r mit |mksource| generierte Dateien.
+# Die generierten Dateien werden fÃ¼r das Scheinziel |files| eingetragen.
+# FÃ¼r die generierten Sourcefiles werden mithilfe von |mf_cc| auch Regeln zur
 # Kompilierung erzeugt.
 # \par
 # Die folgenden Optionen und Argumente werden von $! akzeptiert:
@@ -195,7 +195,7 @@ efeu_gensrc ()
 # $alias
 # $pconfig !
 # t:top |
-#	definiert das Hauptverzeichniss für die Installation, die
+#	definiert das Hauptverzeichniss fÃ¼r die Installation, die
 #	Vorgabe ist |TOP| von |shmkmf|.
 # h:sub |
 #	installiert Headerdateien in <top>|/include/|<sub>.
@@ -204,21 +204,21 @@ efeu_gensrc ()
 # L:path |
 #	installiert die Programmbibliothek in <path>.
 # c |
-#	erzeugt Installationsregeln für konfigurierbare Headerdateien
+#	erzeugt Installationsregeln fÃ¼r konfigurierbare Headerdateien
 #	(Filezusatz |.hcfg|).
 # u |
 #	erzeugt Erneuerungsregeln anstelle von Installationsregeln
-#	für konfigurierbare Headerdateien.
+#	fÃ¼r konfigurierbare Headerdateien.
 # r:hdr |
-#	erzeugt Installationsregeln für konfigurierbare Headerdateien
+#	erzeugt Installationsregeln fÃ¼r konfigurierbare Headerdateien
 #	(Filezusatz |.hcfg|) unter Verwendung der Regeldatei <hdr>.
 # x |
-#	ruft |mf_gensrc| für alle verfügbaren Schablonendateien auf.
+#	ruft |mf_gensrc| fÃ¼r alle verfÃ¼gbaren Schablonendateien auf.
 # :name |
 #	Name der Programmbibliothek
 # *args |
 #	:*:additional arguments for |mf_cc| to create libraries.
-#	:de:zusätzliche Argumente für |mf_cc| zum Generieren der
+#	:de:zusÃ¤tzliche Argumente fÃ¼r |mf_cc| zum Generieren der
 #	Bibliothek.
 # !
 # :*:
@@ -232,9 +232,9 @@ efeu_gensrc ()
 # @arglist
 #
 # :de:
-# Wurde kein Installationsverzeichnis für Headerdateien angegeben,
+# Wurde kein Installationsverzeichnis fÃ¼r Headerdateien angegeben,
 # wird <top>|/include| verwendet, wurde kein Installationsverzeichnis
-# für die Programmbibliothek angegeben, wird <top>|/lib| verwendet.
+# fÃ¼r die Programmbibliothek angegeben, wird <top>|/lib| verwendet.
 
 efeu_library ()
 {(
@@ -299,37 +299,37 @@ efeu_library ()
 #	verwende |DEP_|<name> und |LIB_|<name> als Variablennamen
 #	anstelle von |DEP_LIST| und |LIB_LIST|.
 # L:path | 
-#	setzt das aktuelle Verzeichnis <ldir> für Programmbibliotheken auf
+#	setzt das aktuelle Verzeichnis <ldir> fÃ¼r Programmbibliotheken auf
 #	<path> und erweitert die Link-Flags um |-L|<path>.
 # l:name |
 #	erweitert die Link-Flags um |-l|<name>. Der Name <name> kann
-#	unmittelbatan die Option angehängt wrrden.
+#	unmittelbatan die Option angehÃ¤ngt wrrden.
 # xd:dep |
-#	erweitert die Abhängigkeiten um <dep>.
+#	erweitert die AbhÃ¤ngigkeiten um <dep>.
 # md:name |
-#	ist eine Abkürzung für |-xd '$$(|<name>|)'|.
+#	ist eine AbkÃ¼rzung fÃ¼r |-xd '$$(|<name>|)'|.
 # xl:flag |
 #	erweitert die Link-Flags mit <flag>.
 # ml:name |
-#	ist eine Abkürzung für |-xl '$$(|<name>|)'|.
+#	ist eine AbkÃ¼rzung fÃ¼r |-xl '$$(|<name>|)'|.
 # s:name |
-#	Erweitert die Abhängigkeiten um |'$$(DEP_|<name>|)'| und die
+#	Erweitert die AbhÃ¤ngigkeiten um |'$$(DEP_|<name>|)'| und die
 #	Link Flags um |'$$(LIB_|<name>|)'|, entspricht
 #	|-md DEP_|<name> |-ml LIB_|<name>
 # sl:name |
 #	Erweitert die Link Flags um |'$$(LIB_|<name>|)'|, entspricht
 #	|-ml LIB_|<name>
 # //name |
-#	Erweitert die Abhängigkeiten um <ldir>|/lib<name>|<sfx> und die
-#	Link-Flags um |-l|<name>. Der Zusatz <sfx> hängt davon ab, ob das
-#	system gemeinsam genutzte Bibliotheken unterstützt oder nut statische
-#	Bibliotheken verfügbar sind.
+#	Erweitert die AbhÃ¤ngigkeiten um <ldir>|/lib<name>|<sfx> und die
+#	Link-Flags um |-l|<name>. Der Zusatz <sfx> hÃ¤ngt davon ab, ob das
+#	system gemeinsam genutzte Bibliotheken unterstÃ¼tzt oder nut statische
+#	Bibliotheken verfÃ¼gbar sind.
 # !
 # :*:
 # The following options and arguments are accepted by $!:
 # :de:
 # Die Funktion $! generiert aus Bibliotheksnamen Variablen mit
-# Anhängigkeitsnamen und Link-Flags.
+# AnhÃ¤ngigkeitsnamen und Link-Flags.
 # \par
 # Die folgenden Optionen und Argumente werden von $! akzeptiert:
 #
@@ -392,22 +392,22 @@ efeu_libvar ()
 # $alias
 # $pconfig !
 # t:top |
-#	definiert das Hauptverzeichniss für die Installation, die
+#	definiert das Hauptverzeichniss fÃ¼r die Installation, die
 #	Vorgabe ist |TOP| von |shmkmf|.
 # c |
-#	erzeugt Installationsregeln für konfigurierbare Headerdateien
+#	erzeugt Installationsregeln fÃ¼r konfigurierbare Headerdateien
 #	(Filezusatz |.hcfg|).
 # u |
 #	erzeugt Erneuerungsregeln anstelle von Installationsregeln
-#	für konfigurierbare Headerdateien.
+#	fÃ¼r konfigurierbare Headerdateien.
 # b:bin |
 #	installiert das Programm im Verzeichnis <bin>.
 # x |
-#	ruft |mf_gensrc| für alle verfügbaren Schablonendateien auf.
+#	ruft |mf_gensrc| fÃ¼r alle verfÃ¼gbaren Schablonendateien auf.
 # :name |
 #	Name des Programms
 # *args |
-#	zusätzliche Argumente werden an |efeu_libvar| übergeben.
+#	zusÃ¤tzliche Argumente werden an |efeu_libvar| Ã¼bergeben.
 # !
 # :*:
 # The following options and arguments are accepted by $!:
@@ -455,7 +455,7 @@ efeu_stdprog ()
 # $pconfig !
 # d |
 #	:*:delete an existing note file. No rule is generated.
-#	:de:Löscht eine bestehende Anmerkungsdatei. Es wird keine
+#	:de:LÃ¶scht eine bestehende Anmerkungsdatei. Es wird keine
 #	Regel generiert.
 # :name |
 # 	:*:Name of note file, default is basename of source directory
@@ -527,8 +527,8 @@ esac
 # It is used on commenting restrictions or problems.
 # :de:
 # Die Funktion $! generiert eine Anmerkungsdatei falls der
-# Testausdruck fehlschlägt.
-# Sie wird zur Kommentierunmg von Einschränkungen oder Problemen verwendet.
+# Testausdruck fehlschlÃ¤gt.
+# Sie wird zur Kommentierunmg von EinschrÃ¤nkungen oder Problemen verwendet.
 #
 # @arglist
 
@@ -561,7 +561,7 @@ efeu_test ()
 # $alias
 # $pconfig !
 # l:lang |
-#	definiert die Sprachen für die die Dokumentation generiert werden
+#	definiert die Sprachen fÃ¼r die die Dokumentation generiert werden
 #	soll.
 # H::hdr |
 #	:*:this option is passed to |efeudoc|.
@@ -644,15 +644,15 @@ esac
 # $alias
 # $pconfig !
 # l:lang |
-#	definiert die Sprachen, für die das Handbuch generiert werden
+#	definiert die Sprachen, fÃ¼r die das Handbuch generiert werden
 #	soll.
 # s:sec |
-#	gibt den Abschnitt für die Handbucheinträge vor.
+#	gibt den Abschnitt fÃ¼r die HandbucheintrÃ¤ge vor.
 # !
 # :*:
 # The following options and arguments are accepted by $!:
 # :de:
-# Die Funktion $! installiert Handbucheinträge.
+# Die Funktion $! installiert HandbucheintrÃ¤ge.
 # \par
 # Die folgenden Optionen und Argumente werden von $! akzeptiert:
 #

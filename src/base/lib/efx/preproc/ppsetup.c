@@ -1,7 +1,7 @@
 /*
 Eingabe - Preprozessor
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -37,7 +37,7 @@ char *IncPath = NULL;
 static EfiVarDef pp_var[] = {
 	{ "IncPath",	&Type_str, &IncPath,
 		":*:search path for header files\n"
-		":de:Suchpfad für Headerdateien\n"},
+		":de:Suchpfad fÃ¼r Headerdateien\n"},
 };
 
 #define	RVIO	Val_io(rval)

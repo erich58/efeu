@@ -1,10 +1,10 @@
 /*
-EDB-Datenbank auszählen
+EDB-Datenbank auszÃ¤hlen
 
-$Copyright (C) 2007 Erich Frühstück
-A-3423 St.Andrä/Wördern, Wildenhaggasse 38
+$Copyright (C) 2007 Erich FrÃ¼hstÃ¼ck
+A-3423 St.AndrÃ¤/WÃ¶rdern, Wildenhaggasse 38
 */
 
 1	$!: Unbekannter Datentyp $(Type:%#s).\n
-2	$!: Unbekannter Zähler $(Counter:%#s).\n
+2	$!: Unbekannter ZÃ¤hler $(Counter:%#s).\n
 3	$!: Unbekannte Auswertungsdefinition $(Eval:%#s).\n

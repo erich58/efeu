@@ -3,7 +3,7 @@ EFEU-Datenbank
 
 $Header <EFEU/$1>
 
-$Copyright (C) 2004 Erich Frühstück
+$Copyright (C) 2004 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -37,19 +37,19 @@ extern LogControl *edb_info;
 extern LogControl *edb_debug;
 
 typedef struct {
-	REFVAR;		/* Referenzzähler */
+	REFVAR;		/* ReferenzzÃ¤hler */
 	char *head;	/* Initialisierungsdefinition */
 	char *desc;	/* Beschreibungstext */
 	EfiObj *obj;	/* Datenobjekt */
 
-	int save;	/* Flag für Zurückschreiben */
+	int save;	/* Flag fÃ¼r ZurÃ¼ckschreiben */
 	void *ipar;	/* Eingabeparameter */
 	int (*read) (EfiType *type, void *data, void *par);
-	size_t nread;	/* Zahl der gelesenen Datensätze */
+	size_t nread;	/* Zahl der gelesenen DatensÃ¤tze */
 
 	void *opar;	/* Ausgabeparameter */
 	size_t (*write) (EfiType *type, void *data, void *par);
-	size_t nwrite;	/* Zahl der geschriebenen Datensätze */
+	size_t nwrite;	/* Zahl der geschriebenen DatensÃ¤tze */
 } EDB;
 
 EfiType *edb_type (const char *def);

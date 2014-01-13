@@ -2,6 +2,6 @@
 
 Bei Klassifikationen handelt es sich um die Einteilung von Werten eines
 Datentypes in diskrete Gruppen. Als Resultat wird ein Objekt mit
-Aufzählungstyp geliefert. Klassifikationen werden als Komponenten
+AufzÃ¤hlungstyp geliefert. Klassifikationen werden als Komponenten
 eines Datentyps eingetragen. Die Klassifikation  wird jeweils bei der
-Abfrage des Datenobjektes durchgeführt.
+Abfrage des Datenobjektes durchgefÃ¼hrt.

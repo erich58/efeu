@@ -2,7 +2,7 @@
 @synopsis -h
 \Description
 Das Kommando |$!| wird von |shmkmf| zur Bestimmung der
-Abh‰ngigkeiten zwischen einzelnen EFEU-Projekten und zur Ausgabe
+Abh√§ngigkeiten zwischen einzelnen EFEU-Projekten und zur Ausgabe
 der Projektbezeichnungen benutzt.
 
 @arglist -i

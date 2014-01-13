@@ -1,7 +1,7 @@
 /*
-Beschreibungstext durchbl‰ttern
+Beschreibungstext durchbl√§ttern
 
-$Copyright (C) 1998 Erich Fr¸hst¸ck
+$Copyright (C) 1998 Erich Fr√ºhst√ºck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -128,10 +128,10 @@ static MDEF mdef[] = {
 		":de:Info-Eintrag darstellen\n"
 	}, { "dump", mdef_dump,
 		":*:dump info entry\n"
-		":de:INFO-Eintr‰ge ausgeben\n"
+		":de:INFO-Eintr√§ge ausgeben\n"
 	}, { "xdump", mdef_xdump,
 		":*:complete dump of info entries\n"
-		":de:INFO-Eintr‰ge vollst‰ndig ausgeben\n"
+		":de:INFO-Eintr√§ge vollst√§ndig ausgeben\n"
 	}, { "std", mdef_std,
 		":*:use standard browser\n"
 		":de:Verwende den Standardbrowser\n"

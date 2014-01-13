@@ -1,5 +1,5 @@
 # :en: configuration of TCL/TK-libraries
-# :de: Konfiguration für TCL/TK-Bibliotheken
+# :de: Konfiguration fÃ¼r TCL/TK-Bibliotheken
 ##Depends: .
 
 include efeu.smh

@@ -2,7 +2,7 @@
 :*:	determine c-flags for use of external libraries
 :de: 	Bestimmung von C-Flags zur Einbindung externer Bibliotheken
 
-$Copyright (C) 2002 Erich Frühstück
+$Copyright (C) 2002 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or

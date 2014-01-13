@@ -1,7 +1,7 @@
 /*
 Umgebungswechsel
 
-$Copyright (C) 1999 Erich Frühstück
+$Copyright (C) 1999 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -117,7 +117,7 @@ int term_env (void *drv, int flag, va_list list)
 		else	term_pop(trm);
 
 		break;
-/*	Attribute und Anführungen
+/*	Attribute und AnfÃ¼hrungen
 */
 	case DOC_ATT_RM:	term_att(trm, flag, NULL); break;
 	case DOC_ATT_BF:	term_att(trm, flag, term_par.bf); break;

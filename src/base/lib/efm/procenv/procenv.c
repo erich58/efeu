@@ -1,7 +1,7 @@
 /*
 Prozessumgebung
 
-$Copyright (C) 2001 Erich Fr¸hst¸ck
+$Copyright (C) 2001 Erich Fr√ºhst√ºck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -29,7 +29,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/LangDef.h>
 #include <EFEU/locale.h>
 
-/*	Systemabh‰ngige Parameter:
+/*	Systemabh√§ngige Parameter:
 
 S_PGM_SHELL	Standardbefehlsinterpreter
 S_PGM_PAGER	Standardseitenfilter
@@ -39,32 +39,32 @@ S_PGM_PAGER	Standardseitenfilter
 #define S_PGM_PAGER	"|less -r"
 
 /*
-Die Variable |$1| enth‰lt den Verzeichnisnamen (falls bekannt) des Programms.
+Die Variable |$1| enth√§lt den Verzeichnisnamen (falls bekannt) des Programms.
 */
 
 char *ProgDir = NULL;
 
 /*
-Die Variable |$1| enth‰lt den Basisnamen des Kommandos.
+Die Variable |$1| enth√§lt den Basisnamen des Kommandos.
 */
 
 char *ProgName = NULL;
 
 /*
-Die Variable |$1| enth‰lt die Kommandoidentifikation.
+Die Variable |$1| enth√§lt die Kommandoidentifikation.
 Sie unterscheidet sich im Normalfall nicht von |ProgName|.
 */
 
 char *ProgIdent = NULL;
 
 /*
-Die Variable |$1| enth‰lt den Namen der Shell f¸r Unterprozesse.
+Die Variable |$1| enth√§lt den Namen der Shell f√ºr Unterprozesse.
 */
 
 char *Shell = S_PGM_SHELL;
 
 /*
-Die Variable |$1| enth‰lt den Namen des Kommandos f¸r eine
+Die Variable |$1| enth√§lt den Namen des Kommandos f√ºr eine
 Seitenorientierte ausgabe.
 */
 
@@ -141,8 +141,8 @@ void SetProgName (const char *name)
 
 /*
 $Notes
-Die Prozessumgebung wird ¸berarbeitet und daher kann sich an den
-einzelnen Variablen einiges ‰ndern.  Dies sollte keine Kompatiblit‰tsprobleme
+Die Prozessumgebung wird √ºberarbeitet und daher kann sich an den
+einzelnen Variablen einiges √§ndern.  Dies sollte keine Kompatiblit√§tsprobleme
 aufwerfen, da die Variablen nur Bibliotheksintern verwendung finden.
 
 $SeeAlso

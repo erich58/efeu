@@ -1,6 +1,6 @@
 /*	Hilfsfunktionen zur Tabellengenerierung
-	$Copyright (C) 1997, 2004 Erich Frühstück
-	A-3423 St.Andrä/Wördern, Südtirolergasse 17-21/5
+	$Copyright (C) 1997, 2004 Erich FrÃ¼hstÃ¼ck
+	A-3423 St.AndrÃ¤/WÃ¶rdern, SÃ¼dtirolergasse 17-21/5
 */
 
 #ifndef	_include_Figure_hdr
@@ -18,7 +18,7 @@
 
 struct Picture {
 	double width;	/* Breite */
-	double height;	/* Höhe */
+	double height;	/* HÃ¶he */
 	double left;	/* Linker Rand */
 	double right;	/* Rechter Rand */
 	double top;	/* Oberer Rand */
@@ -32,7 +32,7 @@ struct Picture {
 struct Figure {
 	IO out;		/* Ausgabestruktur */
 	bool figenv;	/* Figure/Tabular-Umgebung */
-	str endkey;	/* Abschlußstring */
+	str endkey;	/* AbschluÃŸstring */
 	Picture pic;	/* Bildparameter */
 };
 

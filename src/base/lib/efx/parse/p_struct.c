@@ -1,7 +1,7 @@
 /*
 Struktur generieren
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -304,7 +304,7 @@ void AddListConv (EfiType *type, EfiFuncCall l2d, EfiFuncCall d2l)
 	memfree(p);
 }
 
-/*	Kopierfunktion für Strukturtypen
+/*	Kopierfunktion fÃ¼r Strukturtypen
 */
 
 void Struct_copy (const EfiType *type, void *tg, const void *src)
@@ -322,7 +322,7 @@ void Struct_copy (const EfiType *type, void *tg, const void *src)
 }
 
 
-/*	Löschfunktion für Strukturtypen
+/*	LÃ¶schfunktion fÃ¼r Strukturtypen
 */
 
 

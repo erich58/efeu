@@ -1,8 +1,8 @@
 #!/bin/sh
 # :*:call cvs for a list of repositories
-# :de:cvs - Aufruf für mehrere Arbeitskopien
+# :de:cvs - Aufruf fÃ¼r mehrere Arbeitskopien
 #
-# $Copyright (C) 2001 Erich Frühstück
+# $Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -45,7 +45,7 @@ esac
 # under the list of directories, specified by de Environment GLOBCVS.
 # If |GLOBCVS| is not defined, |\$EFEUTOP/src| is used, if |EFEUTOP| is
 # not defined, |\$HOME/src| is used.
-# :de:Das Kommando |\$!| führt ein cvs-Kommando für alle
+# :de:Das Kommando |\$!| fÃ¼hrt ein cvs-Kommando fÃ¼r alle
 # Arbeitskopien unterhalb der durch die Umgebungsvariable |GLOBCVS|
 # definierten Verzeichnisliste durch. Falls |GLOBCVS| nicht definiert
 # ist, wird |\$EFEUTOP/src| genommen, falls auch |EFEUTOP| nicht definiert
@@ -56,7 +56,7 @@ esac
 #
 # :*:The option |--ls| lists all directories, where a separate call of
 # cvs is executed.
-# :de:Die Option |--ls| listet alle Verzeichnisse auf, für die ein eigenes
+# :de:Die Option |--ls| listet alle Verzeichnisse auf, fÃ¼r die ein eigenes
 # cvs-Kommando abgesetzt wird.
 
 # $SeeAlso

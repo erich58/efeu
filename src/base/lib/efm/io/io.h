@@ -1,9 +1,9 @@
 /*
-IO-Definitionen für EFEU-Programmbibliothek
+IO-Definitionen fÃ¼r EFEU-Programmbibliothek
 
 $Header	<EFEU/$1>
 
-$Copyright (C) 1997 Erich Frühstück
+$Copyright (C) 1997 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -120,7 +120,7 @@ void io_linemark (IO *io);
 char *io_prompt (IO *io, const char *prompt);
 
 /*
-Der Makro |$1| erhönht den Referenzzähler der IO-Struktur <io>
+Der Makro |$1| erhÃ¶nht den ReferenzzÃ¤hler der IO-Struktur <io>
 */
 
 #define	io_refer(io)	rd_refer(io)
@@ -147,7 +147,7 @@ Der Makro |$1| liefert eine IO-Struktur auf einen konstanten String.
 
 /*
 Der Makro |$1| liefert eine IO-Struktur auf einen dynamischen String.
-Dieser wird beim schließen der IO-Struktur automatisch freigegeben.
+Dieser wird beim schlieÃŸen der IO-Struktur automatisch freigegeben.
 */
 
 #define	io_mstr(str)	io_string((char *) (str), memfree)
@@ -209,7 +209,7 @@ int io_mbprintf (IO *io, const char *fmt, ...);
 void log_vprintf (LogControl *log, const char *fmt, va_list list);
 void log_printf (LogControl *log, const char *fmt, ...);
 
-/*	Binäre Ein/Ausgabe
+/*	BinÃ¤re Ein/Ausgabe
 */
 
 size_t io_read (IO *io, void *buf, size_t nbyte);
@@ -278,7 +278,7 @@ void io_error (IO *io, const char *fmt, const char *def, ...);
 */
 
 extern IO *iostd;		/* Standardein/ausgabe */
-extern IO *iomsg;		/* Ausgabe für message */
+extern IO *iomsg;		/* Ausgabe fÃ¼r message */
 extern IO *ioerr;		/* Standardfehler */
 extern IO *ionull;		/* Null-Device */
 
@@ -287,7 +287,7 @@ extern IO *ionull;		/* Null-Device */
 */
 
 IO *io_lnum (IO *io);	/* Zeilennummer */
-IO *io_count (IO *io);	/* Ausgabezähler */
+IO *io_count (IO *io);	/* AusgabezÃ¤hler */
 IO *io_html (IO *io);	/* HTML-Filter */
 IO *io_crlf (IO *io);	/* CRLF Filter */
 IO *io_indent (IO *io, int c, int n);

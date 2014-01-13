@@ -2,7 +2,7 @@
 :*:	Dynamic string buffer
 :de:	Arbeiten mit dynamischen Zeichenfeldern
 
-$Copyright (C) 1996 Erich Frühstück
+$Copyright (C) 1996 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -32,7 +32,7 @@ static ALLOCTAB(sb_tab, "StrBuf", 32, sizeof(StrBuf));
 :*:
 The function |$1| creates a new string buffer with blocksize <bsize>.
 :de:
-Die Funktion |$1| liefert ein neues Zeichenfeld mit Buffergröße <blksize>.
+Die Funktion |$1| liefert ein neues Zeichenfeld mit BuffergrÃ¶ÃŸe <blksize>.
 */
 
 StrBuf *sb_create (size_t blksize)

@@ -2,7 +2,7 @@
 :*:create script documentation from comments
 :de:Dokumentation aus Sourcefile generieren
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -37,7 +37,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 DocBuf doc_buf;	/* Dokumentbuffer */
-int indent;	/* Einrücktiefe */
+int indent;	/* EinrÃ¼cktiefe */
 
 static int f_setpar (CmdPar *cpar, CmdParVar *var,
 	const char *par, const char *arg)

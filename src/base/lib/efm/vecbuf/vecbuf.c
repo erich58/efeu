@@ -1,7 +1,7 @@
 /*
 Vektorbuffer
 
-$Copyright (C) 1996 Erich Frühstück
+$Copyright (C) 1996 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -26,7 +26,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 /*
 Die Funktion |vb_init| initialisiert den Vektorbuffer <buf>
-mit Blockgröße <blk> und Datengröße <size>.
+mit BlockgrÃ¶ÃŸe <blk> und DatengrÃ¶ÃŸe <size>.
 */
 
 void vb_init (VecBuf *buf, size_t blk, size_t size)
@@ -80,10 +80,10 @@ void vb_free (VecBuf *buf)
 }
 
 /*
-Die Funktion |$1| liefert den Pointer auf das nächste Element
+Die Funktion |$1| liefert den Pointer auf das nÃ¤chste Element
 im Vektorbuffer. Das Speicherfeld des Elements wird mit 0
-initialisiert. Die Komponente |used| wird um 1 erhöht.
-Bei Bedarf wird der Buffer vergrößert.
+initialisiert. Die Komponente |used| wird um 1 erhÃ¶ht.
+Bei Bedarf wird der Buffer vergrÃ¶ÃŸert.
 */
 
 void *vb_next (VecBuf *buf)
@@ -110,10 +110,10 @@ void *vb_data (VecBuf *buf, size_t pos)
 }
 
 /*
-Die Funktion |$1| fügt <dim> Element an der Position <pos>
-ein. Die Funktion liefert die Startadresse der eingefügten Elemente.
-Falls <pos> größer als die Komponente |used| ist oder <dim> den
-Wert 0 hat, wird kein Element eingefügt und die Funktion
+Die Funktion |$1| fÃ¼gt <dim> Element an der Position <pos>
+ein. Die Funktion liefert die Startadresse der eingefÃ¼gten Elemente.
+Falls <pos> grÃ¶ÃŸer als die Komponente |used| ist oder <dim> den
+Wert 0 hat, wird kein Element eingefÃ¼gt und die Funktion
 liefert einen Nullpointer.
 */
 
@@ -128,7 +128,7 @@ void *vb_insert (VecBuf *buf, size_t pos, size_t dim)
 	n = pos * buf->elsize;
 	offset = dim * buf->elsize;
 
-/*	Genügend Speicherplatz für neue Elemente vorhanden
+/*	GenÃ¼gend Speicherplatz fÃ¼r neue Elemente vorhanden
 */
 	if	(buf->used + dim <= buf->size)
 	{
@@ -160,12 +160,12 @@ void *vb_insert (VecBuf *buf, size_t pos, size_t dim)
 }
 
 /*
-Die Funktion |$1| löscht <dim> Elemente ab Position
+Die Funktion |$1| lÃ¶scht <dim> Elemente ab Position
 <pos>. Die Datenwerte werden zum Ende des Speicherfeldes
-verschoben. Die Funktion liefert den Pointer auf die gelöschten
+verschoben. Die Funktion liefert den Pointer auf die gelÃ¶schten
 Elemente.
-Falls <pos> + <dim> größer als die Komponente |used| ist
-wird kein Element gelöscht und die Funktion
+Falls <pos> + <dim> grÃ¶ÃŸer als die Komponente |used| ist
+wird kein Element gelÃ¶scht und die Funktion
 liefert einen Nullpointer.
 */
 

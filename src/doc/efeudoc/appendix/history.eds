@@ -1,14 +1,14 @@
 \appendix	Geschichte
 Dieser Abschnitt dokumentiert die Entwicklung des Dokumentgenerators.
-Die wichtigsten Änderungen werden hier mit Datum vermerkt und nach der
-Aktualität gereiht.
+Die wichtigsten Ã„nderungen werden hier mit Datum vermerkt und nach der
+AktualitÃ¤t gereiht.
 
 \shead	Mai 2009
-Das Handbuch wurde überarbeitet und an den aktuellen Stand der
+Das Handbuch wurde Ã¼berarbeitet und an den aktuellen Stand der
 Software angepasst.
 
 \shead	November 2008
-Im November 2008 wurde die Tabellengenerierung überarbeitet.
+Im November 2008 wurde die Tabellengenerierung Ã¼berarbeitet.
 Tabellen werden jetzt bei allen Ausgabeformaten (bisher nur \LaTeX;)
 korrekt dargestellt. Speziell auf das Synthesis-Layout
 zugeschnittene Tabellenanweisungen wurden entfernt.
@@ -17,10 +17,10 @@ zugeschnittene Tabellenanweisungen wurden entfernt.
 Im Juni 2008 erfolgte die Umstellung des internen Zeichensatzes auf
 Unicode.
 
-\shead	Jänner 2007
-Der Standardfilezusatz für Dokumentdateien wurde von |.doc| auf |.eds|
+\shead	JÃ¤nner 2007
+Der Standardfilezusatz fÃ¼r Dokumentdateien wurde von |.doc| auf |.eds|
 umgestellt um Konflikte mit Word-Dokumenten zu vermeiden.
-Grundsätzlich sind die Namenszusätze weiterhin beliebig, diese
+GrundsÃ¤tzlich sind die NamenszusÃ¤tze weiterhin beliebig, diese
 Umstellung hat nur Auswirkungen auf die Suche nach der Basisdatei, wenn
 als Quelle ein Verzeichnis angegeben wurde.
 
@@ -34,31 +34,31 @@ Ab Mai 2001 wird der Synthesis-Standard nicht mehr als Grundlage der
 \LaTeX;-Formatierung herangezogen. Es gibt eine Makrodatei zur
 Aktivierung des Synthesis-Stiles.
 
-\shead	Jänner 2000
-Folgende Erweiterungen/Änderungen wurden im Jänner 2000 durchgeführt:
+\shead	JÃ¤nner 2000
+Folgende Erweiterungen/Ã„nderungen wurden im JÃ¤nner 2000 durchgefÃ¼hrt:
 *	Die neue Umgebung |spage| dient zur Verschiebung des linken
-	Randes. Zusätzlich besteht die Möglichkeit, auf eine kleinere
+	Randes. ZusÃ¤tzlich besteht die MÃ¶glichkeit, auf eine kleinere
 	Schrift und/oder auf Schreibmaschinenschrift umzustellen.
-*	Der Befehl Fußnotenmarkierungen wurde von |\fn| auf |\mark|
-	umgeändert.
+*	Der Befehl FuÃŸnotenmarkierungen wurde von |\fn| auf |\mark|
+	umgeÃ¤ndert.
 *	Das mit |\date| gesetzte Datum kann mit dem Befehl |\thedate|
 	abgerufen werden.
-*	Neue Befehle und Makros für Handbucheinträge:
+*	Neue Befehle und Makros fÃ¼r HandbucheintrÃ¤ge:
 	|proto|, |mksource| und |@MSExample|.
 *	Der neue Befehl |config| ladet eine Konfigurationsdatei.
 *	Die Konfigurationsdatei |EFEU| initialisiert Titelparameter
-	für EFEU-Dokumente (Logo, Autor, Adresse) und stellt den
-	Makro |@Impressum| zur Verfügung.
+	fÃ¼r EFEU-Dokumente (Logo, Autor, Adresse) und stellt den
+	Makro |@Impressum| zur VerfÃ¼gung.
 
 \shead	Dezember 1999
 Im Dezember 1999 wurde |efeudoc| freigegeben.
 Der \LaTeX-Treiber ist im wesentlichen fertiggestellt.
-Das Handbuch steht in einer Rohfassung zur Verfügung.
+Das Handbuch steht in einer Rohfassung zur VerfÃ¼gung.
 
 Die folgenden Arbeiten sind noch offen:
 *	Das Konzept zur online-Abfrage von Dokumenten muss noch
 	erarbeitet werden.
-*	Die automatische Generierung der Begriffserläuterung
-	steht erst in einer Rohversion zur Verfügung.
-*	Einzelne Layoutfragen sind noch nicht abgeklärt.
+*	Die automatische Generierung der BegriffserlÃ¤uterung
+	steht erst in einer Rohversion zur VerfÃ¼gung.
+*	Einzelne Layoutfragen sind noch nicht abgeklÃ¤rt.
 *	Es gibt noch kein Programmierhandbuch zu |efeudoc|.

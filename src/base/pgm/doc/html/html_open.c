@@ -1,7 +1,7 @@
 /*
 HTML-Ausgabefilter
 
-$Copyright (C) 2000 Erich Frühstück
+$Copyright (C) 2000 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -41,20 +41,20 @@ If not, write to the Free Software Foundation, Inc.,
 
 typedef struct {
 	IO *io;	/* Aktuelle Ausgabestruktur */
-	IO *tmp;	/* Temporärer Buffer */
+	IO *tmp;	/* TemporÃ¤rer Buffer */
 	char *path;	/* Bibliothek */
 	char *title;	/* Dokumenttitel */
 	char *fname;	/* Aktuelle Datei */
 	StrBuf ref;	/* Referenz */
 	StrBuf toc;	/* Inhaltsverzeichnis */
-	StrBuf lof;	/* Übersichtsverzeichnis */
+	StrBuf lof;	/* Ãœbersichtsverzeichnis */
 	VecBuf idx;	/* Indexvektor */
 	VecBuf lbl;	/* Labelvektor */
 	int chap;	/* Kapitelnummer */
 	int sec;	/* Abschnittsnummer */
 	int last;	/* Letztes ausgegebene Zeichen */
 	int protect;	/* Schutzmodus */
-	int app;	/* Flag für Anhang */
+	int app;	/* Flag fÃ¼r Anhang */
 	int anum;	/* Ankernummer */
 } HPOST;
 
@@ -76,7 +76,7 @@ static void hpost_split(HPOST *hpost)
 }
 
 
-/*	Indexeinträge
+/*	IndexeintrÃ¤ge
 */
 
 typedef struct {
@@ -197,7 +197,7 @@ static void hpost_next (HPOST *hpost)
 
 	if	(mstrcmp(LangDef.language, "de") == 0)
 	{
-		fmt_prev = "<A HREF=%#s>nächsten</A>";
+		fmt_prev = "<A HREF=%#s>nÃ¤chsten</A>";
 		fmt_next = "<A HREF=%#s>vorigen</A>";
 	}
 
@@ -475,7 +475,7 @@ static void create_dir (const char *name)
 /*
 Die Funktion |$1| dient zur Ausgabe eines HTML-Dokuments in
 mehreren Teildateien. Als Argument wird die Biblothek
-für die Teildateien angegeben.
+fÃ¼r die Teildateien angegeben.
 Die Bibliothek <dir> wird bei Bedarf eingerichtet.
 
 $SeeAlso

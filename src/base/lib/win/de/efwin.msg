@@ -1,7 +1,7 @@
 /*
 Standardfehlermeldungen der Curses - Hilfsprogramme
 
-$Copyright (C) 1995 Erich Frühstück
+$Copyright (C) 1995 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -20,4 +20,4 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-1	$!: Fenster der Größe ($1, $2) an Position ($3, $4) kann nicht generiert werden.\n
+1	$!: Fenster der GrÃ¶ÃŸe ($1, $2) an Position ($3, $4) kann nicht generiert werden.\n

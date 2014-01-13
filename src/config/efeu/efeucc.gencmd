@@ -2,7 +2,7 @@
 # :*:create efeucc script
 # :de:efeucc Script generieren
 #
-# $Copyright (C) 2004 Erich Frühstück
+# $Copyright (C) 2004 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -98,8 +98,8 @@ esac
 # for cc and expands the include path and |LD_RUN_PATH|
 # according to the EFEU top directory. Just have a look to
 # the command |$bin/efeucc| to see the settings.
-# :de:Das Kommando |\\\$!| setzt einige default Optionen für
-# def C-Kompiler und erweitert die Suchpfade für Einbindedateien
+# :de:Das Kommando |\\\$!| setzt einige default Optionen fÃ¼r
+# def C-Kompiler und erweitert die Suchpfade fÃ¼r Einbindedateien
 # und Bibliotheken entsprechend dem Hauptverzeichnis von EFEU.
 # Die aktuelle Setzung kann direkt dem Kommando |$bin/efeucc|
 # entnommen werden.

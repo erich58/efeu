@@ -1,8 +1,8 @@
 /*
-EDB-Datenfiles auszählen
+EDB-Datenfiles auszÃ¤hlen
 
-$Copyright (C) 2007 Erich Frühstück
-A-3423 St.Andrä/Wördern, Wildenhaggasse 38
+$Copyright (C) 2007 Erich FrÃ¼hstÃ¼ck
+A-3423 St.AndrÃ¤/WÃ¶rdern, Wildenhaggasse 38
 */
 
 #include <EFEU/mstring.h>
@@ -288,7 +288,7 @@ int main (int narg, char **arg)
 	cnt_limit = GetIntResource("CountLimit", 0);
 	rec_mode = GetResource("RecordMode", NULL);
 
-/*	Datenbank öffnen
+/*	Datenbank Ã¶ffnen
 */
 	edb = edb_fopen(NULL, GetResource("Input", NULL));
 	edb = edb_filter(edb, GetResource("Filter", NULL));
@@ -313,7 +313,7 @@ int main (int narg, char **arg)
 			mstrcpy(edb->desc));
 		MdCntObj(CountPar, LvalObj(&Lval_ptr, &Type_int, &cnt_counter),
 			"count.index",
-			mlangcpy(":*:count index :de:Zählindex", NULL));
+			mlangcpy(":*:count index :de:ZÃ¤hlindex", NULL));
 		MdCntObj(CountPar, LvalObj(&Lval_ptr, &Type_uint, &recnum),
 			"recnum",
 			mlangcpy(":*:record number :de:Satzindex", NULL));
@@ -324,7 +324,7 @@ int main (int narg, char **arg)
 		InfoNode *info;
 		char  *mode;
 	
-		info = AddInfo(NULL, "cdef", "Zähldefinitionen", NULL, NULL);
+		info = AddInfo(NULL, "cdef", "ZÃ¤hldefinitionen", NULL, NULL);
 		MdCountInfo(info, CountPar);
 		MdClassInfo(info, CountPar);
 		mode = GetResource("InfoMode", NULL);
@@ -340,7 +340,7 @@ int main (int narg, char **arg)
 		cnt_exit(edb, NULL);
 	}
 
-/*	Zähler Bestimmen
+/*	ZÃ¤hler Bestimmen
 */
 	p = GetResource("Counter", NULL);
 
@@ -386,7 +386,7 @@ int main (int narg, char **arg)
 		else 	oname = mstrpaste(" > ", p, oname);
 	}
 
-/*	EDB-File bei RecordMode öffnen
+/*	EDB-File bei RecordMode Ã¶ffnen
 */
 	if	(rec_mode)
 	{
@@ -403,7 +403,7 @@ int main (int narg, char **arg)
 		md_count_hook = std_hook;
 	}
 
-/*	Datenbank auszählen
+/*	Datenbank auszÃ¤hlen
 */
 	cnt_counter = 0;
 	cnt_rec = 0;

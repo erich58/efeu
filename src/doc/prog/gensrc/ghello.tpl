@@ -1,5 +1,5 @@
 /*
-Schablonendatei für <"Hello World"> Beispielprogramm
+Schablonendatei fÃ¼r <"Hello World"> Beispielprogramm
 */
 
 config src

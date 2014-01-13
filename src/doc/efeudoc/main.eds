@@ -2,7 +2,7 @@
 :*:efeu document generator
 :de:EFEU-Dokumentgenerator 
 
-$Copyright (C) 2000, 2009 Erich Frühstück
+$Copyright (C) 2000, 2009 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -23,7 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 \config	efeu
 \date	Mai 2009
-\title	Einführung in efeudoc
+\title	EinfÃ¼hrung in efeudoc
 Grundlagen der Dokumentgenerierung
 im Rahmen von EFEU
 

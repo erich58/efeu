@@ -1,10 +1,10 @@
 # :*:functions to write compile rules
-# :de:Hilfsfunktionen für Kompilierungsregeln
+# :de:Hilfsfunktionen fÃ¼r Kompilierungsregeln
 #
 # $Synopsis
 # include $1
 #
-# $Copyright (C) 2004, 2009 Erich Frühstück
+# $Copyright (C) 2004, 2009 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -33,7 +33,7 @@ gcc_wflags="-Wall -Wmissing-prototypes -Wpointer-arith"
 # $pconfig !
 # *cflags|
 #	:*:default compile flags, assigned to |cc_cflags| if available.
-#	:de:Standardcompilerflags, werden bei Verfügbarkeit der Variablen
+#	:de:Standardcompilerflags, werden bei VerfÃ¼gbarkeit der Variablen
 #	|cc_cflags| zugewiesen.
 # !
 # :*:
@@ -49,21 +49,21 @@ gcc_wflags="-Wall -Wmissing-prototypes -Wpointer-arith"
 # [cc_lpath]
 #	default search path for libraries
 # :de:
-# Die Funktion $! initialisiert Parameter für den C-Compiler und prüft
-# die Verfügbarkeit von Compilerflags.
-# Falls keine speziellen Kompilerflags benötigt werden, kann der Aufruf von
+# Die Funktion $! initialisiert Parameter fÃ¼r den C-Compiler und prÃ¼ft
+# die VerfÃ¼gbarkeit von Compilerflags.
+# Falls keine speziellen Kompilerflags benÃ¶tigt werden, kann der Aufruf von
 # von $1 entfallen, da diese Funktion implizit bei fehlender Initialisierung
 # aufgerufen wird.
 # Die folgenden Variablen werden von $! gesetzt:
 # [CC]
 #	Aufruf des C-Kompilers
 # [cc_shared]
-#	Flag für die Verfügbarkeit von shared objects (gemeinsam genutzte
+#	Flag fÃ¼r die VerfÃ¼gbarkeit von shared objects (gemeinsam genutzte
 #	Bibliotheken).
 # [cc_cflags]
-#	Verfügbare Compilerflags.
+#	VerfÃ¼gbare Compilerflags.
 # [cc_lpath]
-#	Standardsuchpfad für Bibliotheken
+#	Standardsuchpfad fÃ¼r Bibliotheken
 
 cc_config ()
 {
@@ -178,7 +178,7 @@ _cc_setup_done=
 # $alias
 # $pconfig !
 # !
-# :de:Die Funktion $1 generiert Makefile-Makros für den
+# :de:Die Funktion $1 generiert Makefile-Makros fÃ¼r den
 # C-Kompiler. Die Funktion ist gegen Mehrfachaufrufe abgesichert und wird
 # implizit von anderen Funktionen aufgerufen.
 #
@@ -190,7 +190,7 @@ _cc_setup_done=
 #	generierten Flags und den Inhalt von |PROJECT_CFLAGS| zusammen.
 # [CONFIG_LDFLAGS]
 #	Standardlinkflags, wird von der Shell-Variablen |PROJECT_LDFLAGS|
-#	übernommen.
+#	Ã¼bernommen.
 
 cc_setup ()
 {
@@ -211,14 +211,14 @@ cc_objlist=$TMP/objlist
 # $pconfig !
 # d:dep |
 #	:*:expands the dependence list by <dep>.
-#	:de:erweitert die Liste der Abhängigkeiten um <dep>.
+#	:de:erweitert die Liste der AbhÃ¤ngigkeiten um <dep>.
 # md:name |
 #	:*:is an abbrevation for |-d '$$(|<name>|)'|.
-#	:de:ist eine Abkürzung für |-d '$$(|<name>|)'|.
+#	:de:ist eine AbkÃ¼rzung fÃ¼r |-d '$$(|<name>|)'|.
 # c |
 #	:*:stands for compile onley. Creates to every C-sourcefile a
 #	target name with suffix |.o|. This option is passed to the C-compiler.
-#	:de: steht für nur kompilieren. Zu jedem C-Sourcefile wird ein
+#	:de: steht fÃ¼r nur kompilieren. Zu jedem C-Sourcefile wird ein
 #	Zielname mit Zusatz |.o| bestimmt. Die Option wird an den
 #	C-Kompiler weitergereicht.
 # I::path | D::macdef | U::name |
@@ -226,10 +226,10 @@ cc_objlist=$TMP/objlist
 #	:de:Diese Optionen werden an den C-Kompiler weitergereicht.
 # xc:flag |
 #	:*:passes compile optionen <flag> to the C-compiler
-#	:de:reicht Übersetzungsoptionen <flag> an den C-Kompiler weiter.
+#	:de:reicht Ãœbersetzungsoptionen <flag> an den C-Kompiler weiter.
 # mc:name |
 #	:*:is an abbrevation for |-xc '$$(|<name>|)'|.
-#	:de:ist eine Abkürzung für |-xc '$$(|<name>|)'|.
+#	:de:ist eine AbkÃ¼rzung fÃ¼r |-xc '$$(|<name>|)'|.
 # o:name |
 #	:*:determines the name of target, if option |-c| is not used.
 #	:de:bestimmt den Namen Zieldatei falls Option |-c| nicht
@@ -242,13 +242,13 @@ cc_objlist=$TMP/objlist
 #	:de:reicht Linkoption <flag> an den C-Kompiler weiter.
 # ml:name |
 #	:*:is an abbrevation for |-xl '$$(|<name>|)'|.
-#	:de:ist eine Abkürzung für |-xl '$$(|<name>|)'|.
+#	:de:ist eine AbkÃ¼rzung fÃ¼r |-xl '$$(|<name>|)'|.
 # xo:obj |
 #	:*:expands the object file list by <obj>.
 #	:de:erweitert die Liste der Objektdateien um <obj>.
 # mo:name |
 #	:*:is an abbrevation for |-xo '$$(|<name>|)'|.
-#	:de:ist eine Abkürzung für |-xo '$$(|<name>|)'|.
+#	:de:ist eine AbkÃ¼rzung fÃ¼r |-xo '$$(|<name>|)'|.
 # //<name>.c |
 #	:*:is handled as C-source file.
 #	:de:wird als C-Source Datei gehandhabt.
@@ -271,13 +271,13 @@ cc_objlist=$TMP/objlist
 # :de:
 # Die einzelnen Paramaeter werden von $! nach folgenden Kriterien
 # unterschiedlich behandelt:
-# *	Übersetzungsflags
+# *	Ãœbersetzungsflags
 # *	Sourcedateien
 # *	Objektdateien
 # *	Linkerflags
-# * 	Zusätzliche Abhängigkeiten
-# Die Funktion generiert Einträge im Makefile zur automatischen
-# Bestimmung der Abhängigkeiten der Sourcen von den einzelnen
+# * 	ZusÃ¤tzliche AbhÃ¤ngigkeiten
+# Die Funktion generiert EintrÃ¤ge im Makefile zur automatischen
+# Bestimmung der AbhÃ¤ngigkeiten der Sourcen von den einzelnen
 # Headerdateien.
 # Die durch die Regel generierten Objektdateien werden in einer
 # Dateiliste zwischengespeichert.
@@ -377,7 +377,7 @@ mf_cc ()
 #	:de:Erhalte die Objektliste
 # p:pfx |
 #	:*:prefix for object files
-#	:de:Prefix für Objektdateien
+#	:de:Prefix fÃ¼r Objektdateien
 # :name |
 #	:*:name of macro
 #	:de:Name des Makros
@@ -388,8 +388,8 @@ mf_cc ()
 # therafter.
 # :de:
 # Die Funktion $! erzeugt eine Variablenzuweisung mit allen
-# Objektdateien aller vorangegangenen Aufrufe von |mf_cc|. Anschließend
-# wird die Liste der Objektdateien gelöscht.
+# Objektdateien aller vorangegangenen Aufrufe von |mf_cc|. AnschlieÃŸend
+# wird die Liste der Objektdateien gelÃ¶scht.
 #
 # @arglist
 
@@ -437,15 +437,15 @@ mf_objlist ()
 # m:name |
 #	:*:use the directory defined by macro <name> for target files.
 #	:de:verwendet das durch den Makronamen <name> definierte
-#	Verzeichnis für Zieldateien.
+#	Verzeichnis fÃ¼r Zieldateien.
 # p:dir |
 #	:*:like |-d|, create additional creation rule for directory <dir>
 #	with phony target |$$AllTarget|.
 # c:dir |
 #	:*:like |-p|, create additional cleaning rules for directory <dir>
 #	(and possibly needed subdirectories) with phony target |$$CleanTarget|.
-#	:de:wie |-p|, generiert aber zusätzlich noch eine Regel zum Löschen
-#	von <dir> (und möglicher Unterverzeichnisse) mit Scheinziel
+#	:de:wie |-p|, generiert aber zusÃ¤tzlich noch eine Regel zum LÃ¶schen
+#	von <dir> (und mÃ¶glicher Unterverzeichnisse) mit Scheinziel
 #	|$$CleanTarget|.
 # v:vn |
 #	:*:sets the version number <vn> of the shared library
@@ -462,7 +462,7 @@ mf_objlist ()
 #	:de:definiert den Namen der Programmbibliothek
 # d:dep |
 #	:*:expands the dependence list by <dep>.
-#	:de:erweitert die Liste der Abhängigkeiten um <dep>.
+#	:de:erweitert die Liste der AbhÃ¤ngigkeiten um <dep>.
 # L::path | l::name |
 #	:*:these options are passed to the C-compiler.
 #	:de:diese Optionen werden an den C-Kompiler weitergereicht.
@@ -471,13 +471,13 @@ mf_objlist ()
 #	:de:reicht Linkoption <flag> an den C-Kompiler weiter.
 # ml:name |
 #	:*:is an abbrevation for |-xl '$$(|<name>|)'|.
-#	:de:ist eine Abkürzung für |-xl '$$(|<name>|)'|.
+#	:de:ist eine AbkÃ¼rzung fÃ¼r |-xl '$$(|<name>|)'|.
 # xo:obj |
 #	:*:expands the object file list by <obj>.
 #	:de:erweitert die Liste der Objektdateien um <obj>.
 # mo:name |
 #	:*:is an abbrevation for |-xo '$$(|<name>|)'|.
-#	:de:ist eine Abkürzung für |-xo '$$(|<name>|)'|.
+#	:de:ist eine AbkÃ¼rzung fÃ¼r |-xo '$$(|<name>|)'|.
 # :obj |
 #	:*:expands the object file list by <obj>.
 #	:de:erweitert die Liste der Objektdateien um <obj>.

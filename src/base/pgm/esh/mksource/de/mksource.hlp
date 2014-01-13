@@ -1,7 +1,7 @@
 /*
-Handbucheintrag für mksource
+Handbucheintrag fÃ¼r mksource
 
-$Copyright (C) 2000 Erich Frühstück
+$Copyright (C) 2000 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -27,26 +27,26 @@ Das Kommando |$!|
 dient zur Generierung von C-Sourcefiles mithilfe
 des EFEU-Befehlsinterpreters.
 
-Bei der Eingabedatei handelt es sich um ein Skriptfile für den
+Bei der Eingabedatei handelt es sich um ein Skriptfile fÃ¼r den
 Befehlsinterpreter. Die Ausgabe erfolgt in die folgenden
 IO-Strukturen:
 [|hdr|]	C-Headerfile
 [|top|]	Kopzeilen im C-Sourcefile
 [|src|]	C-Sourcefile
-[|info|]	Infodatei für |eis|
+[|info|]	Infodatei fÃ¼r |eis|
 [|tex|]	LaTeX-Dokumentation (siehe Anmerkung am Ende)
 [|doc|]	Dokumentationsfile (siehe Anmerkung am Ende)
 
 Ob die mit den Ausgabestrukturen verbundenen Dateien auch
-generiert werden, hängt von einer Konfigurationszeile zu Beginn
+generiert werden, hÃ¤ngt von einer Konfigurationszeile zu Beginn
 des Skripts ab. Sie hat die Gestalt:
 
 |config| <list>\[|=|<filename>\]
 
-wobei <list> die gewünschten Ausgabestrukturen enthält, für die
+wobei <list> die gewÃ¼nschten Ausgabestrukturen enthÃ¤lt, fÃ¼r die
 auch eine Datei generiert werden soll. Der Basisname der
 Ausgabedateien wird vom Basisnamen des Skriptfiles bestimmt.
-Es gibt aber auch die Möglichkeit, die Namen der Ausgabedateien
+Es gibt aber auch die MÃ¶glichkeit, die Namen der Ausgabedateien
 explizit vorzugeben. Die Ausgabestruktur <top> kann nicht angesprochen
 werden, sie ist mit <src> gekoppelt.
 

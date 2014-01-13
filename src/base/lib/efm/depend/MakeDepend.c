@@ -1,7 +1,7 @@
 /*
-Abhängigkeitslisten
+AbhÃ¤ngigkeitslisten
 
-$Copyright (C) 1999 Erich Frühstück
+$Copyright (C) 1999 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -23,7 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/ftools.h>
 #include <EFEU/MakeDepend.h>
 
-#define	BREAK_COL	70	/* Spaltenpostion für Fortsetzungszeile */
+#define	BREAK_COL	70	/* Spaltenpostion fÃ¼r Fortsetzungszeile */
 
 int MakeDepend = 0;
 

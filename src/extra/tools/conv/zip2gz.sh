@@ -2,7 +2,7 @@
 # :*:transform data of ZIP-archive into gzip compressed file
 # :de:ZIP Archiv in komprinierte Datei konvertieren
 #
-# $Copyright (C) 2002 Erich Frühstück
+# $Copyright (C) 2002 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -27,7 +27,7 @@
 #	:de:Daten im Textmodus auslesen (default)
 # b|
 #	:*:get data in binary mode
-#	:de:Daten binär auslesen
+#	:de:Daten binÃ¤r auslesen
 # \#|
 #	:*:compression mode (-1 fast, -9 best)
 #	:de:Kompressionsmodus (-1 schnellste Kompression, -9 beste Kompression)

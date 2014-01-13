@@ -1,7 +1,7 @@
 /*
 Kombination von Polynomstrukturen
 
-$Copyright (C) 1992 Erich Frühstück
+$Copyright (C) 1992 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -34,7 +34,7 @@ static size_t *join_deg = NULL;
 static double **join_koef = NULL;
 
 
-/*	Translation der Stützstelle um den Wert a
+/*	Translation der StÃ¼tzstelle um den Wert a
 */
 
 static void trans(double a, double *c, size_t k)
@@ -59,7 +59,7 @@ static void trans(double a, double *c, size_t k)
 }
 
 
-/*	Speicherplatz für Koeffizientenmatrix generieren
+/*	Speicherplatz fÃ¼r Koeffizientenmatrix generieren
 */
 
 static void mkkoef(Polynom **p, size_t n)
@@ -118,30 +118,30 @@ static void setkoef(double x, Polynom **p, size_t n)
 		while (join_deg[i] > 0 && join_koef[i][join_deg[i]] == 0.)
 			join_deg[i]--;
 
-	/*	Stützstelle Verschieben
+	/*	StÃ¼tzstelle Verschieben
 	*/
 		trans(x - p[i]->x[join_ind[i]], join_koef[i], join_deg[i]);
 	}
 }
 
 
-/*	Polynome verknüpfen
+/*	Polynome verknÃ¼pfen
 */
 
 size_t pnjoin(Polynom **p, size_t n, void (*op) (double, double **, size_t *, size_t))
 {
-	double x = 0.;	/* Wert der Stützstelle */
-	size_t dim;	/* Zähler für Stützstellen */
-	int i, k;	/* Hilfszähler */
+	double x = 0.;	/* Wert der StÃ¼tzstelle */
+	size_t dim;	/* ZÃ¤hler fÃ¼r StÃ¼tzstellen */
+	int i, k;	/* HilfszÃ¤hler */
 
 /*	Die Initialisierung von x mit 0. ist nicht notwendig,
-	sie dient nur zur Unterdrückung einer Kompilerwarnung.
+	sie dient nur zur UnterdrÃ¼ckung einer Kompilerwarnung.
 */
 	if	(n == 0)	return 0;
 
-/*	Initialisieren der Zähler und bestimmen des Minimums
-	der Stützstellen. Mit k verden die Polynome
-	verschieden vom Nullpolynom gezählt.
+/*	Initialisieren der ZÃ¤hler und bestimmen des Minimums
+	der StÃ¼tzstellen. Mit k verden die Polynome
+	verschieden vom Nullpolynom gezÃ¤hlt.
 */
 	dim = 0;
 	join_ind = memalloc(n * sizeof(size_t));
@@ -160,7 +160,7 @@ size_t pnjoin(Polynom **p, size_t n, void (*op) (double, double **, size_t *, si
 	}
 
 /*	Falls kein Polynom verschieden vom Nullpolynom,
-	Abbruch der Verarbeitung mit Rückgabewert 0.
+	Abbruch der Verarbeitung mit RÃ¼ckgabewert 0.
 */
 	if	(k == 0)
 	{
@@ -168,7 +168,7 @@ size_t pnjoin(Polynom **p, size_t n, void (*op) (double, double **, size_t *, si
 		return dim;
 	}
 
-/*	Falls op definiert ist, Speicherplatz für
+/*	Falls op definiert ist, Speicherplatz fÃ¼r
 	Gradvektor und Koeffizientenmatrix generieren.
 */
 	if	(op != NULL)
@@ -177,7 +177,7 @@ size_t pnjoin(Polynom **p, size_t n, void (*op) (double, double **, size_t *, si
 		mkkoef(p, n);
 	}
 
-/*	Schrittweise Abarbeitung der Stützstellen
+/*	Schrittweise Abarbeitung der StÃ¼tzstellen
 */
 	for (;;)
 	{
@@ -192,11 +192,11 @@ size_t pnjoin(Polynom **p, size_t n, void (*op) (double, double **, size_t *, si
 			(*op)(x, join_koef, join_deg, n);
 		}
 
-	/*	Erhöhen der Indizes für alle Polynome mit
-		Stützstellen <= x und ermitteln des neuen
-		Minimums. Mit k werden die Polynome gezählt,
-		deren Stützstellenbereich noch nicht
-		ausgeschöpft ist.
+	/*	ErhÃ¶hen der Indizes fÃ¼r alle Polynome mit
+		StÃ¼tzstellen <= x und ermitteln des neuen
+		Minimums. Mit k werden die Polynome gezÃ¤hlt,
+		deren StÃ¼tzstellenbereich noch nicht
+		ausgeschÃ¶pft ist.
 	*/
 		for (i = k = 0; i < n; i++)
 		{
@@ -214,12 +214,12 @@ size_t pnjoin(Polynom **p, size_t n, void (*op) (double, double **, size_t *, si
 				x = p[i]->x[join_ind[i]];
 		}
 
-	/*	Stützstellenbereich aller Polynome ist ausgeschöpft
+	/*	StÃ¼tzstellenbereich aller Polynome ist ausgeschÃ¶pft
 	*/
 		if	(k == 0)	break;
 
-	/*	Reduktion der Indizies für alle Polynome mit
-		Stützstelle > x und Index > 0.
+	/*	Reduktion der Indizies fÃ¼r alle Polynome mit
+		StÃ¼tzstelle > x und Index > 0.
 	*/
 		for (i = 0; i < n; i++)
 		{

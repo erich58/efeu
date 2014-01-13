@@ -3,7 +3,7 @@
 :de:	Filehilfsprogramme
 
 $Header	<EFEU/$1>
-$Copyright (C) 1996, 2001 Erich Frühstück
+$Copyright (C) 1996, 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -42,7 +42,7 @@ extern int pipe_lock;
 extern char *fsearch (const char *path, const char *pfx,
 	const char *name, const char *ext);
 
-/*	Datenfiles öffnen
+/*	Datenfiles Ã¶ffnen
 */
 
 extern FILE *fileopen (const char *name, const char *mode);
@@ -69,7 +69,7 @@ int deltemp (char *path);
 int deltempdir (char *path);
 void tempstat (void);
 
-/*	Binäre Ein/Ausgabe von Datenfiles
+/*	BinÃ¤re Ein/Ausgabe von Datenfiles
 */
 
 extern size_t rfread (void *ptr, size_t size, size_t nitems, FILE *file);

@@ -1,7 +1,7 @@
 /*
-Ausgabefilter für HTML-Unixdoc
+Ausgabefilter fÃ¼r HTML-Unixdoc
 
-$Copyright (C) 1999 Erich Frühstück
+$Copyright (C) 1999 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -39,13 +39,13 @@ static int html_filter(int c, IO *io)
 	case '&':	io_puts("&amp;", io); break;
 	case '%':	io_puts("&percnt;", io); break;
 	case '"':	io_puts("&quot;", io); break;
-	case 'Ä':	io_puts("&Auml;", io); break;
-	case 'Ö':	io_puts("&Ouml;", io); break;
-	case 'Ü':	io_puts("&Uuml;", io); break;
-	case 'ä':	io_puts("&auml;", io); break;
-	case 'ö':	io_puts("&ouml;", io); break;
-	case 'ü':	io_puts("&uuml;", io); break;
-	case 'ß':	io_puts("&szlig;", io); break;
+	case 'Ã„':	io_puts("&Auml;", io); break;
+	case 'Ã–':	io_puts("&Ouml;", io); break;
+	case 'Ãœ':	io_puts("&Uuml;", io); break;
+	case 'Ã¤':	io_puts("&auml;", io); break;
+	case 'Ã¶':	io_puts("&ouml;", io); break;
+	case 'Ã¼':	io_puts("&uuml;", io); break;
+	case 'ÃŸ':	io_puts("&szlig;", io); break;
 	default:	io_putc(c, io); break;
 	}
 

@@ -1,7 +1,7 @@
 /*
 Lineare Interpolation mit Polynomstruktur
 
-$Copyright (C) 1991 Erich Frühstück
+$Copyright (C) 1991 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -23,7 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <Math/pnom.h>
 
 /*
-Gegeben sind n+1 Stützpunkte x[i], i=0,..,n mit den zugehörigen
+Gegeben sind n+1 StÃ¼tzpunkte x[i], i=0,..,n mit den zugehÃ¶rigen
 Funktionswerten y[i]. Gesucht ist eine lineare Interpolation der
 Funktion in den n Intervallen.
 */
@@ -34,9 +34,9 @@ Funktion in den n Intervallen.
 Polynom *linint(size_t n, double *x, double *y)
 {
 	Polynom *p;	/* Polynomstruktur */
-	int i;		/* Hilfszähler */
+	int i;		/* HilfszÃ¤hler */
 
-/*	Spezialfälle
+/*	SpezialfÃ¤lle
 */
 	if	(n == 0)	return NULL;
 	if	(n == 1)	return pnconst(x[0], y[0]);

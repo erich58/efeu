@@ -1,7 +1,7 @@
 /*
 Standardfehlermeldungen der efx - Programmbibliothek
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -30,12 +30,12 @@ If not, write to the Free Software Foundation, Inc.,
 
 21	$!: Datei $1 nicht lesbar.\n
 22	$!: Datei $1 nicht beschreibbar.\n
-23	$!: Datei $1, Zugriff $2 nicht möglich.\n
-24	$!: Schließen einer nicht mit fileopen() göffneten Datei.\n
+23	$!: Datei $1, Zugriff $2 nicht mÃ¶glich.\n
+24	$!: SchlieÃŸen einer nicht mit fileopen() gÃ¶ffneten Datei.\n
 25	$!: Verwendung einer bereits geschlossenen IO-Struktur.\n
-26	$!: Temporäre Datei kann nicht generiert werden.\n
+26	$!: TemporÃ¤re Datei kann nicht generiert werden.\n
 
-27	$!: Alle temporären Dateinamen in Verwendung.\n
+27	$!: Alle temporÃ¤ren Dateinamen in Verwendung.\n
 28	$!: Unbekannter Zugriff auf Datei.\n
 29	$!: Prozess $1 nicht generierbar.\n
 
@@ -43,11 +43,11 @@ If not, write to the Free Software Foundation, Inc.,
 32	$!: Unbekannte Option $1.\n
 33	$!: Resourcefile $1 generiert.\n
 34	$!: Initialisierungsfile $1 generiert.\n
-35	$!: Datenbankindex außerhalb des zulässigen Bereichs.\n
+35	$!: Datenbankindex auÃŸerhalb des zulÃ¤ssigen Bereichs.\n
 38	$!: Variable $1 ist nicht definiert.\n
 39	$!: Variable $1 kann nicht initialisiert werden (falscher Datentype).\n
 
-41	$!: Konstanter Datenbuffer kann nicht vergrößert werden.\n
+41	$!: Konstanter Datenbuffer kann nicht vergrÃ¶ÃŸert werden.\n
 42	$!: File $0: Vorzeitiges Fileende beim Lesen eines Vektorfeldes.\n
 43	$!: File $0: Ausgabefehler beim Schreiben eines Vektorfeldes.\n
 
@@ -56,23 +56,23 @@ If not, write to the Free Software Foundation, Inc.,
 62	$": Argument $1 ist kein L-Wert.\n
 63	$": Zuviele Argumente.\n
 
-65	$!: EvalFunc() mit ungültigen Datenpointer aufgerufen!\n
+65	$!: EvalFunc() mit ungÃ¼ltigen Datenpointer aufgerufen!\n
 
 70	$!: Operator $1 nicht gefunden.\n
 71	$!: Funktion $1 nicht gefunden.\n
 72	$!: $0: Unerwartetes Zeichen $1 in Befehlszeile.\n
 73	$!: Datei $1 (Suchpfad $2) nicht gefunden.\n
-74	$!: Funktion $1 für Datentype $2 nicht gefunden.\n
-75	$!: $1-Konstruktor für Argumentliste nicht definiert.\n
+74	$!: Funktion $1 fÃ¼r Datentype $2 nicht gefunden.\n
+75	$!: $1-Konstruktor fÃ¼r Argumentliste nicht definiert.\n
 
 81	$!: $0: Funktions/Variablenname fehlt.\n
 82	$!: $0: Funktionstype fehlt.\n
 83	$!: $0: Unbekannter Datentype $1.\n
 84	$!: $0: Extra Zeichen nach Ellipse $1.\n
 85	$!: $0: Syntaxfehler in Ellipse $1.\n
-86	$!: Vorgabewert für L-Wert nicht zulässig.\n
+86	$!: Vorgabewert fÃ¼r L-Wert nicht zulÃ¤ssig.\n
 87	$!: Argumentliste fehlt.\n
-88	$!: Argument für $1 ist kein L-Wert.\n
+88	$!: Argument fÃ¼r $1 ist kein L-Wert.\n
 89	$!: $0: Objekttype fehlt.\n
 90	$!: $0: Syntaxfehler im Datentype $1.\n
 
@@ -80,27 +80,27 @@ If not, write to the Free Software Foundation, Inc.,
 212	$!: Rechtes Argument einer Zuweisung ist kein Objekt.\n
 213	$!: Linker Operant einer Zuweisung ist kein L-Wert.\n
 214	$!: Operant des Operators $1 ist nicht definiert.\n
-215	$!: Operator $1 für Datentype $2 nicht definiert.\n
+215	$!: Operator $1 fÃ¼r Datentype $2 nicht definiert.\n
 216	$!: Bereichsliste: Vergleichsfunktion ist nicht definiert.\n
 217	$!: Bereichsliste: Schrittweite nicht bestimmbar.\n
 
 91	$!: Funktion $1: Kein Effekt.\n
 92	$!: Funktion $1: Falsche Argumente.\n
 93	$!: Funktion $1: Argument $2 ist nicht definiert.\n
-94	$!: Funktion $1: Undefinierter Vorgabewert für Argument $2.\n
-95	$!: $0: Ungültiger Name in for-in Schleife.\n
-96	$!: $0: Funktion $1: Kein Argument für Rückgabereferenz definiert.\n
-97	$!: Funktion $1: ACHTUNG: Inkompatible Rückgabereferenz.\n
+94	$!: Funktion $1: Undefinierter Vorgabewert fÃ¼r Argument $2.\n
+95	$!: $0: UngÃ¼ltiger Name in for-in Schleife.\n
+96	$!: $0: Funktion $1: Kein Argument fÃ¼r RÃ¼ckgabereferenz definiert.\n
+97	$!: Funktion $1: ACHTUNG: Inkompatible RÃ¼ckgabereferenz.\n
 
 101	$!: $0: Operator $1: Rechtes Argument fehlt.\n
 102	$!: $0: Bedingter Ausdruck: ":" fehlt.\n
-103	$!: $0: Teilterm: Abschlußklammer fehlt.\n
-104	$!: $0: Ausdruck: Abschlußklammer fehlt.\n
-105	$!: $0: Stringabschluß fehlt.\n
-106	$!: $0: Unvollständige Argumentliste.\n
-108	$!: $0: Zeichenabschluß fehlt.\n
+103	$!: $0: Teilterm: AbschluÃŸklammer fehlt.\n
+104	$!: $0: Ausdruck: AbschluÃŸklammer fehlt.\n
+105	$!: $0: StringabschluÃŸ fehlt.\n
+106	$!: $0: UnvollstÃ¤ndige Argumentliste.\n
+108	$!: $0: ZeichenabschluÃŸ fehlt.\n
 109	$!: $0: Syntaxfehler: $1 statt $2 gelesen.\n
-110	$!: $0: Syntaxfehler: unvollständiger Block.\n
+110	$!: $0: Syntaxfehler: unvollstÃ¤ndiger Block.\n
 
 111	$!: Funktion $1: Kein Effekt.\n
 112	$!: Funktion $1: Falsche Argumente.\n
@@ -114,18 +114,18 @@ If not, write to the Free Software Foundation, Inc.,
 121	$!: $0: Unerwartetes Fileende.\n
 122	$!: $0: Syntaxfehler in Strukturdefinition.\n
 123	$!: $0: Syntaxfehler in Typedefinition.\n
-124	$!: $0: Speichergröße von $1 ist nicht definiert.\n
+124	$!: $0: SpeichergrÃ¶ÃŸe von $1 ist nicht definiert.\n
 125	$!: Undefiniertes Objekt $1 in Argumentliste.\n
 126	$!: Undefinierter Vorgabewert in Funktionsaufruf.\n
 127	$!: $0: Funktionstype fehlt.\n
 128	$!: $0: Unbekannter Datentype $1.\n
 129	$!: $0: Unbekannte Objektbindung in Prototype.\n
 
-221	$!: $0: Destruktor mit Rückgabewert $1.\n
-222	$!: $0: Konverter für $1 ohne Rückgabewert.\n
-223	$!: $0: Argumente für Destruktor/Konverter nicht zugelassen.\n
+221	$!: $0: Destruktor mit RÃ¼ckgabewert $1.\n
+222	$!: $0: Konverter fÃ¼r $1 ohne RÃ¼ckgabewert.\n
+223	$!: $0: Argumente fÃ¼r Destruktor/Konverter nicht zugelassen.\n
 224	$!: $0: Extra Zeichen nach void-Kennung.\n
-225	$!: $0: Scope mit ungültigen Datentype $1.\n
+225	$!: $0: Scope mit ungÃ¼ltigen Datentype $1.\n
 
 131	$!: Zuweisung: Linkes Objekt ist kein L-Wert!\n
 132	$!: Zuweisung: Rechtes Objekt ist nicht definiert!\n
@@ -134,13 +134,13 @@ If not, write to the Free Software Foundation, Inc.,
 135	$!: Objekt ist kein Vektor!\n
 136	$!: Objekt vom Type $1 kann nicht kopiert werden!\n
 137	$!: ACHTUNG: Rekursives Objekt vom Type $1!\n
-138	$!: Zusätzliche Initialisierungswerte wurden ignoriert.\n
+138	$!: ZusÃ¤tzliche Initialisierungswerte wurden ignoriert.\n
 
 141	$!: Unbekannter Objekttype $1.\n
 142	$!: Extra Zeichen nach Ellipse $2.\n
-143	$!: Vorgabewert für L-Wert nicht zulässig.\n
-144	$!: Funktionsblöcke können nicht kopiert werden.\n
-145	$!: Terme und Listen können nicht kopiert werden.\n
+143	$!: Vorgabewert fÃ¼r L-Wert nicht zulÃ¤ssig.\n
+144	$!: FunktionsblÃ¶cke kÃ¶nnen nicht kopiert werden.\n
+145	$!: Terme und Listen kÃ¶nnen nicht kopiert werden.\n
 146	$!: Ellipse in Argumentliste wurde ignoriert.\n
 
 151	$!: Variablentabelle kann nicht kopiert werden.\n
@@ -148,27 +148,27 @@ If not, write to the Free Software Foundation, Inc.,
 153	$!: $0: Unbekannter Datentype $1.\n
 154	$!: ACHTUNG: Variable $1 neu definiert.\n
 154b	$!: ACHTUNG: Variable $1 bereits definiert.\n
-155	$!: Vektorindex außerhalb des zulässigen Bereichs.\n
+155	$!: Vektorindex auÃŸerhalb des zulÃ¤ssigen Bereichs.\n
 255	$!: Vektor ist nicht initialisiert.\n
-256	$!: Vektorgröße kann nicht verändert werden.\n
+256	$!: VektorgrÃ¶ÃŸe kann nicht verÃ¤ndert werden.\n
 156	$!: $0: Syntaxfehler in Strukturdefinition.\n
 157	$!: ACHTUNG: Struktur $1 neu definiert.\n
 157b	$!: ACHTUNG: Struktur $1 kann nicht umdefiniert werden.\n
-158	$!: Speichergröße von $1 ist nicht definiert.\n
+158	$!: SpeichergrÃ¶ÃŸe von $1 ist nicht definiert.\n
 159	$!: Unerlaubtes Mitglied in Struktur $1.\n
 
 161	$!: Objekt $1 nicht in $2 konvertierbar.\n
 162	$!: Name $1 nicht gefunden.\n
-163	$!: Lesefunktion für Objekt $1 nicht definiert.\n
+163	$!: Lesefunktion fÃ¼r Objekt $1 nicht definiert.\n
 164	$!: Objekt vom Type $1: Komponente $2 ist nicht definiert.\n
-165	$!: Zuweisungsobjekt erlaubt keine Komponentenauflösung.\n
+165	$!: Zuweisungsobjekt erlaubt keine KomponentenauflÃ¶sung.\n
 166	$!: Variable $1 ist nicht definiert.\n
 167	$!: Operand von L-Wert cast ist kein L-Wert.\n
-168	$!: Veränderung eines als const Deklarierten Arguments.\n
+168	$!: VerÃ¤nderung eines als const Deklarierten Arguments.\n
 169	$!: Funktionsargument $1 wird weiterverwendet.\n
 
-171	$!: Ungültiges "break".\n
-172	$!: Ungültiges "continue".\n
+171	$!: UngÃ¼ltiges "break".\n
+172	$!: UngÃ¼ltiges "continue".\n
 173	$!: Unbekannte Funktion/Operator $1.\n
 174	$!: Unbekannte Funktion/Operator $1.\n
 175	$!: Funktion $1: L-Wert kann nicht generiert werden.\n
@@ -176,8 +176,8 @@ If not, write to the Free Software Foundation, Inc.,
 181	$!: $0: EOF in Liste.\n
 182	$!: $0: Fehlendes Objekt vor $1.\n
 183	$!: $0: Unerwartetes Zeichen $1 in Liste.\n
-185	$!: $0: Syntaxfehler in Aufzählungsdefinition.\n
-186	$!: $0: Basisklasse $1 muß ein Aufzählungstype sein.\n
+185	$!: $0: Syntaxfehler in AufzÃ¤hlungsdefinition.\n
+186	$!: $0: Basisklasse $1 muÃŸ ein AufzÃ¤hlungstype sein.\n
 
 191	$!: $0: Member/Scope-Name wurde nicht angegeben.\n
 192	$!: $0: Komponente $1 von Scope ist nicht definiert.\n
@@ -193,7 +193,7 @@ If not, write to the Free Software Foundation, Inc.,
 206	$!: Unerlaubte Funktionsdeklaration.\n
 
 301	$!: Unbekannter Zufallsgeneratortype $1.\n
-302	$!: Unbekannte Speicherlänge in Variablendefinition.\n
+302	$!: Unbekannte SpeicherlÃ¤nge in Variablendefinition.\n
 
 400	$!: Funktionsdefinition noch nicht ausprogrammiert.\n
 401	$!: $0: Fehlender Block nach switch-Statement.\n
@@ -201,8 +201,8 @@ If not, write to the Free Software Foundation, Inc.,
 403	$!: $0: Unerwartetes Zeichen nach default-Statement.\n
 404	$!: $0: Befehlszeilen vor Klausel werden ignoriert.\n
 
-ppm	$!: $0: Ungültiger Header in Pixmap-Datei.\n
+ppm	$!: $0: UngÃ¼ltiger Header in Pixmap-Datei.\n
 nocmp	$!: Vergleichsfunktion ist nicht definiert.\n
 
 vdiff	$!: $0: Datentyp $1: falsche Version $2 != $3.\n
-vskip	$!: $0: Keine Versionskontrolle für Datentyp $1.\n
+vskip	$!: $0: Keine Versionskontrolle fÃ¼r Datentyp $1.\n

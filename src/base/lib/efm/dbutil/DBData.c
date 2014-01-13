@@ -1,7 +1,7 @@
 /*
 Arbeiten mit Datenbankdaten
 
-$Copyright (C) 2002 Erich Frühstück
+$Copyright (C) 2002 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -41,11 +41,11 @@ static LogControl note_ctrl = LOG_CONTROL("DBData", LOGLEVEL_NOTE);
 static DBDATA(DBDataBuf);
 
 /*
-Die Funktion |$1| liest einen EBCDIC-Datensatz der Länge <recl>.
-Falls <recl> gleich 0 ist, wird von einem Datensatz mit Satzlängenfeld
+Die Funktion |$1| liest einen EBCDIC-Datensatz der LÃ¤nge <recl>.
+Falls <recl> gleich 0 ist, wird von einem Datensatz mit SatzlÃ¤ngenfeld
 ausgegangen. Bei erfolgreichem Lesen liefert die Funktion einen
 Pointer auf den Datenbuffer. Bei einem Fehler oder am Ende der
-Datei wird ein NULL-Pointer zurückgegeben.
+Datei wird ein NULL-Pointer zurÃ¼ckgegeben.
 */
 
 DBData *DBData_ebcdic (DBData *db, IO *io, int recl)
@@ -113,13 +113,13 @@ static void DBData_expand (DBData *db)
 
 /*
 Die Funktion |$1| ladet eine Datenzeile im Textformat.
-Ein Wagenrücklauf in der Eingabedatei wird ignoriert.
+Ein WagenrÃ¼cklauf in der Eingabedatei wird ignoriert.
 Ein NUL-Zeichen wird durch ein Leerzeichen ersetzt.
 Falls eine Liste von Trennzeichen <delim> angegeben wurde,
 wird der Datensatz in Datenfelder aufgespalten.
 Bei erfolgreichem Lesen liefert die Funktion einen
 Pointer auf den Datenbuffer. Bei einem Fehler oder am Ende der
-Datei wird ein NULL-Pointer zurückgegeben.
+Datei wird ein NULL-Pointer zurÃ¼ckgegeben.
 */
 
 DBData *DBData_text (DBData *db, IO *io, const char *delim)
@@ -191,7 +191,7 @@ static void add_qfield (DBData *db, IO *io)
 /*
 Die Funktion |$1| ladet eine Datenzeile im Textformat und
 spaltet sie nach den Trennzeichen auf. Im Unterschied zu
-|DBData_text| werden Anführungszeichen berücksichtigt.
+|DBData_text| werden AnfÃ¼hrungszeichen berÃ¼cksichtigt.
 Die Aufspaltung erfolgt bereits beim Laden der Datenzeile.
 */
 
@@ -319,8 +319,8 @@ void DBData_conv (DBData *db)
 }
 
 /*
-Die Funktion |$1| synchronisiert den Datenbuffer auf die Satzlänge <recl>.
-Bei Verlängerung wird mit dem Zeichen <c> aufgefüllt.
+Die Funktion |$1| synchronisiert den Datenbuffer auf die SatzlÃ¤nge <recl>.
+Bei VerlÃ¤ngerung wird mit dem Zeichen <c> aufgefÃ¼llt.
 */
 
 void DBData_sync (DBData *db, int recl, int c)
@@ -347,12 +347,12 @@ void DBData_sync (DBData *db, int recl, int c)
 
 /*
 Die Funktion |$1| zerlegt den Datenbuffer in einzelne Felder, wobei <delim>
-die zulässigen Trennzeichen angibt. Falls <delim> kein Leerzeichen enthält,
+die zulÃ¤ssigen Trennzeichen angibt. Falls <delim> kein Leerzeichen enthÃ¤lt,
 wird jedes Feld durch genau ein Trennzeichen getrennt. Ansonsten gilt
 eine beliebige Folge von Leerzeichen und Tabulatoren und optional ein
 sonstiges Trennzeichen als Feldtrennung.
-Die Funktion liefert die Zahl der Felder und legt ein zusätzliches,
-leeres Feld für missing Values an.
+Die Funktion liefert die Zahl der Felder und legt ein zusÃ¤tzliches,
+leeres Feld fÃ¼r missing Values an.
 */
 
 int DBData_split (DBData *db, const char *delim)
@@ -420,7 +420,7 @@ int DBData_split (DBData *db, const char *delim)
 
 
 /*
-Position prüfen prüfen
+Position prÃ¼fen prÃ¼fen
 */
 
 int DBData_check (DBData *data, int pos, int len)
@@ -454,8 +454,8 @@ unsigned char *DBData_ptr (DBData *data, int pos, int len)
 /*
 Die Funktion |$1| liefert das Datenfeld mit Index <idx>.
 Falls <data> ein Nullpointer ist, wird ein Nullpointer
-zurückgegeben. Falls Index <idx> außerhalb des zulässigen Bereichs liegt,
-wird ein Leerstring zurückgegeben.
+zurÃ¼ckgegeben. Falls Index <idx> auÃŸerhalb des zulÃ¤ssigen Bereichs liegt,
+wird ein Leerstring zurÃ¼ckgegeben.
 */
 
 char *DBData_field (DBData *data, int idx)
@@ -474,8 +474,8 @@ char *DBData_field (DBData *data, int idx)
 
 /*
 Die Funktion |$1| liefert das Datenfeld mit Index <idx>.
-Falls Index <idx> außerhalb des zulässigen Bereichs liegt, wird
-zusätzlich eine Warnung ausgegeben.
+Falls Index <idx> auÃŸerhalb des zulÃ¤ssigen Bereichs liegt, wird
+zusÃ¤tzlich eine Warnung ausgegeben.
 */
 		
 char *DBData_xfield (DBData *data, int idx)
@@ -492,8 +492,8 @@ char *DBData_xfield (DBData *data, int idx)
 /*
 Die Funktion |$1| liefert den Kalenderindeg zu einer Datumsangabe
 im Datenfeld mit Index <idx>. Falls <data> ein Nullpointer ist,
-oder <idx> außerhalb des zulässigen Bereichs liegt, wird 0 zurückgegeben.
-Falls <flag> ungleich null ist, wird bei der Datumsvervollständigung
+oder <idx> auÃŸerhalb des zulÃ¤ssigen Bereichs liegt, wird 0 zurÃ¼ckgegeben.
+Falls <flag> ungleich null ist, wird bei der DatumsvervollstÃ¤ndigung
 der letzte Tag, ansonsten der erste Tag im Monat/Jahr genommen.
 */
 

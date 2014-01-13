@@ -1,7 +1,7 @@
 /*
-IO-Schnittstelle zu großen Zwischenbuffer
+IO-Schnittstelle zu groÃŸen Zwischenbuffer
 
-$Copyright (C) 1998 Erich Frühstück
+$Copyright (C) 1998 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -41,14 +41,14 @@ If not, write to the Free Software Foundation, Inc.,
 int ftruncate (int fd, off_t length);
 
 typedef struct {
-	char *name;	/* Name der temporären Zwischendatei */
+	char *name;	/* Name der temporÃ¤ren Zwischendatei */
 	int fd;		/* Filedeskriptor */
 	unsigned char *buf;	/* Datenbuffer */
-	unsigned size;	/* Buffergröße */
+	unsigned size;	/* BuffergrÃ¶ÃŸe */
 	unsigned pos;	/* Aktuelle Position */
 	unsigned end;	/* Bufferende */
 	unsigned blk_pos;	/* Aktueller Block */
-	unsigned blk_end;	/* Zahl der Blöcke */
+	unsigned blk_end;	/* Zahl der BlÃ¶cke */
 } BIGBUF;
 
 static void bb_debug (BIGBUF *bb, const char *cmd)

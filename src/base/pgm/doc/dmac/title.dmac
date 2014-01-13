@@ -1,8 +1,8 @@
 /*
 :*:title page
-:de:Befehle für die Titelseite
+:de:Befehle fÃ¼r die Titelseite
 
-$Copyright (C) 1999 Erich Frühstück
+$Copyright (C) 1999 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -50,8 +50,8 @@ If not, write to the Free Software Foundation, Inc.,
 The interpretation of the flags depends of the actual output
 driver.
 :de:Der Befehl $1 erweitert die Flags zur Dokumentverarbeitung.
-Inwieweit einzelne Flags bei der Formatierung berücksichtigt werden,
-hängt vom jeweiligem Ausgabetreiber ab.
+Inwieweit einzelne Flags bei der Formatierung berÃ¼cksichtigt werden,
+hÃ¤ngt vom jeweiligem Ausgabetreiber ab.
 
 \def\addflag	for (x in split(ParseLine(cin), ",")) docflags += xexpand(x);
 
@@ -61,7 +61,7 @@ hängt vom jeweiligem Ausgabetreiber ab.
 
 :*:The command $1 loades the LaTeX package <name> if the LaTeX driver
 is used.
-:de:Der Befehl $1 generiert für LaTeX die Definitionszeile
+:de:Der Befehl $1 generiert fÃ¼r LaTeX die Definitionszeile
 <|\\usepackage[<opt>]{<name>}|>. Damit werden Zusatzpakete geladen.
 
 \def\package	{{
@@ -104,7 +104,7 @@ is only used in the later case. The <subtitle> is ignored in the
 later case.
 :de:Falls das Dokument noch nicht begonnen wurde, setzt der Befehl $1
 Titel und Untertitel des Dokuments. Ansonsten wird ein neues Kapitel
-begonnen, wobei die Kurzform für den Eintrag ins Inhaltsverzeichnis
+begonnen, wobei die Kurzform fÃ¼r den Eintrag ins Inhaltsverzeichnis
 verwendet wird.
 
 \def\title	{{
@@ -121,15 +121,15 @@ verwendet wird.
 	$1 <Autorenliste>\br
 	~~~~&ldots;
 
-:de:Der Befehl $1 definiert die Autorenliste für die Titelseite.
+:de:Der Befehl $1 definiert die Autorenliste fÃ¼r die Titelseite.
 
 \def\author	author = expand(strsub(ParseLine(cin, true), "\n", "\\br\n"));
 
 :*:introduction
-:de:Einführung
+:de:EinfÃ¼hrung
 
 :*:The command $1 starts the introduction
-:de:Der Befehl $1 beginnt die Einführung
+:de:Der Befehl $1 beginnt die EinfÃ¼hrung
 
 \def\intro	{
 	fprintf(ioerr, "\\intro ist veraltet, durch \\preface ersetzen!\n");

@@ -1,8 +1,8 @@
 #!/bin/sh
 # :*:	list the next level of config files in a directory
-# :de: 	Auflisten der nächsten Ebene von Konfigurationsdateien.
+# :de: 	Auflisten der nÃ¤chsten Ebene von Konfigurationsdateien.
 #
-# $Copyright (C) 2009 Erich Frühstück
+# $Copyright (C) 2009 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or modify

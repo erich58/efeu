@@ -1,6 +1,6 @@
 /*	Initialisierung von EDB
-	$Copyright (C) 2004 Erich Frühstück
-	A-3423 St.Andrä/Wördern, Wildenhaggasse 38
+	$Copyright (C) 2004 Erich FrÃ¼hstÃ¼ck
+	A-3423 St.AndrÃ¤/WÃ¶rdern, Wildenhaggasse 38
 */
 
 
@@ -48,7 +48,7 @@ static EfiObj *get_data (const EfiObj *base, void *data)
 static EfiMember edb_var[] = {
 	{ "head", &Type_str, get_head, NULL,
 		":*:header of data file\n"
-		":de:Header für Datenverarbeitung\n" },
+		":de:Header fÃ¼r Datenverarbeitung\n" },
 	{ "desc", &Type_str, get_desc, NULL,
 		":*:description of data file\n"
 		":de:Beschreibung der Daten\n" },

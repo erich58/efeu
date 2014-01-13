@@ -3,7 +3,7 @@ Bilderverwaltung
 
 $Header <EFEU/$1>
 
-$Copyright (C) 1995 Erich Frühstück
+$Copyright (C) 1995 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -51,7 +51,7 @@ COLOR SetColor(double x, double y, double z);
 int GetColor(COLOR color, COLOR *tab, size_t dim);
 
 typedef struct {
-	REFVAR;		/* Referenzzähler */
+	REFVAR;		/* ReferenzzÃ¤hler */
 	int colors;	/* Farbenzahl */
 	int rows;	/* Zeilenzahl */
 	int cols;	/* Spaltenzahl */

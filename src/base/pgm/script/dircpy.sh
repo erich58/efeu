@@ -2,7 +2,7 @@
 # :*:copy directory
 # :de:Verzeichnis kopieren
 #
-# $Copyright (C) 2001 Erich Frühstück
+# $Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -54,8 +54,8 @@ esac
 # Das Kommando |\$!| verwendet |find| und |cpio| zum Kopieren des
 # Verzeichnisbaumes <src> nach <tg>|/|<src>.
 # Attribute und Zugriffszeiten werden mitkopiert. Die Zugriffszeiten
-# der Ausgangsdateien bleiben unverändert. Dateien werden nur überschrieben,
-# wenn die zugehörige Ausgangsdatei eine neuere Modifikationszeit aufweist.
+# der Ausgangsdateien bleiben unverÃ¤ndert. Dateien werden nur Ã¼berschrieben,
+# wenn die zugehÃ¶rige Ausgangsdatei eine neuere Modifikationszeit aufweist.
 
 # $SeeAlso
 # find(1), cpio(1), dircmp(1).

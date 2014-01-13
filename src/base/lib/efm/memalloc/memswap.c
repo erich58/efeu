@@ -1,7 +1,7 @@
 /*
 Speicherinhalt austauschen
 
-$Copyright (C) 1996 Erich Frühstück
+$Copyright (C) 1996 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -28,7 +28,7 @@ beginnend bei <ap> und <bp>. Die Variable <n> gibt die Zahl der
 Bytes an, die vertauscht werden sollen.
 
 $Warning
-Falls sich die beiden Speicherfelder überlappen, ist das Resultat
+Falls sich die beiden Speicherfelder Ã¼berlappen, ist das Resultat
 unbestimmt.
 */
 

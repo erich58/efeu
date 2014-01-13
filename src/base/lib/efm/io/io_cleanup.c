@@ -1,7 +1,7 @@
 /*
-IO-Struktur mit Aufräumfunktion
+IO-Struktur mit AufrÃ¤umfunktion
 
-$Copyright (C) 1999 Erich Frühstück
+$Copyright (C) 1999 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -29,7 +29,7 @@ If not, write to the Free Software Foundation, Inc.,
 typedef struct {
 	void (*clean) (IO *io, void *par);
 	IO *io;	/* Eingabestruktur */
-	void *par;	/* Aufräumfunktion */
+	void *par;	/* AufrÃ¤umfunktion */
 } CLPAR;
 
 

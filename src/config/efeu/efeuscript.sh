@@ -2,7 +2,7 @@
 # :*:install script file
 # :de:Installation von Scripts
 #
-# $Copyright (C) 2001 Erich Frühstück
+# $Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -24,10 +24,10 @@
 # Version=":VN:"
 # u|
 #	:*:only user gets exec permission
-#	:de:Nur Eigentümer erhält Ausführungsrechte
+#	:de:Nur EigentÃ¼mer erhÃ¤lt AusfÃ¼hrungsrechte
 # g|
 #	:*:only user and group gets exec permission
-#	:de:Nur Eigentümer und Gruppe erhalten Ausführungsrechte
+#	:de:Nur EigentÃ¼mer und Gruppe erhalten AusfÃ¼hrungsrechte
 # e|
 #	:*:use /usr/bin/env to start interpreter
 #	:de:/usr/bin/env zum Start des Interpreters verwenden
@@ -37,7 +37,7 @@
 # s:"|/|expr|/|repl|/|" |
 #	:*:use sed to replace <expr> with <repl>. This Option may be repeated.
 #	:de:Verwende sed zum Ersetzen von <expr> durch <repl>. Mehrfachangaben
-#	sind möglich. Anstelle von |/| kann auch ein anderes Trennzeichen
+#	sind mÃ¶glich. Anstelle von |/| kann auch ein anderes Trennzeichen
 #	verwendet werden.
 # c:name|
 #	:*:name of interpreter, default $cmd
@@ -54,8 +54,8 @@
 # The command completes the script <src> with a interpreter key (#!).
 # The complete path of the interpreter is discoverd.
 # :de:
-# Das Kommando ergänzt das Skript <src> mit einer Interpreterkennung.
-# Dabei wird der vollständige Pfad des Interpreters automatisch
+# Das Kommando ergÃ¤nzt das Skript <src> mit einer Interpreterkennung.
+# Dabei wird der vollstÃ¤ndige Pfad des Interpreters automatisch
 # ermittelt.
 # 
 # :*:
@@ -63,7 +63,7 @@
 # only checked and not modified.
 # :de:
 # Falls bereits eine Interpreterkennung vorhanden ist, wird diese
-# nur geprüft und nicht verändert.
+# nur geprÃ¼ft und nicht verÃ¤ndert.
 #
 # @arglist -i
 

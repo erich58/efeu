@@ -2,7 +2,7 @@
 :*:EDB interface
 :de:EDB-Schnittstelle
 
-$Copyright (C) 2006 Erich Frühstück
+$Copyright (C) 2006 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -883,15 +883,15 @@ static EDBMetaDef mdef[] = {
 	},
 	{ "pg_query", meta_query, 0,
 		":*:read data from postgresql query"
-		":de:Daten über SQL-Abfrage holen"
+		":de:Daten Ã¼ber SQL-Abfrage holen"
 	},
 	{ "pg_connect", meta_connect, 0,
 		":*:create persistent connection to postgresql server"
-		":de:Beständige Verbindung zum PostgeSQL-Server aufbauen"
+		":de:BestÃ¤ndige Verbindung zum PostgeSQL-Server aufbauen"
 	},
 	{ "pg_close", meta_close, 0,
 		":*:close persistent connection to postgresql server"
-		":de:Beständige Verbindung zum PostgeSQL-Server schließen"
+		":de:BestÃ¤ndige Verbindung zum PostgeSQL-Server schlieÃŸen"
 	},
 	{ "pg_exec", meta_exec, 0,
 		":*:send SQL-query to server"
@@ -899,11 +899,11 @@ static EDBMetaDef mdef[] = {
 	},
 	{ "pg_group", meta_group, 0,
 		":*:define grouping for cube generation"
-		":de:Gruppen für die Würfelkonstruktion festlegen"
+		":de:Gruppen fÃ¼r die WÃ¼rfelkonstruktion festlegen"
 	},
 	{ "pg_cursor", meta_cursor, 0,
 		":*:define cursor for data query"
-		":de:Cursor für Datenabfrage definieren"
+		":de:Cursor fÃ¼r Datenabfrage definieren"
 	},
 	{ "pg_create", meta_create, 0,
 		":*:Create EDB-Datafile with given cursor and group"

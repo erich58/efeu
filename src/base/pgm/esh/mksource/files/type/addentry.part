@@ -2,11 +2,11 @@
 :*:The function |$1| adds structure members to the structur
 definition.
 :de:Die Funktion |$1| erweitert die Strukturdefinitionen entsprechend
-der Einträge in <def>. Eine einzelne Zeile hat die Form
+der EintrÃ¤ge in <def>. Eine einzelne Zeile hat die Form
 	<type> <name> <desc>
 wobei <type> der Datentyp, <name> der Variablenname und <desc> der
 Beschreibungstext ist. Eine Zahl anstelle von <type> generiert einen
-Bitfeldeintrag der entsprechenden Größe.
+Bitfeldeintrag der entsprechenden GrÃ¶ÃŸe.
 Ein . oder das Schlusselwort
 |@macro| anstelle von <type> erzeugt einen Eintrag der Form |"|<name>|;"|.
 Vergleiche dazu untenstehendes Beispiel.
@@ -14,7 +14,7 @@ Falls <type> mit einem Klammeraffen beginnt,
 handelt es sich um eine Steueranweisung oder einen Spezialeintrag.
 Folgende Anweisungen sind definiert:
 \end
-(Liste unvollständig)
+(Liste unvollstÃ¤ndig)
 */
 
 void TypeDef::addentry (IO in)

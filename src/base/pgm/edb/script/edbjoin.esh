@@ -1,8 +1,8 @@
 /*
 :*:	joining efeu data files
-:de:	Verknüpfen von Efeu-Datenfiles
+:de:	VerknÃ¼pfen von Efeu-Datenfiles
 
-$Copyright (C) 2005 Erich Frühstück
+$Copyright (C) 2005 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -50,7 +50,7 @@ n:lim | Limit
 	:de:Begrenzung der ausgegebenen Datenzeilen
 j:arg | JoinArg
 	:*:sets the join parameter to <arg>
-	:de:setzt den Verknüpfungsparameter auf <arg>
+	:de:setzt den VerknÃ¼pfungsparameter auf <arg>
 a:def | Filter1: append " "
 	:*:applay filter <def> on first input file
 	:de:Filter <def> auf die erste Eingabedatei anwenden

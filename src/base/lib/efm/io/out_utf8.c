@@ -1,7 +1,7 @@
 /*
 UTF-8 Ausgabekonvertierung
 
-$Copyright (C) 2009 Erich Fr¸hst¸ck
+$Copyright (C) 2009 Erich Fr√ºhst√ºck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -48,7 +48,7 @@ static void utf8_flush (IO *out)
 
 	if	(!out->nsave)	return;
 
-	if	(out->save_buf[out->nsave]) /* Unvollst‰ndig */
+	if	(out->save_buf[out->nsave]) /* Unvollst√§ndig */
 	{
 		for (i = 0; i < out->nsave; i++)
 			io_putucs_utf8(latin9_to_ucs(out->save_buf[i]),

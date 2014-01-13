@@ -1,12 +1,12 @@
 \sec	Einstieg
 
-Efeudoc wurde so konzipiert, dass ein normales Textfile möglichst ohne
+Efeudoc wurde so konzipiert, dass ein normales Textfile mÃ¶glichst ohne
 besondere Steueranweisungen verarbeitet werden kann. Idee ist, das ein
 grob strukturiertes Textfile auch zu einem analog strukturierten
 Dokument wird.
 
-Grundsätzlich gibt es eine strikte Trennung zwischen Layout und
-Inhalt, d.H. efeudoc bietet nur wenige Optionen für die textliche
+GrundsÃ¤tzlich gibt es eine strikte Trennung zwischen Layout und
+Inhalt, d.H. efeudoc bietet nur wenige Optionen fÃ¼r die textliche
 Gestaltung im laufenden Text, die Darstellung dieser Grundelemente
-kann dafür in einem Stylefile angepasst werden.
+kann dafÃ¼r in einem Stylefile angepasst werden.
 Dokumente erhalten damit ein einheitlicheres Aussehen.

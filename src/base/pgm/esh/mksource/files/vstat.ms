@@ -2,7 +2,7 @@
 Verarbeitungsstatistik
 
 $Header	<$1>
-$Copyright (C) 1998 Erich Frühstück
+$Copyright (C) 1998 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -31,21 +31,21 @@ If not, write to the Free Software Foundation, Inc.,
 Die Funktion |$1| konstruiert eine Tabelle mit Formatanweisungen
 und optional eine Ausgabefunktion zur Ausgabe einer Verarbeitungsstatistik.
 
-Als Argument benötigt die Funktion |$1| den Namen <sname> und die
+Als Argument benÃ¶tigt die Funktion |$1| den Namen <sname> und die
 Bezeichnung <label> der Verarbeitungsstatistik,
 sowie eine IO-Struktur <def> mit Formatdefinitionen.
 
 Aus den einzelnen Formatdefinitionen wird der Vektor
-|char *| <sname>|_fmt| konstruiert. Zusätzlich wird 
-der Makro <sname>|_dim| mit der Zahl der Einträge im Vektor definiert.
+|char *| <sname>|_fmt| konstruiert. ZusÃ¤tzlich wird 
+der Makro <sname>|_dim| mit der Zahl der EintrÃ¤ge im Vektor definiert.
 
 Die einzelnen Formatdefinitionen haben den Aufbau:
 	<name>	<fmt>
-wobei für <name> eine Parametersubstitution durchgeführt wird und Argument 1
+wobei fÃ¼r <name> eine Parametersubstitution durchgefÃ¼hrt wird und Argument 1
 auf den Namen der Verarbeitungsstatistik gesetzt ist.
-Falls der resultierende Name ein gültiger C-Bezeichner ist, wird ein
+Falls der resultierende Name ein gÃ¼ltiger C-Bezeichner ist, wird ein
 Makro mit der aktuellen Indexnummer in der Formattabelle eingerichtet.
-Der Parameter <fmt> wird unverändert als Formatstring in die Tabelle übernommen.
+Der Parameter <fmt> wird unverÃ¤ndert als Formatstring in die Tabelle Ã¼bernommen.
 
 Falls das Argument <pdef> verschieden von |NULL|
 ist, wird damit eine Ausgabefunktion mit Prototyp
@@ -53,20 +53,20 @@ ist, wird damit eine Ausgabefunktion mit Prototyp
 konstruiert. Der Vektor |tab| besteht aus mindestens <sname>|_dim|
 Elementen, die der Reihe nach ausgegeben werden.
 Mithilfe von <otype> und <vtype> kann der Typ der
-Ausgabestruktur und des Statistikvektors verändert werden.
-Falls für <otype> |NULL| übergeben wird, entfällt das Argument |out|.
+Ausgabestruktur und des Statistikvektors verÃ¤ndert werden.
+Falls fÃ¼r <otype> |NULL| Ã¼bergeben wird, entfÃ¤llt das Argument |out|.
 
 Die Definition
-<pdef> bestimmt den Rumpf der Hauptschleife. Für sie wird eine
-Parametersubstitution durchgeführt, wobei Argument 1 auf den Namen der
+<pdef> bestimmt den Rumpf der Hauptschleife. FÃ¼r sie wird eine
+Parametersubstitution durchgefÃ¼hrt, wobei Argument 1 auf den Namen der
 Verarbeitungsstatistik gesetzt wird.
-Als Name für den Laufindex wird <n> verwendet.
-Zusätzlich wird vor der Parametersubstitution die Variable
+Als Name fÃ¼r den Laufindex wird <n> verwendet.
+ZusÃ¤tzlich wird vor der Parametersubstitution die Variable
 <fmt> auf <sname>|_fmt[n]| und <val> auf |tab[n]| gesetzt.
 Das unten angegebene Beispiel zeigt ihre Verwendung.
 
 Falls das Argument <glob> der Funktion |$1| den Wert |true| hat, werden
-Formatvektor und Ausgabefunktion mit externer Verknüpfbarkeit definiert.
+Formatvektor und Ausgabefunktion mit externer VerknÃ¼pfbarkeit definiert.
 */
 
 void VStat (str sname, str label, IO def, str pdef = NULL,
@@ -134,8 +134,8 @@ void VStat (str sname, str label, IO def, str pdef = NULL,
 }
 
 /*
-Die Funktion |$1| generiert zusätzlich zu einer Ausgabefunktion für
-eine |IO|-Struktur eine Protokollfunktion für eine |LogControl|-Struktur.
+Die Funktion |$1| generiert zusÃ¤tzlich zu einer Ausgabefunktion fÃ¼r
+eine |IO|-Struktur eine Protokollfunktion fÃ¼r eine |LogControl|-Struktur.
 Ansonsten sind die Parameter gleich wie bei |VStat|.
 */
 
@@ -161,9 +161,9 @@ $Example
 
 Das folgende Beispiel zeigt ein Programm, welches die Zeichen der
 Standard&-eingabe unter zuhilfenahme einer Verarbeitungsstatistik
-nach verschiedenen Zeichenklassen auszählt.
+nach verschiedenen Zeichenklassen auszÃ¤hlt.
 Anstelle von |IO| soll eine |FILE|-Struktur verwendet werden.
-Die angegebene Schablonendatei liefert ein lauffähiges Programm.
+Die angegebene Schablonendatei liefert ein lauffÃ¤higes Programm.
 
 \ms_example ctype
 config src

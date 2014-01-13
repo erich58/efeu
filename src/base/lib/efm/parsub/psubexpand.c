@@ -1,7 +1,7 @@
 /*
 Parametersubstitution
 
-$Copyright (C) 1994, 2009 Erich Frühstück
+$Copyright (C) 1994, 2009 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -203,7 +203,7 @@ static char *expand (StrBuf *base, IO *in, GETARG *arg)
 /*	Falls base NULL ist, wird der statische Buffer expand_buf verwendet.
 	Damit expand rekursiv aufgerufen werden kann, wird dieser immer
 	ab der aktuellen Position verwendet. Diese muss am Ende der
-	Verarbeitung zurückgesetzt werden.
+	Verarbeitung zurÃ¼ckgesetzt werden.
 */
 	buf = base ? base : &expand_buf;
 	offset = buf->pos;
@@ -279,8 +279,8 @@ static char *expand (StrBuf *base, IO *in, GETARG *arg)
 		return sb_nul(buf) + offset;
 
 /*	Falls expand_buf verwendet wurde, muss dieser auf den Anfangszustand
-	zurückgestellt werden. Die zurückgegebene Zeichenkette bleibt bis
-	zum nächsten Schreibzugriff gültig.
+	zurÃ¼ckgestellt werden. Die zurÃ¼ckgegebene Zeichenkette bleibt bis
+	zum nÃ¤chsten Schreibzugriff gÃ¼ltig.
 */
 	sb_putc(0, buf);
 	sb_setpos(buf, offset);

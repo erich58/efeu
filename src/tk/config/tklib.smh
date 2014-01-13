@@ -1,5 +1,5 @@
 # :*:configuration file for tk interface
-# :de:Konfigurationsdatei für tk Schnittstelle
+# :de:Konfigurationsdatei fÃ¼r tk Schnittstelle
 #
 # $Synopsis
 # include $1
@@ -7,7 +7,7 @@
 # \$(TK_INC)\br
 # \$(TK_LIB)
 #
-# $Copyright (C) 2004 Erich Frühstück
+# $Copyright (C) 2004 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # This library is free software; you can redistribute it and/or
@@ -39,7 +39,7 @@ include cflags.smh
 # :de:
 # Durch Einbinden der Headerdatei |$1| werden die |make|-Makros
 # \index{|TK_INC|} und \index{|TK_LIB|} mit Kompiler und Linkeroptionen
-# für Tcl/Tk Anwendungen definiert.
+# fÃ¼r Tcl/Tk Anwendungen definiert.
 # Die Konfiguration erfolgt mit den Befehlszeilen:
 #
 # $source
@@ -68,8 +68,8 @@ mf_comm -n "End of TCL/TK configuration"
 # include $1
 # \end
 # :de:
-# Eine typische Ausgabe (abhängig von Bibliotheksversion und
-# Rechnerarchitektur) für das Einbinden der Headerdatei mit
+# Eine typische Ausgabe (abhÃ¤ngig von Bibliotheksversion und
+# Rechnerarchitektur) fÃ¼r das Einbinden der Headerdatei mit
 # \shmkmf[-x] hat die Form:
 # include $1
 # \end

@@ -2,7 +2,7 @@
 :*:administation of command parameters
 :de:Verwalten von Kommandoparameterstrukturen
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -49,7 +49,7 @@ static void cpar_clean (void *ptr)
 }
 
 /*
-Die Datenstruktur |$1| definiert den Referenztype für die Struktur |CmdPar|.
+Die Datenstruktur |$1| definiert den Referenztype fÃ¼r die Struktur |CmdPar|.
 */
 
 RefType CmdPar_reftype = REFTYPE_INIT("CmdPar", cpar_ident, cpar_clean);
@@ -91,7 +91,7 @@ void CmdPar_init (CmdPar *par)
 }
 
 /*
-Die Funktion |$1| löscht alle in der Kommandoparameterstruktur <par>
+Die Funktion |$1| lÃ¶scht alle in der Kommandoparameterstruktur <par>
 gespeicherten Daten und stellt den Zustand nach |CmdPar_init| her.
 */
 
@@ -125,9 +125,9 @@ CmdPar *CmdPar_alloc (const char *name)
 
 /*
 Die Funktion |$1| wird intern zur Bestimmung eines Vorgabewertes
-für den Pointer <ptr> auf eine Kommandostruktur verwendet.
-Falls für <ptr> ein Nullpointer übergeben wird, liefert die
-die Funktion |$1| den Pointer auf eine interne Datenstruktur zurück.
+fÃ¼r den Pointer <ptr> auf eine Kommandostruktur verwendet.
+Falls fÃ¼r <ptr> ein Nullpointer Ã¼bergeben wird, liefert die
+die Funktion |$1| den Pointer auf eine interne Datenstruktur zurÃ¼ck.
 Diese wird bei der ersten Verwendung automatisch initialisiert.
 Ansonsten liefert die Funktion <ptr>.
 */
@@ -172,7 +172,7 @@ static void var_info (IO *io, InfoNode *info)
 
 /*
 Die Funktion |$1| generiert aus der Kommandoparameterstruktur die folgenden
-Unterpunkte für den Informationsknoten <node>:
+Unterpunkte fÃ¼r den Informationsknoten <node>:
 [Res]	Kommandoresourcen
 [Arg]	Optionen und Argumente
 [Env]	Umgebungsvariablen
@@ -196,11 +196,11 @@ void CmdPar_info (CmdPar *par, InfoNode *node)
 /*
 $Note
 Die hier beschriebenen Funktionen werden von einem Kommando nur
-dann benötigt, wenn es mit mehr als einer Kommandoparameterstruktur
+dann benÃ¶tigt, wenn es mit mehr als einer Kommandoparameterstruktur
 arbeitet. Alle anderen Funktionen zur Verwaltung der Kommandoparameter
-kännen mit einen Nullpointer anstelle einer Kommandoparameterstruktur
+kÃ¤nnen mit einen Nullpointer anstelle einer Kommandoparameterstruktur
 aufgerufen werden, da sie mithilfe von |CmdPar_ptr| auf
-eine interne Variable zurückgreifen.
+eine interne Variable zurÃ¼ckgreifen.
 
 $SeeAlso
 \mref{CmdParCall(3)},

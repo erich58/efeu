@@ -1,7 +1,7 @@
 /*
-Zusammenfügen einer variablen Liste von Strings
+ZusammenfÃ¼gen einer variablen Liste von Strings
 
-$Copyright (C) 1996 Erich Frühstück
+$Copyright (C) 1996 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -24,7 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/strbuf.h>
 
 /*
-Die Funktion |$1| dient zum Zusammenhängen beliebig vieler Strings
+Die Funktion |$1| dient zum ZusammenhÃ¤ngen beliebig vieler Strings
 mit Trennzeichen <delim>.
 Die variable Argumentliste wird mit einem Nullpointer abgeschlossen.
 */
@@ -53,9 +53,9 @@ char *mstrcat(const char *delim, const char *list, ...)
 
 
 /*
-Die Funktion <$1> hängt die beiden Strings <a> und <b>
-mit dem Trennzeichen <delim> zusammen. Falls für einen beiden Strings
-ein Nullpointer übergeben wurde, wird kein Trennzeichen ausgegeben.
+Die Funktion <$1> hÃ¤ngt die beiden Strings <a> und <b>
+mit dem Trennzeichen <delim> zusammen. Falls fÃ¼r einen beiden Strings
+ein Nullpointer Ã¼bergeben wurde, wird kein Trennzeichen ausgegeben.
 Sind beide Strings Nullpointer, liefert die Funktion einen Nullpointer.
 */
 
@@ -75,7 +75,7 @@ char *mstrpaste(const char *delim, const char *a, const char *b)
 
 /*
 $Notes
-Das Speicherfeld für den Rückgabewert wird mit |memalloc| eingerichtet.
+Das Speicherfeld fÃ¼r den RÃ¼ckgabewert wird mit |memalloc| eingerichtet.
 $SeeAlso
 \mref{memalloc(3)}.\br
 \mref{string(3C)} @PRM.

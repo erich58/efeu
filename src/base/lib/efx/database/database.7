@@ -22,16 +22,16 @@ VirFunc \it{test} = NULL, str \it{list} = NULL)
 \Description
 
 Der Konstruktor \tt{DataBase} generiert eine einfache Datenbank.
-Als Argument wird der Datentype \it{type} für die Einträge,
+Als Argument wird der Datentype \it{type} fÃ¼r die EintrÃ¤ge,
 eine optionale Vergleichsfunktion \it{cmp} und eine
-optionale Blockgröße \it{bsize} übergeben.
+optionale BlockgrÃ¶ÃŸe \it{bsize} Ã¼bergeben.
 
-Die generierte Datenbank enthält einen homogenen Datenvektor mit 
+Die generierte Datenbank enthÃ¤lt einen homogenen Datenvektor mit 
 Elementen vom Type \it{type}. Ist eine Vergleichsfunktion angegeben,
-sind die Einträge sortiert.
-Die größe der Datenbank wird dynamisch angepaßt.
-Die Blockgröße bestimmt dabei um vieviel Elemente
-auf einmal die Datenbank vergrößert wird. Fehl die Angabe der Blockgröße
+sind die EintrÃ¤ge sortiert.
+Die grÃ¶ÃŸe der Datenbank wird dynamisch angepaÃŸt.
+Die BlockgrÃ¶ÃŸe bestimmt dabei um vieviel Elemente
+auf einmal die Datenbank vergrÃ¶ÃŸert wird. Fehl die Angabe der BlockgrÃ¶ÃŸe
 oder ist sie 0, werden Standardvorgaben verwendet.
 
 Eine Datenbank kann mit den Funktionen \tt{DataBase::load},
@@ -39,59 +39,59 @@ Eine Datenbank kann mit den Funktionen \tt{DataBase::load},
 und \tt{DataBase::fsave} ausgegeben werden.
 
 Die Ein- und Ausgabe erfolgt als ASCII-File. Dabei steht ein
-kompaktes und ein komplexes Datenformat zur verfügung.
+kompaktes und ein komplexes Datenformat zur verfÃ¼gung.
 Bei der Eingabe wird das Datenformat automatisch erkannt.
-Bei der Ausgabe wird standardmäßig das kompakte Format verwendet,
-ist jedoch \it{flag} gesetzt, wird das komplexe Datenformat gewählt.
+Bei der Ausgabe wird standardmÃ¤ÃŸig das kompakte Format verwendet,
+ist jedoch \it{flag} gesetzt, wird das komplexe Datenformat gewÃ¤hlt.
 
-Beim Laden von Datenbankeinträgen einer sortierten Datenbank
-werden bereits vorhandene Einträge
+Beim Laden von DatenbankeintrÃ¤gen einer sortierten Datenbank
+werden bereits vorhandene EintrÃ¤ge
 durch den aktuellen Wert ersetzt.
 Wahlweise kann durch den Ausdruck \it{expr} auch eine
-Verknüpfung des alten Wertes mit dem neuen Wert definiert
+VerknÃ¼pfung des alten Wertes mit dem neuen Wert definiert
 werden. Im Ausdruck \it{expr} weist die Variablen \it{x}
 auf den aktuellen Wert des Datenfiles und die Variablen \it{y}
-auf den zugehörigen Datenbankeintrag.
+auf den zugehÃ¶rigen Datenbankeintrag.
 
 Bei der Ausgabe einer Datenbank kann neben der Wahl des Ausgabeformates
 (Variable \it{flag}) auch eine Datenselektion mit der boolschen Funktion
-\it{test} durchgeführt werden (Es werden nur Datenbankeinträge ausgegeben,
-für den die Funktion den Wert wahr liefert).
-Bei Strukturdaten besteht noch die Möglichkeit, mit der Variablen
-\it{list} die Komponenten bei der Ausgabe einzuschränken (Falls
+\it{test} durchgefÃ¼hrt werden (Es werden nur DatenbankeintrÃ¤ge ausgegeben,
+fÃ¼r den die Funktion den Wert wahr liefert).
+Bei Strukturdaten besteht noch die MÃ¶glichkeit, mit der Variablen
+\it{list} die Komponenten bei der Ausgabe einzuschrÃ¤nken (Falls
 \it{list} kein Nullpointer ist, werden nur jene Komponenten ausgegeben,
-die in \it{list} vorkommen. Die Komponentennamen können mit
-weißen Zeichen (Leerzeichen, Tabulatoren, ...),
+die in \it{list} vorkommen. Die Komponentennamen kÃ¶nnen mit
+weiÃŸen Zeichen (Leerzeichen, Tabulatoren, ...),
 Komma oder Strichpunkt voneinander getrennt werden.
 
 \subsection{Kompaktes Datenformat}
-Beim kompakten Datenformat enthält jede Zeile einen kompletten Datenbankeintrag.
-Die einzelnen Elemente einer Zeile können wahlweise mit Doppel- oder
-Strichpunkt getrennt werden. In einer Zelle können beliebige
-Ausdrücke stehen. Das Ergebniss wird in den Datentype der zugehörigen
+Beim kompakten Datenformat enthÃ¤lt jede Zeile einen kompletten Datenbankeintrag.
+Die einzelnen Elemente einer Zeile kÃ¶nnen wahlweise mit Doppel- oder
+Strichpunkt getrennt werden. In einer Zelle kÃ¶nnen beliebige
+AusdrÃ¼cke stehen. Das Ergebniss wird in den Datentype der zugehÃ¶rigen
 Komponente konvertiert.
 
 Ist eine Zelle leer, wird der Wert des vorangegangenen Datenbankeintrags
 verwendet.
 
 Die Reihenfolge der Variablen wird durch eine Kopfzeile festgelegt.
-Diese ist mit einem Gittersymbol gekennzeichnet und enthält anstelle
+Diese ist mit einem Gittersymbol gekennzeichnet und enthÃ¤lt anstelle
 der Datenwerte die Namen der Komponenten.
 
-Es können mehrere Kopfzeilen vorkommen, und damit die Reihenfolge der
-Datenwerte innerhalb des Datenfiles verändert werden.
+Es kÃ¶nnen mehrere Kopfzeilen vorkommen, und damit die Reihenfolge der
+Datenwerte innerhalb des Datenfiles verÃ¤ndert werden.
 Nichtverwendete Komponenten werden mit Vorgabewerten besetzt.
 
-Enthält eine Datenzeile mehr Zellen als in der letzten Kopfzeile definiert
-wurden, werden die entsprechenden Einträge ausgewertet, aber nicht verwendet.
+EnthÃ¤lt eine Datenzeile mehr Zellen als in der letzten Kopfzeile definiert
+wurden, werden die entsprechenden EintrÃ¤ge ausgewertet, aber nicht verwendet.
 
 \subsection{Komplexes Datenformat}
-Beim komplexen Datenformat bestehen Datenbankeinträge aus mehreren
+Beim komplexen Datenformat bestehen DatenbankeintrÃ¤ge aus mehreren
 Anweisungszeilen.
-Eine Leerzeile trennt einzelne Datenbankeinträge.
+Eine Leerzeile trennt einzelne DatenbankeintrÃ¤ge.
 
 Die Anweisungen sind beliebige Befehlszeilen des esh-Interpreters.
-Die Komponenten des aktuellen Dateneintrags können über ihren Namen
+Die Komponenten des aktuellen Dateneintrags kÃ¶nnen Ã¼ber ihren Namen
 angesprochen werden.
 
 Auf den gesamten Eintrag kann mit \tt{this} zugegriffen werden.
@@ -105,7 +105,7 @@ zugegriffen werden:
 \ttitem	\it{type} this
 Aktueller Datenbankeintrag.
 \ttitem	\it{type} default
-Datenbankeintrag mit Vorgabewerten für fehlende Datenbankeinträge.
+Datenbankeintrag mit Vorgabewerten fÃ¼r fehlende DatenbankeintrÃ¤ge.
 \ttitem	\it{type} last
 Letzter Datenbankeintrag.
 \ttitem	bool addentry
@@ -113,10 +113,10 @@ Das Steuerflag \tt{addentry} bestimmt ob der aktuelle Datenwert
 auch in die Datenbank eingetragen wird.
 Es wird bei jeder Zuweisung eines Datenbankwertes
 auf \tt{true} gesetzt und nach erfolgten Eintrag
-wieder auf \tt{false} zurückgestellt.
+wieder auf \tt{false} zurÃ¼ckgestellt.
 \end
 
-Soll der Vorgabewert verändert werden, wird zunächst ein
+Soll der Vorgabewert verÃ¤ndert werden, wird zunÃ¤chst ein
 normaler Datenbankeintrag mit den Vorgabewerten generiert,
 der am Ende mit den Befehlszeilen
 
@@ -127,59 +127,59 @@ der am Ende mit den Befehlszeilen
 
 abgeschlossen wird.
 
-Die erste Befehlszeile übernimmt die Daten des aktuellen Eintrags,
-während die zweite Zeile eine Eintragung in die Datenbank unterdrückt
-(Es soll ja nur der Vorgabewert verändert werden und nicht wirklich
+Die erste Befehlszeile Ã¼bernimmt die Daten des aktuellen Eintrags,
+wÃ¤hrend die zweite Zeile eine Eintragung in die Datenbank unterdrÃ¼ckt
+(Es soll ja nur der Vorgabewert verÃ¤ndert werden und nicht wirklich
 ein Datenbankwert eingetragen).
 
-Im kompakten Format können diese Befehlfolgen an eine Datenzeile
-(jeweils mit Doppel- oder Strichpunkt getrennt) angehängt werden.
+Im kompakten Format kÃ¶nnen diese Befehlfolgen an eine Datenzeile
+(jeweils mit Doppel- oder Strichpunkt getrennt) angehÃ¤ngt werden.
 
-Im komplexen Datenformat können auch Vorgabewerte durch expliziten
-Zugriff auf die Komponenten von \tt{default} verändert werden.
+Im komplexen Datenformat kÃ¶nnen auch Vorgabewerte durch expliziten
+Zugriff auf die Komponenten von \tt{default} verÃ¤ndert werden.
 
-Im komplexen Datenformat können zusätzliche Hilfsvariablen definiert
+Im komplexen Datenformat kÃ¶nnen zusÃ¤tzliche Hilfsvariablen definiert
 werden, deren Lebensdauer mit der Abarbeitung des Datenfiles beendet wird.
 
-Dabei ist darauf zu Achten, daß mit jede Befehlszeile die Variable
-\tt{addentry} auf \tt{true} gesetzt wird, unabhängig davon ob 
-mit der Befehlszeile auch eine Veränderung eines Datenbankwertes
+Dabei ist darauf zu Achten, daÃŸ mit jede Befehlszeile die Variable
+\tt{addentry} auf \tt{true} gesetzt wird, unabhÃ¤ngig davon ob 
+mit der Befehlszeile auch eine VerÃ¤nderung eines Datenbankwertes
 erfolgt.
 
-Soll ein Initialisierungsblock vor den eigentlichen Datenbankeinträgen
-mit einer Leerzeile getrennt werden (was aus Gründen der Lesbarkeit
-zu empfehlen ist) muß zuvor die Variable \tt{addentry} auf
-\tt{false}  gesetzt werden, um nicht unerwünschte Leereinträge
+Soll ein Initialisierungsblock vor den eigentlichen DatenbankeintrÃ¤gen
+mit einer Leerzeile getrennt werden (was aus GrÃ¼nden der Lesbarkeit
+zu empfehlen ist) muÃŸ zuvor die Variable \tt{addentry} auf
+\tt{false}  gesetzt werden, um nicht unerwÃ¼nschte LeereintrÃ¤ge
 zu Konstruieren.
 
 \subsection{Datenbankmanipulation}
 
-Der Operator "+=" dient zum Einfügen eines Datenbankeintrags.
+Der Operator "+=" dient zum EinfÃ¼gen eines Datenbankeintrags.
 Bei einer sortierten Datenbank wird ein eventuell vorhandener
-Eintrag gleichen Schlüssels erstetzt und der Operator liefert die
+Eintrag gleichen SchlÃ¼ssels erstetzt und der Operator liefert die
 alte Definition. Bei einer unsortierten Datenbank wird der Eintrag
-am Ende der Datenbank angehängt.
+am Ende der Datenbank angehÃ¤ngt.
 
 Mit dem Operator "-=" kann ein Datenbankeintrag
-einer sortierten Datenbank gelöscht werden.
-Der Operator liefert den gelöschten Eintrag. Wird der Eintrag
+einer sortierten Datenbank gelÃ¶scht werden.
+Der Operator liefert den gelÃ¶schten Eintrag. Wird der Eintrag
 nicht gefunden, liefert der Operator einen Nullpointer.
 
 Mit dem Operator "[]" kann der Datenbankeintrag wahlweise durch
-seinen Index oder über einen Schlüssel (nur bei einer sortierten Datenbank)
+seinen Index oder Ã¼ber einen SchlÃ¼ssel (nur bei einer sortierten Datenbank)
 abgefragt werden.
 
 Mit der Funktion \tt{DataBase::index} kann
 der Index eines Datenbankeintrags gefunden werden.
-Die Funktion \tt{dim} liefert die Zahl der Datenbankeinträge.
+Die Funktion \tt{dim} liefert die Zahl der DatenbankeintrÃ¤ge.
 
-Die Funktion \tt{DataBase::insert} fügt an der Stelle \it{pos}
-\it{n} leere Einträge in die Datenbank.
-Mit der Funktion \tt{DataBase::delete} werden \it{n} Einträge
-ab der Position \tt{pos} gelöscht.
+Die Funktion \tt{DataBase::insert} fÃ¼gt an der Stelle \it{pos}
+\it{n} leere EintrÃ¤ge in die Datenbank.
+Mit der Funktion \tt{DataBase::delete} werden \it{n} EintrÃ¤ge
+ab der Position \tt{pos} gelÃ¶scht.
 Diese Funktionen sollten nicht an sortierten Datenbanken
-durchgeführt werden, da sie die Sortierordnung zerstören.
+durchgefÃ¼hrt werden, da sie die Sortierordnung zerstÃ¶ren.
 
 Die Funktion \tt{DataBase::sort} erlaubt eine Neusortierung
 einer Datenbank. Wird anstelle der Sortierfunktion ein Nullpointer
-übergeben, gilt die Datenbank als unsortiert.
+Ã¼bergeben, gilt die Datenbank als unsortiert.

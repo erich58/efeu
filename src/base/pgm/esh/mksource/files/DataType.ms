@@ -3,7 +3,7 @@
 :de:Einfache Datentypkonstruktion
 
 $Header	<$1>
-$Copyright (C) 2002 Erich Frühstück
+$Copyright (C) 2002 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -31,7 +31,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 /*
 :*:The function |$1| provides include statements for type definations.
-:de:Die Funktion |$1| sorgt für die zur Typedefinition notwendigen
+:de:Die Funktion |$1| sorgt fÃ¼r die zur Typedefinition notwendigen
 Headerdateien.
 */
 
@@ -89,8 +89,8 @@ void DataType::DBMacros (IO out)
 in context of EFEU.
 :de:Die Funktion |$1| richtet einen einfachen Datentyp ein, der sowohl
 von C-Programmen als auch vom EFEU-Interpreter verwendet werden kann.
-Der Datentype <Name> wird über |typedef| von einem
-bestehenden Datentype <def> abgeleitet. Satz- und Speicherlänge
+Der Datentype <Name> wird Ã¼ber |typedef| von einem
+bestehenden Datentype <def> abgeleitet. Satz- und SpeicherlÃ¤nge
 wird auf |sizeof(|<Name>|)| gesetzt. Optional kann ein
 Basistype <base> angegeben werden.
 */
@@ -171,7 +171,7 @@ void DataType ()
 
 /*
 $Example
-Das folgende Beispiel definiert die Makros für den Datentype "foo",
+Das folgende Beispiel definiert die Makros fÃ¼r den Datentype "foo",
 der von "int" abgeleitet wurde.
 
 \ms_example

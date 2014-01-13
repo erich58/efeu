@@ -1,20 +1,20 @@
 \sec	mkmf
 
 So gut |make| auch ist, die folgenden Nachteile
-müssen angeführt werden:
+mÃ¼ssen angefÃ¼hrt werden:
 *	Das Schreiben der Beschreibungsdatei und insbesonders die
-	Zusammenstellung aller Abhängigkeiten für ein Ziel ist
+	Zusammenstellung aller AbhÃ¤ngigkeiten fÃ¼r ein Ziel ist
 	aufwendig.
 *	Makefiles werden bei umfangreichen Aufgabenstellungen schnell
-	unübersichtlich.
-*	Es gibt keine Möglichkeit, ähnliche oder häufig vorkommende Einträge
-	über Makros oder Funktionen zu definieren.
-*	Bei der Übertragung einer Aufgabe auf einen anderen Rechnertyp muß
+	unÃ¼bersichtlich.
+*	Es gibt keine MÃ¶glichkeit, Ã¤hnliche oder hÃ¤ufig vorkommende EintrÃ¤ge
+	Ã¼ber Makros oder Funktionen zu definieren.
+*	Bei der Ãœbertragung einer Aufgabe auf einen anderen Rechnertyp muÃŸ
 	das Makefile angepasst werden.
 
-Durch den Übergang von geschriebenen Makefiles zu generierten Makefiles
+Durch den Ãœbergang von geschriebenen Makefiles zu generierten Makefiles
 lassen sich diese Nachteile weitestgehend ausmerzen.
-Alle größeren Programmpakete verwenden eine Form der automatischen
+Alle grÃ¶ÃŸeren Programmpakete verwenden eine Form der automatischen
 Generierung von Makefiles.
 
 \ssec	xmkmf
@@ -22,16 +22,16 @@ Generierung von Makefiles.
 Das Kommando |xmkmf| ist Teil der Entwicklungsumgebung des
 X-Window-Systems. Es generiert mithilfe des C-Preprozessors aus
 einer Datei Namens |Imakefile| ein Makefile.
-Das Kommando ist primär auf X-Anwendungen zugeschnitten und für einen
+Das Kommando ist primÃ¤r auf X-Anwendungen zugeschnitten und fÃ¼r einen
 anderen Anwendungsbereich weniger gut geeignet.
 
 \ssec	ccmkmf
 
 Das Kommando |ccmkmf| basiert auf dem gleichen Grundgedanken wie
 |xmkmf|. Auch hier wird der C-Preprozessor zu Generierung eingesetzt.
-Die Aufgabe zerfällt in ein einfaches Shell-Skript |ccmkmf| und einen
+Die Aufgabe zerfÃ¤llt in ein einfaches Shell-Skript |ccmkmf| und einen
 nachgeschalteten Filter |ppfilter|, der die Ausgabe des Preprozessors
-in eine für |make| korrekte Form bringt. Das Kommando ist veraltet und
+in eine fÃ¼r |make| korrekte Form bringt. Das Kommando ist veraltet und
 wurde Ende 2004 durch |shmkmf| ersetzt.
 
 \ssec	autoconf
@@ -50,25 +50,25 @@ im Kontext des Skripts |shmkmf| aufgerufen werden. Dieses Konzept ist
 Schwerpunkt dieser Dokumentationen.
 Die Handbuchseiten zur Verwendung des Kommandos stehen im Anhang.
 
-Diese Vorgangsweise eröffnet zusätzliche Möglichkeiten, die mit einem
-Preprozessor nur schwer durchgeführt werden können. So konnte die
+Diese Vorgangsweise erÃ¶ffnet zusÃ¤tzliche MÃ¶glichkeiten, die mit einem
+Preprozessor nur schwer durchgefÃ¼hrt werden kÃ¶nnen. So konnte die
 automatische Erstellung und Aktualisierung eines Makefiles direkt
 aus den Inhalt eines Verzeichnisses in |shmkmf| integriert werden.
 
 Im in der Zwischenzeit veralteten Konzept von |ccmkmf| musste das
-zweistufig gemacht werden. Zunächst wurde mit einem Hilfskommando ein
-|Imakefile| zusammengestellt und aschließend daraus das |Makefile|
+zweistufig gemacht werden. ZunÃ¤chst wurde mit einem Hilfskommando ein
+|Imakefile| zusammengestellt und aschlieÃŸend daraus das |Makefile|
 generiert.
 
-Während bei der Makroexpansion nur eine fixe Anzahl von
-Parametern in einer genau festgelegten Reihenfolge verwendet werden können,
-erlaubt der Einsatz von Shellfunktionen eine höhere Flexiblität. Zwar
-entsteht zusätzlicher Aufwand beim Parsen der Argumente, aber die
-Einsatzmöglichkeiten der so definierten Funktionen sind vielseitiger.
+WÃ¤hrend bei der Makroexpansion nur eine fixe Anzahl von
+Parametern in einer genau festgelegten Reihenfolge verwendet werden kÃ¶nnen,
+erlaubt der Einsatz von Shellfunktionen eine hÃ¶here FlexiblitÃ¤t. Zwar
+entsteht zusÃ¤tzlicher Aufwand beim Parsen der Argumente, aber die
+EinsatzmÃ¶glichkeiten der so definierten Funktionen sind vielseitiger.
 
 \ssec	mkmf
 
-Das Kommando |mkmf| ist ein Wrapper (Hüllfunktion) für eine Reihe
+Das Kommando |mkmf| ist ein Wrapper (HÃ¼llfunktion) fÃ¼r eine Reihe
 verschiedener Werkzeuge der Makefilegenerierung. Es erkennt anhand der
 vorhandenen Konfigurationsdateien, welches Werkzeug zur
 Makefilegenerierung eingesetzt werden soll (Vergleiche dazu \mref{mkmf(1)}).

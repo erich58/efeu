@@ -2,7 +2,7 @@
 :*: shared object
 :de: Gemeinsam genutzte Objekte
 
-$Copyright (C) 2006 Erich Frühstück
+$Copyright (C) 2006 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -46,7 +46,7 @@ static int libname (const char *name)
 :*:
 The function |$1| is a wrapper around |dlopen|.
 :de:
-Die Funktion |$1| ist eine Hülle um |dlopen|.
+Die Funktion |$1| ist eine HÃ¼lle um |dlopen|.
 */
 
 void *so_open (const char *name)

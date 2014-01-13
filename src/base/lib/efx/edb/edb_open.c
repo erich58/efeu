@@ -1,7 +1,7 @@
 /*
-Öffnen einer Efeu-Datenbank
-$Copyright (C) 2006 Erich Frühstück
-A-3423 St.Andrä/Wördern, Wildenhaggasse 38
+Ã–ffnen einer Efeu-Datenbank
+$Copyright (C) 2006 Erich FrÃ¼hstÃ¼ck
+A-3423 St.AndrÃ¤/WÃ¶rdern, Wildenhaggasse 38
 */
 
 #include <EFEU/EDB.h>

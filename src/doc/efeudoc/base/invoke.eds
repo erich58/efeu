@@ -6,23 +6,23 @@ Falls ein Verzeichnis angegeben wurde, wird nach der Datei
 |main.eds| gesucht und bei Erfolg verarbeitet. Falls anstelle eines
 Namens ein |-| angegeben wurde, wird die Standardeingabe verarbeitet.
 
-Die Art der Aufbereitung wird über Optionen gesteuert. Die
+Die Art der Aufbereitung wird Ã¼ber Optionen gesteuert. Die
 Standardvorgabe ist planer Text ohne Steuerinformationen.
 Allgemein kann der Ausgabemodus mit der Option |-T|~<mode> angegeben
-werden. Für die wichtigsten Modi gibt es kurze Optionen:
+werden. FÃ¼r die wichtigsten Modi gibt es kurze Optionen:
 [|-t|]
 	Terminalausgabe mit |less|.
 [|-l|]
 	Ausgabe von \LaTeX;-Sourcen.
 [|-p|]
-	Postscript-Dokument über \LaTeX.
+	Postscript-Dokument Ã¼ber \LaTeX.
 [|--pdf|]
-	PDF-Dokument über \LaTeX.
+	PDF-Dokument Ã¼ber \LaTeX.
 
-Die Ausgabedatei wird über die Option |-o| festgelegt. Vorgabe ist die
+Die Ausgabedatei wird Ã¼ber die Option |-o| festgelegt. Vorgabe ist die
 Standardausgabe.
 
-|efeudoc| unterstützt die automatische Dokumentgenerierung mit |make|.
+|efeudoc| unterstÃ¼tzt die automatische Dokumentgenerierung mit |make|.
 Mit der Option |-r|~<target> wird anstelle der Dokumentaufbereitung
-eine Generierungsregel für |make| mit dem Pseudoziel <target>
-und einer vollständigen Abhängigkeitsliste ausgegeben.
+eine Generierungsregel fÃ¼r |make| mit dem Pseudoziel <target>
+und einer vollstÃ¤ndigen AbhÃ¤ngigkeitsliste ausgegeben.

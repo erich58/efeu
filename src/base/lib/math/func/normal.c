@@ -4,7 +4,7 @@
 
 $Name dnormal, pnormal, qnormal
 
-$Copyright (C) 2002 Erich Frühstück
+$Copyright (C) 2002 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -46,7 +46,7 @@ double dnormal (double q, double mu, double sigma)
 The function |$1| computes the cummulative probability of the
 normal distribution.
 :de:
-Die Funktion |$1| berechnet die kummulative Häufigkeit der Normalverteilung.
+Die Funktion |$1| berechnet die kummulative HÃ¤ufigkeit der Normalverteilung.
 */
 
 double pnormal (double q, double mu, double sigma)

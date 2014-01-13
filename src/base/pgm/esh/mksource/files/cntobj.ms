@@ -1,8 +1,8 @@
 /*
-Zählobjekt generieren
+ZÃ¤hlobjekt generieren
 
 $Header	<$1>
-$Copyright (C) 2000 Erich Frühstück
+$Copyright (C) 2000 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -28,10 +28,10 @@ If not, write to the Free Software Foundation, Inc.,
 
 /*
 Die Funktion |$1| dient zur Konstruktion der Komponenten
-eines Zählobjektes. Sie benötigt als Argumente einen Namen <name>
+eines ZÃ¤hlobjektes. Sie benÃ¶tigt als Argumente einen Namen <name>
 einen esh-Datentype <type> und eine Eingabestruktur <def> mit
-Definitionszeilen. Mit <arg> kann optional der Zähldatentype (Argument von
-|md_count|) angegeben werden. Standardmäßig wird |const void *data|
+Definitionszeilen. Mit <arg> kann optional der ZÃ¤hldatentype (Argument von
+|md_count|) angegeben werden. StandardmÃ¤ÃŸig wird |const void *data|
 verwendet.
 
 Es werden folgende Funktionen und Makros
@@ -39,11 +39,11 @@ definiert:
 
 \ttitem	CT_<name>
 	ist ein Makro mit einem String, der den Datentype <type>
-	repräsentiert.
+	reprÃ¤sentiert.
 \ttitem	ini_<name>
 	ist eine Funktion zur Initialisierung eines Elements der
 	Datenmatrix. Wird keine besondere Initialisierungsfunktion
-	benötigt, wird stellvertretend ein gleichnamiger Makro
+	benÃ¶tigt, wird stellvertretend ein gleichnamiger Makro
 	mit dem Wert |NULL| eingerichtet.
 \ttitem	set_<name>
 	ist eine Funktion zum Setzen der Werte in einem Buffer.
@@ -56,27 +56,27 @@ nie direkt verwendet werden sondern nur zur Initialisierung
 einer Variablen vom Type |MdCount| dienen.
 
 Die einzelnen Zeilen der Eingabestruktur <def> bestehen aus
-einem Schlüsselwort <key>, einer Komponentenkennung <var>
+einem SchlÃ¼sselwort <key>, einer Komponentenkennung <var>
 und einen Ausdruck <cmd>.
 
 Bei der Komponentenkennung handelt es sich entweder um den Namen
-eines Strukturelementes oder einem Punkt für den gesamten Datentype.
-Die Stringregister 1 und 2 werden mit Ausdrücken initialisiert,
-die auf das gewünschte Element der Datenmatrix, bzw. dem statischen
+eines Strukturelementes oder einem Punkt fÃ¼r den gesamten Datentype.
+Die Stringregister 1 und 2 werden mit AusdrÃ¼cken initialisiert,
+die auf das gewÃ¼nschte Element der Datenmatrix, bzw. dem statischen
 Buffer verweisen. Auf den Ausdruck wird Parametersubstitution
 angewendet.
 
-Das Schlüsselwort bestimmt, für welche Komponentenfunktion
-der Ausdruck bestimmt ist. Folgende Kennungen sind möglich:
+Das SchlÃ¼sselwort bestimmt, fÃ¼r welche Komponentenfunktion
+der Ausdruck bestimmt ist. Folgende Kennungen sind mÃ¶glich:
 
-[|return|] bestimmt den Rückgabewert der Funktion |set_|<name>.
+[|return|] bestimmt den RÃ¼ckgabewert der Funktion |set_|<name>.
 [|set|]	generiert eine Befehlszeile der Funktion |set_|<name>.
 [|ini|]	generiert eine Befehlszeile der Funktion |ini_|<name>.
 [|add|]	generiert eine Befehlszeile der Funktion |add_|<name>.
 
 Ansonsten definiert <cmd> den Zuweisungswert der Komponente <var>
-in der Funktion |set_|<name>. Zusätzlich wird auch eine Befehlszeile
-für |ini_|<name> (Initialisierung mit 0) und |add_|<name>
+in der Funktion |set_|<name>. ZusÃ¤tzlich wird auch eine Befehlszeile
+fÃ¼r |ini_|<name> (Initialisierung mit 0) und |add_|<name>
 (|+=|-Operator) generiert. Dies ist gleichbedeutend mit:
 	\code
 	ini	<var>	$1 = 0\br
@@ -195,9 +195,9 @@ inline void CntObj(str name, Type_t type, IO def, str arg = NULL)
 /*
 $Example
 
-Das folgende Beispiel zeigt die Konstruktion eines Zählobjektes
-für Dauerverteilungen. Die Dauer einer Episode wird über eine
-globale Variable übergeben.
+Das folgende Beispiel zeigt die Konstruktion eines ZÃ¤hlobjektes
+fÃ¼r Dauerverteilungen. Die Dauer einer Episode wird Ã¼ber eine
+globale Variable Ã¼bergeben.
 
 \ms_example
 config src

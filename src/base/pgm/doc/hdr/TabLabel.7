@@ -21,7 +21,7 @@ Er wird in Kombination mit dem Datentype |Figure|
 (Vergleiche dazu \mref{Figure(7)}) zur Einarbeitung von Daten
 aus einer Datenmatrix verwendet.
 
-Eine Tabellenachse kann sowohl für die Zeilen- als auch die
+Eine Tabellenachse kann sowohl fÃ¼r die Zeilen- als auch die
 Spalten einer Tabelle verwendet werden.
 Sie hat den folgenden Aufbau:
 
@@ -37,33 +37,33 @@ struct TabLabel {
 
 Dabei gibt |TabLabel::key| die Kennung der Tabellenachse
 und |TabLabel::name| den
-Namen der zugehörigen Achse in der Datenmatrix an. Die
-Variable |TabLabel::list| enthält die Selektionsliste mit den
+Namen der zugehÃ¶rigen Achse in der Datenmatrix an. Die
+Variable |TabLabel::list| enthÃ¤lt die Selektionsliste mit den
 Achsenelementen. Sie wird beim Laden der Datenmatrix zur
-Generierung von Zusammenfassungen benötigt und sorgt dabei
-für die richtigen Reihenfolge der Achsenelemente (Wichtig bei Spalten!).
+Generierung von Zusammenfassungen benÃ¶tigt und sorgt dabei
+fÃ¼r die richtigen Reihenfolge der Achsenelemente (Wichtig bei Spalten!).
 Der Konverter |str TabLabel()| liefert den Selektionsstring
-der Achsenstruktur. Damit kann die Achse stellvertretend für
+der Achsenstruktur. Damit kann die Achse stellvertretend fÃ¼r
 seine Komponente beim Laden einer Datenmatrix angegeben werden.
 
-Die Datenbank |TabLabel::tab| enthält die einzelen
-Zeilen- bzw. Spaltenbezeichner und die zugehörigen
+Die Datenbank |TabLabel::tab| enthÃ¤lt die einzelen
+Zeilen- bzw. Spaltenbezeichner und die zugehÃ¶rigen
 Selektionsdefinitionen der Datenmatrix.
 
 In |TabLabel::special| stehen |efeudoc|-Sequenzen, die zu Beginn
-eines Tabellenkopfes (Spaltenachse) bzw. Tabellenkörpers (Zeilenachse)
+eines Tabellenkopfes (Spaltenachse) bzw. TabellenkÃ¶rpers (Zeilenachse)
 auszugeben sind.
 
 \margin	Konstruktion von Achsendefinitionen
 Achsendefintionen werden am einfachsten mit dem Konstruktor
 |TabLabel| konstruiert.
 Als Argument wird die Achsenkennung <key>,
-der Name der zugehörigen Datenachse und eine IO-Struktur mit
-Definitionszeilen für die einzelnen Achsenbezeichner übergeben.
+der Name der zugehÃ¶rigen Datenachse und eine IO-Struktur mit
+Definitionszeilen fÃ¼r die einzelnen Achsenbezeichner Ã¼bergeben.
 In der Regel wird anstelle der IO-Struktur ein Definitionsstring
-(implizite Konvertierung) übergeben.
+(implizite Konvertierung) Ã¼bergeben.
 
-Jede Definitionszeile besteht aus zwei Einträgen (Kennung und Bezeichner),
+Jede Definitionszeile besteht aus zwei EintrÃ¤gen (Kennung und Bezeichner),
 die durch ein Leerzeichen oder einem Tabulator getrennt sind.
 Die Kennung <key>, die keine Leerzeichen oder Tabulatoren enthalten darf,
 bestimmt die Selektion in der Datenmatrix.
@@ -73,31 +73,31 @@ der Tabelle. Er kann beliebig viele Leerzeichen und Tabulatoren enthalten.
 Beginnt die Kennung mit einem Klammeraffen |@| wird keine
 Achsenselektion definiert. Die Komponente |TabLabel::special|
 (siehe oben) wird mit dem Bezeichner erweitert.
-Dabei stehen folgende Varianten zur Verfügung:
-[|@+|]	Ein Tabulator wird zu Beginn eingefügt (Fortsetzungszeilen).
-[|@*|]	Der Zeilenvorschub am Ende wird unterdrückt.
+Dabei stehen folgende Varianten zur VerfÃ¼gung:
+[|@+|]	Ein Tabulator wird zu Beginn eingefÃ¼gt (Fortsetzungszeilen).
+[|@*|]	Der Zeilenvorschub am Ende wird unterdrÃ¼ckt.
 
-Folgende Kennungen sind möglich:
+Folgende Kennungen sind mÃ¶glich:
 [<name>]
-	Der Name <name> gibt den zugehörigen Achsenindex in der
+	Der Name <name> gibt den zugehÃ¶rigen Achsenindex in der
 	Datenmatrix an.
 [<|:<name>\[<liste>\]|>]
 	Die Achsenkennung <name> wird erst beim Laden eingerichtet und die
 	Daten ergeben sich durch entsprechnde Aggregation der in <list>
-	angeführten Achsenkennungen.
+	angefÃ¼hrten Achsenkennungen.
 [|.|]
 	Der Tabellenachse werden keine Daten in der Datenmatrix
 	zugeordnet. Bei Tabellen mit komplexeren Datentransformationen
-	können in einer Tabellenzeile aus einem Datenmatrixeintrag
+	kÃ¶nnen in einer Tabellenzeile aus einem Datenmatrixeintrag
 	mehrere Tabellenwerte errechnet werden. Die Tabellenachse
-	benötigt damit mehr Spalten als Datenwerte vorhanden sind.
-	Bei Zeilenachsen können damit Leerzeilen konstruiert werden.
+	benÃ¶tigt damit mehr Spalten als Datenwerte vorhanden sind.
+	Bei Zeilenachsen kÃ¶nnen damit Leerzeilen konstruiert werden.
 
 Beginnt ein Bezeichner mit einer Ziffer, die mit einem Doppelpunkt
 abgeschlossen wird, definiert diese die Breite der Spalte.
 
-Anstelle der Konstruktion der Tabellenachse über eine IO-Struktur
-können die einzelnen Einträge auch mit |TabLabel::entry| generiert
+Anstelle der Konstruktion der Tabellenachse Ã¼ber eine IO-Struktur
+kÃ¶nnen die einzelnen EintrÃ¤ge auch mit |TabLabel::entry| generiert
 werden.
 
 \Examples
@@ -106,7 +106,7 @@ durch Leerzeilen. Die letzte Zeile wird in Fettschrift gesetzt.
 
 ---- verbatim
 TabLabel("sv", "sv", string !
-MANN	Männer
+MANN	MÃ¤nner
 FRAU	Frauen
 .
 A00-18	Bis 18
@@ -116,7 +116,7 @@ A30-39	30 bis 39
 A40-49	40 bis 49
 A50-54	50 bis 54
 A55-59	55 bis 59
-A60-99	60 und älter
+A60-99	60 und Ã¤lter
 .
 GES	[*]Insgesamt
 !);
@@ -127,7 +127,7 @@ Die Achsenbezeichner beziehen sich auf die unterste Gliederung.
 
 ---- verbatim
 TabLabel("hdr", "epi", string !
-@	[1] | Unselbständig Erwerbstätige\\mark{1} |
+@	[1] | UnselbstÃ¤ndig ErwerbstÃ¤tige\\mark{1} |
 @+	#3l davon haben mindestens eine Episode von:
 @*	[1]
 GES

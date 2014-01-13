@@ -1,7 +1,7 @@
 /*
 Datenbank ausgeben
 
-$Copyright (C) 1995 Erich Frühstück
+$Copyright (C) 1995 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -30,7 +30,7 @@ Indexwert abtesten
 */
 
 struct IDXCMP {
-	struct IDXCMP *next;	/* Für Verkettungen */
+	struct IDXCMP *next;	/* FÃ¼r Verkettungen */
 	char *pattern;		/* Musterkennung */
 	int flag;		/* Negationsflag */
 	size_t minval;		/* Minimalwert */

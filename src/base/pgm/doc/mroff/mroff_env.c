@@ -1,7 +1,7 @@
 /*
 Umgebungswechsel
 
-$Copyright (C) 1999 Erich Frühstück
+$Copyright (C) 1999 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -161,7 +161,7 @@ int mroff_env (void *drv, int flag, va_list list)
 	case DOC_ATT_IT:	put_att(mr, flag, ATT_IT); break;
 	case DOC_ATT_TT:	put_att(mr, flag, ATT_TT); break;
 
-/*	Anführungen
+/*	AnfÃ¼hrungen
 */
 	case DOC_QUOTE_SGL:	io_puts(flag ? "`" : "'", mr->out); break;
 	case DOC_QUOTE_DBL:	io_puts(flag ? "\"" : "\"", mr->out); break;

@@ -1,30 +1,30 @@
 \sec	Informationsabfragen
 
-Mithilfe der Option \index{|--info|} können \index{Programminformationen} von
+Mithilfe der Option \index{|--info|} kÃ¶nnen \index{Programminformationen} von
 EDB-Kommandos abgefragt werden. Dabei wird direkt auf interne
 Tabellenstrukturen zugegriffen und damit der aktuelle Stand der
 Funktionen ausgegeben.
 
-Dabei werden über Header nachgeladene Erweiterungen ebenfalls
-dargestellt. Die entsprechenden Optionen (z.B. |-F|) müssen vor
+Dabei werden Ã¼ber Header nachgeladene Erweiterungen ebenfalls
+dargestellt. Die entsprechenden Optionen (z.B. |-F|) mÃ¼ssen vor
 |--info| angegeben werden.
 
-Alternativ können auch bei vielen Parametern durch Eingabe eines
-Fragezeichens (|?|) die zugehörigen Informationen abgerufen werden.
+Alternativ kÃ¶nnen auch bei vielen Parametern durch Eingabe eines
+Fragezeichens (|?|) die zugehÃ¶rigen Informationen abgerufen werden.
 
 Beispiele:
 \ttitem edb <type>[?]
-	Listet die verfügbaren Lesefunktionen für den Datentype <type> auf.
+	Listet die verfÃ¼gbaren Lesefunktionen fÃ¼r den Datentype <type> auf.
 \ttitem edb <db> -p?
-	Listet die verfügbaren Ausgabefunktionen für die Datenbank <db> auf.
+	Listet die verfÃ¼gbaren Ausgabefunktionen fÃ¼r die Datenbank <db> auf.
 \ttitem edb <db> -f?
-	Listet die verfügbaren Filter für die Datenbank <db> auf.
+	Listet die verfÃ¼gbaren Filter fÃ¼r die Datenbank <db> auf.
 \ttitem edb <db> -f join=?
 	Liefert die Beschreibung zum Datenbankfilter |join|. Der Filter ist
-	allgemein verfügbar und die Informationsausgabe ist unabhängig von der
+	allgemein verfÃ¼gbar und die Informationsausgabe ist unabhÃ¤ngig von der
 	Datenbank, z.B. kann hier die Dummy-Datenbank |void:| angegeben werden.
 \ttitem edb <db> -f join[?]
-	Listet die Parameter für den Datenbankfilter |join| auf\note{Diese
-	Form der Informationsabfrage ist nur möglich, wenn sie im jeweiligen
+	Listet die Parameter fÃ¼r den Datenbankfilter |join| auf\note{Diese
+	Form der Informationsabfrage ist nur mÃ¶glich, wenn sie im jeweiligen
 	Filter implementiert wurde. Falls vorhanden, sollte im
 	Beschreibungstext zum Filter darauf hingewiesen werden.}.

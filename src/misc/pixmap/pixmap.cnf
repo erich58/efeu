@@ -1,6 +1,6 @@
-# ESH-Interpreter mit Pixmap Unterstützung
+# ESH-Interpreter mit Pixmap UnterstÃ¼tzung
 #
-# $Copyright (C) 1994, 2002 Erich Frühstück
+# $Copyright (C) 1994, 2002 Erich FrÃ¼hstÃ¼ck
 
 CmdType = "pix";
 HistoryName = "~/.pix_history";

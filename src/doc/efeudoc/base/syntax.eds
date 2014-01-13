@@ -2,29 +2,29 @@
 
 Ein Dokument kann gemischt Zeichen in \index{UTF8} oder \index{ISO~8859-15}
 enthalten.
-Die Interpretation von UTF8-Sequenzen ist vorrangig. Gehört ein Byte
+Die Interpretation von UTF8-Sequenzen ist vorrangig. GehÃ¶rt ein Byte
 nicht zu einer UTF8-Sequenz, wird es als Zeichen im Zeichensatz
 ISO~8859-15 interpretiert\note{In der Regel kommt es hier zu keinen
-Konflikten, da in einem gewöhnlicher Text kaum ISO~8859-15 Zeichen
-nebeneinanderstehen, die eine gültiges UTF8-Zeichen bilden. Notfalls
-kann hier mit einem Gegenschrägstrich (Fluchtsymbol) die Sequenz
+Konflikten, da in einem gewÃ¶hnlicher Text kaum ISO~8859-15 Zeichen
+nebeneinanderstehen, die eine gÃ¼ltiges UTF8-Zeichen bilden. Notfalls
+kann hier mit einem GegenschrÃ¤gstrich (Fluchtsymbol) die Sequenz
 aufgebrochen werden.}.
 
 Intern werden die Zeichen im Unicode gespeichert. Der Zeichensatz
-für die generierten Zwischendateien (wie z.B. \LaTeX;-Sourcen)
-kann über Optionen gesteuert werden
+fÃ¼r die generierten Zwischendateien (wie z.B. \LaTeX;-Sourcen)
+kann Ã¼ber Optionen gesteuert werden
 
-Von den weißen Zeichen wird nur das Leerzeichen, der Tabulator und
+Von den weiÃŸen Zeichen wird nur das Leerzeichen, der Tabulator und
 der Zeilenvorschub interpretiert.
 Tabulatoren werden automatisch in
 Leerzeichen expandiert. Die Tabulatorbreite ist dabei 8 Zeichen.
 Mehrere aufeinander folgende Leerzeichen gelten im Regelfall wie
 ein einzelnes Leerzeichen.
 
-Absätze werden, analog zu \LaTeX; durch Leerzeilen bestimmt.
-Zusätzlich wird aber die Einrücktiefe als Strukturierungselement
-verwendet. Im Konzept mancher Steueranweisungen gelten eingerückte
-Zeilen als Fortsetzungszeilen. Näheres dazu später.
+AbsÃ¤tze werden, analog zu \LaTeX; durch Leerzeilen bestimmt.
+ZusÃ¤tzlich wird aber die EinrÃ¼cktiefe als Strukturierungselement
+verwendet. Im Konzept mancher Steueranweisungen gelten eingerÃ¼ckte
+Zeilen als Fortsetzungszeilen. NÃ¤heres dazu spÃ¤ter.
 
 Eine Beschreibungsdatei kann \index{Kommentare} im C++-Stil enthalten.
 Diese sind entweder durch  |/*| ... |*/| oder durch |//| ... Zeilenvorschub
@@ -32,19 +32,19 @@ begrenzt, wobei der Zeilenvorschub selbst nicht zum Kommentar
 gerechnet wird.
 
 Beginnt ein Kommentar unmittelbar am Zeilenanfang, wird ein dem
-Kommentar folgender Zeilenvorschub unterdrückt.  Bei der Entfernung
+Kommentar folgender Zeilenvorschub unterdrÃ¼ckt.  Bei der Entfernung
 eines Kommentars aus dem Eingabestrom kann damit nie eine Leerzeile
 (Absatztrennung!) entstehen.
 
 Die wichtigsten Steuerzeichen sind |\\|, |@| und |&|. Sie leiten
 Steueranweisungen (|\\|), Textmakros (|@|) und Sonderzeichen
-(Entitäten, |&|) ein.
-Eine Tilde \index{|~|} steht wie bei \LaTeX; für ein Leerzeichen ohne
+(EntitÃ¤ten, |&|) ein.
+Eine Tilde \index{|~|} steht wie bei \LaTeX; fÃ¼r ein Leerzeichen ohne
 Umbrucherlaubnis.
-Die spitzen Klammern |<| ... |>| werden für Attribute verwendet.
-Die Details dazu folgen in späteren Abschnitten.
+Die spitzen Klammern |<| ... |>| werden fÃ¼r Attribute verwendet.
+Die Details dazu folgen in spÃ¤teren Abschnitten.
 
-Die \index{Namen} von Steueranweisungen und Textmakros dürfen nur aus
+Die \index{Namen} von Steueranweisungen und Textmakros dÃ¼rfen nur aus
 alphanumerischen Zeichen (nur ASCII, keine Umlaute) und dem
 Unterstreichungssymbol \index{|_|} bestehen, wobei das erste Zeichen eines
 Namens keine Ziffer sein darf. Leerzeichen nach einem Namen werden
@@ -55,16 +55,16 @@ Daneben gibt es noch einzelne Steuerzeichen, die nur am Zeilenanfang
 wirken, wie Labels (|[|...|]|) und Marken (|*| und |#|) bei Listen,
 oder in einer bestimmten Zeichenkombination wirken (Ligaturen,
 Kommentare, Abschnittsmarken). Listen werden im Abschnitt \vref{list}
-näher behandelt. Abschnittsmarken zur Begrenzung von Eingabereichen
-werden auf Seite \pref{here} näher erläutert.
+nÃ¤her behandelt. Abschnittsmarken zur Begrenzung von Eingabereichen
+werden auf Seite \pref{here} nÃ¤her erlÃ¤utert.
 
-Der Gegenschrägstrich leitet nicht nur Steueranweisungen ein, sondern
+Der GegenschrÃ¤gstrich leitet nicht nur Steueranweisungen ein, sondern
 hat auch die Funktion eines Fluchtsymbols.
 Steht er vor einem Zeilenvorschub, wird
 der Zeilenvorschub ignoriert (Fortsetzungszeile).
-Falls ein Gegenschrägstrich vor einem Zeichen steht, das kein
+Falls ein GegenschrÃ¤gstrich vor einem Zeichen steht, das kein
 Zeilenvorschub oder das erste Zeichen eines Namens ist, wird dieses
-wie ein gewöhnliches Textzeichen behandelt.
+wie ein gewÃ¶hnliches Textzeichen behandelt.
 Er hebt damit die Bedeutung eines Steuerzeichens auf.
 
 \index{Ligaturen} sind Buchstabenkombinationen,
@@ -75,27 +75,27 @@ sind definiert:
 	aufeinander folgende Minuszeichen \index{|--|} werden als mittellanger
 	Strich -- und drei aufeinander folgende Minuszeichen \index{|---|}
 	werden als langer Strich --- gesetzt. Diese Regel wurde von
-	\LaTeX; übernommen.
+	\LaTeX; Ã¼bernommen.
 *	Drei aufeinander folgende Punkte werden mit einem breiteren Abstand
-	gesetzt. Alternativ kann dafür \index{|&ldots;|} eingesetzt werden.
+	gesetzt. Alternativ kann dafÃ¼r \index{|&ldots;|} eingesetzt werden.
 *	Ein Plus \index{|+|} oder ein Minus \index{|-|} vor einer Ziffer wird
 	im mathematischen Modus gesetzt.
 
-\index{Entitäten} dienen zur Eingabe von Sonderzeichen. Sie werden mit
+\index{EntitÃ¤ten} dienen zur Eingabe von Sonderzeichen. Sie werden mit
 dem Steuerzeichen \index{|&|} eingeleitet. Danach folgt:
 *	\index[|&;|]Ein Strichpunkt. Die Kombination gilt als Leerzeichen.
-*	Der Name eines Sonderzeichens. Es gilt die übliche
-	Namenskonvention für Charakter Entitäten im HTML-Code.
+*	Der Name eines Sonderzeichens. Es gilt die Ã¼bliche
+	Namenskonvention fÃ¼r Charakter EntitÃ¤ten im HTML-Code.
 	Der Name wird mit einem Strichpunkt abgeschlossen.
 *	\index[|&#|]Ein |#|-Symbol zur Einleitung einer numerischen
 	Unicodedefinition. Falls dem |#|-Symbol ein X folgt, wird
 	ein Hexadezimalwert, ansonsten ein Dezimalwert erwartet.
 	Der Codewert wird mit einem Strichpunkt abgeschlossen.
 *	Ein sonstiges Zeichen. Diese Form dient als Kurzschreibweise
-	für einzelne Sonderzeichen.
+	fÃ¼r einzelne Sonderzeichen.
 	Falls die Kombination nicht definiert ist, wirkt |&| wie ein
-	Fluchtsymbol, das Folgezeichen wird unverändert ausgegeben.
-	Derzeit wird nur \index{|&-|} für das Sonderzeichen \index{|&shy;|},
+	Fluchtsymbol, das Folgezeichen wird unverÃ¤ndert ausgegeben.
+	Derzeit wird nur \index{|&-|} fÃ¼r das Sonderzeichen \index{|&shy;|},
 	das eine Umbruchstelle markiert, verwendet.
 
 Falls der Ausgabetreiber eine Zeichendefinition nicht kennt, wird ein

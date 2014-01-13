@@ -1,7 +1,7 @@
 /*
 Sicht auf ein Efeu-Datenobjekt
 
-$Copyright (C) 2007 Erich Frühstück
+$Copyright (C) 2007 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -51,7 +51,7 @@ static Label Label_range = {
 static Label Label_seq = {
 	"seq",
 	":*:sequence identificator"
-	":de:Kennung für Ablauffolge"
+	":de:Kennung fÃ¼r Ablauffolge"
 };
 
 static Label Label_date = {
@@ -69,7 +69,7 @@ static Label Label_val = {
 static Label Label_freq = {
 	"freq",
 	":*:Frequency data"
-	":de:Häufigkeitsdaten"
+	":de:HÃ¤ufigkeitsdaten"
 };
 
 static Label Label_var = {

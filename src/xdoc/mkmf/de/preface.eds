@@ -1,6 +1,6 @@
 /*	Introduction, german version
 
-$Copyright (C) 2004, 2008 Erich Frühstück
+$Copyright (C) 2004, 2008 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -21,42 +21,42 @@ If not, write to the Free Software Foundation, Inc.,
 
 \preface
 
-Das Kommando |make| ist ein wichtiges Werkzeug für die automatisierte
+Das Kommando |make| ist ein wichtiges Werkzeug fÃ¼r die automatisierte
 Abarbeitung von Aufgaben. Es ist Teil des Entwicklungssystems und wird
 im Regelfall zum Kompilieren einzelner Programme oder Programmpakete
 verwendet. Seine Anwendung ist aber nicht nur auf diesen
-ursprünglichen Anwendungsbereich beschränkt, es lassen sich damit
-auch allgemeine Projektarbeiten durchführen.
+ursprÃ¼nglichen Anwendungsbereich beschrÃ¤nkt, es lassen sich damit
+auch allgemeine Projektarbeiten durchfÃ¼hren.
 
-Im Prinzip kann |make| überall dort eingesetzt werden, wo eine
-Stapelverarbeitung möglich ist. Gegenüber von Skripts hat |make| den Vorteil,
-dass nur jene Teilaufgaben durchgeführt werden müssen, die von
-Änderungen betroffen sind.
+Im Prinzip kann |make| Ã¼berall dort eingesetzt werden, wo eine
+Stapelverarbeitung mÃ¶glich ist. GegenÃ¼ber von Skripts hat |make| den Vorteil,
+dass nur jene Teilaufgaben durchgefÃ¼hrt werden mÃ¼ssen, die von
+Ã„nderungen betroffen sind.
 
-Für |make| wird die Aufgabe in mehrere Teilziele zerlegt. Für jedes
-Teilziel benötigt |make| die Informationen, wovon dieses Teilziel
-abhängt und welche Befehle zur Erreichung des Teilziel notwendig sind.
+FÃ¼r |make| wird die Aufgabe in mehrere Teilziele zerlegt. FÃ¼r jedes
+Teilziel benÃ¶tigt |make| die Informationen, wovon dieses Teilziel
+abhÃ¤ngt und welche Befehle zur Erreichung des Teilziel notwendig sind.
 Diese Regeln werden in einem |Makefile| festgeschrieben.
 
-In der Regel handelt es sich bei den Teilzielen und Abhängigkeiten um Dateien.
+In der Regel handelt es sich bei den Teilzielen und AbhÃ¤ngigkeiten um Dateien.
 Ob die
 entsprechenden Befehle zur Erzeugung der Ziele abgerufen werden
-müssen, wird anhand der Zeitstempel der Dateien ermittelt: Sobald eine
-Datei, von der das Ziel abhängt, neueren Datums als das Ziel selbst ist,
+mÃ¼ssen, wird anhand der Zeitstempel der Dateien ermittelt: Sobald eine
+Datei, von der das Ziel abhÃ¤ngt, neueren Datums als das Ziel selbst ist,
 wird das Ziel neu generiert.
 
-Um ordnungsgemäß arbeiten zu können, benötigt |make| eine vollständige
-Liste von Abhängigkeiten, so müssen z.B. bei einer Regel zur Erzeugung
+Um ordnungsgemÃ¤ÃŸ arbeiten zu kÃ¶nnen, benÃ¶tigt |make| eine vollstÃ¤ndige
+Liste von AbhÃ¤ngigkeiten, so mÃ¼ssen z.B. bei einer Regel zur Erzeugung
 einer Objektdatei nicht nur das Sourcefile, sondern auch die
-eingebundenen Header mit angegeben werden, denn auch eine Änderung
-einer Headerdatei erfordert eine Neuübersetzung der Objektdatei.
+eingebundenen Header mit angegeben werden, denn auch eine Ã„nderung
+einer Headerdatei erfordert eine NeuÃ¼bersetzung der Objektdatei.
 
-Die Abhängigkeiten vollständig zu halten, ist aufwendig und erfordert
+Die AbhÃ¤ngigkeiten vollstÃ¤ndig zu halten, ist aufwendig und erfordert
 einiges an Sorgfalt. Andererseits kennt ein Compiler die einzelnen,
 eingebundenen Dateien und ist entweder in der Lage, die
-Abhängigkeiten direkt aufzulisten oder eine Zwischenausgabe zu liefern,
+AbhÃ¤ngigkeiten direkt aufzulisten oder eine Zwischenausgabe zu liefern,
 aus der diese Informationen mit geringem Aufwand herausgeholt
-werden können. Was liegt also näher, als die Bestimmung der Abhängigkeiten zu
+werden kÃ¶nnen. Was liegt also nÃ¤her, als die Bestimmung der AbhÃ¤ngigkeiten zu
 automatisieren?
 
 Sehr oft liegt die Situation vor, dass alle Sourcen eines
@@ -65,21 +65,21 @@ ergeben. Die Arbeit, alle einzeln in einem Makefile aufzulisten, kann
 auch ein Skript erledigen.
 
 Damit sind wir schon bei den Vorteilen generierter Makefiles. Meist
-genügen wenige Anweisungen um die Bildungsregeln für ein Projekt
-festzulegen. Diese müssen auch nicht mehr angepasst werden, mit jeder
-neu angelegten Datei werden auch automatisch die Regeln für |make|
-erweitert. Hier gibt es auch aktive Unterstützung von |make|, denn als
-erster Schritt wird immer geprüft, ob das |Makefile| selbst erneuert
+genÃ¼gen wenige Anweisungen um die Bildungsregeln fÃ¼r ein Projekt
+festzulegen. Diese mÃ¼ssen auch nicht mehr angepasst werden, mit jeder
+neu angelegten Datei werden auch automatisch die Regeln fÃ¼r |make|
+erweitert. Hier gibt es auch aktive UnterstÃ¼tzung von |make|, denn als
+erster Schritt wird immer geprÃ¼ft, ob das |Makefile| selbst erneuert
 werden muss.
 
 Das hier vorgestellte Werkzeug zur Generierung von Makefiles basiert
-auf der Shell. Die folgenden Gründe sprechen für ihren Einsatz als
+auf der Shell. Die folgenden GrÃ¼nde sprechen fÃ¼r ihren Einsatz als
 Makefilegenerator:
 *	Sie ist der Standard-Befehlsinterpreter auf jedem POSIX-System,
-*	Individuelle Anpassungen sind einfach möglich,
-*	Zusätzliche Hilfskommandos können leicht integriert werden.
+*	Individuelle Anpassungen sind einfach mÃ¶glich,
+*	ZusÃ¤tzliche Hilfskommandos kÃ¶nnen leicht integriert werden.
 
-Abschließend noch eine wichtige Anmerkung zu diesem Handbuch:
+AbschlieÃŸend noch eine wichtige Anmerkung zu diesem Handbuch:
 
 Die einzelnen Beschreibungstexte werden von den Kommandos selbst
 mit der Option |--help| generiert oder aus den Kommentaren der
@@ -89,9 +89,9 @@ mit den Kommandos und den Funktionsdefinitionen
 abgestimmt und auf dem neuesten Stand.
 Die einzelnen Handbuchseiten sind auch online mit |man| abrufbar.
 
-Der Umfang der Dokumentation hängt von den lokal installierten
+Der Umfang der Dokumentation hÃ¤ngt von den lokal installierten
 EFEU-Projekten und der Dokumentsprache ab. Teile des Handbuchs sind in
 Arbeit.
 
-	Erich Frühstück\br
-	Wördern, \thedate
+	Erich FrÃ¼hstÃ¼ck\br
+	WÃ¶rdern, \thedate

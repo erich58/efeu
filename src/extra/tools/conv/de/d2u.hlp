@@ -1,12 +1,12 @@
 @name
 @synopsis -h
 \Description
-Das Kommando |$!| konvertiert Zeilenabschlüsse mit Wagenrücklauf (CR)
-und Zeilenvorschub (LF) in Zeilen mit nur Zeilenvorschub als Abschluß
+Das Kommando |$!| konvertiert ZeilenabschlÃ¼sse mit WagenrÃ¼cklauf (CR)
+und Zeilenvorschub (LF) in Zeilen mit nur Zeilenvorschub als AbschluÃŸ
 und umgekehrt.
-Die Dateien werden jeweils ersetzt. Falls die Dateien binäre Daten
-enthalten oder bereits den richtigen Zeilenabschluß enthalten,
-bleiben sie unberührt.
+Die Dateien werden jeweils ersetzt. Falls die Dateien binÃ¤re Daten
+enthalten oder bereits den richtigen ZeilenabschluÃŸ enthalten,
+bleiben sie unberÃ¼hrt.
 
 @arglist -i
 @copyright -h

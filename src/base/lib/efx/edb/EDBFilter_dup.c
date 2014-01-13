@@ -1,6 +1,6 @@
-/*	Datensätze duplizieren
+/*	DatensÃ¤tze duplizieren
 
-$Copyright (C) 2004 Erich Frühstück
+$Copyright (C) 2004 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -158,5 +158,5 @@ static EDB *fdef_dup (EDBFilter *filter, EDB *base,
 EDBFilter EDBFilter_dup = EDB_FILTER(NULL,
 	"dup", "=list", fdef_dup, NULL,
 	":*:duplicate records"
-	":de:Datensätze duplizieren"
+	":de:DatensÃ¤tze duplizieren"
 );

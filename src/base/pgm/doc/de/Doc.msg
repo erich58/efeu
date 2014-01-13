@@ -1,7 +1,7 @@
 /*
-Fehlermeldungen für Dokumentformatierung
+Fehlermeldungen fÃ¼r Dokumentformatierung
 
-$Copyright (C) 1999 Erich Frühstück
+$Copyright (C) 1999 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -20,14 +20,14 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-0	$!: Kann aus Sicherheitsgründen von root nicht gestartet werden.\n
+0	$!: Kann aus SicherheitsgrÃ¼nden von root nicht gestartet werden.\n
 1	$!: Unbekannter Dokumenttype $1.\n
 2	$!: $0: Unbekannte Zeichendefinition $1.\n
-3	$!: Umgebung $1 ohne Abschluß.\n
+3	$!: Umgebung $1 ohne AbschluÃŸ.\n
 4	$!: Filestatus von $1 nicht ermittelbar.\n
 5	$!: Datei $1 nicht gefunden.\n
 
-11	$!: Unbekanntes Schlüsselword $1.\n
+11	$!: Unbekanntes SchlÃ¼sselword $1.\n
 12	$!: $0: Unbekannter Befehl \\$1.\n
 13	$!: $0: Unbekannter Textmakro @$1.\n
 

@@ -1,7 +1,7 @@
 /*
 Reference manual for efm library
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -23,20 +23,20 @@ If not, write to the Free Software Foundation, Inc.,
 \config	efeu
 \date	Mai 2001
 \title	Die Programmbibliothek efm
-Handbuch für Programmierer
+Handbuch fÃ¼r Programmierer
 
 \preface
-Die Programmbiliothek |efm| stellt eine Reihe von nützlichen
-Hilfsfunktionen zur verfügung. Schwerpunkt sind Funktionen
+Die Programmbiliothek |efm| stellt eine Reihe von nÃ¼tzlichen
+Hilfsfunktionen zur verfÃ¼gung. Schwerpunkt sind Funktionen
 zur Ein- und Ausgabe und der Verwaltung von dynamischen
 Datenstrukturen.
 
-Das Handbuch ist in Arbeit. Der allgemeine Teil muß noch
+Das Handbuch ist in Arbeit. Der allgemeine Teil muÃŸ noch
 geschrieben werden. Die Funktionen, Makros und Datentypen
-sind zwar vollständig angeführt, aber nur zum Teil beschrieben.
+sind zwar vollstÃ¤ndig angefÃ¼hrt, aber nur zum Teil beschrieben.
 
-	Erich Frühstück\br
-	Wördern, \thedate
+	Erich FrÃ¼hstÃ¼ck\br
+	WÃ¶rdern, \thedate
 \toc
 \addsrclist
 \delsrc		main.doc

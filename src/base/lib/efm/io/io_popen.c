@@ -1,7 +1,7 @@
 /*
 Pipe - IO-Struktur
 
-$Copyright (C) 1994 Erich Fr¸hst¸ck
+$Copyright (C) 1994 Erich Fr√ºhst√ºck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -87,17 +87,17 @@ IO *io_popen(const char *proc, const char *mode)
 #if	NEED_POPEN
 
 typedef struct KEY_S {
-	struct KEY_S *next;	/* n‰chster Eintrag */
+	struct KEY_S *next;	/* n√§chster Eintrag */
 	FILE *file;		/* File Struktur */
-	char *proc;		/* Prozeﬂ */
-	char *name;		/* Tempor‰rer Filename */
+	char *proc;		/* Proze√ü */
+	char *name;		/* Tempor√§rer Filename */
 } KEY;
 
 
-static KEY *root = NULL;	/* Wurzel f¸r offene Pseudo-Pipes */
+static KEY *root = NULL;	/* Wurzel f√ºr offene Pseudo-Pipes */
 
 
-/*	Pseudo-Pipe schlieﬂen
+/*	Pseudo-Pipe schlie√üen
 */
 
 int pclose(FILE *file)
@@ -131,7 +131,7 @@ int pclose(FILE *file)
 }
 
 
-/*	Pseudo-Pipe ˆffnen
+/*	Pseudo-Pipe √∂ffnen
 */
 
 FILE *popen(const char *name, const char *mode)

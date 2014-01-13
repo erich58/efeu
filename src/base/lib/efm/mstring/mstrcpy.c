@@ -1,7 +1,7 @@
 /*
 Kopieren eines Strings mit Speicherzuweisung
 
-$Copyright (C) 1996 Erich Frühstück
+$Copyright (C) 1996 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -24,7 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 /*
 Die Funktion |$1| kopiert den String <s>.
-Wurde als Argument ein Nullpointer übergeben, liefert die Funktion
+Wurde als Argument ein Nullpointer Ã¼bergeben, liefert die Funktion
 ebenfalls einen Nullpointer.
 */
 
@@ -36,7 +36,7 @@ char *mstrcpy (const char *s)
 /*
 Die Funktion |$1| kopiert
 maximal <len> Zeichen des Strings <s>. Wurde als Argument ein Nullpointer
-übergeben, liefert die Funktion einen Leerstring.
+Ã¼bergeben, liefert die Funktion einen Leerstring.
 */
 
 char *mstrncpy (const char *s, size_t len)
@@ -57,7 +57,7 @@ char *mstrncpy (const char *s, size_t len)
 
 /*
 $Notes
-Das Speicherfeld für den Rückgabewert wird mit |memalloc| eingerichtet.
+Das Speicherfeld fÃ¼r den RÃ¼ckgabewert wird mit |memalloc| eingerichtet.
 $SeeAlso
 \mref{memalloc(3)}.\br
 \mref{string(3C)} @PRM.

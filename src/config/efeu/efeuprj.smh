@@ -1,10 +1,10 @@
 # :*:create master makefile with efeuprj for subprojects
-# :de:Haupmakefile mit efeuprj für Teilprojekte generieren
+# :de:Haupmakefile mit efeuprj fÃ¼r Teilprojekte generieren
 #
 # $Synopsis
 # include $1
 #
-# $Copyright (C) 2004 Erich Frühstück
+# $Copyright (C) 2004 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
