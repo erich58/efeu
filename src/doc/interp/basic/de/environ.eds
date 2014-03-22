@@ -2,22 +2,22 @@
 
 \ssec	Programmargumente
 
-Wird ein |esh|-Skript aufgerufen, können zusätzliche Argumente zur
-Steuerung des Skripts übergeben werden. Dazu stehen die
-Variablen \index{|argc|} und \index{|argv|} zur Verfügung.
+Wird ein |esh|-Skript aufgerufen, kÃ¶nnen zusÃ¤tzliche Argumente zur
+Steuerung des Skripts Ã¼bergeben werden. Dazu stehen die
+Variablen \index{|argc|} und \index{|argv|} zur VerfÃ¼gung.
 Bei |argc| handelt es sich um einen Ganzzahlwert mit der Zahl der
-übergebenen Argumente, während |argv| der Vektor mit den Argumenten
-ist. Das erste Element |argv[0]| enthält immer den Aufrufnamen
-des Skripts, |argc| ist immer größer oder gleich 1.
+Ã¼bergebenen Argumente, wÃ¤hrend |argv| der Vektor mit den Argumenten
+ist. Das erste Element |argv[0]| enthÃ¤lt immer den Aufrufnamen
+des Skripts, |argc| ist immer grÃ¶ÃŸer oder gleich 1.
 
 Die Funktion \index{|shift|} mit dem optionalen Parameter <|<n>~=~1|>
-löscht <n> Argumente an der Position 1 aus dem Argumentvektor.
-Das erste Argument |argv[0]| bleibt dabei unverändert.
-Die Zahl der Argumente |argc| wird entsprechend angepaßt.
+lÃ¶scht <n> Argumente an der Position 1 aus dem Argumentvektor.
+Das erste Argument |argv[0]| bleibt dabei unverÃ¤ndert.
+Die Zahl der Argumente |argc| wird entsprechend angepaÃŸt.
 
 \ssec	Umgebungsvariablen
 
-Umgebungsvariablen können mit der Funktion \index{|getenv|} abgefragt
+Umgebungsvariablen kÃ¶nnen mit der Funktion \index{|getenv|} abgefragt
 werden. Die Syntax ist:
 	<|\eval{getenv}|>
 
@@ -28,5 +28,5 @@ Beispiele:
 	<|getenv("HOME")|>\br
 	<|getenv("LANG", "us")|>
 
-Das nächste Kapitel beschäftigt sich ausführlicher
+Das nÃ¤chste Kapitel beschÃ¤ftigt sich ausfÃ¼hrlicher
 mit der Abfrage von Programmargumenten.

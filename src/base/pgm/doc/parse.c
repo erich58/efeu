@@ -1,7 +1,7 @@
 /*
 Lesefunktionen
 
-$Copyright (C) 1999 Erich Frühstück
+$Copyright (C) 1999 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -39,7 +39,7 @@ static char *parse_data (void)
 }
 
 
-/*	Anführungen
+/*	AnfÃ¼hrungen
 */
 
 static void copy_quote (IO *in, StrBuf *buf, int key)
@@ -361,7 +361,7 @@ char *DocParseArg (IO *in, int beg, int end, int flag)
 }
 
 
-/*	Namen einlesen: Da diese nur temporär zur Suche verwendet
+/*	Namen einlesen: Da diese nur temporÃ¤r zur Suche verwendet
 	werden, liefert die Funktion den Buffer anstelle einer Kopie.
 */
 
@@ -430,7 +430,7 @@ int DocParseNum (IO *in)
 }
 
 
-/*	Steuerflags einlesen: Diese werden nur temporär verwendet
+/*	Steuerflags einlesen: Diese werden nur temporÃ¤r verwendet
 */
 
 char *DocParseFlags (IO *in)

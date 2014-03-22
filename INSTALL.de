@@ -1,6 +1,6 @@
 VORBEREITUNG
 
-Folgende Softwarepakete werden benötigt:
+Folgende Softwarepakete werden benÃ¶tigt:
 *	C-Development
 *	readline-Development
 *	teTeX
@@ -9,20 +9,20 @@ Folgende Softwarepakete werden empfohlen:
 *	postgresql-Development
 *	tcl/tk-Development
 
-ÜBERSETZEN
+ÃœBERSETZEN
 
 Der Aufruf von
 
 	make all
 
-sorgt für die Übersetzung von EFEU.
+sorgt fÃ¼r die Ãœbersetzung von EFEU.
 
 INSTALLATION
 
-Nach der Übersetzung kann EFEU bereits verwendet werden, es genügt,
-den Suchpfad für Programme mit <TOP>/bin zu erweitern.
+Nach der Ãœbersetzung kann EFEU bereits verwendet werden, es genÃ¼gt,
+den Suchpfad fÃ¼r Programme mit <TOP>/bin zu erweitern.
 
 Alternativ dazu kann EFEU aber auch in /usr oder /usr/local installiert werden.
 Dazu muss das Skript efeu-install.sh mit Root-Rechten aufgerufen
-werden. Die Option --local wählt die Installation in /usr/local aus.
+werden. Die Option --local wÃ¤hlt die Installation in /usr/local aus.
 EFEU kann von root mit dem Kommando efeu-uninstall deinstalliert werden.

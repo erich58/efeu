@@ -2,7 +2,7 @@
 :*:document structuring
 :de:Befehle zur Unterteilung
 
-$Copyright (C) 1999 Erich Frühstück
+$Copyright (C) 1999 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -99,22 +99,22 @@ If not, write to the Free Software Foundation, Inc.,
 :*:headline in manual pages
 	$1 |[|<toc entry>|]| <title>\br
 	~~~~&ldots;
-:de:Hauptüberschrift in Handbucheinträgen
-	$1 |[|<Kurzform>|]| <Hauptüberschrift>\br
+:de:HauptÃ¼berschrift in HandbucheintrÃ¤gen
+	$1 |[|<Kurzform>|]| <HauptÃ¼berschrift>\br
 	~~~~&ldots;
 
-:de:Der Befehl $1 setzt eine Hauptüberschift.
+:de:Der Befehl $1 setzt eine HauptÃ¼berschift.
 
 \def\head	section('H', ParseOpt(cin, true), ParseLine(cin, true));
 
 :*:subheadline in manual pages
 	$1 |[|<toc entry>|]| <title>\br
 	~~~~&ldots;
-:de:Nebenüberschrift in Handbucheinträgen
-	$1 |[|<Kurzform>|]| <Nebenüberschrift>\br
+:de:NebenÃ¼berschrift in HandbucheintrÃ¤gen
+	$1 |[|<Kurzform>|]| <NebenÃ¼berschrift>\br
 	~~~~&ldots;
 
-:de:Der Befehl $1 setzt eine Nebenüberschrift.
+:de:Der Befehl $1 setzt eine NebenÃ¼berschrift.
 
 \def\shead	section('h', ParseOpt(cin, true), ParseLine(cin, true));
 
@@ -133,15 +133,15 @@ If not, write to the Free Software Foundation, Inc.,
 	$1 |[|<Links>|] {|<Randnotiz>|}|
 
 :de:Der Befehl $1 setzt eine Randnotiz. Der optionale Text <Links>
-für linke Seiten wird nur bei doppelseitigem Druck verwendet.
+fÃ¼r linke Seiten wird nur bei doppelseitigem Druck verwendet.
 
 \def\margin	section('m', ParseOpt(cin, true), ParseArg(cin));
 
 :*:footnote
 	$1 |[|<mark>|] {|<note>|}|\br
-:de:Fußnote
+:de:FuÃŸnote
 	$1 |[|<Marke>|] {|<Anmerkung>|}|\br
 
-:de:Der Befehl $1 setzt eine Fußnote.
+:de:Der Befehl $1 setzt eine FuÃŸnote.
 
 \def\note	section('N', ParseOpt(cin, true), ParseArg(cin));

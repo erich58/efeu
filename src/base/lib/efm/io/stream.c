@@ -1,7 +1,7 @@
 /*
 Ein/Ausgabe auf File
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -28,11 +28,11 @@ If not, write to the Free Software Foundation, Inc.,
 #include <unistd.h>
 #include <sys/stat.h>
 
-#define	TMP_SIZE	1024	/* Größe für Ersatzbuffer */
+#define	TMP_SIZE	1024	/* GrÃ¶ÃŸe fÃ¼r Ersatzbuffer */
 
 
-/*	Temporäre Datei öffnen: Falls nicht möglich,
-	wird ein Temporärer Buffer generiert.
+/*	TemporÃ¤re Datei Ã¶ffnen: Falls nicht mÃ¶glich,
+	wird ein TemporÃ¤rer Buffer generiert.
 */
 
 IO *io_tmpfile (void)
@@ -47,7 +47,7 @@ IO *io_tmpfile (void)
 }
 
 
-/*	Datei öffnen
+/*	Datei Ã¶ffnen
 */
 
 IO *io_fopen (const char *name, const char *mode)

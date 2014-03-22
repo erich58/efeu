@@ -3,7 +3,7 @@
 
 GZIP = "-n1"
 	:*:compression mode for gzip
-	:de:Komprimierungsmodus für gzip
+	:de:Komprimierungsmodus fÃ¼r gzip
 
 1 | -fast | GZIP = -n1
 	:*:use fast compression by writing with |gzip|.

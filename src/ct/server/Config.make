@@ -1,5 +1,5 @@
 # :en: data cube server
-# :de: Datenwürfelserver
+# :de: DatenwÃ¼rfelserver
 ##Depends: .
 
 include efeu.smh

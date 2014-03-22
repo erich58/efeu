@@ -1,12 +1,12 @@
 @name
 @synopsis -h
 \Description
-Das Kommando |$!| entfernt Blockl‰ngeninformationen aus der Datei <in>
+Das Kommando |$!| entfernt Blockl√§ngeninformationen aus der Datei <in>
 und schreibt die Daten in die Datei <out>. Falls keine Ausgabedatei
 angegeben wurde, werden nur Statusinformationen produziert.
 
-Das Kommando |$!| wird zur Nachbearbeitung von Dateien benˆtigt, die
-von einem variabel geblockten Magnetband ohne Blockl‰ngenkontrolle
+Das Kommando |$!| wird zur Nachbearbeitung von Dateien ben√∂tigt, die
+von einem variabel geblockten Magnetband ohne Blockl√§ngenkontrolle
 (z.B: mit |rawtape| ohne Option |-v|) gelesen wurden.
 
 @arglist -i

@@ -1,7 +1,7 @@
 /*
 Documentation of ETK Library, german version
 
-$Copyright (C) 2002 Erich Frühstück
+$Copyright (C) 2002 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -23,7 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 \config	efeu
 \date	Juli 2002
 \title	EFEU Schnittstelle zu Tcl/Tk
-Handbuch für Programmierer
+Handbuch fÃ¼r Programmierer
 
 \preface
 Die Programmbibliothek |ETK| stellt eine Schnittstelle zur
@@ -40,41 +40,41 @@ aktiviert werden.
 Die Schnittstelle erlaubt die gleichzeitige Verwendung des
 Tcl-Interpreters und des EFEU-Interpreters.
 
-Auf der EFEU-Seite wird die Tcl-Schnittstelle im wesentlichen über die
-Schlüsselwörter |tcl| und |tclfunc| realisiert, wobei |tcl| die
+Auf der EFEU-Seite wird die Tcl-Schnittstelle im wesentlichen Ã¼ber die
+SchlÃ¼sselwÃ¶rter |tcl| und |tclfunc| realisiert, wobei |tcl| die
 direkte Eingabe einer Tcl-Befehlsfolge erlaubt und |tclfunc| zur
 Definition von Tcl-Kommandos in der Syntax des EFEU-Interpreters
 erlaubt. Daneben gibt es noch die
 Hilfsfunktionen |tclset|, |tclget| und |tclvar| zur
-Manipulation von Rückgabewerten und Variablen.
+Manipulation von RÃ¼ckgabewerten und Variablen.
 
 Auf der Tcl-Seite gibt es die vordefinierten Befehle |@expr| und |@eval|,
 mit denen auf den EFEU-Interpreter zugegriffen werden kenn.
 
 Details zur Schnittstelle sind im Handbucheintrag \mref{etk(1)}
-beschrieben. Ein kurzer Überblick über den EFEU-Befehlsinterpreter
+beschrieben. Ein kurzer Ãœberblick Ã¼ber den EFEU-Befehlsinterpreter
 kann im Handbucheintrag \mref{esh(1)} nachgeschlagen werden.
 
 Die Tk-Erweiterung zu Tcl steht erst nach Aufruf von |tkinit()|
-zur Verfügung. Nach der Definition der einzelnen Widgets wird die
+zur VerfÃ¼gung. Nach der Definition der einzelnen Widgets wird die
 Anwendung mit |tkmain()| aktiviert.
 /*
-Nach Rückkehr aus |tkmain()|
+Nach RÃ¼ckkehr aus |tkmain()|
 kann eine neue Anwendung mit |tkinit()| gestartet werden.
 */
 
 Die Schnittstelle arbeitet mit verschiedenen Versionen von Tcl/Tk
 zusammen. Zum Teil ergeben sich Unterschiede im Verhalten
-der Schnittstelle. Tcl-Versionen vor 8.0 verwenden ausschließlich
-Zeichenketten für den Wertaustusch zwischen Tcl- und EFEU-Interpreter.
-Spätere Versionen nutzen die Möglichkeit von Tcl-Objekten und
-können |bool|, |int| und |double| Werte direkt austauschen.
+der Schnittstelle. Tcl-Versionen vor 8.0 verwenden ausschlieÃŸlich
+Zeichenketten fÃ¼r den Wertaustusch zwischen Tcl- und EFEU-Interpreter.
+SpÃ¤tere Versionen nutzen die MÃ¶glichkeit von Tcl-Objekten und
+kÃ¶nnen |bool|, |int| und |double| Werte direkt austauschen.
 
-Dieses Handbuch beschränkt sich auf die Beschreibung der Schnittstelle
+Dieses Handbuch beschrÃ¤nkt sich auf die Beschreibung der Schnittstelle
 und setzt Kenntnisse im Arbeiten mit Tcl/Tk vorraus.
 
-	Erich Frühstück\br
-	Wördern, \thedate
+	Erich FrÃ¼hstÃ¼ck\br
+	WÃ¶rdern, \thedate
 
 \toc
 

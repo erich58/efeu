@@ -7,61 +7,61 @@ von Definitionsparametern zusammen, die durch einen Strichpunkt
 getrennt sind. Diese Parameter haben wiederum die allgemeine
 Syntax <name>|[|<opt>|]=|<arg>.
 
-Die Definitionsparameter können
-anstelle eines Strichpunkts auch durch weiße Zeichen getrennt werden.
-Da weiße Zeichen aber auch zur Trennung der einzelnen
+Die Definitionsparameter kÃ¶nnen
+anstelle eines Strichpunkts auch durch weiÃŸe Zeichen getrennt werden.
+Da weiÃŸe Zeichen aber auch zur Trennung der einzelnen
 Filterdefinitionen verwendet werden, stehen sie hier im Regelfall
-nicht zur Verfügung, außer die gesamte Filterdefinition wird in geschwungene
+nicht zur VerfÃ¼gung, auÃŸer die gesamte Filterdefinition wird in geschwungene
 Klammern gestellt.
 
-Für die Definitionsparameter gelten die gleichen Klammerregeln wie für
+FÃ¼r die Definitionsparameter gelten die gleichen Klammerregeln wie fÃ¼r
 die Filterdefinitionen selbst.
 
 \ssec	\index{Variablendefinition}
 
 Mithilfe der Parameterdefinition |var| wird die Datenstruktur der
 Ausgabedatei bestimmt. Als Argument wird eine Liste von
-Variablendefinitionen angegeben. Dabei können wahlweise
-bestehende Variablen der \index{Quellstruktur} ausgewählt werden oder neue
+Variablendefinitionen angegeben. Dabei kÃ¶nnen wahlweise
+bestehende Variablen der \index{Quellstruktur} ausgewÃ¤hlt werden oder neue
 Variablen mit einem optionalen Vorgabewert definiert werden.
-Es können auch Änderungen in der Verschachtelung der Datenstruktur
+Es kÃ¶nnen auch Ã„nderungen in der Verschachtelung der Datenstruktur
 vorgenommen werden.
 
 Die Auswahl einer bestehenden Variablen aus der Quellstruktur hat
 die Form: [<new>|=|]<name>, wobei <name> der Name der Variablen in der
 Quellstruktur und <new> der Name in der \index{Zielstruktur} ist. Falls <new>
 nicht angegeben wurde, wird <name> verwendet.
-Die mehrfache Verwendung einer Komponente ist zulässig, aber alle
-Namen in der neuen Datenstruktur müssen verschieden sein.
+Die mehrfache Verwendung einer Komponente ist zulÃ¤ssig, aber alle
+Namen in der neuen Datenstruktur mÃ¼ssen verschieden sein.
 
 Ein einzelner Stern |*|
-wählt alle Variablen der Quellstruktur aus, deren Namen noch nicht in
+wÃ¤hlt alle Variablen der Quellstruktur aus, deren Namen noch nicht in
 der Zielstruktur verwendet wurden. Damit lassen sich z.B. leicht
-Umordnungen realisieren, es müssen nur die Namen jener Variablen
+Umordnungen realisieren, es mÃ¼ssen nur die Namen jener Variablen
 angegeben werden, die vorgezogen werden. Die restlichen Variablen
-können anschließend mit |*| ausgewählt werden. Der Stern kann auch bei
+kÃ¶nnen anschlieÃŸend mit |*| ausgewÃ¤hlt werden. Der Stern kann auch bei
 Teilstrukturen verwendet werden.
 
-Eine zusätzliche Variable kann mit |{|<type> <name>[|=|<val>]|}|
-eingerichtet werden. Die geschwungenen Klammern sind wegen dem weißen
+Eine zusÃ¤tzliche Variable kann mit |{|<type> <name>[|=|<val>]|}|
+eingerichtet werden. Die geschwungenen Klammern sind wegen dem weiÃŸen
 Zeichen zwischen dem Datentyp <type> und dem Variablennamen <name> notwendig.
-Innerhalb einer Teilstrukturdefinition (nächster Absatz) können sie
+Innerhalb einer Teilstrukturdefinition (nÃ¤chster Absatz) kÃ¶nnen sie
 entfallen.
 
-\index{Teilstruktur}en können mithilfe von <name>|={|<list>|}| eingerichtet
+\index{Teilstruktur}en kÃ¶nnen mithilfe von <name>|={|<list>|}| eingerichtet
 werden, wobei <list> wiederum eine Liste von Variablendefinitionen
 ist.
 
 Beispiel: |var=num,name={first_name,family_name}|
 
 Wurden keine Variablen definiert, wird
-für die Ausgabedatei die gleiche Datenstruktur wie
-für die Quelldatei verwendet. Dies ist gleichbedeutend mit der Angabe
+fÃ¼r die Ausgabedatei die gleiche Datenstruktur wie
+fÃ¼r die Quelldatei verwendet. Dies ist gleichbedeutend mit der Angabe
 |var=*|.
 
 \index[Aufteilen von Variablendefinitionen]
 Die Variablendefinition kann auf mehrere |var|-Anweisungen aufgeteilt
-werden. Die einzelnen Definitionen werden zusammengehängt.
+werden. Die einzelnen Definitionen werden zusammengehÃ¤ngt.
 
 \index[Strukturreduktion]
 Falls als Option ein |r| angegeben wurde, wird eine resultierende
@@ -70,13 +70,13 @@ reduziert.
 
 \index[Datentypkonverter]
 Ein Konverter zur Umwandlung eines Quelldatensatzes in einen
-Zieldatensatz wird implizit über die Variablendefinition eingerichtet.
+Zieldatensatz wird implizit Ã¼ber die Variablendefinition eingerichtet.
 
 \ssec	\index{Vektormodus}
 
-Anstelle die Datensätze einzeln abzuarbeiten, können die Daten auch im
-Vektormodus verarbeitet werden. Dabei werden zusammengehörende
-Datensätze in einem Vektor geladen. Die Ergebnisdatensätze werden
+Anstelle die DatensÃ¤tze einzeln abzuarbeiten, kÃ¶nnen die Daten auch im
+Vektormodus verarbeitet werden. Dabei werden zusammengehÃ¶rende
+DatensÃ¤tze in einem Vektor geladen. Die ErgebnisdatensÃ¤tze werden
 ebenfalls in einem Vektor zusammengestellt.
 
 Der Vektormodus wird durch die Anweisung
@@ -84,58 +84,58 @@ Der Vektormodus wird durch die Anweisung
 |vec[|<flag>|]|[|=|<cmp>]
 
 aktiviert. Die Vergleichsdefinition <cmp> bestimmt die
-zusammengehörenden Datensätze, die pro Arbeitsschritt geladen werden.
+zusammengehÃ¶renden DatensÃ¤tze, die pro Arbeitsschritt geladen werden.
 Ohne Vergleichsdefinition wird jeweils ein Datensatz geladen.
-Falls für <flag> |c| angegeben wurde, wird jeder
+Falls fÃ¼r <flag> |c| angegeben wurde, wird jeder
 Eingabesatz kopiert. Ansonsten ist der Zieldatenvektor am Anfang der
 Verarbeitung leer.
 
 \ssec	Ausdruck
 
 \index[Transformationsausdruck]
-Die eigentliche Transformation wird über einen Ausdruck spezifiziert.
+Die eigentliche Transformation wird Ã¼ber einen Ausdruck spezifiziert.
 Die Syntax ist |expr[|<lang>|]={|<expr>|}|, wobei der Ausdruck <expr>
 bei jedem Datenzyklus ausgewertet wird.
-Standardmäßig wird der EFEU-Interpreter eingesetzt. Alternativ
-dazu kann mit <lang> eine andere Sprache gewählt werden.
-Derzeit ist nur |C| verfügbar.
+StandardmÃ¤ÃŸig wird der EFEU-Interpreter eingesetzt. Alternativ
+dazu kann mit <lang> eine andere Sprache gewÃ¤hlt werden.
+Derzeit ist nur |C| verfÃ¼gbar.
 
 Der Ausdruck wird wie der \index{Auswertungsblock} einer
 \index{|while|-Anweisung}
 abgearbeitet. Eine \index{|break|-Anweisung} bricht die Verarbeitung ab.
 Die \index{|continue|-Anweisung} beginnt die Verarbeitung eines neuen Zyklus,
-die aktuellen Daten werden nicht berücksichtigt.
+die aktuellen Daten werden nicht berÃ¼cksichtigt.
 
 Bei der Einzelsatzverarbeitung stehen der Quell- und Zieldatensatz unter
-den Namen \index{|src|} und \index{|tg|} zur Verfügung. Weiters kann
+den Namen \index{|src|} und \index{|tg|} zur VerfÃ¼gung. Weiters kann
 auf die Komponenten direkt mit ihren Namen zugegriffen werden. Dabei
 gilt folgende \index{Sichtbarkeit}shierarchie:
 
 *	Automatische Variablen im Auswertungsblock,
 *	statische Variablen im Auswertungsblock,
-*	Aufrufparameter für den Ausdruck (|tg|, |src|),
+*	Aufrufparameter fÃ¼r den Ausdruck (|tg|, |src|),
 *	Namensraum des Zieldatentyps,
 *	Namensraum des Quelldatentyps,
 *	globale Variablen.
 
 Bei der Vektorverarbeitung referieren die Namen \index{|src|} und
-\index{|tg|} die Quell- und Zielvektoren. Zusätzlich steht unter
+\index{|tg|} die Quell- und Zielvektoren. ZusÃ¤tzlich steht unter
 dem Namen \index{|base|} die EDB-Datenschnittstelle selbst zur
-Verfügung. Damit ist es möglich, zusätzliche Datensätze für die
-Verarbeitung zu laden. Zugriffe auf Quell- und Zieldatensätze sind nur
-über die Vektoren |src| und |tg| möglich.
+VerfÃ¼gung. Damit ist es mÃ¶glich, zusÃ¤tzliche DatensÃ¤tze fÃ¼r die
+Verarbeitung zu laden. Zugriffe auf Quell- und ZieldatensÃ¤tze sind nur
+Ã¼ber die Vektoren |src| und |tg| mÃ¶glich.
 
-Falls als Sprache |C| gewählt wurde, bildet der angegebene Ausdruck
+Falls als Sprache |C| gewÃ¤hlt wurde, bildet der angegebene Ausdruck
 den Rumpf einer \index{C-Funktion}, die zur Auswertungszeit kompiliert
 und als gemeinsam genutzes Objekt geladen wird.
 
-Bei der Einzelsatzverarbeitung werden Quell- und Zieldatensätze als
+Bei der Einzelsatzverarbeitung werden Quell- und ZieldatensÃ¤tze als
 Pointer vom Typ \index{|EfiObj|}, bei der Vektorverarbeitung als Pointer vom
-Typ \index{|EfiVec|} übergeben. Auch hier kann bei Vektorverarbeitung
+Typ \index{|EfiVec|} Ã¼bergeben. Auch hier kann bei Vektorverarbeitung
 auf die |EDB|-Datenschnittstelle mittels \index{|base|} zugegriffen werden.
 
-Bei der Generierung des Sourcefiles wird für den Ausdruck <expr>
-eine \index{Parametersubstitution} durchgeführt. Dabei kann auf
+Bei der Generierung des Sourcefiles wird fÃ¼r den Ausdruck <expr>
+eine \index{Parametersubstitution} durchgefÃ¼hrt. Dabei kann auf
 Variablen des EFEU-Interpreters zugegriffen werden. Insbesonders
 kann damit auf einfache Weise die \index{Adresse einer Strukturkomponente}
 ermittelt werden. Der Ausdruck |$(&src.gender)| liefert z.B. die Adresse der
@@ -144,16 +144,16 @@ Komponente |geschl| in der Datenstruktur des EDB-Datenfiles
 ((char *) src->data +| <offset>|))|, wobei <offset> der Datenoffset
 der entsprechenden Strukturkomponente ist.
 
-Standardmäßig wird die Funktion mit dem Wert 0 verlassen.
+StandardmÃ¤ÃŸig wird die Funktion mit dem Wert 0 verlassen.
 Alternativ kann auch \index{|CmdEval_Break|} (entspricht der
 \index{|break|-Anweisung}) oder \index{|CmdEval_Cont|} (entspricht der
 \index{|continue|-Anweisung}) verlassen werden.
 
-\ssec	Sonderfälle
+\ssec	SonderfÃ¤lle
 
 \index[Filter |cut|]
-Für die Selektion einzelner Variablen aus einer Struktur ohne weitere
-zusätzliche Modifikation kann auch der Filter \index{|cut|} verwendet werden.
+FÃ¼r die Selektion einzelner Variablen aus einer Struktur ohne weitere
+zusÃ¤tzliche Modifikation kann auch der Filter \index{|cut|} verwendet werden.
 Der Aufruf |cut[|<opt>|]=|<arg> ist gleichwertig
 mit |trans=var[|<opt>|]=|<arg>.
 

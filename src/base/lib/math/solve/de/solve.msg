@@ -1,7 +1,7 @@
 /*
 Formatdefinitionen zur Nullstellenbestimmung
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -21,6 +21,6 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 2	Keine Nullstelle im Intervall [$1, $2]\n
-3	$!: Maximale Stufenzahl von $(SolveStep) überschritten.\n
+3	$!: Maximale Stufenzahl von $(SolveStep) Ã¼berschritten.\n
 4	Stufe $1: [$2, $3]\n
 5	Stufe $1: [$2, $3] (Gewicht: $4)\n

@@ -1,5 +1,5 @@
-/*	Zusammenfügen von Dimensionen
-	(c) 1994 Erich Frühstück
+/*	ZusammenfÃ¼gen von Dimensionen
+	(c) 1994 Erich FrÃ¼hstÃ¼ck
 */
 
 #include <EFEU/mdmat.h>

@@ -1,7 +1,7 @@
 /*
 Robuste Speicherplatzzuweisung
 
-$Copyright (C) 1996 Erich Frühstück
+$Copyright (C) 1996 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -23,8 +23,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/memalloc.h>
 #include <EFEU/vecbuf.h>
 
-#define	MEM_SMALL	8	/* Kleine Datenblöcke */
-#define	MEM_MEDIUM	32	/* Mittlere Datenblöcke */
+#define	MEM_SMALL	8	/* Kleine DatenblÃ¶cke */
+#define	MEM_MEDIUM	32	/* Mittlere DatenblÃ¶cke */
 
 #define	WARN_1	"memalloc(): Pointer reused without freeing\n"
 #define	STAT_1	"%s: Blocksize %3ld: %5ld used, %5ld free, %5ld byte (%ldx%ldx%ld)\n"
@@ -32,7 +32,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 static int mem_cmp (const void *a, const void *b);
 
-/*	Zuweisungstabellen: Diese müssen mit aufsteigender Elementlänge
+/*	Zuweisungstabellen: Diese mÃ¼ssen mit aufsteigender ElementlÃ¤nge
 	angeordnet werden.
 */
 
@@ -48,7 +48,7 @@ static VECBUF (mem_large, 32, sizeof(void *));
 static size_t request = 0;
 
 
-/*	Vergleichsfunktion für Speichersegmente
+/*	Vergleichsfunktion fÃ¼r Speichersegmente
 */
 
 static int mem_cmp (const void *pa, const void *pb)
@@ -63,16 +63,16 @@ static int mem_cmp (const void *pa, const void *pb)
 
 /*
 Die Funktion |$1| reserviert einen Speicherplatz der
-Größe <size>. Sie verwaltet unterschiedliche
-Zuweisungstabellen in Abhängigkeit der Größe des Speicherfeldes.
+GrÃ¶ÃŸe <size>. Sie verwaltet unterschiedliche
+Zuweisungstabellen in AbhÃ¤ngigkeit der GrÃ¶ÃŸe des Speicherfeldes.
 
 $Diagnostic
-Kann der gewünschte Speicherplatz nicht reserviert werden,
+Kann der gewÃ¼nschte Speicherplatz nicht reserviert werden,
 wird die Verarbeitung mit einer Fehlermeldung abgebrochen.
 
 $Note
-Ein Anwendungsprogramm, daß viele gleich lange Speichersegmente
-verwendet, sollte diese nach Möglichkeit direkt mit \mref{alloctab(3)}
+Ein Anwendungsprogramm, daÃŸ viele gleich lange Speichersegmente
+verwendet, sollte diese nach MÃ¶glichkeit direkt mit \mref{alloctab(3)}
 verwalten, da damit der Zuweisungsalgorithmus von
 |$1| entlastet wird.
 */
@@ -97,11 +97,11 @@ void *memalloc (size_t size)
 
 /*
 Die Funktion |$1| gibt einen mit |memalloc|
-generierten Speicherplatz frei. Die Funktion überprüft den
+generierten Speicherplatz frei. Die Funktion Ã¼berprÃ¼ft den
 Speicherplatz <ptr>, ob er aus den Zuweisungstabellen
-stammt. Die Übergabe eines Pointers, der <nicht>
+stammt. Die Ãœbergabe eines Pointers, der <nicht>
 von einem Aufruf von |memalloc| stammt oder mit
-|memnotice| registriert wurde, ist zulässig.
+|memnotice| registriert wurde, ist zulÃ¤ssig.
 */
 
 void memfree (void *p)
@@ -128,11 +128,11 @@ void memfree (void *p)
 
 /*
 Die Funktion |$1| registriert ein mit |lmalloc|
-oder |malloc| generiertes Speicherfeld und ermöglicht damit
+oder |malloc| generiertes Speicherfeld und ermÃ¶glicht damit
 die Freigabe des Speicherfeldes mit |memfree|.
 $diagnostic
 Falls |$1| zweimal mit dem selben Datenpointer
-aufgerufen wird, ohne daß er zuvor freigegeben wurde,
+aufgerufen wird, ohne daÃŸ er zuvor freigegeben wurde,
 wird eine Warnung ausgegeben.
 */
 
@@ -184,8 +184,8 @@ void memstat (const char *prompt)
 }
 
 /*
-Die Funktion |$1| überprüft die einzelnen Zuweisungstabellen
-auf Konsistenz. Sie wird nur für die Fehlersuche verwendet.
+Die Funktion |$1| Ã¼berprÃ¼ft die einzelnen Zuweisungstabellen
+auf Konsistenz. Sie wird nur fÃ¼r die Fehlersuche verwendet.
 */
 
 void memcheck (void)

@@ -1,7 +1,7 @@
 /*
 Eingabe - Preprozessor
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -31,7 +31,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	INC_PFX		"include"
 
-#define	NEED_PROTECT	0	/* Schutzmode vorläufig nicht benötigt */
+#define	NEED_PROTECT	0	/* Schutzmode vorlÃ¤ufig nicht benÃ¶tigt */
 
 /*	Teststruktur: Die Variable depth gibt die Verschachtelungstiefe
 	in einem nicht selektierten Zweig an.
@@ -45,7 +45,7 @@ If not, write to the Free Software Foundation, Inc.,
 typedef struct PPTestStruct PPTest;
 
 struct PPTestStruct {
-	PPTest *next;	/* Verweis auch nächsten Eintrag */
+	PPTest *next;	/* Verweis auch nÃ¤chsten Eintrag */
 	int depth;	/* Falsch - Verschachtelungstiefe */
 	int stat;	/* Status */
 	int start;	/* Startzeile */
@@ -58,10 +58,10 @@ struct PPTestStruct {
 typedef struct PPInputStruct PPInput;
 
 struct PPInputStruct {
-	PPInput *next;	/* Verweis auch nächsten Eintrag */
+	PPInput *next;	/* Verweis auch nÃ¤chsten Eintrag */
 	IO *io;		/* Eingabestruktur */
 	PPTest *test;	/* Testliste */
-	int crflag;	/* Flag für '\r' in Eingabefile */
+	int crflag;	/* Flag fÃ¼r '\r' in Eingabefile */
 };
 
 
@@ -75,12 +75,12 @@ typedef struct {
 	PPInput *input;	/* Eingabeliste */
 	StrBuf buf;	/* Zwischenbuffer */
 	StrBuf combuf;	/* Kommentarbuffer */
-	int at_start;	/* Flag für Zeilenbeginn */
+	int at_start;	/* Flag fÃ¼r Zeilenbeginn */
 	int save;	/* Zahl der gebufferten Zeichen */
 #if	NEED_PROTECT
 	int protect;	/* Schutzmodus */
 #endif
-	int expand;	/* Flag für String und Makrointerpretation */
+	int expand;	/* Flag fÃ¼r String und Makrointerpretation */
 } PPData;
 
 
@@ -108,7 +108,7 @@ static PPMacDef pp_macdef[] = {
 static NameKeyTab *pp_macrotab = NULL;
 
 
-/*	Preprozess - Filter: Anhand von IOPP_COMMENT wird geprüft,
+/*	Preprozess - Filter: Anhand von IOPP_COMMENT wird geprÃ¼ft,
 	ob er bereits vorgeschalten wurde.
 */
 
@@ -139,7 +139,7 @@ IO *io_ptrpreproc (IO *io, char **pptr, char **lptr)
 }
 
 
-/*	Die Funktion pp_eat liefert das nächste Zeichen.
+/*	Die Funktion pp_eat liefert das nÃ¤chste Zeichen.
 	Eventell vorhandene Zeilenfortsetzungen und Kommentare
 	werden entfernt. Falls flag gesetzt ist, wird ein
 	nach einem Kommentar folgender Zeilenvorschub entfernt.
@@ -456,7 +456,7 @@ static int pp_ctrl (IO *io, int req, va_list list)
 }
 
 
-/*	Präprozessbefehle
+/*	PrÃ¤prozessbefehle
 */
 
 #define	PP_INCL		1	/* Datei einbinden */
@@ -465,7 +465,7 @@ static int pp_ctrl (IO *io, int req, va_list list)
 #define	PP_NOEXPAND	4	/* Makros nicht expandieren */
 
 #define	PP_DEFINE	11	/* Makro definieren */
-#define	PP_UNDEF	12	/* Makro Löschen */
+#define	PP_UNDEF	12	/* Makro LÃ¶schen */
 #define	PP_ERROR	13	/* Fehlermeldung ausgeben */
 
 #define	PP_IF		21	/* Beginn Testblock */
@@ -509,7 +509,7 @@ static int cmd_testval (IO *io);
 static int cmd_isdef (IO *io);
 
 
-/*	Direktiven ausführen
+/*	Direktiven ausfÃ¼hren
 */
 
 static void pp_cmd (PPData *pp)
@@ -605,7 +605,7 @@ static void pp_cmd (PPData *pp)
 		}
 	}
 
-/*	Restliche Zeichen aus Zeile löschen
+/*	Restliche Zeichen aus Zeile lÃ¶schen
 */
 	iocpy_skip(x->io, NULL, 0, "\n", 0);
 }

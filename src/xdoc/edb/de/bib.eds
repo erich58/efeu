@@ -1,12 +1,12 @@
 \bibliography
 
 \bibitem interp
-Erich Frühstück.
+Erich FrÃ¼hstÃ¼ck.
 Der EFEU Interpreter.
 EFEU--Handbuch
 
 \bibitem mdmat
-Erich Frühstück.
+Erich FrÃ¼hstÃ¼ck.
 Mehrdimensionale
 Datenmatrizen.
 EFEU--Handbuch
@@ -17,7 +17,7 @@ PostgreSQL ge-packt.
 Bonn: mitp, 2005
 
 \bibitem geschwinde
-Ewald Geschwinde and Hans-Jürgen Schönig.
+Ewald Geschwinde and Hans-JÃ¼rgen SchÃ¶nig.
 PostgreSQL: developer's handbook.
 Indianapolis: Sams Publishing, 2001
 
@@ -28,5 +28,5 @@ Bonn: MITP-Verlag, 2000
 
 \bibitem momjian
 Bruce Momjian.
-PostgeSQL Einführung und Konzepte.
-München Boston: Addison-Wesley 20004
+PostgeSQL EinfÃ¼hrung und Konzepte.
+MÃ¼nchen Boston: Addison-Wesley 20004

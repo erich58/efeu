@@ -1,6 +1,6 @@
-/*	Datensatzz‰hler
+/*	Datensatzz√§hler
 
-$Copyright (C) 2007 Erich Fr¸hst¸ck
+$Copyright (C) 2007 Erich Fr√ºhst√ºck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -36,5 +36,5 @@ static void rec_create (MdCountPar *par, EfiCount *def, EfiObj *obj,
 EfiCount EfiCount_record = EFI_COUNT(NULL,
 	"record", NULL, rec_create, NULL,
 	":*:count records"
-	":de:Datens‰tze z‰hlen"
+	":de:Datens√§tze z√§hlen"
 );

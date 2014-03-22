@@ -1,12 +1,12 @@
 # :*:configuration file for curses library
-# :de:Konfigurationsdatei für curses Bibliothek
+# :de:Konfigurationsdatei fÃ¼r curses Bibliothek
 #
 # $Synopsis
 # include $1
 #
 # \index{|LD_CURSES|}
 #
-# $Copyright (C) 2004 Erich Frühstück
+# $Copyright (C) 2004 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -32,7 +32,7 @@ include cflags.smh
 # $Description
 # :de:
 # Durch Einbinden der Headerdatei |$1| wird der Makro
-# |LD_CURSES| mit link-Flags für curses-Programme definiert.
+# |LD_CURSES| mit link-Flags fÃ¼r curses-Programme definiert.
 
 mf_comm "Curses configuration from $FILE"
 mf_cflags LD_CURSES -lncurses -o -lcurses
@@ -48,8 +48,8 @@ mf_comm -n "End of curses configuration"
 # include $1
 # \end
 # :de:
-# Eine typische Ausgabe (abhängig von Bibliotheksversion und
-# Rechnerarchitektur) für das Einbinden der Headerdatei mit
+# Eine typische Ausgabe (abhÃ¤ngig von Bibliotheksversion und
+# Rechnerarchitektur) fÃ¼r das Einbinden der Headerdatei mit
 # \shmkmf[-x] hat die Form:
 # include $1
 # \end

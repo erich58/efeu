@@ -4,7 +4,7 @@
 
 $Header <Math/$1>
 
-$Copyright (C) 1997 Erich Frühstück
+$Copyright (C) 1997 Erich FrÃ¼hstÃ¼ck
 This file is part of Math.
 
 This library is free software; you can redistribute it and/or
@@ -40,8 +40,8 @@ If not, write to the Free Software Foundation, Inc.,
 #define	TS_YEAR		'y'	/* Jahresdaten */
 #define	TS_QUART	'q'	/* Quartalsdaten */
 #define	TS_MONTH	'm'	/* Monatsdaten */
-#define	TS_WEEK		'w'	/* Wochenzähler */
-#define	TS_DAY		'd'	/* Tageszähler */
+#define	TS_WEEK		'w'	/* WochenzÃ¤hler */
+#define	TS_DAY		'd'	/* TageszÃ¤hler */
 #define	TS_HOUR		'H'	/* Stunden */
 #define	TS_MIN		'M'	/* Minuten */
 #define	TS_SEC		'S'	/* Sekunden */
@@ -79,8 +79,8 @@ typedef struct {
 	char *name;	/* Name der Zeitreihe */
 	double *data;	/* Datenwerte */
 	TimeIndex base;	/* Zeitbasis */
-	size_t dim;	/* Zeitreihenlänge */
-	size_t size;	/* Speicherfeldgröße */
+	size_t dim;	/* ZeitreihenlÃ¤nge */
+	size_t size;	/* SpeicherfeldgrÃ¶ÃŸe */
 	char *fmt;	/* Darstellungsformat */
 } TimeSeries;
 
@@ -133,9 +133,9 @@ typedef struct {
 	OLSCoeff *koef;	/* Koeffizientenvektor */
 	TimeSeries **exogen;	/* Exogene Variablen */
 	TimeSeries *res;	/* Residuen */
-	TimeIndex base;	/* Basis der Schätzperiode */
-	TimeIndex first;	/* Erster Index für Projektionen */
-	TimeIndex last;	/* Letzter Index für Projektionen */
+	TimeIndex base;	/* Basis der SchÃ¤tzperiode */
+	TimeIndex first;	/* Erster Index fÃ¼r Projektionen */
+	TimeIndex last;	/* Letzter Index fÃ¼r Projektionen */
 } OLSPar;
 
 OLSPar *OLSPar_create (size_t dim);

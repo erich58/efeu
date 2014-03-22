@@ -4,7 +4,7 @@
 % The key %T is replaced by the top directory of efeu.
 #!/bin/sh
 # :*:Startup script for efeu commandos
-# :de:Startskript für efeu-Programme
+# :de:Startskript fÃ¼r efeu-Programme
 
 # $Note
 # :*:This command was created by |make starter|
@@ -22,7 +22,7 @@ export PATH
 #	:de:Kommando
 # *args |
 #	:*:arguments for <cmd>
-#	:de:Argumente für <cmd>
+#	:de:Argumente fÃ¼r <cmd>
 
 usage ()
 {
@@ -40,8 +40,8 @@ esac
 # arguments, |$1| runs a shell in the new environment.
 # :de:Das Kommando |$!| erweitert |PATH| mit dem bin-Verzeichnis von
 # EFEU und ruft das gegebene Kommando <cmd> mit den
-# zugehörigen Argumenten auf. Ohne Argumente wird eine Shell in der
-# veränderten Umgebung gestartet.
+# zugehÃ¶rigen Argumenten auf. Ohne Argumente wird eine Shell in der
+# verÃ¤nderten Umgebung gestartet.
 
 test $# -ge 1 && exec "$@"
 exec $SHELL

@@ -1,8 +1,8 @@
 /*
 :*:conditional expressions
-:de:Bedingte Ausdrücke
+:de:Bedingte AusdrÃ¼cke
 
-$Copyright (C) 1999 Erich Frühstück
+$Copyright (C) 1999 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -35,10 +35,10 @@ If not, write to the Free Software Foundation, Inc.,
 	$1 |{|<expr>|}| <ifpart> \[|\else| <elsepart>\] |\endif|\br
 
 :de:Falls <expr> wahr ist, wird <ifpart> ausgegeben, ansonsten <elsepart>.
-Das Schlüsselwort |\else| kann zusammen mit <elsepart> entfallen.
-Testblöcke können verschachtelt werden. Kommentare und mit |||| ... ||||
+Das SchlÃ¼sselwort |\else| kann zusammen mit <elsepart> entfallen.
+TestblÃ¶cke kÃ¶nnen verschachtelt werden. Kommentare und mit |||| ... ||||
 oder |----| ... |----| geklammerte Textteile werden nicht nach
-Schlüsselwörtern untersucht.
+SchlÃ¼sselwÃ¶rtern untersucht.
 
 \def\if	{ cout << ParseBlock(cin, expr(ParseExpr(cin)),
 	"if", "endif", "else"); }
@@ -46,14 +46,14 @@ Schlüsselwörtern untersucht.
 /*
 PROBLEM:
 Das Aufspalten der Liste mit split liefert keine gute Zerlegung:
-Keine Maskierung, Leerfelder bei mehreren weißen Zeichen
+Keine Maskierung, Leerfelder bei mehreren weiÃŸen Zeichen
 hinterainander oder am Ende der Liste, ...
 
 Textschleife
 	$1 <List> |\do| <Block> |\done|
 
-Der Text <Block> wird für jedes Argument der Liste <List>
-ausgeführt. Die einzelnen Werte der Liste sind durch Leerzeichen oder
+Der Text <Block> wird fÃ¼r jedes Argument der Liste <List>
+ausgefÃ¼hrt. Die einzelnen Werte der Liste sind durch Leerzeichen oder
 Komma getrennt. Im Text <Block> wird |$1| gegen das aktuelle Argument
 ersetzt.
 

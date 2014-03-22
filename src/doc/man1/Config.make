@@ -1,5 +1,5 @@
 # :en: manpages for commands
-# :de: Handbucheintr‰ge zu Kommandos
+# :de: Handbucheintr√§ge zu Kommandos
 ##Depends: .
 
 include efeu.smh

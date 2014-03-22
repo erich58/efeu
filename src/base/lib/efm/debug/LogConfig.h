@@ -3,7 +3,7 @@
 :de:	Protokollkonfiguration
 
 $Header	<EFEU/$1>
-$Copyright (C) 2009 Erich Frühstück
+$Copyright (C) 2009 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -30,7 +30,7 @@ If not, write to the Free Software Foundation, Inc.,
 #define	LOGLEVEL_ERR	1	/* Fehlermeldungen */
 #define	LOGLEVEL_WARN	2	/* Warnungen */
 #define	LOGLEVEL_NOTE	3	/* Verarbeitungsinformationen */
-#define	LOGLEVEL_INFO	4	/* Zusätzliche Informationen */
+#define	LOGLEVEL_INFO	4	/* ZusÃ¤tzliche Informationen */
 #define	LOGLEVEL_DEBUG	5	/* Debug-Informationen */
 #define	LOGLEVEL_TRACE	6	/* Ablaufverfolgung */
 
@@ -55,8 +55,8 @@ void DelLogOutput (LogOutput *out);
 
 typedef struct LogControlEntry LogControlEntry;
 
-#define	LOGFLAG_UTF8	0x1	/* UTF8-Konvertierung wird benötigt */
-#define	LOGFLAG_LATIN9	0x2	/* LATIN9-Konvertierung wird benötigt */
+#define	LOGFLAG_UTF8	0x1	/* UTF8-Konvertierung wird benÃ¶tigt */
+#define	LOGFLAG_LATIN9	0x2	/* LATIN9-Konvertierung wird benÃ¶tigt */
 
 #define	LOGFLAG_TIME	0x10	/* Zeitstempel wird ausgegeben */
 #define	LOGFLAG_TYPE	0x20	/* Typ der Logmeldung wird ausgegeben */

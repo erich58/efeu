@@ -1,5 +1,5 @@
 /*	Datenwerte in Liste konvertieren
-	(c) 1995 Erich Frühstück
+	(c) 1995 Erich FrÃ¼hstÃ¼ck
 */
 
 #include <EFEU/mdeval.h>

@@ -1,62 +1,62 @@
 \sec	make
 
-Das Kommando |make| gehört zum
+Das Kommando |make| gehÃ¶rt zum
 <"Development System"> des UNIX-Betriebssystems und ist in der
-Regel auf allen UNIX--Systemen verfügbar. Es wird im Regelfall
+Regel auf allen UNIX--Systemen verfÃ¼gbar. Es wird im Regelfall
 zum Kompilieren einzelner Programme oder Programmpakete
-verwendet, eignet sich aber auch sehr gut für andere Aufgaben.
+verwendet, eignet sich aber auch sehr gut fÃ¼r andere Aufgaben.
 
 \ssec	Rechenregeln
-Die Grundlage für das Kommando |make| bilden Rechenregeln
+Die Grundlage fÃ¼r das Kommando |make| bilden Rechenregeln
 mit den folgenden Komponenten:
 *	Die Ziele: Das sind die Name der zu generierenden Dateien oder
-	Teilaufgaben (z.B. Aufräumen). Meist wird pro Regel nur ein
+	Teilaufgaben (z.B. AufrÃ¤umen). Meist wird pro Regel nur ein
 	Ziel angegeben.
-*	Die Abhängigkeiten: Das ist eine Liste aller Dateien, die das Ergebnis
+*	Die AbhÃ¤ngigkeiten: Das ist eine Liste aller Dateien, die das Ergebnis
 	bestimmen.
 *	Die Befehle: Das ist eine Liste von Befehlsaufrufen, die
 	zur Generierung des Ergebnisses notwendig sind.
 
-Neben den expliziten Rechenregeln für ein bestimmtes Ziel
-gibt es noch interne Rechenregeln für Dateien mit bestimmten Filezusätzen.
+Neben den expliziten Rechenregeln fÃ¼r ein bestimmtes Ziel
+gibt es noch interne Rechenregeln fÃ¼r Dateien mit bestimmten FilezusÃ¤tzen.
 Diese werden bei generierten Makefiles normalerweise nicht genutzt.
 
-Das Kommando |make| führt die Befehle, die zu einem Ziel führen,
-immer dann durch, wenn eine der Abhängigkeiten ein neueres Datum
+Das Kommando |make| fÃ¼hrt die Befehle, die zu einem Ziel fÃ¼hren,
+immer dann durch, wenn eine der AbhÃ¤ngigkeiten ein neueres Datum
 als das Ergebnis selbst aufweist. Fehlende Dateien oder Pseudoziele werden
 zu Beginn der Verarbeitung als veraltet betrachtet.
 
-Kommt es bei der Durchführung eines Befehls zu einem Fehler oder
+Kommt es bei der DurchfÃ¼hrung eines Befehls zu einem Fehler oder
 wird die Verarbeitung durch ein Signal abgebrochen,
-werden die aktuellen Zieldateien gelöscht.
+werden die aktuellen Zieldateien gelÃ¶scht.
 
-Die Abhängigkeiten werden rekursiv geprüft, wenn also eine Datei A von
-der Datei B abhängt und diese wiederum von C, so wird vor A zunächst
+Die AbhÃ¤ngigkeiten werden rekursiv geprÃ¼ft, wenn also eine Datei A von
+der Datei B abhÃ¤ngt und diese wiederum von C, so wird vor A zunÃ¤chst
 B auf den letzten Stand gebracht.
 
-Die von |make| ausgeführten Befehle werden angezeigt.
+Die von |make| ausgefÃ¼hrten Befehle werden angezeigt.
 
 \ssec	Beschreibungsdatei
 Die Rechenregeln werden in einer Beschreibungsdatei
 (auch Makefile genannt) zusammengestellt.
 Mit der Option |-f| <makefile> wird |make| der Name der
-Beschreibungsdatei übergeben. Fehlt die Option, wird nach einer
+Beschreibungsdatei Ã¼bergeben. Fehlt die Option, wird nach einer
 Datei mit dem Namen |makefile| oder |Makefile| gesucht.
 
-Beim Aufruf von |make| werden die gewünschten Ziele
-als Argument übergeben. Wird |make| ohne Argument aufgerufen,
+Beim Aufruf von |make| werden die gewÃ¼nschten Ziele
+als Argument Ã¼bergeben. Wird |make| ohne Argument aufgerufen,
 wird das erste Ziel in der Beschreibungsdatei generiert.
 
 Wird |make| mit der Option |-n| aufgerufen, werden die zur
-Aktualisierung notwendigen Befehle nicht durchgeführt,
+Aktualisierung notwendigen Befehle nicht durchgefÃ¼hrt,
 sondern nur angezeigt.
 
-Die vorliegende Kurzeinführung in die Funktionsweise von |make|
-erhebt keinen Anspruch auf Vollständigkeit. Es wurden bewusst
-Aspekte ausgeklammert, die zwar für <"handgeschriebene"> Makefiles
+Die vorliegende KurzeinfÃ¼hrung in die Funktionsweise von |make|
+erhebt keinen Anspruch auf VollstÃ¤ndigkeit. Es wurden bewusst
+Aspekte ausgeklammert, die zwar fÃ¼r <"handgeschriebene"> Makefiles
 wichtig sind, aber im Kontext generierter Makefiles keine Rolle
 spielen.
 
-Weitere Informationen zu |make| können interaktiv mit |man make|
+Weitere Informationen zu |make| kÃ¶nnen interaktiv mit |man make|
 bzw. |info make| abgerufen werden.
 Es gibt auch umfangreiche Literatur zur Verwendung von |make|.

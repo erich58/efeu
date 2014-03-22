@@ -2,7 +2,7 @@
 :*:	accumulate axis of data cube
 :de:	Achsen einer Datenmatrix aufsummieren
 
-$Copyright (C) 1997, 2001 Erich Frühstück
+$Copyright (C) 1997, 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -24,7 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 pconfig !
 r | Reduce = true
 	:*:remove singular axis
-	:de:Entfernen von singulären Achsen
+	:de:Entfernen von singulÃ¤ren Achsen
 v:[name::]var | VarDef: append " "
 	:*:select type components
 	:de:Variablenselektion

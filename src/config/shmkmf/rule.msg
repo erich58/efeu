@@ -1,6 +1,6 @@
 #	message file for rule.smh
-#	$Copyright (C) 2005 Erich Frühstück
-#	A-3423 St.Andrä/Wördern, Wildenhaggasse 38
+#	$Copyright (C) 2005 Erich FrÃ¼hstÃ¼ck
+#	A-3423 St.AndrÃ¤/WÃ¶rdern, Wildenhaggasse 38
 
 *	mf_rule: empty target.
 de	mf_rule: Ziel ist nicht definiert.

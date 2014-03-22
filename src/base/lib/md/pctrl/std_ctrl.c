@@ -1,5 +1,5 @@
-/*	Ausgabekontrolle für Standardanwendung
-	(c) 1994 Erich Frühstück
+/*	Ausgabekontrolle fÃ¼r Standardanwendung
+	(c) 1994 Erich FrÃ¼hstÃ¼ck
 */
 
 #include <EFEU/pctrl.h>

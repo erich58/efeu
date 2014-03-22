@@ -1,7 +1,7 @@
 /*
 Allgemeine Funktionen
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -30,7 +30,7 @@ static void name (EfiFunc *func, void *rval, void **arg) \
 { int x; Val_int(rval) = cmp(&x, arg) && (x op 0) ? 1 : 0; }
 
 
-/*	Ausdrücke auswerten
+/*	AusdrÃ¼cke auswerten
 */
 
 static void f_str2expr (EfiFunc *func, void *rval, void **arg)
@@ -68,7 +68,7 @@ static void f_xeval2 (EfiFunc *func, void *rval, void **arg)
 CEXPR(l_dim, Val_int(rval) = ObjListLen(Val_list(arg[0])))
 CEXPR(c_dim, Val_int(rval) = 1)
 
-/*	Zuweisungsoperatoren für allgemeine Objekte
+/*	Zuweisungsoperatoren fÃ¼r allgemeine Objekte
 */
 
 static void base_assign(EfiFunc *func, void *rval, void **arg)
@@ -153,7 +153,7 @@ static void f_post_dec(EfiFunc *func, void *rval, void **arg)
 }
 
 
-/*	Verknüpfung von Listen
+/*	VerknÃ¼pfung von Listen
 */
 
 typedef EfiObj *(*list_eval)(const char *name, EfiObj *left, EfiObj *right);
@@ -202,7 +202,7 @@ static void list_expr(list_eval eval, const char *name, void *rval, void **arg)
 		right = right->next;
 	}
 
-/*	Listenelemente verknüpfen
+/*	Listenelemente verknÃ¼pfen
 */
 	left = Val_list(arg[0]);
 	right = result;

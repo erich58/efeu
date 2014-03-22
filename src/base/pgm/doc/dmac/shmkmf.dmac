@@ -2,7 +2,7 @@
 :*:commands to include created Makefiles
 :de:Befehle zur Einbindung generierter Makefiles
 
-$Copyright (C) 2004 Erich Frühstück
+$Copyright (C) 2004 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -39,7 +39,7 @@ If not, write to the Free Software Foundation, Inc.,
 These lines and the created Makefile are included in verbatim mode
 with <phrase> as intermediate text.
 :de:Der Befehl $1 wendet |shmkmf| auf die angegebenen Befehlszeilen an
-und bindet diese und das generierte Makefile wortwörtlich ein.
+und bindet diese und das generierte Makefile wortwÃ¶rtlich ein.
 Dazwischen wird der Verbindungstext <Text> eingeschoben.
 
 \def\shmkmf {{
@@ -89,7 +89,7 @@ Dazwischen wird der Verbindungstext <Text> eingeschoben.
 
 :*:The command $1 expands the headlines used by all following
 |shmkmf| examples. The headlines are stored in a variable |smh_head|.
-:de:Das Kommando $1 erweitert die Kopfzeilen für alle nachfolgenden
+:de:Das Kommando $1 erweitert die Kopfzeilen fÃ¼r alle nachfolgenden
 |shmkmf| Beispiele. Die Kopfzeilen werden in der Variablen |smh_head|
 gespeichert.
 
@@ -101,8 +101,8 @@ $1
 
 :*:The command $1 creates a temporary directory for |shmkmf| examples.
 The name of the directory is stored in in the variable |smh_temp|.
-:de:Das Kommando $1 generiert ein temporäres Verzeichnis
-für |shmkmf|-Beispiele. Der Name des Verzeichnisses wird in der
+:de:Das Kommando $1 generiert ein temporÃ¤res Verzeichnis
+fÃ¼r |shmkmf|-Beispiele. Der Name des Verzeichnisses wird in der
 Variablen |smh_temp| gespeichert.
 
 \def\smh_init {
@@ -114,7 +114,7 @@ $1[|[|<mode>|]|] <cmd>
 :*:The command $1 executes <cmd> in the temporary directory |smh_temp|.
 Possible outputs are inserted with mode <mode> (same statements as in
 |\include|).
-:de:Das Kommando $1 ruft <cmd> im temporären Arbeitsverzeichnis
+:de:Das Kommando $1 ruft <cmd> im temporÃ¤ren Arbeitsverzeichnis
 |smh_temp| auf. Eventuelle Ausgaben werden mit Darstellungsmode <mode>
 (Angaben wie bei |\include|) eingebunden.
 
@@ -142,7 +142,7 @@ $1 <name>
 
 :*:The command $1 creates the file <name>
 in the temporary directory |smh_temp| with the given data lines.
-:de:Das Kommando $1 generiert die Datei <name> im temporären
+:de:Das Kommando $1 generiert die Datei <name> im temporÃ¤ren
 Verzeichnis |smh_temp| mit den gegebenen Datenzeilen.
 
 \def\smh_create {{
@@ -166,8 +166,8 @@ $1
 
 :*:The command $1 removes the temporary directory for |shmkmf| examples
 and clears all predefined headlines.
-:de:Das Kommando $1 entfernt das temporäres Verzeichnis für |shmkmf|-Beispiele
-und löscht alle vordefinierten Kopfzeilen.
+:de:Das Kommando $1 entfernt das temporÃ¤res Verzeichnis fÃ¼r |shmkmf|-Beispiele
+und lÃ¶scht alle vordefinierten Kopfzeilen.
 
 \def\smh_clean {
 	if	(smh_temp)

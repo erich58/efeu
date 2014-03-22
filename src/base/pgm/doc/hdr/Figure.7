@@ -1,5 +1,5 @@
 \Name
-Figure -- Werkzeuge zur Generierung von Übersichten
+Figure -- Werkzeuge zur Generierung von Ãœbersichten
 \Synopsis
 \tthang
 \#include \<Figure.hdr\>
@@ -27,53 +27,53 @@ void Figure::end ()
 Der Datentype |Figure| erlaubt die Konstuktion einer
 |fig|-Umgebung in |efeudoc|.
 
-Der Konstruktor benötigt als Argument die aktuelle
-Ausgabestruktur. Mit <margin> wird der linke Rand der Übersicht angegeben.
+Der Konstruktor benÃ¶tigt als Argument die aktuelle
+Ausgabestruktur. Mit <margin> wird der linke Rand der Ãœbersicht angegeben.
 Falls das optionale Flag <npage> gesetzt ist,
 wird die Tabelle auf einer neuen Seite begonnen.
 
-Der Abschluß der |fig|-Umgebung erfolgt automatisch bei Freigabe
+Der AbschluÃŸ der |fig|-Umgebung erfolgt automatisch bei Freigabe
 der |Figure|-Struktur. Eine explizite Freigabe ist mit der
-Funktion |free()|, oder durch Initialisierung mit NULL möglich.
+Funktion |free()|, oder durch Initialisierung mit NULL mÃ¶glich.
 Endet die Lebensdauer einer |Figure|-Struktur nach einer
 Tabellendefinition, kann auf die explizite Freigabe verzichtet werden,
 da der Destruktor automatisch aufgerufen wird.
 
-Die Tabellenüberschrift wird am einfachsten mit der Funktion
+Die TabellenÃ¼berschrift wird am einfachsten mit der Funktion
 |Figure::caption| generiert.
-Als Argument wird die Haupt- und Unterüberschrift übergeben.
-Der Befehl sollte am Anfang einer Übersicht stehen und kann nur
+Als Argument wird die Haupt- und UnterÃ¼berschrift Ã¼bergeben.
+Der Befehl sollte am Anfang einer Ãœbersicht stehen und kann nur
 einmal verwendet werden.
 
 Zur Konstruktion beliebiger Textteile in der Tabellenumgebung stehen
-die folgende Funktionen zur Verfügung:
+die folgende Funktionen zur VerfÃ¼gung:
 [|Figure::puts|]
 	gibt <text>, gefolgt von einem Zeilenvorschub aus.
 [|Figure::printf|]
 	Erlaubt eine formatierte Ausgabe von Variablen
 	(Vergleiche dazu \mref{printf(3)}).
 
-Tabellenanmerkungen können mit der Funktion |Figure:note| generiert
+Tabellenanmerkungen kÃ¶nnen mit der Funktion |Figure:note| generiert
 werden. Das Argument <width> gibt die Spaltenbreite an.
-Alternativ dazu können die Anmerkungen bereits als Makro
+Alternativ dazu kÃ¶nnen die Anmerkungen bereits als Makro
 vordefiniert sein. Der Makroaufruf wird am einfachsten mit
 |Figure::puts| ausgegeben.
 
 \margin	Tabellenkonstruktion
 
 Mit |Figure::tab| wird der Tabellenkopf eingeleitet.
-Als Argument wird der Achsenbezeichner für die Spalten
+Als Argument wird der Achsenbezeichner fÃ¼r die Spalten
 und optional die Standardbreite
-einer Spalte und die Standardhöhe einer Zeile übergeben.
+einer Spalte und die StandardhÃ¶he einer Zeile Ã¼bergeben.
 
-Der Tabelenkörper wird mit der Funktion |Figure::body|
-generiert. Als erstes Argument wird die Achsenstruktur für
-die Tabellenzeilen übergeben. Danach folgt die Datenmatrix
-mit den Tabellendaten und den zugehörigen Auswertungsparameter.
+Der TabelenkÃ¶rper wird mit der Funktion |Figure::body|
+generiert. Als erstes Argument wird die Achsenstruktur fÃ¼r
+die Tabellenzeilen Ã¼bergeben. Danach folgt die Datenmatrix
+mit den Tabellendaten und den zugehÃ¶rigen Auswertungsparameter.
 
 Die Tabellendaten werden mit der Funktion |mdmat::data| generiert,
 wobei der Definitionsstring von der Achsenstruktur <line> bestimmt wird.
-Die anderen Parameter werden von der Funktion |Figure::body| übernommen.
+Die anderen Parameter werden von der Funktion |Figure::body| Ã¼bernommen.
 
 Eine einzelne Tabellenzeile wird mit der Funktion
 |Figure::tabline| generiert. Als Argument wird der
@@ -81,7 +81,7 @@ Zeilenbezeichner <label> und die Liste der Tabellenwerte
 ausgegeben. Fehlen die Tabellenwerte, wird eine Leerzeile mit
 Balken generiert.
 
-Die Funktion |Figure::end| schließt eine Tabelle ab.
+Die Funktion |Figure::end| schlieÃŸt eine Tabelle ab.
 
 \Example
 Das folgende Beispiel

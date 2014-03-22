@@ -1,8 +1,8 @@
 #:*:	newline conversion between UNIX and DOS
-#:de:	Zeilenumbrüche zwischen UNIX und DOS konvertieren
+#:de:	ZeilenumbrÃ¼che zwischen UNIX und DOS konvertieren
 #
-# $Copyright (C) 2004 Erich Frühstück
-# A-3423 St.Andrä/Wördern, Wildenhaggasse 38
+# $Copyright (C) 2004 Erich FrÃ¼hstÃ¼ck
+# A-3423 St.AndrÃ¤/WÃ¶rdern, Wildenhaggasse 38
 # 
 # EFEU is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public
@@ -34,13 +34,13 @@ z | Zero = true
 	:de:erlaube NUL-Zeichen in Textdateien
 c | CheckOnly = true
 	:*:check conversion without overwriting files
-	:de:prüfe die Konvertierung ohne die Dateien zu überschreiben
+	:de:prÃ¼fe die Konvertierung ohne die Dateien zu Ã¼berschreiben
 u | TODOS = false
 	:*:convert to UNIX
-	:de:konvertieren für UNIX
+	:de:konvertieren fÃ¼r UNIX
 d | TODOS = true
 	:*:convert to DOS (default)
-	:de:konvertieren für DOS (default)
+	:de:konvertieren fÃ¼r DOS (default)
 +file(s) |
 	:*:files to convert
 	:de:Dateien zum konvertieren

@@ -1,8 +1,8 @@
 /*
 :*:headlines for manpages
-:de:Überschriften für Handbucheinträge
+:de:Ãœberschriften fÃ¼r HandbucheintrÃ¤ge
 
-$Copyright (C) 1999 Erich Frühstück
+$Copyright (C) 1999 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -36,7 +36,7 @@ This command is automatic inserted in every file
 witch prefix starts with a digit.
 :de:Der Befehl $1 beginnt einen neuen Handbucheintrag mit Namen <name> zum
 Handbuchkapitel <num>. Dieser Befehl wird automatisch zu Beginn einer
-Datei eingefügt, dessen Filezusatz mit einer Ziffer beginnt.
+Datei eingefÃ¼gt, dessen Filezusatz mit einer Ziffer beginnt.
 
 \def\mpage newenv('m', expand(ParseOpt(cin, true)), expand(ParseLine(cin)));
 
@@ -46,7 +46,7 @@ Datei eingefügt, dessen Filezusatz mit einer Ziffer beginnt.
 	$1 |[|toc entry|]|\br
 	<one line title>
 :de:Namensabschnitt einer Handbuchseite mit
-Hauptüberschrift BEZEICHNUNG
+HauptÃ¼berschrift BEZEICHNUNG
 	$1 |[|Kurzform|]| <Titel>\br
 	~~~~...\br
 	$1 |[|Kurzform|]|\br
@@ -63,62 +63,62 @@ Hauptüberschrift BEZEICHNUNG
 }}
 
 :*:caption SYNOPSIS
-:de:Hauptüberschrift ÜBERSICHT
+:de:HauptÃ¼berschrift ÃœBERSICHT
 
-\def\Synopsis	mansection(":*:SYNOPSIS:de:ÜBERSICHT");
+\def\Synopsis	mansection(":*:SYNOPSIS:de:ÃœBERSICHT");
 
 :*:caption DESCRIPTION
-:de:Hauptüberschrift BESCHREIBUNG
+:de:HauptÃ¼berschrift BESCHREIBUNG
 
 \def\Description	mansection(":*:DESCRIPTION:de:BESCHREIBUNG");
 
 :*:caption EXAMPLE
-:de:Hauptüberschrift BEISPIEL
+:de:HauptÃ¼berschrift BEISPIEL
 
 \def\Example	mansection(":*:EXAMPLE:de:BEISPIEL");
 
 :*:caption EXAMPLES
-:de:Hauptüberschrift BEISPIELE
+:de:HauptÃ¼berschrift BEISPIELE
 
 \def\Examples	mansection(":*:EXAMPLES:de:BEISPIELE");
 
 :*:caption FILES
-:de:Hauptüberschrift DATEIEN
+:de:HauptÃ¼berschrift DATEIEN
 
 \def\Files	mansection(":*:FILES:de:DATEIEN");
 
 :*:caption ENVIRONMENT
-:de:Hauptüberschrift UMGEBUNGSVARIABLEN
+:de:HauptÃ¼berschrift UMGEBUNGSVARIABLEN
 
 \def\Environment	mansection(":*:ENVIRONMENT:de:UMGEBUNGSVARIABLEN");
 
 :*:caption SEE ALSO
-:de:Hauptüberschrift SIEHE AUCH
+:de:HauptÃ¼berschrift SIEHE AUCH
 
 \def\SeeAlso	mansection(":*:SEE ALSO:de:SIEHE AUCH");
 
 :*:caption DIAGNOSTICS
-:de:Hauptüberschrift DIAGNOSE
+:de:HauptÃ¼berschrift DIAGNOSE
 
 \def\Diagnostics	mansection(":*:DIAGNOSTICS:de:DIAGNOSE");
 
 :*:caption NOTES
-:de:Hauptüberschrift BEMERKUNGEN
+:de:HauptÃ¼berschrift BEMERKUNGEN
 
 \def\Notes	mansection(":*:NOTES:de:BEMERKUNGEN");
 
 :*:caption WARNINGS
-:de:Hauptüberschrift WARNUNGEN
+:de:HauptÃ¼berschrift WARNUNGEN
 
 \def\Warnings	mansection(":*:WARNINGS:de:WARNUNGEN");
 
 :*:caption ERRORS
-:de:Hauptüberschrift FEHLER
+:de:HauptÃ¼berschrift FEHLER
 
 \def\Errors	mansection(":*:ERRORS:de:FEHLER");
 
 :*:caption COPYRIGHT
-:de:Hauptüberschrift COPYRIGHT
+:de:HauptÃ¼berschrift COPYRIGHT
 
 \def\Copyright	mansection("COPYRIGHT");
 
@@ -143,7 +143,7 @@ der EFEU INterpretersprache
 \def\proto	fprintf(cout, "<|%s|>\\br\n", ParseLine(cin, true));
 
 
-/*	Kommandos für Kompatiblität
+/*	Kommandos fÃ¼r KompatiblitÃ¤t
 */
 
 \def\BibTeX	{ mode('h'); if (!plaintex("{\sc Bib}\TeX{}")) cout << "BibTeX"; }

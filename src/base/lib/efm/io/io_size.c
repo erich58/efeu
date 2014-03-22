@@ -1,7 +1,7 @@
 /*
-Kompakte Ein- Ausgabe von Größenangaben
+Kompakte Ein- Ausgabe von GrÃ¶ÃŸenangaben
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -26,15 +26,15 @@ If not, write to the Free Software Foundation, Inc.,
 /*
 $Description
 
-Die kompakte Darstellung einer Größenangabe erlaubt eine dichte
-Darstellung von Datenwerten unterschiedlicher Größenordnung.
-Die Zahl der benötigten Byte hängt vom Größenwert ab.
+Die kompakte Darstellung einer GrÃ¶ÃŸenangabe erlaubt eine dichte
+Darstellung von Datenwerten unterschiedlicher GrÃ¶ÃŸenordnung.
+Die Zahl der benÃ¶tigten Byte hÃ¤ngt vom GrÃ¶ÃŸenwert ab.
 
-Sie wird folgendermaßen gebildet:
-Der Zahlenwert wird zunächst in 7-Bit Tupel zerlegt (Basis 128).
+Sie wird folgendermaÃŸen gebildet:
+Der Zahlenwert wird zunÃ¤chst in 7-Bit Tupel zerlegt (Basis 128).
 Diese werden beginnend beim niedrigsignifikantesten Wert ausgegeben,
-wobei das 8. Bit als Flag dient und anzeigt, ob noch ein zusätzliches Tupel
-benötigt wird.
+wobei das 8. Bit als Flag dient und anzeigt, ob noch ein zusÃ¤tzliches Tupel
+benÃ¶tigt wird.
 
 Die folgende Tabelle zeigt beispielhaft die Umkodierung:
 ---- verbatim
@@ -57,7 +57,7 @@ Die folgende Tabelle zeigt beispielhaft die Umkodierung:
 #define	M_DATA	(0xFF & ~M_FLAG)
 
 /*
-Die Funktion |$1| liest eine kompakte Größenangabe
+Die Funktion |$1| liest eine kompakte GrÃ¶ÃŸenangabe
 aus der Eingabestruktur <io>.
 
 $Diagnostic
@@ -86,7 +86,7 @@ size_t io_read_size (size_t *ptr, IO *io)
 }
 
 /*
-Die Funktion |$1| schreibt eine Größenangabe
+Die Funktion |$1| schreibt eine GrÃ¶ÃŸenangabe
 in kompakter Form in die Ausgabestruktur <io>.
 
 $Diagnostic

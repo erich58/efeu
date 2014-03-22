@@ -1,27 +1,27 @@
 \sec	Grundlagen
 
-\index{Ausgabedefinitionen} werden über eine Zeichenkette festgelegt.
+\index{Ausgabedefinitionen} werden Ã¼ber eine Zeichenkette festgelegt.
 Diese setzt sich aus einer durch Komma getrennte Liste von
 Parametersetzungen der Form <name>|[|<opt>|]|[|=|<arg>] zusammen.
 
-Bei den EDB-Kommandos wird die Ausgabedefinition über die \index{Option |-p|}
+Bei den EDB-Kommandos wird die Ausgabedefinition Ã¼ber die \index{Option |-p|}
 vorgeben. Innerhalb eines |esh|-Skripts wird die Ausgabedefinition
-als Parameter an die Funktion |EDB::fout| bzw. |EDB::out| übergeben.
+als Parameter an die Funktion |EDB::fout| bzw. |EDB::out| Ã¼bergeben.
 
-Die Parameter können folgendermaßen eingeteilt werden:
+Die Parameter kÃ¶nnen folgendermaÃŸen eingeteilt werden:
 *	Parameter, die direkt den Ausgabemodus bestimmen;
 *	Parameter, die allgemeine Flags setzen, auf die die
-	Ausgabemodi zurückgreifen;
-*	Parameter, die die Umgebung verändern und somit indirekt
+	Ausgabemodi zurÃ¼ckgreifen;
+*	Parameter, die die Umgebung verÃ¤ndern und somit indirekt
 	auf die Formatierung Einfluss nehmen;
-*	Makros für eine Kombination von Ausgabedefinitionen. Parameter
-	können weitergereicht werden.
+*	Makros fÃ¼r eine Kombination von Ausgabedefinitionen. Parameter
+	kÃ¶nnen weitergereicht werden.
 
 Die Standardausgabedefinition ist \index{|default|}. Es handelt sich dabei
-um einen Makro für die Kombination |plain,verbose,split=512M|.
+um einen Makro fÃ¼r die Kombination |plain,verbose,split=512M|.
 
-Die Liste der Ausgabedefinitionen läßt sich erweitern.
-So gehört z.B. die Ausgabefunktion |md| nicht zum Basisumfang von
+Die Liste der Ausgabedefinitionen lÃ¤ÃŸt sich erweitern.
+So gehÃ¶rt z.B. die Ausgabefunktion |md| nicht zum Basisumfang von
 |EDB|, sondern wird erst mit der Aktivierung der |mdmat|-Funktionen
 eingetragen.
 
@@ -30,58 +30,58 @@ eingetragen.
 \index[Headerausgabe]
 Datenfiles enthalten zumeist einen Datensatzkopf oder Header.
 Es gibt einen vordefinierten
-Parameter für die Headerausgabe, der mit den folgenden
-Parameterdefinitionen verändert werden kann:
+Parameter fÃ¼r die Headerausgabe, der mit den folgenden
+Parameterdefinitionen verÃ¤ndert werden kann:
 
 [\index{|nohead|}]
-	unterdrückt die Ausgabe des Datensatzkopfes;
+	unterdrÃ¼ckt die Ausgabe des Datensatzkopfes;
 [\index{|compact|}]
-	sorgt für eine kompakte Darstellung des Datensatzkopfes;
+	sorgt fÃ¼r eine kompakte Darstellung des Datensatzkopfes;
 [\index{|verbose|}]
-	liefert eine ausführliche Darstellung des Datensazukopfes mit
-	zusätzlichen Kommentaren.
+	liefert eine ausfÃ¼hrliche Darstellung des Datensazukopfes mit
+	zusÃ¤tzlichen Kommentaren.
 
-Die Verwendung dieses Parameters ist vom Ausgabemodus abhängig und
-wird nicht immer berücksichtigt.
+Die Verwendung dieses Parameters ist vom Ausgabemodus abhÃ¤ngig und
+wird nicht immer berÃ¼cksichtigt.
 Die Voreinstellung ist |verbose|.
 
-\ssec	Aufspalten großer Dateien
+\ssec	Aufspalten groÃŸer Dateien
 
 \index[Aufspalten von Dateien]
-Abhängig vom verwendeten Dateisystem können nur Dateien bis zu einer
-maximalen Größe gespeichert werden. Um auch größere Datenmengen
-zu verarbeiten, können Dateien automatisch aufgespalten werden.
+AbhÃ¤ngig vom verwendeten Dateisystem kÃ¶nnen nur Dateien bis zu einer
+maximalen GrÃ¶ÃŸe gespeichert werden. Um auch grÃ¶ÃŸere Datenmengen
+zu verarbeiten, kÃ¶nnen Dateien automatisch aufgespalten werden.
 Vorraussetzung dabei ist, dass die Ausgabe in eine Datei und
 nicht zur Standardausgabe erfolgt.
 
-Das Aufspaltungsprinzip wird am besten anhand eines Beispiels erklärt.
+Das Aufspaltungsprinzip wird am besten anhand eines Beispiels erklÃ¤rt.
 Angenommen, es soll die Datei |foo.bar| generiert werden:
-*	Zunächst erfolgt die Ausgabe direkt in diese Datei. Ist die
+*	ZunÃ¤chst erfolgt die Ausgabe direkt in diese Datei. Ist die
 	Verarbeitung vor dem Erreichen des Ausgabelimits abgeschlossen,
-	ist nichts weiter zu tun, die Datei enthält vollständig die Daten.
-*	Bei Überschreitung des \index{Ausgabeslimit}s wird die Datei
+	ist nichts weiter zu tun, die Datei enthÃ¤lt vollstÃ¤ndig die Daten.
+*	Bei Ãœberschreitung des \index{Ausgabeslimit}s wird die Datei
 	|foo.bar| in |foo.01.bar| umbenannt und ein Metadatenfile
 	|foo.bar| eingerichtet. Weiters wird eine neue Datei
 	|foo.02.bar| angelegt, in die nun die weitere Ausgabe erfolgt.
-	Bei erneuter Überschreitung des Limits wird dann |foo.03.bar|
-	generiert und das Metadatenfile |foo.bar| ergänzt.
+	Bei erneuter Ãœberschreitung des Limits wird dann |foo.03.bar|
+	generiert und das Metadatenfile |foo.bar| ergÃ¤nzt.
 
 Liefert der Ausgabemodus Dateien im EDB-Datenformat, kann der gesamte
-Datenbestand über das Metadatenfile |foo.bar| gelesen werden.
+Datenbestand Ã¼ber das Metadatenfile |foo.bar| gelesen werden.
 
-Der Filezusatz der Ausgabedatei wird auch für alle Teildateien
+Der Filezusatz der Ausgabedatei wird auch fÃ¼r alle Teildateien
 beibehalten. Damit wird sichergestellt, dass bei dem Filezusatz |.gz|
 oder |.bz2| auch alle Teildateien komprimiert werden. Bei Kommandos,
 die auf den EFEU-Bibliotheken aufbauen, werden Dateien mit
-entsprechendem Filezusatz automatisch mit dem zugehörigen
+entsprechendem Filezusatz automatisch mit dem zugehÃ¶rigen
 Kompressionsprogramm komprimiert.
 
 Die folgende Parameter bestimmen das Aufspaltungslimit:
 [\index{|nosplit|}]
 	keine Aufspaltung von Dateien.
 [\index{|split|}|=|<lim>]
-	Vorgabe des Aufspaltungslimits für die Ausgabe. Dem Zahlenwert
-	kann ein |k| für Kilobyte, |M| für Megabyte, oder |G| für Gigabyte
+	Vorgabe des Aufspaltungslimits fÃ¼r die Ausgabe. Dem Zahlenwert
+	kann ein |k| fÃ¼r Kilobyte, |M| fÃ¼r Megabyte, oder |G| fÃ¼r Gigabyte
 	nachgestellt werden. Als Multiplikator wird 1024 verwendet.
 	Fehlt die Angabe des Limits, wird 512M eingesetzt. Ein Wert von 0
 	enstpricht dem Parameter |nosplit|.
@@ -93,10 +93,10 @@ EFEU-Interpreters, die die Formatierung und Ausgabe von Werten
 beeinflussen:
 
 [\index{|locale|}|=|<lang>]
-	setzt die \index{Locale} für die Ausgabe auf <lang>. Falls keine
+	setzt die \index{Locale} fÃ¼r die Ausgabe auf <lang>. Falls keine
 	\index{Sprachdefinition} angegeben wurde, wird sie aus der
 	Umgebungsvariablen \index{|LANG|} bestimmt.
 
-Nicht jeder Ausgabemodus berücksichtigt diese Formatierungsparameter.
-Dies gilt insbesonders für Ausgabemodi, für die ein gültiges und möglichst
-verlustfreies EDB-Datenformat wichtiger ist als eine schöne Darstellung.
+Nicht jeder Ausgabemodus berÃ¼cksichtigt diese Formatierungsparameter.
+Dies gilt insbesonders fÃ¼r Ausgabemodi, fÃ¼r die ein gÃ¼ltiges und mÃ¶glichst
+verlustfreies EDB-Datenformat wichtiger ist als eine schÃ¶ne Darstellung.

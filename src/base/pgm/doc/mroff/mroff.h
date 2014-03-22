@@ -1,7 +1,7 @@
 /*
 mroff-Ausgabefilter
 
-$Copyright (C) 1999 Erich Frühstück
+$Copyright (C) 1999 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -50,11 +50,11 @@ struct ManRoffVarStruct {
 struct ManRoffStruct {
 	DOCDRV_VAR;		/* Standardausgabevariablen */
 	char *dochead;		/* Dokumentkopf */
-	char *nextpar;		/* Nächster Absatz */
+	char *nextpar;		/* NÃ¤chster Absatz */
 	unsigned copy : 1;	/* Kopiermodus */
-	unsigned space : 1;	/* Leerzeichen wird benötigt */
-	unsigned nlignore : 1;	/* Nächsten Zeilenvorschub ignorieren */
-	unsigned item : 1;	/* Flag für item */
+	unsigned space : 1;	/* Leerzeichen wird benÃ¶tigt */
+	unsigned nlignore : 1;	/* NÃ¤chsten Zeilenvorschub ignorieren */
+	unsigned item : 1;	/* Flag fÃ¼r item */
 	ManRoffVar var;	/* Umgebungsvariablen */
 	Stack *s_att;	/* Stack mit Attributen */
 	char *att;	/* Aktuelles Attribut */

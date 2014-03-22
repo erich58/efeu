@@ -1,7 +1,7 @@
 /*
 Datenbankstruktur
 
-$Copyright (C) 1995 Erich Frühstück
+$Copyright (C) 1995 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -24,7 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/database.h>
 #include <EFEU/stdtype.h>
 
-#define	DB_BLKSIZE	128	/* Blockgröße für Zahl der Datenbankeinträge */
+#define	DB_BLKSIZE	128	/* BlockgrÃ¶ÃŸe fÃ¼r Zahl der DatenbankeintrÃ¤ge */
 
 static char *db_ident (const void *data)
 {

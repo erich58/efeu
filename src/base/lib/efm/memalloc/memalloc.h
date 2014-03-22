@@ -4,7 +4,7 @@
 
 $Header	<EFEU/$1>
 
-$Copyright (C) 1996 Erich Frühstück
+$Copyright (C) 1996 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -32,7 +32,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 /*
 :*:The macro |$1| alligns the size <x> in times of <y>.
-:de:Der Makro |$1| dient zur Ausrichtung der Speichergröße <x> auf
+:de:Der Makro |$1| dient zur Ausrichtung der SpeichergrÃ¶ÃŸe <x> auf
 ganzzahlige Vielfache von <y>.
 */
 
@@ -47,7 +47,7 @@ The macro |$1| returns the first dimension of the field <x>.
 It is used for fields, wich dimensions is only determined by the number
 of initialisation values.
 :de:
-Der Makro |$1| liefert die erste Dimension des Datenfeldes <x>.  Er wird für
+Der Makro |$1| liefert die erste Dimension des Datenfeldes <x>.  Er wird fÃ¼r
 globale oder statische Felder verwendet, deren erste Dimension nicht
 vorgegebnen ist, sondern aus der Zahl der Initialisierungswerte bestimmt  wird.
 */
@@ -64,7 +64,7 @@ field. It could be used in the argumentlist of functions like
 |qsort| or |bsearch|.
 :de:
 Der Makro |$1| liefert den Pointer, die Zahl der Elemente und die
-Elementgröße eines Datenfeldes. Er wird typischerweise bei der Übergabe
+ElementgrÃ¶ÃŸe eines Datenfeldes. Er wird typischerweise bei der Ãœbergabe
 von Feldern an Funktionen wie |qsort| und |bsearch|.
 */
 
@@ -79,7 +79,7 @@ void lcheckall (void);
 
 /*
 :*:The type |$1| is used as allocation list node.
-:de:Der Datentyp |$1| wird für den Knoten einer Zuweisungsliste verwendet.
+:de:Der Datentyp |$1| wird fÃ¼r den Knoten einer Zuweisungsliste verwendet.
 */
 
 typedef struct AllocTabListStruct {
@@ -92,31 +92,31 @@ The structure |$1| is usesd to administrate
 memmory pieces with fixed size |elsize|.
 :de:
 Die Datenstruktur |$1| definiert eine Speichersegmenttabelle zur
-Verwaltung von Speichersegmenten der Größe |elsize|.
+Verwaltung von Speichersegmenten der GrÃ¶ÃŸe |elsize|.
 
 :de:
-Sie enthält eine Liste der freien Elemente
-(|freelist|) und eine Liste mit Datenblöcken (|blklist|).
+Sie enthÃ¤lt eine Liste der freien Elemente
+(|freelist|) und eine Liste mit DatenblÃ¶cken (|blklist|).
 Die Zahl der freien Segmente wird in |nfree| und die Zahl der
 benutzten Segmente wird in |nused| gespeichert.
 Die Komponente |name| wird zur leichteren Identifizierung der Tabellen
-für Debuggingzwecke verwendet.
-Mit den Funktionen |new_data| und |del_data| können Datensegmente
+fÃ¼r Debuggingzwecke verwendet.
+Mit den Funktionen |new_data| und |del_data| kÃ¶nnen Datensegmente
 entnommen und wieder hineingestellt werden. Vergleiche dazu
 \mref{alloctab(3)}.
 
 :de:
-Zum Auffüllen der freien Liste wird ein Block mit |blksize| Elementen
-angefordert. Jedem Block ist eine Kettenstruktur vorangestellt (Für
-die Liste der Datenblöcke). Der Speicherbedarf für einen Block
-beträgt |sizeof(AllocTabList)| + |blksize| * |elsize|.
-Datenblöcke, die zum Füllen der freien Liste angefordert wurden,
+Zum AuffÃ¼llen der freien Liste wird ein Block mit |blksize| Elementen
+angefordert. Jedem Block ist eine Kettenstruktur vorangestellt (FÃ¼r
+die Liste der DatenblÃ¶cke). Der Speicherbedarf fÃ¼r einen Block
+betrÃ¤gt |sizeof(AllocTabList)| + |blksize| * |elsize|.
+DatenblÃ¶cke, die zum FÃ¼llen der freien Liste angefordert wurden,
 werden nicht mehr freigegeben.
 
 :de:
-Die Datensegmentgröße muß auf die Größe einer Kettenstruktur
+Die DatensegmentgrÃ¶ÃŸe muÃŸ auf die GrÃ¶ÃŸe einer Kettenstruktur
 ausgerichtet sein. Freie Elemente werden zu einer Liste verkettet und
-können dort entnommen werden.
+kÃ¶nnen dort entnommen werden.
 
 :de:
 Die Komponente |chain| dient zur Verkettung der einzelnen Tabellen
@@ -134,7 +134,7 @@ struct AllocTab {
 	size_t nused;
 	AllocTabList *blklist;
 	AllocTabList *freelist;
-	AllocTab *chain;	/* Verkettung für Statistiken und Debugging */
+	AllocTab *chain;	/* Verkettung fÃ¼r Statistiken und Debugging */
 };
 
 void *new_data (AllocTab *tab);
@@ -147,9 +147,9 @@ void AllocTab_walk (void (*visit) (AllocTab *tab, void *par), void *par);
 
 /*
 :de:
-Der Makro |$1| liefert die Initialisierungswerte für eine Zuweisungstabelle
-zur Verwaltung von Speicherelementen fixer Länge.
-Die Länge eines Segmentes wird durch <size> festgelegt.
+Der Makro |$1| liefert die Initialisierungswerte fÃ¼r eine Zuweisungstabelle
+zur Verwaltung von Speicherelementen fixer LÃ¤nge.
+Die LÃ¤nge eines Segmentes wird durch <size> festgelegt.
 Durch <blk> wird die Zahl der Elemente eines Blockes festgelegt.
 Falls <blk> den Wert 0 hat, werden Standardvorgaben verwendet.
 */
@@ -160,8 +160,8 @@ Falls <blk> den Wert 0 hat, werden Standardvorgaben verwendet.
 /*
 :de:
 Der Makro |$1| initialisiert eine Zuweisungstabelle
-zur Verwaltung von Speicherelementen fixer Länge unter dem Namen <name>.
-Die Länge eines Segmentes wird durch <size> festgelegt.
+zur Verwaltung von Speicherelementen fixer LÃ¤nge unter dem Namen <name>.
+Die LÃ¤nge eines Segmentes wird durch <size> festgelegt.
 Durch <blk> wird die Zahl der Elemente eines Blockes festgelegt.
 Falls <blk> den Wert 0 hat, werden Standardvorgaben verwendet.
 */

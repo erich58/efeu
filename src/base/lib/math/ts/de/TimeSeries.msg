@@ -1,7 +1,7 @@
 /*
 Standardfehlermeldungen der Zeitreihen - Programmbibliothek
 
-$Copyright (C) 1997 Erich Fr¸hst¸ck
+$Copyright (C) 1997 Erich Fr√ºhst√ºck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -22,10 +22,10 @@ If not, write to the Free Software Foundation, Inc.,
 
 1	$!: Zeitreihenindex nicht kompatibel: $1 - $2.\n
 2	$!: Unbekannter Indextype $1.\n
-3	$!: Zeitreihenkonvertierung nicht zul‰ssig.\n
+3	$!: Zeitreihenkonvertierung nicht zul√§ssig.\n
 
-11	$!: Zeitreihenindex auﬂerhalb des zul‰ssigen Bereichs.\n
-12	$!: Zeitreihenkonvertierung nicht durchf¸hrbar.\n
+11	$!: Zeitreihenindex au√üerhalb des zul√§ssigen Bereichs.\n
+12	$!: Zeitreihenkonvertierung nicht durchf√ºhrbar.\n
 
 21	$!: Zeitreihenfunktion ist nicht definiert.\n
 22	$!: Zeitreihenausdruck: Rechtes Argument ist nicht definiert.\n
@@ -35,7 +35,7 @@ If not, write to the Free Software Foundation, Inc.,
 31	$!: OLS: Keine Exogene Variable angegeben.\n
 32	$!: OLS: Zeitreihenindex nicht kompatibel.\n
 33	$!: OLS: Zuwenig Freiheitsgrade.\n
-34	$!: OLS: Sch‰tzmatrix ist Singul‰r.\n
+34	$!: OLS: Sch√§tzmatrix ist Singul√§r.\n
 
 41	$!: Projektion: Inkompatible Parameterzahl.\n
 42	$!: Projektion: Zeitreihenindex nicht kompatibel.\n

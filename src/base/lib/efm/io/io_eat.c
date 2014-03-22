@@ -1,7 +1,7 @@
 /*
-Zeichen überlesen
+Zeichen Ã¼berlesen
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -71,7 +71,7 @@ static void c_skip(IO *io)
 }
 
 
-/*	C, C++ Kommentare überlesen
+/*	C, C++ Kommentare Ã¼berlesen
 */
 
 int iocpy_cskip(IO *in, IO *out, int c, const char *arg, unsigned int flags)
@@ -99,7 +99,7 @@ int iocpy_cskip(IO *in, IO *out, int c, const char *arg, unsigned int flags)
 }
 
 
-/*	Zeichen überlesen
+/*	Zeichen Ã¼berlesen
 */
 
 int iocpy_skip(IO *in, IO *out, int c, const char *arg, unsigned int flags)
@@ -109,7 +109,7 @@ int iocpy_skip(IO *in, IO *out, int c, const char *arg, unsigned int flags)
 	while ((x = io_getc(in)) != EOF)
 		if (listcmp(arg, x)) break;
 
-/*	Bei Flag wird Abschlusszeichen zurückgeschrieben
+/*	Bei Flag wird Abschlusszeichen zurÃ¼ckgeschrieben
 */
 	if	(flags)	io_ungetc(x, in);
 

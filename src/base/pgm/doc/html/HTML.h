@@ -1,7 +1,7 @@
 /*
 HTML-Ausgabefilter
 
-$Copyright (C) 2000 Erich Frühstück
+$Copyright (C) 2000 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -40,13 +40,13 @@ typedef struct {
 	DOCDRV_VAR;	/* Standardausgabevariablen */
 	int class;	/* Dokumentklasse */
 	int copy;	/* Kopiermodus */
-	StrBuf buf;	/* Temporärer Buffer */
+	StrBuf buf;	/* TemporÃ¤rer Buffer */
 	char *nextpar;	/* Absatzkennung */
 	char *enditem;	/* Item - Endekemnnung */
 	Stack *s_att;	/* Stack mit Attributen */
 	char *att;	/* Aktuelles Attribute */
 	Stack *s_cmd;	/* Befehlsstack */
-	char *hmode;	/* Zeichenkette vor dem nächsten Zeichen */
+	char *hmode;	/* Zeichenkette vor dem nÃ¤chsten Zeichen */
 	VecBuf colgrp;	/* Spaltendefinitionen */
 	int cpos;	/* Spaltenposition */
 } HTML;

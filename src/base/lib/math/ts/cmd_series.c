@@ -1,8 +1,8 @@
 /*
 :*:set up interpreter to use time series
-:de:Befehlsinterpreter für Zeitreihenanalysen initialisieren
+:de:Befehlsinterpreter fÃ¼r Zeitreihenanalysen initialisieren
 
-$Copyright (C) 1997 Erich Frühstück
+$Copyright (C) 1997 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -844,7 +844,7 @@ TimeIndex a, TimeIndex b)", f_copy },
 	{ FUNC_VIRTUAL, &Type_TimeSeries,
 		"Seasonal (str name, TimeSeries x, int p = 12)", f_xseasonal },
 
-/*	Unäre Terme/Funktionen
+/*	UnÃ¤re Terme/Funktionen
 */
 	{ FUNC_VIRTUAL, &Type_TimeSeries, "operator-() (TimeSeries)", f_func },
 	{ FUNC_VIRTUAL, &Type_TimeSeries, "operator+() (TimeSeries)", f_func },
@@ -854,7 +854,7 @@ TimeIndex a, TimeIndex b)", f_copy },
 	{ FUNC_VIRTUAL, &Type_TimeSeries,
 		"call (VirFunc, TimeSeries)", f_xfunc },
 
-/*	Binäre Terme
+/*	BinÃ¤re Terme
 */
 	{ FUNC_VIRTUAL, &Type_TimeSeries,
 		"operator+ (TimeSeries, TimeSeries)", f_term },

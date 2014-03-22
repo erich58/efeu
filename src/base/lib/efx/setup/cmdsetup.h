@@ -3,7 +3,7 @@ Befehlsinterpreter initialisieren
 
 $Header <EFEU/$1>
 
-$Copyright (C) 1996 Erich Frühstück
+$Copyright (C) 1996 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -60,7 +60,7 @@ void CmdSetup_assignarg(void);	/* Zuweisungsargument */
 void CmdSetup_time(void);	/* Zeitstrukturen, Standardbibliothek */
 void CmdSetup_date(void);	/* Datum- und Zeit */
 void CmdSetup_unix(void);	/* UNIX-Systemstrukturen */
-void CmdSetup_regex(void);	/* Reguläre Ausdrücke */
+void CmdSetup_regex(void);	/* RegulÃ¤re AusdrÃ¼cke */
 void CmdSetup_match(void);	/* Mustervergleich */
 void CmdSetup_cmdpar(void);	/* Befehlsparameter */
 void CmdSetup_dl(void);		/* Dynamische Bibliotheken */

@@ -1,46 +1,46 @@
 \sec	Das EDB-Datenformat
 
 \index[Datenformat]
-Datenbestände können effizient in einem EDB-Datenfile abgespeichert
+DatenbestÃ¤nde kÃ¶nnen effizient in einem EDB-Datenfile abgespeichert
 werden. Zu ihrer Verwaltung stehen die Kommandos
 \index[|edb|]\mref{edb(1)}, \index[|edbcat|]\mref{edbcat(1)} und
-\index[|edbjoin|]\mref{edbjoin(1)} zur Verfügung. Ihre Verwendung wird
+\index[|edbjoin|]\mref{edbjoin(1)} zur VerfÃ¼gung. Ihre Verwendung wird
 im Anhang beschrieben. Es handelt sich dabei um einfache EFEU-Skripts.
 
-In diesem Abschnitt soll zunächst nur das Grundprinzip des Datenformats
+In diesem Abschnitt soll zunÃ¤chst nur das Grundprinzip des Datenformats
 aufgezeigt werden, die genaue Syntax wird im Kapitel \ref{data} beschrieben.
 
-Ein EDB-Datenfile besteht aus einer Kennung (\index{Schlüsselwort
+Ein EDB-Datenfile besteht aus einer Kennung (\index{SchlÃ¼sselwort
 |EDB|}, gefolgt von einer \index{Versionsnummer}),
-Anweisungen und Daten. Daten können wahlweise \index[Binärformat]binär oder
+Anweisungen und Daten. Daten kÃ¶nnen wahlweise \index[BinÃ¤rformat]binÃ¤r oder
 in einem \index{Textformat} gespeichert werden.
 
-Grundsätzlich kann zwischen reinen \index{Datenfile}s und
+GrundsÃ¤tzlich kann zwischen reinen \index{Datenfile}s und
 \index{Metadatenfile}s
 unterschieden werden. Erstere enthalten auch physisch die Daten,
-während letztere nur Regeln zur Zusammenstellung von Daten (meist aus
-anderen EDB-Datenfiles) enthalten. Mischformen sind möglich, aber selten
+wÃ¤hrend letztere nur Regeln zur Zusammenstellung von Daten (meist aus
+anderen EDB-Datenfiles) enthalten. Mischformen sind mÃ¶glich, aber selten
 in Verwendung.
 
-Für ein reines Datenfile werden zwei Informationen benötigt:
+FÃ¼r ein reines Datenfile werden zwei Informationen benÃ¶tigt:
 Der Datentyp und die Lesefunktion.
 Die folgenden Zeilen zeigen die Beispieldatei \index{|pers.edb|}:
 
 \include[verbatim]	pers.edb
 
-Das nächste Beispiel zeigt ein einfaches Metadatenfile, das
-auf die Daten des vorherigen Beispiels zurückgreift:
+Das nÃ¤chste Beispiel zeigt ein einfaches Metadatenfile, das
+auf die Daten des vorherigen Beispiels zurÃ¼ckgreift:
 
 \include[verbatim]	mpers.edb
 
 Der Datentyp muss hier nicht angegeben werden, da er ja durch die
 eingebundene Datei |pers.edb| bereits definiert wird. Diese Form von
-Metadatenfiles findet man bei großen Datenmengen, die sich nicht mehr
+Metadatenfiles findet man bei groÃŸen Datenmengen, die sich nicht mehr
 als einzelne Datei abspeichern lassen. Die einzelnen Teile werden dann
 mithilfe eines Metadatenfiles und der \index{|@file|-Anweisung}
 zusammengefasst.
 
-Daten können auch über Funktionen generiert werden.
+Daten kÃ¶nnen auch Ã¼ber Funktionen generiert werden.
 Die folgende Beispieldatei \index{|rand.edb|} liefert beliebig viele,
 normalverteilte Zufallszahlen:
 
@@ -49,6 +49,6 @@ normalverteilte Zufallszahlen:
 Der Zufallsgenerator wird mit der aktuellen Zeit initialisiert.
 Mit \index{|static|} deklarierte Zeilen werden bereits beim Parsen des
 Ausdrucks ausgewertet. Da es sich hierbei um ein unbegrenztes
-Datenfile handelt, muss bei der Verarbeitung die Zahl der Datensätze
+Datenfile handelt, muss bei der Verarbeitung die Zahl der DatensÃ¤tze
 begrenzt werden. Bei Verwendung der Kommandoskripts \mref{edb(1)},
 \mref{edbcat(1)} und \mref{edbjoin(1)} erfolgt dies mit der Option |-n|.

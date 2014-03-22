@@ -1,6 +1,6 @@
 /*	Introduction to edb manual, german version
 
-$Copyright (C) 2005 Erich Frühstück
+$Copyright (C) 2005 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -30,96 +30,96 @@ die Verwaltung an das Betriebssystem delegiert. Im EDB-Konzept
 sind Tabellen einfach Dateien mit einem speziellen Datenformat.
 
 Die Verwaltung wird damit wesentlich vereinfacht und kann durch
-gewöhnliche Funktionen zur Dateimanipulation ersetzt werden. Was
-bleibt, sind Funktionen zur Selektion, Transformation und Verknüpfung
+gewÃ¶hnliche Funktionen zur Dateimanipulation ersetzt werden. Was
+bleibt, sind Funktionen zur Selektion, Transformation und VerknÃ¼pfung
 von Datenbanken. Diese bilden den Kern der Datenschnittstelle.
 
 Durch die Verlegung der Verwaltung auf die Dateiebene lassen sich
 allgemeine Werkzeuge zur Datengenerierung einsetzen.
-So kann z.B. der Aufbau von Tabellen aus Basisdateien über |make| gesteuert
-werden. Ändert sich eine Tabelle, werden nur die davon abhängigen
+So kann z.B. der Aufbau von Tabellen aus Basisdateien Ã¼ber |make| gesteuert
+werden. Ã„ndert sich eine Tabelle, werden nur die davon abhÃ¤ngigen
 Tabellen und Auswertungen neu zusammengestellt und generiert.
 
-Der wesentliche Unterschied zu einem herkömmlichen Datenbanksystem ist,
-dass eine Tabelle nicht direkt geändert werden kann, sondern jede
+Der wesentliche Unterschied zu einem herkÃ¶mmlichen Datenbanksystem ist,
+dass eine Tabelle nicht direkt geÃ¤ndert werden kann, sondern jede
 Form der Manipulation, sei es auch nur ein einzelner Datensatz, in
-einer neuen Tabelle (ist gleich Datei) resultiert. Nach Abschluß der
-Verarbeitung kann die ursprüngliche Tabelle durch die neue Version
+einer neuen Tabelle (ist gleich Datei) resultiert. Nach AbschluÃŸ der
+Verarbeitung kann die ursprÃ¼ngliche Tabelle durch die neue Version
 ersetzt werden. Transaktionen betreffen also immer die gesamte
 Tabelle.
 
-EDB ersetzt kein Datenbanksystem, sondern ergänzt es in den Bereichen
+EDB ersetzt kein Datenbanksystem, sondern ergÃ¤nzt es in den Bereichen
 Auswertung, Data Warehouse und Data Mining.
 
-EDB ist nicht auf relationale Tabellen beschränkt.
-Da Transaktionen grundsätzlich immer die
-gesamte Tabelle betreffen, entfällt die Notwendigkeit der
+EDB ist nicht auf relationale Tabellen beschrÃ¤nkt.
+Da Transaktionen grundsÃ¤tzlich immer die
+gesamte Tabelle betreffen, entfÃ¤llt die Notwendigkeit der
 Normalisierung zur Vermeidung von Update-Anomalien.
-Durch die Verwendung nicht normalisierter Datenbanken läßt sich eine
+Durch die Verwendung nicht normalisierter Datenbanken lÃ¤ÃŸt sich eine
 schnelle Verarbeitung erzielen.
 
-Bei der Datenmodellierung müssen keine Restriktionen des
-Relationenmodells berücksichtigt werden. Die Tabellenstrukturen
-können ganz auf die Problemstellung zugeschnitten werden.
+Bei der Datenmodellierung mÃ¼ssen keine Restriktionen des
+Relationenmodells berÃ¼cksichtigt werden. Die Tabellenstrukturen
+kÃ¶nnen ganz auf die Problemstellung zugeschnitten werden.
 
-Auf eine Datenschnittstelle können Transformationen aufgesetzt
+Auf eine Datenschnittstelle kÃ¶nnen Transformationen aufgesetzt
 werden, die wieder als Datenschnittstellen sichtbar werden.
 Im EDB-Datenkonzept sind physikalische und virtuelle Tabellen
 gleichwertig.
 
-EDB setzt auf den EFEU-Interpreter auf. Es können beliebige Datentypen
+EDB setzt auf den EFEU-Interpreter auf. Es kÃ¶nnen beliebige Datentypen
 des Interpreters verwendet werden. Neue Datentypen lassen sich innerhalb
 des Interpreters oder durch Einbinden von C-Bibliotheken erweitern.
-Vektoren mit fixer und variabler Länge werden unterstützt.
+Vektoren mit fixer und variabler LÃ¤nge werden unterstÃ¼tzt.
 Auf die Datenschnittstelle kann vom Interpreter aus zugegriffen werden.
 
 Da es sich beim EFEU-Interpreter um eine objektorientierte
 Skriptsprache handelt, stehen OO-Konzepte zur Datenmodellierung zur
-Verfügung. Insbesonders Kapselung und Vererbung weisen sich dabei als
-besonders nützlich.
+VerfÃ¼gung. Insbesonders Kapselung und Vererbung weisen sich dabei als
+besonders nÃ¼tzlich.
 
 EDB ist ein Datenfluss- und Transformationskonzept. Am Anfang steht
 eine Datenquelle, gefolgt von einzelnen Datentransformationen (Filter)
 und schlussendlich endet die Verarbeitung bei einer Datensenke.
-Der Datenstrom kann beliebig aufgespalten werden. Verschiedene Datenströme
-können zusammengeführt werden.
+Der Datenstrom kann beliebig aufgespalten werden. Verschiedene DatenstrÃ¶me
+kÃ¶nnen zusammengefÃ¼hrt werden.
 Alle Zwischenstufen in einer Filterkette (Datenpipeline) stellen sich
 als EDB-Schnittstellen dar.
 
 Datenquellen sind sehr allgemein. Neben dem Lesen eines EDB-Datenfiles
-werden über spezielle Lesefunktionen auch beliebige Fremdformate oder
+werden Ã¼ber spezielle Lesefunktionen auch beliebige Fremdformate oder
 Ausgaben von anderen Prozessen (z.B. SQL-Abfragen aus einem
-Datenbanksystem) unterstützt.
+Datenbanksystem) unterstÃ¼tzt.
 
 Auch Datensenken sind sehr allgemein. Neben dem Speichern als
-EDB-Datenfile können beliebige Exportformate erzeugt und bei
+EDB-Datenfile kÃ¶nnen beliebige Exportformate erzeugt und bei
 Bedarf direkt an andere Prozesse weitergereicht werden.
 
 Eine spezielle Form einer Datensenke ist die Umwandlung von
 Aggregatdateien (Tabellen, die nur Klassifikationen und aggregierbare
-Variablen enthalten) in einen Datenwürfel.
+Variablen enthalten) in einen DatenwÃ¼rfel.
 
-Datenwürfel sind elementare Datenobjekte des EFEU-Interpreters.
-Neben den üblichen Transaktionen für Datenwürfeln stehen auch eine
+DatenwÃ¼rfel sind elementare Datenobjekte des EFEU-Interpreters.
+Neben den Ã¼blichen Transaktionen fÃ¼r DatenwÃ¼rfeln stehen auch eine
 Reihe von, auf beliebige Dimensionen verallgemeinerte, Matrixoperationen
-zur Verfügung (z.B. Matrixmultiplikation über gemeinsame Achsen von
-Datenwürfeln).
+zur VerfÃ¼gung (z.B. Matrixmultiplikation Ã¼ber gemeinsame Achsen von
+DatenwÃ¼rfeln).
 
 Im ersten Kapitel dieser Dokumentation werden die elementaren Konzepte kurz
 vorgestellt.
 In den nachfolgenden Kapiteln werden diese dann detaillierter
 beschrieben.
 
-Der Anhang enthält Handbuchseiten zu einzelnen Kommandos.
-Diese Handbucheinträge können auch direkt durch Eingabe des
+Der Anhang enthÃ¤lt Handbuchseiten zu einzelnen Kommandos.
+Diese HandbucheintrÃ¤ge kÃ¶nnen auch direkt durch Eingabe des
 entsprechenden Kommandos und der Option |--help| interaktiv abgerufen
 werden.
 Dabei wird insbesonders auf den Handbucheintrag |esh|
-verwiesen, der einen kurzen Überblick über den EFEU-Interpreter gibt.
+verwiesen, der einen kurzen Ãœberblick Ã¼ber den EFEU-Interpreter gibt.
 
-Der Umfang der Dokumentation hängt von den lokal installierten
+Der Umfang der Dokumentation hÃ¤ngt von den lokal installierten
 EFEU-Projekten und der Dokumentsprache ab. Derzeit ist die deutsche
-Version am ausführlichsten.
+Version am ausfÃ¼hrlichsten.
 
-	Erich Frühstück\br
-	Wördern, \thedate
+	Erich FrÃ¼hstÃ¼ck\br
+	WÃ¶rdern, \thedate

@@ -1,6 +1,6 @@
 /*	Datenbanktransformation
 
-$Copyright (C) 2005 Erich Frühstück
+$Copyright (C) 2005 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -344,13 +344,13 @@ static TPAR tpar[] = {
 		":*:evaluate data in vector mode\n"
 		"cmp determines related records\n"
 		"available flags: copy\n"
-		":de:Datensätze im Vektormodus verarbeiten\n"
-		"cmp bestimmt die zusammengehörigen Datensätze\n"
-		"Verfügbare Flags: copy\n"
+		":de:DatensÃ¤tze im Vektormodus verarbeiten\n"
+		"cmp bestimmt die zusammengehÃ¶rigen DatensÃ¤tze\n"
+		"VerfÃ¼gbare Flags: copy\n"
 	}, { "expr", "[lang]={exp}", trans_expr,
 		":*:expression to process the records\n"
 		"alternative language: C\n"
-		":de:Ausdruck zur Überarbeitung der Datensätze\n"
+		":de:Ausdruck zur Ãœberarbeitung der DatensÃ¤tze\n"
 		"Alternative Sprachen: C\n"
 	}
 };
@@ -587,6 +587,6 @@ EDBFilter EDBFilter_trans = EDB_FILTER(NULL,
 	"trans", "[par]", fdef_trans, NULL, 
 	":*:transforming records.\n"
 	"trans[?] gives a list of availabel parameters.\n"
-	":de:Transformieren von Datensätzen.\n"
-	"Die Angabe trans[?] liefert die verfügbaren Parameter.\n"
+	":de:Transformieren von DatensÃ¤tzen.\n"
+	"Die Angabe trans[?] liefert die verfÃ¼gbaren Parameter.\n"
 );

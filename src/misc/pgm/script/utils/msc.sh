@@ -2,7 +2,7 @@
 # :*:edit data cube using sc
 # :de:Datenmatrix mit sc editieren
 #
-# $Copyright (C) 1997 Erich Frühstück
+# $Copyright (C) 1997 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -48,9 +48,9 @@ esac
 # :de:
 # Das Programm erlaubt die Manipulation der Datenamtrix <file>
 # als sc Spreadsheet. Je nach Art der mdprint-Optionen, ist eine
-# Änderung der Datenmatrix möglich.  Die Änderungen an der Datenmatrix
-# sollten mit Vorsicht durchgeführt werden, ein Fehler in der Syntax kann
-# zu Datenverlusten führen.
+# Ã„nderung der Datenmatrix mÃ¶glich.  Die Ã„nderungen an der Datenmatrix
+# sollten mit Vorsicht durchgefÃ¼hrt werden, ein Fehler in der Syntax kann
+# zu Datenverlusten fÃ¼hren.
 
 # $SeeAlso
 # mdprint(1), mdread(1), mvi(1), sc(1).
@@ -77,12 +77,12 @@ de*)
 	msg4="
 Das Programm erlaubt die Manipulation der Datenamtrix \"%s\"
 als sc Spreadsheet. Je nach Art der mdprint-Optionen, ist eine
-Änderung der Datenmatrix möglich.  Die Änderungen an der Datenmatrix
-sollten mit Vorsicht durchgeführt werden, ein Fehler in der Syntax kann
-zu Datenverlusten führen.\n
+Ã„nderung der Datenmatrix mÃ¶glich.  Die Ã„nderungen an der Datenmatrix
+sollten mit Vorsicht durchgefÃ¼hrt werden, ein Fehler in der Syntax kann
+zu Datenverlusten fÃ¼hren.\n
 "
 	msg5="Fortfahren ? j\b"
-	msg6="Änderungen sichern ? j\b"
+	msg6="Ã„nderungen sichern ? j\b"
 	;;
 esac
 

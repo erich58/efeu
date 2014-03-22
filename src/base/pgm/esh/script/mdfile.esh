@@ -2,7 +2,7 @@
 :*:	show structure of data cube
 :de:	Informationen zu einer Datenmatrix ausgeben
 
-$Copyright (C) 1997, 2001 Erich Frühstück
+$Copyright (C) 1997, 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -33,16 +33,16 @@ s | Mode: set {Mode}s
 	:de:Achsenstruktur ausgeben
 h | Mode: set {Mode}h
 	:*:show type and header
-	:de: Datentyp und Header ausführlich ausgeben
+	:de: Datentyp und Header ausfÃ¼hrlich ausgeben
 d | Mode: set {Mode}d
 	:*:show description
 	:de: Beschreibungstext ausgeben
 X | Mode: set {Mode}X
 	:*:short axis list
-	:de:Achsen verkürzt auflisten
+	:de:Achsen verkÃ¼rzt auflisten
 x | Mode: set {Mode}x
 	:*:verbose axis list
-	:de:Achsen ausführlich auflisten
+	:de:Achsen ausfÃ¼hrlich auflisten
 l | Mode: set {Mode}dx
 	:*:long listing, equivalent to |-hdx|
 	:de:Lange Auflistung, entspricht |-hdx|

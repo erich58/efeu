@@ -1,7 +1,7 @@
 /*
 Nullstellenbestimmung mit Bisektionsverfahren
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -29,7 +29,7 @@ double bisection (int (*f)(void *par, double x), void *par, double x0, double x1
 	double tol;	/* Fehlerintervall */
 	int y, y0, y1;	/* Funktionswerte */
 	double x, z;	/* Hilfsvariablen */
-	int i;		/* Hilfszähler */
+	int i;		/* HilfszÃ¤hler */
 
 	if	(x0 > x1)	x = x0, x0 = x1, x1 = x;
 

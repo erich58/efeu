@@ -1,7 +1,7 @@
 #:*:	evaluate project description files
 #:de: 	Auswerten von Projektbeschreibungsdateien
 #
-# $Copyright (C) 2002 Erich Frühstück
+# $Copyright (C) 2002 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -23,7 +23,7 @@ Version = ":VN:"
 
 d|
 	:*:create dependence list
-	:de:Abhängigkeitsliste generieren
+	:de:AbhÃ¤ngigkeitsliste generieren
 :file(s) |
 	:*:project description file(s)
 	:de:Projektbeschreibungsdatei(en)

@@ -4,7 +4,7 @@
 # $Synopsis
 # <=[=> include $1 <=]=>
 #
-# $Copyright (C) 2004 Erich Frühstück
+# $Copyright (C) 2004 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -36,7 +36,7 @@ _base_smh=1
 # $source | sed -e 's/include //'
 #
 # :de:
-# zur Verfügung.
+# zur VerfÃ¼gung.
 
 include comment.smh
 include var.smh

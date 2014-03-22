@@ -1,7 +1,7 @@
 /*
 Steuerbefehle
 
-$Copyright (C) 1999 Erich Frühstück
+$Copyright (C) 1999 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -62,7 +62,7 @@ int HTML_cmd (void *drv, va_list list)
 	case DOC_CMD_LOF:
 		io_puts("<P><A HREF=\"lof.html\">", html->out);
 		io_langputs(":*:list of figures"
-			":de:Verzeichnis der Übersichten", html->out);
+			":de:Verzeichnis der Ãœbersichten", html->out);
 		io_puts("</A><BR>\n", html->out);
 		break;
 	case DOC_CMD_LOT:

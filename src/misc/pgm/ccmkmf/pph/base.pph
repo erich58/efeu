@@ -1,7 +1,7 @@
 /*
-Basismakros für efeupp
+Basismakros fÃ¼r efeupp
 
-$Copyright (C) 1999 Erich Frühstück
+$Copyright (C) 1999 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -27,9 +27,9 @@ If not, write to the Free Software Foundation, Inc.,
 $Description
 Die meisten C--Preprozessoren verwenden eine Reihe von
 vordefinierten Makros, die in der Regel zur Systemabfrage
-dienen. Diese können sich störend bei der Generierung der
+dienen. Diese kÃ¶nnen sich stÃ¶rend bei der Generierung der
 Makefiles auswirken.
-Die folgenden Makrodefinitionen werden automatisch gelöscht,
+Die folgenden Makrodefinitionen werden automatisch gelÃ¶scht,
 falls sie definiert sind:
 
 unix, linux, dos, UNIX, MSDOS
@@ -43,7 +43,7 @@ unix, linux, dos, UNIX, MSDOS
 
 /*
 Manche C--Preprozessoren liefern Fehlermeldungen, wenn bei einer
-Makrofunktion für ein Argument kein Wert eingesetzt wird.
+Makrofunktion fÃ¼r ein Argument kein Wert eingesetzt wird.
 Der Makro |$1| wirkt wie ein leeres Argument,
 verhindert aber die Fehlermeldung.
 */
@@ -52,10 +52,10 @@ verhindert aber die Fehlermeldung.
 #if	__STDC__
 /*
 Der Makro |$1| konvertiert das Argument <x> in eine Zeichenkonstante.
-Das Setzen eines Argumentes unter doppelte Anführungszeichen wird
-von traditionellen C--Preprozessoren anders gelöst als
+Das Setzen eines Argumentes unter doppelte AnfÃ¼hrungszeichen wird
+von traditionellen C--Preprozessoren anders gelÃ¶st als
 von ANSI--C--Preprozessoren. Um eine kompatible Beschreibungsbasis zu
-erhalten, steht die Funktion |$1| für diese Aufgabe zur Verfügung.
+erhalten, steht die Funktion |$1| fÃ¼r diese Aufgabe zur VerfÃ¼gung.
 
 */
 #define	String(x)	#x
@@ -71,31 +71,31 @@ erhalten, steht die Funktion |$1| für diese Aufgabe zur Verfügung.
 
 /*
 $Description
-Beim Zusammenhängen von Argumenten fügen manche Preprozessoren
-ein Leerzeichen ein. Daher sollte für diese Aufgabe immer eine
+Beim ZusammenhÃ¤ngen von Argumenten fÃ¼gen manche Preprozessoren
+ein Leerzeichen ein. Daher sollte fÃ¼r diese Aufgabe immer eine
 der nachfolgenden Makros verwendet werden.
-Sie sorgen dafür, daß zwischen den Argumenten keine Leerzeichen eingefügt
-werden. Voraussetzung dafür ist aber auch, daß beim Funktionsaufruf
+Sie sorgen dafÃ¼r, daÃŸ zwischen den Argumenten keine Leerzeichen eingefÃ¼gt
+werden. Voraussetzung dafÃ¼r ist aber auch, daÃŸ beim Funktionsaufruf
 in der Argumentliste ebenfalls keine Leerzeichen auftreten.
 */
 
 /*
-Der Makro |$1| hängt die Argumente <a> und <b> zusammen.
+Der Makro |$1| hÃ¤ngt die Argumente <a> und <b> zusammen.
 */
 #define	Concat(a,b)	_Concat2(a,b)
 
 /*
-Der Makro |$1| hängt die Argumente <a> und <b> zusammen.
+Der Makro |$1| hÃ¤ngt die Argumente <a> und <b> zusammen.
 */
 #define	Concat2(a,b)	_Concat2(a,b)
 
 /*
-Der Makro |$1| hängt die drei Argumente <a>, <b> und <c> zusammen.
+Der Makro |$1| hÃ¤ngt die drei Argumente <a>, <b> und <c> zusammen.
 */
 #define	Concat3(a,b,c)	_Concat3(a,b,c)
 
 /*
-Der Makro |$1| hängt die vier Argumente <a>, <b>, <c> und <d> zusammen.
+Der Makro |$1| hÃ¤ngt die vier Argumente <a>, <b>, <c> und <d> zusammen.
 */
 #define	Concat4(a,b,c,d)	_Concat4(a,b,c,d)
 

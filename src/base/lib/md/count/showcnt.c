@@ -1,7 +1,7 @@
 /*
-Auflisten von Zählerdefinitionen
+Auflisten von ZÃ¤hlerdefinitionen
 
-$Copyright (C) 1995 Erich Frühstück
+$Copyright (C) 1995 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -25,7 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	LBL_COUNT \
 	":*:counter types" \
-	":de:Zählerdefinitionen"
+	":de:ZÃ¤hlerdefinitionen"
 
 void md_showcnt(IO *io, MdCountPar *tab)
 {

@@ -1,7 +1,7 @@
 /*
 Documentation of ETK Library, english version
 
-$Copyright (C) 2002 Erich Frühstück
+$Copyright (C) 2002 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -45,8 +45,8 @@ valuers directly.
 This manpage describes primarly the interface to Tcl/Tk and does not
 replace a Tcl/Tk documentation.
 
-	Erich Frühstück\br
-	Wördern, \thedate
+	Erich FrÃ¼hstÃ¼ck\br
+	WÃ¶rdern, \thedate
 \toc
 
 \addsrclist

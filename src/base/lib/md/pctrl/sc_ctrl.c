@@ -1,5 +1,5 @@
-/*	Ausgabekontrolle für sc
-	(c) 1994 Erich Frühstück
+/*	Ausgabekontrolle fÃ¼r sc
+	(c) 1994 Erich FrÃ¼hstÃ¼ck
 */
 
 #include <EFEU/pctrl.h>

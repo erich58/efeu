@@ -1,7 +1,7 @@
 /*
-Matrixinversion mit Gauﬂ-Jordan-Algorithmus
+Matrixinversion mit Gau√ü-Jordan-Algorithmus
 
-$Copyright (C) 1997 Erich Fr¸hst¸ck
+$Copyright (C) 1997 Erich Fr√ºhst√ºck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -76,7 +76,7 @@ size_t GaussJordan (double *data, size_t dim)
 
 	/*	Transformation
 	*/
-		if	(line[j] == 0.)	return j; /* Singul‰re Matrix */
+		if	(line[j] == 0.)	return j; /* Singul√§re Matrix */
 
 		x = 1. / line[j];
 

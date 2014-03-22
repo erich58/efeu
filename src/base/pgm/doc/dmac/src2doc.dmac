@@ -1,8 +1,8 @@
 /*
 :*:create manual pages from source
-:de:Handbucheinträge aus Sourcefiles generieren
+:de:HandbucheintrÃ¤ge aus Sourcefiles generieren
 
-$Copyright (C) 2000 Erich Frühstück
+$Copyright (C) 2000 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -42,7 +42,7 @@ DataBase SourceList = DataBase(SourceListEntry, SourceListComp);
 	$1 <dir>
 
 :de:Der Befehl $1 erweitert die Liste der Programmsourcen zur Konstruktion von
-Handbucheinträgen mit allen Dateien aus der Bibliothek <dir>.
+HandbucheintrÃ¤gen mit allen Dateien aus der Bibliothek <dir>.
 Fehlt die Angabe von <dir>, wird der Bibliotheksname der aktuellen
 Eingabedatei genommen.
 
@@ -105,12 +105,12 @@ if	(x)
 
 :*:remove files from source list
 	$1 <pattern>
-:de:Dateien aus der Liste der Programmsourcen löschen
+:de:Dateien aus der Liste der Programmsourcen lÃ¶schen
 	$1 <list>
 
-:de:Der Befehl $1 löscht alle Dateien aus der Liste der Programmsourcen,
-die der Musterliste <list> entsprechen. Eine leere Liste löcht alle
-Einträge.
+:de:Der Befehl $1 lÃ¶scht alle Dateien aus der Liste der Programmsourcen,
+die der Musterliste <list> entsprechen. Eine leere Liste lÃ¶cht alle
+EintrÃ¤ge.
 
 \def\delsrc {{
 	List_t list = split(ParseLine(cin));
@@ -126,11 +126,11 @@ Einträge.
 
 :*:create manual page from source
 	$1 |[|<flags>|]| <pattern list>
-:de:Handbucheinträge aus Programmsourcen generieren
+:de:HandbucheintrÃ¤ge aus Programmsourcen generieren
 	$1 |[|<flags>|]| <Musterliste>
 
 :de:Das Argument <Musterliste> gibt eine Liste von Selektionsmustern an.
-Der Optionale Parameter <flags> erlaubt die Übergabe von Optionen
+Der Optionale Parameter <flags> erlaubt die Ãœbergabe von Optionen
 an das Kommando |src2doc|.
 
 \def\src2doc {{

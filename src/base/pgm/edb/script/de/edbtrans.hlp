@@ -4,82 +4,82 @@
 
 Das Kommando |$!| erlaubt komplexe Umformungen von EDB-Datenfiles.
 Dabei ist sowohl eine Einzelsatzverarbeitung als auch eine
-Vektorverarbeitung möglich.
+Vektorverarbeitung mÃ¶glich.
 
-Bei der Einzeldatensatzverarbeitung werden die Datensätze einzeln
-gelesen, transformiert und einzeln weitergereicht. Dabei können auch
-Datensätze ausgeschieden werden.
+Bei der Einzeldatensatzverarbeitung werden die DatensÃ¤tze einzeln
+gelesen, transformiert und einzeln weitergereicht. Dabei kÃ¶nnen auch
+DatensÃ¤tze ausgeschieden werden.
 
-Bei der Vektorverarbeitung werden pro Zyklus mehrere Datensätze
+Bei der Vektorverarbeitung werden pro Zyklus mehrere DatensÃ¤tze
 gelesen. Bei der Transformation kann dabei auf alle geladenen
-Datensätze zugegriffen werden und es können beliebig viele
-Ausgabedatensätze generiert werden.
+DatensÃ¤tze zugegriffen werden und es kÃ¶nnen beliebig viele
+AusgabedatensÃ¤tze generiert werden.
 
 @arglist -i
 
 \shead Transformationsdefinition
 
-Die Transformationsdefinition besteht aus einer Liste von Schlüsselwörtern
-mit zugehörigen Parameterwerten. Die Listenelemente können mit einem
+Die Transformationsdefinition besteht aus einer Liste von SchlÃ¼sselwÃ¶rtern
+mit zugehÃ¶rigen Parameterwerten. Die Listenelemente kÃ¶nnen mit einem
 Leerzeichen, Tabulator, Zeilenvorschub oder Strichpunkt getrennt werden.
 
-Folgende Angaben sind möglich:
+Folgende Angaben sind mÃ¶glich:
 \item	|?|
-	Die möglichen Schlüsselwörter werden mit einer
+	Die mÃ¶glichen SchlÃ¼sselwÃ¶rter werden mit einer
 	Kurzbeschreibung aufgelistet. Die so gewonnene Information ist
-	immer vollständig und möglicherweise aktueller als im
+	immer vollstÃ¤ndig und mÃ¶glicherweise aktueller als im
 	vorliegende Handbuch.
 \item	|var[|<flags>|]=|<list>
 	Das Argument <list> ist eine mit Komma getrennte Liste von
 	Variablendefinitionen.
-	Falls für <flags> |r| angegeben wurde, wird eine resultierende
+	Falls fÃ¼r <flags> |r| angegeben wurde, wird eine resultierende
 	Datenstruktur mit nur einer Komponente auf diese eine Komponente
 	reduziert.
 \item	|vec[|<flags>|]=|<cmp>
-	Datensätze werden im Vektormodus verarbeitet. Falls <cmp>
-	angegeben wurde, werden alle bezüglich dieser
-	Vergleichsfunktion gleichen Datensätze simultan verarbeitet.
+	DatensÃ¤tze werden im Vektormodus verarbeitet. Falls <cmp>
+	angegeben wurde, werden alle bezÃ¼glich dieser
+	Vergleichsfunktion gleichen DatensÃ¤tze simultan verarbeitet.
 	Ohne Vergleichsfunktion wird jeweils ein Datensatz geladen.
-	Falls für <flags> |c| angegeben wurde, wird jeder
+	Falls fÃ¼r <flags> |c| angegeben wurde, wird jeder
 	Eingabesatz kopiert.
 \item	|expr[|<lang>|]=|<exp>
 	Der Ausdruck <expr> wird bei jedem Datenzyklus ausgewertet.
-	Standardmäßig wird der EFEU-Interpreter eingesetzt. Alternativ
-	dazu kann mit <lang> eine andere Sprache gewählt werden.
-	Derzeit ist C verfügbar. Der angegenene Ausdruck <expr> wird
+	StandardmÃ¤ÃŸig wird der EFEU-Interpreter eingesetzt. Alternativ
+	dazu kann mit <lang> eine andere Sprache gewÃ¤hlt werden.
+	Derzeit ist C verfÃ¼gbar. Der angegenene Ausdruck <expr> wird
 	kompiliert und als gemeinsam genutzes Objekt geladen.
 \end
 
-Die Parameter |var| und |vec| müssen vor |expr| angegeben werden.
+Die Parameter |var| und |vec| mÃ¼ssen vor |expr| angegeben werden.
 
-\shead Ausdrücke
+\shead AusdrÃ¼cke
 
-Gewöhnliche Ausdrücke <expr> des EFEU-Interpreters werden zu einem
-Block zusammengestellt. Der Block wird für jeden gelesenen Datensatz
-ausgeführt und dient zum setzen von Werten im resultierendem
-Datenobjekt. Auf den Basisdatensatz/Datenvektor kann über den Namen |src|,
-auf den Zieldatensatz/Zielvektor über den Namen |tg| zugegriffen
+GewÃ¶hnliche AusdrÃ¼cke <expr> des EFEU-Interpreters werden zu einem
+Block zusammengestellt. Der Block wird fÃ¼r jeden gelesenen Datensatz
+ausgefÃ¼hrt und dient zum setzen von Werten im resultierendem
+Datenobjekt. Auf den Basisdatensatz/Datenvektor kann Ã¼ber den Namen |src|,
+auf den Zieldatensatz/Zielvektor Ã¼ber den Namen |tg| zugegriffen
 werden.
 
-Bei der Einzelsatzverarbeitung können die Komponenten des resultierenden
+Bei der Einzelsatzverarbeitung kÃ¶nnen die Komponenten des resultierenden
 Datentyps und des Basisdatentyps direkt unter ihrem Namen angesprochen werden.
 Bei Namensgleichheit wird den Komponenten des Zieldatensatzes der
 Vorzug gegeben.
 
-Im Vektormodus kann zusätzlich auf das Basisdatenfile |base| zugegriffen
-werden. Damit lassen sich zusätzliche Datensätze nachladen.
+Im Vektormodus kann zusÃ¤tzlich auf das Basisdatenfile |base| zugegriffen
+werden. Damit lassen sich zusÃ¤tzliche DatensÃ¤tze nachladen.
 
 \shead C-Funktionen
 
-Alternativ zu Skript-Ausdrücke kann auch eine C-Funktion zur
-Bearbeitung spezifiziert werden. Bei großen Datenmengen
+Alternativ zu Skript-AusdrÃ¼cke kann auch eine C-Funktion zur
+Bearbeitung spezifiziert werden. Bei groÃŸen Datenmengen
 kann damit die Laufzeit reduziert werden.
 
 @environ -h
 
 \Notes
 
-Die Funktionalität des Kommandos steht auch als Filter zur verfügung.
+Die FunktionalitÃ¤t des Kommandos steht auch als Filter zur verfÃ¼gung.
 
 \SeeAlso
 \mref{edb(1)}.

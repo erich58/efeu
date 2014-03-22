@@ -1,7 +1,7 @@
 /*
-Standardfehlermeldungen für msgtab
+Standardfehlermeldungen fÃ¼r msgtab
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -26,8 +26,8 @@ If not, write to the Free Software Foundation, Inc.,
 
 21	$!: Datei $1 nicht lesbar.\n
 22	$!: Datei $1 nicht beschreibbar.\n
-23	$!: Datei $1, Zugriff $2 nicht möglich.\n
-24	$!: Schließen einer nicht mit fileopen() göffneten Datei.\n
+23	$!: Datei $1, Zugriff $2 nicht mÃ¶glich.\n
+24	$!: SchlieÃŸen einer nicht mit fileopen() gÃ¶ffneten Datei.\n
 25	$!: Verwendung einer bereits geschlossenen IO-Struktur.\n
-26	$!: Temporäre Datei kann nicht generiert werden.\n
+26	$!: TemporÃ¤re Datei kann nicht generiert werden.\n
 

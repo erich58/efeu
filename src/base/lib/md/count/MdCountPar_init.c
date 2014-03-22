@@ -1,8 +1,8 @@
 /*
 :*:count parameters
-:de:Zählparameter initialisieren
+:de:ZÃ¤hlparameter initialisieren
 
-$Copyright (C) 2007 Erich Frühstück
+$Copyright (C) 2007 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -129,7 +129,7 @@ void MdCountPar_init (MdCountPar *par, EfiObj *obj, const char *method)
 	if	(!cdef)
 		log_error(NULL, ERR_METHOD, "ms", Type2str(type), method);
 
-/*	Klassen und Zähltypen initialisieren
+/*	Klassen und ZÃ¤hltypen initialisieren
 */
 	if	(mstrcmp(xarg->arg, "?") == 0)
 	{

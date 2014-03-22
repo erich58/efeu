@@ -2,7 +2,7 @@
 :*:	select part of data cube
 :de:	Teilmatrix selektieren
 
-$Copyright (C) 1997, 2001 Erich Frühstück
+$Copyright (C) 1997, 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -36,7 +36,7 @@ E:expr | :eval 'geval("{}")'
 	:de:Ausdruck <expr> auswerten
 r | Reduce = true
 	:*:remove singular axis
-	:de:Entfernen von singulären Achsen
+	:de:Entfernen von singulÃ¤ren Achsen
 m:map | Output; MapMode = true
 	:*:create file mapping
 	:de:Dateiabbild generieren

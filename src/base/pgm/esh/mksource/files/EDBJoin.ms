@@ -1,9 +1,9 @@
 /*
-EDB-Datenbankverknüpfung
+EDB-DatenbankverknÃ¼pfung
 
 $Header	<$1>
-$Copyright (C) 2007 Erich Frühstück
-A-3423 St.Andrä/Wördern, Wildenhaggasse 38
+$Copyright (C) 2007 Erich FrÃ¼hstÃ¼ck
+A-3423 St.AndrÃ¤/WÃ¶rdern, Wildenhaggasse 38
 */
 
 #ifndef	EDBJoin_ms
@@ -14,7 +14,7 @@ A-3423 St.Andrä/Wördern, Wildenhaggasse 38
 #include <RefPar.ms>
 
 /*
-Die Funktion |$1| richtet eine Datenstruktur zur Verknüpfung von zwei
+Die Funktion |$1| richtet eine Datenstruktur zur VerknÃ¼pfung von zwei
 Datenbanken ein.
 
 [<t1>]
@@ -22,7 +22,7 @@ Datenbanken ein.
 [<t2>]
 	legt den Datenbanktyp der zweiten Datenbank fest.
 [<read>]
-	ist der Funktionsrumpf für die Verarbeitungsfunktion.
+	ist der Funktionsrumpf fÃ¼r die Verarbeitungsfunktion.
 [<par>]
 	Falls <par> verschieden von |NULL| ist, wird eine
 	Variable vom Typ <par> zur Steuerung des Filters angelegt.
@@ -35,11 +35,11 @@ Datenbanken ein.
 	eingerichtet wird (Vorgabe: true).
 
 Das letzte Kommentar vor Aufruf der Funktion wird als
-Beschreibungstext für den Datenbankfilter verwendet.
+Beschreibungstext fÃ¼r den Datenbankfilter verwendet.
 Achtung: Kommentare im Funktionsrumpf werden vor dem Aufruf der Funktion
 verarbeitet! 
 
-Bei der Aufbereitung der Funktionsrümpfe von <create> und <read>
+Bei der Aufbereitung der FunktionsrÃ¼mpfe von <create> und <read>
 werden die folgenden Parametersubstitutionen vorgenommen:
 
 [|\$1|]	Der Type der ersten Datenbank;
@@ -53,7 +53,7 @@ In der Lesefunktion sind die folgenden Variablen vordefiniert:
 |data|
 	ist der Pointer auf das zu lesende Objekt
 |base|
-	ist der Name der Basis-Datenbank und steht nur zur Verfügung,
+	ist der Name der Basis-Datenbank und steht nur zur VerfÃ¼gung,
 	wenn kein Parametertyp definiert wurde.
 |par|
 	ist ein Pointer auf die Parameterstruktur bei Verwendung eines

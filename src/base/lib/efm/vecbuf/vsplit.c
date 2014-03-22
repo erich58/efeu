@@ -2,7 +2,7 @@
 :de:Vektoren aufspalten
 :en:split array 
 
-$Copyright (C) 1999 Erich Frühstück
+$Copyright (C) 1999 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -26,11 +26,11 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/memalloc.h>
 
 /*
-Die Funktion |$1| reorganisiert den Vektor <base> der Größe <dim> so,
-daß die Elmente, für die die Testfunktion <test> den Wert 1 liefert,
-am Anfang des Vektors stehen. Das Argument <size> gibt die Größe
-eines Elementes an. Der Rückgabewert der Funktion ist die Zahl
-der Elemente, für die die Testfunktion <test> den Wert 1 liefert.
+Die Funktion |$1| reorganisiert den Vektor <base> der GrÃ¶ÃŸe <dim> so,
+daÃŸ die Elmente, fÃ¼r die die Testfunktion <test> den Wert 1 liefert,
+am Anfang des Vektors stehen. Das Argument <size> gibt die GrÃ¶ÃŸe
+eines Elementes an. Der RÃ¼ckgabewert der Funktion ist die Zahl
+der Elemente, fÃ¼r die die Testfunktion <test> den Wert 1 liefert.
 */
 
 size_t vsplit (void *base, size_t dim, size_t size,
@@ -71,8 +71,8 @@ size_t vsplit (void *base, size_t dim, size_t size,
 
 /*
 Die Funktion |$1| arbeitet wie |vsplit|, geht jedoch davon aus,
-daß der Vektor so sortiert ist, daß alle Elemente,
-für die die Testfunktion <test> den Wert 1 liefert,
+daÃŸ der Vektor so sortiert ist, daÃŸ alle Elemente,
+fÃ¼r die die Testfunktion <test> den Wert 1 liefert,
 am Anfang des Vektors stehen.
 */
 

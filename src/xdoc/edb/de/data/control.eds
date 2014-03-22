@@ -9,10 +9,10 @@ Zusammenstellung einer Datenschnittstelle.
 
 Jedesmal, wenn durch eine Anweisung eine neue Datenschnittstelle
 generiert wird, wird die aktuelle zur vorhergehenden
-Datenschnittstelle, bzw. an diese angehängt.
+Datenschnittstelle, bzw. an diese angehÃ¤ngt.
 
 An eine bereits eingerichtete Datenschnittstelle kann ein Eingabekanal
-angefügt werden.
+angefÃ¼gt werden.
 
-Nach Abarbeitung der Anweisungen werden alle verfügbaren
-Datenschnittstellen zusammengehängt.
+Nach Abarbeitung der Anweisungen werden alle verfÃ¼gbaren
+Datenschnittstellen zusammengehÃ¤ngt.

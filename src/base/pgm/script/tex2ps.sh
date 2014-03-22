@@ -2,7 +2,7 @@
 # :*:process TeX-document
 # :de:TeX-Formatierung
 #
-# $Copyright (C) 1993, 2001 Erich Frühstück
+# $Copyright (C) 1993, 2001 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -27,10 +27,10 @@
 #	:de:Landscape
 # n:count |
 #	:*:number of formatting runs
-#	:de:Zahl der Formatierungsläufe
+#	:de:Zahl der FormatierungslÃ¤ufe
 # r:res |
 #	:*:resolution
-#	:de:Auflösung
+#	:de:AuflÃ¶sung
 # :src |
 #	:*:source
 #	:de:Definitionsfile

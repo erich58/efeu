@@ -1,7 +1,7 @@
 /*
 term-Ausgabefilter
 
-$Copyright (C) 1999 Erich Frühstück
+$Copyright (C) 1999 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -40,11 +40,11 @@ typedef struct {
 	char *tt;	/* Wechsel zu Schreibmascinenschrift */
 	char *bf;	/* Wechsel zu Fettschrift */
 	char *Name;	/* Name im Handbucheintrag */
-	char *TabName;	/* Name in der Tabellenüberschrift */
-	char *FigName;	/* Name in der Abbildungsüberschrift */
+	char *TabName;	/* Name in der TabellenÃ¼berschrift */
+	char *FigName;	/* Name in der AbbildungsÃ¼berschrift */
 } TermPar;
 
-#define	TERM_INDENT	4	/* Einrücktiefe */
+#define	TERM_INDENT	4	/* EinrÃ¼cktiefe */
 
 extern TermPar term_par;
 void TermPar_init(void);
@@ -63,13 +63,13 @@ struct TermStruct {
 	unsigned col;		/* Aktuelle Spalte */
 	unsigned space;		/* Leerzeichen ausgeben */
 	unsigned mode;		/* Leerzeichenmodus */
-	unsigned hangpar;	/* Hängende Absätze */
-	unsigned hang;		/* Einrücktiefe nach Umbruch */
+	unsigned hangpar;	/* HÃ¤ngende AbsÃ¤tze */
+	unsigned hang;		/* EinrÃ¼cktiefe nach Umbruch */
 	TermVar var;		/* Umgebungsvariablen */
 	Stack *s_att;		/* Stack mit Attributen */
 	char *att;		/* Aktuelles Attribut */
 	Tabular *tab;	/* Tabellenstruktur */
-	IO *save_out;	/* Zwischenspeicher für Ausgabestruktur */
+	IO *save_out;	/* Zwischenspeicher fÃ¼r Ausgabestruktur */
 };
 
 extern IO *DocOut_term (IO *io);

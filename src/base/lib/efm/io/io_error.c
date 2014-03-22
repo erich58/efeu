@@ -3,7 +3,7 @@ Fehlermeldung mit IO-Struktur
 
 $Name io_note, io_error
 
-$Copyright (C) 1999 Erich Frühstück
+$Copyright (C) 1999 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -48,7 +48,7 @@ void io_note (IO *io, const char *fmt, const char *def, ...)
 
 /*
 Die Funktion |$1| gibt eine Meldung zur Fehlerklasse |IO| vom Level
-|DBG_NOTE| aus. Der Parameter 0 enthält wird mit |io_ident()|
+|DBG_NOTE| aus. Der Parameter 0 enthÃ¤lt wird mit |io_ident()|
 auf die Kennung der IO-Struktur <io> gesetzt. Nach der Ausgabe der Meldung
 wird |io_ctrl| mit dem Parameter |IO_ERROR| aufgerufen. Falls die
 IO-Struktur keine eigene Fehlerbehandlung kennt, wird das Programm mit

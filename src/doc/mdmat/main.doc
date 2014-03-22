@@ -1,18 +1,18 @@
 \config	efeu
 \date	Oktober 2000
 \title	Mehrdimensonale Datenmatrizen
-Benutzerhandbuch für mehrdimensionale Datenmatrizen
+Benutzerhandbuch fÃ¼r mehrdimensionale Datenmatrizen
 
 \preface
-Dieses Handbuch gibt einen Überblick über das Arbeiten
+Dieses Handbuch gibt einen Ãœberblick Ã¼ber das Arbeiten
 mit mehrdimensionalen Datenmatrizen.
 
-Die vorliegende Fassung ist noch unvollständig und wird laufend ergänzt.
-Insbesonders einzelne Handbucheinträge im Anhang müssen noch erweitert
+Die vorliegende Fassung ist noch unvollstÃ¤ndig und wird laufend ergÃ¤nzt.
+Insbesonders einzelne HandbucheintrÃ¤ge im Anhang mÃ¼ssen noch erweitert
 werden.
 
-Um Vollständigkeit zu erreichen, wurden auch jene Handbucheinträge
-zu den Kommandos aufgenommen, deren Beschreibung über eine reine
+Um VollstÃ¤ndigkeit zu erreichen, wurden auch jene HandbucheintrÃ¤ge
+zu den Kommandos aufgenommen, deren Beschreibung Ã¼ber eine reine
 Aufrufsyntax nicht hinausgeht.
 
 Im Handbuch gilt folgende Notation:
@@ -20,11 +20,11 @@ Im Handbuch gilt folgende Notation:
 	werden in Schreibmaschinenschrift gesetzt.
 *	Variablennamen werden in Kursiv gesetzt.
 
-Im Anhang wurden alle für das Arbeiten mit mehrdimensionalen
-Datenmatrizen relevanten Handbucheinträge zusammengefaßt.
+Im Anhang wurden alle fÃ¼r das Arbeiten mit mehrdimensionalen
+Datenmatrizen relevanten HandbucheintrÃ¤ge zusammengefaÃŸt.
 
-	Erich Frühstück\br
-	Wördern, \thedate
+	Erich FrÃ¼hstÃ¼ck\br
+	WÃ¶rdern, \thedate
 \toc
 
 \include grundl.doc

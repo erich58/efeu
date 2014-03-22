@@ -2,7 +2,7 @@
 :*:program generator
 :de:Programmgenerierung
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -57,7 +57,7 @@ static char *BaseName = NULL;	/* Basisname */
 static int Verbose = 0;		/* Protokollmodus */
 static char *bootstrap = NULL;	/* Aufrufparameter */
 static int hdr_comment = 0;	/* Kommentare auch in den Header schreiben */
-static SB_DECL(sb_flags, 0);	/* Buffer für Flags */
+static SB_DECL(sb_flags, 0);	/* Buffer fÃ¼r Flags */
 
 static void put_comment (const char *txt, IO *out)
 {
@@ -125,7 +125,7 @@ typedef struct {
 	char *fname;	/* Filename */
 	int flag;	/* Steuerflag */
 	IO *io;		/* IO - Struktur */
-	int inc;	/* Flag für eingebundene Dateien */
+	int inc;	/* Flag fÃ¼r eingebundene Dateien */
 } OUTPUT;
 
 static OUTPUT output[] = {
@@ -180,16 +180,16 @@ static EfiVarDef globvar[] = {
 	{ "VerboseMode",	&Type_int, &Verbose },
 };
 
-/*	Lokale Variablen für Aufrufargumente
+/*	Lokale Variablen fÃ¼r Aufrufargumente
 */
 
 static char *AllTarget = "all";	/* Generierungsziel */
-static char *CleanTarget = "clean";	/* Aufräumziel */
-static char *DependTarget = "depend";	/* Abhängigkeitsziel */
+static char *CleanTarget = "clean";	/* AufrÃ¤umziel */
+static char *DependTarget = "depend";	/* AbhÃ¤ngigkeitsziel */
 static char *Template = NULL;	/* Eingabefile */
-static char *DependName = NULL;	/* Abhängigkeitsname */
+static char *DependName = NULL;	/* AbhÃ¤ngigkeitsname */
 static char *ListName = NULL;	/* Listendatei */
-static int MakeDep = 0;		/* Abhängigkeitsregeln generieren */
+static int MakeDep = 0;		/* AbhÃ¤ngigkeitsregeln generieren */
 static int MakeRule = 0;	/* Regel generieren */
 static int MakeList = 0;	/* Liste generieren */
 static int LockFlag = 0;	/* Sperrflag */
@@ -217,7 +217,7 @@ static void protect_name (const char *name, IO *io)
 }
 
 
-/*	Ausgabefiles öffnen/schließen
+/*	Ausgabefiles Ã¶ffnen/schlieÃŸen
 */
 
 static int SetupOutput = 1;
@@ -546,7 +546,7 @@ int main (int narg, char **arg)
 	if	(!MakeDep && !MakeRule)
 		return 0;
 
-/*	Abhängigkeitsziel bestimmen
+/*	AbhÃ¤ngigkeitsziel bestimmen
 */
 	if	(!DependName)
 	{

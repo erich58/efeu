@@ -1,7 +1,7 @@
 /*
-64-Bit Ganzzahlobjekte mit Variabler Satzlänge
+64-Bit Ganzzahlobjekte mit Variabler SatzlÃ¤nge
 
-$Copyright (C) 2006 Erich Frühstück
+$Copyright (C) 2006 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or

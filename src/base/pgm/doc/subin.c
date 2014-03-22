@@ -1,7 +1,7 @@
 /*
 Teileingabedatei
 
-$Copyright (C) 1999 Erich Frühstück
+$Copyright (C) 1999 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -32,7 +32,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 typedef struct {
 	IO *io;		/* Eingabestruktur */
-	char *key;	/* Abschlußkennung */
+	char *key;	/* AbschluÃŸkennung */
 	size_t save;	/* Zahl der gepufferten Zeichen */
 	StrBuf buf;	/* Zeichenbuffer */
 } SUBIO;

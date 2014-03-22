@@ -1,7 +1,7 @@
 \sec	Tabellen
 
-Auch für Tabellen wird das Grundprinzip, dass die Definitionsdatei
-schon annähernd das Ergebnis andeutet, angewendet. Vergleiche dazu
+Auch fÃ¼r Tabellen wird das Grundprinzip, dass die Definitionsdatei
+schon annÃ¤hernd das Ergebnis andeutet, angewendet. Vergleiche dazu
 Abbildung \vref{tab1}.
 
 \fig
@@ -15,53 +15,53 @@ Abbildung \vref{tab1}.
 
 Tabellen werden
 mit dem |\tab|-Befehl eingeleitet und enden
-bei der nächsten Leerzeile.
+bei der nÃ¤chsten Leerzeile.
 
 Als Argument des |\tab|-Befehls wird eine Spaltendefinition
 analog zur \LaTeX-Umgebung |\tabular| erwartet. Folgende
-Angaben sind möglich:
-[l]	linksbündige Spalte
+Angaben sind mÃ¶glich:
+[l]	linksbÃ¼ndige Spalte
 [c]	zentrierte Spalte
-[r]	rechtsbündige Spalte
+[r]	rechtsbÃ¼ndige Spalte
 [\|]	Trennlinie(n) zwischen den Spalten
 
 Optional kann beim |\tab|-Befehl
 eine Tabellenbreite in \LaTeX-Notation angegeben werden. Beim
 \LaTeX-Treiber wird anstelle der |\tabular|-Umgebung die
 |\tabularx|-Umgebung eingesetzt. Dementsprechend steht auch bei der
-Spaltendefinition die zusätzliche Angabe |X| für eine linksbündig
-ausgerichtete Spalte variabler Breite zur Verfügung.
+Spaltendefinition die zusÃ¤tzliche Angabe |X| fÃ¼r eine linksbÃ¼ndig
+ausgerichtete Spalte variabler Breite zur VerfÃ¼gung.
 Die anderen Ausgabetreiber ignorieren derzeit diese Option, |X| wird
 wie |l| behandelt.
 
 Im Tabellensatz definiert jede Eingabezeile eine Tabellenzeile oder
-eine Trennlinie. Eine Einrückung wird dabei als Fortsetzungszeile betrachtet.
+eine Trennlinie. Eine EinrÃ¼ckung wird dabei als Fortsetzungszeile betrachtet.
 
 Die einzelnen Tabellenspalten werden mit Pipe-Symbol |||| getrennt.
-Dementsprechend steht das Attribut: Wortwörtlicher Text in
-Schreibmaschinenschrift (||||<Text>||||) nicht zur Verfügung, es kann
-aber |<|||<Text>|||>| verwendet werden. Sonderzeichen in <Text> müssen
-dann mit dem Gegenschrägstrich (|\\|) maskiert werden.
+Dementsprechend steht das Attribut: WortwÃ¶rtlicher Text in
+Schreibmaschinenschrift (||||<Text>||||) nicht zur VerfÃ¼gung, es kann
+aber |<|||<Text>|||>| verwendet werden. Sonderzeichen in <Text> mÃ¼ssen
+dann mit dem GegenschrÃ¤gstrich (|\\|) maskiert werden.
 
 Das Gittersymbol |#| wird im Tabellensatz zur Kennzeichnung einer
 Mehrfachspalte verwendet. Unmittelbar nach dem Gittersymbol folgt die
-Zahl der überspannten Spalten, gefolgt von einer Spaltendefinition.
-Die Zahl der überspannten Spalten kann auch 1 betragen, wenn z.B. nur
-die Ausrichtung einer Zelle geändert werden soll.
+Zahl der Ã¼berspannten Spalten, gefolgt von einer Spaltendefinition.
+Die Zahl der Ã¼berspannten Spalten kann auch 1 betragen, wenn z.B. nur
+die Ausrichtung einer Zelle geÃ¤ndert werden soll.
 
-Werden Spaltentrennlinien verwendet, ist folgendes zu berücksichtigen:
-Die Trennlinien zwischen den Spalten gehören immer zur linken Spalte,
+Werden Spaltentrennlinien verwendet, ist folgendes zu berÃ¼cksichtigen:
+Die Trennlinien zwischen den Spalten gehÃ¶ren immer zur linken Spalte,
 die Trennlinien am Rand zur jeweils ersten, bzw. letzten Spalte. Bei
-einer Mehrfachspalte werden alle zu den überspannten Spalten
-gehörenden Trennlinien entfernt und müssen bei Bedarf bei der
+einer Mehrfachspalte werden alle zu den Ã¼berspannten Spalten
+gehÃ¶renden Trennlinien entfernt und mÃ¼ssen bei Bedarf bei der
 Spaltendefinition der Mehrfachspalte wieder angegeben werden.
 
 Trennlinien werden durch drei aufeinander folgende Minus (|---|) bzw.
-drei Gleichheitszeichen (|===|) für eine Doppellinie definiert.
-Falls Trennlinien nur für einzelne Spalten gelten sollen, kann eine
+drei Gleichheitszeichen (|===|) fÃ¼r eine Doppellinie definiert.
+Falls Trennlinien nur fÃ¼r einzelne Spalten gelten sollen, kann eine
 Liste von Spaltenbereichen der Form <num> bzw <first>|-|<last>
 angegeben werden. Solche Spaltenlinien sind derzeit nur als Einfachlinien
-möglich.
+mÃ¶glich.
 
 \fig
 \latex\centering
@@ -72,9 +72,9 @@ möglich.
 \label{tab2}
 \end
 
-Die Möglichkeiten der Tabellengestaltung sind gegenüber \LaTeX; leicht
-eingeschränkt. Für den normalen Anwendungsfall sind sie jedoch
+Die MÃ¶glichkeiten der Tabellengestaltung sind gegenÃ¼ber \LaTeX; leicht
+eingeschrÃ¤nkt. FÃ¼r den normalen Anwendungsfall sind sie jedoch
 ausreichend. Notfalls kann eine Tabelle auch direkt mit eingebundenen
 \LaTeX-Anweisungen geschrieben werden, jedoch muss dann auch eine
-Ersatzdarstellung für die anderen Ausgabetreiber bereitgestellt
+Ersatzdarstellung fÃ¼r die anderen Ausgabetreiber bereitgestellt
 werden.

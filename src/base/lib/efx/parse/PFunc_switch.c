@@ -1,7 +1,7 @@
 /*
 Switch-Statement
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -28,7 +28,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/printobj.h>
 
 
-/*	Datentype für Klausel
+/*	Datentype fÃ¼r Klausel
 */
 
 struct CASE {
@@ -61,7 +61,7 @@ static void del_case (struct CASE *ptr)
 }
 
 
-/*	Objekttype für Klausel
+/*	Objekttype fÃ¼r Klausel
 */
 
 #define	Val_case(x)	((struct CASE **) (x))[0]

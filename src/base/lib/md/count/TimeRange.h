@@ -1,9 +1,9 @@
 /*
-Datumsbereich für Auszählungen
+Datumsbereich fÃ¼r AuszÃ¤hlungen
 
 $Header <EFEU/$1>
 
-$Copyright (C) 1998, 2007 Erich Frühstück
+$Copyright (C) 1998, 2007 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -35,8 +35,8 @@ typedef struct {
 	char *label;	/* Bereichskennung */
 	unsigned ug;	/* Intervalluntergrenze, Datum */
 	unsigned og;	/* Intervallobergrenze, Datum */
-	unsigned dat;	/* Bezugsdatum für Stammdaten */
-	unsigned jahr;	/* Bezugsjahr für Stammdaten */
+	unsigned dat;	/* Bezugsdatum fÃ¼r Stammdaten */
+	unsigned jahr;	/* Bezugsjahr fÃ¼r Stammdaten */
 	unsigned tage;	/* Intervallbreite, Datum */
 	unsigned ug_sec;	/* Intervalluntergrenze, Sekunden */
 	unsigned og_sec;	/* Intervallobergrenze, Sekunden */

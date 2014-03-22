@@ -2,8 +2,8 @@
 :*:	convert resource file intpo xml-Format
 :de:	Resourcedatei in XML-Format umwandeln
 
-$Copyright (C) 2008 Erich Frühstück
-A-3423 St.Andrä/Wördern, Wildenhaggasse 38
+$Copyright (C) 2008 Erich FrÃ¼hstÃ¼ck
+A-3423 St.AndrÃ¤/WÃ¶rdern, Wildenhaggasse 38
 
 EFEU is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public

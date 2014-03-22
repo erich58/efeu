@@ -2,7 +2,7 @@
 :*:	ouput string language filter
 :de:	Ausgabe eines Strings mit Sprachfilter
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -27,7 +27,7 @@ If not, write to the Free Software Foundation, Inc.,
 :*:
 The function |$1| writes the locale specific part of <str> to <out>.
 :de:
-Die Funktion |$1| filtert die zur lokalen Sprache zugehörigen Teile
+Die Funktion |$1| filtert die zur lokalen Sprache zugehÃ¶rigen Teile
 aus dem String <str> und gibt in nach <out> aus.
 */
 

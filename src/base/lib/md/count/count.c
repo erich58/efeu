@@ -1,7 +1,7 @@
 /*
-Daten zählen
+Daten zÃ¤hlen
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -42,7 +42,7 @@ void md_count (mdmat *ctab, const void *data)
 		return;
 	}
 
-/*	Zähler setzen
+/*	ZÃ¤hler setzen
 */
 	flag = 0;
 
@@ -71,7 +71,7 @@ void md_count (mdmat *ctab, const void *data)
 		if	(!flag)	return;
 	}
 
-/*	Addition durchführen
+/*	Addition durchfÃ¼hren
 */
 	list = ctab->x_priv;
 

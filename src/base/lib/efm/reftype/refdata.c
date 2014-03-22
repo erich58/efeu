@@ -1,7 +1,7 @@
 /*
-Datenstrukturen mit Referenzzähler
+Datenstrukturen mit ReferenzzÃ¤hler
 
-$Copyright (C) 1995 Erich Frühstück
+$Copyright (C) 1995 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -37,8 +37,8 @@ If not, write to the Free Software Foundation, Inc.,
 #define	KEY_CLEAN	"clean"
 #define	KEY_DEBUG	"debug"
 
-/*	Hilfsfunktion zur Überprüfung eines Referenzobjektes.
-	Bei gültigen Daten wird der Pointer geliefert.
+/*	Hilfsfunktion zur ÃœberprÃ¼fung eines Referenzobjektes.
+	Bei gÃ¼ltigen Daten wird der Pointer geliefert.
 	Die Funktion entfernt gleichzeitig eine const-Qualifikation
 */
 
@@ -201,7 +201,7 @@ void *rd_init (const RefType *type, void *data)
 }
 
 
-/*	Referenzzähler erhöhen
+/*	ReferenzzÃ¤hler erhÃ¶hen
 */
 
 void *rd_refer (const void *data)
@@ -217,7 +217,7 @@ void *rd_refer (const void *data)
 	return rd;
 }
 
-/*	Referenzzähler verringern/Daten freigeben
+/*	ReferenzzÃ¤hler verringern/Daten freigeben
 */
 
 void *rd_deref (void *data)
@@ -248,7 +248,7 @@ void *rd_deref (void *data)
 	}
 }
 
-/*	Referenzzähler verringern/Daten freigeben
+/*	ReferenzzÃ¤hler verringern/Daten freigeben
 */
 
 void rd_clean (void *data)

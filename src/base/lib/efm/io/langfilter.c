@@ -2,7 +2,7 @@
 :*:	language filter
 :de:	Sprachfilter
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -43,11 +43,11 @@ If not, write to the Free Software Foundation, Inc.,
 typedef struct {
 	IO *io;		/* Eingabestruktur */
 	int (*newpar) (IO *io, int c, void *par); /* Test auf neuen Absatz */
-	void *par;	/* Parameter für Absatztest */
+	void *par;	/* Parameter fÃ¼r Absatztest */
 	char *lang;	/* Sprachkennung */
 	StrBuf buf;	/* Zeichenbuffer */
 	int nsave;	/* Gepufferte Zeichen */
-	int nlflag;	/* Flag für neue Zeile */
+	int nlflag;	/* Flag fÃ¼r neue Zeile */
 	int protect;	/* Schutzflag */
 } LFPAR;
 
@@ -57,30 +57,30 @@ static int lf_ctrl (IO *io, int req, va_list list);
 /*
 :de:
 Die Funktion |$1| setzt einen Sprachfilter auf die IO-Struktur <io>.
-Dieser filtert alle nicht zur Sprachdefinition <lang> gehörenden Teile
+Dieser filtert alle nicht zur Sprachdefinition <lang> gehÃ¶renden Teile
 aus dem Eingabestrom.
 \par
-Der Eingabestrom enthält mehrsprachigen Text, der durch Sprachmarken der Form
+Der Eingabestrom enthÃ¤lt mehrsprachigen Text, der durch Sprachmarken der Form
 |:|<tag>|,|<tag>|:| gekennzeichnet ist.  Die nachfolgenden Zeichen werden nur
-kopiert, wenn <lang> mit einem <tag> übereinstimmt.  Sprachmarken haben die
+kopiert, wenn <lang> mit einem <tag> Ã¼bereinstimmt.  Sprachmarken haben die
 Form <L>|_|<T>, wobei <L> den ISO 639 Sprachcode und <T> den ISO 3166
-Ländercode angibt. Der Ländercode ist optional.
+LÃ¤ndercode angibt. Der LÃ¤ndercode ist optional.
 \par
-Zunächst werden alle Zeichen unverändert kopiert. Mit der ersten Sprachmarke
+ZunÃ¤chst werden alle Zeichen unverÃ¤ndert kopiert. Mit der ersten Sprachmarke
 beginnt die bedingte Verarbeitung. Eine neue Zeile oder die spezielle
-Marke |:_:| schließt einen Verarbeitungsblock ab.
+Marke |:_:| schlieÃŸt einen Verarbeitungsblock ab.
 \par
-Ein Tag der Form |:|<L>|_*:| steht für ein anderes Land der Sprache <L>,
-ein Tag der Form |:*:| steht für die Defaultsprache.
-Die Defaultmarken können an beliebiger Stelle des bedingten Blocks
+Ein Tag der Form |:|<L>|_*:| steht fÃ¼r ein anderes Land der Sprache <L>,
+ein Tag der Form |:*:| steht fÃ¼r die Defaultsprache.
+Die Defaultmarken kÃ¶nnen an beliebiger Stelle des bedingten Blocks
 stehen.
 \par
-Beispiel: |:de_AT:Jänner:de_*:Januar:en,*:January:_:|
+Beispiel: |:de_AT:JÃ¤nner:de_*:Januar:en,*:January:_:|
 \par
 Ein |:| wird nur interpretiert, wenn ein Stern, ein Unterstreichungszeichen
-oder ein Buchstabe nachfolgt.  Zusätzlich kann die Interpretation von |:| mit
-einem Gegenschrägstrich aufgehoben werden. Der Gegenschrägstrich bleibt im
-Eingabestrom erhalten.  Der Filter berücksichtigt Verbatim-Ausdrücke, die mit
+oder ein Buchstabe nachfolgt.  ZusÃ¤tzlich kann die Interpretation von |:| mit
+einem GegenschrÃ¤gstrich aufgehoben werden. Der GegenschrÃ¤gstrich bleibt im
+Eingabestrom erhalten.  Der Filter berÃ¼cksichtigt Verbatim-AusdrÃ¼cke, die mit
 dem Pipe-Symbol begrenzt sind. Innerhalb von zwei Pipe-Symbolen wird |:| nicht
 interpretiert.
 \par
@@ -101,7 +101,7 @@ IO *langfilter (IO *io, const char *lang)
 /*
 :de:
 Die Funktion |$1| ist eine erweiterte Version von |langfilter|, bei der
-eine zusätzliche Abgrenzung der Verarbeitungsblöcke mithilfe einer Testfunktion
+eine zusÃ¤tzliche Abgrenzung der VerarbeitungsblÃ¶cke mithilfe einer Testfunktion
 bestimmt wird. Die Testfunktion wird zu Beginn jeder Zeile mit dem ersten
 Zeichen der Zeile aufgerufen. Falls sie einen Wert ungleich 0 liefert,
 gilt der Verarbeitungsblock als abgeschlossen. Die Testfunktion kann mithilfe

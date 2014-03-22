@@ -1,5 +1,5 @@
-/*	Ausgabekontrolle für TeX
-	(c) 1994 Erich Frühstück
+/*	Ausgabekontrolle fÃ¼r TeX
+	(c) 1994 Erich FrÃ¼hstÃ¼ck
 */
 
 #include <EFEU/pctrl.h>
@@ -11,10 +11,10 @@ static int quote_flag = 0;
 */
 
 typedef struct {
-	int size;	/* Basisgröße */
+	int size;	/* BasisgrÃ¶ÃŸe */
 	char *name;	/* Schriftname */
 	double width;	/* Ziffernbreite in mm */
-	double height;	/* Zeilenhöhe in mm */
+	double height;	/* ZeilenhÃ¶he in mm */
 } TEXFONT;
 
 
@@ -53,7 +53,7 @@ typedef struct {
 	double margin;	/* Linker Rand in mm */
 	double topskip;	/* Oberer Rand in mm */
 	double width;	/* Papierbreite in mm */
-	double height;	/* Papierhöhe in mm */
+	double height;	/* PapierhÃ¶he in mm */
 } PGFMT;
 
 
@@ -224,23 +224,23 @@ int tex_put(int c, PCTRL *pf)
 	case '"':
 
 		quote_flag = !quote_flag;
-		io_puts(quote_flag ? "\"`" : "\"´", pf->io);
+		io_puts(quote_flag ? "\"`" : "\"Å½", pf->io);
 		break;
 
 	case '\\': io_puts("$\\backslash$", pf->io); break;
 	case '*':  io_puts("$\\ast$", pf->io); break;
 
 /*
-	case 'Ä': io_puts("\"A", pf->io); break;
-	case 'Ö': io_puts("\"O", pf->io); break;
-	case 'Ü': io_puts("\"U", pf->io); break;
-	case 'ä': io_puts("\"a", pf->io); break;
-	case 'ö': io_puts("\"o", pf->io); break;
-	case 'ü': io_puts("\"u", pf->io); break;
-	case 'ß': io_puts("\"s", pf->io); break;
+	case 'Ã„': io_puts("\"A", pf->io); break;
+	case 'Ã–': io_puts("\"O", pf->io); break;
+	case 'Ãœ': io_puts("\"U", pf->io); break;
+	case 'Ã¤': io_puts("\"a", pf->io); break;
+	case 'Ã¶': io_puts("\"o", pf->io); break;
+	case 'Ã¼': io_puts("\"u", pf->io); break;
+	case 'ÃŸ': io_puts("\"s", pf->io); break;
 */
-	case 'Ä': case 'Ö': case 'Ü':
-	case 'ä': case 'ö': case 'ü': case 'ß':
+	case 'Ã„': case 'Ã–': case 'Ãœ':
+	case 'Ã¤': case 'Ã¶': case 'Ã¼': case 'ÃŸ':
 	case '\t':
 
 		io_putc(c, pf->io);

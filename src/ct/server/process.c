@@ -3,9 +3,9 @@
 #include <EFEU/printobj.h>
 #include <ctype.h>
 
-#define	FLG_NONE	0x0	/* Keine Prüfung auf Datenwürfel */
+#define	FLG_NONE	0x0	/* Keine PrÃ¼fung auf DatenwÃ¼rfel */
 #define	FLG_BREAK	0x1	/* Abbruch der Verarbeitung */
-#define	FLG_LOAD	0x2	/* Datenwürfel muss geladen sein */
+#define	FLG_LOAD	0x2	/* DatenwÃ¼rfel muss geladen sein */
 
 #define	E_UDC	"Unknown data cube %#s.\n"	
 #define	E_NOC	"No cube selected.\n"	

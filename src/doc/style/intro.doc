@@ -1,14 +1,14 @@
 \preface
 Dieses Buch wendet sich an Programmentwickler und Anwender unter UNIX,
-die Erweiterungen an den Programmbibliotheken von EFEU durchführen.
+die Erweiterungen an den Programmbibliotheken von EFEU durchfÃ¼hren.
 
-Für jedes größere Projekt gibt es Richtinien zur Gestaltung der
+FÃ¼r jedes grÃ¶ÃŸere Projekt gibt es Richtinien zur Gestaltung der
 Sourcefiles. Diese dienen zur Vereinheitlichung und leichteren
-Lesbarkeit der Sourcen. Dieses Handbuch legt die Richtlinien für die
+Lesbarkeit der Sourcen. Dieses Handbuch legt die Richtlinien fÃ¼r die
 Programmierung mit EFEU fest.
 
-Die Richtlinien gelten generell für C-Sourcen, EFEU-Scripts und im
-beschränkten Umfang auch für Imakefiles.
+Die Richtlinien gelten generell fÃ¼r C-Sourcen, EFEU-Scripts und im
+beschrÃ¤nkten Umfang auch fÃ¼r Imakefiles.
 
-	Erich Frühstück\br
-	Wördern, \thedate
+	Erich FrÃ¼hstÃ¼ck\br
+	WÃ¶rdern, \thedate

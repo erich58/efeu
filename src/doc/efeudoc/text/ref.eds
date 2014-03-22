@@ -1,11 +1,11 @@
 \sec	Referenzen
 
-\ssec	Textbezüge
+\ssec	TextbezÃ¼ge
 
 Der Befehl \index{|\label|} setzt einen Label im laufendem Text,
 der Referenziert werden kann. Dabei kann sowohl die Seite als
 auch der aktuelle Kontext (Kapitelnummer, Bereichsnummer oder
-Übersichtsnummer) abgefragt werden.
+Ãœbersichtsnummer) abgefragt werden.
 
 Der Befehl \index{|\ref|} liefert den Kontext eines Labels.
 
@@ -31,11 +31,11 @@ Der Befehl \index{|\url|} referenziert einen \index{Hyperlink}. Er hat
 die Syntax:
 	|\url|||<url>|||{|<Bezeichnung>|}|
 
-Dabei steht <url> für den Hyperlink und <Bezeichnung> für die
-Schaltfläche im laufenden Text. Der Hyperlink wird in verbatim-Form
+Dabei steht <url> fÃ¼r den Hyperlink und <Bezeichnung> fÃ¼r die
+SchaltflÃ¤che im laufenden Text. Der Hyperlink wird in verbatim-Form
 angegeben.
 
-\ssec	Stichworteinträge
+\ssec	StichworteintrÃ¤ge
 
 \label{index}
 Ein \index{Stichworteintrag} wird mit dem Befehl \index{|\index|} generiert.
@@ -48,11 +48,11 @@ der Stichworteintrag im laufenden Text nicht vorkommt, anders
 geschrieben wird oder ein <"Zerbrechlichkeitsproblem"> besteht.
 Dies tritt z.B: auf, wenn ein |\index|-Befehl in einem
 Gliederungsbefehl, einer Randnotiz oder einem Zitat verwendet wird
-und Sonderzeichen oder Attributwechsel enthält. Nähere Hinweise
+und Sonderzeichen oder Attributwechsel enthÃ¤lt. NÃ¤here Hinweise
 zu <"zerbrechlichen Befehlen"> finden sich in jedem \LaTeX-Handbuch.
 
-Beachte auch, dass Leerzeichen oder Zeilenvorschübe nach dem
+Beachte auch, dass Leerzeichen oder ZeilenvorschÃ¼be nach dem
 |\index|-Befehl erhalten bleiben. Eine Zeile, die nur aus einem
 Stichworteintrag mit einem Stichwort in eckigen Klammern besteht,
-kann zu einer Absatztrennung führen und sollte daher nur zwischen
-den Absätzen stehen.
+kann zu einer Absatztrennung fÃ¼hren und sollte daher nur zwischen
+den AbsÃ¤tzen stehen.

@@ -1,7 +1,7 @@
 /*
-Bin‰re Ein- Ausgabe mit reverser Byteordnung
+Bin√§re Ein- Ausgabe mit reverser Byteordnung
 
-$Copyright (C) 1996 Erich Fr¸hst¸ck
+$Copyright (C) 1996 Erich Fr√ºhst√ºck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -24,7 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/ftools.h>
 
 /*
-Die Funktion |$1| liest <nitems> Datens‰tze der L‰nge <size>
+Die Funktion |$1| liest <nitems> Datens√§tze der L√§nge <size>
 aus der Datei <stream> in den Buffer <ptr>,
 wobei jeder Datensatz in umgekehrter Reihenfolge gelesen.
 */
@@ -57,7 +57,7 @@ size_t rfread (void *ptr, size_t size, size_t nitems, FILE *file)
 }
 
 /*
-Die Funktion |$1| schreibt <nitems> Datens‰tze der L‰nge <size>
+Die Funktion |$1| schreibt <nitems> Datens√§tze der L√§nge <size>
 vom Buffer <ptr> in die Datei <stream>,
 wobei jeder Datensatz in umgekehrter Reihenfolge ausgegeben wird.
 */

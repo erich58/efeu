@@ -1,8 +1,8 @@
 /*
 :*:	paste data cubes with regard to axis
-:de:	Datenmatrizen bezüglich einer Achse zusammenhängen
+:de:	Datenmatrizen bezÃ¼glich einer Achse zusammenhÃ¤ngen
 
-$Copyright (C) 1997, 2001 Erich Frühstück
+$Copyright (C) 1997, 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -30,7 +30,7 @@ Name = "#1"
 
 r | Reduce = true
 	:*:remove singular axis
-	:de:Entfernen von singulären Achsen
+	:de:Entfernen von singulÃ¤ren Achsen
 m:map | Output; MapMode = true
 	:*:create file mapping
 	:de:Dateiabbild generieren
@@ -51,14 +51,14 @@ u | Uniq = true
 	Datei entnommen.
 e:expr | Expr
 	:*:expression for comparing, default is "cmp(a,b)".
-	:de:definiert einen Vergleichsausdruck für die Sortierung.
-	Im Ausdruck stehen die Variablen <a> und <b> für die
+	:de:definiert einen Vergleichsausdruck fÃ¼r die Sortierung.
+	Im Ausdruck stehen die Variablen <a> und <b> fÃ¼r die
 	jeweiligen Achsenezeichner.
 	Falls <expr> nicht definiert ist,
 	wird <|cmp(<a>,<b>)|> verwendet.
 n:name | Name
 	:*:name of axis for pasting, default is {Name}
-	:de:definiert die Achse, bezüglich der die Daten zusammengehängt werden.
+	:de:definiert die Achse, bezÃ¼glich der die Daten zusammengehÃ¤ngt werden.
 	Die Vorgabe ist {Name}.
 o:aus | Output; PrintMode = false
 	:*:output file
@@ -114,7 +114,7 @@ for (int i = 0; i < n; i++)
 
 if	(!flagres("Sort"))	DB.sort(cmp_pos);
 
-/*	Datenfiles überarbeiten
+/*	Datenfiles Ã¼berarbeiten
 */
 
 for (i = 0; i < n; i++)

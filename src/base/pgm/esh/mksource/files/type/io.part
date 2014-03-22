@@ -1,5 +1,5 @@
 /*
-:de:Die Funktion |$1| erzeugt eine benutzerdefinierte, binäre
+:de:Die Funktion |$1| erzeugt eine benutzerdefinierte, binÃ¤re
 Lesefunktion.
 */
 
@@ -14,7 +14,7 @@ void TypeDef::read (str body)
 }
 
 /*
-:de:Die Funktion |$1| erzeugt eine benutzerdefinierte, binäre
+:de:Die Funktion |$1| erzeugt eine benutzerdefinierte, binÃ¤re
 Schreibfunktion.
 */
 
@@ -30,5 +30,5 @@ void TypeDef::write (str body)
 
 /*
 $Description
-:de:Schreib- und Lesefunktion müssen zueinander kompatibel sein.
+:de:Schreib- und Lesefunktion mÃ¼ssen zueinander kompatibel sein.
 */

@@ -1,7 +1,7 @@
 # :*:options controlling command description output
 # :de:Steuerflag zur Handbuchgenerierung
 
-# Copyright (C) 2001 Erich Frühstück
+# Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # This library is free software; you can redistribute it and/or
@@ -36,11 +36,11 @@
 	[lp]	send postscript data to |lpr|
 	:de:
 	generiert eine Beschreibung des Kommandos.
-	Der zusätzliche Parameter <type> bestimmt die Formatierung und
+	Der zusÃ¤tzliche Parameter <type> bestimmt die Formatierung und
 	die Ausgabe der Beschreibung.
 	[term]	Terminalausgabe (default)
-	[raw]	Rohformat für |efeudoc|
-	[man]	nroff/troff Sourcen für |man|
+	[raw]	Rohformat fÃ¼r |efeudoc|
+	[man]	nroff/troff Sourcen fÃ¼r |man|
 	[lp]	Ausgabe zum Drucker
 
 # :*:format definitions for manpage creation

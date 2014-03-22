@@ -1,7 +1,7 @@
 /*
 Kommandoparameterwerte setzen/abfragen
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -37,7 +37,7 @@ Die Funktion |$1| ruft die Variablendefinition <name> der
 Kommandoparameterstruktur ab. Falls <flag> verschieden von 0 ist,
 wird sie bei Bedarf eingerichtet.
 Bei einem Nullpointer als Argument liefert die Funktion einen Nullpointer.
-Die Komponente |name| darf nicht verändert werden, da sie als Sortierschlüssel
+Die Komponente |name| darf nicht verÃ¤ndert werden, da sie als SortierschlÃ¼ssel
 dient!
 */
 
@@ -61,11 +61,11 @@ CmdParVar *CmdPar_var (CmdPar *par, const char *name, int flag)
 
 /*
 Die Funktion |$1| ruft den Wert der Variablen <name> der
-Kommandoparameterstruktur ab. Falls für <name>
+Kommandoparameterstruktur ab. Falls fÃ¼r <name>
 ein Nullpointer angegeben wurde, wird der Aufrufname geliefert.
 Ist der Wert der abgerufenen Variablen NULL, wird er
-durch <defval> ersetzt. Die von |$1| zurückgegebene Zeichenkette
-darf nicht verändert werden!
+durch <defval> ersetzt. Die von |$1| zurÃ¼ckgegebene Zeichenkette
+darf nicht verÃ¤ndert werden!
 */
 
 char *CmdPar_getval (CmdPar *par, const char *name, const char *defval)
@@ -87,10 +87,10 @@ char *CmdPar_getval (CmdPar *par, const char *name, const char *defval)
 
 /*
 Die Funktion |$1| setzt den Wert der Variablen <name> der
-Kommandoparameterstruktur auf <value>. Falls für <name>
-ein Nullpointer angegeben wurde, wird der Aufrufname geändert.
-Für <value> sollte nur ein dynamisch generierter
-String übergeben werden (Vergleiche dazu \mref{mstring(3)}).
+Kommandoparameterstruktur auf <value>. Falls fÃ¼r <name>
+ein Nullpointer angegeben wurde, wird der Aufrufname geÃ¤ndert.
+FÃ¼r <value> sollte nur ein dynamisch generierter
+String Ã¼bergeben werden (Vergleiche dazu \mref{mstring(3)}).
 */
 
 void CmdPar_setval (CmdPar *par, const char *name, char *value)

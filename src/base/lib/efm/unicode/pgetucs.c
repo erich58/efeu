@@ -2,7 +2,7 @@
 :*:extract unicode character from string
 :de:Unicode Zeichen aus String bestimmen
 
-$Copyright (C) 2008 Erich Frühstück
+$Copyright (C) 2008 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -28,9 +28,9 @@ If not, write to the Free Software Foundation, Inc.,
 #define U3(c)	((c & 0xf0) == 0xe0)	/* Test auf 3-Byte Sequenz */
 #define	U4(c)	((c & 0xf8) == 0xf0)	/* Test auf 4-Byte Sequenz */
 
-#define	V2(c)	(c & 0x1f)	/* Startbits für 2-Byte Sequenz */
-#define	V3(c)	(c & 0xf)	/* Startbits für 3-Byte Sequenz */
-#define	V4(c)	(c & 0x7)	/* Startbits für 4-Byte Sequenz */
+#define	V2(c)	(c & 0x1f)	/* Startbits fÃ¼r 2-Byte Sequenz */
+#define	V3(c)	(c & 0xf)	/* Startbits fÃ¼r 3-Byte Sequenz */
+#define	V4(c)	(c & 0x7)	/* Startbits fÃ¼r 4-Byte Sequenz */
 
 #define	UF(c)	((c & 0xc0) == 0x80)	/* Test auf Folgezeichen */
 #define	VF(c)	(c & 0x3f)		/* Datenbits des Folgezeichens */
@@ -52,24 +52,24 @@ static int32_t get_sub (char **ptr, int32_t val, int n)
 }
 
 /*
-Die Funktion |$1| liefert das nächste Unicode-Zeichen aus einem String,
+Die Funktion |$1| liefert das nÃ¤chste Unicode-Zeichen aus einem String,
 mit wahlweise ISO 8859-15 (latin9) oder UTF-8 kodierten Zeichen.
-Als Argument wird ein Zeiger auf die aktuelle Stringposition übergeben,
-der entsprechend weitergezählt wird. Das Argument <lim> bestimmt,
-wieviele Zeichen maximal gelesen werden können. Damit läßt sich die Funktion
+Als Argument wird ein Zeiger auf die aktuelle Stringposition Ã¼bergeben,
+der entsprechend weitergezÃ¤hlt wird. Das Argument <lim> bestimmt,
+wieviele Zeichen maximal gelesen werden kÃ¶nnen. Damit lÃ¤ÃŸt sich die Funktion
 auch auf nicht mit 0 terminierte Zeichenketten anwenden. Bei
-null-terminierten Zeichenfeldern kann ein beliebiger Wert |>=| 4 übergeben
+null-terminierten Zeichenfeldern kann ein beliebiger Wert |>=| 4 Ã¼bergeben
 werden.
 
 Zeichen mit Kodewert zwischen 128 und 256, die nicht Teil einer UTF8-Kodierung
 sind, werden als ISO 8859-15-Kodewert aufgefasst und entsprechend umgewandelt.
-Falls für <lim> ein Wert |<=| 1 übergeben wird, werden keine Multibyte-Zeichen
-aufgelöst und die Funktion verhält sich wie eine reine Konvertierung von
+Falls fÃ¼r <lim> ein Wert |<=| 1 Ã¼bergeben wird, werden keine Multibyte-Zeichen
+aufgelÃ¶st und die Funktion verhÃ¤lt sich wie eine reine Konvertierung von
 ISO 8859-15 in Unicode.
 $Notes
-Da diese Funktion primär für internen Gebrauch bestimmt ist, werden
-die folgenden Rahmenbedingungen vorraussgesetzt und nicht geprüft:
-*	<p> ist ein gültiger Pointer.
+Da diese Funktion primÃ¤r fÃ¼r internen Gebrauch bestimmt ist, werden
+die folgenden Rahmenbedingungen vorraussgesetzt und nicht geprÃ¼ft:
+*	<p> ist ein gÃ¼ltiger Pointer.
 *	|*|<p> zeigt nicht auf die Abschlussnull bzw. auf das erste Zeichen
 	nach einem Datenfeld.
 */

@@ -1,7 +1,7 @@
 /*
 Initialisierung des Befehlsinterpreters
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -98,7 +98,7 @@ static void func_info (IO *io, InfoNode *info)
 	}
 }
 
-/*	Schlüsselwörter
+/*	SchlÃ¼sselwÃ¶rter
 */
 
 static EfiObj *pf_operator (IO *io, void *data)
@@ -474,7 +474,7 @@ char *PS2 = "> ";
 static EfiVarDef vardef[] = {
 	{ "MakeDepend",	&Type_bool, &MakeDepend,
 		":*:flag for creating dependence lists\n"
-		":de:Flag zur Generierung von Abhängigkeitslisten\n" },
+		":de:Flag zur Generierung von AbhÃ¤ngigkeitslisten\n" },
 	{ "ProgIdent",	&Type_str, &ProgIdent,
 		":*:identification of command\n"
 		":de:Identifikation des Kommandos\n" },
@@ -486,13 +486,13 @@ static EfiVarDef vardef[] = {
 		":de:Aufrufname des Kommandos\n" },
 	{ "ApplPath",	&Type_str, &ApplPath,
 		":*:search path for application files\n"
-		":de:Suchpfad für Anwendungsdateien\n"},
+		":de:Suchpfad fÃ¼r Anwendungsdateien\n"},
 	{ "InfoPath",	&Type_str, &InfoPath,
 		":*:search path for info files\n"
-		":de:Suchpfad für Informationsdateien\n"},
+		":de:Suchpfad fÃ¼r Informationsdateien\n"},
 	{ "Shell",	&Type_str, &Shell,
 		":*:shell for system calls\n"
-		":de:Shell für Systemaufrufe\n" },
+		":de:Shell fÃ¼r Systemaufrufe\n" },
 	{ "Pager",	&Type_str, &Pager,
 		":*:default pager\n"
 		":de:Standardpager\n" },

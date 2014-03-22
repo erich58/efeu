@@ -4,7 +4,7 @@
 # $Synopsis
 # <=[=> include $1 <=]=>
 #
-# $Copyright (C) 2004 Erich Frühstück
+# $Copyright (C) 2004 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -31,27 +31,27 @@ include dir.smh
 # $pconfig !
 # n |
 #	:*:clears options passed to |mf_rule|.
-#	:de:Löscht die Optionen für |mf_rule|.
+#	:de:LÃ¶scht die Optionen fÃ¼r |mf_rule|.
 # i | A:name | C:name |
 #	:*:These flages are passed to |mf_rule|. They determines
 #	the names of the phony targets for creating/cleaning.
 #	The |-a| flag of |mf_rule| is predefined.
 #	See \mref\{rule.smh(7)\} for details.
 #	:de:Diese Flags werden an |mf_rule| weitergereicht. Sie
-#	bestimmen die Namen der Scheinziele zum Generieren/Aufräumen.
+#	bestimmen die Namen der Scheinziele zum Generieren/AufrÃ¤umen.
 #	Das |-a| Flag von |mf_rule| ist vordefiniert.
 #	Vergleiche dazu \mref\{rule.smh(7)\}.
 # d:dep |
 #	:*:expands depend list by <dep>.
-#	:de:ergänzt die Abhängigkeiten um <dep>.
+#	:de:ergÃ¤nzt die AbhÃ¤ngigkeiten um <dep>.
 # s:subst |
 #	:*:substitution statetement in the form of <=key=repl=>, where <=> is
 #	an arbitrary delimiter.
-#	:de:Ersetzungsanweisung der Form <=key=repl=>, wobei für <=> ein
+#	:de:Ersetzungsanweisung der Form <=key=repl=>, wobei fÃ¼r <=> ein
 #	beliebiges Trennzeichen verwendet werden kann.
 # m:mode |
 #	:*:set the permissions of target to the given <mode>.
-#	:de:setzt die Zugriffsrechte für das Ziel entsprechend von <mode>.
+#	:de:setzt die Zugriffsrechte fÃ¼r das Ziel entsprechend von <mode>.
 #	Vergleiche dazu \mref\{chmod(1)\}.
 # /%*=*/%name=repl |
 #	:*:substitution rule, passed to |mf_rule|.
@@ -61,7 +61,7 @@ include dir.smh
 #	Vergleiche dazu \mref\{rule.smh(7)\}.
 # x |
 #	:*:is an abbreviation for |-m a+x|.
-#	:de:ist eine Abkürzung für |-m a+x|.
+#	:de:ist eine AbkÃ¼rzung fÃ¼r |-m a+x|.
 # :tg |
 #	:*:is the name of the target file.
 #	:de:Ist der Name der Zieldatei
@@ -74,7 +74,7 @@ include dir.smh
 #	unten.
 # ::args(s) |
 #	:*:specifies additional arguments/filters to <cmd>, see below.
-#	:de:definiert zusätzliche Argumente/Filter zur Erzeugung der Zieldatei,
+#	:de:definiert zusÃ¤tzliche Argumente/Filter zur Erzeugung der Zieldatei,
 #	siehe weiter unten.
 # !
 # :*:
@@ -160,10 +160,10 @@ mf_file ()
 # This supports building environments, where more than one user (e.g.
 # all members of a group) are allowed to update the target file.
 # :de:
-# Falls Zugriffsrechte für das Ziel vorgegeben wurden, wird das Ziel
+# Falls Zugriffsrechte fÃ¼r das Ziel vorgegeben wurden, wird das Ziel
 # vor einer Neugenerierung entfernt. Damit wird sichergestellt, dass das
-# Ziel dem user gehört und ein nachfolgendes |chmod| nicht fehlschlägt.
-# Dies unterstützt Bildungsumgebungen, wo mehr als ein Anwender (z.B.
+# Ziel dem user gehÃ¶rt und ein nachfolgendes |chmod| nicht fehlschlÃ¤gt.
+# Dies unterstÃ¼tzt Bildungsumgebungen, wo mehr als ein Anwender (z.B.
 # alle Mitglieder einer Gruppe) das Recht zur Erneuerung des Ziels
 # haben.
 #
@@ -176,7 +176,7 @@ mf_file ()
 # mf_file -x '\$(BIN)/foo' foo.sh
 # mf_file '\$(DATA)/foo.dat' "a.dat b.dat c.dat" "cat" "| sort"
 # \end
-# //| Kompensation des Pipe-Symbols für langpar
+# //| Kompensation des Pipe-Symbols fÃ¼r langpar
 # :de:
 # Die folgende Zeilen
 # \config shmkmf
@@ -185,7 +185,7 @@ mf_file ()
 # mf_file -x '\$(BIN)/foo' foo.sh
 # mf_file '\$(DATA)/foo.dat' "a.dat b.dat c.dat" "cat" "| sort"
 # \end
-# //| Kompensation des Pipe-Symbols für langpar
+# //| Kompensation des Pipe-Symbols fÃ¼r langpar
 
 # $Note
 # :*:The header |$1| is preloaded by |shmkmf|.

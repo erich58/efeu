@@ -1,7 +1,7 @@
 /*
 Dokumenttreiberstruktur
 
-$Copyright (C) 1999 Erich Frühstück
+$Copyright (C) 1999 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -26,7 +26,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 extern char *CFGPath;
 
-#define	BLKS	32		/* Blockgröße der Variablentabelle */
+#define	BLKS	32		/* BlockgrÃ¶ÃŸe der Variablentabelle */
 
 
 /*	Initialisierung und Freigabe

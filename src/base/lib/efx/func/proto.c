@@ -1,7 +1,7 @@
 /*
 Funktionsprototypen generieren
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -79,7 +79,7 @@ EfiFunc *MakePrototype(IO *io, EfiType *type, EfiName *nptr, unsigned flags)
 	EfiVarTab *vtab;
 	EfiFuncArg arg;
 	IO *tmp;
-	int rflag;	/* Rückgabe von L-Wert */
+	int rflag;	/* RÃ¼ckgabe von L-Wert */
 	int lflag;	/* L-Wert funktion */
 	int weight;
 	int virfunc;
@@ -204,7 +204,7 @@ EfiFunc *MakePrototype(IO *io, EfiType *type, EfiName *nptr, unsigned flags)
 	io_getc(io);
 	c = io_eat(io, "%s");
 
-/*	Konverter überprüfen
+/*	Konverter Ã¼berprÃ¼fen
 */
 	if	(name == NULL)
 	{
@@ -258,7 +258,7 @@ EfiFunc *MakePrototype(IO *io, EfiType *type, EfiName *nptr, unsigned flags)
 		return NULL;
 	}
 
-/*	Überprüfung der Rückgabereferenz
+/*	ÃœberprÃ¼fung der RÃ¼ckgabereferenz
 */
 	if	(rflag && n == 0)
 	{

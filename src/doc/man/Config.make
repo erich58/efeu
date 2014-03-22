@@ -1,5 +1,5 @@
 # :en: manpages for libraries
-# :de: Handbucheinträge zu Bibliotheken
+# :de: HandbucheintrÃ¤ge zu Bibliotheken
 ##Depends: .
 
 include efeu.smh

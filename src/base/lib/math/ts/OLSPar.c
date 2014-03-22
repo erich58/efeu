@@ -1,8 +1,8 @@
 /*
 :*:parameter of OLS estimation
-:de:OLS-Schätzparameter
+:de:OLS-SchÃ¤tzparameter
 
-$Copyright (C) 1997 Erich Frühstück
+$Copyright (C) 1997 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -71,7 +71,7 @@ int OLSPar_print (IO *io, OLSPar *par)
 
 	p1 = TimeIndex2str(par->base, 0);
 	p2 = TimeIndex2str(par->base, par->nr - 1);
-	n  = io_xprintf(io, "Schätzzeitraum:%10s\t%25s\n", p1, p2);
+	n  = io_xprintf(io, "SchÃ¤tzzeitraum:%10s\t%25s\n", p1, p2);
 	memfree(p1);
 	memfree(p2);
 	n += io_xprintf(io, "Beobachtungen: %10d\t", par->nr);

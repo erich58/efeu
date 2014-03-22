@@ -2,7 +2,7 @@
 :*:basic commands
 :de:Basisbefehle
 
-$Copyright (C) 1999 Erich Frühstück
+$Copyright (C) 1999 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -34,7 +34,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 :*:The command $1 cerates a new table for commands, macros and vars
 and pushes it to the table stack.
-:de:Der Befehl $1 generiert eine neue Tabelle für Befehle, Makros und
+:de:Der Befehl $1 generiert eine neue Tabelle fÃ¼r Befehle, Makros und
 Variablen und legt sie am Tabellenstack ab.
 
 \def\push	push(NULL);
@@ -91,16 +91,16 @@ The following control flags could be used:
 	evaluate file with EFEU command interpreter, new
 	variables are created global.
 :de:Der Befehl $1 bindet die Datei <file> an der aktuellen Position ein.
-Folgende Steuerflags können angegeben werden:
+Folgende Steuerflags kÃ¶nnen angegeben werden:
 [|verbatim|]
-	Wortwörtlicher Text ohne Interpretation von Sonderzeichen.
+	WortwÃ¶rtlicher Text ohne Interpretation von Sonderzeichen.
 	Tabulatoren werden durch Leerzeichen ersetzt.
 [|latex|]
-	Datei enthält LaTeX-Steuersequenzen
+	Datei enthÃ¤lt LaTeX-Steuersequenzen
 [|html|]
-	Datei enthält HTML-Steuersequenzen
+	Datei enthÃ¤lt HTML-Steuersequenzen
 [|man|]
-	Datei enthält nroff-Steuersequnenzen im Handbuchstandard
+	Datei enthÃ¤lt nroff-Steuersequnenzen im Handbuchstandard
 [|ignore|]
 	Datei wird verarbeitet, aber es erfolgt keine Ausgabe.
 [|eval|]
@@ -130,7 +130,7 @@ Folgende Steuerflags können angegeben werden:
 :*:The command $1 inserts the output of the command <cmd>
 at current position. The flags are the same as in |\include|.
 :de:Der Befehl $1 bindet die Ausgabe des Kommandos <cmd> ein.
-Die Flags <flags> sind äquivalent zu |\include|.
+Die Flags <flags> sind Ã¤quivalent zu |\include|.
 
 \def\pipe input(ParseOpt(cin, true), popen(xexpand(ParseLine(cin, true)), "r"))
 
@@ -209,7 +209,7 @@ Fehlt <Eintrag> wird <Bereich> als Indexeintrag verwendet.
 	cout << arg;
 }}
 
-/*	Zeichen zurückschreiben
+/*	Zeichen zurÃ¼ckschreiben
 */
 
 :*:line feed
@@ -218,7 +218,7 @@ Fehlt <Eintrag> wird <Bereich> als Indexeintrag verwendet.
 	$1
 
 :*:The command $1 writes a linefeed back to the input stream.
-:de:Der Befehl $1 schreibt einen Zeilenvorschub zurück.
+:de:Der Befehl $1 schreibt einen Zeilenvorschub zurÃ¼ck.
 
 \def\n	cin.ungetc('\n');
 
@@ -228,7 +228,7 @@ Fehlt <Eintrag> wird <Bereich> als Indexeintrag verwendet.
 	$1
 
 :*:The command $1 writes a tabulator key back to the input stream.
-:de:Der Befehl $1 schreibt einen Tabulator zurück.
+:de:Der Befehl $1 schreibt einen Tabulator zurÃ¼ck.
 
 \def\t	cin.ungetc('\t');
 

@@ -1,5 +1,5 @@
 /*	Werte abfragen/setzen
-	(c) 1994 Erich Frühstück
+	(c) 1994 Erich FrÃ¼hstÃ¼ck
 */
 
 

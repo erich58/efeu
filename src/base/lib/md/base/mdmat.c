@@ -1,5 +1,5 @@
 /*	Arbeiten mit multidimensionalen Matrizen
-	(c) 1994 Erich Frühstück
+	(c) 1994 Erich FrÃ¼hstÃ¼ck
 */
 
 #include <EFEU/mdmat.h>
@@ -275,19 +275,19 @@ static EfiFuncDef pdef[] = {
 static EfiVarDef vardef[] = {
 	{ "MdClassListFormat", &Type_str, &MdClassListFormat,
 		":*:parameter for displaying count classes\n"
-		":de:Parameter zur Darstellung von Zählklassen\n" },
+		":de:Parameter zur Darstellung von ZÃ¤hlklassen\n" },
 	{ "MdClassPrintHead", &Type_str, &MdClassPrintHead,
 		":*:parameter for displaying count classes\n"
-		":de:Parameter zur Darstellung von Zählklassen\n" },
+		":de:Parameter zur Darstellung von ZÃ¤hlklassen\n" },
 	{ "MdClassPrintEntry", &Type_str, &MdClassPrintEntry,
 		":*:parameter for displaying count classes\n"
-		":de:Parameter zur Darstellung von Zählklassen\n" },
+		":de:Parameter zur Darstellung von ZÃ¤hlklassen\n" },
 	{ "MdClassPrintFoot", &Type_str, &MdClassPrintFoot,
 		":*:parameter for displaying count classes\n"
-		":de:Parameter zur Darstellung von Zählklassen\n" },
+		":de:Parameter zur Darstellung von ZÃ¤hlklassen\n" },
 	{ "MdClassPrintLimit", &Type_int, &MdClassPrintLimit,
 		":*:parameter for displaying count classes\n"
-		":de:Parameter zur Darstellung von Zählklassen\n" },
+		":de:Parameter zur Darstellung von ZÃ¤hlklassen\n" },
 };
 
 void SetupMdMat(void)

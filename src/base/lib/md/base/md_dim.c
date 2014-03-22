@@ -1,5 +1,5 @@
 /*	Achsendimension bestimmen
-	(c) 1994 Erich Frühstück
+	(c) 1994 Erich FrÃ¼hstÃ¼ck
 */
 
 #include <EFEU/mdmat.h>
@@ -19,7 +19,7 @@ size_t md_dim(mdaxis *x)
 }
 
 
-/*	Strukturgrößen berechnen
+/*	StrukturgrÃ¶ÃŸen berechnen
 */
 
 size_t md_size(mdaxis *x, size_t size)

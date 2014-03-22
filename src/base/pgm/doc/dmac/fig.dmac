@@ -2,7 +2,7 @@
 :*:figures and tables
 :de:Abbildungen und Tabellen
 
-$Copyright (C) 1999 Erich Frühstück
+$Copyright (C) 1999 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -43,12 +43,12 @@ If not, write to the Free Software Foundation, Inc.,
 
 :*:figure or table caption
 	$1 |[|<short form>|]| <title>
-:de:Über- und Unterschriften für Übersichten
-	$1 |[|<Kurzform>|]| <Überschrift>
+:de:Ãœber- und Unterschriften fÃ¼r Ãœbersichten
+	$1 |[|<Kurzform>|]| <Ãœberschrift>
 
 :*:The command sets the title for a figure or table.
-:de:Der Befehl $1 setzt eine Über- bzw. Unterschrift in einer gleitenden
-Übersicht.
+:de:Der Befehl $1 setzt eine Ãœber- bzw. Unterschrift in einer gleitenden
+Ãœbersicht.
 
 \def\caption	section('F', ParseOpt(cin, true), ParseLine(cin, true));
 

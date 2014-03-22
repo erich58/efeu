@@ -1,7 +1,7 @@
 /*
 Teilstring abtrennen
 
-$Copyright (C) 1996 Erich Frühstück
+$Copyright (C) 1996 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -28,8 +28,8 @@ Die Funktion |$1| trennt aus dem String <str> den mit einem Zeichen von
 wird dieser auf das erste Zeichen des Reststrings gesetzt. Falls <flag>
 verschieden von 0 ist, wird ein mehrfaches Vorkommen von Trennsymbolen
 aus <delim> wie ein einzelnes Trennsymbol behandelt.
-Falls für <delim> ein Nullpointer übergeben wird, gelten 
-Leerzeichen, Tabulatoren und Zeilenvorschübe als Trennzeichen.
+Falls fÃ¼r <delim> ein Nullpointer Ã¼bergeben wird, gelten 
+Leerzeichen, Tabulatoren und ZeilenvorschÃ¼be als Trennzeichen.
 */
 
 char *mstrcut (const char *str, char **ptr, char *delim, int flag)

@@ -2,7 +2,7 @@
 Datenbank - Datenfelder
 
 $Header	<$1>
-$Copyright (C) 1998 Erich Frühstück
+$Copyright (C) 1998 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -66,26 +66,26 @@ static struct DBDataDef {
 	str name;	/* Datentypename */
 	str label;	/* Beschreibungstext */
 	bool glob;	/* Globale Definition */
-	bool fix;	/* Fixe Satzlänge */
+	bool fix;	/* Fixe SatzlÃ¤nge */
 
 	DataBase var;	/* Variablentabelle */
 	DataBase slist;	/* Synchronisationsliste */
-	str recl;	/* Satzlänge */
+	str recl;	/* SatzlÃ¤nge */
 
-	str argdecl;	/* Zusätzliche Argumente beim Lesen/Synchronisieren */
-	str arglist;	/* Zusätzliche Argumente beim Lesen/Synchronisieren */
-	str varlist;	/* Zusätzliche Variablen beim Lesen/Synchronisieren */
-	str syncvar;	/* Zusätzliche Variablen beim Synchronisieren */
+	str argdecl;	/* ZusÃ¤tzliche Argumente beim Lesen/Synchronisieren */
+	str arglist;	/* ZusÃ¤tzliche Argumente beim Lesen/Synchronisieren */
+	str varlist;	/* ZusÃ¤tzliche Variablen beim Lesen/Synchronisieren */
+	str syncvar;	/* ZusÃ¤tzliche Variablen beim Synchronisieren */
 
 	str read_body;	/* Funktionsrumpf der Eingabefunktion */
 	str write_body;	/* Funktionsrumpf der Schreibfunktion */
 	str alloc_body;	/* Funktionsrumpf der Zuweisungsfunktion */
-	str clear_body;	/* Funktionsrumpf der Löschfunktion */
+	str clear_body;	/* Funktionsrumpf der LÃ¶schfunktion */
 
 	str space_body;	/* Funktionsrumpf der Speicherbedarfsfunktion */
 	str sync_head;	/* Funktionskopf zur Synchronisation */
 	str sync_body;	/* Funktionsrumpf zur Synchronisation */
-	str sync_foot;	/* Funktionsfuß zur Synchronisation */
+	str sync_foot;	/* FunktionsfuÃŸ zur Synchronisation */
 	str s_func;	/* Komponentenfunktionen */
 	str s_mtab;	/* Komponententabelle */
 	str s_setup;	/* Initialisierungszeilen */
@@ -382,7 +382,7 @@ else	memset($2_buf, 0, $3 * sizeof($2_buf[0]));
 		f.write(glob);
 	}
 
-/*	Aufräumen
+/*	AufrÃ¤umen
 */
 	if	(clear_body)
 	{
@@ -746,54 +746,54 @@ static EfiObj *$0_$2 (const EfiObj *base, void *par)
 /*
 Die Funktion |$1| generiert eine Datenstruktur mit Namen |Name|
 aus der Eingabestruktur |Def| mit Definitionszeilen.
-Das Argument |Desc| dient als Beschreibungstext zur Erläuterung der
+Das Argument |Desc| dient als Beschreibungstext zur ErlÃ¤uterung der
 Sourcen. Das Flag <glob> bestimmt, ob der Datentyp global (im Header) oder
 local (im Sourcefile) definiert wird.
 
-Zu jedem Datentyp werden Hilfsfunktionen zum Löschen,
-zur binären Eingabe und zur binären Ausgabe generiert.
+Zu jedem Datentyp werden Hilfsfunktionen zum LÃ¶schen,
+zur binÃ¤ren Eingabe und zur binÃ¤ren Ausgabe generiert.
 
 Eine Definitionszeile hat den folgenden Aufbau:
 	<key> <type> <name> <desc>
 
 wobei <key> ein Kennwort, <type> ein Datentyp, <name> ein
-Variablenname und <desc> einen Beschreibungstext für die Variable
+Variablenname und <desc> einen Beschreibungstext fÃ¼r die Variable
 darstellt.
 
 Folgende Kennungen sind definiert:
 \ttitem	std
-	Definition einer gewöhnlichen Variable vom Type <type>
+	Definition einer gewÃ¶hnlichen Variable vom Type <type>
 \ttitem	ext
-	Definition einer externen Variablen, sie wird bei der binären
-	Ein- und Ausgabe nicht berücksichtigt.
+	Definition einer externen Variablen, sie wird bei der binÃ¤ren
+	Ein- und Ausgabe nicht berÃ¼cksichtigt.
 \ttitem	ptr
 	Definition eines externen Pointers.
 \ttitem	sub
 	Definition einer Variablen mit einem Datentyp, der Funktionen
-	zur binären Ein- und Ausgabe unterstützt (typischerweise ein
+	zur binÃ¤ren Ein- und Ausgabe unterstÃ¼tzt (typischerweise ein
 	mit |Bitfield| oder |DBData| eingerichtetet Datentyp).
 \ttitem	?<cond>
 	Wie <sub>, jedoch werden Ein- und Ausgabefunktionen in
-	Abhängigkeit von der Bedingung <cond> (eine andere Komponente
+	AbhÃ¤ngigkeit von der Bedingung <cond> (eine andere Komponente
 	des Datentyps) aufgerufen. Ist die Bedingung beim Lesen
 	falsch, wird der Datenwert auf 0 gesetzt.
 \ttitem	\@<var>,<bsize>
 	Definition einer Vektorkomponente, wobei <var> die aktuelle
-	Dimension des Vektors angibt und <bsize> die Blockgröße zur
-	Vergrößerung des Speicherfeldes für den Vektor bestimmt.
+	Dimension des Vektors angibt und <bsize> die BlockgrÃ¶ÃŸe zur
+	VergrÃ¶ÃŸerung des Speicherfeldes fÃ¼r den Vektor bestimmt.
 \ttitem	*<var>
 	Wie |@|, jedoch wird der Speicherbereich der Variablen extern
-	zur Verfügung gestellt. Wird bei mehrdimensionalen
+	zur VerfÃ¼gung gestellt. Wird bei mehrdimensionalen
 	Datenstrukturen verwendet.
 
 Falls bei einem Datentyp ein |@| vorangestellt ist, wird beim
-Löschen eines Datensatzes auch für diese Komponente eine eigene
-Löschfunktion (muss definiert sein) aufgerufen.
+LÃ¶schen eines Datensatzes auch fÃ¼r diese Komponente eine eigene
+LÃ¶schfunktion (muss definiert sein) aufgerufen.
 
-Bei einer Vektordefinition können dem Namen zusätzliche Komponenten
-muit ',' angehängt werden. Dabei handelt es sich um eine andere
-Vektorkomponente, die als externer Speicherbereich für Teilvektoren
-benötigt werden.
+Bei einer Vektordefinition kÃ¶nnen dem Namen zusÃ¤tzliche Komponenten
+muit ',' angehÃ¤ngt werden. Dabei handelt es sich um eine andere
+Vektorkomponente, die als externer Speicherbereich fÃ¼r Teilvektoren
+benÃ¶tigt werden.
 */
 
 void DBData (str Name, str Desc, IO Def, bool glob = true)
@@ -848,12 +848,12 @@ void DBData (str Name, str Desc, IO Def, bool glob = true)
 }
 
 /*
-Die Funktion |$1| generiert eine Ausgabefunktion für Datenvektoren
+Die Funktion |$1| generiert eine Ausgabefunktion fÃ¼r Datenvektoren
 mithilfe von |Function::pfbody| (Vergleiche dazu \mref{printfunc(7)}).
 In den Definitionszeilen verweist <x> auf den aktuellen Datenpointer.
 Normalerweise akzeptiert die generierte Ausgabefunktion eine
 Ausgabestruktur, den Pointer auf den Datenvektor und die Dimension
-des Datenvektors. Mit <xdecl> können zusätzliche Argumente übergeben
+des Datenvektors. Mit <xdecl> kÃ¶nnen zusÃ¤tzliche Argumente Ã¼bergeben
 werden.
 */
 

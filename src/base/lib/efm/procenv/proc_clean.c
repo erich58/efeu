@@ -1,8 +1,8 @@
 /*
 :*:controll of process clean up
-:de:Kontrolle von Aufräumarbeiten
+:de:Kontrolle von AufrÃ¤umarbeiten
 
-$Copyright (C) 2004 Erich Frühstück
+$Copyright (C) 2004 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -85,9 +85,9 @@ static void proc_init (void)
 :*:The function |$1| registers <clfunc> to be called at process termination.
 The Argument <par> is passed to the cleaning function <clfunc>.
 The cleaning function is never called twice.
-:de:Die Funktion |$1| registriert <clfunc> als Aufräumfunktion bei Prozessende.
-Der Parameter <par> wird als Argument an die Aufräumfunktion <clfunc>
-weitergereicht. Die Aufräumfunktion wird nur einmal aufgerufen.
+:de:Die Funktion |$1| registriert <clfunc> als AufrÃ¤umfunktion bei Prozessende.
+Der Parameter <par> wird als Argument an die AufrÃ¤umfunktion <clfunc>
+weitergereicht. Die AufrÃ¤umfunktion wird nur einmal aufgerufen.
 */
 
 void proc_clean (void (*clfunc) (void *par), void *par)
@@ -118,9 +118,9 @@ The first call to |proc_clean| registers |$1| with |atexit|
 to be called at program termination.
 :de:Die Funktion |$1| ruft alle mit |proc_clean| registrierten
 Funktionen in umgekehrter Reihenfolge (Die zuletzt registrierte
-Funktion wird als erstes aufgerufen) auf und löscht sie aus dem internen
+Funktion wird als erstes aufgerufen) auf und lÃ¶scht sie aus dem internen
 Register. Der erste Aufruf von |proc_clean| registriert |$1| mit
-|atexit| für den Aufruf bei Prozessende.
+|atexit| fÃ¼r den Aufruf bei Prozessende.
 */
 
 void proc_doclean (void)

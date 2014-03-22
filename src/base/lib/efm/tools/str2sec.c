@@ -1,5 +1,5 @@
 /*	Sekundenintervall bestimmen
-	(c) 2009 Erich Frühstück
+	(c) 2009 Erich FrÃ¼hstÃ¼ck
 */
 
 #include <EFEU/calendar.h>

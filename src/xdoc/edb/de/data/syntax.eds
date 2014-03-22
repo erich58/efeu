@@ -6,10 +6,10 @@ Ein \index{|EDB|-Datenfile} besteht aus den folgenden Komponenten:
 *	\index{Metadaten} oder \index{Kopfteil}
 *	\index{Datenteil} (optional)
 
-Die erste Zeile eines EDB-Datenfiles enthält die Kennung \index{|EDB|},
+Die erste Zeile eines EDB-Datenfiles enthÃ¤lt die Kennung \index{|EDB|},
 gefolgt von einer Versionsnummer. Derzeit wird die Versionsnummer
 nicht ausgewertet, der Rest der Zeile wird einfach ignoriert. Aus
-Kompatiblitätsgründen für zukünftige Erweiterungen sollte hier
+KompatiblitÃ¤tsgrÃ¼nden fÃ¼r zukÃ¼nftige Erweiterungen sollte hier
 1.0 angegeben werden.
 
 \index[Kommentare]
@@ -21,14 +21,14 @@ bei der Ausgabe wieder in den \index{Kopfteil} geschrieben.
 Nach der Kennung folgt der \index{Metadatenteil} mit den einzelnen
 Anweisungen. Eine Anweisung beginnt mit einem \index{|@|}-Symbol, gefolgt von
 dem Kennwort der Anweisung und den Argumenten der Anweisung.
-Einige Anweisungen benötigen einen \index{Datenteil}. Dieser schließt
-unmittelbar an die Anweisung an und endet bei der nächsten Anweisung.
-Eine Ausnahme stellt die \index{|@data|-Anweisung} dar. Sie schließt den
-Metadatenbereich ab. Alle nachfolgenden Zeilen gehören zum Datenteil.
+Einige Anweisungen benÃ¶tigen einen \index{Datenteil}. Dieser schlieÃŸt
+unmittelbar an die Anweisung an und endet bei der nÃ¤chsten Anweisung.
+Eine Ausnahme stellt die \index{|@data|-Anweisung} dar. Sie schlieÃŸt den
+Metadatenbereich ab. Alle nachfolgenden Zeilen gehÃ¶ren zum Datenteil.
 
-Die Interpretation des Datenteils hängt von der Anweisung ab.
-Kommentare im Datenteil sind nur zulässig, wenn dies von der
-zugehörigen Anweisung unterstützt wird.
+Die Interpretation des Datenteils hÃ¤ngt von der Anweisung ab.
+Kommentare im Datenteil sind nur zulÃ¤ssig, wenn dies von der
+zugehÃ¶rigen Anweisung unterstÃ¼tzt wird.
 
 Ist die erste Anweisung im Datenfile eine \index{|@type|-Anweisung}, kann das
 Kennwort entfallen. Die \index{Datentypdefinition} kann damit unmittelbar an

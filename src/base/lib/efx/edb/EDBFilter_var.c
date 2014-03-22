@@ -1,6 +1,6 @@
 /*	Variablen neu zusammenstellen
 
-$Copyright (C) 2006 Erich Frühstück
+$Copyright (C) 2006 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -105,7 +105,7 @@ static EDB *fdef_var (EDBFilter *filter, EDB *edb,
 EDBFilter EDBFilter_var = EDB_FILTER(NULL,
 	"var", "[r]=list", fdef_var, NULL,
 	":*:rearrange variables with expresions and patterns"
-	":de:Neuzusammenstellung von Variablen über Ausdrücke und Muster"
+	":de:Neuzusammenstellung von Variablen Ã¼ber AusdrÃ¼cke und Muster"
 );
 
 EDB *edb_conv (EDB *edb, EfiType *type)

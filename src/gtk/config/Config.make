@@ -1,5 +1,5 @@
 # :en: configuration of Gtk+
-# :de: Konfiguration für Gtk+
+# :de: Konfiguration fÃ¼r Gtk+
 ##Depends: .
 
 include efeu.smh

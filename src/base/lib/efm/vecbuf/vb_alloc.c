@@ -1,7 +1,7 @@
 /*
-Vektorbuffer vergrößern
+Vektorbuffer vergrÃ¶ÃŸern
 
-$Copyright (C) 1996 Erich Frühstück
+$Copyright (C) 1996 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -28,8 +28,8 @@ If not, write to the Free Software Foundation, Inc.,
 #define	E_NEXP "[efm:1]$!: can not expand constant data buffer.\n"
 
 /*
-Die Funktion |$1| sorgt dafür, daß im Vektorbuffer <buf> mindestens
-<dim> Elemente zur Verfügung stehen. Die Funktion liefert
+Die Funktion |$1| sorgt dafÃ¼r, daÃŸ im Vektorbuffer <buf> mindestens
+<dim> Elemente zur VerfÃ¼gung stehen. Die Funktion liefert
 den Pointer auf das Speicherfeld. Die Komponente <used> wird auf 0
 gesetzt.
 */
@@ -43,9 +43,9 @@ void *vb_alloc (VecBuf *buf, size_t dim)
 
 
 /*
-Die Funktion |$1| sorgt dafür, daß im Vektorbuffer <buf> mindestens
-<dim> Elemente zur Verfügung stehen, wobei die verwendeten
-Datenelemente unverändert bleiben.
+Die Funktion |$1| sorgt dafÃ¼r, daÃŸ im Vektorbuffer <buf> mindestens
+<dim> Elemente zur VerfÃ¼gung stehen, wobei die verwendeten
+Datenelemente unverÃ¤ndert bleiben.
 */
 
 void *vb_realloc (VecBuf *buf, size_t dim)
@@ -66,7 +66,7 @@ void *vb_realloc (VecBuf *buf, size_t dim)
 
 /*
 Die Funktion |$1| wird intern zur Buffererweiterung
-verwendet. Falls der Buffer vergrößert wurde, liefert sie
+verwendet. Falls der Buffer vergrÃ¶ÃŸert wurde, liefert sie
 die Adresse des alten Datenbuffers, ansonsten einen Nullpointer.
 Der alte Datenbuffer kann mit |lfree| freigegeben werden.
 Der neue Datenbuffer wird nicht initialisiert!

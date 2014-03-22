@@ -1,8 +1,8 @@
 \sec Konstruktionsfunktion
 
 Eine Alternative zur Deklarierung eines Datentyps stellt die
-Ableitung eines Datentyps über eine Konstruktionsfunktion dar.
-Die einzelnen Komponenten der Struktur werden über Terme definiert.
+Ableitung eines Datentyps Ã¼ber eine Konstruktionsfunktion dar.
+Die einzelnen Komponenten der Struktur werden Ã¼ber Terme definiert.
 Die Angabe des resultierenden Datentyps und der Komponentenname sind
 dabei optional, falls sie sich aus dem Ausdruck ableiten lassen.
 
@@ -11,12 +11,12 @@ Konstruktionsfunktion lautet:
 
 |construct| <name> [ |:| <args> ] |{| <vardef> |}|
 
-Dabei gibt <args> die Argumentliste für die Konstruktionsfunktion vor.
+Dabei gibt <args> die Argumentliste fÃ¼r die Konstruktionsfunktion vor.
 Diese kann leer sein oder Vorgabewerte enthalten. Die
 Variablendefinitionen <vardef> bestehen aus einer Liste von
-Ausdrücken der Form:
+AusdrÃ¼cken der Form:
 
 \[ <type> <name> |=| ] <expr>
 
-Die einzelnen Ausdrücke können durch ein Komma, einen
+Die einzelnen AusdrÃ¼cke kÃ¶nnen durch ein Komma, einen
 Strichpunkt oder ein Leerzeichen getrennt sein.

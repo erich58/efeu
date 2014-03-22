@@ -2,7 +2,7 @@
 :*:	data cube function
 :de:	Funktion auf Datenmatrix anwenden
 
-$Copyright (C) 1997, 2001 Erich Frühstück
+$Copyright (C) 1997, 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -38,7 +38,7 @@ E:expr | :eval 'geval("{}")'
 	:de:Ausdruck <expr> auswerten
 r | Reduce = true
 	:*:remove singular axis
-	:de:Entfernen von singulären Achsen
+	:de:Entfernen von singulÃ¤ren Achsen
 m:map | Output; MapMode = true
 	:*:create file mapping
 	:de:Dateiabbild generieren
@@ -71,7 +71,7 @@ e:expr | Expr
 	:de:Ausdruck
 x:list | Mark
 	:*:list of column axis, default "{Mark}"
-	:de:Achsenliste für Spalten, Vorgabe "{Mark}"
+	:de:Achsenliste fÃ¼r Spalten, Vorgabe "{Mark}"
 p:prec | :eval 'float_prec = {}'
 	:*:floating number precision
 	:de:Genauigkeit der Zahlenwerte

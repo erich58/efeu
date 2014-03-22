@@ -1,9 +1,9 @@
 /*
-Hauptdefinitionen für efmain Programmbibliothek
+Hauptdefinitionen fÃ¼r efmain Programmbibliothek
 
 $Header <EFEU/$1>
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -49,7 +49,7 @@ If not, write to the Free Software Foundation, Inc.,
 #endif
 
 
-/*	Initialisieren / Aufräumen
+/*	Initialisieren / AufrÃ¤umen
 */
 
 #include <EFEU/procenv.h>

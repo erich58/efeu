@@ -1,7 +1,7 @@
 /*
 Datenvektor runden
 
-$Copyright (C) 1995 Erich Fr¸hst¸ck
+$Copyright (C) 1995 Erich Fr√ºhst√ºck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -49,9 +49,9 @@ void roundvec(double *x, size_t dim, double val)
 	val = (val - zp + zn) / (zp + zn);
 
 /*	Datenwerte justieren und in Ganzzahlwert und Nachkommastellen zerlegen.
-	Rdiff enth‰llt die Summe der Nachkommastellen und ist immer ganzzahlig.
-	Durch Aufrunden positiver Werte, bzw. abrunden negativer Werte muﬂ
-	rdiff auf 0 justiert werden. Np und nn enth‰lt die Zahl der nach 4/5
+	Rdiff enth√§llt die Summe der Nachkommastellen und ist immer ganzzahlig.
+	Durch Aufrunden positiver Werte, bzw. abrunden negativer Werte mu√ü
+	rdiff auf 0 justiert werden. Np und nn enth√§lt die Zahl der nach 4/5
 	Rundung auf/abzurundenden Werte.
 */
 	y = memalloc(dim * sizeof(double));

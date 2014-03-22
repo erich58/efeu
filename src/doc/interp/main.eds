@@ -2,7 +2,7 @@
 :*:The EFEU Interpreter
 :de:Der EFEU Interpreter
 
-$Copyright (C) 2003 Erich Frühstück
+$Copyright (C) 2003 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -24,7 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 \config	efeu
 \config docpart
 
-\author	Erich Frühstück
+\author	Erich FrÃ¼hstÃ¼ck
 
 \docpart title.eds
 

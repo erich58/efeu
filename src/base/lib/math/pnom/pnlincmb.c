@@ -1,7 +1,7 @@
 /*
-Linearkombination von stückweisen Polynomen
+Linearkombination von stÃ¼ckweisen Polynomen
 
-$Copyright (C) 1992 Erich Frühstück
+$Copyright (C) 1992 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or

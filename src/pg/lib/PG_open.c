@@ -1,8 +1,8 @@
 /*
-:de:	Interface für Datenübermittlung öffnen
+:de:	Interface fÃ¼r DatenÃ¼bermittlung Ã¶ffnen
 :*:	open interface for copying data to/from database server
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -33,7 +33,7 @@ If not, write to the Free Software Foundation, Inc.,
 #define	M_FLUSH	"$!: PQputline() failed.\n"
 #define	M_ECOPY	"$!: PQendcopy() failed\n"
 
-#define	BSIZE	1024	/* Größe des Eingabebuffers */
+#define	BSIZE	1024	/* GrÃ¶ÃŸe des Eingabebuffers */
 
 typedef struct {
 	PG *pg;	/* Datenbankstruktur */
@@ -41,7 +41,7 @@ typedef struct {
 	StrBuf wbuf;	/* Ausgabebuffer */
 	char *rbuf;	/* Eingabebuffer */
 	char *ptr;	/* Pointer auf Eingabebuffer */
-	int flag;	/* Flag für offene Daten */
+	int flag;	/* Flag fÃ¼r offene Daten */
 } PGCOPY;
 
 static void pg_flush (PGCOPY *par)
@@ -158,11 +158,11 @@ static int pg_ctrl (IO *io, int req, va_list list)
 
 /*
 :de:
-Die Funktion |$1| führt eine COPY Anfrage an den Datenbankserver
-durch und liefert eine IO-Struktur zur Übermittlung/Abfrage
+Die Funktion |$1| fÃ¼hrt eine COPY Anfrage an den Datenbankserver
+durch und liefert eine IO-Struktur zur Ãœbermittlung/Abfrage
 von Daten. Die Verbindungsstruktur <pg> sollte danach nicht mehr
-verwendet werden, außer der Referenzzähler wurde zuvor mit |rd_refer|
-erhöht.
+verwendet werden, auÃŸer der ReferenzzÃ¤hler wurde zuvor mit |rd_refer|
+erhÃ¶ht.
 :*:
 The function |$1| performs a COPY command and returns an IO-structure
 for copying data to/from the backend.
@@ -181,7 +181,7 @@ $Diagnostic
 :de:
 Die Funktion |$1| liefert einen NULL-Pointer, falls die
 Anfrage fehlschlug.
-Der Rückgabewert muß nicht geprüft werden, ein NULL-Pointer wird
+Der RÃ¼ckgabewert muÃŸ nicht geprÃ¼ft werden, ein NULL-Pointer wird
 wie |/dev/null| behandelt.
 :*:
 The function |$1| returns a NULL-Pointer on failure.
@@ -189,10 +189,10 @@ You need not check the return value, a NULL-pointer acts like |/dev/null|.
 
 $Notes
 :de:
-Beim Schließen der IO-Struktur werden alle noch offenen Daten
-vom Datenbankserver überlesen und die Verbindung bei Bedarf geschlossen,
-Solange die IO-Struktur geöffnet ist, ist die Datenbankverbindung
-für andere Abfragen gesperrt.
+Beim SchlieÃŸen der IO-Struktur werden alle noch offenen Daten
+vom Datenbankserver Ã¼berlesen und die Verbindung bei Bedarf geschlossen,
+Solange die IO-Struktur geÃ¶ffnet ist, ist die Datenbankverbindung
+fÃ¼r andere Abfragen gesperrt.
 :*:
 On closing, all pending data from backend are skipped and the connection
 is closed on demand.

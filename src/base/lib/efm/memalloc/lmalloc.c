@@ -2,7 +2,7 @@
 :*:memmory allocation
 :de:Speicherplatzanforderung
 
-$Copyright (C) 1996 Erich Frühstück
+$Copyright (C) 1996 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -26,12 +26,12 @@ If not, write to the Free Software Foundation, Inc.,
 /*
 Bei Problemen mit dynamisch angeforderten Speichersegmenten
 kann der Makro MEMCHECK auf 1 gesetzt werden. Jedes Segment
-wird zusätzlich mit einer Anfangs- und Endekennung versehen.
-Bei der Freigabe werden diese Kennungen überprüft.
+wird zusÃ¤tzlich mit einer Anfangs- und Endekennung versehen.
+Bei der Freigabe werden diese Kennungen Ã¼berprÃ¼ft.
 
-Falls die Speicherplatzanforderung fehlschlägt, kann nicht
-auf die Standardfehlerroutinen zurückgegriffen werden, da
-diese eventuell selbst ein Speichersegment anfordern müssen.
+Falls die Speicherplatzanforderung fehlschlÃ¤gt, kann nicht
+auf die Standardfehlerroutinen zurÃ¼ckgegriffen werden, da
+diese eventuell selbst ein Speichersegment anfordern mÃ¼ssen.
 */
 
 #define	MEMCHECK	0
@@ -175,7 +175,7 @@ static void trace_add (void *ptr, size_t size)
 /*
 :de:
 Die Funktion |$1| reserviert einen Speicherplatz der
-Größe <size>. Durch |lfree| kann der Speicherplatz
+GrÃ¶ÃŸe <size>. Durch |lfree| kann der Speicherplatz
 wieder freigegeben werden.
 
 $Warnings
@@ -183,19 +183,19 @@ $Warnings
 If the end of the memory segment is overwritten and may result in
 a segmentation fault on a later call to |$1|.
 :de:
-Falls über das Ende eines reservierten Speicherplatzes
+Falls Ã¼ber das Ende eines reservierten Speicherplatzes
 hinausgeschrieben wird, kommt
 es zu einem unkontrollierten Fehlverhalten.
-Meistens führt ein späterer Aufruf von |$1| zu einem
+Meistens fÃ¼hrt ein spÃ¤terer Aufruf von |$1| zu einem
 Absturz des Programms.
 
 $Diagnostics
 :de:
-Wird ein Speicherfeld der Größe 0 angefordert, liefert
+Wird ein Speicherfeld der GrÃ¶ÃŸe 0 angefordert, liefert
 die Funktion |$1| einen Nullpointer.
-Kann der gewünschte Speicherplatz nicht reserviert werden,
+Kann der gewÃ¼nschte Speicherplatz nicht reserviert werden,
 wird die Verarbeitung des rufenden Kommandos mit einer Fehlermeldung
-abgebrochen. Der Rückgabewert von |$1| muß daher nicht überprüft
+abgebrochen. Der RÃ¼ckgabewert von |$1| muÃŸ daher nicht Ã¼berprÃ¼ft
 werden.
 */
 
@@ -223,7 +223,7 @@ void *lmalloc (size_t size)
 
 /*
 Die Funktion |$1| gibt einen von |lmalloc| angeforderten
-Speicherbereich wieder frei. Ein Nullpointer ist als Argument zulässig.
+Speicherbereich wieder frei. Ein Nullpointer ist als Argument zulÃ¤ssig.
 */
 
 void lfree (void *p)
@@ -242,11 +242,11 @@ void lfree (void *p)
 }
 
 /*
-Die Funktion |$1| ändert die Größe eines zuvor mit |lmalloc| angeforderten
-Speicherfeldes auf <size> und liefert die Adresse des möglicherweise
-verschobenen Speicherfeldes. Falls als <ptr> ein Nullpointer übergeben wurde,
-ist die Funktion äquivalent zu |lmalloc|, falls <size> 0 ist, ist die
-Funktion äquivalent zu |lfree| und liefert einen Nullpointer.
+Die Funktion |$1| Ã¤ndert die GrÃ¶ÃŸe eines zuvor mit |lmalloc| angeforderten
+Speicherfeldes auf <size> und liefert die Adresse des mÃ¶glicherweise
+verschobenen Speicherfeldes. Falls als <ptr> ein Nullpointer Ã¼bergeben wurde,
+ist die Funktion Ã¤quivalent zu |lmalloc|, falls <size> 0 ist, ist die
+Funktion Ã¤quivalent zu |lfree| und liefert einen Nullpointer.
 */
 
 void *lrealloc (void *ptr, size_t size)
@@ -278,7 +278,7 @@ void *lrealloc (void *ptr, size_t size)
 
 :de:
 Die Funktion |$1| testet ein Speichersegment, ob sein Anfang oder sein
-Ende überschrieben wurde. Vorraussetzung ist dabei, daß vor dem Kompilieren
+Ende Ã¼berschrieben wurde. Vorraussetzung ist dabei, daÃŸ vor dem Kompilieren
 der Makro |MEMCHECK| auf 1 gesetzt wurde.
 */
 
@@ -335,7 +335,7 @@ der Makro |MEMTRACE| auf 1 gesetzt wurde.
 The variable |memtrace| activates the trace option.
 :de:
 Die Variable |$1| dient zur Aktivierung der Ablaufkontrolle
-für die Speicherverwaltung.
+fÃ¼r die Speicherverwaltung.
 */
 
 int memtrace = 0;
@@ -377,7 +377,7 @@ If memtrace is activated, the function |$1| lists all changes in
 memory allocation since last call.
 :de:
 Falls die Ablaufverfolgung aktiviert wurde, listet die
-Funktion |$1| alle Änderungen in der Speicherverwaltung
+Funktion |$1| alle Ã„nderungen in der Speicherverwaltung
 seit dem letzten Aufruf auf.
 */
 
@@ -409,17 +409,17 @@ $Notes
 For small memory segments, the functions |memalloc| and |memfree| should
 be used instead.
 :de:
-Für kleine Speichersegmente sollten
+FÃ¼r kleine Speichersegmente sollten
 die Funktionen |memalloc| und |memfree| eingesetzt
 werden.
 
 $Warnings
 :*:
-:de:Bei Übergabe eines Pointers an die Funktion
+:de:Bei Ãœbergabe eines Pointers an die Funktion
 |lfree|, der nicht durch einen vorangegangenen Aufruf von
 |lmalloc| stammt, ist das Verhalten unbestimmt und kann
-zu einem Programmabsturz führen.
-Die Funktionen |memalloc| und |memfree| sind diesbezüglich robust.
+zu einem Programmabsturz fÃ¼hren.
+Die Funktionen |memalloc| und |memfree| sind diesbezÃ¼glich robust.
 $SeeAlso
 \mref{alloctab(3)}, \mref{memalloc(3)}.\br
 \mref{malloc(3S)} @PRM.

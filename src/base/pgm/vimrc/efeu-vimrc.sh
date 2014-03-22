@@ -1,8 +1,8 @@
 #!/bin/sh
 # :*: update vim configuration files for EFEU
-# :de: Vim Konfigurationsdateien für EFEU erneuern
+# :de: Vim Konfigurationsdateien fÃ¼r EFEU erneuern
 #
-# $Copyright (C) 2002 Erich Frühstück
+# $Copyright (C) 2002 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or

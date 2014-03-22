@@ -1,10 +1,10 @@
 /*
 :*:	data types with reference counter
-:de:	Datenstrukturen mit Referenzzähler
+:de:	Datenstrukturen mit ReferenzzÃ¤hler
 
 $Header	<EFEU/$1>
 
-$Copyright (C) 1994, 2002 Erich Frühstück
+$Copyright (C) 1994, 2002 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -40,7 +40,7 @@ Die Datentruktur |$1| definiert den Referenzdatentyps.
 typedef struct {
 	char *label;		/* Bezeichnung */
 	char *(*ident) (const void *data); /* Identifikationsfunktion */
-	void (*clean) (void *data); /* Löschfunktion */
+	void (*clean) (void *data); /* LÃ¶schfunktion */
 	struct LogControl *log;	/* Protokollsteuerung */
 } RefType;
 
@@ -50,7 +50,7 @@ The macro |$1| expands to the initialization values for a
 standard reference type.
 :de:
 Der Makro |$1| expandiert zu den Initialisierungswerten eines Referenztyps
-für Standardanwendungen.
+fÃ¼r Standardanwendungen.
 */
 
 #define	REFTYPE_INIT(label, ident, clean)	\
@@ -74,8 +74,8 @@ Referenztyps.
 The Macro allowes to declare a RefData compatible structure.
 He must be placed at the beginning of the structure.
 :de:
-Der Makro |$1| liefert die Referenzvariablen für eine Referenzstruktur.
-Er muß zu Beginn der Datentypedefinition stehen.
+Der Makro |$1| liefert die Referenzvariablen fÃ¼r eine Referenzstruktur.
+Er muÃŸ zu Beginn der Datentypedefinition stehen.
 */
 
 #ifdef	REFDATA_MAGIC
@@ -98,7 +98,7 @@ The macro |REFDATA| generates the initial values for the reference values
 of a reference type. He is used by the initialization of an object
 with reference type.
 :de:
-Der Makro |REFDATA| liefert die Initialisierungswerte für die
+Der Makro |REFDATA| liefert die Initialisierungswerte fÃ¼r die
 Referenzvariablen. Er wird bei der Initialisierung eines
 Referenzobjektes verwendet.
 */
@@ -114,8 +114,8 @@ Referenzobjektes verwendet.
 The datatype |$1| is the basic type for all reference types.
 He includes only reference values.
 :de:
-Der Datentype |$1| ist eine Oberklasse für alle Referenzdatentypen.
-Er enthält nur die Referenzvariablen.
+Der Datentype |$1| ist eine Oberklasse fÃ¼r alle Referenzdatentypen.
+Er enthÃ¤lt nur die Referenzvariablen.
 */
 
 typedef struct {
@@ -195,7 +195,7 @@ because the internal structure of RefType may change. The
 macro provides a constant interface.
 :de:
 Ein Referenztyp sollte immer mit |REFTYPE_INIT| initialisiert
-werden, da sich die Zusammensetzung der Struktur ändern kann. Der
+werden, da sich die Zusammensetzung der Struktur Ã¤ndern kann. Der
 Makro liefert eine konstante Schnittstelle.
 */
 

@@ -1,68 +1,68 @@
 \sec	Entwicklung des EFEU-Interpreters
 
-Die EFEU-Shell |esh| steht nicht nur für das Kommando gleichen Namens,
-sondern auch für einen Interpreter, der über C-Bibliotheksfunktion
+Die EFEU-Shell |esh| steht nicht nur fÃ¼r das Kommando gleichen Namens,
+sondern auch fÃ¼r einen Interpreter, der Ã¼ber C-Bibliotheksfunktion
 aufgerufen wird. Er nimmt nicht nur eine zentrale Stellung im Rahmen
-von EFEU ein, sondern ist insbesonders ein wichtiges Werkzeug für
+von EFEU ein, sondern ist insbesonders ein wichtiges Werkzeug fÃ¼r
 die Datenanalysen von Synthesis.
 
 Mein erster Versuch einen Befehlsinterpreter zu schreiben
-reicht weit zurück. Anfang der 80-er Jahre habe ich --
+reicht weit zurÃ¼ck. Anfang der 80-er Jahre habe ich --
 weniger aus Notwendigkeit als aus Lust am Programmieren -- am
 Rechner des physikalischen Institutes in Wien meine erste Version
 eines Befehlsinterpreters geschrieben. Damals kannte ich UNIX und C
 noch nicht und ich verwendete Fortran. Von dieser Version sind,
-außer Erinnerungen, keine Spuren zurückgeblieben.
+auÃŸer Erinnerungen, keine Spuren zurÃ¼ckgeblieben.
 
 \index[Generierung von Berichten]
 Anfang der 90-er Jahre arbeitete ich an der automatischen Generierung
-von Berichten aus Datenmatrizen. In den dafür verwendeten Skripten
+von Berichten aus Datenmatrizen. In den dafÃ¼r verwendeten Skripten
 zur Datenaufbereitung reichten einfache Datenabfragen nicht mehr aus,
 es waren auch Berechnungen notwendig. Ich brauchte also
 schnell einen Befehlsinterpreter. Dieser war, motiviert von
-Erfahrungen mit PostScript, zunächst stackorientiert.
+Erfahrungen mit PostScript, zunÃ¤chst stackorientiert.
 
-Ein \index{stackorientierter Interpreter} läßt sich schnell implementieren.
+Ein \index{stackorientierter Interpreter} lÃ¤ÃŸt sich schnell implementieren.
 Seine Verwendung ist allerdings nicht benutzerfreundlich.
-Die Auflösung von Termen und die richtige Abfolge der Funktionsaufrufe
-verbleibt beim Anwender. Auch muß man sich immer wieder Gedanken
+Die AuflÃ¶sung von Termen und die richtige Abfolge der Funktionsaufrufe
+verbleibt beim Anwender. Auch muÃŸ man sich immer wieder Gedanken
 machen, in welcher Reihenfolge die Daten am Stack liegen, wie sie
-der nächste Funktionsaufruf benötigt und welche Umordnungen notwendig
+der nÃ¤chste Funktionsaufruf benÃ¶tigt und welche Umordnungen notwendig
 sind.
 
 Daher begann ich wieder an einem Befehlsinterpreter zu arbeiten.
-Da ich bereits langjährige Erfahrung in C hatte und diese Sprache
-lieben gelernt habe, wollte ich einen C-ähnlichen Interpreter
-schreiben. Primär sollte er von C-Programmen zur Auswertung
+Da ich bereits langjÃ¤hrige Erfahrung in C hatte und diese Sprache
+lieben gelernt habe, wollte ich einen C-Ã¤hnlichen Interpreter
+schreiben. PrimÃ¤r sollte er von C-Programmen zur Auswertung
 von Konfigurationsskripts eingesetzt werden. Daher wollte ich,
 dass vom Interpreter direkt auf C-Datenstrukturen zugegriffen werden
 kann und einfache Schnittstellen zu C-Bibliotheksfunktionen
 bestehen.
 
 Im Jahr 1994 war der EFEU-Interpreter einsetzbar, und es stand
-auch das |esh|-Kommando zur Verfügung. Seine erste wichtige Anwendung
+auch das |esh|-Kommando zur VerfÃ¼gung. Seine erste wichtige Anwendung
 war die Umstellung des \index{Wohnungsmarktmodell}es auf esh. Dabei kommt
-eine Version des Interpreters mit zusätzlichen Funktionen speziell
-für das Wohnungsmarktmodell zum Einsatz. Hier erwies sich auch die
-Nähe zu C als sehr nützlich. Zeitaufwendige Algorithmen konnten
+eine Version des Interpreters mit zusÃ¤tzlichen Funktionen speziell
+fÃ¼r das Wohnungsmarktmodell zum Einsatz. Hier erwies sich auch die
+NÃ¤he zu C als sehr nÃ¼tzlich. Zeitaufwendige Algorithmen konnten
 schrittweise durch C-Funktionen ersetzt werden, um die Laufzeit
 des Wohnungsmarktmodelles zu verbessern.
 
-In den nächsten Jahren wurde der Interpreter zunehmend um Funktionen
+In den nÃ¤chsten Jahren wurde der Interpreter zunehmend um Funktionen
 erweitert. So wurde eine Reihe von Hilfsprogrammen zur Manipulation
-von \index{Datenmatrizen} in |esh|-Skripts umgewandelt. Treibende Kraft dafür
+von \index{Datenmatrizen} in |esh|-Skripts umgewandelt. Treibende Kraft dafÃ¼r
 war einerseits das Wohnungsmarktmodell und andererseits die
 Berichtsgenerierung. Mit der Entwicklung von \index{|texmerge|}
 im Jahr 1996 wurde der weiterhin noch verwendete stackorientierte
-Interpreter endgültig durch |esh| ersetzt.
+Interpreter endgÃ¼ltig durch |esh| ersetzt.
 
 Ich habe mich mit C++ und objektorientierter Programmierung
 auseinandergesetzt, ohne aber auf C++ umzusteigen\note
-	Die Gründe dafür lagen zunächst in der Verfügbarkeit --
+	Die GrÃ¼nde dafÃ¼r lagen zunÃ¤chst in der VerfÃ¼gbarkeit --
 	C ist im Gegensatz zu C++ Bestandteil eines jeden UNIX-Systems
-	-- und im Overhead von C++ gegenüber von C.
-	Später hatte ich bereits
-	soviele objektorientierte Techniken und Hilfsfunktionen für C
+	-- und im Overhead von C++ gegenÃ¼ber von C.
+	SpÃ¤ter hatte ich bereits
+	soviele objektorientierte Techniken und Hilfsfunktionen fÃ¼r C
 	entwickelt, dass ein Umstieg nicht mehr angesagt war.
 . Der |esh|-Interpreter hat aber deutlich davon profitiert,
 er wurde um objekt&-orientierte Sprachelemente erweitert.

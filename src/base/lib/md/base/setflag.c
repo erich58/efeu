@@ -1,5 +1,5 @@
-/*	Achsenflags setzen/löschen
-	(c) 1994 Erich Frühstück
+/*	Achsenflags setzen/lÃ¶schen
+	(c) 1994 Erich FrÃ¼hstÃ¼ck
 */
 
 #include <EFEU/mdmat.h>

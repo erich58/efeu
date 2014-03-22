@@ -1,7 +1,7 @@
 /*
 Mustervergleich
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -58,10 +58,10 @@ static int dopatcmp (const char *pat, const char **ptr);
 static void urange (const char *range, unsigned *a, unsigned *b);
 
 
-/*	Rückgabecode von dopatcmp()
+/*	RÃ¼ckgabecode von dopatcmp()
 */
 
-#define	NOMATCH	0	/* Keine Übereinstimmung */
+#define	NOMATCH	0	/* Keine Ãœbereinstimmung */
 #define	INITIAL	1	/* Stringanfang entspricht dem Muster */
 #define	MATCH	2	/* String entspricht dem Muster */
 
@@ -71,13 +71,13 @@ static void urange (const char *range, unsigned *a, unsigned *b);
 
 int patcmp(const char *p, const char *s, char **ptr)
 {
-	int flag;	/* Negationsflag für Muster */
-	int val;	/* Rückgabewert von patcmp() */
+	int flag;	/* Negationsflag fÃ¼r Muster */
+	int val;	/* RÃ¼ckgabewert von patcmp() */
 
 	if	(ptr != NULL)	*ptr = NULL;
 
 /*	Ein leeres Muster stimmt nur mit einem leeren String
-	überein.
+	Ã¼berein.
 */
 	if	(p == NULL)
 	{
@@ -98,7 +98,7 @@ int patcmp(const char *p, const char *s, char **ptr)
 
 	if	(s == NULL)	return ! flag;
 
-/*	Mustervergleich durchführen und Ergebnis prüfen
+/*	Mustervergleich durchfÃ¼hren und Ergebnis prÃ¼fen
 */
 	val = dopatcmp(p, &s);
 
@@ -119,8 +119,8 @@ static int dopatcmp(const char *pat, const char **ptr)
 	const char *ldef;	/* Listendefinition */
 	unsigned cmin;		/* Minimale Widerholungzahl */
 	unsigned cmax;		/* Maximale Widerholungzahl */
-	unsigned i;		/* Zähler */
-	size_t n;		/* Hilfszähler */
+	unsigned i;		/* ZÃ¤hler */
+	size_t n;		/* HilfszÃ¤hler */
 	int val;		/* Hilfsvariable */
 
 /*	Abarbeiten des Strings

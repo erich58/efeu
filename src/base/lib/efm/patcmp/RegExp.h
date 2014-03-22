@@ -1,10 +1,10 @@
 /*
 :*:	regular expressions
-:de:	Reguläre Ausdrücke
+:de:	RegulÃ¤re AusdrÃ¼cke
 
 $Header	<EFEU/$1>
 
-$Copyright (C) 2000 Erich Frühstück
+$Copyright (C) 2000 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -31,8 +31,8 @@ If not, write to the Free Software Foundation, Inc.,
 
 /*
 :de:
-Die Datenstruktur |$1| dient zur Verwaltung von regulären Ausdrücken.
-Für Debuggingzwecke wird nicht nur der übersetzte Ausdruck, sondern
+Die Datenstruktur |$1| dient zur Verwaltung von regulÃ¤ren AusdrÃ¼cken.
+FÃ¼r Debuggingzwecke wird nicht nur der Ã¼bersetzte Ausdruck, sondern
 auch der Definitionsstring in der Struktur gespeichert.
 */
 
@@ -40,13 +40,13 @@ typedef struct {
 	REFVAR;		/* Referenzvariablen */
 	int icase;	/* Flag zur Fallunterscheidung */
 	char *def;	/* Definitionsstring */
-	regex_t exp;	/* übersetzter Ausdruck */
+	regex_t exp;	/* Ã¼bersetzter Ausdruck */
 } RegExp;
 
 /*
 :de:
 Der Makro |$1| legt die Maximalzahl von Teilmustern fest, die
-mit |RegExp_exec| abgefragt werden können.
+mit |RegExp_exec| abgefragt werden kÃ¶nnen.
 */
 
 #define	REGEXP_MAXSUB	32

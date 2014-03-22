@@ -1,7 +1,7 @@
 /*
 Datenbank sortieren, Eintrag suchen
 
-$Copyright (C) 1995 Erich Frühstück
+$Copyright (C) 1995 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -24,7 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/database.h>
 
 
-/*	Vergleichsfunktion für Dateneinträge
+/*	Vergleichsfunktion fÃ¼r DateneintrÃ¤ge
 */
 
 static EfiFunc *DB_cmpfunc = NULL;
@@ -38,7 +38,7 @@ static int DB_cmp(const void *a, const void *b)
 }
 
 
-/*	Eintrag suchen/ersetzen/löschen
+/*	Eintrag suchen/ersetzen/lÃ¶schen
 */
 
 void *DB_search(EfiDB *db, void *data, int flag)

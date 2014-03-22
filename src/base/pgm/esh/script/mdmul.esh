@@ -2,7 +2,7 @@
 :*:	matrix multiplication
 :de:	Matrizen multiplizieren
 
-$Copyright (C) 1997, 2001 Erich Frühstück
+$Copyright (C) 1997, 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -35,7 +35,7 @@ E:expr | :eval 'geval("{}")'
 	:de:Ausdruck <expr> auswerten
 r | Reduce = true
 	:*:remove singular axis
-	:de:Entfernen von singulären Achsen
+	:de:Entfernen von singulÃ¤ren Achsen
 m:map | Output; MapMode = true
 	:*:create file mapping
 	:de:Dateiabbild generieren
@@ -53,10 +53,10 @@ x:axis | x1; x2
 	:de:Name der gemeinsamen Achse
 a:name\|=\|var | SelDef1: append " "
 	:*:selection parameter for first input file
-	:de:Selektionsparameter für die erste Datei
+	:de:Selektionsparameter fÃ¼r die erste Datei
 b:name\|=\|var | SelDef2: append " "
 	:*:selection parameter for second input file
-	:de:Selektionsparameter für die zweite Datei
+	:de:Selektionsparameter fÃ¼r die zweite Datei
 :file1 | Ein1
 	:*:name of first data cube
 	:de:Name der 1. Eingabedatei
@@ -65,7 +65,7 @@ b:name\|=\|var | SelDef2: append " "
 	:de:Name der 2. Eingabedatei
 /.*=.*/<name>=<var> | SelDef: append " "
 	:*:selection parameter for both data files
-	:de:Selektionsparameter für beide Datenfiles
+	:de:Selektionsparameter fÃ¼r beide Datenfiles
 ::out | Output; PrintMode = false
 	:*:output file
 	:de:Name der Ausgabedatei

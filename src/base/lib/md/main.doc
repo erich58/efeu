@@ -1,18 +1,18 @@
 \config	efeu
 \date	Oktober 2000
 \title	Die Programmbibliothek md
-Handbuch für Programmierer
+Handbuch fÃ¼r Programmierer
 
 \preface
-Die Programmbiliothek |md| enthält sämtliche Hilfsfunktionen
+Die Programmbiliothek |md| enthÃ¤lt sÃ¤mtliche Hilfsfunktionen
 zum Arbeiten mit Datenmatrizen.
 
-Das Handbuch ist in Arbeit. Der allgemeine Teil muß noch
+Das Handbuch ist in Arbeit. Der allgemeine Teil muÃŸ noch
 geschrieben werden. Die Funktionen, Makros und Datentypen
-sind zwar vollständig angeführt, aber nur zum Teil beschrieben.
+sind zwar vollstÃ¤ndig angefÃ¼hrt, aber nur zum Teil beschrieben.
 
-	Erich Frühstück\br
-	Wördern, \thedate
+	Erich FrÃ¼hstÃ¼ck\br
+	WÃ¶rdern, \thedate
 \toc
 \addsrclist
 \delsrc		main.doc

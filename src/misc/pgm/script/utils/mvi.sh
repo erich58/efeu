@@ -2,7 +2,7 @@
 # :*:edit data cube using vi
 # :de:Datenmatrix mit vi editieren
 #
-# $Copyright (C) 1997 Erich Frühstück
+# $Copyright (C) 1997 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -48,9 +48,9 @@ esac
 # :de:
 # Das Programm erlaubt die Manipulation der Datenamtrix <file>
 # mit dem Editor vi. Je nach Art der mdprint-Optionen, ist eine
-# Änderung der Datenmatrix möglich.  Die Änderungen an der Datenmatrix
-# sollten mit Vorsicht durchgeführt werden, ein Fehler in der Syntax kann
-# zu Datenverlusten führen.
+# Ã„nderung der Datenmatrix mÃ¶glich.  Die Ã„nderungen an der Datenmatrix
+# sollten mit Vorsicht durchgefÃ¼hrt werden, ein Fehler in der Syntax kann
+# zu Datenverlusten fÃ¼hren.
 
 # $SeeAlso
 # mdprint(1), mdread(1), msc(1).
@@ -77,12 +77,12 @@ de*)
 	msg4="
 Das Programm erlaubt die Manipulation der Datenamtrix \"$name\"
 mit dem Editor vi. Je nach Art der mdprint-Optionen, ist eine
-Änderung der Datenmatrix möglich. Die Änderungen an der Datenmatrix
-sollten mit Vorsicht durchgeführt werden, ein Fehler in der Syntax kann
-zu Datenverlusten führen.\n
+Ã„nderung der Datenmatrix mÃ¶glich. Die Ã„nderungen an der Datenmatrix
+sollten mit Vorsicht durchgefÃ¼hrt werden, ein Fehler in der Syntax kann
+zu Datenverlusten fÃ¼hren.\n
 "
 	msg5="Fortfahren ? j\b"
-	msg6="Änderungen sichern ? j\b"
+	msg6="Ã„nderungen sichern ? j\b"
 	;;
 esac
 

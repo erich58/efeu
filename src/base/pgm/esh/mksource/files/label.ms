@@ -2,7 +2,7 @@
 Label-Tabelle generieren
 
 $Header	<$1>
-$Copyright (C) 2000 Erich Frühstück
+$Copyright (C) 2000 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -38,7 +38,7 @@ struct LabelEntry {
 
 /*
 Der Datentyp |$1| dient zur Generierung von Label-Tabellen.
-Diese werden primär bei der Konstruktion von Zählklassen verwendet.
+Diese werden primÃ¤r bei der Konstruktion von ZÃ¤hlklassen verwendet.
 */
 
 struct Label {
@@ -52,7 +52,7 @@ Label Label (str lname, ...)
 }
 
 /*
-Die Funktion |$1| liefert die akzuelle Zahl der Label-Einträge
+Die Funktion |$1| liefert die akzuelle Zahl der Label-EintrÃ¤ge
 */
 
 virtual int dim (Label & x)
@@ -61,7 +61,7 @@ virtual int dim (Label & x)
 }
 
 /*
-Die Funktion |$1| ergänzt die Label-Tabelle um einen Eintrag.
+Die Funktion |$1| ergÃ¤nzt die Label-Tabelle um einen Eintrag.
 */
 
 void Label::add (str name, str desc = NULL)
@@ -80,7 +80,7 @@ void Label::load (IO io)
 }
 
 /*
-Die Funktion |$1| generiert Label-Definitionen für einen
+Die Funktion |$1| generiert Label-Definitionen fÃ¼r einen
 vordefinierten Wertebereich.
 */
 
@@ -119,8 +119,8 @@ void Label::tab (bool glob = false)
 }
 
 /*
-Die Funktion |$1| generiert eine Liste von Makros für die einzelnen
-Einträge der Tabelle.
+Die Funktion |$1| generiert eine Liste von Makros fÃ¼r die einzelnen
+EintrÃ¤ge der Tabelle.
 */
 
 void Label::macro (bool glob = false)
@@ -148,8 +148,8 @@ void Label::macro (bool glob = false)
 $Description
 
 Die Konstruktionsfunktionen |Label::add|, |Label::load| und
-|Label::range| können beliebig miteinander kombiniert werden.
-Es können sowohl Makrodefinitionen mit |Label::macro| als auch eine
+|Label::range| kÃ¶nnen beliebig miteinander kombiniert werden.
+Es kÃ¶nnen sowohl Makrodefinitionen mit |Label::macro| als auch eine
 Label-Tabelle mit |Label::tab| generiert werden.
 */
 

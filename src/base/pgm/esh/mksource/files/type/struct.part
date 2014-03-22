@@ -6,16 +6,16 @@ static struct TypeDef {
 	str t_name;	/* Datentypname */
 	str t_desc;	/* Kurzbeschreibung */
 	str t_cname;	/* C-Datentyp */
-	int t_recl;	/* Satzlänge */
+	int t_recl;	/* SatzlÃ¤nge */
 	str t_base;	/* Basisdatentyp */
-	bool set_base;	/* Flag für Vererbung */
-	int need_setup;	/* Modus für Setup */
+	bool set_base;	/* Flag fÃ¼r Vererbung */
+	int need_setup;	/* Modus fÃ¼r Setup */
 	bool create_done;
 	bool glob_decl;	
-	bool compat;	/* Kompatiblitätsflag */
+	bool compat;	/* KompatiblitÃ¤tsflag */
 
 	str s_var;	/* Strukturvariablen */
-	str e_member;	/* Mitglieder einer Aufzählung */
+	str e_member;	/* Mitglieder einer AufzÃ¤hlung */
 	int e_dim;	/* Dimension des Label-Vektors */
 	str s_proto;
 	str s_mtab;
@@ -24,7 +24,7 @@ static struct TypeDef {
 
 	str read_func;	/* Lesefunktion */
 	str read_body;
-	str read_tmpbuf; /* Zwischenbuffer für Lesefunktion */
+	str read_tmpbuf; /* Zwischenbuffer fÃ¼r Lesefunktion */
 
 	str write_func;	/* Schreibfunktion */
 	str write_body;
@@ -32,7 +32,7 @@ static struct TypeDef {
 	str print_func;	/* Darstellungsfunktion */
 	str print_body;
 
-	str clean_func;	/* Löschfunktion */
+	str clean_func;	/* LÃ¶schfunktion */
 	str clean_body;
 
 	str copy_func;	/* Kopierfunktion */
@@ -46,7 +46,7 @@ static struct TypeDef {
 	int bf_used;
 	bool has_bf;
 	bool flag_malloc;
-	bool flag_vrecl;	/* Flag für variable Satzlänge */
+	bool flag_vrecl;	/* Flag fÃ¼r variable SatzlÃ¤nge */
 
 	str[] t_ctrl;
 	str[] t_idef;

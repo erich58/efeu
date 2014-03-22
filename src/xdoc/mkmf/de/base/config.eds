@@ -1,7 +1,7 @@
 \sec	Aufbau von |Config.make|
 
-Die Konfigurationsdatei für |shmkmf| hat den Namen |Config.make|. Die
-einzelnen Zeilen werden von der Shell interpretiert. Für die normale
+Die Konfigurationsdatei fÃ¼r |shmkmf| hat den Namen |Config.make|. Die
+einzelnen Zeilen werden von der Shell interpretiert. FÃ¼r die normale
 Anwendungen sind jedoch keine Kenntnisse der Shell-Programmierung
 erforderlich. Die Konfigurationsdatei besteht aus einer Reihe von
 vordefinierten Funktionsaufrufen, die jeweils eine entsprechende
@@ -9,32 +9,32 @@ Makefileregel generieren.
 
 Funktionen unterscheiden sich im Aufruf nicht von externen Kommandos.
 Meist ist es unerheblich, ob eine bestimmte Aufgabe als Funktion oder
-als externes Kommando implementiert ist. Im folgenden werden wir dafür
+als externes Kommando implementiert ist. Im folgenden werden wir dafÃ¼r
 allgemein den Begriff Funktion verwenden.
 
 Die meisten vordefinierten Funktionen zur Regelgenerierung haben den
-Präfix |mf_|. Damit werden Namenskonflikte vermieden. Die Syntax der
+PrÃ¤fix |mf_|. Damit werden Namenskonflikte vermieden. Die Syntax der
 Funktionen orientiert sich an die Syntax der Makefile-Regeln. Es gilt
 folgende Reihenfolge der Optionen und Argumente:
 
 *	Optionen zur Ausgabe/Formatierung der Regel
 *	Name des Ziels
-*	Name der Abhängigkeiten (falls benötigt)
-*	Optionen und Argumente für die Kommandos der Regel
+*	Name der AbhÃ¤ngigkeiten (falls benÃ¶tigt)
+*	Optionen und Argumente fÃ¼r die Kommandos der Regel
 
 Hierbei ist besonders zu beachten, dass bei Kommandos
-üblicherweise zuerst die Ausgangsdateien und dann die Zieldateien angegeben
+Ã¼blicherweise zuerst die Ausgangsdateien und dann die Zieldateien angegeben
 werde, bei Funktionen zur Regelgenerierung ist das genau umgekehrt.
-Weiters sind die Optionen zur Ausgabe der Regel unabhängig von den
-Optionen für die Kommandos zur Aufgabenlösung selbst.
+Weiters sind die Optionen zur Ausgabe der Regel unabhÃ¤ngig von den
+Optionen fÃ¼r die Kommandos zur AufgabenlÃ¶sung selbst.
 
-Die Funktionen zur Regelgenerierung sind bezüglich der Reihenfolge der
+Die Funktionen zur Regelgenerierung sind bezÃ¼glich der Reihenfolge der
 Optionen nicht so flexibel wie die in der Regel verwendeten Kommandos.
 
 \ssec	Variablen
 
-Wie in Makefiles können auch in |Config.make| Variablen verwendet
-werden. Ihre Definition und die Wertabfrage ist ähnlich wie in
+Wie in Makefiles kÃ¶nnen auch in |Config.make| Variablen verwendet
+werden. Ihre Definition und die Wertabfrage ist Ã¤hnlich wie in
 Makefiles, aber nicht gleich. Wichtig ist es, diese beiden
 Variablenbegriffe nicht miteinander zu verwechseln.
 
@@ -42,26 +42,26 @@ Eine Variablenzuweisung in der Shell hat die Form:
 
 <name>|=|<wert>
 
-Vor und nach dem Zuweisungszeichen |=| dürfen keine Leerzeichen
+Vor und nach dem Zuweisungszeichen |=| dÃ¼rfen keine Leerzeichen
 stehen. Falls in <wert> Leerzeichen und sonstige Sonderzeichen
-der Shell vorkommen. müssen diese geeignet quotiert werden.
-Eine Möglichkeit davon ist es, den gesamten Ausdruck von <wert> unter
-einfache oder doppelte Anführung zu setzen, oder jedes Sonderzeichen
-mit dem Fluchtsymbol Gegenschrägstrich (Backslash) zu maskieren.
+der Shell vorkommen. mÃ¼ssen diese geeignet quotiert werden.
+Eine MÃ¶glichkeit davon ist es, den gesamten Ausdruck von <wert> unter
+einfache oder doppelte AnfÃ¼hrung zu setzen, oder jedes Sonderzeichen
+mit dem Fluchtsymbol GegenschrÃ¤gstrich (Backslash) zu maskieren.
 
-Die Anführungszeichen sind nicht Teil des Wertes der Variablen.
-Hier verhält sich |make| anders. Eventuell vorhandene Anführungen
-sind dort Teil des Variableninhalts. Dies stört in der Regel nicht, da
-|make| zur Befehlsausführung wiederum die Shell verwendet, die dann
-die Anführungszeichen eliminiert. Außerdem erlaubt |make| Leerzeichen
+Die AnfÃ¼hrungszeichen sind nicht Teil des Wertes der Variablen.
+Hier verhÃ¤lt sich |make| anders. Eventuell vorhandene AnfÃ¼hrungen
+sind dort Teil des Variableninhalts. Dies stÃ¶rt in der Regel nicht, da
+|make| zur BefehlsausfÃ¼hrung wiederum die Shell verwendet, die dann
+die AnfÃ¼hrungszeichen eliminiert. AuÃŸerdem erlaubt |make| Leerzeichen
 vor und nach dem Zuweisungszeichen (|=|), was im allgemeinem die
-Lesbarkeit erhöht.
+Lesbarkeit erhÃ¶ht.
 
 Bei der Abfrage von Shell-Variablen kommt wie bei |make| das
 Dollarzeichen zum Einsatz. Eine Klammerung des Variablennamens ist
-aber nur in Sonderfällen notwendig. Das Ende des Namens wird durch ein
-Punktierungszeichen (alles außer Buchstaben, Ziffern oder dem
+aber nur in SonderfÃ¤llen notwendig. Das Ende des Namens wird durch ein
+Punktierungszeichen (alles auÃŸer Buchstaben, Ziffern oder dem
 Unterstreichungssymbol) bestimmt. Folgt unmittelbar nach einem Namen
 wieder ein Buchstabe (oder eine Ziffer) muss der Name in geschwungenen
-Klammern eingeschlossen werden. Make benötigt im Gegensatz dazu
-für Variablen mit mehr als einem Buchstaben runde Klammern.
+Klammern eingeschlossen werden. Make benÃ¶tigt im Gegensatz dazu
+fÃ¼r Variablen mit mehr als einem Buchstaben runde Klammern.

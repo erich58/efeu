@@ -1,7 +1,7 @@
 /*
 Verwaltung der IO-Strukturen
 
-$Copyright (C) 1997 Erich Frühstück
+$Copyright (C) 1997 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -57,7 +57,7 @@ IO *io_alloc (void)
 RefType io_reftype = REFTYPE_INIT("IO", io_ident, io_clean);
 
 
-/*	IO-Struktur schließen/Referenzzähler verringern
+/*	IO-Struktur schlieÃŸen/ReferenzzÃ¤hler verringern
 */
 
 int io_close (IO *io)
@@ -68,7 +68,7 @@ int io_close (IO *io)
 }
 
 
-/*	Gepufferte Zeichen zurückschreiben
+/*	Gepufferte Zeichen zurÃ¼ckschreiben
 */
 
 int io_pushback (IO *io)
@@ -93,7 +93,7 @@ int io_pushback (IO *io)
 }
 
 
-/*	Zurücksetzen der IO-Struktur
+/*	ZurÃ¼cksetzen der IO-Struktur
 */
 
 int io_err (IO *io)

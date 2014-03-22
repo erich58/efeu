@@ -1,7 +1,7 @@
 /*
 Von libc6-1.0.3 aus random_r.c abgeleiteter Code
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or

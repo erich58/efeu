@@ -1,7 +1,7 @@
 /*
 Fenster mit Spuranzeige
 
-$Copyright (C) 1995 Erich Frühstück
+$Copyright (C) 1995 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -92,7 +92,7 @@ void WinTrace (int rows, int cols)
 
 		case 'z':
 		
-			WinConfirm(CurrentPos(win, 0, 0, flags), "Bitte um eine\nBestätigung");
+			WinConfirm(CurrentPos(win, 0, 0, flags), "Bitte um eine\nBestÃ¤tigung");
 			break;
 
 		case 'e':

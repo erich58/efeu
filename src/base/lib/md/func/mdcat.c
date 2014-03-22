@@ -1,7 +1,7 @@
 /*
 :de:Achsen einer Datenmatrix aufsummieren
 
-$Copyright (C) 1994, 2007 Erich Frühstück
+$Copyright (C) 1994, 2007 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -113,7 +113,7 @@ mdmat *md_cat (const char *def, mdmat **tab, size_t dim)
 	md_alloc(md);
 	memset(md->data, 0, md->size);
 
-/*	Werte einfügen
+/*	Werte einfÃ¼gen
 */
 	p = md->data;
 

@@ -1,7 +1,7 @@
 /*
 Funktionen auswerten
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -140,7 +140,7 @@ void Func_inline (EfiFunc *func, void *rval, void **arg)
 		PushVarTab(RefVarTab(func->type->vtab), base);
 	}
 
-/*	Variablentabelle für Argumente aufbauen
+/*	Variablentabelle fÃ¼r Argumente aufbauen
 */
 	if	(func->dim)
 	{
@@ -180,7 +180,7 @@ void Func_inline (EfiFunc *func, void *rval, void **arg)
 		else	Obj2Data(obj, func->type, rval);
 	}
 
-/*	Variablentabelle für Argumente löschen
+/*	Variablentabelle fÃ¼r Argumente lÃ¶schen
 */
 	if	(vtab)
 	{

@@ -1,8 +1,8 @@
 /*
 :*:time range for counting
-:de:Zeitbereich für Zählungen
+:de:Zeitbereich fÃ¼r ZÃ¤hlungen
 
-$Copyright (C) 2006 Erich Frühstück
+$Copyright (C) 2006 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -115,7 +115,7 @@ void MdCountPar_range (MdCountPar *par, const char *def)
 	if	(label)
 		s_time.name = label;
 
-/*	Zeitzähler generieren
+/*	ZeitzÃ¤hler generieren
 */
 	s_time.dim = par->time_dim;
 	s_time.ptr = &par->time_idx;

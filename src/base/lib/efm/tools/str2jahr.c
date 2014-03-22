@@ -1,12 +1,12 @@
 /*	Jahresbestimmung
-	(c) 2000 Erich Frühstück
+	(c) 2000 Erich FrÃ¼hstÃ¼ck
 */
 
 #include <EFEU/calendar.h>
 #include <ctype.h>
 
-#define	YLIM_2000	CenturyLimit	/* Grenze für 2000 - Offset */
-#define	YLIM_1900	100		/* Grenze für 1900 - Offset */
+#define	YLIM_2000	CenturyLimit	/* Grenze fÃ¼r 2000 - Offset */
+#define	YLIM_1900	100		/* Grenze fÃ¼r 1900 - Offset */
 
 int str2jahr (const char *str, char **ptr)
 {

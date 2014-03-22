@@ -1,4 +1,4 @@
-# :de: Hilfsprogramme für Pixeldateien
+# :de: Hilfsprogramme fÃ¼r Pixeldateien
 ##Depends: pix
 
 include efeu.smh

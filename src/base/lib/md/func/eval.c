@@ -1,5 +1,5 @@
 /*	Daten auswerten
-	(c) 1995 Erich Frühstück
+	(c) 1995 Erich FrÃ¼hstÃ¼ck
 */
 
 #include <EFEU/mdeval.h>
@@ -74,7 +74,7 @@ static void datawalk (const WALKPAR *walk, DATAPAR *data, MdEvalDef *eval)
 
 	x = walk->axis;
 
-/*	Achsen überlesen
+/*	Achsen Ã¼berlesen
 */
 	while (x != NULL)
 	{

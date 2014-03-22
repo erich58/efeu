@@ -1,7 +1,7 @@
 /*
 Werte aus Buffer abfragen
 
-$Copyright (C) 1993 Erich Frühstück
+$Copyright (C) 1993 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -240,7 +240,7 @@ void set_pval (unsigned char *buf, int pos, int len, unsigned val)
 	}
 }
 
-/*	Zahlenwerte in BCD-Verschlüsselung
+/*	Zahlenwerte in BCD-VerschlÃ¼sselung
 */
 
 unsigned db_bcdval(const unsigned char *buf, int pos, int len)

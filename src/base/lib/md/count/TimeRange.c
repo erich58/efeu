@@ -1,6 +1,6 @@
 /*	Bestimmung eines Datumsbereichs
-	(c) 1998 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+	(c) 1998 Erich FrÃ¼hstÃ¼ck
+	A-1090 Wien, WÃ¤hringer StraÃŸe 64/6
 */
 
 #include <EFEU/TimeRange.h>
@@ -10,7 +10,7 @@
 
 #define	DELIM	"%s,"
 
-#define	JLIM	70	/* Limit für Jahrhundertwechsel */
+#define	JLIM	70	/* Limit fÃ¼r Jahrhundertwechsel */
 
 char *TimeRange_fmt = NULL;
 

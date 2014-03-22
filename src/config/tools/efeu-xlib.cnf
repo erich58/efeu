@@ -1,7 +1,7 @@
 #:*:	determine c-flags for use of external libraries
 #:de: 	Bestimmung von C-Flags zur Einbindung externer Bibliotheken
 #
-# $Copyright (C) 2002 Erich Frühstück
+# $Copyright (C) 2002 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -29,20 +29,20 @@ d::level |
 	:de:Maximale Ebene bei rekursiver Suche.
 I::path |
 	:*:path to search header files (default: |/usr/include|).
-	:de:Suchpfad für Kopfdateien, Vorgabe: |/usr/include|.
+	:de:Suchpfad fÃ¼r Kopfdateien, Vorgabe: |/usr/include|.
 L::path |
 	:*:path to search libraries (default: |/lib:/usr/lib|).
-	:de:Suchpfad für Bibliotheken, Vorgabe: |/lib:/usr/lib|.
+	:de:Suchpfad fÃ¼r Bibliotheken, Vorgabe: |/lib:/usr/lib|.
 a |
 	:*:try next search only if last search was successfull.
-	:de:Nächste Suche nur durchführen, wenn letzte Suche erfolgreich war.
+	:de:NÃ¤chste Suche nur durchfÃ¼hren, wenn letzte Suche erfolgreich war.
 o |
 	:*:try next search only if last search failed.
-	:de:Nächste Suche nur durchführen, wenn letzte Suche fehlschlug.
+	:de:NÃ¤chste Suche nur durchfÃ¼hren, wenn letzte Suche fehlschlug.
 l:lib |
 	:*:search for libraray corresponding to the regular
 	expression |^lib(|<lib>|)\.(a||so)$$|.
-	:de:Suche nach der Bibliothek, die dem regulären
+	:de:Suche nach der Bibliothek, die dem regulÃ¤ren
 	Ausdruck |^lib(|<lib>|)\.(a||so)$$| entspricht.
 ::name |
 	:*:search for header <name>, where <name> may contain

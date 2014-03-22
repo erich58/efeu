@@ -1,23 +1,23 @@
 \sec	Listen
 
 Listen werden automatisch bei Vorhandensein einer Listenmarke
-begonnen. Je nach Art der Listenmarke wird eine Aufzählungsliste,
+begonnen. Je nach Art der Listenmarke wird eine AufzÃ¤hlungsliste,
 eine nummerierte Liste oder eine Beschreibungsliste generiert.
 Wechselt die Art der Listenmarke, wird auch die Listenumgebung
 gewechselt.
 
 Folgende Marken sind definiert:
 *	Ein Stern |*| am Anfang einer Zeile stellt
-	eine Aufzählungsmarke dar. Folgt dem Stern ein
-	nichtweißes Zeichen, gilt er nicht als Marke.
+	eine AufzÃ¤hlungsmarke dar. Folgt dem Stern ein
+	nichtweiÃŸes Zeichen, gilt er nicht als Marke.
 *	Ein Gitterzeichen |#| am Anfang einer Zeile stellt
 	eine Nummerierungsmarke dar. Folgt dem Gitterzeichen ein
-	nichtweißes Zeichen, gilt er nicht als Marke.
+	nichtweiÃŸes Zeichen, gilt er nicht als Marke.
 *	Ein mit eckigen Klammern |[|~&ldots;~|]| begrenzter Text am Anfang einer
 	Zeile stellt eine Beschreibungsmarke dar.
 
 Beachte: Die Art der Listenmarken, der Nummerierungsstil (dezimal,
-alphabetisch oder römisch) und die Schrift der Beschreibungsmarke
+alphabetisch oder rÃ¶misch) und die Schrift der Beschreibungsmarke
 werden von den entsprechenden Textprozessoren (\LaTeX, |nroff|,
 &ldots;) bestimmt.
 
@@ -26,23 +26,23 @@ werden von den entsprechenden Textprozessoren (\LaTeX, |nroff|,
 ~
 
 \include list_ex1.eds
-\caption Beispiel für die Listengenerierung
+\caption Beispiel fÃ¼r die Listengenerierung
 \end
 
-Werden die zugehörigen Listeneinträge eingerückt geschrieben (sollte
+Werden die zugehÃ¶rigen ListeneintrÃ¤ge eingerÃ¼ckt geschrieben (sollte
 ein Schreibstandard sein), kann das Ende der Liste anhand der
-Einrücktiefe ermittelt werden.  Beginnt ein Text ohne Marke auf der
+EinrÃ¼cktiefe ermittelt werden.  Beginnt ein Text ohne Marke auf der
 selben Ebene wie die Listenmarken, wird die Liste beendet. Sie kann
 auch direkt mit \index{|\endlist|} oder \index{|\endall|} beendet
 werden. Ein Gliederungsbefehl beendet alle offenen Listen.
 
-Die zu einer Marke gehörenden Listeneinträge können bereits
+Die zu einer Marke gehÃ¶renden ListeneintrÃ¤ge kÃ¶nnen bereits
 neben der Marke beginnen, die Marke wird bei der Ermittlung der
-Einrücktiefe mit berücksichtigt.
+EinrÃ¼cktiefe mit berÃ¼cksichtigt.
 
-Ist ein Listeneintrag eingerückt, können Teillistenmarken auf der
-selben Einrücktiefe wie der Listeneintrag selbst stehen, ansonsten
-müssen sie eingerückt werden.
+Ist ein Listeneintrag eingerÃ¼ckt, kÃ¶nnen Teillistenmarken auf der
+selben EinrÃ¼cktiefe wie der Listeneintrag selbst stehen, ansonsten
+mÃ¼ssen sie eingerÃ¼ckt werden.
 
 Neben den syntaktisch eingebauten Marken gibt es noch Befehle,
 die Listenmarken generieren. Sie werden in der Regel zur Vereinfachung
@@ -59,11 +59,11 @@ Folgende Markenbefehle sind definiert:
 [\index{|\bfitem|}]
 	Marke in Fettschrift.
 
-Wie Einrückungen können auch Listen einen eigenen Absatz bilden,
+Wie EinrÃ¼ckungen kÃ¶nnen auch Listen einen eigenen Absatz bilden,
 oder Teil eines Absatzes sein. Die Beschreibungstexte einer Marke
-können selbst aus mehreren Absätzen bestehen und Teillisten enthalten.
+kÃ¶nnen selbst aus mehreren AbsÃ¤tzen bestehen und Teillisten enthalten.
 
-Eine Einrückung, die einer Liste folgt, kann von dieser
+Eine EinrÃ¼ckung, die einer Liste folgt, kann von dieser
 nicht unterschieden werden. Hier muss die Liste vorher mit
 \index{|\endlist|} beendet werden.
 
@@ -73,14 +73,14 @@ nicht unterschieden werden. Hier muss die Liste vorher mit
 	\index{|\margin|}|[|<Position>|]|<Text>
 generiert.
 
-\index{Fußnoten} werden mit dem Befehl
+\index{FuÃŸnoten} werden mit dem Befehl
 	\index{|\note|}|[|<Marke>|]{|<Text>|}| generiert.
-Die Fußnotenmarke kann optional vorgegeben werden.
+Die FuÃŸnotenmarke kann optional vorgegeben werden.
 
 Das ist der laufende Text, der mit einer Randnotiz\margin{Das ist
 die Randnotiz} und einer
-Fußnote\note{Das ist die Fußnote} versehen ist.
+FuÃŸnote\note{Das ist die FuÃŸnote} versehen ist.
 
-Eine Fußnotenmarke kann unabhängig von einer Fußnote mit dem
+Eine FuÃŸnotenmarke kann unabhÃ¤ngig von einer FuÃŸnote mit dem
 Befehl \index{|\mark|}|{|<num>|}| generiert werden. Hat <num> den Wert 0,
 wird ein Stern als Marke verwendet.

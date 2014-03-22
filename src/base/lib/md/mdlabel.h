@@ -3,7 +3,7 @@ Labelgenerierung
 
 $Header <EFEU/$1>
 
-$Copyright (C) 1997 Erich Frühstück
+$Copyright (C) 1997 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -36,7 +36,7 @@ typedef struct MdAxisLabelStruct MdAxisLabel;
 struct MdAxisLabelStruct {
 	MdAxisLabel *next;
 	char *name;	/* Name der Achse */
-	size_t len;	/* Länge des Bezeichners */
+	size_t len;	/* LÃ¤nge des Bezeichners */
 	size_t dim;	/* Zahl der Muster */
 	char **list;	/* Liste mit Muster */
 	VecBuf idxtab;	/* Tabelle mit Bezeichnern */

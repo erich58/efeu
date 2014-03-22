@@ -2,7 +2,7 @@
 :*:	print data cube
 :de:	Datenmatrix ausgeben
 
-$Copyright (C) 1997, 2001 Erich Frühstück
+$Copyright (C) 1997, 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -50,19 +50,19 @@ M:mode | mode
 	:de:Aufbereitung als ASCII-Datei
 -csv | mode = csv; Suffix = "csv"; Locale = NULL
 	:*:prepare for excel
-	:de:Aufbereitung für excel
+	:de:Aufbereitung fÃ¼r excel
 -tex | mode = tex
 	:*:prepare for LaTeX
-	:de:Aufbereitung für TeX
+	:de:Aufbereitung fÃ¼r TeX
 -tab | mode = tab
 	:*:prepare for LaTeX tabular environment
-	:de:Aufbereitung für TeX-Tabellen
+	:de:Aufbereitung fÃ¼r TeX-Tabellen
 -data | mode="data"; Flags: set "{Flags} nohead"
 	:*:print only data values
 	:de:Nur Datenwerte ausgeben
 -sc | mode = "sc"; Locale = "en"
 	:*:output sc spreadsheet
-	:de:Aufbereitung für sc-Spreadsheet
+	:de:Aufbereitung fÃ¼r sc-Spreadsheet
 -std | :eval 'PrintListDelim=" "; field_width = 7'; \
 	Flags: set "{Flags} mode=std title label=8"
 	:*:fixed column alignment
@@ -84,28 +84,28 @@ M:mode | mode
 	:de:Spaltenbezeichner markieren
 -nomark | Flags: set "{Flags} nomark"
 	:*:suppress column marker
-	:de:Spaltenbezeichner unterdrücken
+	:de:Spaltenbezeichner unterdrÃ¼cken
 h | Flags: set "{Flags} nodata"
 	:*:show header only
 	:de:Nur Header ausgeben
 b | Flags: set "{Flags} nohead"
 	:*:show data only
-	:de:Header unterdrücken
+	:de:Header unterdrÃ¼cken
 H | Flags: set "{Flags} xhead"
 	:*:show complete header
-	:de:Vollständigen Header ausgeben
+	:de:VollstÃ¤ndigen Header ausgeben
 t | Flags: set "{Flags} title"
 	:*:show only title in header
 	:de:Nur Titel im Header ausgeben
 z | Flags: set "{Flags} nozero"
 	:*:suppress 0 values
-	:de:Nullwerte unterdrücken
+	:de:Nullwerte unterdrÃ¼cken
 L:loc | -locale:loc | Locale
 	:*:set locale for number format to <loc>
-	:de:Lokale für Zahlendarstellung auf <loc> setzen
+	:de:Lokale fÃ¼r Zahlendarstellung auf <loc> setzen
 f:font | Flags: set "{Flags} {}pt"
 	:*:font size in point
-	:de:Fontgröße in pt
+	:de:FontgrÃ¶ÃŸe in pt
 l:width | Flags: set "{Flags} label={}"
 	:*:width of line label
 	:de:Breite der Zeilenbezeichner
@@ -129,16 +129,16 @@ e | :eval 'fmt_float="%*.*e"'
 	:de:Exponentialformat verwenden
 x:list | Mark
 	:*:mark axis as column
-	:de:Achsenliste für Spalten
+	:de:Achsenliste fÃ¼r Spalten
 s:list | SumList: append " "
 	:*:accumulate list of axis
 	:de:Achsen aufsummieren
 r | Reduce = " "
 	:*:remove singular axis
-	:de:Entfernen von singulären Achsen
+	:de:Entfernen von singulÃ¤ren Achsen
 R:list | Reduce: append " "
 	:*:remove singular axis from List <list>
-	:de:Entfernen von singulären Achsen aus der Liste <list>
+	:de:Entfernen von singulÃ¤ren Achsen aus der Liste <list>
 v:[name::]var | VarDef: append " "
 	:*:select type components
 	:de:Variablenselektion
@@ -150,7 +150,7 @@ P:name\|=\|list | -paste:name\|=\|list | Paste: append " "
 	:de:Liste <list> von Achsen zu neuer Achse <name> zusammenfassen
 -paste-delim:key | PasteDelim
 	:*:delimiter for pasting axis, default: {PasteDelim}
-	:de:Begrenzer für das Verkleben von Achsen, Vorgabe {PasteDelim}
+	:de:Begrenzer fÃ¼r das Verkleben von Achsen, Vorgabe {PasteDelim}
 S:list | -split:list | Split: append ","
 	:*:split data matrix by axis <list>.
 	:de:Datenmatrix nach Achse(n) <list> aufspalten.

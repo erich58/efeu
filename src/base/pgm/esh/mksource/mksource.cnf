@@ -1,7 +1,7 @@
 # :*:program generator
 # :de:Programmgenerierung
 # 
-# $Copyright (C) 1994 Erich Frühstück
+# $Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -26,7 +26,7 @@
 
 I:dir | :eval 'IncPath = paste(PATHSEP, "{}", IncPath); addflag("-I{}")'
 	:*:appends <dir> to the search path for scripts.
-	:de:erweitert den Suchpfad für Skriptfiles um <dir>.
+	:de:erweitert den Suchpfad fÃ¼r Skriptfiles um <dir>.
 
 s | :eval 'VerboseMode = 0'
 	:*:silent execution
@@ -38,7 +38,7 @@ V | :eval 'VerboseMode = 1'
 
 v | :eval 'VerboseMode = 2'
 	:*:verbose
-	:de:Arbeitsschritte ausführlich protokollieren
+	:de:Arbeitsschritte ausfÃ¼hrlich protokollieren
 
 l | :eval 'MakeList = true'
 	:*:create list of targets
@@ -54,7 +54,7 @@ r | :eval 'MakeRule = true'
 
 x | :eval 'AllTarget = NULL; CleanTarget = NULL; DependTarget = NULL'
 	:*:no pseudo targets for make
-	:de:Keine Pseudoziele für Makefileregeln
+	:de:Keine Pseudoziele fÃ¼r Makefileregeln
 
 -all:name | :eval 'AllTarget = "{}"'
 	:*:target name
@@ -62,11 +62,11 @@ x | :eval 'AllTarget = NULL; CleanTarget = NULL; DependTarget = NULL'
 
 -clean:name | :eval 'CleanTarget = "{}"'
 	:*:clean target name
-	:de:Name des Löschzieles
+	:de:Name des LÃ¶schzieles
 
 -depend:name | :eval 'DependTarget = "{}"'
 	:*:depend target name
-	:de:Name des Ziels für Abhängigkeitsregeln
+	:de:Name des Ziels fÃ¼r AbhÃ¤ngigkeitsregeln
 
 -lock | :eval 'LockFlag = true'
 	:*:lock file creation
@@ -78,15 +78,15 @@ x | :eval 'AllTarget = NULL; CleanTarget = NULL; DependTarget = NULL'
 
 d | :eval 'MakeDep = true'
 	:*:make dependence
-	:de:Abhängigkeitsregeln generieren
+	:de:AbhÃ¤ngigkeitsregeln generieren
 
 D name | :eval 'DependName = "{}"; MakeDep = true'
 	:*:make dependence for target <name>
-	:de:Abhängigkeitsregel für <name> generieren
+	:de:AbhÃ¤ngigkeitsregel fÃ¼r <name> generieren
 
 n name | :eval 'config name = "{}"'
 	:*:base name for created files
-	:de:Basisname für Standardnamen
+	:de:Basisname fÃ¼r Standardnamen
 
 h | :eval 'config hdr'
 	:*:create header

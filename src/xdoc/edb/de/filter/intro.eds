@@ -1,6 +1,6 @@
 \sec 	Grundlagen
 
-Sämtliche Transformationen von EDB-Datenfiles können über
+SÃ¤mtliche Transformationen von EDB-Datenfiles kÃ¶nnen Ã¼ber
 \index{Filter} implementiert werden.
 
 Datenbankfilter werden durch Aufsetzen einer EDB-Datenschnittstelle
@@ -8,45 +8,45 @@ auf eine andere EDB-Datenschnittstelle realisiert. Die Daten werden
 mit einer speziellen Lesefunktion aus der Basisdatenschnittstelle
 gelesen und verarbeitet.
 
-Grundsätzlich lesen Datenbankfilter <n> Datensätze eines Typs und
-liefern <k> Datensätze eines anderen Typs. Die resultierenden Datensätze
-werden immer einzeln über die Datenschnittstelle abgerufen und müssen
+GrundsÃ¤tzlich lesen Datenbankfilter <n> DatensÃ¤tze eines Typs und
+liefern <k> DatensÃ¤tze eines anderen Typs. Die resultierenden DatensÃ¤tze
+werden immer einzeln Ã¼ber die Datenschnittstelle abgerufen und mÃ¼ssen
 bei Bedarf vom Filter zwischengespeichert werden. Beim Sortieren
 eines Datenfiles muss z.B. der gesamte Datenbestand zwischengespeichert
 werden.
 
-Filter können beliebig geschachtelt werden. Es besteht die
-Möglichkeit, zusätzliche Daten über einen Filter einzuspielen.
-Über diesen Weg kann z.B. eine Datenbankverknüpfung als Filter
+Filter kÃ¶nnen beliebig geschachtelt werden. Es besteht die
+MÃ¶glichkeit, zusÃ¤tzliche Daten Ã¼ber einen Filter einzuspielen.
+Ãœber diesen Weg kann z.B. eine DatenbankverknÃ¼pfung als Filter
 implementiert werden.
 
 \ssec	Syntax
 
 \index[Filtersyntax]
-Filter können parametrisiert werden. Die allgemeine Syntax ist
+Filter kÃ¶nnen parametrisiert werden. Die allgemeine Syntax ist
 	<name>|[|<opt>|]=|<arg>
-Die Parameter <opt> und <arg> können vom Filter <name> beliebig
-verwendet werden. In der Regel werden notwendige Parameter über
-<arg> und zusätzliche Parameter über <opt> übergeben. Parameter, die
-Leerzeichen enthalten können, werden bevorzugt als <opt> übergeben.
+Die Parameter <opt> und <arg> kÃ¶nnen vom Filter <name> beliebig
+verwendet werden. In der Regel werden notwendige Parameter Ã¼ber
+<arg> und zusÃ¤tzliche Parameter Ã¼ber <opt> Ã¼bergeben. Parameter, die
+Leerzeichen enthalten kÃ¶nnen, werden bevorzugt als <opt> Ã¼bergeben.
 Falls <opt> nicht angegeben wird, entfallen auch die eckigen Klammern.
 Dabei ist zu beachten, dass keine Angabe von <opt> und eine leere
-Klammer (Leerstring für <opt>) unterschiedlich behandelt werden.
+Klammer (Leerstring fÃ¼r <opt>) unterschiedlich behandelt werden.
 
 Bei der Implementierung der Filter wird die \index{Filterdefinition} aus
-einer Zeichenkette ermittelt. Mehrere Filter können dabei angegeben
-werden. Die einzelnen Definitionen werden durch beliebige, weiße
+einer Zeichenkette ermittelt. Mehrere Filter kÃ¶nnen dabei angegeben
+werden. Die einzelnen Definitionen werden durch beliebige, weiÃŸe
 Zeichen getrennt. Innerhalb von eckigen, runden oder geschwungenen
-Klammern werden weiße Zeichen nicht als Trennzeichen behandelt.
+Klammern werden weiÃŸe Zeichen nicht als Trennzeichen behandelt.
 
 Stehen nur Teile der Filterdefinition in geschwungenen Klammern, sind
 sie Teil der Filterdefinition. Wird die gesamte Filterdefinition in
 geschwungene Klammern gesetzt, werden diese bei der Analyse entfernt.
-Dies wird benötigt, wenn z.B. im Argument einer Filterdefinition ein
-Leerzeichen außerhalb einer Klammer steht.
+Dies wird benÃ¶tigt, wenn z.B. im Argument einer Filterdefinition ein
+Leerzeichen auÃŸerhalb einer Klammer steht.
 
 \index[Informationsabfrage zu Datenbankfiltern]
-Wird ein |?| als Filtername angegeben, werden alle verfügbaren Filter
+Wird ein |?| als Filtername angegeben, werden alle verfÃ¼gbaren Filter
 mit einer Kurzbeschreibung ausgegeben.
 Wird als Argument eines Filters ein |?| angegeben, wird eine
 Kurzbeschreibung des Filters ausgegeben.
@@ -54,55 +54,55 @@ Kurzbeschreibung des Filters ausgegeben.
 \ssec	\label{fscript}\index{Filterskripts}
 
 \index[Filter |script|]
-Es besteht die Möglichkeit, Filterdefinitionen aus einem Skript zu
-laden. Grundsätzlich gelten die gleichen Regeln wie bei der
+Es besteht die MÃ¶glichkeit, Filterdefinitionen aus einem Skript zu
+laden. GrundsÃ¤tzlich gelten die gleichen Regeln wie bei der
 Definition als Zeichenkette, das Skript wird aber vorher noch mit
-einem \index{Preprozessor} überarbeitet. Dabei
+einem \index{Preprozessor} Ã¼berarbeitet. Dabei
 werden Kommentare im C-Stil (ISO99) und Preprozessordirektiven
 abgearbeitet.
-\index{Lange Zeilen} können mithilfe eines
-\index{Gegenschrägstrich}s\note{Die Sequenz Gegenschrägstrich
-Zeilenvorschub wird aus der Eingabe gelöscht.} zerlegt werden.
+\index{Lange Zeilen} kÃ¶nnen mithilfe eines
+\index{GegenschrÃ¤gstrich}s\note{Die Sequenz GegenschrÃ¤gstrich
+Zeilenvorschub wird aus der Eingabe gelÃ¶scht.} zerlegt werden.
 
-Zusätzlich werden Leerzeichen vor einem Zeilenvorschub entfernt und
-eingerückte Zeilen gelten als \index{Fortsetzungszeilen}\note{Ein
+ZusÃ¤tzlich werden Leerzeichen vor einem Zeilenvorschub entfernt und
+eingerÃ¼ckte Zeilen gelten als \index{Fortsetzungszeilen}\note{Ein
 Zeilenvorschub gefolgt von einem Leerzeichen oder einem Tabulatoren
 wird entfernt.}.
-Damit lassen sich Skripts übersichtlicher schreiben.
+Damit lassen sich Skripts Ã¼bersichtlicher schreiben.
 
 \index[|script|]
-Die Implementation erfolgt über den Filter |script=|<path>, wobei
+Die Implementation erfolgt Ã¼ber den Filter |script=|<path>, wobei
 <path> der Pfadname des Filterskripts ist. Der Filter |script| ist ein
 Dummy-Filter, der nur dazu dient, die im Skript definierten Filter zu
 aktivieren.
 
 \ssec	\label{cmp}\index{Vergleichsdefinition}
 
-Sollen EDB-Datenfiles sortiert, gemischt oder verknüpft werden,
-müssen einzelne Datensätze miteinander verglichen werden.
-Die dafür benötigte  Vergleichsdefinition wird durch eine Liste der
+Sollen EDB-Datenfiles sortiert, gemischt oder verknÃ¼pft werden,
+mÃ¼ssen einzelne DatensÃ¤tze miteinander verglichen werden.
+Die dafÃ¼r benÃ¶tigte  Vergleichsdefinition wird durch eine Liste der
 Komponenten der Datenstruktur festgelegt. Die Sortierung erfolgt in
 der Reihenfolge der Angaben.
 
-Jeder Komponente kann ein |+| für aufsteigend oder ein |-| für
+Jeder Komponente kann ein |+| fÃ¼r aufsteigend oder ein |-| fÃ¼r
 absteigend vorangestellt werden. Ohne Angabe einer Richtungsangabe wird
 aufsteigend sortiert. Danach folgt optional der Name einer
 Vergeichsfunktion. Dieser Name wird mit einem |:| abgeschlossen.
 Ohne Angabe wird die Funktion |cmp| verwendet.
 
-Wird keine Komponentenliste angegeben, werden die einzelnen Datensätze
-binär verglichen. Ist die Komponentenliste leer, wird die
+Wird keine Komponentenliste angegeben, werden die einzelnen DatensÃ¤tze
+binÃ¤r verglichen. Ist die Komponentenliste leer, wird die
 \index{Vergleichsfunktion} des Datentyps des EFEU-Datenfiles verwendet.
 
-Bei Vektorkomponenten besteht die Möglichkeit, entweder direkt den
-gewünschten Index anzugeben, oder einen \index{Teilvergleich} für die
-Vektorkomponenten durchzuführen. Falls kein Index der Form |[|<num>|]|
-angegeben ist, wird automatisch der Teilvergleich gewählt. Bei
-Feldern mit variabler Länge ist nur der Teilvergleich zulässig.
+Bei Vektorkomponenten besteht die MÃ¶glichkeit, entweder direkt den
+gewÃ¼nschten Index anzugeben, oder einen \index{Teilvergleich} fÃ¼r die
+Vektorkomponenten durchzufÃ¼hren. Falls kein Index der Form |[|<num>|]|
+angegeben ist, wird automatisch der Teilvergleich gewÃ¤hlt. Bei
+Feldern mit variabler LÃ¤nge ist nur der Teilvergleich zulÃ¤ssig.
 
-Ein Teilvergleich wird auch für einen mit |(| ... |)| geklammerten
-\index{Teilbereich} gestartet. Innerhalb der Klammerung können mehrere
+Ein Teilvergleich wird auch fÃ¼r einen mit |(| ... |)| geklammerten
+\index{Teilbereich} gestartet. Innerhalb der Klammerung kÃ¶nnen mehrere
 Komponenten angegeben werden.
 
 Eine vorgegebene Vergleichsfunktion wird nicht in den Teilbereich
-übernommen, sie muss innerhalb des Teilbereichs neu angegeben werden.
+Ã¼bernommen, sie muss innerhalb des Teilbereichs neu angegeben werden.

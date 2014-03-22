@@ -1,5 +1,5 @@
 /*	Matrizen multiplizieren
-	(c) 1994 Erich Frühstück
+	(c) 1994 Erich FrÃ¼hstÃ¼ck
 */
 
 #include <EFEU/mdmat.h>
@@ -54,7 +54,7 @@ mdmat *md_mul (mdmat *md1, mdmat *md2, int flag)
 	if	(par.add == NULL)
 		return NULL;
 
-/*	Ergebnisachsen zusammenstellen und gemeinsame Achsen auf Kompatiblität
+/*	Ergebnisachsen zusammenstellen und gemeinsame Achsen auf KompatiblitÃ¤t
 	testen
 */
 	x1 = md1->axis;
@@ -121,7 +121,7 @@ mdmat *md_mul (mdmat *md1, mdmat *md2, int flag)
 }
 
 
-/*	Primäre Achsen der ersten Matrix
+/*	PrimÃ¤re Achsen der ersten Matrix
 */
 
 static void mainwalk (GPAR *par, mdaxis *x, mdaxis *x1, mdaxis *x2, char *p, char *p1, char *p2)

@@ -10,9 +10,9 @@ Unicode-Zeichen einlesen
 #define U3(c)	((c & 0xf0) == 0xe0)	/* Test auf 3-Byte Sequenz */
 #define	U4(c)	((c & 0xf8) == 0xf0)	/* Test auf 4-Byte Sequenz */
 
-#define	V2(c)	((c & 0x1f) << 6)	/* Startbits für 2-Byte Sequenz */
-#define	V3(c)	((c & 0xf) << 12)	/* Startbits für 3-Byte Sequenz */
-#define	V4(c)	((c & 0x7) << 18)	/* Startbits für 4-Byte Sequenz */
+#define	V2(c)	((c & 0x1f) << 6)	/* Startbits fÃ¼r 2-Byte Sequenz */
+#define	V3(c)	((c & 0xf) << 12)	/* Startbits fÃ¼r 3-Byte Sequenz */
+#define	V4(c)	((c & 0x7) << 18)	/* Startbits fÃ¼r 4-Byte Sequenz */
 
 #define	UF(c)	((c & 0xc0) == 0x80)	/* Test auf Folgezeichen */
 #define	VF(c)	(c & 0x3f)		/* Datenbits des Folgezeichens */

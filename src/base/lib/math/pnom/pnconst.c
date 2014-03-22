@@ -1,7 +1,7 @@
 /*
-Arbeiten mit stückweisen Polynomen: Konstante Funktion
+Arbeiten mit stÃ¼ckweisen Polynomen: Konstante Funktion
 
-$Copyright (C) 1991 Erich Frühstück
+$Copyright (C) 1991 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or

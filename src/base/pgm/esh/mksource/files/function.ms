@@ -2,7 +2,7 @@
 Konstruktion von Funktionen
 
 $Header	<$1>
-$Copyright (C) 1996 Erich Frühstück
+$Copyright (C) 1996 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -28,7 +28,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 /*
 Der Datentyp |$1| definert eine Zeile in der konstruierten Funktion.
-Dabei ist <margin> die zugehörige Einrücktiefe und <line> der
+Dabei ist <margin> die zugehÃ¶rige EinrÃ¼cktiefe und <line> der
 Zeilentext.
 */
 
@@ -72,7 +72,7 @@ struct Function {
 
 /*
 Der Konverter auf |bool| testet, ob die Struktur eine
-Funktionsdefinition enthält.
+Funktionsdefinition enthÃ¤lt.
 */
 
 restricted bool Function ()
@@ -90,7 +90,7 @@ Beim Konstruktor |$1| gibt die Variable <_xname> den Datentyp und Namen der
 Funktion an. Das Argument <_xargs> bestimmt die Argumentliste der Funktion.
 Auf <_xname> und <_xargs> wird eine Parametersubstitution angewendet.
 Alle weiteren Argumente setzen Stringregister,
-die bei der Parametersubstitution zur Verfügung stehen.
+die bei der Parametersubstitution zur VerfÃ¼gung stehen.
 */
 
 inline Function Function (str _xname, str _xargs = NULL, ...)
@@ -152,7 +152,7 @@ virtual void Function::write (bool ext)
 
 /*
 Mit Hilfe der Funktion |$1| wird die C-Funktion ausgegeben.
-Die Bindung wird über ein internes Flag gesteuert, dass beim
+Die Bindung wird Ã¼ber ein internes Flag gesteuert, dass beim
 einrichten der Deklarationsstruktur gesetzt wird.
 */
 
@@ -162,11 +162,11 @@ virtual void Function::write ()
 }
 
 /*
-Die folgenden Hilfsfunktionen dienen zum Einfügen und Gliederen
+Die folgenden Hilfsfunktionen dienen zum EinfÃ¼gen und Gliederen
 der generierten Sourcezeilen:
 
 \ttitem	$1
-	wird zu Beginn jeder Zeile aufgerufen und fügt bei Bedarf eine
+	wird zu Beginn jeder Zeile aufgerufen und fÃ¼gt bei Bedarf eine
 	Leerzeile ein.
 */
 
@@ -183,7 +183,7 @@ void Function::startline & (void)
 
 /*
 \ttitem	$1
-	fügt eine Absatztrennung ein.
+	fÃ¼gt eine Absatztrennung ein.
 */
 
 void Function::newpar & (void)
@@ -216,11 +216,11 @@ void Function::add_line & (int dp, str cmd)
 /*
 \shead	Konstruktion von Sourcezeilen
 Zur Konstruktion von Sourcezeilen stehen eine Reihe von Funktionen
-zur Verfügung. Die Sourcezeilen werden mit einem Formatargument <fmt>
-übergeben, das mit Paramatersubstitution überarbeitet wird.
+zur VerfÃ¼gung. Die Sourcezeilen werden mit einem Formatargument <fmt>
+Ã¼bergeben, das mit Paramatersubstitution Ã¼berarbeitet wird.
 
 \ttitem	$1
-	fügt eine Befehlszeile ein.
+	fÃ¼gt eine Befehlszeile ein.
 */
 
 void Function::line & (str _fmt = NULL, ...)
@@ -228,9 +228,9 @@ void Function::line & (str _fmt = NULL, ...)
 
 /*
 \ttitem	$1
-	fügt eine Befehlszeile ein. Der Formatstring <fmt> wird
+	fÃ¼gt eine Befehlszeile ein. Der Formatstring <fmt> wird
 	jedoch nicht mit Parametersubstitution, sondern mit |sprintf|
-	formatiert. Die Stringregister werden nicht verändert.
+	formatiert. Die Stringregister werden nicht verÃ¤ndert.
 */
 
 void Function::fline & (str fmt, ...)
@@ -238,7 +238,7 @@ void Function::fline & (str fmt, ...)
 
 /*
 \ttitem	$1
-	fügt eine Zeile ohne Einrückung ein und wird vorzugsweise für
+	fÃ¼gt eine Zeile ohne EinrÃ¼ckung ein und wird vorzugsweise fÃ¼r
 	Preprozessorzeilen verwendet.
 */
 
@@ -247,7 +247,7 @@ void Function::ppline & (str _fmt = NULL, ...)
 
 /*
 \ttitem	$1
-	fügt einen Kommentar ein.
+	fÃ¼gt einen Kommentar ein.
 */
 
 inline void Function::comment & (str _fmt = NULL, ...)
@@ -261,7 +261,7 @@ inline void Function::comment & (str _fmt = NULL, ...)
 /*
 \ttitem	$1
 	zerlegt den Formatstring <_fmt> in einzelne Zeilen
-	und fügt sie in der Datenstruktur ein.
+	und fÃ¼gt sie in der Datenstruktur ein.
 */
 
 inline void Function::body & (str _fmt = NULL, ...)
@@ -271,9 +271,9 @@ inline void Function::body & (str _fmt = NULL, ...)
 /*
 \shead	Kopfdeklarationen
 
-Grundsätzlich können Deklarationen zu Beginn einer Funktion
-wie gewöhnliche Zeilen definiert werden. Die Funktion |$1| erlaubt
-aber, Kopfdeklarationen im laufenden Text zu ergänzen. Alle mit
+GrundsÃ¤tzlich kÃ¶nnen Deklarationen zu Beginn einer Funktion
+wie gewÃ¶hnliche Zeilen definiert werden. Die Funktion |$1| erlaubt
+aber, Kopfdeklarationen im laufenden Text zu ergÃ¤nzen. Alle mit
 |$1| eingetragenen Datenzeilen werden vor allen anderen Datenzeilen
 ausgegeben.
 */
@@ -286,14 +286,14 @@ void Function::head & (str _fmt = NULL, ...)
 
 Um einen gut strukturierten Block zu erhalten, sind
 vor den Befehlszeilen je nach Blocktiefe entsprechend
-viele Tabulatoren einzufügen.
+viele Tabulatoren einzufÃ¼gen.
 
 Die nachfolgenden Funktionen erleichtern die zeilenweise Konstruktion
-von Blöcken. Die Einrücktiefe wird automatisch adjustiert.
+von BlÃ¶cken. Die EinrÃ¼cktiefe wird automatisch adjustiert.
 
 \ttitem	$1
 	beginnt einen Funktionsblock. Das Argument <_fmt>
-	wird vor der öffnenden Klammer eingefügt.
+	wird vor der Ã¶ffnenden Klammer eingefÃ¼gt.
 */
 
 void Function::beg & (str _fmt = NULL)
@@ -301,8 +301,8 @@ void Function::beg & (str _fmt = NULL)
 
 /*
 \ttitem	$1
-	schließt einen Funktionsblock.
-	Das Argument <_fmt> wird nach der schließenden Klammer eingefügt.
+	schlieÃŸt einen Funktionsblock.
+	Das Argument <_fmt> wird nach der schlieÃŸenden Klammer eingefÃ¼gt.
 */
 
 void Function::end & (str _fmt = NULL)
@@ -310,7 +310,7 @@ void Function::end & (str _fmt = NULL)
 
 /*
 \ttitem	$1
-	generiert eine Blockstruktur mit Kopf <head> und Körper <body> 
+	generiert eine Blockstruktur mit Kopf <head> und KÃ¶rper <body> 
 */
 
 void Function::block & (str head, str body, ...)
@@ -339,10 +339,10 @@ void Function::switch & (str _expr, ...)
 
 /*
 \ttitem	$1
-	erzeugt eine |case|-Anweisung mit zugehörigem Kommando <_cmd>.
+	erzeugt eine |case|-Anweisung mit zugehÃ¶rigem Kommando <_cmd>.
 	Ist <_key> der Null-String, wird eine |default| Anweisung
 	generiert. Die |case|-Label stehen auf der gleichen
-	Einrücktiefe wie die Blockklammern der |switch|-Struktur.
+	EinrÃ¼cktiefe wie die Blockklammern der |switch|-Struktur.
 */
 
 inline void Function::case & (str _key, str _cmd = NULL, ...)
@@ -370,10 +370,10 @@ inline void Function::cblock & (str _key, str _cmd, ...)
 }
 
 /*
-Einfache C-Funktionen können mit der Funktion |Func| konstruiert werden.
+Einfache C-Funktionen kÃ¶nnen mit der Funktion |Func| konstruiert werden.
 Das Argument <_body> bestimmt den Funktionsrumpf. Auch auf ihn wird
 Parametersubstitution angewendet.
-Für alle anderen Argumente gilt das bei der Beschreibung
+FÃ¼r alle anderen Argumente gilt das bei der Beschreibung
 des Konstruktors gesagte.
 */
 
@@ -389,10 +389,10 @@ inline void StdFunc (str _name, str _args, str _body, ...)
 }
 
 /*
-Einfache C-Funktionen können mit den Funktionen |GlobalFunction| und
+Einfache C-Funktionen kÃ¶nnen mit den Funktionen |GlobalFunction| und
 |LocalFunction| konstruiert werden. Das Argument <_body> bestimmt den
 Funktionsrumpf. Auch auf ihn wird Parametersubstitution angewendet.
-Für alle anderen Argumente gilt das bei der Beschreibung
+FÃ¼r alle anderen Argumente gilt das bei der Beschreibung
 des Konstruktors gesagte.
 */
 

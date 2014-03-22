@@ -1,6 +1,6 @@
-/*	Verschachteln von Datensätzen
+/*	Verschachteln von DatensÃ¤tzen
 
-$Copyright (C) 2007 Erich Frühstück
+$Copyright (C) 2007 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -385,6 +385,6 @@ static EDB *fdef_nest (EDBFilter *filter, EDB *base,
 EDBFilter EDBFilter_nest = EDB_FILTER(NULL,
 	"nest", "[name=list]", fdef_nest, NULL,
 	":*:nest data records"
-	":de:Datensätze verschachteln"
+	":de:DatensÃ¤tze verschachteln"
 );
 

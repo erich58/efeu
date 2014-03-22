@@ -1,8 +1,8 @@
 /*
 :*:administration of memmory segments fixed size.
-:de:Verwaltung von Speichersegmenten fixer Größe
+:de:Verwaltung von Speichersegmenten fixer GrÃ¶ÃŸe
 
-$Copyright (C) 1996 Erich Frühstück
+$Copyright (C) 1996 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -33,7 +33,7 @@ If not, write to the Free Software Foundation, Inc.,
 static int log_lock = 0;
 static LogControl log_debug = LOG_CONTROL("alloctab", LOGLEVEL_DEBUG);
 
-static ALLOCTAB(root, "root", 0, 0);	/* Dummy-Tabelle für verkettung */
+static ALLOCTAB(root, "root", 0, 0);	/* Dummy-Tabelle fÃ¼r verkettung */
 static AllocTab *chain = &root;
 
 /*
@@ -41,7 +41,7 @@ $Description
 :*:This functions administrates memmory segments of fixed size
 with an assignment table. The internal structure is described
 in \mref{memalloc(7)}.
-:de:Die Funktionen verwalten Speichersegmente fixer Größe über eine
+:de:Die Funktionen verwalten Speichersegmente fixer GrÃ¶ÃŸe Ã¼ber eine
 Zuweisungstabelle. Der innere Aufbau und die Einrichtung einer
 Zuweisungstabelle sind in \mref{memalloc(7)} beschrieben.
 */
@@ -159,12 +159,12 @@ static void load (AllocTab *tab)
 
 /*
 :*:The Function |$1| provides a new data segment.
-:de:Die Funktion |$1| stellt ein neues Datensegment zur Verfügung.
+:de:Die Funktion |$1| stellt ein neues Datensegment zur VerfÃ¼gung.
 
 $Diagnostics
 :*:If |$1| could not allocate a new segment, the programm
 is terminated.
-:de:Kann |$1| kein neues Segment mehr zur Verfügung stellen,
+:de:Kann |$1| kein neues Segment mehr zur VerfÃ¼gung stellen,
 wird die Verarbeitung des rufenden Kommandos mit einer Fehlermeldung
 abgebrochen.
 */
@@ -197,15 +197,15 @@ void *new_data (AllocTab *tab)
 has a legal address and was not released bevor. It is save
 to call |$1| with a pointer not recieved from the table.
 :de:Die Funktion |$1| gibt das Datensegment <ptr> wieder frei.
-Dabei wird überprüft, ob das Datensegment aus der Zuweisungstabelle
-stammt, eine gültige Adresse besitzt und nicht bereits in der
+Dabei wird Ã¼berprÃ¼ft, ob das Datensegment aus der Zuweisungstabelle
+stammt, eine gÃ¼ltige Adresse besitzt und nicht bereits in der
 Liste der freien Elemente aufscheint.
 Die Funktion liefert 1 bei Erfolg und 0 falls der Pointer nicht
 aus der Zuweisungstabelle stammt.
 
 :de:Anstelle von <ptr> kann
-auch ein Nullpointer übergeben werden, in diesem Fall werden
-von der Funktion |$1| keine Aktionen durchgeführt.
+auch ein Nullpointer Ã¼bergeben werden, in diesem Fall werden
+von der Funktion |$1| keine Aktionen durchgefÃ¼hrt.
 
 $Diagnostics
 :*:The function |$1| returns 1 if the pointer
@@ -219,8 +219,8 @@ $Warnings
 :*:If a data segment is used after freeing, the internal free
 list may be destroyed.
 :de:Nach der Freigabe eines Datensegmentes darf dieses nicht mehr
-benützt werden, da ansonsten die freie Liste zerstört wird.
-Der Inhalt eines Datensegmentes wird bei der Freigabe verändert.
+benÃ¼tzt werden, da ansonsten die freie Liste zerstÃ¶rt wird.
+Der Inhalt eines Datensegmentes wird bei der Freigabe verÃ¤ndert.
 */
 
 int del_data (AllocTab *tab, void *entry)
@@ -259,8 +259,8 @@ int del_data (AllocTab *tab, void *entry)
 /*
 :*:The Function |$1| checks if <entry> descend from the
 table <tab>
-:de:Die Funktion |$1| überprüft einen Pointer, ob er aus der
-Zuweisungstabelle stammt und eine gültige Adressse hat.
+:de:Die Funktion |$1| Ã¼berprÃ¼ft einen Pointer, ob er aus der
+Zuweisungstabelle stammt und eine gÃ¼ltige Adressse hat.
 */
 
 int tst_data (AllocTab *tab, void *entry)
@@ -315,8 +315,8 @@ static void alloctab_abort (AllocTab *tab, const char *fmt, ...)
 :*:The function |$1| checks the consistence of a allocation
 table. The acitivities are only performed, if the debug_level
 for alloctab is at least debug (see \mref{Debug(3)}).
-:de:Die Funktion |$1| überprüft die Konsistenz der Zuweisungstabelle und
-ihrer Speichersegmente falls der Debug-Level für alloctab
+:de:Die Funktion |$1| Ã¼berprÃ¼ft die Konsistenz der Zuweisungstabelle und
+ihrer Speichersegmente falls der Debug-Level fÃ¼r alloctab
 auf debug gesetzt ist.
 Vergleiche dazu auch \mref{Debug(3)}.
 */
@@ -361,9 +361,9 @@ void check_data (AllocTab *tab)
 :*:The function |$1| walks along the table chain and calls <visit> vor every
 allocation tabel. It's use is primary for debugging and generating statistics
 about memory usage.
-:de:Die Funktion |$1| durchwandert die Tabellenkette und ruft <visit> für
-jede Tabelle auf. Ihre Verwendung dient primär der Fehlersuche und der
-Generierung von Statistiken über die Speicherverwendung.
+:de:Die Funktion |$1| durchwandert die Tabellenkette und ruft <visit> fÃ¼r
+jede Tabelle auf. Ihre Verwendung dient primÃ¤r der Fehlersuche und der
+Generierung von Statistiken Ã¼ber die Speicherverwendung.
 */
 
 void AllocTab_walk (void (*visit) (AllocTab *tab, void *par), void *par)
@@ -381,7 +381,7 @@ $Notes
 :*:This functions relieves the dynamic memmory allocation and
 reduces fragmentation by small objects.
 :de:Die Funktionen entlasten die dynamische Speicherplatzverwaltung
-und verhindern eine Zerstückelung von Speichersegmenten bei kleinen
+und verhindern eine ZerstÃ¼ckelung von Speichersegmenten bei kleinen
 Datenobjekten.
 
 $SeeAlso

@@ -2,7 +2,7 @@
 :*:environments
 :de:Umgebungen
 
-$Copyright (C) 1999 Erich Frühstück
+$Copyright (C) 1999 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -32,19 +32,19 @@ Umgebung wird der Text in Schreibmaschine gesetzt.
 \def\code	newenv('c');
 
 :*:hanging paragraphs
-:de:Hängende Absätze
+:de:HÃ¤ngende AbsÃ¤tze
 
 :*:The command $1 starts a region with hanging paragraphs.
-:de:Der Befehl $1 beginnt eine Umgebung mit hängenden Absätzen.
+:de:Der Befehl $1 beginnt eine Umgebung mit hÃ¤ngenden AbsÃ¤tzen.
 
 \def\hang	newenv('h');
 
 :*:quoting
-:de:Einrückung
+:de:EinrÃ¼ckung
 
 :*:The command $1 starts a region with quoted (indented) text.
 :de:Der Befehl $1 wechselt in die quote-Umgebung.
-Innerhalb dieser Umgebung wird der Text eingerückt.
+Innerhalb dieser Umgebung wird der Text eingerÃ¼ckt.
 
 \def\quote	newenv('q');
 
@@ -52,7 +52,7 @@ Innerhalb dieser Umgebung wird der Text eingerückt.
 :de:Aktuelle Umgebung beenden
 
 :*:The command $1 closes the current environment.
-:de:Der Befehl $1 schließt die aktuelle Umgebung ab.
+:de:Der Befehl $1 schlieÃŸt die aktuelle Umgebung ab.
 
 \def\end	endenv(0);
 
@@ -60,7 +60,7 @@ Innerhalb dieser Umgebung wird der Text eingerückt.
 :de:Alle Umgebungen beenden
 
 :*:The command $1 closes all open environments.
-:de:Der Befehl $1 schließt alle Umgebungen ab.
+:de:Der Befehl $1 schlieÃŸt alle Umgebungen ab.
 
 \def\endall	endenv('a');
 
@@ -71,7 +71,7 @@ Innerhalb dieser Umgebung wird der Text eingerückt.
 :de:Liste beenden
 
 :*:The command $1 closes the current list environment.
-:de:Der Befehl $1 schließt die aktuelle Liste ab.
+:de:Der Befehl $1 schlieÃŸt die aktuelle Liste ab.
 
 \def\endlist	endenv('l');
 

@@ -2,7 +2,7 @@
 :*:program example: Hello World!
 :de:Programmbeispiel: Hello World!
 
-$Copyright (C) 2002 Erich Frühstück
+$Copyright (C) 2002 Erich FrÃ¼hstÃ¼ck
 */
 
 pconfig !
@@ -10,14 +10,14 @@ Version = "hello2.esh 1.0"
 
 Format = "%s"
 	:*:format specification
-	:de:Formatierungsanweisung für den Ausgabetext.
+	:de:Formatierungsanweisung fÃ¼r den Ausgabetext.
 Label = "Hello World!"
 	:*:output text
 	:de:Ausgabetext.
 
 q|-quote|Format = "\"%s\""
 	:*:print text with quotes
-	:de:Gibt den Ausgabetext unter Anführung aus.
+	:de:Gibt den Ausgabetext unter AnfÃ¼hrung aus.
 f:fmt|-format:fmt|Format
 	:*:sets output format, default `{Format}'
 	:de:Setzt das Ausgabeformat, die Vorgabe ist |{Format}|.

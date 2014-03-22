@@ -1,5 +1,5 @@
-/*	Testfunktionen für mehrdimensionale Matrizen
-	(c) 1994 Erich Frühstück
+/*	Testfunktionen fÃ¼r mehrdimensionale Matrizen
+	(c) 1994 Erich FrÃ¼hstÃ¼ck
 */
 
 #include <EFEU/mdmat.h>

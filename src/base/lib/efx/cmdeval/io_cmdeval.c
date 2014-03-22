@@ -1,7 +1,7 @@
 /*
 Befehlsinterpreter als Eingabefilter
 
-$Copyright (C) 1999 Erich Frühstück
+$Copyright (C) 1999 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -30,7 +30,7 @@ If not, write to the Free Software Foundation, Inc.,
 typedef struct {
 	IO *io;	/* Eingabestruktur */
 	StrBuf buf;	/* Zwischenbuffer */
-	char *delim;	/* Abschlußzeichen */
+	char *delim;	/* AbschluÃŸzeichen */
 	IO *cin;	/* Zwischensicherung von CmdEval_cin */
 	IO *cout;	/* Zwischensicherung von CmdEval_cout */
 	unsigned save : 31;	/* Zahl der gespeicherten Zeichen */

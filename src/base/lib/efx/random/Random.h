@@ -3,7 +3,7 @@ Zufallszahlengeneratoren
 
 $Header <EFEU/$1>
 
-$Copyright (C) 1998 Erich Frühstück
+$Copyright (C) 1998 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -86,7 +86,7 @@ size_t RandomIndex (Random *rd, size_t dim);
 size_t RandomChoice (Random *rd, void *base, size_t dim, size_t size,
 	size_t lim);
 
-/*	Initialisierung für esh-Interpreter
+/*	Initialisierung fÃ¼r esh-Interpreter
 */
 
 void SetupRandom (void);

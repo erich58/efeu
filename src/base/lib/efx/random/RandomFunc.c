@@ -1,7 +1,7 @@
 /*
 Zufallszahlenfunktionen
 
-$Copyright (C) 2001 Erich Fr¸hst¸ck
+$Copyright (C) 2001 Erich Fr√ºhst√ºck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -53,9 +53,9 @@ double NormalRandom (Random *rd)
 	return x;
 }
 
-/*	Poissonverteilung: Bei groﬂem Mittelwert wird eine Normalverteilung
-	verwendet. Ab 9 sind die Werte ann‰hernd normalverteilt, ab 700
-	kommt es zu einem ‹berlauf bei der Berechnung.
+/*	Poissonverteilung: Bei gro√üem Mittelwert wird eine Normalverteilung
+	verwendet. Ab 9 sind die Werte ann√§hernd normalverteilt, ab 700
+	kommt es zu einem √úberlauf bei der Berechnung.
 */
 
 #define	POISSON_MAX	20.5 	/* 9 <= x <= 700 */

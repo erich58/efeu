@@ -1,8 +1,8 @@
 /*
 :*:german manpage for etk
-:de:Deutscher Handbucheintrag für etk
+:de:Deutscher Handbucheintrag fÃ¼r etk
 
-$Copyright (C) 2002 Erich Frühstück
+$Copyright (C) 2002 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -26,16 +26,16 @@ If not, write to the Free Software Foundation, Inc.,
 \Description
 Das Programm |$!|
 interpretiert Skriptfiles in der Syntax des EFEU - Befehlsinterpreters
-analog zu |esh| aber mit Unterstützung von Tcl/Tk. Details der Syntax
-können im Handbuch zu |esh| nachgeschlagen werden, hier wird nur
-die spezielle Erweiterung für Tcl/Tk beschrieben.
+analog zu |esh| aber mit UnterstÃ¼tzung von Tcl/Tk. Details der Syntax
+kÃ¶nnen im Handbuch zu |esh| nachgeschlagen werden, hier wird nur
+die spezielle Erweiterung fÃ¼r Tcl/Tk beschrieben.
 
 If the script is executable and the first line is
-Falls das Skript ausführbar ist und die erste Zeile die Form
-	|#!|<vollständiger Pfadname von $!>
-besitz, kann es wie ein gewöhnliches Kommando aufgerufen werden.
+Falls das Skript ausfÃ¼hrbar ist und die erste Zeile die Form
+	|#!|<vollstÃ¤ndiger Pfadname von $!>
+besitz, kann es wie ein gewÃ¶hnliches Kommando aufgerufen werden.
 
-Damit ein Skript unabhängig vom
+Damit ein Skript unabhÃ¤ngig vom
 Installationsort von |$!| ist, kann als Interpreterkennung
 	|#!/usr/bin/env $!|
 oder

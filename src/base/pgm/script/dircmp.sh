@@ -2,7 +2,7 @@
 # :*:compare directoriies
 # :de:Verzeichnisse vergleichen
 #
-# $Copyright (C) 2001 Erich Frühstück
+# $Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -36,7 +36,7 @@
 #	:de:Kontextvergleich mit |diff| anstelle von |cmp|
 # v|
 #	:*:list all performed comparisons
-#	:de:Protokoll der durchgeführten Vergleiche
+#	:de:Protokoll der durchgefÃ¼hrten Vergleiche
 # :dir1|
 #	:*:first directory
 #	:de:1. Verzeichnis
@@ -45,7 +45,7 @@
 #	:de:2. Verzeichnis
 # ::"find-options"|
 #	:*:any find option for first directory
-#	:de:beliebige find - Optionen für das 1. Verzeichnis
+#	:de:beliebige find - Optionen fÃ¼r das 1. Verzeichnis
 
 usage ()
 {
@@ -65,7 +65,7 @@ esac
 # :de:
 # Das Kommando |\$!| vergleicht Dateien in <dir1> mit Dateien in <dir2>.
 # Die Verarbeitung erfolgt rekursiv. Der Vergleich ist nicht symetrisch:
-# Es ist in Ordnung, wenn <dir1> weniger Dateien als <dir2> enthält.
+# Es ist in Ordnung, wenn <dir1> weniger Dateien als <dir2> enthÃ¤lt.
 #
 # @arglist -i
 #

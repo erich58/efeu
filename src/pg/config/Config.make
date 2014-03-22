@@ -1,5 +1,5 @@
 # :en: configuration of PostgreSQL interface
-# :de: Konfiguration für PostgreSQL-Schnittstelle
+# :de: Konfiguration fÃ¼r PostgreSQL-Schnittstelle
 ##Depends: .
 
 include efeu.smh

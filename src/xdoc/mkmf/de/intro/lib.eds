@@ -6,19 +6,19 @@
 \smh_exec cp $src/bincoef.c .
 
 Die Programmbibliothek |binom| stellt Hilfsfunktionen zur Berechnung
-der Binomialkoeffizienten zur Verfügung.
+der Binomialkoeffizienten zur VerfÃ¼gung.
 Sie wird aus den folgenden drei Dateien gebildet:
 *	|binom.h|
 *	|factorial.c|
 *	|bincoef.c|
 
-Die Kopfdatei |binom.h| enthält die Funktionsprototypen
+Die Kopfdatei |binom.h| enthÃ¤lt die Funktionsprototypen
 der Bibliotheksfunktionen.
 
 \include[verbatim] binom.h
 
 Das Sourcefile |factorial.c| definiert die Funktion |factorial| zur
-Berechnung der Fakultät.
+Berechnung der FakultÃ¤t.
 
 \include[verbatim] factorial.c
 
@@ -26,15 +26,15 @@ Das Sourcefile |bincoef.c| definiert die Funktion |bincoef| zur
 Berechnung der Binomialkoeffizienten. Diese werden mithilfe von
 |factorial| berechnet. Dieses Verfahren ist nicht das numerisch
 beste, weil die Koeffizienten nur bis \math{n \leq 12} berechnet werden
-können. In diesem Kontext geht es jedoch mehr um die Anschaulichkeit als
+kÃ¶nnen. In diesem Kontext geht es jedoch mehr um die Anschaulichkeit als
 um optimale Algorithmen.
 
 \include[verbatim] bincoef.c
 
 \ssec Konfiguration des Bildungssystems
 
-Die Konfigurationsdatei |Config.make| bestimmt die Regeln für |make|.
-Zum besseren Verständnis der einzelnen Funktionen und ihrer Auswirkung
+Die Konfigurationsdatei |Config.make| bestimmt die Regeln fÃ¼r |make|.
+Zum besseren VerstÃ¤ndnis der einzelnen Funktionen und ihrer Auswirkung
 werden mit Hilfe von |mf_comm| Kommentare in das generierte Makefile gesetzt.
 
 ---- config
@@ -65,10 +65,10 @@ werden mit Hilfe von |mf_comm| Kommentare in das generierte Makefile gesetzt.
 \smh_rule
 \smh_exec[verbatim] cat Config.make
 
-Zunächst werden
-die Hilfsfunktionen für die Erstellung von C-Programmen mithilfe
-der |include| Funktion geladen. Anschließend werden die
-Übersetzungsregeln für die einzelnen Module mit |mf_cc| generiert.
+ZunÃ¤chst werden
+die Hilfsfunktionen fÃ¼r die Erstellung von C-Programmen mithilfe
+der |include| Funktion geladen. AnschlieÃŸend werden die
+Ãœbersetzungsregeln fÃ¼r die einzelnen Module mit |mf_cc| generiert.
 Die Syntax von |mf_cc| orientiert sich an der Syntax von |cc|,
 jedoch werden die Sourcen nicht kompiliert, sondern nur die Regeln zum
 Kompilieren generiert.
@@ -77,33 +77,33 @@ Die Zeile |mf_objlist OBJ| nutzt bereits ein typisches
 Leistungsmerkmal von |shmkmf|. Die durch die einzelnen |mf_cc|-Funktionen
 definierten Objektdateien werden intern gespeichert. Mithilfe von
 |mf_objlist| wird nun die Liste dieser Dateien als Make-Variable |OBJ|
-zur Verfügung gestellt.
-Diese Variable wird dann bei der abschließenden Anweisung |mf_lib| zur
+zur VerfÃ¼gung gestellt.
+Diese Variable wird dann bei der abschlieÃŸenden Anweisung |mf_lib| zur
 Konstruktion der Programmbibliothek verwendet.
 
 Die Syntax dieser Funktionen ist im Anhang unter \mref{cc.smh(7)} beschrieben.
 
-\ssec Die generierten Regeln für |make|
+\ssec Die generierten Regeln fÃ¼r |make|
 
 Das Makefile wird mit Hilfe von |shmkmf| generiert.
-Der Aufruf liefert die folgende Ausgabe\note{Überlange
+Der Aufruf liefert die folgende Ausgabe\note{Ãœberlange
 Zeilen wurden bei der Darstellung umgebrochen. Die Umbruchstellen sind
-wie bei Fortsetzungszeilen mit einem Gegenschrägstrich markiert.}:
+wie bei Fortsetzungszeilen mit einem GegenschrÃ¤gstrich markiert.}:
 
 \smh_exec[fold] shmkmf
 
-Diese hängt von der jeweiligen Konfiguration und Systemumgebung
+Diese hÃ¤ngt von der jeweiligen Konfiguration und Systemumgebung
 ab. Erkennbar ist aber, dass bereits beim Generieren des Makefiles das
-Kommando |make| aufgerufen wird. Dies dient zur Ergänzung der Regeln
-mit vom C-Kompiler generierten Abhängigkeiten, die aus den
+Kommando |make| aufgerufen wird. Dies dient zur ErgÃ¤nzung der Regeln
+mit vom C-Kompiler generierten AbhÃ¤ngigkeiten, die aus den
 beteiligten Sourcedateien ermittelt werden.
 
-Gegenüber den 5 Zeilen der Konfigurationsdatei (Kommentarerzeugung
+GegenÃ¼ber den 5 Zeilen der Konfigurationsdatei (Kommentarerzeugung
 nicht mitgerechnet) ist das generierte Makefile bereits recht umfangreich.
 Der Aufbau ist klar und sollte jemandem, dem die Syntax von
-Makefiles vertraut ist, kein Verständnisproblem bereiten. Durch die
-Kommentareinfügungen sind die Wirkungen der einzelnen Anweisungen
-deutlich sichtbar. Überlange Zeilen wurden bei der Darstellung
+Makefiles vertraut ist, kein VerstÃ¤ndnisproblem bereiten. Durch die
+KommentareinfÃ¼gungen sind die Wirkungen der einzelnen Anweisungen
+deutlich sichtbar. Ãœberlange Zeilen wurden bei der Darstellung
 umgebrochen.
 
 \smh_exec[fold] cat Makefile

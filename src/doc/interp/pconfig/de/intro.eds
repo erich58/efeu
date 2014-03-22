@@ -3,27 +3,27 @@
 Die \index{X/Open-Spezifikation} definiert eine standardisierte Verwendung
 von Kommandozeilenoptionen. Daneben bietet sie
 mit der Bibliotheksfunktion \index{|getopt|} eine standardisierte
-Programmierschnittstelle für die Bereitstellung von
+Programmierschnittstelle fÃ¼r die Bereitstellung von
 Kommandozeilenschaltern in C-Programmen.
 
-In EFEU wird ein ähnlicher Weg gegangen, jedoch wird die
+In EFEU wird ein Ã¤hnlicher Weg gegangen, jedoch wird die
 Konfiguration der Programmargumente gleichzeitig mit ihrer
-Dokumentation verbunden. Weiters werden zusätzlich Umgebungsvariablen
+Dokumentation verbunden. Weiters werden zusÃ¤tzlich Umgebungsvariablen
 und Argumente mit einbezogen.
 
 Die Formatierung der Beschreibungstexte erfolgt mit \index{|efeudoc|}.
-Dokumente können damit in mehreren Formaten (roff, \LaTeX, HTML, &ldots;)
-generiert werden. Weiters besteht die Möglichkeit, die Aufrufsyntax
-direkt in eine längere \index{Programmdokumentation} einzubauen.
+Dokumente kÃ¶nnen damit in mehreren Formaten (roff, \LaTeX, HTML, &ldots;)
+generiert werden. Weiters besteht die MÃ¶glichkeit, die Aufrufsyntax
+direkt in eine lÃ¤ngere \index{Programmdokumentation} einzubauen.
 
-In der \index{EFEU-Spezifikation} können ähnlich wie in der GNU-Version
+In der \index{EFEU-Spezifikation} kÃ¶nnen Ã¤hnlich wie in der GNU-Version
 von \index{|getopt|} Optionen an beliebiger Stelle, also auch nach den
 Argumenten, angegeben werden.
 Das Flag \index{|POSIXLY_CORRECT|}, das bei der GNU-Version von
 |getopt| diese Erweiterung deaktiviert, wird von EFEU
-nicht unterstützt.
+nicht unterstÃ¼tzt.
 
-Diese Form der Programmkonfiguration steht sowohl für EFEU-Scripts
-als auch für C-Programme zur verfügung. In EFEU-Scripts werden diese
+Diese Form der Programmkonfiguration steht sowohl fÃ¼r EFEU-Scripts
+als auch fÃ¼r C-Programme zur verfÃ¼gung. In EFEU-Scripts werden diese
 mithilfe von |pconfig| direkt im Skript definiert, bei C-Programmen wird
 eine Datei mit gleichem Basisnamen und Filezusatz |.cnf| verwendet.

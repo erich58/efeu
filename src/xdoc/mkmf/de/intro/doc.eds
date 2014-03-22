@@ -6,29 +6,29 @@ Einbindung erfolgt mit |\input|.
 
 \include[verbatim] pasctrian.tex
 
-Um die gleichmäßige Dreiecksform zu erhalten,
+Um die gleichmÃ¤ÃŸige Dreiecksform zu erhalten,
 werden die einzelne Zahlenwerte in eine Box gepackt.
 Dies erfolgt mithilfe des Makros |\C|. Bei der Generierung der Tabelle mit
-dem Kommando |pasctrian| wird als Formatparameter |\\C{%d}| übergeben.
+dem Kommando |pasctrian| wird als Formatparameter |\\C{%d}| Ã¼bergeben.
 
-Die generierte Tabelle erfüllt jetzt fast alle gewünschten
-Anforderungen, \LaTeX; benötigt jedoch noch den Zeilenendbefehl |\\| am
+Die generierte Tabelle erfÃ¼llt jetzt fast alle gewÃ¼nschten
+Anforderungen, \LaTeX; benÃ¶tigt jedoch noch den Zeilenendbefehl |\\| am
 Ende jeder Zeile in der Tabellendatei.
 
-Es bieten sich dafür mehrere Ansatzmöglichkeiten an:
+Es bieten sich dafÃ¼r mehrere AnsatzmÃ¶glichkeiten an:
 *	In \LaTeX; wird eine entsprechende Umgebung definiert, in der
 	jede Eingabezeile auch zu einer Dokumentenzeile wird. Das ist
-	die aufwendigste Lösung.
+	die aufwendigste LÃ¶sung.
 *	Das Kommando |pactrian| generiert die Zeichensequenz |\\| am Ende der
 	Zeile.
-	Das ist unschön, wenn das Kommando nicht im \LaTeX; Kontext
-	verwendet wird. Eine zusätzliche Option wäre denkbar, macht
-	aber das Kommando unnötig kompliziert.
-*	Die benötigten Zeichen werden mit dem Streameditor |sed|
-	eingefügt. Das ist die einfachste Lösung, die gleichzeitig auch das
+	Das ist unschÃ¶n, wenn das Kommando nicht im \LaTeX; Kontext
+	verwendet wird. Eine zusÃ¤tzliche Option wÃ¤re denkbar, macht
+	aber das Kommando unnÃ¶tig kompliziert.
+*	Die benÃ¶tigten Zeichen werden mit dem Streameditor |sed|
+	eingefÃ¼gt. Das ist die einfachste LÃ¶sung, die gleichzeitig auch das
 	Zusammenspiel verschiedener Werkzeuge zeigt.
 
-Eine Generierungsregel für die |sed|-Lösung wird mit der folgenden
+Eine Generierungsregel fÃ¼r die |sed|-LÃ¶sung wird mit der folgenden
 Anweisung erzielt:
 
 \shmkmf[-x] Die damit erzeugten Regeln haben die Form:
@@ -48,7 +48,7 @@ Backslash maskiert werden.
 Jetzt fehlen nur noch die Regeln zur Formatierung des Dokuments und
 die Umformung in eine PostScript-Datei. Dies erfolgt mit den
 Kommandos |latex| und |dvips|.
-Die zugehörigen Konfigurationszeilen sind:
+Die zugehÃ¶rigen Konfigurationszeilen sind:
 
 \shmkmf[-x] Diese liefern die Regeln:
 mf_rule -a pasctrian.dvi "pasctrian.tex tab.tex" "latex %1"

@@ -1,12 +1,12 @@
 # :*:configuration file for dynamik linking loader
-# :de:Konfigurationsdatei für dynamisches Einbinden
+# :de:Konfigurationsdatei fÃ¼r dynamisches Einbinden
 #
 # $Synopsis
 # include $1
 #
 # \index{|LD_DL|}
 #
-# $Copyright (C) 2005 Erich Frühstück
+# $Copyright (C) 2005 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -32,7 +32,7 @@ include cflags.smh
 # $Description
 # :de:
 # Durch Einbinden der Headerdatei |$1| wird der Makro
-# |LD_DL| mit link-Flags für dynamische ladbare Module definiert.
+# |LD_DL| mit link-Flags fÃ¼r dynamische ladbare Module definiert.
 
 mf_comm "dl configuration from $FILE"
 mf_cflags LD_DL -ldl
@@ -48,8 +48,8 @@ mf_comm -n "End of dl configuration"
 # include $1
 # \end
 # :de:
-# Eine typische Ausgabe (abhängig von Bibliotheksversion und
-# Rechnerarchitektur) für das Einbinden der Headerdatei mit
+# Eine typische Ausgabe (abhÃ¤ngig von Bibliotheksversion und
+# Rechnerarchitektur) fÃ¼r das Einbinden der Headerdatei mit
 # \shmkmf[-x] hat die Form:
 # include $1
 # \end

@@ -3,7 +3,7 @@ Operatordefinitionen
 
 $Header <EFEU/$1>
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -63,8 +63,8 @@ typedef struct EfiOpStruct EfiOp;
 
 struct EfiOpStruct {
 	char *name;	/* Operatorname */
-	char prior;	/* Priorität */
-	char assoc;	/* Assoziativität */
+	char prior;	/* PrioritÃ¤t */
+	char assoc;	/* AssoziativitÃ¤t */
 	EfiObj *(*parse) (IO *io, EfiOp *op, EfiObj *left);
 };
 

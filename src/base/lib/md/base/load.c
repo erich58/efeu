@@ -2,7 +2,7 @@
 :*:selectiv load of data cube
 :de:Multidimensionale Matrix selektiv laden
 
-$Copyright (C) 1994, 2007 Erich Frühstück
+$Copyright (C) 1994, 2007 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -25,8 +25,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/MatchPar.h>
 
 typedef struct {
-	short skip;	/* Überlesen */
-	short tmpload;	/* Temporär laden */
+	short skip;	/* Ãœberlesen */
+	short tmpload;	/* TemporÃ¤r laden */
 	size_t offset;	/* Datenoffset */
 	size_t dim;	/* Setztiefe */
 	size_t *idx;	/* Indexvektor */

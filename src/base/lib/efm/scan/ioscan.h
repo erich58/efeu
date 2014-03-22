@@ -3,7 +3,7 @@ Datenwerte aus IO-Struktur lesen
 
 $Header	<EFEU/$1>
 
-$Copyright (C) 1997 Erich Frühstück
+$Copyright (C) 1997 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -43,7 +43,7 @@ uint64_t mstr2uint64 (const char *str, char **ptr, int base);
 
 #define	SCAN_CHAR	0x10	/* ASCII/Latin1 - Zeichendefinition */
 #define	SCAN_UCS	0x20	/* UNICODE - Zeichendefinition */
-#define	SCAN_STR	0x40	/* String (doppelte Anführung oder NULL) */
+#define	SCAN_STR	0x40	/* String (doppelte AnfÃ¼hrung oder NULL) */
 #define	SCAN_UTF	0x80	/* UTF8-String */
 #define	SCAN_NAME	0x100	/* Name */
 
@@ -53,14 +53,14 @@ uint64_t mstr2uint64 (const char *str, char **ptr, int base);
 #define	SCAN_TEXT	(SCAN_XCHAR | SCAN_STR | SCAN_UTF | SCAN_NAME)
 #define	SCAN_TYPEMASK	(SCAN_NUMERIC | SCAN_TEXT)
 
-#define	SCAN_BINVAL	0x400	/* Binärwert */
+#define	SCAN_BINVAL	0x400	/* BinÃ¤rwert */
 #define	SCAN_OCTVAL	0x800	/* Oktalwert */
 #define	SCAN_HEXVAL	0x1000	/* Hexadezimalwert */
 
 #define	SCAN_BASEMASK	(SCAN_BINVAL | SCAN_OCTVAL | SCAN_HEXVAL)
 
 #define	SCAN_UNSIGNED	0x2000	/* Vorzeichenfreier Wert */
-#define	SCAN_LOCALE	0x4000	/* Lokale berücksichtigen */
+#define	SCAN_LOCALE	0x4000	/* Lokale berÃ¼cksichtigen */
 
 #define	SCAN_ANYVAL	(SCAN_NUMERIC | SCAN_UNSIGNED | SCAN_BASEMASK)
 #define	SCAN_ANYTYPE	(SCAN_ANYVAL | SCAN_TEXT)

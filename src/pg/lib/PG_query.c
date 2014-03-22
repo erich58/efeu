@@ -2,7 +2,7 @@
 :de:	SQL-Abfrage von Tupeln
 :*:	send a tuple query to backend
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -37,14 +37,14 @@ If not, write to the Free Software Foundation, Inc.,
 The function |$1| submits the query <cmd> to the database server with
 expected return status PGRES_TUPLES_OK.
 :de:
-Die Funktion |$1| übermittelt die Datenbankanfrage <cmd> an den
-Datenbankserver mit erwartetem Rückgabestatus PGRES_TUPLES_OK.
+Die Funktion |$1| Ã¼bermittelt die Datenbankanfrage <cmd> an den
+Datenbankserver mit erwartetem RÃ¼ckgabestatus PGRES_TUPLES_OK.
 
 $Diagnostic
 :*:
 The function |$1| returns 1 on success and 0 on failure.
 :de:
-Die Funktion |$1| liefert 1 bei Erfolg und 0 bei Mißerfolg.
+Die Funktion |$1| liefert 1 bei Erfolg und 0 bei MiÃŸerfolg.
 */
 
 int PG_query (PG *pg, const char *cmd)

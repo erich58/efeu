@@ -2,7 +2,7 @@
 # :*:Install EFEU in a standard place
 # :de:EFEU an einem Standardort installieren.
 #
-# $Copyright (C) 2008 Erich Frühstück
+# $Copyright (C) 2008 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or

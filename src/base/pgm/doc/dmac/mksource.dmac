@@ -2,7 +2,7 @@
 :*:commands to include created source files
 :de:Befehle zur Sourcefilegenerierung
 
-$Copyright (C) 2000 Erich Frühstück
+$Copyright (C) 2000 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -22,7 +22,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 \eval	{
-	int ms_exnum = 1;	// Laufnummer für Beispiele 
+	int ms_exnum = 1;	// Laufnummer fÃ¼r Beispiele 
 }
 
 
@@ -34,7 +34,7 @@ If not, write to the Free Software Foundation, Inc.,
 :*:The command $1 calls |mksource| with the given script
 and includes the created files in verbatim mode.
 :de:Der Befehl $1 wendet |mksource| auf die angegebene Skriptdatei
-an und bindet die Ergebnisdateien wortwörtlich ein.
+an und bindet die Ergebnisdateien wortwÃ¶rtlich ein.
 
 \def\mksource {{
 str fname = fsearch(DocPath, xexpand(ParseLine(cin)), NULL);
@@ -65,7 +65,7 @@ if	(fname)
 	$1 <name>
 	<example script>
 	|\\end|
-:de:Beispiel für |mksource| ausführen
+:de:Beispiel fÃ¼r |mksource| ausfÃ¼hren
 	$1 <name>
 	<Beispielskript>
 	|\\end|
@@ -73,7 +73,7 @@ if	(fname)
 :*:The command $1 calls |mksource| with the given example script
 and includes it together with all created files in verbatim mode.
 :de:Der Befehl $1 wendet |mksource| auf das Beispielskript
-an und bindet dieses mit allen Ergebnisdateien wortwörtlich ein.
+an und bindet dieses mit allen Ergebnisdateien wortwÃ¶rtlich ein.
 
 \def\ms_example	{{
 	str desc = ParseLine(cin);

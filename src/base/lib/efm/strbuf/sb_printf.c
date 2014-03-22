@@ -1,7 +1,7 @@
 /*
 Datenwerte formatiern
 
-$Copyright (C) 1994, 2008 Erich Fr¸hst¸ck
+$Copyright (C) 1994, 2008 Erich Fr√ºhst√ºck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -27,8 +27,8 @@ If not, write to the Free Software Foundation, Inc.,
 
 /*
 Die Funktion |$1| erlaubt formatierte Ausgaben in den Stringbuffer <sb>.
-Es wird ein implizites |sb_sync| durchgef¸hrt. Der Stringbuffer ist
-anschlieﬂend nullterminiert. Ein Nullpointer als Formatstring ist zul‰ssig.
+Es wird ein implizites |sb_sync| durchgef√ºhrt. Der Stringbuffer ist
+anschlie√üend nullterminiert. Ein Nullpointer als Formatstring ist zul√§ssig.
 */
 
 int sb_printf (StrBuf *sb, const char *fmt, ...)
@@ -43,7 +43,7 @@ int sb_printf (StrBuf *sb, const char *fmt, ...)
 }
 
 /*
-Die Funktion |$1| hat die selbe Funktionalit‰t wie |sb_printf|, nur wird
+Die Funktion |$1| hat die selbe Funktionalit√§t wie |sb_printf|, nur wird
 ein Argument vom Typ |va_list| anstelle einer variablen Argumentliste
 verwendet.
 */

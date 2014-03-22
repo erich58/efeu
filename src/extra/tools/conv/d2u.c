@@ -1,9 +1,9 @@
 /*
 :*:	newline conversion between UNIX and DOS
-:de:	Zeilenumbrüche zwischen UNIX und DOS konvertieren
+:de:	ZeilenumbrÃ¼che zwischen UNIX und DOS konvertieren
 
-$Copyright (C) 2004 Erich Frühstück
-A-3423 St.Andrä/Wördern, Wildenhaggasse 38
+$Copyright (C) 2004 Erich FrÃ¼hstÃ¼ck
+A-3423 St.AndrÃ¤/WÃ¶rdern, Wildenhaggasse 38
 
 EFEU is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public
@@ -35,7 +35,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <errno.h>
 #include <signal.h>
 
-#define	NTRY	10	/* Maximalzahl der Versuche für temporäre Datei */
+#define	NTRY	10	/* Maximalzahl der Versuche fÃ¼r temporÃ¤re Datei */
 
 #define	CONV	"[d2u:conv]$1: file converted.\n"
 #define	CHECK	"[d2u:check]$1: conversion proposed.\n"

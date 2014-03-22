@@ -1,7 +1,7 @@
 /*
-Regeln für Handbucheinträge
+Regeln fÃ¼r HandbucheintrÃ¤ge
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -24,7 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 #define	_Manual_pph	1
 
 /*
-Der Makro |$1| definiert die Bibliothek für einen Handbucheintrag.
+Der Makro |$1| definiert die Bibliothek fÃ¼r einen Handbucheintrag.
 */
 #define	ManualDir(path,ext)		\
 PathName(path, Concat(man,ext))
@@ -55,9 +55,9 @@ $(MANDIR)/man@.num/target.num.Z: $(MANDIR)/man@.num/name@.num.Z	@;\
 
 /*
 $Notes
-Die Regeln zur Generierung von Handbucheinträgen sind veraltet
-und stehen nur mehr aus Kompatiblitätsgründen
-zur Verfügung.
+Die Regeln zur Generierung von HandbucheintrÃ¤gen sind veraltet
+und stehen nur mehr aus KompatiblitÃ¤tsgrÃ¼nden
+zur VerfÃ¼gung.
 
 $SeeAlso
 \mref{mkmf(1)}.

@@ -1,7 +1,7 @@
 /*
 Dokumentation aus Sourcefile generieren
 
-$Copyright (C) 2000 Erich Frühstück
+$Copyright (C) 2000 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -104,7 +104,7 @@ int main (int narg, char **arg)
 	eval(Name, ein, aus);
 
 /*	Leerzeile am Ende verhindert das unerwartete Verschwinden von 
-	nachfolgenden Texten beim Zusammenfügen mehrerer Ausgabedateien.
+	nachfolgenden Texten beim ZusammenfÃ¼gen mehrerer Ausgabedateien.
 */
 	io_putc('\n', aus);
 	io_close(ein);

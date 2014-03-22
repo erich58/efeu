@@ -1,7 +1,7 @@
 /*
 XML-Konstruktor
 
-$Copyright (C) 2008 Erich Frühstück
+$Copyright (C) 2008 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -98,7 +98,7 @@ static struct {
 } action_tab[] = {
 	{ NULL, xml_print, "Default, entspricht beautified" },
 	{ "c:ompact", xml_compact, "Kompakte Datstellung" },
-	{ "b:eautified", xml_print, "Aufgelockert mit weißen Zeichen" },
+	{ "b:eautified", xml_print, "Aufgelockert mit weiÃŸen Zeichen" },
 	{ "t:list", xml_tlist, "Tagliste" },
 	{ "d:ump", xml_dump, "Dump der Werte mit Hierarchieposition" },
 };

@@ -1,7 +1,7 @@
 /*
 Ausgabefunktionen
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -91,43 +91,43 @@ char *DoubleToString (double val)
 static EfiVarDef var_print[] = {
 	{ "field_width", &Type_int, &PrintFieldWidth,
 		":*:field with for formatting values\n"
-		":de:Feldbreite für Werte\n" },
+		":de:Feldbreite fÃ¼r Werte\n" },
 	{ "float_prec", &Type_int, &PrintFloatPrec,
 		":*:floating point precission\n"
 		":de:Genauigkeit von Gleitkommawerten\n" },
 	{ "PrintTypeVerbosity", &Type_int, &PrintTypeVerbosity,
 		":*:verbosity of type representation\n"
-		":de:Darstellungsausführlichkeit von Datentypen\n" },
+		":de:DarstellungsausfÃ¼hrlichkeit von Datentypen\n" },
 	{ "fmt_str", &Type_str, &v_fmt_str,
 		":*:format key for strings\n"
-		":de:Formatdefinition für Zeichenketten\n" },
+		":de:Formatdefinition fÃ¼r Zeichenketten\n" },
 	{ "fmt_float", &Type_str, &v_fmt_float,
 		":*:format key for floating point numbers\n"
-		":de:Formatdefinition für Gleitkommazahlen\n" },
+		":de:Formatdefinition fÃ¼r Gleitkommazahlen\n" },
 	{ "fmt_int", &Type_str, &v_fmt_int,
 		":*:format key for integer\n"
-		":de:Formatdefinition für Ganzzahlwerte\n" },
+		":de:Formatdefinition fÃ¼r Ganzzahlwerte\n" },
 	{ "fmt_unsigned", &Type_str, &v_fmt_uint,
 		":*:format key for unsigned integer\n"
-		":de:Formatdefinition für vorzeichenfreie Ganzzahlwerte\n" },
+		":de:Formatdefinition fÃ¼r vorzeichenfreie Ganzzahlwerte\n" },
 	{ "fmt_int64", &Type_str, &v_fmt_int64,
 		":*:format key for 64 bit integer\n"
-		":de:Formatdefinition für 64-Bit Ganzzahlwerte\n" },
+		":de:Formatdefinition fÃ¼r 64-Bit Ganzzahlwerte\n" },
 	{ "fmt_uint64", &Type_str, &v_fmt_uint64,
 		":*:format key for unsigned 64 bit integer\n"
-		":de:Formatdefinition für vorzeichenfreie 64-Bit Ganzzahlwerte\n" },
+		":de:Formatdefinition fÃ¼r vorzeichenfreie 64-Bit Ganzzahlwerte\n" },
 	{ "fmt_size", &Type_str, &v_fmt_size,
 		":*:format key for size integer\n"
-		":de:Formatdefinition für Größenzahlen\n" },
+		":de:Formatdefinition fÃ¼r GrÃ¶ÃŸenzahlen\n" },
 	{ "PrintListBegin", &Type_str, &PrintListBegin,
 		":*:start string used in displaying lists\n"
-		":de:Startzeichen für Listen\n" },
+		":de:Startzeichen fÃ¼r Listen\n" },
 	{ "PrintListDelim", &Type_str, &PrintListDelim,
 		":*:delimiter used in displaying lists\n"
-		":de:Trennzeichen für Listen\n" },
+		":de:Trennzeichen fÃ¼r Listen\n" },
 	{ "PrintListEnd", &Type_str, &PrintListEnd,
 		":*:end string used in displaying lists\n"
-		":de:Abschlußzeichen für Listen\n" },
+		":de:AbschluÃŸzeichen fÃ¼r Listen\n" },
 };
 
 

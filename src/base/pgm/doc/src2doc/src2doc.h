@@ -1,7 +1,7 @@
 /*
 Dokumentation aus Sourcefile generieren
 
-$Copyright (C) 2000 Erich Frühstück
+$Copyright (C) 2000 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -74,14 +74,14 @@ typedef struct {
 
 
 struct SrcDataStruct {
-	int hdr;	/* Flag für Header */
+	int hdr;	/* Flag fÃ¼r Header */
 	IO *ein;	/* Eingabestruktur */
 	StrBuf buf;	/* Stringbuffer */
 	DocBuf doc;	/* Dokumentbuffer */
 	SrcCmd *ppdef;	/* Preprozessordefinitionen */
 	size_t ppdim;	/* Zahl der Preprozessdefinitionen */
-	unsigned mask;	/* Maske für SYNOPSIS-Deklarationen */
-	unsigned xmask;	/* Maske für beschriebene Deklarationen */
+	unsigned mask;	/* Maske fÃ¼r SYNOPSIS-Deklarationen */
+	unsigned xmask;	/* Maske fÃ¼r beschriebene Deklarationen */
 };
 
 void SrcData_init (SrcData *data, IO *ein);

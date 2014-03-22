@@ -2,7 +2,7 @@
 :*:write unicode character as utf-8 character sequence to string
 :de:Unicode Zeichen mit UTF-8 Codierung in String schreiben.
 
-$Copyright (C) 2009 Erich Frühstück
+$Copyright (C) 2009 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -25,13 +25,13 @@ If not, write to the Free Software Foundation, Inc.,
 
 /*
 Die Funktion |$1| schreibt das Unicode-Zeichen als UTF-8 Sequenz in
-den Stringbuffer <buf> der Länge <len> und liefert die Zahl der
+den Stringbuffer <buf> der LÃ¤nge <len> und liefert die Zahl der
 ausgegebenen Bytes. Falls <buf> ein Nullpointer ist oder nicht
-genügend Speicherplatz für die Codesequenz und eine Abschlußnull bietet,
-wird kein Zeichen ausgegeben und die Funktion liefert die Zahl der benötigten
-Bytes. Die Abschlußnull wird nicht geschrieben, sondern nur bei der
-Speicherbedarfsrechnung berücksichtigt.
-Zeichen mit negativen Codewert (z.B.: EOF) oder mit einem Codwert größer
+genÃ¼gend Speicherplatz fÃ¼r die Codesequenz und eine AbschluÃŸnull bietet,
+wird kein Zeichen ausgegeben und die Funktion liefert die Zahl der benÃ¶tigten
+Bytes. Die AbschluÃŸnull wird nicht geschrieben, sondern nur bei der
+Speicherbedarfsrechnung berÃ¼cksichtigt.
+Zeichen mit negativen Codewert (z.B.: EOF) oder mit einem Codwert grÃ¶ÃŸer
 als |0x001FFFFF| werden ignoriert.
 */
 

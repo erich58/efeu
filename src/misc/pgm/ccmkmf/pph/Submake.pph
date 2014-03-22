@@ -1,7 +1,7 @@
 /*
 Teilmakefiles
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -34,7 +34,7 @@ mkfile: imkfile					@;\
 
 /*
 Der Makro |$1|
-ruft für das Pseudoziel <name> das Kommando |make|
+ruft fÃ¼r das Pseudoziel <name> das Kommando |make|
 mit Makefile <mfile> und Argumentliste <args> auf.
 */
 #define	NamedSubmake(name,mfile,args)	@;\

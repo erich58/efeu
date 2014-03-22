@@ -1,6 +1,6 @@
-/*	Gnu-Plot Schnittstelle für Zeitreihen
-	(c) 1997 Erich Frühstück
-	A-1090 Wien, Währinger Straße 64/6
+/*	Gnu-Plot Schnittstelle fÃ¼r Zeitreihen
+	(c) 1997 Erich FrÃ¼hstÃ¼ck
+	A-1090 Wien, WÃ¤hringer StraÃŸe 64/6
 */
 
 bool PlotDataHist = false;

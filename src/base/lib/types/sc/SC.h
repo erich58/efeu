@@ -1,7 +1,7 @@
 /*
 Schnittstelle zu sc spread sheet
 
-$Copyright (C) 2002 Erich Frühstück
+$Copyright (C) 2002 Erich FrÃ¼hstÃ¼ck
 
 $Header <EfiType/SC.h>
 */

@@ -1,8 +1,8 @@
 #:*:	show/change time stamp of compressd file
-#:de:	Abfragen/Ändern des Zeitstempels komprimierter Dateien
+#:de:	Abfragen/Ã„ndern des Zeitstempels komprimierter Dateien
 #
-# $Copyright (C) 2004 Erich Frühstück
-# A-3423 St.Andrä/Wördern, Wildenhaggasse 38
+# $Copyright (C) 2004 Erich FrÃ¼hstÃ¼ck
+# A-3423 St.AndrÃ¤/WÃ¶rdern, Wildenhaggasse 38
 # 
 # EFEU is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public
@@ -29,7 +29,7 @@ NoStamp = false
 
 l | ListStamp = true
 	:*:lists modification time and time stamp for every file.
-	:de:gibt für jede Datei Modifikationszeit und Zeitstempel aus.
+	:de:gibt fÃ¼r jede Datei Modifikationszeit und Zeitstempel aus.
 t | Touch = true
 	:*:sets the modification time of file to the time stamp.
 	:de:setzt die Modifikationszeit der Datei auf den Zeitstempel.
@@ -38,7 +38,7 @@ s | SyncStamp = true
 	:de:setzt den Zeitstempel auf die Modifikationszeit der Datei.
 c | ClearStamp = true
 	:*:clears time stamp.
-	:de:löscht den Zeitstempel.
+	:de:lÃ¶scht den Zeitstempel.
 a | AllFiles = true
 	:*:list also files without original name or time stamp
 	:de:listet auch Dateien ohne Originalnamen und Zeitstempel auf.

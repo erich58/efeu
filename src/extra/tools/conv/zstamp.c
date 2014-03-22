@@ -1,9 +1,9 @@
 /*
 :*:	show/change time stamp of compressd file
-:de:	Abfragen/Ändern des Zeitstempels komprimierter Dateien
+:de:	Abfragen/Ã„ndern des Zeitstempels komprimierter Dateien
 
-$Copyright (C) 2004 Erich Frühstück
-A-3423 St.Andrä/Wördern, Wildenhaggasse 38
+$Copyright (C) 2004 Erich FrÃ¼hstÃ¼ck
+A-3423 St.AndrÃ¤/WÃ¶rdern, Wildenhaggasse 38
 
 EFEU is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public

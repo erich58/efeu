@@ -27,7 +27,7 @@ C:void "(*conv)(EfiType *type, void *data, const char *def)"
 cpar.setup(false);
 
 TypeDef def = TypeDef(NAME,
-	"Datenstruktur für die Würfelkonstruktion", string !
+	"Datenstruktur fÃ¼r die WÃ¼rfelkonstruktion", string !
 @base
 P:PG		pg	Schnittstellenpointer
 X:PG_Grp[]	grp	Gruppenvektor
@@ -36,7 +36,7 @@ str		cname	Cursorname
 Type_t		type	Datentyp
 Object		obj	Datenobjekt
 EDB		edb	EDB-Datenschnittstelle
-int		bsize	Blockgröße zur Datenabfrage
+int		bsize	BlockgrÃ¶ÃŸe zur Datenabfrage
 !);
 
 def.use(PAR);

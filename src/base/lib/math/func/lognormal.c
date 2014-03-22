@@ -4,7 +4,7 @@
 
 $Name dlognormal, plognormal, qlognormal
 
-$Copyright (C) 2002 Erich Frühstück
+$Copyright (C) 2002 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -48,7 +48,7 @@ double dlognormal (double q, double mu, double sigma)
 The function |$1| computes the cummulative probability of the
 lognormal distribution.
 :de:
-Die Funktion |$1| berechnet die kummulative Häufigkeit der Lognormalverteilung.
+Die Funktion |$1| berechnet die kummulative HÃ¤ufigkeit der Lognormalverteilung.
 */
 
 double plognormal (double q, double mu, double sigma)

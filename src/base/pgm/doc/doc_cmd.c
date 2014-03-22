@@ -1,7 +1,7 @@
 /*
-Dokumentbefehle ausführen
+Dokumentbefehle ausfÃ¼hren
 
-$Copyright (C) 1999 Erich Frühstück
+$Copyright (C) 1999 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -92,7 +92,7 @@ void Doc_cmd (Doc *doc, IO *in)
 	if	(io_peek(in) == '=')
 	{
 		io_getc(in);
-		p = mstrcpy(p);	/* Temporärer Buffer !!! */
+		p = mstrcpy(p);	/* TemporÃ¤rer Buffer !!! */
 		DocTab_setmac(doc->cmd_stack->data, p,
 			Doc_lastcomment(doc), DocParseExpr(in));
 		return;

@@ -1,6 +1,6 @@
 # EDB Datenbanken vergleichen
 # 
-# $Copyright (C) 2007 Erich Frühstück
+# $Copyright (C) 2007 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -38,9 +38,9 @@ p:mode | Print
 	:*:output mode
 	:de:Ausgabemodus
 c:name | Comp
-	Vergleichsfunktion für Datensätze, Vorgabe {Comp}
+	Vergleichsfunktion fÃ¼r DatensÃ¤tze, Vorgabe {Comp}
 d:name | Diff
-	Darstellungsfunktion für Unterschiede, Vorgabe {Diff}
+	Darstellungsfunktion fÃ¼r Unterschiede, Vorgabe {Diff}
 n:lim | maxrec
 	:*:Limit of input data lines
 	:de:Begrenzung der gelesenen Datenzeilen

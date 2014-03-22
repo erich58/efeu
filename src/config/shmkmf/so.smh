@@ -4,7 +4,7 @@
 # $Synopsis
 # include $1
 #
-# $Copyright (C) 2007 Erich Frühstück
+# $Copyright (C) 2007 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -52,7 +52,7 @@ mf_srclist -c mksrclist
 #	:de:Name der Quelldatei.
 # *args |
 #	:*:additional arguments for |mf_cc|.
-#	:de:zusätzliche Argumente für |mf_cc|.
+#	:de:zusÃ¤tzliche Argumente fÃ¼r |mf_cc|.
 # !
 # :*:
 # The function $! creates a rule to compile a shared object module.
@@ -91,7 +91,7 @@ so_cc ()
 #	:de:Name der Schablonendatei.
 # *args |
 #	:*:additional arguments for |mf_cc| to compile sources.
-#	:de:zusätzliche Argumente für |mf_cc| zum kompilieren der
+#	:de:zusÃ¤tzliche Argumente fÃ¼r |mf_cc| zum kompilieren der
 #	Sourcen.
 # !
 # :*:

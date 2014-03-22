@@ -2,7 +2,7 @@
 :*:index of time series
 :de:Zeitreihenindex
 
-$Copyright (C) 1997 Erich Frühstück
+$Copyright (C) 1997 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -26,8 +26,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <Math/TimeSeries.h>
 #include <ctype.h>
 
-#define	YLIM_2000	50	/* Jahresgrenze für 2000 - Offset */
-#define	YLIM_1900	100	/* Jahresgrenze für 1900 - Offset */
+#define	YLIM_2000	50	/* Jahresgrenze fÃ¼r 2000 - Offset */
+#define	YLIM_1900	100	/* Jahresgrenze fÃ¼r 1900 - Offset */
 
 /*
 #	#Index

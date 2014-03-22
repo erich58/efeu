@@ -2,19 +2,19 @@
 /*
 Programmbeispiel: Hello World!
 
-$Copyright (C) 2002 Erich Frühstück
+$Copyright (C) 2002 Erich FrÃ¼hstÃ¼ck
 */
 
 pconfig !
 Version = "vhello3.esh 1.0"
 
 Format = "%s"
-	Formatierungsanweisung für den Ausgabetext.
+	Formatierungsanweisung fÃ¼r den Ausgabetext.
 Label = "Hallo Welt!"
 	Ausgabetext.
 
 q|-quote|Format = "\"%s\""
-	Gibt den Ausgabetext unter Anführung aus.
+	Gibt den Ausgabetext unter AnfÃ¼hrung aus.
 f:fmt|-format:fmt|Format
 	Setzt das Ausgabeformat, die Vorgabe ist |{Format}|.
 ::arg|Label

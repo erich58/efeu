@@ -1,5 +1,5 @@
 # :en: german version of efeu style guide
-# :de: Stilführer
+# :de: StilfÃ¼hrer
 ##Depends: .
 
 include efeu.smh

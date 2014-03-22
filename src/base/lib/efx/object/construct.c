@@ -1,7 +1,7 @@
 /*
 Datentype konstruieren
 
-$Copyright (C) 2006 Erich Frühstück
+$Copyright (C) 2006 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -40,7 +40,7 @@ If not, write to the Free Software Foundation, Inc.,
 #define ERR_NAME	"$!: missing variable name.\n"
 #define ERR_CHAR	"$!: unexpected character $1.\n"
 
-/*	Selektionseinträge
+/*	SelektionseintrÃ¤ge
 */
 
 typedef struct ConstructEntry ConstructEntry;

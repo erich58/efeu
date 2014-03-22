@@ -1,5 +1,5 @@
 /*
-Aufz‰hlungstyp einrichten.
+Aufz√§hlungstyp einrichten.
 */
 
 static void TypeDef::enumerator (str name, int n, str desc)

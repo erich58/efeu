@@ -1,10 +1,10 @@
 /*
 :*:Name key tables
-:de:Namensschlüsseltabellen
+:de:NamensschlÃ¼sseltabellen
 
 $Header	<EFEU/$1>
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -44,8 +44,8 @@ typedef struct {
 extern RefType nkt_reftype;
 
 /*
-Der Makro |$1| liefert die Initialisierungswerte für eine Schlüsseltabelle
-mit Namen |name|, Blockgröße |bsize| und Löschfunktion |clean|.
+Der Makro |$1| liefert die Initialisierungswerte fÃ¼r eine SchlÃ¼sseltabelle
+mit Namen |name|, BlockgrÃ¶ÃŸe |bsize| und LÃ¶schfunktion |clean|.
 */
 
 #define	NKT_DATA(name, bsize, clean)	\

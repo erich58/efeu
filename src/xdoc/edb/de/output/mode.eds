@@ -1,78 +1,78 @@
 \sec	Ausgabemodi
 
-Der Ausgabemodus determiniert im wesentlichen die Ausgabe. Er enthält
-eine Ausgabefunktion, die für jeden Datensatz aufgerufen wird. Wobei
+Der Ausgabemodus determiniert im wesentlichen die Ausgabe. Er enthÃ¤lt
+eine Ausgabefunktion, die fÃ¼r jeden Datensatz aufgerufen wird. Wobei
 hier eine Ausgabe nicht unbedingt das Schreiben von Daten in eine Datei
-bedeuten muss, es können z.B. auch Daten zu einem \index{Datenwürfel}
+bedeuten muss, es kÃ¶nnen z.B. auch Daten zu einem \index{DatenwÃ¼rfel}
 aggregiert werden. Vergleiche dazu \ref{md}, Seite \pref{md}.
 
 \ssec	Ausgabe als EDB-Datenfile
 
 Es gibt drei verschiedene Ausgabeformate, die im Regelfall wiederum
-als EDB-Datenfiles gelesen werden können. Diese entsprechen auch den
-gleichnamigen Standardlesefunktionen für EDB-Datenfiles.
+als EDB-Datenfiles gelesen werden kÃ¶nnen. Diese entsprechen auch den
+gleichnamigen Standardlesefunktionen fÃ¼r EDB-Datenfiles.
 
 Allen Ausgabemodi ist gemeinsam, dass sie einen standardisierten
 EDB-Datenfilekopf mit dem Datentyp des EDB-Datenfiles generieren.
-Aus dem Datentyp werden eventuell benötigte Headerzeilen extrahiert.
-Der Kopfteil schließt mit einer \index{|@data|-Anweisung} ab, die als
-Parameter die zur Ausgabe passende, gleichnamige Lesedefinition enthält.
+Aus dem Datentyp werden eventuell benÃ¶tigte Headerzeilen extrahiert.
+Der Kopfteil schlieÃŸt mit einer \index{|@data|-Anweisung} ab, die als
+Parameter die zur Ausgabe passende, gleichnamige Lesedefinition enthÃ¤lt.
 
 [\index{|plain|}]
 	Die Daten werden so ausgegeben, dass sie als \index{Term} des
-	EFEU-Interpreters wieder gelesen werden können. Die einzelnen Terme
+	EFEU-Interpreters wieder gelesen werden kÃ¶nnen. Die einzelnen Terme
 	sind durch einen Strichpunkt getrennt. Formatierungsvorgaben
-	für Zahlenwerte werden nicht berücksichtigt. Die Ausgabe ist
-	auf eine möglichst exakte Wertrepräsentation abgestimmt.
+	fÃ¼r Zahlenwerte werden nicht berÃ¼cksichtigt. Die Ausgabe ist
+	auf eine mÃ¶glichst exakte WertreprÃ¤sentation abgestimmt.
 [\index{|l|}, \index{|label|}]
 	Die Daten werden in eine Zeichenkette transformiert. Die
 	Lesbarkeit ist in der Regel besser als bei |plain|, aber nicht
 	alle Datentypen lassen sich verlustfrei und problemlos wieder
-	einlesen. Für den Datentyp muss ein geeigneter Konverter oder
-	Konstruktor eingerichtet sein, der die Rückwandlung der
+	einlesen. FÃ¼r den Datentyp muss ein geeigneter Konverter oder
+	Konstruktor eingerichtet sein, der die RÃ¼ckwandlung der
 	Zeichenkette in den Datenwert sicherstellt.
 	Formatierungsparameter wie Ausgabegenauigkeit,
 	Darstellungsformat und lokale Besonderheiten werden
-	berücksichtigt, können aber eine Weiterverarbeitung als
+	berÃ¼cksichtigt, kÃ¶nnen aber eine Weiterverarbeitung als
 	EDB-Datenfile verhindern.
 [\index{|b|}, \index{|binary|}]
-	Die Daten werden binär ausgegeben. Mit wenigen Ausnahmen,
-	wie z.B. Funktionen oder Ausdrücke,
-	haben alle Datentypen eine binäre Repräsentation der Werte,
+	Die Daten werden binÃ¤r ausgegeben. Mit wenigen Ausnahmen,
+	wie z.B. Funktionen oder AusdrÃ¼cke,
+	haben alle Datentypen eine binÃ¤re ReprÃ¤sentation der Werte,
 	die wieder 1:1 gelesen werden kann.
 
-Die Standardvorgabe für die Ausgabe ist |plain|.
+Die Standardvorgabe fÃ¼r die Ausgabe ist |plain|.
 Die Deklaration des Datentypes im Kopf kann mit |compcat| bzw.
 |verbose| modifiziert werden. Bei |nohead| wird im
-Ausgabemodus |plain| und |label| der Kopfteil unterdrückt, bei
+Ausgabemodus |plain| und |label| der Kopfteil unterdrÃ¼ckt, bei
 |binary| wirkt |nohead| wie |compact|.
 
 \ssec 	Daten exportieren
 
-Für den export der Daten an andere Programme ist die Darstellung der
+FÃ¼r den export der Daten an andere Programme ist die Darstellung der
 Datenwerte als Zeichenkette am besten geeignet. Der Dateikopf wird
-nicht benötigt, eine Kommentarzeile mit den Namen der Variablen kann
+nicht benÃ¶tigt, eine Kommentarzeile mit den Namen der Variablen kann
 aber hilfreich sein.
 
 [\index{|data|}&;|[|<opt>|]=|<mode>]
-	sorgt für eine Ausgabe der Daten entsprechend der
+	sorgt fÃ¼r eine Ausgabe der Daten entsprechend der
 	Ausgabedefinition <mode>.
-	Welche Ausgabeformate für den Datentyp verfügbar
+	Welche Ausgabeformate fÃ¼r den Datentyp verfÃ¼gbar
 	sind, kann durch eine leere Definition |data=| abgefragt
 	werden.
 
 	Ohne Angabe eines Ausgabemodus werden die Daten analog zu |label|
-	ausgegeben, es wird kein Dateikopf erzeugt. Die erste Zeile enthält
+	ausgegeben, es wird kein Dateikopf erzeugt. Die erste Zeile enthÃ¤lt
 	die Namen der Variablen. Diese kann mit dem Parameter |nohead|
-	unterdrückt werden.
+	unterdrÃ¼ckt werden.
 
 	Falls \index{|crlf|} als Option angegeben wird, werden
-	die Ausgabezeilen mit Wagenrücklauf und Zeilenvorschub abgeschlossen.
+	die Ausgabezeilen mit WagenrÃ¼cklauf und Zeilenvorschub abgeschlossen.
 [\index{|x|}&;|[|<opt>|]=|<mode>, \index{|export|}&;|[|<opt>|]=|<mode>]
-	sind Makros für die Kombination
+	sind Makros fÃ¼r die Kombination
 	|{data[|<opt>|]=|<mode>|},nosplit|.
 [\index{|csv|}&;|=|<mode>]
-	ist ein Makro für die Kombination
+	ist ein Makro fÃ¼r die Kombination
 	|{data[crlf]=|<mode>|},nosplit,nohead,locale|.
 
 \ssec	Formatierte Ausgabe
@@ -80,12 +80,12 @@ aber hilfreich sein.
 \index[Formatierte Ausgabe]
 
 Die Ausgabedefinition \index{|fmt|} erlaubt eine formatierte Ausgabe
-von Datensätzen. Die Syntax lautet: |fmt[|<head>|]=|<fmt>.
-Als Argument wird ein Formatstring <fmt> für die einzelnen
-Datenzeilen übergeben. Die Datenwerte werden mittels
+von DatensÃ¤tzen. Die Syntax lautet: |fmt[|<head>|]=|<fmt>.
+Als Argument wird ein Formatstring <fmt> fÃ¼r die einzelnen
+Datenzeilen Ã¼bergeben. Die Datenwerte werden mittels
 \index{Parametersubstitution} eingebaut. Optional kann auch ein Format
-<head> für die Kopfzeile angegeben werden. Falls die Formatanweisung
-Kommas enthält, muss die Ausgabedefinition in geschwungene Klammern gesetzt
+<head> fÃ¼r die Kopfzeile angegeben werden. Falls die Formatanweisung
+Kommas enthÃ¤lt, muss die Ausgabedefinition in geschwungene Klammern gesetzt
 werden.
 
 So liefert z.B. der Aufruf
@@ -102,46 +102,46 @@ input("verbatim", popen(cmd, "r"));
 
 \index[Ausgabe als Datenmatrix]
 Mit der Ausgabedefinition \index{|md|} werden die Daten zu einer Datenmatrix
-(Datenwürfel) aufsummiert.
+(DatenwÃ¼rfel) aufsummiert.
 
 Beim Einrichten der Ausgabestruktur wird die resultierende Datenmatrix
 entsprechend der Struktur des Datentyps generiert. Bei der Ausgabe
 eines Satzes werden die Werte zu den entsprechenden Zellen der
-Datenmatrix addiert. Erst beim Schließen der Ausgabestruktur wird die
+Datenmatrix addiert. Erst beim SchlieÃŸen der Ausgabestruktur wird die
 Datenmatrix ausgegeben.
 
-Als Argument kann ein Ausgabemodus für die Datematrix angegeben
-werden. Fehlt dieser, erfolgt die Ausgabe binär.
+Als Argument kann ein Ausgabemodus fÃ¼r die Datematrix angegeben
+werden. Fehlt dieser, erfolgt die Ausgabe binÃ¤r.
 
-\index[Rahmenbedingungen für die Ausgabe als Datenmatrix]
-Für die Ausgabe als Datenmatrix muss
-die Struktur des Datentyps gewisse Rahmenbedingungen erfüllen. Notfalls
+\index[Rahmenbedingungen fÃ¼r die Ausgabe als Datenmatrix]
+FÃ¼r die Ausgabe als Datenmatrix muss
+die Struktur des Datentyps gewisse Rahmenbedingungen erfÃ¼llen. Notfalls
 muss mithilfe der Filter |view|, |trans| oder |var| eine geeignete
-Datentyptransformation durchgeführt werden.
+Datentyptransformation durchgefÃ¼hrt werden.
 
-Jede einzelne Komponente muss eine der folgenden drei Bedingungen erfüllen:
-*	Die Komponente ist ein Aufzählungstyp;
-*	Die Komponente ist eine Struktur, die sich ausschließlich aus
-	Aufzählungstypen zusammensetzt;
+Jede einzelne Komponente muss eine der folgenden drei Bedingungen erfÃ¼llen:
+*	Die Komponente ist ein AufzÃ¤hlungstyp;
+*	Die Komponente ist eine Struktur, die sich ausschlieÃŸlich aus
+	AufzÃ¤hlungstypen zusammensetzt;
 *	Die Komponente ist eine aufsummierbare Variable.
 
 Aus den Strukturkomponenten, die die ersten beiden Bedingungen
-erfüllen, werden Achsen konstruiert. Der Name der Komponente bestimmt
-den Namen der Achse, während die möglichen Ausprägungen die
+erfÃ¼llen, werden Achsen konstruiert. Der Name der Komponente bestimmt
+den Namen der Achse, wÃ¤hrend die mÃ¶glichen AusprÃ¤gungen die
 Achenbezeichner festlegen. Die restlichen Komponenten bilden den
 Datentyp der Datenmatrix.
 
 Ob eine Komponente aufsummierbar ist, ist eine inhaltliche und keine
 technische Frage. So gut wie alle Datentypen (auch Zeichenketten) lassen
 sich summieren, aber nicht alle Summationen sind im Kontext der
-Würfelgenerierung sinnvoll.
+WÃ¼rfelgenerierung sinnvoll.
 So werden z.B. beim Aufsummieren von Zeichenketten die einzelnen Textteile
-zusammengehängt.
+zusammengehÃ¤ngt.
 
-Die Datei \index{|pers.edb|} enthält keine summierbaren Variablen, und nur
-|gender| ist ein Aufzählungstyp.
-Mit einem geeigneten Filter läßt sich aber eine Datenmatrix mit der
-Anzahl der Männer und Frauen daraus generieren.
+Die Datei \index{|pers.edb|} enthÃ¤lt keine summierbaren Variablen, und nur
+|gender| ist ein AufzÃ¤hlungstyp.
+Mit einem geeigneten Filter lÃ¤ÃŸt sich aber eine Datenmatrix mit der
+Anzahl der MÃ¤nner und Frauen daraus generieren.
 
 Der Aufruf
 ---- eval
@@ -153,9 +153,9 @@ input("verbatim", popen(cmd, "r"));
 }
 ----
 
-Von der Datenstruktur wird nur |gender| verwendet, zusätzlich wird
-eine Zählvariable |anz| eingerichtet.
+Von der Datenstruktur wird nur |gender| verwendet, zusÃ¤tzlich wird
+eine ZÃ¤hlvariable |anz| eingerichtet.
 
-Die Ausgabe als Datenmatrix (Datenwürfel) wird häufig im Kontext mit
+Die Ausgabe als Datenmatrix (DatenwÃ¼rfel) wird hÃ¤ufig im Kontext mit
 einer Datensicht (Datenbankfilter |view|) verwendet. Dieser ist ein
 eigenes Kapitel gewidmet (Abschnitt \ref{view}, Seite \pref{view}).

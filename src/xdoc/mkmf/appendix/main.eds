@@ -10,7 +10,7 @@
 
 \langpar
 :*:\mchap[7]	Supplemental |shmkmf|-functions
-:de:\mchap[7]	Erg‰nzende |shmkmf|-Funktionen
+:de:\mchap[7]	Erg√§nzende |shmkmf|-Funktionen
 
 \delsrc
 \addsrcpath	\eval{mkpath("lib/shmkmf")}
@@ -26,8 +26,8 @@
 examples for the use of |shmkmf|. They are activated by the
 command line:\br
 |\config shmkmf|\br
-:de:Dieser Abschnitt enth‰lt eine Liste von |efeudoc|-Befehlen
-zum Schreiben von Beispielen f¸r |shmkmf|. Sie werden
+:de:Dieser Abschnitt enth√§lt eine Liste von |efeudoc|-Befehlen
+zum Schreiben von Beispielen f√ºr |shmkmf|. Sie werden
 mit der Befehlszeile\br
 |\config shmkmf|\br
 aktiviert.

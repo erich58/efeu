@@ -1,6 +1,6 @@
 /*	uniq - filter
 
-$Copyright (C) 2004 Erich Frühstück
+$Copyright (C) 2004 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -93,5 +93,5 @@ static EDB *fdef_uniq (EDBFilter *filter, EDB *base,
 EDBFilter EDBFilter_uniq = EDB_FILTER(NULL,
 	"uniq", NULL, fdef_uniq, NULL,
 	":*:remove duplicate data lines"
-	":de:Doppelte Datensätze entfernen"
+	":de:Doppelte DatensÃ¤tze entfernen"
 );

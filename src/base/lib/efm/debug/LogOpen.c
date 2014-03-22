@@ -1,8 +1,8 @@
 /*
 :*:open protokoll chanel
-:de:Protokollausgabe öffnen
+:de:Protokollausgabe Ã¶ffnen
 
-$Copyright (C) 2009 Erich Frühstück
+$Copyright (C) 2009 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -123,7 +123,7 @@ static void log_flush (IO *out)
 
 	if	(!out->nsave)	return;
 
-	if	(out->save_buf[out->nsave]) /* Unvollständig */
+	if	(out->save_buf[out->nsave]) /* UnvollstÃ¤ndig */
 	{
 		for (i = 0; i < out->nsave; i++)
 			sb_putucs(latin9_to_ucs(out->save_buf[i]), log->buf);
@@ -205,10 +205,10 @@ static int log_ctrl (IO *io, int req, va_list list)
 }
 
 /*
-Die Hilfsfunktion |$1| fügt je nach Bedarf zu Beginn jeder Zeile
-einen Zeitstempel ein und führt eine Konvertierung nach latin9 durch.
-Das Ergebnis der Konvertierung wird an den Stringbuffer angehängt,
-der ursprüngliche Inhalt wird nicht verändert.
+Die Hilfsfunktion |$1| fÃ¼gt je nach Bedarf zu Beginn jeder Zeile
+einen Zeitstempel ein und fÃ¼hrt eine Konvertierung nach latin9 durch.
+Das Ergebnis der Konvertierung wird an den Stringbuffer angehÃ¤ngt,
+der ursprÃ¼ngliche Inhalt wird nicht verÃ¤ndert.
 */
 
 static char *reorg (LOGOUT *log, unsigned flags)

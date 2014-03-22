@@ -1,8 +1,8 @@
 /*
 :*:	setting up Gtk+ enum types
-:de:	Gtk+ Aufzählungstypen generieren
+:de:	Gtk+ AufzÃ¤hlungstypen generieren
 
-$Copyright (C) 2002 Erich Frühstück
+$Copyright (C) 2002 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -308,7 +308,7 @@ static EnumTypeDef sort[] = {
 /*
 :de:
 Die Funktion |$1| erweitert den esh-Interpreter zur Nutzung
-der Gtk+ Aufzählungstypen.
+der Gtk+ AufzÃ¤hlungstypen.
 :*:
 The function |$1| expands the esh-Interpreter for use of the
 Gtk+ enum types.

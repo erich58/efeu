@@ -2,7 +2,7 @@
 :*:load command configuration from file
 :de:Kommandoparameter aus Datei laden
 
-$Copyright (C) 2001 Erich Fr¸hst¸ck
+$Copyright (C) 2001 Erich Fr√ºhst√ºck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -148,7 +148,7 @@ static char *copy_desc (IO *io, StrBuf *sb)
 	return sb_strcpy(sb);
 }
 
-/*	Regul‰ren Ausdruck kopieren
+/*	Regul√§ren Ausdruck kopieren
 */
 
 static char *copy_expr (IO *io, StrBuf *sb)
@@ -403,7 +403,7 @@ static void parse_line (CmdPar *par, IO *io, StrBuf *sb)
 			break;
 		}
 
-	/*	Zeichen kopieren und auf Abschluﬂ testen
+	/*	Zeichen kopieren und auf Abschlu√ü testen
 	*/
 		while ((c = io_getc(io)) != '|')
 		{

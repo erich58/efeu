@@ -1,7 +1,7 @@
 /*
-Formatdefinitionen für MDMATH-Funktionen
+Formatdefinitionen fÃ¼r MDMATH-Funktionen
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -23,4 +23,4 @@ If not, write to the Free Software Foundation, Inc.,
 1	$!: Leere Matrix bei Matrixinversion.\n
 2	$!: Type "$1" nicht in double konvertierbar.\n
 3	$!: Matrixinversion: Matrix nicht quadratisch.\n
-4	$!: Matrixinversion: Datenmatrix ist singulär (dim=$1, rang=$2).\n
+4	$!: Matrixinversion: Datenmatrix ist singulÃ¤r (dim=$1, rang=$2).\n

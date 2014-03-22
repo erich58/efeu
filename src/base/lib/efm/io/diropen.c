@@ -1,7 +1,7 @@
 /*
 Teilfileausgabe in Bibliothek
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -150,7 +150,7 @@ IO *diropen (const char *dir, const char *name)
 /*
 Die Funktion |$1| generiert eine neue Teilausgabedatei mit Namen <name>.
 In die Basisdatei wird stellvertretend <repl> eingesetzt. Dabei
-wird Parametersubstitution durchgeführt und Register 1 auf <name> gesetzt.
+wird Parametersubstitution durchgefÃ¼hrt und Register 1 auf <name> gesetzt.
 */
 
 int io_newpart(IO *io, const char *name, const char *repl)
@@ -159,7 +159,7 @@ int io_newpart(IO *io, const char *name, const char *repl)
 }
 
 /*
-Die Funktion |$1| schließt eine zuvor mit |io_newpart|
+Die Funktion |$1| schlieÃŸt eine zuvor mit |io_newpart|
 generierte Teilausgabedatei.
 */
 

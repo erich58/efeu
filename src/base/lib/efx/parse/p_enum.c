@@ -1,7 +1,7 @@
 /*
-Aufzählungstype generieren
+AufzÃ¤hlungstype generieren
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -179,7 +179,7 @@ EfiObj *PFunc_enum (IO *io, void *data)
 	}
 	else
 	{
-		/* Nur überlesen, derzeit keine Prüfung auf Äquivalenz! */
+		/* Nur Ã¼berlesen, derzeit keine PrÃ¼fung auf Ã„quivalenz! */
 
 		while ((c = io_skipcom(io, NULL, 0)) != '}')
 			;

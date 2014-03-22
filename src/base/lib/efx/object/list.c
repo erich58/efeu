@@ -1,7 +1,7 @@
 /*
 Objektlisten
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -40,7 +40,7 @@ EfiObjList *NewObjList(EfiObj *obj)
 }
 
 
-/*	Objektliste löschen
+/*	Objektliste lÃ¶schen
 */
 
 void DelObjList(EfiObjList *list)
@@ -54,7 +54,7 @@ void DelObjList(EfiObjList *list)
 }
 
 
-/*	Updateliste löschen
+/*	Updateliste lÃ¶schen
 */
 
 void UnlinkUpdateList (EfiObjList *list)
@@ -78,7 +78,7 @@ void UnlinkUpdateList (EfiObjList *list)
 	}
 }
 
-/*	Länge einer Liste bestimmen
+/*	LÃ¤nge einer Liste bestimmen
 */
 
 int ObjListLen(const EfiObjList *list)

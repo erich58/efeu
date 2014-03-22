@@ -2,7 +2,7 @@
 :*:disk usage
 :de:Festplattenverwendung
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -27,9 +27,9 @@ Power = 1000
 Unit = GB
 All = false
 LBL_DEV = Filesystem
-LBL_SIZE = :*:size:de:Größe
+LBL_SIZE = :*:size:de:GrÃ¶ÃŸe
 LBL_USED = :*:used:de:Verbraucht
-LBL_AVAIL = :*:available:de:Verfügbar
+LBL_AVAIL = :*:available:de:VerfÃ¼gbar
 LBL_MOUNT = :*:mount point:de:Mountpunkt
 LBL_GES = :*:total:de:Insgesamt
 
@@ -38,10 +38,10 @@ a | All = true
 	:de:Auch Dateisysteme ohne Typ ausgeben.
 g | Unit = GB
 	:*:display size in GB.
-	:de:Gößen in GB ausgeben.
+	:de:GÃ¶ÃŸen in GB ausgeben.
 m | Unit = MB
 	:*:display size in MB.
-	:de:Gößen in MB ausgeben.
+	:de:GÃ¶ÃŸen in MB ausgeben.
 H | Power = 1024
 	:*:use powers of 1024 instead of 1000
 	:de:Verwende 1024 anstelle von 1000 als einheit

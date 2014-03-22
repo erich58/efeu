@@ -1,7 +1,7 @@
 /*
 String/Zeichen mit Sonderdarstellung ausgeben
 
-$Copyright (C) 1993, 2008 Erich Frühstück
+$Copyright (C) 1993, 2008 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -25,8 +25,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/patcmp.h>
 #include <ctype.h>
 
-#define	EXTEND	1	/* Zeichen 128 - 255 unverändert ausgeben */
-#define	LATIN	0	/* Zeichen 161 - 255 unverändert ausgeben */
+#define	EXTEND	1	/* Zeichen 128 - 255 unverÃ¤ndert ausgeben */
+#define	LATIN	0	/* Zeichen 161 - 255 unverÃ¤ndert ausgeben */
 
 #if	EXTEND
 #define	printable(c)	isprint(c) || ((unsigned char) (c) > 127)

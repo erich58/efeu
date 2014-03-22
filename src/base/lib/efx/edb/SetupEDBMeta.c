@@ -1,6 +1,6 @@
 /*	Metadefinitionen initialisieren
-	$Copyright (C) 2006 Erich Frühstück
-	A-3423 St.Andrä/Wördern, Wildenhaggasse 38
+	$Copyright (C) 2006 Erich FrÃ¼hstÃ¼ck
+	A-3423 St.AndrÃ¤/WÃ¶rdern, Wildenhaggasse 38
 */
 
 #include <EFEU/EDBMeta.h>
@@ -120,11 +120,11 @@ static EDBMetaDef mdef[] = {
 	},
 	{ "paste", EDBMeta_paste, 0,
 		":*:paste data files"
-		":de:Datenfiles zusammenhängen"
+		":de:Datenfiles zusammenhÃ¤ngen"
 	},
 	{ "join", meta_join, 0,
 		":*:join data files"
-		":de:Datenfiles verknüpfen"
+		":de:Datenfiles verknÃ¼pfen"
 	},
 	{ "filter", meta_filter, 0,
 		":*:append filter to data base"

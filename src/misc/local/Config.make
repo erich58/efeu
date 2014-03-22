@@ -1,4 +1,4 @@
-# :de: Lokale Erg‰nzungen
+# :de: Lokale Erg√§nzungen
 ##Depends: .
 
 include efeu.smh

@@ -1,7 +1,7 @@
 /*
-Parser für Variablendefinitionen
+Parser fÃ¼r Variablendefinitionen
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -31,7 +31,7 @@ static EfiObj *e_vdef(const EfiType *type, const void *ptr);
 typedef struct {
 	EfiType *type;	/* Variablentype */
 	EfiName name;	/* Namensdefinition */
-	unsigned cnst;	/*  Flag für Konstante */
+	unsigned cnst;	/*  Flag fÃ¼r Konstante */
 	EfiObjList *idx; /* Indexliste */
 	EfiObj *defval;	/* Initialisierungswert */
 } EfiVarDecl;

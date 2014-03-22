@@ -1,7 +1,7 @@
 # :*:create documentation from source
 # :de:Dokumentation aus Sourcefile generieren
 
-# $Copyright (C) 2000 Erich Frühstück
+# $Copyright (C) 2000 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -47,7 +47,7 @@ s:num|:eval 'Secnum="{}"'
 	:de:Handbuchabschnitt
 i:fmt|:eval 'IncFmt="{}"'
 	:*:format for header file
-	:de:Format für Headerdateien
+	:de:Format fÃ¼r Headerdateien
 g|:eval 'IncFmt="<%s>"'
 	:*:global header files
 	:de:Globale Einbindedateien

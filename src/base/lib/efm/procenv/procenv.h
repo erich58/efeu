@@ -4,7 +4,7 @@
 
 $Header	<EFEU/$1>
 
-$Copyright (C) 1997 Erich Frühstück
+$Copyright (C) 1997 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -36,11 +36,11 @@ If not, write to the Free Software Foundation, Inc.,
 #define	EXIT_FAILURE	1
 #endif
 
-extern char *ProgDir;		/* Programmverzeichnis, falls verfügbar */
+extern char *ProgDir;		/* Programmverzeichnis, falls verfÃ¼gbar */
 extern char *ProgName;		/* Programmname */
 extern char *ProgIdent;		/* Programmidentifikation */
-extern char *ApplPath;		/* Suchpfad für Hilfsdateien */
-extern char *InfoPath;		/* Suchpfad für Informationsdateien */
+extern char *ApplPath;		/* Suchpfad fÃ¼r Hilfsdateien */
+extern char *InfoPath;		/* Suchpfad fÃ¼r Informationsdateien */
 extern char *Pager;		/* Seitenfilter */
 extern char *Shell;		/* Shell */
 extern char *CurrentLocale;	/* Aktuelle Lokale-Setzung */

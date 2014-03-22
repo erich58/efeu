@@ -1,8 +1,8 @@
 /*
 :*:Parameter for EfiInput and EiOutput
-:de:IO-Parameter für EfiInput und EfiOutput
+:de:IO-Parameter fÃ¼r EfiInput und EfiOutput
 
-$Copyright (C) 2006 Erich Frühstück
+$Copyright (C) 2006 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or

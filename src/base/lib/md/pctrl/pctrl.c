@@ -1,8 +1,8 @@
 /*
 :*:mdprint output control 
-:de:Ausgabekontrolle für mdprint
+:de:Ausgabekontrolle fÃ¼r mdprint
 
-$Copyright (C) 1994, 2002 Erich Frühstück
+$Copyright (C) 1994, 2002 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -46,7 +46,7 @@ static PCTRLDef pctrl[] = {
 	{ "struct", "Formatierung als Liste", ", ", " },\n", NULL, struct_ctrl },
 	{ "csv", "Formatierung als csv - Datei", ";", "\r\n", NULL, csv_ctrl },
 	{ "data", "Nur Datenwerte ausgeben", "\t", "\n", NULL, data_ctrl },
-	{ "sc", "Aufbereitung für SC", "\n", "\n", NULL, sc_ctrl },
+	{ "sc", "Aufbereitung fÃ¼r SC", "\n", "\n", NULL, sc_ctrl },
 	{ "tex", "LaTeX-Dokument", "&", "~\\\\\n", "\\newpage\n", tex_ctrl },
 	{ "tab", "LaTeX-Tabelle", "&", "~\\\\\n", "\\newpage\n", tab_ctrl },
 };

@@ -1,7 +1,7 @@
 /*
-Fehlermeldungen für src2doc
+Fehlermeldungen fÃ¼r src2doc
 
-$Copyright (C) 2000 Erich Frühstück
+$Copyright (C) 2000 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
