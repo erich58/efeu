@@ -22,6 +22,7 @@ typedef struct XMLBuf XMLBuf;
 
 typedef void *(*XMLAction) (XMLBuf *xml, const char *name,
 	const char *data, void *par);
+typedef void (*XMLClose) (void *par);
 
 typedef struct {
 	int (*put) (int c, void *par);
@@ -31,6 +32,7 @@ typedef struct {
 struct XMLBuf {
 	StrBuf sbuf;
 	XMLAction action;
+	XMLClose close;
 	void *par;
 	XMLType type;
 	int depth;
@@ -44,6 +46,7 @@ struct XMLBuf {
 
 XMLBuf *xml_create (XMLBuf *xml, XMLAction action, void *par);
 
+void XMLBuf_atclose (XMLBuf *xml, XMLClose close);
 void XMLBuf_start (XMLBuf *xml, const char *name);
 int XMLBuf_next (XMLBuf *xml, int concat);
 void XMLBuf_prev (XMLBuf *xml, int last);

@@ -1,0 +1,24 @@
+pconfig !
+:file | Input
+	Eingabedatei
+!
+
+{
+	XML xml;
+
+	xml.expr([switch (type)
+	{
+	case XMLType::comm:
+		printf("# %#s\n", data);
+		break;
+	case XMLType::data:
+	case XMLType::cdata:
+		printf("%s = %#s\n", name, data);
+		break;
+	default:
+		printf("%s %s %#s\n", type, name, data);
+		break;
+	}]);
+	xml.parse(open(Input, "r"));
+	xml.close();
+}

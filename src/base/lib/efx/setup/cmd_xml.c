@@ -91,6 +91,13 @@ static XMLOutput *xml_open_io (IO *io)
 	return out;
 }
 
+static void xml_close_io (void *par)
+{
+	XMLOutput *out = par;
+	UnrefObj(out->par);
+	memfree(out);
+}
+
 static struct {
 	const char *key;
 	XMLAction action;
@@ -131,15 +138,60 @@ static XMLAction get_action (const char *name)
 
 static void f_open_io (EfiFunc *func, void *rval, void **arg)
 {
-	xml_create(arg[0], get_action(Val_str(arg[2])),
+	XMLBuf *xml = arg[0];
+	xml_create(xml, get_action(Val_str(arg[2])),
 		xml_open_io(Val_io(arg[1])));
+	XMLBuf_atclose(xml, xml_close_io);
+}
+
+typedef struct {
+	EfiObj *obj;
+	EfiVarTab *tab;
+	int type;
+	const char *name;
+	const char *data;
+} XMLExpr;
+
+static void expr_clean (void *par)
+{
+	XMLExpr *expr = par;
+	UnrefObj(expr->obj);
+	DelVarTab(expr->tab);
+	memfree(expr);
+}
+
+static void *expr_action (XMLBuf *xml, const char *name,
+	const char *data, void *par)
+{
+	XMLExpr *expr = par;
+	EfiObj *obj;
+	PushVarTab(RefVarTab(expr->tab), NULL);
+	expr->type = xml->type;
+	expr->name = name;
+	expr->data = data;
+	obj = EvalExpression(expr->obj);
+	PopVarTab();
+	return obj;
+}
+
+static void f_expr (EfiFunc *func, void *rval, void **arg)
+{
+	XMLExpr *expr = memalloc(sizeof *expr);
+	expr->obj = RefObj(Val_obj(arg[1]));
+	expr->tab = VarTab(NULL, 0);
+	VarTab_xadd(expr->tab, "type", NULL,
+		LvalObj(&Lval_ptr, GetType("XMLType"), &expr->type));
+	VarTab_xadd(expr->tab, "name", NULL,
+		LvalObj(&Lval_ptr, &Type_str, &expr->name));
+	VarTab_xadd(expr->tab, "data", NULL,
+		LvalObj(&Lval_ptr, &Type_str, &expr->data));
+	xml_create(arg[0], expr_action, expr);
+	XMLBuf_atclose(arg[0], expr_clean);
 }
 
 static void f_close (EfiFunc *func, void *rval, void **arg)
 {
-	XMLOutput *out = XMLBuf_close(arg[0]);
-	Val_obj(rval) = out ? out->par : ptr2Obj(NULL);
-	memfree(out);
+	XMLBuf_close(arg[0]);
 }
 
 
@@ -217,7 +269,8 @@ static EfiFuncDef fdef_xml[] = {
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, XML)", f_fprint },
 	{ FUNC_VIRTUAL, &Type_void,
 		"XML::open (IO out, str method = NULL)", f_open_io },
-	{ 0, &Type_obj, "XML::close ()", f_close },
+	{ FUNC_VIRTUAL, &Type_void, "XML::expr (Expr_t expr)", f_expr },
+	{ 0, &Type_void, "XML::close ()", f_close },
 	{ 0, &Type_void, "XML::parse (IO in)", f_parse },
 
 	{ 0, &Type_void, "XML::dtd (str name, str id, str decl = NULL)", f_dtd },

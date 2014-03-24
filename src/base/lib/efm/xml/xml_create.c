@@ -91,6 +91,7 @@ void *XMLBuf_action (XMLBuf *xml, XMLType which, int prev)
 static void xml_init (XMLBuf *xml, XMLAction action, void *par)
 {
 	xml->action = action;
+	xml->close = NULL;
 	xml->par = par;
 	xml->depth = 0;
 	xml->open_tag = 0;
@@ -102,14 +103,24 @@ static void xml_init (XMLBuf *xml, XMLAction action, void *par)
 	sb_nul(&xml->sbuf);
 }
 
+void XMLBuf_atclose (XMLBuf *xml, XMLClose close)
+{
+	xml->close = close;
+}
+
 void *XMLBuf_close (XMLBuf *xml)
 {
-	void *par;
+	void *par = xml->par;
 
 	while (xml->tag)
 		XMLBuf_end(xml);
 
-	par = xml->par;
+	if	(xml->close)
+	{
+		xml->close(par);
+		par = NULL;
+	}
+
 	xml_init(xml, NULL, NULL);
 	return par;
 }
