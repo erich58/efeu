@@ -3,7 +3,7 @@ Preprozessor
 
 $Header <EFEU/$1>
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -51,7 +51,7 @@ struct PPMacroStruct {
 	char *name;		/* Makroname */
 	char *repl;		/* Makrodefinition */
 	unsigned hasarg : 1;	/* Makro mit Argumenten */
-	unsigned lock : 15;	/* Sperrflag gegen rekursive Auflösung */
+	unsigned lock : 15;	/* Sperrflag gegen rekursive AuflÃ¶sung */
 	unsigned vaarg : 1;	/* Makro mit variabler Argumentzahl */
 	unsigned dim : 15;	/* Zahl der Argumente */
 	PPMacro **arg;		/* Argumentliste */

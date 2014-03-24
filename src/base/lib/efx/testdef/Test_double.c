@@ -2,7 +2,7 @@
 :*:	test floating-point value
 :de:	Gleitkommazahlen testen
 
-$Copyright (C) 2004, 2005 Erich Frühstück
+$Copyright (C) 2004, 2005 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -134,8 +134,8 @@ TestParDef TestPar_double = { &Type_double,
 	":*:The valid values for the test are defined either by a relation\n"
 	"(less or greater a specific value) or a intervall (limits enclosed).\n"
 	"A ! oder ^ at beginn of the expression negates the test.\n"
-	":de:Der Wertebereich für den Test wird entweder durch einen\n"
-	"Vergleich (kleiner oder größer als ein vorgegebener Wert)\n"
+	":de:Der Wertebereich fÃ¼r den Test wird entweder durch einen\n"
+	"Vergleich (kleiner oder grÃ¶ÃŸer als ein vorgegebener Wert)\n"
 	"oder durch ein Intervall (Grenzwerte eingeschlossen) festgelegt.\n"
 	"Ein ! oder ^ am Anfang der Spezifikation negiert den Test.\n"
 };

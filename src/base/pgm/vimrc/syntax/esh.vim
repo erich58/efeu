@@ -1,6 +1,6 @@
 " Vim syntax file
 " Language:	esh - Befehlsinterpreter
-" Maintainer:	Erich Frühstück
+" Maintainer:	Erich FrÃ¼hstÃ¼ck
 " Last change:	2002/06/05
 
 " Remove any old syntax stuff hanging around

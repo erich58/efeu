@@ -1,7 +1,7 @@
 /*
 Configuration header for EFEU Libraries
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -21,7 +21,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 \Name
-config -- Basiskopfdatei für EFEU-Programme
+config -- Basiskopfdatei fÃ¼r EFEU-Programme
 \Synopsis
 \code
 \#include EFEU/config.h
@@ -37,7 +37,7 @@ sizealign(x, y)
 Die Headerdatei |EFEU/config.h| wird von allen Headerdateien
 der EFEU-Programmbibliotheken eingebundet. Sie dient zur
 Systemanpassung. Sie wird bei der Installation von EFEU
-Systemabhängig generiert.
+SystemabhÃ¤ngig generiert.
 
 Die folgenden Headerdateien werden automatisch eingebunden:
 [|<stdio.h>|]
@@ -45,24 +45,24 @@ Die folgenden Headerdateien werden automatisch eingebunden:
 [|<stdarg.h>|]
 	variable Argumentlisten;
 [|<string.h>|]
-	Hilfsfunktuonen für Zeichenketten (Strings);
+	Hilfsfunktuonen fÃ¼r Zeichenketten (Strings);
 [|<stdlib.h>|]
 	Allgemeinwe Hilfsfunktionen;
 [|<unistd.h>|]
 	UNIX-Speizifische Konstanten und Funktionen;
 
-Weiters wird gewährleistet, daß der Datentype \index{|size_t|}
-(Ganzzahldatentype für Adressen) und der Makro \index{|NULL|}
+Weiters wird gewÃ¤hrleistet, daÃŸ der Datentype \index{|size_t|}
+(Ganzzahldatentype fÃ¼r Adressen) und der Makro \index{|NULL|}
 (generischer Nullpointer) definiert sind.
 
 Der Makro \index{|REVBYTEORDER|} dient zur Abfrage der Byteordnung des Systems.
-Hat er den Wert 1, werden niedrigsignifikante Bytes vor höhersignifikanten
+Hat er den Wert 1, werden niedrigsignifikante Bytes vor hÃ¶hersignifikanten
 Bytes abgespeichert.
 
 Der Makro \index{|tabsize|} liefert die erste Dimension des
-Datenfeldes <x>.  Er wird für globale oder statische Felder verwendet,
+Datenfeldes <x>.  Er wird fÃ¼r globale oder statische Felder verwendet,
 deren erste Dimension nicht vorgegebnen ist, sondern aus der Zahl der
 Initialisierungswerte bestimmt  wird.
 
-Der Makro \index{|sizealign|} dient zur Ausrichtung der Speichergröße <x> auf
+Der Makro \index{|sizealign|} dient zur Ausrichtung der SpeichergrÃ¶ÃŸe <x> auf
 ganzzahlige Vielfache von <y>.

@@ -3,7 +3,7 @@ Readline-Schnittstelle
 
 $Header <EFEU/$1>
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -31,21 +31,21 @@ extern void SetupReadline (void);
 
 /*
 $Description
-Die Readline-Schnittstelle läßt sich mithilfe von |io_ctrl|-Aufrufen
-konfigurieren. Alls erstes Argument wird eine IO-Struktur übergeben,
+Die Readline-Schnittstelle lÃ¤ÃŸt sich mithilfe von |io_ctrl|-Aufrufen
+konfigurieren. Alls erstes Argument wird eine IO-Struktur Ã¼bergeben,
 danach folgt der Kontrollmakro und die zur Steuerung notwendigen
 Argumente. Bei Erfolg liefert der Aufruf den Wert von 0.
 Falls die <io>-Struktur keine Readline-Schnittstelle darstellt,
 werden die Aktionen einfach ignoriert und |io_ctrl| liefert |EOF| (-1).
 
-Im folgenden sind die einzelnen Kontrollaufrufe angeführt.
+Im folgenden sind die einzelnen Kontrollaufrufe angefÃ¼hrt.
 Der Datentype der spezifischen Argumente wird mit einem cast dargestellt:
 
 [<|io_ctrl(<io>, $1)|>]
-	bewirkt nichts, der Rückgabewert kann aber
+	bewirkt nichts, der RÃ¼ckgabewert kann aber
 	zum testen einer IO-Struktur auf eine
 	Readline-Schnittstelle verwendet werden.
-	Eine Readline-Schnittstelle wird nur für interaktive Programme
+	Eine Readline-Schnittstelle wird nur fÃ¼r interaktive Programme
 	eingerichtet!
 */
 
@@ -53,7 +53,7 @@ Der Datentype der spezifischen Argumente wird mit einem cast dargestellt:
 
 /*
 [<|io_ctrl(<io>, $1, (int) <key>|>)]
-	setzt das Interaktionszeichen für eingebaute Befehle der
+	setzt das Interaktionszeichen fÃ¼r eingebaute Befehle der
 	Readline-Schnittstelle.
 	Voreingestellt ist das Rufzeichen <"|!|">.
 */
@@ -63,7 +63,7 @@ Der Datentype der spezifischen Argumente wird mit einem cast dargestellt:
 /*
 [<|io_ctrl(<io>, $1, (int) <size>|>)]
 	legt die maximale Zahl der History-Zeilen festgelgt.
-	Ein Wert von 0 steht für unbegrenzt.
+	Ein Wert von 0 steht fÃ¼r unbegrenzt.
 	Voreingestellt sind 100 Zeilen.
 */
 
@@ -76,7 +76,7 @@ oben beschriebenen Steuermakros.
 
 ---- verbatim
 if	(io_ctrl(io, RLCTRL) == 0)
-	io_puts("readline-Funktionalität verfügbar!\n", io);
+	io_puts("readline-FunktionalitÃ¤t verfÃ¼gbar!\n", io);
 
 io_ctrl(io, RLCTRL_KEY, '%');
 io_ctrl(io, RLCTRL_HSIZE, 500);

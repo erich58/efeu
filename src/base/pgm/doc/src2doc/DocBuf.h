@@ -1,7 +1,7 @@
 /*
 Dokumentbuffer
 
-$Copyright (C) 2000 Erich Frühstück
+$Copyright (C) 2000 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -47,7 +47,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 typedef struct {
 	CmdPar *cmdpar;		/* Kommandoparameter */
-	StrBuf *synopsis;	/* Übersicht */
+	StrBuf *synopsis;	/* Ãœbersicht */
 	StrBuf *source;		/* Sourcezeilen */
 	StrBuf *tab[BUF_DIM];	/* Stringbuffertabelle */
 	char *var[VAR_DIM];	/* Variablentabelle */

@@ -1,8 +1,8 @@
 #!/bin/sh
 # :*:transforms sc representation of data cube to binary form
-# :de:Konvertiert sc Darstellung einer Datenmatrix in Binärformat
+# :de:Konvertiert sc Darstellung einer Datenmatrix in BinÃ¤rformat
 #
-# $Copyright (C) 2001 Erich Frühstück
+# $Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -24,7 +24,7 @@
 # Version=":VN:"
 # r |
 # 	:*:remove singulary axis
-# 	:de:Entfernen von singulären Achsen
+# 	:de:Entfernen von singulÃ¤ren Achsen
 #:input |
 #	:*:input file
 #	:de:Name der Eingabedatei

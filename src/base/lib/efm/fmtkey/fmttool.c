@@ -1,7 +1,7 @@
 /*
 Formatierungshifsfunktionen
 
-$Copyright (C) 1994, 2008 Erich Frühstück
+$Copyright (C) 1994, 2008 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -48,7 +48,7 @@ int ftool_addsig (StrBuf *sb, int sig, int flags)
 
 /*
 $alias
-Die Funktion |$1| schließt eine Zahlenformatierung ab. Dabei werden die ab
+Die Funktion |$1| schlieÃŸt eine Zahlenformatierung ab. Dabei werden die ab
 <pos> geschriebenen Zeichen im Stringbuffer umgedreht und entsprechend der
 Formatierungsvorgaben ausgerichtet.
 */

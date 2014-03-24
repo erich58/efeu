@@ -2,7 +2,7 @@
 # :*:compose file from single parts
 # :de:Datei aus Einzelteilen zusammenstellen
 #
-# $Copyright (C) 2007 Erich Frühstück
+# $Copyright (C) 2007 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or modify
@@ -52,9 +52,9 @@ esac
 # :de:Das Kommando |\$!| liest die Datei <base> und ersetzt Zeilen der
 # Form:\br
 # |@include foo|\br
-# durch den Inhalt der jeweiligen Datei <foo>. Die Pfade müssen
+# durch den Inhalt der jeweiligen Datei <foo>. Die Pfade mÃ¼ssen
 # relativ zur Basisdatei angegeben werden.
-# Falls Option |-r| gesetzt wurde, werden Generierungsregeln für |make|
+# Falls Option |-r| gesetzt wurde, werden Generierungsregeln fÃ¼r |make|
 # zur Standardausgabe geschrieben.
 
 mkrule=0

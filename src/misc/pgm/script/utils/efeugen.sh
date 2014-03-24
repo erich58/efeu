@@ -2,7 +2,7 @@
 # :*:run make in global building directory
 # :de:make in globaler Generierungsbibliothek aufrufen
 #
-# $Copyright (C) 1999 Erich Frühstück
+# $Copyright (C) 1999 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -58,7 +58,7 @@ esac
 # definierte Verzeichnis und ruft make mit den angegebenen Argumenten
 # auf.  Falls |EFEUGEN| nicht definiert ist, wird |$\$EFEUTOP/build|
 # genommen.  Falls |EFEUTOP| nicht gesetzt ist, wird |$\$HOME|
-# substituiert. Der aktuelle Wert für |EFEUGEN| ist |@{gen}|. 
+# substituiert. Der aktuelle Wert fÃ¼r |EFEUGEN| ist |@{gen}|. 
 #
 # @arglist -i
 #
@@ -68,7 +68,7 @@ esac
 # :de:
 # Die Option |-s| kann mehrfach verwendet werden. Ein Unterverzeichnis
 # der Form |a.b| wird in |a.d/b.d| konvertiert (|-s a.b| ist damit
-# äquivalent zu |-s a -s b|).
+# Ã¤quivalent zu |-s a -s b|).
 
 # message formats
 

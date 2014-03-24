@@ -1,8 +1,8 @@
 #!/bin/sh
 # :*:edit binary file using mkdump and vi
-# :de:bin‰re Dateien mit mkdump und vi editieren
+# :de:bin√§re Dateien mit mkdump und vi editieren
 #
-# $Copyright (C) 1991 Erich Fr¸hst¸ck
+# $Copyright (C) 1991 Erich Fr√ºhst√ºck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -40,7 +40,7 @@ esac
 # :en:The command transforms the binary file <file> into a temporary
 # ascii representation and starts |vi| to edit.\par
 # The following options and arguments are accepted:
-# :de:Das Programm formt die Bin‰rdatei <file> in eine tempor‰re
+# :de:Das Programm formt die Bin√§rdatei <file> in eine tempor√§re
 # Datei um und startet den vi zum editieren.\par
 # Die folgenden Optionen und Argumente werden akzeptiert:
 #
@@ -67,11 +67,11 @@ de*)
 	msg2="$0: File \"%s\" nicht lesbar\n"
 	msg3="$0: File \"%s\" nicht beschreibbar\n"
 	msg4="
-Das Programm formt die Bin‰rdatei \"%s\" in eine tempor‰re
+Das Programm formt die Bin√§rdatei \"%s\" in eine tempor√§re
 Datei um und startet den vi zum editieren.\n
 "
 	msg5="Fortfahren ? j\b"
-	msg6="ƒnderungen sichern ? j\b"
+	msg6="√Ñnderungen sichern ? j\b"
 	;;
 esac
 

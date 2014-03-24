@@ -1,7 +1,7 @@
 /*
-Stringsubstitution mit regulären Ausdrücken
+Stringsubstitution mit regulÃ¤ren AusdrÃ¼cken
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -70,15 +70,15 @@ static void do_repl (StrBuf *sb, const char *repl,
 }
 
 /*
-Die Funktion |$1| ersetzt Teilstrings von <str>, die dem regulären Ausdruck
+Die Funktion |$1| ersetzt Teilstrings von <str>, die dem regulÃ¤ren Ausdruck
 <exp> entsprechen durch iden String <repl>. Falls <flag> verschieden von 0 ist,
 werden alle gefundenen Teilstrings ersetzt, ansonsten nur der erste.
 
 Falls <str> ein Nullpointer ist, liefert die Funktion einen Nullpointer.
-Falls ein Nullpointer als regulärer Ausdruck übergeben wurde, liefert
+Falls ein Nullpointer als regulÃ¤rer Ausdruck Ã¼bergeben wurde, liefert
 die Funktion eine Kopie des Strings <str>.
-Falls ein leerer Ausdruck für <expr> übergeben wurde, wird <repl>
-zwischen jedem Zeichen von <str> eingefügt.
+Falls ein leerer Ausdruck fÃ¼r <expr> Ã¼bergeben wurde, wird <repl>
+zwischen jedem Zeichen von <str> eingefÃ¼gt.
 
 Der Ersatzstring <repl> kann Sequenzen der Form |\0|, |\1|, ..., |\9|
 enthalten, die jeweils durch das entsprechende Teilmuster von <exp> definiert

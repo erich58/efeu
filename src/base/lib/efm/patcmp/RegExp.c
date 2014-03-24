@@ -1,7 +1,7 @@
 /*
-Reguläre Ausdrücke
+RegulÃ¤re AusdrÃ¼cke
 
-$Copyright (C) 2000 Erich Frühstück
+$Copyright (C) 2000 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -65,17 +65,17 @@ RefType RegExp_reftype = REFTYPE_INIT("RegExp", re_ident, re_clean);
 char *RegExp_error = NULL;
 
 /*
-Die Funktion |$1| konvertiert den String <str> in einen regulären
+Die Funktion |$1| konvertiert den String <str> in einen regulÃ¤ren
 Ausdruck (<"POSIX Extended Regular Expression">).
 Bei einem Syntaxfehler liefert die Funktion einen
 Nullpointer und die Variable |RegExp_error| verweist auf einen String
 mit der Fehlerbeschreibung.
 Bei erfolgreicher Verarbeitung wird |RegExp_error| auf |NULL| gesetzt.
 
-Wird ein Nullpointer als Argument übergeben, liefert die
+Wird ein Nullpointer als Argument Ã¼bergeben, liefert die
 Funktion ebenfalls einen Nullpointer. Dies gilt nicht als Fehler.
 
-Falls <flag> verschieden von 0 ist, wird zwischen Groß- und Kleinschreibung
+Falls <flag> verschieden von 0 ist, wird zwischen GroÃŸ- und Kleinschreibung
 nicht unterschieden.
 */
 
@@ -107,17 +107,17 @@ RegExp *RegExp_comp (const char *str, int flag)
 static regmatch_t match[REGEXP_MAXSUB];
 
 /*
-Die Funktion |$1| vergleicht den regulären Ausdruck <exp> mit
-dem String <str>. Falls der String nicht mit dem regulären Ausdruck
-übereinstimmt, liefert die Funktion 0 und falls Pointer <ptr>
+Die Funktion |$1| vergleicht den regulÃ¤ren Ausdruck <exp> mit
+dem String <str>. Falls der String nicht mit dem regulÃ¤ren Ausdruck
+Ã¼bereinstimmt, liefert die Funktion 0 und falls Pointer <ptr>
 nicht Null ist, wird ein Nullpointer dort gespeichert.
 
-Bei einer Übereinstimmung und
+Bei einer Ãœbereinstimmung und
 falls der Pointer <ptr> verschieden von Null ist, wird dort die Adresse
 eines Vektors mit Offsetwerten der Teilmuster gespeichert und
-die Funktion liefert die Zahl der Teilmuster (größer als 0).
-Es können maximal |REGEX_MAXSUB| Teilmuster abgefragt werden.
-Ansonsten liefert die Funktion bei Übereinstimmung den Wert 1.
+die Funktion liefert die Zahl der Teilmuster (grÃ¶ÃŸer als 0).
+Es kÃ¶nnen maximal |REGEX_MAXSUB| Teilmuster abgefragt werden.
+Ansonsten liefert die Funktion bei Ãœbereinstimmung den Wert 1.
 
 ACHTUNG: Falls sowohl <exp> als auch <str> ein Nullpointer ist,
 wird <ptr> auf |NULL| gesetzt und die Funktion liefert 1 und nicht 0!

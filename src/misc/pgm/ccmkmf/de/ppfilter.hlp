@@ -2,14 +2,14 @@
 @synopsis -h
 \Description
 Das Kommando |$!| wird von |ccmkmf| zum Filtern der Ausgabe des
-C-Präprozessors verwendet. Die folgenden Optionen werden vom Kommando
+C-PrÃ¤prozessors verwendet. Die folgenden Optionen werden vom Kommando
 akzeptiert.
 
 @arglist
 
 \Notes
 Da das Kommando nicht direkt aufgerufen wird, wurde auf eine
-genaue Überprüfung der Argumentliste verzichtet. Nur das erste
+genaue ÃœberprÃ¼fung der Argumentliste verzichtet. Nur das erste
 Argument wird analysiert.
 
 \SeeAlso

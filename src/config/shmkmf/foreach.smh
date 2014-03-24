@@ -1,10 +1,10 @@
 # :*:call function for a list of source files
-# :de:Funktion für eine Liste von Sourcefiles aufrufen
+# :de:Funktion fÃ¼r eine Liste von Sourcefiles aufrufen
 #
 # $Synopsis
 # <=[=> include $1 <=]=>
 #
-# $Copyright (C) 2004 Erich Frühstück
+# $Copyright (C) 2004 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -46,17 +46,17 @@ include srclist.smh
 # m:name |
 #	:*:use the directory defined by macro <name> for target files.
 #	:de:verwendet das durch den Makronamen <name> definierte
-#	Verzeichnis für Zieldateien.
+#	Verzeichnis fÃ¼r Zieldateien.
 # p:dir |
 #	:*:like |-d|, create additional creation rule for directory <dir>
 #	with phony target |$$AllTarget|.
-#	:de:wie |-d|, generiert aber zusätzlich noch eine Regel zum Einrichten
+#	:de:wie |-d|, generiert aber zusÃ¤tzlich noch eine Regel zum Einrichten
 #	von <dir> mit Scheinziel |$$AllTarget|.
 # c:dir |
 #	:*:like |-p|, create additional cleaning rules for directory <dir>
 #	(and possibly needed subdirectories) with phony target |$$CleanTarget|.
-#	:de:wie |-p|, generiert aber zusätzlich noch eine Regel zum Löschen
-#	von <dir> (und möglicher Unterverzeichnisse) mit Scheinziel
+#	:de:wie |-p|, generiert aber zusÃ¤tzlich noch eine Regel zum LÃ¶schen
+#	von <dir> (und mÃ¶glicher Unterverzeichnisse) mit Scheinziel
 #	|$$CleanTarget|.
 # M:maplist |
 #	:*:
@@ -78,23 +78,23 @@ include srclist.smh
 #	for subdirectories.
 #	:de:
 #	bestimmt aus dem Namen des Verzeichnisses der Sourcedatei das
-#	Unterverzeichnis für die Zieldatei.
+#	Unterverzeichnis fÃ¼r die Zieldatei.
 #	\par
 #	Das Argument <maplist> besteht aus einer liste von
-#	Ausdrücken der Form <pattern>[|=|<repl>]. Wenn der
+#	AusdrÃ¼cken der Form <pattern>[|=|<repl>]. Wenn der
 #	Basisname des Verzeichnisses der Quelldatei dem 
-#	Dateimuster <pattern>  entspricht, wird für die Zieldatei das
+#	Dateimuster <pattern>  entspricht, wird fÃ¼r die Zieldatei das
 #	Unterverzeichnis <repl> verwendet. Fehlt die Angabe von |=|<repl>,
 #	wird <pattern> verwendet. In diesem Fall darf <pattern> keine
-#	Jokerzeichen enthalten. Beachte, dass ein leerer String für
+#	Jokerzeichen enthalten. Beachte, dass ein leerer String fÃ¼r
 #	<repl> anders behandelt wird und bedeutet, dass kein
 #	Unterverzeichnis zu verwenden ist. Das ist auch das
-#	Standardverhalten für Quellverzeichnisse, die keinem Muster
+#	Standardverhalten fÃ¼r Quellverzeichnisse, die keinem Muster
 #	entsprechen.
 #	\par
 #	In Kombination mit Option |-c|
-#	oder |-p| werden auch entsprechende Regeln für die Unterverzeichnisse
-#	generiert, wobei die Option |-m| ein |-p| für die Unterverzeichnisse
+#	oder |-p| werden auch entsprechende Regeln fÃ¼r die Unterverzeichnisse
+#	generiert, wobei die Option |-m| ein |-p| fÃ¼r die Unterverzeichnisse
 #	impliziert.
 # x:sub |
 #	:*:install files in the subdirectory <sub>. Will be used in combination
@@ -104,28 +104,28 @@ include srclist.smh
 # s:suffix |
 #	:*:select files with suffix <suffix> and remove it from the
 #	target name.
-#	:de:Wähle Dateien mit Zusatz <suffix> aus, wobei für die
+#	:de:WÃ¤hle Dateien mit Zusatz <suffix> aus, wobei fÃ¼r die
 #	Zieldatei der Zusatz <suffix> vom Dateinamen entfernt wird.
 # S:suffix |
 #	:*:select files with suffix <suffix> and remove it from the
 #	target name.
-#	:de:Wähle Dateien mit Zusatz <suffix> aus ohne den Zusatz vom
+#	:de:WÃ¤hle Dateien mit Zusatz <suffix> aus ohne den Zusatz vom
 #	Namen der Zieldatei zu entfernen.
 # e:expr |
 #	:*:select files with regular expression <expr>. Attention: the
 #	expression is also set with option |-s| or |-S| to
 #	|\\.|<suffix>|$$|.
-#	:de:wähle Datei entsprechend dem Regulären Ausdruck <expr> aus.
+#	:de:wÃ¤hle Datei entsprechend dem RegulÃ¤ren Ausdruck <expr> aus.
 #	Achtung: Der Ausdruck wird von den Optionen |-s| und |-S|
 #	auf (|\\.|<suffix>|$$|) gesetzt.
 # :cmd |
 #	:*:defines the command to create the rule. The full source name
 #	is in Variable |src|, the basename is in variable |name| and the
 #	target name is in the variable |tg| available.
-#	:de:gibt die Regelfunktion für die ausgewählten Dateien an.
-#	Bei der Ausführung steht der volle Pfadname der Quelldatei in der
+#	:de:gibt die Regelfunktion fÃ¼r die ausgewÃ¤hlten Dateien an.
+#	Bei der AusfÃ¼hrung steht der volle Pfadname der Quelldatei in der
 #	Variablen |src|, der Basisname in der Variablen |name| und der
-#	Zielname in der Variablen |tg| zur Verfügung.
+#	Zielname in der Variablen |tg| zur VerfÃ¼gung.
 # *path |
 #	:*:list of source files or source directories. Not nessesary in
 #	conjunction with |mf_srclist|.
@@ -138,7 +138,7 @@ include srclist.smh
 # |mf_srclist|, no path is nessesary (see \mref{srclist.smh(7)} for details).
 # The following options and arguments are accepted by $!:
 # :de:
-# Die Funktion $! dient zur Ausführung von <cmd> für eine Liste von
+# Die Funktion $! dient zur AusfÃ¼hrung von <cmd> fÃ¼r eine Liste von
 # Dateien. Die Dateiliste wird mithilfe von |tmplist| aus den Pfadangaben
 # <path> zusammengestellt. Wurde mit
 # |mf_srclist| eine Dateiliste definiert, ist die Angabe von Pfadnamen optional.
@@ -240,7 +240,7 @@ foreach ()
 # :*:
 # For the shown examples wie assume the following directory structure:
 # :de:
-# Für die gezeigten Anwendungsbeispiele gehen wir von der folgenden
+# FÃ¼r die gezeigten Anwendungsbeispiele gehen wir von der folgenden
 # Verzeichnisstruktur aus:  
 #
 # \smh_exec mkdir src files en de files/de
@@ -276,17 +276,17 @@ foreach ()
 # :de:
 # Die Hilfe-Dateien mit Zusatz |.hlp| sind je nach Sprachkennung in
 # unterschiedliche Verzeichnisse zu verteilen. Dabei sollen alle
-# Handbucheinträge der Unterverzeichnisse |de| in |\$(LIB)/de/help| und alle
+# HandbucheintrÃ¤ge der Unterverzeichnisse |de| in |\$(LIB)/de/help| und alle
 # anderen in |\$(LIB)/help| installiert werden. Dies Aufteilung erfolgt
 # mithilfe der Mapping-Option |-M|. Die folgende Regel
-# \shmkmf[-x] liefert die gewünschte Aufteilung:
+# \shmkmf[-x] liefert die gewÃ¼nschte Aufteilung:
 # foreach -m LIB -M 'de=de/help *=help' -S hlp 'mf_file \$tg \$src' \$SRC
 # \end
 #
 # :*:
 # The folowing command line is equivalent:
 # :de:
-# Die folgende Befehlszeile ist äquivalent:
+# Die folgende Befehlszeile ist Ã¤quivalent:
 #
 # ---- verbatim
 # foreach -m LIB -M de -x help -S hlp 'mf_file \$tg \$src' \$SRC

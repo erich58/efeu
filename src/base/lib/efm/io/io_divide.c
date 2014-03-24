@@ -2,7 +2,7 @@
 :*:	divide output structure
 :de:	Ausgabestruktur aufteilen
 
-$Copyright (C) 2003 Erich Frühstück
+$Copyright (C) 2003 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -69,8 +69,8 @@ If 0, a default block sizte is used.
 :de:
 Die Funktion |$1| generiert eine mit <base> verbundene Ausgabestruktur <out>.
 Falls <out> geschlossen wird, werden alle nach <out> geschriebenen Daten nach
-<base> kopiert. Das Argument <bsize> definiert die Blockgröße des temporären
-Datenbuffers. Falls es null ist, wird eine vordefinierte Buffergröße verwendet.
+<base> kopiert. Das Argument <bsize> definiert die BlockgrÃ¶ÃŸe des temporÃ¤ren
+Datenbuffers. Falls es null ist, wird eine vordefinierte BuffergrÃ¶ÃŸe verwendet.
 */
 
 IO *io_divide (IO *base, size_t bsize)

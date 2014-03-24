@@ -1,7 +1,7 @@
 # :*:server test client
-# :de:Testprogramm für Server
+# :de:Testprogramm fÃ¼r Server
 
-# $Copyright (C) 2007 Erich Frühstück
+# $Copyright (C) 2007 Erich FrÃ¼hstÃ¼ck
 
 Port = 2100
 SleepTime = 0;
@@ -16,7 +16,7 @@ h:host | -host:host | Host
 	:de:Gibt den Rechnernamen an.
 p:port | -port:port | Port
 	:*:Specifies the server port (default {Port}). 
-	:de:Gibt die Portnummer für die Verbindung an.
+	:de:Gibt die Portnummer fÃ¼r die Verbindung an.
 s | Single = true
 	:*:send every command in a single connection
 	:de:Einzelverbindungen

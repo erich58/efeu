@@ -2,7 +2,7 @@
 :*:editing dynamic string buffer
 :de:Dynamisches Zeichenfeld editieren
 
-$Copyright (C) 1996 Erich Frühstück
+$Copyright (C) 1996 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -27,8 +27,8 @@ If not, write to the Free Software Foundation, Inc.,
 :*:
 The function |$1| deletes <n> character at the actual position.
 :de:
-Die Funktion |$1| löscht <n> Zeichen an der aktuellen Position.
-Der Rückgabewert ist ein Pointer auf die ans Ende des Buffers verschobenen
+Die Funktion |$1| lÃ¶scht <n> Zeichen an der aktuellen Position.
+Der RÃ¼ckgabewert ist ein Pointer auf die ans Ende des Buffers verschobenen
 Zeichen.
 */
 
@@ -49,8 +49,8 @@ void *sb_delete (StrBuf *sb, size_t n)
 The function |$1| inserts the character <c> <n> times at the actual position
 and returns the address of the insertion point.
 :de:
-Die Funktion |$1| fügt das Zeichen <c> <n>-mal an der aktuellen Position ein
-und liefert die Adresse der ersten Einfügeposition
+Die Funktion |$1| fÃ¼gt das Zeichen <c> <n>-mal an der aktuellen Position ein
+und liefert die Adresse der ersten EinfÃ¼geposition
 */
 
 void *sb_insert (StrBuf *sb, int c, size_t n)

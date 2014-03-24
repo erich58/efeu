@@ -2,7 +2,7 @@
 # :*:recursiv call of sed for all files in a directory
 # :de:sed rekursiv auf alle Dateien eines Verzeichnisses anwenden
 #
-# $Copyright (C) 2002 Erich Frühstück
+# $Copyright (C) 2002 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -25,14 +25,14 @@
 # d|
 #	:*:show differences after editing without replacing
 #	the orignial file.
-#	:de:Zeige Unterschiede nach den Änderungen ohne die
-#	Originaldatei zu verändern.
+#	:de:Zeige Unterschiede nach den Ã„nderungen ohne die
+#	Originaldatei zu verÃ¤ndern.
 # c|
 #	:*:same as |-d|, but use contect diff
 #	:de:Wie Option -d, aber mit Kontextvergleich.
 # name:pat|
 #	:*:edit only files which match pattern <pat> (find option).
-#	:de:Ändere nur Dateien, die dem Muster <pat> entsprechen
+#	:de:Ã„ndere nur Dateien, die dem Muster <pat> entsprechen
 #	(|find| Option).
 # ::dir|
 #	:*:directories

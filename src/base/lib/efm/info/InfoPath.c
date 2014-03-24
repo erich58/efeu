@@ -1,7 +1,7 @@
 /*
-Suchpfad für Informationsdateien
+Suchpfad fÃ¼r Informationsdateien
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -26,15 +26,15 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/mkpath.h>
 
 /*
-Die Variable |$1| bestimmt den Suchpfad für Informationsdateien.
+Die Variable |$1| bestimmt den Suchpfad fÃ¼r Informationsdateien.
 */
 
 char *InfoPath = NULL;
 
 /*
-Die Funktion |$1| initialisiert den Suchpfad |InfoPath| für Informationsdateien.
-Falls für <path> ein Nullpointer angegeben wurde und der Suchpfad bereits
-initialisiert wurde, wird er von |$1| nicht verändert.
+Die Funktion |$1| initialisiert den Suchpfad |InfoPath| fÃ¼r Informationsdateien.
+Falls fÃ¼r <path> ein Nullpointer angegeben wurde und der Suchpfad bereits
+initialisiert wurde, wird er von |$1| nicht verÃ¤ndert.
 */
 
 void SetInfoPath (const char *dir)

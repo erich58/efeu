@@ -1,9 +1,9 @@
 /*
-Formatierungsschlüssel
+FormatierungsschlÃ¼ssel
 
 $Header	<EFEU/$1>
 
-$Copyright (C) 1994, 2007 Erich Frühstück
+$Copyright (C) 1994, 2007 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -33,9 +33,9 @@ typedef struct {
 	StrBuf buf;	/* Zeichenbuffer */
 	int mode;	/* Formatierungsmodus */
 	int flags;	/* Steuerflags */
-	int size;	/* Größenangabe */
+	int size;	/* GrÃ¶ÃŸenangabe */
 	int width;	/* Feldbreite */
-	int prec;	/* Präzession */
+	int prec;	/* PrÃ¤zession */
 } FmtKey;
 
 #define	FKEY_DATA()	{ SB_DATA(30), 0, 0, 0, 0, 0 }
@@ -44,10 +44,10 @@ typedef struct {
 #define	FMT_BLANK	0x1	/* Blank bei positiven Werten */
 #define	FMT_SIGN	0x2	/* Vorzeichen immer ausgeben */
 #define	FMT_ALTMODE	0x4	/* Alternative Form */
-#define	FMT_ZEROPAD	0x8	/* Auffüllen mit 0 */
-#define	FMT_RIGHT	0x10	/* Rechtsbündige Ausrichtung */
-#define	FMT_NEED_WIDTH	0x20	/* Feldbreite muß abgefragt werden */
-#define	FMT_NEED_PREC	0x40	/* Genauigkeit muß abgefragt werden */
+#define	FMT_ZEROPAD	0x8	/* AuffÃ¼llen mit 0 */
+#define	FMT_RIGHT	0x10	/* RechtsbÃ¼ndige Ausrichtung */
+#define	FMT_NEED_WIDTH	0x20	/* Feldbreite muÃŸ abgefragt werden */
+#define	FMT_NEED_PREC	0x40	/* Genauigkeit muÃŸ abgefragt werden */
 #define	FMT_NOPREC	0x80	/* Keine Genauigkeit angegeben */
 #define	FMT_NEGPREC	0x100	/* negative Genauigkeit */
 #define	FMT_GROUP	0x200	/* Grupperiungsflag */

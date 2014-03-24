@@ -1,8 +1,8 @@
 #!/bin/sh
 # :*:configuration tool for shmkmf
-# :de:Konfigurationswerkzeug für shmkmf
+# :de:Konfigurationswerkzeug fÃ¼r shmkmf
 #
-# $Copyright (C) 2002, 2008 Erich Frühstück
+# $Copyright (C) 2002, 2008 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or modify
@@ -39,7 +39,7 @@ esac
 #	:de:Fehlermeldungen ausgeben
 # x|
 #	:*:execute compiled command
-#	:de:Kompiliertes Programm ausführen
+#	:de:Kompiliertes Programm ausfÃ¼hren
 # s|
 #	:*:read function body from standard input
 #	:de:Funktionsrumpf von der Standardeingabe lesen
@@ -54,13 +54,13 @@ esac
 #	:de:Headerfile, falls existiert, einbinden
 # r:hdr|
 #	:*:header for shmkmf
-#	:de:Headerfile für shmkmf einbinden
+#	:de:Headerfile fÃ¼r shmkmf einbinden
 # f:flgs|
 #	:*:compiler flags
-#	:de:Flags für C-Kompiler
+#	:de:Flags fÃ¼r C-Kompiler
 # :cmd|
 #	:*:command to perform
-#	:de:Auszuführendes Kommando
+#	:de:AuszufÃ¼hrendes Kommando
 # ::arg(s)|
 #	:*:command specific arguments
 #	:de:Befehlsspezifische Argumente
@@ -146,8 +146,8 @@ shift
 # are evaluated by a call to |$!|.
 # :de:
 # Das Kommando |$!| dient zur Bestimmung von systemspezifischen Parametern.
-# Normalerweise wird damit eine Schablone für ein C-Headerfile 
-# mit speziellen Testanweisungen überarbeitet.
+# Normalerweise wird damit eine Schablone fÃ¼r ein C-Headerfile 
+# mit speziellen Testanweisungen Ã¼berarbeitet.
 # Diese Anweisungen werden mit awk isoliert und von |$!| verarbeitet.
 #
 # :*:
@@ -155,9 +155,9 @@ shift
 # If the |-x| flag is set, the created program is executed and
 # its output is inserted.
 # :de:
-# Manche Tests generieren C-Sourcen und überprüfen den Kompilierungsstatus.
+# Manche Tests generieren C-Sourcen und Ã¼berprÃ¼fen den Kompilierungsstatus.
 # Falls die |-x| Option gesetzt ist, wird das generierte Programm auch
-# ausgeführt und seine Ausgabe eingearbeitet.
+# ausgefÃ¼hrt und seine Ausgabe eingearbeitet.
 #
 # @arglist -i
 # 
@@ -166,9 +166,9 @@ shift
 # or |update|, a template file is evaluated, otherwise a special
 # test is performed.
 # :de:
-# Das erste Argument bestimmt die Aktivitäten von |$!|. Fals es |file|
+# Das erste Argument bestimmt die AktivitÃ¤ten von |$!|. Fals es |file|
 # oder |update| ist, wird eine Schablonendatei verarbeitet, ansonsten wird
-# ein spezieller Test durchgeführt.
+# ein spezieller Test durchgefÃ¼hrt.
 #
 # :*:
 # Every occurance of |@@SRC@@| in the template file would be replaced by
@@ -177,21 +177,21 @@ shift
 # :de:
 # In der Schablonendatei wird jedes Vorkommen von |@@SRC@@| durch den
 # Namen der Schablonendatei und |@@CMD@@| durch |$!| ersetzt. Die folgenden
-# Schlüsselwörter am Anfang der Datei werden akzeptiert:
+# SchlÃ¼sselwÃ¶rter am Anfang der Datei werden akzeptiert:
 #
 # |@@set| <flags>
 #	:*:sets options for the following calls to |$!|.
-#	:de:Setzt Optionen für die nachfolgenden Aufrufe von |$!|.
+#	:de:Setzt Optionen fÃ¼r die nachfolgenden Aufrufe von |$!|.
 #
 # |@@add| <flags>
 #	:*:expands the options for the following calls to |$!|.
-#	:de:Erweitert die Optionen für die nachfolgenden Aufrufe von |$!|.
+#	:de:Erweitert die Optionen fÃ¼r die nachfolgenden Aufrufe von |$!|.
 #
 # |@@include| <file>
 #	:*:if header <file> exists, a include directive is createted and the
 #	options for the following calls to |$!| are expanded to include it.
 #	:de:Falls die Headerdatei <file> existiert, wird eine
-#	include-Direktive generiert und die Optionen für
+#	include-Direktive generiert und die Optionen fÃ¼r
 #	die nachfolgenden Aufrufe von |$!| erweitert, um sie einzubinden.
 #
 # |@@eval| <args>
@@ -211,14 +211,14 @@ shift
 #	leitet alle Zeilen zwischen |@@beg| und |@@end| an |$!| weiter.
 #
 # :*:The following commands are performed by the command |$!|
-# :de:Die folgenden Kommandos werden vom Programm |$!| ausgeführt:
+# :de:Die folgenden Kommandos werden vom Programm |$!| ausgefÃ¼hrt:
 
 case $type in
 file)
 # $Description
 # |file| [<name>]
 #	:*:inserts system specific parameters in file <name>
-#	:de:Fügt in Datei <name> systemspezifische Parameter ein
+#	:de:FÃ¼gt in Datei <name> systemspezifische Parameter ein
 	exec awk -v eval="$eval" '
 BEGIN { pipe = "" }
 /@SRC@/ { gsub("@SRC@", FILENAME) }
@@ -240,7 +240,7 @@ update)
 # |update| <src> <tg>
 #	:*:performs $! file on <src> and overwrites <tg> only if
 #	<src> is newer than <tg> or <tg> has changed.
-#	:de:Fügt in die Datei <src> systemspezifische Parameter ein
+#	:de:FÃ¼gt in die Datei <src> systemspezifische Parameter ein
 #	und erneuert <tg>, falls sich das Ergebniss von ihr unterscheidet
 #	oder <src> neueres Datum hat als <tg>.
 	mkdir $tmp || exit 1
@@ -260,14 +260,14 @@ check)
 # $Description
 # |check| <expr>
 #	:*:check compilation/execution of <expr> without any additional	message.
-#	:de:Testet Kompilierung/Ausführung von <expr> ohne zusätzliche Ausgabe.
+#	:de:Testet Kompilierung/AusfÃ¼hrung von <expr> ohne zusÃ¤tzliche Ausgabe.
 	body="$*;"
 	;;
 report)
 # $Description
 # |report| <expr>
 #	:*:reports status of compilation/execution of <expr>.
-#	:de:Meldet den Status der Kompilierung/Ausführung von <expr>.
+#	:de:Meldet den Status der Kompilierung/AusfÃ¼hrung von <expr>.
 	success="echo success"
 	failure="echo failure"
 	body="$*;"
@@ -278,7 +278,7 @@ error)
 #	:*:create |#error| directive with <message>,
 #	if compilation/execution fails.
 #	:de:Generiert |#error| Directive mit <message>, falls die
-#	Kompilierung/Ausführung von <expr> fehlschlägt.
+#	Kompilierung/AusfÃ¼hrung von <expr> fehlschlÃ¤gt.
 	failure="echo #error $1"
 	shift
 	body="$*;"
@@ -288,7 +288,7 @@ success)
 # |success| <tname> <expr>
 #	:*:if compilation/execution of <expr> is successful,
 #	define <tname> with 1, else with 0.
-#	:de:Falls die Kompilierung/Ausführung von <expr> erfolgreich ist,
+#	:de:Falls die Kompilierung/AusfÃ¼hrung von <expr> erfolgreich ist,
 #	wird der Makro <tname> mit 1, ansonsten mit 0 definiert.
 	success="echo #define $1 1"
 	failure="echo #define $1 0"
@@ -300,7 +300,7 @@ failure)
 # |failure| <tname> <expr>
 #	:*:if compilation/execution of <expr> failed,
 #	define <tname> with 1, else with 0.
-#	:de:Falls die Kompilierung/Ausführung von <expr> fehlschlägt, wird der
+#	:de:Falls die Kompilierung/AusfÃ¼hrung von <expr> fehlschlÃ¤gt, wird der
 #	Makro <tname> mit 1, ansonsten mit 0 definiert.
 	success="echo #define $1 0"
 	failure="echo #define $1 1"
@@ -311,7 +311,7 @@ include)
 # $Description
 # |include| <name>
 #	:*:includes header <name> if availabel.
-#	:de:Bindet header <name> ein, falls verfügbar.
+#	:de:Bindet header <name> ein, falls verfÃ¼gbar.
 	incl="$incl
 #include <$1>"
 	success="echo #include <$1>"
@@ -320,7 +320,7 @@ proto)
 # $Description
 # |proto| <proto>
 #	:*:check compatibility of prototype <proto>.
-#	:de:Testet die Kompatiblität des Prototypes <proto>.
+#	:de:Testet die KompatiblitÃ¤t des Prototypes <proto>.
 	success="echo $*;"
 	failure="echo prototype not compatible >&2"
 	decl="$*;"

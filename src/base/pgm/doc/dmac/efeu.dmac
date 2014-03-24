@@ -2,7 +2,7 @@
 :*:EFEU manpage configuration
 :de:EFEU-Handbuchformat
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -25,7 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 	if	(!DocStyle)
 		DocStyle = "report";
 
-	author = expand("Erich Frühstück");
+	author = expand("Erich FrÃ¼hstÃ¼ck");
 	str exname = langcpy(":*:Exercise:de:Aufgabe");
 	latex::preamble += string !
 
@@ -68,7 +68,7 @@ If not, write to the Free Software Foundation, Inc.,
 	\put(4,4){\parbox[b]{10cm}{\raggedright\bf $(author:%s)}}
 	\put(11,0){\rotatebox{90}{\small
 		{\color{Red}\Huge E}rich
-		{\color{Red}\Huge F}\hspace{-0.5em}rühstück
+		{\color{Red}\Huge F}\hspace{-0.5em}rÃ¼hstÃ¼ck
 		{\color{Red}\Huge E}ntwicklungs
 		{\color{Red}\Huge U}\hspace{-0.2em}mgebung}}
 	\end{picture}
@@ -99,7 +99,7 @@ If not, write to the Free Software Foundation, Inc.,
 :de:Aufgabe
 	$1
 
-:de:Der Makro beginnt eine neue Übungsaufgabe.
+:de:Der Makro beginnt eine neue Ãœbungsaufgabe.
 
 \def\exercise{
 	if (!plaintex("\n\\exercise{}"))
@@ -111,7 +111,7 @@ If not, write to the Free Software Foundation, Inc.,
 :de:Impressum
 	$1 |(|<Ersheinungsjahr>|)|
 
-:de:Der Makro $1 setzt das Impressum für ein EFEU-Handbuch.
+:de:Der Makro $1 setzt das Impressum fÃ¼r ein EFEU-Handbuch.
 
 \def@Copyright
 \eval{mode('h')}
@@ -120,7 +120,7 @@ If not, write to the Free Software Foundation, Inc.,
 \strut
 \vfill
 }
-Copyright (C) $1 Erich Frühstück.\br
+Copyright (C) $1 Erich FrÃ¼hstÃ¼ck.\br
 This documentation is part of EFEU.
 \par
 EFEU is free software; you can redistribute it and/or
@@ -141,24 +141,24 @@ If not, write to the Free Software Foundation, Inc.,
 
 \def@Impressum
 \appendix	Impressum
-Eigentümer und Verleger:\br
-Erich Frühstück\br
+EigentÃ¼mer und Verleger:\br
+Erich FrÃ¼hstÃ¼ck\br
 //Wildenhaggasse 38\br
-A\-3423 St.Andrä/Wördern
+A\-3423 St.AndrÃ¤/WÃ¶rdern
 \par
-Für den Inhalt verantwortlich:\br
-Erich Frühstück
+FÃ¼r den Inhalt verantwortlich:\br
+Erich FrÃ¼hstÃ¼ck
 \par
 Herstellung und Redaktion:\br
-Erich Frühstück
+Erich FrÃ¼hstÃ¼ck
 \par
-Wördern $1
+WÃ¶rdern $1
 
 :*:note for incomplete paragraph
-:de:Anmerkung für unvollständigen Abschnitt
+:de:Anmerkung fÃ¼r unvollstÃ¤ndigen Abschnitt
 
 \def@TODO
 \langpar
 :*:<*This paragraph is not completed.*>
-:de:<*Dieser Abschnitt muß noch vervollständigt werden.*>
+:de:<*Dieser Abschnitt muÃŸ noch vervollstÃ¤ndigt werden.*>
 :_:\par

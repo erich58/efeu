@@ -1,7 +1,7 @@
 /*
 Ganzzahlwert formatieren
 
-$Copyright (C) 1994, 2008 Erich Frühstück
+$Copyright (C) 1994, 2008 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -195,7 +195,7 @@ int fmt_intmax (StrBuf *sb, const FmtKey *key, intmax_t xval)
 		n++;
 	}
 
-/*	Auffüllen mit Nullen
+/*	AuffÃ¼llen mit Nullen
 */
 	k = pos + key->width;
 

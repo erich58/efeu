@@ -2,12 +2,12 @@
 @synopsis -h
 \Description
 Das Kommando |$!| filtert aus der Ausgabe des C--Preprozessors
-die Namen von eingebundenen Dateien und stellt daraus eine Abhängigkeitsliste
-für die angegebenen Ziele <target(s)> zusammen.
+die Namen von eingebundenen Dateien und stellt daraus eine AbhÃ¤ngigkeitsliste
+fÃ¼r die angegebenen Ziele <target(s)> zusammen.
 
 @arglist -i
 
-Die typische Anwendung für |pp2dep| erfolgt in einem Makefile der
+Die typische Anwendung fÃ¼r |pp2dep| erfolgt in einem Makefile der
 Form:
 
 ---- verbatim

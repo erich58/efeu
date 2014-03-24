@@ -1,7 +1,7 @@
 # :*:document generator
 # :de:EFEU-Dokumentkonverter
 
-# $Copyright (C) 1999 Erich Frühstück
+# $Copyright (C) 1999 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -27,8 +27,8 @@ UseUTF8 = false
 I:dir|CFGPath:eval 'CFGPath = paste(PATHSEP, CFGPath, "{}")'; Bootstrap: set '{Bootstrap} -I "{}"'
 	:*:append <dir> to the search path for configuration files.
 	The default setting is "|$(CFGPath:%s)|".
-	:de:erweitert den Suchpfad für Konfigurationsdateien um <dir>.
-	Die Vorgabe für den Suchpfad ist:\br \url |$(CFGPath:%s)|.
+	:de:erweitert den Suchpfad fÃ¼r Konfigurationsdateien um <dir>.
+	Die Vorgabe fÃ¼r den Suchpfad ist:\br \url |$(CFGPath:%s)|.
 T:type|Type:
 	:*:document type, |?| gives a listing.
 	:de:Ausgabetype, |?| liefert eine Auflistung.
@@ -38,10 +38,10 @@ C:cfg|Config:
 H:hdr|Head: append '\n'; Bootstrap: set '{Bootstrap} -H "{}"'
 	:*:evaluates <hdr> before any input file.
 	:de:Wertet den String <hdr> vor den Eingabedateien aus.
-	Damit können Dokumentmakros definiert werden.
+	Damit kÃ¶nnen Dokumentmakros definiert werden.
 0|NoHead = 1; Bootstrap: append " -0"
 	:*:suppress document head
-	:de:Dokumentkopf unterdrücken
+	:de:Dokumentkopf unterdrÃ¼cken
 u|UseUTF8 = true;
 	:*:Use UTF8 coding in sources
 	:de:UTF8 Kodierung verwenden.
@@ -50,7 +50,7 @@ r:name|TaskName; MakeDepend = 1
 	:de:Generierungsregeln mit Pseudoziel
 d|MakeDepend = 1
 	:*:create dependence
-	:de:Abhängigkeitsregeln generieren
+	:de:AbhÃ¤ngigkeitsregeln generieren
 t|Type = "term"; Output = "|less -r"
 	:*:terminal output
 	:de:Terminalausgabe
@@ -59,10 +59,10 @@ l|Type = "LaTeX"
 	:de:LaTeX-Dokument
 p|Type = "tex2ps"
 	:*:PostScript document over LaTeX
-	:de:PostScript-Dokument über LaTeX
+	:de:PostScript-Dokument Ã¼ber LaTeX
 -pdf|Type = "tex2pdf"
 	:*:PDF document over LaTeX
-	:de:PDF-Dokument über LaTeX
+	:de:PDF-Dokument Ã¼ber LaTeX
 h|Type = "html"
 	:*:html document
 	:de:HTML-Dokument

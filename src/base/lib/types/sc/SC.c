@@ -1,7 +1,7 @@
 /*
-Hilfsprogramme für Spreadsheed-Conector
+Hilfsprogramme fÃ¼r Spreadsheed-Conector
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -28,16 +28,16 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	USE_V6	0	/* Verwende Version 6 */
 
-#define	SC_CMDSIZE	31	/* Bufferlänge für SC-Befehlsnamen */
+#define	SC_CMDSIZE	31	/* BufferlÃ¤nge fÃ¼r SC-Befehlsnamen */
 
-#define	SC_TYPE		0xF	/* Maske für Datentype */
+#define	SC_TYPE		0xF	/* Maske fÃ¼r Datentype */
 #define	SC_EMPTY	0x0	/* Leeres Feld */
 #define	SC_DATA		0x1	/* Datenfeld */
 #define	SC_EXPR		0x2	/* Zuweisungsausdruck */
 #define	SC_LABEL	0x3	/* Zentrierter Label */
 
-#define	SC_LEFT		0x10	/* Linksbündiger Text */
-#define	SC_RIGHT	0x20	/* Rechtsbündiger Text */
+#define	SC_LEFT		0x10	/* LinksbÃ¼ndiger Text */
+#define	SC_RIGHT	0x20	/* RechtsbÃ¼ndiger Text */
 
 typedef struct {
 	int type;	/* Datentype */
@@ -47,7 +47,7 @@ typedef struct {
 } SCData;
 
 typedef struct {
-	REFVAR;		/* Referenzzähler */
+	REFVAR;		/* ReferenzzÃ¤hler */
 	int x;		/* X - Position */
 	int y;		/* Y - Position */
 	int rows;	/* Zahl der Zeilen */

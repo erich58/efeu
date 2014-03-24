@@ -2,7 +2,7 @@
 :*:code source
 :de:Codesource
 
-$Copyright (C) 2005 Erich Frühstück
+$Copyright (C) 2005 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -36,7 +36,7 @@ static void src_clean (void *ptr)
 }
 
 /*
-:de:Die Datenstruktur |$1| definiert den Referenztype für die
+:de:Die Datenstruktur |$1| definiert den Referenztype fÃ¼r die
 Struktur |EfiSrc|.
 */
 

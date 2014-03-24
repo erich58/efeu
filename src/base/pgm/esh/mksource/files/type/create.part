@@ -1,6 +1,6 @@
 /*
 :*:The function |$1| provides include statements for type definitions.
-:de:Die Funktion |$1| sorgt für die zur Typedefinition notwendigen
+:de:Die Funktion |$1| sorgt fÃ¼r die zur Typedefinition notwendigen
 Headerdateien.
 */
 

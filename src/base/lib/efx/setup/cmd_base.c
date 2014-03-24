@@ -1,7 +1,7 @@
 /*
 Basistypen
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -27,7 +27,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/printobj.h>
 #include <ctype.h>
 
-/*	Lösch- und Kopierfunktionen
+/*	LÃ¶sch- und Kopierfunktionen
 */
 
 void Clean_obj(const EfiType *st, void *data, int mode)

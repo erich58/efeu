@@ -1,8 +1,8 @@
 /*
 :*:red black trees with reference count
-:de:Rot-Schwarz-Bäume mit Referenzzähler
+:de:Rot-Schwarz-BÃ¤ume mit ReferenzzÃ¤hler
 
-$Copyright (C) 2008 Erich Frühstück
+$Copyright (C) 2008 Erich FrÃ¼hstÃ¼ck
 
 This code is based on tsearch.c from the GNU C Library.
 Copyright (C) 1995, 1996, 1997, 2000 Free Software Foundation, Inc.

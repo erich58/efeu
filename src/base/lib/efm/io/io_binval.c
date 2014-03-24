@@ -1,7 +1,7 @@
 /*
-Binäre Ein- Ausgabe von Ganzzahlwerten
+BinÃ¤re Ein- Ausgabe von Ganzzahlwerten
 
-$Copyright (C) 1996 Erich Frühstück
+$Copyright (C) 1996 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -71,7 +71,7 @@ char *io_getstr(IO *io)
 	return io_mread(io, size);
 }
 
-/*	Gepackte Ausgabe eines Strings mit Längenangabe
+/*	Gepackte Ausgabe eines Strings mit LÃ¤ngenangabe
 */
 
 int io_putstr(const char *str, IO *io)

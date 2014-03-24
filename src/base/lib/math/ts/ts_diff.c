@@ -2,7 +2,7 @@
 :*:calculate differences
 :de:Differenzen berechnen
 
-$Copyright (C) 1997 Erich Frühstück
+$Copyright (C) 1997 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -113,14 +113,14 @@ void ts_cumulate (TimeSeries *ts, TimeSeries *base, EfiVirFunc *fptr)
 	n -= idx.value;
 	ts_sync(ts, idx, n, 0);
 
-/*	Basis übernehmen
+/*	Basis Ã¼bernehmen
 */
 	n = base->base.value - idx.value;
 
 	for (i = 0; i < base->dim; i++)
 		ts->data[i + n] = base->data[i];
 
-/*	Werte zurückrechnen
+/*	Werte zurÃ¼ckrechnen
 */
 	for (i = n - 1; i >= 0; i--)
 		SetData(func, ts->data, i, i, i + base->dim);

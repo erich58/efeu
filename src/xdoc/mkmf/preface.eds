@@ -1,6 +1,6 @@
 /*	Introduction, english version
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -28,5 +28,5 @@ The single manpages are created by the commands itself with
 the option |--help| or by extracting comment lines from the
 source files of functions. So the command syntax is always up to date.
 
-	Erich Frühstück\br
-	Wördern, \thedate
+	Erich FrÃ¼hstÃ¼ck\br
+	WÃ¶rdern, \thedate

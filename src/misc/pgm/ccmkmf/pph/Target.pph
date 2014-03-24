@@ -1,7 +1,7 @@
 /*
 Zielmakros
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -25,36 +25,36 @@ If not, write to the Free Software Foundation, Inc.,
 
 /*
 Der Makro |$1|
-generiert eine Abhängigkeit <dep> für das Pseudoziel <name>.
+generiert eine AbhÃ¤ngigkeit <dep> fÃ¼r das Pseudoziel <name>.
 */
 #define	NamedTarget(name,dep)		@;name:: dep @;@;
 
 /*
 Der Makro |$1|
-generiert eine Liste von zu löschenden Dateien für das
-Aufräumziel <name>.
+generiert eine Liste von zu lÃ¶schenden Dateien fÃ¼r das
+AufrÃ¤umziel <name>.
 */
 #define	NamedCleanTarget(name,dep)	@;@{@;name:: @;@+rm -f dep @;@}@;
 
 /*
 Der Makro |$1|
-generiert für die Datei <name> eine Abhängigkeit für das Pseudoziel
-|all| und eine Aufräumregel für das Aufräumziel |clean|.
+generiert fÃ¼r die Datei <name> eine AbhÃ¤ngigkeit fÃ¼r das Pseudoziel
+|all| und eine AufrÃ¤umregel fÃ¼r das AufrÃ¤umziel |clean|.
 */
 #define	AllTarget(dep)		\
 NamedTarget(all,dep)@;NamedCleanTarget(clean,dep)
 
 /*
 Der Makro |$1|
-generiert eine Liste von zu löschenden Dateien für das
-Aufräumziel |clean|.
+generiert eine Liste von zu lÃ¶schenden Dateien fÃ¼r das
+AufrÃ¤umziel |clean|.
 */
 #define	CleanTarget(dep)	NamedCleanTarget(clean,dep)
 
 /*
-Wird der Makro |$1| als Ziel einer Regel angeführt, wird automatisch
-auch eine Abhängigkeit für das Pseudoziel
-|all| und eine Aufräumregel für das Pseudoziel |clean| generiert.
+Wird der Makro |$1| als Ziel einer Regel angefÃ¼hrt, wird automatisch
+auch eine AbhÃ¤ngigkeit fÃ¼r das Pseudoziel
+|all| und eine AufrÃ¤umregel fÃ¼r das Pseudoziel |clean| generiert.
 */
 #if	0
 #define	Target(name)		AllTarget(name)@;name

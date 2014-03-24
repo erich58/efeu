@@ -4,7 +4,7 @@
 # $Synopsis
 # <=[=> include $1 <=]=>
 #
-# $Copyright (C) 2004 Erich Frühstück
+# $Copyright (C) 2004 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -29,7 +29,7 @@ _comment_smh=1
 # $pconfig !
 # n |
 # 	:*:suppresses the empty line before assignment.
-#	:de:Leerezeile vor Variablenzuweisung unterdrücken
+#	:de:Leerezeile vor Variablenzuweisung unterdrÃ¼cken
 # *arg(s) |
 #	:*:is the list of comment line(s).
 #	:de:gibt die Liste von Kommentaren an.
@@ -42,7 +42,7 @@ _comment_smh=1
 # Without option |-n| an empty line is placed before the comment.
 # The following arguments are accepted:
 # :de:
-# Die Funktion $! generiert für jedes Argument <arg> eine
+# Die Funktion $! generiert fÃ¼r jedes Argument <arg> eine
 # Kommentarzeile der Form:\br
 # |#| <arg>
 # \par

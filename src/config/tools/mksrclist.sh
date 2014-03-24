@@ -2,7 +2,7 @@
 # :*:create source list
 # :de:Sourecliste generieren
 #
-# $Copyright (C) 2000 Erich Frühstück
+# $Copyright (C) 2000 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -27,7 +27,7 @@
 #	:de:Forcierte Neugenerierung der Ausgabedatei
 # x|
 #	:*:consider source generation with |mksource|.
-#	:de:Berücksichtige Sourcgenerierung mit |mksource|.
+#	:de:BerÃ¼cksichtige Sourcgenerierung mit |mksource|.
 # e:pat|
 #	:*:ignore files which maches pattern <pat>
 #	:de:Dateien ignorieren, die dem Muster <pat> entsprechen
@@ -36,7 +36,7 @@
 #	:de:Hauptbibliothek der Sourcen
 # ::name|
 #	:*:name of output file to update
-#	:de:Name der Ausgabedatei für ein update
+#	:de:Name der Ausgabedatei fÃ¼r ein update
 
 # $Description
 # :*:The command |$!| creates a list of files unter <top>.
@@ -49,8 +49,8 @@
 # If the source list is new or it hase changed, the return code is 1.
 # Otherwise the return code is 0.
 # :de:Das Kommando |$!| liefert 2, falls ein Fehler bei der Erzeugung der
-# Dateiliste auftrat. Falls die Dateiliste neu ist oder sich verädert hat,
-# ist der Rückgabewert 1. Bei unveränderter Dateiliste ist er 0.
+# Dateiliste auftrat. Falls die Dateiliste neu ist oder sich verÃ¤dert hat,
+# ist der RÃ¼ckgabewert 1. Bei unverÃ¤nderter Dateiliste ist er 0.
 # 
 # $SeeAlso
 # shmkmf(1), d2m.smh(7).
@@ -76,8 +76,8 @@ fmt_create="create sourcelist %s\n"
 
 case $LANG in
 de*)
-	fmt_keep="$0: %s wurde nicht verändert\n"
-	fmt_modify="$0: %s wurde verändert\n"
+	fmt_keep="$0: %s wurde nicht verÃ¤ndert\n"
+	fmt_modify="$0: %s wurde verÃ¤ndert\n"
 	fmt_create="Sourceliste %s wird generiert\n"
 	;;
 esac
@@ -170,7 +170,7 @@ top=`(cd $1 || exit 2; pwd)` || exit 2
 
 # :*:remove / on end of directorys name for correct interpretation of
 # exeption list.
-# :de:Ein / am Ende eines Bibliotheksnamens muß entfernt werden,
+# :de:Ein / am Ende eines Bibliotheksnamens muÃŸ entfernt werden,
 # da ansonsten die Ausnahmefiles nicht korrekt interpretiert
 # werden.
 

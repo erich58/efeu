@@ -1,7 +1,7 @@
 /*
-IO-Struktur mit Zeilenzähler
+IO-Struktur mit ZeilenzÃ¤hler
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -29,7 +29,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 typedef struct {
 	IO *io;		/* Eingabestruktur */
-	unsigned nl : 1;	/* Flag für neue Zeile */
+	unsigned nl : 1;	/* Flag fÃ¼r neue Zeile */
 	unsigned line : 31;	/* Zeilennummer */
 } LNUM;
 

@@ -3,7 +3,7 @@ Objektkonvertierung
 
 $Header <EFEU/$1>
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -34,17 +34,17 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #define	D_REJECT	-1	/* Konvertierung ablehnen */
-#define	D_MATCH		0	/* Übereinstimung */
+#define	D_MATCH		0	/* Ãœbereinstimung */
 
-#define	D_PROMOTE	01	/* Geförderte Konvertierung */
+#define	D_PROMOTE	01	/* GefÃ¶rderte Konvertierung */
 #define	D_EXPAND	02	/* Expansion eines Basisobjekts */
 #define	D_KONVERT	04	/* Normale Konvertierung */
 
 #define	D_BASE		010	/* Kompatible Basis */
-#define	D_ACCEPT	020	/* Akzeptierte Übernahme */
+#define	D_ACCEPT	020	/* Akzeptierte Ãœbernahme */
 #define	D_VAARG		040	/* Variable Argumentzahl */
 
-#define	D_RESTRICTED	0100	/* Eingeschränkte Konvertierung */
+#define	D_RESTRICTED	0100	/* EingeschrÃ¤nkte Konvertierung */
 #define	D_CREATE	0200	/* Konstruktor verwenden */
 #define	D_MAXDIST	0400	/* Maximaldistanz */
 

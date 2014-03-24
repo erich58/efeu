@@ -2,7 +2,7 @@
 :*:	convert data cube to efeu data files
 :de:	Konvertiere eine Datenmatrix in ein Efeu-Datenfiles
 
-$Copyright (C) 2006 Erich Frühstück
+$Copyright (C) 2006 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -39,10 +39,10 @@ F:file | :eval 'gload(IncPath, "{}")'
 	:de:Datei <file> mit Befehlszeilen laden
 v:[name::]var | VarDef: append " "
 	:*:select type components of data cube
-	:de:Variablenselektion für Datenmatrix
+	:de:Variablenselektion fÃ¼r Datenmatrix
 r | Reduce = true
 	:*:remove singular axis
-	:de:Entfernen von singulären Achsen
+	:de:Entfernen von singulÃ¤ren Achsen
 T:title | Title
 	:*:set title of output file
 	:de:Titel der Ausgabedatei setzen
@@ -63,7 +63,7 @@ f:def | Filter: append " "
 	:de:Name der Eingabedatei
 /.*=.*/<name>=<var> | SelDef: append " "
 	:*:selection parameter for data cube
-	:de:Selektionsparameter für Datenmatrix
+	:de:Selektionsparameter fÃ¼r Datenmatrix
 ::out | Output
 	:*:output file name
 	:de:Name der Ausgabedatei

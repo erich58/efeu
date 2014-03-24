@@ -1,6 +1,6 @@
-/*	Binäre Eingabefunktion
-	$Copyright (C) 2006 Erich Frühstück
-	A-3423 St.Andrä/Wördern, Wildenhaggasse 38
+/*	BinÃ¤re Eingabefunktion
+	$Copyright (C) 2006 Erich FrÃ¼hstÃ¼ck
+	A-3423 St.AndrÃ¤/WÃ¶rdern, Wildenhaggasse 38
 */
 
 #include <EFEU/EfiInput.h>

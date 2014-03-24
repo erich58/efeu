@@ -1,42 +1,42 @@
 \title	Allgemeines
 
-\sec	Zeilenlängen
+\sec	ZeilenlÃ¤ngen
 
-Grundsätzlich sollten die Zeilen von C-Sourcen, EFEU-Scripts und
-Imakefiles auf 80 Zeichen begrenzt werden. Längere Zeilen machen
+GrundsÃ¤tzlich sollten die Zeilen von C-Sourcen, EFEU-Scripts und
+Imakefiles auf 80 Zeichen begrenzt werden. LÃ¤ngere Zeilen machen
 Probleme bei der Ausgabe am Drucker oder bei der Ansicht am Terminal.
-Auch können solche Programme schlecht in Dokumente eingearbeitet
+Auch kÃ¶nnen solche Programme schlecht in Dokumente eingearbeitet
 werden.
 
-Automatische Umbrüche bei der Darstellung können zu
-Fehlinterpretationen führen, da insbesonders bei EFEU-Scripts und bei
-Imakefiles Zeilenumbrüche anders als Leerzeichen oder Tabulatoren
+Automatische UmbrÃ¼che bei der Darstellung kÃ¶nnen zu
+Fehlinterpretationen fÃ¼hren, da insbesonders bei EFEU-Scripts und bei
+Imakefiles ZeilenumbrÃ¼che anders als Leerzeichen oder Tabulatoren
 behandelt werden.
 
-Um die Zeilenlängen zu verringern, stehen folgende Möglichkeiten
+Um die ZeilenlÃ¤ngen zu verringern, stehen folgende MÃ¶glichkeiten
 offen:
 
 *	Die Vermeidung von langen Zeilen durch umstrukturieren des Codes.
 *	Das Einfugen eines Zeilenvorschubs an einer Stelle, wo er sich
-	nicht störend auf die Syntax und die Lesbarkeit auswirkt.
-	Bei EFEU-Scripts werden z.B. Zeilenvorschübe zwischen den Argumenten
+	nicht stÃ¶rend auf die Syntax und die Lesbarkeit auswirkt.
+	Bei EFEU-Scripts werden z.B. ZeilenvorschÃ¼be zwischen den Argumenten
 	einer Argumentliste wie Leerzeichen behandelt.
-*	Durch das Voranstellen eines Gegenschrägstrichs |\|
+*	Durch das Voranstellen eines GegenschrÃ¤gstrichs |\|
 	unmittelbar vor dem Zeilenvorschub. Dies kann an einer
 	beliebigen Stelle des Codes erfolgen.
 
 Werden Codezeilen umgebrochen, sollten nachfolgende Zeilen zur
-besseren Lesbarkeit zusätzlich Eingerückt werden. Daher sollten
-Zeilenumbrüche nach Möglichkeit nur an solchen Stellen gesetzt werden,
-wo beliebig viele Tabulatoren oder Leerzeichen folgen dürfen.
+besseren Lesbarkeit zusÃ¤tzlich EingerÃ¼ckt werden. Daher sollten
+ZeilenumbrÃ¼che nach MÃ¶glichkeit nur an solchen Stellen gesetzt werden,
+wo beliebig viele Tabulatoren oder Leerzeichen folgen dÃ¼rfen.
 
-\sec	Einrückungen
+\sec	EinrÃ¼ckungen
 
-Einrückungen erfolgen Grundsätzlich mit Tabulatoren und nicht mit
-Leerzeichen. Zu beachten ist auch, dass bei Imakefiles eine Einrückung
-mit einem Tabulator syntaktisch etwas anderes ist als eine Einrückung
-mit Leerzeichen. Details zu den Einrückregeln bei bestimmten
-syntaktischen Elementen folgen später.
+EinrÃ¼ckungen erfolgen GrundsÃ¤tzlich mit Tabulatoren und nicht mit
+Leerzeichen. Zu beachten ist auch, dass bei Imakefiles eine EinrÃ¼ckung
+mit einem Tabulator syntaktisch etwas anderes ist als eine EinrÃ¼ckung
+mit Leerzeichen. Details zu den EinrÃ¼ckregeln bei bestimmten
+syntaktischen Elementen folgen spÃ¤ter.
 
 Tiefe Verschachtelungen sind durch Zerlegen des Codes in kleinere
 Hilfsfunktionen zu vermeiden.

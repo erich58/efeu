@@ -4,7 +4,7 @@
 # $Synopsis
 # <=[=> include $1 <=]=>
 #
-# $Copyright (C) 2004 Erich Frühstück
+# $Copyright (C) 2004 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -34,7 +34,7 @@ _rule_smh=1
 # for the standard phony targets for creating and cleaining. The default
 # setting is |all| respective |clean|.
 # :de:Die Variablen |AllTarget| und |CleanTarget| definieren die Namen
-# für die Standardziele zur Generierung und zum Aufräumen.
+# fÃ¼r die Standardziele zur Generierung und zum AufrÃ¤umen.
 # Die Standardvorgabe ist |all| beziehungsweise |clean|.
 
 AllTarget=all
@@ -44,36 +44,36 @@ CleanTarget=clean
 # $pconfig !
 # A:name |
 # 	:*:create extra rule for letting phony target <name> depending on <tg>.
-#	:de:erzeugt für das Scheinziel <name> eine Abhängigkeit von <tg>.
+#	:de:erzeugt fÃ¼r das Scheinziel <name> eine AbhÃ¤ngigkeit von <tg>.
 # C:name |
 # 	:*:create extra rule for phony target <name> to remove <tg>.
-#	:de:erzeugt für das Scheinziel <name> eine Löschregel für <tg>.
+#	:de:erzeugt fÃ¼r das Scheinziel <name> eine LÃ¶schregel fÃ¼r <tg>.
 # c |
 #	:*:is an abbreviation for |-C $$CleanTarget|.
-#	:de:ist eine Abkürzung für |-C $$CleanTarget|.
+#	:de:ist eine AbkÃ¼rzung fÃ¼r |-C $$CleanTarget|.
 # a |
 #	:*:is an abbreviation for |-A $$AllTarget -C $$CleanTarget|.
-#	:de:ist eine Abkürzung für |-A $$AllTarget -C $$CleanTarget|.
+#	:de:ist eine AbkÃ¼rzung fÃ¼r |-A $$AllTarget -C $$CleanTarget|.
 # i |
 #	:*:is an abbreviation for |-A install -C uninstall|.
-#	:de:ist eine Abkürzung für |-A install -C uninstall|.
+#	:de:ist eine AbkÃ¼rzung fÃ¼r |-A install -C uninstall|.
 # d |
 #	:*:create a double-colon rule insteat of a single-colon rule.
 #	:de:erzeugt eine Doppel-Colon Regel anstelle einer Enfach-Colon Regel.
 # r |
 #	:*:read additional commamd lines from standard input (as
 #	here-document).
-#	:de:liest zusätzliche Kommandos von der Standardeingabe (als
+#	:de:liest zusÃ¤tzliche Kommandos von der Standardeingabe (als
 #	Here-Dokument).
 # /%*=*/%<name>=<repl> |
 #	:*:creates a substitution rule for |%|<name> with <repl>
-#	:de:definiert eine Ersetzungsregel für |%|<name> mit <repl>
+#	:de:definiert eine Ersetzungsregel fÃ¼r |%|<name> mit <repl>
 # :tg |
 # 	:*:defines the target list.
 #	:de:gibt die Liste der Ziele an.
 # ::dep |
 # 	:*:defines the dependence list.
-#	:de:gibt die Liste der Abhängigkeiten an.
+#	:de:gibt die Liste der AbhÃ¤ngigkeiten an.
 # *command(s) |
 # 	:*:defines the list of commands.
 #	Every argument is written as an extra line.
@@ -86,7 +86,7 @@ CleanTarget=clean
 # The function $! creates a simple rule for |make|.
 # The following options are accepted:
 # :de:
-# Die Funktion $! generiert eine einfache Regel für |make|.
+# Die Funktion $! generiert eine einfache Regel fÃ¼r |make|.
 # Die folgenden Optionen und Argumente werden akzeptiert:
 #
 # @arglist
@@ -101,14 +101,14 @@ CleanTarget=clean
 # by other functions to write the |make| rules. Some of them are just
 # wrappers for $!.
 # :de:
-# Die Option |-r| erlaubt die Spezifikation der Befehlszeilen über ein
+# Die Option |-r| erlaubt die Spezifikation der Befehlszeilen Ã¼ber ein
 # Here-Dokument. Die Zeichensequenz |@/| am Ende einer Zeile wird in einen
-# Gegenschrägstrich |\\| umgewandelt. Dies erlaubt die Ausgabe von
+# GegenschrÃ¤gstrich |\\| umgewandelt. Dies erlaubt die Ausgabe von
 # Fortsetzungszeilen im Makefile.
 # \par
 # Die untenstehenden Beispiele zeigen die Verwendung der Funktion.
-# Sie wird häufig von anderen Funktionen für die eigentliche Regelgenerierung
-# eingesetzt. Manche von diesen sind einfach nur Hüllen für $!.
+# Sie wird hÃ¤ufig von anderen Funktionen fÃ¼r die eigentliche Regelgenerierung
+# eingesetzt. Manche von diesen sind einfach nur HÃ¼llen fÃ¼r $!.
 
 mf_rule ()
 {
@@ -195,13 +195,13 @@ mf_rule ()
 #	:de:verwende Pseudoziel <name> anstelle von $$CleanTarget.
 # *list |
 # 	:*:list of files to clean up.
-#	:de:Liste der aufzuräumenden Dateien.
+#	:de:Liste der aufzurÃ¤umenden Dateien.
 # !
 # :*:
 # The function crates cleanup rules for the given target(s).
 # The following options are accepted:
 # :de:
-# Die Funktion $! erzeugt Aufräumregeln für die gegebenen Ziele.
+# Die Funktion $! erzeugt AufrÃ¤umregeln fÃ¼r die gegebenen Ziele.
 # Die folgenden Optionen und Argumente werden akzeptiert:
 #
 # @arglist
@@ -229,21 +229,21 @@ mf_clean ()
 # :de:
 # \shead Ersetzungsregeln
 # Bei der Ausgabe der Regeln werden mithilfe des Streameditors |sed|
-# Ersetzungen durchgeführt. Insbesonders stehen Abkürzungen für die
-# einzelnen Dateien der Abhängigkeitsliste zur Verfügung.
+# Ersetzungen durchgefÃ¼hrt. Insbesonders stehen AbkÃ¼rzungen fÃ¼r die
+# einzelnen Dateien der AbhÃ¤ngigkeitsliste zur VerfÃ¼gung.
 # Ersetzungskennungen werden mit einem Prozentzeichen eingeleitet.
-# [|%0|] Komplette Liste der Abhängigkeiten
-# [|%1|] Erste Datei aus der Liste der Abhängigkeiten
-# [|%|<n>] <n>-te Datei aus der Liste der Abhängigkeiten
+# [|%0|] Komplette Liste der AbhÃ¤ngigkeiten
+# [|%1|] Erste Datei aus der Liste der AbhÃ¤ngigkeiten
+# [|%|<n>] <n>-te Datei aus der Liste der AbhÃ¤ngigkeiten
 # [|%=|] Das Prozentzeichen selbst
 # [|%@|] Die Sequenz |\$@| (vermeidet das Quotieren von |\$|)
 # \end
-# Zusätzlich können noch mit |%|<name>|=|<repl> beliebige Ersetzungen
-# definiert werden. Die Ersetzungsregeln können mit den Optionen
-# beliebig gemischt werden, müssen aber vor den Argumenten angegeben
-# werden. Bereits definierte Ersetzungen können in den Ersetzungsregeln
+# ZusÃ¤tzlich kÃ¶nnen noch mit |%|<name>|=|<repl> beliebige Ersetzungen
+# definiert werden. Die Ersetzungsregeln kÃ¶nnen mit den Optionen
+# beliebig gemischt werden, mÃ¼ssen aber vor den Argumenten angegeben
+# werden. Bereits definierte Ersetzungen kÃ¶nnen in den Ersetzungsregeln
 # verwendet werden. Sie werden auch bei der Zieldatei und der
-# Abhängigkeitsliste berücksichtigt.
+# AbhÃ¤ngigkeitsliste berÃ¼cksichtigt.
 
 # $Examples
 # \config shmkmf
@@ -285,23 +285,23 @@ mf_clean ()
 # mf_rule bar foo 'cp foo \$@'
 # \end
 # \par
-# Wird zusätzlich das Flag |-a| verwendet, liefert die Zeile
+# Wird zusÃ¤tzlich das Flag |-a| verwendet, liefert die Zeile
 # \shmkmf[-x] die Ausgabe:
 # mf_rule -a bar foo 'cp foo \$@'
 # \end
 # \par
 # Die folgende Zeile
-# \shmkmf[-x] ist ein Beispiel für eine einfache Doppel-Colon Regel:
+# \shmkmf[-x] ist ein Beispiel fÃ¼r eine einfache Doppel-Colon Regel:
 # mf_rule -d all
 # \end
 # \par
-# Das nächste Beispiel zeigt eine allgemeinere Anwendung.
+# Das nÃ¤chste Beispiel zeigt eine allgemeinere Anwendung.
 # \shmkmf[-x] liefert
 # mf_rule -i bar "foo foo.ch" 'rm -f \$@' 'sed -f %2 %1 > \$@'
 # \end
 # \par
-# Den Abschluß bildet eine mehrzeile Regel unter Einsatz der |-r| Option
-# und einer Substitutionsregel (|%x| für |foo|).
+# Den AbschluÃŸ bildet eine mehrzeile Regel unter Einsatz der |-r| Option
+# und einer Substitutionsregel (|%x| fÃ¼r |foo|).
 # \shmkmf[-x] liefert
 # mf_rule %x=foo -a -r bar "%x %x.ch" << EOF
 # rm -f %@

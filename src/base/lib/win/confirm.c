@@ -1,7 +1,7 @@
 /*
-Bestätigung
+BestÃ¤tigung
 
-$Copyright (C) 1995 Erich Frühstück
+$Copyright (C) 1995 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -30,7 +30,7 @@ void WinConfirm (WinSize *ws, char *label)
 	int i, n;
 
 	if	(ws == NULL)	ws = CenterPos(0, 0);
-	if	(label == NULL)	label = "Bestätigen";
+	if	(label == NULL)	label = "BestÃ¤tigen";
 
 	height = 1;
 

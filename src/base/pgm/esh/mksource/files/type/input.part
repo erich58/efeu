@@ -53,7 +53,7 @@ void TypeDef::input (str name, str desc, str create, str body, str par = NULL)
 
 /*
 Die Funktion |$1| generiert einfache Lesefunktionen mithilfe von |DBData|.
-Sie wird nicht direkt verwendet, sondern ist die Basis für die davon
+Sie wird nicht direkt verwendet, sondern ist die Basis fÃ¼r die davon
 abgeleiteten Funktionen |TypeDef::ebcdic|, |TypeDef::text| und |TypeDef::qtext|.
 */
 
@@ -90,7 +90,7 @@ void TypeDef::dbdata (str name, str desc, str body, str par, str func)
 }
 
 /*
-Die Funktion |$1| generiert eine einfache Lesefunktion für EBCDIC-Daten
+Die Funktion |$1| generiert eine einfache Lesefunktion fÃ¼r EBCDIC-Daten
 mithilfe von |DBData_ebcdic|.
 */
 
@@ -99,7 +99,7 @@ void TypeDef::ebcdic (str name, str desc, int recl, str body, str par = NULL)
 		sprintf("DBData_ebcdic(NULL, in, %d)", recl));
 
 /*
-Die Funktion |$1| generiert eine einfache Lesefunktion für Textdaten
+Die Funktion |$1| generiert eine einfache Lesefunktion fÃ¼r Textdaten
 mithilfe von |DBData_text|.
 */
 

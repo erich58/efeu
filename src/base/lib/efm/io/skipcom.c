@@ -1,7 +1,7 @@
 /*
 Kommentare lesen/zwischenspeichern
 
-$Copyright (C) 1999, 2008 Erich Frühstück
+$Copyright (C) 1999, 2008 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -24,7 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	PROMPT	"/* "	/**/
 
-static int indent;	/* Einrücktiefe */
+static int indent;	/* EinrÃ¼cktiefe */
 
 static void skip_cstyle (IO *io);
 static int skip_line (IO *io);
@@ -33,32 +33,32 @@ static void save_cstyle (IO *io, StrBuf *buf, int flag);
 static int save_line (IO *io, StrBuf *buf);
 
 /*
-Die Funktion |$1| liest das nächste Zeichen aus der Eingabestruktur <io>,
-wobei Kommentare im C99/C++-Style überlesen werden.
+Die Funktion |$1| liest das nÃ¤chste Zeichen aus der Eingabestruktur <io>,
+wobei Kommentare im C99/C++-Style Ã¼berlesen werden.
 Falls <flag> verschieden von 0 ist,
 wird ein dem Kommentar folgender Zeilenvorschub, bzw. der das Kommentar
-abschließende Zeilenvorschub überlesen.
-Die übliche Anwendung ist das Setzen von <flag> am Anfang einer Zeile.
+abschlieÃŸende Zeilenvorschub Ã¼berlesen.
+Die Ã¼bliche Anwendung ist das Setzen von <flag> am Anfang einer Zeile.
 
-Kommentare können für Dokumentationszwecke ausgewertet werden.
+Kommentare kÃ¶nnen fÃ¼r Dokumentationszwecke ausgewertet werden.
 Falls <buf> verschieden von NULL ist,
 wird der Kommentartext in <buf> gespeichert.
 Um unterschiedliche Kommentierungsstile zu vereinheitlichen, werden
 eine Reihe von Bereinigungen am Kommentartext vorgenommen.
 
-Für Kommentare der Form |/\*| ... |*\/| gelten folgende Regeln:
+FÃ¼r Kommentare der Form |/\*| ... |*\/| gelten folgende Regeln:
 *	Beliebig viele Sterne am Anfang und Ende des Kommentars
 	werden entfernt, So speichert z.B. das Kommentar |/\*****A*****\/|
 	nur den Buchstaben |A|.
 *	Ein Backslash an Anfang oder Ende des Kommentars wird entfernt.
-	Diese Regel ermöglicht Sterne am Anfang und Ende des Kommentars.
+	Diese Regel ermÃ¶glicht Sterne am Anfang und Ende des Kommentars.
 *	Die Zeichenfolge "Leerzeichen Stern" am Anfang einer Zeile wird
 	ignoriert.
 
 Bei Kommentaren der Form |//| ... \<newline\> werden
 aufeinanderfolgende Kommentare, die jeweils am Zeilenanfang beginnen,
-zusammengehängt. Diese Regel ist nur wirksam, wenn <flag> verschieden von 0
-ist, also der abschließende Zeilenvorschub ignoriert wird.
+zusammengehÃ¤ngt. Diese Regel ist nur wirksam, wenn <flag> verschieden von 0
+ist, also der abschlieÃŸende Zeilenvorschub ignoriert wird.
 
 Falls |$1| mit <flag> |== 0| aufgerufen wurde, werden Leerzeichen und
 Tabulatoren am Anfang des Kommentars entfernt.

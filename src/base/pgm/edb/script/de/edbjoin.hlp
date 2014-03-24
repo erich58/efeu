@@ -1,67 +1,67 @@
 @name
 @synopsis -h
 \Description
-Die Verknüpfung der EDB-Datenfiles erfolgt anhand eines gemeinsamen
-Schlüssels. Die Datenfiles müssen bezüglich des Schlüssels sortiert
-sein. Pro Schlüssel dürfen mehr als ein Datensatz vorhanden sein.
-Falls der Schlüssel nicht explizit angegeben wurde, werden all in
-beiden Datenfiles gemeinsam vorkommenden Variablen dafür verwendet.
+Die VerknÃ¼pfung der EDB-Datenfiles erfolgt anhand eines gemeinsamen
+SchlÃ¼ssels. Die Datenfiles mÃ¼ssen bezÃ¼glich des SchlÃ¼ssels sortiert
+sein. Pro SchlÃ¼ssel dÃ¼rfen mehr als ein Datensatz vorhanden sein.
+Falls der SchlÃ¼ssel nicht explizit angegeben wurde, werden all in
+beiden Datenfiles gemeinsam vorkommenden Variablen dafÃ¼r verwendet.
 
-Standardmäßig erfolgt die Verarbeitung nur für Schlüsselwerte, für die
+StandardmÃ¤ÃŸig erfolgt die Verarbeitung nur fÃ¼r SchlÃ¼sselwerte, fÃ¼r die
 Daten in beiden Datenfiles vorhanden sind. Es besteht aber die
-Möglichkeit zusätzlich/alternativ Datensätze, die nur in Datei 1 oder
+MÃ¶glichkeit zusÃ¤tzlich/alternativ DatensÃ¤tze, die nur in Datei 1 oder
 in Datei 2 vorhanden sind, zu verarbeiten.
 
 Ohne expliziter Vorgabe der Datenstruktur der Ergebnissdatei wird
-diese aus den Schlüsselvariablen, den verbleibenden Variablen der
+diese aus den SchlÃ¼sselvariablen, den verbleibenden Variablen der
 ersten Datenbank und den verbleibenden Variablen der zweiten Datenbank
 zusammengesetzt.
 
 Falls Daten aus beiden Datenfiles vorhanden sind, werden alle
-Datensatzkombinationen gebildet. Es besteht aber die Möglichkeit,
-ausschließlich Daten der ersten, bzw. der zweiten Datenbank zu
+Datensatzkombinationen gebildet. Es besteht aber die MÃ¶glichkeit,
+ausschlieÃŸlich Daten der ersten, bzw. der zweiten Datenbank zu
 liefern (Selektion mithilfe einer zweiten Datenbank).
 
 @arglist -i
 
-\shead Verknüpfungsparameter
+\shead VerknÃ¼pfungsparameter
 
-Der Verknüpfungsparameter besteht aus einer Liste von Schlüsselwörtern
-mit zugehörigen Parameterwerten. Die Listenelemente können mit einem
+Der VerknÃ¼pfungsparameter besteht aus einer Liste von SchlÃ¼sselwÃ¶rtern
+mit zugehÃ¶rigen Parameterwerten. Die Listenelemente kÃ¶nnen mit einem
 Leerzeichen, Tabulator, Zeilenvorschub oder Strichpunkt getrennt werden.
 
-Folgende Angaben sind möglich:
+Folgende Angaben sind mÃ¶glich:
 \item	|?|
-	Die möglichen Schlüsselwörter werden mit einer
+	Die mÃ¶glichen SchlÃ¼sselwÃ¶rter werden mit einer
 	Kurzbeschreibung aufgelistet. Die so gewonnene Information ist
-	immer vollständig und möglicherweise aktueller als im
+	immer vollstÃ¤ndig und mÃ¶glicherweise aktueller als im
 	vorliegende Handbuch.
 \item	|filter[|<db>|]=|<def>
 	Der Datenbankfilter <def> wird auf die Datenbank <db>
 	angewendet.
-	Für <db> sind folgende Angaben zulässig:
+	FÃ¼r <db> sind folgende Angaben zulÃ¤ssig:
 	[|a|] Erste Datenbank
 	[|b|] Zweite Datenbank
 	Die Vorgabe ist |b|, da dieser Parameter zum Setzen eines
-	Filters auf die zweite Datenbank bei Implementation der Verknüpfung
-	über den Filter |join| benötigt wird.
-	Die gleichzeitige Verwendung von |a| und |b| ist zulässig,
+	Filters auf die zweite Datenbank bei Implementation der VerknÃ¼pfung
+	Ã¼ber den Filter |join| benÃ¶tigt wird.
+	Die gleichzeitige Verwendung von |a| und |b| ist zulÃ¤ssig,
 	aber nur sinnvoll, wenn eine
 	Filterdefintion auf beide Datenbanken angewendet werden kann.
-	Bei Verwendung des Kommandos |$!| können Filter
+	Bei Verwendung des Kommandos |$!| kÃ¶nnen Filter
 	mit der Option |-a| bzw. |-b| spezifiziert werden.
 \item	|mode=|<flags>
-	Das Argument <flags> bestimmt, für welche Situationen eine
+	Das Argument <flags> bestimmt, fÃ¼r welche Situationen eine
 	Verarbeitung erfolgen soll:
-	[|a|] Datensätze sind nur in Datei 1 vorhanden
-	[|b|] Datensätze sind nur in Datei 2 vorhanden
-	[|x|] Datensätze sind in beiden Dateien vorhanden
+	[|a|] DatensÃ¤tze sind nur in Datei 1 vorhanden
+	[|b|] DatensÃ¤tze sind nur in Datei 2 vorhanden
+	[|x|] DatensÃ¤tze sind in beiden Dateien vorhanden
 	Die Standardvorgabe ist |x|. Falls die erste Datenbank mit Werten
-	der zweiten Datenbank ergänzt werden soll, ist |ax| als Modus
+	der zweiten Datenbank ergÃ¤nzt werden soll, ist |ax| als Modus
 	anzugeben.
 \item	|use=|<db>
-	Die Datensätze der Datenbank <db> werden direkt für die
-	Ausgabe bestimmt. Für <db> sind folgende Angaben zulässig
+	Die DatensÃ¤tze der Datenbank <db> werden direkt fÃ¼r die
+	Ausgabe bestimmt. FÃ¼r <db> sind folgende Angaben zulÃ¤ssig
 	[|a|] Erste Datenbank
 	[|b|] Zweite Datenbank
 	[|x|] Immer einen kombinierten Datensatz bilden.
@@ -70,13 +70,13 @@ Folgende Angaben sind möglich:
 	Setzung von |use| ignoriert.
 \item	|key=|<list>
 	Das Argument <list> ist eine mit Komma getrennte Liste von
-	Schlüsseldefinitionen.
+	SchlÃ¼sseldefinitionen.
 	Die allgemeine Form lautet [<name>|:|]<a>[|=|<b>],
-	wobei <name> der Name im generierten Schlüssel, <a> der Name in
+	wobei <name> der Name im generierten SchlÃ¼ssel, <a> der Name in
 	der ersten Datenbank und <b> der Name in der zweiten Datenbank
 	ist. Falls <name> oder <b> nicht angegeben wurde, wird <a>
-	eingesetzt. Falls für <a> oder <b> ein Punkt |.| angegeben
-	wird, wird der gesamte Datensatz als Schlüssel verwendet.
+	eingesetzt. Falls fÃ¼r <a> oder <b> ein Punkt |.| angegeben
+	wird, wird der gesamte Datensatz als SchlÃ¼ssel verwendet.
 	Standardvorgabe ist die Verwendung aller gleichnamigen
 	Variablen in den beiden Datenfiles.
 \item	|var=|<list>
@@ -84,13 +84,13 @@ Folgende Angaben sind möglich:
 	Variablendefinitionen.
 	Die allgemeine Form lautet [<name>|=|]<base>[|.|<var>],
 	wobei <name> den Variablenname in der generierten Datenstruktur,
-	und <base> das Basisobjekt für die Auswahl der Komponente <var>
-	festlegt. Folgende Angaben für <base> sind möglich:
-	[|k|] für eine Schlüsselvariable,
-	[|a|] für eine Komponente der ersten Datenbank und
-	[|b|] für eine Komponente der zweiten Datenbank.
+	und <base> das Basisobjekt fÃ¼r die Auswahl der Komponente <var>
+	festlegt. Folgende Angaben fÃ¼r <base> sind mÃ¶glich:
+	[|k|] fÃ¼r eine SchlÃ¼sselvariable,
+	[|a|] fÃ¼r eine Komponente der ersten Datenbank und
+	[|b|] fÃ¼r eine Komponente der zweiten Datenbank.
 	Falls <var> nicht angegeben wurde, wird die entsprechende
-	Datenstruktur als Teilstruktur verwendet. Falls für <var> ein
+	Datenstruktur als Teilstruktur verwendet. Falls fÃ¼r <var> ein
 	Stern |*| angegeben wurde, werden alle Komponenten
 	der entsprechenden Strktur verwendet, deren Name noch nicht in
 	der resultierenden Datenstruktur verwendet wurde.
@@ -101,23 +101,23 @@ Folgende Angaben sind möglich:
 
 Die Reihenfolge der Parameter ist signifikant.
 Der Parameter |filter| muss vor |key|, der Parameter |key| vor
-|var| angegeben werden. Der Parameter |mode| überschreibt die Setzung
+|var| angegeben werden. Der Parameter |mode| Ã¼berschreibt die Setzung
 von |use|.
 
 Anmerkungen:
 \ttitem	mode=a
-	Liefert alle Datensätze der ersten Datenbank für die es keinen
+	Liefert alle DatensÃ¤tze der ersten Datenbank fÃ¼r die es keinen
 	entsprechenden Datensatz in der zweiten Datenbank gibt.
 \ttitem	use=a
-	Liefert alle Datensätze der ersten Datenbank für die es mindestens
+	Liefert alle DatensÃ¤tze der ersten Datenbank fÃ¼r die es mindestens
 	einen entsprechenden Datensatz in der zweiten Datenbank gibt,
 \ttitem	mode=ax
-	Liefert kombinierte Datensätze für jeden Datensatz der ersten
-	Datenbank, wobei bei fehlenden Datensätzen der zweiten Datenbank
-	Vorgabewerte für die zusätzlichen Variablen eingesetzt werden.
+	Liefert kombinierte DatensÃ¤tze fÃ¼r jeden Datensatz der ersten
+	Datenbank, wobei bei fehlenden DatensÃ¤tzen der zweiten Datenbank
+	Vorgabewerte fÃ¼r die zusÃ¤tzlichen Variablen eingesetzt werden.
 \ttitem	mode=a use=x
-	Liefert für jeden nur in der ersten Datenbank vorkommenden Datensatz
-	einen kombinierten Datensatz, wobei die zusätzlichen Variablen
+	Liefert fÃ¼r jeden nur in der ersten Datenbank vorkommenden Datensatz
+	einen kombinierten Datensatz, wobei die zusÃ¤tzlichen Variablen
 	der zweiten Datenbank auf Vorgabewerte gesetzt sind. Diese Angabe
 	ist selten sinnvoll.
 \ttitem	mode=b use=a

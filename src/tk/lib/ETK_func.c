@@ -2,7 +2,7 @@
 :*:	define function as tcl command
 :de:	Funktion als Tcl-Kommando definieren
 
-$Copyright (C) 2002 Erich Frühstück
+$Copyright (C) 2002 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or

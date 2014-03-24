@@ -1,7 +1,7 @@
 /*
 Kompilierungsregeln
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -27,7 +27,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 /*
 Der Makro |$1| generiert eine Kompilierungsregel mit Ziel <tg>,
-Abhängigkeiten <dep> und Kompilerflags <args>.
+AbhÃ¤ngigkeiten <dep> und Kompilerflags <args>.
 */
 #define	CompileRule(tg,dep,args) \
 @;@;tg: dep \
@@ -36,7 +36,7 @@ Abhängigkeiten <dep> und Kompilerflags <args>.
 
 /*
 Der Makro |$1| generiert eine zu |CompileRule| kompatible
-Regel für die Bestimmung von Abhängigkeiten.
+Regel fÃ¼r die Bestimmung von AbhÃ¤ngigkeiten.
 */
 #define	DependRule(tg,dep,args) \
 @;@;depend:: \
@@ -64,7 +64,7 @@ CompileRule(tg,dep,-o $@ args $(SYSLFLAGS) lflags $(SYSLIBS))
 #endif
 
 /*
-Der Makro |$1| generiert eine Kompilierungsregel für ein Objekt-File.
+Der Makro |$1| generiert eine Kompilierungsregel fÃ¼r ein Objekt-File.
 */
 #define	SpecialObjectRule(name,dep,flags) \
 CompileRule(ObjectName(name),SourceName(name) dep,flags -c SourceName(name)) \
@@ -72,9 +72,9 @@ DependRule(ObjectName(name),SourceName(name),flags -c SourceName(name)) \
 @;
 
 /*
-Der Makro |$1| generiert eine Kompilierungsregel für ein Objekt-File.
-Zusätzlich wird eine Abhängigkeit für das Pseudoziel |all| und
-eine Aufräumregel für das Pseudoziel |clean| generiert.
+Der Makro |$1| generiert eine Kompilierungsregel fÃ¼r ein Objekt-File.
+ZusÃ¤tzlich wird eine AbhÃ¤ngigkeit fÃ¼r das Pseudoziel |all| und
+eine AufrÃ¤umregel fÃ¼r das Pseudoziel |clean| generiert.
 */
 #define	NormalObjectTarget(name,flags) \
 AllTarget(ObjectName(name)) \
@@ -82,7 +82,7 @@ SpecialObjectRule(name,NullArg,flags) \
 @;
 
 /*
-Der Makro |$1| generiert eine Kompilierungsregel für ein Kommando.
+Der Makro |$1| generiert eine Kompilierungsregel fÃ¼r ein Kommando.
 */
 #define	NormalProgramRule(name,flags,src,dep,libs) \
 LinkCompileRule(ProgramName(name),src dep,flags src,libs) \
@@ -90,43 +90,43 @@ DependRule(ProgramName(name),src,flags src) \
 @;
 
 /*
-Der Makro |$1| generiert eine Kompilierungsregel für ein Kommando.
-Zusätzlich wird eine Abhängigkeit für das Pseudoziel |all| und
-eine Aufräumregel für das Pseudoziel |clean| generiert.
+Der Makro |$1| generiert eine Kompilierungsregel fÃ¼r ein Kommando.
+ZusÃ¤tzlich wird eine AbhÃ¤ngigkeit fÃ¼r das Pseudoziel |all| und
+eine AufrÃ¤umregel fÃ¼r das Pseudoziel |clean| generiert.
 */
 #define	NormalProgramTarget(name,flags,src,dep,libs)	\
 AllTarget(ProgramName(name))				@;\
 NormalProgramRule(name,flags,src,dep,libs)		@;
 
 /*
-Der Makro |$1| generiert eine Kompilierungsregel für ein
+Der Makro |$1| generiert eine Kompilierungsregel fÃ¼r ein
 unter <dir> installiertes Kommando.
 */
 #define	InstalledProgramRule(dir,name,flags,src,dep,libs) \
 NormalProgramRule(PathName(dir,name),flags,src,dep,libs)
 
 /*
-Der Makro |$1| generiert eine Kompilierungsregel für ein
+Der Makro |$1| generiert eine Kompilierungsregel fÃ¼r ein
 unter <dir> installiertes Kommando.
-Zusätzlich wird eine Abhängigkeit für das Pseudoziel |all| und
-eine Aufräumregel für das Pseudoziel |clean| generiert.
+ZusÃ¤tzlich wird eine AbhÃ¤ngigkeit fÃ¼r das Pseudoziel |all| und
+eine AufrÃ¤umregel fÃ¼r das Pseudoziel |clean| generiert.
 */
 #define	InstalledProgramTarget(dir,name,flags,src,dep,libs)	\
 AllTarget(PathName(dir,ProgramName(name)))			@;\
 InstalledProgramRule(dir,name,flags,src,dep,libs)		@;
 
 /*
-Der Makro |$1| ge neriert eine Kompilierungsregel für ein
+Der Makro |$1| ge neriert eine Kompilierungsregel fÃ¼r ein
 einfaches Kommando mit nur einem Sourcefile.
 */
 #define	SimpleProgramRule(name,dep) \
 NormalProgramRule(name,NullArg,SourceName(name),dep,$(STDLIBS))
 
 /*
-Der Makro |$1| ge neriert eine Kompilierungsregel für ein
+Der Makro |$1| ge neriert eine Kompilierungsregel fÃ¼r ein
 einfaches Kommando mit nur einem Sourcefile.
-Zusätzlich wird eine Abhängigkeit für das Pseudoziel |all| und
-eine Aufräumregel für das Pseudoziel |clean| generiert.
+ZusÃ¤tzlich wird eine AbhÃ¤ngigkeit fÃ¼r das Pseudoziel |all| und
+eine AufrÃ¤umregel fÃ¼r das Pseudoziel |clean| generiert.
 */
 #define	SimpleProgramTarget(name,dep)	\
 NormalProgramTarget(name,NullArg,SourceName(name),dep,$(STDLIBS))

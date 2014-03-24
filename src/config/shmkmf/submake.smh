@@ -1,10 +1,10 @@
 # :*:create master makefile for subprojects
-# :de:Hauptmakefile für Teilprojekte generieren
+# :de:Hauptmakefile fÃ¼r Teilprojekte generieren
 #
 # $Synopsis
 # include $1
 #
-# $Copyright (C) 2008 Erich Frühstück
+# $Copyright (C) 2008 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -53,13 +53,13 @@ submake_clean="clean"
 #	:de:erweitert die Liste der Generierungsziele mit <name>
 # c:name|
 #	:*:expands the list of clean targets with <name>
-#	:de:erweitert die Liste der Aufräumziele mit <name>
+#	:de:erweitert die Liste der AufrÃ¤umziele mit <name>
 # i|
 #	:*:is a shortcut for |-b install -c uninstall|
-#	:de: ist eine Kurzform für |-b install -c uninstall|
+#	:de: ist eine Kurzform fÃ¼r |-b install -c uninstall|
 # p|
 #	:*:is a shortcut for |-c purge|
-#	:de: ist eine Kurzform für |-c purge|
+#	:de: ist eine Kurzform fÃ¼r |-c purge|
 # s:name|
 #	:*:search for subdirectories in <name>
 #	:de:Verarbeite Unterverzeichnisse in <name>
@@ -68,14 +68,14 @@ submake_clean="clean"
 #	:de:Verwende <name> als Arbeitsverzeichnis
 # !
 # :de:
-# Die Funktion |$1| generiert für jedes Unterverzeichnis
+# Die Funktion |$1| generiert fÃ¼r jedes Unterverzeichnis
 # im Quellverzeichnis ein korrespondierendes Verzeichnis im Aufbauverzeichnis
-# Dabei werden nur jene Verzeichnisse berücksichtigt, die eine
-# |Config.make| Datei enthalten. Abhängigkeiten zwischen den Verzeichnissen
-# werden über das Schlüsselwort |Depends:| im Kommentartext gesteuert.
-# Nach diesem Schlüsselwört folgt eine Liste aller Verzeichnisse, die zuvor
-# gebaut werden müssen. Die Abhängigkeiten gelten nur für die
-# Genererierungsziele und nicht für die Aufräumziele.
+# Dabei werden nur jene Verzeichnisse berÃ¼cksichtigt, die eine
+# |Config.make| Datei enthalten. AbhÃ¤ngigkeiten zwischen den Verzeichnissen
+# werden Ã¼ber das SchlÃ¼sselwort |Depends:| im Kommentartext gesteuert.
+# Nach diesem SchlÃ¼sselwÃ¶rt folgt eine Liste aller Verzeichnisse, die zuvor
+# gebaut werden mÃ¼ssen. Die AbhÃ¤ngigkeiten gelten nur fÃ¼r die
+# Genererierungsziele und nicht fÃ¼r die AufrÃ¤umziele.
 #
 # :de:
 # Die folgenden Optionen und Argumente werden von $! akzeptiert:
@@ -83,12 +83,12 @@ submake_clean="clean"
 # @arglist
 #
 # :de:
-# Quell- und Aufbauverzeichnis dürfen zusammenfallen. Die Makefiles werden
-# dann jeweils im gleichen Verzeichnis wie die zugehörigen |Config.make|
+# Quell- und Aufbauverzeichnis dÃ¼rfen zusammenfallen. Die Makefiles werden
+# dann jeweils im gleichen Verzeichnis wie die zugehÃ¶rigen |Config.make|
 # Dateien gebaut.
 # Zur Kontrolle der Zusammensetzung der Unterverzeichnisse wird die Datei
 # |ProjectList| mit einer Liste aller Quellverzeichnisse im Aufbauverzeichnis
-# angelegt und bei jedem Aufruf von |make| auf Veränderung geprüft.
+# angelegt und bei jedem Aufruf von |make| auf VerÃ¤nderung geprÃ¼ft.
 
 submake ()
 {(

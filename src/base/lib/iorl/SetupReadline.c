@@ -1,7 +1,7 @@
 /*
 Standard Ein/Ausgabe mit readline - Interface
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -540,14 +540,14 @@ static IO *iorl_open (const char *prompt, const char *histname)
 /*
 Falls ein Kommando interaktiv aufgerufen wird, also sowohl
 Standardeingabe als auch Standardausgabe mit einem Terminal verbunden
-sind, sorgt |$1| dafür, daß eine mit |io_interact| eingerichtete
+sind, sorgt |$1| dafÃ¼r, daÃŸ eine mit |io_interact| eingerichtete
 IO-Struktur die Readline-Schnittstelle verwendet.
-Die Funktion wird üblicherweise in der Hauptfunktion |main| eines
+Die Funktion wird Ã¼blicherweise in der Hauptfunktion |main| eines
 Kommandos aufgerufen.
 
 Die Funktion |io_interact| wird mit den zwei Argumenten <prompt> und
 <histname> aufgerufen.
-Das Argument <prompt> legt den Prompt für die Eingabe fest.
+Das Argument <prompt> legt den Prompt fÃ¼r die Eingabe fest.
 Falls <histname> verschieden von Null ist, wird die entsprechende Datei
 als Historyfile von |readline| verwendet.
 */

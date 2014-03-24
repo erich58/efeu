@@ -1,7 +1,7 @@
 /*
 Ein/Ausgabefunktionen
 
-$Copyright (C) 1999 Erich Frühstück
+$Copyright (C) 1999 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -35,7 +35,7 @@ If not, write to the Free Software Foundation, Inc.,
 #define	GET(ptr)	*(ptr++)
 #endif
 
-/*	Datensätze lesen
+/*	DatensÃ¤tze lesen
 */
 
 size_t dbread (FILE *file, void *dptr,
@@ -74,7 +74,7 @@ size_t dbread (FILE *file, void *dptr,
 }
 
 
-/*	Datensätze ausgeben
+/*	DatensÃ¤tze ausgeben
 */
 
 size_t dbwrite (FILE *file, const void *dptr,

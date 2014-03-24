@@ -1,7 +1,7 @@
 /*
 Abfrage eines Operators
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -63,7 +63,7 @@ static int doparse (const char *name, void *ptr, void *par)
 		}
 	}
 
-/*	Gefunden: Test auf korrekte Priorität
+/*	Gefunden: Test auf korrekte PrioritÃ¤t
 */
 	if	(op->prior < prior)
 	{
@@ -74,7 +74,7 @@ static int doparse (const char *name, void *ptr, void *par)
 		return 1;
 	}
 
-/*	Zuviel gelesene Zeichen zurückschreiben
+/*	Zuviel gelesene Zeichen zurÃ¼ckschreiben
 */
 	opdef = op;
 	pushback(i);
@@ -104,7 +104,7 @@ EfiObj *Parse_op(IO *in, int p, EfiObj *obj)
 }
 
 
-/*	Zeichen zurückschreiben
+/*	Zeichen zurÃ¼ckschreiben
 */
 
 static void pushback(int save)

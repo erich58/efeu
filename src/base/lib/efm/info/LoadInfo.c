@@ -1,7 +1,7 @@
 /*
 Informationsdaten laden
 
-$Copyright (C) 1998 Erich Frühstück
+$Copyright (C) 1998 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -228,7 +228,7 @@ static InfoNode *get_node(IO *io, InfoNode *node)
 	return node;
 }
 
-/*	Einträge laden
+/*	EintrÃ¤ge laden
 */
 
 static void load (InfoNode *base, IO *io)

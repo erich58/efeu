@@ -1,7 +1,7 @@
 /*
 Kalenderrechnung
 
-$Copyright (C) 1997 Erich Frühstück
+$Copyright (C) 1997 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -24,13 +24,13 @@ If not, write to the Free Software Foundation, Inc.,
 #include <time.h>
 #include <ctype.h>
 
-#define	OFFSET_LIMIT	0xFFFF	/* Limit für Offset */
+#define	OFFSET_LIMIT	0xFFFF	/* Limit fÃ¼r Offset */
 #define	SEC_OF_DAY	(24 * 60 * 60)
 
 int CenturyLimit = 50;
 
-#define	YLIM_2000	CenturyLimit	/* Grenze für 2000 - Offset */
-#define	YLIM_1900	100		/* Grenze für 1900 - Offset */
+#define	YLIM_2000	CenturyLimit	/* Grenze fÃ¼r 2000 - Offset */
+#define	YLIM_1900	100		/* Grenze fÃ¼r 1900 - Offset */
 
 /*	leap year -- account for gregorian reformation in 1752
 */

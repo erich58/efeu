@@ -1,7 +1,7 @@
 /*
 Unterbrechungspunkt
 
-$Copyright (C) 1997 Erich Frühstück
+$Copyright (C) 1997 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -49,7 +49,7 @@ static CmdDef CmdTab[] = {
 	{ "p", "Ausdruck ausgeben", f_print },
 	{ "print", "Ausdruck ausgeben", f_print },
 	{ "quit", "Verarbeitung abbrechen", f_quit },
-	{ "delete", "Beobachtungspunkt löschen", f_delete },
+	{ "delete", "Beobachtungspunkt lÃ¶schen", f_delete },
 	{ "sigint", "Interrupt an Programm senden (gdb-Schnittstelle)", f_int },
 };
 

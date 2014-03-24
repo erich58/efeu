@@ -2,9 +2,9 @@
 
 \index[Filter |var|]
 Der Filter \index{|var|} dient zur Auswahl und Ableitung einzelner
-Variablen (Attribute) aus einem Datensatz. Die Variablen können
-beliebig zu Teilstrukturen zusammengefasst werden. Zusätzlich zu den
-verfügbaren Variablen des Basisdatensatzes können beliebige Ausdrücke
+Variablen (Attribute) aus einem Datensatz. Die Variablen kÃ¶nnen
+beliebig zu Teilstrukturen zusammengefasst werden. ZusÃ¤tzlich zu den
+verfÃ¼gbaren Variablen des Basisdatensatzes kÃ¶nnen beliebige AusdrÃ¼cke
 zur Konstruktion neuer Variablen verwendet werden.
 
 \ssec	Syntax
@@ -14,7 +14,7 @@ Die allgemeine Syntax des Filters lautet:
 var[|[r]|]|=|<varlist>
 
 Falls keine Variablenliste <varlist> angegeben wird, werden alle
-verfügbaren Variablen aufgelistet.
+verfÃ¼gbaren Variablen aufgelistet.
 
 Besteht die durch <varlist> definierte Datenstruktur nur aus einer
 Komponente, und wurde das Flag |r| (reduce) angegeben oder lautet der
@@ -22,12 +22,12 @@ Name dieser Komponente |this|, wird der Datentyp durch den Typ der
 Komponente ersetzt.
 
 Die Variablenliste <varlist> besteht aus einer durch Komma getrennten
-Liste von Ausdrücken der Form:
+Liste von AusdrÃ¼cken der Form:
 
 \[[<type>] <name>|=|]<expr>
 
 Falls kein Datentyp <type> angegeben wurde, wird dieser durch den
-Typ des Ergebnisses bei der Auswertung von <expr> bestimmt. Falls für <expr>
+Typ des Ergebnisses bei der Auswertung von <expr> bestimmt. Falls fÃ¼r <expr>
 eine Komponente des Basisdatensatzes angegeben wurde, kann <name>
 weggelassen werden. Es wird der Name der letzten Komponente in <expr>
 verwendet.
@@ -51,7 +51,7 @@ Mit dem speziellen Ausdruck
 
 wird eine Strukturvariable <name> eingerichtet, deren Komponenten
 wiederum durch die Variablenliste <varlist> nach obigen Regeln bestimmt
-werden. Es sind beliebige Verschachtelungen zulässig.
+werden. Es sind beliebige Verschachtelungen zulÃ¤ssig.
 
 Beispiel: Der Aufruf
 ---- eval
@@ -67,10 +67,10 @@ input("verbatim", popen(cmd, "r"));
 
 \ssec	Musterselektion
 
-Bei der Zusammenstellung von Variablen können Komponenten des
-Basisdatensatzes auch über einen Mustervergleich ausgewählt werden.
+Bei der Zusammenstellung von Variablen kÃ¶nnen Komponenten des
+Basisdatensatzes auch Ã¼ber einen Mustervergleich ausgewÃ¤hlt werden.
 Die Vorgabe eines Datentyps oder eines Variablennamens ist hier nicht
-zulässig. Bei Namenskonflikten werden selektierte Variablen ignoriert.
+zulÃ¤ssig. Bei Namenskonflikten werden selektierte Variablen ignoriert.
 
 Ein Ausdruck zur Mustererkennung hat den folgenden Aufbau:
 
@@ -81,16 +81,16 @@ Dabei ist <pexpr> ein Musterausdruck und <base> eine Basiskomponente
 einer Datenstruktur. Ein Musterausdruck <pexpr> wiederum besteht
 entweder aus einem einzelnen Stern (|*|) oder einer Musterliste in
 eckigen Klammern. Die einzelnen Elemente in der Musterliste werden durch
-weiße Zeichen oder Kommas getrennt.
+weiÃŸe Zeichen oder Kommas getrennt.
 
-Einem Element kann ein |+| für Auswahl oder ein |-| für
-Zurückweisung vorangestellt werden. Keine Angabe wirkt wie
-ein |+|. Falls das erste Element der Liste eine Zurückweisung ist,
-gelten zu Beginn alle Variablen als ausgewählt.
+Einem Element kann ein |+| fÃ¼r Auswahl oder ein |-| fÃ¼r
+ZurÃ¼ckweisung vorangestellt werden. Keine Angabe wirkt wie
+ein |+|. Falls das erste Element der Liste eine ZurÃ¼ckweisung ist,
+gelten zu Beginn alle Variablen als ausgewÃ¤hlt.
 
 Bei der Auswahl werden die Variablennamen der Reihe nach mit den
-Elementen der Musterliste verglichen und bei Übereinstimmung
-entsprechend der Selektionswirkung ausgewählt oder zurückgewiesen.
+Elementen der Musterliste verglichen und bei Ãœbereinstimmung
+entsprechend der Selektionswirkung ausgewÃ¤hlt oder zurÃ¼ckgewiesen.
 
 Es gibt drei verschiedene Auswahlformen:
 
@@ -106,16 +106,16 @@ Es gibt drei verschiedene Auswahlformen:
 [|#|<ug>[|:|<og>]]
 	dient zur positionellen Auswahl.
 	Die Variablen der Basiskomponente werden beginnend
-	mit 1 durchnummeriert. Eine Variable wird ausgewählt/zurückgewiesen,
+	mit 1 durchnummeriert. Eine Variable wird ausgewÃ¤hlt/zurÃ¼ckgewiesen,
 	wenn ihre Position im Intervall |[| <ug>, <og> |]| liegt. Falls
 	|:|<og> nicht angegeben wurde, wird der Wert von <ug> verwendet.
-	Negative Werte für <og> und <ug> werden relativ zur letzten
-	Variablen bestimmt. Fehlende Werte stehen für einen offenen Bereich.
+	Negative Werte fÃ¼r <og> und <ug> werden relativ zur letzten
+	Variablen bestimmt. Fehlende Werte stehen fÃ¼r einen offenen Bereich.
 	So selektiert z.B. |#-3:| die letzten drei Variablen.
 [|/|<regex>|/|[|i|]]
-	verwendet den regulären Ausdruck <regex> zur Auswahl. Falls das
+	verwendet den regulÃ¤ren Ausdruck <regex> zur Auswahl. Falls das
 	optionale Flag |i| angegeben wurde, erfolgt keine
-	Unterscheidung bezüglich der Groß- und Kleinschreibung. Es
+	Unterscheidung bezÃ¼glich der GroÃŸ- und Kleinschreibung. Es
 	wird die <"POSIX Extended Regular Expression"> Syntax
 	(Vergleiche dazu \mref{regex(7)}) verwendet.
 
@@ -136,45 +136,45 @@ Die Variablen wurden im Beispiel folgend bestimmt:
 *	alle Variablen, die nicht auf |name| enden,
 *	alle restlichen Variablen.
 
-Bei einem Mustervergleich können nur Komponenten einer Datenstruktur
+Bei einem Mustervergleich kÃ¶nnen nur Komponenten einer Datenstruktur
 und keine abgeleiteten Variablen selektiert werden. Beispiel: Der
 Datentyp |Date| ist ein Ganzzahlwert (Kalenderindex) ohne Komponenten,
 kennt aber eine Reihe von abgeleiteten Variablen (year, month, ...), die
-wie Komponenten angesprochen werden können. So kann zwar in der
-Beispieldatei |data.edb| das Zugangsjahr mit |bdat.year| ausgewählt
-werden, die Musterauswahl |bdat.[year]| schlägt aber fehl.
+wie Komponenten angesprochen werden kÃ¶nnen. So kann zwar in der
+Beispieldatei |data.edb| das Zugangsjahr mit |bdat.year| ausgewÃ¤hlt
+werden, die Musterauswahl |bdat.[year]| schlÃ¤gt aber fehl.
 
 \ssec	Klassifikationen
 
-Im Kontext der Konstruktion von Datenwürfeln spielen Klassifikationen
-(Variablen mit Aufzähltyp) eine wichtige Rolle.
+Im Kontext der Konstruktion von DatenwÃ¼rfeln spielen Klassifikationen
+(Variablen mit AufzÃ¤hltyp) eine wichtige Rolle.
 Mit dem speziellen Ausdruck
 
 <name>|=|<expr>|{|<cdef>|}|
 
-wird eine Klassifikation des Ausdrucks <expr> durchgeführt.
+wird eine Klassifikation des Ausdrucks <expr> durchgefÃ¼hrt.
 Der Ausdruck <expr> darf keine Muster&-selektion enthalten.
-Klassifikationsdefinitionen können geschachtelt werden.
+Klassifikationsdefinitionen kÃ¶nnen geschachtelt werden.
 
-Klassifikationsdefinitionen hängen vom Datentyp des Ausdrucks <expr>
-ab. Die allgemeine Syntax für Klassifikationsdefinitionen ist:
+Klassifikationsdefinitionen hÃ¤ngen vom Datentyp des Ausdrucks <expr>
+ab. Die allgemeine Syntax fÃ¼r Klassifikationsdefinitionen ist:
 
 <name>|[|<opt>|]=|<arg>
 
-Durch Angabe eines |?| können die verfügbaren
+Durch Angabe eines |?| kÃ¶nnen die verfÃ¼gbaren
 Klassifikationsdefinitionen zu einer Variablen aufgelistet werden.
 
 Klassifikationsdefinitionen sind als Datentyp-Parameter (Abschnitt \ref{par},
 Seite \pref{par}) zur Parameterklasse |class| definiert.
 
 <*Anmerkung:*> Das Konzept der Klassifikationsdefinitionen ist abgeschlossen,
-konkrete Klassifikationsdefinitionen müssen jedoch erst entwickelt
-werden. Derzeit steht nur für den externen Datentyp |AGE99| (Ein Datentyp für
+konkrete Klassifikationsdefinitionen mÃ¼ssen jedoch erst entwickelt
+werden. Derzeit steht nur fÃ¼r den externen Datentyp |AGE99| (Ein Datentyp fÃ¼r
 das Alter mit Wertebereich 0 - 99) eine Klassifikationsdefinition zur
-Verfügung.
+VerfÃ¼gung.
 
 In Vorbereitung:
 *	Zerlegung des Wertebereichs einer Variablen
-	mit beliebigem Datentyp über Testausdrücke.
-*	Ableitung einer Teilklassifikation aus einem Aufzähltyp durch Auswahl
+	mit beliebigem Datentyp Ã¼ber TestausdrÃ¼cke.
+*	Ableitung einer Teilklassifikation aus einem AufzÃ¤hltyp durch Auswahl
 	und Zusammenfassungen von Labels.

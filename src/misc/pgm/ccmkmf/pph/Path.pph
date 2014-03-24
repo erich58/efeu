@@ -1,7 +1,7 @@
 /*
 Konstruktion von Pfadnamen
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -25,16 +25,16 @@ If not, write to the Free Software Foundation, Inc.,
 /*
 $Description
 Zur Konstruktion von Pfadnamen stehen eine Reihe von Hilfsfunktionen
-zur Verfügung.
+zur VerfÃ¼gung.
 Ihre Verwendung garantiert eine
-Kompatiblität der Imakefiles auf verschiedene Systeme.
+KompatiblitÃ¤t der Imakefiles auf verschiedene Systeme.
 $SeeAlso
 \mref{mkmf(1)}, \mref{Name(7)}.
 */
 
 #ifndef PathName
 /*
-Der Makro |$1| hängt Bibliotheksnamen und Filenamen zusammen.
+Der Makro |$1| hÃ¤ngt Bibliotheksnamen und Filenamen zusammen.
 Unter Unix liefert er <|<dir>/<name>|>.
 */
 #define	PathName(dir,name)	Concat3(dir,/,name)
@@ -42,7 +42,7 @@ Unter Unix liefert er <|<dir>/<name>|>.
 
 #ifndef MsgPath
 /*
-Der Makro |$1| generiert einen Bibliothekspfad für Fehlermeldungsdateien.
+Der Makro |$1| generiert einen Bibliothekspfad fÃ¼r Fehlermeldungsdateien.
 Unter Unix liefert er <|<dir>/messages/<name>|>.
 */
 #define	MsgPath(dir,name)	Concat3(dir,/messages/,name)
@@ -50,7 +50,7 @@ Unter Unix liefert er <|<dir>/messages/<name>|>.
 
 #ifndef DocPath
 /*
-Der Makro |$1| generiert einen Bibliothekspfad für Dokumentationen.
+Der Makro |$1| generiert einen Bibliothekspfad fÃ¼r Dokumentationen.
 Unter Unix liefert er <|<dir>/help/<name>|>.
 */
 #define	DocPath(dir,name)	Concat3(dir,/doc/,name)
@@ -58,7 +58,7 @@ Unter Unix liefert er <|<dir>/help/<name>|>.
 
 #ifndef HelpPath
 /*
-Der Makro |$1| generiert einen Bibliothekspfad für Hilfetexte.
+Der Makro |$1| generiert einen Bibliothekspfad fÃ¼r Hilfetexte.
 Unter Unix liefert er <|<dir>/help/<name>|>.
 */
 #define	HelpPath(dir,name)	Concat3(dir,/help/,name)

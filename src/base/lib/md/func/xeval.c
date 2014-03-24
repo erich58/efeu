@@ -1,5 +1,5 @@
 /*	Achse einer Datenmatrix auswerten
-	(c) 1995 Erich Frühstück
+	(c) 1995 Erich FrÃ¼hstÃ¼ck
 */
 
 #include <EFEU/mdmat.h>
@@ -83,7 +83,7 @@ static void md_xeval (mdmat *md, const char *name, unsigned mask, EfiObj *expr)
 	xobj = memalloc(vdim * sizeof *xobj);
 	n = 0;
 
-/*	Variablen für Achsennamen generieren
+/*	Variablen fÃ¼r Achsennamen generieren
 */
 	for (x = md->axis; x != NULL; x = x->next)
 	{
@@ -101,7 +101,7 @@ static void md_xeval (mdmat *md, const char *name, unsigned mask, EfiObj *expr)
 		n++;
 	}
 
-/*	Variablen für Achsenwerte generieren
+/*	Variablen fÃ¼r Achsenwerte generieren
 */
 	if	(axis)
 	{

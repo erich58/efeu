@@ -1,18 +1,18 @@
 \sec	Transformationen
 
 \index[Transformationen]
-Auf die einzelnen EDB-Datenschnittstellen können
+Auf die einzelnen EDB-Datenschnittstellen kÃ¶nnen
 \index{Transformationsfunktion}en gesetzt werden. Mehrere Datenschnittstellen
-können miteinander verknüpft werden. Das Resultat ist wiederum eine
+kÃ¶nnen miteinander verknÃ¼pft werden. Das Resultat ist wiederum eine
 EDB-Datenschnittstelle.
 
 Es gibt verschiedene Formen der Implementierung dieser
-Transformationen. Eine Möglichkeit davon sind entsprechende
+Transformationen. Eine MÃ¶glichkeit davon sind entsprechende
 Anweisungen in einem EDB-Datenfile. Diese werden im Kapitel
 \ref{data} beschrieben.
 
 Innerhalb eines
-\index{|esh|-Skript}s können Transformationen mithilfe von Funktionen auf
+\index{|esh|-Skript}s kÃ¶nnen Transformationen mithilfe von Funktionen auf
 eine Datenschnittstelle aufgesetzt werden.
 
 \ssec	Filter
@@ -24,34 +24,34 @@ auf eine andere EDB-Datenschnittstelle realisiert. Die Daten werden
 mit einer speziellen Lesefunktion aus der Basisdatenschnittstelle
 gelesen und transformiert.
 
-Die Aufgaben von Filtern können umfangreich sein, im folgenden sind
-ein paar Beispiele angeführt:
+Die Aufgaben von Filtern kÃ¶nnen umfangreich sein, im folgenden sind
+ein paar Beispiele angefÃ¼hrt:
 *	Einfache Selektionen;
-*	Umordnung/Sortierung von Datensätzen;
+*	Umordnung/Sortierung von DatensÃ¤tzen;
 *	Reduktion von Variablen;
-*	Aggregation von Datensätzen;
-*	Ergänzen mit neuen Variablen;
+*	Aggregation von DatensÃ¤tzen;
+*	ErgÃ¤nzen mit neuen Variablen;
 *	Zusammenstellung von Variablen zu einer Datensicht.
 
-Filter arbeiten nicht nur mit einzelnen Datensätzen, sondern können
-mehrere, zusammenhängende Datensätze als Einheit verarbeiten.
+Filter arbeiten nicht nur mit einzelnen DatensÃ¤tzen, sondern kÃ¶nnen
+mehrere, zusammenhÃ¤ngende DatensÃ¤tze als Einheit verarbeiten.
 Komplexe Modifikationen sind mit dem \index{|trans|}- und
-\index{|view|}-Filter möglich.
+\index{|view|}-Filter mÃ¶glich.
 
-Filter können folgend aktiviert werden:
+Filter kÃ¶nnen folgend aktiviert werden:
 *	Durch die |@filter| Anweisung in einem EDB-Datenfile.
-*	Als Parameter beim Öffnen eines EDB-Datenfiles
+*	Als Parameter beim Ã–ffnen eines EDB-Datenfiles
 	oder mithilfe der Funktion |EDB::filter| in einem Skript.
 *	Durch Kommandozeilenoptionen von \mref{edb(1)},
 	\mref{edbcat(1)}  und  \mref{edbjoin(1)}.
 
-\ssec	Zusammenhängen von Datenfiles
+\ssec	ZusammenhÃ¤ngen von Datenfiles
 
-Datenfiles können mithilfe von \index{|edbcat|} zusammengehängt werden.
-Standardmäßig werden die Dateien der Reihe nach abgearbeitet.
-Alternativ können die Dateien auch bezüglich einer
+Datenfiles kÃ¶nnen mithilfe von \index{|edbcat|} zusammengehÃ¤ngt werden.
+StandardmÃ¤ÃŸig werden die Dateien der Reihe nach abgearbeitet.
+Alternativ kÃ¶nnen die Dateien auch bezÃ¼glich einer
 Vergleichsdefinition (Option |-m| <cmp>) gemischt werden.
-Zusätzlich kann auch eine \index{Sortierung} der Einzeldateien (Angabe von
+ZusÃ¤tzlich kann auch eine \index{Sortierung} der Einzeldateien (Angabe von
 |-s| <cmp> anstelle von |-m| <cmp>) verlangt werden.
 Die Spezifikation einer Vergleichsdefinition wird in Abschnitt
 \ref{cmp}, Seite \pref{cmp} beschrieben.
@@ -62,13 +62,13 @@ Weitere Details zu diesem Kommando stehen unter \mref{edbcat(1)}.
 
 Die entsprechende Anweisung in einem EDB-Datenfile lautet |@file|.
 
-\ssec	Verknüpfen von Datenfiles
+\ssec	VerknÃ¼pfen von Datenfiles
 
-Das Kommando \index{|edbjoin|} erlaubt das Verknüpfen zweier Datenfiles
-über einen gemeinsamen Schlüssel. Im Anhang (\mref{edbjoin(1)}) wird das
-Kommando ausführlich beschrieben.
+Das Kommando \index{|edbjoin|} erlaubt das VerknÃ¼pfen zweier Datenfiles
+Ã¼ber einen gemeinsamen SchlÃ¼ssel. Im Anhang (\mref{edbjoin(1)}) wird das
+Kommando ausfÃ¼hrlich beschrieben.
 
-Die Verknüpfung zweier Datenfiles kann alternativ auch über ein
+Die VerknÃ¼pfung zweier Datenfiles kann alternativ auch Ã¼ber ein
 EDB-Metadatenfile (Anweisung |@join|) oder mithilfe des Filters
 \index{|join|} definiert werden.
 
@@ -77,8 +77,8 @@ mit Episodendaten zu den in \index{|pers.edb|} definierten Personen.
 
 \include[verbatim]	data.edb
 
-Diese beiden Tabellen können einfach mit dem Befehl
-|edbjoin -n0 pers.edb data.edb| verknüpft werden.
+Diese beiden Tabellen kÃ¶nnen einfach mit dem Befehl
+|edbjoin -n0 pers.edb data.edb| verknÃ¼pft werden.
 Die Ausgabe ist:
 
 \pipe[verbatim] |edbjoin -n0 pers.edb data.edb|

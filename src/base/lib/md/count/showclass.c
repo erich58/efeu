@@ -1,7 +1,7 @@
 /*
 Auflisten von Selektionsdefinitionen
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -25,7 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 
 #define	MAX_COLUMNS	64	/* Max. Spaltenzahl */
-#define	WIDTH		16	/* Breite für Zusammenfassung */
+#define	WIDTH		16	/* Breite fÃ¼r Zusammenfassung */
 
 #define	LBL_CLASS	\
 	":*:grouping classes" \

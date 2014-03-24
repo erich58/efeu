@@ -3,7 +3,7 @@ Nullstellenberechnung
 
 $Header <Math/$1>
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of Math.
 
 This library is free software; you can redistribute it and/or
@@ -33,7 +33,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #ifndef	MSG_SOLVE
-#define	MSG_SOLVE	"solve"	/* Name für Fehlermeldungen */
+#define	MSG_SOLVE	"solve"	/* Name fÃ¼r Fehlermeldungen */
 #endif
 
 
@@ -42,7 +42,7 @@ double regfalsi (double (*f)(void *par, double x),
 double bisection (int (*f)(void *par, double x),
 	void *fpar, double x0, double x1);
 
-void SetupSolve (void);	/* Parameter für Nullstellenberechnung */
+void SetupSolve (void);	/* Parameter fÃ¼r Nullstellenberechnung */
 
 extern int SolveFlag;	/* Protokollflag */
 extern char *SolveFmt;	/* Ausgabeformat */

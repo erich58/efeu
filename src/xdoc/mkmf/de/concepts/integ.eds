@@ -2,16 +2,16 @@
 
 Bisher wurde davon ausgegangen, das am jeweiligen Arbeitsrechner das
 Build-System |shmkmf| installiert ist. Sollen die Sourcen auf einem
-anderen Rechner übertragen und kompiliert werden, muss dort |shmkmf|
-verfügbar sein, z. B. durch Installation von |efeu|.
+anderen Rechner Ã¼bertragen und kompiliert werden, muss dort |shmkmf|
+verfÃ¼gbar sein, z. B. durch Installation von |efeu|.
 
-Es besteht aber auch die Möglichkeit, |shmkmf| in ein Projekt
+Es besteht aber auch die MÃ¶glichkeit, |shmkmf| in ein Projekt
 so zu integrieren, dass eine Installation des Buildsystems
 nicht notwendig ist.
 
-Dazu richten wir zunächst im Hauptverzeichnis des Projektes das Verzeichnis
-|shmkmf| mit den Skriptfiles von |shmkmf| ein. Die Skriptfiles für
-|shmkmf| können einer aktuellen EFEU-Distribution entnommen werden.
+Dazu richten wir zunÃ¤chst im Hauptverzeichnis des Projektes das Verzeichnis
+|shmkmf| mit den Skriptfiles von |shmkmf| ein. Die Skriptfiles fÃ¼r
+|shmkmf| kÃ¶nnen einer aktuellen EFEU-Distribution entnommen werden.
 Quelle: |http://efeu.cybertec.at|, Unterverzeichnis: |src/config/shmkmf|.
 
 \smh_init
@@ -25,18 +25,18 @@ Quelle: |http://efeu.cybertec.at|, Unterverzeichnis: |src/config/shmkmf|.
 \smh_exec cp $src/pasctrian.c src/tools
 \smh_exec cp $src/pasctrian.tex src/pasctrian
 
-Da jetzt |shmkmf| nicht mehr direkt verfügbar ist, benötigen wir ein
+Da jetzt |shmkmf| nicht mehr direkt verfÃ¼gbar ist, benÃ¶tigen wir ein
 einfaches |Makefile| zur initialisierung des Buildprozesses. Im
-wesentlichen benötigen wir die Regel zur Generierung des Makefiles im
+wesentlichen benÃ¶tigen wir die Regel zur Generierung des Makefiles im
 |build|-Verzeichnis. Das vorher im Hauptverzeichnis plazierte
 |Config.make| wird nach |src| verschoben. Es besteht wiederum nur aus
 einer Befehlszeile:
 \smh_create src/Config.make
 submake
 \end
-Die Optionen |-s| und |-w| werden nicht mehr benötigt, da die
+Die Optionen |-s| und |-w| werden nicht mehr benÃ¶tigt, da die
 Trennung in Source-Zweig und Build-Zweig bereits im Makefile
-durchgeführt wird. Mehr dazu später.
+durchgefÃ¼hrt wird. Mehr dazu spÃ¤ter.
 
 Das Makefile im Hauptverzeichnis hat folgenden Aufbau:
 \smh_exec cp $src/make.config Makefile
@@ -44,18 +44,18 @@ Das Makefile im Hauptverzeichnis hat folgenden Aufbau:
 
 Das Makefile besteht aus zwei Bereichen:
 *	Der Grundkonzeption des Generierungsprozesses
-*	Die Generierung des Basismakefiles für die Anwendung
+*	Die Generierung des Basismakefiles fÃ¼r die Anwendung
 
-Die Grundkonzeption hängt von den jeweiligen Anforderungen ab.
-Üblicherweise wird hier über das Pseudoziel |all| das Hauptmakefile
-der Anwendung aktiviert. Zusätzlich sind im Beispiel noch die
-Aufräumregeln |purge| und |clean| definiert. Durch die saubere
-Trennung zwischenSourcen und generierten Dateien können hier einfach
-die Zielverzeichnisse gelöscht werden.
+Die Grundkonzeption hÃ¤ngt von den jeweiligen Anforderungen ab.
+Ãœblicherweise wird hier Ã¼ber das Pseudoziel |all| das Hauptmakefile
+der Anwendung aktiviert. ZusÃ¤tzlich sind im Beispiel noch die
+AufrÃ¤umregeln |purge| und |clean| definiert. Durch die saubere
+Trennung zwischenSourcen und generierten Dateien kÃ¶nnen hier einfach
+die Zielverzeichnisse gelÃ¶scht werden.
 
-Für die Generierung des Basismakefiles wird eine einfache
-Bootstrapregel benötigt, die Prüfung von Abhängigkeiten erfolgt
-implizit bei seiner Verwendung über den Aufruf mit dem Pseudoziel
+FÃ¼r die Generierung des Basismakefiles wird eine einfache
+Bootstrapregel benÃ¶tigt, die PrÃ¼fung von AbhÃ¤ngigkeiten erfolgt
+implizit bei seiner Verwendung Ã¼ber den Aufruf mit dem Pseudoziel
 |all|. Daher wird das Makefile nur generiert, wenn es nicht schon existiert.
 Die Trennung in Source- und Build-Zweig erfolt durch Aufruf von
 |shmkmf| im Build-Zweig mit dem Pfad zum Sourcefile.
@@ -64,10 +64,10 @@ Hauptverzeichnis wird mit |pwd| abgefragt und in einer
 Hilfsvariablen zwischengespeichert.
 
 Da die Skripts nicht in einer installierten Version vorliegen
-(Filezusatz |.sh|, Ausführbarkeitsrechte müssen nicht gesetzt sein),
-wird |shmkmf| über die Shell gestartet. An dieser Art des Aufrufs
+(Filezusatz |.sh|, AusfÃ¼hrbarkeitsrechte mÃ¼ssen nicht gesetzt sein),
+wird |shmkmf| Ã¼ber die Shell gestartet. An dieser Art des Aufrufs
 erkennt |shmkmf|, dass es nicht in der installierten Version
-aufgerufen wurde und berücksichtigt dies bei der Suche nach
+aufgerufen wurde und berÃ¼cksichtigt dies bei der Suche nach
 Konfigurationsdateien und bei den Aufrufkonventionen in den Make-Regeln.
 
 \smh_exec cp $src/shmkmf.config shmkmf.cfg

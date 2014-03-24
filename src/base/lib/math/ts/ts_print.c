@@ -2,7 +2,7 @@
 :*:print time series data
 :de:Zeitreihendaten ausgeben
 
-$Copyright (C) 1997 Erich Frühstück
+$Copyright (C) 1997 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or

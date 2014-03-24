@@ -1,14 +1,14 @@
 \sec	Grafiken
 
-Für Grafiken gibt es noch keine vordefinierten Methoden in |efeudoc|.
+FÃ¼r Grafiken gibt es noch keine vordefinierten Methoden in |efeudoc|.
 Eine der Schwierigkeiten liegt dain, dass zum einen nicht alle
-Ausgabetreiber mit Grafiken nicht umgehen können und zum anderen
-unterschiedliche Aufbereitungen benötigt werden.
+Ausgabetreiber mit Grafiken nicht umgehen kÃ¶nnen und zum anderen
+unterschiedliche Aufbereitungen benÃ¶tigt werden.
 
-Insofern Grafiken nur in der \LaTeX-Version benötigt werden,
+Insofern Grafiken nur in der \LaTeX-Version benÃ¶tigt werden,
 kann der entsprechende \LaTeX-Code mittels |\include| oder
 einem Eingabebereich und geeigneten Steuerflags eingebunden werden.
-Hier besteht auch die Möglichkeit, den Code mithilfe des integrierten
+Hier besteht auch die MÃ¶glichkeit, den Code mithilfe des integrierten
 Befehlsinterpreters und/oder externer Kommandos
 (z.B. \index{|gnuplot|}) im Rahmen der Dokumentverarbeitung zu erzeugen.
 Vergleiche dazu Abbildung \vref{gra1}.
@@ -22,7 +22,7 @@ Vergleiche dazu Abbildung \vref{gra1}.
 \label{gra1}
 \end
 
-Für die HTML-Aufbereitung ist geplant,
+FÃ¼r die HTML-Aufbereitung ist geplant,
 \LaTeX-Codebereiche mit Hilfe von |latex| und
 einer geeignete Nachbearbeitung (|dvips|, |netpbm|, |imagemagick|)
 als Grafik einzubinden.

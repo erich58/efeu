@@ -1,7 +1,7 @@
 /*
-Expansionsfunktionen für Beschreibungstexte abfragen/definieren
+Expansionsfunktionen fÃ¼r Beschreibungstexte abfragen/definieren
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -36,7 +36,7 @@ static void setup_builtin (void);
 :*:The function |$1| returns a pointer to the expansion definition <name>
 or a NULL pointer if not defined.
 :de:Die Funktion |$1| liefert die durch <name> definierte
-Expansionsfunktion für Beschreibungstexte.
+Expansionsfunktion fÃ¼r Beschreibungstexte.
 */
 
 CmdParExpand *CmdParExpand_get (const char *name)
@@ -48,7 +48,7 @@ CmdParExpand *CmdParExpand_get (const char *name)
 /*
 :*:The function |$1| enhances the list of expansion definition
 with <eval>.
-:de:Die Funktion |$1| erweitert die Expansionsfunktionen für
+:de:Die Funktion |$1| erweitert die Expansionsfunktionen fÃ¼r
 Beschreibungstexte mit <def>.
 */
 
@@ -87,7 +87,7 @@ static int show_fmt (const char *name, void *data, void *ptr)
 /*
 :*:The function |$1| writes a list of expansion definations to
 the output <io>.
-:de:Die Funktion |$1| listet die Expansionsfunktionen für
+:de:Die Funktion |$1| listet die Expansionsfunktionen fÃ¼r
 Beschreibungstexte auf.
 */
 
@@ -226,10 +226,10 @@ static void f_varlist (CmdPar *par, IO *io, const char *arg)
 
 static CmdParExpand builtin[] = {
 	{ "head", ":*:manpage head:de:Handbuchkopf", f_head },
-	{ "ident", ":*:caption:de:Überschrift", f_ident },
+	{ "ident", ":*:caption:de:Ãœberschrift", f_ident },
 	{ "name", ":*:manpage head with caption"
-		":de:Handbuchkopf mit Überschrift", f_name },
-	{ "synopsis", ":*:Synopsis:de:Übersicht", f_synopsis },
+		":de:Handbuchkopf mit Ãœberschrift", f_name },
+	{ "synopsis", ":*:Synopsis:de:Ãœbersicht", f_synopsis },
 	{ "arglist", ":*:command parameters:de:Programmparameter", f_arglist },
 	{ "options", ":*:command options:de:Programmoptionen", f_options },
 	{ "environ", ":*:Environment:de:Umgebungsvariablen", f_environ },

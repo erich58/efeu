@@ -1,7 +1,7 @@
 /*
 Vektorbuffer anfordern/freigeben
 
-$Copyright (C) 1996 Erich Frühstück
+$Copyright (C) 1996 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -28,7 +28,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 /*
 Die Funktion |$1| liefert einen neuen Vektorbuffer
-mit Buffergröße <blk> und Elementgröße <size>.
+mit BuffergrÃ¶ÃŸe <blk> und ElementgrÃ¶ÃŸe <size>.
 */
 
 VecBuf *vb_create (size_t blk, size_t size)

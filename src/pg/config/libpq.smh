@@ -1,5 +1,5 @@
 # :*:configuration file for PostgreSQL interface
-# :de:Konfigurationsdatei für PostgreSQL Schnittstelle
+# :de:Konfigurationsdatei fÃ¼r PostgreSQL Schnittstelle
 #
 # $Synopsis
 # include $1
@@ -7,7 +7,7 @@
 # \$(PQ_INC)\br
 # \$(PQ_LIB)
 #
-# $Copyright (C) 2004 Erich Frühstück
+# $Copyright (C) 2004 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -37,7 +37,7 @@ _libpq_smh=1
 # :de:
 # Durch Einbinden der Headerdatei |$1| werden die |make|-Makros
 # \index{|PQ_INC|} und \index{|PQ_LIB|} mit Kompiler und Linkeroptionen
-# für PostgreSQL Oberflächen definiert.
+# fÃ¼r PostgreSQL OberflÃ¤chen definiert.
 # Die Konfiguration erfolgt mit den Befehlszeilen:
 #
 # $source
@@ -57,8 +57,8 @@ mf_comm -n "End of PostgreSQL configuration"
 # include $1
 # \end
 # :de:
-# Eine typische Ausgabe (abhängig von Bibliotheksversion und
-# Rechnerarchitektur) für das Einbinden der Headerdatei mit
+# Eine typische Ausgabe (abhÃ¤ngig von Bibliotheksversion und
+# Rechnerarchitektur) fÃ¼r das Einbinden der Headerdatei mit
 # \shmkmf[-x] hat die Form:
 # include $1
 # \end

@@ -1,7 +1,7 @@
 /*
 Bibliotheken einrichten/entfernen
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -24,10 +24,10 @@ If not, write to the Free Software Foundation, Inc.,
 #define	_CreateDir_pph	1
 
 /*
-Der Makro |$1| sorgt für die Verfügbarkeit
+Der Makro |$1| sorgt fÃ¼r die VerfÃ¼gbarkeit
 des Verzeichnisses <dir>.
-Es wird zu den Abhängigkeiten des Pseudozieles |all| eingetragen.
-Es wird keine Aufräumregel generiert.
+Es wird zu den AbhÃ¤ngigkeiten des Pseudozieles |all| eingetragen.
+Es wird keine AufrÃ¤umregel generiert.
 */
 
 #define	ProvideDir(dir)	\
@@ -38,8 +38,8 @@ Es wird keine Aufräumregel generiert.
 /*
 Der Makro |$1|
 dient zur Konstruktion des Teilverzeichnises <dir>
-für ausschlieslich generierten Dateien.
-Beim Aufräumen mit dem Pseudoziel |clean| wird das Verzeichnis,
+fÃ¼r ausschlieslich generierten Dateien.
+Beim AufrÃ¤umen mit dem Pseudoziel |clean| wird das Verzeichnis,
 falls es leer ist, entfernt.
 */
 
@@ -51,15 +51,15 @@ falls es leer ist, entfernt.
 
 /*
 Der Makro |$1|
-existiert nur mehr aus Kompatiblitätsgründen zu alten
-Makrodefinitionen. Er wird nicht mehr benötigt. Seine
-Verwendung generiert einen Warnhinweis für das Pseudoziel |all| und
+existiert nur mehr aus KompatiblitÃ¤tsgrÃ¼nden zu alten
+Makrodefinitionen. Er wird nicht mehr benÃ¶tigt. Seine
+Verwendung generiert einen Warnhinweis fÃ¼r das Pseudoziel |all| und
 |clean|.
 */
 
 #define	CleanDir(name) \
 all clean:: \
-@;@+@@echo Der Makro CleanDir wird nicht mehr benötigt! \
+@;@+@@echo Der Makro CleanDir wird nicht mehr benÃ¶tigt! \
 @;@+@@echo Bitte aus Imakefile entfernen! \
 @;
 

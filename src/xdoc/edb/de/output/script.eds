@@ -1,7 +1,7 @@
 \sec Ausgabe mittels Skript
 
 \index[Ausgabe mittels Skripts]
-Sehr allgemeine Ausgaben können mithilfe eines |esh|-Skripts generiert
+Sehr allgemeine Ausgaben kÃ¶nnen mithilfe eines |esh|-Skripts generiert
 werden. Dazu wird eine EDB-Datenschnittstelle eingerichtet und
 satzweise abgearbeitet.
 
@@ -44,4 +44,4 @@ cout.puts("\n");
 Da das Kommando \index{|efeudoc|}, mit dessen Hilfe dieses Dokument
 erstellt wurde, den EFEU-Interpreter eingebaut hat, wurde
 dieses Beispiel ohne externen Programmaufruf direkt innerhalb der
-Dokumentverarbeitung ausgeführt.
+Dokumentverarbeitung ausgefÃ¼hrt.

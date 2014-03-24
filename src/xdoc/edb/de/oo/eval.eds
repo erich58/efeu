@@ -1,38 +1,38 @@
 \sec	Auswertungen
 
-Als Basis für die Auswertungen werden die Personendaten und
-Episodeninformationen zusammengeführt. Das Resultat ist eine
-Datenbank mit Datensätzen, die jeweils eine im Kontext der Auswertung
-eine vollständige Beschreibung des Gegenstandes von Interesse
+Als Basis fÃ¼r die Auswertungen werden die Personendaten und
+Episodeninformationen zusammengefÃ¼hrt. Das Resultat ist eine
+Datenbank mit DatensÃ¤tzen, die jeweils eine im Kontext der Auswertung
+eine vollstÃ¤ndige Beschreibung des Gegenstandes von Interesse
 (<"object of interest">) enthalten.
 
-Die Zusammenführung erfolgt über das Metadatenfile |ex2.edb|:
+Die ZusammenfÃ¼hrung erfolgt Ã¼ber das Metadatenfile |ex2.edb|:
 
 \include[verbatim] ex2.edb
 
-Bei größeren Datenbeständen empfiehlt es sich hier, eine physikalische
+Bei grÃ¶ÃŸeren DatenbestÃ¤nden empfiehlt es sich hier, eine physikalische
 Kopie der Daten in einem Staging-Bereich abzulegen. Bei diesen
 einfachen Beispieldateien wurde direkt mit den Metadatenfiles
 gearbeitet.
 
-Da jeder Satz für sich alle Daten für die Auswertungen enthält, könnte
-auf den Schlüssel Personennumer (z.B. zur Anonymisierung) vollständig
-verzichtet werden. Für eine Auswertung wird die Datei sequenziell
+Da jeder Satz fÃ¼r sich alle Daten fÃ¼r die Auswertungen enthÃ¤lt, kÃ¶nnte
+auf den SchlÃ¼ssel Personennumer (z.B. zur Anonymisierung) vollstÃ¤ndig
+verzichtet werden. FÃ¼r eine Auswertung wird die Datei sequenziell
 abgearbeitet.
 
-Eine Zusammenführung einzelner Tabellen wie bei einem
+Eine ZusammenfÃ¼hrung einzelner Tabellen wie bei einem
 relationalen Datenmodell ist nicht erforderlich. Fragen der
 Optimiertung entfallen, da die Datenorganisation und die sequenzielle
 Abarbeitung an sich schon eine schnelle Verarbeitung
 erwirkt (keine Suchprozesse,
-keine Notwendigkeit für Indizes, gute Unterstützung seitens der
+keine Notwendigkeit fÃ¼r Indizes, gute UnterstÃ¼tzung seitens der
 Peripherie und des Betriebssystems durch prefetching und caching).
 
 \ssec	Durchschnittsbestand
 
-Der Vektortyp |Period[]| unterstützt mit der Methode
-|av_stock| für den Datenbankfilter |view| die Auswertung von
-Durchschnittsbeständen.
+Der Vektortyp |Period[]| unterstÃ¼tzt mit der Methode
+|av_stock| fÃ¼r den Datenbankfilter |view| die Auswertung von
+DurchschnittsbestÃ¤nden.
 
 Das folgende Filterskript |stock.def| zeigt eine typische Anwendung dieser
 Methode:
@@ -52,8 +52,8 @@ input("verbatim", popen(cmd, "r"));
 }
 ----
 
-Die so generierte Datei erfüllt die Vorraussetzungen für die
-Konvertierung als Datenwürfel.
+Die so generierte Datei erfÃ¼llt die Vorraussetzungen fÃ¼r die
+Konvertierung als DatenwÃ¼rfel.
 
 Mit
 ---- eval
@@ -67,9 +67,9 @@ input("verbatim", popen(cmd, "r"));
 
 \ssec	Mittleres Einkommen
 
-Der Durchschnittsbestand wird von |av_stock| direkt unterstützt. Mit
+Der Durchschnittsbestand wird von |av_stock| direkt unterstÃ¼tzt. Mit
 dieser Methode lassen sich aber auch allgemeine, bestandsgewichtete
-Variablen ableiten. Im folgenden wird der Filter für die Bestimmung
+Variablen ableiten. Im folgenden wird der Filter fÃ¼r die Bestimmung
 des mittleren Einkommens gezeigt:
 
 \include[verbatim] av_income.def

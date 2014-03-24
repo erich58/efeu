@@ -2,7 +2,7 @@
 :*:control commands
 :de:Steuerbefehle
 
-$Copyright (C) 1999 Erich Fr¸hst¸ck
+$Copyright (C) 1999 Erich Fr√ºhst√ºck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -88,11 +88,11 @@ If not, write to the Free Software Foundation, Inc.,
 \def\printindex	{ endenv('a'); cmd('a'); plaintex("\\printindex\n"); }
 
 :*:footnote mark
-:de:Fuﬂnotenmarke
+:de:Fu√ünotenmarke
 	$1 |{|<num>|}|
 
 :*:The command $1 creates a footnote mark.
-:de:Der Befehl $1 generiert eine Fuﬂnotenmarke.
+:de:Der Befehl $1 generiert eine Fu√ünotenmarke.
 
 \def\mark	cmd('m', xexpand(ParseArg(cin)));
 
@@ -124,11 +124,11 @@ vertikale Verschiebung um <offset> Zeilen.
 :*:language dependent paragraph
 	$1\br
 	<par>
-:de:Sprachabh‰ngiger Absatz
+:de:Sprachabh√§ngiger Absatz
 	$1\br
 	<par>
 
 :*:Experimental, may be changed.
-:de:Experimentell, kˆnnte ge‰ndert werden.
+:de:Experimentell, k√∂nnte ge√§ndert werden.
 
 \def\langpar	ParseLine(cin); mode('v'); cout << langcpy(ParsePar(cin));

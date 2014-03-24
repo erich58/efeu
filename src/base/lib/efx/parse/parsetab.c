@@ -1,7 +1,7 @@
 /*
 Parse-Tabelle
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -77,7 +77,7 @@ static void print_tab (IO *io, NameKeyTab *tab, int depth)
 {
 	int n, pos;
 
-	io_xprintf(io, "Schlüsselwörter der Tiefe %d:", depth);
+	io_xprintf(io, "SchlÃ¼sselwÃ¶rter der Tiefe %d:", depth);
 	pos = MAX_POS;
 
 	if	(tab)

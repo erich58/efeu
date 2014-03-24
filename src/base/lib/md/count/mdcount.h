@@ -1,9 +1,9 @@
 /*
-Auszählen von mehrdimensionalen Datenmatrizen
+AuszÃ¤hlen von mehrdimensionalen Datenmatrizen
 
 $Header <EFEU/$1>
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -31,7 +31,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/Info.h>
 #include <EFEU/TimeRange.h>
 
-/*	Zählerdefinition
+/*	ZÃ¤hlerdefinition
 */
 
 typedef struct MdCount MdCount;
@@ -75,9 +75,9 @@ struct MdCountPar {
 	int time_idx;		/* Aktueller Zeitindex */
 	mdaxis *axis;		/* Vordefinierte Achsen */
 	mdmat *md;		/* Datenmatrix */
-	EfiObj *obj;		/* Zählobjekt */
+	EfiObj *obj;		/* ZÃ¤hlobjekt */
 	EDB *edb;		/* Ausgabedatenbank */
-	void *cpar;		/* Zählparameter */
+	void *cpar;		/* ZÃ¤hlparameter */
 	int (*count) (MdCountPar *par, TimeRange *range);
 	uint64_t recnum;
 	uint64_t event;
@@ -140,7 +140,7 @@ MdClass *MdClass_get (MdCountPar *tab, const char *name);
 
 MdClass *md_subclass (MdClass *base, const char *def);
 
-/*	Pointerzähler und Pointerklassen
+/*	PointerzÃ¤hler und Pointerklassen
 */
 
 typedef struct {
@@ -165,18 +165,18 @@ void MdPtrClass_add (MdCountPar *tab, MdPtrClass *entry, size_t dim);
 void MdPtrClass_xadd (MdCountPar *tab, MdPtrClass *entry, size_t dim,
 	const char *ext, void *ptr);
 
-/*	Zählgruppe
+/*	ZÃ¤hlgruppe
 */
 
 typedef struct MdCntGrpStruct {
-	struct MdCntGrpStruct *next;	/* Nächste Definition */
+	struct MdCntGrpStruct *next;	/* NÃ¤chste Definition */
 	MdClass *cdef;		/* Klassifikationsdefinition */
 	int flag;		/* Selektionsflag */
 	int idx;		/* Selektionsindex */
 } MdCntGrp;
 
 
-/*	Zähltabellen
+/*	ZÃ¤hltabellen
 */
 
 mdaxis *md_classaxis (const char *name, ...);
@@ -193,11 +193,11 @@ void md_count_add (MdCountList *clist, mdaxis *x, char *ptr);
 
 extern void (*md_count_hook) (MdCountList *clist, mdmat *md);
 
-extern MdCount *stdcount;	/* Standardzähler mit long - Werten */
+extern MdCount *stdcount;	/* StandardzÃ¤hler mit long - Werten */
 
 void MdSetup_count (void);
 
-/*	Zähldefinitionsstruktur
+/*	ZÃ¤hldefinitionsstruktur
 */
 
 typedef struct {
@@ -209,7 +209,7 @@ typedef struct {
 typedef struct {
 	REFVAR;
 	EfiObj *obj;	/* Basisobjekt */
-	char *pfx;	/* Prefix für Klassifikationen */
+	char *pfx;	/* Prefix fÃ¼r Klassifikationen */
 	VecBuf cltab;	/* Klassifikationstabelle */
 } MdCntDef;
 
@@ -218,7 +218,7 @@ void MdCntDef_expr (EfiFunc *funv, void *rval, void **arg);
 void MdCntDef_cadd (EfiFunc *func, void *rval, void **arg);
 
 /*
-Datenobjekt für Zählungen vorbereiten
+Datenobjekt fÃ¼r ZÃ¤hlungen vorbereiten
 */
 
 void MdCntObj (MdCountPar *tab, EfiObj *obj, char *name, char *desc);

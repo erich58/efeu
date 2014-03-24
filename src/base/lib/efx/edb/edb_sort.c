@@ -1,6 +1,6 @@
 /*	EDB-Datenbank sortieren
 
-$Copyright (C) 2004 Erich Frühstück
+$Copyright (C) 2004 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -37,14 +37,14 @@ If not, write to the Free Software Foundation, Inc.,
 #define	EDB_MAX_MERGE	3
 #endif
 
-#define	EDB_MIN_DIM	4	/* Für sehr große Datenstrukturen */
+#define	EDB_MIN_DIM	4	/* FÃ¼r sehr groÃŸe Datenstrukturen */
 
 size_t edb_sort_space = 0;
 
-#define	FTAB_BLK	1024	/* Buffergröße für Filetabelle */
-#define	TMP_DIR		"."	/* Bibliothek für temporäre Dateien */
-#define	TMP_SORT	"Sort"	/* Prefix für temporäre Dateien */
-#define	TMP_MERGE	"Merge"	/* Prefix für temporäre Dateien */
+#define	FTAB_BLK	1024	/* BuffergrÃ¶ÃŸe fÃ¼r Filetabelle */
+#define	TMP_DIR		"."	/* Bibliothek fÃ¼r temporÃ¤re Dateien */
+#define	TMP_SORT	"Sort"	/* Prefix fÃ¼r temporÃ¤re Dateien */
+#define	TMP_MERGE	"Merge"	/* Prefix fÃ¼r temporÃ¤re Dateien */
 
 #define	NAME	"edb_sort"	/* Debug - Name */
 
@@ -73,7 +73,7 @@ static void debug (const char *fmt, ...)
 }
 
 /*
-Tabelle mit temporären Dateinamen
+Tabelle mit temporÃ¤ren Dateinamen
 */
 
 static void ftab_init (VecBuf *ftab)
@@ -101,22 +101,22 @@ static char *ftab_next (VecBuf *ftab)
 
 typedef struct {
 	unsigned char *ptr;	/* Datenpointer im Buffer */
-	unsigned size;		/* Datenlänge */
+	unsigned size;		/* DatenlÃ¤nge */
 } POS;
 
 typedef struct {
 	unsigned char *data;	/* Datenpointer */
 	POS *pos;	/* Positionsvektor */
-	IO *io;		/* IO-Struktur für Datenbuffer */
+	IO *io;		/* IO-Struktur fÃ¼r Datenbuffer */
 	unsigned dpos;	/* Aktuelle Datenposition */
-	unsigned dlim;	/* Limit für Datenspeicher */
+	unsigned dlim;	/* Limit fÃ¼r Datenspeicher */
 	unsigned pidx;	/* Index im Positionsvektor */
-	unsigned space;	/* Größe des Datenbuffers */
+	unsigned space;	/* GrÃ¶ÃŸe des Datenbuffers */
 	unsigned mdim;	/* Maximaler Positionsindex */
-	unsigned ksize;	/* Schlüssellänge */
+	unsigned ksize;	/* SchlÃ¼ssellÃ¤nge */
 	CmpDef *cmp;	/* Vergleichsfunktion */
-	EfiObj *obj1;	/* Erstes Objekt für Vergleich */
-	EfiObj *obj2;	/* Zweites Objekt für Vergleich */
+	EfiObj *obj1;	/* Erstes Objekt fÃ¼r Vergleich */
+	EfiObj *obj2;	/* Zweites Objekt fÃ¼r Vergleich */
 } DBUF;
 
 static int dbuf_get (IO *io)

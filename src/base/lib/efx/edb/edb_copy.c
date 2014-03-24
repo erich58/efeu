@@ -1,5 +1,5 @@
 /*
-Kopieren von Datens‰tzen
+Kopieren von Datens√§tzen
 */
 
 #include <EFEU/EDB.h>

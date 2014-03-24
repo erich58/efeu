@@ -2,7 +2,7 @@
 :*:	EFEU library configuration
 :de:	EFEU Bibliothekskonfiguration
 
-$Copyright (C) 2007 Erich Frühstück
+$Copyright (C) 2007 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -28,7 +28,7 @@ If not, write to the Free Software Foundation, Inc.,
 struct EfeuConfigStruct EfeuConfigPar;
 
 /*
-Die Funktion |$1| setzt Konfigurationsparameter für die
+Die Funktion |$1| setzt Konfigurationsparameter fÃ¼r die
 EFEU-Programmbibliotheken.
 */
 

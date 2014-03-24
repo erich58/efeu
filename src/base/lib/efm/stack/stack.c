@@ -1,7 +1,7 @@
 /*
 Stackstruktur
 
-$Copyright (C) 1996 Erich Frühstück
+$Copyright (C) 1996 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -23,7 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/stack.h>
 #include <EFEU/memalloc.h>
 
-#define	STACK_BSIZE	63	/* Blockgröße für Stacksegmente */
+#define	STACK_BSIZE	63	/* BlockgrÃ¶ÃŸe fÃ¼r Stacksegmente */
 
 static ALLOCTAB(Stacktab, "Stack", STACK_BSIZE, sizeof(Stack));
 

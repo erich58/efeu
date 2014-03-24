@@ -1,7 +1,7 @@
 /*
 Variablendefinitionen registrieren
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -24,8 +24,8 @@ If not, write to the Free Software Foundation, Inc.,
 
 /*
 Die Funktion |$1| erweitert die Variablentabelle <tab> um die
-Variablendefinitionen <def>. Die Variablendefinitionen müssen
-über die gesamte Laufzeit der Tabelle <tab> verfügbar sein.
+Variablendefinitionen <def>. Die Variablendefinitionen mÃ¼ssen
+Ã¼ber die gesamte Laufzeit der Tabelle <tab> verfÃ¼gbar sein.
 */
 
 void AddVarDef (EfiVarTab *tab, EfiVarDef *def, size_t dim)

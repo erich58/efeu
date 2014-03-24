@@ -1,7 +1,7 @@
 /*
 Ausgabezeilen markieren
 
-$Copyright (C) 1998 Erich Frühstück
+$Copyright (C) 1998 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -30,7 +30,7 @@ typedef struct {
 	char *pre;	/* Zeilenanfangskennung */
 	char *post;	/* Zeilenendekennung */
 	int flag;	/* Flag zur Leerzeilenbehanlung */
-	int newline;	/* Flag für neue Zeile */
+	int newline;	/* Flag fÃ¼r neue Zeile */
 	int lnum;	/* Zeilennummer (kann im Format verwendet werden) */
 } LMARK;
 

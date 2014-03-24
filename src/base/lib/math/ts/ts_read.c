@@ -1,8 +1,8 @@
 /*
 :*:binary read/write of time series
-:de:Binäres lesen/schreiben von Zeitreihen
+:de:BinÃ¤res lesen/schreiben von Zeitreihen
 
-$Copyright (C) 2002 Erich Frühstück
+$Copyright (C) 2002 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or

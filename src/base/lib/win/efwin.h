@@ -3,7 +3,7 @@ Curses-Schnittstelle
 
 $Header <EFEU/$1>
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -31,7 +31,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <term.h>
 
 #ifndef	MSG_EFWIN
-#define	MSG_EFWIN	"efwin"	/* Name für Fehlermeldungen */
+#define	MSG_EFWIN	"efwin"	/* Name fÃ¼r Fehlermeldungen */
 #endif
 
 #ifndef	KEY_ESC
@@ -49,7 +49,7 @@ If not, write to the Free Software Foundation, Inc.,
 #define	W_FRAME		0x10
 
 typedef struct {
-	int height;	/* Fensterhöhe */
+	int height;	/* FensterhÃ¶he */
 	int width;	/* Fensterbreite */
 	int flags;	/* Fensterflags */
 	int y;		/* Y - Koordinate */

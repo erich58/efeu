@@ -3,21 +3,21 @@
 Mit EFEU wird eine Schnittstellenbibliothek zu PostgreSQL mitgeliefert, die
 auch die EDB-Schnittstelle um entsprechende Ein- und
 Ausgabedefinitionen erweitert. Bei der Kompilierung dieser
-Schnittstelle müssen die PostgreSQL-Entwicklungsdateien installiert
+Schnittstelle mÃ¼ssen die PostgreSQL-Entwicklungsdateien installiert
 sein.
 
 Aktiviert wird die Schnittstelle durch Einbinden der Headerdatei
-\index{|pg.hdr|}. Diese enthält im wesentlichen die Befehlszeile:
+\index{|pg.hdr|}. Diese enthÃ¤lt im wesentlichen die Befehlszeile:
 
 ---- verbatim
 loadlib("PG", "SetupPG");
 ----
 
 Dabei ist |PG| der Name der gemeinsam genutzen Bibliothek und
-|SetupPG| ist eine Initialisierungsfunktion für die Aktivierung der
+|SetupPG| ist eine Initialisierungsfunktion fÃ¼r die Aktivierung der
 Erweiterung.
 
-Die Headerdatei kann bei den edb-Kommandos entweder über die Option |-F pg.hdr|
+Die Headerdatei kann bei den edb-Kommandos entweder Ã¼ber die Option |-F pg.hdr|
 geladen werden oder durch |#include <pg.hdr>| im |@head|-Abschnitt eines
 EDB-Datenfiles eingebunden werden.
 
@@ -25,8 +25,8 @@ EDB-Datenfiles eingebunden werden.
 
 Mithilfe der durch diese Schnittstelle aktivierten Ausgabefunktion \index{|pg|}
 kann ein EDB-Datenfile direkt in eine PostgrSQL-Tabelle geschrieben werden.
-Zusätzlich wird ein EDB-Metadatenfile erzeugt, mit deren Hilfe die
-Daten wieder aus der Tabelle ausgelesen werden können.
+ZusÃ¤tzlich wird ein EDB-Metadatenfile erzeugt, mit deren Hilfe die
+Daten wieder aus der Tabelle ausgelesen werden kÃ¶nnen.
 
 Beispiel: Die folgende Befehlszeile generiert eine Tabelle |pers| in
 der Datenbank |foo| aus dem EDB-Datenfile |pers.dat|:
@@ -38,7 +38,7 @@ edb -n0 -F pg.hdr -p pg=foo:pers pers.edb
 Die generierte PostgreSQL Tabelle hat die folgende Struktur:
 
 ---- verbatim
-       Tabelle »public.pers«
+       Tabelle Â»public.persÂ«
    Spalte    |   Typ   | Attribute
 =============+=========+===========
  num         | integer |
@@ -52,20 +52,20 @@ Die Ausgabefunktion |pg| hat die allgemeine Syntax:
 
 |pg[|<flags>|]=|[<dbdef>|:|]<name>[|;|<par>]
 
-Folgende Steuerflags <flags> können angegeben werden:
-[d]	Bereits vorhandene Tabelle diesen Namens löschen;
+Folgende Steuerflags <flags> kÃ¶nnen angegeben werden:
+[d]	Bereits vorhandene Tabelle diesen Namens lÃ¶schen;
 [n]	Keine Verbindung aufbauen, nur Metadatenfile ausgeben.
 
 Bei der Datenbankdefinition <dbdef> handelt es sich entweder um einen
 einzelnen Datenbanknamen, oder eine Liste von Verbindungsparametern
-der Form <name>|=|<var> für die Funktion PQconnectdb der
+der Form <name>|=|<var> fÃ¼r die Funktion PQconnectdb der
 C-Schnittstelle zu PostgreSQL.
 
-Mit dem Parameter <par> können Primärschlüssel, Fremdschlüssel oder
-zusätzliche Spalten für die Tabelle definiert werden. Der Parameter
+Mit dem Parameter <par> kÃ¶nnen PrimÃ¤rschlÃ¼ssel, FremdschlÃ¼ssel oder
+zusÃ¤tzliche Spalten fÃ¼r die Tabelle definiert werden. Der Parameter
 wird ans Ende der Strukturdefinition der Tabelle gestellt.
-Die folgende Ausgabevariante definiert |num| als Primärschlüssel für
-die Tabelle |pers|. Die Ausgabefunktion muss unter Anführung gestellt
+Die folgende Ausgabevariante definiert |num| als PrimÃ¤rschlÃ¼ssel fÃ¼r
+die Tabelle |pers|. Die Ausgabefunktion muss unter AnfÃ¼hrung gestellt
 werden, damit der Strichpunkt, das Leerzeichen und die Klammern nicht
 von der Shell interpretiert werden.
 
@@ -75,8 +75,8 @@ edb -n0 -F pg.hdr -p 'pg=foo:pers;primary key(num)' pers.edb
 
 Der Datenaustausch erfolgt mit dem SQL-Kommando:
 	|COPY| <table> |FROM stdin|
-Die Daten werden im Textformat übertragen. Die Datentypen der Tabelle werden
-aus den Datentypen des Interpreters bestimmt. Falls keine äquivalenten
+Die Daten werden im Textformat Ã¼bertragen. Die Datentypen der Tabelle werden
+aus den Datentypen des Interpreters bestimmt. Falls keine Ã¤quivalenten
 Datentypen existieren, wird |text| genommen.
 
 Die Datentypen werden automatisch bestimmt. Es gelten folgende
@@ -106,8 +106,8 @@ str | text
 Date | date
 ---
 
-Aufzählungstypen werden als |integer| umgesetzt.
-Strukturen werden in Komponenten aufgelöst. Als Name wird
+AufzÃ¤hlungstypen werden als |integer| umgesetzt.
+Strukturen werden in Komponenten aufgelÃ¶st. Als Name wird
 <foo>|_|<bar> verwendet, wobei <foo> der Strukturname und <bar> der
 Komponentenname ist.
 
@@ -122,29 +122,29 @@ Aufbau:
 
 \pipe[verbatim]  |edb -n0 -F pg.hdr -p pg[n]=foo:pers pers.edb|
 
-Das Metafile enthält zunächst den Datentyp der Tabelle, danach folgt
+Das Metafile enthÃ¤lt zunÃ¤chst den Datentyp der Tabelle, danach folgt
 eine |head|-Anweisung zur Aktivierung der PostgreSQL-Schnittstelle.
 Die eigentliche Datenabfrage erfolgt mithilfe von \index{|pg_copy|}.
 Als Argument wird analog zur Ausgabefunktion der Datenbankname und
 der Tabellenname angegeben.
 
-Diese Form der Abfrage kann nicht nur für mit |edb| generierten
+Diese Form der Abfrage kann nicht nur fÃ¼r mit |edb| generierten
 Tabellen, sondern auch allgemein verwendet werden. Die Datenstruktur
 muss den einzelnen Variablen der Tabelle entsprechen.
 Der Datenaustausch erfolgt wiederum im Textformat.
 
 Die Datenbankabfrage erfolgt mittels:
 	|COPY| <table> |TO stdout|
-Dieser Befehl kann nicht für eine Sicht verwendet werden.
+Dieser Befehl kann nicht fÃ¼r eine Sicht verwendet werden.
 
 \ssec	Allgemeine Datenbankabfragen mit einem Metadatenfile
 
-Eine Datenbankabfrage kann über ein Metadatenfile realisiert werden.
-Die Daten lassen sich wie ein gewöhnliches |EDB|-Datenfile
+Eine Datenbankabfrage kann Ã¼ber ein Metadatenfile realisiert werden.
+Die Daten lassen sich wie ein gewÃ¶hnliches |EDB|-Datenfile
 weiterverarbeiten.
 
-Neben der Extraktion von Daten mittels |COPY| können auch beliebige
-Datenbankabfragen mithilfe von |pg_query| über ein Metadatenfile realisiert
+Neben der Extraktion von Daten mittels |COPY| kÃ¶nnen auch beliebige
+Datenbankabfragen mithilfe von |pg_query| Ã¼ber ein Metadatenfile realisiert
 werden.
 
 Die Allgemeine Syntax der Metadatenfileanweisung ist:
@@ -152,13 +152,13 @@ Die Allgemeine Syntax der Metadatenfileanweisung ist:
 |pg_query| <dbdef>\br
 <Select-Anweisung>
 
-Die Abfrage erfolgt Zeilenweise über einen Datenbankcursor. Innerhalb
-der Select-Anweisung sind Kommentare im C-Stil zulässig und
-Zeilenvorschübe werden wie Leerzeichen behandelt. Ein Abschluss des
+Die Abfrage erfolgt Zeilenweise Ã¼ber einen Datenbankcursor. Innerhalb
+der Select-Anweisung sind Kommentare im C-Stil zulÃ¤ssig und
+ZeilenvorschÃ¼be werden wie Leerzeichen behandelt. Ein Abschluss des
 Kommandos mit einem Strichpunkt wie in |psql| ist nicht notwendig,
 kann aber vorhanden sein.
 
-Der Datentyp für das EDB-Datenfile muss nicht vorgegeben werden, er
+Der Datentyp fÃ¼r das EDB-Datenfile muss nicht vorgegeben werden, er
 kann automatisch aus der Abfrage ermittelt werden. Es gelten folgende
 Umsetzungsregeln:
 
@@ -173,9 +173,9 @@ date | Date
 text | str
 ---
 
-Alle anderen Datentypen werden als Zeichenkette |str| übernommen.
+Alle anderen Datentypen werden als Zeichenkette |str| Ã¼bernommen.
 
-Die einzelnen Datenzeilen werden mithilfe eines temporären Cursors
+Die einzelnen Datenzeilen werden mithilfe eines temporÃ¤ren Cursors
 vom Datenbankserver abgefragt.
 Der Datenaustausch erfolgt wiederum im Textformat.
 
@@ -193,8 +193,8 @@ ORDER BY gender,birth_year
 
 \ssec	SQL-Anweisungen und persistente Verbindungen
 
-Neben den bisher vorgestellten Abfragemöglichkeiten mit |pg_copy| und
-|pg_query| können auch allgemeine SQL-Anweisungen gesendet werden.
+Neben den bisher vorgestellten AbfragemÃ¶glichkeiten mit |pg_copy| und
+|pg_query| kÃ¶nnen auch allgemeine SQL-Anweisungen gesendet werden.
 Dies erfolgt mithilfe der Anweisung |pg_exec|. Die Syntax ist analog
 zu |pg_query|, jedoch kann mehr als eine Anweisung gesendet werden.
 
@@ -202,9 +202,9 @@ zu |pg_query|, jedoch kann mehr als eine Anweisung gesendet werden.
 <SQL-Anweisungen>
 
 Die Anweisungen |pg_copy|, |pg_query| und |pg_exec| bauen im
-Normalfall jeweils eine unabhängige Verbindung auf. Alternativ dazu
-kann zunächst eine Verbindung mit |pg_connect| eingerichtet werden.
-Anschließend werden die Abfrageanweisungen ohne
+Normalfall jeweils eine unabhÃ¤ngige Verbindung auf. Alternativ dazu
+kann zunÃ¤chst eine Verbindung mit |pg_connect| eingerichtet werden.
+AnschlieÃŸend werden die Abfrageanweisungen ohne
 Datenbankdefinition verwendet. Der Zugriff auf die Datenbank wird mit
 |pg_close| geschlossen.
 Jede weitere Anweisung mit SQL-Abfragen baut eine

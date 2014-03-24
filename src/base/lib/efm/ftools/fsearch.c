@@ -1,7 +1,7 @@
 /*
 Suche nach einer Datei
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -51,7 +51,7 @@ static int need_search (const char *name);
 static char *add_tilde (StrBuf *sb, const char *path);
 
 
-/*	Filenamen an Pfad anhängen und auf Lesbarkeit testen
+/*	Filenamen an Pfad anhÃ¤ngen und auf Lesbarkeit testen
 */
 
 static int sub_search (StrBuf *sb, const char *name)

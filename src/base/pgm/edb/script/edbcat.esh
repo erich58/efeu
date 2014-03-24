@@ -1,8 +1,8 @@
 /*
 :*:	concatenation of efeu data files
-:de:	Zusammenhängen von Efeu-Datenfiles
+:de:	ZusammenhÃ¤ngen von Efeu-Datenfiles
 
-$Copyright (C) 2004 Erich Frühstück
+$Copyright (C) 2004 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -37,8 +37,8 @@ str Comp = NULL
 I:dir|IncPath:eval 'IncPath = paste(PATHSEP, IncPath, "{}")'
 	:*:append <dir> to the search path for script headers.
 	The default setting is "$(IncPath:%s)".
-	:de:erweitert den Suchpfad für Skriptfiles um <dir>.
-	Die Vorgabe für den Suchpfad ist:\br "|$(IncPath:%s)|".
+	:de:erweitert den Suchpfad fÃ¼r Skriptfiles um <dir>.
+	Die Vorgabe fÃ¼r den Suchpfad ist:\br "|$(IncPath:%s)|".
 E:expr | :eval 'geval("{}")'
 	:*:evaluate expression <expr>
 	:de:Ausdruck <expr> auswerten
@@ -64,7 +64,7 @@ m:cmp | -merge:cmp | Comp; Merge = true;
 	mischt die Dateien mit der Vergleichsfunktion <cmp>.
 s:cmp | -sort:cmp | Comp; Merge = true; Sort = true
 	sortiert die Dateien mit der Vergleichsfunktion <cmp>
-	vor dem mischen/verknüpfen.
+	vor dem mischen/verknÃ¼pfen.
 o:out | Output
 	:*:output file name
 	:de:Name der Ausgabedatei 

@@ -1,7 +1,7 @@
 # :*:EFEU command interpreter
 # :de:EFEU Befehlsinterpreter
 #
-# $Copyright (C) 1994, 2001 Erich Frühstück
+# $Copyright (C) 1994, 2001 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -25,12 +25,12 @@ HistoryName = "~/.esh_history"
 
 @ESHPATH|IncPath:eval 'IncPath = paste(PATHSEP, IncPath, "{}")'
 	:*:define extra directories for searching script headers.
-	:de:erweitert den Suchpfad für Skriptfiles.
+	:de:erweitert den Suchpfad fÃ¼r Skriptfiles.
 I:dir|IncPath:eval 'IncPath = paste(PATHSEP, IncPath, "{}")'
 	:*:append <dir> to the search path for script headers.
 	The default setting is "$(IncPath:%s)".
-	:de:erweitert den Suchpfad für Skriptfiles um <dir>.
-	Die Vorgabe für den Suchpfad ist:\br "|$(IncPath:%s)|".
+	:de:erweitert den Suchpfad fÃ¼r Skriptfiles um <dir>.
+	Die Vorgabe fÃ¼r den Suchpfad ist:\br "|$(IncPath:%s)|".
 D:"name|=|val"|:eval 'copy(preproc("#define " + strsub("{}", "=", " ")), NULL);'
 	:*:define macro <name> with value <val>
 	:de:definiert den Makro <name> mit Wert <value>

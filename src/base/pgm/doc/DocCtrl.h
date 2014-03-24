@@ -1,7 +1,7 @@
 /*
-Kontrollfunktionen für Dokumentausgabe
+Kontrollfunktionen fÃ¼r Dokumentausgabe
 
-$Copyright (C) 1991 Erich Frühstück
+$Copyright (C) 1991 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -47,7 +47,7 @@ If not, write to the Free Software Foundation, Inc.,
 #define	DOC_CMD_ITEM	0x07	/* Neuer Listeneintrag */
 #define	DOC_CMD_APP	0x08	/* Beginn des Anhangs */
 #define	DOC_CMD_IDX	0x09	/* Indexeintrag */
-#define	DOC_CMD_MARK	0x0a	/* Fußnotenmarke */
+#define	DOC_CMD_MARK	0x0a	/* FuÃŸnotenmarke */
 #define	DOC_CMD_TEX	0x0b	/* TeX-Kommando */
 
 /*	Referenzen
@@ -66,11 +66,11 @@ If not, write to the Free Software Foundation, Inc.,
 #define	DOC_TAB_SEP	0x21	/* Tabellentrennzeichen */
 #define	DOC_TAB_END	0x22	/* Ende einer Tabellenzeile */
 #define	DOC_TAB_HLINE	0x23	/* Horizontale Trennlinie */
-#define	DOC_TAB_CLINE	0x24	/* Trennlinie über einzelne Spalten */
+#define	DOC_TAB_CLINE	0x24	/* Trennlinie Ã¼ber einzelne Spalten */
 
 /*	Umgebungen werden mit DOC_BEG eingeleitet und mit DOC_END
 	beendet.  Die Umgebungskennungen werden nach inhaltlichen
-	Gruppen zusammengefaßt.
+	Gruppen zusammengefaÃŸt.
 */
 
 #define	DOC_BEG		(DOC_CTRL|11)	/* Beginn einer Umgebung */
@@ -81,7 +81,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #define	DOC_PAR_CTRL	0x00			/* Kennung */
-#define	DOC_PAR_STD	(DOC_PAR_CTRL|0x0)	/* Gewöhnlicher Absatz */
+#define	DOC_PAR_STD	(DOC_PAR_CTRL|0x0)	/* GewÃ¶hnlicher Absatz */
 #define	DOC_PAR_ITEM	(DOC_PAR_CTRL|0x1)	/* Listeneintrag */
 #define	DOC_PAR_TAG	(DOC_PAR_CTRL|0x2)	/* Beschreibungslabel */
 
@@ -95,10 +95,10 @@ If not, write to the Free Software Foundation, Inc.,
 #define	DOC_SEC_SECT	(DOC_SEC_CTRL|0x3)	/* Bereich */
 #define	DOC_SEC_SSECT	(DOC_SEC_CTRL|0x4)	/* Zwischentitel */
 #define	DOC_SEC_PARA	(DOC_SEC_CTRL|0x5)	/* Paragraph */
-#define	DOC_SEC_HEAD	(DOC_SEC_CTRL|0x6)	/* Hauptüberschrift */
-#define	DOC_SEC_SHEAD	(DOC_SEC_CTRL|0x7)	/* Nebenüberschrift */
-#define	DOC_SEC_CAPT	(DOC_SEC_CTRL|0x8)	/* Tabellenüberschrift */
-#define	DOC_SEC_SCAPT	(DOC_SEC_CTRL|0x9)	/* Tabellennenenüberschrift */
+#define	DOC_SEC_HEAD	(DOC_SEC_CTRL|0x6)	/* HauptÃ¼berschrift */
+#define	DOC_SEC_SHEAD	(DOC_SEC_CTRL|0x7)	/* NebenÃ¼berschrift */
+#define	DOC_SEC_CAPT	(DOC_SEC_CTRL|0x8)	/* TabellenÃ¼berschrift */
+#define	DOC_SEC_SCAPT	(DOC_SEC_CTRL|0x9)	/* TabellennenenÃ¼berschrift */
 #define	DOC_SEC_MARG	(DOC_SEC_CTRL|0xa)	/* Randnotiz */
 #define	DOC_SEC_NOTE	(DOC_SEC_CTRL|0xb)	/* Anmerkung */
 #define	DOC_SEC_FNOTE	(DOC_SEC_CTRL|0xc)	/* Tabellenanmerkung */
@@ -107,7 +107,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #define	DOC_LIST_CTRL	0x20			/* Kennung */
-#define	DOC_LIST_ITEM	(DOC_LIST_CTRL|0x0)	/* Aufzählungsliste */
+#define	DOC_LIST_ITEM	(DOC_LIST_CTRL|0x0)	/* AufzÃ¤hlungsliste */
 #define	DOC_LIST_ENUM	(DOC_LIST_CTRL|0x1)	/* Numerierungsliste */
 #define	DOC_LIST_DESC	(DOC_LIST_CTRL|0x2)	/* Beschreibungsliste */
 
@@ -122,12 +122,12 @@ If not, write to the Free Software Foundation, Inc.,
 #define	DOC_ATT_BF	(DOC_ATT_CTRL|0x2)	/* Fett */
 #define	DOC_ATT_TT	(DOC_ATT_CTRL|0x3)	/* Schreibmaschine */
 
-/*	Anführungen
+/*	AnfÃ¼hrungen
 */
 
 #define	DOC_QUOTE_CTRL	0x40			/* Kennung */
-#define	DOC_QUOTE_SGL	(DOC_QUOTE_CTRL|0x0)	/* Einfache Anführung */
-#define	DOC_QUOTE_DBL	(DOC_QUOTE_CTRL|0x1)	/* Doppelte Anführung */
+#define	DOC_QUOTE_SGL	(DOC_QUOTE_CTRL|0x0)	/* Einfache AnfÃ¼hrung */
+#define	DOC_QUOTE_DBL	(DOC_QUOTE_CTRL|0x1)	/* Doppelte AnfÃ¼hrung */
 
 /*	Verarbeitungsmodi
 */
@@ -147,14 +147,14 @@ If not, write to the Free Software Foundation, Inc.,
 #define	DOC_ENV_CTRL	0x60			/* Kennung */
 #define	DOC_ENV_BASE	(DOC_ENV_CTRL|0x0)	/* Standardumgebung */
 #define	DOC_ENV_INTRO	(DOC_ENV_CTRL|0x1)	/* Einleitung */
-#define	DOC_ENV_QUOTE	(DOC_ENV_CTRL|0x2)	/* Einrückung */
+#define	DOC_ENV_QUOTE	(DOC_ENV_CTRL|0x2)	/* EinrÃ¼ckung */
 #define	DOC_ENV_FORMULA	(DOC_ENV_CTRL|0x4)	/* Formelsatz */
 #define	DOC_ENV_TABLE	(DOC_ENV_CTRL|0x5)	/* Tabellenumgebung */
 #define	DOC_ENV_FIG	(DOC_ENV_CTRL|0x6)	/* Bildumgebung */
 #define	DOC_ENV_TAB	(DOC_ENV_CTRL|0x7)	/* Tabelle */
 #define	DOC_ENV_URL	(DOC_ENV_CTRL|0x8)	/* URL */
 #define	DOC_ENV_CODE	(DOC_ENV_CTRL|0x9)	/* Befehlszeilen */
-#define	DOC_ENV_HANG	(DOC_ENV_CTRL|0xa)	/* Hängende Absätze */
+#define	DOC_ENV_HANG	(DOC_ENV_CTRL|0xa)	/* HÃ¤ngende AbsÃ¤tze */
 #define	DOC_ENV_SLOPPY	(DOC_ENV_CTRL|0xb)	/* Schlampige Formatierung */
 #define	DOC_ENV_MCOL	(DOC_ENV_CTRL|0xc)	/* Mehrfachspalte */
 #define	DOC_ENV_SPAGE	(DOC_ENV_CTRL|0xd)	/* Teilseite */

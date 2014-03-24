@@ -1,7 +1,7 @@
 /*
 Nullstellenbestimmung
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -44,7 +44,7 @@ EfiVarTab *SolvePar = NULL;
 static EfiVarDef glob_var[] = {
 	{ "SolvePar", &Type_vtab, &SolvePar,
 		":*:solve parameter tab\n"
-		":de:Lösungsparametertabelle\n" },
+		":de:LÃ¶sungsparametertabelle\n" },
 };
 
 static int solve_intval(void *par, double x)

@@ -1,7 +1,7 @@
 /*
 Datei mapping
 
-$Copyright (C) 2007 Erich Frühstück
+$Copyright (C) 2007 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -53,7 +53,7 @@ static EfiMember var_map[] = {
 		":de:Dateiname\n" },
 	{ "size", &Type_uint64, get_size, NULL,
 		":*:file size\n"
-		":de:Dateigröße\n" },
+		":de:DateigrÃ¶ÃŸe\n" },
 };
 
 static void f_null (EfiFunc *func, void *rval, void **arg)

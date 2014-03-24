@@ -1,7 +1,7 @@
 /*
 error messages for manpage generator
 
-$Copyright (C) 1999 Erich Frühstück
+$Copyright (C) 1999 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or

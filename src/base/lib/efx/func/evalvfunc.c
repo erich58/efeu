@@ -1,7 +1,7 @@
 /*
 Funktionen bestimmen und auswerten
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -24,7 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/konvobj.h>
 #include <EFEU/printobj.h>
 
-/*	Argumentvektor aufräumen
+/*	Argumentvektor aufrÃ¤umen
 */
 
 static void clean_arg (EfiFuncArg *arg, size_t narg)
@@ -223,7 +223,7 @@ static EfiObj *eval_func (EfiFunc *func, EfiArgKonv *fkonv,
 
 	FuncDebug(func, "eval");
 
-/*	Funktion ausführen
+/*	Funktion ausfÃ¼hren
 */
 	if	(narg)
 	{

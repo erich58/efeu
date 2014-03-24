@@ -1,8 +1,8 @@
 # :*:count edb data files
-# :de:EDB-Datenbank auszählen
+# :de:EDB-Datenbank auszÃ¤hlen
 #
-# $Copyright (C) 2007 Erich Frühstück
-# A-3423 St.Andrä/Wördern, Wildenhaggasse 38
+# $Copyright (C) 2007 Erich FrÃ¼hstÃ¼ck
+# A-3423 St.AndrÃ¤/WÃ¶rdern, Wildenhaggasse 38
 
 .out.mark = NULL
 .out.fmt = "|mdprint -r -t -l15 -w7 {.out.mark} -p$(float_prec) -"
@@ -28,13 +28,13 @@ Post = NULL;
 i::mode | InfoMode; StartInfo = true
 	Informationsausgabe mit Modus <mode>.
 l::pat | ClassList; ShowClass = true
-	listet alle verfügbaren Zählklassen und ihre Klassenausprägungen auf,
+	listet alle verfÃ¼gbaren ZÃ¤hlklassen und ihre KlassenausprÃ¤gungen auf,
 	die dem Muster <pat> entsprechen.
-	Die Auswertungsfunktion muß definiert sein.
+	Die Auswertungsfunktion muÃŸ definiert sein.
 L::pat | ClassList; ShowClass = true; :eval MdClassPrintLimit=1
-	listet alle verfügbaren Zählklassen auf,
+	listet alle verfÃ¼gbaren ZÃ¤hlklassen auf,
 	die dem Muster <pat> entsprechen.
-	Die Auswertungsfunktion muß definiert sein.
+	Die Auswertungsfunktion muÃŸ definiert sein.
 E:expr | :eval 'geval("{}")'
 	:*:evaluate expression <expr>
 	:de:Ausdruck <expr> auswerten
@@ -42,7 +42,7 @@ F:file | :eval 'gload(IncPath, "{}")'
 	:*:execute command lines in file <file>
 	:de:Datei <file> mit Befehlszeilen laden
 x:list[-] | .out.mark: set "-x {}"; Output: vset .out.fmt
-	gibt für die Textausgabe die Achsenliste für die Spalten vor.
+	gibt fÃ¼r die Textausgabe die Achsenliste fÃ¼r die Spalten vor.
 p:prec | :eval float_prec={}; Output: vset .out.fmt 
 	bestimmt bei der Textausgabe die Darstellungsgenauigkeit von
 	Gleitkommawerten. Die Vorgabe ist $(float_prec).
@@ -55,31 +55,31 @@ f:def | Filter: append " "
 e:eval | Method
 	definiert das Auswertungsverfahren, Die Vorgabe ist |"{Method}"|.
 c:counter | Counter
-	definiert den Zähler, die Vorgabe ist |"{Counter}"|.
+	definiert den ZÃ¤hler, die Vorgabe ist |"{Counter}"|.
 r:range | Range
-	definiert den Zeitbereich für die Zählung, die Vorgabe ist |"{Range}"|.
+	definiert den Zeitbereich fÃ¼r die ZÃ¤hlung, die Vorgabe ist |"{Range}"|.
 w:weight | Weight
-	definiert das Hochrechnungsgewicht für die Zählung.
+	definiert das Hochrechnungsgewicht fÃ¼r die ZÃ¤hlung.
 	Die Vorgabe ist ${Weight}.
 n:lim | CountLimit
-	Maximale Zahl der Zählaufrufe (0 = unbegrenzt), Vorgabe {CountLimit}
+	Maximale Zahl der ZÃ¤hlaufrufe (0 = unbegrenzt), Vorgabe {CountLimit}
 R::mode[label] | RecordMode; :eval float_prec = 16; \
 		.out.fmt = NULL; Output = NULL;
 	aktiviert die Einzelsatzaufzeichnung mit Modus <mode>.
-	Mögliche Werte können mit -R? abgefragt werden.
+	MÃ¶gliche Werte kÃ¶nnen mit -R? abgefragt werden.
 d:delim | RecordDelimiter
 	setzt das Trennzeichen zwischen den einzelnen Werten auf <delim>.
 M:target | :eval 'depend(DBName); makedepend("{}"); exit(0)'
-	generiert Abhängigkeitsregeln für die angegebene Zieldatei <target>.
+	generiert AbhÃ¤ngigkeitsregeln fÃ¼r die angegebene Zieldatei <target>.
 P:post | Post: set "{Post}|{}"
-	erweitert die Postfilter für die Zählung.
+	erweitert die Postfilter fÃ¼r die ZÃ¤hlung.
 :in | Input
 	:*:input file name
 	:de:Name der Eingabedatei
 /.*=.*/<name>=<list> | Grpdef: append " "
 	definiert eine Achse mit Namen <name> der Datenmatrix. Das Argument
 	wird anhand des Zuweisungszeichens |=| identifiziert. Mit <list>
-	werden die für die Achse verwendeten Klassifikationen angegeben.
+	werden die fÃ¼r die Achse verwendeten Klassifikationen angegeben.
 ::out | Output
 	:*:output file name
 	:de:Name der Ausgabedatei

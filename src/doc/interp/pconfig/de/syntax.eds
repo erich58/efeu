@@ -1,13 +1,13 @@
 \sec	Konfigurationsdatei
 
-Eine \index{Konfigurationsdatei} für Programmparameter ist zeilenweise
+Eine \index{Konfigurationsdatei} fÃ¼r Programmparameter ist zeilenweise
 aufgebaut und setzt sich aus den folgenden Zeilentypen zusammen:
 
 *	\index{Kommentar}e: Diese sind mit einem Gittersymbol in der ersten
 	Spalte gekennzeichnet.
 *	\index{Beschreibungstext}e: Diese sind durch einen Tabulator in der
 	ersten Spalte gekennzeichnet. Aufeinanderfolgende
-	Beschreibungstexte gehören zusammen. Beschreibungstexte nach
+	Beschreibungstexte gehÃ¶ren zusammen. Beschreibungstexte nach
 	einem Kommentar oder einer Leerzeile werden ignoriert.
 *	\index{Definitionszeile}n: Das sind alle anderen Zeilen,
 	die nicht mit einem Gittersymbol oder einem Tabulator
@@ -48,12 +48,12 @@ Folgende Kennungen sind definiert:
 [|+|<arg>]
 	variable Argumentliste mit mindestens einem Argument,
 [|/|<regex>|/|<arg>]
-	Argument, das dem \index[regulärer Ausdruck]regulären
+	Argument, das dem \index[regulÃ¤rer Ausdruck]regulÃ¤ren
 	Ausdruck <regex> entspricht.
 
-Der Parameter <arg> wird für die Darstellung der Kommandosyntax
-verwendet. Er wird standardmäßig in kursiv gesetzt, bei regulären
-Ausdrücken wird Schreibmaschinenschrift verwendet.
+Der Parameter <arg> wird fÃ¼r die Darstellung der Kommandosyntax
+verwendet. Er wird standardmÃ¤ÃŸig in kursiv gesetzt, bei regulÃ¤ren
+AusdrÃ¼cken wird Schreibmaschinenschrift verwendet.
 
 Jede Kennung kann einen \index{Vorgabewert} enthalten. Dieser wird in eckigen
 Klammern gesetzt und am Ende der Kennung angegeben.
@@ -74,18 +74,18 @@ Befehlskennungen sind folgend aufgebaut:
 [<=[<name>]~|:|~<func>~[<arg>]=>]
 	Hier handelt es sich um eine allgemeine Befehlskennung.
 	Der Resourcename <name> ist optional, aber das Trennzeichen
-	<"|:|"> muß zwingend vorhanden sein. Das Funktionsargument <arg> ist
+	<"|:|"> muÃŸ zwingend vorhanden sein. Das Funktionsargument <arg> ist
 	durch Leerzeichen oder Tabulatoren vom Funktionsnamen <func>
 	zu trennen.
 
 Beachte den Unterschied zwischen der Zuweisung <"<name> |=| <val>"> und
 der Befehlskennung <"<name>|: set| <val>">.
-Im ersten Fall erhält <name> den Wert von
+Im ersten Fall erhÃ¤lt <name> den Wert von
 <val> ohne, im zweiten Fall mit
 \index{Substitution} von Parameterwerten.
 
 Der \index{Beschreibungstext} nach einer Definitionszeile dient zur
-Erläuterung der einzelnen Befehlszeilen und wird zur Konstruktion
+ErlÃ¤uterung der einzelnen Befehlszeilen und wird zur Konstruktion
 des Handbucheintrages verwendet.
 Folgt ein Beschreibungstext einer Definitionszeile ohne einer Kennung,
 dient er zur Beschreibung der Resourcevariablen des letzten Befehls.
@@ -93,7 +93,7 @@ dient er zur Beschreibung der Resourcevariablen des letzten Befehls.
 Obwohl der Vorgabewert einer Kennung am Ende stehen sollte,
 wird er an jeder beliebigen Position akzeptiert.
 Die Interpretation der Leerzeichen oder der speziellen Trennzeichen
-kann durch Setzen von Anführungszeichen (einfach oder doppelt) oder
+kann durch Setzen von AnfÃ¼hrungszeichen (einfach oder doppelt) oder
 mit dem Backslash als Fluchtsymbol unterbunden werden.
 
 \ssec	Standardoptionen
@@ -104,7 +104,7 @@ geladen wird:
 \include[verbatim] \eval{fsearch(ApplPath, "config/efm.cnf")}
 
 \exercise
-Schreiben sie ein Skript, dass möglichst alle Options- und
+Schreiben sie ein Skript, dass mÃ¶glichst alle Options- und
 Argumentdefinitionen verwendet und die entsprechenden Parameter
 ausgibt. Kombinieren sie mehrere Optionskennungen
 (z.B: Einbuchstabenkennung und langer Optionsname) zur Setzung eines

@@ -1,7 +1,7 @@
 /*
 Applikationsdateien
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -31,17 +31,17 @@ If not, write to the Free Software Foundation, Inc.,
 #define	SUBDIR	"lib/efeu/%L/%S"
 
 /*
-Die Variable |$1| bestimmt den Suchpfad für Applikationsdateien.
+Die Variable |$1| bestimmt den Suchpfad fÃ¼r Applikationsdateien.
 */
 
 char *ApplPath = NULL;
 
 /*
-Die Funktion |$1| initialisiert den Suchpfad |ApplPath| für
+Die Funktion |$1| initialisiert den Suchpfad |ApplPath| fÃ¼r
 Applikationsdateien. Als Parameter wird im Normalfall der
-Verzeichnisname des aufgerufenen Programms übergeben. Falls für <dir>
+Verzeichnisname des aufgerufenen Programms Ã¼bergeben. Falls fÃ¼r <dir>
 ein Nullpointer angegeben wurde und der Suchpfad bereits initialisiert
-wurde, wird er von |$1| nicht verändert.
+wurde, wird er von |$1| nicht verÃ¤ndert.
 */
 
 void SetApplPath (const char *dir)
@@ -55,7 +55,7 @@ void SetApplPath (const char *dir)
 
 /*
 Die Funktion |$1| sucht eine Applikationsdatei vom Type |type|
-und öffnet sie als IO-Struktur. Der Type bestimmt das Teilverzeichnis
+und Ã¶ffnet sie als IO-Struktur. Der Type bestimmt das Teilverzeichnis
 und den Filezusatz.
 
 Folgende Typen sind in |<EFEU/appl.h>| vordefiniert:

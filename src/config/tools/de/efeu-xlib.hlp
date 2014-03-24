@@ -11,7 +11,7 @@ Verzeichnisse aufgelistet.
 
 Zwischen Optionskennung und Optionsargument darf kein Leerzeichen
 stehen. Falls |-L| oder |-I| ohne Argument verwendet wird, wird der
-zugehörige Suchpfad auf |NULL| gesetzt.
+zugehÃ¶rige Suchpfad auf |NULL| gesetzt.
 
 \Example
 Der Befehl
@@ -24,7 +24,7 @@ mit Namen |lib|.
 
 |$! -lncurses -o -lcurses|
 
-Prüft, ob |ncurses| verfügbar ist oder ob |curses| stellvertretend
+PrÃ¼ft, ob |ncurses| verfÃ¼gbar ist oder ob |curses| stellvertretend
 verwendet werden soll.
 
 \SeeAlso

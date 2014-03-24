@@ -1,7 +1,7 @@
 /*
-Fehlermeldungen für efm-Programmbibliothek
+Fehlermeldungen fÃ¼r efm-Programmbibliothek
 
-$Copyright (C) 1999 Erich Frühstück
+$Copyright (C) 1999 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -20,7 +20,7 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-1	$!: Konstanter Datenbuffer kann nicht vergrößert werden.\n
+1	$!: Konstanter Datenbuffer kann nicht vergrÃ¶ÃŸert werden.\n
 2	$!: File $0: Vorzeitiges Fileende beim Lesen eines Vektorfeldes.\n
 3	$!: Dokumentformatierung $1 ist nicht definiert.
 
@@ -32,7 +32,7 @@ If not, write to the Free Software Foundation, Inc.,
 31	$!: Option -$1 - fehlendes Argument.\n
 32	$!: Unbekannte Option -$1.\n
 33	$!: Optionskennung -$1 ist nicht eindeutig:\n\t-$2, -$3, ...\n
-34	$!: Optionskennung $1: Unzulässige Kombination\n
+34	$!: Optionskennung $1: UnzulÃ¤ssige Kombination\n
 
 51	$!: $0: Mehr als ein 'u' in Ganzzahlwert.\n
 52	$!: $0: Mehr als ein 'l' in Ganzzahlwert.\n
@@ -40,5 +40,5 @@ If not, write to the Free Software Foundation, Inc.,
 61	$!: ArgList: Unbekannte Formatanweisung $1.\n
 
 pnoarg	$!: parsub($0): Argument $1 nicht definiert.\n
-pilkey	$!: parsub($0): Unbekannter Formatschlüssel $1.\n
+pilkey	$!: parsub($0): Unbekannter FormatschlÃ¼ssel $1.\n
 imode	$!: info mode $1 not defined.\n

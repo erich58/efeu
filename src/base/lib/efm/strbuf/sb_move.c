@@ -4,7 +4,7 @@ Datenblock im Stringbuffer verschieben
 
 #include <EFEU/strbuf.h>
 
-#define	TSIZE	512	/* Zwischenbuffergrˆﬂe */
+#define	TSIZE	512	/* Zwischenbuffergr√∂√üe */
 
 static size_t do_move (unsigned char *dest, unsigned char *src, size_t size);
 
@@ -12,8 +12,8 @@ static size_t do_move (unsigned char *dest, unsigned char *src, size_t size);
 Die Funktion |$1| verschiebt <length> Byte von der Position <src> zur
 Position <dest> nach vorne. Die Zielposition muss kleiner als die
 Ausgangsposition sein.  Falls <length> den Wert 0 hat, wird alles im
-Zeichenbuffer ab der Position <src> nach <dest> geschoben.  Die Grˆﬂe
-des Buffers wird dabei nicht ver‰ndert.  Die Funktion liefert die Zahl
+Zeichenbuffer ab der Position <src> nach <dest> geschoben.  Die Gr√∂√üe
+des Buffers wird dabei nicht ver√§ndert.  Die Funktion liefert die Zahl
 der verschoben Zeichen.
 */
 

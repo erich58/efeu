@@ -1,7 +1,7 @@
 /*
-Hilfsprogramme für TeX
+Hilfsprogramme fÃ¼r TeX
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -38,7 +38,7 @@ int TeXputs(const char *str, IO *io)
 	return size;
 }
 
-/*	String unter Anführung ausgeben
+/*	String unter AnfÃ¼hrung ausgeben
 */
 
 int TeXquote(const char *str, IO *io)
@@ -113,8 +113,8 @@ int TeXputc(int c, IO *io)
 		break;
 
 	case '\t': case '\n':
-	case 'Ä': case 'Ö': case 'Ü':
-	case 'ä': case 'ö': case 'ü': case 'ß':
+	case 'Ã„': case 'Ã–': case 'Ãœ':
+	case 'Ã¤': case 'Ã¶': case 'Ã¼': case 'ÃŸ':
 
 		io_putc(c, io);
 		break;

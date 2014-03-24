@@ -1,9 +1,9 @@
 \sec	Projektszenario
 
-Das Projektszenario wurde so gewählt, dass sowohl Programmentwicklung
-(klassische Aufgaben für |make|) als auch allgemeine Projektaufgaben
-(meist wenig beachtete Nutzungsmöglichkeiten für |make|) behandelt
-werden können.
+Das Projektszenario wurde so gewÃ¤hlt, dass sowohl Programmentwicklung
+(klassische Aufgaben fÃ¼r |make|) als auch allgemeine Projektaufgaben
+(meist wenig beachtete NutzungsmÃ¶glichkeiten fÃ¼r |make|) behandelt
+werden kÃ¶nnen.
 
 Das Endprodukt ist ein PostScript-Dokument mit dem Bild eines Pascalschen
 Dreiecks. Dabei handelt es sich um eine Tabelle mit
@@ -37,5 +37,5 @@ Arbeitsschritte notwendig:
 *	Kompilieren des Hilfsprogramms;
 *	Erstellen der Tabelle;
 *	Formatieren des Dokuments;
-*	Konvertieren in das gewünschte Ausgabeformat.
+*	Konvertieren in das gewÃ¼nschte Ausgabeformat.
 

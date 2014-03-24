@@ -1,7 +1,7 @@
 /*
 Suchen eines Bereichs in einem Vektor
 
-$Copyright (C) 2011 Erich Frühstück
+$Copyright (C) 2011 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -23,14 +23,14 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/vecbuf.h>
 
 /*
-Die Funktion |$1| dient zum suchen von Einträgen
+Die Funktion |$1| dient zum suchen von EintrÃ¤gen
 in einem sortierten Vektor. Die Funktion liefert die
-Startposition des Vektors und die Position des nächsten Elements.
+Startposition des Vektors und die Position des nÃ¤chsten Elements.
 
 Die Vergleichsfunktion <comp> wird mit zwei Pointern
-auf Datenelemente aufgerufen und muß einen Wert
-kleiner, gleich oder größer 0 liefern, je nachdem ob
-der erste Datenwert kleiner, gleich oder größer als der zweite
+auf Datenelemente aufgerufen und muÃŸ einen Wert
+kleiner, gleich oder grÃ¶ÃŸer 0 liefern, je nachdem ob
+der erste Datenwert kleiner, gleich oder grÃ¶ÃŸer als der zweite
 Datenwert ist.
 */
 

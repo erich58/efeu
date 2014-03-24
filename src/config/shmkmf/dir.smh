@@ -1,10 +1,10 @@
 # :*:rules for directories
-# :de:Regeln für Verzeichnisse
+# :de:Regeln fÃ¼r Verzeichnisse
 #
 # $Synopsis
 # <=[=> include $1 <=]=>
 #
-# $Copyright (C) 2004 Erich Frühstück
+# $Copyright (C) 2004 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -29,42 +29,42 @@ _dir_smh=1
 # $pconfig !
 # q |
 #	:*:supresses echoing for the following directory rules.
-#	:de:unterdrückt das Echo von Befehlsaufrufen für nachfolgende
+#	:de:unterdrÃ¼ckt das Echo von Befehlsaufrufen fÃ¼r nachfolgende
 #	Verzeichnisregeln.
 # v |
 #	:*:activates echoing for the following directory rules.
-#	:de:aktiviert das Echo von Befehlsaufrufen für nachfolgende
+#	:de:aktiviert das Echo von Befehlsaufrufen fÃ¼r nachfolgende
 #	Verzeichnisregeln.
 # c |
 #	:*:creates additional cleaning rules for the following directories
 #	with phony target |$$CleanTarget|.
-#	:de:erzeugt zusätzliche Aufräumregeln für die nachfolgenden
+#	:de:erzeugt zusÃ¤tzliche AufrÃ¤umregeln fÃ¼r die nachfolgenden
 #	Verzeichnisse unter Verwendung des Scheinzieles |$$CleanTarget|.
 # C:name |
 #	:*:creates additional cleaning rules for the following directories
 #	with phony target <name>.
-#	:de:erzeugt zusätzliche Aufräumregeln für die nachfolgenden
+#	:de:erzeugt zusÃ¤tzliche AufrÃ¤umregeln fÃ¼r die nachfolgenden
 #	Verzeichnisse unter Verwendung des Scheinzieles <name>.
 # p |
 #	:*:do not create create cleaning rules for the following directories.
-#	:de:erzeugt keine Aufräumregeln für die nachfolgenden Verzeichnisse.
+#	:de:erzeugt keine AufrÃ¤umregeln fÃ¼r die nachfolgenden Verzeichnisse.
 # a |
 #	:*:sets the name of the phony target to create directories to
 #	|$$AllTarget|.
-#	:de:Setzt den Namen des Scheinzeils für Verzeichnisse auf |$$AllTarget|.
+#	:de:Setzt den Namen des Scheinzeils fÃ¼r Verzeichnisse auf |$$AllTarget|.
 # A:name |
 #	:*:sets the name of the phony target to create directories to
 #	<name>.
-#	:de:Setzt den Namen des Scheinzeils für Verzeichnisse auf <name>.
+#	:de:Setzt den Namen des Scheinzeils fÃ¼r Verzeichnisse auf <name>.
 # x |
-#	:de:Falls eine make-Variable für das Verzeichnis angegeben wurde,
-#	wird eine zusätzlich Shell-Variable gleichen Namens eingerichtet.
+#	:de:Falls eine make-Variable fÃ¼r das Verzeichnis angegeben wurde,
+#	wird eine zusÃ¤tzlich Shell-Variable gleichen Namens eingerichtet.
 #	Vergleiche dazu \mref\{var.smh(3)}.
 # :dir |
 #	:*:name of a directory
-#	:de:Regel für Verzeichnis <dir> einrichten.
+#	:de:Regel fÃ¼r Verzeichnis <dir> einrichten.
 # //<name>=<dir> |
-#	:de:richtet für das Verzeichnis <dir> zusätzlich eine make-Variable
+#	:de:richtet fÃ¼r das Verzeichnis <dir> zusÃ¤tzlich eine make-Variable
 #	mit Namen <name> ein.
 # !
 # :*:
@@ -76,11 +76,11 @@ _dir_smh=1
 # This does not effect the output of a variable assignment.
 # :de:
 # Die Funktion $! generiert Regeln zum Einrichten von Verzeichnissen.
-# Es können beliebig viele Verzeichnisse angegeben werden.
+# Es kÃ¶nnen beliebig viele Verzeichnisse angegeben werden.
 # Die Verzeichnisse werden entweder in der Form <dir> oder <name>|=|<dir>
-# angegeben. Im zweiten Fall wird zusätzlich eine |make|-Variable für das
+# angegeben. Im zweiten Fall wird zusÃ¤tzlich eine |make|-Variable fÃ¼r das
 # Verzeichnis angelegt.
-# Für das aktuelle Verzeichnis <"."> wird keine Regel generiert.
+# FÃ¼r das aktuelle Verzeichnis <"."> wird keine Regel generiert.
 # Eine Variablendefinition wird aber immer ausgegeben.
 #
 # :*:
@@ -97,11 +97,11 @@ _dir_smh=1
 # Die Funktion $! verwendet eine Doppel-Colon Regel zur Bereitstellung
 # der Verzeichnisse. Dadurch kann ein Verzeichnis mehr als einmal
 # angegeben werden und erlaubt die implizite Bereitstellung der
-# Verzeichnisse wann immer es nötig ist.
+# Verzeichnisse wann immer es nÃ¶tig ist.
 # Von Nachteil ist, dass der Befehl zur Bereitstellung mehr als einmal
-# und auch wenn das Verzeichnis bereits existiert ausgeführt wird.
-# Daher wird |test| zur Überprüfung der Existenz des Verzeichnisses
-# eingesetzt und das Echo für das Kommando kann abgestellt werden.
+# und auch wenn das Verzeichnis bereits existiert ausgefÃ¼hrt wird.
+# Daher wird |test| zur ÃœberprÃ¼fung der Existenz des Verzeichnisses
+# eingesetzt und das Echo fÃ¼r das Kommando kann abgestellt werden.
 # Vergleiche dazu untenstehende Beispiele.
 #
 # :*:
@@ -109,17 +109,17 @@ _dir_smh=1
 # Makefile to get sure, that all cleaning rules for installed files
 # are processesed first.
 # :de:
-# Die Aufräumregeln für Verzeichnisse werden mithilfe von |postpone| ans
+# Die AufrÃ¤umregeln fÃ¼r Verzeichnisse werden mithilfe von |postpone| ans
 # Ende des Makefiles gestellt. Damit wird sichergestellt, dass alle
-# nachfolgenden Aufräumregeln zur Installation von Dateien zuerst
-# ausgeführt werden.
+# nachfolgenden AufrÃ¤umregeln zur Installation von Dateien zuerst
+# ausgefÃ¼hrt werden.
 #
 # :*:
 # The following options are switches, which may intermixed with
 # directory names. They have the following meaning:
 # :de:
 # Bei den Optionen handelt es sich um Schalter, die beliebig mit
-# Verzeichnisnamen kombiniert werden können. Sie haben folgende Bedeutung:
+# Verzeichnisnamen kombiniert werden kÃ¶nnen. Sie haben folgende Bedeutung:
 #
 # @options
 #

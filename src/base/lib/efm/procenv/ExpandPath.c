@@ -1,7 +1,7 @@
 /*
 Pfadnamen expandieren
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -30,9 +30,9 @@ If not, write to the Free Software Foundation, Inc.,
 #endif
 
 /*
-Die Funktion |$1| führt Tilde-expansion an einem Pfadnamen durch.
+Die Funktion |$1| fÃ¼hrt Tilde-expansion an einem Pfadnamen durch.
 Eine Tilde |~| gefolgt von einem Benutzernamen (1. Zeichen ein Buchstabe,
-danach beliebige Zeichen bis zu einem Schrägstrich |/|)
+danach beliebige Zeichen bis zu einem SchrÃ¤gstrich |/|)
 wird durch das HOME-Verzeichnis des Benutzers ersetzt.
 Eine Tilde vor einem nichtalphabetischen Zeichen wurd durch den Wert
 der Umgebungsvariablen |HOME| ersetzt.

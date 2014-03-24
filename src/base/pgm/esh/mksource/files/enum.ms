@@ -1,8 +1,8 @@
 /*
-Konstruktion einer Aufzählungsdefinition
+Konstruktion einer AufzÃ¤hlungsdefinition
 
 $Header	<$1>
-$Copyright (C) 1998 Erich Frühstück
+$Copyright (C) 1998 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -28,21 +28,21 @@ If not, write to the Free Software Foundation, Inc.,
 
 /*
 $Description
-Eine Aufzählungsdefinition erlaubt die Konvertierung von
-Schlüsselwörtern in einen Indexwert.
+Eine AufzÃ¤hlungsdefinition erlaubt die Konvertierung von
+SchlÃ¼sselwÃ¶rtern in einen Indexwert.
 Die folgenden Funktionen werden definiert:
 
 \ttitem	unsigned <enum>Index (const char *<key>);
-	liefert den Index der Aufzählung mit Kennung <key>.
+	liefert den Index der AufzÃ¤hlung mit Kennung <key>.
 \ttitem	char *<enum>Label (unsigned <index>);
-	liefert den Namen der Aufzählung mit Index <index>.
+	liefert den Namen der AufzÃ¤hlung mit Index <index>.
 \ttitem	char *<enum>Desc (unsigned <index>);
-	liefert die Beschreibung der Aufzählung mit Index <index>.
+	liefert die Beschreibung der AufzÃ¤hlung mit Index <index>.
 \ttitem	<enum>Dim
-	ist ein Makro mit der Zahl der Ausprägungen.
+	ist ein Makro mit der Zahl der AusprÃ¤gungen.
 
-Bei nicht definierten Argumenten (Index außerhalb des zulässigen Bereichs,
-unbekannter Schlüssel) wird immer die erste Aufzählungsdefinition verwendet.
+Bei nicht definierten Argumenten (Index auÃŸerhalb des zulÃ¤ssigen Bereichs,
+unbekannter SchlÃ¼ssel) wird immer die erste AufzÃ¤hlungsdefinition verwendet.
 */
 
 static void Enum_macro (IO io, str ename, str name, int n, str desc)
@@ -59,25 +59,25 @@ static void Enum_macro (IO io, str ename, str name, int n, str desc)
 }
 
 /*
-Die Funktion |$1| generiert eine Aufzählungsdefinition
+Die Funktion |$1| generiert eine AufzÃ¤hlungsdefinition
 mit dem Namen <ename>. Falls Flag <glob> wahr ist,
-wird die Auszählungsdefinition global, ansonsten lokal generiert.
+wird die AuszÃ¤hlungsdefinition global, ansonsten lokal generiert.
 
-Die IO-Struktur <def> enthält Definitionszeilen der Form:
+Die IO-Struktur <def> enthÃ¤lt Definitionszeilen der Form:
 	<key> <desc>
 
-wobei <key> ein Aufzählungsschlüssel und <desc> der zugehörige
-Beschreibungstext ist. Die einzelnen Einträge werden beginned bei 0
+wobei <key> ein AufzÃ¤hlungsschlÃ¼ssel und <desc> der zugehÃ¶rige
+Beschreibungstext ist. Die einzelnen EintrÃ¤ge werden beginned bei 0
 durchnummeriert.
 
-Falls <key> ein gültiger C-Name ist,
+Falls <key> ein gÃ¼ltiger C-Name ist,
 wird eine Makro mit dem Namen <ename>|_|<key>
 und der Laufnummer als Wert konstruiert.
 
-Einem Schlüssel können beliebig viele Kennungen der Form |[|<name>|]|
-vorangestellt werden. Für jede dieser Kennungen wird ein Makro mit
-der aktuellen Laufnummer generiert. Damit lassen sich Makros für
-nichtnumerische Aufzählungsschlüssel definieren.
+Einem SchlÃ¼ssel kÃ¶nnen beliebig viele Kennungen der Form |[|<name>|]|
+vorangestellt werden. FÃ¼r jede dieser Kennungen wird ein Makro mit
+der aktuellen Laufnummer generiert. Damit lassen sich Makros fÃ¼r
+nichtnumerische AufzÃ¤hlungsschlÃ¼ssel definieren.
 */
 
 void Enum(str ename, str label, IO def, bool glob = true)
@@ -115,7 +115,7 @@ void Enum(str ename, str label, IO def, bool glob = true)
 	if	(n == 0)
 		fprintf(src, "\t{ %#s, %#s },\n", NULL, "Dummyeintrag");
 
-	fprintf(io, "\n#define\t%sDim\t%d\t/* Zahl der Ausprägungen */\n\n",
+	fprintf(io, "\n#define\t%sDim\t%d\t/* Zahl der AusprÃ¤gungen */\n\n",
 		ename, n);
 
 	src << "};\n";
@@ -140,7 +140,7 @@ void Enum(str ename, str label, IO def, bool glob = true)
 
 /*
 $Example
-Im nachfolgenden Beispiel wird eine Aufzählungsstruktur für
+Im nachfolgenden Beispiel wird eine AufzÃ¤hlungsstruktur fÃ¼r
 das Geschlecht generiert.
 
 \ms_example
@@ -153,7 +153,7 @@ Include(src, HeaderName);
 
 Enum("Geschl", "Geschlecht", string !
 [X]-	Unbekannt
-M	Männer
+M	MÃ¤nner
 W	Frauen
 !);
 \end

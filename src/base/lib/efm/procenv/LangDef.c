@@ -1,7 +1,7 @@
 /*
 Sprachumgebung
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -26,13 +26,13 @@ If not, write to the Free Software Foundation, Inc.,
 #include <ctype.h>
 
 /*
-Die Variable |$1| enthält Informationen über die aktuelle Sprachumgebung.
+Die Variable |$1| enthÃ¤lt Informationen Ã¼ber die aktuelle Sprachumgebung.
 [|LangDef.langdef|]
-	enthält den Originalstring für die Sprachdefinition,
+	enthÃ¤lt den Originalstring fÃ¼r die Sprachdefinition,
 [|LangDef.language|]
-	enthält den ISO 639 Sprachcode,
+	enthÃ¤lt den ISO 639 Sprachcode,
 [|LangDef.territory|]
-	enthält den ISO 3166 Ländercode.
+	enthÃ¤lt den ISO 3166 LÃ¤ndercode.
 */
 
 LangDefType LangDef = { NULL, NULL, NULL };
@@ -93,11 +93,11 @@ static void lt_set (LangDefType *lt, const char *name)
 /*
 Die Funktion |$1| initialisiert die Komponenten der globalen Variablen
 |LangDef| entsprechend der Sprachdefinition <lang>.
-Falls ein Nullpointer übergeben wurde und |LangDef| noch nicht
+Falls ein Nullpointer Ã¼bergeben wurde und |LangDef| noch nicht
 initialisiert wurde, wird die Umgebungsvariable |LANG| zur
 Sprachdefinition abgefragt.
 Aus der Sprachdefinition werden nur die Komponenten Sprache
-und Ländercode extrahiert.
+und LÃ¤ndercode extrahiert.
 */
 
 void SetLangDef (const char *name)

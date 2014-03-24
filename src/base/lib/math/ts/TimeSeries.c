@@ -2,7 +2,7 @@
 :de:reference type for time series
 :de:Referenztype der Zeitreihenstruktur
 
-$Copyright (C) 1997 Erich Frühstück
+$Copyright (C) 1997 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -122,14 +122,14 @@ void ts_sync (TimeSeries *ts, TimeIndex base, size_t dim, int offset)
 
 	end = base.value + dim;
 
-/*	Zeitreihe oben kürzen
+/*	Zeitreihe oben kÃ¼rzen
 */
 	if	(end < ts->base.value)
 		ts->dim = 0;
 	else if	(end < tsend)
 		ts->dim = end - ts->base.value;
 
-/*	Zeitreihe unten kürzen
+/*	Zeitreihe unten kÃ¼rzen
 */
 	if	(tsend < base.value)
 	{

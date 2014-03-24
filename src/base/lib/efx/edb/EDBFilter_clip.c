@@ -1,6 +1,6 @@
 /*	clip - filter
 
-$Copyright (C) 2005 Erich Frühstück
+$Copyright (C) 2005 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -93,5 +93,5 @@ static EDB *fdef_clip (EDBFilter *filter, EDB *base,
 EDBFilter EDBFilter_clip = EDB_FILTER(NULL,
 	"clip", "=skip,count", fdef_clip, NULL,
 	":*:clips out a part of the database"
-	":de:Datenbank auf Bereich einschränken"
+	":de:Datenbank auf Bereich einschrÃ¤nken"
 );

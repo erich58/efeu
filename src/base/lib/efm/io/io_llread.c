@@ -1,7 +1,7 @@
 /*
 Kompakte Ein- Ausgabe von 64-Bit Ganzzahlvektoren
 
-$Copyright (C) 2006 Erich Frühstück
+$Copyright (C) 2006 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -27,13 +27,13 @@ If not, write to the Free Software Foundation, Inc.,
 $Description
 
 Die kompakte Darstellung von 64-Bit Ganzzahlwerten erlaubt eine dichte
-Darstellung von Datenwerten unterschiedlicher Größenordnung.
+Darstellung von Datenwerten unterschiedlicher GrÃ¶ÃŸenordnung.
 Bei der Darstellung wird ein Bit als Fortsetzungsflag verwendet.
 Damit werden zur Darstellung von 64-Bit Ganzzahlwerten bis zu
-9 Byte benötigt (8 Byte mit je 1 Fortsetzungsbit und 7 Datenbits sowie
+9 Byte benÃ¶tigt (8 Byte mit je 1 Fortsetzungsbit und 7 Datenbits sowie
 1 zusatzliches Byte mit 8 Datenbits).
 
-Bei vorzeichenbehafteten Ganzzahlwerten enthält das erste Datenbyte
+Bei vorzeichenbehafteten Ganzzahlwerten enthÃ¤lt das erste Datenbyte
 ein Vorzeichenflag. Der Absolutwert wird gepackt dargestellt.
 Die Zahl 0x8000000000000000 wird als "negative null" dargestellt.
 
@@ -59,8 +59,8 @@ Die folgende Tabelle zeigt beispielhaft die Umkodierung:
 
 #define	BIT_CONT	0x80	/* Fortsetzungsbit */
 #define	BIT_SIG		0x40	/* Vorzeichenbit */
-#define	MASK_6		0x3f	/* Maske für 6 Datenbits */
-#define	MASK_7		0x7f	/* Maske für 7 Datenbits */
+#define	MASK_6		0x3f	/* Maske fÃ¼r 6 Datenbits */
+#define	MASK_7		0x7f	/* Maske fÃ¼r 7 Datenbits */
 
 static int vput_residual (uint64_t val, IO *io)
 {

@@ -2,7 +2,7 @@
 :*:access to Tcl variables
 :de:Zugriff auf Tcl-Variablen
 
-$Copyright (C) 2002 Erich Frühstück
+$Copyright (C) 2002 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -196,7 +196,7 @@ Tcl variable <name>. If the variable <name> was not used, the type
 is |str| otherwise it depends on the curent assignment of <name>.
 :de:Die Funktion |$1| liefert ein L-Wert Objekt der Tcl-Variable <name>.
 Falls die Variable noch nicht verwendet wurde hat sie den Type |str|,
-ansonsten hängt der Typ von der aktuellen Belegung der Variablen ab.
+ansonsten hÃ¤ngt der Typ von der aktuellen Belegung der Variablen ab.
 */
 
 EfiObj *ETK_var (ETK *etk, const char *name)

@@ -1,44 +1,44 @@
 \sec	Einbinden von Dateien
 
-Mit dem Befehl \index{|\include|} können Dateien eingebunden werden.
+Mit dem Befehl \index{|\include|} kÃ¶nnen Dateien eingebunden werden.
 Er hat die Syntax:
 	|\include[|<flags>|]| <name>
 
-Die Datei <name> wird entsprechend dem Suchpfad für Dokumente
-gesucht. Einthält <name> einem Schrägstrich~|/|, wird während der
+Die Datei <name> wird entsprechend dem Suchpfad fÃ¼r Dokumente
+gesucht. EinthÃ¤lt <name> einem SchrÃ¤gstrich~|/|, wird wÃ¤hrend der
 Verarbeitung der Suchpfad um den Bibliotheksnamen der Datei
 erweitert.
 
 Die Steuerflags <flags> bestimmen die Verarbeitung der Datei.
-Folgende Angaben sind möglich:
+Folgende Angaben sind mÃ¶glich:
 [|config|]
 	Die Datei wird als Konfigurationsdatei geladen.
 	Es kann nicht mit anderen Flags kombiniert werden.
 [|eval|]
-	Die Datei wird mit zunächst mit dem esh-Interpreter ausgewertet.
+	Die Datei wird mit zunÃ¤chst mit dem esh-Interpreter ausgewertet.
 [|geval|]
 	Wie |eval|, aber neue Variablen und Funktionen werden global
 	eingerichtet.
 [|verbatim|]
-	Der Inhalt wird wortwörtlich in Schreibmaschinenschrift
-	dargestellt und (abhängig von Layouteinstellungen) grau hinterlegt.
+	Der Inhalt wird wortwÃ¶rtlich in Schreibmaschinenschrift
+	dargestellt und (abhÃ¤ngig von Layouteinstellungen) grau hinterlegt.
 [|fold|[|=|<cols>]]
 	Ist eine Variante zu |verbatim|, wobei lange Zeilen automatisch
 	umgebrochen werden. Die Umbruchposition kann optional als Parameter
-	übergeben werden, die Vorgabe ist 80. Umbruchstellen werden mit einem
+	Ã¼bergeben werden, die Vorgabe ist 80. Umbruchstellen werden mit einem
 	Backslash vor dem Zeilenumbruch markiert.
 [|code|]
 	Der Inhalt wird in Schreibmaschinenschrift
-	dargestellt, Attributwechsel sind möglich.
+	dargestellt, Attributwechsel sind mÃ¶glich.
 [|latex|]
-	Die Datei enthält \LaTeX;-Code und wird nur Verarbeitet, wenn
-	der Ausgabetreiber dies unterstützt.
+	Die Datei enthÃ¤lt \LaTeX;-Code und wird nur Verarbeitet, wenn
+	der Ausgabetreiber dies unterstÃ¼tzt.
 [|html|]
-	Die Datei enthält HTML-Code und wird nur Verarbeitet, wenn der
-	Ausgabetreiber dies unterstützt.
+	Die Datei enthÃ¤lt HTML-Code und wird nur Verarbeitet, wenn der
+	Ausgabetreiber dies unterstÃ¼tzt.
 [|man|]
-	Die Datei enthält |troff|-Code für Handbucheinträge und wird nur
-	Verarbeitet, wenn der Ausgabetreiber dies unterstützt.
+	Die Datei enthÃ¤lt |troff|-Code fÃ¼r HandbucheintrÃ¤ge und wird nur
+	Verarbeitet, wenn der Ausgabetreiber dies unterstÃ¼tzt.
 [|ignore|]
 	Der Inhalt der Datei wird ignoriert. Die Verwendung ist nur in
 	Kombination mit anderen Steuerflags sinnvoll.
@@ -61,16 +61,16 @@ Beispiel: der Befehl
 wertet die Datei mit den esh-Interpreter aus, schickt das Ergebnis
 an das Kommando |gnuplot| und interpretiert das Resultat als
 \LaTeX-Befehle. Falls der Ausgabetrieber diese nicht verarbeiten kann,
-werden die Befehle wortwörtlich dargestellt.
+werden die Befehle wortwÃ¶rtlich dargestellt.
 
 Anstelle einer Datei kann auch die Ausgabe eines Kommandos
 mithilfe des \index{|\pipe|}-Befehls
 eingebunden werden.
 Er hat die Syntax:
 	|\pipe[|<flags>|]| <cmdline>
-Für <flags> gelten die gleichen Regeln wie beim |\include|-Befehl.
-Zu beachten ist, dass bei der Interpretation von <cmdline> die üblichen
-Regeln für den normalen Textfluß gelten. Bei Sonderzeichen empfiehlt es sich,
+FÃ¼r <flags> gelten die gleichen Regeln wie beim |\include|-Befehl.
+Zu beachten ist, dass bei der Interpretation von <cmdline> die Ã¼blichen
+Regeln fÃ¼r den normalen TextfluÃŸ gelten. Bei Sonderzeichen empfiehlt es sich,
 die Befehlsanweisung mit dem Pipe-Symbol zu klammern.
 
 Beispiel: Die Anweisung
@@ -89,9 +89,9 @@ Die genaue Syntax lautet:
 	<Eingabebereich>\br
 	|----| <Kommentar>\br
 
-wobei für <flags> wieder die gleichen Regeln wie beim |\include|-Befehl gelten.
+wobei fÃ¼r <flags> wieder die gleichen Regeln wie beim |\include|-Befehl gelten.
 
-Eingabebereiche werden sehr häufig zum Auswerten von esh-Sequenzen
+Eingabebereiche werden sehr hÃ¤ufig zum Auswerten von esh-Sequenzen
 als Alternative zum |\eval|-Befehl verwendet.
 
 Die in diesem Abschnitt dargestellten Beispielcodes wurden mihilfe eines

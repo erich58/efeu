@@ -1,6 +1,6 @@
 /*	tee - filter
 
-$Copyright (C) 2004 Erich Frühstück
+$Copyright (C) 2004 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -48,5 +48,5 @@ static EDB *tee_create (EDBFilter *filter, EDB *base,
 EDBFilter EDBFilter_tee = EDB_FILTER(NULL,
 	"tee", "[mode]=path", tee_create, NULL,
 	":*:copy records and write into file"
-	":de:Datensätze in Datei mitprotokollieren"
+	":de:DatensÃ¤tze in Datei mitprotokollieren"
 );

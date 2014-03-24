@@ -1,7 +1,7 @@
 /*
 Kommandoparameter in Datei sichern
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -225,13 +225,13 @@ static int regex_arg(CmdPar *par, CmdParKey *key,
 /*
 Die Funktion |$1| wertet die Befehlsargumente entsprechend der
 Parameterstruktur |CmdPar| aus. Die Befehlsargumente
-werden abhängig von der Parameterdefinitionen entsprechend
+werden abhÃ¤ngig von der Parameterdefinitionen entsprechend
 modifiziert. Falls <flag> verschieden von 0 ist, wird die
 Optionsabfrage beim ersten Argument, dass nicht mit einer
 Optionskennung beginnt, gestoppt.
 
 Die Funktion |$1| liefert die Zahl der
-verbleibenden Argumente (größer gleich 1), -1 bei einem
+verbleibenden Argumente (grÃ¶ÃŸer gleich 1), -1 bei einem
 Fehler und 0 bei einem Abbruch der Argumentabfrage.
 */
 

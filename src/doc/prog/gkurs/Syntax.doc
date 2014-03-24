@@ -1,24 +1,24 @@
 \sec	Syntaktische Grundlagen
 
-Die Eingabezeilen werden durch einen \index{Präprozessor} gefiltert und können
-Kommentare enthalten. Die \index{Direktiven} (Präprozessorbefehle)
+Die Eingabezeilen werden durch einen \index{PrÃ¤prozessor} gefiltert und kÃ¶nnen
+Kommentare enthalten. Die \index{Direktiven} (PrÃ¤prozessorbefehle)
 werden mit einem Gittersymbol <"\index{|#|}"> eingeleitet und enden
-beim nächsten Zeilenvorschub.
+beim nÃ¤chsten Zeilenvorschub.
 
-Kommentare können wie in C++ Programmen wahlweise
+Kommentare kÃ¶nnen wie in C++ Programmen wahlweise
 durch |/*| ... |*/| oder |//| ... <Zeilenvorschub> gekapselt werden.
 
-\ssec	Ausdrücke
+\ssec	AusdrÃ¼cke
 
-Ausdrücke beginnen entweder mit einem Schlüsselwort oder stellen
-einen Block oder Term dar. Die Schlüsselwörter generieren
+AusdrÃ¼cke beginnen entweder mit einem SchlÃ¼sselwort oder stellen
+einen Block oder Term dar. Die SchlÃ¼sselwÃ¶rter generieren
 Kontrollstrukturen oder spezielle syntaktische Konstruktionen.
-Sie werden später noch detailiert dargestellt.
+Sie werden spÃ¤ter noch detailiert dargestellt.
 
 Ein Block wird mit geschwungenen Klammern |{| ... |}|
-abgegrenzt und besteht aus einer Liste von Ausdrücken.
-Blöcke kommen in der Regel bei Funktionsrumpfen, Schleifen und
-Testblöcken zum Einsatz.
+abgegrenzt und besteht aus einer Liste von AusdrÃ¼cken.
+BlÃ¶cke kommen in der Regel bei Funktionsrumpfen, Schleifen und
+TestblÃ¶cken zum Einsatz.
 
 Ein Ausdruck, der nicht mit einer geschwungenen Klammer beginnt,
 wird als Term gelesen.
@@ -34,68 +34,68 @@ a < 5 || b > 10
 ----
 
 Ein Term wird entweder mit einem Strichpunkt oder einem Zeilenvorschub
-aufgerufen. Wird ein Term der äußersten Ebene mit einem Zeilenvorschub
+aufgerufen. Wird ein Term der Ã¤uÃŸersten Ebene mit einem Zeilenvorschub
 abgeschlossen, wird das Ergebnis des Terms ausgegeben.
 Ergebnisse von Termen, die mit einem Strichpunkt abgeschlossen werden
 oder innerhalb eines Blocks stehen, werden nicht ausgewertet.
 
-Terme der äußersten Ebene werden unmittelbar nach dem Lesen
-ausgewertet. Blöcke werden erst ausgeführt, nachdem sie vollständig
-gelesen wurden. Einzige Ausnahme: Terme, denen das Schlüsselwort
+Terme der Ã¤uÃŸersten Ebene werden unmittelbar nach dem Lesen
+ausgewertet. BlÃ¶cke werden erst ausgefÃ¼hrt, nachdem sie vollstÃ¤ndig
+gelesen wurden. Einzige Ausnahme: Terme, denen das SchlÃ¼sselwort
 |const| oder |static| vorangestellt wird, werden immer sofort nach dem Lesen
-ausgeführt. Die Verwendung von |static| wird bei der Beschreibung der
-Variablen \vref{static} erklärt.
+ausgefÃ¼hrt. Die Verwendung von |static| wird bei der Beschreibung der
+Variablen \vref{static} erklÃ¤rt.
 
 Die automatische Ausgabe von Berechnungsergebnissen
-dient primär der interaktiven Verarbeitung.
+dient primÃ¤r der interaktiven Verarbeitung.
 In Skripts empfiehlt es sich, jeden Term mit einem Strichpunkt
-abzuschließen und Ausgaben über Ausgabefunktionen zu steuern.
+abzuschlieÃŸen und Ausgaben Ã¼ber Ausgabefunktionen zu steuern.
 
-\ssec	Präprozessor
+\ssec	PrÃ¤prozessor
 
-Der verwendete Präprozessor hat eine ähnliche Syntax wie der
-C-Präprozessor. Es gibt jedoch einen wesentlichen Unterschied:
-Der Präprozessor wird nicht zur Vorverarbeitung der gesamten Datei
+Der verwendete PrÃ¤prozessor hat eine Ã¤hnliche Syntax wie der
+C-PrÃ¤prozessor. Es gibt jedoch einen wesentlichen Unterschied:
+Der PrÃ¤prozessor wird nicht zur Vorverarbeitung der gesamten Datei
 verwendet, sondern ist zeilenweise implementiert und arbeitet direkt
-mit dem Befehlsinterpreter zusammen. Insbesonders kann durch verändern
+mit dem Befehlsinterpreter zusammen. Insbesonders kann durch verÃ¤ndern
 von Variablen im Befehlsmodus auch die Verarbeitung nachfolgender
-Präprozessorzeilen beeinflußt werden.
+PrÃ¤prozessorzeilen beeinfluÃŸt werden.
 
 Eine Direktive, bei der nach dem
 Startzeichen <"|#|"> ein Sonderzeichen folgt, wird ebenfalls als
-Kommentarzeile betrachtet. Insbesonders gilt das auch für die
+Kommentarzeile betrachtet. Insbesonders gilt das auch fÃ¼r die
 Zeile:
 	<|#!/efeu/bin/env esh|>
 
-Durch Einfügen dieser Zeile zu Beginn der Datei kann ein Skript
-ausführbar gemacht werden. Diese Eigenschaft des Präprozessors
-sollte ausschließlich für den eben dargestellten Zweck und nicht
-für allgemeine Kommentare verwendet werden.
+Durch EinfÃ¼gen dieser Zeile zu Beginn der Datei kann ein Skript
+ausfÃ¼hrbar gemacht werden. Diese Eigenschaft des PrÃ¤prozessors
+sollte ausschlieÃŸlich fÃ¼r den eben dargestellten Zweck und nicht
+fÃ¼r allgemeine Kommentare verwendet werden.
 
-Die folgenden Präprozessordirektiven können verwendet werden:
+Die folgenden PrÃ¤prozessordirektiven kÃ¶nnen verwendet werden:
 
 [|#include <|<file>|>|]
 	Einbinden der Datei <file>. Die Suche erfolgt in den durch die
 	Variable \index{|IncPath|} definierten Verzeichnissen.
 
 [|#include "|<file>|"|]
-	Wie oben, jedoch zusätzliche Suche im aktuellen Verzeichnis, falls
+	Wie oben, jedoch zusÃ¤tzliche Suche im aktuellen Verzeichnis, falls
 	dieses nicht im Suchpfad enthalten ist.
 
 [|#if|~<expr>]
 	Falls der Ausdruck <expr> logisch wahr liefert,
 	werden die nachfolgenden Zeilen interpretiert,
-	ansonsten übersprungen.
+	ansonsten Ã¼bersprungen.
 
 [|#elif|~<expr>]
 	Falls kein vorangegangener Ausdruck einer |#if| oder |#elif|
 	Anweisung logisch wahr war und <expr> einen logisch wahren
-	Ausdruck liefert, werden die nachfolgenden Statements ausgeführt.
+	Ausdruck liefert, werden die nachfolgenden Statements ausgefÃ¼hrt.
 
 [|#else|]
 	Falls kein vorangegangener Ausdruck einer |#if| oder |#elif|
 	Anweisung logisch wahr war, werden die nachfolgenden Statements
-	ausgeführt.
+	ausgefÃ¼hrt.
 
 [|#endif|]
 	Ende eines Abfrageblockes.
@@ -104,11 +104,11 @@ Die folgenden Präprozessordirektiven können verwendet werden:
 	Definiert einen Makro <name> der durch <repl> ersetzt wird.
 
 [|#define|~<name>(<arglist>)~<repl>]
-	Definiert einen Makro <name> mit Argumenten. Die öffnende Klammer
-	muß unmittelbar nach dem Namen folgen.
+	Definiert einen Makro <name> mit Argumenten. Die Ã¶ffnende Klammer
+	muÃŸ unmittelbar nach dem Namen folgen.
 
 [|#undef|~<name>]
-	Löscht die Definition des Makros <name>
+	LÃ¶scht die Definition des Makros <name>
 
 [|#ifdef|~<name>]
 	Testet, ob der angegebene Makro definiert ist.
@@ -121,10 +121,10 @@ Die folgenden Präprozessordirektiven können verwendet werden:
 
 \ssec	Systemaufrufe
 
-Systemaufrufe können direkt in EFEU-Skripts eingebaut werden.
+Systemaufrufe kÃ¶nnen direkt in EFEU-Skripts eingebaut werden.
 Jede Zeile, die mit einem |!| beginnt, wird als Systemaufruf
 interpretiert. Ausnahmen davon sind nur readline-Kommandos
-im interaktiven Modus. In die Befehlszeile können Parameter
-mit der üblichen Parametersubstitution eingebaut werden
+im interaktiven Modus. In die Befehlszeile kÃ¶nnen Parameter
+mit der Ã¼blichen Parametersubstitution eingebaut werden
 (Vergleiche dazu \mref{parsub}). Alternativ dazu steht die Funktion
-|system()| zur Verfügung.
+|system()| zur VerfÃ¼gung.

@@ -1,6 +1,6 @@
 /*	Introdution to user reference manual, german version
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -21,7 +21,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 \preface
 Dieses Handbuch beschreibt die einzelnen Kommandos von EFEU.
-Die aktuelle Version enthält alle Kommandos, aber die Beschreibungen
+Die aktuelle Version enthÃ¤lt alle Kommandos, aber die Beschreibungen
 sind zum Teil sehr kurz.
 
 Die einzelnen Beschreibungstexte werden von den Kommandos selbst
@@ -29,11 +29,11 @@ mit der Option |--help| generiert. Die Syntax ist damit automatisch
 mit dem Kommando abgestimmt und auf den neuesetem Stand.
 
 Im folgenden sind die wichtigsten Werkzeuge von EFEU
-überblicksartig aufgelistet:
+Ã¼berblicksartig aufgelistet:
 \ttitem	shmkmf
 	generiert ein Makefile aus einer Konfigurationsdatei
 \ttitem	esh
-	ist ein Befehlsinterpreter mit einer Syntax ähnlich zu C/C++.
+	ist ein Befehlsinterpreter mit einer Syntax Ã¤hnlich zu C/C++.
 \ttitem	mksource
 	verwendet den esh Interprerter um C Sourcen zu generieren.
 \ttitem	efeudoc
@@ -41,5 +41,5 @@ Im folgenden sind die wichtigsten Werkzeuge von EFEU
 	(LaTeX, HTML, roff, ...).
 \end
 
-	Erich Frühstück\br
-	Wördern, \thedate
+	Erich FrÃ¼hstÃ¼ck\br
+	WÃ¶rdern, \thedate

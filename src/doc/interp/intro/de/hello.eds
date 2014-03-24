@@ -1,7 +1,7 @@
 \sec	Hello World
 
-Viele Bücher zur Programmentwicklung, insbesonders in der UNIX-Welt
-beginnen mit dem bekanntesten aller Programme, nämlich <"Hello World">.
+Viele BÃ¼cher zur Programmentwicklung, insbesonders in der UNIX-Welt
+beginnen mit dem bekanntesten aller Programme, nÃ¤mlich <"Hello World">.
 
 Sehen wir uns nun die Datei |hello.esh| an, die Esh-Version
 von <"Hello World">.
@@ -12,7 +12,7 @@ Das Skript besteht nur aus einer einzigen Anweisung. Die Funktion
 |printf| dient zur formatierten Ausgabe von Variablen.
 
 Achtung: Der Strichpunkt am Ende der Zeile ist notwendig, da sonst
-der Rückgabewert von |printf| -- die Zahl der ausgegebenen Zeichen --
+der RÃ¼ckgabewert von |printf| -- die Zahl der ausgegebenen Zeichen --
 ebenfalls ausgegeben wird.
 
 Aufgerufen wird das Skript mit
@@ -20,44 +20,44 @@ Aufgerufen wird das Skript mit
 
 wobei der Filezusatz |.esh| weggelassen werden kann.
 
-\ssec	Ausführbarkeit von Skripts
+\ssec	AusfÃ¼hrbarkeit von Skripts
 
-Um ein esh-Skript ausführbar zu machen, benötigt es
+Um ein esh-Skript ausfÃ¼hrbar zu machen, benÃ¶tigt es
 als erste Zeile einen speziellen Eintrag der Form:
 	|#!/|<bindir>|/esh|
 
-der das Betriebssystem darüber informiert, dass das
+der das Betriebssystem darÃ¼ber informiert, dass das
 Skript vom Kommando |esh| interpriert werden soll.
-Für <bindir> muss aber der absolute Pfadname des
+FÃ¼r <bindir> muss aber der absolute Pfadname des
 Installationsverzeichnisses von |esh| angegeben werden.
 Da aber EFEU an den verschiedensten Stellen im System
 installiert sein kann, sind solche Skripts auf andere Rechner
-nicht übertragbar. Daher wird ein Trick angewendet und folgende
-Zeile eingefügt:
+nicht Ã¼bertragbar. Daher wird ein Trick angewendet und folgende
+Zeile eingefÃ¼gt:
 	<|#!/usr/bin/env esh|>
 
 Das Kommando |env| dient eigentlich dazu, ein Kommando in
-veränderter Umgebung ausführen zu lassen. Diese Funktionalität
-wird zwar nicht benötigt, aber es erlaubt den Start des
+verÃ¤nderter Umgebung ausfÃ¼hren zu lassen. Diese FunktionalitÃ¤t
+wird zwar nicht benÃ¶tigt, aber es erlaubt den Start des
 |esh|-Interpreters ohne absolute Pfadangabe.
 
-Damit das Skript auch ausführbar ist, muß noch der Dateimodus mit
-dem Befehl |chmod| geändert werden:
+Damit das Skript auch ausfÃ¼hrbar ist, muÃŸ noch der Dateimodus mit
+dem Befehl |chmod| geÃ¤ndert werden:
 	|chmod a+x hello.esh|
 
-Alternativ dazu können diese Schritte mit dem Hilfsprogramm
-|efeuscript| durchgeführt werden. Es dient zur Installation
+Alternativ dazu kÃ¶nnen diese Schritte mit dem Hilfsprogramm
+|efeuscript| durchgefÃ¼hrt werden. Es dient zur Installation
 eines Skriptfiles und wird in der Regel in Makefiles verwendet.
 Eine genaue Beschreibung des Kommandos findet sich im Anhang.
 
 Ein Esh-Skript wird mit den Optionen |-e -c esh| installiert.
-Falls das Sourcefile den Filezusatz <"|.esh|"> enthält,
+Falls das Sourcefile den Filezusatz <"|.esh|"> enthÃ¤lt,
 sind keine Optionen notwendig, die Einstellungen werden automatisch
 an Hand des Filenamens ermittelt. Das obige Programmbeispiel kann also
 folgend installiert werden:
 	<|efeuscript hello.esh <bindir>/hello|>
 
-Ausführbare Skripts werden meist ohne Namenszusatz installiert.
+AusfÃ¼hrbare Skripts werden meist ohne Namenszusatz installiert.
 
 \exercise
-Schreiben sie eine ausführbare Version des Programms "Hello World".
+Schreiben sie eine ausfÃ¼hrbare Version des Programms "Hello World".

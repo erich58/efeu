@@ -1,7 +1,7 @@
 /*
 Kommandoresourcen
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -32,7 +32,7 @@ If not, write to the Free Software Foundation, Inc.,
 Die Funktion |$1| analysiert die Kommandozeilenargumente <argv>
 und setzt die entsprechenden Resourcen.
 Die abgefragten Optionen und Argumente werden aus dem Vektor <argv>
-gelöscht und <argc> wird entsprechend justiert.
+gelÃ¶scht und <argc> wird entsprechend justiert.
 Der Aufrufname des Kommandos in <argv>|[0]| bleibt erhalten.
 */
 
@@ -94,7 +94,7 @@ void SetVersion (const char *val)
 
 /*
 Die Funktion |$1| sucht die Resource <name> und liefert einen
-Zeiger auf ihren Wert. Wurde |NULL| als Name übergeben, liefert
+Zeiger auf ihren Wert. Wurde |NULL| als Name Ã¼bergeben, liefert
 die Funktion einen Zeiger auf den Basisnamen des Kommandos.
 Ist die Resource <name> nicht definiert, oder ist ihr Wert
 ein NULL-String, liefert die Funktion den Zeiger <defval>.
@@ -107,7 +107,7 @@ char *GetResource (const char *name, const char *defval)
 
 /*
 Die Funktion |$1| sucht die Resource <name> und liefert das
-Ganzzahläquivalent ihres Wertes. Die Konvertierung erfolgt
+GanzzahlÃ¤quivalent ihres Wertes. Die Konvertierung erfolgt
 mit <|strtol(<ptr>, NULL, 0)|>. Ist die Resource <name> nicht definiert,
 oder ist ihr Wert ein NULL-String, liefert die Funktion den Wert <defval>.
 */
@@ -120,15 +120,15 @@ int GetIntResource (const char *name, int defval)
 
 /*
 Die Funktion |$1| sucht die Resource <name> und liefert das
-boolsche Äquivalent ihres Wertes.
+boolsche Ã„quivalent ihres Wertes.
 Ist die Resource <name> nicht definiert,
 oder ist ihr Wert ein NULL-String, liefert die Funktion den Wert 0.
 Beginnt der Wert mit <"t"> oder <"T">, liefert die Funktion 1.
 Beginnt der Wert mit einer Ziffer, liefert die Funktion das logische
-äquivalent dieser Ziffer. Ansonsten liefert die Funktion 0.
+Ã¤quivalent dieser Ziffer. Ansonsten liefert die Funktion 0.
 
-Typische Werte für eine Flagresource sind:
-<"0">, <"f">, <"false"> für 0 und <"1">, <"t">, <"true"> für 1.
+Typische Werte fÃ¼r eine Flagresource sind:
+<"0">, <"f">, <"false"> fÃ¼r 0 und <"1">, <"t">, <"true"> fÃ¼r 1.
 */
 
 int GetFlagResource (const char *name)

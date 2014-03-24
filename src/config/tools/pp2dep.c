@@ -1,8 +1,8 @@
 /*
 :*:	create dependence list from cpp output
-:de:	Abh‰ngigkeitsregeln aus Pr‰prozessorausgabe generieren
+:de:	Abh√§ngigkeitsregeln aus Pr√§prozessorausgabe generieren
 
-$Copyright (C) 1998 Erich Fr¸hst¸ck
+$Copyright (C) 1998 Erich Fr√ºhst√ºck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -27,8 +27,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <stdlib.h>
 #include <unistd.h>
 
-#define	NAME_SIZE	1023	/* Maximall‰nge f¸r Filenamen ohne Abschluﬂ */
-#define	BREAK_COL	70	/* Spaltenpostion f¸r Fortsetzungszeile */
+#define	NAME_SIZE	1023	/* Maximall√§nge f√ºr Filenamen ohne Abschlu√ü */
+#define	BREAK_COL	70	/* Spaltenpostion f√ºr Fortsetzungszeile */
 
 #define	FMT_USAGE	"usage: %s [-l] [-x name] target(s)\n"
 
@@ -254,7 +254,7 @@ int main (int narg, char **arg)
 		}
 	}
 
-/*	Abh‰ngigkeiten laden
+/*	Abh√§ngigkeiten laden
 */
 	arg += optind;
 	narg -= optind;
@@ -300,7 +300,7 @@ int main (int narg, char **arg)
 	putchar(':');
 	pos++;
 
-/*	Abh‰ngigkeiten ausgeben
+/*	Abh√§ngigkeiten ausgeben
 */
 	for (n = 0; n < name_dim; n++)
 	{

@@ -2,7 +2,7 @@
 # :*:create Makefile from Imakefile, cpp version
 # :de:Makefile aus Imakefile generieren
 #
-# $Copyright (C) 1999 Erich Frühstück
+# $Copyright (C) 1999 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -39,13 +39,13 @@
 #	:de:Konfigurationsdatei
 # d:target |
 #	:*:create dependence rule for target
-#	:de:Abhängigkeitsregel für target generieren
+#	:de:AbhÃ¤ngigkeitsregel fÃ¼r target generieren
 # I:dir |
 #	:*:expand include path with dir
 #	:de:Suchpfad um dir erweitern
 # U:name |
 #	:*:delete macro name
-#	:de:Makro name löschen
+#	:de:Makro name lÃ¶schen
 # D:name=val |
 #	:*:define macro name
 #	:de:Makro name definieren
@@ -78,7 +78,7 @@ esac
 # :de:
 # Das Kommando |$!| generiert ein Makefile aus einem Imakefile analog zu
 # xmkmf (X11 development).
-# Diese Version benutzt |cpp| als Präprozessor und |ppfilter| als
+# Diese Version benutzt |cpp| als PrÃ¤prozessor und |ppfilter| als
 # Postfilter.
 # Folgende Optionen und Argumente werden vom Kommando |$!| akzeptiert:
 #
@@ -88,29 +88,29 @@ esac
 # For normal use, |mkmf| is called without arguments.
 # Most of the flags are only used for compatibility checks.
 # :de:
-# Im Normalfall benötigt |mkmf| keine Optionen.
-# Die meisten Flags dienen Kompatiblitätstests.
+# Im Normalfall benÃ¶tigt |mkmf| keine Optionen.
+# Die meisten Flags dienen KompatiblitÃ¤tstests.
 
 # $Description
 # :de:
 # \shead Probleme mit dem C-Preprozessor
-# Die einzelnen Befehlszeilen in Regeln müssen mit einem Tabulator
-# eingerückt sein, dieser darf nicht durch Leerzeichen ersetzt werden.
-# Für C sind aber Tabulatoren und Leerzeichen völlig gleichwertig.
+# Die einzelnen Befehlszeilen in Regeln mÃ¼ssen mit einem Tabulator
+# eingerÃ¼ckt sein, dieser darf nicht durch Leerzeichen ersetzt werden.
+# FÃ¼r C sind aber Tabulatoren und Leerzeichen vÃ¶llig gleichwertig.
 # \par
 # Innerhalb von Makroersetzungen wurden schon jetzt Tabulatoren in
 # Leerzeichen ersetzt. Daher wird in Makrodefinitionen die
 # Zeichenkombinattion |@+| eingesetzt, die von einem nachgeschaltenen
 # Filter in einen Tabulator umgewandelt wird.
 # \par
-# Es gibt aber auch Preprozessoren, die auch Tabulatoren außerhalb von
-# Makrodefinitionen in Leerzeichen umwandeln. Hier müssten auch im
+# Es gibt aber auch Preprozessoren, die auch Tabulatoren auÃŸerhalb von
+# Makrodefinitionen in Leerzeichen umwandeln. Hier mÃ¼ssten auch im
 # Imakefile selbst alle Tabulatoren durch |@+| ersetzt werden.
 # \par
 # Im Zuge der Umstellung des GNU-C Komilers von ISO/IEC 9899:1990 auf
 # ISO/IEC 9800:1999 (ANSI C) wurde die Ausgabe des C-Preprozessors
-# geändert. Ab Version gcc-3.0 werden Tabulatoren in Leerzeichen
-# umgewandelt. Durch Rückgriff auf den traditionellen Preprozesser (K\&R C)
+# geÃ¤ndert. Ab Version gcc-3.0 werden Tabulatoren in Leerzeichen
+# umgewandelt. Durch RÃ¼ckgriff auf den traditionellen Preprozesser (K\&R C)
 # kann dieses Problem vorerst noch abgefangen werden.
 
 # $Notes
@@ -130,7 +130,7 @@ fmt_hdr="$0: insert header %s.\n"
 case $LANG in
 de*)
 	fmt_nodef="$0: Definitionsfile %s nicht lesbar\n"
-	fmt_hdr="$0: Headerdatei %s eingefügt.\n"
+	fmt_hdr="$0: Headerdatei %s eingefÃ¼gt.\n"
 	;;
 esac
 
@@ -284,7 +284,7 @@ echo "#include \"$if\"" >> $tmp
 $CC -I. $flags $stdinc -E $tmp | $filter > $of
 rm -f $tmp
 
-#	Falls das generierte Makefeile eine depend-Regel enthält,
+#	Falls das generierte Makefeile eine depend-Regel enthÃ¤lt,
 #	wird diese aktiviert
 
 if	grep '^depend[ ]*:' $of >/dev/null; then

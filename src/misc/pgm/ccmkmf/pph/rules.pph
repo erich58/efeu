@@ -1,7 +1,7 @@
 /*
-Standardregeln für Makefiles
+Standardregeln fÃ¼r Makefiles
 
-$Copyright (C) 1999 Erich Frühstück
+$Copyright (C) 1999 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -40,7 +40,7 @@ beim Kompilieren generiert.
 $Description
 Die folgenden Headerdateien werden von |rules.pph| automatisch eingebunden:
 [|base.pph|]
-	Basismakros für efeupp
+	Basismakros fÃ¼r efeupp
 [|Name.pph|]
 	Namensmakros
 [|Path.pph|]
@@ -56,9 +56,9 @@ Die folgenden Headerdateien werden von |rules.pph| automatisch eingebunden:
 [|Compile.pph|]
 	Kompilierungsregeln
 [|Lib.pph|]
-	Regeln für Programmbibliotheken
+	Regeln fÃ¼r Programmbibliotheken
 [|Manual.pph|]
-	Regeln für Handbucheinträge
+	Regeln fÃ¼r HandbucheintrÃ¤ge
 $SeeAlso
 \mref{make(1)}, \mref{mkmf(1)}.\br
 \mref{base(7)},
@@ -87,16 +87,16 @@ $SeeAlso
 /*
 Der Makro |$1|
 generiert eine einfache Makefileregel. <Name> ist
-der Name der Zieldatei, <dep> ist die Liste der Abhängigkeiten
+der Name der Zieldatei, <dep> ist die Liste der AbhÃ¤ngigkeiten
 und <cmd> ist die Befehlszeile.
 */
 #define	SimpleRule(name,dep,cmd)	@;name: dep@;@+cmd @;
 
 /*
 Der Makro |$1|
-nimmt zusätzlich <name> in die Abhängigkeitsliste
+nimmt zusÃ¤tzlich <name> in die AbhÃ¤ngigkeitsliste
 des Pseudoziels |all| auf. Weiters wird <name> in die
-Aufräumliste des Pseudoziels |clean| eingetragen.
+AufrÃ¤umliste des Pseudoziels |clean| eingetragen.
 */
 #define	AllTargetRule(name,dep,cmd) \
 @;AllTarget(name) \

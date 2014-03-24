@@ -4,7 +4,7 @@
 
 $Name a37l, l37a
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -47,7 +47,7 @@ unsigned a37l (const char *s)
 		case '7':		x +=  8; break;
 		case '8':		x +=  9; break;
 		case '9':		x += 10; break;
-		case 'Ä': case 'ä':	
+		case 'Ã„': case 'Ã¤':	
 		case 'A': case 'a':	x += 11; break;
 		case 'B': case 'b':	x += 12; break;
 		case 'C': case 'c':	x += 13; break;
@@ -62,15 +62,15 @@ unsigned a37l (const char *s)
 		case 'L': case 'l':	x += 22; break;
 		case 'M': case 'm':	x += 23; break;
 		case 'N': case 'n':	x += 24; break;
-		case 'Ö': case 'ö':	
+		case 'Ã–': case 'Ã¶':	
 		case 'O': case 'o':	x += 25; break;
 		case 'P': case 'p':	x += 26; break;
 		case 'Q': case 'q':	x += 27; break;
 		case 'R': case 'r':	x += 28; break;
-		case 'ß':
+		case 'ÃŸ':
 		case 'S': case 's':	x += 29; break;
 		case 'T': case 't':	x += 30; break;
-		case 'Ü': case 'ü':	
+		case 'Ãœ': case 'Ã¼':	
 		case 'U': case 'u':	x += 31; break;
 		case 'V': case 'v':	x += 32; break;
 		case 'W': case 'w':	x += 33; break;
@@ -91,8 +91,8 @@ static char buf[8];	/* Statischer Buffer */
 $Notes
 :*:The value returned by |$1| is a pointer into a static buffer,
 the contents of wich are overwriten by each call.
-:de:Der Rückgabewert von |$1| ist ein Pointer auf einen statischen Buffer,
-der bei jedem Aufruf überschrieben wird.
+:de:Der RÃ¼ckgabewert von |$1| ist ein Pointer auf einen statischen Buffer,
+der bei jedem Aufruf Ã¼berschrieben wird.
 */
 
 char *l37a (unsigned x)

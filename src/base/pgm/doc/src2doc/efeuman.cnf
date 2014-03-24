@@ -1,7 +1,7 @@
 # :*:create documentation from script
 # :de:Dokumentation aus Skriptfile generieren
 
-# $Copyright (C) 2001 Erich Frühstück
+# $Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -23,7 +23,7 @@ desc = ":*:The following options and arguments
 are accepted from command |$!|:
 :de:Folgende Optionen und Argumente werden vom Kommando |$!| akzeptiert:\n"
 	:*:default description body
-	:de:Vorgabe für Beschreibungsrumpf
+	:de:Vorgabe fÃ¼r Beschreibungsrumpf
 LoadConfig = false
 LoadHelp = true
 
@@ -44,7 +44,7 @@ s:src | :setsrc {}
 	:de:Eingabefile
 ::"<=|--help|[|=|<type>]=>" |
 	:*:print usage of script <script>.
-	:de:gibt die Beschreibung für das Script <script> aus.
+	:de:gibt die Beschreibung fÃ¼r das Script <script> aus.
 .version.fmt = "@ident\n\n@version\n\n@copyright\n"
 ::"<=|--version|=>" |
 	:*:show version information.

@@ -1,7 +1,7 @@
 /*
 latin-9 Ausgabekonvertierung
 
-$Copyright (C) 2009 Erich Frühstück
+$Copyright (C) 2009 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -48,7 +48,7 @@ static void latin9_flush (IO *out)
 
 	if	(!out->nsave)	return;
 
-	if	(out->save_buf[out->nsave]) /* Unvollständig */
+	if	(out->save_buf[out->nsave]) /* UnvollstÃ¤ndig */
 	{
 		for (i = 0; i < out->nsave; i++)
 			io_putc(out->save_buf[i], out->data);

@@ -1,5 +1,5 @@
 # :en: data cube client
-# :de: Datenwürfelclient
+# :de: DatenwÃ¼rfelclient
 ##Depends: .
 
 include efeu.smh

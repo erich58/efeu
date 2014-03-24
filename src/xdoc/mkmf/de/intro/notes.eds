@@ -1,7 +1,7 @@
 \sec	Nachbemerkung
 
-Die hier präsentierte Lösung hat noch einige Schwachstellen. So müssen
+Die hier prÃ¤sentierte LÃ¶sung hat noch einige Schwachstellen. So mÃ¼ssen
 Beispielsweise bei einer Erweiterung der Programmbibliothek um
-zusätzlich Module auch entsprechende Einträge in die
-Konfigurationsdatei geschrieben werden. Im nächsten Kapitel wird
+zusÃ¤tzlich Module auch entsprechende EintrÃ¤ge in die
+Konfigurationsdatei geschrieben werden. Im nÃ¤chsten Kapitel wird
 ein Konzept vorgestellt, bei dem dies nicht mehr notwendig ist.

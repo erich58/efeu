@@ -1,8 +1,8 @@
-/*	Hilfsprogramme zum öffnen von Files
+/*	Hilfsprogramme zum Ã¶ffnen von Files
 :*:	administration of FILE-pointers
 :de:	Administration von FILE-Pointern
 
-$Copyright (C) 1994, 2001 Erich Frühstück
+$Copyright (C) 1994, 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or

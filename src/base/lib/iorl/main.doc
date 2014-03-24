@@ -1,20 +1,20 @@
 \config	efeu
 \date	Mai 2001
 \title	Die Readline-Schnittstelle
-Handbuch für Programmierer
+Handbuch fÃ¼r Programmierer
 
 \preface
 Die Programmbiliothek |iorl| definiert eine Schnittstelle
-zur Readline-Bibliothek über eine IO-Struktur.
+zur Readline-Bibliothek Ã¼ber eine IO-Struktur.
 
 Die Schnittstelle wird derzeit um die Konfigurierbarkeit
-des Vervollständigunmgsalgorithmus erweitert.
+des VervollstÃ¤ndigunmgsalgorithmus erweitert.
 
-Das Handbuch ist in Arbeit. Der allgemeine Teil muß noch
+Das Handbuch ist in Arbeit. Der allgemeine Teil muÃŸ noch
 geschrieben werden.
 
-	Erich Frühstück\br
-	Wördern, \thedate
+	Erich FrÃ¼hstÃ¼ck\br
+	WÃ¶rdern, \thedate
 \toc
 \addsrclist
 \delsrc		main.doc

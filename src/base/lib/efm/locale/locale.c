@@ -1,7 +1,7 @@
 /*
 Sprachanpassung
 
-$Copyright (C) 1997 Erich Frühstück
+$Copyright (C) 1997 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -27,7 +27,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 /*
 :*:the table |$1| contains locale for value representation
-:de:Der Vektor |$1| enthält Locale zur Wertedarstellung
+:de:Der Vektor |$1| enthÃ¤lt Locale zur Wertedarstellung
 */
 
 LCValueDef LCValue[] = {
@@ -52,12 +52,12 @@ static char *W_en[7] = {
 };
 
 static char *M_de[12] = {
-	"Jannuar", "Februar", "März", "April", "Mai", "Juni", "Juli",
+	"Jannuar", "Februar", "MÃ¤rz", "April", "Mai", "Juni", "Juli",
 	"August", "September", "Oktober", "November", "Dezember"
 };
 
 static char *M_de_AT[12] = {
-	"Jänner", "Februar", "März", "April", "Mai", "Juni", "Juli",
+	"JÃ¤nner", "Februar", "MÃ¤rz", "April", "Mai", "Juni", "Juli",
 	"August", "September", "Oktober", "November", "Dezember"
 };
 
@@ -68,7 +68,7 @@ static char *W_de[7] =	{
 
 /*
 :*:the table |$1| contains locale for data representation
-:de:Der Vektor |$1| enthält Locale zur Datumsdarstellung
+:de:Der Vektor |$1| enthÃ¤lt Locale zur Datumsdarstellung
 */
 
 LCDateDef LCDate[] = {

@@ -2,7 +2,7 @@
 :*:	setting up GtkList widgets
 :de:	GtkList Widgets initialisieren
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -35,7 +35,7 @@ static void f_mode (EfiFunc *func, void *rval, void **arg)
 	gtk_list_set_selection_mode(Val_ptr(arg[0]), Val_int(arg[1]));
 }
 
-/*	Listeneinträge
+/*	ListeneintrÃ¤ge
 */
 
 static void f_item (EfiFunc *func, void *rval, void **arg)
@@ -83,7 +83,7 @@ static EfiFuncDef fdef[] = {
 	{ 0, NULL, "int GtkList::index (GtkListItem child)", f_index },
 };
 
-/*	Signalhändling
+/*	SignalhÃ¤ndling
 */
 
 static EGtkSigDef sig_list[] = {

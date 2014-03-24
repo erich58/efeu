@@ -1,5 +1,5 @@
 /*	Header einer multidimensionale Matrix laden
-	(c) 1994 Erich Frühstück
+	(c) 1994 Erich FrÃ¼hstÃ¼ck
 */
 
 #include <EFEU/mdmat.h>
@@ -165,7 +165,7 @@ mdmat *md_gethdr(IO *io, int flag)
 
 	md->type = mdtype(StrPool_get(md->sbuf, StrPool_next(md->sbuf)));
 
-/*	Kompatiblitätsprüfung
+/*	KompatiblitÃ¤tsprÃ¼fung
 */
 	if	(md->type->recl != recl)
 	{

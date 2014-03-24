@@ -1,7 +1,7 @@
 /*
-Binäre Eingabe von Zahlenwerten in maschinenunabhängiger Form
+BinÃ¤re Eingabe von Zahlenwerten in maschinenunabhÃ¤ngiger Form
 
-$Copyright (C) 1996 Erich Frühstück
+$Copyright (C) 1996 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -25,9 +25,9 @@ If not, write to the Free Software Foundation, Inc.,
 /*
 $Description
 Die Funktionen |get1byte|, |get2byte| und |get4byte|
-erlauben eine binäre Eingabe von Ganzzahlwerten in maschinenunabhängiger
-Form der Längen 1, 2, 3 und 4 Byte.
-Dabei wird davon ausgegangen, daß höhersignifikante Bytes
+erlauben eine binÃ¤re Eingabe von Ganzzahlwerten in maschinenunabhÃ¤ngiger
+Form der LÃ¤ngen 1, 2, 3 und 4 Byte.
+Dabei wird davon ausgegangen, daÃŸ hÃ¶hersignifikante Bytes
 zuerst gespeichert werden. Die Funktionen sind mit den
 Ausgabefunktionen |put1byte|, |put2byte|, |put3byte| und |put4byte|
 kompatibel (Vergleiche dazu \mref{putbyte(3)}).

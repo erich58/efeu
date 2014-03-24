@@ -1,5 +1,5 @@
 /*	Datenwerte in Liste konvertieren, Neue Version
-	(c) 1995 Erich Frühstück
+	(c) 1995 Erich FrÃ¼hstÃ¼ck
 */
 
 #include <EFEU/mdmat.h>
@@ -91,7 +91,7 @@ void MF_data(EfiFunc *func, void *rval, void **arg)
 }
 
 
-/*	Primärschleife für Standardauswertung
+/*	PrimÃ¤rschleife fÃ¼r Standardauswertung
 */
 
 static void stdwalk(EVALPAR *par, int mode, mdaxis *x, char *data, char *base)
@@ -100,7 +100,7 @@ static void stdwalk(EVALPAR *par, int mode, mdaxis *x, char *data, char *base)
 	int i, k;
 	int flag;
 
-/*	Achsen überlesen
+/*	Achsen Ã¼berlesen
 */
 	while (x && (x->flags & MDXFLAG_MARK) != mode)
 		x = x->next;

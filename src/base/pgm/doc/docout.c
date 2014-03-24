@@ -1,7 +1,7 @@
 /*
 Dokumentausgabefilter
 
-$Copyright (C) 1999 Erich Frühstück
+$Copyright (C) 1999 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -90,10 +90,10 @@ static DocType TypeTab[] = {
 		":de:LaTeX-Dokument",
 		DocOut_latex, NULL, NULL },
 	{ "tex2ps", ":*:PostScript over LaTeX"
-		":de:PostScript-Dokument über LaTeX",
+		":de:PostScript-Dokument Ã¼ber LaTeX",
 		DocOut_latex, post_open, "tex2ps -n3 -" },
 	{ "tex2pdf", ":*:PDF over LaTeX"
-		":de:PDF-Dokument über LaTeX",
+		":de:PDF-Dokument Ã¼ber LaTeX",
 		DocOut_latex, post_open, "tex2pdf -n3 -" },
 	{ "man", ":*:man source"
 		":de:Handbuchsource",
@@ -184,7 +184,7 @@ void DocOutInfo (const char *name, const char *desc)
 }
 
 
-/*	Dokumentausgabe öffnen
+/*	Dokumentausgabe Ã¶ffnen
 */
 
 IO *DocFilter (DocType *type, IO *io)

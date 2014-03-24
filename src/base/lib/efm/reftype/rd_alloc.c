@@ -1,8 +1,8 @@
 /*
 :*:dynamic allocatetd memory with reference counter
-:de:Dynamische Speicheranforderung mit Referenzzähler
+:de:Dynamische Speicheranforderung mit ReferenzzÃ¤hler
 
-$Copyright (C) 2006 Erich Frühstück
+$Copyright (C) 2006 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or

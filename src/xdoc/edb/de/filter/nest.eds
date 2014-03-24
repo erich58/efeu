@@ -12,42 +12,42 @@ Die allgemeine Syntax lautet:
 |nest[|<v1>[|[uniq]|]|=|<l1> <v2>[|[uniq]|]|=|<l2> &ldots;|]|
 
 Dabei ist <v1>, <v2> der Name eines Vektors und <l1>, <l2> sind
-Musterlisten zur Variablenselektion. Es können beliebig viele
+Musterlisten zur Variablenselektion. Es kÃ¶nnen beliebig viele
 Vektordefinitionen angegeben werden. Die nicht von einer Musterliste
-selektierten Variablen bilden den Schlüssel für die Verschachtelung.
-Alle Datensätze mit gleichem Schlüssel werden zusammengefasst.
+selektierten Variablen bilden den SchlÃ¼ssel fÃ¼r die Verschachtelung.
+Alle DatensÃ¤tze mit gleichem SchlÃ¼ssel werden zusammengefasst.
 Die Dimension der Vektoren ist gleich der Zahl der zusammengefasssten
-Datensätze. Falls das Flag |uniq| angegeben wurde, werden
+DatensÃ¤tze. Falls das Flag |uniq| angegeben wurde, werden
 aufeinanderfolgende, idente Werte des jeweiligen Vektors auf einen
-Repräsentanten reduziert.
+ReprÃ¤sentanten reduziert.
 
-Der resultierende Datensatz besteht aus den Schlüsselvariablen und den
-Vektoren. Grundsätzlich werden alle Strukturkomponenten entweder dem
-Schlüssel oder einem Vektor zugeordnet. Bei dieser Zuordnung werden
+Der resultierende Datensatz besteht aus den SchlÃ¼sselvariablen und den
+Vektoren. GrundsÃ¤tzlich werden alle Strukturkomponenten entweder dem
+SchlÃ¼ssel oder einem Vektor zugeordnet. Bei dieser Zuordnung werden
 die einzelnen Komponenten der Reihe nach mit den Musterlisten der
 Vektordefinitionen verglichen. Die Reihenfolge der Vektordefinitionen
-ist signifikant. Die erste Übereinstimmung wird genommen.
+ist signifikant. Die erste Ãœbereinstimmung wird genommen.
 
-Die Syntax für die Musterselektion stimmt mit der Musterselektion beim
-|var|-Filter überein, es werden aber keine eckigen Klammern angegeben.
-Weiters können nur Basiskomponenten angesprochen werden.
-Falls Teilkomponenten oder über einen Ausdruck abgeleitete Variablen
-benötigt werden, lässt sich dies über einen vorgeschaltenen
+Die Syntax fÃ¼r die Musterselektion stimmt mit der Musterselektion beim
+|var|-Filter Ã¼berein, es werden aber keine eckigen Klammern angegeben.
+Weiters kÃ¶nnen nur Basiskomponenten angesprochen werden.
+Falls Teilkomponenten oder Ã¼ber einen Ausdruck abgeleitete Variablen
+benÃ¶tigt werden, lÃ¤sst sich dies Ã¼ber einen vorgeschaltenen
 |var|-Filter erreichen.
 
-Wenn für einen Vektor mehr als eine Komponente angegeben wurde, wird
+Wenn fÃ¼r einen Vektor mehr als eine Komponente angegeben wurde, wird
 eine eigene Datenstruktur eingerichtet, ansonsten wird der Typ der
 Komponente verwendet. Die Reihenfolge der Variablen ist festgelegt,
-kann aber mit einem nachgeschalteten |var|-Filter geändert werden.
+kann aber mit einem nachgeschalteten |var|-Filter geÃ¤ndert werden.
 
 Falls nur eine Vektordefinition angegeben wurde, ist das Resultat eine
 sogenannte \index{PNF-Relation} (<Partitioned Normal Form>).
 Diese Teilklasse der
-verschachtelten Relationen lässt sich immer entschachteln und auf eine
-1. Normalform zürckführen.
+verschachtelten Relationen lÃ¤sst sich immer entschachteln und auf eine
+1. Normalform zÃ¼rckfÃ¼hren.
 
 Beispiel: Der Aufruf\note{Der Filter \mref{fold(1)} dient zum
-Umbrechen überlanger Zeilen.}
+Umbrechen Ã¼berlanger Zeilen.}
 
 ---- eval
 {

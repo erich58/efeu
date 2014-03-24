@@ -1,7 +1,7 @@
 /*
 ASCII-Konvertierungsfunktionen
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -25,18 +25,18 @@ If not, write to the Free Software Foundation, Inc.,
 /*
 Die Funktion |$1| ladet einen Datenbanksatz im Textformat
 aus der Eingabestruktzur <io> in den Buffer <buf>. Das Argumnent
-<recl> gibt die Satzlänge an. Der Buffer <buf> muß um mindestens 1 Byte
-größer sein als die Satzlänge <recl>.
+<recl> gibt die SatzlÃ¤nge an. Der Buffer <buf> muÃŸ um mindestens 1 Byte
+grÃ¶ÃŸer sein als die SatzlÃ¤nge <recl>.
 
-Falls die Datensatzzeile länger als die angegebene Satzlänge ist,
-wird der Rest der Zeile ignoriert, falls die Datensatzzeile kürzer
-als die Satzlänge ist, wird der Buffer mit Leerzeichen ergänzt.
-Ein Wagenrücklauf in der Eingabedatei wird ignoriert.
+Falls die Datensatzzeile lÃ¤nger als die angegebene SatzlÃ¤nge ist,
+wird der Rest der Zeile ignoriert, falls die Datensatzzeile kÃ¼rzer
+als die SatzlÃ¤nge ist, wird der Buffer mit Leerzeichen ergÃ¤nzt.
+Ein WagenrÃ¼cklauf in der Eingabedatei wird ignoriert.
 Ein NUL-Zeichen wird durch ein Leerzeichen esrsetzt.
 
 $Diagnostic
 Bei einem Lesefehler oder beim Ende der Datei liefert die Funktion |$1| einen
-Nullpointer. Ansonsten wird die Adresse von <buf> zurückgegeben.
+Nullpointer. Ansonsten wird die Adresse von <buf> zurÃ¼ckgegeben.
 */
 
 char *txt_load (IO *io, char *buf, int recl)

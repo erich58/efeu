@@ -1,7 +1,7 @@
 /*
 Eingabe - Preprozessor
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -27,7 +27,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/MakeDepend.h>
 #include <ctype.h>
 
-#define	BREAK_COL	70	/* Spaltenpostion für Fortsetzungszeile */
+#define	BREAK_COL	70	/* Spaltenpostion fÃ¼r Fortsetzungszeile */
 
 void MakeDependList (IO *io, const char *name)
 {

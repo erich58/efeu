@@ -1,9 +1,9 @@
 /*
-Befehlsausführung
+BefehlsausfÃ¼hrung
 
 $Header <EFEU/$1>
 
-$Copyright (C) 1998 Erich Frühstück
+$Copyright (C) 1998 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -31,7 +31,7 @@ If not, write to the Free Software Foundation, Inc.,
 #define	CmdEval_Normal	0	/* Normale Verarbeitung */
 #define	CmdEval_Cont	1	/* Fortsetzung */
 #define	CmdEval_Break	2	/* Abbruch */
-#define	CmdEval_Return	3	/* Rücksprung */
+#define	CmdEval_Return	3	/* RÃ¼cksprung */
 
 extern EfiObj *CmdEval_retval;
 extern int CmdEval_stat;

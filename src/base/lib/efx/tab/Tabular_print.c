@@ -1,7 +1,7 @@
 /*
 Tabellenausgabe
 
-$Copyright (C) 2008 Erich Frühstück
+$Copyright (C) 2008 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -161,7 +161,7 @@ void Tabular_print (Tabular *tab, IO *out)
 	text = (char *) tab->text.data;
 	vb_qsort(&tab->entry, cmp_entry);
 
-/*	Breitenbestimmung für Mehrfachspalten
+/*	Breitenbestimmung fÃ¼r Mehrfachspalten
 */
 	for (entry = tab->entry.data, n = tab->entry.used; n--; entry++)
 	{

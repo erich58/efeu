@@ -3,7 +3,7 @@ Hilfsprogramme
 
 $Header <EFEU/$1>
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -31,7 +31,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/dbutil.h>
 
 #ifndef	MSG_EFUTIL
-#define	MSG_EFUTIL	"efutil"	/* Name für Fehlermeldungen */
+#define	MSG_EFUTIL	"efutil"	/* Name fÃ¼r Fehlermeldungen */
 #endif
 
 /*	String/Zeile laden

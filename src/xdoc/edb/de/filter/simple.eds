@@ -1,29 +1,29 @@
 \sec	Standardfilter
 
-Neben den bereits erwähnten Filtern |script|, |trans| und |var| stehen
-noch die folgenden Filter standardmäßig zur Verfügung:
+Neben den bereits erwÃ¤hnten Filtern |script|, |trans| und |var| stehen
+noch die folgenden Filter standardmÃ¤ÃŸig zur VerfÃ¼gung:
 
-\ssec \index[Datensatzselektion]\index{Teildatensätze auswählen}
+\ssec \index[Datensatzselektion]\index{TeildatensÃ¤tze auswÃ¤hlen}
 
 |test[|<expr>|]|
 
 \index[Filter |test|]
-Der Filter \index{|test|} führt eine einfache Datensatzselektion mithilfe
-eines Testausdrucks durch. Datensätze, für die der Ausdruck <expr>
+Der Filter \index{|test|} fÃ¼hrt eine einfache Datensatzselektion mithilfe
+eines Testausdrucks durch. DatensÃ¤tze, fÃ¼r die der Ausdruck <expr>
 logisch falsch liefert, werden ignoriert. Der folgende Aufruf
 selektiert alle Frauen aus der Beispieldatei |pers.edb|:
 	|edb -f test[gender==2] pers.edb|
 
-\ssec \index{Beschränken der Datensätze}
+\ssec \index{BeschrÃ¤nken der DatensÃ¤tze}
 
 |clip=|<skip>[|,|<lim>]
 
 \index[Filter |clip|]
-Der Filter \index{|clip|} beschränkt die Datenbank auf <lim> Datensätze, wobei
-die ersten <skip> Datensätze überlesen werden. Falls <lim> fehlt, oder mit
-0 spezifiziert wurde, wird die Datenbank nicht beschränkt, sondern
-nur <skip> Datensätze überlesen. Bei einem fehlenden Wert für <skip> wird
-0 (keinen Datensatz überlesen) angenommen.
+Der Filter \index{|clip|} beschrÃ¤nkt die Datenbank auf <lim> DatensÃ¤tze, wobei
+die ersten <skip> DatensÃ¤tze Ã¼berlesen werden. Falls <lim> fehlt, oder mit
+0 spezifiziert wurde, wird die Datenbank nicht beschrÃ¤nkt, sondern
+nur <skip> DatensÃ¤tze Ã¼berlesen. Bei einem fehlenden Wert fÃ¼r <skip> wird
+0 (keinen Datensatz Ã¼berlesen) angenommen.
 
 \ssec \index{Stichprobenauswahl}
 
@@ -31,57 +31,57 @@ nur <skip> Datensätze überlesen. Bei einem fehlenden Wert für <skip> wird
 
 \index[Filter |sample|]
 Der Filter \index{|sample|} generiert eine Zufallstichprobe mit einer
-prozentuellen Größe von <percent>. Der Zufallsgenerator wird durch
+prozentuellen GrÃ¶ÃŸe von <percent>. Der Zufallsgenerator wird durch
 eine Methode <method> (Vorgabe: |std|) und einen Initialisierungswert <seed>
 (Vorgabe: 0) festgelegt. Die Auswahl erfolgt durch Vergleich einer
-Zufallszahl mit der Stichprobengröße. Ist die Zufallszahl kleiner als
-die Stichprobengröße, wird der Datensatz genommen, ansonsten
+Zufallszahl mit der StichprobengrÃ¶ÃŸe. Ist die Zufallszahl kleiner als
+die StichprobengrÃ¶ÃŸe, wird der Datensatz genommen, ansonsten
 verworfen.
 
 Falls eine Vergleichsdefinition <cmp> angegeben wurde, wird nicht pro
 Datensatz, sondern pro Gruppe aufeinanderfolgender und gleicher
-Datensätze eine Zufallszahl berechnet. Datensätze, die bezüglich der
-Vergleichsdefinition <cmp> übereinstimmen, werden gleich behandelt.
+DatensÃ¤tze eine Zufallszahl berechnet. DatensÃ¤tze, die bezÃ¼glich der
+Vergleichsdefinition <cmp> Ã¼bereinstimmen, werden gleich behandelt.
 
 Beispiel: Der folgende Aufruf
 	|edb -f sample[:std:0,num]=50 data.edb|
 generiert eine 50% Stichprobe von |data.edb|, wobei sichergestellt ist,
-dass die Datensätze einer Person entweder zur Gänze ausgewählt oder
+dass die DatensÃ¤tze einer Person entweder zur GÃ¤nze ausgewÃ¤hlt oder
 abgelehnt werden.
 
-\ssec \index{Doppelte Datensätze entfernen}
+\ssec \index{Doppelte DatensÃ¤tze entfernen}
 
 |uniq|
 
 \index[Filter |uniq|]
 Der Filter \index{|uniq|} reduziert mehrere aufeinanderfolgende, idente
-Datensätze auf einen einzelnen Datensatz.
+DatensÃ¤tze auf einen einzelnen Datensatz.
 
-\ssec \index{Aggregation von Datensätzen}
+\ssec \index{Aggregation von DatensÃ¤tzen}
 
 |sum=|<name>,&ldots;
 
 \index[Filter |sum|]
 Der Filter \index{|sum|} dient zur Aggregation einzelner Datenzeilen.
 Als Argument wird die Liste der aufzusummierenden Variablen
-angegeben. Summiert wird über alle Datensätze, die bis auf die
+angegeben. Summiert wird Ã¼ber alle DatensÃ¤tze, die bis auf die
 angegebenen Variablen identisch sind. Bei der Zusammenfassung
 von Datenzeilen in ein Aggregatfile ist vorher eine geeignete
 Sortierung vorzunehmen.
 
-Neben dieser einfachen Form von Aggregation besteht die Möglichkeit,
+Neben dieser einfachen Form von Aggregation besteht die MÃ¶glichkeit,
 ein EDB-Datenfile als Datenmatrix auszugeben. Eine Sortierung der
 Daten ist nicht notwendig.
 Vergleiche dazu Abschnitt \ref{md}, Seite \pref{md}.
 
-\ssec \index{Sortieren von Datensätzen}
+\ssec \index{Sortieren von DatensÃ¤tzen}
 
 |sort|[|=|<cmp>]
 
 \index[Filter |sort|]
 Der Filter \index{|sort|} dient zum Sortieren eines Datenfiles.
-Als Argument wird die Sortierdefinition übergeben. Ohne Angabe einer
-Sortierdefinition wird die binäre Repräsentation der Datensätze
+Als Argument wird die Sortierdefinition Ã¼bergeben. Ohne Angabe einer
+Sortierdefinition wird die binÃ¤re ReprÃ¤sentation der DatensÃ¤tze
 verglichen.
 
 Der folgende Aufruf:
@@ -89,17 +89,17 @@ Der folgende Aufruf:
 sortiert die Daten der Beispieldatei |pers.edb| nach dem Namen der
 Personen.
 
-\ssec	\index{Verknüpfen von Datensätzen}
+\ssec	\index{VerknÃ¼pfen von DatensÃ¤tzen}
 
 |join[|<par>|]=|<file>
 
 \index[Filter |join|]
-Der Filter \index{|join|} verknüpft die Datensätze mit dem EDB-Datenfile <file>.
+Der Filter \index{|join|} verknÃ¼pft die DatensÃ¤tze mit dem EDB-Datenfile <file>.
 Er stellt eine Alternative zur Verwendung des Kommandos
 \index{|edbjoin|} dar und erlaubt das Einbinden von Daten innerhalb einer
 \index{Filterkette}.
 
-Die folgenden beiden Aufrufe zur Verknüfung der Beispieldateien
+Die folgenden beiden Aufrufe zur VerknÃ¼fung der Beispieldateien
 |pers.edb| und |data.edb| sind gleichwertig:
 
 ---- verbatim
@@ -107,13 +107,13 @@ edbjoin -j key=num pers.edb data.edb
 edb -f join[key=num]=data.edb pers.edb
 ---- verbatim
 
-\ssec	\index{Duplizieren von Datensätzen}
+\ssec	\index{Duplizieren von DatensÃ¤tzen}
 
 |dup=|<name>[|=|<val>],&ldots;
 
 \index[Filter |dup|]
-Der Filter \index{|dup|} dupliziert für jedes Element der Komponentenliste die
-einzelnen Datenzeilen, wobei für die Komponente <name> der
+Der Filter \index{|dup|} dupliziert fÃ¼r jedes Element der Komponentenliste die
+einzelnen Datenzeilen, wobei fÃ¼r die Komponente <name> der
 Vorgabewert <val> eingesetzt wird. Falls <val> fehlt, wird der
 Defaultwert des Datentyps verwendet. Der Filter dient zur
 Konstruktion von Randsummen beim Aufbau von Aggregatfiles.
@@ -123,6 +123,6 @@ Konstruktion von Randsummen beim Aufbau von Aggregatfiles.
 |tee[|<mode>|]=|<path>
 
 \index[Filter |tee|]
-Der Filter \index{|tee|} legt für alle Datensätze eine Kopie in der
+Der Filter \index{|tee|} legt fÃ¼r alle DatensÃ¤tze eine Kopie in der
 Datei <path> ab. Durch <mode> wird der Ausgabemodus festgelegt. Damit
-können Zwischenstufen einer komplexen \index{Filterkette} ausgegeben werden.
+kÃ¶nnen Zwischenstufen einer komplexen \index{Filterkette} ausgegeben werden.

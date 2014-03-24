@@ -1,7 +1,7 @@
 /*
 Installation von Dateien
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -25,8 +25,8 @@ If not, write to the Free Software Foundation, Inc.,
 
 /*
 Der Makro |$1| generiert eine Regel zur Installation der
-Datei <base> unter den Namen <name> für das Pseudoziel <target>
-und eine Aufräumregel für das Pseudoziel |clean|.
+Datei <base> unter den Namen <name> fÃ¼r das Pseudoziel <target>
+und eine AufrÃ¤umregel fÃ¼r das Pseudoziel |clean|.
 */
 #define	InstallFile(target,name,base)	@;\
 NamedTarget(target,name)		@;\
@@ -37,8 +37,8 @@ name: base			@;\
 
 /*
 Der Makro |$1| generiert eine Regel zur Installation des
-Skripts <base> unter den Namen <name> für das Pseudoziel |all|
-und eine Aufräumregel für das Pseudoziel |clean|.
+Skripts <base> unter den Namen <name> fÃ¼r das Pseudoziel |all|
+und eine AufrÃ¤umregel fÃ¼r das Pseudoziel |clean|.
 */
 #define	InstallScript(name,base)	@;\
 AllTarget(name)			@;\
@@ -50,7 +50,7 @@ name: base			@;\
 /*
 Der Makro |$1| generiert eine Regel zur Installation des
 Skripts <base> unter den Namen <name> mithilfe des Kommandos
-|efeuscript|. Mit dem Argument <flags> werden Installationsflags übergeben.
+|efeuscript|. Mit dem Argument <flags> werden Installationsflags Ã¼bergeben.
 */
 #define	InstallCmdScript(name,base,flags)	@;\
 AllTarget(name)			@;\
@@ -61,7 +61,7 @@ name: base			@;\
 Der Makro |$1| generiert eine Regel zur Konfiguration der
 Headerdatei <name> aus der Definitionsdatei <base> mithilfe
 des Kommandos |shmkmf-config|.
-Die Regel wird für das Pseudoziel <target> eingetragen.
+Die Regel wird fÃ¼r das Pseudoziel <target> eingetragen.
 */
 
 #define	ConfigHeaderFile(target,name,base)	@;\
@@ -74,11 +74,11 @@ name: base			@;\
 Der Makro |$1| generiert eine Regel zur Erneuerung der
 Headerdatei <name> aus der Definitionsdatei <base> mithilfe
 des Kommandos |shmkmf-config|.
-Die Regel wird für das Pseudoziel <target> eingetragen.
+Die Regel wird fÃ¼r das Pseudoziel <target> eingetragen.
 Im Unterschied zu |ConfigHeaderFile| wird |shmkmf-config|
-auch dann aufgerufen, wenn sich <base> nicht verändert hat.
-Damit kann auf eine Veränderung der Systemumgebung (Installation
-von zusätzlicher Software) reagiert werden.
+auch dann aufgerufen, wenn sich <base> nicht verÃ¤ndert hat.
+Damit kann auf eine VerÃ¤nderung der Systemumgebung (Installation
+von zusÃ¤tzlicher Software) reagiert werden.
 */
 
 #define	UpdateHeaderFile(target,name,base)	@;\

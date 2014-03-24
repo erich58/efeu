@@ -1,7 +1,7 @@
 /*
 Namensmakros
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -24,9 +24,9 @@ If not, write to the Free Software Foundation, Inc.,
 #define	_Name_pph	1
 /*
 $Description
-Die Namensmakros hängen an einen Basisnamen den
+Die Namensmakros hÃ¤ngen an einen Basisnamen den
 typischen Filezusatz an. Ihre Verwendung garantiert eine
-Kompatiblität der Imakefiles auf verschiedene Systeme.
+KompatiblitÃ¤t der Imakefiles auf verschiedene Systeme.
 $SeeAlso
 \mref{mkmf(1)}, \mref{Path(7)}.
 */
@@ -99,7 +99,7 @@ Unter Unix liefert er <|-L<name>|>.
 
 #ifndef	LinkName
 /*
-Der Makro |$1| definiert die Kompilierungsoption für eine Programmbibliothek.
+Der Makro |$1| definiert die Kompilierungsoption fÃ¼r eine Programmbibliothek.
 Unter Unix liefert er <|-l<name>|>.
 */
 #define	LinkName(name)		Concat(-l,name)

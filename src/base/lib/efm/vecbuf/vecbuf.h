@@ -3,7 +3,7 @@ Dynamischer Vektorbuffer
 
 $Header	<EFEU/$1>
 
-$Copyright (C) 1996 Erich Frühstück
+$Copyright (C) 1996 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -29,25 +29,25 @@ If not, write to the Free Software Foundation, Inc.,
 
 /*
 Die Datenstruktur |$1| dient zur Verwaltung eines Datenfeldes.
-Dabei ist |data| ein Pointer auf ein Speicherfeld, daß |size|
-Elemente der Größe |elsize| enthält. Die Komponente |used|
-gibt an, wieviele Elemente gerade benützt werden. Falls
+Dabei ist |data| ein Pointer auf ein Speicherfeld, daÃŸ |size|
+Elemente der GrÃ¶ÃŸe |elsize| enthÃ¤lt. Die Komponente |used|
+gibt an, wieviele Elemente gerade benÃ¼tzt werden. Falls
 |blksize| verschieden von null ist, ist der Buffer dynamisch und
-wird bei Bedarf um |blksize| Elemente vergrößert.
+wird bei Bedarf um |blksize| Elemente vergrÃ¶ÃŸert.
 */
 
 typedef struct {
-	size_t blksize;	/* Blockgröße zur Buffervergrößerung */
-	size_t elsize;	/* Größe eines Datenelementes */
-	size_t size;	/* Aktuelle Größe des Buffers */
-	size_t used;	/* Zahl der benützten Elemente */
+	size_t blksize;	/* BlockgrÃ¶ÃŸe zur BuffervergrÃ¶ÃŸerung */
+	size_t elsize;	/* GrÃ¶ÃŸe eines Datenelementes */
+	size_t size;	/* Aktuelle GrÃ¶ÃŸe des Buffers */
+	size_t used;	/* Zahl der benÃ¼tzten Elemente */
 	void *data;	/* Datenbuffer */
 } VecBuf;
 
 
 /*
 Der Makro |$1| liefert die Strukturkomponenten eines Vektorbuffers
-mit Blockgröße <blk> und Datengröße <size>. Er wird bei der Initialisierung
+mit BlockgrÃ¶ÃŸe <blk> und DatengrÃ¶ÃŸe <size>. Er wird bei der Initialisierung
 von Variablen verwendet, die einen Vektorbuffer als Komponente enthalten.
 */
 
@@ -55,7 +55,7 @@ von Variablen verwendet, die einen Vektorbuffer als Komponente enthalten.
 
 /*
 Der Makro |$1| deklariert den Vektorbuffer <name> und initialisiert
-ihn mit der Blockgröße <blk> und der Datengröße <size>.
+ihn mit der BlockgrÃ¶ÃŸe <blk> und der DatengrÃ¶ÃŸe <size>.
 
 $Examples
 Die nachfolgende Befehlszeile richtet einen statischen Vektorbuffer
@@ -91,10 +91,10 @@ void vb_uniq (VecBuf *buf, int (*comp) (const void *a, const void *b));
 void *vb_bsearch (VecBuf *buf, const void *key,
 	int (*comp) (const void *a, const void *b));
 
-#define	VB_ENTER	0	/* Eintrag abfragen/ergänzen */
-#define	VB_REPLACE	1	/* Eintrag ersetzen/ergänzen */
+#define	VB_ENTER	0	/* Eintrag abfragen/ergÃ¤nzen */
+#define	VB_REPLACE	1	/* Eintrag ersetzen/ergÃ¤nzen */
 #define	VB_SEARCH	2	/* Eintrag abfragen */
-#define	VB_DELETE	3	/* Eintrag aus Tabelle löschen */
+#define	VB_DELETE	3	/* Eintrag aus Tabelle lÃ¶schen */
 
 void *vb_search (VecBuf *buf, void *data,
 	int (*comp) (const void *a, const void *b), int mode);

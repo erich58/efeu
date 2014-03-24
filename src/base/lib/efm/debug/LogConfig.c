@@ -1,8 +1,8 @@
 /*
 :*:logging configuration
-:de:Ausgabekonfiguration für Protokolle
+:de:Ausgabekonfiguration fÃ¼r Protokolle
 
-$Copyright (C) 2009 Erich Frühstück
+$Copyright (C) 2009 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -72,14 +72,14 @@ static unsigned encoding(void);
 /*
 Die Funktion |$1| erweitert/setzt die Protokolldefinitionen entsprechend
 dem Definitionsstring <def>. Die Protokolldefinitionen liefern die Datenbasis
-für die Protokollausgabe mithilfe einer Steuerstruktur vom Typ |LogControl|.
+fÃ¼r die Protokollausgabe mithilfe einer Steuerstruktur vom Typ |LogControl|.
 Sie werden intern in einer Tabelle verwaltet.
 
 Falls das erste Zeichen des Definitionsstrings <def> ein
 Klammeraffe |'@'| ist, wird die Tabelle vor der weitern Interpretation
-des Definitionsstrings gelöscht. Ansonsten wird die Tabelle erweitert.
+des Definitionsstrings gelÃ¶scht. Ansonsten wird die Tabelle erweitert.
 
-Der Definitionsstring besteht aus mehreren, durch weiße Zeichen getrennte
+Der Definitionsstring besteht aus mehreren, durch weiÃŸe Zeichen getrennte
 Protokolldefinitionen. Diese besteht aus den folgenden Komponenten:
 
 *	Liste von Selektoren
@@ -89,13 +89,13 @@ Protokolldefinitionen. Diese besteht aus den folgenden Komponenten:
 Die allgemeine Syntax ist:
 	<sel>[|;|<sel>][|=|<path>][|[|<flags>|]|]
 
-Die einzelnen Komponenten sind optional. Die Ausgabeflags können an einer
+Die einzelnen Komponenten sind optional. Die Ausgabeflags kÃ¶nnen an einer
 beliebigen Stelle der Protokolldefinition stehen. Die Bedeutung der
-Trennzeichen kann entweder mit einem Gegenschrägstrich, oder durch
+Trennzeichen kann entweder mit einem GegenschrÃ¤gstrich, oder durch
 einfaches Hochkomma aufgehoben werden.
 
 Anstelle des Definitionsstrings kann auch eine folge von |+| und |-| stehen.
-Damit wird der Vorgabewert für den Protokollierungslevel erhöht, bzw.
+Damit wird der Vorgabewert fÃ¼r den Protokollierungslevel erhÃ¶ht, bzw.
 verringert.
 
 Beim Ausgabepfad <path> handelt es sich um einen vordefinierten Standardnamen,
@@ -111,9 +111,9 @@ eine Datei oder einen Prozess, an dem die Daten weitergeleitet werden.
 [||||<cmd> arg(s)]
 	Pipe an externes Kommando
 [<path>]
-	Anhängen an Datei.
+	AnhÃ¤ngen an Datei.
 
-Folgende Steuerflags können angegeben werden:
+Folgende Steuerflags kÃ¶nnen angegeben werden:
 
 [time]
 	Der Ausgabe wird ein Zeitstempel vorangestellt.
@@ -125,14 +125,14 @@ Folgende Steuerflags können angegeben werden:
 Falls die Kodierung nicht vorgegeben wurde, wird sie aus der Sprachumgebung
 ermittelt.
 
-Die Selektoren bestimmen, für welche Steuerstrukturen die Protokolldefinition
+Die Selektoren bestimmen, fÃ¼r welche Steuerstrukturen die Protokolldefinition
 gilt. Sie haben die Form <name>[|,|<name>]|.|<level>[|,|<level>]. Anstelle
-von <name> kann auch ein Stern (|*|) für alle angegeben werden.
-Fehlt der Name, gilt der Selektor für die Vorgabedefinition.
+von <name> kann auch ein Stern (|*|) fÃ¼r alle angegeben werden.
+Fehlt der Name, gilt der Selektor fÃ¼r die Vorgabedefinition.
 
-Für die Levels kann |none|, |err|, |warn|, |note|, |info|, |debug|, |trace| oder
+FÃ¼r die Levels kann |none|, |err|, |warn|, |note|, |info|, |debug|, |trace| oder
 |*| angegeben werden. Ein fehlender Level wird wie |*| behandelt. Ein Level
-aktiviert auch alle anderen mit einer höheren Priorität, außer dem Namen
+aktiviert auch alle anderen mit einer hÃ¶heren PrioritÃ¤t, auÃŸer dem Namen
 wird ein |=| vorangestellt. Die Selektion des Levels kann negiert werden,
 indem ein |!| vorangestellt wird.
 */
@@ -253,8 +253,8 @@ void LogConfig (const char *def)
 }
 
 /*
-Die Funktion |$1| prüft, ob sich die Kontrollstruktur <ctrl> auf dem Stand
-der letzten Konfigurationsänderung befindet und erneuert bei Bedarf die
+Die Funktion |$1| prÃ¼ft, ob sich die Kontrollstruktur <ctrl> auf dem Stand
+der letzten KonfigurationsÃ¤nderung befindet und erneuert bei Bedarf die
 Protokolldefinitionen. Die Funktion wird implizit vor jeder Protokollausgabe
 aufgerufen.
 */
@@ -434,7 +434,7 @@ static unsigned set_mask (unsigned base, int n)
 }
 
 /*
-Quotierten String anhängen
+Quotierten String anhÃ¤ngen
 */
 
 static int add_str (StrBuf *sb, const char *def, int delim)
@@ -551,7 +551,7 @@ static int log_match (LogControl *ctrl, char *select)
 }
 
 /*
-Verwalten von Einträgen für die Protokollsteuerung
+Verwalten von EintrÃ¤gen fÃ¼r die Protokollsteuerung
 */
 
 static ALLOCTAB(etab, "LogControlEntry", ENTRY_BSIZE, sizeof(LogControlEntry));

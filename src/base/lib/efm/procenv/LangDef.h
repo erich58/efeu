@@ -4,7 +4,7 @@
 
 $Header	<EFEU/$1>
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -31,16 +31,16 @@ If not, write to the Free Software Foundation, Inc.,
 /*
 :de:
 Der Datentype |$1| erlaubt die Abfrage der Komponenten
-Sprache und Ländercode einer Sprachdefinitionen der Form
+Sprache und LÃ¤ndercode einer Sprachdefinitionen der Form
 <"<language>[|_|<territory>][<otherparts>]">.
-Zusätzliche Komponenten in <otherparts> werden ignoriert. 
+ZusÃ¤tzliche Komponenten in <otherparts> werden ignoriert. 
 Die Originaldefinition <langdef> wird ebenfalls in der Struktur gespeichert.
 */
 
 typedef struct {
 	char *langdef;	/* Sprachdefinition */
 	char *language;	/* ISO 639 Sprachcode */
-	char *territory;/* ISO 3166 Ländercode */
+	char *territory;/* ISO 3166 LÃ¤ndercode */
 } LangDefType;
 
 void SetLangDef (const char *str);

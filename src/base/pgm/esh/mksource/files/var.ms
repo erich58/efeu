@@ -2,7 +2,7 @@
 Hilfsfunktionen zur Variablendefinition
 
 $Header	<$1>
-$Copyright (C) 1996 Erich Frühstück
+$Copyright (C) 1996 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -31,7 +31,7 @@ bleiben. Die internen Namen werden zur Vermeidung von
 Sichtbarkeitskonflikten mit "_" gekennzeichnet.
 
 Die Funktion |$1| richtet eine Variable ein. Falls <_glob> den Wert
-true hat, wird sie mit externer Verknüpfbarkeit und ansonsten
+true hat, wird sie mit externer VerknÃ¼pfbarkeit und ansonsten
 statisch eingerichtet.
 */
 
@@ -51,7 +51,7 @@ inline void DeclVar (bool _glob = true, str _decl,
 }
 
 /*
-Die Funktion |$1| richtet eine Variable mit externer Verknüpfbarkeit ein.
+Die Funktion |$1| richtet eine Variable mit externer VerknÃ¼pfbarkeit ein.
 */
 
 void GlobalVar (str _decl, str _val = NULL, str _desc = NULL, ...)
@@ -67,11 +67,11 @@ void LocalVar (str _decl, str _val = NULL, str _desc = NULL, ...)
 
 /*
 Die Funktion |$1| richtet einen Vektor ein. Falls <glob> den Wert
-true hat, wird der Vektor mit externer Verknüpfbarkeit und ansonsten
-statisch eingerichtet. Falls für |_dim| der Wert 0 übergeben wird,
-bestimmt |_val| die Zuweisungsliste für den Vektor. Bei jedem
-Zeilenumbruch in |_val| wird ein Komma eingefügt. Ist |_dim| größer als 0,
-steht |_val| für jedes einzelne Vektorelement. Der Laufindex |n| kann bei
+true hat, wird der Vektor mit externer VerknÃ¼pfbarkeit und ansonsten
+statisch eingerichtet. Falls fÃ¼r |_dim| der Wert 0 Ã¼bergeben wird,
+bestimmt |_val| die Zuweisungsliste fÃ¼r den Vektor. Bei jedem
+Zeilenumbruch in |_val| wird ein Komma eingefÃ¼gt. Ist |_dim| grÃ¶ÃŸer als 0,
+steht |_val| fÃ¼r jedes einzelne Vektorelement. Der Laufindex |n| kann bei
 der Wertedefinition verwendet werden.
 */
 
@@ -123,7 +123,7 @@ inline void DeclVec (bool _glob = true, str _decl, int _dim,
 }
 
 /*
-Die Funktion |$1| richtet einen Vektor mit externer Verknüpfbarkeit ein.
+Die Funktion |$1| richtet einen Vektor mit externer VerknÃ¼pfbarkeit ein.
 */
 
 void GlobalVec (str _decl, int _dim, str _val = NULL, str _desc = NULL, ...)

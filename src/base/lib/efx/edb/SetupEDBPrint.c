@@ -1,6 +1,6 @@
 /*	Ausgabedefinitionen initialisieren
-	$Copyright (C) 2004 Erich Frühstück
-	A-3423 St.Andrä/Wördern, Wildenhaggasse 38
+	$Copyright (C) 2004 Erich FrÃ¼hstÃ¼ck
+	A-3423 St.AndrÃ¤/WÃ¶rdern, Wildenhaggasse 38
 */
 
 #include <EFEU/EDB.h>
@@ -134,7 +134,7 @@ static EDBPrintDef pdef[] = {
 	},
 	{ "binary", NULL, EDBPrint_binary, NULL,
 		":*:binary output"
-		":de:Binärausgabe"
+		":de:BinÃ¤rausgabe"
 	},
 	{ "plain", NULL, EDBPrint_plain, NULL,
 		":*:plain output"
@@ -155,7 +155,7 @@ static EDBPrintDef pdef[] = {
 
 	{ "locale", "=lang", set_locale, NULL,
 		":*:set locale for output"
-		":de:Lokale für die Ausgabe setzen"
+		":de:Lokale fÃ¼r die Ausgabe setzen"
 	},
 
 	{ "verbosity", "=level", set_header, "1",
@@ -164,15 +164,15 @@ static EDBPrintDef pdef[] = {
 	},
 	{ "nohead", NULL, EDBPrintDef_alias, "verbosity=0",
 		":*:no header, alias for $2"
-		":de:Kein Header, Kurzform für $2"
+		":de:Kein Header, Kurzform fÃ¼r $2"
 	},
 	{ "compact", NULL, EDBPrintDef_alias, "verbosity=1",
 		":*:compact header\nalias for $2"
-		":de:Kompakter Header ohne Kommentare\nKurzform für $2"
+		":de:Kompakter Header ohne Kommentare\nKurzform fÃ¼r $2"
 	},
 	{ "verbose", NULL, EDBPrintDef_alias, "verbosity=2",
 		":*:verbose header\nalias for $2"
-		":de:Header mit Kommentaren\nKurzform für $2"
+		":de:Header mit Kommentaren\nKurzform fÃ¼r $2"
 	},
 	
 	{ "prec", "[width]=prec", set_prec, "18g",
@@ -182,7 +182,7 @@ static EDBPrintDef pdef[] = {
 
 	{ "split", "=limit", set_split, NULL,
 		":*:split limit for output"
-		":de:Aufspaltungslimit für die Ausgabe"
+		":de:Aufspaltungslimit fÃ¼r die Ausgabe"
 	},
 	{ "nosplit", NULL, set_split, "0",
 		":*:do not split output"
@@ -191,29 +191,29 @@ static EDBPrintDef pdef[] = {
 
 	{ "export", "[opt]=def", EDBPrintDef_alias, "{data[]=#},nosplit",
 		":*:export data\nalias for $2"
-		":de:Daten exportieren\nKurzform für $2"
+		":de:Daten exportieren\nKurzform fÃ¼r $2"
 	},
 	{ "csv", "=def", EDBPrintDef_alias,
 		"{data[crlf]=#},nosplit,nohead,locale",
 		":*:export data with CR/LF\nalias for $2"
-		":de:Daten mit CR/LF exportieren\nKurzform für $2"
+		":de:Daten mit CR/LF exportieren\nKurzform fÃ¼r $2"
 	},
 
 	{ "b", NULL, EDBPrintDef_alias, "binary",
 		":*:alias for $2"
-		":de:Kurzform für $2"
+		":de:Kurzform fÃ¼r $2"
 	},
 	{ "raw", NULL, EDBPrintDef_alias, "data=binary,nosplit",
 		":*:alias for $2"
-		":de:Kurzform für $2"
+		":de:Kurzform fÃ¼r $2"
 	},
 	{ "l", NULL, EDBPrintDef_alias, "label",
 		":*:alias for $2"
-		":de:Kurzform für $2"
+		":de:Kurzform fÃ¼r $2"
 	},
 	{ "x", "[opt]=def", EDBPrintDef_alias, "{export[]=#}",
 		":*:alias for $2"
-		":de:Kurzform für $2"
+		":de:Kurzform fÃ¼r $2"
 	},
 };
 

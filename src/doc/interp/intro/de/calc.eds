@@ -1,6 +1,6 @@
 \sec	Verwendung als Tischrechner
 
-Die Einsatzmöglichkeiten von |esh| sind vielfältig, so eignet er sich
+Die EinsatzmÃ¶glichkeiten von |esh| sind vielfÃ¤ltig, so eignet er sich
 auch hervorragend als \index{Tischrechner}.
 Wird |esh| ohne Argumente aufgerufen, startet er im interaktiven Mode
 und meldet sich mit dem Prompt <"|esh: |">.
@@ -21,61 +21,61 @@ esh:
 \index[Beenden von |esh|]
 Beendet wird |esh| durch Eingabe des Dateiendezeichens (\index{|^D|})
 am Prompt oder durch Aufruf der  Funktion \index[|exit|]<|exit(<n>)|>.
-Das Argument <n> bestimmt den Rückgabewert des Kommandos.
+Das Argument <n> bestimmt den RÃ¼ckgabewert des Kommandos.
 Bei erfolgreicher Abarbeitung sollte 0, bei einem Fehler ein Wert
 ungleich 0 angegeben werden. Ein mit \index{|^D|} beendetes Skript
-hat den Rückgabewert 0.
+hat den RÃ¼ckgabewert 0.
 
 Mit der ersten Befehlszeile wird der Ausdruck |3*(4+1)| berechnet.
-Für die berechnung arithmetischer Ausdrücke gelten die üblichen
-Prioritäten. Mithilfe runder Klammern kann die Reihenfolge der
-Bewertung geändert werden.
+FÃ¼r die berechnung arithmetischer AusdrÃ¼cke gelten die Ã¼blichen
+PrioritÃ¤ten. Mithilfe runder Klammern kann die Reihenfolge der
+Bewertung geÃ¤ndert werden.
 
 Die zweite Befehlszeile definiert die Variable <x> vom Typ |double|
-und initialisiert sie mit der Quadratwurzel von 2. Der Rückgabewert
+und initialisiert sie mit der Quadratwurzel von 2. Der RÃ¼ckgabewert
 einer Variablendefinition ist der Initialisierungswert der Variablen.
 Am Ende wird der Kehrwert von <x> berechnet.
 
-Anders als in anderen Skriptsprachen müssen Variablen vor ihrer
+Anders als in anderen Skriptsprachen mÃ¼ssen Variablen vor ihrer
 Verwendung vereinbart werden. Die Vereinbarung kann aber an beliebiger
 Stelle erfolgen und gleich mit einer Wertzuweisung (wie im obigen
 Beispiel) verbunden werden. Auch kommen in |esh| die unterschiedlichsten
 Datentypen zum Einsatz. Andere Skriptsprachen verwenden oft nur
 Zeichenketten und Gleitkommawerte.
 
-Fürs erste werden die folgenden Datentypen benötigt:
+FÃ¼rs erste werden die folgenden Datentypen benÃ¶tigt:
 
 \ttitem	int
-	für Ganzzahlwerte;
+	fÃ¼r Ganzzahlwerte;
 \ttitem	double
-	für Gleitkommawerte mit doppelter Genauigkeit;
+	fÃ¼r Gleitkommawerte mit doppelter Genauigkeit;
 \ttitem	char
-	für ein einzelnes Zeichen;
+	fÃ¼r ein einzelnes Zeichen;
 \ttitem	str
-	für eine Zeichenkette.
+	fÃ¼r eine Zeichenkette.
 
 Zahlenkonstanten mit einem Dezimalpunkt oder einem Exponenten werden als
-Gleitkommakonstanten interpretiert. Ganzzahlkonstanten können neben der
-üblichen Dezimaldarstellung auch oktal (erste Ziffer 0) oder
+Gleitkommakonstanten interpretiert. Ganzzahlkonstanten kÃ¶nnen neben der
+Ã¼blichen Dezimaldarstellung auch oktal (erste Ziffer 0) oder
 hexadezimal (|0x| oder |0X| als Prefix) angegeben werden.
 
-Ein Zeichen in einfacher Anführung stellt eine Zeichenkonstante dar,
-eine beliebige Zeichenfolge unter doppelter Anführung stellt eine
+Ein Zeichen in einfacher AnfÃ¼hrung stellt eine Zeichenkonstante dar,
+eine beliebige Zeichenfolge unter doppelter AnfÃ¼hrung stellt eine
 Zeichenkette (auch String genannt) dar.
 
 Eine Befehlszeile wird wahlweise mit einem Zeilenvorschub oder
 einem Strichpunkt abgeschlossen. Bei einem Strichpunkt wird die
 Befehlszeile ausgewertet, aber das Resultat nicht ausgegeben.
 Diese Konzeption habe ich |octave|\note
-	Dabei handelt es sich um eine Skriptsprache für
+	Dabei handelt es sich um eine Skriptsprache fÃ¼r
 	numerische Berechnungen mit Matrizen. Ich habe sie
 	eine Zeit lang zur Berechnung von Regressionen verwendet,
-	bevor ich diese Funktionalität in esh eingebaut habe.
+	bevor ich diese FunktionalitÃ¤t in esh eingebaut habe.
 abgeschaut.
 
 \index[Abbruch von |esh|]
-Falls |esh| in einer Endlosschleife hängt oder man das
-Ende einer längeren Berechnung nicht abwarten will, kann das Kommando
+Falls |esh| in einer Endlosschleife hÃ¤ngt oder man das
+Ende einer lÃ¤ngeren Berechnung nicht abwarten will, kann das Kommando
 auch mit einem Interrupt (\index{|^C|}) abgebrochen werden.
 
 \exercise
@@ -84,49 +84,49 @@ Rufen sie |esh| auf und geben sie einzelne Terme ein.
 \ssec	Editieren der Befehlszeilen
 
 Im interaktiven Modus verwendet esh Readline zur Eingabe von
-Befehlszeilen. Damit können Befehlszeilen erneut abgerufen
+Befehlszeilen. Damit kÃ¶nnen Befehlszeilen erneut abgerufen
 und editiert werden. Readline wird auch von der |bash|
 und anderen interaktiven Kommandos wie |gdb|, |gnuplot| oder |octave|
 verwendet.
 
-Ich setze die Editiermöglichkeiten der |bash| als bekannt vor
-und gehe daher hier nicht weiter darauf ein. Eine ausführliche
+Ich setze die EditiermÃ¶glichkeiten der |bash| als bekannt vor
+und gehe daher hier nicht weiter darauf ein. Eine ausfÃ¼hrliche
 Referenz findet sich in \cite[A.16, Seite 1047]{karsten}.
 
 \index[Zugriff auf History-Zeilen]
-Analog zur |bash| können History-Zeilen nicht nur über Editierzeichen,
-sondern auch über eingebaute Kommandos aktiviert werden.
+Analog zur |bash| kÃ¶nnen History-Zeilen nicht nur Ã¼ber Editierzeichen,
+sondern auch Ã¼ber eingebaute Kommandos aktiviert werden.
 Sie sind im folgenden aufgelistet:
 
 [|!h|[|istory|] [<n>]]
 	\index[|!history|]
 	listet die letzen <n> Befehle auf.
-	Die Voreinstellung für <n> ist 10.
+	Die Voreinstellung fÃ¼r <n> ist 10.
 [|!h|[|istory|] <n>~<k>]
 	listet die History-Zeilen <n> bis <k> auf.
 [|!r| [<n> [<k>]]]
 	\index[|!r|]
-	führt die History-Zeilen <n> bis <k> erneut aus.
-	Fehlt die Angabe von <k> wird Zeile <n> ausgeführt,
-	fehlt auch <n>, wird die letzte Zeile ausgeführt.
+	fÃ¼hrt die History-Zeilen <n> bis <k> erneut aus.
+	Fehlt die Angabe von <k> wird Zeile <n> ausgefÃ¼hrt,
+	fehlt auch <n>, wird die letzte Zeile ausgefÃ¼hrt.
 [|!fc| [<n> [<k>]]]
 	\index[|!fc|]
 	ladet die History-Zeilen <n> bis <k> in einem Editor
-	(Standardkonfiguration: |vi|) und führt sie nach dem
+	(Standardkonfiguration: |vi|) und fÃ¼hrt sie nach dem
 	Speichern aus.
 
-Zusätzlich gibt es noch den eingebauten Befehl \index{|!eof|}, der wie die
+ZusÃ¤tzlich gibt es noch den eingebauten Befehl \index{|!eof|}, der wie die
 Eingabe des Dateiendezeichens wirkt.
-Die Befehle |!history|, |!r|, |!fc| und |!eof| müssen unmittelbar
+Die Befehle |!history|, |!r|, |!fc| und |!eof| mÃ¼ssen unmittelbar
 am Zeilenanfang eingegeben werden und stehen nur im interaktiven Modus
-zur Verfügung.
+zur VerfÃ¼gung.
 
 Die History-Zeilen werden nur dann gesichert, wenn |esh| mit
 dem Dateiendezeichen (\index{|^D|}) beendet wird. Bei einer
 Beendigung mit \index{|exit|} oder einem Abbruch mit Interrupt (\index{|^C|})
 werden sie nicht ausgegeben.
 
-Eine esh-spezifische Vervollständigung von Befehlszeilen ist
+Eine esh-spezifische VervollstÃ¤ndigung von Befehlszeilen ist
 derzeit noch nicht implementiert.
 
 \exercise

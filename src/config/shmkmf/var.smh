@@ -4,7 +4,7 @@
 # $Synopsis
 # <=[=> include $1 <=]=>
 #
-# $Copyright (C) 2004 Erich Frühstück
+# $Copyright (C) 2004 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -29,11 +29,11 @@ _var_smh=1
 # $pconfig !
 # n |
 # 	:*:suppress empty line before assignment
-#	:de:Leerezeile vor Variablenzuweisung unterdrücken
+#	:de:Leerezeile vor Variablenzuweisung unterdrÃ¼cken
 # x |
 #	:*:create additional shell variable with same name
 #	and value <"|$$(|<name>|)|">.
-#	:de:Zusätzlich Shell-Variable gleichen Namens und Wert
+#	:de:ZusÃ¤tzlich Shell-Variable gleichen Namens und Wert
 #	<"|$$(|<name>|)|"> einrichten.
 # :name |
 #	:*:name variable
@@ -46,7 +46,7 @@ _var_smh=1
 # The funktion $! creates a variable assignment for |make|.
 # The following arguments are accepted:
 # :de:
-# Die Funktion $! gibt eine Variablenzuweisung für |make| aus.
+# Die Funktion $! gibt eine Variablenzuweisung fÃ¼r |make| aus.
 # Folgende Optionen und Argumente werden akzeptiert:
 #
 # @arglist

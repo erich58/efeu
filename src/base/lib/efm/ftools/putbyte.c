@@ -1,7 +1,7 @@
 /*
-Binäre Ausgabe von Zahlenwerten in maschinenunabhängiger Form
+BinÃ¤re Ausgabe von Zahlenwerten in maschinenunabhÃ¤ngiger Form
 
-$Copyright (C) 1996 Erich Frühstück
+$Copyright (C) 1996 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -25,8 +25,8 @@ If not, write to the Free Software Foundation, Inc.,
 /*
 $Description
 Die Funktionen |put1byte|, |put2byte|, |put3byte| und |put4byte|
-erlauben eine binäre Ausgabe von Ganzzahlwerten in maschinenunabhängiger
-Form. Dabei werden höhersignifikante Bytes zuerst ausgegeben.
+erlauben eine binÃ¤re Ausgabe von Ganzzahlwerten in maschinenunabhÃ¤ngiger
+Form. Dabei werden hÃ¶hersignifikante Bytes zuerst ausgegeben.
 
 $Diagnostic
 Falls ein Ausgabefehler auftritt wird eine Fehlermeldung ausgegeben

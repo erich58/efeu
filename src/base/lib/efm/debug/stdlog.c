@@ -3,7 +3,7 @@ Standardfunktionen zur Meldungsausgabe
 
 $Name log_psub, log_psubarg, log_psubvarg, log_note, log_error
 
-$Copyright (C) 2009 Erich Frühstück
+$Copyright (C) 2009 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -29,9 +29,9 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/ioctrl.h>
 
 /*
-Die Funktion |$1| gibt die Meldung <fmt> für die Protokollklasse <ctrl> aus.
-Die Substitutionsparameter werden in Form einer einer Argumentliste übergegen.
-Diese Funktion stellt die Basis für alle Funktionen zur Ausgabe
+Die Funktion |$1| gibt die Meldung <fmt> fÃ¼r die Protokollklasse <ctrl> aus.
+Die Substitutionsparameter werden in Form einer einer Argumentliste Ã¼bergegen.
+Diese Funktion stellt die Basis fÃ¼r alle Funktionen zur Ausgabe
 von Fehlermeldungen dar und wird selten direkt verwendet.
 */
 
@@ -82,14 +82,14 @@ void log_psub (LogControl *ctrl, const char *fmt, ArgList *args)
 }
 
 /*
-Die Funktion |$1| gibt die Meldung <fmt> für die Protokollklasse <ctrl> aus.
+Die Funktion |$1| gibt die Meldung <fmt> fÃ¼r die Protokollklasse <ctrl> aus.
 Die Substitutionsparameter werden in einer Argumentliste zusammengestellt.
-Der Parameter 0 wird durch <id> bestimmt, <id> muß entweder |NULL| sein
+Der Parameter 0 wird durch <id> bestimmt, <id> muÃŸ entweder |NULL| sein
 oder auf einen mit |memalloc()| eingerichteten Speicher verweisen.
-Alle anderen Parameter werden über <argdef> an die
-Argumentliste angehängt.
+Alle anderen Parameter werden Ã¼ber <argdef> an die
+Argumentliste angehÃ¤ngt.
 
-Diese Funktion stellt die Basis für alle Funktionen zur Ausgabe
+Diese Funktion stellt die Basis fÃ¼r alle Funktionen zur Ausgabe
 von Fehlermeldungen mit einer variablen Argumentliste dar und wird
 selten direkt verwendet.
 */
@@ -135,7 +135,7 @@ void log_note (LogControl *ctrl, const char *fmt, const char *argdef, ...)
 
 /*
 Die Funktion |$1| gibt eine Meldung zur Fehlerklasse <cl> vom Level
-|DBG_ERR| aus und bricht anschließend die Verarbeitung mit einem Aufruf von
+|DBG_ERR| aus und bricht anschlieÃŸend die Verarbeitung mit einem Aufruf von
 |exit(EXIT_FAILURE)| ab. Der Parameter 0 kann nicht vorgegeben werden und hat
 immer den Wert |NULL|.
 */

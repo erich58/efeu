@@ -1,7 +1,7 @@
 # :*:data cube server
-# :de:Server für Datenwürfel
+# :de:Server fÃ¼r DatenwÃ¼rfel
 
-# $Copyright (C) 2007 Erich Frühstück
+# $Copyright (C) 2007 Erich FrÃ¼hstÃ¼ck
 
 
 Port = 2100
@@ -25,7 +25,7 @@ q | Debug = err
 	:de:Stille Verarbeitung. Nur Fehler werden gemeldet.
 #l:log | Logfile
 #	:*:Log file for client/server transactions.
-#	:de:Logfile für Client/Server Datenaustausch.
+#	:de:Logfile fÃ¼r Client/Server Datenaustausch.
 -pid-file:path | PidFile
 	:*:File to write the process id.
 	:de:Datename zur Ausgabe der Prozessnummer

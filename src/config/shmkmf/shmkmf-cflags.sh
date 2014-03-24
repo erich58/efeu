@@ -2,7 +2,7 @@
 # :*:	determine c-flags for use of external libraries
 # :de: 	Bestimmung von C-Flags zur Einbindung externer Bibliotheken
 #
-# $Copyright (C) 2008 Erich Frühstück
+# $Copyright (C) 2008 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or modify
@@ -28,23 +28,23 @@
 #	:de:Makro <name> mit gefundenen Flags initialisieren.
 # I::path |
 #	:*:path to search header files (default: |/usr/include|).
-#	:de:Suchpfad für Kopfdateien, Vorgabe: |/usr/include|.
+#	:de:Suchpfad fÃ¼r Kopfdateien, Vorgabe: |/usr/include|.
 # L::path |
 #	:*:path to search libraries (default: |/lib:/usr/lib|).
-#	:de:Suchpfad für Bibliotheken, Vorgabe: |/lib:/usr/lib|.
+#	:de:Suchpfad fÃ¼r Bibliotheken, Vorgabe: |/lib:/usr/lib|.
 # a |
 #	:*:try next search only if last search was successfull.
-#	:de:Nächste Suche nur durchführen, wenn letzte Suche erfolgreich war.
+#	:de:NÃ¤chste Suche nur durchfÃ¼hren, wenn letzte Suche erfolgreich war.
 # o |
 #	:*:try next search only if last search failed.
-#	:de:Nächste Suche nur durchführen, wenn letzte Suche fehlschlug.
+#	:de:NÃ¤chste Suche nur durchfÃ¼hren, wenn letzte Suche fehlschlug.
 # l:lib |
 #	:*:search for libraray corresponding to the regular
 #	expression |^lib(|<lib>|)\.(a||so)$$|. On asuccess, print out
 #	the |-l|<name> flag for linking the library. If the library is
 #	in an other place than |/lib| or |/usr/lib| an |-L|<dir> flag is
 #	also generated.
-#	:de:Suche nach der Bibliothek, die dem regulären
+#	:de:Suche nach der Bibliothek, die dem regulÃ¤ren
 #	Ausdruck |^lib(|<lib>|)\.(a||so)$$| entspricht. Liefer bei
 #	Erfolg das entsprechende |-l| flag und falls die Bibliothek
 #	nicht in einem der beiden Verzeichnisse |/lib| oder |usr/lib|
@@ -54,7 +54,7 @@
 #	contain directory parts as in |X11/X.h|. If <dir> is different from
 #	|/usr/include|, print out the option |-I|<dir>.
 #	:de:Suche nach dem Verzeichnis <dir>, welches die Kopfdatei <name>
-#	enthält, wobei <name> Pfadteile enthalten kann (z.B: |X11/X.h|)
+#	enthÃ¤lt, wobei <name> Pfadteile enthalten kann (z.B: |X11/X.h|)
 #	Falls <dir> verschieden von |/usr/include| ist, wird ein Kompileflag
 #	der Form |-I|<dir> erzeugt.
 
@@ -107,12 +107,12 @@ expand_path ()
 	fi
 }
 
-# Die Funktion spaltet eine Pfadvariable auf und fügt bei //
-# alle möglichen Zwischenverzeichnisse mithilfe von find ein.
-# Das Startverzeichnis für find enthält immer einen nachgestellen
-# Schrägstrich, damit als Startverzeichnis ein symbolischer Link
+# Die Funktion spaltet eine Pfadvariable auf und fÃ¼gt bei //
+# alle mÃ¶glichen Zwischenverzeichnisse mithilfe von find ein.
+# Das Startverzeichnis fÃ¼r find enthÃ¤lt immer einen nachgestellen
+# SchrÃ¤gstrich, damit als Startverzeichnis ein symbolischer Link
 # angegeben werden kann. Nicht alle von split_path gelieferten Verzeichnisse
-# müssen existieren.
+# mÃ¼ssen existieren.
 
 split_path ()
 {(
@@ -134,7 +134,7 @@ split_path ()
 )}
 
 
-# Include-Verzeichnis für Header bestimmen.
+# Include-Verzeichnis fÃ¼r Header bestimmen.
 
 get_incdir ()
 {
@@ -239,8 +239,8 @@ do
 	esac
 done
 
-# Ergebnis ausgeben und Rückgabestatus bestimmen.
-# Mehrfachschrägstriche in der Ausgabe werden reduziert.
+# Ergebnis ausgeben und RÃ¼ckgabestatus bestimmen.
+# MehrfachschrÃ¤gstriche in der Ausgabe werden reduziert.
 
 if [ "$stat" -ne 0 ]; then
 	printf "%s\n" "$out" | sed -e 's|/[/]*|/|g'

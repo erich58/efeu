@@ -1,8 +1,8 @@
 #!/bin/sh
 # :*: update magic file for efile
-# :de: Magic-File für efile erneuern
+# :de: Magic-File fÃ¼r efile erneuern
 #
-# $Copyright (C) 2000 Erich Frühstück
+# $Copyright (C) 2000 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or

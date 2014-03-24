@@ -2,7 +2,7 @@
 :*:The EDB interface
 :de:Die EDB-Datenschnittstelle
 
-$Copyright (C) 2005 Erich Frühstück
+$Copyright (C) 2005 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -25,7 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 \config docpart
 
 \docpart title.eds
-\author	Erich Frühstück
+\author	Erich FrÃ¼hstÃ¼ck
 
 @Copyright(2006)
 

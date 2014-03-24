@@ -2,7 +2,7 @@
 :*:	Dynamic string buffer
 :de:	Arbeiten mit dynamischen Zeichenfeldern
 
-$Copyright (C) 1996 Erich Fr¸hst¸ck
+$Copyright (C) 1996 Erich Fr√ºhst√ºck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -30,7 +30,7 @@ If not, write to the Free Software Foundation, Inc.,
 The Function |$1| initializes the dynamic string with the blocksize <bsize>.
 :de:
 Die Funktion |$1| initialisiert den Stringbuffer <sb>
-mit der Blockgrˆﬂe <bsize>.
+mit der Blockgr√∂√üe <bsize>.
 */
 
 void sb_init (StrBuf *sb, size_t bsize)
@@ -50,7 +50,7 @@ void sb_init (StrBuf *sb, size_t bsize)
 The function |$1| sets the actual size of the string buffer <sb> to zero
 and frees the memory used by the string buffer <sb>.
 :de:
-Die Funktion |$1| setzt die Grˆﬂe des Stringbuffers auf 0 und
+Die Funktion |$1| setzt die Gr√∂√üe des Stringbuffers auf 0 und
 gibt das vom Stringbuffer verwendete Speicherfeld frei.
 */
 
@@ -68,7 +68,7 @@ void sb_free (StrBuf *sb)
 
 /*
 :de:Die Funktion |$1| liefert das aktuell im Stringbuffer verwendete
-Speicherfeld. Dieses kann sp‰ter mit |memfree| freigegeben werden. Der
+Speicherfeld. Dieses kann sp√§ter mit |memfree| freigegeben werden. Der
 Zustand des Stringbuffers ist gleich wie nach einem Aufruf von |sb_free|.
 */
 
@@ -93,7 +93,7 @@ void *sb_getmem (StrBuf *sb)
 The function |$1| sets the actual size of the string buffer to zero
 without freeing any memory used by the buffer.
 :de:
-Die Funktion |$1| setzt die Grˆﬂe des Zeichenfeldes auf 0 ohne
+Die Funktion |$1| setzt die Gr√∂√üe des Zeichenfeldes auf 0 ohne
 Speicherbereich freizugeben.
 */
 
@@ -112,7 +112,7 @@ void sb_trunc (StrBuf *sb)
 The function |$1| expands the memory field used to store date in the
 string buffer.
 :de:
-Die Funktion |$1| vergrˆﬂert das Zeichenfeld entsprechend der Blockgrˆﬂe.
+Die Funktion |$1| vergr√∂√üert das Zeichenfeld entsprechend der Blockgr√∂√üe.
 */
 
 void *sb_expand (StrBuf *buf, size_t size)
@@ -177,7 +177,7 @@ int sb_setpos (StrBuf *sb, int pos)
 The function |$1| writes the string <str> with terminating '\0'
 to the string buffer <sb>.
 :de:
-Die Funktion |$1| schreibt den String <str> mit dem abschlieﬂenden
+Die Funktion |$1| schreibt den String <str> mit dem abschlie√üenden
 0-Zeichen in das Zeichenfeld <sb>.
 */
 
@@ -212,7 +212,7 @@ The function |$1| returns a '\0'-terminated string copy of the characters
 stored in the string buffer. If no characters are stored, a Nullpointer is
 returned.
 :de:
-Die Funktion |$1| liefert eine Stringkopie (0-Abschluﬂ) des Zeichenfeldes.
+Die Funktion |$1| liefert eine Stringkopie (0-Abschlu√ü) des Zeichenfeldes.
 Falls kein Zeichen gespeichert wurde, liefert die Funktion einen Nullpointer.
 */
 
@@ -238,7 +238,7 @@ The function |$1| returns ia copy of the characters stored in the string
 without '\0'-termination.
 :de:
 Die Funktion |$1| liefert eine Kopie der Zeichen im Stringbuffer
-ohne 0-Abschluﬂ.
+ohne 0-Abschlu√ü.
 */
 
 char *sb_memcpy (StrBuf *buf)

@@ -1,9 +1,9 @@
-\title	Willkommen zur EFEU Veröffentlichung
-\author	Erich Frühstück
+\title	Willkommen zur EFEU VerÃ¶ffentlichung
+\author	Erich FrÃ¼hstÃ¼ck
 
 \sec	Enleitung
 
-Die Erich Frühstück Entwicklungs Umgebung wurde von Erich Frühstück
+Die Erich FrÃ¼hstÃ¼ck Entwicklungs Umgebung wurde von Erich FrÃ¼hstÃ¼ck
 im Rahmen seiner Projektarbeiten im Auftrag der
 <"Synthesis Forschung Gesellschaft m.b.H."> entwickelt.
 
@@ -20,79 +20,79 @@ EFEU besteht aus:
 	ruft make in einem globalen, durch die Umgebungsvariable
 	EFEUGEN definiertem, Generierungsverzeichnis auf.
 	In EFEU ist die Generierung von Bibliotheken und Kommandos
-	vollständig von den Sourcen getrennt.
+	vollstÃ¤ndig von den Sourcen getrennt.
 
 \sec	C Bibliotheken
 
 [efm]
-	ist die Basisbibliothek für EFEU Anwendungen. Hier folgt
-	ein kurzer Überblick:
-	*	Werkzeuge für eine robuste Speicherverwaltung.
-	*	Funktionen zum Zusammenhängen und Kopieren von
+	ist die Basisbibliothek fÃ¼r EFEU Anwendungen. Hier folgt
+	ein kurzer Ãœberblick:
+	*	Werkzeuge fÃ¼r eine robuste Speicherverwaltung.
+	*	Funktionen zum ZusammenhÃ¤ngen und Kopieren von
 		Zeichenketten mit Speicherzuteilung.
-	*	Buffer für dynamisch wachsende Zeichenketten und
+	*	Buffer fÃ¼r dynamisch wachsende Zeichenketten und
 		Vektoren.
-	*	Datenstrukturen mit Referenzzähler und garbage collection.
+	*	Datenstrukturen mit ReferenzzÃ¤hler und garbage collection.
 	*	Hilfsfunktionen zur Dateiverarbeitung, die die Angabe
 		einer Pipline anstelle eines Filenamens erlauben.
 		Automatische Implementation von
-		(De)Compressionsfiltern (gzip) in Abhängigkeit von
-		Filezusätzen.
+		(De)Compressionsfiltern (gzip) in AbhÃ¤ngigkeit von
+		FilezusÃ¤tzen.
 	*	Beinhaltet ein high level Interface zu Dateien,
 		Zeichenketten und allem von dem man lesen oder
 		in das man schreiben kenn.
-		Erlaubt die Kontrolle von spezifischen Möglichkeiten
+		Erlaubt die Kontrolle von spezifischen MÃ¶glichkeiten
 		der zugrundeliegenden Datenstrukturen. Ein- und
-		Ausgabefilter können auf einfache Weise dazugeschalten
+		Ausgabefilter kÃ¶nnen auf einfache Weise dazugeschalten
 		werden.
-	*	Enhält Funktionen zur Programmkonfiguration.
+	*	EnhÃ¤lt Funktionen zur Programmkonfiguration.
 		Die Dokumentation der Kommandoargumente und Optionen ist
 		in die Deklaration integriert.
 [efx]
 	stellt den esh Interpreter (siehe Anwendungen) und einige
-	Erweiterungen zur Basisbibliothek zur Verfügung.
+	Erweiterungen zur Basisbibliothek zur VerfÃ¼gung.
 [iorl]
-	stellt ein Interface zu readline zur Verfügung.
+	stellt ein Interface zu readline zur VerfÃ¼gung.
 [md]
-	enthält eine Reihe von Hilfsfunktionen zur Verarbeitung
-	von mehrdsimensionalen Datenmatrizen (Datenwürfeln).
-	Das `mdmat' Datenformat unterstützt Datenwürfel vom beliebigem
+	enthÃ¤lt eine Reihe von Hilfsfunktionen zur Verarbeitung
+	von mehrdsimensionalen Datenmatrizen (DatenwÃ¼rfeln).
+	Das `mdmat' Datenformat unterstÃ¼tzt DatenwÃ¼rfel vom beliebigem
 	Datentype und ohne Dimensionsbegrenzung.
-	Die Bibliothek enthält auch Funktionen zum Auszählen von
+	Die Bibliothek enthÃ¤lt auch Funktionen zum AuszÃ¤hlen von
 	Datenstrukturen.
 [efmath]
-	beinhaltet Funktionen für stuckweise Polynome und Zeitreihen.
-	Stellt Splineinterpolation und OLS-Schätzer zur verfügung.
+	beinhaltet Funktionen fÃ¼r stuckweise Polynome und Zeitreihen.
+	Stellt Splineinterpolation und OLS-SchÃ¤tzer zur verfÃ¼gung.
 [efwin]
-	ist eine oberfläche zu curses. Die Funktionalität ist zur zeit
-	auf die Erfordernisse der Anwendungsprogramme beschränkt.
+	ist eine oberflÃ¤che zu curses. Die FunktionalitÃ¤t ist zur zeit
+	auf die Erfordernisse der Anwendungsprogramme beschrÃ¤nkt.
 	Aktuell wird diese Bibliothek nur von "eis" (siehe
 	Anwendungen) verwendet.
 [PG]
-	ist eine Oberfläche zu PostgreSQL als Modul für esh oder zur
+	ist eine OberflÃ¤che zu PostgreSQL als Modul fÃ¼r esh oder zur
 	direkten Verwendung in C Programmen.
 
 \sec	Anwendungsprogramme
 
 [esh]
-	ist ein Befehlsinterpreter mit einer Syntax ähnlich zu C/C++.
-	Kann auf vielfältige Art und Weise eingesetzt werden.
+	ist ein Befehlsinterpreter mit einer Syntax Ã¤hnlich zu C/C++.
+	Kann auf vielfÃ¤ltige Art und Weise eingesetzt werden.
 	Der Anwendungsbereich beginnt bei einem Tischrechner (readline
 	interface) und endet bei komplexen Skripts.
 	Der Interprerer teilt sich Datenpointer direkt mit
 	C-Programmen. Er kann in C-Programmen zur Auswertung von
-	Konfigurationsdateien verwendet werden und er läßt sich leicht
+	Konfigurationsdateien verwendet werden und er lÃ¤ÃŸt sich leicht
 	mit eigenen C-Funktionen und Datentypen erweitern.
 [mksource]
 	verwendet den esh Interprerter um C Sourcen zu generieren.
-	In der EFEU Veröffentlichung finden sich keine Anwendungen,
+	In der EFEU VerÃ¶ffentlichung finden sich keine Anwendungen,
 	aber dieses Werkzeug wird intensiv zur Datenanalyse bei Synthesis
 	eingesetzt.
 [efeudoc]
 	ist eine Dokumentgenerator mit verschiedenen Ausgabeformaten
 	(LaTeX, HTML, roff, ...). Der esh Interpreter wird in
 	Makrofunktionen verwendet und erlaubt die direkte Datenanalyse
-	und Tabellengenerierung aus Datenwürfeln im Dokument.
+	und Tabellengenerierung aus DatenwÃ¼rfeln im Dokument.
 [src2doc]
 	extrahiert Kommentare aus Sourcedateien zur weiterverarbeitung
 	mit efeudoc. Dieses Werkzeug erlaubt die Integration der
@@ -105,7 +105,7 @@ rufe einfach make auf.
 
 \sec	Anmerkungen
 
-*	EFEU benötigt teTeX und readline development.
+*	EFEU benÃ¶tigt teTeX und readline development.
 *	Die aktuellen Dokumentationen sind in Deutsch, englische
 	Versionen sind in arbeit.
 *	Weitere Dokumentationen sind in arbeit.
@@ -114,4 +114,4 @@ rufe einfach make auf.
 
 Bitte melde Fehler in EFEU direkt dem Autor:
 
-Erich Frühstück <ef\@cybertec.at>
+Erich FrÃ¼hstÃ¼ck <ef\@cybertec.at>

@@ -1,47 +1,47 @@
 \preface
 Dieses Buch wendet sich an Programmentwickler und Anwender unter UNIX,
-die für ihre Arbeit die Werkzeuge und Programmbibliotheken von EFEU
+die fÃ¼r ihre Arbeit die Werkzeuge und Programmbibliotheken von EFEU
 nutzen wollen.
 
-Bei \index{EFEU}\note <*E*>rich <*F*>rühstück <*E*>ntwicklungs-<*U*>mgebung
+Bei \index{EFEU}\note <*E*>rich <*F*>rÃ¼hstÃ¼ck <*E*>ntwicklungs-<*U*>mgebung
 handelt es sich um eine Entwicklungsumgebung
 zur Bildung von Programmbibliotheken und Anwenderprogrammen sowie
-eine Reihe von Hilfswerkzeugen für die tägliche Arbeit.
+eine Reihe von Hilfswerkzeugen fÃ¼r die tÃ¤gliche Arbeit.
 
 Besondere Eigenschaften:
 *	Umfangreiche C-Programmbibliotheken;
 *	Makefilegenerierung mit C-Preprozessor aus einem Imakefile oder
 	direkt aus dem Sourcebaum;
-*	Mathematische Funktionen zum Arbeiten mit Datenwürfeln
+*	Mathematische Funktionen zum Arbeiten mit DatenwÃ¼rfeln
 	(beliebigdimensional), Polynomen und Zeitreihen;
-*	Befehlsinterpreter mit C++-ähnlicher Syntax;
+*	Befehlsinterpreter mit C++-Ã¤hnlicher Syntax;
 *	Generierung von Sourcecode aus Schablonendateien;
 *	Handbuchgenerierung aus Sourcefiles;
 *	Dokumentsprache mit einfacher Syntax, komplexen
-	Einbindemöglichkeiten und verschiedenen Ausgabeformaten
+	EinbindemÃ¶glichkeiten und verschiedenen Ausgabeformaten
 	(\LaTeX, HTML, roff, &ldots;).
 \endlist
 
-Die EFEU-Implementierung bei Synthesis enthält zusätzlich
+Die EFEU-Implementierung bei Synthesis enthÃ¤lt zusÃ¤tzlich
 noch eine Reihe von Programmbibliotheken und Kommandos zur
-Auswertung und Verwaltung von administrativen Daten und für
+Auswertung und Verwaltung von administrativen Daten und fÃ¼r
 Modellrechnungen. Diese zum Teil sehr umfangreichen Module
-werden in eigenen Handbüchern behandelt.
+werden in eigenen HandbÃ¼chern behandelt.
 
-In der ursprünglichen Form sollte dieses Handbuch den Schwerpunkt
-C-Programmierung haben, nach Rücksprache mit Mitarbeitern
+In der ursprÃ¼nglichen Form sollte dieses Handbuch den Schwerpunkt
+C-Programmierung haben, nach RÃ¼cksprache mit Mitarbeitern
 des Instiutes habe ich den EFEU-Interpreter in den
 Vordergrund gestellt.
 
-Trotzdem werden weiterhin einige Ausführungen zur C-Programmierung
-ins Handbuch einfließen. Zum einen weist der EFEU-Interpreter eine starke
-Affinität zu C/C++ auf, zum anderen ergeben sich dadurch tiefere
+Trotzdem werden weiterhin einige AusfÃ¼hrungen zur C-Programmierung
+ins Handbuch einflieÃŸen. Zum einen weist der EFEU-Interpreter eine starke
+AffinitÃ¤t zu C/C++ auf, zum anderen ergeben sich dadurch tiefere
 Einblicke in die zugrundeliegenden Programmbibliotheken.
 
 /*
-Zum Verständnis dieses Buches sind Grundkenntnisse in der Arbeit
-mit UNIX-Systemen sowie in der Programmiersprache C förderlich.
+Zum VerstÃ¤ndnis dieses Buches sind Grundkenntnisse in der Arbeit
+mit UNIX-Systemen sowie in der Programmiersprache C fÃ¶rderlich.
 */
-	Erich Frühstück\br
-	Wördern, \thedate
+	Erich FrÃ¼hstÃ¼ck\br
+	WÃ¶rdern, \thedate
 

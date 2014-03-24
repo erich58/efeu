@@ -1,5 +1,5 @@
 # :en: manpages to the libraries
-# :de: Handbücher zu den Programmbiblitheken
+# :de: HandbÃ¼cher zu den Programmbiblitheken
 ##Depends: doc
 
 include efeu.smh

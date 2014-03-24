@@ -2,7 +2,7 @@
 Konstruktion von Makrodefinitionen
 
 $Header	<$1>
-$Copyright (C) 1996 Erich Frühstück
+$Copyright (C) 1996 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -27,20 +27,20 @@ If not, write to the Free Software Foundation, Inc.,
 /*
 Die Funktion |$1| dient zur Konstruktion einer Makrofunktion.
 Als Argumente wird der Makroname <name>, die Argumentliste
-<args> und der Makrorumpf <def> übergeben.
+<args> und der Makrorumpf <def> Ã¼bergeben.
 Die Makrodefinition wird in die Datei <io> geschrieben. Hier wird
 wahlweise |hdr| oder |src| eingesetzt.
 
-Wird als Argumentliste ein Nullpointer übergeben, wird ein Makro
+Wird als Argumentliste ein Nullpointer Ã¼bergeben, wird ein Makro
 ohne Argument generiert. Bei einem Leerstring wird ein
 Makro mit 0 Argumenten generiert.
 
-Die zusätzlichen Argumente werden als der Reihe nach in den
-Stringregistern beginnend bei 1 gespeichert und können damit
-über Parametersubstitution, die auf die drei anderen Argumente
+Die zusÃ¤tzlichen Argumente werden als der Reihe nach in den
+Stringregistern beginnend bei 1 gespeichert und kÃ¶nnen damit
+Ã¼ber Parametersubstitution, die auf die drei anderen Argumente
 angewendet wird, eingebaut werden.
 
-Bei Zeilenvorschüben im Makrorumpf werden automatisch entsprechende
+Bei ZeilenvorschÃ¼ben im Makrorumpf werden automatisch entsprechende
 Fortsetzungszeilen in der Makrodefinition generiert.
 */
 
@@ -71,8 +71,8 @@ void Macro (IO io, str name, str args, str def, ...)
 Die Funktion |$1| erlaubt die Konstruktion einfacher Makrodefinitionen.
 Jede Zeile der Eingabestruktur <def> besteht aus dem
 Makronamen, dem Ersetzungstext und einem Beschreibungstext.
-Besteht der Ersetzungstext aus mehr als einem Word, muß er unter
-Anführung gestellt werden.
+Besteht der Ersetzungstext aus mehr als einem Word, muÃŸ er unter
+AnfÃ¼hrung gestellt werden.
 */
 
 void Define (IO io, IO def, ...)
@@ -102,9 +102,9 @@ void Define (IO io, IO def, ...)
 }
 
 /*
-Die Funktion |$1| generiert für jedes übergebene Argument
-ein |#include|-Statement. Enthält das Argument keine spitzen Klammern,
-wird es unter Anführung gestellt.
+Die Funktion |$1| generiert fÃ¼r jedes Ã¼bergebene Argument
+ein |#include|-Statement. EnthÃ¤lt das Argument keine spitzen Klammern,
+wird es unter AnfÃ¼hrung gestellt.
 */
 
 void Include (IO io, ...)
@@ -124,7 +124,7 @@ void Include (IO io, ...)
 }
 
 /*
-Die Funktion |$1| generiert für jedes übergebene Argument
+Die Funktion |$1| generiert fÃ¼r jedes Ã¼bergebene Argument
 ein |#include|-Statement der Form |#include <|<arg>|.h>|.
 */
 

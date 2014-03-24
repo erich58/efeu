@@ -1,7 +1,7 @@
 /*
-Datei öffnen
+Datei Ã¶ffnen
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -36,8 +36,8 @@ If not, write to the Free Software Foundation, Inc.,
 $Description
 April 1999:
 	Flexiblere Kompressionsverfahren.
-	Automatische Einträge in Abhängigkeitslisten.
-März 2000:
+	Automatische EintrÃ¤ge in AbhÃ¤ngigkeitslisten.
+MÃ¤rz 2000:
 	Filename "-" wird wie Nullpointer behandelt.
 	Filedeskriptorkennungen "&0", "&1", "&2".
 */
@@ -96,7 +96,7 @@ static char *zcmd (const char *name, const char *mode)
 }
 
 
-/*	Pipeline öffnen
+/*	Pipeline Ã¶ffnen
 */
 
 static FILE *open_pipe (const char *name, int mode)
@@ -110,7 +110,7 @@ static FILE *open_pipe (const char *name, int mode)
 	return file;
 }
 
-/*	Datei öffnen
+/*	Datei Ã¶ffnen
 */
 
 static FILE *open_file (const char *name, int mode)
@@ -126,7 +126,7 @@ static FILE *open_file (const char *name, int mode)
 
 
 /*
-Die Funktion |$1| öffnet die Datei <name> mit Zugriff <mode>
+Die Funktion |$1| Ã¶ffnet die Datei <name> mit Zugriff <mode>
 */
 
 FILE *fileopen (const char *name, const char *mode)
@@ -146,7 +146,7 @@ FILE *fileopen (const char *name, const char *mode)
 		return NULL;
 	}
 
-/*	Einträge in Abhängigkeitslisten
+/*	EintrÃ¤ge in AbhÃ¤ngigkeitslisten
 */
 	if	(strchr(mode, 'd'))
 	{
@@ -160,7 +160,7 @@ FILE *fileopen (const char *name, const char *mode)
 		else	AddDepend(name);
 	}
 
-/*	Dateien öffnen
+/*	Dateien Ã¶ffnen
 */
 	if	(name == NULL || (name[0] == '-' && name[1] == 0))
 		return (omode == MODE_READ) ? stdin : stdout;

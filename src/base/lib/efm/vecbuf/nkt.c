@@ -1,7 +1,7 @@
 /*
-Tabelle mit Namensschlüssel
+Tabelle mit NamensschlÃ¼ssel
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -41,16 +41,16 @@ static void nkt_rt_clean (void *ptr)
 }
 
 /*
-Die externe Variable |$1| definiert den Referenztyp für
-Suchtabellen mit Namensschlüssel.
+Die externe Variable |$1| definiert den Referenztyp fÃ¼r
+Suchtabellen mit NamensschlÃ¼ssel.
 */
 
 RefType nkt_reftype = REFTYPE_INIT("NameKeyTab",
 	nkt_rt_ident, nkt_rt_clean);
 
 /*
-Die Funktion |$1| generiert eine neue Schlüsseltabelle mit Namen |name|,
-Blockgröße |bsize| und Löschfunktion |ckean|.
+Die Funktion |$1| generiert eine neue SchlÃ¼sseltabelle mit Namen |name|,
+BlockgrÃ¶ÃŸe |bsize| und LÃ¶schfunktion |ckean|.
 */
 
 NameKeyTab *nkt_create (const char *name, size_t bsize,
@@ -64,7 +64,7 @@ NameKeyTab *nkt_create (const char *name, size_t bsize,
 }
 
 /*
-Die Funktion |$1| löscht alle Einträge del Schlüsseltabelle <nkt>.
+Die Funktion |$1| lÃ¶scht alle EintrÃ¤ge del SchlÃ¼sseltabelle <nkt>.
 */
 
 void nkt_clean (NameKeyTab *nkt)
@@ -93,7 +93,7 @@ static int nkt_cmp (const void *pa, const void *pb)
 }
 
 /*
-Die Funktion |$1| erweitert die Schlüsseltabelle <nkt> um den
+Die Funktion |$1| erweitert die SchlÃ¼sseltabelle <nkt> um den
 Eintrag <name> mit den Daten <data>. Die Funktion liefert 1
 falls ein alter Eintrag ersetzt wurde und 0 sonst.
 */
@@ -116,8 +116,8 @@ int nkt_insert (NameKeyTab *nkt, const char *name, void *data)
 }
 
 /*
-Die Funktion |$1| löscht den Eintrag <name> aus der Schlüsseltabelle <nkt>.
-Die Funktion liefert 1 falls ein Eintrag gelöscht wurde und 0 falls
+Die Funktion |$1| lÃ¶scht den Eintrag <name> aus der SchlÃ¼sseltabelle <nkt>.
+Die Funktion liefert 1 falls ein Eintrag gelÃ¶scht wurde und 0 falls
 kein entsprechender Eintrag existierte.
 */
 
@@ -139,7 +139,7 @@ int nkt_delete (NameKeyTab *nkt, const char *name)
 }
 
 /*
-Die Funktion |$1| ruft den Eintrag <name> aus der Schlüsseltabelle
+Die Funktion |$1| ruft den Eintrag <name> aus der SchlÃ¼sseltabelle
 <nkt> ab. Falls der Eintrag nicht gefunden wurde,
 liefert die Funktion <defval>.
 */
@@ -158,11 +158,11 @@ void *nkt_fetch (NameKeyTab *nkt, const char *name, void *defval)
 }
 
 /*
-Die Funktion |$1| ruft für jeden Eintrag der Suchtabelle die
+Die Funktion |$1| ruft fÃ¼r jeden Eintrag der Suchtabelle die
 Funktion <visit> mit dem Eintragsnamen <name>, dem Datenpointer <data>
-und dem Parameterwert <par>, der beim Aufruf der Funktion übergeben wurde.
+und dem Parameterwert <par>, der beim Aufruf der Funktion Ã¼bergeben wurde.
 Die Funktion |nkt_walk| stoppt die Verarbeitung, sobald die Funktion <visit>
-einen Wert ungleich 0 liefert und gibt diesen als Rückgabewert zurück.
+einen Wert ungleich 0 liefert und gibt diesen als RÃ¼ckgabewert zurÃ¼ck.
 */
 
 int nkt_walk (NameKeyTab *nkt,
@@ -182,7 +182,7 @@ int nkt_walk (NameKeyTab *nkt,
 
 /*
 Die Funktion |$1| arbeitet wie |nkt_walk|, jedoch werden die
-Einträge in umgekehrter Reihenfolge abgearbeitet.
+EintrÃ¤ge in umgekehrter Reihenfolge abgearbeitet.
 */
 
 int nkt_rwalk (NameKeyTab *nkt,

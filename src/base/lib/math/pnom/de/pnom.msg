@@ -1,7 +1,7 @@
 /*
-Formattabelle zum Arbeiten mit stückweisen Polynomen
+Formattabelle zum Arbeiten mit stÃ¼ckweisen Polynomen
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -20,5 +20,5 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-1	$!: Ableitung $1 nicht zulässig.\n
+1	$!: Ableitung $1 nicht zulÃ¤ssig.\n
 11	$!: Syntaxfehler in Polynomdaten.\n

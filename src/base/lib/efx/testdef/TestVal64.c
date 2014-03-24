@@ -1,8 +1,8 @@
 /*
 :*:	test uint64_t integer value
-:de:	Vorzeichenfreien 64-Bit Ganzzahlwert prüfen
+:de:	Vorzeichenfreien 64-Bit Ganzzahlwert prÃ¼fen
 
-(c) 1997, 2007 Erich Frühstück
+(c) 1997, 2007 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or

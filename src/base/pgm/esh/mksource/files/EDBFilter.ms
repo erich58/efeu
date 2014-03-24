@@ -2,8 +2,8 @@
 EDB-Datenbankfilter
 
 $Header	<$1>
-$Copyright (C) 2007 Erich Frühstück
-A-3423 St.Andrä/Wördern, Wildenhaggasse 38
+$Copyright (C) 2007 Erich FrÃ¼hstÃ¼ck
+A-3423 St.AndrÃ¤/WÃ¶rdern, Wildenhaggasse 38
 */
 
 #ifndef	EDBFilter_ms
@@ -14,10 +14,10 @@ A-3423 St.Andrä/Wördern, Wildenhaggasse 38
 #include <RefPar.ms>
 
 /*
-Die Funktion |$1| generiert einen Filter für EDB-Datenbanken.
+Die Funktion |$1| generiert einen Filter fÃ¼r EDB-Datenbanken.
 Als Argument wird die Syntax <syntax> des Filters, ein kurzer
 Beschreibungstext <label> und der Funktionsrumpf <read> einer
-Lesefunktion benötigt. Der Filtername <name> wird aus der Syntax
+Lesefunktion benÃ¶tigt. Der Filtername <name> wird aus der Syntax
 abgeleitet.
 
 Die optionalen Argumente haben folgende Bedeutung:
@@ -34,7 +34,7 @@ Die optionalen Argumente haben folgende Bedeutung:
 	handeln, ein solcher wird am einfachsten mithilfe der Funktion
 	|RefPar| eingerichtet.
 [<pfx>]
-	ist ein Präfix für den Namen des generirten Filters und der
+	ist ein PrÃ¤fix fÃ¼r den Namen des generirten Filters und der
 	Hilfsfunktionen.
 [<ext>]
 	ist eine boolsche Variable, die bestimmt, ob die
@@ -42,11 +42,11 @@ Die optionalen Argumente haben folgende Bedeutung:
 	eingerichtet wird (Vorgabe: true).
 
 Das letzte Kommentar vor Aufruf der Funktion wird als
-Beschreibungstext für den Datenbankfilter verwendet.
+Beschreibungstext fÃ¼r den Datenbankfilter verwendet.
 Achtung: Kommentare im Funktionsrumpf werden vor dem Aufruf der Funktion
 verarbeitet! 
 
-Bei der Aufbereitung der Funktionsrümpfe von <create> und <read>
+Bei der Aufbereitung der FunktionsrÃ¼mpfe von <create> und <read>
 werden die folgenden Parametersubstitutionen vorgenommen:
 
 [|\$1|]	Der Type der Basisdatenbank;
@@ -59,7 +59,7 @@ In der Ledefunktion sind die folgenden Variablen vordefiniert:
 |data|
 	ist der Pointer auf das zu lesende Objekt
 |base|
-	ist der Name der Basis-Datenbank und steht nur zur Verfügung,
+	ist der Name der Basis-Datenbank und steht nur zur VerfÃ¼gung,
 	wenn kein Parametertyp definiert wurde.
 |par|
 	ist ein Pointer auf die Parameterstruktur bei Verwendung eines
@@ -154,7 +154,7 @@ config src
 #include <EDBFilter.ms>
 
 /\*
-Der Filter \$1 läßt die Daten unverändert.
+Der Filter \$1 lÃ¤ÃŸt die Daten unverÃ¤ndert.
 *\/
 
 EDBFilter("dummy", "Dummy-Filter",

@@ -2,7 +2,7 @@
 :*:	database connection type
 :de:	Datenbankverbindungstype
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -114,7 +114,7 @@ Die Funktion |$1| erzeugt eine Verbindung zu einem PostgreSQL Datenbankserver
 und liefert eine Struktur vom Type |PG|. Die Verbindung wird mit der Funktion
 |PQconnectdb| aufgebaut, der Parameter <def> wird an diese Funktion
 weitergereicht. Falls nur der Datenbankname angegeben wird, kann das
-Schlüsselwort |dbname| entfallen.
+SchlÃ¼sselwort |dbname| entfallen.
 :*:
 The function |$1| makes a new connection to a PostgreSQL backend
 and returns a |PG| structure.

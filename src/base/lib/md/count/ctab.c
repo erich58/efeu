@@ -1,7 +1,7 @@
 /*
-Zählerstruktur generieren
+ZÃ¤hlerstruktur generieren
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -41,7 +41,7 @@ static void dummy (MdCount *cnt, void *data, void *buf)
 }
 
 
-/*	Zähltabelle aus IO-Struktur generieren
+/*	ZÃ¤hltabelle aus IO-Struktur generieren
 */
 
 mdmat *md_ioctab (const char *title, IO *io,
@@ -95,7 +95,7 @@ static void put_type (const char *str, IO *io)
 	io_puts(str, io);
 }
 
-/*	Zähltabelle initialisieren
+/*	ZÃ¤hltabelle initialisieren
 */
 
 int md_ctabinit (mdmat *tab, MdCountList *list)
@@ -186,7 +186,7 @@ int md_ctabinit (mdmat *tab, MdCountList *list)
 }
 
 
-/*	Zähltabelle aus Definitionsstring generieren
+/*	ZÃ¤hltabelle aus Definitionsstring generieren
 */
 
 mdmat *md_ctab (const char *title, const char *def,

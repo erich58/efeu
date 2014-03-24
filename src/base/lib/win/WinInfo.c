@@ -1,8 +1,8 @@
 /*
 :*:	command information browser
-:de:	Informationseinträge darstellen
+:de:	InformationseintrÃ¤ge darstellen
 
-$Copyright (C) 2006 Erich Frühstück
+$Copyright (C) 2006 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -36,7 +36,7 @@ typedef struct {
 typedef struct INFOPAR_S INFOPAR;
 
 struct INFOPAR_S {
-	INFOPAR *prev;	/* Vorgängerknoten */
+	INFOPAR *prev;	/* VorgÃ¤ngerknoten */
 	VecBuf buf;	/* Buffer */
 	int active;	/* Aktiver Index */
 	int curline;	/* Aktuelle Zeile */

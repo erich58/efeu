@@ -1,7 +1,7 @@
 \sec	Fortlaufende Untergliederung
 
-Grundsätzlich besteht ein Dokument aus Vorwort, Inhaltsverzeichnis,
-den einzelnen Kapiteln und diversesn Anhängen. Zusätzlich kann ein
+GrundsÃ¤tzlich besteht ein Dokument aus Vorwort, Inhaltsverzeichnis,
+den einzelnen Kapiteln und diversesn AnhÃ¤ngen. ZusÃ¤tzlich kann ein
 Dokument noch in verschiedene Abschitte unterteilt werden.
 
 \ssec	Vorwort
@@ -9,12 +9,12 @@ Dokument noch in verschiedene Abschitte unterteilt werden.
 Das Vorwort beginnt immer auf einer rechten Seite.
 Es wird mit dem Befehl |\preface| eingeleitet.
 Wie jede andere Umgebung wird das Vorwort automatisch mit
-dem nächsten Glliederungsbefehl beendet, insbesonders auch
+dem nÃ¤chsten Glliederungsbefehl beendet, insbesonders auch
 durch den |\toc|-Befehl, mit dem das Inhaltsverzeichnis generiert
 wird.
 
-Für die fortlaufende \index{Untergliederung} stehen die folgenden
-Befehle zur Verfügung:
+FÃ¼r die fortlaufende \index{Untergliederung} stehen die folgenden
+Befehle zur VerfÃ¼gung:
 
 ---- eval
 for (x in "\\part", "\\chap", "\\sec", "\\ssec", "\\para")
@@ -22,7 +22,7 @@ for (x in "\\part", "\\chap", "\\sec", "\\ssec", "\\para")
 ----
 
 Die fortlaufende Untergliederung orientiert sich an \LaTeX. Die
-folgende Tabelle zeigt die Äquivalenzen:
+folgende Tabelle zeigt die Ã„quivalenzen:
 
 \tab	|l|l|
 ---

@@ -1,6 +1,6 @@
-/*	Datenbankverknüpfung
+/*	DatenbankverknÃ¼pfung
 
-$Copyright (C) 2005 Erich Frühstück
+$Copyright (C) 2005 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -556,9 +556,9 @@ static JPAR jpar[] = {
 		"b,2\trecords uniq in file 2\n"
 		"x\trecords in both files\n"
 		":de:Auswertungsmodus:\n"
-		"a,1\tDatensätze nur in Datei 1\n"
-		"b,2\tDatensätze nur in Datei 2\n"
-		"x\tDatensätze in beiden Dateien)\n"
+		"a,1\tDatensÃ¤tze nur in Datei 1\n"
+		"b,2\tDatensÃ¤tze nur in Datei 2\n"
+		"x\tDatensÃ¤tze in beiden Dateien)\n"
 	}, { "filter", "[db]=fdef", join_filter,
 		":*:applay filter <fdef> to given data base <db>:\n"
 		"a,1\tfirst data base\n"
@@ -568,7 +568,7 @@ static JPAR jpar[] = {
 		"b,2\tzweite Datenbank (Vorgabe)\n"
 	}, { "key", "=list", join_key,
 		":*:list of key variables\n"
-		":de:Liste der Schlüsselvariablen\n"
+		":de:Liste der SchlÃ¼sselvariablen\n"
 	}, { "use", "=db", join_use,
 		":*:use data from given input file <db>:\n"
 		"a,1\tfirst data base\n"
@@ -819,6 +819,6 @@ EDBFilter EDBFilter_join = EDB_FILTER(NULL,
 	"join", "[par]=file", fdef_join, NULL, 
 	":*:join with database <file> and parameters <par>.\n"
 	"join[?] gives a list of availabel parameters.\n"
-	":de:Verknüpfen mit Datenbank <file> und Parameter <par>.\n"
-	"Die Angabe join[?] liefert die verfügbaren Parameter.\n"
+	":de:VerknÃ¼pfen mit Datenbank <file> und Parameter <par>.\n"
+	"Die Angabe join[?] liefert die verfÃ¼gbaren Parameter.\n"
 );

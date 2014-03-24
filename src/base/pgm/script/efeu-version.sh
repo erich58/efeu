@@ -1,8 +1,8 @@
 #!/bin/sh
 # :*:check efeu version
-# :de:EFEU-Version überprüfen
+# :de:EFEU-Version Ã¼berprÃ¼fen
 #
-# $Copyright (C) 2011 Erich Frühstück
+# $Copyright (C) 2011 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or

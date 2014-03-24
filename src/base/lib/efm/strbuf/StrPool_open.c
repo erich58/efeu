@@ -1,10 +1,10 @@
 /*
 :*:io interface to string data pool
-:de:IO-Zugriff auf Sammelbecken für Zeichenketten
+:de:IO-Zugriff auf Sammelbecken fÃ¼r Zeichenketten
 
 $Header	<EFEU/$1>
 
-$Copyright (C) 2007 Erich Frühstück
+$Copyright (C) 2007 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or

@@ -3,7 +3,7 @@ Ausgabekontrolle
 
 $Header <EFEU/$1>
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -48,7 +48,7 @@ struct PCTRLStruct {
 };
 
 
-#define	PCTRL_MASK	('p' << 8)	/* Maske für Steuerflags */
+#define	PCTRL_MASK	('p' << 8)	/* Maske fÃ¼r Steuerflags */
 
 #define	PCTRL_BEGIN	(PCTRL_MASK|0x01)	/* Beginn der Ausgabe */
 #define	PCTRL_DATA	(PCTRL_MASK|0x02)	/* Start der Datensektion */
@@ -57,18 +57,18 @@ struct PCTRLStruct {
 #define	PCTRL_PAGE	(PCTRL_MASK|0x05)	/* Neue Seite */
 #define	PCTRL_EHEAD	(PCTRL_MASK|0x06)	/* Ende des Datenheaders */
 #define	PCTRL_EDATA	(PCTRL_MASK|0x07)	/* Ende der Datensektion */
-#define	PCTRL_END	(PCTRL_MASK|0x08)	/* Aufräumen */
+#define	PCTRL_END	(PCTRL_MASK|0x08)	/* AufrÃ¤umen */
 
-#define	PCTRL_FMASK	(0x10)			/* Maske für Wertefelder */
+#define	PCTRL_FMASK	(0x10)			/* Maske fÃ¼r Wertefelder */
 
-#define	PCTRL_LEFT	(PCTRL_MASK|0x11)	/* Linksbündiger String */
+#define	PCTRL_LEFT	(PCTRL_MASK|0x11)	/* LinksbÃ¼ndiger String */
 #define	PCTRL_CENTER	(PCTRL_MASK|0x12)	/* Zentrierter String */
-#define	PCTRL_RIGHT	(PCTRL_MASK|0x13)	/* Rechtsbündiger String */
+#define	PCTRL_RIGHT	(PCTRL_MASK|0x13)	/* RechtsbÃ¼ndiger String */
 #define	PCTRL_VALUE	(PCTRL_MASK|0x14)	/* Zahlenwert ausgeben */
 #define	PCTRL_EMPTY	(PCTRL_MASK|0x15)	/* Leerfeld ausgeben */
 
-#define	PCTRL_COLUMNS	(PCTRL_MASK|0x21)	/* Verfügbare Spalten bestimmen */
-#define	PCTRL_LINES	(PCTRL_MASK|0x22)	/* Verfügbare Zeilen bestimmen */
+#define	PCTRL_COLUMNS	(PCTRL_MASK|0x21)	/* VerfÃ¼gbare Spalten bestimmen */
+#define	PCTRL_LINES	(PCTRL_MASK|0x22)	/* VerfÃ¼gbare Zeilen bestimmen */
 #define	PCTRL_XPOS	(PCTRL_MASK|0x23)	/* Aktuelle Spalte bestimmen */
 #define	PCTRL_YPOS	(PCTRL_MASK|0x24)	/* Aktuelle Zeile bestimmen */
 
@@ -100,8 +100,8 @@ int tst_ctrl (PCTRL *pf, int cmd, va_list list);
 /*	Globale Anpassungsvariablen
 */
 
-extern int pctrl_fsize;		/* Fontgröße für die Ausgabe */
-extern char *pctrl_pgfmt;	/* Seitenformat für die Ausgabe */
+extern int pctrl_fsize;		/* FontgrÃ¶ÃŸe fÃ¼r die Ausgabe */
+extern char *pctrl_pgfmt;	/* Seitenformat fÃ¼r die Ausgabe */
 extern char *PrintListDelim;	/* Trennzeichen zwischen Datenwerten */
 
 #endif	/* EFEU/pctrl.h */

@@ -2,7 +2,7 @@
 Bitfield - Datenstrukturen generieren
 
 $Header	<$1>
-$Copyright (C) 1995 Erich Frühstück
+$Copyright (C) 1995 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -28,7 +28,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <DataType.ms>
 
 static struct BitfieldVar {
-	int size;	/* Variablenlänge */
+	int size;	/* VariablenlÃ¤nge */
 	str name;	/* Variablenname */
 	str desc;	/* Beschreibungstext */
 };
@@ -66,22 +66,22 @@ mit Variablendefinitionen und <Desc> eine Kurzbezeichnung
 der Struktur an.
 
 Eine Definitionszeile in der Eingabestruktur hat die Gestalt:
-	Bitlänge Name Beschreibungstext
+	BitlÃ¤nge Name Beschreibungstext
 
 Die Struktur wird unter dem Namen <Name> generiert.
-Zur Ausrichtung auf ganze Wörter (32 Bit) werden bei Bedarf
-Dummyvariablen eingeführt.
+Zur Ausrichtung auf ganze WÃ¶rter (32 Bit) werden bei Bedarf
+Dummyvariablen eingefÃ¼hrt.
 
 Neben der Strukturdefinition werden die folgenden Makros definiert:
 [<name>|_size|]
-	gibt die Bytelänge der Struktur an
+	gibt die BytelÃ¤nge der Struktur an
 [<name>|_recl|]
-	gibt die für die binäre Ein/Ausgabe verwendete
-	Satzlänge an. Diese kann kleiner als <name>|_recl| sein.
+	gibt die fÃ¼r die binÃ¤re Ein/Ausgabe verwendete
+	SatzlÃ¤nge an. Diese kann kleiner als <name>|_recl| sein.
 [<name><|_read(<io>, <data>, <dim>)|>]
-	liest <dim> Datensätze aus <io> in den Buffer <data>.
+	liest <dim> DatensÃ¤tze aus <io> in den Buffer <data>.
 [<name><|_write(<io>, <data>, <dim>)|>]
-	gibt <dim> Datensätze des Buffers <data> nach <io> aus.
+	gibt <dim> DatensÃ¤tze des Buffers <data> nach <io> aus.
 [<name><|_clear(<data>, <dim>)|>]
 	setzt den Datenbuffer <buf> mit <dim> Elementen auf 0.
 
@@ -101,7 +101,7 @@ void Bitfield(str Name, str Desc, IO Def, bool flag = true)
 	Name = psub(Name);
 	Desc = Desc ? psub(Desc) : "Bitfeldstruktur " + Name;
 
-/*	Bitfeldeinträge generieren
+/*	BitfeldeintrÃ¤ge generieren
 */
 	DataType type = DataType(Name, NULL);
 	DataBase db = DataBase(BitfieldVar);
@@ -172,7 +172,7 @@ void Bitfield(str Name, str Desc, IO Def, bool flag = true)
 	xprint.write(false);
 	list2x.write(false);
 
-/*	Ungenützte Bytes bestimmen
+/*	UngenÃ¼tzte Bytes bestimmen
 */
 	if	(size)
 	{

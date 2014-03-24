@@ -1,6 +1,6 @@
 /*	latin1 symbols
 
-$Copyright (C) 1999 Erich Frühstück
+$Copyright (C) 1999 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -19,36 +19,36 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-Auml	Ä
-Aring	Å
-AElig	Æ
-Ccedil	Ç
-Eacute	É
-Ntilde	Ñ
-Ouml	Ö
-szlig	ß
-agrave	à
-aacute	á
-acirc	â
-auml	ä
-aring	å
-aelig	æ
-ccedil	ç
-egrave	è
-eacute	é
-circ	ê
-euml	ë
-igrave	ì
-iacute	í
-icirc	î
-iuml	ï
-ntilde	ñ
-ograve	ò
-oacute	ó
-ocirc	ô
-ouml	ö
-ugrave	ù
-uacute	ú
-ucirc	û
-uuml	ü
-yuml	ÿ
+Auml	Ã„
+Aring	Ã…
+AElig	Ã†
+Ccedil	Ã‡
+Eacute	Ã‰
+Ntilde	Ã‘
+Ouml	Ã–
+szlig	ÃŸ
+agrave	Ã 
+aacute	Ã¡
+acirc	Ã¢
+auml	Ã¤
+aring	Ã¥
+aelig	Ã¦
+ccedil	Ã§
+egrave	Ã¨
+eacute	Ã©
+circ	Ãª
+euml	Ã«
+igrave	Ã¬
+iacute	Ã­
+icirc	Ã®
+iuml	Ã¯
+ntilde	Ã±
+ograve	Ã²
+oacute	Ã³
+ocirc	Ã´
+ouml	Ã¶
+ugrave	Ã¹
+uacute	Ãº
+ucirc	Ã»
+uuml	Ã¼
+yuml	Ã¿

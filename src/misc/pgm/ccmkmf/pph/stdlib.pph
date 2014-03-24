@@ -2,7 +2,7 @@
 :*:standard library names
 :de:Standardbibliotheksnamen
 
-$Copyright (C) 1999, 2002 Erich Frühstück
+$Copyright (C) 1999, 2002 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -43,14 +43,14 @@ $Synopsis
 \index{|DEP_MATH|}
 
 $Description
-Für die wichtigsten vom EFEU-Projekt verwalteten Programmbibliotheken
-gibt es sowohl die zugehörigen Link-Optionen (|LIB_|<name>> Makros)
+FÃ¼r die wichtigsten vom EFEU-Projekt verwalteten Programmbibliotheken
+gibt es sowohl die zugehÃ¶rigen Link-Optionen (|LIB_|<name>> Makros)
 als auch die vollen Pfadnamen der Programmbibliotheken
 (|DEP_|<name> Makros) als Makro vordefiniert.
-Zusätzlich sind auch häufig gebrauchte Standardbibliotheken als
+ZusÃ¤tzlich sind auch hÃ¤ufig gebrauchte Standardbibliotheken als
 Makro vordefiniert.
 
-Makros für EFEU-Programmbibliotheken:
+Makros fÃ¼r EFEU-Programmbibliotheken:
 [|EFM|]
 	Basisprogrammbibliothek mit elementaren
 	Funktionen des EFEU-Projektes,
@@ -64,9 +64,9 @@ Makros für EFEU-Programmbibliotheken:
 	Schnittstelle zur Curses-Programmbibliothek, in Arbeit;
 [|MATH|]
 	mathematisches Erweiterungspaket,
-	umfaßt derzeit Polynom- und Zeitreihenfunktionen.
+	umfaÃŸt derzeit Polynom- und Zeitreihenfunktionen.
 
-Fehlende Makros für EFEU-Projektbibliotheken können durch <|StdLib(<name>)|>
+Fehlende Makros fÃ¼r EFEU-Projektbibliotheken kÃ¶nnen durch <|StdLib(<name>)|>
 (Link-Option) und <|LinkName(<name>)|> (Pfadname) ersetzt werden.
 */
 
@@ -88,9 +88,9 @@ Fehlende Makros für EFEU-Projektbibliotheken können durch <|StdLib(<name>)|>
 
 /*
 $Notes
-Die Makros für Systembibliotheken sollten in eine lokale
+Die Makros fÃ¼r Systembibliotheken sollten in eine lokale
 Konfigurationsdatei ausgelagert werden, da ihre Definition
-vom verwendeten System abhängt.
+vom verwendeten System abhÃ¤ngt.
 */
 
 #endif	/* stdlib.pph */

@@ -1,5 +1,5 @@
 # :en: efeu basic documentation
-# :de: EFEU Basishandbücher
+# :de: EFEU BasishandbÃ¼cher
 ##Depends: base
 
 include efeuprj.smh

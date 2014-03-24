@@ -1,7 +1,7 @@
 /*
 Gleitkommawerte formatieren
 
-$Copyright (C) 1994, 2008 Erich Frühstück
+$Copyright (C) 1994, 2008 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -99,7 +99,7 @@ static void x_fmt (StrBuf *sb, const FmtKey *key, int *sig, double val)
 	int prec;
 	double base;
 
-/*	Präzession und Exponent bestimmen
+/*	PrÃ¤zession und Exponent bestimmen
 */
 	prec = (key->flags & FMT_NOPREC) ? 6 : key->prec;
 	base = 1.;

@@ -1,8 +1,8 @@
 /*
 :*:	test unsigned integer value
-:de:	Vorzeichenfreien Ganzzahlwert prüfen
+:de:	Vorzeichenfreien Ganzzahlwert prÃ¼fen
 
-(c) 1997, 2005 Erich Frühstück
+(c) 1997, 2005 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -48,7 +48,7 @@ If not, write to the Free Software Foundation, Inc.,
 "unterhalb oder oberhalb eines Datums (-date, +date) oder durch\n"\
 "einen Zeitbereich (beg\\:end) festgelegt. Datumsangaben haben die\n" \
 "Form JJJJ-MM-TT oder TT.MM.JJJJ. Fehlende Tages- und Monatsangaben\n" \
-"werden durch das erste Monat/den ersten Tag ergänzt. Beim Endedatum\n"\
+"werden durch das erste Monat/den ersten Tag ergÃ¤nzt. Beim Endedatum\n"\
 "eines Zeitbereichs wird das letzte Monat/der letzte Tag verwendet.\n"
 
 #define	DE_NEG \

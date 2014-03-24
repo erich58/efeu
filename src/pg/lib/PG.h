@@ -3,7 +3,7 @@
 :de:	Interface zu PostgreSQL
 
 $Header <DB/PG.h>
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -38,18 +38,18 @@ If not, write to the Free Software Foundation, Inc.,
 
 /*
 :de:
-Der Datentyp |$1| repräsentiert eine Verbindung zum Datenbankserver.
+Der Datentyp |$1| reprÃ¤sentiert eine Verbindung zum Datenbankserver.
 :*:
 The structure |$1| represents a connection to a database server.
 */
 
 typedef struct {
-	REFVAR;		/* Referenzzähler */
+	REFVAR;		/* ReferenzzÃ¤hler */
 	PGconn *conn;	/* Verbindungsdaten */
 	PGresult *res;	/* Ergebnisdaten */
 	FILE *trace;	/* Trace File */
-	int lock;	/* Sperre für exec-Befehle */
-	int trans;	/* Flag für Transaktion */
+	int lock;	/* Sperre fÃ¼r exec-Befehle */
+	int trans;	/* Flag fÃ¼r Transaktion */
 } PG;
 
 PG *PG_connect (const char *def);

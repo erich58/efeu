@@ -1,7 +1,7 @@
 /*
 Verarbeitungsmodi
 
-$Copyright (C) 2000 Erich Frühstück
+$Copyright (C) 2000 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -31,17 +31,17 @@ typedef struct {
 } S2DMode;
 
 static S2DMode tab[] = {
-	{ "hdr", s2d_hdr, "Handbucheintrag für Headerfile"},
-	{ "xhdr", s2d_xhdr, "Erweiterter Handbucheintrag für Headerfile"},
-	{ "src", s2d_src, "Handbucheintrag für Sourcefile"},
-	{ "cmd", s2d_cmd, "Handbucheintrag für Scriptdateien"},
-	{ "sh", s2d_sh, "Handbucheintrag für Shellfunktionen"},
-	{ "std", s2d_std, "C-Style Sourcen mit Erläuterung"},
+	{ "hdr", s2d_hdr, "Handbucheintrag fÃ¼r Headerfile"},
+	{ "xhdr", s2d_xhdr, "Erweiterter Handbucheintrag fÃ¼r Headerfile"},
+	{ "src", s2d_src, "Handbucheintrag fÃ¼r Sourcefile"},
+	{ "cmd", s2d_cmd, "Handbucheintrag fÃ¼r Scriptdateien"},
+	{ "sh", s2d_sh, "Handbucheintrag fÃ¼r Shellfunktionen"},
+	{ "std", s2d_std, "C-Style Sourcen mit ErlÃ¤uterung"},
 	{ "xstd", s2d_xstd,
-		"C-Style Sourcen mit Erläuterung ohne Kopfdefinition"},
-	{ "script", s2d_script, "sh-Style Sourcen mit Erläuterung"},
+		"C-Style Sourcen mit ErlÃ¤uterung ohne Kopfdefinition"},
+	{ "script", s2d_script, "sh-Style Sourcen mit ErlÃ¤uterung"},
 	{ "xscript", s2d_xscript,
-		"sh-Style Sourcen mit Erläuterung ohne Kopfdefinition"},
+		"sh-Style Sourcen mit ErlÃ¤uterung ohne Kopfdefinition"},
 	{ "com", s2d_com, "Kommentare der Datei"},
 	{ "doc", s2d_doc, "Direkteinbindung der Datei"},
 };

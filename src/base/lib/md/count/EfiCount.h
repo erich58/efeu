@@ -1,8 +1,8 @@
 /*
-Zähldefintionen für Efeu-Datenobjekte
+ZÃ¤hldefintionen fÃ¼r Efeu-Datenobjekte
 
-$Copyright (C) 2007 Erich Frühstück
-A-3423 St.Andrä/Wördern, Wildenhaggasse 38
+$Copyright (C) 2007 Erich FrÃ¼hstÃ¼ck
+A-3423 St.AndrÃ¤/WÃ¶rdern, Wildenhaggasse 38
 */
 
 #ifndef	EFEU_EfiCount_h

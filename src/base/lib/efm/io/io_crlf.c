@@ -1,8 +1,8 @@
 /*
 :*:terminate lines with CR LF
-:de:Zeilen mit CR LF abschließen
+:de:Zeilen mit CR LF abschlieÃŸen
 
-$Copyright (C) 1998 Erich Frühstück
+$Copyright (C) 1998 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -45,7 +45,7 @@ static int crlf_ctrl (IO *io, int req, va_list list)
 /*
 :*:The function |$1| implements an output filter for |base| which replaces
 every LF by CR and LF.
-:de:Die Funktion |$1| implementiert einen Ausgabefilter für |base|, der
+:de:Die Funktion |$1| implementiert einen Ausgabefilter fÃ¼r |base|, der
 jedes LF durch CR LF ersetzt.
 */
 

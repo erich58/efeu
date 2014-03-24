@@ -22,7 +22,7 @@ t_vmatch:  ./t_vmatch.c
 depend::  ./t_vmatch.c
 	$(CC) $(CONFIG_CFLAGS) $(CFLAGS) ./t_vmatch.c -MM -MT t_vmatch >> Makefile
 
-# Von shmkmf erg‰nzte Regeln:
+# Von shmkmf erg√§nzte Regeln:
 
 all::
 
@@ -59,7 +59,7 @@ SourceList::
 	@find . -type f -name "[!.]*[!~]" -print | sort > $@~
 	@if cmp -s $@~ $@; then rm -f $@~; else mv -f $@~ $@; fi
 
-# Von make depend erg‰nzte Regeln:
+# Von make depend erg√§nzte Regeln:
 t_vmatch: t_vmatch.c /home/erich/efeu/include/EFEU/Resource.h \
  /home/erich/efeu/include/EFEU/config.h \
  /home/erich/efeu/include/EFEU/vecbuf.h

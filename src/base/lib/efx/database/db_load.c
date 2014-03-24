@@ -1,7 +1,7 @@
 /*
 Datenbank laden
 
-$Copyright (C) 1995 Erich Fr¸hst¸ck
+$Copyright (C) 1995 Erich Fr√ºhst√ºck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -90,7 +90,7 @@ static void addtodb (EfiDB *db, void *buf, EfiObj *expr)
 }
 
 
-/*	Komplexe Datenbankeintr‰ge
+/*	Komplexe Datenbankeintr√§ge
 */
 
 static void load_complex (IO *io, EfiDB *db, LPAR *lpar, EfiObj *expr)
@@ -129,7 +129,7 @@ static void load_complex (IO *io, EfiDB *db, LPAR *lpar, EfiObj *expr)
 }
 
 
-/*	Kompakte Datenbankeintr‰ge
+/*	Kompakte Datenbankeintr√§ge
 */
 
 static void load_compact (IO *io, EfiDB *db, LPAR *lpar, EfiObj *expr)
@@ -218,7 +218,7 @@ void DB_load (IO *io, EfiDB *db, EfiObj *expr)
 	VarTab_xadd(NULL, "addentry", NULL, lpar.flag);
 	PushContext(RefVarTab(LocalVar), NULL);
 
-/*	Datenbankeintr‰ge lesen
+/*	Datenbankeintr√§ge lesen
 */
 	if	(io_eat(io, ";%s") == '#')
 	{
@@ -226,7 +226,7 @@ void DB_load (IO *io, EfiDB *db, EfiObj *expr)
 	}
 	else	load_complex(io, db, &lpar, expr);
 
-/*	Aufr‰umen
+/*	Aufr√§umen
 */
 	PopContext();
 	PopVarTab();

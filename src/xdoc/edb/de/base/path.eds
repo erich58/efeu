@@ -5,31 +5,31 @@ Regeln der EFEU-Programmbibliotheken und spezifische Regeln der
 EDB-Datenfileverarbeitung zum Tragen. Darunter fallen:
 *	Spezifische Verarbeitungsverfahren aufgrund von Namenskonventionen;
 *	Extraktion von Verarbeitungsparametern aus der Namensdefinition;
-*	Spezielle Schemata für den Zugriff auf Daten.
+*	Spezielle Schemata fÃ¼r den Zugriff auf Daten.
 
 \ssec	Komprimierte Dateien
 
-Die EFEU-Programmbibliotheken unterstützen mit \index{|gzip|} oder
-\index{|bzip2|} komprimierte Dateien. Dies gilt auch für EDB-Datenfiles.
-Die Aktivierung der Kompression/Dekompression erfolgt über den
+Die EFEU-Programmbibliotheken unterstÃ¼tzen mit \index{|gzip|} oder
+\index{|bzip2|} komprimierte Dateien. Dies gilt auch fÃ¼r EDB-Datenfiles.
+Die Aktivierung der Kompression/Dekompression erfolgt Ã¼ber den
 Filezusatz. Endet eine Datei auf |.gz| wird |gzip| verwendet, bei
 |.bz2| wird |bzip2| verwendet.
 
-Der \index{Kompressionsgrad} bei der Ausgabe mit |gzip| kann über
+Der \index{Kompressionsgrad} bei der Ausgabe mit |gzip| kann Ã¼ber
 Optionen gesteuert werden. Diese werden von allen |edb|-Kommandos
-unterstützt.
+unterstÃ¼tzt.
 
 [|-1|, |--fast]
 	verwendet \index{schnelle Komprimierung} bei der Ausgabe mittels
-	|gzip|. Das ist die Voreinstellung für EFEU-Komandos.
+	|gzip|. Das ist die Voreinstellung fÃ¼r EFEU-Komandos.
 [|-9|, |--best]
 	verwendet \index{optimale Komprimierung} bei der Ausgabe. Die
-	Kompression dauert hier deutlich länger, die Größenreduktion
-	ist nur geringfügig besser. Daher wird diese Einstellung selten
+	Kompression dauert hier deutlich lÃ¤nger, die GrÃ¶ÃŸenreduktion
+	ist nur geringfÃ¼gig besser. Daher wird diese Einstellung selten
 	verwendet.
 
 Eine Kompression mit |bzip2| liefert kleinere Dateien als |gzip|, die
-Rechenzeit ist dafür deutlich höher.
+Rechenzeit ist dafÃ¼r deutlich hÃ¶her.
 
 \ssec	Pipes
 
@@ -37,36 +37,36 @@ Mit Pipe wird ein Datenstrom zwischen zwei Prozessen bezeichnet.
 Beginnt ein Name mit einem Pipe-Symbol (||||) gefolgt von einem
 Befehlsaufruf, wird damit eine Pipe zum entsprechenden Prozess
 generiert. Je nach Zugriffsmodus (lesend oder schreibend) werden die
-Daten von dem zugehörigen Prozess geholt oder an ihn weitergegeben.
-Diese Regel gilt generell für alle Dateizugriffe, nicht nur für
+Daten von dem zugehÃ¶rigen Prozess geholt oder an ihn weitergegeben.
+Diese Regel gilt generell fÃ¼r alle Dateizugriffe, nicht nur fÃ¼r
 EDB-Datenfiles.
 
 \ssec	Zugriff auf reine Datenfiles
 
 Die EDB-Kommandos erlauben den Zugriff auf reine Datenfiles ohne
-Verwendung eines EDB-Metafiles. Die dafür notwendigen Informationen
+Verwendung eines EDB-Metafiles. Die dafÃ¼r notwendigen Informationen
 wie Datentyp und
-Lesefunktion können direkt mit dem Dateinamen spezifiziert werden.
+Lesefunktion kÃ¶nnen direkt mit dem Dateinamen spezifiziert werden.
 
-Die allgemeine Syntax für einen Dateinamen lautet:
+Die allgemeine Syntax fÃ¼r einen Dateinamen lautet:
 	\[<type>[|[|<read>|]||:|]]<path>
 
 Dabei gibt <type> den Datentyp, <read> die Lesefunktion und <path> den
 Dateipfad an.
 Ohne Angabe eines Datentyps muss <path> auf ein EDB-Datenfile
-verweisen, ein |-| steht für die Standardeingabe.
+verweisen, ein |-| steht fÃ¼r die Standardeingabe.
 
 Als Datentyp <type> kann ein beliebiger, (auch externer) benannter
 Datentyp oder eine Strukturdefinition in Form von '|{| <varlist>
-|}|' angegeben werden. Das Schlüsselwort |struct| wird nicht
+|}|' angegeben werden. Das SchlÃ¼sselwort |struct| wird nicht
 verwendet.
 
 Bei Angabe einer Lesefunktion ist der Doppelpunkt |:| vor dem
-Pfadnamen optional. Die Standardvorgabe für die Lesefunktion ist
+Pfadnamen optional. Die Standardvorgabe fÃ¼r die Lesefunktion ist
 |plain|.
 
 Fehlt der Dateiname <path>, wird eine leere Datei gegebenen Types
-konstruiert. Dies kann verwendet werden, um über ein edb-Kommando
+konstruiert. Dies kann verwendet werden, um Ã¼ber ein edb-Kommando
 Informationen zu einem gegebenen Datentyp abzufragen.
 
 Beispiele:
@@ -77,6 +77,6 @@ ls | edb str[label]:-
 ----
 
 Der erste Aufruf liefert Zufallszahlen aus |/dev/random|\note{Linux
-spezifische Gerätedatei, liefert Zufallsbytes (\mref{random(4)}).}.
-Die beiden anderen Aufrufe sind äquivalent, sie liefern jeweils eine
+spezifische GerÃ¤tedatei, liefert Zufallsbytes (\mref{random(4)}).}.
+Die beiden anderen Aufrufe sind Ã¤quivalent, sie liefern jeweils eine
 Datenbank mit den Dateinamen im aktuellen Verzeichnis.

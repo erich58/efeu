@@ -1,7 +1,7 @@
 /*
-Fehlermeldungen für d2u
+Fehlermeldungen fÃ¼r d2u
 
-$Copyright (C) 2004 Erich Frühstück
+$Copyright (C) 2004 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -24,8 +24,8 @@ conv	$1: Datei erfolgreich konvertiert.\n
 check	$1: Konvertierung wird vorgeschlagen.\n
 isunix	$1: bereits eine UNIX Textdatei.\n
 isdos	$1: bereits eine MS-DOS Textdatei.\n
-isdir	$1: Verzeichnis übersprungen.\n
-binary	$1: Binärdatei ignoriert.\n
-errout	$1: Ausgabefehler, Datei nicht verändert.\n
-notmp	$1: kein temporärer Dateiname verfügbar.\n
+isdir	$1: Verzeichnis Ã¼bersprungen.\n
+binary	$1: BinÃ¤rdatei ignoriert.\n
+errout	$1: Ausgabefehler, Datei nicht verÃ¤ndert.\n
+notmp	$1: kein temporÃ¤rer Dateiname verfÃ¼gbar.\n
 

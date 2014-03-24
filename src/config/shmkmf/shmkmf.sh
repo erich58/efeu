@@ -2,7 +2,7 @@
 # :*:create Makefile from shell
 # :de:Makefile mithilfe der Shell generieren
 #
-# $Copyright (C) 2004 Erich Frühstück
+# $Copyright (C) 2004 Erich FrÃ¼hstÃ¼ck
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -27,7 +27,7 @@
 #
 # v |
 #	:*:write extra comments to the makefile
-#	:de:Zusätzliche Kommentare ins Makefile schreiben
+#	:de:ZusÃ¤tzliche Kommentare ins Makefile schreiben
 # i |
 #	:*:read commands from stdin
 #	:de:Lese Befehle aus der Standardeingabe
@@ -39,21 +39,21 @@
 #	:de:Lese Befehle aus der Zeichenkette <string>.
 # x |
 #	:*:do not create extra rules and comments
-#	:de:Keine zusätzlichen Regeln und Kommentare generieren
+#	:de:Keine zusÃ¤tzlichen Regeln und Kommentare generieren
 # r:arg |
 #	:*:create Makefile in a temporary directory and run |make|
 #	with the given argument <arg>.
-#	:de:Makefile in einem temprären Verzeichnis generieren und
+#	:de:Makefile in einem temprÃ¤ren Verzeichnis generieren und
 #	|make| mit gegebenem Argument <arg> aufrufen.
 # t:top |
 #	:*:sets |TOP| to <top> (default: .)
 #	:de:Setzt |TOP| auf <top>, Vorgabe: .
 # C:dir |
 #	:*:expand config path with <dir>
-#	:de:Suchpfad für Konfigurationsdateien um <dir> erweitern
+#	:de:Suchpfad fÃ¼r Konfigurationsdateien um <dir> erweitern
 # I:dir |
 #	:*:expand include path with <dir>
-#	:de:Suchpfad für Headerdateien um <dir> erweitern
+#	:de:Suchpfad fÃ¼r Headerdateien um <dir> erweitern
 # ::config | Config
 #	:*:name of configuration file (default: {Config})
 #	:de:Name der Konfigurationsdatei, Vorgabe: {Config}
@@ -183,10 +183,10 @@ language=`expr "$LANG" : "\([a-z][a-z]\).*"`
 # codeset not supported yet
 #codeset=`expr "$LANG" : ".*[.]\([^@]*\).*"`
 
-# Die Funktion $1 spaltet eine Pfadvariable auf und fügt bei //
-# alle möglichen Zwischenverzeichnisse mithilfe von find ein.
-# Das Startverzeichnis für find enthält immer einen nachgestellen
-# Schrägstrich, damit als Startverzeichnis ein symbolischer Link
+# Die Funktion $1 spaltet eine Pfadvariable auf und fÃ¼gt bei //
+# alle mÃ¶glichen Zwischenverzeichnisse mithilfe von find ein.
+# Das Startverzeichnis fÃ¼r find enthÃ¤lt immer einen nachgestellen
+# SchrÃ¤gstrich, damit als Startverzeichnis ein symbolischer Link
 # angegeben werden kann. Nicht alle von $1 gelieferten Verzeichnisse
 # existieren.
 

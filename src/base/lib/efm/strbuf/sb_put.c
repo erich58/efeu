@@ -2,7 +2,7 @@
 :*:	Write characters to string buffer
 :de:	Zeichen in Stringbuffer schreiben
 
-$Copyright (C) 1996 Erich Frühstück
+$Copyright (C) 1996 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -32,10 +32,10 @@ is expandet. In opposite to the macro |sb_putc| the position in the
 string buffer is always synchronized.
 :de:
 Die Funktion |$1| schreibt das Zeichen <c> in das Zeichenfeld <sb> und
-liefert das geschriebene Zeichen als Rückgabewert. Das Zeichenfeld
-wird bei Bedarf mit |sb_expand| vergrößert.
-Gegenüber dem Makro |sb_putc| führt |$1| immer eine Synchronisation
-der Zeichenfeldgröße mit der aktuellen Position durch.
+liefert das geschriebene Zeichen als RÃ¼ckgabewert. Das Zeichenfeld
+wird bei Bedarf mit |sb_expand| vergrÃ¶ÃŸert.
+GegenÃ¼ber dem Makro |sb_putc| fÃ¼hrt |$1| immer eine Synchronisation
+der ZeichenfeldgrÃ¶ÃŸe mit der aktuellen Position durch.
 */
 
 int sb_put (int c, StrBuf *sb)

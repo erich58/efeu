@@ -3,7 +3,7 @@ Tabellenkonstruktion
 
 $Header <EFEU/$1>
 
-$Copyright (C) 2008 Erich Frühstück
+$Copyright (C) 2008 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -55,7 +55,7 @@ typedef struct {
 	TabularLinestyle hline : 2;	/* Art der Trennlinie */
 	TabularAlign align : 2;		/* Zeilenausrichtung */
 	unsigned top_margin : 2;	/* Oberer Rand */
-	unsigned height : 10;		/* Zeilenhöhe */
+	unsigned height : 10;		/* ZeilenhÃ¶he */
 } TabularRow;
 
 typedef struct {
@@ -68,13 +68,13 @@ typedef struct {
 } TabularEntry;
 
 typedef struct {
-	REFVAR;		/* Referenzzähler */
+	REFVAR;		/* ReferenzzÃ¤hler */
 	IO *io;		/* Ausgabestruktur */
 	int margin;	/* Linker Rand */
 	StrBuf text;	/* Textbuffer */
 	VecBuf col;	/* Spaltendefinitionen */
 	VecBuf row;	/* Zeilendefinitionen */
-	VecBuf entry;	/* Tabelleneinträge */
+	VecBuf entry;	/* TabelleneintrÃ¤ge */
 	TabularEntry buf;
 } Tabular;
 

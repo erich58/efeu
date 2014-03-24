@@ -4,22 +4,22 @@ In den bisherigen Abschnitten wurden die Beispieldateien
 |pers.edb| und |data.edb| vorgestellt, die einem traditionellen
 relationalen Datenkonzept entsprechen. In diesem Kapitel wird
 aufgezeigt, wie Konzepte der objektorientierten Programmierung
-bei der Datenanalyse genutzt werden können.
+bei der Datenanalyse genutzt werden kÃ¶nnen.
 
 \ssec	Headerdeklarationen
 
-Die für die Daten verwendeten Datentypen werden in eigenen Headerfiles
-definiert. Falls der Basisname mit dem Datentype übereinstimmt und der
+Die fÃ¼r die Daten verwendeten Datentypen werden in eigenen Headerfiles
+definiert. Falls der Basisname mit dem Datentype Ã¼bereinstimmt und der
 Filezusatz auf |.hdr| lautet, kann der Datentyp direkt oder in
-Verbindung mit dem Schlüsselwort |extern|\note{Wird dieses
-Schlüsselwort vor einem unbekannten Datentyp angegeben, wird nach
-einer entsprechenden Headerdatei oder einer gemeinsam genützten
+Verbindung mit dem SchlÃ¼sselwort |extern|\note{Wird dieses
+SchlÃ¼sselwort vor einem unbekannten Datentyp angegeben, wird nach
+einer entsprechenden Headerdatei oder einer gemeinsam genÃ¼tzten
 Objektdatei mit der Definition dieses Datentyps gesucht.} aktiviert werden.
 
 \ssec	Datenkonvertierung
 
-Die äquivalenten Daten im objektorientierten Konzept werden mit
-|ex2_pers.edb| und |ex2_data.edb| benannt. Anstelle einer unabhängigen
+Die Ã¤quivalenten Daten im objektorientierten Konzept werden mit
+|ex2_pers.edb| und |ex2_data.edb| benannt. Anstelle einer unabhÃ¤ngigen
 Definition werden sie hier zur Demonstration der
-Datentransformationsmöglichkeiten direkt aus den
-ursprünglichen Daten abgeleitet.
+DatentransformationsmÃ¶glichkeiten direkt aus den
+ursprÃ¼nglichen Daten abgeleitet.

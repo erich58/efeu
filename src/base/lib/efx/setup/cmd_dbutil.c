@@ -1,7 +1,7 @@
 /*
-Hilfsfunktionen für Datenbankdaten
+Hilfsfunktionen fÃ¼r Datenbankdaten
 
-$Copyright (C) 1994 Erich Frühstück
+$Copyright (C) 1994 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -45,7 +45,7 @@ static EfiMember m_tab[] = {
 	{ "dim", &Type_int, m_dim, NULL },
 };
 
-/*	Datenbankdatei öffnen
+/*	Datenbankdatei Ã¶ffnen
 */
 
 static void f_ebcdic (EfiFunc *func, void *rval, void **arg)

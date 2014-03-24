@@ -1,8 +1,8 @@
 /*
-Zählerdefintion generieren
+ZÃ¤hlerdefintion generieren
 
 $Header	<$1>
-$Copyright (C) 2000 Erich Frühstück
+$Copyright (C) 2000 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -31,20 +31,20 @@ If not, write to the Free Software Foundation, Inc.,
 #include <cntvar.ms>
 
 /*
-Die Struktur |$1| dient zur Konstruktion von Zählobjekten und
-Zählklassifikationen. Sämtliche Hilfsfunktionen und Hilfstabellen
-werden statisch eingerichtet. Der Zugriff erfolgt über
+Die Struktur |$1| dient zur Konstruktion von ZÃ¤hlobjekten und
+ZÃ¤hlklassifikationen. SÃ¤mtliche Hilfsfunktionen und Hilfstabellen
+werden statisch eingerichtet. Der Zugriff erfolgt Ã¼ber
 Initialisierungsfunktionen, die wahlweise statisch oder global
 eingerichtet werden.
 */
 
 struct CntDef {
-	bool glob;	/* Flag für globale Definition */
+	bool glob;	/* Flag fÃ¼r globale Definition */
 	str tsetup;	/* Datentypinitialisierung */
 	str ftab;	/* Funktionstabelle */
 	str pfx;	/* Namensprefix */
-	str ctype;	/* Type des Zählobjektes */
-	str cntarg;	/* Argumentliste der Zählerfunktionen */
+	str ctype;	/* Type des ZÃ¤hlobjektes */
+	str cntarg;	/* Argumentliste der ZÃ¤hlerfunktionen */
 	str idxtype;	/* Type der Klassendefinitionen */
 	str idxarg;	/* Argumentliste der Klassenfunktionen */
 	str idxvar;	/* Variablendeklaration der Klassenfunktionen */
@@ -52,20 +52,20 @@ struct CntDef {
 	str var_type;	/* Variablentype */
 	str var_name;	/* Variablenname */
 	int var_dim;	/* Dimension des Variablenvektors */
-	str[] add;	/* Vektor für Ergänzungen */
-	str[] ini;	/* Vektor für Initialisierungen */
-	DataBase cnt;	/* Datenbank mit Zählern */
+	str[] add;	/* Vektor fÃ¼r ErgÃ¤nzungen */
+	str[] ini;	/* Vektor fÃ¼r Initialisierungen */
+	DataBase cnt;	/* Datenbank mit ZÃ¤hlern */
 	DataBase class;	/* Datenbank mit Klassifikationen */
-	bool compat;	/* Kompatiblitätsflag (kein Prefix für Zählobjekte) */
+	bool compat;	/* KompatiblitÃ¤tsflag (kein Prefix fÃ¼r ZÃ¤hlobjekte) */
 };
 
 
 /*
 Die erste Form des Konstruktors richtet
-Zähldefinitionen ein, die Parameterwerte ausschließlich über
-globale Variablen oder über den mit |md_count| übergebenen Datenpointer
+ZÃ¤hldefinitionen ein, die Parameterwerte ausschlieÃŸlich Ã¼ber
+globale Variablen oder Ã¼ber den mit |md_count| Ã¼bergebenen Datenpointer
 erhalten. Die Variable <type> gibt den Datentype des Datenpointers an.
-wird ein Nullstring übergeben, wird <"|const void *|"> verwendet.
+wird ein Nullstring Ã¼bergeben, wird <"|const void *|"> verwendet.
 */
 
 virtual promotion inline CntDef CntDef (str type = NULL, bool cglob = true,
@@ -85,7 +85,7 @@ virtual promotion inline CntDef CntDef (str type = NULL, bool cglob = true,
 
 /*
 Der zweite Konstruktor verwendet einen Schnittstellenvektor der
-Dimension <n> zur Kommunikation mit den Zählfunktionen.
+Dimension <n> zur Kommunikation mit den ZÃ¤hlfunktionen.
 Die Datenstruktur <name> wird mit mithilfe von |Struct|
 (Vergleiche dazu \mref{struct(7)}) aus <def> generiert.
 */
@@ -154,7 +154,7 @@ virtual promotion inline CntDef CntDef (str name, int n, str def,
 
 /*
 Mithilfe von |CntDef::init| kann eine
-Initialisierungsfunktion für die Zählvariablen eingerichtet werden.
+Initialisierungsfunktion fÃ¼r die ZÃ¤hlvariablen eingerichtet werden.
 Die Initialisierungsfunktion hat als erstes Argument den Index auf
 den Schnittstellenvektor und liefert den entsprechenden Pointer.
 */
@@ -193,7 +193,7 @@ void CntDef::init(str name, str args = NULL, str body = NULL)
 void CntDef::ctab(str name, str pfx, str ext = NULL,
 	str pext = NULL, str xdesc = NULL)
 {
-	src << "\n/*\tZählertabelle\n*/\n\n";
+	src << "\n/*\tZÃ¤hlertabelle\n*/\n\n";
 	name = psub(name);
 
 	if	(pext)	pext = ", " + psub(pext, name);
@@ -272,9 +272,9 @@ void CntDef::create(str name, str args, str body, ...)
 
 /*
 Die Funktion |CntDef::setup| richtet statische Vektoren mit den
-Zählobjekten und den Klassifikationen ein. Weiters konstruiert
-sie eine Funktion zum Eintragen der entsprechenden Einträge
-in die Zähldatenbanken.
+ZÃ¤hlobjekten und den Klassifikationen ein. Weiters konstruiert
+sie eine Funktion zum Eintragen der entsprechenden EintrÃ¤ge
+in die ZÃ¤hldatenbanken.
 */
 
 void CntDef::setup(str name, str lblpfx = NULL, ...)
@@ -379,7 +379,7 @@ void CntDef::setup(str name, str lblpfx = NULL, ...)
 void CntDef::add_cnt(str name, str desc)
 {
 	fprintf(src, "\n/*\t%s\n*/\n\n",
-		psub(desc ? desc : "Zählobjekt $(name)"));
+		psub(desc ? desc : "ZÃ¤hlobjekt $(name)"));
 	cnt += { name, desc };
 }
 
@@ -427,9 +427,9 @@ void CntDef::use(...)
 }
 
 /*
-\shead	Zählobjekt
+\shead	ZÃ¤hlobjekt
 
-Ein Zählobjekt wird mit der Funktion |CntDef::cntobj| eingerichtet.
+Ein ZÃ¤hlobjekt wird mit der Funktion |CntDef::cntobj| eingerichtet.
 Dies erfolgt mit der Funktion |CntObj| (Vergleiche dazu
 \mref{cntobj(7)}).
 */
@@ -441,8 +441,8 @@ void CntDef::cntobj(str name, str desc, Type_t type, IO def)
 }
 
 /*
-Zählobjekte zur Ausgabe von Variablen können auch mit der Funktion
-|CntDef::cntvar| eingerichtet werden. Die Verwendung ist äquivalent
+ZÃ¤hlobjekte zur Ausgabe von Variablen kÃ¶nnen auch mit der Funktion
+|CntDef::cntvar| eingerichtet werden. Die Verwendung ist Ã¤quivalent
 zu einem Aufruf von |CntObj| mit der Definition
 	|set . $2 =| <expr>\br
 	|add . \$1 = $2|
@@ -490,7 +490,7 @@ void CntDef::stdfunc(str name, str fdef, ...)
 	definiert eine frei gestaltete Klassifikationsfunktion.
 	Die Variable <fdef> definiert den Funktionsrumpf und
 	die Eingabestruktur <def> definiert die Klassenkennungen.
-	Jede Zeile von <def> enthält eine Kennung und einen
+	Jede Zeile von <def> enthÃ¤lt eine Kennung und einen
 	Beschreibungstext.
 
 */
@@ -508,7 +508,7 @@ void CntDef::classfunc(str name, str desc, str fdef, IO def)
 /*
 [|CntDef::simple|]
 	generiert eine einfache Klassifikationsfunktion mit <n>
-	Klassen. Der Rückgabewert der Funktion wird vom Ausdruck
+	Klassen. Der RÃ¼ckgabewert der Funktion wird vom Ausdruck
 	<expr> bestimmt. Die Variablen <fmt> und <lbl> dienen zur
 	Konstruktion der Kennungen und Beschreibungen.
 */
@@ -547,7 +547,7 @@ void CntDef::limit(str name, str desc, str expr, int n,
 	generiert eine lineare Klassifikation mit einer offenen Klasse
 	am Anfang und am Ende. Der Ausdruck <expr> liefert den Klassenindex.
 	Die Variablen <first> und <last> bestimmen die untere, bzw.
-	obere Grenze für die zwei offenen Klassen.
+	obere Grenze fÃ¼r die zwei offenen Klassen.
 */
 
 void CntDef::range(str name, str desc, str expr, int first, int last,
@@ -569,8 +569,8 @@ return $3 - $2;
 
 /*
 [|CntDef::flag|]
-	liefert eine Klassifikation mit einer Ausprägung,
-	die nur Daten zählt, für die der Ausdruck <expr> wahr ist.
+	liefert eine Klassifikation mit einer AusprÃ¤gung,
+	die nur Daten zÃ¤hlt, fÃ¼r die der Ausdruck <expr> wahr ist.
 */
 
 void CntDef::flag(str name, str desc, str expr, str fmt = NULL)
@@ -627,8 +627,8 @@ virtual promotion void CntDef::test(str name, str desc, str init, IO def)
 /*
 [|CntDef::complex|]
 	erlaubt die Konstruktion einer Klassifikation, bei der
-	|switch|-Blöcke und |if|-Anweisungen beliebig kombiniert
-	und verschachtelt werden können.
+	|switch|-BlÃ¶cke und |if|-Anweisungen beliebig kombiniert
+	und verschachtelt werden kÃ¶nnen.
 */
 
 void CntDef::complex(str name, str desc, IO def)
@@ -641,8 +641,8 @@ void CntDef::complex(str name, str desc, IO def)
 
 /*
 $Examples
-Das erste Beispiel zeigt die Konstruktion eines Zählobjektes für
-Fälle und eine Klasse für die Gesamtheit.
+Das erste Beispiel zeigt die Konstruktion eines ZÃ¤hlobjektes fÃ¼r
+FÃ¤lle und eine Klasse fÃ¼r die Gesamtheit.
 
 \ms_example
 config hdr src
@@ -654,13 +654,13 @@ StdInclude(hdr, "EFEU/mdcount")
 Include(src, HeaderName)
 
 CntDef cdef = CntDef()
-cdef.cntobj("ges", "Fallzähler", int, ". . 1");
+cdef.cntobj("ges", "FallzÃ¤hler", int, ". . 1");
 cdef.classfunc("ges", "Gesamtheit", "return 0;", "GES Gesamtheit");
 cdef.setup("Simple");
 \end
 
-Das zweite Beispiel zeigt eine Zähldefinition mit einer
-Zählvariablenstruktur.
+Das zweite Beispiel zeigt eine ZÃ¤hldefinition mit einer
+ZÃ¤hlvariablenstruktur.
 
 \ms_example	eink
 config hdr src
@@ -686,7 +686,7 @@ struct DezilBasis {
 	double val;
 };
 
-cdef.cntobj("eink", "Einkommenszähler", DezilBasis, string !
+cdef.cntobj("eink", "EinkommenszÃ¤hler", DezilBasis, string !
 .	anz	1.
 .	val	$$(ptr)->satz
 return 	.	$$(ptr)->satz ? 1 : 0
@@ -702,7 +702,7 @@ cdef.test("std", "Standardklassen",
 10000	E$$(key)	Einkommen $$((int) last + 1) bis zu $$(key)
 20000	E$$(key)	Einkommen $$((int) last + 1) bis zu $$(key)
 50000	E$$(key)	Einkommen $$((int) last + 1) bis zu $$(key)
-*	EXXX	Einkommen über $$(last)
+*	EXXX	Einkommen Ã¼ber $$(last)
 !);
 
 cdef.setup("EK", "ek");

@@ -2,7 +2,7 @@
 :*: system call
 :de: Systemaufruf
 
-$Copyright (C) 1997 Erich Frühstück
+$Copyright (C) 1997 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -30,9 +30,9 @@ difference: If |$1| is called with |NULL| as argument and
 the global variable |Shell| is not |NULL|, |system(Shell)| is executed.
 If |Shell| is not definied, |callproc| returns -1.
 :de:
-Die Funktion |$1| ist eine Hülle um |system| mit dem folgenden
+Die Funktion |$1| ist eine HÃ¼lle um |system| mit dem folgenden
 Unterschied: Falls |$1| mit einem Nullpointer als Argument aufgerufen wird
-und die Variable |Shell| ist nicht |NULL|, wird |system(Shell)| ausgeführt.
+und die Variable |Shell| ist nicht |NULL|, wird |system(Shell)| ausgefÃ¼hrt.
 Falls |Shell| nicht definiert ist, liefert |callproc| -1.
 */
 
@@ -59,7 +59,7 @@ int callproc (const char *cmd)
 /*
 :*: If |$1| is true, no system call is performed.
 :de: Falls |$1| verschieden von 0 ist, werden keine Systemaufrufe
-durchgeführt.
+durchgefÃ¼hrt.
 */
 int callproc_lock = 0;
 

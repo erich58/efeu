@@ -1,5 +1,5 @@
 # :en: Supplemented data types for interpreter
-# :de: Ergänzende Datentypen für Interpreter
+# :de: ErgÃ¤nzende Datentypen fÃ¼r Interpreter
 ##Depends: efm efx esh
 
 CC=efeucc

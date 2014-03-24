@@ -1,7 +1,7 @@
 /*
-String mit Längeninformation ausgeben
+String mit LÃ¤ngeninformation ausgeben
 
-$Copyright (C) 1996 Erich Frühstück
+$Copyright (C) 1996 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or

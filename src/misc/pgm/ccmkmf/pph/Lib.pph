@@ -1,7 +1,7 @@
 /*
-Regeln für Programmbibliotheken
+Regeln fÃ¼r Programmbibliotheken
 
-$Copyright (C) 2001 Erich Frühstück
+$Copyright (C) 2001 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -25,17 +25,17 @@ If not, write to the Free Software Foundation, Inc.,
 
 /*
 $Description
-Die folgenden Makros für Programmbibliotheken
-hängen vom Flag |DoSharedLib| ab. Falls es gesetzt ist,
-werden die Makros für dynamische Programmbibliotheken herangozeogen,
-ansonsten für statische Programmbibliotheken.
+Die folgenden Makros fÃ¼r Programmbibliotheken
+hÃ¤ngen vom Flag |DoSharedLib| ab. Falls es gesetzt ist,
+werden die Makros fÃ¼r dynamische Programmbibliotheken herangozeogen,
+ansonsten fÃ¼r statische Programmbibliotheken.
 */
 
 #if	DoSharedLib
 
 /*
 Der Makro |$1| definiert ein Standard-Programmbibliothek.
-Die Definition ist von |DoSharedLib| abhängig.
+Die Definition ist von |DoSharedLib| abhÃ¤ngig.
 */
 #define	StdLib(name)		PathName($(STDLIBDIR),SharedLibName(name))
 
@@ -105,7 +105,7 @@ flags -c SourceName(src)	@;\
 #if	DoSharedLib
 #define	LibRule(dir,name,obj,libs)	SharedLibRule(dir,name,obj,libs)
 /*
-Der Makro |$1| definiert die Generierungsregel für eine Programmbibliothek.
+Der Makro |$1| definiert die Generierungsregel fÃ¼r eine Programmbibliothek.
 */
 #define	LibTarget(dir,name,obj,libs)	SharedLibTarget(dir,name,obj,libs)
 #else

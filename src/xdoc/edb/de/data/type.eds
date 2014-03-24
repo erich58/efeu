@@ -1,55 +1,55 @@
 \sec	\label{type}\index{Datentypen}
 
-Grundsätzlich können beliebige Datentypen des EFEU-Interpreters
+GrundsÃ¤tzlich kÃ¶nnen beliebige Datentypen des EFEU-Interpreters
 verwendet werden. Es gibt aber gewisse Grundanforderungen:
-*	Für den Datentyp muss eine \index{binäre Lese- und Schreibfunktion}
-	existieren, damit Daten binär gelesen und gespeichert werden können.
-*	Für den Datentyp muss eine \index{Textrepräsentation} existieren,
+*	FÃ¼r den Datentyp muss eine \index{binÃ¤re Lese- und Schreibfunktion}
+	existieren, damit Daten binÃ¤r gelesen und gespeichert werden kÃ¶nnen.
+*	FÃ¼r den Datentyp muss eine \index{TextreprÃ¤sentation} existieren,
 	damit Daten im Textformat gelesen und gespeichert werden
-	können.
+	kÃ¶nnen.
 
-Für \index{zusammengesetzte Datentypen} gilt, dass diese Vorraussetzungen
-automatisch erfüllt sind, wenn sie für die einzelnen Komponenten
-erfüllt sind. Datentypen, die obige Anforderungen nicht erfüllen,
-werden in der Regel aber nicht für Datenfiles benötigt. Dazu gehören
-z.B. Funktionen, Ausdrücke und Listen.
+FÃ¼r \index{zusammengesetzte Datentypen} gilt, dass diese Vorraussetzungen
+automatisch erfÃ¼llt sind, wenn sie fÃ¼r die einzelnen Komponenten
+erfÃ¼llt sind. Datentypen, die obige Anforderungen nicht erfÃ¼llen,
+werden in der Regel aber nicht fÃ¼r Datenfiles benÃ¶tigt. Dazu gehÃ¶ren
+z.B. Funktionen, AusdrÃ¼cke und Listen.
 
 \ssec	\index{Elementare Datentypen}
 
-Die folgenden elementaren Datentypen können für EDB-Datenfiles
+Die folgenden elementaren Datentypen kÃ¶nnen fÃ¼r EDB-Datenfiles
 verwendet werden:
 
-*	\index{|bool|} für logische Werte,
+*	\index{|bool|} fÃ¼r logische Werte,
 *	\index{|int8_t|}, \index{|int16_t|}, \index{|int|},
 	\index{|int32_t|}, \index{|int64_t|} und \index{|varint|}
-	für vorzeichenbehaftete Ganzzahlwerte,
+	fÃ¼r vorzeichenbehaftete Ganzzahlwerte,
 *	\index{|uint8_t|}, \index{|uint16_t|}, \index{|unsigned|},
 	\index{|uint32_t|}, \index{|uint64_t|} und \index{|varsize|}
-	für vorzeichenlose Ganzzahlwerte,
-*	\index{|Date|} für Datumsangaben,
-*	\index{|float|} und \index{|double|} für Gleitkommawerte,
-*	\index{|char|} für Zeichenkonstanten und
-*	\index{|str|} für Zeichenketten.
+	fÃ¼r vorzeichenlose Ganzzahlwerte,
+*	\index{|Date|} fÃ¼r Datumsangaben,
+*	\index{|float|} und \index{|double|} fÃ¼r Gleitkommawerte,
+*	\index{|char|} fÃ¼r Zeichenkonstanten und
+*	\index{|str|} fÃ¼r Zeichenketten.
 
-Die binäre Darstellung der Datentypen |int| und |unsigned| hängt von der
+Die binÃ¤re Darstellung der Datentypen |int| und |unsigned| hÃ¤ngt von der
 jeweiligen Implementation der gleichnamigen C-Datentypen, mit denen der
 EFEU-Interpreter kompiliert wurde, ab. Auch wenn diese auf vielen
-Systemen mit 32 Bit implementiert sind, eignen sie sich nicht für
+Systemen mit 32 Bit implementiert sind, eignen sie sich nicht fÃ¼r
 einen kompatiblen Datenaustausch. Bei |varint| und |varsize| handelt es
-sich um 64-Bit Ganzzahltypen mit einer variablen Datenlänge. Diese
+sich um 64-Bit Ganzzahltypen mit einer variablen DatenlÃ¤nge. Diese
 eignen sich zur effizienten Speicherung von Variablen mit einem weiten
 Wertebereich.
 
 \ssec	\index{Strukturen}
 
-Aus bereits deklarierten Datentypen können Strukturen gebildet werden.
-Im EFEU-Interpreter werden Strukturen mithilfe des Schlüsselwortes
+Aus bereits deklarierten Datentypen kÃ¶nnen Strukturen gebildet werden.
+Im EFEU-Interpreter werden Strukturen mithilfe des SchlÃ¼sselwortes
 \index{|struct|} -- gefolgt von der Liste der Komponenten -- erzeugt. Die
 Komponentenliste besteht aus einer Reihe von Variablendeklarationen,
-die in geschwungene Klammern gesetzt ist. Strukturen können geschachtelt
+die in geschwungene Klammern gesetzt ist. Strukturen kÃ¶nnen geschachtelt
 werden.
 
-In einem EDB-Datenfile kann die Angabe des Schlüsselwortes |struct| und der
+In einem EDB-Datenfile kann die Angabe des SchlÃ¼sselwortes |struct| und der
 geschwungenen Klammern entfallen. Sobald einem Datentyp ein
 Variablenname folgt, wird der Ausdruck als Strukturkomponente
 aufgefasst.
@@ -60,50 +60,50 @@ definiert eine Datenstruktur mit den Komponenten |num|, |first_name|,
 
 \index[benannte Strukturen]
 Normalerweise werden Strukturen in EFEU-Skripts benannt, d.h. es wird
-ein symbolischer Name\note{Dieser wird optional nach dem Schlüsselwort
+ein symbolischer Name\note{Dieser wird optional nach dem SchlÃ¼sselwort
 |struct| angegeben.}
-vergeben, der stellvertretend für die
+vergeben, der stellvertretend fÃ¼r die
 Strukturdefinition verwendet werden kann. In EDB-Datenfiles werden in
 der Regel zur Vermeidung von Namenskonflikten \index{namenlose Strukturen}
 verwendet.
 \index[Strukturvergleich]Zwei Strukturen gelten als gleich, wenn ihre
 Komponenten jeweils gleichen Datentyp und Namen aufweisen. Falls eine
-namenlose Struktur mit einer benannten Struktur übereinstimmt, wird
+namenlose Struktur mit einer benannten Struktur Ã¼bereinstimmt, wird
 sie durch die benannte Struktur ersetzt.
 
-\ssec	\index{Aufzählungstypen}
+\ssec	\index{AufzÃ¤hlungstypen}
 
-Eine besondere Form von abgeleiteteten Datentypen sind Aufzählungstypen.
+Eine besondere Form von abgeleiteteten Datentypen sind AufzÃ¤hlungstypen.
 Dabei handelt es sich um Ganzzahlwerte mit einer begrenzten Zahl von
-Ausprägungen, denen ein symbolischer Name zugeordnet ist.
+AusprÃ¤gungen, denen ein symbolischer Name zugeordnet ist.
 
 In der Beispieldatei \index{|pers.edb|} wird mit
 	|enum { m = 1, f = 2 }|
-ein Aufzählungstyp für die Komponente |gender| eingerichtet.
-Auch hier kann optional ein symbolischer Name für den Aufzählungstyp
+ein AufzÃ¤hlungstyp fÃ¼r die Komponente |gender| eingerichtet.
+Auch hier kann optional ein symbolischer Name fÃ¼r den AufzÃ¤hlungstyp
 angegeben werden.
-\index[Vergleich von Aufzählungstypen]Zwei Aufzählungstypen gelten als
-gleich, wenn die möglichen Ausprägungen bezüglich der Werte und der
-symbolischen Namen übereinstimmen.
+\index[Vergleich von AufzÃ¤hlungstypen]Zwei AufzÃ¤hlungstypen gelten als
+gleich, wenn die mÃ¶glichen AusprÃ¤gungen bezÃ¼glich der Werte und der
+symbolischen Namen Ã¼bereinstimmen.
 
-Aufzählungstypen und Strukturen, die ausschließlich Komponenten mit
-Aufzählungstypen aufweisen, kommt bei der \index{Aggregation} eines
-EDB-Datenfiles zu einem \index{Datenwürfel} eine besondere Rolle zu: Sie
-bestimmen die Achsen des Datenwürfels.
+AufzÃ¤hlungstypen und Strukturen, die ausschlieÃŸlich Komponenten mit
+AufzÃ¤hlungstypen aufweisen, kommt bei der \index{Aggregation} eines
+EDB-Datenfiles zu einem \index{DatenwÃ¼rfel} eine besondere Rolle zu: Sie
+bestimmen die Achsen des DatenwÃ¼rfels.
 
-Aufzählungstypen werden intern als |int| gespeichert, es kann aber
-eine Bytelänge in der Form |:| <len> nach dem Schlüsselwort |enum|
-für die Binärdarstellung angegeben werden, z.B:
+AufzÃ¤hlungstypen werden intern als |int| gespeichert, es kann aber
+eine BytelÃ¤nge in der Form |:| <len> nach dem SchlÃ¼sselwort |enum|
+fÃ¼r die BinÃ¤rdarstellung angegeben werden, z.B:
 	|enum : 1 { m = 1, f = 2 }|
 
-Variablen mit Aufzählungstyp werden auch als Klassifikationen bezeichnet.
+Variablen mit AufzÃ¤hlungstyp werden auch als Klassifikationen bezeichnet.
 
 \ssec	\index{Datenfelder}
 
-\index[Datenfelder variabler Länge]
-Strukturen können Datenfelder mit fixer und variabler Länge enthalten.
+\index[Datenfelder variabler LÃ¤nge]
+Strukturen kÃ¶nnen Datenfelder mit fixer und variabler LÃ¤nge enthalten.
 
-Datenfelder können auf zwei Arten deklariert werden:
+Datenfelder kÃ¶nnen auf zwei Arten deklariert werden:
 
 [<type> <name>|[|<dim>|]|]
 	deklariert <name> als Datenfeld vom Type <type>.
@@ -111,39 +111,39 @@ Datenfelder können auf zwei Arten deklariert werden:
 	deklariert <name> als Skalar vom \index{Vektordatentyp}
 	<type>|[|<dim>|]|.
 
-\index[Datenfelder variabler Länge]
-Mit <type>|[]| (oder <type>|[0]|) wird ein Datenfeld variabler Länge
+\index[Datenfelder variabler LÃ¤nge]
+Mit <type>|[]| (oder <type>|[0]|) wird ein Datenfeld variabler LÃ¤nge
 eingerichtet.
 
-Falls mehr als eine Dimension benötigt wird, wird eine Deklaration der
+Falls mehr als eine Dimension benÃ¶tigt wird, wird eine Deklaration der
 Form:
 	<type> <name>|[|<n0>|][|<n1>|]...[|<nk>|];|
 in
 	<type>|[|<nk>|]...[|<n1>|]| <name>|[|<n0>|];|
 
-konvertiert, da Datenfelder nur eindimensional sein können, es aber
-keine Beschränkungen bei der Konstruktion von Vektordatentypen gibt.
+konvertiert, da Datenfelder nur eindimensional sein kÃ¶nnen, es aber
+keine BeschrÃ¤nkungen bei der Konstruktion von Vektordatentypen gibt.
 
 \index[Schachtelung von Datenfeldern]
-Eine mehrfache Schachtelung von Datenfeldern mit variablen Längen ist
-möglich, weist aber einen hohen \index{Speicherverwaltungsaufwand} auf und
-kann daher bei größeren Datenmengen zu Perfor&-mance&-problemen führen.
+Eine mehrfache Schachtelung von Datenfeldern mit variablen LÃ¤ngen ist
+mÃ¶glich, weist aber einen hohen \index{Speicherverwaltungsaufwand} auf und
+kann daher bei grÃ¶ÃŸeren Datenmengen zu Perfor&-mance&-problemen fÃ¼hren.
 
 \ssec	\index{Konstruktionsdefinition}
 
-Eine Datenstruktur kann auch über eine sogenannte
+Eine Datenstruktur kann auch Ã¼ber eine sogenannte
 Konstruktionsdefinition eingerichtet werden. Die Struktur wird dabei
-implizit über eine Liste von Ausdrücken zu Basisvariablen definiert.
+implizit Ã¼ber eine Liste von AusdrÃ¼cken zu Basisvariablen definiert.
 Diese Form der Typdefinition wird implizit bei einer Reihe von
 Filterdefinition bei der Zusammenstellung von Variablen verwendet.
 
 \ssec	\index{Externe Datentypen}
 
 Bei den externen Datentypen handelt es sich um in C implementierte
-Datentypen, die in der Regel über Programmmodule nachgeladen werden.
-Durch die Implementation in C können solche Datentypen mit sehr viel
+Datentypen, die in der Regel Ã¼ber Programmmodule nachgeladen werden.
+Durch die Implementation in C kÃ¶nnen solche Datentypen mit sehr viel
 spezifischeren Eigenschaften ausgestattet werden, z.B:
 *	Bitfeldstrukturen,
-*	spezifische Binärrepräsentationen,
-*	interne Verküpfungen von Komponenten.
+*	spezifische BinÃ¤rreprÃ¤sentationen,
+*	interne VerkÃ¼pfungen von Komponenten.
 

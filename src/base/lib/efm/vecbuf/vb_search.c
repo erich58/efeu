@@ -1,7 +1,7 @@
 /*
-Verwalten, Suchen und Sortieren von Einträgen in einem Vektorbuffer
+Verwalten, Suchen und Sortieren von EintrÃ¤gen in einem Vektorbuffer
 
-$Copyright (C) 1996 Erich Frühstück
+$Copyright (C) 1996 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -42,46 +42,46 @@ static void swap (char *a, char *b, size_t n)
 }
 
 /*
-Die Funktion |$1| dient zum Verwalten von Einträgen
-in einem sortierten Vektorbuffer. Der Suchschlüssel <data>
-dient zur Suche von Einträgen und als Zwischenbuffer für
-Daten. Bei neuen Einträgen werden die Daten vom Suchschlüssel
-in den Vektorbuffer übertragen, bei gelöschten Einträgen
-werden die Daten in den Suchschlüssel geschrieben.
+Die Funktion |$1| dient zum Verwalten von EintrÃ¤gen
+in einem sortierten Vektorbuffer. Der SuchschlÃ¼ssel <data>
+dient zur Suche von EintrÃ¤gen und als Zwischenbuffer fÃ¼r
+Daten. Bei neuen EintrÃ¤gen werden die Daten vom SuchschlÃ¼ssel
+in den Vektorbuffer Ã¼bertragen, bei gelÃ¶schten EintrÃ¤gen
+werden die Daten in den SuchschlÃ¼ssel geschrieben.
 
 Die Vergleichsfunktion <comp> wird mit zwei Pointern
-auf Datenelemente aufgerufen und muß einen Wert
-kleiner, gleich oder größer 0 liefern, je nachdem ob
-der erste Datenwert kleiner, gleich oder größer als der zweite
+auf Datenelemente aufgerufen und muÃŸ einen Wert
+kleiner, gleich oder grÃ¶ÃŸer 0 liefern, je nachdem ob
+der erste Datenwert kleiner, gleich oder grÃ¶ÃŸer als der zweite
 Datenwert ist.
 
-Als Modus <mode> ist eines der folgenden Werte zulässig:
+Als Modus <mode> ist eines der folgenden Werte zulÃ¤ssig:
 
 [|VB_SEARCH|]
 	Falls der Eintrag gefunden wurde, liefert die Funktion
 	den Pointer auf den Eintrag, ansonsten einen Nullpointer.
-	Der Suchschlüssel wird nicht verändert.
+	Der SuchschlÃ¼ssel wird nicht verÃ¤ndert.
 [|VB_ENTER|]
 	Falls der Eintrag gefunden wurde, liefert die Funktion den
-	Pointer auf den Eintrag. Der Suchschlüssel wird nicht
-	verändert. Falls der Eintrag noch nicht vorhanden ist, wird
-	ein neuer Eintrag generiert und die Daten vom Suchschlüssel
-	übernommen. Der Suchschlüssel wird anschließend gelöscht.
+	Pointer auf den Eintrag. Der SuchschlÃ¼ssel wird nicht
+	verÃ¤ndert. Falls der Eintrag noch nicht vorhanden ist, wird
+	ein neuer Eintrag generiert und die Daten vom SuchschlÃ¼ssel
+	Ã¼bernommen. Der SuchschlÃ¼ssel wird anschlieÃŸend gelÃ¶scht.
 	Die Funktion liefert den Pointer auf den neuen Eintrag.
 [|VB_REPLACE|]
 	Falls der Eintrag bereits vorhanden ist,
-	werden die Daten mit dem Suchschlüssel ausgetauscht,
-	und die Funktion liefert den Pointer auf den Suchschlüssel.
+	werden die Daten mit dem SuchschlÃ¼ssel ausgetauscht,
+	und die Funktion liefert den Pointer auf den SuchschlÃ¼ssel.
 	Ansonsten wird ein neuer Eintrag generiert
-	und die Daten vom Suchschlüssel übernommen.
-	Der Suchschlüssel wird anschließend gelöscht
+	und die Daten vom SuchschlÃ¼ssel Ã¼bernommen.
+	Der SuchschlÃ¼ssel wird anschlieÃŸend gelÃ¶scht
 	und die Funktion liefert einen Nullpointer.
 [|VB_DELETE|]
 	Falls der Eintrag in der Tabelle gefunden wird,
-	wird er gelöscht. Die Datenwerte werden in den Suchschlüssel
-	übertragen und die Funktion liefert
-	den Pointer auf den Suchschlüssel.
-	Ansonsten wird ein Nullpointer zurückgegeben.
+	wird er gelÃ¶scht. Die Datenwerte werden in den SuchschlÃ¼ssel
+	Ã¼bertragen und die Funktion liefert
+	den Pointer auf den SuchschlÃ¼ssel.
+	Ansonsten wird ein Nullpointer zurÃ¼ckgegeben.
 */
 
 void *vb_search (VecBuf *buf, void *data,
@@ -136,7 +136,7 @@ void *vb_search (VecBuf *buf, void *data,
 		}
 	}
 
-/*	Datenwert übernehmen
+/*	Datenwert Ã¼bernehmen
 */
 	if	(mode == VB_ENTER || mode == VB_REPLACE)
 	{
@@ -161,7 +161,7 @@ void vb_qsort (VecBuf *buf, int (*comp) (const void *a, const void *b))
 }
 
 /*
-Die Funktion |$1| reduziert die Daten bezüglich gleicher Einträge.
+Die Funktion |$1| reduziert die Daten bezÃ¼glich gleicher EintrÃ¤ge.
 */
 
 void vb_uniq (VecBuf *buf, int (*comp) (const void *a, const void *b))
@@ -171,7 +171,7 @@ void vb_uniq (VecBuf *buf, int (*comp) (const void *a, const void *b))
 
 /*
 Die Funktion |$1| verwendet die Bibliotheksfunktion
-|bsearch| zur Suche eines Eintrages und ist äquivalent zu
+|bsearch| zur Suche eines Eintrages und ist Ã¤quivalent zu
 |vb_search| mit Flag |VB_SEARCH|.
 */
 

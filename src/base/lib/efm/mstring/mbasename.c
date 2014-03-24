@@ -2,7 +2,7 @@
 :*:Return dirname/basename of given pathname
 :de:Verzeichnisname/Basisname aus Pfadnamens generieren
 
-$Copyright (C) 2002 Erich Frühstück
+$Copyright (C) 2002 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 EFEU is free software; you can redistribute it and/or
@@ -77,9 +77,9 @@ If flag is set to true, the return value contains a final '/'.
 If there is no directory part, the function returns |NULL| (not "." or "./").
 :de:
 Die Funktion |$1| liefert den Verzeichnisteil des Filenamens <path>.
-Falls <flag> verschieden von 0 ist, enthält der Verzeichnisteil
-ein abschließendes '/'.
-Falls <path> keine Verzeichnisse enthält, liefert die Funktion
+Falls <flag> verschieden von 0 ist, enthÃ¤lt der Verzeichnisteil
+ein abschlieÃŸendes '/'.
+Falls <path> keine Verzeichnisse enthÃ¤lt, liefert die Funktion
 |NULL| (nicht "." oder "./").
 */
 
@@ -94,8 +94,8 @@ The function |$1| returns the name of the file <path> with all leading
 directory components removed. if <suffix> is not |NULL|, the filesuffix
 is detached from the basename and stored in <suffix>.
 :de:
-Die Funktion |$1| liefert den Basisnamen einer Datei. Falls für <suffix>
-kein Nullpointer übergeben wurde, wird der Filezusatz abgetrennt und in
+Die Funktion |$1| liefert den Basisnamen einer Datei. Falls fÃ¼r <suffix>
+kein Nullpointer Ã¼bergeben wurde, wird der Filezusatz abgetrennt und in
 <suffix> gespeichert.
 */
 
@@ -130,10 +130,10 @@ The address stored in <suffix> is part of the memory space returned
 by |basename|. It should not used as argument to |memfree| and is
 invalid, if the return value of |basename| is free'd.
 :de:
-Das Speicherfeld für die Rückgabewerte wird mit |memalloc| eingerichtet.
-Der Pointer auf <suffix> gehört zum Speicherfeld für den Basisnamen.
+Das Speicherfeld fÃ¼r die RÃ¼ckgabewerte wird mit |memalloc| eingerichtet.
+Der Pointer auf <suffix> gehÃ¶rt zum Speicherfeld fÃ¼r den Basisnamen.
 Er darf nicht als Argument von |memfree| verwendet werden und ist
-ungültig, sobald der Rückgabewert von |basename| freigegeben wird.
+ungÃ¼ltig, sobald der RÃ¼ckgabewert von |basename| freigegeben wird.
 
 $SeeAlso
 \mref{memalloc(3)}.\br

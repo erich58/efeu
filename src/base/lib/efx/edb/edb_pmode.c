@@ -1,6 +1,6 @@
-/*	Ausgabemodus für EDB-Datenfiles
-	$Copyright (C) 2004 Erich Frühstück
-	A-3423 St.Andrä/Wördern, Wildenhaggasse 38
+/*	Ausgabemodus fÃ¼r EDB-Datenfiles
+	$Copyright (C) 2004 Erich FrÃ¼hstÃ¼ck
+	A-3423 St.AndrÃ¤/WÃ¶rdern, Wildenhaggasse 38
 */
 
 #include <EFEU/EDB.h>

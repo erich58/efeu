@@ -1,26 +1,26 @@
 \sec	Texthervorhebungen
 
 Je nach dem Kontext eines Textes ergibt sich automatisch die
-entsprechende Schriftart und Schriftgröße.
-Eine Änderung der Schrift ist nur zum Hervorheben einzelner Wörter
+entsprechende Schriftart und SchriftgrÃ¶ÃŸe.
+Eine Ã„nderung der Schrift ist nur zum Hervorheben einzelner WÃ¶rter
 innerhalb eines Absatzes vorgesehen.
 
 Texthervorhebungen werden mit spitzen Klammern (|<|~&ldots;~|>|) begrenzt.
-Das der öffnenden Klammer folgende Zeichen bestimmt die Art der
-Hervorhebung. Es wird vor der schließenden Klammer wiederholt.
+Das der Ã¶ffnenden Klammer folgende Zeichen bestimmt die Art der
+Hervorhebung. Es wird vor der schlieÃŸenden Klammer wiederholt.
 
 Folgende Texthervorhebungen sind definiert:
 [|=|]	Standardschrift (nur sinnvoll innerhalb einer anderen Schrift)
-[|'|]	Einfache Anführung
-[|"|]	Doppelte Anführung
+[|'|]	Einfache AnfÃ¼hrung
+[|"|]	Doppelte AnfÃ¼hrung
 [|*|]	Fettschrift
 [|/|]	Kursivschrift
 [||||]	Schreibmaschinenschrift
 
-Folgt keines dieser Zeichen der öffnenden Klammer, wird der Text
-kursiv hervorgehoben. Die Kennung |/| wird benötigt, wenn das
+Folgt keines dieser Zeichen der Ã¶ffnenden Klammer, wird der Text
+kursiv hervorgehoben. Die Kennung |/| wird benÃ¶tigt, wenn das
 erste Zeichen des kursiven Textes ein Kennzeichen ist, oder
-sein könnte (Argument eines Textmakros).
+sein kÃ¶nnte (Argument eines Textmakros).
 
 \fig
 \latex{\centering}
@@ -29,8 +29,8 @@ sein könnte (Argument eines Textmakros).
 ~ | <*Eingabe*> | <*Darstellung*>
 ===
 Standardschrift | <|\<=Text=\>|> | <=Text=>
-Einfache Anführung | <|\<'Text'\>|> | <'Text'>
-Doppelte Anführung | <|\<"Text"\>|> | <"Text">
+Einfache AnfÃ¼hrung | <|\<'Text'\>|> | <'Text'>
+Doppelte AnfÃ¼hrung | <|\<"Text"\>|> | <"Text">
 Fettschrift | <|\<*Text*\>|> | <*Text*>
 Schreibmaschinenschrift | <|\<\|Text\|\>|> | <|Text|>
 Italic | <|\</Text/\>|> | </Text/>
@@ -39,8 +39,8 @@ Italic | <|\</Text/\>|> | </Text/>
 \caption Texthervorhebungen
 \end
 
-Die Darstellung der Attribute kann durch Layoutvorgaben geändert
-werden. Bei EFEU-Handbüchern wird Schreibmaschinenschrift zusätzlich
+Die Darstellung der Attribute kann durch Layoutvorgaben geÃ¤ndert
+werden. Bei EFEU-HandbÃ¼chern wird Schreibmaschinenschrift zusÃ¤tzlich
 in blauer Schrift und Italic in roter Schrift gesetzt.
 
 Das Pipe-Symbol |||| dient zur Ausgabe einer kurzen Sequenz
@@ -49,7 +49,7 @@ Der entsprechende Text wird dabei zwischen zwei Pipe-Symbole
 gestellt. Alle anderen Sonderzeichen verlieren ihre Bedeutung, ein
 Zeilenvorschub wird zu einem Leerzeichen. Ein Pipe-Symbol selbst
 kann durch zwei aufeinander folgende Pipe-Symbole dargestellt werden.
-Das Fluchtsymbol |\| wird ebenfalls wie ein gewöhnliches Zeichen
+Das Fluchtsymbol |\| wird ebenfalls wie ein gewÃ¶hnliches Zeichen
 behandelt. Diese Form der Texthervorhebung kann im Tabellensatz
 nicht verwendet werden.
 

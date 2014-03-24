@@ -1,4 +1,4 @@
-/*	Binäre Datenausgabe
+/*	BinÃ¤re Datenausgabe
 */
 
 #include <EFEU/EDB.h>

@@ -1,5 +1,5 @@
-/*	Fehlermeldungen für syndbdiff
-	(c) 1998 Erich Frühstück
+/*	Fehlermeldungen fÃ¼r syndbdiff
+	(c) 1998 Erich FrÃ¼hstÃ¼ck
 */
 
 1	$!: Unbekannter Datenbanktype $(Type).\n

@@ -1,21 +1,21 @@
 \sec	Gleitende Tabellen
 
 Zur Konstruktion von gleitenden Tabellen und Bildern stehen die
-Umgebungen \index{|\fig|} und \index{|\table|} zur Verfügung.
-Als optionales Argument kann ein Positionierungsparameter übergeben werden.
-Tabellenüberschriften können mit dem \index{|\caption|} Befehl gesetzt werden.
+Umgebungen \index{|\fig|} und \index{|\table|} zur VerfÃ¼gung.
+Als optionales Argument kann ein Positionierungsparameter Ã¼bergeben werden.
+TabellenÃ¼berschriften kÃ¶nnen mit dem \index{|\caption|} Befehl gesetzt werden.
 Die Umgebungen werden mit \index{|\end|} abgeschlossen.
 
-Die Funktionalität wird vollständig an \LaTeX; übertragen.
-Details dazu können in jedem \LaTeX-Handbuch nachgelesen werden.
-Andere Ausgabetreiber ignorieren diese Umgebung und fügen den Inhalt der
+Die FunktionalitÃ¤t wird vollstÃ¤ndig an \LaTeX; Ã¼bertragen.
+Details dazu kÃ¶nnen in jedem \LaTeX-Handbuch nachgelesen werden.
+Andere Ausgabetreiber ignorieren diese Umgebung und fÃ¼gen den Inhalt der
 gleitenden Tabellen in den laufenden Text ein.
 
 Falls der Inhalt der gleitenden Tabelle zentriert dargestellt werden
 soll, kann nach dem |\fig|-Befehl die Anweisung
 	|\latex{\centering}|
-eingefügt werden. Dies hat nur Auswirkungen auf die Dokumenterstellung
+eingefÃ¼gt werden. Dies hat nur Auswirkungen auf die Dokumenterstellung
 mit \LaTeX.
 
-Die Verzeichnisse können mit den Befehlen |\lof| (List of Figures)
+Die Verzeichnisse kÃ¶nnen mit den Befehlen |\lof| (List of Figures)
 und |\lot| (List of Tables) abgerufen werden.

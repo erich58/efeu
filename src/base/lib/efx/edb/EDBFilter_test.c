@@ -2,7 +2,7 @@
 :*:test filter
 :de:Testfilter
 
-$Copyright (C) 2005 Erich Frühstück
+$Copyright (C) 2005 Erich FrÃ¼hstÃ¼ck
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -101,5 +101,5 @@ static EDB *test_create (EDBFilter *filter, EDB *base,
 EDBFilter EDBFilter_test = EDB_FILTER(NULL,
 	"test", "[expr]", test_create, NULL,
 	":*:select records with test expression"
-	":de:Datensätze mit Testausdruck selektieren"
+	":de:DatensÃ¤tze mit Testausdruck selektieren"
 );
