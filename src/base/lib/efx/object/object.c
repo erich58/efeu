@@ -50,7 +50,7 @@ static void do_debug (int flag, char *fmt, const EfiObj *obj);
 /*	Zuweisungsobjekt generieren
 */
 
-EfiObj *LvalObj (EfiLval *lval, EfiType *type, ...)
+EfiObj *LvalObj (const EfiLval *lval, const EfiType *type, ...)
 {
 	EfiObj *x;
 	va_list args;
@@ -62,8 +62,8 @@ EfiObj *LvalObj (EfiLval *lval, EfiType *type, ...)
 	x = lval->alloc(type, args);
 	va_end(args);
 
-	x->type = type;
-	x->lval = lval;
+	x->type = (EfiType *) type;
+	x->lval = (EfiLval *) lval;
 
 	if	(lval->update)
 		lval->update(x);

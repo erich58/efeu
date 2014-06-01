@@ -317,7 +317,7 @@ EfiType *MakeStruct (char *name, EfiStruct *base, EfiStruct *list);
 #define	RefObj(obj)	rd_refer(obj)
 #define	UnrefObj(obj)	rd_deref(obj)
 
-EfiObj *LvalObj (EfiLval *lval, EfiType *type, ...);
+EfiObj *LvalObj (const EfiLval *lval, const EfiType *type, ...);
 EfiObj *NewObj (const EfiType *type, void *data);
 EfiObj *ConstObj (const EfiType *type, const void *data);
 EfiObj *ExtObj (const EfiType *type, const void *data);
