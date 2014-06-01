@@ -27,7 +27,7 @@ typedef struct {
 	EfiBitfield *def;
 } BFPar;
 
-static EfiObj *BFPar_alloc (EfiType *type, va_list list)
+static EfiObj *BFPar_alloc (const EfiType *type, va_list list)
 {
 	BFPar *par = Lval_alloc(sizeof *par + type->size);
 	par->base = RefObj(va_arg(list, EfiObj *));

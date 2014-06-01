@@ -221,7 +221,7 @@ struct EfiTypeStruct {
 #define	LVAL_VAR \
 	char *name; \
 	char *desc; \
-	EfiObj *(*alloc) (EfiType *type, va_list list); \
+	EfiObj *(*alloc) (const EfiType *type, va_list list); \
 	void (*free) (EfiObj *obj); \
 	void (*update) (EfiObj *obj); \
 	void (*sync) (EfiObj *obj); \

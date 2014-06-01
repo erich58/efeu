@@ -30,7 +30,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	LVAL_SIZE(type) (sizeof(EGtkArg) + type->size)
 
-EfiObj *EGtkLval_alloc (EfiType *type, va_list list)
+EfiObj *EGtkLval_alloc (const EfiType *type, va_list list)
 {
 	EGtkArg *obj = (EGtkArg *) Obj_alloc(LVAL_SIZE(type));
 	obj->obj = va_arg(list, GtkObject *);

@@ -22,7 +22,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/object.h>
 
-static EfiObj *ptr_alloc (EfiType *type, va_list list)
+static EfiObj *ptr_alloc (const EfiType *type, va_list list)
 {
 	EfiObj *obj = Obj_alloc(sizeof(EfiObj));
 	obj->data = va_arg(list, void *);

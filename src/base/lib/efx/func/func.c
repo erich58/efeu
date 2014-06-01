@@ -24,14 +24,14 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/cmdeval.h>
 #include <EFEU/printobj.h>
 
-static EfiObj *farg_ptr (EfiType *type, va_list list)
+static EfiObj *farg_ptr (const EfiType *type, va_list list)
 {
 	EfiObj *obj = Obj_alloc(sizeof *obj);
 	obj->data = va_arg(list, void *);
 	return obj;
 }
 
-static EfiObj *farg_copy (EfiType *type, va_list list)
+static EfiObj *farg_copy (const EfiType *type, va_list list)
 {
 	EfiObj *obj = Obj_alloc(sizeof *obj + type->size);
 	obj->data = obj + 1;

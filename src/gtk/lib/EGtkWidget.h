@@ -67,7 +67,7 @@ extern void AddEGtkArg(EfiType *type, EGtkArgDef *def, size_t dim);
 extern void EGtkWidgetClass(GtkType type, EGtkArgDef *arg, size_t narg,
 	EGtkSigDef *sig, size_t nsig);
 
-extern EfiObj *EGtkLval_alloc (EfiType *type, va_list list);
+extern EfiObj *EGtkLval_alloc (const EfiType *type, va_list list);
 extern void EGtkLval_free (EfiObj *obj);
 extern char *EGtkLval_ident (const EfiObj *obj);
 

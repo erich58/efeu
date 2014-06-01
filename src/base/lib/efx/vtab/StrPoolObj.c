@@ -30,7 +30,7 @@ typedef struct {
 	size_t *idx;
 } StrPoolPar;
 
-static EfiObj *pool_alloc (EfiType *type, va_list list)
+static EfiObj *pool_alloc (const EfiType *type, va_list list)
 {
 	StrPoolPar *par = (void *) Obj_alloc(sizeof *par + Type_str.size);
 	par->data = (par + 1);

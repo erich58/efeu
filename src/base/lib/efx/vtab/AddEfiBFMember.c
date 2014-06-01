@@ -28,7 +28,7 @@ typedef struct {
 	unsigned data;
 } BFDATA;
 
-static EfiObj *bf_alloc (EfiType *type, va_list list)
+static EfiObj *bf_alloc (const EfiType *type, va_list list)
 {
 	EfiObj *obj = Obj_alloc(sizeof(EfiObj) + sizeof(BFDATA));
 	BFDATA *bf = (void *) (obj + 1);

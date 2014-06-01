@@ -28,7 +28,7 @@ typedef struct {
 
 #define	LCAST_SIZE(type) (sizeof(LCAST) + type->size)
 
-static EfiObj *lcast_alloc (EfiType *type, va_list list)
+static EfiObj *lcast_alloc (const EfiType *type, va_list list)
 {
 	LCAST *lc = Lval_alloc(sizeof *lc + type->size);
 	lc->base = va_arg(list, EfiObj *);

@@ -79,7 +79,7 @@ typedef struct {
 
 #define	TCLSIZE(type) (sizeof(EfiObj) + sizeof(TCLVAR) + (type)->size)
 
-static EfiObj *tcl_alloc (EfiType *type, va_list list)
+static EfiObj *tcl_alloc (const EfiType *type, va_list list)
 {
 	EfiObj *obj = Obj_alloc(TCLSIZE(type));
 	TCLVAR *var = (void *) (obj + 1);
