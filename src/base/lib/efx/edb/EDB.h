@@ -54,7 +54,7 @@ typedef struct {
 
 EfiType *edb_type (const char *def);
 EDB *edb_alloc (EfiObj *obj, char *desc);
-EDB *edb_create (EfiType *type);
+EDB *edb_create (const EfiType *type);
 EDB *edb_share (EDB *base);
 EDB *edb_fopen (const char *path, const char *name);
 EDB *edb_popen (const char *cmd);

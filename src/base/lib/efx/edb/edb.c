@@ -87,7 +87,7 @@ EDB *edb_alloc (EfiObj *obj, char *desc)
 	return NULL;
 }
 
-EDB *edb_create (EfiType *type)
+EDB *edb_create (const EfiType *type)
 {
 	return edb_alloc(LvalObj(NULL, type), NULL);
 }
