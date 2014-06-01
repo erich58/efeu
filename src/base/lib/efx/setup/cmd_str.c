@@ -378,15 +378,7 @@ static void f_upper (EfiFunc *func, void *rval, void **arg)
 		char *s;
 
 		for (s = RVSTR; *s != 0; s++)
-		{
-			switch (*s)
-			{
-			case 'ä':	*s = 'Ä'; break;
-			case 'ö':	*s = 'Ö'; break;
-			case 'ü':	*s = 'Ü'; break;
-			default:	*s = toupper(*s); break;
-			}
-		}
+			*s = toupper(*s);
 	}
 }
 
@@ -397,15 +389,7 @@ static void f_lower (EfiFunc *func, void *rval, void **arg)
 		char *s;
 
 		for (s = RVSTR; *s != 0; s++)
-		{
-			switch (*s)
-			{
-			case 'Ä':	*s = 'ä'; break;
-			case 'Ö':	*s = 'ö'; break;
-			case 'Ü':	*s = 'ü'; break;
-			default:	*s = tolower(*s); break;
-			}
-		}
+			*s = tolower(*s);
 	}
 }
 
