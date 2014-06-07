@@ -89,6 +89,11 @@ syn region docTT matchgroup=Delimiter start="<|" end="|>" contains=ALL
 
 syn region docBF matchgroup=Delimiter start="^-----*[ \t]*.*$" end="^----.*$"
 
+" Latex
+
+syn region docLaTeX matchgroup=Statement start="\\latex{" end="}" contains=docGrp
+syn region docGrp matchgroup=Delimiter start="{" end="}" contained contains=docGrp
+
 "Tabellen
 
 syn region docTab matchgroup=Delimiter start="\\tab.*$" end="^$" contains=docTabKey,docRM,docBF,docTT,docIT,docEsc,docSpecial,docError,docMac,docCommand,docContinue,docSubst
