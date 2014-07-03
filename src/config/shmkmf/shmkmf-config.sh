@@ -219,17 +219,17 @@ file)
 # |file| [<name>]
 #	:*:inserts system specific parameters in file <name>
 #	:de:Fügt in Datei <name> systemspezifische Parameter ein
-	exec awk -v eval="$eval" '
+	exec awk -v cfg_eval="$eval" '
 BEGIN { pipe = "" }
 /@SRC@/ { gsub("@SRC@", FILENAME) }
-/@CMD@/ { gsub("@CMD@", eval) }
+/@CMD@/ { gsub("@CMD@", cfg_eval) }
 /^@include/ { gsub("^@include[ 	]*", "");
-	if (!system(eval " include " $0)) flags = flags " -i " $0;
+	if (!system(cfg_eval " include " $0)) flags = flags " -i " $0;
 	next }
 /^@set/ { gsub("^@set", ""); flags = $0; next }
 /^@add/ { gsub("^@add", flags); flags = $0; next }
-/^@eval/ { gsub("^@eval", eval flags); system($0); next }
-/^@beg/ { gsub("^@beg", eval " -s " flags); pipe = $0; next }
+/^@eval/ { gsub("^@eval", cfg_eval flags); system($0); next }
+/^@beg/ { gsub("^@beg", cfg_eval " -s " flags); pipe = $0; next }
 /^@end/ { close(pipe); pipe = ""; next }
 /^@@/ { gsub("^@@", "@") }
 { if (pipe) print | pipe; else print }
