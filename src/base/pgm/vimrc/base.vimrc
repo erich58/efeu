@@ -28,7 +28,7 @@ augroup cprog
   autocmd BufRead *       set formatoptions=tcql nocindent comments&
   "autocmd BufRead *.c,*.h set formatoptions=croql cindent comments=sr:/*,mb:*,el:*/,://
   "autocmd BufRead *.c,*.h set formatoptions=croql cindent comments=s1:/*,mb:\0,e:*/,://
-  autocmd BufRead *.c,*.h set formatoptions=croql cindent comments=f:/*,://
+  autocmd BufRead *.cpp,*.c,*.h set formatoptions=croql cindent comments=f:/*,://
 augroup END
 
 set hlsearch
