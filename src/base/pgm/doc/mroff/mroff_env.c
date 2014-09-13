@@ -212,6 +212,7 @@ int mroff_env (void *drv, int flag, va_list list)
 		break;
 	case DOC_ENV_CODE:
 		put_att(mr, flag, ATT_TT);
+		mroff_newline(mr);
 		break;
 	case DOC_ENV_HANG:
 		if	(flag)
