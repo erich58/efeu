@@ -82,11 +82,11 @@ Er muß zu Beginn der Datentypedefinition stehen.
 #define	REFVAR	\
 	unsigned refmagic; \
 	unsigned refcount; \
-	const RefType *reftype;
+	const RefType *reftype
 #else
 #define	REFVAR	\
-	const RefType *reftype; \
-	size_t refcount
+	size_t refcount; \
+	const RefType *reftype
 #endif
 
 /*
@@ -106,7 +106,7 @@ Referenzobjektes verwendet.
 #ifdef	REFDATA_MAGIC
 #define	REFDATA(type)	REFDATA_MAGIC, 1, type
 #else
-#define	REFDATA(type)	type, 1
+#define	REFDATA(type)	1, type
 #endif
 
 /*
