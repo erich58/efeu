@@ -716,7 +716,7 @@ typedef struct {
 typedef struct {
 	unsigned flags;		/* Funktionsflags */
 	EfiType *type;		/* Datentype */
-	char *prot;		/* Prototype */
+	const char *prot;	/* Prototype */
 	void (*eval) (EfiFunc *func, void *rval, void **arg);	/* Auswertungsfunktion */
 } EfiFuncDef;
 
