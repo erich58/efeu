@@ -109,10 +109,10 @@ EfiObj *Var2Obj (EfiStruct *var, const EfiObj *obj);
 */
 
 typedef struct {
-	char *name;		/* Variablenname */
+	const char *name;	/* Variablenname */
 	EfiType *type;		/* Variablentype */
 	void *data;		/* Datenpointer */
-	char *desc;		/* Beschreibungstext */
+	const char *desc;	/* Beschreibungstext */
 } EfiVarDef;
 
 /*	Variablentabellen
