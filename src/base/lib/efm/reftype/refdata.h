@@ -38,7 +38,7 @@ Die Datentruktur |$1| definiert den Referenzdatentyps.
 */
 
 typedef struct {
-	char *label;		/* Bezeichnung */
+	const char *label;	/* Bezeichnung */
 	char *(*ident) (const void *data); /* Identifikationsfunktion */
 	void (*clean) (void *data); /* Löschfunktion */
 	struct LogControl *log;	/* Protokollsteuerung */
