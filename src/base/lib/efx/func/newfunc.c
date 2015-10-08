@@ -41,7 +41,7 @@ static void func_clean (void *data)
 static char *func_ident (const void *data)
 {
 	const EfiFunc *func = data;
-	char *p;
+	const char *p;
 
 	if	(func->name)	p = func->name;
 	else if	(func->type)	p = func->type->name;

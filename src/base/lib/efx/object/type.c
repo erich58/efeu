@@ -28,7 +28,7 @@ If not, write to the Free Software Foundation, Inc.,
 void DelType (EfiType *type)
 {
 	DelVarTab(type->vtab);
-	memfree(type->name);
+	memfree((char *) type->name);
 }
 
 static void del_type (void *ptr)

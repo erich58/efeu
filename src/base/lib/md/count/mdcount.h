@@ -37,9 +37,9 @@ If not, write to the Free Software Foundation, Inc.,
 typedef struct MdCount MdCount;
 
 #define	MDCOUNT_VAR \
-	char *name; \
-	char *type; \
-	char *desc; \
+	const char *name; \
+	const char *type; \
+	const char *desc; \
 	int (*set) (MdCount *cnt, void *buf, const void *data); \
 	void (*init) (MdCount *cnt, void *data, size_t *idx, size_t dim); \
 	void (*add) (MdCount *cnt, void *data, void *buf)

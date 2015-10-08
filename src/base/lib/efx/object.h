@@ -189,9 +189,9 @@ int IsVirFunc (void *data);
 */
 
 struct EfiTypeStruct {
-	char *name;		/* Typename */
-	char *cname;		/* C-Datentyp */
-	char *desc;		/* Beschreibungstext */
+	const char *name;	/* Typename */
+	const char *cname;	/* C-Datentyp */
+	const char *desc;	/* Beschreibungstext */
 	size_t size;		/* Datenlänge */
 	size_t recl;		/* Satzlänge */
 	size_t (*read) (const EfiType *type, void *data, IO *io);

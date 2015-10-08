@@ -303,7 +303,7 @@ void AddEnumFunc (EfiType *type)
 	int n;
 
 	arg[0] = NULL;
-	arg[1] = type->name;
+	arg[1] = (char *) type->name;
 
 	if	(!type->read)
 		type->read = Enum_read;
