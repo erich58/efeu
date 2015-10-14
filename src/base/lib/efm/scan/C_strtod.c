@@ -37,6 +37,6 @@ double C_strtod (const char *def, char **ptr)
 
 	setlocale(LC_ALL, "C");
 	val = strtod(def, ptr);
-	setlocale(LC_ALL, CurrentLocale);
+	setlocale(LC_ALL, p);
 	return val;
 }
