@@ -8,3 +8,5 @@
 ^doc
 ^note
 ^etc
+^save
+\.swp$
