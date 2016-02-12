@@ -34,7 +34,7 @@ x=`dirname $0`
 
 if [ -x $x/shmkmf-list ]; then
 	_submake_list="$x/shmkmf-list"
-elif [ -f $x/shmkmf-config.sh ]; then
+elif [ -f $x/shmkmf-list.sh ]; then
 	_submake_list="sh $x/shmkmf-list.sh"
 else
 	_submake_list=shmkmf-list
@@ -122,8 +122,12 @@ submake ()
 
 	test "$#" -eq 0 || shmkmf_warg submake
 
-	test "$usage" && mf_rule -d usage "" \
-		"@echo 'usage: make <target> | <project>[.target]'"
+	[ "$usage" ] && mf_rule -r -d usage "" <<!
+@printf 'usage: make <target> | <modul>[.<target>]\\\\n'
+@printf '\\\\ntargets:'
+@printf ' %s' $build $clean
+@printf '\\\\n\\\\n'
+!
 
 	mf_update -w "$work" ProjectList $_submake_list $SRC
 
@@ -149,16 +153,16 @@ submake ()
 		wdir=$work$name
 		printf " %s.%%" $name >> $tpl
 
-		test "$usage" && mf_rule -r -d usage "" <<!
-@printf '%s' $name
-@(grep '^#' $cfg || @/
-echo '# <no description>') | sed -e 's/^#[ 	]*/	/'
-!
-		mf_rule $wdir/Makefile $cfg "test -d $wdir || mkdir -p $wdir" \
+		[ "$usage" ] && mf_rule -d usage "" "@shmkmf-usage $name $cfg"
+		mf_rule -d $name "$wdir/Makefile"
+		mf_rule -d $name "" "cd $wdir; make"
+		mf_rule $wdir/Makefile $cfg "[ -d $wdir ] || mkdir -p $wdir" \
 			"cd $wdir; $shmkmf -t $TOP $cfg"
 
 		for dep in `grep '^#.*Depends:' $cfg | sed -e 's/.*Depends://'`
 		do
+			[ "$dep" = "." ] && continue
+
 			printf "\n%s/Makefile: %s/Makefile\n" \
 				"$wdir" "$work$dep"
 
@@ -167,9 +171,6 @@ echo '# <no description>') | sed -e 's/^#[ 	]*/	/'
 				printf "%s:: %s\n" "$name.$tg" "$dep.$tg"
 			done
 		done
-
-		printf "\n%s:: %s/Makefile; %s\n" \
-			"$name" "$wdir" "cd $wdir; make"
 
 		for tg in $build $clean
 		do
@@ -193,5 +194,4 @@ echo '# <no description>') | sed -e 's/^#[ 	]*/	/'
 )}
 
 # $SeeAlso
-# \mref{shmkmf(1)},
-# \mref{efeuprj.smh(7)},
+# \mref{shmkmf(1)}.

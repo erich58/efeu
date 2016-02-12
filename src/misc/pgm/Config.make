@@ -1,4 +1,5 @@
-# :en: utilities
+# :*: utilities
 # :de: Hilfsprogramme
 
-include efeuprj.smh
+include submake.smh
+submake -u 

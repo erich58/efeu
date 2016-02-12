@@ -1,4 +1,4 @@
-# :en: vim configuration files
+# :*: vim configuration files
 # :de: vim Konfigurationsdateien
 ##Depends: .
 

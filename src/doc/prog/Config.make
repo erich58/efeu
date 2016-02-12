@@ -1,4 +1,4 @@
-# :en: german documentation about EFEU programming
+# :*: german documentation about EFEU programming
 # :de: EFEU Programmierhandbuch
 ##Depends: .
 

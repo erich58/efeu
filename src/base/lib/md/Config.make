@@ -1,4 +1,4 @@
-# :en: data cube library
+# :*: data cube library
 # :de: Datenmatrix
 ##Depends: efm efx
 

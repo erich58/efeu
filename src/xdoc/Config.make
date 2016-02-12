@@ -1,5 +1,6 @@
-# :en: documentation depending on installed modules
+# :*: documentation depending on installed modules
 # :de: Von installierten Modulen abhängige Dokumentationen
-##Depends: *
+##Depends: base doc
 
-include efeuprj.smh
+include submake.smh
+submake -u 

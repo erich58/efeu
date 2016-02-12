@@ -1,4 +1,4 @@
-# :en: EFEU Letters and Numbers
+# :*: EFEU Letters and Numbers
 # :de: EFEU-Version von Buchstaben und Zahlen
 ##Depends: .
 

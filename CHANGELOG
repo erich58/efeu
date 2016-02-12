@@ -1,3 +1,9 @@
+EFEU 3.4
+
+*	Refactoring build concept.
+*	Changed source code encoding from latin9 to utf-8.
+*	Added const qualification to string declarations.
+
 EFEU 3.3-1
 
 *	Compatibility adaptions to newer gcc version.

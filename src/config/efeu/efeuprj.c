@@ -357,6 +357,24 @@ static void desc_label (DESC *desc, size_t n)
 	printf(LBLFMT, desc[n].name, desc[n].label ? desc[n].label : "");
 }
 
+static void desc_list (DESC *desc, size_t n)
+{
+	NODE *p;
+
+	printf("%s\n", desc[n].name);
+	printf("\tpath: %s\n", desc[n].path);
+	printf("\tlabel: %s\n", desc[n].label ? desc[n].label : "");
+	printf("\tdepth: %d\n", desc[n].depth);
+	printf("\tflag: %d\n", desc[n].flag);
+
+	printf("\tdeplist:");
+
+	for (p = desc[n].deplist; p != NULL; p = p->next)
+		printf(" %s", p->name);
+
+	printf("\n");
+}
+
 static void desc_show (DESC *desc, size_t n)
 {
 	NODE *p;
@@ -454,6 +472,10 @@ int main (int argc, char **argv)
 		else if	(argv[n][1] == 'd')
 		{
 			ofunc = desc_show;
+		}
+		else if	(argv[n][1] == 'l')
+		{
+			ofunc = desc_list;
 		}
 		else	usage(argv[n]);
 	}

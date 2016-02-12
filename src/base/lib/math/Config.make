@@ -1,4 +1,4 @@
-# :en: mathematican functions
+# :*: mathematican functions
 # :de: Mathematische Hilfsfunktionen
 ##Depends: md
 

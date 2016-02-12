@@ -1,4 +1,4 @@
-# :en: edb commands
+# :*: edb commands
 # :de: edb  Kommandos
 ##Depends: efm efx md math iorl esh
 

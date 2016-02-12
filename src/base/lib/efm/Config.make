@@ -1,4 +1,4 @@
-# :en: basic libraries
+# :*: basic libraries
 # :de: Basisbibliothek
 ##Depends: script
 

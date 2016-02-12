@@ -1,4 +1,4 @@
-# :en: mdmat specification
+# :*: mdmat specification
 # :de: MDMAT Spezifikation
 ##Depends: .
 

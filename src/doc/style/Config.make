@@ -1,4 +1,4 @@
-# :en: german version of efeu style guide
+# :*: german version of efeu style guide
 # :de: Stilführer
 ##Depends: .
 

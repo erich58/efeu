@@ -58,7 +58,8 @@ cd $build
 cat > Config.make << EOF
 TOP=$top
 SRC=$src
-include efeuprj.smh
+include submake.smh
+submake -u
 EOF
 
 shmkmf

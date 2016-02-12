@@ -1,4 +1,4 @@
-# :en: The EDB interface
+# :*: The EDB interface
 # :de: Die EDB-Datenschnittstelle
 ##Depends: .
 

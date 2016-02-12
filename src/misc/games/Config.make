@@ -1,4 +1,5 @@
-# :en: games
+# :*: games
 # :de: Spiele
 
-include efeuprj.smh
+include submake.smh
+submake -u 

@@ -1,4 +1,4 @@
-# :en: examples
+# :*: examples
 # :de: Beispiele
 ##Depends: pgm
 

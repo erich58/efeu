@@ -1,4 +1,4 @@
-# :en: efeu configuration tools
+# :*: efeu configuration tools
 # :de: EFEU Konfigurationswerkzeuge
 ##Depends: .
 
@@ -22,7 +22,7 @@
 # If not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-mf_rule -d usage
+include submake.smh
+submake -u 
 mf_rule -d update "" "(cd $SRC; ./setup)" 
 mf_dir ETC=$TOP/etc
-include efeuprj.smh

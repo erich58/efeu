@@ -1,4 +1,4 @@
-# :en: documentation
+# :*: documentation
 # :de: Dokumentation
 ##Depends: pgm
 

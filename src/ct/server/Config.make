@@ -1,4 +1,4 @@
-# :en: data cube server
+# :*: data cube server
 # :de: Datenwürfelserver
 ##Depends: .
 

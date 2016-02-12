@@ -1,4 +1,4 @@
-# :en: makefile generator based on cpp
+# :*: makefile generator based on cpp
 # :de: Makefile Generator, basierend auf cpp
 ##Depends: .
 
