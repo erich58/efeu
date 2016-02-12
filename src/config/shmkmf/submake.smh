@@ -161,6 +161,8 @@ submake ()
 
 		for dep in `grep '^#.*Depends:' $cfg | sed -e 's/.*Depends://'`
 		do
+			[ "$dep" = "." ] && continue
+
 			printf "\n%s/Makefile: %s/Makefile\n" \
 				"$wdir" "$work$dep"
 
