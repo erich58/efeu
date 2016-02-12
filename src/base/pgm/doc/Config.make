@@ -1,4 +1,4 @@
-# :en: document generator
+# :*: document generator
 # :de: Dokumentgenerator
 ##Depends: esh
 

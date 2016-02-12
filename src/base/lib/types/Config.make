@@ -1,4 +1,4 @@
-# :en: Supplemented data types for interpreter
+# :*: Supplemented data types for interpreter
 # :de: Ergänzende Datentypen für Interpreter
 ##Depends: efm efx esh
 

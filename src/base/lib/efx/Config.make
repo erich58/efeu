@@ -1,4 +1,4 @@
-# :en: extension library
+# :*: extension library
 # :de: Erweiterungsbibliothek
 ##Depends: efm
 

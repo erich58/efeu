@@ -1,4 +1,4 @@
-# :en: shell scripts
+# :*: shell scripts
 # :de: Shell-Scripts
 ##Depends: .
 

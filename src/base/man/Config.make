@@ -1,4 +1,4 @@
-# :en: manpages to the libraries
+# :*: manpages to the libraries
 # :de: Handbücher zu den Programmbiblitheken
 ##Depends: doc
 

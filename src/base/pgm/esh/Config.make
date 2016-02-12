@@ -1,4 +1,4 @@
-# :en: esh, mksource and scripts
+# :*: esh, mksource and scripts
 # :de: esh, mksource und Scripts
 ##Depends: efm efx md math iorl
 

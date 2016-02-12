@@ -1,4 +1,4 @@
-# :en: readline interface
+# :*: readline interface
 # :de: Readline-Schnittstelle
 ##Depends: efm
 

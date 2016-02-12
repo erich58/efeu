@@ -1,4 +1,4 @@
-# :en: curses tools
+# :*: curses tools
 # :de: Fensterhilfsprogramme
 ##Depends: efm efx
 
