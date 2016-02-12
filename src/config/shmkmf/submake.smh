@@ -124,8 +124,9 @@ submake ()
 
 	[ "$usage" ] && mf_rule -r -d usage "" <<!
 @printf 'usage: make <target> | <modul>[.<target>]\\\\n'
-@printf 'targets: %s %s\\\\n' "$build" "$clean"
-@printf 'moduls:\\\\n'
+@printf '\\\\ntargets:'
+@printf ' %s' $build $clean
+@printf '\\\\n\\\\n'
 !
 
 	mf_update -w "$work" ProjectList $_submake_list $SRC
@@ -152,7 +153,9 @@ submake ()
 		wdir=$work$name
 		printf " %s.%%" $name >> $tpl
 
-		test "$usage" && mf_rule -d usage "" "@shmkmf-usage $name $cfg"
+		[ "$usage" ] && mf_rule -d usage "" "@shmkmf-usage $name $cfg"
+		mf_rule -d $name "$wdir/Makefile"
+		mf_rule -d $name "" "cd $wdir; make"
 		mf_rule $wdir/Makefile $cfg "[ -d $wdir ] || mkdir -p $wdir" \
 			"cd $wdir; $shmkmf -t $TOP $cfg"
 
@@ -166,9 +169,6 @@ submake ()
 				printf "%s:: %s\n" "$name.$tg" "$dep.$tg"
 			done
 		done
-
-		printf "\n%s:: %s/Makefile; %s\n" \
-			"$name" "$wdir" "cd $wdir; make"
 
 		for tg in $build $clean
 		do
