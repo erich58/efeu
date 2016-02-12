@@ -1,4 +1,4 @@
-# :en: The EFEU Interpreter
+# :*: The EFEU Interpreter
 # :de: Der EFEU Interpreter
 ##Depends: .
 

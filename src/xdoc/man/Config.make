@@ -1,4 +1,4 @@
-# :en: man pages for installed files
+# :*: man pages for installed files
 # :de: Handbucheinträge aus installierten Dateien generieren
 ##Depends: .
 

@@ -1,4 +1,4 @@
-# :en: manpages for commands
+# :*: manpages for commands
 # :de: Handbucheinträge zu Kommandos
 ##Depends: .
 

@@ -1,4 +1,4 @@
-# :en: manpages for libraries
+# :*: manpages for libraries
 # :de: Handbucheinträge zu Bibliotheken
 ##Depends: .
 

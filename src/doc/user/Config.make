@@ -1,4 +1,4 @@
-# :en: user reference manual
+# :*: user reference manual
 # :de: Benutzerhandbuch
 ##Depends: .
 

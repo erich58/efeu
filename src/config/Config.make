@@ -1,4 +1,4 @@
-# :en: efeu configuration tools
+# :*: efeu configuration tools
 # :de: EFEU Konfigurationswerkzeuge
 ##Depends: .
 

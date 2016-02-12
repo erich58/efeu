@@ -1,4 +1,4 @@
-# :en: data cube client
+# :*: data cube client
 # :de: Datenwürfelclient
 ##Depends: .
 

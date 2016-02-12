@@ -1,5 +1,6 @@
-# :en: Cybertec
+# :*: Cybertec
 # :de: Cybertec
 ##Depends: base
 
-include efeuprj.smh
+include submake.smh
+submake -u 

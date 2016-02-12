@@ -1,5 +1,6 @@
-# :en: GTK+ interface
+# :*: GTK+ interface
 # :de: GTK+ Schnittstelle
 ##Depends: base
 
-include efeuprj.smh
+include submake.smh
+submake -u 

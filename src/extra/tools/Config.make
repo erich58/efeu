@@ -1,4 +1,4 @@
-# :en: simple tools
+# :*: simple tools
 # :de: Einfache Hilfsprogramme
 ##Depends: .
 

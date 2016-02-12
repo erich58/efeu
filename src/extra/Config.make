@@ -1,5 +1,6 @@
-# :en: Extra commands for specific tasks
+# :*: Extra commands for specific tasks
 # :de: Zusatzprogramme für spezifische Aufgaben
 ##Depends: base
 
-include efeuprj.smh
+include submake.smh
+submake -u 

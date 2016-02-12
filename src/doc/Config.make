@@ -1,5 +1,6 @@
-# :en: efeu basic documentation
+# :*: efeu basic documentation
 # :de: EFEU Basishandbücher
 ##Depends: base
 
-include efeuprj.smh
+include submake.smh
+submake -u 

@@ -1,4 +1,4 @@
-# :en: german documentation about efeudoc
+# :*: german documentation about efeudoc
 # :de: Handbuch zum Dokumentkonverter
 ##Depends: .
 

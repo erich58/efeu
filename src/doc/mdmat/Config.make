@@ -1,4 +1,4 @@
-# :en: german documentation about data cubes
+# :*: german documentation about data cubes
 # :de: Handbuch zu den Datenmatrizen
 ##Depends: .
 

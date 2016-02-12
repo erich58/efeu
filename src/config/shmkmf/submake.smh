@@ -194,5 +194,4 @@ submake ()
 )}
 
 # $SeeAlso
-# \mref{shmkmf(1)},
-# \mref{efeuprj.smh(7)},
+# \mref{shmkmf(1)}.

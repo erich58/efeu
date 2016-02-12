@@ -1,5 +1,6 @@
-# :en: miscellaneous
+# :*: miscellaneous
 # :de: Verschiedenes
 ##Depends: base tk
 
-include efeuprj.smh
+include submake.smh
+submake -u 

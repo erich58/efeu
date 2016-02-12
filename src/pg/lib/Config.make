@@ -1,4 +1,4 @@
-# :en: PostgreSQL-interface
+# :*: PostgreSQL-interface
 # :de: Schnittstelle zu PostgreSQL
 ##Depends: config
 

@@ -1,5 +1,6 @@
-# :en: TK interface
+# :*: TK interface
 # :de: TK Schnittstelle
 ##Depends: base
 
-include efeuprj.smh
+include submake.smh
+submake -u 

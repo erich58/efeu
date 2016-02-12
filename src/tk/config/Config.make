@@ -1,4 +1,4 @@
-# :en: configuration of TCL/TK-libraries
+# :*: configuration of TCL/TK-libraries
 # :de: Konfiguration für TCL/TK-Bibliotheken
 ##Depends: .
 

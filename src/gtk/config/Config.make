@@ -1,4 +1,4 @@
-# :en: configuration of Gtk+
+# :*: configuration of Gtk+
 # :de: Konfiguration für Gtk+
 ##Depends: .
 

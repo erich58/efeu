@@ -1,4 +1,4 @@
-# :en: Makefile generation
+# :*: Makefile generation
 # :de: Generieren von Makefiles
 ##Depends: .
 
