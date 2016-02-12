@@ -1,4 +1,4 @@
-# :en: EFEU specific tools
+# :*: EFEU specific tools
 # :de: EFEU spezifische Werkzeuge
 ##Depends: tools
 

@@ -1,7 +1,5 @@
-# :en: create Makefile from shell
+# :*: create Makefile from shell
 # :de: Makefile mithilfe der Shell generieren
-
-##Depends: .
 
 VN=${EFEU_VERSION:-shmkmf 1.0}
 
