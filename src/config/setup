@@ -60,6 +60,7 @@ TOP=$top
 SRC=$src
 include submake.smh
 submake -u
+include efeudoc.smh
 EOF
 
 shmkmf

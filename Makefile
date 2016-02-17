@@ -7,6 +7,7 @@ usage::
 	@echo
 	@echo "config	create Makefile in build"
 	@echo "build	build all (running make all in build)"
+	@echo "doc	build doc (running make doc in build)"
 	@echo "note	display notes of building process (if any)"
 	@echo "all	runs make config build note"
 	@echo "purge	remove build directory"
@@ -32,6 +33,9 @@ config::
 
 build::
 	($(SETENV); cd build; make all)
+
+doc::
+	($(SETENV); cd build; make doc)
 
 note::
 	@(test -d note && find note -type f -print | xargs cat) || true

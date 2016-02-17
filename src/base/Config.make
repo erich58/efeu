@@ -4,3 +4,4 @@
 
 include submake.smh
 submake -u 
+include efeudoc.smh
