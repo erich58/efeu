@@ -1,6 +1,6 @@
 # :*: manpages to the libraries
 # :de: Handbücher zu den Programmbiblitheken
-##Depends: doc
+##Depends: efeudoc
 
 include efeu.smh
 ldir=`cd $SRC/../lib; pwd`
