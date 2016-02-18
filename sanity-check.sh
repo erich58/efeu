@@ -20,11 +20,10 @@
 # If not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-TMP=${TMPDIR:-/tmp}/efeu_sanity$$
-mkdir $TMP || exit 1
-chmod go-rwx $TMP
+TMP=`mktemp -d`
+trap "rm -rvf $TMP;" 0
+trap "exit 1" 1 2 3 15
 readonly TMP
-trap "cd; rm -rf $TMP;" 0
 
 check_stat ()
 {
@@ -40,7 +39,6 @@ check_stat ()
 }
 
 cd $TMP
-
 cat > hello.c << !
 #include <stdio.h>
 
@@ -53,3 +51,5 @@ int main (int argc, char **argv)
 
 make hello > /dev/null
 check_stat $? "Testing compiler ....................... "
+
+rm -rf $TMP
