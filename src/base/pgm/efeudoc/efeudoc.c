@@ -159,7 +159,6 @@ int main (int narg, char **arg)
 	rd_deref(doc);
 
 	if	(!MakeDepend)	return 0;
-	if	(!MakeDepend)	return 0;
 	
 	p = GetResource("TaskName", NULL);
 
