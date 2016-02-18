@@ -3,5 +3,5 @@
 ##Depends: .
 
 include efeu.smh
-efeu_doc -l "de" efeudoc
+efeu_doc -l "de_AT" efeudoc
 

@@ -17,7 +17,7 @@ mf_rule -a $TOP/lib/esh/types/PG_Grp.so '$(LIB)' "ln -s %1 %@"
 mf_rule -a $TOP/lib/esh/types/PGCube.so '$(LIB)' "ln -s %1 %@"
 fi
 
-efeu_doc -l "de en" pg
+efeu_doc -l "de_AT en_US" pg
 
 # check the status of libpq availability
 

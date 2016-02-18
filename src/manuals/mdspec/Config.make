@@ -3,5 +3,5 @@
 ##Depends: .
 
 include efeu.smh
-efeu_doc -l "en" mdspec
+efeu_doc -l "en_US" mdspec
 

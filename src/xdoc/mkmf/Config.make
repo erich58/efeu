@@ -20,6 +20,6 @@ mf_rule -a pasctrian.dvi "pasctrian.tex tab.tex" "latex %1"
 mf_rule -a pasctrian.ps pasctrian.dvi "dvips -o %@ %1"
 mf_clean pasctrian.aux pasctrian.log
 
-efeu_doc -l "de" mkmf
-#efeu_doc -l "de en" mkmf
+efeu_doc -l "de_AT" mkmf
+#efeu_doc -l "de_AT en_US" mkmf
 
