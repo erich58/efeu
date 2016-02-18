@@ -22,7 +22,7 @@
 Type = NULL
 Config = NULL
 Bootstrap = NULL
-UseUTF8 = false
+UseUTF8 = true
 
 I:dir|CFGPath:eval 'CFGPath = paste(PATHSEP, CFGPath, "{}")'; Bootstrap: set '{Bootstrap} -I "{}"'
 	:*:append <dir> to the search path for configuration files.
