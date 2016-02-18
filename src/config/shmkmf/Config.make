@@ -12,4 +12,3 @@ foreach -p $TOP/lib/shmkmf -S awk 'mf_file $tg $src'
 foreach -p $TOP/lib/efeu -M de -x help -S hlp 'mf_file $tg $src'
 
 include efeudoc.smh
-efeudoc_setup

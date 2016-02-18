@@ -26,9 +26,7 @@ test $_efeugroup_smh && return
 _efeugroup_smh=1
 
 include submake.smh
-include efeudoc.smh
-submake -u -b doc -c doc.clean
-efeudoc_setup
+submake -u -b doc
 
 # $SeeAlso
 # \mref{shmkmf(1)},

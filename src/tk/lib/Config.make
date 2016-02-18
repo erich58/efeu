@@ -26,3 +26,5 @@ files are not installed or on an unexpected place.
 Correct this and rebuild the module.
 !
 fi
+
+mf_rule -d doc

@@ -14,4 +14,3 @@ foreach -m BIN -s gencmd "mf_file -x \$tg \$src 'VN=\"$EFEU_VERSION\" sh' $TOP"
 foreach -m CFG -s gencfg "mf_update \$tg.cfg 'VN=\"$EFEU_VERSION\" sh' \$src $TOP"
 
 include efeudoc.smh
-efeudoc_setup

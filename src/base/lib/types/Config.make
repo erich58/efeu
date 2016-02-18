@@ -13,4 +13,3 @@ foreach -m INC -S h 'mf_file $tg $src'
 foreach -m LIB -s c 'so_cc $tg $src'
 foreach -s tpl 'so_mksource -H $INC -L $LIB $src $libs'
 
-efeudoc_setup
