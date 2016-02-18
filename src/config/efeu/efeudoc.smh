@@ -38,24 +38,24 @@ _efeudoc_smh=1
 
 postpone _efeudoc_post
 
-_efeudoc_manpage=
-
 _efeudoc_post()
 {
-	if	[ -f $TMP/.efeudoc.manpage ]; then
+	if	[ -f $TMP/.efeudoc.man ]; then
 		mf_rule -d doc "" \
 			"$EFEUDOC --help >/dev/null && \$(MAKE) doc.manpage"
 		mf_rule -d doc.manpage
-	else
-		mf_rule -d doc
 	fi
 
-	mf_rule -d doc.clean
-}
+	if	[ -f $TMP/.efeudoc.doc ]; then
+		mf_rule -d doc "" \
+			"$EFEUDOC --help >/dev/null && \$(MAKE) doc.html"
+		mf_rule -d doc "" \
+			"efeucheck latexdoc >/dev/null && \$(MAKE) doc.ps"
+		mf_rule -d doc.html
+		mf_rule -d doc.ps
+	fi
 
-efeudoc_rule()
-{
-	mf_rule -A doc.manpage -C doc.clean "$@"
+	mf_rule -d doc
 }
 
 # $alias
@@ -84,7 +84,8 @@ efeu_doc ()
 {(
 	flg=
 	lng=$efeu_deflang
-	mdir="mf_dir -p"
+	mdir="mf_dir -p -A doc"
+	touch $TMP/.efeudoc.doc
 
 	while [ -n "$1" ]
 	do
@@ -109,27 +110,27 @@ efeu_doc ()
 
 	for l in $lng
 	do
-		cmd="env LANG=$l $EFEUDOC $flg$ucs"
-		dir=$TOP/doc/$l
+		cmd="LANG=$l $EFEUDOC $flg$ucs"
+
+		case "$l" in
+		??_*)	ldir=`expr "$l" : '^\(..\)_'`;;
+		*)	ldir=.;;
+		esac
+	
+		dir=$TOP/doc/$ldir
 
 		if [ "$HAS_LATEX" = 1 ]; then
 			$mdir $dir/ps
 			ps=$dir/ps/$tg.ps.gz
-			mf_rule -a $ps "" "$cmd -p $src | gzip > \$@"
+			mf_rule -A doc.ps -C clean $ps "" \
+				"$cmd -p $src | gzip > \$@"
 			mf_depend "$cmd -d -p -o $ps $src >> $Makefile"
-
-			if [ "$HAS_PS2PDF" = 1 ]; then
-				$mdir $dir/pdf
-				pdf=$dir/pdf/$tg.pdf
-				mf_rule -a $pdf "$ps" \
-					"zcat $ps | ps2pdf - \$@"
-			fi
 		fi
 
 		h=$dir/html
 		$mdir $h
-		n=html_${tg}_$l
-		mf_rule -d all $n "(cd $h; htmlindex )"
+		n=html_${tg}_$ldir
+		mf_rule -d doc.html $n "(cd $h; htmlindex )"
 		mf_rule -d $n
 		mf_rule -d clean "" "rm -rf $h/$tg"
 		mf_depend "$cmd -r $n -h -o $h/$tg $src >> $Makefile"
@@ -164,7 +165,7 @@ esac
 
 efeu_man ()
 {(
-	touch $TMP/.efeudoc.manpage
+	touch $TMP/.efeudoc.man
 	lng=$efeu_deflang
 	sec=1
 
