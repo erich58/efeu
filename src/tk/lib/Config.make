@@ -15,9 +15,11 @@ HDR=$TOP/include/GUI/tk_config.h
 add_depend $HDR
 efeu_note -d ETK
 
-test -f $HDR || exit 0
-
 if
+	test -f $HDR
+then
+	:
+elif
 	grep "HAS_TCL.*0" $HDR
 then
 	efeu_note ETK <<!
@@ -26,5 +28,3 @@ files are not installed or on an unexpected place.
 Correct this and rebuild the module.
 !
 fi
-
-mf_rule -d doc
