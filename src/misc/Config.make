@@ -2,5 +2,4 @@
 # :de: Verschiedenes
 ##Depends: base tk
 
-include submake.smh
-submake -u 
+include efeugroup.smh

@@ -1,10 +1,10 @@
-# :*: efeu configuration tools
-# :de: EFEU Konfigurationswerkzeuge
-##Depends: .
-
-# target rules for efeu configuration scripts
+# :*:create documentation with efeudoc
+# :de:Dokumentationen mit efeudoc generieren
 #
-# $Copyright (C) 2001 Erich Frühstück
+# $Synopsis
+# include $1
+#
+# $Copyright (C) 2016 Erich Frühstück
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -22,6 +22,16 @@
 # If not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-include efeugroup.smh
-mf_rule -d update "" "(cd $SRC; ./setup)" 
-mf_dir ETC=$TOP/etc
+test $_efeudoc_smh && return
+_efeudoc_smh=1
+
+: ${EFEUDOC:=efeudoc}
+
+efeudoc_setup()
+{
+	mf_rule -d doc "" "$EFEUDOC --help >/dev/null"
+	mf_rule -d doc.clean
+}
+
+# $SeeAlso
+# \mref{shmkmf(1)}

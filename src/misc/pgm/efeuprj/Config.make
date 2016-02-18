@@ -23,3 +23,6 @@ foreach -m CFG -s gencfg "mf_update \$tg.cfg 'VN=\"$EFEU_VERSION\" sh' \$src $TO
 foreach -c $APP -M de -x config -S cnf \
 	'mf_file -s "/:VN:/$EFEU_VERSION/" $tg $src'
 foreach -c $APP -M de -x help -S hlp 'mf_file $tg $src'
+
+include efeudoc.smh
+efeudoc_setup

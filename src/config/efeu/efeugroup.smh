@@ -1,5 +1,5 @@
-# :*:create documentation with efeudoc
-# :de:Dokumentationen mit efeudoc generieren
+# :*:build rules vor a group of modules
+# :de:Generierungsregeln für eine Gruppe von Modulen
 #
 # $Synopsis
 # include $1
@@ -22,12 +22,15 @@
 # If not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-test $efeudoc_smh && return
+test $_efeugroup_smh && return
+_efeugroup_smh=1
 
-: ${EFEUDOC:=efeudoc}
-
-mf_rule -d doc "" "$EFEUDOC --help >/dev/null"
-mf_rule -d doc.clean
+include submake.smh
+include efeudoc.smh
+submake -u -b doc -c doc.clean
+efeudoc_setup
 
 # $SeeAlso
-# \mref{shmkmf(1)}
+# \mref{shmkmf(1)},
+# \mref{efeudoc(7)},
+# \mref{submake(7)}.

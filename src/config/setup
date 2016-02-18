@@ -44,7 +44,7 @@ export PATH
 
 # preinstall config tools
 
-sh $src/shmkmf/shmkmf.sh -r all -t $top $src/shmkmf/Config.make
+sh $src/shmkmf/shmkmf.sh -r all -t $top -I $src/shmkmf $src/shmkmf/Config.make
 shmkmf -r all -t $top $src/tools/Config.make
 shmkmf -r all -t $top $src/efeu/Config.make
 
@@ -58,9 +58,7 @@ cd $build
 cat > Config.make << EOF
 TOP=$top
 SRC=$src
-include submake.smh
-submake -u
-include efeudoc.smh
+include efeugroup.smh
 EOF
 
 shmkmf

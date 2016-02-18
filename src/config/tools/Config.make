@@ -26,3 +26,5 @@ foreach -c $APP -M de -x config -S cnf \
 	'mf_file -s "/:VN:/$EFEU_VERSION/g" $tg $src'
 foreach -c $APP -M de -x help -S hlp 'mf_file $tg $src'
 
+include efeudoc.smh
+efeudoc_setup

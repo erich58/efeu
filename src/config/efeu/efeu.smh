@@ -36,6 +36,7 @@ include config.smh
 include script.smh
 include dl.smh
 config latex.cfg
+include efeudoc.smh
 
 # $Synopsis
 #
@@ -65,6 +66,7 @@ if [ $_stdrules ]; then
 	mf_rule -d depend files
 	mf_rule -d files
 	mf_srclist -c mksrclist
+	efeudoc_setup
 fi
 
 # $Description
