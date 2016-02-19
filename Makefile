@@ -25,14 +25,16 @@ usage::
 
 SETENV=	EFEUTOP=`pwd`; PATH=$$EFEUTOP/bin:$$PATH; export EFEUTOP PATH
 
-config::
+config:: build/Makefile
+
+build/Makefile:
 	sh sanity-check.sh
 	-if [ -f src/Makefile ]; then (cd src; make); fi
-	if [ -x src/config/setup ]; then (cd src/config; ./setup ../..); fi
+	if [ -x src/config/setup ]; then (cd src/config; sh ./setup ../..); fi
 	($(SETENV); cd build; shmkmf)
 
 basic:: config
-	($(SETENV); cd build; $(MAKE) base.all tk.all )
+	($(SETENV); cd build; $(MAKE) base.all tk.all)
 
 all:: config
 	($(SETENV); cd build; $(MAKE) all)
@@ -49,7 +51,7 @@ purge::
 	rm -rf build
 
 clean::
-	rm -rf include ppinclude build lib bin cgi-bin share doc man note
+	rm -rf include ppinclude build lib bin etc cgi-bin share doc man note
 
 starter::
 	test -d ~/bin || mkdir ~/bin

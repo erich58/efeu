@@ -105,12 +105,9 @@ efeu_doc ()
 	*)	shmkmf_warg "efeu_doc";;
 	esac
 
-	ucs=
-	test "$HAS_LATEX_UCS" = 1 && ucs=" -u"
-
 	for l in $lng
 	do
-		cmd="LANG=$l $EFEUDOC $flg$ucs"
+		cmd="LANG=$l $EFEUDOC $flg"
 
 		case "$l" in
 		??_*)	ldir=`expr "$l" : '^\(..\)_'`;;
@@ -119,13 +116,15 @@ efeu_doc ()
 	
 		dir=$TOP/doc/$ldir
 
-		if [ "$HAS_LATEX" = 1 ]; then
-			$mdir $dir/ps
-			ps=$dir/ps/$tg.ps.gz
-			mf_rule -A doc.ps -C clean $ps "" \
-				"$cmd -p $src | gzip > \$@"
-			mf_depend "$cmd -d -p -o $ps $src >> $Makefile"
-		fi
+		# PostScript
+		
+		$mdir $dir/ps
+		ps=$dir/ps/$tg.ps.gz
+		mf_rule -A doc.ps -C clean $ps "" \
+			"$cmd -p $src | gzip > \$@"
+		mf_depend "$cmd -d -p -o $ps $src >> $Makefile"
+
+		# HTML
 
 		h=$dir/html
 		$mdir $h

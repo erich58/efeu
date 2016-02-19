@@ -53,13 +53,3 @@ mf_var EMOBJ "efeuman.o \$(DOCBUF)"
 mf_cc -o '$(BIN)/src2doc' -mo S2DOBJ -md DEP_DOC -ml LIB_DOC
 mf_cc -o '$(BIN)/efeuman' -mo EMOBJ -md DEP_DOC -ml LIB_DOC
 foreach -m BIN -s esh 'mf_script -e -c esh $tg $src'
-
-efeu_note -d latex
-
-if [ "$HAS_LATEX" != 1 ]; then
-	efeu_note latex <<!
-LaTeX or dvips ist not installed and so PostScript-Versions of the
-Documentations could not be build. Install the appropriate packages und
-rerun the building of EFEU.
-!
-fi

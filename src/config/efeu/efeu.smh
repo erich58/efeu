@@ -35,7 +35,6 @@ cc_setup
 include config.smh
 include script.smh
 include dl.smh
-config latex.cfg
 include efeudoc.smh
 
 # $Synopsis
