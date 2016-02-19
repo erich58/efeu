@@ -178,6 +178,7 @@ find $TMP -type d -exec chmod a+rx '{}' \;
 
 (
 	cd $TMP;
+	find * -depth -type l -printf "rm -f /%p\n"
 	find * -depth -type f -printf "rm -f /%p\n"
 	find * -depth -type d -printf "rmdir -p /%p 2>/dev/null\n"
 ) >> $bin/$UINST
