@@ -27,8 +27,30 @@ trap "rm -rf $tmp;" 0
 trap "exit 1" 1 2 3 15
 readonly tmp
 
+list_cmd()
+{
+	awk '
+/[)][ \t]*#/ {
+	match($0, "[)][ \t]*#[ \t]*");
+	name = substr($0, 1, RSTART - 1);
+	desc = substr($0, RSTART + RLENGTH);
+
+	tags = tags ? tags " | " name : name
+	doc = doc name "\n\t" desc "\n";
+	tab[name] = desc
+
+	if	(len < length(name))
+		len = length(name);
+}
+END {
+for (x in tab)
+	printf("%-*s %s\n", len, x, tab[x]);
+}
+' $1 | sort
+}
+
 case "$1" in
-latex)
+latex)	# check availability of latex
 	cd $tmp
 	cat > ltest.tex << !
 \\documentclass[10pt,a4paper]{article}
@@ -42,14 +64,23 @@ latex)
 This is a Test.
 \\end{document}
 !
-	latex ltest.tex 2>/dev/null >/dev/null </dev/null && \
+	latex ltest.tex >/dev/null 2>&1 </dev/null && \
 		dvips -o ltest.ps ltest.dvi 2>/dev/null
 	;;
-latexdoc)
-	echo "Test" | efeudoc -p - 2>/dev/null >/dev/null
+ps2pdf)	# check availability of ps2pdf
+	printf '%%!PS\nshowpage\n' | ps2pdf - - >/dev/null
+	;;
+pdfdoc)	# efeudoc supports pdf output
+	echo "Test" | efeudoc --pdf - >/dev/null 2>&1
+	;;
+latexdoc) # efeudoc supports postscript with latex
+	echo "Test" | efeudoc -p - >/dev/null 2>&1
+	;;
+?*)
+	exit 1
 	;;
 *)
-	echo "Usage: $0 latex | latexdoc"
-	exit 1
+	printf 'Usage: %s what\n\n' $0
+	list_cmd $0
 	;;
 esac
