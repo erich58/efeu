@@ -15,10 +15,12 @@ mf_rule -d doc "" "efeucheck pdfdoc && \$(MAKE) doc.pdf"
 
 make_pdf()
 {
-	foreach -A doc.pdf -p $1 -s ps.gz \
-		'mf_rule -a $tg.pdf $src "zcat \$< | ps2pdf - \$@"' $2
+	mf_dir -A doc.pdf -p $TOP/$2/pdf
+	mf_srclist $1 $TOP/$2/ps
+	foreach -A doc.pdf -p $TOP/$2/pdf -s ps.gz \
+		'mf_rule -a $tg.pdf $src "zcat \$< | ps2pdf - \$@"'
 }
 
-make_pdf $TOP/doc/pdf $TOP/doc/ps
-make_pdf $TOP/doc/de/pdf $TOP/doc/de/ps
-make_pdf $TOP/doc/en/pdf $TOP/doc/en/ps
+#make_pdf doc_main doc
+make_pdf doc_de doc/de
+make_pdf doc_en doc/en
