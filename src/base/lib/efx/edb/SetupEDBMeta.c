@@ -38,8 +38,7 @@ void EDBMeta_type (EDBMetaDef *def, EDBMeta *meta, const char *arg)
 	{
 		meta->prev = edb_paste(meta->prev, meta->cur);
 		meta->cur = edb_create(type);
-		meta->cur->desc = meta->desc;
-		meta->desc = NULL;
+		meta->cur->desc = mstrcpy(meta->desc);
 	}
 }
 
