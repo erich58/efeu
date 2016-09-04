@@ -3,5 +3,5 @@
 ##Depends: .
 
 include efeu.smh
-efeu_doc -l "de" mdmat
+efeu_doc -l "de_AT" mdmat
 

@@ -9,5 +9,5 @@ foreach -S edb 'mf_file $tg $src'
 foreach -S hdr 'mf_file $tg $src'
 foreach -S def 'mf_file $tg $src'
 AllTarget=all
-efeu_doc -l "de en" edb
+efeu_doc -l "de_AT en_US" edb
 

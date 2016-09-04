@@ -1,0 +1,198 @@
+# :*:create documentation with efeudoc
+# :de:Dokumentationen mit efeudoc generieren
+#
+# $Synopsis
+# include $1
+#
+# $Copyright (C) 2016 Erich Frühstück
+# This file is part of EFEU.
+# 
+# EFEU is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+# 
+# EFEU is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public
+# License along with EFEU; see the file COPYING.
+# If not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+test $_efeudoc_smh && return
+_efeudoc_smh=1
+
+: ${EFEUDOC:=efeudoc}
+
+# $Description
+# :de:
+# Durch Einbinden der Headerdatei |$1| werden Funktionen
+# zur Dokumentgenerierung mithilfe von efeudoc vordefiniert.
+# \par
+# Die Dokumentationen werden für das Scheinziel |doc| eingerichtet.
+# Falls |efeudoc| bzw. benötigte Werkzeuge (|latex|, |dvips|) nicht verfügbar
+# sind, wird nur eine Warnung ausgegeben.
+
+postpone _efeudoc_post
+
+_efeudoc_post()
+{
+	if	[ -f $TMP/.efeudoc.man ]; then
+		mf_rule -d doc "" \
+			"$EFEUDOC --help >/dev/null && \$(MAKE) doc.manpage"
+		mf_rule -d doc.manpage
+	fi
+
+	if	[ -f $TMP/.efeudoc.doc ]; then
+		mf_rule -d doc "" \
+			"$EFEUDOC --help >/dev/null && \$(MAKE) doc.html"
+		mf_rule -d doc "" \
+			"efeucheck latexdoc >/dev/null && \$(MAKE) doc.ps"
+		mf_rule -d doc.html
+		mf_rule -d doc.ps
+	fi
+
+	mf_rule -d doc
+}
+
+# $alias
+# $pconfig !
+# l:lang |
+#	definiert die Sprachen für die die Dokumentation generiert werden
+#	soll.
+# H::hdr |
+#	:*:this option is passed to |efeudoc|.
+#	:de:Diese Option wird an |efeudoc| weitergereicht.
+# ::tg |
+#	Name des Dokuments
+# ::src |
+#	Verzeichnis mit den Dokumentsourcen
+# !
+# :*:
+# The following options and arguments are accepted by $!:
+# :de:
+# Die Funktion $! generiert Dokumentationen mithile von |efeudoc|.
+# \par
+# Die folgenden Optionen und Argumente werden von $! akzeptiert:
+#
+# @arglist
+
+efeu_doc ()
+{(
+	flg=
+	lng=$efeu_deflang
+	mdir="mf_dir -p -A doc"
+	touch $TMP/.efeudoc.doc
+
+	while [ -n "$1" ]
+	do
+		case "$1" in
+		-l)	lng="$2"; shift 2;;
+		-H)	flg="$flg $1 '$2'"; shift 2;;
+		--)	break;;
+		-*)	shmkmf_invop "efeu_doc" "$1"; exit 1;;
+		*)	break;;
+		esac
+	done
+
+	case "$#" in
+	0)	tg=`basename $SRC`; src=$SRC;;
+	1)	tg=$1; src=$SRC;;
+	2)	tg=$1; src=$2;;
+	*)	shmkmf_warg "efeu_doc";;
+	esac
+
+	for l in $lng
+	do
+		cmd="LANG=$l $EFEUDOC $flg"
+
+		case "$l" in
+		??_*)	ldir=`expr "$l" : '^\(..\)_'`;;
+		*)	ldir=.;;
+		esac
+	
+		dir=$TOP/doc/$ldir
+
+		# PostScript
+		
+		$mdir $dir/ps
+		ps=$dir/ps/$tg.ps.gz
+		mf_rule -A doc.ps -C clean $ps "" \
+			"$cmd -p $src | gzip > \$@"
+		mf_depend "$cmd -d -p -o $ps $src >> $Makefile"
+
+		# HTML
+
+		h=$dir/html
+		$mdir $h
+		n=html_${tg}_$ldir
+		mf_rule -d doc.html $n "(cd $h; htmlindex )"
+		mf_rule -d $n
+		mf_rule -d clean "" "rm -rf $h/$tg"
+		mf_depend "$cmd -r $n -h -o $h/$tg $src >> $Makefile"
+	done
+)}
+
+case `uname -s` in
+AIX)	man_ext=""; man_filter="";;
+*)	man_ext=".gz"; man_filter="| gzip";;
+esac
+
+# $alias
+# $pconfig !
+# l:lang |
+#	definiert die Sprachen, für die das Handbuch generiert werden
+#	soll.
+# s:sec |
+#	gibt den Abschnitt für die Handbucheinträge vor.
+# :tg |
+#	Zielname des Handbucheintrags.
+# :src |
+#	Quelle des Handbucheintrags.
+# !
+# :*:
+# The following options and arguments are accepted by $!:
+# :de:
+# Die Funktion $! installiert einen Handbucheintrag.
+# \par
+# Die folgenden Optionen und Argumente werden von $! akzeptiert:
+#
+# @arglist
+
+efeu_man ()
+{(
+	touch $TMP/.efeudoc.man
+	lng=$efeu_deflang
+	sec=1
+
+	while [ -n "$1" ]
+	do
+		case "$1" in
+		-l)	lng="$2"; shift 2;;
+		-s)	sec="$2"; shift 2;;
+		*)	break;;
+		esac
+	done
+
+	[ "$#" -eq 2 ] || shmkmf_warg "efeu_doc"
+
+	ext="$sec$man_ext"
+	mf_rule -A doc.manpage -C clean "$1.$ext" "$2" \
+		"LANG=$lng src2doc $2 | $EFEUDOC -Tman - $man_filter > \$@"
+
+	dir=`dirname $1`
+	base=`basename $1`
+
+	for x in `src2doc -a $2`
+	do
+		mf_rule -A doc.manpage -C clean \
+			"$dir/$x.$ext" "$dir/$base.$ext" \
+			"cd $dir; ln -fs $base.$ext $x.$ext"
+	done
+)}
+
+# $SeeAlso
+# \mref{shmkmf(1)}

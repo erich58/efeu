@@ -1,8 +1,8 @@
 #!/bin/sh
-# :*:create latex configuration
-# :de:LaTeX Konfigurationsdatei generieren
+# :*:check software configuration
+# :de:Prüfen von Softwareverfügbarkeit
 #
-# $Copyright (C) 2005 Erich Frühstück
+# $Copyright (C) 2016 Erich Frühstück
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -22,18 +22,36 @@
 
 # create temporary working directory
 
-tmp=${TMPDIR:-/tmp}/check$$
-trap "cd; rm -rf $tmp" 0
-trap "exit 1" 1 2 3
+tmp=`mktemp -d`
+trap "rm -rf $tmp;" 0
+trap "exit 1" 1 2 3 15
+readonly tmp
 
-mkdir $tmp
-cd $tmp
+list_cmd()
+{
+	awk '
+/[)][ \t]*#/ {
+	match($0, "[)][ \t]*#[ \t]*");
+	name = substr($0, 1, RSTART - 1);
+	desc = substr($0, RSTART + RLENGTH);
 
-HAS_LATEX_UCS=
-HAS_LATEX=
-HAS_PS2PDF=
+	tags = tags ? tags " | " name : name
+	doc = doc name "\n\t" desc "\n";
+	tab[name] = desc
 
-if
+	if	(len < length(name))
+		len = length(name);
+}
+END {
+for (x in tab)
+	printf("%-*s %s\n", len, x, tab[x]);
+}
+' $1 | sort
+}
+
+case "$1" in
+latex)	# check availability of latex
+	cd $tmp
 	cat > ltest.tex << !
 \\documentclass[10pt,a4paper]{article}
 \\usepackage{ucs}
@@ -46,40 +64,23 @@ if
 This is a Test.
 \\end{document}
 !
-	latex ltest.tex 2>/dev/null >/dev/null </dev/null && \
+	latex ltest.tex >/dev/null 2>&1 </dev/null && \
 		dvips -o ltest.ps ltest.dvi 2>/dev/null
-then
-	HAS_LATEX_UCS=1
-	HAS_LATEX=1
-elif
-	cat > ltest.tex << !
-\\documentclass[10pt,a4paper]{article}
-\\usepackage[latin1]{inputenc}
-\\usepackage{tabularx}
-\\usepackage{german}
-\\usepackage[german]{varioref}
-\\dateaustrian
-\\begin{document}
-This is a Test.
-\\end{document}
-!
-	latex ltest.tex 2>/dev/null >/dev/null </dev/null && \
-		dvips -o ltest.ps ltest.dvi 2>/dev/null
-then
-	HAS_LATEX=1
-fi
-
-if
-	ps2pdf ltest.ps ltest.pdf 2>/dev/null >/dev/null
-then
-	HAS_PS2PDF=1
-fi
-
-cat << EOF
-# Do not edit, configuration file was created by
-# /bin/sh $0
-
-HAS_LATEX_UCS=$HAS_LATEX_UCS
-HAS_LATEX=$HAS_LATEX
-HAS_PS2PDF=$HAS_PS2PDF
-EOF
+	;;
+ps2pdf)	# check availability of ps2pdf
+	printf '%%!PS\nshowpage\n' | ps2pdf - - >/dev/null
+	;;
+pdfdoc)	# efeudoc supports pdf output
+	echo "Test" | efeudoc --pdf - >/dev/null 2>&1
+	;;
+latexdoc) # efeudoc supports postscript with latex
+	echo "Test" | efeudoc -p - >/dev/null 2>&1
+	;;
+?*)
+	exit 1
+	;;
+*)
+	printf 'Usage: %s what\n\n' $0
+	list_cmd $0
+	;;
+esac

@@ -164,6 +164,8 @@ do
 	esac
 done
 
+export TOP
+
 shift `expr $OPTIND - 1`
 
 if [ "$#" -gt 2 ]; then

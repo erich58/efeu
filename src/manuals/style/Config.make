@@ -3,5 +3,5 @@
 ##Depends: .
 
 include efeu.smh
-efeu_doc -l "de" style
+efeu_doc -l "de_AT" style
 

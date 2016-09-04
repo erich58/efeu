@@ -2,5 +2,4 @@
 # :de: EFEU-Basisbibliotheken/Standardkommandos
 ##Depends: config
 
-include submake.smh
-submake -u 
+include efeugroup.smh

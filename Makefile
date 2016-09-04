@@ -3,17 +3,18 @@
 STARTER=~/bin/efeu
 
 usage::
-	@echo "usage: make config | all | purge | clean | stat"
+	@echo "usage: make base | all | doc | purge | clean | stat"
 	@echo
-	@echo "config	create Makefile in build"
-	@echo "build	build all (running make all in build)"
-	@echo "note	display notes of building process (if any)"
-	@echo "all	runs make config build note"
+	@echo "config	create efeu configuration tools"
+	@echo "basic	create basic functionality"
+	@echo "all	create all tools"
+	@echo "doc	create all with documentation"
+	@echo
+	@echo "install	Install efeu (what was build)"
 	@echo "purge	remove build directory"
 	@echo "clean	remove all target directories"
 	@echo
 	@echo "starter	Create starter script $(STARTER)"
-	@echo "install	Install efeu binaries"
 	@echo "arch	create archive for binaries"
 	@echo
 	@echo "NOTE: Instead of installing efeu, you can add"
@@ -24,25 +25,33 @@ usage::
 
 SETENV=	EFEUTOP=`pwd`; PATH=$$EFEUTOP/bin:$$PATH; export EFEUTOP PATH
 
-config::
+config:: build/Makefile
+
+build/Makefile:
 	sh sanity-check.sh
 	-if [ -f src/Makefile ]; then (cd src; make); fi
-	if [ -x src/config/setup ]; then (cd src/config; ./setup ../..); fi
+	if [ -x src/config/setup ]; then (cd src/config; sh ./setup ../..); fi
 	($(SETENV); cd build; shmkmf)
 
-build::
-	($(SETENV); cd build; make all)
+basic:: config
+	($(SETENV); cd build; $(MAKE) base.all tk.all)
+
+all:: config
+	($(SETENV); cd build; $(MAKE) all)
+
+doc:: config
+	($(SETENV); cd build; $(MAKE) all doc)
+
+basic all doc:: note
 
 note::
 	@(test -d note && find note -type f -print | xargs cat) || true
-
-all:: config build note
 
 purge::
 	rm -rf build
 
 clean::
-	rm -rf include ppinclude build lib bin cgi-bin share doc man note
+	rm -rf include ppinclude build lib bin etc cgi-bin share doc man note
 
 starter::
 	test -d ~/bin || mkdir ~/bin

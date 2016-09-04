@@ -35,7 +35,7 @@ cc_setup
 include config.smh
 include script.smh
 include dl.smh
-config latex.cfg
+include efeudoc.smh
 
 # $Synopsis
 #
@@ -509,8 +509,8 @@ efeu_note ()
 )}
 
 case "$LANG" in
-de*)	efeu_deflang=de;;
-*)	efeu_deflang=en;;
+de*)	efeu_deflang=de_AT;;
+*)	efeu_deflang=en_US;;
 esac
 
 # $alias
@@ -557,134 +557,6 @@ efeu_test ()
 	printf "\tfi;\n\n"
 )}
 
-
-# $alias
-# $pconfig !
-# l:lang |
-#	definiert die Sprachen für die die Dokumentation generiert werden
-#	soll.
-# H::hdr |
-#	:*:this option is passed to |efeudoc|.
-#	:de:Diese Option wird an |efeudoc| weitergereicht.
-# ::tg |
-#	Name des Dokuments
-# ::src |
-#	Verzeichnis mit den Dokumentsourcen
-# !
-# :*:
-# The following options and arguments are accepted by $!:
-# :de:
-# Die Funktion $! generiert Dokumentationen mithile von |efeudoc|.
-# \par
-# Die folgenden Optionen und Argumente werden von $! akzeptiert:
-#
-# @arglist
-
-efeu_doc ()
-{(
-	flg=
-	lng=$efeu_deflang
-	mdir="mf_dir -p"
-
-	while [ -n "$1" ]
-	do
-		case "$1" in
-		-l)	lng="$2"; shift 2;;
-		-H)	flg="$flg $1 '$2'"; shift 2;;
-		--)	break;;
-		-*)	shmkmf_invop "efeu_doc" "$1"; exit 1;;
-		*)	break;;
-		esac
-	done
-
-	case "$#" in
-	0)	tg=`basename $SRC`; src=$SRC;;
-	1)	tg=$1; src=$SRC;;
-	2)	tg=$1; src=$2;;
-	*)	shmkmf_warg "efeu_doc";;
-	esac
-
-	ucs=
-	test "$HAS_LATEX_UCS" = 1 && ucs=" -u"
-
-	for l in $lng
-	do
-		cmd="env LANG=$l $EFEUDOC $flg$ucs"
-		dir=$TOP/doc/$l
-
-		if [ "$HAS_LATEX" = 1 ]; then
-			$mdir $dir/ps
-			ps=$dir/ps/$tg.ps.gz
-			mf_rule -a $ps "" "$cmd -p $src | gzip > \$@"
-			mf_depend "$cmd -d -p -o $ps $src >> $Makefile"
-
-			if [ "$HAS_PS2PDF" = 1 ]; then
-				$mdir $dir/pdf
-				pdf=$dir/pdf/$tg.pdf
-				mf_rule -a $pdf "$ps" \
-					"zcat $ps | ps2pdf - \$@"
-			fi
-		fi
-
-		h=$dir/html
-		$mdir $h
-		n=html_${tg}_$l
-		mf_rule -d all $n "(cd $h; htmlindex )"
-		mf_rule -d $n
-		mf_rule -d clean "" "rm -rf $h/$tg"
-		mf_depend "$cmd -r $n -h -o $h/$tg $src >> $Makefile"
-	done
-)}
-
-case `uname -s` in
-AIX)	man_ext=""; man_filter="";;
-*)	man_ext=".gz"; man_filter="| gzip";;
-esac
-
-# $alias
-# $pconfig !
-# l:lang |
-#	definiert die Sprachen, für die das Handbuch generiert werden
-#	soll.
-# s:sec |
-#	gibt den Abschnitt für die Handbucheinträge vor.
-# !
-# :*:
-# The following options and arguments are accepted by $!:
-# :de:
-# Die Funktion $! installiert Handbucheinträge.
-# \par
-# Die folgenden Optionen und Argumente werden von $! akzeptiert:
-#
-# @arglist
-
-efeu_man ()
-{(
-	lng=$efeu_deflang
-	sec=1
-
-	while [ -n "$1" ]
-	do
-		case "$1" in
-		-l)	lng="$2"; shift 2;;
-		-s)	sec="$2"; shift 2;;
-		*)	break;;
-		esac
-	done
-
-	ext="$sec$man_ext"
-	mf_rule -a "$1.$ext" "$2" \
-		"LANG=$lng src2doc $2 | $EFEUDOC -Tman - $man_filter > \$@"
-
-	dir=`dirname $1`
-	base=`basename $1`
-
-	for x in `src2doc -a $2`
-	do
-		mf_rule -a "$dir/$x.$ext" "$dir/$base.$ext" \
-			"cd $dir; ln -fs $base.$ext $x.$ext"
-	done
-)}
 
 # $SeeAlso
 # \mref{shmkmf(1)},

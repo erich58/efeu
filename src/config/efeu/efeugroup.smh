@@ -1,10 +1,10 @@
-# :*: efeu configuration tools
-# :de: EFEU Konfigurationswerkzeuge
-##Depends: .
-
-# target rules for efeu configuration scripts
+# :*:build rules vor a group of modules
+# :de:Generierungsregeln für eine Gruppe von Modulen
 #
-# $Copyright (C) 2001 Erich Frühstück
+# $Synopsis
+# include $1
+#
+# $Copyright (C) 2016 Erich Frühstück
 # This file is part of EFEU.
 # 
 # EFEU is free software; you can redistribute it and/or
@@ -22,6 +22,13 @@
 # If not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-include efeugroup.smh
-mf_rule -d update "" "(cd $SRC; ./setup)" 
-mf_dir ETC=$TOP/etc
+test $_efeugroup_smh && return
+_efeugroup_smh=1
+
+include submake.smh
+submake -u -b doc
+
+# $SeeAlso
+# \mref{shmkmf(1)},
+# \mref{efeudoc(7)},
+# \mref{submake(7)}.

@@ -3,11 +3,17 @@ VORBEREITUNG
 Folgende Softwarepakete werden benötigt:
 *	C-Development
 *	readline-Development
-*	teTeX
+
+Folgende Softwarepakete werden für die Dokumentation benötigt:
+
+*	texlive
+*	texlive-lang-german
+*	texlive-latex-extra
 
 Folgende Softwarepakete werden empfohlen:
-*	postgresql-Development
+*	x11-Development
 *	tcl/tk-Development
+*	postgresql-Development
 
 ÜBERSETZEN
 
@@ -17,10 +23,12 @@ Der Aufruf von
 
 sorgt für die Übersetzung von EFEU.
 
-INSTALLATION
+TESTEN
 
 Nach der Übersetzung kann EFEU bereits verwendet werden, es genügt,
 den Suchpfad für Programme mit <TOP>/bin zu erweitern.
+
+INSTALLATION
 
 Alternativ dazu kann EFEU aber auch in /usr oder /usr/local installiert werden.
 Dazu muss das Skript efeu-install.sh mit Root-Rechten aufgerufen
