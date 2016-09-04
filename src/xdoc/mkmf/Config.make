@@ -17,7 +17,7 @@ mf_cc -o pasctrian -mo OBJ
 mf_rule -a tab.tex pasctrian \
 	"./pasctrian 12 '\C{%d}' | sed -e 's/\$\$/\\\\\\\\/' > %@"
 
-mf_rule -d doc "" 'efeucheck latex && $(MAKE) docfiles'
+mf_rule -d doc "" '-efeucheck latex && $(MAKE) docfiles'
 mf_rule -A docfiles -c pasctrian.dvi "pasctrian.tex tab.tex" "latex %1"
 mf_rule -A docfiles -c pasctrian.ps pasctrian.dvi "dvips -o %@ %1"
 mf_clean pasctrian.aux pasctrian.log
