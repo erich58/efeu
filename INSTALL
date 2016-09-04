@@ -2,19 +2,21 @@ PRELIMINARIES
 
 The following packages are needed:
 
-*	C development
-*	readline development
-*	teTeX or texlive
+*	make
+*	gcc
+*	libreadline-dev
 
-texlive benötigt:
+The following packages are needed for documentation:
 
+*	texlive
 *	texlive-lang-german
 *	texlive-latex-extra
 
 The following packages are recommended:
 
-*	postgresql development
+*	X11 development
 *	tcl/tk development
+*	postgresql development
 
 COMPILING
 
@@ -22,10 +24,12 @@ To compile EFEU, just do a
 
 make all
 
-INSTALLATION
+TESTING
 
 After Compiling, EFEU is ready to run. You only need to expand the
 environment PATH with <TOP>/bin, where <TOP> is the top directory of EFEU.
+
+INSTALLATION
 
 Alternatively you could install EFEU in a standard place. You need to run the
 script efeu-install.sh with root right. If called with option --local, all
