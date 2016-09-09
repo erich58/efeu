@@ -44,7 +44,7 @@ _libpq_smh=1
 
 mf_comm "PostgreSQL configuration from $FILE"
 efeu-xlib -mPQ_INC -I/usr/local//include:/usr/include// libpq-fe.h
-efeu-xlib -mPQ_LIB -L/usr/local//lib:/usr/lib -lpq -a -lcrypt
+efeu-xlib -mPQ_LIB -L/usr/local//lib:/usr/lib// -lpq -a -lcrypt
 mf_comm -n "End of PostgreSQL configuration"
 
 # $Examples
