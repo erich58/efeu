@@ -80,15 +80,13 @@ static int getidx (PG *pg, const char *def)
 	return n;
 }
 
-static SB_DECL(buf_lbl, 0);
-
 static char *inc_lbl (const char *lbl, const char *def)
 {
 	StrBuf *buf;
 	IO *io;
 	char *p;
 
-	sb_trunc(&buf_lbl);
+	buf = sb_acquire();	
 
 	for (; *def != 0; def++)
 	{
@@ -97,15 +95,15 @@ static char *inc_lbl (const char *lbl, const char *def)
 			if	(def[1] == '#')
 			{
 				def++;
-				sb_putc(*def, &buf_lbl);
+				sb_putc(*def, buf);
 			}
-			else	sb_printf(&buf_lbl, "%#s", lbl);
+			else	sb_printf(buf, "%#s", lbl);
 		}
 		else	sb_putc(*def, buf);
 	}
 
-	sb_begin(&buf_lbl);
-	io = io_strbuf(&buf_lbl);
+	sb_begin(buf);
+	io = io_strbuf(buf);
 	p = Obj2str(Parse_term(io, 0));
 	io_close(io);
 	sb_release(buf);
