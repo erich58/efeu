@@ -11,9 +11,11 @@ Folgende Softwarepakete werden für die Dokumentation benötigt:
 *	texlive-latex-extra
 
 Folgende Softwarepakete werden empfohlen:
-*	x11-Development
-*	tcl/tk-Development
-*	postgresql-Development
+
+*	curses-Development (libncurses5-dev)
+*	x11-Development (libX11-dev)
+*	tcl/tk-Development (tk-dev)
+*	postgresql-Development (libpq-dev)
 
 ÜBERSETZEN
 
