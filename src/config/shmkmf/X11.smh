@@ -41,7 +41,10 @@ include cflags.smh
 #
 # $source
 
-mf_cflags LD_X11 -L/usr/X11R6/lib:/usr/lib/X11 -lX11
+mf_comm "X11 configuration from $FILE"
+LD_X11=`shmkmf-cflags -m -L/usr/X11R6/lib:/usr/lib// -lX11`
+printf 'LD_X11= %s\n' "$LD_X11"
+mf_comm -n "End of X11 configuration"
 
 # $Examples
 # \config shmkmf
