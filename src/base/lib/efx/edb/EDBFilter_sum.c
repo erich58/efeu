@@ -32,11 +32,11 @@ Testliste
 typedef struct TLISTStruct {
 	struct TLISTStruct *next;
 	size_t offset;
-	int (*test) (void *par, const void *a, const void *b);
-	void *par;
+	int (*test) (EfiFunc *func, const void *a, const void *b);
+	EfiFunc *func;
 } TLIST;
 
-static int test_enum (void *par, const void *a, const void *b)
+static int test_enum (EfiFunc *func, const void *a, const void *b)
 {
 	return Val_int(a) != Val_int(b);
 }
@@ -47,14 +47,14 @@ static TLIST *tlist_enum (size_t offset)
 	t->next = NULL;
 	t->offset = offset;
 	t->test = test_enum;
-	t->par = NULL;
+	t->func = NULL;
 	return t;
 }
 
-static int test_func (void *par, const void *a, const void *b)
+static int test_func (EfiFunc *func, const void *a, const void *b)
 {
 	int rval = 1;
-	CallFunc(&Type_bool, &rval, par, a, b);
+	CallFunc(&Type_bool, &rval, func, a, b);
 	return !rval;
 }
 
@@ -64,10 +64,10 @@ static TLIST *tlist (EfiType *type, size_t offset, size_t dim)
 	t->next = NULL;
 	t->offset = offset;
 	t->test = test_func;
-	t->par = GetFunc(&Type_bool, GetGlobalFunc("=="),
+	t->func = GetFunc(&Type_bool, GetGlobalFunc("=="),
 		2, type, 1, type, 0); 
 
-	if	(!t->par)
+	if	(!t->func)
 		log_note(edb_note, FMT_NOCMP, "s", type->name);
 
 	return t;
@@ -79,6 +79,7 @@ static void tlist_free (TLIST *tlist)
 	if	(tlist)
 	{
 		tlist_free(tlist->next);
+		rd_deref(tlist->func);
 		memfree(tlist);
 	}
 }
@@ -112,6 +113,7 @@ static void slist_free (SLIST *slist)
 	if	(slist)
 	{
 		slist_free(slist->next);
+		rd_deref(slist->add);
 		memfree(slist);
 	}
 }
@@ -131,6 +133,7 @@ static void sum_clean (void *data)
 {
 	SUM *sum = data;
 	rd_deref(sum->base);
+	fprintf(stderr, "sum_clean\n");
 	tlist_free(sum->tlist);
 	slist_free(sum->slist);
 	memfree(sum);
@@ -146,7 +149,6 @@ static void *sum_alloc (EDB *edb, const char *vlist)
 	EfiStruct *var;
 	char **list;
 	size_t dim;
-	int flag;
 	
 	sum = memalloc(sizeof *sum);
 	sum->base = edb;
@@ -188,7 +190,7 @@ static int sum_test (SUM *spar, const char *a, const char *b)
 	TLIST *t;
 
 	for (t = spar->tlist; t != NULL; t = t->next)
-		if (t->test(t->par, a + t->offset, b + t->offset))
+		if (t->test(t->func, a + t->offset, b + t->offset))
 			return 1;
 
 	return 0;
