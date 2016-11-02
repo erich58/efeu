@@ -159,17 +159,12 @@ static void *sum_alloc (EDB *edb, const char *vlist)
 
 	for (var = edb->obj->type->list; var != NULL; var = var->next)
 	{
-		flag = 0;
-
-		if	(patselect(var->name, list, dim))
-			flag = 1;
-
-		if	(!flag && IsTypeClass(var->type, &Type_enum))
+		if	(IsTypeClass(var->type, &Type_enum))
 		{
 			*tp = tlist_enum(var->offset);
 			tp = &(*tp)->next;
 		}
-		else if	(flag || vlist == NULL)
+		else if	(patselect(var->name, list, dim))
 		{
 			*sp = slist(var->type, var->offset, var->dim);
 			sp = &(*sp)->next;
