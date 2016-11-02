@@ -133,7 +133,6 @@ static void sum_clean (void *data)
 {
 	SUM *sum = data;
 	rd_deref(sum->base);
-	fprintf(stderr, "sum_clean\n");
 	tlist_free(sum->tlist);
 	slist_free(sum->slist);
 	memfree(sum);
