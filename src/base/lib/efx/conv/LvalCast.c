@@ -90,7 +90,7 @@ static EfiLval lcast_lval = {
 	lcast_ident,
 };
 
-EfiObj *KonvLval(EfiObj *obj, EfiType *type)
+EfiObj *LvalCast(EfiObj *obj, EfiType *type)
 {
 	obj = EvalObj(obj, NULL);
 

@@ -434,7 +434,7 @@ static EfiObj *cast_expr(void *par, const EfiObjList *list)
 
 static EfiObj *lcast_expr(void *par, const EfiObjList *list)
 {
-	return KonvLval(RefObj(list->obj), par);
+	return LvalCast(RefObj(list->obj), par);
 }
 
 /*	Komma - Operator
