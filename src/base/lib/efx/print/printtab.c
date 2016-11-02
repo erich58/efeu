@@ -85,6 +85,7 @@ int ShowVecData (IO *io, const EfiType *type, const void *data, size_t dim)
 		data = (const char *) data + type->size;
 	}
 
+	rd_deref(func);
 	n += io_puts(PrintListEnd, io);
 	return n;
 }

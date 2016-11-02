@@ -194,6 +194,7 @@ static void v_bsearch (EfiFunc *func, void *rval, void **arg)
 			vec->buf.used, vec->buf.elsize, v_bsearch_cmp);
 	else	ptr = NULL;
 
+	rd_deref(v_bsearch_func);
 	v_bsearch_func = save;
 
 	if	(ptr == NULL)
