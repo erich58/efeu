@@ -20,7 +20,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/EDB.h>
-#include <EFEU/konvobj.h>
+#include <EFEU/conv.h>
 
 #define	ERR_AGGR "[edb:aggr]$!: aggregate function $1 " \
 	"is not definied for data type $2.\n"

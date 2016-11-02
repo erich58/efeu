@@ -20,7 +20,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/EDB.h>
-#include <EFEU/konvobj.h>
+#include <EFEU/conv.h>
 
 static void assign_clean (void *ptr)
 {

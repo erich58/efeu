@@ -28,7 +28,7 @@ If not, write to the Free Software Foundation, Inc.,
 #define	MSG_MDMAT	"mdmat"
 
 #include <EFEU/object.h>
-#include <EFEU/konvobj.h>
+#include <EFEU/conv.h>
 #include <EFEU/pconfig.h>
 #include <EFEU/refdata.h>
 #include <EFEU/EDB.h>

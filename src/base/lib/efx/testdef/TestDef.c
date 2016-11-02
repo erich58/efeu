@@ -25,7 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/parsearg.h>
 #include <EFEU/printobj.h>
 #include <EFEU/stdtype.h>
-#include <EFEU/konvobj.h>
+#include <EFEU/conv.h>
 #include <ctype.h>
 
 #define	ID	"TestDef"

@@ -22,8 +22,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	EFEU_konvobj_h
-#define	EFEU_konvobj_h	1
+#ifndef	EFEU_conv_h
+#define	EFEU_conv_h	1
 
 #include <EFEU/efmain.h>
 #include <EFEU/efio.h>
@@ -84,4 +84,4 @@ EfiKonv *GetKonv (EfiKonv *buf, const EfiType *otype, const EfiType *ntype);
 void KonvData (EfiKonv *konv, void *tg, void *src);
 int KonvDist (const EfiType *old, const EfiType *new);
 
-#endif	/* EFEU/konvobj.h */
+#endif	/* EFEU/conv_h */

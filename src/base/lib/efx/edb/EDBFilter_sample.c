@@ -22,7 +22,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/EDB.h>
 #include <EFEU/EDBFilter.h>
-#include <EFEU/konvobj.h>
+#include <EFEU/conv.h>
 #include <EFEU/Random.h>
 #include <ctype.h>
 

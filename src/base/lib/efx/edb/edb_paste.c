@@ -5,7 +5,7 @@ A-3423 St.Andrä/Wördern, Wildenhaggasse 38
 */
 
 #include <EFEU/EDB.h>
-#include <EFEU/konvobj.h>
+#include <EFEU/conv.h>
 
 #define	ERR_CONV "[edb:conv]don't know how to convert $1 in $2.\n"
 

@@ -21,7 +21,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/object.h>
-#include <EFEU/konvobj.h>
+#include <EFEU/conv.h>
 #include <EFEU/Debug.h>
 
 int FuncDebugLock = 0;

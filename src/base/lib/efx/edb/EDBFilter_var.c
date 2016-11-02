@@ -21,7 +21,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/EDB.h>
 #include <EFEU/EDBFilter.h>
-#include <EFEU/konvobj.h>
+#include <EFEU/conv.h>
 
 #define	ERR_CONV "[edb:conv]don't know how to convert $1 in $2.\n"
 #define	ERR_TYP	"[edb:typ]$!: unknown datatype $1.\n"

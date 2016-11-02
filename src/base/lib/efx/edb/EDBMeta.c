@@ -5,7 +5,7 @@ A-3423 St.Andrä/Wördern, Wildenhaggasse 38
 */
 
 #include <EFEU/EDBMeta.h>
-#include <EFEU/konvobj.h>
+#include <EFEU/conv.h>
 
 #define	FTAB_BLK	500
 
