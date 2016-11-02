@@ -27,9 +27,11 @@ If not, write to the Free Software Foundation, Inc.,
 
 static void aggr_clean (void *ptr)
 {
-	rd_deref(((EDBAggregate *) ptr)->next);
-	rd_deref(((EDBAggregate *) ptr)->sub);
-	rd_deref(((EDBAggregate *) ptr)->var);
+	EDBAggregate *x = ptr;
+	rd_deref(x->next);
+	rd_deref(x->sub);
+	rd_deref(x->var);
+	rd_deref(x->f_aggregate);
 	memfree(ptr);
 }
 
