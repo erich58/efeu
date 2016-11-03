@@ -174,7 +174,7 @@ static EfiObj *make_lval (ETK *etk, const char *name)
 {
 	IDXTYPE idx = NewIdx(name);
 	Tcl_Obj *obj = GetVar(etk->interp, idx);
-	char *type = (obj && obj->typePtr) ? obj->typePtr->name : NULL;
+	const char *type = (obj && obj->typePtr) ? obj->typePtr->name : NULL;
 
 	if	(type == NULL)
 		return LvalObj(&Lval_tcl, &Type_str, etk, idx, obj_str);

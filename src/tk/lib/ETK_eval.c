@@ -34,7 +34,7 @@ Objekt des Types |EfiObj|.
 
 EfiObj *ETK_obj (Tcl_Obj *obj)
 {
-	char *type = (obj && obj->typePtr) ? obj->typePtr->name : NULL;
+	const char *type = (obj && obj->typePtr) ? obj->typePtr->name : NULL;
 
 	if	(mstrcmp(type, "int") == 0)
 	{
