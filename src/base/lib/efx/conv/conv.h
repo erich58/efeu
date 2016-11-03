@@ -56,17 +56,17 @@ typedef struct {
 	EfiFunc *func;
 	EfiType *type;
 	int dist;
-} EfiArgKonv;
+} EfiArgConv;
 
-EfiArgKonv *GetArgKonv (const EfiType *old, const EfiType *new);
+EfiArgConv *GetArgKonv (const EfiType *old, const EfiType *new);
 int ArgKonvDist (const EfiType *old, const EfiType *new);
 
 EfiObj *KonvObj (const EfiObj *obj, EfiType *def);
 EfiObj *LvalCast (EfiObj *obj, EfiType *def);
-void ArgKonv (EfiArgKonv *konv, void *tg, void *src);
+void ArgKonv (EfiArgConv *conv, void *tg, void *src);
 
 EfiFunc *SearchFunc (EfiVirFunc *tab, EfiFuncArg *arg,
-	size_t narg, EfiArgKonv **konv);
+	size_t narg, EfiArgConv **conv);
 
 EfiFunc *GetKonvFunc(const EfiType *old, const EfiType *new);
 
@@ -81,7 +81,7 @@ typedef struct {
 } EfiKonv;
 
 EfiKonv *GetKonv (EfiKonv *buf, const EfiType *otype, const EfiType *ntype);
-void KonvData (EfiKonv *konv, void *tg, void *src);
+void KonvData (EfiKonv *conv, void *tg, void *src);
 int KonvDist (const EfiType *old, const EfiType *new);
 
 #endif	/* EFEU/conv_h */

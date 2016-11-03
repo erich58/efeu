@@ -38,9 +38,9 @@ static EfiFunc *KonvFunc(const EfiType *old, const EfiType *new)
 	return NULL;
 }
 
-EfiArgKonv *GetArgKonv(const EfiType *old, const EfiType *new)
+EfiArgConv *GetArgKonv(const EfiType *old, const EfiType *new)
 {
-	static EfiArgKonv buf;
+	static EfiArgConv buf;
 
 	buf.type = NULL;
 	buf.dist = 0;
@@ -76,7 +76,7 @@ EfiArgKonv *GetArgKonv(const EfiType *old, const EfiType *new)
 	return NULL;
 }
 
-void ArgKonv(EfiArgKonv *conv, void *tg, void *src)
+void ArgKonv(EfiArgConv *conv, void *tg, void *src)
 {
 	if	(conv->func)
 	{
@@ -90,6 +90,6 @@ void ArgKonv(EfiArgKonv *conv, void *tg, void *src)
 
 int ArgKonvDist (const EfiType *old, const EfiType *new)
 {
-	EfiArgKonv *conv = GetArgKonv(old, new);
+	EfiArgConv *conv = GetArgKonv(old, new);
 	return conv ? conv->dist : D_RESTRICTED;
 }

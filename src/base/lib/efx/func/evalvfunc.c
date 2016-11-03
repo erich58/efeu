@@ -116,7 +116,7 @@ static EfiFuncArg *farg_list (EfiVirFunc *vtab,
 */
 
 static EfiFunc *get_func (EfiVirFunc *vtab, EfiFuncArg *arg,
-	size_t narg, EfiArgKonv **ptr)
+	size_t narg, EfiArgConv **ptr)
 {
 	EfiFunc *func;
 	StrBuf *sb;
@@ -157,7 +157,7 @@ static EfiFunc *get_func (EfiVirFunc *vtab, EfiFuncArg *arg,
 /*	Funktion auswerten
 */
 
-static EfiObj *eval_func (EfiFunc *func, EfiArgKonv *fkonv,
+static EfiObj *eval_func (EfiFunc *func, EfiArgConv *fkonv,
 	EfiFuncArg *arg, size_t narg)
 {
 	size_t fargdim;
@@ -248,7 +248,7 @@ static EfiObj *eval_func (EfiFunc *func, EfiArgKonv *fkonv,
 
 EfiObj *EvalVirFunc (EfiVirFunc *vtab, const EfiObjList *list)
 {
-	EfiArgKonv *fkonv;
+	EfiArgConv *fkonv;
 	EfiFuncArg *arg;
 	EfiFunc *func;
 	size_t argdim;
@@ -275,7 +275,7 @@ int ShowData (IO *io, const EfiType *type, const void *data)
 {
 	EfiVirFunc *vtab;
 	EfiFunc *func;
-	EfiArgKonv *fkonv;
+	EfiArgConv *fkonv;
 	EfiFuncArg *arg;
 	size_t maxdim;
 

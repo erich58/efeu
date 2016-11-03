@@ -26,7 +26,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 EfiObj *KonvObj (const EfiObj *obj, EfiType *def)
 {
-	EfiKonv konv;
+	EfiKonv conv;
 	char *p;
 
 	if	(obj == NULL)
@@ -41,10 +41,10 @@ EfiObj *KonvObj (const EfiObj *obj, EfiType *def)
 	if	(obj->type == &Type_obj)
 		return KonvObj(Val_obj(obj->data), def);
 
-	if	(GetKonv(&konv, obj->type, def))
+	if	(GetKonv(&conv, obj->type, def))
 	{
 		EfiObj *x = NewObj(def, NULL);
-		KonvData(&konv, x->data, obj->data);
+		KonvData(&conv, x->data, obj->data);
 		return x;
 	}
 
