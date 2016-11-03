@@ -30,9 +30,9 @@ static EfiFunc *KonvFunc(const EfiType *old, const EfiType *new)
 
 	if	(old == NULL)	return NULL;
 
-	ftab = old->konv.data;
+	ftab = old->conv.data;
 
-	for (i = 0; i < old->konv.used; i++)
+	for (i = 0; i < old->conv.used; i++)
 		if (ftab[i]->type == new) return ftab[i];
 
 	return NULL;
@@ -76,20 +76,20 @@ EfiArgKonv *GetArgKonv(const EfiType *old, const EfiType *new)
 	return NULL;
 }
 
-void ArgKonv(EfiArgKonv *konv, void *tg, void *src)
+void ArgKonv(EfiArgKonv *conv, void *tg, void *src)
 {
-	if	(konv->func)
+	if	(conv->func)
 	{
-		konv->func->eval(konv->func, tg, &src);
+		conv->func->eval(conv->func, tg, &src);
 	}
-	else if	(konv->type)
+	else if	(conv->type)
 	{
-		CopyData(konv->type, tg, src);
+		CopyData(conv->type, tg, src);
 	}
 }
 
 int ArgKonvDist (const EfiType *old, const EfiType *new)
 {
-	EfiArgKonv *konv = GetArgKonv(old, new);
-	return konv ? konv->dist : D_RESTRICTED;
+	EfiArgKonv *conv = GetArgKonv(old, new);
+	return conv ? conv->dist : D_RESTRICTED;
 }

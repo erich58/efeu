@@ -54,7 +54,7 @@ static int set_arg (EfiFunc *func, EfiFuncArg *arg, size_t narg, EfiObj *obj)
 	arg[narg].defval = obj;
 	arg[narg].type = obj->type;
 	arg[narg].lval = obj->lval ? 1 : 0;
-	arg[narg].nokonv = 1;
+	arg[narg].noconv = 1;
 	return 1;
 }
 
@@ -178,7 +178,7 @@ static EfiObj *eval_func (EfiFunc *func, EfiArgKonv *fkonv,
 				arg[i].defval = obj;
 				arg[i].type = obj->type;
 				arg[i].lval = 0;
-				arg[i].nokonv = 1;
+				arg[i].noconv = 1;
 			}
 		}
 

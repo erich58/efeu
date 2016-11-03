@@ -241,7 +241,7 @@ EfiFunc *MakePrototype(IO *io, EfiType *type, EfiName *nptr, unsigned flags)
 		arg.desc = NULL;
 		arg.type = (otype == &Type_obj) ? NULL : otype;
 		arg.lval = lflag;
-		arg.nokonv = 1;
+		arg.noconv = 1;
 		arg.promote = 0;
 		arg.cnst = (arg.lval == 0);
 		arg.defval = NULL;
@@ -286,7 +286,7 @@ EfiFunc *MakePrototype(IO *io, EfiType *type, EfiName *nptr, unsigned flags)
 		arg.desc = NULL;
 		arg.type = &Type_list;
 		arg.lval = 0;
-		arg.nokonv = 0;
+		arg.noconv = 0;
 		arg.promote = 0;
 		arg.cnst = 0;
 		arg.defval = NULL;
@@ -336,7 +336,7 @@ int ParseFuncArg(IO *io, EfiFuncArg *arg, int delim)
 	arg->type = NULL;
 	arg->defval = NULL;
 	arg->lval = 0;
-	arg->nokonv = 0;
+	arg->noconv = 0;
 	arg->cnst = 0;
 	arg->promote = 0;
 
@@ -394,7 +394,7 @@ int ParseFuncArg(IO *io, EfiFuncArg *arg, int delim)
 			{
 				memfree(p);
 				p = NULL;
-				arg->nokonv = 1;
+				arg->noconv = 1;
 			}
 			else if (mstrcmp("promotion", p) == 0)
 			{
@@ -421,7 +421,7 @@ int ParseFuncArg(IO *io, EfiFuncArg *arg, int delim)
 
 		if	(c == '&')	arg->lval = 1;
 #if	1
-		else if	(c == '*')	arg->nokonv = 1;
+		else if	(c == '*')	arg->noconv = 1;
 #else
 		else if	(c == '*')	abort();
 #endif

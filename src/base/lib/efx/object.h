@@ -208,7 +208,7 @@ struct EfiTypeStruct {
 	EfiVarTab *vtab;	/* Variablentabelle */
 	EfiFunc *fclean;	/* Destruktor, nicht überladbar */
 	EfiFunc *fcopy;		/* Kopierfunktion, nicht überladbar */
-	VecBuf konv;		/* Konvertierungen */
+	VecBuf conv;		/* Konvertierungen */
 	VecBuf par;		/* Parametertabelle */
 	EfiVirFunc *create;	/* Konstruktor, überladbar */
 	void *defval;		/* Vorgabewert */
@@ -626,7 +626,7 @@ typedef struct {
 	unsigned lval : 1;	/* L-Wert erforderlich */
 	unsigned cnst : 1;	/* Konstante */
 	unsigned promote : 1;	/* Geförderte Konvertierung */
-	unsigned nokonv : 29;	/* Keine Konvertierung erlaubt */
+	unsigned noconv : 29;	/* Keine Konvertierung erlaubt */
 } EfiFuncArg;
 
 #define	KONV_PROMOTION	0

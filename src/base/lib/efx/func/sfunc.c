@@ -195,7 +195,7 @@ static int get_konvdef(EfiFunc *func, size_t narg,
 			konv[i].dist = D_MATCH;
 		else if	(func->arg[i].type == NULL)
 			konv[i].dist = D_ACCEPT;
-		else if	(func->arg[i].nokonv)
+		else if	(func->arg[i].noconv)
 			return konv[i].dist = D_REJECT;
 		else if	(func->arg[i].lval)
 		{

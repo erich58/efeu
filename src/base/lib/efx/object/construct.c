@@ -314,7 +314,7 @@ static EfiFunc *cf_create (const EfiObj *obj)
 		func->arg->lval = 0;
 		func->arg->cnst = 0;
 		func->arg->promote = 0;
-		func->arg->nokonv = 0;
+		func->arg->noconv = 0;
 	}
 
 	return func;

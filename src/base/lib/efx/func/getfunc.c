@@ -119,7 +119,7 @@ EfiFunc *XGetFunc (EfiType *type, EfiVirFunc *vtab,
 		func->arg[i].name = mstrcpy(arg[i].name);
 		func->arg[i].desc = NULL;
 		func->arg[i].lval = arg[i].lval;
-		func->arg[i].nokonv = 1;
+		func->arg[i].noconv = 1;
 		func->arg[i].cnst = 1;
 		func->arg[i].defval = NULL;
 	}
@@ -153,7 +153,7 @@ EfiFuncArg *VaFuncArg (int narg, va_list list)
 	{
 		arg[i].type = va_arg(list, EfiType *);
 		arg[i].lval = va_arg(list, int);
-		arg[i].nokonv = 0;
+		arg[i].noconv = 0;
 		arg[i].name = NULL;
 		arg[i].desc = NULL;
 		arg[i].defval = NULL;

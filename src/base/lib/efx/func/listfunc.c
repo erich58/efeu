@@ -117,7 +117,7 @@ int PrintFuncArg(IO *io, EfiFuncArg *arg)
 
 	n = 0;
 
-	if	(arg->nokonv)	n += io_puts("restricted ", io);
+	if	(arg->noconv)	n += io_puts("restricted ", io);
 	if	(arg->promote)	n += io_puts("promotion ", io);
 	if	(arg->cnst)	n += io_puts("const ", io);
 

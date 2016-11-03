@@ -28,9 +28,9 @@ static EfiFunc *Konverter(const EfiType *old, const EfiType *new)
 	EfiFunc **ftab;
 	int i;
 
-	ftab = old->konv.data;
+	ftab = old->conv.data;
 
-	for (i = 0; i < old->konv.used; i++)
+	for (i = 0; i < old->conv.used; i++)
 		if (ftab[i]->type == new) return ftab[i];
 
 	return NULL;
@@ -44,7 +44,7 @@ static EfiFunc *Konstruktor(const EfiType *old, const EfiType *new)
 		EfiFuncArg arg;
 		arg.type = (EfiType *) old;
 		arg.lval = 0;
-		arg.nokonv = 0;
+		arg.noconv = 0;
 		arg.name = NULL;
 		arg.defval = NULL;
 		return XGetFunc(NULL, new->create, &arg, 1);
@@ -53,71 +53,71 @@ static EfiFunc *Konstruktor(const EfiType *old, const EfiType *new)
 }
 
 
-EfiKonv *GetKonv(EfiKonv *konv, const EfiType *old, const EfiType *new)
+EfiKonv *GetKonv(EfiKonv *conv, const EfiType *old, const EfiType *new)
 {
 	static EfiKonv buf;
 
-	if	(konv == NULL)	konv = &buf;
+	if	(conv == NULL)	conv = &buf;
 
-	konv->func = NULL;
-	konv->type = (EfiType *) new;
-	konv->dist = 0;
+	conv->func = NULL;
+	conv->type = (EfiType *) new;
+	conv->dist = 0;
 
-	while (konv->type != NULL)
+	while (conv->type != NULL)
 	{
-		if	(konv->type == old)
+		if	(conv->type == old)
 		{
-			konv->func = NULL;
-			return konv;
+			conv->func = NULL;
+			return conv;
 		}
-		else if	((konv->func = Konverter(old, konv->type)))
+		else if	((conv->func = Konverter(old, conv->type)))
 		{
-			switch (konv->func->weight)
+			switch (conv->func->weight)
 			{
 			case KONV_PROMOTION:
-				konv->dist |= D_PROMOTE;
+				conv->dist |= D_PROMOTE;
 				break;
 			case KONV_RESTRICTED:
-				konv->dist |= D_RESTRICTED;
+				conv->dist |= D_RESTRICTED;
 				break;
 			default:
-				konv->dist |= D_KONVERT;
+				conv->dist |= D_KONVERT;
 				break;
 			}
 
-			return konv;
+			return conv;
 		}
-		else if	((konv->func = Konstruktor(old, konv->type)))
+		else if	((conv->func = Konstruktor(old, conv->type)))
 		{
-			konv->dist |= D_CREATE;
-			return konv;
+			conv->dist |= D_CREATE;
+			return conv;
 		}
 
-		if	(konv->type->dim)	break;
+		if	(conv->type->dim)	break;
 
-		konv->type = konv->type->base;
-		konv->dist = D_EXPAND;
+		conv->type = conv->type->base;
+		conv->dist = D_EXPAND;
 	}
 
 	return NULL;
 }
 
 
-void KonvData(EfiKonv *konv, void *tg, void *src)
+void KonvData(EfiKonv *conv, void *tg, void *src)
 {
-	if	(konv->func)
+	if	(conv->func)
 	{
-		konv->func->eval(konv->func, tg, &src);
+		conv->func->eval(conv->func, tg, &src);
 	}
-	else if	(konv->type)
+	else if	(conv->type)
 	{
-		CopyData(konv->type, tg, src);
+		CopyData(conv->type, tg, src);
 	}
 }
 
 
 int KonvDist (const EfiType *old, const EfiType *new)
 {
-	EfiKonv *konv = GetKonv(NULL, old, new);
-	return konv ? konv->dist : -1;
+	EfiKonv *conv = GetKonv(NULL, old, new);
+	return conv ? conv->dist : -1;
 }

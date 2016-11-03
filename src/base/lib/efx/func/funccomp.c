@@ -93,9 +93,9 @@ int FuncComp (const void *pa, const void *pb)
 		{
 			return (a->arg[i].lval ? -1 : 1);
 		}
-		else if	(a->arg[i].nokonv != b->arg[i].nokonv)
+		else if	(a->arg[i].noconv != b->arg[i].noconv)
 		{
-			return (a->arg[i].nokonv ? 1 : -1);
+			return (a->arg[i].noconv ? 1 : -1);
 		}
 		else if	(a->arg[i].type != b->arg[i].type)
 		{
