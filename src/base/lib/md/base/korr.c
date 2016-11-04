@@ -5,18 +5,18 @@
 #include <EFEU/mdmat.h>
 #include <EFEU/efutil.h>
 
-static void do_korr(mdaxis *axis, void *data, EfiKonv *get, EfiKonv *set, double val, int round);
+static void do_korr(mdaxis *axis, void *data, EfiConv *get, EfiConv *set, double val, int round);
 
 void md_korr(mdmat *md, int round)
 {
-	EfiKonv get;
-	EfiKonv set;
+	EfiConv get;
+	EfiConv set;
 	double val;
 
 	if	(md == NULL)	return;
 
-	Md_KonvDef(&get, md->type, &Type_double);
-	Md_KonvDef(&set, &Type_double, md->type);
+	Md_ConvDef(&get, md->type, &Type_double);
+	Md_ConvDef(&set, &Type_double, md->type);
 	val = MdValSum(md->axis, md->data, &get, 0);
 
 	if	(val < 0.)	val = 0.;
@@ -24,7 +24,7 @@ void md_korr(mdmat *md, int round)
 	do_korr(md->axis, md->data, &get, &set, val, round);
 }
 
-static void do_korr(mdaxis *axis, void *data, EfiKonv *get, EfiKonv *set,
+static void do_korr(mdaxis *axis, void *data, EfiConv *get, EfiConv *set,
 	double val, int round)
 {
 	double *dat;
@@ -34,7 +34,7 @@ static void do_korr(mdaxis *axis, void *data, EfiKonv *get, EfiKonv *set,
 
 	if	(axis == NULL)
 	{
-		KonvData(set, data, &val);
+		ConvData(set, data, &val);
 		return;
 	}
 

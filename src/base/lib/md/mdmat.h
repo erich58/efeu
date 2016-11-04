@@ -282,8 +282,8 @@ void MdSetup_func (void);
 EfiFunc *mdfunc_add (const EfiType *type);
 EfiFunc *md_addfunc (const char *op, const EfiType *t1, const EfiType *t2);
 
-double MdValSum(mdaxis *x, void *data, EfiKonv *get, unsigned mask);
-void MdRound(mdaxis *x, void *data, EfiKonv *get, EfiKonv *set, double val,
+double MdValSum(mdaxis *x, void *data, EfiConv *get, unsigned mask);
+void MdRound(mdaxis *x, void *data, EfiConv *get, EfiConv *set, double val,
 	double factor, unsigned mask);
 
 
@@ -313,12 +313,12 @@ void md_korr (mdmat *md, int rflag);
 /*	Datenkonvertierung
 */
 
-EfiKonv *Md_KonvDef (EfiKonv *buf, const EfiType *t1, const EfiType *t2);
+EfiConv *Md_ConvDef (EfiConv *buf, const EfiType *t1, const EfiType *t2);
 
-long Md_getlong(EfiKonv *konv, void *data);
-double Md_getdbl(EfiKonv *konv, void *data);
-void Md_setlong(EfiKonv *konv, void *data, long int val);
-void Md_setdbl(EfiKonv *konv, void *data, double val);
+long Md_getlong(EfiConv *konv, void *data);
+double Md_getdbl(EfiConv *konv, void *data);
+void Md_setlong(EfiConv *konv, void *data, long int val);
+void Md_setdbl(EfiConv *konv, void *data, double val);
 
 void MF_valsum (EfiFunc *func, void *rval, void **arg);
 void MF_leval (EfiFunc *func, void *rval, void **arg);

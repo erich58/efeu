@@ -23,35 +23,35 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 #include <EFEU/conv.h>
 
-static EfiFunc *KonvFunc(const EfiType *old, const EfiType *new)
+static EfiFunc *ConvFunc(const EfiType *src, const EfiType *tg)
 {
 	EfiFunc **ftab;
 	int i;
 
-	if	(old == NULL)	return NULL;
+	if	(src == NULL)	return NULL;
 
-	ftab = old->conv.data;
+	ftab = src->conv.data;
 
-	for (i = 0; i < old->conv.used; i++)
-		if (ftab[i]->type == new) return ftab[i];
+	for (i = 0; i < src->conv.used; i++)
+		if (ftab[i]->type == tg) return ftab[i];
 
 	return NULL;
 }
 
-EfiArgConv *GetArgKonv(const EfiType *old, const EfiType *new)
+EfiConv *GetArgConv(const EfiType *src, const EfiType *tg)
 {
-	static EfiArgConv buf;
+	static EfiConv buf;
 
 	buf.type = NULL;
 	buf.dist = 0;
 
-	for (; new != NULL; new = new->dim ? NULL : new->base)
+	for (; tg != NULL; tg = tg->dim ? NULL : tg->base)
 	{
 		buf.func = NULL;
 
-		if	(old == new)	return &buf;
+		if	(src == tg)	return &buf;
 
-		if	((buf.func = KonvFunc(old, new)))
+		if	((buf.func = ConvFunc(src, tg)))
 		{
 			switch (buf.func->weight)
 			{
@@ -69,14 +69,14 @@ EfiArgConv *GetArgKonv(const EfiType *old, const EfiType *new)
 			return &buf;
 		}
 
-		buf.type = (EfiType *) new;
+		buf.type = (EfiType *) tg;
 		buf.dist = D_EXPAND;
 	}
 
 	return NULL;
 }
 
-void ArgKonv(EfiArgConv *conv, void *tg, void *src)
+void ArgConv(EfiConv *conv, void *tg, void *src)
 {
 	if	(conv->func)
 	{
@@ -86,10 +86,4 @@ void ArgKonv(EfiArgConv *conv, void *tg, void *src)
 	{
 		CopyData(conv->type, tg, src);
 	}
-}
-
-int ArgKonvDist (const EfiType *old, const EfiType *new)
-{
-	EfiArgConv *conv = GetArgKonv(old, new);
-	return conv ? conv->dist : D_RESTRICTED;
 }

@@ -48,7 +48,7 @@ EfiFunc *XGetFunc (EfiType *type, EfiVirFunc *vtab,
 {
 	FUNCDEF *def;
 	EfiFunc *func;
-	EfiArgConv *konv;
+	EfiConv *konv;
 	size_t i, j;
 
 	if	(vtab == NULL)	return NULL;

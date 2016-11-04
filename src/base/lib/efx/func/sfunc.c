@@ -49,17 +49,17 @@ void FuncDebug (EfiFunc *func, const char *pfx)
 	}
 }
 
-static int test_base(const EfiType *old, const EfiType *new)
+static int test_base(const EfiType *src, const EfiType *tg)
 {
-	for (; old != NULL; old = old->dim ? NULL : old->base)
-		if (old == new) return 1;
+	for (; src != NULL; src = src->dim ? NULL : src->base)
+		if (src == tg) return 1;
 
 	return 0;
 }
 
 
 static void show_dist(IO *io, EfiFunc *func, int dist,
-	EfiArgConv *konv, size_t dim)
+	EfiConv *conv, size_t dim)
 {
 	int i;
 
@@ -70,22 +70,22 @@ static void show_dist(IO *io, EfiFunc *func, int dist,
 
 	for (i = 0; i < dim; i++)
 	{
-		io_xprintf(io, "%5d:  %#.4x\t%s\t", i, konv[i].dist & 0xffff,
-			konv[i].type ? konv[i].type->name : ".");
-		ListFunc(io, konv[i].func);
+		io_xprintf(io, "%5d:  %#.4x\t%s\t", i, conv[i].dist & 0xffff,
+			conv[i].type ? conv[i].type->name : ".");
+		ListFunc(io, conv[i].func);
 		io_putc('\n', io);
 	}
 
 	FuncDebugLock--;
 }
 
-static int get_konvdef(EfiFunc *func, size_t narg,
-	EfiFuncArg *arg, EfiArgConv *konv);
+static int get_convdef(EfiFunc *func, size_t narg,
+	EfiFuncArg *arg, EfiConv *conv);
 
 EfiFunc *SearchFunc (EfiVirFunc *vtab, EfiFuncArg *arg,
-	size_t narg, EfiArgConv **ptr)
+	size_t narg, EfiConv **ptr)
 {
-	EfiArgConv *x, *konv, *curkonv;
+	EfiConv *x, *konv, *curkonv;
 	int i, dist, curdist;
 	EfiFunc *func, *curfunc, **ftab;
 	IO *out;
@@ -105,8 +105,8 @@ EfiFunc *SearchFunc (EfiVirFunc *vtab, EfiFuncArg *arg,
 */
 	if	(narg != 0)
 	{
-		konv = memalloc(narg * sizeof(EfiArgConv));
-		curkonv = memalloc(narg * sizeof(EfiArgConv));
+		konv = memalloc(narg * sizeof(EfiConv));
+		curkonv = memalloc(narg * sizeof(EfiConv));
 	}
 	else	konv = curkonv = NULL;
 
@@ -117,7 +117,7 @@ EfiFunc *SearchFunc (EfiVirFunc *vtab, EfiFuncArg *arg,
 	for (i = 0; i < vtab->tab.used; i++)
 	{
 		curfunc = ftab[i];
-		curdist = get_konvdef(curfunc, narg, arg, curkonv);
+		curdist = get_convdef(curfunc, narg, arg, curkonv);
 
 		if	((out = LogOpen(&func_trace)))
 		{
@@ -167,8 +167,8 @@ EfiFunc *SearchFunc (EfiVirFunc *vtab, EfiFuncArg *arg,
 }
 
 
-static int get_konvdef(EfiFunc *func, size_t narg,
-	EfiFuncArg *arg, EfiArgConv *konv)
+static int get_convdef(EfiFunc *func, size_t narg,
+	EfiFuncArg *arg, EfiConv *konv)
 {
 	int i, dist;
 
@@ -182,7 +182,7 @@ static int get_konvdef(EfiFunc *func, size_t narg,
 
 	for (i = dist = 0; i < narg; i++)
 	{
-		EfiArgConv *x = konv + i;
+		EfiConv *x = konv + i;
 		konv[i].func = NULL;
 		konv[i].type = NULL;
 		konv[i].dist = 0;
@@ -203,7 +203,7 @@ static int get_konvdef(EfiFunc *func, size_t narg,
 				konv[i].dist = D_BASE;
 			else	return konv[i].dist = D_REJECT;
 		}
-		else if	((x = GetArgKonv(arg[i].type, func->arg[i].type)))
+		else if	((x = GetArgConv(arg[i].type, func->arg[i].type)))
 		{
 			if	((x->dist & D_RESTRICTED) &&
 					(func->arg[i].promote ||

@@ -53,9 +53,9 @@ static EfiFunc *Konstruktor(const EfiType *old, const EfiType *new)
 }
 
 
-EfiKonv *GetKonv(EfiKonv *conv, const EfiType *old, const EfiType *new)
+EfiConv *GetConv(EfiConv *conv, const EfiType *old, const EfiType *new)
 {
-	static EfiKonv buf;
+	static EfiConv buf;
 
 	if	(conv == NULL)	conv = &buf;
 
@@ -103,7 +103,7 @@ EfiKonv *GetKonv(EfiKonv *conv, const EfiType *old, const EfiType *new)
 }
 
 
-void KonvData(EfiKonv *conv, void *tg, void *src)
+void ConvData(EfiConv *conv, void *tg, void *src)
 {
 	if	(conv->func)
 	{
@@ -116,8 +116,8 @@ void KonvData(EfiKonv *conv, void *tg, void *src)
 }
 
 
-int KonvDist (const EfiType *old, const EfiType *new)
+int ConvDist (const EfiType *old, const EfiType *new)
 {
-	EfiKonv *conv = GetKonv(NULL, old, new);
+	EfiConv *conv = GetConv(NULL, old, new);
 	return conv ? conv->dist : -1;
 }

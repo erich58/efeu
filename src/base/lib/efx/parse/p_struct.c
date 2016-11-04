@@ -89,7 +89,7 @@ EfiObj *PFunc_struct(IO *io, void *data)
 }
 
 
-static void ExpandKonv (EfiFunc *func, void *rval, void **arg)
+static void ExpandConv (EfiFunc *func, void *rval, void **arg)
 {
 	CopyData(func->arg[0].type, rval, arg[0]);
 }
@@ -242,7 +242,7 @@ EfiType *MakeStruct (char *name, EfiStruct *base, EfiStruct *list)
 	if	(type->base)
 	{
 		p = msprintf("%s (%s)", type->name, type->base->name);
-		SetFunc(0, type, p, ExpandKonv);
+		SetFunc(0, type, p, ExpandConv);
 		memfree(p);
 	}
 

@@ -23,13 +23,13 @@ If not, write to the Free Software Foundation, Inc.,
 #include <Math/mdmath.h>
 #include <Math/linalg.h>
 
-static void getdata (EfiKonv *konv, mdaxis *x, mdaxis *x1, mdaxis *x2,
+static void getdata (EfiConv *konv, mdaxis *x, mdaxis *x1, mdaxis *x2,
 	char *p, char *data);
 
 mdmat *mdinv (mdmat *base)
 {
 	mdaxis *axis, *xpre, *xpost, **ppre, **ppost;
-	EfiKonv konv;
+	EfiConv konv;
 	mdmat *md;
 	StrPool *sbuf;
 	int lines, cols;
@@ -40,7 +40,7 @@ mdmat *mdinv (mdmat *base)
 		return NULL;
 	}
 
-	if	(GetKonv(&konv, base->type, &Type_double) == NULL)
+	if	(GetConv(&konv, base->type, &Type_double) == NULL)
 	{
 		log_note(NULL, "[mdmath:2]", "m", type2str(base->type));
 		return NULL;
@@ -106,7 +106,7 @@ mdmat *mdinv (mdmat *base)
 }
 
 
-static void getdata (EfiKonv *konv, mdaxis *x, mdaxis *x1, mdaxis *x2,
+static void getdata (EfiConv *konv, mdaxis *x, mdaxis *x1, mdaxis *x2,
 	char *p, char *data)
 {
 	if	(x != NULL)
@@ -138,5 +138,5 @@ static void getdata (EfiKonv *konv, mdaxis *x, mdaxis *x1, mdaxis *x2,
 			data += size;
 		}
 	}
-	else	KonvData(konv, p, data);
+	else	ConvData(konv, p, data);
 }

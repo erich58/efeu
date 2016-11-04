@@ -59,7 +59,7 @@ EfiObj *EvalObj(EfiObj *x, EfiType *type)
 		*/
 		else if	(type)
 		{
-			x = KonvObj(y, type);
+			x = ConvObj(y, type);
 			UnrefObj(y);
 			break;
 		}

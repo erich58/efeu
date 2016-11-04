@@ -12,7 +12,7 @@ A-3423 St.Andrä/Wördern, Wildenhaggasse 38
 typedef struct {
 	REFVAR;
 	EDB *sub;
-	EfiKonv conv;
+	EfiConv conv;
 } CPAR;
 
 static void cpar_clean (void *data)
@@ -29,7 +29,7 @@ static int read_conv (EfiType *type, void *data, void *par)
 
 	if	(edb_read(cpar->sub))
 	{
-		KonvData(&cpar->conv, data, cpar->sub->obj->data);
+		ConvData(&cpar->conv, data, cpar->sub->obj->data);
 		return 1;
 	}
 	
@@ -51,7 +51,7 @@ static int read_copy (EfiType *type, void *data, void *par)
 
 EDB *edb_paste (EDB *base, EDB *sub)
 {
-	EfiKonv conv;
+	EfiConv conv;
 
 	if	(!base)
 		return sub;
@@ -77,7 +77,7 @@ EDB *edb_paste (EDB *base, EDB *sub)
 		}
 		else	edb_input(base, read_copy, sub);
 	}
-	else if	(GetKonv(&conv, sub->obj->type, base->obj->type))
+	else if	(GetConv(&conv, sub->obj->type, base->obj->type))
 	{
 		CPAR *cpar = memalloc(sizeof *cpar);
 		cpar->sub = sub;

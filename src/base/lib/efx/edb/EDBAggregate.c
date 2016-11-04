@@ -98,7 +98,7 @@ void EDBAggregateFunc (EDBAggregate *aggr, const char *name,
 
 	if	(!aggr)	return;
 
-	if	(base == tg || GetKonv(NULL, base, tg))
+	if	(base == tg || GetConv(NULL, base, tg))
 	{
 		rd_deref(aggr);
 		return;

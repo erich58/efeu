@@ -64,9 +64,9 @@ char *type2str(const EfiType *type)
 }
 
 
-EfiKonv *Md_KonvDef(EfiKonv *buf, const EfiType *type1, const EfiType *type2)
+EfiConv *Md_ConvDef(EfiConv *buf, const EfiType *type1, const EfiType *type2)
 {
-	EfiKonv *konv = GetKonv(buf, type1, type2);
+	EfiConv *konv = GetConv(buf, type1, type2);
 
 	if	(konv == NULL)
 		log_note(NULL, "[mdmat:102]",

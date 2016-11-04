@@ -71,9 +71,9 @@ static int kfunc_cmp(const void *pa, const void *pb)
 	else				return 0;
 }
 
-void CopyKonv (EfiType *type, EfiType *base);
+void CopyConv (EfiType *type, EfiType *base);
 
-void CopyKonv (EfiType *type, EfiType *base)
+void CopyConv (EfiType *type, EfiType *base)
 {
 	EfiFunc **ftab;
 	EfiFunc *func;

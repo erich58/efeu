@@ -118,7 +118,8 @@ static mdaxis *make_axis (StrPool *sbuf, PG *pg, const char *def, int n)
 	char **xp;
 	int field;
 	IDX *idx;
-	int i, j, k;
+	int i, j;
+	size_t k;
 	
 	args = assignarg(def, NULL, ",");
 	field = getidx(pg, args->arg ? args->arg : args->name);
@@ -229,7 +230,7 @@ mdmat *PG_mdmat (PG *pg, const EfiType *type,
 	char *value;
 	int ntuples;
 	int field;
-	EfiKonv konv;
+	EfiConv konv;
 	EfiFunc *f_add;
 	void *buf;
 	char *title;
@@ -245,7 +246,7 @@ mdmat *PG_mdmat (PG *pg, const EfiType *type,
 		return NULL;
 	}
 
-	if	(!Md_KonvDef(&konv, &Type_str, type))
+	if	(!Md_ConvDef(&konv, &Type_str, type))
 		return NULL;
 
 	if	((f_add = mdfunc_add(type)) == NULL)
@@ -289,11 +290,11 @@ mdmat *PG_mdmat (PG *pg, const EfiType *type,
 		for (p = md->axis; p != NULL; p = p->next)
 		{
 			IDX *idx = p->priv;
-			data += (int) idx[i].data * p->size;
+			data += (size_t) idx[i].data * p->size;
 		}
 
 		value = PQgetvalue(pg->res, i, field);
-		KonvData(&konv, buf, &value);
+		ConvData(&konv, buf, &value);
 		CallVoidFunc(f_add, data, buf);
 	}
 

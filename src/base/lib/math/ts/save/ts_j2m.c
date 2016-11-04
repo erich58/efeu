@@ -65,7 +65,7 @@ static Polynom *intpol (double *y, size_t dim)
 	return pn;
 }
 
-void TimeSeriesKonv_j2m (TimeSeries *ts)
+void TimeSeriesConv_j2m (TimeSeries *ts)
 {
 	Polynom *pn;
 	int i;

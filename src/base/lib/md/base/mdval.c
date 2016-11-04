@@ -6,37 +6,37 @@
 #include <EFEU/mdmat.h>
 
 
-long Md_getlong(EfiKonv *konv, void *data)
+long Md_getlong(EfiConv *konv, void *data)
 {
 	if	(konv)
 	{
 		long val;
-		KonvData(konv, &val, data);
+		ConvData(konv, &val, data);
 		return val;
 	}
 	else	return 0;
 }
 
 
-double Md_getdbl(EfiKonv *konv, void *data)
+double Md_getdbl(EfiConv *konv, void *data)
 {
 	if	(konv)
 	{
 		double val;
-		KonvData(konv, &val, data);
+		ConvData(konv, &val, data);
 		return val;
 	}
 	else	return 0.;
 }
 
 
-void Md_setlong(EfiKonv *konv, void *data, long val)
+void Md_setlong(EfiConv *konv, void *data, long val)
 {
-	KonvData(konv, data, &val);
+	ConvData(konv, data, &val);
 }
 
 
-void Md_setdbl(EfiKonv *konv, void *data, double val)
+void Md_setdbl(EfiConv *konv, void *data, double val)
 {
-	KonvData(konv, data, &val);
+	ConvData(konv, data, &val);
 }

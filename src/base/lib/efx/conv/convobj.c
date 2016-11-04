@@ -24,9 +24,9 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/conv.h>
 
 
-EfiObj *KonvObj (const EfiObj *obj, EfiType *def)
+EfiObj *ConvObj (const EfiObj *obj, EfiType *def)
 {
-	EfiKonv conv;
+	EfiConv conv;
 	char *p;
 
 	if	(obj == NULL)
@@ -39,12 +39,12 @@ EfiObj *KonvObj (const EfiObj *obj, EfiType *def)
 		return obj2Obj(RefObj(obj));
 
 	if	(obj->type == &Type_obj)
-		return KonvObj(Val_obj(obj->data), def);
+		return ConvObj(Val_obj(obj->data), def);
 
-	if	(GetKonv(&conv, obj->type, def))
+	if	(GetConv(&conv, obj->type, def))
 	{
 		EfiObj *x = NewObj(def, NULL);
-		KonvData(&conv, x->data, obj->data);
+		ConvData(&conv, x->data, obj->data);
 		return x;
 	}
 

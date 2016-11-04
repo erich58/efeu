@@ -196,7 +196,7 @@ static void set_test (TestDefEntry *entry, const char *opt, const char *arg)
 		for (list = entry->par; list; list = list->next)
 		{
 			EfiObj *x = list->obj;
-			list->obj = KonvObj(x, entry->type);
+			list->obj = ConvObj(x, entry->type);
 
 			if	(!list->obj)
 			{
@@ -217,7 +217,7 @@ static void set_test (TestDefEntry *entry, const char *opt, const char *arg)
 		for (; arg; arg = p)
 		{
 			val = mstrcut(arg, &p, ",", 1);
-			obj = KonvObj(str2Obj(val), entry->type);
+			obj = ConvObj(str2Obj(val), entry->type);
 
 			if	(obj)
 			{

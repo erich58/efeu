@@ -53,35 +53,26 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 typedef struct {
-	EfiFunc *func;
-	EfiType *type;
-	int dist;
-} EfiArgConv;
+	EfiFunc *func;	/* Konvertierungsfunktion */
+	EfiType *type;	/* Konvertierungsbasis */
+	int dist;	/* Konvertierungsdistanz */
+} EfiConv;
 
-EfiArgConv *GetArgKonv (const EfiType *old, const EfiType *new);
-int ArgKonvDist (const EfiType *old, const EfiType *new);
 
-EfiObj *KonvObj (const EfiObj *obj, EfiType *def);
+EfiConv *GetArgConv (const EfiType *src, const EfiType *tg);
+void ArgConv (EfiConv *conv, void *tg, void *src);
+
+EfiObj *ConvObj (const EfiObj *obj, EfiType *def);
 EfiObj *LvalCast (EfiObj *obj, EfiType *def);
-void ArgKonv (EfiArgConv *conv, void *tg, void *src);
 
 EfiFunc *SearchFunc (EfiVirFunc *tab, EfiFuncArg *arg,
-	size_t narg, EfiArgConv **conv);
-
-EfiFunc *GetKonvFunc(const EfiType *old, const EfiType *new);
-
+	size_t narg, EfiConv **conv);
 
 /*	Objekte konvertieren
 */
 
-typedef struct {
-	EfiFunc *func;	/* Konvertierungsfunktion */
-	EfiType *type;	/* Konvertierungsbasis */
-	int dist;	/* Konvertierungsdistanz */
-} EfiKonv;
-
-EfiKonv *GetKonv (EfiKonv *buf, const EfiType *otype, const EfiType *ntype);
-void KonvData (EfiKonv *conv, void *tg, void *src);
-int KonvDist (const EfiType *old, const EfiType *new);
+EfiConv *GetConv (EfiConv *buf, const EfiType *otype, const EfiType *ntype);
+void ConvData (EfiConv *conv, void *tg, void *src);
+int ConvDist (const EfiType *src, const EfiType *tg);
 
 #endif	/* EFEU/conv_h */

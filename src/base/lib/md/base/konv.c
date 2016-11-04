@@ -6,7 +6,7 @@
 
 int md_konv(mdmat *md, const EfiType *type)
 {
-	EfiKonv def;
+	EfiConv def;
 	char *buf, *src, *tg;
 	size_t dim;
 	mdaxis *x;
@@ -15,7 +15,7 @@ int md_konv(mdmat *md, const EfiType *type)
 	if	(type == NULL)		return 0;
 	if	(md->type == type)	return 0;
 
-	if	(GetKonv(&def, md->type, type) == NULL)
+	if	(GetConv(&def, md->type, type) == NULL)
 	{
 		log_note(NULL, "[mdmat:102]", NULL);
 		return EOF;
@@ -30,7 +30,7 @@ int md_konv(mdmat *md, const EfiType *type)
 
 	while (dim-- > 0)
 	{
-		KonvData(&def, tg, src);
+		ConvData(&def, tg, src);
 		tg += type->size;
 		src += md->type->size;
 	}

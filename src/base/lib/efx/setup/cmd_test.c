@@ -97,7 +97,7 @@ static void f_objdump (EfiFunc *func, void *rval, void **arg)
 
 static void f_typedist (EfiFunc *func, void *rval, void **arg)
 {
-	Val_int(rval) = KonvDist(Val_type(arg[0]), Val_type(arg[1]));
+	Val_int(rval) = ConvDist(Val_type(arg[0]), Val_type(arg[1]));
 }
 
 
@@ -119,7 +119,7 @@ static struct {
 static void f_showkonv (EfiFunc *func, void *rval, void **arg)
 {
 	EfiType *old, *new;
-	EfiKonv konv;
+	EfiConv konv;
 
 	old = Val_type(arg[0]);
 	new = Val_type(arg[1]);
@@ -129,7 +129,7 @@ static void f_showkonv (EfiFunc *func, void *rval, void **arg)
 
 	io_xprintf(iostd, "%s -> %s: ", old->name, new->name);
 
-	if	(GetKonv(&konv, old, new))
+	if	(GetConv(&konv, old, new))
 	{
 		char *delim;
 		int i;
@@ -205,7 +205,7 @@ static void f_typehead (EfiFunc *func, void *rval, void **arg)
 
 static void f_getconv (EfiFunc *func, void *rval, void **arg)
 {
-	EfiKonv *konv = GetKonv(NULL, Val_type(arg[0]), Val_type(arg[1]));
+	EfiConv *konv = GetConv(NULL, Val_type(arg[0]), Val_type(arg[1]));
 	Val_func(rval) = konv ? rd_refer(konv->func) : NULL;
 }
 

@@ -34,7 +34,7 @@ void CopyDataFunc (EfiFunc *func, void *rval, void **arg)
 	CopyData(func->type, rval, arg[0]);
 }
 
-extern void CopyKonv(EfiType *type, EfiType *base);
+extern void CopyConv(EfiType *type, EfiType *base);
 
 EfiObj *PFunc_typedef (IO *io, void *arg)
 {
@@ -60,7 +60,7 @@ EfiObj *PFunc_typedef (IO *io, void *arg)
 		st->defval ? st->defval->data : type->base->defval);
 	rd_deref(st);
 
-	CopyKonv(type, type->base);
+	CopyConv(type, type->base);
 	def = msprintf("%s ()", type->name);
 	SetFunc(FUNC_PROMOTION, type->base, def, CopyDataFunc);
 	memfree(def);

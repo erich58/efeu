@@ -753,7 +753,6 @@ void SetupInt (void);
 void SetupFloat (void);
 void SetupMath (void);
 
-void StdKonvDef (void);
 void StdFuncDef (void);
 void StdPrintDef (void);
 void StdIoDef (void);

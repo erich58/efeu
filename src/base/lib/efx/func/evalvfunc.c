@@ -116,7 +116,7 @@ static EfiFuncArg *farg_list (EfiVirFunc *vtab,
 */
 
 static EfiFunc *get_func (EfiVirFunc *vtab, EfiFuncArg *arg,
-	size_t narg, EfiArgConv **ptr)
+	size_t narg, EfiConv **ptr)
 {
 	EfiFunc *func;
 	StrBuf *sb;
@@ -157,7 +157,7 @@ static EfiFunc *get_func (EfiVirFunc *vtab, EfiFuncArg *arg,
 /*	Funktion auswerten
 */
 
-static EfiObj *eval_func (EfiFunc *func, EfiArgConv *fkonv,
+static EfiObj *eval_func (EfiFunc *func, EfiConv *fkonv,
 	EfiFuncArg *arg, size_t narg)
 {
 	size_t fargdim;
@@ -171,7 +171,7 @@ static EfiObj *eval_func (EfiFunc *func, EfiArgConv *fkonv,
 			if	(fkonv[i].func || fkonv[i].type)
 			{
 				obj = NewObj(func->arg[i].type, NULL);
-				ArgKonv(fkonv + i, obj->data,
+				ArgConv(fkonv + i, obj->data,
 					arg[i].defval->data);
 				UnrefObj(arg[i].defval);
 
@@ -248,7 +248,7 @@ static EfiObj *eval_func (EfiFunc *func, EfiArgConv *fkonv,
 
 EfiObj *EvalVirFunc (EfiVirFunc *vtab, const EfiObjList *list)
 {
-	EfiArgConv *fkonv;
+	EfiConv *fkonv;
 	EfiFuncArg *arg;
 	EfiFunc *func;
 	size_t argdim;
@@ -275,7 +275,7 @@ int ShowData (IO *io, const EfiType *type, const void *data)
 {
 	EfiVirFunc *vtab;
 	EfiFunc *func;
-	EfiArgConv *fkonv;
+	EfiConv *fkonv;
 	EfiFuncArg *arg;
 	size_t maxdim;
 
