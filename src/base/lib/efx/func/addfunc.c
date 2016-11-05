@@ -84,30 +84,6 @@ void CopyConv (EfiType *type, EfiType *base)
 	for (i = 0; i < base->conv.used; i++)
 	{
 		func = rd_refer(ftab[i]);
-	#if	0
-		if	(ftab[i]->clean)
-			continue;
-
-		func = NewFunc();
-		func->type = ftab[i]->type;
-		func->name = NULL;
-		func->dim = 1;
-		func->arg = memalloc(sizeof(EfiFuncArg));
-		func->arg[0].type = type;
-		func->arg[0].name = mstrcpy("this");
-		func->arg[0].lval = 0;
-		func->arg[0].noconv = 1;
-		func->arg[0].cnst = 1;
-		func->arg[0].defval = NULL;
-		func->eval = ftab[i]->eval;
-		func->bound = ftab[i]->bound;
-		func->weight = ftab[i]->weight;
-		func->virfunc = ftab[i]->virfunc;
-		func->vaarg = 0;
-		func->par = ftab[i]->par;
-		func->clean = NULL;
-	#endif
-
 		del_func(vb_search(&type->conv, &func,
 			kfunc_cmp, VB_REPLACE));
 	}
