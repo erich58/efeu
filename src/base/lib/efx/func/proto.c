@@ -267,11 +267,9 @@ EfiFunc *MakePrototype(IO *io, EfiType *type, EfiName *nptr, unsigned flags)
 		return NULL;
 	}
 
-	func = NewFunc();
-	func->type = (type == &Type_obj) ? NULL : type;
+	func = NewFunc(type == &Type_obj ? NULL : type, name);
 	func->lretval = rflag;
 	func->scope = vtab;
-	func->name = name;
 	func->bound = (otype ? 1 : 0);
 	func->virfunc = virfunc;
 	func->weight = weight;

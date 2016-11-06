@@ -700,7 +700,7 @@ EfiFunc *VaGetFunc (EfiType *type, EfiVirFunc *tab,
 EfiFunc *XGetFunc (EfiType *type, EfiVirFunc *tab,
 	EfiFuncArg *arg, size_t narg);
 
-EfiFunc *NewFunc (void);
+EfiFunc *NewFunc (EfiType *type, char *name);
 void DelFunc (EfiFunc *func);
 void AddFunc (EfiFunc *func);
 

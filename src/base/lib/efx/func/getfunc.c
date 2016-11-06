@@ -96,13 +96,11 @@ EfiFunc *XGetFunc (EfiType *type, EfiVirFunc *vtab,
 
 /*	Neue Funktion definieren
 */
-	func = NewFunc();
 
-	if	(type == &Type_obj)	func->type = NULL;
-	else if	(type == NULL)		func->type = def->func->type;
-	else				func->type = type;
+	if	(type == &Type_obj)	type = NULL;
+	else if	(type == NULL)		type = def->func->type;
 
-	func->name = mstrcpy(def->func->name);
+	func = NewFunc(type, mstrcpy(def->func->name));
 	func->arg = memalloc(narg * sizeof(EfiFuncArg));
 	func->eval = GetFuncEval;
 	func->dim = narg;

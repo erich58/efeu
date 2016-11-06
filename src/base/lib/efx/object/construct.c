@@ -290,8 +290,7 @@ static EfiFunc *cf_create (const EfiObj *obj)
 {
 	EfiFunc *func;
 
-	func = NewFunc();
-	func->type = NULL;
+	func = NewFunc(NULL, NULL);
 	func->lretval = 0;
 	func->scope = NULL;
 	func->name = NULL;

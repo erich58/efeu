@@ -61,7 +61,10 @@ int IsFunc (void *ptr)
 	return (func && func->reftype == &FuncRefType);
 }
 
-EfiFunc *NewFunc (void)
+EfiFunc *NewFunc (EfiType *type, char *name)
 {
-	return rd_init(&FuncRefType, new_data(&tab_func));
+	EfiFunc *func = new_data(&tab_func);
+	func->type = type;
+	func->name = name;
+	return rd_init(&FuncRefType, func);
 }
