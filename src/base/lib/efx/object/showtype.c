@@ -93,6 +93,9 @@ static int show_enum (IO *io, const EfiType *type, int verbosity)
 
 	n += io_puts(" {", io);
 
+	if	(type->desc && verbosity > 1)
+		n += io_xprintf(io, " /* %s */", type->desc);
+
 	if	(type->vtab)
 	{
 		VarTabEntry *p;

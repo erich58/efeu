@@ -60,9 +60,12 @@ static void add_key (EfiType *type, IO *io, int delim)
 	int c;
 	char *name;
 
+	io_ctrl(io, IOPP_COMMENT, NULL);
 	start = NextEnumCode(type->base, 0);
 	c = io_eat(io, " \t\n,");
-	io_ctrl(io, IOPP_COMMENT, NULL);
+
+	if	(io_ctrl(io, IOPP_COMMENT, &type->desc) != EOF)
+		mtrim(type->desc);
 
 	while (c != EOF)
 	{
