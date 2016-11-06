@@ -38,7 +38,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	D_PROMOTE	01	/* Geförderte Konvertierung */
 #define	D_EXPAND	02	/* Expansion eines Basisobjekts */
-#define	D_KONVERT	04	/* Normale Konvertierung */
+#define	D_CONVERT	04	/* Normale Konvertierung */
 
 #define	D_BASE		010	/* Kompatible Basis */
 #define	D_ACCEPT	020	/* Akzeptierte Übernahme */

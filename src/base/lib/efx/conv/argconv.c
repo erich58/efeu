@@ -63,7 +63,7 @@ EfiConv *GetArgConv(const EfiType *src, const EfiType *tg)
 				buf.dist |= D_RESTRICTED;
 				break;
 			default:
-				buf.dist |= D_KONVERT;
+				buf.dist |= D_CONVERT;
 				break;
 			}
 

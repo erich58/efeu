@@ -111,7 +111,7 @@ static struct {
 	{ D_VAARG, "VAARG" },
 	{ D_ACCEPT, "ACCEPT" },
 	{ D_BASE, "BASE" },
-	{ D_KONVERT, "KONVERT" },
+	{ D_CONVERT, "CONVERT" },
 	{ D_EXPAND, "EXPAND" },
 	{ D_PROMOTE, "PROMOTE" },
 };

@@ -82,7 +82,7 @@ EfiConv *GetConv(EfiConv *conv, const EfiType *old, const EfiType *new)
 				conv->dist |= D_RESTRICTED;
 				break;
 			default:
-				conv->dist |= D_KONVERT;
+				conv->dist |= D_CONVERT;
 				break;
 			}
 
