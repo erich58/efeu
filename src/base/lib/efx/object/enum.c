@@ -101,17 +101,23 @@ EfiObjList *EnumKeyList (EfiType *type)
 int EnumKeyCode (const EfiType *type, const char *name)
 {
 	VarTabEntry *var;
+	const EfiType *base;
 
 	if	(!name || !type->vtab)	return 0;
 
-	while (type != NULL)
+	for (base = type; base != NULL; base = base->base)
 	{
-		var = VarTab_get(type->vtab, name);
+		var = VarTab_get(base->vtab, name);
 
-		if	(var && var->obj && var->obj->type == type)
+		if	(var && var->obj && var->obj->type == base)
 			return Val_int(var->obj->data);
+	}
 
-		type = type->base;
+	if	(type->flags & TYPE_EXPAND)
+	{
+		int key = NextEnumCode(type, 0);
+		AddEnumKey(type, mstrcpy(name), NULL, key);
+		return key;
 	}
 
 	return 0;
@@ -263,6 +269,10 @@ EfiType *AddEnumType (EfiType *type)
 			DelType(type);
 			return base;
 		}
+	}
+	else if	(type->flags & TYPE_EXPAND)
+	{
+		type->name = msprintf("_enum_%p", type);
 	}
 	else if	((base = FindEnum(type)))
 	{

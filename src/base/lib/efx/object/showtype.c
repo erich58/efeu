@@ -129,6 +129,13 @@ static int show_enum (IO *io, const EfiType *type, int verbosity)
 		}
 	}
 
+	if	(type->flags & TYPE_EXPAND)
+	{
+		n += io_nputc(delim, io, 1);
+		n += io_nputc('\t', io, depth);
+		n += io_puts("...", io);
+	}
+
 	if	(verbosity > 1)
 	{
 		n += io_nputc('\n', io, 1);

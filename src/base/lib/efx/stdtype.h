@@ -69,6 +69,7 @@ void Struct_clean (const EfiType *type, void *tg, int mode);
 #define	TYPE_EXTERN	0x1
 #define	TYPE_ENUM	0x2
 #define	TYPE_MALLOC	0x4
+#define	TYPE_EXPAND	0x8
 
 #define	TYPE_CNAME(type)	#type
 

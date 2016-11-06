@@ -81,6 +81,16 @@ static void add_key (EfiType *type, IO *io, int delim)
 			name = io_xgets(io, "\"");
 			io_getc(io);
 		}
+		else if	(c == '.')
+		{
+			name = io_mgets(io, "!.");
+
+			if	(strcmp(name, "...") == 0)
+			{
+				type->flags |= TYPE_EXPAND;
+				break;
+			}
+		}
 		else	name = io_getname(io);
 
 		if	(name == NULL)
