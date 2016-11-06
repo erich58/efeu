@@ -47,7 +47,7 @@ static EfiFunc *Konstruktor(const EfiType *old, const EfiType *new)
 		arg.noconv = 0;
 		arg.name = NULL;
 		arg.defval = NULL;
-		return XGetFunc(NULL, new->create, &arg, 1);
+		return rd_deref(XGetFunc(NULL, new->create, &arg, 1));
 	}
 	else	return NULL;
 }

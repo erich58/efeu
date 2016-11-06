@@ -105,7 +105,7 @@ EfiFunc *XGetFunc (EfiType *type, EfiVirFunc *vtab,
 	func->eval = GetFuncEval;
 	func->dim = narg;
 	func->bound = def->func->bound;
-	func->weight = def->func->weight;
+	func->weight = CONV_GENERATED;
 	func->virfunc = def->func->virfunc;
 	func->vaarg = 0;
 	func->par = def;
@@ -122,7 +122,8 @@ EfiFunc *XGetFunc (EfiType *type, EfiVirFunc *vtab,
 		func->arg[i].defval = NULL;
 	}
 
-	return func;
+	AddFunc(func);
+	return rd_refer(func);
 }
 
 
