@@ -55,10 +55,11 @@ EfiConv *GetArgConv(const EfiType *src, const EfiType *tg)
 		{
 			switch (buf.func->weight)
 			{
-			case KONV_PROMOTION:
+			case CONV_PROMOTION:
 				buf.dist |= D_PROMOTE;
 				break;
-			case KONV_RESTRICTED:
+			case CONV_RESTRICTED:
+			case CONV_GENERATED:
 				buf.dist |= D_RESTRICTED;
 				break;
 			default:

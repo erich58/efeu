@@ -90,9 +90,9 @@ EfiFunc *MakePrototype(IO *io, EfiType *type, EfiName *nptr, unsigned flags)
 	rflag = (flags & FUNC_LRETVAL) ? 1 : 0;
 	virfunc = (flags & FUNC_VIRTUAL) ? 1 : 0;
 
-	if	(flags & FUNC_RESTRICTED)	weight = KONV_RESTRICTED;
-	else if	(flags & FUNC_PROMOTION)	weight = KONV_PROMOTION;
-	else					weight = KONV_STANDARD;
+	if	(flags & FUNC_RESTRICTED)	weight = CONV_RESTRICTED;
+	else if	(flags & FUNC_PROMOTION)	weight = CONV_PROMOTION;
+	else					weight = CONV_STANDARD;
 
 	eval = (flags & FUNC_INLINE) ? Func_inline : Func_func;
 
@@ -109,9 +109,9 @@ EfiFunc *MakePrototype(IO *io, EfiType *type, EfiName *nptr, unsigned flags)
 		}
 
 		if	(strcmp("promotion", tname) == 0)
-			weight = KONV_PROMOTION;
+			weight = CONV_PROMOTION;
 		else if	(strcmp("restricted", tname) == 0)
-			weight = KONV_RESTRICTED;
+			weight = CONV_RESTRICTED;
 		else if	(strcmp("virtual", tname) == 0)
 			virfunc = 1;
 		else if	(strcmp("inline", tname) == 0)

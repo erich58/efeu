@@ -629,9 +629,10 @@ typedef struct {
 	unsigned noconv : 29;	/* Keine Konvertierung erlaubt */
 } EfiFuncArg;
 
-#define	KONV_PROMOTION	0
-#define	KONV_STANDARD	1
-#define	KONV_RESTRICTED	2
+#define	CONV_PROMOTION	0
+#define	CONV_STANDARD	1
+#define	CONV_RESTRICTED	2
+#define	CONV_GENERATED	3
 
 #define	FUNC_PROMOTION	0x1	/* Geförderte Konvertierung */
 #define	FUNC_RESTRICTED	0x2	/* Eingeschränkte Konvertierung */

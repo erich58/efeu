@@ -74,10 +74,11 @@ EfiConv *GetConv(EfiConv *conv, const EfiType *old, const EfiType *new)
 		{
 			switch (conv->func->weight)
 			{
-			case KONV_PROMOTION:
+			case CONV_PROMOTION:
 				conv->dist |= D_PROMOTE;
 				break;
-			case KONV_RESTRICTED:
+			case CONV_RESTRICTED:
+			case CONV_GENERATED:
 				conv->dist |= D_RESTRICTED;
 				break;
 			default:
