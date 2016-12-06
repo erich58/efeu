@@ -66,6 +66,7 @@ static void *do_print (XMLBuf *xml, const char *name, const char *data,
 	XMLOutput *out, PCTRL *ctrl)
 {
 	int need_newline = ctrl->beautified;
+	int need_indent = 0; 
 
 	if	(!out || !out->put)	return NULL;
 
@@ -89,16 +90,34 @@ static void *do_print (XMLBuf *xml, const char *name, const char *data,
 			if	(ctrl->beautified)
 			{
 				out_char(out, '\n');
-				out_indent(xml, out, 0);
+				need_indent = 1;
 			}
 
 			break;
 		}
 	}
-	else if	(ctrl->beautified)
+	else
 	{
-		out_indent(xml, out, 0);
+		need_indent = ctrl->beautified;
 	}
+
+	switch (xml->type)
+	{
+	case xml_data:
+		if	(!data || !*data)
+			return NULL;
+
+		break;
+	case xml_err:
+	case xml_comm:
+		if	(!ctrl->beautified)
+			return NULL;
+
+		break;
+	}
+
+	if	(need_indent)
+		out_indent(xml, out, 0);
 
 	switch (xml->type)
 	{
@@ -144,33 +163,21 @@ static void *do_print (XMLBuf *xml, const char *name, const char *data,
 		out_str(out, "]]>");
 		break;
 	case xml_end:
-		if	(xml->open_tag)	return NULL;
-
 		out_str(out, "</");
 		out_str(out, name);
 		out_char(out, '>');
 		break;
 	case xml_err:
-		if	(ctrl->beautified)
-		{
-			out_str(out, "<!--\nERROR: ");
-			out_str(out, data);
-			out_str(out, "\n");
-			out_indent(xml, out, 0);
-			out_str(out, "-->");
-		}
-		else	return NULL;
-
+		out_str(out, "<!--\nERROR: ");
+		out_str(out, data);
+		out_str(out, "\n");
+		out_indent(xml, out, 0);
+		out_str(out, "-->");
 		break;
 	case xml_comm:
-		if	(ctrl->beautified)
-		{
-			out_str(out, "<!--");
-			out_str(out, data);
-			out_str(out, "-->");
-		}
-		else	return NULL;
-
+		out_str(out, "<!--");
+		out_str(out, data);
+		out_str(out, "-->");
 		break;
 	case xml_att:
 		out_str(out, name);
