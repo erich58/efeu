@@ -27,6 +27,8 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	MONAT(x)	LOCALE->month[x ? (x - 1) % 12 : 0]
 #define	WTAG(x)		LOCALE->weekday[x % 7]
+#define	MABBREV(x)	LOCALE->month_abbrev[x ? (x - 1) % 12 : 0]
+#define	WABBREV(x)	LOCALE->weekday_abbrev[x % 7]
 
 #define	FMT_DATE	"%Y-%m-%d"
 #define	FMT_TIME	FMT_DATE " %H:%M:%S"
@@ -69,10 +71,10 @@ static int print_key (IO *io, CalInfo *cal, int key, PutVal putval)
 {
 	switch (key)
 	{
-	case 'a':	return io_xprintf(io, "%2.2s", WTAG(cal->wday));
+	case 'a':	return io_puts(WABBREV(cal->wday), io);
 	case 'A':	return io_puts(WTAG(cal->wday), io);
 	case 'h':
-	case 'b':	return io_xprintf(io, "%3.3s", MONAT(cal->month));
+	case 'b':	return io_puts(MABBREV(cal->month), io);
 	case 'B':	return io_puts(MONAT(cal->month), io);
 
 	case 'd':	return putval(io, 2, cal->day);
