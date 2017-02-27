@@ -231,16 +231,16 @@ int tex_put(int c, PCTRL *pf)
 	case '*':  io_puts("$\\ast$", pf->io); break;
 
 /*
-	case 'Ä': io_puts("\"A", pf->io); break;
-	case 'Ö': io_puts("\"O", pf->io); break;
-	case 'Ü': io_puts("\"U", pf->io); break;
-	case 'ä': io_puts("\"a", pf->io); break;
-	case 'ö': io_puts("\"o", pf->io); break;
-	case 'ü': io_puts("\"u", pf->io); break;
-	case 'ß': io_puts("\"s", pf->io); break;
+	case 0xc4: io_puts("\"A", pf->io); break;
+	case 0xd6: io_puts("\"O", pf->io); break;
+	case 0xdc: io_puts("\"U", pf->io); break;
+	case 0xe4: io_puts("\"a", pf->io); break;
+	case 0xf6: io_puts("\"o", pf->io); break;
+	case 0xfc: io_puts("\"u", pf->io); break;
+	case 0xdf: io_puts("\"s", pf->io); break;
 */
-	case 'Ä': case 'Ö': case 'Ü':
-	case 'ä': case 'ö': case 'ü': case 'ß':
+	case 0xc4: case 0xd6: case 0xdc:		/* ÄÖÜ */
+	case 0xe4: case 0xf6: case 0xfc: case 0xdf:	/* äöüß */
 	case '\t':
 
 		io_putc(c, pf->io);

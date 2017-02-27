@@ -39,13 +39,13 @@ static int html_filter(int c, IO *io)
 	case '&':	io_puts("&amp;", io); break;
 	case '%':	io_puts("&percnt;", io); break;
 	case '"':	io_puts("&quot;", io); break;
-	case 'Ä':	io_puts("&Auml;", io); break;
-	case 'Ö':	io_puts("&Ouml;", io); break;
-	case 'Ü':	io_puts("&Uuml;", io); break;
-	case 'ä':	io_puts("&auml;", io); break;
-	case 'ö':	io_puts("&ouml;", io); break;
-	case 'ü':	io_puts("&uuml;", io); break;
-	case 'ß':	io_puts("&szlig;", io); break;
+	case 0xc4:	io_puts("&Auml;", io); break;
+	case 0xd6:	io_puts("&Ouml;", io); break;
+	case 0xdc:	io_puts("&Uuml;", io); break;
+	case 0xe4:	io_puts("&auml;", io); break;
+	case 0xf6:	io_puts("&ouml;", io); break;
+	case 0xfc:	io_puts("&uuml;", io); break;
+	case 0xdf:	io_puts("&szlig;", io); break;
 	default:	io_putc(c, io); break;
 	}
 
