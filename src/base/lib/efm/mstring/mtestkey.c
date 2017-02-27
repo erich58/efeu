@@ -44,10 +44,10 @@ int mtestkey (const char *def, char **ptr, const char *key)
 	for (flag = 0; *def; def++, key++)
 	{
 		if	(IS_DELIM(*def))	break;
-		if	(*key == ':')		flag = 1, key++;
-		if	(*key == '*')		flag = 1, key--;
-		if	(*key == '?')		;
-		if	(*def != *key)		return 0;
+		else if	(*key == ':')		flag = 1, key++;
+		else if	(*key == '*')		flag = 1, key--;
+		else if	(*key == '?')		;
+		else if	(*def != *key)		return 0;
 	}
 
 	if	(flag || *key == 0 || *key == ':' || *key == '*')

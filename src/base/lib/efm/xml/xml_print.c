@@ -114,6 +114,8 @@ static void *do_print (XMLBuf *xml, const char *name, const char *data,
 			return NULL;
 
 		break;
+	default:
+		break;
 	}
 
 	if	(need_indent)
