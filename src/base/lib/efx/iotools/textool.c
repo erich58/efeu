@@ -113,8 +113,8 @@ int TeXputc(int c, IO *io)
 		break;
 
 	case '\t': case '\n':
-	case 'Ä': case 'Ö': case 'Ü':
-	case 'ä': case 'ö': case 'ü': case 'ß':
+	case 0xc4: case 0xd6: case 0xdc:		/* ÄÖÜ */
+	case 0xe4: case 0xf6: case 0xfc: case 0xdf:	/* äöüß */
 
 		io_putc(c, io);
 		break;
