@@ -1,8 +1,10 @@
 VORBEREITUNG
 
 Folgende Softwarepakete werden benötigt:
-*	C-Development
-*	readline-Development
+
+*	make
+*	C-Development (gcc, clang)
+*	Readline-Developmend (libreadline-dev)
 
 Folgende Softwarepakete werden für die Dokumentation benötigt:
 

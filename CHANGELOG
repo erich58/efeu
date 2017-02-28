@@ -3,6 +3,7 @@ EFEU 3.4
 *	Refactoring build concept.
 *	Changed source code encoding from latin9 to utf-8.
 *	Added const qualification to string declarations.
+*	Fixed some error warnings corresponding to clang Compiler.
 
 EFEU 3.3-1
 
