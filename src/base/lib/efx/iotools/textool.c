@@ -61,7 +61,7 @@ int TeXputc(int c, IO *io)
 
 	io = io_count(io_refer(io));
 
-	switch ((unsigned char) c)
+	switch (c)
 	{
 	case EOF:
 	
