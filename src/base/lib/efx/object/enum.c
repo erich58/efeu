@@ -116,7 +116,7 @@ int EnumKeyCode (const EfiType *type, const char *name)
 	if	(type->flags & TYPE_EXPAND)
 	{
 		int key = NextEnumCode(type, 0);
-		AddEnumKey(type, mstrcpy(name), NULL, key);
+		AddEnumKey((EfiType *) type, mstrcpy(name), NULL, key);
 		return key;
 	}
 
