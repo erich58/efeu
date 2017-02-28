@@ -22,6 +22,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <Math/linalg.h>
 #include <EFEU/memalloc.h>
+#include <math.h>
 
 size_t GaussJordan (double *data, size_t dim)
 {
@@ -42,12 +43,12 @@ size_t GaussJordan (double *data, size_t dim)
 	*/
 		ptr = line + j;
 		k = j;
-		m = abs(*ptr);
+		m = fabs(*ptr);
 
 		for (i = j + 1; i < dim; i++)
 		{
 			ptr += dim;
-			x = abs(*ptr);
+			x = fabs(*ptr);
 
 			if	(m < x)
 			{
