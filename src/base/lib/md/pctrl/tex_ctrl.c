@@ -198,7 +198,7 @@ int tab_ctrl(PCTRL *pf, int cmd, va_list list)
 
 int tex_put(int c, PCTRL *pf)
 {
-	switch ((char) c)
+	switch ((unsigned char) c)
 	{
 	case '%': case '$': case '#': case '_':
 	case '&': case '{': case '}':

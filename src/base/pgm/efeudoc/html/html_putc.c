@@ -32,7 +32,7 @@ void HTML_hmode(HTML *html)
 
 static int html_filter(int c, IO *io)
 {
-	switch ((char) c)
+	switch ((unsigned char) c)
 	{
 	case '<':	io_puts("&lt;", io); break;
 	case '>':	io_puts("&gt;", io); break;
