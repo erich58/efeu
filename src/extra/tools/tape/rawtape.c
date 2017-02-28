@@ -37,7 +37,9 @@ If not, write to the Free Software Foundation, Inc.,
 #define	MSG3	FDEF("msg.3", "%d bytes write.\n")
 #define	MSG4	FDEF("msg.4", "%d defect blocks.\n")
 
-#define _XOPEN_SOURCE 1
+#ifndef _XOPEN_SOURCE
+#define _XOPEN_SOURCE 500
+#endif
 
 #include <stdio.h>
 #include <sys/types.h>
