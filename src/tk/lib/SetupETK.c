@@ -173,6 +173,12 @@ static void f_main (EfiFunc *func, void *rval, void **arg)
 	}
 }
 
+static void f_event (EfiFunc *func, void *rval, void **arg)
+{
+	while (Tcl_DoOneEvent(TCL_ALL_EVENTS|TCL_DONT_WAIT))
+		;
+}
+
 static void f_tcleval (EfiFunc *func, void *rval, void **arg)
 {
 	ArgList *argl;
@@ -262,6 +268,7 @@ static EfiFuncDef fdef[] = {
 		f_tclexpr },
 	{ 0, &Type_bool, "tkinit ()", f_init },
 	{ 0, &Type_void, "tkmain ()", f_main },
+	{ 0, &Type_void, "tkevent ()", f_event },
 };
 #endif
 
