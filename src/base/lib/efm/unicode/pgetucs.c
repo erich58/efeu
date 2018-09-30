@@ -42,7 +42,7 @@ static int32_t get_sub (char **ptr, int32_t val, int n)
 	if	(n == 0)
 		return val;
 
-	c = *(*ptr)++;
+	c = (unsigned char) *(*ptr)++;
 
 	if	(UF(c) && (val = get_sub(ptr, val << 6 | VF(c), n - 1)) >= 0)
 		return val;
@@ -76,7 +76,7 @@ die folgenden Rahmenbedingungen vorraussgesetzt und nicht geprüft:
 
 int32_t pgetucs (char **p, size_t lim)
 {
-	int c = *(*p)++;
+	int c = (unsigned char) *(*p)++;
 	int32_t val = 0;
 
 	if	(U1(c))			return c;
