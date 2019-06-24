@@ -108,7 +108,7 @@ int io_rewind (IO *io);
 int io_close (IO *io);
 int io_err (IO *io);
 
-int io_close_stat;
+extern int io_close_stat;
 
 void io_push (IO *io, IO *tmp);
 IO *io_pop (IO *io);
@@ -162,8 +162,8 @@ IO *io_popen (const char *name, const char *mode);
 IO *io_interact (const char *prompt, const char *hist);
 IO *io_batch (void);
 
-IO *(*_interact_open) (const char *prompt, const char *hist);
-IO *(*_interact_filter) (IO *io);
+extern IO *(*_interact_open) (const char *prompt, const char *hist);
+extern IO *(*_interact_filter) (IO *io);
 
 
 /*	Eingabefunktionen

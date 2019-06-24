@@ -76,7 +76,7 @@ void loadlib (const char *name, const char *init);
 
 int callproc (const char *cmd);
 extern int callproc_lock;
-void (*callproc_init) (void);
-void (*callproc_exit) (void);
+extern void (*callproc_init) (void);
+extern void (*callproc_exit) (void);
 
 #endif	/* EFEU/procenv.h */

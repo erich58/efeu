@@ -35,7 +35,9 @@ If not, write to the Free Software Foundation, Inc.,
 #define	S_NBLK	FDEF("msg.nblk", "%d blocks read (maxblksize = %d).\n")
 #define	S_NOUT	FDEF("msg.nout", "%d chars written.\n")
 
-#define _XOPEN_SOURCE 1
+#ifndef _XOPEN_SOURCE
+#define _XOPEN_SOURCE 500
+#endif
 
 #include <stdio.h>
 

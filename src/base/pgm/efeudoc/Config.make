@@ -27,7 +27,7 @@ mf_var OBJ "efeudoc.o skip.o parse.o p_reg.o p_block.o DocCopy.o docsym.o" \
 	"DocDrv.o Doc.o docout.o test.o" \
 	"html.o html_open.o html_putc.o html_cpush.o" \
 	"html_tab.o html_cmd.o html_env.o" \
-	"LaTeX.o latex.o latex_putc.o latex_cmd.o latex_env.o" \
+	"LaTeX.o DocOut_latex.o latex_putc.o latex_cmd.o latex_env.o" \
 	"mroff.o mroff_par.o mroff_var.o mroff_putc.o" \
 	"mroff_tab.o mroff_cmd.o mroff_env.o" \
 	"term.o term_var.o term_putc.o term_cmd.o term_env.o" \

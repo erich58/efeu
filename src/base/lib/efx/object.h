@@ -778,7 +778,7 @@ EfiObjList *Parse_list (IO *io, int endchar);
 EfiObjList *Parse_clist (IO *io, int endchar);
 EfiObjList *Parse_idx (IO *io);
 
-int ParseStringIndex;
+extern int ParseStringIndex;
 
 EfiObj *Parse_op (IO *io, int prior, EfiObj *left);
 EfiObj *Parse_cmd (IO *io);

@@ -20,8 +20,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	_manual_pph
-#define	_manual_pph	1
+#ifndef	_DocTarget_pph
+#define	_DocTarget_pph	1
 
 #define	PSDocName(dir,name)	\
 PathName(PathName(dir,ps),Concat(name,.ps.gz))
@@ -69,4 +69,4 @@ $SeeAlso
 \mref{efeudoc(1)}.
 */
 
-#endif	/* manual.pph */
+#endif	/* DocTarget.pph */

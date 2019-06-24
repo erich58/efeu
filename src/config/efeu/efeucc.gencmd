@@ -30,7 +30,9 @@ esac
 # determine C compiler
 
 if [ "$CC" != "" ]; then
-	:
+	case "$CC" in
+	clang)	CC="$CC -Qunused-arguments";;
+	esac
 elif	gcc --version >/dev/null 2>&1; then
 	CC="gcc -fPIC -Wall -Wmissing-prototypes -Wpointer-arith"
 else

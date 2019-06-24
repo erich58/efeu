@@ -1,8 +1,10 @@
 VORBEREITUNG
 
 Folgende Softwarepakete werden benötigt:
-*	C-Development
-*	readline-Development
+
+*	make
+*	C-Development (gcc, clang)
+*	Readline-Developmend (libreadline-dev)
 
 Folgende Softwarepakete werden für die Dokumentation benötigt:
 
@@ -12,7 +14,7 @@ Folgende Softwarepakete werden für die Dokumentation benötigt:
 
 Folgende Softwarepakete werden empfohlen:
 
-*	curses-Development (libncurses5-dev)
+*	curses-Development (libncurses-dev)
 *	x11-Development (libX11-dev)
 *	tcl/tk-Development (tk-dev)
 *	postgresql-Development (libpq-dev)

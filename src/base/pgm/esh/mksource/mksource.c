@@ -446,7 +446,6 @@ int main (int narg, char **arg)
 	int i;
 	char *flags;
 
-	ChangeLocale("C");
 	SetVersion(EFEU_VERSION);
 	SetProgName(arg[0]);
 	bootstrap = mtabcat(" ", arg, narg);

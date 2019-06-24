@@ -121,6 +121,7 @@ static int f_setlocale (CmdPar *cpar, CmdParVar *var,
 {
 	char *p = CmdPar_psub(cpar, par, arg);
 	ChangeLocale(p);
+	memfree(p);
 	return 0;
 }
 
