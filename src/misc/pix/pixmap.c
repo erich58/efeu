@@ -231,61 +231,6 @@ int height = 0, int color = 0)", PF_rule },
 };
 
 
-#if	0
-/*	Konvertierungen
-*/
-
-static void double2Color (const EfiKonv *p, COLOR *y, double *x)
-{
-	y->red = ColorValue(*x);
-	y->green = y->blue = y->red;
-}
-
-static void Color2double (const EfiKonv *p, double *y, COLOR *x)
-{
-	*y = 0.299 * RED(x) + 0.587 * GREEN(x) + 0.114 * BLUE(x);
-}
-
-
-static void List2Color (const EfiKonv *p, COLOR *y, EfiObjList **x)
-{
-	y->red = 0;
-	y->green = 0;
-	y->blue = 0;
-	
-	if	((*x))
-	{
-		y->red = ColorValue(Obj2double(RefObj((*x)->obj)));
-
-		if	((*x)->next)
-		{
-			y->green = ColorValue(Obj2double(RefObj((*x)->next->obj)));
-
-			if	((*x)->next->next)
-				y->blue = ColorValue(Obj2double(RefObj((*x)->next->next->obj)));
-		}
-	}
-}
-
-static void Color2List (const EfiKonv *p, EfiObjList **y, COLOR *x)
-{
-	(*y) = NewObjList(Obj_double(x->red / 255.));
-	(*y)->next = NewObjList(Obj_double(x->green / 255.));
-	(*y)->next->next = NewObjList(Obj_double(x->blue / 255.));
-}
-#endif
-
-/*
-static EfiKonv konv[] = {
-	{ &Type_null, &Type_OldPixMap, Konv_Goodkonv, Null2Any },
-	{ &Type_Color, &Type_double, Konv_Badkonv, (KonvEfiFunc) Color2double },
-	{ &Type_double, &Type_Color, Konv_Goodkonv, (KonvEfiFunc) double2Color },
-	{ &Type_list, &Type_Color, Konv_Goodkonv, (KonvEfiFunc) List2Color },
-	{ &Type_Color, &Type_list, Konv_Goodkonv, (KonvEfiFunc) Color2List },
-};
-*/
-
-
 /*	Konstanten
 */
 
@@ -342,7 +287,4 @@ void SetupOldPixMap(void)
 	AddFuncDef(fdef, tabsize(fdef));
 	AddParseDef(pdef, tabsize(pdef));
 	AddEfiMember(Type_OldPixMap.vtab, member, tabsize(member));
-	/*
-	AddParseDef(konv, tabsize(konv));
-	*/
 }

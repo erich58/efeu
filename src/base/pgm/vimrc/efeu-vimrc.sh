@@ -89,7 +89,7 @@ do
 done
 
 printf "endif\n\n" >> $tmp
-printf 'set tags=./tags\\ %s/build/scope.d/tags\n' $top >> $tmp
+printf 'set tags=./tags\\ %s/build/scope/tags\n' $top >> $tmp
 
 if
 	cmp -s vimrc $tmp

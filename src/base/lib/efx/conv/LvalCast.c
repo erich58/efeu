@@ -20,7 +20,7 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include <EFEU/konvobj.h>
+#include <EFEU/conv.h>
 
 typedef struct {
 	LVALOBJ_VAR;
@@ -90,7 +90,7 @@ static EfiLval lcast_lval = {
 	lcast_ident,
 };
 
-EfiObj *KonvLval(EfiObj *obj, EfiType *type)
+EfiObj *LvalCast(EfiObj *obj, EfiType *type)
 {
 	obj = EvalObj(obj, NULL);
 

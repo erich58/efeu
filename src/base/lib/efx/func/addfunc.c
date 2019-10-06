@@ -71,44 +71,20 @@ static int kfunc_cmp(const void *pa, const void *pb)
 	else				return 0;
 }
 
-void CopyKonv (EfiType *type, EfiType *base);
+void CopyConv (EfiType *type, EfiType *base);
 
-void CopyKonv (EfiType *type, EfiType *base)
+void CopyConv (EfiType *type, EfiType *base)
 {
 	EfiFunc **ftab;
 	EfiFunc *func;
 	int i;
 
-	ftab = base->konv.data;
+	ftab = base->conv.data;
 
-	for (i = 0; i < base->konv.used; i++)
+	for (i = 0; i < base->conv.used; i++)
 	{
 		func = rd_refer(ftab[i]);
-	#if	0
-		if	(ftab[i]->clean)
-			continue;
-
-		func = NewFunc();
-		func->type = ftab[i]->type;
-		func->name = NULL;
-		func->dim = 1;
-		func->arg = memalloc(sizeof(EfiFuncArg));
-		func->arg[0].type = type;
-		func->arg[0].name = mstrcpy("this");
-		func->arg[0].lval = 0;
-		func->arg[0].nokonv = 1;
-		func->arg[0].cnst = 1;
-		func->arg[0].defval = NULL;
-		func->eval = ftab[i]->eval;
-		func->bound = ftab[i]->bound;
-		func->weight = ftab[i]->weight;
-		func->virfunc = ftab[i]->virfunc;
-		func->vaarg = 0;
-		func->par = ftab[i]->par;
-		func->clean = NULL;
-	#endif
-
-		del_func(vb_search(&type->konv, &func,
+		del_func(vb_search(&type->conv, &func,
 			kfunc_cmp, VB_REPLACE));
 	}
 }
@@ -166,7 +142,7 @@ static void AddTypeFunc (EfiFunc *func)
 			del_func(&type->fcopy);
 			type->fcopy = func;
 		}
-		else	set_kfunc(&type->konv, func);
+		else	set_kfunc(&type->conv, func);
 
 		return;
 	}

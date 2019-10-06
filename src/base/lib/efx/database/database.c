@@ -37,6 +37,7 @@ static void db_clean (void *data)
 	EfiDB *db = data;
 	CleanVecData(db->type, db->buf.used, db->buf.data, 1);
 	vb_free(&db->buf);
+	rd_deref(db->cmp);
 	memfree(db);
 }
 
@@ -331,6 +332,7 @@ static void f_db_sort(EfiFunc *func, void *rval, void **arg)
 	if	((db = Ref_DB(arg[0])) == NULL)
 		return;
 
+	rd_deref(db->cmp);
 	db->cmp = GetFunc(&Type_int, Val_vfunc(arg[1]), 2, db->type, 0, db->type, 0);
 	DB_sort(db);
 	DBRVAL = db;

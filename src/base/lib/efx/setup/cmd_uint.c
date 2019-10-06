@@ -23,7 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 #include <EFEU/cmdconfig.h>
 
-#define	SIG	1
+#define	SIG	0
 #define	S	"unsigned"
 #define	T	unsigned int
 

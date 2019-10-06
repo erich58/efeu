@@ -23,6 +23,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 #include <EFEU/refdata.h>
 
+static LogControl FuncDebugControl = LOG_CONTROL("Func", LOGLEVEL_DEBUG);
+
 static ALLOCTAB(tab_func, "EfiFunc", 0, sizeof(EfiFunc));
 
 static void func_clean (void *data)
@@ -50,8 +52,8 @@ static char *func_ident (const void *data)
 	return msprintf("%s()", p);
 }
 
-static RefType FuncRefType = REFTYPE_INIT("Func",
-	func_ident, func_clean);
+static RefType FuncRefType = REFTYPE_EXT("Func",
+	func_ident, func_clean, &FuncDebugControl);
 
 int IsFunc (void *ptr)
 {
@@ -59,7 +61,10 @@ int IsFunc (void *ptr)
 	return (func && func->reftype == &FuncRefType);
 }
 
-EfiFunc *NewFunc (void)
+EfiFunc *NewFunc (EfiType *type, char *name)
 {
-	return rd_init(&FuncRefType, new_data(&tab_func));
+	EfiFunc *func = new_data(&tab_func);
+	func->type = type;
+	func->name = name;
+	return rd_init(&FuncRefType, func);
 }

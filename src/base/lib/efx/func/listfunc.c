@@ -59,8 +59,9 @@ int ListFunc(IO *io, EfiFunc *func)
 
 	switch (func->weight)
 	{
-	case KONV_PROMOTION:	n += io_puts("promotion ", io); break;
-	case KONV_RESTRICTED:	n += io_puts("restricted ", io); break;
+	case CONV_PROMOTION:	n += io_puts("promotion ", io); break;
+	case CONV_RESTRICTED:	n += io_puts("restricted ", io); break;
+	case CONV_GENERATED:	n += io_puts("/* generated */ ", io); break;
 	default:		break;
 	}
 
@@ -117,7 +118,7 @@ int PrintFuncArg(IO *io, EfiFuncArg *arg)
 
 	n = 0;
 
-	if	(arg->nokonv)	n += io_puts("restricted ", io);
+	if	(arg->noconv)	n += io_puts("restricted ", io);
 	if	(arg->promote)	n += io_puts("promotion ", io);
 	if	(arg->cnst)	n += io_puts("const ", io);
 

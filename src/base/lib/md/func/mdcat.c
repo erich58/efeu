@@ -23,7 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/mdmat.h>
 
 static mdaxis *add_axis (StrPool *pool, mdaxis **tab, size_t dim);
-static void setval (EfiKonv *konv, mdaxis *x, char *px, mdaxis *y, char *py);
+static void setval (EfiConv *konv, mdaxis *x, char *px, mdaxis *y, char *py);
 
 mdmat *md_cat (const char *def, mdmat **tab, size_t dim)
 {
@@ -34,7 +34,7 @@ mdmat *md_cat (const char *def, mdmat **tab, size_t dim)
 	char *fmt;
 	char *p;
 	mdaxis **ptr;
-	EfiKonv konv;
+	EfiConv konv;
 	size_t ndim;
 
 	if	(dim == 0)	return NULL;
@@ -88,8 +88,8 @@ mdmat *md_cat (const char *def, mdmat **tab, size_t dim)
 		}
 		else	x[i] = tab[i]->axis;
 
-		if	(md->type == NULL || KonvDist(md->type, tab[i]->type)
-				< KonvDist(tab[i]->type, md->type))
+		if	(md->type == NULL || ConvDist(md->type, tab[i]->type)
+				< ConvDist(tab[i]->type, md->type))
 		{
 			md->type = tab[i]->type;
 		}
@@ -121,7 +121,7 @@ mdmat *md_cat (const char *def, mdmat **tab, size_t dim)
 	{
 		if	(tab[i])
 		{
-			Md_KonvDef(&konv, tab[i]->type, md->type);
+			Md_ConvDef(&konv, tab[i]->type, md->type);
 			setval(&konv, md->axis->next, p,
 				tab[i]->axis, tab[i]->data);
 		}
@@ -153,7 +153,7 @@ static mdaxis *add_axis(StrPool *pool, mdaxis **tab, size_t dim)
 	return cpy_axis(pool, axis, 0);
 }
 
-static void setval (EfiKonv *konv, mdaxis *x, char *px,
+static void setval (EfiConv *konv, mdaxis *x, char *px,
 	mdaxis *y, char *py)
 {
 	if	(x != NULL)
@@ -180,5 +180,5 @@ static void setval (EfiKonv *konv, mdaxis *x, char *px,
 			px += sx;
 		}
 	}
-	else	KonvData(konv, px, py);
+	else	ConvData(konv, px, py);
 }

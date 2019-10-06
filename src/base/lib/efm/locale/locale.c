@@ -46,9 +46,17 @@ static char *M_en[12] = {
 	"August", "September", "October", "November", "December",
 };
 
+static char *m_en[12] = {
+	"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
+	"Aug", "Sep", "Oct", "Nov", "Dec",
+};
 static char *W_en[7] = {
 	"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday",
 	"Friday", "Saturday"
+};
+
+static char *w_en[7] = {
+	"Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"
 };
 
 static char *M_de[12] = {
@@ -56,9 +64,19 @@ static char *M_de[12] = {
 	"August", "September", "Oktober", "November", "Dezember"
 };
 
+static char *m_de[12] = {
+	"Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul",
+	"Aug", "Sep", "Okt", "Nov", "Dez"
+};
+
 static char *M_de_AT[12] = {
 	"Jänner", "Februar", "März", "April", "Mai", "Juni", "Juli",
 	"August", "September", "Oktober", "November", "Dezember"
+};
+
+static char *m_de_AT[12] = {
+	"Jän", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul",
+	"Aug", "Sep", "Okt", "Nov", "Dez"
 };
 
 static char *W_de[7] =	{
@@ -66,15 +84,18 @@ static char *W_de[7] =	{
 	"Donnerstag", "Freitag", "Samstag"
 };
 
+static char *w_de[7] =	{
+	"So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"
+};
 /*
 :*:the table |$1| contains locale for data representation
 :de:Der Vektor |$1| enthält Locale zur Datumsdarstellung
 */
 
 LCDateDef LCDate[] = {
-	{ "C", M_en, W_en },
-	{ "de_AT", M_de_AT, W_de },
-	{ "de", M_de, W_de },
+	{ "C", M_en, W_en, m_en, w_en },
+	{ "de_AT", M_de_AT, W_de, m_de_AT, w_de },
+	{ "de", M_de, W_de, m_de, w_de },
 };
 
 LocaleDef Locale = { LCValue, LCValue, LCDate };

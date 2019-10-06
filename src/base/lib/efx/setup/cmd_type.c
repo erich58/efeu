@@ -121,10 +121,10 @@ static EfiObj *type_clist (const EfiObj *obj, void *data)
 
 	if	(type)
 	{
-		EfiFunc **ftab = type->konv.data;
+		EfiFunc **ftab = type->conv.data;
 		size_t n;
 
-		for (n = 0; n < type->konv.used; n++)
+		for (n = 0; n < type->conv.used; n++)
 		{
 #if	0
 			*ptr = NewObjList(type2Obj(ftab[n]->type));
@@ -308,7 +308,7 @@ static void list_vfunc(IO *io, const VecBuf *tab)
 static void tinfo_conv (IO *io, InfoNode *info)
 {
 	EfiType *type = info->par;
-	list_vfunc(io, &type->konv);
+	list_vfunc(io, &type->conv);
 }
 
 static void tinfo_create (IO *io, InfoNode *info)
@@ -325,9 +325,9 @@ static void tinfo_create (IO *io, InfoNode *info)
 	for (n = TypeTab.tab.used, p = TypeTab.tab.data; n-- > 0; p++)
 	{
 		EfiType *src = p->data;
-		EfiFunc **ftab = src->konv.data;
+		EfiFunc **ftab = src->conv.data;
 
-		for (k = 0; k < src->konv.used; k++)
+		for (k = 0; k < src->conv.used; k++)
 		{
 			if (ftab[k]->type == type)
 			{

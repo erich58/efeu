@@ -7,14 +7,14 @@
 
 void md_round(mdmat *md, double factor, unsigned mask)
 {
-	EfiKonv get;
-	EfiKonv set;
+	EfiConv get;
+	EfiConv set;
 	double val;
 
 	if	(md == NULL)	return;
 
-	Md_KonvDef(&get, md->type, &Type_double);
-	Md_KonvDef(&set, &Type_double, md->type);
+	Md_ConvDef(&get, md->type, &Type_double);
+	Md_ConvDef(&set, &Type_double, md->type);
 
 	val = factor * MdValSum(md->axis, md->data, &get, mask);
 	val = (val < 0.) ? - (int) (-val + 0.5) : (int) (val + 0.5);
@@ -23,14 +23,14 @@ void md_round(mdmat *md, double factor, unsigned mask)
 
 void md_adjust(mdmat *md, double val, unsigned mask)
 {
-	EfiKonv get;
-	EfiKonv set;
+	EfiConv get;
+	EfiConv set;
 	double factor;
 
 	if	(md == NULL)	return;
 
-	Md_KonvDef(&get, md->type, &Type_double);
-	Md_KonvDef(&set, &Type_double, md->type);
+	Md_ConvDef(&get, md->type, &Type_double);
+	Md_ConvDef(&set, &Type_double, md->type);
 
 	val = (val < 0.) ? - (long) (-val + 0.5) : (long) (val + 0.5);
 	factor = MdValSum(md->axis, md->data, &get, mask);
@@ -39,7 +39,7 @@ void md_adjust(mdmat *md, double val, unsigned mask)
 }
 
 
-double MdValSum(mdaxis *x, void *data, EfiKonv *get, unsigned mask)
+double MdValSum(mdaxis *x, void *data, EfiConv *get, unsigned mask)
 {
 	double val;
 	int i;
@@ -53,13 +53,13 @@ double MdValSum(mdaxis *x, void *data, EfiKonv *get, unsigned mask)
 			val += MdValSum(x->next, (char *) data + i * x->size, get, mask);
 		}
 	}
-	else	KonvData(get, &val, data);
+	else	ConvData(get, &val, data);
 
 	return val;
 }
 
 
-void MdRound(mdaxis *axis, void *data, EfiKonv *get, EfiKonv *set, double val,
+void MdRound(mdaxis *axis, void *data, EfiConv *get, EfiConv *set, double val,
 	double factor, unsigned mask)
 {
 	double *x;
@@ -68,7 +68,7 @@ void MdRound(mdaxis *axis, void *data, EfiKonv *get, EfiKonv *set, double val,
 
 	if	(axis == NULL)
 	{
-		KonvData(set, data, &val);
+		ConvData(set, data, &val);
 		return;
 	}
 

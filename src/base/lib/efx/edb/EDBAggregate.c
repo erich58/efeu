@@ -20,16 +20,18 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/EDB.h>
-#include <EFEU/konvobj.h>
+#include <EFEU/conv.h>
 
 #define	ERR_AGGR "[edb:aggr]$!: aggregate function $1 " \
 	"is not definied for data type $2.\n"
 
 static void aggr_clean (void *ptr)
 {
-	rd_deref(((EDBAggregate *) ptr)->next);
-	rd_deref(((EDBAggregate *) ptr)->sub);
-	rd_deref(((EDBAggregate *) ptr)->var);
+	EDBAggregate *x = ptr;
+	rd_deref(x->next);
+	rd_deref(x->sub);
+	rd_deref(x->var);
+	rd_deref(x->f_aggregate);
 	memfree(ptr);
 }
 
@@ -96,7 +98,7 @@ void EDBAggregateFunc (EDBAggregate *aggr, const char *name,
 
 	if	(!aggr)	return;
 
-	if	(base == tg || GetKonv(NULL, base, tg))
+	if	(base == tg || GetConv(NULL, base, tg))
 	{
 		rd_deref(aggr);
 		return;

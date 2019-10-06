@@ -444,7 +444,7 @@ static void f_konv(EfiFunc *func, void *rval, void **arg)
 static void f_j2m(EfiFunc *func, void *rval, void **arg)
 {
 	TimeSeries *ts = Val_TimeSeries(arg[0]);
-	TimeSeriesKonv_j2m(ts);
+	TimeSeriesConv_j2m(ts);
 	Val_TimeSeries(rval) = rd_refer(ts);
 }
 #endif

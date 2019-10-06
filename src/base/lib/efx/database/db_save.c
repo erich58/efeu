@@ -293,5 +293,6 @@ void DB_save(IO *io, EfiDB *db, int mode, EfiVirFunc *test, char *list)
 		data += db->type->size;
 	}
 
+	rd_deref(func);
 	memfree(ptr);
 }

@@ -208,7 +208,7 @@ struct EfiTypeStruct {
 	EfiVarTab *vtab;	/* Variablentabelle */
 	EfiFunc *fclean;	/* Destruktor, nicht überladbar */
 	EfiFunc *fcopy;		/* Kopierfunktion, nicht überladbar */
-	VecBuf konv;		/* Konvertierungen */
+	VecBuf conv;		/* Konvertierungen */
 	VecBuf par;		/* Parametertabelle */
 	EfiVirFunc *create;	/* Konstruktor, überladbar */
 	void *defval;		/* Vorgabewert */
@@ -626,12 +626,13 @@ typedef struct {
 	unsigned lval : 1;	/* L-Wert erforderlich */
 	unsigned cnst : 1;	/* Konstante */
 	unsigned promote : 1;	/* Geförderte Konvertierung */
-	unsigned nokonv : 29;	/* Keine Konvertierung erlaubt */
+	unsigned noconv : 29;	/* Keine Konvertierung erlaubt */
 } EfiFuncArg;
 
-#define	KONV_PROMOTION	0
-#define	KONV_STANDARD	1
-#define	KONV_RESTRICTED	2
+#define	CONV_PROMOTION	0
+#define	CONV_STANDARD	1
+#define	CONV_RESTRICTED	2
+#define	CONV_GENERATED	3
 
 #define	FUNC_PROMOTION	0x1	/* Geförderte Konvertierung */
 #define	FUNC_RESTRICTED	0x2	/* Eingeschränkte Konvertierung */
@@ -700,7 +701,7 @@ EfiFunc *VaGetFunc (EfiType *type, EfiVirFunc *tab,
 EfiFunc *XGetFunc (EfiType *type, EfiVirFunc *tab,
 	EfiFuncArg *arg, size_t narg);
 
-EfiFunc *NewFunc (void);
+EfiFunc *NewFunc (EfiType *type, char *name);
 void DelFunc (EfiFunc *func);
 void AddFunc (EfiFunc *func);
 
@@ -753,7 +754,6 @@ void SetupInt (void);
 void SetupFloat (void);
 void SetupMath (void);
 
-void StdKonvDef (void);
 void StdFuncDef (void);
 void StdPrintDef (void);
 void StdIoDef (void);
@@ -778,7 +778,7 @@ EfiObjList *Parse_list (IO *io, int endchar);
 EfiObjList *Parse_clist (IO *io, int endchar);
 EfiObjList *Parse_idx (IO *io);
 
-int ParseStringIndex;
+extern int ParseStringIndex;
 
 EfiObj *Parse_op (IO *io, int prior, EfiObj *left);
 EfiObj *Parse_cmd (IO *io);

@@ -21,7 +21,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/object.h>
-#include <EFEU/konvobj.h>
+#include <EFEU/conv.h>
 #include <EFEU/printobj.h>
 
 /*	Argumentvektor aufräumen
@@ -54,7 +54,7 @@ static int set_arg (EfiFunc *func, EfiFuncArg *arg, size_t narg, EfiObj *obj)
 	arg[narg].defval = obj;
 	arg[narg].type = obj->type;
 	arg[narg].lval = obj->lval ? 1 : 0;
-	arg[narg].nokonv = 1;
+	arg[narg].noconv = 1;
 	return 1;
 }
 
@@ -116,7 +116,7 @@ static EfiFuncArg *farg_list (EfiVirFunc *vtab,
 */
 
 static EfiFunc *get_func (EfiVirFunc *vtab, EfiFuncArg *arg,
-	size_t narg, EfiArgKonv **ptr)
+	size_t narg, EfiConv **ptr)
 {
 	EfiFunc *func;
 	StrBuf *sb;
@@ -157,7 +157,7 @@ static EfiFunc *get_func (EfiVirFunc *vtab, EfiFuncArg *arg,
 /*	Funktion auswerten
 */
 
-static EfiObj *eval_func (EfiFunc *func, EfiArgKonv *fkonv,
+static EfiObj *eval_func (EfiFunc *func, EfiConv *fkonv,
 	EfiFuncArg *arg, size_t narg)
 {
 	size_t fargdim;
@@ -171,14 +171,14 @@ static EfiObj *eval_func (EfiFunc *func, EfiArgKonv *fkonv,
 			if	(fkonv[i].func || fkonv[i].type)
 			{
 				obj = NewObj(func->arg[i].type, NULL);
-				ArgKonv(fkonv + i, obj->data,
+				ArgConv(fkonv + i, obj->data,
 					arg[i].defval->data);
 				UnrefObj(arg[i].defval);
 
 				arg[i].defval = obj;
 				arg[i].type = obj->type;
 				arg[i].lval = 0;
-				arg[i].nokonv = 1;
+				arg[i].noconv = 1;
 			}
 		}
 
@@ -248,7 +248,7 @@ static EfiObj *eval_func (EfiFunc *func, EfiArgKonv *fkonv,
 
 EfiObj *EvalVirFunc (EfiVirFunc *vtab, const EfiObjList *list)
 {
-	EfiArgKonv *fkonv;
+	EfiConv *fkonv;
 	EfiFuncArg *arg;
 	EfiFunc *func;
 	size_t argdim;
@@ -275,7 +275,7 @@ int ShowData (IO *io, const EfiType *type, const void *data)
 {
 	EfiVirFunc *vtab;
 	EfiFunc *func;
-	EfiArgKonv *fkonv;
+	EfiConv *fkonv;
 	EfiFuncArg *arg;
 	size_t maxdim;
 

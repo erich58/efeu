@@ -36,6 +36,11 @@ static int lc_print (const EfiType *st, const void *data, IO *io)
 	const LogControlEntry *entry;
 	int n;
 
+	if	(!lc)
+	{
+		return io_printf(io, "NULL");
+	}
+		
 	n = io_printf(io, "%s.%s", lc->name, LogLevelName(lc->level));
 
 	for (entry = lc->entry; entry; entry = entry->next)

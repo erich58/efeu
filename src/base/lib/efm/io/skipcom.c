@@ -231,7 +231,7 @@ static void save_cstyle (IO *io, StrBuf *buf, int flag)
 
 			if	(flag)		continue;
 			if	(indent < 0)	indent = pos;
-			if	(buf->pos)	;
+//			if	(buf->pos)	;
 		}
 		else if	(indent > pos)	indent = pos;
 

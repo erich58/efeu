@@ -21,7 +21,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/object.h>
-#include <EFEU/konvobj.h>
+#include <EFEU/conv.h>
 #include <EFEU/Debug.h>
 #include <EFEU/Op.h>
 
@@ -434,7 +434,7 @@ static EfiObj *cast_expr(void *par, const EfiObjList *list)
 
 static EfiObj *lcast_expr(void *par, const EfiObjList *list)
 {
-	return KonvLval(RefObj(list->obj), par);
+	return LvalCast(RefObj(list->obj), par);
 }
 
 /*	Komma - Operator

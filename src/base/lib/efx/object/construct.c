@@ -290,14 +290,13 @@ static EfiFunc *cf_create (const EfiObj *obj)
 {
 	EfiFunc *func;
 
-	func = NewFunc();
-	func->type = NULL;
+	func = NewFunc(NULL, NULL);
 	func->lretval = 0;
 	func->scope = NULL;
 	func->name = NULL;
 	func->bound = 0;
 	func->virfunc = 1;
-	func->weight = KONV_STANDARD;
+	func->weight = CONV_STANDARD;
 	func->eval = func_noarg;
 	func->par = NULL;
 	func->clean = Construct_clean;
@@ -314,7 +313,7 @@ static EfiFunc *cf_create (const EfiObj *obj)
 		func->arg->lval = 0;
 		func->arg->cnst = 0;
 		func->arg->promote = 0;
-		func->arg->nokonv = 0;
+		func->arg->noconv = 0;
 	}
 
 	return func;

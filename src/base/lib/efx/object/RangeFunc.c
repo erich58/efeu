@@ -46,7 +46,10 @@ void RangeFunc (EfiFunc *func, void *rval, void **arg)
 	CallFunc(&Type_int, &c, f_cmp, arg[0], arg[1]);
 
 	if	(c == 0)
+	{
+		rd_deref(f_cmp);
 		return;
+	}
 
 	if	(func->dim > 2)
 	{
@@ -65,6 +68,7 @@ void RangeFunc (EfiFunc *func, void *rval, void **arg)
 	{
 		log_note(NULL, "[efmain:217]", NULL);
 		*ptr = NewObjList(ConstObj(func->arg[1].type, arg[1]));
+		rd_deref(f_cmp);
 		return;
 	}
 
@@ -79,4 +83,7 @@ void RangeFunc (EfiFunc *func, void *rval, void **arg)
 		ptr = &(*ptr)->next;
 	}
 	while (d != 0);
+
+	rd_deref(f_step);
+	rd_deref(f_cmp);
 }

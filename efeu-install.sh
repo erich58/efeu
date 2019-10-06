@@ -151,7 +151,7 @@ if [ -d etc ]; then
 	find etc -depth | cpio -padm -R 0:0 $TMP/$config
 fi
 
-for x in bin lib man include
+for x in bin lib man include share
 do
 	test -d $x || continue
 	echo "Preparing files in $x"

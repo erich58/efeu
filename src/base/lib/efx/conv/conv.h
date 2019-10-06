@@ -22,8 +22,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	EFEU_konvobj_h
-#define	EFEU_konvobj_h	1
+#ifndef	EFEU_conv_h
+#define	EFEU_conv_h	1
 
 #include <EFEU/efmain.h>
 #include <EFEU/efio.h>
@@ -38,7 +38,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	D_PROMOTE	01	/* Geförderte Konvertierung */
 #define	D_EXPAND	02	/* Expansion eines Basisobjekts */
-#define	D_KONVERT	04	/* Normale Konvertierung */
+#define	D_CONVERT	04	/* Normale Konvertierung */
 
 #define	D_BASE		010	/* Kompatible Basis */
 #define	D_ACCEPT	020	/* Akzeptierte Übernahme */
@@ -53,35 +53,26 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 typedef struct {
-	EfiFunc *func;
-	EfiType *type;
-	int dist;
-} EfiArgKonv;
+	EfiFunc *func;	/* Konvertierungsfunktion */
+	EfiType *type;	/* Konvertierungsbasis */
+	int dist;	/* Konvertierungsdistanz */
+} EfiConv;
 
-EfiArgKonv *GetArgKonv (const EfiType *old, const EfiType *new);
-int ArgKonvDist (const EfiType *old, const EfiType *new);
 
-EfiObj *KonvObj (const EfiObj *obj, EfiType *def);
-EfiObj *KonvLval (EfiObj *obj, EfiType *def);
-void ArgKonv (EfiArgKonv *konv, void *tg, void *src);
+EfiConv *GetArgConv (const EfiType *src, const EfiType *tg);
+void ArgConv (EfiConv *conv, void *tg, void *src);
+
+EfiObj *ConvObj (const EfiObj *obj, EfiType *def);
+EfiObj *LvalCast (EfiObj *obj, EfiType *def);
 
 EfiFunc *SearchFunc (EfiVirFunc *tab, EfiFuncArg *arg,
-	size_t narg, EfiArgKonv **konv);
-
-EfiFunc *GetKonvFunc(const EfiType *old, const EfiType *new);
-
+	size_t narg, EfiConv **conv);
 
 /*	Objekte konvertieren
 */
 
-typedef struct {
-	EfiFunc *func;	/* Konvertierungsfunktion */
-	EfiType *type;	/* Konvertierungsbasis */
-	int dist;	/* Konvertierungsdistanz */
-} EfiKonv;
+EfiConv *GetConv (EfiConv *buf, const EfiType *otype, const EfiType *ntype);
+void ConvData (EfiConv *conv, void *tg, void *src);
+int ConvDist (const EfiType *src, const EfiType *tg);
 
-EfiKonv *GetKonv (EfiKonv *buf, const EfiType *otype, const EfiType *ntype);
-void KonvData (EfiKonv *konv, void *tg, void *src);
-int KonvDist (const EfiType *old, const EfiType *new);
-
-#endif	/* EFEU/konvobj.h */
+#endif	/* EFEU/conv_h */

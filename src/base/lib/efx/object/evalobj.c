@@ -21,7 +21,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/object.h>
-#include <EFEU/konvobj.h>
+#include <EFEU/conv.h>
 
 
 void UnrefEval(EfiObj *obj)
@@ -59,7 +59,7 @@ EfiObj *EvalObj(EfiObj *x, EfiType *type)
 		*/
 		else if	(type)
 		{
-			x = KonvObj(y, type);
+			x = ConvObj(y, type);
 			UnrefObj(y);
 			break;
 		}

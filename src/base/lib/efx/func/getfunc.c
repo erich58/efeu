@@ -21,7 +21,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/object.h>
-#include <EFEU/konvobj.h>
+#include <EFEU/conv.h>
 
 typedef struct {
 	EfiFunc *func;	/* Konvertierungsfunktion */
@@ -48,7 +48,7 @@ EfiFunc *XGetFunc (EfiType *type, EfiVirFunc *vtab,
 {
 	FUNCDEF *def;
 	EfiFunc *func;
-	EfiArgKonv *konv;
+	EfiConv *konv;
 	size_t i, j;
 
 	if	(vtab == NULL)	return NULL;
@@ -96,18 +96,16 @@ EfiFunc *XGetFunc (EfiType *type, EfiVirFunc *vtab,
 
 /*	Neue Funktion definieren
 */
-	func = NewFunc();
 
-	if	(type == &Type_obj)	func->type = NULL;
-	else if	(type == NULL)		func->type = def->func->type;
-	else				func->type = type;
+	if	(type == &Type_obj)	type = NULL;
+	else if	(type == NULL)		type = def->func->type;
 
-	func->name = mstrcpy(def->func->name);
+	func = NewFunc(type, mstrcpy(def->func->name));
 	func->arg = memalloc(narg * sizeof(EfiFuncArg));
 	func->eval = GetFuncEval;
 	func->dim = narg;
 	func->bound = def->func->bound;
-	func->weight = def->func->weight;
+	func->weight = CONV_GENERATED;
 	func->virfunc = def->func->virfunc;
 	func->vaarg = 0;
 	func->par = def;
@@ -119,12 +117,13 @@ EfiFunc *XGetFunc (EfiType *type, EfiVirFunc *vtab,
 		func->arg[i].name = mstrcpy(arg[i].name);
 		func->arg[i].desc = NULL;
 		func->arg[i].lval = arg[i].lval;
-		func->arg[i].nokonv = 1;
+		func->arg[i].noconv = 1;
 		func->arg[i].cnst = 1;
 		func->arg[i].defval = NULL;
 	}
 
-	return func;
+	AddFunc(func);
+	return rd_refer(func);
 }
 
 
@@ -153,7 +152,7 @@ EfiFuncArg *VaFuncArg (int narg, va_list list)
 	{
 		arg[i].type = va_arg(list, EfiType *);
 		arg[i].lval = va_arg(list, int);
-		arg[i].nokonv = 0;
+		arg[i].noconv = 0;
 		arg[i].name = NULL;
 		arg[i].desc = NULL;
 		arg[i].defval = NULL;

@@ -21,75 +21,70 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/object.h>
-#include <EFEU/konvobj.h>
+#include <EFEU/conv.h>
 
-static EfiFunc *KonvFunc(const EfiType *old, const EfiType *new)
+static EfiFunc *ConvFunc(const EfiType *src, const EfiType *tg)
 {
 	EfiFunc **ftab;
 	int i;
 
-	if	(old == NULL)	return NULL;
+	if	(src == NULL)	return NULL;
 
-	ftab = old->konv.data;
+	ftab = src->conv.data;
 
-	for (i = 0; i < old->konv.used; i++)
-		if (ftab[i]->type == new) return ftab[i];
+	for (i = 0; i < src->conv.used; i++)
+		if (ftab[i]->type == tg) return ftab[i];
 
 	return NULL;
 }
 
-EfiArgKonv *GetArgKonv(const EfiType *old, const EfiType *new)
+EfiConv *GetArgConv(const EfiType *src, const EfiType *tg)
 {
-	static EfiArgKonv buf;
+	static EfiConv buf;
 
 	buf.type = NULL;
 	buf.dist = 0;
 
-	for (; new != NULL; new = new->dim ? NULL : new->base)
+	for (; tg != NULL; tg = tg->dim ? NULL : tg->base)
 	{
 		buf.func = NULL;
 
-		if	(old == new)	return &buf;
+		if	(src == tg)	return &buf;
 
-		if	((buf.func = KonvFunc(old, new)))
+		if	((buf.func = ConvFunc(src, tg)))
 		{
 			switch (buf.func->weight)
 			{
-			case KONV_PROMOTION:
+			case CONV_PROMOTION:
 				buf.dist |= D_PROMOTE;
 				break;
-			case KONV_RESTRICTED:
+			case CONV_RESTRICTED:
+			case CONV_GENERATED:
 				buf.dist |= D_RESTRICTED;
 				break;
 			default:
-				buf.dist |= D_KONVERT;
+				buf.dist |= D_CONVERT;
 				break;
 			}
 
 			return &buf;
 		}
 
-		buf.type = (EfiType *) new;
+		buf.type = (EfiType *) tg;
 		buf.dist = D_EXPAND;
 	}
 
 	return NULL;
 }
 
-void ArgKonv(EfiArgKonv *konv, void *tg, void *src)
+void ArgConv(EfiConv *conv, void *tg, void *src)
 {
-	if	(konv->func)
+	if	(conv->func)
 	{
-		konv->func->eval(konv->func, tg, &src);
+		conv->func->eval(conv->func, tg, &src);
 	}
-	else if	(konv->type)
+	else if	(conv->type)
 	{
-		CopyData(konv->type, tg, src);
+		CopyData(conv->type, tg, src);
 	}
-}
-
-int ArgKonvDist (const EfiType *old, const EfiType *new)
-{
-	EfiArgKonv *konv = GetArgKonv(old, new);
-	return konv ? konv->dist : D_RESTRICTED;
 }

@@ -50,7 +50,7 @@ EfiType *NewType (char *name)
 	type = memalloc(sizeof(EfiType));
 	memset(type, 0, sizeof *type);
 	type->name = name;
-	vb_init(&type->konv, 8, sizeof(EfiFunc *));
+	vb_init(&type->conv, 8, sizeof(EfiFunc *));
 	vb_init(&type->par, 16, sizeof(EfiParClass *));
 	return type;
 }

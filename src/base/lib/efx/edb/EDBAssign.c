@@ -20,7 +20,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/EDB.h>
-#include <EFEU/konvobj.h>
+#include <EFEU/conv.h>
 
 static void assign_clean (void *ptr)
 {
@@ -85,7 +85,7 @@ void EDBAssignFunc (EDBAssign *assign, EfiType *tg, EfiType *base)
 
 	if	(!assign)	return;
 
-	if	(base == tg || GetKonv(NULL, base, tg))
+	if	(base == tg || GetConv(NULL, base, tg))
 	{
 		rd_deref(assign);
 		return;

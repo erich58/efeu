@@ -59,10 +59,17 @@ static void add_key (EfiType *type, IO *io, int delim)
 	int start;
 	int c;
 	char *name;
+	char *desc;
 
+	io_ctrl(io, IOPP_COMMENT, NULL);
 	start = NextEnumCode(type->base, 0);
 	c = io_eat(io, " \t\n,");
-	io_ctrl(io, IOPP_COMMENT, NULL);
+
+	if	(io_ctrl(io, IOPP_COMMENT, &desc) != EOF)
+	{
+		mtrim(desc);
+		type->desc = desc;
+	}
 
 	while (c != EOF)
 	{
@@ -77,6 +84,16 @@ static void add_key (EfiType *type, IO *io, int delim)
 			io_getc(io);
 			name = io_xgets(io, "\"");
 			io_getc(io);
+		}
+		else if	(c == '.')
+		{
+			name = io_mgets(io, "!.");
+
+			if	(strcmp(name, "...") == 0)
+			{
+				type->flags |= TYPE_EXPAND;
+				break;
+			}
 		}
 		else	name = io_getname(io);
 

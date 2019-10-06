@@ -28,7 +28,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/efmain.h>
 #include <EFEU/efio.h>
 #include <EFEU/object.h>
-#include <EFEU/konvobj.h>
+#include <EFEU/conv.h>
 
 /*	Ausgabefilter und Druckerkontrolle
 */

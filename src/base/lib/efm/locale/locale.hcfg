@@ -58,6 +58,8 @@ typedef struct {
 	char *name;
 	char **month;
 	char **weekday;
+	char **month_abbrev;
+	char **weekday_abbrev;
 } LCDateDef;
 
 extern LCDateDef LCDate[];

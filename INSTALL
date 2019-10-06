@@ -3,8 +3,8 @@ PRELIMINARIES
 The following packages are needed:
 
 *	make
-*	gcc
-*	libreadline-dev
+*	C development (gcc, clang)
+*	readline developmend (libreadline-dev)
 
 The following packages are needed for documentation:
 
@@ -14,9 +14,10 @@ The following packages are needed for documentation:
 
 The following packages are recommended:
 
-*	X11 development
-*	tcl/tk development
-*	postgresql development
+*	curses development (libncurses-dev)
+*	X11 development (libX11-dev)
+*	tcl/tk development (tk-dev)
+*	postgresql development (libpq-dev)
 
 COMPILING
 

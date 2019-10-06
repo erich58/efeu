@@ -1,8 +1,10 @@
 VORBEREITUNG
 
 Folgende Softwarepakete werden benötigt:
-*	C-Development
-*	readline-Development
+
+*	make
+*	C-Development (gcc, clang)
+*	Readline-Developmend (libreadline-dev)
 
 Folgende Softwarepakete werden für die Dokumentation benötigt:
 
@@ -11,9 +13,11 @@ Folgende Softwarepakete werden für die Dokumentation benötigt:
 *	texlive-latex-extra
 
 Folgende Softwarepakete werden empfohlen:
-*	x11-Development
-*	tcl/tk-Development
-*	postgresql-Development
+
+*	curses-Development (libncurses-dev)
+*	x11-Development (libX11-dev)
+*	tcl/tk-Development (tk-dev)
+*	postgresql-Development (libpq-dev)
 
 ÜBERSETZEN
 
