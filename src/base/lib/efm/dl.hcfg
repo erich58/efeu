@@ -36,7 +36,7 @@ If not, write to the Free Software Foundation, Inc.,
 #ifndef EFEU_dl_h
 #define EFEU_dl_h	1
 
-@set -r dl.smh -f '-ml LD_DL'
+@set -f '-ldl'
 @eval include dlfcn.h
 @add -i dlfcn.h
 

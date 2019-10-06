@@ -1,3 +1,7 @@
+EFEU 4.0
+
+*	Replace |shmkf| by using gnu-make extensions and scripts.
+
 EFEU 3.4
 
 *	Refactoring build concept.

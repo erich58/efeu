@@ -10,4 +10,5 @@
 ^etc
 ^save
 \.swp$
+/\.build
 nohup.out.*
