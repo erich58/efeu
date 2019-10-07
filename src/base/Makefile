@@ -1,4 +1,12 @@
 include Setup.mak
 
+Modules= lib
+
 all clean::
-	$(MAKE) -C lib $@
+	for m in $(Modules); \
+	do \
+		printf '############################################\n'; \
+		printf '# %-40s #\n' $$m; \
+		printf '############################################\n'; \
+		make -C $$m $@ || exit 1; \
+	done

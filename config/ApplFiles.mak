@@ -22,12 +22,12 @@ $(BUILD)/hlp.files::
 	@$(_ApplFiles_update) $@ find . -name '*.hlp'
 
 $(BUILD)/hlp.rule: $(BUILD)/hlp.files
-	$(_ApplFiles_cfgrule) $< $(LIB)/efeu/%L/help/%F > $@
+	@$(_ApplFiles_cfgrule) $< $(LIB)/efeu/%L/help/%F > $@
 
 $(BUILD)/msg.files::
-	$(_ApplFiles_update) $@ find . -name '*.msg'
+	@$(_ApplFiles_update) $@ find . -name '*.msg'
 
 $(BUILD)/msg.rule: $(BUILD)/msg.files
-	$(_ApplFiles_cfgrule) $< $(LIB)/efeu/%L/messages/%F > $@
+	@$(_ApplFiles_cfgrule) $< $(LIB)/efeu/%L/messages/%F > $@
 
 endif

@@ -1,4 +1,13 @@
 include Setup.mak
 
+Modules= efm md
+
 all clean::
-	$(MAKE) -C efm $@
+	@for m in $(Modules); \
+	do \
+		printf '+------------------------------------------+\n'; \
+		printf '| %-40s |\n' $$m; \
+		printf '+------------------------------------------+\n'; \
+		make -C $$m $@ || exit 1; \
+	done
+	@printf -- '--------------------------------------------\n';
