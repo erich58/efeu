@@ -17,11 +17,11 @@ EFEU_DIRS = $(INC) $(BIN) $(LIB)
 # local source files
 
 VPATH = $(shell find -L . -type d)
-HCFG = $(wildcard *.hcfg */*.hcfg)
-HDR = $(wildcard *.h */*.h)
-SRC = $(wildcard *.c */*.c)
+SRC_HCFG = $(wildcard *.hcfg */*.hcfg)
+SRC_H = $(wildcard *.h */*.h)
+SRC_C = $(wildcard *.c */*.c)
 
-OBJ = $(patsubst %.c,$(BUILD)/%.o,$(notdir $(SRC)))
+OBJ = $(patsubst %.c,$(BUILD)/%.o,$(notdir $(SRC_C)))
 
 all:: files
 
@@ -48,8 +48,8 @@ ifndef	EFEU_INCLUDE
 EFEU_INCLUDE = $(INC)/EFEU
 endif
 
-FILES = $(patsubst %.hcfg,$(EFEU_INCLUDE)/%.h,$(notdir $(HCFG)))
-FILES += $(patsubst %.h,$(EFEU_INCLUDE)/%.h,$(notdir $(HDR)))
+FILES = $(patsubst %.hcfg,$(EFEU_INCLUDE)/%.h,$(notdir $(SRC_HCFG)))
+FILES += $(patsubst %.h,$(EFEU_INCLUDE)/%.h,$(notdir $(SRC_H)))
 
 files:: $(FILES)
 
@@ -58,7 +58,7 @@ clean::
 
 # update configuration header
 
-HRULES = $(patsubst %.hcfg,$(BUILD)/%.hrule,$(notdir $(HCFG)))
+HRULES = $(patsubst %.hcfg,$(BUILD)/%.hrule,$(notdir $(SRC_HCFG)))
 
 include $(HRULES)
 
