@@ -1,6 +1,6 @@
 include Setup.mak
 
-Modules= efm md
+Modules= efm md math
 
 all clean::
 	@for m in $(Modules); \
