@@ -7,6 +7,16 @@ ifeq ($(wildcard $(TOP)/CHANGELOG),)
 $(error "$$(TOP)/CHANGELOG not found")
 endif
 
+# The default Target
+
+all::
+clean::
+
+ifneq ($(NAME),config)
+all::
+	make -C $(CFG) $@
+endif
+
 include $(CFG)/CC.mak
 
 EFEU_VERSION=$(shell sed -e 1q $(TOP)/CHANGELOG)

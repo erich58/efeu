@@ -1,6 +1,6 @@
 #!/bin/sh
-# :*:create rules for configuration files
-# :de:Regeln für Konfigurationsdateien
+# :*:create make rules for configuration files
+# :de:Make-Regeln für Konfigurationsdateien
 #
 # $Copyright (C) 2019 Erich Frühstück
 # This file is part of EFEU.
@@ -65,11 +65,11 @@ esac
 
 #	Parse command args
 
-lang=
 all=all
 clean=clean
+lang=
 
-while getopts "a:c:l:t:" opt
+while getopts "a:c:l:" opt
 do
 	case $opt in
 	a)	all="$OPTARG";;
@@ -103,6 +103,13 @@ BEGIN {
 	f = substr($0, n + 1);
 	d = substr($0, 1, n - 1);
 
+	n = match(f, "[.][^.]*$");
+
+	if	(n)
+	{
+		b = substr(f, 1, n - 1);
+	}
+
 	n = match(d, pattern);
 
 	if	(n)
@@ -117,6 +124,7 @@ BEGIN {
 
 	t = tpl;
 	gsub("/%L", l, t);
+	gsub("%B", b, t);
 	gsub("%F", f, t);
 	gsub("%D", d, t);
 	printf("%s:: %s\n\n", all, t);
