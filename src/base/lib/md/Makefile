@@ -5,3 +5,4 @@ LDFLAGS += -lefx -lefm -ldl -lm
 
 include $(CFG)/Library.mak
 include $(CFG)/ApplFiles.mak
+include $(CFG)/MagicFiles.mak
