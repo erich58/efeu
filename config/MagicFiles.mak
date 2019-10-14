@@ -12,7 +12,7 @@ endif
 -include $(BUILD)/magic.rule
 
 $(BUILD)/magic.files::
-	@$(BIN)/efeu-update -v $@ find . -name '*.magic'
+	@$(BIN)/efeu-update $@ find . -name '*.magic'
 
 $(BUILD)/magic.rule: $(BUILD)/magic.files
 	$(BIN)/efeu-mkrule -a files $< $(MAGIC)/%B > $@

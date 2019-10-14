@@ -10,19 +10,19 @@ include $(CFG)/EFEU.mak
 -include $(BUILD)/msg.rule
 
 $(BUILD)/cnf.files::
-	@$(BIN)/efeu-update -v $@ find . -name '*.cnf'
+	@$(BIN)/efeu-update $@ find . -name '*.cnf'
 
 $(BUILD)/cnf.rule: $(BUILD)/cnf.files $(BIN)/efeu-mkrule
 	@$(BIN)/efeu-mkrule -a files -l de $< $(LIB)/efeu/%L/config/%F > $@
 
 $(BUILD)/hlp.files::
-	@$(BIN)/efeu-update -v $@ find . -name '*.hlp'
+	@$(BIN)/efeu-update $@ find . -name '*.hlp'
 
 $(BUILD)/hlp.rule: $(BUILD)/hlp.files $(BIN)/efeu-mkrule
 	@$(BIN)/efeu-mkrule -a files -l de $< $(LIB)/efeu/%L/help/%F > $@
 
 $(BUILD)/msg.files::
-	@$(BIN)/efeu-update -v $@ find . -name '*.msg'
+	@$(BIN)/efeu-update $@ find . -name '*.msg'
 
 $(BUILD)/msg.rule: $(BUILD)/msg.files $(BIN)/efeu-mkrule
 	@$(BIN)/efeu-mkrule -a files -l de $< $(LIB)/efeu/%L/messages/%F > $@

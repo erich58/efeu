@@ -86,7 +86,7 @@ then
 	[ "$verbose" ] && echo "$tg is up to date"
 else
 	mv $tmp $tg
-	[ "$verbose" ] && echo "$@ > $tg"
+	echo "$@ > $tg"
 fi
 
 exit 0

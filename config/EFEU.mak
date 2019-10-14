@@ -50,7 +50,7 @@ clean::
 	rm -rf $(BUILD)
 
 $(BUILD)::
-	mkdir -p $@
+	@mkdir -p $@
 
 # header files
 
@@ -72,11 +72,11 @@ HRULES = $(patsubst %.hcfg,$(BUILD)/%.hrule,$(notdir $(SRC_HCFG)))
 
 include $(HRULES)
 
-CONFIG_UPDATE = sh $(CFG)/efeu-config.sh update
+CONFIG_UPDATE = $(BIN)/efeu-config -v update
 
 $(BUILD)/%.hrule: %.hcfg
 	@mkdir -p $(@D)
-	printf '%s::\n\t$(CONFIG_UPDATE) %s $$@\n' \
+	printf '%s::\n\t@$(CONFIG_UPDATE) %s $$@\n' \
 		$(EFEU_INCLUDE)/$(@F:.hrule=.h) $< > $@
 
 # installing header files
