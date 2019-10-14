@@ -70,6 +70,8 @@ clean::
 
 HRULES = $(patsubst %.hcfg,$(BUILD)/%.hrule,$(notdir $(SRC_HCFG)))
 
+$(HRULES): $(CFG)/EFEU.mak
+
 include $(HRULES)
 
 CONFIG_UPDATE = $(BIN)/efeu-config update
@@ -77,7 +79,7 @@ CONFIG_UPDATE = $(BIN)/efeu-config update
 $(BUILD)/%.hrule: %.hcfg
 	@mkdir -p $(@D)
 	printf '%s::\n\t@$(CONFIG_UPDATE) %s $$@\n' \
-		$(EFEU_INCLUDE)/$(@F:.hrule=.h) $< > $@
+		$(EFEU_INCLUDE)/$(@F:.hrule=.h) '$$(abspath $<)' > $@
 
 # installing header files
 
