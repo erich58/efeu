@@ -72,7 +72,7 @@ HRULES = $(patsubst %.hcfg,$(BUILD)/%.hrule,$(notdir $(SRC_HCFG)))
 
 include $(HRULES)
 
-CONFIG_UPDATE = $(BIN)/efeu-config -v update
+CONFIG_UPDATE = $(BIN)/efeu-config update
 
 $(BUILD)/%.hrule: %.hcfg
 	@mkdir -p $(@D)
