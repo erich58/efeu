@@ -39,7 +39,9 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/config.h>
 #include <unistd.h>
 
-@set -r readline.smh -f '-mc RL_INC -ml RL_LIB'
+#set -r readline.smh -f '-mc RL_INC -ml RL_LIB'
+@eval ldflags -lreadline -lncurses
+@set -f -lreadline
 @eval include readline.h
 @add -i readline.h
 @eval success HAS_READLINE  'readline(NULL);'
