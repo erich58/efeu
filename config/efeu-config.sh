@@ -320,6 +320,14 @@ include)
 #include <$1>"
 	success="echo #include <$1>"
 	;;
+ldflags)
+# $Description
+# |ldflags| <name>
+#	:*:includes header <name> if availabel.
+#	:de:Bindet header <name> ein, falls verfügbar.
+	flags="$flags $*"
+	success="echo $*"
+	;;
 proto)
 # $Description
 # |proto| <proto>
@@ -338,6 +346,26 @@ typedef)
 	name=$1; shift
 	failure="echo typedef $* $name;"
 	body="$name x;"
+	;;
+and)
+# $Description
+# |and| <expr1> <expr2> ...
+#	:*:evalate expressions until one is false
+#	:de:Ausdrücke auswerten bis der erste falsch ergibt
+	for x
+	do
+		$eval $x || exit 1
+	done
+	;;
+or)
+# $Description
+# |or| <expr1> <expr2> ...
+#	:*:evalate expressions until one is true
+#	:de:Ausdrücke auswerten bis der Erste wahr ergibt
+	for x
+	do
+		$eval $x && break
+	done
 	;;
 *)
 	printf "$msg2" $type
@@ -379,6 +407,14 @@ return 0;
 }
 EOF
 
+cat >> $tmp/Makefile <<EOF
+all:: tprog
+
+tprog: tprog.c
+	$CC -o \$@ \$< $flags
+EOF
+
+
 if	[ $verbose -gt 0 ]; then
 	echo "=== src ===" >&2
 	cat $tmp/tprog.c >&2
@@ -386,11 +422,10 @@ fi
 
 if	[ $verbose -gt 0 ]; then
 	echo "=== build ===" >&2
-	echo $CC $flags -o tprog tprog.c >&2
+	cat $tmp/Makefile >&2
 fi
 
-(cd $tmp; $CC $flags -o tprog tprog.c) 2> $tmp/Error > $tmp/Log
-
+make -C $tmp 2> $tmp/Error > $tmp/Log
 stat=1
 
 if	[ -x $tmp/tprog ]
