@@ -39,14 +39,13 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/config.h>
 #include <unistd.h>
 
-#set -r readline.smh -f '-mc RL_INC -ml RL_LIB'
-@eval ldflags -lreadline -lncurses
-@set -f -lreadline
-@eval include readline.h
-@add -i readline.h
+//@set -r @TOP@/Setup.mak -r @CWD@/Rules.mak
+@set -f -lreadline -f -lncurses
+@eval include readline/readline.h
+@add -i readline/readline.h
 @eval success HAS_READLINE  'readline(NULL);'
-@eval include history.h
-@add -i history.h
+@eval include readline/history.h
+@add -i readline/history.h
 @eval success HAS_HISTORY 'read_history(NULL);'
 
 #endif	/* EFEU/rl_config.h */

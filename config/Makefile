@@ -1,6 +1,6 @@
 include Setup.mak
+
 include $(CFG)/EFEU.mak
-include $(CFG)/CC.mak
 
 SCRIPTS = $(wildcard *.sh)
 FILES = $(patsubst %.sh,$(BIN)/%,$(SCRIPTS))

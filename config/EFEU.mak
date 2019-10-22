@@ -27,7 +27,6 @@ EFEU_DIRS = $(INC) $(BIN) $(LIB)
 # local source files
 
 VPATH = $(shell find -L . -type d)
-SRC_HCFG = $(wildcard *.hcfg */*.hcfg)
 SRC_H = $(wildcard *.h */*.h)
 SRC_C = $(wildcard *.c */*.c)
 
@@ -52,36 +51,18 @@ clean::
 $(BUILD)::
 	@mkdir -p $@
 
-# header files
+# installing header files
 
 ifndef	EFEU_INCLUDE
 EFEU_INCLUDE = $(INC)/EFEU
 endif
 
-FILES = $(patsubst %.hcfg,$(EFEU_INCLUDE)/%.h,$(notdir $(SRC_HCFG)))
-FILES += $(patsubst %.h,$(EFEU_INCLUDE)/%.h,$(notdir $(SRC_H)))
+FILES = $(patsubst %.h,$(EFEU_INCLUDE)/%.h,$(notdir $(SRC_H)))
 
 files:: $(FILES)
 
 clean::
 	rm -f $(FILES)
-
-# update configuration header
-
-HRULES = $(patsubst %.hcfg,$(BUILD)/%.hrule,$(notdir $(SRC_HCFG)))
-
-$(HRULES): $(CFG)/EFEU.mak
-
-include $(HRULES)
-
-CONFIG_UPDATE = $(BIN)/efeu-config update
-
-$(BUILD)/%.hrule: %.hcfg
-	@mkdir -p $(@D)
-	printf '%s::\n\t@$(CONFIG_UPDATE) %s $$@\n' \
-		$(EFEU_INCLUDE)/$(@F:.hrule=.h) '$$(abspath $<)' > $@
-
-# installing header files
 
 $(EFEU_INCLUDE)/%.h : %.h
 	@mkdir -p $(@D)

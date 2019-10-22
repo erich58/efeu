@@ -43,6 +43,9 @@ esac
 # s|
 #	:*:read function body from standard input
 #	:de:Funktionsrumpf von der Standardeingabe lesen
+# t:name|
+#	:*:top directory of project (default: current working directory)
+#	:de:Hauptverzeichnis des Pojekts (Vorgabe: aktuelles Arbeitsverzeichnis)
 # c:name|
 #	:*:C-Compiler
 #	:de:C-Kompiler zum Testen
@@ -52,6 +55,9 @@ esac
 # I:hdr|
 #	:*:header for source if exists
 #	:de:Headerfile, falls existiert, einbinden
+# r:name|
+#	:*:include file with additional make parameters
+#	:de:Einbindedatei mit zusätzlichen Parametern für make
 # f:flgs|
 #	:*:compiler flags
 #	:de:Flags für C-Kompiler
@@ -86,20 +92,26 @@ esac
 #	Parse command args
 
 flags=""
+rules=""
 verbose=0
 execute=0
 stdin=0
 incl=""
+cwd=`pwd`
+top="$cwd"
 eval="$cmd"
 
-while getopts "hvxsc:f:I:i:" opt
+while getopts "hvxsc:t:f:r:I:i:" opt
 do
 	case $opt in
 	v)	verbose=1; eval="$eval -v";;
 	x)	execute=1;;
 	s)	stdin=1;;
 	c)	CC="$OPTARG";;
+	t)	top="$OPTARG"; eval="$eval -t $OPTARG";;
 	f)	flags="$flags $OPTARG";;
+	r)	rules="$rules
+include $OPTARG";;
 	I)	incl="$incl
 `$0 include $OPTARG`";;
 	i)	incl="$incl
@@ -172,13 +184,29 @@ fi
 # ein spezieller Test durchgeführt.
 #
 # :*:
-# Every occurance of |@@SRC@@| in the template file would be replaced by
-# the name of the template file and |@@CMD@@| by |$!|. The following keywords
-# at start of a line are accepted:
+# Speciel keywords are subsituted by predefined values:
+# :de:Einzelne Schlüsselwörter werden durch vordefinierte Parameter ersetzt:
+#
+# |@@TOP@@|
+#	:*:The name of the top directrory (option -t).
+#	:de:Der Name des Hauptverzeichnisses (Option -t).
+#
+# |@@CWD@@|
+#	:*:The name of the current working directory.
+#	:de:Der Name des aktuellen Arbeitsverzeichnisses.
+#
+# |@@SRC@@|
+#	:*:The name of the template file.
+#	:de:Der Name der Schablonendatei.
+#
+# |@@CMD@@|
+#	:*:the name of the script |$!| for recurisive calling.
+#	:*:Der Name dieses Skripts |$!| für einen rekursiven Aufruf.
+#
+# :*:
+# The following keywords at start of a line are accepted:
 # :de:
-# In der Schablonendatei wird jedes Vorkommen von |@@SRC@@| durch den
-# Namen der Schablonendatei und |@@CMD@@| durch |$!| ersetzt. Die folgenden
-# Schlüsselwörter am Anfang der Datei werden akzeptiert:
+# Die folgenden Schlüsselwörter am Anfang der Datei werden akzeptiert:
 #
 # |@@set| <flags>
 #	:*:sets options for the following calls to |$!|.
@@ -216,12 +244,14 @@ file)
 # |file| [<name>]
 #	:*:inserts system specific parameters in file <name>
 #	:de:Fügt in Datei <name> systemspezifische Parameter ein
-	exec awk -v cfg_eval="$eval" '
+	exec awk -v top="$top" -v cfg_eval="$eval" -v cwd="$cwd" '
 BEGIN { pipe = "" }
-/@SRC@/ { gsub("@SRC@", FILENAME) }
+/@TOP@/ { gsub("@TOP@", top) }
+/@CWD@/ { gsub("@CWD@", cwd) }
 /@CMD@/ { gsub("@CMD@", cfg_eval) }
+/@SRC@/ { gsub("@SRC@", FILENAME) }
 /^@include/ { gsub("^@include[ 	]*", "");
-	if (!system(cfg_eval " include " $0)) flags = flags " -i " $0;
+	if (!system(cfg_eval flags " include " $0)) flags = flags " -i " $0;
 	next }
 /^@set/ { gsub("^@set", ""); flags = $0; next }
 /^@add/ { gsub("^@add", flags); flags = $0; next }
@@ -323,8 +353,8 @@ include)
 ldflags)
 # $Description
 # |ldflags| <name>
-#	:*:includes header <name> if availabel.
-#	:de:Bindet header <name> ein, falls verfügbar.
+#	:*:links again <name> if availabel.
+#	:de: Verwendet Bibliothek <name> ein, falls verfügbar.
 	flags="$flags $*"
 	success="echo $*"
 	;;
@@ -408,21 +438,29 @@ return 0;
 EOF
 
 cat >> $tmp/Makefile <<EOF
+TOP=$top
+
+CC=$CC
+CPPFLAGS=
+CFLAGS=
+LDFLAGS=
+
+all::
+clean::
+
+$rules
+
 all:: tprog
 
 tprog: tprog.c
-	$CC -o \$@ \$< $flags
+	\$(CC) -o \$@ \$< \$(CPPFLAGS) \$(CFLAGS) $flags \$(LDFLAGS)
 EOF
-
-
-if	[ $verbose -gt 0 ]; then
-	echo "=== src ===" >&2
-	cat $tmp/tprog.c >&2
-fi
 
 if	[ $verbose -gt 0 ]; then
 	echo "=== build ===" >&2
 	cat $tmp/Makefile >&2
+	echo "=== src ===" >&2
+	cat $tmp/tprog.c >&2
 fi
 
 make -C $tmp 2> $tmp/Error > $tmp/Log
