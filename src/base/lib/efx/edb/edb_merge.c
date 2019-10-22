@@ -141,6 +141,8 @@ EDB *edb_merge (CmpDef *cdef, EDB **tab, size_t dim)
 		EDB *edb;
 		int n;
 		
+		edb = edb_create(tab[0]->obj->type);
+
 		mpar = memalloc(sizeof mpar[0] + dim * sizeof mpar->tab[0]);
 		mpar->tab = (void *) (mpar + 1);
 		mpar->dim = dim;
@@ -151,7 +153,6 @@ EDB *edb_merge (CmpDef *cdef, EDB **tab, size_t dim)
 		for (n = 0; n < dim; n++)
 			entry_init(mpar->tab + n, tab[n]);
 
-		edb = edb_create(tab[0]->obj->type);
 		edb->read = mpar_read;
 		edb->ipar = mpar;
 		edb->desc = tab[0]->desc;
