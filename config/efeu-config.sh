@@ -208,6 +208,12 @@ fi
 # :de:
 # Die folgenden Schlüsselwörter am Anfang der Datei werden akzeptiert:
 #
+# |@@@@|
+#	:*:is replaced by a single |@@|.
+#	:de:Wird durch ein einfaches |@@| ersetzt.
+# |#@@|
+#	:*:the whole line is ignored.
+#	:de:Die Zeile wird ignoriert.
 # |@@set| <flags>
 #	:*:sets options for the following calls to |$!|.
 #	:de:Setzt Optionen für die nachfolgenden Aufrufe von |$!|.
@@ -235,6 +241,10 @@ fi
 #	:de:Ruft |$!| mit Option |-s| und den angegebenen Argumenten auf und
 #	leitet alle Zeilen zwischen |@@beg| und |@@end| an |$!| weiter.
 #
+# :*:If the keyword ends with a letter, a space must follow.
+# :de:Falls das Schlüsselwort mit einem Buchstaben endet, muss ein Leerzeichen
+# folgen.
+#
 # :*:The following commands are performed by the command |$!|
 # :de:Die folgenden Kommandos werden vom Programm |$!| ausgeführt:
 
@@ -246,6 +256,7 @@ file)
 #	:de:Fügt in Datei <name> systemspezifische Parameter ein
 	exec awk -v top="$top" -v cfg_eval="$eval" -v cwd="$cwd" '
 BEGIN { pipe = "" }
+/^#@/ { next }
 /@TOP@/ { gsub("@TOP@", top) }
 /@CWD@/ { gsub("@CWD@", cwd) }
 /@CMD@/ { gsub("@CMD@", cfg_eval) }
