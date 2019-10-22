@@ -39,8 +39,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/config.h>
 #include <unistd.h>
 
-//@set -r @TOP@/Setup.mak -r @CWD@/Rules.mak
-@set -f -lreadline -f -lncurses
+@set -r @TOP@/Setup.mak -r @CWD@/Rules.mak
+#@set -f -lreadline -f -lncurses
 @eval include readline/readline.h
 @add -i readline/readline.h
 @eval success HAS_READLINE  'readline(NULL);'
