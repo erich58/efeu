@@ -69,6 +69,6 @@ printf("#define	REVBYTEORDER %d\n", ((char *) &x)[0]);
 
 extern double C_strtod (const char *def, char **ptr);
 
-@eval success HAS_SNPRINTF 'va_list list; vsnprintf(NULL, 0, NULL, list)'
+@eval success HAS_SNPRINTF 'va_list list; vsnprintf(NULL, 0, "x", list)'
 
 #endif	/* EFEU/config.h */
