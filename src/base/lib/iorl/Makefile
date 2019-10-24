@@ -1,4 +1,5 @@
-include Setup.mak
+TOP=../../../..
+include $(TOP)/Setup.mak
 include $(CFG)/EFEU.mak
 
 RL_CONFIG= $(EFEU_INCLUDE)/rl_config.h
@@ -12,7 +13,7 @@ clean::
 
 $(RL_CONFIG)::
 	@mkdir -p $(@D)
-	/home/erich/efeu/bin/efeu-config -t $(TOP) update rl_config.hcfg $@
+	$(BIN)/efeu-config -t $(TOP) update rl_config.hcfg $@
 	@mkdir -p $(TOP)/note
 	sh ./verify.sh $(TOP)/note/iorl $@
 

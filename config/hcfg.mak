@@ -21,6 +21,6 @@ include $(_hcfg_rules)
 $(BUILD)/%.hrule: %.hcfg
 	@mkdir -p $(@D)
 	printf '%s::\n\t@$(BIN)/efeu-config update %s $$@\n' \
-		$(EFEU_INCLUDE)/$(@F:.hrule=.h) '$$(abspath $<)' > $@
+		$(EFEU_INCLUDE)/$(@F:.hrule=.h) $< > $@
 
 endif

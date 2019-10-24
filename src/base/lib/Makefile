@@ -1,4 +1,5 @@
-include Setup.mak
+TOP=../../..
+include $(TOP)/Setup.mak
 
 Modules= efm iorl efx md math
 

@@ -3,10 +3,6 @@
 ifndef _EFEU_mak_
 _EFEU_mak_ = defined
 
-ifeq ($(wildcard $(TOP)/CHANGELOG),)
-$(error "$$(TOP)/CHANGELOG not found")
-endif
-
 # The default Target
 
 all::
@@ -19,8 +15,8 @@ endif
 
 include $(CFG)/CC.mak
 
-EFEU_VERSION=$(shell sed -e 1q $(TOP)/CHANGELOG)
-CPPFLAGS += -D'EFEU_VERSION="$$EFEU_VERSION"' -D_XOPEN_SOURCE=500
+CPPFLAGS += -D'EFEU_VERSION="$$VERSION"' \
+	-D_XOPEN_SOURCE=500 -D_FILE_OFFSET_BITS=64
 
 EFEU_DIRS = $(INC) $(BIN) $(LIB) 
 

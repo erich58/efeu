@@ -4,6 +4,16 @@ ifndef TOP
 TOP=$(shell pwd)
 endif
 
+_TOP=$(shell cd $(TOP) && pwd)
+
+# Determine Version
+
+ifeq ($(wildcard $(TOP)/CHANGELOG),)
+$(error "$$(TOP)/CHANGELOG not found")
+endif
+
+VERSION=$(shell sed -e 1q $(TOP)/CHANGELOG)
+
 # Determine Modul-Name
 
 ifndef NAME
@@ -12,7 +22,7 @@ endif
 
 # Configuration directory 
 
-CFG=$(abspath $(TOP)/config)
+CFG=$(_TOP)/config
 
 # Build directory
 
@@ -20,8 +30,8 @@ BUILD=.build
 
 # Target directories
 
-BIN=$(abspath $(TOP)/bin)
-LIB=$(abspath $(TOP)/lib)
-INC=$(abspath $(TOP)/include)
-MAN=$(abspath $(TOP)/man)
-SHR=$(abspath $(TOP)/share)
+BIN=$(_TOP)/bin
+LIB=$(_TOP)/lib
+INC=$(_TOP)/include
+MAN=$(_TOP)/man
+SHR=$(_TOP)/share

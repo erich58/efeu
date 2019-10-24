@@ -1,7 +1,5 @@
 include Setup.mak
 
-include $(CFG)/EFEU.mak
-
 SCRIPTS = $(wildcard *.sh)
 FILES = $(patsubst %.sh,$(BIN)/%,$(SCRIPTS))
 
@@ -12,5 +10,5 @@ clean::
 
 $(BIN)/% : %.sh
 	mkdir -p $(@D)
-	sed -e 's/:VN:/$(EFEU_VERSION)/g' $< > $@
+	sed -e 's/:VN:/$(VERSION)/g' $< > $@
 	chmod a+x $@

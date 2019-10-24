@@ -108,7 +108,7 @@ do
 	x)	execute=1;;
 	s)	stdin=1;;
 	c)	CC="$OPTARG";;
-	t)	top="$OPTARG"; eval="$eval -t $OPTARG";;
+	t)	top=`cd $OPTARG && pwd`; eval="$eval -t $top";;
 	f)	flags="$flags $OPTARG";;
 	r)	rules="$rules
 include $OPTARG";;

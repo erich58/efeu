@@ -1,2 +1,2 @@
-TOP=$(abspath ../../../..)
+TOP=../../../..
 include $(TOP)/Setup.mak
