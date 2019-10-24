@@ -35,3 +35,13 @@ LIB=$(_TOP)/lib
 INC=$(_TOP)/include
 MAN=$(_TOP)/man
 SHR=$(_TOP)/share
+
+# Default targets
+
+.PHONY: all files clean
+
+all:: files
+
+files::
+
+clean::

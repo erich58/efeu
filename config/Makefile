@@ -1,4 +1,5 @@
-include Setup.mak
+TOP=..
+include $(TOP)/Setup.mak
 
 SCRIPTS = $(wildcard *.sh)
 FILES = $(patsubst %.sh,$(BIN)/%,$(SCRIPTS))

@@ -3,7 +3,7 @@
 ifndef	_CC_mak_
 _CC_mak_ = defined
 
-CC = $(shell $(BIN)/efeu-config cc)
+CC = $(shell sh $(CFG)/efeu-config.sh cc)
 
 ifeq ($(strip $(CC)),)
 $(error "C-Compiler is not defined")

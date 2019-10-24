@@ -3,16 +3,7 @@
 ifndef _EFEU_mak_
 _EFEU_mak_ = defined
 
-# The default Target
-
-all::
-clean::
-
-ifneq ($(NAME),config)
-all::
-	make -C $(CFG) $@
-endif
-
+include $(CFG)/Config.mak
 include $(CFG)/CC.mak
 
 CPPFLAGS += -D'EFEU_VERSION="$$VERSION"' \

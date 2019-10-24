@@ -1,4 +1,5 @@
-include Setup.mak
+TOP=../../../..
+include $(TOP)/Setup.mak
 include $(CFG)/EFEU.mak
 
 LDFLAGS += -lefm -lm -ldl

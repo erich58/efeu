@@ -4,7 +4,7 @@ include $(CFG)/EFEU.mak
 
 RL_CONFIG= $(EFEU_INCLUDE)/rl_config.h
 
-include Rules.mak
+LDFLAGS += -lreadline -lncurses
 
 files:: $(RL_CONFIG)
 

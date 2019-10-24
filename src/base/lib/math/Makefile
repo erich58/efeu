@@ -1,4 +1,5 @@
-include Setup.mak
+TOP=../../../..
+include $(TOP)/Setup.mak
 
 EFEU_INCLUDE = $(INC)/Math
 include $(CFG)/EFEU.mak
