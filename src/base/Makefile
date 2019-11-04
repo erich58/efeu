@@ -1,5 +1,6 @@
 TOP=../..
 include $(TOP)/Setup.mak
+include $(CFG)/Config.mak
 
 Modules= lib
 

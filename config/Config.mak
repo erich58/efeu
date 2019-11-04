@@ -1,7 +1,7 @@
 ifndef _Config_mak_
 _Config_mak_ = defined
 
-files::
+prereq::
 	$(MAKE) -C $(CFG)
 
 endif

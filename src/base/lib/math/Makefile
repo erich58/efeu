@@ -4,6 +4,9 @@ include $(TOP)/Setup.mak
 EFEU_INCLUDE = $(INC)/Math
 include $(CFG)/EFEU.mak
 
+prereq::
+	$(MAKE) -C ../md
+
 LDFLAGS += -lmd -lefx -lefm -ldl -lm
 
 include $(CFG)/Library.mak

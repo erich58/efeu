@@ -38,7 +38,13 @@ SHR=$(_TOP)/share
 
 # Default targets
 
-.PHONY: all files clean
+.PHONY: autonom prereq all files clean
+
+autonom:: prereq
+
+prereq::
+
+autonom:: all
 
 all:: files
 
