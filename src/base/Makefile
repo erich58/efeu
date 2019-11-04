@@ -2,7 +2,7 @@ TOP=../..
 include $(TOP)/Setup.mak
 include $(CFG)/Config.mak
 
-Modules= lib
+Modules= scripts lib
 
 all clean::
 	for m in $(Modules); \

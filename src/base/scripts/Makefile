@@ -1,4 +1,4 @@
-TOP=../../../..
+TOP=../../..
 include $(TOP)/Setup.mak
 
 SCRIPTS = $(wildcard *.sh)
