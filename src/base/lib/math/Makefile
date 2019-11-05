@@ -1,4 +1,5 @@
 TOP=../../../..
+NAME=efmath
 include $(TOP)/Setup.mak
 
 EFEU_INCLUDE = $(INC)/Math
