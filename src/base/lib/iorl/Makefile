@@ -2,9 +2,12 @@ TOP=../../../..
 include $(TOP)/Setup.mak
 include $(CFG)/EFEU.mak
 
+prereq::
+	$(MAKE) -C ../efm
+
 RL_CONFIG= $(EFEU_INCLUDE)/rl_config.h
 
-LDFLAGS += -lreadline -lncurses
+LDFLAGS += -lefm -lreadline -lncurses
 
 files:: $(RL_CONFIG)
 
