@@ -6,7 +6,7 @@ _EFEU_mak_ = defined
 include $(CFG)/Config.mak
 include $(CFG)/CC.mak
 
-CPPFLAGS += -D'EFEU_VERSION="$$VERSION"' \
+CPPFLAGS += -D'EFEU_VERSION="$(VERSION)"' \
 	-D_XOPEN_SOURCE=500 -D_FILE_OFFSET_BITS=64
 
 EFEU_DIRS = $(INC) $(BIN) $(LIB) 
