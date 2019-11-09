@@ -100,9 +100,7 @@ clean::
 	rm -f $oname
 
 $oname: $1
-	$0 $1 $oname
-
-Makefile: $1
+	$0 \$< \$@
 
 !
 	awk '/^@include/ { printf "%s: %s/%s\n", \
