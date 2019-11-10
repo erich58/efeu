@@ -6,24 +6,16 @@ _EFEU_mak_ = defined
 include $(CFG)/Config.mak
 include $(CFG)/CC.mak
 
+ifndef	EFEU_INCLUDE
+EFEU_INCLUDE = $(INC)/EFEU
+endif
+
 CPPFLAGS += -D'EFEU_VERSION="$(VERSION)"' \
 	-D_XOPEN_SOURCE=500 -D_FILE_OFFSET_BITS=64
 
 EFEU_DIRS = $(INC) $(BIN) $(LIB) 
 
-# local source files
-
-VPATH = $(shell find -L . -type d)
-SRC_H = $(wildcard *.h */*.h)
-SRC_C = $(wildcard *.c */*.c)
-
-OBJ = $(patsubst %.c,$(BUILD)/%.o,$(notdir $(SRC_C)))
-
-all:: files
-
 files:: $(EFEU_DIRS)
-
-clean::
 
 $(EFEU_DIRS)::
 	@mkdir -p $@
@@ -37,32 +29,5 @@ clean::
 
 $(BUILD)::
 	@mkdir -p $@
-
-# installing header files
-
-ifndef	EFEU_INCLUDE
-EFEU_INCLUDE = $(INC)/EFEU
-endif
-
-FILES = $(patsubst %.h,$(EFEU_INCLUDE)/%.h,$(notdir $(SRC_H)))
-
-files:: $(FILES)
-
-clean::
-	rm -f $(FILES)
-
-$(EFEU_INCLUDE)/%.h : %.h
-	@mkdir -p $(@D)
-	cp $< $@
-
-# build object files
-
-$(BUILD)/%.d : %.o
-	@mkdir -p $(@D)
-	echo '$(WORK)/cp $<' > $@
-
-$(BUILD)/%.o : %.c
-	@mkdir -p $(@D)
-	$(CC) -o $@ -c -MMD $(CPPFLAGS) $(CFLAGS) $<
 
 endif

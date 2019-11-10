@@ -1,13 +1,17 @@
 TOP=../../../..
 include $(TOP)/Setup.mak
 include $(CFG)/EFEU.mak
+include $(CFG)/ApplFiles.mak
 
 prereq::
 	$(MAKE) -C ../../scripts
 	$(MAKE) -C ../../lib
 
 LDFLAGS += -lefmath -liorl -lmd -lefx -lefm -ldl -lm
-PGM = $(patsubst %.c,$(BIN)/%,$(notdir $(SRC_C)))
+
+VPATH = $(shell find -L . -type d)
+SRC = $(wildcard */*.c)
+PGM = $(patsubst %.c,$(BIN)/%,$(notdir $(SRC)))
 
 all:: $(PGM)
 
@@ -44,7 +48,7 @@ $(LIB)/mksource/%.ms : mksource/files/%.ms
 
 # compose file
 
-include $(BUILD)/TypeDef.rule
+-include $(BUILD)/TypeDef.rule
 
 $(BUILD)/TypeDef.rule: mksource/files/type/TypeDef.msx
 	$(BIN)/compose-file -r $< $(LIB)/mksource/TypeDef.ms > $@
