@@ -5,7 +5,7 @@ STARTER=~/bin/efeu
 usage::
 	@echo "usage: make base | all | doc | purge | clean | stat"
 	@echo
-	@echo "config	create efeu configuration tools"
+#	@echo "config	create efeu configuration tools"
 	@echo "basic	create basic functionality"
 	@echo "all	create all tools"
 	@echo "doc	create all with documentation"
@@ -25,24 +25,29 @@ usage::
 
 SETENV=	EFEUTOP=`pwd`; PATH=$$EFEUTOP/bin:$$PATH; export EFEUTOP PATH
 
-config:: build/Makefile
+config::
 
-build/Makefile:
-	sh sanity-check.sh
-	-if [ -f src/Makefile ]; then (cd src; make); fi
-	if [ -x src/config/setup ]; then (cd src/config; sh ./setup ../..); fi
-	($(SETENV); cd build; shmkmf)
+all::
+	$(MAKE) -C src all
 
-basic:: config
-	($(SETENV); cd build; $(MAKE) base.all tk.all)
+#config:: build/Makefile
+#
+#build/Makefile:
+#	sh sanity-check.sh
+#	-if [ -f src/Makefile ]; then (cd src; make); fi
+#	if [ -x src/config/setup ]; then (cd src/config; sh ./setup ../..); fi
+#	($(SETENV); cd build; shmkmf)
 
-all:: config
-	($(SETENV); cd build; $(MAKE) all)
+basic::
+	$(MAKE) -C src/base all
 
-doc:: config
-	($(SETENV); cd build; $(MAKE) all doc)
-
-basic all doc:: note
+#all:: config
+#	($(SETENV); cd build; $(MAKE) all)
+#
+#doc:: config
+#	($(SETENV); cd build; $(MAKE) all doc)
+#
+#basic all doc:: note
 
 note::
 	@(test -d note && find note -type f -print | xargs cat) || true
