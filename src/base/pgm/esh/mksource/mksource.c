@@ -186,6 +186,7 @@ static EfiVarDef globvar[] = {
 static char *AllTarget = "all";	/* Generierungsziel */
 static char *CleanTarget = "clean";	/* Aufräumziel */
 static char *DependTarget = "depend";	/* Abhängigkeitsziel */
+static char *WorkDir = NULL;	/* Arbeitsverzeichnis */
 static char *Template = NULL;	/* Eingabefile */
 static char *DependName = NULL;	/* Abhängigkeitsname */
 static char *ListName = NULL;	/* Listendatei */
@@ -195,6 +196,7 @@ static int MakeList = 0;	/* Liste generieren */
 static int LockFlag = 0;	/* Sperrflag */
 
 static EfiVarDef locvar[] = {
+	{ "WorkDir",	&Type_str, &WorkDir },
 	{ "Template",	&Type_str, &Template },
 	{ "DependName",	&Type_str, &DependName },
 	{ "ListName",	&Type_str, &ListName },
@@ -343,7 +345,7 @@ static EfiObj *p_config (IO *io, void *data)
 		memfree(arg);
 	}
 	
-	if	(MakeList || MakeRule)
+	if	((MakeList || MakeRule) && !MakeDep)
 		eval_stat = 0;
 
 	divide_src();
@@ -427,7 +429,7 @@ static void eval_file(const char *name)
 	if	(Verbose)
 		io_xprintf(ioerr, "input < %s\n", fname);
 
-	AddDepend(fname); 
+	AddDepend(fname);
 	save_cin = CmdEval_cin;
 	CmdEval_cin = io_fileopen(fname, "r");
 	memfree(fname);
@@ -488,7 +490,17 @@ int main (int narg, char **arg)
 	{
 		char *dname, *suffix;
 		dname = mdirname(Template, 0);
-		BaseName = mbasename(Template, &suffix);
+
+		if	(WorkDir)
+		{
+			char *p = mbasename(Template, &suffix);
+			BaseName = mstrpaste("/", WorkDir, p);
+			memfree(p);
+		}
+		else
+		{
+			BaseName = mbasename(Template, &suffix);
+		}
 
 		if	(dname)
 		{
@@ -556,19 +568,28 @@ int main (int narg, char **arg)
 
 	if	(MakeRule && Template)
 	{
-		char *arg[2];
+		char *parg[2];
+		StrBuf *cmd;
 
-		arg[0] = bootstrap;
-		arg[1] = BaseName;
+		cmd = sb_create(0);
+		sb_puts(arg[0], cmd);
 
-		io_psubvec(iostd, R_HEAD, 2, arg);
+		if	(WorkDir)
+		{
+			sb_puts(" -W ", cmd);
+			sb_puts(WorkDir, cmd);
+		}
+
+		parg[0] = bootstrap;
+		parg[1] = BaseName;
+		io_psubvec(iostd, R_HEAD, 2, parg);
 
 		if	(AllTarget)
 			printf("\n%s:: %s\n", AllTarget, DependName);
 
-		if	(DependTarget)
+		if	(DependTarget && !MakeDep)
 			printf("\n%s:: %s\n\t%s%s -d %s >> $(MAKEFILE)\n",
-				DependTarget, Template, ProgName, flags,
+				DependTarget, Template, sb_nul(cmd), flags,
 				Template);
 
 		if	(CleanTarget)
@@ -583,7 +604,7 @@ int main (int narg, char **arg)
 		}
 
 		printf("\n%s: %s\n\t%s%s %s\n",
-			DependName, Template, ProgName, flags, Template);
+			DependName, Template, sb_nul(cmd), flags, Template);
 
 		if	(rule_buf.pos)
 		{
