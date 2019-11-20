@@ -2,7 +2,7 @@ TOP=../../..
 include $(TOP)/Setup.mak
 include $(CFG)/Config.mak
 
-Modules= efm iorl efx md math
+Modules= efm iorl efx md math win
 
 all clean::
 	@for m in $(Modules); \
