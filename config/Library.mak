@@ -8,8 +8,8 @@ include $(CFG)/EFEU.mak
 VPATH = $(shell find -L . -type d)
 
 _Library = $(LIB)/lib$(NAME).so
-_Library_h = $(wildcard *.h */*.h)
-_Library_c = $(wildcard *.c */*.c)
+_Library_h = $(shell find -L . -name '*.h')
+_Library_c = $(shell find -L . -name '*.c')
 
 _Library_obj = $(patsubst %.c,$(BUILD)/%.o,$(notdir $(_Library_c)))
 _Library_dep = $(patsubst %.o,%.d,$(_Library_obj))
