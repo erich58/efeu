@@ -234,9 +234,22 @@ static void open_output (OUTPUT *out, const char *name, const char *head)
 	if	(out->fname == NULL)
 	{
 		if	(name)
+		{
 			out->fname = mstrcpy(name);
-		else if	(!SetupOutput)
+		}
+		else if	(SetupOutput)
+		{
+			;
+		}
+		else if	(WorkDir)
+		{
+			out->fname = msprintf("%s/%s.%s",
+				WorkDir, BaseName, out->ext);
+		}
+		else
+		{
 			out->fname = mstrcat(".", BaseName, out->ext, NULL);
+		}
 	}
 
 	if	(!out->flag)	return;
@@ -490,17 +503,7 @@ int main (int narg, char **arg)
 	{
 		char *dname, *suffix;
 		dname = mdirname(Template, 0);
-
-		if	(WorkDir)
-		{
-			char *p = mbasename(Template, &suffix);
-			BaseName = mstrpaste("/", WorkDir, p);
-			memfree(p);
-		}
-		else
-		{
-			BaseName = mbasename(Template, &suffix);
-		}
+		BaseName = mbasename(Template, &suffix);
 
 		if	(dname)
 		{
