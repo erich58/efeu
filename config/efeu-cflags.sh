@@ -24,15 +24,18 @@
 
 msg1='usage: %s [--help] name [-Ipath] [-Lpath] [-ao] [-lname | hdr]\n'
 msg2='%s: invalid option %s.\n'
+msg3='%s: extra arguments.\n'
 
 case ${LANG:=en} in
 de*)
 	msg1='Aufruf: %s [--help] name [-Ipath] [-Lpath] [-ao] [-lname | hdr]\n'
 	msg2='%s: Ungültige Option %s.\n'
+	msg3='%s: Zusätzliche Argumente.\n'
 	;;
 esac
 
 # $pconfig !
+# Version=":VN:"
 # :name |
 #	:*:name <name> of macro with found flags.
 #	:de:Name <name> des Makros für die gefundenen Flags.
@@ -205,6 +208,24 @@ find_lib ()
 	return 1
 }
 
+eval_file ()
+{
+	case "$1" in
+	*.sh)	cmd="sh $1";;
+	*)	cmd="$1";;
+	esac
+
+	if [ $# -ne 2 ]; then
+		printf "$msg3" "$1"
+		exit 1
+	fi
+
+	awk -v cmd="$cmd" '
+/^@eval/ { $1 = cmd; system($0); next; }
+{ print }
+' $2
+}
+
 # :*:
 # The function $! creates c-flags for use of external libraries.
 # The following options and arguments are accepted:
@@ -215,10 +236,11 @@ find_lib ()
 # @arglist
 
 case "$1" in
--*)
-	usage $1; exit 0;;
-?*)	printf '%s =' "$1";;
-*)	usage -?; exit 0;;
+--version)	efeuman -- $0 $1 || grep 'Version[=]' $0; exit 0;;
+--file)		shift; eval_file $0 $*; exit 0;;
+-*)		usage $1; exit 0;;
+?*)		printf '%s =' "$1"; shift;;
+*)		usage -?; exit 0;;
 esac
 
 ipath=
