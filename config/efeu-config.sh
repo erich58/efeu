@@ -22,13 +22,15 @@
 
 #	message formats
 
-msg1="usage: $0 [--help] [opt] cmd arg(s)\n"
-msg2="$0: unknown command %s\n"
+msg1="usage: %s [--help] [opt] cmd arg(s)\n"
+msg2="%s: unknown command %s\n"
+msg3='%s: invalid option %s.\n'
 
 case ${LANG:=en} in
 de*)
-	msg1="Aufruf: $0 [--help] [opt] cmd arg(s)\n"
-	msg2="$0: Unbekanntes Kommando %s\n"
+	msg1="Aufruf: %s [--help] [opt] cmd arg(s)\n"
+	msg2="%s: Unbekanntes Kommando %s\n"
+	msg3='%s: Ungültige Option %s.\n'
 	;;
 esac
 
@@ -70,7 +72,7 @@ esac
 
 usage ()
 {
-	efeuman -- $0 $1 || printf "$msg1"
+	efeuman -- $0 $1 || printf "$msg1" "$0"
 }
 
 case "$1" in
@@ -133,7 +135,7 @@ failure=":"
 type=$1
 shift
 
-#	Determine C compiler and command invocation
+#	Determine C compiler
 
 if [ "$CC" != "" ]; then
 	case "$CC" in
@@ -147,6 +149,166 @@ else
 	*)	CC="cc";;
 	esac
 fi
+
+# Pfad aufspalten
+
+splitpath ()
+{(
+	IFS=":"
+	for d in $1
+	do
+		case "$d" in
+		?*//?*/*)
+			a=`expr $d : '\(.*/\)/'`
+			b=`expr $d : '.*//\([^/]*\)'`
+			c=`expr $d : '.*//[^/]*\(/.*\)'`
+			find -L $a -type d -name "$b" \
+				-exec test -d \{\}$c \; \
+				-print 2>/dev/null |\
+				sed -e "s|\$|$c|" | LANG=C sort
+			;;
+		?*//?*)
+			a=`expr $d : '\(.*/\)/'`
+			b=`expr $d : '.*//\(.*\)'`
+			find -L $a -type d -name "$b" -print 2>/dev/null |
+				LANG=C sort
+			;;
+		*//)	
+			a=`expr $d : '\(.*/\)/$'`
+			find -L $a -type d -print 2>/dev/null |
+				sed -e 's|/$||' | LANG=C sort
+			;;
+		*)	
+			printf "%s\n" $d
+			;;
+		esac
+	done
+)
+}
+
+expandpath ()
+{
+	splitpath `expr "$*" : '..\(.*\)'`
+}
+
+# Determine standard lib dirs
+
+cc_stdlib ()
+{
+	if
+		LANG=C $CC --print-search-dirs 2>/dev/null > $tmp/list
+	then
+		awk -F= '/^libraries/ { printf "%s\n", $2 }' $tmp/list |
+			tr : '\n' | while read _dir
+		do
+			[ -d $_dir ] && printf "%s\n" `cd $_dir; pwd`
+		done | sort -u
+		rm $tmp/list
+	else
+		printf '%s\n' /lib /usr/lib
+	fi
+}
+
+find_dir ()
+{
+	while read _dir
+	do
+		_path=`find $_dir -maxdepth 1 -name "$2" | head -1`
+
+		if [ "$_path" ]; then
+			case "$3" in
+			D)	printf "%s " $_dir;;
+			F)	printf "%s " `basename $_path`;;
+			P)	printf "%s " $_path;;
+			*)	;;
+			esac
+
+			return 0
+		fi
+	done < $1
+	return 1
+}
+
+# directory lists
+
+incdirs=$tmp/incdirs
+libdirs=$tmp/libdirs
+stdincdirs=$tmp/stdincdirs
+stdlibdirs=$tmp/stdlibdirs
+usedlibdirs=$tmp/usedlibdirs
+
+find_lib ()
+{
+	name=`expr "$1" : '..\(.*\)'`
+
+	if
+		find_dir $stdlibdirs "lib$name.*"
+	then
+		printf '%s ' "$1"
+	elif
+		find_dir $usedlibdirs "lib$name.*"
+	then
+		printf '%s ' "$1"
+	elif
+		dir=`find_dir $libdirs "lib$name.*" D`
+	then
+		printf '%s\n' "$dir" >> $usedlibdirs;
+		printf '%s %s ' "-L$dir" "$1"
+	else
+		return 1
+	fi
+}
+
+soname ()
+{
+	find_dir $stdlibdirs "$1" P || find_dir "$libdirs" "$1" P
+}
+
+cppflags ()
+{
+	while read _dir
+	do
+		printf '%s ' "-I$_dir"
+		return 0
+	done < $incdirs
+
+	[ -f /usr/include/$1 ] && return 0
+	return 1
+}
+
+#	Configuration parameter
+# 	name op arg(s)
+
+cflags ()
+{
+	printf '%s %s ' "$1" "$2"
+	shift 2
+	touch $tmp/ipath;
+	touch $tmp/lpath;
+	last=0
+	[ -f $stdlibdirs ] || cc_stdlib > $stdlibdirs
+	printf '/usr/include\n' > $stdincdirs
+	touch $incdirs
+	touch $libdirs
+	cp /dev/null $usedlibdirs
+
+	while [ -n "$1" ]
+	do
+		case "$1" in
+		-a)	shift; [ $last -ne 0 ] && shift;;
+		-o)	shift; [ $last -eq 0 ] && shift;;
+		-c)	printf '%s ' "$CC"; shift;;
+		-I*)	expandpath $1 >> $incdirs; shift;;
+		-L*)	expandpath $1 >> $libdirs; shift;;
+		-l*)	find_lib "$1"; last=$?; shift;;
+		-*)	printf "$msg3" "$0" "$1"; exit 1;;
+		*.so)	soname "$1"; last=$?; shift;;
+		*)	cppflags "$1"; shift;;
+		esac
+	done
+
+	printf '\n'
+}
 
 #	Determine test
 
@@ -300,6 +462,18 @@ update)
 #	:de:Gibt den verwendeten C-Compiler mit default-Flags aus.
 cc)
 	echo $CC
+	exit 0
+	;;
+cflags)
+	if [ $stdin -ne 0 ]; then
+		while read line
+		do
+			cflags $line
+		done
+	else
+		cflags $*
+	fi
+	exit 0
 	;;
 check)
 # $Description
@@ -409,7 +583,7 @@ or)
 	done
 	;;
 *)
-	printf "$msg2" $type
+	printf "$msg2" "$0" $type
 	awk '
 BEGIN { flag = 0 }
 /^case .type in/ { flag = 1 }
