@@ -209,26 +209,6 @@ cc_stdlib ()
 	fi
 }
 
-find_dir ()
-{
-	while read _dir
-	do
-		_path=`find $_dir -maxdepth 1 -name "$2" | head -1`
-
-		if [ "$_path" ]; then
-			case "$3" in
-			D)	printf "%s " $_dir;;
-			F)	printf "%s " `basename $_path`;;
-			P)	printf "%s " $_path;;
-			*)	;;
-			esac
-
-			return 0
-		fi
-	done < $1
-	return 1
-}
-
 # directory lists
 
 incdirs=$tmp/incdirs
@@ -239,29 +219,43 @@ usedlibdirs=$tmp/usedlibdirs
 
 find_lib ()
 {
-	name=`expr "$1" : '..\(.*\)'`
+	while read _libdir
+	do
+		find -L $_libdir -maxdepth 1 -name "$2" 2>/dev/null \
+			-printf '%h %f\n' | sort | while read _dir _lib
+		do
+			case "$_lib" in
+			lib*.so) _name=`expr "$_lib" : 'lib\(.*\).so'`;;
+			lib*.a) _name=`expr "$_lib" : 'lib\(.*\).a'`;;
+			*)	continue;;
+			esac
 
-	if
-		find_dir $stdlibdirs "lib$name.*"
-	then
-		printf '%s ' "$1"
-	elif
-		find_dir $usedlibdirs "lib$name.*"
-	then
-		printf '%s ' "$1"
-	elif
-		dir=`find_dir $libdirs "lib$name.*" D`
-	then
-		printf '%s\n' "$dir" >> $usedlibdirs;
-		printf '%s %s ' "-L$dir" "$1"
-	else
-		return 1
-	fi
+			case "$3" in
+			L)	printf '%s\n' "$_dir" >> $usedlibdirs;
+				printf -- ' -L%s -l%s' "$_dir" "$_name";;
+			P)	printf -- ' %s' "$_dir/$_lib";;
+			*)	printf -- ' -l%s' "$_name";;
+			esac
+
+			exit 1 # exit 1 to break main loop
+		done || return 0
+	done < $1
+
+	# Not found
+	return 1
+}
+
+ldflags ()
+{
+	name=`expr "$1" : '..\(.*\)'`
+	find_lib $stdlibdirs "lib$name.*" ||
+		find_lib $usedlibdirs "lib$name.*" ||
+		find_lib $libdirs "lib$name.*" L
 }
 
 soname ()
 {
-	find_dir $stdlibdirs "$1" P || find_dir "$libdirs" "$1" P
+	find_lib $stdlibdirs "$1" P || find_lib "$libdirs" "$1" P
 }
 
 cppflags ()
@@ -281,7 +275,12 @@ cppflags ()
 
 cflags ()
 {
-	printf '%s %s ' "$1" "$2"
+	if [ $# -lt 2 ]; then
+		printf '%s\n' "$1"
+		return
+	fi
+
+	printf '%s %s' "$1" "$2"
 	shift 2
 	touch $tmp/ipath;
 	touch $tmp/lpath;
@@ -300,7 +299,7 @@ cflags ()
 		-c)	printf '%s ' "$CC"; shift;;
 		-I*)	expandpath $1 >> $incdirs; shift;;
 		-L*)	expandpath $1 >> $libdirs; shift;;
-		-l*)	find_lib "$1"; last=$?; shift;;
+		-l*)	ldflags "$1"; last=$?; shift;;
 		-*)	printf "$msg3" "$0" "$1"; exit 1;;
 		*.so)	soname "$1"; last=$?; shift;;
 		*)	cppflags "$1"; shift;;
