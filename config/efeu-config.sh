@@ -262,8 +262,15 @@ cppflags ()
 {
 	while read _dir
 	do
-		printf '%s ' "-I$_dir"
-		return 0
+		if [ -f $_dir/$1 ]; 
+		then
+			case "$_dir" in
+			/usr/include)	;;
+			*)		printf ' %s' "-I$_dir";;
+			esac
+
+			return 0
+		fi
 	done < $incdirs
 
 	[ -f /usr/include/$1 ] && return 0
