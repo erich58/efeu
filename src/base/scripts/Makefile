@@ -1,3 +1,6 @@
+# :*: shell scripts
+# :de: Shell-Scripts
+
 TOP=../../..
 include $(TOP)/Setup.mak
 

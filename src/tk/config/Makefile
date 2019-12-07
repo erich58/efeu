@@ -1,3 +1,6 @@
+# :*: configuration of TCL/TK-libraries
+# :de: Konfiguration für TCL/TK-Bibliotheken
+
 TOP=../../..
 include $(TOP)/Setup.mak
 include $(CFG)/Config.mak

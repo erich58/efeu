@@ -1,3 +1,6 @@
+# :*: readline interface
+# :de: Readline-Schnittstelle
+
 TOP=../../../..
 include $(TOP)/Setup.mak
 include $(CFG)/EFEU.mak

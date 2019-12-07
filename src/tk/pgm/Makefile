@@ -1,3 +1,5 @@
+# :de: etk-interpreter
+
 TOP=../../..
 include $(TOP)/Setup.mak
 include $(CFG)/EFEU.mak

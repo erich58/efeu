@@ -1,3 +1,6 @@
+# :*: TK interface
+# :de: TK Schnittstelle
+
 TOP=../..
 include $(TOP)/Setup.mak
 include $(CFG)/Config.mak

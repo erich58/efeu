@@ -1,3 +1,6 @@
+# :*: mathematican functions
+# :de: Mathematische Hilfsfunktionen
+
 TOP=../../../..
 NAME=efmath
 include $(TOP)/Setup.mak

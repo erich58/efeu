@@ -1,3 +1,6 @@
+# :*: extension library
+# :de: Erweiterungsbibliothek
+
 TOP=../../../..
 include $(TOP)/Setup.mak
 include $(CFG)/EFEU.mak

@@ -1,3 +1,6 @@
+# :*: esh, mksource and scripts
+# :de: esh, mksource und Scripts
+
 TOP=../../../..
 include $(TOP)/Setup.mak
 include $(CFG)/EFEU.mak

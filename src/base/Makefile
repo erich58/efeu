@@ -1,3 +1,6 @@
+# :*: basic libraries and commands	
+# :de: EFEU-Basisbibliotheken/Standardkommandos
+
 TOP=../..
 include $(TOP)/Setup.mak
 include $(CFG)/Config.mak

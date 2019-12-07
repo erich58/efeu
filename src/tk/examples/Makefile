@@ -1,3 +1,6 @@
+# :*: examples
+# :de: Beispiele
+
 TOP=../../..
 include $(TOP)/Setup.mak
 include $(CFG)/EFEU.mak

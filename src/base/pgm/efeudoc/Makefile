@@ -1,3 +1,6 @@
+# :*: document generator
+# :de: Dokumentgenerator
+
 TOP=../../../..
 include $(TOP)/Setup.mak
 include $(CFG)/CC.mak

@@ -1,3 +1,6 @@
+# :*: vim configuration files
+# :de: vim Konfigurationsdateien
+
 TOP=../../../..
 include $(TOP)/Setup.mak
 include $(CFG)/EFEU.mak

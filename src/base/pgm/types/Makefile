@@ -1,3 +1,6 @@
+# :*: Supplemented data types for interpreter
+# :de: Ergänzende Datentypen für Interpreter
+
 TOP=../../../..
 include $(TOP)/Setup.mak
 include $(CFG)/EFEU.mak

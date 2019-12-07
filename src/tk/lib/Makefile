@@ -1,3 +1,5 @@
+# :de: TCL/TK-interface
+
 TOP=../../..
 NAME=etk
 include $(TOP)/Setup.mak
