@@ -1,0 +1,29 @@
+TOP=../../..
+NAME=etk
+include $(TOP)/Setup.mak
+
+EFEU_INCLUDE = $(INC)/GUI
+include $(CFG)/EFEU.mak
+
+prereq::
+	$(MAKE) -C ../config
+
+../.build/tklib.mak:: prereq
+
+include ../.build/tklib.mak
+
+TK_CONFIG= $(EFEU_INCLUDE)/tk_config.h
+
+LDFLAGS += -lefm -lreadline -lncurses
+
+files:: $(TK_CONFIG)
+
+clean::
+	rm -f $(TK_CONFIG)
+
+$(TK_CONFIG)::
+	@mkdir -p $(@D)
+	$(BIN)/efeu-config -t $(TOP) update tk_config.hcfg $@
+
+include $(CFG)/Library.mak
+include $(CFG)/ApplFiles.mak

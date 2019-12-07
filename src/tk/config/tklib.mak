@@ -33,11 +33,12 @@ _tklib_mak_ = defined
 # $source
 
 @beg cflags
-TK_INC = -I/usr/include//:/usr/local/include tk.h
+CPPFLAGS += -I/usr/include//:/usr/local/include tk.h
 
-TK_LIB = -L/usr/lib:/usr/local/lib -ltk[0-9.]*
-TK_LIB += -L/usr/X11R6/lib:/usr/local/lib -lX11
-TK_LIB += -lm -ldl
+LDFLAGS += -L/usr/lib:/usr/local/lib -ltk[0-9.]*
+LDFLAGS += -L/usr/lib:/usr/local/lib -ltcl[0-9.]*
+LDFLAGS += -L/usr/X11R6/lib:/usr/local/lib -lX11
+LDFLAGS += -lm -ldl
 @end
 
 endif

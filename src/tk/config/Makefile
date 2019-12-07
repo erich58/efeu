@@ -2,7 +2,8 @@ TOP=../../..
 include $(TOP)/Setup.mak
 include $(CFG)/Config.mak
 
-TKLIB = $(LIB)/efeu/make/tklib.mak
+#TKLIB = $(LIB)/efeu/make/tklib.mak
+TKLIB = ../.build/tklib.mak
 
 all:: $(TKLIB)
 
