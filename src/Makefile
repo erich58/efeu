@@ -2,7 +2,7 @@ TOP=..
 include $(TOP)/Setup.mak
 include $(CFG)/EFEU.mak
 
-Modules= base
+Modules= base tk
 
 all clean::
 	@for m in $(Modules); \
