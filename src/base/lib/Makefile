@@ -4,7 +4,7 @@ include $(CFG)/Config.mak
 
 Modules= efm iorl efx md math win
 
-all clean::
+all doc clean::
 	@for m in $(Modules); \
 	do \
 		printf '+------------------------------------------+\n'; \

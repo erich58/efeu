@@ -50,4 +50,6 @@ all:: files
 
 files::
 
+doc::
+
 clean::

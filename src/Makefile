@@ -4,7 +4,7 @@ include $(CFG)/Config.mak
 
 Modules= base tk pg
 
-all clean::
+all doc clean::
 	@for m in $(Modules); \
 	do \
 		printf '############################################\n'; \

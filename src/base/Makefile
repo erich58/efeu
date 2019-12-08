@@ -7,7 +7,7 @@ include $(CFG)/Config.mak
 
 Modules= scripts lib pgm
 
-all clean::
+all doc clean::
 	@for m in $(Modules); \
 	do \
 		printf '********************************************\n'; \
