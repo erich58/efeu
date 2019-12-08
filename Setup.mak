@@ -34,6 +34,7 @@ BIN=$(_TOP)/bin
 LIB=$(_TOP)/lib
 INC=$(_TOP)/include
 MAN=$(_TOP)/man
+DOC=$(_TOP)/doc
 SHR=$(_TOP)/share
 
 # Default targets
