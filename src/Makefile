@@ -2,7 +2,7 @@ TOP=..
 include $(TOP)/Setup.mak
 include $(CFG)/Config.mak
 
-Modules= base tk
+Modules= base tk pg
 
 all clean::
 	@for m in $(Modules); \

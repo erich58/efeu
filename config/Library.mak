@@ -33,9 +33,11 @@ $(EFEU_INCLUDE)/%.h : %.h
 -include $(_Library_dep)
 
 $(BUILD)/%.d : %.c
+	@mkdir -p $(@D)
 	echo "$(@:.d=.o): $<" > $@
 
 $(BUILD)/%.o : %.c
+	@mkdir -p $(@D)
 	$(CC) -o $@ -c -MMD $(CPPFLAGS) $(CFLAGS) $<
 
 endif

@@ -38,7 +38,10 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/config.h>
 
-@set -r libpq.smh -f '-mc PQ_INC -ml PQ_LIB' -i libpq-fe.h
+@set -r @CWD@/.build/libpq.mk
+@eval include libpq-fe.h
+@add -i libpq-fe.h
+
 @eval success HAS_PQ  'PQfinish(PQconnectdb(NULL));'
 
 #endif	/* DB/pq_config.h */
