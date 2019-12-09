@@ -8,7 +8,7 @@ include $(CFG)/Config.mak
 prereq::
 	$(MAKE) -C ../base
 
-Modules= config lib pgm examples
+Modules= config lib pgm examples manual
 
 all clean::
 	@for m in $(Modules); \
