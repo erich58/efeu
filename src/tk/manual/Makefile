@@ -20,39 +20,29 @@ doc:: $(FILES)
 clean::
 	rm -rf $(FILES) $(HDIRS)
 
-$(DE)/pdf/tk.pdf:
-	@mkdir -p $(@D)
-	LANG=de_AT $(EFEUDOC) --pdf -o $@ main.doc
+$(DE)/pdf/tk.pdf: main.doc
+	@mkdir -p $(BUILD) $(@D)
+	LANG=de_AT $(EFEUDOC) -M $(BUILD)/de_pdf.d --pdf -o $@ $<
 
-$(DE)/html/tk/index.html:
-	@mkdir -p $(@D)
-	LANG=de_AT $(EFEUDOC) -h -o $(@D) main.doc
+-include $(BUILD)/de_pdf.d
 
-files:: $(BUILD)/de.d
+$(DE)/html/tk/index.html: main.doc
+	@mkdir -p $(BUILD) $(@D)
+	LANG=de_AT $(EFEUDOC) -M $(BUILD)/de_html.d -h -o $(@D) $<
 
-$(BUILD)/de.d:
-	@mkdir -p $(@D)
-	LANG=de_AT $(EFEUDOC) -d --pdf -o $(DE)/pdf/tk.pdf main.doc > $@
-	LANG=de_AT $(EFEUDOC) -d -h -o $(DE)/html/tk main.doc >> $@
+-include $(BUILD)/de_html.d
 
-include $(BUILD)/de.d
+$(EN)/pdf/tk.pdf: main.doc
+	@mkdir -p $(BUILD) $(@D)
+	LANG=en_US $(EFEUDOC) -M $(BUILD)/en_pdf.d --pdf -o $@ $<
 
-$(EN)/pdf/tk.pdf:
-	@mkdir -p $(@D)
-	LANG=en_US $(EFEUDOC) --pdf -o $@ main.doc
+-include $(BUILD)/en_pdf.d
 
-$(EN)/html/tk/index.html: $(BUILD)/en.d
-	@mkdir -p $(@D)
-	LANG=en_US $(EFEUDOC) -h -o $(@D) main.doc
+$(EN)/html/tk/index.html: main.doc
+	@mkdir -p $(BUILD) $(@D)
+	LANG=en_US $(EFEUDOC) -M $(BUILD)/en_html.d -h -o $(@D) $<
 
-files:: $(BUILD)/en.d
-
-$(BUILD)/en.d:
-	@mkdir -p $(@D)
-	LANG=en_US $(EFEUDOC) -d --pdf -o $(EN)/pdf/tk.pdf main.doc > $@
-	LANG=en_US $(EFEUDOC) -d -h -o $(EN)/html/tk main.doc > $@
-
-include $(BUILD)/en.d
+-include $(BUILD)/en_html.d
 
 clean::
 	rm -rf $(BUILD)
