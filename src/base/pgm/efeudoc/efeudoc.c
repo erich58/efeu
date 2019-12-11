@@ -158,6 +158,15 @@ int main (int narg, char **arg)
 	Doc_endall(doc, 0);
 	rd_deref(doc);
 
+	p = GetResource("DependFile", NULL);
+
+	if	(p && Output)
+	{
+		IO *out = io_fopen(p, "w");
+		MakeDependRule(out);
+		io_close(out);
+	}
+
 	if	(!MakeDepend)	return 0;
 	
 	p = GetResource("TaskName", NULL);

@@ -51,6 +51,9 @@ r:name|TaskName; MakeDepend = 1
 d|MakeDepend = 1
 	:*:create dependence
 	:de:Abhängigkeitsregeln generieren
+M:file|DependFile
+	:*:store dependence in file
+	:de:Abhängigkeitsregeln in Datei schreiben
 t|Type = "term"; Output = "|less -r"
 	:*:terminal output
 	:de:Terminalausgabe
