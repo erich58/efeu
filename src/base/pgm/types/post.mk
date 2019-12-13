@@ -2,7 +2,7 @@ TOP=../../../..
 include $(TOP)/Setup.mak
 include $(CFG)/EFEU.mak
 
-TINC = $(INC)/EfiTypes
+TINC = $(INC)/EfiType
 TLIB = $(LIB)/esh/types
 
 VPATH = $(shell find -L . -type d)
