@@ -18,7 +18,7 @@ all:: $(_ComplexProgram)
 files:: $(_ComplexProgram_files)
 
 clean::
-	rm -f $(_ComplexProgram)
+	rm -f $(_ComplexProgram) $(_ComplexProgram_files)
 	rm -rf $(BUILD)
 
 $(_ComplexProgram): $(_ComplexProgram_o)
