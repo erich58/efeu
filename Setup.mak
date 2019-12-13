@@ -26,7 +26,9 @@ CFG=$(_TOP)/config
 
 # Build directory
 
+ifndef BUILD
 BUILD=.build
+endif
 
 # Target directories
 
@@ -39,7 +41,7 @@ SHR=$(_TOP)/share
 
 # Default targets
 
-.PHONY: autonom prereq all files clean
+.PHONY: autonom prereq all files doc clean
 
 autonom:: prereq
 
