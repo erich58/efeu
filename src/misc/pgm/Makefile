@@ -5,7 +5,7 @@ TOP=../../..
 include $(TOP)/Setup.mak
 include $(CFG)/Config.mak
 
-Modules= ccmkmf tools
+Modules= tools
 
 all doc clean::
 	@for m in $(Modules); \
