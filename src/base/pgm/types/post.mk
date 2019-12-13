@@ -23,10 +23,8 @@ clean::
 
 -include $(DEP)
 
-$(BUILD)/%.d : %.c
-	echo "$(@:.d=.so): $<" > $@
-
 $(BUILD)/%.so:  %.c
+	@mkdir -p $(BUILD)
 	$(CC) -o $@ -MMD $(CPPFLAGS) $(CFLAGS) -I. -I$(TINC) \
 		-shared -nostdlib $< $(LDFLAGS)
 
