@@ -4,7 +4,6 @@
 TOP=../../../..
 include $(TOP)/Setup.mak
 include $(CFG)/EFEU.mak
-include $(CFG)/ApplFiles.mak
 
 prereq::
 	$(MAKE) -C ../../scripts
@@ -51,7 +50,10 @@ $(LIB)/mksource/%.ms : mksource/files/%.ms
 
 # compose file
 
--include $(BUILD)/TypeDef.rule
+all clean:: $(BUILD)/TypeDef.make
+	$(MAKE) -f $< $@
 
-$(BUILD)/TypeDef.rule: mksource/files/type/TypeDef.msx
+$(BUILD)/TypeDef.make: mksource/files/type/TypeDef.msx
 	$(BIN)/compose-file -r $< $(LIB)/mksource/TypeDef.ms > $@
+
+include $(CFG)/ApplFiles.mak
