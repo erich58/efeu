@@ -53,10 +53,8 @@ $(BIN)/src2doc: $(S2D_OBJ) $(DBUF_OBJ)
 $(BIN)/efeudoc: $(DOC_OBJ)
 	$(CC) -o $@ $(DOC_OBJ) $(LDFLAGS)
 
-$(BUILD)/%.d : %.c
-	echo "$(@:.d=.o): $<" > $@
-
 $(BUILD)/%.o : %.c
+	@mkdir -p $(BUILD)
 	$(CC) -o $@ -c -MMD $(CPPFLAGS) $(CFLAGS) $<
 
 files:: $(HFILES)
