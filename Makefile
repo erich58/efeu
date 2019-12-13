@@ -26,6 +26,9 @@ usage::
 SETENV=	EFEUTOP=`pwd`; PATH=$$EFEUTOP/bin:$$PATH; export EFEUTOP PATH
 
 config::
+	$(MAKE) -C config all
+
+all doc clean:: config
 
 all doc clean::
 	$(MAKE) -C src $@

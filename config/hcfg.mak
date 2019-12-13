@@ -16,10 +16,10 @@ clean::
 
 $(_hcfg_rules): $(CFG)/hcfg.mak
 
-include $(_hcfg_rules)
+-include $(_hcfg_rules)
 
 $(BUILD)/%.hrule: %.hcfg
-	@mkdir -p $(@D)
+	@mkdir -p $(BUILD) $(@D)
 	printf '%s::\n\t@$(BIN)/efeu-config update %s $$@\n' \
 		$(EFEU_INCLUDE)/$(@F:.hrule=.h) $< > $@
 
