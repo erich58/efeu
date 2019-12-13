@@ -4,6 +4,9 @@ include $(CFG)/Config.mak
 
 Modules= base tk pg
 
+all:: prereq
+doc:: all
+
 all doc clean::
 	@for m in $(Modules); \
 	do \
