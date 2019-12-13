@@ -50,10 +50,18 @@ $(LIB)/mksource/%.ms : mksource/files/%.ms
 
 # compose file
 
-all clean:: $(BUILD)/TypeDef.make
-	$(MAKE) -f $< $@
+COMPOSE = $(LIB)/mksource/TypeDef.ms
+
+all:: $(COMPOSE)
+
+clean::
+	rm -f $(COMPOSE)
+
+$(COMPOSE): $(BUILD)/TypeDef.make
+	$(MAKE) -f $< all
 
 $(BUILD)/TypeDef.make: mksource/files/type/TypeDef.msx
-	$(BIN)/compose-file -r $< $(LIB)/mksource/TypeDef.ms > $@
+	@mkdir -p $(BUILD)
+	$(BIN)/compose-file -r $< $(COMPOSE) > $@
 
 include $(CFG)/ApplFiles.mak
