@@ -19,6 +19,7 @@ files:: $(_ComplexProgram_files)
 
 clean::
 	rm -f $(_ComplexProgram)
+	rm -rf $(BUILD)
 
 $(_ComplexProgram): $(_ComplexProgram_o)
 	@mkdir -p $(@D)

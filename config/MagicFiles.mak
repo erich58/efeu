@@ -18,6 +18,6 @@ $(BUILD)/magic.rule: $(BUILD)/magic.files
 	$(BIN)/efeu-mkrule -a files $< $(MAGIC)/magic.d/%B > $@
 
 all clean::
-	$(BIN)/efeu-magic $(MAGIC)
+	-$(BIN)/efeu-magic $(MAGIC)
 
 endif

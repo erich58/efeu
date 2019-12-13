@@ -8,7 +8,8 @@ include $(CFG)/ApplFiles.mak
 prereq::
 	$(MAKE) -C ../lib
 
-../.build/tklib.mak:: prereq
+../.build/tklib.mak::
+	$(MAKE) -C ../config
 
 include ../.build/tklib.mak
 

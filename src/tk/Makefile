@@ -19,3 +19,6 @@ all clean::
 		make -C $$m $@ || exit 1; \
 	done
 	@printf '********************************************\n'
+
+clean::
+	rm -rf $(BUILD)

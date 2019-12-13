@@ -42,6 +42,7 @@ all:: $(PGM)
 
 clean::
 	rm -f $(PGM)
+	rm -rf $(BUILD)
 
 $(BIN)/efeuman: $(EM_OBJ) $(DBUF_OBJ)
 	$(CC) -o $@ $(EM_OBJ) $(DBUF_OBJ) $(LDFLAGS)

@@ -29,3 +29,6 @@ $(TK_CONFIG)::
 
 include $(CFG)/Library.mak
 include $(CFG)/ApplFiles.mak
+
+clean::
+	rm -rf $(BUILD)

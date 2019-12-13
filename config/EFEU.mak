@@ -20,14 +20,4 @@ files:: $(EFEU_DIRS)
 $(EFEU_DIRS)::
 	@mkdir -p $@
 
-# build directory
-
-files:: $(BUILD)
-
-clean::
-	rm -rf $(BUILD)
-
-$(BUILD)::
-	@mkdir -p $@
-
 endif

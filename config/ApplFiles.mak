@@ -27,4 +27,6 @@ $(BUILD)/msg.files::
 $(BUILD)/msg.rule: $(BUILD)/msg.files $(BIN)/efeu-mkrule
 	@$(BIN)/efeu-mkrule -a files -l de $< $(LIB)/efeu/%L/messages/%F > $@
 
+clean::
+	rm -rf $(BUILD)
 endif

@@ -21,6 +21,7 @@ files:: $(_Library_files)
 
 clean::
 	rm -f $(_Library) $(_Library_files)
+	rm -rf $(BUILD)
 
 $(_Library): $(_Library_obj)
 	@mkdir -p $(@D)
