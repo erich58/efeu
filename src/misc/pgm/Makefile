@@ -5,7 +5,7 @@ TOP=../../..
 include $(TOP)/Setup.mak
 include $(CFG)/Config.mak
 
-Modules= tools
+Modules= script tools efeuprj
 
 all doc clean::
 	@for m in $(Modules); \
