@@ -27,4 +27,12 @@ $(LIB)/efeu/config/%.cnf : %.cnf
 	@mkdir -p $(@D)
 	cp $< $@
 
+$(LIB)/efeu/help/%.hlp : %.hlp
+	@mkdir -p $(@D)
+	cp $< $@
+
+$(LIB)/efeu/de/help/%.hlp : de/%.hlp
+	@mkdir -p $(@D)
+	cp $< $@
+
 endif

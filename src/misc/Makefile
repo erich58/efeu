@@ -5,7 +5,7 @@ TOP=../..
 include $(TOP)/Setup.mak
 include $(CFG)/Config.mak
 
-Modules= latex
+Modules= latex pgm tools
 
 all doc clean::
 	@for m in $(Modules); \

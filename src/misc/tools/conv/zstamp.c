@@ -140,8 +140,8 @@ int main (int argc, char **argv)
 			sbuf.st_mtime = stamp;
 			set_utime = 1;
 		}
-		else if	(allfiles || (!stamp == nostamp) || buf[3] & 0x08 ||
-			(notbest && buf[8] != 2))
+		else if	(allfiles || ((stamp == 0) == nostamp) ||
+			 buf[3] & 0x08 || (notbest && buf[8] != 2))
 		{
 			printf("%s:", src);
 
