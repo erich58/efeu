@@ -12,3 +12,4 @@
 \.swp$
 /\.build
 nohup.out.*
+tags

@@ -1,5 +1,5 @@
-# :*: utilities
-# :de: Hilfsprogramme
+# :*: simple tools
+# :de: Einfache Hilfsprogramme
 
 TOP=../../..
 include $(TOP)/Setup.mak

@@ -38,6 +38,7 @@ INC=$(_TOP)/include
 MAN=$(_TOP)/man
 DOC=$(_TOP)/doc
 SHR=$(_TOP)/share
+SRC=$(_TOP)/src
 
 # Default targets
 
