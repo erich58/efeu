@@ -5,7 +5,7 @@ TOP=../..
 include $(TOP)/Setup.mak
 include $(CFG)/Config.mak
 
-Modules= latex pgm tools games # pix pixmap vimrc
+Modules= latex pgm tools games vimrc pix # pixmap
 
 all doc clean::
 	@for m in $(Modules); \
