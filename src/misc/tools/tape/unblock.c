@@ -40,6 +40,8 @@ If not, write to the Free Software Foundation, Inc.,
 #endif
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #ifdef	EFEUCFG
 #include <EFEU/Resource.h>
