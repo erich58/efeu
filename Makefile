@@ -5,7 +5,6 @@ STARTER=~/bin/efeu
 usage::
 	@echo "usage: make base | all | doc | purge | clean | stat"
 	@echo
-#	@echo "config	create efeu configuration tools"
 	@echo "basic	create basic functionality"
 	@echo "all	create all tools"
 	@echo "doc	create all with documentation"
@@ -33,24 +32,10 @@ all doc clean:: config
 all doc clean::
 	$(MAKE) -C src $@
 
-#config:: build/Makefile
-#
-#build/Makefile:
-#	sh sanity-check.sh
-#	-if [ -f src/Makefile ]; then (cd src; make); fi
-#	if [ -x src/config/setup ]; then (cd src/config; sh ./setup ../..); fi
-#	($(SETENV); cd build; shmkmf)
-
 basic::
 	$(MAKE) -C src/base all
 
-#all:: config
-#	($(SETENV); cd build; $(MAKE) all)
-#
-#doc:: config
-#	($(SETENV); cd build; $(MAKE) all doc)
-#
-#basic all doc:: note
+basic all doc:: note
 
 note::
 	@(test -d note && find note -type f -print | xargs cat) || true
