@@ -2,7 +2,7 @@ TOP=..
 include $(TOP)/Setup.mak
 include $(CFG)/Config.mak
 
-Modules= base tk pg
+Modules= config base tk pg
 
 all:: prereq
 doc:: all
