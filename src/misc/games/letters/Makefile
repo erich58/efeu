@@ -30,7 +30,7 @@ files:: $(IM_TG)
 clean::
 	rm -rf $(IM_TG)
 
-$(TG_DIR)/% : images/%
+$(TG_DIR)/images/% : images/%
 	@mkdir -p $(@D)
 	cp $< $@
 
