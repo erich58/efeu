@@ -282,13 +282,13 @@ cppflags ()
 
 cflags ()
 {
-	if [ $# -lt 2 ]; then
-		printf '%s\n' "$1"
-		return
-	fi
-
-	printf '%s %s' "$1" "$2"
-	shift 2
+	case "$2" in
+	*=*)
+		printf '%s %s' "$1" "$2"
+		shift 2
+		;;
+	esac
+	
 	touch $tmp/ipath;
 	touch $tmp/lpath;
 	last=0
