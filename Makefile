@@ -38,7 +38,7 @@ basic::
 basic all doc:: note
 
 note::
-	@(test -d note && find note -type f -print | xargs cat) || true
+	@(test -d note && find note -type f | xargs head -v) || true
 
 purge::
 	rm -rf build
