@@ -1,4 +1,5 @@
-# Regeln für Symlinks generieren
+#!/bin/sh
+# Regeln fuer Symlinks generieren
 
 if [ $# -ne 2 ]; then
 	echo "usage: $0 image-dir cfg"
