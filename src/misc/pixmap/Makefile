@@ -8,7 +8,9 @@ include $(CFG)/EFEU.mak
 prereq::
 	$(MAKE) -C $(TOP)/src/base
 
-LDFLAGS += -lpix -liorl -lmd -lefmath -lefx -lefm -lm -lX11
+X11 = $(shell $(BIN)/efeu-config cflags -L/usr/X11R6/lib:/usr/local/lib -lX11)
+
+LDFLAGS += -lpix -liorl -lmd -lefmath -lefx -lefm -lm $(X11)
 include $(CFG)/SimplePrograms.mak
 include $(CFG)/ApplFiles.mak
 
