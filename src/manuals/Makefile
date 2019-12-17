@@ -5,7 +5,7 @@ TOP=../..
 include $(TOP)/Setup.mak
 include $(CFG)/Config.mak
 
-Modules= base efeudoc interp user
+Modules= base efeudoc interp man1 mdmat mdspec prog style user
 
 all doc clean::
 	@for m in $(Modules); \
