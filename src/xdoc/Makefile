@@ -5,7 +5,7 @@ TOP=../..
 include $(TOP)/Setup.mak
 include $(CFG)/Config.mak
 
-Modules= #edb man mkmf
+Modules= edb #man mkmf
 
 all doc clean::
 	@for m in $(Modules); \
