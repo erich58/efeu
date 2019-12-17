@@ -5,22 +5,26 @@ TOP=../../..
 include $(TOP)/Setup.mak
 include $(CFG)/Config.mak
 
-PDF = $(DOC)/de/pdf/$(NAME).pdf
-HTML = $(DOC)/de/html/$(NAME)
+DE_PDF = $(DOC)/de/pdf/$(NAME).pdf
+DE_HTML = $(DOC)/de/html/$(NAME)
 
-doc:: $(PDF) $(HTML)/index.html
+FILES = $(DE_PDF)
+DIRS = $(DE_HTML)
+FILES += $(patsubst %,%/index.html,$(DIRS))
+
+doc:: $(FILES)
 
 clean::
-	rm -rf $(PDF) $(HTML) $(BUILD)
+	rm -rf $(FILES) $(DIRS) $(BUILD)
 
-$(PDF): main.eds
+$(DE_PDF): main.eds
 	@mkdir -p $(BUILD) $(@D)
-	LANG=de_AT $(BIN)/efeudoc -M $(BUILD)/pdf.d --pdf -o $@ $<
+	LANG=de_AT $(BIN)/efeudoc -M $(BUILD)/de_pdf.d --pdf -o $@ $<
 
--include $(BUILD)/pdf.d
+-include $(BUILD)/de_pdf.d
 
-$(HTML)/index.html: main.eds
+$(DE_HTML)/index.html: main.eds
 	@mkdir -p $(BUILD) $(@D)
-	LANG=de_AT $(BIN)/efeudoc -M $(BUILD)/html.d -h -o $(@D) $<
+	LANG=de_AT $(BIN)/efeudoc -M $(BUILD)/de_html.d -h -o $(@D) $<
 
--include $(BUILD)/html.d
+-include $(BUILD)/de_html.d
