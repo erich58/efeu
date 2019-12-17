@@ -4,7 +4,7 @@
 include config.mk
 
 prereq::
-	$(MAKE) -C $(TOP)/src/base
+	make -C $(TOP)/src/base
 
 # Header für PostgreSQL Schnittstelle
 

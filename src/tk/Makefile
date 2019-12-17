@@ -6,7 +6,7 @@ include $(TOP)/Setup.mak
 include $(CFG)/Config.mak
 
 prereq::
-	$(MAKE) -C ../base
+	make -C ../base
 
 Modules= config lib pgm examples manual
 
@@ -16,7 +16,7 @@ all doc clean::
 		printf '********************************************\n'; \
 		printf '* %-40s *\n' $$m; \
 		printf '********************************************\n'; \
-		make -C $$m $@ || exit 1; \
+		$(MAKE) -C $$m $@ || exit 1; \
 	done
 	@printf '********************************************\n'
 

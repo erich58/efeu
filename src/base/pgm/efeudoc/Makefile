@@ -12,8 +12,8 @@ include $(CFG)/EFEU.mak
 include $(CFG)/ApplFiles.mak
 
 prereq::
-	$(MAKE) -C ../../scripts
-	$(MAKE) -C ../esh
+	make -C ../../scripts
+	make -C ../esh
 
 LDFLAGS += -lefmath -liorl -lmd -lefx -lefm -ldl -lm
 VPATH = $(shell find -L . -type d)

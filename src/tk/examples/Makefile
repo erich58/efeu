@@ -6,7 +6,7 @@ include $(TOP)/Setup.mak
 include $(CFG)/EFEU.mak
 
 prereq::
-	$(MAKE) -C ../lib
+	make -C ../lib
 
 EXDIR = $(SHR)/examples/etk
 

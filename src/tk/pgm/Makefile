@@ -6,7 +6,7 @@ include $(CFG)/EFEU.mak
 include $(CFG)/ApplFiles.mak
 
 prereq::
-	$(MAKE) -C ../lib
+	make -C ../lib
 
 ../.build/tklib.mak::
 	$(MAKE) -C ../config

@@ -8,7 +8,7 @@ EFEU_INCLUDE = $(INC)/GUI
 include $(CFG)/EFEU.mak
 
 prereq::
-	$(MAKE) -C ../config
+	make -C ../config
 
 ../.build/tklib.mak:: prereq
 

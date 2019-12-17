@@ -5,7 +5,7 @@ include $(TOP)/Setup.mak
 include $(CFG)/EFEU.mak
 
 prereq::
-	$(MAKE) -C $(TOP)/src/base/lib
+	make -C $(TOP)/src/base/lib
 
 LDFLAGS += -liorl -lefx -lefm -lm
 

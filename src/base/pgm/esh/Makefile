@@ -6,8 +6,8 @@ include $(TOP)/Setup.mak
 include $(CFG)/EFEU.mak
 
 prereq::
-	$(MAKE) -C ../../scripts
-	$(MAKE) -C ../../lib
+	make -C ../../scripts
+	make -C ../../lib
 
 LDFLAGS += -lefmath -liorl -lmd -lefx -lefm -ldl -lm
 

@@ -9,7 +9,7 @@ EFEU_INCLUDE = $(INC)/Math
 include $(CFG)/EFEU.mak
 
 prereq::
-	$(MAKE) -C ../md
+	make -C ../md
 
 LDFLAGS += -lmd -lefx -lefm -ldl -lm
 

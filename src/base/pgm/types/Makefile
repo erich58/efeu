@@ -6,7 +6,7 @@ include $(TOP)/Setup.mak
 include $(CFG)/EFEU.mak
 
 prereq::
-	$(MAKE) -C ../esh
+	make -C ../esh
 
 # Stufe 1: Sourcen bereitstellen
 
@@ -21,7 +21,7 @@ all:: $(SUBTARGET)
 
 % : $(BUILD)/%.mk
 	@mkdir -p $(@D)
-	$(MAKE) -f $<
+	make -f $<
 
 $(BUILD)/%.mk : %.tpl
 	@mkdir -p $(@D)

@@ -6,7 +6,7 @@ include $(TOP)/Setup.mak
 include $(CFG)/Config.mak
 
 prereq::
-	$(MAKE) -C $(TOP)/src/tk
+	make -C $(TOP)/src/tk
 
 PGM = $(BIN)/efeu-letters
 
@@ -37,10 +37,10 @@ $(TG_DIR)/images/% : images/%
 # Links
 
 all clean:: $(BUILD)/en.mak
-	make -f $(BUILD)/en.mak $@
+	$(MAKE) -f $(BUILD)/en.mak $@
 
 all clean:: $(BUILD)/de.mak
-	make -f $(BUILD)/de.mak $@
+	$(MAKE) -f $(BUILD)/de.mak $@
 
 $(BUILD)/en.mak::
 	@mkdir -p $(@D)

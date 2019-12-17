@@ -6,7 +6,7 @@ include $(TOP)/Setup.mak
 include $(CFG)/EFEU.mak
 
 prereq::
-	$(MAKE) -C $(TOP)/src/base
+	make -C $(TOP)/src/base
 
 X11 = $(shell $(BIN)/efeu-config cflags -L/usr/X11R6/lib:/usr/local/lib -lX11)
 

@@ -6,7 +6,7 @@ include $(TOP)/Setup.mak
 include $(CFG)/EFEU.mak
 
 prereq::
-	$(MAKE) -C $(TOP)/src/base/lib/efx
+	make -C $(TOP)/src/base/lib/efx
 
 LDFLAGS += -lefm -lefx
 
