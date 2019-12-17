@@ -1,11 +1,11 @@
-# :*: basic libraries and commands	
-# :de: EFEU-Basisbibliotheken/Standardkommandos
+# :*: efeu basic documentation
+# :de: EFEU Basishandbücher
 
 TOP=../..
 include $(TOP)/Setup.mak
 include $(CFG)/Config.mak
 
-Modules= base
+Modules= base efeudoc interp user
 
 all doc clean::
 	@for m in $(Modules); \
@@ -13,6 +13,6 @@ all doc clean::
 		printf '********************************************\n'; \
 		printf '* %-40s *\n' $$m; \
 		printf '********************************************\n'; \
-		make -C $$m $@ || exit 1; \
+		$(MAKE) -C $$m $@ || exit 1; \
 	done
 	@printf '********************************************\n'
