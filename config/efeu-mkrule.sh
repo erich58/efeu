@@ -89,6 +89,9 @@ src=$1
 tpl=$2
 shift 2
 
+printf '# Makefile created by %s\n\n' "$0"
+printf '%s::\n\n%s::\n\n' "$all" "$clean"
+
 awk -v all="$all" -v clean="$clean" -v lang="$lang" -v tpl="$tpl" '
 BEGIN {
 	gsub(",","|",lang);

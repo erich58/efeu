@@ -4,6 +4,7 @@ ifndef _Library_mak_
 _Library_mak_ = defined
 
 include $(CFG)/EFEU.mak
+include $(CFG)/ApplFiles.mak
 
 VPATH = $(shell find -L . -type d)
 
@@ -32,10 +33,6 @@ $(EFEU_INCLUDE)/%.h : %.h
 	cp $< $@
 
 -include $(_Library_dep)
-
-$(BUILD)/%.d : %.c
-	@mkdir -p $(@D)
-	echo "$(@:.d=.o): $<" > $@
 
 $(BUILD)/%.o : %.c
 	@mkdir -p $(@D)

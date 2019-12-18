@@ -28,7 +28,6 @@ $(TK_CONFIG)::
 	$(BIN)/efeu-config -t $(TOP) update tk_config.hcfg $@
 
 include $(CFG)/Library.mak
-include $(CFG)/ApplFiles.mak
 
 clean::
 	rm -rf $(BUILD)

@@ -11,4 +11,3 @@ prereq::
 LDFLAGS += -lefm -lefx
 
 include $(CFG)/Library.mak
-include $(CFG)/ApplFiles.mak
