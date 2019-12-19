@@ -29,10 +29,12 @@ clean::
 $(MAN)/de/man3/%.3.gz: %.c
 	@mkdir -p $(@D)
 	LANG=de_AT $(BIN)/src2doc $< | $(BIN)/efeudoc -Tman - | gzip > $@
+	$(BIN)/src2doc -a $< | $(BIN)/efeu-symlinks -s .3.gz $@
 
 $(MAN)/de/man7/%.7.gz: %.h
 	@mkdir -p $(@D)
 	LANG=de_AT $(BIN)/src2doc $< | $(BIN)/efeudoc -Tman - | gzip > $@
+	$(BIN)/src2doc -a $< | $(BIN)/efeu-symlinks -s .7.gz $@
 
 $(DOC)/de/pdf/%.pdf: $(SRC)/base/lib/%/main.doc
 	@mkdir -p $(BUILD) $(@D)
