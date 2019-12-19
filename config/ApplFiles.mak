@@ -6,6 +6,6 @@ _ApplFiles_mak_ = defined
 include $(CFG)/Config.mak
 
 all clean::
-	$(BIN)/efeu-applfiles $(LIB) $@
+	$(BIN)/efeu-applfiles $(LIB)/efeu $@
 
 endif
