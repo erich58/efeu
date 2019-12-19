@@ -55,5 +55,8 @@ cd $dir || exit 1
 
 while read name
 do
-	$cmd $base $name$suffix
+	tg="$name$suffix"
+	[ "$base" != "$tg" ] && $cmd $base $tg
 done
+
+exit 0
