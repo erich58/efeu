@@ -7,12 +7,12 @@ include $(CFG)/EFEU.mak
 include $(CFG)/ApplFiles.mak
 
 _Library = $(LIB)/lib$(NAME).so
-_Library_h = $(shell find -L . -name '*.h')
-_Library_c = $(shell find -L . -name '*.c')
+_Library_hdr = $(shell find -L . -name '*.h' -printf '%f\n')
+_Library_src = $(shell find -L . -name '*.c' -printf '%f\n')
 
-_Library_obj = $(patsubst %.c,$(BUILD)/%.o,$(notdir $(_Library_c)))
+_Library_obj = $(patsubst %.c,$(BUILD)/%.o,$(_Library_src))
 _Library_dep = $(patsubst %.o,%.d,$(_Library_obj))
-_Library_files = $(patsubst %.h,$(EFEU_INCLUDE)/%.h,$(notdir $(_Library_h)))
+_Library_files = $(patsubst %.h,$(EFEU_INCLUDE)/%.h,$(_Library_hdr))
 
 all:: $(_Library)
 

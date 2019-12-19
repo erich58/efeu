@@ -5,27 +5,25 @@ ifndef _ComplexProgram_mak_
 _ComplexProgram_mak_ = defined
 
 include $(CFG)/EFEU.mak
+include $(CFG)/ApplFiles.mak
 
 _ComplexProgram = $(BIN)/$(NAME)
-_ComplexProgram_c = $(wildcard *.c)
-_ComplexProgram_cnf = $(wildcard *.cnf)
-_ComplexProgram_o = $(patsubst %.c,$(BUILD)/%.o,$(notdir $(_ComplexProgram_c)))
-_ComplexProgram_d = $(patsubst %.o,%.d,$(_ComplexProgram_o))
-_ComplexProgram_files = $(patsubst %,$(LIB)/efeu/config/%,$(_ComplexProgram_cnf))
+_ComplexProgram_src = $(shell find -L . -name '*.c' -printf '%f\n')
+
+_ComplexProgram_obj = $(patsubst %.c,$(BUILD)/%.o,$(_ComplexProgram_src))
+_ComplexProgram_dep = $(patsubst %.o,%.d,$(_ComplexProgram_obj))
 
 all:: $(_ComplexProgram)
-
-files:: $(_ComplexProgram_files)
 
 clean::
 	rm -f $(_ComplexProgram) $(_ComplexProgram_files)
 	rm -rf $(BUILD)
 
-$(_ComplexProgram): $(_ComplexProgram_o)
+$(_ComplexProgram): $(_ComplexProgram_obj)
 	@mkdir -p $(@D)
-	$(CC) -o $@ $(_ComplexProgram_o) $(LDFLAGS)
+	$(CC) -o $@ $(_ComplexProgram_obj) $(LDFLAGS)
 
--include $(_ComplexProgram_d)
+-include $(_ComplexProgram_dep)
 
 $(BUILD)/%.o : %.c
 	@mkdir -p $(BUILD) $(@D)

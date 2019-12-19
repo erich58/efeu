@@ -5,34 +5,17 @@ ifndef _SimplePrograms_mak_
 _SimplePrograms_mak_ = defined
 
 include $(CFG)/EFEU.mak
+include $(CFG)/ApplFiles.mak
 
-_SimplePrograms_c = $(wildcard *.c)
-_SimplePrograms_cnf = $(wildcard *.cnf)
-
+_SimplePrograms_c = $(shell find -L . -name '*.c' -printf '%f\n')
 _SimplePrograms = $(patsubst %.c,$(BIN)/%,$(_SimplePrograms_c))
-_SimplePrograms_files = $(patsubst %,$(LIB)/efeu/config/%,$(_SimplePrograms_cnf))
 
 all:: $(_SimplePrograms)
 
-files:: $(_SimplePrograms_files)
-
 clean::
-	rm -f $(_SimplePrograms) $(_SimplePrograms_files)
+	rm -f $(_SimplePrograms)
 
 $(BIN)/% : %.c
 	@mkdir -p $(@D)
 	$(CC) -o $@ $(CPPFLAGS) $(CFLAGS) $< $(LDFLAGS)
-
-$(LIB)/efeu/config/%.cnf : %.cnf
-	@mkdir -p $(@D)
-	cp $< $@
-
-$(LIB)/efeu/help/%.hlp : %.hlp
-	@mkdir -p $(@D)
-	cp $< $@
-
-$(LIB)/efeu/de/help/%.hlp : de/%.hlp
-	@mkdir -p $(@D)
-	cp $< $@
-
 endif
