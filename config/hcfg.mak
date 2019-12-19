@@ -18,6 +18,7 @@ _hcfg_update = $(patsubst %.hcfg,%,$(_hcfg_src))
 files:: $(_hcfg_update)
 
 $(_hcfg_update)::
+	@mkdir -p $(EFEU_INCLUDE)
 	$(BIN)/efeu-config update $@.hcfg $(EFEU_INCLUDE)/$(@F).h
 
 clean::

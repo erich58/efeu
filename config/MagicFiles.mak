@@ -6,16 +6,20 @@ _MagicFiles_mak_ = defined
 include $(CFG)/EFEU.mak
 
 ifndef	MAGIC
-MAGIC = $(TOP)/etc/efeu
+MAGIC = $(ETC)/efeu
 endif
 
--include $(BUILD)/magic.rule
+_MagicFiles_src = $(shell find . -name '*.magic' -printf '%f\n')
+_MagicFiles_files = $(patsubst %.magic,$(MAGIC)/magic.d/%,$(_MagicFiles_src))
 
-$(BUILD)/magic.files::
-	@$(BIN)/efeu-update $@ find . -name '*.magic'
+files:: $(_MagicFiles_files)
 
-$(BUILD)/magic.rule: $(BUILD)/magic.files
-	$(BIN)/efeu-mkrule -a files $< $(MAGIC)/magic.d/%B > $@
+clean::
+	rm -f $(_MagicFiles_files)
+
+$(MAGIC)/magic.d/% :%.magic
+	@mkdir -p $(@D)
+	cp $< $@
 
 all clean::
 	-$(BIN)/efeu-magic $(MAGIC)

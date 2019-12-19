@@ -32,13 +32,14 @@ endif
 
 # Target directories
 
+SRC=$(_TOP)/src
 BIN=$(_TOP)/bin
 LIB=$(_TOP)/lib
 INC=$(_TOP)/include
 MAN=$(_TOP)/man
 DOC=$(_TOP)/doc
 SHR=$(_TOP)/share
-SRC=$(_TOP)/src
+ETC=$(_TOP)/etc
 
 # Default targets
 

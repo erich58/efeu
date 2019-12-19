@@ -6,8 +6,6 @@ _Library_mak_ = defined
 include $(CFG)/EFEU.mak
 include $(CFG)/ApplFiles.mak
 
-VPATH = $(shell find -L . -type d)
-
 _Library = $(LIB)/lib$(NAME).so
 _Library_h = $(shell find -L . -name '*.h')
 _Library_c = $(shell find -L . -name '*.c')

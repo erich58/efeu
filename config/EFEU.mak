@@ -10,6 +10,10 @@ ifndef	EFEU_INCLUDE
 EFEU_INCLUDE = $(INC)/EFEU
 endif
 
+ifndef	VPATH
+VPATH = $(shell find -L . -type d)
+endif
+
 CPPFLAGS += -D'EFEU_VERSION="$(VERSION)"' \
 	-D_XOPEN_SOURCE=500 -D_FILE_OFFSET_BITS=64
 
