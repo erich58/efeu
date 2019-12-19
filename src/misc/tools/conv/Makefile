@@ -9,6 +9,7 @@ prereq::
 
 CFLAGS += -lefm
 include $(CFG)/SimplePrograms.mak
+include $(CFG)/Scripts.mak
 
 # Extra Symlinks
 
