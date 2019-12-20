@@ -18,3 +18,6 @@ clean::
 $(TEXDIR)/% : %
 	@mkdir -p $(@D)
 	cp $< $@
+
+all::
+	-texhash $(TEXMF)
