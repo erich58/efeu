@@ -1,5 +1,6 @@
 # :*: manpages to the libraries
 # :de: Handbücher zu den Programmbibliotheken
+
 TOP=../../..
 include $(TOP)/Setup.mak
 include $(CFG)/Config.mak
@@ -26,6 +27,8 @@ doc:: $(FILES)
 clean::
 	rm -rf $(FILES) $(HTML_DIRS)
 
+# manpages
+
 $(MAN)/de/man3/%.3.gz: %.c
 	@mkdir -p $(@D)
 	LANG=de_AT $(BIN)/src2doc $< | $(BIN)/efeudoc -Tman - | gzip > $@
@@ -35,6 +38,13 @@ $(MAN)/de/man7/%.7.gz: %.h
 	@mkdir -p $(@D)
 	LANG=de_AT $(BIN)/src2doc $< | $(BIN)/efeudoc -Tman - | gzip > $@
 	$(BIN)/src2doc -a $< | $(BIN)/efeu-symlinks -s .7.gz $@
+
+# remove dead links
+
+clean::
+	find -L $(MAN) -type l -exec rm -vf '{}' \;
+
+# docments
 
 $(DOC)/de/pdf/%.pdf: $(SRC)/base/lib/%/main.doc
 	@mkdir -p $(BUILD) $(@D)
