@@ -10,6 +10,10 @@ ifndef	EFEU_INCLUDE
 EFEU_INCLUDE = $(INC)/EFEU
 endif
 
+ifndef	EFEU_LIB
+EFEU_LIB = $(LIB)/efeu
+endif
+
 ifndef	VPATH
 VPATH = $(shell find -L . -type d)
 endif
