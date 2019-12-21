@@ -1,3 +1,9 @@
+EFEU 4.0
+
+*	Config.make replaced by using ordinary Makefiles with gnu-make
+	extensions and shell scripts. The tool |shmkmf| no longer
+	used and may be externalized.
+
 EFEU 3.4
 
 *	Refactoring build concept.

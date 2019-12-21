@@ -49,10 +49,6 @@ replace a Tcl/Tk documentation.
 	Wördern, \thedate
 \toc
 
-\addsrclist
-\getsrc		*-en.doc
-\delsrc
-
 \appendix
 \mchap[1]	Commands
 \pipe		|etk --help=raw|

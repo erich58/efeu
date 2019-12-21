@@ -1,0 +1,8 @@
+# :*:configuration file for PostgreSQL interface
+# :de:Konfigurationsdatei für PostgreSQL Schnittstelle
+
+@beg cflags
+CPPFLAGS += -I/usr/include//:/usr/local/include tk.h
+CPPFLAGS += -I/usr/local//include:/usr/include// libpq-fe.h
+LDFLAGS += -L/usr/local//lib:/usr/lib// -lpq -a -lcrypt
+@end

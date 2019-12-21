@@ -9,5 +9,8 @@
 ^note
 ^etc
 ^save
+^efeu-.*\.tgz
 \.swp$
+/\.build
 nohup.out.*
+tags

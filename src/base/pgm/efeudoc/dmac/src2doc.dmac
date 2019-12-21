@@ -139,7 +139,10 @@ List_t list = split(ParseLine(cin, true));
 
 for (x in SourceList)
 	if (pselect(x.name, list))
-		MakeDepend ? depend(x.path) : cout << filter(cmd + x.path);
+	{
+		depend(x.path);
+		cout << filter(cmd + x.path);
+	}
 }}
 
 :*:include files of source list
@@ -177,6 +180,8 @@ cmd = cmd ? "|" + cmd : "$1";
 
 for (x in SourceList)
 	if (pselect(x.name, list))
-		MakeDepend ? depend(x.path) : \
-			copy(open(psub(cmd, x.path), "rz"), cout);
+	{
+		depend(x.path);
+		copy(open(psub(cmd, x.path), "rz"), cout);
+	}
 }}

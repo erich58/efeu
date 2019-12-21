@@ -38,7 +38,14 @@ check_stat ()
 	esac
 }
 
+CC=`sh config/efeu-config.sh cc`
+
 cd $TMP
+
+cat > Makefile <<!
+CC = $CC
+!
+
 cat > hello.c << !
 #include <stdio.h>
 

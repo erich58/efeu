@@ -111,15 +111,9 @@ do
 	fi
 done
 
-if [ -n "$ulist" ]
-then
-	printf "Found previous installed EFEU-version in$ulist.\n"
-	printf "This would be removed before installing the new one.\n"
-fi
-
-#query -y "Continue" || exit 0
-
-if [ `id -u` != 0 ]; then
+if [ -n "$arch" ]; then
+	:
+elif [ `id -u` != 0 ]; then
 	note "Only root can do this."
 	exit 1
 fi
@@ -129,6 +123,7 @@ mkdir $TMP || exit 1
 chmod go-rwx $TMP
 readonly TMP
 trap "cd; rm -rf $TMP;" 0
+trap "exit 1" 1 2 3 15
 
 mkdir -p $TMP/$data
 mkdir -p $TMP/$config

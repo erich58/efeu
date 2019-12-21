@@ -8,19 +8,8 @@ im Rahmen seiner Projektarbeiten im Auftrag der
 <"Synthesis Forschung Gesellschaft m.b.H."> entwickelt.
 
 EFEU besteht aus:
-*	Entwicklungswerkzeugen,
-*	umfangreichen C Bibliotheken und
+*	Umfangreichen C Bibliotheken und
 *	Anwendungsprogrammen.
-
-\sec	Entwicklungswerkzeuge
-
-[shmkmf]
-	generiert ein Makefile aus einem Skriptfile mithilfe der Shell.
-[efeugen]
-	ruft make in einem globalen, durch die Umgebungsvariable
-	EFEUGEN definiertem, Generierungsverzeichnis auf.
-	In EFEU ist die Generierung von Bibliotheken und Kommandos
-	vollständig von den Sourcen getrennt.
 
 \sec	C Bibliotheken
 
@@ -114,4 +103,4 @@ rufe einfach make auf.
 
 Bitte melde Fehler in EFEU direkt dem Autor:
 
-Erich Frühstück <ef\@cybertec.at>
+Erich Frühstück <erich.fruehstueck\@chello.at>

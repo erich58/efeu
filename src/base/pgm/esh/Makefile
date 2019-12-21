@@ -1,0 +1,67 @@
+# :*: esh, mksource and scripts
+# :de: esh, mksource und Scripts
+
+TOP=../../../..
+include $(TOP)/Setup.mak
+include $(CFG)/EFEU.mak
+
+prereq::
+	make -C ../../scripts
+	make -C ../../lib
+
+LDFLAGS += -lefmath -liorl -lmd -lefx -lefm -ldl -lm
+
+VPATH = $(shell find -L . -type d)
+SRC = $(wildcard */*.c)
+PGM = $(patsubst %.c,$(BIN)/%,$(notdir $(SRC)))
+
+all:: $(PGM)
+
+clean::
+	rm -f $(PGM)
+
+$(BIN)/% : %.c
+	@mkdir -p $(@D)
+	$(CC) -o $@ $(CPPFLAGS) $(CFLAGS) $< $(LDFLAGS)
+
+
+# Scripts and extra files
+
+SRC_ESH = $(wildcard script/*.esh)
+SRC_HDR = $(wildcard mksource/files/*.hdr)
+SRC_MS  = $(wildcard mksource/files/*.ms)
+
+FILES = $(patsubst %.esh,$(BIN)/%,$(notdir $(SRC_ESH)))
+FILES += $(patsubst %,$(LIB)/esh/%,$(notdir $(SRC_HDR)))
+FILES += $(patsubst %,$(LIB)/mksource/%,$(notdir $(SRC_MS)))
+
+all:: $(FILES)
+
+$(BIN)/% : script/%.esh
+	$(BIN)/efeuscript -e -c esh $< $@
+
+$(LIB)/esh/%.hdr : mksource/files/%.hdr
+	@mkdir -p $(@D)
+	cp $< $@
+
+$(LIB)/mksource/%.ms : mksource/files/%.ms
+	@mkdir -p $(@D)
+	cp $< $@
+
+# compose file
+
+COMPOSE = $(LIB)/mksource/TypeDef.ms
+
+all:: $(COMPOSE)
+
+clean::
+	rm -f $(COMPOSE)
+
+$(COMPOSE): $(BUILD)/TypeDef.make
+	$(MAKE) -f $< all
+
+$(BUILD)/TypeDef.make: mksource/files/type/TypeDef.msx
+	@mkdir -p $(BUILD)
+	$(BIN)/compose-file -r $< $(COMPOSE) > $@
+
+include $(CFG)/ApplFiles.mak

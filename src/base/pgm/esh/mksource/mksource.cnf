@@ -28,6 +28,10 @@ I:dir | :eval 'IncPath = paste(PATHSEP, "{}", IncPath); addflag("-I{}")'
 	:*:appends <dir> to the search path for scripts.
 	:de:erweitert den Suchpfad für Skriptfiles um <dir>.
 
+W:dir | :eval 'WorkDir = "{}"'
+	:*:use <dir> for generated files.
+	:de:verwendet <dir> für generierte Dateien.
+
 s | :eval 'VerboseMode = 0'
 	:*:silent execution
 	:de:Arbeitsschritte nicht protokollieren
@@ -80,11 +84,11 @@ d | :eval 'MakeDep = true'
 	:*:make dependence
 	:de:Abhängigkeitsregeln generieren
 
-D name | :eval 'DependName = "{}"; MakeDep = true'
+D:name | :eval 'DependName = "{}"; MakeDep = true'
 	:*:make dependence for target <name>
 	:de:Abhängigkeitsregel für <name> generieren
 
-n name | :eval 'config name = "{}"'
+n:name | :eval 'config name = "{}"'
 	:*:base name for created files
 	:de:Basisname für Standardnamen
 
@@ -96,11 +100,11 @@ c | :eval 'config src'
 	:*:create source
 	:de:Sourcefile mit Standardnamen generieren
 
-H hdr | :eval 'config hdr = $1'
+H:hdr | :eval 'config hdr = $1'
 	:*:create header with name <hdr>
 	:de:Headerfile mit Namen <hdr> generieren
 
-C src | :eval 'config src = $1'
+C:src | :eval 'config src = $1'
 	:*:create source with name <src>
 	:de:Sourcefile mit Namen <src> generieren
 
@@ -109,7 +113,7 @@ t | :eval 'LockFlag = true; config tex'
 	:de:(veraltet) TeX-Dokumentation mit Standardnamen generieren,
 	andere Files sperren
 
-T doc | :eval 'LockFlag = true; config tex = $1'
+T:doc | :eval 'LockFlag = true; config tex = $1'
 	:*:(obsolete) create TeX documentation <doc>, lock other outputs
 	:de:(veraltet) TeX-Dokumentation <doc> generieren,
 	andere Files sperren

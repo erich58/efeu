@@ -59,11 +59,10 @@ static void print_type (IO *io, InfoNode *base);
 
 static IO *post_open (const char *name, const char *par)
 {
+	AddTarget(name);
+
 	if	(MakeDepend)
-	{
-		AddTarget(name);
 		return NULL;
-	}
 
 	if	(name)
 	{
