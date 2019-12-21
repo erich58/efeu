@@ -3,26 +3,23 @@
 STARTER=~/bin/efeu
 
 usage::
-	@echo "usage: make base | all | doc | purge | clean | stat"
+	@echo "usage: make base | all | doc | clean | stat"
 	@echo
 	@echo "basic	create basic functionality"
 	@echo "all	create all tools"
 	@echo "doc	create all with documentation"
+	@echo "clean	cleanup the build"
 	@echo
 	@echo "install	Install efeu (what was build)"
-	@echo "purge	remove build directory"
-	@echo "clean	remove all target directories"
-	@echo
 	@echo "starter	Create starter script $(STARTER)"
 	@echo "arch	create archive for binaries"
 	@echo
-	@echo "NOTE: Instead of installing efeu, you can add"
+	@echo "NOTE:"
+	@echo "make install creates the command efeu-uninstall"
+	@echo "wich removes al un installed files"
+	@echo "Instead of installing efeu, you can add"
 	@echo "`pwd`/bin to PATH or use the starter script."
-
-#	The following macro sets the environment needed for some
-#	commands to correctly implement efeu.
-
-SETENV=	EFEUTOP=`pwd`; PATH=$$EFEUTOP/bin:$$PATH; export EFEUTOP PATH
+	@echo
 
 config::
 	$(MAKE) -C config all
@@ -39,9 +36,6 @@ basic all doc:: note
 
 note::
 	@(test -d note && find note -type f | xargs head -v) || true
-
-purge::
-	rm -rf build
 
 clean::
 	rm -rf include ppinclude build lib bin etc cgi-bin share doc man note

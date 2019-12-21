@@ -7,18 +7,8 @@ EFEU was designed by Erich Fruehstueck. It is the environment for his
 programming work in projects of the synthesis research institute.
 
 EFEU consists of
-*	development tools,
 *	extensive C libraries and
 *	application commands.
-
-\sec	Development tools
-
-[shmkmf]
-	creates a Makefile from configuration using the shell.
-[efeugen]
-	runs make on a global building place, definend by environemt.
-	In EFEU the building of libraries and commands is
-	completly separated from source.
 
 \sec	C libraries
 
@@ -102,4 +92,4 @@ Read the instructions in INSTALL or just try make.
 
 Please report any bugs in EFEU to the author:
 
-Erich Fruehstueck <ef\@cybertec.at>
+Erich Fruehstueck <erich.fruehsteck\@chello.at>
