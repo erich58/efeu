@@ -1,6 +1,7 @@
 #include <EFEU/UnitTest.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <string.h>
 
 static int count_good = 0;
 static int count_bad = 0;

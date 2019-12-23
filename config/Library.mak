@@ -44,18 +44,18 @@ _Library_gcov_obj = $(patsubst %.o,%.gcov.o,$(_Library_obj))
 _Library_gcov_dep = $(patsubst %.o,%.d,$(_Library_gcov_obj))
 
 _Library_tst = $(shell find -L . -name '*.tst' -printf '%f\n')
-_Library_bin = $(patsubst %.tst,$(BUILD)/%.bin,$(_Library_tst))
-_Library_tst_dep = $(patsubst %.bin,%.bin.d,$(_Library_bin))
+_Library_tst_bin = $(patsubst %.tst,$(BUILD)/%.bin,$(_Library_tst))
+_Library_tst_dep = $(patsubst %.bin,%.bin.d,$(_Library_tst_bin))
 
 utest:: all $(_Library_gcov)
 
 utest::
 	make -C $(SRC)/utest
 
-utest:: $(_Library_bin)
+utest:: $(_Library_tst_bin)
 
 utest::
-	printf '%s\n' $(_Library_bin) | /bin/sh
+	printf '%s\n' $(_Library_tst_bin) | /bin/sh
 
 $(_Library_gcov): $(_Library_gcov_obj)
 	ar -r $@ $(_Library_gcov_obj)
@@ -67,12 +67,15 @@ $(BUILD)/%.gcov.o : %.c
 	@mkdir -p $(@D)
 	$(CC) -o $@ -c -MMD $(CPPFLAGS) $(CFLAGS) --coverage $<
 
+$(_Library_tst_bin) : $(_Library_gcov)
+
 $(BUILD)/%.bin : %.tst
 	@mkdir -p $(@D)
 	$(CC) -o $@ -MMD -MF $(@).d $(CPPFLAGS) $(CFLAGS) \
 		-x c $< -x none $(_Library_gcov) -lgcov $(LDFLAGS) -lutest
 
 purge::
+	rm -rf $(_Library_gcov)
 	rm -rf $(_Library_gcov_obj) $(_Library_gcov_dep)
 	rm -rf $(_Library_gcov_obj:.o=.gcno)
 	rm -rf $(_Library_gcov_obj:.o=.gcda)

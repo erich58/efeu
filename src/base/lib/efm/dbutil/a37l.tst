@@ -24,8 +24,8 @@ UNIT_TEST
 	EXPECT_TRUE(a37l("0     ") == 37u * 37u * 37u *37u * 37u);
 	EXPECT_TRUE(a37l("0      ") == 37u * 37u * 37u * 37u * 37u * 37u);
 
-	EXPECT_TRUE(strcmp(l37a(a37l("zzzzzz")), "ZZZZZZ") == 0);
-	EXPECT_TRUE(strcmp(l37a(a37l("1234567")), "1234567") != 0);
-	EXPECT_TRUE(strcmp(l37a(a37l("aBcDeF")), "ABCDEF") == 0);
-	EXPECT_TRUE(strcmp(l37a(a37l("a:b.c ")), "A B C ") == 0);
+	EXPECT_STREQ(l37a(a37l("zzzzzz")), "ZZZZZZ");
+	EXPECT_STRNE(l37a(a37l("1234567")), "1234567");
+	EXPECT_STREQ(l37a(a37l("aBcDeF")), "ABCDEF");
+	EXPECT_STREQ(l37a(a37l("a:b.c ")), "A B C ");
 }
