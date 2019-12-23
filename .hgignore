@@ -12,5 +12,6 @@
 ^efeu-.*\.tgz
 \.swp$
 /\.build
+/\.utest
 nohup.out.*
 tags

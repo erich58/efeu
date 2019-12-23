@@ -6,7 +6,7 @@ _Library_mak_ = defined
 include $(CFG)/EFEU.mak
 include $(CFG)/ApplFiles.mak
 
-_Library = $(LIB)/lib$(NAME).so
+Library = $(LIB)/lib$(NAME).so
 _Library_hdr = $(shell find -L . -name '*.h' -printf '%f\n')
 _Library_src = $(shell find -L . -name '*.c' -printf '%f\n')
 
@@ -14,15 +14,15 @@ _Library_obj = $(patsubst %.c,$(BUILD)/%.o,$(_Library_src))
 _Library_dep = $(patsubst %.o,%.d,$(_Library_obj))
 _Library_files = $(patsubst %.h,$(EFEU_INCLUDE)/%.h,$(_Library_hdr))
 
-all:: $(_Library)
+all:: $(Library)
 
 files:: $(_Library_files)
 
 clean::
-	rm -f $(_Library) $(_Library_files)
+	rm -f $(Library) $(_Library_files)
 	rm -rf $(BUILD)
 
-$(_Library): $(_Library_obj)
+$(Library): $(_Library_obj)
 	@mkdir -p $(@D)
 	$(CC) -shared -Wl,-soname,lib$(NAME).so -o $@ $(_Library_obj) $(LDFLAGS)
 

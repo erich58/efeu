@@ -10,3 +10,6 @@ LDFLAGS += -ldl
 
 include $(CFG)/hcfg.mak
 include $(CFG)/Library.mak
+
+UTFLAGS = $(Library)
+include $(CFG)/UnitTest.mak
