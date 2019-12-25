@@ -47,15 +47,15 @@ _Library_tst_src = $(shell find -L . -name '*.tst.c' -printf '%f\n')
 _Library_tst_bin = $(patsubst %.c,$(BUILD)/%,$(_Library_tst_src))
 _Library_tst_dep = $(patsubst %,%.d,$(_Library_tst_bin))
 
-utest::
+test::
 	make -C $(SRC)/utest all
 
-utest:: all $(_Library_gcov)
+test:: all $(_Library_gcov)
 
-utest:: $(_Library_tst_bin)
+test:: $(_Library_tst_bin)
 
-utest::
-	printf '%s\n' $(_Library_tst_bin) | sort | /bin/sh
+test::
+	$(BIN)/efeu-test $(BUILD)
 
 $(_Library_gcov): $(_Library_gcov_obj)
 	ar -r $@ $(_Library_gcov_obj)

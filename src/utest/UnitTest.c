@@ -66,6 +66,7 @@ int main(int argc, char **argv)
 	else
 		name = argv[0];
 
+	fprintf(stderr, "%s\t%s\n", "#RUN", name);
 	runUnitTest();
 	printf("%s\t%d\t%d\t%d\t%s\n", name, count_good + count_bad,
 		count_good, count_bad, count_bad ? "FAILURE" : "SUCCESS");
