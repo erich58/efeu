@@ -64,7 +64,11 @@ find $1 -name '*.c.gcov' -exec rm '{}' \;
 echo "#unit tests"
 
 redir=""
-[ $out ] && redir="2>> $out"
+
+if [ $out ]; then
+	[ -f $out ] && rm -f $out
+	redir="2>> $out"
+fi
 
 find $1 -name '*.tst' | sort | while read tst
 do
