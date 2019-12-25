@@ -1,7 +1,7 @@
 #include <EFEU/UnitTest.h>
 #include <stdio.h>
 
-UNIT_TEST
+TEST_SUITE
 {
 	EXPECT_STREQ(UnitTest_qstr(0), "(null)");
 	EXPECT_STREQ(UnitTest_qstr("äöü"), "\"äöü\"");

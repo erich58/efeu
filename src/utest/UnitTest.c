@@ -13,40 +13,63 @@ static int count_bad = 0;
 
 typedef void (*runFunction)(void);
 
+/* Atomare Infozeile
+*/
+
+static void vinfo(const char *pfx, const char *file, int line,
+	const char *fmt, va_list list)
+{
+	char buf[1024];
+	size_t pos;
+
+	pos = snprintf(buf, sizeof buf, "%s\t%s:%d\t", pfx, file, line);
+	pos += vsnprintf(buf + pos, sizeof buf - pos - 1, fmt, list);
+
+	if	(pos >= sizeof buf)
+		pos = sizeof buf - 1;
+
+	buf[pos++] = '\n';
+	write(2, buf, pos);
+}
+
+void UnitTest_info(const char *file, int line, const char *fmt, ...)
+{
+	va_list list;
+
+	va_start (list, fmt);
+	vinfo("INFO", file, line, fmt, list);
+	va_end(list);
+}
+
 int UnitTest_result(const char *file, int line, int res, const char *fmt, ...)
 {
 	va_list list;
 
 	if	(res)
-	{
 		count_good++;
-	}
 	else
-	{
 		count_bad++;
-	}
 
-	char buf[1024];
 	va_start (list, fmt);
-	vsnprintf(buf, sizeof buf, fmt, list);
+	vinfo(res ? "GOOD" : "BAD", file, line, fmt, list);
 	va_end(list);
-
-	fprintf(stderr, "%s\t%s:%d\t%s\n",
-		res ? "GOOD" : "BAD", file, line, buf);
 	return res;
-}
-
-int UnitTest_summary(void)
-{
-	printf("good: %d\n", count_good);
-	printf("bad:  %d\n", count_bad);
-	return count_bad != 0;
 }
 
 int main(int argc, char **argv)
 {
+	char *name;
+	char *p;
+
+	if	((p = strrchr(argv[0], '/')))
+		name = p + 1;
+	else
+		name = argv[0];
+
 	runUnitTest();
-	return UnitTest_summary();
+	printf("%s\t%d\t%d\t%d\t%s\n", name, count_good + count_bad,
+		count_good, count_bad, count_bad ? "FAILURE" : "SUCCESS");
+	return count_bad ? 1 : 0;
 }
 
 int UnitTest_wait(void)

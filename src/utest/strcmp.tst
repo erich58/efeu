@@ -1,6 +1,6 @@
 #include <EFEU/UnitTest.h>
 
-UNIT_TEST
+TEST_SUITE
 {
 	EXPECT_STRCMP(NULL, ==, NULL);
 	EXPECT_STRCMP(NULL, <, "");

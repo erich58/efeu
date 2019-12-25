@@ -1,7 +1,7 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/dbutil.h>
 
-UNIT_TEST
+TEST_SUITE
 {
 	int errcnt = 0;
 	int n = 0;

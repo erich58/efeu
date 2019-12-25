@@ -5,7 +5,6 @@
 
 void UnitTest_info(const char *file, int line, const char *fmt, ...);
 int UnitTest_result(const char *file, int line, int res, const char *fmt, ...);
-int UnitTest_summary(void);
 const char *UnitTest_tempname(const char *name);
 const char *UnitTest_mkdir(const char *name);
 const char *UnitTest_mkfile(const char *name, const char *content);
@@ -18,7 +17,7 @@ int UnitTest_wait(void);
 
 void runUnitTest(void);
 
-#define UNIT_TEST	void runUnitTest(void)
+#define TEST_SUITE	void runUnitTest(void)
 
 #define PRINT_LABEL(label)	\
 UnitTest_info(__FILE__, __LINE__, "/* %s */", label)

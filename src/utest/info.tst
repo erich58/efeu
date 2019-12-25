@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-UNIT_TEST
+TEST_SUITE
 {
 	const char *str = "Infostring";
 	PRINT_INT(6 * 7);

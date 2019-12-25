@@ -1,6 +1,6 @@
 #include <EFEU/UnitTest.h>
 
-UNIT_TEST
+TEST_SUITE
 {
 	TEST_FORK
 	{

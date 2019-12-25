@@ -1,7 +1,7 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/math.h>
 
-UNIT_TEST
+TEST_SUITE
 {
 	EXPECT_TRUE(!isnan(0.));
 	EXPECT_TRUE(!isinf(0.));

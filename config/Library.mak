@@ -55,7 +55,7 @@ utest::
 utest:: $(_Library_tst_bin)
 
 utest::
-	printf '%s\n' $(_Library_tst_bin) | /bin/sh
+	printf '%s\n' $(_Library_tst_bin) | sort | /bin/sh
 
 $(_Library_gcov): $(_Library_gcov_obj)
 	ar -r $@ $(_Library_gcov_obj)

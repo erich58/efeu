@@ -10,7 +10,7 @@
 #include <unistd.h>
 
 #define	MKTEMP	"mktemp -d"
-#define	CLEANUP	"rm -rvf "
+#define	CLEANUP	"rm -rf "
 #define	BSIZE	64
 
 typedef struct {

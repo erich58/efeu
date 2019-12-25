@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <dirent.h>
 
-UNIT_TEST
+TEST_SUITE
 {
 	TEST_DIR("dir");
 	TEST_FILE("dir/file", "Testdaten\n");
