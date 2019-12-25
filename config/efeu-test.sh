@@ -101,11 +101,11 @@ do
 '
 		[ -f $name.c.gcov ] && mv $name.c.gcov $1
 	else
-		printf '%-23s\t00.00%% of unknown\n' $name.c
+		printf '#%-22s\tnot run\n' $name.c
 	fi
 done | tee gcov.out | awk '
 BEGIN { run = 0; c = 0.; n = 0; other = 0; }
-/unknown/ { other++; next; }
+/not run/ { other++; next; }
 {
 	c += $2 * $4;
 	n += $4
@@ -113,8 +113,10 @@ BEGIN { run = 0; c = 0.; n = 0; other = 0; }
 }
 END {
 	printf("Coverage: %.2f%% of %d lines in %d files\n",
-		c / n, n, run);
-	printf("Missing: %d files\n", other);
+		n ? c / n : 0, n, run);
+
+	if	(other)
+		printf("Missing: %d files\n", other);
 }
 '
 
