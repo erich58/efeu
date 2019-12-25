@@ -8,7 +8,7 @@ include $(CFG)/ApplFiles.mak
 
 Library = $(LIB)/lib$(NAME).so
 _Library_hdr = $(shell find -L . -name '*.h' -printf '%f\n')
-_Library_src = $(shell find -L . -name '*.c' -printf '%f\n')
+_Library_src = $(shell find -L . -name '*.c' ! -name '*.tst.c' -printf '%f\n')
 
 _Library_files = $(patsubst %.h,$(EFEU_INCLUDE)/%.h,$(_Library_hdr))
 _Library_obj = $(patsubst %.c,$(BUILD)/%.o,$(_Library_src))
@@ -43,14 +43,14 @@ _Library_gcov = $(BUILD)/lib$(NAME).gcov.a
 _Library_gcov_obj = $(patsubst %.o,%.gcov.o,$(_Library_obj))
 _Library_gcov_dep = $(patsubst %.o,%.d,$(_Library_gcov_obj))
 
-_Library_tst = $(shell find -L . -name '*.tst' -printf '%f\n')
-_Library_tst_bin = $(patsubst %.tst,$(BUILD)/%.bin,$(_Library_tst))
-_Library_tst_dep = $(patsubst %.bin,%.bin.d,$(_Library_tst_bin))
-
-utest:: all $(_Library_gcov)
+_Library_tst_src = $(shell find -L . -name '*.tst.c' -printf '%f\n')
+_Library_tst_bin = $(patsubst %.c,$(BUILD)/%,$(_Library_tst_src))
+_Library_tst_dep = $(patsubst %,%.d,$(_Library_tst_bin))
 
 utest::
-	make -C $(SRC)/utest
+	make -C $(SRC)/utest all
+
+utest:: all $(_Library_gcov)
 
 utest:: $(_Library_tst_bin)
 
@@ -69,10 +69,10 @@ $(BUILD)/%.gcov.o : %.c
 
 $(_Library_tst_bin) : $(_Library_gcov)
 
-$(BUILD)/%.bin : %.tst
+$(BUILD)/%.tst : %.tst.c
 	@mkdir -p $(@D)
-	$(CC) -o $@ -MMD -MF $(@).d $(CPPFLAGS) $(CFLAGS) \
-		-x c $< -x none $(_Library_gcov) -lgcov $(LDFLAGS) -lutest
+	$(CC) -o $@ -MMD -MF $(@).d $(CPPFLAGS) $(CFLAGS) $< \
+		$(_Library_gcov) -lgcov $(LDFLAGS) -lutest
 
 purge::
 	rm -rf $(_Library_gcov)
