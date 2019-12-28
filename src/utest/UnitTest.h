@@ -17,7 +17,12 @@ int UnitTest_wait(void);
 
 void runUnitTest(void);
 
+#define TEST_DECL(name)	static void _test_ ## name (void)
 #define TEST_SUITE	void runUnitTest(void)
+
+#define TEST_RUN(name)	\
+do { UnitTest_info(__FILE__, __LINE__, "run %s", # name); \
+_test_ ## name (); } while (0)
 
 #define PRINT_LABEL(label)	\
 UnitTest_info(__FILE__, __LINE__, "/* %s */", label)
