@@ -2,6 +2,7 @@
 #define	EFEU_UnitTest_h	1
 
 #include <string.h>
+#include <stdio.h>
 
 void UnitTest_info(const char *file, int line, const char *fmt, ...);
 int UnitTest_result(const char *file, int line, int res, const char *fmt, ...);
@@ -21,8 +22,7 @@ void runUnitTest(void);
 #define TEST_SUITE	void runUnitTest(void)
 
 #define TEST_RUN(name)	\
-do { UnitTest_info(__FILE__, __LINE__, "run %s", # name); \
-_test_ ## name (); } while (0)
+fprintf(stderr, "#TEST\t%s\n", # name), _test_ ## name ()
 
 #define PRINT_LABEL(label)	\
 UnitTest_info(__FILE__, __LINE__, "/* %s */", label)
