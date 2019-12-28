@@ -37,10 +37,13 @@ static int default_flags = 0;
 
 #define	MASK_EXACT(level)	(1 << ((level) - 1))
 #define	MASK_FULL(level)	(~(~0 << (level)))
+#define	MASK_DEFAULT		MASK_FULL(LOGLEVEL_NOTE)
 
 static STRBUF(sbuf, 0);
 static int LogConfigChange = 1;
-static int default_mask = MASK_FULL(LOGLEVEL_NOTE);
+static int LogConfigLock = 0;
+
+static int default_mask = MASK_DEFAULT;
 
 typedef struct {
 	char *select;	/* Auswahl */
@@ -144,9 +147,12 @@ void LogConfig (const char *def)
 
 	if	(!def)	return;
 
+	LogConfigLock++;
+
 	if	(*def == '@')
 	{
 		vb_clean(&vbuf, def_clean);
+		default_mask = MASK_DEFAULT;
 		def++;
 	}
 
@@ -250,6 +256,7 @@ void LogConfig (const char *def)
 	}
 
 	LogConfigChange++;
+	LogConfigLock--;
 }
 
 /*
@@ -261,18 +268,16 @@ aufgerufen.
 
 int LogUpdate (LogControl *ctrl)
 {
-	static int lock = 0;
-
 	if	(!ctrl)	return 0;
 
-	if	(!lock && ctrl->sync != LogConfigChange)
+	if	(!LogConfigLock && ctrl->sync != LogConfigChange)
 	{
 		LogControlEntry *entry;
 		LOGDEF *def;
 		size_t n;
 
 		entry = NULL;
-		lock = 1;
+		LogConfigLock++;
 
 		for (n = vbuf.used, def = vbuf.data; n--; def++)
 			if	(log_match(ctrl, def->select))
@@ -284,7 +289,7 @@ int LogUpdate (LogControl *ctrl)
 		del_entry(ctrl->entry);
 		ctrl->entry = entry;
 		ctrl->sync = LogConfigChange;
-		lock = 0;
+		LogConfigLock--;
 	}
 
 	return ctrl->entry ? 1 : 0;
