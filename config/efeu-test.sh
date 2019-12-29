@@ -99,9 +99,8 @@ do
 	name=`basename $obj .gcov.o`
 
 	if	[ -f $1/$name.gcov.gcda ]; then
-		$gcov $obj | sed -e "s/'//g" | awk '
-/^File/ { printf("%-23s\t", $2); }
-/^Lines/ { printf("%s\n", substr($0, index($a, ":") + 1)); }
+		$gcov $obj | sed -e "s/'//g" | awk -v src=$1/$name.c.gcov '
+/^Lines/ { printf("%-23s\t%s\n", src, substr($0, index($a, ":") + 1)); }
 '
 		[ -f $name.c.gcov ] && mv $name.c.gcov $1
 	else
