@@ -47,6 +47,8 @@ TEST_DECL(setup)
 	EXPECT_TRUE(nlog->sync == sync);
 	EXPECT_STREQ(config(""), "EWNidt-Nd");
 	EXPECT_TRUE(nlog->sync == ++sync);
+	EXPECT_STREQ(config(" "), "EWNidt-Nd");
+	EXPECT_TRUE(dlog->sync == ++sync);
 }
 
 TEST_DECL(LogLevel)
@@ -93,7 +95,7 @@ TEST_DECL(LogControl)
 	EXPECT_STREQ(config("-"), "EWnidt-nd");
 	EXPECT_STREQ(config("-"), "Ewnidt-nd");
 	EXPECT_STREQ(config("-"), "Ewnidt-nd");
-	EXPECT_STREQ(config(""), "EWNidt-Nd");
+	EXPECT_STREQ(config(":"), "EWNidt-Nd");
 
 	EXPECT_STREQ(config("@X.warn"), "EWNidt-Nd");
 	EXPECT_STREQ(config("@X.debug"), "EWNidt-ND");
