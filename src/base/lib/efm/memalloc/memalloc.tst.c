@@ -1,7 +1,7 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/Debug.h>
 
-static void test_sizealign(void)
+TEST_DECL(sizealign)
 {
 	EXPECT_TRUE(sizealign(0, 4) == 0);
 	EXPECT_TRUE(sizealign(1, 4) == 4);
@@ -10,11 +10,12 @@ static void test_sizealign(void)
 	EXPECT_TRUE(sizealign(123456, 1000) == 124000);
 }
 
-static void test_alloctab(void)
+TEST_DECL(alloctab)
 {
-//	LogConfig("AllocTabTest.*=stderr");
+	LogConfig("AllocTabTest.*=stderr");
 	ALLOCTAB(tab, "AllocTabTest", 2, sizeof(int));
-	EXPECT_STREQ(tab.name, "Test");
+	AllocTab_stat(ioerr, &tab, 1);
+	EXPECT_STREQ(tab.name, "AllocTabTest");
 	EXPECT_TRUE(tab.blksize == 2);
 	EXPECT_TRUE(tab.elsize == sizeof(AllocTabList));
 	EXPECT_TRUE(tab.nfree == 0);
@@ -41,9 +42,10 @@ static void test_alloctab(void)
 	EXPECT_TRUE(tab.freelist == p);
 	EXPECT_TRUE(tab.nfree == 2);
 	EXPECT_TRUE(tab.nused == 0);
+	AllocTab_stat(ioerr, &tab, 1);
 }
 
-static void test_lmalloc(void)
+TEST_DECL(lmalloc)
 {
 	char *p = NULL;
 
@@ -60,7 +62,7 @@ static void test_lmalloc(void)
 
 TEST_SUITE
 {
-	test_sizealign();
-	test_alloctab();
-	test_lmalloc();
+	TEST_RUN(sizealign);
+	TEST_RUN(alloctab);
+	TEST_RUN(lmalloc);
 }

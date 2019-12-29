@@ -72,6 +72,33 @@ static void def_clean (void *data);
 
 static unsigned encoding(void);
 
+static int pfx_cmd(int c)
+{
+	switch (c)
+	{
+	case ' ':
+	case '\t':
+	case '\n':
+		break;
+	case '@':
+		vb_clean(&vbuf, def_clean);
+		break;
+	case '+':
+		default_mask = set_mask(default_mask, 1);
+		break;
+	case '-':
+		default_mask = set_mask(default_mask, -1);
+		break;
+	case ':':
+		default_mask = MASK_DEFAULT;
+		break;
+	default:
+		return 0;
+	}
+
+	return 1;
+}
+
 /*
 Die Funktion |$1| erweitert/setzt die Protokolldefinitionen entsprechend
 dem Definitionsstring <def>. Die Protokolldefinitionen liefern die Datenbasis
@@ -149,31 +176,19 @@ void LogConfig (const char *def)
 
 	LogConfigLock++;
 
-	if	(*def == '@')
+	if	(*def == 0)
 	{
 		vb_clean(&vbuf, def_clean);
 		default_mask = MASK_DEFAULT;
-		def++;
 	}
+
+	while (pfx_cmd(*def))
+		++def;
 
 	while (*def)
 	{
 		while (isspace(*def))
 			def++;
-
-		if	(*def == '+')
-		{
-			default_mask = set_mask(default_mask, 1);
-			def++;
-			continue;
-		}
-
-		if	(*def == '-')
-		{
-			default_mask = set_mask(default_mask, -1);
-			def++;
-			continue;
-		}
 
 		sb_setpos(&sbuf, 0);
 		flags = 0;
