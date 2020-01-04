@@ -1,7 +1,7 @@
 # :de: TCL/TK-interface
 
 TOP=../../..
-NAME=etk
+NAME=ETK
 include $(TOP)/Setup.mak
 
 EFEU_INCLUDE = $(INC)/GUI
@@ -29,5 +29,14 @@ $(TK_CONFIG)::
 
 include $(CFG)/Library.mak
 
+ESH_HDR = $(wildcard *.hdr)
+FILES += $(patsubst %,$(LIB)/esh/%,$(notdir $(ESH_HDR)))
+
+all:: $(FILES)
+
+$(LIB)/esh/%.hdr : %.hdr
+	@mkdir -p $(@D)
+	cp $< $@
+
 clean::
-	rm -rf $(BUILD)
+	rm -rf $(BUILD) $(FILES)

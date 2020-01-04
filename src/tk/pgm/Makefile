@@ -13,7 +13,7 @@ prereq::
 
 include ../.build/tklib.mak
 
-LDFLAGS += -letk -liorl -lmd -lefmath -lefx -lefm -ldl -lm
+LDFLAGS += -lETK -liorl -lmd -lefmath -lefx -lefm -ldl -lm
 
 SRC = $(wildcard *.c)
 PGM = $(patsubst %.c,$(BIN)/%,$(SRC))
