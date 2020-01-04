@@ -23,10 +23,192 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/ioctrl.h>
 #include <EFEU/printobj.h>
-#include <EFEU/DBData.h>
 #include <EFEU/parsearg.h>
 #include <EFEU/EfiInput.h>
 #include <ctype.h>
+
+typedef struct {
+	unsigned recl;		/* Satzlänge */
+	unsigned dim;		/* Felddimension */
+	unsigned char *buf;	/* Datenbuffer */
+	char **tab;		/* Feldvektor */
+	unsigned buf_size;	/* Buffergröße */
+	unsigned tab_size;	/* Tabellengröße */
+} LabelData;
+
+#define	BSIZE	2040
+
+static LabelData LabelDataBuf = { 0, 0, NULL, NULL, 0, 0 };
+
+static void LabelData_expand (LabelData *db)
+{
+	void *buf = db->buf;
+	db->buf_size += BSIZE;
+	db->buf = lmalloc(db->buf_size);
+	memcpy(db->buf, buf, db->recl);
+	lfree(buf);
+}
+
+/*
+Die Funktion |$1| liefert das Datenfeld mit Index <idx>.
+Falls <data> ein Nullpointer ist, wird ein Nullpointer
+zurückgegeben. Falls Index <idx> außerhalb des zulässigen Bereichs liegt,
+wird ein Leerstring zurückgegeben.
+*/
+
+static char *LabelData_field (LabelData *data, int idx)
+{
+	if	(data == NULL)	return NULL;
+	
+	if	(idx < 1)	return "";
+
+	idx--;
+
+	if	(idx < data->dim)
+		return data->tab[idx];
+
+	return "";
+}
+
+static void add_qfield (LabelData *db, IO *io)
+{
+	int c;
+
+	while ((c = io_getc(io)) != EOF)
+	{
+		if	(c == '\n')
+		{
+			io_ungetc(c, io);
+			return;
+		}
+
+		if	(c == '"')
+		{
+			if	((c = io_getc(io)) != '"')
+			{
+				io_ungetc(c, io);
+				return;
+			}
+		}
+
+		if	(db->buf_size <= db->recl)
+			LabelData_expand(db);
+
+		db->buf[db->recl++] = c;
+	}
+}
+
+
+/*
+Die Funktion |$1| ladet eine Datenzeile im Textformat und
+spaltet sie nach den Trennzeichen auf. Im Unterschied zu
+|LabelData_text| werden Anführungszeichen berücksichtigt.
+Die Aufspaltung erfolgt bereits beim Laden der Datenzeile.
+*/
+
+static LabelData *LabelData_qtext (LabelData *db, IO *io, const char *delim)
+{
+	char *p;
+	int mode;
+	int need_space;
+	int c;
+	int i;
+
+	if	(db == NULL)
+		db = &LabelDataBuf;
+	
+	if	(delim == NULL)	delim = " \t;";
+
+	db->recl = 0;
+	db->dim = 0;
+
+	if	(io_peek(io) == EOF)
+		return NULL;
+
+	mode = 0;
+	need_space = 0;
+
+	while (mode != EOF)
+	{
+		c = io_getc(io);
+
+		if	(c == '\r')	continue;
+		if	(c == 0)	c = ' ';
+
+		if	(mode == 0 && c == ' ')	
+			continue;
+
+		if	(c == '\n' || c == EOF)
+		{
+			db->dim++;
+			mode = EOF;
+			c = 0;
+		}
+		else if	(strchr(delim, c))
+		{
+			db->dim++;
+			mode = 0;
+
+			while (c == ' ' || c == '\t')
+				c = io_getc(io);
+
+			if	(c == '\n' || c == EOF)
+				mode = EOF;
+			else if	(strchr(delim, c) == NULL)
+				io_ungetc(c, io);
+
+			need_space = 0;
+			c = 0;
+		}
+		else if	(mode == 0 && c == '"')
+		{
+			add_qfield(db, io);
+			mode = 1;
+			need_space = 0;
+			continue;
+		}
+		else if	(c == ' ')
+		{
+			need_space = 1;
+			continue;
+		}
+		else	mode = 1;
+
+		if	(need_space)
+		{
+			if	(db->buf_size <= db->recl)
+				LabelData_expand(db);
+
+			db->buf[db->recl++] = ' ';
+			need_space = 0;
+		}
+
+		if	(db->buf_size <= db->recl)
+			LabelData_expand(db);
+
+		db->buf[db->recl++] = c;
+	}
+
+	if	(db->tab_size < db->dim)
+	{
+		db->tab_size = sizealign(db->dim, BSIZE);
+		lfree(db->tab);
+		db->tab = lmalloc(db->tab_size * sizeof (char *));
+	}
+
+	p = (char *) db->buf;
+	db->tab[0] = p;
+
+	for (i = 1; i < db->dim; i++)
+	{
+		while (*p != 0)
+			p++;
+
+		db->tab[i] = ++p;
+	}
+
+	return db;
+}
 
 static int start_line (IO *io)
 {
@@ -63,7 +245,7 @@ static EfiObj *label_obj (char *label)
 
 static int read_label (EfiType *type, void *data, void *par)
 {
-	DBData *db;
+	LabelData *db;
 	EfiStruct *var;
 	EfiObj *obj;
 	EfiObj *base;
@@ -75,21 +257,21 @@ static int read_label (EfiType *type, void *data, void *par)
 	if	(start_line(io) == EOF)
 		return 0;
 
-	if	((db = DBData_qtext(NULL, io, ";\t")) == NULL)
+	if	((db = LabelData_qtext(NULL, io, ";\t")) == NULL)
 		return 0;
 
 	base = LvalObj(&Lval_ptr, type, data);
 
 	if	(!type->list)
 	{
-		obj = label_obj(DBData_field(db, 1));
+		obj = label_obj(LabelData_field(db, 1));
 		UnrefObj(AssignObj(base, obj));
 		return 1;
 	}
 
 	for (i = 1, var = type->list; var != NULL; var = var->next, i++)
 	{
-		obj = label_obj(DBData_field(db, i));
+		obj = label_obj(LabelData_field(db, i));
 		UnrefObj(AssignObj(Var2Obj(var, base), obj));
 	}
 

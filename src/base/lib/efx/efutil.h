@@ -28,7 +28,6 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/efmain.h>
 #include <EFEU/efio.h>
 #include <EFEU/ftools.h>
-#include <EFEU/dbutil.h>
 
 #ifndef	MSG_EFUTIL
 #define	MSG_EFUTIL	"efutil"	/* Name für Fehlermeldungen */

@@ -6,7 +6,6 @@ Daten über Ausdruck generieren
 #include <EFEU/ioctrl.h>
 #include <EFEU/printobj.h>
 #include <EFEU/cmdeval.h>
-#include <EFEU/DBData.h>
 #include <ctype.h>
 
 typedef struct {

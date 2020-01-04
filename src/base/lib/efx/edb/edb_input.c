@@ -5,7 +5,6 @@ Daten einlesen
 #include <EFEU/EDB.h>
 #include <EFEU/ioctrl.h>
 #include <EFEU/printobj.h>
-#include <EFEU/DBData.h>
 #include <ctype.h>
 
 typedef struct {

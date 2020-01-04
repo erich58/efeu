@@ -34,6 +34,7 @@ struct CPAR {
 	struct CLIST *list;
 };
 
+#if	0
 void *MakeCodePar (const char *opt, const char *arg, void *par)
 {
 	unsigned (*code)(const char *name);
@@ -71,6 +72,11 @@ void *MakeCodePar (const char *opt, const char *arg, void *par)
 	return cpar;
 }
 
+TestParDef TestPar_a37l = { &Type_uint,
+	"=[!^]codelist",
+	MakeCodePar, memfree, a37l
+};
+#endif
 
 int TestCode (void *par, unsigned code)
 {
@@ -86,13 +92,6 @@ int TestCode (void *par, unsigned code)
 
 	return !ptr->flag;
 }
-
-
-TestParDef TestPar_a37l = { &Type_uint,
-	"=[!^]codelist",
-	MakeCodePar, memfree, a37l
-};
-
 
 void *MakeEnumPar (const char *opt, const char *arg, void *par)
 {
