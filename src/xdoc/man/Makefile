@@ -35,4 +35,4 @@ $(MAN)/de/man7/%.7.gz: $(LIB)/mksource/%.ms
 # remove dead links
 
 clean::
-	find -L $(MAN) -type l -exec rm -vf '{}' \;
+	-find -L $(MAN) -type l -exec rm -vf '{}' \;

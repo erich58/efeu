@@ -42,7 +42,7 @@ $(MAN)/de/man7/%.7.gz: %.h
 # remove dead links
 
 clean::
-	find -L $(MAN) -type l -exec rm -vf '{}' \;
+	-find -L $(MAN) -type l -exec rm -vf '{}' \;
 
 # docments
 
