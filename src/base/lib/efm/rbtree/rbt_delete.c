@@ -33,8 +33,6 @@ If not, write to the Free Software Foundation, Inc.,
    KEY is the key to be deleted, ROOTP is the address of the root of tree,
    COMPAR the comparison function.  */
 
-extern void *alloca (size_t size);
-
 int rbt_delete (RBTree *tree, const void *key)
 {
 	RBTreeNode *p, *q, *r;
