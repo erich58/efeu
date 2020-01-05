@@ -1,6 +1,7 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/LogConfig.h>
 #include <EFEU/Debug.h>
+#include <ctype.h>
 
 static LogControl *nlog = NULL;
 static LogControl *dlog = NULL;
@@ -30,6 +31,14 @@ static const char *config(const char *cfg)
 	buf[pos++] = LogUpdate(dlog) ? 'D' : 'd';
 	buf[pos] = 0;
 	return buf;
+}
+
+static const char *fconfig(const char *fmt, const char *name)
+{
+	char buf[256];
+	remove(name);
+	snprintf(buf, sizeof buf, fmt, name);
+	return config(buf);
 }
 
 TEST_DECL(setup)
@@ -107,12 +116,87 @@ TEST_DECL(LogControl)
 	EXPECT_STREQ(config("@.debug"), "EWNIDt-ND");
 }
 
+static int match(const char *mask, const char *content)
+{
+	if	(!mask)		return content == NULL;
+	if	(!content)	return 0;
+
+	while (*mask != 0)
+	{
+		if	(*content == 0)
+			return 0;
+		else if	(*mask == '?')
+			;
+		else if	(*mask == '#' && isdigit(*content))
+			;
+		else if (*mask != *content)
+			return 0;
+
+		mask++;
+		content++;
+	}
+
+	return 1;
+}
+
+static int log_check(const char *mask)
+{
+	const char *content = UnitTest_content("log");
+
+	if	(!match(mask, content))
+	{
+		PRINT_STR(content);
+		return 0;
+	}
+
+	return 1;
+}
+
+TEST_DECL(LogOutput)
+{
+	const char *logfile;
+	IO *out;
+	
+	EXPECT_TRUE((logfile = UnitTest_tempname("log")) != NULL);
+	EXPECT_STREQ(config(""), "EWNidt-Nd");
+	EXPECT_TRUE(LogOpen(dlog) == NULL);
+
+	EXPECT_STREQ(fconfig("@ 'X'.debug=%s", logfile), "EWNidt-ND");
+	EXPECT_TRUE(log_check(NULL));
+	EXPECT_TRUE((out = LogOpen(dlog)) != NULL);
+	io_puts("TEST\n", out);
+	io_close(out);
+	EXPECT_TRUE(log_check("TEST\n"));
+
+	log_printf(dlog, "ABC\n");
+	EXPECT_TRUE(log_check("TEST\nABC\n"));
+	TEST_CONTENT("log", "TEST\nABC\n");
+
+	EXPECT_STREQ(fconfig("@X.debug=%s[time]", logfile), "EWNidt-ND");
+	log_printf(dlog, "X\n");
+	EXPECT_TRUE(log_check("####-##-## ##:##:##.###### X\n"));
+
+	EXPECT_STREQ(fconfig("X.debug=[utf8]%s", logfile), "EWNidt-ND");
+	log_printf(dlog, "Ä\n");
+	EXPECT_TRUE(log_check("Ä\n"));
+
+	EXPECT_STREQ(fconfig("@X.debug=%s[time,latin9]", logfile), "EWNidt-ND");
+	log_printf(dlog, "Ä\n");
+	EXPECT_TRUE(log_check("####-##-## ##:##:##.###### \304\n"));
+
+	EXPECT_STREQ(fconfig("=%s", logfile), "EWNidt-ND");
+	log_printf(NoteLog, "NOTE\n");
+	log_printf(nlog, "X\n");
+	EXPECT_TRUE(log_check("NOTE\nX\n"));
+}
+
 TEST_SUITE
 {
 	TEST_RUN(setup);
 	TEST_RUN(LogLevel);
 	TEST_RUN(StdLog);
 	TEST_RUN(LogControl);
+	TEST_RUN(LogOutput);
 	rd_deref(nlog);
 	rd_deref(dlog);
 }
