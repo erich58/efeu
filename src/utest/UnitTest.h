@@ -17,6 +17,7 @@ void UnitTest_exit(void);
 int UnitTest_wait(void);
 
 void runUnitTest(void);
+extern char *UnitTest_name;
 
 #define TEST_DECL(name)	static void _test_ ## name (void)
 #define TEST_SUITE	void runUnitTest(void)

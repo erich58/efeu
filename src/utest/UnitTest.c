@@ -8,6 +8,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+char *UnitTest_name = NULL;
 static int count_good = 0;
 static int count_bad = 0;
 
@@ -58,17 +59,16 @@ int UnitTest_result(const char *file, int line, int res, const char *fmt, ...)
 
 int main(int argc, char **argv)
 {
-	char *name;
 	char *p;
 
 	if	((p = strrchr(argv[0], '/')))
-		name = p + 1;
+		UnitTest_name = p + 1;
 	else
-		name = argv[0];
+		UnitTest_name = argv[0];
 
-	fprintf(stderr, "%s\t%s\n", "#RUN", name);
+	fprintf(stderr, "%s\t%s\n", "#RUN", UnitTest_name);
 	runUnitTest();
-	printf("%s\t%d\t%d\t%d\t%s\n", name, count_good + count_bad,
+	printf("%s\t%d\t%d\t%d\t%s\n", UnitTest_name, count_good + count_bad,
 		count_good, count_bad, count_bad ? "FAILURE" : "SUCCESS");
 	return count_bad ? 1 : 0;
 }
