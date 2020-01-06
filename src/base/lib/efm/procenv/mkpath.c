@@ -27,7 +27,7 @@ static int add_bin (StrBuf *sb, const char *name, size_t size, va_list list)
 {
 	const char *ext;
 
-	if	(strncmp(name, "bin", 3) == 0)
+	if	(strcmp(name, "bin") == 0)
 	{
 		size = 0;
 	}
