@@ -60,9 +60,19 @@ TEST_DECL(lmalloc)
 	lcheckall();
 }
 
+TEST_DECL(memswap)
+{
+	char a[] = "123456789";
+	char b[] = "ABCDEFGHI";
+	memswap(a + 3, b + 3, 3);
+	EXPECT_STREQ(a, "123DEF789");
+	EXPECT_STREQ(b, "ABC456GHI");
+}
+
 TEST_SUITE
 {
 	TEST_RUN(sizealign);
 	TEST_RUN(alloctab);
 	TEST_RUN(lmalloc);
+	TEST_RUN(memswap);
 }
