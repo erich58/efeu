@@ -1,6 +1,7 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/LogConfig.h>
 #include <EFEU/Debug.h>
+#include <EFEU/ftools.h>
 #include <ctype.h>
 
 static LogControl *nlog = NULL;
@@ -190,6 +191,20 @@ TEST_DECL(LogOutput)
 	EXPECT_TRUE(log_check("NOTE\nX\n"));
 }
 
+TEST_DECL(log_file)
+{
+	const char *logfile;
+	FILE *file;
+	
+	EXPECT_TRUE((logfile = UnitTest_tempname("log")) != NULL);
+	EXPECT_STREQ(fconfig("@X.debug=%s[time]", logfile), "EWNidt-ND");
+	EXPECT_TRUE((file = log_file(dlog)) != NULL);
+	fprintf(file, "TEST\n");
+	fileclose(file);
+	usleep(1000); /* Wait for log child */
+	EXPECT_TRUE(log_check("####-##-## ##:##:##.###### TEST\n"));
+}
+
 TEST_SUITE
 {
 	TEST_RUN(setup);
@@ -197,6 +212,7 @@ TEST_SUITE
 	TEST_RUN(StdLog);
 	TEST_RUN(LogControl);
 	TEST_RUN(LogOutput);
+	TEST_RUN(log_file);
 	rd_deref(nlog);
 	rd_deref(dlog);
 }
