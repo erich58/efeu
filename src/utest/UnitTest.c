@@ -11,6 +11,7 @@
 char *UnitTest_name = NULL;
 static int count_good = 0;
 static int count_bad = 0;
+static int fork_depth = 0;
 
 typedef void (*runFunction)(void);
 
@@ -21,9 +22,13 @@ static void vinfo(const char *pfx, const char *file, int line,
 	const char *fmt, va_list list)
 {
 	char buf[1024];
-	size_t pos;
+	size_t pos = 0;
 
-	pos = snprintf(buf, sizeof buf, "%s\t%s:%d\t", pfx, file, line);
+	for (int n = 0; n < fork_depth; ++n)
+		pos += snprintf(buf + pos, sizeof buf - pos + 1, ".\t");
+
+	pos += snprintf(buf + pos, sizeof buf - pos - 1,
+		"%s\t%s:%d\t", pfx, file, line);
 	pos += vsnprintf(buf + pos, sizeof buf - pos - 1, fmt, list);
 
 	if	(pos >= sizeof buf)
@@ -95,6 +100,7 @@ int UnitTest_fork(const char *file, int line)
 	{
 		count_good = 0;
 		count_bad = 0;
+		fork_depth++;
 		return 1;
 	}
 
