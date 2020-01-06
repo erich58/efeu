@@ -38,6 +38,21 @@ static void vinfo(const char *pfx, const char *file, int line,
 	write(2, buf, pos);
 }
 
+static void info(const char *pfx, const char *file, int line,
+	const char *fmt, ...)
+{
+	va_list list;
+
+	va_start (list, fmt);
+	vinfo(pfx, file, line, fmt, list);
+	va_end(list);
+}
+
+void UnitTest_expr(const char *file, int line, const char *expr)
+{
+	info("EXPR", file, line, "%s", expr);
+}
+
 void UnitTest_info(const char *file, int line, const char *fmt, ...)
 {
 	va_list list;

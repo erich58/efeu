@@ -2,7 +2,7 @@
 
 TEST_SUITE
 {
-	const char *str = "Infostring";
+	const char *str;
 	PRINT_INT(6 * 7);
 	PRINT_SIZE(-1);
 	PRINT_SSIZE(~0ll);
@@ -12,6 +12,7 @@ TEST_SUITE
 	PRINT_FMT("%llu", ~0l);
 	PRINT_FMT("%llu", ~0ll);
 	PRINT_STR(0);
+	TEST_EXPR(str = "Infostring");
 	PRINT_STR(str);
 	PRINT_PTR(str);
 }

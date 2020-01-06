@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdio.h>
 
+void UnitTest_expr(const char *file, int line, const char *expr);
 void UnitTest_info(const char *file, int line, const char *fmt, ...);
 int UnitTest_result(const char *file, int line, int res, const char *fmt, ...);
 const char *UnitTest_tempname(const char *name);
@@ -24,6 +25,9 @@ extern char *UnitTest_name;
 
 #define TEST_RUN(name)	\
 fprintf(stderr, "#TEST\t%s\n", # name), _test_ ## name ()
+
+#define TEST_EXPR(expr)	\
+UnitTest_expr(__FILE__, __LINE__, # expr), (expr)
 
 #define PRINT_LABEL(label)	\
 UnitTest_info(__FILE__, __LINE__, "/* %s */", label)
