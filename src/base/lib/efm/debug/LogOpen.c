@@ -175,16 +175,19 @@ static int log_close (LOGOUT *log)
 {
 	LogControlEntry *entry;
 
-	if	(!log->buf->pos || log->buf->data[log->buf->pos - 1] != '\n')
-		sb_putc('\n', log->buf);
-
-	sb_putc(0, log->buf);
-
-	for (entry = log->ctrl->entry; entry; entry = entry->next)
+	if	(log->buf->pos)
 	{
-		if	(!entry->out)	continue;
+		if	(log->buf->data[log->buf->pos - 1] != '\n')
+			sb_putc('\n', log->buf);
 
-		entry->out->write(entry->out, reorg(log, entry->flags));
+		sb_putc(0, log->buf);
+
+		for (entry = log->ctrl->entry; entry; entry = entry->next)
+		{
+			if	(!entry->out)	continue;
+
+			entry->out->write(entry->out, reorg(log, entry->flags));
+		}
 	}
 
 	sb_release(log->buf);
