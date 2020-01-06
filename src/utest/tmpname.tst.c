@@ -1,5 +1,4 @@
 #include <EFEU/UnitTest.h>
-#include <stdio.h>
 #include <dirent.h>
 
 TEST_SUITE

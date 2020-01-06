@@ -1,5 +1,4 @@
 #include <EFEU/UnitTest.h>
-#include <stdio.h>
 
 TEST_SUITE
 {

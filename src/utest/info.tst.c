@@ -1,6 +1,4 @@
 #include <EFEU/UnitTest.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 TEST_SUITE
 {
