@@ -41,11 +41,15 @@ static size_t buf_puts(SBUF *buf, const char *str)
 	return buf->pos;
 }
 
+static int cleanup_pid = 0;
 static char *cmd_cleanup = NULL;
 static char *tmpdir = NULL;
 
 static void cleanup_tmpdir()
 {
+	if	(getpid() != cleanup_pid)
+		return;
+
 	if	(cmd_cleanup)
 		system(cmd_cleanup);
 }
@@ -75,6 +79,7 @@ static void create_tmpdir()
 	fclose(file);
 	cmd_cleanup = buf.data;
 	tmpdir = cmd_cleanup + pos;
+	cleanup_pid = getpid();
 	atexit(cleanup_tmpdir);
 }
 
