@@ -4,11 +4,11 @@
 
 #	message formats
 
-msg1="usage: $0 [--help] [-q] [-o out] build-dir\n"
+msg1="usage: $0 [--help] [-q] [-C dir] [-o out] dir\n"
 
 case ${LANG:=en} in
 de*)
-	msg1="Aufruf: $0 [--help] [-q] [-o out] build-dir\n"
+	msg1="Aufruf: $0 [--help] [-q] [-C dir] [-o out] dir\n"
 	;;
 esac
  
@@ -19,10 +19,13 @@ esac
 #	:de:Keine Detaildaten ausgeben
 # o:out |
 #	:*:output file for detail data
-#	:de:output of details
+#	:de:Ausgabefile für Detaildaten
+# c:base |
+#	:*:Verzeichnis mit Basuisauswertung
+#	:de:Verzeichnis mit Basisauswertung
 # :dir |
-#	:*:build directory
-#	:de:Generierungsverzeichnis
+#	:*:build/analyse directory
+#	:de:Generierungs-/Analyseverzeichnis
 
 usage ()
 {
@@ -36,12 +39,14 @@ esac
 
 out="test.out"
 gcov="gcov"
+base=""
 
-while getopts "qo:" opt
+while getopts "qo:c:" opt
 do
 	case $opt in
 	q)	gcov="gcov -n"; out="/dev/null";;
 	o)	out=$OPTARG;;
+	c)	base=$OPTARG;;
 	\?)	usage -?; exit 1;;
 	esac
 done
@@ -53,6 +58,17 @@ case "$#" in
 1)	;;
 *)	usage -?; exit 1;;
 esac
+
+if	[ "$base" ]; then
+
+	grep -l . "$base/gcov.out" >/dev/null || exit 1;
+
+	find $1 -name '*.c' ! -name '*.tst.c' -printf '%f\n' | while read name
+	do
+		grep "$name" $base/gcov.out
+	done
+	exit 0;
+fi
 
 # cleanup coverage data
 
