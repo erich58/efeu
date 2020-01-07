@@ -108,6 +108,7 @@ END {
 
 # analyse coverage
 
+export LANG=C
 echo "#code coverage"
 
 find $1 -name '*.gcov.o' | sort | while read obj
