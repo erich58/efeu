@@ -102,25 +102,36 @@ void so_close (void *handle)
 #endif
 }
 
-void loadlib (const char *lname, const char *fname)
+int loadlib (const char *lname, const char *fname)
 {
 #if	HAS_DLFCN
 	void *handle;
 	void (*init)(void);
+	int stat = 0;
 
 	handle = so_open(lname);
 
-	if	(handle == NULL || fname == NULL)
+	if	(handle == NULL)
 	{
-		;
+		return 0;
+	}
+	else if	(fname == NULL)
+	{
+		return 1;
 	}
 	else if	((init = dlsym(handle, fname)) == NULL)
 	{
 		io_xprintf(ioerr, "dlsym: %s\n", dlerror());
 		dlclose(handle);
+		return 0;
 	}
-	else	init();
+	else
+	{
+		init();
+		return 1;
+	}
 #else
 	io_xprintf(ioerr, "loadlib: not implemented\n");
+	return 0;
 #endif
 }

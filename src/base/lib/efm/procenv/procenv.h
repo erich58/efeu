@@ -69,7 +69,7 @@ void proc_doclean (void);
 extern char *so_path;
 void *so_open (const char *name);
 void so_close (void *handle);
-void loadlib (const char *name, const char *init);
+int loadlib (const char *name, const char *init);
 
 /*	Systemaufrufe
 */
