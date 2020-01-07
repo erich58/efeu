@@ -7,7 +7,7 @@ include $(CFG)/EFEU.mak
 prereq::
 	make -C $(TOP)/src/base/lib/efm
 
-CFLAGS += -lefm
+LDFLAGS += -lefm
 include $(CFG)/SimplePrograms.mak
 include $(CFG)/Scripts.mak
 
