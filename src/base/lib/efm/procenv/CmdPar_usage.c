@@ -21,7 +21,6 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/CmdPar.h>
-#include <EFEU/EfeuConfig.h>
 #include <EFEU/strbuf.h>
 #include <EFEU/ftools.h>
 #include <EFEU/parsub.h>
@@ -42,6 +41,12 @@ If not, write to the Free Software Foundation, Inc.,
 #define	STD_OUT		io_popen("efeudoc -t -", "w")
 #define	ERR_OUT		io_popen("efeudoc -Tterm - 1>&2", "w")
 
+static int has_efeudoc()
+{
+	static char *efeudoc = NULL;
+	efeudoc = fsearch(getenv("PATH"), NULL, "efeudoc", NULL);
+	return efeudoc != NULL;
+}
 
 static void expand_func (CmdPar *par, IO *in, IO *out, int c)
 {
@@ -170,9 +175,10 @@ void CmdPar_usage (CmdPar *par, IO *out, const char *fmt)
 
 	if	(out)
 		out = io_refer(out);
-	else if	(EfeuConfigPar.standalone)
+	else if	(has_efeudoc())
+		out = ERR_OUT;
+	else
 		out = io_refer(ioerr);
-	else	out = ERR_OUT;
 
 	subcopy(CmdPar_ptr(par), def, out, EOF);
 	io_close(def);
@@ -209,9 +215,10 @@ void CmdPar_manpage (CmdPar *par, IO *out)
 
 	if	(out)
 		out = io_refer(out);
-	else if	(EfeuConfigPar.standalone)
+	else if	(has_efeudoc())
+		out = STD_OUT;
+	else
 		out = io_refer(iostd);
-	else	out = STD_OUT;
 
 	subcopy(par, def, out, EOF);
 	io_close(def);

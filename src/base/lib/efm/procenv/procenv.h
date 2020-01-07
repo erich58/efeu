@@ -49,7 +49,6 @@ extern char *CurrentLocale;	/* Aktuelle Lokale-Setzung */
 */
 
 void ChangeLocale (const char *def);
-void EfeuConfig (const char *name);
 void SetProgName (const char *name);
 void SetApplPath (const char *path);
 void SetInfoPath (const char *path);

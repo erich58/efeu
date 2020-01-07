@@ -24,7 +24,6 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/mstring.h>
 #include <EFEU/ftools.h>
 #include <EFEU/appl.h>
-#include <EFEU/EfeuConfig.h>
 #include <EFEU/mkpath.h>
 
 #define	ENVIRON	"APPLPATH"

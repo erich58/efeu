@@ -21,7 +21,6 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/CmdPar.h>
-#include <EFEU/EfeuConfig.h>
 #include <EFEU/strbuf.h>
 #include <EFEU/parsub.h>
 
