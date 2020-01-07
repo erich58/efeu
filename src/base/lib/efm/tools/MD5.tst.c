@@ -8,8 +8,9 @@
 static const char *md5(unsigned char digest[16])
 {
 	static char buf[34];
+	int i;
 
-	for (int i = 0; i < 16; i++)
+	for (i = 0; i < 16; i++)
 		sprintf(buf + 2 * i, "%02x", digest[i]);
 
 	return buf;

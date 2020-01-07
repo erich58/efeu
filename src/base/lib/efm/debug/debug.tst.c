@@ -63,7 +63,9 @@ TEST_DECL(setup)
 
 TEST_DECL(LogLevel)
 {
-	for (int i = 0; i <= LOGLEVEL_TRACE; i++)
+	int i;
+
+	for (i = 0; i <= LOGLEVEL_TRACE; i++)
 		EXPECT_TRUE(LogLevelIndex(LogLevelName(i)) == i);
 
 	EXPECT_STREQ(LogLevelName(LOGLEVEL_ERR), "err");

@@ -23,8 +23,9 @@ static void vinfo(const char *pfx, const char *file, int line,
 {
 	char buf[1024];
 	size_t pos = 0;
+	int n;
 
-	for (int n = 0; n < fork_depth; ++n)
+	for (n = 0; n < fork_depth; ++n)
 		pos += snprintf(buf + pos, sizeof buf - pos + 1, ".\t");
 
 	pos += snprintf(buf + pos, sizeof buf - pos - 1,

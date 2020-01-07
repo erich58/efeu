@@ -88,6 +88,8 @@ static int check_order()
 
 TEST_SUITE
 {
+	int i;
+
 	EXPECT_FALSE(find(1));
 	add(1);
 	EXPECT_TRUE(find(1));
@@ -105,7 +107,7 @@ TEST_SUITE
 	EXPECT_TRUE(count() == 0);
 	EXPECT_TRUE(clean_count == 1);
 
-	for (int i = 0; i < 20; i++)
+	for (i = 0; i < 20; i++)
 	{
 		add(i);
 		add(20 + i);
@@ -120,7 +122,7 @@ TEST_SUITE
 
 	clean_count = 0;
 
-	for (int i = 20; i < 40; i++)
+	for (i = 20; i < 40; i++)
 		rbt_delete(&rbt, &i);
 
 	EXPECT_TRUE(clean_count == 20);
