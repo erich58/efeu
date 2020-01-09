@@ -4,11 +4,11 @@
 
 #	message formats
 
-msg1="usage: $0 [--help] [-q] [-C dir] [-o out] dir\n"
+msg1="usage: $0 [--help] [-q] [-C dir] [-o out] name\n"
 
 case ${LANG:=en} in
 de*)
-	msg1="Aufruf: $0 [--help] [-q] [-C dir] [-o out] dir\n"
+	msg1="Aufruf: $0 [--help] [-q] [-C dir] [-o out] name\n"
 	;;
 esac
  
@@ -21,11 +21,11 @@ esac
 #	:*:output file for detail data
 #	:de:Ausgabefile für Detaildaten
 # c:base |
-#	:*:Verzeichnis mit Basuisauswertung
+#	:*:directory with basic evaluation
 #	:de:Verzeichnis mit Basisauswertung
-# :dir |
-#	:*:build/analyse directory
-#	:de:Generierungs-/Analyseverzeichnis
+# :name |
+#	:*:build/analyse directory or single command
+#	:de:Generierungs-/Analyseverzeichnis oder Einzelkommando
 
 usage ()
 {
@@ -41,7 +41,7 @@ out="test.out"
 gcov="gcov"
 base=""
 
-while getopts "qo:c:" opt
+while getopts "qo:c:t:" opt
 do
 	case $opt in
 	q)	gcov="gcov -n"; out="/dev/null";;
@@ -59,11 +59,24 @@ case "$#" in
 *)	usage -?; exit 1;;
 esac
 
+find_tst()
+{
+	find $1 -name '*.tst' | sort
+}
+
+if [ -d $1 ]; then
+	dir=$1
+	tlist="find_tst"
+else
+	dir=`dirname $1`
+	tlist="echo";
+fi
+
 if	[ "$base" ]; then
 
 	grep -l . "$base/gcov.out" >/dev/null || exit 1;
 
-	find $1 -name '*.c' ! -name '*.tst.c' -printf '%f\n' | while read name
+	find $dir -name '*.c' ! -name '*.tst.c' -printf '%f\n' | while read name
 	do
 		grep "$name" $base/gcov.out
 	done
@@ -72,8 +85,8 @@ fi
 
 # cleanup coverage data
 
-find $1 -name '*.gcda' -exec rm '{}' \;
-find $1 -name '*.c.gcov' -exec rm '{}' \;
+find $dir -name '*.gcda' -exec rm '{}' \;
+find $dir -name '*.c.gcov' -exec rm '{}' \;
 
 # run unit tests
 
@@ -86,7 +99,7 @@ if [ $out ]; then
 	redir="2>> $out"
 fi
 
-find $1 -name '*.tst' | sort | while read tst
+$tlist $1 | while read tst
 do
 	eval $tst $redir
 done | awk '
@@ -111,21 +124,23 @@ END {
 export LANG=C
 echo "#code coverage"
 
-find $1 -name '*.gcov.o' | sort | while read obj
+find $dir -name '*.gcov.o' | sort | while read obj
 do
 	name=`basename $obj .gcov.o`
 
-	if	[ -f $1/$name.gcov.gcda ]; then
-		$gcov -o $1 $obj | sed -e "s/'//g" |
-			awk -v src=$1/$name.c.gcov '
+	if	[ -f $dir/$name.gcov.gcda ]; then
+		$gcov -o $dir $obj | sed -e "s/'//g" |
+			awk -v src=$dir/$name.c.gcov '
+/:0.00% of/ { printf("#%-22s\tnot used\n", src); next; }
 /^Lines/ { printf("%-23s\t%s\n", src, substr($0, index($a, ":") + 1)); }
 '
-		[ -f $name.c.gcov ] && mv $name.c.gcov $1
+		[ -f $name.c.gcov ] && mv $name.c.gcov $dir
 	else
 		printf '#%-22s\tnot run\n' $name.c
 	fi
 done | tee gcov.out | awk '
-BEGIN { run = 0; c = 0.; n = 0; other = 0; }
+BEGIN { run = 0; c = 0.; n = 0; unused = 0; other = 0; }
+/not used/ { unused++; next; }
 /not run/ { other++; next; }
 {
 	c += $2 * $4;
@@ -136,8 +151,10 @@ END {
 	printf("Coverage: %.2f%% of %d lines in %d files\n",
 		n ? c / n : 0, n, run);
 
+	if	(unused)
+		printf("Not used: %d files\n", unused);
 	if	(other)
-		printf("Missing: %d files\n", other);
+		printf("Missing:  %d files\n", other);
 }
 '
 
