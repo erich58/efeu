@@ -230,7 +230,7 @@ void *rd_deref (void *data)
 	{
 		rd->refcount--;
 		std_debug(rd, KEY_DEREF);
-		return rd->refcount ? rd : NULL;
+		return rd;
 	}
 	else
 	{
@@ -248,7 +248,7 @@ void *rd_deref (void *data)
 	}
 }
 
-/*	Referenzzähler verringern/Daten freigeben
+/*	Wie rd_deref, aber ohne Freigabediagnose
 */
 
 void rd_clean (void *data)
