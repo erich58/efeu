@@ -78,6 +78,7 @@ void vb_free (VecBuf *buf);
 void vb_clean (VecBuf *vb, void (*clean) (void *ptr));
 void *vb_realloc (VecBuf *buf, size_t dim);
 void *vb_next (VecBuf *buf);
+size_t vb_size(VecBuf *buf);
 void *vb_data (VecBuf *buf, size_t pos);
 void *vb_copy (VecBuf *buf, void *data, size_t dim);
 void *vb_append (VecBuf *buf, void *data, size_t dim);

@@ -54,10 +54,10 @@ static int key_put (int c, IO *io)
 {
 	switch (c)
 	{
-	case '\n':	c = 'n';
-	case '\t':	c = 't';
-	case '\f':	c = 'f';
-	case '\b':	c = 'b';
+	case '\n':	io_puts("\\n", io); return;
+	case '\t':	io_puts("\\t", io); return;
+	case '\f':	io_puts("\\f", io); return;
+	case '\b':	io_puts("\\b", io); return;
 	case '<':
 	case '|':
 	case ':':
@@ -184,5 +184,6 @@ void DumpInfo (IO *io, const char *name, int flag)
 		io->data = &filter;
 		dump_info(io, info, info, flag);
 		io_close(io);
+		rd_deref(info);
 	}
 }

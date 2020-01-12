@@ -35,6 +35,10 @@ const char *UnitTest_qstr(const char *str)
 			case '\\':	buf[n++] = '\\'; buf[n++] = '\\'; break;
 			case '\t':	buf[n++] = '\\'; buf[n++] = 't'; break;
 			case '\n':	buf[n++] = '\\'; buf[n++] = 'n'; break;
+			case '\f':	buf[n++] = '\\'; buf[n++] = 'f'; break;
+			case '\b':	buf[n++] = '\\'; buf[n++] = 'b'; break;
+			case '\v':	buf[n++] = '\\'; buf[n++] = 'v'; break;
+			case '\r':	buf[n++] = '\\'; buf[n++] = 'r'; break;
 			default:	buf[n++] = *str; break;
 			}
 		}

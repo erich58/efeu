@@ -55,8 +55,6 @@ void SetInfoPath (const char *dir)
 
 /*	Systemsuchpfade
 */
-	if	(sb_getpos(sb))	sb_putc(':', sb);
-
 	mkpath_base(sb, "lib/eis/%L", NULL);
 	mkpath_base(sb, "lib/efeu/%L/info", NULL);
 	memfree(InfoPath);

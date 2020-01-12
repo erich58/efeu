@@ -98,6 +98,15 @@ void *vb_next (VecBuf *buf)
 }
 
 /*
+Die Funktion |$1| liefert die Zahl der Element des Vektorbuffers.
+*/
+
+size_t vb_size (VecBuf *buf)
+{
+	return buf ? buf->used : 0;
+}
+
+/*
 Die Funktion |$1| liefert das Element an Position <pos> des Vektorbuffers
 <dim> oder einen Nullpointer, falls weniger Elemente enthalten sind.
 */
