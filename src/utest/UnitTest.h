@@ -70,6 +70,10 @@ UnitTest_result(__FILE__,__LINE__, !(expr), "!(%s)", # expr)
 #define	EXPECT_EQ(a, b)		EXPECT_TRUE(a == b)
 #define	EXPECT_NE(a, b)		EXPECT_TRUE(a != b)
 
+#define EXPECT_STR(a, b)	\
+UnitTest_result(__FILE__, __LINE__, \
+	UnitTest_strcmp(a, b) == 0, "%s", # b)
+
 #define EXPECT_STRCMP(a, op, b)	\
 UnitTest_result(__FILE__, __LINE__, \
 	UnitTest_strcmp(a, b) op 0, "%s %s %s", # a, # op, # b)
