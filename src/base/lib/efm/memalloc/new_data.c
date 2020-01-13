@@ -33,7 +33,7 @@ If not, write to the Free Software Foundation, Inc.,
 static int log_lock = 0;
 static LogControl log_debug = LOG_CONTROL("alloctab", LOGLEVEL_DEBUG);
 
-static ALLOCTAB(root, "root", 0, 0);	/* Dummy-Tabelle für verkettung */
+static ALLOCTAB(root, "root", 0, 0);	/* Dummy-Tabelle für Verkettung */
 static AllocTab *chain = &root;
 
 /*

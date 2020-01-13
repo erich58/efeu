@@ -1,5 +1,7 @@
 #include <EFEU/UnitTest.h>
 #include <string.h>
+#include <sys/types.h>
+#include <regex.h>
 
 int UnitTest_strcmp(const char *a, const char *b)
 {
@@ -8,6 +10,32 @@ int UnitTest_strcmp(const char *a, const char *b)
 	if	(b == NULL)	return 1;
 
 	return strcmp(a, b);
+}
+
+int UnitTest_match(const char *a, const char *expr)
+{
+	if	(expr == NULL)
+		return (a == NULL);
+
+	if	(a == NULL)
+		return 0;
+
+	char err_buf[256];
+	regex_t buf;
+	int n;
+	n = regcomp(&buf, expr, REG_EXTENDED|REG_NOSUB);
+
+	if	(n != 0)
+	{
+		regerror(n, &buf, err_buf, sizeof err_buf);
+		fprintf(stderr, "#ERROR\t%s\n", err_buf);
+		regfree(&buf);
+		return 0;
+	}
+
+	n = regexec(&buf, a, 0, NULL, 0);
+	regfree(&buf);
+	return n == 0;
 }
 
 const char *UnitTest_qstr(const char *str)

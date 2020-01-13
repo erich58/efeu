@@ -1,5 +1,8 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/Debug.h>
+#include <EFEU/mstring.h>
+
+static ALLOCTAB(tab, "AllocTabTest", 2, sizeof(int));
 
 TEST_DECL(sizealign)
 {
@@ -12,9 +15,6 @@ TEST_DECL(sizealign)
 
 TEST_DECL(alloctab)
 {
-	LogConfig("AllocTabTest.*=stderr");
-	ALLOCTAB(tab, "AllocTabTest", 2, sizeof(int));
-	AllocTab_stat(ioerr, &tab, 1);
 	EXPECT_STREQ(tab.name, "AllocTabTest");
 	EXPECT_TRUE(tab.blksize == 2);
 	EXPECT_TRUE(tab.elsize == sizeof(AllocTabList));
@@ -43,6 +43,9 @@ TEST_DECL(alloctab)
 	EXPECT_TRUE(tab.nfree == 2);
 	EXPECT_TRUE(tab.nused == 0);
 	AllocTab_stat(ioerr, &tab, 1);
+
+	PRINT_STR(UnitTest_content("debug.out"));
+	PRINT_STR(UnitTest_content("trace.out"));
 }
 
 TEST_DECL(lmalloc)
@@ -67,6 +70,17 @@ TEST_DECL(memswap)
 	memswap(a + 3, b + 3, 3);
 	EXPECT_STREQ(a, "123DEF789");
 	EXPECT_STREQ(b, "ABC456GHI");
+}
+
+TEST_DECL(Trace)
+{
+	char *cfg;
+	cfg = msprintf("alloctab.trace=%s", UnitTest_tempname("trace.out"));
+	LogConfig(cfg);
+	memfree(cfg);
+	cfg = msprintf("alloctab.debug=%s", UnitTest_tempname("debug.out"));
+	LogConfig(cfg);
+	memfree(cfg);
 }
 
 TEST_SUITE

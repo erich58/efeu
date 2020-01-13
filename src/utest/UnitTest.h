@@ -13,6 +13,7 @@ const char *UnitTest_mkfile(const char *name, const char *content);
 const char *UnitTest_content(const char *name);
 const char *UnitTest_qstr(const char *str);
 int UnitTest_strcmp(const char *s1, const char *s2);
+int UnitTest_match(const char *str, const char *expr);
 int UnitTest_fork(const char *file, int line);
 void UnitTest_exit(void);
 int UnitTest_wait(void);
@@ -48,7 +49,6 @@ UnitTest_info(__FILE__, __LINE__, \
 UnitTest_info(__FILE__, __LINE__, \
 	"(ssize_t)(%s) -> %zd", # expr, (size_t)(expr))
 
-
 #define PRINT_LONG(expr) \
 UnitTest_info(__FILE__, __LINE__, \
 	"(long long)(%s) -> %lld", # expr, (long long)(expr))
@@ -80,6 +80,14 @@ UnitTest_result(__FILE__, __LINE__, \
 
 #define	EXPECT_STREQ(a, b)	EXPECT_STRCMP(a, ==, b)
 #define	EXPECT_STRNE(a, b)	EXPECT_STRCMP(a, !=, b)
+
+#define EXPECT_MATCH(a, b)	\
+UnitTest_result(__FILE__, __LINE__, \
+	UnitTest_match(a, b), "%s ~ %s", # a, # b)
+
+#define EXPECT_NOMATCH(a, b)	\
+UnitTest_result(__FILE__, __LINE__, \
+	UnitTest_match(a, b) == 0, "%s !~ %s", # a, # b)
 
 #define	TEST_DIR(name)	\
 UnitTest_result(__FILE__, __LINE__, \
