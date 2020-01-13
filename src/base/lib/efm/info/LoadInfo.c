@@ -273,12 +273,13 @@ static void load (InfoNode *base, IO *io)
 
 	add_entry(node, buf);
 	sb_release(buf);
-	io_close(io);
 }
 
 void IOLoadInfo (InfoNode *base, IO *io)
 {
-	load(base, io_refer(io));
+	base = GetInfo(base, NULL);
+	load(base, io);
+	rd_deref(base);
 }
 
 void LoadInfo (InfoNode *base, const char *fname)
@@ -287,13 +288,12 @@ void LoadInfo (InfoNode *base, const char *fname)
 
 	if	(!fname)	return;
 
-	base = GetInfo(base, NULL);
-
 	if	(*fname == '|')
 	{
 		io = io_popen(fname + 1, "r");
 	}
 	else	io = io_findopen(InfoPath, fname, NULL, "rz");
 
-	load(base, io);
+	IOLoadInfo(base, io);
+	io_close(io);
 }

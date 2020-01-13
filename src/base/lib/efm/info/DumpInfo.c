@@ -54,10 +54,10 @@ static int key_put (int c, IO *io)
 {
 	switch (c)
 	{
-	case '\n':	io_puts("\\n", io); return;
-	case '\t':	io_puts("\\t", io); return;
-	case '\f':	io_puts("\\f", io); return;
-	case '\b':	io_puts("\\b", io); return;
+	case '\n':	io_puts("\\n", io); return c;
+	case '\t':	io_puts("\\t", io); return c;
+	case '\f':	io_puts("\\f", io); return c;
+	case '\b':	io_puts("\\b", io); return c;
 	case '<':
 	case '|':
 	case ':':
