@@ -118,7 +118,8 @@ TEST_DECL(Default)
 	EXPECT_TRUE(root->refcount == 1);
 
 	InfoNode *info;
-	TEST_EXPR(info = AddInfo(root, "a/b", "Label", NULL, "Description\n"));
+	TEST_EXPR(info = AddInfo(root, "a/b", "Label",
+		f_puts, "Description\n"));
 	TEST_EXPR(PrintInfo(out(), info));
 	EXPECT_STREQ(data(), "Label\nDescription\n");
 	EXPECT_TRUE(root->refcount == 2);
@@ -155,16 +156,32 @@ TEST_DECL(Default)
 
 TEST_DECL(LoadInfo)
 {
-	PRINT_STR(dump(&root));
+	EXPECT_STR(dump(&root), "root[1]<0>\n");
+	TEST_EXPR(LoadInfo(&root, "|printf '@0: Label\nDescription\n'"));
+	PrintInfo(out(), rd_deref(GetInfo(&root, "0")));
+	EXPECT_STR(data(), "Label\nDescription\n");
+
 	TEST_EXPR(SetInfoPath(UnitTest_tempname(NULL)));
-	LoadInfo(&root, "|printf '@name: Label\nDescription\n'");
-	EXPECT_STR(dump(&root), "root[2]<1>\n+name[1]<-1>\n");
 
-//	TEST_FILE("test.info", "@name: Label\nDescription\n");
-//	LoadInfo(&root, "test.info");
-	PrintInfo(out(), rd_deref(GetInfo(&root, "name")));
-	PRINT_STR(data());
+	TEST_FILE("1.info", "@1\\t\\n\\f\\b\\ \\x \t\fy :"
+		" \tz\\\n\\\t\\ \\<\\z \n");
+	LoadInfo(&root, "1.info");
+	InfoNode *info = *(InfoNode **) vb_data(root.list, 1);
+	EXPECT_STREQ(info->name, "1\t\n\f\b \\xy");
+	EXPECT_STREQ(info->label, "z\n\t <\\z");
 
+	TEST_FILE("2.info", "@2 : File<2\\ dat\\a   \n");
+	TEST_FILE("2 dat\\a", "Inhalt\n");
+	LoadInfo(&root, "2.info");
+	PrintInfo(out(), rd_deref(GetInfo(&root, "2")));
+	EXPECT_STR(data(), "File\nInhalt\n");
+
+	TEST_FILE("3.info", "@3\t:Pipe |echo Input\n");
+	LoadInfo(&root, "3.info");
+	PrintInfo(out(), rd_deref(GetInfo(&root, "3")));
+	EXPECT_STR(data(), "Pipe\nInput\n");
+
+//	PRINT_STR(data());
 }
 
 TEST_DECL(Coverage)

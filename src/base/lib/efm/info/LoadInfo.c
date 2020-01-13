@@ -48,10 +48,10 @@ static int get_key(IO *io, char **p)
 		{
 			switch (c = io_getc(io))
 			{
-			case 't':	c = '\t';
-			case 'n':	c = '\n';
-			case 'f':	c = '\f';
-			case 'b':	c = '\b';
+			case 't':	c = '\t'; break;
+			case 'n':	c = '\n'; break;
+			case 'f':	c = '\f'; break;
+			case 'b':	c = '\b'; break;
 			case '\n':
 			case '\t':
 			case ' ':
@@ -61,8 +61,6 @@ static int get_key(IO *io, char **p)
 			case '\\':	break;
 			default:	sb_putc('\\', sb); break;
 			}
-
-			sb_putc(c, sb);
 		}
 		else if	(c == '<' || c == '|' || c == ':' || c == '\n')
 		{
@@ -106,8 +104,6 @@ static int get_label(IO *io, char **p)
 			case '\\':	break;
 			default:	sb_putc('\\', sb); break;
 			}
-
-			sb_putc(c, sb);
 		}
 		else if	(c == '<' || c == '|')
 		{
