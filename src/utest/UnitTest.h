@@ -102,6 +102,11 @@ UnitTest_result(__FILE__, __LINE__, \
 	UnitTest_strcmp(UnitTest_content(name), cont) == 0, \
 	"content(%s) == %s", # name, # cont)
 
+#define	MATCH_CONTENT(name, cont)	\
+UnitTest_result(__FILE__, __LINE__, \
+	UnitTest_match(UnitTest_content(name), cont), \
+	"content(%s) ~ %s", # name, # cont)
+
 #define	TEST_FORK	\
 	if	(UnitTest_fork(__FILE__, __LINE__))
 

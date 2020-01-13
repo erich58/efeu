@@ -7,6 +7,7 @@ TEST_SUITE
 	TEST_FILE("dir/file", "Testdaten\n");
 
 	TEST_CONTENT("dir/file", "Testdaten\n");
+	MATCH_CONTENT("dir/file", "^Test");
 	EXPECT_TRUE(UnitTest_content(NULL) != NULL);
 	PRINT_STR(UnitTest_content(NULL));
 

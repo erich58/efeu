@@ -14,11 +14,19 @@ int UnitTest_strcmp(const char *a, const char *b)
 
 int UnitTest_match(const char *a, const char *expr)
 {
+	int neg = 0;
+
 	if	(expr == NULL)
 		return (a == NULL);
 
+	if	(*expr == '!')
+	{
+		neg = 1;
+		++expr;
+	}
+
 	if	(a == NULL)
-		return 0;
+		return neg;
 
 	char err_buf[256];
 	regex_t buf;
@@ -30,12 +38,12 @@ int UnitTest_match(const char *a, const char *expr)
 		regerror(n, &buf, err_buf, sizeof err_buf);
 		fprintf(stderr, "#ERROR\t%s\n", err_buf);
 		regfree(&buf);
-		return 0;
+		return neg;
 	}
 
 	n = regexec(&buf, a, 0, NULL, 0);
 	regfree(&buf);
-	return n == 0;
+	return n == 0 ? !neg : neg;
 }
 
 const char *UnitTest_qstr(const char *str)
