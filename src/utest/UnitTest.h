@@ -97,6 +97,10 @@ UnitTest_result(__FILE__, __LINE__, \
 UnitTest_result(__FILE__, __LINE__, \
 	UnitTest_mkfile(name, cont) != NULL, "mkfile(%s, %s)", # name, # cont)
 
+#define PRINT_CONTENT(name)	\
+UnitTest_info(__FILE__, __LINE__, \
+	"content(%s) -> %s", # name, UnitTest_qstr(UnitTest_content(name)))
+
 #define	TEST_CONTENT(name, cont)	\
 UnitTest_result(__FILE__, __LINE__, \
 	UnitTest_strcmp(UnitTest_content(name), cont) == 0, \
