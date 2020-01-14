@@ -1,8 +1,28 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/Debug.h>
-#include <EFEU/mstring.h>
+#include <stdio.h>
+#include <signal.h>
+
+#include "utest/data.tst.h"
 
 static ALLOCTAB(tab, "AllocTabTest", 2, sizeof(int));
+
+static void activate_log(const char *log, const char *name)
+{
+	char buf[1024];
+	snprintf(buf, sizeof buf, "%s=%s", log, UnitTest_tempname(name));
+	LogConfig(buf);
+}
+
+static void clear_log(const char *name)
+{
+	remove(UnitTest_tempname(name));
+}
+
+static void sig_exit(int sig)
+{
+	exit(sig);
+}
 
 TEST_DECL(sizealign)
 {
@@ -42,10 +62,19 @@ TEST_DECL(alloctab)
 	EXPECT_TRUE(tab.freelist == p);
 	EXPECT_TRUE(tab.nfree == 2);
 	EXPECT_TRUE(tab.nused == 0);
-	AllocTab_stat(ioerr, &tab, 1);
 
-	PRINT_STR(UnitTest_content("debug.out"));
-	PRINT_STR(UnitTest_content("trace.out"));
+	EXPECT_TRUE(new_data(NULL) == NULL);
+	EXPECT_TRUE(del_data(NULL, NULL) == 1);
+	EXPECT_TRUE(del_data(NULL, "x") == 0);
+
+	AllocTab_stat(out(), &tab, 1);
+	EXPECT_MATCH(data(), "^AllocTabTest");
+
+	clear_log("error.log");
+	EXPECT_TRUE(del_data(&tab, p) == 0);
+	MATCH_CONTENT("error.log",
+		"alloctab.AllocTabTest.: Pointer [^ ]* already released.\n");
+
 }
 
 TEST_DECL(lmalloc)
@@ -72,21 +101,72 @@ TEST_DECL(memswap)
 	EXPECT_STREQ(b, "ABC456GHI");
 }
 
-TEST_DECL(Trace)
+TEST_DECL(debug_check)
 {
-	char *cfg;
-	cfg = msprintf("alloctab.trace=%s", UnitTest_tempname("trace.out"));
-	LogConfig(cfg);
-	memfree(cfg);
-	cfg = msprintf("alloctab.debug=%s", UnitTest_tempname("debug.out"));
-	LogConfig(cfg);
-	memfree(cfg);
+	TEST_FILE("debug.log", NULL);
+	del_data(&tab, new_data(&tab));
+
+	TEST_FORK
+	{
+		signal(SIGABRT, sig_exit);
+		tab.nfree++;
+		new_data(&tab);
+		TEST_EXIT;
+	}
+
+	CHILD_EXIT(6);
+	MATCH_CONTENT("debug.log", "assignment parameters");
+
+	TEST_FILE("debug.log", NULL);
+
+	TEST_FORK
+	{
+		signal(SIGABRT, sig_exit);
+		new_data(&tab);
+		tab.nfree++;
+		tab.nused--;
+		new_data(&tab);
+		TEST_EXIT;
+	}
+
+	CHILD_EXIT(6);
+	MATCH_CONTENT("debug.log", "missing entries");
+
+	TEST_FILE("debug.log", NULL);
+
+	TEST_FORK
+	{
+		signal(SIGABRT, sig_exit);
+		AllocTabList list = { tab.freelist->next };
+		tab.freelist = &list;
+		new_data(&tab);
+		TEST_EXIT;
+	}
+
+	CHILD_EXIT(6);
+	MATCH_CONTENT("debug.log", "not part of block list");
+}
+
+TEST_DECL(trace)
+{
+	activate_log("alloctab.trace", "trace.log");
+	void *p = new_data(&tab );
+	del_data(&tab, p);
+	PRINT_STR(UnitTest_content("trace.log"));
+	MATCH_CONTENT("trace.log",
+		"alloctab.AllocTabTest.: Pointer [^ ]* allocated.\n"
+		"alloctab.AllocTabTest.: Pointer [^ ]* released.\n");
 }
 
 TEST_SUITE
 {
+	activate_log(".err", "error.log");
+	activate_log("alloctab.debug", "debug.log");
 	TEST_RUN(sizealign);
 	TEST_RUN(alloctab);
 	TEST_RUN(lmalloc);
 	TEST_RUN(memswap);
+	TEST_RUN(trace);
+	TEST_RUN(debug_check);
+	LogConfig("");
 }
