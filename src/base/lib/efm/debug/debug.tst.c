@@ -4,6 +4,8 @@
 #include <EFEU/ftools.h>
 #include <ctype.h>
 
+#include "utest/data.tst.h"
+
 static LogControl *nlog = NULL;
 static LogControl *dlog = NULL;
 
@@ -217,4 +219,7 @@ TEST_SUITE
 	TEST_RUN(log_file);
 	rd_deref(nlog);
 	rd_deref(dlog);
+
+	AllocTab_stat(out(), NULL, 1);
+	EXPECT_MATCH(data(), "byte");
 }
