@@ -102,10 +102,13 @@ int UnitTest_wait(void)
 	if	(pid < 0)
 		return 0;
 
-	if	(!WIFEXITED(status))
-		return 0;
+	if	(WIFEXITED(status))
+		return WEXITSTATUS(status);
 
-	return WEXITSTATUS(status) == 0;
+	if	(WIFSIGNALED(status))
+		return -WTERMSIG(status);
+
+	return 0x100;
 }
 
 int UnitTest_fork(const char *file, int line)

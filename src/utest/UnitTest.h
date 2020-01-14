@@ -112,7 +112,14 @@ UnitTest_result(__FILE__, __LINE__, \
 
 #define	TEST_EXIT		UnitTest_exit()
 
-#define	TEST_WAIT		\
-UnitTest_result(__FILE__, __LINE__, UnitTest_wait(), "child exit 0")
+#define	CHILD_EXIT(n)		\
+UnitTest_result(__FILE__, __LINE__, \
+	UnitTest_wait() == n, "child exit %d", n)
+
+#define	CHILD_SIGNALED(n)		\
+UnitTest_result(__FILE__, __LINE__, \
+	UnitTest_wait() == -n, "child signaled %d", n)
+
+#define	TEST_WAIT		CHILD_EXIT(0)
 
 #endif
