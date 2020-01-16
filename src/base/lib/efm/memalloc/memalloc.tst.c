@@ -81,15 +81,41 @@ TEST_DECL(lmalloc)
 {
 	char *p = NULL;
 
-	memtrace = 1;
 	EXPECT_TRUE((p = lrealloc(p, 32)) != NULL);
 	PRINT_PTR(p);
-	meminfo(NULL);
 	EXPECT_TRUE((p = lrealloc(p, 64)) != NULL);
 	PRINT_PTR(p);
-	meminfo(NULL);
 	EXPECT_TRUE((p = lrealloc(p, 0)) == NULL);
-	lcheckall();
+}
+
+TEST_DECL(memalloc)
+{
+	char *p = NULL;
+	EXPECT_TRUE((p = memalloc(8)) != NULL);
+	memfree(p);
+	memfree("a");
+	memfree(NULL);
+
+	TEST_FORK
+	{
+		int i;
+
+		freopen("/dev/null", "w", stderr);
+		memtrace = 1;
+		memalloc(1024);
+
+		for (i = 0; i < 2000; i++)
+			lmalloc(32);
+
+		memstat(NULL);
+		meminfo(NULL);
+		memchange(NULL);
+		memcheck();
+		lcheckall();
+		TEST_EXIT;
+	}
+
+	TEST_WAIT;
 }
 
 TEST_DECL(memswap)
@@ -165,6 +191,7 @@ TEST_SUITE
 	TEST_RUN(sizealign);
 	TEST_RUN(alloctab);
 	TEST_RUN(lmalloc);
+	TEST_RUN(memalloc);
 	TEST_RUN(memswap);
 	TEST_RUN(trace);
 	TEST_RUN(debug_check);
