@@ -142,6 +142,14 @@ TEST_DECL(mstrsplit)
 	EXPECT_STREQ(tab[4], "c");
 }
 
+TEST_DECL(msprintf)
+{
+	va_list args;
+	EXPECT_STREQ(msprintf(NULL), NULL);
+	EXPECT_STREQ(mvsprintf(NULL, args), NULL);
+	EXPECT_STREQ(msprintf("%d", 5), "5");
+}
+
 TEST_SUITE
 {
 	TEST_RUN(mbasename);
@@ -154,4 +162,5 @@ TEST_SUITE
 	TEST_RUN(mtabcat);
 	TEST_RUN(mstrcut);
 	TEST_RUN(mstrsplit);
+	TEST_RUN(msprintf);
 }
