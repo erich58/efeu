@@ -2,7 +2,7 @@
 #include <EFEU/mkpath.h>
 #include <EFEU/mstring.h>
 
-TEST_SUITE
+TEST_DECL(mkpath)
 {
 	STRBUF(buf, 256);
 	EXPECT_TRUE(mkpath_bin(&buf, "bin", "lib", "else", NULL));
@@ -33,4 +33,35 @@ TEST_SUITE
 	EXPECT_STREQ(p, "/bin:/home/test/bin:/root/bin");
 
 	setenv("PATH", path, 1);	/* Restore PATH */
+}
+
+static int c_flags = 0;
+
+static void c_init()
+{
+	c_flags |= 1;
+}
+
+static void c_exit()
+{
+	c_flags |= 2;
+}
+
+TEST_DECL(callproc)
+{
+	Shell = "true";
+	EXPECT_TRUE(callproc(NULL) == 0);
+	Shell = NULL;
+	EXPECT_TRUE(callproc(NULL) == -1);
+	callproc_init = c_init;
+	callproc_exit = c_exit;
+	EXPECT_TRUE(callproc("exit 5") == 5);
+	EXPECT_TRUE(c_flags == 3);
+	TEST_FILE("x.sh", "echo TEST\n");
+}
+
+TEST_SUITE
+{
+	TEST_RUN(mkpath);
+	TEST_RUN(callproc);
 }
