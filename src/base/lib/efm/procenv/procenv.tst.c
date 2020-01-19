@@ -55,9 +55,18 @@ TEST_DECL(callproc)
 	EXPECT_TRUE(callproc(NULL) == -1);
 	callproc_init = c_init;
 	callproc_exit = c_exit;
-	EXPECT_TRUE(callproc("exit 5") == 5);
+	EXPECT_TRUE(callproc("true") == 0);
 	EXPECT_TRUE(c_flags == 3);
-	TEST_FILE("x.sh", "echo TEST\n");
+
+	EXPECT_TRUE(callproc("exit 5") == 5);
+	EXPECT_TRUE(callproc("kill -15 $$") == -1);
+
+	EXPECT_TRUE(callproc(UnitTest_tpl("@/x.sh")) == 127);
+	TEST_FILE("x.sh", "kill -3 $$\n");
+	EXPECT_TRUE(callproc(UnitTest_tpl("@/x.sh")) == 126);
+	EXPECT_TRUE(callproc(UnitTest_tpl("sh @/x.sh")) == 128 + 3);
+	EXPECT_TRUE(callproc(UnitTest_tpl("chmod a+x @/x.sh")) == 0);
+	EXPECT_TRUE(callproc(UnitTest_tpl("@/x.sh")) == 128 + 3);
 }
 
 TEST_SUITE
