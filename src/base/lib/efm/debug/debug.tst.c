@@ -1,6 +1,7 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/LogConfig.h>
 #include <EFEU/Debug.h>
+#include <EFEU/procenv.h>
 #include <EFEU/ftools.h>
 #include <ctype.h>
 
@@ -44,6 +45,32 @@ static const char *fconfig(const char *fmt, const char *name)
 	return config(buf);
 }
 
+#if	0
+static const char *loginfo(LogControl *log)
+{
+	if	(!log)
+		return NULL;
+
+	LogUpdate(log);
+	IO *io = out();
+	LogControlEntry *entry = log->entry;
+
+	io_puts(log->name, io);
+	io_putc(':', io);
+
+	for (entry = log->entry; entry; entry = entry->next)
+	{
+		if	(entry->out)
+		{
+			io_putc(' ', io);
+			io_puts(entry->out->name, io);
+		}
+	}
+
+	return data();
+}
+#endif
+
 TEST_DECL(setup)
 {
 	static LogControl LogData = LOG_CONTROL("X", LOGLEVEL_NOTE);
@@ -81,7 +108,7 @@ TEST_DECL(LogLevel)
 	EXPECT_TRUE(LogLevelIndex("anything") == 0);
 }
 
-TEST_DECL(StdLog)
+TEST_DECL(LogControl)
 {
 	EXPECT_STREQ(rd_ident(ErrLog), ".err");
 	EXPECT_TRUE(check_stdlog(ErrLog, LOGLEVEL_ERR, 1));
@@ -95,10 +122,7 @@ TEST_DECL(StdLog)
 	EXPECT_TRUE(check_stdlog(DebugLog, LOGLEVEL_DEBUG, 0));
 	EXPECT_STREQ(rd_ident(TraceLog), ".trace");
 	EXPECT_TRUE(check_stdlog(TraceLog, LOGLEVEL_TRACE, 0));
-}
 
-TEST_DECL(LogControl)
-{
 	EXPECT_STREQ(config("+"), "EWNIdt-Nd");
 	EXPECT_STREQ(config("+"), "EWNIDt-ND");
 	EXPECT_STREQ(config("+"), "EWNIDT-ND");
@@ -189,9 +213,10 @@ TEST_DECL(LogOutput)
 	log_printf(dlog, "Ä\n");
 	EXPECT_TRUE(log_check("####-##-## ##:##:##.###### \304\n"));
 
-	EXPECT_STREQ(fconfig("=%s", logfile), "EWNidt-ND");
+	EXPECT_STREQ(fconfig("@ =%s", logfile), "EWNidt-Nd");
 	log_printf(NoteLog, "NOTE\n");
-	log_printf(nlog, "X\n");
+	va_list list;
+	log_vprintf(nlog, "X\n", list);
 	EXPECT_TRUE(log_check("NOTE\nX\n"));
 }
 
@@ -209,14 +234,66 @@ TEST_DECL(log_file)
 	EXPECT_TRUE(log_check("####-##-## ##:##:##.###### TEST\n"));
 }
 
+TEST_DECL(GetFormat)
+{
+	SetApplPath(UnitTest_tmpname(NULL));
+	TEST_FILE("tst.msg", "1\tFehlermeldung\n");
+
+	LogConfig("@:");
+	LogConfig(UnitTest_tpl("msg.note=@/msg.log"));
+	TEST_FILE("msg.log", NULL);
+	EXPECT_STREQ(GetFormat("ABC"), "ABC");
+	EXPECT_STREQ(GetFormat("[]ABC"), "ABC");
+	EXPECT_STREQ(GetFormat("[ubk:123]ABC"), "ABC");
+	MATCH_CONTENT("msg.log", "key \"123\" not found");
+	EXPECT_STREQ(GetFormat("[%res]ABC"), "ABC");
+	PRINT_CONTENT("msg.log");
+	EXPECT_STREQ(GetFormat("[tst:1]ABC"), "Fehlermeldung");
+
+	SetResource("tstfmt","XYZ");
+	EXPECT_STREQ(GetFormat("[%tstfmt]ABC"), "XYZ");
+}
+
+TEST_DECL(stdlog)
+{
+	LogConfig("@:");
+	LogConfig(UnitTest_tpl("msg.note=@/msg.log =@/log"));
+
+	TEST_FILE("log", NULL);
+	log_psub(WarnLog, NULL, NULL);
+	TEST_CONTENT("log", "WARNING:\n");
+
+	TEST_FILE("log", NULL);
+	TEST_FILE("msg.log", NULL);
+	log_psub(ErrLog, "[ubk:123]", NULL);
+	TEST_CONTENT("log", "ERROR [ubk:123]:\n");
+	MATCH_CONTENT("msg.log", "key \"123\" not found");
+
+	TEST_FILE("log", NULL);
+	log_note(NULL, "Meldung $1", "s", "ABC");
+	TEST_CONTENT("log", "Meldung ABC\n");
+
+	TEST_FILE("log", NULL);
+
+	TEST_FORK
+	{
+		log_error(NULL, "Fehler $2 ($1)", "sd", "Text", 42);
+		TEST_EXIT;
+	}
+
+	CHILD_EXIT(1);
+	TEST_CONTENT("log", "Fehler 42 (Text)\n");
+}
+
 TEST_SUITE
 {
 	TEST_RUN(setup);
 	TEST_RUN(LogLevel);
-	TEST_RUN(StdLog);
 	TEST_RUN(LogControl);
 	TEST_RUN(LogOutput);
 	TEST_RUN(log_file);
+	TEST_RUN(GetFormat);
+	TEST_RUN(stdlog);
 	rd_deref(nlog);
 	rd_deref(dlog);
 
