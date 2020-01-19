@@ -298,7 +298,7 @@ int LogUpdate (LogControl *ctrl)
 			if	(log_match(ctrl, def->select))
 				entry = new_entry(entry, def);
 
-		if	(MASK_EXACT(ctrl->level) & default_mask)
+		if	(!entry && (MASK_EXACT(ctrl->level) & default_mask))
 			entry = new_entry(entry, NULL);
 
 		del_entry(ctrl->entry);
