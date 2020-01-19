@@ -14,8 +14,11 @@ TEST_SUITE
 	TEST_CONTENT("dir/x", NULL);
 	EXPECT_FALSE(UnitTest_content(NULL));
 	PRINT_STR(UnitTest_content(NULL));
+	EXPECT_STREQ(UnitTest_tpl(NULL), NULL);
+	EXPECT_STREQ(UnitTest_tpl("@"), UnitTest_tmpname(NULL));
+	EXPECT_STREQ(UnitTest_tpl("@/x\\@bc"), UnitTest_tmpname("x@bc"));
 
-	DIR *dir = opendir(UnitTest_tempname("dir"));
+	DIR *dir = opendir(UnitTest_tmpname("dir"));
 
 	if	(EXPECT_TRUE(dir != NULL))
 	{

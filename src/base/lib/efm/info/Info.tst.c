@@ -161,7 +161,7 @@ TEST_DECL(LoadInfo)
 	PrintInfo(out(), rd_deref(GetInfo(&root, "0")));
 	EXPECT_STR(data(), "Label\nDescription\n");
 
-	TEST_EXPR(SetInfoPath(UnitTest_tempname(NULL)));
+	TEST_EXPR(SetInfoPath(UnitTest_tmpname(NULL)));
 
 	TEST_FILE("1.info", "@1\\t\\n\\f\\b\\ \\x \t\fy :"
 		" \tz\\\n\\\t\\ \\<\\z \n");

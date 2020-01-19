@@ -83,7 +83,45 @@ static void create_tmpdir()
 	atexit(cleanup_tmpdir);
 }
 
-const char *UnitTest_tempname(const char *name)
+const char *UnitTest_tpl(const char *tpl)
+{
+	if	(tpl)
+	{
+		static SBUF buf = { NULL, 0, 0 };
+		buf.pos = 0;
+		create_tmpdir();
+
+		while (*tpl)
+		{
+			if	(*tpl == '\\')
+			{
+				++tpl;
+
+				if	(*tpl)
+					buf_putc(&buf, *tpl);
+				else
+					break;
+			}
+			else if	(*tpl == '@')
+			{
+				buf_puts(&buf, tmpdir);
+			}
+			else
+			{
+				buf_putc(&buf, *tpl);
+			}
+
+			++tpl;
+		}
+
+		buf_putc(&buf, 0);
+		return buf.data;
+	}
+
+	return NULL;
+}
+
+const char *UnitTest_tmpname(const char *name)
 {
 	create_tmpdir();
 
@@ -103,13 +141,13 @@ const char *UnitTest_tempname(const char *name)
 
 const char *UnitTest_mkdir(const char *name)
 {
-	const char *path = UnitTest_tempname(name);
+	const char *path = UnitTest_tmpname(name);
 	return mkdir(path, 0777) == 0 ? path : NULL;
 }
 
 const char *UnitTest_mkfile(const char *name, const char *content)
 {
-	const char *path = UnitTest_tempname(name);
+	const char *path = UnitTest_tmpname(name);
 	FILE *file = fopen(path, "w");
 	
 	if	(file)
@@ -139,7 +177,7 @@ const char *UnitTest_content(const char *name)
 	undefined = 1;
 	buf.pos = 0;
 
-	const char *path = UnitTest_tempname(name);
+	const char *path = UnitTest_tmpname(name);
 	FILE *file = fopen(path, "r");
 	
 	if	(file)

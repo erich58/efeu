@@ -7,7 +7,8 @@
 void UnitTest_expr(const char *file, int line, const char *expr);
 void UnitTest_info(const char *file, int line, const char *fmt, ...);
 int UnitTest_result(const char *file, int line, int res, const char *fmt, ...);
-const char *UnitTest_tempname(const char *name);
+const char *UnitTest_tpl(const char *tpl);
+const char *UnitTest_tmpname(const char *name);
 const char *UnitTest_mkdir(const char *name);
 const char *UnitTest_mkfile(const char *name, const char *content);
 const char *UnitTest_content(const char *name);

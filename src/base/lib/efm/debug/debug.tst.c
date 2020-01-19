@@ -162,7 +162,7 @@ TEST_DECL(LogOutput)
 	const char *logfile;
 	IO *out;
 	
-	EXPECT_TRUE((logfile = UnitTest_tempname("log")) != NULL);
+	EXPECT_TRUE((logfile = UnitTest_tmpname("log")) != NULL);
 	EXPECT_STREQ(config(""), "EWNidt-Nd");
 	EXPECT_TRUE(LogOpen(dlog) == NULL);
 
@@ -200,7 +200,7 @@ TEST_DECL(log_file)
 	const char *logfile;
 	FILE *file;
 	
-	EXPECT_TRUE((logfile = UnitTest_tempname("log")) != NULL);
+	EXPECT_TRUE((logfile = UnitTest_tmpname("log")) != NULL);
 	EXPECT_STREQ(fconfig("@X.debug=%s[time]", logfile), "EWNidt-ND");
 	EXPECT_TRUE((file = log_file(dlog)) != NULL);
 	fprintf(file, "TEST\n");

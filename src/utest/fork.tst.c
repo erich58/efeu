@@ -1,5 +1,6 @@
 #include <EFEU/UnitTest.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 TEST_SUITE
 {

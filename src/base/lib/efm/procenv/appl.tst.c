@@ -28,8 +28,8 @@ TEST_SUITE
 	APPL_FILE("extra/a.cnf");
 	APPL_FILE("extra/b.msg");
 
-	setenv("APPLPATH", UnitTest_tempname("lib/%S"), 1);
-	SetApplPath(UnitTest_tempname("extra"));
+	setenv("APPLPATH", UnitTest_tmpname("lib/%S"), 1);
+	SetApplPath(UnitTest_tmpname("extra"));
 	PRINT_STR(ApplPath);
 
 	EXPECT_STREQ(appl_content("a", APPL_CNF), "extra/a.cnf");
