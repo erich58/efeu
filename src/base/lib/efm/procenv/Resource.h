@@ -43,6 +43,4 @@ extern char *GetResource (const char *name, const char *defval);
 extern int GetIntResource (const char *name, int val);
 extern int GetFlagResource (const char *name);
 
-extern char *GetFormat (const char *def);
-
 #endif	/* EFEU/Resource.h */

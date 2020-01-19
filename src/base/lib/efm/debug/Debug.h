@@ -32,6 +32,7 @@ If not, write to the Free Software Foundation, Inc.,
 extern char *FormatTabEntry (const char *name, const char *key);
 extern void FormatTabLoad (IO *io, const char *name, int endkey);
 extern void FormatTabShow (IO *io, const char *name, const char *fmt);
+extern char *GetFormat (const char *def);
 
 void log_psub (LogControl *ctrl, const char *fmt, ArgList *list);
 void log_psubvarg (LogControl *ctrl, const char *fmt, char *id,
