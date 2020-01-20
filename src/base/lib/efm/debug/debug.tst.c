@@ -3,6 +3,7 @@
 #include <EFEU/Debug.h>
 #include <EFEU/procenv.h>
 #include <EFEU/ftools.h>
+#include <EFEU/io.h>
 #include <ctype.h>
 
 #include "utest/data.tst.h"
@@ -240,7 +241,7 @@ TEST_DECL(GetFormat)
 	TEST_FILE("tst.msg", "1\tFehlermeldung\n");
 
 	LogConfig("@:");
-	LogConfig(UnitTest_tpl("msg.note=@/msg.log"));
+	LogConfig(UnitTest_tpl("msg.debug=@/msg.log"));
 	TEST_FILE("msg.log", NULL);
 	EXPECT_STREQ(GetFormat("ABC"), "ABC");
 	EXPECT_STREQ(GetFormat("[]ABC"), "ABC");
@@ -252,6 +253,16 @@ TEST_DECL(GetFormat)
 
 	SetResource("tstfmt","XYZ");
 	EXPECT_STREQ(GetFormat("[%tstfmt]ABC"), "XYZ");
+
+	IO *io;
+	EXPECT_TRUE((io = io_fileopen(UnitTest_tmpname("tst.msg"), "r")) != NULL);
+	FormatTabLoad(io, "tst2", EOF);
+	EXPECT_STREQ(GetFormat("[tst2:1]ABC"), "Fehlermeldung");
+	io_close(io);
+
+	TEST_FILE("tst3.msg", "1\tABC\n2\t\"DEF\"");
+	FormatTabShow(out(), "tst3", "$0-$1-$2\n");
+	EXPECT_STREQ(data(), "tst3-1-ABC\ntst3-2-DEF\n");
 }
 
 TEST_DECL(stdlog)
@@ -262,6 +273,8 @@ TEST_DECL(stdlog)
 	TEST_FILE("log", NULL);
 	log_psub(WarnLog, NULL, NULL);
 	TEST_CONTENT("log", "WARNING:\n");
+	log_psubarg(WarnLog, "FMT", NULL, NULL, NULL);
+	TEST_CONTENT("log", "WARNING:\nFMT\n");
 
 	TEST_FILE("log", NULL);
 	TEST_FILE("msg.log", NULL);
