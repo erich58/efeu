@@ -82,6 +82,8 @@ static int pfx_cmd(int c)
 		break;
 	case '@':
 		vb_clean(&vbuf, def_clean);
+		memfree(default_path);
+		default_path = NULL;
 		break;
 	case '+':
 		default_mask = set_mask(default_mask, 1);

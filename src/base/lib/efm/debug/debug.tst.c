@@ -221,6 +221,52 @@ TEST_DECL(LogOutput)
 	EXPECT_TRUE(log_check("NOTE\nX\n"));
 }
 
+TEST_DECL(LogOutputStat)
+{
+	TEST_FILE("stderr.out", NULL);
+
+	TEST_FORK
+	{
+		freopen(UnitTest_tmpname("stderr.out"), "w", stderr);
+		LogOutputStat();
+
+		log_psub(ErrLog, "DEFAULT\n", NULL);
+		LogConfig("=stderr");
+		log_psub(ErrLog, "STDERR\n", NULL);
+		
+#if	HAS_SYSLOG
+		LogConfig("=syslog");
+		log_psub(ErrLog, "SYSLOG\n", NULL);
+#endif
+		LogConfig(UnitTest_tpl("='|cat > @/pipe.out'"));
+		log_psub(ErrLog, "PIPE\n", NULL);
+
+		LogConfig("=");
+		log_psub(ErrLog, "Keine Ausgabe\n", NULL);
+
+		LogConfig("@");
+		log_psub(ErrLog, "END\n", NULL);
+		TEST_EXIT;
+	}
+
+	TEST_WAIT;
+	TEST_CONTENT("stderr.out",
+		"stderr 0\n"
+#if	HAS_SYSLOG
+		"syslog 0\n"
+		"syslog.err 0\n"
+		"syslog.warn 0\n"
+		"syslog.notice 0\n"
+		"syslog.info 0\n"
+		"syslog.debug 0\n"
+#endif
+		"DEFAULT\n"
+		"STDERR\n"
+		"END\n"
+		);
+	TEST_CONTENT("pipe.out", "PIPE\n");
+}
+
 TEST_DECL(log_file)
 {
 	const char *logfile;
@@ -300,8 +346,9 @@ TEST_DECL(stdlog)
 
 TEST_SUITE
 {
-	TEST_RUN(setup);
 	TEST_RUN(LogLevel);
+	TEST_RUN(LogOutputStat);
+	TEST_RUN(setup);
 	TEST_RUN(LogControl);
 	TEST_RUN(LogOutput);
 	TEST_RUN(log_file);
