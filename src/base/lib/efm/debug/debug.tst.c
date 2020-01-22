@@ -234,10 +234,12 @@ TEST_DECL(LogOutputStat)
 		LogConfig("=stderr");
 		log_psub(ErrLog, "STDERR\n", NULL);
 		
+/*
 #if	HAS_SYSLOG
 		LogConfig("=syslog");
 		log_psub(ErrLog, "SYSLOG\n", NULL);
 #endif
+*/
 		LogConfig(UnitTest_tpl("='|cat > @/pipe.out'"));
 		log_psub(ErrLog, "PIPE\n", NULL);
 

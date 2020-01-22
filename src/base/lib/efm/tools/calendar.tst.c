@@ -60,28 +60,32 @@ TEST_DECL(Calendar)
 
 TEST_DECL(Time)
 {
-	CalTimeIndex t1 = str2Time("2019-08-24 12:30:15", NULL, 0);
-	EXPECT_STREQ(Time2str(NULL, t1), "2019-08-24 12:30:15");
+	CalTimeIndex t1 = str2Time("2019-08-04 12:30:15", NULL, 0);
+	EXPECT_STREQ(Time2str(NULL, t1), "2019-08-04 12:30:15");
 	CalInfo *info = TimeCalendar(t1, NULL);
 	EXPECT_TRUE(info->year == 2019);
 	EXPECT_TRUE(info->month == 8);
-	EXPECT_TRUE(info->day == 24);
-	EXPECT_TRUE(info->wday == 6);
-	EXPECT_TRUE(info->yday == 236);
+	EXPECT_TRUE(info->day == 4);
+	EXPECT_TRUE(info->wday == 0);
+	EXPECT_TRUE(info->yday == 216);
 	EXPECT_TRUE(info->hour == 12);
 	EXPECT_TRUE(info->min == 30);
 	EXPECT_TRUE(info->sec == 15);
-	EXPECT_TRUE(Calendar_week(t1.date) == 34);
-	EXPECT_STREQ(Calendar2str(NULL, t1.date), "2019-08-24");
+	EXPECT_TRUE(Calendar_week(t1.date) == 31);
+	EXPECT_STREQ(Calendar2str(NULL, t1.date), "2019-08-04");
 	EXPECT_TRUE(t1.time == (12 * 60 + 30) * 60 + 15);
 	
 	PRINT_STR(Time2str("%B %b", t1));
-	EXPECT_STREQ(Time2str("%A %a", t1), "Saturday Sa");
+	EXPECT_STREQ(Time2str("%A %a", t1), "Sunday Su");
 	EXPECT_STREQ(Time2str("%B %b", t1), "August Aug");
 	EXPECT_STREQ(Time2str("|%m|%-m|%_m|", t1), "|08|8| 8|");
+	EXPECT_STREQ(Time2str("|%y|%Y|", t1), "|19|2019|");
+	EXPECT_STREQ(Time2str("|%d|%e|%j|", t1), "|04| 4|216|");
+	EXPECT_STREQ(Time2str("|%I|%p|%P|", t1), "|12|PM|pm|");
+	PRINT_STR(Time2str("|%I|%p|%P|", t1));
 
 	CalTimeIndex t2 = Time_offset(t1, 124);
-	EXPECT_STREQ(Time2str(NULL, t2), "2019-08-24 12:32:19");
+	EXPECT_STREQ(Time2str(NULL, t2), "2019-08-04 12:32:19");
 	EXPECT_TRUE(Time_dist(t1, t2) == 124);
 }
 
