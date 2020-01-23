@@ -28,8 +28,19 @@ static void vinfo(const char *pfx, const char *file, int line,
 	for (n = 0; n < fork_depth; ++n)
 		pos += snprintf(buf + pos, sizeof buf - pos + 1, ".\t");
 
-	pos += snprintf(buf + pos, sizeof buf - pos - 1,
-		"%s\t%s:%d\t", pfx, file, line);
+	if	(pfx)
+		pos += snprintf(buf + pos, sizeof buf - pos - 1, "%s", pfx);
+
+	if	(pos + 1 < sizeof buf)
+		buf[pos++] = '\t';
+
+	if	(file)
+		pos += snprintf(buf + pos, sizeof buf - pos - 1,
+			"%s:%d", file, line);
+
+	if	(pos + 1 < sizeof buf)
+		buf[pos++] = '\t';
+
 	pos += vsnprintf(buf + pos, sizeof buf - pos - 1, fmt, list);
 
 	if	(pos >= sizeof buf)
@@ -130,4 +141,18 @@ int UnitTest_fork(const char *file, int line)
 void UnitTest_exit(void)
 {
 	exit(count_bad ? 1 : 0);
+}
+
+int UnitTest_exec(const char *file, int line,
+	void (*test)(void), const char *name)
+{
+	if	(UnitTest_fork(file, line))
+	{
+		info("#RUN", NULL, 0, "%s", name);
+		test();
+		UnitTest_exit();
+	}
+
+	return UnitTest_result(file, line,
+		UnitTest_wait() == 0, "%s success", name);
 }

@@ -16,6 +16,8 @@ const char *UnitTest_qstr(const char *str);
 int UnitTest_strcmp(const char *s1, const char *s2);
 int UnitTest_match(const char *str, const char *expr);
 int UnitTest_fork(const char *file, int line);
+int UnitTest_exec(const char *file, int line,
+	void (*test)(void), const char *name);
 void UnitTest_exit(void);
 int UnitTest_wait(void);
 
@@ -126,5 +128,8 @@ UnitTest_result(__FILE__, __LINE__, \
 	UnitTest_wait() == -n, "child signaled %d", n)
 
 #define	TEST_WAIT		CHILD_EXIT(0)
+
+#define	TEST_EXEC(name)		\
+UnitTest_exec(__FILE__, __LINE__, _test_ ## name, # name)
 
 #endif
