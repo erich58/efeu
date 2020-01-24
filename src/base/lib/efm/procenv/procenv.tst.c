@@ -60,14 +60,16 @@ TEST_DECL(callproc)
 	EXPECT_TRUE(c_flags == 3);
 
 	EXPECT_TRUE(callproc("exit 5") == 5);
-	EXPECT_TRUE(callproc("kill -15 $$") == -1);
+	EXPECT_TRUE(callproc("kill -15 $$") == 128 + 15);
 
 	EXPECT_TRUE(callproc(UnitTest_tpl("@/x.sh")) == 127);
-	TEST_FILE("x.sh", "kill -3 $$\n");
+	TEST_FILE("x.sh", "kill -2 $$\n");
 	EXPECT_TRUE(callproc(UnitTest_tpl("@/x.sh")) == 126);
-	EXPECT_TRUE(callproc(UnitTest_tpl("sh @/x.sh")) == 128 + 3);
+	EXPECT_TRUE(callproc(UnitTest_tpl("sh @/x.sh")) == 128 + 2);
+	PRINT_INT(callproc(UnitTest_tpl("sh @/x.sh")));
 	EXPECT_TRUE(callproc(UnitTest_tpl("chmod a+x @/x.sh")) == 0);
-	EXPECT_TRUE(callproc(UnitTest_tpl("@/x.sh")) == 128 + 3);
+	EXPECT_TRUE(callproc(UnitTest_tpl("@/x.sh")) == 128 + 2);
+	PRINT_INT(callproc(UnitTest_tpl("@/x.sh")));
 }
 
 TEST_DECL(Resource)

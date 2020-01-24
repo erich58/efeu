@@ -52,7 +52,13 @@ int callproc (const char *cmd)
 	if	(cmd)
 	{
 		n = system(cmd);
-		n = WIFEXITED(n) ? WEXITSTATUS(n) : -1;
+
+		if	(WIFEXITED(n))
+			n = WEXITSTATUS(n);
+		else if	(WIFSIGNALED(n))
+			n = 128 + WTERMSIG(n);
+		else
+			n = -1;
 	}
 	else		
 	{
