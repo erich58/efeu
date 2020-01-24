@@ -10,85 +10,59 @@
 #include <unistd.h>
 
 #define	MKTEMP	"mktemp -d"
-#define	CLEANUP	"rm -rf "
-#define	BSIZE	64
-
-typedef struct {
-	char *data;
-	size_t size;
-	size_t pos;
-} SBUF;
-
-static void buf_putc(SBUF *buf, int c)
-{
-	if	(buf->pos >= buf->size)
-	{
-		buf->size += buf->size ? buf->size : BSIZE;
-		buf->data = realloc(buf->data, buf->size);
-	}
-
-	buf->data[buf->pos++] = c;
-}
-
-static size_t buf_puts(SBUF *buf, const char *str)
-{
-	if	(str)
-	{
-		while (*str)
-			buf_putc(buf, *str++);
-	}
-
-	return buf->pos;
-}
 
 static int cleanup_pid = 0;
-static char *cmd_cleanup = NULL;
-static char *tmpdir = NULL;
+static const char *tmpdir = NULL;
 
 static void cleanup_tmpdir()
 {
 	if	(getpid() != cleanup_pid)
 		return;
 
-	if	(cmd_cleanup)
-		system(cmd_cleanup);
+	pid_t pid = fork();
+
+	if	(pid == 0)
+		execl("/bin/rm", "rm", "-rf", tmpdir, (char*) NULL);
+	
+	wait(NULL);
 }
 
 static void create_tmpdir()
 {
-	SBUF buf = { NULL, 0, 0 };
+	STRING_DECL(buf);
 	FILE *file;
-	size_t pos;
-	int c;
 
 	if	(tmpdir)
 		return;
 
-	if	(!(file = popen(MKTEMP, "r")))
+	if	((file = popen(MKTEMP, "r")))
 	{
-		perror(MKTEMP);
-		exit(1);
+		int c;
+
+		while ((c = getc(file)) != EOF && c != '\n')
+			UnitTest_putc(c, &buf);
+
+		fclose(file);
 	}
 
-	pos = buf_puts(&buf, CLEANUP);
-
-	while ((c = getc(file)) != EOF && c != '\n')
-		buf_putc(&buf, c);
-
-	buf_putc(&buf, 0);
-	fclose(file);
-	cmd_cleanup = buf.data;
-	tmpdir = cmd_cleanup + pos;
-	cleanup_pid = getpid();
-	atexit(cleanup_tmpdir);
+	if	(buf.size)
+	{
+		cleanup_pid = getpid();
+		tmpdir = UnitTest_cstr(&buf);
+		atexit(cleanup_tmpdir);
+	}
+	else
+	{
+		exit(1);
+	}
 }
 
 const char *UnitTest_tpl(const char *tpl)
 {
 	if	(tpl)
 	{
-		static SBUF buf = { NULL, 0, 0 };
-		buf.pos = 0;
+		static STRING_DECL(buf);
+		buf.size = 0;
 		create_tmpdir();
 
 		while (*tpl)
@@ -98,23 +72,23 @@ const char *UnitTest_tpl(const char *tpl)
 				++tpl;
 
 				if	(*tpl)
-					buf_putc(&buf, *tpl);
+					UnitTest_putc(*tpl, &buf);
 				else
 					break;
 			}
 			else if	(*tpl == '@')
 			{
-				buf_puts(&buf, tmpdir);
+				UnitTest_puts(tmpdir, &buf);
 			}
 			else
 			{
-				buf_putc(&buf, *tpl);
+				UnitTest_putc(*tpl, &buf);
 			}
 
 			++tpl;
 		}
 
-		buf_putc(&buf, 0);
+		UnitTest_putc(0, &buf);
 		return buf.data;
 	}
 
@@ -127,12 +101,12 @@ const char *UnitTest_tmpname(const char *name)
 
 	if	(name)
 	{
-		static SBUF buf = { NULL, 0, 0 };
-		buf.pos = 0;
-		buf_puts(&buf, tmpdir);
-		buf_putc(&buf, '/');
-		buf_puts(&buf, name);
-		buf_putc(&buf, 0);
+		static STRING_DECL(buf);
+		buf.size = 0;
+		UnitTest_puts(tmpdir, &buf);
+		UnitTest_putc('/', &buf);
+		UnitTest_puts(name, &buf);
+		UnitTest_putc(0, &buf);
 		return buf.data;
 	}
 
@@ -168,14 +142,14 @@ const char *UnitTest_mkfile(const char *name, const char *content)
 
 const char *UnitTest_content(const char *name)
 {
-	static SBUF buf = { NULL, 0, 0 };
+	static STRING_DECL(buf);
 	static int undefined = 1;
 
 	if	(!name)
 		return undefined ? NULL : buf.data;
 
 	undefined = 1;
-	buf.pos = 0;
+	buf.size = 0;
 
 	const char *path = UnitTest_tmpname(name);
 	FILE *file = fopen(path, "r");
@@ -185,10 +159,10 @@ const char *UnitTest_content(const char *name)
 		int c;
 
 		while ((c = getc(file)) != EOF)
-			buf_putc(&buf, c);
+			UnitTest_putc(c, &buf);
 		
 		fclose(file);
-		buf_putc(&buf, 0);
+		UnitTest_putc(0, &buf);
 		undefined = 0;
 		return buf.data;
 	}

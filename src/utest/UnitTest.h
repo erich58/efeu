@@ -3,18 +3,40 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <stdarg.h>
+
+typedef struct {
+	char *data;
+	size_t size;
+	size_t capacity;
+} UnitTestString;
+
+#define	STRING_DECL(name)	UnitTestString name = { NULL, 0, 0, }
+
+void UnitTest_clear(UnitTestString *ustr);
+void UnitTest_free(UnitTestString *ustr);
+void UnitTest_putc(int c, UnitTestString *ustr);
+void UnitTest_puts(const char *s, UnitTestString *ustr);
+void UnitTest_qputs(const char *s, int delim, UnitTestString *ustr);
+void UnitTest_vprintf(UnitTestString *ustr, const char *fmt, va_list list);
+void UnitTest_printf(UnitTestString *ustr, const char *fmt, ...);
+
+const char *UnitTest_cstr(UnitTestString *ustr);
+const char *UnitTest_qstr(const char *str);
+
+int UnitTest_strcmp(const char *s1, const char *s2);
+int UnitTest_match(const char *str, const char *expr);
 
 void UnitTest_expr(const char *file, int line, const char *expr);
 void UnitTest_info(const char *file, int line, const char *fmt, ...);
 int UnitTest_result(const char *file, int line, int res, const char *fmt, ...);
+
 const char *UnitTest_tpl(const char *tpl);
 const char *UnitTest_tmpname(const char *name);
 const char *UnitTest_mkdir(const char *name);
 const char *UnitTest_mkfile(const char *name, const char *content);
 const char *UnitTest_content(const char *name);
-const char *UnitTest_qstr(const char *str);
-int UnitTest_strcmp(const char *s1, const char *s2);
-int UnitTest_match(const char *str, const char *expr);
+
 int UnitTest_fork(const char *file, int line);
 int UnitTest_exec(const char *file, int line,
 	void (*test)(void), const char *name);

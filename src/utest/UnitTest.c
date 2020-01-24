@@ -21,33 +21,26 @@ typedef void (*runFunction)(void);
 static void vinfo(const char *pfx, const char *file, int line,
 	const char *fmt, va_list list)
 {
-	char buf[1024];
-	size_t pos = 0;
+	static STRING_DECL(buf);
 	int n;
 
+	UnitTest_clear(&buf);
+
 	for (n = 0; n < fork_depth; ++n)
-		pos += snprintf(buf + pos, sizeof buf - pos + 1, ".\t");
+		UnitTest_puts(".\t", &buf);
 
 	if	(pfx)
-		pos += snprintf(buf + pos, sizeof buf - pos - 1, "%s", pfx);
-
-	if	(pos + 1 < sizeof buf)
-		buf[pos++] = '\t';
+	{
+		UnitTest_puts(pfx, &buf);
+		UnitTest_putc('\t', &buf);
+	}
 
 	if	(file)
-		pos += snprintf(buf + pos, sizeof buf - pos - 1,
-			"%s:%d", file, line);
+		UnitTest_printf(&buf, "%s:%d\t", file, line);
 
-	if	(pos + 1 < sizeof buf)
-		buf[pos++] = '\t';
-
-	pos += vsnprintf(buf + pos, sizeof buf - pos - 1, fmt, list);
-
-	if	(pos >= sizeof buf)
-		pos = sizeof buf - 1;
-
-	buf[pos++] = '\n';
-	write(2, buf, pos);
+	UnitTest_vprintf(&buf, fmt, list);
+	UnitTest_putc('\n', &buf);
+	write(2, buf.data, buf.size);
 }
 
 static void info(const char *pfx, const char *file, int line,
@@ -133,8 +126,11 @@ int UnitTest_fork(const char *file, int line)
 		fork_depth++;
 		return 1;
 	}
+	else if	(pid < 0)
+	{
+		UnitTest_result(file, line, 1, "fork");
+	}
 
-	UnitTest_result(file, line, pid > 0, "fork");
 	return 0;
 }
 
