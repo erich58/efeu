@@ -17,4 +17,13 @@ TEST_SUITE
 	EXPECT_NOMATCH("abc\ndef", "^abc\nde$");
 	EXPECT_MATCH("2000-12-01", "[0-9]{4}-[0-9]{2}-[0-9]{2}");
 	EXPECT_NOMATCH("20-12-01", "[0-9]{4}-[0-9]{2}-[0-9]{2}");
+
+	TEST_FORK
+	{
+		char *x = "abc";
+		EXPECT_MATCH(x, "^b");
+		TEST_EXIT;
+	}
+
+	CHILD_EXIT(1);
 }

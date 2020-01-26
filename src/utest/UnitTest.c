@@ -82,6 +82,44 @@ int UnitTest_result(const char *file, int line, int res, const char *fmt, ...)
 	return res;
 }
 
+int UnitTest_expect_strcmp(const char *file, int line, const char *op,
+	const char *s1, const char *s2, const char *x1, const char *x2)
+{
+	int r = 0;
+
+	if	(!op || !*op)
+		;
+	else if	(strcmp(op, "~") == 0)
+		r = UnitTest_match(s1, s2);
+	else if	(strcmp(op, "!~") == 0)
+		r = UnitTest_match(s1, s2) == 0;
+	else if	(strcmp(op, "==") == 0)
+		r = UnitTest_strcmp(s1, s2) == 0;
+	else if	(strcmp(op, "!=") == 0)
+		r = UnitTest_strcmp(s1, s2) != 0;
+	else if	(strcmp(op, "<") == 0)
+		r = UnitTest_strcmp(s1, s2) < 0;
+	else if	(strcmp(op, "<=") == 0)
+		r = UnitTest_strcmp(s1, s2) <= 0;
+	else if	(strcmp(op, ">") == 0)
+		r = UnitTest_strcmp(s1, s2) > 0;
+	else if	(strcmp(op, ">=") == 0)
+		r = UnitTest_strcmp(s1, s2) >= 0;
+
+	UnitTest_result(file, line, r, "%s %s %s", x1, op, x2, NULL);
+
+	if	(r)
+		return r;
+
+	if	(*x1 != '"')
+		info("#AS", file, line, "%s = %s", x1, UnitTest_qstr(s1), NULL);
+
+	if	(*x2 != '"')
+		info("#AS", file, line, "%s = %s", x2, UnitTest_qstr(s2), NULL);
+
+	return 0;
+}
+
 int main(int argc, char **argv)
 {
 	char *p;

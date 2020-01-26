@@ -29,6 +29,16 @@ TEST_SUITE
 	EXPECT_TRUE(UnitTest_content(NULL) != NULL);
 	PRINT_STR(UnitTest_content(NULL));
 
+	TEST_FORK
+	{
+		const char *res = "X\n";
+		MATCH_CONTENT("dir/file", "^X");
+		TEST_CONTENT("dir/file", res);
+		TEST_EXIT;
+	}
+
+	CHILD_EXIT(1);
+
 	TEST_EXEC(bad_path);
 	TEST_CONTENT("dir/x", NULL);
 	EXPECT_FALSE(UnitTest_content(NULL));
