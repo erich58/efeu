@@ -46,6 +46,11 @@ static const char *fconfig(const char *fmt, const char *name)
 	return config(buf);
 }
 
+static const char *logid(LogControl *log)
+{
+	return cstr(rd_ident(log));
+}
+
 #if	0
 static const char *loginfo(LogControl *log)
 {
@@ -78,8 +83,8 @@ TEST_DECL(setup)
 	nlog = &LogData;
 	dlog = LogControl_create("X.debug");
 
-	EXPECT_STR(rd_ident(nlog), "X.note");
-	EXPECT_STR(rd_ident(dlog), "X.debug");
+	EXPECT_STR(logid(nlog), "X.note");
+	EXPECT_STR(logid(dlog), "X.debug");
 
 	LogUpdate(ErrLog);
 	int sync = ErrLog->sync;
@@ -111,17 +116,17 @@ TEST_DECL(LogLevel)
 
 TEST_DECL(LogControl)
 {
-	EXPECT_STR(rd_ident(ErrLog), ".err");
+	EXPECT_STR(logid(ErrLog), ".err");
 	EXPECT_TRUE(check_stdlog(ErrLog, LOGLEVEL_ERR, 1));
-	EXPECT_STR(rd_ident(WarnLog), ".warn");
+	EXPECT_STR(logid(WarnLog), ".warn");
 	EXPECT_TRUE(check_stdlog(WarnLog, LOGLEVEL_WARN, 1));
-	EXPECT_STR(rd_ident(NoteLog), ".note");
+	EXPECT_STR(logid(NoteLog), ".note");
 	EXPECT_TRUE(check_stdlog(NoteLog, LOGLEVEL_NOTE, 1));
-	EXPECT_STR(rd_ident(InfoLog), ".info");
+	EXPECT_STR(logid(InfoLog), ".info");
 	EXPECT_TRUE(check_stdlog(InfoLog, LOGLEVEL_INFO, 0));
-	EXPECT_STR(rd_ident(DebugLog), ".debug");
+	EXPECT_STR(logid(DebugLog), ".debug");
 	EXPECT_TRUE(check_stdlog(DebugLog, LOGLEVEL_DEBUG, 0));
-	EXPECT_STR(rd_ident(TraceLog), ".trace");
+	EXPECT_STR(logid(TraceLog), ".trace");
 	EXPECT_TRUE(check_stdlog(TraceLog, LOGLEVEL_TRACE, 0));
 
 	EXPECT_STR(config("+"), "EWNIdt-Nd");
