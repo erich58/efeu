@@ -32,13 +32,13 @@ TEST_SUITE
 	SetApplPath(UnitTest_tmpname("extra"));
 	PRINT_STR(ApplPath);
 
-	EXPECT_STREQ(appl_content("a", APPL_CNF), "extra/a.cnf");
-	EXPECT_STREQ(appl_content("a", APPL_MSG), "lib/messages/a.msg");
-	EXPECT_STREQ(appl_content("a", APPL_HLP), "lib/help/a.hlp");
-	EXPECT_STREQ(appl_content("b", APPL_CNF), "lib/config/b.cnf");
-	EXPECT_STREQ(appl_content("b.cnf", APPL_CNF), "lib/config/b.cnf");
-	EXPECT_STREQ(appl_content("b.cnf", 0), NULL);
-	EXPECT_STREQ(appl_content("c", APPL_CNF), NULL);
-	EXPECT_STREQ(appl_content("c.cnf", APPL_CNF), NULL);
-	EXPECT_STREQ(appl_content("c.cnf", 0), "lib/c.cnf");
+	EXPECT_STR(appl_content("a", APPL_CNF), "extra/a.cnf");
+	EXPECT_STR(appl_content("a", APPL_MSG), "lib/messages/a.msg");
+	EXPECT_STR(appl_content("a", APPL_HLP), "lib/help/a.hlp");
+	EXPECT_STR(appl_content("b", APPL_CNF), "lib/config/b.cnf");
+	EXPECT_STR(appl_content("b.cnf", APPL_CNF), "lib/config/b.cnf");
+	EXPECT_STR(appl_content("b.cnf", 0), NULL);
+	EXPECT_STR(appl_content("c", APPL_CNF), NULL);
+	EXPECT_STR(appl_content("c.cnf", APPL_CNF), NULL);
+	EXPECT_STR(appl_content("c.cnf", 0), "lib/c.cnf");
 }

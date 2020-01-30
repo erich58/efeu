@@ -7,9 +7,9 @@ TEST_SUITE
 	pushstack(&stack, "a");
 	pushstack(&stack, "b");
 	pushstack(&stack, "c");
-	EXPECT_STREQ(popstack(&stack, NULL), "c");
-	EXPECT_STREQ(popstack(&stack, NULL), "b");
-	EXPECT_STREQ(popstack(&stack, NULL), "a");
+	EXPECT_STR(popstack(&stack, NULL), "c");
+	EXPECT_STR(popstack(&stack, NULL), "b");
+	EXPECT_STR(popstack(&stack, NULL), "a");
 	EXPECT_TRUE(stack == NULL);
-	EXPECT_STREQ(popstack(&stack, "x"), "x");
+	EXPECT_STR(popstack(&stack, "x"), "x");
 }

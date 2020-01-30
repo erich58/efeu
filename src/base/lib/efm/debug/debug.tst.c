@@ -78,16 +78,16 @@ TEST_DECL(setup)
 	nlog = &LogData;
 	dlog = LogControl_create("X.debug");
 
-	EXPECT_STREQ(rd_ident(nlog), "X.note");
-	EXPECT_STREQ(rd_ident(dlog), "X.debug");
+	EXPECT_STR(rd_ident(nlog), "X.note");
+	EXPECT_STR(rd_ident(dlog), "X.debug");
 
 	LogUpdate(ErrLog);
 	int sync = ErrLog->sync;
-	EXPECT_STREQ(config(NULL), "EWNidt-Nd");
+	EXPECT_STR(config(NULL), "EWNidt-Nd");
 	EXPECT_TRUE(nlog->sync == sync);
-	EXPECT_STREQ(config(""), "EWNidt-Nd");
+	EXPECT_STR(config(""), "EWNidt-Nd");
 	EXPECT_TRUE(nlog->sync == ++sync);
-	EXPECT_STREQ(config(" "), "EWNidt-Nd");
+	EXPECT_STR(config(" "), "EWNidt-Nd");
 	EXPECT_TRUE(dlog->sync == ++sync);
 }
 
@@ -98,52 +98,52 @@ TEST_DECL(LogLevel)
 	for (i = 0; i <= LOGLEVEL_TRACE; i++)
 		EXPECT_TRUE(LogLevelIndex(LogLevelName(i)) == i);
 
-	EXPECT_STREQ(LogLevelName(LOGLEVEL_ERR), "err");
-	EXPECT_STREQ(LogLevelName(LOGLEVEL_WARN), "warn");
-	EXPECT_STREQ(LogLevelName(LOGLEVEL_NOTE), "note");
-	EXPECT_STREQ(LogLevelName(LOGLEVEL_INFO), "info");
-	EXPECT_STREQ(LogLevelName(LOGLEVEL_DEBUG), "debug");
-	EXPECT_STREQ(LogLevelName(LOGLEVEL_TRACE), "trace");
-	EXPECT_STREQ(LogLevelName(0), "none");
-	EXPECT_STREQ(LogLevelName(99), "none");
+	EXPECT_STR(LogLevelName(LOGLEVEL_ERR), "err");
+	EXPECT_STR(LogLevelName(LOGLEVEL_WARN), "warn");
+	EXPECT_STR(LogLevelName(LOGLEVEL_NOTE), "note");
+	EXPECT_STR(LogLevelName(LOGLEVEL_INFO), "info");
+	EXPECT_STR(LogLevelName(LOGLEVEL_DEBUG), "debug");
+	EXPECT_STR(LogLevelName(LOGLEVEL_TRACE), "trace");
+	EXPECT_STR(LogLevelName(0), "none");
+	EXPECT_STR(LogLevelName(99), "none");
 	EXPECT_TRUE(LogLevelIndex("anything") == 0);
 }
 
 TEST_DECL(LogControl)
 {
-	EXPECT_STREQ(rd_ident(ErrLog), ".err");
+	EXPECT_STR(rd_ident(ErrLog), ".err");
 	EXPECT_TRUE(check_stdlog(ErrLog, LOGLEVEL_ERR, 1));
-	EXPECT_STREQ(rd_ident(WarnLog), ".warn");
+	EXPECT_STR(rd_ident(WarnLog), ".warn");
 	EXPECT_TRUE(check_stdlog(WarnLog, LOGLEVEL_WARN, 1));
-	EXPECT_STREQ(rd_ident(NoteLog), ".note");
+	EXPECT_STR(rd_ident(NoteLog), ".note");
 	EXPECT_TRUE(check_stdlog(NoteLog, LOGLEVEL_NOTE, 1));
-	EXPECT_STREQ(rd_ident(InfoLog), ".info");
+	EXPECT_STR(rd_ident(InfoLog), ".info");
 	EXPECT_TRUE(check_stdlog(InfoLog, LOGLEVEL_INFO, 0));
-	EXPECT_STREQ(rd_ident(DebugLog), ".debug");
+	EXPECT_STR(rd_ident(DebugLog), ".debug");
 	EXPECT_TRUE(check_stdlog(DebugLog, LOGLEVEL_DEBUG, 0));
-	EXPECT_STREQ(rd_ident(TraceLog), ".trace");
+	EXPECT_STR(rd_ident(TraceLog), ".trace");
 	EXPECT_TRUE(check_stdlog(TraceLog, LOGLEVEL_TRACE, 0));
 
-	EXPECT_STREQ(config("+"), "EWNIdt-Nd");
-	EXPECT_STREQ(config("+"), "EWNIDt-ND");
-	EXPECT_STREQ(config("+"), "EWNIDT-ND");
-	EXPECT_STREQ(config("+"), "EWNIDT-ND");
-	EXPECT_STREQ(config("-"), "EWNIDt-ND");
-	EXPECT_STREQ(config("-"), "EWNIdt-Nd");
-	EXPECT_STREQ(config("-"), "EWNidt-Nd");
-	EXPECT_STREQ(config("-"), "EWnidt-nd");
-	EXPECT_STREQ(config("-"), "Ewnidt-nd");
-	EXPECT_STREQ(config("-"), "Ewnidt-nd");
-	EXPECT_STREQ(config(":"), "EWNidt-Nd");
+	EXPECT_STR(config("+"), "EWNIdt-Nd");
+	EXPECT_STR(config("+"), "EWNIDt-ND");
+	EXPECT_STR(config("+"), "EWNIDT-ND");
+	EXPECT_STR(config("+"), "EWNIDT-ND");
+	EXPECT_STR(config("-"), "EWNIDt-ND");
+	EXPECT_STR(config("-"), "EWNIdt-Nd");
+	EXPECT_STR(config("-"), "EWNidt-Nd");
+	EXPECT_STR(config("-"), "EWnidt-nd");
+	EXPECT_STR(config("-"), "Ewnidt-nd");
+	EXPECT_STR(config("-"), "Ewnidt-nd");
+	EXPECT_STR(config(":"), "EWNidt-Nd");
 
-	EXPECT_STREQ(config("@X.warn"), "EWNidt-Nd");
-	EXPECT_STREQ(config("@X.debug"), "EWNidt-ND");
-	EXPECT_STREQ(config("@X.note"), "EWNidt-Nd");
-	EXPECT_STREQ(config("@X.info"), "EWNidt-Nd");
-	EXPECT_STREQ(config("X.note"), "EWNidt-Nd");
-	EXPECT_STREQ(config("~X.info"), "EWNidt-Nd");
+	EXPECT_STR(config("@X.warn"), "EWNidt-Nd");
+	EXPECT_STR(config("@X.debug"), "EWNidt-ND");
+	EXPECT_STR(config("@X.note"), "EWNidt-Nd");
+	EXPECT_STR(config("@X.info"), "EWNidt-Nd");
+	EXPECT_STR(config("X.note"), "EWNidt-Nd");
+	EXPECT_STR(config("~X.info"), "EWNidt-Nd");
 
-	EXPECT_STREQ(config("@.debug"), "EWNIDt-ND");
+	EXPECT_STR(config("@.debug"), "EWNIDt-ND");
 }
 
 static int match(const char *mask, const char *content)
@@ -188,10 +188,10 @@ TEST_DECL(LogOutput)
 	IO *out;
 	
 	EXPECT_TRUE((logfile = UnitTest_tmpname("log")) != NULL);
-	EXPECT_STREQ(config(""), "EWNidt-Nd");
+	EXPECT_STR(config(""), "EWNidt-Nd");
 	EXPECT_TRUE(LogOpen(dlog) == NULL);
 
-	EXPECT_STREQ(fconfig("@ 'X'.debug=%s", logfile), "EWNidt-ND");
+	EXPECT_STR(fconfig("@ 'X'.debug=%s", logfile), "EWNidt-ND");
 	EXPECT_TRUE(log_check(NULL));
 	EXPECT_TRUE((out = LogOpen(dlog)) != NULL);
 	io_puts("TEST\n", out);
@@ -202,19 +202,19 @@ TEST_DECL(LogOutput)
 	EXPECT_TRUE(log_check("TEST\nABC\n"));
 	TEST_CONTENT("log", "TEST\nABC\n");
 
-	EXPECT_STREQ(fconfig("@X.debug=%s[time]", logfile), "EWNidt-ND");
+	EXPECT_STR(fconfig("@X.debug=%s[time]", logfile), "EWNidt-ND");
 	log_printf(dlog, "X\n");
 	EXPECT_TRUE(log_check("####-##-## ##:##:##.###### X\n"));
 
-	EXPECT_STREQ(fconfig("X.debug=[utf8]%s", logfile), "EWNidt-ND");
+	EXPECT_STR(fconfig("X.debug=[utf8]%s", logfile), "EWNidt-ND");
 	log_printf(dlog, "Ä\n");
 	EXPECT_TRUE(log_check("Ä\n"));
 
-	EXPECT_STREQ(fconfig("@X.debug=%s[time,latin9]", logfile), "EWNidt-ND");
+	EXPECT_STR(fconfig("@X.debug=%s[time,latin9]", logfile), "EWNidt-ND");
 	log_printf(dlog, "Ä\n");
 	EXPECT_TRUE(log_check("####-##-## ##:##:##.###### \304\n"));
 
-	EXPECT_STREQ(fconfig("@ =%s", logfile), "EWNidt-Nd");
+	EXPECT_STR(fconfig("@ =%s", logfile), "EWNidt-Nd");
 	log_printf(NoteLog, "NOTE\n");
 	va_list list;
 	log_vprintf(nlog, "X\n", list);
@@ -275,7 +275,7 @@ TEST_DECL(log_file)
 	FILE *file;
 	
 	EXPECT_TRUE((logfile = UnitTest_tmpname("log")) != NULL);
-	EXPECT_STREQ(fconfig("@X.debug=%s[time]", logfile), "EWNidt-ND");
+	EXPECT_STR(fconfig("@X.debug=%s[time]", logfile), "EWNidt-ND");
 	EXPECT_TRUE((file = log_file(dlog)) != NULL);
 	fprintf(file, "TEST\n");
 	fileclose(file);
@@ -291,26 +291,26 @@ TEST_DECL(GetFormat)
 	LogConfig("@:");
 	LogConfig(UnitTest_tpl("msg.debug=@/msg.log"));
 	TEST_FILE("msg.log", NULL);
-	EXPECT_STREQ(GetFormat("ABC"), "ABC");
-	EXPECT_STREQ(GetFormat("[]ABC"), "ABC");
-	EXPECT_STREQ(GetFormat("[ubk:123]ABC"), "ABC");
+	EXPECT_STR(GetFormat("ABC"), "ABC");
+	EXPECT_STR(GetFormat("[]ABC"), "ABC");
+	EXPECT_STR(GetFormat("[ubk:123]ABC"), "ABC");
 	MATCH_CONTENT("msg.log", "key \"123\" not found");
-	EXPECT_STREQ(GetFormat("[%res]ABC"), "ABC");
+	EXPECT_STR(GetFormat("[%res]ABC"), "ABC");
 	PRINT_CONTENT("msg.log");
-	EXPECT_STREQ(GetFormat("[tst:1]ABC"), "Fehlermeldung");
+	EXPECT_STR(GetFormat("[tst:1]ABC"), "Fehlermeldung");
 
 	SetResource("tstfmt","XYZ");
-	EXPECT_STREQ(GetFormat("[%tstfmt]ABC"), "XYZ");
+	EXPECT_STR(GetFormat("[%tstfmt]ABC"), "XYZ");
 
 	IO *io;
 	EXPECT_TRUE((io = io_fileopen(UnitTest_tmpname("tst.msg"), "r")) != NULL);
 	FormatTabLoad(io, "tst2", EOF);
-	EXPECT_STREQ(GetFormat("[tst2:1]ABC"), "Fehlermeldung");
+	EXPECT_STR(GetFormat("[tst2:1]ABC"), "Fehlermeldung");
 	io_close(io);
 
 	TEST_FILE("tst3.msg", "1\tABC\n2\t\"DEF\"");
 	FormatTabShow(out(), "tst3", "$0-$1-$2\n");
-	EXPECT_STREQ(data(), "tst3-1-ABC\ntst3-2-DEF\n");
+	EXPECT_STR(data(), "tst3-1-ABC\ntst3-2-DEF\n");
 }
 
 TEST_DECL(stdlog)

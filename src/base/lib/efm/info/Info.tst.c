@@ -67,7 +67,7 @@ TEST_DECL(InfoPath)
 	char *path = mstrcpy(getenv("PATH")); /* Save PATH */
 	TEST_EXPR(setenv("PATH", "a/bin:b", 1));
 	SetInfoPath("x");
-	EXPECT_STREQ(InfoPath, "x:a/lib/eis/%L:a/lib/efeu/%L/info");
+	EXPECT_STR(InfoPath, "x:a/lib/eis/%L:a/lib/efeu/%L/info");
 	setenv("PATH", path, 1);	/* Restore PATH */
 }
 
@@ -81,7 +81,7 @@ TEST_DECL(SetupInfo)
 
 	EXPECT_STR(cstr(rd_ident(&root)), "root");
 	TEST_EXPR(PrintInfo(out(), &root));
-	EXPECT_STREQ(data(), "root node\n");
+	EXPECT_STR(data(), "root node\n");
 
 	InfoNode *i1 = AddInfo(&root, "x", "X-Label", NULL, "Desc of $1:$2\n");
 	EXPECT_STR(dump(&root), "root[2]<1>\n+x[1]<-1>\n");
@@ -121,29 +121,29 @@ TEST_DECL(Default)
 	TEST_EXPR(info = AddInfo(root, "a/b", "Label",
 		f_puts, "Description\n"));
 	TEST_EXPR(PrintInfo(out(), info));
-	EXPECT_STREQ(data(), "Label\nDescription\n");
+	EXPECT_STR(data(), "Label\nDescription\n");
 	EXPECT_TRUE(root->refcount == 2);
 	EXPECT_TRUE(info->refcount == 1);
 
 	TEST_EXPR(InfoName(out(), NULL, info));
-	EXPECT_STREQ(data(), "/a/b");
-	EXPECT_STREQ(cstr(rd_ident(info)), "/a/b");
+	EXPECT_STR(data(), "/a/b");
+	EXPECT_STR(cstr(rd_ident(info)), "/a/b");
 
 	TEST_EXPR(DumpInfo(out(), NULL, 0));
-	EXPECT_STREQ(data(), "@:\n@a| --info=dump:/a\n");
+	EXPECT_STR(data(), "@:\n@a| --info=dump:/a\n");
 
 	TEST_EXPR(DumpInfo(out(), NULL, 1));
-	EXPECT_STREQ(data(), "@:\n@a:\n@a/b: Label\nDescription\n");
+	EXPECT_STR(data(), "@:\n@a:\n@a/b: Label\nDescription\n");
 
 	TEST_EXPR(DumpInfo(out(), "/a", 1));
-	EXPECT_STREQ(data(), "@:\n@b: Label\nDescription\n");
+	EXPECT_STR(data(), "@:\n@b: Label\nDescription\n");
 
 	TEST_EXPR(DumpInfo(out(), "/a/b", 1));
-	EXPECT_STREQ(data(), "@: Label\nDescription\n");
+	EXPECT_STR(data(), "@: Label\nDescription\n");
 
 	TEST_EXPR(info = GetInfo(NULL, "/a/./b/../"));
 	TEST_EXPR(PrintInfo(out(), info));
-	EXPECT_STREQ(data(), "\nb\tLabel\n");
+	EXPECT_STR(data(), "\nb\tLabel\n");
 	EXPECT_TRUE(rd_deref(info) != NULL);
 
 	TEST_EXPR(info = AddInfo(NULL, "x/z\n\t\f\by-<|:>\\z",
@@ -167,8 +167,8 @@ TEST_DECL(LoadInfo)
 		" \tz\\\n\\\t\\ \\<\\z \n");
 	LoadInfo(&root, "1.info");
 	InfoNode *info = *(InfoNode **) vb_data(root.list, 1);
-	EXPECT_STREQ(info->name, "1\t\n\f\b \\xy");
-	EXPECT_STREQ(info->label, "z\n\t <\\z");
+	EXPECT_STR(info->name, "1\t\n\f\b \\xy");
+	EXPECT_STR(info->label, "z\n\t <\\z");
 
 	TEST_FILE("2.info", "@2 : File<2\\ dat\\a   \n");
 	TEST_FILE("2 dat\\a", "Inhalt\n");

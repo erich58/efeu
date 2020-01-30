@@ -103,9 +103,6 @@ UnitTest_expect_strcmp(__FILE__, __LINE__, "==", a, b, # a, # b)
 #define EXPECT_STRCMP(a, op, b)	\
 UnitTest_expect_strcmp(__FILE__, __LINE__, # op, a, b, # a, # b)
 
-#define	EXPECT_STREQ(a, b)	EXPECT_STRCMP(a, ==, b)
-#define	EXPECT_STRNE(a, b)	EXPECT_STRCMP(a, !=, b)
-
 #define EXPECT_MATCH(a, b)	\
 UnitTest_expect_strcmp(__FILE__, __LINE__, "~", a, b, # a, # b)
 

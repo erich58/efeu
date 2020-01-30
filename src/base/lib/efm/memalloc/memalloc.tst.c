@@ -35,7 +35,7 @@ TEST_DECL(sizealign)
 
 TEST_DECL(alloctab)
 {
-	EXPECT_STREQ(tab.name, "AllocTabTest");
+	EXPECT_STR(tab.name, "AllocTabTest");
 	EXPECT_TRUE(tab.blksize == 2);
 	EXPECT_TRUE(tab.elsize == sizeof(AllocTabList));
 	EXPECT_TRUE(tab.nfree == 0);
@@ -123,8 +123,8 @@ TEST_DECL(memswap)
 	char a[] = "123456789";
 	char b[] = "ABCDEFGHI";
 	memswap(a + 3, b + 3, 3);
-	EXPECT_STREQ(a, "123DEF789");
-	EXPECT_STREQ(b, "ABC456GHI");
+	EXPECT_STR(a, "123DEF789");
+	EXPECT_STR(b, "ABC456GHI");
 }
 
 TEST_DECL(debug_check)

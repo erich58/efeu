@@ -11,16 +11,15 @@ TEST_SUITE
 	EXPECT_STRCMP("1", >, "0");
 	EXPECT_STRCMP("1", >=, "1");
 
-	EXPECT_STREQ("a", "a");
-	EXPECT_STRNE("a", "b");
+	EXPECT_STR("a", "a");
 
 	TEST_FORK
 	{
 		char *x = "x";
 		char *y = "y";
-		EXPECT_STREQ(x, "a");
-		EXPECT_STREQ("a", y);
-		EXPECT_STREQ(x, y);
+		EXPECT_STR(x, "a");
+		EXPECT_STR("a", y);
+		EXPECT_STR(x, y);
 		TEST_EXIT;
 	}
 

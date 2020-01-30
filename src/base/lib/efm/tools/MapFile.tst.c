@@ -19,6 +19,6 @@ TEST_SUITE
 	map = MapFile_open(UnitTest_tmpname("data"));
 	PRINT_STR(rd_ident(map));
 	EXPECT_TRUE(map != NULL);
-	EXPECT_STREQ(map->data, TEST_DATA);
+	EXPECT_STR(map->data, TEST_DATA);
 	EXPECT_TRUE(rd_deref(map) == NULL);
 }

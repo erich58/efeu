@@ -5,7 +5,7 @@
 TEST_DECL(bad_path)
 {
 	freopen("/dev/null", "w", stderr);
-	EXPECT_STREQ(UnitTest_mkfile("x/sub", NULL), NULL);
+	EXPECT_STR(UnitTest_mkfile("x/sub", NULL), NULL);
 }
 
 TEST_SUITE
@@ -43,12 +43,12 @@ TEST_SUITE
 	TEST_CONTENT("dir/x", NULL);
 	EXPECT_FALSE(UnitTest_content(NULL));
 	PRINT_STR(UnitTest_content(NULL));
-	EXPECT_STREQ(UnitTest_tpl(NULL), NULL);
-	EXPECT_STREQ(UnitTest_tpl("@"), UnitTest_tmpname(NULL));
-	EXPECT_STREQ(UnitTest_tpl("@/x\\@bc"), UnitTest_tmpname("x@bc"));
-	EXPECT_STREQ(UnitTest_tpl("abc"), "abc");
-	EXPECT_STREQ(UnitTest_tpl("abc\\"), "abc");
-	EXPECT_STREQ(UnitTest_tpl("abc\\x"), "abcx");
+	EXPECT_STR(UnitTest_tpl(NULL), NULL);
+	EXPECT_STR(UnitTest_tpl("@"), UnitTest_tmpname(NULL));
+	EXPECT_STR(UnitTest_tpl("@/x\\@bc"), UnitTest_tmpname("x@bc"));
+	EXPECT_STR(UnitTest_tpl("abc"), "abc");
+	EXPECT_STR(UnitTest_tpl("abc\\"), "abc");
+	EXPECT_STR(UnitTest_tpl("abc\\x"), "abcx");
 
 	DIR *dir = opendir(UnitTest_tmpname("dir"));
 
@@ -59,7 +59,7 @@ TEST_SUITE
 		while ((entry = readdir(dir)))
 		{
 			if	(entry->d_name[0] != '.')
-				EXPECT_STREQ(entry->d_name, "file");
+				EXPECT_STR(entry->d_name, "file");
 		}
 
 		EXPECT_TRUE(closedir(dir) == 0);
