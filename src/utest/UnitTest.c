@@ -86,13 +86,14 @@ int UnitTest_strcheck(const char *file, int line, const char *op,
 	const char *s1, const char *s2, const char *x1, const char *x2)
 {
 	int r = 0;
+	int show = 0;
 
 	if	(!op || !*op)
 		;
 	else if	(strcmp(op, "~") == 0)
-		r = UnitTest_match(s1, s2);
+		show = 1, r = UnitTest_match(s1, s2);
 	else if	(strcmp(op, "!~") == 0)
-		r = UnitTest_match(s1, s2) == 0;
+		show = 1, r = UnitTest_match(s1, s2) == 0;
 	else if	(strcmp(op, "==") == 0)
 		r = UnitTest_strcmp(s1, s2) == 0;
 	else if	(strcmp(op, "!=") == 0)
@@ -108,7 +109,7 @@ int UnitTest_strcheck(const char *file, int line, const char *op,
 
 	UnitTest_result(file, line, r, "%s %s %s", x1, op, x2, NULL);
 
-	if	(r)
+	if	(r && !show)
 		return r;
 
 	if	(*x1 != '"')
@@ -117,7 +118,7 @@ int UnitTest_strcheck(const char *file, int line, const char *op,
 	if	(*x2 != '"')
 		info("#AS", file, line, "%s = %s", x2, UnitTest_qstr(s2), NULL);
 
-	return 0;
+	return r;
 }
 
 int main(int argc, char **argv)
