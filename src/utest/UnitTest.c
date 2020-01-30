@@ -82,7 +82,7 @@ int UnitTest_result(const char *file, int line, int res, const char *fmt, ...)
 	return res;
 }
 
-int UnitTest_expect_strcmp(const char *file, int line, const char *op,
+int UnitTest_strcheck(const char *file, int line, const char *op,
 	const char *s1, const char *s2, const char *x1, const char *x2)
 {
 	int r = 0;

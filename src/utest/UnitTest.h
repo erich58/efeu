@@ -30,7 +30,7 @@ int UnitTest_match(const char *str, const char *expr);
 void UnitTest_expr(const char *file, int line, const char *expr);
 void UnitTest_info(const char *file, int line, const char *fmt, ...);
 int UnitTest_result(const char *file, int line, int res, const char *fmt, ...);
-int UnitTest_expect_strcmp(const char *file, int line, const char *op,
+int UnitTest_strcheck(const char *file, int line, const char *op,
 	const char *s1, const char *s2, const char *x1, const char *x2);
 
 const char *UnitTest_tpl(const char *tpl);
@@ -98,16 +98,16 @@ UnitTest_result(__FILE__,__LINE__, !(expr), "!(%s)", # expr)
 #define	EXPECT_NE(a, b)		EXPECT_TRUE(a != b)
 
 #define EXPECT_STR(a, b)	\
-UnitTest_expect_strcmp(__FILE__, __LINE__, "==", a, b, # a, # b)
+UnitTest_strcheck(__FILE__, __LINE__, "==", a, b, # a, # b)
 
 #define EXPECT_STRCMP(a, op, b)	\
-UnitTest_expect_strcmp(__FILE__, __LINE__, # op, a, b, # a, # b)
+UnitTest_strcheck(__FILE__, __LINE__, # op, a, b, # a, # b)
 
 #define EXPECT_MATCH(a, b)	\
-UnitTest_expect_strcmp(__FILE__, __LINE__, "~", a, b, # a, # b)
+UnitTest_strcheck(__FILE__, __LINE__, "~", a, b, # a, # b)
 
 #define EXPECT_NOMATCH(a, b)	\
-UnitTest_expect_strcmp(__FILE__, __LINE__, "!~", a, b, # a, # b)
+UnitTest_strcheck(__FILE__, __LINE__, "!~", a, b, # a, # b)
 
 #define	TEST_DIR(name)	\
 UnitTest_result(__FILE__, __LINE__, \
@@ -122,11 +122,11 @@ UnitTest_info(__FILE__, __LINE__, \
 	"content(%s) -> %s", # name, UnitTest_qstr(UnitTest_content(name)))
 
 #define	TEST_CONTENT(name, cont)	\
-UnitTest_expect_strcmp(__FILE__, __LINE__, "==", \
+UnitTest_strcheck(__FILE__, __LINE__, "==", \
 	UnitTest_content(name), cont, "content(" # name ")", # cont)
 
 #define	MATCH_CONTENT(name, cont)	\
-UnitTest_expect_strcmp(__FILE__, __LINE__, "~", \
+UnitTest_strcheck(__FILE__, __LINE__, "~", \
 	UnitTest_content(name), cont, "content(" # name ")", # cont)
 
 #define	TEST_FORK	\
