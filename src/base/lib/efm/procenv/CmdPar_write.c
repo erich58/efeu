@@ -219,7 +219,7 @@ void CmdPar_write (CmdPar *par, IO *io)
 	for (n = par->var.used, var = par->var.data; n-- > 0; var++)
 	{
 		put_name(var->name, io);
-		io_xprintf(io, " = %#s\n", var->name, var->value);
+		io_xprintf(io, " = %#s\n", var->value);
 		put_desc(var->desc, io);
 	}
 
