@@ -198,7 +198,7 @@ $Note
 Die hier beschriebenen Funktionen werden von einem Kommando nur
 dann benötigt, wenn es mit mehr als einer Kommandoparameterstruktur
 arbeitet. Alle anderen Funktionen zur Verwaltung der Kommandoparameter
-kännen mit einen Nullpointer anstelle einer Kommandoparameterstruktur
+können mit einen Nullpointer anstelle einer Kommandoparameterstruktur
 aufgerufen werden, da sie mithilfe von |CmdPar_ptr| auf
 eine interne Variable zurückgreifen.
 
