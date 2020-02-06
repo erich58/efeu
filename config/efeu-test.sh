@@ -150,6 +150,7 @@ END {
 # analyse coverage
 
 export LANG=C
+echo ""
 echo "#code coverage"
 
 gcda=`find_gcda $src $build`
@@ -163,23 +164,50 @@ fi
 
 $gcov -o $build $gcda | sed -e "s/'//g" | awk '
 /File/ { src=$2; }
-NF == 0 { src = "TOTAL"; }
-/:0.00% of/ { printf("#%-22s\tnot used\n", src); next; }
-/^Lines/ { printf("%-23s\t%s\n", src, substr($0, index($a, ":") + 1)); }
+NF == 0 { src = "~TOTAL"; }
+/^Lines/ { printf("%s\t%s\n", src, substr($0, index($a, ":") + 1)); }
+' > gcov.tmp
+
+find $dir -name '*.c' ! -name '*.tst.c' | while read path
+do
+	name=`basename $path .c`
+	[ -f $name.c.gcov ] || printf '%s\tnot run\n' $path |
+		sed -e 's|^\./||' >> gcov.tmp
+done
+
+find . -maxdepth 1 -name '*.gcov' -exec mv -f '{}' $build \;
+
+sort gcov.tmp | awk '
+$2 ~ /not/ { printf("%-23s\t%s %s\n", $1, $2, $3); next; }
+{
+	k = 0.01 * $2 * $4;
+	printf("%-23s\t%.0f\t%.0f\t%s\n", $1, k, $4, $2); next;
+}
 ' | tee gcov.out | awk -v verbose=$verbose '
-BEGIN { run = 0; c = 0.; n = 0; unused = 0; other = 0; }
-/TOTAL/ { print; next; }
+BEGIN { run = 0; c = 0.; n = 0; k = 0; unused = 0; other = 0; }
+/~TOTAL/ { next; }
+verbose { print; }
 /not used/ { unused++; next; }
 /not run/ { other++; next; }
 {
-	c += $2 * $4;
-	n += $4
+	n += $3;
+	k += $2;
+	c += $3 * $4;
+
+	if	($2 == 0)
+	{
+		unused++;
+		next;
+	}
+
 	run++;
 }
-verbose { print; }
 END {
-	printf("Coverage: %.2f%% of %d lines in %d files\n",
-		n ? c / n : 0, n, run);
+	if	(verbose)
+		printf("\n");
+
+	printf("Coverage: %.2f%% %d of %d lines in %d files\n",
+		n ? c / n : 0, k, n, run);
 
 	if	(unused)
 		printf("Not used: %d files\n", unused);
@@ -188,5 +216,5 @@ END {
 }
 '
 
-find . -maxdepth 1 -name '*.gcov' -exec mv -f '{}' $build \;
+rm gcov.tmp
 exit 0
