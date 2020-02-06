@@ -134,9 +134,20 @@ TEST_DECL(Resource)
 	PRINT_CONTENT("err.log");
 }
 
+TEST_DECL(Lang)
+{
+	EXPECT_STR(CurrentLocale, NULL);
+	ChangeLocale("C");
+	EXPECT_STR(CurrentLocale, "C");
+	ChangeLocale("C");
+	ChangeLocale(NULL);
+	EXPECT_STR(CurrentLocale, "C");
+}
+
 TEST_SUITE
 {
 	TEST_RUN(mkpath);
 	TEST_RUN(callproc);
 	TEST_RUN(Resource);
+	TEST_RUN(Lang);
 }
