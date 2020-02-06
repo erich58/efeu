@@ -55,7 +55,7 @@ test:: all $(_Library_gcov)
 test:: $(_Library_tst_bin)
 
 test::
-	$(BIN)/efeu-test $(BUILD)
+	$(BIN)/efeu-test .
 
 $(_Library_gcov): $(_Library_gcov_obj)
 	ar -r $@ $(_Library_gcov_obj)

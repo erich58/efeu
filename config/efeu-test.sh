@@ -4,11 +4,11 @@
 
 #	message formats
 
-msg1="usage: $0 [--help] [-q] [-C dir] [-o out] name\n"
+msg1="usage: $0 [--help] [-q] [-b dir] [-o out] name\n"
 
 case ${LANG:=en} in
 de*)
-	msg1="Aufruf: $0 [--help] [-q] [-C dir] [-o out] name\n"
+	msg1="Aufruf: $0 [--help] [-q] [-b dir] [-o out] name\n"
 	;;
 esac
  
@@ -20,9 +20,9 @@ esac
 # o:out |
 #	:*:output file for detail data
 #	:de:Ausgabefile für Detaildaten
-# c:base |
-#	:*:directory with basic evaluation
-#	:de:Verzeichnis mit Basisauswertung
+# b:build |
+#	:*:name of subdirectory with build files
+#	:de:Unterverzeichnis mit generierten Dateien
 # :name |
 #	:*:build/analyse directory or single command
 #	:de:Generierungs-/Analyseverzeichnis oder Einzelkommando
@@ -40,13 +40,14 @@ esac
 out="test.out"
 gcov="gcov"
 base=""
+build=".build"
 
-while getopts "qo:c:t:" opt
+while getopts "qo:b:" opt
 do
 	case $opt in
 	q)	gcov="gcov -n"; out="/dev/null";;
 	o)	out=$OPTARG;;
-	c)	base=$OPTARG;;
+	b)	build=$OPTARG;;
 	\?)	usage -?; exit 1;;
 	esac
 done
@@ -59,34 +60,61 @@ case "$#" in
 *)	usage -?; exit 1;;
 esac
 
-find_tst()
+error()
 {
-	find $1 -name '*.tst' | sort
+	printf '%s\n' "$*"
+	exit 1;
 }
 
-if [ -d $1 ]; then
-	dir=$1
-	tlist="find_tst"
-else
-	dir=`dirname $1`
-	tlist="echo";
-fi
-
-if	[ "$base" ]; then
-
-	grep -l . "$base/gcov.out" >/dev/null || exit 1;
-
-	find $dir -name '*.c' ! -name '*.tst.c' -printf '%f\n' | while read name
+find_tst()
+{
+	find $1 -name '*.tst.c' | sort | while read path
 	do
-		grep "$name" $base/gcov.out
+		name=`basename $path .c`
+		[ -f $2/$name ] && echo $2/$name
 	done
-	exit 0;
+}
+
+find_gcda()
+{
+	find $1 -name '*.c' ! -name '*.tst.c' | sort | while read path
+	do
+		name=`basename $path .c`
+		gcda=$2/$name.gcov.gcda
+		[ -f $gcda ] && echo $gcda
+	done
+}
+
+if [ -d $1/$build ]; then
+	dir=.
+	top=$1
+	src=$1/$build
+elif [ -d $1 ]; then
+	dir=`basename $1`
+	top=`dirname $1`
+	src=$dir
+elif [ -f $1 ]; then
+	dir=`dirname $1`
+	top=`dirname $dir`
+	src=`basename $dir`/`basename $1`
+else
+	error "$0: Testliste $1 nicht definiert."
 fi
+
+cd $top || exit 1
+
+if [ ! -d $build ]; then
+	error "$0: Build-Verzeichnis nicht definiert."
+fi
+
+[ -z "$tlist" ] && tlist=`find $src -name '*.tst' | sort`
+[ -z "$tlist" ] && tlist=`find_tst $src $build`
+[ -z "$tlist" ] && error "$0: Keine Tests gefunden"
 
 # cleanup coverage data
 
-find $dir -name '*.gcda' -exec rm '{}' \;
-find $dir -name '*.c.gcov' -exec rm '{}' \;
+find $build -name '*.gcda' -exec rm '{}' \;
+find $build -name '*.gcov' -exec rm '{}' \;
 
 # run unit tests
 
@@ -99,7 +127,7 @@ if [ $out ]; then
 	redir="2>> $out"
 fi
 
-$tlist $1 | while read tst
+for tst in $tlist
 do
 	eval $tst $redir
 done | awk '
@@ -124,22 +152,23 @@ END {
 export LANG=C
 echo "#code coverage"
 
-find $dir -name '*.gcov.o' | sort | while read obj
-do
-	name=`basename $obj .gcov.o`
+gcda=`find_gcda $src $build`
 
-	if	[ -f $dir/$name.gcov.gcda ]; then
-		$gcov -o $dir $obj | sed -e "s/'//g" |
-			awk -v src=$dir/$name.c.gcov '
+if	[ -z "$gcda" ]; then
+	gcda=`find $build -name '*.gcda' | sort`
+	verbose=0
+else
+	verbose=1
+fi
+
+$gcov -o $build $gcda | sed -e "s/'//g" | awk '
+/File/ { src=$2; }
+NF == 0 { src = "TOTAL"; }
 /:0.00% of/ { printf("#%-22s\tnot used\n", src); next; }
 /^Lines/ { printf("%-23s\t%s\n", src, substr($0, index($a, ":") + 1)); }
-'
-		[ -f $name.c.gcov ] && mv $name.c.gcov $dir
-	else
-		printf '#%-22s\tnot run\n' $name.c
-	fi
-done | tee gcov.out | awk '
+' | tee gcov.out | awk -v verbose=$verbose '
 BEGIN { run = 0; c = 0.; n = 0; unused = 0; other = 0; }
+/TOTAL/ { print; next; }
 /not used/ { unused++; next; }
 /not run/ { other++; next; }
 {
@@ -147,6 +176,7 @@ BEGIN { run = 0; c = 0.; n = 0; unused = 0; other = 0; }
 	n += $4
 	run++;
 }
+verbose { print; }
 END {
 	printf("Coverage: %.2f%% of %d lines in %d files\n",
 		n ? c / n : 0, n, run);
@@ -158,4 +188,5 @@ END {
 }
 '
 
+find . -maxdepth 1 -name '*.gcov' -exec mv -f '{}' $build \;
 exit 0
