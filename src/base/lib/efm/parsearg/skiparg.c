@@ -29,7 +29,7 @@ void skiparg(int *narg, char **arg, int n)
 {
 	char *p;
 	
-	if	(n >= *narg)	return;
+	if	(n >= *narg || n < 0)	return;
 
 	p = arg[n];
 
