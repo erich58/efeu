@@ -36,7 +36,7 @@ static int subcopy (const char *arg, int delim)
 	{
 		switch (arg[n])
 		{
-		case  0:	return n;
+		case  0:	return 0;
 		case '{':	n += subcopy(arg + n, '}'); break;
 		case '[':	n += subcopy(arg + n, ']'); break;
 		case '(':	n += subcopy(arg + n, ')'); break;
@@ -69,8 +69,6 @@ AssignArg *assignarg (const char *arg, char **ptr, const char *delim)
 
 		if	(ptr && *ptr && **ptr && delim && strchr(delim, **ptr))
 		{
-			(*ptr)++;
-
 			while (isspace(**ptr))
 				(*ptr)++;
 			
