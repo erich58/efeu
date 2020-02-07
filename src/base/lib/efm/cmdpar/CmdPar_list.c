@@ -57,7 +57,7 @@ static void verbatim (const char *str, IO *io, int protect)
 			switch (*str)
 			{
 			case '"':
-				io_putc('\n', io);
+				io_putc('\\', io);
 				break;
 			case '\n':
 				io_puts("\\n", io);

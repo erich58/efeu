@@ -180,7 +180,7 @@ Unterpunkte für den Informationsknoten <node>:
 
 void CmdPar_info (CmdPar *par, InfoNode *node)
 {
-	par = CmdPar_ptr(NULL);
+	par = CmdPar_ptr(par);
 	node = GetInfo(node, NULL);
 	node->label = CmdPar_getval(par, "Ident", NULL);
 	node->func = NULL;
