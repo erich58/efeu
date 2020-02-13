@@ -74,25 +74,32 @@ static const char *eval_par(CmdPar *par, ...)
 TEST_DECL(read)
 {
 	CmdPar *par = CmdPar_alloc("test");
-	test_par(par, "#OPT\nB = 1\n\tRDESC\n"
+	test_par(par, "# CommandId\n\n"
+		"# $Copyright Test-1.0\n"
+		"# Comment\n"
+		"\tSkip\n"
+		"B = 1\n\tRDESC\n"
 		"a|-aa|A = 6\n\tADESC\n"
 		"/.*=.*/<name>=<value>|X\n\tXDESC\n"
 		":c|C\n\tCDESC\n"
 		"b:x|-bb::x|B\n\tBDESC\n"
 		"@DENV|::d|D\n\tDDESC\n"
+		"*args|\n"
 		);
 
-	EXPECT_STR(CmdPar_getval(par, "Ident", "X"), "OPT\n");
+	EXPECT_STR(CmdPar_getval(par, "Ident", "X"), "CommandId\n");
+	EXPECT_STR(CmdPar_getval(par, "Copyright", "X"),
+		"Copyright Test-1.0");
 	EXPECT_STR(CmdPar_getval(par, "A", "X"), "X");
 	EXPECT_STR(CmdPar_getval(par, "B", "X"), "1");
 	EXPECT_STR(CmdPar_getval(par, "C", "X"), "X");
 	EXPECT_STR(CmdPar_getval(par, "D", "X"), "X");
 	EXPECT_STR(CmdPar_getval(par, "X", "X"), "X");
-	EXPECT_TRUE(par->var.used == 6);
-	EXPECT_TRUE(par->def.used == 5);
+	EXPECT_TRUE(par->var.used == 7);
+	EXPECT_TRUE(par->def.used == 6);
 	EXPECT_TRUE(par->env.used == 1);
 	EXPECT_TRUE(par->opt.used == 4);
-	EXPECT_TRUE(par->arg.used == 3);
+	EXPECT_TRUE(par->arg.used == 4);
 
 	InfoNode *info = NewInfo(NULL, "info");
 	CmdPar_info(par, info);
@@ -211,6 +218,10 @@ d\n\tDDESC\n\
 	EXPECT_STR(CmdPar_getval(par, "D", "X"), "b");
 	EXPECT_STR(CmdPar_getval(par, "X", "X"), "x=y");
 
+	EXPECT_STR(eval_par(par, "n", "a", "b", "c", NULL), "2: n c");
+	EXPECT_STR(CmdPar_getval(par, "C", "X"), "a");
+	EXPECT_STR(CmdPar_getval(par, "D", "X"), "b");
+
 	TEST_FORK
 	{
 		setenv("DENV", "ENVDATA", 1);
@@ -271,10 +282,108 @@ TEST_DECL(Ptr)
 	EXPECT_TRUE(par->var.size == 0); 
 }
 
+TEST_DECL(args)
+{
+	CmdPar *par = CmdPar_alloc("args");
+	EXPECT_STR(cstr(rd_ident(par)), "args");
+	test_par(par,
+		"$last|L\n\tLast\n"
+		"::opt|O\n\tOptional\n"
+		"+extra|X: append \" \"\n\tExtra\n");
+
+	EXPECT_STR(eval_par(par, "name", "a", NULL), "1: name");
+	EXPECT_STR(CmdPar_getval(par, "O", NULL), NULL);
+	EXPECT_STR(CmdPar_getval(par, "X", NULL), NULL);
+	EXPECT_STR(CmdPar_getval(par, "L", NULL), "a");
+
+	EXPECT_STR(eval_par(par, "name", "a", "b", NULL), "1: name");
+	EXPECT_STR(CmdPar_getval(par, "O", NULL), "a");
+	EXPECT_STR(CmdPar_getval(par, "X", NULL), NULL);
+	EXPECT_STR(CmdPar_getval(par, "L", NULL), "b");
+
+	CmdPar_setval(par, "X", NULL);
+	EXPECT_STR(eval_par(par, "name", "a", "b", "c", NULL), "1: name");
+	EXPECT_STR(CmdPar_getval(par, "O", NULL), "a");
+	EXPECT_STR(CmdPar_getval(par, "X", NULL), "b");
+	EXPECT_STR(CmdPar_getval(par, "L", NULL), "c");
+
+	CmdPar_setval(par, "X", NULL);
+	EXPECT_STR(eval_par(par, "name", "a", "b", "c", "d", NULL), "1: name");
+	EXPECT_STR(CmdPar_getval(par, "O", NULL), "a");
+	EXPECT_STR(CmdPar_getval(par, "X", NULL), "b c");
+	EXPECT_STR(CmdPar_getval(par, "L", NULL), "d");
+
+	CmdPar_setval(par, "O", "X");
+	CmdPar_setval(par, "X", "X");
+	CmdPar_setval(par, "L", "X");
+	EXPECT_STR(eval_par(par, "name", "-", "-", "c", "-", NULL), "1: name");
+	EXPECT_STR(CmdPar_getval(par, "O", NULL), NULL);
+	EXPECT_STR(CmdPar_getval(par, "X", NULL), "X c");
+	EXPECT_STR(CmdPar_getval(par, "L", NULL), NULL);
+
+	CmdPar_docmode = 0;
+	CmdPar_arglist(par, out());
+	EXPECT_STR(data(), "\
+last\n\tLast\n\
+opt\n\tOptional\n\
+extra\n\tExtra\n\
+");
+	rd_deref(par);
+}
+
+TEST_DECL(xargs)
+{
+	CmdPar *par = CmdPar_alloc("args");
+	test_par(par,
+		"/.*=.*/<name>=<value>|A\n\tAssign\n"
+		"/@(.*)/<name>=<value>|B\n\tExtract\n"
+		"*rest|\n\tRest\n");
+
+	EXPECT_STR(eval_par(par, "name", "a", "b", NULL), "3: name a b");
+	EXPECT_STR(CmdPar_getval(par, "A", NULL), NULL);
+	EXPECT_STR(CmdPar_getval(par, "B", NULL), NULL);
+
+	EXPECT_STR(eval_par(par, "name", "a=b", "@c", NULL), "1: name");
+	EXPECT_STR(CmdPar_getval(par, "A", NULL), "a=b");
+	EXPECT_STR(CmdPar_getval(par, "B", NULL), "c");
+
+	EXPECT_STR(eval_par(par, "name", "@a", "x", "b=c", NULL), "2: name x");
+	EXPECT_STR(CmdPar_getval(par, "A", NULL), "b=c");
+	EXPECT_STR(CmdPar_getval(par, "B", NULL), "a");
+
+	rd_deref(par);
+}
+
+TEST_DECL(env)
+{
+	CmdPar *par = CmdPar_alloc("args");
+	test_par(par,
+		"@TEST_1|A\n\tADESC\n"
+		"@TEST_2[default]|B\n\tBDESC\n"
+		);
+
+	unsetenv("TEST_1");
+	unsetenv("TEST_2");
+	EXPECT_STR(eval_par(par, "name", NULL), "1: name");
+	EXPECT_STR(CmdPar_getval(par, "A", NULL), NULL);
+	EXPECT_STR(CmdPar_getval(par, "B", NULL), "default");
+
+	setenv("TEST_1", "a", 1);
+	setenv("TEST_2", "b", 1);
+	EXPECT_STR(eval_par(par, "name", NULL), "1: name");
+	EXPECT_STR(CmdPar_getval(par, "A", NULL), "a");
+	EXPECT_STR(CmdPar_getval(par, "B", NULL), "b");
+
+	rd_deref(par);
+}
+
 TEST_SUITE
 {
 	TEST_RUN(Static);
 	TEST_RUN(Dynamic);
 	TEST_RUN(Ptr);
 	TEST_RUN(read);
+	TEST_RUN(args);
+	TEST_RUN(xargs);
+	TEST_RUN(env);
 }
