@@ -1,3 +1,6 @@
+/* UnitTest für CmdParEval und implizit für CmdPar_psub.
+*/
+
 #include <EFEU/UnitTest.h>
 #include <EFEU/CmdPar.h>
 #include <EFEU/mstring.h>
@@ -27,6 +30,7 @@ static int pcmd(const char *c, const char *v, const char *p, const char *a)
 TEST_DECL(show)
 {
 	CmdParEval_show(out(), NULL);	// Für Testabdeckung //
+	EXPECT_MATCH(data(), "^\\[append] .*\n\\[vset]");
 	CmdParEval_show(out(), "$1 ");
 	EXPECT_STR(data(), "append break config exit info insert lset "
 	 	"manpage message set setlocale test usage vset ");
@@ -34,6 +38,8 @@ TEST_DECL(show)
 
 TEST_DECL(var)
 {
+	EXPECT_STR(cstr(CmdPar_psub(&par, NULL, "arg")), "arg");
+
 	pset("a", NULL);
 	EXPECT_TRUE(pcmd("append", "a", ":", "first") == 0);
 	EXPECT_STR(pget("a"), "first");
@@ -144,6 +150,26 @@ TEST_DECL(doc)
 	TEST_CONTENT("doc/man2", "MANPAGE\n");
 }
 
+TEST_DECL(config)
+{
+	TEST_FILE("config.cnf", "A = V1\nB = V2\n");
+	EXPECT_TRUE(pcmd("config", NULL, "{}",
+		UnitTest_tmpname("config.cnf")) == 0);
+	EXPECT_STR(pget("A"), "V1");
+	EXPECT_STR(pget("B"), "V2");
+
+	TEST_FORK
+	{
+		freopen(UnitTest_tmpname("config.err"), "w", stderr);
+		pcmd("config", NULL, "{}", UnitTest_tmpname("undefined.cnf"));
+		TEST_EXIT;
+	}
+
+	CHILD_EXIT(0);
+	MATCH_CONTENT("config.err",
+		"application file.*undefined.cnf.*not found");
+}
+
 static int f_test_add (CmdPar *cpar, CmdParVar *var,
 	const char *par, const char *arg)
 {
@@ -168,5 +194,6 @@ TEST_SUITE
 	TEST_RUN(debug);
 	TEST_RUN(add);
 	TEST_RUN(doc);
+	TEST_RUN(config);
 	CmdPar_clean(&par);
 }
