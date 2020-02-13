@@ -141,7 +141,7 @@ TEST_DECL(doc)
 		pset(".manpage.fmt", "MANPAGE\n");
 		pcmd("manpage", NULL, "{}", UnitTest_tmpname("doc/man2"));
 
-		TEST_WAIT;
+		TEST_EXIT;
 	}
 
 	CHILD_EXIT(0);
