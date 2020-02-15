@@ -29,10 +29,11 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/ArgList.h>
 #include <EFEU/io.h>
 
-extern char *FormatTabEntry (const char *name, const char *key);
-extern void FormatTabLoad (IO *io, const char *name, int endkey);
-extern void FormatTabShow (IO *io, const char *name, const char *fmt);
-extern char *GetFormat (const char *def);
+char *FormatTabEntry (const char *name, const char *key);
+void FormatTabLoad (IO *io, const char *name, int endkey);
+void FormatTabShow (IO *io, const char *name, const char *fmt);
+char *GetFormat (const char *def);
+extern int GetFormatDisable;
 
 void log_psub (LogControl *ctrl, const char *fmt, ArgList *list);
 void log_psubvarg (LogControl *ctrl, const char *fmt, char *id,
