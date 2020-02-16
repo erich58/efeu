@@ -1,13 +1,27 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/CmdPar.h>
+#include <EFEU/Debug.h>
+#include <EFEU/mstring.h>
 #include "utest/data.tst.h"
 
-TEST_DECL(Static)
+static CmdPar par;
+
+static void pset(const char *name, const char *value)
 {
-	static CmdPar par;
+	CmdPar_setval(&par, name, mstrcpy(value));
+}
+
+static const char *pget(const char *name)
+{
+	return CmdPar_getval(&par, name, NULL);
+}
+
+TEST_DECL(setup)
+{
 	CmdPar_init(&par);
-	EXPECT_TRUE(par.refcount == 0);
-	CmdPar_clean(&par);
+	TEST_FILE("error.log", NULL);
+	LogConfig(UnitTest_tpl("=@/error.log"));
+	GetFormatDisable = 1;
 }
 
 TEST_DECL(Dynamic)
@@ -27,7 +41,7 @@ static void test_par(CmdPar *par, const char *str)
 
 #define	MAX_NARG	20
 
-static const char *eval_par(CmdPar *par, ...)
+static const char *eval_par(const char *first, ...)
 {
 	static STRING_DECL(argbuf);
 	static char *arg[MAX_NARG + 1];
@@ -35,10 +49,12 @@ static const char *eval_par(CmdPar *par, ...)
 	int n;
 
 	va_list list;
-	va_start(list, par);
+	va_start(list, first);
 	UnitTest_clear(&argbuf);
+	UnitTest_puts(first, &argbuf);
+	UnitTest_putc(0, &argbuf);
 
-	for (narg = 0; narg < MAX_NARG; narg++)
+	for (narg = 1; narg < MAX_NARG; narg++)
 	{
 		const char *arg = va_arg(list, const char *);
 
@@ -60,7 +76,7 @@ static const char *eval_par(CmdPar *par, ...)
 			p++;
 	}
 
-	CmdPar_eval(par, &narg, arg, 0);
+	CmdPar_eval(&par, &narg, arg, 0);
 
 	IO *io = out();
 	io_printf(io, "%d:", narg);
@@ -187,55 +203,6 @@ d\n\tDDESC\n\
 	PrintInfo(out(), GetInfo(info, "Env"));
 	EXPECT_STR(data(), "environment\nDENV\n\tDDESC\n");
 
-	EXPECT_STR(eval_par(par, "name", "--", "-a", NULL), "1: name");
-	EXPECT_STR(CmdPar_getval(par, "A", "X"), "X");
-	EXPECT_STR(CmdPar_getval(par, "C", "X"), "-a");
-
-	EXPECT_STR(eval_par(par, "name", "-a", "b", NULL), "1: name");
-	EXPECT_STR(CmdPar_getval(par, "A", "X"), "6");
-	EXPECT_STR(CmdPar_getval(par, "C", "X"), "b");
-
-	EXPECT_STR(eval_par(par, "name", "-b", "z", "a", NULL), "1: name");
-	EXPECT_STR(CmdPar_getval(par, "A", "X"), "6");
-	EXPECT_STR(CmdPar_getval(par, "B", "X"), "z");
-	EXPECT_STR(CmdPar_getval(par, "C", "X"), "a");
-
-
-	EXPECT_STR(eval_par(par, "n", "a", NULL), "1: n");
-	EXPECT_STR(CmdPar_getval(par, "C", "X"), "a");
-	EXPECT_STR(CmdPar_getval(par, "D", "X"), "X");
-
-	EXPECT_STR(eval_par(par, "n", "-", "b", NULL), "1: n");
-	EXPECT_STR(CmdPar_getval(par, "C", "X"), "X");
-	EXPECT_STR(CmdPar_getval(par, "D", "X"), "b");
-
-	EXPECT_STR(eval_par(par, "n", "", NULL), "1: n");
-	EXPECT_STR(CmdPar_getval(par, "C", "X"), "");
-	EXPECT_STR(CmdPar_getval(par, "D", "X"), "b");
-
-	EXPECT_STR(eval_par(par, "n", "x=y", "a", NULL), "1: n");
-	EXPECT_STR(CmdPar_getval(par, "C", "X"), "a");
-	EXPECT_STR(CmdPar_getval(par, "D", "X"), "b");
-	EXPECT_STR(CmdPar_getval(par, "X", "X"), "x=y");
-
-	EXPECT_STR(eval_par(par, "n", "a", "b", "c", NULL), "2: n c");
-	EXPECT_STR(CmdPar_getval(par, "C", "X"), "a");
-	EXPECT_STR(CmdPar_getval(par, "D", "X"), "b");
-
-	TEST_FORK
-	{
-		setenv("DENV", "ENVDATA", 1);
-		EXPECT_STR(eval_par(par, "n", "a", NULL), "1: n");
-		EXPECT_STR(CmdPar_getval(par, "C", "X"), "a");
-		EXPECT_STR(CmdPar_getval(par, "D", "X"), "ENVDATA");
-		EXPECT_STR(eval_par(par, "n", "-", "b", NULL), "1: n");
-		EXPECT_STR(CmdPar_getval(par, "C", "X"), "X");
-		EXPECT_STR(CmdPar_getval(par, "D", "X"), "b");
-		TEST_EXIT;
-	}
-
-	TEST_WAIT;
-
 	/* TODO: Freigabe der Info-Struktur */
 	rd_deref(info);
 }
@@ -250,7 +217,7 @@ TEST_DECL(Ptr)
 	EXPECT_STR(cstr(rd_ident(par)), "CmdPar");
 
 	CmdPar_setval(par, "a", "A");
-	CmdPar_setval(NULL, "b", "B");
+	CmdPar_setval(par, "b", "B");
 	EXPECT_TRUE(par->var.used == 2); 
 
 	EXPECT_STR(CmdPar_getval(par, "b", "X"), "B");
@@ -282,108 +249,165 @@ TEST_DECL(Ptr)
 	EXPECT_TRUE(par->var.size == 0); 
 }
 
-TEST_DECL(args)
+TEST_DECL(opt)
 {
-	CmdPar *par = CmdPar_alloc("args");
-	EXPECT_STR(cstr(rd_ident(par)), "args");
-	test_par(par,
+	test_par(&par,
+		"a|-aa|A = 6\n\tADESC\n"
+		"b:x|-bb::x|B\n\tBDESC\n"
+		"*rest|\n\tRest\n");
+
+	pset("A", "X");
+	pset("B", "X");
+	EXPECT_STR(eval_par("name", "x", NULL), "2: name x");
+	EXPECT_STR(pget("A"), "X");
+	EXPECT_STR(pget("B"), "X");
+
+	pset("A", "X");
+	pset("B", "X");
+	EXPECT_STR(eval_par("name", "-ab", "x", "y", NULL), "2: name y");
+	EXPECT_STR(pget("A"), "6");
+	EXPECT_STR(pget("B"), "x");
+
+	pset("A", "X");
+	pset("B", "X");
+	EXPECT_STR(eval_par("name", "-ba", "x", NULL), "2: name x");
+	EXPECT_STR(pget("A"), "X");
+	EXPECT_STR(pget("B"), "a");
+
+	TEST_FILE("error.log", NULL);
+	pset("B", "X");
+	EXPECT_STR(eval_par("name", "-b", NULL), "1: name");
+	EXPECT_STR(pget("B"), "X");
+	TEST_CONTENT("error.log", "NOTE [efm:31]: $0=\"\" $1=\"b\"\n");
+
+	pset("B", "X");
+	EXPECT_STR(eval_par("name", "-b", "-", "x", NULL),
+		"2: name x");
+	EXPECT_STR(pget("B"), NULL);
+
+	CmdPar_clean(&par);
+}
+
+TEST_DECL(arg)
+{
+	test_par(&par,
+		":std|S\n\tStandard\n"
+		"::opt|O\n\tOptional\n"
+		"*rest|\n\tRest\n");
+	EXPECT_STR(eval_par("name", "x", NULL), "1: name");
+	EXPECT_STR(pget("S"), "x");
+	EXPECT_STR(pget("O"), NULL);
+
+	EXPECT_STR(eval_par("name", "x", "y", NULL), "1: name");
+	EXPECT_STR(pget("S"), "x");
+	EXPECT_STR(pget("O"), "y");
+
+	EXPECT_STR(eval_par("name", "x", "y", "z", NULL), "2: name z");
+	EXPECT_STR(pget("S"), "x");
+	EXPECT_STR(pget("O"), "y");
+
+	EXPECT_STR(eval_par("name", "-", "--", "y", "z", NULL), "2: name z");
+	EXPECT_STR(pget("S"), NULL);
+	EXPECT_STR(pget("O"), "y");
+
+	CmdPar_clean(&par);
+}
+
+TEST_DECL(xargs)
+{
+	test_par(&par,
 		"$last|L\n\tLast\n"
 		"::opt|O\n\tOptional\n"
 		"+extra|X: append \" \"\n\tExtra\n");
 
-	EXPECT_STR(eval_par(par, "name", "a", NULL), "1: name");
-	EXPECT_STR(CmdPar_getval(par, "O", NULL), NULL);
-	EXPECT_STR(CmdPar_getval(par, "X", NULL), NULL);
-	EXPECT_STR(CmdPar_getval(par, "L", NULL), "a");
+	EXPECT_STR(eval_par("name", "a", "b", NULL), "1: name");
+	EXPECT_STR(pget("O"), "a");
+	EXPECT_STR(pget("X"), NULL);
+	EXPECT_STR(pget("L"), "b");
 
-	EXPECT_STR(eval_par(par, "name", "a", "b", NULL), "1: name");
-	EXPECT_STR(CmdPar_getval(par, "O", NULL), "a");
-	EXPECT_STR(CmdPar_getval(par, "X", NULL), NULL);
-	EXPECT_STR(CmdPar_getval(par, "L", NULL), "b");
+	pset("X", NULL);
+	EXPECT_STR(eval_par("name", "a", "b", "c", NULL), "1: name");
+	EXPECT_STR(pget("O"), "a");
+	EXPECT_STR(pget("X"), "b");
+	EXPECT_STR(pget("L"), "c");
 
-	CmdPar_setval(par, "X", NULL);
-	EXPECT_STR(eval_par(par, "name", "a", "b", "c", NULL), "1: name");
-	EXPECT_STR(CmdPar_getval(par, "O", NULL), "a");
-	EXPECT_STR(CmdPar_getval(par, "X", NULL), "b");
-	EXPECT_STR(CmdPar_getval(par, "L", NULL), "c");
+	pset("X", NULL);
+	EXPECT_STR(eval_par("name", "a", "b", "c", "d", NULL), "1: name");
+	EXPECT_STR(pget("O"), "a");
+	EXPECT_STR(pget("X"), "b c");
+	EXPECT_STR(pget("L"), "d");
 
-	CmdPar_setval(par, "X", NULL);
-	EXPECT_STR(eval_par(par, "name", "a", "b", "c", "d", NULL), "1: name");
-	EXPECT_STR(CmdPar_getval(par, "O", NULL), "a");
-	EXPECT_STR(CmdPar_getval(par, "X", NULL), "b c");
-	EXPECT_STR(CmdPar_getval(par, "L", NULL), "d");
-
-	CmdPar_setval(par, "O", "X");
-	CmdPar_setval(par, "X", "X");
-	CmdPar_setval(par, "L", "X");
-	EXPECT_STR(eval_par(par, "name", "-", "-", "c", "-", NULL), "1: name");
-	EXPECT_STR(CmdPar_getval(par, "O", NULL), NULL);
-	EXPECT_STR(CmdPar_getval(par, "X", NULL), "X c");
-	EXPECT_STR(CmdPar_getval(par, "L", NULL), NULL);
+	pset("O", "X");
+	pset("X", "X");
+	pset("L", "X");
+	EXPECT_STR(eval_par("name", "-", "-", "c", "-", NULL), "1: name");
+	EXPECT_STR(pget("O"), NULL);
+	EXPECT_STR(pget("X"), "X c");
+	EXPECT_STR(pget("L"), NULL);
 
 	CmdPar_docmode = 0;
-	CmdPar_arglist(par, out());
+	CmdPar_arglist(&par, out());
 	EXPECT_STR(data(), "\
 last\n\tLast\n\
 opt\n\tOptional\n\
 extra\n\tExtra\n\
 ");
-	rd_deref(par);
+	CmdPar_clean(&par);
 }
 
-TEST_DECL(xargs)
+TEST_DECL(regex)
 {
-	CmdPar *par = CmdPar_alloc("args");
-	test_par(par,
+	test_par(&par,
 		"/.*=.*/<name>=<value>|A\n\tAssign\n"
 		"/@(.*)/<name>=<value>|B\n\tExtract\n"
 		"*rest|\n\tRest\n");
 
-	EXPECT_STR(eval_par(par, "name", "a", "b", NULL), "3: name a b");
-	EXPECT_STR(CmdPar_getval(par, "A", NULL), NULL);
-	EXPECT_STR(CmdPar_getval(par, "B", NULL), NULL);
+	EXPECT_STR(eval_par("name", "a", "b", NULL), "3: name a b");
+	EXPECT_STR(pget("A"), NULL);
+	EXPECT_STR(pget("B"), NULL);
 
-	EXPECT_STR(eval_par(par, "name", "a=b", "@c", NULL), "1: name");
-	EXPECT_STR(CmdPar_getval(par, "A", NULL), "a=b");
-	EXPECT_STR(CmdPar_getval(par, "B", NULL), "c");
+	EXPECT_STR(eval_par("name", "a=b", "@c", NULL), "1: name");
+	EXPECT_STR(pget("A"), "a=b");
+	EXPECT_STR(pget("B"), "c");
 
-	EXPECT_STR(eval_par(par, "name", "@a", "x", "b=c", NULL), "2: name x");
-	EXPECT_STR(CmdPar_getval(par, "A", NULL), "b=c");
-	EXPECT_STR(CmdPar_getval(par, "B", NULL), "a");
+	EXPECT_STR(eval_par("name", "@a", "x", "b=c", NULL), "2: name x");
+	EXPECT_STR(pget("A"), "b=c");
+	EXPECT_STR(pget("B"), "a");
 
-	rd_deref(par);
+	CmdPar_clean(&par);
 }
 
 TEST_DECL(env)
 {
-	CmdPar *par = CmdPar_alloc("args");
-	test_par(par,
+	test_par(&par,
 		"@TEST_1|A\n\tADESC\n"
 		"@TEST_2[default]|B\n\tBDESC\n"
 		);
 
 	unsetenv("TEST_1");
 	unsetenv("TEST_2");
-	EXPECT_STR(eval_par(par, "name", NULL), "1: name");
-	EXPECT_STR(CmdPar_getval(par, "A", NULL), NULL);
-	EXPECT_STR(CmdPar_getval(par, "B", NULL), "default");
+	EXPECT_STR(eval_par("name", NULL), "1: name");
+	EXPECT_STR(pget("A"), NULL);
+	EXPECT_STR(pget("B"), "default");
 
 	setenv("TEST_1", "a", 1);
 	setenv("TEST_2", "b", 1);
-	EXPECT_STR(eval_par(par, "name", NULL), "1: name");
-	EXPECT_STR(CmdPar_getval(par, "A", NULL), "a");
-	EXPECT_STR(CmdPar_getval(par, "B", NULL), "b");
+	EXPECT_STR(eval_par("name", NULL), "1: name");
+	EXPECT_STR(pget("A"), "a");
+	EXPECT_STR(pget("B"), "b");
 
-	rd_deref(par);
+	CmdPar_clean(&par);
 }
 
 TEST_SUITE
 {
-	TEST_RUN(Static);
+	TEST_RUN(setup);
 	TEST_RUN(Dynamic);
 	TEST_RUN(Ptr);
 	TEST_RUN(read);
-	TEST_RUN(args);
 	TEST_RUN(xargs);
+	TEST_RUN(regex);
 	TEST_RUN(env);
+	TEST_RUN(arg);
+	TEST_RUN(opt);
 }
