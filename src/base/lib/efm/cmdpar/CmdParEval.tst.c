@@ -141,6 +141,10 @@ TEST_DECL(doc)
 		pset(".manpage.fmt", "MANPAGE\n");
 		pcmd("manpage", NULL, "{}", UnitTest_tmpname("doc/man2"));
 
+		iostd = io_fopen(UnitTest_tmpname("doc/man3"), "w");
+		pcmd("manpage", NULL, "arg", "@xxx $$\n");
+		io_close(iostd);
+
 		TEST_EXIT;
 	}
 
@@ -148,6 +152,7 @@ TEST_DECL(doc)
 	TEST_CONTENT("doc/usage", "CommandName -- CommandName\n");
 	TEST_CONTENT("doc/man1", "CommandName -- CommandName\n");
 	TEST_CONTENT("doc/man2", "MANPAGE\n");
+	TEST_CONTENT("doc/man3", "@xxx $\n");
 }
 
 TEST_DECL(config)

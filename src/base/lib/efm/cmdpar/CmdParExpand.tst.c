@@ -22,6 +22,14 @@ static void parg(const char *str)
 	io_close(io);
 }
 
+static const char *pexpand(const char *str)
+{
+	IO *io = io_cstr(str);
+	CmdPar_expand(&par, io, out());
+	io_close(io);
+	return data();
+}
+
 static const char *expand(const char *name, const char *arg)
 {
 	CmdParExpand *def = CmdParExpand_get(name);
@@ -133,5 +141,35 @@ TEST_SUITE
 	EXPECT_STR(expand("test_add", "DATA"), NULL);
 	CmdParExpand_add(&test_add);
 	EXPECT_STR(expand("test_add", "DATA"), "DATA");
+
+	CmdPar_expand(NULL, NULL, out());
+	EXPECT_STR(data(), "@");
+	EXPECT_STR(pexpand(""), "@");
+	EXPECT_STR(pexpand(" "), "@");
+	EXPECT_STR(pexpand("@"), "@");
+	EXPECT_STR(pexpand("ident"), "CommandName -- IdentName\n");
+	EXPECT_STR(pexpand("!"), "|CommandName|");
+	EXPECT_STR(pexpand("{Ident}"), "IdentName");
+	EXPECT_STR(pexpand("{Ident"), "IdentName");
+
+	IO *io = io_cstr("@ident");
+	CmdPar_iousage(&par, out(), io);
+	io_close(io);
+	EXPECT_STR(data(), "CommandName -- IdentName\n");
+
+	TEST_FILE("CommandName.hlp", "HELP\n");
+
+	TEST_FORK
+	{
+		SetApplPath(UnitTest_tmpname(NULL));
+		EXPECT_STR(CmdPar_hpath(&par),
+			UnitTest_tpl("@/CommandName.hlp"));
+		CmdPar_manpage(&par, out());
+		EXPECT_STR(data(), "HELP\n");
+		TEST_EXIT;
+	}
+
+	TEST_WAIT;
+
 	CmdPar_clean(&par);
 }

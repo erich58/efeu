@@ -36,6 +36,13 @@ static void pconfig(const char *str)
 
 #define	MAX_NARG	20
 
+static const char *eval_msg = "";
+
+static void set_msg(const char *msg)
+{
+	eval_msg = msg;
+}
+
 static const char *eval_par(const char *first)
 {
 	static STRING_DECL(argbuf);
@@ -74,7 +81,10 @@ static const char *eval_par(const char *first)
 			p++;
 	}
 
+	UnitTest_mkfile("error.log", "");
 	CmdPar_eval(par, &narg, arg, 0);
+	TEST_CONTENT("error.log", eval_msg);
+	eval_msg = "";
 
 	IO *io = out();
 	io_printf(io, "%s", arg[0]);
@@ -97,7 +107,7 @@ TEST_DECL(read)
 		"/.*=.*/<name>=<value>|X\n\tXDESC\n"
 		":c|C\n\tCDESC\n"
 		"b:x|-bb::x|B\n\tBDESC\n"
-		"@DENV|::d|D\n\tDDESC\n"
+		"@DENV|::d|D\n\t:*:DDESC\n"
 		"*args|\n"
 	);
 
@@ -251,8 +261,9 @@ TEST_DECL(Ptr)
 TEST_DECL(opt)
 {
 	pconfig(
-		"a|-aa|A = 6\n\tADESC\n"
-		"b:x|-bb::x|B\n\tBDESC\n"
+		"a[6]|-la[8]|A\n\tADESC\n"
+		"b:x|-ob:x|B\n\tBDESC\n"
+		"c::x[C1]|-ocd::x[C2]|C\n\tCDESC\n"
 		"*rest|\n\tRest\n"
 	);
 
@@ -261,6 +272,10 @@ TEST_DECL(opt)
 	EXPECT_STR(eval_par("name x"), "name x");
 	EXPECT_STR(pget("A"), "X");
 	EXPECT_STR(pget("B"), "X");
+
+	pset("A", "X");
+	EXPECT_STR(eval_par("name -a x y"), "name x y");
+	EXPECT_STR(pget("A"), "6");
 
 	pset("A", "X");
 	pset("B", "X");
@@ -274,15 +289,78 @@ TEST_DECL(opt)
 	EXPECT_STR(pget("A"), "X");
 	EXPECT_STR(pget("B"), "a");
 
-	TEST_FILE("error.log", NULL);
 	pset("B", "X");
+	set_msg("NOTE [efm:31]: $0=\"\" $1=\"b\"\n");
 	EXPECT_STR(eval_par("name -b"), "name");
 	EXPECT_STR(pget("B"), "X");
-	TEST_CONTENT("error.log", "NOTE [efm:31]: $0=\"\" $1=\"b\"\n");
+
+	pset("C", "X");
+	EXPECT_STR(eval_par("name -c"), "name");
+	EXPECT_STR(pget("C"), "C1");
+	TEST_CONTENT("error.log", "");
 
 	pset("B", "X");
 	EXPECT_STR(eval_par("name -b - x"), "name x");
 	EXPECT_STR(pget("B"), NULL);
+
+	pset("C", "X");
+	EXPECT_STR(eval_par("name -c - x"), "name - x");
+	EXPECT_STR(pget("C"), "C1");
+
+	pset("B", "X");
+	EXPECT_STR(eval_par("name -b \\- x"), "name x");
+	EXPECT_STR(pget("B"), "-");
+
+	pset("C", "X");
+	EXPECT_STR(eval_par("name -ca x"), "name x");
+	EXPECT_STR(pget("C"), "a");
+
+	set_msg("NOTE [efm:32]: $0=\"\" $1=\"x\"\n");
+	EXPECT_STR(eval_par("name -x a b"), "name a b");
+
+	set_msg("NOTE [efm:33]: $0=\"\" $1=\"-o\" $2=\"-ob\" $3=\"-ocd\"\n");
+	EXPECT_STR(eval_par("name --o a b"), "name a b");
+
+	pset("B", "X");
+	EXPECT_STR(eval_par("name --ob a x"), "name x");
+	EXPECT_STR(pget("B"), "a");
+
+	pset("B", "X");
+	EXPECT_STR(eval_par("name --ob=a x"), "name x");
+	EXPECT_STR(pget("B"), "a");
+
+	pset("B", "X");
+	EXPECT_STR(eval_par("name --ob= a x"), "name a x");
+	EXPECT_STR(pget("B"), "");
+
+	pset("B", "X");
+	EXPECT_STR(eval_par("name --ob=- a x"), "name a x");
+	EXPECT_STR(pget("B"), NULL);
+
+	pset("C", "X");
+	EXPECT_STR(eval_par("name --oc a x"), "name a x");
+	EXPECT_STR(pget("C"), "C2");
+
+	pset("C", "X");
+	EXPECT_STR(eval_par("name --oc=a x"), "name x");
+	EXPECT_STR(pget("C"), "a");
+
+	pset("C", "X");
+	EXPECT_STR(eval_par("name --oc= x"), "name x");
+	EXPECT_STR(pget("C"), "");
+
+	pset("C", "X");
+	EXPECT_STR(eval_par("name --oc=- x"), "name x");
+	EXPECT_STR(pget("C"), "C2");
+
+	pset("A", "X");
+	EXPECT_STR(eval_par("name --la x y"), "name x y");
+	EXPECT_STR(pget("A"), "8");
+
+	pset("B", "X");
+	set_msg("NOTE [efm:34]: $0=\"\" $1=\"--obx\"\n");
+	EXPECT_STR(eval_par("name --obx y"), "name y");
+	EXPECT_STR(pget("B"), "X");
 
 	CmdPar_clean(par);
 }
@@ -401,6 +479,83 @@ TEST_DECL(env)
 	CmdPar_clean(par);
 }
 
+TEST_DECL(syntax)
+{
+	pconfig(
+		"o|O\n\tOption\n"
+		":arg|A\n\tArg\n"
+	);
+
+	CmdPar_docmode = 0;
+	pset(NULL, "test");
+	pset(".synopsis.intro", "usage: ");
+
+	TEST_FORK
+	{
+		ioerr = io_fopen(UnitTest_tmpname("syntax.log"), "w");
+		setenv("PATH", UnitTest_tmpname(NULL), 1);
+		EXPECT_STR(eval_par("name"), "name");
+		io_close(ioerr);
+		TEST_CONTENT("syntax.log", "test [ -o ] arg\n");
+		UnitTest_mkfile("syntax.log", NULL);
+
+		ioerr = io_fopen(UnitTest_tmpname("syntax.log"), "w");
+		EXPECT_STR(eval_par("name a b c"), "name b c");
+		io_close(ioerr);
+		TEST_CONTENT("syntax.log", "test [ -o ] arg\n");
+		UnitTest_mkfile("syntax.log", NULL);
+
+		TEST_EXIT;
+	}
+
+	CHILD_EXIT(0);
+
+	TEST_FORK
+	{
+		ioerr = io_fopen(UnitTest_tmpname("syntax.log"), "w");
+		setenv("PATH", UnitTest_tmpname(NULL), 1);
+		eval_par("name -?");
+		// not reached
+		exit(99);
+	}
+
+	CHILD_EXIT(0);
+	TEST_CONTENT("syntax.log", "test [ -o ] arg\n");
+
+	CmdPar_clean(par);
+}
+
+TEST_DECL(write)
+{
+	pset("@A\tB\nC:D", "X");
+	pconfig(
+		"@ENV|\n"
+		"o|-opt[x]|\n\tOpt\n"
+		":a|A:set x\n"
+		"::b|B = z\n"
+		"+c|\n"
+		"*d|\n"
+		"/e/|\n"
+		"$f|\n"
+	);
+
+	CmdPar_write(par, out());
+	EXPECT_STR(data(),
+		"\\@A\\tB\\nC\\:D = \"X\"\n"
+		"A = NULL\n"
+		"B = NULL\n"
+		"Ident = NULL\n\n"
+		"@ENV|\n"
+		"o|-opt[x]|\n\tOpt\n"
+		":a|A: set \"x\"\n"
+		"::b|B = \"z\"\n"
+		"+c|\n"
+		"*d|\n"
+		"/e/|\n"
+		"$f|\n"
+	);
+}
+
 TEST_SUITE
 {
 	TEST_RUN(setup);
@@ -411,4 +566,6 @@ TEST_SUITE
 	TEST_RUN(env);
 	TEST_RUN(arg);
 	TEST_RUN(opt);
+	TEST_RUN(syntax);
+	TEST_RUN(write);
 }

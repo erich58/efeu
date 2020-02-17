@@ -159,7 +159,7 @@ void CmdParCall_print (IO *io, CmdParCall *call)
 	if	(call->name)
 		put_name(call->name, io);
 
-	if	(call->eval)
+	if	(call->eval && call->eval->name)
 	{
 		io_puts(": ", io);
 		put_name(call->eval->name, io);
