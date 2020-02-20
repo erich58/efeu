@@ -104,6 +104,15 @@ static void x_fmt (StrBuf *sb, const FmtKey *key, int *sig, double val)
 	prec = (key->flags & FMT_NOPREC) ? 6 : key->prec;
 	base = 1.;
 
+	switch (key->mode)
+	{
+	case 'g':
+	case 'G':
+		--prec; break;
+	default:
+		break;
+	}
+
 	for (exponent = 0; exponent < prec; exponent++)
 		base *= 10;
 
