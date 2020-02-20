@@ -145,6 +145,7 @@ int sb_vmbprintf (StrBuf *sb, const char *fmt, va_list list)
 
 		case 'u':
 		case 'b':
+		case 'B':
 		case 'o':
 		case 'x':
 		case 'X':
