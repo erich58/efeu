@@ -153,7 +153,7 @@ FmtKey *fmtkey (FmtKey *key, int32_t (*get) (void *data), void *data)
 
 int32_t fmtkey_pgetc (void *data)
 {
-	char **ptr = data;
+	unsigned char **ptr = data;
 	return (**ptr) ? *(*ptr)++ : EOF;
 }
 
