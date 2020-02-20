@@ -55,7 +55,8 @@ int fmt_intmax (StrBuf *sb, const FmtKey *key, intmax_t xval)
 	{
 	case 'i':	sep = LOCALE(thousands_sep); /* FALLTHROUGH */
 	case 'd':	sig = 1; break;
-	case 'b':	base = 2; break;
+	case 'b':	mark = "0b"; base = 2; break;
+	case 'B':	mark = "0B"; base = 2; break;
 	case 'o':	base = 8; break;
 	case 'P':	ptrval = 1; /* FALLTHROUGH */
 	case 'X':	digit = uc_digit; mark = "0X"; base = 16; break;
