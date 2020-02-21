@@ -79,4 +79,6 @@ int fmt_double (StrBuf *sb, const FmtKey *key, double val);
 int fmt_intmax (StrBuf *sb, const FmtKey *key, intmax_t val);
 int fmt_uintmax (StrBuf *sb, const FmtKey *key, uintmax_t val);
 
+extern int float_align;
+
 #endif	/* EFEU/fmtkey.h */

@@ -86,9 +86,12 @@ static int g_adjust (int mode, int exponent, int prec)
 	}
 
 	if	(exponent < -3)	return 0;
+	if	(exponent < 0)	return 1;
 
 	if	(float_align > 1)
-		prec = float_align * ((prec + float_align - 1) / float_align);
+	{
+		exponent = float_align * (exponent / float_align);
+	}
 
 	return exponent < prec + 3;
 }
@@ -151,30 +154,15 @@ static void x_fmt (StrBuf *sb, const FmtKey *key, int *sig, double val)
 	{
 		prec -= exponent;
 		exponent = 0;
-
-		if	(float_align > 1)
-		{
-			while (prec % float_align != 0)
-			{
-				val *= 10.;
-				prec++;
-			}
-		}
 	}
 	else
 	{
 		if	(float_align > 1)
 		{
-			while (prec % float_align != 0)
-			{
-				exponent--;
-				prec++;
-			}
-
 			while (exponent % float_align != 0)
 			{
-				val *= 10.;
 				exponent--;
+				prec--;
 			}
 		}
 
