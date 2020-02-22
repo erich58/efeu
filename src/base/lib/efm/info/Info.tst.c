@@ -1,6 +1,7 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/Info.h>
 #include <EFEU/mstring.h>
+#include <EFEU/procenv.h>
 
 static InfoNode root = STD_INFO("root", "root node");
 
@@ -62,6 +63,11 @@ static const char *dump(InfoNode *info)
 	return data();
 }
 
+static IO *fake_interact(const char *prompt, const char *hist)
+{
+	return NULL;
+}
+
 TEST_DECL(InfoPath)
 {
 	char *path = mstrcpy(getenv("PATH")); /* Save PATH */
@@ -96,18 +102,12 @@ TEST_DECL(SetupInfo)
 	PrintInfo(out(), i2);
 	EXPECT_STR(data(), "Y-Label\nY-Desc\n");
 
-#if	1
 	rd_refer(i2);
 	EXPECT_STR(dump(&root), "root[2]<1>\n+x[2]<1>\n++y/z[2]<-1> func\n");
 	EXPECT_TRUE(rd_deref(i1) != NULL);
 	EXPECT_TRUE(rd_deref(i1) == NULL);
 	EXPECT_STR(show(i2), "y/z[1]<-1> func\n");
 	EXPECT_TRUE(i2->prev == NULL);
-#else
-	EXPECT_TRUE(rd_deref(i2) == NULL);
-	EXPECT_STR(dump(&root), "root[2]<1>\n+x[1]<0>\n");
-	EXPECT_TRUE(rd_deref(i1) == NULL);
-#endif
 	EXPECT_STR(dump(&root), "root[1]<0>\n");
 }
 
@@ -140,6 +140,32 @@ TEST_DECL(Default)
 
 	TEST_EXPR(DumpInfo(out(), "/a/b", 1));
 	EXPECT_STR(data(), "@: Label\nDescription\n");
+
+	IO *save = iostd;
+	iostd = out();
+	BrowseInfo("xdump:");
+	EXPECT_STR(data(), "@:\n@a:\n@a/b: Label\nDescription\n");
+	iostd = out();
+	BrowseInfo("dump:/a/b");
+	EXPECT_STR(data(), "@: Label\nDescription\n");
+	iostd = out();
+	BrowseInfo("print:/a/b");
+	EXPECT_STR(data(), "Label\nDescription\n");
+	iostd = out();
+	BrowseInfo("?");
+	EXPECT_MATCH(data(),
+		"auto\n\t[^\n]*\n"
+		"print\n\t[^\n]*\n"
+		"dump\n\t[^\n]*\n"
+		"xdump\n\t[^\n]*\n"
+		"std\n\t[^\n]*\n"
+	);
+	iostd = save;
+
+	Pager = mstrcpy(UnitTest_tmpname("std.out"));
+	_interact_open = fake_interact;
+	BrowseInfo("std:/a/b");
+	TEST_CONTENT("std.out", "Label\nDescription\n");
 
 	TEST_EXPR(info = GetInfo(NULL, "/a/./b/../"));
 	TEST_EXPR(PrintInfo(out(), info));
