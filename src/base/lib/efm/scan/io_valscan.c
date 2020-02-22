@@ -231,7 +231,7 @@ static int make_integer (IO *io, void **ptr, int sig, uint64_t val,
 	}
 	while (c != EOF);
 
-	switch (base & (SCAN_INT | SCAN_INT64))
+	switch (base & (SCAN_INTEGER))
 	{
 	case SCAN_INT:		type = SCAN_INT; break;
 	case SCAN_INT64:	type = SCAN_INT64; break;
@@ -394,13 +394,13 @@ int io_valscan (IO *in, unsigned flags, void **ptr)
 		if	((flags & SCAN_HEXVAL) && (c == 'x' || c == 'X'))
 		{
 			lval = get_hexval(in);
-			flags &= (SCAN_INT | SCAN_HEXVAL);
+			flags &= (SCAN_INTEGER | SCAN_HEXVAL);
 			return make_integer(in, ptr, sign == '-', lval, flags);
 		}
 		else if	((flags & SCAN_BINVAL) && (c == 'b' || c == 'B'))
 		{
 			lval = get_binval(in);
-			flags &= (SCAN_INT | SCAN_BINVAL);
+			flags &= (SCAN_INTEGER | SCAN_BINVAL);
 			return make_integer(in, ptr, sign == '-', lval, flags);
 		}
 
