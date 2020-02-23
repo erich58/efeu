@@ -50,7 +50,7 @@ RefType nkt_reftype = REFTYPE_INIT("NameKeyTab",
 
 /*
 Die Funktion |$1| generiert eine neue Schlüsseltabelle mit Namen |name|,
-Blockgröße |bsize| und Löschfunktion |ckean|.
+Blockgröße |bsize| und Löschfunktion |clean|.
 */
 
 NameKeyTab *nkt_create (const char *name, size_t bsize,
