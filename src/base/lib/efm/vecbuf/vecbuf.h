@@ -119,7 +119,7 @@ typedef struct {
 } VecMatch;
 
 VecMatch vmatch (void *key, void *base, size_t dim, size_t size,
-	int (*comp) (const void *a, const void *b));
+	int (*comp) (const void *key, const void *data));
 
 /*
 $SeeAlso
