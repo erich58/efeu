@@ -64,7 +64,7 @@ NameKeyTab *nkt_create (const char *name, size_t bsize,
 }
 
 /*
-Die Funktion |$1| löscht alle Einträge del Schlüsseltabelle <nkt>.
+Die Funktion |$1| löscht alle Einträge der Schlüsseltabelle <nkt>.
 */
 
 void nkt_clean (NameKeyTab *nkt)
