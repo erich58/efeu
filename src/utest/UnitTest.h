@@ -38,12 +38,14 @@ const char *UnitTest_tmpname(const char *name);
 const char *UnitTest_mkdir(const char *name);
 const char *UnitTest_mkfile(const char *name, const char *content);
 const char *UnitTest_content(const char *name);
+void UnitTest_tmpclean(void);
 
 int UnitTest_fork(const char *file, int line);
 int UnitTest_exec(const char *file, int line,
 	void (*test)(void), const char *name);
 void UnitTest_exit(void);
 int UnitTest_wait(void);
+int UnitTest_assert(int stat);
 
 void runUnitTest(void);
 extern char *UnitTest_name;
@@ -90,6 +92,9 @@ UnitTest_info(__FILE__, __LINE__, \
 
 #define	EXPECT_TRUE(expr) \
 UnitTest_result(__FILE__,__LINE__, (expr), "%s", # expr)
+
+#define	ASSERT_TRUE(expr) \
+UnitTest_assert(EXPECT_TRUE(expr))
 
 #define	EXPECT_FALSE(expr) \
 UnitTest_result(__FILE__,__LINE__, !(expr), "!(%s)", # expr)

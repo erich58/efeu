@@ -14,7 +14,7 @@
 static int cleanup_pid = 0;
 static const char *tmpdir = NULL;
 
-static void cleanup_tmpdir()
+void UnitTest_tmpclean()
 {
 	if	(getpid() != cleanup_pid)
 		return;
@@ -25,6 +25,7 @@ static void cleanup_tmpdir()
 		execl("/bin/rm", "rm", "-rf", tmpdir, (char*) NULL);
 	
 	wait(NULL);
+	tmpdir = NULL;
 }
 
 static void create_tmpdir()
@@ -49,7 +50,7 @@ static void create_tmpdir()
 	{
 		cleanup_pid = getpid();
 		tmpdir = UnitTest_cstr(&buf);
-		atexit(cleanup_tmpdir);
+		atexit(UnitTest_tmpclean);
 	}
 	else
 	{

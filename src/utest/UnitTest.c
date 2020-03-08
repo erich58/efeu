@@ -191,3 +191,16 @@ int UnitTest_exec(const char *file, int line,
 	return UnitTest_result(file, line,
 		UnitTest_wait() == 0, "%s success", name);
 }
+
+int UnitTest_assert(int stat)
+{
+	if	(!stat)
+	{
+		UnitTest_tmpclean();
+		info("ABORT", NULL, 0, "");
+		abort();
+	}
+
+	return stat;
+}
+

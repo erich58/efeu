@@ -5,6 +5,7 @@
 TEST_SUITE
 {
 	PRINT_LABEL("Parent");
+	ASSERT_TRUE(1);
 
 	TEST_FORK
 	{
@@ -13,7 +14,8 @@ TEST_SUITE
 		TEST_FORK
 		{
 			PRINT_LABEL("Grandchild");
-			abort();
+			ASSERT_TRUE(1);
+			ASSERT_TRUE(0);
 			TEST_EXIT; // not reached
 		}
 

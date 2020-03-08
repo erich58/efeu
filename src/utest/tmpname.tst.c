@@ -21,6 +21,22 @@ TEST_SUITE
 
 	CHILD_EXIT(1);
 
+	char *tmp = strdup(UnitTest_tmpname(NULL));
+	PRINT_STR(UnitTest_tmpname(NULL));
+	EXPECT_STRCMP(tmp, ==, UnitTest_tmpname(NULL));
+	UnitTest_tmpclean();
+
+	TEST_FORK
+	{
+		PRINT_STR(UnitTest_tmpname(NULL));
+		EXPECT_STRCMP(tmp, !=, UnitTest_tmpname(NULL));
+		TEST_EXIT;
+	}
+
+	CHILD_EXIT(0);
+	PRINT_STR(UnitTest_tmpname(NULL));
+	EXPECT_STRCMP(tmp, !=, UnitTest_tmpname(NULL));
+
 	TEST_DIR("dir");
 	TEST_FILE("dir/file", "Testdaten\n");
 
