@@ -116,7 +116,7 @@ TEST_DECL(Resource)
 		TEST_EXIT;
 	}
 
-	TEST_WAIT;
+	CHILD_EXIT(0);
 
 	TEST_FORK
 	{

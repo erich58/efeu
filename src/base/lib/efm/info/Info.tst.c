@@ -153,7 +153,7 @@ TEST_DECL(Default)
 	EXPECT_STR(data(), "Label\nDescription\n");
 	iostd = out();
 	BrowseInfo("?");
-	EXPECT_MATCH(data(),
+	MATCH_STR(data(),
 		"auto\n\t[^\n]*\n"
 		"print\n\t[^\n]*\n"
 		"dump\n\t[^\n]*\n"
@@ -165,7 +165,7 @@ TEST_DECL(Default)
 	Pager = mstrcpy(UnitTest_tmpname("std.out"));
 	_interact_open = fake_interact;
 	BrowseInfo("std:/a/b");
-	TEST_CONTENT("std.out", "Label\nDescription\n");
+	EXPECT_CONTENT("std.out", "Label\nDescription\n");
 
 	TEST_EXPR(info = GetInfo(NULL, "/a/./b/../"));
 	TEST_EXPR(PrintInfo(out(), info));
@@ -223,7 +223,7 @@ TEST_DECL(Coverage)
 		TEST_EXIT;
 	}
 
-	TEST_WAIT;
+	CHILD_EXIT(0);
 }
 
 TEST_SUITE

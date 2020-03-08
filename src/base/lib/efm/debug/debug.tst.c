@@ -205,7 +205,7 @@ TEST_DECL(LogOutput)
 
 	log_printf(dlog, "ABC\n");
 	EXPECT_TRUE(log_check("TEST\nABC\n"));
-	TEST_CONTENT("log", "TEST\nABC\n");
+	EXPECT_CONTENT("log", "TEST\nABC\n");
 
 	EXPECT_STR(fconfig("@X.debug=%s[time]", logfile), "EWNidt-ND");
 	log_printf(dlog, "X\n");
@@ -256,8 +256,8 @@ TEST_DECL(LogOutputStat)
 		TEST_EXIT;
 	}
 
-	TEST_WAIT;
-	TEST_CONTENT("stderr.out",
+	CHILD_EXIT(0);
+	EXPECT_CONTENT("stderr.out",
 		"stderr 0\n"
 #if	HAS_SYSLOG
 		"syslog 0\n"
@@ -271,7 +271,7 @@ TEST_DECL(LogOutputStat)
 		"STDERR\n"
 		"END\n"
 		);
-	TEST_CONTENT("pipe.out", "PIPE\n");
+	EXPECT_CONTENT("pipe.out", "PIPE\n");
 }
 
 TEST_DECL(log_file)
@@ -325,19 +325,19 @@ TEST_DECL(stdlog)
 
 	TEST_FILE("log", NULL);
 	log_psub(WarnLog, NULL, NULL);
-	TEST_CONTENT("log", "WARNING:\n");
+	EXPECT_CONTENT("log", "WARNING:\n");
 	log_psubarg(WarnLog, "FMT", NULL, NULL, NULL);
-	TEST_CONTENT("log", "WARNING:\nFMT\n");
+	EXPECT_CONTENT("log", "WARNING:\nFMT\n");
 
 	TEST_FILE("log", NULL);
 	TEST_FILE("msg.log", NULL);
 	log_psub(ErrLog, "[ubk:123]", NULL);
-	TEST_CONTENT("log", "ERROR [ubk:123]:\n");
+	EXPECT_CONTENT("log", "ERROR [ubk:123]:\n");
 	MATCH_CONTENT("msg.log", "key \"123\" not found");
 
 	TEST_FILE("log", NULL);
 	log_note(NULL, "Meldung $1", "s", "ABC");
-	TEST_CONTENT("log", "Meldung ABC\n");
+	EXPECT_CONTENT("log", "Meldung ABC\n");
 
 	TEST_FILE("log", NULL);
 
@@ -348,7 +348,7 @@ TEST_DECL(stdlog)
 	}
 
 	CHILD_EXIT(1);
-	TEST_CONTENT("log", "Fehler 42 (Text)\n");
+	EXPECT_CONTENT("log", "Fehler 42 (Text)\n");
 }
 
 TEST_SUITE
@@ -365,5 +365,5 @@ TEST_SUITE
 	rd_deref(dlog);
 
 	AllocTab_stat(out(), NULL, 1);
-	EXPECT_MATCH(data(), "byte");
+	MATCH_STR(data(), "byte");
 }

@@ -24,7 +24,7 @@ TEST_SUITE
 	TEST_DIR("dir");
 	TEST_FILE("dir/file", "Testdaten\n");
 
-	TEST_CONTENT("dir/file", "Testdaten\n");
+	EXPECT_CONTENT("dir/file", "Testdaten\n");
 	MATCH_CONTENT("dir/file", "^Test");
 	EXPECT_TRUE(UnitTest_content(NULL) != NULL);
 	PRINT_STR(UnitTest_content(NULL));
@@ -33,14 +33,14 @@ TEST_SUITE
 	{
 		const char *res = "X\n";
 		MATCH_CONTENT("dir/file", "^X");
-		TEST_CONTENT("dir/file", res);
+		EXPECT_CONTENT("dir/file", res);
 		TEST_EXIT;
 	}
 
 	CHILD_EXIT(1);
 
 	TEST_EXEC(bad_path);
-	TEST_CONTENT("dir/x", NULL);
+	EXPECT_CONTENT("dir/x", NULL);
 	EXPECT_FALSE(UnitTest_content(NULL));
 	PRINT_STR(UnitTest_content(NULL));
 	EXPECT_STR(UnitTest_tpl(NULL), NULL);

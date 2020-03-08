@@ -30,7 +30,7 @@ static int pcmd(const char *c, const char *v, const char *p, const char *a)
 TEST_DECL(show)
 {
 	CmdParEval_show(out(), NULL);	// Für Testabdeckung //
-	EXPECT_MATCH(data(), "^\\[append] .*\n\\[vset]");
+	MATCH_STR(data(), "^\\[append] .*\n\\[vset]");
 	CmdParEval_show(out(), "$1 ");
 	EXPECT_STR(data(), "append break config exit info insert lset "
 	 	"manpage message set setlocale test usage vset ");
@@ -114,10 +114,10 @@ TEST_DECL(debug)
 	}
 
 	CHILD_EXIT(0);
-	TEST_CONTENT("debug/test",
+	EXPECT_CONTENT("debug/test",
 		"var=\"value\", \"{}\", \"arg\" -> \"arg\"\n");
-	TEST_CONTENT("debug/message", "value arg var value");
-	TEST_CONTENT("debug/info", "@: Label\nDesc of info:Label\n");
+	EXPECT_CONTENT("debug/message", "value arg var value");
+	EXPECT_CONTENT("debug/info", "@: Label\nDesc of info:Label\n");
 }
 
 TEST_DECL(doc)
@@ -149,10 +149,10 @@ TEST_DECL(doc)
 	}
 
 	CHILD_EXIT(0);
-	TEST_CONTENT("doc/usage", "CommandName -- CommandName\n");
-	TEST_CONTENT("doc/man1", "CommandName -- CommandName\n");
-	TEST_CONTENT("doc/man2", "MANPAGE\n");
-	TEST_CONTENT("doc/man3", "@xxx $\n");
+	EXPECT_CONTENT("doc/usage", "CommandName -- CommandName\n");
+	EXPECT_CONTENT("doc/man1", "CommandName -- CommandName\n");
+	EXPECT_CONTENT("doc/man2", "MANPAGE\n");
+	EXPECT_CONTENT("doc/man3", "@xxx $\n");
 }
 
 TEST_DECL(config)

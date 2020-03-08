@@ -94,20 +94,14 @@ UnitTest_result(__FILE__,__LINE__, (expr), "%s", # expr)
 #define	EXPECT_FALSE(expr) \
 UnitTest_result(__FILE__,__LINE__, !(expr), "!(%s)", # expr)
 
-#define	EXPECT_EQ(a, b)		EXPECT_TRUE(a == b)
-#define	EXPECT_NE(a, b)		EXPECT_TRUE(a != b)
-
 #define EXPECT_STR(a, b)	\
 UnitTest_strcheck(__FILE__, __LINE__, "==", a, b, # a, # b)
 
 #define EXPECT_STRCMP(a, op, b)	\
 UnitTest_strcheck(__FILE__, __LINE__, # op, a, b, # a, # b)
 
-#define EXPECT_MATCH(a, b)	\
+#define MATCH_STR(a, b)	\
 UnitTest_strcheck(__FILE__, __LINE__, "~", a, b, # a, # b)
-
-#define EXPECT_NOMATCH(a, b)	\
-UnitTest_strcheck(__FILE__, __LINE__, "!~", a, b, # a, # b)
 
 #define	TEST_DIR(name)	\
 UnitTest_result(__FILE__, __LINE__, \
@@ -121,7 +115,7 @@ UnitTest_result(__FILE__, __LINE__, \
 UnitTest_info(__FILE__, __LINE__, \
 	"content(%s) -> %s", # name, UnitTest_qstr(UnitTest_content(name)))
 
-#define	TEST_CONTENT(name, cont)	\
+#define	EXPECT_CONTENT(name, cont)	\
 UnitTest_strcheck(__FILE__, __LINE__, "==", \
 	UnitTest_content(name), cont, "content(" # name ")", # cont)
 
@@ -141,8 +135,6 @@ UnitTest_result(__FILE__, __LINE__, \
 #define	CHILD_SIGNALED(n)		\
 UnitTest_result(__FILE__, __LINE__, \
 	UnitTest_wait() == -n, "child signaled %d", n)
-
-#define	TEST_WAIT		CHILD_EXIT(0)
 
 #define	TEST_EXEC(name)		\
 UnitTest_exec(__FILE__, __LINE__, _test_ ## name, # name)

@@ -68,7 +68,7 @@ TEST_DECL(alloctab)
 	EXPECT_TRUE(del_data(NULL, "x") == 0);
 
 	AllocTab_stat(out(), &tab, 1);
-	EXPECT_MATCH(data(), "^AllocTabTest");
+	MATCH_STR(data(), "^AllocTabTest");
 
 	clear_log("error.log");
 	EXPECT_TRUE(del_data(&tab, p) == 0);
@@ -115,7 +115,7 @@ TEST_DECL(memalloc)
 		TEST_EXIT;
 	}
 
-	TEST_WAIT;
+	CHILD_EXIT(0);
 }
 
 TEST_DECL(memswap)

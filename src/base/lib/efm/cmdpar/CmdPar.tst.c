@@ -83,7 +83,7 @@ static const char *eval_par(const char *first)
 
 	UnitTest_mkfile("error.log", "");
 	CmdPar_eval(par, &narg, arg, 0);
-	TEST_CONTENT("error.log", eval_msg);
+	EXPECT_CONTENT("error.log", eval_msg);
 	eval_msg = "";
 
 	IO *io = out();
@@ -248,7 +248,7 @@ TEST_DECL(Ptr)
 	InfoNode *info = NewInfo(NULL, "CmdPar");
 	CmdPar_info(par, info);
 	PrintInfo(out(), info);
-	EXPECT_MATCH(data(), "\nArg\t.*\nEnv\t.*\nRes\t.*\n");
+	MATCH_STR(data(), "\nArg\t.*\nEnv\t.*\nRes\t.*\n");
 
 	CmdPar_var(par, "a", 1)->desc = "Description";
 	PrintInfo(out(), GetInfo(info, "Res"));
@@ -297,7 +297,7 @@ TEST_DECL(opt)
 	pset("C", "X");
 	EXPECT_STR(eval_par("name -c"), "name");
 	EXPECT_STR(pget("C"), "C1");
-	TEST_CONTENT("error.log", "");
+	EXPECT_CONTENT("error.log", "");
 
 	pset("B", "X");
 	EXPECT_STR(eval_par("name -b - x"), "name x");
@@ -496,13 +496,13 @@ TEST_DECL(syntax)
 		setenv("PATH", UnitTest_tmpname(NULL), 1);
 		EXPECT_STR(eval_par("name"), "name");
 		io_close(ioerr);
-		TEST_CONTENT("syntax.log", "test [ -o ] arg\n");
+		EXPECT_CONTENT("syntax.log", "test [ -o ] arg\n");
 		UnitTest_mkfile("syntax.log", NULL);
 
 		ioerr = io_fopen(UnitTest_tmpname("syntax.log"), "w");
 		EXPECT_STR(eval_par("name a b c"), "name b c");
 		io_close(ioerr);
-		TEST_CONTENT("syntax.log", "test [ -o ] arg\n");
+		EXPECT_CONTENT("syntax.log", "test [ -o ] arg\n");
 		UnitTest_mkfile("syntax.log", NULL);
 
 		TEST_EXIT;
@@ -520,7 +520,7 @@ TEST_DECL(syntax)
 	}
 
 	CHILD_EXIT(0);
-	TEST_CONTENT("syntax.log", "test [ -o ] arg\n");
+	EXPECT_CONTENT("syntax.log", "test [ -o ] arg\n");
 
 	CmdPar_clean(par);
 }

@@ -184,9 +184,9 @@ TEST_DECL(qsort)
 	EXPECT_TRUE(vsplit(v, n, sizeof v[0], NULL) == 7);
 	EXPECT_STR(vinfo(v, n), "7: 1 5 1 3 8 4 2");
 	EXPECT_TRUE(vsplit(v, n, sizeof v[0], gt_3) == 3);
-	EXPECT_MATCH(vinfo(v, n), "7: [458] [458] [458] [123] [123] [123] [123]");
+	MATCH_STR(vinfo(v, n), "7: [458] [458] [458] [123] [123] [123] [123]");
 	EXPECT_TRUE(vsplit(v, n, sizeof v[0], le_4) == 5);
-	EXPECT_MATCH(vinfo(v, n), "7: [1-4] [1-4] [1-4] [1-4] [1-4] [58] [58]");
+	MATCH_STR(vinfo(v, n), "7: [1-4] [1-4] [1-4] [1-4] [1-4] [58] [58]");
 
 	vb_qsort(&buf, vcomp);
 	EXPECT_STR(vbinfo(&buf), "7: 1 1 2 3 4 5 8");

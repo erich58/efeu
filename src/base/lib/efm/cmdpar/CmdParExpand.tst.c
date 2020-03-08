@@ -53,7 +53,7 @@ static CmdParExpand test_add = { "test_add", "Testfunktion", f_test_add };
 TEST_SUITE
 {
 	CmdParExpand_show(out(), NULL);	// Für Testabdeckung //
-	EXPECT_MATCH(data(), "^\\[arglist] .*\n\\[version]");
+	MATCH_STR(data(), "^\\[arglist] .*\n\\[version]");
 	CmdParExpand_show(out(), "$1 ");
 	EXPECT_STR(data(), "arglist copyright environ head ident name "
 		"options synopsis varlist version ");
@@ -169,7 +169,7 @@ TEST_SUITE
 		TEST_EXIT;
 	}
 
-	TEST_WAIT;
+	CHILD_EXIT(0);
 
 	CmdPar_clean(&par);
 }

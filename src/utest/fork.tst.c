@@ -14,13 +14,14 @@ TEST_SUITE
 		{
 			PRINT_LABEL("Grandchild");
 			abort();
+			TEST_EXIT; // not reached
 		}
 
 		CHILD_SIGNALED(6);
 		TEST_EXIT;
 	}
 
-	TEST_WAIT; // or CHILD_EXIT(0);
+	CHILD_EXIT(0);
 
 	TEST_FORK
 	{

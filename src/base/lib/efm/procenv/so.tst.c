@@ -18,7 +18,7 @@ TEST_SUITE
 		TEST_EXIT;
 	}
 
-	TEST_WAIT;
+	CHILD_EXIT(0);
 	TEST_EXPR(ProgDir = mstrcpy(UnitTest_tmpname(NULL)));
 	EXPECT_FALSE(loadlib("undefined", "tst_init"));
 	EXPECT_TRUE(loadlib("libsotest.so", NULL));
