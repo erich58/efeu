@@ -109,11 +109,6 @@ void *vb_search (VecBuf *buf, void *data,
 		{
 			switch (mode)
 			{
-			case VB_ENTER:
-			case VB_SEARCH:
-
-				return p1;
-
 			case VB_DELETE:
 
 				memcpy(data, p1, buf->elsize);
@@ -131,8 +126,7 @@ void *vb_search (VecBuf *buf, void *data,
 				break;
 			}
 
-			i2 = i + 1;
-			break;
+			return p1;
 		}
 	}
 

@@ -75,6 +75,7 @@ TEST_SUITE
 	EXPECT_DATA(vb_data(vb, 5), 8, 80);
 
 	EXPECT_TRUE(vb_search(vb, set(&d, 2, 0), comp, VB_SEARCH) == NULL);
+	EXPECT_DATA(vb_search(vb, set(&d, 3, 0), comp, VB_SEARCH), 3, 31);
 	EXPECT_DATA(vb_search(vb, set(&d, 5, 0), comp, VB_SEARCH), 5, 50);
 
 	EXPECT_TRUE(vb_bsearch(vb, set(&d, 2, 0), comp) == NULL);
