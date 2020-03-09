@@ -21,7 +21,6 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 1	$!: can not expand constant data buffer.\n
-2	$!: file $0: unexpected EOF by reading data field.\n
 3	$!: formating type $1 is not defined.
 
 11	$!: $0: data types not compatibel.\n

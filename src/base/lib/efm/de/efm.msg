@@ -21,7 +21,6 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 1	$!: Konstanter Datenbuffer kann nicht vergrößert werden.\n
-2	$!: File $0: Vorzeitiges Fileende beim Lesen eines Vektorfeldes.\n
 3	$!: Dokumentformatierung $1 ist nicht definiert.
 
 11	$!: $0: Datentypen sind nicht kompatibel.\n

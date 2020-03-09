@@ -85,7 +85,6 @@ void *vb_append (VecBuf *buf, void *data, size_t dim);
 void *vb_fetch (VecBuf *buf, void *data);
 void *vb_insert (VecBuf *buf, size_t pos, size_t dim);
 void *vb_delete (VecBuf *buf, size_t pos, size_t dim);
-void *vb_load (VecBuf *buf, FILE *file, size_t dim);
 
 void vb_qsort (VecBuf *buf, int (*comp) (const void *a, const void *b));
 void vb_uniq (VecBuf *buf, int (*comp) (const void *a, const void *b));
