@@ -172,7 +172,7 @@ void *DatPool_get (DatPool *pool, size_t offset)
 
 	offset -= pool->csize;
 
-	if	(offset < pool->msize)
+	if	(offset < pool->used)
 		return pool->mdata + offset;
 
 	return NULL;
