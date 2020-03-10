@@ -28,6 +28,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/extension.h>
 #include <EFEU/refdata.h>
+#include <EFEU/io.h>
 
 #define	STRPOOL_VAR	\
 	REFVAR;		\
@@ -70,5 +71,10 @@ char *StrPool_get (const StrPool *pool, size_t offset);
 char *StrPool_mget (const StrPool *pool, size_t offset);
 size_t StrPool_copy (StrPool *tg, StrPool *src, size_t offset);
 int StrPool_cmp (StrPool *p1, size_t i1, StrPool *p2, size_t i2);
+
+IO *StrPool_open (StrPool *pool);
+void StrPool_dump (StrPool *pool, IO *out);
+size_t StrPool_read (StrPool *pool, size_t size, IO *in);
+size_t StrPool_write (StrPool *pool, IO *out);
 
 #endif	/* EFEU/StrPool.h */

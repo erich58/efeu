@@ -285,7 +285,7 @@ char *StrPool_get (const StrPool *pool, size_t offset)
 
 	offset -= pool->csize;
 
-	if	(offset < pool->msize)	return pool->mdata + offset;
+	if	(offset < pool->used)	return pool->mdata + offset;
 
 	return NULL;
 }
@@ -308,6 +308,6 @@ int StrPool_cmp (StrPool *p1, size_t i1, StrPool *p2, size_t i2)
 	if	(p1 == p2 && i1 == i2)
 		return 0;
 
-	return mstrcmp(StrPool_get(p1, i1), StrPool_get(p2, i1));
+	return mstrcmp(StrPool_get(p1, i1), StrPool_get(p2, i2));
 }
 
