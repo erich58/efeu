@@ -65,14 +65,7 @@ StrBuf *sb_acquire (void)
 		}
 	}
 
-	buf = memalloc(sizeof *buf);
-	depth++;
-	flag = 1;
-#if	PART_TRACE
-	fprintf(stderr, "sb_acquire[%p] %d %d\n", buf, count, depth);
-#endif
-	sb_init(buf, 0);
-	return buf;
+	return sb_create(0);
 }
 
 /*
@@ -110,12 +103,7 @@ void sb_release (StrBuf *buf)
 		}
 	}
 	
-#if	PART_TRACE
-	fprintf(stderr, "sb_release[%p] %d %d\n", buf, count, depth);
-#endif
-	depth--;
-	sb_free(buf);
-	memfree(buf);
+	sb_destroy(buf);
 }
 
 /*
