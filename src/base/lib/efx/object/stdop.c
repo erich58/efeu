@@ -282,6 +282,7 @@ static EfiObj *bool_and(void *par, const EfiObjList *list)
 		if	(!(obj && Val_bool(obj->data)))
 			return bool2Obj(0);
 
+		UnrefObj(obj);
 		list = list->next;
 	}
 
@@ -300,6 +301,7 @@ static EfiObj *bool_or(void *par, const EfiObjList *list)
 		if	(obj && Val_bool(obj->data))
 			return bool2Obj(1);
 
+		UnrefObj(obj);
 		list = list->next;
 	}
 
