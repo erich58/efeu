@@ -39,6 +39,8 @@ TEST_DECL(show)
 TEST_DECL(var)
 {
 	EXPECT_STR(cstr(CmdPar_psub(&par, NULL, "arg")), "arg");
+	EXPECT_STR(cstr(CmdPar_psub(&par, "X = {}", "arg")), "X = arg");
+	EXPECT_STR(cstr(CmdPar_psub(&par, "X = \"{}\"", "arg")), "X = \"arg\"");
 
 	pset("a", NULL);
 	EXPECT_TRUE(pcmd("append", "a", ":", "first") == 0);

@@ -72,6 +72,7 @@ char *CmdPar_psub (CmdPar *par, const char *fmt, const char *arg)
 		args.csize = 1;
 		args.mdata = (char *) arg;
 		args.msize = 1;
+		args.used = 1;
 		args.index = &args.csize;
 		args.dim = 1;
 		p = do_vsub(CmdPar_ptr(par), in, &args, 0, EOF);
