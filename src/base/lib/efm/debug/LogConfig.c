@@ -82,6 +82,8 @@ static int pfx_cmd(int c)
 		break;
 	case '@':
 		vb_clean(&vbuf, def_clean);
+		memfree(default_path);
+		default_path = NULL;
 		break;
 	case '+':
 		default_mask = set_mask(default_mask, 1);
@@ -298,7 +300,7 @@ int LogUpdate (LogControl *ctrl)
 			if	(log_match(ctrl, def->select))
 				entry = new_entry(entry, def);
 
-		if	(MASK_EXACT(ctrl->level) & default_mask)
+		if	(!entry && (MASK_EXACT(ctrl->level) & default_mask))
 			entry = new_entry(entry, NULL);
 
 		del_entry(ctrl->entry);

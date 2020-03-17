@@ -21,6 +21,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/nkt.h>
 #include <EFEU/Resource.h>
+#include <EFEU/Debug.h>
 #include <EFEU/Info.h>
 #include <EFEU/EfiClass.h>
 

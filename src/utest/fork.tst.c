@@ -1,5 +1,6 @@
 #include <EFEU/UnitTest.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 TEST_SUITE
 {
@@ -12,14 +13,21 @@ TEST_SUITE
 		TEST_FORK
 		{
 			PRINT_LABEL("Grandchild");
-
-			TEST_EXIT;
+			abort();
 		}
 
-		TEST_WAIT;
+		CHILD_SIGNALED(6);
 		TEST_EXIT;
 	}
 
-//	EXPECT_TRUE(usleep(1000) == 0);
-	TEST_WAIT;
+	TEST_WAIT; // or CHILD_EXIT(0);
+
+	TEST_FORK
+	{
+		PRINT_LABEL("Exec");
+		execl("/bin/false", "false", NULL);
+		TEST_EXIT; // not reached
+	}
+
+	CHILD_EXIT(1);
 }

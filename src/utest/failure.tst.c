@@ -10,5 +10,5 @@ TEST_SUITE
 		TEST_EXIT;
 	}
 
-	EXPECT_FALSE(UnitTest_wait());
+	CHILD_EXIT(1);
 }

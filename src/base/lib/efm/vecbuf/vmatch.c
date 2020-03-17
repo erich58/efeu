@@ -27,18 +27,11 @@ Die Funktion |$1| dient zum suchen von Einträgen
 in einem sortierten Vektor. Die Funktion liefert die
 Startposition des Vektors und die Position des nächsten Elements.
 
-Die Vergleichsfunktion <comp> wird mit zwei Pointern
-auf Datenelemente aufgerufen und muß einen Wert
+Die Vergleichsfunktion <comp> wird mit einem Pointer auf einen Testparameter
+und einem Pointer auf ein Datenelement aufgerufen und muß einen Wert
 kleiner, gleich oder größer 0 liefern, je nachdem ob
-der erste Datenwert kleiner, gleich oder größer als der zweite
-Datenwert ist.
+der Testbereich vor, um oder nach dem Datenelement liegt.
 */
-
-struct {
-	void *key;
-	int (*comp) (const void *a, const void *b);
-} MDATA;
-
 
 static VecMatch mval (size_t start, size_t end)
 {
@@ -47,7 +40,7 @@ static VecMatch mval (size_t start, size_t end)
 }
 
 VecMatch vmatch (void *key, void *base, size_t dim, size_t size,
-	int (*comp) (const void *a, const void *b))
+	int (*comp) (const void *key, const void *data))
 {
 	int i, i0, i1, i2, i3;
 	int k;

@@ -85,7 +85,7 @@ static int show_fmt (const char *name, void *data, void *ptr)
 }
 
 /*
-:*:The function |$1| writes a list of expansion definations to
+:*:The function |$1| writes a list of expansion functions to
 the output <io>.
 :de:Die Funktion |$1| listet die Expansionsfunktionen für
 Beschreibungstexte auf.

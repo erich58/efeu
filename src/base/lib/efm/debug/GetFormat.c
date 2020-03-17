@@ -31,6 +31,8 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	SIGLEN	63
 
+int GetFormatDisable = 0;
+
 /*
 Die Funktion |$1| liefert den durch die Formatdefinition <def>
 definierten Formatstring. Eine Formatdefinition besteht
@@ -61,7 +63,7 @@ char *GetFormat (const char *def)
 	int flag;
 	int i;
 
-	if	(def == NULL)
+	if	(def == NULL || GetFormatDisable)
 		return NULL;
 
 	if	(*def != '[')

@@ -97,8 +97,9 @@ void MakeCleanRule (IO *io, const char *name)
 	int n, p;
 	char **ptr;
 
+	io_putc('\n', io);
 	io_puts(name, io);
-	io_puts(" ::\n\t", io);
+	io_puts("::\n\t", io);
 	p = 8;
 	p = put_name(io, 0, "rm -f");
 

@@ -46,9 +46,24 @@ int callproc (const char *cmd)
 	if	(callproc_init)
 		callproc_init();
 
-	if	(cmd != NULL)	n = system(cmd) >> 8;
-	else if	(Shell != NULL)	n = system(Shell) >> 8;
-	else			n = -1;
+	if	(!cmd)
+		cmd = Shell;
+
+	if	(cmd)
+	{
+		n = system(cmd);
+
+		if	(WIFEXITED(n))
+			n = WEXITSTATUS(n);
+		else if	(WIFSIGNALED(n))
+			n = 128 + WTERMSIG(n);
+		else
+			n = -1;
+	}
+	else		
+	{
+		n = -1;
+	}
 
 	if	(callproc_exit)
 		callproc_exit();

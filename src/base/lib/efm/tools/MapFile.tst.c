@@ -12,13 +12,13 @@ TEST_SUITE
 	EXPECT_TRUE(MapFile_open("/unknown file") == NULL);
 	EXPECT_TRUE(MapFile_open(".") == NULL);
 
-	map = MapFile_open(UnitTest_tempname("data"));
+	map = MapFile_open(UnitTest_tmpname("data"));
 	EXPECT_TRUE(map == NULL);
 
 	TEST_FILE("data", TEST_DATA);
-	map = MapFile_open(UnitTest_tempname("data"));
+	map = MapFile_open(UnitTest_tmpname("data"));
 	PRINT_STR(rd_ident(map));
 	EXPECT_TRUE(map != NULL);
-	EXPECT_STREQ(map->data, TEST_DATA);
+	EXPECT_STR(map->data, TEST_DATA);
 	EXPECT_TRUE(rd_deref(map) == NULL);
 }

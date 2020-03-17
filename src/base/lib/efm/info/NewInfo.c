@@ -29,15 +29,38 @@ static ALLOCTAB(info_tab, "InfoNode", 0, sizeof(InfoNode));
 
 static void entry_clean (void *data)
 {
-	rd_deref(*((InfoNode **) data));
+	InfoNode *node = *((InfoNode **) data);
+	node->prev = NULL;
+	rd_deref(node);
+}
+
+static void info_erase (VecBuf *buf, InfoNode *info)
+{
+	size_t n;
+	InfoNode **data = buf->data;
+
+	for (n = 0; n < buf->used; ++n)
+	{
+		if	(data[n] == info)
+		{
+			vb_delete(buf, n, 1);
+			break;
+		}
+	}
 }
 
 static void info_clean (void *ptr)
 {
 	InfoNode *info = ptr;
+
+	if	(info->prev)
+	{
+		info_erase(info->prev->list, info);
+		rd_deref(info->prev);
+	}
+
 	memfree(info->name);
 	memfree(info->label);
-	rd_deref(info->prev);
 	vb_clean(info->list, entry_clean);
 	del_data(&info_tab, info);
 }

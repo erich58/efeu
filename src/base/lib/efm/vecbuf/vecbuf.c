@@ -98,6 +98,15 @@ void *vb_next (VecBuf *buf)
 }
 
 /*
+Die Funktion |$1| liefert die Zahl der Element des Vektorbuffers.
+*/
+
+size_t vb_size (VecBuf *buf)
+{
+	return buf ? buf->used : 0;
+}
+
+/*
 Die Funktion |$1| liefert das Element an Position <pos> des Vektorbuffers
 <dim> oder einen Nullpointer, falls weniger Elemente enthalten sind.
 */
@@ -163,7 +172,7 @@ void *vb_insert (VecBuf *buf, size_t pos, size_t dim)
 Die Funktion |$1| löscht <dim> Elemente ab Position
 <pos>. Die Datenwerte werden zum Ende des Speicherfeldes
 verschoben. Die Funktion liefert den Pointer auf die gelöschten
-Elemente.
+Elemente, diese können in der Reihenfolge zyklisch verschoben sein..
 Falls <pos> + <dim> größer als die Komponente |used| ist
 wird kein Element gelöscht und die Funktion
 liefert einen Nullpointer.

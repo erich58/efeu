@@ -26,8 +26,6 @@ If not, write to the Free Software Foundation, Inc.,
 #include <ctype.h>
 
 static int32_t get_ucs (IO *io, int delim);
-static int32_t get_hex (IO *io);
-static int get_oct (IO *io, int val);
 static int make_char (IO *io, int type, void **ptr);
 
 int io_scan (IO *io, unsigned int flags, void **ptr)
@@ -136,29 +134,36 @@ char *io_getname(IO *io)
 	return NULL;
 }
 
-static int get_ucs_next (IO *io, int delim)
+static int32_t get_char (IO *io, int delim)
 {
-	int c = io_getc(io);
+	int32_t c = io_getc(io);
 
 	if	(c == delim)
-	{
-		io_ungetc(c, io);
 		return EOF;
-	}
 
 	if	(c == '\\')
 	{
-		switch ((c = io_getc(io)))
+		if	(io_peek(io) == delim)
 		{
-		case '0':	c = get_oct(io, 0); break;
-		case '1':	c = get_oct(io, 1); break;
-		case '2':	c = get_oct(io, 2); break;
-		case '3':	c = get_oct(io, 3); break;
-		default:
-			io_ungetc(c, io);
-			io_ungetc('\\', io);
-			return EOF;
+			c = io_getc(io);
 		}
+		else
+		{
+			io_ungetc(c, io);
+			c = io_xgetc(io, NULL);
+		}
+	}
+
+	return c;
+}
+
+static int get_ucs_next (IO *io, int delim)
+{
+	int c = get_char(io, delim);
+
+	if	(c == EOF)
+	{
+		return EOF;
 	}
 
 	if	((c & 0xc0) != 0x80)
@@ -174,47 +179,10 @@ static int32_t get_ucs (IO *io, int delim)
 	int32_t c, d;
 	int n;
 
-	c = io_getc(io);
+	c = get_char(io, delim);
 
-	if	(c == delim)
-		return EOF;
-
-	if	(c == '\\')
-	{
-		switch ((c = io_getc(io)))
-		{
-		case EOF:	return 0;
-		case '\n':
-		case ';':	return get_ucs(io, delim);
-		case '\'':
-		case '"':
-		case '?':
-		case '\\':	return c;
-		case 'b':	return '\b';
-		case 'f':	return '\f';
-		case 'n':	return '\n';
-		case 'r':	return '\r';
-		case 't':	return '\t';
-		case 'v':	return '\v';
-		case 'a':	return 7;
-		case 'x':	return get_hex(io) & 0x7fffffff;
-		case '0':	c = get_oct(io, 0); break;
-		case '1':	c = get_oct(io, 1); break;
-		case '2':	c = get_oct(io, 2); break;
-		case '3':	c = get_oct(io, 3); break;
-		default:
-			if	(!(c & 0x80))
-			{
-				io_xprintf(ioerr,
-					"unknown escape sequence '\\%c'.\n",
-					c);
-			}
-
-			return c;
-		}
-	}
-
-	if	((c & 0x80) == 0)	return c;
+	if	(c == EOF)		return EOF;
+	else if	((c & 0x80) == 0)	return c;
 	else if	((c & 0xc0) == 0x80)	return c;
 	else if	((c & 0xe0) == 0xc0)	n = 0;
 	else if	((c & 0xf0) == 0xe0)	n = 1;
@@ -243,73 +211,6 @@ static int32_t get_ucs (IO *io, int delim)
 	}
 
 	return c;
-}
-
-static int32_t get_hex (IO *io)
-{
-	int32_t val = 0;
-	int i;
-
-	for (i = 0; i < 8; i++)
-	{
-		int c = io_getc(io);
-
-		switch (c)
-		{
-		default:	io_ungetc(c, io); /* FALLTHROUGH */
-		case EOF:	return val;
-		case '0':	c = 0; break;
-		case '1':	c = 1; break;
-		case '2':	c = 2; break;
-		case '3':	c = 3; break;
-		case '4':	c = 4; break;
-		case '5':	c = 5; break;
-		case '6':	c = 6; break;
-		case '7':	c = 7; break;
-		case '8':	c = 8; break;
-		case '9':	c = 9; break;
-		case 'a': case 'A':	c = 10; break;
-		case 'b': case 'B':	c = 11; break;
-		case 'c': case 'C':	c = 12; break;
-		case 'd': case 'D':	c = 13; break;
-		case 'e': case 'E':	c = 14; break;
-		case 'f': case 'F':	c = 15; break;
-		}
-
-		val <<= 4;
-		val += c;
-	}
-
-	return val;
-}
-
-static int get_oct (IO *io, int val)
-{
-	int i;
-
-	for (i = 1; i < 3; i++)
-	{
-		int c = io_getc(io);
-
-		switch (c)
-		{
-		default:	io_ungetc(c, io); /* FALLTHROUGH */
-		case EOF:	return val;
-		case '0':	c = 0; break;
-		case '1':	c = 1; break;
-		case '2':	c = 2; break;
-		case '3':	c = 3; break;
-		case '4':	c = 4; break;
-		case '5':	c = 5; break;
-		case '6':	c = 6; break;
-		case '7':	c = 7; break;
-		}
-
-		val <<= 3;
-		val += c;
-	}
-
-	return val;
 }
 
 static int make_char (IO *io, int type, void **ptr)

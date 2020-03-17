@@ -107,7 +107,6 @@ int loadlib (const char *lname, const char *fname)
 #if	HAS_DLFCN
 	void *handle;
 	void (*init)(void);
-	int stat = 0;
 
 	handle = so_open(lname);
 

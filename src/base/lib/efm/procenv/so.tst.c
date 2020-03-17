@@ -13,16 +13,16 @@ TEST_SUITE
 
 	TEST_FORK
 	{
-		EXPECT_TRUE(chdir(UnitTest_tempname(NULL)) == 0);
+		EXPECT_TRUE(chdir(UnitTest_tmpname(NULL)) == 0);
 		system("$CC -o libsotest.so -shared -nostdlib sotest.c");
 		TEST_EXIT;
 	}
 
 	TEST_WAIT;
-	TEST_EXPR(ProgDir = mstrcpy(UnitTest_tempname(NULL)));
+	TEST_EXPR(ProgDir = mstrcpy(UnitTest_tmpname(NULL)));
 	EXPECT_FALSE(loadlib("undefined", "tst_init"));
 	EXPECT_TRUE(loadlib("libsotest.so", NULL));
-	EXPECT_TRUE(loadlib(UnitTest_tempname("libsotest.so"), NULL));
+	EXPECT_TRUE(loadlib(UnitTest_tmpname("libsotest.so"), NULL));
 	EXPECT_TRUE(loadlib("sotest", "tst_init"));
 	EXPECT_FALSE(loadlib("sotest", "undefined"));
 

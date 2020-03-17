@@ -30,10 +30,10 @@ TEST_SUITE
 	MD5Context_update (&ctx, buf, sizeof buf - 1);
 	MD5Context_final (digest, &ctx);
 	PRINT_STR(md5(digest));
-	EXPECT_STREQ(md5(digest), TEST_DIGEST);
+	EXPECT_STR(md5(digest), TEST_DIGEST);
 
 	MD5Context_init (&ctx);
 	MD5Context_update (&ctx, NULL, 0);
 	MD5Context_final (digest, &ctx);
-	EXPECT_STREQ(md5(digest), EMPTY_DIGEST);
+	EXPECT_STR(md5(digest), EMPTY_DIGEST);
 }

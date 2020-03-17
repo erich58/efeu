@@ -75,7 +75,7 @@ MapFile *MapFile_open (const char *path)
 	if	(data == MAP_FAILED)
 	{
 		log_psubarg(WarnLog, "$!: mmap(\"$0\"): $1.\n",
-			path, "s", strerror(errno));
+			mstrcpy(path), "s", strerror(errno));
 		return NULL;
 	}
 

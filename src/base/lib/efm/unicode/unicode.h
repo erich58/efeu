@@ -26,6 +26,7 @@ If not, write to the Free Software Foundation, Inc.,
 #ifndef	EFEU_unicode_h
 #define	EFEU_unicode_h	1
 
+#include <stddef.h>
 #include <EFEU/stdint.h>
 
 int32_t latin9_to_ucs (int c);

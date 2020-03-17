@@ -13,6 +13,6 @@ TEST_DECL(test2)
 TEST_SUITE
 {
 	PRINT_LABEL("main test");
-	TEST_RUN(test1);
+	TEST_EXEC(test1);
 	TEST_RUN(test2);
 }

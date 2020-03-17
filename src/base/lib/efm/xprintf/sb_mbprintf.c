@@ -1,5 +1,5 @@
 /*
-Datenwerte formatiern
+Myltibyteversion für sb_printf
 
 $Copyright (C) 1994, 2008 Erich Frühstück
 This file is part of EFEU.
@@ -23,7 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/strbuf.h>
 #include <EFEU/fmtkey.h>
 
-int sb_xprintf (StrBuf *sb, const char *fmt, ...)
+int sb_mbprintf (StrBuf *sb, const char *fmt, ...)
 {
 	if	(sb && fmt)
 	{
@@ -31,7 +31,7 @@ int sb_xprintf (StrBuf *sb, const char *fmt, ...)
 		int n;
 
 		va_start(args, fmt);
-		n = sb_vxprintf(sb, fmt, args);
+		n = sb_vmbprintf(sb, fmt, args);
 		va_end(args);
 		return n;
 	}
@@ -40,7 +40,7 @@ int sb_xprintf (StrBuf *sb, const char *fmt, ...)
 }
 
 
-int sb_vxprintf (StrBuf *sb, const char *fmt, va_list list)
+int sb_vmbprintf (StrBuf *sb, const char *fmt, va_list list)
 {
 	FmtKey *key;
 	intmax_t sval;
@@ -57,16 +57,17 @@ int sb_vxprintf (StrBuf *sb, const char *fmt, va_list list)
 	{
 		if	(*fmt != '%')
 		{
-			if	(sb_putc(*fmt, sb) == EOF)
+			int c = fmtkey_pgetucs(&fmt);
+
+			if	(sb_putucs(c, sb) == EOF)
 				break;
 
 			n++;
-			fmt++;
 			continue;
 		}
 
 		fmt++;
-		key = fmtkey(NULL, fmtkey_pgetc, &fmt);
+		key = fmtkey(NULL, fmtkey_pgetucs, &fmt);
 
 		if	(key->flags & FMT_NEED_WIDTH)
 		{
@@ -95,7 +96,7 @@ int sb_vxprintf (StrBuf *sb, const char *fmt, va_list list)
 		case 's':
 		case 'S':
 		
-			n += fmt_str(sb, key, va_arg(list, char *));
+			n += fmt_mbstr(sb, key, va_arg(list, char *));
 			break;
 
 		case 'c':
@@ -107,7 +108,8 @@ int sb_vxprintf (StrBuf *sb, const char *fmt, va_list list)
 				n += fmt_ucs(sb, key, va_arg(list, int32_t));
 				break;
 			default:
-				n += fmt_char(sb, key, va_arg(list, int));
+				n += fmt_ucs(sb, key,
+					(unsigned char) va_arg(list, int));
 				break;
 			}
 
@@ -143,6 +145,7 @@ int sb_vxprintf (StrBuf *sb, const char *fmt, va_list list)
 
 		case 'u':
 		case 'b':
+		case 'B':
 		case 'o':
 		case 'x':
 		case 'X':
@@ -192,7 +195,7 @@ int sb_vxprintf (StrBuf *sb, const char *fmt, va_list list)
 
 		case 'n':
 
-			sval = (key->flags & FMT_ALTMODE) ? n : sb->pos - pos;
+			sval = (key->flags & FMT_ALTMODE) ? sb->pos - pos : n;
 
 			switch (key->size)
 			{
@@ -226,12 +229,12 @@ int sb_vxprintf (StrBuf *sb, const char *fmt, va_list list)
 
 		case '[':
 
-			n += fmt_str(sb, key, (char *) key->buf.data);
+			n += fmt_mbstr(sb, key, (char *) key->buf.data);
 			break;
 
 		default:
 
-			if	(sb_putc(key->mode, sb) == EOF)
+			if	(sb_putucs(key->mode, sb) == EOF)
 				return n;
 
 			n++;

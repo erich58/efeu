@@ -26,6 +26,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/Info.h>
 #include <EFEU/EfiClass.h>
 #include <EFEU/Resource.h>
+#include <EFEU/Debug.h>
 #include <ctype.h>
 
 #define	KEY_TYPE	"Type"

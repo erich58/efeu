@@ -50,7 +50,7 @@ typedef struct {
 #define	FMT_NEED_PREC	0x40	/* Genauigkeit muß abgefragt werden */
 #define	FMT_NOPREC	0x80	/* Keine Genauigkeit angegeben */
 #define	FMT_NEGPREC	0x100	/* negative Genauigkeit */
-#define	FMT_GROUP	0x200	/* Grupperiungsflag */
+#define	FMT_GROUP	0x200	/* Gruppierungsflag */
 
 #define	FMTKEY_BYTE	1	/* 1 Byte Datenwert */
 #define	FMTKEY_SHORT	2	/* Kurzer Datenwert */
@@ -78,5 +78,7 @@ int fmt_long (StrBuf *sb, const FmtKey *key, long val);
 int fmt_double (StrBuf *sb, const FmtKey *key, double val);
 int fmt_intmax (StrBuf *sb, const FmtKey *key, intmax_t val);
 int fmt_uintmax (StrBuf *sb, const FmtKey *key, uintmax_t val);
+
+extern int float_align;
 
 #endif	/* EFEU/fmtkey.h */

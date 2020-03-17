@@ -7,7 +7,7 @@ include $(CFG)/EFEU.mak
 include $(CFG)/ApplFiles.mak
 
 Library = $(LIB)/lib$(NAME).so
-_Library_hdr = $(shell find -L . -name '*.h' -printf '%f\n')
+_Library_hdr = $(shell find -L . -name '*.h' ! -name '*.tst.h' -printf '%f\n')
 _Library_src = $(shell find -L . -name '*.c' ! -name '*.tst.c' -printf '%f\n')
 
 _Library_files = $(patsubst %.h,$(EFEU_INCLUDE)/%.h,$(_Library_hdr))
@@ -55,7 +55,7 @@ test:: all $(_Library_gcov)
 test:: $(_Library_tst_bin)
 
 test::
-	$(BIN)/efeu-test $(BUILD)
+	$(BIN)/efeu-test .
 
 $(_Library_gcov): $(_Library_gcov_obj)
 	ar -r $@ $(_Library_gcov_obj)
@@ -71,7 +71,7 @@ $(_Library_tst_bin) : $(_Library_gcov)
 
 $(BUILD)/%.tst : %.tst.c
 	@mkdir -p $(@D)
-	$(CC) -o $@ -MMD -MF $(@).d $(CPPFLAGS) $(CFLAGS) $< \
+	$(CC) -o $@ -MMD -MF $(@).d $(CPPFLAGS) -I. $(CFLAGS) $< \
 		$(_Library_gcov) -lgcov $(LDFLAGS) -lutest
 
 purge::

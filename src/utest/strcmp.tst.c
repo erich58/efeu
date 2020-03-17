@@ -7,8 +7,21 @@ TEST_SUITE
 	EXPECT_STRCMP("", >, NULL);
 	EXPECT_STRCMP("", ==, "");
 	EXPECT_STRCMP("abc", <, "abcd");
+	EXPECT_STRCMP("abc", <=, "abc");
 	EXPECT_STRCMP("1", >, "0");
+	EXPECT_STRCMP("1", >=, "1");
 
-	EXPECT_STREQ("a", "a");
-	EXPECT_STRNE("a", "b");
+	EXPECT_STR("a", "a");
+
+	TEST_FORK
+	{
+		char *x = "x";
+		char *y = "y";
+		EXPECT_STR(x, "a");
+		EXPECT_STR("a", y);
+		EXPECT_STR(x, y);
+		TEST_EXIT;
+	}
+
+	CHILD_EXIT(1);
 }

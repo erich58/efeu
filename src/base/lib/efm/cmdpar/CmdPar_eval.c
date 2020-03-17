@@ -34,7 +34,7 @@ If not, write to the Free Software Foundation, Inc.,
 static char *get_arg (const char *arg)
 {
 	if	(arg == NULL)
-		return NULL;
+		return NULL;	// should not happen
 
 	if	(arg[0] == '-' && arg[1] == 0)
 		return NULL;
