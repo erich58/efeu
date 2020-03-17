@@ -29,6 +29,8 @@ int sb_move (StrBuf *sb, int dest, int src, int length)
 
 	if	(src >= n)	return 0;
 
+	n -= src;
+
 	if	(length == 0 || length > n)
 		length = n;
 

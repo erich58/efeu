@@ -1,5 +1,5 @@
 /*
-Datenblock im Stringbuffer verschieben
+Datenblock im Stringbuffer spiegeln
 */
 
 #include <EFEU/strbuf.h>
