@@ -1,5 +1,8 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/strbuf.h>
+#include <EFEU/LogConfig.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 TEST_DECL(expand)
 {
@@ -144,28 +147,125 @@ TEST_DECL(put)
 
 	EXPECT_STR(sb_nul(&buf), "122abcxyCBA");
 	sb_free(&buf);
+
+	EXPECT_TRUE(sb_putmem(NULL, "A\0B", 4) == 0);
+	EXPECT_TRUE(sb_putmem(&buf, NULL, 0) == 0);
+	EXPECT_TRUE(sb_putmem(&buf, "A\0B", 4) == 4);
+	EXPECT_TRUE(sb_size(&buf) == 4);
+	EXPECT_TRUE(memcmp(sb_nul(&buf), "A\0B", 4) == 0);
+	sb_free(&buf);
 }
 
-TEST_DECL(putucs)
+TEST_DECL(ucs)
 {
-	static STRBUF(buf, 4);
+	StrBuf *buf = sb_create(4);
 	EXPECT_TRUE(sb_putucs('c', NULL) == 0);
-	EXPECT_TRUE(sb_putucs(EOF, &buf) == 0);
-	EXPECT_TRUE(sb_putucs('a', &buf) == 1);
-	EXPECT_TRUE(sb_putucs(0177, &buf) == 1);
-	EXPECT_TRUE(sb_putucs('b', &buf) == 1);
-	EXPECT_TRUE(sb_putucs(0200, &buf) == 2);
-	EXPECT_TRUE(sb_putucs(03777, &buf) == 2);
-	EXPECT_TRUE(sb_putucs('c', &buf) == 1);
-	EXPECT_TRUE(sb_putucs(04000, &buf) == 3);
-	EXPECT_TRUE(sb_putucs('d', &buf) == 1);
-	EXPECT_TRUE(sb_putucs(0200000, &buf) == 4);
-	EXPECT_TRUE(sb_putucs('e', &buf) == 1);
-	EXPECT_TRUE(sb_putucs(010000000, &buf) == 0);
+	EXPECT_TRUE(sb_putucs(EOF, buf) == 0);
+	EXPECT_TRUE(sb_putucs('a', buf) == 1);
+	EXPECT_TRUE(sb_putucs(0177, buf) == 1);
+	EXPECT_TRUE(sb_putucs('b', buf) == 1);
+	EXPECT_TRUE(sb_putucs(0200, buf) == 2);
+	EXPECT_TRUE(sb_putucs(03777, buf) == 2);
+	EXPECT_TRUE(sb_putucs('c', buf) == 1);
+	EXPECT_TRUE(sb_putucs(04000, buf) == 3);
+	EXPECT_TRUE(sb_putucs('d', buf) == 1);
+	EXPECT_TRUE(sb_putucs(0200000, buf) == 4);
+	EXPECT_TRUE(sb_putucs('e', buf) == 1);
+	EXPECT_TRUE(sb_putucs(010000000, buf) == 0);
 
-	EXPECT_STR(sb_nul(&buf),
+	EXPECT_STR(sb_nul(buf),
 		"a\177b\302\200\337\277c\340\240\200d\360\220\200\200e");
-	sb_free(&buf);
+	sb_setpos(buf, 0);
+	EXPECT_TRUE(sb_getucs(buf) == 'a');
+	EXPECT_TRUE(sb_getucs(buf) == 0177);
+	EXPECT_TRUE(sb_getucs(buf) == 'b');
+	EXPECT_TRUE(sb_getucs(buf) == 0200);
+	EXPECT_TRUE(sb_getucs(buf) == 03777);
+	EXPECT_TRUE(sb_getucs(buf) == 'c');
+	EXPECT_TRUE(sb_getucs(buf) == 04000);
+	EXPECT_TRUE(sb_getucs(buf) == 'd');
+	EXPECT_TRUE(sb_getucs(buf) == 0200000);
+	EXPECT_TRUE(sb_getucs(buf) == 'e');
+	EXPECT_TRUE(sb_getucs(buf) == EOF);
+
+	sb_clean(buf);
+	sb_putc(0344, buf); // ä
+	sb_putc(' ', buf);
+	sb_putc(0337, buf); // ß
+	sb_putc(' ', buf);
+	sb_putc(0244, buf); // €
+	EXPECT_STR(sb_nul(buf), "\344 \337 \244");
+	sb_setpos(buf, 0);
+	EXPECT_TRUE(sb_getucs(buf) == 0344);
+	EXPECT_TRUE(sb_getucs(buf) == ' ');
+	EXPECT_TRUE(sb_getucs(buf) == 0337);
+	EXPECT_TRUE(sb_getucs(buf) == ' ');
+	EXPECT_TRUE(sb_getucs(buf) == 0x20AC);
+	EXPECT_TRUE(sb_getucs(buf) == EOF);
+
+	sb_clean(buf);
+	EXPECT_TRUE(sb_putmb("äöü€", NULL) == 0);
+	EXPECT_TRUE(sb_putmb(NULL, buf) == 0);
+	EXPECT_TRUE(sb_putmb("äöü€", buf) == 4);
+	EXPECT_TRUE(sb_size(buf) == 9);
+	EXPECT_STR(sb_nul(buf), "äöü€");
+
+	sb_destroy(buf);
+}
+
+TEST_DECL(printf)
+{
+	StrBuf *buf = sb_create(2);
+	EXPECT_TRUE(sb_printf(NULL, "abc") == 0);
+	EXPECT_TRUE(sb_printf(buf, NULL) == 0);
+	EXPECT_TRUE(sb_printf(buf, "abcd %d", 42) == 7);
+	EXPECT_STR(sb_nul(buf), "abcd 42");
+	sb_setpos(buf, 5);
+	EXPECT_TRUE(sb_get(NULL) == EOF);
+	EXPECT_TRUE(sb_get(buf) == '4');
+	EXPECT_TRUE(sb_get(buf) == '2');
+	EXPECT_TRUE(sb_get(buf) == EOF);
+
+	sb_destroy(buf);
+}
+
+TEST_DECL(xput)
+{
+	StrBuf *buf = sb_create(2);
+	EXPECT_TRUE(sb_xputs("abc", NULL, "") == 0);
+	EXPECT_TRUE(sb_xputs(NULL, buf, "") == 0);
+	EXPECT_TRUE(sb_xputs("a b", buf, " ") == 4);
+	EXPECT_TRUE(sb_xputs("'ä€'", buf, "'") == 9);
+	EXPECT_STR(sb_nul(buf), "a\\ b\\'ä€\\'");
+	sb_clean(buf);
+
+	EXPECT_TRUE(sb_xputs("a\t\nb :;.", buf, " :.") == 13);
+	EXPECT_STR(sb_nul(buf), "a\\t\\nb\\ \\:;\\.");
+	sb_clean(buf);
+
+	EXPECT_TRUE(sb_xputs("\b\f\n\r\t\v\\", buf, NULL) == 14);
+	EXPECT_STR(sb_nul(buf), "\\b\\f\\n\\r\\t\\v\\\\");
+	sb_clean(buf);
+
+	EXPECT_TRUE(sb_xputc('a', NULL, "") == 0);
+	EXPECT_TRUE(sb_xputc(EOF, buf, "") == 0);
+	EXPECT_TRUE(sb_xputc('a', buf, "") == 1);
+	EXPECT_TRUE(sb_xputc(0127, buf, "") == 1);
+	EXPECT_TRUE(sb_xputc(0255, buf, "") == 1);
+	EXPECT_TRUE(sb_xputc(033, buf, "") == 4);
+	EXPECT_STR(sb_nul(buf), "a\127\255\\033");
+
+	sb_destroy(buf);
+}
+
+TEST_DECL(read)
+{
+	int fd;
+	TEST_FILE("data", "Testdaten\n");
+	fd = open(UnitTest_tmpname("data"), O_RDONLY);
+	EXPECT_TRUE(fd >= 0);
+	EXPECT_STR(sb_read(fd, NULL), "Testdaten\n");
+	close(fd);
 }
 
 TEST_SUITE
@@ -176,5 +276,8 @@ TEST_SUITE
 	TEST_RUN(acquire);
 	TEST_RUN(edit);
 	TEST_RUN(put);
-	TEST_RUN(putucs);
+	TEST_RUN(ucs);
+	TEST_RUN(printf);
+	TEST_RUN(xput);
+	TEST_RUN(read);
 }
