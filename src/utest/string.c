@@ -110,7 +110,9 @@ void UnitTest_qputs(const char *str, int delim, UnitTestString *buf)
 
 		for (; *str; ++str)
 		{
-			switch (*str)
+			unsigned char c = *str;
+
+			switch (c)
 			{
 			case '\\':	UnitTest_puts("\\\\", buf); break;
 			case '\t':	UnitTest_puts("\\t", buf); break;
@@ -120,13 +122,22 @@ void UnitTest_qputs(const char *str, int delim, UnitTestString *buf)
 			case '\v':	UnitTest_puts("\\v", buf); break;
 			case '\r':	UnitTest_puts("\\r", buf); break;
 			default:
-				if	(*str == delim)
+				if	(c == delim)
 				{
 					UnitTest_putc('\\', buf);
 					UnitTest_putc(delim, buf);
 				}
+				else if	(c < ' ' || c >= 127)
+				{
+					UnitTest_putc('\\', buf);
+					UnitTest_putc('0' + (c >> 6), buf);
+					UnitTest_putc('0' + (c >> 3) % 8, buf);
+					UnitTest_putc('0' + c % 8, buf);
+				}
 				else
-					UnitTest_putc(*str, buf);
+				{
+					UnitTest_putc(c, buf);
+				}
 
 				break;
 			}

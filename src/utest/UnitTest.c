@@ -82,6 +82,14 @@ int UnitTest_result(const char *file, int line, int res, const char *fmt, ...)
 	return res;
 }
 
+static const char *qstr(const char *str)
+{
+	static STRING_DECL(buf);
+	UnitTest_clear(&buf);
+	UnitTest_qputs(str, '"', &buf);
+	return UnitTest_cstr(&buf);
+}
+
 int UnitTest_strcheck(const char *file, int line, const char *op,
 	const char *s1, const char *s2, const char *x1, const char *x2)
 {
@@ -113,10 +121,10 @@ int UnitTest_strcheck(const char *file, int line, const char *op,
 		return r;
 
 	if	(*x1 != '"')
-		info("#AS", file, line, "%s = %s", x1, UnitTest_qstr(s1), NULL);
+		info("#AS", file, line, "%s = %s", x1, qstr(s1), NULL);
 
 	if	(*x2 != '"')
-		info("#AS", file, line, "%s = %s", x2, UnitTest_qstr(s2), NULL);
+		info("#AS", file, line, "%s = %s", x2, qstr(s2), NULL);
 
 	return r;
 }

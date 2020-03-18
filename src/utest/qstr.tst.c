@@ -3,7 +3,7 @@
 TEST_SUITE
 {
 	EXPECT_STR(UnitTest_qstr(0), "(null)");
-	EXPECT_STR(UnitTest_qstr("äöü"), "\"äöü\"");
+	EXPECT_STR(UnitTest_qstr(":ä:€:"), "\":\\303\\244:\\342\\202\\254:\"");
 	EXPECT_STR(UnitTest_qstr("a\tb"), "\"a\\tb\"");
 	EXPECT_STR(UnitTest_qstr("a\nb"), "\"a\\nb\"");
 	EXPECT_STR(UnitTest_qstr("a\fb"), "\"a\\fb\"");
