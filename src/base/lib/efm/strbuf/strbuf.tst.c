@@ -120,6 +120,54 @@ TEST_DECL(edit)
 	sb_free(&buf);
 }
 
+TEST_DECL(put)
+{
+	static STRBUF(buf, 4);
+	EXPECT_TRUE(sb_put('1', NULL) == EOF);
+	EXPECT_TRUE(sb_nputc('2', NULL, 2) == 0);
+	EXPECT_TRUE(sb_puts("abc", NULL) == 0);
+	EXPECT_TRUE(sb_nputs("xyz", 2, NULL) == 0);
+	EXPECT_TRUE(sb_rputs("ABC", NULL) == 0);
+
+	EXPECT_TRUE(sb_put('1', &buf) == '1');
+	EXPECT_TRUE(sb_nputc('2', &buf, 2) == 2);
+	EXPECT_TRUE(sb_puts("abc", &buf) == 3);
+	EXPECT_TRUE(sb_nputs("xyz", 2, &buf) == 2);
+	EXPECT_TRUE(sb_rputs("ABC", &buf) == 3);
+
+	EXPECT_TRUE(sb_put(EOF, &buf) == EOF);
+	EXPECT_TRUE(sb_puts(NULL, &buf) == 0);
+	EXPECT_TRUE(sb_nputs("xyz", 0, &buf) == 0);
+	EXPECT_TRUE(sb_nputs("", 2, &buf) == 0);
+	EXPECT_TRUE(sb_nputs(NULL, 2, &buf) == 0);
+	EXPECT_TRUE(sb_rputs(NULL, &buf) == 0);
+
+	EXPECT_STR(sb_nul(&buf), "122abcxyCBA");
+	sb_free(&buf);
+}
+
+TEST_DECL(putucs)
+{
+	static STRBUF(buf, 4);
+	EXPECT_TRUE(sb_putucs('c', NULL) == 0);
+	EXPECT_TRUE(sb_putucs(EOF, &buf) == 0);
+	EXPECT_TRUE(sb_putucs('a', &buf) == 1);
+	EXPECT_TRUE(sb_putucs(0177, &buf) == 1);
+	EXPECT_TRUE(sb_putucs('b', &buf) == 1);
+	EXPECT_TRUE(sb_putucs(0200, &buf) == 2);
+	EXPECT_TRUE(sb_putucs(03777, &buf) == 2);
+	EXPECT_TRUE(sb_putucs('c', &buf) == 1);
+	EXPECT_TRUE(sb_putucs(04000, &buf) == 3);
+	EXPECT_TRUE(sb_putucs('d', &buf) == 1);
+	EXPECT_TRUE(sb_putucs(0200000, &buf) == 4);
+	EXPECT_TRUE(sb_putucs('e', &buf) == 1);
+	EXPECT_TRUE(sb_putucs(010000000, &buf) == 0);
+
+	EXPECT_STR(sb_nul(&buf),
+		"a\177b\302\200\337\277c\340\240\200d\360\220\200\200e");
+	sb_free(&buf);
+}
+
 TEST_SUITE
 {
 	TEST_RUN(expand);
@@ -127,4 +175,6 @@ TEST_SUITE
 	TEST_RUN(pos);
 	TEST_RUN(acquire);
 	TEST_RUN(edit);
+	TEST_RUN(put);
+	TEST_RUN(putucs);
 }
