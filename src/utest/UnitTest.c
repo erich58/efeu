@@ -142,6 +142,7 @@ int main(int argc, char **argv)
 	runUnitTest();
 	printf("%s\t%d\t%d\t%d\t%s\n", UnitTest_name, count_good + count_bad,
 		count_good, count_bad, count_bad ? "FAILURE" : "SUCCESS");
+	fflush(stdout);
 	return count_bad ? 1 : 0;
 }
 

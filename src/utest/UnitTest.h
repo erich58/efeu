@@ -38,6 +38,8 @@ const char *UnitTest_tmpname(const char *name);
 const char *UnitTest_mkdir(const char *name);
 const char *UnitTest_mkfile(const char *name, const char *content);
 const char *UnitTest_content(const char *name);
+int UnitTest_stdout(const char *name_);
+int UnitTest_stderr(const char *name_);
 void UnitTest_tmpclean(void);
 
 int UnitTest_fork(const char *file, int line);
