@@ -62,6 +62,7 @@ TEST_DECL(callproc)
 	EXPECT(callproc("exit 5") == 5);
 	EXPECT(callproc("kill -15 $$") == 128 + 15);
 
+	UnitTest_stderr("");
 	EXPECT(callproc(UnitTest_tpl("@/x.sh")) == 127);
 	TEST_FILE("x.sh", "kill -2 $$\n");
 	EXPECT(callproc(UnitTest_tpl("@/x.sh")) == 126);

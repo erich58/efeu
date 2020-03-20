@@ -19,12 +19,15 @@ TEST_SUITE
 	}
 
 	CHILD_EXIT(0);
+
 	TEST_EXPR(ProgDir = mstrcpy(UnitTest_tmpname(NULL)));
 	EXPECT_FALSE(loadlib("undefined", "tst_init"));
 	EXPECT(loadlib("libsotest.so", NULL));
 	EXPECT(loadlib(UnitTest_tmpname("libsotest.so"), NULL));
 	EXPECT(loadlib("sotest", "tst_init"));
-	EXPECT_FALSE(loadlib("sotest", "undefined"));
+	UnitTest_stderr("stderr");
+	EXPECT(loadlib("sotest", "undefined") == 0);
+	MATCH_CONTENT("stderr", "^dlsym: ");
 
 	void *handle;
 	EXPECT((handle = so_open("sotest")) != NULL);
