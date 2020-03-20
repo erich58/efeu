@@ -32,46 +32,46 @@ TEST_DECL(getc)
 {
 	char *str = "Äa";
 	char *p = str;
-	EXPECT_TRUE(fmtkey_pgetc(&p) == 0xc3);
-	EXPECT_TRUE(fmtkey_pgetc(&p) == 0x84);
-	EXPECT_TRUE(fmtkey_pgetc(&p) == 'a');
-	EXPECT_TRUE(fmtkey_pgetc(&p) == EOF);
+	EXPECT(fmtkey_pgetc(&p) == 0xc3);
+	EXPECT(fmtkey_pgetc(&p) == 0x84);
+	EXPECT(fmtkey_pgetc(&p) == 'a');
+	EXPECT(fmtkey_pgetc(&p) == EOF);
 	p = str;
-	EXPECT_TRUE(fmtkey_pgetucs(&p) == 0xc4);
-	EXPECT_TRUE(fmtkey_pgetucs(&p) == 'a');
-	EXPECT_TRUE(fmtkey_pgetc(&p) == EOF);
+	EXPECT(fmtkey_pgetucs(&p) == 0xc4);
+	EXPECT(fmtkey_pgetucs(&p) == 'a');
+	EXPECT(fmtkey_pgetc(&p) == EOF);
 }
 
 TEST_DECL(sb_printf)
 {
 	StrBuf *sb = sb_create(2);
-	EXPECT_TRUE(sb_printf(sb, NULL) == 0);
-	EXPECT_TRUE(sb_printf(NULL, "%d", 42) == 0);
-	EXPECT_TRUE(sb_printf(sb, "%d", 42) == 2);
+	EXPECT(sb_printf(sb, NULL) == 0);
+	EXPECT(sb_printf(NULL, "%d", 42) == 0);
+	EXPECT(sb_printf(sb, "%d", 42) == 2);
 	EXPECT_STR(sb_nul(sb), "42");
-	EXPECT_TRUE(sb_xprintf(sb, "Ä") == 2);
+	EXPECT(sb_xprintf(sb, "Ä") == 2);
 	sb_destroy(sb);
 }
 
 TEST_DECL(sb_xprintf)
 {
 	StrBuf *sb = sb_create(2);
-	EXPECT_TRUE(sb_xprintf(sb, NULL) == 0);
-	EXPECT_TRUE(sb_xprintf(NULL, "%d", 42) == 0);
-	EXPECT_TRUE(sb_xprintf(sb, "%d", 42) == 2);
+	EXPECT(sb_xprintf(sb, NULL) == 0);
+	EXPECT(sb_xprintf(NULL, "%d", 42) == 0);
+	EXPECT(sb_xprintf(sb, "%d", 42) == 2);
 	EXPECT_STR(sb_nul(sb), "42");
-	EXPECT_TRUE(sb_xprintf(sb, "Ä") == 2);
+	EXPECT(sb_xprintf(sb, "Ä") == 2);
 	sb_destroy(sb);
 }
 
 TEST_DECL(sb_mbprintf)
 {
 	StrBuf *sb = sb_create(2);
-	EXPECT_TRUE(sb_mbprintf(sb, NULL) == 0);
-	EXPECT_TRUE(sb_mbprintf(NULL, "%d", 42) == 0);
-	EXPECT_TRUE(sb_mbprintf(sb, "%d", 42) == 2);
+	EXPECT(sb_mbprintf(sb, NULL) == 0);
+	EXPECT(sb_mbprintf(NULL, "%d", 42) == 0);
+	EXPECT(sb_mbprintf(sb, "%d", 42) == 2);
 	EXPECT_STR(sb_nul(sb), "42");
-	EXPECT_TRUE(sb_mbprintf(sb, "Ä") == 1);
+	EXPECT(sb_mbprintf(sb, "Ä") == 1);
 	sb_destroy(sb);
 }
 
@@ -178,14 +178,14 @@ TEST_DECL(xfmt)
 	ssize_t z;
 	intmax_t j;
 	ptrdiff_t t;
-	fmt("a%hhn", &c); EXPECT_TRUE(c == 1);
-	fmt("ab%hn", &h); EXPECT_TRUE(h == 2);
-	fmt("abc%n", &d); EXPECT_TRUE(d == 3);
-	fmt("abcd%ln", &l); EXPECT_TRUE(l == 4);
-	fmt("abcde%lln", &ll); EXPECT_TRUE(ll == 5);
-	fmt("abcdef%zn", &z); EXPECT_TRUE(z == 6);
-	fmt("abcdefg%jn", &j); EXPECT_TRUE(j == 7);
-	fmt("abcdefgh%tn", &t); EXPECT_TRUE(t == 8);
+	fmt("a%hhn", &c); EXPECT(c == 1);
+	fmt("ab%hn", &h); EXPECT(h == 2);
+	fmt("abc%n", &d); EXPECT(d == 3);
+	fmt("abcd%ln", &l); EXPECT(l == 4);
+	fmt("abcde%lln", &ll); EXPECT(ll == 5);
+	fmt("abcdef%zn", &z); EXPECT(z == 6);
+	fmt("abcdefg%jn", &j); EXPECT(j == 7);
+	fmt("abcdefgh%tn", &t); EXPECT(t == 8);
 }
 
 TEST_DECL(divergend)

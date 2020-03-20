@@ -90,11 +90,11 @@ UnitTest_info(__FILE__, __LINE__, \
 UnitTest_info(__FILE__, __LINE__, \
 	"%s -> %s", # expr, UnitTest_qstr(expr))
 
-#define	EXPECT_TRUE(expr) \
+#define	EXPECT(expr) \
 UnitTest_result(__FILE__,__LINE__, (expr), "%s", # expr)
 
-#define	ASSERT_TRUE(expr) \
-UnitTest_assert(EXPECT_TRUE(expr))
+#define	ASSERT(expr) \
+UnitTest_assert(EXPECT(expr))
 
 #define	EXPECT_FALSE(expr) \
 UnitTest_result(__FILE__,__LINE__, !(expr), "!(%s)", # expr)

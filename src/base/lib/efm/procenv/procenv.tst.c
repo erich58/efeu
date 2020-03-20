@@ -6,14 +6,14 @@
 TEST_DECL(mkpath)
 {
 	STRBUF(buf, 256);
-	EXPECT_TRUE(mkpath_bin(&buf, "bin", "lib", "else", NULL));
+	EXPECT(mkpath_bin(&buf, "bin", "lib", "else", NULL));
 	EXPECT_STR(sb_nul(&buf), "lib:else");
 	sb_clean(&buf);
 	EXPECT_FALSE(mkpath_bin(&buf, "x", "lib", "else", NULL));
 	EXPECT_STR(sb_nul(&buf), "");
 	EXPECT_FALSE(mkpath_bin(&buf, "bin32", "lib", "else", NULL));
 	EXPECT_STR(sb_nul(&buf), "");
-	EXPECT_TRUE(mkpath_bin(&buf, "x/bin", "lib", "else", NULL));
+	EXPECT(mkpath_bin(&buf, "x/bin", "lib", "else", NULL));
 	EXPECT_STR(sb_nul(&buf), "x/lib:x/else");
 
 	char *path = mstrcpy(getenv("PATH")); /* Save PATH */
@@ -51,52 +51,52 @@ static void c_exit()
 TEST_DECL(callproc)
 {
 	Shell = "true";
-	EXPECT_TRUE(callproc(NULL) == 0);
+	EXPECT(callproc(NULL) == 0);
 	Shell = NULL;
-	EXPECT_TRUE(callproc(NULL) == -1);
+	EXPECT(callproc(NULL) == -1);
 	callproc_init = c_init;
 	callproc_exit = c_exit;
-	EXPECT_TRUE(callproc("true") == 0);
-	EXPECT_TRUE(c_flags == 3);
+	EXPECT(callproc("true") == 0);
+	EXPECT(c_flags == 3);
 
-	EXPECT_TRUE(callproc("exit 5") == 5);
-	EXPECT_TRUE(callproc("kill -15 $$") == 128 + 15);
+	EXPECT(callproc("exit 5") == 5);
+	EXPECT(callproc("kill -15 $$") == 128 + 15);
 
-	EXPECT_TRUE(callproc(UnitTest_tpl("@/x.sh")) == 127);
+	EXPECT(callproc(UnitTest_tpl("@/x.sh")) == 127);
 	TEST_FILE("x.sh", "kill -2 $$\n");
-	EXPECT_TRUE(callproc(UnitTest_tpl("@/x.sh")) == 126);
-	EXPECT_TRUE(callproc(UnitTest_tpl("sh @/x.sh")) == 128 + 2);
+	EXPECT(callproc(UnitTest_tpl("@/x.sh")) == 126);
+	EXPECT(callproc(UnitTest_tpl("sh @/x.sh")) == 128 + 2);
 	PRINT_INT(callproc(UnitTest_tpl("sh @/x.sh")));
-	EXPECT_TRUE(callproc(UnitTest_tpl("chmod a+x @/x.sh")) == 0);
-	EXPECT_TRUE(callproc(UnitTest_tpl("@/x.sh")) == 128 + 2);
+	EXPECT(callproc(UnitTest_tpl("chmod a+x @/x.sh")) == 0);
+	EXPECT(callproc(UnitTest_tpl("@/x.sh")) == 128 + 2);
 	PRINT_INT(callproc(UnitTest_tpl("@/x.sh")));
 }
 
 TEST_DECL(Resource)
 {
-	EXPECT_TRUE(GetResource("Version", NULL) == NULL);
+	EXPECT(GetResource("Version", NULL) == NULL);
 	SetVersion("2.5");
 	EXPECT_STR(GetResource("Version", NULL), "2.5");
 	SetVersion("$ 4.8 $");
 	EXPECT_STR(GetResource("Version", NULL), "4.8");
 	SetResource("IntValue", "42");
-	EXPECT_TRUE(GetIntResource("IntValue", 0) == 42);
+	EXPECT(GetIntResource("IntValue", 0) == 42);
 
 	EXPECT_STR(GetResource("Undefined", "Default"), "Default");
 	EXPECT_STR(GetResource(NULL, "Default"), "Default");
-	EXPECT_TRUE(GetIntResource(NULL, 123) == 123);
+	EXPECT(GetIntResource(NULL, 123) == 123);
 
-	EXPECT_TRUE(GetFlagResource("Flag") == 0);
+	EXPECT(GetFlagResource("Flag") == 0);
 	SetResource("Flag", "1");
-	EXPECT_TRUE(GetFlagResource("Flag") == 1);
+	EXPECT(GetFlagResource("Flag") == 1);
 	SetResource("Flag", "false");
-	EXPECT_TRUE(GetFlagResource("Flag") == 0);
+	EXPECT(GetFlagResource("Flag") == 0);
 	SetResource("Flag", "true");
-	EXPECT_TRUE(GetFlagResource("Flag") == 1);
+	EXPECT(GetFlagResource("Flag") == 1);
 	SetResource("Flag", "");
-	EXPECT_TRUE(GetFlagResource("Flag") == 0);
+	EXPECT(GetFlagResource("Flag") == 0);
 	SetResource("Flag", "T");
-	EXPECT_TRUE(GetFlagResource("Flag") == 1);
+	EXPECT(GetFlagResource("Flag") == 1);
 
 	TEST_FILE("dummy.cnf",
 		"o|Option = TEST\n\tOption\n"
@@ -110,7 +110,7 @@ TEST_DECL(Resource)
 		int nargs = 3;
 		SetApplPath(UnitTest_tmpname(NULL));
 		ParseCommand(&nargs, args);
-		EXPECT_TRUE(nargs == 2);
+		EXPECT(nargs == 2);
 		EXPECT_STR(GetResource("Option", NULL), "TEST");
 		EXPECT_STR(args[1], "arg");
 		TEST_EXIT;

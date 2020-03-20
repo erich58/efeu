@@ -3,22 +3,22 @@
 
 TEST_SUITE
 {
-	EXPECT_TRUE(!isnan(0.));
-	EXPECT_TRUE(!isinf(0.));
+	EXPECT(!isnan(0.));
+	EXPECT(!isinf(0.));
 
-	EXPECT_TRUE(!isnan(-1./0.));
-	EXPECT_TRUE(isnan(0./0.));
-	EXPECT_TRUE(!isnan(1./0.));
+	EXPECT(!isnan(-1./0.));
+	EXPECT(isnan(0./0.));
+	EXPECT(!isnan(1./0.));
 
-	EXPECT_TRUE(isinf(-1./0.));
-	EXPECT_TRUE(!isinf(0./0.));
-	EXPECT_TRUE(isinf(1./0.));
+	EXPECT(isinf(-1./0.));
+	EXPECT(!isinf(0./0.));
+	EXPECT(isinf(1./0.));
 
-	EXPECT_TRUE(isnan(ExceptionValue(0.)));
-	EXPECT_TRUE(isinf(ExceptionValue(1.)));
-	EXPECT_TRUE(isinf(ExceptionValue(-1.)));
+	EXPECT(isnan(ExceptionValue(0.)));
+	EXPECT(isinf(ExceptionValue(1.)));
+	EXPECT(isinf(ExceptionValue(-1.)));
 
-	EXPECT_TRUE(ExceptionValue(-1.) < 0.);
-	EXPECT_TRUE(ExceptionValue(1.) > 0.);
-	EXPECT_TRUE(ExceptionValue(0.) != ExceptionValue(0.));
+	EXPECT(ExceptionValue(-1.) < 0.);
+	EXPECT(ExceptionValue(1.) > 0.);
+	EXPECT(ExceptionValue(0.) != ExceptionValue(0.));
 }

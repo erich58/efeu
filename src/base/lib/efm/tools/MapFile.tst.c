@@ -9,16 +9,16 @@ TEST_SUITE
 	SetProgName(UnitTest_name);
 
 	MapFile *map;
-	EXPECT_TRUE(MapFile_open("/unknown file") == NULL);
-	EXPECT_TRUE(MapFile_open(".") == NULL);
+	EXPECT(MapFile_open("/unknown file") == NULL);
+	EXPECT(MapFile_open(".") == NULL);
 
 	map = MapFile_open(UnitTest_tmpname("data"));
-	EXPECT_TRUE(map == NULL);
+	EXPECT(map == NULL);
 
 	TEST_FILE("data", TEST_DATA);
 	map = MapFile_open(UnitTest_tmpname("data"));
 	PRINT_STR(rd_ident(map));
-	EXPECT_TRUE(map != NULL);
+	EXPECT(map != NULL);
 	EXPECT_STR(map->data, TEST_DATA);
-	EXPECT_TRUE(rd_deref(map) == NULL);
+	EXPECT(rd_deref(map) == NULL);
 }

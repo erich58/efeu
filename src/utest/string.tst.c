@@ -17,14 +17,14 @@ TEST_SUITE
 	UnitTest_puts("abc", &buf);
 	UnitTest_printf(&buf, "%*s", 2000, "");
 	UnitTest_puts("xyz", &buf);
-	EXPECT_TRUE(buf.size == 3 + 2000 + 3);
+	EXPECT(buf.size == 3 + 2000 + 3);
 	buf.size = 4;
 	EXPECT_STR(UnitTest_cstr(&buf), "abc ");
 
 	UnitTest_free(&buf);
-	EXPECT_TRUE(buf.data == NULL);
-	EXPECT_TRUE(buf.size == 0);
-	EXPECT_TRUE(buf.capacity == 0);
+	EXPECT(buf.data == NULL);
+	EXPECT(buf.size == 0);
+	EXPECT(buf.capacity == 0);
 	TEST_EXPR(UnitTest_putc('a', NULL));
 	TEST_EXPR(UnitTest_puts("abc", NULL));
 	TEST_EXPR(UnitTest_printf(NULL, "%d", 42));

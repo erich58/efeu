@@ -89,11 +89,11 @@ TEST_DECL(setup)
 	LogUpdate(ErrLog);
 	int sync = ErrLog->sync;
 	EXPECT_STR(config(NULL), "EWNidt-Nd");
-	EXPECT_TRUE(nlog->sync == sync);
+	EXPECT(nlog->sync == sync);
 	EXPECT_STR(config(""), "EWNidt-Nd");
-	EXPECT_TRUE(nlog->sync == ++sync);
+	EXPECT(nlog->sync == ++sync);
 	EXPECT_STR(config(" "), "EWNidt-Nd");
-	EXPECT_TRUE(dlog->sync == ++sync);
+	EXPECT(dlog->sync == ++sync);
 }
 
 TEST_DECL(LogLevel)
@@ -101,7 +101,7 @@ TEST_DECL(LogLevel)
 	int i;
 
 	for (i = 0; i <= LOGLEVEL_TRACE; i++)
-		EXPECT_TRUE(LogLevelIndex(LogLevelName(i)) == i);
+		EXPECT(LogLevelIndex(LogLevelName(i)) == i);
 
 	EXPECT_STR(LogLevelName(LOGLEVEL_ERR), "err");
 	EXPECT_STR(LogLevelName(LOGLEVEL_WARN), "warn");
@@ -111,23 +111,23 @@ TEST_DECL(LogLevel)
 	EXPECT_STR(LogLevelName(LOGLEVEL_TRACE), "trace");
 	EXPECT_STR(LogLevelName(0), "none");
 	EXPECT_STR(LogLevelName(99), "none");
-	EXPECT_TRUE(LogLevelIndex("anything") == 0);
+	EXPECT(LogLevelIndex("anything") == 0);
 }
 
 TEST_DECL(LogControl)
 {
 	EXPECT_STR(logid(ErrLog), ".err");
-	EXPECT_TRUE(check_stdlog(ErrLog, LOGLEVEL_ERR, 1));
+	EXPECT(check_stdlog(ErrLog, LOGLEVEL_ERR, 1));
 	EXPECT_STR(logid(WarnLog), ".warn");
-	EXPECT_TRUE(check_stdlog(WarnLog, LOGLEVEL_WARN, 1));
+	EXPECT(check_stdlog(WarnLog, LOGLEVEL_WARN, 1));
 	EXPECT_STR(logid(NoteLog), ".note");
-	EXPECT_TRUE(check_stdlog(NoteLog, LOGLEVEL_NOTE, 1));
+	EXPECT(check_stdlog(NoteLog, LOGLEVEL_NOTE, 1));
 	EXPECT_STR(logid(InfoLog), ".info");
-	EXPECT_TRUE(check_stdlog(InfoLog, LOGLEVEL_INFO, 0));
+	EXPECT(check_stdlog(InfoLog, LOGLEVEL_INFO, 0));
 	EXPECT_STR(logid(DebugLog), ".debug");
-	EXPECT_TRUE(check_stdlog(DebugLog, LOGLEVEL_DEBUG, 0));
+	EXPECT(check_stdlog(DebugLog, LOGLEVEL_DEBUG, 0));
 	EXPECT_STR(logid(TraceLog), ".trace");
-	EXPECT_TRUE(check_stdlog(TraceLog, LOGLEVEL_TRACE, 0));
+	EXPECT(check_stdlog(TraceLog, LOGLEVEL_TRACE, 0));
 
 	EXPECT_STR(config("+"), "EWNIdt-Nd");
 	EXPECT_STR(config("+"), "EWNIDt-ND");
@@ -192,38 +192,38 @@ TEST_DECL(LogOutput)
 	const char *logfile;
 	IO *out;
 	
-	EXPECT_TRUE((logfile = UnitTest_tmpname("log")) != NULL);
+	EXPECT((logfile = UnitTest_tmpname("log")) != NULL);
 	EXPECT_STR(config(""), "EWNidt-Nd");
-	EXPECT_TRUE(LogOpen(dlog) == NULL);
+	EXPECT(LogOpen(dlog) == NULL);
 
 	EXPECT_STR(fconfig("@ 'X'.debug=%s", logfile), "EWNidt-ND");
-	EXPECT_TRUE(log_check(NULL));
-	EXPECT_TRUE((out = LogOpen(dlog)) != NULL);
+	EXPECT(log_check(NULL));
+	EXPECT((out = LogOpen(dlog)) != NULL);
 	io_puts("TEST\n", out);
 	io_close(out);
-	EXPECT_TRUE(log_check("TEST\n"));
+	EXPECT(log_check("TEST\n"));
 
 	log_printf(dlog, "ABC\n");
-	EXPECT_TRUE(log_check("TEST\nABC\n"));
+	EXPECT(log_check("TEST\nABC\n"));
 	EXPECT_CONTENT("log", "TEST\nABC\n");
 
 	EXPECT_STR(fconfig("@X.debug=%s[time]", logfile), "EWNidt-ND");
 	log_printf(dlog, "X\n");
-	EXPECT_TRUE(log_check("####-##-## ##:##:##.###### X\n"));
+	EXPECT(log_check("####-##-## ##:##:##.###### X\n"));
 
 	EXPECT_STR(fconfig("X.debug=[utf8]%s", logfile), "EWNidt-ND");
 	log_printf(dlog, "Ä\n");
-	EXPECT_TRUE(log_check("Ä\n"));
+	EXPECT(log_check("Ä\n"));
 
 	EXPECT_STR(fconfig("@X.debug=%s[time,latin9]", logfile), "EWNidt-ND");
 	log_printf(dlog, "Ä\n");
-	EXPECT_TRUE(log_check("####-##-## ##:##:##.###### \304\n"));
+	EXPECT(log_check("####-##-## ##:##:##.###### \304\n"));
 
 	EXPECT_STR(fconfig("@ =%s", logfile), "EWNidt-Nd");
 	log_printf(NoteLog, "NOTE\n");
 	va_list list;
 	log_vprintf(nlog, "X\n", list);
-	EXPECT_TRUE(log_check("NOTE\nX\n"));
+	EXPECT(log_check("NOTE\nX\n"));
 }
 
 TEST_DECL(LogOutputStat)
@@ -279,13 +279,13 @@ TEST_DECL(log_file)
 	const char *logfile;
 	FILE *file;
 	
-	EXPECT_TRUE((logfile = UnitTest_tmpname("log")) != NULL);
+	EXPECT((logfile = UnitTest_tmpname("log")) != NULL);
 	EXPECT_STR(fconfig("@X.debug=%s[time]", logfile), "EWNidt-ND");
-	EXPECT_TRUE((file = log_file(dlog)) != NULL);
+	EXPECT((file = log_file(dlog)) != NULL);
 	fprintf(file, "TEST\n");
 	fileclose(file);
 	usleep(1000); /* Wait for log child */
-	EXPECT_TRUE(log_check("####-##-## ##:##:##.###### TEST\n"));
+	EXPECT(log_check("####-##-## ##:##:##.###### TEST\n"));
 }
 
 TEST_DECL(GetFormat)
@@ -308,7 +308,7 @@ TEST_DECL(GetFormat)
 	EXPECT_STR(GetFormat("[%tstfmt]ABC"), "XYZ");
 
 	IO *io;
-	EXPECT_TRUE((io = io_fileopen(UnitTest_tmpname("tst.msg"), "r")) != NULL);
+	EXPECT((io = io_fileopen(UnitTest_tmpname("tst.msg"), "r")) != NULL);
 	FormatTabLoad(io, "tst2", EOF);
 	EXPECT_STR(GetFormat("[tst2:1]ABC"), "Fehlermeldung");
 	io_close(io);

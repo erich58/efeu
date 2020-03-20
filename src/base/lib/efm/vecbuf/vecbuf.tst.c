@@ -119,23 +119,23 @@ TEST_DECL(basic)
 	IVAL(vb_next(&vbuf)) = 1;
 	IVAL(vb_next(&vbuf)) = 5;
 	IVAL(vb_insert(&vbuf, 1, 1)) = 10;
-	EXPECT_TRUE(vb_insert(&vbuf, 1, 0) == NULL);
-	EXPECT_TRUE(vb_insert(&vbuf, 4, 1) == NULL);
+	EXPECT(vb_insert(&vbuf, 1, 0) == NULL);
+	EXPECT(vb_insert(&vbuf, 4, 1) == NULL);
 	*((int *) vb_next(&vbuf)) = 2;
-	EXPECT_TRUE(vb_size(&vbuf) == 4);
+	EXPECT(vb_size(&vbuf) == 4);
 
 	int *v = vb_data(&vbuf, 0);
 	EXPECT_STR(vbinfo(&vbuf), "4: 1 10 5 2");
 
 	v = vb_delete(&vbuf, 1, 2);
-	EXPECT_TRUE(v[0] + v[1] == 15); // Reihenfolge nicht definiert
-	EXPECT_TRUE(vb_delete(&vbuf, 4, 1) == NULL);
+	EXPECT(v[0] + v[1] == 15); // Reihenfolge nicht definiert
+	EXPECT(vb_delete(&vbuf, 4, 1) == NULL);
 	IVAL(vb_insert(&vbuf, 0, 1)) = 3;
-	EXPECT_TRUE(IVAL(vb_data(&vbuf, 2)) == 2);
+	EXPECT(IVAL(vb_data(&vbuf, 2)) == 2);
 
 	vb_clean(&vbuf, vclean);
 	vb_free(&vbuf);
-	EXPECT_TRUE(1);
+	EXPECT(1);
 }
 
 #define	D1	"a1a2a3a4"
@@ -144,21 +144,21 @@ TEST_DECL(basic)
 TEST_DECL(copy)
 {
 	VecBuf *buf = vb_create(8, 2);
-	EXPECT_TRUE(vb_copy(NULL, D1, 4) == NULL);
-	EXPECT_TRUE(vb_copy(buf, NULL, 0) == NULL);
-	EXPECT_TRUE(memcmp(vb_copy(buf, D1, 4), D1, 8) == 0);
+	EXPECT(vb_copy(NULL, D1, 4) == NULL);
+	EXPECT(vb_copy(buf, NULL, 0) == NULL);
+	EXPECT(memcmp(vb_copy(buf, D1, 4), D1, 8) == 0);
 
 	void *last = buf->data;
-	EXPECT_TRUE(vb_append(NULL, D2, 2) == NULL);
-	EXPECT_TRUE(vb_append(buf, NULL, 0) == last);
-	EXPECT_TRUE(memcmp(vb_append(buf, D2, 2), D1 D2, 12) == 0);
+	EXPECT(vb_append(NULL, D2, 2) == NULL);
+	EXPECT(vb_append(buf, NULL, 0) == last);
+	EXPECT(memcmp(vb_append(buf, D2, 2), D1 D2, 12) == 0);
 
-	EXPECT_TRUE(vb_fetch(NULL, NULL) == NULL);
+	EXPECT(vb_fetch(NULL, NULL) == NULL);
 	void *d = vb_fetch(buf, NULL);
-	EXPECT_TRUE(d != NULL);
-	EXPECT_TRUE(memcmp(d, D1 D2, 12) == 0);
+	EXPECT(d != NULL);
+	EXPECT(memcmp(d, D1 D2, 12) == 0);
 	vb_delete(buf, 0, 4);
-	EXPECT_TRUE(memcmp(vb_fetch(buf, d), D2, 4) == 0);
+	EXPECT(memcmp(vb_fetch(buf, d), D2, 4) == 0);
 	memfree(d);
 	vb_destroy(buf);
 }
@@ -181,11 +181,11 @@ TEST_DECL(qsort)
 
 	v = vb_data(&buf, 0);
 	n = vb_size(&buf);
-	EXPECT_TRUE(vsplit(v, n, sizeof v[0], NULL) == 7);
+	EXPECT(vsplit(v, n, sizeof v[0], NULL) == 7);
 	EXPECT_STR(vinfo(v, n), "7: 1 5 1 3 8 4 2");
-	EXPECT_TRUE(vsplit(v, n, sizeof v[0], gt_3) == 3);
+	EXPECT(vsplit(v, n, sizeof v[0], gt_3) == 3);
 	MATCH_STR(vinfo(v, n), "7: [458] [458] [458] [123] [123] [123] [123]");
-	EXPECT_TRUE(vsplit(v, n, sizeof v[0], le_4) == 5);
+	EXPECT(vsplit(v, n, sizeof v[0], le_4) == 5);
 	MATCH_STR(vinfo(v, n), "7: [1-4] [1-4] [1-4] [1-4] [1-4] [58] [58]");
 
 	vb_qsort(&buf, vcomp);
@@ -197,19 +197,19 @@ TEST_DECL(qsort)
 
 	v = vb_data(&buf, 0);
 	n = vb_size(&buf);
-	EXPECT_TRUE(svsplit(v, n, sizeof v[0], le_4) == 4);
-	EXPECT_TRUE(svsplit(v, n, sizeof v[0], le_2) == 2);
+	EXPECT(svsplit(v, n, sizeof v[0], le_4) == 4);
+	EXPECT(svsplit(v, n, sizeof v[0], le_2) == 2);
 	EXPECT_STR(vinfo(v, n), "6: 1 2 3 4 5 8");
 
 	key = 7;
-	EXPECT_TRUE(vb_bsearch(&buf, &key, vcomp) == NULL);
-	EXPECT_TRUE(bsearch(&key, v, n, sizeof v[0], vcomp) == NULL);
+	EXPECT(vb_bsearch(&buf, &key, vcomp) == NULL);
+	EXPECT(bsearch(&key, v, n, sizeof v[0], vcomp) == NULL);
 	key = 3;
-	EXPECT_TRUE(IVAL(vb_bsearch(&buf, &key, vcomp)) == 3);
-	EXPECT_TRUE(IVAL(bsearch(&key, v, n, sizeof v[0], vcomp)) == 3);
+	EXPECT(IVAL(vb_bsearch(&buf, &key, vcomp)) == 3);
+	EXPECT(IVAL(bsearch(&key, v, n, sizeof v[0], vcomp)) == 3);
 
 	VecMatch m = vmatch(mkey(0, 0), v, n, sizeof v[0], NULL);
-	EXPECT_TRUE(m.start == 0 && m.end == n);
+	EXPECT(m.start == 0 && m.end == n);
 
 	EXPECT_STR(minfo(&buf, 0, 0), "6[0,0]: [ ] 1 2 3 4 5 8");
 	EXPECT_STR(minfo(&buf, 10, 10), "6[6,6]: 1 2 3 4 5 8 [ ]");

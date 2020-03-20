@@ -6,7 +6,7 @@ TEST_SUITE
 	TEST_FORK
 	{
 		PRINT_LABEL("Child");
-		EXPECT_TRUE(0);
+		EXPECT(0);
 		TEST_EXIT;
 	}
 

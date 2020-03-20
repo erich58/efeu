@@ -26,52 +26,52 @@ static void sig_exit(int sig)
 
 TEST_DECL(sizealign)
 {
-	EXPECT_TRUE(sizealign(0, 4) == 0);
-	EXPECT_TRUE(sizealign(1, 4) == 4);
-	EXPECT_TRUE(sizealign(4, 4) == 4);
-	EXPECT_TRUE(sizealign(5, 4) == 8);
-	EXPECT_TRUE(sizealign(123456, 1000) == 124000);
+	EXPECT(sizealign(0, 4) == 0);
+	EXPECT(sizealign(1, 4) == 4);
+	EXPECT(sizealign(4, 4) == 4);
+	EXPECT(sizealign(5, 4) == 8);
+	EXPECT(sizealign(123456, 1000) == 124000);
 }
 
 TEST_DECL(alloctab)
 {
 	EXPECT_STR(tab.name, "AllocTabTest");
-	EXPECT_TRUE(tab.blksize == 2);
-	EXPECT_TRUE(tab.elsize == sizeof(AllocTabList));
-	EXPECT_TRUE(tab.nfree == 0);
-	EXPECT_TRUE(tab.nused == 0);
-	EXPECT_TRUE(tab.blklist == NULL);
-	EXPECT_TRUE(tab.freelist == NULL);
-	EXPECT_TRUE(tab.chain == NULL);
+	EXPECT(tab.blksize == 2);
+	EXPECT(tab.elsize == sizeof(AllocTabList));
+	EXPECT(tab.nfree == 0);
+	EXPECT(tab.nused == 0);
+	EXPECT(tab.blklist == NULL);
+	EXPECT(tab.freelist == NULL);
+	EXPECT(tab.chain == NULL);
 	void *p;
-	EXPECT_TRUE((p = new_data(&tab)) != NULL);
-	EXPECT_TRUE(tab.nfree == 1);
-	EXPECT_TRUE(tab.nused == 1);
+	EXPECT((p = new_data(&tab)) != NULL);
+	EXPECT(tab.nfree == 1);
+	EXPECT(tab.nused == 1);
 
-	if	(EXPECT_TRUE(tab.blklist != NULL))
-		EXPECT_TRUE(tab.blklist->next == NULL);
+	if	(EXPECT(tab.blklist != NULL))
+		EXPECT(tab.blklist->next == NULL);
 
-	if	(EXPECT_TRUE(tab.freelist != NULL))
-		EXPECT_TRUE(tab.freelist->next == NULL);
+	if	(EXPECT(tab.freelist != NULL))
+		EXPECT(tab.freelist->next == NULL);
 
-	EXPECT_TRUE(tab.chain != NULL);
-	EXPECT_TRUE(del_data(&tab, "x") == 0);
-	EXPECT_TRUE(tab.nfree == 1);
-	EXPECT_TRUE(tab.nused == 1);
-	EXPECT_TRUE(del_data(&tab, p) == 1);
-	EXPECT_TRUE(tab.freelist == p);
-	EXPECT_TRUE(tab.nfree == 2);
-	EXPECT_TRUE(tab.nused == 0);
+	EXPECT(tab.chain != NULL);
+	EXPECT(del_data(&tab, "x") == 0);
+	EXPECT(tab.nfree == 1);
+	EXPECT(tab.nused == 1);
+	EXPECT(del_data(&tab, p) == 1);
+	EXPECT(tab.freelist == p);
+	EXPECT(tab.nfree == 2);
+	EXPECT(tab.nused == 0);
 
-	EXPECT_TRUE(new_data(NULL) == NULL);
-	EXPECT_TRUE(del_data(NULL, NULL) == 1);
-	EXPECT_TRUE(del_data(NULL, "x") == 0);
+	EXPECT(new_data(NULL) == NULL);
+	EXPECT(del_data(NULL, NULL) == 1);
+	EXPECT(del_data(NULL, "x") == 0);
 
 	AllocTab_stat(out(), &tab, 1);
 	MATCH_STR(data(), "^AllocTabTest");
 
 	clear_log("error.log");
-	EXPECT_TRUE(del_data(&tab, p) == 0);
+	EXPECT(del_data(&tab, p) == 0);
 	MATCH_CONTENT("error.log",
 		"alloctab.AllocTabTest.: Pointer [^ ]* already released.\n");
 
@@ -81,17 +81,17 @@ TEST_DECL(lmalloc)
 {
 	char *p = NULL;
 
-	EXPECT_TRUE((p = lrealloc(p, 32)) != NULL);
+	EXPECT((p = lrealloc(p, 32)) != NULL);
 	PRINT_PTR(p);
-	EXPECT_TRUE((p = lrealloc(p, 64)) != NULL);
+	EXPECT((p = lrealloc(p, 64)) != NULL);
 	PRINT_PTR(p);
-	EXPECT_TRUE((p = lrealloc(p, 0)) == NULL);
+	EXPECT((p = lrealloc(p, 0)) == NULL);
 }
 
 TEST_DECL(memalloc)
 {
 	char *p = NULL;
-	EXPECT_TRUE((p = memalloc(8)) != NULL);
+	EXPECT((p = memalloc(8)) != NULL);
 	memfree(p);
 	memfree("a");
 	memfree(NULL);

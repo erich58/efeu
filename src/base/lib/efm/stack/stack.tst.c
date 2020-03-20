@@ -10,6 +10,6 @@ TEST_SUITE
 	EXPECT_STR(popstack(&stack, NULL), "c");
 	EXPECT_STR(popstack(&stack, NULL), "b");
 	EXPECT_STR(popstack(&stack, NULL), "a");
-	EXPECT_TRUE(stack == NULL);
+	EXPECT(stack == NULL);
 	EXPECT_STR(popstack(&stack, "x"), "x");
 }

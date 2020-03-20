@@ -9,17 +9,17 @@ TEST_DECL(base)
 {
 	StrPool *s = NewStrPool();
 	EXPECT_STR(cstr(rd_ident(s)), "8/8 + 0/0");
-	EXPECT_TRUE(StrPool_add(s, "abc") == 8);
-	EXPECT_TRUE(StrPool_add(s, "0123456789") == 8 + 4);
-	EXPECT_TRUE(StrPool_offset(s) == 23);
-	EXPECT_TRUE(StrPool_align(s, 4) == 16);
-	EXPECT_TRUE(StrPool_align(s, 8) == 16);
-	EXPECT_TRUE(StrPool_offset(s) == 24);
-	EXPECT_TRUE(StrPool_add(s, NULL) == 0);
-	EXPECT_TRUE(StrPool_xadd(s, NULL) == 24);
-	EXPECT_TRUE(StrPool_nadd(s, "abcdefg", 3) == 24 + 1);
+	EXPECT(StrPool_add(s, "abc") == 8);
+	EXPECT(StrPool_add(s, "0123456789") == 8 + 4);
+	EXPECT(StrPool_offset(s) == 23);
+	EXPECT(StrPool_align(s, 4) == 16);
+	EXPECT(StrPool_align(s, 8) == 16);
+	EXPECT(StrPool_offset(s) == 24);
+	EXPECT(StrPool_add(s, NULL) == 0);
+	EXPECT(StrPool_xadd(s, NULL) == 24);
+	EXPECT(StrPool_nadd(s, "abcdefg", 3) == 24 + 1);
 	EXPECT_STR(cstr(rd_ident(s)), "8/8 + 21/1000");
-	EXPECT_TRUE(StrPool_offset(s) == 29);
+	EXPECT(StrPool_offset(s) == 29);
 
 	EXPECT_STR(StrPool_get(s, 0), NULL);
 	EXPECT_STR(StrPool_mget(s, 0), NULL);
@@ -35,25 +35,25 @@ TEST_DECL(base)
 
 	StrPool *t = StrPool_map(UnitTest_tmpname("data"));
 	EXPECT_STR(cstr(rd_ident(t)), "8/29 + 0/0");
-	EXPECT_TRUE(StrPool_start(t) == 0);
-	EXPECT_TRUE(StrPool_next(t) == 8);
-	EXPECT_TRUE(StrPool_next(t) == 12);
-	EXPECT_TRUE(StrPool_next(t) == 23);
-	EXPECT_TRUE(StrPool_next(t) == 24);
-	EXPECT_TRUE(StrPool_next(t) == 25);
-	EXPECT_TRUE(StrPool_next(t) == 0);
-	EXPECT_TRUE(StrPool_copy(s, s, 8) == 8);
-	EXPECT_TRUE(StrPool_copy(t, s, 8) == 29);
+	EXPECT(StrPool_start(t) == 0);
+	EXPECT(StrPool_next(t) == 8);
+	EXPECT(StrPool_next(t) == 12);
+	EXPECT(StrPool_next(t) == 23);
+	EXPECT(StrPool_next(t) == 24);
+	EXPECT(StrPool_next(t) == 25);
+	EXPECT(StrPool_next(t) == 0);
+	EXPECT(StrPool_copy(s, s, 8) == 8);
+	EXPECT(StrPool_copy(t, s, 8) == 29);
 	EXPECT_STR(StrPool_get(t, 29), "abc");
 	EXPECT_STR(cstr(rd_ident(t)), "29/29 + 4/1000");
-	EXPECT_TRUE(StrPool_align(t, 2000) == 2000);
-	EXPECT_TRUE(StrPool_offset(t) == 2029);
+	EXPECT(StrPool_align(t, 2000) == 2000);
+	EXPECT(StrPool_offset(t) == 2029);
 	EXPECT_STR(cstr(rd_ident(t)), "29/29 + 2000/2000");
 
-	EXPECT_TRUE(StrPool_cmp(s, 8, s, 8) == 0);
-	EXPECT_TRUE(StrPool_cmp(s, 8, t, 29) == 0);
-	EXPECT_TRUE(StrPool_cmp(s, 12, t, 29) < 0);
-	EXPECT_TRUE(StrPool_cmp(s, 0, NULL, 29) == 0);
+	EXPECT(StrPool_cmp(s, 8, s, 8) == 0);
+	EXPECT(StrPool_cmp(s, 8, t, 29) == 0);
+	EXPECT(StrPool_cmp(s, 12, t, 29) < 0);
+	EXPECT(StrPool_cmp(s, 0, NULL, 29) == 0);
 
 	rd_deref(s);
 	rd_deref(t);
@@ -69,18 +69,18 @@ TEST_DECL(rw)
 	sb_putc(0, sb);
 	sb_puts("xyz", sb);
 	sb_putc(0, sb);
-	EXPECT_TRUE(sb_size(sb) == 20);
+	EXPECT(sb_size(sb) == 20);
 
 	StrPool *s = StrPool_alloc(20);
 	sb_setpos(sb, 0);
 	IO *io = io_strbuf(sb);
-	EXPECT_TRUE(StrPool_read(s, 10, io) == 10);
-	EXPECT_TRUE(StrPool_read(s, 10, io) == 10);
-	EXPECT_TRUE(StrPool_read(s, 10, io) == 0);
+	EXPECT(StrPool_read(s, 10, io) == 10);
+	EXPECT(StrPool_read(s, 10, io) == 10);
+	EXPECT(StrPool_read(s, 10, io) == 0);
 	io_close(io);
 	sb_destroy(sb);
 
-	EXPECT_TRUE(StrPool_add(s, "ABC")== 28);
+	EXPECT(StrPool_add(s, "ABC")== 28);
 
 	StrPool_dump(s, out());
 	EXPECT_STR(data(),
@@ -94,7 +94,7 @@ TEST_DECL(rw)
 		"     28 \"ABC\"\n"
 		"  ----- ------------\n");
 
-	EXPECT_TRUE(StrPool_write(s, out()) == 32);
+	EXPECT(StrPool_write(s, out()) == 32);
 	EXPECT_STR(data(), "StrPool");
 	EXPECT_STR(data() + 8, "abc");
 	EXPECT_STR(data() + 12, "1234567890");
@@ -136,7 +136,7 @@ TEST_DECL(out)
 
 	io_puts("ABC", io);
 	EXPECT_STR(rd_ident(io), "<StrPool>");
-	EXPECT_TRUE(io_rewind(io) == EOF);
+	EXPECT(io_rewind(io) == EOF);
 	io_close(io);
 
 	StrPool_printf(pool, "-%d-", 5);
@@ -153,7 +153,7 @@ TEST_DECL(out)
 		"  ----- ------------\n");
 	rd_deref(pool);
 
-	EXPECT_TRUE(StrPool_open(NULL) == NULL);
+	EXPECT(StrPool_open(NULL) == NULL);
 }
 
 TEST_SUITE

@@ -82,7 +82,7 @@ TEST_DECL(SetupInfo)
 	root.setup = f_setup;
 	EXPECT_STR(show(&root), "root[1]<-1> setup\n");
 	SetupInfo(&root);
-	EXPECT_TRUE(cnt_setup == 1);
+	EXPECT(cnt_setup == 1);
 	EXPECT_STR(dump(&root), "root[1]<-1>\n");
 
 	EXPECT_STR(cstr(rd_ident(&root)), "root");
@@ -104,26 +104,26 @@ TEST_DECL(SetupInfo)
 
 	rd_refer(i2);
 	EXPECT_STR(dump(&root), "root[2]<1>\n+x[2]<1>\n++y/z[2]<-1> func\n");
-	EXPECT_TRUE(rd_deref(i1) != NULL);
-	EXPECT_TRUE(rd_deref(i1) == NULL);
+	EXPECT(rd_deref(i1) != NULL);
+	EXPECT(rd_deref(i1) == NULL);
 	EXPECT_STR(show(i2), "y/z[1]<-1> func\n");
-	EXPECT_TRUE(i2->prev == NULL);
+	EXPECT(i2->prev == NULL);
 	EXPECT_STR(dump(&root), "root[1]<0>\n");
 }
 
 TEST_DECL(Default)
 {
 	InfoNode *root = rd_deref(GetInfo(NULL, NULL));
-	EXPECT_TRUE(root != NULL);
-	EXPECT_TRUE(root->refcount == 1);
+	EXPECT(root != NULL);
+	EXPECT(root->refcount == 1);
 
 	InfoNode *info;
 	TEST_EXPR(info = AddInfo(root, "a/b", "Label",
 		f_puts, "Description\n"));
 	TEST_EXPR(PrintInfo(out(), info));
 	EXPECT_STR(data(), "Label\nDescription\n");
-	EXPECT_TRUE(root->refcount == 2);
-	EXPECT_TRUE(info->refcount == 1);
+	EXPECT(root->refcount == 2);
+	EXPECT(info->refcount == 1);
 
 	TEST_EXPR(InfoName(out(), NULL, info));
 	EXPECT_STR(data(), "/a/b");
@@ -170,7 +170,7 @@ TEST_DECL(Default)
 	TEST_EXPR(info = GetInfo(NULL, "/a/./b/../"));
 	TEST_EXPR(PrintInfo(out(), info));
 	EXPECT_STR(data(), "\nb\tLabel\n");
-	EXPECT_TRUE(rd_deref(info) != NULL);
+	EXPECT(rd_deref(info) != NULL);
 
 	TEST_EXPR(info = AddInfo(NULL, "x/z\n\t\f\by-<|:>\\z",
 		"L<$$x>|\n", NULL, NULL));

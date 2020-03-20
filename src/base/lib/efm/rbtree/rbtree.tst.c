@@ -92,20 +92,20 @@ TEST_SUITE
 
 	EXPECT_FALSE(find(1));
 	add(1);
-	EXPECT_TRUE(find(1));
-	EXPECT_TRUE(count() == 1);
+	EXPECT(find(1));
+	EXPECT(count() == 1);
 	add(1);
 	add(1);
-	EXPECT_TRUE(count() == 1);
+	EXPECT(count() == 1);
 
 	EXPECT_FALSE(rbt_delete(&rbt, key(2)));
-	EXPECT_TRUE(rbt_delete(&rbt, key(1)));
-	EXPECT_TRUE(clean_count == 0);
-	EXPECT_TRUE(count() == 1);
-	EXPECT_TRUE(rbt_delete(&rbt, key(1)));
-	EXPECT_TRUE(rbt_delete(&rbt, key(1)));
-	EXPECT_TRUE(count() == 0);
-	EXPECT_TRUE(clean_count == 1);
+	EXPECT(rbt_delete(&rbt, key(1)));
+	EXPECT(clean_count == 0);
+	EXPECT(count() == 1);
+	EXPECT(rbt_delete(&rbt, key(1)));
+	EXPECT(rbt_delete(&rbt, key(1)));
+	EXPECT(count() == 0);
+	EXPECT(clean_count == 1);
 
 	for (i = 0; i < 20; i++)
 	{
@@ -114,19 +114,19 @@ TEST_SUITE
 		add(60 - i);
 	}
 
-	EXPECT_TRUE(check_order());
-	EXPECT_TRUE(count() == 60);
+	EXPECT(check_order());
+	EXPECT(count() == 60);
 	cnt = 0;
 	rbt_walk(&rbt, cvisit);
-	EXPECT_TRUE(cnt == 60);
+	EXPECT(cnt == 60);
 
 	clean_count = 0;
 
 	for (i = 20; i < 40; i++)
 		rbt_delete(&rbt, &i);
 
-	EXPECT_TRUE(clean_count == 20);
-	EXPECT_TRUE(count() == 40);
+	EXPECT(clean_count == 20);
+	EXPECT(count() == 40);
 	rbt_destroy(&rbt);
-	EXPECT_TRUE(count() == 0);
+	EXPECT(count() == 0);
 }

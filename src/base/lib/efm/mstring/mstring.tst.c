@@ -19,38 +19,38 @@ TEST_DECL(mbasename)
 	EXPECT_STR((b = mbasename("a/b.c", NULL)), "b.c");
 	EXPECT_STR((b = mbasename("/b.c", &s)), "b");
 	EXPECT_STR(s, "c");
-	EXPECT_TRUE(b + strlen(b) + 1 == s);
+	EXPECT(b + strlen(b) + 1 == s);
 }
 
 TEST_DECL(mstrcmp)
 {
 	char a[] = "a";
-	EXPECT_TRUE(mstrcmp(NULL, NULL) == 0);
-	EXPECT_TRUE(mstrcmp("", NULL) > 0);
-	EXPECT_TRUE(mstrcmp(NULL, "") < 0);
+	EXPECT(mstrcmp(NULL, NULL) == 0);
+	EXPECT(mstrcmp("", NULL) > 0);
+	EXPECT(mstrcmp(NULL, "") < 0);
 	PRINT_STR(a);
-	EXPECT_TRUE(mstrcmp(a, "a") == 0);
-	EXPECT_TRUE(mstrcmp(a, "x") < 0);
-	EXPECT_TRUE(mstrcmp("aa", a) > 0);
-	EXPECT_TRUE(mstrlen(NULL) == 0);
-	EXPECT_TRUE(mstrlen("abc") == 3);
+	EXPECT(mstrcmp(a, "a") == 0);
+	EXPECT(mstrcmp(a, "x") < 0);
+	EXPECT(mstrcmp("aa", a) > 0);
+	EXPECT(mstrlen(NULL) == 0);
+	EXPECT(mstrlen("abc") == 3);
 }
 
 TEST_DECL(mtestkey)
 {
 	char *p;
-	EXPECT_TRUE(mtestkey(NULL, NULL, NULL));
+	EXPECT(mtestkey(NULL, NULL, NULL));
 	EXPECT_FALSE(mtestkey(NULL, NULL, ""));
 	EXPECT_FALSE(mtestkey("abc", &p, NULL));
 	EXPECT_STR(p, "abc");
-	EXPECT_TRUE(mtestkey(" abc xyz", &p, "a?c"));
+	EXPECT(mtestkey(" abc xyz", &p, "a?c"));
 	EXPECT_STR(p, " xyz");
-	EXPECT_TRUE(mtestkey("\t abc", NULL, "ab:c"));
-	EXPECT_TRUE(mtestkey("ab", NULL, "ab:c"));
+	EXPECT(mtestkey("\t abc", NULL, "ab:c"));
+	EXPECT(mtestkey("ab", NULL, "ab:c"));
 	EXPECT_FALSE(mtestkey("a", NULL, "ab:c"));
 	EXPECT_FALSE(mtestkey("abx", NULL, "ab:c"));
-	EXPECT_TRUE(mtestkey("abxyz", NULL, "ab*"));
-	EXPECT_TRUE(mtestkey(" _a123_(xyz)", &p, "*"));
+	EXPECT(mtestkey("abxyz", NULL, "ab*"));
+	EXPECT(mtestkey(" _a123_(xyz)", &p, "*"));
 	EXPECT_STR(p, "(xyz)");
 }
 
@@ -132,9 +132,9 @@ TEST_DECL(mstrsplit)
 	EXPECT_STR(nextstr(&p), NULL);
 
 	char **tab;
-	EXPECT_TRUE(mstrsplit(NULL, "%s,", &tab) == 0);
-	EXPECT_TRUE(mstrsplit("a b", "%s,", NULL) == 0);
-	EXPECT_TRUE(mstrsplit(" , a b , , c", "%s,", &tab) == 5);
+	EXPECT(mstrsplit(NULL, "%s,", &tab) == 0);
+	EXPECT(mstrsplit("a b", "%s,", NULL) == 0);
+	EXPECT(mstrsplit(" , a b , , c", "%s,", &tab) == 5);
 	EXPECT_STR(tab[0], "");
 	EXPECT_STR(tab[1], "a");
 	EXPECT_STR(tab[2], "b");

@@ -42,7 +42,7 @@ TEST_SUITE
 
 	EXPECT_CONTENT("dir/file", "Testdaten\n");
 	MATCH_CONTENT("dir/file", "^Test");
-	EXPECT_TRUE(UnitTest_content(NULL) != NULL);
+	EXPECT(UnitTest_content(NULL) != NULL);
 	PRINT_STR(UnitTest_content(NULL));
 
 	TEST_FORK
@@ -68,7 +68,7 @@ TEST_SUITE
 
 	DIR *dir = opendir(UnitTest_tmpname("dir"));
 
-	if	(EXPECT_TRUE(dir != NULL))
+	if	(EXPECT(dir != NULL))
 	{
 		struct dirent *entry;
 
@@ -78,6 +78,6 @@ TEST_SUITE
 				EXPECT_STR(entry->d_name, "file");
 		}
 
-		EXPECT_TRUE(closedir(dir) == 0);
+		EXPECT(closedir(dir) == 0);
 	}
 }

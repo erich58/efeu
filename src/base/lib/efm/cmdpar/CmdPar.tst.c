@@ -119,11 +119,11 @@ TEST_DECL(read)
 	EXPECT_STR(CmdPar_getval(par, "C", "X"), "X");
 	EXPECT_STR(CmdPar_getval(par, "D", "X"), "X");
 	EXPECT_STR(CmdPar_getval(par, "X", "X"), "X");
-	EXPECT_TRUE(par->var.used == 7);
-	EXPECT_TRUE(par->def.used == 6);
-	EXPECT_TRUE(par->env.used == 1);
-	EXPECT_TRUE(par->opt.used == 4);
-	EXPECT_TRUE(par->arg.used == 4);
+	EXPECT(par->var.used == 7);
+	EXPECT(par->def.used == 6);
+	EXPECT(par->env.used == 1);
+	EXPECT(par->opt.used == 4);
+	EXPECT(par->arg.used == 4);
 
 	InfoNode *info = NewInfo(NULL, "info");
 	CmdPar_info(par, info);
@@ -219,15 +219,15 @@ d\n\tDDESC\n\
 TEST_DECL(Ptr)
 {
 	CmdPar *par = NULL;
-	EXPECT_TRUE((par = CmdPar_ptr(NULL)) != NULL);
-	EXPECT_TRUE(par->refcount == 1);
-	EXPECT_TRUE(par == CmdPar_ptr(NULL));
+	EXPECT((par = CmdPar_ptr(NULL)) != NULL);
+	EXPECT(par->refcount == 1);
+	EXPECT(par == CmdPar_ptr(NULL));
 	CmdPar_setval(par, NULL, "CmdPar");
 	EXPECT_STR(cstr(rd_ident(par)), "CmdPar");
 
 	CmdPar_setval(par, "a", "A");
 	CmdPar_setval(par, "b", "B");
-	EXPECT_TRUE(par->var.used == 2); 
+	EXPECT(par->var.used == 2); 
 
 	EXPECT_STR(CmdPar_getval(par, "b", "X"), "B");
 	EXPECT_STR(CmdPar_getval(NULL, "b", "X"), "B");
@@ -240,10 +240,10 @@ TEST_DECL(Ptr)
 
 	CmdParDef *def = CmdParDef_alloc();
 	CmdPar_add(par, def);
-	EXPECT_TRUE(par->def.used == 1); 
-	EXPECT_TRUE(par->arg.used == 0); 
-	EXPECT_TRUE(par->opt.used == 0); 
-	EXPECT_TRUE(par->env.used == 0); 
+	EXPECT(par->def.used == 1); 
+	EXPECT(par->arg.used == 0); 
+	EXPECT(par->opt.used == 0); 
+	EXPECT(par->env.used == 0); 
 
 	InfoNode *info = NewInfo(NULL, "CmdPar");
 	CmdPar_info(par, info);
@@ -255,7 +255,7 @@ TEST_DECL(Ptr)
 	EXPECT_STR(data(), "resources\na = \"A\"\n\tDescription");
 
 	CmdPar_clean(par);
-	EXPECT_TRUE(par->var.size == 0); 
+	EXPECT(par->var.size == 0); 
 }
 
 TEST_DECL(opt)

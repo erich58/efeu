@@ -46,15 +46,15 @@ TEST_DECL(assignarg)
 	AssignArg *arg;
 
 	rest = "X";
-	EXPECT_TRUE(assignarg(NULL, &rest, NULL) == NULL);
+	EXPECT(assignarg(NULL, &rest, NULL) == NULL);
 	EXPECT_STR(rest, NULL);
 
 	rest = "X";
-	EXPECT_TRUE(assignarg(" \t", &rest, NULL) == NULL);
+	EXPECT(assignarg(" \t", &rest, NULL) == NULL);
 	EXPECT_STR(rest, NULL);
 
 #define	ASSIGNARG(def, d, n, o, a, r)	\
-if	(EXPECT_TRUE((arg = assignarg(def, &rest, d)) != NULL)) { \
+if	(EXPECT((arg = assignarg(def, &rest, d)) != NULL)) { \
 	EXPECT_STR(arg->name, n); \
 	EXPECT_STR(arg->opt, o); \
 	EXPECT_STR(arg->arg, a); \

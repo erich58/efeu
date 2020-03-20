@@ -7,11 +7,11 @@
 TEST_SUITE
 {
 	DatPool *d = DatPool_dyn(4);
-	EXPECT_TRUE(d != NULL);
+	EXPECT(d != NULL);
 	EXPECT_STR(cstr(rd_ident(d)), "0@0 + 0@0/4");
-	EXPECT_TRUE(DatPool_add(d, "abc", 3) == 0);
-	EXPECT_TRUE(DatPool_add(d, "0123456789", 10) == 3);
-	EXPECT_TRUE(DatPool_add(d, "xyz", 4) == 13);
+	EXPECT(DatPool_add(d, "abc", 3) == 0);
+	EXPECT(DatPool_add(d, "0123456789", 10) == 3);
+	EXPECT(DatPool_add(d, "xyz", 4) == 13);
 	EXPECT_STR(DatPool_get(d, 0), "abc0123456789xyz");
 	EXPECT_STR(cstr(rd_ident(d)), "0@0 + 17@20/4");
 	DatPool_create(d, UnitTest_tmpname("data"));
@@ -19,14 +19,14 @@ TEST_SUITE
 
 	d = DatPool_map(UnitTest_tmpname("data"));
 	EXPECT_STR(cstr(rd_ident(d)), "0@17 + 0@0/0");
-	EXPECT_TRUE(DatPool_add(d, "ABC", 4) == 17);
+	EXPECT(DatPool_add(d, "ABC", 4) == 17);
 	EXPECT_STR(DatPool_get(d, 0), "abc0123456789xyz");
 	EXPECT_STR(DatPool_get(d, 17), "ABC");
 	EXPECT_STR(cstr(rd_ident(d)), "0@17 + 4@100000/0");
 	EXPECT_STR(DatPool_get(d, 16), "");
-	EXPECT_TRUE((char *)DatPool_get(d, 15) + 1 == DatPool_get(d, 16));
-	EXPECT_TRUE((char *)DatPool_get(d, 16) + 1 != DatPool_get(d, 17));
-	EXPECT_TRUE((char *)DatPool_get(d, 17) + 1 == DatPool_get(d, 18));
+	EXPECT((char *)DatPool_get(d, 15) + 1 == DatPool_get(d, 16));
+	EXPECT((char *)DatPool_get(d, 16) + 1 != DatPool_get(d, 17));
+	EXPECT((char *)DatPool_get(d, 17) + 1 == DatPool_get(d, 18));
 	EXPECT_STR(DatPool_get(d, 19), "C");
 	EXPECT_STR(DatPool_get(d, 20), "");
 	EXPECT_STR(DatPool_get(d, 21), NULL);
