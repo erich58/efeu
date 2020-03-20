@@ -92,7 +92,7 @@ int UnitTest_match(const char *a, const char *expr)
 	if	(n != 0)
 	{
 		regerror(n, &buf, err_buf, sizeof err_buf);
-		fprintf(stderr, "#ERROR\t%s\n", err_buf);
+		UnitTest_error("%s", err_buf);
 		regfree(&buf);
 		return neg;
 	}

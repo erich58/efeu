@@ -28,7 +28,9 @@ int UnitTest_strcmp(const char *s1, const char *s2);
 int UnitTest_match(const char *str, const char *expr);
 
 void UnitTest_expr(const char *file, int line, const char *expr);
+void UnitTest_test(const char *file, int line, const char *name);
 void UnitTest_info(const char *file, int line, const char *fmt, ...);
+void UnitTest_error(const char *fmt, ...);
 int UnitTest_result(const char *file, int line, int res, const char *fmt, ...);
 int UnitTest_strcheck(const char *file, int line, const char *op,
 	const char *s1, const char *s2, const char *x1, const char *x2);
@@ -56,7 +58,7 @@ extern char *UnitTest_name;
 #define TEST_SUITE	void runUnitTest(void)
 
 #define TEST_RUN(name)	\
-fprintf(stderr, "#TEST\t%s\n", # name), _test_ ## name ()
+UnitTest_test(NULL, 0, # name), _test_ ## name ()
 
 #define TEST_EXPR(expr)	\
 UnitTest_expr(__FILE__, __LINE__, # expr), (expr)

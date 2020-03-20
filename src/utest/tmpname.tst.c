@@ -4,7 +4,7 @@
 
 TEST_DECL(bad_path)
 {
-	freopen("/dev/null", "w", stderr);
+	UnitTest_stderr("/dev/null");
 	EXPECT_STR(UnitTest_mkfile("x/sub", NULL), NULL);
 }
 
@@ -13,7 +13,7 @@ TEST_SUITE
 	TEST_FORK
 	{
 		PRINT_LABEL("mktemp error");
-		freopen("/dev/null", "w", stderr);
+		UnitTest_stderr("/dev/null");
 		setenv("TMPDIR", "./bad/dir/name", 1);
 		UnitTest_tmpname(NULL);
 		exit(0);

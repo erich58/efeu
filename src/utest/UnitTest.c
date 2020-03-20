@@ -7,6 +7,8 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
 
 char *UnitTest_name = NULL;
 static int count_good = 0;
@@ -14,6 +16,77 @@ static int count_bad = 0;
 static int fork_depth = 0;
 
 typedef void (*runFunction)(void);
+
+/* Redirektion
+*/
+
+static int real_stdout = 1;
+static int real_stderr = 2;
+
+static int reopen_fd(int fd, const char *name)
+{
+	switch (*name)
+	{
+	case 0:
+		name = "/dev/null";
+		break;
+	case '.':
+	case '/':
+		break;
+	default:
+		name = UnitTest_tmpname(name);
+		break;
+	}
+
+	int fdnew = creat(name, 0644);
+
+	if	(fdnew < 0)
+	{
+		UnitTest_error("%s: %s", name, strerror(errno));
+		return 0;
+	}
+
+	dup2(fdnew, fd);
+	return 1;
+}
+
+int UnitTest_stdout(const char *name)
+{
+	fflush(stdout);
+
+	if	(name)
+	{
+		if	(real_stdout == 1)
+			real_stdout = dup(1);
+
+		return reopen_fd(1, name);
+	}
+	else if	(real_stdout != 1)
+	{
+		dup2(real_stdout, 1);
+	}
+
+	return 1;
+}
+
+int UnitTest_stderr(const char *name)
+{
+	fflush(stderr);
+
+	if	(name)
+	{
+		if	(real_stderr == 2)
+			real_stderr = dup(2);
+
+		return reopen_fd(2, name);
+	}
+	else if	(real_stderr != 2)
+	{
+		dup2(real_stderr, 2);
+	}
+
+	return 1;
+}
 
 /* Atomare Infozeile
 */
@@ -40,7 +113,7 @@ static void vinfo(const char *pfx, const char *file, int line,
 
 	UnitTest_vprintf(&buf, fmt, list);
 	UnitTest_putc('\n', &buf);
-	write(2, buf.data, buf.size);
+	write(real_stderr, buf.data, buf.size);
 }
 
 static void info(const char *pfx, const char *file, int line,
@@ -65,6 +138,22 @@ void UnitTest_info(const char *file, int line, const char *fmt, ...)
 	va_start (list, fmt);
 	vinfo("INFO", file, line, fmt, list);
 	va_end(list);
+}
+
+void UnitTest_error(const char *fmt, ...)
+{
+	va_list list;
+
+	va_start (list, fmt);
+	vinfo("#ERROR", NULL, 0, fmt, list);
+	va_end(list);
+}
+
+void UnitTest_test(const char *file, int line, const char *name)
+{
+	UnitTest_stdout(NULL);
+	UnitTest_stderr(NULL);
+	info("#TEST", file, line, "%s", name);
 }
 
 int UnitTest_result(const char *file, int line, int res, const char *fmt, ...)
@@ -140,6 +229,7 @@ int main(int argc, char **argv)
 
 	fprintf(stderr, "%s\t%s\n", "#RUN", UnitTest_name);
 	runUnitTest();
+	UnitTest_stdout(NULL);
 	printf("%s\t%d\t%d\t%d\t%s\n", UnitTest_name, count_good + count_bad,
 		count_good, count_bad, count_bad ? "FAILURE" : "SUCCESS");
 	fflush(stdout);

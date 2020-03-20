@@ -64,7 +64,6 @@ const char *UnitTest_tpl(const char *tpl)
 	{
 		static STRING_DECL(buf);
 		buf.size = 0;
-		create_tmpdir();
 
 		while (*tpl)
 		{
@@ -79,6 +78,7 @@ const char *UnitTest_tpl(const char *tpl)
 			}
 			else if	(*tpl == '@')
 			{
+				create_tmpdir();
 				UnitTest_puts(tmpdir, &buf);
 			}
 			else
