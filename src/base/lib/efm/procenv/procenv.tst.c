@@ -9,9 +9,9 @@ TEST_DECL(mkpath)
 	EXPECT(mkpath_bin(&buf, "bin", "lib", "else", NULL));
 	EXPECT_STR(sb_nul(&buf), "lib:else");
 	sb_clean(&buf);
-	EXPECT_FALSE(mkpath_bin(&buf, "x", "lib", "else", NULL));
+	EXPECT(!mkpath_bin(&buf, "x", "lib", "else", NULL));
 	EXPECT_STR(sb_nul(&buf), "");
-	EXPECT_FALSE(mkpath_bin(&buf, "bin32", "lib", "else", NULL));
+	EXPECT(!mkpath_bin(&buf, "bin32", "lib", "else", NULL));
 	EXPECT_STR(sb_nul(&buf), "");
 	EXPECT(mkpath_bin(&buf, "x/bin", "lib", "else", NULL));
 	EXPECT_STR(sb_nul(&buf), "x/lib:x/else");

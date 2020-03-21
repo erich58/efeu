@@ -106,9 +106,6 @@ UnitTest_result(__FILE__,__LINE__, (expr), "%s", # expr)
 #define	ASSERT(expr) \
 UnitTest_assert(EXPECT(expr))
 
-#define	EXPECT_FALSE(expr) \
-UnitTest_result(__FILE__,__LINE__, !(expr), "!(%s)", # expr)
-
 #define EXPECT_STR(a, b)	\
 UnitTest_strcheck(__FILE__, __LINE__, "==", a, b, # a, # b)
 

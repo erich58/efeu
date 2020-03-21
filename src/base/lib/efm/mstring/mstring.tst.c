@@ -40,15 +40,15 @@ TEST_DECL(mtestkey)
 {
 	char *p;
 	EXPECT(mtestkey(NULL, NULL, NULL));
-	EXPECT_FALSE(mtestkey(NULL, NULL, ""));
-	EXPECT_FALSE(mtestkey("abc", &p, NULL));
+	EXPECT(!mtestkey(NULL, NULL, ""));
+	EXPECT(!mtestkey("abc", &p, NULL));
 	EXPECT_STR(p, "abc");
 	EXPECT(mtestkey(" abc xyz", &p, "a?c"));
 	EXPECT_STR(p, " xyz");
 	EXPECT(mtestkey("\t abc", NULL, "ab:c"));
 	EXPECT(mtestkey("ab", NULL, "ab:c"));
-	EXPECT_FALSE(mtestkey("a", NULL, "ab:c"));
-	EXPECT_FALSE(mtestkey("abx", NULL, "ab:c"));
+	EXPECT(!mtestkey("a", NULL, "ab:c"));
+	EXPECT(!mtestkey("abx", NULL, "ab:c"));
 	EXPECT(mtestkey("abxyz", NULL, "ab*"));
 	EXPECT(mtestkey(" _a123_(xyz)", &p, "*"));
 	EXPECT_STR(p, "(xyz)");

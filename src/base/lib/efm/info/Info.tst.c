@@ -213,13 +213,13 @@ TEST_DECL(LoadInfo)
 TEST_DECL(Coverage)
 {
 	TEST_EXPR(PrintInfo(iostd, NULL));
-	EXPECT_FALSE(InfoNameToken(NULL));
+	EXPECT(!InfoNameToken(NULL));
 
 	TEST_FORK
 	{
 		freopen("/dev/null", "w", stderr);
-		EXPECT_FALSE(GetInfo(NULL, "-undefined-"));
-		EXPECT_FALSE(AddInfo(NULL, "a", "Label", NULL, "Desc\n"));
+		EXPECT(!GetInfo(NULL, "-undefined-"));
+		EXPECT(!AddInfo(NULL, "a", "Label", NULL, "Desc\n"));
 		TEST_EXIT;
 	}
 

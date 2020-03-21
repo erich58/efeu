@@ -90,7 +90,7 @@ TEST_SUITE
 {
 	int i;
 
-	EXPECT_FALSE(find(1));
+	EXPECT(!find(1));
 	add(1);
 	EXPECT(find(1));
 	EXPECT(count() == 1);
@@ -98,7 +98,7 @@ TEST_SUITE
 	add(1);
 	EXPECT(count() == 1);
 
-	EXPECT_FALSE(rbt_delete(&rbt, key(2)));
+	EXPECT(!rbt_delete(&rbt, key(2)));
 	EXPECT(rbt_delete(&rbt, key(1)));
 	EXPECT(clean_count == 0);
 	EXPECT(count() == 1);
