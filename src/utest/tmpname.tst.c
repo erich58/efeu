@@ -38,9 +38,9 @@ TEST_SUITE
 	EXPECT_STRCMP(tmp, !=, UnitTest_tmpname(NULL));
 
 	TEST_DIR("dir");
-	TEST_FILE("dir/file", "Testdaten\n");
+	TEST_FILE("dir/file", "Testdaten\nNeue Zeile\n");
 
-	EXPECT_CONTENT("dir/file", "Testdaten\n");
+	EXPECT_CONTENT("dir/file", "Testdaten\nNeue Zeile\n");
 	MATCH_CONTENT("dir/file", "^Test");
 	EXPECT(UnitTest_content(NULL) != NULL);
 	PRINT_STR(UnitTest_content(NULL));
@@ -57,7 +57,7 @@ TEST_SUITE
 
 	TEST_EXEC(bad_path);
 	EXPECT_CONTENT("dir/x", NULL);
-	EXPECT_FALSE(UnitTest_content(NULL));
+	EXPECT_CONTENT(NULL, NULL);
 	PRINT_STR(UnitTest_content(NULL));
 	EXPECT_STR(UnitTest_tpl(NULL), NULL);
 	EXPECT_STR(UnitTest_tpl("@"), UnitTest_tmpname(NULL));

@@ -9,18 +9,23 @@ typedef struct {
 	char *data;
 	size_t size;
 	size_t capacity;
+	size_t pos;
 } UnitTestString;
 
-#define	STRING_DECL(name)	UnitTestString name = { NULL, 0, 0, }
+#define	STRING_DECL(name)	UnitTestString name = { NULL, 0, 0, 0, }
 
 void UnitTest_clear(UnitTestString *ustr);
 void UnitTest_free(UnitTestString *ustr);
 void UnitTest_putc(int c, UnitTestString *ustr);
 void UnitTest_puts(const char *s, UnitTestString *ustr);
+void UnitTest_qputc(int c, int delim, UnitTestString *ustr);
 void UnitTest_qputs(const char *s, int delim, UnitTestString *ustr);
 void UnitTest_vprintf(UnitTestString *ustr, const char *fmt, va_list list);
 void UnitTest_printf(UnitTestString *ustr, const char *fmt, ...);
 
+size_t UnitTest_start(UnitTestString *ustr);
+const char *UnitTest_next(UnitTestString *ustr);
+const char *UnitTest_qsplit(UnitTestString *ustr, const char *str);
 const char *UnitTest_cstr(UnitTestString *ustr);
 const char *UnitTest_qstr(const char *str);
 
@@ -30,6 +35,8 @@ int UnitTest_match(const char *str, const char *expr);
 void UnitTest_expr(const char *file, int line, const char *expr);
 void UnitTest_test(const char *file, int line, const char *name);
 void UnitTest_info(const char *file, int line, const char *fmt, ...);
+void UnitTest_strinfo(const char *file, int line,
+	const char *name, const char *value);
 void UnitTest_error(const char *fmt, ...);
 int UnitTest_result(const char *file, int line, int res, const char *fmt, ...);
 int UnitTest_strcheck(const char *file, int line, const char *op,
@@ -40,8 +47,8 @@ const char *UnitTest_tmpname(const char *name);
 const char *UnitTest_mkdir(const char *name);
 const char *UnitTest_mkfile(const char *name, const char *content);
 const char *UnitTest_content(const char *name);
-int UnitTest_stdout(const char *name_);
-int UnitTest_stderr(const char *name_);
+int UnitTest_stdout(const char *name);
+int UnitTest_stderr(const char *name);
 void UnitTest_tmpclean(void);
 
 int UnitTest_fork(const char *file, int line);
@@ -91,8 +98,7 @@ UnitTest_info(__FILE__, __LINE__, \
 	"%s -> %p", # expr, (void *)(expr))
 
 #define PRINT_STR(expr)	\
-UnitTest_info(__FILE__, __LINE__, \
-	"%s -> %s", # expr, UnitTest_qstr(expr))
+UnitTest_strinfo(__FILE__, __LINE__, # expr, expr)
 
 #define	EXPECT(expr) \
 UnitTest_result(__FILE__,__LINE__, (expr), "%s", # expr)
@@ -121,8 +127,8 @@ UnitTest_result(__FILE__, __LINE__, \
 	UnitTest_mkfile(name, cont) != NULL, "mkfile(%s, %s)", # name, # cont)
 
 #define PRINT_CONTENT(name)	\
-UnitTest_info(__FILE__, __LINE__, \
-	"content(%s) -> %s", # name, UnitTest_qstr(UnitTest_content(name)))
+UnitTest_strinfo(__FILE__, __LINE__, \
+	"content(" # name ")", UnitTest_content(name))
 
 #define	EXPECT_CONTENT(name, cont)	\
 UnitTest_strcheck(__FILE__, __LINE__, "==", \

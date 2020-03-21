@@ -20,7 +20,41 @@ static UnitTestString *UnitTest_realloc(UnitTestString *buf, size_t n)
 void UnitTest_clear(UnitTestString *buf)
 {
 	if	(buf)
+	{
 		buf->size = 0;
+		buf->pos = 0;
+	}
+}
+
+size_t UnitTest_start(UnitTestString *buf)
+{
+	if	(buf && buf->size)
+	{
+		UnitTest_realloc(buf, 1);
+		buf->data[buf->size] = 0;
+		buf->pos = 0;
+		return buf->size;
+	}
+
+	return 0;
+}
+
+const char *UnitTest_next(UnitTestString *buf)
+{
+	if	(buf && buf->pos < buf->size)
+	{
+		const char *p = buf->data + buf->pos;
+
+		while (buf->pos < buf->size)
+		{
+			if	(buf->data[buf->pos++] == 0)
+				break;
+		}
+
+		return p;
+	}
+
+	return NULL;
 }
 
 void UnitTest_free(UnitTestString *buf)
@@ -29,6 +63,7 @@ void UnitTest_free(UnitTestString *buf)
 	{
 		buf->size = 0;
 		buf->capacity = 0;
+		buf->pos = 0;
 		buf->data = realloc(buf->data, buf->capacity);
 	}
 }
@@ -50,11 +85,8 @@ void UnitTest_puts(const char *str, UnitTestString *buf)
 
 const char *UnitTest_cstr(UnitTestString *buf)
 {
-	if	(UnitTest_realloc(buf, 1))
-	{
-		buf->data[buf->size] = 0;
+	if	(UnitTest_start(buf))
 		return buf->data;
-	}
 
 	return "";
 }
@@ -102,6 +134,39 @@ int UnitTest_match(const char *a, const char *expr)
 	return n == 0 ? !neg : neg;
 }
 
+void UnitTest_qputc(int c, int delim, UnitTestString *buf)
+{
+	switch (c)
+	{
+	case '\\':	UnitTest_puts("\\\\", buf); break;
+	case '\t':	UnitTest_puts("\\t", buf); break;
+	case '\n':	UnitTest_puts("\\n", buf); break;
+	case '\f':	UnitTest_puts("\\f", buf); break;
+	case '\b':	UnitTest_puts("\\b", buf); break;
+	case '\v':	UnitTest_puts("\\v", buf); break;
+	case '\r':	UnitTest_puts("\\r", buf); break;
+	default:
+		if	(c == delim)
+		{
+			UnitTest_putc('\\', buf);
+			UnitTest_putc(delim, buf);
+		}
+		else if	(c < ' ' || c >= 127)
+		{
+			UnitTest_putc('\\', buf);
+			UnitTest_putc('0' + (c >> 6), buf);
+			UnitTest_putc('0' + (c >> 3) % 8, buf);
+			UnitTest_putc('0' + c % 8, buf);
+		}
+		else
+		{
+			UnitTest_putc(c, buf);
+		}
+
+		break;
+	}
+}
+
 void UnitTest_qputs(const char *str, int delim, UnitTestString *buf)
 {
 	if	(str && buf)
@@ -109,39 +174,7 @@ void UnitTest_qputs(const char *str, int delim, UnitTestString *buf)
 		UnitTest_putc(delim, buf);
 
 		for (; *str; ++str)
-		{
-			unsigned char c = *str;
-
-			switch (c)
-			{
-			case '\\':	UnitTest_puts("\\\\", buf); break;
-			case '\t':	UnitTest_puts("\\t", buf); break;
-			case '\n':	UnitTest_puts("\\n", buf); break;
-			case '\f':	UnitTest_puts("\\f", buf); break;
-			case '\b':	UnitTest_puts("\\b", buf); break;
-			case '\v':	UnitTest_puts("\\v", buf); break;
-			case '\r':	UnitTest_puts("\\r", buf); break;
-			default:
-				if	(c == delim)
-				{
-					UnitTest_putc('\\', buf);
-					UnitTest_putc(delim, buf);
-				}
-				else if	(c < ' ' || c >= 127)
-				{
-					UnitTest_putc('\\', buf);
-					UnitTest_putc('0' + (c >> 6), buf);
-					UnitTest_putc('0' + (c >> 3) % 8, buf);
-					UnitTest_putc('0' + c % 8, buf);
-				}
-				else
-				{
-					UnitTest_putc(c, buf);
-				}
-
-				break;
-			}
-		}
+			UnitTest_qputc((unsigned char)*str, delim, buf);
 
 		UnitTest_putc(delim, buf);
 	}
@@ -157,6 +190,38 @@ const char *UnitTest_qstr(const char *str)
 	UnitTest_clear(&buf);
 	UnitTest_qputs(str, '"', &buf);
 	return UnitTest_cstr(&buf);
+}
+
+const char *UnitTest_qsplit(UnitTestString *buf, const char *str)
+{
+	int n = 0;
+
+	if	(!buf)
+		return UnitTest_qstr(str);
+
+	UnitTest_clear(buf);
+
+	if	(!str)
+		return "(null)";
+
+	UnitTest_putc('"', buf);
+
+	for (; *str; ++str)
+	{
+		UnitTest_qputc((unsigned char)*str, '"', buf);
+
+		if	(*str == '\n' && str[1] != 0)
+		{
+			UnitTest_putc('"', buf);
+			UnitTest_putc(0, buf);
+			UnitTest_putc('"', buf);
+			n++;
+		}
+	}
+
+	UnitTest_putc('"', buf);
+	UnitTest_start(buf);
+	return n ? "" : UnitTest_next(buf);
 }
 
 void UnitTest_vprintf(UnitTestString *s, const char *fmt, va_list list)

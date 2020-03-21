@@ -15,4 +15,5 @@ TEST_SUITE
 	TEST_EXPR(str = "Infostring");
 	PRINT_STR(str);
 	PRINT_PTR(str);
+	PRINT_STR("String mit\nZeilenumbruch\n");
 }

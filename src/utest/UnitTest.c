@@ -126,6 +126,17 @@ static void info(const char *pfx, const char *file, int line,
 	va_end(list);
 }
 
+static void strinfo(const char *pfx, const char *file, int line,
+	const char *name, const char *value)
+{
+	static STRING_DECL(buf);
+	const char *p = UnitTest_qsplit(&buf, value);
+	info(pfx, file, line, "%s -> %s", name, p);
+
+	while ((p = UnitTest_next(&buf)))
+		info("+", file, line, "\t%s", p);
+}
+
 void UnitTest_expr(const char *file, int line, const char *expr)
 {
 	info("EXPR", file, line, "%s", expr);
@@ -138,6 +149,12 @@ void UnitTest_info(const char *file, int line, const char *fmt, ...)
 	va_start (list, fmt);
 	vinfo("INFO", file, line, fmt, list);
 	va_end(list);
+}
+
+void UnitTest_strinfo(const char *file, int line,
+	const char *name, const char *value)
+{
+	strinfo("INFO", file, line, name, value);
 }
 
 void UnitTest_error(const char *fmt, ...)
@@ -171,17 +188,49 @@ int UnitTest_result(const char *file, int line, int res, const char *fmt, ...)
 	return res;
 }
 
-static const char *qstr(const char *str)
+static const char *UnitTest_split(UnitTestString *buf, const char *str)
 {
-	static STRING_DECL(buf);
-	UnitTest_clear(&buf);
-	UnitTest_qputs(str, '"', &buf);
-	return UnitTest_cstr(&buf);
+	if	(!buf)
+		return str;
+
+	UnitTest_clear(buf);
+
+	if	(!str || *str != '"')
+		return str;
+
+	int quote = 0;
+	int n = 0;
+
+	while (*str != 0)
+	{
+		if	(*str == '\\' && str[1] != 0)
+		{
+			UnitTest_putc(*str++, buf);
+		}
+		else if	(*str == '"')
+		{
+			quote = !quote;
+		}
+		else if	(*str == ' ' && !quote)
+		{
+			UnitTest_putc(0, buf);
+			n++;
+			str++;
+			continue;
+		}
+
+		UnitTest_putc(*str++, buf);
+	}
+
+	UnitTest_start(buf);
+	return n ? "" : UnitTest_next(buf);
 }
+
 
 int UnitTest_strcheck(const char *file, int line, const char *op,
 	const char *s1, const char *s2, const char *x1, const char *x2)
 {
+	static STRING_DECL(buf);
 	int r = 0;
 	int show = 0;
 
@@ -204,16 +253,20 @@ int UnitTest_strcheck(const char *file, int line, const char *op,
 	else if	(strcmp(op, ">=") == 0)
 		r = UnitTest_strcmp(s1, s2) >= 0;
 
-	UnitTest_result(file, line, r, "%s %s %s", x1, op, x2, NULL);
+	const char *p = UnitTest_split(&buf, x2);
+	UnitTest_result(file, line, r, "%s %s %s", x1, op, p);
+
+	while ((p = UnitTest_next(&buf)))
+		info("+", file, line, "\t%s", p);
 
 	if	(r && !show)
 		return r;
 
 	if	(*x1 != '"')
-		info("#AS", file, line, "%s = %s", x1, qstr(s1), NULL);
+		strinfo("BECAUSE", file, line, x1, s1);
 
 	if	(*x2 != '"')
-		info("#AS", file, line, "%s = %s", x2, qstr(s2), NULL);
+		strinfo("BECAUSE", file, line, x2, s2);
 
 	return r;
 }
