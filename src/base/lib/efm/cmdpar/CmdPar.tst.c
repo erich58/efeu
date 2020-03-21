@@ -82,14 +82,18 @@ static const char *eval_par(const char *first)
 	}
 
 	UnitTest_mkfile("error.log", "");
-	CmdPar_eval(par, &narg, arg, 0);
+	int stat = CmdPar_eval(par, &narg, arg, 0);
 	EXPECT_CONTENT("error.log", eval_msg);
 	eval_msg = "";
 
 	IO *io = out();
-	io_printf(io, "%s", arg[0]);
 
-	for (n = 1; n < narg; n++)
+	if	(stat < 0)
+		io_puts("ERR", io);
+	else
+		io_printf(io, "%d", stat);
+
+	for (n = 0; n < narg; n++)
 		io_printf(io, " %s", arg[n]);
 
 	return data();
@@ -269,97 +273,97 @@ TEST_DECL(opt)
 
 	pset("A", "X");
 	pset("B", "X");
-	EXPECT_STR(eval_par("name x"), "name x");
+	EXPECT_STR(eval_par("name x"), "2 name x");
 	EXPECT_STR(pget("A"), "X");
 	EXPECT_STR(pget("B"), "X");
 
 	pset("A", "X");
-	EXPECT_STR(eval_par("name -a x y"), "name x y");
+	EXPECT_STR(eval_par("name -a x y"), "3 name x y");
 	EXPECT_STR(pget("A"), "6");
 
 	pset("A", "X");
 	pset("B", "X");
-	EXPECT_STR(eval_par("name -ab x y"), "name y");
+	EXPECT_STR(eval_par("name -ab x y"), "2 name y");
 	EXPECT_STR(pget("A"), "6");
 	EXPECT_STR(pget("B"), "x");
 
 	pset("A", "X");
 	pset("B", "X");
-	EXPECT_STR(eval_par("name -ba x"), "name x");
+	EXPECT_STR(eval_par("name -ba x"), "2 name x");
 	EXPECT_STR(pget("A"), "X");
 	EXPECT_STR(pget("B"), "a");
 
 	pset("B", "X");
 	set_msg("NOTE [efm:31]: $0=\"\" $1=\"b\"\n");
-	EXPECT_STR(eval_par("name -b"), "name");
+	EXPECT_STR(eval_par("name -b"), "ERR name");
 	EXPECT_STR(pget("B"), "X");
 
 	pset("C", "X");
-	EXPECT_STR(eval_par("name -c"), "name");
+	EXPECT_STR(eval_par("name -c"), "1 name");
 	EXPECT_STR(pget("C"), "C1");
 	EXPECT_CONTENT("error.log", "");
 
 	pset("B", "X");
-	EXPECT_STR(eval_par("name -b - x"), "name x");
+	EXPECT_STR(eval_par("name -b - x"), "2 name x");
 	EXPECT_STR(pget("B"), NULL);
 
 	pset("C", "X");
-	EXPECT_STR(eval_par("name -c - x"), "name - x");
+	EXPECT_STR(eval_par("name -c - x"), "3 name - x");
 	EXPECT_STR(pget("C"), "C1");
 
 	pset("B", "X");
-	EXPECT_STR(eval_par("name -b \\- x"), "name x");
+	EXPECT_STR(eval_par("name -b \\- x"), "2 name x");
 	EXPECT_STR(pget("B"), "-");
 
 	pset("C", "X");
-	EXPECT_STR(eval_par("name -ca x"), "name x");
+	EXPECT_STR(eval_par("name -ca x"), "2 name x");
 	EXPECT_STR(pget("C"), "a");
 
 	set_msg("NOTE [efm:32]: $0=\"\" $1=\"x\"\n");
-	EXPECT_STR(eval_par("name -x a b"), "name a b");
+	EXPECT_STR(eval_par("name -x a b"), "ERR name a b");
 
 	set_msg("NOTE [efm:33]: $0=\"\" $1=\"-o\" $2=\"-ob\" $3=\"-ocd\"\n");
-	EXPECT_STR(eval_par("name --o a b"), "name a b");
+	EXPECT_STR(eval_par("name --o a b"), "ERR name a b");
 
 	pset("B", "X");
-	EXPECT_STR(eval_par("name --ob a x"), "name x");
+	EXPECT_STR(eval_par("name --ob a x"), "2 name x");
 	EXPECT_STR(pget("B"), "a");
 
 	pset("B", "X");
-	EXPECT_STR(eval_par("name --ob=a x"), "name x");
+	EXPECT_STR(eval_par("name --ob=a x"), "2 name x");
 	EXPECT_STR(pget("B"), "a");
 
 	pset("B", "X");
-	EXPECT_STR(eval_par("name --ob= a x"), "name a x");
+	EXPECT_STR(eval_par("name --ob= a x"), "3 name a x");
 	EXPECT_STR(pget("B"), "");
 
 	pset("B", "X");
-	EXPECT_STR(eval_par("name --ob=- a x"), "name a x");
+	EXPECT_STR(eval_par("name --ob=- a x"), "3 name a x");
 	EXPECT_STR(pget("B"), NULL);
 
 	pset("C", "X");
-	EXPECT_STR(eval_par("name --oc a x"), "name a x");
+	EXPECT_STR(eval_par("name --oc a x"), "3 name a x");
 	EXPECT_STR(pget("C"), "C2");
 
 	pset("C", "X");
-	EXPECT_STR(eval_par("name --oc=a x"), "name x");
+	EXPECT_STR(eval_par("name --oc=a x"), "2 name x");
 	EXPECT_STR(pget("C"), "a");
 
 	pset("C", "X");
-	EXPECT_STR(eval_par("name --oc= x"), "name x");
+	EXPECT_STR(eval_par("name --oc= x"), "2 name x");
 	EXPECT_STR(pget("C"), "");
 
 	pset("C", "X");
-	EXPECT_STR(eval_par("name --oc=- x"), "name x");
+	EXPECT_STR(eval_par("name --oc=- x"), "2 name x");
 	EXPECT_STR(pget("C"), "C2");
 
 	pset("A", "X");
-	EXPECT_STR(eval_par("name --la x y"), "name x y");
+	EXPECT_STR(eval_par("name --la x y"), "3 name x y");
 	EXPECT_STR(pget("A"), "8");
 
 	pset("B", "X");
 	set_msg("NOTE [efm:34]: $0=\"\" $1=\"--obx\"\n");
-	EXPECT_STR(eval_par("name --obx y"), "name y");
+	EXPECT_STR(eval_par("name --obx y"), "ERR name y");
 	EXPECT_STR(pget("B"), "X");
 
 	CmdPar_clean(par);
@@ -373,19 +377,19 @@ TEST_DECL(arg)
 		"*rest|\n\tRest\n"
 	);
 
-	EXPECT_STR(eval_par("name x"), "name");
+	EXPECT_STR(eval_par("name x"), "1 name");
 	EXPECT_STR(pget("S"), "x");
 	EXPECT_STR(pget("O"), NULL);
 
-	EXPECT_STR(eval_par("name x y"), "name");
+	EXPECT_STR(eval_par("name x y"), "1 name");
 	EXPECT_STR(pget("S"), "x");
 	EXPECT_STR(pget("O"), "y");
 
-	EXPECT_STR(eval_par("name x y z"), "name z");
+	EXPECT_STR(eval_par("name x y z"), "2 name z");
 	EXPECT_STR(pget("S"), "x");
 	EXPECT_STR(pget("O"), "y");
 
-	EXPECT_STR(eval_par("name - -- y z"), "name z");
+	EXPECT_STR(eval_par("name - -- y z"), "2 name z");
 	EXPECT_STR(pget("S"), NULL);
 	EXPECT_STR(pget("O"), "y");
 
@@ -397,21 +401,29 @@ TEST_DECL(xargs)
 	pconfig(
 		"$last|L\n\tLast\n"
 		"::opt|O\n\tOptional\n"
-		"+extra|X: append \" \"\n\tExtra\n");
+		"+extra|X: append \" \"\n\tExtra\n"
+	);
 
-	EXPECT_STR(eval_par("name a b"), "name");
+	CmdPar_docmode = 0;
+	pset(NULL, "test");
+	pset(".synopsis.head", NULL);
+
+	UnitTest_stderr("syntax.log");
+	EXPECT_STR(eval_par("name a b"), "0 name");
 	EXPECT_STR(pget("O"), "a");
 	EXPECT_STR(pget("X"), NULL);
 	EXPECT_STR(pget("L"), "b");
+	EXPECT_CONTENT("syntax.log", "test [ opt ] extra last\n");
+	UnitTest_stderr(NULL);
 
 	pset("X", NULL);
-	EXPECT_STR(eval_par("name a b c"), "name");
+	EXPECT_STR(eval_par("name a b c"), "1 name");
 	EXPECT_STR(pget("O"), "a");
 	EXPECT_STR(pget("X"), "b");
 	EXPECT_STR(pget("L"), "c");
 
 	pset("X", NULL);
-	EXPECT_STR(eval_par("name a b c d"), "name");
+	EXPECT_STR(eval_par("name a b c d"), "1 name");
 	EXPECT_STR(pget("O"), "a");
 	EXPECT_STR(pget("X"), "b c");
 	EXPECT_STR(pget("L"), "d");
@@ -419,7 +431,7 @@ TEST_DECL(xargs)
 	pset("O", "X");
 	pset("X", "X");
 	pset("L", "X");
-	EXPECT_STR(eval_par("name - - c -"), "name");
+	EXPECT_STR(eval_par("name - - c -"), "1 name");
 	EXPECT_STR(pget("O"), NULL);
 	EXPECT_STR(pget("X"), "X c");
 	EXPECT_STR(pget("L"), NULL);
@@ -442,15 +454,15 @@ TEST_DECL(regex)
 		"*rest|\n\tRest\n"
 	);
 
-	EXPECT_STR(eval_par("name a b"), "name a b");
+	EXPECT_STR(eval_par("name a b"), "3 name a b");
 	EXPECT_STR(pget("A"), NULL);
 	EXPECT_STR(pget("B"), NULL);
 
-	EXPECT_STR(eval_par("name a=b @c"), "name");
+	EXPECT_STR(eval_par("name a=b @c"), "1 name");
 	EXPECT_STR(pget("A"), "a=b");
 	EXPECT_STR(pget("B"), "c");
 
-	EXPECT_STR(eval_par("name @a x b=c"), "name x");
+	EXPECT_STR(eval_par("name @a x b=c"), "2 name x");
 	EXPECT_STR(pget("A"), "b=c");
 	EXPECT_STR(pget("B"), "a");
 
@@ -466,13 +478,13 @@ TEST_DECL(env)
 
 	unsetenv("TEST_1");
 	unsetenv("TEST_2");
-	EXPECT_STR(eval_par("name"), "name");
+	EXPECT_STR(eval_par("name"), "1 name");
 	EXPECT_STR(pget("A"), NULL);
 	EXPECT_STR(pget("B"), "default");
 
 	setenv("TEST_1", "a", 1);
 	setenv("TEST_2", "b", 1);
-	EXPECT_STR(eval_par("name"), "name");
+	EXPECT_STR(eval_par("name"), "1 name");
 	EXPECT_STR(pget("A"), "a");
 	EXPECT_STR(pget("B"), "b");
 
@@ -490,25 +502,16 @@ TEST_DECL(syntax)
 	pset(NULL, "test");
 	pset(".synopsis.intro", "usage: ");
 
-	TEST_FORK
-	{
-		ioerr = io_fopen(UnitTest_tmpname("syntax.log"), "w");
-		setenv("PATH", UnitTest_tmpname(NULL), 1);
-		EXPECT_STR(eval_par("name"), "name");
-		io_close(ioerr);
-		EXPECT_CONTENT("syntax.log", "test [ -o ] arg\n");
-		UnitTest_mkfile("syntax.log", NULL);
+	UnitTest_stderr("syntax.log");
+	setenv("PATH", UnitTest_tmpname(NULL), 1);
+	EXPECT_STR(eval_par("name"), "0 name");
+	EXPECT_CONTENT("syntax.log", "test [ -o ] arg\n");
 
-		ioerr = io_fopen(UnitTest_tmpname("syntax.log"), "w");
-		EXPECT_STR(eval_par("name a b c"), "name b c");
-		io_close(ioerr);
-		EXPECT_CONTENT("syntax.log", "test [ -o ] arg\n");
-		UnitTest_mkfile("syntax.log", NULL);
+	UnitTest_stderr("syntax.log");
+	EXPECT_STR(eval_par("name a b c"), "ERR name b c");
+	EXPECT_CONTENT("syntax.log", "test [ -o ] arg\n");
 
-		TEST_EXIT;
-	}
-
-	CHILD_EXIT(0);
+	UnitTest_mkfile("syntax.log", NULL);
 
 	TEST_FORK
 	{
