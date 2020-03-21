@@ -301,7 +301,6 @@ TEST_DECL(GetFormat)
 	EXPECT_STR(GetFormat("[ubk:123]ABC"), "ABC");
 	MATCH_CONTENT("msg.log", "key \"123\" not found");
 	EXPECT_STR(GetFormat("[%res]ABC"), "ABC");
-	PRINT_CONTENT("msg.log");
 	EXPECT_STR(GetFormat("[tst:1]ABC"), "Fehlermeldung");
 
 	SetResource("tstfmt","XYZ");
@@ -314,7 +313,7 @@ TEST_DECL(GetFormat)
 	io_close(io);
 
 	TEST_FILE("tst3.msg", "1\tABC\n2\t\"DEF\"");
-	FormatTabShow(out(), "tst3", "$0-$1-$2\n");
+	TEST_EXPR(FormatTabShow(out(), "tst3", "$0-$1-$2\n"));
 	EXPECT_STR(data(), "tst3-1-ABC\ntst3-2-DEF\n");
 }
 
@@ -343,7 +342,7 @@ TEST_DECL(stdlog)
 
 	TEST_FORK
 	{
-		log_error(NULL, "Fehler $2 ($1)", "sd", "Text", 42);
+		TEST_EXPR(log_error(NULL, "Fehler $2 ($1)", "sd", "Text", 42));
 		TEST_EXIT;
 	}
 
@@ -364,6 +363,6 @@ TEST_SUITE
 	rd_deref(nlog);
 	rd_deref(dlog);
 
-	AllocTab_stat(out(), NULL, 1);
+	TEST_EXPR(AllocTab_stat(out(), NULL, 1));
 	MATCH_STR(data(), "byte");
 }
