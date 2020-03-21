@@ -25,6 +25,7 @@ void UnitTest_printf(UnitTestString *ustr, const char *fmt, ...);
 
 size_t UnitTest_start(UnitTestString *ustr);
 const char *UnitTest_next(UnitTestString *ustr);
+const char *UnitTest_split(UnitTestString *ustr, const char *str);
 const char *UnitTest_qsplit(UnitTestString *ustr, const char *str);
 const char *UnitTest_cstr(UnitTestString *ustr);
 const char *UnitTest_qstr(const char *str);
@@ -36,11 +37,13 @@ void UnitTest_expr(const char *file, int line, const char *expr);
 void UnitTest_test(const char *file, int line, const char *name);
 void UnitTest_info(const char *file, int line, const char *fmt, ...);
 void UnitTest_strinfo(const char *file, int line,
-	const char *name, const char *value);
+	const char *str, const char *expr);
 void UnitTest_error(const char *fmt, ...);
 int UnitTest_result(const char *file, int line, int res, const char *fmt, ...);
 int UnitTest_strcheck(const char *file, int line, const char *op,
 	const char *s1, const char *s2, const char *x1, const char *x2);
+int UnitTest_create(const char *file, int line, const char *name,
+	const char *content, const char *expr);
 
 const char *UnitTest_tpl(const char *tpl);
 const char *UnitTest_tmpname(const char *name);
@@ -98,7 +101,7 @@ UnitTest_info(__FILE__, __LINE__, \
 	"%s -> %p", # expr, (void *)(expr))
 
 #define PRINT_STR(expr)	\
-UnitTest_strinfo(__FILE__, __LINE__, # expr, expr)
+UnitTest_strinfo(__FILE__, __LINE__, expr, # expr)
 
 #define	EXPECT(expr) \
 UnitTest_result(__FILE__,__LINE__, (expr), "%s", # expr)
@@ -120,12 +123,11 @@ UnitTest_result(__FILE__, __LINE__, \
 	UnitTest_mkdir(name) != NULL, "mkdir(%s)", # name)
 
 #define	TEST_FILE(name, cont)	\
-UnitTest_result(__FILE__, __LINE__, \
-	UnitTest_mkfile(name, cont) != NULL, "mkfile(%s, %s)", # name, # cont)
+UnitTest_create(__FILE__, __LINE__, name, cont, # cont)
 
 #define PRINT_CONTENT(name)	\
 UnitTest_strinfo(__FILE__, __LINE__, \
-	"content(" # name ")", UnitTest_content(name))
+	UnitTest_content(name), "content(" # name ")")
 
 #define	EXPECT_CONTENT(name, cont)	\
 UnitTest_strcheck(__FILE__, __LINE__, "==", \

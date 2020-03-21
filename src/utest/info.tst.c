@@ -15,5 +15,8 @@ TEST_SUITE
 	TEST_EXPR(str = "Infostring");
 	PRINT_STR(str);
 	PRINT_PTR(str);
-	PRINT_STR("String mit\nZeilenumbruch\n");
+	TEST_EXPR(str = "String mit\nZeilenumbruch\n");
+	PRINT_STR(str);
+	PRINT_STR("Einfacher String");
+	PRINT_STR("Zusammengesetzter " "String");
 }

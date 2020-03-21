@@ -152,9 +152,47 @@ void UnitTest_info(const char *file, int line, const char *fmt, ...)
 }
 
 void UnitTest_strinfo(const char *file, int line,
-	const char *name, const char *value)
+	const char *str, const char *expr)
 {
-	strinfo("INFO", file, line, name, value);
+	static STRING_DECL(buf);
+	
+	if	(*expr == '"')
+	{
+		const char *p = UnitTest_split(&buf, expr);
+
+		if	(*p == 0)
+			p = UnitTest_next(&buf);
+
+		info("INFO", file, line, "%s", p);
+
+		while ((p = UnitTest_next(&buf)))
+			info("+", file, line, "%s", p);
+	}
+	else
+	{
+		strinfo("INFO", file, line, expr, str);
+	}
+}
+
+int UnitTest_create(const char *file, int line, const char *name,
+	const char *str, const char *expr)
+{
+	static STRING_DECL(buf);
+	const char *p;
+	int r = (UnitTest_mkfile(name, str) != NULL);
+
+	if	(*expr == '"')
+		p = UnitTest_split(&buf, expr);
+	else
+		p = UnitTest_qsplit(&buf, str);
+
+	UnitTest_result(file, line, r, "mkfile(%s) << %s",
+		UnitTest_qstr(name), p);
+
+	while ((p = UnitTest_next(&buf)))
+		info("+", file, line, "\t%s", p);
+
+	return r;
 }
 
 void UnitTest_error(const char *fmt, ...)
@@ -187,45 +225,6 @@ int UnitTest_result(const char *file, int line, int res, const char *fmt, ...)
 	va_end(list);
 	return res;
 }
-
-static const char *UnitTest_split(UnitTestString *buf, const char *str)
-{
-	if	(!buf)
-		return str;
-
-	UnitTest_clear(buf);
-
-	if	(!str || *str != '"')
-		return str;
-
-	int quote = 0;
-	int n = 0;
-
-	while (*str != 0)
-	{
-		if	(*str == '\\' && str[1] != 0)
-		{
-			UnitTest_putc(*str++, buf);
-		}
-		else if	(*str == '"')
-		{
-			quote = !quote;
-		}
-		else if	(*str == ' ' && !quote)
-		{
-			UnitTest_putc(0, buf);
-			n++;
-			str++;
-			continue;
-		}
-
-		UnitTest_putc(*str++, buf);
-	}
-
-	UnitTest_start(buf);
-	return n ? "" : UnitTest_next(buf);
-}
-
 
 int UnitTest_strcheck(const char *file, int line, const char *op,
 	const char *s1, const char *s2, const char *x1, const char *x2)
@@ -355,4 +354,3 @@ int UnitTest_assert(int stat)
 
 	return stat;
 }
-

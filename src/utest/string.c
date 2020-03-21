@@ -91,6 +91,45 @@ const char *UnitTest_cstr(UnitTestString *buf)
 	return "";
 }
 
+const char *UnitTest_split(UnitTestString *buf, const char *str)
+{
+	if	(!buf)
+		return str;
+
+	UnitTest_clear(buf);
+
+	if	(!str || *str != '"')
+		return str;
+
+	int quote = 0;
+	int n = 0;
+
+	while (*str != 0)
+	{
+		if	(*str == '\\' && str[1] != 0)
+		{
+			UnitTest_putc(*str++, buf);
+		}
+		else if	(*str == '"')
+		{
+			quote = !quote;
+		}
+		else if	(*str == ' ' && !quote)
+		{
+			UnitTest_putc(0, buf);
+			n++;
+			str++;
+			continue;
+		}
+
+		UnitTest_putc(*str++, buf);
+	}
+
+	UnitTest_start(buf);
+	return n ? "" : UnitTest_next(buf);
+}
+
+
 int UnitTest_strcmp(const char *a, const char *b)
 {
 	if	(a == b)	return 0;

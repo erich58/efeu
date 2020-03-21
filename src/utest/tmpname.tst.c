@@ -38,9 +38,9 @@ TEST_SUITE
 	EXPECT_STRCMP(tmp, !=, UnitTest_tmpname(NULL));
 
 	TEST_DIR("dir");
-	TEST_FILE("dir/file", "Testdaten\nNeue Zeile\n");
+	TEST_FILE("dir/file", "Testdaten\n" "Neue Zeile\n");
 
-	EXPECT_CONTENT("dir/file", "Testdaten\nNeue Zeile\n");
+	EXPECT_CONTENT("dir/file", "Testdaten\n" "Neue Zeile\n");
 	MATCH_CONTENT("dir/file", "^Test");
 	EXPECT(UnitTest_content(NULL) != NULL);
 	PRINT_STR(UnitTest_content(NULL));
