@@ -43,9 +43,18 @@ If not, write to the Free Software Foundation, Inc.,
 
 static int has_efeudoc()
 {
-	static char *efeudoc = NULL;
-	efeudoc = fsearch(getenv("PATH"), NULL, "efeudoc", NULL);
-	return efeudoc != NULL;
+	if	(CmdPar_docmode)
+	{
+		char *p = fsearch(getenv("PATH"), NULL, "efeudoc", NULL);
+
+		if	(p)
+		{
+			memfree(p);
+			return 1;
+		}
+	}
+
+	return 0;
 }
 
 static void expand_func (CmdPar *par, IO *in, IO *out, int c)
