@@ -74,7 +74,7 @@ UnitTest_test(NULL, 0, # name), _test_ ## name ()
 UnitTest_expr(__FILE__, __LINE__, # expr), (expr)
 
 #define PRINT_LABEL(label)	\
-UnitTest_info(__FILE__, __LINE__, "/* %s */", label)
+UnitTest_info(__FILE__, __LINE__, "# %s", label)
 
 #define PRINT_FMT(fmt, expr)	\
 UnitTest_info(__FILE__, __LINE__, \
