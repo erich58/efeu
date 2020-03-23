@@ -5,7 +5,7 @@
 TEST_DECL(bad_path)
 {
 	UnitTest_stderr("/dev/null");
-	EXPECT_STR(UnitTest_mkfile("x/sub", NULL), NULL);
+	EXPECT_STR(UnitTest_mkfile(".", "Data"), NULL);
 }
 
 TEST_SUITE
@@ -37,7 +37,9 @@ TEST_SUITE
 	PRINT_STR(UnitTest_tmpname(NULL));
 	EXPECT_STRCMP(tmp, !=, UnitTest_tmpname(NULL));
 
-	TEST_DIR("dir");
+	EXPECT_STR(UnitTest_mkdir(NULL), UnitTest_tmpname(NULL));
+	EXPECT_STR(UnitTest_mkdir("/dir"), UnitTest_tmpname("dir"));
+	EXPECT_STR(UnitTest_mkdir("dir"), UnitTest_tmpname("dir"));
 	TEST_FILE("dir/file", "Testdaten\n" "Neue Zeile\n");
 
 	EXPECT_CONTENT("dir/file", "Testdaten\n" "Neue Zeile\n");
@@ -80,4 +82,9 @@ TEST_SUITE
 
 		EXPECT(closedir(dir) == 0);
 	}
+
+	TEST_FILE("dir/file", NULL);
+	EXPECT_CONTENT("dir/file", NULL);
+	TEST_FILE("dir/a/b/c/f", "Data");
+	EXPECT_CONTENT("dir/a/b/c/f", "Data");
 }

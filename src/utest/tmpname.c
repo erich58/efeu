@@ -8,6 +8,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <errno.h>
 
 #define	MKTEMP	"mktemp -d"
 
@@ -114,31 +115,63 @@ const char *UnitTest_tmpname(const char *name)
 	return tmpdir;
 }
 
+static const char *mkparent(const char *name)
+{
+	static STRING_DECL(buf);
+	create_tmpdir();
+
+	if	(!name)
+		return tmpdir;
+
+	while (*name == '/')
+		name++;
+
+	buf.size = 0;
+	buf.size = 0;
+	UnitTest_puts(tmpdir, &buf);
+	UnitTest_putc('/', &buf);
+
+	while (*name != 0)
+	{
+		if	(*name == '/')
+			mkdir(UnitTest_cstr(&buf), 0777);
+
+		UnitTest_putc(*name++, &buf);
+	}
+
+	return UnitTest_cstr(&buf);
+}
+
 const char *UnitTest_mkdir(const char *name)
 {
-	const char *path = UnitTest_tmpname(name);
-	return mkdir(path, 0777) == 0 ? path : NULL;
+	const char *path = mkparent(name);
+
+	if	(mkdir(path, 0777) == 0)
+		return path;
+
+	return (errno == EEXIST) ? path : NULL;
 }
 
 const char *UnitTest_mkfile(const char *name, const char *content)
 {
-	const char *path = UnitTest_tmpname(name);
-	FILE *file = fopen(path, "w");
-	
-	if	(file)
-	{
-		if	(content)
-			fputs(content, file);
+	const char *path = mkparent(name);
 
+	if	(content)
+	{
+		FILE *file = fopen(path, "w");
+
+		if	(!file)
+			return NULL;
+
+		fputs(content, file);
 		fclose(file);
-		return path;
 	}
 	else
 	{
-		perror(path);
+		remove(path);
 	}
 
-	return NULL;
+	return path;
 }
 
 const char *UnitTest_content(const char *name)
