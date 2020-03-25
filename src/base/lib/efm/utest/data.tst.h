@@ -23,10 +23,15 @@ IO *out(void)
 
 const char *cstr(char *s)
 {
-	sb_clean(&data_buf);
-	sb_puts(s, &data_buf);
-	memfree(s);
-	return sb_nul(&data_buf);
+	if	(s)
+	{
+		sb_clean(&data_buf);
+		sb_puts(s, &data_buf);
+		memfree(s);
+		return sb_nul(&data_buf);
+	}
+
+	return NULL;
 }
 
 const char *data(void)
