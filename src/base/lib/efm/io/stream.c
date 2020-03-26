@@ -87,13 +87,13 @@ static int f_ctrl (IO *io, int req, va_list list);
 static size_t f_dbread (IO *io, void *p, size_t r, size_t s, size_t n)
 {
 	FILE_IO *fio = io->data;
-	return r * dbread(fio->file, p, r, s, n);
+	return r * dbread(fio->file, p, s, n);
 }
 
 static size_t f_dbwrite (IO *io, const void *p, size_t r, size_t s, size_t n)
 {
 	FILE_IO *fio = io->data;
-	return r * dbwrite(fio->file, p, r, s, n);
+	return r * dbwrite(fio->file, p, s, n);
 }
 
 

@@ -78,7 +78,7 @@ OldPixMap *load_OldPixMap(const char *name)
 	rows = get4byte(file);
 	cols = get4byte(file);
 	pix = new_OldPixMap(rows, cols);
-	pix->colors = loadvec(file, pix->color, sizeof(COLOR), ncol);
+	pix->colors = dbread(file, pix->color, sizeof(COLOR), ncol);
 	fread(pix->pixel, 1, rows * cols, file);
 	fileclose(file);
 	return pix;
@@ -97,7 +97,7 @@ void save_OldPixMap(OldPixMap *pix, const char *name)
 	put4byte(pix->rows, file);
 	put4byte(pix->cols, file);
 
-	savevec(file, pix->color, sizeof(COLOR), pix->colors);
+	dbwrite(file, pix->color, sizeof(COLOR), pix->colors);
 
 	fwrite(pix->pixel, 1, pix->rows * pix->cols, file);
 	fileclose(file);

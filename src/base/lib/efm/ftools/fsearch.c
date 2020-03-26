@@ -74,8 +74,10 @@ static int need_search (const char *name)
 {
 	if	(name[0] == '/')	return 0;
 	if	(name[0] != '.')	return 1;
+	if	(name[1] == 0)		return 0;
 	if	(name[1] == '/')	return 0;
 	if	(name[1] != '.')	return 1;
+	if	(name[2] == 0)		return 0;
 	if	(name[2] == '/')	return 0;
 
 	return 1;

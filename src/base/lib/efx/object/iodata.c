@@ -31,7 +31,7 @@ size_t ReadData (const EfiType *type, void *data, IO *io)
 	{
 		return type->read(type, data, io);
 	}
-	else if	(type->recl)
+	else if	(type->recl == type->size)
 	{
 		return io_dbread(io, data, type->recl, type->size, 1);
 	}
@@ -55,7 +55,7 @@ size_t ReadVecData (const EfiType *type, size_t dim, void *data, IO *io)
 
 		return n;
 	}
-	else if	(type->recl)
+	else if	(type->recl == type->size)
 	{
 		return io_dbread(io, data, type->recl, type->size, dim);
 	}

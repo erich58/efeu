@@ -72,8 +72,8 @@ void tempstat (void);
 /*	Binäre Ein/Ausgabe von Datenfiles
 */
 
-extern size_t rfread (void *ptr, size_t size, size_t nitems, FILE *file);
-extern size_t rfwrite (const void *ptr, size_t size, size_t nitems, FILE *file);
+size_t rfread (void *ptr, size_t size, size_t nitems, FILE *file);
+size_t rfwrite (const void *ptr, size_t size, size_t nitems, FILE *file);
 
 #if	REVBYTEORDER
 #define	fread_compat	rfread
@@ -83,25 +83,22 @@ extern size_t rfwrite (const void *ptr, size_t size, size_t nitems, FILE *file);
 #define	fwrite_compat	fwrite
 #endif
 
-extern int fpeek (FILE *file);
+int fpeek (FILE *file);
 
-extern unsigned get1byte (FILE *file);
-extern unsigned get2byte (FILE *file);
-extern unsigned get3byte (FILE *file);
-extern unsigned get4byte (FILE *file);
+unsigned get1byte (FILE *file);
+unsigned get2byte (FILE *file);
+unsigned get3byte (FILE *file);
+unsigned get4byte (FILE *file);
 
-extern void put1byte (unsigned val, FILE *file);
-extern void put2byte (unsigned val, FILE *file);
-extern void put3byte (unsigned val, FILE *file);
-extern void put4byte (unsigned val, FILE *file);
+void put1byte (unsigned val, FILE *file);
+void put2byte (unsigned val, FILE *file);
+void put3byte (unsigned val, FILE *file);
+void put4byte (unsigned val, FILE *file);
 
-extern size_t loadvec (FILE *file, void *ptr, size_t size, size_t dim);
-extern size_t savevec (FILE *file, const void *ptr, size_t size, size_t dim);
+char *loadstr (FILE *file);
+void savestr (const char *str, FILE *file);
 
-extern char *loadstr (FILE *file);
-extern void savestr (const char *str, FILE *file);
-
-extern size_t dbread (FILE *file, void *dp, size_t rl, size_t size, size_t n);
-extern size_t dbwrite (FILE *file, const void *dp, size_t rl, size_t size, size_t n);
+size_t dbread (FILE *file, void *dp, size_t size, size_t n);
+size_t dbwrite (FILE *file, const void *dp, size_t size, size_t n);
 
 #endif	/* EFEU/ftools.h */

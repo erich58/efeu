@@ -3,6 +3,9 @@
 #include <EFEU/ftools.h>
 #include <EFEU/Debug.h>
 #include <EFEU/MakeDepend.h>
+#include <EFEU/LangDef.h>
+
+#include "utest/data.tst.h"
 
 static LogControl *flog = NULL;
 
@@ -221,6 +224,66 @@ TEST_DECL(findopen)
 	EXPECT_CONTENT("stderr", "file test.dat not found\n");
 }
 
+
+static const char *t_fsearch(const char *path, const char *sub,
+	const char *name, const char *ext)
+{
+	return cstr(fsearch(UnitTest_tpl(path), sub, name, ext));
+}
+
+#define	TMP(x)	UnitTest_tmpname(x)
+
+TEST_DECL(fsearch)
+{
+	char *home = mstrpaste("/", getenv("HOME"), "");
+
+	TEST_EXPR(SetLangDef("en_US"));
+	TEST_EXPR(setenv("TERM", "xterm", 1));
+	TEST_FILE("en/sub/a", "");
+	TEST_FILE("sub/a", "");
+	TEST_FILE("sub/b", "");
+	TEST_FILE("c", "");
+	TEST_FILE("c.x", "");
+	TEST_FILE(".x", "");
+	TEST_FILE("..x", "");
+	TEST_DIR(home);
+
+	EXPECT_STR(t_fsearch("~", NULL, "", NULL), home);
+	EXPECT_STR(t_fsearch("%H", NULL, "", NULL), home);
+	EXPECT_STR(t_fsearch("@/~", NULL, "", NULL), TMP(home));
+	EXPECT_STR(t_fsearch("@/%H", NULL, "", NULL), TMP(home));
+
+	EXPECT_STR(t_fsearch("@/%L/%S", "sub", "a", NULL), TMP("en/sub/a")); 
+	EXPECT_STR(t_fsearch("@/%S", "sub", "a", NULL), TMP("sub/a")); 
+	EXPECT_STR(t_fsearch("@/%S:@/%L/%S", "sub", "a", NULL), TMP("sub/a")); 
+	EXPECT_STR(t_fsearch("@%L", "xxx", "sub/a", NULL), TMP("sub/a")); 
+	EXPECT_STR(t_fsearch("@/%L/%S", "sub", "b", NULL), TMP("sub/b")); 
+	EXPECT_STR(t_fsearch("@/%L/%S", "sub", "c", NULL), NULL);
+	EXPECT_STR(t_fsearch("@/%L/%S:@", "sub", "c", NULL), TMP("c"));
+	EXPECT_STR(t_fsearch("@/%L/%S:@", "sub", "c", "x"), TMP("c.x"));
+	EXPECT_STR(t_fsearch("@/%L/%S:@", "sub", "c.x", "x"), TMP("c.x"));
+	EXPECT_STR(t_fsearch("@/%L/%S:@", "sub", "c.a", "x"), NULL);
+
+	TEST_FILE("xterm/x", "");
+	TEST_FILE("x", "");
+	TEST_FILE("y", "");
+	EXPECT_STR(t_fsearch("@/%T", NULL, "x", NULL), TMP("xterm/x")); 
+	EXPECT_STR(t_fsearch("@/%T", NULL, "y", NULL), NULL);
+
+	TEST_FILE("root/a/b", "");
+	EXPECT_STR(t_fsearch("@~root/a", NULL, "b", NULL), TMP("root/a/b")); 
+
+	EXPECT_STR(t_fsearch("@", NULL, "/bad/file/name", NULL), NULL);
+	EXPECT_STR(t_fsearch("@", NULL, ".", NULL), ".");
+	EXPECT_STR(t_fsearch("@", NULL, "./", NULL), "./");
+	EXPECT_STR(t_fsearch("@", NULL, ".x", NULL), TMP(".x"));
+	EXPECT_STR(t_fsearch("@", NULL, "/", NULL), "/");
+	EXPECT_STR(t_fsearch("@", NULL, "..", NULL), "..");
+	EXPECT_STR(t_fsearch("@", NULL, "../", NULL), "../");
+	EXPECT_STR(t_fsearch("@", NULL, "..x", NULL), TMP("..x"));
+	EXPECT_STR(t_fsearch("@", NULL, NULL, NULL), NULL);
+}
+
 TEST_SUITE
 {
 	TEST_RUN(setup);
@@ -228,4 +291,5 @@ TEST_SUITE
 	TEST_RUN(filetab);
 	TEST_RUN(fileopen);
 	TEST_RUN(findopen);
+	TEST_RUN(fsearch);
 }
