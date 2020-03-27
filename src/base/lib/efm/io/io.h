@@ -45,10 +45,8 @@ struct IO {
 	int (*get) (IO *io);
 	int (*put) (int c, IO *io);
 	int (*ctrl) (IO *io, int c, va_list list);
-	size_t (*dbread) (IO *io, void *data,
-		size_t recl, size_t size, size_t dim);
-	size_t (*dbwrite) (IO *io, const void *data,
-		size_t recl, size_t size, size_t dim);
+	size_t (*dbread) (IO *io, void *data, size_t size, size_t dim);
+	size_t (*dbwrite) (IO *io, const void *data, size_t size, size_t dim);
 	void *data;
 
 	unsigned char stat;
@@ -213,10 +211,8 @@ size_t io_rwrite (IO *io, const void *buf, size_t nbyte);
 char *io_mread (IO *io, size_t nbyte);
 char *io_getarg (IO *io, int beg, int end);
 
-size_t io_dbread (IO *io, void *data,
-	size_t recl, size_t size, size_t dim);
-size_t io_dbwrite (IO *io, const void *data,
-	size_t recl, size_t size, size_t dim);
+size_t io_dbread (IO *io, void *data, size_t size, size_t dim);
+size_t io_dbwrite (IO *io, const void *data, size_t size, size_t dim);
 
 char *io_getstr (IO *io);
 int io_putstr (const char *str, IO *io);

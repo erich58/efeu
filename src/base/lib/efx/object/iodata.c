@@ -33,7 +33,7 @@ size_t ReadData (const EfiType *type, void *data, IO *io)
 	}
 	else if	(type->recl == type->size)
 	{
-		return io_dbread(io, data, type->recl, type->size, 1);
+		return type->size * io_dbread(io, data, type->size, 1);
 	}
 	else	return 0;
 }
@@ -57,7 +57,7 @@ size_t ReadVecData (const EfiType *type, size_t dim, void *data, IO *io)
 	}
 	else if	(type->recl == type->size)
 	{
-		return io_dbread(io, data, type->recl, type->size, dim);
+		return type->size * io_dbread(io, data, type->size, dim);
 	}
 	else	return 0;
 }
@@ -69,9 +69,9 @@ size_t WriteData (const EfiType *type, const void *data, IO *io)
 	{
 		return type->write(type, data, io);
 	}
-	else if	(type->recl)
+	else if	(type->recl == type->size)
 	{
-		return io_dbwrite(io, data, type->recl, type->size, 1);
+		return type->size * io_dbwrite(io, data, type->size, 1);
 	}
 	else	return 0;
 }
@@ -91,9 +91,9 @@ size_t WriteVecData (const EfiType *type, size_t dim, const void *data, IO *io)
 
 		return n;
 	}
-	else if	(type->recl)
+	else if	(type->recl == type->size)
 	{
-		return io_dbwrite(io, data, type->recl, type->size, dim);
+		return type->size * io_dbwrite(io, data, type->size, dim);
 	}
 	else	return 0;
 }

@@ -146,7 +146,7 @@ static void load_ppm (IO *io, EPixmap *pix)
 
 static void load_ppmraw (IO *io, EPixmap *pix)
 {
-	io_dbread(io, pix->data, 1, 1, pix->rows * pix->cols * 3);
+	io_dbread(io, pix->data, 1, pix->rows * pix->cols * 3);
 
 	if	(color_maxval != 255)
 	{

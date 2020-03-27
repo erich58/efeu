@@ -36,7 +36,7 @@ If not, write to the Free Software Foundation, Inc.,
 /*	Datensätze lesen
 */
 
-size_t io_dbread (IO *io, void *dptr, size_t recl, size_t size, size_t n)
+size_t io_dbread (IO *io, void *dptr, size_t size, size_t n)
 {
 	register size_t i, j;
 	register int c;
@@ -48,13 +48,13 @@ size_t io_dbread (IO *io, void *dptr, size_t recl, size_t size, size_t n)
 	}
 
 	if	(io->dbread && !io->nsave)
-		return io->dbread(io, dptr, recl, size, n);
+		return io->dbread(io, dptr, size, n);
 
 	for (i = 0; i < n; i++)
 	{
 		register unsigned char *data = DATA(dptr, size);
 
-		for (j = 0; j < recl; j++)
+		for (j = 0; j < size; j++)
 		{
 			if	((c = io_getc(io)) == EOF)
 				io_error(io, "[ftools:21]", NULL);
@@ -62,32 +62,29 @@ size_t io_dbread (IO *io, void *dptr, size_t recl, size_t size, size_t n)
 			SET(data, c);
 		}
 
-		for (j = recl; j < size; j++)
-			SET(data, 0);
-
 		dptr = (char *) dptr + size;
 	}
 
-	return recl * n;
+	return n;
 }
 
 
 /*	Datensätze ausgeben
 */
 
-size_t io_dbwrite (IO *io, const void *dptr, size_t recl, size_t size, size_t n)
+size_t io_dbwrite (IO *io, const void *dptr, size_t size, size_t n)
 {
 	register size_t i, j;
 	register int c;
 	
 	if	(io && io->dbwrite)
-		return io->dbwrite(io, dptr, recl, size, n);
+		return io->dbwrite(io, dptr, size, n);
 
 	for (i = 0; i < n; i++)
 	{
 		register unsigned char *data = DATA(dptr, size);
 
-		for (j = 0; j < recl; j++)
+		for (j = 0; j < size; j++)
 		{
 			c = GET(data);
 
@@ -98,5 +95,5 @@ size_t io_dbwrite (IO *io, const void *dptr, size_t recl, size_t size, size_t n)
 		dptr = (char *) dptr + size;
 	}
 
-	return recl * n;
+	return n;
 }
