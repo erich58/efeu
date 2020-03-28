@@ -1,4 +1,8 @@
 #include <EFEU/UnitTest.h>
+#include <stdlib.h>
+
+static STRING_DECL(buf);
+static UnitTestString *ustr = &buf;
 
 TEST_DECL(cstr)
 {
@@ -27,26 +31,24 @@ TEST_DECL(qstr)
 
 TEST_DECL(string)
 {
-	STRING_DECL(buf);
+	UnitTest_puts("abc,", ustr);
+	UnitTest_printf(ustr, "%d,", 42);
+	EXPECT_STR(UnitTest_str(ustr), "abc,42,");
+	UnitTest_qputs("x'y", '\'', ustr);
+	EXPECT_STR(UnitTest_str(ustr), "abc,42," "'x\\'y'");
+	UnitTest_clear(ustr);
+	UnitTest_printf(ustr, "%d", 42);
+	EXPECT_STR(UnitTest_str(ustr), "42");
 
-	UnitTest_puts("abc,", &buf);
-	UnitTest_printf(&buf, "%d,", 42);
-	EXPECT_STR(UnitTest_str(&buf), "abc,42,");
-	UnitTest_qputs("x'y", '\'', &buf);
-	EXPECT_STR(UnitTest_str(&buf), "abc,42," "'x\\'y'");
-	UnitTest_clear(&buf);
-	UnitTest_printf(&buf, "%d", 42);
-	EXPECT_STR(UnitTest_str(&buf), "42");
-
-	UnitTest_clear(&buf);
-	UnitTest_puts("abc", &buf);
-	UnitTest_printf(&buf, "%*s", 2000, "");
-	UnitTest_puts("xyz", &buf);
+	UnitTest_clear(ustr);
+	UnitTest_puts("abc", ustr);
+	UnitTest_printf(ustr, "%*s", 2000, "");
+	UnitTest_puts("xyz", ustr);
 	EXPECT(buf.size == 3 + 2000 + 3);
 	buf.size = 4;
-	EXPECT_STR(UnitTest_str(&buf), "abc ");
+	EXPECT_STR(UnitTest_str(ustr), "abc ");
 
-	UnitTest_free(&buf);
+	UnitTest_free(ustr);
 	EXPECT(buf.data == NULL);
 	EXPECT(buf.size == 0);
 	EXPECT(buf.capacity == 0);
@@ -56,29 +58,54 @@ TEST_DECL(string)
 	TEST_EXPR(UnitTest_printf(NULL, "%d", 42));
 	EXPECT_STR(UnitTest_str(NULL), "");
 
-	UnitTest_puts("abc", &buf);
-	UnitTest_putc(0, &buf);
-	UnitTest_putc(0, &buf);
-	UnitTest_puts("xyz", &buf);
-	EXPECT(UnitTest_start(&buf) == 8);
-	EXPECT_STR(UnitTest_next(&buf), "abc");
-	EXPECT_STR(UnitTest_next(&buf), "");
-	EXPECT_STR(UnitTest_next(&buf), "xyz");
-	EXPECT_STR(UnitTest_next(&buf), NULL);
+	UnitTest_puts("abc", ustr);
+	UnitTest_putc(0, ustr);
+	UnitTest_putc(0, ustr);
+	UnitTest_puts("xyz", ustr);
+	EXPECT(UnitTest_start(ustr) == 8);
+	EXPECT_STR(UnitTest_next(ustr), "abc");
+	EXPECT_STR(UnitTest_next(ustr), "");
+	EXPECT_STR(UnitTest_next(ustr), "xyz");
+	EXPECT_STR(UnitTest_next(ustr), NULL);
+}
 
+TEST_DECL(split)
+{
+	EXPECT_STR(UnitTest_split(NULL, "abc xyz"), "abc xyz");
+	EXPECT_STR(UnitTest_split(ustr, NULL), NULL);
+	EXPECT_STR(UnitTest_split(ustr, "abc xyz"), "abc xyz");
+	EXPECT_STR(UnitTest_next(ustr), NULL);
+	EXPECT_STR(UnitTest_split(ustr, "\"abc xyz\""), "\"abc xyz\"");
+	EXPECT_STR(UnitTest_next(ustr), NULL);
+
+	EXPECT_STR(UnitTest_split(ustr, "\"abc\"  \"xyz\""), "");
+	EXPECT_STR(UnitTest_next(ustr), "\"abc\"");
+	EXPECT_STR(UnitTest_next(ustr), "\"xyz\"");
+	EXPECT_STR(UnitTest_next(ustr), NULL);
+}
+
+TEST_DECL(qsplit)
+{
 	EXPECT_STR(UnitTest_qsplit(NULL, "abc\n"), "\"abc\\n\"");
-	EXPECT_STR(UnitTest_qsplit(&buf, NULL), "(null)");
-	EXPECT_STR(UnitTest_next(&buf), NULL);
-	EXPECT_STR(UnitTest_qsplit(&buf, "abc\n"), "\"abc\\n\"");
-	EXPECT_STR(UnitTest_next(&buf), NULL);
+	EXPECT_STR(UnitTest_qsplit(ustr, NULL), "(null)");
+	EXPECT_STR(UnitTest_next(ustr), NULL);
+	EXPECT_STR(UnitTest_qsplit(ustr, "abc\n"), "\"abc\\n\"");
+	EXPECT_STR(UnitTest_next(ustr), NULL);
 
-	EXPECT_STR(UnitTest_qsplit(&buf, "abc\n\nxyz\n"), "");
-	EXPECT_STR(UnitTest_next(&buf), "\"abc\\n\"");
-	EXPECT_STR(UnitTest_next(&buf), "\"\\n\"");
-	EXPECT_STR(UnitTest_next(&buf), "\"xyz\\n\"");
-	EXPECT_STR(UnitTest_next(&buf), NULL);
+	EXPECT_STR(UnitTest_qsplit(ustr, "abc\n\nxyz\n"), "");
+	EXPECT_STR(UnitTest_next(ustr), "\"abc\\n\"");
+	EXPECT_STR(UnitTest_next(ustr), "\"\\n\"");
+	EXPECT_STR(UnitTest_next(ustr), "\"xyz\\n\"");
+	EXPECT_STR(UnitTest_next(ustr), NULL);
+}
 
-	UnitTest_free(&buf);
+TEST_DECL(cleanup)
+{
+	EXPECT(ustr->data != NULL);
+	EXPECT(ustr->capacity != 0);
+	TEST_EXPR(UnitTest_free(ustr));
+	EXPECT(ustr->data == NULL);
+	EXPECT(ustr->capacity == 0);
 }
 
 TEST_SUITE
@@ -86,4 +113,7 @@ TEST_SUITE
 	TEST_RUN(cstr);
 	TEST_RUN(qstr);
 	TEST_RUN(string);
+	TEST_RUN(split);
+	TEST_RUN(qsplit);
+	TEST_RUN(cleanup);
 }

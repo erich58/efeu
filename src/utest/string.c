@@ -118,7 +118,10 @@ const char *UnitTest_split(UnitTestString *buf, const char *str)
 		{
 			UnitTest_putc(0, buf);
 			n++;
-			str++;
+
+			while (*str == ' ')
+				str++;
+
 			continue;
 		}
 
