@@ -83,7 +83,7 @@ void UnitTest_puts(const char *str, UnitTestString *buf)
 	}
 }
 
-const char *UnitTest_cstr(UnitTestString *buf)
+const char *UnitTest_str(UnitTestString *buf)
 {
 	if	(UnitTest_start(buf))
 		return buf->data;
@@ -223,12 +223,25 @@ void UnitTest_qputs(const char *str, int delim, UnitTestString *buf)
 	}
 }
 
+const char *UnitTest_cstr(const char *str)
+{
+	if	(str)
+	{
+		static STRING_DECL(buf);
+		UnitTest_clear(&buf);
+		UnitTest_puts(str, &buf);
+		return UnitTest_str(&buf);
+	}
+
+	return NULL;
+}
+
 const char *UnitTest_qstr(const char *str)
 {
 	static STRING_DECL(buf);
 	UnitTest_clear(&buf);
 	UnitTest_qputs(str, '"', &buf);
-	return UnitTest_cstr(&buf);
+	return UnitTest_str(&buf);
 }
 
 const char *UnitTest_qsplit(UnitTestString *buf, const char *str)

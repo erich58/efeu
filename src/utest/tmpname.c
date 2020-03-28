@@ -50,7 +50,7 @@ static void create_tmpdir()
 	if	(buf.size)
 	{
 		cleanup_pid = getpid();
-		tmpdir = UnitTest_cstr(&buf);
+		tmpdir = UnitTest_str(&buf);
 		atexit(UnitTest_tmpclean);
 	}
 	else
@@ -134,12 +134,12 @@ static const char *mkparent(const char *name)
 	while (*name != 0)
 	{
 		if	(*name == '/')
-			mkdir(UnitTest_cstr(&buf), 0777);
+			mkdir(UnitTest_str(&buf), 0777);
 
 		UnitTest_putc(*name++, &buf);
 	}
 
-	return UnitTest_cstr(&buf);
+	return UnitTest_str(&buf);
 }
 
 const char *UnitTest_mkdir(const char *name)

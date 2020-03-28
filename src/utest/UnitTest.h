@@ -27,7 +27,9 @@ size_t UnitTest_start(UnitTestString *ustr);
 const char *UnitTest_next(UnitTestString *ustr);
 const char *UnitTest_split(UnitTestString *ustr, const char *str);
 const char *UnitTest_qsplit(UnitTestString *ustr, const char *str);
-const char *UnitTest_cstr(UnitTestString *ustr);
+const char *UnitTest_str(UnitTestString *ustr);
+
+const char *UnitTest_cstr(const char *str);
 const char *UnitTest_qstr(const char *str);
 
 int UnitTest_strcmp(const char *s1, const char *s2);
