@@ -20,10 +20,11 @@ typedef void (*runFunction)(void);
 /* Redirektion
 */
 
+static int real_stdin = 0;
 static int real_stdout = 1;
 static int real_stderr = 2;
 
-static int reopen_fd(int fd, const char *name)
+static const char *std_name(const char *name)
 {
 	switch (*name)
 	{
@@ -34,19 +35,63 @@ static int reopen_fd(int fd, const char *name)
 	case '/':
 		break;
 	default:
-		name = UnitTest_tmpname(name);
+		name = NULL;
 		break;
 	}
 
-	int fdnew = creat(name, 0644);
+	return name;
+}
+
+static int reopen_fd(int fd, const char *name)
+{
+	const char *fname = std_name(name);
+
+	if	(!fname)
+		fname = UnitTest_tmpname(name);
+
+	int fdnew = creat(fname, 0644);
 
 	if	(fdnew < 0)
 	{
-		UnitTest_error("%s: %s", name, strerror(errno));
+		UnitTest_error("%s: %s", fname, strerror(errno));
 		return 0;
 	}
 
 	dup2(fdnew, fd);
+	return 1;
+}
+
+int UnitTest_stdin(const char *name, const char *content)
+{
+	if	(name)
+	{
+		const char *fname;
+		
+		if	(real_stdin == 0)
+			real_stdin = dup(0);
+
+		if	((fname = std_name(name)))
+			;
+		else if	(content)
+			fname = UnitTest_mkfile(name, content);
+		else	fname = UnitTest_tmpname(name);
+
+		int fd = open(fname, O_RDONLY); 
+
+		if	(fd < 0)
+		{
+			UnitTest_error("%s: %s", fname, strerror(errno));
+			return 0;
+		}
+
+		dup2(fd, 0);
+		return 1;
+	}
+	else if	(real_stdin != 0)
+	{
+		dup2(real_stdin, 0);
+	}
+
 	return 1;
 }
 

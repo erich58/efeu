@@ -52,9 +52,11 @@ const char *UnitTest_tmpname(const char *name);
 const char *UnitTest_mkdir(const char *name);
 const char *UnitTest_mkfile(const char *name, const char *content);
 const char *UnitTest_content(const char *name);
+void UnitTest_tmpclean(void);
+
+int UnitTest_stdin(const char *name, const char *content);
 int UnitTest_stdout(const char *name);
 int UnitTest_stderr(const char *name);
-void UnitTest_tmpclean(void);
 
 int UnitTest_fork(const char *file, int line);
 int UnitTest_exec(const char *file, int line,
