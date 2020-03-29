@@ -35,7 +35,6 @@ static struct {
 	{ 0, SB_DATA(0) },
 };
 
-static int depth = 0;
 static int count = 0;
 static int flag = 0;
 
