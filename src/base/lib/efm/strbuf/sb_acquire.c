@@ -32,9 +32,7 @@ static struct {
 	{ 0, SB_DATA(0) },
 	{ 0, SB_DATA(0) },
 	{ 0, SB_DATA(0) },
-#if	1
 	{ 0, SB_DATA(0) },
-#endif
 };
 
 static int depth = 0;
@@ -47,7 +45,6 @@ Die Funktion |$1| fordert einen neuen Stringbuffer an.
 
 StrBuf *sb_acquire (void)
 {
-	StrBuf *buf;
 	int i;
 
 	count++;
@@ -65,6 +62,7 @@ StrBuf *sb_acquire (void)
 		}
 	}
 
+	flag = 1;
 	return sb_create(0);
 }
 
