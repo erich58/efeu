@@ -37,13 +37,8 @@ If not, write to the Free Software Foundation, Inc.,
 
 IO *io_tmpfile (void)
 {
-	FILE *tmp;
-
-	if	((tmp = tmpfile()) != NULL)
-		return io_stream("<tmpfile>", tmp, fclose);
-
-	return io_tmpbuf(TMP_SIZE);
-	return NULL;
+	FILE *tmp = tmpfile();
+	return tmp ? io_stream("<tmpfile>", tmp, fclose) : io_tmpbuf(TMP_SIZE);
 }
 
 
@@ -57,9 +52,6 @@ IO *io_fopen (const char *name, const char *mode)
 
 IO *io_fileopen(const char *name, const char *mode)
 {
-	if	(name && *name == '|')
-		return io_popen(name + 1, mode);
-
 	return io_stream(name, fileopen(name, mode), fileclose);
 }
 
