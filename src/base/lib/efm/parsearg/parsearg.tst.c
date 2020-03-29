@@ -1,17 +1,18 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/parsearg.h>
-#include "utest/data.tst.h"
+#include "utest/out.tst.h"
+#include "utest/m2c.tst.h"
 
 TEST_DECL(argval)
 {
 	EXPECT_STR(argval(NULL), NULL);
 	EXPECT_STR(argval("-"), NULL);
-	EXPECT_STR(cstr(argval("x")), "x");
+	EXPECT_STR(M2C(argval("x")), "x");
 }
 
 static const char *argl(int narg, char **arg)
 {
-	IO *io = out();
+	IO *io = OUT();
 	int n;
 
 	io_printf(io, "%d:", narg);
@@ -19,7 +20,7 @@ static const char *argl(int narg, char **arg)
 	for (n = 0; n < narg; n++)
 		io_printf(io, " %s", arg[n]);
 
-	return data();
+	return DATA();
 }
 
 TEST_DECL(skiparg)

@@ -5,7 +5,7 @@
 /* Tests erfolgen mit einem Integer-Vektor
 */
 
-#include "utest/data.tst.h"
+#include "utest/out.tst.h"
 
 #define	IVAL(p)	((int *) p)[0]
 
@@ -16,7 +16,7 @@ static void vclean(void *ptr)
 
 static const char *vinfo(int *vec, size_t dim)
 {
-	IO *io = out();
+	IO *io = OUT();
 	io_printf(io, "%zu:", dim);
 
 	if	(vec && dim)
@@ -27,7 +27,7 @@ static const char *vinfo(int *vec, size_t dim)
 			io_printf(io, " %d", vec[i]);
 	}
 
-	return data();
+	return DATA();
 }
 
 static const char *vbinfo(VecBuf *buf)
@@ -87,7 +87,7 @@ static const char *minfo(VecBuf *vb, int min, int max)
 	size_t n = vb_size(vb);
 	VecMatch m = vmatch(mkey(min, max), v, n, sizeof v[0], mcomp);
 
-	IO *io = out();
+	IO *io = OUT();
 	io_printf(io, "%zu[%zu,%zu]:", n, m.start, m.end);
 
 	if	(v && n)
@@ -108,7 +108,7 @@ static const char *minfo(VecBuf *vb, int min, int max)
 			io_printf(io, " %d", v[i++]);
 	}
 
-	return data();
+	return DATA();
 }
 
 TEST_DECL(basic)

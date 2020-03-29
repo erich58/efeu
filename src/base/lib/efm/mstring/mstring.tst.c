@@ -3,8 +3,6 @@
 #include <stdio.h>
 #include <signal.h>
 
-//#include "utest/data.tst.h"
-
 TEST_DECL(mbasename)
 {
 	char *b, *s;

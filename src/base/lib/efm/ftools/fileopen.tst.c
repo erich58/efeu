@@ -5,8 +5,6 @@
 #include <EFEU/MakeDepend.h>
 #include <EFEU/LangDef.h>
 
-#include "utest/data.tst.h"
-
 static LogControl *flog = NULL;
 
 TEST_DECL(setup)
@@ -228,7 +226,10 @@ TEST_DECL(findopen)
 static const char *t_fsearch(const char *path, const char *sub,
 	const char *name, const char *ext)
 {
-	return cstr(fsearch(UnitTest_tpl(path), sub, name, ext));
+	char *m = fsearch(UnitTest_tpl(path), sub, name, ext);
+	const char *c = UnitTest_cstr(m);
+	memfree(m);
+	return c;
 }
 
 #define	TMP(x)	UnitTest_tmpname(x)

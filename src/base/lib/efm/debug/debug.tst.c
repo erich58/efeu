@@ -6,7 +6,8 @@
 #include <EFEU/io.h>
 #include <ctype.h>
 
-#include "utest/data.tst.h"
+#include "utest/out.tst.h"
+#include "utest/m2c.tst.h"
 
 static LogControl *nlog = NULL;
 static LogControl *dlog = NULL;
@@ -48,7 +49,7 @@ static const char *fconfig(const char *fmt, const char *name)
 
 static const char *logid(LogControl *log)
 {
-	return cstr(rd_ident(log));
+	return M2C(rd_ident(log));
 }
 
 #if	0
@@ -58,7 +59,7 @@ static const char *loginfo(LogControl *log)
 		return NULL;
 
 	LogUpdate(log);
-	IO *io = out();
+	IO *io = OUT();
 	LogControlEntry *entry = log->entry;
 
 	io_puts(log->name, io);
@@ -73,7 +74,7 @@ static const char *loginfo(LogControl *log)
 		}
 	}
 
-	return data();
+	return DATA();
 }
 #endif
 
@@ -313,8 +314,8 @@ TEST_DECL(GetFormat)
 	io_close(io);
 
 	TEST_FILE("tst3.msg", "1\tABC\n2\t\"DEF\"");
-	TEST_EXPR(FormatTabShow(out(), "tst3", "$0-$1-$2\n"));
-	EXPECT_STR(data(), "tst3-1-ABC\ntst3-2-DEF\n");
+	TEST_EXPR(FormatTabShow(OUT(), "tst3", "$0-$1-$2\n"));
+	EXPECT_STR(DATA(), "tst3-1-ABC\ntst3-2-DEF\n");
 }
 
 TEST_DECL(stdlog)
@@ -363,6 +364,6 @@ TEST_SUITE
 	rd_deref(nlog);
 	rd_deref(dlog);
 
-	TEST_EXPR(AllocTab_stat(out(), NULL, 1));
-	MATCH_STR(data(), "byte");
+	TEST_EXPR(AllocTab_stat(OUT(), NULL, 1));
+	MATCH_STR(DATA(), "byte");
 }

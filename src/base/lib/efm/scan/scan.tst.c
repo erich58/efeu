@@ -2,13 +2,13 @@
 #include <EFEU/ioscan.h>
 #include <EFEU/locale.h>
 #include <EFEU/mstring.h>
-#include "utest/data.tst.h"
+#include "utest/out.tst.h"
 
 static int testkey(const char *str, const char *key)
 {
 	IO *io = io_cstr(str);
 	int rval = io_testkey(io, key);
-	io_copy(io, out());
+	io_copy(io, OUT());
 	io_close(io);
 	return rval;
 }
@@ -17,7 +17,7 @@ static int valscan(const char *str, unsigned flags, void **data)
 {
 	IO *io = io_cstr(str);
 	int rval = io_valscan(io, flags, data);
-	io_copy(io, out());
+	io_copy(io, OUT());
 	io_close(io);
 	return rval;
 }
@@ -26,7 +26,7 @@ static int scan(const char *str, unsigned flags, void **data)
 {
 	IO *io = io_cstr(str);
 	int rval = io_scan(io, flags, data);
-	io_copy(io, out());
+	io_copy(io, OUT());
 	io_close(io);
 	return rval;
 }
@@ -86,11 +86,11 @@ TEST_DECL(mstr2int64)
 TEST_DECL(testkey)
 {
 	EXPECT(testkey("abc:", NULL) == 0);
-	EXPECT_STR(data(), "abc:");
+	EXPECT_STR(DATA(), "abc:");
 	EXPECT(testkey("abc:", "abc") == 1);
-	EXPECT_STR(data(), ":");
+	EXPECT_STR(DATA(), ":");
 	EXPECT(testkey("abcd:", "abc") == 0);
-	EXPECT_STR(data(), "abcd:");
+	EXPECT_STR(DATA(), "abcd:");
 }
 
 TEST_DECL(valscan)
@@ -109,7 +109,7 @@ TEST_DECL(valscan)
 	if	(EXPECT(valscan(" 3.5", SCAN_INT, &p) == SCAN_INT))
 		EXPECT(*((int *) p) == 3); 
 
-	EXPECT_STR(data(), ".5");
+	EXPECT_STR(DATA(), ".5");
 
 	if	(EXPECT(valscan(" 3", SCAN_DOUBLE, &p) == SCAN_DOUBLE))
 		EXPECT(*((double *) p) == 3.); 
@@ -123,7 +123,7 @@ TEST_DECL(valscan)
 	if	(EXPECT(valscan(" 0xabcdefgh", SCAN_ANYVAL, &p) == SCAN_INT))
 		EXPECT(*((int *) p) == 0xabcdef); 
 
-	EXPECT_STR(data(), "gh");
+	EXPECT_STR(DATA(), "gh");
 
 	if	(EXPECT(valscan("0x1234567890ll", SCAN_ANYVAL, &p) == SCAN_INT64))
 		EXPECT(*((int64_t *) p) == 0x1234567890ll); 
@@ -132,7 +132,7 @@ TEST_DECL(valscan)
 	if	(EXPECT(valscan(" 0b1012", SCAN_ANYVAL, &p) == SCAN_INT))
 		EXPECT(*((int *) p) == 5); 
 
-	EXPECT_STR(data(), "2");
+	EXPECT_STR(DATA(), "2");
 
 	if	(EXPECT(valscan(" -1u", 0, &p) == (SCAN_INT|SCAN_UNSIGNED)))
 		EXPECT(*((unsigned *) p) == ~0); 
@@ -149,7 +149,7 @@ TEST_DECL(scan)
 	EXPECT(io_scan(NULL, SCAN_ANYTYPE, NULL) == 0);
 
 	EXPECT(scan(" \t123", 0, NULL) == 0);
-	EXPECT_STR(data(), "123");
+	EXPECT_STR(DATA(), "123");
 
 	EXPECT(scan("3.5", SCAN_ANYTYPE, NULL) == SCAN_DOUBLE);
 	EXPECT(scan("3", SCAN_ANYTYPE, NULL) == SCAN_INT);
@@ -160,12 +160,12 @@ TEST_DECL(scan)
 	EXPECT(scan("L'a'", SCAN_ANYTYPE, NULL) == SCAN_UCS);
 	EXPECT(scan("L\"a\"", SCAN_ANYTYPE, NULL) == SCAN_STR);
 	EXPECT(scan("L'a'", 0, NULL) == 0);
-	EXPECT_STR(data(), "L'a'");
+	EXPECT_STR(DATA(), "L'a'");
 	EXPECT(scan("L'a'", SCAN_NAME, NULL) == SCAN_NAME);
-	EXPECT_STR(data(), "'a'");
+	EXPECT_STR(DATA(), "'a'");
 	EXPECT(scan("L'a'", SCAN_UCS, NULL) == SCAN_UCS);
 	EXPECT(scan("L 'a'", SCAN_UCS, NULL) == 0);
-	EXPECT_STR(data(), "L 'a'");
+	EXPECT_STR(DATA(), "L 'a'");
 	EXPECT(scan("L 'a'", SCAN_ANYTYPE, NULL) == SCAN_NAME);
 
 	if	(EXPECT(scan("'a'", SCAN_XCHAR, &p) == SCAN_CHAR))
@@ -204,7 +204,10 @@ TEST_DECL(scan)
 		EXPECT_STR(p, NULL); 
 
 	if	(EXPECT(scan("\"abc\"", SCAN_ANYTYPE, &p) == SCAN_STR))
-		EXPECT_STR(cstr(p), "abc"); 
+	{
+		EXPECT_STR(p, "abc"); 
+		memfree(p);
+	}
 }
 
 TEST_DECL(locale)
@@ -216,7 +219,7 @@ TEST_DECL(locale)
 	if	(EXPECT(valscan("123.456,78", 0, &p) == SCAN_DOUBLE))
 		EXPECT(*((double *) p) == 123.456); 
 
-	EXPECT_STR(data(), ",78");
+	EXPECT_STR(DATA(), ",78");
 
 	SetLocale(LOC_SCAN, "de");
 

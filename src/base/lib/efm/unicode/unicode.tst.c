@@ -1,6 +1,6 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/unicode.h>
-#include "utest/data.tst.h"
+#include "utest/out.tst.h"
 
 #define	DATA_UTF8 "-€ŠšŽžŒœŸ-"
 #define	DATA_LATIN9 "-\xa4\xa6\xa8\xb4\xb8\xbc\xbd\xbe-"
@@ -15,13 +15,13 @@ static const char *utfdump(int32_t ucs)
 	static unsigned char buf[8];
 	int n = nputucs(ucs, buf, 7);
 	int i;
-	IO *io = out();
+	IO *io = OUT();
 	io_printf(io, "%d", n);
 
 	for (i = 0; i < n; i++)
 		io_printf(io, " %2x", buf[i]);
 
-	return data();
+	return DATA();
 }
 
 TEST_SUITE

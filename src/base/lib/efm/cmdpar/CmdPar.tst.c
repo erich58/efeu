@@ -2,7 +2,8 @@
 #include <EFEU/CmdPar.h>
 #include <EFEU/Debug.h>
 #include <EFEU/mstring.h>
-#include "utest/data.tst.h"
+#include "utest/out.tst.h"
+#include "utest/m2c.tst.h"
 
 static CmdPar *par = NULL;
 
@@ -86,7 +87,7 @@ static const char *eval_par(const char *first)
 	EXPECT_CONTENT("error.log", eval_msg);
 	eval_msg = "";
 
-	IO *io = out();
+	IO *io = OUT();
 
 	if	(stat < 0)
 		io_puts("ERR", io);
@@ -96,7 +97,7 @@ static const char *eval_par(const char *first)
 	for (n = 0; n < narg; n++)
 		io_printf(io, " %s", arg[n]);
 
-	return data();
+	return DATA();
 }
 
 TEST_DECL(read)
@@ -133,33 +134,33 @@ TEST_DECL(read)
 	CmdPar_info(par, info);
 
 	CmdPar_docmode = 0;
-	CmdPar_resource(par, out());
-	EXPECT_STR(data(), "B = \"1\"\n\tRDESC\n");
+	CmdPar_resource(par, OUT());
+	EXPECT_STR(DATA(), "B = \"1\"\n\tRDESC\n");
 
 	CmdPar_setval(par, "B", "a|b\t\"\n");
 	CmdPar_docmode = 1;
-	CmdPar_resource(par, out());
-	EXPECT_STR(data(), "[|B = \"a||b\\t\\\"\\n\"|]\n\tRDESC\n");
+	CmdPar_resource(par, OUT());
+	EXPECT_STR(DATA(), "[|B = \"a||b\\t\\\"\\n\"|]\n\tRDESC\n");
 
-	PrintInfo(out(), GetInfo(info, "Res"));
-	EXPECT_STR(data(), "resources\nB = \"a|b\\t\\\"\\n\"\n\tRDESC\n");
+	PrintInfo(OUT(), GetInfo(info, "Res"));
+	EXPECT_STR(DATA(), "resources\nB = \"a|b\\t\\\"\\n\"\n\tRDESC\n");
 
 	CmdPar_docmode = 0;
-	CmdPar_synopsis(par, out(), 0);
-	EXPECT_STR(data(), "test\
+	CmdPar_synopsis(par, OUT(), 0);
+	EXPECT_STR(DATA(), "test\
  [ -a ] [ --aa ] [ -b x ] [ --bb[=x] ]\
  { <name>=<value> }\
  c [ d ]\
 \n");
-	CmdPar_synopsis(par, out(), 1);
-	EXPECT_STR(data(), "test\
+	CmdPar_synopsis(par, OUT(), 1);
+	EXPECT_STR(DATA(), "test\
  [ -a ] [ --aa ]\
  { <name>=<value> }\
  c [ -b x ] [ --bb[=x] ] [ d ]\
 \n");
 	CmdPar_docmode = 1;
-	CmdPar_synopsis(par, out(), 0);
-	EXPECT_STR(data(), "\
+	CmdPar_synopsis(par, OUT(), 0);
+	EXPECT_STR(DATA(), "\
 \\hang\n\
 |test|\n\
 \\[~|-a|~]\n\
@@ -172,13 +173,13 @@ TEST_DECL(read)
 \\end\n");
 
 	CmdPar_docmode = 0;
-	CmdPar_options(par, out());
-	EXPECT_STR(data(), "\
+	CmdPar_options(par, OUT());
+	EXPECT_STR(DATA(), "\
 -a, --aa\n\tADESC\n\
 -b x, --bb[=x]\n\tBDESC\n\
 ");
-	CmdPar_arglist(par, out());
-	EXPECT_STR(data(), "\
+	CmdPar_arglist(par, OUT());
+	EXPECT_STR(DATA(), "\
 -a, --aa\n\tADESC\n\
 <name>=<value>\n\tXDESC\n\
 c\n\tCDESC\n\
@@ -186,8 +187,8 @@ c\n\tCDESC\n\
 d\n\tDDESC\n\
 ");
 	CmdPar_docmode = 1;
-	CmdPar_arglist(par, out());
-	EXPECT_STR(data(), "\
+	CmdPar_arglist(par, OUT());
+	EXPECT_STR(DATA(), "\
 [<=|-a|, |--aa|=>]\n\tADESC\n\
 [<=<|<name>=<value>|>=>]\n\tXDESC\n\
 [<=</c/>=>]\n\tCDESC\n\
@@ -195,8 +196,8 @@ d\n\tDDESC\n\
 [<=</d/>=>]\n\tDDESC\n\
 \\end\n");
 
-	PrintInfo(out(), GetInfo(info, "Arg"));
-	EXPECT_STR(data(), "options and arguments\n\
+	PrintInfo(OUT(), GetInfo(info, "Arg"));
+	EXPECT_STR(DATA(), "options and arguments\n\
 -a, --aa\n\tADESC\n\
 <name>=<value>\n\tXDESC\n\
 c\n\tCDESC\n\
@@ -205,15 +206,15 @@ d\n\tDDESC\n\
 ");
 
 	CmdPar_docmode = 0;
-	CmdPar_environ(par, out());
-	EXPECT_STR(data(), "DENV\n\tDDESC\n");
+	CmdPar_environ(par, OUT());
+	EXPECT_STR(DATA(), "DENV\n\tDDESC\n");
 
 	CmdPar_docmode = 1;
-	CmdPar_environ(par, out());
-	EXPECT_STR(data(), "[|DENV|]\n\tDDESC\n");
+	CmdPar_environ(par, OUT());
+	EXPECT_STR(DATA(), "[|DENV|]\n\tDDESC\n");
 
-	PrintInfo(out(), GetInfo(info, "Env"));
-	EXPECT_STR(data(), "environment\nDENV\n\tDDESC\n");
+	PrintInfo(OUT(), GetInfo(info, "Env"));
+	EXPECT_STR(DATA(), "environment\nDENV\n\tDDESC\n");
 
 	/* TODO: Freigabe der Info-Struktur */
 	// rd_deref(info);
@@ -227,7 +228,7 @@ TEST_DECL(Ptr)
 	EXPECT(par->refcount == 1);
 	EXPECT(par == CmdPar_ptr(NULL));
 	CmdPar_setval(par, NULL, "CmdPar");
-	EXPECT_STR(cstr(rd_ident(par)), "CmdPar");
+	EXPECT_STR(M2C(rd_ident(par)), "CmdPar");
 
 	CmdPar_setval(par, "a", "A");
 	CmdPar_setval(par, "b", "B");
@@ -237,10 +238,10 @@ TEST_DECL(Ptr)
 	EXPECT_STR(CmdPar_getval(NULL, "b", "X"), "B");
 	EXPECT_STR(CmdPar_getval(par, "c", "X"), "X");
 	EXPECT_STR(CmdPar_getval(par, NULL, "X"), "CmdPar");
-	CmdPar_showval(par, out(), NULL);
-	EXPECT_STR(data(), "a=\"A\"\nb=\"B\"\n");
-	CmdPar_showval(par, out(), "$1:$2;");
-	EXPECT_STR(data(), "a:A;b:B;");
+	CmdPar_showval(par, OUT(), NULL);
+	EXPECT_STR(DATA(), "a=\"A\"\nb=\"B\"\n");
+	CmdPar_showval(par, OUT(), "$1:$2;");
+	EXPECT_STR(DATA(), "a:A;b:B;");
 
 	CmdParDef *def = CmdParDef_alloc();
 	CmdPar_add(par, def);
@@ -251,12 +252,12 @@ TEST_DECL(Ptr)
 
 	InfoNode *info = NewInfo(NULL, "CmdPar");
 	CmdPar_info(par, info);
-	PrintInfo(out(), info);
-	MATCH_STR(data(), "\nArg\t.*\nEnv\t.*\nRes\t.*\n");
+	PrintInfo(OUT(), info);
+	MATCH_STR(DATA(), "\nArg\t.*\nEnv\t.*\nRes\t.*\n");
 
 	CmdPar_var(par, "a", 1)->desc = "Description";
-	PrintInfo(out(), GetInfo(info, "Res"));
-	EXPECT_STR(data(), "resources\na = \"A\"\n\tDescription");
+	PrintInfo(OUT(), GetInfo(info, "Res"));
+	EXPECT_STR(DATA(), "resources\na = \"A\"\n\tDescription");
 
 	CmdPar_clean(par);
 	EXPECT(par->var.size == 0); 
@@ -437,8 +438,8 @@ TEST_DECL(xargs)
 	EXPECT_STR(pget("L"), NULL);
 
 	CmdPar_docmode = 0;
-	CmdPar_arglist(par, out());
-	EXPECT_STR(data(), "\
+	CmdPar_arglist(par, OUT());
+	EXPECT_STR(DATA(), "\
 last\n\tLast\n\
 opt\n\tOptional\n\
 extra\n\tExtra\n\
@@ -542,8 +543,8 @@ TEST_DECL(write)
 		"$f|\n"
 	);
 
-	CmdPar_write(par, out());
-	EXPECT_STR(data(),
+	CmdPar_write(par, OUT());
+	EXPECT_STR(DATA(),
 		"\\@A\\tB\\nC\\:D = \"X\"\n"
 		"A = NULL\n"
 		"B = NULL\n"

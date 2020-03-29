@@ -6,7 +6,8 @@
 #include <EFEU/mstring.h>
 #include <EFEU/io.h>
 #include <EFEU/procenv.h>
-#include "utest/data.tst.h"
+#include "utest/out.tst.h"
+#include "utest/m2c.tst.h"
 
 static CmdPar par;
 
@@ -29,18 +30,18 @@ static int pcmd(const char *c, const char *v, const char *p, const char *a)
 
 TEST_DECL(show)
 {
-	CmdParEval_show(out(), NULL);	// Für Testabdeckung //
-	MATCH_STR(data(), "^\\[append] .*\n\\[vset]");
-	CmdParEval_show(out(), "$1 ");
-	EXPECT_STR(data(), "append break config exit info insert lset "
+	CmdParEval_show(OUT(), NULL);	// Für Testabdeckung //
+	MATCH_STR(DATA(), "^\\[append] .*\n\\[vset]");
+	CmdParEval_show(OUT(), "$1 ");
+	EXPECT_STR(DATA(), "append break config exit info insert lset "
 	 	"manpage message set setlocale test usage vset ");
 }
 
 TEST_DECL(var)
 {
-	EXPECT_STR(cstr(CmdPar_psub(&par, NULL, "arg")), "arg");
-	EXPECT_STR(cstr(CmdPar_psub(&par, "X = {}", "arg")), "X = arg");
-	EXPECT_STR(cstr(CmdPar_psub(&par, "X = \"{}\"", "arg")), "X = \"arg\"");
+	EXPECT_STR(M2C(CmdPar_psub(&par, NULL, "arg")), "arg");
+	EXPECT_STR(M2C(CmdPar_psub(&par, "X = {}", "arg")), "X = arg");
+	EXPECT_STR(M2C(CmdPar_psub(&par, "X = \"{}\"", "arg")), "X = \"arg\"");
 
 	pset("a", NULL);
 	EXPECT(pcmd("append", "a", ":", "first") == 0);

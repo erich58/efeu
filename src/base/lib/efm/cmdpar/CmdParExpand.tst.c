@@ -6,7 +6,7 @@
 #include <EFEU/mstring.h>
 #include <EFEU/io.h>
 #include <EFEU/procenv.h>
-#include "utest/data.tst.h"
+#include "utest/out.tst.h"
 
 static CmdPar par;
 
@@ -25,9 +25,9 @@ static void parg(const char *str)
 static const char *pexpand(const char *str)
 {
 	IO *io = io_cstr(str);
-	CmdPar_expand(&par, io, out());
+	CmdPar_expand(&par, io, OUT());
 	io_close(io);
-	return data();
+	return DATA();
 }
 
 static const char *expand(const char *name, const char *arg)
@@ -36,8 +36,8 @@ static const char *expand(const char *name, const char *arg)
 
 	if	(def && def->eval)
 	{
-		def->eval(&par, out(), arg);
-		return data();
+		def->eval(&par, OUT(), arg);
+		return DATA();
 	}
 
 	return NULL;
@@ -52,10 +52,10 @@ static CmdParExpand test_add = { "test_add", "Testfunktion", f_test_add };
 
 TEST_SUITE
 {
-	CmdParExpand_show(out(), NULL);	// Für Testabdeckung //
-	MATCH_STR(data(), "^\\[arglist] .*\n\\[version]");
-	CmdParExpand_show(out(), "$1 ");
-	EXPECT_STR(data(), "arglist copyright environ head ident name "
+	CmdParExpand_show(OUT(), NULL);	// Für Testabdeckung //
+	MATCH_STR(DATA(), "^\\[arglist] .*\n\\[version]");
+	CmdParExpand_show(OUT(), "$1 ");
+	EXPECT_STR(DATA(), "arglist copyright environ head ident name "
 		"options synopsis varlist version ");
 
 	CmdPar_init(&par);
@@ -142,8 +142,8 @@ TEST_SUITE
 	CmdParExpand_add(&test_add);
 	EXPECT_STR(expand("test_add", "DATA"), "DATA");
 
-	CmdPar_expand(NULL, NULL, out());
-	EXPECT_STR(data(), "@");
+	CmdPar_expand(NULL, NULL, OUT());
+	EXPECT_STR(DATA(), "@");
 	EXPECT_STR(pexpand(""), "@");
 	EXPECT_STR(pexpand(" "), "@");
 	EXPECT_STR(pexpand("@"), "@");
@@ -153,9 +153,9 @@ TEST_SUITE
 	EXPECT_STR(pexpand("{Ident"), "IdentName");
 
 	IO *io = io_cstr("@ident");
-	CmdPar_iousage(&par, out(), io);
+	CmdPar_iousage(&par, OUT(), io);
 	io_close(io);
-	EXPECT_STR(data(), "CommandName -- IdentName\n");
+	EXPECT_STR(DATA(), "CommandName -- IdentName\n");
 
 	TEST_FILE("CommandName.hlp", "HELP\n");
 
@@ -164,8 +164,8 @@ TEST_SUITE
 		SetApplPath(UnitTest_tmpname(NULL));
 		EXPECT_STR(CmdPar_hpath(&par),
 			UnitTest_tpl("@/CommandName.hlp"));
-		CmdPar_manpage(&par, out());
-		EXPECT_STR(data(), "HELP\n");
+		CmdPar_manpage(&par, OUT());
+		EXPECT_STR(DATA(), "HELP\n");
 		TEST_EXIT;
 	}
 

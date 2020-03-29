@@ -2,7 +2,8 @@
 #include <EFEU/io.h>
 #include <EFEU/Debug.h>
 #include <EFEU/mstring.h>
-#include "utest/data.tst.h"
+
+#include "utest/m2c.tst.h"
 
 TEST_DECL(logging)
 {
@@ -14,8 +15,8 @@ TEST_DECL(logging)
 TEST_DECL(null)
 {
 	EXPECT_STR(rd_ident(NULL), NULL);
-	EXPECT_STR(cstr(io_xident(NULL, NULL)), NULL);
-	EXPECT_STR(cstr(io_xident(NULL, ":%*:")), "::");
+	EXPECT_STR(M2C(io_xident(NULL, NULL)), NULL);
+	EXPECT_STR(M2C(io_xident(NULL, ":%*:")), "::");
 
 	EXPECT(io_putc('a', NULL) == 0);
 	EXPECT(io_nputc('a', NULL, 5) == 0);
@@ -35,10 +36,10 @@ TEST_DECL(null)
 TEST_DECL(plain)
 {
 	IO *io = io_alloc();
-	EXPECT_STR(cstr(rd_ident(io)), "<io>");
-	EXPECT_STR(cstr(io_xident(io, NULL)), "<io>");
-	EXPECT_STR(cstr(io_xident(io, "a%*b:%d%%.", 42)), "a<io>b:42%.");
-	EXPECT_STR(cstr(io_xident(io, "%m %s", mstrcpy("a"), "x")), "a x");
+	EXPECT_STR(M2C(rd_ident(io)), "<io>");
+	EXPECT_STR(M2C(io_xident(io, NULL)), "<io>");
+	EXPECT_STR(M2C(io_xident(io, "a%*b:%d%%.", 42)), "a<io>b:42%.");
+	EXPECT_STR(M2C(io_xident(io, "%m %s", mstrcpy("a"), "x")), "a x");
 
 	EXPECT(io_putc('a', io) == 0);
 	EXPECT(io_nputc('a', io, 5) == 0);

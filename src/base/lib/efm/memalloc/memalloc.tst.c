@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <signal.h>
 
-#include "utest/data.tst.h"
+#include "utest/out.tst.h"
 
 static ALLOCTAB(tab, "AllocTabTest", 2, sizeof(int));
 
@@ -67,8 +67,8 @@ TEST_DECL(alloctab)
 	EXPECT(del_data(NULL, NULL) == 1);
 	EXPECT(del_data(NULL, "x") == 0);
 
-	AllocTab_stat(out(), &tab, 1);
-	MATCH_STR(data(), "^AllocTabTest");
+	AllocTab_stat(OUT(), &tab, 1);
+	MATCH_STR(DATA(), "^AllocTabTest");
 
 	clear_log("error.log");
 	EXPECT(del_data(&tab, p) == 0);

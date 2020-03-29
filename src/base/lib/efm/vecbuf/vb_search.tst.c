@@ -7,7 +7,7 @@ typedef struct {
 	int val;
 } DATA;
 
-#define	EXPECT_DATA(p, k, v)	EXPECT(isdata(p, k, v))
+#define	EXPECT_data(p, k, v)	EXPECT(isDATA(p, k, v))
 
 static void *set(void *ptr, int key, int val)
 {
@@ -22,7 +22,7 @@ static void *set(void *ptr, int key, int val)
 	return NULL;
 }
 
-static int isdata(const void *ptr, int key, int val)
+static int isDATA(const void *ptr, int key, int val)
 {
 	if	(ptr)
 	{
@@ -54,34 +54,34 @@ TEST_SUITE
 	set(vb_next(vb), 8, 80);
 	vb_qsort(vb, comp);
 
-	EXPECT_DATA(vb_search(vb, set(&d, 5, 50), comp, VB_ENTER), 5, 50);
-	EXPECT_DATA(&d, 0, 0);
-	EXPECT_DATA(vb_search(vb, set(&d, 1, 10), comp, VB_ENTER), 1, 10);
-	EXPECT_DATA(&d, 0, 0);
-	EXPECT_DATA(vb_search(vb, set(&d, 1, 11), comp, VB_ENTER), 1, 10);
-	EXPECT_DATA(&d, 1, 11);
+	EXPECT_data(vb_search(vb, set(&d, 5, 50), comp, VB_ENTER), 5, 50);
+	EXPECT_data(&d, 0, 0);
+	EXPECT_data(vb_search(vb, set(&d, 1, 10), comp, VB_ENTER), 1, 10);
+	EXPECT_data(&d, 0, 0);
+	EXPECT_data(vb_search(vb, set(&d, 1, 11), comp, VB_ENTER), 1, 10);
+	EXPECT_data(&d, 1, 11);
 
 	EXPECT(vb_search(vb, set(&d, 3, 30), comp, VB_REPLACE) == NULL);
-	EXPECT_DATA(&d, 0, 0);
+	EXPECT_data(&d, 0, 0);
 	EXPECT(vb_search(vb, set(&d, 3, 31), comp, VB_REPLACE) == &d);
-	EXPECT_DATA(&d, 3, 30);
+	EXPECT_data(&d, 3, 30);
 
 	EXPECT(vb_size(vb) == 6);
-	EXPECT_DATA(vb_data(vb, 0), 1, 10);
-	EXPECT_DATA(vb_data(vb, 1), 3, 31);
-	EXPECT_DATA(vb_data(vb, 2), 4, 40);
-	EXPECT_DATA(vb_data(vb, 3), 5, 50);
-	EXPECT_DATA(vb_data(vb, 4), 7, 70);
-	EXPECT_DATA(vb_data(vb, 5), 8, 80);
+	EXPECT_data(vb_data(vb, 0), 1, 10);
+	EXPECT_data(vb_data(vb, 1), 3, 31);
+	EXPECT_data(vb_data(vb, 2), 4, 40);
+	EXPECT_data(vb_data(vb, 3), 5, 50);
+	EXPECT_data(vb_data(vb, 4), 7, 70);
+	EXPECT_data(vb_data(vb, 5), 8, 80);
 
 	EXPECT(vb_search(vb, set(&d, 2, 0), comp, VB_SEARCH) == NULL);
-	EXPECT_DATA(vb_search(vb, set(&d, 3, 0), comp, VB_SEARCH), 3, 31);
-	EXPECT_DATA(vb_search(vb, set(&d, 5, 0), comp, VB_SEARCH), 5, 50);
+	EXPECT_data(vb_search(vb, set(&d, 3, 0), comp, VB_SEARCH), 3, 31);
+	EXPECT_data(vb_search(vb, set(&d, 5, 0), comp, VB_SEARCH), 5, 50);
 
 	EXPECT(vb_bsearch(vb, set(&d, 2, 0), comp) == NULL);
-	EXPECT_DATA(vb_bsearch(vb, set(&d, 5, 0), comp), 5, 50);
+	EXPECT_data(vb_bsearch(vb, set(&d, 5, 0), comp), 5, 50);
 
-	EXPECT_DATA(vb_search(vb, set(&d, 3, 0), comp, VB_DELETE), 3, 31);
+	EXPECT_data(vb_search(vb, set(&d, 3, 0), comp, VB_DELETE), 3, 31);
 	EXPECT(vb_search(vb, set(&d, 3, 0), comp, VB_DELETE) == NULL);
 
 	EXPECT(vb_size(vb) == 5);
