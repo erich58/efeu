@@ -77,29 +77,25 @@ static int iodata_get (IO *io)
 	return (s->pos < s->size) ? (int) s->data[s->pos++] : EOF;
 }
 
-static size_t iodata_dbread (IO *io, void *dptr,
-	size_t recl, size_t size, size_t n)
+static size_t iodata_dbread (IO *io, void *dptr, size_t size, size_t n)
 {
 	IODATA *s = io->data;
 	size_t i, j;
 
-	if	(s->pos + n * recl > s->size)
+	if	(s->pos + n * size > s->size)
 		log_error(NULL, "[ftools:21]", NULL);
 
 	for (i = 0; i < n; i++)
 	{
 		unsigned char *data = DATA(dptr, size);
 
-		for (j = 0; j < recl; j++)
+		for (j = 0; j < size; j++)
 			SET(data, s->data[s->pos++]);
-
-		for (j = recl; j < size; j++)
-			SET(data, 0);
 
 		dptr = (char *) dptr + size;
 	}
 
-	return recl * n;
+	return size * n;
 }
 
 static int iodata_ctrl (IO *io, int req, va_list list)

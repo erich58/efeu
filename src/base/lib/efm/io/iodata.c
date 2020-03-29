@@ -65,7 +65,7 @@ size_t io_dbread (IO *io, void *dptr, size_t size, size_t n)
 		dptr = (char *) dptr + size;
 	}
 
-	return n;
+	return n * size;
 }
 
 
@@ -95,5 +95,5 @@ size_t io_dbwrite (IO *io, const void *dptr, size_t size, size_t n)
 		dptr = (char *) dptr + size;
 	}
 
-	return n;
+	return n * size;
 }
