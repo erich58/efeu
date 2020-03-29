@@ -81,7 +81,7 @@ static int mcomp (const void *key, const void *d)
 	return 0;
 }
 
-const char *minfo(VecBuf *vb, int min, int max)
+static const char *minfo(VecBuf *vb, int min, int max)
 {
 	int *v = vb_data(vb, 0);
 	size_t n = vb_size(vb);
