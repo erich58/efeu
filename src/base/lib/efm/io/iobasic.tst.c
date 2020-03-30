@@ -86,8 +86,98 @@ TEST_DECL(stream)
 	EXPECT(io_close(io) == 0);
 }
 
+TEST_DECL(strbuf)
+{
+	char buf[32];
+	unsigned offset;
+	IO *io;
+
+	StrBuf *sb = sb_create(32);
+	EXPECT((io = io_strbuf(sb)) != NULL);
+	EXPECT_STR(rd_ident(io), "<strbuf>");
+	EXPECT(io_puts("data", io) == 4);
+	EXPECT(io_rewind(io) == 0);
+	EXPECT_STR(io_gets(buf, sizeof buf, io), "data");
+	EXPECT(io_rewind(io) == 0);
+	offset = 2;
+	EXPECT(io_ctrl(io, IO_SETPOS, &offset) == 0);
+	EXPECT(io_getc(io) == 't');
+	EXPECT(io_ctrl(io, IO_GETPOS, &offset) == 0);
+	EXPECT(offset == 3);
+	EXPECT(io_ctrl(io, 0) == EOF);
+	EXPECT(io_close(io) == 0);
+	sb_destroy(sb);
+
+	EXPECT((io = io_tmpbuf(64)) != NULL);
+	EXPECT_STR(rd_ident(io), "<tmpbuf>");
+	EXPECT(io_puts("data", io) == 4);
+	EXPECT(io_rewind(io) == 0);
+	EXPECT_STR(io_gets(buf, sizeof buf, io), "data");
+	EXPECT(io_close(io) == 0);
+
+	EXPECT((io = io_strbuf(NULL)) != NULL);
+	EXPECT_STR(rd_ident(io), "<tmpbuf>");
+	EXPECT(io_close(io) == 0);
+}
+
+TEST_DECL(data)
+{
+	IO *io;
+	char dbuf[16] = "T1234abcd";
+	unsigned offset;
+	int wd[2] = { 0x31323334, 0x61626364 };
+	int rd[2] = { 0, 0 };
+
+	EXPECT((io = io_data(NULL, dbuf, sizeof dbuf)) != NULL);
+	EXPECT(io_peek(io) == 'T');
+	EXPECT(io_getc(io) == 'T');
+	EXPECT(io_dbread(io, rd, sizeof rd[0], 2) == sizeof rd);
+	EXPECT(memcmp(wd, rd, sizeof wd) == 0);
+	EXPECT_STR(rd_ident(io), ":9/16");
+	EXPECT(io_rewind(io) == 0);
+	EXPECT(io_ctrl(io, IO_GETPOS, &offset) == 0);
+	EXPECT(offset == 0);
+	TEST_EXPR(offset = 10);
+	EXPECT(io_ctrl(io, IO_SETPOS, &offset) == 0);
+	EXPECT(io_getc(io) == 0);
+	TEST_EXPR(offset = 16);
+	EXPECT(io_ctrl(io, IO_SETPOS, &offset) == EOF);
+
+	TEST_FORK
+	{
+		UnitTest_stderr("");
+		io_dbread(io, rd, sizeof rd[0], 2);
+		exit(0);
+	}
+
+	CHILD_EXIT(1);
+
+	EXPECT(io_close(io) == 0);
+
+	EXPECT(io_data(NULL, NULL, 0) == NULL);
+}
+
+TEST_DECL(bigbuf)
+{
+	IO *io;
+	char buf[32];
+
+	EXPECT((io = io_bigbuf(4, UnitTest_tmpname("buf_"))) != NULL);
+	PRINT_STR(rd_ident(io));
+	EXPECT(io_puts("abcd1234567", io) == 11);
+	MATCH_STR(rd_ident(io), "bigbuf[(].*[)] 2[+]3 2[+]0");
+	EXPECT(io_rewind(io) == 0);
+	EXPECT(io_read(io, buf, sizeof buf) == 11);
+	buf[11] = 0;
+	EXPECT_STR(buf, "abcd1234567");
+	EXPECT(io_close(io) == 0);
+}
+
 TEST_SUITE
 {
 	TEST_RUN(string);
 	TEST_RUN(stream);
+	TEST_RUN(strbuf);
+	TEST_RUN(data);
+	TEST_RUN(bigbuf);
 }
