@@ -72,7 +72,7 @@ $(_Library_tst_bin) : $(_Library_gcov)
 $(BUILD)/%.tst : %.tst.c
 	@mkdir -p $(@D)
 	$(CC) -o $@ -MMD -MF $(@).d $(CPPFLAGS) -I. $(CFLAGS) $< \
-		$(_Library_gcov) -lgcov $(LDFLAGS) -lutest
+		$(_Library_gcov) -lgcov $(LDFLAGS) $(TST_LDFLAGS) -lutest
 
 purge::
 	rm -rf $(_Library_gcov)
