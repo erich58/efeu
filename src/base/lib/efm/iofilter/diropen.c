@@ -130,7 +130,8 @@ IO *diropen (const char *dir, const char *name)
 	if	(!name)
 		return NULL;
 
-	create_dir(dir);
+	if	(dir)
+		create_dir(dir);
 
 	p = mstrpaste("/", dir, name);
 	io = io_fileopen(p, "wdz");
