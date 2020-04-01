@@ -142,6 +142,7 @@ TEST_DECL(fileopen)
 	PRINT_LABEL("Compressed data");
 
 	ASSERT((file = fileopen(UnitTest_tmpname("data.gz"), "wz")) != NULL);
+	EXPECT_STR(fileident(file), "<!gzip>");
 	EXPECT(fputs("Test data\n", file) > 0);
 	EXPECT(fileclose(file) == 0);
 
@@ -156,13 +157,16 @@ TEST_DECL(fileopen)
 	EXPECT(fileclose(file) == 0);
 
 	ASSERT((file = fileopen(UnitTest_tmpname("data.gz"), "r")) != NULL);
+	EXPECT_STR(fileident(file), UnitTest_tmpname("data.gz"));
 	EXPECT(getc(file) == 037);	// gzip magic
 	EXPECT(getc(file) == 0213);	// gzip magic
 	EXPECT(fileclose(file) == 0);
 
 	PRINT_LABEL("Pipes");
+	EXPECT(pipeopen(NULL, "r") == NULL);
 
 	ASSERT((file = fileopen("|echo TEST", "r")) != NULL);
+	EXPECT_STR(fileident(file), "<!echo>");
 	EXPECT_STR(fgets(buf, sizeof buf, file), "TEST\n");
 	EXPECT(fileclose(file) == 0);
 	

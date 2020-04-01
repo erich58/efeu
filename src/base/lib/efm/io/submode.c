@@ -39,7 +39,7 @@ void io_protect (IO *io, int flag)
 	io_ctrl(io, IO_PROTECT, flag);
 }
 
-char *io_prompt (IO *io, const char *prompt)
+const char *io_prompt (IO *io, const char *prompt)
 {
-	return io_ctrl(io, IO_PROMPT, &prompt) == EOF ? NULL : (char *) prompt;
+	return io_ctrl(io, IO_PROMPT, &prompt) == EOF ? NULL : prompt;
 }

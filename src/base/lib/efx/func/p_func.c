@@ -55,7 +55,7 @@ static void pfunc_clean (void *data)
 EfiObj *Parse_func(IO *io, EfiType *type, EfiName *name, int flags)
 {
 	EfiFunc *func;
-	char *prompt;
+	const char *prompt;
 	int c;
 
 	func = MakePrototype(io, type, name, flags);

@@ -37,7 +37,7 @@ EfiObj *PFunc_struct(IO *io, void *data)
 	EfiStruct *st;
 	EfiStruct *bvar;
 	void *p;
-	char *prompt;
+	const char *prompt;
 	int c;
 
 	p = io_getname(io);

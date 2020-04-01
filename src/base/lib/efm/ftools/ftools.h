@@ -45,19 +45,20 @@ extern char *fsearch (const char *path, const char *pfx,
 /*	Datenfiles öffnen
 */
 
-extern FILE *fileopen (const char *name, const char *mode);
-extern FILE *tempopen (void);
-extern FILE *findopen (const char *path, const char *pfx,
+FILE *fileopen (const char *name, const char *mode);
+FILE *pipeopen (const char *name, const char *mode);
+FILE *tempopen (void);
+FILE *findopen (const char *path, const char *pfx,
 	const char *name, const char *ext, const char *mode);
-extern int fileclose (FILE *file);
-extern char *fileident (FILE *file);
-extern void filenotice (const char *name, const char *mode,
+int fileclose (FILE *file);
+char *fileident (FILE *file);
+void filenotice (const char *name, const char *mode,
 	FILE *file, int (*close) (FILE *file));
-extern FILE *filerefer (FILE *file);
-extern void fileerror (FILE *file, const char *fmt,
+FILE *filerefer (FILE *file);
+void fileerror (FILE *file, const char *fmt,
 	const char *argdef, ...);
 
-extern FILE *log_file (LogControl *ctrl);
+FILE *log_file (LogControl *ctrl);
 
 /*
 temporay files

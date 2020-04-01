@@ -114,7 +114,7 @@ IO *io_divide (IO *io, size_t bsize);
 void io_submode (IO *io, int flag);
 void io_protect (IO *io, int flag);
 void io_linemark (IO *io);
-char *io_prompt (IO *io, const char *prompt);
+const char *io_prompt (IO *io, const char *prompt);
 
 /*
 Der Makro |$1| erhönht den Referenzzähler der IO-Struktur <io>

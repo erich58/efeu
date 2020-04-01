@@ -72,7 +72,7 @@ TEST_DECL(stream)
 	EXPECT(io_close(io) == 0);
 
 	EXPECT((io = io_fileopen("|echo test", "r")) != NULL);
-	EXPECT_STR(rd_ident(io), "|echo test");
+	EXPECT_STR(rd_ident(io), "<!echo>");
 	EXPECT(io_ctrl(io, IO_GETPOS, &offset) == EOF);
 	EXPECT_STR(io_gets(buf, sizeof buf, io), "test\n");
 	EXPECT(io_close(io) == 0);

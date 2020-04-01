@@ -60,7 +60,7 @@ EfiObj *Parse_block(IO *io, int endchar)
 	EfiObjList **ptr;
 	EfiObj *obj;
 	EfiBlock block;
-	char *prompt;
+	const char *prompt;
 	int c;
 
 	prompt = io_prompt(io, PROMPT);

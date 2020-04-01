@@ -61,7 +61,7 @@ void copy_token (IO *ein, IO *aus, int c, int flag)
 
 void copy_block (IO *ein, IO *aus, int end, int flag)
 {
-	char *prompt;
+	const char *prompt;
 	int c, last;
 
 	prompt = io_prompt(ein, ">>> ");

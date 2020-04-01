@@ -95,7 +95,7 @@ EfiObjList *Parse_list(IO *io, int endchar)
 	EfiObj *obj;
 	EfiObjList *list;
 	EfiObjList **ptr;
-	char *prompt;
+	const char *prompt;
 	char *eatdef;
 	int flag;
 	int c;

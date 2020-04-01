@@ -132,7 +132,8 @@ EfiObj *PFunc_enum (IO *io, void *data)
 {
 	EfiType *type;
 	EfiType *base;
-	char *name, *prompt;
+	char *name;
+	const char *prompt;
 	size_t recl;
 	int c;
 

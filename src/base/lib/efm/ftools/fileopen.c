@@ -26,6 +26,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/patcmp.h>
 #include <EFEU/MakeDepend.h>
 #include <EFEU/Debug.h>
+#include <EFEU/strbuf.h>
+#include <ctype.h>
 
 #define FMT_1	"[ftools:1]$!: file \"$1\": undefined access mode \"$2\".\n"
 #define FMT_2	"[ftools:2]$!: popen(\"$1\", \"$2\"): execution failed.\n"
@@ -60,14 +62,14 @@ static struct {
 	char *res;
 	char *cmd;
 } ztab[] = {
-	{ 'r',  "gz",	NULL,	"|gzip -cdf $1" },
-	{ 'w',  "gz",	"GZIP", "|gzip $2 -c > $1" },
-	{ 'a',  "gz",	"GZIP",	"|gzip $2 -c >> $1" },
-	{ 'r',  "bz2",	NULL,	"|bzip2 -cd $1" },
-	{ 'w',  "bz2",	NULL,	"|bzip2 -c > $1" },
-	{ 'r',  "GZ",	NULL,	"|gzip -cdf $1" },
-	{ 'w',  "GZ",	"GZIP", "|gzip $2 -c > $1" },
-	{ 'a',  "GZ",	"GZIP",	"|gzip $2 -c >> $1" },
+	{ 'r',  "gz",	NULL,	"gzip -cdf $1" },
+	{ 'w',  "gz",	"GZIP", "gzip $2 -c > $1" },
+	{ 'a',  "gz",	"GZIP",	"gzip $2 -c >> $1" },
+	{ 'r',  "bz2",	NULL,	"bzip2 -cd $1" },
+	{ 'w',  "bz2",	NULL,	"bzip2 -c > $1" },
+	{ 'r',  "GZ",	NULL,	"gzip -cdf $1" },
+	{ 'w',  "GZ",	"GZIP", "gzip $2 -c > $1" },
+	{ 'a',  "GZ",	"GZIP",	"gzip $2 -c >> $1" },
 };
 
 #define	zcmp(x,m,e)	((x).mode == (m) && strcmp((x).ext, (e)) == 0)
@@ -99,31 +101,29 @@ static char *zcmd (const char *name, const char *mode)
 /*	Pipeline öffnen
 */
 
-static FILE *open_pipe (const char *name, int mode)
+FILE *pipeopen (const char *cmd, const char *mode)
 {
-	FILE *file = popen((char *) name + 1, ptype[mode]);
+	if	(!cmd || !mode)
+		return NULL;
+
+	if	(pipe_lock)
+		log_error(NULL, FMT_4, "ss", cmd, mode);
+
+	FILE *file = popen(cmd, mode);
 	
 	if	(file == NULL)
-		log_error(NULL, FMT_2, "ss", name + 1, ptype[mode]);
+		log_error(NULL, FMT_2, "ss", cmd, mode);
 
-	filenotice(name, ptype[mode], file, pclose);
+	StrBuf *sb = sb_acquire();
+	sb_puts("<!", sb);
+
+	while (*cmd && !isspace(*cmd))
+		sb_putc(*cmd++, sb);
+
+	sb_puts(">", sb);
+	filenotice(sb_nul(sb), mode, file, pclose);
 	return file;
 }
-
-/*	Datei öffnen
-*/
-
-static FILE *open_file (const char *name, int mode)
-{
-	FILE *file = fopen(name, ftype[mode]);
-	
-	if	(file == NULL)
-		log_error(NULL, FMT_3, "ss", name, ftype[mode]);
-
-	filenotice(name, ftype[mode], file, fclose);
-	return file;
-}
-
 
 /*
 Die Funktion |$1| öffnet die Datei <name> mit Zugriff <mode>
@@ -131,6 +131,7 @@ Die Funktion |$1| öffnet die Datei <name> mit Zugriff <mode>
 
 FILE *fileopen (const char *name, const char *mode)
 {
+	FILE *file;
 	char *fname;
 	int omode;
 
@@ -167,10 +168,7 @@ FILE *fileopen (const char *name, const char *mode)
 
 	if	(*name == '|')
 	{
-		if	(pipe_lock)
-			log_error(NULL, FMT_4, "ss", name, omode);
-
-		return open_pipe(name, omode);
+		return pipeopen(name + 1, ptype[omode]);
 	}
 
 	if	(*name == '&')
@@ -186,10 +184,21 @@ FILE *fileopen (const char *name, const char *mode)
 
 	if	((fname = zcmd(name, mode)))
 	{
-		FILE *file = open_pipe(fname, omode);
+		int save_lock = pipe_lock;
+		pipe_lock = 0;
+		file = pipeopen(fname, ptype[omode]);
+		pipe_lock = save_lock;
 		memfree(fname);
-		return file;
 	}
-	
-	return open_file(name, omode);
+	else
+	{
+		file = fopen(name, ftype[omode]);
+		
+		if	(file == NULL)
+			log_error(NULL, FMT_3, "ss", name, ftype[omode]);
+
+		filenotice(name, ftype[omode], file, fclose);
+	}
+
+	return file;
 }

@@ -147,7 +147,7 @@ int iocpy_macsub (IO *in, IO *out, int c,
 {
 	int n;
 	PPMacro *mac;
-	char *prompt;
+	const char *prompt;
 	StrBuf *sb;
 	VecBuf argv;
 

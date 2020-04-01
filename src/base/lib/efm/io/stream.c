@@ -50,15 +50,20 @@ IO *io_fopen (const char *name, const char *mode)
 	return io_stream(name, fopen(name, mode), fclose);
 }
 
+IO *io_popen(const char *name, const char *mode)
+{
+	return io_stream(NULL, pipeopen(name, mode), fileclose);
+}
+
 IO *io_fileopen(const char *name, const char *mode)
 {
-	return io_stream(name, fileopen(name, mode), fileclose);
+	return io_stream(NULL, fileopen(name, mode), fileclose);
 }
 
 IO *io_findopen (const char *path, const char *name, const char *ext,
 	const char *mode)
 {
-	return io_stream(name, findopen(path, NULL, name, ext, mode),
+	return io_stream(NULL, findopen(path, NULL, name, ext, mode),
 		fileclose);
 }
 

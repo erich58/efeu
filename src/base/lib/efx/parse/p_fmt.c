@@ -32,7 +32,7 @@ int Parse_fmt(IO *io, const char *fmt, ...)
 	int c;
 	va_list k;
 	EfiObj **ptr;
-	char *prompt;
+	const char *prompt;
 	int stat;
 
 	if	(fmt == NULL)	return 0;
