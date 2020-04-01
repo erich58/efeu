@@ -66,7 +66,7 @@ Tabulatoren am Anfang des Kommentars entfernt.
 
 int io_skipcom (IO *io, StrBuf *buf, int flag)
 {
-	char *prompt;
+	const char *prompt;
 	int startline;
 	int c;
 

@@ -136,7 +136,7 @@ liefert ein Objekt vom Type |_Expr_|.
 EfiObj *ETK_parse (ETK *etk, IO *io)
 {
 	int c;
-	char *prompt;
+	const char *prompt;
 	EfiObj *(*expr) (void *par, const EfiObjList *list);
 
 	if	(!io)	return NULL;

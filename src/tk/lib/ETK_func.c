@@ -68,7 +68,7 @@ static int proc_func (ClientData data, Tcl_Interp *interp, int argc, ARGDECL)
 
 static EfiObj *parse_body (IO *io)
 {
-	char *prompt;
+	const char *prompt;
 	EfiObj *obj;
 	int c;
 
