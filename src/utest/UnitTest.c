@@ -24,27 +24,29 @@ static int real_stdin = 0;
 static int real_stdout = 1;
 static int real_stderr = 2;
 
-static const char *std_name(const char *name)
+static const char *qualified_name(const char *name_)
 {
-	switch (*name)
+	switch (*name_)
 	{
 	case 0:
-		name = "/dev/null";
-		break;
-	case '.':
+		return "/dev/null";
 	case '/':
-		break;
-	default:
-		name = NULL;
+		return name_;
+	case '.':
+		if	(name_[1] == 0 || name_[1] == '/')
+			return name_;
+		if	(name_[1] == '.' && (name_[2] == 0 || name_[2] == '/'))
+			return name_;
+			
 		break;
 	}
 
-	return name;
+	return NULL;
 }
 
 static int reopen_fd(int fd, const char *name)
 {
-	const char *fname = std_name(name);
+	const char *fname = qualified_name(name);
 
 	if	(!fname)
 		fname = UnitTest_tmpname(name);
@@ -70,7 +72,7 @@ int UnitTest_stdin(const char *name, const char *content)
 		if	(real_stdin == 0)
 			real_stdin = dup(0);
 
-		if	((fname = std_name(name)))
+		if	((fname = qualified_name(name)))
 			;
 		else if	(content)
 			fname = UnitTest_mkfile(name, content);

@@ -85,7 +85,7 @@ IO *io_count (IO *io)
 	count->io = io;
 	count->count = 0;
 	io = io_alloc();
-	io->put = (io ? std_put : dummy_put);
+	io->put = (count->io ? std_put : dummy_put);
 	io->ctrl = count_ctrl;
 	io->data = count;
 	return io;

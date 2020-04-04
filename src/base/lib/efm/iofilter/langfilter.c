@@ -215,6 +215,17 @@ static int lf_key (LFPAR *lf)
 		do	c = io_getc(lf->io);
 		while	(c == ' ' || c == '\t');
 
+		if	(c == '\\')
+		{
+			lf->nlflag = 0;
+			c = io_peek(lf->io);
+
+			if	(c != ' ' && c != '\t')
+				io_ungetc('\\', lf->io);
+
+			return type;
+		}
+
 		if	(c != '\n')
 		{
 			io_ungetc(c, lf->io);
@@ -234,7 +245,7 @@ static int lf_test (IO *io)
 static int lf_fill (LFPAR *lf)
 {
 	int save_pos;
-	int mode, stat;
+	int mode, stat, s;
 	int vstat;
 	int c;
 
@@ -300,7 +311,9 @@ static int lf_fill (LFPAR *lf)
 			if	(mode == 2)
 				save_pos = sb_getpos(&lf->buf);
 
-			switch (lf_key(lf))
+			s = lf_key(lf);
+
+			switch (s)
 			{
 			case LANG_MATCH:
 				if	(stat == LANG_DEF || stat == LANG_XDEF)
@@ -320,11 +333,15 @@ static int lf_fill (LFPAR *lf)
 				break;
 			case LANG_XDEF:
 			case LANG_DEF:
-				if	(stat != LANG_MATCH)
+				if	(stat < s)
 				{
-					save_pos = sb_getpos(&lf->buf);
+					if	(mode == 1)
+						sb_setpos(&lf->buf, save_pos);
+					else
+						save_pos = sb_getpos(&lf->buf);
+
 					mode = 1;
-					stat = LANG_DEF;
+					stat = s;
 				}
 				else	mode = 0;
 

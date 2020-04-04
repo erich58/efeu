@@ -52,9 +52,11 @@ CEXPR(f_tmpfile, RVIO = io_tmpfile())
 CEXPR(f_tmpbuf, RVIO = io_tmpbuf(*((uint32_t *) arg[0])))
 CEXPR(f_langfilter, RVIO = langfilter(io_refer(IO(0)), STR(1)))
 CEXPR(f_lnum, RVIO = io_lnum(io_refer(IO(0))))
-CEXPR(f_ucs2latin9, RVIO = io_ucs2latin9(io_refer(IO(0))))
 CEXPR(f_lmark, RVIO = io_lmark(io_refer(IO(0)), STR(1), STR(2), INT(3)))
+/*
+CEXPR(f_ucs2latin9, RVIO = io_ucs2latin9(io_refer(IO(0))))
 CEXPR(f_in_utf8, RVIO = in_utf8(io_refer(IO(0))))
+*/
 CEXPR(f_out_utf8, RVIO = out_utf8(io_refer(IO(0))))
 CEXPR(f_out_latin9, RVIO = out_latin9(io_refer(IO(0))))
 CEXPR(f_indent, RVIO = io_indent(io_refer(IO(0)), INT(1), INT(2)))
@@ -396,11 +398,13 @@ static EfiFuncDef fdef_io[] = {
 	{ 0, &Type_io, "findopen (str path, str name, str type = NULL, \
 str mode = \"r\")", f_findopen },
 	{ 0, &Type_io, "lnum (IO io)", f_lnum },
-	{ FUNC_VIRTUAL, &Type_io, "ucs2latin9 (IO io)", f_ucs2latin9 },
 	{ 0, &Type_io, "langfilter (IO io, str lang = NULL)", f_langfilter },
 	{ 0, &Type_io, "linemark (IO io, str pre = \"%4d\t\", \
 str post = NULL, bool flag = false)", f_lmark },
+	/*
+	{ FUNC_VIRTUAL, &Type_io, "ucs2latin9 (IO io)", f_ucs2latin9 },
 	{ 0, &Type_io, "in_utf8 (IO io)", f_in_utf8 },
+	*/
 	{ 0, &Type_io, "out_utf8 (IO io)", f_out_utf8 },
 	{ 0, &Type_io, "out_latin9 (IO io)", f_out_latin9 },
 	{ 0, &Type_io, "indent (IO io, char c = '\t', int n = 1)", f_indent },

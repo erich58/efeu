@@ -255,14 +255,11 @@ int io_putucs_latin9 (int32_t c, IO *io);
 int io_putucs_xml (int32_t c, IO *io);
 int io_putucs_utf8 (int32_t c, IO *io);
 
-IO *io_ucs2latin9 (IO *base);
-
 /*	Fehlermeldungen
 */
 
 void io_note (IO *io, const char *fmt, const char *def, ...);
 void io_error (IO *io, const char *fmt, const char *def, ...);
-
 
 /*	Standard Ein-Ausgabestrukturen
 */
@@ -272,22 +269,18 @@ extern IO *iomsg;		/* Ausgabe für message */
 extern IO *ioerr;		/* Standardfehler */
 extern IO *ionull;		/* Null-Device */
 
-
 /*	Filterprogramme
 */
 
 IO *io_lnum (IO *io);	/* Zeilennummer */
 IO *io_count (IO *io);	/* Ausgabezähler */
-IO *io_html (IO *io);	/* HTML-Filter */
 IO *io_crlf (IO *io);	/* CRLF Filter */
 IO *io_indent (IO *io, int c, int n);
 IO *io_lmark (IO *io, const char *pre, const char *post, int flag);
-IO *io_cleanup (IO *io, void (*cf) (IO *io, void *p), void *p);
 IO *xlangfilter (IO *in, const char *lang,
 	int (*newpar) (IO *io, int c, void *par), void *par);
 IO *langfilter (IO *in, const char *lang);
 
-IO *in_utf8 (IO *io);	/* UTF-8 Eingabekonvertierung */
 IO *out_utf8 (IO *io);	/* UTF-8 Ausgabekonvertierung */
 IO *out_latin9 (IO *io);	/* LATIN-9 Ausgabekonvertierung */
 
