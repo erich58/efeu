@@ -75,7 +75,8 @@ with |rd_alloc| or |rd_wrap|.
 
 void *rd_data (void *rd)
 {
-	return rd ? ((REFPTR *) rd)->data : NULL;
+	REFPTR *p = rd;
+	return (p && p->reftype == &mem_reftype) ? p->data : NULL;
 }
 
 /*

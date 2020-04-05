@@ -78,16 +78,10 @@ Der Makro |$1| liefert die Referenzvariablen für eine Referenzstruktur.
 Er muß zu Beginn der Datentypedefinition stehen.
 */
 
-#ifdef	REFDATA_MAGIC
 #define	REFVAR	\
 	unsigned refmagic; \
 	unsigned refcount; \
 	const RefType *reftype
-#else
-#define	REFVAR	\
-	size_t refcount; \
-	const RefType *reftype
-#endif
 
 /*
 $Synopsis
@@ -103,11 +97,7 @@ Referenzvariablen. Er wird bei der Initialisierung eines
 Referenzobjektes verwendet.
 */
 
-#ifdef	REFDATA_MAGIC
 #define	REFDATA(type)	REFDATA_MAGIC, 1, type
-#else
-#define	REFDATA(type)	1, type
-#endif
 
 /*
 :*:
