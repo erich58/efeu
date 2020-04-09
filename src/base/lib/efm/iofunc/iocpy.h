@@ -37,11 +37,8 @@ int iocpy_repl (IO *in, IO *out, int key, const char *arg, unsigned flags);
 int iocpy_skip (IO *in, IO *out, int key, const char *arg, unsigned flags);
 int iocpy_cskip (IO *in, IO *out, int key, const char *arg, unsigned flags);
 
-int iocpy_value (IO *in, IO *out, int key, const char *arg, unsigned flags);
 int iocpy_name (IO *in, IO *out, int key, const char *arg, unsigned flags);
 int iocpy_str (IO *in, IO *out, int key, const char *arg, unsigned flags);
 int iocpy_xstr (IO *in, IO *out, int key, const char *arg, unsigned flags);
-
-int iocpy_usage (IO *in, IO *out, int key, const char *arg, unsigned flags);
 
 #endif	/* EFEU/iocpy.h */
