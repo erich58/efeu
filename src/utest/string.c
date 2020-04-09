@@ -215,8 +215,8 @@ void UnitTest_qputs(const char *str, int delim, UnitTestString *buf)
 	{
 		UnitTest_putc(delim, buf);
 
-		for (; *str; ++str)
-			UnitTest_qputc((unsigned char)*str, delim, buf);
+		while (*str)
+			UnitTest_qputc((unsigned char)*str++, delim, buf);
 
 		UnitTest_putc(delim, buf);
 	}
