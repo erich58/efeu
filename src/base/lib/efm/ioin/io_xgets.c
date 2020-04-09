@@ -21,7 +21,6 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/io.h>
-#include <EFEU/iocpy.h>
 
 
 char *io_xgets(IO *io, const char *delim)
@@ -52,13 +51,5 @@ int io_xcopy(IO *in, IO *out, const char *delim)
 		if (io_putc(c, out) != EOF) n++;
 
 	io_protect(in, 0);
-	return n;
-}
-
-
-int iocpy_xstr(IO *in, IO *out, int c, const char *arg, unsigned int flags)
-{
-	register int n = io_xcopy(in, out, arg);
-	io_getc(in);
 	return n;
 }

@@ -90,3 +90,10 @@ int iocpy_esc(IO *in, IO *out, int c, const char *arg, unsigned int flags)
 	io_putc(x, out);
 	return flags ? 2 : 1;
 }
+
+int iocpy_xstr(IO *in, IO *out, int c, const char *arg, unsigned int flags)
+{
+	register int n = io_xcopy(in, out, arg);
+	io_getc(in);
+	return n;
+}
