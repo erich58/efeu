@@ -63,7 +63,7 @@ int64_t io_llget (IO *io, size_t recl)
 	return (int64_t) uval;
 }
 
-void io_llput (int64_t val, IO *io, size_t recl)
+size_t io_llput (int64_t val, IO *io, size_t recl)
 {
 	int sig;
 	int i;
@@ -85,6 +85,13 @@ void io_llput (int64_t val, IO *io, size_t recl)
 	buf[recl] = (buf[recl] & 0x7f) | sig;
 
 	for (i = recl; i >= 0; i--)
+	{
 		if (io_putc(buf[i], io) == EOF)
+		{
 			io_error(io, "[ftools:22]", NULL);
+			return 0;
+		}
+	}
+
+	return recl + 1;
 }

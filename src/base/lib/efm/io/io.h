@@ -218,11 +218,11 @@ char *io_getstr (IO *io);
 int io_putstr (const char *str, IO *io);
 
 unsigned io_getval (IO *io, int n);
-void io_putval (unsigned val, IO *io, int n);
+size_t io_putval (unsigned val, IO *io, int n);
 int64_t io_llget (IO *io, size_t recl);
-void io_llput (int64_t val, IO *io, size_t recl);
+size_t io_llput (int64_t val, IO *io, size_t recl);
 uint64_t io_ullget (IO *io, size_t recl);
-void io_ullput (uint64_t val, IO *io, size_t recl);
+size_t io_ullput (uint64_t val, IO *io, size_t recl);
 
 size_t io_llread (IO *io, int64_t *data, size_t dim);
 size_t io_llwrite (IO *io, const int64_t *data, size_t dim);

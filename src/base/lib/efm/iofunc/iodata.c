@@ -57,7 +57,10 @@ size_t io_dbread (IO *io, void *dptr, size_t size, size_t n)
 		for (j = 0; j < size; j++)
 		{
 			if	((c = io_getc(io)) == EOF)
+			{
 				io_error(io, "[ftools:21]", NULL);
+				return 0;
+			}
 
 			SET(data, c);
 		}
@@ -89,7 +92,10 @@ size_t io_dbwrite (IO *io, const void *dptr, size_t size, size_t n)
 			c = GET(data);
 
 			if	(io_putc(c, io) == EOF)
+			{
 				io_error(io, "[ftools:22]", NULL);
+				return 0;
+			}
 		}
 
 		dptr = (char *) dptr + size;

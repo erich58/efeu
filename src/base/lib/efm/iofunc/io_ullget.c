@@ -54,7 +54,7 @@ uint64_t io_ullget (IO *io, size_t recl)
 	return uval;
 }
 
-void io_ullput (uint64_t val, IO *io, size_t recl)
+size_t io_ullput (uint64_t val, IO *io, size_t recl)
 {
 	unsigned char buf[8];
 	int i;
@@ -68,6 +68,13 @@ void io_ullput (uint64_t val, IO *io, size_t recl)
 	}
 
 	for (i = recl - 1; i >= 0; i--)
+	{
 		if (io_putc(buf[i], io) == EOF)
+		{
 			io_error(io, "[ftools:22]", NULL);
+			return 0;
+		}
+	}
+
+	return recl;
 }

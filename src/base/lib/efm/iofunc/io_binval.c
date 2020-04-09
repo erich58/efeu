@@ -33,8 +33,8 @@ unsigned io_getval (IO *io, int n)
 	{
 		if	((c = io_getc(io)) == EOF)
 		{
-			fprintf(stderr, "getval: Unerwartetes Fileende.\n");
-			exit(EXIT_FAILURE);
+			io_error(io, "[ftools:21]", NULL);
+			return 0;
 		}
 
 		val = (val << 8) + c;
@@ -43,16 +43,20 @@ unsigned io_getval (IO *io, int n)
 	return val;
 }
 
-void io_putval (unsigned val, IO *io, int n)
+size_t io_putval (unsigned val, IO *io, int n)
 {
-	while (n-- > 0)
+	int i = n;
+
+	while (i-- > 0)
 	{
-		if	(io_putc((val >> (8 * n)) & 0xFF, io) == EOF)
+		if	(io_putc((val >> (8 * i)) & 0xFF, io) == EOF)
 		{
-			fprintf(stderr, "putval: Ausgabefehler.\n");
-			exit(EXIT_FAILURE);
+			io_error(io, "[ftools:22]", NULL);
+			return 0;
 		}
 	}
+
+	return n;
 }
 
 /*	Gepackten String einlesen
