@@ -21,24 +21,15 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/io.h>
-#include <EFEU/iocpy.h>
 #include <EFEU/patcmp.h>
-
-
-static void c_skip (IO *io);
 
 int io_eat(IO *io, const char *wmark)
 {
 	int c;
 
-	while ((c = io_mgetc(io, 1)) != EOF)
+	while ((c = io_skipcom(io, NULL, 0)) != EOF)
 	{
-		if	(c == '/' && iocpy_cskip(io, NULL, c,
-				NULL, 1) != EOF)
-		{
-			continue;
-		}
-		else if	(!listcmp(wmark, c))
+		if	(!listcmp(wmark, c))
 		{
 			io_ungetc(c, io);
 			break;
@@ -48,70 +39,3 @@ int io_eat(IO *io, const char *wmark)
 	return c;
 }
 
-
-/*	Lesen bis Ende eines C - Style Kommentars
-*/
-
-static void c_skip(IO *io)
-{
-	int c;
-
-	while ((c = io_getc(io)) != EOF)
-	{
-		while (c == '*')
-		{
-			c = io_getc(io);
-
-			if	(c == '/')
-			{
-				return;
-			}
-		}
-	}
-}
-
-
-/*	C, C++ Kommentare überlesen
-*/
-
-int iocpy_cskip(IO *in, IO *out, int c, const char *arg, unsigned int flags)
-{
-	int x;
-
-	x = io_getc(in);
-
-	if	(x == '*')
-	{
-		io_protect(in, 1);
-		c_skip(in);
-		io_protect(in, 0);
-		return 0;
-	}
-	else if	(x == '/' && flags)
-	{
-		return iocpy_skip(in, out, x, "\n", 1);
-	}
-	else
-	{
-		io_ungetc(x, in);
-		return EOF;
-	}
-}
-
-
-/*	Zeichen überlesen
-*/
-
-int iocpy_skip(IO *in, IO *out, int c, const char *arg, unsigned int flags)
-{
-	int x;
-
-	while ((x = io_getc(in)) != EOF)
-		if (listcmp(arg, x)) break;
-
-/*	Bei Flag wird Abschlusszeichen zurückgeschrieben
-*/
-	if	(flags)	io_ungetc(x, in);
-
-	return 0;
-}

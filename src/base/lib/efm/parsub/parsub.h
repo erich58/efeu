@@ -25,7 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 #ifndef	EFEU_parsub_h
 #define	EFEU_parsub_h	1
 
-#include <EFEU/iocpy.h>
+#include <EFEU/io.h>
 #include <EFEU/strbuf.h>
 #include <EFEU/ArgList.h>
 

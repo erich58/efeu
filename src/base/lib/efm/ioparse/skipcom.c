@@ -73,7 +73,7 @@ int io_skipcom (IO *io, StrBuf *buf, int flag)
 	startline = 1;
 	indent = -1;
 
-	while ((c = io_getc(io)) == '/')
+	while ((c = io_mgetc(io, 1)) == '/')
 	{
 		switch ((c = io_getc(io)))
 		{
