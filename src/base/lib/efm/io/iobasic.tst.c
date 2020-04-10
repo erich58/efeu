@@ -104,6 +104,8 @@ TEST_DECL(strbuf)
 	EXPECT(io_getc(io) == 't');
 	EXPECT(io_ctrl(io, IO_GETPOS, &offset) == 0);
 	EXPECT(offset == 3);
+	EXPECT(io_ctrl(io, IO_UNGETC, 'x') == 'x');
+	EXPECT(io_getc(io) == 'x');
 	EXPECT(io_ctrl(io, 0) == EOF);
 	EXPECT(io_close(io) == 0);
 	sb_destroy(sb);
