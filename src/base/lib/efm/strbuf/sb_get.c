@@ -42,6 +42,30 @@ int sb_get (StrBuf *sb)
 
 
 /*
+:*:
+The function |$1| pushes <c> back to string buffer <sb>
+and returns the code of the character or EOF on error.
+Pushed-back characters will be returned in reverse order;
+you can not pushback more character then previously read.
+:de:
+Dioe Funktion Makro |$1| schreibt das Zeichen <c>
+in das Zeichenfeld <sb> zurück und liefert das Zeichen als
+Rückgabewert oder EOF bei einem Fehler. Es können nur soviele Zeichen
+zurückgeschrieben werden, als bisher gelesen wurden.
+*/
+
+int sb_ungetc(int c, StrBuf *sb)
+{
+	if	(sb && c != EOF && sb->pos > 0)
+	{
+		sb->pos--;
+		return sb->data[sb->pos] = (unsigned char) c;
+	}
+
+	return EOF;
+}
+
+/*
 $SeeAlso
 \mref{strbuf(7)},
 \mref{memalloc(7)}.

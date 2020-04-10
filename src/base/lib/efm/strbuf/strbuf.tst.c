@@ -123,6 +123,20 @@ TEST_DECL(edit)
 	sb_free(&buf);
 }
 
+TEST_DECL(ungetc)
+{
+	static STRBUF(buf, 4);
+	EXPECT(sb_puts("1234567890", &buf) == 10);
+	sb_setpos(&buf, 3);
+	EXPECT(sb_ungetc('a', &buf) == 'a');
+	EXPECT(sb_ungetc('b', &buf) == 'b');
+	EXPECT(sb_ungetc('c', &buf) == 'c');
+	EXPECT(sb_ungetc('d', &buf) == EOF);
+	sb_end(&buf);
+	EXPECT_STR(sb_nul(&buf), "cba4567890");
+	sb_free(&buf);
+}
+
 TEST_DECL(put)
 {
 	static STRBUF(buf, 4);
@@ -275,6 +289,7 @@ TEST_SUITE
 	TEST_RUN(pos);
 	TEST_RUN(acquire);
 	TEST_RUN(edit);
+	TEST_RUN(ungetc);
 	TEST_RUN(put);
 	TEST_RUN(ucs);
 	TEST_RUN(printf);

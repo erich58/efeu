@@ -108,6 +108,7 @@ void *sb_getmem (StrBuf *sb);
 #define sb_clean(sb)	sb_trunc(sb)
 
 int sb_get (StrBuf *sb);
+int sb_ungetc (int c, StrBuf *sb);
 int sb_put (int c, StrBuf *sb);
 int sb_xputc(int c, StrBuf *sb, const char *delim);
 int sb_xputs(const char *str, StrBuf *sb, const char *delim);
