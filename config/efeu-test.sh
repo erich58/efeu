@@ -132,7 +132,7 @@ do
 	eval $tst $redir
 done | awk '
 BEGIN {
-	fmt = "%-23s\t%3d\t%3d\t%3d\t%s\n";
+	fmt = "%-23s\t%5d\t%5d\t%5d\t%s\n";
 	t = 0; g = 0; b = 0; s = "SUCCESS"
 }
 /FAILURE/ {
