@@ -101,6 +101,7 @@ TEST_DECL(strbuf)
 	EXPECT(io_rewind(io) == 0);
 	offset = 2;
 	EXPECT(io_ctrl(io, IO_SETPOS, &offset) == 0);
+	EXPECT(io_ctrl(io, IO_PEEK) == 't');
 	EXPECT(io_getc(io) == 't');
 	EXPECT(io_ctrl(io, IO_GETPOS, &offset) == 0);
 	EXPECT(offset == 3);
