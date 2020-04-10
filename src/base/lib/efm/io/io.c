@@ -93,13 +93,16 @@ int io_pushback (IO *io)
 }
 
 
-/*	Zurücksetzen der IO-Struktur
+/*	Prüfen auf Fehler
 */
 
 int io_err (IO *io)
 {
 	return (io && (io->stat & IO_STAT_ERR));
 }
+
+/*	Zurücksetzen der IO-Struktur
+*/
 
 int io_rewind (IO *io)
 {
@@ -109,4 +112,17 @@ int io_rewind (IO *io)
 	io->nsave = 0;
 	io->stat = 0;
 	return 0;
+}
+
+/*	IO-Struktur umkopieren
+*/
+
+int io_copy (IO *in, IO *out)
+{
+	int c, n;
+
+	for (n = 0; (c = io_getc(in)) != EOF; n++)
+		if (io_putc(c, out) == EOF) break;
+
+	return n;
 }

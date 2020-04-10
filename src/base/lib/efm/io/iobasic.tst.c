@@ -173,6 +173,19 @@ TEST_DECL(bigbuf)
 	EXPECT(io_close(io) == 0);
 }
 
+TEST_DECL(copy)
+{
+	char *str = "abc123xyz";
+	IO *in;
+	IO *out;
+	EXPECT((in = io_string(str, NULL)) != NULL);
+	EXPECT((out = io_fopen(UnitTest_tmpname("data"), "w")) != NULL);
+	EXPECT(io_copy(in, out) == strlen(str));
+	EXPECT(io_close(in) == 0);
+	EXPECT(io_close(out) == 0);
+	EXPECT_CONTENT("data", str);
+}
+
 TEST_SUITE
 {
 	TEST_RUN(string);
@@ -180,4 +193,5 @@ TEST_SUITE
 	TEST_RUN(strbuf);
 	TEST_RUN(data);
 	TEST_RUN(bigbuf);
+	TEST_RUN(copy);
 }
