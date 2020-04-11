@@ -38,7 +38,7 @@ If not, write to the Free Software Foundation, Inc.,
 #endif
 
 
-/*	String von Sonderdarstellung ausgeben
+/*	String mit Sonderdarstellung ausgeben
 */
 
 int io_xputs(const char *str, IO *io, const char *delim)

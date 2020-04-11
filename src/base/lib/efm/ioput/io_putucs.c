@@ -24,23 +24,19 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/locale.h>
 #include <EFEU/mstring.h>
 
-
 int io_putucs_ascii (int32_t c, IO *io)
 {
-	io_putc(c > 0xff ? '?' : c, io);
-	return 1;
+	return io_nputc(c > 0xff ? '?' : c, io, 1);
 }
 
 int io_putucs_latin1 (int32_t c, IO *io)
 {
-	io_putc(c > 0xff ? '?' : c, io);
-	return 1;
+	return io_nputc(c > 0xff ? '?' : c, io, 1);
 }
 
 int io_putucs_latin9 (int32_t c, IO *io)
 {
-	io_putc(ucs_to_latin9(c), io);
-	return 1;
+	return io_nputc(ucs_to_latin9(c), io, 1);
 }
 
 int io_putucs_xml (int32_t c, IO *io)
@@ -59,61 +55,58 @@ int io_putucs_xml (int32_t c, IO *io)
 	if	(c >= 0x7f)
 		return io_xprintf(io, "&#%d;", c);
 
-	io_putc(c, io);
-	return 1;
+	return io_nputc(c, io, 1);
 }
 
 int io_putucs_utf8 (int32_t c, IO *io)
 {
+	int n = 0;
+
 	if	(c < 0)
 	{
 		return 0;
 	}
 	else if	(c <= 0x0000007F)
 	{
-		io_putc(c, io);
-		return 1;
+		n += io_nputc(c, io, 1);
 	}
 	else if	(c <= 0x000007FF)
 	{
-		io_putc(0xc0 | ((c >> 6) & 0x1f), io);
-		io_putc(0x80 | (c & 0x3f), io);
-		return 2;
+		n += io_nputc(0xc0 | ((c >> 6) & 0x1f), io, 1);
+		n += io_nputc(0x80 | (c & 0x3f), io, 1);
 	}
 	else if	(c <= 0x0000FFFF)
 	{
-		io_putc(0xe0 | ((c >> 12) & 0x0f), io);
-		io_putc(0x80 | ((c >> 6) & 0x3f), io);
-		io_putc(0x80 | (c & 0x3f), io);
-		return 3;
+		n += io_nputc(0xe0 | ((c >> 12) & 0x0f), io, 1);
+		n += io_nputc(0x80 | ((c >> 6) & 0x3f), io, 1);
+		n += io_nputc(0x80 | (c & 0x3f), io, 1);
 	}
 	else if	(c <= 0x001FFFFF)
 	{
-		io_putc(0xf0 | ((c >> 18) & 0x07), io);
-		io_putc(0x80 | ((c >> 12) & 0x3f), io);
-		io_putc(0x80 | ((c >> 6) & 0x3f), io);
-		io_putc(0x80 | (c & 0x3f), io);
-		return 4;
+		n += io_nputc(0xf0 | ((c >> 18) & 0x07), io, 1);
+		n += io_nputc(0x80 | ((c >> 12) & 0x3f), io, 1);
+		n += io_nputc(0x80 | ((c >> 6) & 0x3f), io, 1);
+		n += io_nputc(0x80 | (c & 0x3f), io, 1);
 	}
 	else if	(c <= 0x03FFFFFF)
 	{
-		io_putc(0xf8 | ((c >> 24) & 0x03), io);
-		io_putc(0x80 | ((c >> 18) & 0x3f), io);
-		io_putc(0x80 | ((c >> 12) & 0x3f), io);
-		io_putc(0x80 | ((c >> 6) & 0x3f), io);
-		io_putc(0x80 | (c & 0x3f), io);
-		return 5;
+		n += io_nputc(0xf8 | ((c >> 24) & 0x03), io, 1);
+		n += io_nputc(0x80 | ((c >> 18) & 0x3f), io, 1);
+		n += io_nputc(0x80 | ((c >> 12) & 0x3f), io, 1);
+		n += io_nputc(0x80 | ((c >> 6) & 0x3f), io, 1);
+		n += io_nputc(0x80 | (c & 0x3f), io, 1);
 	}
 	else
 	{
-		io_putc(0xfc | ((c >> 30) & 0x01), io);
-		io_putc(0x80 | ((c >> 24) & 0x3f), io);
-		io_putc(0x80 | ((c >> 18) & 0x3f), io);
-		io_putc(0x80 | ((c >> 12) & 0x3f), io);
-		io_putc(0x80 | ((c >> 6) & 0x3f), io);
-		io_putc(0x80 | (c & 0x3f), io);
-		return 6;
+		n += io_nputc(0xfc | ((c >> 30) & 0x01), io, 1);
+		n += io_nputc(0x80 | ((c >> 24) & 0x3f), io, 1);
+		n += io_nputc(0x80 | ((c >> 18) & 0x3f), io, 1);
+		n += io_nputc(0x80 | ((c >> 12) & 0x3f), io, 1);
+		n += io_nputc(0x80 | ((c >> 6) & 0x3f), io, 1);
+		n += io_nputc(0x80 | (c & 0x3f), io, 1);
 	}
+
+	return n;
 }
 
 static struct {
