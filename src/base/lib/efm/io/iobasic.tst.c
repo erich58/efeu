@@ -181,12 +181,33 @@ TEST_DECL(copy)
 	char *str = "abc123xyz";
 	IO *in;
 	IO *out;
-	EXPECT((in = io_string(str, NULL)) != NULL);
-	EXPECT((out = io_fopen(UnitTest_tmpname("data"), "w")) != NULL);
+	PRINT_LABEL("io_copy");
+	EXPECT_PTR(in = io_string(str, NULL));
+	EXPECT_PTR(out = io_fopen(UnitTest_tmpname("data"), "w"));
 	EXPECT(io_copy(in, out) == strlen(str));
 	EXPECT(io_close(in) == 0);
 	EXPECT(io_close(out) == 0);
 	EXPECT_CONTENT("data", str);
+
+	PRINT_LABEL("io_xcopy");
+	EXPECT_PTR(in = io_string("a\\n\\t\\;b\nc;", NULL));
+	EXPECT_PTR(out = io_fopen(UnitTest_tmpname("data"), "w"));
+	EXPECT(io_xcopy(in, out, ";\n") == 5);
+	EXPECT(io_getc(in) == '\n');
+	EXPECT(io_xcopy(in, out, ";\n") == 1);
+	EXPECT(io_close(in) == 0);
+	EXPECT(io_close(out) == 0);
+	EXPECT_CONTENT("data", "a\n\t;bc");
+
+	PRINT_LABEL("io_mcopy");
+	EXPECT_PTR(in = io_string("a\\\n\\b\\;\\\n;x\\", NULL));
+	EXPECT_PTR(out = io_fopen(UnitTest_tmpname("data"), "w"));
+	EXPECT(io_mcopy(in, out, ";\n") == 4);
+	EXPECT(io_getc(in) == ';');
+	EXPECT(io_mcopy(in, out, ";\n") == 2);
+	EXPECT(io_close(in) == 0);
+	EXPECT(io_close(out) == 0);
+	EXPECT_CONTENT("data", "a\\b;x\\");
 }
 
 TEST_SUITE

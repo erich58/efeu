@@ -114,15 +114,3 @@ int io_rewind (IO *io)
 	return 0;
 }
 
-/*	IO-Struktur umkopieren
-*/
-
-int io_copy (IO *in, IO *out)
-{
-	int c, n;
-
-	for (n = 0; (c = io_getc(in)) != EOF; n++)
-		if (io_putc(c, out) == EOF) break;
-
-	return n;
-}

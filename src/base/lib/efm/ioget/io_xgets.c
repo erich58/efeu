@@ -40,16 +40,3 @@ char *io_xgets(IO *io, const char *delim)
 }
 
 
-int io_xcopy(IO *in, IO *out, const char *delim)
-{
-	int n, c;
-
-	io_protect(in, 1);
-	n = 0;
-
-	while ((c = io_xgetc(in, delim)) != EOF)
-		if (io_putc(c, out) != EOF) n++;
-
-	io_protect(in, 0);
-	return n;
-}

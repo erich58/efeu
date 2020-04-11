@@ -24,41 +24,6 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/ioctrl.h>
 #include <EFEU/patcmp.h>
 
-
-int io_mcopy(IO *in, IO *out, const char *delim)
-{
-	int n, c;
-
-	for (n = 0; (c = io_mgetc(in, 0)) != EOF; )
-	{
-		if	(c == '\\')
-		{
-			c = io_mgetc(in, 0);
-
-			if	(c == EOF)
-			{
-				c = '\\';
-			}
-			else if	(!listcmp(delim, c))
-			{
-				io_putc('\\', out);
-				n++;
-			}
-		}
-		else if	(listcmp(delim, c))
-		{
-			io_ungetc(c, in);
-			break;
-		}
-
-		io_putc(c, out);
-		n++;
-	}
-
-	return n;
-}
-
-
 char *io_mgets(IO *io, const char *delim)
 {
 	StrBuf *sb;
