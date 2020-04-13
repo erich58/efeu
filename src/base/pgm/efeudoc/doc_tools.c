@@ -159,7 +159,7 @@ static int put_str (const char *str, IO *out)
 	int k;
 
 	for (k = 0; *str; k++)
-		io_putucs(pgetucs((char **) &str, 4), out);
+		io_putucs(pgetucs(&str, 4), out);
 
 	return k;
 }

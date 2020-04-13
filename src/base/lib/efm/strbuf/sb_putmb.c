@@ -18,7 +18,7 @@ int sb_putmb (const char *str, StrBuf *sb)
 		int n;
 
 		for (n = 0; *str; n++)
-			sb_putucs(pgetucs((char **) &str, 4), sb);
+			sb_putucs(pgetucs(&str, 4), sb);
 
 		return n;
 	}

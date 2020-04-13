@@ -29,7 +29,7 @@ int fmt_mbstr (StrBuf *sb, const FmtKey *key, const char *str)
 	int pos;
 	unsigned lim;
 	int32_t c;
-	char *p;
+	const char *p;
 
 	pos = sb->pos;
 
@@ -49,14 +49,14 @@ int fmt_mbstr (StrBuf *sb, const FmtKey *key, const char *str)
 	/* Startposition und Ausgabelimit bestimmen */
 
 	lim = ~0;
-	p = (char *) str;
+	p = str;
 
 	if	(key->flags & FMT_NEGPREC)
 	{
 		for (k = 0; pgetucs(&p, 4); k++)
 			;
 
-		p = (char *) str;
+		p = str;
 
 		while (k-- > key->prec)
 			pgetucs(&p, 4);

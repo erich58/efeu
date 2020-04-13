@@ -35,7 +35,7 @@ If not, write to the Free Software Foundation, Inc.,
 #define	UF(c)	((c & 0xc0) == 0x80)	/* Test auf Folgezeichen */
 #define	VF(c)	(c & 0x3f)		/* Datenbits des Folgezeichens */
 
-static int32_t get_sub (char **ptr, int32_t val, int n)
+static int32_t get_sub (const char **ptr, int32_t val, int n)
 {
 	int c;
 	
@@ -74,7 +74,7 @@ die folgenden Rahmenbedingungen vorraussgesetzt und nicht geprüft:
 	nach einem Datenfeld.
 */
 
-int32_t pgetucs (char **p, size_t lim)
+int32_t pgetucs (const char **p, size_t lim)
 {
 	int c = (unsigned char) *(*p)++;
 	int32_t val = 0;

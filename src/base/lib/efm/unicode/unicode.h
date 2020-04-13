@@ -32,7 +32,7 @@ If not, write to the Free Software Foundation, Inc.,
 int32_t latin9_to_ucs (int c);
 int ucs_to_latin9 (int32_t c);
 
-int32_t pgetucs (char **p, size_t lim);
+int32_t pgetucs (const char **p, size_t lim);
 int nputucs (int32_t c, unsigned char *buf, size_t len);
 
 int ucscopy_utf8 (char *tg, size_t len, const char *src);

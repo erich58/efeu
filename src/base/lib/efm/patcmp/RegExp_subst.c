@@ -51,18 +51,24 @@ static void do_repl (StrBuf *sb, const char *repl,
 
 			switch (*repl)
 			{
-			case '0':	put_match(sb, str, match); break;
-			case '1':	put_match(sb, str, match + 1); break;
-			case '2':	put_match(sb, str, match + 2); break;
-			case '3':	put_match(sb, str, match + 3); break;
-			case '4':	put_match(sb, str, match + 4); break;
-			case '5':	put_match(sb, str, match + 5); break;
-			case '6':	put_match(sb, str, match + 6); break;
-			case '7':	put_match(sb, str, match + 7); break;
-			case '8':	put_match(sb, str, match + 8); break;
-			case '9':	put_match(sb, str, match + 9); break;
-			case '$':	sb_putc(*repl, sb); break;
-			default:	sb_putc('$', sb); repl--; break;
+			case '0':
+			case '1':
+			case '2':
+			case '3':
+			case '4':
+			case '5':
+			case '6':
+			case '7':
+			case '8':
+			case '9':
+				put_match(sb, str, match + (*repl - '0'));
+				break;
+			case '$':
+				sb_putc(*repl, sb);
+				break;
+			default:
+				sb_putc('$', sb); repl--;
+				break;
 			}
 		}
 		else	sb_putc(*repl, sb);
@@ -71,7 +77,7 @@ static void do_repl (StrBuf *sb, const char *repl,
 
 /*
 Die Funktion |$1| ersetzt Teilstrings von <str>, die dem regulären Ausdruck
-<exp> entsprechen durch iden String <repl>. Falls <flag> verschieden von 0 ist,
+<exp> entsprechen durch den String <repl>. Falls <flag> verschieden von 0 ist,
 werden alle gefundenen Teilstrings ersetzt, ansonsten nur der erste.
 
 Falls <str> ein Nullpointer ist, liefert die Funktion einen Nullpointer.
@@ -80,7 +86,7 @@ die Funktion eine Kopie des Strings <str>.
 Falls ein leerer Ausdruck für <expr> übergeben wurde, wird <repl>
 zwischen jedem Zeichen von <str> eingefügt.
 
-Der Ersatzstring <repl> kann Sequenzen der Form |\0|, |\1|, ..., |\9|
+Der Ersatzstring <repl> kann Sequenzen der Form |$0|, |$1|, ..., |$9|
 enthalten, die jeweils durch das entsprechende Teilmuster von <exp> definiert
 werden.
 */
@@ -89,7 +95,7 @@ char *RegExp_subst (RegExp *exp, const char *repl, const char *str, int glob)
 {
 	regmatch_t match[MAXSUB];
 	StrBuf *sb;
-	size_t i, n;
+	size_t i;
 	int flag;
 
 	if	(str == NULL)	return NULL;
@@ -100,13 +106,6 @@ char *RegExp_subst (RegExp *exp, const char *repl, const char *str, int glob)
 
 	while (*str && regexec(&exp->exp, str, MAXSUB, match, flag) == 0)
 	{
-		if	(match[0].rm_so < 0)
-		{
-			match[0].rm_so = 0;
-			match[0].rm_eo = strlen(str);
-			n++;
-		}
-
 		for (i = 0; i < match[0].rm_so; i++)
 			sb_putc(str[i], sb);
 

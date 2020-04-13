@@ -73,7 +73,7 @@ int ucscopy_utf8 (char *tg, size_t size, const char *src)
 
 	for (n = 0; *src; n += k)
 	{
-	       	k = nputucs(pgetucs((char **) &src, 4),
+	       	k = nputucs(pgetucs(&src, 4),
 			(unsigned char *) tg, size);
 
 		if	(k < size)
@@ -124,7 +124,7 @@ int ucscopy_latin9 (char *tg, size_t size, const char *src)
 
 	for (n = 0; *src; n++)
 	{
-	       	c = pgetucs((char **) &src, 4);
+	       	c = pgetucs(&src, 4);
 
 		if	(tg && size > 1)
 		{

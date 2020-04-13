@@ -76,8 +76,7 @@ int patcmp(const char *p, const char *s, char **ptr)
 
 	if	(ptr != NULL)	*ptr = NULL;
 
-/*	Ein leeres Muster stimmt nur mit einem leeren String
-	überein.
+/*	Ein leeres Muster stimmt nur mit einem Nullstring überein.
 */
 	if	(p == NULL)
 	{

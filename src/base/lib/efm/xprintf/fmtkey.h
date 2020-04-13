@@ -63,7 +63,7 @@ typedef struct {
 FmtKey *fmtkey (FmtKey *buf, int32_t (*get) (void *), void *);
 int32_t fmtkey_pgetc (void *data);
 int32_t fmtkey_pgetucs (void *data);
-int32_t pgetucs (char **p, size_t lim);
+int32_t pgetucs (const char **p, size_t lim);
 
 int ftool_addsig (StrBuf *buf, int sig, int flags);
 int ftool_complete (StrBuf *sb, const FmtKey *key, int pos, int nchar);

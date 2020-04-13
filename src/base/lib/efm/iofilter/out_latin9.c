@@ -55,7 +55,7 @@ static void latin9_flush (IO *out)
 	}
 	else
 	{
-		char *p = (char *) out->save_buf;
+		const char *p = (const char *) out->save_buf;
 		int32_t c = pgetucs(&p, out->nsave);
 		io_putc(ucs_to_latin9(c), out->data);
 	}

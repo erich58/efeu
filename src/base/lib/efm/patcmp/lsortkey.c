@@ -23,6 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/patcmp.h>
 #include <EFEU/strbuf.h>
 #include <EFEU/mstring.h>
+#include <EFEU/unicode.h>
 
 static char *lextab[] = {
 	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,
@@ -68,9 +69,10 @@ char *lexsortkey (const char *base, StrBuf *buf)
 	if	(!buf)	buf = &lexbuf1;
 
 	sb_clean(buf);
+	int32_t c;
 
-	for (; *base != 0; base++)
-		sb_puts(lextab[(unsigned char) *base], buf);
+	while ((c = pgetucs(&base, 4)))
+		sb_puts(lextab[ucs_to_latin9(c)], buf);
 
 	sb_putc(0, buf);
 	return (char *) buf->data;

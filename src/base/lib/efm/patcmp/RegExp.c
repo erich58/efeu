@@ -138,14 +138,7 @@ int RegExp_exec (RegExp *exp, const char *str, regmatch_t **ptr)
 	if	(!ptr)		return 1;
 
 	for (n = 0; n < REGEXP_MAXSUB; n++)
-		if	(match[n].rm_so < 0)	break;
-
-	if	(n == 0)
-	{
-		match[n].rm_so = 0;
-		match[n].rm_eo = strlen(str);
-		n++;
-	}
+		if (match[n].rm_so < 0)	break;
 
 	*ptr = match;
 	return n;

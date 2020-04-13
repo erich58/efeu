@@ -30,7 +30,7 @@ int io_wputs (const char *src, IO *io)
 		int n;
 
 		for (n = 0; *src; n++)
-			if (io_putucs(pgetucs((char **) &src, 4), io) <= 0)
+			if (io_putucs(pgetucs(&src, 4), io) <= 0)
 				break;
 
 		return n;

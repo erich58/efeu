@@ -5,7 +5,7 @@
 #define	DATA_UTF8 "-€ŠšŽžŒœŸ-"
 #define	DATA_LATIN9 "-\xa4\xa6\xa8\xb4\xb8\xbc\xbd\xbe-"
 
-static int32_t getucs(char *def, int len)
+static int32_t getucs(const char *def, int len)
 {
 	return pgetucs(&def, len);
 }
