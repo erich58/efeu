@@ -1,35 +1,19 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/io.h>
 
+#include "utest/in.tst.h"
+#include "utest/mstr.tst.h"
+
 #define	EXPECT_BUF(a, b) \
 	UnitTest_strcheck(__FILE__, __LINE__, "==", sb_nul(a), b, # a, # b)
 
-#define	EXPECT_DATA(a, b) \
-	UnitTest_strcheck(__FILE__, __LINE__, "==", DATA(a), b, # a, # b)
-
-static IO *IN(char *def)
-{
-	static IO *io = NULL;
-	io_close(io);
-	io = def ? io_string(def, NULL) : NULL;
-	return io;
-}
-
-static char *DATA(char *def)
-{
-	static char *buf = NULL;
-	memfree(buf);
-	buf = def ? def : NULL;
-	return buf;
-}
-
 TEST_DECL(getarg)
 {
-	EXPECT_DATA(io_getarg(IN("[a(b)c]"), '[', ']'), "a(b)c");
-	EXPECT_DATA(io_getarg(IN("[a(bc]"), '[', ']'), "a(bc]");
-	EXPECT_DATA(io_getarg(IN("[a(b{c)d]"), '[', ']'), "a(b{c)d]");
-	EXPECT_DATA(io_getarg(IN("|a[bc|d]|ef"), '|', '|'), "a[bc|d]");
-	EXPECT_DATA(io_getarg(IN("x|a"), '|', '|'), NULL);
+	EXPECT_MSTR(io_getarg(IN("[a(b)c]"), '[', ']'), "a(b)c");
+	EXPECT_MSTR(io_getarg(IN("[a(bc]"), '[', ']'), "a(bc]");
+	EXPECT_MSTR(io_getarg(IN("[a(b{c)d]"), '[', ']'), "a(b{c)d]");
+	EXPECT_MSTR(io_getarg(IN("|a[bc|d]|ef"), '|', '|'), "a[bc|d]");
+	EXPECT_MSTR(io_getarg(IN("x|a"), '|', '|'), NULL);
 }
 
 TEST_DECL(gets)
@@ -116,24 +100,24 @@ TEST_DECL(mgetc)
 
 	EXPECT(io_mgetc(NULL, 0) == EOF);
 
-	EXPECT_DATA(io_mgets(IN("abc\\\nxyz\\"), NULL), "abcxyz\\");
-	EXPECT_DATA(io_mgets(IN("abc\\;x\\yz;"), ";"), "abc;x\\yz");
+	EXPECT_MSTR(io_mgets(IN("abc\\\nxyz\\"), NULL), "abcxyz\\");
+	EXPECT_MSTR(io_mgets(IN("abc\\;x\\yz;"), ";"), "abc;x\\yz");
 }
 
 TEST_DECL(xgetc)
 {
 	IO *in;
-	EXPECT_DATA(io_xgets(IN("\\b\\f\\n\\r\\t\\v\\a\\c\\"), NULL),
+	EXPECT_MSTR(io_xgets(IN("\\b\\f\\n\\r\\t\\v\\a\\c\\"), NULL),
 		"\b\f\n\r\t\v\007\\c");
-	EXPECT_DATA(io_xgets(IN(":\\xa0:\\xfg:\\xa"), NULL),
+	EXPECT_MSTR(io_xgets(IN(":\\xa0:\\xfg:\\xa"), NULL),
 		":\240:\017g:\012");
-	EXPECT_DATA(io_xgets(IN(":\\240:\\248:\\20"), NULL),
+	EXPECT_MSTR(io_xgets(IN(":\\240:\\248:\\20"), NULL),
 		":\240:\0248:\020");
 
 	EXPECT_PTR(in = IN("a\\\\b\\\nc\\;d\\ef;xyz"));
-	EXPECT_DATA(io_xgets(in, ";"), "a\\bc;d\\ef");
+	EXPECT_MSTR(io_xgets(in, ";"), "a\\bc;d\\ef");
 	EXPECT(io_getc(in) == ';');
-	EXPECT_DATA(io_xgets(in, ";"), "xyz");
+	EXPECT_MSTR(io_xgets(in, ";"), "xyz");
 }
 
 TEST_DECL(read)
@@ -154,8 +138,8 @@ TEST_DECL(read)
 	EXPECT(io_rread(IN("12"), buf, 4) == 2);
 	EXPECT_STR(buf, "xx21x");
 
-	EXPECT_DATA(io_mread(IN("123456"), 4), "1234");
-	EXPECT_DATA(io_mread(IN("12"), 4), "12");
+	EXPECT_MSTR(io_mread(IN("123456"), 4), "1234");
+	EXPECT_MSTR(io_mread(IN("12"), 4), "12");
 }
 
 TEST_DECL(getline)
@@ -171,9 +155,9 @@ TEST_DECL(getline)
 
 	sb_destroy(sb);
 
-	EXPECT_STR(io_getline(IN(""), NULL, '\n'), NULL);
-	EXPECT_DATA(io_getline(IN("abc\ndef\n"), NULL, '\n'), "abc");
-	EXPECT_DATA(io_mgetline(IN("abc\\\ndef\n"), NULL, "\n"), "abcdef");
+	EXPECT_MSTR(io_getline(IN(""), NULL, '\n'), NULL);
+	EXPECT_MSTR(io_getline(IN("abc\ndef\n"), NULL, '\n'), "abc");
+	EXPECT_MSTR(io_mgetline(IN("abc\\\ndef\n"), NULL, "\n"), "abcdef");
 }
 
 TEST_DECL(getucs)
@@ -221,5 +205,5 @@ TEST_SUITE
 
 	// Speicherfreigabe
 	IN(NULL);
-	DATA(NULL);
+	utest_mstr(NULL);
 }

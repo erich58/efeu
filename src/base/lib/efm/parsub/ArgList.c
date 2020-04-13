@@ -104,9 +104,7 @@ void arg_undo (ArgList *list)
 	if	(list && list->dim)
 	{
 		list->dim--;
-
-		if	(list->index[list->dim] > list->csize)
-			list->used = list->index[list->dim] - list->csize;
+		list->index[list->dim] = 0;
 	}
 }
 
@@ -154,7 +152,7 @@ hier der Eintrag 0 nicht abgefragt wird!
 
 char *arg_get (ArgList *list, int n)
 {
-	if	(list == NULL)
+	if	(list == NULL || list->dim == 0)
 		return NULL;
 
 	if	(n == 0)
@@ -185,23 +183,15 @@ extern void arg_cset (ArgList *list, int n, const char *val)
 	{
 		if	(n < 0)	n += list->dim;
 
-		if	(n + 1 >= list->size)
+		while (n + 1 >= list->size)
 		{
-			size_t i;
-
 			list->size += BLKSIZE;
 			list->index = lrealloc(list->index,
 				list->size * sizeof list->index[0]);
-
-			for (i = list->dim; i < n; i++)
-				list->index[i] = 0;
-
-			list->dim = n + 1;
 		}
-		else if	(n >= list->dim)
-		{
-			list->dim = n + 1;
-		}
+
+		while (list->dim <= n)
+			list->index[list->dim++] = 0;
 
 		list->index[n] = StrPool_add((StrPool *) list, val);
 	}

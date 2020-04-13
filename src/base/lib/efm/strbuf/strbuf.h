@@ -84,7 +84,7 @@ Zeichenfeldes. Als Argument wird die Blockgröße benötigt.
 
 /*
 :*:
-The Mmacro |$1| declares the string buffer variable <name> and initializes
+The macro |$1| declares the string buffer variable <name> and initializes
 it with blocksize <blk>.
 :de:
 Der Makro |$1| deklariert das Zeichenfeld <name> und initialisiert

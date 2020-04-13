@@ -229,7 +229,10 @@ static char *expand (StrBuf *base, IO *in, GETARG *arg)
 		while ((c = io_getc(in)) != ']')
 		{
 			if	(c == EOF)
-				return sb_nul(buf);
+			{
+				sb_trunc(&format_buf);
+				break;
+			}
 
 			if	(c == '\\')
 			{
@@ -255,7 +258,12 @@ static char *expand (StrBuf *base, IO *in, GETARG *arg)
 			}
 			else	last = first;
 
-			if	(*par == ';')
+			if	(*par == '\\')
+			{
+				if	(par[1] == ':' || par[1] == ';')
+					par++;
+			}
+			else if	(*par == ';')
 				par++;
 
 			add_list(buf, in, par, arg, first, last);
