@@ -2,9 +2,11 @@
 #include <EFEU/ioctrl.h>
 #include <pty.h>
 
+#include "utest/mstr.tst.h"
+
 TEST_DECL(null)
 {
-	EXPECT_STR(rd_ident(NULL), NULL);
+	EXPECT_MSTR(rd_ident(NULL), NULL);
 	EXPECT(io_getc(NULL) == EOF);
 	EXPECT(io_puts("test\n", NULL) == 0);
 
@@ -13,7 +15,7 @@ TEST_DECL(null)
 
 TEST_DECL(ionull)
 {
-	EXPECT_STR(rd_ident(ionull), "<null>");
+	EXPECT_MSTR(rd_ident(ionull), "<null>");
 	EXPECT(io_getc(ionull) == EOF);
 	EXPECT(io_puts("test\n", ionull) == 5);
 
@@ -27,7 +29,7 @@ TEST_DECL(iostd)
 
 	EXPECT(iostd == io_batch());
 	EXPECT(iomsg == io_batch());
-	EXPECT_STR(rd_ident(iostd), "<stdin,stdout>");
+	EXPECT_MSTR(rd_ident(iostd), "<stdin,stdout>");
 
 	UnitTest_stdin("stdin", "data\n");
 	EXPECT_STR(io_gets(buf, sizeof buf, iostd), "data\n");
@@ -47,7 +49,7 @@ TEST_DECL(iostd)
 
 TEST_DECL(ioerr)
 {
-	EXPECT_STR(rd_ident(ioerr), "<stderr>");
+	EXPECT_MSTR(rd_ident(ioerr), "<stderr>");
 
 	EXPECT(io_getc(ioerr) == EOF);
 
@@ -91,7 +93,7 @@ TEST_DECL(interact)
 
 		io = io_interact(NULL, NULL);
 		UnitTest_stdout("stdout");
-		EXPECT_STR(rd_ident(io), "<interact>:1");
+		EXPECT_MSTR(rd_ident(io), "<interact>:1");
 
 		int c;
 		int last = '\n';
@@ -166,4 +168,5 @@ TEST_SUITE
 	TEST_RUN(iostd);
 	TEST_RUN(ioerr);
 	TEST_RUN(interact);
+	CLEANUP_MSTR;
 }

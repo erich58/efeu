@@ -43,5 +43,5 @@ TEST_SUITE
 	d = DatPool_map(UnitTest_tmpname("data"));
 	EXPECT_MSTR(rd_ident(d), "0@21 + 0@0/0");
 	rd_deref(d);
-	utest_mstr(NULL);
+	CLEANUP_MSTR;
 }

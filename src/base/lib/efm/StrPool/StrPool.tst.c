@@ -23,7 +23,7 @@ TEST_DECL(base)
 	EXPECT(StrPool_offset(s) == 29);
 
 	EXPECT_STR(StrPool_get(s, 0), NULL);
-	EXPECT_STR(StrPool_mget(s, 0), NULL);
+	EXPECT_MSTR(StrPool_mget(s, 0), NULL);
 	EXPECT_STR(StrPool_get(s, 8), "abc");
 	EXPECT_STR(StrPool_get(NULL, 8), NULL);
 	EXPECT_STR(StrPool_get(s, 12), "0123456789");
@@ -136,7 +136,7 @@ TEST_DECL(out)
 	IO *io = StrPool_open(pool);
 
 	io_puts("ABC", io);
-	EXPECT_STR(rd_ident(io), "<StrPool>");
+	EXPECT_MSTR(rd_ident(io), "<StrPool>");
 	EXPECT(io_rewind(io) == EOF);
 	io_close(io);
 
@@ -163,5 +163,5 @@ TEST_SUITE
 	TEST_RUN(rw);
 	TEST_RUN(ext);
 	TEST_RUN(out);
-	utest_mstr(NULL);
+	CLEANUP_MSTR;
 }

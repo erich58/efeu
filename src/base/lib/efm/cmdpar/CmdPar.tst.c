@@ -572,5 +572,5 @@ TEST_SUITE
 	TEST_RUN(opt);
 	TEST_RUN(syntax);
 	TEST_RUN(write);
-	utest_mstr(NULL);
+	CLEANUP_MSTR;
 }

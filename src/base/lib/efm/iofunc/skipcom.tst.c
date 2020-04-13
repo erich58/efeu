@@ -1,16 +1,10 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/io.h>
 
+#include "utest/in.tst.h"
+
 #define	EXPECT_BUF(a, b) \
 	UnitTest_strcheck(__FILE__, __LINE__, "==", sb_nul(a), b, # a, # b)
-
-static IO *IN(char *def)
-{
-	static IO *io = NULL;
-	io_close(io);
-	io = def ? io_string(def, NULL) : NULL;
-	return io;
-}
 
 static const char *skipcom(char *def, StrBuf *cbuf, int flag)
 {
@@ -89,6 +83,5 @@ TEST_SUITE
 {
 	TEST_RUN(skipcom);
 	TEST_RUN(io_eat);
-	// Speicherfreigabe
-	IN(NULL);
+	CLEANUP_IN;
 }

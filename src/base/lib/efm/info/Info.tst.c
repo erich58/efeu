@@ -234,5 +234,5 @@ TEST_SUITE
 	TEST_RUN(Default);
 	TEST_RUN(LoadInfo);
 	TEST_RUN(Coverage);
-	utest_mstr(NULL);
+	CLEANUP_MSTR;
 }

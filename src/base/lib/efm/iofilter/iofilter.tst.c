@@ -3,6 +3,8 @@
 #include <EFEU/ioctrl.h>
 #include <EFEU/MakeDepend.h>
 
+#include "utest/mstr.tst.h"
+
 TEST_DECL(diropen)
 {
 	IO *io;
@@ -62,27 +64,27 @@ TEST_DECL(push)
 	TEST_EXPR(io_push(NULL, NULL));
 	EXPECT_PTR(io = io_string("abc", NULL));
 	EXPECT(io_getc(io) == 'a');
-	PRINT_STR(rd_ident(io));
+	PRINT_MSTR(rd_ident(io));
 	TEST_EXPR(io_push(io, io_string("xyz", NULL)));
-	PRINT_STR(rd_ident(io));
+	PRINT_MSTR(rd_ident(io));
 	EXPECT(io_getc(io) == 'x');
 	EXPECT(io_getc(io) == 'y');
 	EXPECT(io_getc(io) == 'z');
 	EXPECT(io_ungetc('z', io));
-	PRINT_STR(rd_ident(io));
+	PRINT_MSTR(rd_ident(io));
 
 	EXPECT_PTR(sub = io_pop(io));
-	PRINT_STR(rd_ident(sub));
+	PRINT_MSTR(rd_ident(sub));
 	EXPECT(io_getc(sub) == 'z');
 	EXPECT(io_close(sub) == 0);
 
-	PRINT_STR(rd_ident(io));
+	PRINT_MSTR(rd_ident(io));
 	EXPECT(io_getc(io) == 'b');
 	EXPECT(io_getc(io) == 'c');
 	EXPECT(io_getc(io) == EOF);
 
 	EXPECT(io_pop(io) == NULL);
-	PRINT_STR(rd_ident(io));
+	PRINT_MSTR(rd_ident(io));
 	EXPECT(io_close(io) == 0);
 }
 
@@ -90,7 +92,7 @@ TEST_DECL(lnum)
 {
 	IO *io;
 	EXPECT_PTR(io = io_lnum(io_string("a\nb\n", NULL)));
-	EXPECT_STR(rd_ident(io), "\"a\\nb\\n\":0:1");
+	EXPECT_MSTR(rd_ident(io), "\"a\\nb\\n\":0:1");
 	EXPECT(io_ctrl(io, IO_LINE) == 1);
 	EXPECT(io_getc(io) == 'a');
 	EXPECT(io_getc(io) == '\n');
@@ -117,7 +119,7 @@ TEST_DECL(lmark)
 
 	EXPECT_PTR(io = io_fopen(UnitTest_tmpname("data"), "w+"));
 	EXPECT_PTR(io = io_lmark(io, "%d: ", NULL, 0));
-	MATCH_STR(rd_ident(io), "lmark(.*/data)");
+	MATCH_MSTR(rd_ident(io), "lmark(.*/data)");
 	io_puts("line1\n\nline2\n", io);
 	EXPECT(io_ctrl(io, 0) == EOF);
 	EXPECT(io_rewind(io) == 0);
@@ -147,7 +149,7 @@ TEST_DECL(indent)
 	IO *io;
 	EXPECT_PTR(io = io_fopen(UnitTest_tmpname("data"), "w"));
 	EXPECT_PTR(io = io_indent(io, '=', 2));
-	MATCH_STR(rd_ident(io), "indent(.*/data)");
+	MATCH_MSTR(rd_ident(io), "indent(.*/data)");
 	EXPECT(io_ctrl(io, 0) == EOF);
 	io_puts("line1\n",io);
 	io_submode(io, 1);
@@ -175,7 +177,7 @@ TEST_DECL(divide)
 	IO *sub;
 	EXPECT_PTR(base = io_fopen(UnitTest_tmpname("data"), "w"));
 	EXPECT_PTR(sub = io_divide(base, 0));
-	MATCH_STR(rd_ident(sub), "divide(.*/data)");
+	MATCH_MSTR(rd_ident(sub), "divide(.*/data)");
 	EXPECT(io_ctrl(sub, 0) == EOF);
 	io_puts("b1", base);
 	io_puts("s1", sub);
@@ -207,7 +209,7 @@ TEST_DECL(latin9)
 	EXPECT(out_latin9(NULL) == NULL);
 	EXPECT_PTR(io = io_fopen(UnitTest_tmpname("data"), "w"));
 	EXPECT_PTR(io = out_latin9(io));
-	MATCH_STR(rd_ident(io), "latin9(.*/data)");
+	MATCH_MSTR(rd_ident(io), "latin9(.*/data)");
 	EXPECT(io_ctrl(io, 0) == EOF);
 
 	io_puts("|ä€|", io);
@@ -229,7 +231,7 @@ TEST_DECL(utf8)
 	EXPECT(out_utf8(NULL) == NULL);
 	EXPECT_PTR(io = io_fopen(UnitTest_tmpname("data"), "w"));
 	EXPECT_PTR(io = out_utf8(io));
-	MATCH_STR(rd_ident(io), "utf8(.*/data)");
+	MATCH_MSTR(rd_ident(io), "utf8(.*/data)");
 	EXPECT(io_ctrl(io, 0) == EOF);
 
 	io_puts("|ä€|", io);
@@ -278,7 +280,7 @@ TEST_DECL(lang)
 
 	EXPECT_PTR(io = io_fopen(UnitTest_tmpname("data"), "r"));
 	EXPECT_PTR(io = xlangfilter(io, "de_AT", protect_line, NULL));
-	MATCH_STR(rd_ident(io), "[de_AT].*");
+	MATCH_MSTR(rd_ident(io), "[de_AT].*");
 
 	EXPECT_STR(io_gets(buf, sizeof buf, io), "\txy:=z\n");
 	EXPECT_STR(io_gets(buf, sizeof buf, io), "\n");
@@ -311,4 +313,5 @@ TEST_SUITE
 	TEST_RUN(latin9);
 	TEST_RUN(utf8);
 	TEST_RUN(lang);
+	CLEANUP_MSTR;
 }

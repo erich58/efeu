@@ -165,6 +165,6 @@ TEST_SUITE
 	TEST_RUN(psubvec);
 	TEST_RUN(expand);
 	TEST_RUN(psubfilter);
-	IN(NULL);
-	utest_mstr(NULL);
+	CLEANUP_IN;
+	CLEANUP_MSTR;
 }

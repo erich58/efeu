@@ -2,6 +2,8 @@
 #include <EFEU/MapFile.h>
 #include <EFEU/procenv.h>
 
+#include "utest/mstr.tst.h"
+
 #define	TEST_DATA	"1234567890ABCDEFGHIJKLMNOPQRSTUVMXYZ\n"
 
 TEST_SUITE
@@ -17,8 +19,9 @@ TEST_SUITE
 
 	TEST_FILE("data", TEST_DATA);
 	map = MapFile_open(UnitTest_tmpname("data"));
-	PRINT_STR(rd_ident(map));
+	PRINT_MSTR(rd_ident(map));
 	EXPECT(map != NULL);
 	EXPECT_STR(map->data, TEST_DATA);
 	EXPECT(rd_deref(map) == NULL);
+	CLEANUP_MSTR;
 }

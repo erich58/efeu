@@ -4,6 +4,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#include "utest/mstr.tst.h"
+
 TEST_DECL(string)
 {
 	IO *io;
@@ -12,7 +14,7 @@ TEST_DECL(string)
 
 	EXPECT((io = io_string("data", NULL)) != NULL);
 	EXPECT_STR(io_gets(buf, sizeof buf, io), "data");
-	EXPECT_STR(rd_ident(io), "\"data\":4");
+	EXPECT_MSTR(rd_ident(io), "\"data\":4");
 	EXPECT(io_rewind(io) == 0);
 	offset = 2;
 	EXPECT(io_ctrl(io, IO_SETPOS, &offset) == 0);
@@ -26,7 +28,7 @@ TEST_DECL(string)
 	EXPECT((io = io_string(msprintf("%-100d", 42), memfree)) != NULL);
 	EXPECT(io_getc(io) == '4');
 	EXPECT(io_getc(io) == '2');
-	MATCH_STR(rd_ident(io), "\"42[ ]*[.]{3}\":2");
+	MATCH_MSTR(rd_ident(io), "\"42[ ]*[.]{3}\":2");
 	EXPECT(io_close(io) == 0);
 
 	EXPECT((io = io_string(NULL, NULL)) == NULL);
@@ -42,7 +44,7 @@ TEST_DECL(stream)
 	int rd[2] = { 0, 0 };
 
 	EXPECT((io = io_fopen(UnitTest_tmpname("data"), "w+")) != NULL);
-	EXPECT_STR(rd_ident(io), UnitTest_tmpname("data"));
+	EXPECT_MSTR(rd_ident(io), UnitTest_tmpname("data"));
 	EXPECT(io_putc('T', io) == 'T');
 	EXPECT(io_dbwrite(io, wd, sizeof wd[0], 2) == sizeof wd);
 	EXPECT(io_rewind(io) == 0);
@@ -65,20 +67,20 @@ TEST_DECL(stream)
 	EXPECT_CONTENT("data", "T1234abcd");
 
 	EXPECT((io = io_tmpfile()) != NULL);
-	EXPECT_STR(rd_ident(io), "<tmpfile>");
+	EXPECT_MSTR(rd_ident(io), "<tmpfile>");
 	EXPECT(io_puts("data\n", io) == 5);
 	EXPECT(io_rewind(io) == 0);
 	EXPECT_STR(io_gets(buf, sizeof buf, io), "data\n");
 	EXPECT(io_close(io) == 0);
 
 	EXPECT((io = io_fileopen("|echo test", "r")) != NULL);
-	EXPECT_STR(rd_ident(io), "<!echo>");
+	EXPECT_MSTR(rd_ident(io), "<!echo>");
 	EXPECT(io_ctrl(io, IO_GETPOS, &offset) == EOF);
 	EXPECT_STR(io_gets(buf, sizeof buf, io), "test\n");
 	EXPECT(io_close(io) == 0);
 
 	EXPECT((io = io_fileopen(NULL, "w")) != NULL);
-	EXPECT_STR(rd_ident(io), "<stdout>");
+	EXPECT_MSTR(rd_ident(io), "<stdout>");
 	EXPECT(io_close(io) == 0);
 
 	EXPECT((io = io_findopen(UnitTest_tmpname(NULL),
@@ -94,7 +96,7 @@ TEST_DECL(strbuf)
 
 	StrBuf *sb = sb_create(32);
 	EXPECT((io = io_strbuf(sb)) != NULL);
-	EXPECT_STR(rd_ident(io), "<strbuf>");
+	EXPECT_MSTR(rd_ident(io), "<strbuf>");
 	EXPECT(io_puts("data", io) == 4);
 	EXPECT(io_rewind(io) == 0);
 	EXPECT_STR(io_gets(buf, sizeof buf, io), "data");
@@ -112,14 +114,14 @@ TEST_DECL(strbuf)
 	sb_destroy(sb);
 
 	EXPECT((io = io_tmpbuf(64)) != NULL);
-	EXPECT_STR(rd_ident(io), "<tmpbuf>");
+	EXPECT_MSTR(rd_ident(io), "<tmpbuf>");
 	EXPECT(io_puts("data", io) == 4);
 	EXPECT(io_rewind(io) == 0);
 	EXPECT_STR(io_gets(buf, sizeof buf, io), "data");
 	EXPECT(io_close(io) == 0);
 
 	EXPECT((io = io_strbuf(NULL)) != NULL);
-	EXPECT_STR(rd_ident(io), "<tmpbuf>");
+	EXPECT_MSTR(rd_ident(io), "<tmpbuf>");
 	EXPECT(io_close(io) == 0);
 }
 
@@ -136,7 +138,7 @@ TEST_DECL(data)
 	EXPECT(io_getc(io) == 'T');
 	EXPECT(io_dbread(io, rd, sizeof rd[0], 2) == sizeof rd);
 	EXPECT(memcmp(wd, rd, sizeof wd) == 0);
-	EXPECT_STR(rd_ident(io), ":9/16");
+	EXPECT_MSTR(rd_ident(io), ":9/16");
 	EXPECT(io_rewind(io) == 0);
 	EXPECT(io_ctrl(io, IO_GETPOS, &offset) == 0);
 	EXPECT(offset == 0);
@@ -166,9 +168,9 @@ TEST_DECL(bigbuf)
 	char buf[32];
 
 	EXPECT((io = io_bigbuf(4, UnitTest_tmpname("buf_"))) != NULL);
-	PRINT_STR(rd_ident(io));
+	PRINT_MSTR(rd_ident(io));
 	EXPECT(io_puts("abcd1234567", io) == 11);
-	MATCH_STR(rd_ident(io), "bigbuf[(].*[)] 2[+]3 2[+]0");
+	MATCH_MSTR(rd_ident(io), "bigbuf[(].*[)] 2[+]3 2[+]0");
 	EXPECT(io_rewind(io) == 0);
 	EXPECT(io_read(io, buf, sizeof buf) == 11);
 	buf[11] = 0;
@@ -218,4 +220,5 @@ TEST_SUITE
 	TEST_RUN(data);
 	TEST_RUN(bigbuf);
 	TEST_RUN(copy);
+	CLEANUP_MSTR;
 }

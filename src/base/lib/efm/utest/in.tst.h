@@ -15,4 +15,6 @@ static IO *IN(char *def)
 	return io;
 }
 
+#define	CLEANUP_IN	IN(NULL)
+
 #endif

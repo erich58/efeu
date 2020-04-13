@@ -361,5 +361,5 @@ TEST_SUITE
 
 	TEST_EXPR(AllocTab_stat(OUT(), NULL, 1));
 	MATCH_STR(DATA(), "byte");
-	utest_mstr(NULL);
+	CLEANUP_MSTR;
 }

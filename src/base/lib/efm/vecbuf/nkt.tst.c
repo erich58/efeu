@@ -2,6 +2,7 @@
 #include <EFEU/nkt.h>
 
 #include "utest/out.tst.h"
+#include "utest/mstr.tst.h"
 
 #define	IVAL(p)	((int *) (p))[0]
 
@@ -38,7 +39,7 @@ TEST_SUITE
 	nkt_insert(t, "C", iptr(100));
 	EXPECT(nkt_walk(t, visit, OUT()) == 0);
 	EXPECT_STR(DATA(), "C=100;I=1;L=50;V=5;X=10;");
-	EXPECT_STR(rd_ident(t), "NameKeyTab Test[5]"); 
+	EXPECT_MSTR(rd_ident(t), "NameKeyTab Test[5]"); 
 
 	clean_count = 0;
 	nkt_delete(t, "L");
@@ -65,5 +66,5 @@ TEST_SUITE
 	rd_deref(nkt_create("X", 8, NULL));
 	nkt_insert(NULL, "x", NULL);
 	nkt_delete(NULL, "x");
-
+	CLEANUP_MSTR;
 }

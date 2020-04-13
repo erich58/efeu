@@ -86,5 +86,5 @@ TEST_SUITE
 	TEST_RUN(argval);
 	TEST_RUN(skiparg);
 	TEST_RUN(assignarg);
-	utest_mstr(NULL);
+	CLEANUP_MSTR;
 }

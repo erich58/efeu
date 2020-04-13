@@ -204,6 +204,6 @@ TEST_SUITE
 	TEST_RUN(getucs);
 
 	// Speicherfreigabe
-	IN(NULL);
-	utest_mstr(NULL);
+	CLEANUP_IN;
+	CLEANUP_MSTR;
 }

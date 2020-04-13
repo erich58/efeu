@@ -156,5 +156,5 @@ TEST_SUITE
 	TEST_RUN(null);
 	TEST_RUN(plain);
 	TEST_RUN(ctrl);
-	utest_mstr(NULL);
+	CLEANUP_MSTR;
 }

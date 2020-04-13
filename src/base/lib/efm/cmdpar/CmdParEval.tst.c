@@ -204,5 +204,5 @@ TEST_SUITE
 	TEST_RUN(doc);
 	TEST_RUN(config);
 	CmdPar_clean(&par);
-	utest_mstr(NULL);
+	CLEANUP_MSTR;
 }
