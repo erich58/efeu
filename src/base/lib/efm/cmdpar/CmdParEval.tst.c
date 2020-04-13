@@ -7,7 +7,7 @@
 #include <EFEU/io.h>
 #include <EFEU/procenv.h>
 #include "utest/out.tst.h"
-#include "utest/m2c.tst.h"
+#include "utest/mstr.tst.h"
 
 static CmdPar par;
 
@@ -39,9 +39,9 @@ TEST_DECL(show)
 
 TEST_DECL(var)
 {
-	EXPECT_STR(M2C(CmdPar_psub(&par, NULL, "arg")), "arg");
-	EXPECT_STR(M2C(CmdPar_psub(&par, "X = {}", "arg")), "X = arg");
-	EXPECT_STR(M2C(CmdPar_psub(&par, "X = \"{}\"", "arg")), "X = \"arg\"");
+	EXPECT_MSTR(CmdPar_psub(&par, NULL, "arg"), "arg");
+	EXPECT_MSTR(CmdPar_psub(&par, "X = {}", "arg"), "X = arg");
+	EXPECT_MSTR(CmdPar_psub(&par, "X = \"{}\"", "arg"), "X = \"arg\"");
 
 	pset("a", NULL);
 	EXPECT(pcmd("append", "a", ":", "first") == 0);
@@ -204,4 +204,5 @@ TEST_SUITE
 	TEST_RUN(doc);
 	TEST_RUN(config);
 	CmdPar_clean(&par);
+	utest_mstr(NULL);
 }

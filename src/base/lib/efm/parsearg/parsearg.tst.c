@@ -1,13 +1,13 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/parsearg.h>
 #include "utest/out.tst.h"
-#include "utest/m2c.tst.h"
+#include "utest/mstr.tst.h"
 
 TEST_DECL(argval)
 {
 	EXPECT_STR(argval(NULL), NULL);
 	EXPECT_STR(argval("-"), NULL);
-	EXPECT_STR(M2C(argval("x")), "x");
+	EXPECT_MSTR(argval("x"), "x");
 }
 
 static const char *argl(int narg, char **arg)
@@ -86,4 +86,5 @@ TEST_SUITE
 	TEST_RUN(argval);
 	TEST_RUN(skiparg);
 	TEST_RUN(assignarg);
+	utest_mstr(NULL);
 }

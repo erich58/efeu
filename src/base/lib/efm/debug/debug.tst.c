@@ -7,7 +7,7 @@
 #include <ctype.h>
 
 #include "utest/out.tst.h"
-#include "utest/m2c.tst.h"
+#include "utest/mstr.tst.h"
 
 static LogControl *nlog = NULL;
 static LogControl *dlog = NULL;
@@ -47,11 +47,6 @@ static const char *fconfig(const char *fmt, const char *name)
 	return config(buf);
 }
 
-static const char *logid(LogControl *log)
-{
-	return M2C(rd_ident(log));
-}
-
 #if	0
 static const char *loginfo(LogControl *log)
 {
@@ -84,8 +79,8 @@ TEST_DECL(setup)
 	nlog = &LogData;
 	dlog = LogControl_create("X.debug");
 
-	EXPECT_STR(logid(nlog), "X.note");
-	EXPECT_STR(logid(dlog), "X.debug");
+	EXPECT_MSTR(rd_ident(nlog), "X.note");
+	EXPECT_MSTR(rd_ident(dlog), "X.debug");
 
 	LogUpdate(ErrLog);
 	int sync = ErrLog->sync;
@@ -117,17 +112,17 @@ TEST_DECL(LogLevel)
 
 TEST_DECL(LogControl)
 {
-	EXPECT_STR(logid(ErrLog), ".err");
+	EXPECT_MSTR(rd_ident(ErrLog), ".err");
 	EXPECT(check_stdlog(ErrLog, LOGLEVEL_ERR, 1));
-	EXPECT_STR(logid(WarnLog), ".warn");
+	EXPECT_MSTR(rd_ident(WarnLog), ".warn");
 	EXPECT(check_stdlog(WarnLog, LOGLEVEL_WARN, 1));
-	EXPECT_STR(logid(NoteLog), ".note");
+	EXPECT_MSTR(rd_ident(NoteLog), ".note");
 	EXPECT(check_stdlog(NoteLog, LOGLEVEL_NOTE, 1));
-	EXPECT_STR(logid(InfoLog), ".info");
+	EXPECT_MSTR(rd_ident(InfoLog), ".info");
 	EXPECT(check_stdlog(InfoLog, LOGLEVEL_INFO, 0));
-	EXPECT_STR(logid(DebugLog), ".debug");
+	EXPECT_MSTR(rd_ident(DebugLog), ".debug");
 	EXPECT(check_stdlog(DebugLog, LOGLEVEL_DEBUG, 0));
-	EXPECT_STR(logid(TraceLog), ".trace");
+	EXPECT_MSTR(rd_ident(TraceLog), ".trace");
 	EXPECT(check_stdlog(TraceLog, LOGLEVEL_TRACE, 0));
 
 	EXPECT_STR(config("+"), "EWNIdt-Nd");
@@ -366,4 +361,5 @@ TEST_SUITE
 
 	TEST_EXPR(AllocTab_stat(OUT(), NULL, 1));
 	MATCH_STR(DATA(), "byte");
+	utest_mstr(NULL);
 }

@@ -4,12 +4,12 @@
 #include <EFEU/io.h>
 
 #include "utest/out.tst.h"
-#include "utest/m2c.tst.h"
+#include "utest/mstr.tst.h"
 
 TEST_DECL(base)
 {
 	StrPool *s = NewStrPool();
-	EXPECT_STR(M2C(rd_ident(s)), "8/8 + 0/0");
+	EXPECT_MSTR(rd_ident(s), "8/8 + 0/0");
 	EXPECT(StrPool_add(s, "abc") == 8);
 	EXPECT(StrPool_add(s, "0123456789") == 8 + 4);
 	EXPECT(StrPool_offset(s) == 23);
@@ -19,7 +19,7 @@ TEST_DECL(base)
 	EXPECT(StrPool_add(s, NULL) == 0);
 	EXPECT(StrPool_xadd(s, NULL) == 24);
 	EXPECT(StrPool_nadd(s, "abcdefg", 3) == 24 + 1);
-	EXPECT_STR(M2C(rd_ident(s)), "8/8 + 21/1000");
+	EXPECT_MSTR(rd_ident(s), "8/8 + 21/1000");
 	EXPECT(StrPool_offset(s) == 29);
 
 	EXPECT_STR(StrPool_get(s, 0), NULL);
@@ -35,7 +35,7 @@ TEST_DECL(base)
 	StrPool_save(s, UnitTest_tmpname("data"));
 
 	StrPool *t = StrPool_map(UnitTest_tmpname("data"));
-	EXPECT_STR(M2C(rd_ident(t)), "8/29 + 0/0");
+	EXPECT_MSTR(rd_ident(t), "8/29 + 0/0");
 	EXPECT(StrPool_start(t) == 0);
 	EXPECT(StrPool_next(t) == 8);
 	EXPECT(StrPool_next(t) == 12);
@@ -46,10 +46,10 @@ TEST_DECL(base)
 	EXPECT(StrPool_copy(s, s, 8) == 8);
 	EXPECT(StrPool_copy(t, s, 8) == 29);
 	EXPECT_STR(StrPool_get(t, 29), "abc");
-	EXPECT_STR(M2C(rd_ident(t)), "29/29 + 4/1000");
+	EXPECT_MSTR(rd_ident(t), "29/29 + 4/1000");
 	EXPECT(StrPool_align(t, 2000) == 2000);
 	EXPECT(StrPool_offset(t) == 2029);
-	EXPECT_STR(M2C(rd_ident(t)), "29/29 + 2000/2000");
+	EXPECT_MSTR(rd_ident(t), "29/29 + 2000/2000");
 
 	EXPECT(StrPool_cmp(s, 8, s, 8) == 0);
 	EXPECT(StrPool_cmp(s, 8, t, 29) == 0);
@@ -163,4 +163,5 @@ TEST_SUITE
 	TEST_RUN(rw);
 	TEST_RUN(ext);
 	TEST_RUN(out);
+	utest_mstr(NULL);
 }

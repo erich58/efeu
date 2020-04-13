@@ -18,7 +18,7 @@ static void f_puts(IO *out, InfoNode *info)
 }
 
 #include "utest/out.tst.h"
-#include "utest/m2c.tst.h"
+#include "utest/mstr.tst.h"
 
 static void show_info(IO *out, InfoNode *info)
 {
@@ -86,7 +86,7 @@ TEST_DECL(SetupInfo)
 	EXPECT(cnt_setup == 1);
 	EXPECT_STR(dump(&root), "root[1]<-1>\n");
 
-	EXPECT_STR(M2C(rd_ident(&root)), "root");
+	EXPECT_MSTR(rd_ident(&root), "root");
 	TEST_EXPR(PrintInfo(OUT(), &root));
 	EXPECT_STR(DATA(), "root node\n");
 
@@ -128,7 +128,7 @@ TEST_DECL(Default)
 
 	TEST_EXPR(InfoName(OUT(), NULL, info));
 	EXPECT_STR(DATA(), "/a/b");
-	EXPECT_STR(M2C(rd_ident(info)), "/a/b");
+	EXPECT_MSTR(rd_ident(info), "/a/b");
 
 	TEST_EXPR(DumpInfo(OUT(), NULL, 0));
 	EXPECT_STR(DATA(), "@:\n@a| --info=dump:/a\n");
@@ -234,4 +234,5 @@ TEST_SUITE
 	TEST_RUN(Default);
 	TEST_RUN(LoadInfo);
 	TEST_RUN(Coverage);
+	utest_mstr(NULL);
 }

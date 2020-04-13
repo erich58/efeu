@@ -3,7 +3,7 @@
 #include <EFEU/Debug.h>
 #include <EFEU/mstring.h>
 #include "utest/out.tst.h"
-#include "utest/m2c.tst.h"
+#include "utest/mstr.tst.h"
 
 static CmdPar *par = NULL;
 
@@ -228,7 +228,7 @@ TEST_DECL(Ptr)
 	EXPECT(par->refcount == 1);
 	EXPECT(par == CmdPar_ptr(NULL));
 	CmdPar_setval(par, NULL, "CmdPar");
-	EXPECT_STR(M2C(rd_ident(par)), "CmdPar");
+	EXPECT_MSTR(rd_ident(par), "CmdPar");
 
 	CmdPar_setval(par, "a", "A");
 	CmdPar_setval(par, "b", "B");
@@ -572,4 +572,5 @@ TEST_SUITE
 	TEST_RUN(opt);
 	TEST_RUN(syntax);
 	TEST_RUN(write);
+	utest_mstr(NULL);
 }

@@ -2,27 +2,27 @@
 #include <EFEU/DatPool.h>
 #include <EFEU/memalloc.h>
 
-#include "utest/m2c.tst.h"
+#include "utest/mstr.tst.h"
 
 TEST_SUITE
 {
 	DatPool *d = DatPool_dyn(4);
 	EXPECT(d != NULL);
-	EXPECT_STR(M2C(rd_ident(d)), "0@0 + 0@0/4");
+	EXPECT_MSTR(rd_ident(d), "0@0 + 0@0/4");
 	EXPECT(DatPool_add(d, "abc", 3) == 0);
 	EXPECT(DatPool_add(d, "0123456789", 10) == 3);
 	EXPECT(DatPool_add(d, "xyz", 4) == 13);
 	EXPECT_STR(DatPool_get(d, 0), "abc0123456789xyz");
-	EXPECT_STR(M2C(rd_ident(d)), "0@0 + 17@20/4");
+	EXPECT_MSTR(rd_ident(d), "0@0 + 17@20/4");
 	DatPool_create(d, UnitTest_tmpname("data"));
 	rd_deref(d);
 
 	d = DatPool_map(UnitTest_tmpname("data"));
-	EXPECT_STR(M2C(rd_ident(d)), "0@17 + 0@0/0");
+	EXPECT_MSTR(rd_ident(d), "0@17 + 0@0/0");
 	EXPECT(DatPool_add(d, "ABC", 4) == 17);
 	EXPECT_STR(DatPool_get(d, 0), "abc0123456789xyz");
 	EXPECT_STR(DatPool_get(d, 17), "ABC");
-	EXPECT_STR(M2C(rd_ident(d)), "0@17 + 4@100000/0");
+	EXPECT_MSTR(rd_ident(d), "0@17 + 4@100000/0");
 	EXPECT_STR(DatPool_get(d, 16), "");
 	EXPECT((char *)DatPool_get(d, 15) + 1 == DatPool_get(d, 16));
 	EXPECT((char *)DatPool_get(d, 16) + 1 != DatPool_get(d, 17));
@@ -41,6 +41,7 @@ TEST_SUITE
 	EXPECT_STR(p + 8 + 17, "ABC");
 
 	d = DatPool_map(UnitTest_tmpname("data"));
-	EXPECT_STR(M2C(rd_ident(d)), "0@21 + 0@0/0");
+	EXPECT_MSTR(rd_ident(d), "0@21 + 0@0/0");
 	rd_deref(d);
+	utest_mstr(NULL);
 }

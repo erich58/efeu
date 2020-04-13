@@ -62,6 +62,7 @@ char *io_xident (IO *io, const char *fmt, ...)
 				sb_puts(id, buf);
 				break;
 			case 0:
+				--fmt;
 				break;
 			default:
 				sb_putc(*fmt, buf);
