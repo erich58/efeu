@@ -26,6 +26,19 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/EfiClass.h>
 #include <limits.h>
 #include <time.h>
+#include <stdint.h>
+
+static size_t read_time (const EfiType *type, void *data, IO *io)
+{
+	*((time_t *) data) = io_ullget(io, type->recl);
+	return type->recl;
+}
+
+static size_t write_time (const EfiType *type, const void *data, IO *io)
+{
+	io_ullput(*((time_t *) data), io, type->recl);
+	return type->recl;
+}
 
 static int print_time (const EfiType *type, const void *data, IO *io)
 {
@@ -33,7 +46,11 @@ static int print_time (const EfiType *type, const void *data, IO *io)
 	return io_xprintf(io, "%llu", (int64_t) *t);
 }
 
-EfiType Type_time = SIMPLE_TYPE("time", time_t, NULL, print_time);
+//EfiType Type_time = SIMPLE_TYPE("time", time_t, NULL, print_time);
+
+EfiType Type_time = COMPLEX_TYPE("time", "time_t", \
+	sizeof(time_t), sizeof(uint32_t), \
+	read_time, write_time, print_time, NULL, NULL, NULL, NULL, 0);
 
 static char *time_fmt = NULL;
 
