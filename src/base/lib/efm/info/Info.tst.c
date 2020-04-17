@@ -55,13 +55,13 @@ static void dump_info(IO *out, InfoNode *info, int depth)
 static const char *show(InfoNode *info)
 {
 	show_info(OUT(), info);
-	return DATA();
+	return utest_out();
 }
 
 static const char *dump(InfoNode *info)
 {
 	dump_info(OUT(), info, 0);
-	return DATA();
+	return utest_out();
 }
 
 static IO *fake_interact(const char *prompt, const char *hist)
@@ -88,7 +88,7 @@ TEST_DECL(SetupInfo)
 
 	EXPECT_MSTR(rd_ident(&root), "root");
 	TEST_EXPR(PrintInfo(OUT(), &root));
-	EXPECT_STR(DATA(), "root node\n");
+	EXPECT_OUT("root node\n");
 
 	InfoNode *i1 = AddInfo(&root, "x", "X-Label", NULL, "Desc of $1:$2\n");
 	EXPECT_STR(dump(&root), "root[2]<1>\n+x[1]<-1>\n");
@@ -97,11 +97,11 @@ TEST_DECL(SetupInfo)
 	EXPECT_STR(dump(&root), "root[2]<1>\n+x[2]<1>\n++y/z[1]<-1> func\n");
 
 	PrintInfo(OUT(), &root);
-	EXPECT_STR(DATA(), "root node\n\nx\tX-Label\n");
+	EXPECT_OUT("root node\n\nx\tX-Label\n");
 	PrintInfo(OUT(), i1);
-	EXPECT_STR(DATA(), "X-Label\nDesc of x:X-Label\n\ny\\/z\tY-Label\n");
+	EXPECT_OUT("X-Label\nDesc of x:X-Label\n\ny\\/z\tY-Label\n");
 	PrintInfo(OUT(), i2);
-	EXPECT_STR(DATA(), "Y-Label\nY-Desc\n");
+	EXPECT_OUT("Y-Label\nY-Desc\n");
 
 	rd_refer(i2);
 	EXPECT_STR(dump(&root), "root[2]<1>\n+x[2]<1>\n++y/z[2]<-1> func\n");
@@ -122,39 +122,39 @@ TEST_DECL(Default)
 	TEST_EXPR(info = AddInfo(root, "a/b", "Label",
 		f_puts, "Description\n"));
 	TEST_EXPR(PrintInfo(OUT(), info));
-	EXPECT_STR(DATA(), "Label\nDescription\n");
+	EXPECT_OUT("Label\nDescription\n");
 	EXPECT(root->refcount == 2);
 	EXPECT(info->refcount == 1);
 
 	TEST_EXPR(InfoName(OUT(), NULL, info));
-	EXPECT_STR(DATA(), "/a/b");
+	EXPECT_OUT("/a/b");
 	EXPECT_MSTR(rd_ident(info), "/a/b");
 
 	TEST_EXPR(DumpInfo(OUT(), NULL, 0));
-	EXPECT_STR(DATA(), "@:\n@a| --info=dump:/a\n");
+	EXPECT_OUT("@:\n@a| --info=dump:/a\n");
 
 	TEST_EXPR(DumpInfo(OUT(), NULL, 1));
-	EXPECT_STR(DATA(), "@:\n@a:\n@a/b: Label\nDescription\n");
+	EXPECT_OUT("@:\n@a:\n@a/b: Label\nDescription\n");
 
 	TEST_EXPR(DumpInfo(OUT(), "/a", 1));
-	EXPECT_STR(DATA(), "@:\n@b: Label\nDescription\n");
+	EXPECT_OUT("@:\n@b: Label\nDescription\n");
 
 	TEST_EXPR(DumpInfo(OUT(), "/a/b", 1));
-	EXPECT_STR(DATA(), "@: Label\nDescription\n");
+	EXPECT_OUT("@: Label\nDescription\n");
 
 	IO *save = iostd;
 	iostd = OUT();
 	BrowseInfo("xdump:");
-	EXPECT_STR(DATA(), "@:\n@a:\n@a/b: Label\nDescription\n");
+	EXPECT_OUT("@:\n@a:\n@a/b: Label\nDescription\n");
 	iostd = OUT();
 	BrowseInfo("dump:/a/b");
-	EXPECT_STR(DATA(), "@: Label\nDescription\n");
+	EXPECT_OUT("@: Label\nDescription\n");
 	iostd = OUT();
 	BrowseInfo("print:/a/b");
-	EXPECT_STR(DATA(), "Label\nDescription\n");
+	EXPECT_OUT("Label\nDescription\n");
 	iostd = OUT();
 	BrowseInfo("?");
-	MATCH_STR(DATA(),
+	MATCH_OUT(
 		"auto\n\t[^\n]*\n"
 		"print\n\t[^\n]*\n"
 		"dump\n\t[^\n]*\n"
@@ -170,15 +170,15 @@ TEST_DECL(Default)
 
 	TEST_EXPR(info = GetInfo(NULL, "/a/./b/../"));
 	TEST_EXPR(PrintInfo(OUT(), info));
-	EXPECT_STR(DATA(), "\nb\tLabel\n");
+	EXPECT_OUT("\nb\tLabel\n");
 	EXPECT(rd_deref(info) != NULL);
 
 	TEST_EXPR(info = AddInfo(NULL, "x/z\n\t\f\by-<|:>\\z",
 		"L<$$x>|\n", NULL, NULL));
 	TEST_EXPR(DumpInfo(OUT(), "/x", 1));
-	EXPECT_STR(DATA(), "@:\n@z\\n\\t\\f\\by-\\<\\|\\:>\\\\\\\\z: "
+	EXPECT_OUT("@:\n@z\\n\\t\\f\\by-\\<\\|\\:>\\\\\\\\z: "
 		"L\\<$$$x>\\|\\\n\n");
-	PRINT_STR(DATA());
+	PRINT_OUT();
 }
 
 TEST_DECL(LoadInfo)
@@ -186,7 +186,7 @@ TEST_DECL(LoadInfo)
 	EXPECT_STR(dump(&root), "root[1]<0>\n");
 	TEST_EXPR(LoadInfo(&root, "|printf '@0: Label\nDescription\n'"));
 	PrintInfo(OUT(), rd_deref(GetInfo(&root, "0")));
-	EXPECT_STR(DATA(), "Label\nDescription\n");
+	EXPECT_OUT("Label\nDescription\n");
 
 	TEST_EXPR(SetInfoPath(UnitTest_tmpname(NULL)));
 
@@ -201,14 +201,12 @@ TEST_DECL(LoadInfo)
 	TEST_FILE("2 dat\\a", "Inhalt\n");
 	LoadInfo(&root, "2.info");
 	PrintInfo(OUT(), rd_deref(GetInfo(&root, "2")));
-	EXPECT_STR(DATA(), "File\nInhalt\n");
+	EXPECT_OUT("File\nInhalt\n");
 
 	TEST_FILE("3.info", "@3\t:Pipe |echo Input\n");
 	LoadInfo(&root, "3.info");
 	PrintInfo(OUT(), rd_deref(GetInfo(&root, "3")));
-	EXPECT_STR(DATA(), "Pipe\nInput\n");
-
-//	PRINT_STR(DATA());
+	EXPECT_OUT("Pipe\nInput\n");
 }
 
 TEST_DECL(Coverage)
@@ -235,4 +233,5 @@ TEST_SUITE
 	TEST_RUN(LoadInfo);
 	TEST_RUN(Coverage);
 	CLEANUP_MSTR;
+	CLEANUP_OUT;
 }

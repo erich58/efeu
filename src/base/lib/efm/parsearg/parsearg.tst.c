@@ -20,7 +20,7 @@ static const char *argl(int narg, char **arg)
 	for (n = 0; n < narg; n++)
 		io_printf(io, " %s", arg[n]);
 
-	return DATA();
+	return utest_out();
 }
 
 TEST_DECL(skiparg)
@@ -87,4 +87,5 @@ TEST_SUITE
 	TEST_RUN(skiparg);
 	TEST_RUN(assignarg);
 	CLEANUP_MSTR;
+	CLEANUP_OUT;
 }

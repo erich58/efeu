@@ -38,7 +38,7 @@ TEST_SUITE
 	nkt_insert(t, "L", iptr(50));
 	nkt_insert(t, "C", iptr(100));
 	EXPECT(nkt_walk(t, visit, OUT()) == 0);
-	EXPECT_STR(DATA(), "C=100;I=1;L=50;V=5;X=10;");
+	EXPECT_OUT("C=100;I=1;L=50;V=5;X=10;");
 	EXPECT_MSTR(rd_ident(t), "NameKeyTab Test[5]"); 
 
 	clean_count = 0;
@@ -46,13 +46,13 @@ TEST_SUITE
 	nkt_delete(t, "C");
 	EXPECT(clean_count == 2);
 	EXPECT(nkt_rwalk(t, visit, OUT()) == 0);
-	EXPECT_STR(DATA(), "X=10;V=5;I=1;");
+	EXPECT_OUT("X=10;V=5;I=1;");
 
 	clean_count = 0;
 	nkt_insert(t, "V", iptr(42));
 	EXPECT(clean_count == 1);
 	EXPECT(nkt_walk(t, visit, OUT()) == 1);
-	EXPECT_STR(DATA(), "I=1;V=42;");
+	EXPECT_OUT("I=1;V=42;");
 
 	EXPECT(nkt_fetch(t, "Z", &defval) == &defval);
 	EXPECT(nkt_fetch(NULL, "Z", &defval) == &defval);
@@ -67,4 +67,5 @@ TEST_SUITE
 	nkt_insert(NULL, "x", NULL);
 	nkt_delete(NULL, "x");
 	CLEANUP_MSTR;
+	CLEANUP_OUT;
 }

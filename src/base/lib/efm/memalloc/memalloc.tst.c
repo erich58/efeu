@@ -68,7 +68,7 @@ TEST_DECL(alloctab)
 	EXPECT(del_data(NULL, "x") == 0);
 
 	AllocTab_stat(OUT(), &tab, 1);
-	MATCH_STR(DATA(), "^AllocTabTest");
+	MATCH_OUT("^AllocTabTest");
 
 	clear_log("error.log");
 	EXPECT(del_data(&tab, p) == 0);
@@ -196,4 +196,5 @@ TEST_SUITE
 	TEST_RUN(trace);
 	TEST_RUN(debug_check);
 	LogConfig("");
+	CLEANUP_OUT;
 }

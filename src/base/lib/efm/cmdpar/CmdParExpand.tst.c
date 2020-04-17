@@ -27,7 +27,7 @@ static const char *pexpand(const char *str)
 	IO *io = io_cstr(str);
 	CmdPar_expand(&par, io, OUT());
 	io_close(io);
-	return DATA();
+	return utest_out();
 }
 
 static const char *expand(const char *name, const char *arg)
@@ -37,7 +37,7 @@ static const char *expand(const char *name, const char *arg)
 	if	(def && def->eval)
 	{
 		def->eval(&par, OUT(), arg);
-		return DATA();
+		return utest_out();
 	}
 
 	return NULL;
@@ -53,9 +53,9 @@ static CmdParExpand test_add = { "test_add", "Testfunktion", f_test_add };
 TEST_SUITE
 {
 	CmdParExpand_show(OUT(), NULL);	// Für Testabdeckung //
-	MATCH_STR(DATA(), "^\\[arglist] .*\n\\[version]");
+	MATCH_OUT("^\\[arglist] .*\n\\[version]");
 	CmdParExpand_show(OUT(), "$1 ");
-	EXPECT_STR(DATA(), "arglist copyright environ head ident name "
+	EXPECT_OUT("arglist copyright environ head ident name "
 		"options synopsis varlist version ");
 
 	CmdPar_init(&par);
@@ -143,7 +143,7 @@ TEST_SUITE
 	EXPECT_STR(expand("test_add", "DATA"), "DATA");
 
 	CmdPar_expand(NULL, NULL, OUT());
-	EXPECT_STR(DATA(), "@");
+	EXPECT_OUT("@");
 	EXPECT_STR(pexpand(""), "@");
 	EXPECT_STR(pexpand(" "), "@");
 	EXPECT_STR(pexpand("@"), "@");
@@ -155,7 +155,7 @@ TEST_SUITE
 	IO *io = io_cstr("@ident");
 	CmdPar_iousage(&par, OUT(), io);
 	io_close(io);
-	EXPECT_STR(DATA(), "CommandName -- IdentName\n");
+	EXPECT_OUT("CommandName -- IdentName\n");
 
 	TEST_FILE("CommandName.hlp", "HELP\n");
 
@@ -165,11 +165,12 @@ TEST_SUITE
 		EXPECT_STR(CmdPar_hpath(&par),
 			UnitTest_tpl("@/CommandName.hlp"));
 		CmdPar_manpage(&par, OUT());
-		EXPECT_STR(DATA(), "HELP\n");
+		EXPECT_OUT("HELP\n");
 		TEST_EXIT;
 	}
 
 	CHILD_EXIT(0);
 
 	CmdPar_clean(&par);
+	CLEANUP_OUT;
 }

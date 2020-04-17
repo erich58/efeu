@@ -16,6 +16,7 @@ static int testkey(const char *str, const char *key)
 static int valscan(const char *str, unsigned flags, void **data)
 {
 	IO *io = io_cstr(str);
+	utest_out();
 	int rval = io_valscan(io, flags, data);
 	io_copy(io, OUT());
 	io_close(io);
@@ -86,11 +87,11 @@ TEST_DECL(mstr2int64)
 TEST_DECL(testkey)
 {
 	EXPECT(testkey("abc:", NULL) == 0);
-	EXPECT_STR(DATA(), "abc:");
+	EXPECT_OUT("abc:");
 	EXPECT(testkey("abc:", "abc") == 1);
-	EXPECT_STR(DATA(), ":");
+	EXPECT_OUT(":");
 	EXPECT(testkey("abcd:", "abc") == 0);
-	EXPECT_STR(DATA(), "abcd:");
+	EXPECT_OUT("abcd:");
 }
 
 TEST_DECL(valscan)
@@ -109,7 +110,7 @@ TEST_DECL(valscan)
 	if	(EXPECT(valscan(" 3.5", SCAN_INT, &p) == SCAN_INT))
 		EXPECT(*((int *) p) == 3); 
 
-	EXPECT_STR(DATA(), ".5");
+	EXPECT_OUT(".5");
 
 	if	(EXPECT(valscan(" 3", SCAN_DOUBLE, &p) == SCAN_DOUBLE))
 		EXPECT(*((double *) p) == 3.); 
@@ -123,7 +124,7 @@ TEST_DECL(valscan)
 	if	(EXPECT(valscan(" 0xabcdefgh", SCAN_ANYVAL, &p) == SCAN_INT))
 		EXPECT(*((int *) p) == 0xabcdef); 
 
-	EXPECT_STR(DATA(), "gh");
+	EXPECT_OUT("gh");
 
 	if	(EXPECT(valscan("0x1234567890ll", SCAN_ANYVAL, &p) == SCAN_INT64))
 		EXPECT(*((int64_t *) p) == 0x1234567890ll); 
@@ -132,7 +133,7 @@ TEST_DECL(valscan)
 	if	(EXPECT(valscan(" 0b1012", SCAN_ANYVAL, &p) == SCAN_INT))
 		EXPECT(*((int *) p) == 5); 
 
-	EXPECT_STR(DATA(), "2");
+	EXPECT_OUT("2");
 
 	if	(EXPECT(valscan(" -1u", 0, &p) == (SCAN_INT|SCAN_UNSIGNED)))
 		EXPECT(*((unsigned *) p) == ~0); 
@@ -149,7 +150,7 @@ TEST_DECL(scan)
 	EXPECT(io_scan(NULL, SCAN_ANYTYPE, NULL) == 0);
 
 	EXPECT(scan(" \t123", 0, NULL) == 0);
-	EXPECT_STR(DATA(), "123");
+	EXPECT_OUT("123");
 
 	EXPECT(scan("3.5", SCAN_ANYTYPE, NULL) == SCAN_DOUBLE);
 	EXPECT(scan("3", SCAN_ANYTYPE, NULL) == SCAN_INT);
@@ -160,12 +161,12 @@ TEST_DECL(scan)
 	EXPECT(scan("L'a'", SCAN_ANYTYPE, NULL) == SCAN_UCS);
 	EXPECT(scan("L\"a\"", SCAN_ANYTYPE, NULL) == SCAN_STR);
 	EXPECT(scan("L'a'", 0, NULL) == 0);
-	EXPECT_STR(DATA(), "L'a'");
+	EXPECT_OUT("L'a'");
 	EXPECT(scan("L'a'", SCAN_NAME, NULL) == SCAN_NAME);
-	EXPECT_STR(DATA(), "'a'");
+	EXPECT_OUT("'a'");
 	EXPECT(scan("L'a'", SCAN_UCS, NULL) == SCAN_UCS);
 	EXPECT(scan("L 'a'", SCAN_UCS, NULL) == 0);
-	EXPECT_STR(DATA(), "L 'a'");
+	EXPECT_OUT("L 'a'");
 	EXPECT(scan("L 'a'", SCAN_ANYTYPE, NULL) == SCAN_NAME);
 
 	if	(EXPECT(scan("'a'", SCAN_XCHAR, &p) == SCAN_CHAR))
@@ -219,7 +220,7 @@ TEST_DECL(locale)
 	if	(EXPECT(valscan("123.456,78", 0, &p) == SCAN_DOUBLE))
 		EXPECT(*((double *) p) == 123.456); 
 
-	EXPECT_STR(DATA(), ",78");
+	EXPECT_OUT(",78");
 
 	SetLocale(LOC_SCAN, "de");
 
@@ -237,4 +238,5 @@ TEST_SUITE
 	TEST_RUN(valscan);
 	TEST_RUN(scan);
 	TEST_RUN(locale);
+	CLEANUP_OUT;
 }

@@ -27,7 +27,7 @@ static const char *vinfo(int *vec, size_t dim)
 			io_printf(io, " %d", vec[i]);
 	}
 
-	return DATA();
+	return utest_out();
 }
 
 static const char *vbinfo(VecBuf *buf)
@@ -108,7 +108,7 @@ static const char *minfo(VecBuf *vb, int min, int max)
 			io_printf(io, " %d", v[i++]);
 	}
 
-	return DATA();
+	return utest_out();
 }
 
 TEST_DECL(basic)
@@ -226,4 +226,5 @@ TEST_SUITE
 	TEST_RUN(basic);
 	TEST_RUN(copy);
 	TEST_RUN(qsort);
+	CLEANUP_OUT;
 }

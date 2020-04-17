@@ -21,7 +21,7 @@ static const char *utfdump(int32_t ucs)
 	for (i = 0; i < n; i++)
 		io_printf(io, " %2x", buf[i]);
 
-	return DATA();
+	return utest_out();
 }
 
 TEST_SUITE
@@ -64,4 +64,6 @@ TEST_SUITE
 	EXPECT(getucs("\xc2\xf0", 2) == 0xc2);
 	EXPECT(getucs("\xef\xbf\xbf", 3) == 0xffff);
 	EXPECT(getucs("\xf0\x9a\x80\x8b", 4) == 0x1a00b);
+
+	CLEANUP_OUT;
 }

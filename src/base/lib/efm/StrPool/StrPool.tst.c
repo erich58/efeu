@@ -84,7 +84,7 @@ TEST_DECL(rw)
 	EXPECT(StrPool_add(s, "ABC")== 28);
 
 	StrPool_dump(s, OUT());
-	EXPECT_STR(DATA(),
+	EXPECT_OUT(
 		"  ----- ------------\n"
 		"      0 \"StrPool\"\n"
 		"      8 \"abc\"\n"
@@ -96,13 +96,13 @@ TEST_DECL(rw)
 		"  ----- ------------\n");
 
 	EXPECT(StrPool_write(s, OUT()) == 32);
-	EXPECT_STR(DATA(), "StrPool");
-	EXPECT_STR(DATA() + 8, "abc");
-	EXPECT_STR(DATA() + 12, "1234567890");
-	EXPECT_STR(DATA() + 23, "");
-	EXPECT_STR(DATA() + 24, "xyz");
-	EXPECT_STR(DATA() + 28, "ABC");
-	EXPECT_STR(DATA() + 32, "");
+	EXPECT_OUT("StrPool");
+	EXPECT_STR(utest_out() + 8, "abc");
+	EXPECT_STR(utest_out() + 12, "1234567890");
+	EXPECT_STR(utest_out() + 23, "");
+	EXPECT_STR(utest_out() + 24, "xyz");
+	EXPECT_STR(utest_out() + 28, "ABC");
+	EXPECT_STR(utest_out() + 32, "");
 
 	rd_deref(s);
 }
@@ -118,7 +118,7 @@ TEST_DECL(ext)
 	char buf[] = "StrPool\0abc\0\0xy";
 	StrPool *pool = StrPool_ext(buf, sizeof buf, ext_clean);
 	StrPool_dump(pool, OUT());
-	EXPECT_STR(DATA(),
+	EXPECT_OUT(
 		"  ----- ------------\n"
 		"      0 \"StrPool\"\n"
 		"      8 \"abc\"\n"
@@ -127,7 +127,7 @@ TEST_DECL(ext)
 		"  ----- ------------\n"
 		"  ----- ------------\n");
 	rd_deref(pool);
-	EXPECT_STR(DATA(), "clean: 16");
+	EXPECT_OUT("clean: 16");
 }
 
 TEST_DECL(out)
@@ -144,7 +144,7 @@ TEST_DECL(out)
 	StrPool_psubarg(pool, "$0:$1", "sd", "xyz", 5);
 
 	StrPool_dump(pool, OUT());
-	EXPECT_STR(DATA(),
+	EXPECT_OUT(
 		"  ----- ------------\n"
 		"      0 \"StrPool\"\n"
 		"  ----- ------------\n"
@@ -164,4 +164,5 @@ TEST_SUITE
 	TEST_RUN(ext);
 	TEST_RUN(out);
 	CLEANUP_MSTR;
+	CLEANUP_OUT;
 }

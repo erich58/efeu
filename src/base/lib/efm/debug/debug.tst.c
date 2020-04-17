@@ -69,7 +69,7 @@ static const char *loginfo(LogControl *log)
 		}
 	}
 
-	return DATA();
+	return utest_out();
 }
 #endif
 
@@ -310,7 +310,7 @@ TEST_DECL(GetFormat)
 
 	TEST_FILE("tst3.msg", "1\tABC\n2\t\"DEF\"");
 	TEST_EXPR(FormatTabShow(OUT(), "tst3", "$0-$1-$2\n"));
-	EXPECT_STR(DATA(), "tst3-1-ABC\ntst3-2-DEF\n");
+	EXPECT_OUT("tst3-1-ABC\ntst3-2-DEF\n");
 }
 
 TEST_DECL(stdlog)
@@ -360,6 +360,7 @@ TEST_SUITE
 	rd_deref(dlog);
 
 	TEST_EXPR(AllocTab_stat(OUT(), NULL, 1));
-	MATCH_STR(DATA(), "byte");
+	MATCH_OUT("byte");
 	CLEANUP_MSTR;
+	CLEANUP_OUT;
 }

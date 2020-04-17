@@ -9,11 +9,12 @@ TEST_SUITE
 	AddDepend("d1");
 	AddDepend("d2");
 	MakeDependRule(OUT());
-	EXPECT_STR(DATA(), "\nt1 t2: d1 d2\n");
+	EXPECT_OUT("\nt1 t2: d1 d2\n");
 	MakeTargetRule(OUT(), "command $< $@");
-	EXPECT_STR(DATA(), "\nt1 t2: d1 d2\n\tcommand $< $@\n");
+	EXPECT_OUT("\nt1 t2: d1 d2\n\tcommand $< $@\n");
 	MakeTaskRule(OUT(), "task-name");
-	EXPECT_STR(DATA(), "\ntask-name:: t1 t2\n");
+	EXPECT_OUT("\ntask-name:: t1 t2\n");
 	MakeCleanRule(OUT(), "clean-name");
-	EXPECT_STR(DATA(), "\nclean-name::\n\trm -f t1 t2\n");
+	EXPECT_OUT("\nclean-name::\n\trm -f t1 t2\n");
+	CLEANUP_OUT;
 }

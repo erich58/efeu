@@ -31,9 +31,9 @@ static int pcmd(const char *c, const char *v, const char *p, const char *a)
 TEST_DECL(show)
 {
 	CmdParEval_show(OUT(), NULL);	// Für Testabdeckung //
-	MATCH_STR(DATA(), "^\\[append] .*\n\\[vset]");
+	MATCH_OUT("^\\[append] .*\n\\[vset]");
 	CmdParEval_show(OUT(), "$1 ");
-	EXPECT_STR(DATA(), "append break config exit info insert lset "
+	EXPECT_OUT("append break config exit info insert lset "
 	 	"manpage message set setlocale test usage vset ");
 }
 
@@ -205,4 +205,5 @@ TEST_SUITE
 	TEST_RUN(config);
 	CmdPar_clean(&par);
 	CLEANUP_MSTR;
+	CLEANUP_OUT;
 }
