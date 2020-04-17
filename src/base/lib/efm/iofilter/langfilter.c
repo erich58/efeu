@@ -408,6 +408,7 @@ static int lf_ctrl (IO *io, int req, va_list list)
 		return stat;
 
 	case IO_REWIND:
+	case IO_PEEK:
 
 		return EOF;
 		

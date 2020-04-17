@@ -63,9 +63,6 @@ int io_peek (IO *io)
 	if	(io->nsave != 0)
 		return io->save_buf[io->nsave - 1];
 	
-	if	((c = io_ctrl(io, IO_PEEK)) != EOF)
-		return c;
-
 	if	(io->get)
 	{
 		if	((c = (*io->get)(io)) != EOF)
