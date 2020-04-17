@@ -139,14 +139,6 @@ static void *do_print (XMLBuf *xml, const char *name, const char *data,
 	case xml_dtd:
 		out_str(out, "<!DOCTYPE ");
 		out_str(out, name);
-
-		if	(data && *data)
-		{
-			out_str(out, "[");
-			out_str(out, data);
-			out_str(out, "]");
-		}
-
 		out_char(out, '>');
 		need_newline = 1;
 		break;

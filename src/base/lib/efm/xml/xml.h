@@ -49,18 +49,14 @@ XMLBuf *xml_create (XMLBuf *xml, XMLAction action, void *par);
 void XMLBuf_atclose (XMLBuf *xml, XMLClose close);
 void XMLBuf_start (XMLBuf *xml, const char *name);
 int XMLBuf_next (XMLBuf *xml, int concat);
-void XMLBuf_prev (XMLBuf *xml, int last);
-int XMLBuf_last (XMLBuf *xml);
 char *XMLBuf_entity (XMLBuf *buf, const char *name);
 
 void *XMLBuf_action (XMLBuf *xml, XMLType which, int prev);
 void *XMLBuf_close (XMLBuf *xml);
 void *XMLBuf_parse (XMLBuf *xml, IO *io);
-int XMLBuf_puts (XMLBuf *xml, const char *pfx, const char *str);
 
 void *XMLBuf_pi (XMLBuf *xml, const char *name, const char *data);
-void *XMLBuf_dtd (XMLBuf *xml, const char *name,
-	const char *id, const char *decl);
+void *XMLBuf_dtd (XMLBuf *xml, const char *decl);
 void *XMLBuf_entry (XMLBuf *xml, const char *tag, const char *data);
 void *XMLBuf_beg (XMLBuf *xml, const char *tag);
 void *XMLBuf_att (XMLBuf *xml, const char *name, const char *data);

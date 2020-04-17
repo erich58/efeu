@@ -247,7 +247,7 @@ static void f_err (EfiFunc *func, void *rval, void **arg)
 
 static void f_dtd (EfiFunc *func, void *rval, void **arg)
 {
-	XMLBuf_dtd(arg[0], Val_str(arg[1]), Val_str(arg[2]), Val_str(arg[3]));
+	XMLBuf_dtd(arg[0], Val_str(arg[1]));
 }
 
 static void f_end (EfiFunc *func, void *rval, void **arg)
@@ -273,7 +273,7 @@ static EfiFuncDef fdef_xml[] = {
 	{ 0, &Type_void, "XML::close ()", f_close },
 	{ 0, &Type_void, "XML::parse (IO in)", f_parse },
 
-	{ 0, &Type_void, "XML::dtd (str name, str id, str decl = NULL)", f_dtd },
+	{ 0, &Type_void, "XML::dtd (str decl)", f_dtd },
 	{ 0, &Type_void, "XML::pi (str name, str data)", f_pi },
 	{ 0, &Type_void, "XML::rem (str fmt, ...)", f_rem },
 	{ 0, &Type_void, "XML::err (str fmt, ...)", f_err },

@@ -1,8 +1,58 @@
 #include <EFEU/xml.h>
+#include <ctype.h>
 
 #define	TAG_DELIM	'/'
 
 static XML_DECL(create_buf);
+
+static int XMLBuf_puts (XMLBuf *xml, const char *pfx, const char *str)
+{
+	int space;
+	int quote;
+
+	if	(!xml || !str)	return 0;
+
+	while ((*str && isspace(*str)))
+		str++;
+
+	if	(!*str)
+		return 0;
+
+	sb_puts(pfx, &xml->sbuf);
+
+	for (space = 0, quote = 0; *str; str++)
+	{
+		if	(*str == quote)
+		{
+			quote = 0;
+		}
+		else if	(quote)
+		{
+			;
+		}
+		else if	(*str == '"' || *str == '\'')
+		{
+			quote = *str;
+		}
+		else if	(isspace(*str))
+		{
+			if	(!space)
+				space = ' ';
+
+			continue;
+		}
+
+		if	(space)
+		{
+			sb_putc(space, &xml->sbuf);
+			space = 0;
+		}
+
+		sb_putc(*str, &xml->sbuf);
+	}
+
+	return 1;
+}
 
 int XMLBuf_next (XMLBuf *xml, int concat)
 {
@@ -18,7 +68,7 @@ int XMLBuf_next (XMLBuf *xml, int concat)
 	return last;
 }
 
-void XMLBuf_prev (XMLBuf *xml, int last)
+static void XMLBuf_prev (XMLBuf *xml, int last)
 {
 	xml->data = xml->tag;
 	xml->tag = last;
@@ -37,7 +87,7 @@ void XMLBuf_start (XMLBuf *xml, const char *name)
 	sb_puts(name, &xml->sbuf);
 }
 
-int XMLBuf_last (XMLBuf *xml)
+static int XMLBuf_last (XMLBuf *xml)
 {
 	int last;
 
@@ -213,16 +263,9 @@ void *XMLBuf_pi (XMLBuf *xml, const char *name, const char *data)
 	return entry(xml, xml_pi, 0, name, data);
 }
 
-void *XMLBuf_dtd (XMLBuf *xml, const char *name,
-	const char *id, const char *decl)
+void *XMLBuf_dtd (XMLBuf *xml, const char *decl)
 {
-	int last;
-
-	XMLBuf_start(xml, name);
-	XMLBuf_puts(xml, " ", id);
-	last = XMLBuf_next(xml, 0);
-	XMLBuf_puts(xml, NULL, decl);
-	return XMLBuf_action(xml, xml_dtd, last);
+	return entry(xml, xml_dtd, 0, decl, NULL);
 }
 
 void *XMLBuf_err (XMLBuf *xml, const char *fmt, ...)

@@ -1,5 +1,6 @@
 #include <EFEU/xml.h>
 #include <ctype.h>
+#include <strings.h>
 
 #define	BLANK(c)	((c) == ' ' || c == '\t')
 #define	SPACE(c)	(BLANK(c) || c == '\n' || c == '\r')
@@ -125,15 +126,7 @@ static void *parse_dtd (XMLBuf *xml, IO *in)
 	XMLBuf_start(xml, NULL);
 
 	while ((c = io_getucs(in)) != EOF && c != '>')
-	{
-		if	(c == '[')
-		{
-			last = XMLBuf_next(xml, 0);
-			parse_markup(xml, in, ']', 1, 0);
-			return XMLBuf_action(xml, xml_dtd, last);
-		}
-		else	sb_putucs(c, &xml->sbuf);
-	}
+		sb_putucs(c, &xml->sbuf);
 
 	last = XMLBuf_next(xml, 0);
 	return XMLBuf_action(xml, xml_dtd, last);
@@ -175,7 +168,7 @@ static void *parse_special (XMLBuf *xml, IO *in)
 		{
 			char *p = sb_nul(&xml->sbuf) + xml->data;
 
-			if	(strcmp(p, "DOCTYPE") == 0)
+			if	(strcasecmp(p, "DOCTYPE") == 0)
 				return parse_dtd(xml, in);
 		}
 		else if	(c == '[')
