@@ -56,6 +56,7 @@ all:: $(COMPOSE)
 
 clean::
 	rm -f $(COMPOSE)
+	rm -rf $(BUILD)
 
 $(COMPOSE): $(BUILD)/TypeDef.make
 	$(MAKE) -f $< all

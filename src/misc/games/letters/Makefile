@@ -49,3 +49,6 @@ $(BUILD)/en.mak::
 $(BUILD)/de.mak::
 	@mkdir -p $(@D)
 	$(BIN)/efeu-update $@ sh mkrule.sh $(TG_DIR) de.rules
+
+clean::
+	rm -rf $(BUILD)

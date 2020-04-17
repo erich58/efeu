@@ -43,6 +43,7 @@ $(MAN)/de/man7/%.7.gz: %.h
 
 clean::
 	-find -L $(MAN) -type l -exec rm -vf '{}' \;
+	rm -rf $(BUILD)
 
 # docments
 
