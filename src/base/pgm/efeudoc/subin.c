@@ -112,7 +112,6 @@ static int subio_ctrl (IO *io, int req, va_list list)
 		memfree(subio);
 		return stat;
 	case IO_REWIND:
-	case IO_PEEK:
 		return EOF;
 	default:
 		return io_vctrl(subio->io, req, list);

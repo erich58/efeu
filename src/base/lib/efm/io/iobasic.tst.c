@@ -103,7 +103,6 @@ TEST_DECL(strbuf)
 	EXPECT(io_rewind(io) == 0);
 	offset = 2;
 	EXPECT(io_ctrl(io, IO_SETPOS, &offset) == 0);
-	EXPECT(io_ctrl(io, IO_PEEK) == 't');
 	EXPECT(io_getc(io) == 't');
 	EXPECT(io_ctrl(io, IO_GETPOS, &offset) == 0);
 	EXPECT(offset == 3);
@@ -157,6 +156,7 @@ TEST_DECL(data)
 
 	CHILD_EXIT(1);
 
+	EXPECT(io_ctrl(io, 0) == EOF);
 	EXPECT(io_close(io) == 0);
 
 	EXPECT(io_data(NULL, NULL, 0) == NULL);

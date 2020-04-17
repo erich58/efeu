@@ -36,7 +36,6 @@ If not, write to the Free Software Foundation, Inc.,
 #define	IO_ERROR		(IO_STDCTRL|0x05)
 #define	IO_PROTECT		(IO_STDCTRL|0x06)
 #define	IO_RESTORE		(IO_STDCTRL|0x07)
-#define	IO_PEEK			(IO_STDCTRL|0x08)
 #define	IO_STAT			(IO_STDCTRL|0x09)
 #define	IO_GETPOS		(IO_STDCTRL|0x0a)
 #define	IO_SETPOS		(IO_STDCTRL|0x0b)

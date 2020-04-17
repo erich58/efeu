@@ -44,7 +44,6 @@ static int base_ctrl (StrBuf *sb, int req, va_list list)
 	case IO_GETPOS:	*va_arg(list, unsigned *) = sb_getpos(sb); return 0;
 	case IO_SETPOS:	sb_setpos(sb, *va_arg(list, unsigned *)); return 0;
 	case IO_UNGETC:	return sb_ungetc(va_arg(list, int), sb);
-	case IO_PEEK:	return (sb->pos < sb_size(sb)) ? sb->data[sb->pos] : EOF;
 	default:	return EOF;
 	}
 }

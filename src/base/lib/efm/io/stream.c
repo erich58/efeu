@@ -180,10 +180,6 @@ static int f_ctrl (IO *io, int req, va_list list)
 
 		return fstat(fileno(fio->file), va_arg(list, struct stat *));
 
-	case IO_PEEK:
-
-		return fpeek(fio->file);
-
 	case IO_IDENT:
 
 		*va_arg(list, char **) = mstrcpy(fio->name ? fio->name :

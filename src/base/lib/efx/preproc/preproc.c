@@ -439,7 +439,6 @@ static int pp_ctrl (IO *io, int req, va_list list)
 
 /*	Gesperrte Steuersequenzen
 */
-	case IO_PEEK:
 	case IO_REWIND:
 
 		return EOF;
