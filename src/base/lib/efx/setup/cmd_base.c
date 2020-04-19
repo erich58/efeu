@@ -186,7 +186,7 @@ static int print_name (const EfiType *st, const void *data, IO *io)
 {
 	const char *name = * (const char **) data;
 
-	if	(!name && !*name)
+	if	(!name || !*name)
 		return io_puts("operator\"\"", io);
 
 	if	(std_name(name))
