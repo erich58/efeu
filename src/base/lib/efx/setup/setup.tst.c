@@ -1,12 +1,14 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/object.h>
 #include "utest/mstr.tst.h"
+#include "utest/out.tst.h"
 #include "utest/obj.tst.h"
 #include <math.h>
 
 TEST_DECL(base)
 {
 	EfiObj *obj;
+	void *data;
 
 	TEST_OBJ_TYPE(bool2Obj(0), "false");
 	TEST_OBJ_TYPE(bool2Obj(1), "true");
@@ -14,7 +16,16 @@ TEST_DECL(base)
 	TEST_OBJ_TYPE(ucs2Obj(L'€'), "'€'");
 	TEST_OBJ_TYPE(str2Obj(mstrcpy("abc")), "\"abc\"");
 	TEST_OBJ_TYPE(str2Obj(NULL), "NULL");
-	TEST_OBJ_TYPE(NewObj(&Type_ptr, NULL), "NULL");
+
+	obj = NewObj(&Type_ptr, NULL);
+	PrintData(OUT(), obj->type, obj->data);
+	EXPECT_OUT("NULL");
+	data = (void *) 0x1234;
+	CopyData(obj->type, obj->data, &data);
+	PrintData(OUT(), obj->type, obj->data);
+	EXPECT_OUT("_Ptr_(0x1234)");
+	EXPECT(WriteData(obj->type, obj->data, OUT()) == 0);
+	EXPECT_OUT("");
 }
 
 TEST_DECL(stdint)
@@ -311,5 +322,6 @@ TEST_SUITE
 	TEST_RUN(stdfloat);
 	TEST_RUN(math);
 	CLEANUP_MSTR;
+	CLEANUP_OUT;
 	CLEANUP_OBJ;
 }
