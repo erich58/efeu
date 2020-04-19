@@ -403,6 +403,8 @@ int Obj2bool (EfiObj *obj);
 int Obj2char (EfiObj *obj);
 int Obj2int (EfiObj *obj);
 unsigned Obj2uint (EfiObj *obj);
+int64_t Obj2varint (EfiObj *obj);
+uint64_t Obj2varsize (EfiObj *obj);
 
 
 /*	Gleitkommaobjekte

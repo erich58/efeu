@@ -107,6 +107,19 @@ unsigned Obj2uint (EfiObj *obj)
 	return val;
 }
 
+int64_t Obj2varint (EfiObj *obj)
+{
+	int64_t val;
+	Obj2Data(obj, &Type_varint, &val);
+	return val;
+}
+
+uint64_t Obj2varsize (EfiObj *obj)
+{
+	uint64_t val;
+	Obj2Data(obj, &Type_varsize, &val);
+	return val;
+}
 
 float Obj2float (EfiObj *obj)
 {
