@@ -27,6 +27,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/printobj.h>
 #include <ctype.h>
 
+#define	DEBUG_STR	0
+
 /*	Lösch- und Kopierfunktionen
 */
 
@@ -100,6 +102,7 @@ void Clean_str(const EfiType *st, void *data, int mode)
 	Val_str(data) = NULL;
 }
 
+#if	DEBUG_STR
 static void debug_str (char * const *src, const char *tg)
 {
 	static int stat = -1;
@@ -113,18 +116,15 @@ static void debug_str (char * const *src, const char *tg)
 	if	(stat > 0)
 		io_xprintf(ioerr, "Copy_str(%p, %p=%#s)\n", tg, src, *src);
 }
+#else
+#define	debug_str(a, b)
+#endif
 
 void Copy_str(const EfiType *st, void *tg, const void *src)
 {
 	debug_str(src, tg);
 	Val_str(tg) = mstrcpy(Val_str(src));
 }
-
-void Memory_copy(const EfiType *st, void *tg, const void *src)
-{
-	memcpy(tg, src, st->size);
-}
-
 
 static EfiObj *Eval_void(const EfiType *type, const void *data)
 {
@@ -195,6 +195,12 @@ static int print_name (const EfiType *st, const void *data, IO *io)
 	return io_xprintf(io, "operator%#s", name);
 }
 
+static int print_undef (const EfiType *st, const void *data, IO *io)
+{
+	const char *name = * (const char **) data;
+	return io_xprintf(io, "(%s) %s", st->name, name);
+}
+
 /*	Einfache Pointertypen
 */
 
@@ -216,7 +222,7 @@ EfiType Type_lval = PTR_TYPE("Lval_t", EfiType *, &Type_type,
 EfiType Type_name = EVAL_TYPE("_Name_", char *, Eval_name,
 	print_name, Clean_str, Copy_str);
 EfiType Type_undef = PTR_TYPE("_undef_", char *, NULL,
-	NULL, Clean_str, Copy_str);
+	print_undef, Clean_str, Copy_str);
 
 /*	Referenztypen
 */

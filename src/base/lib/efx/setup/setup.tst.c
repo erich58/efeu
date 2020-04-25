@@ -1,5 +1,6 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/object.h>
+#include <EFEU/Resource.h>
 #include "utest/mstr.tst.h"
 #include "utest/out.tst.h"
 #include "utest/obj.tst.h"
@@ -15,7 +16,6 @@ TEST_DECL(base)
 	TEST_OBJ_TYPE(char2Obj('a'), "'a'");
 	TEST_OBJ_TYPE(ucs2Obj(L'€'), "'€'");
 	TEST_OBJ_TYPE(str2Obj(mstrcpy("abc")), "\"abc\"");
-	TEST_OBJ_TYPE(str2Obj(NULL), "NULL");
 
 	obj = NewObj(&Type_ptr, NULL);
 	PrintData(OUT(), obj->type, obj->data);
@@ -26,6 +26,68 @@ TEST_DECL(base)
 	EXPECT_OUT("_Ptr_(0x1234)");
 	EXPECT(WriteData(obj->type, obj->data, OUT()) == 0);
 	EXPECT_OUT("");
+	UnrefObj(obj);
+
+	obj = NewObj(&Type_void, NULL);
+	PrintData(OUT(), obj->type, obj->data);
+	EXPECT_OUT("void()");
+	UnrefEval(obj);
+
+	obj = str2Obj(NULL);
+	PrintData(OUT(), obj->type, obj->data);
+	EXPECT_OUT("NULL");
+	EXPECT(ReadData(obj->type, obj->data, ionull) == 0);
+	EXPECT_STR(Val_str(obj->data), NULL);
+	IO *io = io_strbuf(0);
+	io_putc(0, io);
+	io_rewind(io);
+	EXPECT(ReadData(obj->type, obj->data, io) == 1);
+	EXPECT_STR(Val_str(obj->data), NULL);
+	UnrefObj(obj);
+
+	obj = NewPtrObj(&Type_name, NULL);
+	PrintData(OUT(), obj->type, obj->data);
+	EXPECT_OUT("operator\"\"");
+	data = (void *) "++";
+	CopyData(obj->type, obj->data, &data);
+	PrintData(OUT(), obj->type, obj->data);
+	EXPECT_OUT("operator\"++\"");
+	data = (void *) "abc";
+	CopyData(obj->type, obj->data, &data);
+	PrintData(OUT(), obj->type, obj->data);
+	EXPECT_OUT("abc");
+	obj = EvalObj(obj, NULL);
+	EXPECT(obj->type == &Type_undef);
+	EXPECT_MSTR(Obj2str(obj), "(_undef_) abc");
+
+	obj = type2Obj(&Type_int);
+	EXPECT_MSTR(obj_show(RefObj(obj)), "int");
+	PrintData(OUT(), obj->type, obj->data);
+	EXPECT_OUT("int");
+	obj = obj2Obj(obj);
+	EXPECT(obj->type == &Type_obj);
+	PrintData(OUT(), obj->type, obj->data);
+	EXPECT_OUT("int");
+	EXPECT_MSTR(obj_show(obj), "(Object) int");
+
+	EXPECT_MSTR(EVAL("[3*5]"), "[15]");
+	EXPECT_MSTR(EVAL("(void)5"), NULL);
+	EXPECT_MSTR(SHOW("(VirFunc) xdiv"), "double xdiv (double, double)\n");
+	MATCH_MSTR(EVAL("(VirFunc) int::operator++"), "\\(VirFunc\\) ");
+	MATCH_MSTR(EVAL("VarTab(\"x\")"), "\\(VarTab\\) ");
+	EXPECT_ITERM("!iostd", 0);
+	EXPECT_ITERM("iostd == ioerr", 0);
+	EXPECT_ITERM("iostd != ioerr", 1);
+
+	PushVarTab(NULL, NULL);
+	EXPECT_MSTR(EVAL("str a = \"abc\""), "abc");
+	EXPECT_MSTR(EVAL("free(a)"), NULL);
+	EXPECT_MSTR(EVAL("a"), NULL);
+	EXPECT_ITERM("Object o = 2", 2);
+	PopVarTab();
+
+	SetResource("ResourceData", "Data");
+	EXPECT_MSTR(EVAL("ResourceData"), "Data");
 }
 
 TEST_DECL(stdint)
@@ -313,6 +375,21 @@ TEST_DECL(math)
 	PopVarTab();
 }
 
+TEST_DECL(assignarg)
+{
+	PushVarTab(NULL, NULL);
+	EXPECT_MSTR(SHOW("AssignArg a"), "NULL");
+	EXPECT_MSTR(SHOW("a = \"Name[Opt]=Arg\""), "Name[Opt]=Arg");
+	EXPECT_MSTR(SHOW("a.name"), "\"Name\"");
+	EXPECT_MSTR(SHOW("a.opt"), "\"Opt\"");
+	EXPECT_MSTR(SHOW("a.arg"), "\"Arg\"");
+	EXPECT_MSTR(SHOW("(List_t) a"), "{\"Name\", \"Opt\", \"Arg\"}");
+	EXPECT_MSTR(SHOW("str s = \"a=b,c\""), "\"a=b,c\"");
+	EXPECT_MSTR(SHOW("a = AssignArg(s, \",\")"), "a=b");
+	EXPECT_MSTR(SHOW("s"), "\"c\"");
+	PopVarTab();
+}
+
 TEST_SUITE
 {
 	SetupStd();
@@ -321,6 +398,7 @@ TEST_SUITE
 	TEST_RUN(stdint);
 	TEST_RUN(stdfloat);
 	TEST_RUN(math);
+	TEST_RUN(assignarg);
 	CLEANUP_MSTR;
 	CLEANUP_OUT;
 	CLEANUP_OBJ;

@@ -38,8 +38,6 @@ void Copy_ref (const EfiType *st, void *tg, const void *src);
 void Copy_str (const EfiType *st, void *tg, const void *src);
 void Copy_varstr (const EfiType *st, void *tg, const void *src);
 
-void Memory_copy (const EfiType *type, void *tg, const void *src);
-
 size_t Read_str (const EfiType *st, void *data, IO *io);
 size_t Write_str (const EfiType *st, const void *data, IO *io);
 int Print_str (const EfiType *st, const void *data, IO *io);

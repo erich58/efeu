@@ -23,9 +23,14 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/EfiView.h>
 #include <EFEU/stdtype.h>
 
+static void mem_copy(const EfiType *st, void *tg, const void *src)
+{
+	memcpy(tg, src, st->size);
+}
+
 EfiType Type_EfiViewSeq = COMPLEX_TYPE("EfiViewSeq", "EfiViewSeq",
 	sizeof(EfiViewSeq), 0, Struct_read, Struct_write, NULL,
-	NULL, NULL, NULL, Memory_copy, 0);
+	NULL, NULL, NULL, mem_copy, 0);
 
 void EfiViewSeq_setup (void)
 {
