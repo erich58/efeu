@@ -1,6 +1,7 @@
 # :*: curses tools
 # :de: Fensterhilfsprogramme
 
+NAME=efwin
 TOP=../../../..
 include $(TOP)/Setup.mak
 include $(CFG)/EFEU.mak
