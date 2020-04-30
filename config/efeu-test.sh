@@ -85,6 +85,8 @@ find_gcda()
 	done
 }
 
+used=0
+
 if [ -d $1/$build ]; then
 	dir=.
 	top=$1
@@ -97,6 +99,7 @@ elif [ -f $1 ]; then
 	dir=`dirname $1`
 	top=`dirname $dir`
 	src=`basename $dir`/`basename $1`
+	used=1
 else
 	error "$0: Testliste $1 nicht definiert."
 fi
@@ -157,9 +160,9 @@ gcda=`find_gcda $src $build`
 
 if	[ -z "$gcda" ]; then
 	gcda=`find $build -name '*.gcda' | sort`
-	verbose=0
+	verbose=$used
 else
-	verbose=1
+	verbose=2
 fi
 
 $gcov -o $build $gcda | sed -e "s/'//g" | awk '
@@ -186,7 +189,10 @@ $2 ~ /not/ { printf("%-23s\t%s %s\n", $1, $2, $3); next; }
 ' | tee gcov.out | awk -v verbose=$verbose '
 BEGIN { run = 0; c = 0.; n = 0; k = 0; unused = 0; other = 0; }
 /~TOTAL/ { next; }
-verbose { print; }
+verbose {
+	if	($2 > 0 || verbose > 1)
+		print;
+}
 /not used/ { unused++; next; }
 /not run/ { other++; next; }
 {

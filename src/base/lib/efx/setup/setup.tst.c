@@ -1,6 +1,8 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/object.h>
 #include <EFEU/Resource.h>
+#include <EFEU/math.h>
+#include <EFEU/CmdPar.h>
 #include "utest/mstr.tst.h"
 #include "utest/out.tst.h"
 #include "utest/obj.tst.h"
@@ -16,6 +18,10 @@ TEST_DECL(base)
 	TEST_OBJ_TYPE(char2Obj('a'), "'a'");
 	TEST_OBJ_TYPE(ucs2Obj(L'€'), "'€'");
 	TEST_OBJ_TYPE(str2Obj(mstrcpy("abc")), "\"abc\"");
+	EXPECT_MSTR(obj_show(char2Obj('a')), "a");
+	EXPECT_MSTR(obj_show(ucs2Obj(L'Ä')), "Ä");
+	EXPECT_MSTR(SHOW("'a'"), "a");
+	EXPECT_MSTR(SHOW("L'Ä'"), "Ä");
 
 	obj = NewObj(&Type_ptr, NULL);
 	PrintData(OUT(), obj->type, obj->data);
@@ -95,6 +101,7 @@ TEST_DECL(stdint)
 	TEST_OBJ_TYPE(int2Obj(-12345), "-12345");
 	EXPECT_UTERM("(unsigned) 12345", 12345);
 	EXPECT_MSTR(EVAL("-12345"), "-12345");
+	EXPECT_MSTR(SHOW("-12345"), "-12345");
 
 	TEST_OBJ_TYPE(uint2Obj(12345), "12345u");
 	EXPECT_ITERM("(int)    ~0u", -1);
@@ -108,6 +115,7 @@ TEST_DECL(stdint)
 	EXPECT_UTERM("(uint32_t)~0u", 0xFFFFFFFFull);
 	EXPECT_UTERM("(uint64_t)~0u", 0xFFFFFFFFull);
 	EXPECT_MSTR(EVAL("12345u"), "12345");
+	EXPECT_MSTR(SHOW("12345u"), "12345");
 
 	TEST_TERM_TYPE("(int8_t)0x80", "-128");
 	EXPECT_ITERM("(int)    (int8_t)0x80", -128);
@@ -169,6 +177,7 @@ TEST_DECL(stdint)
 	EXPECT_UTERM("(uint32_t)(int32_t)0x7FFF", 0x7FFF);
 	EXPECT_UTERM("(uint64_t)(int32_t)0x7FFF", 0x7FFF);
 	EXPECT_MSTR(EVAL("(int32_t) -12345"), "-12345");
+	EXPECT_MSTR(SHOW("(int32_t) -12345"), "-12345");
 
 	TEST_TERM_TYPE("(uint32_t) 128", "128");
 	EXPECT_ITERM("(int)    (uint32_t)~0", -1);
@@ -182,6 +191,7 @@ TEST_DECL(stdint)
 	EXPECT_UTERM("(uint32_t)(uint32_t)~0", 0xFFFFFFFFull);
 	EXPECT_UTERM("(uint64_t)(uint32_t)~0", 0xFFFFFFFFull);
 	EXPECT_MSTR(EVAL("(uint32_t) 12345"), "12345");
+	EXPECT_MSTR(SHOW("(uint32_t) 12345"), "12345");
 
 	TEST_TERM_TYPE("(int64_t) -128", "-128");
 	EXPECT_ITERM("(int)    (int64_t)-128", -128);
@@ -195,6 +205,7 @@ TEST_DECL(stdint)
 	EXPECT_UTERM("(uint32_t)(int64_t)0x7FFF", 0x7FFF);
 	EXPECT_UTERM("(uint64_t)(int64_t)0x7FFF", 0x7FFF);
 	EXPECT_MSTR(EVAL("(int64_t) -1234567890"), "-1234567890");
+	EXPECT_MSTR(SHOW("(int64_t) -1234567890"), "-1234567890");
 
 	TEST_TERM_TYPE("(uint64_t) 128", "128");
 	EXPECT_ITERM("(int)    (uint64_t)~0", -1);
@@ -208,6 +219,7 @@ TEST_DECL(stdint)
 	EXPECT_UTERM("(uint32_t)(uint64_t)~0", 0xFFFFFFFFull);
 	EXPECT_UTERM("(uint64_t)(uint64_t)~0", 0xFFFFFFFFFFFFFFFFull);
 	EXPECT_MSTR(EVAL("(uint64_t) 1234567890"), "1234567890");
+	EXPECT_MSTR(SHOW("(uint64_t) 1234567890"), "1234567890");
 
 	TEST_OBJ_TYPE(varint2Obj(-12345), "-12345");
 	EXPECT_ITERM("(int)    -128l", -128);
@@ -296,6 +308,12 @@ TEST_DECL(stdfloat)
 {
 	TEST_TERM_TYPE("float(3.5)", "3.5000000");
 	TEST_OBJ_TYPE(double2Obj(3.5), "3.500000000000000");
+	SetFloatPrec("#4g");
+	EXPECT_MSTR(EVAL("12.5"), "12.50");
+	EXPECT_MSTR(SHOW("12.5"), "12.50");
+	SetFloatPrec("0f");
+	EXPECT_MSTR(SHOW("12.5"), "13");
+	SetFloatPrec("#5");
 
 	EXPECT_DTERM("abs(-2.)", 2.);
 	EXPECT_DTERM("min(3., 5.)", 3.);
@@ -342,6 +360,10 @@ TEST_DECL(stdfloat)
 	EXPECT_DTERM("rnd(2.4)", 2.);
 	EXPECT_DTERM("rnd(2.5)", 3.);
 	EXPECT_DTERM("rnd(-2.5)", -3.);
+
+	EXPECT_DTERM("M_PI", M_PI);
+	EXPECT_DTERM("Inf", ExceptionValue(1.));
+	EXPECT_MSTR(SHOW("NaN"), "NaN");
 }
 
 TEST_DECL(math)
@@ -390,6 +412,41 @@ TEST_DECL(assignarg)
 	PopVarTab();
 }
 
+TEST_DECL(type)
+{
+	EXPECT_MSTR(SHOW("str.name"), "\"str\"");
+	EXPECT_MSTR(SHOW("str.cname"), "\"char *\"");
+	EXPECT_MSTR(SHOW("str.desc"), "NULL");
+	EXPECT_ITERM("str.size", sizeof(char *));
+	EXPECT_ITERM("str.recl", 0);
+	EXPECT_ITERM("int.default", 0);
+	EXPECT_MSTR(SHOW("str.base"), "_Ptr_");
+	EXPECT_MSTR(SHOW("str.flags"), "4");
+	EXPECT_MSTR(SHOW("int.flags"), "0");
+	EXPECT_MSTR(SHOW("Func.var"), "Func = {\n\ttype\n}");
+	UnitTest_stdout("stdout");
+	EXPECT_MSTR(EVAL("bool.info(\"print\")"), NULL);
+	fflush(stdout);
+	EXPECT_CONTENT("stdout",
+		"name = bool\n"
+		"\n"
+		"default = false\n"
+		"\n"
+		"cname = \"int\"\n"
+		"size = 4\n"
+		"recl = 4\n"
+		"\n"
+		"io:\tprint\n"
+		"copy:\tmemcpy\n"
+		"clean:\tmemset\n"
+		"\n"
+		"conv\n"
+		"create\n"
+		"par\n"
+		"var\n"
+	);
+}
+
 TEST_SUITE
 {
 	SetupStd();
@@ -399,6 +456,7 @@ TEST_SUITE
 	TEST_RUN(stdfloat);
 	TEST_RUN(math);
 	TEST_RUN(assignarg);
+	TEST_RUN(type);
 	CLEANUP_MSTR;
 	CLEANUP_OUT;
 	CLEANUP_OBJ;

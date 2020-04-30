@@ -66,6 +66,9 @@ int EshEval (int *narg, char **arg)
 	char *p;
 	IO *in;
 
+	if	(!narg || !arg)
+		return EXIT_FAILURE;
+
 	SetProgName(arg[0]);
 	SetupStd();
 
