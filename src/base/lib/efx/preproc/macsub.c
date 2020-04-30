@@ -148,6 +148,7 @@ int iocpy_macsub (IO *in, IO *out, int c,
 	int n;
 	PPMacro *mac;
 	const char *prompt;
+	const char *name;
 	StrBuf *sb;
 	VecBuf argv;
 
@@ -164,11 +165,12 @@ int iocpy_macsub (IO *in, IO *out, int c,
 		else	sb_putc(c, sb);
 	}
 
-	mac = GetMacro(sb_nul(sb));
+	name = sb_nul(sb);
+	mac = GetMacro(name);
 
 	if	(mac == NULL || mac->lock)
 	{
-		n = io_puts(sb_nul(sb), out);
+		n = io_puts(name, out);
 		sb_release(sb);
 		return n;
 	}
