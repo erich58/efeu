@@ -68,7 +68,8 @@ error()
 
 find_tst()
 {
-	find $1 -name '*.tst.c' | sort | while read path
+	find $1 -name '*.tst' -perm -u+x
+	find $1 -name '*.tst.c' | while read path
 	do
 		name=`basename $path .c`
 		[ -f $2/$name ] && echo $2/$name
@@ -90,7 +91,7 @@ used=0
 if [ -d $1/$build ]; then
 	dir=.
 	top=$1
-	src=$1/$build
+	src=.
 elif [ -d $1 ]; then
 	dir=`basename $1`
 	top=`dirname $1`
@@ -110,8 +111,7 @@ if [ ! -d $build ]; then
 	error "$0: Build-Verzeichnis nicht definiert."
 fi
 
-[ -z "$tlist" ] && tlist=`find $src -name '*.tst' | sort`
-[ -z "$tlist" ] && tlist=`find_tst $src $build`
+tlist=`find_tst $src ./$build | sort -u`
 [ -z "$tlist" ] && error "$0: Keine Tests gefunden"
 
 # cleanup coverage data
