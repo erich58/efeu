@@ -81,6 +81,7 @@ typedef struct {
 	int protect;	/* Schutzmodus */
 #endif
 	int expand;	/* Flag für String und Makrointerpretation */
+	NameKeyTab *mactab;
 } PPData;
 
 
@@ -101,12 +102,21 @@ static ALLOCTAB(pptest_tab, "PPTest", 0, sizeof(PPTest));
 static void pp_cmd (PPData *pp);
 static void pp_subcmd (PPData *pp, int code);
 
-static PPMacDef pp_macdef[] = {
+static PPMacDef pp_testmacdef[] = {
 	{ "defined(x)", macsub_def },
 };
 
-static NameKeyTab *pp_macrotab = NULL;
+static NameKeyTab *pp_testmacro = NULL;
 
+
+static int id_macdef (PPMacro *mac, IO *out, char **arg, int narg)
+{
+	PPData *pp = mac->par;
+	char *p = rd_ident(pp->input->io);
+	int n = io_xprintf(out, "%#s", p);
+	memfree(p);
+	return n;
+}
 
 /*	Preprozess - Filter: Anhand von IOPP_COMMENT wird geprüft,
 	ob er bereits vorgeschalten wurde.
@@ -117,6 +127,7 @@ IO *io_ptrpreproc (IO *io, char **pptr, char **lptr)
 	if	(io && io_ctrl(io, IOPP_COMMENT, NULL) == EOF)
 	{
 		PPData *pp = memalloc(sizeof(PPData));
+		PPMacro *mac;
 		pp->pptr = pptr;
 		pp->lptr = lptr;
 		pp->ident = NULL;
@@ -129,6 +140,12 @@ IO *io_ptrpreproc (IO *io, char **pptr, char **lptr)
 #if	NEED_PROTECT
 		pp->protect = 0;
 #endif
+		pp->mactab = NewMacroTab(1);
+		mac = NewMacro();
+		mac->name = mstrcpy("__ID__");
+		mac->sub = id_macdef;
+		mac->par = pp;
+		nkt_insert(pp->mactab, mac->name, mac);
 		io = io_alloc();
 		io->get = pp_get;
 		io->ctrl = pp_ctrl;
@@ -308,7 +325,9 @@ static int pp_get (IO *io)
 
 			if	(isalpha(c) || c == '_')
 			{
+				PushMacroTab(pp->mactab);
 				iocpy_macsub(x->io, tmp, c, "!%n_", 1);
+				PopMacroTab();
 			}
 			else if	(c =='"')
 			{
@@ -405,6 +424,7 @@ static int pp_ctrl (IO *io, int req, va_list list)
 		sb_free(&pp->buf);
 		sb_free(&pp->combuf);
 		memfree(pp->ident);
+		rd_deref(pp->mactab);
 		memfree(pp);
 		return stat;
 
@@ -757,13 +777,13 @@ static int cmd_testval (IO *io)
 	IO *tmp;
 
 	tmp = io_tmpbuf(0);
-	PushMacroTab(pp_macrotab);
+	PushMacroTab(pp_testmacro);
 
-	if	(pp_macrotab == NULL)
-		AddMacDef(pp_macdef, tabsize(pp_macdef));
+	if	(pp_testmacro == NULL)
+		AddMacDef(pp_testmacdef, tabsize(pp_testmacdef));
 
 	io_macsub(io, tmp, "\n");
-	pp_macrotab = PopMacroTab();
+	pp_testmacro = PopMacroTab();
 
 	io_putc('\n', tmp);
 	io_rewind(tmp);

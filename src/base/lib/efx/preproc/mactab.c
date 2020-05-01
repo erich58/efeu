@@ -41,6 +41,7 @@ PPMacro *NewMacro (void)
 	mac->dim = 0;
 	mac->arg = NULL;
 	mac->tab = NULL;
+	mac->par = NULL;
 	return mac;
 }
 

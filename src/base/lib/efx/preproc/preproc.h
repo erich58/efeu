@@ -57,6 +57,7 @@ struct PPMacroStruct {
 	PPMacro **arg;		/* Argumentliste */
 	NameKeyTab *tab;	/* Makrotabelle mit Argumenten */
 	int (*sub) (PPMacro *mac, IO *io, char **arg, int narg);
+	void *par;		/* Extra Parameter */
 };
 
 
