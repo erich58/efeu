@@ -156,7 +156,14 @@ static void vinfo(const char *pfx, const char *file, int line,
 	}
 
 	if	(file)
-		UnitTest_printf(&buf, "%s:%d\t", file, line);
+	{
+		UnitTest_puts(file, &buf);
+		
+		if	(line > 0)
+			UnitTest_printf(&buf, ":%d", line);
+
+		UnitTest_putc('\t', &buf);
+	}
 
 	UnitTest_vprintf(&buf, fmt, list);
 	UnitTest_putc('\n', &buf);
@@ -320,14 +327,23 @@ int UnitTest_strcheck(const char *file, int line, const char *op,
 int main(int argc, char **argv)
 {
 	char *p;
+	size_t n;
 
 	if	((p = strrchr(argv[0], '/')))
 		UnitTest_name = p + 1;
 	else
 		UnitTest_name = argv[0];
 
-	fprintf(stderr, "%s\t%s\n", "#RUN", UnitTest_name);
-	runUnitTest();
+	fprintf(stderr, "%s\t%s", "#RUN", UnitTest_name);
+
+	for (n = 1; n < argc; n++)
+	{
+		fputc(' ', stderr);
+		fputs(argv[n], stderr);
+	}
+
+	fputc('\n', stderr);
+	runUnitTest(argc, argv);
 	UnitTest_stdout(NULL);
 	printf("%s\t%d\t%d\t%d\t%s\n", UnitTest_name, count_good + count_bad,
 		count_good, count_bad, count_bad ? "FAILURE" : "SUCCESS");

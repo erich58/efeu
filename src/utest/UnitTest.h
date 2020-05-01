@@ -65,11 +65,12 @@ void UnitTest_exit(void);
 int UnitTest_wait(void);
 int UnitTest_assert(int stat);
 
-void runUnitTest(void);
+void runUnitTest(int argc, char **argv);
 extern char *UnitTest_name;
 
 #define TEST_DECL(name)	static void _test_ ## name (void)
-#define TEST_SUITE	void runUnitTest(void)
+#define TEST_SUITE	\
+void runUnitTest(int UnitTest_argc, char **UnitTest_argv)
 
 #define TEST_RUN(name)	\
 UnitTest_test(NULL, 0, # name), _test_ ## name ()
