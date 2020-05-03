@@ -326,7 +326,7 @@ static int pp_get (IO *io)
 			if	(isalpha(c) || c == '_')
 			{
 				PushMacroTab(pp->mactab);
-				iocpy_macsub(x->io, tmp, c, "!%n_", 1);
+				macsub_cpy(x->io, tmp, c, 0);
 				PopMacroTab();
 			}
 			else if	(c =='"')

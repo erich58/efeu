@@ -40,7 +40,7 @@ int io_macsub (IO *in, IO *out, const char *delim)
 	{
 		if	(isalpha(c) || c == '_')
 		{
-			n += iocpy_macsub(in, out, c, "!%n_", 1);
+			n += macsub_cpy(in, out, c, 0);
 		}
 		else if	(c =='"')
 		{
@@ -63,16 +63,32 @@ int macsub_repl (PPMacro *mac, IO *out, char **arg, int narg)
 {
 	IO *in;
 	int c, n;
+	int flag;
 
 	in = io_cstr(mac->repl);
 	n = 0;
+	flag = 0;
 
 	while ((c = io_skipcom(in, NULL, 0)) != EOF)
 	{
-		if	(isalpha(c) || c == '_')
-			n += iocpy_macsub(in, out, c, "!%n_", 1);
+		if	(c == '#')
+		{
+			flag = 1;
+		}
+		else if	(isalpha(c) || c == '_')
+		{
+			n += macsub_cpy(in, out, c, flag);
+			flag = 0;
+		}
+		else if	(flag && (c == ' ' || c == '\t'))
+		{
+			;
+		}
 		else if	(io_putc(c, out) != EOF)
+		{
 			n++;
+			flag = 0;
+		}
 	}
 
 	io_close(in);
@@ -115,14 +131,23 @@ static int nextarg (IO *in, StrBuf *sb)
 {
 	IO *out;
 	int c;
+	int start;
 
 	sb_setpos(sb, 0);
 	out = io_strbuf(sb);
+	start = 1;
 
 	while ((c = io_skipcom(in, NULL, 0)) != EOF)
 	{
-		if	(isalpha(c) || c == '_')
-			iocpy_macsub(in, out, c, "!%n_", 1);
+		if	(c == ' ' || c == '\t')
+		{
+			if	(start)
+				continue;
+
+			io_putc(c, out);
+		}
+		else if	(isalpha(c) || c == '_')
+			macsub_cpy(in, out, c, 0);
 		else if (c == '(')
 			iocpy_brace(in, out, c, ")", 1);
 		else if (c == '[')
@@ -136,14 +161,15 @@ static int nextarg (IO *in, StrBuf *sb)
 		else if	(c == ',' || c == ')')
 			break;
 		else	io_putc(c, out);
+
+		start = 0;
 	}
 
 	rd_deref(out);
 	return c;
 }
 
-int iocpy_macsub (IO *in, IO *out, int c,
-	const char *arg, unsigned int flags)
+int macsub_cpy (IO *in, IO *out, int c, unsigned int flags)
 {
 	int n;
 	PPMacro *mac;
@@ -157,7 +183,7 @@ int iocpy_macsub (IO *in, IO *out, int c,
 
 	while ((c = io_getc(in)) != EOF)
 	{
-		if	(listcmp(arg, c))
+		if	(listcmp("!%n_", c))
 		{
 			io_ungetc(c, in);
 			break;
@@ -173,6 +199,14 @@ int iocpy_macsub (IO *in, IO *out, int c,
 		n = io_puts(name, out);
 		sb_release(sb);
 		return n;
+	}
+
+	if	(flags)
+	{
+		io_putc('"', out);
+		n = io_xputs(mac->repl, out, "\"");
+		io_putc('"', out);
+		return n + 2;
 	}
 
 	vb_init(&argv, 64, sizeof(char *));

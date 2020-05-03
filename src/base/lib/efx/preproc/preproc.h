@@ -64,6 +64,7 @@ struct PPMacroStruct {
 int macsub_repl (PPMacro *mac, IO *io, char **arg, int narg);
 int macsub_subst (PPMacro *mac, IO *io, char **arg, int narg);
 int macsub_def (PPMacro *mac, IO *io, char **arg, int narg);
+int macsub_cpy (IO *in, IO *out, int key, unsigned flags);
 
 PPMacro *NewMacro (void);
 void DelMacro (void *ptr);
@@ -104,8 +105,6 @@ NameKeyTab *PopMacroTab (void);
 
 int io_macsub (IO *in, IO *out, const char *delim);
 int io_egetc(IO *io, const char *delim);
-
-int iocpy_macsub (IO *in, IO *out, int key, const char *arg, unsigned flags);
 
 void SetupPreproc (void);
 
