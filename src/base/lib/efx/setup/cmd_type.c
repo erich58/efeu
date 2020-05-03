@@ -600,5 +600,7 @@ void CmdSetup_type (void)
 	AddEfiMember(Type_type.vtab, type_member, tabsize(type_member));
 	AddFuncDef(fdef_type, tabsize(fdef_type));
 	info = AddInfo(NULL, KEY_TYPE, LBL_TYPE, NULL, NULL);
-	info->setup = tinfo_setup;
+
+	if	(info)
+		info->setup = tinfo_setup;
 }
