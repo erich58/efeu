@@ -53,6 +53,9 @@ _Library_ext_dep = $(patsubst %.c,$(BUILD)/%.d,$(_Library_ext_src))
 
 all:: $(_Library_ext_so)
 
+clean::
+	rm -rf $(_Library_ext_so)
+
 -include $(_Library_ext_dep)
 
 $(EXT_LIB)/%.so : %.ext.c
