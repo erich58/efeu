@@ -15,6 +15,7 @@ void runUnitTest(int UnitTest_argc, char **UnitTest_argv);
 TEST_SUITE
 {
 	SetupStd();
+	SetupMath();
 	SetupUtil();
 	SetupPreproc();
 

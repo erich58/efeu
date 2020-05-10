@@ -53,6 +53,11 @@ static void f_strcheck (EfiFunc *func, void *rval, void **arg)
 		Val_str(arg[4]), Val_str(arg[5]));
 }
 
+static void f_dcmp (EfiFunc *func, void *rval, void **arg)
+{
+	Val_bool(rval) = UnitTest_dcmp(Val_double(arg[0]), Val_double(arg[1]));
+}
+
 static void f_create (EfiFunc *func, void *rval, void **arg)
 {
 	Val_bool(rval) = UnitTest_create(Val_str(arg[0]), 0,
@@ -131,6 +136,7 @@ static EfiFuncDef fdef_func[] = {
 		f_result },
 	{ 0, &Type_bool, "UnitTest::strcheck(str id, str op, "
 		"str s1, str s2, str x1, str x2)", f_strcheck },
+	{ 0, &Type_bool, "UnitTest::dcmp(double a, double b)", f_dcmp },
 	{ 0, &Type_bool, "UnitTest::create(str id, "
 		"str name, str content, str expr)", f_create },
 	{ 0, &Type_bool, "UnitTest::assert(bool stat)", f_assert },
@@ -157,6 +163,8 @@ static PPMacDef macdef[] = {
 		"\"%s -> %s\", # x, (str)(x))", NULL },
 	{ "EXPECT(x) UnitTest::result(__ID__, (x), \"%s\", # x)", NULL },
 	{ "ASSERT(x) UnitTest::assert(EXPECT(x))", NULL },
+	{ "EXPECT_DBL(a, b) UnitTest::result(__ID__,"
+		"UnitTest::dcmp(a, b), \"%s ~ %s\", # a, # b)", NULL },
 	{ "EXPECT_STR(a, b) UnitTest::strcheck(__ID__,"
 		"\"==\", a, b, # a, # b)", NULL },
 	{ "EXPECT_STRCMP(a, op, b) UnitTest::strcheck(__ID__,"
@@ -189,9 +197,7 @@ void UnitTest_setup(void)
 		return;
 
 	init_done = 1;
-	PRINT_LABEL("setup");
 	SetupStd();
-	fprintf(stderr, "GlobalVar: %p\n", GlobalVar);
 	UnitTestVar = VarTab("UnitTest", 32);
 	AddVarDef(GlobalVar, vardef, tabsize(vardef));
 	PushVarTab(RefVarTab(UnitTestVar), NULL);

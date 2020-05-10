@@ -314,87 +314,6 @@ TEST_DECL(stdfloat)
 	SetFloatPrec("0f");
 	EXPECT_MSTR(SHOW("12.5"), "13");
 	SetFloatPrec("#5");
-
-	EXPECT_DTERM("abs(-2.)", 2.);
-	EXPECT_DTERM("min(3., 5.)", 3.);
-	EXPECT_DTERM("max(3., 5.)", 5.);
-
-	EXPECT_ITERM("(bool) 5.", 1);
-	EXPECT_ITERM("!5.", 0);
-	EXPECT_DTERM("-(-5.)", 5.);
-	EXPECT_DTERM("+(-5.)", -5.);
-
-	EXPECT_DTERM("3. * 5.", 15.);
-	EXPECT_DTERM("5. / 2.", 2.5);
-	EXPECT_DTERM("2. + 5.5", 7.5);
-	EXPECT_DTERM("5.25 - 7.", -1.75);
-
-	EXPECT_ITERM("2.25 < 2.5", 1);
-	EXPECT_ITERM("2.25 <= 2.5", 1);
-	EXPECT_ITERM("2.25 == 2.5", 0);
-	EXPECT_ITERM("2.25 != 2.5", 1);
-	EXPECT_ITERM("2.25 > 2.5", 0);
-	EXPECT_ITERM("2.25 >= 2.5", 0);
-
-	PushVarTab(NULL, NULL);
-	EXPECT_DTERM("double x = 5.5", 5.5);
-	EXPECT_DTERM("x++", 5.5);
-	EXPECT_DTERM("++x", 7.5);
-	EXPECT_DTERM("--x", 6.5);
-	EXPECT_DTERM("x--", 6.5);
-	EXPECT_DTERM("x *= 2.", 11.);
-	EXPECT_DTERM("x /= 4.", 2.75);
-	EXPECT_DTERM("x += 6.", 8.75);
-	EXPECT_DTERM("x -= 2.5", 6.25);
-	PopVarTab();
-
-	EXPECT_DTERM("xdiv(5., 0.)", 0.);
-	EXPECT_DTERM("xdiv(5., 2.)", 2.5);
-	EXPECT_DTERM("xdiv1(5., 0.)", 1.);
-	EXPECT_DTERM("xdiv1(5., 2.)", 2.5);
-	EXPECT_DTERM("idx(5., 20.)", 25.);
-	EXPECT_DTERM("idx(5., 0.)", 0.);
-	EXPECT_DTERM("rate(8., 10.)", -20.);
-	EXPECT_DTERM("rate(12., 10.)", 20.);
-	EXPECT_DTERM("rate(10., 0.)", 0.);
-	EXPECT_DTERM("rnd(2.4)", 2.);
-	EXPECT_DTERM("rnd(2.5)", 3.);
-	EXPECT_DTERM("rnd(-2.5)", -3.);
-
-	EXPECT_DTERM("M_PI", M_PI);
-	EXPECT_DTERM("Inf", ExceptionValue(1.));
-	EXPECT_MSTR(SHOW("NaN"), "NaN");
-}
-
-TEST_DECL(math)
-{
-	EXPECT_DTERM("sqrt(25.)", 5.);
-	EXPECT_DTERM("log(2.)", log(2.));
-	EXPECT_DTERM("xlog(-2.)", 0.);
-	EXPECT_DTERM("exp(1.)", exp(1.));
-	EXPECT_DTERM("ceil(2.1)", 3.);
-	EXPECT_DTERM("floor(-3.2)", -4.);
-	EXPECT_DTERM("sin(1.)", sin(1.));
-	EXPECT_DTERM("cos(1.)", cos(1.));
-	EXPECT_DTERM("tan(1.)", tan(1.));
-	EXPECT_DTERM("asin(0.5)", asin(0.5));
-	EXPECT_DTERM("acos(0.5)", acos(0.5));
-	EXPECT_DTERM("atan(1.0)", atan(1.0));
-	EXPECT_DTERM("atan2(-1.0, -1.0)", atan2(-1.0, -1.0));
-	EXPECT_DTERM("pow(2.0, 0.5)", pow(2.0, 0.5));
-	EXPECT_DTERM("3.8 % 3.5", fmod(3.8, 3.5));
-	EXPECT_DTERM("rnd125(0.)", 0.);
-	EXPECT_DTERM("rnd125(-0.21)", -0.5);
-	EXPECT_DTERM("rnd125(7.8)", 10.);
-	EXPECT_DTERM("ldexp(10., 4)", ldexp(10., 4));
-	PushVarTab(NULL, NULL);
-	EXPECT_ITERM("int n = 0", 0);
-	EXPECT_DTERM("double x = 0.", 0.);
-	EXPECT_DTERM("modf(3.75, x)", 0.75);
-	EXPECT_DTERM("x", 3.0);
-	EXPECT_DTERM("frexp(2.5, n)", 2.5 / 4.);
-	EXPECT_ITERM("n", 2);
-	PopVarTab();
 }
 
 TEST_DECL(assignarg)
@@ -454,7 +373,6 @@ TEST_SUITE
 	TEST_RUN(base);
 	TEST_RUN(stdint);
 	TEST_RUN(stdfloat);
-	TEST_RUN(math);
 	TEST_RUN(assignarg);
 	TEST_RUN(type);
 	CLEANUP_MSTR;
