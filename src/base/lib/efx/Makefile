@@ -9,7 +9,9 @@ prereq::
 	make -C ../efm
 
 LDFLAGS += -lefm -lm -ldl
-TST_CFLAGS += -I ../efm
+EXT_LIB = $(LIB)/esh
+EXT_LDFLAGS = -lefx -lutest
+TST_CFLAGS += -I ../efm -D'EXT_LIB="$(EXT_LIB)"'
 
 include $(CFG)/hcfg.mak
 include $(CFG)/Library.mak
