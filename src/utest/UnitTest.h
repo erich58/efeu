@@ -34,6 +34,7 @@ const char *UnitTest_qstr(const char *str);
 
 int UnitTest_strcmp(const char *s1, const char *s2);
 int UnitTest_match(const char *str, const char *expr);
+int UnitTest_dcmp(double d1, double d2);
 
 void UnitTest_expr(const char *file, int line, const char *expr);
 void UnitTest_test(const char *file, int line, const char *name);
@@ -119,6 +120,9 @@ UnitTest_result(__FILE__,__LINE__, (expr) != NULL, "%s", # expr)
 
 #define ASSERT_PTR(expr)	\
 UnitTest_assert(EXPECT_PTR(expr))
+
+#define EXPECT_DBL(a, b)	\
+UnitTest_result(__FILE__, __LINE__, UnitTest_dcmp(a, b), "%s ~ %s", # a, # b)
 
 #define EXPECT_STR(a, b)	\
 UnitTest_strcheck(__FILE__, __LINE__, "==", a, b, # a, # b)

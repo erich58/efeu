@@ -417,3 +417,14 @@ int UnitTest_assert(int stat)
 
 	return stat;
 }
+
+int UnitTest_dcmp(double a, double b)
+{
+	if	(b != 0.)
+	{
+		double x = (a - b) / b;
+		return -0.0000005 < x && x < 0.0000005;
+	}
+
+	return a == 0.;
+}
