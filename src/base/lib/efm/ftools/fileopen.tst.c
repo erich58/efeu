@@ -189,7 +189,7 @@ TEST_DECL(fileopen)
 	MakeDepend = 1;
 	ASSERT((file = fileopen(UnitTest_tmpname("data.gz"), "rzd")) != NULL);
 	EXPECT_STR(fgets(buf, sizeof buf, file), "Test data\n");
-	EXPECT(fileclose(file) == 0);
+	fileclose(file);
 
 	ASSERT((file = fileopen(UnitTest_tmpname("output"), "wd")) != NULL);
 	EXPECT(fputs("Test data\n", file) > 0);
