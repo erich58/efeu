@@ -246,62 +246,6 @@ TEST_DECL(stdint)
 	EXPECT_UTERM("(uint32_t)~0ul", 0xFFFFFFFFull);
 	EXPECT_UTERM("(uint64_t)~0ul", 0xFFFFFFFFFFFFFFFFull);
 	EXPECT_MSTR(EVAL("1234567890ul"), "1234567890");
-
-	EXPECT_ITERM("abs(-2)", 2);
-	EXPECT_ITERM("abs(-32u)", -32u);
-	EXPECT_ITERM("min(3, 5)", 3);
-	EXPECT_ITERM("max(3, 5)", 5);
-	EXPECT_ITERM("cmp(2, 5)", -1);
-	EXPECT_ITERM("cmp(2, 2)", 0);
-	EXPECT_ITERM("rcmp(2, 5)", 1);
-	EXPECT_ITERM("rcmp(5, 5)", 0);
-
-	EXPECT_DTERM("(float) 3", 3.);
-	EXPECT_DTERM("(double) 3", 3.);
-
-	EXPECT_ITERM("(bool) 5", 1);
-	EXPECT_ITERM("!5", 0);
-	EXPECT_ITERM("~0", -1);
-	EXPECT_ITERM("-(-5)", 5);
-	EXPECT_ITERM("+(-5)", -5);
-	EXPECT_ITERM("(int) 3.5", 3);
-
-	EXPECT_ITERM("3 * 5", 15);
-	EXPECT_ITERM("5 / 2", 2);
-	EXPECT_ITERM("5 % 2", 1);
-	EXPECT_ITERM("2 + 5", 7);
-	EXPECT_ITERM("5 - 7", -2);
-
-	EXPECT_ITERM("1 << 2", (1 << 2));
-	EXPECT_ITERM("64 >> 2", (64 >> 2));
-	EXPECT_ITERM("0xF0 & 0x1F", 0x10);
-	EXPECT_ITERM("123 ^ 456", (123 ^ 456));
-	EXPECT_ITERM("0xF0 | 0x03", 0xF3);
-
-	EXPECT_ITERM("2 < 5", 1);
-	EXPECT_ITERM("2 <= 5", 1);
-	EXPECT_ITERM("2 == 5", 0);
-	EXPECT_ITERM("2 != 5", 1);
-	EXPECT_ITERM("2 > 5", 0);
-	EXPECT_ITERM("2 >= 5", 0);
-
-	PushVarTab(NULL, NULL);
-	EXPECT_ITERM("int x = 5", 5);
-	EXPECT_ITERM("x++", 5);
-	EXPECT_ITERM("++x", 7);
-	EXPECT_ITERM("--x", 6);
-	EXPECT_ITERM("x--", 6);
-	EXPECT_ITERM("x *= 2", 10);
-	EXPECT_ITERM("x /= 3", 3);
-	EXPECT_ITERM("x %= 2", 1);
-	EXPECT_ITERM("x += 6", 7);
-	EXPECT_ITERM("x -= 2", 5);
-	EXPECT_ITERM("x |= 2", 7);
-	EXPECT_ITERM("x &= 12", 4);
-	EXPECT_ITERM("x ^= 2", 6);
-	EXPECT_ITERM("x <<= 1", 12);
-	EXPECT_ITERM("x >>= 2", 3);
-	PopVarTab();
 }
 
 TEST_DECL(stdfloat)
