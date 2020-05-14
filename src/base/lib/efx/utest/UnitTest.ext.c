@@ -32,6 +32,11 @@ static void f_info (EfiFunc *func, void *rval, void **arg)
 	sb_release(sb);
 }
 
+static void f_expr (EfiFunc *func, void *rval, void **arg)
+{
+	UnitTest_expr(Val_str(arg[0]), 0, Val_str(arg[1]));
+}
+
 static void f_result (EfiFunc *func, void *rval, void **arg)
 {
 	StrBuf *sb = do_print(arg[2], arg[3]);
@@ -129,8 +134,17 @@ static void f_wait (EfiFunc *func, void *rval, void **arg)
 	Val_int(rval) = UnitTest_wait();
 }
 
+static void f_repr (EfiFunc *func, void *rval, void **arg)
+{
+	StrBuf *sb = sb_acquire();
+	IO *io = io_strbuf(sb);
+	ShowObj(io, arg[0]);
+	Val_str(rval) = sb_cpyrelease(sb);
+}
+
 static EfiFuncDef fdef_func[] = {
 	{ 0, &Type_void, "UnitTest::info(str id, str fmt, ...)", f_info },
+	{ 0, &Type_void, "UnitTest::expr(str id, str expr)", f_expr },
 	{ 0, &Type_void, "UnitTest::strinfo(str id, str a, str x)", f_strinfo },
 	{ 0, &Type_bool, "UnitTest::result(str id, bool res, str fmt, ...)",
 		f_result },
@@ -148,41 +162,55 @@ static EfiFuncDef fdef_func[] = {
 	{ 0, &Type_void, "UnitTest::tmpclean()", f_tmpclean },
 	{ 0, &Type_bool, "UnitTest::stdin(str name, "
 		"str content = NULL)", f_stdin },
-	{ 0, &Type_bool, "UnitTest::stdout(str name)", f_stdout },
-	{ 0, &Type_bool, "UnitTest::stderr(str name)", f_stderr },
+	{ 0, &Type_bool, "UnitTest::stdout(str name = NULL)", f_stdout },
+	{ 0, &Type_bool, "UnitTest::stderr(str name = NULL)", f_stderr },
 
 	{ 0, &Type_bool, "UnitTest::fork(str id)", f_fork },
 	{ 0, &Type_void, "UnitTest::exit()", f_exit },
 	{ 0, &Type_int, "UnitTest::wait()", f_wait },
+	{ 0, &Type_str, "UnitTest::repr(.)", f_repr },
 };
 
 static PPMacDef macdef[] = {
-	{ "PRINT_LABEL(x) UnitTest::info(__ID__, \"%s\", x)", NULL },
-	{ "PRINT_STR(x) UnitTest::strinfo(__ID__, x, # x)", NULL },
-	{ "PRINT(x) UnitTest::info(__ID__,"
-		"\"%s -> %s\", # x, (str)(x))", NULL },
-	{ "EXPECT(x) UnitTest::result(__ID__, (x), \"%s\", # x)", NULL },
-	{ "ASSERT(x) UnitTest::assert(EXPECT(x))", NULL },
-	{ "EXPECT_DBL(a, b) UnitTest::result(__ID__,"
-		"UnitTest::dcmp(a, b), \"%s ~ %s\", # a, # b)", NULL },
-	{ "EXPECT_STR(a, b) UnitTest::strcheck(__ID__,"
-		"\"==\", a, b, # a, # b)", NULL },
-	{ "EXPECT_STRCMP(a, op, b) UnitTest::strcheck(__ID__,"
-		"op, a, b, # a, # b)", NULL },
-	{ "MATCH_STR(a, b) UnitTest::strcheck(__ID__,"
-		"\"~\", a, b, # a, # b)", NULL },
-	{ "TEST_DIR(name) UnitTest::result(__ID__,"
-		"UnitTest::mkdir(name), \"mkdir(%s)\", # name)", NULL },
-	{ "TEST_FILE(name, cont) UnitTest::create(__ID__,"
-		"name, cont, # cont)", NULL },
-	{ "PRINT_CONTENT(name) UnitTest::strinfo(__ID__,"
-		"UnitTest::content(name), sprintf(\"content(%s)\", # name))", NULL },
+	{ "TEST_EXPR(__x) UnitTest::expr(__ID__, # __x), (__x)", NULL },
+	{ "PRINT_LABEL(__x) UnitTest::info(__ID__, \"%s\", __x)", NULL },
+	{ "PRINT_STR(__x) UnitTest::strinfo(__ID__, __x, # __x)", NULL },
+	{ "PRINT(__x) UnitTest::info(__ID__,"
+		"\"%s -> %s\", # __x, UnitTest::repr(__x))", NULL },
+	{ "EXPECT(__x) UnitTest::result(__ID__, (__x), \"%s\", # __x)", NULL },
+	{ "ASSERT(__x) UnitTest::assert(EXPECT(__x))", NULL },
+	{ "EXPECT_DBL(__a, __b) UnitTest::result(__ID__,"
+		"UnitTest::dcmp(__a, __b), \"%s ~ %s\", # __a, # __b)", NULL },
+	{ "EXPECT_STR(__a, __b) UnitTest::strcheck(__ID__,"
+		"\"==\", __a, __b, # __a, # __b)", NULL },
+	{ "EXPECT_STRCMP(__a, __op, __b) UnitTest::strcheck(__ID__,"
+		"__op, __a, __b, # __a, # __b)", NULL },
+	{ "MATCH_STR(__a, __b) UnitTest::strcheck(__ID__,"
+		"\"~\", __a, __b, # __a, # __b)", NULL },
+	{ "TEST_DIR(__n) UnitTest::result(__ID__,"
+		"UnitTest::mkdir(__n), \"mkdir(%s)\", # __n)", NULL },
+	{ "TEST_FILE(__n, __c) UnitTest::create(__ID__,"
+		"__n, __c, # __c)", NULL },
+	{ "PRINT_CONTENT(__n) UnitTest::strinfo(__ID__,"
+		"UnitTest::content(__n), sprintf(\"content(%s)\", # __n))", NULL },
+	{ "EXPECT_CONTENT(__n, __c) UnitTest::strcheck(__ID__, \"==\","
+		"UnitTest::content(__n), __c, " 
+		"sprintf(\"content(%s)\", # __n), # __c)", NULL },
+	{ "MATCH_CONTENT(__n, __c) UnitTest::strcheck(__ID__, \"~\","
+		"UnitTest::content(__n), __c, " 
+		"sprintf(\"content(%s)\", # __n), # __c)", NULL },
+	{ "EXPECT_REPR(__o, __r) UnitTest::strcheck(__ID__, \"==\", "
+		"UnitTest::repr(__o), __r, "
+		"sprintf(\"repr(%s)\", # __o), # __r)", NULL },
+	{ "MATCH_REPR(__o, __r) UnitTest::strcheck(__ID__, \"~\", "
+		"UnitTest::repr(__o), __r, "
+		"sprintf(\"repr(%s)\", # __o), # __r)", NULL },
 	{ "TEST_FORK if (UnitTest::fork(__ID__))", NULL },
 	{ "TEST_EXIT UnitTest::wait()", NULL },
-	{ "CHILD_SIGNALED(n) UnitTest::result(__ID__,"
-		"UnitTest::wait() == -n, \"child signaled %d\", n)", NULL },
-	{ "CHILD_EXIT(n) UnitTest::result(__ID__,"
-		"UnitTest::wait() == n, \"child exit %d\", n)", NULL },
+	{ "CHILD_SIGNALED(__n) UnitTest::result(__ID__,"
+		"UnitTest::wait() == -__n, \"child signaled %d\", __n)", NULL },
+	{ "CHILD_EXIT(__n) UnitTest::result(__ID__,"
+		"UnitTest::wait() == __n, \"child exit %d\", __n)", NULL },
 };
 
 TEST_SUITE

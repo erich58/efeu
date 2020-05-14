@@ -231,18 +231,6 @@ static void f_fprintf (EfiFunc *func, void *rval, void **arg)
 static void f_sprintf (EfiFunc *func, void *rval, void **arg)
 {
 	StrBuf *sb;
-	IO *io;
-
-	sb = sb_acquire();
-	io = io_strbuf(sb);
-	PrintFmtList(io, Val_str(arg[0]), Val_list(arg[1]));
-	io_close(io);
-	Val_str(rval) = sb_cpyrelease(sb);
-}
-
-static void f_xprintf (EfiFunc *func, void *rval, void **arg)
-{
-	StrBuf *sb;
 
 	sb = sb_acquire();
 	StrBufFmtList(sb, Val_str(arg[0]), Val_list(arg[1]));
@@ -583,7 +571,6 @@ static EfiFuncDef fdef_func[] = {
 	{ 0, &Type_int, "printf (str fmt, ...)", f_printf },
 	{ 0, &Type_int, "fprintf (IO io, str fmt, ...)", f_fprintf },
 	{ 0, &Type_str, "sprintf (str fmt, ...)", f_sprintf },
-	{ 0, &Type_str, "xprintf (str fmt, ...)", f_xprintf },
 
 	{ FUNC_VIRTUAL, &Type_int, "pcopy (IO in, IO out, int delim = EOF)",
 		f_pcopy },
@@ -601,7 +588,7 @@ static EfiFuncDef fdef_func[] = {
 	{ 0, &Type_str, "fsearch (str path, str name, str type = NULL)", f_fsearch },
 	{ FUNC_VIRTUAL, &Type_bool, "patcmp (str pat, str s)", f_patcmp },
 	{ FUNC_VIRTUAL, &Type_bool, "patcmp (str pat, str s, str &t)", f_patcmp },
-	{ FUNC_VIRTUAL, &Type_bool, "pselect (str pat, ...)", f_pselect },
+	{ FUNC_VIRTUAL, &Type_bool, "pselect (str a, ...)", f_pselect },
 	{ 0, &Type_bool, "listcmp (str pat, char c)", f_listcmp },
 	{ 0, &Type_str, "cat (str delim, ...)", f_cat },
 	{ 0, &Type_list, "split (str s, str delim = \"%s\")", f_split },

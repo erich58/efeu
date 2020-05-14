@@ -260,21 +260,6 @@ TEST_DECL(stdfloat)
 	SetFloatPrec("#5");
 }
 
-TEST_DECL(assignarg)
-{
-	PushVarTab(NULL, NULL);
-	EXPECT_MSTR(SHOW("AssignArg a"), "NULL");
-	EXPECT_MSTR(SHOW("a = \"Name[Opt]=Arg\""), "Name[Opt]=Arg");
-	EXPECT_MSTR(SHOW("a.name"), "\"Name\"");
-	EXPECT_MSTR(SHOW("a.opt"), "\"Opt\"");
-	EXPECT_MSTR(SHOW("a.arg"), "\"Arg\"");
-	EXPECT_MSTR(SHOW("(List_t) a"), "{\"Name\", \"Opt\", \"Arg\"}");
-	EXPECT_MSTR(SHOW("str s = \"a=b,c\""), "\"a=b,c\"");
-	EXPECT_MSTR(SHOW("a = AssignArg(s, \",\")"), "a=b");
-	EXPECT_MSTR(SHOW("s"), "\"c\"");
-	PopVarTab();
-}
-
 TEST_DECL(type)
 {
 	EXPECT_MSTR(SHOW("str.name"), "\"str\"");
@@ -317,7 +302,6 @@ TEST_SUITE
 	TEST_RUN(base);
 	TEST_RUN(stdint);
 	TEST_RUN(stdfloat);
-	TEST_RUN(assignarg);
 	TEST_RUN(type);
 	CLEANUP_MSTR;
 	CLEANUP_OUT;
