@@ -26,32 +26,22 @@ void UnitTest_tmpclean()
 		execl("/bin/rm", "rm", "-rf", tmpdir, (char*) NULL);
 	
 	wait(NULL);
+	free(tmpdir);
 	tmpdir = NULL;
 }
 
 static void create_tmpdir()
 {
-	STRING_DECL(buf);
-	FILE *file;
-
 	if	(tmpdir)
 		return;
 
-	if	((file = popen(MKTEMP, "r")))
-	{
-		int c;
+	const char *p = UnitTest_pgets(MKTEMP, '\n');
 
-		while ((c = getc(file)) != EOF && c != '\n')
-			UnitTest_putc(c, &buf);
-
-		fclose(file);
-	}
-
-	if	(buf.size)
+	if	(p)
 	{
 		cleanup_pid = getpid();
-		tmpdir = UnitTest_str(&buf);
 		atexit(UnitTest_tmpclean);
+		tmpdir = strdup(p);
 	}
 	else
 	{
@@ -127,7 +117,6 @@ static const char *mkparent(const char *name)
 		name++;
 
 	buf.size = 0;
-	buf.size = 0;
 	UnitTest_puts(tmpdir, &buf);
 	UnitTest_putc('/', &buf);
 
@@ -202,4 +191,24 @@ const char *UnitTest_content(const char *name)
 	}
 
 	return NULL;
+}
+
+const char *UnitTest_pgets(const char *cmd, int delim)
+{
+	static STRING_DECL(buf);
+	FILE *file;
+
+	buf.size = 0;
+
+	if	((file = popen(cmd, "r")))
+	{
+		int c;
+
+		while ((c = getc(file)) != EOF && c != delim)
+			UnitTest_putc(c, &buf);
+
+		fclose(file);
+	}
+
+	return buf.size ? UnitTest_str(&buf) : NULL;
 }

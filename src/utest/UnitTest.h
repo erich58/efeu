@@ -48,6 +48,7 @@ int UnitTest_strcheck(const char *file, int line, const char *op,
 int UnitTest_create(const char *file, int line, const char *name,
 	const char *content, const char *expr);
 
+const char *UnitTest_pgets(const char *cmd_, int delim);
 const char *UnitTest_tpl(const char *tpl);
 const char *UnitTest_tmpname(const char *name);
 const char *UnitTest_mkdir(const char *name);
