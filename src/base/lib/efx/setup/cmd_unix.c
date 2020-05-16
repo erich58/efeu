@@ -55,10 +55,12 @@ static int io_mode (IO *out, int mode)
 	case S_IFCHR:	io_putc('c', out); break;
 	case S_IFBLK:	io_putc('b', out); break;
 	case S_IFIFO:	io_putc('p', out); break;
+#ifdef	S_IFLNK
 	case S_IFLNK:	io_putc('l', out); break;
-/*
+#endif
+#ifdef	S_IFSOCK
 	case S_IFSOCK:	io_putc('s', out); break;
-*/
+#endif
 	default:	io_putc('?', out); break;
 	}
 
@@ -178,8 +180,14 @@ static void str2fstat (EfiFunc *func, void *rval, void **arg)
 {
 	struct stat buf;
 	struct tm *x;
+	int s;
 
-	if	(stat(Val_str(arg[0]), &buf) != EOF)
+	if	(Val_bool(arg[1]))
+		s = lstat(Val_str(arg[0]), &buf);
+	else
+		s = stat(Val_str(arg[0]), &buf);
+		
+	if	(s != EOF)
 	{
 		FileStat *fstat = rval;
 		fstat->path = mstrcpy(Val_str(arg[0]));
@@ -372,6 +380,11 @@ static void f_getuid (EfiFunc *func, void *rval, void **arg)
 	Val_int(rval) = getuid();
 }
 
+static void f_getgid (EfiFunc *func, void *rval, void **arg)
+{
+	Val_int(rval) = getgid();
+}
+
 static void f_umask (EfiFunc *func, void *rval, void **arg)
 {
 	Val_int(rval) = umask(Val_int(arg[0]));
@@ -474,7 +487,7 @@ static void f_flist (EfiFunc *func, void *rval, void **arg)
 	EfiObjList **ptr = (EfiObjList **) rval;
 	char *path = Val_str(arg[0]);
 	char *p = Val_str(arg[3]);
-	int type;
+	int type = 0;
 
 	if	(!p)	p = "f";
 
@@ -510,6 +523,11 @@ static void f_getcwd (EfiFunc *func, void *rval, void **arg)
 	Val_str(rval) = mstrcpy(p);
 }
 
+static void f_chdir (EfiFunc *func, void *rval, void **arg)
+{
+	Val_bool(rval) = (chdir(Val_str(arg[0])) == 0);
+}
+
 /*	Funktionstabelle
 */
 
@@ -518,7 +536,7 @@ static EfiFuncDef func_unix[] = {
 	{ FUNC_RESTRICTED, &Type_str, "mode_t ()", f_mode2str },
 	{ FUNC_RESTRICTED, &Type_int, "mode_t ()", f_mode2int },
 	{ FUNC_PROMOTION, &Type_uint, "mode_t ()", CopyDataFunc },
-	{ 0, &Type_fstat, "FileStat (str path)", str2fstat },
+	{ 0, &Type_fstat, "FileStat (str path, bool link = false)", str2fstat },
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, FileStat)", fprint_fstat },
 	{ FUNC_RESTRICTED, &Type_bool, "FileStat ()", fstat2bool },
 	{ FUNC_VIRTUAL, &Type_pwd, "passwd (int uid)", f_pwd_int },
@@ -527,11 +545,13 @@ static EfiFuncDef func_unix[] = {
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, passwd)", fprint_pwd },
 	{ FUNC_RESTRICTED, &Type_bool, "passwd ()", pwd2bool },
 	{ 0, &Type_int, "getuid ()", f_getuid },
+	{ 0, &Type_int, "getgid ()", f_getgid },
 	{ 0, &Type_int, "umask (int mask)", f_umask },
 	{ 0, &Type_list, "flist (str path, str pat = NULL,"
 		" bool rel = false, str type = \"f\")", f_flist },
 	{ 0, &Type_bool, "mkdir (str path)", f_mkdir },
 	{ 0, &Type_str, "getcwd ()", f_getcwd },
+	{ 0, &Type_bool, "chdir (str path)", f_chdir },
 };
 
 

@@ -206,7 +206,7 @@ static PPMacDef macdef[] = {
 		"UnitTest::repr(__o), __r, "
 		"sprintf(\"repr(%s)\", # __o), # __r)", NULL },
 	{ "TEST_FORK if (UnitTest::fork(__ID__))", NULL },
-	{ "TEST_EXIT UnitTest::wait()", NULL },
+	{ "TEST_EXIT UnitTest::exit()", NULL },
 	{ "CHILD_SIGNALED(__n) UnitTest::result(__ID__,"
 		"UnitTest::wait() == -__n, \"child signaled %d\", __n)", NULL },
 	{ "CHILD_EXIT(__n) UnitTest::result(__ID__,"

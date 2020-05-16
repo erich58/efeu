@@ -295,6 +295,11 @@ TEST_DECL(type)
 	);
 }
 
+TEST_DECL(unix)
+{
+	TEST_TERM_TYPE("mode_t(0100777)", "-rwxrwxrwx");
+}
+
 TEST_SUITE
 {
 	SetupStd();
@@ -303,6 +308,7 @@ TEST_SUITE
 	TEST_RUN(stdint);
 	TEST_RUN(stdfloat);
 	TEST_RUN(type);
+	TEST_RUN(unix);
 	CLEANUP_MSTR;
 	CLEANUP_OUT;
 	CLEANUP_OBJ;
