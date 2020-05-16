@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <regex.h>
+#include <errno.h>
 
 #define	BSIZE	64
 
@@ -89,6 +90,21 @@ const char *UnitTest_str(UnitTestString *buf)
 		return buf->data;
 
 	return "";
+}
+
+char *UnitTest_mstr(UnitTestString *buf)
+{
+	if	(UnitTest_start(buf))
+	{
+		char *p = buf->data;
+		buf->size = 0;
+		buf->capacity = 0;
+		buf->pos = 0;
+		buf->data = 0;
+		return p;
+	}
+
+	return NULL;
 }
 
 const char *UnitTest_split(UnitTestString *buf, const char *str)

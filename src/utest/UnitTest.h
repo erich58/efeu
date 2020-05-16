@@ -28,6 +28,7 @@ const char *UnitTest_next(UnitTestString *ustr);
 const char *UnitTest_split(UnitTestString *ustr, const char *str);
 const char *UnitTest_qsplit(UnitTestString *ustr, const char *str);
 const char *UnitTest_str(UnitTestString *ustr);
+char *UnitTest_mstr(UnitTestString *ustr);
 
 const char *UnitTest_cstr(const char *str);
 const char *UnitTest_qstr(const char *str);
@@ -48,7 +49,7 @@ int UnitTest_strcheck(const char *file, int line, const char *op,
 int UnitTest_create(const char *file, int line, const char *name,
 	const char *content, const char *expr);
 
-const char *UnitTest_pgets(const char *cmd_, int delim);
+char *UnitTest_pgets(const char *cmd_, int delim);
 const char *UnitTest_tpl(const char *tpl);
 const char *UnitTest_tmpname(const char *name);
 const char *UnitTest_mkdir(const char *name);

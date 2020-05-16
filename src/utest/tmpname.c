@@ -13,7 +13,7 @@
 #define	MKTEMP	"mktemp -d"
 
 static int cleanup_pid = 0;
-static const char *tmpdir = NULL;
+static char *tmpdir = NULL;
 
 void UnitTest_tmpclean()
 {
@@ -26,7 +26,7 @@ void UnitTest_tmpclean()
 		execl("/bin/rm", "rm", "-rf", tmpdir, (char*) NULL);
 	
 	wait(NULL);
-	free(tmpdir);
+	free((void *) tmpdir);
 	tmpdir = NULL;
 }
 
@@ -35,18 +35,14 @@ static void create_tmpdir()
 	if	(tmpdir)
 		return;
 
-	const char *p = UnitTest_pgets(MKTEMP, '\n');
-
-	if	(p)
+	if	(!(tmpdir = UnitTest_pgets(MKTEMP, '\n')))
 	{
-		cleanup_pid = getpid();
-		atexit(UnitTest_tmpclean);
-		tmpdir = strdup(p);
-	}
-	else
-	{
+		UnitTest_error("'%s' failed", MKTEMP);
 		exit(1);
 	}
+
+	cleanup_pid = getpid();
+	atexit(UnitTest_tmpclean);
 }
 
 const char *UnitTest_tpl(const char *tpl)
@@ -193,12 +189,10 @@ const char *UnitTest_content(const char *name)
 	return NULL;
 }
 
-const char *UnitTest_pgets(const char *cmd, int delim)
+char *UnitTest_pgets(const char *cmd, int delim)
 {
-	static STRING_DECL(buf);
+	STRING_DECL(buf);
 	FILE *file;
-
-	buf.size = 0;
 
 	if	((file = popen(cmd, "r")))
 	{
@@ -210,5 +204,5 @@ const char *UnitTest_pgets(const char *cmd, int delim)
 		fclose(file);
 	}
 
-	return buf.size ? UnitTest_str(&buf) : NULL;
+	return UnitTest_mstr(&buf);
 }

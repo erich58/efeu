@@ -10,6 +10,7 @@ TEST_SUITE
 	TEST_FORK
 	{
 		PRINT_LABEL("Child");
+		UnitTest_stdout("stdout");
 
 		TEST_FORK
 		{
@@ -19,7 +20,8 @@ TEST_SUITE
 			TEST_EXIT; // not reached
 		}
 
-		CHILD_SIGNALED(6);
+		CHILD_EXIT(2);
+		MATCH_CONTENT("stdout", "ABORT\n");
 		TEST_EXIT;
 	}
 
@@ -27,10 +29,10 @@ TEST_SUITE
 
 	TEST_FORK
 	{
-		PRINT_LABEL("Exec");
-		execl("/bin/false", "false", NULL);
+		PRINT_LABEL("Abort with signal");
+		abort();
 		TEST_EXIT; // not reached
 	}
 
-	CHILD_EXIT(1);
+	CHILD_SIGNALED(6);
 }

@@ -410,9 +410,11 @@ int UnitTest_assert(int stat)
 {
 	if	(!stat)
 	{
-		UnitTest_tmpclean();
 		info("ABORT", NULL, 0, "");
-		abort();
+		printf("%s\t%d\t%d\t%d\tABORT\n", UnitTest_name,
+			count_good + count_bad,
+			count_good, count_bad);
+		exit(2);
 	}
 
 	return stat;
