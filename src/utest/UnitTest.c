@@ -15,7 +15,42 @@ static int count_good = 0;
 static int count_bad = 0;
 static int fork_depth = 0;
 
-typedef void (*runFunction)(void);
+static const char *colored(int fd, const char *name)
+{
+	static STRING_DECL(buf);
+	static char *cdef[3] = { NULL, NULL, NULL };
+	static int need_setup = 1;
+
+	int color = 0;
+
+	if	(!name)
+		return name;
+
+	switch (*name)
+	{
+	case '*':	color = 1; name++; break;
+	case '!':	color = 2; name++; break;
+	default:	break;
+	}
+
+	if	(!color || !isatty(fd))
+		return name;
+
+	if	(need_setup)
+	{
+		cdef[0] = UnitTest_pgets("tput sgr0", EOF);	// Off
+		cdef[1] = UnitTest_pgets("tput setaf 2", EOF);	// Green
+		cdef[2] = UnitTest_pgets("tput setaf 1", EOF);	// Red
+		need_setup = 0;
+	}
+
+	buf.size = 0;
+	UnitTest_puts(cdef[color], &buf);
+	UnitTest_puts(name, &buf);
+	UnitTest_puts(cdef[0], &buf);
+	return UnitTest_mstr(&buf);
+}
+
 
 /* Redirektion
 */
@@ -151,7 +186,7 @@ static void vinfo(const char *pfx, const char *file, int line,
 
 	if	(pfx)
 	{
-		UnitTest_puts(pfx, &buf);
+		UnitTest_puts(colored(real_stderr, pfx), &buf);
 		UnitTest_putc('\t', &buf);
 	}
 
@@ -275,7 +310,7 @@ int UnitTest_result(const char *file, int line, int res, const char *fmt, ...)
 		count_bad++;
 
 	va_start (list, fmt);
-	vinfo(res ? "GOOD" : "BAD", file, line, fmt, list);
+	vinfo(res ? "*GOOD" : "!BAD", file, line, fmt, list);
 	va_end(list);
 	return res;
 }
@@ -324,6 +359,13 @@ int UnitTest_strcheck(const char *file, int line, const char *op,
 	return r;
 }
 
+void UnitTest_summary(const char *issue)
+{
+	printf("%s\t%d\t%d\t%d\t%s\n", UnitTest_name, count_good + count_bad,
+		count_good, count_bad, colored(1, issue));
+	fflush(stdout);
+}
+
 int main(int argc, char **argv)
 {
 	char *p;
@@ -345,9 +387,7 @@ int main(int argc, char **argv)
 	fputc('\n', stderr);
 	runUnitTest(argc, argv);
 	UnitTest_stdout(NULL);
-	printf("%s\t%d\t%d\t%d\t%s\n", UnitTest_name, count_good + count_bad,
-		count_good, count_bad, count_bad ? "FAILURE" : "SUCCESS");
-	fflush(stdout);
+	UnitTest_summary(count_bad ? "!FAILURE" : "*SUCCESS");
 	return count_bad ? 1 : 0;
 }
 
@@ -410,10 +450,8 @@ int UnitTest_assert(int stat)
 {
 	if	(!stat)
 	{
-		info("ABORT", NULL, 0, "");
-		printf("%s\t%d\t%d\t%d\tABORT\n", UnitTest_name,
-			count_good + count_bad,
-			count_good, count_bad);
+		info("!ABORT", NULL, 0, "");
+		UnitTest_summary("!ABORT");
 		exit(2);
 	}
 
