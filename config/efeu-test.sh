@@ -130,23 +130,28 @@ if [ $out ]; then
 	redir="2>> $out"
 fi
 
+red=`tput setaf 1`
+green=`tput setaf 2`
+off=`tput sgr0`
+SUCCESS="${green}SUCCESS{$off}"
+
 for tst in $tlist
 do
 	eval $tst $redir
-done | awk '
+done | awk -v good="$green" -v bad="$red" -v off="$off" '
 BEGIN {
-	fmt = "%-23s\t%5d\t%5d\t%5d\t%s\n";
-	t = 0; g = 0; b = 0; s = "SUCCESS"
+	fmt = "%-23s\t%5d\t%5d\t%5d\t%s%s%s\n";
+	t = 0; g = 0; b = 0; s = "SUCCESS";
 }
 /FAILURE/ {
 	s = "FAILURE"
 }
 {
 	t += $2; g += $3; b += $4;
-	printf(fmt, $1, $2, $3, $4, $5);
+	printf(fmt, $1, $2, $3, $4, $4 ? bad : good, $5, off);
 }
 END {
-	printf(fmt, "TOTAL", t, g, b, s);
+	printf(fmt, "TOTAL", t, g, b, b ? bad : good, s, off);
 }
 '
 
@@ -156,7 +161,9 @@ export LANG=C
 echo ""
 echo "#code coverage"
 
-gcda=`find_gcda $src $build`
+gcda=""
+
+[ "$src" != "." ] && gcda=`find_gcda $src $build`
 
 if	[ -z "$gcda" ]; then
 	gcda=`find $build -name '*.gcda' | sort`
