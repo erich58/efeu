@@ -30,11 +30,16 @@ static const char *colored(int fd, const char *name)
 	{
 	case '*':	color = 1; name++; break;
 	case '!':	color = 2; name++; break;
-	default:	break;
+	default:	return name;
 	}
 
-	if	(!color || !isatty(fd))
+	int save_errno = errno;
+
+	if	(!isatty(fd))
+	{
+		errno = save_errno;
 		return name;
+	}
 
 	if	(need_setup)
 	{

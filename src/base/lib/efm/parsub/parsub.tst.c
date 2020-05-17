@@ -76,7 +76,7 @@ TEST_DECL(psubarg)
 	EXPECT_OUTPUT("a b");
 	EXPECT(io_psubarg(io, "$*", "n%", "|%5d%%|", 42) == 8);
 	EXPECT_OUTPUT("|   42%|");
-	errno = 0;
+	errno = EACCES;
 	EXPECT(io_psubarg(io, "$0", "e"));
 	EXPECT_OUTPUT(strerror(errno));
 
