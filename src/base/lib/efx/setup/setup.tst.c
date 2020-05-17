@@ -260,41 +260,6 @@ TEST_DECL(stdfloat)
 	SetFloatPrec("#5");
 }
 
-TEST_DECL(type)
-{
-	EXPECT_MSTR(SHOW("str.name"), "\"str\"");
-	EXPECT_MSTR(SHOW("str.cname"), "\"char *\"");
-	EXPECT_MSTR(SHOW("str.desc"), "NULL");
-	EXPECT_ITERM("str.size", sizeof(char *));
-	EXPECT_ITERM("str.recl", 0);
-	EXPECT_ITERM("int.default", 0);
-	EXPECT_MSTR(SHOW("str.base"), "_Ptr_");
-	EXPECT_MSTR(SHOW("str.flags"), "4");
-	EXPECT_MSTR(SHOW("int.flags"), "0");
-	EXPECT_MSTR(SHOW("Func.var"), "Func = {\n\ttype\n}");
-	UnitTest_stdout("stdout");
-	EXPECT_MSTR(EVAL("bool.info(\"print\")"), NULL);
-	fflush(stdout);
-	EXPECT_CONTENT("stdout",
-		"name = bool\n"
-		"\n"
-		"default = false\n"
-		"\n"
-		"cname = \"int\"\n"
-		"size = 4\n"
-		"recl = 4\n"
-		"\n"
-		"io:\tprint\n"
-		"copy:\tmemcpy\n"
-		"clean:\tmemset\n"
-		"\n"
-		"conv\n"
-		"create\n"
-		"par\n"
-		"var\n"
-	);
-}
-
 TEST_DECL(unix)
 {
 	TEST_TERM_TYPE("mode_t(0100777)", "-rwxrwxrwx");
@@ -307,7 +272,6 @@ TEST_SUITE
 	TEST_RUN(base);
 	TEST_RUN(stdint);
 	TEST_RUN(stdfloat);
-	TEST_RUN(type);
 	TEST_RUN(unix);
 	CLEANUP_MSTR;
 	CLEANUP_OUT;

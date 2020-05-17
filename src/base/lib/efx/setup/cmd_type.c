@@ -419,13 +419,13 @@ static void type_setup (InfoNode *info)
 	EfiType *type = info->par;
 	InfoNode *sub;
 
-	AddInfo(info, "conv", ":en:Converters:de:Konverter",
+	AddInfo(info, "conv", ":*:Converters:de:Konverter",
 		tinfo_conv, type);
-	AddInfo(info, "create", ":en:Constructors:de:Konstruktoren",
+	AddInfo(info, "create", ":*:Constructors:de:Konstruktoren",
 		tinfo_create, type);
-	AddInfo(info, "var", ":en:Variables:de:Variablen",
+	AddInfo(info, "var", ":*:Variables:de:Variablen",
 		tinfo_var, type);
-	sub = AddInfo(info, "par", ":en:Parameters:de:Parameter",
+	sub = AddInfo(info, "par", ":*:Parameters:de:Parameter",
 		tinfo_par, type);
 	sub->setup = load_par;
 
