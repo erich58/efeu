@@ -74,6 +74,7 @@ TEST_DECL(mlangcpy)
 {
 	EXPECT_STR(mlangcpy(":de:ABC:*:xyz", "de_AT"), "ABC");
 	EXPECT_STR(mlangcpy(":de:ABC:*:xyz", NULL), "xyz");
+	EXPECT_STR(mlangcpy(":de:ABC:en:xyz", NULL), NULL);
 	EXPECT_STR(mlangcpy(NULL, NULL), NULL);
 }
 
