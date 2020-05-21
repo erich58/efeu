@@ -160,7 +160,7 @@ static EfiFuncDef fdef_func[] = {
 	{ 0, &Type_str, "UnitTest::mkfile(str name, str content = NULL)", f_mkfile },
 	{ 0, &Type_str, "UnitTest::content(str name = NULL)", f_content },
 	{ 0, &Type_void, "UnitTest::tmpclean()", f_tmpclean },
-	{ 0, &Type_bool, "UnitTest::stdin(str name, "
+	{ 0, &Type_bool, "UnitTest::stdin(str name = NULL, "
 		"str content = NULL)", f_stdin },
 	{ 0, &Type_bool, "UnitTest::stdout(str name = NULL)", f_stdout },
 	{ 0, &Type_bool, "UnitTest::stderr(str name = NULL)", f_stderr },
