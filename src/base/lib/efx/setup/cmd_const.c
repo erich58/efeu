@@ -32,7 +32,7 @@ If not, write to the Free Software Foundation, Inc.,
 static EfiVarDef var_const[] = {
 	{ "iostd",	&Type_io, &iostd,
 		":*:standard input output\n"
-		":de:Standarein/ausgabestruktor\n" },
+		":de:Standard-Ein/Ausgabestruktor\n" },
 	{ "iomsg",	&Type_io, &iomsg,
 		":*:message output (stdout)\n"
 		":de:Ausgabe von Meldungen (stdout)\n" },
