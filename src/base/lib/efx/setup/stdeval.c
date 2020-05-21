@@ -119,13 +119,6 @@ static EfiObj *pf_func (IO *io, void *data)
 	return Parse_func(io, NULL, NULL, (int) (size_t) data);
 }
 
-static EfiObj *pf_expression (IO *io, void *data)
-{
-	log_note(NULL, "WARNING: expression obsolete, use [...] instead.\n",
-		NULL);
-	return expr2Obj(Parse_cmd(io));
-}
-
 static EfiObj *pf_string (IO *io, void *data)
 {
 	return str2Obj(getstring(io));
@@ -225,7 +218,6 @@ static EfiParseDef pdef[] = {
 	{ "break", PFunc_break, (void *) 0 },
 	{ "continue", PFunc_break, (void *) 1 },
 
-	{ "expression", pf_expression, NULL },
 	{ "string", pf_string, NULL },
 	{ "parsub", pf_parsub, NULL },
 	{ "static", pf_static, NULL },
