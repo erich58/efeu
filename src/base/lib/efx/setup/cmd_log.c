@@ -64,12 +64,12 @@ static EfiObj *p_log (IO *io, void *data)
 }
 
 static EfiParseDef pdef_log[] = {
-	{ "Error", p_log, &ErrLog },
-	{ "Warning", p_log, &WarnLog },
-	{ "Notice", p_log, &NoteLog },
-	{ "Info", p_log, &InfoLog },
-	{ "Debug", p_log, &DebugLog },
-	{ "Trace", p_log, &TraceLog },
+	{ "ErrLog", p_log, &ErrLog },
+	{ "WarnLog", p_log, &WarnLog },
+	{ "NoteLog", p_log, &NoteLog },
+	{ "InfoLog", p_log, &InfoLog },
+	{ "DebugLog", p_log, &DebugLog },
+	{ "TraceLog", p_log, &TraceLog },
 };
 
 /*	Funktionstabelle
