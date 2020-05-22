@@ -102,150 +102,18 @@ TEST_DECL(stdint)
 	EXPECT_UTERM("(unsigned) 12345", 12345);
 	EXPECT_MSTR(EVAL("-12345"), "-12345");
 	EXPECT_MSTR(SHOW("-12345"), "-12345");
-
 	TEST_OBJ_TYPE(uint2Obj(12345), "12345u");
-	EXPECT_ITERM("(int)    ~0u", -1);
-	EXPECT_ITERM("(int8_t) ~0u", -1);
-	EXPECT_ITERM("(int16_t)~0u", -1);
-	EXPECT_ITERM("(int32_t)~0u", -1);
-	EXPECT_ITERM("(int64_t)~0u", 0xFFFFFFFFll);
-	EXPECT_UTERM("(unsigned)~0u", 0xFFFFFFFFull);
-	EXPECT_UTERM("(uint8_t) ~0u", 0xFF);
-	EXPECT_UTERM("(uint16_t)~0u", 0xFFFF);
-	EXPECT_UTERM("(uint32_t)~0u", 0xFFFFFFFFull);
-	EXPECT_UTERM("(uint64_t)~0u", 0xFFFFFFFFull);
-	EXPECT_MSTR(EVAL("12345u"), "12345");
-	EXPECT_MSTR(SHOW("12345u"), "12345");
 
-	TEST_TERM_TYPE("(int8_t)0x80", "-128");
-	EXPECT_ITERM("(int)    (int8_t)0x80", -128);
-	EXPECT_ITERM("(int8_t) (int8_t)0x80", -128);
-	EXPECT_ITERM("(int16_t)(int8_t)0x80", -128);
-	EXPECT_ITERM("(int32_t)(int8_t)0x80", -128);
-	EXPECT_ITERM("(int64_t)(int8_t)0x80", -128);
-	EXPECT_ITERM("(unsigned)(int8_t)0x7f", 127);
-	EXPECT_ITERM("(uint8_t) (int8_t)0x7f", 127);
-	EXPECT_ITERM("(uint16_t)(int8_t)0x7f", 127);
-	EXPECT_ITERM("(uint32_t)(int8_t)0x7f", 127);
-	EXPECT_ITERM("(uint64_t)(int8_t)0x7f", 127);
-
+	TEST_TERM_TYPE("(int8_t) 0x80", "-128");
 	TEST_TERM_TYPE("(uint8_t) ~0", "255");
-	EXPECT_ITERM("(int)    (uint8_t)~0", 0xFF);
-	EXPECT_ITERM("(int8_t) (uint8_t)~0", -1);
-	EXPECT_ITERM("(int16_t)(uint8_t)~0", 0xFF);
-	EXPECT_ITERM("(int32_t)(uint8_t)~0", 0xFF);
-	EXPECT_ITERM("(int64_t)(uint8_t)~0", 0xFF);
-	EXPECT_UTERM("(unsigned)(uint8_t)~0", 0xFF);
-	EXPECT_UTERM("(uint8_t) (uint8_t)~0", 0xFF);
-	EXPECT_UTERM("(uint16_t)(uint8_t)~0", 0xFF);
-	EXPECT_UTERM("(uint32_t)(uint8_t)~0", 0xFF);
-	EXPECT_UTERM("(uint64_t)(uint8_t)~0", 0xFF);
-
 	TEST_TERM_TYPE("(int16_t) -128", "-128");
-	EXPECT_ITERM("(int)    (int16_t)-128", -128);
-	EXPECT_ITERM("(int8_t) (int16_t)-128", -128);
-	EXPECT_ITERM("(int16_t)(int16_t)-128", -128);
-	EXPECT_ITERM("(int32_t)(int16_t)-128", -128);
-	EXPECT_ITERM("(int64_t)(int16_t)-128", -128);
-	EXPECT_UTERM("(unsigned)(int16_t)0x7FFF", 0x7FFF);
-	EXPECT_UTERM("(uint8_t) (int16_t)0x7FFF", 0xFF);
-	EXPECT_UTERM("(uint16_t)(int16_t)0x7FFF", 0x7FFF);
-	EXPECT_UTERM("(uint32_t)(int16_t)0x7FFF", 0x7FFF);
-	EXPECT_UTERM("(uint64_t)(int16_t)0x7FFF", 0x7FFF);
-	
 	TEST_TERM_TYPE("(uint16_t) 12345", "12345");
-	EXPECT_ITERM("(int)    (uint16_t)~0", 0xFFFF);
-	EXPECT_ITERM("(int8_t) (uint16_t)~0", -1);
-	EXPECT_ITERM("(int16_t)(uint16_t)~0", -1);
-	EXPECT_ITERM("(int32_t)(uint16_t)~0", 0xFFFF);
-	EXPECT_ITERM("(int64_t)(uint16_t)~0", 0xFFFF);
-	EXPECT_UTERM("(unsigned)(uint16_t)~0", 0xFFFF);
-	EXPECT_UTERM("(uint8_t) (uint16_t)~0", 0xFF);
-	EXPECT_UTERM("(uint16_t)(uint16_t)~0", 0xFFFF);
-	EXPECT_UTERM("(uint32_t)(uint16_t)~0", 0xFFFF);
-	EXPECT_UTERM("(uint64_t)(uint16_t)~0", 0xFFFF);
-
 	TEST_TERM_TYPE("(int32_t) -128", "-128");
-	EXPECT_ITERM("(int)    (int32_t)-128", -128);
-	EXPECT_ITERM("(int8_t) (int32_t)-128", -128);
-	EXPECT_ITERM("(int16_t)(int32_t)-128", -128);
-	EXPECT_ITERM("(int32_t)(int32_t)-128", -128);
-	EXPECT_ITERM("(int64_t)(int32_t)-128", -128);
-	EXPECT_UTERM("(unsigned)(int32_t)0x7FFF", 0x7FFF);
-	EXPECT_UTERM("(uint8_t) (int32_t)0x7FFF", 0xFF);
-	EXPECT_UTERM("(uint16_t)(int32_t)0x7FFF", 0x7FFF);
-	EXPECT_UTERM("(uint32_t)(int32_t)0x7FFF", 0x7FFF);
-	EXPECT_UTERM("(uint64_t)(int32_t)0x7FFF", 0x7FFF);
-	EXPECT_MSTR(EVAL("(int32_t) -12345"), "-12345");
-	EXPECT_MSTR(SHOW("(int32_t) -12345"), "-12345");
-
 	TEST_TERM_TYPE("(uint32_t) 128", "128");
-	EXPECT_ITERM("(int)    (uint32_t)~0", -1);
-	EXPECT_ITERM("(int8_t) (uint32_t)~0", -1);
-	EXPECT_ITERM("(int16_t)(uint32_t)~0", -1);
-	EXPECT_ITERM("(int32_t)(uint32_t)~0", -1);
-	EXPECT_ITERM("(int64_t)(uint32_t)~0", 0xFFFFFFFFll);
-	EXPECT_UTERM("(unsigned)(uint32_t)~0", 0xFFFFFFFFull);
-	EXPECT_UTERM("(uint8_t) (uint32_t)~0", 0xFF);
-	EXPECT_UTERM("(uint16_t)(uint32_t)~0", 0xFFFF);
-	EXPECT_UTERM("(uint32_t)(uint32_t)~0", 0xFFFFFFFFull);
-	EXPECT_UTERM("(uint64_t)(uint32_t)~0", 0xFFFFFFFFull);
-	EXPECT_MSTR(EVAL("(uint32_t) 12345"), "12345");
-	EXPECT_MSTR(SHOW("(uint32_t) 12345"), "12345");
-
 	TEST_TERM_TYPE("(int64_t) -128", "-128");
-	EXPECT_ITERM("(int)    (int64_t)-128", -128);
-	EXPECT_ITERM("(int8_t) (int64_t)-128", -128);
-	EXPECT_ITERM("(int16_t)(int64_t)-128", -128);
-	EXPECT_ITERM("(int32_t)(int64_t)-128", -128);
-	EXPECT_ITERM("(int64_t)(int64_t)-128", -128);
-	EXPECT_UTERM("(unsigned)(int64_t)0x7FFF", 0x7FFF);
-	EXPECT_UTERM("(uint8_t) (int64_t)0x7FFF", 0xFF);
-	EXPECT_UTERM("(uint16_t)(int64_t)0x7FFF", 0x7FFF);
-	EXPECT_UTERM("(uint32_t)(int64_t)0x7FFF", 0x7FFF);
-	EXPECT_UTERM("(uint64_t)(int64_t)0x7FFF", 0x7FFF);
-	EXPECT_MSTR(EVAL("(int64_t) -1234567890"), "-1234567890");
-	EXPECT_MSTR(SHOW("(int64_t) -1234567890"), "-1234567890");
-
 	TEST_TERM_TYPE("(uint64_t) 128", "128");
-	EXPECT_ITERM("(int)    (uint64_t)~0", -1);
-	EXPECT_ITERM("(int8_t) (uint64_t)~0", -1);
-	EXPECT_ITERM("(int16_t)(uint64_t)~0", -1);
-	EXPECT_ITERM("(int32_t)(uint64_t)~0", -1);
-	EXPECT_ITERM("(int64_t)(uint64_t)~0", -1);
-	EXPECT_UTERM("(unsigned)(uint64_t)~0", 0xFFFFFFFFull);
-	EXPECT_UTERM("(uint8_t) (uint64_t)~0", 0xFF);
-	EXPECT_UTERM("(uint16_t)(uint64_t)~0", 0xFFFF);
-	EXPECT_UTERM("(uint32_t)(uint64_t)~0", 0xFFFFFFFFull);
-	EXPECT_UTERM("(uint64_t)(uint64_t)~0", 0xFFFFFFFFFFFFFFFFull);
-	EXPECT_MSTR(EVAL("(uint64_t) 1234567890"), "1234567890");
-	EXPECT_MSTR(SHOW("(uint64_t) 1234567890"), "1234567890");
-
 	TEST_OBJ_TYPE(varint2Obj(-12345), "-12345");
-	EXPECT_ITERM("(int)    -128l", -128);
-	EXPECT_ITERM("(int8_t) -128l", -128);
-	EXPECT_ITERM("(int16_t)-128l", -128);
-	EXPECT_ITERM("(int32_t)-128l", -128);
-	EXPECT_ITERM("(int64_t)-128l", -128);
-	EXPECT_UTERM("(unsigned)0x7FFFl", 0x7FFF);
-	EXPECT_UTERM("(uint8_t) 0x7FFFl", 0xFF);
-	EXPECT_UTERM("(uint16_t)0x7FFFl", 0x7FFF);
-	EXPECT_UTERM("(uint32_t)0x7FFFl", 0x7FFF);
-	EXPECT_UTERM("(uint64_t)0x7FFFl", 0x7FFF);
-	EXPECT_MSTR(EVAL("-1234567890l"), "-1234567890");
-
 	TEST_OBJ_TYPE(varsize2Obj(42), "42");
-	EXPECT_ITERM("(int)    ~0ul", -1);
-	EXPECT_ITERM("(int8_t) ~0ul", -1);
-	EXPECT_ITERM("(int16_t)~0ul", -1);
-	EXPECT_ITERM("(int32_t)~0ul", -1);
-	EXPECT_ITERM("(int64_t)~0ul", -1);
-	EXPECT_UTERM("(unsigned)~0ul", 0xFFFFFFFFull);
-	EXPECT_UTERM("(uint8_t) ~0ul", 0xFF);
-	EXPECT_UTERM("(uint16_t)~0ul", 0xFFFF);
-	EXPECT_UTERM("(uint32_t)~0ul", 0xFFFFFFFFull);
-	EXPECT_UTERM("(uint64_t)~0ul", 0xFFFFFFFFFFFFFFFFull);
-	EXPECT_MSTR(EVAL("1234567890ul"), "1234567890");
 }
 
 TEST_DECL(stdfloat)
