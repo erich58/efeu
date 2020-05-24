@@ -1,6 +1,7 @@
 #!/usr/bin/env .build/script.tst
 
 PRINT_LABEL("Datentyp: mode_t");
+EXPECT_IOTEST(mode_t(0100777), "-rwxrwxrwx");
 
 EXPECT(mode_t.base == unsigned);
 EXPECT_REPR(mode_t(0), "?---------");

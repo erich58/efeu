@@ -1,5 +1,15 @@
 #!/usr/bin/env .build/script.tst
 
+EXPECT_IOTEST(float(3.5), "3.5000000");
+EXPECT_IOTEST(3.5, "3.500000000000000");
+EXPECT_STR(3.5, "3.5000");
+
+{
+	StrBuf buf;
+	fprint((IO) buf, 3.5);
+	EXPECT_STR(buf, "3.5000");
+}
+
 EXPECT(abs(-2.) == 2.);
 EXPECT(min(3., 5.) == 3.);
 EXPECT(max(3., 5.) == 5.);

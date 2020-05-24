@@ -1,55 +1,17 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/object.h>
+#include <EFEU/printobj.h>
 #include <EFEU/Resource.h>
 #include <EFEU/math.h>
 #include <EFEU/CmdPar.h>
 #include "utest/mstr.tst.h"
 #include "utest/out.tst.h"
-#include "utest/obj.tst.h"
 #include <math.h>
 
-TEST_DECL(base)
+TEST_DECL(name)
 {
 	EfiObj *obj;
 	void *data;
-
-	TEST_OBJ_TYPE(bool2Obj(0), "false");
-	TEST_OBJ_TYPE(bool2Obj(1), "true");
-	TEST_OBJ_TYPE(char2Obj('a'), "'a'");
-	TEST_OBJ_TYPE(ucs2Obj(L'€'), "'€'");
-	TEST_OBJ_TYPE(str2Obj(mstrcpy("abc")), "\"abc\"");
-	EXPECT_MSTR(obj_show(char2Obj('a')), "a");
-	EXPECT_MSTR(obj_show(ucs2Obj(L'Ä')), "Ä");
-	EXPECT_MSTR(SHOW("'a'"), "a");
-	EXPECT_MSTR(SHOW("L'Ä'"), "Ä");
-
-	obj = NewObj(&Type_ptr, NULL);
-	PrintData(OUT(), obj->type, obj->data);
-	EXPECT_OUT("NULL");
-	data = (void *) 0x1234;
-	CopyData(obj->type, obj->data, &data);
-	PrintData(OUT(), obj->type, obj->data);
-	EXPECT_OUT("_Ptr_(0x1234)");
-	EXPECT(WriteData(obj->type, obj->data, OUT()) == 0);
-	EXPECT_OUT("");
-	UnrefObj(obj);
-
-	obj = NewObj(&Type_void, NULL);
-	PrintData(OUT(), obj->type, obj->data);
-	EXPECT_OUT("void()");
-	UnrefEval(obj);
-
-	obj = str2Obj(NULL);
-	PrintData(OUT(), obj->type, obj->data);
-	EXPECT_OUT("NULL");
-	EXPECT(ReadData(obj->type, obj->data, ionull) == 0);
-	EXPECT_STR(Val_str(obj->data), NULL);
-	IO *io = io_strbuf(0);
-	io_putc(0, io);
-	io_rewind(io);
-	EXPECT(ReadData(obj->type, obj->data, io) == 1);
-	EXPECT_STR(Val_str(obj->data), NULL);
-	UnrefObj(obj);
 
 	obj = NewPtrObj(&Type_name, NULL);
 	PrintData(OUT(), obj->type, obj->data);
@@ -66,82 +28,23 @@ TEST_DECL(base)
 	EXPECT(obj->type == &Type_undef);
 	EXPECT_MSTR(Obj2str(obj), "(_undef_) abc");
 
-	obj = type2Obj(&Type_int);
-	EXPECT_MSTR(obj_show(RefObj(obj)), "int");
-	PrintData(OUT(), obj->type, obj->data);
-	EXPECT_OUT("int");
-	obj = obj2Obj(obj);
-	EXPECT(obj->type == &Type_obj);
-	PrintData(OUT(), obj->type, obj->data);
-	EXPECT_OUT("int");
-	EXPECT_MSTR(obj_show(obj), "(Object) int");
-
-	EXPECT_MSTR(EVAL("[3*5]"), "[15]");
-	EXPECT_MSTR(EVAL("(void)5"), NULL);
-	EXPECT_MSTR(SHOW("(VirFunc) xdiv"), "double xdiv (double, double)\n");
-	MATCH_MSTR(EVAL("(VirFunc) int::operator++"), "\\(VirFunc\\) ");
-	MATCH_MSTR(EVAL("VarTab(\"x\")"), "\\(VarTab\\) ");
-	EXPECT_ITERM("!iostd", 0);
-	EXPECT_ITERM("iostd == ioerr", 0);
-	EXPECT_ITERM("iostd != ioerr", 1);
-
-	PushVarTab(NULL, NULL);
-	EXPECT_MSTR(EVAL("str a = \"abc\""), "abc");
-	EXPECT_MSTR(EVAL("free(a)"), NULL);
-	EXPECT_MSTR(EVAL("a"), NULL);
-	EXPECT_ITERM("Object o = 2", 2);
-	PopVarTab();
-
-	SetResource("ResourceData", "Data");
-	EXPECT_MSTR(EVAL("ResourceData"), "Data");
 }
 
-TEST_DECL(stdint)
+TEST_DECL(floatprec)
 {
-	TEST_OBJ_TYPE(int2Obj(-12345), "-12345");
-	EXPECT_UTERM("(unsigned) 12345", 12345);
-	EXPECT_MSTR(EVAL("-12345"), "-12345");
-	EXPECT_MSTR(SHOW("-12345"), "-12345");
-	TEST_OBJ_TYPE(uint2Obj(12345), "12345u");
-
-	TEST_TERM_TYPE("(int8_t) 0x80", "-128");
-	TEST_TERM_TYPE("(uint8_t) ~0", "255");
-	TEST_TERM_TYPE("(int16_t) -128", "-128");
-	TEST_TERM_TYPE("(uint16_t) 12345", "12345");
-	TEST_TERM_TYPE("(int32_t) -128", "-128");
-	TEST_TERM_TYPE("(uint32_t) 128", "128");
-	TEST_TERM_TYPE("(int64_t) -128", "-128");
-	TEST_TERM_TYPE("(uint64_t) 128", "128");
-	TEST_OBJ_TYPE(varint2Obj(-12345), "-12345");
-	TEST_OBJ_TYPE(varsize2Obj(42), "42");
-}
-
-TEST_DECL(stdfloat)
-{
-	TEST_TERM_TYPE("float(3.5)", "3.5000000");
-	TEST_OBJ_TYPE(double2Obj(3.5), "3.500000000000000");
 	SetFloatPrec("#4g");
-	EXPECT_MSTR(EVAL("12.5"), "12.50");
-	EXPECT_MSTR(SHOW("12.5"), "12.50");
+	EXPECT_MSTR(Obj2str(strterm("12.5")), "12.50");
 	SetFloatPrec("0f");
-	EXPECT_MSTR(SHOW("12.5"), "13");
+	EXPECT_MSTR(Obj2str(strterm("12.5")), "13");
 	SetFloatPrec("#5");
-}
-
-TEST_DECL(unix)
-{
-	TEST_TERM_TYPE("mode_t(0100777)", "-rwxrwxrwx");
 }
 
 TEST_SUITE
 {
 	SetupStd();
 	SetupMath();
-	TEST_RUN(base);
-	TEST_RUN(stdint);
-	TEST_RUN(stdfloat);
-	TEST_RUN(unix);
+	TEST_RUN(name);
+	TEST_RUN(floatprec);
 	CLEANUP_MSTR;
 	CLEANUP_OUT;
-	CLEANUP_OBJ;
 }

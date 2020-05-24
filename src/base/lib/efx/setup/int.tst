@@ -2,6 +2,9 @@
 
 PRINT_LABEL("int");
 EXPECT_STR(typeof 0, "int");
+EXPECT_IOTEST(-32000, "-32000");
+EXPECT_STR(-32000, "-32000");
+EXPECT_REPR(-32000, "-32000");
 EXPECT((int)    -128 == -128);
 EXPECT((int8_t) -128 == -128);
 EXPECT((int16_t)-128 == -128);
@@ -12,11 +15,12 @@ EXPECT((uint8_t) 0x7FFF == 0xFF);
 EXPECT((uint16_t)0x7FFF == 0x7FFF);
 EXPECT((uint32_t)0x7FFF == 0x7FFF);
 EXPECT((uint64_t)0x7FFF == 0x7FFF);
-EXPECT_STR(-12345, "-12345");
-EXPECT_REPR(-12345, "-12345");
 
 PRINT_LABEL("unsigned");
 EXPECT_STR(typeof ~0u, "unsigned");
+EXPECT_IOTEST(64000u, "64000u");
+EXPECT_STR(64000u, "64000");
+EXPECT_REPR(64000u, "64000");
 EXPECT((int)    ~0u == -1);
 EXPECT((int8_t) ~0u == -1);
 EXPECT((int16_t)~0u == -1);
@@ -27,9 +31,9 @@ EXPECT((uint8_t) ~0u == 0xFF);
 EXPECT((uint16_t)~0u == 0xFFFF);
 EXPECT((uint32_t)~0u == 0xFFFFFFFFull);
 EXPECT((uint64_t)~0u == 0xFFFFFFFFull);
-EXPECT_STR(12345u, "12345");
 
 PRINT_LABEL("int8_t")
+EXPECT_IOTEST((int8_t)0x80, "-128");
 EXPECT((int)    (int8_t)0x80 == -128);
 EXPECT((int8_t) (int8_t)0x80 == -128);
 EXPECT((int16_t)(int8_t)0x80 == -128);
@@ -42,6 +46,7 @@ EXPECT((uint32_t)(int8_t)0x7f == 127);
 EXPECT((uint64_t)(int8_t)0x7f == 127);
 
 PRINT_LABEL("uint8_t");
+EXPECT_IOTEST((uint8_t)~0, "255");
 EXPECT((int)    (uint8_t)~0 == 0xFF);
 EXPECT((int8_t) (uint8_t)~0 == -1);
 EXPECT((int16_t)(uint8_t)~0 == 0xFF);
@@ -54,6 +59,7 @@ EXPECT((uint32_t)(uint8_t)~0 == 0xFF);
 EXPECT((uint64_t)(uint8_t)~0 == 0xFF);
 
 PRINT_LABEL("int16_t");
+EXPECT_IOTEST((int16_t)-32000, "-32000");
 EXPECT((int)    (int16_t)-128 == -128);
 EXPECT((int8_t) (int16_t)-128 == -128);
 EXPECT((int16_t)(int16_t)-128 == -128);
@@ -66,6 +72,7 @@ EXPECT((uint32_t)(int16_t)0x7FFF == 0x7FFF);
 EXPECT((uint64_t)(int16_t)0x7FFF == 0x7FFF);
 
 PRINT_LABEL("uint16_t");
+EXPECT_IOTEST((uint16_t)64000, "64000");
 EXPECT((int)    (uint16_t)~0 == 0xFFFF);
 EXPECT((int8_t) (uint16_t)~0 == -1);
 EXPECT((int16_t)(uint16_t)~0 == -1);
@@ -78,6 +85,8 @@ EXPECT((uint32_t)(uint16_t)~0 == 0xFFFF);
 EXPECT((uint64_t)(uint16_t)~0 == 0xFFFF);
 
 PRINT_LABEL("int32_t");
+EXPECT_IOTEST((int32_t)-2000000000, "-2000000000");
+EXPECT_STR((int32_t)-2000000000, "-2000000000");
 EXPECT((int)    (int32_t)-128 == -128);
 EXPECT((int8_t) (int32_t)-128 == -128);
 EXPECT((int16_t)(int32_t)-128 == -128);
@@ -88,10 +97,10 @@ EXPECT((uint8_t) (int32_t)0x7FFF == 0xFF);
 EXPECT((uint16_t)(int32_t)0x7FFF == 0x7FFF);
 EXPECT((uint32_t)(int32_t)0x7FFF == 0x7FFF);
 EXPECT((uint64_t)(int32_t)0x7FFF == 0x7FFF);
-EXPECT_STR((int32_t)-12345, "-12345");
-EXPECT_REPR((int32_t)-12345, "-12345");
 
 PRINT_LABEL("uint32_t");
+EXPECT_IOTEST((uint32_t)4000000000, "4000000000");
+EXPECT_STR((uint32_t)4000000000, "4000000000");
 EXPECT((int)    (uint32_t)~0 == -1);
 EXPECT((int8_t) (uint32_t)~0 == -1);
 EXPECT((int16_t)(uint32_t)~0 == -1);
@@ -102,10 +111,10 @@ EXPECT((uint8_t) (uint32_t)~0 == 0xFF);
 EXPECT((uint16_t)(uint32_t)~0 == 0xFFFF);
 EXPECT((uint32_t)(uint32_t)~0 == 0xFFFFFFFFull);
 EXPECT((uint64_t)(uint32_t)~0 == 0xFFFFFFFFull);
-EXPECT_STR((uint32_t) 12345, "12345");
-EXPECT_REPR((uint32_t) 12345, "12345");
 
 PRINT_LABEL("int64_t");
+EXPECT_IOTEST((int64_t)-4500000000000000000, "-4500000000000000000");
+EXPECT_STR((int64_t)-4500000000000000000, "-4500000000000000000");
 EXPECT((int)    (int64_t)-128 == -128);
 EXPECT((int8_t) (int64_t)-128 == -128);
 EXPECT((int16_t)(int64_t)-128 == -128);
@@ -116,10 +125,10 @@ EXPECT((uint8_t) (int64_t)0x7FFF == 0xFF);
 EXPECT((uint16_t)(int64_t)0x7FFF == 0x7FFF);
 EXPECT((uint32_t)(int64_t)0x7FFF == 0x7FFF);
 EXPECT((uint64_t)(int64_t)0x7FFF == 0x7FFF);
-EXPECT_STR((int64_t) -1234567890, "-1234567890");
-EXPECT_REPR((int64_t) -1234567890, "-1234567890");
 
 PRINT_LABEL("uint64_t");
+EXPECT_IOTEST((uint64_t)9000000000000000000, "9000000000000000000");
+EXPECT_STR((uint64_t)9000000000000000000, "9000000000000000000");
 EXPECT((int)    (uint64_t)~0 == -1);
 EXPECT((int8_t) (uint64_t)~0 == -1);
 EXPECT((int16_t)(uint64_t)~0 == -1);
@@ -130,12 +139,13 @@ EXPECT((uint8_t) (uint64_t)~0 == 0xFF);
 EXPECT((uint16_t)(uint64_t)~0 == 0xFFFF);
 EXPECT((uint32_t)(uint64_t)~0 == 0xFFFFFFFFull);
 EXPECT((uint64_t)(uint64_t)~0 == 0xFFFFFFFFFFFFFFFFull);
-EXPECT_STR((uint64_t) 1234567890, "1234567890");
-EXPECT_REPR((uint64_t) 1234567890, "1234567890");
 
 PRINT_LABEL("varint");
 EXPECT_STR(varint.cname, "int64_t");
 EXPECT_STR(typeof 0l, "varint");
+EXPECT_IOTEST(-4000000000000000000l, "-4000000000000000000");
+EXPECT_STR(-4000000000000000000l, "-4000000000000000000");
+EXPECT_REPR(-4000000000000000000l, "-4000000000000000000");
 EXPECT((int)    -128l == -128);
 EXPECT((int8_t) -128l == -128);
 EXPECT((int16_t)-128l == -128);
@@ -146,11 +156,13 @@ EXPECT((uint8_t) 0x7FFFl == 0xFF);
 EXPECT((uint16_t)0x7FFFl == 0x7FFF);
 EXPECT((uint32_t)0x7FFFl == 0x7FFF);
 EXPECT((uint64_t)0x7FFFl == 0x7FFF);
-EXPECT_STR(-1234567890l, "-1234567890");
 
 PRINT_LABEL("varsize");
 EXPECT_STR(varsize.cname, "uint64_t");
 EXPECT_STR(typeof 0ul, "varsize");
+EXPECT_IOTEST(9000000000000000000ul, "9000000000000000000");
+EXPECT_STR(9000000000000000000ul, "9000000000000000000");
+EXPECT_REPR(9000000000000000000ul, "9000000000000000000");
 EXPECT((int)    ~0ul == -1);
 EXPECT((int8_t) ~0ul == -1);
 EXPECT((int16_t)~0ul == -1);
@@ -161,8 +173,6 @@ EXPECT((uint8_t) ~0ul == 0xFF);
 EXPECT((uint16_t)~0ul == 0xFFFF);
 EXPECT((uint32_t)~0ul == 0xFFFFFFFFull);
 EXPECT((uint64_t)~0ul == 0xFFFFFFFFFFFFFFFFull);
-EXPECT_STR(1234567890ul, "1234567890");
-EXPECT_REPR(1234567890ul, "1234567890");
 
 PRINT_LABEL("Integer functions");
 EXPECT(abs(-2) == 2);

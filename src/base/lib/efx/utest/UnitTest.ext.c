@@ -8,6 +8,8 @@
 #include <EFEU/printobj.h>
 
 void UnitTest_setup(void);
+int UnitTest_iotest(const char *fn, int lno, const EfiObj *obj,
+	const char *repr, const char *expr);
 
 static EfiVarTab *UnitTestVar = NULL;
 
@@ -142,6 +144,64 @@ static void f_repr (EfiFunc *func, void *rval, void **arg)
 	Val_str(rval) = sb_cpyrelease(sb);
 }
 
+static void f_iotest (EfiFunc *func, void *rval, void **arg)
+{
+	const EfiObj *obj = arg[1];
+
+	if	(!obj)
+	{
+		Val_bool(rval) = 1;
+		return;
+	}
+
+	StrBuf *sb = sb_acquire();
+	IO *io = io_strbuf(sb);
+	EfiObj *tg;
+	int r = 1;
+
+	const char *id = Val_str(arg[0]);
+	const char *value = Val_str(arg[2]);
+	const char *expr = Val_str(arg[3]);
+
+	/*
+	io_xprintf(io, "typeof(%s) -> %s (%s)",
+		expr, obj->type->name, obj->type->cname); 
+	UnitTest_info(id, 0, "# %s", sb_nul(sb));
+
+	io_rewind(io);
+	*/
+
+	PrintData(io, obj->type, obj->data);
+	r = (mstrcmp(sb_nul(sb), value) == 0);
+	UnitTest_result(id, 0, r, "%s -> %s", expr,
+		UnitTest_qstr(value));
+
+	tg = ConstObj(obj->type, obj->data);
+	io_rewind(io);
+	PrintData(io, tg->type, tg->data); 
+	r &= UnitTest_strcheck(id, 0, "==", sb_nul(sb), value,
+		"copy", UnitTest_qstr(value));
+	UnrefObj(tg);
+
+	if	(r && obj->type->read && obj->type->write)
+	{
+		tg = NewObj(obj->type, NULL);
+		io_rewind(io);
+		WriteData(obj->type, obj->data, io); 
+		io_rewind(io);
+		ReadData(tg->type, tg->data, io); 
+		io_rewind(io);
+		PrintData(io, tg->type, tg->data); 
+		r &= UnitTest_strcheck(id, 0, "==", sb_nul(sb), value, 
+			"out-in", UnitTest_qstr(value));
+		UnrefObj(tg);
+	}
+
+	sb_release(sb);
+	Val_bool(rval) = r;
+}
+
+
 static EfiFuncDef fdef_func[] = {
 	{ 0, &Type_void, "UnitTest::info(str id, str fmt, ...)", f_info },
 	{ 0, &Type_void, "UnitTest::expr(str id, str expr)", f_expr },
@@ -158,6 +218,8 @@ static EfiFuncDef fdef_func[] = {
 	{ 0, &Type_str, "UnitTest::tmp(str name = NULL)", f_tmp },
 	{ 0, &Type_str, "UnitTest::mkdir(str name)", f_mkdir },
 	{ 0, &Type_str, "UnitTest::mkfile(str name, str content = NULL)", f_mkfile },
+	{ 0, &Type_bool, "UnitTest::iotest(str id, ., str repr, str expr)",
+		f_iotest },
 	{ 0, &Type_str, "UnitTest::content(str name = NULL)", f_content },
 	{ 0, &Type_void, "UnitTest::tmpclean()", f_tmpclean },
 	{ 0, &Type_bool, "UnitTest::stdin(str name = NULL, "
@@ -185,6 +247,8 @@ static PPMacDef macdef[] = {
 		"\"==\", __a, __b, # __a, # __b)", NULL },
 	{ "EXPECT_STRCMP(__a, __op, __b) UnitTest::strcheck(__ID__,"
 		"__op, __a, __b, # __a, # __b)", NULL },
+	{ "EXPECT_IOTEST(__a, __b) UnitTest::iotest(__ID__,"
+		"__a, __b, # __a)", NULL },
 	{ "MATCH_STR(__a, __b) UnitTest::strcheck(__ID__,"
 		"\"~\", __a, __b, # __a, # __b)", NULL },
 	{ "TEST_DIR(__n) UnitTest::result(__ID__,"
