@@ -12,6 +12,7 @@ int UnitTest_iotest(const char *fn, int lno, const EfiObj *obj,
 	const char *repr, const char *expr);
 
 static EfiVarTab *UnitTestVar = NULL;
+static STRBUF(UnitTestBuffer, 256);
 
 static EfiVarDef vardef[] = {
 	{ "UnitTest",	&Type_vtab, &UnitTestVar,
@@ -144,6 +145,17 @@ static void f_repr (EfiFunc *func, void *rval, void **arg)
 	Val_str(rval) = sb_cpyrelease(sb);
 }
 
+static void f_out_io (EfiFunc *func, void *rval, void **arg)
+{
+	Val_io(rval) = io_strbuf(&UnitTestBuffer);
+}
+
+static void f_out_data (EfiFunc *func, void *rval, void **arg)
+{
+	Val_str(rval) = mstrcpy(sb_nul(&UnitTestBuffer));
+	sb_trunc(&UnitTestBuffer);
+}
+
 static void f_iotest (EfiFunc *func, void *rval, void **arg)
 {
 	const EfiObj *obj = arg[1];
@@ -231,6 +243,8 @@ static EfiFuncDef fdef_func[] = {
 	{ 0, &Type_void, "UnitTest::exit()", f_exit },
 	{ 0, &Type_int, "UnitTest::wait()", f_wait },
 	{ 0, &Type_str, "UnitTest::repr(.)", f_repr },
+	{ 0, &Type_io, "UnitTest::out_io()", f_out_io },
+	{ 0, &Type_str, "UnitTest::out_data()", f_out_data },
 };
 
 static PPMacDef macdef[] = {
@@ -269,6 +283,14 @@ static PPMacDef macdef[] = {
 	{ "MATCH_REPR(__o, __r) UnitTest::strcheck(__ID__, \"~\", "
 		"UnitTest::repr(__o), __r, "
 		"sprintf(\"repr(%s)\", # __o), # __r)", NULL },
+	{ "IN(__s) (IO)(__s)", NULL },
+	{ "OUT() UnitTest::out_io()", NULL },
+	{ "EXPECT_OUT(__r) UnitTest::strcheck(__ID__, \"==\", "
+		"UnitTest::out_data(), __r, "
+		"\"output()\", # __r)", NULL },
+	{ "MATCH_OUT(__r) UnitTest::strcheck(__ID__, \"~\", "
+		"UnitTest::out_data(), __r, "
+		"\"output()\", # __r)", NULL },
 	{ "TEST_FORK if (UnitTest::fork(__ID__))", NULL },
 	{ "TEST_EXIT UnitTest::exit()", NULL },
 	{ "CHILD_SIGNALED(__n) UnitTest::result(__ID__,"

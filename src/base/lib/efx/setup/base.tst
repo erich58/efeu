@@ -27,6 +27,7 @@ EXPECT_IOTEST(int, "int");
 EXPECT_IOTEST(unknown_name, "(_undef_) unknown_name");
 EXPECT_IOTEST(Object(5), "5");
 
+EXPECT_IOTEST(NULL, "NULL");
 EXPECT(!NULL);
 EXPECT((bool)NULL == false);
 UnitTest::stdout("stdout");

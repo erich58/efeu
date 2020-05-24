@@ -44,29 +44,30 @@ UnitTest::stdout();
 EXPECT_CONTENT("stdout", "Testausgabe 42\n");
 
 EXPECT_STR(sprintf("%d", 42), "42");
-EXPECT(pcopy((IO) "abc\nxyz\n", (IO) sb, '\n') == 3);
-EXPECT_STR(sb, "abc");
-EXPECT_STR(pcopy((IO) "abc\nxyz\n", 'y'), "abc\nx");
-sb.free();
-EXPECT(TeXputs(sb, "a_c") == 4);
-EXPECT_STR(sb, "a\\_c");
+EXPECT(pcopy(IN("abc\nxyz\n"), OUT(), '\n') == 3);
+EXPECT_OUT("abc");
+EXPECT_STR(pcopy(IN("abc\nxyz\n"), 'y'), "abc\nx");
+
+EXPECT(TeXputs(OUT(), "a_c") == 4);
+EXPECT_OUT("a\\_c");
 EXPECT_REPR(expr(3 * 5), "15");
 
 PRINT_LABEL("Termauswertung");
 
 int a = 10;
+StrBuf sb;
 
 {
 	int a = 0;
 	eval("a += 2");
 	geval("a += 2");
-	eval((IO)("a++"));
+	eval(IN("a++"));
 	EXPECT(a == 3);
 	sb.free();
 	IO out = sb;
-	cmdeval((IO)"a+100", out, false);
+	cmdeval(IN("a+100"), out, false);
 	putc(' ', out);
-	cmdeval((IO)"a+200", out, true);
+	cmdeval(IN("a+200"), out, true);
 }
 
 EXPECT(a == 12);

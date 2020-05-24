@@ -4,11 +4,8 @@ EXPECT_IOTEST(float(3.5), "3.5000000");
 EXPECT_IOTEST(3.5, "3.500000000000000");
 EXPECT_STR(3.5, "3.5000");
 
-{
-	StrBuf buf;
-	fprint((IO) buf, 3.5);
-	EXPECT_STR(buf, "3.5000");
-}
+fprint(OUT(), 3.5);
+EXPECT_OUT("3.5000");
 
 EXPECT(abs(-2.) == 2.);
 EXPECT(min(3., 5.) == 3.);
@@ -59,3 +56,4 @@ EXPECT(rnd(-2.5) == -3.);
 EXPECT_DBL(M_PI, 3.14159265);
 EXPECT(1./0. == Inf);
 EXPECT_STR(str(0./0.), "NaN");
+EXPECT_STR(NaN, "NaN");
