@@ -132,6 +132,17 @@ static void f_lcheckall (EfiFunc *func, void *rval, void **arg)
 	lcheckall();
 }
 
+static void f_setenv (EfiFunc *func, void *rval, void **arg)
+{
+	const char *name = STR(0);
+	const char *value = STR(1);
+
+	if	(value)
+		Val_bool(rval) = (setenv(name, value, Val_bool(arg[2])) == 0);
+	else
+		Val_bool(rval) = (unsetenv(name) == 0);
+}
+
 static void f_getenv (EfiFunc *func, void *rval, void **arg)
 {
 	char *p = getenv(STR(0));
@@ -242,6 +253,8 @@ static EfiFuncDef fdef_pctrl[] = {
 	{ 0, &Type_void, "memchange (str mark = NULL)", f_memchange },
 	{ 0, &Type_void, "memcheck ()", f_memcheck },
 	{ 0, &Type_void, "lcheckall ()", f_lcheckall },
+	{ 0, &Type_bool, "setenv (str name, str def, bool overwrite = true)",
+		f_setenv },
 	{ 0, &Type_str, "getenv (str name, str def = NULL)", f_getenv },
 	{ 0, &Type_str, "dirname (str name, bool flag = false)", f_dirname },
 	{ FUNC_VIRTUAL, &Type_str, "basename (str path)", f_basename },
