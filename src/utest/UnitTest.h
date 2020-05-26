@@ -71,6 +71,7 @@ int UnitTest_assert(int stat);
 
 void runUnitTest(int argc, char **argv);
 extern char *UnitTest_name;
+extern int UnitTest_child;
 
 #define TEST_DECL(name)	static void _test_ ## name (void)
 #define TEST_SUITE	\

@@ -11,6 +11,8 @@
 #include <errno.h>
 
 char *UnitTest_name = NULL;
+int UnitTest_child = 0;
+
 static int count_good = 0;
 static int count_bad = 0;
 static int fork_depth = 0;
@@ -415,16 +417,16 @@ int UnitTest_wait(void)
 
 int UnitTest_fork(const char *file, int line)
 {
-	pid_t pid = fork();
+	UnitTest_child = fork();
 
-	if	(pid == 0)
+	if	(UnitTest_child == 0)
 	{
 		count_good = 0;
 		count_bad = 0;
 		fork_depth++;
 		return 1;
 	}
-	else if	(pid < 0)
+	else if	(UnitTest_child < 0)
 	{
 		UnitTest_result(file, line, 1, "fork");
 	}

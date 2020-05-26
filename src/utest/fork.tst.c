@@ -10,6 +10,7 @@ TEST_SUITE
 	TEST_FORK
 	{
 		PRINT_LABEL("Child");
+		EXPECT(UnitTest_child == 0);
 		UnitTest_stdout("stdout");
 
 		TEST_FORK
@@ -25,6 +26,7 @@ TEST_SUITE
 		TEST_EXIT;
 	}
 
+	EXPECT(UnitTest_child != 0);
 	CHILD_EXIT(0);
 
 	TEST_FORK
