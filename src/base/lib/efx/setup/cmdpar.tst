@@ -75,7 +75,12 @@ EXPECT(p.list() == { "Arg", "Opt", "Res" });
 EXPECT_STR(p.psub("{Arg}:$1", 42), "y:42");
 EXPECT_STR(p.psub(NULL), NULL);
 
-p.xeval({ "test", "-o", "x", "y" })
+p = CmdPar("test");
+p.read(IN("o|\n*args|\n"));
+p.write(OUT());
+EXPECT_OUT("\no|\n*args|\n");
+EXPECT(p.eval({ "test", "-o", "a", "-o", "x" }) == { "test", "a", "x", });
+EXPECT(p.xeval({ "test", "-o", "a", "-o", "x" }) == { "test", "a", "-o", "x", });
 
 p = CmdPar("test");
 TEST_FILE("test.cnf", "Parameter = 5\n");

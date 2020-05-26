@@ -30,27 +30,34 @@ EXPECT_REPR(Func.var, "Func = {\n\ttype\n}");
 EXPECT_REPR(int operator+ (int, int);,
 	"virtual int operator\"+\" (int, int)");
 
+str boolean_info = string !
+name = bool
+
+default = false
+
+cname = "int"
+size = 4
+recl = 4
+
+io:	print
+copy:	memcpy
+clean:	memset
+
+conv	Converters
+create	Constructors
+par	Parameters
+var	Variables
+!;
+
 UnitTest::stdout("stdout");
 bool.info("print");
 UnitTest::stdout();
-EXPECT_CONTENT("stdout", "\
-name = bool\n\
-\n\
-default = false\n\
-\n\
-cname = \"int\"\n\
-size = 4\n\
-recl = 4\n\
-\n\
-io:\tprint\n\
-copy:\tmemcpy\n\
-clean:\tmemset\n\
-\n\
-conv\tConverters\n\
-create\tConstructors\n\
-par\tParameters\n\
-var\tVariables\n"
-);
+EXPECT_CONTENT("stdout", boolean_info);
+
+UnitTest::stdout("stdout");
+Info("print:/Type/bool");
+UnitTest::stdout();
+EXPECT_CONTENT("stdout", boolean_info);
 
 str operator@ = "special";
 EXPECT_STR(operator@ , "special");
@@ -95,10 +102,42 @@ const int x1 = 3;
 static int x2 = 5;
 provide int;
 
+struct TestType {
+	int a;
+	str b;
+};
+
+EXPECT(is_type("TestType"));
+EXPECT(is_type("UndefinedType") == false);
+
+set_ctrl("A", "X");
+EXPECT_STR(TestType.get_ctrl("A"), "X");
+TestType.set_ctrl("C", "D1");
+EXPECT_STR(TestType.get_ctrl("C"), "D1");
+TestType.set_ctrl("C", "D2");
+EXPECT_STR(TestType.get_ctrl("C"), "D2");
+TestType.list_ctrl(OUT());
+EXPECT_OUT("C\t\nA\t\n");
+
 PRINT_LABEL("Info - Ausgabe")
 UnitTest::stdout("stdout");
 Info("print:/");
 Info("print:/Var");
 Info("print:/Func");
+Info("print:/Type/int");
+Info("print:/Type/str");
+Info("print:/Type/varint");
+Info("print:/Type/int/par");
+Info("print:/Type/int/var");
+Info("print:/Type/int/conv");
+Info("print:/Type/int/create");
+Info("print:/Type/TestType/member");
+Info("xdump:/Type/TestType/par");
 UnitTest::stdout();
+EXPECT(int.order > 0);
+EXPECT(int.dim == 0);
+EXPECT_STR(int.src, NULL);
+EXPECT(typeof int.create == VirFunc);
+EXPECT(typeof int.convlist == List_t);
+EXPECT(typeof int.convlist.obj == Func);
 

@@ -77,7 +77,7 @@ static char *Time_fmt = NULL;
 
 static EfiObj *cal2obj (CalInfo *cal, int type)
 {
-	int val;
+	int val = 0;
 
 	if	(cal == NULL)
 		cal = Calendar(0, NULL);
@@ -92,7 +92,6 @@ static EfiObj *cal2obj (CalInfo *cal, int type)
 	case DM_HOUR:	val = cal->hour; break;
 	case DM_MIN:	val = cal->min; break;
 	case DM_SEC:	val = cal->sec; break;
-	default:	val = 0; break;
 	}
 
 	return int2Obj(val);
@@ -429,6 +428,8 @@ static EfiFuncDef fdef[] = {
 	{ FUNC_RESTRICTED, &Type_double, "Time ()", f_Time2dbl },
 	{ 0, &Type_str, "Time::konv (str fmt = NULL)", f_Time_conv },
 	{ 0, &Type_int, "Time::print (IO out, str fmt = NULL)", f_Time_print },
+	{ 0, &Type_str, "str (Time t)", f_Time2str },
+	{ 0, &Type_str, "str (Time t, str fmt)", f_Time_conv },
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, Time)", f_fprint_Time },
 	{ 0, &Type_Time, "localtime (int offset = 0)", f_localtime },
 	{ 0, &Type_Time, "& Time::operator+= & (int)", f_Time_add },
