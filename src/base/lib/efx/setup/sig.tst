@@ -71,7 +71,7 @@ TEST_FORK
 {
 	signal(SIGALRM, [ EXPECT(this == SIGALRM); ]);
 	alarm(1);
-	sleep(2.);
+	EXPECT(sleep(2.) == false);
 	TEST_EXIT;
 }
 
@@ -81,7 +81,7 @@ TEST_FORK
 {
 	signal(SIGUSR1, [ EXPECT(this == SIGUSR1); ]);
 	raise(SIGUSR1);
-	sleep(2.);
+	sleep(0.1);
 	TEST_EXIT;
 }
 
