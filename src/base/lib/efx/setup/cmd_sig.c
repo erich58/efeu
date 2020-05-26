@@ -25,6 +25,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/parsedef.h>
 #include <EFEU/cmdsetup.h>
 #include <signal.h>
+#include <time.h>
+#include <errno.h>
 
 #define	NSIG	64
 
@@ -109,6 +111,36 @@ static void f_alarm (EfiFunc *func, void *rval, void **arg)
 	Val_int(rval) = alarm(Val_int(arg[0]));
 }
 
+static void f_sleep (EfiFunc *func, void *rval, void **arg)
+{
+	struct timespec tv, rem;
+	double d = Val_double(arg[0]);
+
+	if	(d <= 0.)
+	{
+		Val_bool(rval) = 1;
+		return;
+	}
+
+	tv.tv_sec = d;
+	long nsec = 100000000. * (d - tv.tv_sec);
+	tv.tv_sec += nsec / 1000000000l;
+	tv.tv_nsec = nsec % 1000000000l;
+	int s;
+
+	if	(Val_bool(arg[1]))
+	{
+		while ((s = nanosleep(&tv, &rem) != 0) && errno == EINTR)
+			tv = rem;
+	}
+	else
+	{
+		s = nanosleep(&tv, &rem);
+	}
+
+	Val_bool(rval) = (s == 0);
+}
+
 static EfiFuncDef fdef_sig[] = {
 	{ FUNC_VIRTUAL, &Type_bool, "signal (int signum, int mode = SIG_DFL)",
 		f_sig_mode },
@@ -117,6 +149,7 @@ static EfiFuncDef fdef_sig[] = {
 	{ 0, &Type_bool, "kill (int pid, int sig)", f_kill },
 	{ 0, &Type_bool, "raise (int sig)", f_raise },
 	{ 0, &Type_int, "alarm (int sec)", f_alarm },
+	{ 0, &Type_bool, "sleep (double sec, bool resume = false)", f_sleep },
 };
 
 void CmdSetup_signal (void)

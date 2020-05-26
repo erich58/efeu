@@ -70,4 +70,4 @@ EXPECT_STR(def, NULL);
 
 EXPECT(Date() == today());
 EXPECT(Time(time()) == Time());
-EXPECT(localtime(30) - Time()) == 30);
+EXPECT(localtime(30) - Time() == 30);

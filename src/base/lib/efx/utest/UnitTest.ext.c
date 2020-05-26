@@ -19,6 +19,13 @@ static EfiVarDef vardef[] = {
 		"UnitTest-Funktionen\n" },
 };
 
+static EfiVarDef uvar[] = {
+	{ "name", &Type_str, &UnitTest_name,
+		"Basisname des Tests\n" },
+	{ "child", &Type_int, &UnitTest_child,
+		"Kindprozess\n" },
+};
+
 static StrBuf *do_print(void *fmt, void *list)
 {
 	StrBuf *sb = sb_acquire();
@@ -315,6 +322,7 @@ void UnitTest_setup(void)
 	UnitTestVar = VarTab("UnitTest", 32);
 	AddVarDef(GlobalVar, vardef, tabsize(vardef));
 	PushVarTab(RefVarTab(UnitTestVar), NULL);
+	AddVarDef(NULL, uvar, tabsize(uvar));
 	AddFuncDef(fdef_func, tabsize(fdef_func));
 	PopVarTab();
 	AddMacDef(macdef, tabsize(macdef));
