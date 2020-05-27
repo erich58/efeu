@@ -124,3 +124,11 @@ EXPECT_DBL(xdiv(timeval(), time()), 1.0);
 EXPECT(Date() == today());
 EXPECT(Time(time()) == Time());
 EXPECT(localtime(30) - Time() == 30);
+
+EXPECT(time.classification("c1h", "daytime[%h Uhr]=1h"));
+EXPECT_STR(((time)Time("2020-01-01 08:20:00")).c1h, "08 Uhr");
+EXPECT_STR(((time)Time("2020-01-01 15:00:00")).c1h, "15 Uhr");
+
+EXPECT(time.classification("cday", "date[%d.%m.]=2020"));
+EXPECT_STR(((time)Time("2020-05-12 08:20:00")).cday, "12.05.");
+EXPECT(((time)Time("2021-01-01 15:00:00")).cday == 0);
