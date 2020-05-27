@@ -34,7 +34,6 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/Op.h>
 #include <EFEU/CmpDef.h>
 #include <EFEU/TestDef.h>
-#include <EFEU/tms.h>
 #include <EFEU/EfiInput.h>
 #include <EFEU/EfiOutput.h>
 #include <EFEU/EfiClass.h>
@@ -597,7 +596,6 @@ void SetupStd(void)
 	CmdSetup_cmdpar();
 	CmdSetup_match();
 	CmdSetup_unix();
-	CmdSetup_tms();
 	CmdSetup_timeval();
 	CmdSetup_dl();
 	CmdSetup_log();
