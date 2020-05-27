@@ -383,7 +383,6 @@ void CmdSetup_base(void)
 	AddType(&Type_char);
 	AddType(&Type_wchar);
 	AddType(&Type_str);
-	AddType(&Type_varstr);
 	AddType(&Type_io);
 	AddType(&Type_vtab);
 
