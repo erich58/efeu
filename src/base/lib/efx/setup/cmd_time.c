@@ -68,7 +68,7 @@ static char *time_fmt = NULL;
 static EfiObj *time2obj (time_t *t, int type)
 {
 	struct tm *tm = localtime(t);
-	int val;
+	int val = 0;
 
 	switch (type)
 	{
@@ -81,7 +81,7 @@ static EfiObj *time2obj (time_t *t, int type)
 	case DM_MIN:	val = tm->tm_min; break;
 	case DM_SEC:	val = tm->tm_sec; break;
 	case DM_DST:	return bool2Obj(tm->tm_isdst);
-	default:	val = 0; break;
+	default:	return varsize2Obj(*t);
 	}
 
 	return int2Obj(val);
@@ -98,6 +98,7 @@ static EfiVarDef v_time[] = {
 };
 
 static EfiMember m_time[] = {
+	{ "idx", &Type_varsize, time_member, (void *) DM_IDX },
 	{ "day", &Type_int, time_member, (void *) DM_DAY },
 	{ "month", &Type_int, time_member, (void *) DM_MON },
 	{ "year", &Type_int, time_member, (void *) DM_YEAR },

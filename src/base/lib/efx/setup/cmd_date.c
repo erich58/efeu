@@ -306,6 +306,7 @@ static void f_Time2time (EfiFunc *func, void *rval, void **arg)
 	tm.tm_hour = x->hour;
 	tm.tm_min = x->min;
 	tm.tm_sec = x->sec;
+	tm.tm_isdst = -1;
 	*((time_t *) rval) = mktime(&tm);
 }
 
