@@ -22,16 +22,14 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/object.h>
 #include <EFEU/cmdsetup.h>
-#include <EFEU/tms.h>
-#include <limits.h>
-
-#if	HAS_TIMEVAL
+#include <sys/time.h>
+#include <math.h>
 
 static int print_timeval (const EfiType *type, const void *data, IO *io)
 {
 	const struct timeval *p = data;
-	return io_xprintf(io, "%u.%06u", (unsigned) p->tv_sec,
-		(unsigned) p->tv_usec);
+	return io_xprintf(io, "%llu.%06lu", (unsigned long long) p->tv_sec,
+		(unsigned long) p->tv_usec);
 }
 
 EfiType Type_timeval = SIMPLE_TYPE("timeval", struct timeval,
@@ -45,13 +43,20 @@ static void f_create (EfiFunc *func, void *rval, void **arg)
 static void f_dbl2tv (EfiFunc *func, void *rval, void **arg)
 {
 	struct timeval *tv = rval;
-	double t = Val_double(arg[0]);
+	double d = Val_double(arg[0]);
 
-	if	(t > LONG_MAX)
-		t = LONG_MAX;
-
-	tv->tv_sec = t;
-	tv->tv_usec = 1000000. * (t - tv->tv_sec);
+	if	(d > 0.)
+	{
+		double sec;
+		unsigned long usec = 1000000. * modf(d, &sec) + 0.5;
+		tv->tv_sec = sec + (usec / 1000000l) + 0.5;
+		tv->tv_usec = usec % 1000000l;
+	}
+	else
+	{
+		tv->tv_sec = 0;
+		tv->tv_usec = 0;
+	}
 }
 
 static void f_tv2dbl (EfiFunc *func, void *rval, void **arg)
@@ -72,17 +77,11 @@ static EfiFuncDef fdef_timeval[] = {
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, timeval)", f_print },
 };
 
-#endif
-
 /*	Initialisierung
 */
 
 void CmdSetup_timeval(void)
 {
-#if	HAS_TIMEVAL
 	AddType(&Type_timeval);
 	AddFuncDef(fdef_timeval, tabsize(fdef_timeval));
-#else
-	;
-#endif
 }

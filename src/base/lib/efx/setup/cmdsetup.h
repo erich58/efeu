@@ -58,6 +58,7 @@ void CmdSetup_DatPool(void);	/* Datenpool */
 void CmdSetup_MapFile(void);	/* Dateimapping */
 void CmdSetup_assignarg(void);	/* Zuweisungsargument */
 void CmdSetup_time(void);	/* Zeitstrukturen, Standardbibliothek */
+void CmdSetup_timeval(void);	/* Zeit in Mikrosekundenauflösung */
 void CmdSetup_date(void);	/* Datum- und Zeit */
 void CmdSetup_unix(void);	/* UNIX-Systemstrukturen */
 void CmdSetup_regex(void);	/* Reguläre Ausdrücke */
