@@ -544,7 +544,6 @@ void SetupStd(void)
 	CmdSetup_double();
 	CmdSetup_str();
 	CmdSetup_io();
-	CmdSetup_stat();
 
 	CmdSetup_int8();
 	CmdSetup_int16();
