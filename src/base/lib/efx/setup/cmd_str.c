@@ -179,6 +179,18 @@ static void k_nchar2str (EfiFunc *func, void *rval, void **arg)
 	Val_str(rval) = s;
 }
 
+static void k_nwchar2str (EfiFunc *func, void *rval, void **arg)
+{
+	StrBuf *sb = sb_acquire();
+	int32_t c = *((int32_t *) arg[0]);
+	int n = func->dim ? Val_int(arg[1]) : 1;
+
+	while (n-- > 0)
+		sb_putucs(c, sb);
+
+	RVSTR = sb_cpyrelease(sb);
+}
+
 static void k_type2str (EfiFunc *func, void *rval, void **arg)
 {
 	StrBuf *sb;
@@ -350,16 +362,16 @@ static void f_strsub (EfiFunc *func, void *rval, void **arg)
 		{
 			sb_puts(in, sb);
 
+			if	(p == s)
+				p++;
+
 			if	(flag)
 			{
 				sb_puts(p, sb);
 				break;
 			}
-			else if	(s == p)
-			{
-				s++;
-			}
-			else	s = p;
+
+			s = p;
 		}
 		else
 		{
@@ -433,10 +445,12 @@ static EfiFuncDef func_str[] = {
 	{ 0, &Type_varsize, "varsize (str)", to_uint64 },
 	{ 0, &Type_varsize, "varsize (str, int base)", to_uint64 },
 
-	{ 0, &Type_double, "double (str, bool locale = false)", k_str2double },
+	{ 0, &Type_double, "double (str)", k_str2double },
 	{ 0, &Type_str, "char ()", k_char2str },
+	{ 0, &Type_str, "wchar_t ()", k_nwchar2str },
 	{ 0, &Type_str, "str (double)", k_double2str },
 	{ 0, &Type_str, "str (char, int = 1)", k_nchar2str },
+	{ 0, &Type_str, "str (wchar_t, int = 1)", k_nwchar2str },
 	{ 0, &Type_str, "str (Type_t, int verbosity = 1)", k_type2str },
 	{ 0, &Type_str, "str (restricted _Ptr_)", k_ptr2str },
 	{ FUNC_RESTRICTED, &Type_str, "str (.)", k_any2str },
