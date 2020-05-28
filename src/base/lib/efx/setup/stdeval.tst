@@ -112,6 +112,8 @@ EXPECT(is_type("UndefinedType") == false);
 
 set_ctrl("A", "X");
 EXPECT_STR(TestType.get_ctrl("A"), "X");
+set_ctrl("A", "Y");
+EXPECT_STR(TestType.get_ctrl("A"), "Y");
 TestType.set_ctrl("C", "D1");
 EXPECT_STR(TestType.get_ctrl("C"), "D1");
 TestType.set_ctrl("C", "D2");
