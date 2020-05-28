@@ -49,7 +49,6 @@ void CmdSetup_signal(void);	/* Signalhaendling */
 void CmdSetup_test(void);	/* Testfunktionen */
 void CmdSetup_konv(void);	/* Konvertierungen */
 void CmdSetup_func(void);	/* Funktionen */
-void CmdSetup_op(void);		/* Operatoren einrichten */
 void CmdSetup_info(void);	/* Informationsdatenbank */
 void CmdSetup_strbuf(void);	/* Stringbuffer */
 void CmdSetup_xml(void);	/* XML-Creator */

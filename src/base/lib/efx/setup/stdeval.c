@@ -582,7 +582,6 @@ void SetupStd(void)
 	CmdSetup_print();
 	CmdSetup_func();
 	CmdSetup_range();
-	CmdSetup_op();
 	CmdSetup_info();
 	CmdSetup_strbuf();
 	CmdSetup_xml();
