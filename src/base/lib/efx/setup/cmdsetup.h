@@ -53,7 +53,6 @@ void CmdSetup_info(void);	/* Informationsdatenbank */
 void CmdSetup_strbuf(void);	/* Stringbuffer */
 void CmdSetup_xml(void);	/* XML-Creator */
 void CmdSetup_StrPool(void);	/* Stringpool */
-void CmdSetup_DatPool(void);	/* Datenpool */
 void CmdSetup_MapFile(void);	/* Dateimapping */
 void CmdSetup_assignarg(void);	/* Zuweisungsargument */
 void CmdSetup_time(void);	/* Zeitstrukturen, Standardbibliothek */

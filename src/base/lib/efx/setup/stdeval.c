@@ -585,7 +585,6 @@ void SetupStd(void)
 	CmdSetup_strbuf();
 	CmdSetup_xml();
 	CmdSetup_MapFile();
-	CmdSetup_DatPool();
 	CmdSetup_StrPool();
 	CmdSetup_assignarg();
 	CmdSetup_time();
