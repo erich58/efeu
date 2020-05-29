@@ -108,7 +108,7 @@ static void f_regcmp (EfiFunc *func, void *rval, void **arg)
 
 static void f_nregcmp (EfiFunc *func, void *rval, void **arg)
 {
-	Val_int(rval) = sub_cmp (Val_ptr(arg[0]), Val_ptr(arg[1]));
+	Val_int(rval) = !sub_cmp (Val_ptr(arg[0]), Val_ptr(arg[1]));
 }
 
 static void f_regexec (EfiFunc *func, void *rval, void **arg)
@@ -162,9 +162,6 @@ static void f_match (EfiFunc *func, void *rval, void **arg)
 static EfiObjList *match_to_list(const char *str, regmatch_t *match, size_t n)
 {
 	EfiObjList *list, **ptr;
-
-	if	(!match)
-		return NewObjList(str2Obj(NULL));
 
 	list = NULL;
 	ptr = &list;
