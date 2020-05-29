@@ -90,3 +90,6 @@ TEST_FORK
 }
 
 CHILD_EXIT(0);
+
+EXPECT(loadlib(NULL) == false);
+EXPECT(loadlib("efm") == true);

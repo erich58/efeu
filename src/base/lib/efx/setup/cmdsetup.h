@@ -63,7 +63,6 @@ void CmdSetup_unix(void);	/* UNIX-Systemstrukturen */
 void CmdSetup_regex(void);	/* Reguläre Ausdrücke */
 void CmdSetup_match(void);	/* Mustervergleich */
 void CmdSetup_cmdpar(void);	/* Befehlsparameter */
-void CmdSetup_dl(void);		/* Dynamische Bibliotheken */
 void CmdSetup_type(void);	/* Datentypen */
 void CmdSetup_log(void);	/* Protokollkonfiguration */
 

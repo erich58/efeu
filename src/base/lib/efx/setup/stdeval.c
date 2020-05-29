@@ -595,7 +595,6 @@ void SetupStd(void)
 	CmdSetup_match();
 	CmdSetup_unix();
 	CmdSetup_timeval();
-	CmdSetup_dl();
 	CmdSetup_log();
 
 	AddEfiMember(Type_list.vtab, list_member, tabsize(list_member));

@@ -528,6 +528,11 @@ static void f_chdir (EfiFunc *func, void *rval, void **arg)
 	Val_bool(rval) = (chdir(Val_str(arg[0])) == 0);
 }
 
+static void f_loadlib (EfiFunc *func, void *rval, void **arg)
+{
+	Val_bool(rval) = loadlib(Val_str(arg[0]), Val_str(arg[1]));
+}
+
 /*	Funktionstabelle
 */
 
@@ -552,8 +557,14 @@ static EfiFuncDef func_unix[] = {
 	{ 0, &Type_bool, "mkdir (str path)", f_mkdir },
 	{ 0, &Type_str, "getcwd ()", f_getcwd },
 	{ 0, &Type_bool, "chdir (str path)", f_chdir },
+	{ 0, &Type_bool, "loadlib (str name, str init = NULL)", f_loadlib },
 };
 
+static EfiVarDef dl_var[] = {
+	{ "LDPATH",	&Type_str, &so_path,
+		":*:search path for shared object modules\n"
+		":de:Suchpfad für shared object modules\n" },
+};
 
 void CmdSetup_unix(void)
 {
@@ -563,4 +574,5 @@ void CmdSetup_unix(void)
 	AddType(&Type_pwd);
 	AddEfiMember(Type_pwd.vtab, pwd_var, tabsize(pwd_var));
 	AddFuncDef(func_unix, tabsize(func_unix));
+	AddVarDef(GlobalVar, dl_var, tabsize(dl_var));
 }
