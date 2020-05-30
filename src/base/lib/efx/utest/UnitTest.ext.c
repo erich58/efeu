@@ -57,17 +57,30 @@ static void f_result (EfiFunc *func, void *rval, void **arg)
 	sb_release(sb);
 }
 
+static char *is_expr(char *p)
+{
+	IO *io = io_string(p, NULL);
+	EfiObj *obj = Parse_term(io, EOF);
+	io_close(io);
+
+	if	(obj && obj->type == &Type_str)
+		p = NULL;
+
+	UnrefObj(obj);
+	return p;
+}
+
 static void f_strinfo (EfiFunc *func, void *rval, void **arg)
 {
 	UnitTest_strinfo(Val_str(arg[0]), 0, "INFO",
-		Val_str(arg[1]), Val_str(arg[2]));
+		Val_str(arg[1]), is_expr(Val_str(arg[2])));
 }
 
 static void f_strcheck (EfiFunc *func, void *rval, void **arg)
 {
 	Val_bool(rval) = UnitTest_strcheck(Val_str(arg[0]), 0,
 		Val_str(arg[1]), Val_str(arg[2]), Val_str(arg[3]),
-		Val_str(arg[4]), Val_str(arg[5]));
+		Val_str(arg[4]), is_expr(Val_str(arg[5])));
 }
 
 static void f_dcmp (EfiFunc *func, void *rval, void **arg)
@@ -234,7 +247,6 @@ static EfiObj *PFunc_TestBlock (IO *io, void *data)
 
 	if	(!Parse_fmt(io, "(N L) C", &name, &list, &block))
 	{
-		UnitTest_error("bad syntax for test block");
 		memfree(id);
 		return NULL;
 	}
@@ -264,6 +276,7 @@ static EfiObj *PFunc_TestBlock (IO *io, void *data)
 	memfree(id);
 	return NULL;
 }
+
 
 static EfiFuncDef fdef_func[] = {
 	{ 0, &Type_void, "UnitTest::info(str id, str fmt, ...)", f_info },

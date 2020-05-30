@@ -1,4 +1,8 @@
 #include <EFEU/UnitTest.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 TEST_SUITE
 {
@@ -19,4 +23,21 @@ TEST_SUITE
 	PRINT_STR(str);
 	PRINT_STR("Einfacher String");
 	PRINT_STR("Zusammengesetzter " "String");
+	PRINT_STR(NULL);
+
+	TEST_FILE("output", NULL);
+
+	TEST_FORK
+	{
+		int fd = creat(UnitTest_tmpname("output"), 0644);
+		dup2(fd, 2);
+		UnitTest_strinfo("Test", 1, "INFO", "a\nb\n", NULL);
+		TEST_EXIT;
+	}
+
+	CHILD_EXIT(0);
+	EXPECT_CONTENT("output",
+		".\tINFO\tTest:1\t\"a\\n\"\n"
+		".\t+\tTest:1\t\"b\\n\"\n"
+	);
 }

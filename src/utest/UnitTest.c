@@ -227,10 +227,24 @@ static void strinfo(const char *pfx, const char *file, int line,
 {
 	static STRING_DECL(buf);
 	const char *p = UnitTest_qsplit(&buf, value);
-	info(pfx, file, line, "%s -> %s", name, p);
 
-	while ((p = UnitTest_next(&buf)))
-		info("+", file, line, "\t%s", p);
+	if	(!name)
+	{
+		if	(*p == 0)
+			p = UnitTest_next(&buf);
+
+		info(pfx, file, line, "%s", p);
+
+		while ((p = UnitTest_next(&buf)))
+			info("+", file, line, "%s", p);
+	}
+	else
+	{
+		info(pfx, file, line, "%s -> %s", name, p);
+
+		while ((p = UnitTest_next(&buf)))
+			info("+", file, line, "\t%s", p);
+	}
 }
 
 void UnitTest_expr(const char *file, int line, const char *expr)
@@ -253,7 +267,7 @@ void UnitTest_strinfo(const char *file, int line, const char *pfx,
 {
 	static STRING_DECL(buf);
 	
-	if	(*expr == '"')
+	if	(expr && *expr == '"')
 	{
 		const char *p = UnitTest_split(&buf, expr);
 
@@ -349,7 +363,9 @@ int UnitTest_strcheck(const char *file, int line, const char *op,
 	else if	(strcmp(op, ">=") == 0)
 		r = UnitTest_strcmp(s1, s2) >= 0;
 
-	const char *p = UnitTest_split(&buf, x2);
+	const char *p = x2 ? UnitTest_split(&buf, x2) :
+		UnitTest_qsplit(&buf, s2);
+
 	UnitTest_result(file, line, r, "%s %s %s", x1, op, p);
 
 	while ((p = UnitTest_next(&buf)))
@@ -361,7 +377,7 @@ int UnitTest_strcheck(const char *file, int line, const char *op,
 	if	(*x1 != '"')
 		strinfo("BECAUSE", file, line, x1, s1);
 
-	if	(*x2 != '"')
+	if	(x2 && *x2 != '"')
 		strinfo("BECAUSE", file, line, x2, s2);
 
 	return r;
