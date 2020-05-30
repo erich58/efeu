@@ -238,16 +238,17 @@ void UnitTest_expr(const char *file, int line, const char *expr)
 	info("EXPR", file, line, "%s", expr);
 }
 
-void UnitTest_info(const char *file, int line, const char *fmt, ...)
+void UnitTest_info(const char *file, int line, const char *pfx,
+	const char *fmt, ...)
 {
 	va_list list;
 
 	va_start (list, fmt);
-	vinfo("INFO", file, line, fmt, list);
+	vinfo(pfx, file, line, fmt, list);
 	va_end(list);
 }
 
-void UnitTest_strinfo(const char *file, int line,
+void UnitTest_strinfo(const char *file, int line, const char *pfx,
 	const char *str, const char *expr)
 {
 	static STRING_DECL(buf);
@@ -259,14 +260,14 @@ void UnitTest_strinfo(const char *file, int line,
 		if	(*p == 0)
 			p = UnitTest_next(&buf);
 
-		info("INFO", file, line, "%s", p);
+		info(pfx, file, line, "%s", p);
 
 		while ((p = UnitTest_next(&buf)))
 			info("+", file, line, "%s", p);
 	}
 	else
 	{
-		strinfo("INFO", file, line, expr, str);
+		strinfo(pfx, file, line, expr, str);
 	}
 }
 

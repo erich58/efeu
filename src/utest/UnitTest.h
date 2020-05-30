@@ -39,8 +39,9 @@ int UnitTest_dcmp(double d1, double d2);
 
 void UnitTest_expr(const char *file, int line, const char *expr);
 void UnitTest_test(const char *file, int line, const char *name);
-void UnitTest_info(const char *file, int line, const char *fmt, ...);
-void UnitTest_strinfo(const char *file, int line,
+void UnitTest_info(const char *file, int line, const char *pfx,
+	const char *fmt, ...);
+void UnitTest_strinfo(const char *file, int line, const char *pfx,
 	const char *str, const char *expr);
 void UnitTest_error(const char *fmt, ...);
 int UnitTest_result(const char *file, int line, int res, const char *fmt, ...);
@@ -84,34 +85,34 @@ UnitTest_test(NULL, 0, # name), _test_ ## name ()
 UnitTest_expr(__FILE__, __LINE__, # expr), (expr)
 
 #define PRINT_LABEL(label)	\
-UnitTest_info(__FILE__, __LINE__, "# %s", label)
+UnitTest_info(__FILE__, __LINE__, "INFO", "# %s", label)
 
 #define PRINT_FMT(fmt, expr)	\
-UnitTest_info(__FILE__, __LINE__, \
+UnitTest_info(__FILE__, __LINE__, "INFO", \
 	"(%s, %s) -> " fmt, # fmt, # expr, (expr))
 
 #define PRINT_INT(expr)	\
-UnitTest_info(__FILE__, __LINE__, \
+UnitTest_info(__FILE__, __LINE__, "INFO", \
 	"(int)(%s) -> %d", # expr, (int)(expr))
 
 #define PRINT_SIZE(expr) \
-UnitTest_info(__FILE__, __LINE__, \
+UnitTest_info(__FILE__, __LINE__, "INFO", \
 	"(size_t)(%s) -> %zu", # expr, (size_t)(expr))
 
 #define PRINT_SSIZE(expr) \
-UnitTest_info(__FILE__, __LINE__, \
+UnitTest_info(__FILE__, __LINE__, "INFO", \
 	"(ssize_t)(%s) -> %zd", # expr, (size_t)(expr))
 
 #define PRINT_LONG(expr) \
-UnitTest_info(__FILE__, __LINE__, \
+UnitTest_info(__FILE__, __LINE__, "INFO", \
 	"(long long)(%s) -> %lld", # expr, (long long)(expr))
 
 #define PRINT_PTR(expr)	\
-UnitTest_info(__FILE__, __LINE__, \
+UnitTest_info(__FILE__, __LINE__, "INFO", \
 	"%s -> %p", # expr, (void *)(expr))
 
 #define PRINT_STR(expr)	\
-UnitTest_strinfo(__FILE__, __LINE__, expr, # expr)
+UnitTest_strinfo(__FILE__, __LINE__, "INFO", expr, # expr)
 
 #define	EXPECT(expr) \
 UnitTest_result(__FILE__,__LINE__, (expr), "%s", # expr)

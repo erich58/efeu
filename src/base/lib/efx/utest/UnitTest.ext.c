@@ -6,6 +6,8 @@
 #include <EFEU/preproc.h>
 #include <EFEU/efutil.h>
 #include <EFEU/printobj.h>
+#include <EFEU/parsedef.h>
+#include <EFEU/cmdeval.h>
 
 void UnitTest_setup(void);
 int UnitTest_iotest(const char *fn, int lno, const EfiObj *obj,
@@ -38,7 +40,7 @@ static StrBuf *do_print(void *fmt, void *list)
 static void f_info (EfiFunc *func, void *rval, void **arg)
 {
 	StrBuf *sb = do_print(arg[1], arg[2]);
-	UnitTest_info(Val_str(arg[0]), 0, "%s", sb_nul(sb));
+	UnitTest_info(Val_str(arg[0]), 0, "INFO", "%s", sb_nul(sb));
 	sb_release(sb);
 }
 
@@ -57,7 +59,7 @@ static void f_result (EfiFunc *func, void *rval, void **arg)
 
 static void f_strinfo (EfiFunc *func, void *rval, void **arg)
 {
-	UnitTest_strinfo(Val_str(arg[0]), 0,
+	UnitTest_strinfo(Val_str(arg[0]), 0, "INFO",
 		Val_str(arg[1]), Val_str(arg[2]));
 }
 
@@ -221,6 +223,48 @@ static void f_iotest (EfiFunc *func, void *rval, void **arg)
 }
 
 
+static EfiObj *PFunc_TestBlock (IO *io, void *data)
+{
+	char *name;
+	EfiObj *block;
+	EfiObjList *list;
+	int rval = 0;
+
+	char *id = rd_ident(io);
+
+	if	(!Parse_fmt(io, "(N L) C", &name, &list, &block))
+	{
+		UnitTest_error("bad syntax for test block");
+		memfree(id);
+		return NULL;
+	}
+
+	rval = Obj2int(ReduceObjList(&list));
+	DelObjList(list);
+	UnitTest_info(id, 0, "# Test: %s", name);
+	memfree(id);
+	memfree(name);
+
+	if	(UnitTest_fork(id, 0))
+	{
+		UnrefEval(block);
+		UnitTest_exit();
+	}
+
+	id = rd_ident(io);
+	int estat = UnitTest_wait();
+
+	if	(!UnitTest_result(id, 0, estat == rval, "child %s %d",
+		rval < 0 ? "signaled" :"exit", abs(rval)))
+	{
+		UnitTest_info(id, 0, "BECAUSE", "child %s %d",
+			estat < 0 ? "signaled" :"exit", abs(estat));
+	}
+
+	memfree(id);
+	return NULL;
+}
+
 static EfiFuncDef fdef_func[] = {
 	{ 0, &Type_void, "UnitTest::info(str id, str fmt, ...)", f_info },
 	{ 0, &Type_void, "UnitTest::expr(str id, str expr)", f_expr },
@@ -306,6 +350,10 @@ static PPMacDef macdef[] = {
 		"UnitTest::wait() == __n, \"child exit %d\", __n)", NULL },
 };
 
+static EfiParseDef pdef[] = {
+	{ "TEST", PFunc_TestBlock, NULL },
+};
+
 TEST_SUITE
 {
 }
@@ -320,6 +368,7 @@ void UnitTest_setup(void)
 	init_done = 1;
 	SetupStd();
 	UnitTestVar = VarTab("UnitTest", 32);
+	AddParseDef(pdef, tabsize(pdef));
 	AddVarDef(GlobalVar, vardef, tabsize(vardef));
 	PushVarTab(RefVarTab(UnitTestVar), NULL);
 	AddVarDef(NULL, uvar, tabsize(uvar));

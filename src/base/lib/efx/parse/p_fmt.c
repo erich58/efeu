@@ -32,6 +32,7 @@ int Parse_fmt(IO *io, const char *fmt, ...)
 	int c;
 	va_list k;
 	EfiObj **ptr;
+	EfiObjList **list;
 	const char *prompt;
 	int stat;
 
@@ -44,6 +45,9 @@ int Parse_fmt(IO *io, const char *fmt, ...)
 	{
 		switch (*fmt)
 		{
+		case 'N':
+			*va_arg(k, char **) = io_getname(io);
+			break;
 		case 'T':
 			ptr = va_arg(k, EfiObj **);
 			*ptr = Parse_term(io, 0);
@@ -55,6 +59,18 @@ int Parse_fmt(IO *io, const char *fmt, ...)
 		case 'C':
 			ptr = va_arg(k, EfiObj **);
 			*ptr = Parse_cmd(io);
+			break;
+		case 'L':
+			list = va_arg(k, EfiObjList **);
+
+			if	(io_eat(io, "%s") == ',')
+				io_getc(io);
+
+			*list = Parse_list(io, fmt[1]);
+
+			if	(fmt[1])
+				fmt++;
+
 			break;
 		case ' ':
 			io_eat(io, "%s");

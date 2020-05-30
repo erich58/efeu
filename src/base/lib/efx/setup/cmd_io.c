@@ -231,7 +231,7 @@ static void f_getline (EfiFunc *func, void *rval, void **arg)
 	if	(list == NULL)
 		io_mcopy(io, NULL, "\n");
 
-	while (list != NULL)
+	for (; list != NULL; list = list->next)
 	{
 		io_eat(io, " \t");
 
@@ -252,8 +252,6 @@ static void f_getline (EfiFunc *func, void *rval, void **arg)
 			CopyData(list->obj->type, list->obj->data, obj->data);
 			UnrefObj(obj);
 		}
-
-		list = list->next;
 	}
 
 	Val_bool(rval) = 1;
