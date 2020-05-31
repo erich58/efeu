@@ -162,7 +162,15 @@ static void f_scanline (EfiFunc *func, void *rval, void **arg)
 	{
 		c = io_getc(io);
 
-		if	(c == EOF || listcmp(end, c))
+		if	(c == '\\')
+		{
+			c = io_getc(io);
+
+			if	(c == EOF)	break;
+			else if	(c == '\n')	io_linemark(io);
+			else			sb_putc(c, sb);
+		}
+		else if	(c == EOF || listcmp(end, c))
 		{
 			ptr = end_scan(sb, ptr);
 			break;
@@ -173,14 +181,6 @@ static void f_scanline (EfiFunc *func, void *rval, void **arg)
 			c = io_eat(io, delim);
 
 			if	(listcmp(end, c))	break;
-		}
-		else if	(c == '\\')
-		{
-			c = io_getc(io);
-
-			if	(c == EOF)	break;
-			else if	(c == '\n')	io_linemark(io);
-			else			sb_putc(c, sb);
 		}
 		else if	(c == '"')
 		{
@@ -284,11 +284,19 @@ static void f_fgets (EfiFunc *func, void *rval, void **arg)
 static void f_ngets (EfiFunc *func, void *rval, void **arg)
 {
 	IO *in = IO(0);
-	int n = Val_int(arg[1]);
-	char *buf = memalloc(n);
+	int n = Val_int(arg[1]) + 1;
 
-	if	((RVSTR = io_gets(buf, n, in)) == NULL)
-		memfree(buf);
+	if	(n > 0)
+	{
+		char *buf = memalloc(n);
+
+		if	((RVSTR = io_gets(buf, n, in)) == NULL)
+			memfree(buf);
+	}
+	else
+	{
+		RVSTR = NULL;
+	}
 }
 
 static void f_copy (EfiFunc *func, void *rval, void **arg)

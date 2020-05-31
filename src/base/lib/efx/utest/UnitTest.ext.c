@@ -251,11 +251,13 @@ static EfiObj *PFunc_TestBlock (IO *io, void *data)
 		return NULL;
 	}
 
+	if	(!name)
+		name = mstrcpy("child");
+
 	rval = Obj2int(ReduceObjList(&list));
 	DelObjList(list);
-	UnitTest_info(id, 0, "# Test: %s", name);
+	UnitTest_info(id, 0, "#EXEC", "%s", name);
 	memfree(id);
-	memfree(name);
 
 	if	(UnitTest_fork(id, 0))
 	{
@@ -266,14 +268,15 @@ static EfiObj *PFunc_TestBlock (IO *io, void *data)
 	id = rd_ident(io);
 	int estat = UnitTest_wait();
 
-	if	(!UnitTest_result(id, 0, estat == rval, "child %s %d",
+	if	(!UnitTest_result(id, 0, estat == rval, "%s %s %d", name,
 		rval < 0 ? "signaled" :"exit", abs(rval)))
 	{
-		UnitTest_info(id, 0, "BECAUSE", "child %s %d",
+		UnitTest_info(id, 0, "BECAUSE", "%s %s %d", name,
 			estat < 0 ? "signaled" :"exit", abs(estat));
 	}
 
 	memfree(id);
+	memfree(name);
 	return NULL;
 }
 
