@@ -401,7 +401,7 @@ static EfiFuncDef func_cpar[] = {
 	{ 0, &Type_void, "ArgList::operator+= (str arg)", f_argl_add },
 	{ 0, &Type_void, "ArgList::set (int n, str arg = NULL)", f_argl_set },
 	{ FUNC_VIRTUAL, &Type_int, "dim (ArgList list)", f_argl_dim },
-	{ FUNC_VIRTUAL, &Type_str, "operator[] (ArgList list, int n)",
+	{ FUNC_VIRTUAL, &Type_str, "operator[] (restricted ArgList list, int n)",
 		f_argl_index },
 
 	{ FUNC_VIRTUAL, &Type_io,

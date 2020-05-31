@@ -18,6 +18,7 @@ TEST_SUITE
 	SetupMath();
 	SetupUtil();
 	SetupPreproc();
+	SetupDebug();
 
 	UnitTest_setup();
 

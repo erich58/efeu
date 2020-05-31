@@ -76,6 +76,11 @@ static void f_get (EfiFunc *func, void *rval, void **arg)
 	Val_obj(rval) = StrPoolObj(idx, pool, idx->data);
 }
 
+static void f_start (EfiFunc *func, void *rval, void **arg)
+{
+	*((uint64_t *) rval) = StrPool_start(Val_ptr(arg[0]));
+}
+
 static void f_next (EfiFunc *func, void *rval, void **arg)
 {
 	*((uint64_t *) rval) = StrPool_next(Val_ptr(arg[0]));
@@ -132,6 +137,7 @@ static EfiFuncDef fdef_StrPool[] = {
 	{ 0, &Type_StrPool, "_Ptr_ ()", f_null },
 	{ 0, &Type_StrPool, "StrPool (void)", f_alloc },
 	{ 0, &Type_StrPool, "StrPool (str path)", f_load },
+	{ 0, &Type_varsize, "StrPool::start ()", f_start },
 	{ 0, &Type_varsize, "StrPool::next ()", f_next },
 	{ 0, &Type_varsize, "StrPool::add (str)", f_add },
 	{ 0, &Type_varsize, "StrPool::printf (str fmt, ...)", f_printf },
@@ -139,7 +145,7 @@ static EfiFuncDef fdef_StrPool[] = {
 	{ 0, &Type_void, "StrPool::dump (IO = iostd )", f_dump },
 	{ 0, &Type_void, "StrPool::cvar (IO out, str name)",
 		f_cvar },
-	{ FUNC_VIRTUAL, &Type_obj, "operator[] (StrPool, varsize)", f_get },
+	{ FUNC_VIRTUAL, &Type_obj, "operator[] (restricted StrPool, varsize)", f_get },
 };
 
 void CmdSetup_StrPool(void)

@@ -41,12 +41,16 @@ If not, write to the Free Software Foundation, Inc.,
 #define	D_CONVERT	04	/* Normale Konvertierung */
 
 #define	D_BASE		010	/* Kompatible Basis */
+//#define	D_BASE		02	/* Kompatible Basis */
 #define	D_ACCEPT	020	/* Akzeptierte Übernahme */
 #define	D_VAARG		040	/* Variable Argumentzahl */
 
 #define	D_RESTRICTED	0100	/* Eingeschränkte Konvertierung */
 #define	D_CREATE	0200	/* Konstruktor verwenden */
+//#define	D_EXPAND	0400	/* Expansion eines Basisobjekts */
+
 #define	D_MAXDIST	0400	/* Maximaldistanz */
+//#define	D_MAXDIST	01000	/* Maximaldistanz */
 
 
 /*	Funktionsargumente Konvertieren

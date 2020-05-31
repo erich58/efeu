@@ -37,7 +37,7 @@ EfiType Type_MapFile = REF_TYPE("MapFile", MapFile *);
 static EfiObj *get_name (const EfiObj *base, void *data)
 {
 	MapFile *map = base ? Val_ptr(base->data) : NULL;
-	return map ? str2Obj(mstrcpy(map->name)) : NULL;
+	return str2Obj(map ? mstrcpy(map->name) : NULL);
 }
 
 static EfiObj *get_size (const EfiObj *base, void *data)
