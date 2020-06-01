@@ -67,7 +67,8 @@ fprint(OUT(), ct);
 EXPECT_OUT("2020-04-01 12:20:30");
 
 PRINT_LABEL("Datentyp Date");
-TEST_EXPR(Date d = Date(t));
+TEST_EXPR(Date d = t);
+EXPECT(d == Date(t));
 EXPECT_IOTEST(d, "Date(01,04,2020)");
 EXPECT_STR(d, "2020-04-01");
 EXPECT(d == Date("2020-04-01"));
@@ -83,6 +84,7 @@ EXPECT(Date::cal1900 == 0);
 d.print(OUT());
 EXPECT(d);
 EXPECT(d == Date(1, 4, 2020));
+EXPECT(cmp(d, Date(1, 4, 2020)) == 0);
 EXPECT_OUT("2020-04-01");
 fprint(OUT(), d);
 EXPECT_OUT("2020-04-01");

@@ -27,7 +27,7 @@ EXPECT_REPR(mode_t(0140000), "s---------");
 PRINT_LABEL("Datentyp: FileStat");
 
 EXPECT(FileStat.base == void);
-Time t = Time();
+time t = time();
 umask(027);
 TEST_FILE("data", "1234\n");
 EXPECT(FileStat s = FileStat(UnitTest::tmp("data")));
