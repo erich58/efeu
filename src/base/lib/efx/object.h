@@ -368,6 +368,7 @@ extern EfiType Type_int;	/* Normale Ganzzahlkonstante */
 extern EfiType Type_uint;	/* Vorzeichenfreie Ganzzahlkonstante */
 extern EfiType Type_Date;	/* Datumsindex */
 extern EfiType Type_Time;	/* Zeitindex */
+extern EfiType Type_time;	/* Zeitindex, time_t Version */
 extern EfiType Type_strbuf;	/* Stringbuffer */
 extern EfiType Type_assignarg;	/* Zuweisungsargument */
 extern EfiType Type_varint;	/* Variable Ganzzahlkonstante */

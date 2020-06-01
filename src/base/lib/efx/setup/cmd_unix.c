@@ -86,7 +86,7 @@ typedef struct {
 	unsigned gid;
 	unsigned mode;
 	int64_t size;
-	CalTimeIndex mtime;
+	time_t mtime;
 } FileStat;
 
 #define	Val_fstat(x)	((FileStat *) (x))[0]
@@ -161,9 +161,9 @@ static EfiObj *fstat_mtime (const EfiObj *base, void *data)
 	if	(base)
 	{
 		FileStat *fstat = base->data;
-		return NewObj(&Type_Time, &fstat->mtime);
+		return NewObj(&Type_time, &fstat->mtime);
 	}
-	else	return NewObj(&Type_Time, NULL);
+	else	return NewObj(&Type_time, NULL);
 }
 
 static EfiMember fstat_var[] = {
@@ -173,13 +173,12 @@ static EfiMember fstat_var[] = {
 	{ "mode", &Type_int, fstat_mode, NULL },
 	{ "type", &Type_char, fstat_type, NULL },
 	{ "size", &Type_int64, fstat_size, NULL },
-	{ "mtime", &Type_Time, fstat_mtime, NULL },
+	{ "mtime", &Type_time, fstat_mtime, NULL },
 };
 
 static void str2fstat (EfiFunc *func, void *rval, void **arg)
 {
 	struct stat buf;
-	struct tm *x;
 	int s;
 
 	if	(Val_bool(arg[1]))
@@ -195,15 +194,7 @@ static void str2fstat (EfiFunc *func, void *rval, void **arg)
 		fstat->gid = buf.st_gid;
 		fstat->mode = buf.st_mode;
 		fstat->size = buf.st_size;
-
-		if	((x = localtime(&buf.st_mtime)) != NULL)
-		{
-			fstat->mtime.date = CalendarIndex(x->tm_mday,
-				1 + x->tm_mon, 1900 + x->tm_year);
-			fstat->mtime.time = (x->tm_hour * 60 + x->tm_min) * 60
-				+ x->tm_sec;
-		}
-		else	fstat->mtime = CurrentTime();
+		fstat->mtime = buf.st_mtime;
 	}
 	else	memset(rval, 0, sizeof(FileStat));
 }
@@ -236,7 +227,8 @@ static void fprint_fstat (EfiFunc *func, void *rval, void **arg)
 	{
 		int n = 0;
 		n = io_xprintf(io, "(%s: ", fstat->path);
-		n += PrintTime(io, "%_d. %b %Y %H:%M ", fstat->mtime);
+		n += Print_tm(io, "%_d. %b %Y %H:%M ",
+			localtime(&fstat->mtime));
 		n += io_xprintf(io, "%#o ", fstat->mode);
 		n += io_xprintf(io, "%d-", fstat->uid);
 		n += io_xprintf(io, "%d ", fstat->gid);
