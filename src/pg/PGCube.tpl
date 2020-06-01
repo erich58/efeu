@@ -295,7 +295,7 @@ memfree(cmd);
 !);
 
 def.setup(true);
-def = NULL;
+free(def);
 
 hdr << "#endif\t/* HAS_PQ */\n";
 src << "#endif\t/* HAS_PQ */\n";

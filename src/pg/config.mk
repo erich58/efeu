@@ -12,4 +12,4 @@ files:: .build/libpq.mk
 	mkdir -p $(@D)
 	$(BIN)/efeu-config update libpq.mkcfg $@
 
-include .build/libpq.mk
+-include .build/libpq.mk
