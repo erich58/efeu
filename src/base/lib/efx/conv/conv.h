@@ -36,6 +36,7 @@ If not, write to the Free Software Foundation, Inc.,
 #define	D_REJECT	-1	/* Konvertierung ablehnen */
 #define	D_MATCH		0	/* Übereinstimung */
 
+#if	0
 #define	D_PROMOTE	01	/* Geförderte Konvertierung */
 #define	D_EXPAND	02	/* Expansion eines Basisobjekts */
 #define	D_CONVERT	04	/* Normale Konvertierung */
@@ -51,6 +52,20 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	D_MAXDIST	0400	/* Maximaldistanz */
 //#define	D_MAXDIST	01000	/* Maximaldistanz */
+#else
+#define	D_PROMOTE	0x1	/* Geförderte Konvertierung */
+#define	D_BASE		0x2	/* Kompatible Basis */
+#define	D_CONVERT	0x4	/* Normale Konvertierung */
+#define	D_ACCEPT	0x8	/* Akzeptierte Übernahme */
+#define	D_VAARG		0x10	/* Variable Argumentzahl */
+
+#define	D_RESTRICTED	0x20	/* Eingeschränkte Konvertierung */
+#define	D_EXPAND	0x40	/* Expansion eines Basisobjekts */
+#define	D_CREATE	0x80	/* Konstruktor verwenden */
+
+#define	D_MAXDIST	0x100	/* Maximaldistanz */
+
+#endif
 
 
 /*	Funktionsargumente Konvertieren
