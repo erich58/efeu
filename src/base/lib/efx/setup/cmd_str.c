@@ -446,6 +446,7 @@ static EfiFuncDef func_str[] = {
 	{ 0, &Type_varsize, "varsize (str, int base)", to_uint64 },
 
 	{ 0, &Type_double, "double (str)", k_str2double },
+	{ 0, &Type_str, "_Ptr_ ()", k_ptr2str },
 	{ 0, &Type_str, "char ()", k_char2str },
 	{ 0, &Type_str, "wchar_t ()", k_nwchar2str },
 	{ 0, &Type_str, "str (double)", k_double2str },
