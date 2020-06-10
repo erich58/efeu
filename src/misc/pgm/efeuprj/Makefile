@@ -12,3 +12,15 @@ prereq::
 
 include $(CFG)/SimplePrograms.mak
 include $(CFG)/ApplFiles.mak
+
+SMH = $(wildcard *.smh)
+FILES= $(patsubst %,$(LIB)/shmkmf/%, $(SMH))
+
+all:: $(FILES)
+
+clean::
+	rm -f $(FILES)
+
+$(LIB)/shmkmf/% : %
+	@mkdir -p $(@D)
+	cp $< $@
