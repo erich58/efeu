@@ -577,7 +577,7 @@ void SetupStd(void)
 	CmdSetup_signal();
 	CmdSetup_test();
 
-	CmdSetup_konv();
+	CmdSetup_conv();
 	CmdSetup_print();
 	CmdSetup_func();
 	CmdSetup_range();

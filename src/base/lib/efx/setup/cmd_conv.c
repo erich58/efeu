@@ -132,7 +132,7 @@ static void str2type (EfiFunc *func, void *rval, void **arg)
 	Val_type(rval) = str2Type(Val_str(arg[0]));
 }
 
-static EfiFuncDef konv_func[] = {
+static EfiFuncDef conv_func[] = {
 /*	Ganzzahlkonvertierungen
 */
 	{ FUNC_PROMOTION, &Type_int, "bool ()", k_bool2int },
@@ -168,7 +168,7 @@ static EfiFuncDef konv_func[] = {
 /*	Konvertierungen eintragen
 */
 
-void CmdSetup_konv(void)
+void CmdSetup_conv(void)
 {
-	AddFuncDef(konv_func, tabsize(konv_func));
+	AddFuncDef(conv_func, tabsize(conv_func));
 }

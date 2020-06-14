@@ -47,7 +47,7 @@ void CmdSetup_range(void);	/* Bereichsfunktionen */
 void CmdSetup_pctrl(void);	/* Programmsteuerung */
 void CmdSetup_signal(void);	/* Signalhaendling */
 void CmdSetup_test(void);	/* Testfunktionen */
-void CmdSetup_konv(void);	/* Konvertierungen */
+void CmdSetup_conv(void);	/* Konvertierungen */
 void CmdSetup_func(void);	/* Funktionen */
 void CmdSetup_info(void);	/* Informationsdatenbank */
 void CmdSetup_strbuf(void);	/* Stringbuffer */
