@@ -209,6 +209,8 @@ static int get_convdef(EfiFunc *func, size_t narg,
 					(func->arg[i].promote ||
 					func->weight == CONV_PROMOTION))
 				x->dist = D_CONVERT | D_PROMOTE;
+			if	(func->weight == CONV_RESTRICTED)
+				x->dist |= D_ACCEPT;
 
 			konv[i] = *x;
 		}
