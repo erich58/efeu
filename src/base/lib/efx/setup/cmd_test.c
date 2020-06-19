@@ -116,7 +116,7 @@ static struct {
 	{ D_PROMOTE, "PROMOTE" },
 };
 
-static void f_showkonv (EfiFunc *func, void *rval, void **arg)
+static void f_showconv (EfiFunc *func, void *rval, void **arg)
 {
 	EfiType *old, *new;
 	EfiConv konv;
@@ -134,7 +134,7 @@ static void f_showkonv (EfiFunc *func, void *rval, void **arg)
 		char *delim;
 		int i;
 
-		io_xprintf(iostd, "%#4o", konv.dist);
+		io_xprintf(iostd, "%#.3x", konv.dist);
 		delim = " ";
 
 		for (i = 0; i < tabsize(dist_tab); i++)
@@ -256,7 +256,7 @@ void CmdSetup_test(void)
 	SetFunc(0, &Type_void, "vtabdump (int = 0, IO = iostd)", f_vtabdump);
 	SetFunc(0, &Type_void, "objdump (. obj, IO = iostd)", f_objdump);
 	SetFunc(0, &Type_int, "dist (Type_t a, Type_t b)", f_typedist);
-	SetFunc(0, &Type_void, "showkonv (Type_t a, Type_t b)", f_showkonv);
+	SetFunc(0, &Type_void, "showconv (Type_t a, Type_t b)", f_showconv);
 	SetFunc(0, &Type_func, "getconv (Type_t a, Type_t b)", f_getconv);
 	SetFunc(0, &Type_func, "Type_t::getconv (Type_t b)", f_getconv);
 	SetFunc(0, &Type_void, "lcshow (IO = iostd)", f_lcshow);
