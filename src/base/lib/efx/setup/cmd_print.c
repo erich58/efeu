@@ -24,7 +24,6 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/cmdsetup.h>
 #include <EFEU/printobj.h>
 
-
 #define	RV	Val_int(rval)
 
 
@@ -133,6 +132,11 @@ static EfiVarDef var_print[] = {
 
 /*	Ausgabefunktionen
 */
+
+static void f_SetFloatPrec(EfiFunc *func, void *rval, void **arg)
+{
+	SetFloatPrec(Val_str(arg[0]));
+}
 
 static void fprint_ptr(EfiFunc *func, void *rval, void **arg)
 {
@@ -263,9 +267,7 @@ static void fprint_ofunc(EfiFunc *func, void *rval, void **arg)
 	ofunc = arg[1];
 	n = 0;
 
-	vfunc = VirFunc(ofunc->func);
-
-	if	(vfunc != NULL)
+	if	(ofunc && ofunc->func && (vfunc = VirFunc(ofunc->func)))
 	{
 		EfiFunc **ftab = vfunc->tab.data;
 
@@ -278,49 +280,9 @@ static void fprint_ofunc(EfiFunc *func, void *rval, void **arg)
 			n += io_puts("\n", io);
 		}
 	}
-	else
-	{
-		n += io_puts("(", io);
-		n += PrintObj(io, ofunc->obj);
-		n += io_puts(") ", io);
-		n = io_puts("NULL", io);
-	}
+	else	n = io_puts("NULL", io);
 
 	RV = n;
-}
-
-static void fprint_name(EfiFunc *func, void *rval, void **arg)
-{
-	Val_int(rval) = io_puts(((EfiName *) arg[1])->name, Val_io(arg[0]));
-}
-
-static void fprint_mname(EfiFunc *func, void *rval, void **arg)
-{
-	EfiName *name;
-	IO *io;
-	int n;
-
-	io = Val_io(arg[0]);
-	name = (EfiName *) arg[1];
-	n = PrintObj(io, name->obj);
-	n += io_puts(".", io);
-	n += io_puts(name->name, io);
-	Val_int(rval) = n;
-}
-
-static void fprint_sname(EfiFunc *func, void *rval, void **arg)
-{
-	EfiName *name;
-	IO *io;
-	int n;
-
-	io = Val_io(arg[0]);
-	name = (EfiName *) arg[1];
-
-	n = PrintObj(io, name->obj);
-	n += io_puts("::", io);
-	n += io_puts(name->name, io);
-	Val_int(rval) = n;
 }
 
 static void fprint_undef(EfiFunc *func, void *rval, void **arg)
@@ -328,7 +290,6 @@ static void fprint_undef(EfiFunc *func, void *rval, void **arg)
 	Val_int(rval) = io_xprintf(Val_io(arg[0]), "(%s) %s",
 		Type_undef.name, Val_str(arg[1]));
 }
-
 
 static void fprint_any(EfiFunc *func, void *rval, void **arg)
 {
@@ -454,6 +415,7 @@ static void put_obj(EfiFunc *func, void *rval, void **arg)
 
 
 static EfiFuncDef fdef_print[] = {
+	{ 0, &Type_void, "SetFloatPrec (str)", f_SetFloatPrec },
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, bool)", fprint_bool },
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, int)", fprint_int },
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, unsigned)", fprint_uint },
@@ -464,9 +426,6 @@ static EfiFuncDef fdef_print[] = {
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, wchar_t)", fprint_wchar },
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, str)", fprint_str },
 
-	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, _Name_)", fprint_name },
-	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, _MemberName_)", fprint_mname },
-	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, _ScopeName_)", fprint_sname },
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, _undef_)", fprint_undef },
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, restricted _Ptr_)", fprint_ptr },
 	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, _Ref_)", fprint_ref },

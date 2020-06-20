@@ -30,21 +30,11 @@ TEST_DECL(name)
 
 }
 
-TEST_DECL(floatprec)
-{
-	SetFloatPrec("#4g");
-	EXPECT_MSTR(Obj2str(strterm("12.5")), "12.50");
-	SetFloatPrec("0f");
-	EXPECT_MSTR(Obj2str(strterm("12.5")), "13");
-	SetFloatPrec("#5");
-}
-
 TEST_SUITE
 {
 	SetupStd();
 	SetupMath();
 	TEST_RUN(name);
-	TEST_RUN(floatprec);
 	CLEANUP_MSTR;
 	CLEANUP_OUT;
 }
