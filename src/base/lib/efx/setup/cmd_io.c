@@ -457,7 +457,7 @@ str post = NULL, bool flag = false)", f_lmark },
 	{ 0, &Type_list, "scanline (IO io, str delim = \"%s\", "
 		"str end = \"\\n\")", f_scanline },
 	{ 0, &Type_bool, "getline (IO io, ...)", f_getline },
-	{ 0, &Type_str, "fgetc (IO io)", f_getc },
+	{ 0, &Type_int, "fgetc (IO io)", f_getc },
 	{ 0, &Type_str, "fgets (IO io, int end = '\n')", f_fgets },
 	{ 0, &Type_str, "ngets (IO io, int n)", f_ngets },
 

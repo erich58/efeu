@@ -190,7 +190,7 @@ static void f_insert (EfiFunc *func, void *rval, void **arg)
 
 static void f_delete (EfiFunc *func, void *rval, void **arg)
 {
-	Val_int(rval) = sb_delete(SB(arg[0]), Val_int(arg[1])) != NULL;
+	Val_bool(rval) = sb_delete(SB(arg[0]), Val_int(arg[1])) != NULL;
 }
 
 static void f_sb2io (EfiFunc *func, void *rval, void **arg)
@@ -252,7 +252,7 @@ static EfiFuncDef fdef_strbuf[] = {
 	{ 0, &Type_int, "StrBuf::printf (str fmt, ...)", f_printf },
 	{ 0, &Type_void, "StrBuf::move (int dest, int src, int len)", f_move },
 	{ 0, &Type_void, "StrBuf::insert (char c, int count = 1)", f_insert },
-	{ 0, &Type_int, "StrBuf::delete (int count = 1)", f_delete },
+	{ 0, &Type_bool, "StrBuf::delete (int count = 1)", f_delete },
 	{ 0, &Type_io, "StrBuf ()", f_sb2io },
 	{ 0, &Type_str, "StrBuf ()", f_sb2str },
 	{ 0, &Type_strbuf, "str ()", f_str2sb },
