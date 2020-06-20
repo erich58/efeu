@@ -64,14 +64,19 @@ int macsub_repl (PPMacro *mac, IO *out, char **arg, int narg)
 	IO *in;
 	int c, n;
 	int flag;
+	int quote;
 
 	in = io_cstr(mac->repl);
 	n = 0;
 	flag = 0;
+	quote = 0;
 
 	while ((c = io_skipcom(in, NULL, 0)) != EOF)
 	{
-		if	(c == '#')
+		if	(c == '"')
+			quote = !quote;
+
+		if	(c == '#' && !quote)
 		{
 			flag = 1;
 		}
