@@ -222,13 +222,6 @@ static void f_getppid (EfiFunc *func, void *rval, void **arg)
 	Val_int(rval) = getppid();
 }
 
-/*
-static void f_time(EfiFunc *func, void *rval, void **arg)
-{
-	Val_int(rval) = time(NULL);
-}
-*/
-
 static void f_expand(EfiFunc *func, void *rval, void **arg)
 {
 	Val_str(rval) = ExpandPath(Val_str(arg[0]));
@@ -271,9 +264,6 @@ static EfiFuncDef fdef_pctrl[] = {
 	{ 0, &Type_void, "tempstat (void)", f_tempstat },
 	{ 0, &Type_int, "getpid ()", f_getpid },
 	{ 0, &Type_int, "getppid ()", f_getppid },
-	/*
-	{ 0, &Type_int, "time ()", f_time },
-	*/
 	{ 0, &Type_str,  "ExpandPath (str = NULL)", f_expand },
 };
 
