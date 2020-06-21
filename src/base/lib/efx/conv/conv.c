@@ -1,5 +1,5 @@
 /*
-Funktionsargumente konvertieren
+Objekte und Funktionsargumente konvertieren
 
 $Copyright (C) 1996 Erich Frühstück
 This file is part of EFEU.
@@ -36,6 +36,20 @@ static EfiFunc *Konverter(const EfiType *old, const EfiType *new)
 	return NULL;
 }
 
+static EfiFunc *ConvFunc(const EfiType *src, const EfiType *tg)
+{
+	EfiFunc **ftab;
+	int i;
+
+	if	(src == NULL)	return NULL;
+
+	ftab = src->conv.data;
+
+	for (i = 0; i < src->conv.used; i++)
+		if (ftab[i]->type == tg) return ftab[i];
+
+	return NULL;
+}
 
 static EfiFunc *Konstruktor(const EfiType *old, const EfiType *new)
 {
@@ -103,6 +117,45 @@ EfiConv *GetConv(EfiConv *conv, const EfiType *old, const EfiType *new)
 	return NULL;
 }
 
+EfiConv *GetArgConv(const EfiType *src, const EfiType *tg)
+{
+	static EfiConv buf;
+
+	buf.type = NULL;
+	buf.dist = 0;
+
+	for (; tg != NULL; tg = tg->dim ? NULL : tg->base)
+	{
+		buf.func = NULL;
+
+		if	(src == tg)	return &buf;
+
+		if	((buf.func = ConvFunc(src, tg)))
+		{
+			switch (buf.func->weight)
+			{
+			case CONV_PROMOTION:
+				buf.dist |= D_PROMOTE;
+				break;
+			case CONV_RESTRICTED:
+			case CONV_GENERATED:
+				buf.dist |= D_RESTRICTED;
+				break;
+			default:
+				buf.dist |= D_CONVERT;
+				break;
+			}
+
+			return &buf;
+		}
+
+		buf.type = (EfiType *) tg;
+		buf.dist = D_EXPAND;
+	}
+
+	return NULL;
+}
+
 
 void ConvData(EfiConv *conv, void *tg, void *src)
 {
@@ -116,6 +169,17 @@ void ConvData(EfiConv *conv, void *tg, void *src)
 	}
 }
 
+void ArgConv(EfiConv *conv, void *tg, void *src)
+{
+	if	(conv->func)
+	{
+		conv->func->eval(conv->func, tg, &src);
+	}
+	else if	(conv->type)
+	{
+		CopyData(conv->type, tg, src);
+	}
+}
 
 int ConvDist (const EfiType *old, const EfiType *new)
 {
