@@ -22,6 +22,7 @@ TEST_FILE("log.out", NULL);
 IO io = NoteLog.open();
 fprintf(io, "result=%d\n", 42);
 close(io);
+sleep(0.1);
 EXPECT_CONTENT("log.out", "result=42\n");
 
 LogControl test;
