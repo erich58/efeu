@@ -23,35 +23,23 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 #include <EFEU/conv.h>
 
-static EfiFunc *Konverter(const EfiType *old, const EfiType *new)
-{
-	EfiFunc **ftab;
-	int i;
-
-	ftab = old->conv.data;
-
-	for (i = 0; i < old->conv.used; i++)
-		if (ftab[i]->type == new) return ftab[i];
-
-	return NULL;
-}
-
 static EfiFunc *ConvFunc(const EfiType *src, const EfiType *tg)
 {
-	EfiFunc **ftab;
-	int i;
+	if	(src)
+	{
+		EfiFunc **ftab;
+		int i;
 
-	if	(src == NULL)	return NULL;
+		ftab = src->conv.data;
 
-	ftab = src->conv.data;
-
-	for (i = 0; i < src->conv.used; i++)
-		if (ftab[i]->type == tg) return ftab[i];
+		for (i = 0; i < src->conv.used; i++)
+			if (ftab[i]->type == tg) return ftab[i];
+	}
 
 	return NULL;
 }
 
-static EfiFunc *Konstruktor(const EfiType *old, const EfiType *new)
+static EfiFunc *CreateFunc(const EfiType *old, const EfiType *new)
 {
 	if	(new->create)
 	{
@@ -66,6 +54,19 @@ static EfiFunc *Konstruktor(const EfiType *old, const EfiType *new)
 	else	return NULL;
 }
 
+static int ConvFuncDist(EfiFunc *func)
+{
+	switch (func->weight)
+	{
+	case CONV_PROMOTION:
+		return D_PROMOTE;
+	case CONV_RESTRICTED:
+	case CONV_GENERATED:
+		return D_RESTRICTED;
+	default:
+		return D_CONVERT;
+	}
+}
 
 EfiConv *GetConv(EfiConv *conv, const EfiType *old, const EfiType *new)
 {
@@ -84,25 +85,12 @@ EfiConv *GetConv(EfiConv *conv, const EfiType *old, const EfiType *new)
 			conv->func = NULL;
 			return conv;
 		}
-		else if	((conv->func = Konverter(old, conv->type)))
+		else if	((conv->func = ConvFunc(old, conv->type)))
 		{
-			switch (conv->func->weight)
-			{
-			case CONV_PROMOTION:
-				conv->dist |= D_PROMOTE;
-				break;
-			case CONV_RESTRICTED:
-			case CONV_GENERATED:
-				conv->dist |= D_RESTRICTED;
-				break;
-			default:
-				conv->dist |= D_CONVERT;
-				break;
-			}
-
+			conv->dist |= ConvFuncDist(conv->func);
 			return conv;
 		}
-		else if	((conv->func = Konstruktor(old, conv->type)))
+		else if	((conv->func = CreateFunc(old, conv->type)))
 		{
 			conv->dist |= D_CREATE;
 			return conv;
@@ -117,40 +105,29 @@ EfiConv *GetConv(EfiConv *conv, const EfiType *old, const EfiType *new)
 	return NULL;
 }
 
-EfiConv *GetArgConv(const EfiType *src, const EfiType *tg)
+EfiConv *GetArgConv(EfiConv *conv, const EfiType *src, const EfiType *tg)
 {
 	static EfiConv buf;
 
-	buf.type = NULL;
-	buf.dist = 0;
+	if	(conv == NULL)	conv = &buf;
+
+	conv->type = NULL;
+	conv->dist = 0;
 
 	for (; tg != NULL; tg = tg->dim ? NULL : tg->base)
 	{
-		buf.func = NULL;
+		conv->func = NULL;
 
-		if	(src == tg)	return &buf;
+		if	(src == tg)	return conv;
 
-		if	((buf.func = ConvFunc(src, tg)))
+		if	((conv->func = ConvFunc(src, tg)))
 		{
-			switch (buf.func->weight)
-			{
-			case CONV_PROMOTION:
-				buf.dist |= D_PROMOTE;
-				break;
-			case CONV_RESTRICTED:
-			case CONV_GENERATED:
-				buf.dist |= D_RESTRICTED;
-				break;
-			default:
-				buf.dist |= D_CONVERT;
-				break;
-			}
-
-			return &buf;
+			conv->dist |= ConvFuncDist(conv->func);
+			return conv;
 		}
 
-		buf.type = (EfiType *) tg;
-		buf.dist = D_EXPAND;
+		conv->type = (EfiType *) tg;
+		conv->dist = D_EXPAND;
 	}
 
 	return NULL;
@@ -158,18 +135,6 @@ EfiConv *GetArgConv(const EfiType *src, const EfiType *tg)
 
 
 void ConvData(EfiConv *conv, void *tg, void *src)
-{
-	if	(conv->func)
-	{
-		conv->func->eval(conv->func, tg, &src);
-	}
-	else if	(conv->type)
-	{
-		CopyData(conv->type, tg, src);
-	}
-}
-
-void ArgConv(EfiConv *conv, void *tg, void *src)
 {
 	if	(conv->func)
 	{

@@ -203,7 +203,7 @@ static int get_convdef(EfiFunc *func, size_t narg,
 				konv[i].dist = D_BASE;
 			else	return konv[i].dist = D_REJECT;
 		}
-		else if	((x = GetArgConv(arg[i].type, func->arg[i].type)))
+		else if	((x = GetArgConv(NULL, arg[i].type, func->arg[i].type)))
 		{
 			if	((x->dist & D_RESTRICTED) &&
 					(func->arg[i].promote ||

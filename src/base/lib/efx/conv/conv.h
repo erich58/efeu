@@ -59,17 +59,13 @@ typedef struct {
 } EfiConv;
 
 
-EfiConv *GetArgConv (const EfiType *src, const EfiType *tg);
-void ArgConv (EfiConv *conv, void *tg, void *src);
+EfiConv *GetArgConv (EfiConv *buf, const EfiType *src, const EfiType *tg);
 
 EfiObj *ConvObj (const EfiObj *obj, EfiType *def);
 EfiObj *LvalCast (EfiObj *obj, EfiType *def);
 
 EfiFunc *SearchFunc (EfiVirFunc *tab, EfiFuncArg *arg,
 	size_t narg, EfiConv **conv);
-
-/*	Objekte konvertieren
-*/
 
 EfiConv *GetConv (EfiConv *buf, const EfiType *otype, const EfiType *ntype);
 void ConvData (EfiConv *conv, void *tg, void *src);

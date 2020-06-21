@@ -171,7 +171,7 @@ static EfiObj *eval_func (EfiFunc *func, EfiConv *fkonv,
 			if	(fkonv[i].func || fkonv[i].type)
 			{
 				obj = NewObj(func->arg[i].type, NULL);
-				ArgConv(fkonv + i, obj->data,
+				ConvData(fkonv + i, obj->data,
 					arg[i].defval->data);
 				UnrefObj(arg[i].defval);
 
