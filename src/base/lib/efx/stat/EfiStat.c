@@ -106,7 +106,7 @@ $Note
 Die hier beschriebenen Funktionen werden von einem Kommando nur
 dann benötigt, wenn es mit mehr als einer Interpreterinstanz
 arbeitet. Alle anderen Funktionen zur Verwaltung des Interpreters
-kännen mit einen Nullpointer anstelle der Statusstruktur
+können mit einen Nullpointer anstelle der Statusstruktur
 aufgerufen werden, da sie mithilfe von |Efi_ptr| auf
 eine interne Variable zurückgreifen.
 
