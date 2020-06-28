@@ -49,7 +49,7 @@ void roundvec(double *x, size_t dim, double val)
 	val = (val - zp + zn) / (zp + zn);
 
 /*	Datenwerte justieren und in Ganzzahlwert und Nachkommastellen zerlegen.
-	Rdiff enthällt die Summe der Nachkommastellen und ist immer ganzzahlig.
+	Rdiff enthält die Summe der Nachkommastellen und ist immer ganzzahlig.
 	Durch Aufrunden positiver Werte, bzw. abrunden negativer Werte muß
 	rdiff auf 0 justiert werden. Np und nn enthält die Zahl der nach 4/5
 	Rundung auf/abzurundenden Werte.
@@ -63,7 +63,7 @@ void roundvec(double *x, size_t dim, double val)
 		if	(x[i] >= 0.)
 		{
 			y[i] = x[i] + val * x[i];
-			x[i] = (long) y[i];
+			x[i] = floor(y[i]);
 			y[i] -= x[i];
 
 			if	(y[i] > 0.5)	np++;
@@ -71,7 +71,7 @@ void roundvec(double *x, size_t dim, double val)
 		else
 		{
 			y[i] = x[i] - val * x[i];
-			x[i] = - (long) (-y[i]);
+			x[i] = - floor(-y[i]);
 			y[i] -= x[i];
 
 			if	(y[i] < -0.5)	nn++;
