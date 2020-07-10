@@ -37,7 +37,7 @@ static const char *utest_out(void)
 	"~", utest_out(), s, "output()", # s)
 
 #define	PRINT_OUT()	UnitTest_strinfo(__FILE__, __LINE__, \
-	utest_out(), "output()")
+	"INFO", utest_out(), "output()")
 
 #define	CLEANUP_OUT	utest_out_clean()
 

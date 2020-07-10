@@ -22,7 +22,7 @@ static char *utest_mstr(char *def)
 	UnitTest_strcheck(__FILE__, __LINE__, "~", utest_mstr(a), b, # a, # b)
 
 #define	PRINT_MSTR(s) \
-	UnitTest_strinfo(__FILE__, __LINE__, utest_mstr(s), # s)
+	UnitTest_strinfo(__FILE__, __LINE__, "INFO", utest_mstr(s), # s)
 
 #define	CLEANUP_MSTR \
 	utest_mstr(NULL)

@@ -146,7 +146,7 @@ UnitTest_result(__FILE__, __LINE__, \
 UnitTest_create(__FILE__, __LINE__, name, cont, # cont)
 
 #define PRINT_CONTENT(name)	\
-UnitTest_strinfo(__FILE__, __LINE__, \
+UnitTest_strinfo(__FILE__, __LINE__, "INFO", \
 	UnitTest_content(name), "content(" # name ")")
 
 #define	EXPECT_CONTENT(name, cont)	\
