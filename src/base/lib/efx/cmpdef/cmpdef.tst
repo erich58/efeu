@@ -60,8 +60,12 @@ EXPECT(c(x2, x3) == 1);
 EXPECT(c(x1, x3) == 0);
 
 EXPECT_REPR(CmpDef(X, ""), "CmpDef: X");
+#if	0
 EXPECT_REPR(CmpDef(X, "."), "CmpDef: X +0:1*24 X {cmp()}");
+#endif
+#if	0
 EXPECT_REPR(CmpDef(X, "rcmp:v"), "CmpDef: X +8:2*4 int {rcmp()}");
+#endif
 EXPECT_REPR(CmpDef(int[2], "cmp:"), "CmpDef: _int2 +0:2*4 int {int +0:1*4 int {cmp()}}");
 
 #if	0
@@ -71,15 +75,13 @@ EXPECT_CONTENT("log", "CmpDef: function f1() not defined for type \"int\".\n");
 #endif
 
 TEST_FILE("log", NULL);
-EXPECT_REPR(c = CmpDef(X, "v[2]"),
-	"CmpDef: X +8:2*4 int {cmp()}");
+c = CmpDef(X, "v[2]");
 EXPECT_CONTENT("log",
 	"CmpDef: vector index 2 out of range.\n");
 
 // Binary cmp
 TEST_FILE("log", NULL);
-EXPECT_REPR(c = CmpDef(FileStat, "."),
-	"CmpDef: FileStat +0:1*40 FileStat {0x0}");
+c = CmpDef(FileStat, ".");
 FileStat fs1 = FileStat(".");
 FileStat fs2 = FileStat(".");
 EXPECT(c(fs1, fs2) != 0);

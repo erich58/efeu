@@ -84,11 +84,12 @@ TEST_DECL(acquire)
 	memfree(p);
 
 	StrBuf *tab[5];
+	int i;
 	
-	for (int i = 0; i < 5; i++)
+	for (i = 0; i < 5; i++)
 		tab[i] = sb_acquire();
 	
-	for (int i = 0; i < 5; i++)
+	for (i = 0; i < 5; i++)
 		sb_release(tab[i]);
 }
 

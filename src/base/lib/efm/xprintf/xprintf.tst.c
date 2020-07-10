@@ -85,7 +85,6 @@ TEST_DECL(fmt)
 	EXPECT_STR(fmt("|%5.3o|%-5.1o|%#5o|", 1, 2, 3), "|  001|2    |   03|");
 	EXPECT_STR(fmt("|%4.3x|%-4.1x|%#4x|", 10, 11, 12), "| 00a|b   | 0xc|");
 	EXPECT_STR(fmt("|%hhx|%hx|", ~0, ~0), "|ff|ffff|");
-	EXPECT_STR(fmt("|%hhd|%hd|", 0xFF, 0xFFFF), "|-1|-1|");
 	EXPECT_STR(fmt("|%zd|", (size_t) 12345), "|12345|");
 	EXPECT_STR(fmt("|%jd|", (intmax_t) 12345), "|12345|");
 	EXPECT_STR(fmt("|%td|", (ptrdiff_t) 12345), "|12345|");
@@ -108,6 +107,8 @@ TEST_DECL(fmt)
 TEST_DECL(xfmt)
 {
 	EXPECT_STR(fmt(NULL), NULL);
+
+	EXPECT_STR(fmt("|%hhd|%hd|", 0xFF, 0xFFFF), "|-1|-1|");
 
 	EXPECT_STR(fmt("|%b|%#b|%#B|", 5, 10, 10), "|101|0b1010|0B1010|");
 	EXPECT_STR(fmt("|%lx|%llx|", ~0l, ~0ll), "|ffffffff|ffffffffffffffff|");
