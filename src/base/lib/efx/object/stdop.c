@@ -277,12 +277,9 @@ static EfiObj *bool_and(void *par, const EfiObjList *list)
 
 	while (list != NULL)
 	{
-		obj = EvalObj(RefObj(list->obj), &Type_bool);
-
-		if	(!(obj && Val_bool(obj->data)))
+		if	(!Obj2bool(RefObj(list->obj)))
 			return bool2Obj(0);
 
-		UnrefObj(obj);
 		list = list->next;
 	}
 
@@ -296,12 +293,9 @@ static EfiObj *bool_or(void *par, const EfiObjList *list)
 
 	while (list != NULL)
 	{
-		obj = EvalObj(RefObj(list->obj), &Type_bool);
-
-		if	(obj && Val_bool(obj->data))
+		if	(Obj2bool(RefObj(list->obj)))
 			return bool2Obj(1);
 
-		UnrefObj(obj);
 		list = list->next;
 	}
 
