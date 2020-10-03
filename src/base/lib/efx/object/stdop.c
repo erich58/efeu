@@ -273,8 +273,6 @@ static EfiObj *globvar(IO *io, EfiOp *op, EfiObj *left)
 
 static EfiObj *bool_and(void *par, const EfiObjList *list)
 {
-	EfiObj *obj;
-
 	while (list != NULL)
 	{
 		if	(!Obj2bool(RefObj(list->obj)))
@@ -289,8 +287,6 @@ static EfiObj *bool_and(void *par, const EfiObjList *list)
 
 static EfiObj *bool_or(void *par, const EfiObjList *list)
 {
-	EfiObj *obj;
-
 	while (list != NULL)
 	{
 		if	(Obj2bool(RefObj(list->obj)))
