@@ -49,15 +49,37 @@ static void par_dat1900 (EfiFunc *func, void *rval, void **arg)
 		NULL, Val_str(arg[0]));
 }
 
+static int test_val64 (void *data, const EfiObj *obj)
+{
+	return TestVal64(data, Obj2varsize(RefObj(obj)));
+}
+
+static void par_64 (EfiFunc *func, void *rval, void **arg)
+{
+	Val_ptr(rval) = test_create(&TestPar_64, test_val64,
+		NULL, Val_str(arg[0]));
+}
+
 static int test_code (void *data, const EfiObj *obj)
 {
 	return TestCode(data, Obj2uint(RefObj(obj)));
 }
 
-static void fpar_enum (EfiFunc *func, void *rval, void **arg)
+static void par_enum (EfiFunc *func, void *rval, void **arg)
 {
 	Val_ptr(rval) = test_create(&TestPar_enum, test_code,
 		Val_str(arg[0]), Val_str(arg[1]));
+}
+
+static int test_double (void *data, const EfiObj *obj)
+{
+	return Test_double(data, Obj2double(RefObj(obj)));
+}
+
+static void par_double (EfiFunc *func, void *rval, void **arg)
+{
+	Val_ptr(rval) = test_create(&TestPar_double, test_double,
+		NULL, Val_str(arg[0]));
 }
 
 static void f_create (EfiFunc *func, void *rval, void **arg)
@@ -80,14 +102,16 @@ static void f_test (EfiFunc *func, void *rval, void **arg)
 		}
 	}
 }
-	
+
 static EfiFuncDef fdef[] = {
 	{ 0, &Type_TestDef, "TestDef (Type_t type)", f_create },
 	{ 0, &Type_TestDef, "TestDef (Type_t type, str def)", f_create },
 	{ 0, &Type_TestDef, "TestNum (str arg)", par_num },
 	{ 0, &Type_TestDef, "TestDat (str arg)", par_dat },
 	{ 0, &Type_TestDef, "TestDat1900 (str arg)", par_dat1900 },
-	{ 0, &Type_TestDef, "TestEnum (str type, str arg)", fpar_enum },
+	{ 0, &Type_TestDef, "TestEnum (str type, str arg)", par_enum },
+	{ 0, &Type_TestDef, "Test64 (str arg)", par_64 },
+	{ 0, &Type_TestDef, "TestDouble (str arg)", par_double },
 	{ FUNC_VIRTUAL, &Type_bool, "operator() (TestDef, List_t)", f_test },
 };
 

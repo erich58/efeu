@@ -105,6 +105,7 @@ static void test_clean (void *data)
 {
 	TestDef *test = data;
 	entry_clean(test->list);
+	CleanTestPar(test->par, test->data);
 	memfree(test);
 }
 
@@ -119,8 +120,7 @@ TestDef *test_create (TestParDef *def, TestDefFunc test,
 
 	par->par = def;
 	par->test = test;
-	par->data = def && def->create ?
-		def->create(opt, arg, def->data) : NULL;
+	par->data = CreateTestPar(def, opt, arg);
 	return rd_init(&TestDef_reftype, par);
 }
 
@@ -426,10 +426,15 @@ int TestDef_obj (TestDef *def, const EfiObj *obj)
 	if	(def->type != obj->type)
 	{
 		EfiObj *x = EvalObj(RefObj(obj), def->type);
-		int r =	TestDef_test(def, x->data);
-		UnrefObj(x);
-		return r;
+
+		if	(x)
+		{
+			int r =	TestDef_test(def, x->data);
+			UnrefObj(x);
+			return r;
+		}
+
+		return 0;
 	}
 	else	return TestDef_test(def, obj->data);
 }
-

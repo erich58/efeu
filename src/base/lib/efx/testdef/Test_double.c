@@ -82,7 +82,7 @@ static void *make_par (const char *opt, const char *arg, void *ptr)
 	char *p;
 	int nflag;
 
-	if	(arg == NULL || *arg == 0 || ptr == NULL)
+	if	(arg == NULL || *arg == 0)
 		return NULL;
 
 	par = memalloc(sizeof(VALPAR));
