@@ -21,6 +21,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/efutil.h>
+#include <math.h>
 
 void roundvec(double *x, size_t dim, double val)
 {
