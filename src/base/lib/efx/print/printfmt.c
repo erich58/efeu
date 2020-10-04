@@ -24,9 +24,6 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/printobj.h>
 #include <EFEU/fmtkey.h>
 
-/*	Abfragefunktionen
-*/
-
 int PrintFmtObj (IO *io, const char *fmt, const EfiObj *obj)
 {
 	if	(io && fmt)
