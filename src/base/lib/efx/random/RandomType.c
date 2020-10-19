@@ -64,7 +64,6 @@ RandomType *GetRandomType (const char *name)
 	if	(TypeTab.used == 0)
 	{
 		AddRandomType(&RandomType_std);
-		AddRandomType(&RandomType_old);
 		AddRandomType(&RandomType_d48);
 	}
 

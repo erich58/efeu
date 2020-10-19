@@ -46,12 +46,6 @@ struct RandomTypeStruct {
 
 extern RandomType RandomType_d48;
 extern RandomType RandomType_std;
-extern RandomType RandomType_old;
-extern RandomType RandomType_r0;
-extern RandomType RandomType_r1;
-extern RandomType RandomType_r2;
-extern RandomType RandomType_r3;
-extern RandomType RandomType_r4;
 
 void AddRandomType (RandomType *type);
 void ListRandomType (IO *io);

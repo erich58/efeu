@@ -6,6 +6,7 @@
 #include <EFEU/preproc.h>
 #include <EFEU/efutil.h>
 #include <EFEU/printobj.h>
+#include <EFEU/Random.h>
 
 #define runUnitTest hidden_runUnitTest
 void runUnitTest(int UnitTest_argc, char **UnitTest_argv);
@@ -19,6 +20,7 @@ TEST_SUITE
 	SetupUtil();
 	SetupPreproc();
 	SetupDebug();
+	SetupRandom();
 
 	UnitTest_setup();
 
