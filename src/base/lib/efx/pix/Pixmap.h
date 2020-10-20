@@ -40,7 +40,6 @@ EPixmap *NewPixmap (size_t rows, size_t cols, int color);
 EPixmap *LoadPixmap (IO *io);
 void SavePixmap (EPixmap *pix, IO *io);
 
-void Pixmap_vadjust (EPixmap *pix, int idx, int offset);
 void SetupPixmap (void);
 
 #endif	/* EFEU/Pixmap.h */

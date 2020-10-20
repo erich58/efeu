@@ -37,12 +37,12 @@ static void pix_clean (void *data)
 static char *pix_ident (const void *data)
 {
 	const EPixmap *pix = data;
-	return msprintf("%dx%dx3", pix->rows, pix->cols);
+	return msprintf("%dx%dx3", pix->cols, pix->rows);
 }
 
 static RefType Pixmap_reftype = REFTYPE_INIT("Pixmap", pix_ident, pix_clean);
 
-/*	Pixmap-File generieren
+/*	Pixmap generieren
 */
 
 EPixmap *NewPixmap (size_t rows, size_t cols, int color)
@@ -66,6 +66,17 @@ EPixmap *NewPixmap (size_t rows, size_t cols, int color)
 	}
 
 	return rd_init(&Pixmap_reftype, pix);
+}
+
+/*	Pixmap ausgeben
+*/
+
+void SavePixmap (EPixmap *pix, IO *io)
+{
+	if	(!pix || !io)	return;
+
+	io_xprintf(io, "P6\n%d %d\n255\n", pix->cols, pix->rows);
+	io_dbwrite(io, pix->data, 1, pix->rows * pix->cols * 3);
 }
 
 
@@ -96,18 +107,11 @@ static void PF_save (EfiFunc *func, void *rval, void **arg)
 	Val_ptr(rval) = rd_refer(Val_ptr(arg[0]));
 }
 
-static void PF_vadjust (EfiFunc *func, void *rval, void **arg)
-{
-	Pixmap_vadjust(Val_ptr(arg[0]), Val_int(arg[1]), Val_int(arg[2]));
-	Val_ptr(rval) = rd_refer(Val_ptr(arg[0]));
-}
-
 static EfiFuncDef fdef[] = {
 	{ 0, &Type_Pixmap, "Pixmap (int width, int height, int color = 0)",
 		PF_create },
 	{ 0, &Type_Pixmap, "LoadPixmap (str name)", PF_load },
 	{ 0, &Type_Pixmap, "Pixmap::save (str name)", PF_save },
-	{ 0, &Type_Pixmap, "Pixmap::vadjust (int color, int offset)", PF_vadjust },
 };
 
 static EfiObj *get_cols (const EfiObj *base, void *data)
