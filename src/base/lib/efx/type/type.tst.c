@@ -3,10 +3,12 @@
 #include <stdtype.h>
 #include "utest/mstr.tst.h"
 
+/* created with mksource <DataType.ms> */
+
 typedef struct {
-	double d;		/* D */
-	uint32_t b1 : 24;	/* b1 */
-	uint32_t b2 : 8;	/* b2 */
+	double d;		/* DBL */
+	uint32_t b1 : 24;	/* B1 */
+	uint32_t b2 : 8;	/* B2 */
 	int i[2];		/* INT */
 } TestType;
 
@@ -22,7 +24,7 @@ static void b1_set (void *data, void *ptr)
 }
 
 static EfiBitfield Test_b1 = {
-	"int", "b1", 24, b1_get, b1_set, "b1"
+	"int", "b1", 24, b1_get, b1_set, "B1"
 };
 
 static void b2_get (void *data, void *ptr)
@@ -36,7 +38,7 @@ static void b2_set (void *data, void *ptr)
 }
 
 static EfiBitfield Test_b2 = {
-	"int", "b2", 8, b2_get, b2_set, "b2"
+	"int", "b2", 8, b2_get, b2_set, "B2"
 };
 
 EfiType Type_Test = SIMPLE_TYPE("TestType", TestType, NULL, NULL);
@@ -59,6 +61,7 @@ TEST_SUITE
 	st_var = EfiType_bitfield(type, NULL, offset, &Test_b2);
 	st_var = EfiType_stdvar(type, st_var, offsetof(TestType, i),
 		2, "int", "i", "INT");
+	AddListConv(type, List2Struct, Struct2List);
 
 	PushVarTab(NULL, NULL);
 	TestType data = { 5., 100, 10, { 1, 2 } };
