@@ -104,7 +104,7 @@ static EDB *fdef_var (EDBFilter *filter, EDB *edb,
 
 EDBFilter EDBFilter_var = EDB_FILTER(NULL,
 	"var", "[r]=list", fdef_var, NULL,
-	":*:rearrange variables with expresions and patterns"
+	":*:rearange variables with expresions and patterns"
 	":de:Neuzusammenstellung von Variablen über Ausdrücke und Muster"
 );
 
