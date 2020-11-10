@@ -31,4 +31,6 @@ $(BUILD)/%.mk : %.tpl
 
 all clean::
 	$(MAKE) -f post.mk $@
+
+clean::
 	rm -rf $(BUILD)
