@@ -63,11 +63,7 @@ int TeXputc(int c, IO *io)
 
 	switch (c)
 	{
-	case EOF:
-	
-		break;
-
-	case '%': case '$': case '#': case '_':
+	case '%': case '$': case '#': case '_':
 	case '&': case '{': case '}':
 
 		io_putc('\\', io);

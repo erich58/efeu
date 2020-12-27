@@ -48,7 +48,7 @@ static int cr_get (IO *io)
 	int c;
 
 	do	c = io_getc(io->data);
-	while	(c == '\r' || c == 32);
+	while	(c == '\r');
 
 	return c;
 }

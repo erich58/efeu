@@ -95,7 +95,7 @@ static struct IDXCMP *new_idxcmp(const char *def, size_t dim)
 		a = strtol(def + 1, &p, 0);
 
 		if	(-a > (long) dim)	a = 0;
-		else if	(a < 0)			a += 1 + (long) dim;
+		else if	(a < 0)			a += (long) dim;
 
 		x->minval = a;
 

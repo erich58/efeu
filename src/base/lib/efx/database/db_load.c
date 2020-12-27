@@ -186,7 +186,7 @@ static void load_compact (IO *io, EfiDB *db, LPAR *lpar, EfiObj *expr)
 			}
 			else if	(x && x->obj)
 			{
-				AssignObj(x->obj, obj);
+				x->obj = AssignObj(x->obj, obj);
 				Val_bool(lpar->flag->data) = 1;
 			}
 			else	UnrefEval(obj);

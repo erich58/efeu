@@ -8,6 +8,7 @@
 #include <EFEU/printobj.h>
 #include <EFEU/Random.h>
 #include <EFEU/Pixmap.h>
+#include <EFEU/database.h>
 
 #define runUnitTest hidden_runUnitTest
 void runUnitTest(int UnitTest_argc, char **UnitTest_argv);
@@ -23,6 +24,7 @@ TEST_SUITE
 	SetupDebug();
 	SetupRandom();
 	SetupPixmap();
+	SetupDataBase();
 
 	UnitTest_setup();
 
