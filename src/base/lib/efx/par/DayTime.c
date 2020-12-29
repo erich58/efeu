@@ -46,13 +46,9 @@ static RefType DayTime_reftype = REFTYPE_INIT("DayTime", NULL, DayTime_free);
 
 static int DayTime_update (const EfiObj *base, void *par)
 {
-	if	(par)
-	{
-		DayTimePar *dt = par;
-		int sec = dt->get_sec(base);
-		return (sec / dt->unit) % dt->dim + 1;
-	}
-	else	return 1;
+	DayTimePar *dt = par;
+	int sec = dt->get_sec(base);
+	return (sec / dt->unit) % dt->dim + 1;
 }
 
 static char *sb_time (StrBuf *sb, const char *fmt, int t0, int t1)

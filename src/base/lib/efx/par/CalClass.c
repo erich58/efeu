@@ -43,17 +43,13 @@ static RefType CalClass_reftype = REFTYPE_INIT("CalClass", NULL, CalClass_free);
 
 static int CalClass_update (const EfiObj *base, void *par)
 {
-	if	(par)
-	{
-		CalClassPar *cpar = par;
-		int val = cpar->get_cal(base);
+	CalClassPar *cpar = par;
+	int val = cpar->get_cal(base);
 		
-		if	(val < cpar->ug)	return 0;
-		if	(val > cpar->og)	return 0;
+	if	(val < cpar->ug)	return 0;
+	if	(val > cpar->og)	return 0;
 
-		return val - cpar->ug + 1;
-	}
-	else	return 1;
+	return val - cpar->ug + 1;
 }
 
 void CalClass (EfiClassArg *def, const EfiType *type,
