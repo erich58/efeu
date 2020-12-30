@@ -62,17 +62,12 @@ static int map_update (const EfiObj *obj, void *opaque_par)
 
 static int sub_update (const EfiObj *obj, void *opaque_par)
 {
-	if	(opaque_par)
-	{
-		SPar *par = opaque_par;
-		IDX idx, *ptr;
+	SPar *par = opaque_par;
+	IDX idx, *ptr;
 
-		idx.key = Val_int(obj->data);
-		ptr = bsearch(&idx, par->tab, par->dim,
-			sizeof par->tab[0], cmp_idx);
-		return ptr ? ptr->val : 0;
-	}
-	else	return 1;
+	idx.key = Val_int(obj->data);
+	ptr = bsearch(&idx, par->tab, par->dim, sizeof par->tab[0], cmp_idx);
+	return ptr ? ptr->val : 0;
 }
 
 static VECBUF(idx_buf, 100, sizeof(IDX));
@@ -127,7 +122,6 @@ static void create_sub (EfiClassArg *def, const EfiType *type,
 	MatchPar *match;
 
  	def->type = NewEnumType(NULL, 1);
-	def->update = sub_update;
 	idx = make_idx (type);
 	match = MatchPar_list(arg, idx_buf.used);
 
@@ -143,6 +137,7 @@ static void create_sub (EfiClassArg *def, const EfiType *type,
 
 	rd_deref(match);
  	def->type = AddEnumType(def->type);
+	def->update = sub_update;
 	def->par = make_par (type);
 }
 

@@ -131,6 +131,50 @@ TEST_DECL(generic)
 	EXPECT(rd_deref(arg.par) == NULL);
 }
 
+static EnumTypeDef ttype_label[] = {
+	{ "a", 1, "A" },
+	{ "b", 2, "B" },
+	{ "c", 3, "C" },
+	{ "d", 4, "D" },
+};
+
+TEST_DECL(EfiClassEnum)
+{
+	EfiType *type = MakeEnumType("ttype", ttype_label, 4);
+	PrintType(OUT(), type, 1);
+	EXPECT_OUT("enum ttype : 1 { a = 1, b = 2, c = 3, d = 4, }");
+	EfiObj *base = NewObj(type, NULL);
+	TEST_EXPR(Val_int(base->data) = 0);
+	EfiObj *obj;
+
+	EfiObj *c1;
+	EXPECT_PTR(c1 = EfiClassExpr(base, "select=b,c"));
+	obj = EvalExpression(c1);
+	PrintType(OUT(), obj->type, 1);
+	EXPECT_OUT("enum : 1 { b = 1, c = 2, }");
+	EXPECT(Obj2int(obj) == 0);
+
+	EfiObj *c2;
+	EXPECT_PTR(c2 = EfiClassExpr(base, "group=g1=a,b *=c"));
+	obj = EvalExpression(c2);
+	PrintType(OUT(), obj->type, 1);
+	EXPECT_OUT("enum : 1 { c = 2, g1 = 1, }");
+	EXPECT(Obj2int(obj) == 0);
+
+	TEST_EXPR(Val_int(base->data) = 1);
+	EXPECT(Obj2int(EvalExpression(c1)) == 0);
+	EXPECT(Obj2int(EvalExpression(c2)) == 1);
+	TEST_EXPR(Val_int(base->data) = 2);
+	EXPECT(Obj2int(EvalExpression(c1)) == 1);
+	EXPECT(Obj2int(EvalExpression(c2)) == 1);
+	TEST_EXPR(Val_int(base->data) = 3);
+	EXPECT(Obj2int(EvalExpression(c1)) == 2);
+	EXPECT(Obj2int(EvalExpression(c2)) == 2);
+	TEST_EXPR(Val_int(base->data) = 4);
+	EXPECT(Obj2int(EvalExpression(c1)) == 0);
+	EXPECT(Obj2int(EvalExpression(c2)) == 0);
+}
+
 static void visit(EfiParClass *class, void *data)
 {
 	io_printf(data, "%s: %s\n", class->epc_name, class->epc_label);
@@ -148,10 +192,21 @@ TEST_SUITE
 		"test: test expression\n"
 	);
 
+	EfiParWalk(&Type_enum, &EfiPar_class, visit, OUT());
+	EXPECT_OUT(
+		"group: label grouping\n"
+		"select: label selection\n"
+		"flag: flag expression\n"
+		"generic: generic class construction\n"
+		"switch: switch expression\n"
+		"test: test expression\n"
+	);
+
 	TEST_RUN(dummy);
 	TEST_RUN(flag);
 	TEST_RUN(cswitch);
 	TEST_RUN(ctest);
 	TEST_RUN(generic);
+	TEST_RUN(EfiClassEnum);
 	CLEANUP_OUT;
 }

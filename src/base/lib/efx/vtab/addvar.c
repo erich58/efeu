@@ -35,7 +35,8 @@ static void var_clean (VarTabEntry *var)
 {
 	if	(var)
 	{
-		UnrefObj(var->obj);
+		if	(var->obj)
+			UnrefObj(var->obj);
 
 		if	(var->entry_clean)
 			var->entry_clean(var);
@@ -47,6 +48,7 @@ static VarTabEntry *var_get (EfiVarTab *tab, const char *name, int mode)
 	if	(tab)
 	{
 		VarTabEntry key;
+		memset(&key, 0, sizeof key);
 		key.name = name;
 		return vb_search(&tab->tab, &key, var_cmp, mode);
 	}
