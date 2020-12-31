@@ -241,8 +241,6 @@ static EfiObj *label_obj (char *label)
 	return *label == '{' ? strterm(label) : str2Obj(mstrcpy(label));
 }
 
-#define ISVEC(t)	((t)->dim || IsTypeClass(t, &Type_vec))
-
 static int read_label (EfiType *type, void *data, void *par)
 {
 	LabelData *db;
