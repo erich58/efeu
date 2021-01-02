@@ -27,43 +27,6 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/MakeDepend.h>
 #include <ctype.h>
 
-#define	BREAK_COL	70	/* Spaltenpostion für Fortsetzungszeile */
-
-void MakeDependList (IO *io, const char *name)
-{
-	int n, p;
-	char **ptr;
-
-	if	(name == NULL)	return;
-
-	n = DependList.used;
-	ptr = DependList.data;
-
-	if	(n == 0)	return;
-
-	io_putc('\n', io);
-	p = io_puts(name, io);
-	p += io_puts(":", io);
-
-	while (n > 0)
-	{
-		io_putc(' ', io);
-		p++;
-
-		if	(*ptr && p + strlen(*ptr) >= BREAK_COL)
-		{
-			io_puts("\\\n ", io);
-			p = 1;
-		}
-			
-		p += io_puts(*ptr, io);
-		ptr++;
-		n--;
-	}
-
-	io_putc('\n', io);
-}
-
 void Func_target (EfiFunc *func, void *rval, void **arg)
 {
 	AddTarget(Val_str(arg[0]));

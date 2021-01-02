@@ -35,6 +35,7 @@ extern VecBuf TargetList;
 
 void AddTarget (const char *name);
 void AddDepend (const char *name);
+void MakeDependList (IO *io, const char *name);
 void MakeDependRule (IO *io);
 void MakeTargetRule (IO *io, const char *cmd);
 void MakeTaskRule (IO *io, const char *name);

@@ -144,3 +144,25 @@ void MakeDependRule (IO *io)
 {
 	MakeTargetRule(io, NULL);
 }
+
+void MakeDependList (IO *io, const char *name)
+{
+	int n, p;
+	char **ptr;
+
+	if	(!DependList.used || !name)	return;
+
+	n = DependList.used;
+	ptr = DependList.data;
+
+	io_putc('\n', io);
+	p = 0;
+	p = put_name(io, p, name);
+	io_putc(':', io);
+	p++;
+
+	for (n = DependList.used, ptr = DependList.data; n-- > 0; ptr++)
+		p = put_name(io, p, *ptr);
+
+	io_putc('\n', io);
+}
