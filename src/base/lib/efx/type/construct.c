@@ -176,14 +176,10 @@ static void Construct_clean (void *opaque_par)
 
 static ConstructEntry *Construct_next (ConstructPar *par, EfiStruct *var)
 {
-	if	(var)
-	{
-		ConstructEntry *entry = ConstructEntry_alloc(var);
-		*par->ptr = entry;
-		par->ptr = &(*par->ptr)->next;
-		return entry;
-	}
-	else	return NULL;
+	ConstructEntry *entry = ConstructEntry_alloc(var);
+	*par->ptr = entry;
+	par->ptr = &(*par->ptr)->next;
+	return entry;
 }
 
 static void func_noarg (EfiFunc *func, void *rval, void **arg)
@@ -411,8 +407,8 @@ static size_t match_dim_base (EfiObj *base)
 static size_t match_dim (ConstructPar *par)
 {
 	if	(par->obj)	return match_dim_base(par->obj);
-	else if	(par->dim)	return par->dim;
 	else if	(par->tab)	return par->tab->tab.used;
+	else if	(par->dim)	return par->dim;
 	else			return 0;
 }
 
@@ -601,14 +597,6 @@ static int parse_expr (IO *io, ConstructPar *par, int delim)
 		{
 			ShowVarTab(ioerr, "var", par->tab);
 			io_putc('\n', ioerr);
-		}
-		else
-		{
-			int i;
-
-			for (i = 0; i < par->dim; i++)
-				list_var(ioerr, par->var[i]->name,
-					par->var[i]->obj);
 		}
 
 		exit(EXIT_SUCCESS);
@@ -842,7 +830,13 @@ EfiFunc *ConstructFunc (const char *name, const char *def, EfiVarTab *tab)
 {
 	IO *io;
 	EfiFunc *func;
-	
+
+	if	(!def)
+		return NULL;
+
+	while (isspace(*def))
+		def++;
+
 	func = cf_create(NULL);
 	func->scope = RefVarTab(tab);
 	
