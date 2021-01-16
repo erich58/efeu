@@ -88,7 +88,7 @@ void ShowEDBPrintDef (IO *out, EDBPrintDef *pdef, int verbosity)
 
 	if	(verbosity)
 	{
-		char *p = GetFormat(":en:Syntax:de:Verwendung");
+		char *p = GetFormat(":*:Syntax:de:Verwendung");
 
 		io_putc('\n', out);
 		io_langputs(p, out);
