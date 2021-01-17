@@ -81,11 +81,45 @@ TEST_DECL(pmode)
 	EXPECT_PTR(pmode = edb_pmode(NULL, edb, "locale=de_AT"));
 }
 
+TEST_DECL(split)
+{
+	EDBPrintMode *pmode;
+	EDB *edb = edb_create(&Type_int);
+
+	EXPECT_PTR(pmode = edb_pmode(NULL, edb, "split"));
+	EXPECT(pmode->split == 2000 * 1024ul * 1024ul);
+
+	EXPECT_PTR(pmode = edb_pmode(NULL, edb, "split=200"));
+	EXPECT(pmode->split == 200);
+	EXPECT_PTR(pmode = edb_pmode(NULL, edb, "split=120k"));
+	EXPECT(pmode->split == 120 * 1024ul);
+	EXPECT_PTR(pmode = edb_pmode(NULL, edb, "split=32M"));
+	EXPECT(pmode->split == 32 * 1024ul * 1024ul);
+	EXPECT_PTR(pmode = edb_pmode(NULL, edb, "split=5G"));
+	EXPECT(pmode->split == 5 * 1024ul * 1024ul * 1024ul);
+
+	UnitTest_stderr("stderr");
+	EXPECT_PTR(pmode = edb_pmode(NULL, edb, "split=5z"));
+	UnitTest_stderr(NULL);
+	EXPECT(pmode->split == 5);
+	MATCH_CONTENT("stderr", "'z'");
+
+	EXPECT_PTR(pmode = edb_pmode(NULL, edb, "nosplit"));
+	EXPECT(pmode->split == 0);
+
+	UnitTest_stderr("stderr");
+	EXPECT_PTR(pmode = edb_pmode(NULL, edb, "nosplit=1024"));
+	EXPECT(pmode->split == 0);
+	UnitTest_stderr(NULL);
+	MATCH_CONTENT("stderr", "1024");
+}
+
 TEST_SUITE
 {
 	TEST_RUN(psub);
 	TEST_RUN(show);
 	TEST_RUN(list);
 	TEST_RUN(pmode);
+	TEST_RUN(split);
 	CLEANUP_OUT;
 }

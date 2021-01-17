@@ -96,9 +96,17 @@ TEST_DECL(vec)
 		"5\n"
 	);
 	EXPECT_EVAL("int[] y", "Vec: int[0]");
-	EXPECT_EVAL("y.load(TMP(\"db\")", "");
+	EXPECT_EVAL("y.load(TMP(\"db\"))", "");
 	EXPECT_EVAL("y", "Vec: int[3]");
 	EXPECT_EVAL("(List_t) y", "{1, 3, 5}");
+
+	EXPECT_EVAL("int y2[2]", "{0, 0}");
+	EXPECT_EVAL("y2.load(TMP(\"db\"))", "");
+	EXPECT_EVAL("y2", "{1, 3}");
+
+	EXPECT_EVAL("int y3[5]", "{0, 0, 0, 0, 0}");
+	EXPECT_EVAL("y3.load(TMP(\"db\"))", "");
+	EXPECT_EVAL("y3", "{1, 3, 5, 0, 0}");
 
 	EXPECT_EVAL("x.save(TMP(\"db\"), \"nohead\", \"DESC\")", "");
 	EXPECT_CONTENT("db",
@@ -235,7 +243,6 @@ TEST_SUITE
 {
 	SetupStd();
 	SetupEDB();
-	SetupEDBInfo();
 	AddFuncDef(func, tabsize(func));
 	TEST_EXEC(create);
 	TEST_EXEC(read);

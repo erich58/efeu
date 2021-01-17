@@ -134,6 +134,17 @@ TEST(data)
 	buf.free();
 }
 
+TEST(prec)
+{
+	double x = 1.23456;
+	EDB edb = EDB(x);
+	edb.out(buf, "data,prec[6]=3");
+	edb.write();
+	edb = NULL;
+	EXPECT_STR(buf, "  1.23\n");
+	buf.free();
+}
+
 TEST(data_struct)
 {
 	struct { int a; struct { int b; int c; } s; int d[2]} x = {
@@ -193,3 +204,19 @@ TEST(data_binary)
 	EXPECT_STR(buf, "\001\002\003\004");
 	buf.free();
 }
+
+TEST(info)
+{
+	int x = 42;
+	EDB edb = EDB(x);
+	UnitTest::stderr("stderr");
+	TEST_FORK
+	{
+		edb.out(buf, "?");
+		exit(1); // notreached
+	}
+	CHILD_EXIT(0);
+	UnitTest::stderr(NULL);
+	MATCH_CONTENT("stderr", ".");
+}
+
