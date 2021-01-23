@@ -61,6 +61,7 @@ void EDBMeta_paste (EDBMetaDef *def, EDBMeta *meta, const char *arg);
 
 void AddEDBMetaDef (EDBMetaDef *def, size_t dim);
 EDBMetaDef *GetEDBMetaDef (const char *name);
+void ShowEDBMetaDef(IO *out, EDBMetaDef *mdef);
 void ListEDBMetaDef (IO *out);
 void SetupEDBMeta (void);
 void EDBMetaInfo (InfoNode *info);

@@ -66,6 +66,8 @@ void ShowEDBPrintDef (IO *out, EDBPrintDef *pdef, int verbosity)
 	IO *desc;
 	int c;
 
+	if	(!out || !pdef)	return;
+
 	fmt = GetFormat(pdef->desc);
 	desc = langfilter(io_cstr(fmt), NULL);
 

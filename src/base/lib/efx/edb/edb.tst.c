@@ -168,6 +168,8 @@ TEST_DECL(combine)
 		"3\n"
 	);
 
+	EXPECT_EVAL("edb = edbcat()", "NULL");
+
 	PRINT_LABEL("merge");
 	EXPECT_EVAL("EDB db1 = edbopen(TMP(\"db1\"));", "");
 	EXPECT_EVAL("EDB db2 = edbopen(TMP(\"db2\"));", "");

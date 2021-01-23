@@ -29,17 +29,14 @@ EDBMetaDef *GetEDBMetaDef (const char *name)
 	return nkt_fetch(&MetaDef, name, NULL);
 }
 
-static int do_list (const char *name, void *data, void *par)
+void ShowEDBMetaDef (IO *out, EDBMetaDef *mdef)
 {
-	EDBMetaDef *mdef;
-	IO *out;
 	char *fmt;
 	IO *desc;
 	int c;
 
+	if	(!out || !mdef)	return;
 
-	mdef = data;
-	out = par;
 	fmt = GetFormat(mdef->desc);
 	desc = langfilter(io_cstr(fmt), NULL);
 
@@ -61,6 +58,11 @@ static int do_list (const char *name, void *data, void *par)
 
 	io_close(desc);
 	io_putc('\n', out);
+}
+
+static int do_list (const char *name, void *data, void *par)
+{
+	ShowEDBMetaDef(par, data);
 	return 0;
 }
 
