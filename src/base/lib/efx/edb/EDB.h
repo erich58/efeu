@@ -159,7 +159,6 @@ void PrintEDBAssign (IO *out, EDBAssign *assign);
 typedef struct EDBAggregateStruct {
 	REFVAR;
 	struct EDBAggregateStruct *next;
-	struct EDBAggregateStruct *sub;
 	EfiStruct *var;
 	EfiFunc *f_aggregate;
 	unsigned offset;

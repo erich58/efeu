@@ -29,7 +29,6 @@ static void aggr_clean (void *ptr)
 {
 	EDBAggregate *x = ptr;
 	rd_deref(x->next);
-	rd_deref(x->sub);
 	rd_deref(x->var);
 	rd_deref(x->f_aggregate);
 	memfree(ptr);
@@ -42,7 +41,6 @@ EDBAggregate *NewEDBAggregate (EDBAggregate *next, const char *op,
 {
 	EDBAggregate *x = memalloc(sizeof *x);
 	x->next = next;
-	x->sub = NULL;
 	x->var = rd_refer(var);
 	x->offset = offset;
 	x->f_aggregate = GetFunc(NULL, GetTypeFunc(var->type, "+="),
@@ -64,23 +62,16 @@ void EDBAggregateData (EDBAggregate *aggr, void *opaque_tg, void *opaque_src)
 		arg[0] = (char *) opaque_tg + aggr->var->offset;
 		arg[1] = (char *) opaque_src + aggr->offset;
 
-		if	(aggr->sub)
+		if	(aggr->f_aggregate)
 		{
-			EDBAggregateData(aggr->sub, arg[0], arg[1]);
-			continue;
-		}
-		else if	(!aggr->f_aggregate)
-		{
-			continue;
-		}
-
-		CallVoidFuncVec(aggr->f_aggregate, arg);
-
-		for (n = 1; n < aggr->var->dim; n++)
-		{
-			arg[0] = ((char *) arg[0]) + aggr->var->type->size;
-			arg[1] = ((char *) arg[1]) + aggr->var->type->size;
 			CallVoidFuncVec(aggr->f_aggregate, arg);
+
+			for (n = 1; n < aggr->var->dim; n++)
+			{
+				arg[0] = ((char *) arg[0]) + aggr->var->type->size;
+				arg[1] = ((char *) arg[1]) + aggr->var->type->size;
+				CallVoidFuncVec(aggr->f_aggregate, arg);
+			}
 		}
 	}
 }
