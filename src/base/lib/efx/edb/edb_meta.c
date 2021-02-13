@@ -48,27 +48,11 @@ static char *parse_arg (IO *io, StrBuf *buf)
 	while ((c = io_skipcom (io, NULL, 0)) != EOF)
 	{
 		if	(c == '$')
-		{
 			sb_puts(psubexpand(NULL, io, 0, NULL), buf);
-			continue;
-		}
-
-		if	(c == '\\')
-		{
-			c = io_getc(io);
-
-			if	(c == '\n')
-			{
-				do	c = io_skipcom(io, NULL, 0);
-				while	(c == ' ' || c == '\t');
-			}
-			else	sb_putc('\\', buf);
-		}
-
-		if	(c == '\n')
+		else if	(c == '\n')
 			break;
-
-		sb_putc(c, buf);
+		else
+			sb_putc(c, buf);
 	}
 
 	sb_putc(0, buf);
