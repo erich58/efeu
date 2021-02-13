@@ -55,6 +55,11 @@ TEST_DECL(skipcom)
 
 	EXPECT_STR(skipcom("a/b\n", sb, 1), "a/b\n");
 	EXPECT_BUF(sb, "");
+
+	EXPECT_STR(skipcom("a\\\nb", sb, 0), "ab");
+	EXPECT_STR(skipcom("a/*A*/\\\nb", sb, 0), "ab");
+	EXPECT_STR(skipcom("a/*A*/\\\\\nb", sb, 0), "a\\\nb");
+	EXPECT_BUF(sb, "A");
 	sb_destroy(sb);
 }
 
