@@ -241,6 +241,20 @@ TEST_DECL(header)
 	);
 }
 
+TEST_DECL(tmpload)
+{
+	TEST_FILE("data", "EDB 1.0\nint\n@data plain\n10\n20\n");
+	EDB *edb = edb_fopen(NULL, UnitTest_tmpname("data"));
+	EXPECT(Val_int(edb_read(edb)) == 10);
+	edb_unread(edb);
+	edb_tmpload(edb);
+	EXPECT(Val_int(edb_read(edb)) == 10);
+	EXPECT(Val_int(edb_read(edb)) == 20);
+	EXPECT(edb_read(edb) == NULL);
+	rd_deref(edb);
+	edb_tmpload(NULL);
+}
+
 TEST_SUITE
 {
 	SetupStd();
@@ -253,5 +267,6 @@ TEST_SUITE
 	TEST_EXEC(combine);
 	TEST_EXEC(trans);
 	TEST_EXEC(header);
+	TEST_EXEC(tmpload);
 	CLEANUP_EVAL;
 }
