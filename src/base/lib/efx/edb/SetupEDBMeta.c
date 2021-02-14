@@ -11,18 +11,6 @@
 #define	FMT_UNIT "edb_meta: parameter \"$1\": undefined unit key $2.\n"
 #define	FMT_XARG "edb_meta: parameter \"$1\": argument \"$2\" ignored.\n"
 
-#define	TEST	1	/* Testkommando */
-
-#if	TEST
-static void meta_test (EDBMetaDef *def, EDBMeta *meta, const char *arg)
-{
-	char *desc = mlangcpy(def->desc, NULL);
-	io_xprintf(ioerr, "/* %s */\n", desc);
-	io_xprintf(ioerr, "@%s: %#s\n", def->name, arg);
-	memfree(desc);
-}
-#endif
-
 static void meta_head (EDBMetaDef *def, EDBMeta *meta, const char *arg)
 {
 	IO *cin = io_cmdpreproc(io_cstr(EDBMeta_par(meta, 0)));
@@ -87,12 +75,6 @@ static EDBMetaDef mdef[] = {
 		":*:empty statement"
 		":de:Leerkommando"
 	},
-#if	TEST
-	{ "test", meta_test, 0,
-		":*:test command"
-		":de:Testkommando"
-	},
-#endif
 	{ "head", meta_head, 0,
 		":*:header definition"
 		":de:Headerdefinitionen laden"

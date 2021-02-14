@@ -2,6 +2,7 @@
 #include <EFEU/object.h>
 #include <EFEU/EDB.h>
 #include <EFEU/EDBMeta.h>
+#include <EFEU/EDBFilter.h>
 #include "utest/in.tst.h"
 #include "utest/out.tst.h"
 
@@ -32,6 +33,7 @@ TEST_DECL(setup)
 
 	SetupStd();
 	AddEDBMetaDef(&mdef, 1);
+	SetupEDBFilter();
 }
 
 TEST_DECL(show)
@@ -149,14 +151,18 @@ TEST_DECL(file)
 		"int\n"
 		"@file\n"
 		"db1\n"
+		"@filter\n"
+		"var=a=this,b=1\n"
 	);
 	EXPECT_DB("db",
 		"EDB\t1.0\n"
 		"// DESC\n"
-		"int\n"
+		"int a;\n"
+		"int b;\n"
 		"@data plain\n"
-		"15\n"
-		"3\n"
+		"#a;b\n"
+		"15;1\n"
+		"3;1\n"
 	);
 
 	TEST_FILE("db",
@@ -266,12 +272,138 @@ TEST_DECL(file)
 	);
 }
 
+TEST_DECL(head)
+{
+	TEST_FILE("db",
+		"EDB\t1.0\n"
+		"@head\n"
+		"fprintf(ioerr, \"%d\\n\",  6 * 7);\n"
+		"@end\n"
+	);
+	UnitTest_stderr("stderr");
+	EXPECT_DB("db", NULL);
+	UnitTest_stderr(NULL);
+	EXPECT_CONTENT("stderr", "42\n");
+}
+
+TEST_DECL(expr)
+{
+	TEST_FILE("db",
+		"EDB\t1.0\n"
+		"@type\n"
+		"int a;\n"
+		"@expr\n"
+		"static int n = 5;\n"
+		"if (n == 0) break;\n"
+		"a = n--;\n"
+		"if (a == 3) continue;\n"
+		"@end\n"
+	);
+	EXPECT_DB("db", 
+		"EDB\t1.0\n"
+		"int a;\n"
+		"@data plain\n"
+		"#a\n"
+		"5\n"
+		"4\n"
+		"2\n"
+		"1\n"
+	);
+
+	edb_expr(NULL, NULL);	// Coverage
+}
+
+TEST_DECL(join)
+{
+	TEST_FILE("db1",
+		"EDB\t1.0\n"
+		"int a;\n"
+		"int b;\n"
+		"@data plain\n"
+		"#a;b\n"
+		"3;1\n"
+		"5;2\n"
+		"15;3\n"
+	);
+	TEST_FILE("db2",
+		"EDB\t1.0\n"
+		"int a;\n"
+		"int c;\n"
+		"@data plain\n"
+		"#a;c\n"
+		"3;91\n"
+		"15;92\n"
+	);
+	TEST_FILE("db",
+		"EDB\t1.0\n"
+		"@file\n"
+		"db1\n"
+		"@file\n"
+		"db2\n"
+		"@join\n"
+	);
+	EXPECT_DB("db",
+		"EDB\t1.0\n"
+		"int a;\n"
+		"int b;\n"
+		"int c;\n"
+		"@data plain\n"
+		"#a;b;c\n"
+		"3;1;91\n"
+		"15;3;92\n"
+	);
+}
+
+TEST_DECL(import)
+{
+	TEST_FILE("data", "\001\002\003\004");
+	TEST_FILE("data1",
+		"3\n"
+		"5\n"
+		"15\n"
+	);
+	TEST_FILE("data2",
+		"11\n"
+		"12\n"
+	);
+	UnitTest_stdin("stdin", "42\n");
+	TEST_FILE("db",
+		"EDB\t1.0\n"
+		"int\n"
+		"@import binary\n"
+		"data\n"
+		"@import plain\n"
+		"|echo 99\n"
+		"data1\n"
+		"-\n"
+		"data2\n"
+	);
+	EXPECT_DB("db",
+		"EDB\t1.0\n"
+		"int\n"
+		"@data plain\n"
+		"16909060\n" /* 0x1020304 */
+		"99\n"
+		"3\n"
+		"5\n"
+		"15\n"
+		"42\n"
+		"11\n"
+		"12\n"
+	);
+	UnitTest_stdin(NULL, NULL);
+}
+
 TEST_SUITE
 {
 	TEST_RUN(setup);
 	TEST_RUN(show);
 	TEST_RUN(meta);
 	TEST_RUN(file);
+	TEST_RUN(head);
+	TEST_RUN(expr);
+	TEST_RUN(join);
+	TEST_RUN(import);
 	CLEANUP_IN;
 	CLEANUP_OUT;
 }
