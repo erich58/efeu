@@ -5,8 +5,7 @@ TOP=../../..
 include $(TOP)/Setup.mak
 include $(CFG)/Config.mak
 
-#Modules=  conv dump tape xml
-Modules=  conv dump xml
+Modules=  conv dump tape xml
 
 all doc clean::
 	@for m in $(Modules); \
