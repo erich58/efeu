@@ -8,5 +8,5 @@ prereq::
 	make -C $(TOP)/src/base/lib/efm
 
 CPPFLAGS += -DEFEUCFG
-LDFLAGS = -lefm
+LDFLAGS += -lefm
 include $(CFG)/SimplePrograms.mak
