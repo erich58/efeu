@@ -17,7 +17,7 @@ clean::
 
 $(PGM): efeu-letters.etk
 	@mkdir -p $(@D)
-	efeuscript -e -c etk $< $@
+	$(TOP)/bin/efeuscript -e -c etk $< $@
 
 # Dateien
 
