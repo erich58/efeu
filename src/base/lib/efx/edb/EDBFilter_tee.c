@@ -24,14 +24,15 @@ If not, write to the Free Software Foundation, Inc.,
 
 static int tee_read (EfiType *type, void *data, void *par)
 {
-	EDB *base = par;
+	EDB *edb = par;
 
-	if	(edb_read(base))
+	if	(edb_read(edb))
 	{
-		edb_write(base);
+		edb_write(edb);
 		return 1;
 	}
 
+	edb_closeout(edb);
 	return 0;
 }
 
