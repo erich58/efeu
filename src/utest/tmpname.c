@@ -201,7 +201,7 @@ char *UnitTest_pgets(const char *cmd, int delim)
 		while ((c = getc(file)) != EOF && c != delim)
 			UnitTest_putc(c, &buf);
 
-		fclose(file);
+		pclose(file);
 	}
 
 	return UnitTest_mstr(&buf);
