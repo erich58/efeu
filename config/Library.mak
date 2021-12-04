@@ -68,10 +68,33 @@ endif
 # unit test with code coverage
 
 test::
+	make -C $(SRC)/utest all
+
+test:: all
 
 _Library_tst_src = $(shell find -L . -name '*.tst.c' -printf '%f\n')
 _Library_tst_bin = $(patsubst %.c,$(BUILD)/%,$(_Library_tst_src))
 _Library_tst_dep = $(patsubst %,%.d,$(_Library_tst_bin))
+
+ifneq ($(_Library_ext_src),)
+_Library_ext_gcov = $(patsubst %.ext.c,$(BUILD)/%.gcov.so,$(_Library_ext_src))
+
+test:: $(_Library_ext_gcov)
+
+$(BUILD)/%.gcov.so : $(BUILD)/%.gcov.o
+	@mkdir -p $(@D)
+	$(CC) -shared -o $@ $< -lgcov $(LDFLAGS) $(EXT_LDFLAGS) -lutest
+
+$(BUILD)/%.gcov.o : %.ext.c
+	@mkdir -p $(@D)
+	$(CC) -o $@ -c -MMD $(CPPFLAGS) $(CFLAGS) --coverage $<
+
+purge::
+	rm -rf $(_Library_ext_gcov)
+	rm -rf $(_Library_ext_gcov:.so=.gcno)
+	rm -rf $(_Library_ext_gcov:.so=.gcda)
+
+endif
 
 ifneq ($(_Library_tst_bin),)
 
@@ -79,10 +102,7 @@ _Library_gcov = $(BUILD)/lib$(NAME).gcov.a
 _Library_gcov_obj = $(patsubst %.o,%.gcov.o,$(_Library_obj))
 _Library_gcov_dep = $(patsubst %.o,%.d,$(_Library_gcov_obj))
 
-test::
-	make -C $(SRC)/utest all
-
-test:: all $(_Library_gcov)
+test:: $(_Library_gcov)
 
 test:: $(_Library_tst_bin)
 
