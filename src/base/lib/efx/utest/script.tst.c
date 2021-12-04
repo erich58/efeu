@@ -10,6 +10,7 @@
 #include <EFEU/Pixmap.h>
 #include <EFEU/database.h>
 #include <EFEU/EDB.h>
+#include <EFEU/Tabular.h>
 
 #define runUnitTest hidden_runUnitTest
 void runUnitTest(int UnitTest_argc, char **UnitTest_argv);
@@ -27,6 +28,7 @@ TEST_SUITE
 	SetupPixmap();
 	SetupDataBase();
 	SetupEDB();
+	SetupTabular();
 
 	UnitTest_setup();
 
