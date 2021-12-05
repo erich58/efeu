@@ -86,7 +86,7 @@ static const char *qualified_name(const char *name_)
 	return NULL;
 }
 
-static int reopen_fd(int fd, const char *name)
+int UnitTest_reopen(int fd, const char *name)
 {
 	const char *fname = qualified_name(name);
 
@@ -148,7 +148,7 @@ int UnitTest_stdout(const char *name)
 		if	(real_stdout == 1)
 			real_stdout = dup(1);
 
-		return reopen_fd(1, name);
+		return UnitTest_reopen(1, name);
 	}
 	else if	(real_stdout != 1)
 	{
@@ -167,7 +167,7 @@ int UnitTest_stderr(const char *name)
 		if	(real_stderr == 2)
 			real_stderr = dup(2);
 
-		return reopen_fd(2, name);
+		return UnitTest_reopen(2, name);
 	}
 	else if	(real_stderr != 2)
 	{
