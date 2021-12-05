@@ -139,6 +139,12 @@ static void f_stdout (EfiFunc *func, void *rval, void **arg)
 	Val_bool(rval) = UnitTest_stdout(Val_str(arg[0]));
 }
 
+static void f_tstout (EfiFunc *func, void *rval, void **arg)
+{
+	fflush(stderr);
+	Val_bool(rval) = UnitTest_reopen(2, Val_str(arg[0]));
+}
+
 static void f_stderr (EfiFunc *func, void *rval, void **arg)
 {
 	Val_bool(rval) = UnitTest_stderr(Val_str(arg[0]));
@@ -199,7 +205,7 @@ static void f_iotest (EfiFunc *func, void *rval, void **arg)
 
 	/*
 	io_xprintf(io, "typeof(%s) -> %s (%s)",
-		expr, obj->type->name, obj->type->cname); 
+		expr, obj->type->name, obj->type->cname);
 	UnitTest_info(id, 0, "# %s", sb_nul(sb));
 
 	io_rewind(io);
@@ -212,7 +218,7 @@ static void f_iotest (EfiFunc *func, void *rval, void **arg)
 
 	tg = ConstObj(obj->type, obj->data);
 	io_rewind(io);
-	PrintData(io, tg->type, tg->data); 
+	PrintData(io, tg->type, tg->data);
 	r &= UnitTest_strcheck(id, 0, "==", sb_nul(sb), value,
 		"copy", UnitTest_qstr(value));
 	UnrefObj(tg);
@@ -221,12 +227,12 @@ static void f_iotest (EfiFunc *func, void *rval, void **arg)
 	{
 		tg = NewObj(obj->type, NULL);
 		io_rewind(io);
-		WriteData(obj->type, obj->data, io); 
+		WriteData(obj->type, obj->data, io);
 		io_rewind(io);
-		ReadData(tg->type, tg->data, io); 
+		ReadData(tg->type, tg->data, io);
 		io_rewind(io);
-		PrintData(io, tg->type, tg->data); 
-		r &= UnitTest_strcheck(id, 0, "==", sb_nul(sb), value, 
+		PrintData(io, tg->type, tg->data);
+		r &= UnitTest_strcheck(id, 0, "==", sb_nul(sb), value,
 			"out-in", UnitTest_qstr(value));
 		UnrefObj(tg);
 	}
@@ -305,6 +311,7 @@ static EfiFuncDef fdef_func[] = {
 		"str content = NULL)", f_stdin },
 	{ 0, &Type_bool, "UnitTest::stdout(str name = NULL)", f_stdout },
 	{ 0, &Type_bool, "UnitTest::stderr(str name = NULL)", f_stderr },
+	{ 0, &Type_bool, "UnitTest::tstout(str name = NULL)", f_tstout },
 
 	{ 0, &Type_bool, "UnitTest::fork(str id)", f_fork },
 	{ 0, &Type_void, "UnitTest::exit()", f_exit },
