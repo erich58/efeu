@@ -383,6 +383,36 @@ int UnitTest_strcheck(const char *file, int line, const char *op,
 	return r;
 }
 
+int UnitTest_intmax(const char *file, int line,
+	intmax_t i1, intmax_t i2, const char *x1, const char *x2)
+{
+	int r = (i1 == i2);
+	UnitTest_result(file, line, r, "%s == %s", x1, x2);
+
+	if	(r == 0)
+	{
+		info("BECAUSE", file, line, "%s = %jd", x1, i1);
+		info("BECAUSE", file, line, "%s = %jd", x2, i2);
+	}
+
+	return r;
+}
+
+int UnitTest_uintmax(const char *file, int line,
+	uintmax_t i1, uintmax_t i2, const char *x1, const char *x2)
+{
+	int r = (i1 == i2);
+	UnitTest_result(file, line, r, "%s == %s", x1, x2);
+
+	if	(r == 0)
+	{
+		info("BECAUSE", file, line, "%s = %ju", x1, i1);
+		info("BECAUSE", file, line, "%s = %ju", x2, i2);
+	}
+
+	return r;
+}
+
 void UnitTest_summary(const char *issue)
 {
 	printf("%s\t%d\t%d\t%d\t%s\n", UnitTest_name, count_good + count_bad,
