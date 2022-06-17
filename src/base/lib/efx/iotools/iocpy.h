@@ -27,6 +27,13 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/io.h>
 
+/*	String/Zeile laden
+*/
+
+int io_egetc (IO *io, const char *delim);
+char *io_lgets (IO *io, const char *endkey);
+char *getstring (IO *io);
+
 /*	Standardkopierroutinen
 */
 
@@ -40,5 +47,7 @@ int iocpy_cskip (IO *in, IO *out, int key, const char *arg, unsigned flags);
 int iocpy_name (IO *in, IO *out, int key, const char *arg, unsigned flags);
 int iocpy_str (IO *in, IO *out, int key, const char *arg, unsigned flags);
 int iocpy_xstr (IO *in, IO *out, int key, const char *arg, unsigned flags);
+
+int iocpy_brace (IO *in, IO *out, int key, const char *arg, unsigned flags);
 
 #endif	/* EFEU/iocpy.h */

@@ -33,15 +33,6 @@ If not, write to the Free Software Foundation, Inc.,
 #define	MSG_EFUTIL	"efutil"	/* Name für Fehlermeldungen */
 #endif
 
-/*	String/Zeile laden
-*/
-
-int io_egetc (IO *io, const char *delim);
-char *io_lgets (IO *io, const char *endkey);
-int iocpy_brace (IO *in, IO *out, int key, const char *arg, unsigned flags);
-char *getstring (IO *io);
-
-
 /*	Zufallszahlengenereator
 */
 

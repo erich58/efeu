@@ -1,5 +1,5 @@
 /*
-Multizeilen zusasmmenfassen
+Multizeilen zusammenfassen und Kommentare ignorieren
 
 $Copyright (C) 1994 Erich Frühstück
 This file is part of EFEU.
@@ -39,7 +39,6 @@ int io_egetc(IO *io, const char *delim)
 	return c;
 }
 
-
 static int subgetc(IO *io, const char *delim)
 {
 	int c;
@@ -50,11 +49,19 @@ static int subgetc(IO *io, const char *delim)
 	{
 		c = io_getc(io);
 
-		if	(c != EOF && c != '\n' && listcmp(delim, c))
+		if	(c == '\n')
+		{
+			c = io_getc(io);
+		}
+		else if	(c != EOF && listcmp(delim, c))
+		{
 			return c;
-
-		io_ungetc(c, io);
-		return '\\';
+		}
+		else
+		{
+			io_ungetc(c, io);
+			return '\\';
+		}
 	}
 
 	if	(listcmp(delim, c))

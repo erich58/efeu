@@ -164,6 +164,54 @@ TEST_DECL(textool)
 	EXPECT_OUT("\"`abc\"'");
 }
 
+TEST_DECL(iocpy_brace)
+{
+	IO *in;
+
+	PRINT_LABEL("Kommentare erhalten");
+	TEST_EXPR(in = IN("a{\"b\"[c\\\n(/**/)])}d)rest"));
+	EXPECT_INT(iocpy_brace(in, OUT(), '(', ")", 0), 19);
+	EXPECT_NOUT(copied, "(a{\"b\"[c(/**/)])}d)");
+	EXPECT_INT(io_copy(in, OUT()), 4);
+	EXPECT_NOUT(remain, "rest");
+
+	PRINT_LABEL("Kommentare ignorieren");
+	TEST_EXPR(in = IN("a}'b)'c\\\n/**/d))"));
+	EXPECT_INT(iocpy_brace(in, OUT(), '(', ")", 1), 10);
+	EXPECT_NOUT(copied, "(a}'b)'cd)");
+	EXPECT_INT(io_copy(in, OUT()), 1);
+	EXPECT_NOUT(remain, ")");
+}
+
+TEST_DECL(io_egetc)
+{
+	IO *in;
+
+	TEST_EXPR(in = IN("\\a\\bb"));
+	EXPECT_CHAR(io_egetc(in, "b"), '\\');
+	EXPECT_CHAR(io_egetc(in, "b"), 'a');
+	EXPECT_CHAR(io_egetc(in, "b"), 'b');
+	EXPECT_CHAR(io_egetc(in, "b"), EOF);
+	EXPECT_CHAR(io_getc(in), 'b');
+
+	TEST_EXPR(in = IN("a\\\nb\n"));
+	EXPECT_CHAR(io_egetc(in, "\n"), 'a');
+	EXPECT_CHAR(io_egetc(in, NULL), 'b');
+	EXPECT_CHAR(io_egetc(in, "\n"), EOF);
+	EXPECT_CHAR(io_getc(in), '\n');
+
+	TEST_EXPR(in = IN("a\\\nb\n"));
+	EXPECT_CHAR(io_egetc(in, NULL), 'a');
+	EXPECT_CHAR(io_egetc(in, NULL), 'b');
+	EXPECT_CHAR(io_egetc(in, NULL), '\n');
+	EXPECT_CHAR(io_egetc(in, NULL), EOF);
+	EXPECT_CHAR(io_getc(in), EOF);
+
+	TEST_EXPR(in = IN("a\\"));
+	EXPECT_CHAR(io_egetc(in, NULL), 'a');
+	EXPECT_CHAR(io_egetc(in, NULL), '\\');
+	EXPECT_CHAR(io_egetc(in, NULL), EOF);
+}
 
 TEST_SUITE
 {
@@ -174,9 +222,11 @@ TEST_SUITE
 	TEST_RUN(savestr);
 	TEST_RUN(cp_str);
 	TEST_RUN(cp_util);
+	TEST_RUN(iocpy_brace);
 	TEST_RUN(crfilter);
 	TEST_RUN(getstring);
 	TEST_RUN(textool);
+	TEST_RUN(io_egetc);
 	CLEANUP_IN;
 	CLEANUP_OUT;
 }
