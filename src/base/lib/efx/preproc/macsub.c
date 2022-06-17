@@ -132,7 +132,7 @@ int macsub_subst (PPMacro *mac, IO *io, char **arg, int narg)
 	return n;
 }
 
-static int nextarg (IO *in, StrBuf *sb)
+static int nextarg (IO *in, StrBuf *sb, int delim)
 {
 	IO *out;
 	int c;
@@ -163,7 +163,7 @@ static int nextarg (IO *in, StrBuf *sb)
 			iocpy_str(in, out, c, "\"", 1);
 		else if (c == '\'')
 			iocpy_str(in, out, c, "'", 1);
-		else if	(c == ',' || c == ')')
+		else if	(c == delim || c == ')')
 			break;
 		else	io_putc(c, out);
 
@@ -235,11 +235,14 @@ int macsub_cpy (IO *in, IO *out, int c, unsigned int flags)
 		}
 
 		prompt = io_prompt(in, PROMPT);
+		int n = 0;
 
 		do
 		{
 			char **p = vb_next(&argv);
-			c = nextarg(in, sb);
+			++n;
+			c = nextarg(in, sb,
+				(mac->vaarg && n >= mac->dim) ? EOF : ',');
 			sb_putc(0, sb);
 			*p = sb_memcpy(sb);
 		}

@@ -36,7 +36,6 @@ PPMacro *NewMacro (void)
 	mac->repl = NULL;
 	mac->hasarg = 0;
 	mac->vaarg = 0;
-	mac->repl = NULL;
 	mac->lock = 0;
 	mac->dim = 0;
 	mac->arg = NULL;

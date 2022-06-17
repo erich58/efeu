@@ -107,6 +107,14 @@ static void getmacarg (IO *io, PPMacro *mac, StrBuf *buf)
 				x = NewMacro();
 				x->name = sb_memcpy(buf);
 				x->sub = macsub_repl;
+
+				if	(strcmp("...", x->name) == 0)
+				{
+					memfree(x->name);
+					x->name = "va_list";
+					mac->vaarg = 1;
+				}
+
 				AddMacro(x);
 			}
 			else	x = NULL;
@@ -131,15 +139,6 @@ static void getmacarg (IO *io, PPMacro *mac, StrBuf *buf)
 
 		for (i = 0; i < mac->dim; i++)
 			io_read(tmp, mac->arg + i, sizeof(PPMacro *));
-
-		i = mac->dim - 1;
-
-		if	(mac->arg[i] && strcmp("...", mac->arg[i]->name) == 0)
-		{
-			memfree(mac->arg[i]->name);
-			mac->arg[i]->name = "va_list";
-			mac->vaarg = 1;
-		}
 	}
 
 	io_close(tmp);
