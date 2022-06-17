@@ -3,9 +3,42 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <stdlib.h>
+#include <pty.h>
 
 TEST_SUITE
 {
+	UnitTest_info(__FILE__, __LINE__, "*GREEN", "");
+	UnitTest_info(__FILE__, __LINE__, "!RED", "");
+
+	TEST_FORK
+	{
+		char buf[1024];
+		int master;
+		int slave;
+		setenv("TERM", "vt100", 1);
+		ASSERT(openpty(&master, &slave, NULL, NULL, NULL) == 0);
+		int fderr = dup(2);
+
+		dup2(slave, 2);
+		UnitTest_info(__FILE__, __LINE__, "*GREEN", "");
+		dup2(fderr, 2);
+		EXPECT(read(master, buf, sizeof buf) > 0);
+		EXPECT_PTR(strstr(buf, "\033["));
+
+		dup2(slave, 2);
+		UnitTest_info(__FILE__, __LINE__, "!RED", "");
+		dup2(fderr, 2);
+		EXPECT(read(master, buf, sizeof buf) > 0);
+		EXPECT_PTR(strstr(buf, "\033["));
+
+		close(slave);
+		close(master);
+		TEST_EXIT;
+	}
+
+	CHILD_EXIT(0);
+
 	const char *str;
 	PRINT_INT(6 * 7);
 	PRINT_SIZE(-1);

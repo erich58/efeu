@@ -25,8 +25,7 @@ static const char *colored(int fd, const char *name)
 
 	int color = 0;
 
-	if	(!name)
-		return name;
+	if	(!name)	return name;
 
 	switch (*name)
 	{
