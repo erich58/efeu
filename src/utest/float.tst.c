@@ -9,6 +9,18 @@ TEST_SUITE
 	EXPECT(UnitTest_dcmp(0., 0.) == 1);
 	EXPECT(UnitTest_dcmp(1.e-32, 0.) == 0);
 	EXPECT(UnitTest_dcmp(-1.e-32, 0.) == 0);
+
 	EXPECT_DBL(1.0000001, 1.);
 	EXPECT_DBL(0.9999999, 1.);
+
+	TEST_FORK
+	{
+		double d;
+		TEST_EXPR(d = 1./3.);
+		EXPECT_DBL(d, 0.33333);
+		EXPECT_DBL(d, 0.3333333);
+		TEST_EXIT;
+	}
+
+	CHILD_EXIT(1);
 }

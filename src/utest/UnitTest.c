@@ -383,6 +383,22 @@ int UnitTest_strcheck(const char *file, int line, const char *op,
 	return r;
 }
 
+int UnitTest_double(const char *file, int line,
+	double d1, double d2, const char *x1, const char *x2)
+{
+	int r = UnitTest_dcmp(d1, d2);
+	UnitTest_result(file, line, r, "%s ~ %s", x1, x2);
+
+	if	(r == 0)
+	{
+		info("BECAUSE", file, line, "%s = %.16g", x1, d1);
+		info("BECAUSE", file, line, "%s = %.16g", x2, d2);
+	}
+
+	return r;
+}
+
+
 int UnitTest_intmax(const char *file, int line,
 	intmax_t i1, intmax_t i2, const char *x1, const char *x2)
 {
