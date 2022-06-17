@@ -5,7 +5,7 @@
 TEST_SUITE
 {
 	PRINT_LABEL("Parent");
-	ASSERT(1);
+	EXPECT(UnitTest_wait() == 0);
 
 	TEST_FORK
 	{
