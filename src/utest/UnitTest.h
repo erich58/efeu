@@ -33,6 +33,7 @@ char *UnitTest_mstr(UnitTestString *ustr);
 
 const char *UnitTest_cstr(const char *str);
 const char *UnitTest_qstr(const char *str);
+const char *UnitTest_qchar(int c);
 
 int UnitTest_strcmp(const char *s1, const char *s2);
 int UnitTest_match(const char *str, const char *expr);
@@ -54,6 +55,8 @@ int UnitTest_intmax(const char *file, int line,
 	intmax_t i1, intmax_t i2, const char *x1, const char *x2);
 int UnitTest_uintmax(const char *file, int line,
 	uintmax_t i1, uintmax_t i2, const char *x1, const char *x2);
+int UnitTest_char(const char *file, int line,
+	int c1, int c2, const char *x1, const char *x2);
 int UnitTest_create(const char *file, int line, const char *name,
 	const char *content, const char *expr);
 void UnitTest_summary(const char *issue);
@@ -142,6 +145,9 @@ UnitTest_intmax(__FILE__, __LINE__, a, b, # a, # b)
 
 #define EXPECT_UINT(a, b)	\
 UnitTest_uintmax(__FILE__, __LINE__, a, b, # a, # b)
+
+#define EXPECT_CHAR(a, b)	\
+UnitTest_char(__FILE__, __LINE__, a, b, # a, # b)
 
 #define EXPECT_STR(a, b)	\
 UnitTest_strcheck(__FILE__, __LINE__, "==", a, b, # a, # b)

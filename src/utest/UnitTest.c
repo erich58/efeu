@@ -413,6 +413,23 @@ int UnitTest_intmax(const char *file, int line,
 	return r;
 }
 
+int UnitTest_char(const char *file, int line,
+	int c1, int c2, const char *x1, const char *x2)
+{
+	int r = (c1 == c2);
+	UnitTest_result(file, line, r, "%s == %s", x1, x2);
+
+	if	(r == 0)
+	{
+		info("BECAUSE", file, line, "%s = %s (%d)",
+			x1, UnitTest_qchar(c1), c1);
+		info("BECAUSE", file, line, "%s = %s (%d)",
+			x2, UnitTest_qchar(c2), c2);
+	}
+
+	return r;
+}
+
 int UnitTest_uintmax(const char *file, int line,
 	uintmax_t i1, uintmax_t i2, const char *x1, const char *x2)
 {

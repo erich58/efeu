@@ -21,4 +21,14 @@ TEST_SUITE
 	}
 
 	CHILD_EXIT(1);
+
+	TEST_FORK
+	{
+		int c;
+		TEST_EXPR(c = '\n');
+		EXPECT_CHAR(c, -1);
+		TEST_EXIT;
+	}
+
+	CHILD_EXIT(1);
 }

@@ -263,6 +263,25 @@ const char *UnitTest_qstr(const char *str)
 	return UnitTest_str(&buf);
 }
 
+const char *UnitTest_qchar(int c)
+{
+	static STRING_DECL(buf);
+	UnitTest_clear(&buf);
+
+	if	(c != EOF)
+	{
+		UnitTest_putc('\'', &buf);
+		UnitTest_qputc(c, '\'', &buf);
+		UnitTest_putc('\'', &buf);
+	}
+	else
+	{
+		UnitTest_puts("EOF", &buf);
+	}
+
+	return UnitTest_str(&buf);
+}
+
 const char *UnitTest_qsplit(UnitTestString *buf, const char *str)
 {
 	int n = 0;
