@@ -59,6 +59,28 @@ int io_macsub (IO *in, IO *out, const char *delim)
 	return n;
 }
 
+static int concat(IO *in)
+{
+	if	(io_peek(in) != '#')
+		return 0;
+
+	int c = io_getc(in);
+
+	if	(io_peek(in) != '#')
+	{
+		io_ungetc(c, in);
+		return 0;
+	}
+
+	io_getc(in);
+	c = io_peek(in);
+
+	if	(isalpha(c) || c == '_')
+		return io_getc(in);
+
+	return 0;
+}
+
 int macsub_repl (PPMacro *mac, IO *out, char **arg, int narg)
 {
 	IO *in;
@@ -80,10 +102,34 @@ int macsub_repl (PPMacro *mac, IO *out, char **arg, int narg)
 		{
 			flag = 1;
 		}
-		else if	(isalpha(c) || c == '_')
+		else if	(!quote && (isalpha(c) || c == '_'))
 		{
-			n += macsub_cpy(in, out, c, flag);
-			flag = 0;
+			if	(flag)
+			{
+				n += macsub_cpy(in, out, c, flag);
+				flag = 0;
+			}
+			else
+			{
+				IO *tmp = io_tmpbuf(0);
+				macsub_cpy(in, tmp, c, 0);
+				int k = 0;
+
+				while ((c = concat(in)))
+				{
+					macsub_cpy(in, tmp, c, 0);
+					++k;
+				}
+
+				io_rewind(tmp);
+
+				if	(k)
+					n += io_macsub(tmp, out, NULL);
+				else
+					n += io_copy(tmp, out);
+
+				io_close(tmp);
+			}
 		}
 		else if	(flag && (c == ' ' || c == '\t'))
 		{
@@ -104,7 +150,6 @@ int macsub_def (PPMacro *mac, IO *io, char **arg, int narg)
 {
 	return io_puts(GetMacro(arg[0]) ? "1" : "0", io);
 }
-
 
 int macsub_subst (PPMacro *mac, IO *io, char **arg, int narg)
 {
@@ -239,11 +284,11 @@ int macsub_cpy (IO *in, IO *out, int c, unsigned int flags)
 
 		do
 		{
-			char **p = vb_next(&argv);
 			++n;
 			c = nextarg(in, sb,
 				(mac->vaarg && n >= mac->dim) ? EOF : ',');
 			sb_putc(0, sb);
+			char **p = vb_next(&argv);
 			*p = sb_memcpy(sb);
 		}
 		while	(c == ',');

@@ -72,8 +72,25 @@ PPMacro *ParseMacro (IO *io)
 			else	sb_putc('\\', buf);
 		}
 
-		sb_putc(c, buf);
-		c = io_skipcom(io, NULL, 0);
+		if	(c == '#' && io_peek(io) == '#')
+		{
+
+			while (buf->pos && isspace(buf->data[buf->pos - 1]))
+				buf->pos--;
+
+			sb_sync(buf);
+			sb_putc(c, buf);
+			c = io_getc(io);
+			sb_putc(c, buf);
+
+			do	c = io_skipcom(io, NULL, 0);
+			while	(c == ' ' || c == '\t');
+		}
+		else
+		{
+			sb_putc(c, buf);
+			c = io_skipcom(io, NULL, 0);
+		}
 	}
 
 	io_ungetc(c, io);
