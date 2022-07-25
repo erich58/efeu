@@ -1,0 +1,105 @@
+#include <EFEU/UnitTest.h>
+#include <EFEU/preproc.h>
+#include "utest/out.tst.h"
+
+static const char *do_macsub(const char *input)
+{
+	PushMacroTab(NULL);
+	IO *in = io_ptrpreproc(io_cstr(input), NULL, NULL);
+	io_copy(in, OUT());
+	io_close(in);
+	rd_deref(PopMacroTab());
+	return input;
+}
+
+#define	MACSUB(input)	\
+UnitTest_strinfo(__FILE__, __LINE__, "INFO", do_macsub(input), "input")
+
+TEST_DECL(noarg_recursiv)
+{
+	MACSUB(
+		"#define A	C\n"
+		"#define B	A\n"
+		"#define C	B\n"
+		"A\n"
+		"B\n"
+		"C\n"
+	);
+	EXPECT_OUT(
+		"A\n"
+		"B\n"
+		"C\n"
+	);
+}
+
+TEST_DECL(noarg_str)
+{
+	MACSUB(
+		"#define A	c\n"
+		"#define B	\"A\"\n"
+		"#define C	B\n"
+		"A\n"
+		"B\n"
+		"C\n"
+	);
+	EXPECT_OUT(
+		"c\n"
+		"\"A\"\n"
+		"\"A\"\n"
+	);
+}
+
+TEST_DECL(noarg_op)
+{
+	MACSUB(
+		"#define A	# X\n"
+		"#define B	X ## Y\n"
+		"A\n"
+		"B\n"
+	);
+	EXPECT_OUT(
+		"# X\n"
+		"XY\n"
+	);
+}
+
+TEST_DECL(arg_op)
+{
+	MACSUB(
+		"#define f(x)	x\n"
+		"#define g(x)	# x\n"
+		"#define h(x)	x ## 1\n"
+		"f(a)\n"
+		"g(a)\n"
+		"h(a)\n"
+	);
+	EXPECT_OUT(
+		"a\n"
+		"\"a\"\n"
+		"a1\n"
+	);
+}
+
+TEST_DECL(arg_catsub)
+{
+	MACSUB(
+		"#define b1	OK\n"
+		"#define f(x)	x##1\n"
+		"f(a)\n"
+		"f(b)\n"
+	);
+	EXPECT_OUT(
+		"a1\n"
+		"OK\n"
+	);
+}
+
+TEST_SUITE
+{
+	TEST_RUN(noarg_recursiv);
+	TEST_RUN(noarg_str);
+	TEST_RUN(noarg_op);
+	TEST_RUN(arg_op);
+	TEST_RUN(arg_catsub);
+	CLEANUP_OUT;
+}

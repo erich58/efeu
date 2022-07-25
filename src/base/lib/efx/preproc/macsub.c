@@ -75,13 +75,13 @@ static int concat(IO *in)
 	io_getc(in);
 	c = io_peek(in);
 
-	if	(isalpha(c) || c == '_')
+	if	(isalnum(c) || c == '_')
 		return io_getc(in);
 
 	return 0;
 }
 
-int macsub_repl (PPMacro *mac, IO *out, char **arg, int narg)
+static int do_repl (PPMacro *mac, IO *out, int strflag)
 {
 	IO *in;
 	int c, n;
@@ -98,7 +98,7 @@ int macsub_repl (PPMacro *mac, IO *out, char **arg, int narg)
 		if	(c == '"')
 			quote = !quote;
 
-		if	(c == '#' && !quote)
+		if	(strflag && c == '#' && !quote)
 		{
 			flag = 1;
 		}
@@ -146,6 +146,11 @@ int macsub_repl (PPMacro *mac, IO *out, char **arg, int narg)
 	return n;
 }
 
+int macsub_repl (PPMacro *mac, IO *out, char **arg, int narg)
+{
+	do_repl(mac, out, 0);
+}
+
 int macsub_def (PPMacro *mac, IO *io, char **arg, int narg)
 {
 	return io_puts(GetMacro(arg[0]) ? "1" : "0", io);
@@ -164,7 +169,7 @@ int macsub_subst (PPMacro *mac, IO *io, char **arg, int narg)
 	}
 
 	PushMacroTab(mac->tab);
-	n = macsub_repl(mac, io, NULL, 0);
+	n = do_repl(mac, io, 1);
 	PopMacroTab();
 
 	for (i = 0; i < mac->dim; i++)

@@ -27,7 +27,7 @@ int iocpy_str(IO *in, IO *out, int c, const char *arg, unsigned int flags)
 {
 	int n, escape;
 
-	if	(flags & 1)
+	if	(c && (flags & 1))
 	{
 		io_putc(c, out);
 		n = 1;

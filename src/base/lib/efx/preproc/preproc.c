@@ -164,21 +164,7 @@ IO *io_ptrpreproc (IO *io, char **pptr, char **lptr)
 
 static int pp_eat (PPInput *in, StrBuf *buf, int flag)
 {
-	int c;
-
-	while ((c = io_skipcom(in->io, buf, flag)) == '\\')
-	{
-		if	(io_peek(in->io) != '\n')
-			break;
-
-		io_getc(in->io);
-		io_linemark(in->io);
-
-		do	c = io_getc(in->io);
-		while	(c == ' ' || c == '\t');
-		
-		io_ungetc(c, in->io);
-	}
+	int c = io_skipcom(in->io, buf, flag);
 
 	if	(c == '\r')
 	{
@@ -552,6 +538,7 @@ static void pp_cmd (PPData *pp)
 
 	if	((cmd = nkt_fetch(pp_tab, name, NULL)) == NULL)
 	{
+		pp_skip(x->io, 0);
 		io_error(x->io, "[preproc:191]", "m", name);
 		return;
 	}
