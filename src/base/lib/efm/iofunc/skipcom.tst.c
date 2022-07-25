@@ -26,7 +26,7 @@ TEST_DECL(skipcom)
 {
 	StrBuf *sb = sb_create(0);
 
-	EXPECT_STR(skipcom("a\\\n/*X*/\n", NULL, 0), "a\n");
+	EXPECT_STR(skipcom("a\\\n \t/*X*/\n", NULL, 0), "a\n");
 	EXPECT_STR(skipcom("a/*X*/\n", NULL, 1), "a");
 	EXPECT_STR(skipcom("b//X", NULL, 0), "b");
 	EXPECT_STR(skipcom("b//X\n", NULL, 0), "b\n");
@@ -57,8 +57,8 @@ TEST_DECL(skipcom)
 	EXPECT_BUF(sb, "");
 
 	EXPECT_STR(skipcom("a\\\nb", sb, 0), "ab");
-	EXPECT_STR(skipcom("a/*A*/\\\nb", sb, 0), "ab");
-	EXPECT_STR(skipcom("a/*A*/\\\\\nb", sb, 0), "a\\\nb");
+	EXPECT_STR(skipcom("a/*A*/\\\n b", sb, 0), "ab");
+	EXPECT_STR(skipcom("a/*A*/\\\\\n b", sb, 0), "a\\\n b");
 	EXPECT_BUF(sb, "A");
 	sb_destroy(sb);
 }
