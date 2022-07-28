@@ -144,7 +144,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 151	$!: could not copy table of variables.\n
 152	$!: $0: syntax error in variable declaration.\n
-153	$!: $0: undefined data type$1.\n
+153	$!: $0: undefined data type $1.\n
 154	$!: ATTENTION: variable $1 new declared.\n
 154b	$!: ATTENTION: variable $1 allready declared.\n
 155	$!: vector index out of bounds.\n

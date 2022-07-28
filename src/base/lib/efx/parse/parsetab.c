@@ -77,7 +77,7 @@ static void print_tab (IO *io, NameKeyTab *tab, int depth)
 {
 	int n, pos;
 
-	io_xprintf(io, "Schlüsselwörter der Tiefe %d:", depth);
+	io_xprintf(io, "Keywords of level %d:", depth);
 	pos = MAX_POS;
 
 	if	(tab)
