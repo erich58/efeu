@@ -635,7 +635,7 @@ static void pp_subcmd (PPData *pp, int code)
 	case PP_ELSE:	io_error(io, "[preproc:194]", NULL); break;
 	case PP_ENDIF:	io_error(io, "[preproc:195]", NULL); break;
 	case PP_INCL:	cmd_include(pp); break;
-	case PP_RETURN: subclose(pp); break;
+	case PP_RETURN: subclose(pp); return;
 	case PP_EXPAND: pp->expand = 1; break;
 	case PP_NOEXPAND: pp->expand = 0; break;
 	case PP_DEFINE:	AddMacro(ParseMacro(io)); break;

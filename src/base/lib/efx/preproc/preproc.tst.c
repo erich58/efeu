@@ -246,6 +246,52 @@ TEST_DECL(block_error)
 	);
 }
 
+TEST_DECL(include)
+{
+	TEST_FILE("sub",
+		"sub 1\n"
+		"#return\n"
+		"sub 2\n"
+	);
+	PPINPUT(
+		"main 1\n"
+		"#include <sub>\n"
+		"main 2\n"
+	);
+	EXPECT_OUT(
+		"main 1\n"
+		"sub 1\n"
+		"main 2\n"
+	);
+
+	TEST_FILE("h1", "header 1\n");
+	PPINPUT( "#include \"h1\"\n");
+	EXPECT_OUT("header 1\n");
+
+	PPINPUT("#include <h1>\n");
+	EXPECT_OUT("header 1\n");
+
+	PPINPUT("#include \"h1\"\n");
+	EXPECT_OUT("header 1\n");
+
+	PPINPUT("#include sprintf(\"<h%d>\", 1)\n");
+	EXPECT_OUT("header 1\n");
+
+	UnitTest_stderr("err");
+	PPINPUT("#include <h2>\n");
+	UnitTest_stderr(NULL);
+	EXPECT_CONTENT("err",
+		"197: File h2 not found.\n"
+	);
+
+	UnitTest_stderr("err");
+	PPINPUT("#include\n");
+	UnitTest_stderr(NULL);
+	EXPECT_CONTENT("err",
+		"198: Missing file name.\n"
+	);
+}
+
 TEST_SUITE
 {
 	SetupStd();
@@ -258,6 +304,8 @@ TEST_SUITE
 		"194	194: ELSE unexpected.\n"
 		"195	195: ENDIF unexpected.\n"
 		"196	196: EOF in test block (start line $1)\n"
+		"197	197: File $1 not found.\n"
+		"198	198: Missing file name.\n"
 		"199	199: CR detected\n"
 	);
 	TEST_RUN(pp_ctrl);
@@ -269,6 +317,7 @@ TEST_SUITE
 	TEST_RUN(error);
 	TEST_RUN(block);
 	TEST_RUN(block_error);
+	TEST_RUN(include);
 	CLEANUP_IN;
 	CLEANUP_OUT;
 }

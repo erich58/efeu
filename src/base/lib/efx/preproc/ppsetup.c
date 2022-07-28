@@ -70,7 +70,7 @@ static EfiFuncDef ppfdef[] = {
 	{ 0, &Type_io, "ppopen (str name, str type = NULL)",
 		f_ppopen },
 	{ 0, &Type_str, "lastcomment (IO io = cin)", f_lastcomment },
-	{ 0, &Type_str, "clearcomment (IO io = cin)", f_clearcomment },
+	{ 0, &Type_void, "clearcomment (IO io = cin)", f_clearcomment },
 	{ 0, &Type_void, "target (str)", Func_target },
 	{ 0, &Type_void, "depend (str)", Func_depend },
 	{ 0, &Type_void, "makedepend (str, IO = iostd)", Func_makedepend },
