@@ -148,7 +148,7 @@ static int do_repl (PPMacro *mac, IO *out, int strflag)
 
 int macsub_repl (PPMacro *mac, IO *out, char **arg, int narg)
 {
-	do_repl(mac, out, 0);
+	return do_repl(mac, out, 0);
 }
 
 int macsub_def (PPMacro *mac, IO *io, char **arg, int narg)
