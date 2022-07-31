@@ -141,6 +141,9 @@ StrBuf *sb_acquire (void);
 void sb_release (StrBuf *buf);
 char *sb_cpyrelease (StrBuf *buf);
 
+int sb_getint(StrBuf *buf);
+const char *sb_setint(StrBuf *buf, int val);
+
 /*
 :de:Der Makro |$1| liefert einen Stringpointer auf die aktuelle Position.
 Achtung: Der String ist nicht notwendigerweise 0-terminiert.
@@ -148,7 +151,6 @@ Vergleiche dazu auch \mref{sbuf_nul}.
 */
 
 #define	sb_ptr(sb)	((char *) (sb)->data + (sb)->pos)
-
 
 /*
 :*:
