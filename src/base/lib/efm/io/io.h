@@ -174,9 +174,6 @@ int io_xgetc (IO *io, const char *delim);
 char *io_xgets (IO *io, const char *delim);
 int io_xcopy (IO *in, IO *out, const char *delim);
 
-char *getstring (IO *io);
-
-
 /*	Ausgaberoutinen
 */
 

@@ -32,6 +32,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/parsub.h>
 #include <EFEU/iocpy.h>
 
+char *getstring (IO *io);
 
 /*	Hilfsprogramme zur TeX - Ausgabe
 */
