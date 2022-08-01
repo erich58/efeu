@@ -24,16 +24,17 @@ If not, write to the Free Software Foundation, Inc.,
 
 const char *io_scan_str(IO *io, StrBuf *sb)
 {
-	static STRBUF(buf, 32);
-
 	if	(io_peek(io) != '"')
 		return NULL;
 
 	if	(!sb)
+	{
+		static STRBUF(buf, 32);
 		sb = &buf;
+		sb_clean(sb);
+	}
 
 	int c;
-	sb_clean(sb);
 	io_protect(io, 1);
 	io_getc(io);
 
