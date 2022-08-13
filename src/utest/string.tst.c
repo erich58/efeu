@@ -99,6 +99,31 @@ TEST_DECL(qsplit)
 	EXPECT_STR(UnitTest_next(ustr), NULL);
 }
 
+TEST_DECL(lsplit)
+{
+	EXPECT(UnitTest_lsplit(NULL, "abc\n") == 0);
+	EXPECT(UnitTest_lsplit(ustr, NULL) == 0);
+	EXPECT_STR(UnitTest_next(ustr), NULL);
+	EXPECT(UnitTest_lsplit(ustr, "abc\n") == 1);
+	EXPECT_STR(UnitTest_next(ustr), "abc");
+	EXPECT_STR(UnitTest_next(ustr), NULL);
+
+	EXPECT(UnitTest_lsplit(ustr, "abc\n\nxyz\n") == 3);
+	EXPECT_STR(UnitTest_next(ustr), "abc");
+	EXPECT_STR(UnitTest_next(ustr), "");
+	EXPECT_STR(UnitTest_next(ustr), "xyz");
+	EXPECT_STR(UnitTest_next(ustr), NULL);
+
+	EXPECT(UnitTest_lsplit(ustr, "abc\nxyz") == 2);
+	EXPECT_STR(UnitTest_next(ustr), "abc");
+	EXPECT_STR(UnitTest_next(ustr), "xyz");
+	EXPECT_STR(UnitTest_next(ustr), NULL);
+
+	EXPECT(UnitTest_lsplit(ustr, "") == 1);
+	EXPECT_STR(UnitTest_next(ustr), "");
+	EXPECT_STR(UnitTest_next(ustr), NULL);
+}
+
 TEST_DECL(cleanup)
 {
 	EXPECT(ustr->data != NULL);
@@ -115,5 +140,6 @@ TEST_SUITE
 	TEST_RUN(string);
 	TEST_RUN(split);
 	TEST_RUN(qsplit);
+	TEST_RUN(lsplit);
 	TEST_RUN(cleanup);
 }

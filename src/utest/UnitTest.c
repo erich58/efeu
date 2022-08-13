@@ -17,11 +17,29 @@ static int count_good = 0;
 static int count_bad = 0;
 static int fork_depth = 0;
 
+const char *UnitTest_color(int color)
+{
+	static char *cdef[4] = { NULL, NULL, NULL, NULL };
+	static int need_setup = 1;
+
+	if	(color >= 4)
+		color = 0;
+
+	if	(need_setup)
+	{
+		cdef[0] = UnitTest_pgets("tput sgr0", EOF);	// Off
+		cdef[1] = UnitTest_pgets("tput setaf 2", EOF);	// Green
+		cdef[2] = UnitTest_pgets("tput setaf 1", EOF);	// Red
+		cdef[3] = UnitTest_pgets("tput setaf 4", EOF);	// Blue
+		need_setup = 0;
+	}
+
+	return cdef[color];
+}
+
 static const char *colored(int fd, const char *name)
 {
 	static STRING_DECL(buf);
-	static char *cdef[3] = { NULL, NULL, NULL };
-	static int need_setup = 1;
 
 	int color = 0;
 
@@ -31,6 +49,7 @@ static const char *colored(int fd, const char *name)
 	{
 	case '*':	color = 1; name++; break;
 	case '!':	color = 2; name++; break;
+	case '?':	color = 3; name++; break;
 	default:	return name;
 	}
 
@@ -42,19 +61,11 @@ static const char *colored(int fd, const char *name)
 		return name;
 	}
 
-	if	(need_setup)
-	{
-		cdef[0] = UnitTest_pgets("tput sgr0", EOF);	// Off
-		cdef[1] = UnitTest_pgets("tput setaf 2", EOF);	// Green
-		cdef[2] = UnitTest_pgets("tput setaf 1", EOF);	// Red
-		need_setup = 0;
-	}
-
 	buf.size = 0;
-	UnitTest_puts(cdef[color], &buf);
+	UnitTest_puts(UnitTest_color(color), &buf);
 	UnitTest_puts(name, &buf);
-	UnitTest_puts(cdef[0], &buf);
-	return UnitTest_mstr(&buf);
+	UnitTest_puts(UnitTest_color(0), &buf);
+	return UnitTest_str(&buf);
 }
 
 
@@ -108,6 +119,7 @@ int UnitTest_reopen(int fd, const char *name)
 int UnitTest_stdin(const char *name, const char *content)
 {
 	fseek(stdin, 0L, SEEK_END);
+	fflush(stdin);
 
 	if	(name)
 	{
@@ -452,7 +464,7 @@ int UnitTest_uintmax(const char *file, int line,
 void UnitTest_summary(const char *issue)
 {
 	printf("%s\t%d\t%d\t%d\t%s\n", UnitTest_name, count_good + count_bad,
-		count_good, count_bad, colored(1, issue));
+		count_good, count_bad, colored(real_stdout, issue));
 	fflush(stdout);
 }
 

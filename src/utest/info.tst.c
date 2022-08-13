@@ -8,8 +8,9 @@
 
 TEST_SUITE
 {
-	UnitTest_info(__FILE__, __LINE__, "*GREEN", "");
-	UnitTest_info(__FILE__, __LINE__, "!RED", "");
+	UnitTest_info(__FILE__, __LINE__, "*GOOD", "");
+	UnitTest_info(__FILE__, __LINE__, "!BAD", "");
+	UnitTest_info(__FILE__, __LINE__, "?CHECK", "");
 
 	TEST_FORK
 	{
@@ -21,13 +22,19 @@ TEST_SUITE
 		int fderr = dup(2);
 
 		dup2(slave, 2);
-		UnitTest_info(__FILE__, __LINE__, "*GREEN", "");
+		UnitTest_info(__FILE__, __LINE__, "*GOOD", "");
 		dup2(fderr, 2);
 		EXPECT(read(master, buf, sizeof buf) > 0);
 		EXPECT_PTR(strstr(buf, "\033["));
 
 		dup2(slave, 2);
-		UnitTest_info(__FILE__, __LINE__, "!RED", "");
+		UnitTest_info(__FILE__, __LINE__, "!BAD", "");
+		dup2(fderr, 2);
+		EXPECT(read(master, buf, sizeof buf) > 0);
+		EXPECT_PTR(strstr(buf, "\033["));
+
+		dup2(slave, 2);
+		UnitTest_info(__FILE__, __LINE__, "?CHECK", "");
 		dup2(fderr, 2);
 		EXPECT(read(master, buf, sizeof buf) > 0);
 		EXPECT_PTR(strstr(buf, "\033["));

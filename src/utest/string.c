@@ -314,6 +314,41 @@ const char *UnitTest_qsplit(UnitTestString *buf, const char *str)
 	return n ? "" : UnitTest_next(buf);
 }
 
+size_t UnitTest_lsplit(UnitTestString *buf, const char *str)
+{
+	size_t n = 0;
+
+	if	(!buf)
+		return 0;
+
+	UnitTest_clear(buf);
+
+	if	(!str)
+		return 0;
+
+	for (; *str; ++str)
+	{
+		if	(*str == '\n')
+		{
+			if	(!str[1])
+				break;
+
+			UnitTest_putc(0, buf);
+			n++;
+		}
+		else
+		{
+			UnitTest_putc(*str, buf);
+		}
+	}
+
+	UnitTest_putc(0, buf);
+	n++;
+	UnitTest_start(buf);
+	return n;
+}
+
+
 void UnitTest_vprintf(UnitTestString *s, const char *fmt, va_list list)
 {
 	if	(!s || !fmt)

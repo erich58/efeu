@@ -28,12 +28,14 @@ size_t UnitTest_start(UnitTestString *ustr);
 const char *UnitTest_next(UnitTestString *ustr);
 const char *UnitTest_split(UnitTestString *ustr, const char *str);
 const char *UnitTest_qsplit(UnitTestString *ustr, const char *str);
+size_t UnitTest_lsplit(UnitTestString *ustr, const char *str);
 const char *UnitTest_str(UnitTestString *ustr);
 char *UnitTest_mstr(UnitTestString *ustr);
 
 const char *UnitTest_cstr(const char *str);
 const char *UnitTest_qstr(const char *str);
 const char *UnitTest_qchar(int c);
+const char *UnitTest_color(int color);
 
 int UnitTest_strcmp(const char *s1, const char *s2);
 int UnitTest_match(const char *str, const char *expr);
@@ -49,6 +51,8 @@ void UnitTest_error(const char *fmt, ...);
 int UnitTest_result(const char *file, int line, int res, const char *fmt, ...);
 int UnitTest_strcheck(const char *file, int line, const char *op,
 	const char *s1, const char *s2, const char *x1, const char *x2);
+int UnitTest_linematch(const char *file, int line,
+	const char *str, const char *expr, const char *term);
 int UnitTest_double(const char *file, int line,
 	double d1, double d2, const char *x1, const char *x2);
 int UnitTest_intmax(const char *file, int line,
@@ -157,6 +161,9 @@ UnitTest_strcheck(__FILE__, __LINE__, # op, a, b, # a, # b)
 
 #define MATCH_STR(a, b)	\
 UnitTest_strcheck(__FILE__, __LINE__, "~", a, b, # a, # b)
+
+#define MATCH_LINES(a, b)	\
+UnitTest_linematch(__FILE__, __LINE__, a, b, # a)
 
 #define	TEST_DIR(name)	\
 UnitTest_result(__FILE__, __LINE__, \
