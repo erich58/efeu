@@ -101,11 +101,14 @@ int UnitTest_reopen(int fd, const char *name)
 	}
 
 	dup2(fdnew, fd);
+	close(fdnew);
 	return 1;
 }
 
 int UnitTest_stdin(const char *name, const char *content)
 {
+	fseek(stdin, 0L, SEEK_END);
+
 	if	(name)
 	{
 		const char *fname;
@@ -128,6 +131,7 @@ int UnitTest_stdin(const char *name, const char *content)
 		}
 
 		dup2(fd, 0);
+		close(fd);
 		return 1;
 	}
 	else if	(real_stdin != 0)
