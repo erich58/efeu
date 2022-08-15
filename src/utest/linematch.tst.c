@@ -18,19 +18,24 @@ TEST_DECL(special)
 
 TEST_DECL(lmatch)
 {
-	const char *str = 
-		"00.010300 DBG onAlarm: Timer 'OneShotTimer' triggered.\n" 
-		"00.010320 LOG callbackTimer: OneShotTimer: 1\n"
-		"00.010330 DBG onAlarm: Timer 'OneShotTimer' expired.\n" 
-		"00.010400 DBG waitTime: 1 reduced to 1\n"
-		"00.010500 DBG wait: No active listener\n";
-	MATCH_LINES(str, 
-		"DBG onAlarm: Timer 'OneShotTimer' triggered.\n" 
-		"LOG callbackTimer: OneShotTimer: 1\n"
-		"DBG onAlarm: Timer 'OneShotTimer' expired.\n" 
-		"DBG waitTime: \n"
-		"DBG wait: No active listener.\n"
-	);
+	const char *str =
+		"The first line.\n"
+		"The second line.\n"
+		"The last line.\n"
+	;
+
+	MATCH_LINES(str, "first\nsecond\nlast\n");
+
+	TEST_FORK
+	{
+		MATCH_LINES(str, "second\n");
+		MATCH_LINES(str, "first\nsecond\nlast\nextra\n");
+		MATCH_LINES(str, "first\nlast\n");
+		MATCH_LINES(str, "first\nother\nlast\n");
+		TEST_EXIT;
+	}
+
+	CHILD_EXIT(1);
 }
 
 TEST_SUITE

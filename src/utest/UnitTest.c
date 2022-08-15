@@ -17,7 +17,7 @@ static int count_good = 0;
 static int count_bad = 0;
 static int fork_depth = 0;
 
-const char *UnitTest_color(int color)
+static const char *colorString(int color)
 {
 	static char *cdef[4] = { NULL, NULL, NULL, NULL };
 	static int need_setup = 1;
@@ -62,9 +62,9 @@ static const char *colored(int fd, const char *name)
 	}
 
 	buf.size = 0;
-	UnitTest_puts(UnitTest_color(color), &buf);
+	UnitTest_puts(colorString(color), &buf);
 	UnitTest_puts(name, &buf);
-	UnitTest_puts(UnitTest_color(0), &buf);
+	UnitTest_puts(colorString(0), &buf);
 	return UnitTest_str(&buf);
 }
 
@@ -191,6 +191,15 @@ int UnitTest_stderr(const char *name)
 
 	return 1;
 }
+
+const char *UnitTest_color(int color)
+{
+	if	(isatty(real_stderr))
+		return colorString(color);
+
+	return color ? "{" : "}";
+}
+
 
 /* Atomare Infozeile
 */
