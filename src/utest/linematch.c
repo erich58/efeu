@@ -96,7 +96,7 @@ typedef struct {
 } LineMatch;
 
 #define	MATCH_DECL(name)	\
-LineMatch name = { NULL, NULL, 0, 0, NULL, 0, 0 }
+LineMatch name = { NULL, 0, 0, NULL, 0, 0 }
 
 static void match_clear(LineMatch *match)
 {

@@ -19,11 +19,8 @@ static int fork_depth = 0;
 
 static const char *colorString(int color)
 {
-	static char *cdef[4] = { NULL, NULL, NULL, NULL };
+	static const char *cdef[4] = { NULL, NULL, NULL, NULL };
 	static int need_setup = 1;
-
-	if	(color >= 4)
-		color = 0;
 
 	if	(need_setup)
 	{
@@ -34,7 +31,7 @@ static const char *colorString(int color)
 		need_setup = 0;
 	}
 
-	return cdef[color];
+	return color < 4 ? cdef[color] : "";
 }
 
 static const char *colored(int fd, const char *name)
