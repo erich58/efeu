@@ -10,11 +10,45 @@
 #define	PLIST_BSIZE	16
 #define	DLIST_BSIZE	16
 
+#define	VECTOR(type)	struct {  \
+	type *entry; \
+	size_t size; \
+	size_t capacity; \
+}
+
+#define	VECTOR_INIT	{ NULL, 0, 0 }
+
+#define	VECTOR_RESERVE(var, n)	\
+	if	((var).capacity < n) \
+	{ \
+		(var).capacity = ALIGN(n, 16); \
+		(var).entry = realloc((var).entry, \
+			(var).capacity * sizeof (var).entry[0]); \
+		assert((var).entry); \
+	}
+
 typedef struct {
 	const char *line;
 	int stat;
 	regex_t data;
 } PatternEntry;
+
+typedef VECTOR(PatternEntry) Pattern;
+
+typedef struct {
+	const char *line;
+	regmatch_t match;
+} DataEntry;
+
+typedef VECTOR(DataEntry) Data;
+
+typedef struct {
+	Pattern pattern;
+	Data data;
+} LineMatch;
+
+#define	MATCH_DECL(name)	\
+LineMatch name = { VECTOR_INIT, VECTOR_INIT }
 
 static int setPattern(PatternEntry *p, const char *line)
 {
@@ -37,11 +71,6 @@ static void showPattern(PatternEntry *p)
 	UnitTest_strinfo(NULL, 0, p->stat == 0 ? "??" : "!ERROR",
 		p->line, NULL);
 }
-
-typedef struct {
-	const char *line;
-	regmatch_t match;
-} DataEntry;
 
 static void setData(DataEntry *data, const char *string)
 {
@@ -86,30 +115,18 @@ static void showData(DataEntry *d)
 }
 
 
-typedef struct {
-	PatternEntry *pattern;
-	size_t psize;
-	size_t pcapacity;
-	DataEntry *data;
-	size_t dsize;
-	size_t dcapacity;
-} LineMatch;
-
-#define	MATCH_DECL(name)	\
-LineMatch name = { NULL, 0, 0, NULL, 0, 0 }
-
 static void match_clear(LineMatch *match)
 {
-	while	(match->psize)
+	while	(match->pattern.size)
 	{
-		--match->psize;
-		regfree(&match->pattern[match->psize].data);
+		--match->pattern.size;
+		regfree(&match->pattern.entry[match->pattern.size].data);
 	}
 
-	match->dsize = 0;
+	match->data.size = 0;
 }
 
-static int match_init(LineMatch *match, const char *data, const char *expr)
+static void match_init(LineMatch *match, const char *data, const char *expr)
 {
 	static STRING_DECL(buf_data);
 	static STRING_DECL(buf_expr);
@@ -117,44 +134,26 @@ static int match_init(LineMatch *match, const char *data, const char *expr)
 
 	match_clear(match);
 	n = UnitTest_lsplit(&buf_data, data);
+	VECTOR_RESERVE(match->data, n);
+	match->data.size = n;
 
-	if	(match->dcapacity < n)
-	{
-		match->dcapacity = ALIGN(n, DLIST_BSIZE);
-		match->data = realloc(match->data,
-			match->dcapacity * sizeof match->data[0]);
-		assert(match->data);
-	}
-
-	match->dsize = n;
-
-	for (n = 0; n < match->dsize; ++n)
-		setData(match->data + n, UnitTest_next(&buf_data));
+	for (n = 0; n < match->data.size; ++n)
+		setData(match->data.entry + n, UnitTest_next(&buf_data));
 
 	n = UnitTest_lsplit(&buf_expr, expr);
+	VECTOR_RESERVE(match->pattern, n);
+	match->pattern.size = n;
 
-	if	(match->pcapacity < n)
-	{
-		match->pcapacity = ALIGN(n, PLIST_BSIZE);
-		match->pattern = realloc(match->pattern,
-			match->pcapacity * sizeof match->pattern[0]);
-		assert(match->pattern);
-	}
-
-	match->psize = n;
-	int errcnt = 0;
-
-	for (n = 0; n < match->psize; ++n)
-		errcnt += setPattern(match->pattern + n,
-			UnitTest_next(&buf_expr));
-
-	return errcnt;
+	for (n = 0; n < match->pattern.size; ++n)
+		setPattern(match->pattern.entry + n, UnitTest_next(&buf_expr));
 }
 
 static int match_cmp(LineMatch *match, int p, int d)
 {
-	return regexec(&match->pattern[p].data,
-		match->data[d].line, 1, &match->data[d].match, 0) == 0;
+	if	(match->pattern.entry[p].stat != 0)
+		return 0;
+	return regexec(&match->pattern.entry[p].data,
+		match->data.entry[d].line, 1, &match->data.entry[d].match, 0) == 0;
 }
 
 int UnitTest_linematch(const char *file, int line, 
@@ -163,57 +162,23 @@ int UnitTest_linematch(const char *file, int line,
 	static MATCH_DECL(mdata);
 	size_t n;
 
-	if	(term == 0)	term = "(null)";
-	else if	(*term == '"')	term = "(string)";
+	if	(term == 0)	term = "NULL";
 
-	match_clear(&mdata);
-
-	if	(match_init(&mdata, str, expr) != 0)
-	{
-		UnitTest_result(file, line, 0, "error in regular expression");
-
-		for (n = 0; n < mdata.psize; ++n)
-			showPattern(mdata.pattern + n);
-
-		return 0;
-	}
-
-	if	(!mdata.psize && !mdata.dsize)
-		return UnitTest_result(file, line, 1, "%s = (null)", term);
-
-	if	(!mdata.dsize)
-	{
-		UnitTest_result(file, line, 0, "%s ~ (expression)", term);
-
-		for (n = 0; n < mdata.psize; ++n)
-			showPattern(mdata.pattern + n);
-
-		return 0;
-	}
-
-	if	(!mdata.psize)
-	{
-		UnitTest_result(file, line, 0, "%s = (null)", term);
-
-		for (n = 0; n < mdata.dsize; ++n)
-			showData(mdata.data + n);
-
-		return 0;
-	}
+	match_init(&mdata, str, expr);
 
 	/* Gute Vergleiche */
 
-	for (n = 0; n < mdata.dsize && n < mdata.psize; ++n)
+	for (n = 0; n < mdata.data.size && n < mdata.pattern.size; ++n)
 	{
 		if	(!match_cmp(&mdata, n, n))
 			break;
 	}
 
-	int res = (n == mdata.dsize && n == mdata.psize);
-	UnitTest_result(file, line, res, "%s ~ (expression)", term);
+	int res = (n == mdata.data.size && n == mdata.pattern.size);
+	UnitTest_result(file, line, res, "linematch(%s)", term);
 
 	for (size_t i = 0; i < n; ++i)
-		showData(mdata.data + i);
+		showData(mdata.data.entry + i);
 
 	if	(res)
 		return res;
@@ -224,43 +189,43 @@ int UnitTest_linematch(const char *file, int line,
 	size_t p = n;
 	size_t d = n;
 
-	while (p < mdata.psize && d < mdata.dsize)
+	while (p < mdata.pattern.size && d < mdata.data.size)
 	{
 		if	(match_cmp(&mdata, p, d))
 		{
-			showData(mdata.data + d);
+			showData(mdata.data.entry + d);
 		}
 		else if	(match_cmp(&mdata, p, d + 1))
 		{
-			showData(mdata.data + d);
+			showData(mdata.data.entry + d);
 			++d;
-			showData(mdata.data + d);
+			showData(mdata.data.entry + d);
 		}
 		else if	(match_cmp(&mdata, p + 1, d))
 		{
-			showPattern(mdata.pattern + p);
+			showPattern(mdata.pattern.entry + p);
 			++p;
-			showData(mdata.data + d);
+			showData(mdata.data.entry + d);
 		}
 		else
 		{
-			showPattern(mdata.pattern + p);
-			showData(mdata.data + d);
+			showPattern(mdata.pattern.entry + p);
+			showData(mdata.data.entry + d);
 		}
 
 		++p;
 		++d;
 	}
 
-	while (d < mdata.dsize)
+	while (d < mdata.data.size)
 	{
-		showData(mdata.data + d);
+		showData(mdata.data.entry + d);
 		++d;
 	}
 
-	while (p < mdata.psize)
+	while (p < mdata.pattern.size)
 	{
-		showPattern(mdata.pattern + p);
+		showPattern(mdata.pattern.entry + p);
 		++p;
 	}
 

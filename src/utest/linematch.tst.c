@@ -9,7 +9,7 @@ TEST_DECL(special)
 	{
 		MATCH_LINES("abc\nxyz\n", NULL);
 		MATCH_LINES(NULL, "abc\nxyz\n");
-		MATCH_LINES("", "abc\n[x\n.\n");
+		MATCH_LINES("abc", "abc\n[x\nxyz\n");
 		TEST_EXIT;
 	}
 
