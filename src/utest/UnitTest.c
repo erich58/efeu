@@ -16,6 +16,21 @@ int UnitTest_child = 0;
 static int count_good = 0;
 static int count_bad = 0;
 static int fork_depth = 0;
+static int force_color = 0;
+
+static int color_enabled(int fd_)
+{
+	if	(force_color)
+		return 1;
+
+	/* WARNING: isatty might change errno! So we save the previous value
+	   an restore it after check.
+	 */
+	int save_errno = errno;
+	int res = isatty(fd_);
+	errno = save_errno;
+	return res;
+}
 
 static const char *colorString(int color)
 {
@@ -50,13 +65,8 @@ static const char *colored(int fd, const char *name)
 	default:	return name;
 	}
 
-	int save_errno = errno;
-
-	if	(!isatty(fd))
-	{
-		errno = save_errno;
+	if	(!color_enabled(fd))
 		return name;
-	}
 
 	buf.size = 0;
 	UnitTest_puts(colorString(color), &buf);
@@ -191,7 +201,7 @@ int UnitTest_stderr(const char *name)
 
 const char *UnitTest_color(int color)
 {
-	if	(isatty(real_stderr))
+	if	(color_enabled(real_stderr))
 		return colorString(color);
 
 	return color ? "{" : "}";
@@ -474,6 +484,20 @@ void UnitTest_summary(const char *issue)
 	fflush(stdout);
 }
 
+static void skiparg(int *narg, char **arg, int n)
+{
+	char *p;
+	
+	if	(n >= *narg || n < 0)	return;
+
+	p = arg[n];
+
+	for ((*narg)--; n < *narg; n++)
+		arg[n] = arg[n + 1];
+
+	arg[*narg] = p;
+}
+
 int main(int argc, char **argv)
 {
 	char *p;
@@ -483,6 +507,12 @@ int main(int argc, char **argv)
 		UnitTest_name = p + 1;
 	else
 		UnitTest_name = argv[0];
+
+	if	(argc > 1 && strcmp("-c", argv[1]) == 0)
+	{
+		force_color = 1;
+		skiparg(&argc, argv, 1);
+	}
 
 	fprintf(stderr, "%s\t%s", "#RUN", UnitTest_name);
 
