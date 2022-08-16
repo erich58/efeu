@@ -53,6 +53,8 @@ autonom:: all
 
 all:: files
 
+test::
+
 files::
 
 doc::

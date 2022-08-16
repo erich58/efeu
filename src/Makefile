@@ -7,7 +7,7 @@ Modules= config utest base tk misc pg scope manuals xdoc
 all:: prereq
 doc:: all
 
-all doc clean::
+all test doc clean::
 	@for m in $(Modules); \
 	do \
 		printf '############################################\n'; \

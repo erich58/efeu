@@ -7,7 +7,7 @@ include $(CFG)/Config.mak
 
 Modules= latex pgm tools games vimrc pix pixmap
 
-all doc clean::
+all test doc clean::
 	@for m in $(Modules); \
 	do \
 		printf '********************************************\n'; \

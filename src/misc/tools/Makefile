@@ -7,7 +7,7 @@ include $(CFG)/Config.mak
 
 Modules=  conv dump tape xml
 
-all doc clean::
+all test doc clean::
 	@for m in $(Modules); \
 	do \
 		printf '+------------------------------------------+\n'; \

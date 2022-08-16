@@ -4,7 +4,7 @@ include $(CFG)/Config.mak
 
 Modules= esh types edb efeudoc vimrc
 
-all doc clean::
+all test doc clean::
 	@for m in $(Modules); \
 	do \
 		printf '+------------------------------------------+\n'; \

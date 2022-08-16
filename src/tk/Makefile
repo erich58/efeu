@@ -10,7 +10,7 @@ prereq::
 
 Modules= config lib pgm examples manual
 
-all doc clean::
+all test doc clean::
 	@for m in $(Modules); \
 	do \
 		printf '********************************************\n'; \

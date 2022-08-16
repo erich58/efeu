@@ -7,7 +7,7 @@ include $(CFG)/Config.mak
 
 Modules= base efeudoc interp man1 mdmat mdspec prog style user
 
-all doc clean::
+all test doc clean::
 	@for m in $(Modules); \
 	do \
 		printf '********************************************\n'; \

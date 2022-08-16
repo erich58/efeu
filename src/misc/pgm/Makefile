@@ -7,7 +7,7 @@ include $(CFG)/Config.mak
 
 Modules= script tools efeuprj
 
-all doc clean::
+all test doc clean::
 	@for m in $(Modules); \
 	do \
 		printf '+------------------------------------------+\n'; \

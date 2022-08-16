@@ -7,7 +7,7 @@ include $(CFG)/Config.mak
 
 Modules = shmkmf tools efeu
 
-all doc clean::
+all test doc clean::
 	@for m in $(Modules); \
 	do \
 		printf '********************************************\n'; \

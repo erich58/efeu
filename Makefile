@@ -24,9 +24,9 @@ usage::
 config::
 	$(MAKE) -C config all
 
-all doc clean:: config
+all test doc clean:: config
 
-all doc clean::
+all test doc clean::
 	$(MAKE) -C src $@
 
 basic::
