@@ -161,7 +161,6 @@ int UnitTest_linematch(const char *file, int line,
 	const char *str, const char *expr, const char *term)
 {
 	static MATCH_DECL(mdata);
-	static STRING_DECL(buf1);
 	size_t n;
 
 	if	(term == 0)	term = "(null)";
