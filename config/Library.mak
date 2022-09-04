@@ -126,7 +126,7 @@ $(BUILD)/%.tst.o : %.tst.c
 	@mkdir -p $(@D)
 	$(CC) -o $@ -c -MMD $(CPPFLAGS) -I. $(CFLAGS) $(TST_CFLAGS) --coverage $<
 
-$(BUILD)/%.tst : %.tst.o
+$(BUILD)/%.tst : $(BUILD)/%.tst.o
 	@mkdir -p $(@D)
 	$(CC) -o $@ $< $(_Library_gcov) -lgcov $(LDFLAGS) $(TST_LDFLAGS) -lutest
 
