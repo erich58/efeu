@@ -73,8 +73,9 @@ test::
 test:: all
 
 _Library_tst_src = $(shell find -L . -name '*.tst.c' -printf '%f\n')
+_Library_tst_obj = $(patsubst %.c,$(BUILD)/%.o,$(_Library_tst_src))
+_Library_tst_dep = $(patsubst %.o,%.d,$(_Library_tst_obj))
 _Library_tst_bin = $(patsubst %.c,$(BUILD)/%,$(_Library_tst_src))
-_Library_tst_dep = $(patsubst %,%.d,$(_Library_tst_bin))
 
 ifneq ($(_Library_ext_src),)
 _Library_ext_gcov = $(patsubst %.ext.c,$(BUILD)/%.gcov.so,$(_Library_ext_src))
@@ -119,12 +120,15 @@ $(BUILD)/%.gcov.o : %.c
 	@mkdir -p $(@D)
 	$(CC) -o $@ -c -MMD $(CPPFLAGS) $(CFLAGS) --coverage $<
 
-$(_Library_tst_bin) : $(_Library_gcov)
+$(_Library_tst_obj) : $(_Library_gcov)
 
-$(BUILD)/%.tst : %.tst.c
+$(BUILD)/%.tst.o : %.tst.c
 	@mkdir -p $(@D)
-	$(CC) -o $@ -MMD -MF $(@).d $(CPPFLAGS) -I. $(CFLAGS) $(TST_CFLAGS) $< \
-		$(_Library_gcov) -lgcov $(LDFLAGS) $(TST_LDFLAGS) -lutest
+	$(CC) -o $@ -c -MMD $(CPPFLAGS) -I. $(CFLAGS) $(TST_CFLAGS) --coverage $<
+
+$(BUILD)/%.tst : %.tst.o
+	@mkdir -p $(@D)
+	$(CC) -o $@ $< $(_Library_gcov) -lgcov $(LDFLAGS) $(TST_LDFLAGS) -lutest
 
 purge::
 	rm -rf $(_Library_gcov)
