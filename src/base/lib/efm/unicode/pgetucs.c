@@ -68,7 +68,7 @@ aufgelöst und die Funktion verhält sich wie eine reine Konvertierung von
 ISO 8859-15 in Unicode.
 $Notes
 Da diese Funktion primär für internen Gebrauch bestimmt ist, werden
-die folgenden Rahmenbedingungen vorraussgesetzt und nicht geprüft:
+die folgenden Rahmenbedingungen vorausgesetzt und nicht geprüft:
 *	<p> ist ein gültiger Pointer.
 *	|*|<p> zeigt nicht auf die Abschlussnull bzw. auf das erste Zeichen
 	nach einem Datenfeld.
