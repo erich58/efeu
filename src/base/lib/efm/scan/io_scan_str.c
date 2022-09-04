@@ -24,7 +24,9 @@ If not, write to the Free Software Foundation, Inc.,
 
 const char *io_scan_str(IO *io, StrBuf *sb)
 {
-	if	(io_peek(io) != '"')
+	int c = io_peek(io);
+
+	if	(c != '"')
 		return NULL;
 
 	if	(!sb)
@@ -34,7 +36,6 @@ const char *io_scan_str(IO *io, StrBuf *sb)
 		sb_clean(sb);
 	}
 
-	int c;
 	io_protect(io, 1);
 	io_getc(io);
 

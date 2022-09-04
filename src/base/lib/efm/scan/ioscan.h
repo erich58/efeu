@@ -35,6 +35,8 @@ int io_scan (IO *io, unsigned flags, void **ptr);
 int io_valscan (IO *io, unsigned flags, void **ptr);
 
 const char *io_scan_str(IO *in, StrBuf *buf);
+const char *io_scan_char(IO *in, StrBuf *buf);
+const char *io_scan_name(IO *in, StrBuf *buf);
 
 int64_t mstr2int64 (const char *str, char **ptr, int base);
 uint64_t mstr2uint64 (const char *str, char **ptr, int base);
