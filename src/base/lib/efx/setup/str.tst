@@ -1,7 +1,7 @@
 #!/usr/bin/env .build/script.tst
 
 EXPECT_REPR(typeof '@', char);
-EXPECT_REPR(typeof 'ä', char);
+EXPECT_REPR(typeof 'ä', wchar_t);
 EXPECT_REPR(typeof '€', wchar_t);
 EXPECT_REPR(typeof L'@', wchar_t);
 EXPECT_REPR(typeof L'ä', wchar_t);
@@ -12,7 +12,7 @@ EXPECT((int32_t) '€' == 8364);
 EXPECT_REPR((char) 64, "@");
 EXPECT_REPR((wchar_t) 8364, "€");
 
-EXPECT_STR(str('ä'), "\344");
+EXPECT_STR(str('ä'), "\303\244");
 EXPECT_STR(str(L'ä'), "\303\244");
 
 EXPECT(int("12") == 12);

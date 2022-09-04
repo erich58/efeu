@@ -42,7 +42,7 @@ EXPECT_POUT(5u, "5");
 EXPECT_POUT(5l, "5");
 EXPECT_POUT(5lu, "5");
 EXPECT_POUT('a', "a");
-EXPECT_POUT('ä', "\344");
+EXPECT_POUT('ä', "\303\244");
 EXPECT_POUT(L'ä', "\303\244");
 EXPECT_POUT("abc", "\"abc\"");
 EXPECT_POUT(x, "(_undef_) x");

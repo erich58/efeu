@@ -173,14 +173,16 @@ TEST_DECL(scan)
 		EXPECT(*((unsigned char *) p) == 'a'); 
 	if	(EXPECT(scan("L'a'", SCAN_XCHAR, &p) == SCAN_UCS))
 		EXPECT(*((int32_t *) p) == 'a'); 
-	if	(EXPECT(scan("'Ä'", SCAN_XCHAR, &p) == SCAN_CHAR))
-		EXPECT(*((unsigned char *) p) == 0xc4); 
-	if	(EXPECT(scan("'\xc3\x84'", SCAN_XCHAR, &p) == SCAN_CHAR))
-		EXPECT(*((unsigned char *) p) == 0xc4); 
+	if	(EXPECT(scan("'Ä'", SCAN_XCHAR, &p) == SCAN_UCS))
+		EXPECT(*((int32_t *) p) == 0xc4); 
+	if	(EXPECT(scan("'\xc3\x84'", SCAN_XCHAR, &p) == SCAN_UCS))
+		EXPECT(*((int32_t *) p) == 0xc4); 
 	if	(EXPECT(scan("'€'", SCAN_XCHAR, &p) == SCAN_UCS))
 		EXPECT(*((int32_t *) p) == 0x20ac); 
-	if	(EXPECT(scan("'\\342\\202\\254'", SCAN_XCHAR, &p) == SCAN_UCS))
+	if	(EXPECT(scan("'\342\202\254'", SCAN_XCHAR, &p) == SCAN_UCS))
 		EXPECT(*((int32_t *) p) == 0x20ac); 
+//	if	(EXPECT(scan("'\\342\\202\\254'", SCAN_XCHAR, &p) == SCAN_UCS))
+//		EXPECT(*((int32_t *) p) == 0x20ac); 
 
 	EXPECT(scan_char("'\\''") == '\'');
 	EXPECT(scan_char("'\\\\'") == '\\');
@@ -194,9 +196,9 @@ TEST_DECL(scan)
 	EXPECT(scan_char("'\xc4'") == 0xc4);
 	EXPECT(scan_char("'\\xc4'") == 0xc4);
 	EXPECT(scan_char("'\xc0\x8a'") == 0x0a);
-	EXPECT(scan_char("'\\xc0\\x8a'") == 0x0a);
+//	EXPECT(scan_char("'\\xc0\\x8a'") == 0x0a);
 	EXPECT(scan_char("'\xe0\x8a\x8b'") == (0xa << 6) + 0xb);
-	EXPECT(scan_char("'\\xe0\\x8a\\x8b'") == (0xa << 6) + 0xb);
+//	EXPECT(scan_char("'\\xe0\\x8a\\x8b'") == (0xa << 6) + 0xb);
 
 	if	(EXPECT(scan("NULL", SCAN_ANYTYPE, &p) == SCAN_NAME))
 		EXPECT_STR(p, NULL); 

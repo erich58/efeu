@@ -23,9 +23,9 @@ If not, write to the Free Software Foundation, Inc.,
 
 
 #include <EFEU/ioscan.h>
+#include <EFEU/unicode.h>
 #include <ctype.h>
 
-static int32_t get_ucs (IO *io, int delim);
 static int make_char (IO *io, int type, void **ptr);
 
 int io_scan (IO *io, unsigned int flags, void **ptr)
@@ -134,100 +134,19 @@ char *io_getname(IO *io)
 	return NULL;
 }
 
-static int32_t get_char (IO *io, int delim)
-{
-	int32_t c = io_getc(io);
-
-	if	(c == delim)
-		return EOF;
-
-	if	(c == '\\')
-	{
-		if	(io_peek(io) == delim)
-		{
-			c = io_getc(io);
-		}
-		else
-		{
-			io_ungetc(c, io);
-			c = io_xgetc(io, NULL);
-		}
-	}
-
-	return c;
-}
-
-static int get_ucs_next (IO *io, int delim)
-{
-	int c = get_char(io, delim);
-
-	if	(c == EOF)
-	{
-		return EOF;
-	}
-
-	if	((c & 0xc0) != 0x80)
-	{
-		io_ungetc(c, io);
-		return EOF;
-	}
-	else	return (c & 0x3f); 
-}
-
-static int32_t get_ucs (IO *io, int delim)
-{
-	int32_t c, d;
-	int n;
-
-	c = get_char(io, delim);
-
-	if	(c == EOF)		return EOF;
-	else if	((c & 0x80) == 0)	return c;
-	else if	((c & 0xc0) == 0x80)	return c;
-	else if	((c & 0xe0) == 0xc0)	n = 0;
-	else if	((c & 0xf0) == 0xe0)	n = 1;
-	else if	((c & 0xf8) == 0xf0)	n = 2;
-	/*
-	else if	((c & 0xfc) == 0xf8)	n = 3;
-	*/
-	else				return c;
-
-	d = get_ucs_next(io, delim);
-
-	if	(d == EOF)
-		return c;
-
-	c &= 0x1f >> n;
-	c <<= 6;
-	c += d;
-
-	for (; n; n--)
-	{
-		c <<= 6;
-		d = get_ucs_next(io, delim);
-
-		if	(d != EOF)
-			c += d;
-	}
-
-	return c;
-}
-
 static int make_char (IO *io, int type, void **ptr)
 {
 	static int32_t buf_ucs;
 	static unsigned char buf_char;
 	int32_t val;
 
-	io_getc(io);
-	val = get_ucs(io, '\'');
-
-	if	(val < 0)	val = 0;
+	const char *p = io_scan_char(io, NULL);
+	val = p ? pgetucs(&p, 4) : 0;
 
 	type &= (SCAN_UCS | SCAN_CHAR);
 
 	if	(type == (SCAN_UCS | SCAN_CHAR))
-		type = (val > 0xff) ? SCAN_UCS : SCAN_CHAR;
+		type = (val > 0x7f) ? SCAN_UCS : SCAN_CHAR;
 
 	if	(ptr == NULL)
 	{
@@ -242,12 +161,6 @@ static int make_char (IO *io, int type, void **ptr)
 	{
 		buf_char = val;
 		*ptr = &buf_char;
-	}
-
-	while ((val = get_ucs(io, '\'')) != EOF)
-	{
-		io_xprintf(ioerr,
-			"extra character %#lc in character constant.\n", val);
 	}
 
 	return type;
