@@ -237,6 +237,7 @@ am Ende 0-Zeichen eingefügt.
 
 #define	sb_align(sb, m)	while ((sb_size(sb) % (m)) != 0) sb_putc(0, sb)
 
+const char *sb_cstr (StrBuf *sb);
 char *sb_nul (StrBuf *sb);
 char *sb_strcpy (StrBuf *sb);
 char *sb_memcpy (StrBuf *sb);

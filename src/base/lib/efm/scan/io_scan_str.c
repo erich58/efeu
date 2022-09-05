@@ -46,6 +46,5 @@ const char *io_scan_str(IO *io, StrBuf *sb)
 		io_getc(io);
 
 	io_protect(io, 0);
-	sb_putc(0, sb);
-	return (const char *) sb->data;
+	return sb_cstr(sb);
 }

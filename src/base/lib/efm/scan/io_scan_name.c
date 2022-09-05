@@ -48,6 +48,5 @@ const char *io_scan_name(IO *io, StrBuf *sb)
 
 	io_ungetc(c, io);
 	io_protect(io, 0);
-	sb_putc(0, sb);
-	return (const char *) sb->data;
+	return sb_cstr(sb);
 }

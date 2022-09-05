@@ -192,6 +192,19 @@ int sb_putstr (const char *str, StrBuf *buf)
 	else	return 0;
 }
 
+const char *sb_cstr (StrBuf *buf)
+{
+	if	(buf)
+	{
+		sb_putc(0, buf);
+		buf->pos--;
+		sb_sync(buf);
+		return (const char *) buf->data;
+	}
+
+	return NULL;
+}
+
 char *sb_nul (StrBuf *buf)
 {
 	if	(buf)

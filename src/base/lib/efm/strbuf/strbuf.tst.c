@@ -34,11 +34,39 @@ TEST_DECL(expand)
 	sb_free(&buf);
 }
 
+TEST_DECL(nul)
+{
+	STRBUF(buf, 32);
+	EXPECT_STR(sb_nul(NULL), NULL);
+	EXPECT_STR(sb_nul(&buf), "");
+	EXPECT(buf.pos == 0);
+	EXPECT(buf.size == 32);
+	sb_puts("abc", &buf);
+	EXPECT_STR(sb_nul(&buf), "abc");
+	EXPECT(buf.pos == 3);
+	EXPECT(buf.size == 32);
+	sb_free(&buf);
+}
+
+TEST_DECL(cstr)
+{
+	static STRBUF(buf, 32);
+	EXPECT_STR(sb_cstr(NULL), NULL);
+	EXPECT_STR(sb_cstr(&buf), "");
+	EXPECT(buf.pos == 0);
+	EXPECT(buf.size == 32);
+	sb_puts("abc", &buf);
+	EXPECT_STR(sb_cstr(&buf), "abc");
+	EXPECT(buf.pos == 3);
+	EXPECT(buf.size == 32);
+	sb_free(&buf);
+}
+
 TEST_DECL(getmem)
 {
 	static STRBUF(buf, 32);
 	sb_puts("TestDaten", &buf);
-	EXPECT_STR(sb_nul(&buf), "TestDaten");
+	EXPECT_STR(sb_cstr(&buf), "TestDaten");
 	char *p;
 
 	EXPECT_STR((p = sb_strcpy(&buf)), "TestDaten");
@@ -66,10 +94,10 @@ TEST_DECL(pos)
 	EXPECT(sb_setpos(&buf, 20) == 7);
 	EXPECT(sb_setpos(&buf, 3) == 3);
 	sb_puts("123456", &buf);
-	EXPECT_STR(sb_nul(&buf), "abc123456");
+	EXPECT_STR(sb_cstr(&buf), "abc123456");
 	sb_trunc(&buf);
-	EXPECT_STR(sb_nul(&buf), "");
-	EXPECT_STR(sb_nul(NULL), NULL);
+	EXPECT_STR(sb_cstr(&buf), "");
+	EXPECT_STR(sb_cstr(NULL), NULL);
 }
 
 TEST_DECL(acquire)
@@ -101,25 +129,25 @@ TEST_DECL(edit)
 	sb_setpos(&buf, 2);
 	EXPECT(memcmp(sb_insert(&buf, 'x', 2), "xx", 2) == 0); 
 	sb_end(&buf);
-	EXPECT_STR(sb_nul(&buf), "aaxxa");
+	EXPECT_STR(sb_cstr(&buf), "aaxxa");
 	EXPECT(sb_delete(NULL, 1) == NULL); 
 	EXPECT(sb_delete(&buf, 1) == NULL); 
 	sb_setpos(&buf, 1);
 	EXPECT(memcmp(sb_delete(&buf, 2), "ax", 2) == 0); 
 	sb_end(&buf);
-	EXPECT_STR(sb_nul(&buf), "axa");
+	EXPECT_STR(sb_cstr(&buf), "axa");
 	sb_puts("12345", &buf);
 	EXPECT(sb_move(&buf, 1, 5, 2) == 2);
-	EXPECT_STR(sb_nul(&buf), "a34xa125");
+	EXPECT_STR(sb_cstr(&buf), "a34xa125");
 	EXPECT(sb_move(&buf, 4, 6, 0) == 2);
-	EXPECT_STR(sb_nul(&buf), "a34x25a1");
+	EXPECT_STR(sb_cstr(&buf), "a34x25a1");
 	sb_nputc('z', &buf, 1000);
 	EXPECT(sb_size(&buf) == 1008);
 	EXPECT(sb_move(&buf, 5, 8, 0) == 1000);
 	sb_setpos(&buf, 10);
-	EXPECT_STR(sb_nul(&buf), "a34x2zzzzz");
+	EXPECT_STR(sb_cstr(&buf), "a34x2zzzzz");
 	EXPECT(sb_swap(&buf, 2, 4) == 4);
-	EXPECT_STR(sb_nul(&buf), "a3z2x4zzzz");
+	EXPECT_STR(sb_cstr(&buf), "a3z2x4zzzz");
 	EXPECT(sb_swap(NULL, 2, 4) == 0);
 	sb_free(&buf);
 }
@@ -134,7 +162,7 @@ TEST_DECL(ungetc)
 	EXPECT(sb_ungetc('c', &buf) == 'c');
 	EXPECT(sb_ungetc('d', &buf) == EOF);
 	sb_end(&buf);
-	EXPECT_STR(sb_nul(&buf), "cba4567890");
+	EXPECT_STR(sb_cstr(&buf), "cba4567890");
 	sb_free(&buf);
 }
 
@@ -160,14 +188,14 @@ TEST_DECL(put)
 	EXPECT(sb_nputs(NULL, 2, &buf) == 0);
 	EXPECT(sb_rputs(NULL, &buf) == 0);
 
-	EXPECT_STR(sb_nul(&buf), "122abcxyCBA");
+	EXPECT_STR(sb_cstr(&buf), "122abcxyCBA");
 	sb_free(&buf);
 
 	EXPECT(sb_putmem(NULL, "A\0B", 4) == 0);
 	EXPECT(sb_putmem(&buf, NULL, 0) == 0);
 	EXPECT(sb_putmem(&buf, "A\0B", 4) == 4);
 	EXPECT(sb_size(&buf) == 4);
-	EXPECT(memcmp(sb_nul(&buf), "A\0B", 4) == 0);
+	EXPECT(memcmp(sb_cstr(&buf), "A\0B", 4) == 0);
 	sb_free(&buf);
 }
 
@@ -188,7 +216,7 @@ TEST_DECL(ucs)
 	EXPECT(sb_putucs('e', buf) == 1);
 	EXPECT(sb_putucs(010000000, buf) == 0);
 
-	EXPECT_STR(sb_nul(buf),
+	EXPECT_STR(sb_cstr(buf),
 		"a\177b\302\200\337\277c\340\240\200d\360\220\200\200e");
 	sb_setpos(buf, 0);
 	EXPECT(sb_getucs(buf) == 'a');
@@ -209,7 +237,7 @@ TEST_DECL(ucs)
 	sb_putc(0337, buf); // ß
 	sb_putc(' ', buf);
 	sb_putc(0244, buf); // €
-	EXPECT_STR(sb_nul(buf), "\344 \337 \244");
+	EXPECT_STR(sb_cstr(buf), "\344 \337 \244");
 	sb_setpos(buf, 0);
 	EXPECT(sb_getucs(buf) == 0344);
 	EXPECT(sb_getucs(buf) == ' ');
@@ -223,7 +251,7 @@ TEST_DECL(ucs)
 	EXPECT(sb_putmb(NULL, buf) == 0);
 	EXPECT(sb_putmb("äöü€", buf) == 4);
 	EXPECT(sb_size(buf) == 9);
-	EXPECT_STR(sb_nul(buf), "äöü€");
+	EXPECT_STR(sb_cstr(buf), "äöü€");
 
 	sb_destroy(buf);
 }
@@ -234,7 +262,7 @@ TEST_DECL(printf)
 	EXPECT(sb_printf(NULL, "abc") == 0);
 	EXPECT(sb_printf(buf, NULL) == 0);
 	EXPECT(sb_printf(buf, "abcd %d", 42) == 7);
-	EXPECT_STR(sb_nul(buf), "abcd 42");
+	EXPECT_STR(sb_cstr(buf), "abcd 42");
 	sb_setpos(buf, 5);
 	EXPECT(sb_get(NULL) == EOF);
 	EXPECT(sb_get(buf) == '4');
@@ -251,15 +279,15 @@ TEST_DECL(xput)
 	EXPECT(sb_xputs(NULL, buf, "") == 0);
 	EXPECT(sb_xputs("a b", buf, " ") == 4);
 	EXPECT(sb_xputs("'ä€'", buf, "'") == 9);
-	EXPECT_STR(sb_nul(buf), "a\\ b\\'ä€\\'");
+	EXPECT_STR(sb_cstr(buf), "a\\ b\\'ä€\\'");
 	sb_clean(buf);
 
 	EXPECT(sb_xputs("a\t\nb :;.", buf, " :.") == 13);
-	EXPECT_STR(sb_nul(buf), "a\\t\\nb\\ \\:;\\.");
+	EXPECT_STR(sb_cstr(buf), "a\\t\\nb\\ \\:;\\.");
 	sb_clean(buf);
 
 	EXPECT(sb_xputs("\b\f\n\r\t\v\\", buf, NULL) == 14);
-	EXPECT_STR(sb_nul(buf), "\\b\\f\\n\\r\\t\\v\\\\");
+	EXPECT_STR(sb_cstr(buf), "\\b\\f\\n\\r\\t\\v\\\\");
 	sb_clean(buf);
 
 	EXPECT(sb_xputc('a', NULL, "") == 0);
@@ -268,7 +296,7 @@ TEST_DECL(xput)
 	EXPECT(sb_xputc(0127, buf, "") == 1);
 	EXPECT(sb_xputc(0255, buf, "") == 1);
 	EXPECT(sb_xputc(033, buf, "") == 4);
-	EXPECT_STR(sb_nul(buf), "a\127\255\\033");
+	EXPECT_STR(sb_cstr(buf), "a\127\255\\033");
 
 	sb_destroy(buf);
 }
@@ -286,6 +314,8 @@ TEST_DECL(read)
 TEST_SUITE
 {
 	TEST_RUN(expand);
+	TEST_RUN(nul);
+	TEST_RUN(cstr);
 	TEST_RUN(getmem);
 	TEST_RUN(pos);
 	TEST_RUN(acquire);
