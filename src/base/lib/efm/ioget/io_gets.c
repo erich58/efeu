@@ -38,10 +38,10 @@ char *io_gets (char *buf, int n, IO *io)
 		if	(c == '\n')	break;
 	}
 
+	buf[k] = 0;
+
 	if	(k > 0)
-	{
-		buf[k] = 0;
 		return buf;
-	}
-	else	return NULL;
+
+	return NULL;
 }
