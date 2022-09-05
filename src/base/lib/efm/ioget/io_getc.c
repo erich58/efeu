@@ -92,14 +92,14 @@ int io_ungetc (int c, IO *io)
 		if	(io_ctrl(io, IO_UNGETC, io->save_buf[0]) == EOF)
 			return 0;
 
-		if	(io->stat == IO_STAT_EOF)
-			io->stat = IO_STAT_OK;
-
 		io->nsave--;
 
 		for (i = 0; i < io->nsave; i++)
 			io->save_buf[i] = io->save_buf[i + 1];
 	}
+
+	if	(io->stat == IO_STAT_EOF)
+		io->stat = IO_STAT_OK;
 
 	io->save_buf[io->nsave++] = (unsigned char) c;
 	return 1;
