@@ -2,17 +2,8 @@
 #include <EFEU/ioscan.h>
 #include "utest/in.tst.h"
 
-#define	SCAN(input, val, rem)	do { \
-	UnitTest_info(__FILE__, __LINE__, "INFO", \
-		"io_scan_int(%s)", # input); \
-	IO *in = IN(input); 	\
-	const char *value = io_scan_int(in, NULL); \
-	EXPECT_STR(value, val); \
-	char remaining[8]; \
-	io_gets(remaining, sizeof remaining, in); \
-	EXPECT_STR(remaining, rem); \
-} while (0)
-
+#define	SCAN(input, val, rem)	\
+IO2STR_FUNCTION(io_scan_int, (in, NULL), input, val, rem)
 
 TEST_DECL(not_a_int)
 {

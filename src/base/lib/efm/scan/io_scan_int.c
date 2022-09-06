@@ -66,19 +66,21 @@ static void cpy_digit(IO *io, StrBuf *sb, const char *digits)
 
 const char *io_scan_int(IO *io, StrBuf *sb)
 {
-	int c = io_getc(io);
+	int c = io_peek(io);
+
+	if	(c == EOF)
+		return NULL;
+
 	int sig = 0;
 
 	if	(c == '+' || c == '-')
 	{
-		sig = c;
-		c = io_getc(io);
+		sig = io_getc(io);
+		c = io_peek(io);
 	}
 
 	if	(!strchr(DEC, c))
 	{
-		io_ungetc(c, io);
-
 		if	(sig)
 			io_ungetc(sig, io);
 
@@ -95,6 +97,7 @@ const char *io_scan_int(IO *io, StrBuf *sb)
 	if	(sig)
 		sb_putc(sig, sb);
 
+	c = io_getc(io);
 	sb_putc(c, sb);
 	io_protect(io, 1);
 
