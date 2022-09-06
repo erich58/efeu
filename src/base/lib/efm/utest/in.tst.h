@@ -22,11 +22,9 @@ static int IN_ctrl(IO *io, int req, va_list list)
 	}
 }
 
-static IO *IN(const char *def)
+static IO *IN_create(const char *def)
 {
-	static IO *io = NULL;
-	io_close(io);
-	io = NULL;
+	IO *io = NULL;
 
 	if	(def)
 	{
@@ -38,6 +36,29 @@ static IO *IN(const char *def)
 
 	return io;
 }
+
+static IO *IN(const char *def)
+{
+	static IO *io = NULL;
+	io_close(io);
+	io = IN_create(def);
+	return io;
+}
+
+#define	IO2STR_FUNCTION(func, args, input, val, rem)	\
+do { \
+	IO *in = IN_create(input); 	\
+	const char *value = func args; \
+	UnitTest_strcheck(__FILE__, __LINE__, "==", value, val, \
+		# func "(" # input ")", # val); \
+	if	(rem)	{ \
+		char remaining[8]; \
+		io_gets(remaining, sizeof remaining, in); \
+		EXPECT_STR(remaining, rem); \
+	} \
+	io_close(in); \
+} while (0)
+
 
 #define	CLEANUP_IN	IN(NULL)
 
