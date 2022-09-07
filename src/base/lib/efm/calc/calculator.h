@@ -1,5 +1,5 @@
 /*
-:*:	tools for calculating
+:*:	Tools for calculating
 :de:	Hilfsfunktionen zur Termauswertung
 
 $Header	<EFEU/$1>
@@ -32,8 +32,7 @@ If not, write to the Free Software Foundation, Inc.,
 typedef struct Calculator Calculator;
 
 struct Calculator {
-	const char *(*obj)(IO *in, StrBuf *sb);
-	const char *(*value)(const char *name, StrBuf *sb);
+	const char *(*value)(IO *in, StrBuf *sb);
 };
 
 const char *calc_eval(Calculator *calc, IO *in, StrBuf *sb);

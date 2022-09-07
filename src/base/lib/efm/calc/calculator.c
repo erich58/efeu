@@ -1,5 +1,6 @@
 /*
-Einfache Termauswertung
+:*:Simple term calculating
+:de:Einfache Termauswertung
 
 $Copyright (C) 2022 Erich Frühstück
 This file is part of EFEU.
@@ -38,19 +39,20 @@ typedef struct CalcInternal CalcInternal;
 
 struct CalcInternal {
 	const char *whitespace;
-	const char *(*obj)(IO *in, StrBuf *sb);
-	const char *(*value)(const char *name, StrBuf *sb);
+	const char *(*value)(IO *in, StrBuf *sb);
 	IO *in;
-	StrBuf *tmp;
 };
 
 #define	calc_peek(calc)	io_eat(calc->in, calc->whitespace)
 
-static const char *builtin_obj(IO *in, StrBuf *sb)
+static const char *parse_obj(CalcInternal *calc, StrBuf *sb)
 {
 	const char *p;
-	
-	if	((p = io_scan_int(in, sb)))
+
+	if	((p = io_scan_name(calc->in, sb)))
+		return calc->value(calc->in, sb);
+
+	if	((p = io_scan_int(calc->in, sb)))
 	{
 		long long int val = strtoll(p, NULL, 0);
 		sb_clean(sb);
@@ -58,12 +60,12 @@ static const char *builtin_obj(IO *in, StrBuf *sb)
 		return sb_cstr(sb);
 	}
 
-	return io_scan_str(in, sb);
-
+	return io_scan_str(calc->in, sb);
 }
 
-static const char *builtin_value(const char *name, StrBuf *sb)
+static const char *builtin_value(IO *in, StrBuf *sb)
 {
+	sb_clean(sb);
 	sb_putc('0', sb);
 	return sb_cstr(sb);
 }
@@ -117,11 +119,7 @@ static const char *parse_term(CalcInternal *calc, StrBuf *sb,
 		p = sb_cstr(sb);
 		break;
 	default:
-		if	((p = io_scan_name(calc->in, calc->tmp)))
-			p = calc->value(p, sb);
-		else
-			p = calc->obj(calc->in, sb);
-
+		p = parse_obj(calc, sb);
 		break;
 	}
 
@@ -248,11 +246,9 @@ const char *calc_eval(Calculator *calc, IO *in, StrBuf *sb)
 	if	(!in)
 		return NULL;
 
-	ci.obj = (calc && calc->obj) ? calc->obj : builtin_obj;
 	ci.value = (calc && calc->value) ? calc->value : builtin_value;
 	ci.in = in;
 	ci.whitespace = " \t";
-	ci.tmp = sb_create(32);
 
 	if	(!sb)
 	{
@@ -262,6 +258,5 @@ const char *calc_eval(Calculator *calc, IO *in, StrBuf *sb)
 	}
 
 	const char *p = parse_term(&ci, sb, 0, EOF);
-	sb_destroy(ci.tmp);
 	return p;
 }
