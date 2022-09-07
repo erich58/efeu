@@ -587,7 +587,7 @@ void CmdPar_read (CmdPar *par, IO *io, int end, int flag)
 					break;
 				}
 				
-				sb_clean(sb);
+				sb_clear(sb);
 			}
 			else	skipline(io);
 

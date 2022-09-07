@@ -12,8 +12,8 @@ static const char *skipcom(char *def, StrBuf *cbuf, int flag)
 	IO *io = IN(def);
 	int c;
 
-	sb_clean(&sbuf);
-	sb_clean(cbuf);
+	sb_clear(&sbuf);
+	sb_clear(cbuf);
 
 	while ((c = io_skipcom(io, cbuf, flag)) != EOF)
 		sb_putc(c, &sbuf);

@@ -68,7 +68,7 @@ char *lexsortkey (const char *base, StrBuf *buf)
 	if	(!base)	return NULL;
 	if	(!buf)	buf = &lexbuf1;
 
-	sb_clean(buf);
+	sb_clear(buf);
 	int32_t c;
 
 	while ((c = pgetucs(&base, 4)))

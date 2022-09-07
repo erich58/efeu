@@ -39,7 +39,7 @@ static void entry_clean (ENTRY *entry)
 
 static void entry_load (ENTRY *entry)
 {
-	sb_clean(&entry->buf);
+	sb_clear(&entry->buf);
 
 	if	(edb_read(entry->edb))
 	{

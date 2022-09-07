@@ -18,7 +18,7 @@ static char *parse_key (IO *io, StrBuf *buf)
 {
 	int c;
 
-	sb_clean(buf);
+	sb_clear(buf);
 
 	while ((c = io_skipcom (io, NULL, 0)) != EOF)
 	{
@@ -43,7 +43,7 @@ static char *parse_arg (IO *io, StrBuf *buf)
 {
 	int c;
 
-	sb_clean(buf);
+	sb_clear(buf);
 
 	while ((c = io_skipcom (io, NULL, 0)) != EOF)
 	{
@@ -71,7 +71,7 @@ char *EDBMeta_par (EDBMeta *meta, int flag)
 	int last = '\n';
 	int c;
 	
-	sb_clean(buf);
+	sb_clear(buf);
 
 	while ((c = io_mgetc(io, 1)) != EOF)
 	{

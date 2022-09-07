@@ -48,7 +48,7 @@ static int divide_ctrl (IO *io, int req, va_list list)
 		io_write(div->base, div->buf.data, div->buf.pos);
 		/* FALLTHROUGH */
 	case IO_REWIND:
-		sb_clean(&div->buf);
+		sb_clear(&div->buf);
 		return 0;
 	case IO_IDENT:
 		*va_arg(list, char **) = io_xident(div->base, "divide(%*)");

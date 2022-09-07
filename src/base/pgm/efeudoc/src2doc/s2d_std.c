@@ -113,7 +113,7 @@ static void std_head (const char *name, StrBuf *buf, IO *ein, IO *aus)
 		}
 
 		io_psubarg(aus, (char *) buf->data, "ns", name);
-		sb_clean(buf);
+		sb_clear(buf);
 	}
 	else if	(name)
 	{
@@ -140,7 +140,7 @@ static void std_copy (const char *name, StrBuf *buf, IO *ein, IO *aus, IO *src)
 			sb_putc(0, buf);
 			io_putc('\n', aus);
 			io_psubarg(aus, (char *) buf->data, "ns", name);
-			sb_clean(buf);
+			sb_clear(buf);
 			flag = 0;
 		}
 
@@ -169,7 +169,7 @@ static void std_copy (const char *name, StrBuf *buf, IO *ein, IO *aus, IO *src)
 		sb_putc(0, buf);
 		io_putc('\n', aus);
 		io_psubarg(aus, (char *) buf->data, "ns", name);
-		sb_clean(buf);
+		sb_clear(buf);
 	}
 }
 

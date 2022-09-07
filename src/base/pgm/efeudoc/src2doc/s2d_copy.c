@@ -44,10 +44,10 @@ StrBuf *SrcData_copy (SrcData *data, StrBuf *buf, const char *name)
 			*q = 0;
 
 		io_push(data->ein, io_fileopen(p ,"rzd"));
-		sb_clean(&data->buf);
+		sb_clear(&data->buf);
 	}
 	else	buf = DocBuf_copy(&data->doc, &data->buf, buf, name);
 
-	sb_clean(data->doc.source);
+	sb_clear(data->doc.source);
 	return buf;
 }

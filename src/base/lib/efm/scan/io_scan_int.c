@@ -91,7 +91,7 @@ const char *io_scan_int(IO *io, StrBuf *sb)
 	{
 		static STRBUF(buf, 32);
 		sb = &buf;
-		sb_clean(sb);
+		sb_clear(sb);
 	}
 
 	if	(sig)

@@ -157,7 +157,7 @@ static void sh_eval (SrcData *data, const char *name)
 				continue;
 			}
 
-			sb_clean(data->doc.source);
+			sb_clear(data->doc.source);
 			p = parse_name(data->ein, c);
 			sb_puts(p, data->doc.source);
 			c = io_getc(data->ein);

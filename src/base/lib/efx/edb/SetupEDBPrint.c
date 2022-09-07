@@ -19,7 +19,7 @@ char *EDBPrintDef_psub (const char *fmt, const char *opt, const char *arg)
 {
 	if	(!fmt)	return NULL;
 
-	for (sb_clean(&pdef_buf); *fmt; fmt++)
+	for (sb_clear(&pdef_buf); *fmt; fmt++)
 	{
 		if	(fmt[0] == '[' && fmt[1] == ']')
 		{

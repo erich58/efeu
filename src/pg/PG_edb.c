@@ -343,7 +343,7 @@ static char *edb2pg_get (EDB2PG *par)
 {
 	io_putc(0, par->io);
 	io_rewind(par->io);
-	sb_clean(&par->buf);
+	sb_clear(&par->buf);
 	return (char *) par->buf.data;
 }
 
@@ -563,7 +563,7 @@ static int read_pg (EfiType *type, void *data, void *p_par)
 	char *p;
 	int c;
 	
-	sb_clean(&par->buf);
+	sb_clear(&par->buf);
 
 	if	(!par->buf.nfree)
 		sb_expand(&par->buf, 2);
@@ -730,7 +730,7 @@ static void meta_query (EDBMetaDef *def, EDBMeta *meta, const char *arg)
 
 	PG_command(par->pg, "BEGIN");
 	par->endline = 0;
-	sb_clean(&meta->buf);
+	sb_clear(&meta->buf);
 	sb_puts("DECLARE tmpcursor CURSOR FOR ", &meta->buf);
 	PG_command(par->pg, parse_query(meta->ctrl, &meta->buf));
 
@@ -871,7 +871,7 @@ static void meta_close (EDBMetaDef *def, EDBMeta *meta, const char *arg)
 static void meta_exec (EDBMetaDef *def, EDBMeta *meta, const char *arg)
 {
 	PG *pg = epg_connect(arg, 0);
-	sb_clean(&meta->buf);
+	sb_clear(&meta->buf);
 	PG_command(pg, parse_query(meta->ctrl, &meta->buf));
 	rd_deref(pg);
 }

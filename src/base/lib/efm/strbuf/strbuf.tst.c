@@ -231,7 +231,7 @@ TEST_DECL(ucs)
 	EXPECT(sb_getucs(buf) == 'e');
 	EXPECT(sb_getucs(buf) == EOF);
 
-	sb_clean(buf);
+	sb_clear(buf);
 	sb_putc(0344, buf); // ä
 	sb_putc(' ', buf);
 	sb_putc(0337, buf); // ß
@@ -246,7 +246,7 @@ TEST_DECL(ucs)
 	EXPECT(sb_getucs(buf) == 0x20AC);
 	EXPECT(sb_getucs(buf) == EOF);
 
-	sb_clean(buf);
+	sb_clear(buf);
 	EXPECT(sb_putmb("äöü€", NULL) == 0);
 	EXPECT(sb_putmb(NULL, buf) == 0);
 	EXPECT(sb_putmb("äöü€", buf) == 4);
@@ -280,15 +280,15 @@ TEST_DECL(xput)
 	EXPECT(sb_xputs("a b", buf, " ") == 4);
 	EXPECT(sb_xputs("'ä€'", buf, "'") == 9);
 	EXPECT_STR(sb_cstr(buf), "a\\ b\\'ä€\\'");
-	sb_clean(buf);
+	sb_clear(buf);
 
 	EXPECT(sb_xputs("a\t\nb :;.", buf, " :.") == 13);
 	EXPECT_STR(sb_cstr(buf), "a\\t\\nb\\ \\:;\\.");
-	sb_clean(buf);
+	sb_clear(buf);
 
 	EXPECT(sb_xputs("\b\f\n\r\t\v\\", buf, NULL) == 14);
 	EXPECT_STR(sb_cstr(buf), "\\b\\f\\n\\r\\t\\v\\\\");
-	sb_clean(buf);
+	sb_clear(buf);
 
 	EXPECT(sb_xputc('a', NULL, "") == 0);
 	EXPECT(sb_xputc(EOF, buf, "") == 0);

@@ -82,7 +82,7 @@ int io_skipcom (IO *io, StrBuf *buf, int flag)
 
 			if	(buf)
 			{
-				sb_clean(buf);
+				sb_clear(buf);
 				indent = -1;
 				save_cstyle(io, buf, flag);
 				startline = 1;
@@ -99,7 +99,7 @@ int io_skipcom (IO *io, StrBuf *buf, int flag)
 			{
 				if	(startline)
 				{
-					sb_clean(buf);
+					sb_clear(buf);
 					indent = -1;
 				}
 

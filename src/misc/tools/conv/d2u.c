@@ -83,7 +83,7 @@ static char *savename (const char *path)
 
 	if	(path == NULL)	return NULL;
 
-	sb_clean(&buf);
+	sb_clear(&buf);
 	name = strrchr(path, '/');
 
 	if	(name)

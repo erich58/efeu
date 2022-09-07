@@ -18,7 +18,7 @@ static const char *fmt(const char *fmt, ...)
 	{
 		va_list args;
 
-		sb_clean(&buf);
+		sb_clear(&buf);
 		va_start(args, fmt);
 		do_vprintf(&buf, fmt, args);
 		va_end(args);

@@ -309,6 +309,6 @@ StrBuf *DocBuf_copy (DocBuf *doc, StrBuf *base, StrBuf *buf, const char *name)
 	}
 
 	io_close(io);
-	sb_clean(base);
+	sb_clear(base);
 	return buf;
 }

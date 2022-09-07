@@ -202,7 +202,7 @@ static char *maketemp (TMPTAB *tab, const char *dir, const char *pfx)
 
 	pid = getpid();
 	buf = &tempbuf;
-	sb_clean(buf);
+	sb_clear(buf);
 	sb_puts(dir, buf);
 	sb_putc('/', buf);
 	sb_puts(pfx ? pfx : PFX, buf);

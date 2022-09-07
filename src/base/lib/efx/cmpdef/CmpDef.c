@@ -40,7 +40,7 @@ typedef struct {
 
 static char *parse_name (const char *def, char **ptr)
 {
-	sb_clean(&name_buf);
+	sb_clear(&name_buf);
 
 	while (*def == '_' || isalnum((unsigned char) *def))
 		sb_putc(*def++, &name_buf);

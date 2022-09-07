@@ -27,7 +27,7 @@ static STRBUF(parse_buf, 1024);
 
 StrBuf *parse_open (void)
 {
-	sb_clean(&parse_buf);
+	sb_clear(&parse_buf);
 	return &parse_buf;
 }
 

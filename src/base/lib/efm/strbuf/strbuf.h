@@ -105,7 +105,7 @@ void sb_trunc (StrBuf *sb);
 void sb_free (StrBuf *sb);
 void *sb_getmem (StrBuf *sb);
 
-#define sb_clean(sb)	sb_trunc(sb)
+#define sb_clear(sb)	sb_trunc(sb)
 
 int sb_get (StrBuf *sb);
 int sb_ungetc (int c, StrBuf *sb);
@@ -261,14 +261,14 @@ Ein Nullpointer ist ebenfalls nicht zulässig.
 On writing, it is assumed, that the position points to the end of the
 character field. On reading or editing, the position is uncoupled
 from the end of the character field. So writing after reading or editing
-needs a synchronisation of the position either with |sb_clean|, |sb_sync|
+needs a synchronisation of the position either with |sb_clear|, |sb_sync|
 or |sb_end|.
 :de:
 Beim Schreiben wird vorrausgesetzt, daß der Positionszeiger am Ende des
 Zeichenfeldes steht. Beim Lesen oder Editieren wird der Positionszeiger
 vom Ende des Zeichenfeldes abgekoppelt.
 Soll nach einem Lese- oder Editiervorgang wieder geschrieben werden,
-muß daher entweder |sb_clean| (Anfang) |sb_sync| (aktuelle Position) oder
+muß daher entweder |sb_clear| (Anfang) |sb_sync| (aktuelle Position) oder
 |sb_end| (Ende) aufgerufen werden.
 
 $SeeAlso

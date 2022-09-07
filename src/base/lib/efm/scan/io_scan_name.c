@@ -34,7 +34,7 @@ const char *io_scan_name(IO *io, StrBuf *sb)
 	{
 		static STRBUF(buf, 32);
 		sb = &buf;
-		sb_clean(sb);
+		sb_clear(sb);
 	}
 
 	io_protect(io, 1);

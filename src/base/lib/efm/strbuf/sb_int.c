@@ -31,7 +31,7 @@ const char *sb_setint(StrBuf *buf, int val)
 {
 	if	(buf)
 	{
-		sb_clean(buf);
+		sb_clear(buf);
 		sb_printf(buf, "%d", val);
 		return sb_nul(buf);
 	}

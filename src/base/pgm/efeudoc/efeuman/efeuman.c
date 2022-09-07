@@ -190,7 +190,7 @@ static char *getpar (StrBuf *buf)
 	}
 
 	p = buf2var(buf);
-	sb_clean(buf);
+	sb_clear(buf);
 	return p;
 }
 
@@ -228,7 +228,7 @@ static void addline (IO *io, StrBuf *buf)
 	if	(flag && !doc_buf.var[VAR_TITLE])
 	{
 		doc_buf.var[VAR_TITLE] = buf2var(buf);
-		sb_clean(buf);
+		sb_clear(buf);
 	}
 	else	sb_putc('\n', buf);
 }
@@ -274,8 +274,8 @@ static void addbuf(StrBuf *buf)
 		DocBuf_copy(&doc_buf, buf, NULL, NULL);
 	}
 
-	sb_clean(buf);
-	sb_clean(doc_buf.source);
+	sb_clear(buf);
+	sb_clear(doc_buf.source);
 }
 
 static void eval_script (IO *io, StrBuf *buf)

@@ -65,7 +65,7 @@ TEST_DECL(getc)
 	EXPECT(sb->data[0] == 'x');
 	EXPECT(io_ungetc('a', io) == 0);
 
-	sb_clean(sb);
+	sb_clear(sb);
 	EXPECT(sb_puts("1", sb) == 1);
 	io_rewind(io);
 	io_push(io, io_string("x", NULL));

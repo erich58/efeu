@@ -143,7 +143,7 @@ void DocSym_free (DocSym *sym)
 {
 	if	(sym)
 	{
-		sb_clean(&sym->buf);
+		sb_clear(&sym->buf);
 		memfree(sym->tab);
 		memfree(sym);
 	}

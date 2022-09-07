@@ -55,7 +55,7 @@ static const char *parse_obj(CalcInternal *calc, StrBuf *sb)
 	if	((p = io_scan_int(calc->in, sb)))
 	{
 		long long int val = strtoll(p, NULL, 0);
-		sb_clean(sb);
+		sb_clear(sb);
 		sb_printf(sb, "%lld", val);
 		return sb_cstr(sb);
 	}
@@ -65,7 +65,7 @@ static const char *parse_obj(CalcInternal *calc, StrBuf *sb)
 
 static const char *builtin_value(IO *in, StrBuf *sb)
 {
-	sb_clean(sb);
+	sb_clear(sb);
 	sb_putc('0', sb);
 	return sb_cstr(sb);
 }
@@ -83,7 +83,7 @@ static const char *parse_term(CalcInternal *calc, StrBuf *sb,
 	int prior, int delim)
 {
 	int c = calc_peek(calc);
-	sb_clean(sb);
+	sb_clear(sb);
 
 	if	(c == EOF)
 		return NULL;
@@ -114,7 +114,7 @@ static const char *parse_term(CalcInternal *calc, StrBuf *sb,
 		if	(c == '-')	val = -val;
 		else if	(c == '!')	val = !val;
 		
-		sb_clean(sb);
+		sb_clear(sb);
 		sb_printf(sb, "%lld", val);
 		p = sb_cstr(sb);
 		break;
@@ -166,7 +166,7 @@ static const char *parse_term(CalcInternal *calc, StrBuf *sb,
 			int val = mstrcmp(p, parse_term(calc, right,
 				PRIOR_EQUAL, delim)) == 0;
 			sb_destroy(right);
-			sb_clean(sb);
+			sb_clear(sb);
 			sb_printf(sb, "%d", op == '!' ? !val : val); 
 			p = sb_cstr(sb);
 			continue;
@@ -231,7 +231,7 @@ static const char *parse_term(CalcInternal *calc, StrBuf *sb,
 			break;
 		}
 
-		sb_clean(sb);
+		sb_clear(sb);
 		sb_printf(sb, "%lld", val);
 		p = sb_cstr(sb);
 	}
@@ -254,7 +254,7 @@ const char *calc_eval(Calculator *calc, IO *in, StrBuf *sb)
 	{
 		static STRBUF(buf, 32);
 		sb = &buf;
-		sb_clean(sb);
+		sb_clear(sb);
 	}
 
 	const char *p = parse_term(&ci, sb, 0, EOF);

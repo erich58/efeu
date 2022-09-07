@@ -8,7 +8,7 @@ TEST_DECL(mkpath)
 	STRBUF(buf, 256);
 	EXPECT(mkpath_bin(&buf, "bin", "lib", "else", NULL));
 	EXPECT_STR(sb_nul(&buf), "lib:else");
-	sb_clean(&buf);
+	sb_clear(&buf);
 	EXPECT(!mkpath_bin(&buf, "x", "lib", "else", NULL));
 	EXPECT_STR(sb_nul(&buf), "");
 	EXPECT(!mkpath_bin(&buf, "bin32", "lib", "else", NULL));
@@ -19,7 +19,7 @@ TEST_DECL(mkpath)
 	char *path = mstrcpy(getenv("PATH")); /* Save PATH */
 	TEST_EXPR(setenv("PATH", "a/bin:b/bin", 1));
 
-	sb_clean(&buf);
+	sb_clear(&buf);
 	TEST_EXPR(mkpath_base(&buf, "lib", "else", NULL));
 	EXPECT_STR(sb_nul(&buf), "a/lib:a/else:b/lib:b/else");
 

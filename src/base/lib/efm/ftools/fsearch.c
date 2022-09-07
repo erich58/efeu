@@ -194,7 +194,7 @@ static int do_search (StrBuf *sb, const char *path,
 			if	(flag)
 				return 0;
 
-			sb_clean(sb);
+			sb_clear(sb);
 			break;
 
 		case '/':
