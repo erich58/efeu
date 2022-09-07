@@ -213,14 +213,14 @@ void Doc_mac (Doc *doc, IO *in)
 	if	(io_peek(in) == '(')
 	{
 		io_getc(in);
-		vb_clean(&arg_buf, NULL);
+		vb_clear(&arg_buf, NULL);
 		nextarg = mstrcpy(mac->name);
 
 		do	nextarg = DocParseMacArg(in);
 		while	(io_getc(in) == ',');
 
 		p = mac_expand(mac->fmt, arg_buf.used, arg_buf.data);
-		vb_clean(&arg_buf, memfree);
+		vb_clear(&arg_buf, memfree);
 	}
 	else	p = mac_expand(mac->fmt, 1, &mac->name);
 

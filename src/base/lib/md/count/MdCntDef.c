@@ -36,7 +36,7 @@ static char *rt_ident (const void *ptr)
 static void rt_clean (void *ptr)
 {
 	MdCntDef *def = ptr;
-	vb_clean(&def->cltab, NULL);
+	vb_clear(&def->cltab, NULL);
 	UnrefObj(def->obj);
 	memfree(def->pfx);
 	memfree(def);

@@ -37,7 +37,7 @@ static void tab_clean (void *data)
 	DocTab *doc = data;
 	memfree(doc->name);
 	DelVarTab(doc->var);
-	vb_clean(&doc->mtab, subclean);
+	vb_clear(&doc->mtab, subclean);
 	vb_free(&doc->mtab);
 	memfree(doc);
 }

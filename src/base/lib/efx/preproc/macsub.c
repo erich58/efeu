@@ -305,6 +305,6 @@ int macsub_cpy (IO *in, IO *out, int c, unsigned int flags)
 	mac->lock = 1;
 	n = mac->sub(mac, out, argv.data, argv.used);
 	mac->lock = 0;
-	vb_clean(&argv, memfree);
+	vb_clear(&argv, memfree);
 	return n;
 }

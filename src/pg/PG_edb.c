@@ -322,7 +322,7 @@ static void edb2pg_clean (void *data)
 
 	rd_deref(par->pg);
 	io_close(par->io);
-	vb_clean(&par->conv, conv_free);
+	vb_clear(&par->conv, conv_free);
 	vb_free(&par->conv);
 	sb_free(&par->buf);
 	memfree(par);

@@ -456,7 +456,7 @@ static void tinfo_setup (InfoNode *info)
 	if	(sync != TypeTabChangeCount)
 	{
 		sync = TypeTabChangeCount;
-		vb_clean(info->list, entry_clean);
+		vb_clear(info->list, entry_clean);
 	}
 	else if	(info->list)
 	{

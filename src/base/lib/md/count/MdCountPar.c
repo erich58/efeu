@@ -37,8 +37,8 @@ static char *rt_ident (const void *ptr)
 static void rt_clean (void *ptr)
 {
 	MdCountPar *par = ptr;
-	vb_clean(&par->vtab, NULL);
-	vb_clean(&par->ctab, NULL);
+	vb_clear(&par->vtab, NULL);
+	vb_clear(&par->ctab, NULL);
 	memfree(par->time_range);
 	del_axis(par->axis);
 	rd_deref(par->cpar);

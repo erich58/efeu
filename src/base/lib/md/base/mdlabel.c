@@ -77,7 +77,7 @@ MdAxisLabel *new_label (void)
 void del_label (MdAxisLabel *x)
 {
 	del_label(x->next);
-	vb_clean(&x->idxtab, del_key);
+	vb_clear(&x->idxtab, del_key);
 	del_data(&label_tab, x);
 }
 

@@ -75,7 +75,7 @@ void vb_init (VecBuf *buf, size_t blk, size_t size);
 void *_vb_alloc (VecBuf *buf, size_t dim);
 void *vb_alloc (VecBuf *buf, size_t dim);
 void vb_free (VecBuf *buf);
-void vb_clean (VecBuf *vb, void (*clean) (void *ptr));
+void vb_clear (VecBuf *vb, void (*clean) (void *ptr));
 void *vb_realloc (VecBuf *buf, size_t dim);
 void *vb_next (VecBuf *buf);
 size_t vb_size(VecBuf *buf);

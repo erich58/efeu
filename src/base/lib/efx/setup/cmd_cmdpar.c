@@ -142,7 +142,7 @@ static EfiObjList *do_eval (CmdPar *par, EfiObjList *arglist, int flag)
 		}
 	}
 
-	vb_clean(buf, memfree);
+	vb_clear(buf, memfree);
 	vb_free(buf);
 	return list;
 }

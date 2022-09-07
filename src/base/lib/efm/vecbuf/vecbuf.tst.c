@@ -133,7 +133,7 @@ TEST_DECL(basic)
 	IVAL(vb_insert(&vbuf, 0, 1)) = 3;
 	EXPECT(IVAL(vb_data(&vbuf, 2)) == 2);
 
-	vb_clean(&vbuf, vclean);
+	vb_clear(&vbuf, vclean);
 	vb_free(&vbuf);
 	EXPECT(1);
 }

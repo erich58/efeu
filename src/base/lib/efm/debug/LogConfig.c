@@ -81,7 +81,7 @@ static int pfx_cmd(int c)
 	case '\n':
 		break;
 	case '@':
-		vb_clean(&vbuf, def_clean);
+		vb_clear(&vbuf, def_clean);
 		memfree(default_path);
 		default_path = NULL;
 		break;
@@ -180,7 +180,7 @@ void LogConfig (const char *def)
 
 	if	(*def == 0)
 	{
-		vb_clean(&vbuf, def_clean);
+		vb_clear(&vbuf, def_clean);
 		default_mask = MASK_DEFAULT;
 	}
 

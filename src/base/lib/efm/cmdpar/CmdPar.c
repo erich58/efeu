@@ -101,9 +101,9 @@ void CmdPar_clean (CmdPar *par)
 
 	memfree(par->name);
 	par->name = NULL;
-	vb_clean(&par->var, var_clean);
+	vb_clear(&par->var, var_clean);
 	vb_free(&par->var);
-	vb_clean(&par->def, def_clean);
+	vb_clear(&par->def, def_clean);
 	vb_free(&par->def);
 	vb_free(&par->env);
 	vb_free(&par->opt);

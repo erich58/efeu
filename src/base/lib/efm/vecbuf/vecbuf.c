@@ -46,7 +46,7 @@ verwendeten Datenelemente im Vektorbuffer <buf> an und setzt
 die Komponente |used| auf 0.
 */
 
-void vb_clean (VecBuf *buf, void (*clean) (void *ptr))
+void vb_clear (VecBuf *buf, void (*clean) (void *ptr))
 {
 	if	(!buf)	return;
 

@@ -61,7 +61,7 @@ static void info_clean (void *ptr)
 
 	memfree(info->name);
 	memfree(info->label);
-	vb_clean(info->list, entry_clean);
+	vb_clear(info->list, entry_clean);
 	del_data(&info_tab, info);
 }
 

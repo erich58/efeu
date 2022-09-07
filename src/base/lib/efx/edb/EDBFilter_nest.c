@@ -98,7 +98,7 @@ static void nest_clean (void *data)
 {
 	NEST *par = data;
 	rd_deref(par->base);
-	vb_clean(&par->def_tab, nestdef_clean);
+	vb_clear(&par->def_tab, nestdef_clean);
 	UnrefObj(par->key);
 	io_close(par->io);
 	sb_free(&par->buf);
