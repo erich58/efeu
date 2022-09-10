@@ -2,7 +2,6 @@
 #include <EFEU/ioscan.h>
 #include <EFEU/locale.h>
 #include <EFEU/mstring.h>
-#include "utest/in.tst.h"
 #include "utest/out.tst.h"
 
 static int testkey(const char *str, const char *key)
@@ -159,6 +158,7 @@ TEST_DECL(scan)
 	EXPECT(scan("3ull", SCAN_ANYTYPE, NULL) == (SCAN_UNSIGNED|SCAN_INT64));
 	EXPECT(scan("'a'", SCAN_ANYTYPE, NULL) == SCAN_CHAR);
 	EXPECT(scan("\"a\"", SCAN_ANYTYPE, NULL) == SCAN_STR);
+	EXPECT(scan("\"\"", SCAN_ANYTYPE, NULL) == SCAN_STR);
 
 	if	(EXPECT(scan("'a'", SCAN_XCHAR, &p) == SCAN_CHAR))
 		EXPECT(*((unsigned char *) p) == 'a'); 

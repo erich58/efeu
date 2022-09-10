@@ -15,6 +15,7 @@ TEST_SUITE
 	SCAN_REM("a3", NULL, "a3");
 	SCAN_REM("\"abc\" x", "abc", " x");
 	SCAN_REM("\"\" x", "", " x");
+	SCAN_REM("\"\"\" x", "", "\" x");
 
 	CLEANUP_IN;
 }

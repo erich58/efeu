@@ -23,6 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 
 #include <EFEU/ioscan.h>
+#include <EFEU/mstring.h>
 #include <EFEU/unicode.h>
 #include <ctype.h>
 
@@ -47,7 +48,8 @@ int io_scan (IO *io, unsigned int flags, void **ptr)
 			do	io_scan_str(io, sb);
 			while	((c = io_eat(io, " \t")) == '"');
 
-			p = sb_cpyrelease(sb);
+			p = mstrcpy(sb_cstr(sb));
+			sb_release(sb);
 			type = SCAN_STR;
 		}
 	}
