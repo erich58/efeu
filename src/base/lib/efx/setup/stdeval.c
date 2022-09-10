@@ -106,7 +106,7 @@ static EfiObj *pf_operator (IO *io, void *data)
 
 	if	(io_eat(io, " \t") == '"')
 	{
-		io_scan(io, SCAN_STR, &p);
+		p = mstrcpy(io_scan_str(io, NULL));
 	}
 	else	p = io_mgets(io, "%s");
 
