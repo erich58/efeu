@@ -2,6 +2,7 @@
 #include <EFEU/ioscan.h>
 #include <EFEU/locale.h>
 #include <EFEU/mstring.h>
+#include "utest/in.tst.h"
 #include "utest/out.tst.h"
 
 static int testkey(const char *str, const char *key)
@@ -158,21 +159,9 @@ TEST_DECL(scan)
 	EXPECT(scan("3ull", SCAN_ANYTYPE, NULL) == (SCAN_UNSIGNED|SCAN_INT64));
 	EXPECT(scan("'a'", SCAN_ANYTYPE, NULL) == SCAN_CHAR);
 	EXPECT(scan("\"a\"", SCAN_ANYTYPE, NULL) == SCAN_STR);
-	EXPECT(scan("L'a'", SCAN_ANYTYPE, NULL) == SCAN_UCS);
-	EXPECT(scan("L\"a\"", SCAN_ANYTYPE, NULL) == SCAN_STR);
-	EXPECT(scan("L'a'", 0, NULL) == 0);
-	EXPECT_OUT("L'a'");
-	EXPECT(scan("L'a'", SCAN_NAME, NULL) == SCAN_NAME);
-	EXPECT_OUT("'a'");
-	EXPECT(scan("L'a'", SCAN_UCS, NULL) == SCAN_UCS);
-	EXPECT(scan("L 'a'", SCAN_UCS, NULL) == 0);
-	EXPECT_OUT("L 'a'");
-	EXPECT(scan("L 'a'", SCAN_ANYTYPE, NULL) == SCAN_NAME);
 
 	if	(EXPECT(scan("'a'", SCAN_XCHAR, &p) == SCAN_CHAR))
 		EXPECT(*((unsigned char *) p) == 'a'); 
-	if	(EXPECT(scan("L'a'", SCAN_XCHAR, &p) == SCAN_UCS))
-		EXPECT(*((int32_t *) p) == 'a'); 
 	if	(EXPECT(scan("'Ä'", SCAN_XCHAR, &p) == SCAN_UCS))
 		EXPECT(*((int32_t *) p) == 0xc4); 
 	if	(EXPECT(scan("'\xc3\x84'", SCAN_XCHAR, &p) == SCAN_UCS))
@@ -181,8 +170,6 @@ TEST_DECL(scan)
 		EXPECT(*((int32_t *) p) == 0x20ac); 
 	if	(EXPECT(scan("'\342\202\254'", SCAN_XCHAR, &p) == SCAN_UCS))
 		EXPECT(*((int32_t *) p) == 0x20ac); 
-//	if	(EXPECT(scan("'\\342\\202\\254'", SCAN_XCHAR, &p) == SCAN_UCS))
-//		EXPECT(*((int32_t *) p) == 0x20ac); 
 
 	EXPECT(scan_char("'\\''") == '\'');
 	EXPECT(scan_char("'\\\\'") == '\\');
@@ -196,9 +183,7 @@ TEST_DECL(scan)
 	EXPECT(scan_char("'\xc4'") == 0xc4);
 	EXPECT(scan_char("'\\xc4'") == 0xc4);
 	EXPECT(scan_char("'\xc0\x8a'") == 0x0a);
-//	EXPECT(scan_char("'\\xc0\\x8a'") == 0x0a);
 	EXPECT(scan_char("'\xe0\x8a\x8b'") == (0xa << 6) + 0xb);
-//	EXPECT(scan_char("'\\xe0\\x8a\\x8b'") == (0xa << 6) + 0xb);
 
 	if	(EXPECT(scan("NULL", SCAN_ANYTYPE, &p) == SCAN_NAME))
 		EXPECT_STR(p, NULL); 

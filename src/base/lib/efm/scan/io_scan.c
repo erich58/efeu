@@ -42,9 +42,12 @@ int io_scan (IO *io, unsigned int flags, void **ptr)
 	{
 		if	(flags & SCAN_STR)
 		{
-			io_getc(io);
-			p = io_xgets(io, "\"");
-			io_getc(io);
+			StrBuf *sb = sb_acquire();
+
+			do	io_scan_str(io, sb);
+			while	((c = io_eat(io, " \t")) == '"');
+
+			p = sb_cpyrelease(sb);
 			type = SCAN_STR;
 		}
 	}
@@ -54,32 +57,6 @@ int io_scan (IO *io, unsigned int flags, void **ptr)
 		{
 			return make_char(io, flags, ptr);
 		}
-	}
-	else if	(c == 'L' && (flags & (SCAN_UTF|SCAN_UCS)))
-	{
-		int d;
-
-		io_getc(io);
-		d = io_peek(io);
-
-		if	(d == '"' && (flags & SCAN_UTF))
-		{
-			io_getc(io);
-			p = io_xgets(io, "\"");
-			io_getc(io);
-			type = SCAN_STR;
-		}
-		else if	(d == '\'' && (flags & SCAN_UCS))
-		{
-			return make_char(io, SCAN_UCS, ptr);
-		}
-		else if	(flags & SCAN_NAME)
-		{
-			io_ungetc(c, io);
-			p = io_getname(io);
-			type = SCAN_NAME;
-		}
-		else	io_ungetc(c, io);
 	}
 	else if	(c == 'N' && (flags & (SCAN_NAME|SCAN_STR))
 			&& io_testkey(io, "NULL"))
