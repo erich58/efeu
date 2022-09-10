@@ -46,19 +46,17 @@ uint64_t mstr2uint64 (const char *str, char **ptr, int base);
 
 #define	SCAN_INT	0x1	/* Ganzzahlwert */
 #define	SCAN_INT64	0x2	/* 64-Bit Ganzzahlwert */
-#define	SCAN_FLOAT	0x4	/* Gleitkommazahl, einfache Genauigkeit */
 #define	SCAN_DOUBLE	0x8	/* Gleitkommazahl, doppelte Genauigkeit */
 
-#define	SCAN_CHAR	0x10	/* ASCII/Latin1 - Zeichendefinition */
+#define	SCAN_CHAR	0x10	/* ASCII - Zeichendefinition */
 #define	SCAN_UCS	0x20	/* UNICODE - Zeichendefinition */
 #define	SCAN_STR	0x40	/* String (doppelte Anführung oder NULL) */
-#define	SCAN_UTF	0x80	/* UTF8-String */
 #define	SCAN_NAME	0x100	/* Name */
 
 #define	SCAN_INTEGER	(SCAN_INT | SCAN_INT64)
-#define	SCAN_NUMERIC	(SCAN_INTEGER | SCAN_FLOAT | SCAN_DOUBLE)
+#define	SCAN_NUMERIC	(SCAN_INTEGER | SCAN_DOUBLE)
 #define	SCAN_XCHAR	(SCAN_CHAR | SCAN_UCS)
-#define	SCAN_TEXT	(SCAN_XCHAR | SCAN_STR | SCAN_UTF | SCAN_NAME)
+#define	SCAN_TEXT	(SCAN_XCHAR | SCAN_STR | SCAN_NAME)
 #define	SCAN_TYPEMASK	(SCAN_NUMERIC | SCAN_TEXT)
 
 #define	SCAN_BINVAL	0x400	/* Binärwert */

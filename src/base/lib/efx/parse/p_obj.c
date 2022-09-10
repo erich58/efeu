@@ -52,10 +52,6 @@ EfiObj *Parse_obj(IO *io, int flags)
 		return (mode & SCAN_UNSIGNED) ?
 			NewObj(&Type_varsize, p) : NewObj(&Type_varint, p);
 
-	case SCAN_FLOAT:
-
-		return NewObj(&Type_float, p);
-
 	case SCAN_DOUBLE:
 
 		return NewObj(&Type_double, p);

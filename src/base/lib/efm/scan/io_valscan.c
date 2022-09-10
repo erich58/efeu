@@ -366,7 +366,7 @@ int io_valscan (IO *in, unsigned flags, void **ptr)
 	if	(flags & (SCAN_INTEGER))
 		mode |= GET_INT;
 
-	if	(flags & (SCAN_FLOAT | SCAN_DOUBLE))
+	if	(flags & SCAN_DOUBLE)
 		mode |= GET_DBL;
 
 	if	(mode == GET_DBL)
