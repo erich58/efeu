@@ -29,7 +29,7 @@ extern int PrintFloatPrec;
 
 TEST_SUITE
 {
-	PRINT_INT(PrintFloatPrec);
+	SetupStd();
 	PARSE(" NULL ", "_Ptr_: NULL", " ");
 	PARSE(" name ", "_Name_: name", " ");
 	PARSE(" 42 ", "int: 42", " ");
@@ -43,6 +43,8 @@ TEST_SUITE
 	PARSE(" \"a\"\n", "str: \"a\"", "\n");
 	PARSE(" \"a\" \"b\".", "str: \"ab\"", ".");
 	PARSE(" @", "NULL", "@");
+	PARSE(" int ", "Type_t: int", "");
+	PARSE(" true ", "bool: true", " ");
 	CLEANUP_IN;
 	CLEANUP_OUT;
 }
