@@ -7,28 +7,39 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/object.h>
 #include <EFEU/memalloc.h>
+#include "utest/in.tst.h"
+#include "utest/out.tst.h"
 
-static char *utest_term(char *def)
+static const char *obj_to_str(EfiObj *obj)
 {
-	static char *buf = NULL;
-	memfree(buf);
-	buf = def ? Obj2str(strterm(def)) : NULL;
-	return buf;
+	if	(obj)
+	{
+		io_printf(OUT(), "%s: ", obj->type->name);
+		PrintObj(OUT(), obj);
+		UnrefObj(obj);
+	}
+	else
+	{
+		io_puts("NULL", OUT());
+	}
+
+	return utest_out();
 }
 
-#define	EXPECT_TERM(a, b) \
-	UnitTest_strcheck(__FILE__, __LINE__, "==", \
-		utest_term(a), b, "term(" # a ")", # b)
+static const char *utest_term(IO *io)
+{
+	return obj_to_str(EvalObj(Parse_term(io, 0), NULL));
+}
 
-#define	MATCH_TERM(a, b) \
-	UnitTest_strcheck(__FILE__, __LINE__, "~", \
-		utest_term(a), b, "term(" # a ")", # b)
+static void utest_term_clean(void)
+{
+	utest_term(IN(0));
+	utest_out_clean();
+}
 
-#define	PRINT_TERM(s) \
-	UnitTest_strinfo(__FILE__, __LINE__, "INFO", \
-		utest_term(s), "term(" # s ")")
+#define	EXPECT_TERM(input, val, rem) \
+	EXPECT_IO2STR(utest_term, input, val, rem)
 
-#define	CLEANUP_TERM \
-	utest_term(NULL)
+#define	CLEANUP_TERM utest_term_clean()
 
 #endif
