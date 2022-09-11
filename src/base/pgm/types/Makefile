@@ -29,7 +29,7 @@ $(BUILD)/%.mk : %.tpl
 
 # Stufe 2: Header und Binaries
 
-all clean::
+all test clean::
 	$(MAKE) -f post.mk $@
 
 clean::
