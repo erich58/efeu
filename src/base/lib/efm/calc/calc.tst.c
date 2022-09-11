@@ -2,8 +2,10 @@
 #include <EFEU/calculator.h>
 #include "utest/in.tst.h"
 
+#define	CALC_EVAL(in)	calc_eval(NULL, in, NULL)
+
 #define	CALC_REM(input, val, rem)	\
-IO2STR_FUNCTION(calc_eval, (NULL, in, NULL), input, val, rem)
+EXPECT_IO2STR(CALC_EVAL, input, val, rem)
 
 #define	CALC(input, val)	CALC_REM(input, val, NULL)
 

@@ -2,8 +2,10 @@
 #include <EFEU/ioscan.h>
 #include "utest/in.tst.h"
 
+#define	IO_SCAN_INT(in)	io_scan_int(in, NULL)
+
 #define	SCAN(input, val, rem)	\
-IO2STR_FUNCTION(io_scan_int, (in, NULL), input, val, rem)
+EXPECT_IO2STR(IO_SCAN_INT, input, val, rem)
 
 TEST_DECL(not_a_int)
 {

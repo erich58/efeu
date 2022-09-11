@@ -45,14 +45,14 @@ static IO *IN(const char *def)
 	return io;
 }
 
-#define	IO2STR_FUNCTION(func, args, input, val, rem)	\
+#define	EXPECT_IO2STR(func, input, val, rem)	\
 do { \
 	IO *in = IN_create(input); 	\
-	const char *value = func args; \
+	const char *value = func(in); \
 	UnitTest_strcheck(__FILE__, __LINE__, "==", value, val, \
 		# func "(" # input ")", # val); \
 	if	(rem)	{ \
-		char remaining[8]; \
+		char remaining[32]; \
 		io_gets(remaining, sizeof remaining, in); \
 		EXPECT_STR(remaining, rem); \
 	} \
