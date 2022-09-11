@@ -6,6 +6,7 @@
 
 #include <EFEU/UnitTest.h>
 #include <EFEU/object.h>
+#include <EFEU/printobj.h>
 #include <EFEU/memalloc.h>
 #include "utest/in.tst.h"
 #include "utest/out.tst.h"
