@@ -60,7 +60,7 @@ test::
 
 TST_CFLAGS += -I $(TOP)/src/base/lib/efm
 TST_CFLAGS += -I $(TOP)/src/base/lib/efx
-TST_LDFLAGS += -lefx -lefm -lm -ldl
+TST_LDFLAGS += -lmd -lefx -lefm -lm -ldl
 
 $(BUILD)/%.gcov.o : %.c
 	@mkdir -p $(@D)
