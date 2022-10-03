@@ -109,7 +109,20 @@ static SC *sc_create (int row, int col)
 /*	SC - Datentype
 */
 
-static EfiType Type_SC = REF_TYPE("SC", SC *);
+static int Print_SC (const EfiType *st, const void *data, IO *io)
+{
+	const SC *sc = Val_ptr(data);
+
+	if	(sc)
+	{
+		return io_printf(io, "%dx%d", sc->rows, sc->cols);
+	}
+	else	return io_puts("NULL", io);
+}
+
+static size_t Write_SC (const EfiType *st, const void *data, IO *io);
+
+static EfiType Type_SC = IOREF_TYPE("SC", SC *, NULL, Write_SC, Print_SC);
 
 #define	Val_SC(x)	((SC **) x)[0]
 #define	Ref_SC(x)	rd_refer(Val_SC(x))
@@ -169,7 +182,7 @@ static int getcol (char *buf, char **ptr)
 /*	Spreadsheet - Daten ausgeben
 */
 
-static void save_entry (IO *io, SCData *x, int row, int col)
+static size_t save_entry (IO *io, SCData *x, int row, int col)
 {
 	char *cs;
 	char *align;
@@ -183,38 +196,42 @@ static void save_entry (IO *io, SCData *x, int row, int col)
 	switch (x->type)
 	{
 	case SC_LABEL:
-		io_xprintf(io, "%s %s%d = %#s\n", align, cs, row, x->label);
-		break;
+		return io_xprintf(io, "%s %s%d = %#s\n", align, cs, row, x->label);
 	case SC_EXPR:
-		io_xprintf(io, "let %s%d = %s\n", cs, row, x->label);
-		break;
+		return io_xprintf(io, "let %s%d = %s\n", cs, row, x->label);
 	case SC_DATA:
-		io_xprintf(io, "let %s%d = %.2f\n", cs, row, x->value);
-		break;
+		return io_xprintf(io, "let %s%d = %.2f\n", cs, row, x->value);
 	default:
-		break;
+		return 0;
 	}
 }
 
-static void f_sc_save (EfiFunc *func, void *rval, void **arg)
+static size_t Write_SC (const EfiType *type_, const void *data, IO *io)
 {
-	IO *io;
-	SC *sc;
+	const SC *sc = Val_ptr(data);
 	int i, j;
 
-	sc = Ref_SC(arg[0]);
-	io = Val_io(arg[1]);
-	Val_SC(rval) = sc;
+	size_t n = 0;
 
-	if	(sc == NULL || io == NULL)	return;
+	if	(sc == NULL || io == NULL)	return 0;
 
 	for (j = 0; j < sc->cols; j++)
-		io_xprintf(io, "format %s %d %d 0\n",
+		n += io_xprintf(io, "format %s %d %d 0\n",
 			makecol(j), sc->width[j], sc->prec[j]);
 
 	for (i = 0; i < sc->rows; i++)
 		for (j = 0; j < sc->cols; j++)
-			save_entry(io, sc->data + i * sc->cols + j, i, j);
+			n += save_entry(io, sc->data + i * sc->cols + j, i, j);
+
+	return n;
+}
+
+
+static void f_sc_save (EfiFunc *func, void *rval, void **arg)
+{
+	SC *sc = Ref_SC(arg[0]);
+	Val_SC(rval) = sc;
+	Write_SC(&Type_SC, &sc, Val_io(arg[1]));
 }
 
 
