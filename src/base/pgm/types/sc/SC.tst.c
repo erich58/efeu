@@ -52,12 +52,27 @@ TEST_DECL(io)
 	EXPECT_CONTENT("TMP", "NULL");
 	EXPECT_EVAL("write(open(TMP, \"w\"), sc)", "0");
 	EXPECT_CONTENT("TMP", "");
+	EXPECT_EVAL("sc.rows", "0");
+	EXPECT_EVAL("sc.cols", "0");
+	EXPECT_EVAL("sc.x", "0");
+	EXPECT_EVAL("sc.y", "0");
 
 	EXPECT_EVAL("sc = SC(3,4)", "SC: 3x4");
 	EXPECT_EVAL("sc.format(2,8,1);", "");
 	EXPECT_EVAL("sc.label(1,1) = \"Label\"", "\"Label\"");
 	MATCH_EVAL("sc.data(1,2) = 42", "42.0*");
 	EXPECT_EVAL("sc.expr(1,3) = SCIndex(1,2) + \" + 3\"", "\"B0 + 3\"");
+	EXPECT_EVAL("sc.type(1,1) == SC_LABEL", "true");
+	EXPECT_EVAL("sc.type(1,2) == SC_DATA", "true");
+	EXPECT_EVAL("sc.type(1,3) == SC_EXPR", "true");
+	EXPECT_EVAL("sc.type(1,4) == 0", "true");
+
+	EXPECT_EVAL("sc.label(4,1)", "NULL");
+	EXPECT_EVAL("sc.data(4,2)", "NULL");
+	EXPECT_EVAL("sc.expr(4,3)", "NULL");
+	EXPECT_EVAL("sc.get(2,1)", "NULL");
+	EXPECT_EVAL("sc.get(4,1)", "NULL");
+
 	EXPECT_EVAL("sc.rows", "3");
 	EXPECT_EVAL("sc.cols", "4");
 	EXPECT_EVAL("sc.x", "0");
@@ -80,6 +95,20 @@ TEST_DECL(io)
 	PopVarTab();
 }
 
+TEST_DECL(scan)
+{
+	PushVarTab(NULL, NULL);
+	TEST_FILE("TMP",
+		"format AA 10 2 0\n"
+		"let AA5 = 3. * 5.\n"
+	);
+	MATCH_EVAL("SC sc = SC(open(TMP, \"r\"))", "SC: 6x27");
+	MATCH_EVAL("sc.get(6,27)", "15");
+	MATCH_EVAL("sc.save(open(TMP, \"w\"))", "SC: 6x27");
+	PRINT_CONTENT("TMP");
+	PopVarTab();
+}
+
 TEST_SUITE
 {
 	SetupStd();
@@ -89,5 +118,6 @@ TEST_SUITE
 	TEST_RUN(index);
 	TEST_RUN(range);
 	TEST_RUN(io);
+	TEST_RUN(scan);
 	CLEANUP_TERM;
 }

@@ -472,16 +472,17 @@ static void f_sc_get (EfiFunc *func, void *rval, void **arg)
 		case SC_LABEL:
 			Val_obj(rval) = LvalObj(&Lval_ref, &Type_str,
 				Val_SC(arg[0]), &data->label);
-			break;
+			return;
 		case SC_DATA:
 			Val_obj(rval) = LvalObj(&Lval_ref, &Type_double,
 				Val_SC(arg[0]), &data->value);
-			break;
+			return;
 		default:
-			Val_obj(rval) = ptr2Obj(NULL);
 			break;
 		}
 	}
+
+	Val_obj(rval) = ptr2Obj(NULL);
 }
 
 static void f_sc_data (EfiFunc *func, void *rval, void **arg)
@@ -539,36 +540,26 @@ static void f_sc_type (EfiFunc *func, void *rval, void **arg)
 
 static EfiObj *m_rows (const EfiObj *obj, void *data)
 {
-	int x = obj ? Val_SC(obj->data)->rows : 0;
-	return NewObj(&Type_int, &x);
+	SC *sc = obj ? Val_SC(obj->data) : NULL;
+	return int2Obj(sc ? sc->rows : 0);
 }
 
 static EfiObj *m_cols (const EfiObj *obj, void *data)
 {
-	int x = obj ? Val_SC(obj->data)->cols : 0;
-	return NewObj(&Type_int, &x);
+	SC *sc = obj ? Val_SC(obj->data) : NULL;
+	return int2Obj(sc ? sc->cols : 0);
 }
 
 static EfiObj *m_x (const EfiObj *obj, void *data)
 {
-	if	(obj)
-	{
-		SC *sc = Val_SC(obj->data);
-		return LvalObj(&Lval_obj, &Type_int, obj, &sc->x);
-	}
-
-	return NULL;
+	SC *sc = obj ? Val_SC(obj->data) : NULL;
+	return sc ? LvalObj(&Lval_obj, &Type_int, obj, &sc->x) : int2Obj(0);
 }
 
 static EfiObj *m_y (const EfiObj *obj, void *data)
 {
-	if	(obj)
-	{
-		SC *sc = Val_SC(obj->data);
-		return LvalObj(&Lval_obj, &Type_int, obj, &sc->y);
-	}
-
-	return NULL;
+	SC *sc = obj ? Val_SC(obj->data) : NULL;
+	return sc ? LvalObj(&Lval_obj, &Type_int, obj, &sc->y) : int2Obj(0);
 }
 
 static EfiMember var_sc[] = {
