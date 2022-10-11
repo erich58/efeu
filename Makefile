@@ -7,7 +7,7 @@ usage::
 	@echo
 	@echo "basic	create basic functionality"
 	@echo "all	create all tools"
-	@echo "test	create and run unit tests
+	@echo "test	create and run unit tests"
 	@echo "doc	create all with documentation"
 	@echo "clean	cleanup the build"
 	@echo
