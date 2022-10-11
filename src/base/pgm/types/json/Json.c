@@ -175,7 +175,6 @@ static void json_clear(const EfiType *st, void *data, int mode)
 
 	while ((json = json_pop(data)))
 	{
-//		fprintf(stderr, "delete %p\n", json);
 		memfree(json->name);
 		UnrefObj(json->obj);
 		del_data(&json_alloc, json);
@@ -197,7 +196,6 @@ static void json_copy(const EfiType *st, void *tg, const void *src_ptr)
 		json->obj = LvalObj(NULL, s->obj->type);
 		CopyData(json->obj->type, json->obj->data, s->obj->data);
 		json_push(tg, json);
-//		fprintf(stderr, "new %p\n", json);
 		s = s->next;
 	}
 	while (s != src);
@@ -341,7 +339,6 @@ static void func_push_back (EfiFunc *func, void *rval, void **arg)
 	json->obj = LvalObj(NULL, Val_type(arg[2]));
 	json_push(arg[0], json);
 	Val_obj(rval) = RefObj(json->obj);
-//	fprintf(stderr, "new %p\n", json);
 }
 
 static void func_push_front (EfiFunc *func, void *rval, void **arg)
@@ -358,7 +355,7 @@ static void func_parse (EfiFunc *func, void *rval, void **arg)
 
 static void func_str2json (EfiFunc *func, void *rval, void **arg)
 {
-	IO *in = io_mstr(Val_str(arg[0]));
+	IO *in = io_cstr(Val_str(arg[0]));
 	json_parse(rval, in);
 	io_close(in);
 }
