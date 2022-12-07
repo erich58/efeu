@@ -30,15 +30,21 @@ If not, write to the Free Software Foundation, Inc.,
 
 typedef struct {
 	REFVAR;		/* Referenzvariablen */
-	size_t rows;	/* Zahl der Zeilen */
-	size_t cols;	/* Zahl der Spalten */
+	size_t width;	/* Breite */
+	size_t height;	/* Height */
 	unsigned char *data;	/* Datenvektor */
 } EPixmap;
 
-EPixmap *NewPixmap (size_t rows, size_t cols, int color);
-
+EPixmap *NewPixmap (size_t width, size_t height, int color);
 EPixmap *LoadPixmap (IO *io);
 void SavePixmap (EPixmap *pix, IO *io);
+
+void Pix_gray(EPixmap *pix);
+void Pix_bw(EPixmap *pix);
+void Pix_grayhist(EPixmap *pix, IO *out);
+void Pix_fill(EPixmap *pix, int x0, int y0, int x1, int y1, int color);
+void Pix_line(EPixmap *pix, int x0, int y0, int x1, int y1, int w, int color);
+void Pix_frame(EPixmap *pix, int x0, int y0, int x1, int y1, int w, int color);
 
 void SetupPixmap (void);
 

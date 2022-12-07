@@ -56,12 +56,12 @@ static const char *load_and_dump()
 	if	(!pix)
 		return NULL;
 
-	sb_printf(&buf, "%dx%d\n", pix->cols, pix->rows);
+	sb_printf(&buf, "%dx%d\n", pix->width, pix->height);
 	p = pix->data;
 
-	for (r = 0; r < pix->rows; r++)
+	for (r = 0; r < pix->height; r++)
 	{
-		for (c = 0; c < pix->cols; c++)
+		for (c = 0; c < pix->width; c++)
 		{
 			if	(c)
 				sb_putc(' ', &buf);

@@ -83,7 +83,7 @@ static void load_pbm (IO *io, EPixmap *pix)
 	size_t n;
 	unsigned char *p;
 
-	for (p = pix->data, n = pix->rows * pix->cols; n-- > 0; p += 3)
+	for (p = pix->data, n = pix->height * pix->width; n-- > 0; p += 3)
 		p[0] = p[1] = p[2] = pbm_color(io);
 }
 
@@ -95,9 +95,9 @@ static void load_pbmraw (IO *io, EPixmap *pix)
 	data = 0;
 	p = pix->data;
 
-	for (i = 0; i < pix->rows; i++)
+	for (i = 0; i < pix->height; i++)
 	{
-		for (j = 0; j < pix->cols; j++)
+		for (j = 0; j < pix->width; j++)
 		{
 			k = j % 8;
 
@@ -118,7 +118,7 @@ static void load_pgm (IO *io, EPixmap *pix)
 	size_t n;
 	unsigned char *p;
 
-	for (p = pix->data, n = pix->rows * pix->cols; n-- > 0; p += 3)
+	for (p = pix->data, n = pix->height * pix->width; n-- > 0; p += 3)
 		p[0] = p[1] = p[2] = color_scale * get_val(io) + 0.5;
 }
 
@@ -127,7 +127,7 @@ static void load_pgmraw (IO *io, EPixmap *pix)
 	size_t n;
 	unsigned char *p;
 
-	for (p = pix->data, n = pix->rows * pix->cols; n-- > 0; p += 3)
+	for (p = pix->data, n = pix->height * pix->width; n-- > 0; p += 3)
 		p[0] = p[1] = p[2] = color_scale * io_getc(io) + 0.5;
 }
 
@@ -140,17 +140,17 @@ static void load_ppm (IO *io, EPixmap *pix)
 	size_t n;
 	unsigned char *p;
 
-	for (p = pix->data, n = pix->rows * pix->cols * 3; n-- > 0; p++)
+	for (p = pix->data, n = pix->height * pix->width * 3; n-- > 0; p++)
 		*p = color_scale * get_val(io) + 0.5;
 }
 
 static void load_ppmraw (IO *io, EPixmap *pix)
 {
-	io_dbread(io, pix->data, 1, pix->rows * pix->cols * 3);
+	io_dbread(io, pix->data, 1, pix->height * pix->width * 3);
 
 	if	(color_maxval != 255)
 	{
-		size_t n = pix->rows * pix->cols * 3;
+		size_t n = pix->height * pix->width * 3;
 		unsigned char *p = pix->data;
 
 		for (; n-- > 0; p++)
@@ -161,7 +161,7 @@ static void load_ppmraw (IO *io, EPixmap *pix)
 EPixmap *LoadPixmap (IO *io)
 {
 	EPixmap *pix;
-	size_t rows, cols;
+	size_t height, width;
 	void (*load) (IO *io, EPixmap *pix); 
 	int flag;
 
@@ -182,9 +182,9 @@ EPixmap *LoadPixmap (IO *io)
 	default:	io_error(io, E_MAGIC, NULL); return NULL;
 	}
 
-	rows = cols = 0;
-	cols = get_val(io);
-	rows = get_val(io);
+	height = width = 0;
+	width = get_val(io);
+	height = get_val(io);
 
 	if	(flag)
 	{
@@ -192,7 +192,7 @@ EPixmap *LoadPixmap (IO *io)
 		color_scale = color_maxval ? 255. / color_maxval : 0.;
 	}
 
-	pix = NewPixmap(rows, cols, 0);
+	pix = NewPixmap(width, height, 0);
 	load(io, pix);
 	return pix;
 }
