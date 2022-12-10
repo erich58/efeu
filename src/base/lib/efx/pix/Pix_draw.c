@@ -50,9 +50,8 @@ static int normalize (int *a, int *b, int lim)
 	return 1;
 } // normalize
 
-static void point(EPixmap *pix, int x, int y, int color)
+static void std_fill(unsigned char *p, int color)
 {
-	unsigned char *p = pix->data + (y * pix->width + x) * 3;
 	p[0] = (color >> 16) & 0xff;
 	p[1] = (color >> 8) & 0xff;
 	p[2] = color & 0xff;
@@ -69,11 +68,19 @@ void Pix_fill(EPixmap *pix, int x0, int y0, int x1, int y1, int color)
 	if	(!normalize(&y0, &y1, pix->height))
 		return;
 
+	void (*fill) (unsigned char *p, int color) = pix->fillMode;
+
+	if	(!fill)
+		fill = std_fill;
+
 	for (int y = y0; y <= y1; ++y)
 	{
+		unsigned char *p = pix->data + (y * pix->width + x0) * 3;
+
 		for (int x = x0; x <= x1; ++x)
 		{
-			point(pix, x, y, color);
+			fill(p, color);
+			p += 3;
 		}
 	}
 }

@@ -51,6 +51,7 @@ EPixmap *NewPixmap (size_t width, size_t height, int color)
 	pix->height = height;
 	pix->width = width;
 	pix->data = memalloc(width * height * 3);
+	pix->fillMode = 0;
 
 	if	(color)
 	{

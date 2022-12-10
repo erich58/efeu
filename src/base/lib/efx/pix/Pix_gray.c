@@ -128,7 +128,7 @@ static Maximum getmax(int *hist, int start, int end)
 		return max;
 	}
 
-	fprintf(stderr, "%3d: %5d %5d\n", m - SPACE, value, mw / count);
+//	fprintf(stderr, "%3d: %5d %5d\n", m - SPACE, value, mw / count);
 	max.left = m;
 	max.right = m;
 

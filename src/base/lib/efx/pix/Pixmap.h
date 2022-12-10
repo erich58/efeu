@@ -33,6 +33,7 @@ typedef struct {
 	size_t width;	/* Breite */
 	size_t height;	/* Height */
 	unsigned char *data;	/* Datenvektor */
+	void (*fillMode)(unsigned char *data, int color);
 } EPixmap;
 
 EPixmap *NewPixmap (size_t width, size_t height, int color);
