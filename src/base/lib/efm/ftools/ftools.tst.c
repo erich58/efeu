@@ -1,5 +1,16 @@
 #include <EFEU/UnitTest.h>
+#include <EFEU/procenv.h>
 #include <EFEU/ftools.h>
+
+TEST_DECL(setup)
+{
+	SetProgName("ID");
+	SetApplPath(UnitTest_tmpname(NULL));
+	TEST_FILE("ftools.msg",
+		"61	NOTE 61: arg1=$1.\n"
+		"write	$!: $0 $# $*\n"
+	);
+}
 
 TEST_DECL(newtemp)
 {
@@ -78,6 +89,24 @@ TEST_DECL(getbyte)
 	EXPECT_CONTENT("data", "\241\261\262\301\302\303\321\322\323\324");
 }
 
+TEST_DECL(savestr_error)
+{
+	UnitTest_stderr("stderr");
+
+	TEST_FORK
+	{
+		char buf[4];
+		FILE *file = UnitTest_strout(buf, sizeof buf);
+		filenotice("output", "w", file, NULL);
+		savestr("abc", file);
+		TEST_EXIT;
+	}
+
+	CHILD_EXIT(1);
+	UnitTest_stderr(NULL);
+	EXPECT_CONTENT("stderr", "ID: output 0 \n");
+}
+
 TEST_DECL(loadstr)
 {
 	FILE *file = fopen(UnitTest_tmpname("data"), "w+");
@@ -132,9 +161,11 @@ TEST_DECL(fpeek)
 
 TEST_SUITE
 {
+	TEST_RUN(setup);
 	TEST_RUN(newtemp);
 	TEST_RUN(rfread);
 	TEST_RUN(getbyte);
+	TEST_RUN(savestr_error);
 	TEST_RUN(loadstr);
 	TEST_RUN(dbdata);
 	TEST_RUN(fpeek);

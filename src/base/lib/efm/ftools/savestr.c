@@ -24,6 +24,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/memalloc.h>
 #include <EFEU/ftools.h>
 
+#define E_WRITE	"[ftools:write]$!: $0: output error.\n"
+
 void savestr (const char *str, FILE *file)
 {
 	register size_t size;
@@ -36,9 +38,6 @@ void savestr (const char *str, FILE *file)
 		register int c = *str ? *str++ : 0;
 
 		if	(putc(c, file) == EOF)
-		{
-			fprintf(stderr, "savestr: Ausgabefehler.\n");
-			exit(1);
-		}
+			fileerror(file, E_WRITE, NULL);
 	}
 }

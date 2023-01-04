@@ -39,3 +39,5 @@ If not, write to the Free Software Foundation, Inc.,
 35	$!: $0: seeking in file $1 failed.\n
 
 41	$!: file $1.$2 not found.\n
+
+write	$!: $0: output error.\n
