@@ -25,8 +25,8 @@ If not, write to the Free Software Foundation, Inc.,
 #ifndef	EFEU_ftools_h
 #define	EFEU_ftools_h	1
 
+#include <stdio.h>
 #include <EFEU/mstring.h>
-#include <EFEU/LogConfig.h>
 
 #ifndef	SEEK_SET
 #define	SEEK_SET	0
@@ -57,8 +57,6 @@ void filenotice (const char *name, const char *mode,
 FILE *filerefer (FILE *file);
 void fileerror (FILE *file, const char *fmt,
 	const char *argdef, ...);
-
-FILE *log_file (LogControl *ctrl);
 
 /*
 temporay files

@@ -96,6 +96,8 @@ int LogUpdate (LogControl *ctrl);
 void log_error (LogControl *ctrl, const char *fmt, const char *argdef, ...);
 void log_note (LogControl *ctrl, const char *fmt, const char *argdef, ...);
 
+FILE *log_file (LogControl *ctrl);
+
 /*
 $SeeAlso
 \mref{Message(3)}.
