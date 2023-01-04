@@ -25,6 +25,14 @@ If not, write to the Free Software Foundation, Inc.,
 #define E21	"[ftools:21]$!: file $0: unexpected EOF.\n"
 #define E22	"[ftools:22]$!: file $0: could not write data.\n"
 
+#if	REVBYTEORDER
+#define	fread_compat	rfread
+#define	fwrite_compat	rfwrite
+#else
+#define	fread_compat	fread
+#define	fwrite_compat	fwrite
+#endif
+
 /*	Datensätze lesen
 */
 

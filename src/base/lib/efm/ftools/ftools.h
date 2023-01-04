@@ -25,7 +25,6 @@ If not, write to the Free Software Foundation, Inc.,
 #ifndef	EFEU_ftools_h
 #define	EFEU_ftools_h	1
 
-#include <stdio.h>
 #include <EFEU/mstring.h>
 
 #ifndef	SEEK_SET
@@ -73,14 +72,6 @@ void tempstat (void);
 
 size_t rfread (void *ptr, size_t size, size_t nitems, FILE *file);
 size_t rfwrite (const void *ptr, size_t size, size_t nitems, FILE *file);
-
-#if	REVBYTEORDER
-#define	fread_compat	rfread
-#define	fwrite_compat	rfwrite
-#else
-#define	fread_compat	fread
-#define	fwrite_compat	fwrite
-#endif
 
 int fpeek (FILE *file);
 
