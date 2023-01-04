@@ -77,6 +77,8 @@ int UnitTest_stdin(const char *name, const char *content);
 int UnitTest_stdout(const char *name);
 int UnitTest_stderr(const char *name);
 int UnitTest_reopen(int fd, const char *name);
+FILE *UnitTest_strout(char *buf, size_t size);
+FILE *UnitTest_strin(const char *buf, size_t size);
 
 int UnitTest_fork(const char *file, int line);
 int UnitTest_exec(const char *file, int line,
