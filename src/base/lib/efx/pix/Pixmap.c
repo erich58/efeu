@@ -126,6 +126,14 @@ static void PF_fill (EfiFunc *func, void *rval, void **arg)
 		Val_int(arg[5]));
 }
 
+static void PF_clip (EfiFunc *func, void *rval, void **arg)
+{
+	Val_ptr(rval) = Pix_clip(Val_ptr(arg[0]),
+		Val_int(arg[1]), Val_int(arg[2]),
+		Val_int(arg[3]), Val_int(arg[4]),
+		Val_int(arg[5]));
+}
+
 static void PF_line (EfiFunc *func, void *rval, void **arg)
 {
 	Pix_line(Val_ptr(arg[0]),
@@ -153,6 +161,8 @@ static EfiFuncDef fdef[] = {
 	{ 0, &Type_Pixmap, "Pixmap (int width, int height, "
 		"int color = 0xFFFFFF)", PF_create },
 	{ 0, &Type_Pixmap, "LoadPixmap (str name)", PF_load },
+	{ 0, &Type_Pixmap, "Pixmap::clip (int x0, int y0, "
+		"int width, int height, int color = 0xFFFFFF)", PF_clip },
 	{ 0, &Type_Pixmap, "Pixmap::save (str name)", PF_save },
 	{ 0, &Type_void, "Pixmap::gray ()", PF_gray },
 	{ 0, &Type_void, "Pixmap::bw ()", PF_bw },

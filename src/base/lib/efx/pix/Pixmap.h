@@ -39,6 +39,8 @@ typedef struct {
 EPixmap *NewPixmap (size_t width, size_t height, int color);
 EPixmap *LoadPixmap (IO *io);
 void SavePixmap (EPixmap *pix, IO *io);
+EPixmap *Pix_clip(EPixmap *pix, int x0, int y0,
+	size_t width, size_t height, int color);
 
 void Pix_gray(EPixmap *pix);
 void Pix_bw(EPixmap *pix);
