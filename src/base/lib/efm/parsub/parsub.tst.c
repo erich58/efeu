@@ -72,8 +72,8 @@ TEST_DECL(psubarg)
 	EXPECT_OUTPUT("1 2 3 4");
 	EXPECT(io_psubarg(io, "$*", "nxXc", 1u, (uint64_t) 2, 'c') == 11);
 	EXPECT_OUTPUT("0x1 0x2 'c'");
-	EXPECT(io_psubarg(io, "$*", "n*", "a", "b", NULL) == 3);
-	EXPECT_OUTPUT("a b");
+	EXPECT(io_psubarg(io, "$# $*", "n*", "a", "b", NULL) == 5);
+	EXPECT_OUTPUT("2 a b");
 	EXPECT(io_psubarg(io, "$*", "n%", "|%5d%%|", 42) == 8);
 	EXPECT_OUTPUT("|   42%|");
 	errno = EACCES;

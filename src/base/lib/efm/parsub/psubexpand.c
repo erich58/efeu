@@ -274,6 +274,10 @@ static char *expand (StrBuf *base, IO *in, GETARG *arg)
 		if	(arg->dim > 1)
 			add_list(buf, in, NULL, arg, 1, arg->dim - 1);
 	}
+	else if	(def.key == '#')
+	{
+		sb_printf(buf, "%d", arg->dim ? arg->dim - 1 : 0);
+	}
 	else if	(isdigit(def.key))
 	{
 		add_arg(buf, in, NULL, arg, def.key - '0');
