@@ -1,9 +1,14 @@
 \chap	Speicherplatzverwaltung
 
 \sec	Allgemeines
-Die EFEU Programmbibliotheken arbeiten sehr viel mit dynamischen Speichern.
-Zur Verwaltung von Speichersegmenrten gibt es eine Reihe von Hilfsfunktionen,
+
+Zur Verwaltung von Speichersegmenten gibt es eine Reihe von Hilfsfunktionen,
 die verschiedenen Anforderungen gerecht werden.
+
+Die Funktionen erlauben das mischen von dynamischen und statischen
+Speicherbereichen,  es werden nur Speicherbereiche freigegeben, die auch
+alloziert wurden. Für kleine Speicherbereiche gibt es eine effizientere
+Verwaltung über Listen mit schnell verfügbare Segmente.
 
 \sec	Basisfunktionen
 

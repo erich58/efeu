@@ -14,5 +14,6 @@
 /\.build
 \.gcov$
 \.out$
+\.pdf$
 nohup.out.*
 tags

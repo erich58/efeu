@@ -1,0 +1,44 @@
+/*
+Intro to reference manual for efm library
+
+$Copyright (C) 2023 Erich Frühstück
+This file is part of EFEU.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; see the file COPYING.Library.
+If not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+*/
+
+\config	efeu
+\date	Jänner 2023
+\title	Die Programmbibliothek efm
+Handbuch für Programmierer
+
+\preface
+Die Programmbiliothek |efm| stellt eine Reihe von nützlichen
+Hilfsfunktionen zur verfügung. Schwerpunkt sind Funktionen
+zur Ein- und Ausgabe und der Verwaltung von dynamischen
+Datenstrukturen.
+
+Das Handbuch ist in Arbeit. Der allgemeine Teil muß noch
+geschrieben werden. Die Funktionen, Makros und Datentypen
+sind zwar vollständig angeführt, aber nur zum Teil beschrieben.
+
+	Erich Frühstück\br
+	Wien, \thedate
+\toc
+\addsrclist
+\delsrc		main.doc
+\delsrc		intro.doc
+\getsrc		*.doc

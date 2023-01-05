@@ -20,28 +20,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-\config	efeu
-\date	Mai 2001
-\title	Die Programmbibliothek efm
-Handbuch für Programmierer
+\include intro.doc
 
-\preface
-Die Programmbiliothek |efm| stellt eine Reihe von nützlichen
-Hilfsfunktionen zur verfügung. Schwerpunkt sind Funktionen
-zur Ein- und Ausgabe und der Verwaltung von dynamischen
-Datenstrukturen.
-
-Das Handbuch ist in Arbeit. Der allgemeine Teil muß noch
-geschrieben werden. Die Funktionen, Makros und Datentypen
-sind zwar vollständig angeführt, aber nur zum Teil beschrieben.
-
-	Erich Frühstück\br
-	Wördern, \thedate
-\toc
-\addsrclist
-\delsrc		main.doc
-\getsrc		*.doc
-\appendix
 \mchap[3]	Funktionen
 \src2doc	*.c
 \mchap[7]	Makropakete und Konventionen
