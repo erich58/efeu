@@ -123,7 +123,7 @@ static void alloctab_error (AllocTab *tab, const char *fmt, ...)
 static void load (AllocTab *tab)
 {
 	size_t n, size;
-	AllocTabList *p;
+	void **p;
 
 	if	(!tab->chain)
 	{
@@ -141,18 +141,33 @@ static void load (AllocTab *tab)
 
 	tab->nfree = tab->blksize;
 	size = tab->elsize * tab->nfree;
-	p = (AllocTabList *) lmalloc(sizeof(AllocTabList) + size);
-	p->next = tab->blklist;
-	tab->blklist = p;
+	p = lmalloc(sizeof *p + size);
+
+	if	(tab->blklist && p > tab->blklist)
+	{
+		void **blk = tab->blklist;
+
+		while (*blk && p > *blk)
+			blk = *blk;
+
+		*p = *blk;
+		*blk = p;
+	}
+	else
+	{
+		*p = tab->blklist;
+		tab->blklist = p;
+	}
+
 	p++;
 	memset(p, 0, size);
 	tab->freelist = NULL;
 
 	for (n = 0; n < tab->nfree; n++)
 	{
-		p->next = tab->freelist;
+		*p = tab->freelist;
 		tab->freelist = p;
-		p = (AllocTabList *) ((char *) p + tab->elsize);
+		p = (void **) ((char *) p + tab->elsize);
 	}
 }
 
@@ -173,7 +188,7 @@ void *new_data (AllocTab *tab)
 {
 	if	(tab != NULL)
 	{
-		AllocTabList *x;
+		void **x;
 
 		check_data(tab);
 
@@ -181,12 +196,12 @@ void *new_data (AllocTab *tab)
 			load(tab);
 
 		x = tab->freelist;
-		tab->freelist = x->next;
+		tab->freelist = *x;
 		memset(x, 0, tab->elsize);
 		tab->nfree--;
 		tab->nused++;
-		alloctab_trace(tab, TRACE_NEW, (void *) x);
-		return (void *) x;
+		alloctab_trace(tab, TRACE_NEW, x);
+		return x;
 	}
 
 	return NULL;
@@ -225,7 +240,7 @@ Der Inhalt eines Datensegmentes wird bei der Freigabe verändert.
 
 int del_data (AllocTab *tab, void *entry)
 {
-	AllocTabList *x, **ptr;
+	void **x, ***ptr;
 
 	if	(entry == NULL)
 		return 1;
@@ -237,11 +252,41 @@ int del_data (AllocTab *tab, void *entry)
 
 	alloctab_trace(tab, TRACE_DEL, entry);
 
-	x = entry;
+	if	(tab->freelist && entry > tab->freelist)
+	{
+		void **p = tab->freelist;
+
+		while (*p)
+		{
+			if	(entry == *p)
+			{
+				alloctab_error(tab, ERR_FREE, entry);
+				return 0;
+			}
+			else if	(entry > *p)
+				p = *p;
+			else
+				break;
+		}
+
+		*((void **) entry) = *p;
+		*p = entry;
+	}
+	else 
+	{
+		*((void **) entry) = tab->freelist;
+		tab->freelist = entry;
+	}
+
+	tab->nfree++;
+	tab->nused--;
+	return 1;
+
+#if	0
 	ptr = &tab->freelist;
 
 	while (x < *ptr)
-		ptr = &(*ptr)->next;
+		ptr = &(*ptr);
 
 	if	(x == *ptr)
 	{
@@ -249,11 +294,12 @@ int del_data (AllocTab *tab, void *entry)
 		return 0;
 	}
 
-	x->next = *ptr;
+	*x = *ptr;
 	*ptr = x;
 	tab->nfree++;
 	tab->nused--;
 	return 1;
+#endif
 }
 
 /*
@@ -266,14 +312,14 @@ Zuweisungstabelle stammt und eine gültige Adressse hat.
 int tst_data (AllocTab *tab, void *entry)
 {
 	int n;
-	AllocTabList *p;
+	void **p;
 	void *a, *b;
 
 	if	(tab == NULL)	return 0;
 
 	n = tab->elsize * tab->blksize;
 
-	for (p = tab->blklist; p != NULL; p = p->next)
+	for (p = tab->blklist; p != NULL; p = *p)
 	{
 		a = p + 1;
 		b = (char *) a + n;
@@ -323,7 +369,7 @@ Vergleiche dazu auch \mref{Debug(3)}.
 
 void check_data (AllocTab *tab)
 {
-	AllocTabList *p;
+	void **p;
 	size_t n;
 
 	if	(!tab || log_lock)	return;
@@ -336,13 +382,13 @@ void check_data (AllocTab *tab)
 
 	log_lock = 1;
 
-	for (n = 0, p = tab->blklist; p; n += tab->blksize, p = p->next)
+	for (n = 0, p = tab->blklist; p; n += tab->blksize, p = *p)
 		lcheck(p);
 
 	if	(n != tab->nused + tab->nfree)
 		alloctab_abort(tab, ERR_SIZE, n, tab->nused, tab->nfree);
 
-	for (n = 0, p = tab->freelist; p != NULL; p = p->next, n++)
+	for (n = 0, p = tab->freelist; p != NULL; p = *p, n++)
 	{
 		if	(n >= tab->nfree)
 			alloctab_abort(tab, ERR_MFREE, tab->nfree);

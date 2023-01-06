@@ -25,13 +25,13 @@ If not, write to the Free Software Foundation, Inc.,
 
 static void show_tab (AllocTab *tab, void *par)
 {
-	AllocTabList *x;
+	void **x;
 	size_t n;
 
 	x = tab->blklist;
 
 	for (n = 0; x != NULL; n++)
-		x = x->next;
+		x = *x;
 
 	io_printf(par, "%-12.12s %3zd byte", tab->name, tab->elsize);
 	io_printf(par, " %5zd used %5zd free", tab->nused, tab->nfree);

@@ -13,4 +13,30 @@ Verwaltung über Listen mit schnell verfügbare Segmente.
 \sec	Basisfunktionen
 
 \mref{lmalloc(3)}
+\mref{lrealloc(3)}
 \mref{lfree(3)}
+\mref{lcheck(3)}
+\mref{lcheckall(3)}
+
+\sec	Allokationstabelle
+
+AllocTabList
+AllocTab
+
+void *new_data (AllocTab *tab);
+int del_data (AllocTab *tab, void *data);
+int tst_data (AllocTab *tab, void *data);
+void check_data (AllocTab *tab);
+void AllocTab_walk (void (*visit) (AllocTab *tab, void *par), void *par);
+
+void *memalloc (size_t size);
+void memnotice (void *ptr);
+void memfree (void *ptr);
+
+void memstat (const char *prompt);
+extern int memtrace;
+void meminfo (const char *prompt);
+void memchange (const char *prompt);
+
+void memcheck (void);
+void memswap (void *ap, void *bp, size_t n);

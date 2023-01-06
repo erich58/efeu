@@ -7,6 +7,28 @@
 
 static ALLOCTAB(tab, "AllocTabTest", 2, sizeof(int));
 
+static size_t ldim(void **list)
+{
+	size_t n = 0;
+
+	while (list)
+	{
+		list = *list;
+		n++;
+	}
+
+	return n;
+}
+
+static const char *status()
+{
+	static char buf[1024];
+	snprintf(buf, sizeof buf, "blk=%zd seg=%zd used=%zd free=%zd",
+		ldim(tab.blklist), ldim(tab.freelist), tab.nused, tab.nfree);
+	return buf;
+}
+
+
 static void activate_log(const char *log, const char *name)
 {
 	char buf[1024];
@@ -37,31 +59,37 @@ TEST_DECL(alloctab)
 {
 	EXPECT_STR(tab.name, "AllocTabTest");
 	EXPECT(tab.blksize == 2);
-	EXPECT(tab.elsize == sizeof(AllocTabList));
+	EXPECT(tab.elsize == sizeof(void *));
 	EXPECT(tab.nfree == 0);
 	EXPECT(tab.nused == 0);
 	EXPECT(tab.blklist == NULL);
 	EXPECT(tab.freelist == NULL);
 	EXPECT(tab.chain == NULL);
-	void *p;
-	EXPECT((p = new_data(&tab)) != NULL);
-	EXPECT(tab.nfree == 1);
-	EXPECT(tab.nused == 1);
+	EXPECT_STR(status(), "blk=0 seg=0 used=0 free=0");
 
-	if	(EXPECT(tab.blklist != NULL))
-		EXPECT(tab.blklist->next == NULL);
-
-	if	(EXPECT(tab.freelist != NULL))
-		EXPECT(tab.freelist->next == NULL);
-
+	void *p1;
+	EXPECT((p1 = new_data(&tab)) != NULL);
 	EXPECT(tab.chain != NULL);
+	EXPECT_STR(status(), "blk=1 seg=1 used=1 free=1");
+
+	void *p2;
+	EXPECT((p2 = new_data(&tab)) != NULL);
+	EXPECT_STR(status(), "blk=1 seg=0 used=2 free=0");
+
+	void *p3;
+	EXPECT((p3 = new_data(&tab)) != NULL);
+	EXPECT_STR(status(), "blk=2 seg=1 used=3 free=1");
+
+	EXPECT(del_data(&tab, p2) == 1);
+	EXPECT(del_data(&tab, p1) == 1);
+	EXPECT(del_data(&tab, p3) == 1);
+	EXPECT_STR(status(), "blk=2 seg=4 used=0 free=4");
+
+	EXPECT((p1 = new_data(&tab)) != NULL);
+	EXPECT_STR(status(), "blk=2 seg=3 used=1 free=3");
+
 	EXPECT(del_data(&tab, "x") == 0);
-	EXPECT(tab.nfree == 1);
-	EXPECT(tab.nused == 1);
-	EXPECT(del_data(&tab, p) == 1);
-	EXPECT(tab.freelist == p);
-	EXPECT(tab.nfree == 2);
-	EXPECT(tab.nused == 0);
+	EXPECT_STR(status(), "blk=2 seg=3 used=1 free=3");
 
 	EXPECT(new_data(NULL) == NULL);
 	EXPECT(del_data(NULL, NULL) == 1);
@@ -71,10 +99,9 @@ TEST_DECL(alloctab)
 	MATCH_OUT("^AllocTabTest");
 
 	clear_log("error.log");
-	EXPECT(del_data(&tab, p) == 0);
+	EXPECT(del_data(&tab, p3) == 0);
 	MATCH_CONTENT("error.log",
 		"alloctab.AllocTabTest.: Pointer [^ ]* already released.\n");
-
 }
 
 TEST_DECL(lmalloc)
@@ -163,7 +190,7 @@ TEST_DECL(debug_check)
 	TEST_FORK
 	{
 		signal(SIGABRT, sig_exit);
-		AllocTabList list = { tab.freelist->next };
+		void *list = tab.freelist;
 		tab.freelist = &list;
 		new_data(&tab);
 		TEST_EXIT;

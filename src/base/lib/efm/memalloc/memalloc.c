@@ -161,13 +161,13 @@ void memstat (const char *prompt)
 
 	for (i = 0; i < tabsize(mem_tab); i++)
 	{
-		AllocTabList *x;
+		void **x;
 		size_t n;
 
 		x = mem_tab[i].blklist;
 
 		for (n = 0; x != NULL; n++)
-			x = x->next;
+			x = *x;
 
 		fprintf(stderr, STAT_1, prompt,
 			(unsigned long) mem_tab[i].elsize,

@@ -177,29 +177,29 @@ void *Lval_alloc (size_t size)
 }
 
 #define	STAT_1	\
-	"%s: Size %3ld +%3ld: %5ld used, %5ld free, %5ld byte (%ldx%ldx%ld)\n"
+	"%s: Size %3zd +%3zd: %5zd used, %5zd free, %5zd byte (%zdx%zdx%zd)\n"
 #define	STAT_L	\
-	"%s: Large objects: %5ld used, %5ld requests\n"
+	"%s: Large objects: %5zd used, %5zd requests\n"
 
 static void show_alloc (AllocTab *tab, const char *prompt)
 {
-	AllocTabList *x;
+	void **x;
 	size_t n;
 
 	x = tab->blklist;
 
 	for (n = 0; x != NULL; n++)
-		x = x->next;
+		x = *x;
 
 	fprintf(stderr, STAT_1, prompt,
-		(unsigned long) sizeof(EfiObj),
-		(unsigned long) (tab->elsize - sizeof(EfiObj)),
-		(unsigned long) tab->nused,
-		(unsigned long) tab->nfree,
-		(unsigned long) n * tab->blksize * tab->elsize,
-		(unsigned long) n,
-		(unsigned long) tab->blksize,
-		(unsigned long) tab->elsize);
+		sizeof(EfiObj),
+		(tab->elsize - sizeof(EfiObj)),
+		tab->nused,
+		tab->nfree,
+		n * tab->blksize * tab->elsize,
+		n,
+		tab->blksize,
+		tab->elsize);
 }
 
 void Obj_putkey (const EfiObj *obj, IO *out)
@@ -294,8 +294,8 @@ void Obj_stat (const char *prompt)
 	show_alloc(&tab_large, prompt);
 
 	fprintf(stderr, STAT_L, prompt,
-		(unsigned long) (stat_alloc - stat_free),
-		(unsigned long) stat_alloc);
+		(stat_alloc - stat_free),
+		stat_alloc);
 }
 
 #define	CHECK_MSG	"%s: Speicherfehler von Objekt %p, Type %#s.\n"

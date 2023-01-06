@@ -65,7 +65,7 @@ field. It could be used in the argumentlist of functions like
 :de:
 Der Makro |$1| liefert den Pointer, die Zahl der Elemente und die
 Elementgröße eines Datenfeldes. Er wird typischerweise bei der Übergabe
-von Feldern an Funktionen wie |qsort| und |bsearch|.
+von Feldern an Funktionen wie |qsort| und |bsearch| verwendet.
 */
 
 #define	tabparm(x)	(void *) (x), tabsize(x), sizeof(x[0])
@@ -76,15 +76,6 @@ void *lrealloc (void *ptr, size_t size);
 void lfree (void *ptr);
 void lcheck (void *ptr);
 void lcheckall (void);
-
-/*
-:*:The type |$1| is used as allocation list node.
-:de:Der Datentyp |$1| wird für den Knoten einer Zuweisungsliste verwendet.
-*/
-
-typedef struct AllocTabListStruct {
-	struct AllocTabListStruct *next;
-} AllocTabList;
 
 /*
 :*:
@@ -109,12 +100,12 @@ entnommen und wieder hineingestellt werden. Vergleiche dazu
 Zum Auffüllen der freien Liste wird ein Block mit |blksize| Elementen
 angefordert. Jedem Block ist eine Kettenstruktur vorangestellt (Für
 die Liste der Datenblöcke). Der Speicherbedarf für einen Block
-beträgt |sizeof(AllocTabList)| + |blksize| * |elsize|.
+beträgt |sizeof(void *)| + |blksize| * |elsize|.
 Datenblöcke, die zum Füllen der freien Liste angefordert wurden,
 werden nicht mehr freigegeben.
 
 :de:
-Die Datensegmentgröße muß auf die Größe einer Kettenstruktur
+Die Datensegmentgröße muß auf die Größe eines Pinters
 ausgerichtet sein. Freie Elemente werden zu einer Liste verkettet und
 können dort entnommen werden.
 
@@ -127,13 +118,13 @@ implizit bei der ersten Verwendung einer Tabelle.
 typedef struct AllocTab AllocTab;
 
 struct AllocTab {
-	const char *name;
-	size_t blksize;
-	size_t elsize;
-	size_t nfree;
-	size_t nused;
-	AllocTabList *blklist;
-	AllocTabList *freelist;
+	const char *name;	/* Name der Tabelle (für Debugging) */
+	size_t blksize;		/* Zahl der neu angeforderten Elemente */
+	size_t elsize;		/* Segmentgröße */
+	size_t nfree;		/* Zahl der freien Segmente */
+	size_t nused;		/* Zahl der benutzten Segmente */
+	void **blklist;		/* Liste von Datenblöcken */
+	void **freelist;	/* Liste freier Segmente */
 	AllocTab *chain;	/* Verkettung für Statistiken und Debugging */
 };
 
@@ -143,7 +134,7 @@ int tst_data (AllocTab *tab, void *data);
 void check_data (AllocTab *tab);
 void AllocTab_walk (void (*visit) (AllocTab *tab, void *par), void *par);
 
-#define	ALLOCSIZE(size)		sizealign(size, sizeof(AllocTabList))
+#define	ALLOCSIZE(size)		sizealign(size, sizeof(void *))
 
 /*
 :de:
