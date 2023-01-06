@@ -197,9 +197,6 @@ void memcheck (void)
 		check_data(mem_tab + i);
 
 	ptr = mem_large.data;
-
-	for (i = 0; i < mem_large.used; i++)
-		lcheck(ptr[i]);
 }
 
 /*

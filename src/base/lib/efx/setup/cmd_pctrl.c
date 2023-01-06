@@ -127,11 +127,6 @@ static void f_memcheck (EfiFunc *func, void *rval, void **arg)
 	memcheck();
 }
 
-static void f_lcheckall (EfiFunc *func, void *rval, void **arg)
-{
-	lcheckall();
-}
-
 static void f_setenv (EfiFunc *func, void *rval, void **arg)
 {
 	const char *name = STR(0);
@@ -245,7 +240,6 @@ static EfiFuncDef fdef_pctrl[] = {
 	{ 0, &Type_void, "meminfo (str mark = NULL)", f_meminfo },
 	{ 0, &Type_void, "memchange (str mark = NULL)", f_memchange },
 	{ 0, &Type_void, "memcheck ()", f_memcheck },
-	{ 0, &Type_void, "lcheckall ()", f_lcheckall },
 	{ 0, &Type_bool, "setenv (str name, str def, bool overwrite = true)",
 		f_setenv },
 	{ 0, &Type_str, "getenv (str name, str def = NULL)", f_getenv },

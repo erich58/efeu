@@ -71,11 +71,11 @@ von Feldern an Funktionen wie |qsort| und |bsearch| verwendet.
 #define	tabparm(x)	(void *) (x), tabsize(x), sizeof(x[0])
 #endif
 
+void *realloc_limcheck (void *ptr, size_t size);
+
 void *lmalloc (size_t size);
 void *lrealloc (void *ptr, size_t size);
 void lfree (void *ptr);
-void lcheck (void *ptr);
-void lcheckall (void);
 
 /*
 :*:

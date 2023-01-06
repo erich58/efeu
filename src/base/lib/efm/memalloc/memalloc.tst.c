@@ -138,7 +138,6 @@ TEST_DECL(memalloc)
 		meminfo(NULL);
 		memchange(NULL);
 		memcheck();
-		lcheckall();
 		TEST_EXIT;
 	}
 

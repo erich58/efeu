@@ -24,75 +24,16 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/memalloc.h>
 
 /*
-Bei Problemen mit dynamisch angeforderten Speichersegmenten
-kann der Makro MEMCHECK auf 1 gesetzt werden. Jedes Segment
-wird zusätzlich mit einer Anfangs- und Endekennung versehen.
-Bei der Freigabe werden diese Kennungen überprüft.
-
 Falls die Speicherplatzanforderung fehlschlägt, kann nicht
 auf die Standardfehlerroutinen zurückgegriffen werden, da
 diese eventuell selbst ein Speichersegment anfordern müssen.
 */
 
-#define	MEMCHECK	0
 #define	MEMTRACE	1
 
 #define	ERR	"sorry: malloc(%lu) failed\n"
 #define	ERR2	"sorry: realloc(%p, %lu) failed\n"
 
-
-#if	MEMCHECK
-
-#define	CHECK_SIZE	8
-#define	CHECK_MASK	"12345678"
-
-#define	MSG1	"lcheck(%p): start marker destroyed.\n"
-#define	MSG2	"lcheck(%p): end marker destroyed.\n"
-
-typedef struct {
-#if	REFBYTEORDER
-	size_t size;
-	char check[CHECK_SIZE];
-#else
-	char check[CHECK_SIZE];
-	size_t size;
-#endif
-} MEMHEAD;
-
-static void *checkmalloc (size_t size)
-{
-	MEMHEAD *head;
-	char *p;
-
-	head = malloc(size + sizeof(MEMHEAD) + CHECK_SIZE);
-
-	if	(head)
-	{
-		p = (char *) (head + 1);
-		head->size = size;
-		memcpy(head->check, CHECK_MASK, CHECK_SIZE);
-		memcpy(p + size, CHECK_MASK, CHECK_SIZE);
-		return p;
-	}
-	else	return NULL;
-}
-
-static void *checkrealloc (void *ptr, size_t size)
-{
-	size_t osize;
-	void *p;
-	
-	osize = ((MEMHEAD *) ptr)[-1].size;
-
-	if	(osize > size)	osize = size;
-
-	p = checkmalloc(size);
-	memcpy(p, ptr, osize);
-	lfree(ptr);
-	return p;
-}
-
-#endif
 
 #if	MEMTRACE
 
@@ -205,11 +146,7 @@ void *lmalloc (size_t size)
 
 	if	(size == 0)	return NULL;
 
-#if	MEMCHECK
-	if	((p = checkmalloc(size)) == NULL)
-#else
 	if	((p = malloc(size)) == NULL)
-#endif
 	{
 		fprintf(stderr, ERR, (unsigned long) size);
 		exit(EXIT_FAILURE);
@@ -233,12 +170,7 @@ void lfree (void *p)
 #if	MEMTRACE
 	trace_add(p, 0);
 #endif
-#if	MEMCHECK
-	lcheck(p);
-	free(((MEMHEAD *) p) - 1);
-#else
 	free(p);
-#endif
 }
 
 /*
@@ -256,11 +188,7 @@ void *lrealloc (void *ptr, size_t size)
 	if	(ptr == NULL)	return lmalloc(size);
 	if	(size == 0)	return lfree(ptr), NULL;
 
-#if	MEMCHECK
-	if	((p = checkrealloc(ptr, size)) == NULL)
-#else
 	if	((p = realloc(ptr, size)) == NULL)
-#endif
 	{
 		fprintf(stderr, ERR2, ptr, (unsigned long) size);
 		exit(EXIT_FAILURE);
@@ -273,55 +201,6 @@ void *lrealloc (void *ptr, size_t size)
 	return p;
 }
 
-
-/*
-
-:de:
-Die Funktion |$1| testet ein Speichersegment, ob sein Anfang oder sein
-Ende überschrieben wurde. Vorraussetzung ist dabei, daß vor dem Kompilieren
-der Makro |MEMCHECK| auf 1 gesetzt wurde.
-*/
-
-void lcheck (void *p)
-{
-#if	MEMCHECK
-	MEMHEAD *head;
-
-	if	(p == NULL)	return;
-
-	head = ((MEMHEAD *) p) - 1;
-
-	if	(memcmp(head->check, CHECK_MASK, CHECK_SIZE) != 0)
-		fprintf(stderr, MSG1, p);
-
-	if	(memcmp(((char *) p) + head->size, CHECK_MASK, CHECK_SIZE) != 0)
-		fprintf(stderr, MSG2, p);
-#else
-	;
-#endif
-}
-
-void lcheckall (void)
-{
-#if	MEMTRACE
-	TRACE *p;
-	size_t n, k;
-
-	for (p = trace_tab, n = trace_dim, k = 0; n-- > 0; p++)
-	{
-		if	(p->size)
-		{
-			lcheck(p->ptr);
-			k++;
-		}
-	}
-
-	fprintf(stderr, "lcheckall: %u entries, %u active\n",
-		(unsigned) trace_dim, (unsigned) k);
-#else
-	;
-#endif
-}
 
 /*
 :*:
@@ -363,7 +242,6 @@ void meminfo (const char *pfx)
 		{
 			fprintf(stderr, "%s:\t%p\t%u\t%lu\n", pfx,
 				p->ptr, p->idx, (unsigned long) p->size);
-			lcheck(p->ptr);
 		}
 	}
 #else

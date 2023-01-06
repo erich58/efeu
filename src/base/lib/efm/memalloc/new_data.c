@@ -382,9 +382,6 @@ void check_data (AllocTab *tab)
 
 	log_lock = 1;
 
-	for (n = 0, p = tab->blklist; p; n += tab->blksize, p = *p)
-		lcheck(p);
-
 	if	(n != tab->nused + tab->nfree)
 		alloctab_abort(tab, ERR_SIZE, n, tab->nused, tab->nfree);
 
