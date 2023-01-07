@@ -508,9 +508,6 @@ static EfiVarDef vardef[] = {
 	{ "Territory", &Type_str, &LangDef.territory,
 		":*:territory code of LANG environment\n"
 		":de:Regionalcode der Umgebungsvariable LANG\n" },
-	{ "memtrace", &Type_bool, &memtrace,
-		":*:flag to control allocation tracing\n"
-		":de:Flag zur Ablaufverfolgung der Speicherverwaltung\n" },
 	{ "ParseStringIndex", &Type_bool, &ParseStringIndex,
 		":*:flag to control index parsing\n"
 		":de:Flag zur Steuerung der Indexbestimmung\n" },

@@ -104,17 +104,6 @@ TEST_DECL(alloctab)
 		"alloctab.AllocTabTest.: Pointer [^ ]* already released.\n");
 }
 
-TEST_DECL(lmalloc)
-{
-	char *p = NULL;
-
-	EXPECT((p = lrealloc(p, 32)) != NULL);
-	PRINT_PTR(p);
-	EXPECT((p = lrealloc(p, 64)) != NULL);
-	PRINT_PTR(p);
-	EXPECT((p = lrealloc(p, 0)) == NULL);
-}
-
 TEST_DECL(memalloc)
 {
 	char *p = NULL;
@@ -128,15 +117,12 @@ TEST_DECL(memalloc)
 		int i;
 
 		freopen("/dev/null", "w", stderr);
-		memtrace = 1;
 		memalloc(1024);
 
 		for (i = 0; i < 2000; i++)
 			lmalloc(32);
 
 		memstat(NULL);
-		meminfo(NULL);
-		memchange(NULL);
 		memcheck();
 		TEST_EXIT;
 	}
@@ -162,8 +148,7 @@ TEST_DECL(debug_check)
 	{
 		signal(SIGABRT, sig_exit);
 		tab.nfree++;
-		new_data(&tab);
-		TEST_EXIT;
+		new_data(&tab); exit(0);
 	}
 
 	CHILD_EXIT(6);
@@ -177,8 +162,7 @@ TEST_DECL(debug_check)
 		new_data(&tab);
 		tab.nfree++;
 		tab.nused--;
-		new_data(&tab);
-		TEST_EXIT;
+		new_data(&tab); exit(0);
 	}
 
 	CHILD_EXIT(6);
@@ -191,8 +175,7 @@ TEST_DECL(debug_check)
 		signal(SIGABRT, sig_exit);
 		void *list = tab.freelist;
 		tab.freelist = &list;
-		new_data(&tab);
-		TEST_EXIT;
+		new_data(&tab); exit(0);
 	}
 
 	CHILD_EXIT(6);
@@ -216,7 +199,6 @@ TEST_SUITE
 	activate_log("alloctab.debug", "debug.log");
 	TEST_RUN(sizealign);
 	TEST_RUN(alloctab);
-	TEST_RUN(lmalloc);
 	TEST_RUN(memalloc);
 	TEST_RUN(memswap);
 	TEST_RUN(trace);

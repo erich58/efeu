@@ -72,7 +72,9 @@ von Feldern an Funktionen wie |qsort| und |bsearch| verwendet.
 #endif
 
 void *realloc_limcheck (void *ptr, size_t size);
+void *realloc_errcheck (void *ptr, size_t size);
 
+void lmcfg(void *(*realloc)(void *ptr, size_t size));
 void *lmalloc (size_t size);
 void *lrealloc (void *ptr, size_t size);
 void lfree (void *ptr);
@@ -165,9 +167,6 @@ void memnotice (void *ptr);
 void memfree (void *ptr);
 
 void memstat (const char *prompt);
-extern int memtrace;
-void meminfo (const char *prompt);
-void memchange (const char *prompt);
 
 void memcheck (void);
 void memswap (void *ap, void *bp, size_t n);

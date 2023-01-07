@@ -102,16 +102,6 @@ static void f_memstat (EfiFunc *func, void *rval, void **arg)
 	memstat(STR(0));
 }
 
-static void f_meminfo (EfiFunc *func, void *rval, void **arg)
-{
-	meminfo(STR(0));
-}
-
-static void f_memchange (EfiFunc *func, void *rval, void **arg)
-{
-	memchange(STR(0));
-}
-
 static void f_allocstat (EfiFunc *func, void *rval, void **arg)
 {
 	Obj_stat(STR(0));
@@ -237,8 +227,6 @@ static EfiFuncDef fdef_pctrl[] = {
 	{ 0, &Type_void, "AllocTab_stat (IO out = iostd)", f_AllocTab_stat },
 	{ 0, &Type_void, "allocstat (str mark = NULL)", f_allocstat },
 	{ 0, &Type_void, "memstat (str mark = NULL)", f_memstat },
-	{ 0, &Type_void, "meminfo (str mark = NULL)", f_meminfo },
-	{ 0, &Type_void, "memchange (str mark = NULL)", f_memchange },
 	{ 0, &Type_void, "memcheck ()", f_memcheck },
 	{ 0, &Type_bool, "setenv (str name, str def, bool overwrite = true)",
 		f_setenv },

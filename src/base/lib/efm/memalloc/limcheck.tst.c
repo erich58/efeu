@@ -5,6 +5,7 @@ TEST_DECL(realloc)
 {
 	char *p, *p2;
 
+	EXPECT(realloc_errcheck(NULL, 0) == NULL);
 	EXPECT(realloc_limcheck(NULL, 0) == NULL);
 
 	EXPECT((p = realloc_limcheck(NULL, 32)) != NULL);
@@ -16,8 +17,7 @@ TEST_DECL(realloc)
 
 	TEST_FORK
 	{
-		EXPECT(realloc_limcheck(NULL, (size_t) ~0 >> 1) != NULL);
-		TEST_EXIT;
+		realloc_limcheck(NULL, (size_t) ~0 >> 1); exit(0);
 	}
 
 	CHILD_EXIT(1);
@@ -33,8 +33,7 @@ TEST_DECL(overwrite)
 	{
 		char *p = realloc_limcheck(NULL, 8);
 		memset(p, 'x', 10);
-		p = realloc_limcheck(NULL, 8);
-		TEST_EXIT;
+		realloc_limcheck(NULL, 8); exit(0);
 	}
 
 	CHILD_EXIT(1);

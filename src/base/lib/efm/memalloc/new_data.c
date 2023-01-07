@@ -370,7 +370,6 @@ Vergleiche dazu auch \mref{Debug(3)}.
 void check_data (AllocTab *tab)
 {
 	void **p;
-	size_t n;
 
 	if	(!tab || log_lock)	return;
 
@@ -381,6 +380,11 @@ void check_data (AllocTab *tab)
 	if	(!log_debug.entry)	return;
 
 	log_lock = 1;
+
+	size_t n = 0;
+
+	for (p = tab->blklist; p; p = *p)
+		n += tab->blksize;
 
 	if	(n != tab->nused + tab->nfree)
 		alloctab_abort(tab, ERR_SIZE, n, tab->nused, tab->nfree);

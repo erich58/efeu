@@ -22,96 +22,27 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/memalloc.h>
+#include <EFEU/Debug.h>
 
-/*
-Falls die Speicherplatzanforderung fehlschlägt, kann nicht
-auf die Standardfehlerroutinen zurückgegriffen werden, da
-diese eventuell selbst ein Speichersegment anfordern müssen.
-*/
+static void *(*realloc_function)(void *data, size_t size) = NULL;
 
-#define	MEMTRACE	1
-
-#define	ERR	"sorry: malloc(%lu) failed\n"
-#define	ERR2	"sorry: realloc(%p, %lu) failed\n"
-
-
-#if	MEMTRACE
-
-#define	TRACE_BSIZE	1000
-
-typedef struct {
-	void *ptr;
-	unsigned idx;
-	size_t size;
-	int change;
-} TRACE;
-
-static TRACE *trace_tab = NULL;
-static size_t trace_size = 0;
-static size_t trace_dim = 0;
-static unsigned trace_idx = 0;
-
-static void trace_add (void *ptr, size_t size)
+void lmcfg(void *(*realloc)(void *ptr, size_t size))
 {
-	int i, i1, i2;
-
-	if	(!memtrace)	return;
-
-	i1 = 0;
-	i2 = trace_dim;
-	trace_idx++;
-
-	while (i1 != i2)
-	{
-		i = (i1 + i2) / 2;
-
-		if	(trace_tab[i].ptr < ptr)	i1 = i + 1;
-		else if	(trace_tab[i].ptr > ptr)	i2 = i;
-		else
-		{
-			trace_tab[i].idx = trace_idx;
-			trace_tab[i].size = size;
-			trace_tab[i].change++;
-			return;
-		}
-	}
-
-	if	(trace_dim >= trace_size)
-	{
-		TRACE *save = trace_tab;
-
-		trace_size += TRACE_BSIZE;
-		trace_tab = malloc(trace_size * sizeof(TRACE));
-
-		if	(!trace_tab)
-		{
-			fprintf(stderr, "malloc(%lu) failed.\n",
-				(unsigned long) trace_size * sizeof(TRACE));
-			exit(EXIT_FAILURE);
-		}
-
-		for (i = 0; i < i1; i++)
-			trace_tab[i] = save[i];
-
-		for (i = trace_dim; i > i1; i--)
-			trace_tab[i] = save[i - 1];
-
-		if	(save)
-			free(save);
-	}
-	else
-	{
-		for (i = trace_dim; i > i1; i--)
-			trace_tab[i] = trace_tab[i - 1];
-	}
-
-	trace_tab[i1].ptr = ptr;
-	trace_tab[i1].idx = trace_idx;
-	trace_tab[i1].size = size;
-	trace_tab[i1].change = 1;
-	trace_dim++;
+	realloc_function = realloc;
 }
-#endif
+
+static LogControl log_trace = LOG_CONTROL("lmalloc", LOGLEVEL_TRACE);
+
+static void lmalloc_trace (void *ptr, size_t size)
+{
+	static int lock = 0;
+
+	if	(lock)	return;
+
+	lock = 1;
+	log_printf(&log_trace, "lmalloc: %p %zd byte\n", ptr, size);
+	lock = 0;
+}
 
 /*
 :de:
@@ -142,35 +73,17 @@ werden.
 
 void *lmalloc (size_t size)
 {
-	void *p;
-
-	if	(size == 0)	return NULL;
-
-	if	((p = malloc(size)) == NULL)
-	{
-		fprintf(stderr, ERR, (unsigned long) size);
-		exit(EXIT_FAILURE);
-	}
-
-#if	MEMTRACE
-	trace_add(p, size);
-#endif
-	return p;
+	return lrealloc(NULL, size);
 }
 
 /*
-Die Funktion |$1| gibt einen von |lmalloc| angeforderten
+Die Funktion |$1| gibt einen von |lmalloc| oder |lrealloc| angeforderten
 Speicherbereich wieder frei. Ein Nullpointer ist als Argument zulässig.
 */
 
 void lfree (void *p)
 {
-	if	(!p)	return;
-
-#if	MEMTRACE
-	trace_add(p, 0);
-#endif
-	free(p);
+	lrealloc(p, 0);
 }
 
 /*
@@ -185,100 +98,21 @@ void *lrealloc (void *ptr, size_t size)
 {
 	char *p;
 
-	if	(ptr == NULL)	return lmalloc(size);
-	if	(size == 0)	return lfree(ptr), NULL;
+	if	(!ptr && !size)
+		return NULL;
 
-	if	((p = realloc(ptr, size)) == NULL)
-	{
-		fprintf(stderr, ERR2, ptr, (unsigned long) size);
-		exit(EXIT_FAILURE);
-	}
+	if	(ptr)
+		lmalloc_trace(ptr, 0);
 
-#if	MEMTRACE
-	trace_add(ptr, 0);
-	trace_add(p, size);
-#endif
+	if	(realloc_function)
+		p = realloc_function(ptr, size);
+	else
+		p = realloc_errcheck(ptr, size);
+
+	if	(size)
+		lmalloc_trace(p, size);
+
 	return p;
-}
-
-
-/*
-:*:
-The following functions are only active, is the library is compiled
-with |MEMTRACE| set to 1.
-:de:
-Die folgenden Funktionen sind nur aktiv, wenn beim kompilieren der Bibliothek
-der Makro |MEMTRACE| auf 1 gesetzt wurde.
-
-:*:
-The variable |memtrace| activates the trace option.
-:de:
-Die Variable |$1| dient zur Aktivierung der Ablaufkontrolle
-für die Speicherverwaltung.
-*/
-
-int memtrace = 0;
-
-/*
-:*:If memtrace is activated, the function |$1| lists all memory
-segments currently in use.
-:de:
-Falls die Speicherablaufverfolgung aktiviert wurde, listet
-die Funktion |$1| alle noch in Verwendung stehenden
-Speicherfelder auf.
-*/
-
-void meminfo (const char *pfx)
-{
-#if	MEMTRACE
-	TRACE *p;
-	size_t n;
-
-	if	(!pfx)	pfx = "meminfo()";
-
-	for (p = trace_tab, n = trace_dim; n-- > 0; p++)
-	{
-		if	(p->size)
-		{
-			fprintf(stderr, "%s:\t%p\t%u\t%lu\n", pfx,
-				p->ptr, p->idx, (unsigned long) p->size);
-		}
-	}
-#else
-	;
-#endif
-}
-
-/*
-:*:
-If memtrace is activated, the function |$1| lists all changes in
-memory allocation since last call.
-:de:
-Falls die Ablaufverfolgung aktiviert wurde, listet die
-Funktion |$1| alle Änderungen in der Speicherverwaltung
-seit dem letzten Aufruf auf.
-*/
-
-void memchange (const char *pfx)
-{
-#if	MEMTRACE
-	TRACE *p;
-	size_t n;
-
-	if	(!pfx)	pfx = "memchange()";
-
-	for (p = trace_tab, n = trace_dim; n-- > 0; p++)
-	{
-		if	(p->change)
-		{
-			p->change = 0;
-			fprintf(stderr, "%s:\t%p\t%u\t%lu\n", pfx,
-				p->ptr, p->idx, (unsigned long) p->size);
-		}
-	}
-#else
-	;
-#endif
 }
 
 /*

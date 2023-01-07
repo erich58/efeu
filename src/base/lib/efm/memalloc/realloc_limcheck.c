@@ -23,34 +23,16 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/memalloc.h>
 
-#define	ERR	"sorry: malloc(%lu) failed\n"
-#define	ERR2	"sorry: realloc(%p, %lu) failed\n"
-
-
 #define	CHECK_BSIZE	32
 #define	CHECK_SIZE	8
 #define	CHECK_MASK	"intactly"
 
-#define	ERR_ALLOC	"sorry: realloc(%p, %zu) failed\n"
 #define	ERR_CHECK	"limcheck(%p, %zu): memory overwrite detected.\n"
 
 typedef struct {
 	void *data;
 	size_t size;
 } ENTRY;
-
-static void *realloc_errcheck(void *data, size_t size)
-{
-	void *ndata = realloc(data, size);
-
-	if	(!ndata)
-	{
-		fprintf(stderr, ERR_ALLOC, data, size);
-		exit(EXIT_FAILURE);
-	}
-
-	return ndata;
-}
 
 static void check_entry(ENTRY *entry)
 {
