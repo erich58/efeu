@@ -195,13 +195,13 @@ int UnitTest_linematch(const char *file, int line,
 		{
 			showData(mdata.data.entry + d);
 		}
-		else if	(match_cmp(&mdata, p, d + 1))
+		else if	(d + 1 < mdata.data.size && match_cmp(&mdata, p, d + 1))
 		{
 			showData(mdata.data.entry + d);
 			++d;
 			showData(mdata.data.entry + d);
 		}
-		else if	(match_cmp(&mdata, p + 1, d))
+		else if	(p + 1 < mdata.pattern.size && match_cmp(&mdata, p + 1, d))
 		{
 			showPattern(mdata.pattern.entry + p);
 			++p;
