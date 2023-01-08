@@ -55,7 +55,7 @@ static const char *loginfo(LogControl *log)
 
 	LogUpdate(log);
 	IO *io = OUT();
-	LogControlEntry *entry = log->entry;
+	LogEntry *entry = log->entry;
 
 	io_puts(log->name, io);
 	io_putc(':', io);

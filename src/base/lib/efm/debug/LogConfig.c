@@ -52,8 +52,8 @@ typedef struct {
 } LOGDEF;
 
 static int log_match (LogControl *ctrl, char *select);
-static LogControlEntry *new_entry (LogControlEntry *base, LOGDEF *def);
-static void del_entry (LogControlEntry *entry);
+static LogEntry *new_entry (LogEntry *base, LOGDEF *def);
+static void del_entry (LogEntry *entry);
 
 static VECBUF(vbuf, LOGDEF_BSIZE, sizeof(LOGDEF));
 
@@ -289,7 +289,7 @@ int LogUpdate (LogControl *ctrl)
 
 	if	(!LogConfigLock && ctrl->sync != LogConfigChange)
 	{
-		LogControlEntry *entry;
+		LogEntry *entry;
 		LOGDEF *def;
 		size_t n;
 
@@ -576,11 +576,11 @@ static int log_match (LogControl *ctrl, char *select)
 Verwalten von Einträgen für die Protokollsteuerung
 */
 
-static ALLOCTAB(etab, "LogControlEntry", ENTRY_BSIZE, sizeof(LogControlEntry));
+static ALLOCTAB(etab, "LogEntry", ENTRY_BSIZE, sizeof(LogEntry));
 
-static LogControlEntry *new_entry (LogControlEntry *base, LOGDEF *def)
+static LogEntry *new_entry (LogEntry *base, LOGDEF *def)
 {
-	LogControlEntry *entry = new_data(&etab);
+	LogEntry *entry = new_data(&etab);
 
 	if	(!entry)	return base;
 
@@ -594,7 +594,7 @@ static LogControlEntry *new_entry (LogControlEntry *base, LOGDEF *def)
 	return entry;
 }
 
-static void del_entry (LogControlEntry *entry)
+static void del_entry (LogEntry *entry)
 {
 	if	(entry)
 	{

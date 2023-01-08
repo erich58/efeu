@@ -53,7 +53,7 @@ void LogOutputStat (void);
 LogOutput *NewLogOutput (const char *name);
 void DelLogOutput (LogOutput *out);
 
-typedef struct LogControlEntry LogControlEntry;
+typedef struct LogEntry LogEntry;
 
 #define	LOGFLAG_UTF8	0x1	/* UTF8-Konvertierung wird benötigt */
 #define	LOGFLAG_LATIN9	0x2	/* LATIN9-Konvertierung wird benötigt */
@@ -61,9 +61,9 @@ typedef struct LogControlEntry LogControlEntry;
 #define	LOGFLAG_TIME	0x10	/* Zeitstempel wird ausgegeben */
 #define	LOGFLAG_TYPE	0x20	/* Typ der Logmeldung wird ausgegeben */
 
-struct LogControlEntry {
+struct LogEntry {
 	LogOutput *out;
-	LogControlEntry *next;
+	LogEntry *next;
 	unsigned int flags;
 };
 
@@ -75,7 +75,7 @@ struct LogControl {
 	const char *name;	/* Bezeichnung */
 	unsigned int level;	/* Debug - Level */
 	unsigned int sync;	/* Synchronisation */
-	LogControlEntry *entry;	/* Tabelle mit Protokollausgaben */
+	LogEntry *entry;	/* Tabelle mit Protokollausgaben */
 };
 
 extern RefType LogControl_reftype;

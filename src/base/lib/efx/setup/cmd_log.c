@@ -33,7 +33,7 @@ static int lc_print (const EfiType *st, const void *data, IO *io)
 {
 	const LogControl *lc = Val_ptr(data);
 	char *delim = "=";
-	const LogControlEntry *entry;
+	const LogEntry *entry;
 	int n;
 
 	if	(!lc)

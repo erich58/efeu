@@ -173,7 +173,7 @@ static int log_put (int c, IO *io)
 
 static int log_close (LOGOUT *log)
 {
-	LogControlEntry *entry;
+	LogEntry *entry;
 
 	if	(log->buf->pos)
 	{
