@@ -48,13 +48,11 @@ UnitTest::stderr();
 MATCH_CONTENT("stderr", "^allocstat: ");
 
 // Nur coverage, Test in Baisbibltiothek efm 
-EXPECT(memtrace == false);
 UnitTest::stderr("stderr");
-meminfo("info");
-memchange("change");
+memstat();
 memcheck();
-lcheckall();
 UnitTest::stderr();
+MATCH_CONTENT("stderr", ".");
 AllocTab_stat(OUT());
 MATCH_OUT(".");
 
