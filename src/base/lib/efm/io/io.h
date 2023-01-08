@@ -288,6 +288,4 @@ IO *diropen (const char *name, const char *base);
 int io_newpart (IO *io, const char *name, const char *repl);
 int io_endpart (IO *io);
 
-IO *LogOpen (LogControl *ctrl);
-
 #endif	/* EFEU/io.h */

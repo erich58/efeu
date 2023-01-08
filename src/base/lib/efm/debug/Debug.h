@@ -35,6 +35,8 @@ void FormatTabShow (IO *io, const char *name, const char *fmt);
 char *GetFormat (const char *def);
 extern int GetFormatDisable;
 
+IO *LogOpen (LogControl *ctrl);
+
 void log_psub (LogControl *ctrl, const char *fmt, ArgList *list);
 void log_psubvarg (LogControl *ctrl, const char *fmt, char *id,
 	const char *argdef, va_list);

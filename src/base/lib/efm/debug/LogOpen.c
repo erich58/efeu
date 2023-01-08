@@ -36,36 +36,12 @@ If not, write to the Free Software Foundation, Inc.,
 typedef struct {
 	LogControl *ctrl;	/* Steuerstruktur */
 	StrBuf *buf;	/* Ausgabebuffer */
-	time_t sec;	/* Sekunde */
-	unsigned usec;	/* Mikrosekunde */
+	const char *stamp;	/* Timestamp */
 } LOGOUT;
 
 static int log_putucs (int32_t c, IO *io);
 static int log_put (int c, IO *io);
 static int log_ctrl (IO *io, int req, va_list list);
-
-#if	HAS_TIMEVAL
-#include <sys/time.h>
-#else
-struct timeval {
-	time_t tv_sec;
-	unsigned tv_usec;
-};
-#endif
-
-#define	FMT_DATE	"%04d-%02d-%02d"
-#define	VAR_DATE	tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday
-
-#define	FMT_TIME	"%02d:%02d:%02d"
-#define	VAR_TIME	tm->tm_hour, tm->tm_min, tm->tm_sec
-
-#if	HAS_GETTIMEOFDAY
-#define	FMT	FMT_DATE " " FMT_TIME ".%06d"
-#define	VAR	VAR_DATE, VAR_TIME, (int) log->usec
-#else
-#define	FMT	FMT_DATE " " FMT_TIME
-#define	VAR	VAR_DATE, VAR_TIME
-#endif
 
 static char *reorg (LOGOUT *log, unsigned flags);
 
@@ -80,22 +56,13 @@ IO *LogOpen (LogControl *ctrl)
 {
 	LOGOUT *log;
 	IO *io;
-	struct timeval tv;
 	
 	if	(!LogUpdate(ctrl))	return NULL;
 
-#if	HAS_GETTIMEOFDAY
-	gettimeofday(&tv, NULL);
-#else
-	tv.tv_sec = time(NULL);
-	tv.tv_usec = 0;
-#endif
-
 	log = memalloc(sizeof *log);
 	log->ctrl = ctrl;
-	log->sec = tv.tv_sec;
-	log->usec = tv.tv_usec;
 	log->buf = sb_acquire();
+	log->stamp = log_timestamp(NULL);
 
 	io = io_alloc();
 	io->putucs = log_putucs;
@@ -233,8 +200,7 @@ static char *reorg (LOGOUT *log, unsigned flags)
 
 	if	(flags & LOGFLAG_TIME)
 	{
-		struct tm *tm = localtime(&log->sec);
-		sb_printf(sb, FMT, VAR);
+		sb_puts(log->stamp, sb);
 		sb_putc(' ', sb);
 	}
 
