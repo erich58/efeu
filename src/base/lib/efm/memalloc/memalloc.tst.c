@@ -6,6 +6,7 @@
 #include "utest/out.tst.h"
 
 static ALLOCTAB(tab, "AllocTabTest", 2, sizeof(int));
+static ALLOCTAB(unnamed, NULL, 0, 512);
 
 static size_t ldim(void **list)
 {
@@ -102,6 +103,17 @@ TEST_DECL(alloctab)
 	EXPECT(del_data(&tab, p3) == 0);
 	MATCH_CONTENT("error.log",
 		"alloctab.AllocTabTest.: Pointer [^ ]* already released.\n");
+
+	clear_log("error.log");
+
+	TEST_FORK
+	{
+		char *p = new_data(&tab);
+		tst_data(&tab, p + 1); exit(0);
+	}
+
+	CHILD_EXIT(1);
+	MATCH_CONTENT("error.log", "not a legal address");
 }
 
 TEST_DECL(memalloc)
@@ -128,6 +140,19 @@ TEST_DECL(memalloc)
 	}
 
 	CHILD_EXIT(0);
+}
+
+TEST_DECL(memnotice)
+{
+	void *p = lmalloc(32);
+	memnotice(p);
+
+	UnitTest_stderr("stderr");
+	memnotice(p);
+	UnitTest_stderr(NULL);
+	MATCH_CONTENT("stderr", "reused without freeing");
+
+	memfree(p);
 }
 
 TEST_DECL(memswap)
@@ -173,6 +198,19 @@ TEST_DECL(debug_check)
 	TEST_FORK
 	{
 		signal(SIGABRT, sig_exit);
+		new_data(&tab);
+		tab.nfree--;
+		tab.nused++;
+		new_data(&tab); exit(0);
+	}
+
+	CHILD_EXIT(6);
+	MATCH_CONTENT("debug.log", "too many entries");
+	TEST_FILE("debug.log", NULL);
+
+	TEST_FORK
+	{
+		signal(SIGABRT, sig_exit);
 		void *list = tab.freelist;
 		tab.freelist = &list;
 		new_data(&tab); exit(0);
@@ -180,17 +218,20 @@ TEST_DECL(debug_check)
 
 	CHILD_EXIT(6);
 	MATCH_CONTENT("debug.log", "not part of block list");
+
 }
 
 TEST_DECL(trace)
 {
 	activate_log("alloctab.trace", "trace.log");
-	void *p = new_data(&tab );
-	del_data(&tab, p);
+	del_data(&tab, new_data(&tab));
+	del_data(&unnamed, new_data(&unnamed));
 	PRINT_STR(UnitTest_content("trace.log"));
 	MATCH_CONTENT("trace.log",
 		"alloctab.AllocTabTest.: Pointer [^ ]* allocated.\n"
-		"alloctab.AllocTabTest.: Pointer [^ ]* released.\n");
+		"alloctab.AllocTabTest.: Pointer [^ ]* released.\n"
+		"alloctab.0x.*: Pointer [^ ]* allocated.\n"
+		"alloctab.0x.*: Pointer [^ ]* released.\n");
 }
 
 TEST_SUITE
@@ -200,6 +241,7 @@ TEST_SUITE
 	TEST_RUN(sizealign);
 	TEST_RUN(alloctab);
 	TEST_RUN(memalloc);
+	TEST_RUN(memnotice);
 	TEST_RUN(memswap);
 	TEST_RUN(trace);
 	TEST_RUN(debug_check);

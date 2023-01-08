@@ -353,8 +353,9 @@ static void alloctab_abort (AllocTab *tab, const char *fmt, ...)
 		io_vprintf(out, fmt, args);
 		va_end(args);
 		io_close(out);
-		abort();
 	}
+
+	abort();
 }
 
 /*
