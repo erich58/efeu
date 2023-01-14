@@ -21,6 +21,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/LogConfig.h>
+#include <EFEU/Debug.h>
 #include <EFEU/ftools.h>
 #include <EFEU/io.h>
 #include <sys/types.h>
@@ -38,7 +39,7 @@ FILE *log_file (LogControl *ctrl)
 	pid_t pid;
 	int last, c;
 
-	out = LogOpen(ctrl);
+	out = log_open(ctrl);
 
 	if	(!out)	return NULL;
 
@@ -81,7 +82,7 @@ FILE *log_file (LogControl *ctrl)
 		if	(last == '\n')
 		{
 			io_close(out);
-			out = LogOpen(ctrl);
+			out = log_open(ctrl);
 		}
 
 		io_putc(c, out);

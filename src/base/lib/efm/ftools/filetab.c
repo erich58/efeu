@@ -59,7 +59,7 @@ static void file_debug (const char *type, FileTab *tab)
 
 	if	(!tab)	return;
 
-	log = LogOpen(&debug_log);
+	log = log_open(&debug_log);
 
 	if	(!log)	return;
 

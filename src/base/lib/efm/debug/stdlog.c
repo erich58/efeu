@@ -40,7 +40,7 @@ void log_psub (LogControl *ctrl, const char *fmt, ArgList *args)
 	IO *io;
 	char *xfmt;
 
-	if	(!(io = LogOpen(ctrl)))
+	if	(!(io = log_open(ctrl)))
 		return;
 
 	if	(!(xfmt = GetFormat(fmt)))

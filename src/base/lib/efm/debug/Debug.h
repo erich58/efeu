@@ -35,7 +35,7 @@ void FormatTabShow (IO *io, const char *name, const char *fmt);
 char *GetFormat (const char *def);
 extern int GetFormatDisable;
 
-IO *LogOpen (LogControl *ctrl);
+IO *log_open (LogControl *ctrl);
 
 void log_psub (LogControl *ctrl, const char *fmt, ArgList *list);
 void log_psubvarg (LogControl *ctrl, const char *fmt, char *id,
@@ -47,7 +47,6 @@ void log_note (LogControl *ctrl, const char *fmt, const char *argdef, ...);
 
 void filedebug (FILE *file, LogControl *ctrl,
 		const char *fmt, const char *def, ...);
-
 
 void AllocTab_stat (IO *out, AllocTab *tab, int verbosity);
 

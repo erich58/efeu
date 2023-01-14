@@ -35,7 +35,7 @@ void FuncDebug (EfiFunc *func, const char *pfx)
 
 	if	(FuncDebugLock)	return;
 
-	if	(func && (out = LogOpen(&func_debug)))
+	if	(func && (out = log_open(&func_debug)))
 	{
 		if	(pfx)
 		{
@@ -119,7 +119,7 @@ EfiFunc *SearchFunc (EfiVirFunc *vtab, EfiFuncArg *arg,
 		curfunc = ftab[i];
 		curdist = get_convdef(curfunc, narg, arg, curkonv);
 
-		if	((out = LogOpen(&func_trace)))
+		if	((out = log_open(&func_trace)))
 		{
 			show_dist(out, curfunc, curdist, curkonv, narg);
 			io_close(out);

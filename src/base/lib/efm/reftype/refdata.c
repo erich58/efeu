@@ -98,7 +98,7 @@ static void debug_id (IO *log, const RefData *rd, const char *cmd)
 
 static IO *debug_log (const RefData *rd)
 {
-	return LogOpen(rd->reftype->log);
+	return log_open(rd->reftype->log);
 }
 
 static void std_debug (const RefData *rd, const char *cmd)

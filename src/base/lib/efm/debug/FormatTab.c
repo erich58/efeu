@@ -133,7 +133,7 @@ static void ftab_show (LogControl *ctrl, MainEntry *entry)
 	IO *io;
 	int n;
 
-	io = LogOpen(ctrl);
+	io = log_open(ctrl);
 
 	if	(!io)	return;
 

@@ -161,7 +161,7 @@ PG *PG_connect (const char *def)
 		IO *io;
 		PG_info(NULL, M_BAD, "s", def);
 
-		if	((io = LogOpen(&pg_debug)))
+		if	((io = log_open(&pg_debug)))
 		{
 			conn_info(io, conn);
 			io_close(io);
@@ -198,7 +198,7 @@ PG *PG_connect (const char *def)
 
 void PG_info (PG *pg, const char *fmt, const char *argdef, ...)
 {
-	IO *io = LogOpen(&pg_info);
+	IO *io = log_open(&pg_info);
 
 	if	(io && fmt)
 	{

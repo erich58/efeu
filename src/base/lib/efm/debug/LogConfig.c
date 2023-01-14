@@ -34,10 +34,13 @@ If not, write to the Free Software Foundation, Inc.,
 
 static char *default_path = NULL;
 static int default_flags = 0;
+static LogOutput *default_out = NULL;
 
 #define	MASK_EXACT(level)	(1 << ((level) - 1))
 #define	MASK_FULL(level)	(~(~0 << (level)))
 #define	MASK_DEFAULT		MASK_FULL(LOGLEVEL_NOTE)
+
+#define	PRINT_PFX(flags)	((flags) & (LOGFLAG_TYPE | LOGFLAG_TIME))
 
 static STRBUF(sbuf, 0);
 static int LogConfigChange = 1;
@@ -49,6 +52,7 @@ typedef struct {
 	char *select;	/* Auswahl */
 	char *path;	/* Ausgabepfad */
 	unsigned flags;	/* Steuerflags */
+	LogOutput *out;	/* Ausgabestruktur */
 } LOGDEF;
 
 static int log_match (LogControl *ctrl, char *select);
@@ -84,6 +88,8 @@ static int pfx_cmd(int c)
 		vb_clear(&vbuf, def_clean);
 		memfree(default_path);
 		default_path = NULL;
+		DelLogOutput(default_out);
+		default_out = NULL;
 		break;
 	case '+':
 		default_mask = set_mask(default_mask, 1);
@@ -232,6 +238,8 @@ void LogConfig (const char *def)
 			memfree(default_path);
 			default_path = mstrcpy(p + 1);
 			default_flags = flags;
+			DelLogOutput(default_out);
+			default_out = NewLogOutput(default_path);
 		}
 		else if	(*p == '.')
 		{
@@ -269,6 +277,7 @@ void LogConfig (const char *def)
 			def->select = mstrcpy(p);
 			def->path = get_path(def->select);
 			def->flags = flags;
+			def->out = NewLogOutput(def->path);
 		}
 	}
 
@@ -312,10 +321,46 @@ int LogUpdate (LogControl *ctrl)
 	return ctrl->entry ? 1 : 0;
 }
 
+/*
+Logeinträge schreiben
+*/
+
+void log_write (LogControl *ctrl, const char *data, size_t pfx)
+{
+	size_t n;
+	int select = 0;
+	LOGDEF *def;
+
+	for (n = vbuf.used, def = vbuf.data; n--; def++)
+	{
+		if	(log_match(ctrl, def->select))
+		{
+			const char *p = data + (PRINT_PFX(def->flags) ? 0 : pfx);
+
+			if	(def->out)
+				def->out->write(def->out, p);
+			else
+				fputs(p, stderr);
+
+			select = 1;
+		}
+	}
+
+	if	(!select && (MASK_EXACT(ctrl->level) & default_mask))
+	{
+		const char *p = data + (PRINT_PFX(default_flags) ? 0 : pfx);
+
+		if	(default_out)
+			default_out->write(default_out, p);
+		else
+			fputs(p, stderr);
+	}
+}
 
 static void def_clean (void *data)
 {
 	LOGDEF *def = data;
+	DelLogOutput(def->out);
 	memfree(def->select);
 }
 

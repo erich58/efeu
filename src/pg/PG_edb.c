@@ -752,7 +752,7 @@ static void meta_query (EDBMetaDef *def, EDBMeta *meta, const char *arg)
 			return;
 		}
 
-		log = LogOpen(InfoLog);
+		log = log_open(InfoLog);
 		nfields = PQnfields(res);
 		var = NULL;
 		ptr = &var;

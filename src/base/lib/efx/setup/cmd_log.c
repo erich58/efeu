@@ -82,7 +82,7 @@ static void str2lc (EfiFunc *func, void *rval, void **arg)
 
 static void lc2io (EfiFunc *func, void *rval, void **arg)
 {
-	Val_io(rval) = LogOpen(Val_ptr(arg[0]));
+	Val_io(rval) = log_open(Val_ptr(arg[0]));
 }
 
 static void f_log_file (EfiFunc *func, void *rval, void **arg)

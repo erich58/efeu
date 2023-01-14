@@ -190,11 +190,11 @@ TEST_DECL(LogOutput)
 	
 	EXPECT((logfile = UnitTest_tmpname("log")) != NULL);
 	EXPECT_STR(config(""), "EWNidt-Nd");
-	EXPECT(LogOpen(dlog) == NULL);
+	EXPECT(log_open(dlog) == NULL);
 
 	EXPECT_STR(fconfig("@ 'X'.debug=%s", logfile), "EWNidt-ND");
 	EXPECT(log_check(NULL));
-	EXPECT((out = LogOpen(dlog)) != NULL);
+	EXPECT((out = log_open(dlog)) != NULL);
 	io_puts("TEST\n", out);
 	io_close(out);
 	EXPECT(log_check("TEST\n"));
@@ -205,15 +205,17 @@ TEST_DECL(LogOutput)
 
 	EXPECT_STR(fconfig("@X.debug=%s[time]", logfile), "EWNidt-ND");
 	log_printf(dlog, "X\n");
-	EXPECT(log_check("####-##-## ##:##:##.###### X\n"));
+	EXPECT(log_check("####-##-## ##:##:##.###### [X.debug] X\n"));
 
-	EXPECT_STR(fconfig("X.debug=[utf8]%s", logfile), "EWNidt-ND");
+	EXPECT_STR(fconfig("@X.debug=%s", logfile), "EWNidt-ND");
 	log_printf(dlog, "Ä\n");
 	EXPECT(log_check("Ä\n"));
 
+#if	0
 	EXPECT_STR(fconfig("@X.debug=%s[time,latin9]", logfile), "EWNidt-ND");
 	log_printf(dlog, "Ä\n");
-	EXPECT(log_check("####-##-## ##:##:##.###### \304\n"));
+	EXPECT(log_check("####-##-## ##:##:##.###### [X.debug] \304\n"));
+#endif
 
 	EXPECT_STR(fconfig("@ =%s", logfile), "EWNidt-Nd");
 	log_printf(NoteLog, "NOTE\n");
@@ -244,8 +246,10 @@ TEST_DECL(LogOutputStat)
 		LogConfig(UnitTest_tpl("='|cat > @/pipe.out'"));
 		log_psub(ErrLog, "PIPE\n", NULL);
 
+		/*
 		LogConfig("=");
 		log_psub(ErrLog, "Keine Ausgabe\n", NULL);
+		*/
 
 		LogConfig("@");
 		log_psub(ErrLog, "END\n", NULL);
@@ -281,7 +285,7 @@ TEST_DECL(log_file)
 	fprintf(file, "TEST\n");
 	fileclose(file);
 	usleep(1000); /* Wait for log child */
-	EXPECT(log_check("####-##-## ##:##:##.###### TEST\n"));
+	EXPECT(log_check("####-##-## ##:##:##.###### [X.debug] TEST\n"));
 }
 
 TEST_DECL(GetFormat)

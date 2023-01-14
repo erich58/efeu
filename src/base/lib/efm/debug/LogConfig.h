@@ -95,6 +95,7 @@ int LogUpdate (LogControl *ctrl);
 
 void log_error (LogControl *ctrl, const char *fmt, const char *argdef, ...);
 void log_note (LogControl *ctrl, const char *fmt, const char *argdef, ...);
+void log_write (LogControl *ctrl, const char *data, size_t pfx);
 
 const char *log_timestamp(const char *syncTime);
 FILE *log_file (LogControl *ctrl);

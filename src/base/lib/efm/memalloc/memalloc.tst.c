@@ -236,7 +236,7 @@ TEST_DECL(trace)
 
 TEST_SUITE
 {
-	activate_log(".err", "error.log");
+	activate_log("*.err", "error.log");
 	activate_log("alloctab.debug", "debug.log");
 	TEST_RUN(sizealign);
 	TEST_RUN(alloctab);

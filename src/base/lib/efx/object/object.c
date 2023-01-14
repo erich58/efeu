@@ -150,7 +150,7 @@ static void do_debug (int flag, char *fmt, const EfiObj *obj)
 	IO *log;
 	int i;
 		
-	if	(!(log = LogOpen(&ObjDebugControl)))
+	if	(!(log = log_open(&ObjDebugControl)))
 		return;
 
 	if	(flag == 2)

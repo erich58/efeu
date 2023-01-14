@@ -24,7 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 void log_printf (LogControl *ctrl, const char *fmt, ...)
 {
-	IO *io = LogOpen(ctrl);
+	IO *io = log_open(ctrl);
 
 	if	(io)
 	{
@@ -40,7 +40,7 @@ void log_printf (LogControl *ctrl, const char *fmt, ...)
 
 void log_vprintf (LogControl *ctrl, const char *fmt, va_list list)
 {
-	IO *io = LogOpen(ctrl);
+	IO *io = log_open(ctrl);
 
 	if	(io)
 	{

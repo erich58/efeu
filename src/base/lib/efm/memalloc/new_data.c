@@ -74,7 +74,7 @@ static void alloctab_trace (AllocTab *tab, const char *fmt, void *ptr)
 
 	log_lock = 1;
 
-	if	((out = LogOpen(&log_trace)))
+	if	((out = log_open(&log_trace)))
 	{
 		alloctab_id(out, tab);
 		io_printf(out, fmt, ptr);
@@ -105,7 +105,7 @@ static void alloctab_error (AllocTab *tab, const char *fmt, ...)
 
 	log_lock = 1;
 
-	if	((out = LogOpen(ErrLog)))
+	if	((out = log_open(ErrLog)))
 	{
 		va_list args;
 
@@ -147,7 +147,7 @@ static void load (AllocTab *tab)
 	{
 		void **blk = tab->blklist;
 
-		while (*blk && p > *blk)
+		while (*blk && (void *) p > *blk)
 			blk = *blk;
 
 		*p = *blk;
@@ -240,8 +240,6 @@ Der Inhalt eines Datensegmentes wird bei der Freigabe verändert.
 
 int del_data (AllocTab *tab, void *entry)
 {
-	void **x, ***ptr;
-
 	if	(entry == NULL)
 		return 1;
 
@@ -252,7 +250,7 @@ int del_data (AllocTab *tab, void *entry)
 
 	alloctab_trace(tab, TRACE_DEL, entry);
 
-	if	(tab->freelist && entry > tab->freelist)
+	if	(tab->freelist && entry > (void *) tab->freelist)
 	{
 		void **p = tab->freelist;
 
@@ -342,7 +340,7 @@ int tst_data (AllocTab *tab, void *entry)
 
 static void alloctab_abort (AllocTab *tab, const char *fmt, ...)
 {
-	IO *out = LogOpen(&log_debug);
+	IO *out = log_open(&log_debug);
 
 	if	(out)
 	{

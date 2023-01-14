@@ -58,7 +58,7 @@ static LogControl sort_debug = LOG_CONTROL(NAME, LOGLEVEL_DEBUG);
 
 static void debug (const char *fmt, ...)
 {
-	IO *log = LogOpen(&sort_debug);
+	IO *log = log_open(&sort_debug);
 
 	if	(log)
 	{
