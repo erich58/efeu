@@ -1,15 +1,23 @@
 #include <EFEU/UnitTest.h>
 #include <stdlib.h>
 
+#define	MATCH(data, pat) \
+do	{ const char *pattern = pat; \
+	PRINT_STR(pattern); \
+	MATCH_LINES(data, pattern); \
+} while (0)
+
 TEST_DECL(special)
 {
-	MATCH_LINES(NULL, NULL);
+	MATCH(NULL, NULL);
+	MATCH("abc\nxyz\n", NULL);
+	MATCH("abc\nxyz\n", "@sloppy");
 
 	TEST_FORK
 	{
-		MATCH_LINES("abc\nxyz\n", NULL);
-		MATCH_LINES(NULL, "abc\nxyz\n");
-		MATCH_LINES("abc", "abc\n[x\nxyz\n");
+		MATCH("abc\nxyz\n", "@fussy");
+		MATCH(NULL, "abc\nxyz\n");
+		MATCH("abc", "abc\n[x\nxyz\n");
 		TEST_EXIT;
 	}
 
@@ -23,15 +31,93 @@ TEST_DECL(lmatch)
 		"The second line.\n"
 		"The last line.\n"
 	;
+	PRINT_STR(str);
 
-	MATCH_LINES(str, "first\nsecond\nlast\n");
+	MATCH(str,
+		"@fussy\n"
+		"*extra\n"
+		"*(x\n"
+		"first\n"
+		"second\n"
+		"last\n"
+		);
 
 	TEST_FORK
 	{
-		MATCH_LINES(str, "second\n");
-		MATCH_LINES(str, "first\nsecond\nlast\nextra\n");
-		MATCH_LINES(str, "first\nlast\n");
-		MATCH_LINES(str, "first\nother\nlast\n");
+		MATCH(str, "second\n");
+		MATCH(str, "first\nsecond\nlast\nextra\n");
+		MATCH(str, "first\nlast\n");
+		MATCH(str, "first\nother\nsecond\n");
+		MATCH(str, "first\nother\nlast\n");
+		TEST_EXIT;
+	}
+
+	CHILD_EXIT(1);
+}
+
+TEST_DECL(def_pat)
+{
+	const char *str =
+		"some extra data\n"
+		"The first line\n"
+		"any other line\n"
+		"The last line\n"
+		"some extra data\n"
+	;
+	PRINT_STR(str);
+
+	MATCH(str,
+		"first\n"
+		"last\n"
+	);
+
+	MATCH(str,
+		"*extra\n"
+		"first\n"
+		"last\n"
+	);
+
+	TEST_FORK
+	{
+		MATCH(str,
+			"@fussy\n"
+			"*extra\n"
+			"first\n"
+			"last\n"
+		);
+
+		MATCH(str,
+			"first\n"
+			"missing\n"
+		);
+
+		TEST_EXIT;
+	}
+
+	CHILD_EXIT(1);
+}
+
+TEST_DECL(bad)
+{
+	TEST_FORK
+	{
+		MATCH(
+			"first\n"
+			"next\n"
+			"extra\n"
+			"something\n"
+			"last\n"
+		,
+			"@fussy\n"
+			"*extra\n"
+			"first\n"
+			"x[\n"
+			"next\n"
+			"abc\n"
+			"xyz\n"
+			"last\n"
+		);
+
 		TEST_EXIT;
 	}
 
@@ -42,4 +128,6 @@ TEST_SUITE
 {
 	TEST_RUN(special);
 	TEST_RUN(lmatch);
+	TEST_RUN(def_pat);
+	TEST_RUN(bad);
 }

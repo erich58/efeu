@@ -6,53 +6,39 @@
 #include <errno.h>
 #include <assert.h>
 
-#define	ALIGN(x, b)	((b) * (((x) + (b) - 1) / (b)))
-#define	PLIST_BSIZE	16
-#define	DLIST_BSIZE	16
+typedef struct PatternEntry PatternEntry;
 
-#define	VECTOR(type)	struct {  \
-	type *entry; \
-	size_t size; \
-	size_t capacity; \
-}
-
-#define	VECTOR_INIT	{ NULL, 0, 0 }
-
-#define	VECTOR_RESERVE(var, n)	\
-	if	((var).capacity < n) \
-	{ \
-		(var).capacity = ALIGN(n, 16); \
-		(var).entry = realloc((var).entry, \
-			(var).capacity * sizeof (var).entry[0]); \
-		assert((var).entry); \
-	}
-
-typedef struct {
+struct PatternEntry {
 	const char *line;
 	int stat;
 	regex_t data;
-} PatternEntry;
+	PatternEntry *next;
+};
 
-typedef VECTOR(PatternEntry) Pattern;
+typedef struct DataEntry DataEntry;
 
-typedef struct {
+struct DataEntry {
 	const char *line;
 	regmatch_t match;
-} DataEntry;
-
-typedef VECTOR(DataEntry) Data;
+	int accepted;
+	DataEntry *next;
+};
 
 typedef struct {
-	Pattern pattern;
-	Data data;
+	PatternEntry *optional;
+	PatternEntry *expected;
+	DataEntry *dlist;
+	int sloppy;
 } LineMatch;
 
 #define	MATCH_DECL(name)	\
-LineMatch name = { VECTOR_INIT, VECTOR_INIT }
+LineMatch name = { NULL, NULL, NULL, 1 }
 
-static int setPattern(PatternEntry *p, const char *line)
+static PatternEntry **pushPattern(PatternEntry **base, const char *line)
 {
+	PatternEntry *p = malloc(sizeof *p);
 	p->line = line;
+	p->next = 0;
 	p->stat = regcomp(&p->data, p->line, REG_EXTENDED);
 
 	if	(p->stat != 0)
@@ -60,42 +46,102 @@ static int setPattern(PatternEntry *p, const char *line)
 		char err_buf[256];
 		regerror(p->stat, &p->data, err_buf, sizeof err_buf);
 		UnitTest_error("%s", err_buf);
-		return 1;
+	//	free(p);
+	//	return base;
 	}
 
-	return 0;
+	*base = p;
+	return &(*base)->next;
 }
 
-static void showPattern(PatternEntry *p)
+static void showPattern(PatternEntry *p, const char *id)
 {
-	UnitTest_strinfo(NULL, 0, p->stat == 0 ? "??" : "!ERROR",
-		p->line, NULL);
+	static STRING_DECL(buf);
+
+	if	(!id)
+		return;
+
+	UnitTest_clear(&buf);
+	const char *key;
+
+	if	(*id == '!')
+	{
+		UnitTest_puts(UnitTest_color(2), &buf);
+		key = "!?";
+	}
+	else
+	{
+		UnitTest_puts(UnitTest_color(3), &buf);
+		key = "??";
+	}
+
+	UnitTest_puts(p->stat == 0 ? id + 1 : "error", &buf);
+	UnitTest_puts(UnitTest_color(0), &buf);
+	UnitTest_putc('\t', &buf);
+	UnitTest_qputs(p->line, '/', &buf);
+	UnitTest_info(NULL, 0, key, "%s", UnitTest_str(&buf));
 }
 
-static void setData(DataEntry *data, const char *string)
+static PatternEntry *popPattern(PatternEntry *base, const char *pfx)
 {
+	if	(base)
+	{
+		PatternEntry *p = base;
+		base = base->next;
+		showPattern(p, pfx);
+		regfree(&p->data);
+		free(p);
+	}
+
+	return base;
+}
+
+static DataEntry **pushData(DataEntry **base, const char *string)
+{
+	DataEntry *data = malloc(sizeof *data);
 	data->line = string;
+	data->next = NULL;
+	data->accepted = 0;
 	data->match.rm_so = -1;
+	*base = data;
+	return &(*base)->next;
 }
 
 static void showData(DataEntry *d)
 {
 	static STRING_DECL(buf);
 
+	UnitTest_clear(&buf);
+	const char *key = ".";
+	int colored = 0;
+
 	if	(d->match.rm_so < 0)
 	{
-		UnitTest_info(NULL, 0, "!!", "%s", d->line);
-		return;
+		UnitTest_puts(UnitTest_color(2), &buf);
+		UnitTest_puts("bad", &buf);
+		UnitTest_puts(UnitTest_color(0), &buf);
+		key = "!!";
+	}
+	else if	(d->accepted)
+	{
+		UnitTest_puts(".", &buf);
+		key = "?~";
+	}
+	else
+	{
+		UnitTest_puts(UnitTest_color(1), &buf);
+		UnitTest_puts("good", &buf);
+		UnitTest_puts(UnitTest_color(0), &buf);
+		key = "*~";
 	}
 
-	UnitTest_clear(&buf);
-	int colored = 0;
+	UnitTest_putc('\t', &buf);
 
 	for (int n = 0; d->line[n]; ++n)
 	{
 		if	(n == d->match.rm_so)
 		{
-			UnitTest_puts(UnitTest_color(1), &buf);
+			UnitTest_puts(UnitTest_color(d->accepted ? 3 : 1), &buf);
 			colored = 1;
 		}
 		else if	(n == d->match.rm_eo)
@@ -111,123 +157,180 @@ static void showData(DataEntry *d)
 		UnitTest_puts(UnitTest_color(0), &buf);
 
 	UnitTest_putc(0, &buf);
-	UnitTest_info(NULL, 0, "*~", "%s", buf.data);
+	UnitTest_info(NULL, 0, key, "%s", buf.data);
 }
 
+static DataEntry *popData(DataEntry *base)
+{
+	if	(base)
+	{
+		DataEntry *data = base;
+		base = base->next;
+		showData(data);
+		free(data);
+	}
+
+	return base;
+}
+
+static void sloppy(DataEntry *d)
+{
+	d->match.rm_so = 0;
+	d->match.rm_eo = 0;
+	d->accepted = 1;
+}
+
+static int match_exact(DataEntry *d, PatternEntry *p)
+{
+	if	(d && p && p->stat == 0)
+		return regexec(&p->data, d->line, 1, &d->match, 0) == 0;
+	
+	return 0;
+}
+
+static int match_any(DataEntry *d, PatternEntry *p)
+{
+	while (p)
+	{
+		if	(match_exact(d, p))
+		{
+			d->accepted = 1;
+			return 1;
+		}
+
+		p = p->next;
+	}
+
+	return 0;
+}
+
+static void setOption(LineMatch *match, const char *opt)
+{
+	if	(strstr(opt, "fussy"))
+		match->sloppy = 0;
+
+	if	(strstr(opt, "sloppy"))
+		match->sloppy = 1;
+}
 
 static void match_clear(LineMatch *match)
 {
-	while	(match->pattern.size)
+	while (match->expected && match->dlist)
 	{
-		--match->pattern.size;
-		regfree(&match->pattern.entry[match->pattern.size].data);
+		if	(match->expected->stat != 0)
+		{
+			match->expected = popPattern(match->expected, "!error");
+		}
+		else if	(match_exact(match->dlist, match->expected))
+		{
+			match->expected = popPattern(match->expected, NULL);
+			match->dlist = popData(match->dlist);
+		}
+		else if	(match_any(match->dlist, match->optional))
+		{
+			match->dlist = popData(match->dlist);
+		}
+		else if	(match_exact(match->dlist->next, match->expected))
+		{
+			match->dlist = popData(match->dlist);
+			match->expected = popPattern(match->expected, NULL);
+			match->dlist = popData(match->dlist);
+		}
+		else if	(match_exact(match->dlist, match->expected->next))
+		{
+			match->expected = popPattern(match->expected, "!error");
+			match->expected = popPattern(match->expected, NULL);
+			match->dlist = popData(match->dlist);
+		}
+		else
+		{
+			match->expected = popPattern(match->expected, "!error");
+			match->dlist = popData(match->dlist);
+		}
 	}
 
-	match->data.size = 0;
+	while (match->dlist)
+	{
+		match_any(match->dlist, match->optional);
+		match->dlist = popData(match->dlist);
+	}
+
+	while (match->expected)
+		match->expected = popPattern(match->expected, "!missing");
+
+	while (match->optional)
+		match->optional = popPattern(match->optional, "?default");
 }
 
 static void match_init(LineMatch *match, const char *data, const char *expr)
 {
 	static STRING_DECL(buf_data);
 	static STRING_DECL(buf_expr);
-	size_t n;
+	const char *p;
 
 	match_clear(match);
-	n = UnitTest_lsplit(&buf_data, data);
-	VECTOR_RESERVE(match->data, n);
-	match->data.size = n;
+	match->sloppy = 1;
 
-	for (n = 0; n < match->data.size; ++n)
-		setData(match->data.entry + n, UnitTest_next(&buf_data));
+	/* Vergleichsvektor */
 
-	n = UnitTest_lsplit(&buf_expr, expr);
-	VECTOR_RESERVE(match->pattern, n);
-	match->pattern.size = n;
+	UnitTest_lsplit(&buf_expr, expr);
+	PatternEntry **exp = &match->expected;
+	PatternEntry **opt = &match->optional;
 
-	for (n = 0; n < match->pattern.size; ++n)
-		setPattern(match->pattern.entry + n, UnitTest_next(&buf_expr));
-}
+	while ((p = UnitTest_next(&buf_expr)))
+	{
+		if	(*p == '@')
+			setOption(match, p + 1);
+		else if	(*p == '*')
+			opt = pushPattern(opt, p + 1);
+		else
+			exp = pushPattern(exp, p);
+	}
 
-static int match_cmp(LineMatch *match, int p, int d)
-{
-	if	(match->pattern.entry[p].stat != 0)
-		return 0;
-	return regexec(&match->pattern.entry[p].data,
-		match->data.entry[d].line, 1, &match->data.entry[d].match, 0) == 0;
+	/* Datenvektor */
+
+	UnitTest_lsplit(&buf_data, data);
+	DataEntry **dp = &match->dlist;
+
+	while ((p = UnitTest_next(&buf_data)))
+		dp = pushData(dp, p);
 }
 
 int UnitTest_linematch(const char *file, int line, 
 	const char *str, const char *expr, const char *term)
 {
 	static MATCH_DECL(mdata);
-	size_t n;
 
-	if	(term == 0)	term = "NULL";
+	if	(!term)	term = "NULL";
 
 	match_init(&mdata, str, expr);
 
-	/* Gute Vergleiche */
+	PatternEntry *p = mdata.expected;
+	DataEntry *d = mdata.dlist;
 
-	for (n = 0; n < mdata.data.size && n < mdata.pattern.size; ++n)
+	while (d)
 	{
-		if	(!match_cmp(&mdata, n, n))
+		if	(match_exact(d, p))
+			p = p->next;
+		else if	(match_any(d, mdata.optional))
+			;
+		else if	(mdata.sloppy)
+			sloppy(d);
+		else
 			break;
+
+		d = d->next;
 	}
 
-	int res = (n == mdata.data.size && n == mdata.pattern.size);
+	int res = (!p && !d);
 	UnitTest_result(file, line, res, "linematch(%s)", term);
 
-	for (size_t i = 0; i < n; ++i)
-		showData(mdata.data.entry + i);
+	while (mdata.expected != p)
+		mdata.expected = popPattern(mdata.expected, NULL);
 
-	if	(res)
-		return res;
+	while (mdata.dlist != d)
+		mdata.dlist = popData(mdata.dlist);
 
-	/* List Bad matches
-	*/
-
-	size_t p = n;
-	size_t d = n;
-
-	while (p < mdata.pattern.size && d < mdata.data.size)
-	{
-		if	(match_cmp(&mdata, p, d))
-		{
-			showData(mdata.data.entry + d);
-		}
-		else if	(d + 1 < mdata.data.size && match_cmp(&mdata, p, d + 1))
-		{
-			showData(mdata.data.entry + d);
-			++d;
-			showData(mdata.data.entry + d);
-		}
-		else if	(p + 1 < mdata.pattern.size && match_cmp(&mdata, p + 1, d))
-		{
-			showPattern(mdata.pattern.entry + p);
-			++p;
-			showData(mdata.data.entry + d);
-		}
-		else
-		{
-			showPattern(mdata.pattern.entry + p);
-			showData(mdata.data.entry + d);
-		}
-
-		++p;
-		++d;
-	}
-
-	while (d < mdata.data.size)
-	{
-		showData(mdata.data.entry + d);
-		++d;
-	}
-
-	while (p < mdata.pattern.size)
-	{
-		showPattern(mdata.pattern.entry + p);
-		++p;
-	}
-
+	match_clear(&mdata);
 	return res;
 }
