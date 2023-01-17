@@ -6,37 +6,37 @@
 #include <errno.h>
 #include <assert.h>
 
-typedef struct PatternEntry PatternEntry;
+typedef struct Pattern Pattern;
 
-struct PatternEntry {
+struct Pattern {
 	const char *line;
 	int stat;
 	regex_t data;
-	PatternEntry *next;
+	Pattern *next;
 };
 
-typedef struct DataEntry DataEntry;
+typedef struct Data Data;
 
-struct DataEntry {
+struct Data {
 	const char *line;
 	regmatch_t match;
 	int accepted;
-	DataEntry *next;
+	Data *next;
 };
 
 typedef struct {
-	PatternEntry *optional;
-	PatternEntry *expected;
-	DataEntry *dlist;
+	Pattern *optional;
+	Pattern *expected;
+	Data *data;
 	int sloppy;
 } LineMatch;
 
 #define	MATCH_DECL(name)	\
 LineMatch name = { NULL, NULL, NULL, 1 }
 
-static PatternEntry **pushPattern(PatternEntry **base, const char *line)
+static Pattern **pushPattern(Pattern **base, const char *line)
 {
-	PatternEntry *p = malloc(sizeof *p);
+	Pattern *p = malloc(sizeof *p);
 	p->line = line;
 	p->next = 0;
 	p->stat = regcomp(&p->data, p->line, REG_EXTENDED);
@@ -46,15 +46,13 @@ static PatternEntry **pushPattern(PatternEntry **base, const char *line)
 		char err_buf[256];
 		regerror(p->stat, &p->data, err_buf, sizeof err_buf);
 		UnitTest_error("%s", err_buf);
-	//	free(p);
-	//	return base;
 	}
 
 	*base = p;
 	return &(*base)->next;
 }
 
-static void showPattern(PatternEntry *p, const char *id)
+static void showPattern(Pattern *p, const char *id)
 {
 	static STRING_DECL(buf);
 
@@ -82,11 +80,11 @@ static void showPattern(PatternEntry *p, const char *id)
 	UnitTest_info(NULL, 0, key, "%s", UnitTest_str(&buf));
 }
 
-static PatternEntry *popPattern(PatternEntry *base, const char *pfx)
+static Pattern *popPattern(Pattern *base, const char *pfx)
 {
 	if	(base)
 	{
-		PatternEntry *p = base;
+		Pattern *p = base;
 		base = base->next;
 		showPattern(p, pfx);
 		regfree(&p->data);
@@ -96,9 +94,9 @@ static PatternEntry *popPattern(PatternEntry *base, const char *pfx)
 	return base;
 }
 
-static DataEntry **pushData(DataEntry **base, const char *string)
+static Data **pushData(Data **base, const char *string)
 {
-	DataEntry *data = malloc(sizeof *data);
+	Data *data = malloc(sizeof *data);
 	data->line = string;
 	data->next = NULL;
 	data->accepted = 0;
@@ -107,7 +105,7 @@ static DataEntry **pushData(DataEntry **base, const char *string)
 	return &(*base)->next;
 }
 
-static void showData(DataEntry *d)
+static void showData(Data *d)
 {
 	static STRING_DECL(buf);
 
@@ -160,11 +158,11 @@ static void showData(DataEntry *d)
 	UnitTest_info(NULL, 0, key, "%s", buf.data);
 }
 
-static DataEntry *popData(DataEntry *base)
+static Data *popData(Data *base)
 {
 	if	(base)
 	{
-		DataEntry *data = base;
+		Data *data = base;
 		base = base->next;
 		showData(data);
 		free(data);
@@ -173,14 +171,14 @@ static DataEntry *popData(DataEntry *base)
 	return base;
 }
 
-static void sloppy(DataEntry *d)
+static void sloppy(Data *d)
 {
 	d->match.rm_so = 0;
 	d->match.rm_eo = 0;
 	d->accepted = 1;
 }
 
-static int match_exact(DataEntry *d, PatternEntry *p)
+static int match_exact(Data *d, Pattern *p)
 {
 	if	(d && p && p->stat == 0)
 		return regexec(&p->data, d->line, 1, &d->match, 0) == 0;
@@ -188,7 +186,7 @@ static int match_exact(DataEntry *d, PatternEntry *p)
 	return 0;
 }
 
-static int match_any(DataEntry *d, PatternEntry *p)
+static int match_any(Data *d, Pattern *p)
 {
 	while (p)
 	{
@@ -215,44 +213,44 @@ static void setOption(LineMatch *match, const char *opt)
 
 static void match_clear(LineMatch *match)
 {
-	while (match->expected && match->dlist)
+	while (match->expected && match->data)
 	{
 		if	(match->expected->stat != 0)
 		{
 			match->expected = popPattern(match->expected, "!error");
 		}
-		else if	(match_exact(match->dlist, match->expected))
+		else if	(match_exact(match->data, match->expected))
 		{
 			match->expected = popPattern(match->expected, NULL);
-			match->dlist = popData(match->dlist);
+			match->data = popData(match->data);
 		}
-		else if	(match_any(match->dlist, match->optional))
+		else if	(match_any(match->data, match->optional))
 		{
-			match->dlist = popData(match->dlist);
+			match->data = popData(match->data);
 		}
-		else if	(match_exact(match->dlist->next, match->expected))
+		else if	(match_exact(match->data->next, match->expected))
 		{
-			match->dlist = popData(match->dlist);
+			match->data = popData(match->data);
 			match->expected = popPattern(match->expected, NULL);
-			match->dlist = popData(match->dlist);
+			match->data = popData(match->data);
 		}
-		else if	(match_exact(match->dlist, match->expected->next))
+		else if	(match_exact(match->data, match->expected->next))
 		{
 			match->expected = popPattern(match->expected, "!error");
 			match->expected = popPattern(match->expected, NULL);
-			match->dlist = popData(match->dlist);
+			match->data = popData(match->data);
 		}
 		else
 		{
 			match->expected = popPattern(match->expected, "!error");
-			match->dlist = popData(match->dlist);
+			match->data = popData(match->data);
 		}
 	}
 
-	while (match->dlist)
+	while (match->data)
 	{
-		match_any(match->dlist, match->optional);
-		match->dlist = popData(match->dlist);
+		match_any(match->data, match->optional);
+		match->data = popData(match->data);
 	}
 
 	while (match->expected)
@@ -274,8 +272,8 @@ static void match_init(LineMatch *match, const char *data, const char *expr)
 	/* Vergleichsvektor */
 
 	UnitTest_lsplit(&buf_expr, expr);
-	PatternEntry **exp = &match->expected;
-	PatternEntry **opt = &match->optional;
+	Pattern **exp = &match->expected;
+	Pattern **opt = &match->optional;
 
 	while ((p = UnitTest_next(&buf_expr)))
 	{
@@ -290,7 +288,7 @@ static void match_init(LineMatch *match, const char *data, const char *expr)
 	/* Datenvektor */
 
 	UnitTest_lsplit(&buf_data, data);
-	DataEntry **dp = &match->dlist;
+	Data **dp = &match->data;
 
 	while ((p = UnitTest_next(&buf_data)))
 		dp = pushData(dp, p);
@@ -305,8 +303,8 @@ int UnitTest_linematch(const char *file, int line,
 
 	match_init(&mdata, str, expr);
 
-	PatternEntry *p = mdata.expected;
-	DataEntry *d = mdata.dlist;
+	Pattern *p = mdata.expected;
+	Data *d = mdata.data;
 
 	while (d)
 	{
@@ -328,8 +326,8 @@ int UnitTest_linematch(const char *file, int line,
 	while (mdata.expected != p)
 		mdata.expected = popPattern(mdata.expected, NULL);
 
-	while (mdata.dlist != d)
-		mdata.dlist = popData(mdata.dlist);
+	while (mdata.data != d)
+		mdata.data = popData(mdata.data);
 
 	match_clear(&mdata);
 	return res;
