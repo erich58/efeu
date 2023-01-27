@@ -51,8 +51,12 @@ IO *log_open (LogControl *ctrl)
 
 	log = realloc_errcheck(NULL, sizeof *log);
 	log->ctrl = ctrl;
-	log->offset = snprintf(log->data, sizeof log->data, "%s [%s.%s] ",
-		log_timestamp(NULL), ctrl->name, LogLevelName(ctrl->level));
+	log->offset = snprintf(log->data, sizeof log->data, "%s ",
+		log_timestamp(NULL));
+
+	if	(ctrl->name)
+		log->offset += snprintf(log->data + log->offset,
+			sizeof log->data - log->offset, "[%s] ", ctrl->name);
 	log->pos = log->offset;
 
 	io = io_alloc();
@@ -65,8 +69,8 @@ IO *log_open (LogControl *ctrl)
 static void log_flush (LOGDATA *log)
 {
 	log->data[log->pos++] = '\n';
-	log->data[log->pos++] = 0;
-	log_write(log->ctrl, log->data, log->offset);
+	log->data[log->pos] = 0;
+	log_write(log->ctrl, log->data, log->offset, log->pos);
 	log->pos = log->offset;
 }
 
@@ -80,10 +84,17 @@ static int log_put (int c, IO *io)
 		return c;
 	}
 
-	if	(log->pos >= MSG_LIM2)
+	if	(log->pos == log->offset)
+	{
+		log->pos += snprintf(log->data + log->offset,
+			sizeof log->data - log->offset, "%s ",
+			LogLevelName(log->ctrl->level));
+	}
+	else if	(log->pos >= MSG_LIM2)
 	{
 		log->data[log->pos++] = '\\';
 		log_flush(log);
+		return log_put(c, io);
 	}
 
 	log->data[log->pos++] = c;

@@ -39,7 +39,7 @@ TEST_DECL(tempopen)
 	TEST_FILE("debug", NULL);
 	EXPECT((file = tempopen()) != NULL);
 	fileclose(file);
-	MATCH_CONTENT("debug",
+	MATCH_LINES(UnitTest_content("debug"),
 		"file: open.*<temp>.*\n"
 		"file: close.*<temp>.*\n"
 	);
@@ -59,8 +59,8 @@ TEST_DECL(filetab)
 	TEST_FILE("debug", NULL);
 	TEST_FILE("flog", NULL);
 	TEST_EXPR(filedebug(file, flog, "[test:1]", NULL));
-	EXPECT_CONTENT("flog", "test-file: Message\n");
-	MATCH_CONTENT("debug",
+	MATCH_CONTENT("flog", "test-file: Message\n");
+	MATCH_LINES(UnitTest_content("debug"),
 		"file: open.*/test.msg.*\n"
 		"file: close.*/test.msg.*\n"
 	);
@@ -75,7 +75,7 @@ TEST_DECL(filetab)
 	}
 
 	CHILD_EXIT(1);
-	EXPECT_CONTENT("stderr", "test-file: Error\n");
+	EXPECT_CONTENT("stderr", "ERR test-file: Error\n");
 	MATCH_CONTENT("debug",
 		"file: forced close.*test-file.*\n"
 	);
@@ -87,7 +87,7 @@ TEST_DECL(filetab)
 	UnitTest_stderr("stderr");
 	EXPECT(fileclose(file) == EOF);
 	EXPECT_CONTENT("test.data", "Test data\n");
-	EXPECT_CONTENT("stderr", "bad fileclose\n");
+	EXPECT_CONTENT("stderr", "MSG bad fileclose\n");
 
 	PRINT_LABEL("Default identifier");
 	EXPECT_STR(fileident(NULL), NULL);
@@ -127,7 +127,7 @@ TEST_DECL(fileopen)
 	}
 
 	CHILD_EXIT(1);
-	EXPECT_CONTENT("stderr", "bad mode\n");
+	EXPECT_CONTENT("stderr", "ERR bad mode\n");
 
 	TEST_FORK
 	{
@@ -137,7 +137,7 @@ TEST_DECL(fileopen)
 	}
 
 	CHILD_EXIT(1);
-	EXPECT_CONTENT("stderr", "open failed\n");
+	EXPECT_CONTENT("stderr", "ERR open failed\n");
 
 	PRINT_LABEL("Compressed data");
 
@@ -179,7 +179,7 @@ TEST_DECL(fileopen)
 	}
 
 	CHILD_EXIT(1);
-	EXPECT_CONTENT("stderr", "pipe locked\n");
+	EXPECT_CONTENT("stderr", "ERR pipe locked\n");
 
 	UnitTest_stderr("stderr");
 	EXPECT((file = fileopen("|bad-command-name", "r")) != NULL);
@@ -223,7 +223,7 @@ TEST_DECL(findopen)
 	}
 
 	CHILD_EXIT(1);
-	EXPECT_CONTENT("stderr", "file test.dat not found\n");
+	EXPECT_CONTENT("stderr", "ERR file test.dat not found\n");
 }
 
 

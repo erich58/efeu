@@ -32,15 +32,11 @@ If not, write to the Free Software Foundation, Inc.,
 #define	LOGDEF_BSIZE	30
 #define	ENTRY_BSIZE	60
 
-static char *default_path = NULL;
-static int default_flags = 0;
 static LogOutput *default_out = NULL;
 
 #define	MASK_EXACT(level)	(1 << ((level) - 1))
 #define	MASK_FULL(level)	(~(~0 << (level)))
 #define	MASK_DEFAULT		MASK_FULL(LOGLEVEL_NOTE)
-
-#define	PRINT_PFX(flags)	((flags) & (LOGFLAG_TYPE | LOGFLAG_TIME))
 
 static STRBUF(sbuf, 0);
 static int LogConfigChange = 1;
@@ -50,14 +46,10 @@ static int default_mask = MASK_DEFAULT;
 
 typedef struct {
 	char *select;	/* Auswahl */
-	char *path;	/* Ausgabepfad */
-	unsigned flags;	/* Steuerflags */
 	LogOutput *out;	/* Ausgabestruktur */
 } LOGDEF;
 
 static int log_match (LogControl *ctrl, char *select);
-static LogEntry *new_entry (LogEntry *base, LOGDEF *def);
-static void del_entry (LogEntry *entry);
 
 static VECBUF(vbuf, LOGDEF_BSIZE, sizeof(LOGDEF));
 
@@ -70,11 +62,7 @@ static void sub_match (LogControl *ctrl, char *select, int *flag);
 
 static int add_str (StrBuf *sb, const char *def, int delim);
 static char *get_path (char *p);
-static unsigned flag_index (char *def);
-static unsigned get_flags (char *list);
 static void def_clean (void *data);
-
-static unsigned encoding(void);
 
 static int pfx_cmd(int c)
 {
@@ -86,8 +74,6 @@ static int pfx_cmd(int c)
 		break;
 	case '@':
 		vb_clear(&vbuf, def_clean);
-		memfree(default_path);
-		default_path = NULL;
 		DelLogOutput(default_out);
 		default_out = NULL;
 		break;
@@ -125,7 +111,7 @@ Protokolldefinitionen. Diese besteht aus den folgenden Komponenten:
 *	Ausgabeflags (<flags>)
 
 Die allgemeine Syntax ist:
-	<sel>[|;|<sel>][|=|<path>][|[|<flags>|]|]
+	<sel>[|;|<sel>][|=|<path>]
 
 Die einzelnen Komponenten sind optional. Die Ausgabeflags können an einer
 beliebigen Stelle der Protokolldefinition stehen. Die Bedeutung der
@@ -145,23 +131,9 @@ eine Datei oder einen Prozess, an dem die Daten weitergeleitet werden.
 	Syslog-Ausgabe zum Level |LOG_ERR|.
 [syslog.<level>]
 	Syslog-Ausgabe zum Level <level>
-	(err, warn, notice, info, debug)
-[||||<cmd> arg(s)]
-	Pipe an externes Kommando
+	(err, warning, notice, info, debug)
 [<path>]
 	Anhängen an Datei.
-
-Folgende Steuerflags können angegeben werden:
-
-[time]
-	Der Ausgabe wird ein Zeitstempel vorangestellt.
-[utf8\br UTF-8]
-	Die Ausgabe erfolgt mit Kodierung UTF-8.
-[latin9]
-	Die Ausgabe erfolgt mit Kodierung ISO8859-15.
-
-Falls die Kodierung nicht vorgegeben wurde, wird sie aus der Sprachumgebung
-ermittelt.
 
 Die Selektoren bestimmen, für welche Steuerstrukturen die Protokolldefinition
 gilt. Sie haben die Form <name>[|,|<name>]|.|<level>[|,|<level>]. Anstelle
@@ -177,7 +149,6 @@ indem ein |!| vorangestellt wird.
 
 void LogConfig (const char *def)
 {
-	unsigned flags;
 	char *p;
 
 	if	(!def)	return;
@@ -199,7 +170,6 @@ void LogConfig (const char *def)
 			def++;
 
 		sb_setpos(&sbuf, 0);
-		flags = 0;
 
 		while (*def && !isspace(*def))
 		{
@@ -214,16 +184,6 @@ void LogConfig (const char *def)
 			{
 				def += add_str(&sbuf, def, '\'');
 			}
-			else if	(*def == '[')
-			{
-				int pos;
-
-				pos = sbuf.pos;
-				def += add_str(&sbuf, def, ']');
-				flags = get_flags(sb_nul(&sbuf) + pos);
-				sbuf.pos = pos;
-				sb_sync(&sbuf);
-			}
 			else	sb_putc(*def++, &sbuf);
 		}
 
@@ -231,15 +191,12 @@ void LogConfig (const char *def)
 
 		if	(*p == 0)
 		{
-			default_flags = flags;
+			;
 		}
 		else if	(*p == '=')
 		{
-			memfree(default_path);
-			default_path = mstrcpy(p + 1);
-			default_flags = flags;
 			DelLogOutput(default_out);
-			default_out = NewLogOutput(default_path);
+			default_out = NewLogOutput( p + 1);
 		}
 		else if	(*p == '.')
 		{
@@ -247,11 +204,10 @@ void LogConfig (const char *def)
 
 			if	(path)
 			{
-				memfree(default_path);
-				default_path = mstrcpy(path);
+				DelLogOutput(default_out);
+				default_out = NewLogOutput(path);
 			}
 
-			default_flags = flags;
 			default_mask = mask_list(p + 1);
 		}
 		else if	(*p == '~')
@@ -275,9 +231,7 @@ void LogConfig (const char *def)
 		{
 			LOGDEF *def = vb_next(&vbuf);
 			def->select = mstrcpy(p);
-			def->path = get_path(def->select);
-			def->flags = flags;
-			def->out = NewLogOutput(def->path);
+			def->out = NewLogOutput(get_path(def->select));
 		}
 	}
 
@@ -298,34 +252,29 @@ int LogUpdate (LogControl *ctrl)
 
 	if	(!LogConfigLock && ctrl->sync != LogConfigChange)
 	{
-		LogEntry *entry;
 		LOGDEF *def;
 		size_t n;
 
-		entry = NULL;
-		LogConfigLock++;
+		ctrl->enabled = 0;
 
 		for (n = vbuf.used, def = vbuf.data; n--; def++)
 			if	(log_match(ctrl, def->select))
-				entry = new_entry(entry, def);
+				ctrl->enabled = 1;
 
-		if	(!entry && (MASK_EXACT(ctrl->level) & default_mask))
-			entry = new_entry(entry, NULL);
+		if	(MASK_EXACT(ctrl->level) & default_mask)
+			ctrl->enabled = 1;
 
-		del_entry(ctrl->entry);
-		ctrl->entry = entry;
 		ctrl->sync = LogConfigChange;
-		LogConfigLock--;
 	}
 
-	return ctrl->entry ? 1 : 0;
+	return ctrl->enabled;
 }
 
 /*
 Logeinträge schreiben
 */
 
-void log_write (LogControl *ctrl, const char *data, size_t pfx)
+void log_write (LogControl *ctrl, const char *data, size_t pfx, size_t len)
 {
 	size_t n;
 	int select = 0;
@@ -335,12 +284,10 @@ void log_write (LogControl *ctrl, const char *data, size_t pfx)
 	{
 		if	(log_match(ctrl, def->select))
 		{
-			const char *p = data + (PRINT_PFX(def->flags) ? 0 : pfx);
-
 			if	(def->out)
-				def->out->write(def->out, p);
+				def->out->write(def->out, data, pfx, len);
 			else
-				fputs(p, stderr);
+				write(2, data + pfx, len - pfx);
 
 			select = 1;
 		}
@@ -348,12 +295,10 @@ void log_write (LogControl *ctrl, const char *data, size_t pfx)
 
 	if	(!select && (MASK_EXACT(ctrl->level) & default_mask))
 	{
-		const char *p = data + (PRINT_PFX(default_flags) ? 0 : pfx);
-
 		if	(default_out)
-			default_out->write(default_out, p);
+			default_out->write(default_out, data, pfx, len);
 		else
-			fputs(p, stderr);
+			write(2, data + pfx, len - pfx);
 	}
 }
 
@@ -362,54 +307,6 @@ static void def_clean (void *data)
 	LOGDEF *def = data;
 	DelLogOutput(def->out);
 	memfree(def->select);
-}
-
-/*
-Definition der Steuerflags
-*/
-
-static struct {
-	char *name;
-	unsigned flag;
-} ftab[] = {
-	{ "time", LOGFLAG_TIME },
-	{ "type", LOGFLAG_TYPE },
-	{ "utf8", LOGFLAG_UTF8 },
-	{ "UTF-8", LOGFLAG_UTF8 },
-	{ "latin9", LOGFLAG_LATIN9 },
-};
-
-static unsigned flag_index (char *def)
-{
-	unsigned flags = 0;
-	int i;
-
-	for (i = 0; i < tabsize(ftab); i++)
-	{
-		if	(strcmp(def, ftab[i].name) == 0)
-		{
-			flags |= ftab[i].flag;
-			break;
-		}
-	}
-
-	return flags;
-}
-
-static unsigned get_flags (char *list)
-{
-	unsigned flags = 0;
-	char *p;
-
-	while ((p = strchr(list, ',')))
-	{
-		*p = 0;
-		flags |= flag_index(list);
-		*p = ',';	/* Trennzeichen restaurieren */
-		list = p + 1;
-	}
-
-	return flags | flag_index(list);
 }
 
 /*
@@ -615,62 +512,4 @@ static int log_match (LogControl *ctrl, char *select)
 
 	sub_match(ctrl, select, &flag);
 	return flag;
-}
-
-/*
-Verwalten von Einträgen für die Protokollsteuerung
-*/
-
-static ALLOCTAB(etab, "LogEntry", ENTRY_BSIZE, sizeof(LogEntry));
-
-static LogEntry *new_entry (LogEntry *base, LOGDEF *def)
-{
-	LogEntry *entry = new_data(&etab);
-
-	if	(!entry)	return base;
-
-	entry->out = NewLogOutput(def ? def->path : default_path);
-	entry->flags = def ? def->flags : default_flags;
-
-	if	(!(entry->flags & (LOGFLAG_UTF8 | LOGFLAG_LATIN9)))
-		entry->flags |= encoding();
-
-	entry->next = base;
-	return entry;
-}
-
-static void del_entry (LogEntry *entry)
-{
-	if	(entry)
-	{
-		del_entry(entry->next);
-		DelLogOutput(entry->out);
-		del_data(&etab, entry);
-	}
-}
-
-/*
-Standardencoding
-*/
-
-static unsigned encoding(void)
-{
-	static unsigned enc = 0;
-
-	if	(!enc)
-	{
-		char *p = getenv("LANG");
-
-		if	(!p)	return LOGFLAG_LATIN9;
-
-		if	(strstr(p, "UTF-8"))
-			enc = LOGFLAG_UTF8;
-		else if	(strstr(p, "UTF8"))
-			enc = LOGFLAG_UTF8;
-		else if	(strstr(p, "utf8"))
-			enc = LOGFLAG_UTF8;
-		else	enc = LOGFLAG_LATIN9;
-	}
-
-	return enc;
 }

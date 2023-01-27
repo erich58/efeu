@@ -67,11 +67,11 @@ TEST_DECL(binval)
 	UnitTest_stderr("stderr");
 	echeck.stat = IO_STAT_OK;
 	EXPECT(io_getval(&echeck, 4) == 0);
-	EXPECT_CONTENT("stderr", "ERROR 21.\n");
+	EXPECT_CONTENT("stderr", "ERR ERROR 21.\n");
 
 	UnitTest_stderr("stderr");
 	EXPECT(io_putval(1u, &echeck, 4) == 0);
-	EXPECT_CONTENT("stderr", "ERROR 22.\n");
+	EXPECT_CONTENT("stderr", "ERR ERROR 22.\n");
 }
 
 TEST_DECL(llget)
@@ -107,12 +107,12 @@ TEST_DECL(llget)
 	UnitTest_stderr("stderr");
 	echeck.stat = IO_STAT_OK;
 	EXPECT(io_llget(&echeck, 4) == 0);
-	EXPECT_CONTENT("stderr", "ERROR 21.\n");
+	EXPECT_CONTENT("stderr", "ERR ERROR 21.\n");
 
 	UnitTest_stderr("stderr");
 	echeck.stat = IO_STAT_OK;
 	EXPECT(io_llput(1u, &echeck, 4) == 0);
-	EXPECT_CONTENT("stderr", "ERROR 22.\n");
+	EXPECT_CONTENT("stderr", "ERR ERROR 22.\n");
 }
 
 TEST_DECL(ullget)
@@ -145,12 +145,12 @@ TEST_DECL(ullget)
 	UnitTest_stderr("stderr");
 	echeck.stat = IO_STAT_OK;
 	EXPECT(io_ullget(&echeck, 4) == 0);
-	EXPECT_CONTENT("stderr", "ERROR 21.\n");
+	EXPECT_CONTENT("stderr", "ERR ERROR 21.\n");
 
 	UnitTest_stderr("stderr");
 	echeck.stat = IO_STAT_OK;
 	EXPECT(io_ullput(1u, &echeck, 4) == 0);
-	EXPECT_CONTENT("stderr", "ERROR 22.\n");
+	EXPECT_CONTENT("stderr", "ERR ERROR 22.\n");
 }
 
 TEST_DECL(llread)
@@ -192,12 +192,12 @@ TEST_DECL(llread)
 	UnitTest_stderr("stderr");
 	echeck.stat = IO_STAT_OK;
 	EXPECT(io_llread(&echeck, c, 1) == 0);
-	EXPECT_CONTENT("stderr", "ERROR 21.\n");
+	EXPECT_CONTENT("stderr", "ERR ERROR 21.\n");
 
 	/*
 	UnitTest_stderr("stderr");
 	EXPECT(io_llwrite(&echeck, a, 1) == 0);
-	EXPECT_CONTENT("stderr", "ERROR 22.\n");
+	EXPECT_CONTENT("stderr", "ERR ERROR 22.\n");
 	*/
 }
 
@@ -229,13 +229,13 @@ TEST_DECL(ullread)
 	UnitTest_stderr("stderr");
 	echeck.stat = IO_STAT_OK;
 	EXPECT(io_ullread(&echeck, b, 1) == 0);
-	EXPECT_CONTENT("stderr", "ERROR 21.\n");
+	EXPECT_CONTENT("stderr", "ERR ERROR 21.\n");
 
 	EXPECT(io_ullwrite(NULL, a, 1) == 0);
 	/*
 	UnitTest_stderr("stderr");
 	EXPECT(io_ullwrite(&echeck, a, 1) == 0);
-	EXPECT_CONTENT("stderr", "ERROR 22.\n");
+	EXPECT_CONTENT("stderr", "ERR ERROR 22.\n");
 	*/
 }
 
@@ -280,17 +280,17 @@ TEST_DECL(iodata)
 	UnitTest_stderr("stderr");
 	echeck.stat = IO_STAT_OK;
 	EXPECT(io_dbread(&echeck, rd1, sizeof rd1[0], 3) == 0);
-	EXPECT_CONTENT("stderr", "ERROR 21.\n");
+	EXPECT_CONTENT("stderr", "ERR ERROR 21.\n");
 
 	UnitTest_stderr("stderr");
 	echeck.stat = IO_STAT_ERR;
 	EXPECT(io_dbread(&echeck, rd1, sizeof rd1[0], 3) == 0);
-	EXPECT_CONTENT("stderr", "ERROR 21.\n");
+	EXPECT_CONTENT("stderr", "ERR ERROR 21.\n");
 
 	UnitTest_stderr("stderr");
 	echeck.stat = IO_STAT_ERR;
 	EXPECT(io_dbwrite(&echeck, wd1, sizeof wd1[0], 3) == 0);
-	EXPECT_CONTENT("stderr", "ERROR 22.\n");
+	EXPECT_CONTENT("stderr", "ERR ERROR 22.\n");
 }
 
 TEST_SUITE

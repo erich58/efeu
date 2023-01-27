@@ -66,7 +66,7 @@ LogControl *LogControl_create (const char *name)
 	lc->name = namelen ? mstrncpy(name, namelen) : NULL;
 	lc->level = level;
 	lc->sync = 0;
-	lc->entry = NULL;
+	lc->enabled = 0;
 	return rd_init(&LogControl_reftype, lc);
 }
 
@@ -88,26 +88,36 @@ char *LogLevelName (int level)
 {
 	switch (level)
 	{
-	case LOGLEVEL_ERR:	return "err";
-	case LOGLEVEL_WARN:	return "warn";
-	case LOGLEVEL_NOTE:	return "note";
-	case LOGLEVEL_INFO:	return "info";
-	case LOGLEVEL_DEBUG:	return "debug";
-	case LOGLEVEL_TRACE:	return "trace";
+	case LOGLEVEL_ERR:	return "ERR";
+	case LOGLEVEL_WARN:	return "WNG";
+	case LOGLEVEL_NOTE:	return "MSG";
+	case LOGLEVEL_INFO:	return "INF";
+	case LOGLEVEL_DEBUG:	return "DBG";
+	case LOGLEVEL_TRACE:	return "TRC";
 	default:		break;
 	}
 
-	return "none";
+	return "XXX";
 }
 
 int LogLevelIndex (const char *name)
 {
-	if	(strcmp(name, "err") == 0)	return LOGLEVEL_ERR;
-	if	(strcmp(name, "warn") == 0)	return LOGLEVEL_WARN;
-	if	(strcmp(name, "note") == 0)	return LOGLEVEL_NOTE;
-	if	(strcmp(name, "info") == 0)	return LOGLEVEL_INFO;
-	if	(strcmp(name, "debug") == 0)	return LOGLEVEL_DEBUG;
-	if	(strcmp(name, "trace") == 0)	return LOGLEVEL_TRACE;
+	static struct {
+		const char *name;
+		int level;
+	} map[] = {
+		{ "err", LOGLEVEL_ERR },
+		{ "warn", LOGLEVEL_WARN },
+		{ "note", LOGLEVEL_NOTE },
+		{ "info", LOGLEVEL_INFO },
+		{ "debug", LOGLEVEL_DEBUG },
+		{ "trace", LOGLEVEL_TRACE },
+		{ NULL, 0 },
+	};
+
+	for (int n = 0; map[n].name; ++n)
+		if (strcmp(name, map[n].name) == 0)
+			return map[n].level;
 
 	return 0;
 }

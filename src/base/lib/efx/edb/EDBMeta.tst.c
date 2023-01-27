@@ -56,7 +56,7 @@ TEST_DECL(meta)
 	UnitTest_stderr("stderr");
 	EXPECT(edb_meta(rd_refer(IN("Bad header\n")), NULL) == NULL);
 	UnitTest_stderr(NULL);
-	EXPECT_CONTENT("stderr", "test: wrong magic number.\n");
+	EXPECT_CONTENT("stderr", "ERR test: wrong magic number.\n");
 
 	UnitTest_stderr("stderr");
 	EXPECT(edb_meta(rd_refer(IN(
@@ -64,7 +64,7 @@ TEST_DECL(meta)
 		"@data\n"
 	)), NULL) == NULL);
 	UnitTest_stderr(NULL);
-	EXPECT_CONTENT("stderr", "test: data type not defined.\n");
+	EXPECT_CONTENT("stderr", "ERR test: data type not defined.\n");
 
 	UnitTest_stderr("stderr");
 	EXPECT(edb_meta(rd_refer(IN(
@@ -77,8 +77,8 @@ TEST_DECL(meta)
 	)), NULL) == NULL);
 	UnitTest_stderr(NULL);
 	EXPECT_CONTENT("stderr",
-		"test: unknown command undef.\n"
-		"test: unexpected character 'x'.\n"
+		"ERR test: unknown command undef.\n"
+		"ERR test: unexpected character 'x'.\n"
 		);
 
 	UnitTest_stderr("stderr");

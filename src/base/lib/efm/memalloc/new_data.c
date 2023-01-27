@@ -376,7 +376,7 @@ void check_data (AllocTab *tab)
 	LogUpdate(&log_debug);
 	log_lock = 0;
 
-	if	(!log_debug.entry)	return;
+	if	(!log_debug.enabled)	return;
 
 	log_lock = 1;
 

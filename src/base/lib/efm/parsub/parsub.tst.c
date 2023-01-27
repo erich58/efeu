@@ -83,7 +83,7 @@ TEST_DECL(psubarg)
 	UnitTest_stderr("stderr");
 	EXPECT(io_psubarg(io, "$*", "nw") == 0);
 	EXPECT_OUTPUT("");
-	EXPECT_CONTENT("stderr", "NOTE 61: arg1='w'.\n");
+	EXPECT_CONTENT("stderr", "MSG NOTE 61: arg1='w'.\n");
 
 	EXPECT(io_psubarg(io, "x", NULL) == 1);
 	EXPECT_OUTPUT("x");
@@ -130,10 +130,10 @@ TEST_DECL(expand)
 	PRINT_LABEL("error handling");
 	UnitTest_stderr("stderr");
 	EXPECT_MSTR(mpsubvec("|$1|", 0, argv), "||");
-	EXPECT_CONTENT("stderr", "NOTE pnoarg: fmt=\"|$1|\":3 arg=1.\n");
+	EXPECT_CONTENT("stderr", "MSG NOTE pnoarg: fmt=\"|$1|\":3 arg=1.\n");
 	UnitTest_stderr("stderr");
 	EXPECT_MSTR(mpsubvec("|$[1;%w]|", 6, argv), "|a1|");
-	EXPECT_CONTENT("stderr", "NOTE pilkey: fmt=\"|$[1;%w]|\":8 arg='w'.\n");
+	EXPECT_CONTENT("stderr", "MSG NOTE pilkey: fmt=\"|$[1;%w]|\":8 arg='w'.\n");
 }
 
 TEST_DECL(psubfilter)

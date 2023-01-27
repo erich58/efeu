@@ -9,6 +9,10 @@
 #include "utest/out.tst.h"
 #include "utest/mstr.tst.h"
 
+#define	MATCH_LOG(log, data)	\
+UnitTest_linematch(__FILE__, __LINE__, \
+UnitTest_content(log), "@fussy\n" data, # log)
+
 static LogControl *nlog = NULL;
 static LogControl *dlog = NULL;
 
@@ -47,40 +51,14 @@ static const char *fconfig(const char *fmt, const char *name)
 	return config(buf);
 }
 
-#if	0
-static const char *loginfo(LogControl *log)
-{
-	if	(!log)
-		return NULL;
-
-	LogUpdate(log);
-	IO *io = OUT();
-	LogEntry *entry = log->entry;
-
-	io_puts(log->name, io);
-	io_putc(':', io);
-
-	for (entry = log->entry; entry; entry = entry->next)
-	{
-		if	(entry->out)
-		{
-			io_putc(' ', io);
-			io_puts(entry->out->name, io);
-		}
-	}
-
-	return utest_out();
-}
-#endif
-
 TEST_DECL(setup)
 {
 	static LogControl LogData = LOG_CONTROL("X", LOGLEVEL_NOTE);
 	nlog = &LogData;
 	dlog = LogControl_create("X.debug");
 
-	EXPECT_MSTR(rd_ident(nlog), "X.note");
-	EXPECT_MSTR(rd_ident(dlog), "X.debug");
+	EXPECT_MSTR(rd_ident(nlog), "X.MSG");
+	EXPECT_MSTR(rd_ident(dlog), "X.DBG");
 
 	LogUpdate(ErrLog);
 	int sync = ErrLog->sync;
@@ -94,35 +72,50 @@ TEST_DECL(setup)
 
 TEST_DECL(LogLevel)
 {
-	int i;
-
-	for (i = 0; i <= LOGLEVEL_TRACE; i++)
-		EXPECT(LogLevelIndex(LogLevelName(i)) == i);
-
-	EXPECT_STR(LogLevelName(LOGLEVEL_ERR), "err");
-	EXPECT_STR(LogLevelName(LOGLEVEL_WARN), "warn");
-	EXPECT_STR(LogLevelName(LOGLEVEL_NOTE), "note");
-	EXPECT_STR(LogLevelName(LOGLEVEL_INFO), "info");
-	EXPECT_STR(LogLevelName(LOGLEVEL_DEBUG), "debug");
-	EXPECT_STR(LogLevelName(LOGLEVEL_TRACE), "trace");
-	EXPECT_STR(LogLevelName(0), "none");
-	EXPECT_STR(LogLevelName(99), "none");
+	EXPECT(LogLevelIndex("err") == LOGLEVEL_ERR);
+	EXPECT(LogLevelIndex("warn") == LOGLEVEL_WARN);
+	EXPECT(LogLevelIndex("note") == LOGLEVEL_NOTE);
+	EXPECT(LogLevelIndex("info") == LOGLEVEL_INFO);
+	EXPECT(LogLevelIndex("debug") == LOGLEVEL_DEBUG);
+	EXPECT(LogLevelIndex("trace") == LOGLEVEL_TRACE);
 	EXPECT(LogLevelIndex("anything") == 0);
+
+	EXPECT_STR(LogLevelName(LOGLEVEL_ERR), "ERR");
+	EXPECT_STR(LogLevelName(LOGLEVEL_WARN), "WNG");
+	EXPECT_STR(LogLevelName(LOGLEVEL_NOTE), "MSG");
+	EXPECT_STR(LogLevelName(LOGLEVEL_INFO), "INF");
+	EXPECT_STR(LogLevelName(LOGLEVEL_DEBUG), "DBG");
+	EXPECT_STR(LogLevelName(LOGLEVEL_TRACE), "TRC");
+	EXPECT_STR(LogLevelName(0), "XXX");
+	EXPECT_STR(LogLevelName(99), "XXX");
+}
+
+TEST_DECL(create)
+{
+	LogControl *ctrl;
+
+	ctrl = LogControl_create("name.info");
+	EXPECT_MSTR(rd_ident(ctrl), "name.INF");
+	rd_deref(ctrl);
+
+	ctrl = LogControl_create(NULL);
+	EXPECT_MSTR(rd_ident(ctrl), ".MSG");
+	rd_deref(ctrl);
 }
 
 TEST_DECL(LogControl)
 {
-	EXPECT_MSTR(rd_ident(ErrLog), ".err");
+	EXPECT_MSTR(rd_ident(ErrLog), ".ERR");
 	EXPECT(check_stdlog(ErrLog, LOGLEVEL_ERR, 1));
-	EXPECT_MSTR(rd_ident(WarnLog), ".warn");
+	EXPECT_MSTR(rd_ident(WarnLog), ".WNG");
 	EXPECT(check_stdlog(WarnLog, LOGLEVEL_WARN, 1));
-	EXPECT_MSTR(rd_ident(NoteLog), ".note");
+	EXPECT_MSTR(rd_ident(NoteLog), ".MSG");
 	EXPECT(check_stdlog(NoteLog, LOGLEVEL_NOTE, 1));
-	EXPECT_MSTR(rd_ident(InfoLog), ".info");
+	EXPECT_MSTR(rd_ident(InfoLog), ".INF");
 	EXPECT(check_stdlog(InfoLog, LOGLEVEL_INFO, 0));
-	EXPECT_MSTR(rd_ident(DebugLog), ".debug");
+	EXPECT_MSTR(rd_ident(DebugLog), ".DBG");
 	EXPECT(check_stdlog(DebugLog, LOGLEVEL_DEBUG, 0));
-	EXPECT_MSTR(rd_ident(TraceLog), ".trace");
+	EXPECT_MSTR(rd_ident(TraceLog), ".TRC");
 	EXPECT(check_stdlog(TraceLog, LOGLEVEL_TRACE, 0));
 
 	EXPECT_STR(config("+"), "EWNIdt-Nd");
@@ -147,6 +140,7 @@ TEST_DECL(LogControl)
 	EXPECT_STR(config("@.debug"), "EWNIDt-ND");
 }
 
+#if	1
 static int match(const char *mask, const char *content)
 {
 	if	(!mask)		return content == NULL;
@@ -182,6 +176,7 @@ static int log_check(const char *mask)
 
 	return 1;
 }
+#endif
 
 TEST_DECL(LogOutput)
 {
@@ -193,85 +188,21 @@ TEST_DECL(LogOutput)
 	EXPECT(log_open(dlog) == NULL);
 
 	EXPECT_STR(fconfig("@ 'X'.debug=%s", logfile), "EWNidt-ND");
-	EXPECT(log_check(NULL));
+	MATCH_LOG("log", "");
 	EXPECT((out = log_open(dlog)) != NULL);
 	io_puts("TEST\n", out);
 	io_close(out);
-	EXPECT(log_check("TEST\n"));
-
-	log_printf(dlog, "ABC\n");
-	EXPECT(log_check("TEST\nABC\n"));
-	EXPECT_CONTENT("log", "TEST\nABC\n");
-
-	EXPECT_STR(fconfig("@X.debug=%s[time]", logfile), "EWNidt-ND");
-	log_printf(dlog, "X\n");
-	EXPECT(log_check("####-##-## ##:##:##.###### [X.debug] X\n"));
+	MATCH_LOG("log", "\\[X] DBG TEST\n");
 
 	EXPECT_STR(fconfig("@X.debug=%s", logfile), "EWNidt-ND");
-	log_printf(dlog, "Ä\n");
-	EXPECT(log_check("Ä\n"));
-
-#if	0
-	EXPECT_STR(fconfig("@X.debug=%s[time,latin9]", logfile), "EWNidt-ND");
-	log_printf(dlog, "Ä\n");
-	EXPECT(log_check("####-##-## ##:##:##.###### [X.debug] \304\n"));
-#endif
+	log_printf(dlog, "X\n");
+	MATCH_LOG("log", "\\[X] DBG X\n");
 
 	EXPECT_STR(fconfig("@ =%s", logfile), "EWNidt-Nd");
 	log_printf(NoteLog, "NOTE\n");
 	va_list list;
 	log_vprintf(nlog, "X\n", list);
-	EXPECT(log_check("NOTE\nX\n"));
-}
-
-TEST_DECL(LogOutputStat)
-{
-	TEST_FILE("stderr.out", NULL);
-
-	TEST_FORK
-	{
-		freopen(UnitTest_tmpname("stderr.out"), "w", stderr);
-		LogOutputStat();
-
-		log_psub(ErrLog, "DEFAULT\n", NULL);
-		LogConfig("=stderr");
-		log_psub(ErrLog, "STDERR\n", NULL);
-		
-/*
-#if	HAS_SYSLOG
-		LogConfig("=syslog");
-		log_psub(ErrLog, "SYSLOG\n", NULL);
-#endif
-*/
-		LogConfig(UnitTest_tpl("='|cat > @/pipe.out'"));
-		log_psub(ErrLog, "PIPE\n", NULL);
-
-		/*
-		LogConfig("=");
-		log_psub(ErrLog, "Keine Ausgabe\n", NULL);
-		*/
-
-		LogConfig("@");
-		log_psub(ErrLog, "END\n", NULL);
-		TEST_EXIT;
-	}
-
-	CHILD_EXIT(0);
-	EXPECT_CONTENT("stderr.out",
-		"stderr 0\n"
-#if	HAS_SYSLOG
-		"syslog 0\n"
-		"syslog.err 0\n"
-		"syslog.warn 0\n"
-		"syslog.notice 0\n"
-		"syslog.info 0\n"
-		"syslog.debug 0\n"
-#endif
-		"DEFAULT\n"
-		"STDERR\n"
-		"END\n"
-		);
-	EXPECT_CONTENT("pipe.out", "PIPE\n");
+	MATCH_LOG("log", "\\MSG NOTE\n\\[X] MSG X\n");
 }
 
 TEST_DECL(log_file)
@@ -280,12 +211,17 @@ TEST_DECL(log_file)
 	FILE *file;
 	
 	EXPECT((logfile = UnitTest_tmpname("log")) != NULL);
-	EXPECT_STR(fconfig("@X.debug=%s[time]", logfile), "EWNidt-ND");
+	EXPECT_STR(fconfig("@X.debug=%s", logfile), "EWNidt-ND");
 	EXPECT((file = log_file(dlog)) != NULL);
-	fprintf(file, "TEST\n");
-	fileclose(file);
+
+	if	(file)
+	{
+		fprintf(file, "TEST\n");
+		fileclose(file);
+	}
+
 	usleep(1000); /* Wait for log child */
-	EXPECT(log_check("####-##-## ##:##:##.###### [X.debug] TEST\n"));
+	MATCH_LOG("log", "\\[X] DBG TEST\n");
 }
 
 TEST_DECL(GetFormat)
@@ -299,7 +235,9 @@ TEST_DECL(GetFormat)
 	EXPECT_STR(GetFormat("ABC"), "ABC");
 	EXPECT_STR(GetFormat("[]ABC"), "ABC");
 	EXPECT_STR(GetFormat("[ubk:123]ABC"), "ABC");
-	MATCH_CONTENT("msg.log", "key \"123\" not found");
+	MATCH_LOG("msg.log",
+		"*WNG : message catalog \"ubk\" not found\n"
+		"WNG : key \"123\" not found");
 	EXPECT_STR(GetFormat("[%res]ABC"), "ABC");
 	EXPECT_STR(GetFormat("[tst:1]ABC"), "Fehlermeldung");
 
@@ -324,19 +262,24 @@ TEST_DECL(stdlog)
 
 	TEST_FILE("log", NULL);
 	log_psub(WarnLog, NULL, NULL);
-	EXPECT_CONTENT("log", "WARNING:\n");
+	MATCH_LOG("log", "WNG WARNING:\n");
 	log_psubarg(WarnLog, "FMT", NULL, NULL, NULL);
-	EXPECT_CONTENT("log", "WARNING:\nFMT\n");
+	MATCH_LOG("log", 
+		"WNG WARNING:\n"
+		"WNG FMT\n"
+	);
 
 	TEST_FILE("log", NULL);
 	TEST_FILE("msg.log", NULL);
 	log_psub(ErrLog, "[ubk:123]", NULL);
-	EXPECT_CONTENT("log", "ERROR [ubk:123]:\n");
-	MATCH_CONTENT("msg.log", "key \"123\" not found");
+	MATCH_LOG("log", "ERR ERROR \\[ubk:123]:\n");
+	MATCH_LOG("msg.log",
+		"*WNG : message catalog \"ubk\" not found\n"
+		"WNG : key \"123\" not found\n");
 
 	TEST_FILE("log", NULL);
 	log_note(NULL, "Meldung $1", "s", "ABC");
-	EXPECT_CONTENT("log", "Meldung ABC\n");
+	MATCH_LOG("log", "MSG Meldung ABC\n");
 
 	TEST_FILE("log", NULL);
 
@@ -347,19 +290,20 @@ TEST_DECL(stdlog)
 	}
 
 	CHILD_EXIT(1);
-	EXPECT_CONTENT("log", "Fehler 42 (Text)\n");
+	MATCH_LOG("log", "ERR Fehler 42 \\(Text)\n");
 }
 
 TEST_SUITE
 {
 	TEST_RUN(LogLevel);
-	TEST_RUN(LogOutputStat);
+	TEST_RUN(create);
 	TEST_RUN(setup);
 	TEST_RUN(LogControl);
 	TEST_RUN(LogOutput);
 	TEST_RUN(log_file);
 	TEST_RUN(GetFormat);
 	TEST_RUN(stdlog);
+	TEST_EXIT;
 	rd_deref(nlog);
 	rd_deref(dlog);
 

@@ -78,7 +78,7 @@ TEST_DECL(pp_eat)
 	PPINPUT("\r\n");
 	EXPECT_OUT("\n");
 	UnitTest_stderr(NULL);
-	EXPECT_CONTENT("err", "199: CR detected\n");
+	EXPECT_CONTENT("err", "MSG 199: CR detected\n");
 }
 
 TEST_DECL(pp_get)
@@ -114,7 +114,7 @@ TEST_DECL(if0)
 		"start\n"
 	);
 	UnitTest_stderr(NULL);
-	EXPECT_CONTENT("err", "196: EOF in test block (start line 2)\n");
+	EXPECT_CONTENT("err", "ERR 196: EOF in test block (start line 2)\n");
 }
 
 TEST_DECL(unknown)
@@ -131,7 +131,7 @@ TEST_DECL(unknown)
 		"end\n"
 	);
 	UnitTest_stderr(NULL);
-	EXPECT_CONTENT("err", "191: unknown directive not_a_directive\n");
+	EXPECT_CONTENT("err", "ERR 191: unknown directive not_a_directive\n");
 }
 
 TEST_DECL(error)
@@ -216,9 +216,9 @@ TEST_DECL(block_error)
 	);
 	UnitTest_stderr(NULL);
 	EXPECT_CONTENT("err",
-		"193: ELIF unexpected.\n"
-		"194: ELSE unexpected.\n"
-		"195: ENDIF unexpected.\n"
+		"ERR 193: ELIF unexpected.\n"
+		"ERR 194: ELSE unexpected.\n"
+		"ERR 195: ENDIF unexpected.\n"
 	);
 
 	UnitTest_stderr("err");
@@ -230,7 +230,7 @@ TEST_DECL(block_error)
 	);
 	UnitTest_stderr(NULL);
 	EXPECT_CONTENT("err",
-		"193: ELIF unexpected.\n"
+		"ERR 193: ELIF unexpected.\n"
 	);
 
 	UnitTest_stderr("err");
@@ -242,7 +242,7 @@ TEST_DECL(block_error)
 	);
 	UnitTest_stderr(NULL);
 	EXPECT_CONTENT("err",
-		"194: ELSE unexpected.\n"
+		"ERR 194: ELSE unexpected.\n"
 	);
 }
 
@@ -281,14 +281,14 @@ TEST_DECL(include)
 	PPINPUT("#include <h2>\n");
 	UnitTest_stderr(NULL);
 	EXPECT_CONTENT("err",
-		"197: File h2 not found.\n"
+		"ERR 197: File h2 not found.\n"
 	);
 
 	UnitTest_stderr("err");
 	PPINPUT("#include\n");
 	UnitTest_stderr(NULL);
 	EXPECT_CONTENT("err",
-		"198: Missing file name.\n"
+		"ERR 198: Missing file name.\n"
 	);
 }
 

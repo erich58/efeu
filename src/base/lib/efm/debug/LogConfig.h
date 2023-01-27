@@ -43,30 +43,20 @@ typedef struct LogOutput LogOutput;
 
 struct LogOutput {
 	const char *name;
-	size_t refcount;
-	void (*write) (LogOutput *out, const char *msg);
+	void (*write) (LogOutput *out, const char *msg, size_t pfx, size_t len);
 	void (*close) (LogOutput *out);
-	void *data;
 };
 
-void LogOutputStat (void);
 LogOutput *NewLogOutput (const char *name);
 void DelLogOutput (LogOutput *out);
 
 typedef struct LogEntry LogEntry;
-
-#define	LOGFLAG_UTF8	0x1	/* UTF8-Konvertierung wird benötigt */
-#define	LOGFLAG_LATIN9	0x2	/* LATIN9-Konvertierung wird benötigt */
-
-#define	LOGFLAG_TIME	0x10	/* Zeitstempel wird ausgegeben */
-#define	LOGFLAG_TYPE	0x20	/* Typ der Logmeldung wird ausgegeben */
 
 struct LogEntry {
 	LogOutput *out;
 	LogEntry *next;
 	unsigned int flags;
 };
-
 
 typedef struct LogControl LogControl;
 
@@ -75,14 +65,14 @@ struct LogControl {
 	const char *name;	/* Bezeichnung */
 	unsigned int level;	/* Debug - Level */
 	unsigned int sync;	/* Synchronisation */
-	LogEntry *entry;	/* Tabelle mit Protokollausgaben */
+	unsigned int enabled;	/* Aktiviert */
 };
 
 extern RefType LogControl_reftype;
 LogControl *LogControl_create (const char *name);
 
 #define	LOG_CONTROL(name, level)	\
-	{ REFDATA(&LogControl_reftype), name, level, 0, NULL }
+	{ REFDATA(&LogControl_reftype), name, level, 0, 0 }
 
 extern LogControl *ErrLog;
 extern LogControl *WarnLog;
@@ -95,7 +85,7 @@ int LogUpdate (LogControl *ctrl);
 
 void log_error (LogControl *ctrl, const char *fmt, const char *argdef, ...);
 void log_note (LogControl *ctrl, const char *fmt, const char *argdef, ...);
-void log_write (LogControl *ctrl, const char *data, size_t pfx);
+void log_write (LogControl *ctrl, const char *data, size_t pfx, size_t len);
 
 const char *log_timestamp(const char *syncTime);
 FILE *log_file (LogControl *ctrl);

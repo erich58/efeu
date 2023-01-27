@@ -104,7 +104,7 @@ TEST_DECL(savestr_error)
 
 	CHILD_EXIT(1);
 	UnitTest_stderr(NULL);
-	EXPECT_CONTENT("stderr", "ID: output 0 \n");
+	EXPECT_CONTENT("stderr", "ERR ID: output 0 \n");
 }
 
 TEST_DECL(loadstr)

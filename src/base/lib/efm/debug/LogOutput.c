@@ -30,60 +30,51 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <syslog.h>
 
-static void write_syslog (LogOutput *out, const char *msg)
+static void slog_err (LogOutput *out, const char *msg, size_t pfx, size_t len)
 {
-	syslog((int) (size_t) out->data, "%s", msg);
+	syslog(LOG_ERR, "%s", msg + pfx);
 }
 
+static void slog_warn (LogOutput *out, const char *msg, size_t pfx, size_t len)
+{
+	syslog(LOG_WARNING, "%s", msg + pfx);
+}
+
+static void slog_note (LogOutput *out, const char *msg, size_t pfx, size_t len)
+{
+	syslog(LOG_NOTICE, "%s", msg + pfx);
+}
+
+static void slog_info (LogOutput *out, const char *msg, size_t pfx, size_t len)
+{
+	syslog(LOG_INFO, "%s", msg + pfx);
+}
+
+static void slog_debug (LogOutput *out, const char *msg, size_t pfx, size_t len)
+{
+	syslog(LOG_DEBUG, "%s", msg + pfx);
+}
 #endif
 
-static void write_stderr (LogOutput *out, const char *msg)
+static void w_stderr (LogOutput *out, const char *msg, size_t pfx, size_t len)
 {
-	fputs(msg, stderr);
+	write(2, msg, len);
 }
 
 static LogOutput logout_tab[] = {
-	{ "stderr", 0, write_stderr, NULL, NULL },
+	{ "stderr", w_stderr, NULL },
 #if	HAS_SYSLOG
-	{ "syslog", 0, write_syslog, NULL, (void *) LOG_ERR },
-	{ "syslog.err", 0, write_syslog, NULL, (void *) LOG_ERR },
-	{ "syslog.warn", 0, write_syslog, NULL, (void *) LOG_WARNING },
-	{ "syslog.notice", 0, write_syslog, NULL, (void *) LOG_NOTICE },
-	{ "syslog.info", 0, write_syslog, NULL, (void *) LOG_INFO },
-	{ "syslog.debug", 0, write_syslog, NULL, (void *) LOG_DEBUG },
+	{ "syslog", slog_err, NULL },
+	{ "syslog.err", slog_err, NULL },
+	{ "syslog.warning", slog_warn, NULL },
+	{ "syslog.notice", slog_note, NULL },
+	{ "syslog.info", slog_info, NULL},
+	{ "syslog.debug", slog_debug, NULL },
 #endif
+	{ NULL, NULL, NULL },
 };
 
-LogOutput StdLogOutput = { "stderr", 0, write_stderr, NULL, NULL };
-
-static VECBUF(buf, 32, sizeof(LogOutput *));
-
-static void setup_logout (void)
-{
-	int i;
-
-	if	(buf.used)	return;
-
-	for (i = 0; i < tabsize(logout_tab); i++)
-		*((LogOutput **) vb_next(&buf)) = logout_tab + i;
-}
-
-
-void LogOutputStat (void)
-{
-	LogOutput **ptr;
-	size_t n;
-
-	setup_logout();
-
-	for (n = buf.used, ptr = buf.data; n--; ptr++)
-	{
-		fprintf(stderr, "%s %zd\n",
-			(*ptr)->name, (*ptr)->refcount);
-	}
-}
-
-static void write_file (LogOutput *out, const char *msg)
+static void write_file (LogOutput *out, const char *msg, size_t pfx, size_t len)
 {
 	FILE *file = fopen(out->name, "a");
 
@@ -94,94 +85,35 @@ static void write_file (LogOutput *out, const char *msg)
 	}
 }
 
-static void write_pipe (LogOutput *out, const char *msg)
+static void close_file (LogOutput *out)
 {
-	if	(!out->data)
-		out->data = popen(out->name + 1, "w");
-
-	if	(out->data)
-	{
-		fputs(msg, out->data);
-		fflush(out->data);
-	}
-}
-
-static void close_pipe (LogOutput *out)
-{
-	if	(out->data)
-		pclose(out->data);
+	realloc_errcheck(out, 0);
 }
 
 LogOutput *NewLogOutput (const char *name)
 {
-	LogOutput **ptr;
 	LogOutput *out;
 	size_t n;
 
-	if	(!name)		return &StdLogOutput;
-	if	(!name[0])	return NULL;
+	if	(!name || !*name)
+		return NULL;
 
-	setup_logout();
-
-	for (n = buf.used, ptr = buf.data; n--; ptr++)
+	for (out = logout_tab; out->name; ++out)
 	{
-		if	(strcmp((*ptr)->name, name) == 0)
-		{
-			if	((*ptr)->refcount)
-			{
-				(*ptr)->refcount++;
-			}
-
-			return *ptr;
-		}
+		if	(strcmp(out->name, name) == 0)
+			return out;
 	}
 
 	n = strlen(name) + 1;
-	out = memalloc(sizeof *out + n);
+	out = realloc_errcheck(NULL, sizeof *out + n);
 	out->name = memcpy(out + 1, name, n);
-	out->refcount = 1;
-
-	if	(name[0] == '|')
-	{
-		out->write = write_pipe;
-		out->close = close_pipe;
-	}
-	else
-	{
-		out->write = write_file;
-		out->close = NULL;
-	}
-
-	out->data = NULL;
-	*((LogOutput **) vb_next(&buf)) = out;
+	out->write = write_file;
+	out->close = close_file;
 	return out;
 }
 
 void DelLogOutput (LogOutput *out)
 {
-	LogOutput **ptr;
-	size_t n;
-
-	if	(!out || !out->refcount)
-		return;
-
-	setup_logout();
-
-	for (n = 0, ptr = buf.data; n < buf.used; n++)
-	{
-		if	(ptr[n] == out)
-		{
-			if	(ptr[n]->refcount <= 1)
-			{
-				if	(ptr[n]->close)
-					ptr[n]->close(ptr[n]);
-
-				ptr = vb_delete(&buf, n, 1);
-				memfree(*ptr);
-			}
-			else	ptr[n]->refcount--;
-
-			return;
-		}
-	}
+	if	(out && out->close)
+		out->close(out);
 }

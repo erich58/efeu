@@ -76,7 +76,7 @@ EXPECT_CONTENT("log", "CmpDef: function f1() not defined for type \"int\".\n");
 
 TEST_FILE("log", NULL);
 c = CmpDef(X, "v[2]");
-EXPECT_CONTENT("log",
+MATCH_CONTENT("log",
 	"CmpDef: vector index 2 out of range.\n");
 
 // Binary cmp
@@ -85,8 +85,8 @@ c = CmpDef(FileStat, ".");
 FileStat fs1 = FileStat(".");
 FileStat fs2 = FileStat(".");
 EXPECT(c(fs1, fs2) != 0);
-EXPECT_CONTENT("log",
-	"CmpDef: function cmp() not defined for type \"FileStat\".\n");
+MATCH_CONTENT("log",
+	"CmpDef: function cmp\\() not defined for type \"FileStat\".\n");
 
 CmpDef(int[2][2], ".,(.[0],.[1][0])");
 CmpDef(struct { int x[2][2]; }, "x[1]");

@@ -105,10 +105,10 @@ CHILD_EXIT(0);
 
 UnitTest::stderr("stderr");
 message("Message $1", "Test");
-EXPECT_CONTENT("stderr", "Message Test\n");
+EXPECT_CONTENT("stderr", "MSG Message Test\n");
 UnitTest::stderr("stderr");
 ionull.debug("Debug");
-EXPECT_CONTENT("stderr", "Debug\n");
+EXPECT_CONTENT("stderr", "MSG Debug\n");
 UnitTest::stderr("stderr");
 
 TEST_FORK
@@ -118,4 +118,4 @@ TEST_FORK
 }
 
 CHILD_EXIT(1);
-EXPECT_CONTENT("stderr", "Error Test\n");
+EXPECT_CONTENT("stderr", "ERR Error Test\n");

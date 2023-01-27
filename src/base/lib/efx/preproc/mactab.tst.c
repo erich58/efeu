@@ -115,7 +115,7 @@ TEST_DECL(redef)
 	UnitTest_stderr("stderr");
 	MACDEF("A v2");
 	UnitTest_stderr(NULL);
-	EXPECT_CONTENT("stderr", "NOTE 211.\n");
+	EXPECT_CONTENT("stderr", "MSG NOTE 211.\n");
 	MACLIST("A\n");
 	MACSUB("{A}", "{v2}");
 

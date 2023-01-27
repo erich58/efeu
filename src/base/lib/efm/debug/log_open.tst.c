@@ -8,13 +8,11 @@
 
 static LogControl logctrl = LOG_CONTROL("test", LOGLEVEL_DEBUG);
 
-static void enable_log(const char *flags)
+static void enable_log()
 {
-	char buf[64];
 	TEST_FILE("log.out", NULL);
-	snprintf(buf, sizeof buf, "test.debug=%s[%s]",
-		UnitTest_tmpname("log.out"), flags);
-	LogConfig(buf);
+	log_timestamp("20200101120000");
+	LogConfig(UnitTest_tpl("test.debug=@/log.out"));
 }
 
 static const char *disable_log()
@@ -30,34 +28,31 @@ TEST_DECL(open)
 {
 	IO *io;
 	EXPECT((io = log_open(&logctrl)) == NULL);
-	enable_log("time,type");
-	log_timestamp("20200101120000");
+
+	enable_log();
 	EXPECT((io = log_open(&logctrl)) != NULL);
 	io_puts("first line\nlast line", io);
 	io_close(io);
-	disable_log();
 	MATCH_LOG(
-		"2020-01-01 12:00:00\\....... \\[test\\.debug] first line\n"
-		"2020-01-01 12:00:00\\....... \\[test\\.debug] last line\n"
+		"@fussy\n"
+		"DBG first line\n"
+		"DBG last line\n"
 		);
 	EXPECT((io = log_open(&logctrl)) == NULL);
 }
 
 TEST_DECL(write)
 {
-	enable_log("time");
-	log_timestamp("20200101120000");
-	log_write(&logctrl, "TESTDATEN\n", 0);
-	disable_log();
-	MATCH_LOG("TESTDATEN\n");
+	enable_log();
+	log_write(&logctrl, "TESTDATEN\n", 0, 10);
+	MATCH_LOG("@fussy\nTESTDATEN\n");
 }
 
 TEST_DECL(open2)
 {
 	IO *io;
 	EXPECT((io = log_open(&logctrl)) == NULL);
-	enable_log("time,type");
-	log_timestamp("20200101120000");
+	enable_log();
 	EXPECT((io = log_open(&logctrl)) != NULL);
 	io_puts("first line\n", io);
 
@@ -72,17 +67,12 @@ TEST_DECL(open2)
 	EXPECT(io_rewind(io) == EOF);
 	io_puts("\nlast line", io);
 	io_close(io);
-	disable_log();
-	/*
 	MATCH_LOG(
-		"2020-01-01 12:00:00\\....... \\[test\\.debug] first line\n"
-		"2020-01-01 12:00:00\\....... \\[test\\.debug] last line\n"
-	);
-	*/
-	MATCH_CONTENT("log.out",
-		"2020-01-01 12:00:00\\....... \\[test\\.debug] first line\n"
-		".*"
-		"2020-01-01 12:00:00\\....... \\[test\\.debug] last line\n"
+		"@fussy\n"
+		"*\\[test] DBG [0-9]+\n"
+		"*\\[test] DBG [abcdefghi ]+\n"
+		"\\[test] DBG first line\n"
+		"\\[test] DBG last line\n"
 	);
 	EXPECT((io = log_open(&logctrl)) == NULL);
 }

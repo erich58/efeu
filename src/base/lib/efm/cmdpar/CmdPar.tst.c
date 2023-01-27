@@ -23,8 +23,6 @@ TEST_DECL(setup)
 	rd_deref(par);
 
 	par = CmdPar_alloc("test");
-	TEST_FILE("error.log", NULL);
-	LogConfig(UnitTest_tpl("=@/error.log"));
 	GetFormatDisable = 1;
 }
 
@@ -82,8 +80,9 @@ static const char *eval_par(const char *first)
 			p++;
 	}
 
-	UnitTest_mkfile("error.log", "");
+	UnitTest_stderr("error.log");
 	int stat = CmdPar_eval(par, &narg, arg, 0);
+	UnitTest_stderr(NULL);
 	EXPECT_CONTENT("error.log", eval_msg);
 	eval_msg = "";
 
@@ -295,7 +294,7 @@ TEST_DECL(opt)
 	EXPECT_STR(pget("B"), "a");
 
 	pset("B", "X");
-	set_msg("NOTE [efm:31]: $0=\"\" $1=\"b\"\n");
+	set_msg("MSG NOTE [efm:31]: $0=\"\" $1=\"b\"\n");
 	EXPECT_STR(eval_par("name -b"), "ERR name");
 	EXPECT_STR(pget("B"), "X");
 
@@ -320,10 +319,10 @@ TEST_DECL(opt)
 	EXPECT_STR(eval_par("name -ca x"), "2 name x");
 	EXPECT_STR(pget("C"), "a");
 
-	set_msg("NOTE [efm:32]: $0=\"\" $1=\"x\"\n");
+	set_msg("MSG NOTE [efm:32]: $0=\"\" $1=\"x\"\n");
 	EXPECT_STR(eval_par("name -x a b"), "ERR name a b");
 
-	set_msg("NOTE [efm:33]: $0=\"\" $1=\"-o\" $2=\"-ob\" $3=\"-ocd\"\n");
+	set_msg("MSG NOTE [efm:33]: $0=\"\" $1=\"-o\" $2=\"-ob\" $3=\"-ocd\"\n");
 	EXPECT_STR(eval_par("name --o a b"), "ERR name a b");
 
 	pset("B", "X");
@@ -363,7 +362,7 @@ TEST_DECL(opt)
 	EXPECT_STR(pget("A"), "8");
 
 	pset("B", "X");
-	set_msg("NOTE [efm:34]: $0=\"\" $1=\"--obx\"\n");
+	set_msg("MSG NOTE [efm:34]: $0=\"\" $1=\"--obx\"\n");
 	EXPECT_STR(eval_par("name --obx y"), "ERR name y");
 	EXPECT_STR(pget("B"), "X");
 
@@ -409,13 +408,11 @@ TEST_DECL(xargs)
 	pset(NULL, "test");
 	pset(".synopsis.head", NULL);
 
-	UnitTest_stderr("syntax.log");
+	eval_msg = "test [ opt ] extra last\n";
 	EXPECT_STR(eval_par("name a b"), "0 name");
 	EXPECT_STR(pget("O"), "a");
 	EXPECT_STR(pget("X"), NULL);
 	EXPECT_STR(pget("L"), "b");
-	EXPECT_CONTENT("syntax.log", "test [ opt ] extra last\n");
-	UnitTest_stderr(NULL);
 
 	pset("X", NULL);
 	EXPECT_STR(eval_par("name a b c"), "1 name");
@@ -503,14 +500,12 @@ TEST_DECL(syntax)
 	pset(NULL, "test");
 	pset(".synopsis.intro", "usage: ");
 
-	UnitTest_stderr("syntax.log");
 	setenv("PATH", UnitTest_tmpname(NULL), 1);
+	eval_msg = "test [ -o ] arg\n";
 	EXPECT_STR(eval_par("name"), "0 name");
-	EXPECT_CONTENT("syntax.log", "test [ -o ] arg\n");
 
-	UnitTest_stderr("syntax.log");
+	eval_msg = "test [ -o ] arg\n";
 	EXPECT_STR(eval_par("name a b c"), "ERR name b c");
-	EXPECT_CONTENT("syntax.log", "test [ -o ] arg\n");
 
 	UnitTest_mkfile("syntax.log", NULL);
 

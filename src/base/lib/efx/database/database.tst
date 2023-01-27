@@ -20,7 +20,7 @@ TEST(bad_index)
 	TEST_FILE("efmain.msg", "35	bad index\n");
 	UnitTest::stderr("stderr");
 	db[5];
-	EXPECT_CONTENT("stderr", "bad index\n");
+	EXPECT_CONTENT("stderr", "MSG bad index\n");
 }
 
 {

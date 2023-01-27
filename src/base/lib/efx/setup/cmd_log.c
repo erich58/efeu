@@ -26,29 +26,22 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/cmdsetup.h>
 #include <EFEU/LogConfig.h>
 #include <EFEU/Op.h>
+#include <EFEU/Debug.h>
 
 extern EfiType Type_ArgList;
 
 static int lc_print (const EfiType *st, const void *data, IO *io)
 {
 	const LogControl *lc = Val_ptr(data);
-	char *delim = "=";
-	const LogEntry *entry;
-	int n;
+	int n = 0;
 
 	if	(!lc)
-	{
 		return io_printf(io, "NULL");
-	}
 		
-	n = io_printf(io, "%s.%s", lc->name, LogLevelName(lc->level));
+	if	(lc->name)
+		n += io_printf(io, "%s.", lc->name);
 
-	for (entry = lc->entry; entry; entry = entry->next)
-	{
-		n += io_printf(io, "%s%s", delim, entry->out->name);
-		delim = ",";
-	}
-
+	n += io_printf(io, "%s=%d", LogLevelName(lc->level), lc->enabled);
 	return n;
 }
 
@@ -95,17 +88,11 @@ static void f_LogConfig (EfiFunc *func, void *rval, void **arg)
 	LogConfig(Val_str(arg[0]));
 }
 
-static void f_LogOutputStat (EfiFunc *func, void *rval, void **arg)
-{
-	LogOutputStat();
-}
-
 static EfiFuncDef func_log[] = {
 	{ 0, &Type_LogControl, "LogControl (str name)", str2lc },
 	{ 0, &Type_io, "LogControl ()", lc2io },
 	{ 0, &Type_io, "LogControl::open ()", f_log_file },
 	{ 0, &Type_void, "LogConfig (str def)", f_LogConfig },
-	{ 0, &Type_void, "LogOutputStat ()", f_LogOutputStat },
 };
 
 void CmdSetup_log (void)

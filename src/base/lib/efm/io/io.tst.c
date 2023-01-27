@@ -67,7 +67,7 @@ TEST_DECL(plain)
 
 	TEST_FILE("io.note",NULL);
 	io_note(io, "$0: NOTE $1 $2", "sd", "abc", 5);
-	EXPECT_CONTENT("io.note","<io>: NOTE abc 5\n");
+	MATCH_CONTENT("io.note","<io>: NOTE abc 5\n");
 
 	TEST_FILE("io.err",NULL);
 
@@ -78,7 +78,7 @@ TEST_DECL(plain)
 	}
 
 	CHILD_EXIT(1);
-	EXPECT_CONTENT("io.err","<io>: ERROR abc 5\n");
+	MATCH_CONTENT("io.err","<io>: ERROR abc 5\n");
 
 	EXPECT(io_close(io) == EOF);
 }

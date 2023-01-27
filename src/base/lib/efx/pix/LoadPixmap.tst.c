@@ -90,13 +90,13 @@ TEST_DECL(bad_magic)
 	UnitTest_stderr("error");
 	OUTPUT(NULL);
 	UnitTest_stderr(NULL);
-	EXPECT_CONTENT("error", "invalid header\n");
+	EXPECT_CONTENT("error", "ERR invalid header\n");
 
 	INPUT("PX\n");
 	UnitTest_stderr("error");
 	OUTPUT(NULL);
 	UnitTest_stderr(NULL);
-	EXPECT_CONTENT("error", "invalid header\n");
+	EXPECT_CONTENT("error", "ERR invalid header\n");
 }
 
 TEST_DECL(pbm)
