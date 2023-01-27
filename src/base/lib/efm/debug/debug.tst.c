@@ -18,8 +18,7 @@ static LogControl *dlog = NULL;
 
 static int check_stdlog(LogControl *log, int level, int active)
 {
-	if	(LogUpdate(log) != active)
-		return 0;
+	if	(LogUpdate(log) != active)	return 0;
 
 	return (log->name == NULL && log->level == level && log->sync != 0);
 }
@@ -140,44 +139,6 @@ TEST_DECL(LogControl)
 	EXPECT_STR(config("@.debug"), "EWNIDt-ND");
 }
 
-#if	1
-static int match(const char *mask, const char *content)
-{
-	if	(!mask)		return content == NULL;
-	if	(!content)	return 0;
-
-	while (*mask != 0)
-	{
-		if	(*content == 0)
-			return 0;
-		else if	(*mask == '?')
-			;
-		else if	(*mask == '#' && isdigit(*content))
-			;
-		else if (*mask != *content)
-			return 0;
-
-		mask++;
-		content++;
-	}
-
-	return 1;
-}
-
-static int log_check(const char *mask)
-{
-	const char *content = UnitTest_content("log");
-
-	if	(!match(mask, content))
-	{
-		PRINT_STR(content);
-		return 0;
-	}
-
-	return 1;
-}
-#endif
-
 TEST_DECL(LogOutput)
 {
 	const char *logfile;
@@ -216,12 +177,16 @@ TEST_DECL(log_file)
 
 	if	(file)
 	{
-		fprintf(file, "TEST\n");
+		fprintf(file, "first line\n");
+		fprintf(file, "last line\n");
 		fileclose(file);
 	}
 
 	usleep(1000); /* Wait for log child */
-	MATCH_LOG("log", "\\[X] DBG TEST\n");
+	MATCH_LOG("log",
+		"\\[X] DBG first line\n"
+		"\\[X] DBG last line\n"
+	);
 }
 
 TEST_DECL(GetFormat)
@@ -262,17 +227,17 @@ TEST_DECL(stdlog)
 
 	TEST_FILE("log", NULL);
 	log_psub(WarnLog, NULL, NULL);
-	MATCH_LOG("log", "WNG WARNING:\n");
+	MATCH_LOG("log", " WNG\n");
 	log_psubarg(WarnLog, "FMT", NULL, NULL, NULL);
 	MATCH_LOG("log", 
-		"WNG WARNING:\n"
-		"WNG FMT\n"
+		" WNG\n"
+		" WNG FMT\n"
 	);
 
 	TEST_FILE("log", NULL);
 	TEST_FILE("msg.log", NULL);
 	log_psub(ErrLog, "[ubk:123]", NULL);
-	MATCH_LOG("log", "ERR ERROR \\[ubk:123]:\n");
+	MATCH_LOG("log", "ERR \\[ubk:123]\n");
 	MATCH_LOG("msg.log",
 		"*WNG : message catalog \"ubk\" not found\n"
 		"WNG : key \"123\" not found\n");
@@ -303,7 +268,6 @@ TEST_SUITE
 	TEST_RUN(log_file);
 	TEST_RUN(GetFormat);
 	TEST_RUN(stdlog);
-	TEST_EXIT;
 	rd_deref(nlog);
 	rd_deref(dlog);
 

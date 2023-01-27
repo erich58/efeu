@@ -51,12 +51,11 @@ const char *log_timestamp(const char *syncTime)
 	struct timeval tv;
 
 #if	HAS_GETTIMEOFDAY
-	if	(gettimeofday(&tv, NULL) != 0)
+	gettimeofday(&tv, NULL);
+#else
+	tv.tv_sec = time(NULL);
+	tv.tv_usec = 0;
 #endif
-	{
-		tv.tv_sec = time(NULL);
-		tv.tv_usec = 0;
-	}
 
 	if	(syncTime)
 	{
@@ -118,5 +117,6 @@ const char *log_timestamp(const char *syncTime)
 		t.tm_sec,
 		tv.tv_usec
 	);
+
 	return buf;
 }

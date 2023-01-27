@@ -35,13 +35,6 @@ static void pconfig(const char *str)
 
 #define	MAX_NARG	20
 
-static const char *eval_msg = "";
-
-static void set_msg(const char *msg)
-{
-	eval_msg = msg;
-}
-
 static const char *eval_par(const char *first)
 {
 	static STRING_DECL(argbuf);
@@ -83,8 +76,6 @@ static const char *eval_par(const char *first)
 	UnitTest_stderr("error.log");
 	int stat = CmdPar_eval(par, &narg, arg, 0);
 	UnitTest_stderr(NULL);
-	EXPECT_CONTENT("error.log", eval_msg);
-	eval_msg = "";
 
 	IO *io = OUT();
 
@@ -294,8 +285,8 @@ TEST_DECL(opt)
 	EXPECT_STR(pget("B"), "a");
 
 	pset("B", "X");
-	set_msg("MSG NOTE [efm:31]: $0=\"\" $1=\"b\"\n");
 	EXPECT_STR(eval_par("name -b"), "ERR name");
+	EXPECT_CONTENT("error.log", "MSG [efm:31] $0=\"\" $1=\"b\"\n");
 	EXPECT_STR(pget("B"), "X");
 
 	pset("C", "X");
@@ -319,11 +310,12 @@ TEST_DECL(opt)
 	EXPECT_STR(eval_par("name -ca x"), "2 name x");
 	EXPECT_STR(pget("C"), "a");
 
-	set_msg("MSG NOTE [efm:32]: $0=\"\" $1=\"x\"\n");
 	EXPECT_STR(eval_par("name -x a b"), "ERR name a b");
+	EXPECT_CONTENT("error.log", "MSG [efm:32] $0=\"\" $1=\"x\"\n");
 
-	set_msg("MSG NOTE [efm:33]: $0=\"\" $1=\"-o\" $2=\"-ob\" $3=\"-ocd\"\n");
 	EXPECT_STR(eval_par("name --o a b"), "ERR name a b");
+	EXPECT_CONTENT("error.log",
+		"MSG [efm:33] $0=\"\" $1=\"-o\" $2=\"-ob\" $3=\"-ocd\"\n");
 
 	pset("B", "X");
 	EXPECT_STR(eval_par("name --ob a x"), "2 name x");
@@ -362,8 +354,8 @@ TEST_DECL(opt)
 	EXPECT_STR(pget("A"), "8");
 
 	pset("B", "X");
-	set_msg("MSG NOTE [efm:34]: $0=\"\" $1=\"--obx\"\n");
 	EXPECT_STR(eval_par("name --obx y"), "ERR name y");
+	EXPECT_CONTENT("error.log", "MSG [efm:34] $0=\"\" $1=\"--obx\"\n");
 	EXPECT_STR(pget("B"), "X");
 
 	CmdPar_clean(par);
@@ -408,14 +400,15 @@ TEST_DECL(xargs)
 	pset(NULL, "test");
 	pset(".synopsis.head", NULL);
 
-	eval_msg = "test [ opt ] extra last\n";
 	EXPECT_STR(eval_par("name a b"), "0 name");
+	EXPECT_CONTENT("error.log", "test [ opt ] extra last\n");
 	EXPECT_STR(pget("O"), "a");
 	EXPECT_STR(pget("X"), NULL);
 	EXPECT_STR(pget("L"), "b");
 
 	pset("X", NULL);
 	EXPECT_STR(eval_par("name a b c"), "1 name");
+	EXPECT_CONTENT("error.log", "");
 	EXPECT_STR(pget("O"), "a");
 	EXPECT_STR(pget("X"), "b");
 	EXPECT_STR(pget("L"), "c");
@@ -501,11 +494,11 @@ TEST_DECL(syntax)
 	pset(".synopsis.intro", "usage: ");
 
 	setenv("PATH", UnitTest_tmpname(NULL), 1);
-	eval_msg = "test [ -o ] arg\n";
 	EXPECT_STR(eval_par("name"), "0 name");
+	EXPECT_CONTENT("error.log", "test [ -o ] arg\n");
 
-	eval_msg = "test [ -o ] arg\n";
 	EXPECT_STR(eval_par("name a b c"), "ERR name b c");
+	EXPECT_CONTENT("error.log", "test [ -o ] arg\n");
 
 	UnitTest_mkfile("syntax.log", NULL);
 

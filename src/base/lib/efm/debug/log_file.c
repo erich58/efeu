@@ -39,9 +39,7 @@ FILE *log_file (LogControl *ctrl)
 	pid_t pid;
 	int last, c;
 
-	out = log_open(ctrl);
-
-	if	(!out)	return NULL;
+	if	(!LogUpdate(ctrl))	return NULL;
 
 	pipe(fd);
 	pid = fork();
@@ -52,7 +50,6 @@ FILE *log_file (LogControl *ctrl)
 	{
 		int status;
 
-		io_close(out);
 		close(fd[0]);
 		file = fdopen(fd[1], "w");
 		setvbuf(file, NULL, _IOLBF, 0);
@@ -76,6 +73,7 @@ FILE *log_file (LogControl *ctrl)
 	dup2(fd[0], 0);
 	close(fd[0]);
 	close(fd[1]);
+	out = log_open(ctrl);
 
 	for (last = 0; (c = getchar()) != EOF; last = c)
 	{

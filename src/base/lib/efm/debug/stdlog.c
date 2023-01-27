@@ -45,24 +45,8 @@ void log_psub (LogControl *ctrl, const char *fmt, ArgList *args)
 
 	if	(!(xfmt = GetFormat(fmt)))
 	{
-		switch (ctrl->level)
-		{
-		case LOGLEVEL_ERR:	io_puts("ERROR", io); break;
-		case LOGLEVEL_WARN:	io_puts("WARNING", io); break;
-		case LOGLEVEL_NOTE:	io_puts("NOTE", io); break;
-		case LOGLEVEL_INFO:	io_puts("INFO", io); break;
-		case LOGLEVEL_DEBUG:	io_puts("DEBUG", io); break;
-		case LOGLEVEL_TRACE:	io_puts("TRACE", io); break;
-		default:		io_puts("MESSAGE", io); break;
-		}
-
 		if	(fmt && *fmt)
-		{
-			io_putc(' ', io);
 			io_puts(fmt, io);
-		}
-
-		io_putc(':', io);
 
 		if	(args && args->dim)
 		{

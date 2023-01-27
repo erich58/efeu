@@ -42,6 +42,13 @@ typedef struct {
 static int log_put (int c, IO *io);
 static int log_ctrl (IO *io, int req, va_list list);
 
+static void log_start(LOGDATA *log)
+{
+	log->pos += snprintf(log->data + log->pos,
+		sizeof log->data - log->pos, "%s ",
+		LogLevelName(log->ctrl->level));
+}
+
 IO *log_open (LogControl *ctrl)
 {
 	LOGDATA *log;
@@ -58,6 +65,7 @@ IO *log_open (LogControl *ctrl)
 		log->offset += snprintf(log->data + log->offset,
 			sizeof log->data - log->offset, "[%s] ", ctrl->name);
 	log->pos = log->offset;
+	log_start(log);
 
 	io = io_alloc();
 	io->put = log_put;
@@ -86,9 +94,7 @@ static int log_put (int c, IO *io)
 
 	if	(log->pos == log->offset)
 	{
-		log->pos += snprintf(log->data + log->offset,
-			sizeof log->data - log->offset, "%s ",
-			LogLevelName(log->ctrl->level));
+		log_start(log);
 	}
 	else if	(log->pos >= MSG_LIM2)
 	{
