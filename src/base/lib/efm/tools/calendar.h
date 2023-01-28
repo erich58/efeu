@@ -52,6 +52,7 @@ int TodayIndex (void);
 
 CalInfo *Calendar (int idx, CalInfo *buf);
 CalInfo *tmCalendar (struct tm *tm, CalInfo *buf);
+struct tm *CalInfo2tm(CalInfo *info, struct tm *buf);
 
 int PrintCalendar (IO *io, const char *fmt, int idx);
 int PrintCalInfo (IO *io, const char *fmt, CalInfo *buf);
@@ -84,6 +85,7 @@ typedef struct {
 CalInfo *TimeCalendar (CalTimeIndex time, CalInfo *buf);
 int PrintTime (IO *io, const char *fmt, CalTimeIndex time);
 char *Time2str (const char *fmt, CalTimeIndex idx);
+struct tm *Time2tm (CalTimeIndex idx, struct tm *buf);
 CalTimeIndex CurrentTime (void);
 CalTimeIndex str2Time (const char *str, char **endptr, int flag);
 CalTimeIndex Time_offset (CalTimeIndex time, int s);

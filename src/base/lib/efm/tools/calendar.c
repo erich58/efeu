@@ -220,6 +220,38 @@ CalInfo *tmCalendar (struct tm *tm, CalInfo *buf)
 	return buf;
 }
 
+struct tm *CalInfo2tm (CalInfo *info, struct tm *tm)
+{
+	static struct tm tm_buf;
+
+	if	(!tm)	tm = &tm_buf;
+
+	if	(info && info->year >= 1970)
+	{
+		tm->tm_year = info->year - 1900;
+		tm->tm_wday = info->wday;
+		tm->tm_yday = info->yday - 1;
+		tm->tm_mon = info->month - 1;
+		tm->tm_mday = info->day;
+		tm->tm_hour = info->hour;
+		tm->tm_min = info->min;
+		tm->tm_sec = info->sec;
+	}
+	else
+	{
+		time_t t = 0;
+		gmtime_r(&t, tm);
+	}
+
+	return tm;
+}
+
+struct tm *Time2tm (CalTimeIndex t, struct tm *tm)
+{
+	CalInfo buf;
+	return CalInfo2tm(TimeCalendar(t, &buf), tm);
+}
+
 /*	Datumshilfsfunktionen
 */
 
