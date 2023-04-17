@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdint.h>
+#include <unistd.h>
 
 typedef struct {
 	char *data;
@@ -13,7 +14,12 @@ typedef struct {
 	size_t pos;
 } UnitTestString;
 
+typedef struct {
+	FILE *file;
+} UnitTestIO;
+
 #define	STRING_DECL(name)	UnitTestString name = { NULL, 0, 0, 0, }
+#define	TEST_IO_DECL(name)	UnitTestIO name = { NULL }
 
 void UnitTest_clear(UnitTestString *ustr);
 void UnitTest_free(UnitTestString *ustr);
@@ -31,6 +37,15 @@ const char *UnitTest_qsplit(UnitTestString *ustr, const char *str);
 size_t UnitTest_lsplit(UnitTestString *ustr, const char *str);
 const char *UnitTest_str(UnitTestString *ustr);
 char *UnitTest_mstr(UnitTestString *ustr);
+
+FILE *UnitTest_file(UnitTestIO *io);
+int UnitTest_fd(UnitTestIO *io);
+FILE *UnitTest_fopen(UnitTestIO *io, const char *mode);
+int UnitTest_open(UnitTestIO *io);
+void UnitTest_rewind(UnitTestIO *io);
+ssize_t UnitTest_append(UnitTestIO *io, const char *data, size_t size);
+ssize_t UnitTest_init(UnitTestIO *io, const char *data, size_t size);
+const char *UnitTest_data(UnitTestIO *io);
 
 const char *UnitTest_cstr(const char *str);
 const char *UnitTest_qstr(const char *str);
