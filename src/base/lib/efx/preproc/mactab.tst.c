@@ -105,7 +105,7 @@ TEST_DECL(macdef)
 
 TEST_DECL(redef)
 {
-	SetApplPath(UnitTest_tmpname(NULL));
+	SetApplPath(UnitTest_tmp(NULL));
 	TEST_FILE("preproc.msg", "211	NOTE 211.\n");
 
 	MACDEF("A v1");

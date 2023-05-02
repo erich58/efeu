@@ -14,10 +14,10 @@ TEST_SUITE
 	EXPECT(DatPool_add(d, "xyz", 4) == 13);
 	EXPECT_STR(DatPool_get(d, 0), "abc0123456789xyz");
 	EXPECT_MSTR(rd_ident(d), "0@0 + 17@20/4");
-	DatPool_create(d, UnitTest_tmpname("data"));
+	DatPool_create(d, UnitTest_tmp("data"));
 	rd_deref(d);
 
-	d = DatPool_map(UnitTest_tmpname("data"));
+	d = DatPool_map(UnitTest_tmp("data"));
 	EXPECT_MSTR(rd_ident(d), "0@17 + 0@0/0");
 	EXPECT(DatPool_add(d, "ABC", 4) == 17);
 	EXPECT_STR(DatPool_get(d, 0), "abc0123456789xyz");
@@ -31,7 +31,7 @@ TEST_SUITE
 	EXPECT_STR(DatPool_get(d, 20), "");
 	EXPECT_STR(DatPool_get(d, 21), NULL);
 	EXPECT_STR(DatPool_get(NULL, 0), NULL);
-	DatPool_create(d, UnitTest_tmpname("data.tmp"));
+	DatPool_create(d, UnitTest_tmp("data.tmp"));
 	rd_deref(d);
 
 	system(UnitTest_tpl("mv @/data.tmp @/data"));
@@ -40,7 +40,7 @@ TEST_SUITE
 	EXPECT_STR(p + 8, "abc0123456789xyz");
 	EXPECT_STR(p + 8 + 17, "ABC");
 
-	d = DatPool_map(UnitTest_tmpname("data"));
+	d = DatPool_map(UnitTest_tmp("data"));
 	EXPECT_MSTR(rd_ident(d), "0@21 + 0@0/0");
 	rd_deref(d);
 	CLEANUP_MSTR;

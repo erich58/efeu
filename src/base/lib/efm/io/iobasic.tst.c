@@ -43,8 +43,8 @@ TEST_DECL(stream)
 	int wd[2] = { 0x31323334, 0x61626364 };
 	int rd[2] = { 0, 0 };
 
-	EXPECT((io = io_fopen(UnitTest_tmpname("data"), "w+")) != NULL);
-	EXPECT_MSTR(rd_ident(io), UnitTest_tmpname("data"));
+	EXPECT((io = io_fopen(UnitTest_tmp("data"), "w+")) != NULL);
+	EXPECT_MSTR(rd_ident(io), UnitTest_tmp("data"));
 	EXPECT(io_putc('T', io) == 'T');
 	EXPECT(io_dbwrite(io, wd, sizeof wd[0], 2) == sizeof wd);
 	EXPECT(io_rewind(io) == 0);
@@ -83,7 +83,7 @@ TEST_DECL(stream)
 	EXPECT_MSTR(rd_ident(io), "<stdout>");
 	EXPECT(io_close(io) == 0);
 
-	EXPECT((io = io_findopen(UnitTest_tmpname(NULL),
+	EXPECT((io = io_findopen(UnitTest_tmp(NULL),
 		"data", NULL, "r")) != NULL);
 	EXPECT(io_close(io) == 0);
 }
@@ -167,7 +167,7 @@ TEST_DECL(bigbuf)
 	IO *io;
 	char buf[32];
 
-	EXPECT((io = io_bigbuf(4, UnitTest_tmpname("buf_"))) != NULL);
+	EXPECT((io = io_bigbuf(4, UnitTest_tmp("buf_"))) != NULL);
 	PRINT_MSTR(rd_ident(io));
 	EXPECT(io_puts("abcd1234567", io) == 11);
 	MATCH_MSTR(rd_ident(io), "bigbuf[(].*[)] 2[+]3 2[+]0");
@@ -185,7 +185,7 @@ TEST_DECL(copy)
 	IO *out;
 	PRINT_LABEL("io_copy");
 	EXPECT_PTR(in = io_string(str, NULL));
-	EXPECT_PTR(out = io_fopen(UnitTest_tmpname("data"), "w"));
+	EXPECT_PTR(out = io_fopen(UnitTest_tmp("data"), "w"));
 	EXPECT(io_copy(in, out) == strlen(str));
 	EXPECT(io_close(in) == 0);
 	EXPECT(io_close(out) == 0);
@@ -193,7 +193,7 @@ TEST_DECL(copy)
 
 	PRINT_LABEL("io_xcopy");
 	EXPECT_PTR(in = io_string("a\\n\\t\\;b\nc;", NULL));
-	EXPECT_PTR(out = io_fopen(UnitTest_tmpname("data"), "w"));
+	EXPECT_PTR(out = io_fopen(UnitTest_tmp("data"), "w"));
 	EXPECT(io_xcopy(in, out, ";\n") == 5);
 	EXPECT(io_getc(in) == '\n');
 	EXPECT(io_xcopy(in, out, ";\n") == 1);
@@ -203,7 +203,7 @@ TEST_DECL(copy)
 
 	PRINT_LABEL("io_mcopy");
 	EXPECT_PTR(in = io_string("a\\\n\\b\\;\\\n;x\\", NULL));
-	EXPECT_PTR(out = io_fopen(UnitTest_tmpname("data"), "w"));
+	EXPECT_PTR(out = io_fopen(UnitTest_tmp("data"), "w"));
 	EXPECT(io_mcopy(in, out, ";\n") == 4);
 	EXPECT(io_getc(in) == ';');
 	EXPECT(io_mcopy(in, out, ";\n") == 2);

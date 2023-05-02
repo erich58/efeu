@@ -106,10 +106,10 @@ TEST_DECL(Resource)
 
 	TEST_FORK
 	{
-		char *cmd = mstrcpy(UnitTest_tmpname("dummy"));
+		char *cmd = mstrcpy(UnitTest_tmp("dummy"));
 		char *args[] = { cmd, "-o", "arg", NULL };
 		int nargs = 3;
-		SetApplPath(UnitTest_tmpname(NULL));
+		SetApplPath(UnitTest_tmp(NULL));
 		ParseCommand(&nargs, args);
 		EXPECT(nargs == 2);
 		EXPECT_STR(GetResource("Option", NULL), "TEST");
@@ -121,12 +121,12 @@ TEST_DECL(Resource)
 
 	TEST_FORK
 	{
-		char *cmd = mstrcpy(UnitTest_tmpname("dummy"));
+		char *cmd = mstrcpy(UnitTest_tmp("dummy"));
 		char *args[] = { cmd, "-x", "bad", NULL };
 		int nargs = 3;
 		setenv("LANG", "C", 1);
-		freopen(UnitTest_tmpname("err.log"), "w", stderr);
-		SetApplPath(UnitTest_tmpname(NULL));
+		freopen(UnitTest_tmp("err.log"), "w", stderr);
+		SetApplPath(UnitTest_tmp(NULL));
 		ParseCommand(&nargs, args);
 		TEST_EXIT;
 	}

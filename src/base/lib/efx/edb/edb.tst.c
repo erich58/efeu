@@ -5,7 +5,7 @@
 
 static void f_TMP (EfiFunc *func, void *rval, void **arg)
 {
-	Val_str(rval) = mstrcpy(UnitTest_tmpname(Val_str(arg[0])));
+	Val_str(rval) = mstrcpy(UnitTest_tmp(Val_str(arg[0])));
 }
 
 static EfiFuncDef func[] = {
@@ -244,7 +244,7 @@ TEST_DECL(header)
 TEST_DECL(tmpload)
 {
 	TEST_FILE("data", "EDB 1.0\nint\n@data plain\n10\n20\n");
-	EDB *edb = edb_fopen(NULL, UnitTest_tmpname("data"));
+	EDB *edb = edb_fopen(NULL, UnitTest_tmp("data"));
 	EXPECT(Val_int(edb_read(edb)) == 10);
 	edb_unread(edb);
 	edb_tmpload(edb);

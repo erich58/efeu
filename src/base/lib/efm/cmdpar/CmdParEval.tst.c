@@ -100,17 +100,17 @@ TEST_DECL(debug)
 		pset("var", "value");
 		pset("x", "var");
 
-		ioerr = io_fopen(UnitTest_tmpname("debug/test"), "w");
+		ioerr = io_fopen(UnitTest_tmp("debug/test"), "w");
 		EXPECT(pcmd("test", "var", "{}", "arg") == 0);
 		io_close(ioerr);
 
-		ioerr = io_fopen(UnitTest_tmpname("debug/message"), "w");
+		ioerr = io_fopen(UnitTest_tmp("debug/message"), "w");
 		EXPECT(pcmd("message", "var",
 			"{var} {} {x} {{x}}", "arg") == 0);
 		io_close(ioerr);
 
 		AddInfo(NULL, "info", "Label", NULL, "Desc of $1:$2\n");
-		iostd = io_fopen(UnitTest_tmpname("debug/info"), "w");
+		iostd = io_fopen(UnitTest_tmp("debug/info"), "w");
 		EXPECT(pcmd("info", NULL, "dump:info", NULL) == 0);
 		io_close(iostd);
 		TEST_EXIT;
@@ -130,21 +130,21 @@ TEST_DECL(doc)
 	TEST_FORK
 	{
 		// disable efeudoc
-		setenv("PATH", UnitTest_tmpname(NULL), 1);
+		setenv("PATH", UnitTest_tmp(NULL), 1);
 		pset(NULL, "CommandName");
 
-		ioerr = io_fopen(UnitTest_tmpname("doc/usage"), "w");
+		ioerr = io_fopen(UnitTest_tmp("doc/usage"), "w");
 		pcmd("usage", NULL, "@name", NULL);
 		io_close(ioerr);
 
-		iostd = io_fopen(UnitTest_tmpname("doc/man1"), "w");
+		iostd = io_fopen(UnitTest_tmp("doc/man1"), "w");
 		pcmd("manpage", NULL, NULL, "@name");
 		io_close(iostd);
 
 		pset(".manpage.fmt", "MANPAGE\n");
-		pcmd("manpage", NULL, "{}", UnitTest_tmpname("doc/man2"));
+		pcmd("manpage", NULL, "{}", UnitTest_tmp("doc/man2"));
 
-		iostd = io_fopen(UnitTest_tmpname("doc/man3"), "w");
+		iostd = io_fopen(UnitTest_tmp("doc/man3"), "w");
 		pcmd("manpage", NULL, "arg", "@xxx $$\n");
 		io_close(iostd);
 
@@ -162,14 +162,14 @@ TEST_DECL(config)
 {
 	TEST_FILE("config.cnf", "A = V1\nB = V2\n");
 	EXPECT(pcmd("config", NULL, "{}",
-		UnitTest_tmpname("config.cnf")) == 0);
+		UnitTest_tmp("config.cnf")) == 0);
 	EXPECT_STR(pget("A"), "V1");
 	EXPECT_STR(pget("B"), "V2");
 
 	TEST_FORK
 	{
-		freopen(UnitTest_tmpname("config.err"), "w", stderr);
-		pcmd("config", NULL, "{}", UnitTest_tmpname("undefined.cnf"));
+		freopen(UnitTest_tmp("config.err"), "w", stderr);
+		pcmd("config", NULL, "{}", UnitTest_tmp("undefined.cnf"));
 		TEST_EXIT;
 	}
 

@@ -108,7 +108,7 @@ int UnitTest_reopen(int fd, const char *name)
 	const char *fname = qualified_name(name);
 
 	if	(!fname)
-		fname = UnitTest_tmpname(name);
+		fname = UnitTest_tmp(name);
 
 	int fdnew = creat(fname, 0644);
 
@@ -139,7 +139,7 @@ int UnitTest_stdin(const char *name, const char *content)
 			;
 		else if	(content)
 			fname = UnitTest_mkfile(name, content);
-		else	fname = UnitTest_tmpname(name);
+		else	fname = UnitTest_tmp(name);
 
 		int fd = open(fname, O_RDONLY); 
 

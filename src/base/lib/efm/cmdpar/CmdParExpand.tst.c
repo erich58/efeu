@@ -161,7 +161,7 @@ TEST_SUITE
 
 	TEST_FORK
 	{
-		SetApplPath(UnitTest_tmpname(NULL));
+		SetApplPath(UnitTest_tmp(NULL));
 		EXPECT_STR(CmdPar_hpath(&par),
 			UnitTest_tpl("@/CommandName.hlp"));
 		CmdPar_manpage(&par, OUT());

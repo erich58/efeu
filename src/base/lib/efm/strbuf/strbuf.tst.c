@@ -305,7 +305,7 @@ TEST_DECL(read)
 {
 	int fd;
 	TEST_FILE("data", "Testdaten\n");
-	fd = open(UnitTest_tmpname("data"), O_RDONLY);
+	fd = open(UnitTest_tmp("data"), O_RDONLY);
 	EXPECT(fd >= 0);
 	EXPECT_STR(sb_read(fd, NULL), "Testdaten\n");
 	close(fd);

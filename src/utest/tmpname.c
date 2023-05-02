@@ -83,7 +83,7 @@ const char *UnitTest_tpl(const char *tpl)
 	return NULL;
 }
 
-const char *UnitTest_tmpname(const char *name)
+const char *UnitTest_tmp(const char *name)
 {
 	create_tmpdir();
 
@@ -170,7 +170,7 @@ const char *UnitTest_content(const char *name)
 	undefined = 1;
 	buf.size = 0;
 
-	const char *path = UnitTest_tmpname(name);
+	const char *path = UnitTest_tmp(name);
 	FILE *file = fopen(path, "r");
 	
 	if	(file)

@@ -5,7 +5,7 @@
 TEST_DECL(setup)
 {
 	SetProgName("ID");
-	SetApplPath(UnitTest_tmpname(NULL));
+	SetApplPath(UnitTest_tmp(NULL));
 	TEST_FILE("ftools.msg",
 		"61	NOTE 61: arg1=$1.\n"
 		"write	$!: $0 $# $*\n"
@@ -14,7 +14,7 @@ TEST_DECL(setup)
 
 TEST_DECL(newtemp)
 {
-	char *tmp = mstrcpy(UnitTest_tmpname(NULL));
+	char *tmp = mstrcpy(UnitTest_tmp(NULL));
 	char *f1, *f2, *d;
 	MATCH_STR((f1 = newtemp(tmp, "TMP_")), "/TMP_[0-9]*a");
 	MATCH_STR((d = newtempdir(tmp, "TMP_")), "/TMP_[0-9]*b");
@@ -55,7 +55,7 @@ TEST_DECL(rfread)
 	char buf[32];
 	FILE *file;
 	TEST_FILE("data", "ABCD1234XYZW");
-	file = fopen(UnitTest_tmpname("data"), "r+b");
+	file = fopen(UnitTest_tmp("data"), "r+b");
 	EXPECT(rfread(buf, 4, 3, file) == 3);
 	buf[12] = 0;
 	EXPECT_STR(buf, "DCBA4321WZYX");
@@ -73,7 +73,7 @@ TEST_DECL(rfread)
 
 TEST_DECL(getbyte)
 {
-	FILE *file = fopen(UnitTest_tmpname("data"), "w+");
+	FILE *file = fopen(UnitTest_tmp("data"), "w+");
 	TEST_EXPR(put1byte(0xA1, file));
 	TEST_EXPR(put2byte(0xB1B2, file));
 	TEST_EXPR(put3byte(0xC1C2C3, file));
@@ -109,7 +109,7 @@ TEST_DECL(savestr_error)
 
 TEST_DECL(loadstr)
 {
-	FILE *file = fopen(UnitTest_tmpname("data"), "w+");
+	FILE *file = fopen(UnitTest_tmp("data"), "w+");
 
 	savestr(NULL, file);
 	savestr("", file);
@@ -128,7 +128,7 @@ TEST_DECL(dbdata)
 {
 	int wd1[3] = { 0, 12345, ~0 };
 	int rd1[3] = { 0, 0, 0 };
-	FILE *file = fopen(UnitTest_tmpname("data"), "w+");
+	FILE *file = fopen(UnitTest_tmp("data"), "w+");
 	EXPECT(dbwrite(file, wd1, sizeof wd1[0], 3) == 3);
 	fflush(file);
 	rewind(file);
@@ -138,7 +138,7 @@ TEST_DECL(dbdata)
 
 	int wd[4] = { 0201, 0202, 0203, 0204 };
 	int rd[4] = { 0, 0, 0, 0 };
-	file = fopen(UnitTest_tmpname("data"), "w+");
+	file = fopen(UnitTest_tmp("data"), "w+");
 	EXPECT(dbwrite(file, wd, sizeof wd[0], 4) == 4);
 	fflush(file);
 	rewind(file);
@@ -150,7 +150,7 @@ TEST_DECL(dbdata)
 TEST_DECL(fpeek)
 {
 	TEST_FILE("data", "ab");
-	FILE *file = fopen(UnitTest_tmpname("data"), "r");
+	FILE *file = fopen(UnitTest_tmp("data"), "r");
 	EXPECT(fpeek(file) == 'a');
 	EXPECT(getc(file) == 'a');
 	EXPECT(getc(file) == 'b');

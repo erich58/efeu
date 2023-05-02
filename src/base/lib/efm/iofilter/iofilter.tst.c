@@ -15,13 +15,13 @@ TEST_DECL(diropen)
 	TEST_FORK
 	{
 		UnitTest_stderr("");
-		diropen(UnitTest_tmpname("not_a_dir"), "main.txt");
+		diropen(UnitTest_tmp("not_a_dir"), "main.txt");
 		exit(0);
 	}
 
 	CHILD_EXIT(1);
 
-	EXPECT_PTR(io = diropen(UnitTest_tmpname(NULL), "main.txt"));
+	EXPECT_PTR(io = diropen(UnitTest_tmp(NULL), "main.txt"));
 	EXPECT(io_ctrl(io, 0) == EOF);
 	EXPECT(io_rewind(io) == EOF);
 
@@ -51,7 +51,7 @@ TEST_DECL(diropen)
 	);
 
 	MakeDepend = 1;
-	EXPECT_PTR(io = diropen(UnitTest_tmpname(NULL), "test.txt"));
+	EXPECT_PTR(io = diropen(UnitTest_tmp(NULL), "test.txt"));
 	io_puts("Test\n", io);
 	EXPECT(io_close(io) == 0);
 	EXPECT_CONTENT("test.txt", NULL);
@@ -111,13 +111,13 @@ TEST_DECL(lnum)
 TEST_DECL(lmark)
 {
 	IO *io;
-	EXPECT_PTR(io = io_fopen(UnitTest_tmpname("data"), "w"));
+	EXPECT_PTR(io = io_fopen(UnitTest_tmp("data"), "w"));
 	EXPECT_PTR(io = io_lmark(io, "<", ">", 1));
 	io_puts("line1\n\nline2\n", io);
 	EXPECT(io_close(io) == 0);
 	EXPECT_CONTENT("data", "<line1>\n<>\n<line2>\n");
 
-	EXPECT_PTR(io = io_fopen(UnitTest_tmpname("data"), "w+"));
+	EXPECT_PTR(io = io_fopen(UnitTest_tmp("data"), "w+"));
 	EXPECT_PTR(io = io_lmark(io, "%d: ", NULL, 0));
 	MATCH_MSTR(rd_ident(io), "lmark(.*/data)");
 	io_puts("line1\n\nline2\n", io);
@@ -147,7 +147,7 @@ TEST_DECL(count)
 TEST_DECL(indent)
 {
 	IO *io;
-	EXPECT_PTR(io = io_fopen(UnitTest_tmpname("data"), "w"));
+	EXPECT_PTR(io = io_fopen(UnitTest_tmp("data"), "w"));
 	EXPECT_PTR(io = io_indent(io, '=', 2));
 	MATCH_MSTR(rd_ident(io), "indent(.*/data)");
 	EXPECT(io_ctrl(io, 0) == EOF);
@@ -175,7 +175,7 @@ TEST_DECL(divide)
 {
 	IO *base;
 	IO *sub;
-	EXPECT_PTR(base = io_fopen(UnitTest_tmpname("data"), "w"));
+	EXPECT_PTR(base = io_fopen(UnitTest_tmp("data"), "w"));
 	EXPECT_PTR(sub = io_divide(base, 0));
 	MATCH_MSTR(rd_ident(sub), "divide(.*/data)");
 	EXPECT(io_ctrl(sub, 0) == EOF);
@@ -194,7 +194,7 @@ TEST_DECL(divide)
 TEST_DECL(crlf)
 {
 	IO *io;
-	EXPECT_PTR(io = io_fopen(UnitTest_tmpname("data"), "w"));
+	EXPECT_PTR(io = io_fopen(UnitTest_tmp("data"), "w"));
 	EXPECT_PTR(io = io_crlf(io));
 	EXPECT(io_ctrl(io, 0) == EOF);
 	io_puts("abc\n\nxyz\n",io);
@@ -207,7 +207,7 @@ TEST_DECL(latin9)
 {
 	IO *io;
 	EXPECT(out_latin9(NULL) == NULL);
-	EXPECT_PTR(io = io_fopen(UnitTest_tmpname("data"), "w"));
+	EXPECT_PTR(io = io_fopen(UnitTest_tmp("data"), "w"));
 	EXPECT_PTR(io = out_latin9(io));
 	MATCH_MSTR(rd_ident(io), "latin9(.*/data)");
 	EXPECT(io_ctrl(io, 0) == EOF);
@@ -229,7 +229,7 @@ TEST_DECL(utf8)
 {
 	IO *io;
 	EXPECT(out_utf8(NULL) == NULL);
-	EXPECT_PTR(io = io_fopen(UnitTest_tmpname("data"), "w"));
+	EXPECT_PTR(io = io_fopen(UnitTest_tmp("data"), "w"));
 	EXPECT_PTR(io = out_utf8(io));
 	MATCH_MSTR(rd_ident(io), "utf8(.*/data)");
 	EXPECT(io_ctrl(io, 0) == EOF);
@@ -278,7 +278,7 @@ TEST_DECL(lang)
 		"a|:de:abc:*:xyz|\n"
 	);
 
-	EXPECT_PTR(io = io_fopen(UnitTest_tmpname("data"), "r"));
+	EXPECT_PTR(io = io_fopen(UnitTest_tmp("data"), "r"));
 	EXPECT_PTR(io = xlangfilter(io, "de_AT", protect_line, NULL));
 	MATCH_MSTR(rd_ident(io), "[de_AT].*");
 

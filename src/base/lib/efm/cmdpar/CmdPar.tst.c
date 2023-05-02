@@ -493,7 +493,7 @@ TEST_DECL(syntax)
 	pset(NULL, "test");
 	pset(".synopsis.intro", "usage: ");
 
-	setenv("PATH", UnitTest_tmpname(NULL), 1);
+	setenv("PATH", UnitTest_tmp(NULL), 1);
 	EXPECT_STR(eval_par("name"), "0 name");
 	EXPECT_CONTENT("error.log", "test [ -o ] arg\n");
 
@@ -504,8 +504,8 @@ TEST_DECL(syntax)
 
 	TEST_FORK
 	{
-		ioerr = io_fopen(UnitTest_tmpname("syntax.log"), "w");
-		setenv("PATH", UnitTest_tmpname(NULL), 1);
+		ioerr = io_fopen(UnitTest_tmp("syntax.log"), "w");
+		setenv("PATH", UnitTest_tmp(NULL), 1);
 		eval_par("name -?");
 		// not reached
 		exit(99);

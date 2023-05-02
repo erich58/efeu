@@ -106,7 +106,7 @@ static void f_tpl (EfiFunc *func, void *rval, void **arg)
 
 static void f_tmp (EfiFunc *func, void *rval, void **arg)
 {
-	Val_str(rval) = mstrcpy(UnitTest_tmpname(Val_str(arg[0])));
+	Val_str(rval) = mstrcpy(UnitTest_tmp(Val_str(arg[0])));
 }
 
 static void f_mkdir (EfiFunc *func, void *rval, void **arg)

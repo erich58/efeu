@@ -32,9 +32,9 @@ TEST_DECL(base)
 	EXPECT_STR(StrPool_get(s, 25), "abc");
 	EXPECT_STR(StrPool_get(s, 28), "");
 	EXPECT_STR(StrPool_get(s, 29), NULL);
-	StrPool_save(s, UnitTest_tmpname("data"));
+	StrPool_save(s, UnitTest_tmp("data"));
 
-	StrPool *t = StrPool_map(UnitTest_tmpname("data"));
+	StrPool *t = StrPool_map(UnitTest_tmp("data"));
 	EXPECT_MSTR(rd_ident(t), "8/29 + 0/0");
 	EXPECT(StrPool_start(t) == 0);
 	EXPECT(StrPool_next(t) == 8);

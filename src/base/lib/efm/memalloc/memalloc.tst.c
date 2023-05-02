@@ -33,13 +33,13 @@ static const char *status()
 static void activate_log(const char *log, const char *name)
 {
 	char buf[1024];
-	snprintf(buf, sizeof buf, "%s=%s", log, UnitTest_tmpname(name));
+	snprintf(buf, sizeof buf, "%s=%s", log, UnitTest_tmp(name));
 	LogConfig(buf);
 }
 
 static void clear_log(const char *name)
 {
-	remove(UnitTest_tmpname(name));
+	remove(UnitTest_tmp(name));
 }
 
 static void sig_exit(int sig)

@@ -42,7 +42,7 @@ TEST_DECL(pp_id)
 
 	TEST_FORK
 	{
-		chdir(UnitTest_tmpname(NULL));
+		chdir(UnitTest_tmp(NULL));
 		IO *in = io_cmdpreproc(io_fopen("input", "r"));
 		io_copy(in, OUT());
 		io_close(in);
@@ -295,9 +295,9 @@ TEST_DECL(include)
 TEST_SUITE
 {
 	SetupStd();
-	SetApplPath(UnitTest_tmpname(NULL));
+	SetApplPath(UnitTest_tmp(NULL));
 	memfree(IncPath);
-	IncPath = mstrcpy(UnitTest_tmpname(NULL));
+	IncPath = mstrcpy(UnitTest_tmp(NULL));
 	TEST_FILE("preproc.msg", 
 		"191	191: unknown directive $1\n"
 		"193	193: ELIF unexpected.\n"

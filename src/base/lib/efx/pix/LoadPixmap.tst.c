@@ -83,7 +83,7 @@ UnitTest_strcheck(__FILE__, __LINE__, "==", \
 
 TEST_DECL(bad_magic)
 {
-	SetApplPath(UnitTest_tmpname(NULL));
+	SetApplPath(UnitTest_tmp(NULL));
 	TEST_FILE("efmain.msg", "ppm	invalid header\n");
 
 	INPUT("A\n");

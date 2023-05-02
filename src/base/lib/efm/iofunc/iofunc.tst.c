@@ -24,7 +24,7 @@ static IO echeck = STD_IODATA (NULL, echeck_put, echeck_ctrl, "<echeck>");
 
 TEST_DECL(setup)
 {
-	SetApplPath(UnitTest_tmpname(NULL));
+	SetApplPath(UnitTest_tmp(NULL));
 	TEST_FILE("ftools.msg",
 		"21	ERROR 21.\n"
 		"22	ERROR 22.\n"

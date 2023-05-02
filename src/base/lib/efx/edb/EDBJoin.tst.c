@@ -8,8 +8,8 @@
 static const char *copy_db(const char *in, const char *out)
 {
 	UnitTest_mkfile(out, NULL);
-	EDB *edb = edb_fopen(NULL, UnitTest_tmpname(in));
-	edb_fout(edb, UnitTest_tmpname(out), "plain");
+	EDB *edb = edb_fopen(NULL, UnitTest_tmp(in));
+	edb_fout(edb, UnitTest_tmp(out), "plain");
 	edb_copy(edb, 0);
 	rd_deref(edb);
 	return UnitTest_content(out);
@@ -48,7 +48,7 @@ TEST_DECL(setup)
 	static EDBJoin jpar;
 	setenv("LANG", "C", 1);
 	SetProgName("test");
-	SetApplPath(UnitTest_tmpname(NULL));
+	SetApplPath(UnitTest_tmp(NULL));
 
 	TEST_FILE("edb.msg",
 		"mhdr	$!: wrong magic number.\n"

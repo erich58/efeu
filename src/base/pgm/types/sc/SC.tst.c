@@ -9,7 +9,7 @@ static void tmpvar()
 {
 	static EfiParseDef pdef[] = { "TMP", PFunc_str, NULL };
 
-	pdef[0].data = mstrcpy(UnitTest_tmpname("TMP"));
+	pdef[0].data = mstrcpy(UnitTest_tmp("TMP"));
 	AddParseDef(pdef, 1);
 }
 

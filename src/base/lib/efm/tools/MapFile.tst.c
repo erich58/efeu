@@ -14,11 +14,11 @@ TEST_SUITE
 	EXPECT(MapFile_open("/unknown file") == NULL);
 	EXPECT(MapFile_open(".") == NULL);
 
-	map = MapFile_open(UnitTest_tmpname("data"));
+	map = MapFile_open(UnitTest_tmp("data"));
 	EXPECT(map == NULL);
 
 	TEST_FILE("data", TEST_DATA);
-	map = MapFile_open(UnitTest_tmpname("data"));
+	map = MapFile_open(UnitTest_tmp("data"));
 	PRINT_MSTR(rd_ident(map));
 	EXPECT(map != NULL);
 	EXPECT_STR(map->data, TEST_DATA);

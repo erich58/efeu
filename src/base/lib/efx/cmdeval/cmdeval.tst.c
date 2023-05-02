@@ -13,8 +13,8 @@ TEST_DECL(CmdEval)
 		"!echo TEST\n"
 		"3s\n"
 	);
-	IO *in = io_fopen(UnitTest_tmpname("cin"), "r");
-	IO *out = io_fopen(UnitTest_tmpname("cout"), "w");
+	IO *in = io_fopen(UnitTest_tmp("cin"), "r");
+	IO *out = io_fopen(UnitTest_tmp("cout"), "w");
 	CmdEval(in, out);
 	io_close(in);
 	io_close(out);
@@ -31,7 +31,7 @@ TEST_DECL(io_cmdeval)
 {
 	char buf[32];
 	TEST_FILE("cin", "int a = 5; {} 3*5a\n$");
-	IO *in = io_fopen(UnitTest_tmpname("cin"), "r");
+	IO *in = io_fopen(UnitTest_tmp("cin"), "r");
 	in = io_cmdeval(in, "$");
 	EXPECT_STR(io_gets(buf, sizeof buf, in), "15 5\n");
 	EXPECT_STR(io_gets(buf, sizeof buf, in), NULL);
@@ -39,7 +39,7 @@ TEST_DECL(io_cmdeval)
 	io_close(in);
 
 	TEST_FILE("cin", "{}");
-	in = io_fopen(UnitTest_tmpname("cin"), "r");
+	in = io_fopen(UnitTest_tmp("cin"), "r");
 	in = io_cmdeval(in, NULL);
 	EXPECT_STR(io_gets(buf, sizeof buf, in), NULL);
 	io_close(in);

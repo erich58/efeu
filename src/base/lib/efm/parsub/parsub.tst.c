@@ -28,7 +28,7 @@ static int psub_test(IO *in, IO *out, void *par)
 
 TEST_DECL(setup)
 {
-	SetApplPath(UnitTest_tmpname(NULL));
+	SetApplPath(UnitTest_tmp(NULL));
 	TEST_FILE("efm.msg",
 		"61	NOTE 61: arg1=$1.\n"
 		"pnoarg	NOTE pnoarg: fmt=$0 arg=$1.\n"
@@ -146,7 +146,7 @@ TEST_DECL(psubfilter)
 	arg_cadd(argl, "\"\\x\"");
 	arg_cadd(argl, NULL);
 	arg_cadd(argl, "10");
-	EXPECT_PTR(io = io_fopen(UnitTest_tmpname("input"), "r"));
+	EXPECT_PTR(io = io_fopen(UnitTest_tmp("input"), "r"));
 	EXPECT_PTR(io = psubfilter(io, argl));
 	EXPECT_STR(io_mgets(io, NULL), "a|\"\\\"\\\\x\\\"\"||10\n");
 	EXPECT(io_rewind(io) == 0);

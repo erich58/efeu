@@ -69,7 +69,7 @@ TEST_SUITE
 
 	TEST_FORK
 	{
-		int fd = creat(UnitTest_tmpname("output"), 0644);
+		int fd = creat(UnitTest_tmp("output"), 0644);
 		dup2(fd, 2);
 		UnitTest_strinfo("Test", 1, "INFO", "a\nb\n", NULL);
 		TEST_EXIT;

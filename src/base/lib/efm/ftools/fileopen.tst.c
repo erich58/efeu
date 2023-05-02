@@ -9,7 +9,7 @@ static LogControl *flog = NULL;
 
 TEST_DECL(setup)
 {
-	SetApplPath(UnitTest_tmpname(NULL));
+	SetApplPath(UnitTest_tmp(NULL));
 
 	TEST_FILE("ftools.msg",
 		"1	bad mode\n"
@@ -49,7 +49,7 @@ TEST_DECL(filetab)
 {
 	FILE *file;
 	
-	EXPECT((file = fopen(UnitTest_tmpname("test.data"), "w")) != NULL);
+	EXPECT((file = fopen(UnitTest_tmp("test.data"), "w")) != NULL);
 	EXPECT(fputs("Test data\n", file) > 0);
 	fflush(file);
 	EXPECT_STR(fileident(file), "<unknown>");
@@ -141,23 +141,23 @@ TEST_DECL(fileopen)
 
 	PRINT_LABEL("Compressed data");
 
-	ASSERT((file = fileopen(UnitTest_tmpname("data.gz"), "wz")) != NULL);
+	ASSERT((file = fileopen(UnitTest_tmp("data.gz"), "wz")) != NULL);
 	EXPECT_STR(fileident(file), "<!gzip>");
 	EXPECT(fputs("Test data\n", file) > 0);
 	EXPECT(fileclose(file) == 0);
 
-	ASSERT((file = fileopen(UnitTest_tmpname("data.gz"), "az")) != NULL);
+	ASSERT((file = fileopen(UnitTest_tmp("data.gz"), "az")) != NULL);
 	EXPECT(fputs("Second line\n", file) > 0);
 	EXPECT(fileclose(file) == 0);
 
-	ASSERT((file = fileopen(UnitTest_tmpname("data.gz"), "rz")) != NULL);
+	ASSERT((file = fileopen(UnitTest_tmp("data.gz"), "rz")) != NULL);
 	EXPECT_STR(fgets(buf, sizeof buf, file), "Test data\n");
 	EXPECT_STR(fgets(buf, sizeof buf, file), "Second line\n");
 	EXPECT_STR(fgets(buf, sizeof buf, file), NULL);
 	EXPECT(fileclose(file) == 0);
 
-	ASSERT((file = fileopen(UnitTest_tmpname("data.gz"), "r")) != NULL);
-	EXPECT_STR(fileident(file), UnitTest_tmpname("data.gz"));
+	ASSERT((file = fileopen(UnitTest_tmp("data.gz"), "r")) != NULL);
+	EXPECT_STR(fileident(file), UnitTest_tmp("data.gz"));
 	EXPECT(getc(file) == 037);	// gzip magic
 	EXPECT(getc(file) == 0213);	// gzip magic
 	EXPECT(fileclose(file) == 0);
@@ -187,11 +187,11 @@ TEST_DECL(fileopen)
 	MATCH_CONTENT("stderr", "sh:.*bad-command-name.*\n");
 
 	MakeDepend = 1;
-	ASSERT((file = fileopen(UnitTest_tmpname("data.gz"), "rzd")) != NULL);
+	ASSERT((file = fileopen(UnitTest_tmp("data.gz"), "rzd")) != NULL);
 	EXPECT_STR(fgets(buf, sizeof buf, file), "Test data\n");
 	fileclose(file);
 
-	ASSERT((file = fileopen(UnitTest_tmpname("output"), "wd")) != NULL);
+	ASSERT((file = fileopen(UnitTest_tmp("output"), "wd")) != NULL);
 	EXPECT(fputs("Test data\n", file) > 0);
 	EXPECT(fileclose(file) == 0);
 	EXPECT_CONTENT("output", NULL);
@@ -202,7 +202,7 @@ TEST_DECL(findopen)
 	char *path;
 	FILE *file;
 
-	TEST_EXPR(path = mstrcpy(UnitTest_tmpname(NULL)));
+	TEST_EXPR(path = mstrcpy(UnitTest_tmp(NULL)));
 	TEST_DIR("sub");
 	TEST_FILE("test.txt", "data\n");
 
@@ -236,7 +236,7 @@ static const char *t_fsearch(const char *path, const char *sub,
 	return c;
 }
 
-#define	TMP(x)	UnitTest_tmpname(x)
+#define	TMP(x)	UnitTest_tmp(x)
 
 TEST_DECL(fsearch)
 {

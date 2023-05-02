@@ -144,7 +144,7 @@ TEST_DECL(LogOutput)
 	const char *logfile;
 	IO *out;
 	
-	EXPECT((logfile = UnitTest_tmpname("log")) != NULL);
+	EXPECT((logfile = UnitTest_tmp("log")) != NULL);
 	EXPECT_STR(config(""), "EWNidt-Nd");
 	EXPECT(log_open(dlog) == NULL);
 
@@ -171,7 +171,7 @@ TEST_DECL(log_file)
 	const char *logfile;
 	FILE *file;
 	
-	EXPECT((logfile = UnitTest_tmpname("log")) != NULL);
+	EXPECT((logfile = UnitTest_tmp("log")) != NULL);
 	EXPECT_STR(fconfig("@X.debug=%s", logfile), "EWNidt-ND");
 	EXPECT((file = log_file(dlog)) != NULL);
 
@@ -191,7 +191,7 @@ TEST_DECL(log_file)
 
 TEST_DECL(GetFormat)
 {
-	SetApplPath(UnitTest_tmpname(NULL));
+	SetApplPath(UnitTest_tmp(NULL));
 	TEST_FILE("tst.msg", "1\tFehlermeldung\n");
 
 	LogConfig("@:");
@@ -210,7 +210,7 @@ TEST_DECL(GetFormat)
 	EXPECT_STR(GetFormat("[%tstfmt]ABC"), "XYZ");
 
 	IO *io;
-	EXPECT((io = io_fileopen(UnitTest_tmpname("tst.msg"), "r")) != NULL);
+	EXPECT((io = io_fileopen(UnitTest_tmp("tst.msg"), "r")) != NULL);
 	FormatTabLoad(io, "tst2", EOF);
 	EXPECT_STR(GetFormat("[tst2:1]ABC"), "Fehlermeldung");
 	io_close(io);

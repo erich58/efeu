@@ -40,7 +40,7 @@ TEST_SUITE
 	log_output("syslog.info");
 	log_output("syslog.debug");
 #endif
-	log_output(UnitTest_tmpname("log.out"));
+	log_output(UnitTest_tmp("log.out"));
 	UnitTest_stderr(NULL);
 	EXPECT_CONTENT("err.out",
 		"PFX DATA\n"

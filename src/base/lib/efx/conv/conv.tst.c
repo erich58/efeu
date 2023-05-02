@@ -6,7 +6,7 @@
 TEST_DECL(setup)
 {
 	SetProgName("test");
-	SetApplPath(UnitTest_tmpname(NULL));
+	SetApplPath(UnitTest_tmp(NULL));
 
 	TEST_FILE("efmain.msg",
 		"161	$!: could not convert $1 to $2.\n"
