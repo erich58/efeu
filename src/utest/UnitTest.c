@@ -606,3 +606,40 @@ int UnitTest_dcmp(double a, double b)
 
 	return a == 0.;
 }
+
+char **UnitTest_mkarg(const char *file_, int line_, const char *name_,
+	size_t dim_, const char *data_, int delim_)
+{
+	if	(!name_)	name_ = "argv";
+	if	(!data_)	data_ = "";
+
+	size_t slen = strlen(data_) + 1;
+	char **v = malloc((dim_ + 1) * sizeof v[0] + slen);
+
+	if	(!v)
+		UnitTest_assert(UnitTest_result(file_, line_,
+			0, "UnitTest_mkarg()"));
+
+	char *p = memcpy(v + dim_ + 1, data_, slen);
+
+	for (size_t i = 0; i < dim_; ++i)
+	{
+		for (v[i] = p; *p; ++p)
+		{
+			if	(*p == delim_)
+			{
+				*p++ = 0;
+				break;
+			}
+		}
+	}
+
+	v[dim_] = NULL;
+	info("*GOOD", file_, line_, "%s[%zd + 1] = {", name_, dim_);
+
+	for (size_t i = 0; i <= dim_; ++i)
+		info("+", file_, line_, "\t%s,", UnitTest_qstr(v[i]));
+
+	info("+", file_, line_, "}");
+	return v;
+}

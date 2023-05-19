@@ -78,6 +78,8 @@ int UnitTest_char(const char *file, int line,
 	int c1, int c2, const char *x1, const char *x2);
 int UnitTest_create(const char *file, int line, const char *name,
 	const char *content, const char *expr);
+char **UnitTest_mkarg(const char *file, int line, const char *name,
+	size_t n, const char *def, int delim);
 void UnitTest_summary(const char *issue);
 
 char *UnitTest_pgets(const char *cmd_, int delim);
@@ -216,5 +218,12 @@ UnitTest_result(__FILE__, __LINE__, \
 
 #define	TEST_EXEC(name)		\
 UnitTest_exec(__FILE__, __LINE__, _test_ ## name, # name)
+
+#define	TEST_ARGV(name, n, def)	\
+	char **name = UnitTest_mkarg(__FILE__, __LINE__, # name, n, def, ' ')
+
+#define	TEST_ARGV2(name, n, def, delim)	\
+	char **name = UnitTest_mkarg(__FILE__, __LINE__, # name, n, def, delim)
+
 
 #endif
