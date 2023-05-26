@@ -85,11 +85,13 @@ static int real_stderr = 2;
 
 static const char *qualified_name(const char *name_)
 {
-	if	(!name_ || !*name_)
-		return "/dev/null";
+	if	(!name_)
+		return NULL;
 
 	switch (*name_)
 	{
+	case 0:
+		return "/dev/null";
 	case '/':
 		return name_;
 	case '.':

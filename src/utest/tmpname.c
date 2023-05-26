@@ -170,8 +170,7 @@ const char *UnitTest_content(const char *name)
 	undefined = 1;
 	buf.size = 0;
 
-	const char *path = UnitTest_tmp(name);
-	FILE *file = fopen(path, "r");
+	FILE *file = fopen(UnitTest_mkpath(name), "r");
 	
 	if	(file)
 	{
