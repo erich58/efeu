@@ -58,12 +58,17 @@ int UnitTest_dcmp(double d1, double d2);
 
 void UnitTest_expr(const char *file, int line, const char *expr);
 void UnitTest_test(const char *file, int line, const char *name);
+void UnitTest_vinfo(const char *file, int line, const char *pfx,
+	const char *fmt, va_list list);
 void UnitTest_info(const char *file, int line, const char *pfx,
 	const char *fmt, ...);
 void UnitTest_strinfo(const char *file, int line, const char *pfx,
 	const char *str, const char *expr);
 void UnitTest_error(const char *fmt, ...);
-int UnitTest_result(const char *file, int line, int res, const char *fmt, ...);
+int UnitTest_vresult(const char *file, int line, int res,
+	const char *fmt, va_list list);
+int UnitTest_result(const char *file, int line, int res,
+	const char *fmt, ...);
 int UnitTest_strcheck(const char *file, int line, const char *op,
 	const char *s1, const char *s2, const char *x1, const char *x2);
 int UnitTest_linematch(const char *file, int line,
@@ -94,6 +99,7 @@ void UnitTest_tmpclean(void);
 int UnitTest_stdin(const char *name, const char *content);
 int UnitTest_stdout(const char *name);
 int UnitTest_stderr(const char *name);
+int UnitTest_fderr(void);
 int UnitTest_reopen(int fd, const char *name);
 FILE *UnitTest_strout(char *buf, size_t size);
 FILE *UnitTest_strin(const char *buf, size_t size);

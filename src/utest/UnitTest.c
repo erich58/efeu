@@ -206,6 +206,11 @@ int UnitTest_stderr(const char *name)
 	return 1;
 }
 
+int UnitTest_fderr()
+{
+	return real_stderr;
+}
+
 const char *UnitTest_color(int color)
 {
 	if	(color_enabled(real_stderr))
@@ -290,6 +295,12 @@ void UnitTest_expr(const char *file, int line, const char *expr)
 	info("EXPR", file, line, "%s", expr);
 }
 
+void UnitTest_vinfo(const char *file, int line, const char *pfx,
+	const char *fmt, va_list list)
+{
+	vinfo(pfx, file, line, fmt, list);
+}
+
 void UnitTest_info(const char *file, int line, const char *pfx,
 	const char *fmt, ...)
 {
@@ -360,17 +371,24 @@ void UnitTest_test(const char *file, int line, const char *name)
 	info("#TEST", file, line, "%s", name);
 }
 
-int UnitTest_result(const char *file, int line, int res, const char *fmt, ...)
+int UnitTest_vresult(const char *file, int line, int res,
+	const char *fmt, va_list list)
 {
-	va_list list;
-
 	if	(res)
 		count_good++;
 	else
 		count_bad++;
 
-	va_start (list, fmt);
 	vinfo(res ? "*GOOD" : "!BAD", file, line, fmt, list);
+	return res;
+}
+
+int UnitTest_result(const char *file, int line, int res, const char *fmt, ...)
+{
+	va_list list;
+
+	va_start (list, fmt);
+	UnitTest_vresult(file, line, res, fmt, list);
 	va_end(list);
 	return res;
 }
