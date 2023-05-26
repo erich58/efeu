@@ -85,6 +85,7 @@ void UnitTest_summary(const char *issue);
 char *UnitTest_pgets(const char *cmd_, int delim);
 const char *UnitTest_tpl(const char *tpl);
 const char *UnitTest_tmp(const char *name);
+const char *UnitTest_mkpath(const char *name);
 const char *UnitTest_mkdir(const char *name);
 const char *UnitTest_mkfile(const char *name, const char *content);
 const char *UnitTest_content(const char *name);

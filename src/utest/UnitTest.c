@@ -85,10 +85,11 @@ static int real_stderr = 2;
 
 static const char *qualified_name(const char *name_)
 {
+	if	(!name_ || !*name_)
+		return "/dev/null";
+
 	switch (*name_)
 	{
-	case 0:
-		return "/dev/null";
 	case '/':
 		return name_;
 	case '.':
@@ -101,6 +102,12 @@ static const char *qualified_name(const char *name_)
 	}
 
 	return NULL;
+}
+
+const char *UnitTest_mkpath(const char *name)
+{
+	const char *fn = qualified_name(name);
+	return fn ? fn : UnitTest_tmp(name);
 }
 
 int UnitTest_reopen(int fd, const char *name)
