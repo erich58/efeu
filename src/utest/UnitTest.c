@@ -114,11 +114,7 @@ const char *UnitTest_mkpath(const char *name)
 
 int UnitTest_reopen(int fd, const char *name)
 {
-	const char *fname = qualified_name(name);
-
-	if	(!fname)
-		fname = UnitTest_tmp(name);
-
+	const char *fname = UnitTest_mkpath(name);
 	int fdnew = creat(fname, 0644);
 
 	if	(fdnew < 0)
@@ -506,6 +502,9 @@ int UnitTest_uintmax(const char *file, int line,
 
 void UnitTest_summary(const char *issue)
 {
+	if	(!issue)
+		issue = count_bad ? "!FAILURE" : "*SUCCESS";
+
 	printf("%s\t%d\t%d\t%d\t%s\n", UnitTest_name, count_good + count_bad,
 		count_good, count_bad, colored(real_stdout, issue));
 	fflush(stdout);
@@ -552,7 +551,7 @@ int main(int argc, char **argv)
 	fputc('\n', stderr);
 	runUnitTest(argc, argv);
 	UnitTest_stdout(NULL);
-	UnitTest_summary(count_bad ? "!FAILURE" : "*SUCCESS");
+	UnitTest_summary(NULL);
 	return count_bad ? 1 : 0;
 }
 
