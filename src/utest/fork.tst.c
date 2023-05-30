@@ -22,7 +22,7 @@ TEST_SUITE
 		}
 
 		CHILD_EXIT(2);
-		MATCH_CONTENT("stdout", "ABORT\n");
+		MATCH_CONTENT("stdout", "ABORT");
 		TEST_EXIT;
 	}
 

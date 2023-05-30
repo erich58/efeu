@@ -4,7 +4,6 @@
 
 TEST_DECL(bad_path)
 {
-	UnitTest_stderr("/dev/null");
 	EXPECT_STR(UnitTest_mkfile(".", "Data"), NULL);
 }
 
@@ -57,7 +56,11 @@ TEST_SUITE
 
 	CHILD_EXIT(1);
 
+//	UnitTest_stderr("stderr");
 	TEST_EXEC(bad_path);
+//	UnitTest_stderr(NULL);
+//	PRINT_CONTENT("stderr");
+
 	EXPECT_CONTENT("dir/x", NULL);
 	EXPECT_CONTENT(NULL, NULL);
 	PRINT_STR(UnitTest_content(NULL));

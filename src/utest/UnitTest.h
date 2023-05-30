@@ -57,7 +57,6 @@ int UnitTest_match(const char *str, const char *expr);
 int UnitTest_dcmp(double d1, double d2);
 
 void UnitTest_expr(const char *file, int line, const char *expr);
-void UnitTest_test(const char *file, int line, const char *name);
 void UnitTest_vinfo(const char *file, int line, const char *pfx,
 	const char *fmt, va_list list);
 void UnitTest_info(const char *file, int line, const char *pfx,
@@ -105,22 +104,27 @@ FILE *UnitTest_strout(char *buf, size_t size);
 FILE *UnitTest_strin(const char *buf, size_t size);
 
 int UnitTest_fork(const char *file, int line);
-int UnitTest_exec(const char *file, int line,
+void UnitTest_exec(const char *file, int line,
+	void (*test)(void), const char *name);
+void UnitTest_run(const char *file, int line,
 	void (*test)(void), const char *name);
 void UnitTest_exit(void);
 int UnitTest_wait(void);
 int UnitTest_assert(int stat);
 
 void runUnitTest(int argc, char **argv);
-extern char *UnitTest_name;
+extern const char *UnitTest_name;
 extern int UnitTest_child;
 
 #define TEST_DECL(name)	static void _test_ ## name (void)
 #define TEST_SUITE	\
 void runUnitTest(int UnitTest_argc, char **UnitTest_argv)
 
+#define	TEST_EXEC(name)		\
+UnitTest_exec(__FILE__, __LINE__, _test_ ## name, # name)
+
 #define TEST_RUN(name)	\
-UnitTest_test(NULL, 0, # name), _test_ ## name ()
+UnitTest_run(__FILE__, __LINE__, _test_ ## name, # name)
 
 #define TEST_EXPR(expr)	\
 UnitTest_expr(__FILE__, __LINE__, # expr), (expr)
@@ -222,9 +226,6 @@ UnitTest_result(__FILE__, __LINE__, \
 #define	CHILD_SIGNALED(n)		\
 UnitTest_result(__FILE__, __LINE__, \
 	UnitTest_wait() == -n, "child signaled %d", n)
-
-#define	TEST_EXEC(name)		\
-UnitTest_exec(__FILE__, __LINE__, _test_ ## name, # name)
 
 #define	TEST_ARGV(name, n, def)	\
 	char **name = UnitTest_mkarg(__FILE__, __LINE__, # name, n, def, ' ')

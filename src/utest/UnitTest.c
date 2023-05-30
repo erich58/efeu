@@ -10,11 +10,16 @@
 #include <fcntl.h>
 #include <errno.h>
 
-char *UnitTest_name = NULL;
+const char *UnitTest_name = NULL;
 int UnitTest_child = 0;
 
 static int count_good = 0;
 static int count_bad = 0;
+static int test_good = 0;
+static int test_bad = 0;
+static int main_good = 0;
+static int main_bad = 0;
+
 static int fork_depth = 0;
 static int force_color = 0;
 
@@ -362,13 +367,6 @@ void UnitTest_error(const char *fmt, ...)
 	va_end(list);
 }
 
-void UnitTest_test(const char *file, int line, const char *name)
-{
-	UnitTest_stdout(NULL);
-	UnitTest_stderr(NULL);
-	info("#TEST", file, line, "%s", name);
-}
-
 int UnitTest_vresult(const char *file, int line, int res,
 	const char *fmt, va_list list)
 {
@@ -502,12 +500,19 @@ int UnitTest_uintmax(const char *file, int line,
 
 void UnitTest_summary(const char *issue)
 {
-	if	(!issue)
-		issue = count_bad ? "!FAILURE" : "*SUCCESS";
+	main_good += count_good;
+	main_bad += count_bad;
 
-	printf("%s\t%d\t%d\t%d\t%s\n", UnitTest_name, count_good + count_bad,
-		count_good, count_bad, colored(real_stdout, issue));
+	if	(main_bad)	test_bad++;
+	else if	(main_good)	test_good++;
+
+	if	(!issue)
+		issue = test_bad ? "!FAILURE" : "*SUCCESS";
+
+	printf("%s\t%d\t%d\t%d\t%s\n", UnitTest_name, test_good + test_bad,
+		test_good, test_bad, colored(real_stdout, issue));
 	fflush(stdout);
+	info(NULL,NULL, 0, NULL);
 }
 
 static void skiparg(int *narg, char **arg, int n)
@@ -550,9 +555,8 @@ int main(int argc, char **argv)
 
 	fputc('\n', stderr);
 	runUnitTest(argc, argv);
-	UnitTest_stdout(NULL);
 	UnitTest_summary(NULL);
-	return count_bad ? 1 : 0;
+	return test_bad ? 1 : 0;
 }
 
 int UnitTest_wait(void)
@@ -580,6 +584,10 @@ int UnitTest_fork(const char *file, int line)
 	{
 		count_good = 0;
 		count_bad = 0;
+		test_good = 0;
+		test_bad = 0;
+		main_good = 0;
+		main_bad = 0;
 		fork_depth++;
 		return 1;
 	}
@@ -593,21 +601,72 @@ int UnitTest_fork(const char *file, int line)
 
 void UnitTest_exit(void)
 {
-	exit(count_bad ? 1 : 0);
+	exit(count_bad || test_bad || main_bad ? 1 : 0);
 }
 
-int UnitTest_exec(const char *file, int line,
+static void run_test(const char *file, int line,
 	void (*test)(void), const char *name)
 {
+	info("#START", file, line, "%s", name);
+	test();
+
+	const char *pfx = "REPORT";
+
+	if	(count_bad)
+	{
+		test_bad++;
+		pfx = "!FAILURE";
+	}
+	else if	(count_good)
+	{
+		test_good++;
+		pfx = "*SUCCESS";
+	}
+
+	count_good = 0;
+	count_bad = 0;
+	info(pfx, file, line, "%s", name);
+}
+
+void UnitTest_run(const char *file, int line,
+	void (*test)(void), const char *name)
+{
+	main_good += count_good;
+	main_bad += count_bad;
+	count_good = 0;
+	count_bad = 0;
+	run_test(file, line, test, name);
+	info(NULL, NULL, 0, NULL);
+}
+
+void UnitTest_exec(const char *file, int line,
+	void (*test)(void), const char *name)
+{
+	info("#EXEC", file, line, "%s", name);
+	main_good += count_good;
+	main_bad += count_bad;
+	count_good = 0;
+	count_bad = 0;
+
 	if	(UnitTest_fork(file, line))
 	{
-		info("#RUN", NULL, 0, "%s", name);
-		test();
+		dup2(2, 1);
+		run_test(file, line, test, name);
 		UnitTest_exit();
 	}
 
-	return UnitTest_result(file, line,
-		UnitTest_wait() == 0, "%s success", name);
+	if	(UnitTest_wait() == 0)
+	{
+		test_good++;
+		info("*SUCCESS", file, line, "%s", name);
+	}
+	else
+	{
+		test_bad++;
+		info("!FAILURE", file, line, "%s", name);
+	}
+
+	info(NULL, NULL, 0, NULL);
 }
 
 int UnitTest_assert(int stat)
