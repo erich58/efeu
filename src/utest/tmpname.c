@@ -153,7 +153,7 @@ const char *UnitTest_mkfile(const char *name, const char *content)
 	}
 	else
 	{
-		remove(path);
+		unlink(path);
 	}
 
 	return path;

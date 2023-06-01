@@ -36,6 +36,12 @@ TEST_SUITE
 	PRINT_STR(UnitTest_tmp(NULL));
 	EXPECT_STRCMP(tmp, !=, UnitTest_tmp(NULL));
 
+	TEST_FILE(NULL, NULL);
+	TEST_FILE("x", "Test\n");
+	EXPECT_CONTENT("x", "Test\n");
+	TEST_FILE("x", NULL);
+	EXPECT_CONTENT("x", NULL);
+
 	EXPECT_STR(UnitTest_mkdir(NULL), UnitTest_tmp(NULL));
 	EXPECT_STR(UnitTest_mkdir("/dir"), UnitTest_tmp("dir"));
 	EXPECT_STR(UnitTest_mkdir("dir"), UnitTest_tmp("dir"));
