@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <pty.h>
 
+#define	STRING(a)	# a
+
 TEST_SUITE
 {
 	UnitTest_info(__FILE__, __LINE__, "*GOOD", "");
@@ -66,18 +68,24 @@ TEST_SUITE
 	PRINT_STR(NULL);
 
 	TEST_FILE("output", NULL);
+	UnitTest_strinfo("Test", 1, "INFO", "xy", STRING("x" "y"));
+	UnitTest_strinfo("Test", 2, "INFO", "a\nb\n", NULL);
+	UnitTest_strinfo("Test", 3, "INFO", "a\nb\n", "name");
 
-	TEST_FORK
-	{
-		int fd = creat(UnitTest_tmp("output"), 0644);
-		dup2(fd, 2);
-		UnitTest_strinfo("Test", 1, "INFO", "a\nb\n", NULL);
-		TEST_EXIT;
-	}
+	int fdsave = dup(2);
+	dup2(creat(UnitTest_tmp("output"), 0644), 2);
+	UnitTest_strinfo("Test", 1, "INFO", "xy", STRING("x" "y"));
+	UnitTest_strinfo("Test", 2, "INFO", "a\nb\n", NULL);
+	UnitTest_strinfo("Test", 3, "INFO", "a\nb\n", "name");
+	dup2(fdsave, 2);
 
-	CHILD_EXIT(0);
 	EXPECT_CONTENT("output",
-		".\tINFO\tTest:1\t\"a\\n\"\n"
-		".\t+\tTest:1\t\"b\\n\"\n"
+		"INFO\tTest:1\t\"x\"\n"
+		"+\tTest:1\t\"y\"\n"
+		"INFO\tTest:2\t\"a\\n\"\n"
+		"+\tTest:2\t\"b\\n\"\n"
+		"INFO\tTest:3\tname -> \n"
+		"+\tTest:3\t\t\"a\\n\"\n"
+		"+\tTest:3\t\t\"b\\n\"\n"
 	);
 }
