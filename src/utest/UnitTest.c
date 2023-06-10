@@ -576,6 +576,27 @@ int UnitTest_wait(void)
 	return 0x100;
 }
 
+int UnitTest_childstat(const char *file, int line, int stat)
+{
+	int s = UnitTest_wait();
+	int res = (s == stat);
+
+	if	(stat < 0)
+		UnitTest_result(file, line, res, "child signaled %d", -stat);
+	else
+		UnitTest_result(file, line, res, "child exit %d", stat);
+
+	if	(res)
+		return res;
+
+	if	(s < 0)
+		info("BECAUSE", file, line, "child signaled %d", -s);
+	else
+		info("BECAUSE", file, line, "child exit %d", s);
+
+	return res;
+}
+
 int UnitTest_fork(const char *file, int line)
 {
 	UnitTest_child = fork();

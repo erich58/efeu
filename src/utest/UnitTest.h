@@ -112,6 +112,7 @@ void UnitTest_run(const char *file, int line,
 	void (*test)(void), const char *name);
 void UnitTest_exit(void);
 int UnitTest_wait(void);
+int UnitTest_childstat(const char *file, int line, int stat);
 int UnitTest_assert(int stat);
 
 void runUnitTest(int argc, char **argv);
@@ -226,12 +227,10 @@ UnitTest_strinfo(__FILE__, __LINE__, "INFO", \
 #define	TEST_EXIT		UnitTest_exit()
 
 #define	CHILD_EXIT(n)		\
-UnitTest_result(__FILE__, __LINE__, \
-	UnitTest_wait() == n, "child exit %d", n)
+UnitTest_childstat(__FILE__, __LINE__, n)
 
 #define	CHILD_SIGNALED(n)		\
-UnitTest_result(__FILE__, __LINE__, \
-	UnitTest_wait() == -n, "child signaled %d", n)
+UnitTest_childstat(__FILE__, __LINE__, -n)
 
 #define	TEST_ARGV(name, n, def)	\
 	char **name = UnitTest_mkarg(__FILE__, __LINE__, # name, n, def, ' ')
