@@ -72,6 +72,8 @@ int UnitTest_strcheck(const char *file, int line, const char *op,
 	const char *s1, const char *s2, const char *x1, const char *x2);
 int UnitTest_linematch(const char *file, int line,
 	const char *str, const char *expr, const char *term);
+int UnitTest_diff(const char *file, int line,
+	const char *s1, const char *s2, const char *x1, const char *x2);
 int UnitTest_double(const char *file, int line,
 	double d1, double d2, const char *x1, const char *x2);
 int UnitTest_intmax(const char *file, int line,
@@ -202,9 +204,9 @@ UnitTest_result(__FILE__, __LINE__, \
 #define	TEST_FILE(name, cont)	\
 UnitTest_create(__FILE__, __LINE__, name, cont, # cont)
 
-#define PRINT_CONTENT(name)	\
-UnitTest_strinfo(__FILE__, __LINE__, "INFO", \
-	UnitTest_content(name), "content(" # name ")")
+#define	EXPECT_FILE(name, cont) \
+UnitTest_diff(__FILE__, __LINE__, \
+	UnitTest_content(name), cont, "content(" # name ")", # cont)
 
 #define	EXPECT_CONTENT(name, cont)	\
 UnitTest_strcheck(__FILE__, __LINE__, "==", \
@@ -213,6 +215,10 @@ UnitTest_strcheck(__FILE__, __LINE__, "==", \
 #define	MATCH_CONTENT(name, cont)	\
 UnitTest_strcheck(__FILE__, __LINE__, "~", \
 	UnitTest_content(name), cont, "content(" # name ")", # cont)
+
+#define PRINT_CONTENT(name)	\
+UnitTest_strinfo(__FILE__, __LINE__, "INFO", \
+	UnitTest_content(name), "content(" # name ")")
 
 #define	TEST_FORK	\
 	if	(UnitTest_fork(__FILE__, __LINE__))
