@@ -8,13 +8,14 @@ TEST_SUITE
 	{
 		TEST_FORK
 		{
-			int fdsave = dup(2);
-			UnitTest_reopen(2, UnitTest_tmp("err"));
+			int fderr = UnitTest_fderr();
+			int fdsave = dup(fderr);
+			UnitTest_reopen(fderr, "err");
 			EXPECT_STR(UnitTest_color(1), "{");
 			EXPECT_STR(UnitTest_color(2), "{");
 			EXPECT_STR(UnitTest_color(3), "{");
 			EXPECT_STR(UnitTest_color(0), "}");
-			dup2(fdsave, 2);
+			dup2(fdsave, fderr);
 			PRINT_CONTENT("err");
 			TEST_EXIT;
 		}

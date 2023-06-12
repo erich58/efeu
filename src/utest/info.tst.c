@@ -72,12 +72,13 @@ TEST_SUITE
 	UnitTest_strinfo("Test", 2, "INFO", "a\nb\n", NULL);
 	UnitTest_strinfo("Test", 3, "INFO", "a\nb\n", "name");
 
-	int fdsave = dup(2);
-	dup2(creat(UnitTest_tmp("output"), 0644), 2);
+	int fderr = UnitTest_fderr();
+	int fdsave = dup(fderr);
+	UnitTest_reopen(fderr, "output");
 	UnitTest_strinfo("Test", 1, "INFO", "xy", STRING("x" "y"));
 	UnitTest_strinfo("Test", 2, "INFO", "a\nb\n", NULL);
 	UnitTest_strinfo("Test", 3, "INFO", "a\nb\n", "name");
-	dup2(fdsave, 2);
+	dup2(fdsave, fderr);
 
 	EXPECT_CONTENT("output",
 		"INFO\tTest:1\t\"x\"\n"

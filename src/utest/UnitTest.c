@@ -222,11 +222,40 @@ const char *UnitTest_color(int color)
 	return color ? "{" : "}";
 }
 
+static void strinfo(const char *pfx, const char *file, int line,
+	const char *name, const char *value)
+{
+	static STRING_DECL(buf);
+	const char *p = UnitTest_qsplit(&buf, value);
+
+	if	(!name)
+	{
+		if	(*p == 0)
+			p = UnitTest_next(&buf);
+
+		UnitTest_info(file, line, pfx, "%s", p);
+
+		while ((p = UnitTest_next(&buf)))
+			UnitTest_info(file, line, "+", "%s", p);
+	}
+	else
+	{
+		UnitTest_info(file, line, pfx, "%s -> %s", name, p);
+
+		while ((p = UnitTest_next(&buf)))
+			UnitTest_info(file, line, "+", "\t%s", p);
+	}
+}
+
+void UnitTest_expr(const char *file, int line, const char *expr)
+{
+	UnitTest_info(file, line, "EXPR", "%s", expr);
+}
 
 /* Atomare Infozeile
 */
 
-static void vinfo(const char *pfx, const char *file, int line,
+void UnitTest_vinfo(const char *file, int line, const char *pfx,
 	const char *fmt, va_list list)
 {
 	static STRING_DECL(buf);
@@ -258,59 +287,13 @@ static void vinfo(const char *pfx, const char *file, int line,
 	write(real_stderr, buf.data, buf.size);
 }
 
-static void info(const char *pfx, const char *file, int line,
-	const char *fmt, ...)
-{
-	va_list list;
-
-	va_start (list, fmt);
-	vinfo(pfx, file, line, fmt, list);
-	va_end(list);
-}
-
-static void strinfo(const char *pfx, const char *file, int line,
-	const char *name, const char *value)
-{
-	static STRING_DECL(buf);
-	const char *p = UnitTest_qsplit(&buf, value);
-
-	if	(!name)
-	{
-		if	(*p == 0)
-			p = UnitTest_next(&buf);
-
-		info(pfx, file, line, "%s", p);
-
-		while ((p = UnitTest_next(&buf)))
-			info("+", file, line, "%s", p);
-	}
-	else
-	{
-		info(pfx, file, line, "%s -> %s", name, p);
-
-		while ((p = UnitTest_next(&buf)))
-			info("+", file, line, "\t%s", p);
-	}
-}
-
-void UnitTest_expr(const char *file, int line, const char *expr)
-{
-	info("EXPR", file, line, "%s", expr);
-}
-
-void UnitTest_vinfo(const char *file, int line, const char *pfx,
-	const char *fmt, va_list list)
-{
-	vinfo(pfx, file, line, fmt, list);
-}
-
 void UnitTest_info(const char *file, int line, const char *pfx,
 	const char *fmt, ...)
 {
 	va_list list;
 
 	va_start (list, fmt);
-	vinfo(pfx, file, line, fmt, list);
+	UnitTest_vinfo(file, line, pfx, fmt, list);
 	va_end(list);
 }
 
@@ -326,10 +309,10 @@ void UnitTest_strinfo(const char *file, int line, const char *pfx,
 		if	(*p == 0)
 			p = UnitTest_next(&buf);
 
-		info(pfx, file, line, "%s", p);
+		UnitTest_info(file, line, pfx, "%s", p);
 
 		while ((p = UnitTest_next(&buf)))
-			info("+", file, line, "%s", p);
+			UnitTest_info(file, line, "+", "%s", p);
 	}
 	else
 	{
@@ -353,7 +336,7 @@ int UnitTest_create(const char *file, int line, const char *name,
 		UnitTest_qstr(name), p);
 
 	while ((p = UnitTest_next(&buf)))
-		info("+", file, line, "\t%s", p);
+		UnitTest_info(file, line, "+", "\t%s", p);
 
 	return r;
 }
@@ -363,7 +346,7 @@ void UnitTest_error(const char *fmt, ...)
 	va_list list;
 
 	va_start (list, fmt);
-	vinfo("#ERROR", NULL, 0, fmt, list);
+	UnitTest_vinfo(NULL, 0, "#ERROR", fmt, list);
 	va_end(list);
 }
 
@@ -375,7 +358,7 @@ int UnitTest_vresult(const char *file, int line, int res,
 	else
 		count_bad++;
 
-	vinfo(res ? "*GOOD" : "!BAD", file, line, fmt, list);
+	UnitTest_vinfo(file, line, res ? "*GOOD" : "!BAD", fmt, list);
 	return res;
 }
 
@@ -421,7 +404,7 @@ int UnitTest_strcheck(const char *file, int line, const char *op,
 	UnitTest_result(file, line, r, "%s %s %s", x1, op, p);
 
 	while ((p = UnitTest_next(&buf)))
-		info("+", file, line, "\t%s", p);
+		UnitTest_info(file, line, "+", "\t%s", p);
 
 	if	(r && !show)
 		return r;
@@ -443,8 +426,8 @@ int UnitTest_double(const char *file, int line,
 
 	if	(r == 0)
 	{
-		info("BECAUSE", file, line, "%s = %.16g", x1, d1);
-		info("BECAUSE", file, line, "%s = %.16g", x2, d2);
+		UnitTest_info(file, line, "BECAUSE", "%s = %.16g", x1, d1);
+		UnitTest_info(file, line, "BECAUSE", "%s = %.16g", x2, d2);
 	}
 
 	return r;
@@ -459,8 +442,8 @@ int UnitTest_intmax(const char *file, int line,
 
 	if	(r == 0)
 	{
-		info("BECAUSE", file, line, "%s = %jd", x1, i1);
-		info("BECAUSE", file, line, "%s = %jd", x2, i2);
+		UnitTest_info(file, line, "BECAUSE", "%s = %jd", x1, i1);
+		UnitTest_info(file, line, "BECAUSE", "%s = %jd", x2, i2);
 	}
 
 	return r;
@@ -474,9 +457,9 @@ int UnitTest_char(const char *file, int line,
 
 	if	(r == 0)
 	{
-		info("BECAUSE", file, line, "%s = %s (%d)",
+		UnitTest_info(file, line, "BECAUSE", "%s = %s (%d)",
 			x1, UnitTest_qchar(c1), c1);
-		info("BECAUSE", file, line, "%s = %s (%d)",
+		UnitTest_info(file, line, "BECAUSE", "%s = %s (%d)",
 			x2, UnitTest_qchar(c2), c2);
 	}
 
@@ -491,8 +474,8 @@ int UnitTest_uintmax(const char *file, int line,
 
 	if	(r == 0)
 	{
-		info("BECAUSE", file, line, "%s = %ju", x1, i1);
-		info("BECAUSE", file, line, "%s = %ju", x2, i2);
+		UnitTest_info(file, line, "BECAUSE", "%s = %ju", x1, i1);
+		UnitTest_info(file, line, "BECAUSE", "%s = %ju", x2, i2);
 	}
 
 	return r;
@@ -512,7 +495,7 @@ void UnitTest_summary(const char *issue)
 	printf("%s\t%d\t%d\t%d\t%s\n", UnitTest_name, test_good + test_bad,
 		test_good, test_bad, colored(real_stdout, issue));
 	fflush(stdout);
-	info(NULL,NULL, 0, NULL);
+	UnitTest_info(NULL, 0, NULL, NULL);
 }
 
 static void skiparg(int *narg, char **arg, int n)
@@ -590,9 +573,9 @@ int UnitTest_childstat(const char *file, int line, int stat)
 		return res;
 
 	if	(s < 0)
-		info("BECAUSE", file, line, "child signaled %d", -s);
+		UnitTest_info(file, line, "BECAUSE", "child signaled %d", -s);
 	else
-		info("BECAUSE", file, line, "child exit %d", s);
+		UnitTest_info(file, line, "BECAUSE", "child exit %d", s);
 
 	return res;
 }
@@ -628,7 +611,7 @@ void UnitTest_exit(void)
 static void run_test(const char *file, int line,
 	void (*test)(void), const char *name)
 {
-	info("#START", file, line, "%s", name);
+	UnitTest_info(file, line, "#START", "%s", name);
 	test();
 
 	const char *pfx = "REPORT";
@@ -646,7 +629,7 @@ static void run_test(const char *file, int line,
 
 	count_good = 0;
 	count_bad = 0;
-	info(pfx, file, line, "%s", name);
+	UnitTest_info(file, line, pfx, "%s", name);
 }
 
 void UnitTest_run(const char *file, int line,
@@ -657,13 +640,13 @@ void UnitTest_run(const char *file, int line,
 	count_good = 0;
 	count_bad = 0;
 	run_test(file, line, test, name);
-	info(NULL, NULL, 0, NULL);
+	UnitTest_info(NULL, 0, NULL, NULL);
 }
 
 void UnitTest_exec(const char *file, int line,
 	void (*test)(void), const char *name)
 {
-	info("#EXEC", file, line, "%s", name);
+	UnitTest_info(file, line, "#EXEC", "%s", name);
 	main_good += count_good;
 	main_bad += count_bad;
 	count_good = 0;
@@ -679,22 +662,22 @@ void UnitTest_exec(const char *file, int line,
 	if	(UnitTest_wait() == 0)
 	{
 		test_good++;
-		info("*SUCCESS", file, line, "%s", name);
+		UnitTest_info(file, line, "*SUCCESS", "%s", name);
 	}
 	else
 	{
 		test_bad++;
-		info("!FAILURE", file, line, "%s", name);
+		UnitTest_info(file, line, "!FAILURE", "%s", name);
 	}
 
-	info(NULL, NULL, 0, NULL);
+	UnitTest_info(NULL, 0, NULL, NULL);
 }
 
 int UnitTest_assert(int stat)
 {
 	if	(!stat)
 	{
-		info("!ABORT", NULL, 0, "");
+		UnitTest_info(NULL, 0, "!ABORT", "");
 		UnitTest_summary("!ABORT");
 		exit(2);
 	}
@@ -741,11 +724,11 @@ char **UnitTest_mkarg(const char *file_, int line_, const char *name_,
 	}
 
 	v[dim_] = NULL;
-	info("*GOOD", file_, line_, "%s[%zd + 1] = {", name_, dim_);
+	UnitTest_info(file_, line_, "*GOOD", "%s[%zd + 1] = {", name_, dim_);
 
 	for (size_t i = 0; i <= dim_; ++i)
-		info("+", file_, line_, "\t%s,", UnitTest_qstr(v[i]));
+		UnitTest_info(file_, line_, "+", "\t%s,", UnitTest_qstr(v[i]));
 
-	info("+", file_, line_, "}");
+	UnitTest_info(file_, line_, "+", "}");
 	return v;
 }

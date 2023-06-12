@@ -29,5 +29,18 @@ TEST_SUITE
 	UNEXPECT_FILE("empty", data);
 	UNEXPECT_FILE("short", data);
 	UNEXPECT_FILE("data", data);
+
+	TEST_FORK
+	{
+		int fderr = UnitTest_fderr();
+		int fdsave = dup(fderr);
+		UnitTest_reopen(fderr,  "err");
+		UnitTest_diff("FILE", 42, "ABC", "ABC", NULL, NULL);
+		dup2(fdsave, fderr);
+		EXPECT_CONTENT("err", ".\tGOOD\tFILE:42\t[expr] == \"ABC\"\n");
+		TEST_EXIT;
+	}
+
+	CHILD_EXIT(0);
 }
 

@@ -37,4 +37,18 @@ TEST_SUITE
 	}
 
 	CHILD_SIGNALED(6);
+
+	TEST_FORK
+	{
+		TEST_FORK { exit(0); }
+		CHILD_SIGNALED(6);
+
+		TEST_FORK { abort(); }
+		CHILD_EXIT(0);
+
+		TEST_EXIT;
+	}
+
+	CHILD_EXIT(1);
+
 }

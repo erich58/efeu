@@ -2,13 +2,22 @@
 #include <stdlib.h>
 #include <dirent.h>
 
+TEST_DECL(mkpath)
+{
+	EXPECT_STR(UnitTest_mkpath(NULL), UnitTest_tmp(NULL));
+	EXPECT_STR(UnitTest_mkpath("abc"), UnitTest_tmp("abc"));
+	EXPECT_STR(UnitTest_mkpath("/dev/null"), "/dev/null");
+}
+
 TEST_DECL(bad_path)
 {
 	EXPECT_STR(UnitTest_mkfile(".", "Data"), NULL);
 }
 
-TEST_SUITE
+TEST_DECL(mktemp_error)
 {
+	UnitTest_tmpclean();
+
 	TEST_FORK
 	{
 		PRINT_LABEL("mktemp error");
@@ -19,7 +28,20 @@ TEST_SUITE
 	}
 
 	CHILD_EXIT(1);
+}
 
+TEST_DECL(tpl)
+{
+	EXPECT_STR(UnitTest_tpl(NULL), NULL);
+	EXPECT_STR(UnitTest_tpl("@"), UnitTest_tmp(NULL));
+	EXPECT_STR(UnitTest_tpl("@/x\\@bc"), UnitTest_tmp("x@bc"));
+	EXPECT_STR(UnitTest_tpl("abc"), "abc");
+	EXPECT_STR(UnitTest_tpl("abc\\"), "abc");
+	EXPECT_STR(UnitTest_tpl("abc\\x"), "abcx");
+}
+
+TEST_DECL(child_tmp)
+{
 	char *tmp = strdup(UnitTest_tmp(NULL));
 	PRINT_STR(UnitTest_tmp(NULL));
 	EXPECT_STRCMP(tmp, ==, UnitTest_tmp(NULL));
@@ -35,6 +57,23 @@ TEST_SUITE
 	CHILD_EXIT(0);
 	PRINT_STR(UnitTest_tmp(NULL));
 	EXPECT_STRCMP(tmp, !=, UnitTest_tmp(NULL));
+}
+
+TEST_DECL(fake_cmd)
+{
+	EXPECT_STR(UnitTest_mkcmd("cmd", "#!/bin/sh\necho $1\n"),
+		UnitTest_tmp("bin/cmd"));
+	EXPECT_STR(UnitTest_pgets("cmd arg",EOF), "arg\n");
+}
+
+TEST_SUITE
+{
+	TEST_RUN(mkpath);
+	TEST_RUN(bad_path);
+	TEST_RUN(mktemp_error);
+	TEST_RUN(child_tmp);
+	TEST_RUN(fake_cmd);
+	TEST_RUN(tpl);
 
 	TEST_FILE(NULL, NULL);
 	TEST_FILE("x", "Test\n");
@@ -62,20 +101,9 @@ TEST_SUITE
 
 	CHILD_EXIT(1);
 
-//	UnitTest_stderr("stderr");
-	TEST_EXEC(bad_path);
-//	UnitTest_stderr(NULL);
-//	PRINT_CONTENT("stderr");
-
 	EXPECT_CONTENT("dir/x", NULL);
 	EXPECT_CONTENT(NULL, NULL);
 	PRINT_STR(UnitTest_content(NULL));
-	EXPECT_STR(UnitTest_tpl(NULL), NULL);
-	EXPECT_STR(UnitTest_tpl("@"), UnitTest_tmp(NULL));
-	EXPECT_STR(UnitTest_tpl("@/x\\@bc"), UnitTest_tmp("x@bc"));
-	EXPECT_STR(UnitTest_tpl("abc"), "abc");
-	EXPECT_STR(UnitTest_tpl("abc\\"), "abc");
-	EXPECT_STR(UnitTest_tpl("abc\\x"), "abcx");
 
 	DIR *dir = opendir(UnitTest_tmp("dir"));
 
@@ -96,8 +124,4 @@ TEST_SUITE
 	EXPECT_CONTENT("dir/file", NULL);
 	TEST_FILE("dir/a/b/c/f", "Data");
 	EXPECT_CONTENT("dir/a/b/c/f", "Data");
-
-	EXPECT_STR(UnitTest_mkcmd("cmd", "#!/bin/sh\necho $1\n"),
-		UnitTest_tmp("bin/cmd"));
-	EXPECT_STR(UnitTest_pgets("cmd arg",EOF), "arg\n");
 }
