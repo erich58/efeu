@@ -96,4 +96,8 @@ TEST_SUITE
 	EXPECT_CONTENT("dir/file", NULL);
 	TEST_FILE("dir/a/b/c/f", "Data");
 	EXPECT_CONTENT("dir/a/b/c/f", "Data");
+
+	EXPECT_STR(UnitTest_mkcmd("cmd", "#!/bin/sh\necho $1\n"),
+		UnitTest_tmp("bin/cmd"));
+	EXPECT_STR(UnitTest_pgets("cmd arg",EOF), "arg\n");
 }

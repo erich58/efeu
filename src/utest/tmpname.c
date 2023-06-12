@@ -159,6 +159,29 @@ const char *UnitTest_mkfile(const char *name, const char *content)
 	return path;
 }
 
+const char *UnitTest_mkcmd(const char *name, const char *content)
+{
+	static STRING_DECL(buf);
+	static int need_path = 1;
+
+	if	(need_path)
+	{
+		UnitTest_clear(&buf);
+		UnitTest_puts(UnitTest_mkdir("bin"), &buf);
+		UnitTest_putc(':', &buf);
+		UnitTest_puts(getenv("PATH"), &buf);
+		setenv("PATH", UnitTest_str(&buf), 1);
+		need_path = 0;
+	}
+
+	UnitTest_clear(&buf);
+	UnitTest_puts("bin/", &buf);
+	UnitTest_puts(name, &buf);
+	const char *p = UnitTest_mkfile(UnitTest_str(&buf), content);
+	chmod(p, 0700);
+	return p;
+}
+
 const char *UnitTest_content(const char *name)
 {
 	static STRING_DECL(buf);

@@ -3,8 +3,10 @@
 
 TEST_SUITE
 {
+	EXPECT(UnitTest_fderr() == 2);
 	EXPECT(UnitTest_stdout("stdout"));
 	EXPECT(UnitTest_stderr("stderr"));
+	EXPECT(UnitTest_fderr() != 2);
 	EXPECT(printf("Testnachricht\n") > 0);
 	EXPECT(UnitTest_stdout(NULL)); // oder fflush(stdout) ! 
 	EXPECT(fprintf(stderr, "Fehlermeldung\n") > 0);

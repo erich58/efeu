@@ -27,7 +27,7 @@ TEST_SUITE
 
 	TEST_FORK
 	{
-		UnitTest_mkfile("tput",
+		UnitTest_mkcmd("tput",
 			"#!/bin/sh\n"
 			"case \"$1$2\" in\n"
 			"setaf2) printf '<green:';;\n"
@@ -36,14 +36,6 @@ TEST_SUITE
 			"sgr0) printf '>';;\n"
 			"esac\n"
 		);
-
-		system(UnitTest_tpl("chmod a+x @/tput"));
-
-		STRING_DECL(path);
-		UnitTest_puts(UnitTest_tmp(NULL), &path);
-		UnitTest_putc(':', &path);
-		UnitTest_puts(getenv("PATH"), &path);
-		setenv("PATH", UnitTest_str(&path), 1);
 
 		EXPECT_STR(UnitTest_color(1), "<green:");
 		EXPECT_STR(UnitTest_color(2), "<red:");

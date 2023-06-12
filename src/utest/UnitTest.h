@@ -94,6 +94,7 @@ const char *UnitTest_tmp(const char *name);
 const char *UnitTest_mkpath(const char *name);
 const char *UnitTest_mkdir(const char *name);
 const char *UnitTest_mkfile(const char *name, const char *content);
+const char *UnitTest_mkcmd(const char *name, const char *content);
 const char *UnitTest_content(const char *name);
 void UnitTest_tmpclean(void);
 
