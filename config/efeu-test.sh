@@ -176,7 +176,7 @@ $gcov -o $build $gcda | sed -e "s/'//g" | awk '
 /File/ { src=$2; }
 NF == 0 { src = "~TOTAL"; }
 /^Lines/ { printf("%s\t%s\n", src, substr($0, index($a, ":") + 1)); }
-' > gcov.tmp
+' | sed -e '/.tst.c	/d' > gcov.tmp
 
 find $dir -name '*.c' ! -name '*.tst.c' | while read path
 do
