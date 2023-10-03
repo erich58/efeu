@@ -103,6 +103,15 @@ static void f_modf (EfiFunc *func, void *rval, void **arg)
 	Val_double(rval) = modf(Val_double(arg[0]), arg[1]);
 }
 
+static void f_sgn (EfiFunc *func, void *rval, void **arg)
+{
+	double d = Val_double(arg[0]);
+
+	if	(d > 0)	Val_int(rval) = 1;
+	else if	(d < 0)	Val_int(rval) = -1;
+	else		Val_int(rval) = 0.;
+}
+
 static EfiFuncDef fdef_math[] = {
 	{ FUNC_VIRTUAL, &Type_double, "log (double)", f_log },
 	{ FUNC_VIRTUAL, &Type_double, "xlog (double)", f_xlog },
@@ -123,6 +132,7 @@ static EfiFuncDef fdef_math[] = {
 	{ FUNC_VIRTUAL, &Type_double, "frexp (double, int &)", f_frexp },
 	{ FUNC_VIRTUAL, &Type_double, "ldexp (double, int)", f_ldexp },
 	{ FUNC_VIRTUAL, &Type_double, "modf (double, double &)", f_modf },
+	{ FUNC_VIRTUAL, &Type_int, "sgn (double)", f_sgn },
 };
 
 
