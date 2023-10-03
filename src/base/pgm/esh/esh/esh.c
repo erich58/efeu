@@ -37,6 +37,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <Math/pnom.h>
 #include <Math/mdmath.h>
 #include <Math/func.h>
+#include <Math/solve.h>
 #include <EFEU/StatData.h>
 #include <EFEU/Tabular.h>
 
@@ -57,7 +58,7 @@ int main (int narg, char **arg)
 	SetupTabular();
 	SetupMdMat();
 	SetupMath();
-	SetupMdMath();
+	SetupSolve();
 	SetupPnom();
 	SetupMathFunc();
 	SetupStatData();
