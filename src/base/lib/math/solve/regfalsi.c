@@ -20,9 +20,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#include <EFEU/math.h>
 #include <Math/solve.h>
-#include <EFEU/object.h>
-
 
 double regfalsi (double (*f)(void *par, double x),
 	void *par, double x0, double x1)
@@ -40,9 +39,9 @@ double regfalsi (double (*f)(void *par, double x),
 
 	if	(y0 * y1 >= 0.)
 	{
-		log_error(NULL, "[solve:2]", "mm", msprintf(SolveFmt, x1),
+		log_note(NULL, "[solve:2]", "mm", msprintf(SolveFmt, x0),
 			msprintf(SolveFmt, x1));
-		return 0.5 * (x0 + x1);
+		return ExceptionValue(0.);
 	}
 
 	tol = SolveEps * (x1 - x0);
@@ -74,6 +73,6 @@ double regfalsi (double (*f)(void *par, double x),
 		else if	(z < 0.5)	weight = (1. + weight) / 2.;
 	}
 
-	log_note(NULL, "[solve:3]", NULL);
+	log_note(NULL, "[solve:3]", "d", SolveStep);
 	return x;
 }

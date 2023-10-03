@@ -20,8 +20,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#include <EFEU/math.h>
 #include <Math/solve.h>
-#include <EFEU/object.h>
 
 
 double bisection (int (*f)(void *par, double x), void *par, double x0, double x1)
@@ -38,8 +38,9 @@ double bisection (int (*f)(void *par, double x), void *par, double x0, double x1
 
 	if	(y0 * y1 > 0)
 	{
-		log_error(NULL, "[solve:2]", "mm", msprintf(SolveFmt, x0),
+		log_note(NULL, "[solve:2]", "mm", msprintf(SolveFmt, x0),
 			msprintf(SolveFmt, x1));
+		return ExceptionValue(0.);
 	}
 
 	tol = SolveEps * (x1 - x0);
@@ -62,6 +63,6 @@ double bisection (int (*f)(void *par, double x), void *par, double x0, double x1
 		else				x1 = x, y1 = y;
 	}
 
-	log_note(NULL, "[solve:3]", NULL);
-	return 0.;
+	log_note(NULL, "[solve:3]", "d", SolveStep);
+	return x;
 }

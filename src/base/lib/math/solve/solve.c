@@ -30,7 +30,7 @@ If not, write to the Free Software Foundation, Inc.,
 int SolveFlag = 0;
 double SolveEps = 0.000001;
 int SolveStep = 25;
-char *SolveFmt = "%12lG";
+char *SolveFmt = "%12G";
 
 static EfiVarDef solve_var[] = {
 	{ "debug", 	&Type_bool, &SolveFlag },
