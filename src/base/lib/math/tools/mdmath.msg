@@ -22,5 +22,5 @@ If not, write to the Free Software Foundation, Inc.,
 
 1	$!: mdinv: empty field.\n
 2	$!: could not convert "$1" in double.\n
-3	$!: mdinv: not a square field.\n
+3	$!: mdinv: not a square field (lines=$1, cols=$2).\n
 4	$!: mdinv: singulary field (dim=$1, range=$2).\n

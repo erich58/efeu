@@ -36,7 +36,7 @@ mdmat *mdinv (mdmat *base)
 
 	if	(base == NULL)
 	{
-		log_error(NULL, "[mdmath:1]", NULL);
+		log_note(NULL, "[mdmath:1]", NULL);
 		return NULL;
 	}
 
@@ -77,7 +77,7 @@ mdmat *mdinv (mdmat *base)
 
 	if	(lines != cols)
 	{
-		log_error(NULL, "[mdmath:3]", NULL);
+		log_note(NULL, "[mdmath:3]", "dd", lines, cols);
 		return NULL;
 	}
 
@@ -94,7 +94,7 @@ mdmat *mdinv (mdmat *base)
 	if	((cols = GaussJordan(md->data, lines)) != lines)
 	{
 		del_mdmat(md);
-		log_error(NULL, "[mdmath:4]", "dd", lines, cols);
+		log_note(NULL, "[mdmath:4]", "dd", lines, cols);
 		return NULL;
 	}
 
