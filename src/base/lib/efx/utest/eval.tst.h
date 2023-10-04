@@ -10,7 +10,7 @@
 #include "utest/in.tst.h"
 #include "utest/out.tst.h"
 
-static const char *utest_eval(char *def)
+static const char *utest_eval(const char *def)
 {
 	iocpy_eval(IN(def), OUT(), 0, NULL, 0);
 	return utest_out();
