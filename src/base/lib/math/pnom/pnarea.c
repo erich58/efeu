@@ -51,8 +51,8 @@ double pnarea(Polynom *p, double a, double b)
 	int k1, k2;
 	double z;
 
-	if	(p == NULL)	return 0.;
-	if	(p->dim == 0)	return 0.;
+	if	(p == NULL || p->dim == 0)
+		return 0.;
 
 	for (k2 = p->dim - 1; k2 > 0; k2--)
 		if (b >= p->x[k2]) break;

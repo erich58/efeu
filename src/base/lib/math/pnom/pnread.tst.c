@@ -1,14 +1,12 @@
 #include <EFEU/UnitTest.h>
 #include <Math/pnom.h>
-#include "utest/out.tst.h"
-#include <locale.h>
+#include "utest/pnom.tst.h"
 
 TEST_DECL(setup)
 {
 	SetupStd();
 	SetProgName("ID");
 	SetApplPath(UnitTest_tmp(NULL));
-	setlocale(LC_ALL, "C");
 	TEST_FILE("pnom.msg",
 		"11	$!: Bad header\n"
 		"12	$!: Bad data line\n"
@@ -42,14 +40,13 @@ TEST_DECL(syntax)
 	EXPECT_CONTENT("stderr", "ERR ID: Bad coefficients\n");
 }
 
-TEST_DECL(right)
+TEST_DECL(str2pnom)
 {
-	TEST_IO_DECL(in);
-
-	UnitTest_init(&in, " 2  3\n\t0 0 1.5 0 -0.5\n 1 1 0 -1.5 0.5\n", 0);
-	Polynom *pn = pnread(UnitTest_file(&in));
-	pnprint(OUT(), pn, "%.2f");
-	EXPECT_OUT(
+	EXPECT_PNOM(str2pnom(
+		" 2  3\n"
+		"\t0 0 1.5 0 -0.5\n"
+		"1 1 0 -1.5 0.5\n"
+	),
 		"2 3\n"
 		"0.00 0.00 1.50 0.00 -0.50\n"
 		"1.00 1.00 0.00 -1.50 0.50\n"
@@ -60,6 +57,6 @@ TEST_SUITE
 {
 	TEST_RUN(setup);
 	TEST_RUN(syntax);
-	TEST_RUN(right);
-	CLEANUP_OUT;
+	TEST_RUN(str2pnom);
+	CLEANUP_PNOM;
 }

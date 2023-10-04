@@ -22,6 +22,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/efmain.h>
 #include <Math/pnom.h>
+#include <locale.h>
 
 
 Polynom *pnread(FILE *file)
@@ -29,6 +30,9 @@ Polynom *pnread(FILE *file)
 	Polynom *p;
 	int n, k;
 	int i, j;
+
+	const char *loc = setlocale(LC_ALL, NULL);
+	setlocale(LC_ALL, "C");
 
 	if	(fscanf(file, "%d%d", &n, &k) != 2)
 	{
@@ -53,5 +57,16 @@ Polynom *pnread(FILE *file)
 		}
 	}
 
+	setlocale(LC_ALL, loc);
 	return p;
+}
+
+Polynom *str2pnom(const char *def)
+{
+	FILE *file = tmpfile();
+	fputs(def, file);
+	rewind(file);
+	Polynom *pn = pnread(file);
+	fclose(file);
+	return pn;
 }

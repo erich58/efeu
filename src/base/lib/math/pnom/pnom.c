@@ -35,6 +35,11 @@ Polynom *Buf_pnom = NULL;
 /*	Funktionen
 */
 
+static void PF_null(EfiFunc *func, void *rval, void **arg)
+{
+	Val_pnom(rval) = NULL;
+}
+
 static void PF_create(EfiFunc *func, void *rval, void **arg)
 {
 	EfiObjList *list = Val_list(arg[0]);
@@ -51,7 +56,7 @@ static void PF_create(EfiFunc *func, void *rval, void **arg)
 	}
 	else
 	{
-		Val_pnom(rval) = pnconst(0., 0.);
+		Val_pnom(rval) = NULL;
 	}
 }
 
@@ -159,6 +164,7 @@ static EfiFuncDef fdef[] = {
 	{ 0, &Type_pnom, "linint (EfiVec x, EfiVec y)", PF_linint },
 	{ 0, &Type_pnom, "spline (EfiVec x, EfiVec y)", PF_spline },
 	{ 0, &Type_pnom, "dspline (EfiVec x, EfiVec y, double a = 0., double b = 0.)", PF_dspline },
+	{ 0, &Type_pnom, "_Ptr_ ()", PF_null },
 	{ 0, &Type_pnom, "Polynom (...)", PF_create },
 	{ 0, &Type_pnom, "pnload (str file)", PF_load },
 	{ 0, &Type_pnom, "Polynom::save (str file)", PF_save },

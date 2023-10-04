@@ -2,6 +2,7 @@
 #include <EFEU/object.h>
 #include <Math/pnom.h>
 #include "utest/eval.tst.h"
+#include "utest/pnom.tst.h"
 
 extern int PrintFloatPrec;
 
@@ -18,7 +19,7 @@ TEST_DECL(setup)
 
 TEST_DECL(zero)
 {
-	EXPECT_EVAL("p = Polynom()", "Polynom: dim=1 deg=0");
+	EXPECT_EVAL("p = Polynom()", "NULL");
 	EXPECT_EVAL("p(0.)", "0.00");
 	EXPECT_EVAL("p(1.)", "0.00");
 }
@@ -28,6 +29,7 @@ TEST_DECL(constant)
 	EXPECT_EVAL("p = Polynom(1.)", "Polynom: dim=1 deg=0");
 	EXPECT_EVAL("p(0.)", "1.00");
 	EXPECT_EVAL("p(1.)", "1.00");
+	EXPECT_EVAL("p = NULL", "NULL");
 }
 
 TEST_DECL(quadratic)
@@ -92,9 +94,7 @@ TEST_DECL(linint)
 	EXPECT(linint(0, NULL, NULL) == NULL);
 	double x = 1.;
 	double y = 2.;
-	Polynom *pn = linint(1, &x, &y);
-	pnprint(OUT(), pn, "%.2f");
-	EXPECT_OUT(
+	EXPECT_PNOM(linint(1, &x, &y),
 		"1 0\n"
 		"1.00 2.00\n"
 	);
@@ -128,4 +128,5 @@ TEST_SUITE
 	TEST_RUN(linint);
 	TEST_RUN(spline);
 	CLEANUP_EVAL;
+	CLEANUP_PNOM;
 }

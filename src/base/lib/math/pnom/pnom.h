@@ -78,6 +78,7 @@ Polynom *pnload (const char *name);
 void pnsave (Polynom *pn, const char *name);
 
 Polynom *pnread (FILE *file);
+Polynom *str2pnom (const char *def);
 int pnprint (IO *file, Polynom *pn, const char *fmt);
 
 
