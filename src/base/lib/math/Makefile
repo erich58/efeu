@@ -12,7 +12,7 @@ prereq::
 	make -C ../md
 
 LDFLAGS += -lmd -lefx -lefm -ldl -lm
-TST_CFLAGS += -I ../efm
+TST_CFLAGS += -I ../efm -I ../efx
 
 include $(CFG)/Library.mak
 include $(CFG)/ApplFiles.mak

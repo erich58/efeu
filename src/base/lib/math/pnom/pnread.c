@@ -41,14 +41,14 @@ Polynom *pnread(FILE *file)
 	{
 		if	(fscanf(file, "%lf", p->x + i) != 1)
 		{
-			log_error(NULL, "[pnom:11]", NULL);
+			log_error(NULL, "[pnom:12]", NULL);
 		}
 
 		for (j = 0; j <= k; ++j)
 		{
 			if	(fscanf(file, "%lf", p->c[i] + j) != 1)
 			{
-				log_error(NULL, "[pnom:11]", NULL);
+				log_error(NULL, "[pnom:13]", NULL);
 			}
 		}
 	}
