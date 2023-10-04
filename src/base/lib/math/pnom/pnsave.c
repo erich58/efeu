@@ -57,22 +57,20 @@ void pnsave(Polynom *p, const char *name)
 
 Polynom *pnload(const char *name)
 {
-	Polynom *p;
-	IO *ein;
-	HEADER hdr;
+	HEADER hdr = { 0, 0 };
+	Polynom *p = NULL;
+	IO *ein = io_fileopen(name, "rb");
 
-	ein = io_fileopen(name, "rb");
-
-	if	(io_read(ein, &hdr, sizeof(HEADER)) != sizeof(HEADER))
+	if	(io_read(ein, &hdr, sizeof(HEADER)) == sizeof(HEADER))
 	{
-		io_close(ein);
-		return NULL;
+		if	(hdr.dim)
+		{
+			p = pnalloc(hdr.dim, hdr.deg);
+			io_read(ein, p->x,
+				sizeof(double) * p->dim * (p->deg + 2));
+		}
 	}
-	
-	p = pnalloc(hdr.dim, hdr.deg);
-	p->dim = hdr.dim;
-	p->deg = hdr.deg;
-	io_read(ein, p->x, sizeof(double) * p->dim * (p->deg + 2));
+
 	io_close(ein);
 	return p;
 }

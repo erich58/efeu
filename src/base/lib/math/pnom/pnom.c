@@ -37,20 +37,22 @@ Polynom *Buf_pnom = NULL;
 
 static void PF_create(EfiFunc *func, void *rval, void **arg)
 {
-	Polynom *pn;
-	EfiObjList *list;
-	int i;
+	EfiObjList *list = Val_list(arg[0]);
 
-	Val_pnom(rval) = pnconst(0., Val_double(arg[0]));
-	list = Val_list(arg[0]);
+	if	(list)
+	{
+		Polynom *pn = pnalloc(1, ObjListLen(list) - 1);
+		pn->x[0] = 0.;
 
-	pn = pnalloc(1, ObjListLen(list) - 1);
-	pn->x[0] = 0.;
+		for (int i = 0; list != NULL; list = list->next)
+			pn->c[0][i++] = Obj2double(RefObj(list->obj));
 
-	for (i = 0; list != NULL; list = list->next)
-		pn->c[0][i++] = Obj2double(RefObj(list->obj));
-
-	Val_pnom(rval) = pn;
+		Val_pnom(rval) = pn;
+	}
+	else
+	{
+		Val_pnom(rval) = pnconst(0., 0.);
+	}
 }
 
 
