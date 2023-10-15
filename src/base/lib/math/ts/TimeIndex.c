@@ -41,7 +41,7 @@ d	Jahr-Monat-Tag
 */
 
 #define	MONTAG(woche)	(7 * (woche) + 0)
-#define	MITTWOCH(woche)	(7 * (woche) + 3)
+#define	MITTWOCH(woche)	(7 * (woche) + 2)
 #define	SONNTAG(woche)	(7 * (woche) + 6)
 
 static int WeekIndex (int y, int w)
@@ -93,7 +93,7 @@ TimeIndex str2TimeIndex (const char *str, char **ptr)
 	idx.value = strtol(str, &p, 10);
 	idx.type = TS_YEAR;
 
-	if	(p == NULL)
+	if	(*p == 0)
 	{
 		idx.value = add_century(idx.value);
 	}

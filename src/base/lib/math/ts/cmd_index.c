@@ -65,13 +65,13 @@ static EfiObj *idx_month (const EfiObj *base, void *data)
 static EfiObj *idx_beg (const EfiObj *base, void *data)
 {
 	int x = base ? tindex_floor(*((TimeIndex *) base->data)) : 0;
-	return NewObj(&Type_int, &x);
+	return NewObj(&Type_Date, &x);
 }
 
 static EfiObj *idx_end (const EfiObj *base, void *data)
 {
 	int x = base ? tindex_ceil(*((TimeIndex *) base->data)) : 0;
-	return NewObj(&Type_int, &x);
+	return NewObj(&Type_Date, &x);
 }
 
 static EfiObj *idx_floor (const EfiObj *base, void *data)
