@@ -8,7 +8,7 @@ static void tst_op(double x, double **c, size_t *deg, size_t n)
 
 	for (size_t i = 0; i < n; ++i)
 	{
-		printf("%d: ", i);
+		printf("%zd: ", i);
 
 		for (size_t j = 0; j <= deg[i]; ++j)
 			printf("%6.2f", c[i][j]);
