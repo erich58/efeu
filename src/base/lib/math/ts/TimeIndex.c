@@ -162,20 +162,20 @@ int tindex_print (IO *io, TimeIndex idx, int offset)
 	{
 	case TS_DAY:
 		Calendar(idx.value, &cal);
-		return io_xprintf(io, "%d-%d-%d",
+		return io_xprintf(io, "%04d-%02d-%02d",
 			cal.year, cal.month, cal.day);
 	case TS_WEEK:
 		Calendar(MITTWOCH(idx.value), &cal);
 		week = idx.value - WeekIndex(cal.year, 0);
 		return io_xprintf(io, "%d/%d", week, cal.year);
 	case TS_MONTH:
-		return io_xprintf(io, "%d.%d",
-			1 + idx.value % 12, idx.value / 12);
+		return io_xprintf(io, "%04d-%02d",
+			idx.value / 12, 1 + idx.value % 12);
 	case TS_QUART:
-		return io_xprintf(io, "%d:%d",
+		return io_xprintf(io, "%04d:%d",
 			idx.value / 4, 1 + idx.value % 4);
 	case TS_YEAR:
-		return io_xprintf(io, "%d", idx.value);
+		return io_xprintf(io, "%04d", idx.value);
 	default:
 		return io_xprintf(io, "#%d", idx.value);
 	}

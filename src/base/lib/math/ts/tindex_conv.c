@@ -38,9 +38,15 @@ static int dat2mon (unsigned dat)
 
 TimeIndex tindex_conv (TimeIndex idx, int type, int pos)
 {
-	if	(idx.type == type)	return idx;
-
-	if	(MBASE(idx.type) && MBASE(type))
+	if	(idx.type == type)
+	{
+		;
+	}
+	else if	(idx.type == TS_INDEX)
+	{
+		idx.type = type;
+	}
+	else if	(MBASE(idx.type) && MBASE(type))
 	{
 		switch (idx.type)
 		{

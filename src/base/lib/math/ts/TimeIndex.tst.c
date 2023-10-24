@@ -36,12 +36,12 @@ TEST_DECL(idx2str)
 	EXPECT_MSTR(TimeIndex2str(tindex_create(TS_YEAR, 2020), 1), "2021");
 	EXPECT_MSTR(TimeIndex2str(tindex_create(TS_QUART, 4*2020), 0), "2020:1");
 	EXPECT_MSTR(TimeIndex2str(tindex_create(TS_QUART, 4*2020), 5), "2021:2");
-	EXPECT_MSTR(TimeIndex2str(tindex_create(TS_MONTH, 12*2020), 0), "1.2020");
-	EXPECT_MSTR(TimeIndex2str(tindex_create(TS_MONTH, 12*2020), 8), "9.2020");
+	EXPECT_MSTR(TimeIndex2str(tindex_create(TS_MONTH, 12*2020), 0), "2020-01");
+	EXPECT_MSTR(TimeIndex2str(tindex_create(TS_MONTH, 12*2020), 8), "2020-09");
 	int cidx = CalendarIndex(1, 1, 2020);
 	EXPECT_MSTR(TimeIndex2str(tindex_create(TS_WEEK, cidx / 7), 0), "1/2020");
-	EXPECT_MSTR(TimeIndex2str(tindex_create(TS_DAY, cidx), 0), "2020-1-1");
-	EXPECT_MSTR(TimeIndex2str(tindex_create(TS_DAY, cidx), 31), "2020-2-1");
+	EXPECT_MSTR(TimeIndex2str(tindex_create(TS_DAY, cidx), 0), "2020-01-01");
+	EXPECT_MSTR(TimeIndex2str(tindex_create(TS_DAY, cidx), 31), "2020-02-01");
 }
 
 TEST_DECL(idx2dbl)
@@ -83,10 +83,10 @@ TEST_DECL(str2idx)
 	EXPECT_STR(p, " /3");
 	EXPECT_MSTR(TimeIndex2str(str2TimeIndex("3/2000", &p), 10), "13/2000");
 	EXPECT_MSTR(TimeIndex2str(str2TimeIndex("2000:1", &p), 5), "2001:2");
-	EXPECT_MSTR(TimeIndex2str(str2TimeIndex("1.2000", &p), 5), "6.2000");
-	EXPECT_MSTR(TimeIndex2str(str2TimeIndex("1.2.2000", &p), 5), "2000-2-6");
-	EXPECT_MSTR(TimeIndex2str(str2TimeIndex("2000-1", &p), 5), "6.2000");
-	EXPECT_MSTR(TimeIndex2str(str2TimeIndex("2000-2-1", &p), 29), "2000-3-1");
+	EXPECT_MSTR(TimeIndex2str(str2TimeIndex("1.2000", &p), 5), "2000-06");
+	EXPECT_MSTR(TimeIndex2str(str2TimeIndex("1.2.2000", &p), 5), "2000-02-06");
+	EXPECT_MSTR(TimeIndex2str(str2TimeIndex("2000-1", &p), 5), "2000-06");
+	EXPECT_MSTR(TimeIndex2str(str2TimeIndex("2000-2-1", &p), 29), "2000-03-01");
 }
 
 TEST_DECL(length)
