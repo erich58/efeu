@@ -33,7 +33,6 @@ static char *type_name(int type)
 		case TS_YEAR:	return "jahr";
 		case TS_QUART:	return "quart";
 		case TS_MONTH:	return "monat";
-		case TS_WEEK:	return "woche";
 		case TS_DAY:	return "tag";
 		default:	return "index";
 		}
@@ -44,7 +43,6 @@ static char *type_name(int type)
 	case TS_YEAR:	return "year";
 	case TS_QUART:	return "quart";
 	case TS_MONTH:	return "month";
-	case TS_WEEK:	return "week";
 	case TS_DAY:	return "day";
 	default:	return "index";
 	}

@@ -144,43 +144,6 @@ static void f_ptr2idx (EfiFunc *func, void *rval, void **arg)
 	RVIDX.value = 0;
 }
 
-static void f_konv (EfiFunc *func, void *rval, void **arg)
-{
-	fprintf(stderr, "WARNING: konv instead of conv.\n");
-	RVIDX = tindex_conv(IDX(0), Val_char(arg[1]), Val_int(arg[2]));
-}
-
-static void f_conv (EfiFunc *func, void *rval, void **arg)
-{
-	char *mode = Val_str(arg[1]);
-
-	if	(mode)
-	{
-		int type = 0;
-		int pos = 0;
-
-		for (; *mode != 0; mode++)
-		{
-			switch (*mode)
-			{
-			case '+':	pos = 1; break;
-			case '-':	pos = -1; break;
-			default:	type = tindex_type(mode); break;
-			}
-		}
-
-		RVIDX = tindex_conv(IDX(0), type, pos);
-	}
-	else	RVIDX = IDX(0);
-}
-
-static void f_xkonv (EfiFunc *func, void *rval, void **arg)
-{
-	fprintf(stderr, "WARNING: konv instead of conv.\n");
-	f_conv(func, rval, arg);
-}
-
-
 static void f_fprint_idx (EfiFunc *func, void *rval, void **arg)
 {
 	char *s = TimeIndex2str(IDX(1), 0);
@@ -201,10 +164,6 @@ static void f_idx2dbl (EfiFunc *func, void *rval, void **arg)
 static EfiFuncDef func[] = {
 	{ 0, &Type_TimeIndex, "_Ptr_ ()", f_ptr2idx },
 	{ 0, &Type_TimeIndex, "str ()", f_str2idx },
-	{ FUNC_VIRTUAL, &Type_TimeIndex, "TimeIndex::konv (char type, int pos = 0)",
-		f_konv },
-	{ FUNC_VIRTUAL, &Type_TimeIndex, "TimeIndex::konv (str mode)", f_xkonv },
-	{ FUNC_VIRTUAL, &Type_TimeIndex, "TimeIndex::conv (str mode)", f_conv },
 	{ FUNC_RESTRICTED, &Type_str, "TimeIndex ()", f_idx2str },
 	{ FUNC_RESTRICTED, &Type_double, "TimeIndex ()", f_idx2dbl },
 

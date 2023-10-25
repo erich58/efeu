@@ -40,7 +40,6 @@ If not, write to the Free Software Foundation, Inc.,
 #define	TS_YEAR		'y'	/* Jahresdaten */
 #define	TS_QUART	'q'	/* Quartalsdaten */
 #define	TS_MONTH	'm'	/* Monatsdaten */
-#define	TS_WEEK		'w'	/* Wochenzähler */
 #define	TS_DAY		'd'	/* Tageszähler */
 #define	TS_HOUR		'H'	/* Stunden */
 #define	TS_MIN		'M'	/* Minuten */
@@ -56,9 +55,8 @@ int tindex_type (const char *name);
 
 TimeIndex tindex_create (int type, int value);
 TimeIndex str2TimeIndex (const char *str, char **ptr);
-int tindex_print (IO *io, TimeIndex idx, int offset);
 char *TimeIndex2str (TimeIndex idx, int offset);
-TimeIndex tindex_conv (TimeIndex idx, int type, int pos);
+int tindex_print (IO *io, TimeIndex idx, int offset);
 int tindex_diff (TimeIndex a, TimeIndex b);
 int tindex_length (TimeIndex idx);
 int tindex_year (TimeIndex idx);
@@ -69,7 +67,6 @@ int tindex_floor (TimeIndex idx);
 int tindex_ceil (TimeIndex idx);
 
 double TimeIndex2dbl (TimeIndex idx, int offset, int pos);
-
 
 /*	Zeitreihenstruktur
 */

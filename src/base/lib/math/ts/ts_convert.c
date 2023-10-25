@@ -138,7 +138,6 @@ static int mmonidx (int x) { return x; }
 static int jdayidx (int x) { return CalendarIndex(1, 1, x); }
 static int qdayidx (int x) { return CalendarIndex(1, 1 + 3 * (x % 4), x / 4); }
 static int mdayidx (int x) { return CalendarIndex(1, 1 + x % 12, x / 12); }
-static int wdayidx (int x) { return MONTAG(x); }
 static int ddayidx (int x) { return x; }
 
 static IdxConv geticonv (int type, int mbase)
@@ -158,7 +157,6 @@ static IdxConv geticonv (int type, int mbase)
 	case TS_YEAR:	return jdayidx;
 	case TS_QUART:	return qdayidx;
 	case TS_MONTH:	return mdayidx;
-	case TS_WEEK:	return wdayidx;
 	default:	return ddayidx;
 	}
 }
@@ -193,7 +191,6 @@ static int newbase(int type, int mbase, int x)
 	case TS_YEAR:	return (day2mon(x) + 11) / 12;
 	case TS_QUART:	return (day2mon(x) + 2) / 3;
 	case TS_MONTH:	return day2mon(x);
-	case TS_WEEK:	return (x + 6) / 7;
 	default:	return x;
 	}
 }

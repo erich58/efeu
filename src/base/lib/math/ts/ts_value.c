@@ -30,7 +30,7 @@ double ts_value (TimeSeries *ts, TimeIndex idx, double defval)
 		return defval;
 
 	if	(idx.type != ts->base.type)
-		idx = tindex_conv(idx, ts->base.type, 0);
+		return ts->data[0];
 
 	if	(idx.value <= ts->base.value)
 		return ts->data[0];
