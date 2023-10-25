@@ -45,7 +45,8 @@ typedef struct {
 } CalInfo;
 
 extern int CenturyLimit;
-int LeapYear (int jahr);
+int CenturyYear (int year);
+int LeapYear (int year);
 int CalendarIndex (int tag, int monat, int jahr);
 int CalendarIndex1900 (int tag, int monat, int jahr);
 int TodayIndex (void);

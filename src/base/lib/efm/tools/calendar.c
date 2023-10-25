@@ -63,14 +63,23 @@ int CenturyLimit = 50;
 #define	last_day_of_year(yr)	\
 	((yr) * 365 + leap_years_since_year_1(yr))
 
+/*	Standardisiertes Jahr
+*/
+
+int CenturyYear(int year)
+{
+	if	(year < YLIM_2000)	year += 2000;
+	if	(year < YLIM_1900)	year += 1900;
+
+	return year;
+}
+
 /*	Schaltjahr
 */
 
 int LeapYear (int year)
 {
-	if	(year < YLIM_2000)	year += 2000;
-	if	(year < YLIM_1900)	year += 1900;
-
+	year = CenturyYear(year);
 	return leap_year(year);
 }
 
@@ -93,9 +102,7 @@ static int DayInYear (int day, int month, int year)
 
 int CalendarIndex (int day, int month, int year)
 {
-	if	(year < YLIM_2000)	year += 2000;
-	if	(year < YLIM_1900)	year += 1900;
-
+	year = CenturyYear(year);
 	return last_day_of_year(year - 1) + DayInYear(day, month, year);
 }
 
@@ -313,8 +320,7 @@ int str2Calendar (const char *str, char **endptr, int flag)
 
 	if	(endptr)	*endptr = p;
 
-	if	(jahr < YLIM_2000)	jahr += 2000;
-	if	(jahr < YLIM_1900)	jahr += 1900;
+	jahr = CenturyYear(jahr);
 
 	if	(flag)
 	{
