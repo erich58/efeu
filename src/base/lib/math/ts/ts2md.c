@@ -22,31 +22,6 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <Math/TimeSeries.h>
-#include <EFEU/LangDef.h>
-
-static char *type_name(int type)
-{
-	if	(mstrcmp(LangDef.language, "de") == 0)
-	{
-		switch (type)
-		{
-		case TS_YEAR:	return "jahr";
-		case TS_QUART:	return "quart";
-		case TS_MONTH:	return "monat";
-		case TS_DAY:	return "tag";
-		default:	return "index";
-		}
-	}
-
-	switch (type)
-	{
-	case TS_YEAR:	return "year";
-	case TS_QUART:	return "quart";
-	case TS_MONTH:	return "month";
-	case TS_DAY:	return "day";
-	default:	return "index";
-	}
-}
 
 mdmat *TimeSeries2mdmat (TimeSeries *ts)
 {
@@ -66,7 +41,7 @@ mdmat *TimeSeries2mdmat (TimeSeries *ts)
 /*	Achse initialisieren
 */
 	md->axis = new_axis(md->sbuf, ts->dim);
-	md->axis->i_name = StrPool_xadd(md->sbuf, type_name(ts->base.type));
+	md->axis->i_name = StrPool_xadd(md->sbuf, tindex_name(ts->base.type));
 
 	for (i = 0; i < ts->dim; i++)
 	{

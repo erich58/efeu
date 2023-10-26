@@ -52,6 +52,7 @@ typedef struct {
 
 
 int tindex_type (const char *name);
+const char *tindex_name (int type);
 
 TimeIndex tindex_create (int type, int value);
 TimeIndex str2TimeIndex (const char *str, char **ptr);

@@ -32,6 +32,18 @@ TEST_DECL(index)
 	EXPECT_CONTENT("err", "MSG ID: unknown index type 'x'.\n");
 }
 
+TEST_DECL(name)
+{
+	EXPECT_STR(tindex_name(TS_YEAR), "year");
+	EXPECT_STR(tindex_name(TS_QUART), "quart");
+	EXPECT_STR(tindex_name(TS_MONTH), "month");
+	EXPECT_STR(tindex_name(TS_DAY), "day");
+	EXPECT_STR(tindex_name(TS_HOUR), "hour");
+	EXPECT_STR(tindex_name(TS_MIN), "min");
+	EXPECT_STR(tindex_name(TS_SEC), "sec");
+	EXPECT_STR(tindex_name(TS_INDEX), "index");
+}
+
 static char *t2str(TimeIndex idx)
 {
 	static char buf[32];
@@ -243,5 +255,6 @@ TEST_SUITE
 	TEST_RUN(floor);
 	TEST_RUN(ceil);
 	TEST_RUN(diff);
+	TEST_RUN(name);
 	CLEANUP_MSTR;
 }

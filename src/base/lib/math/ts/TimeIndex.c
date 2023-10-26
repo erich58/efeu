@@ -325,6 +325,21 @@ int tindex_diff (TimeIndex a, TimeIndex b)
 }
 
 
+const char *tindex_name(int type)
+{
+	switch (type)
+	{
+	case TS_YEAR:	return "year";
+	case TS_QUART:	return "quart";
+	case TS_MONTH:	return "month";
+	case TS_DAY:	return "day";
+	case TS_HOUR:	return "hour";
+	case TS_MIN:	return "min";
+	case TS_SEC:	return "sec";
+	default:	return "index";
+	}
+}
+
 int tindex_type (const char *name)
 {
 	if	(name == NULL)	return 0;
