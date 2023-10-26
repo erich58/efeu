@@ -40,7 +40,7 @@ int ts_print(IO *io, const TimeSeries *ts, const char *fmt)
 	{
 		for (i = 0; i < ts->dim; i++)
 		{
-			if	(i % 6 == 0)	n += io_puts(",\n", io);
+			if	(i % 6 == 0)	n += io_puts(",\n\t", io);
 			else			n += io_puts(", ", io);
 
 			n += io_xprintf(io, fmt, ts->data[i]);

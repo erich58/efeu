@@ -3,6 +3,10 @@
 #include <EFEU/calendar.h>
 #include <Math/TimeSeries.h>
 #include <utest/mstr.tst.h>
+#include <utest/out.tst.h>
+
+#define	EXPECT_TS(ts, str)	\
+	ts_print(OUT(), ts, "%.0f"), EXPECT_NOUT(ts, str)
 
 TEST_DECL(setup)
 {
@@ -17,9 +21,39 @@ TEST_DECL(setup)
 
 TEST_DECL(create)
 {
-	TimeSeries *ts = ts_create("test", tindex_create(TS_INDEX, 0), 10);
+	TimeSeries *ts;
+	EXPECT(ts = ts_create("test", tindex_create(TS_INDEX, 0), 10));
 	EXPECT_MSTR(rd_ident(ts), "test[10] #0 #9");
-	ts_expand(ts, 100);
+	EXPECT_TS(ts,
+		"TimeSeries(\"test\", \"#0\",\n"
+		"\t0, 0, 0, 0, 0, 0,\n"
+		"\t0, 0, 0, 0\n"
+		")\n"
+	);
+
+	TEST_EXPR(ts_resize(ts, 2));
+	EXPECT_TS(ts,
+		"TimeSeries(\"test\", \"#0\",\n"
+		"\t0, 0\n"
+		")\n"
+	);
+
+	TEST_EXPR(ts_append(ts, 3, 1., 2., 3.));
+	EXPECT_TS(ts,
+		"TimeSeries(\"test\", \"#0\",\n"
+		"\t0, 0, 1, 2, 3\n"
+		")\n"
+	);
+
+	TEST_EXPR(ts_resize(ts, 8));
+	EXPECT_TS(ts,
+		"TimeSeries(\"test\", \"#0\",\n"
+		"\t0, 0, 1, 2, 3, 0,\n"
+		"\t0, 0\n"
+		")\n"
+	);
+
+	ts_resize(ts, 100);
 	EXPECT_MSTR(rd_ident(ts), "test[100] #0 #99");
 	rd_deref(ts);
 }
@@ -88,4 +122,5 @@ TEST_SUITE
 	TEST_RUN(create);
 	TEST_RUN(sync);
 	CLEANUP_MSTR;
+	CLEANUP_OUT;
 }
