@@ -349,16 +349,10 @@ static void f_cum(EfiFunc *func, void *rval, void **arg)
 
 static void f_ma(EfiFunc *func, void *rval, void **arg)
 {
-	Val_TimeSeries(rval) = ts_ma(Val_TimeSeries(arg[0]),
-		Val_int(arg[1]), Val_int(arg[2]));
+	TimeSeries *ts = Val_TimeSeries(arg[0]);
+	ts_ma(ts, Val_int(arg[1]));
+	Val_TimeSeries(rval) = rd_refer(ts);
 }
-
-static void f_ima(EfiFunc *func, void *rval, void **arg)
-{
-	ts_ima(Val_TimeSeries(arg[0]),
-		Val_TimeSeries(arg[1]), Val_int(arg[2]));
-}
-
 
 static void f_rename(EfiFunc *func, void *rval, void **arg)
 {
@@ -386,52 +380,11 @@ static void f_setfmt(EfiFunc *func, void *rval, void **arg)
 	Val_TimeSeries(rval) = rd_refer(ts);
 }
 
-static void f_glm(EfiFunc *func, void *rval, void **arg)
+static void f_cma(EfiFunc *func, void *rval, void **arg)
 {
-	TimeSeries *ts;
-	double g1, g2;
-	int n, i, j;
-	
-	ts = Val_TimeSeries(arg[0]);
+	TimeSeries *ts = Val_TimeSeries(arg[0]);
+	ts_cma(ts, Val_int(arg[1]));
 	Val_TimeSeries(rval) = rd_refer(ts);
-	n = Val_int(arg[1]);
-
-	if	(ts == NULL || n <= 1)	return;
-
-	if	(n % 2 == 0)
-	{
-		n = n / 2;
-		g2 = 0.5 / (double) n;
-		g1 = 0.5 * g2;
-	}
-	else
-	{
-		n = (n - 1) / 2;
-		g1 = g2 = 1. / (2. * n + 1.);
-	}
-
-	if	(ts->dim <= 2 * n)
-	{
-		for (i = 1; i < ts->dim; i++)
-			ts->data[0] += ts->data[i];
-
-		ts->data[0] /= (double) ts->dim;
-		ts->dim = 1;
-		return;
-	}
-
-	ts->dim -= 2 * n;
-	ts->base.value += n;
-
-	for (i = 0; i < ts->dim; i++)
-	{
-		ts->data[i] += ts->data[i + 2 * n];
-		ts->data[i] *= g1;
-
-		for (j = 1; j < n; j++)
-			ts->data[i] += g2 * (ts->data[i + j] + ts->data[i + j + n]);
-		ts->data[i] += g2 * ts->data[i + n];
-	}
 }
 
 static void f_konv(EfiFunc *func, void *rval, void **arg)
@@ -775,11 +728,9 @@ TimeIndex a, TimeIndex b)", f_copy },
 	{ FUNC_VIRTUAL, &Type_void,
 		"TimeSeries::cum(TimeSeries base, VirFunc = operator+ )", f_cum },
 	{ FUNC_VIRTUAL, &Type_TimeSeries,
-		"TimeSeries::ma (int n, int adjust = 1)", f_ma },
-	{ FUNC_VIRTUAL, &Type_void,
-		"TimeSeries::ima (TimeSeries base, int adjust = 1)", f_ima },
+		"TimeSeries::ma (int n)", f_ma },
 	{ FUNC_VIRTUAL, &Type_TimeSeries,
-		"TimeSeries::glm (int n = 3)", f_glm },
+		"TimeSeries::cma (int n = 3)", f_cma },
 /*
 	{ FUNC_VIRTUAL, &Type_TimeSeries, "TimeSeries::j2m()", f_j2m },
 */

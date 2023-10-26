@@ -24,27 +24,19 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 #include <Math/TimeSeries.h>
 
-#define	SetData(func, data, a, b, c)	\
-	CallFunc(&Type_double, (data) + (a), func, (data) + (b), (data) + (c))
-
-TimeSeries *ts_ma (TimeSeries *ts, int n, int adjust)
+void ts_ma (TimeSeries *ts, int n)
 {
-	TimeSeries *base;
 	double gew;
 	int i, j;
 
-	if	(ts == NULL)	return NULL;
-	if	(n <= 0)	return NULL;
+	if	(ts == NULL || ts->dim <= 1 || n <= 1)
+		return;
 
 	if	(n > ts->dim)	n = ts->dim;
 
 	gew = 1. / (double) n;
-	base = ts_create(ts->name, ts->base, n);
 	ts->base.value += (n - 1);
 	ts->dim -= (n - 1);
-
-	for (i = 0; i < n; i++)
-		base->data[i] = ts->data[i];
 
 	for (i = 0; i < ts->dim; i++)
 	{
@@ -55,36 +47,49 @@ TimeSeries *ts_ma (TimeSeries *ts, int n, int adjust)
 
 		ts->data[i] = gew * x;
 	}
-
-	return base;
 }
 
-
-void ts_ima (TimeSeries *ts, TimeSeries *base, int adjust)
+void ts_cma (TimeSeries *ts, int n)
 {
-	double gew;
-	int i;
+	double g1, g2;
+	int i, j;
 	
-	if	(ts->base.type != base->base.type)
+	if	(ts == NULL || ts->dim <= 1 || n <= 1)
+		return;
+
+	if	(ts->dim < n)
 	{
-		log_note(NULL, "[TimeSeries:1]",
-			"cc", ts->base.type, base->base.type);
+		for (i = 1; i < ts->dim; i++)
+			ts->data[0] += ts->data[i];
+
+		ts->data[0] /= (double) ts->dim;
+		ts->base.value += ts->dim / 2;
+		ts->dim = 1;
 		return;
 	}
 
-	gew = (double) base->dim;
-	ts_sync(ts, ts->base, ts->dim + base->dim - 1, 0);
-	ts->base.value = base->base.value;
-
-	for (i = ts->dim; i-- > base->dim;)
+	if	(n % 2 == 0)
 	{
-		double *x = ts->data + i - base->dim;
-		ts->data[i] = gew * (x[1] - x[0]);
+		n = n / 2;
+		g2 = 0.5 / (double) n;
+		g1 = 0.5 * g2;
+	}
+	else
+	{
+		n = (n - 1) / 2;
+		g1 = g2 = 1. / (2. * n + 1.);
 	}
 
-	for (i = 0; i < base->dim; i++)
-		ts->data[i] = base->data[i];
+	ts->dim -= 2 * n;
+	ts->base.value += n;
 
-	for (i = base->dim; i < ts->dim; i++)
-		ts->data[i] += ts->data[i - base->dim];
+	for (i = 0; i < ts->dim; i++)
+	{
+		ts->data[i] += ts->data[i + 2 * n];
+		ts->data[i] *= g1;
+
+		for (j = 1; j < n; j++)
+			ts->data[i] += g2 * (ts->data[i + j] + ts->data[i + j + n]);
+		ts->data[i] += g2 * ts->data[i + n];
+	}
 }

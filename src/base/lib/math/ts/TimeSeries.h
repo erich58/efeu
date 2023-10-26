@@ -99,12 +99,11 @@ int ts_print (IO *io, const TimeSeries *ts, const char *fmt);
 TimeSeries *ts_diff (TimeSeries *ts, int lag, EfiVirFunc *func);
 void ts_cumulate (TimeSeries *ts, TimeSeries *base, EfiVirFunc *func);
 
-TimeSeries *ts_ma (TimeSeries *ts, int n, int adjust);
-void ts_ima (TimeSeries *ts, TimeSeries *base, int adjust);
+void ts_ma (TimeSeries *ts, int n);
+void ts_cma (TimeSeries *ts, int n);
 
 TimeSeries *ts_convert (const char *name, TimeSeries *ts,
 	int type, const char *flags);
-
 
 double ts_value (TimeSeries *ts, TimeIndex idx, double defval);
 mdmat *TimeSeries2mdmat (TimeSeries *ts);
