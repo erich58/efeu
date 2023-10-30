@@ -121,7 +121,6 @@ static double e_sum (Polynom *pn, double a, double b);
 */
 
 #define	MBASE(x)	((x) == TS_YEAR || (x) == TS_QUART || (x) == TS_MONTH)
-#define	MONTAG(x)	(7 * (x) + 0)
 
 
 /*	Monatsindex
@@ -199,7 +198,7 @@ static int newbase(int type, int mbase, int x)
 /*	Interpolationsfunktionen
 */
 
-static Polynom *ip_const(TimeSeries *ts, IdxConv konv, int flag)
+static Polynom *ip_const(TimeSeries *ts, IdxConv conv, int flag)
 {
 	Polynom *pn;
 	int i;
@@ -208,13 +207,13 @@ static Polynom *ip_const(TimeSeries *ts, IdxConv konv, int flag)
 	
 	for (i = 0; i < ts->dim; i++)
 	{
-		pn->x[i] = konv(ts->base.value + i) - 0.5;
+		pn->x[i] = conv(ts->base.value + i) - 0.5;
 		pn->c[i][0] = ts->data[i];
 	}
 
 	if	(flag)
 	{
-		double x = konv(ts->base.value + ts->dim) - 0.5;
+		double x = conv(ts->base.value + ts->dim) - 0.5;
 
 		for (i = ts->dim - 1; i >= 0; i--)
 		{
@@ -227,7 +226,7 @@ static Polynom *ip_const(TimeSeries *ts, IdxConv konv, int flag)
 }
 
 
-static Polynom *ip_mean(TimeSeries *ts, IdxConv konv, int anteil)
+static Polynom *ip_mean(TimeSeries *ts, IdxConv conv, int anteil)
 {
 	double *x, *y, y0;
 	Polynom *p1, *p2;
@@ -237,7 +236,7 @@ static Polynom *ip_mean(TimeSeries *ts, IdxConv konv, int anteil)
 	i = ts->dim + 1;
 	x = memalloc(2 * i * sizeof(double));
 	y = x + i;
-	a = konv(ts->base.value) - 0.5;
+	a = conv(ts->base.value) - 0.5;
 	y0 = 0.;
 
 	for (i = 0; i < ts->dim; i++)
@@ -245,7 +244,7 @@ static Polynom *ip_mean(TimeSeries *ts, IdxConv konv, int anteil)
 		x[i] = a;
 		y[i] = y0;
 
-		b = konv(ts->base.value + i + 1) - 0.5;
+		b = conv(ts->base.value + i + 1) - 0.5;
 
 		if	(anteil)
 		{
@@ -256,7 +255,7 @@ static Polynom *ip_mean(TimeSeries *ts, IdxConv konv, int anteil)
 		a = b;
 	}
 
-	x[ts->dim] = konv(ts->base.value + ts->dim) - 0.5;
+	x[ts->dim] = conv(ts->base.value + ts->dim) - 0.5;
 	y[ts->dim] = y0;
 	p1 = spline(ts->dim + 1, x, y);
 	memfree(x);
@@ -266,7 +265,7 @@ static Polynom *ip_mean(TimeSeries *ts, IdxConv konv, int anteil)
 }
 
 
-static double *set_xy(TimeSeries *ts, IdxConv konv, int anteil)
+static double *set_xy(TimeSeries *ts, IdxConv conv, int anteil)
 {
 	double *x, *y;
 	double a, b;
@@ -283,11 +282,11 @@ static double *set_xy(TimeSeries *ts, IdxConv konv, int anteil)
 		y = NULL;
 	}
 
-	b = konv(ts->base.value + ts->dim) - 0.5;
+	b = conv(ts->base.value + ts->dim) - 0.5;
 
 	for (i = ts->dim - 1; i >= 0; i--)
 	{
-		a = konv(ts->base.value + i) - 0.5;
+		a = conv(ts->base.value + i) - 0.5;
 		x[i] = 0.5 * (a + b);
 		
 		if	(anteil)
@@ -299,42 +298,42 @@ static double *set_xy(TimeSeries *ts, IdxConv konv, int anteil)
 	return x;
 }
 
-static Polynom *ip_linear(TimeSeries *ts, IdxConv konv, int anteil)
+static Polynom *ip_linear(TimeSeries *ts, IdxConv conv, int anteil)
 {
 	double *x, *y;
 	Polynom *pn;
 
-	x = set_xy(ts, konv, anteil);
+	x = set_xy(ts, conv, anteil);
 	y = anteil ? x + ts->dim : ts->data;
 	pn = linint(ts->dim, x, y);
 	memfree(x);
 	return pn;
 }
 
-static Polynom *ip_spline(TimeSeries *ts, IdxConv konv, int anteil)
+static Polynom *ip_spline(TimeSeries *ts, IdxConv conv, int anteil)
 {
 	double *x, *y;
 	Polynom *pn;
 
-	x = set_xy(ts, konv, anteil);
+	x = set_xy(ts, conv, anteil);
 	y = anteil ? x + ts->dim : ts->data;
 	pn = spline(ts->dim, x, y);
 	memfree(x);
 	return pn;
 }
 
-static Polynom *ip_dspline(TimeSeries *ts, IdxConv konv, int anteil)
+static Polynom *ip_dspline(TimeSeries *ts, IdxConv conv, int anteil)
 {
 	double *x, *y;
 	Polynom *p1, *p2;
 	int i, j;
 
-	x = set_xy(ts, konv, anteil);
+	x = set_xy(ts, conv, anteil);
 	y = anteil ? x + ts->dim : ts->data;
 	p1 = dspline(ts->dim, x, y, 0., 0.);
 	p2 = pnalloc(p1->dim + 2, p1->deg);
 
-	p2->x[0] = konv(ts->base.value) - 0.5;
+	p2->x[0] = conv(ts->base.value) - 0.5;
 	p2->c[0][0] = p1->c[0][0];
 
 	for (j = 1; j <= p1->deg; j++)

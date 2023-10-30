@@ -5,7 +5,6 @@
 TEST_DECL(setup)
 {
 	SetupStd();
-	TimeSeries *ts = ts_create("test", tindex_create(TS_YEAR, 2000), 0);
 	ts_ma(NULL, 0);
 	ts_cma(NULL, 0);
 }
