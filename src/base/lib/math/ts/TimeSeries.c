@@ -33,7 +33,6 @@ static void ts_clean (void *data)
 	TimeSeries *tg = data;
 	lfree(tg->data);
 	memfree(tg->name);
-	memfree(tg->fmt);
 	del_data(&ts_tab, tg);
 }
 

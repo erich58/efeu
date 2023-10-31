@@ -39,7 +39,6 @@ TimeSeries *ts_copy (const char *name, const TimeSeries *ts,
 	if	(name)
 		x->name = mpsubarg(name, "ns", ts->name);
 
-	x->fmt = mstrcpy(ts->fmt);
 	x->base.value += a;
 
 	if	(b < 0)	return x;

@@ -23,6 +23,8 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <Math/TimeSeries.h>
 
+char *TimeSeries_fmt = "%#10.2f";
+
 int ts_print(IO *io, const TimeSeries *ts, const char *fmt)
 {
 	int i, n;
@@ -33,8 +35,7 @@ int ts_print(IO *io, const TimeSeries *ts, const char *fmt)
 	n += tindex_print(io, ts->base, 0);
 	n += io_puts("\"", io);
 
-	if	(ts->fmt)	fmt = ts->fmt;
-	if	(!fmt)		fmt = "%#10.2f";
+	if	(!fmt)		fmt = TimeSeries_fmt;
 
 	if	(ts->dim > 0)
 	{

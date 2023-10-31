@@ -60,7 +60,6 @@ TimeSeries *ts_seasonal (const char *name, const TimeSeries *ts, int p)
 	if	(name)
 		x->name = mpsubarg(name, "ns", ts->name);
 
-	x->fmt = mstrcpy(ts->fmt);
 	n = p / 2;
 
 	if	(ts->dim < 2 * n + p)

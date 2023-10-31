@@ -79,7 +79,6 @@ typedef struct {
 	TimeIndex base;	/* Zeitbasis */
 	size_t dim;	/* Zeitreihenlänge */
 	size_t size;	/* Speicherfeldgröße */
-	char *fmt;	/* Darstellungsformat */
 } TimeSeries;
 
 extern RefType TimeSeries_reftype;
@@ -154,6 +153,7 @@ extern EfiType Type_TimeSeries;
 extern EfiType Type_TimeIndex;
 extern EfiType Type_OLSCoeff;
 extern EfiType Type_OLSPar;
+extern char *TimeSeries_fmt;
 
 #define	Val_TimeIndex(x)	((TimeIndex *) x)[0]
 #define	Val_TimeSeries(x)	((TimeSeries **) x)[0]

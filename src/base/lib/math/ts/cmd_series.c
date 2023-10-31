@@ -41,14 +41,11 @@ static size_t f_write (const EfiType *type, const void *data, IO *io)
 
 static int f_print (const EfiType *type, const void *data, IO *io)
 {
-	return ts_print(io, Val_ptr(data), "%.16g");
+	return ts_print(io, Val_ptr(data), TimeSeries_fmt);
 }
 
 EfiType Type_TimeSeries = IOREF_TYPE("TimeSeries", TimeSeries *,
 	f_read, f_write, f_print);
-
-
-static char *def_fmt = "%#10.2f";
 
 
 /*	Komponentenfunktionen
@@ -64,18 +61,6 @@ static EfiObj *ts_name (const EfiObj *obj, void *data)
 
 	return NULL;
 }
-
-static EfiObj *ts_fmt (const EfiObj *obj, void *data)
-{
-	if	(obj)
-	{
-		TimeSeries *ts = Val_ptr(obj->data);
-		return LvalObj(&Lval_ref, &Type_str, ts, &ts->fmt);
-	}
-
-	return NULL;
-}
-
 
 static EfiObj *ts_base (const EfiObj *obj, void *data)
 {
@@ -110,7 +95,6 @@ static EfiObj *ts_dim (const EfiObj *obj, void *data)
 
 static EfiMember member[] = {
 	{ "name", &Type_str, ts_name, NULL },
-	{ "fmt", &Type_str, ts_fmt, NULL },
 	{ "base", &Type_TimeIndex, ts_base, NULL },
 	{ "first", &Type_TimeIndex, ts_base, NULL },
 	{ "last", &Type_TimeIndex, ts_last, NULL },
@@ -220,7 +204,7 @@ static void f_xcopy (EfiFunc *func, void *rval, void **arg)
 static void f_fprint (EfiFunc *func, void *rval, void **arg)
 {
 	Val_int(rval) = ts_print(Val_io(arg[0]), Val_TimeSeries(arg[1]),
-		def_fmt);
+		TimeSeries_fmt);
 }
 
 static void f_expand (EfiFunc *func, void *rval, void **arg)
@@ -241,7 +225,7 @@ static void f_expand (EfiFunc *func, void *rval, void **arg)
 
 	if	(n < 0)	n = 0;
 
-	ts_expand(ts, n);
+	ts_resize(ts, n);
 }
 
 static void f_texpand (EfiFunc *func, void *rval, void **arg)
@@ -362,19 +346,6 @@ static void f_rename(EfiFunc *func, void *rval, void **arg)
 	{
 		memfree(ts->name);
 		ts->name = mstrcpy(Val_str(arg[1]));
-	}
-
-	Val_TimeSeries(rval) = rd_refer(ts);
-}
-
-static void f_setfmt(EfiFunc *func, void *rval, void **arg)
-{
-	TimeSeries *ts = Val_TimeSeries(arg[0]);
-
-	if	(ts)
-	{
-		memfree(ts->fmt);
-		ts->fmt = mstrcpy(Val_str(arg[1]));
 	}
 
 	Val_TimeSeries(rval) = rd_refer(ts);
@@ -720,8 +691,6 @@ TimeIndex a, TimeIndex b)", f_copy },
 		"TimeIndex, int offset = 0)", f_sync },
 	{ FUNC_VIRTUAL, &Type_TimeSeries,
 		"TimeSeries::rename(str name = NULL)", f_rename },
-	{ FUNC_VIRTUAL, &Type_TimeSeries,
-		"TimeSeries::setfmt(str fmt = NULL)", f_setfmt },
 
 	{ FUNC_VIRTUAL, &Type_TimeSeries,
 		"TimeSeries::diff(int lag, VirFunc = operator- )", f_diff },
@@ -840,10 +809,16 @@ TimeIndex a, TimeIndex b)", f_copy },
 		"call (VirFunc, double, TimeSeries)", f_xterm },
 };
 
+extern char *TimeSeries_fmt;
+
+static EfiVarDef v_TimeSeries[] = {
+	{ "fmt", &Type_str, &TimeSeries_fmt },
+};
 
 void CmdSetup_TimeSeries (void)
 {
 	AddType(&Type_TimeSeries);
+	AddVarDef(Type_TimeSeries.vtab, v_TimeSeries, tabsize(v_TimeSeries));
 	AddFuncDef(funcdef, tabsize(funcdef));
 	AddEfiMember(Type_TimeSeries.vtab, member, tabsize(member));
 }
