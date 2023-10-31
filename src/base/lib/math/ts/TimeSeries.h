@@ -84,7 +84,7 @@ typedef struct {
 extern RefType TimeSeries_reftype;
 
 TimeSeries *ts_create (const char *name, TimeIndex idx, size_t dim);
-void ts_resize (TimeSeries *ts, size_t dim);
+void ts_resize (TimeSeries *ts, size_t dim, double val);
 void ts_append (TimeSeries *ts, size_t dim, ...);
 void ts_sync (TimeSeries *ts, TimeIndex idx, size_t dim, int offset);
 

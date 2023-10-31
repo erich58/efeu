@@ -53,43 +53,36 @@ EfiType Type_TimeSeries = IOREF_TYPE("TimeSeries", TimeSeries *,
 
 static EfiObj *ts_name (const EfiObj *obj, void *data)
 {
-	if	(obj)
-	{
-		TimeSeries *ts = Val_ptr(obj->data);
-		return LvalObj(&Lval_ref, &Type_str, ts, &ts->name);
-	}
-
-	return NULL;
+	TimeSeries *ts = Val_ptr(obj->data);
+	return ts ? LvalObj(&Lval_ref, &Type_str, ts, &ts->name) : str2Obj(NULL);
 }
 
 static EfiObj *ts_base (const EfiObj *obj, void *data)
 {
-	if	(obj)
-	{
-		TimeSeries *ts = Val_ptr(obj->data);
-		return LvalObj(&Lval_ref, &Type_TimeIndex, ts, &ts->base);
-	}
+	TimeSeries *ts = Val_ptr(obj->data);
 
-	return NULL;
+	return ts ? LvalObj(&Lval_ref, &Type_TimeIndex, ts, &ts->base) :
+		NewObj(&Type_TimeIndex, NULL);
 }
 
 static EfiObj *ts_last (const EfiObj *obj, void *data)
 {
+	TimeIndex x = { 0, 0 };
 	TimeSeries *ts = Val_TimeSeries(obj->data);
 
 	if	(ts)
 	{
-		TimeIndex x = ts->base;
+		x = ts->base;
 		x.value += ts->dim - 1;
-		return NewObj(&Type_TimeIndex, &x);
 	}
 
-	return NULL;
+	return NewObj(&Type_TimeIndex, &x);
 }
 
 static EfiObj *ts_dim (const EfiObj *obj, void *data)
 {
-	int x = obj ? Val_TimeSeries(obj->data)->dim : 0;
+	TimeSeries *ts = Val_TimeSeries(obj->data);
+	int x = ts ? Val_TimeSeries(obj->data)->dim : 0;
 	return NewObj(&Type_int, &x);
 }
 
@@ -128,40 +121,22 @@ static void f_xcreate (EfiFunc *func, void *rval, void **arg)
 	Val_TimeSeries(rval) = ts;
 }
 
-
-static int get_index(TimeIndex base, EfiFunc *func, void **arg, int n, int flg)
-{
-	if	(func->dim <= n)
-		return 0;
-
-	if	(func->arg[n].type == &Type_TimeIndex)
-		return tindex_diff(base, Val_TimeIndex(arg[n])) + flg;
-
-	return Val_int(arg[n]) + flg;
-}
-
 static void f_ncreate (EfiFunc *func, void *rval, void **arg)
 {
-	int dim;
-	TimeIndex base;
-	TimeSeries *ts;
-	double z, s;
-	int i;
-
-	base = Val_TimeIndex(arg[1]);
+	TimeIndex base = Val_TimeIndex(arg[1]);
+	int dim = 0;
 
 	if	(func->arg[2].type == &Type_TimeIndex)
 		dim = tindex_diff(base, Val_TimeIndex(arg[2])) + 1;
 	else if	(func->arg[2].type == &Type_int)
 		dim = Val_int(arg[2]);
-	else	dim = 0;
 
-	ts = ts_create(Val_str(arg[0]), base, dim);
+	TimeSeries *ts = ts_create(Val_str(arg[0]), base, dim);
 
-	z = Val_double(arg[3]);
-	s = Val_double(arg[4]);
+	double z = Val_double(arg[3]);
+	double s = Val_double(arg[4]);
 
-	for (i = 0; i < ts->dim; i++, z += s)
+	for (int i = 0; i < ts->dim; i++, z += s)
 		ts->data[i] = z;
 
 	Val_TimeSeries(rval) = ts;
@@ -169,33 +144,31 @@ static void f_ncreate (EfiFunc *func, void *rval, void **arg)
 
 static void f_copy (EfiFunc *func, void *rval, void **arg)
 {
-	TimeSeries *ts = Val_TimeSeries(arg[0]);
+	int n = 0;
+	const char *name = "$1";
+
+	if	(func->arg[0].type == &Type_str)
+		name = Val_str(arg[n++]);
+
+	TimeSeries *ts = Val_TimeSeries(arg[n++]);
 
 	if	(ts != NULL)
 	{
-		int first = func->dim <= 1 ? 0 :
-			tindex_diff(ts->base, Val_TimeIndex(arg[1]));
-		int last = func->dim <= 2 ? ts->dim : 
-			get_index(ts->base, func, arg, 2, 1);
+		int first, last;
 
-		ts = ts_copy(ts->name, ts, first, last);
-	}
+		if	(n >= func->dim)
+			first = 0;
+		else
+			first = tindex_diff(ts->base, Val_TimeIndex(arg[n++]));
 
-	Val_TimeSeries(rval) = ts;
-}
+		if	(n >= func->dim)
+			last = ts->dim;
+		else if	(func->arg[n].type == &Type_TimeIndex)
+			last = tindex_diff(ts->base, Val_TimeIndex(arg[n])) + 1;
+		else
+			last = first + Val_int(arg[n]);
 
-static void f_xcopy (EfiFunc *func, void *rval, void **arg)
-{
-	TimeSeries *ts = Val_TimeSeries(arg[1]);
-
-	if	(ts != NULL)
-	{
-		int first = func->dim <= 2 ? 0 :
-			tindex_diff(ts->base, Val_TimeIndex(arg[2]));
-		int last = func->dim <= 3 ? ts->dim : 
-			get_index(ts->base, func, arg, 3, 1);
-
-		ts = ts_copy(Val_str(arg[0]), ts, first, last);
+		ts = ts_copy(name, ts, first, last);
 	}
 
 	Val_TimeSeries(rval) = ts;
@@ -207,83 +180,38 @@ static void f_fprint (EfiFunc *func, void *rval, void **arg)
 		TimeSeries_fmt);
 }
 
-static void f_expand (EfiFunc *func, void *rval, void **arg)
+static void f_resize (EfiFunc *func, void *rval, void **arg)
 {
-	TimeSeries *ts;
-	int n;
-
-	ts = Val_TimeSeries(arg[0]);
-	Val_TimeSeries(rval) = rd_refer(ts);
+	TimeSeries *ts = Val_TimeSeries(arg[0]);
 
 	if	(ts == NULL)	return;
+
+	int n = (int) ts->dim;
 
 	if	(func->arg[1].type == &Type_TimeIndex)
 		n = tindex_diff(ts->base, Val_TimeIndex(arg[1])) + 1;
 	else if	(func->arg[1].type == &Type_int)
-		n = (int) ts->dim + Val_int(arg[1]);
-	else	n = (int) ts->dim;
+		n = Val_int(arg[1]);
 
 	if	(n < 0)	n = 0;
 
-	ts_resize(ts, n);
-}
-
-static void f_texpand (EfiFunc *func, void *rval, void **arg)
-{
-	TimeSeries *ts;
-	TimeSeries *x;
-	TimeIndex base;
-	int k, o, n, dim;
-
-	ts = Val_TimeSeries(arg[0]);
+	ts_resize(ts, n, Val_double(arg[2]));
 	Val_TimeSeries(rval) = rd_refer(ts);
-	x = Val_TimeSeries(arg[1]);
-
-	if	(ts->base.type != x->base.type)
-	{
-		log_note(NULL, "[TimeSeries:23]", NULL); 
-		return;
-	}
-
-	if	(x->base.value < ts->base.value)
-	{
-		base = x->base;
-	}
-	else	base = ts->base;
-
-	k = ts->base.value - base.value;
-	o = x->base.value - base.value;
-
-	n = ts->dim + k;
-	dim = x->dim + o;
-
-	if	(dim < n)	dim = n;
-
-	ts_sync(ts, base, dim, 0);
-
-	while (k-- > 0)
-		ts->data[k] = x->data[k];
-
-	for (; n < dim; n++)
-		ts->data[n] = x->data[n - o];
 }
 
 static void f_sync (EfiFunc *func, void *rval, void **arg)
 {
-	TimeSeries *ts;
-	TimeIndex base;
-	int dim;
 
-	ts = Val_TimeSeries(arg[0]);
-	base = Val_TimeIndex(arg[1]);
+	TimeSeries *ts = Val_TimeSeries(arg[0]);
+	TimeIndex base = Val_TimeIndex(arg[1]);
+	int dim = 0;
 
 	if	(func->arg[2].type == &Type_TimeIndex)
 		dim = tindex_diff(base, Val_TimeIndex(arg[2])) + 1;
 	else if	(func->arg[2].type == &Type_int)
 		dim = Val_int(arg[2]);
-	else	dim = 0;
 
-	ts_sync(ts, base, dim, (func->dim > 3) ? Val_int(arg[3]) : 0);
+	ts_sync(ts, base, dim, Val_int(arg[3]));
 	Val_TimeSeries(rval) = rd_refer(ts);
 }
 
@@ -338,19 +266,6 @@ static void f_ma(EfiFunc *func, void *rval, void **arg)
 	Val_TimeSeries(rval) = rd_refer(ts);
 }
 
-static void f_rename(EfiFunc *func, void *rval, void **arg)
-{
-	TimeSeries *ts = Val_TimeSeries(arg[0]);
-
-	if	(ts)
-	{
-		memfree(ts->name);
-		ts->name = mstrcpy(Val_str(arg[1]));
-	}
-
-	Val_TimeSeries(rval) = rd_refer(ts);
-}
-
 static void f_cma(EfiFunc *func, void *rval, void **arg)
 {
 	TimeSeries *ts = Val_TimeSeries(arg[0]);
@@ -358,21 +273,11 @@ static void f_cma(EfiFunc *func, void *rval, void **arg)
 	Val_TimeSeries(rval) = rd_refer(ts);
 }
 
-static void f_konv(EfiFunc *func, void *rval, void **arg)
+static void f_conv(EfiFunc *func, void *rval, void **arg)
 {
 	Val_TimeSeries(rval) = ts_convert(NULL, Val_TimeSeries(arg[0]),
 		tindex_type(Val_str(arg[1])), Val_str(arg[2]));
 }
-
-#if	0
-static void f_j2m(EfiFunc *func, void *rval, void **arg)
-{
-	TimeSeries *ts = Val_TimeSeries(arg[0]);
-	TimeSeriesConv_j2m(ts);
-	Val_TimeSeries(rval) = rd_refer(ts);
-}
-#endif
-
 
 static void tsfunc (EfiFunc *func, void *rval, void **arg,
 	double (*eval) (double *tab, size_t dim))
@@ -645,13 +550,13 @@ TimeIndex a, int b)", f_copy },
 TimeIndex a, TimeIndex b)", f_copy },
 
 	{ 0, &Type_TimeSeries, "TimeSeries (str name, "
-		"TimeSeries x)", f_xcopy },
+		"TimeSeries x)", f_copy },
 	{ 0, &Type_TimeSeries, "TimeSeries (str name, "
-		"TimeSeries x, TimeIndex a)", f_xcopy },
+		"TimeSeries x, TimeIndex a)", f_copy },
 	{ 0, &Type_TimeSeries, "TimeSeries (str name, "
-		"TimeSeries x, TimeIndex a, int b)", f_xcopy },
+		"TimeSeries x, TimeIndex a, int b)", f_copy },
 	{ 0, &Type_TimeSeries, "TimeSeries (str name, "
-		"TimeSeries x, TimeIndex a, TimeIndex b)", f_xcopy },
+		"TimeSeries x, TimeIndex a, TimeIndex b)", f_copy },
 
 	{ 0, &Type_TimeSeries, "TimeSeries (str name, "
 		"TimeIndex base, TimeIndex b, double x = 0., double s = 0.)",
@@ -680,17 +585,13 @@ TimeIndex a, TimeIndex b)", f_copy },
 		"operator[] (TimeSeries &, int)", f_index },
 
 	{ FUNC_VIRTUAL, &Type_TimeSeries,
-		"TimeSeries::expand(TimeIndex, double = 0.)", f_expand },
+		"TimeSeries::resize(TimeIndex, double = 0.)", f_resize },
 	{ FUNC_VIRTUAL, &Type_TimeSeries,
-		"TimeSeries::expand(int, double = 0.)", f_expand },
-	{ FUNC_VIRTUAL, &Type_TimeSeries,
-		"TimeSeries::expand(TimeSeries)", f_texpand },
+		"TimeSeries::resize(int, double = 0.)", f_resize },
 	{ FUNC_VIRTUAL, &Type_TimeSeries, "TimeSeries::sync(TimeIndex, "
 		"int dim, int offset = 0)", f_sync },
 	{ FUNC_VIRTUAL, &Type_TimeSeries, "TimeSeries::sync(TimeIndex, "
 		"TimeIndex, int offset = 0)", f_sync },
-	{ FUNC_VIRTUAL, &Type_TimeSeries,
-		"TimeSeries::rename(str name = NULL)", f_rename },
 
 	{ FUNC_VIRTUAL, &Type_TimeSeries,
 		"TimeSeries::diff(int lag, VirFunc = operator- )", f_diff },
@@ -700,12 +601,9 @@ TimeIndex a, TimeIndex b)", f_copy },
 		"TimeSeries::ma (int n)", f_ma },
 	{ FUNC_VIRTUAL, &Type_TimeSeries,
 		"TimeSeries::cma (int n = 3)", f_cma },
-/*
-	{ FUNC_VIRTUAL, &Type_TimeSeries, "TimeSeries::j2m()", f_j2m },
-*/
 
 	{ FUNC_VIRTUAL, &Type_TimeSeries,
-		"TimeSeries::konv(str type, str flags = NULL)", f_konv },
+		"TimeSeries::conv(str type, str flags = NULL)", f_conv },
 		
 	{ FUNC_VIRTUAL, &Type_double,
 		"TimeSeries::sum ()", f_sum },

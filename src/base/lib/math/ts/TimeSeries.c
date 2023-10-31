@@ -80,7 +80,7 @@ TimeSeries *ts_create (const char *name, TimeIndex idx, size_t dim)
 }
 
 
-void ts_resize(TimeSeries *ts, size_t dim)
+void ts_resize(TimeSeries *ts, size_t dim, double val)
 {
 	if	(ts->size < dim)
 	{
@@ -97,7 +97,7 @@ void ts_resize(TimeSeries *ts, size_t dim)
 	}
 
 	while (ts->dim < dim)
-		ts->data[ts->dim++] = 0.;
+		ts->data[ts->dim++] = val;
 
 	ts->dim = dim;
 }
@@ -109,7 +109,7 @@ void ts_append(TimeSeries *ts, size_t dim, ...)
 	va_end(list);
 
 	size_t n = ts->dim;
-	ts_resize(ts, ts->dim + dim);
+	ts_resize(ts, ts->dim + dim, 0.);
 
 	while (n < ts->dim)
 		ts->data[n++] = va_arg(list, double);

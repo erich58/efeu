@@ -29,7 +29,7 @@ int ts_print(IO *io, const TimeSeries *ts, const char *fmt)
 {
 	int i, n;
 
-	if	(ts == NULL)	return 0;
+	if	(ts == NULL)	return io_puts("NULL", io);
 
 	n = io_xprintf(io, "TimeSeries(%#s, \"", ts->name);
 	n += tindex_print(io, ts->base, 0);

@@ -31,7 +31,7 @@ TEST_DECL(create)
 		")\n"
 	);
 
-	TEST_EXPR(ts_resize(ts, 2));
+	TEST_EXPR(ts_resize(ts, 2, 0.));
 	EXPECT_TS(ts,
 		"TimeSeries(\"test\", \"#0\",\n"
 		"\t0, 0\n"
@@ -45,15 +45,15 @@ TEST_DECL(create)
 		")\n"
 	);
 
-	TEST_EXPR(ts_resize(ts, 8));
+	TEST_EXPR(ts_resize(ts, 8, 5.));
 	EXPECT_TS(ts,
 		"TimeSeries(\"test\", \"#0\",\n"
-		"\t0, 0, 1, 2, 3, 0,\n"
-		"\t0, 0\n"
+		"\t0, 0, 1, 2, 3, 5,\n"
+		"\t5, 5\n"
 		")\n"
 	);
 
-	ts_resize(ts, 100);
+	ts_resize(ts, 100, 0.);
 	EXPECT_MSTR(rd_ident(ts), "test[100] #0 #99");
 	rd_deref(ts);
 }
