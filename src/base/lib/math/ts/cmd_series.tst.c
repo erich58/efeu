@@ -21,6 +21,9 @@ TEST_DECL(member)
 	EXPECT_EVAL("ts.base", "#0");
 	EXPECT_EVAL("ts.last", "#0");
 	EXPECT_EVAL("ts.dim", "0");
+	EXPECT_EVAL("dim(ts)", "0");
+	EXPECT_EVAL("ts << 1", "NULL");
+	EXPECT_EVAL("ts >> 1", "NULL");
 
 	EXPECT_EVAL("ts = TimeSeries(\"test\","
 		"\"2010-01\", 10., 20., 30.)",
@@ -32,6 +35,17 @@ TEST_DECL(member)
 	EXPECT_EVAL("ts.base", "2010-01");
 	EXPECT_EVAL("ts.last", "2010-03");
 	EXPECT_EVAL("ts.dim", "3");
+	EXPECT_EVAL("dim(ts)", "3");
+	EXPECT_EVAL("ts >> 2",
+		"TimeSeries(NULL, \"2010-03\",\n"
+		"\t10.00, 20.00, 30.00\n"
+		")\n"
+	);
+	EXPECT_EVAL("ts << 2",
+		"TimeSeries(NULL, \"2009-11\",\n"
+		"\t10.00, 20.00, 30.00\n"
+		")\n"
+	);
 }
 
 TEST_DECL(create)
@@ -210,6 +224,36 @@ TEST_DECL(sum)
 	EXPECT_EVAL("ts.max()", "0.00");
 }
 
+TEST_DECL(ma)
+{
+	EXPECT_EVAL("TimeSeries ts = TimeSeries(\"test\", "
+		"\"2000\", 1., 2., 5., 7., 13.)",
+		"TimeSeries(\"test\", \"2000\",\n"
+		"\t1.00, 2.00, 5.00, 7.00, 13.00\n"
+		")\n"
+	);
+	EXPECT_EVAL("ts.ma(2)",
+		"TimeSeries(\"test\", \"2001\",\n"
+		"\t1.50, 3.50, 6.00, 10.00\n"
+		")\n"
+	);
+}
+
+TEST_DECL(cma)
+{
+	EXPECT_EVAL("TimeSeries ts = TimeSeries(\"test\", "
+		"\"2000\", 1., 2., 5., 7., 13.)",
+		"TimeSeries(\"test\", \"2000\",\n"
+		"\t1.00, 2.00, 5.00, 7.00, 13.00\n"
+		")\n"
+	);
+	EXPECT_EVAL("ts.cma(3)",
+		"TimeSeries(\"test\", \"2001\",\n"
+		"\t2.67, 4.67, 8.33\n"
+		")\n"
+	);
+}
+
 TEST_SUITE
 {
 	TEST_RUN(setup);
@@ -220,5 +264,7 @@ TEST_SUITE
 	TEST_RUN(resize);
 	TEST_RUN(sync);
 	TEST_RUN(sum);
+	TEST_RUN(ma);
+	TEST_RUN(cma);
 	CLEANUP_EVAL;
 }
