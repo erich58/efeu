@@ -104,7 +104,6 @@ void ts_cma (TimeSeries *ts, int n);
 TimeSeries *ts_convert (const char *name, TimeSeries *ts,
 	int type, const char *flags);
 
-double ts_value (TimeSeries *ts, TimeIndex idx, double defval);
 mdmat *TimeSeries2mdmat (TimeSeries *ts);
 
 

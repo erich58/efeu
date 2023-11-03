@@ -1,6 +1,6 @@
 /*
 :*:exponential smoothing
-:de:Exponentiaesses Glätten
+:de:Exponentiales Glätten
 
 $Copyright (C) 2002 Erich Frühstück
 This file is part of EFEU.

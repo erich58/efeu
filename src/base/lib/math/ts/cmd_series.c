@@ -434,36 +434,6 @@ static void f_index (EfiFunc *func, void *rval, void **arg)
 	else	Val_double(rval) = ts->data[n];
 }
 
-static void f_value(EfiFunc *func, void *rval, void **arg)
-{
-	EfiObjList *list;
-	TimeSeries *ts;
-	TimeIndex idx;
-	double x;
-
-	ts = Val_TimeSeries(arg[0]);
-
-	if	(ts == NULL)
-	{
-		Val_double(rval) = 0.;
-		return;
-	}
-
-	list = Val_list(arg[1]);
-	idx = ts->base;
-	x = 0.;
-
-	if	(list)
-	{
-		Obj2Data(RefObj(list->obj), &Type_TimeIndex, &idx);
-
-		if	(list->next)
-			x = Obj2double(RefObj(list->next->obj));
-	}
-
-	Val_double(rval) = ts_value(ts, idx, x);
-}
-
 static void f_xfunc (EfiFunc *func, void *rval, void **arg)
 {
 	Val_TimeSeries(rval) = ts_func(Val_vfunc(arg[0]),
@@ -573,8 +543,6 @@ TimeIndex a, TimeIndex b)", f_copy },
 
 	{ FUNC_VIRTUAL, &Type_int, "dim (TimeSeries)", f_dim },
 
-	{ FUNC_VIRTUAL, &Type_double,
-		"operator() (TimeSeries, List_t list)", f_value },
 	{ FUNC_VIRTUAL, &Type_double,
 		"operator[] (TimeSeries, TimeIndex)", f_index },
 	{ FUNC_VIRTUAL, &Type_double,

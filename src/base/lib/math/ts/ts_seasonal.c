@@ -61,10 +61,6 @@ TimeSeries *ts_seasonal (const char *name, const TimeSeries *ts, int p)
 		x->name = mpsubarg(name, "ns", ts->name);
 
 	n = p / 2;
-
-	if	(ts->dim < 2 * n + p)
-		return x;
-
 	tsum = (p % 2) ? tsum_odd : tsum_even;
 	gew = 1. / (double) p;
 	N = ts->dim - n;

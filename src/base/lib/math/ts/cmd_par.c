@@ -1,6 +1,6 @@
 /*
 :*:regression parameters
-:de:Regressionsparamweter
+:de:Regressionsparameter
 
 $Copyright (C) 1997 Erich Frühstück
 This file is part of EFEU.
