@@ -490,7 +490,7 @@ TEST_SUITE
 	TEST_RUN(sum);
 	TEST_RUN(ma);
 	TEST_RUN(cma);
-//	TEST_RUN(diff);
+	TEST_RUN(diff);
 	TEST_RUN(conv);
 	TEST_RUN(ts2md);
 	TEST_RUN(index);
@@ -499,6 +499,5 @@ TEST_SUITE
 	TEST_RUN(assign);
 	TEST_RUN(term);
 	TEST_RUN(ExtSmoothing);
-	TEST_RUN(diff);
 	CLEANUP_EVAL;
 }

@@ -50,59 +50,35 @@ EfiType Type_OLSCoeff = STD_TYPE("OLSCoeff", OLSCoeff, NULL,
 /*	Komponentenfunktionen
 */
 
-static EfiObj *koef_name (const EfiObj *base, void *data)
+static EfiObj *coef_name (const EfiObj *base, void *data)
 {
-	if	(base)
-	{
-		OLSCoeff *koef = base->data;
-		return LvalObj(&Lval_obj, &Type_str, base, &koef->name);
-	}
-
-	return NULL;
+	OLSCoeff *coef = base->data;
+	return LvalObj(&Lval_obj, &Type_str, base, &coef->name);
 }
 
-static EfiObj *koef_val (const EfiObj *base, void *data)
+static EfiObj *coef_val (const EfiObj *base, void *data)
 {
-	if	(base)
-	{
-		OLSCoeff *koef = base->data;
-		return LvalObj(&Lval_obj, &Type_double, base, &koef->val);
-	}
-
-	return NULL;
+	OLSCoeff *coef = base->data;
+	return LvalObj(&Lval_obj, &Type_double, base, &coef->val);
 }
 
-static EfiObj *koef_se (const EfiObj *base, void *data)
+static EfiObj *coef_se (const EfiObj *base, void *data)
 {
-	if	(base)
-	{
-		OLSCoeff *koef = base->data;
-		return LvalObj(&Lval_obj, &Type_double, base, &koef->se);
-	}
-
-	return NULL;
+	OLSCoeff *coef = base->data;
+	return LvalObj(&Lval_obj, &Type_double, base, &coef->se);
 }
 
-static EfiObj *koef_tstat (const EfiObj *base, void *data)
+static EfiObj *coef_tstat (const EfiObj *base, void *data)
 {
-	if	(base)
-	{
-		OLSCoeff *koef = base->data;
-		/*
-		double t = koef->se ? koef->val / koef->se : 0.;
-		*/
-		double t = koef->val / koef->se;
-		return NewObj(&Type_double, &t);
-	}
-
-	return NULL;
+	OLSCoeff *coef = base->data;
+	return double2Obj(coef->val / coef->se);
 }
 
 static EfiMember var_OLSCoeff[] = {
-	{ "name", &Type_str, koef_name, NULL },
-	{ "val", &Type_double, koef_val, NULL },
-	{ "se", &Type_double, koef_se, NULL },
-	{ "t", &Type_double, koef_tstat, NULL },
+	{ "name", &Type_str, coef_name, NULL },
+	{ "val", &Type_double, coef_val, NULL },
+	{ "se", &Type_double, coef_se, NULL },
+	{ "t", &Type_double, coef_tstat, NULL },
 };
 
 
@@ -132,12 +108,8 @@ void CmdSetup_OLSCoeff (void)
 
 #define CFMT	"%-9.9s %15.6g %15.6g %15.6g\n"
 
-int OLSCoeff_print (IO *io, OLSCoeff *koef)
+int OLSCoeff_print (IO *io, OLSCoeff *coef)
 {
-	/*
-	return io_xprintf(io, CFMT, koef->name,
-		koef->val, koef->se, koef->se ? koef->val / koef->se : 0.);
-	*/
-	return io_xprintf(io, CFMT, koef->name,
-		koef->val, koef->se, koef->val / koef->se);
+	return io_xprintf(io, CFMT, coef->name,
+		coef->val, coef->se, coef->val / coef->se);
 }

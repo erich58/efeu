@@ -36,82 +36,81 @@ EfiType Type_OLSPar = REF_TYPE("OLSPar", OLSPar *);
 
 static EfiObj *par_nr (const EfiObj *obj, void *data)
 {
-	int x = obj ? Val_OLSPar(obj->data)->nr : 0;
-	return NewObj(&Type_int, &x);
+	OLSPar *par = Val_OLSPar(obj->data);
+	return int2Obj(par ? par->nr : 0);
 }
 
 static EfiObj *par_df (const EfiObj *obj, void *data)
 {
-	int x = obj ? Val_OLSPar(obj->data)->df : 0;
-	return NewObj(&Type_int, &x);
+	OLSPar *par = Val_OLSPar(obj->data);
+	return int2Obj(par ? par->df : 0);
 }
 
 static EfiObj *par_r2 (const EfiObj *obj, void *data)
 {
-	double x = obj ? Val_OLSPar(obj->data)->r2 : 0;
-	return NewObj(&Type_double, &x);
+	OLSPar *par = Val_OLSPar(obj->data);
+	return double2Obj(par ? par->r2 : 0.);
 }
 
 static EfiObj *par_rbar2 (const EfiObj *obj, void *data)
 {
-	double x = obj ? Val_OLSPar(obj->data)->rbar2 : 0;
-	return NewObj(&Type_double, &x);
+	OLSPar *par = Val_OLSPar(obj->data);
+	return double2Obj(par ? par->rbar2 : 0.);
 }
 
 static EfiObj *par_dw (const EfiObj *obj, void *data)
 {
-	double x = obj ? Val_OLSPar(obj->data)->dw : 0;
-	return NewObj(&Type_double, &x);
+	OLSPar *par = Val_OLSPar(obj->data);
+	return double2Obj(par ? par->dw : 0.);
 }
 
 static EfiObj *par_see (const EfiObj *obj, void *data)
 {
-	double x = obj ? Val_OLSPar(obj->data)->see : 0;
-	return NewObj(&Type_double, &x);
+	OLSPar *par = Val_OLSPar(obj->data);
+	return double2Obj(par ? par->see : 0.);
 }
 
 static EfiObj *par_base (const EfiObj *obj, void *data)
 {
-	TimeIndex x = obj ? Val_OLSPar(obj->data)->base : tindex_create(0, 0);
+	OLSPar *par = Val_OLSPar(obj->data);
+	TimeIndex x = par ? par->base : tindex_create(0, 0);
 	return NewObj(&Type_TimeIndex, &x);
 }
 
 static EfiObj *par_first (const EfiObj *obj, void *data)
 {
-	TimeIndex x = obj ? Val_OLSPar(obj->data)->first : tindex_create(0, 0);
+	OLSPar *par = Val_OLSPar(obj->data);
+	TimeIndex x = par ? par->first : tindex_create(0, 0);
 	return NewObj(&Type_TimeIndex, &x);
 }
 
 static EfiObj *par_last (const EfiObj *obj, void *data)
 {
-	TimeIndex x = obj ? Val_OLSPar(obj->data)->last : tindex_create(0, 0);
+	OLSPar *par = Val_OLSPar(obj->data);
+	TimeIndex x = par ? par->last : tindex_create(0, 0);
 	return NewObj(&Type_TimeIndex, &x);
 }
 
 
 static EfiObj *par_koef (const EfiObj *obj, void *data)
 {
-	OLSPar *x = obj ? Val_OLSPar(obj->data) : NULL;
-
-	if	(x == NULL)	return NULL;
-
-	return EfiVecObj(&Type_OLSCoeff, x->koef, x->dim);
+	OLSPar *par = Val_OLSPar(obj->data);
+	return par ? EfiVecObj(&Type_OLSCoeff, par->koef, par->dim) :
+		EfiVecObj(&Type_OLSCoeff, NULL, 0);
 }
 
 static EfiObj *par_exogen (const EfiObj *obj, void *data)
 {
-	OLSPar *x = obj ? Val_OLSPar(obj->data) : NULL;
-
-	if	(x == NULL)	return NULL;
-
-	return EfiVecObj(&Type_TimeSeries, x->exogen, x->dim);
+	OLSPar *par = Val_OLSPar(obj->data);
+	return par ? EfiVecObj(&Type_TimeSeries, par->exogen, par->dim) :
+		EfiVecObj(&Type_TimeSeries, NULL, 0);
 }
 
 
 static EfiObj *par_res (const EfiObj *obj, void *data)
 {
-	OLSPar *x = (obj ? Val_OLSPar(obj->data) : NULL);
-	return x ? NewPtrObj(&Type_TimeSeries, rd_refer(x->res)) : NULL;
+	OLSPar *par = Val_OLSPar(obj->data);
+	return NewPtrObj(&Type_TimeSeries, par ? rd_refer(par->res) : NULL);
 }
 
 static EfiMember member[] = {
@@ -140,6 +139,7 @@ static void f_fprint (EfiFunc *func, void *rval, void **arg)
 	Val_int(rval) = par ? OLSPar_print(io, par) : io_puts("NULL", io);
 }
 
+#if	0
 static void f_symres (EfiFunc *func, void *rval, void **arg)
 {
 	OLSPar *par = Val_OLSPar(arg[0]);
@@ -193,6 +193,7 @@ static void f_adjust (EfiFunc *func, void *rval, void **arg)
 	while (k < par->res->dim)
 		par->res->data[k++] = 0.;
 }
+#endif
 
 /*	Initialisieren
 */
@@ -202,10 +203,12 @@ static EfiFuncDef func[] = {
 		Func_OLS },
 	{ FUNC_VIRTUAL, &Type_OLSPar, "OLS (TimeSeries y, List_t list)",
 		Func_OLS },
+#if	0
 	{ FUNC_VIRTUAL, &Type_TimeSeries,
 		"OLSPar::symres ()", f_symres },
 	{ FUNC_VIRTUAL, &Type_TimeSeries,
 		"OLSPar::adjust (TimeIndex last)", f_adjust },
+#endif
 	{ FUNC_VIRTUAL, &Type_TimeSeries,
 		"OLSPar::proj ()", Func_OLSProj },
 	{ FUNC_VIRTUAL, &Type_TimeSeries,
