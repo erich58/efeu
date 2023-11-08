@@ -103,6 +103,8 @@ TimeSeries *ts_func (EfiVirFunc *fptr, TimeSeries *t1)
 	EfiFunc *func;
 	int i;
 
+	if	(t1 == NULL)	return NULL;
+
 	func = GetFunc(&Type_double, fptr, 1, &Type_double, 0);
 
 	if	(func == NULL)
@@ -118,7 +120,6 @@ TimeSeries *ts_func (EfiVirFunc *fptr, TimeSeries *t1)
 
 	return ts;
 }
-
 
 TimeSeries *ts_term (EfiVirFunc *fptr,
 	EfiType *type1, void *arg1, EfiType *type2, void *arg2)
