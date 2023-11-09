@@ -53,18 +53,19 @@ TEST_DECL(coef)
 
 TEST_DECL(ols)
 {
-	EXPECT_EVAL("TimeSeries c = TimeSeries(\"c\", \"#1\", 6, 1.)",
-		"TimeSeries(\"c\", \"#1\",\n"
-		"\t1.00, 1.00, 1.00, 1.00, 1.00, 1.00\n"
+	EXPECT_EVAL("TimeSeries c = TimeSeries(\"c\", \"2020\", 8, 1.)",
+		"TimeSeries(\"c\", \"2020\",\n"
+		"\t1.00, 1.00, 1.00, 1.00, 1.00, 1.00,\n"
+		"\t1.00, 1.00\n"
 		")\n"
 	);
-	EXPECT_EVAL("TimeSeries x = TimeSeries(\"x\", \"#1\", 0 : 5)",
-		"TimeSeries(\"x\", \"#1\",\n"
+	EXPECT_EVAL("TimeSeries x = TimeSeries(\"x\", \"2021\", 0 : 5)",
+		"TimeSeries(\"x\", \"2021\",\n"
 		"\t0.00, 1.00, 2.00, 3.00, 4.00, 5.00\n"
 		")\n"
 	);
-	EXPECT_EVAL("TimeSeries y = TimeSeries(\"y\", \"#1\", 10 : 20 : 2)",
-		"TimeSeries(\"y\", \"#1\",\n"
+	EXPECT_EVAL("TimeSeries y = TimeSeries(\"y\", \"2021\", 10 : 20 : 2)",
+		"TimeSeries(\"y\", \"2021\",\n"
 		"\t10.00, 12.00, 14.00, 16.00, 18.00, 20.00\n"
 		")\n"
 	);
@@ -77,9 +78,9 @@ TEST_DECL(ols)
 	EXPECT_EVAL("par.rbar2", "1.00");
 	EXPECT_EVAL("par.dw", "2.00");
 	EXPECT_EVAL("par.see", "0.00");
-	EXPECT_EVAL("par.base", "#1");
-	EXPECT_EVAL("par.first", "#1");
-	EXPECT_EVAL("par.last", "#6");
+	EXPECT_EVAL("par.base", "2021");
+	EXPECT_EVAL("par.first", "2021");
+	EXPECT_EVAL("par.last", "2026");
 	PRINT_EVAL("par.koef[0]");
 	EXPECT_EVAL("par.koef[0].name", "\"c\"");
 	EXPECT_EVAL("par.koef[0].val", "10.00");
@@ -91,53 +92,54 @@ TEST_DECL(ols)
 	EXPECT_EVAL("par.koef[1].se", "0.00");
 	EXPECT_EVAL("par.koef[1].t", "Inf");
 	EXPECT_EVAL("par.exogen",
-		"{TimeSeries(\"c\", \"#1\",\n"
-		"\t1.00, 1.00, 1.00, 1.00, 1.00, 1.00\n"
+		"{TimeSeries(\"c\", \"2020\",\n"
+		"\t1.00, 1.00, 1.00, 1.00, 1.00, 1.00,\n"
+		"\t1.00, 1.00\n"
 		")\n"
-		", TimeSeries(\"x\", \"#1\",\n"
+		", TimeSeries(\"x\", \"2021\",\n"
 		"\t0.00, 1.00, 2.00, 3.00, 4.00, 5.00\n"
 		")\n}"
 	);
 	EXPECT_EVAL("par.res", 
-		"TimeSeries(\"y\", \"#1\",\n"
+		"TimeSeries(\"y\", \"2021\",\n"
 		"\t0.00, 0.00, 0.00, 0.00, 0.00, 0.00\n"
 		")\n"
 	);
 	EXPECT_EVAL("par.proj()",
-		"TimeSeries(NULL, \"#1\",\n"
+		"TimeSeries(NULL, \"2021\",\n"
 		"\t10.00, 12.00, 14.00, 16.00, 18.00, 20.00\n"
 		")\n"
 	);
-	EXPECT_EVAL("par.proj(TimeIndex(\"#3\"))",
-		"TimeSeries(NULL, \"#3\",\n"
+	EXPECT_EVAL("par.proj(TimeIndex(\"2023\"))",
+		"TimeSeries(NULL, \"2023\",\n"
 		"\t14.00, 16.00, 18.00, 20.00\n"
 		")\n"
 	);
-	EXPECT_EVAL("par.proj(TimeIndex(\"#3\"), 2)",
-		"TimeSeries(NULL, \"#3\",\n"
+	EXPECT_EVAL("par.proj(TimeIndex(\"2023\"), 2)",
+		"TimeSeries(NULL, \"2023\",\n"
 		"\t14.00, 16.00\n"
 		")\n"
 	);
-	EXPECT_EVAL("par.proj(TimeIndex(\"#2\"), TimeIndex(\"#4\"))",
-		"TimeSeries(NULL, \"#2\",\n"
+	EXPECT_EVAL("par.proj(TimeIndex(\"2022\"), TimeIndex(\"2024\"))",
+		"TimeSeries(NULL, \"2022\",\n"
 		"\t12.00, 14.00, 16.00\n"
 		")\n"
 	);
 
-	EXPECT_EVAL("TimeSeries c2 = TimeSeries(\"c\", \"#2\", 3, 1.)",
-		"TimeSeries(\"c\", \"#2\",\n"
+	EXPECT_EVAL("TimeSeries c2 = TimeSeries(\"c2\", \"2022\", 3, 1.)",
+		"TimeSeries(\"c2\", \"2022\",\n"
 		"\t1.00, 1.00, 1.00\n"
 		")\n"
 	);
 	PRINT_EVAL("OLSPar par = OLS(y, c2);");
 	EXPECT_EVAL("par.res", 
-		"TimeSeries(\"y\", \"#2\",\n"
+		"TimeSeries(\"y\", \"2022\",\n"
 		"\t-2.00, 0.00, 2.00\n"
 		")\n"
 	);
 
-	EXPECT_EVAL("TimeSeries c3 = TimeSeries(\"c\", \"#10\", 3, 1.)",
-		"TimeSeries(\"c\", \"#10\",\n"
+	EXPECT_EVAL("TimeSeries c3 = TimeSeries(\"c\", \"2030\", 3, 1.)",
+		"TimeSeries(\"c\", \"2030\",\n"
 		"\t1.00, 1.00, 1.00\n"
 		")\n"
 	);
@@ -146,11 +148,12 @@ TEST_DECL(ols)
 	UnitTest_stderr(NULL);
 	EXPECT_CONTENT("stderr",
 		"MSG ID: OLS: to less degrees of freedom.\n");
+
 	UnitTest_stderr("stderr");
 	EXPECT_EVAL("OLSPar par = OLS(y, 1)", "NULL");
 	UnitTest_stderr(NULL);
 	EXPECT_CONTENT("stderr",
-		"MSG ID: OLS: to less degrees of freedom.\n");
+		"MSG ID: OLS: time index not compatible.\n");
 
 	EXPECT_EVAL("y[1] += 1.", "13.00");
 	EXPECT_EVAL("y[4] -= 1.", "17.00");
@@ -163,9 +166,9 @@ TEST_DECL(ols)
 	EXPECT_EVAL("par.rbar2", "0.97");
 	EXPECT_EVAL("par.dw", "2.79");
 	EXPECT_EVAL("par.see", "0.61");
-	EXPECT_EVAL("par.base", "#1");
-	EXPECT_EVAL("par.first", "#1");
-	EXPECT_EVAL("par.last", "#6");
+	EXPECT_EVAL("par.base", "2021");
+	EXPECT_EVAL("par.first", "2021");
+	EXPECT_EVAL("par.last", "2026");
 	PRINT_EVAL("par.koef[0]");
 	EXPECT_EVAL("par.koef[0].name", "\"c\"");
 	EXPECT_EVAL("par.koef[0].val", "10.43");
@@ -177,15 +180,16 @@ TEST_DECL(ols)
 	EXPECT_EVAL("par.koef[1].se", "0.15");
 	EXPECT_EVAL("par.koef[1].t", "12.55");
 	EXPECT_EVAL("par.exogen",
-		"{TimeSeries(\"c\", \"#1\",\n"
-		"\t1.00, 1.00, 1.00, 1.00, 1.00, 1.00\n"
+		"{TimeSeries(\"c\", \"2020\",\n"
+		"\t1.00, 1.00, 1.00, 1.00, 1.00, 1.00,\n"
+		"\t1.00, 1.00\n"
 		")\n"
-		", TimeSeries(\"x\", \"#1\",\n"
+		", TimeSeries(\"x\", \"2021\",\n"
 		"\t0.00, 1.00, 2.00, 3.00, 4.00, 5.00\n"
 		")\n}"
 	);
 	EXPECT_EVAL("par.res", 
-		"TimeSeries(\"y\", \"#1\",\n"
+		"TimeSeries(\"y\", \"2021\",\n"
 		"\t-0.43, 0.74, -0.09, 0.09, -0.74, 0.43\n"
 		")\n"
 	);
@@ -206,11 +210,39 @@ TEST_DECL(ols)
 
 }
 
+TEST_DECL(olsx)
+{
+	EXPECT_EVAL("TimeSeries y = TimeSeries(\"y\", \"2020\", 2, 10.)",
+		"TimeSeries(\"y\", \"2020\",\n"
+		"\t10.00, 10.00\n"
+		")\n"
+	);
+	EXPECT_EVAL("TimeSeries c1 = TimeSeries(\"c1\", \"2020\", 2, 1.)",
+		"TimeSeries(\"c1\", \"2020\",\n"
+		"\t1.00, 1.00\n"
+		")\n"
+	);
+	EXPECT_EVAL("TimeSeries c2 = TimeSeries(\"c2\", \"2021\", 1, 1.)",
+		"TimeSeries(\"c2\", \"2021\",\n"
+		"\t1.00\n"
+		")\n"
+	);
+	PRINT_EVAL("OLSPar par = OLS(y, c1)");
+	EXPECT_EVAL("par.df", "1");
+	EXPECT_EVAL("par.r2", "0.00");
+	EXPECT_EVAL("par.rbar2", "0.00");
+	PRINT_EVAL("OLSPar par = OLS(y, c2)");
+	EXPECT_EVAL("par.df", "0");
+	EXPECT_EVAL("par.r2", "1.00");
+	EXPECT_EVAL("par.rbar2", "1.00");
+}
+
 TEST_SUITE
 {
 	TEST_RUN(setup);
 	TEST_RUN(par);
 	TEST_RUN(coef);
 	TEST_RUN(ols);
+	TEST_RUN(olsx);
 	CLEANUP_EVAL;
 }
