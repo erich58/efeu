@@ -162,8 +162,8 @@ TEST_DECL(llread)
 
 	ASSERT_PTR(io = io_tmpbuf(0));
 
-	EXPECT(io_llwrite(io, a, 6) == 6);
-	EXPECT(io_llwrite(io, b, 4) == 8);
+	EXPECT_UINT(io_llwrite(io, a, 6), 6);
+	EXPECT_UINT(io_llwrite(io, b, 4), 8);
 	io_rewind(io);
 
 	EXPECT(io_llread(io, c, 6) == 6);

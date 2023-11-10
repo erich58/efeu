@@ -137,7 +137,7 @@ size_t io_llwrite (IO *io, const int64_t *val, size_t dim)
 			io->put(0, io);
 			continue;
 		}
-		else if	(*val == -(*val))
+		else if	(*val == 0x8000000000000000ll)
 		{
 			io->put(BIT_SIG, io);
 			continue;
