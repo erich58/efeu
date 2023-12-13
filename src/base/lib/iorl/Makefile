@@ -10,7 +10,9 @@ prereq::
 
 RL_CONFIG= $(EFEU_INCLUDE)/rl_config.h
 
-LDFLAGS += -lefm -lreadline -lncurses
+LDFLAGS += -lefm -lreadline -lncurses -ldl
+TST_LDFLAGS += -lutil
+TST_CFLAGS += -I ../efm
 
 files:: $(RL_CONFIG)
 
