@@ -10,6 +10,8 @@ prereq::
 	make -C ../efx
 
 LDFLAGS += -lefx -lefm -lncurses
+TST_LDFLAGS += -lutil
+TST_CFLAGS += -I ../efm
 
 include $(CFG)/Library.mak
 include $(CFG)/ApplFiles.mak
