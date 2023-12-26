@@ -93,9 +93,6 @@ typedef struct {
 
 void *WinMenu_create (WinSize *ws, WinMenu *list, int dim, int cols);
 
-void WinTrace (int height, int width);
-void WinSystem (const char *cmd);
-
 void DrawBox (WINDOW *win);
 void OverlayWindow (WINDOW *child, WINDOW *parent);
 
