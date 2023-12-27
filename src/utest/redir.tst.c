@@ -14,7 +14,7 @@ TEST_SUITE
 	EXPECT_CONTENT("stderr", "Fehlermeldung\n");
 	EXPECT(UnitTest_stdout("bad/file/name") == 0);
 	EXPECT(UnitTest_stdout(".bad/file/name") == 0);
-	EXPECT(fprintf(stderr, "Neuer Eintrag\n") > 0);
+	EXPECT(UnitTest_write(2, "Neuer Eintrag\n") > 0);
 	EXPECT_CONTENT("stderr", "Fehlermeldung\nNeuer Eintrag\n");
 	EXPECT(UnitTest_stderr("")); // "" =^= "/dev/null"
 	EXPECT(UnitTest_stderr(NULL)); // restore

@@ -105,6 +105,7 @@ int UnitTest_fderr(void);
 int UnitTest_reopen(int fd, const char *name);
 FILE *UnitTest_strout(char *buf, size_t size);
 FILE *UnitTest_strin(const char *buf, size_t size);
+ssize_t UnitTest_write(int fd, const char *str);
 
 int UnitTest_fork(const char *file, int line);
 void UnitTest_exec(const char *file, int line,

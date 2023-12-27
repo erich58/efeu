@@ -117,6 +117,11 @@ const char *UnitTest_mkpath(const char *name)
 	return fn ? fn : UnitTest_tmp(name);
 }
 
+ssize_t UnitTest_write(int fd, const char *str)
+{
+	return str ? write(fd, str, strlen(str)) : 0;
+}
+
 int UnitTest_reopen(int fd, const char *name)
 {
 	const char *fname = UnitTest_mkpath(name);
