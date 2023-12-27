@@ -1,8 +1,8 @@
 #include <EFEU/UnitTest.h>
+#include <EFEU/UnitTest_pty.h>
 #include <EFEU/efwin.h>
 #include <EFEU/parsub.h>
 #include <EFEU/ioctrl.h>
-#include <pty.h>
 
 extern void (*callproc_init) (void);
 extern void (*callproc_exit) (void);
@@ -28,33 +28,7 @@ static void write_string(int fd, const char *str)
 
 TEST_SUITE
 {
-	UnitTest_stdin("in", "");
-	UnitTest_stdout("out");
-
-	int master;
-	int slave;
-	ASSERT(openpty(&master, &slave, NULL, NULL, NULL) == 0);
-
-	TEST_FORK
-	{
-		char buf[64];
-		ssize_t n;
-		close(slave);
-		IO *out = io_fopen(UnitTest_tmp("output"), "w");
-
-		while ((n = read(master, buf, sizeof buf)) > 0)
-			io_write(out, buf, n);
-
-		io_close(out);
-		close(master);
-		TEST_EXIT;
-	}
-
-	dup2(slave, 0);
-	dup2(slave, 1);
-	close(slave);
-	EXPECT(isatty(0) == 1);
-	EXPECT(isatty(1) == 1);
+	int master = pty_open("output");
 
 	callproc_init = base_init;
 	callproc_exit = base_exit;
@@ -189,10 +163,6 @@ TEST_SUITE
 	write_string(1, "\n");
 	write_string(1, "END\n");
 
-	close(master);
-	UnitTest_stdin(NULL, NULL);
-	UnitTest_stdout(NULL);
-
-	CHILD_EXIT(0);
+	pty_close(master);
 	PRINT_CONTENT("output");
 }
