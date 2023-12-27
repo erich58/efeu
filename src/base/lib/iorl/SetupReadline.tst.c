@@ -1,8 +1,8 @@
 #include <EFEU/UnitTest.h>
+#include <EFEU/UnitTest_pty.h>
 #include <EFEU/ioctrl.h>
 #include <EFEU/Readline.h>
 #include <EFEU/parsub.h>
-#include <pty.h>
 
 #include "utest/mstr.tst.h"
 #include <EFEU/rl_config.h>
@@ -40,8 +40,6 @@ TEST_SUITE
 	);
 
 	IO *io;
-	int master;
-	int slave;
 	UnitTest_stdin("in", "");
 	UnitTest_stdout("out");
 	EXPECT(isatty(0) == 0);
@@ -51,29 +49,7 @@ TEST_SUITE
 	EXPECT_MSTR(rd_ident(io), "<stdin,stdout>");
 	io_close(io);
 
-	ASSERT(openpty(&master, &slave, NULL, NULL, NULL) == 0);
-
-	TEST_FORK
-	{
-		char buf[64];
-		ssize_t n;
-		close(slave);
-		IO *out = io_fopen(UnitTest_tmp("output"), "w");
-
-		while ((n = read(master, buf, sizeof buf)) > 0)
-			io_write(out, buf, n);
-
-		io_close(out);
-		close(master);
-		TEST_EXIT;
-	}
-
-	close(master);
-	dup2(slave, 0);
-	dup2(slave, 1);
-	close(slave);
-	EXPECT(isatty(0) == 1);
-	EXPECT(isatty(1) == 1);
+	int master = pty_open("output");
 
 	SetupReadline();
 	TEST_FILE("History",
@@ -157,9 +133,7 @@ TEST_SUITE
 
 	io_puts("END\n", io);
 	io_close(io);
-	UnitTest_stdin(NULL, NULL);
-	UnitTest_stdout(NULL);
 
-	CHILD_EXIT(0);
+	pty_close(master);
 	PRINT_CONTENT("output");
 }
