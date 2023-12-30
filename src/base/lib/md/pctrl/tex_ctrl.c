@@ -72,7 +72,7 @@ static PGFMT *texpgfmt(const char *name)
 {
 	int i;
 
-	for (i = 0; i < tabsize(pgfmt); i++)
+	for (i = 0; i < tabsize(pgfmttab); i++)
 		if (strcmp(name, pgfmttab[i].name) == 0)
 			return (pgfmttab + i);
 
