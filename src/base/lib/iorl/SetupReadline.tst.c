@@ -136,4 +136,5 @@ TEST_SUITE
 
 	pty_close(master);
 	PRINT_CONTENT("output");
+	CLEANUP_MSTR;
 }
