@@ -4,6 +4,13 @@
 
 #include <EFEU/pctrl.h>
 
+static int sc_ctrl (PCTRL *pf, int cmd, va_list list);
+static int sc_put (int c, PCTRL *pf);
+
+PCTRLDef pctrl_sc = {
+	"sc", "SC spreadsheet output", "\n", "\n", NULL, sc_ctrl
+};
+
 static int max_strlen = 0;
 static int max_label = 0;
 static int max_width = 0;
@@ -24,7 +31,7 @@ static int val2_put (int c, PCTRL *pf);
 
 #define	SC_HEAD	"#       Aufbereitete Datenmatrix fuer Spreadsheet Calculator."
 
-int sc_ctrl(PCTRL *pf, int cmd, va_list list)
+static int sc_ctrl(PCTRL *pf, int cmd, va_list list)
 {
 	char *a;
 	int i;
@@ -138,7 +145,7 @@ static int put_xpos(IO *io, int pos)
 }
 
 
-int sc_put(int c, PCTRL *pf)
+static int sc_put(int c, PCTRL *pf)
 {
 	switch (c)
 	{

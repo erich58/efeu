@@ -1,33 +1,17 @@
 /*	Ausgabekontrolle für Standardanwendung
-	(c) 1994 Erich Frühstück
+	(c) 2024 Erich Frühstück
 */
 
 #include <EFEU/pctrl.h>
 
+static int tst_put(int c, PCTRL *pf);
+static int tst_ctrl(PCTRL *pf, int cmd, va_list list);
 
-int std_ctrl(PCTRL *pf, int cmd, va_list list)
-{
-	if	(cmd & PCTRL_FMASK)	pf->put = std_put;
+PCTRLDef pctrl_test = {
+	"test", "Test output", " ", "<NL>\n", "<FF>\f", tst_ctrl
+};
 
-	return 0;
-}
-
-
-int std_put(int c, PCTRL *pf)
-{
-	switch (c)
-	{
-	case EOF:	return 0;
-	case '\t':
-	case '\n':	c = ' '; break;
-	default:	break;
-	}
-
-	return io_putc(c, pf->io);
-}
-
-
-int tst_ctrl(PCTRL *pf, int cmd, va_list list)
+static int tst_ctrl(PCTRL *pf, int cmd, va_list list)
 {
 	char *a;
 	int flag;
@@ -60,7 +44,7 @@ int tst_ctrl(PCTRL *pf, int cmd, va_list list)
 }
 
 
-int tst_put(int c, PCTRL *pf)
+static int tst_put(int c, PCTRL *pf)
 {
 	return (c == EOF) ? io_puts(")", pf->io) : io_mputc(c, pf->io, "()");
 }

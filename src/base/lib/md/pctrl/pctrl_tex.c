@@ -6,6 +6,17 @@
 #include <EFEU/locale.h>
 
 static int quote_flag = 0;
+static int tex_ctrl (PCTRL *pf, int cmd, va_list list);
+static int tab_ctrl (PCTRL *pf, int cmd, va_list list);
+static int tex_put (int c, PCTRL *pf);
+
+PCTRLDef pctrl_tex = {
+	"tex", "LaTeX-document", "&", "~\\\\\n", "\\newpage\n", tex_ctrl
+};
+
+PCTRLDef pctrl_tab = {
+	"tab", "LaTeX-table", "&", "~\\\\\n", "\\newpage\n", tab_ctrl
+};
 
 /*	Fontdefinitionen
 */
@@ -114,7 +125,7 @@ static void TeXend(IO *io)
 		io_puts("\\end{document}\n", io);
 }
 
-int tex_ctrl(PCTRL *pf, int cmd, va_list list)
+static int tex_ctrl(PCTRL *pf, int cmd, va_list list)
 {
 	if	(!pgfmt)	pgfmt = texpgfmt(pctrl_pgfmt);
 	if	(!font)		font = TeXfont(pctrl_fsize);
@@ -170,15 +181,10 @@ int tex_ctrl(PCTRL *pf, int cmd, va_list list)
 	case PCTRL_CENTER:
 	case PCTRL_RIGHT:
 	case PCTRL_EMPTY:
-	
-		quote_flag = 0;
-		pf->put = tex_put;
-		break;
-
 	case PCTRL_VALUE:
 
 		quote_flag = 0;
-		pf->put = std_put;
+		pf->put = tex_put;
 		break;
 
 	default:	
@@ -189,14 +195,14 @@ int tex_ctrl(PCTRL *pf, int cmd, va_list list)
 	return 0;
 }
 
-int tab_ctrl(PCTRL *pf, int cmd, va_list list)
+static int tab_ctrl(PCTRL *pf, int cmd, va_list list)
 {
 	TeXcompletion = 0;
 	return tex_ctrl(pf, cmd, list);
 }
 
 
-int tex_put(int c, PCTRL *pf)
+static int tex_put(int c, PCTRL *pf)
 {
 	switch (c)
 	{

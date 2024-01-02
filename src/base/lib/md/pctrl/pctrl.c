@@ -23,6 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/pctrl.h>
 #include <EFEU/ioctrl.h>
+#include <EFEU/nkt.h>
 
 int pctrl_fsize = 10;
 char *pctrl_pgfmt = "a4";
@@ -30,36 +31,46 @@ char *pctrl_pgfmt = "a4";
 static int pf_put (int c, IO *io);
 static int pf_ctrl (IO *io, int req, va_list list);
 
-typedef struct {
-	char *name;	/* Name */
-	char *desc;	/* Beschreibung */
-	const char *nc;	/* Neue Spalte */
-	const char *nl;	/* Neue Zeile */
-	const char *nf;	/* Neue Seite */
-	int (*ctrl) (PCTRL *io, int cmd, va_list list);
-} PCTRLDef;
+static NameKeyTab pctrl_deftab = NKT_DATA("pctrl", 32, NULL);
 
-static PCTRLDef pctrl[] = {
-	{ NULL, "Standardausgabefilter", " ", "\n", "\f", std_ctrl },
-	{ "test", "Testausgabefilter", " ", "<NL>\n", "<FF>\f", tst_ctrl },
-	{ "ascii", "Ascii Ausgabe", "\t", "\n", "\f", std_ctrl },
-	{ "struct", "Formatierung als Liste", ", ", " },\n", NULL, struct_ctrl },
-	{ "csv", "Formatierung als csv - Datei", ";", "\r\n", NULL, csv_ctrl },
-	{ "data", "Nur Datenwerte ausgeben", "\t", "\n", NULL, data_ctrl },
-	{ "sc", "Aufbereitung für SC", "\n", "\n", NULL, sc_ctrl },
-	{ "tex", "LaTeX-Dokument", "&", "~\\\\\n", "\\newpage\n", tex_ctrl },
-	{ "tab", "LaTeX-Tabelle", "&", "~\\\\\n", "\\newpage\n", tab_ctrl },
-};
+int pctrl_add (PCTRLDef *def)
+{
+	return def ? nkt_insert(&pctrl_deftab, def->name, def) : 0;
+}
+
+static void pctrl_init()
+{
+	if	(pctrl_deftab.tab.used == 0)
+	{
+		pctrl_add(&pctrl_std);
+		pctrl_add(&pctrl_test);
+		pctrl_add(&pctrl_ascii);
+		pctrl_add(&pctrl_struct);
+		pctrl_add(&pctrl_csv);
+		pctrl_add(&pctrl_data);
+		pctrl_add(&pctrl_sc);
+		pctrl_add(&pctrl_tex);
+		pctrl_add(&pctrl_tab);
+	}
+}
 
 static PCTRLDef *get_pctrl (const char *name)
 {
-	int i;
+	pctrl_init();
+	return nkt_fetch(&pctrl_deftab, name, &pctrl_std);
+}
 
-	for (i = 0; i < tabsize(pctrl); i++)
-		if (mstrcmp(pctrl[i].name, name) == 0)
-			return pctrl + i;
+static int pctrl_visit(const char *name, void *data, void *par)
+{
+	PCTRLDef *def = data;
+	io_printf(par, "%s\t%s\n", def->name, def->desc);
+	return 0;
+}
 
-	return pctrl;
+void pctrl_list(IO *out)
+{
+	pctrl_init();
+	nkt_walk(&pctrl_deftab, pctrl_visit, out);
 }
 
 /*	Druckkontrolle generieren
@@ -169,5 +180,6 @@ static int pf_ctrl (IO *io, int req, va_list list)
 
 	if	(pf->ctrl)
 		return pf->ctrl(pf, req, list);
-	else	return EOF;
+
+	return EOF;
 }

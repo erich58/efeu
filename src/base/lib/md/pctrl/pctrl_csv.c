@@ -4,8 +4,22 @@
 
 #include <EFEU/pctrl.h>
 
+static int struct_ctrl (PCTRL *pf, int cmd, va_list list);
+static int csv_ctrl (PCTRL *pf, int cmd, va_list list);
 
-int struct_ctrl(PCTRL *pf, int cmd, va_list list)
+PCTRLDef pctrl_struct = {
+	"struct", "List formatting", ", ", " },\n", NULL, struct_ctrl
+};
+
+PCTRLDef pctrl_csv = {
+	"csv", "csv-file", ";", "\r\n", NULL, csv_ctrl
+};
+
+static int val_put (int c, PCTRL *pf);
+static int csv_put (int c, PCTRL *pf);
+static int str_put (int c, PCTRL *pf);
+
+static int struct_ctrl(PCTRL *pf, int cmd, va_list list)
 {
 	switch (cmd)
 	{
@@ -14,15 +28,14 @@ int struct_ctrl(PCTRL *pf, int cmd, va_list list)
 	case PCTRL_CENTER:
 	case PCTRL_RIGHT:	io_puts("\t{ \"", pf->io); pf->put = str_put; break;
 	case PCTRL_EMPTY:
-	case PCTRL_VALUE:	pf->put = std_put; break;
+	case PCTRL_VALUE:	pf->put = val_put; break;
 	default:		break;
 	}
 
 	return 0;
 }
 
-
-int csv_ctrl(PCTRL *pf, int cmd, va_list list)
+static int csv_ctrl(PCTRL *pf, int cmd, va_list list)
 {
 	switch (cmd)
 	{
@@ -38,8 +51,7 @@ int csv_ctrl(PCTRL *pf, int cmd, va_list list)
 	return 0;
 }
 
-
-int csv_put(int c, PCTRL *pf)
+static int csv_put(int c, PCTRL *pf)
 {
 	switch (c)
 	{
@@ -51,8 +63,7 @@ int csv_put(int c, PCTRL *pf)
 	return io_putc(c, pf->io);
 }
 
-
-int str_put(int c, PCTRL *pf)
+static int str_put(int c, PCTRL *pf)
 {
 	switch (c)
 	{
@@ -64,8 +75,7 @@ int str_put(int c, PCTRL *pf)
 	return io_putc(c, pf->io);
 }
 
-
-int val_put(int c, PCTRL *pf)
+static int val_put(int c, PCTRL *pf)
 {
 	switch (c)
 	{

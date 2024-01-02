@@ -30,7 +30,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 #include <EFEU/conv.h>
 
-/*	Ausgabefilter und Druckerkontrolle
+/*	Ausgabekontrolle
 */
 
 typedef struct PCTRLStruct PCTRL;
@@ -67,35 +67,38 @@ struct PCTRLStruct {
 #define	PCTRL_VALUE	(PCTRL_MASK|0x14)	/* Zahlenwert ausgeben */
 #define	PCTRL_EMPTY	(PCTRL_MASK|0x15)	/* Leerfeld ausgeben */
 
-#define	PCTRL_COLUMNS	(PCTRL_MASK|0x21)	/* Verfügbare Spalten bestimmen */
-#define	PCTRL_LINES	(PCTRL_MASK|0x22)	/* Verfügbare Zeilen bestimmen */
-#define	PCTRL_XPOS	(PCTRL_MASK|0x23)	/* Aktuelle Spalte bestimmen */
-#define	PCTRL_YPOS	(PCTRL_MASK|0x24)	/* Aktuelle Zeile bestimmen */
-
+#define	PCTRL_COLUMNS	(PCTRL_MASK|0x21)	/* Verfügbare Spalten abfragen */
+#define	PCTRL_LINES	(PCTRL_MASK|0x22)	/* Verfügbare Zeilen abfragen */
+#define	PCTRL_XPOS	(PCTRL_MASK|0x23)	/* Aktuelle Spalte abfragen */
+#define	PCTRL_YPOS	(PCTRL_MASK|0x24)	/* Aktuelle Zeile abfragen */
 
 IO *io_pctrl (IO *io, const char *name);
 
 
-/*	Spezifische Ausgabe und Steuerprogramme
+/*	Ausgabedefinitionen
 */
 
-int std_put (int c, PCTRL *pf);
-int tst_put (int c, PCTRL *pf);
-int val_put (int c, PCTRL *pf);
-int csv_put (int c, PCTRL *pf);
-int str_put (int c, PCTRL *pf);
-int tex_put (int c, PCTRL *pf);
-int sc_put (int c, PCTRL *pf);
+typedef struct {
+	char *name;	/* Name */
+	char *desc;	/* Beschreibung */
+	const char *nc;	/* Neue Spalte */
+	const char *nl;	/* Neue Zeile */
+	const char *nf;	/* Neue Seite */
+	int (*ctrl) (PCTRL *io, int cmd, va_list list);
+} PCTRLDef;
 
-int std_ctrl (PCTRL *pf, int cmd, va_list list);
-int csv_ctrl (PCTRL *pf, int cmd, va_list list);
-int struct_ctrl (PCTRL *pf, int cmd, va_list list);
-int data_ctrl (PCTRL *pf, int cmd, va_list list);
-int tex_ctrl (PCTRL *pf, int cmd, va_list list);
-int tab_ctrl (PCTRL *pf, int cmd, va_list list);
-int sc_ctrl (PCTRL *pf, int cmd, va_list list);
-int tst_ctrl (PCTRL *pf, int cmd, va_list list);
+int pctrl_add (PCTRLDef *def);
+void pctrl_list (IO *out);
 
+extern PCTRLDef pctrl_std;
+extern PCTRLDef pctrl_test;
+extern PCTRLDef pctrl_ascii;
+extern PCTRLDef pctrl_struct;
+extern PCTRLDef pctrl_csv;
+extern PCTRLDef pctrl_data;
+extern PCTRLDef pctrl_sc;
+extern PCTRLDef pctrl_tex;
+extern PCTRLDef pctrl_tab;
 
 /*	Globale Anpassungsvariablen
 */
