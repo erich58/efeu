@@ -3,9 +3,8 @@
 
 TEST_SUITE
 {
-	IO *io = io_fopen(UnitTest_tmp("output"), "w");
-	io = io_pctrl(io, "sc");
-	EXPECT(io != 0);
+	IO *io;
+	EXPECT_PTR(io = io_pctrl(io_fopen(UnitTest_tmp("output"), "w"), "sc"));
 
 	io_ctrl(io, PCTRL_HEAD);
 	io_ctrl(io, PCTRL_LEFT);
@@ -40,5 +39,34 @@ TEST_SUITE
 		"format A 6 0 0\n"
 		"format B 9 4 0\n"
 		"goto A0\n"
+	);
+
+	EXPECT_PTR(io = io_pctrl(io_fopen(UnitTest_tmp("output"), "w"), "sc"));
+	io_ctrl(io, PCTRL_DATA);
+	io_ctrl(io, PCTRL_LEFT);
+	io_puts("label", io);
+	io_ctrl(io, PCTRL_RIGHT);
+	io_puts("column", io);
+	io_ctrl(io, PCTRL_LINE);
+	io_ctrl(io, PCTRL_LEFT);
+	io_puts("line", io);
+
+	for (int i = 0; i < 25; ++i)
+		io_ctrl(io, PCTRL_EMPTY);
+
+	io_ctrl(io, PCTRL_VALUE);
+	io_puts("1", io);
+	io_ctrl(io, PCTRL_LINE);
+	io_ctrl(io, PCTRL_EDATA);
+
+	io_close(io);
+	MATCH_LINES(UnitTest_content("output"),
+		"leftstring A0 = \"label\"\n"
+		"rightstring B0 = \"column\"\n"
+		"leftstring A1 = \"line\"\n"
+		"let AA1 = 1\n"
+		"format A 5 0 0\n"
+		"format B 7 0 0\n"
+		"format AA 7 0 0\n"
 	);
 }
