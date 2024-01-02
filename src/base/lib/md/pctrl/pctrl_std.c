@@ -17,7 +17,7 @@ PCTRLDef pctrl_ascii = {
 };
 
 PCTRLDef pctrl_data = {
-	"data", "Data without labels", "\t", "\n", NULL, data_ctrl
+	"data", "Data without labels", NULL, "\n", NULL, data_ctrl
 };
 
 static int std_ctrl(PCTRL *pf, int cmd, va_list list)

@@ -29,7 +29,7 @@ static int val2_put (int c, PCTRL *pf);
 #define newline(pf)	io_puts(pf->nl, pf->io)
 
 
-#define	SC_HEAD	"#       Aufbereitete Datenmatrix fuer Spreadsheet Calculator."
+#define	SC_HEAD	"# Spreadsheet Calculator table"
 
 static int sc_ctrl(PCTRL *pf, int cmd, va_list list)
 {
@@ -107,11 +107,6 @@ static int sc_ctrl(PCTRL *pf, int cmd, va_list list)
 		count_len = 0;
 		io_putc('"', pf->io);
 		pf->put = sc_put;
-		break;
-
-	case PCTRL_EMPTY:
-
-		io_puts("0", pf->io);
 		break;
 
 	case PCTRL_VALUE:

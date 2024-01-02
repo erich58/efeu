@@ -86,7 +86,7 @@ IO *io_pctrl(IO *io, const char *name)
 		pf->line = 0;
 		pf->col = 0;
 		pf->page = 0;
-		pf->delim = PrintListDelim;
+		pf->delim = pc->nc ? pc->nc : PrintListDelim;
 		pf->nl = pc->nl;
 		pf->nf = pc->nf;
 		pf->put = NULL;

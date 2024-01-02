@@ -8,7 +8,7 @@ static int tst_put(int c, PCTRL *pf);
 static int tst_ctrl(PCTRL *pf, int cmd, va_list list);
 
 PCTRLDef pctrl_test = {
-	"test", "Test output", " ", "<NL>\n", "<FF>\f", tst_ctrl
+	"test", "Test output", ", ", "<NL>\n", "<FF>\f", tst_ctrl
 };
 
 static int tst_ctrl(PCTRL *pf, int cmd, va_list list)
