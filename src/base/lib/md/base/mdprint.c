@@ -52,6 +52,8 @@ static int cur_line = 0;
 static int max_line = 0;
 static int max_col = 0;
 static int out_mode = 0;
+static const char *pgfmt = "a4";
+static int fsize = 10;
 
 extern int PrintFieldWidth;
 extern int PrintFloatPrec;
@@ -93,13 +95,13 @@ static IO *set_pctrl(IO *io, const char *def)
 		else if	(patcmp("label=", list[i], &p))
 			label_width = atoi(p);
 		else if	(patcmp("landscape", list[i], NULL))
-			pctrl_pgfmt = "a4r";
+			pgfmt = "a4r";
 		else if	(patcmp("paper=", list[i], &p))
-			pctrl_pgfmt = mstrcpy(p);
+			pgfmt = p;
 		else if	(patcmp("*pt", list[i], NULL))
-			pctrl_fsize = atoi(list[i]);
+			fsize = atoi(list[i]);
 		else if	(patcmp("font=", list[i], &p))
-			pctrl_fsize = atoi(p);
+			fsize = atoi(p);
 		else if	(patcmp("mode=", list[i], &p) && !out)
 		{
 			if	(strcmp("binary", p) == 0)
@@ -112,7 +114,12 @@ static IO *set_pctrl(IO *io, const char *def)
 				out_mode = 2;
 				out = io;
 			}
-			else	out = io_pctrl(io, p);
+			else
+			{
+				out = io_pctrl(io, p);
+				io_ctrl(out, PCTRL_FSIZE, fsize);
+				io_ctrl(out, PCTRL_PGFMT, pgfmt);
+			}
 		}
 	}
 
