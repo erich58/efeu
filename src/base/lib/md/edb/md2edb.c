@@ -1,4 +1,4 @@
-/*	EDB-Datenfile auzf Multidimensiomnale Datenmatrix aufsetzen
+/*	EDB-Datenfile auf Multidimensionale Datenmatrix aufsetzen
 
 $Copyright (C) 2006 Erich Frühstück
 This file is part of EFEU.
