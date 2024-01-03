@@ -25,9 +25,6 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/ioctrl.h>
 #include <EFEU/nkt.h>
 
-int pctrl_fsize = 10;
-char *pctrl_pgfmt = "a4";
-
 static int pf_put (int c, IO *io);
 static int pf_ctrl (IO *io, int req, va_list list);
 

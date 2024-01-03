@@ -12,7 +12,7 @@ TEST_SUITE
 	io_ctrl(io, PCTRL_LINE);
 	io_ctrl(io, PCTRL_EHEAD);
 
-	io_ctrl(io, PCTRL_DATA);
+	io_ctrl(io, PCTRL_DATA, 5);
 	io_ctrl(io, PCTRL_LEFT);
 	io_puts("left", io);
 	io_ctrl(io, PCTRL_RIGHT);
@@ -42,7 +42,7 @@ TEST_SUITE
 	);
 
 	EXPECT_PTR(io = io_pctrl(io_fopen(UnitTest_tmp("output"), "w"), "sc"));
-	io_ctrl(io, PCTRL_DATA);
+	io_ctrl(io, PCTRL_DATA, 5);
 	io_ctrl(io, PCTRL_LEFT);
 	io_puts("label", io);
 	io_ctrl(io, PCTRL_RIGHT);

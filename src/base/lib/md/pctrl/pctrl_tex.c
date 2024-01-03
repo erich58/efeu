@@ -8,10 +8,11 @@
 static int quote_flag = 0;
 static int tex_ctrl (PCTRL *pf, int cmd, va_list list);
 static int tab_ctrl (PCTRL *pf, int cmd, va_list list);
+static int doc_ctrl (PCTRL *pf, int cmd, va_list list);
 static int tex_put (int c, PCTRL *pf);
 
 PCTRLDef pctrl_tex = {
-	"tex", "LaTeX-document", "&", "~\\\\\n", "\\newpage\n", tex_ctrl
+	"tex", "LaTeX-document", "&", "~\\\\\n", "\\newpage\n", doc_ctrl
 };
 
 PCTRLDef pctrl_tab = {
@@ -84,7 +85,7 @@ static PGFMT *texpgfmt(const char *name)
 	int i;
 
 	for (i = 0; i < tabsize(pgfmttab); i++)
-		if (strcmp(name, pgfmttab[i].name) == 0)
+		if (mstrcmp(name, pgfmttab[i].name) == 0)
 			return (pgfmttab + i);
 
 	return pgfmttab;
@@ -127,11 +128,21 @@ static void TeXend(IO *io)
 
 static int tex_ctrl(PCTRL *pf, int cmd, va_list list)
 {
-	if	(!pgfmt)	pgfmt = texpgfmt(pctrl_pgfmt);
-	if	(!font)		font = TeXfont(pctrl_fsize);
+	if	(!pgfmt)	pgfmt = texpgfmt(NULL);
+	if	(!font)		font = TeXfont(10);
 
 	switch (cmd)
 	{
+	case PCTRL_FSIZE:
+
+		font = TeXfont(va_arg(list, int));
+		return font->size;
+
+	case PCTRL_PGFMT:
+
+		pgfmt = texpgfmt(va_arg(list, const char *));
+		return (int) (pgfmt->width / font->width);
+
 	case PCTRL_COLUMNS:
 
 		return (int) (pgfmt->width / font->width);
@@ -142,8 +153,6 @@ static int tex_ctrl(PCTRL *pf, int cmd, va_list list)
 
 	case PCTRL_BEGIN:
 
-		pgfmt = texpgfmt(pctrl_pgfmt);
-		font = TeXfont(pctrl_fsize);
 		pf->delim = " & ";
 		TeXbegin(pf->io, pgfmt);
 		io_putc('\\', pf->io);
@@ -160,10 +169,12 @@ static int tex_ctrl(PCTRL *pf, int cmd, va_list list)
 		pf->nl = " \\\\\n";
 		break;
 
+	/*
 	case PCTRL_EHEAD:
 
 		io_puts("\\hline\n", pf->io);
 		break;
+	*/
 
 	case PCTRL_EDATA:
 
@@ -175,6 +186,8 @@ static int tex_ctrl(PCTRL *pf, int cmd, va_list list)
 	case PCTRL_END:
 
 		TeXend(pf->io);
+		font = NULL;
+		pgfmt = NULL;
 		break;
 
 	case PCTRL_LEFT:
@@ -201,6 +214,11 @@ static int tab_ctrl(PCTRL *pf, int cmd, va_list list)
 	return tex_ctrl(pf, cmd, list);
 }
 
+static int doc_ctrl(PCTRL *pf, int cmd, va_list list)
+{
+	TeXcompletion = 1;
+	return tex_ctrl(pf, cmd, list);
+}
 
 static int tex_put(int c, PCTRL *pf)
 {
@@ -230,7 +248,7 @@ static int tex_put(int c, PCTRL *pf)
 	case '"':
 
 		quote_flag = !quote_flag;
-		io_puts(quote_flag ? "\"`" : "\"Ž", pf->io);
+		io_puts(quote_flag ? "\"`" : "\"'", pf->io);
 		break;
 
 	case '\\': io_puts("$\\backslash$", pf->io); break;

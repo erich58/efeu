@@ -22,7 +22,9 @@ static int tst_ctrl(PCTRL *pf, int cmd, va_list list)
 	switch (cmd)
 	{
 	case PCTRL_BEGIN:	a = "BEGIN\n"; break;
-	case PCTRL_DATA:	a = "DATA\n"; break;
+	case PCTRL_DATA:
+		io_xprintf(pf->io, "DATA(%d)\n", va_arg(list, int));
+		return 0;
 	case PCTRL_HEAD:	a = "HEAD\n"; break;
 	case PCTRL_LINE:	break;
 	case PCTRL_PAGE:	break;

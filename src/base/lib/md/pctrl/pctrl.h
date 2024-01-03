@@ -71,6 +71,8 @@ struct PCTRLStruct {
 #define	PCTRL_LINES	(PCTRL_MASK|0x22)	/* Verfügbare Zeilen abfragen */
 #define	PCTRL_XPOS	(PCTRL_MASK|0x23)	/* Aktuelle Spalte abfragen */
 #define	PCTRL_YPOS	(PCTRL_MASK|0x24)	/* Aktuelle Zeile abfragen */
+#define	PCTRL_FSIZE	(PCTRL_MASK|0x25)	/* Fontgröße vorgeben */
+#define	PCTRL_PGFMT	(PCTRL_MASK|0x26)	/* Seitenformat vorgeben */
 
 IO *io_pctrl (IO *io, const char *name);
 
@@ -103,8 +105,6 @@ extern PCTRLDef pctrl_tab;
 /*	Globale Anpassungsvariablen
 */
 
-extern int pctrl_fsize;		/* Fontgröße für die Ausgabe */
-extern char *pctrl_pgfmt;	/* Seitenformat für die Ausgabe */
 extern char *PrintListDelim;	/* Trennzeichen zwischen Datenwerten */
 
 #endif	/* EFEU/pctrl.h */

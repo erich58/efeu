@@ -34,16 +34,18 @@ TEST_DECL(std)
 	EXPECT_INT(io_ctrl(io, PCTRL_COLUMNS), 0);
 	EXPECT_INT(io_ctrl(io, PCTRL_YPOS), 1);
 	EXPECT_INT(io_ctrl(io, PCTRL_XPOS), 0);
+	EXPECT_INT(io_ctrl(io, PCTRL_FSIZE, 10), 0);
+	EXPECT_INT(io_ctrl(io, PCTRL_PGFMT, "a4"), 0);
 
 	io_ctrl(io, PCTRL_HEAD);
 	io_ctrl(io, PCTRL_LEFT);
-	io_puts("headline", io);
+	io_puts("headline x\tx\nx", io);
 	io_ctrl(io, PCTRL_LINE);
 	io_ctrl(io, PCTRL_EHEAD);
 	EXPECT_INT(io_ctrl(io, PCTRL_YPOS), 2);
 	EXPECT_INT(io_ctrl(io, PCTRL_XPOS), 0);
 
-	io_ctrl(io, PCTRL_DATA);
+	io_ctrl(io, PCTRL_DATA, 5);
 	io_ctrl(io, PCTRL_LEFT);
 	io_puts("left", io);
 	EXPECT_INT(io_ctrl(io, PCTRL_YPOS), 2);
@@ -79,7 +81,7 @@ TEST_DECL(std)
 	io_close(io);
 
 	EXPECT_CONTENT("output",
-		"headline\n"
+		"headline x x x\n"
 		"left right\n"
 		"123 \n"
 		"\fcenter\n"
@@ -100,7 +102,7 @@ TEST_DECL(dummy)
 	io_ctrl(io, PCTRL_LINE);
 	io_ctrl(io, PCTRL_EHEAD);
 
-	io_ctrl(io, PCTRL_DATA);
+	io_ctrl(io, PCTRL_DATA, 5);
 	io_ctrl(io, PCTRL_LEFT);
 	io_puts("left", io);
 	io_ctrl(io, PCTRL_RIGHT);

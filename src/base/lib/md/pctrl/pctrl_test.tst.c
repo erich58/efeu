@@ -19,7 +19,7 @@ TEST_SUITE
 	EXPECT_INT(io_ctrl(io, PCTRL_YPOS), 2);
 	EXPECT_INT(io_ctrl(io, PCTRL_XPOS), 0);
 
-	io_ctrl(io, PCTRL_DATA);
+	io_ctrl(io, PCTRL_DATA, 5);
 	io_ctrl(io, PCTRL_LEFT);
 	io_puts("left", io);
 	EXPECT_INT(io_ctrl(io, PCTRL_YPOS), 2);
@@ -60,7 +60,7 @@ TEST_SUITE
 		"HEAD\n"
 		"<1,1>LEFT(headline)<NL>\n"
 		"EHEAD\n"
-		"DATA\n"
+		"DATA(5)\n"
 		"<2,1>LEFT(left), <2,2>RIGHT(right)<NL>\n"
 		"<3,1>VAL(123), <3,2>EMPTY()<NL>\n"
 		"<FF>\f<1,1>CENTER(center)<NL>\n"
