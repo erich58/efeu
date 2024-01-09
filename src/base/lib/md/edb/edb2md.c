@@ -16,7 +16,6 @@ typedef struct {
 	EDBAggregate *aggr;
 	EfiStruct *var;
 	EfiObj *obj;
-	EfiFunc *f_add;
 	char *pmode;
 } EDB2MD;
 
@@ -203,7 +202,7 @@ static mdaxis *make_axis (StrPool *pool, const char *name, const char *desc)
 	return x;
 }
 
-static void add_val(EDBAggregate *aggr, mdaxis *axis, char *tg, char *src)
+static void add_val(EDB2MD *p, mdaxis *axis, char *tg, char *src)
 {
 	if	(axis)
 	{
@@ -219,11 +218,22 @@ static void add_val(EDBAggregate *aggr, mdaxis *axis, char *tg, char *src)
 
 			if	(n == 0)	continue;
 
-			add_val(aggr, axis->next,
+			add_val(p, axis->next,
 				tg + (n - 1) * axis->size, src);
 		}
 	}
-	else	EDBAggregateData(aggr, tg, src);
+	else if	(p->obj)
+	{
+		EDBAggregateData(p->aggr, tg, p->obj->data);
+	}
+	else if	(p->aggr)
+	{
+		EDBAggregateData(p->aggr, tg, src);
+	}
+	else
+	{
+		fprintf(stderr, "misssing aggregate\n");
+	}
 }
 
 static void edb2md_init (EDB2MD *par, EDB *edb)
@@ -236,6 +246,7 @@ static void edb2md_init (EDB2MD *par, EDB *edb)
 	par->md->sbuf = NewStrPool();
 	par->md->i_name = StrPool_add(par->md->sbuf, edb->desc);
 	par->var = NULL;
+	par->obj = NULL;
 	ptr = &par->var;
 	par->aggr = NULL;
 	xptr = &par->md->axis;
@@ -268,29 +279,26 @@ static void edb2md_init (EDB2MD *par, EDB *edb)
 		else
 		{
 			par->md->type = type;
-			par->obj = NewObj(par->md->type, NULL);
 		}
 
 		par->var = NewEfiStruct(par->md->type, NULL, 0);
+		par->aggr = NewEDBAggregate(par->aggr, "+=", par->var, 0);
 	}
 	else if	(par->var->dim == 0 && par->var->next == NULL)
 	{
 		par->md->type = par->var->type;
-		par->obj = NewObj(par->md->type, NULL);
 	}
 	else
 	{
 		par->md->type = MakeStruct(NULL, NULL, RefEfiStruct(par->var));
-		par->obj = NewObj(par->md->type, NULL);
 	}
 
 	md_alloc(par->md);
-	par->f_add = mdfunc_add(par->md->type);
 }
 
 static void edb2md_add (EDB2MD *p, void *data)
 {
- 	add_val(p->aggr, p->md->axis, p->md->data, data);
+ 	add_val(p, p->md->axis, p->md->data, data);
 }
 
 static void edb2md_free (EDB2MD *par)
@@ -301,7 +309,6 @@ static void edb2md_free (EDB2MD *par)
 		igrp_clean(x->priv);
 
 	UnrefObj(par->obj);
-	rd_deref(par->f_add);
 	DelEfiStruct(par->var);
 	rd_deref(par->aggr);
 }
