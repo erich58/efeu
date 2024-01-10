@@ -27,6 +27,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 static char *XNames = NULL;
 static char *YNames = NULL;
+static char *Description = NULL;
 static EfiType *Type = NULL;
 static int has_magic = 0;
 static int need_magic = 0;
@@ -48,6 +49,7 @@ static void clr_par (void)
 {
 	memfree(XNames);
 	memfree(YNames);
+	memfree(Description);
 }
 
 static void set_par (const char *def)
@@ -58,6 +60,7 @@ static void set_par (const char *def)
 
 	XNames = NULL;
 	YNames = NULL;
+	Description = NULL;
 	Type = &Type_double;
 
 	dim = mstrsplit(def, "%s", &list);
@@ -99,6 +102,7 @@ static void set_par (const char *def)
 #define	H_COLUMNS	5
 #define	H_LOCALE	6
 #define	H_MAGIC		7
+#define	H_DESC		8
 
 
 static struct {
@@ -116,6 +120,7 @@ static struct {
 	{ "[Cc]ol*",	H_COLUMNS },
 	{ "[Ss]pal*",	H_COLUMNS },
 	{ "[Ll]oc*",	H_LOCALE },
+	{ "[Dd]esc*",	H_DESC },
 };
 
 #define	SETPAR(name)	(save = name, name = p, p = save)
@@ -174,6 +179,7 @@ static char *get_header(IO *io)
 			case H_TITLE:	SETPAR(title); break;
 			case H_ROWS:	SETPAR(YNames); break;
 			case H_COLUMNS:	SETPAR(XNames); break;
+			case H_DESC:	SETPAR(Description); break;
 			case H_TYPE:	Type = str2Type(p); break;
 			case H_LOCALE:	SetLocale(LOC_SCAN, p); break;
 			default:	break;
@@ -455,6 +461,7 @@ static mdmat *textmode(IO *io, char *title)
 	md = new_mdmat();
 	md->sbuf = NewStrPool();
 	md->i_name = StrPool_xadd(md->sbuf, title);
+	md->i_desc = StrPool_add(md->sbuf, Description);
 	md->type = Type ? Type : &Type_double;
 	xlabel = set_label(XNames);
 	ylabel = set_label(YNames);

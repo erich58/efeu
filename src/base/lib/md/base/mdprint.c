@@ -28,6 +28,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define H_MAGIC		"##MDMAT   "
 #define H_TITLE		"##Title   "
+#define H_DESC		"##Desc    "
 #define H_TYPE		"##Type    "
 #define H_HEAD		"##Head    "
 #define H_LOCALE	"##Locale  "
@@ -181,6 +182,9 @@ static void show_header(IO *io, mdmat *md, int ext)
 
 	put_label(io, H_MAGIC, H_VERSION);
 	put_label(io, H_TITLE, StrPool_get(md->sbuf, md->i_name));
+
+	if	(md->i_desc)
+		put_label(io, H_DESC, StrPool_get(md->sbuf, md->i_desc));
 
 	if	((head = TypeHead(md->type)))
 	{
