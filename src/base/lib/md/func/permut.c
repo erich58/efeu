@@ -37,7 +37,7 @@ void md_permut(mdmat *md, const char *str)
 	XDATA *tab;
 	int i, j;
 
-	if	(str == NULL)	return;
+	if	(!md || !str)	return;
 
 	for (mdim = 0, axis = md->axis; axis != NULL; axis = axis->next)
 		mdim++;
