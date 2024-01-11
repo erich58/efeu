@@ -25,39 +25,38 @@ mdaxis *Buf_mdaxis = NULL;
 static EfiObj *get_title (const EfiObj *base, void *data)
 {
 	mdmat *md = base ? Val_ptr(base->data) : NULL;
-	return md ? StrPoolObj(base, md->sbuf, &md->i_name) : NULL;
+	return md ? StrPoolObj(base, md->sbuf, &md->i_name) : str2Obj(NULL);
 }
 
 static EfiObj *get_desc (const EfiObj *base, void *data)
 {
 	mdmat *md = base ? Val_ptr(base->data) : NULL;
-	return md ? StrPoolObj(base, md->sbuf, &md->i_desc) : NULL;
+	return md ? StrPoolObj(base, md->sbuf, &md->i_desc) : str2Obj(NULL);
 }
 
 static EfiObj *get_type (const EfiObj *base, void *data)
 {
 	mdmat *md = base ? Val_ptr(base->data) : NULL;
-	return md ? ConstObj(&Type_type, &md->type) : NULL;
+	return type2Obj(md ? md->type : &Type_void);
 }
 
 static EfiObj *get_dim (const EfiObj *base, void *data)
 {
 	mdmat *md = base ? Val_ptr(base->data) : NULL;
-	int dim = md ? md_dim(md->axis) : 0;
-	return ConstObj(&Type_int, &dim);
+	return int2Obj(md ? md_dim(md->axis) : 0);
 }
 
 static EfiObj *get_size (const EfiObj *base, void *data)
 {
 	mdmat *md = base ? Val_ptr(base->data) : NULL;
-	int size = md ? md->size : 0;
-	return ConstObj(&Type_int, &size);
+	return int2Obj(md ? md->size : 0);
 }
 
 static EfiObj *get_axis (const EfiObj *base, void *data)
 {
 	mdmat *md = base ? Val_ptr(base->data) : NULL;
-	return md ? LvalObj(&Lval_ref, &Type_mdaxis, md, &md->axis) : NULL;
+	return md ? LvalObj(&Lval_ref, &Type_mdaxis, md, &md->axis) :
+		ConstObj(&Type_mdaxis, NULL);
 }
 
 static EfiMember var_mdmat[] = {
@@ -75,22 +74,14 @@ static EfiMember var_mdmat[] = {
 
 static EfiObj *x_name (const EfiObj *base, void *data)
 {
-	if	(base)
-	{
-		mdaxis *x = Val_ptr(base->data);
-		return StrPoolObj(base, x->sbuf, &x->i_name);
-	}
-	else	return NULL;
+	mdaxis *x = base ? Val_ptr(base->data) : NULL;
+	return x ? StrPoolObj(base, x->sbuf, &x->i_name) : str2Obj(NULL);
 }
 
 static EfiObj *x_desc (const EfiObj *base, void *data)
 {
-	if	(base)
-	{
-		mdaxis *x = Val_ptr(base->data);
-		return StrPoolObj(base, x->sbuf, &x->i_desc);
-	}
-	else	return NULL;
+	mdaxis *x = base ? Val_ptr(base->data) : NULL;
+	return x ? StrPoolObj(base, x->sbuf, &x->i_desc) : str2Obj(NULL);
 }
 
 static EfiObj *x_head (const EfiObj *base, void *data)
@@ -100,27 +91,21 @@ static EfiObj *x_head (const EfiObj *base, void *data)
 
 static EfiObj *x_next (const EfiObj *base, void *data)
 {
-	if	(base)
-	{
-		mdaxis *x = Val_ptr(base->data);
-		return x ? LvalObj(&Lval_obj, &Type_mdaxis, base, &x->next)
-			: NULL;
-	}
-	else	return NULL;
+	mdaxis *x = base ? Val_ptr(base->data) : NULL;
+	return x ? LvalObj(&Lval_obj, &Type_mdaxis, base, &x->next) :
+		ConstObj(&Type_mdaxis, NULL);
 }
 
 static EfiObj *x_dim (const EfiObj *base, void *par)
 {
 	mdaxis *x = base ? Val_ptr(base->data) : NULL;
-	int dim = x ? x->dim : 0;
-	return ConstObj(&Type_int, &dim);
+	return int2Obj(x ? x->dim : 0);
 }
 
 static EfiObj *x_flags (const EfiObj *base, void *par)
 {
 	mdaxis *x = base ? Val_ptr(base->data) : NULL;
-	int flags = x ? x->flags : 0;
-	return ConstObj(&Type_int, &flags);
+	return int2Obj(x ? x->flags : 0);
 }
 
 static EfiObj *x_index (const EfiObj *base, void *data)
@@ -160,39 +145,27 @@ static EfiMember var_mdaxis[] = {
 
 static EfiObj *i_name (const EfiObj *base, void *par)
 {
-	if	(base)
-	{
-		EfiMdIndex *idx = base->data;
-		return (idx->axis && idx->n < idx->axis->dim) ?
-			StrPoolObj(base, idx->axis->sbuf,
-				&idx->axis->idx[idx->n].i_name) :
+	EfiMdIndex *idx = base ? base->data : NULL;
+	return (idx && idx->axis && idx->n < idx->axis->dim) ?
+		StrPoolObj(base, idx->axis->sbuf,
+			&idx->axis->idx[idx->n].i_name) :
 			str2Obj(NULL);
-	}
-	else	return NULL;
 }
 
 static EfiObj *i_desc (const EfiObj *base, void *par)
 {
-	if	(base)
-	{
-		EfiMdIndex *idx = base->data;
-		return (idx->axis && idx->n < idx->axis->dim) ?
-			StrPoolObj(base, idx->axis->sbuf,
-				&idx->axis->idx[idx->n].i_desc) :
-			str2Obj(NULL);
-	}
-	else	return NULL;
+	EfiMdIndex *idx = base ? base->data : NULL;
+	return (idx && idx->axis && idx->n < idx->axis->dim) ?
+		StrPoolObj(base, idx->axis->sbuf,
+			&idx->axis->idx[idx->n].i_desc) :
+		str2Obj(NULL);
 }
 
 static EfiObj *i_flags (const EfiObj *base, void *par)
 {
-	if	(base)
-	{
-		EfiMdIndex *idx = base->data;
-		return int2Obj((idx->axis && idx->n < idx->axis->dim) ?
-			idx->axis->idx[idx->n].flags : 0);
-	}
-	else	return NULL;
+	EfiMdIndex *idx = base ? base->data : NULL;
+	return int2Obj((idx && idx->axis && idx->n < idx->axis->dim) ?
+		idx->axis->idx[idx->n].flags : 0);
 }
 
 static EfiMember var_mdidx[] = {

@@ -10,6 +10,7 @@ mdmat *md_skalar (const EfiType *type, const void *data)
 
 	md = new_mdmat();
 	md->type = (EfiType *) type;
+	md->sbuf = NewStrPool();
 	md_alloc(md);
 	CopyData(type, md->data, data);
 	return md;

@@ -85,7 +85,7 @@ void mdx_init (mdaxis *x)
 	mdx_lbl *lbl;
 	size_t n;
 
-	if	(x->lbl)	return;
+	if	(!x || x->lbl)	return;
 
 	lbl = memalloc(sizeof *lbl);
 	lbl->sbuf = rd_refer(x->sbuf);
@@ -137,7 +137,11 @@ void mdx_index (mdaxis *x, int n)
 
 char *mdx_head (mdaxis *x)
 {
-	if	(x->lbl)
+	if	(!x)
+	{
+		return NULL;
+	}
+	else if	(x->lbl)
 	{
 		return StrPool_get(x->lbl->sbuf,
 			x->lbl->tab[x->lbl->idx]);
@@ -147,7 +151,11 @@ char *mdx_head (mdaxis *x)
 
 char *mdx_label (mdaxis *x, int n)
 {
-	if	(x->lbl)
+	if	(!x)
+	{
+		return NULL;
+	}
+	else if	(x->lbl)
 	{
 		return StrPool_get(x->lbl->sbuf,
 			x->lbl->tab[(n + 1) * x->lbl->cols + x->lbl->idx]);
