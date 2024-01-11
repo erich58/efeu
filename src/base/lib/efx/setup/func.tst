@@ -116,7 +116,7 @@ EXPECT(dim(typelist()) > 0);
 
 PRINT_LABEL("Datentypen");
 enum E { a, b, c };
-EXPECT_REPR(enumlist(E), "{0, 1, 2}"); 
+EXPECT_REPR(enumlist(E), "{\"a\", \"b\", \"c\"}"); 
 sb.free();
 typetree(Type_t, sb);
 PRINT_STR(sb, "Type_t\n `- Lval_t\n");

@@ -364,7 +364,8 @@ static int p_va_list(IO *io, EfiObjList *list, char *sep)
 	while (list != NULL)
 	{
 		n += io_puts(delim, io);
-		n += PrintObj(io, list->obj);
+//		n += PrintObj(io, list->obj);
+		n += ShowObj(io, list->obj);
 		delim = sep;
 		list = list->next;
 	}
