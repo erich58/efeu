@@ -4,14 +4,17 @@
 
 #include <EFEU/mdmat.h>
 
-mdmat *md_skalar (const EfiType *type, const void *data)
+mdmat *md_skalar (const EfiObj *obj)
 {
-	mdmat *md;
+	if	(obj)
+	{
+		mdmat *md = new_mdmat();
+		md->type = (EfiType *) obj->type;
+		md->sbuf = NewStrPool();
+		md_alloc(md);
+		CopyData(obj->type, md->data, obj->data);
+		return md;
+	}
 
-	md = new_mdmat();
-	md->type = (EfiType *) type;
-	md->sbuf = NewStrPool();
-	md_alloc(md);
-	CopyData(type, md->data, data);
-	return md;
+	return NULL;
 }

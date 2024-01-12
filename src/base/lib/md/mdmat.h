@@ -163,7 +163,7 @@ und gibt die Datenstruktur bei Bedarf frei.
 
 mdmat *new_mdmat (void);
 mdmat *cpy_mdmat (const mdmat *md, unsigned mask);
-mdmat *md_skalar (const EfiType *type, const void *data);
+mdmat *md_skalar (const EfiObj *obj);
 
 
 /*	Hilffunktionen zur Listenzerlegung

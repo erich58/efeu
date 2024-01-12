@@ -37,15 +37,14 @@ mdmat *md_prod (mdmat *base)
 	
 	if	(par.mul == NULL)
 	{
-		log_error(NULL, "[mdmat:64]", "mm",
+		log_note(NULL, "[mdmat:64]", "mm",
 			type2str(base->type), type2str(base->type));
 		return NULL;
 	}
 
 	par.add = mdfunc_add(par.mul->type);
 
-	if	(par.add == NULL)
-		return NULL;
+	if	(par.add == NULL)	return NULL;
 
 	par.axis = base->axis;
 

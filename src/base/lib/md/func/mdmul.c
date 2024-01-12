@@ -30,7 +30,7 @@ mdmat *md_mul (mdmat *md1, mdmat *md2, int flag)
 
 	if	(md1 == NULL || md2 == NULL)
 	{
-		log_error(NULL, "[mdmat:61]", NULL);
+		log_note(NULL, "[mdmat:61]", NULL);
 		return NULL;
 	}
 
@@ -44,15 +44,14 @@ mdmat *md_mul (mdmat *md1, mdmat *md2, int flag)
 	
 	if	(par.mul == NULL)
 	{
-		log_error(NULL, "[mdmat:64]", "mm",
+		log_note(NULL, "[mdmat:64]", "mm",
 			type2str(md1->type), type2str(md2->type));
 		return NULL;
 	}
 
 	par.add = mdfunc_add(par.mul->type);
 
-	if	(par.add == NULL)
-		return NULL;
+	if	(par.add == NULL)	return NULL;
 
 /*	Ergebnisachsen zusammenstellen und gemeinsame Achsen auf Kompatiblität
 	testen
@@ -99,7 +98,7 @@ mdmat *md_mul (mdmat *md1, mdmat *md2, int flag)
 		{
 			del_axis(xpre);
 			del_axis(xpost);
-			log_error(NULL, "[mdmat:63]", NULL);
+			log_note(NULL, "[mdmat:63]", NULL);
 			return NULL;
 		}
 	}
