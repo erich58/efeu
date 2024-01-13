@@ -25,7 +25,8 @@ static int copy_opt (IO *in, StrBuf *buf)
 		}
 		else if	(c == '\\')
 		{
-			c = io_mgetc(in, 1);
+			if	((c = io_mgetc(in, 1)) == EOF)
+				break;
 
 			if	(!strchr("[]\\", c))
 				sb_putc('\\', buf);
@@ -45,8 +46,10 @@ static int copy_name (IO *in, StrBuf *buf, int delim, int flag)
 	{
 		if	(c == '\\')
 		{
-			if	(c != '\\' && c != '[' && c != ']' &&
-					c != delim && !isspace(c))
+			if	((c = io_mgetc(in, 1)) == EOF)
+				break;
+
+			if	(c != delim && !isspace(c) && !strchr("[]\\", c))
 				sb_putc('\\', buf);
 		}
 		else if	(c == '[')
@@ -136,7 +139,7 @@ mdlist *io_mdlist (IO *io, int flag)
 	}
 	else if	(c != EOF && !isspace(c))
 	{
-		log_error(NULL, "[mdmat:81]", "c", c);
+		log_note(NULL, "[mdmat:81]", "c", c);
 		io_close(tmp);
 		return NULL;
 	}
