@@ -17,7 +17,7 @@ void md_round(mdmat *md, double factor, unsigned mask)
 	Md_ConvDef(&set, &Type_double, md->type);
 
 	val = factor * MdValSum(md->axis, md->data, &get, mask);
-	val = (val < 0.) ? - (int) (-val + 0.5) : (int) (val + 0.5);
+	val = (val < 0.) ? - floor(-val + 0.5) : floor(val + 0.5);
 	MdRound(md->axis, md->data, &get, &set, val, factor, mask);
 }
 
@@ -32,7 +32,7 @@ void md_adjust(mdmat *md, double val, unsigned mask)
 	Md_ConvDef(&get, md->type, &Type_double);
 	Md_ConvDef(&set, &Type_double, md->type);
 
-	val = (val < 0.) ? - (long) (-val + 0.5) : (long) (val + 0.5);
+	val = (val < 0.) ? - floor(-val + 0.5) : floor(val + 0.5);
 	factor = MdValSum(md->axis, md->data, &get, mask);
 	factor = (factor != 0.) ? val / factor : 1.;
 	MdRound(md->axis, md->data, &get, &set, val, factor, mask);
