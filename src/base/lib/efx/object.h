@@ -455,7 +455,6 @@ extern EfiType Type_name;	/* Name */
 #define	Val_str(x)	((char **) (x))[0]
 #define	Val_io(x)	((IO **) (x))[0]
 #define	Val_obj(x)	((EfiObj **) (x))[0]
-#define	Val_xobj(x)	((EfiObj **) (x))[0]
 #define	Val_type(x)	((EfiType **) (x))[0]
 #define	Val_func(x)	((EfiFunc **) (x))[0]
 #define	Val_vfunc(x)	((EfiVirFunc **) (x))[0]

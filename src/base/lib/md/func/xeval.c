@@ -145,6 +145,6 @@ static void md_xeval (mdmat *md, const char *name, unsigned mask, EfiObj *expr)
 void MF_xeval(EfiFunc *func, void *rval, void **arg)
 {
 	mdmat *md = ref_mdmat(Val_mdmat(arg[0]));
-	md_xeval(md, Val_str(arg[1]), MDFLAG_LOCK, Val_xobj(arg[2]));
+	md_xeval(md, Val_str(arg[1]), MDFLAG_LOCK, Val_obj(arg[2]));
 	Val_mdmat(rval) = md;
 }
