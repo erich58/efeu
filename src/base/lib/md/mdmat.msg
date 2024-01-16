@@ -70,8 +70,8 @@ index values not compatible.\n
 81	$!: Character $1 in list where '=' is expected.\n
 
 91	$!: mdterm: function not defined.\n
-92	$!: incompatible axis $1 - $1 (differnd sizes).\n
-93	$!: mdterm: function "$1" has no return value.\n
+92	$!: incompatible axis $1 - $2 (differnd sizes).\n
+93	$!: mdterm: function "$1" has unspecified return value.\n
 94	$!: mdterm: function "$1" is not defined.\n
 95	$!: function $1 is not appropirate for queryng data of type $2.\n
 

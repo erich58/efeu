@@ -250,7 +250,7 @@ static void f_mdx_index (EfiFunc *func, void *rval, void **arg)
 
 static EfiFuncDef fdef[] = {
 	{ FUNC_VIRTUAL, &Type_mdmat, "mdmat (.)", any_to_mdmat },
-	{ FUNC_VIRTUAL, &Type_mdmat, "mdmat (Type_t type, str def = NULL",
+	{ FUNC_VIRTUAL, &Type_mdmat, "mdmat (restricted Type_t type, str def = NULL",
 		MF_create },
 	{ 0, &Type_mdmat, "mdload (str file, str sel = NULL, str vsel = NULL)",
 		MF_load },
