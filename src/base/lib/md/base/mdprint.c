@@ -207,7 +207,7 @@ static void show_header(IO *io, mdmat *md, int ext)
 		mdindex *idx;
 		size_t n;
 
-		pool = md->axis->sbuf;
+		pool = md->sbuf;
 
 		for (axis = md->axis; axis; axis = axis->next)
 		{
