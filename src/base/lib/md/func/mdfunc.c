@@ -26,6 +26,14 @@ expr; Val_mdmat(rval) = md; }
 static void name(EfiFunc *func, void *rval, void **arg)	\
 { Val_mdmat(rval) = expr; }
 
+static void any_to_mdmat (EfiFunc *func, void *rval, void **arg)
+{
+	register EfiObj *obj = arg[0];
+	Val_mdmat(rval) = obj && obj->type != &Type_ptr ?
+		md_skalar(rd_refer(obj)) : NULL;
+}
+
+MDC_FUNC(MF_create, md_create(Val_type(arg[0]), STR(1)))
 MDC_FUNC(MF_load, md_fload(STR(0), STR(1), STR(2)))
 MDC_FUNC(MF_read, md_read(Val_io(arg[0]), STR(1)))
 MDC_FUNC(MF_reload, md_reload(rd_refer(MD(0)), STR(1), STR(2)))
@@ -241,6 +249,9 @@ static void f_mdx_index (EfiFunc *func, void *rval, void **arg)
 }
 
 static EfiFuncDef fdef[] = {
+	{ FUNC_VIRTUAL, &Type_mdmat, "mdmat (.)", any_to_mdmat },
+	{ FUNC_VIRTUAL, &Type_mdmat, "mdmat (Type_t type, str def = NULL",
+		MF_create },
 	{ 0, &Type_mdmat, "mdload (str file, str sel = NULL, str vsel = NULL)",
 		MF_load },
 	{ 0, &Type_bool, "mdfile (IO *io, str file, str mode = NULL)",

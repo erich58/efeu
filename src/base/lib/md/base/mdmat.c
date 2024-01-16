@@ -214,17 +214,9 @@ static void print_mdidx (EfiFunc *func, void *rval, void **arg)
 	else	Val_int(rval) = io_puts("NULL", io);
 }
 
-static void any_to_mdmat (EfiFunc *func, void *rval, void **arg)
-{
-	register EfiObj *obj = arg[0];
-	Val_mdmat(rval) = obj && obj->type != &Type_ptr ?
-		md_skalar(rd_refer(obj)) : NULL;
-}
-
 static EfiFuncDef pdef[] = {
 	{ FUNC_VIRTUAL, &Type_int, "fprint(IO, mdaxis)", print_mdaxis },
 	{ FUNC_VIRTUAL, &Type_int, "fprint(IO, mdidx)", print_mdidx },
-	{ 0, &Type_mdmat, "mdmat (.)", any_to_mdmat },
 };
 
 static EfiVarDef vardef[] = {

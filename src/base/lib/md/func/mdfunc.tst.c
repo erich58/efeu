@@ -85,6 +85,17 @@ TEST_SUITE
 		"b 3\n"
 	);
 
+	EXPECT_EVAL("mdmat(42).print(cout, \"nohead\");",
+		"1 .\n"
+		". 42\n"
+	);
+
+	EXPECT_EVAL("mdmat(int, \"x=a,b\").print(cout, \"nohead\");",
+		"1 .\n"
+		"a 0\n"
+		"b 0\n"
+	);
+
 	PRINT_EVAL("x = NULL");
 	EXPECT_EVAL("x.paste(\"c\", 0, 0)", "NULL");
 	PRINT_EVAL("x = mdcpy(a)");
