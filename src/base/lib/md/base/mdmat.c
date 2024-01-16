@@ -218,7 +218,7 @@ static void any_to_mdmat (EfiFunc *func, void *rval, void **arg)
 {
 	register EfiObj *obj = arg[0];
 	Val_mdmat(rval) = obj && obj->type != &Type_ptr ?
-		md_skalar(obj) : NULL;
+		md_skalar(rd_refer(obj)) : NULL;
 }
 
 static EfiFuncDef pdef[] = {
