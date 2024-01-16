@@ -214,13 +214,6 @@ static void print_mdidx (EfiFunc *func, void *rval, void **arg)
 	else	Val_int(rval) = io_puts("NULL", io);
 }
 
-/*
-static void ptr_to_mdmat (EfiFunc *func, void *rval, void **arg)
-{
-	Val_mdmat(rval) = NULL;
-}
-*/
-
 static void any_to_mdmat (EfiFunc *func, void *rval, void **arg)
 {
 	register EfiObj *obj = arg[0];
@@ -228,20 +221,9 @@ static void any_to_mdmat (EfiFunc *func, void *rval, void **arg)
 		md_skalar(obj) : NULL;
 }
 
-/*
-static void str_to_mdmat (EfiFunc *func, void *rval, void **arg)
-{
-	Val_mdmat(rval) = md_skalar(&Type_str, arg[0]);
-}
-*/
-
 static EfiFuncDef pdef[] = {
 	{ FUNC_VIRTUAL, &Type_int, "fprint(IO, mdaxis)", print_mdaxis },
 	{ FUNC_VIRTUAL, &Type_int, "fprint(IO, mdidx)", print_mdidx },
-	/*
-	{ 0, &Type_mdmat, "mdmat (_Ptr_)", ptr_to_mdmat },
-	{ 0, &Type_mdmat, "mdmat (str)", str_to_mdmat },
-	*/
 	{ 0, &Type_mdmat, "mdmat (.)", any_to_mdmat },
 };
 
