@@ -22,6 +22,7 @@ static int main_bad = 0;
 
 static int fork_depth = 0;
 static int force_color = 0;
+static int run_complete = 0;
 
 static int color_enabled(int fd_)
 {
@@ -517,6 +518,15 @@ static void skiparg(int *narg, char **arg, int n)
 	arg[*narg] = p;
 }
 
+static void check_complete(void)
+{
+	if	(run_complete)	return;
+
+	count_bad++;
+	UnitTest_info(NULL, 0, "!EXIT", "");
+	UnitTest_summary("!EXIT");
+}
+
 int main(int argc, char **argv)
 {
 	char *p;
@@ -542,7 +552,10 @@ int main(int argc, char **argv)
 	}
 
 	fputc('\n', stderr);
+	run_complete = 0;
+	atexit(check_complete);
 	runUnitTest(argc, argv);
+	run_complete = 1;
 	UnitTest_summary(NULL);
 	return test_bad ? 1 : 0;
 }
@@ -597,6 +610,7 @@ int UnitTest_fork(const char *file, int line)
 		test_bad = 0;
 		main_good = 0;
 		main_bad = 0;
+		run_complete = 1;
 		fork_depth++;
 		return 1;
 	}
@@ -684,6 +698,7 @@ int UnitTest_assert(int stat)
 	{
 		UnitTest_info(NULL, 0, "!ABORT", "");
 		UnitTest_summary("!ABORT");
+		run_complete = 1;
 		exit(2);
 	}
 

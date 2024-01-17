@@ -13,6 +13,10 @@ TEST_DECL(test_arg)
 		PRINT_STR(arg);
 		return;
 	}
+	else if	(isdigit(*arg))
+	{
+		exit(atoi(arg));
+	}
 
 	ASSERT(*arg != 0);
 	EXPECT_STR(arg, "good");
@@ -216,10 +220,19 @@ TEST_SUITE
 		"^$\n"
 	);
 
-	return;
+	CHECK(test("good", "@5", NULL), 5,
+		"TEST\t1\t0\t1\tEXIT\n",
+		"GOOD\t.*arg != 0\n"
+		"GOOD\t.*arg == .good.\n"
+		"EXIT\n"
+	);
 
-	CHECK(test("@!", NULL, NULL), 1,
-		"TEST\t1\t0\t1\tFAILURE\n",
-		""
+	CHECK(test("good", "!5", NULL), 1,
+		"TEST\t2\t1\t1\tFAILURE\n",
+		"GOOD\t.*arg != 0\n"
+		"GOOD\t.*arg == .good.\n"
+		"#EXEC\t.*test_arg\n"
+		".\t#START\t.*test_arg\n"
+		"FAILURE\t.*test_arg\n"
 	);
 }
