@@ -164,7 +164,7 @@ und gibt die Datenstruktur bei Bedarf frei.
 mdmat *new_mdmat (void);
 mdmat *md_create (EfiType *type, const char *def);
 mdmat *md_copy (mdmat *md, const char *def);
-mdmat *md_skalar (EfiObj *obj);
+mdmat *md_scalar (EfiObj *obj);
 
 
 /*	Hilffunktionen zur Listenzerlegung
@@ -236,7 +236,6 @@ EDB *md2edb (mdmat *md);
 void Setup_edb2md (void);
 
 mdmat *md_gethdr (IO *io, int mode);
-void md_tsteof (IO *io);
 int md_file (IO *out, const char *name, const char *mode);
 void md_info (IO *io, mdmat *md, const char *name, const char *mode);
 

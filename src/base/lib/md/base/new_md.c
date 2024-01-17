@@ -73,3 +73,22 @@ void md_alloc (mdmat *md)
 	md->data = rd_data(md->x_data);
 	memset(md->data, 0, md->size);
 }
+
+/*	Skalar in Datenmatrix konvertieren
+*/
+
+mdmat *md_scalar (EfiObj *obj)
+{
+	if	(obj)
+	{
+		mdmat *md = new_mdmat();
+		md->type = obj->type;
+		md->sbuf = NewStrPool();
+		md->size = md->type->size;
+		md->data = memalloc(md->size);
+		Obj2Data(obj, md->type, md->data);
+		return md;
+	}
+
+	return NULL;
+}

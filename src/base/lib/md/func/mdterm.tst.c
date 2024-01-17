@@ -33,7 +33,7 @@ TEST_DECL(assign)
 
 	EXPECT(md_assign(NULL, NULL, NULL) == NULL);
 
-	EXPECT_PTR(a = md_skalar(int2Obj(1)));
+	EXPECT_PTR(a = md_scalar(int2Obj(1)));
 	EXPECT(((int *)a->data)[0] == 1);
 	UnitTest_stderr("stderr");
 	EXPECT(md_assign(NULL, a, NULL) == a);
@@ -44,7 +44,7 @@ TEST_DECL(assign)
 	EXPECT(md_assign("++", a, NULL) == a);
 	EXPECT(((int *)a->data)[0] == 2);
 
-	EXPECT_PTR(b = md_skalar(int2Obj(5)));
+	EXPECT_PTR(b = md_scalar(int2Obj(5)));
 	EXPECT(((int *)b->data)[0] == 5);
 	EXPECT(md_assign("+=", a, b) == a);
 	EXPECT(((int *)a->data)[0] == 7);
@@ -62,7 +62,7 @@ TEST_DECL(term)
 
 	EXPECT(md_term(NULL, NULL, NULL) == NULL);
 
-	EXPECT_PTR(a = md_skalar(int2Obj(1)));
+	EXPECT_PTR(a = md_scalar(int2Obj(1)));
 	EXPECT(((int *)a->data)[0] == 1);
 	UnitTest_stderr("stderr");
 	EXPECT(md_term(NULL, a, NULL) == a);
@@ -85,7 +85,7 @@ TEST_DECL(term)
 	rd_deref(x);
 	rd_deref(vfunc);
 
-	EXPECT_PTR(b = md_skalar(int2Obj(5)));
+	EXPECT_PTR(b = md_scalar(int2Obj(5)));
 	EXPECT_PTR(vfunc = GetGlobalFunc("+"));
 	EXPECT_PTR(x = md_term(vfunc, a, b));
 	EXPECT(((int *)a->data)[0] == 1);

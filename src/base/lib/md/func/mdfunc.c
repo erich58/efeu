@@ -30,7 +30,7 @@ static void any_to_mdmat (EfiFunc *func, void *rval, void **arg)
 {
 	register EfiObj *obj = arg[0];
 	Val_mdmat(rval) = obj && obj->type != &Type_ptr ?
-		md_skalar(rd_refer(obj)) : NULL;
+		md_scalar(rd_refer(obj)) : NULL;
 }
 
 MDC_FUNC(MF_create, md_create(Val_type(arg[0]), STR(1)))
