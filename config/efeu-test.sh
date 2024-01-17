@@ -141,17 +141,17 @@ do
 done | awk -v good="$green" -v bad="$red" -v off="$off" '
 BEGIN {
 	fmt = "%-23s\t%5d\t%5d\t%5d\t%s%s%s\n";
-	t = 0; g = 0; b = 0; s = "SUCCESS";
+	t = 0; g = 0; b = 0;
 }
 {
 	t += $2; g += $3; b += $4;
-
-	if	($4)	s = "FAILURE"
-
 	printf(fmt, $1, $2, $3, $4, $4 ? bad : good, $5, off);
 }
 END {
-	printf(fmt, "TOTAL", t, g, b, b ? bad : good, s, off);
+	if	(b)
+		printf(fmt, "TOTAL", t, g, b, bad, "FAILURE", off);
+	else
+		printf(fmt, "TOTAL", t, g, b, good, "SUCCESS", off);
 }
 '
 
