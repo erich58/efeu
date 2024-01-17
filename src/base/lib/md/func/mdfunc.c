@@ -231,6 +231,7 @@ static void f_mdx_index (EfiFunc *func, void *rval, void **arg)
 
 static EfiFuncDef fdef[] = {
 	{ FUNC_VIRTUAL, &Type_mdmat, "mdmat (.)", any_to_mdmat },
+	{ FUNC_VIRTUAL, &Type_mdmat, "mdmat (restricted mdmat md, str def = NULL)", MF_cpy },
 	{ FUNC_VIRTUAL, &Type_mdmat, "mdmat (restricted Type_t type, str def = NULL",
 		MF_create },
 	{ 0, &Type_mdmat, "mdload (str file, str sel = NULL, str vsel = NULL)",
@@ -245,7 +246,6 @@ static EfiFuncDef fdef[] = {
 	{ 0, &Type_mdmat, "mdinv (mdmat a)", MF_mdinv },
 */
 	{ 0, &Type_mdmat, "mdprod (mdmat a)", MF_mdprod },
-	{ 0, &Type_mdmat, "mdcpy (mdmat, str def = NULL)", MF_cpy },
 	{ 0, &Type_mdmat, "sumaxis (mdmat md, str list)", MF_sumaxis },
 	{ 0, &Type_mdmat, "mddiag (mdmat md, str list)", MF_diag },
 	{ FUNC_VIRTUAL, &Type_mdmat, "mdexpr (VirFunc op, mdmat, mdmat)",

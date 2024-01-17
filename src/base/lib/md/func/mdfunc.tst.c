@@ -73,12 +73,12 @@ TEST_SUITE
 		"b 3\n"
 	);
 
-	EXPECT_EVAL("mdcpy(a).mark(\"c\").print(cout, \"nohead\");",
+	EXPECT_EVAL("mdmat(a).mark(\"c\").print(cout, \"nohead\");",
 		"2 x y\n"
 		"a 1 2\n"
 		"b 3 0\n"
 	);
-	EXPECT_EVAL("mdcpy(a, \"c=x\").mark(\"c\").print(cout, \"nohead\");",
+	EXPECT_EVAL("mdmat(a, \"c=x\").mark(\"c\").print(cout, \"nohead\");",
 		"1 x\n"
 		"a 1\n"
 		"b 3\n"
@@ -97,7 +97,7 @@ TEST_SUITE
 
 	PRINT_EVAL("x = NULL");
 	EXPECT_EVAL("x.paste(\"c\", 0, 0)", "NULL");
-	PRINT_EVAL("x = mdcpy(a)");
+	PRINT_EVAL("x = mdmat(a)");
 	EXPECT_EVAL("x.paste(\"z\", 0, 0, \"-\")",
 		"MD: name=NULL, type=int, dim=1, size=16");
 	EXPECT_EVAL("x.print(cout, \"nohead\");",
@@ -108,7 +108,7 @@ TEST_SUITE
 		"b-y 0\n"
 	);
 
-	PRINT_EVAL("x = mdcpy(a)");
+	PRINT_EVAL("x = mdmat(a)");
 	PRINT_EVAL("x.mark(\"c\")");
 	EXPECT_EVAL("mdmul(x, x).print(cout, \"nohead\");",
 		"2 a b\n"
@@ -116,7 +116,7 @@ TEST_SUITE
 		"b 3 9\n"
 	);
 
-	PRINT_EVAL("x = mdcpy(a)");
+	PRINT_EVAL("x = mdmat(a)");
 	PRINT_EVAL("x.mark(\"r\")");
 	EXPECT_EVAL("mdprod(x).print(cout, \"nohead\");",
 		"2 a b\n"
@@ -124,7 +124,7 @@ TEST_SUITE
 		"b 3 9\n"
 	);
 
-	PRINT_EVAL("x = mdcpy(a)");
+	PRINT_EVAL("x = mdmat(a)");
 	PRINT_EVAL("x.konv(double)");
 	EXPECT_EVAL("x.mark(\"c\").print(cout, \"nohead\");",
 		"2 x y\n"
