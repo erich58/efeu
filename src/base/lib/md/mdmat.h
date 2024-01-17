@@ -95,7 +95,7 @@ struct mdaxis_struct {
 };
 
 mdaxis *new_axis (StrPool *sbuf, size_t dim);
-mdaxis *cpy_axis (StrPool *sbuf, mdaxis *axis, unsigned mask);
+mdaxis *cpy_axis (StrPool *sbuf, mdaxis *axis, unsigned skip_mask);
 void del_axis (mdaxis *axis);
 
 #define	MDFLAG_LOCK	1	/* Index ist gesperrt */

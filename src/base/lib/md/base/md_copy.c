@@ -4,6 +4,42 @@
 
 #include <EFEU/mdmat.h>
 
+/*	Achse kopieren
+*/
+
+mdaxis *cpy_axis (StrPool *sbuf, mdaxis *old, unsigned skip_mask)
+{
+	mdaxis *new;
+	int i, dim;
+
+	if	(old == NULL)	return NULL;
+
+	for (i = dim = 0; i < old->dim; i++)
+	{
+		if	(old->idx[i].flags & skip_mask)	continue;
+
+		dim++;
+	}
+
+	new = new_axis(sbuf, dim);
+	new->i_name = StrPool_copy(new->sbuf, old->sbuf, old->i_name);
+	new->i_desc = StrPool_copy(new->sbuf, old->sbuf, old->i_desc);
+
+	for (i = dim = 0; i < old->dim; i++)
+	{
+		if	(old->idx[i].flags & skip_mask)	continue;
+
+		new->idx[dim].i_name = StrPool_copy(new->sbuf,
+			old->sbuf, old->idx[i].i_name);
+		new->idx[dim].i_desc = StrPool_copy(new->sbuf,
+			old->sbuf, old->idx[i].i_desc);
+		dim++;
+	}
+
+	return new;
+}
+
+
 static void do_copy (mdaxis *y, mdaxis *x, size_t size,
 	char *py, char *px, unsigned mask)
 {
