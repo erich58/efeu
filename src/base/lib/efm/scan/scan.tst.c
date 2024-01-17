@@ -157,11 +157,14 @@ TEST_DECL(scan)
 	EXPECT(scan("3ll", SCAN_ANYTYPE, NULL) == SCAN_INT64);
 	EXPECT(scan("3ull", SCAN_ANYTYPE, NULL) == (SCAN_UNSIGNED|SCAN_INT64));
 	EXPECT(scan("'a'", SCAN_ANYTYPE, NULL) == SCAN_CHAR);
+	EXPECT(scan("L'a'", SCAN_ANYTYPE, NULL) == SCAN_UCS);
 	EXPECT(scan("\"a\"", SCAN_ANYTYPE, NULL) == SCAN_STR);
 	EXPECT(scan("\"\"", SCAN_ANYTYPE, NULL) == SCAN_STR);
 
 	if	(EXPECT(scan("'a'", SCAN_XCHAR, &p) == SCAN_CHAR))
 		EXPECT(*((unsigned char *) p) == 'a'); 
+	if	(EXPECT(scan("L'a'", SCAN_XCHAR, &p) == SCAN_UCS))
+		EXPECT(*((int32_t *) p) == 'a'); 
 	if	(EXPECT(scan("'Ä'", SCAN_XCHAR, &p) == SCAN_UCS))
 		EXPECT(*((int32_t *) p) == 0xc4); 
 	if	(EXPECT(scan("'\xc3\x84'", SCAN_XCHAR, &p) == SCAN_UCS))
@@ -191,9 +194,18 @@ TEST_DECL(scan)
 	if	(EXPECT(scan("NULL", SCAN_STR, &p) == SCAN_STR))
 		EXPECT_STR(p, NULL); 
 
+	if	(EXPECT(scan("NULLER", SCAN_ANYTYPE, &p) == SCAN_NAME))
+		EXPECT_STR(p, "NULLER"); 
+
 	if	(EXPECT(scan("\"abc\"", SCAN_ANYTYPE, &p) == SCAN_STR))
 	{
 		EXPECT_STR(p, "abc"); 
+		memfree(p);
+	}
+
+	if	(EXPECT(scan("LANG", SCAN_ANYTYPE, &p) == SCAN_NAME))
+	{
+		EXPECT_STR(p, "LANG"); 
 		memfree(p);
 	}
 }

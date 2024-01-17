@@ -28,6 +28,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <ctype.h>
 
 static int make_char (IO *io, int type, void **ptr);
+static int is_ucs(IO *io);
 
 int io_scan (IO *io, unsigned int flags, void **ptr)
 {
@@ -55,10 +56,14 @@ int io_scan (IO *io, unsigned int flags, void **ptr)
 	}
 	else if	(c == '\'')
 	{
-		if	(flags & SCAN_CHAR)
+		if	(flags & SCAN_XCHAR)
 		{
 			return make_char(io, flags, ptr);
 		}
+	}
+	else if	(c == 'L' && (flags & SCAN_UCS) && is_ucs(io))
+	{
+		return make_char(io, SCAN_UCS, ptr);
 	}
 	else if	(c == 'N' && (flags & (SCAN_NAME|SCAN_STR))
 			&& io_testkey(io, "NULL"))
@@ -111,6 +116,17 @@ char *io_getname(IO *io)
 	}
 
 	return NULL;
+}
+
+static int is_ucs(IO *io)
+{
+	int c = io_getc(io);
+
+	if	(io_peek(io) == '\'')
+		return 1;
+
+	io_ungetc(c, io);
+	return 0;
 }
 
 static int make_char (IO *io, int type, void **ptr)
