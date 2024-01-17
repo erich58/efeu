@@ -37,25 +37,12 @@ MDC_FUNC(MF_create, md_create(Val_type(arg[0]), STR(1)))
 MDC_FUNC(MF_load, md_fload(STR(0), STR(1), STR(2)))
 MDC_FUNC(MF_read, md_read(Val_io(arg[0]), STR(1)))
 MDC_FUNC(MF_reload, md_reload(rd_refer(MD(0)), STR(1), STR(2)))
+MDC_FUNC(MF_cpy, md_copy(MD(0), STR(1)))
 
 static void MF_file (EfiFunc *func, void *rval, void **arg)
 {
 	Val_bool(rval) = md_file(Val_io(arg[0]),
 		Val_str(arg[1]), Val_str(arg[2]));
-}
-
-static void MF_cpy(EfiFunc *func, void *rval, void **arg)
-{
-	register mdmat *md = MD(0);
-	register char *def = STR(1);
-
-	if	(md && def)
-	{
-		md_setflag(md, def, 0, NULL, 0, mdsf_lock, MDFLAG_TEMP);
-		RVMD = cpy_mdmat(md, MDFLAG_TEMP);
-		md_allflag(md, 0, NULL, 0, mdsf_clear, MDFLAG_TEMP);
-	}
-	else	RVMD = cpy_mdmat(md, 0);
 }
 
 static void MF_paste (EfiFunc *func, void *rval, void **arg)
@@ -195,11 +182,6 @@ static void MF_show(EfiFunc *func, void *rval, void **arg)
 	md_show(Val_io(arg[1]), Val_mdmat(arg[0]));
 }
 
-static void MF_clone(EfiFunc *func, void *rval, void **arg)
-{
-	Val_mdmat(rval) = md_clone(Val_mdmat(arg[0]));
-}
-
 extern void *md_DATA2(mdmat *md, unsigned mask, unsigned base, int lag);
 
 extern void MF_valsum(EfiFunc *func, void *rval, void **arg);
@@ -258,7 +240,6 @@ static EfiFuncDef fdef[] = {
 	{ 0, &Type_mdmat, "mdread (IO io, str def = NULL)", MF_read },
 	{ 0, &Type_mdmat, "reload (mdmat md, str sel = NULL, str vsel = NULL)",
 		MF_reload },
-	{ 0, &Type_mdmat, "mdmat::clone ()", MF_clone },
 	{ 0, &Type_mdmat, "mdmul (mdmat a, mdmat b, int flag = 2)", MF_mdmul },
 /*
 	{ 0, &Type_mdmat, "mdinv (mdmat a)", MF_mdinv },

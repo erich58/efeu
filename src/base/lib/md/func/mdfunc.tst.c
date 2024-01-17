@@ -20,7 +20,6 @@ TEST_SUITE
 	EXPECT_EVAL("x.korr()", "NULL");
 	EXPECT_EVAL("x.reduce()", "NULL");
 	EXPECT_EVAL("(EDB) x", "NULL");
-	EXPECT_EVAL("x.clone()", "NULL");
 	EXPECT_EVAL("x.mark()", "NULL");
 	EXPECT_EVAL("x.transp()", "NULL");
 	EXPECT_EVAL("x.time()", "NULL");

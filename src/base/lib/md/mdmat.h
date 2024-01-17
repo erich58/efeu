@@ -162,7 +162,8 @@ und gibt die Datenstruktur bei Bedarf frei.
 */
 
 mdmat *new_mdmat (void);
-mdmat *cpy_mdmat (const mdmat *md, unsigned mask);
+mdmat *md_create (EfiType *type, const char *def);
+mdmat *md_copy (mdmat *md, const char *def);
 mdmat *md_skalar (EfiObj *obj);
 
 
@@ -302,8 +303,6 @@ mdmat *md_prod (mdmat *md);
 mdmat *md_mul (mdmat *m1, mdmat *m2, int flag);
 mdmat *md_sum (mdmat *md, const char *str);
 mdmat *md_diag (mdmat *md, const char *str);
-mdmat *md_create (EfiType *type, const char *def);
-mdmat *md_clone (const mdmat *md);
 mdmat *md_assign (const char *name, mdmat *m1, mdmat *m2);
 mdmat *md_term (EfiVirFunc *func, mdmat *m1, mdmat *m2);
 mdmat *md_cat (const char *name, mdmat **md, size_t dim);
