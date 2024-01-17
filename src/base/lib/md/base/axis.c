@@ -79,3 +79,19 @@ mdaxis *cpy_axis (StrPool *sbuf, mdaxis *old, unsigned mask)
 
 	return new;
 }
+
+/*	Achsendimension bestimmen
+*/
+
+size_t md_dim(mdaxis *x)
+{
+	int n = 0;
+
+	while (x)
+	{
+		x = x->next;
+		++n;
+	}
+
+	return n;
+}

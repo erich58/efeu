@@ -22,6 +22,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <Math/mdmath.h>
 #include <Math/linalg.h>
+#include <assert.h>
 
 static void getdata (EfiConv *konv, mdaxis *x, mdaxis *x1, mdaxis *x2,
 	char *p, char *data);
@@ -101,7 +102,8 @@ mdmat *mdinv (mdmat *base)
 	md->axis = xpost;
 	*ppost = xpre;
 	*ppre = NULL;
-	md->size = md_size(md->axis, md->type->size);
+
+	assert(md->size == md_size(md, md->axis));
 	return md;
 }
 

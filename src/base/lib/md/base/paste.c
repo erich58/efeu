@@ -3,6 +3,7 @@
 */
 
 #include <EFEU/mdmat.h>
+#include <assert.h>
 
 static void mkindex (const char *delim, mdaxis *x, char *last, int n);
 
@@ -91,4 +92,5 @@ void md_paste(mdmat *md, const char *name, const char *delim, int pos, int n)
 		old = old->next;
 
 	new->next = old;
+	assert(md->size == md_size(md, md->axis));
 }

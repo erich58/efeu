@@ -78,7 +78,7 @@ static mdmat *hdr_v3 (IO *io)
 	}
 
 	md->type = edb_type(StrPool_get(md->sbuf, i_type));
-	md->size = md_size(md->axis, md->type->size);
+	md->size = md_size(md, md->axis);
 
 	for (x = md->axis; x; x = x->next)
 		x->sbuf = rd_refer(md->sbuf);
@@ -178,7 +178,7 @@ mdmat *md_gethdr(IO *io, int flag)
 
 /*	Achsen initialisieren
 */
-	md->size = md_size(md->axis, md->type->size);
+	md->size = md_size(md, md->axis);
 
 	for (x = md->axis; x != NULL; x = x->next)
 	{

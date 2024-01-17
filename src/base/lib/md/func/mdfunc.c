@@ -77,7 +77,6 @@ static void MF_paste (EfiFunc *func, void *rval, void **arg)
 			n = dim - p;
 
 		md_paste(md, name, delim, p, n);
-		md->size = md_size(md->axis, md->type->size);
 	}
 
 	Val_mdmat(rval) = rd_refer(md);

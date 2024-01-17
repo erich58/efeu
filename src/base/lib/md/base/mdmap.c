@@ -212,7 +212,7 @@ mdmat *md_map (MapFile *map)
 		ptr = &(*ptr)->next;
 	}
 	
-	md->size = md_size(md->axis, md->type->size);
+	md->size = md_size(md, md->axis);
 
 	/* data */
 

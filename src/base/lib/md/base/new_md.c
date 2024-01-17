@@ -5,6 +5,23 @@
 
 #include <EFEU/mdmat.h>
 
+/*	Strukturgrößen berechnen
+*/
+
+static size_t set_size(mdaxis *x, size_t size)
+{
+	if	(x != NULL)
+	{
+		x->size = set_size(x->next, size);
+		return x->size * x->dim;
+	}
+	else	return size;
+}
+
+size_t md_size(mdmat *md, mdaxis *axis)
+{
+	return set_size(axis, md->type->size);
+}
 
 static void md_clean (void *data)
 {
@@ -51,7 +68,7 @@ void md_alloc (mdmat *md)
 {
 	if	(!md)	return;
 
-	md->size = md_size(md->axis, md->type->size);
+	md->size = md_size(md, md->axis);
 	md->x_data = md_alloc_hook ? md_alloc_hook(md->size) :
 		rd_wrap(lmalloc(md->size), lfree);
 	md->data = rd_data(md->x_data);

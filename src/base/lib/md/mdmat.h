@@ -197,7 +197,7 @@ mdlist *mdlistcmp (const char *name, int depth, mdlist *list);
 */
 
 size_t md_dim (mdaxis *axis);
-size_t md_size (mdaxis *axis, size_t size);
+size_t md_size (mdmat *md, mdaxis *axis);
 void md_alloc (mdmat *md);
 extern void *(*md_alloc_hook) (size_t size);
 

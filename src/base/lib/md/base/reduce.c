@@ -31,5 +31,4 @@ void md_reduce (mdmat *md, const char *def)
 	}
 
 	memfree(list);
-	md_size(md->axis, md->type->size);
 }

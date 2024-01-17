@@ -495,7 +495,7 @@ static mdmat *textmode(IO *io, char *title)
 
 	offset = memalloc(coldim * sizeof(long));
 	xaxis = label2axis(md->sbuf, xlabel);
-	md_size(xaxis, md->type->size);
+	md_size(md, xaxis);
 	io_rewind(tmp);
 
 	for (i = 0; i < coldim; i++)

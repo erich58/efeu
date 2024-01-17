@@ -4,6 +4,7 @@
 
 #include <EFEU/mdmat.h>
 #include <EFEU/efutil.h>
+#include <math.h>
 
 void md_round(mdmat *md, double factor, unsigned mask)
 {
