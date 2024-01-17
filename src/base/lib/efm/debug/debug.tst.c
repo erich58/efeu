@@ -265,7 +265,7 @@ TEST_SUITE
 	TEST_RUN(setup);
 	TEST_RUN(LogControl);
 	TEST_RUN(LogOutput);
-	TEST_RUN(log_file);
+	TEST_EXEC(log_file);
 	TEST_RUN(GetFormat);
 	TEST_RUN(stdlog);
 	rd_deref(nlog);

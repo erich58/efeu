@@ -13,12 +13,18 @@ EXPECT_STR(NoteLog, "MSG=0");
 fprintf(NoteLog, "Logeintrag");
 MATCH_CONTENT("log.out", "Logeintrag\n");
 
-TEST_FILE("log.out", NULL);
-IO io = NoteLog.open();
-fprintf(io, "result=%d\n", 42);
-close(io);
-sleep(0.1);
-MATCH_CONTENT("log.out", "result=42\n");
+TEST_FORK
+{
+	TEST_FILE("log.out", NULL);
+	IO io = NoteLog.open();
+	fprintf(io, "result=%d\n", 42);
+	close(io);
+	sleep(0.1);
+	MATCH_CONTENT("log.out", "result=42\n");
+	TEST_EXIT
+}
+
+CHILD_EXIT(0);
 
 LogControl test;
 EXPECT_STR(test, "NULL");
