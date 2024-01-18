@@ -140,3 +140,20 @@ void md_setflag (mdmat *md, const char *def, unsigned mask,
 
 	del_mdlist(list);
 }
+
+mdmat *md_mark(mdmat *md, const char *def)
+{
+	if	(!md || !md->axis)
+		return md;
+
+	if	(!def)
+	{
+		for (mdaxis *x = md->axis; x; x = x->next)
+			x->flags &= ~MDXFLAG_MARK;
+
+		return md;
+	}
+
+	md_setflag(md, def, 0, mdsf_mark, MDXFLAG_MARK, NULL, 0);
+	return md;
+}

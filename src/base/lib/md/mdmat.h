@@ -214,6 +214,7 @@ unsigned mdsf_lock (unsigned old, int flag, unsigned val);
 unsigned mdsf_clear (unsigned old, int flag, unsigned val);
 unsigned mdsf_toggle (unsigned old, int flag, unsigned val);
 
+mdmat *md_mark (mdmat *md, const char *def);
 
 /*	Ein - Ausgabe von multidim. Matrizen
 */
