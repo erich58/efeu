@@ -59,8 +59,8 @@ void MF_leval(EfiFunc *func, void *rval, void **arg)
 	mdmat *md;
 
 	md = Val_mdmat(arg[0]);
-	md_setflag(md, Val_str(arg[2]), 0, mdsf_mark, MDXFLAG_MARK, mdsf_lock, MDFLAG_TEMP);
+	md_setflag(md, Val_str(arg[2]), mdsf_mark, MDXFLAG_MARK, mdsf_lock, MDFLAG_TEMP);
 	md_eval(&leval_eval, Val_vfunc(arg[1]), md, MDFLAG_LOCK|MDFLAG_TEMP, 0, 0);
-	md_allflag(md, 0, mdsf_clear, MDXFLAG_MARK, mdsf_clear, MDFLAG_TEMP);
+	md_allflag(md, mdsf_clear, MDXFLAG_MARK, mdsf_clear, MDFLAG_TEMP);
 	Val_mdmat(rval) = ref_mdmat(md);
 }

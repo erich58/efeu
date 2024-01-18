@@ -66,8 +66,8 @@ int md_twalk (void *par, mdmat *md, const char *def, int lag,
 
 	if	(!md || !visit)	return 0;
 
-	md_setflag(md, def, 0, NULL, 0, mdsf_lock, MDFLAG_TEMP);
+	md_setflag(md, def, NULL, 0, mdsf_lock, MDFLAG_TEMP);
 	stat = do_walk(par, md, 0, lag, md->axis, md->data, NULL, visit);
-	md_allflag(md, 0, NULL, 0, mdsf_clear, MDFLAG_TEMP);
+	md_allflag(md, NULL, 0, mdsf_clear, MDFLAG_TEMP);
 	return stat;
 }

@@ -201,10 +201,10 @@ size_t md_size (mdmat *md, mdaxis *axis);
 void md_alloc (mdmat *md);
 extern void *(*md_alloc_hook) (size_t size);
 
-void md_allflag(mdmat *md, unsigned mask,
+void md_allflag(mdmat *md,
 	unsigned (*fx) (unsigned old, int flag, unsigned val), unsigned vx,
 	unsigned (*fi) (unsigned old, int flag, unsigned val), unsigned vi);
-void md_setflag(mdmat *md, const char *def, unsigned mask,
+void md_setflag(mdmat *md, const char *def,
 	unsigned (*fx) (unsigned old, int flag, unsigned val), unsigned vx,
 	unsigned (*fi) (unsigned old, int flag, unsigned val), unsigned vi);
 const char *md_showflag(mdmat *md, int verbose);

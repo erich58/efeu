@@ -75,7 +75,7 @@ mdmat *md_copy (mdmat *md, const char *def)
 	if	(def)
 	{
 		mask = MDFLAG_TEMP;
-		md_setflag(md, def, 0, NULL, 0, mdsf_lock, mask);
+		md_setflag(md, def, NULL, 0, mdsf_lock, mask);
 	}
 
 	m2 = new_mdmat();
@@ -95,7 +95,7 @@ mdmat *md_copy (mdmat *md, const char *def)
 	do_copy(m2->axis, md->axis, m2->type->size, m2->data, md->data, mask);
 
 	if	(mask)
-		md_allflag(md, 0, NULL, 0, mdsf_clear, mask);
+		md_allflag(md, NULL, 0, mdsf_clear, mask);
 
 	return m2;
 }

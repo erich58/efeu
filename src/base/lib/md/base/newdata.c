@@ -84,9 +84,9 @@ void MF_data(EfiFunc *func, void *rval, void **arg)
 	par.type = md->type;
 	par.axis = md->axis;
 	par.ptr = &list;
-	md_setflag(md, Val_str(arg[1]), 0, NULL, 0, mdsf_lock, MDFLAG_TEMP);
+	md_setflag(md, Val_str(arg[1]), NULL, 0, mdsf_lock, MDFLAG_TEMP);
 	stdwalk(&par, 0, md->axis, md->data, NULL);
-	md_allflag(md, 0, NULL, 0, mdsf_clear, MDFLAG_TEMP);
+	md_allflag(md, NULL, 0, mdsf_clear, MDFLAG_TEMP);
 	Val_list(rval) = list;
 }
 

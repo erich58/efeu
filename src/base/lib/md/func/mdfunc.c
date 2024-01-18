@@ -94,12 +94,12 @@ MDB_FUNC(MF_permut, md_permut(md, STR(1)))
 MDC_FUNC(MF_sumaxis, md_sum(MD(0), STR(1)))
 MDC_FUNC(MF_diag, md_diag(MD(0), STR(1)))
 
-MDB_FUNC(MF_selectall, md_allflag(md, 0, NULL, 0, mdsf_clear, MDFLAG_LOCK))
-MDB_FUNC(MF_select, md_setflag(md, STR(1), 0, NULL, 0, mdsf_lock, MDFLAG_LOCK))
-MDB_FUNC(MF_clrbase, md_allflag(md, 0, NULL, 0, mdsf_clear, MDFLAG_BASE))
+MDB_FUNC(MF_selectall, md_allflag(md, NULL, 0, mdsf_clear, MDFLAG_LOCK))
+MDB_FUNC(MF_select, md_setflag(md, STR(1), NULL, 0, mdsf_lock, MDFLAG_LOCK))
+MDB_FUNC(MF_clrbase, md_allflag(md, NULL, 0, mdsf_clear, MDFLAG_BASE))
 MDB_FUNC(MF_base,
-	md_allflag(md, 0, NULL, 0, mdsf_clear, MDFLAG_BASE);
-	md_setflag(md, STR(1), 0, NULL, 0, mdsf_mark, MDFLAG_BASE)
+	md_allflag(md, NULL, 0, mdsf_clear, MDFLAG_BASE);
+	md_setflag(md, STR(1), NULL, 0, mdsf_mark, MDFLAG_BASE)
 )
 MDB_FUNC(MF_mark, md_mark(md, STR(1)))
 MDB_FUNC(MF_transp, md_mark(md, "~*"))

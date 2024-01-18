@@ -31,21 +31,20 @@ unsigned mdsf_toggle (unsigned old, int sel, unsigned val)
 	else	return old;
 }
 
-static void subfunc (mdaxis *x, mdlist *l, unsigned mask,
+static void subfunc (mdaxis *x, mdlist *l,
 	unsigned (*func) (unsigned old, int flag, unsigned val), unsigned flag);
 
 
-static void allindex (mdaxis *x, unsigned mask,
+static void allindex (mdaxis *x,
 	unsigned (*func) (unsigned old, int flag, unsigned val), unsigned flag)
 {
 	int n;
 
 	for (n = 0; n < x->dim; n++)
-		if (!(x->idx[n].flags & mask))
-			x->idx[n].flags = func(x->idx[n].flags, 1, flag);
+		x->idx[n].flags = func(x->idx[n].flags, 1, flag);
 }
 
-static void subfunc (mdaxis *x, mdlist *l, unsigned mask,
+static void subfunc (mdaxis *x, mdlist *l,
 	unsigned (*func) (unsigned old, int flag, unsigned val), unsigned flag)
 {
 	MatchPar *mp;
@@ -54,16 +53,15 @@ static void subfunc (mdaxis *x, mdlist *l, unsigned mask,
 	mp = MatchPar_vec(l->list, l->dim, x->dim);
 
 	for (n = 0; n < x->dim; n++)
-		if (!(x->idx[n].flags & mask))
-			x->idx[n].flags = func(x->idx[n].flags,
-				MatchPar_exec(mp, StrPool_get(x->sbuf,
-					x->idx[n].i_name), n + 1), flag);
+		x->idx[n].flags = func(x->idx[n].flags,
+			MatchPar_exec(mp, StrPool_get(x->sbuf,
+				x->idx[n].i_name), n + 1), flag);
 
 	rd_deref(mp);
 }
 
 
-void md_allflag (mdmat *md, unsigned mask,
+void md_allflag (mdmat *md,
 	unsigned (*fx) (unsigned old, int flag, unsigned val), unsigned vx,
 	unsigned (*fi) (unsigned old, int flag, unsigned val), unsigned vi)
 {
@@ -74,7 +72,7 @@ void md_allflag (mdmat *md, unsigned mask,
 	for (x = md->axis; x != NULL; x = x->next)
 	{
 		if	(fx)	x->flags = fx(x->flags, 1, vx);
-		if	(fi)	allindex(x, mask, fi, vi);
+		if	(fi)	allindex(x, fi, vi);
 	}
 }
 
@@ -82,7 +80,7 @@ void md_allflag (mdmat *md, unsigned mask,
 /*	Hauptfunktion
 */
 
-void md_setflag (mdmat *md, const char *def, unsigned mask,
+void md_setflag (mdmat *md, const char *def,
 	unsigned (*fx) (unsigned old, int flag, unsigned val), unsigned vx,
 	unsigned (*fi) (unsigned old, int flag, unsigned val), unsigned vi)
 {
@@ -109,7 +107,7 @@ void md_setflag (mdmat *md, const char *def, unsigned mask,
 		if	(fi != 0)
 		{
 			for (x = md->axis; x != NULL; x = x->next)
-				allindex(x, mask, fi, vi);
+				allindex(x, fi, vi);
 		}
 		return;
 	}
@@ -131,9 +129,9 @@ void md_setflag (mdmat *md, const char *def, unsigned mask,
 				if	(fi == NULL)
 					;
 				else if	(l->dim)
-					subfunc(x, l, mask, fi, vi);
+					subfunc(x, l, fi, vi);
 				else
-					allindex(x, mask, fi, vi);
+					allindex(x, fi, vi);
 			}
 		}
 
@@ -163,7 +161,7 @@ static mdmat *md_axis_flag(mdmat *md, const char *def, int mask)
 	else if	(*def == '!')
 		fx = mdsf_clear, def++;
 
-	md_setflag(md, def, 0, fx, mask, NULL, 0);
+	md_setflag(md, def, fx, mask, NULL, 0);
 	return md;
 }
 

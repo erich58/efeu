@@ -48,11 +48,11 @@ TEST_SUITE
 	EXPECT_PTR(md_mark(md, NULL));
 	EXPECT_STR(md_showflag(md, 0), "a b c"); 
 
-	md_setflag(md, "b=b2 c", 0, mdsf_mark, MDXFLAG_TEMP, mdsf_lock, MDFLAG_TEMP);
+	md_setflag(md, "b=b2 c", mdsf_mark, MDXFLAG_TEMP, mdsf_lock, MDFLAG_TEMP);
 	EXPECT_STR(md_showflag(md, 1),
 		"a=a1,a2,a3\n"
 		"b[+]=b1[-],b2,b3[-]\n"
 		"c[+]=c1,c2,c3\n"
 	); 
-	md_allflag(md, 0, mdsf_clear, MDXFLAG_TEMP, mdsf_clear, MDFLAG_TEMP);
+	md_allflag(md, mdsf_clear, MDXFLAG_TEMP, mdsf_clear, MDFLAG_TEMP);
 }
