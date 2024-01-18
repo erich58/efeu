@@ -182,6 +182,11 @@ mdmat *md_hide(mdmat *md, const char *def)
 	return md_axis_flag(md, def, MDXFLAG_HIDE);
 }
 
+mdmat *md_temp(mdmat *md, const char *def)
+{
+	return md_axis_flag(md, def, MDXFLAG_TEMP);
+}
+
 const char *md_showflag(mdmat *md, int verbose)
 {
 	static STRBUF(buf, 32);
@@ -237,7 +242,7 @@ const char *md_showflag(mdmat *md, int verbose)
 				if	(x->idx[n].flags & MDFLAG_HIDE)
 					sb_putc('h', &buf);
 				if	(x->idx[n].flags & MDFLAG_TEMP)
-					sb_putc('+', &buf);
+					sb_putc('-', &buf);
 
 				sb_putc(']', &buf);
 			}

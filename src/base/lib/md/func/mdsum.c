@@ -45,7 +45,7 @@ mdmat *md_sum (mdmat *md, const char *def)
 
 	if	(add == NULL)	return NULL;
 
-	md_setflag(md, def, 0, mdsf_mark, MDXFLAG_TEMP, NULL, 0);
+	md_temp(md, def);
 	m2 = new_mdmat();
 	m2->sbuf = NewStrPool();
 	m2->i_name = StrPool_copy(m2->sbuf, md->sbuf, md->i_name);
@@ -67,6 +67,6 @@ mdmat *md_sum (mdmat *md, const char *def)
 	md_alloc(m2);
 	memset(m2->data, 0, (size_t) m2->size);
 	do_md_sum(add, m2->axis, md->axis, m2->data, md->data);
-	md_allflag(md, 0, mdsf_clear, MDXFLAG_TEMP, NULL, 0);
+	md_temp(md, NULL);
 	return m2;
 }

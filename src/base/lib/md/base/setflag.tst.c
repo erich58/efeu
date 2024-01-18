@@ -28,6 +28,12 @@ TEST_SUITE
 	EXPECT_PTR(md_mark(md, "c"));
 	EXPECT_STR(md_showflag(md, 0), "a[t] b[h] c[m]"); 
 
+	EXPECT_PTR(md_temp(md, "[bc]"));
+	EXPECT_STR(md_showflag(md, 0), "a[t] b[h+] c[m+]"); 
+
+	EXPECT_PTR(md_temp(md, NULL));
+	EXPECT_STR(md_showflag(md, 0), "a[t] b[h] c[m]"); 
+
 	EXPECT_PTR(md_mark(md, "a"));
 	EXPECT_STR(md_showflag(md, 0), "a[mt] b[h] c"); 
 
@@ -37,6 +43,16 @@ TEST_SUITE
 	EXPECT_PTR(md_mark(md, "!b"));
 	EXPECT_STR(md_showflag(md, 0), "a[t] b[h] c[m]"); 
 
+	EXPECT_PTR(md_time(md, NULL));
+	EXPECT_PTR(md_hide(md, NULL));
 	EXPECT_PTR(md_mark(md, NULL));
-	EXPECT_STR(md_showflag(md, 0), "a[t] b[h] c"); 
+	EXPECT_STR(md_showflag(md, 0), "a b c"); 
+
+	md_setflag(md, "b=b2 c", 0, mdsf_mark, MDXFLAG_TEMP, mdsf_lock, MDFLAG_TEMP);
+	EXPECT_STR(md_showflag(md, 1),
+		"a=a1,a2,a3\n"
+		"b[+]=b1[-],b2,b3[-]\n"
+		"c[+]=c1,c2,c3\n"
+	); 
+	md_allflag(md, 0, mdsf_clear, MDXFLAG_TEMP, mdsf_clear, MDFLAG_TEMP);
 }

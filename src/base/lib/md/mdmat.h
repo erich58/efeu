@@ -217,6 +217,7 @@ unsigned mdsf_toggle (unsigned old, int flag, unsigned val);
 mdmat *md_mark (mdmat *md, const char *def);
 mdmat *md_time (mdmat *md, const char *def);
 mdmat *md_hide (mdmat *md, const char *def);
+mdmat *md_temp (mdmat *md, const char *def);
 
 /*	Ein - Ausgabe von multidim. Matrizen
 */
