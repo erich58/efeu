@@ -5,6 +5,8 @@
 #include <EFEU/mdmat.h>
 #include <EFEU/MatchPar.h>
 
+#define	INVERT_FLAG	0x1100
+
 unsigned mdsf_mark (unsigned old, int sel, unsigned val)
 {
 	return sel ? (old | val) : (old & ~val);
@@ -141,19 +143,109 @@ void md_setflag (mdmat *md, const char *def, unsigned mask,
 	del_mdlist(list);
 }
 
-mdmat *md_mark(mdmat *md, const char *def)
+static mdmat *md_axis_flag(mdmat *md, const char *def, int mask)
 {
 	if	(!md || !md->axis)
 		return md;
 
-	if	(!def)
+	if	(def == NULL)
 	{
 		for (mdaxis *x = md->axis; x; x = x->next)
-			x->flags &= ~MDXFLAG_MARK;
+			x->flags &= ~mask;
 
 		return md;
 	}
 
-	md_setflag(md, def, 0, mdsf_mark, MDXFLAG_MARK, NULL, 0);
+	unsigned (*fx)(unsigned old, int sel, unsigned val) = mdsf_mark;
+
+	if	(*def == '~')
+		fx = mdsf_toggle, def++;
+	else if	(*def == '!')
+		fx = mdsf_clear, def++;
+
+	md_setflag(md, def, 0, fx, mask, NULL, 0);
 	return md;
+}
+
+mdmat *md_mark(mdmat *md, const char *def)
+{
+	return md_axis_flag(md, def, MDXFLAG_MARK);
+}
+
+mdmat *md_time(mdmat *md, const char *def)
+{
+	return md_axis_flag(md, def, MDXFLAG_TIME);
+}
+
+mdmat *md_hide(mdmat *md, const char *def)
+{
+	return md_axis_flag(md, def, MDXFLAG_HIDE);
+}
+
+const char *md_showflag(mdmat *md, int verbose)
+{
+	static STRBUF(buf, 32);
+
+	if	(!md) return NULL;
+
+	sb_clear(&buf);
+	const char *delim = "";
+
+	for (mdaxis *x = md->axis; x; x = x->next)
+	{
+		sb_puts(delim, &buf);
+		sb_puts(StrPool_get(x->sbuf, x->i_name), &buf);
+
+		if (x->flags)
+		{
+			sb_putc('[', &buf);
+
+			if	(x->flags & MDXFLAG_MARK)
+				sb_putc('m', &buf);
+			if	(x->flags & MDXFLAG_TIME)
+				sb_putc('t', &buf);
+			if	(x->flags & MDXFLAG_HIDE)
+				sb_putc('h', &buf);
+			if	(x->flags & MDXFLAG_TEMP)
+				sb_putc('+', &buf);
+
+			sb_putc(']', &buf);
+		}
+
+		if	(verbose == 0)
+		{
+			delim = " ";
+			continue;
+		}
+
+		delim = "=";
+
+		for (size_t n = 0; n < x->dim; n++)
+		{
+			sb_puts(delim, &buf);
+			delim = ",";
+			sb_puts(StrPool_get(x->sbuf, x->idx[n].i_name), &buf);
+
+			if (x->idx[n].flags)
+			{
+				sb_putc('[', &buf);
+
+				if	(x->idx[n].flags & MDFLAG_LOCK)
+					sb_putc('l', &buf);
+				if	(x->idx[n].flags & MDFLAG_BASE)
+					sb_putc('b', &buf);
+				if	(x->idx[n].flags & MDFLAG_HIDE)
+					sb_putc('h', &buf);
+				if	(x->idx[n].flags & MDFLAG_TEMP)
+					sb_putc('+', &buf);
+
+				sb_putc(']', &buf);
+			}
+		}
+
+		sb_putc('\n', &buf);
+		delim = "";
+	}
+
+	return sb_cstr(&buf);
 }

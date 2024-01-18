@@ -101,10 +101,10 @@ MDB_FUNC(MF_base,
 	md_allflag(md, 0, NULL, 0, mdsf_clear, MDFLAG_BASE);
 	md_setflag(md, STR(1), 0, NULL, 0, mdsf_mark, MDFLAG_BASE)
 )
-MDB_FUNC(MF_mark, md_setflag(md, STR(1), 0, mdsf_mark, MDXFLAG_MARK, NULL, 0))
-MDB_FUNC(MF_transp, md_allflag(md, 0, mdsf_toggle, MDXFLAG_MARK, NULL, 0))
-MDB_FUNC(MF_time, md_setflag(md, STR(1), 0, mdsf_mark, MDXFLAG_TIME, NULL, 0))
-MDB_FUNC(MF_hide, md_setflag(md, STR(1), 0, mdsf_mark, MDXFLAG_HIDE, NULL, 0))
+MDB_FUNC(MF_mark, md_mark(md, STR(1)))
+MDB_FUNC(MF_transp, md_mark(md, "~*"))
+MDB_FUNC(MF_time, md_time(md, STR(1)))
+MDB_FUNC(MF_hide, md_hide(md, STR(1)))
 
 MDB_FUNC(MF_assign, md_assign(func->name, MD(0), MD(1)))
 

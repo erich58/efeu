@@ -36,7 +36,7 @@ TEST_DECL(simple)
 		"y2 2 -1\n"
 	;
 	mdmat *md = md_read(io_cstr(data), NULL);
-	md_setflag(md, "#-1", 0, mdsf_mark, MDXFLAG_MARK, NULL, 0); 
+	md_mark(md, "#-1");
 	md_print(io_refer(OUT()), md, "mode=data");
 	EXPECT_NOUT(md, "1.0000, 2.0000\n2.0000, -1.0000\n");
 
@@ -58,7 +58,7 @@ TEST_DECL(no_inv)
 		"y2 1 1\n"
 	;
 	mdmat *md = md_read(io_cstr(data), NULL);
-	md_setflag(md, "#-1", 0, mdsf_mark, MDXFLAG_MARK, NULL, 0); 
+	md_mark(md, "#-1");
 	md_print(io_refer(OUT()), md, "mode=data");
 	EXPECT_NOUT(md, "1.0000, 1.0000\n1.0000, 1.0000\n");
 	UnitTest_stderr("stderr");
@@ -79,7 +79,7 @@ TEST_DECL(not_square)
 		"y1 1 1\n"
 	;
 	mdmat *md = md_read(io_cstr(data), NULL);
-	md_setflag(md, "#-1", 0, mdsf_mark, MDXFLAG_MARK, NULL, 0); 
+	md_mark(md, "#-1");
 	md_print(io_refer(OUT()), md, "mode=data");
 	EXPECT_NOUT(md, "1.0000, 1.0000\n");
 	UnitTest_stderr("stderr");

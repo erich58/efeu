@@ -30,7 +30,7 @@ static void edb2md_clean (void *data)
 	{
 		memfree(PrintListDelim);
 		PrintListDelim = mstrcpy("\t");
-		md_setflag(par->md, "#-1", 0, mdsf_mark, MDXFLAG_MARK, NULL, 0);
+		md_mark(par->md, "#-1");
 		md_print(par->out, par->md, par->pmode);
 		memfree(par->pmode);
 	}

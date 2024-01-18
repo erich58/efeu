@@ -45,7 +45,6 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 void SetupMdMat (void);
-void SetupMdTest (void);
 
 extern LogControl *md_err;
 extern LogControl *md_note;
@@ -208,6 +207,7 @@ void md_allflag(mdmat *md, unsigned mask,
 void md_setflag(mdmat *md, const char *def, unsigned mask,
 	unsigned (*fx) (unsigned old, int flag, unsigned val), unsigned vx,
 	unsigned (*fi) (unsigned old, int flag, unsigned val), unsigned vi);
+const char *md_showflag(mdmat *md, int verbose);
 
 unsigned mdsf_mark (unsigned old, int flag, unsigned val);
 unsigned mdsf_lock (unsigned old, int flag, unsigned val);
@@ -215,6 +215,8 @@ unsigned mdsf_clear (unsigned old, int flag, unsigned val);
 unsigned mdsf_toggle (unsigned old, int flag, unsigned val);
 
 mdmat *md_mark (mdmat *md, const char *def);
+mdmat *md_time (mdmat *md, const char *def);
+mdmat *md_hide (mdmat *md, const char *def);
 
 /*	Ein - Ausgabe von multidim. Matrizen
 */
