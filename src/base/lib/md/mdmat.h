@@ -201,23 +201,18 @@ size_t md_size (mdmat *md, mdaxis *axis);
 void md_alloc (mdmat *md);
 extern void *(*md_alloc_hook) (size_t size);
 
-void md_allflag(mdmat *md,
-	unsigned (*fx) (unsigned old, int flag, unsigned val), unsigned vx,
-	unsigned (*fi) (unsigned old, int flag, unsigned val), unsigned vi);
-void md_setflag(mdmat *md, const char *def,
-	unsigned (*fx) (unsigned old, int flag, unsigned val), unsigned vx,
-	unsigned (*fi) (unsigned old, int flag, unsigned val), unsigned vi);
+mdmat *md_setflag(mdmat *md, const char *def, unsigned mx, unsigned mi);
+mdmat *md_setlock(mdmat *md, const char *def, unsigned mx, unsigned mi);
+mdmat *md_clrflag(mdmat *md, unsigned mx, unsigned mi);
 const char *md_showflag(mdmat *md, int verbose);
 
-unsigned mdsf_mark (unsigned old, int flag, unsigned val);
-unsigned mdsf_lock (unsigned old, int flag, unsigned val);
-unsigned mdsf_clear (unsigned old, int flag, unsigned val);
-unsigned mdsf_toggle (unsigned old, int flag, unsigned val);
-
 mdmat *md_mark (mdmat *md, const char *def);
+mdmat *md_transp (mdmat *md);
 mdmat *md_time (mdmat *md, const char *def);
 mdmat *md_hide (mdmat *md, const char *def);
 mdmat *md_temp (mdmat *md, const char *def);
+mdmat *md_base (mdmat *md, const char *def);
+mdmat *md_select (mdmat *md, const char *def);
 
 /*	Ein - Ausgabe von multidim. Matrizen
 */

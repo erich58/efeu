@@ -94,15 +94,10 @@ MDB_FUNC(MF_permut, md_permut(md, STR(1)))
 MDC_FUNC(MF_sumaxis, md_sum(MD(0), STR(1)))
 MDC_FUNC(MF_diag, md_diag(MD(0), STR(1)))
 
-MDB_FUNC(MF_selectall, md_allflag(md, NULL, 0, mdsf_clear, MDFLAG_LOCK))
-MDB_FUNC(MF_select, md_setflag(md, STR(1), NULL, 0, mdsf_lock, MDFLAG_LOCK))
-MDB_FUNC(MF_clrbase, md_allflag(md, NULL, 0, mdsf_clear, MDFLAG_BASE))
-MDB_FUNC(MF_base,
-	md_allflag(md, NULL, 0, mdsf_clear, MDFLAG_BASE);
-	md_setflag(md, STR(1), NULL, 0, mdsf_mark, MDFLAG_BASE)
-)
+MDB_FUNC(MF_select, md_select(md, STR(1)))
+MDB_FUNC(MF_base, md_base(md, STR(1)))
 MDB_FUNC(MF_mark, md_mark(md, STR(1)))
-MDB_FUNC(MF_transp, md_mark(md, "~*"))
+MDB_FUNC(MF_transp, md_transp(md))
 MDB_FUNC(MF_time, md_time(md, STR(1)))
 MDB_FUNC(MF_hide, md_hide(md, STR(1)))
 
@@ -283,10 +278,8 @@ static EfiFuncDef fdef[] = {
 	{ 0, &Type_mdmat, "mdmat::paste (str name, int pos, int n, str delim = \".\")",
 		MF_paste },
 
-	{ FUNC_VIRTUAL, &Type_mdmat, "mdmat::select ()", MF_selectall },
-	{ FUNC_VIRTUAL, &Type_mdmat, "mdmat::select (str def)", MF_select },
-	{ FUNC_VIRTUAL, &Type_mdmat, "mdmat::base ()", MF_clrbase },
-	{ FUNC_VIRTUAL, &Type_mdmat, "mdmat::base (str def)", MF_base },
+	{ 0, &Type_mdmat, "mdmat::select (str def = NULL)", MF_select },
+	{ 0, &Type_mdmat, "mdmat::base (str def = NULL)", MF_base },
 	{ 0, &Type_mdmat, "mdmat::mark (str def = NULL)", MF_mark },
 	{ 0, &Type_mdmat, "mdmat::transp ()", MF_transp },
 	{ 0, &Type_mdmat, "mdmat::time (str def = NULL)", MF_time },

@@ -23,8 +23,7 @@ void MF_label(EfiFunc *func, void *rval, void **arg)
 
 	list = NULL;
 	ptr = &list;
-	md_setflag(md, Val_str(arg[1]), mdsf_mark, MDXFLAG_TEMP,
-		mdsf_lock, MDFLAG_TEMP);
+	md_setlock(md, Val_str(arg[1]), MDXFLAG_TEMP, MDFLAG_TEMP);
 	flag = Val_bool(arg[2]);
 
 	for (x = md->axis; x != NULL; x = x->next)
@@ -44,6 +43,6 @@ void MF_label(EfiFunc *func, void *rval, void **arg)
 		}
 	}
 
-	md_allflag(md, mdsf_clear, MDXFLAG_TEMP, mdsf_clear, MDFLAG_TEMP);
+	md_clrflag(md, MDXFLAG_TEMP, MDFLAG_TEMP);
 	Val_list(rval) = list;
 }

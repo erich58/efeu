@@ -70,14 +70,7 @@ mdmat *md_copy (mdmat *md, const char *def)
 
 	if	(md == NULL)	return NULL;
 
-	unsigned mask = 0;
-
-	if	(def)
-	{
-		mask = MDFLAG_TEMP;
-		md_setflag(md, def, NULL, 0, mdsf_lock, mask);
-	}
-
+	md_setlock(md, def, 0, MDFLAG_TEMP);
 	m2 = new_mdmat();
 	m2->sbuf = NewStrPool();
 	m2->axis = NULL;
@@ -87,15 +80,12 @@ mdmat *md_copy (mdmat *md, const char *def)
 
 	for (x = md->axis; x != NULL; x = x->next)
 	{
-		*ptr = cpy_axis(m2->sbuf, x, mask);
+		*ptr = cpy_axis(m2->sbuf, x, MDFLAG_TEMP);
 		ptr = &(*ptr)->next;
 	}
 
 	md_alloc(m2);
-	do_copy(m2->axis, md->axis, m2->type->size, m2->data, md->data, mask);
-
-	if	(mask)
-		md_allflag(md, NULL, 0, mdsf_clear, mask);
-
+	do_copy(m2->axis, md->axis, m2->type->size, m2->data, md->data, MDFLAG_TEMP);
+	md_clrflag(md, 0, MDFLAG_TEMP);
 	return m2;
 }

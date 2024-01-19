@@ -5,112 +5,62 @@
 #include <EFEU/mdmat.h>
 #include <EFEU/MatchPar.h>
 
-#define	INVERT_FLAG	0x1100
-
-unsigned mdsf_mark (unsigned old, int sel, unsigned val)
+mdmat *md_clrflag(mdmat *md, unsigned mx, unsigned mi)
 {
-	return sel ? (old | val) : (old & ~val);
-}
-
-unsigned mdsf_clear (unsigned old, int sel, unsigned val)
-{
-	return sel ? (old & ~val) : old;
-}
-
-unsigned mdsf_lock (unsigned old, int sel, unsigned val)
-{
-	return sel ? (old & ~val) : (old | val);
-}
-
-unsigned mdsf_toggle (unsigned old, int sel, unsigned val)
-{
-	if	(sel)
+	if	(md)
 	{
-		return (old & val) ? (old & ~val) : (old | val);
+		for (mdaxis *x = md->axis; x != NULL; x = x->next)
+		{
+			x->flags &= ~mx;
+
+			if	(mi)
+			{
+				for (size_t i = 0; i < x->dim; ++i)
+					x->idx[i].flags &= ~mi;
+			}
+		}
 	}
-	else	return old;
+
+	return md;
 }
 
-static void subfunc (mdaxis *x, mdlist *l,
-	unsigned (*func) (unsigned old, int flag, unsigned val), unsigned flag);
-
-
-static void allindex (mdaxis *x,
-	unsigned (*func) (unsigned old, int flag, unsigned val), unsigned flag)
+static void allindex (mdaxis *x, unsigned mask)
 {
-	int n;
-
-	for (n = 0; n < x->dim; n++)
-		x->idx[n].flags = func(x->idx[n].flags, 1, flag);
+	for (int n = 0; n < x->dim; n++)
+		x->idx[n].flags |= mask;
 }
 
-static void subfunc (mdaxis *x, mdlist *l,
-	unsigned (*func) (unsigned old, int flag, unsigned val), unsigned flag)
+static void subfunc (mdaxis *x, mdlist *l, unsigned mask, int flag)
 {
-	MatchPar *mp;
-	int n;
+	MatchPar *mp = MatchPar_vec(l->list, l->dim, x->dim);
 
-	mp = MatchPar_vec(l->list, l->dim, x->dim);
+	for (size_t n = 0; n < x->dim; n++)
+	{
+		const char *name = StrPool_get(x->sbuf, x->idx[n].i_name);
 
-	for (n = 0; n < x->dim; n++)
-		x->idx[n].flags = func(x->idx[n].flags,
-			MatchPar_exec(mp, StrPool_get(x->sbuf,
-				x->idx[n].i_name), n + 1), flag);
+		if	(MatchPar_exec(mp, name, n + 1) == flag)
+			x->idx[n].flags |= mask;
+	}
 
 	rd_deref(mp);
 }
 
 
-void md_allflag (mdmat *md,
-	unsigned (*fx) (unsigned old, int flag, unsigned val), unsigned vx,
-	unsigned (*fi) (unsigned old, int flag, unsigned val), unsigned vi)
-{
-	mdaxis *x;
-
-	if	(md == NULL)	return;
-
-	for (x = md->axis; x != NULL; x = x->next)
-	{
-		if	(fx)	x->flags = fx(x->flags, 1, vx);
-		if	(fi)	allindex(x, fi, vi);
-	}
-}
-
-
-/*	Hauptfunktion
+/*	Hauptfunktion
 */
 
-void md_setflag (mdmat *md, const char *def,
-	unsigned (*fx) (unsigned old, int flag, unsigned val), unsigned vx,
-	unsigned (*fi) (unsigned old, int flag, unsigned val), unsigned vi)
+static mdmat *do_setflag (mdmat *md, const char *def,
+	unsigned vx, unsigned vi, int flag)
 {
 	mdlist *l, *list;
 	mdaxis *x;
 	MatchPar *mp;
-	int n, dim;
+	size_t n, dim;
 
-	if	(md == NULL || md->axis == NULL)
-		return;
+	md_clrflag(md, vx, vi);
 
-/*	Achsenflags initialisieren
-*/
-	if	(fx)
-	{
-		for (x = md->axis; x != NULL; x = x->next)
-			x->flags = fx(x->flags, 0, vx);
-	}
-
-/*	Universielle Selektion
-*/
-	if	(def == NULL)
-	{
-		if	(fi != 0)
-		{
-			for (x = md->axis; x != NULL; x = x->next)
-				allindex(x, fi, vi);
-		}
-		return;
-	}
+	if	(!def)
+		return md;
 
 	dim = md_dim(md->axis);
 	list = str2mdlist(def, 0);
@@ -124,14 +74,15 @@ void md_setflag (mdmat *md, const char *def,
 			if	(MatchPar_exec(mp, StrPool_get(x->sbuf,
 					x->i_name), n))
 			{
-				if	(fx)	x->flags = fx(x->flags, 1, vx);
+				x->flags |= vx;
 
-				if	(fi == NULL)
-					;
-				else if	(l->dim)
-					subfunc(x, l, fi, vi);
-				else
-					allindex(x, fi, vi);
+				if	(vi)
+				{
+					if	(l->dim)
+						subfunc(x, l, vi, flag);
+					else if	(flag)
+						allindex(x, vi);
+				}
 			}
 		}
 
@@ -139,50 +90,61 @@ void md_setflag (mdmat *md, const char *def,
 	}
 
 	del_mdlist(list);
-}
-
-static mdmat *md_axis_flag(mdmat *md, const char *def, int mask)
-{
-	if	(!md || !md->axis)
-		return md;
-
-	if	(def == NULL)
-	{
-		for (mdaxis *x = md->axis; x; x = x->next)
-			x->flags &= ~mask;
-
-		return md;
-	}
-
-	unsigned (*fx)(unsigned old, int sel, unsigned val) = mdsf_mark;
-
-	if	(*def == '~')
-		fx = mdsf_toggle, def++;
-	else if	(*def == '!')
-		fx = mdsf_clear, def++;
-
-	md_setflag(md, def, fx, mask, NULL, 0);
 	return md;
 }
 
+mdmat *md_setflag(mdmat *md, const char *def, unsigned mx, unsigned mi)
+{
+	return do_setflag(md, def, mx, mi, 1);
+}
+
+mdmat *md_setlock(mdmat *md, const char *def, unsigned mx, unsigned mi)
+{
+	return do_setflag(md, def, mx, mi, 0);
+}
+
+
 mdmat *md_mark(mdmat *md, const char *def)
 {
-	return md_axis_flag(md, def, MDXFLAG_MARK);
+	return md_setflag(md, def, MDXFLAG_MARK, 0);
+}
+
+mdmat *md_transp(mdmat *md)
+{
+	for (mdaxis *x = md ? md->axis : NULL; x != NULL; x = x->next)
+	{
+		if	(x->flags & MDXFLAG_MARK)
+			x->flags &= ~MDXFLAG_MARK;
+		else
+			x->flags |= MDXFLAG_MARK;
+	}
+
+	return md;
 }
 
 mdmat *md_time(mdmat *md, const char *def)
 {
-	return md_axis_flag(md, def, MDXFLAG_TIME);
+	return md_setflag(md, def, MDXFLAG_TIME, 0);
 }
 
 mdmat *md_hide(mdmat *md, const char *def)
 {
-	return md_axis_flag(md, def, MDXFLAG_HIDE);
+	return md_setflag(md, def, MDXFLAG_HIDE, 0);
 }
 
 mdmat *md_temp(mdmat *md, const char *def)
 {
-	return md_axis_flag(md, def, MDXFLAG_TEMP);
+	return md_setflag(md, def, MDXFLAG_TEMP, 0);
+}
+
+mdmat *md_base(mdmat *md, const char *def)
+{
+	return md_setflag(md, def, 0, MDFLAG_BASE);
+}
+
+mdmat *md_select(mdmat *md, const char *def)
+{
+	return md_setlock(md, def, 0, MDFLAG_LOCK);
 }
 
 const char *md_showflag(mdmat *md, int verbose)
@@ -233,12 +195,12 @@ const char *md_showflag(mdmat *md, int verbose)
 			{
 				sb_putc('[', &buf);
 
-				if	(x->idx[n].flags & MDFLAG_LOCK)
-					sb_putc('l', &buf);
 				if	(x->idx[n].flags & MDFLAG_BASE)
-					sb_putc('b', &buf);
+					sb_putc('B', &buf);
+				if	(x->idx[n].flags & MDFLAG_LOCK)
+					sb_putc('L', &buf);
 				if	(x->idx[n].flags & MDFLAG_HIDE)
-					sb_putc('h', &buf);
+					sb_putc('H', &buf);
 				if	(x->idx[n].flags & MDFLAG_TEMP)
 					sb_putc('-', &buf);
 

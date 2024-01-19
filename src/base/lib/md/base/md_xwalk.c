@@ -72,8 +72,8 @@ int md_xwalk (void *par, mdmat *md, const char *def,
 
 	if	(!md || !visit)	return 0;
 
-	md_setflag(md, def, NULL, 0, mdsf_lock, MDFLAG_TEMP);
+	md_setlock(md, def, 0, MDFLAG_TEMP);
 	stat = do_walk(par, md, 0, md->axis, md->data, NULL, visit);
-	md_allflag(md, NULL, 0, mdsf_clear, MDFLAG_TEMP);
+	md_clrflag(md, 0, MDFLAG_TEMP);
 	return stat;
 }

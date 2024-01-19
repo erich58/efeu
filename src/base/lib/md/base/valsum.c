@@ -47,7 +47,7 @@ static MdEvalDef sum_eval = {
 void MF_valsum(EfiFunc *func, void *rval, void **arg)
 {
 	register mdmat *md = Val_mdmat(arg[0]);
-	md_setflag(md, Val_str(arg[1]), NULL, 0, mdsf_lock, MDFLAG_TEMP);
+	md_setlock(md, Val_str(arg[1]), 0, MDFLAG_TEMP);
 	Val_ptr(rval) = md_eval(&sum_eval, NULL, md, MDFLAG_LOCK|MDFLAG_TEMP, 0, 0);
-	md_allflag(md, NULL, 0, mdsf_clear, MDFLAG_TEMP);
+	md_clrflag(md, 0, MDFLAG_TEMP);
 }
