@@ -103,12 +103,6 @@ mdmat *md_setlock(mdmat *md, const char *def, unsigned mx, unsigned mi)
 	return do_setflag(md, def, mx, mi, 0);
 }
 
-
-mdmat *md_mark(mdmat *md, const char *def)
-{
-	return md_setflag(md, def, MDXFLAG_MARK, 0);
-}
-
 mdmat *md_transp(mdmat *md)
 {
 	for (mdaxis *x = md ? md->axis : NULL; x != NULL; x = x->next)
@@ -120,31 +114,6 @@ mdmat *md_transp(mdmat *md)
 	}
 
 	return md;
-}
-
-mdmat *md_time(mdmat *md, const char *def)
-{
-	return md_setflag(md, def, MDXFLAG_TIME, 0);
-}
-
-mdmat *md_hide(mdmat *md, const char *def)
-{
-	return md_setflag(md, def, MDXFLAG_HIDE, 0);
-}
-
-mdmat *md_temp(mdmat *md, const char *def)
-{
-	return md_setflag(md, def, MDXFLAG_TEMP, 0);
-}
-
-mdmat *md_base(mdmat *md, const char *def)
-{
-	return md_setflag(md, def, 0, MDFLAG_BASE);
-}
-
-mdmat *md_select(mdmat *md, const char *def)
-{
-	return md_setlock(md, def, 0, MDFLAG_LOCK);
 }
 
 const char *md_showflag(mdmat *md, int verbose)

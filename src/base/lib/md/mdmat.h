@@ -205,14 +205,14 @@ mdmat *md_setflag(mdmat *md, const char *def, unsigned mx, unsigned mi);
 mdmat *md_setlock(mdmat *md, const char *def, unsigned mx, unsigned mi);
 mdmat *md_clrflag(mdmat *md, unsigned mx, unsigned mi);
 const char *md_showflag(mdmat *md, int verbose);
-
-mdmat *md_mark (mdmat *md, const char *def);
 mdmat *md_transp (mdmat *md);
-mdmat *md_time (mdmat *md, const char *def);
-mdmat *md_hide (mdmat *md, const char *def);
-mdmat *md_temp (mdmat *md, const char *def);
-mdmat *md_base (mdmat *md, const char *def);
-mdmat *md_select (mdmat *md, const char *def);
+
+#define	md_mark(md, def)	md_setflag(md, def, MDXFLAG_MARK, 0)
+#define	md_time(md, def)	md_setflag(md, def, MDXFLAG_TIME, 0)
+#define	md_hide(md, def)	md_setflag(md, def, MDXFLAG_HIDE, 0)
+#define	md_temp(md, def)	md_setflag(md, def, MDXFLAG_TEMP, 0)
+#define md_base(md, def)	md_setflag(md, def, 0, MDFLAG_BASE)
+#define md_select(md, def)	md_setlock(md, def, 0, MDFLAG_LOCK)
 
 /*	Ein - Ausgabe von multidim. Matrizen
 */
