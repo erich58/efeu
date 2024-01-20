@@ -138,6 +138,9 @@ SUCCESS="${green}SUCCESS{$off}"
 for tst in $tlist
 do
 	eval $tst $redir
+	stat=$?
+	[ $stat -gt 128 ] && printf '%s 0 0 1 SIG-%02d\n' \
+		`basename $tst` `expr $stat - 128`
 done | awk -v good="$green" -v bad="$red" -v off="$off" '
 BEGIN {
 	fmt = "%-23s\t%5d\t%5d\t%5d\t%s%s%s\n";
