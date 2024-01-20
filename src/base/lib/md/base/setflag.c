@@ -57,6 +57,9 @@ static mdmat *do_setflag (mdmat *md, const char *def,
 	MatchPar *mp;
 	size_t n, dim;
 
+	if	(!md || !md->axis)
+		return md;
+
 	md_clrflag(md, vx, vi);
 
 	if	(!def)
