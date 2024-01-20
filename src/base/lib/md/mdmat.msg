@@ -26,7 +26,7 @@ If not, write to the Free Software Foundation, Inc.,
 11	$!: bad magic in data file.\n
 12	$!: wrong number of elments in data file.\n
 13	$!: missing EOF mark.\n
-14	$!: worng size of type $1.\n
+14	$!: wrong size of type $1.\n
 15	$!: type $1 has no component $2.\n
 16	$!: can not add values of type $1 (operator += not defined).\n
 
