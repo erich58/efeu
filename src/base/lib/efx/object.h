@@ -451,6 +451,8 @@ extern EfiType Type_name;	/* Name */
 #define	type2Obj(x)	NewPtrObj(&Type_type, x)
 #define	io2Obj(x)	NewPtrObj(&Type_io, x)
 
+void *obj2func (EfiObj *obj);
+
 #define	Val_ptr(x)	((void **) (x))[0]
 #define	Val_str(x)	((char **) (x))[0]
 #define	Val_io(x)	((IO **) (x))[0]

@@ -1,0 +1,23 @@
+      2 cmdeval		100
+      2 cmpdef		75
+      3 conv		97
+      4 database	100
+     54 edb		77 (TODO: EDBAssign, edb_join, edb_trans)
+     15 func		#IMPLICIT
+     10 iotools		100
+      3 math		100 Missing: CovarianceData (BivariateData, Pair)
+     26 object		#IMPLICIT
+     17 par		97
+     18 parse		#TODO (teilweise implizit)
+      3 pconfig		#TODO
+      2 pix		100
+      8 preproc		99
+      4 print		99
+      7 random		97
+     46 setup		98
+      2 stat		?? mehrere Interpreter, Quellcode-Referenz?
+      5 tab		#TODO 61 Nur für efeudoc
+      7 testdef		92
+      3 tools		100
+      4 type		89 (construct: nicht alles klar)
+     13 vtab		97 (EfiVar_list nur für EDBFilter_var)

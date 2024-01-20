@@ -245,7 +245,7 @@ void AddFunc (EfiFunc *func)
 }
 
 
-static void *obj2func (EfiObj *obj)
+void *obj2func (EfiObj *obj)
 {
 	void *func = NULL;
 
