@@ -199,10 +199,10 @@ static char *dat_label (DAT *dat)
 	switch (dat->type)
 	{
 	case DAT_MONAT:
-		sprintf(buf, "%02d.%d", dat->val % 12 + 1, dat->val / 12);
+		sprintf(buf, "%d-%02d", dat->val / 12, dat->val % 12 + 1);
 		break;
 	case DAT_QUART:
-		sprintf(buf, "%d:%d", dat->val / 4, dat->val % 4 + 1);
+		sprintf(buf, "%d/%d", dat->val / 4, dat->val % 4 + 1);
 		break;
 	case DAT_JAHR:
 		sprintf(buf, "%d", dat->val);
@@ -275,6 +275,9 @@ static void sync_dat(DAT *a, DAT *b)
 static TimeRange *new_range(VecBuf *buf, DAT *a, DAT *b, int flag, char *fmt)
 {
 	TimeRange *range = vb_next(buf);
+
+	if	(!range)
+		return NULL;
 
 	range->ug = dat_lim(a->type, a->val);
 	range->og = dat_lim(b->type, b->val + 1) - 1;
