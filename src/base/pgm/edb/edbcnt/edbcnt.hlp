@@ -1,5 +1,5 @@
 /*
-Handbucheintrag für Redbsyncnt
+Handbucheintrag für edbcnt
 
 $Copyright (C) 2007 Erich Frühstück
 A-3423 St.Andrä/Wördern, Wildenhaggasse 38
@@ -13,7 +13,7 @@ dient zum auszählen eines EDB-Datenfiles zu einer mehrdimensionalen
 Datenmatrix.
 
 Alternativ zum Aufsummieren der einzelnen Zählereignisse, können diese
-auch aufgezeichnet werden. Die Ausgabe ist dann eine Datei eine
+auch aufgezeichnet werden. Die Ausgabe ist dann eine 
 EDB-Datei. Details dazu werden im Abschnitt
 Aufzeichnungsmodus behandelt.
 
@@ -115,7 +115,7 @@ nicht zu groß wird und lieber mehrere kleine, als eine große
 Zählung durchführen.
 
 Die einzelnen Achsendefinitionen werden dem Kommando
-|syncnt| als Argument übergeben und an dem Zuweisungszeichen
+|edbcnt| als Argument übergeben und an dem Zuweisungszeichen
 |=| erkannt. Dementsprechend dürfen Datenbankname und
 Ausgabedatei kein |=| enthalten.
 Mehrere Achsendefinitionen dürfen, durch weiße Zeichen getrennt,
@@ -123,7 +123,7 @@ zu einem Argument zusammengefaßt werden.
 
 \shead	Aufzeichnungsmodus
 
-Im Aufzeichnungsmodus jede Addition in die Tabelle durch die
+Im Aufzeichnungsmodus wird jede Addition in die Tabelle durch die
 Ausgabe eines Datensatzes ersetzt. Damit eröffnet sich eine sehr
 flexible Generierung von Datenfiles für viele Anforderungen.
 
@@ -167,11 +167,11 @@ je nach Ausgabeformat entweder binär oder als Text (bei index und
 label).
 
 \shead	Optionen
-Folgende Optionen und Argumente werden vom Kommando |syncnt| akzeptiert:
+Folgende Optionen und Argumente werden vom Kommando |edbcnt| akzeptiert:
 @arglist
 
 Eine Reihe von Optionen erlaubt die Abfrage von Zählmöglichkeiten.
-Da diese vom  jeweiligen Datenbanktype abhängen, muß auf jedem Fall
+Da diese vom jeweiligen Datenbanktype abhängen, muß auf jedem Fall
 eine Datenbank angegeben werden. Sollen nur Zählmöglichkeiten
 abgefragt/getestet werden, kann als Datenbank <type>|:|
 angegeben werden. Diese Definition steht stellvertretend für
