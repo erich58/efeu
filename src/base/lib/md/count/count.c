@@ -27,20 +27,17 @@ double MdCountWeight = 1.;
 
 void (*md_count_hook) (MdCountList *clist, mdmat *md) = NULL;
 
-void md_count (mdmat *ctab, const void *data)
+int md_count (mdmat *ctab, const void *data)
 {
 	register MdCntGrp *s;
 	register mdaxis *x;
 	MdCountList *list;
 	int flag;
 
-	if	(!ctab)	return;
+	if	(!ctab)	return 0;
 
 	if	(!ctab->x_priv)
-	{
-		log_note(md_note, "[mdmat:303]", NULL);
-		return;
-	}
+		log_error(md_err, "[mdmat:303]", NULL);
 
 /*	Zähler setzen
 */
@@ -53,7 +50,7 @@ void md_count (mdmat *ctab, const void *data)
 		flag |= list->flag;
 	}
 
-	if	(!flag)	return;
+	if	(!flag)	return 0;
 
 /*	Selektionsindizes setzen
 */
@@ -79,6 +76,8 @@ void md_count (mdmat *ctab, const void *data)
 		md_count_hook(list, ctab);
 	else
 		md_count_add(list, ctab->axis, ctab->data);
+
+	return 1;
 }
 
 

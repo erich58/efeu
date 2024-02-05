@@ -187,7 +187,7 @@ mdmat *md_ioctab (const char *titel, IO *io,
 	MdCountPar *gtab, MdCount *counter);
 
 int md_ctabinit (mdmat *md, MdCountList *list);
-void md_count (mdmat *tab, const void *data);
+int md_count (mdmat *tab, const void *data);
 void md_showcnt (IO *io, MdCountPar *tab);
 void md_count_add (MdCountList *clist, mdaxis *x, char *ptr);
 
