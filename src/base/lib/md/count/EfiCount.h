@@ -18,6 +18,7 @@ typedef struct EfiCount EfiCount;
 struct EfiCount {
 	EPC_VAR;
 	char *syntax;
+	char *desc;
 	void (*create) (MdCountPar *par, EfiCount *def, EfiObj *obj,
 		const char *opt, const char *arg);
 	char *par;
@@ -25,9 +26,9 @@ struct EfiCount {
 
 void EfiCount_info (IO *io, const void *data);
 
-#define	EFI_COUNT(type, name, syntax, create, par, label) \
+#define	EFI_COUNT(type, name, syntax, create, par, label, desc) \
 	{ EPC_DATA(&EfiPar_EfiCount, type, name, label, EfiCount_info), \
-		syntax, create, par }
+		syntax, desc, create, par }
 
 void AddEfiCount (EfiCount *def);
 void SetupEfiCount (void);

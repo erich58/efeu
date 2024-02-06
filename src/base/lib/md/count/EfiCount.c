@@ -19,9 +19,9 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include <EFEU/nkt.h>
 #include <EFEU/Resource.h>
 #include <EFEU/EfiCount.h>
+#include <EFEU/Info.h>
 
 #define	INFO_NAME	"count"
 
@@ -39,7 +39,7 @@ void EfiCount_info (IO *out, const void *data)
 	int c;
 
 	fdef = data;
-	fmt = GetFormat(fdef->epc_label);
+	fmt = GetFormat(fdef->desc ? fdef->desc : fdef->epc_label);
 	desc = langfilter(io_cstr(fmt), NULL);
 
 	io_puts(fdef->epc_name, out);
@@ -82,6 +82,19 @@ static void add_info (EfiParClass *entry, void *data)
 static void load_info (InfoNode *info)
 {
 	EfiParWalk(NULL, &EfiPar_EfiCount, add_info, info);
+}
+
+void SetupEfiCount (void)
+{
+	static int init_done = 0;
+	InfoNode *info;
+
+	if	(init_done)	return;
+
+	init_done = 1;
+	AddEfiPar(NULL, &EfiCount_record);
+	info = GetInfo(NULL, NULL);
+	EfiCountInfo(info);
 }
 
 void EfiCountInfo (InfoNode *info)

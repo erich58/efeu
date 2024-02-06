@@ -36,5 +36,6 @@ static void rec_create (MdCountPar *par, EfiCount *def, EfiObj *obj,
 EfiCount EfiCount_record = EFI_COUNT(NULL,
 	"record", NULL, rec_create, NULL,
 	":*:count records"
-	":de:Datensätze zählen"
+	":de:Datensätze zählen",
+	NULL
 );
