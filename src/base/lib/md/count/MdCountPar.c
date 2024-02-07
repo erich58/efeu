@@ -50,7 +50,7 @@ static void rt_clean (void *ptr)
 
 static RefType reftype = REFTYPE_INIT("MdCountPar", rt_ident, rt_clean);
 
-static int rec_count (MdCountPar *par, TimeRange *range)
+static int std_count (MdCountPar *par, TimeRange *range)
 {
 	MdCountPar_event(par, range ? range->dat : 0, 1.);
 	return 1;
@@ -82,7 +82,7 @@ MdCountPar* MdCountPar_create (void)
 	par->md = NULL;
 	par->edb = NULL;
 	par->obj = NULL;
-	par->count = rec_count;
+	par->count = std_count;
 	par->recnum = 0;
 	par->event = 0;
 	par->weight = 1;
