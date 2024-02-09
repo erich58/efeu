@@ -14,9 +14,11 @@ sind zwar vollständig angeführt, aber nur zum Teil beschrieben.
 	Erich Frühstück\br
 	Wördern, \thedate
 \toc
+
 \addsrclist
-\delsrc		main.doc
+\delsrc		main.doc *.tst.?
 \getsrc		*.doc
+
 \appendix
 \mchap[3]	Funktionen
 \src2doc	*.c

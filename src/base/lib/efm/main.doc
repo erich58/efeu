@@ -22,6 +22,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 \include intro.doc
 
+\delsrc		*.tst.?
 \mchap[3]	Funktionen
 \src2doc	*.c
 \mchap[7]	Makropakete und Konventionen

@@ -18,6 +18,7 @@ geschrieben werden.
 \toc
 \addsrclist
 \delsrc		main.doc
+\delsrc		*.tst.?
 \getsrc		*.doc
 \appendix
 \mchap[3]	Funktionen

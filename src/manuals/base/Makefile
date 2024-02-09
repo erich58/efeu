@@ -12,8 +12,8 @@ DOCLIST= efm iorl md
 
 SDIRS = $(patsubst %,$(SRC)/base/lib/%,$(MANLIST))
 VPATH = $(shell find $(SDIRS) -depth -type d)
-SRC_C = $(shell find $(SDIRS) -type f -name '*.c')
-SRC_H = $(shell find $(SDIRS) -type f -name '*.h')
+SRC_C = $(shell find $(SDIRS) -type f -name '*.c' ! -name '*.tst.c')
+SRC_H = $(shell find $(SDIRS) -type f -name '*.h' ! -name '*.tst.h')
 
 FILES = $(patsubst %.c,$(MAN)/de/man3/%.3.gz,$(notdir $(SRC_C))) 
 FILES += $(patsubst %.h,$(MAN)/de/man7/%.7.gz,$(notdir $(SRC_H)))
