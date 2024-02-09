@@ -25,8 +25,6 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/parsearg.h>
 #include <EFEU/EfiCount.h>
 
-#define	ERR_METHOD	"$!: $1: Unbekannte Auswertungsdefinition \"$2\".\n"
-
 static void list (IO *io, EfiType *type, const char *pfx)
 {
 	EfiStruct *st;
@@ -42,6 +40,7 @@ static void list (IO *io, EfiType *type, const char *pfx)
 	}
 }
 
+#if	0
 static void list_member (IO *io, EfiType *type, const char *pfx)
 {
 	EfiStruct *st;
@@ -58,10 +57,6 @@ static void list_member (IO *io, EfiType *type, const char *pfx)
 
 static EfiObj *cnt_obj (EfiObj *base, const char *name)
 {
-	/*
-	char *p;
-	*/
-
 	if	(*name == 0 || *name == '?')
 	{
 		list_member(ioerr, base->type, NULL);
@@ -71,7 +66,7 @@ static EfiObj *cnt_obj (EfiObj *base, const char *name)
 	base = RefObj(base);
 
 #if	0
-	p = strchr(name, '.');
+	char *p = strchr(name, '.');
 
 	if	(p)
 	{
@@ -94,40 +89,41 @@ static EfiObj *cnt_obj (EfiObj *base, const char *name)
 	return base;
 }
 
+#endif
+
 void MdCountPar_init (MdCountPar *par, EfiObj *obj, const char *method)
 {
 	AssignArg *xarg;
 	EfiCount *cdef;
-	EfiType *type;
 	EfiObj *cobj;
 	char *p;
 
-	type = obj->type;
 	xarg = assignarg(method, NULL, NULL);
 	par->obj = RefObj(obj);
 
 	if	(!xarg || !xarg->name[0] || xarg->name[0] == '?')
 	{
-		list(iostd, type, NULL);
+		list(iostd, obj->type, NULL);
 		exit(EXIT_SUCCESS);
 	}
 
 	cobj = RefObj(obj);
 	method = xarg->name;
 
+#if	0
 	while ((p = strchr(method, '.')))
 	{
 		*p = 0;
 		cobj = cnt_obj(cobj, method);
 		method = p + 1;
 	}
+#endif
 
-	fprintf(stderr, "method=%s\n", method);
-	type = cobj->type;
+	EfiType *type = cobj->type;
 	cdef = SearchEfiPar(type, &EfiPar_EfiCount, method);
 
 	if	(!cdef)
-		log_error(NULL, ERR_METHOD, "ms", Type2str(type), method);
+		log_error(md_err, "[mdmat:306]", "ms", Type2str(type), method);
 
 /*	Klassen und Zähltypen initialisieren
 */

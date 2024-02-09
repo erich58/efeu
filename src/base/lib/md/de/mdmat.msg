@@ -97,3 +97,4 @@ Achsenindizes sind nicht kompatibel.\n
 303	$!: Datenmatrix nicht für Auszählungen vorbereitet.\n
 304	$!: Abweichender Datentyp für zusätzliche Klassifikationenen.\n
 305	$!: Datumsbereich $0: Unerwartetes Zeichen $1.\n
+306	$!: $1: Unbekannte Auswertungsdefinition "$2".\n

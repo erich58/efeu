@@ -65,7 +65,7 @@ int md_count (mdmat *ctab, const void *data)
 			flag |= s->flag;
 		}
 
-		if	(!flag)	return;
+		if	(!flag)	return 0;
 	}
 
 /*	Addition durchführen
