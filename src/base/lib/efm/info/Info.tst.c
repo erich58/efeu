@@ -130,16 +130,16 @@ TEST_DECL(Default)
 	EXPECT_OUT("/a/b");
 	EXPECT_MSTR(rd_ident(info), "/a/b");
 
-	TEST_EXPR(DumpInfo(OUT(), NULL, 0));
+	TEST_EXPR(DumpInfo(OUT(), NULL, NULL, 0));
 	EXPECT_OUT("@:\n@a| --info=dump:/a\n");
 
-	TEST_EXPR(DumpInfo(OUT(), NULL, 1));
+	TEST_EXPR(DumpInfo(OUT(), NULL, NULL, 1));
 	EXPECT_OUT("@:\n@a:\n@a/b: Label\nDescription\n");
 
-	TEST_EXPR(DumpInfo(OUT(), "/a", 1));
+	TEST_EXPR(DumpInfo(OUT(), NULL, "/a", 1));
 	EXPECT_OUT("@:\n@b: Label\nDescription\n");
 
-	TEST_EXPR(DumpInfo(OUT(), "/a/b", 1));
+	TEST_EXPR(DumpInfo(OUT(), NULL, "/a/b", 1));
 	EXPECT_OUT("@: Label\nDescription\n");
 
 	IO *save = iostd;
@@ -175,7 +175,7 @@ TEST_DECL(Default)
 
 	TEST_EXPR(info = AddInfo(NULL, "x/z\n\t\f\by-<|:>\\z",
 		"L<$$x>|\n", NULL, NULL));
-	TEST_EXPR(DumpInfo(OUT(), "/x", 1));
+	TEST_EXPR(DumpInfo(OUT(), NULL, "/x", 1));
 	EXPECT_OUT("@:\n@z\\n\\t\\f\\by-\\<\\|\\:>\\\\\\\\z: "
 		"L\\<$$$x>\\|\\\n\n");
 	PRINT_OUT();

@@ -1,7 +1,6 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/mdcount.h>
 #include <EFEU/locale.h>
-//#include <EFEU/EfiCount.h>
 #include "utest/out.tst.h"
 
 TEST_DECL(setup)
@@ -10,9 +9,18 @@ TEST_DECL(setup)
 	SetLocale(LOC_DATE, "C");
 	SetApplPath(UnitTest_tmp(NULL));
 	SetupStd();
-//	SetupEfiCount();
 	TEST_FILE("mdmat.msg",
 		"302	$!: classification table is not initialized.\n"
+	);
+}
+
+TEST_DECL(uninitialized)
+{
+	UnitTest_stderr("stderr");
+	MdClass_add(NULL, NULL, 0);
+	UnitTest_stderr(NULL);
+	EXPECT_CONTENT("stderr",
+		"MSG ID: classification table is not initialized.\n"
 	);
 }
 
@@ -38,14 +46,11 @@ static MdClass test_class_table[] = {
 TEST_SUITE
 {
 	TEST_RUN(setup);
-	UnitTest_stderr("stderr");
-	MdClass_add(NULL, NULL, 0);
-	UnitTest_stderr(NULL);
-	EXPECT_CONTENT("stderr",
-		"MSG ID: classification table is not initialized.\n"
-	);
+	TEST_RUN(uninizialized);
 
 	MdCountPar *par = MdCountPar_create();
+	EXPECT_UINT(par->ctab.used, 0);
+
 	AddMdClass(par, &test_class);
 	EXPECT_UINT(par->ctab.used, 1);
 	MdClass_add(par, test_class_table, 2);
@@ -100,7 +105,7 @@ TEST_SUITE
 	);
 
 	MdClassInfo(NULL, par);
-	DumpInfo(OUT(), "class", 0);
+	DumpInfo(OUT(), NULL, "class", 0);
 	EXPECT_OUT(
 		"@: Selektionsklassen\n"
 		"@t1|ID --info=dump:/class/t1\n"
@@ -118,4 +123,3 @@ TEST_SUITE
 
 	CLEANUP_OUT;
 }
-

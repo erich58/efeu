@@ -69,7 +69,7 @@ InfoNode *AddInfo (InfoNode *base, const char *name,
 
 int InfoName (IO *io, InfoNode *base, InfoNode *info);
 void PrintInfo (IO *io, InfoNode *node);
-void DumpInfo (IO *io, const char *name, int flag);
+void DumpInfo (IO *io, InfoNode *base, const char *name, int flag);
 void BrowseInfo (const char *name);
 
 extern void (*InfoBrowser) (const char *name);

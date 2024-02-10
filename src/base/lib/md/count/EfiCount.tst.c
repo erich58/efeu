@@ -13,7 +13,7 @@ TEST_SUITE
 {
 	SetupEfiCount();
 	AddEfiPar(NULL, &test_count);
-	DumpInfo(OUT(), "count", 0);
+	DumpInfo(OUT(), NULL, "count", 0);
 	EXPECT_OUT(
 		"@: data count method\n"
 		"@record| --info=dump:/count/record\n"

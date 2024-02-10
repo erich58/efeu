@@ -167,9 +167,9 @@ static void dump_info (IO *io, InfoNode *base, InfoNode *info, int flag)
 }
 
 
-void DumpInfo (IO *io, const char *name, int flag)
+void DumpInfo (IO *io, InfoNode *base, const char *name, int flag)
 {
-	InfoNode *info = GetInfo(NULL, name);
+	InfoNode *info = GetInfo(base, name);
 
 	if	(info)
 	{

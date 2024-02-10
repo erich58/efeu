@@ -71,12 +71,12 @@ static void mdef_print (const char *name)
 
 static void mdef_dump (const char *name)
 {
-	DumpInfo(iostd, name, 0);
+	DumpInfo(iostd, NULL, name, 0);
 }
 
 static void mdef_xdump (const char *name)
 {
-	DumpInfo(iostd, name, 1);
+	DumpInfo(iostd, NULL, name, 1);
 }
 
 static void mdef_std (const char *name)
