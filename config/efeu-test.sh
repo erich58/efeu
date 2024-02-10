@@ -44,13 +44,13 @@ out="test.out"
 gcov="gcov"
 base=""
 build=".build"
-not_run="true"
+not_run="1"
 
 while getopts "qro:b:" opt
 do
 	case $opt in
 	q)	gcov="gcov -n"; out="/dev/null";;
-	r)	not_run="";;
+	r)	not_run="0";;
 	o)	out=$OPTARG;;
 	b)	build=$OPTARG;;
 	\?)	usage -?; exit 1;;
@@ -186,7 +186,7 @@ NF == 0 { src = "~TOTAL"; }
 /^Lines/ { printf("%s\t%s\n", src, substr($0, index($a, ":") + 1)); }
 ' | sed -e '/.tst.[ch]	/d' > gcov.tmp
 
-if [ $not_run ]; then
+if [ $not_run -eq 1 ]; then
 	find $dir -name '*.c' ! -name '*.tst.c' | while read path
 	do
 		name=`basename $path .c`
@@ -197,11 +197,15 @@ fi
 
 find . -maxdepth 1 -name '*.[ch].gcov' -exec mv -f '{}' $build \;
 
-sort gcov.tmp | awk '
+sort gcov.tmp | awk -v not_run=$not_run '
 $2 ~ /not/ { printf("%-23s\t%s %s\n", $1, $2, $3); next; }
 {
 	k = 0.01 * $2 * $4;
-	printf("%-23s\t%.0f\t%.0f\t%s\n", $1, k, $4, $2); next;
+
+	if	(k > 0. || not_run == 1)
+		printf("%-23s\t%.0f\t%.0f\t%s\n", $1, k, $4, $2);
+
+	next;
 }
 ' | tee gcov.out | awk -v verbose=$verbose '
 BEGIN { run = 0; c = 0.; n = 0; k = 0; unused = 0; other = 0; }
