@@ -17,6 +17,9 @@ esac
 # q |
 #	:*:do not show details
 #	:de:Keine Detaildaten ausgeben
+# r |
+#	:*:do not show files not running
+#	:*:Ungenutzte Dateien nicht ausgeben
 # o:out |
 #	:*:output file for detail data
 #	:de:Ausgabefile für Detaildaten
@@ -41,11 +44,13 @@ out="test.out"
 gcov="gcov"
 base=""
 build=".build"
+not_run="true"
 
-while getopts "qo:b:" opt
+while getopts "qro:b:" opt
 do
 	case $opt in
 	q)	gcov="gcov -n"; out="/dev/null";;
+	r)	not_run="";;
 	o)	out=$OPTARG;;
 	b)	build=$OPTARG;;
 	\?)	usage -?; exit 1;;
@@ -117,7 +122,7 @@ tlist=`find_tst $src ./$build | sort -u`
 # cleanup coverage data
 
 find $build -name '*.gcda' -exec rm '{}' \;
-find $build -name '*.gcov' -exec rm '{}' \;
+find $build -name '*.[ch].gcov' -exec rm '{}' \;
 
 # run unit tests
 
@@ -181,12 +186,14 @@ NF == 0 { src = "~TOTAL"; }
 /^Lines/ { printf("%s\t%s\n", src, substr($0, index($a, ":") + 1)); }
 ' | sed -e '/.tst.[ch]	/d' > gcov.tmp
 
-find $dir -name '*.c' ! -name '*.tst.c' | while read path
-do
-	name=`basename $path .c`
-	[ -f $name.c.gcov ] || printf '%s\tnot run\n' $path |
-		sed -e 's|^\./||' >> gcov.tmp
-done
+if [ $not_run ]; then
+	find $dir -name '*.c' ! -name '*.tst.c' | while read path
+	do
+		name=`basename $path .c`
+		[ -f $name.c.gcov ] || printf '%s\tnot run\n' $path |
+			sed -e 's|^\./||' >> gcov.tmp
+	done
+fi
 
 find . -maxdepth 1 -name '*.[ch].gcov' -exec mv -f '{}' $build \;
 
