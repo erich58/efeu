@@ -188,7 +188,7 @@ do
 		sed -e 's|^\./||' >> gcov.tmp
 done
 
-find . -maxdepth 1 -name '*.gcov' -exec mv -f '{}' $build \;
+find . -maxdepth 1 -name '*.[ch].gcov' -exec mv -f '{}' $build \;
 
 sort gcov.tmp | awk '
 $2 ~ /not/ { printf("%-23s\t%s %s\n", $1, $2, $3); next; }
