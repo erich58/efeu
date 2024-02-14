@@ -46,7 +46,7 @@ static MdClass test_class_table[] = {
 TEST_SUITE
 {
 	TEST_RUN(setup);
-	TEST_RUN(uninizialized);
+	TEST_RUN(uninitialized);
 
 	MdCountPar *par = MdCountPar_create();
 	EXPECT_UINT(par->ctab.used, 0);

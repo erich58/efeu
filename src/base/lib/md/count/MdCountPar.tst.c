@@ -4,6 +4,7 @@
 #include <EFEU/EfiCount.h>
 #include <EFEU/locale.h>
 #include "utest/out.tst.h"
+#include "utest/mstr.tst.h"
 
 TEST_DECL(setup)
 {
@@ -82,6 +83,7 @@ TEST_DECL(simple)
 {
 	EfiObj *obj = ptr2Obj(NULL);
 	MdCountPar *par = MdCountPar_create();
+	EXPECT_MSTR(rd_ident(par), "MdCountPar[2, 0, 0]");;
 	MdCountPar_init(par, obj, "record");
 	par->md = md_ctab("Test", NULL, par, stdcount);
 	EXPECT(MdCountPar_count(par) == 1);
@@ -100,7 +102,6 @@ TEST_DECL(simple)
 	rd_deref(par);
 }
 
-#if	0
 static void (test_count_hook) (MdCountList *clist, mdmat *md)
 {
 	md_count_add(clist, md->axis, md->data);
@@ -138,17 +139,19 @@ TEST_DECL(generic)
 	EXPECT_STR(axis_info(par->axis), "Jahr[3]=2000,2001,2002");
 	EXPECT_UINT(par->axis->dim, 3);
 	MdCountPar_init(par, obj, "record");
+	PRINT_SIZE(par->vtab.used);
+	PRINT_SIZE(par->ctab.used);
 
-
-	mdmat *md = md_ctab("Test", NULL, par, stdcount);
+//	par->md = md_ctab("Test", "time=Jahr", par, stdcount);
+	par->md = md_ctab("Test", NULL, par, stdcount);
 
 	Val_int(obj->data) = 42;
-	EXPECT(md_count(md, obj->data) == 1);
+	EXPECT_INT(MdCountPar_count(par), 3);
 	Val_int(obj->data) = 11;
-	EXPECT(md_count(md, obj->data) == 1);
+	EXPECT_INT(MdCountPar_count(par), 3);
 
-	md_print(io_refer(OUT()), md, "mode=std");
-	EXPECT_NOUT(md,
+	md_print(io_refer(OUT()), par->md, "mode=std");
+	EXPECT_NOUT(par->md,
 		"##MDMAT   2.0\n"
 		"##Title   Test\n"
 		"##Type    int\n"
@@ -156,20 +159,20 @@ TEST_DECL(generic)
 		"##Rows    \n"
 		"##Columns \n"
 		"1 .\n"
-		". 2\n"
+		". 6\n"
 	);
-	rd_deref(md);
+	rd_deref(par);
 	md_count_hook = NULL;
 }
-#endif
 
 TEST_SUITE
 {
 	TEST_RUN(setup);
 	TEST_RUN(undefined_method);
 	TEST_RUN(simple);
-//	TEST_RUN(generic);
 	TEST_RUN(list_method);
 	TEST_RUN(info_method);
+	TEST_RUN(generic);
 	CLEANUP_OUT;
+	CLEANUP_MSTR;
 }
