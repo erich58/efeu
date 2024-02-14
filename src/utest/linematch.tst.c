@@ -124,10 +124,23 @@ TEST_DECL(bad)
 	CHILD_EXIT(1);
 }
 
+TEST_DECL(content)
+{
+	TEST_FILE("data",
+		"The first line.\n"
+		"The second line.\n"
+		"The last line.\n"
+	);
+	LMATCH_CONTENT("data",
+		"second\n"
+	);
+}
+
 TEST_SUITE
 {
 	TEST_RUN(special);
 	TEST_RUN(lmatch);
 	TEST_RUN(def_pat);
 	TEST_RUN(bad);
+	TEST_RUN(content);
 }

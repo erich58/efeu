@@ -219,6 +219,10 @@ UnitTest_strcheck(__FILE__, __LINE__, "==", \
 UnitTest_strcheck(__FILE__, __LINE__, "~", \
 	UnitTest_content(name), cont, "content(" # name ")", # cont)
 
+#define	LMATCH_CONTENT(name, cont)	\
+UnitTest_linematch(__FILE__, __LINE__, \
+	UnitTest_content(name), cont, "content(" # name ")")
+
 #define PRINT_CONTENT(name)	\
 UnitTest_strinfo(__FILE__, __LINE__, "INFO", \
 	UnitTest_content(name), "content(" # name ")")
