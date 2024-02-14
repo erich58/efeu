@@ -89,22 +89,22 @@ static int real_stdin = 0;
 static int real_stdout = 1;
 static int real_stderr = 2;
 
-static const char *qualified_name(const char *name_)
+static const char *qualified_name(const char *name)
 {
-	if	(!name_)
+	if	(!name)
 		return NULL;
 
-	switch (*name_)
+	switch (*name)
 	{
 	case 0:
 		return "/dev/null";
 	case '/':
-		return name_;
+		return name;
 	case '.':
-		if	(name_[1] == 0 || name_[1] == '/')
-			return name_;
-		if	(name_[1] == '.' && (name_[2] == 0 || name_[2] == '/'))
-			return name_;
+		if	(name[1] == 0 || name[1] == '/')
+			return name;
+		if	(name[1] == '.' && (name[2] == 0 || name[2] == '/'))
+			return name;
 			
 		break;
 	}
@@ -716,22 +716,22 @@ int UnitTest_dcmp(double a, double b)
 	return a == 0.;
 }
 
-char **UnitTest_mkarg(const char *file_, int line_, const char *name_,
-	size_t dim_, const char *data_, int delim_)
+char **UnitTest_mkarg(const char *file, int line, const char *name,
+	size_t dim, const char *data, int delim_)
 {
-	if	(!name_)	name_ = "argv";
-	if	(!data_)	data_ = "";
+	if	(!name)	name = "argv";
+	if	(!data)	data = "";
 
-	size_t slen = strlen(data_) + 1;
-	char **v = malloc((dim_ + 1) * sizeof v[0] + slen);
+	size_t slen = strlen(data) + 1;
+	char **v = malloc((dim + 1) * sizeof v[0] + slen);
 
 	if	(!v)
-		UnitTest_assert(UnitTest_result(file_, line_,
+		UnitTest_assert(UnitTest_result(file, line,
 			0, "UnitTest_mkarg()"));
 
-	char *p = memcpy(v + dim_ + 1, data_, slen);
+	char *p = memcpy(v + dim + 1, data, slen);
 
-	for (size_t i = 0; i < dim_; ++i)
+	for (size_t i = 0; i < dim; ++i)
 	{
 		for (v[i] = p; *p; ++p)
 		{
@@ -743,12 +743,107 @@ char **UnitTest_mkarg(const char *file_, int line_, const char *name_,
 		}
 	}
 
-	v[dim_] = NULL;
-	UnitTest_info(file_, line_, "*GOOD", "%s[%zd + 1] = {", name_, dim_);
+	v[dim] = NULL;
+	UnitTest_info(file, line, "*GOOD", "%s[%zd + 1] = {", name, dim);
 
-	for (size_t i = 0; i <= dim_; ++i)
-		UnitTest_info(file_, line_, "+", "\t%s,", UnitTest_qstr(v[i]));
+	for (size_t i = 0; i <= dim; ++i)
+		UnitTest_info(file, line, "+", "\t%s,", UnitTest_qstr(v[i]));
 
-	UnitTest_info(file_, line_, "+", "}");
+	UnitTest_info(file, line, "+", "}");
 	return v;
+}
+
+void UnitTest_cmdexec(const char *file, int line,
+	const char *cmd, const char *args)
+{
+	if	(!cmd || !args)
+	{
+		UnitTest_info(file, line, "#ERROR",
+			"cmdexec: %s", "incomplete command specification");
+		exit(1);
+	}
+
+	STRING_DECL(buf);
+	size_t n = 0;
+	int quote = 0;
+	const char *tmp = UnitTest_tmp(NULL);
+
+	while 	(*args == ' ' || *args == '\t')
+		++args;
+
+	while (*args != 0)
+	{
+		if	(*args == '\'')
+		{
+			quote = !quote;
+		}
+		else if	(*args == '\\')
+		{
+			args++;
+
+			if	(*args == 0)
+				break;
+
+			UnitTest_putc(*args, &buf);
+		}
+		else if	(*args == '@')
+		{
+			UnitTest_puts(tmp, &buf);
+		}
+		else if	(quote == 0 && (*args == ' ' || *args == '\t'))
+		{
+			UnitTest_putc(0, &buf);
+
+			while 	(args[1] == ' ' || args[1] == '\t')
+				++args;
+
+			n++;
+		}
+		else
+		{
+			UnitTest_putc(*args, &buf);
+		}
+
+		++args;
+	}
+
+	UnitTest_putc(0, &buf);
+	n++;
+
+	char **v = malloc((n + 1) * sizeof v[0]);
+
+	if	(!v)
+	{
+		UnitTest_info(file, line, "#ERROR",
+			"cmdexec: %s", "malloc failed");
+		exit(1);
+	}
+
+	size_t p = 0;
+
+	for (size_t i = 0; i < n; ++i)
+	{
+		v[i] = buf.data + p;
+
+		while (p < buf.size)
+		{
+			if	(buf.data[p++] == 0)
+				break;
+		}
+	}
+
+	v[n] = NULL;
+
+	UnitTest_info(file, line, "INFO", "exec(%s, ", UnitTest_qstr(cmd));
+
+	for (size_t i = 0; i < n; ++i)
+		UnitTest_info(file, line, "+", "\t%s,", UnitTest_qstr(v[i]));
+
+	UnitTest_info(file, line, "+", "\tNULL)");
+
+	execv(cmd, v);
+	UnitTest_info(file, line, "#ERROR", "%s: %s", cmd, strerror(errno));
+	UnitTest_free(&buf);
+	free(v);
+	exit(1);
 }

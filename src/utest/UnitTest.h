@@ -112,6 +112,8 @@ void UnitTest_exec(const char *file, int line,
 	void (*test)(void), const char *name);
 void UnitTest_run(const char *file, int line,
 	void (*test)(void), const char *name);
+void UnitTest_cmdexec(const char *file, int line,
+	const char *cmd, const char *args);
 void UnitTest_exit(void);
 int UnitTest_wait(void);
 int UnitTest_childstat(const char *file, int line, int stat);
@@ -127,6 +129,9 @@ void runUnitTest(int UnitTest_argc, char **UnitTest_argv)
 
 #define	TEST_EXEC(name)		\
 UnitTest_exec(__FILE__, __LINE__, _test_ ## name, # name)
+
+#define	CMD_EXEC(name, args)		\
+UnitTest_cmdexec(__FILE__, __LINE__, name, args)
 
 #define TEST_RUN(name)	\
 UnitTest_run(__FILE__, __LINE__, _test_ ## name, # name)
