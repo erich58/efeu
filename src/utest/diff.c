@@ -16,17 +16,18 @@ int UnitTest_diff(const char *file, int line,
 	if	(!x1 || *x1 == '"')
 		x1 = "[expr]";
 
-	STRING_DECL(buf);
 	const char *p;
 
 	if	(r)
 	{
+		STRING_DECL(buf);
 		p = UnitTest_qsplit(&buf, s1);
 		UnitTest_result(file, line, r, "%s == %s", x1, p);
 
 		while ((p = UnitTest_next(&buf)))
 			UnitTest_info(file, line, "+", "\t%s", p);
 
+		UnitTest_free(&buf);
 		return r;
 	}
 
@@ -48,6 +49,7 @@ int UnitTest_diff(const char *file, int line,
 	UnitTest_mkfile(".diff", NULL);
 	UnitTest_result(file, line, 0, x1);
 
+	STRING_DECL(buf);
 	STRING_DECL(lbuf);
 	UnitTest_lsplit(&buf, s1);
 	UnitTest_next(&buf);
@@ -88,5 +90,7 @@ int UnitTest_diff(const char *file, int line,
 		UnitTest_info(NULL, 0, pfx, "%s", p);
 	}
 
+	UnitTest_free(&buf);
+	UnitTest_free(&lbuf);
 	return 0;
 }
