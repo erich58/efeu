@@ -2,5 +2,5 @@
 
 TOP=../../../..
 include $(TOP)/Setup.mak
-include $(CFG)/Scripts.mak
 include $(CFG)/SimplePrograms.mak
+include $(CFG)/Scripts.mak
