@@ -44,17 +44,6 @@ char *Output = NULL;	/* Ausgabefile */
 int maxrec = 0;		/* Maximale Ausgabezahl */
 int maxerr = 0;		/* Maximale Fehlerzahl */
 
-#define	CMP_EQ	1	/* Gleiche Daten */
-#define	CMP_NE	2	/* Verschiedene Daten */
-#define	CMP_LT	3	/* Vorangehende Daten */
-#define	CMP_GT	4	/* Nachfolgende Daten */
-
-#if	0
-static EfiType *dbtype = NULL;
-static CmpDef *dbcmp = NULL;
-static StrBuf *datbuf[2];
-#endif
-
 typedef struct {
 	const char *name;
 	EDB *edb;
@@ -77,8 +66,6 @@ static int cmp_buf (StrBuf *a, StrBuf *b)
 
 /*	Darstellungsfunktionen
 */
-
-typedef void (*DFunc) (IO *aus, DATA *a, DATA *b, const char *fmt);
 
 static void put_head (IO *aus, DATA *d, const char *mark, const char *fmt)
 {
@@ -109,20 +96,40 @@ static void put_std (IO *aus, DATA *d, const char *mark, const char *fmt)
 	put_mark(aus, d, NULL);
 }
 
+static void dh_std (IO *aus, const char *f1, const char *f2)
+{
+	io_xprintf(aus, "*** %s\n", f1);
+	io_xprintf(aus, "--- %s\n", f2);
+}
+
+static void dh_diff (IO *aus, const char *f1, const char *f2)
+{
+	io_xprintf(aus, "--- %s\n", f1);
+	io_xprintf(aus, "+++ %s\n", f2);
+}
+
 static void df_std (IO *aus, DATA *a, DATA *b, const char *fmt)
 {
-	if	(a && b)
+	if	(fmt)
 	{
-		put_std(aus, a, "***", fmt ? fmt : (a->pos ? "%d" : "EOF"));
-		put_std(aus, b, "---", fmt ? fmt : (b->pos ? "%d" : "EOF"));
+		if	(a && a->buf.pos)
+			put_std(aus, a, "***", fmt);
+
+		if	(b && b->buf.pos)
+			put_std(aus, b, "---", fmt);
+	}
+	else if	(a && b)
+	{
+		put_std(aus, a, "***", a->pos ? "%d" : "EOF");
+		put_std(aus, b, "---", b->pos ? "%d" : "EOF");
 	}
 	else if	(a)
 	{
-		put_std(aus, a, "***", fmt ? fmt : "-%d");
+		put_std(aus, a, "***", "-%d");
 	}
 	else if	(b)
 	{
-		put_std(aus, b, "---", fmt ? fmt : "+%d");
+		put_std(aus, b, "---", "+%d");
 	}
 }
 
@@ -130,61 +137,69 @@ static void buf_write (const char *name, StrBuf *buf)
 {
 	IO *io = io_fileopen(name, "w");
 	io_write(io, buf->data, buf->pos);
+
+	if	(buf->pos && buf->data[buf->pos - 1] != '\n')
+		io_putc('\n', io);
+
 	io_close(io);
 }
 
-static void df_diff (IO *aus, DATA *a, DATA *b, const char *fmt)
+static void df_diff (IO *aus, DATA *a, DATA *b, const char *hdr)
 {
-	if	(a && b)
-	{
-		char *tmp1, *tmp2;
-		char *cmd;
-		IO *io;
-		int n, c;
-		int last;
+	char *tmp1, *tmp2;
+	char *cmd;
+	IO *io;
+	int n, c;
 
-		tmp1 = newtemp(NULL, NULL);
-		tmp2 = newtemp(NULL, NULL);
+	tmp1 = newtemp(NULL, NULL);
+	tmp2 = newtemp(NULL, NULL);
 
-		put_head(aus, a, "***", fmt ? fmt : (a->pos ? "%d" : "EOF"));
-		put_head(aus, b, "---", fmt ? fmt : (b->pos ? "%d" : "EOF"));
+	if	(a)
 		buf_write(tmp1, &a->buf);
+
+	if	(b)
 		buf_write(tmp2, &b->buf);
-		cmd = msprintf("diff -c1 %s %s", tmp1, tmp2);
-		io = io_popen(cmd, "r");
-		memfree(cmd);
 
-		for (n = 0; n < 3 && (c = io_getc(io)) != EOF; )
-			if (c == '\n') n++;
+	io_printf(aus, "@@");
 
-		last = '\n';
-
-		for (last = '\n'; (c = io_getc(io)) != EOF; last = c)
+	if	(hdr)
+	{
+		io_putc(' ', aus);
+		io_puts(hdr, aus);
+	}
+	else
+	{
+		if	(a)
 		{
-			if	(last == '\n')
-				io_puts("# ", aus);
-
-			io_putc(c, aus);
+			if	(a->pos)
+				io_printf(aus, " -%d", a->pos);
+			else
+				io_puts(" -EOF", aus);
 		}
 
-		if	(last != '\n')
-			io_putc('\n', aus);
+		if	(b)
+		{
+			if	(b->pos)
+				io_printf(aus, " +%d", b->pos);
+			else
+				io_puts(" +EOF", aus);
+		}
+	}
 
-		io_close(io);
-		deltemp(tmp1);
-		deltemp(tmp2);
+	io_printf(aus, " @@\n");
+	cmd = msprintf("diff -U-1 %s %s", tmp1, tmp2);
+	io = io_popen(cmd, "r");
+	memfree(cmd);
 
-	}
-	else if	(a)
-	{
-		put_head(aus, a, "***", fmt ? fmt : "-%d");
-		put_mark(aus, a, "# < ");
-	}
-	else if	(b)
-	{
-		put_head(aus, b, "---", fmt ? fmt : "+%d");
-		put_mark(aus, b, "# > ");
-	}
+	for (n = 0; n < 3 && (c = io_getc(io)) != EOF; )
+		if (c == '\n') n++;
+
+	while ((c = io_getc(io)) != EOF)
+		io_putc(c, aus);
+
+	io_close(io);
+	deltemp(tmp1);
+	deltemp(tmp2);
 }
 
 static void df_mark (IO *aus, DATA *a, DATA *b, const char *fmt)
@@ -215,14 +230,19 @@ static void df_mark (IO *aus, DATA *a, DATA *b, const char *fmt)
 	if	(b)	put_mark(aus, b, "> ");
 }
 
-static struct {
+typedef void (*DFunc) (IO *aus, DATA *a, DATA *b, const char *fmt);
+
+typedef struct {
 	char *name;
 	char *desc;
 	DFunc df;
-} DiffTab[] = {
-	{ "std", "Standardausgabe der Unterschiede", df_std },
-	{ "mark", "Markierung der Unterschiede", df_mark },
-	{ "diff", "Unterschiede mit diff darstellen", df_diff },
+	void (*header)(IO *out, const char *f1, const char *f2);
+} DiffMode;
+
+static DiffMode DiffTab[] = {
+	{ "std", "Standardausgabe der Unterschiede", df_std, dh_std },
+	{ "mark", "Markierung der Unterschiede", df_mark, NULL },
+	{ "diff", "Unterschiede mit diff darstellen", df_diff, dh_diff },
 };
 
 static void list_df (IO *io)
@@ -233,7 +253,7 @@ static void list_df (IO *io)
 		io_xprintf(io, "%s\t%s\n", DiffTab[i].name, DiffTab[i].desc);
 }
 
-static DFunc get_df (const char *name)
+static DiffMode *get_df (const char *name)
 {
 	int i;
 
@@ -241,12 +261,12 @@ static DFunc get_df (const char *name)
 	{
 		if	(mstrcmp(DiffTab[i].name, name) == 0)
 		{
-			return DiffTab[i].df;
+			return DiffTab + i;
 		}
 	}
 
 	log_error(NULL, "[2]", "s", name);
-	return NULL;
+	return NULL; /* Not reached */
 }
 
 static void data_open (DATA *data, const char *name, const char *filter)
@@ -268,7 +288,7 @@ static void data_close (DATA *data)
 static void data_str (DATA *data, const char *str)
 {
 	sb_trunc(&data->buf);
-	sb_puts(data->edb->head, &data->buf);
+	sb_puts(str, &data->buf);
 }
 
 static void data_type (DATA *data)
@@ -298,7 +318,7 @@ int main (int narg, char **arg)
 	DATA dbuf[2], *d1, *d2;
 	char *p;
 	IO *aus;
-	DFunc df;
+	DiffMode *df;
 	CmpDef *cmp;
 	int c;
 	int nd, ne;
@@ -338,33 +358,33 @@ int main (int narg, char **arg)
 	data_open(d2, STR("DB2"), STR("Filter2"));
 	aus = io_fileopen(Output, "wz");
 
-	io_xprintf(aus, "*** %s\n", d1->name);
-	io_xprintf(aus, "--- %s\n", d2->name);
+	if	(df->header)
+		df->header(aus, d1->name, d2->name);
 
 	if	(cmp_buf(&d1->buf, &d2->buf))
 	{
-		df(aus, d1, d2, "header");
-	}
-
-	if	(mstrcmp(d1->edb->head, d2->edb->head) != 0)
-	{
-		data_str(d1, d1->edb->head);
-		data_str(d2, d2->edb->head);
-		df(aus, d1, d2, "head");
+		df->df(aus, d1, d2, "header");
 	}
 
 	if	(mstrcmp(d1->edb->desc, d2->edb->desc) != 0)
 	{
 		data_str(d1, d1->edb->desc);
 		data_str(d2, d2->edb->desc);
-		df(aus, d1, d2, "desc");
+		df->df(aus, d1, d2, "desc");
+	}
+
+	if	(mstrcmp(d1->edb->head, d2->edb->head) != 0)
+	{
+		data_str(d1, d1->edb->head);
+		data_str(d2, d2->edb->head);
+		df->df(aus, d1, d2, "head");
 	}
 
 	if	(d1->edb->obj->type != d2->edb->obj->type)
 	{
 		data_type(d1);
 		data_type(d2);
-		df(aus, d1, d2, "type");
+		df->df(aus, d1, d2, "type");
 	}
 	else
 	{
@@ -386,7 +406,7 @@ int main (int narg, char **arg)
 
 			if	(!d1->pos || !d2->pos)
 			{
-				df(aus, d1, d2, NULL);
+				df->df(aus, d1, d2, NULL);
 				ne++;
 				break;
 			}
@@ -397,7 +417,7 @@ int main (int narg, char **arg)
 
 			if	(c < 0)
 			{
-				df(aus, d1, NULL, NULL);
+				df->df(aus, d1, NULL, NULL);
 				data_next(d1);
 				ne++;
 				continue;
@@ -405,7 +425,7 @@ int main (int narg, char **arg)
 
 			if	(c > 0)
 			{
-				df(aus, NULL, d2, NULL);
+				df->df(aus, NULL, d2, NULL);
 				data_next(d2);
 				ne++;
 				continue;
@@ -413,7 +433,7 @@ int main (int narg, char **arg)
 
 			if	(cmp_buf(&d1->buf, &d2->buf))
 			{
-				df(aus, d1, d2, NULL);
+				df->df(aus, d1, d2, NULL);
 				ne++;
 			}
 
