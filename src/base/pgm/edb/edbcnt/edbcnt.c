@@ -25,6 +25,34 @@ A-3423 St.Andrä/Wördern, Wildenhaggasse 38
 #include <ctype.h>
 #include <assert.h>
 
+#define	DEBUG_TYPE	0
+
+#if	DEBUG_TYPE
+static void debug_struct(int depth, EfiStruct *s)
+{
+	while (s)
+	{
+		for (int i = 0; i < depth; ++i)
+			io_putc('\t', ioerr);
+
+		io_xprintf(ioerr, "%d\t%s\t%s\n", s->offset,
+			s->type->name, s->name);
+
+		debug_struct(depth + 1, s->type->list);
+		s = s->next;
+	}
+}
+
+static void debug_type(const char *pfx, EfiType *type)
+{
+	io_printf(ioerr, "#DBG#\t%s\n", pfx);
+
+	if	(type->list)
+		debug_struct(0, type->list);
+	else	io_printf(ioerr, "%s\n", type->name);
+}
+#endif
+
 double SampleWeight = 1.;
 
 static void add_weight (MdCount *cnt, void *data, void *buf)
@@ -169,9 +197,27 @@ static EDB *make_edb (mdmat *md)
 		ptr = &(*ptr)->next;
 	}
 
-	*ptr = cvar;
+	/* Add pointer type to force size_t alignment */
+	*ptr = NewEfiStruct(&Type_ptr, NULL, 0);
+	ptr = &(*ptr)->next;
 
+	/* Create Object with axis and count data values */
+
+	*ptr = cvar;
 	obj = LvalObj(NULL, MakeStruct(NULL, NULL, rec_var));
+
+	/* remove pointer type */
+
+	for (ptr = &rec_var; *ptr; ptr = &(*ptr)->next)
+	{
+		if	((*ptr)->type == &Type_ptr)
+		{
+			*ptr = (*ptr)->next;
+			break;
+		}
+	}
+
+
 	rec_obj = LvalObj(&Lval_ptr, md->type,
 		(char *) obj->data + cvar->offset);
 	return edb_alloc(obj, mstrcpy(StrPool_get(md->sbuf, md->i_name)));
@@ -405,6 +451,16 @@ int main (int narg, char **arg)
 	cnt_counter = 0;
 	cnt_rec = 0;
 	CountPar->md = rd_refer(md);
+
+#if	DEBUG_TYPE
+	debug_type("edb", edb->obj->type);
+	debug_type("md", md->type);
+
+	if	(rec_mode)
+	{
+		debug_type("rec", rec_edb->obj->type);
+	}
+#endif
 
 	while (edb_read(edb))
 	{
