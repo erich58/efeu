@@ -23,10 +23,7 @@ A-3423 St.Andrä/Wördern, Wildenhaggasse 38
 #include <Math/func.h>
 #include <EFEU/StatData.h>
 #include <ctype.h>
-
-#define	VERSION		"1.0"
-#define	KEY_MAGIC	"EDB"
-#define	KEY_DATA	"@data"
+#include <assert.h>
 
 double SampleWeight = 1.;
 
@@ -262,7 +259,6 @@ int main (int narg, char **arg)
 	int need_init;
 	int cnt_limit;
 	int cnt_rec;
-	unsigned recnum;
 	char *oname;
 	IO *io;
 	char *p;
@@ -301,7 +297,6 @@ int main (int narg, char **arg)
 	MdCountPar_init(CountPar, edb->obj, GetResource("Method", NULL));
 
 	MdClass_add(CountPar, cltab, tabsize(cltab));
-	recnum = 0;
 	MdCntObjClass(CountPar, RefObj(edb->obj),
 		"data", mstrcpy(edb->desc));
 
@@ -314,7 +309,7 @@ int main (int narg, char **arg)
 		MdCntObj(CountPar, LvalObj(&Lval_ptr, &Type_int, &cnt_counter),
 			"count.index",
 			mlangcpy(":*:count index :de:Zählindex", NULL));
-		MdCntObj(CountPar, LvalObj(&Lval_ptr, &Type_uint, &recnum),
+		MdCntObj(CountPar, LvalObj(&Lval_ptr, &Type_uint, &cnt_rec),
 			"recnum",
 			mlangcpy(":*:record number :de:Satzindex", NULL));
 	}
@@ -324,7 +319,9 @@ int main (int narg, char **arg)
 		InfoNode *info;
 		char  *mode;
 	
-		info = AddInfo(NULL, "cdef", "Zähldefinitionen", NULL, NULL);
+		info = AddInfo(NULL, "cdef",
+			":*:count definitions:de:Zähldefinitionen",
+			NULL, NULL);
 		MdCountInfo(info, CountPar);
 		MdClassInfo(info, CountPar);
 		mode = GetResource("InfoMode", NULL);
@@ -350,8 +347,8 @@ int main (int narg, char **arg)
 		cnt_exit(edb, NULL);
 	}
 
-	if	((clist = MdCountList_get(CountPar, p)) == NULL)
-		cnt_exit(edb, "[2]");
+	clist = MdCountList_get(CountPar, p);
+	assert(clist);
 
 /*	Datenmatrix generieren
 */
