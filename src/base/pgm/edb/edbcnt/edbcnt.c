@@ -354,10 +354,10 @@ int main (int narg, char **arg)
 			mstrcpy(edb->desc));
 		MdCntObj(CountPar, LvalObj(&Lval_ptr, &Type_int, &cnt_counter),
 			"count.index",
-			mlangcpy(":*:count index :de:Zählindex", NULL));
+			mlangcpy(":*:count index:de:Zählindex", NULL));
 		MdCntObj(CountPar, LvalObj(&Lval_ptr, &Type_uint, &cnt_rec),
 			"recnum",
-			mlangcpy(":*:record number :de:Satzindex", NULL));
+			mlangcpy(":*:record number:de:Satzindex", NULL));
 	}
 
 	if	(GetFlagResource("StartInfo"))
