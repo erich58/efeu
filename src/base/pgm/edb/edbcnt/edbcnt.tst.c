@@ -100,16 +100,21 @@ TEST_DECL(record)
 	);
 
 	RUN_EDBCNT("@/a.edb -Rlabel -p2 -r2000..2002 -w2 "
-		"-c count,wcount,weight,count.index,event,recnum,data @/out");
+		"-c count,wcount,weight,count.index,event,recnum,data "
+		"x=total @/out");
 	EXPECT_FILE("out",
 		"EDB\t1.0\n"
 		"// edbcnt -e record -c count,wcount,weight,"
 			"count.index,event,recnum,data -r 2000..2002\n"
+		"// x=total\n"
 		"enum : 1 {\n"
 		"\t\"2000\" = 1,\n"
 		"\t\"2001\" = 2,\n"
 		"\t\"2002\" = 3,\n"
 		"} jahr;\n"
+		"enum : 1 {\n"
+		"\tTOTAL = 1, /* Totality */\n"
+		"} x;\n"
 		"int count;\t/* standard counter */\n"
 		"double wcount;\t/* weighted count */\n"
 		"double weight;\t/* count weight */\n"
@@ -121,16 +126,34 @@ TEST_DECL(record)
 		"\tdouble val;\n"
 		"} data;\t/* EDB Description */\n"
 		"@data label\n"
-		"#jahr;count;wcount;weight;count_index;event;recnum;data\n"
-		"\"2000\";1;2.00;2.00;0;1;0;{1, 7.50}\n"
-		"\"2001\";1;2.00;2.00;1;2;0;{1, 7.50}\n"
-		"\"2002\";1;2.00;2.00;2;3;0;{1, 7.50}\n"
-		"\"2000\";1;2.00;2.00;3;4;3;{5, 3.80}\n"
-		"\"2001\";1;2.00;2.00;4;5;3;{5, 3.80}\n"
-		"\"2002\";1;2.00;2.00;5;6;3;{5, 3.80}\n"
-		"\"2000\";1;2.00;2.00;6;7;6;{3, 4.20}\n"
-		"\"2001\";1;2.00;2.00;7;8;6;{3, 4.20}\n"
-		"\"2002\";1;2.00;2.00;8;9;6;{3, 4.20}\n"
+		"#jahr;x;count;wcount;weight;count_index;event;recnum;data\n"
+		"\"2000\";\"TOTAL\";1;2.00;2.00;0;1;1;{1, 7.50}\n"
+		"\"2001\";\"TOTAL\";1;2.00;2.00;1;2;1;{1, 7.50}\n"
+		"\"2002\";\"TOTAL\";1;2.00;2.00;2;3;1;{1, 7.50}\n"
+		"\"2000\";\"TOTAL\";1;2.00;2.00;3;4;2;{5, 3.80}\n"
+		"\"2001\";\"TOTAL\";1;2.00;2.00;4;5;2;{5, 3.80}\n"
+		"\"2002\";\"TOTAL\";1;2.00;2.00;5;6;2;{5, 3.80}\n"
+		"\"2000\";\"TOTAL\";1;2.00;2.00;6;7;3;{3, 4.20}\n"
+		"\"2001\";\"TOTAL\";1;2.00;2.00;7;8;3;{3, 4.20}\n"
+		"\"2002\";\"TOTAL\";1;2.00;2.00;8;9;3;{3, 4.20}\n"
+	);
+
+//	system(UnitTest_tpl("cp @/a.edb a.edb"));
+
+	RUN_EDBCNT("@/a.edb -p2 -r2000..2002 -w2 -c count,wcount "
+		"-n2 x=total @/a.md");
+	system(UnitTest_tpl("mdprint -x- -p2 @/a.md @/out"));
+	EXPECT_FILE("out",
+		"##MDMAT   2.0\n"
+		"##Title   edbcnt -e record -c count,wcount -r 2000..2002 x=total\n"
+		"##Type    struct { int count; double wcount }\n"
+		"##Locale  C\n"
+		"##Rows    jahr x\n"
+		"##Columns \n"
+		"2 count wcount\n"
+		"2000.TOTAL 2 4.00\n"
+		"2001.TOTAL 2 4.00\n"
+		"2002.TOTAL 2 4.00\n"
 	);
 }
 
