@@ -96,7 +96,6 @@ void MdCountPar_init (MdCountPar *par, EfiObj *obj, const char *method)
 	AssignArg *xarg;
 	EfiCount *cdef;
 	EfiObj *cobj;
-	char *p;
 
 	xarg = assignarg(method, NULL, NULL);
 	par->obj = RefObj(obj);

@@ -81,7 +81,6 @@ void MdCntObj (MdCountPar *tab, EfiObj *obj, char *pfx, char *desc)
 	key->type = obj->type->name;
 	key->desc = mstrcpy(desc);
 	key->set = NULL;
-	key->init = NULL;
 	key->f_add = get_add(obj->type);
 
 	if	(key->f_add)

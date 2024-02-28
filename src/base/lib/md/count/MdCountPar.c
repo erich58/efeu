@@ -64,7 +64,7 @@ static void add_wcount (MdCount *cnt, void *data, void *buf)
 }
 
 static MdCount ctab[] = {
-	{ "wcount", "double", "weighted count", NULL, NULL, add_wcount },
+	{ "wcount", "double", "weighted count", NULL, add_wcount },
 };
 
 MdCountPar* MdCountPar_create (void)

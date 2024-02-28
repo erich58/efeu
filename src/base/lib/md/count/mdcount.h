@@ -41,7 +41,6 @@ typedef struct MdCount MdCount;
 	const char *type; \
 	const char *desc; \
 	int (*set) (MdCount *cnt, void *buf, const void *data); \
-	void (*init) (MdCount *cnt, void *data, size_t *idx, size_t dim); \
 	void (*add) (MdCount *cnt, void *data, void *buf)
 
 struct MdCount {
@@ -186,7 +185,7 @@ mdmat *md_ctab (const char *titel, const char *def,
 mdmat *md_ioctab (const char *titel, IO *io,
 	MdCountPar *gtab, MdCount *counter);
 
-int md_ctabinit (mdmat *md, MdCountList *list);
+void md_ctabinit (mdmat *md, MdCountList *list);
 int md_count (mdmat *tab, const void *data);
 void md_showcnt (IO *io, MdCountPar *tab);
 void md_count_add (MdCountList *clist, mdaxis *x, char *ptr);

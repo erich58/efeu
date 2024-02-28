@@ -33,7 +33,6 @@ static MdCount counter = {
 	"int",
 	"standard counter",
 	NULL,
-	NULL,
 	add,
 };
 

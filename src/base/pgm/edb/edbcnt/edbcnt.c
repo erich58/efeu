@@ -74,8 +74,8 @@ static void add_event (MdCount *cnt, void *data, void *buf)
 }
 
 static MdCount vtab[] = {
-	{ "event", "unsigned", "event number", set_event, NULL, add_event },
-	{ "weight", "double", "count weight", NULL, NULL, add_weight },
+	{ "event", "unsigned", "event number", set_event, add_event },
+	{ "weight", "double", "count weight", NULL, add_weight },
 };
 
 
@@ -215,36 +215,6 @@ static void std_init (MdCountList *clist, mdmat *md)
 	CleanData(rec_obj->type, rec_obj->data, 0);
 }
 
-static char *ext_init_ptr (mdaxis *x, char *ptr)
-{
-	if	(x && x->priv)
-	{
-		MdCntGrp *s;
-
-		for (s = x->priv; s != NULL; s = s->next)
-		{
-			if	(s->flag)
-				return ext_init_ptr(x->next,
-					ptr + s->idx * x->size);
-	
-			ptr += s->cdef->dim * x->size;
-		}
-
-		return NULL;
-	}
-	else	return ptr;
-}
-
-static void ext_init (MdCountList *clist, mdmat *md)
-{
-	void *p = ext_init_ptr(md->axis, md->data);
-
-	CleanData(rec_obj->type, rec_obj->data, 0);
-
-	if	(p)
-		CopyData(rec_obj->type, rec_obj->data, p);
-}
-
 static void (*rec_init) (MdCountList *clist, mdmat *md) = std_init;
 
 static void rec_print (MdCountList *clist, mdmat *md)
@@ -289,7 +259,6 @@ int main (int narg, char **arg)
 	mdmat *md;
 	mdaxis **ptr;
 	char *rec_mode;
-	int need_init;
 	int cnt_limit;
 	int cnt_rec;
 	char *oname;
@@ -403,7 +372,7 @@ int main (int narg, char **arg)
 		ptr = &(*ptr)->next;
 
 	io_close(io);
-	need_init = md_ctabinit(md, clist);
+	md_ctabinit(md, clist);
 
 /*	Ausgabefile bestimmen
 */
@@ -416,9 +385,6 @@ int main (int narg, char **arg)
 		rec_edb = make_edb(md);
 		edb_fout(rec_edb, oname, rec_mode);
 		md_count_hook = rec_print;
-
-		if	(need_init)
-			rec_init = ext_init;
 	}
 	else
 	{

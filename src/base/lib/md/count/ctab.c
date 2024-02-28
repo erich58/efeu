@@ -33,8 +33,6 @@ typedef struct {
 	size_t *idx;
 } INIT;
 
-static void subinit (INIT *init, int depth, mdaxis *axis, char *data);
-
 static void dummy (MdCount *cnt, void *data, void *buf)
 {
 	;
@@ -98,10 +96,9 @@ static void put_type (const char *str, IO *io)
 /*	Zähltabelle initialisieren
 */
 
-int md_ctabinit (mdmat *tab, MdCountList *list)
+void md_ctabinit (mdmat *tab, MdCountList *list)
 {
 	MdCountList *cl;
-	int need_init;
 
 	if	(list == NULL)
 		list = MdCountList_create(stdcount);
@@ -111,8 +108,6 @@ int md_ctabinit (mdmat *tab, MdCountList *list)
 		log_error(NULL, "[mdmat:41]", NULL);
 		list->cnt->add = dummy;
 	}
-
-	need_init = 0;
 
 /*	Datenmatrix initialisieren
 */
@@ -125,9 +120,6 @@ int md_ctabinit (mdmat *tab, MdCountList *list)
 
 		for (cl = list; cl != NULL; cl = cl->next)
 		{
-			if	(cl->cnt->init)
-				need_init = 1;
-
 			put_type(cl->cnt->type, io);
 			io_puts(" ", io);
 			put_name(cl->cnt->name, io);
@@ -150,39 +142,11 @@ int md_ctabinit (mdmat *tab, MdCountList *list)
 	}
 	else
 	{
-		if	(list->cnt->init)
-			need_init = 1;
-
 		tab->type = mdtype(list->cnt->type);
 	}
 
 	tab->x_priv = list;
 	md_alloc(tab);
-
-	if	(need_init)
-	{
-		INIT init;
-
-		init.dim = md_dim(tab->axis);
-		init.idx = memalloc(init.dim * sizeof(size_t));
-		memset(init.idx, 0, init.dim * sizeof(size_t));
-
-		for (cl = list; cl != NULL; cl = cl->next)
-		{
-			if	(cl->cnt->init)
-			{
-				init.cnt = cl->cnt;
-				init.init = cl->cnt->init;
-				subinit(&init, 0, tab->axis,
-					(char *) tab->data + cl->offset);
-			}
-		}
-
-		memfree(init.idx);
-		return 1;
-	}
-
-	return 0;
 }
 
 
@@ -199,24 +163,4 @@ mdmat *md_ctab (const char *title, const char *def,
 	md = md_ioctab(title, io, gtab, counter);
 	io_close(io);
 	return md;
-}
-
-
-/*	Initialisierungshilfsprogramm
-*/
-
-static void subinit (INIT *init, int depth, mdaxis *axis, char *ptr)
-{
-	if	(axis != NULL)
-	{
-		int i;
-
-		for (i = 0; i < axis->dim; i++)
-		{
-			init->idx[depth] = i;
-			subinit(init, depth + 1, axis->next, ptr);
-			ptr += axis->size;
-		}
-	}
-	else	init->init(init->cnt, ptr, init->idx, init->dim);
 }
