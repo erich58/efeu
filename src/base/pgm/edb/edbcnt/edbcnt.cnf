@@ -22,7 +22,6 @@ Weight = 1.
 CountLimit = 0;
 RecordMode = NULL;
 DBName = NULL;
-Post = NULL;
 :eval MdClassPrintLimit = 0
 
 i::mode | InfoMode; StartInfo = true
@@ -71,8 +70,6 @@ d:delim | RecordDelimiter
 	setzt das Trennzeichen zwischen den einzelnen Werten auf <delim>.
 M:target | :eval 'depend(DBName); makedepend("{}"); exit(0)'
 	generiert Abhängigkeitsregeln für die angegebene Zieldatei <target>.
-P:post | Post: set "{Post}|{}"
-	erweitert die Postfilter für die Zählung.
 :in | Input
 	:*:input file name
 	:de:Name der Eingabedatei

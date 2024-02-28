@@ -92,14 +92,8 @@ static MdClass cltab[] = {
 	{ "total", "Totality", tabsize(total_tab), total_tab, total_idx },
 };
 
-static void cnt_exit (EDB *edb, char *err)
+static void cnt_exit (EDB *edb)
 {
-	if	(err)
-	{
-		log_psubarg(ErrLog, err, rd_ident(edb->ipar), "m",
-			Type2str(edb->obj->type));
-	}
-
 	rd_deref(edb);
 	exit(EXIT_SUCCESS);
 }
@@ -119,12 +113,8 @@ static char *rec_name (const char *name)
 {
 	StrBuf *sb = sb_acquire();
 
-	if	(isdigit((unsigned char) *name))
-		sb_putc('_', sb);
-
 	for (; *name; ++name)
-		sb_putc((*name == '_' || isalnum((unsigned char) *name)) ?
-			*name : '_', sb);
+		sb_putc(isalnum((unsigned char) *name) ? *name : '_', sb);
 
 	return sb_cpyrelease(sb);
 }
@@ -178,9 +168,6 @@ static EDB *make_edb (mdmat *md)
 
 		for (s = x->priv; s != NULL; s = s->next)
 		{
-			if	(s->cdef->name == NULL)
-				continue;
-
 			type = rec_type(s->cdef);
 			*xp = NewEfiStruct(type, NULL, 0);
 			(*xp)->name = rec_name(s->cdef->name);
@@ -380,7 +367,7 @@ int main (int narg, char **arg)
 	if	(GetFlagResource("ShowClass"))
 	{
 		MdShowClass(iostd, CountPar, GetResource("ClassList", NULL));
-		cnt_exit(edb, NULL);
+		cnt_exit(edb);
 	}
 
 /*	Zähler Bestimmen
@@ -390,7 +377,7 @@ int main (int narg, char **arg)
 	if	(p == NULL || *p == '?')
 	{
 		md_showcnt(iostd, CountPar);
-		cnt_exit(edb, NULL);
+		cnt_exit(edb);
 	}
 
 	clist = MdCountList_get(CountPar, p);
@@ -422,13 +409,6 @@ int main (int narg, char **arg)
 */
 	oname = GetResource("Output", NULL);
 	
-	if	((p = GetResource("Post", NULL)))
-	{
-		if	(oname && *oname == '|')
-			oname = mstrpaste(" ", p, oname);
-		else 	oname = mstrpaste(" > ", p, oname);
-	}
-
 /*	EDB-File bei RecordMode öffnen
 */
 	if	(rec_mode)
@@ -449,7 +429,7 @@ int main (int narg, char **arg)
 /*	Datenbank auszählen
 */
 	cnt_counter = 0;
-	cnt_rec = 0;
+	cnt_rec = 1;
 	CountPar->md = rd_refer(md);
 
 #if	DEBUG_TYPE
@@ -464,9 +444,10 @@ int main (int narg, char **arg)
 
 	while (edb_read(edb))
 	{
-		cnt_rec += MdCountPar_count(CountPar);
+		if	(MdCountPar_count(CountPar))
+			cnt_rec++;
 
-		if	(cnt_limit && cnt_rec >= cnt_limit)
+		if	(cnt_limit && cnt_rec > cnt_limit)
 			break;
 	}
 
