@@ -43,7 +43,7 @@ TEST_SUITE
 	DelWindow(win);
 
 	UnitTest_write(1, "\n*io_winopen\n");
-	EXPECT(io = io_winopen(CenterPos(5, 10)));
+	EXPECT_PTR(io = io_winopen(CenterPos(5, 10)));
 	EXPECT_INT(io_ctrl(io, IO_ERROR), EOF);
 	io_puts("12345", io);
 	io_close(io);
