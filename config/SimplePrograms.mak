@@ -52,6 +52,9 @@ $(BUILD)/%.tst : $(BUILD)/%.tst.o
 	@mkdir -p $(@D)
 	$(CC) -o $@ $< -lgcov $(LDFLAGS) $(TST_LDFLAGS) -lutest
 
+clean::
+	rm -rf $(BUILD)
+
 endif
 
 endif
