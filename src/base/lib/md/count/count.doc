@@ -1,8 +1,32 @@
 \chap Daten auszählen
 
-MdCounPar Parameter zum Zählen
+MdCountPar Parameter zum Zählen
 
 MdCount Zähldefinition
 MdClass Klassifikationen
 
 Kapitel in Arbeit.
+
+
+MdCountPar_count()
+	ruft count->Funktion (gesetzt von EfiCount) auf
+
+EfiCount::record
+	ruft MdCountPar_event(par, range) für jeden Zeitbereich auf.
+
+MdCountPar_event:
+	ruft md_count ohne Datenpointer auf
+
+md_count(md, data)
+	md_count_add()
+
+Klassifikationen:
+
+Achse enthält Liste mit MdCntGrp
+	classify liefert index, bei gültigen Wertebereich wird flag gesetzt.
+	Gezählt wird, wenn mindestens eine Gruppe geflagt ist.
+
+	md_count_add führt die Zählung durch, für jede geflagte Gruppe
+	wird der entsprechende Index gesetzt.
+
+Achsen werden mit md_ctabaxis konstruiert.
