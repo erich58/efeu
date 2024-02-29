@@ -3,10 +3,7 @@
 */
 
 #include <EFEU/mdmat.h>
-#include <EFEU/mdcount.h>
 #include <EFEU/stdtype.h>
-#include <EFEU/EfiCount.h>
-#include <EFEU/EfiView.h>
 
 static LogControl err_log = LOG_CONTROL("md", LOGLEVEL_ERR);
 static LogControl note_log = LOG_CONTROL("md", LOGLEVEL_NOTE);
@@ -238,5 +235,4 @@ void SetupMdMat(void)
 	AddEfiMember(Type_mdidx.vtab, var_mdidx, tabsize(var_mdidx));
 	MdSetup_func();
 	Setup_edb2md();
-	SetupEfiView();
 }
