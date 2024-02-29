@@ -1,12 +1,16 @@
 #include <EFEU/UnitTest.h>
 #include <stdlib.h>
 
-#define	EDBCNT	BUILD "/edbcnt"
+int hidden_main(int argc, char **arg);
 
-#define	RUN_EDBCNT(args)	\
+#define	EDBCNT BIN "/edbcnt"
+
+#define	RUN_EDBCNT(n, def)	\
 TEST_FORK { \
+	TEST_ARGV(main_args, n + 1, UnitTest_tpl(EDBCNT " " def)); \
 	UnitTest_reopen(1, "stdout"); \
-	CMD_EXEC(EDBCNT, "edbcnt " args); \
+	EXPECT(hidden_main(n + 1, main_args) == 0); \
+	TEST_EXIT; \
 } CHILD_EXIT(0);
 
 TEST_DECL(setup)
@@ -24,7 +28,9 @@ TEST_DECL(synopsis)
 		setenv("TERM", "dumb", 1);
 		setenv("COLUMNS", "60", 1);
 		UnitTest_reopen(2, "stderr");
-		CMD_EXEC(EDBCNT, "edbcnt");
+		char *args[] = { EDBCNT, NULL };
+		EXPECT(hidden_main(1, args) == 1);
+		TEST_EXIT;
 	}
 
 	CHILD_EXIT(1);
@@ -33,7 +39,7 @@ TEST_DECL(synopsis)
 
 TEST_DECL(info)
 {
-	RUN_EDBCNT("int: -ixdump");
+	RUN_EDBCNT(2, "int: -ixdump");
 	EXPECT_FILE("stdout",
 		"@: count definitions\n"
 		"@class: grouping classes\n"
@@ -46,7 +52,7 @@ TEST_DECL(info)
 		"double\n"
 	);
 
-	RUN_EDBCNT("int: -l*");
+	RUN_EDBCNT(2, "int: -l*");
 	EXPECT_CONTENT("stdout",
 		"total[1]\tTotality\n"
 		"\tTOTAL\tTotality\n"
@@ -55,7 +61,7 @@ TEST_DECL(info)
 
 TEST_DECL(counter)
 {
-	RUN_EDBCNT("int: -c?");
+	RUN_EDBCNT(2, "int: -c?");
 	EXPECT_CONTENT("stdout",
 		"count\tstandard counter\n"
 		"wcount\tweighted count\n"
@@ -64,7 +70,9 @@ TEST_DECL(counter)
 	TEST_FORK
 	{
 		UnitTest_reopen(2, "stderr");
-		CMD_EXEC(EDBCNT, "edbcnt int: -c unknown");
+		char *args[] = { EDBCNT, "int:", "-c", "unknown", NULL };
+		EXPECT(hidden_main(4, args) == 1);
+		TEST_EXIT;
 	}
 
 	CHILD_EXIT(1);
@@ -86,7 +94,7 @@ TEST_DECL(record)
 		"3;4.2\n"
 	);
 
-	RUN_EDBCNT("@/a.edb -Rplain -c?");
+	RUN_EDBCNT(3, "@/a.edb -Rplain -c?");
 	EXPECT_FILE("stdout",
 		"count\tstandard counter\n"
 		"count.index\tcount index\n"
@@ -99,7 +107,7 @@ TEST_DECL(record)
 		"weight\tcount weight\n"
 	);
 
-	RUN_EDBCNT("@/a.edb -Rlabel -p2 -r2000..2002 -w2 "
+	RUN_EDBCNT(9, "@/a.edb -Rlabel -p2 -r2000..2002 -w2 "
 		"-c count,wcount,weight,count.index,event,recnum,data "
 		"x=total @/out");
 	EXPECT_FILE("out",
@@ -140,7 +148,7 @@ TEST_DECL(record)
 
 //	system(UnitTest_tpl("cp @/a.edb a.edb"));
 
-	RUN_EDBCNT("@/a.edb -p2 -r2000..2002 -w2 -c count,wcount "
+	RUN_EDBCNT(9, "@/a.edb -p2 -r2000..2002 -w2 -c count,wcount "
 		"-n2 x=total @/a.md");
 	system(UnitTest_tpl("mdprint -x- -p2 @/a.md @/out"));
 	EXPECT_FILE("out",
