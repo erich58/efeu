@@ -263,6 +263,25 @@ static EfiFuncDef fdef[] = {
 	{ 0, &Type_void, "mdmat::count ()", m_count },
 };
 
+static EfiVarDef vardef[] = {
+	{ "MdClassListFormat", &Type_str, &MdClassListFormat,
+		":*:parameter for displaying count classes\n"
+		":de:Parameter zur Darstellung von Zählklassen\n" },
+	{ "MdClassPrintHead", &Type_str, &MdClassPrintHead,
+		":*:parameter for displaying count classes\n"
+		":de:Parameter zur Darstellung von Zählklassen\n" },
+	{ "MdClassPrintEntry", &Type_str, &MdClassPrintEntry,
+		":*:parameter for displaying count classes\n"
+		":de:Parameter zur Darstellung von Zählklassen\n" },
+	{ "MdClassPrintFoot", &Type_str, &MdClassPrintFoot,
+		":*:parameter for displaying count classes\n"
+		":de:Parameter zur Darstellung von Zählklassen\n" },
+	{ "MdClassPrintLimit", &Type_int, &MdClassPrintLimit,
+		":*:parameter for displaying count classes\n"
+		":de:Parameter zur Darstellung von Zählklassen\n" },
+};
+
+
 void MdSetup_count (void)
 {
 	AddType(&Type_cotab);
@@ -272,6 +291,7 @@ void MdSetup_count (void)
 	AddType(&Type_cntobj);
 	AddType(&Type_trange);
 	AddEfiMember(Type_trange.vtab, var_trange, tabsize(var_trange));
+	AddVarDef(NULL, vardef, tabsize(vardef));
 	VarTab_xadd(NULL, "stdcount", NULL, NewPtrObj(&Type_cntobj, stdcount));
 	AddFuncDef(fdef, tabsize(fdef));
 }

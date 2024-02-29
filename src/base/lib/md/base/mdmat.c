@@ -219,24 +219,6 @@ static EfiFuncDef pdef[] = {
 	{ FUNC_VIRTUAL, &Type_int, "fprint(IO, mdidx)", print_mdidx },
 };
 
-static EfiVarDef vardef[] = {
-	{ "MdClassListFormat", &Type_str, &MdClassListFormat,
-		":*:parameter for displaying count classes\n"
-		":de:Parameter zur Darstellung von Zählklassen\n" },
-	{ "MdClassPrintHead", &Type_str, &MdClassPrintHead,
-		":*:parameter for displaying count classes\n"
-		":de:Parameter zur Darstellung von Zählklassen\n" },
-	{ "MdClassPrintEntry", &Type_str, &MdClassPrintEntry,
-		":*:parameter for displaying count classes\n"
-		":de:Parameter zur Darstellung von Zählklassen\n" },
-	{ "MdClassPrintFoot", &Type_str, &MdClassPrintFoot,
-		":*:parameter for displaying count classes\n"
-		":de:Parameter zur Darstellung von Zählklassen\n" },
-	{ "MdClassPrintLimit", &Type_int, &MdClassPrintLimit,
-		":*:parameter for displaying count classes\n"
-		":de:Parameter zur Darstellung von Zählklassen\n" },
-};
-
 void SetupMdMat(void)
 {
 	static int setup_done = 0;
@@ -251,13 +233,10 @@ void SetupMdMat(void)
 	AddType(&Type_mdaxis);
 	AddType(&Type_mdidx);
 	AddFuncDef(pdef, tabsize(pdef));
-	AddVarDef(NULL, vardef, tabsize(vardef));
 	AddEfiMember(Type_mdmat.vtab, var_mdmat, tabsize(var_mdmat));
 	AddEfiMember(Type_mdaxis.vtab, var_mdaxis, tabsize(var_mdaxis));
 	AddEfiMember(Type_mdidx.vtab, var_mdidx, tabsize(var_mdidx));
-	MdSetup_count();
 	MdSetup_func();
 	Setup_edb2md();
-	SetupEfiCount();
 	SetupEfiView();
 }

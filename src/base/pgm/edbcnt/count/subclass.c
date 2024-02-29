@@ -26,7 +26,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 typedef struct {
 	MDCLASS_VAR;
-	MdClass *main;
+	MdClass *base;
 	int *idx;
 } MdSubClass;
 
@@ -34,9 +34,9 @@ typedef struct {
 static int subclassify (MdClass *data, const void *ptr)
 {
 	MdSubClass *sel = (MdSubClass *) data;
-	int n = MdClassify(sel->main, ptr);
+	int n = MdClassify(sel->base, ptr);
 
-	if	(n >= 0 && n < sel->main->dim)
+	if	(n >= 0 && n < sel->base->dim)
 	{
 		return sel->idx[n];
 	}
@@ -105,7 +105,7 @@ MdClass *md_subclass (MdClass *base, const char *def)
 	sub->label = NULL;
 	sub->classify = subclassify;
 	sub->idx = (int *) (sub + 1);
-	sub->main = base;
+	sub->base = base;
 
 	for (i = 0; i < base->dim; i++)
 		sub->idx[i] = base->dim;

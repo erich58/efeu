@@ -276,6 +276,8 @@ int main (int narg, char **arg)
 	SetupMdMat();
 	SetupMath();
 	SetupMdMath();
+	MdSetup_count();
+	SetupEfiCount();
 	SetupPnom();
 	SetupMathFunc();
 	SetupStatData();
