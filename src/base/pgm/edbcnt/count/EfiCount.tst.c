@@ -1,5 +1,5 @@
 #include <EFEU/UnitTest.h>
-#include <EFEU/EfiCount.h>
+#include "EfiCount.h"
 #include <EFEU/Info.h>
 #include "utest/out.tst.h"
 

@@ -7,14 +7,14 @@ A-3423 St.Andrä/Wördern, Wildenhaggasse 38
 
 #include <EFEU/mstring.h>
 #include <EFEU/mdmat.h>
-#include <EFEU/mdcount.h>
+#include "mdcount.h"
 #include <EFEU/parsearg.h>
 #include <EFEU/preproc.h>
 #include <EFEU/efutil.h>
 #include <EFEU/CmdPar.h>
 #include <EFEU/printobj.h>
 #include <EFEU/EDB.h>
-#include <EFEU/EfiCount.h>
+#include "EfiCount.h"
 #include <EFEU/Random.h>
 #include <EFEU/Debug.h>
 #include <Math/TimeSeries.h>

@@ -1,7 +1,7 @@
 #include <EFEU/UnitTest.h>
-#include <EFEU/mdcount.h>
+#include "mdcount.h"
 #include <EFEU/printobj.h>
-#include <EFEU/EfiCount.h>
+#include "EfiCount.h"
 #include <EFEU/preproc.h>
 #include <EFEU/locale.h>
 #include "utest/out.tst.h"

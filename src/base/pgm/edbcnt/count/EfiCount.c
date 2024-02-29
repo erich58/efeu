@@ -20,7 +20,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/Resource.h>
-#include <EFEU/EfiCount.h>
+#include "EfiCount.h"
 #include <EFEU/Info.h>
 
 #define	INFO_NAME	"count"

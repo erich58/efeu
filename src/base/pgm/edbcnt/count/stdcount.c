@@ -21,7 +21,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/mdmat.h>
-#include <EFEU/mdcount.h>
+#include "mdcount.h"
 
 static void add (MdCount *cnt, void *data, void *buf)
 {

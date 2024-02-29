@@ -1,6 +1,6 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/mdmat.h>
-#include <EFEU/mdcount.h>
+#include "mdcount.h"
 
 TEST_SUITE
 {

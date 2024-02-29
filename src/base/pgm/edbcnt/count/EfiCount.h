@@ -9,7 +9,7 @@ A-3423 St.Andrä/Wördern, Wildenhaggasse 38
 #define	EFEU_EfiCount_h	1
 
 #include <EFEU/EfiPar.h>
-#include <EFEU/mdcount.h>
+#include "mdcount.h"
 
 extern EfiPar EfiPar_EfiCount;
 

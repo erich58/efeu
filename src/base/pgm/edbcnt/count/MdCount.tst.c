@@ -1,5 +1,5 @@
 #include <EFEU/UnitTest.h>
-#include <EFEU/mdcount.h>
+#include "mdcount.h"
 #include <EFEU/locale.h>
 #include "utest/out.tst.h"
 

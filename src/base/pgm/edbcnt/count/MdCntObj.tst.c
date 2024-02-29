@@ -1,6 +1,6 @@
 #include <EFEU/UnitTest.h>
-#include <EFEU/mdcount.h>
-#include <EFEU/EfiCount.h>
+#include "mdcount.h"
+#include "EfiCount.h"
 #include <EFEU/locale.h>
 #include "utest/out.tst.h"
 
