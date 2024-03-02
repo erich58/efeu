@@ -28,7 +28,6 @@ config hdr src
 #include <TypeDef.ms>
 
 StdInclude(hdr, "EFEU/calendar");
-StdInclude(hdr, "EFEU/EfiView");
 StdInclude(src, paste("/", "EfiType", BaseName));
 
 TypeDef def = TypeDef(BaseName, "month");
