@@ -33,7 +33,7 @@ test:: $(_SimpleProgram_tst)
 test::
 	$(BIN)/efeu-test .
 
-TST_CFLAGS += -D 'BUILD="$(BUILD)"'
+TST_CFLAGS += -D 'BUILD="$(shell pwd)/$(BUILD)"'
 
 $(BUILD)/%.gcov.o : %.c
 	@mkdir -p $(@D)
