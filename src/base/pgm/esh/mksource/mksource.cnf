@@ -88,7 +88,7 @@ D:name | :eval 'DependName = "{}"; MakeDep = true'
 	:*:make dependence for target <name>
 	:de:Abhängigkeitsregel für <name> generieren
 
-n:name | :eval 'config name = "{}"'
+n:name | :eval 'config name={}'
 	:*:base name for created files
 	:de:Basisname für Standardnamen
 
@@ -100,11 +100,11 @@ c | :eval 'config src'
 	:*:create source
 	:de:Sourcefile mit Standardnamen generieren
 
-H:hdr | :eval 'config hdr = $1'
+H:hdr | :eval 'config hdr={}'
 	:*:create header with name <hdr>
 	:de:Headerfile mit Namen <hdr> generieren
 
-C:src | :eval 'config src = $1'
+C:src | :eval 'config src={}'
 	:*:create source with name <src>
 	:de:Sourcefile mit Namen <src> generieren
 
