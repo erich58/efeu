@@ -24,10 +24,10 @@ $(BIN)/% : %.sh
 
 $(BIN)/% : %.esh
 	mkdir -p $(@D)
-	$(BIN)/efeuscript -s '/:VN:/$(VERSION)/g' -c esh $< $@
+	$(BIN)/efeuscript -s '/:VN:/$(VERSION)/g' -e -c esh $< $@
 
 $(BIN)/% : %.etk
 	mkdir -p $(@D)
-	$(BIN)/efeuscript -s '/:VN:/$(VERSION)/g' -c etk $< $@
+	$(BIN)/efeuscript -s '/:VN:/$(VERSION)/g' -e -c etk $< $@
 
 endif
