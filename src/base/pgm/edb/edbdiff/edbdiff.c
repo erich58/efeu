@@ -187,7 +187,7 @@ static void df_diff (IO *aus, DATA *a, DATA *b, const char *hdr)
 	}
 
 	io_printf(aus, " @@\n");
-	cmd = msprintf("diff -U-1 %s %s", tmp1, tmp2);
+	cmd = msprintf("diff -u %s %s", tmp1, tmp2);
 	io = io_popen(cmd, "r");
 	memfree(cmd);
 
