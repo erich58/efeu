@@ -4,41 +4,27 @@
 TOP=../../../..
 include $(TOP)/Setup.mak
 include $(CFG)/EFEU.mak
+include $(CFG)/ApplFiles.mak
+include $(CFG)/Scripts.mak
 
 prereq::
 	make -C ../../scripts
 	make -C ../../lib
 
 LDFLAGS += -lefmath -liorl -lmd -lefx -lefm -ldl -lm
+TST_CFLAGS += -D 'SRC="$(shell pwd)"'
 
-VPATH = $(shell find -L . -type d)
-SRC = $(wildcard */*.c)
-PGM = $(patsubst %.c,$(BIN)/%,$(notdir $(SRC)))
+include $(CFG)/SimplePrograms.mak
 
-all:: $(PGM)
+# Extra files
 
-clean::
-	rm -f $(PGM)
-
-$(BIN)/% : %.c
-	@mkdir -p $(@D)
-	$(CC) -o $@ $(CPPFLAGS) $(CFLAGS) $< $(LDFLAGS)
-
-
-# Scripts and extra files
-
-SRC_ESH = $(wildcard script/*.esh)
 SRC_HDR = $(wildcard mksource/files/*.hdr)
 SRC_MS  = $(wildcard mksource/files/*.ms)
 
-FILES = $(patsubst %.esh,$(BIN)/%,$(notdir $(SRC_ESH)))
-FILES += $(patsubst %,$(LIB)/esh/%,$(notdir $(SRC_HDR)))
+FILES = $(patsubst %,$(LIB)/esh/%,$(notdir $(SRC_HDR)))
 FILES += $(patsubst %,$(LIB)/mksource/%,$(notdir $(SRC_MS)))
 
 all:: $(FILES)
-
-$(BIN)/% : script/%.esh
-	$(BIN)/efeuscript -e -c esh $< $@
 
 $(LIB)/esh/%.hdr : mksource/files/%.hdr
 	@mkdir -p $(@D)
@@ -64,5 +50,3 @@ $(COMPOSE): $(BUILD)/TypeDef.make
 $(BUILD)/TypeDef.make: mksource/files/type/TypeDef.msx
 	@mkdir -p $(BUILD)
 	$(BIN)/compose-file -r $< $(COMPOSE) > $@
-
-include $(CFG)/ApplFiles.mak
