@@ -318,13 +318,13 @@ static EfiObj *p_config (IO *io, void *data)
 
 	while ((c = io_eat(io, " \t")) != EOF)
 	{
-		if	(c == '\n')	break;
+		if	(c == '\n' || c == ';')	break;
 
-		name = io_mgets(io, "=%s");
+		name = io_mgets(io, "=%s;");
 
 		if	((c = io_getc(io)) == '=')
 		{
-			p = io_mgets(io, "%s");
+			p = io_mgets(io, "%s;");
 			arg = mpsubvec(p, 0, NULL);
 			memfree(p);
 		}
@@ -442,6 +442,8 @@ static void eval_file(const char *name)
 	CmdEval_cin = io_fileopen(fname, "r");
 	memfree(fname);
 	CmdEval_cin = io_cmdpreproc(CmdEval_cin);
+
+	eval_stat = 1;
 
 	while (eval_stat && io_eat(CmdEval_cin, ";%s") != EOF)
 		UnrefEval(Parse_cmd(CmdEval_cin));

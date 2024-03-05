@@ -92,19 +92,19 @@ n:name | :eval 'config name={}'
 	:*:base name for created files
 	:de:Basisname für Standardnamen
 
-h | :eval 'config hdr'
+h | :eval 'config hdr; addflag("-h")'
 	:*:create header
 	:de:Headerfile mit Standardnamen generieren
 
-c | :eval 'config src'
+c | :eval 'config src; addflag("-c")'
 	:*:create source
 	:de:Sourcefile mit Standardnamen generieren
 
-H:hdr | :eval 'config hdr={}'
+H:hdr | :eval 'config hdr={}; addflag("-H{}")'
 	:*:create header with name <hdr>
 	:de:Headerfile mit Namen <hdr> generieren
 
-C:src | :eval 'config src={}'
+C:src | :eval 'config src={}; addflag("-C{}")'
 	:*:create source with name <src>
 	:de:Sourcefile mit Namen <src> generieren
 
