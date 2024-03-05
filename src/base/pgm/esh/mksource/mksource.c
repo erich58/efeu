@@ -125,16 +125,15 @@ typedef struct {
 	char *fname;	/* Filename */
 	int flag;	/* Steuerflag */
 	IO *io;		/* IO - Struktur */
-	int inc;	/* Flag für eingebundene Dateien */
 } OUTPUT;
 
 static OUTPUT output[] = {
-	{ "hdr", "h", hdr_c, 1, NULL, 0, NULL, 0 },
-	{ "top", NULL, NULL, 0, NULL, 0, NULL, 0 },
-	{ "src", "c", hdr_c, 0, NULL, 0, NULL, 0 },
-	{ "tex", "tex", hdr_tex, 0, NULL, 0, NULL, 0 },
-	{ "doc", "doc", hdr_c, 0, NULL, 0, NULL, 0 },
-	{ "info", "info", hdr_c, 0, NULL, 0, NULL, 0 },
+	{ "hdr", "h", hdr_c, 1, NULL, 0, NULL },
+	{ "top", NULL, NULL, 0, NULL, 0, NULL },
+	{ "src", "c", hdr_c, 0, NULL, 0, NULL },
+	{ "tex", "tex", hdr_tex, 0, NULL, 0, NULL },
+	{ "doc", "doc", hdr_c, 0, NULL, 0, NULL },
+	{ "info", "info", hdr_c, 0, NULL, 0, NULL },
 };
 
 #define	OUT_HDR	0
@@ -282,9 +281,6 @@ static void close_output (OUTPUT *out)
 	if	(!out->fname)	out->flag = 0;
 	if	(!out->io)	return;
 
-	if	(out->inc)
-		rd_deref(io_pop(out->io));
-
 	if	(out->protect && out->fname)
 	{
 		io_puts("\n#endif\t/* ", out->io);
@@ -294,7 +290,6 @@ static void close_output (OUTPUT *out)
 
 	io_close(out->io);
 	out->io = NULL;
-	out->inc = 0;
 }
 
 
