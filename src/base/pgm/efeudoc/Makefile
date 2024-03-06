@@ -10,6 +10,7 @@ CPPFLAGS += -I$(EFEU_INCLUDE)
 
 include $(CFG)/EFEU.mak
 include $(CFG)/ApplFiles.mak
+include $(CFG)/Scripts.mak
 
 prereq::
 	make -C ../../scripts
@@ -66,29 +67,32 @@ $(EFEU_INCLUDE)/% : %
 	@mkdir -p $(@D)
 	cp $< $@
 
-# Scripts and Files
+# Extra Files
 
 CFGDIR=$(LIB)/efeudoc
 ESHLIB=$(LIB)/esh
 
-FILES  = $(patsubst %.esh,$(BIN)/%,$(notdir $(wildcard *.esh */*.esh)))
-FILES += $(patsubst %,$(ESHLIB)/%,$(notdir $(wildcard *.hdr */*.hdr)))
+FILES = $(patsubst %,$(ESHLIB)/%,$(notdir $(wildcard *.hdr */*.hdr)))
 FILES += $(patsubst %,$(CFGDIR)/%,$(notdir $(wildcard *.sym */*.sym)))
 FILES += $(patsubst %,$(CFGDIR)/%,$(notdir $(wildcard *.dmac */*.dmac)))
 FILES += $(patsubst %,$(CFGDIR)/%,$(notdir $(wildcard *.cfg */*.cfg)))
 FILES += $(patsubst %,$(CFGDIR)/%,$(notdir $(wildcard *.eps */*.eps)))
 FILES += $(patsubst %,$(CFGDIR)/%,$(notdir $(wildcard *.ltx */*.ltx)))
 
-files:: $(CFGDIR) $(ESHLIB) $(FILES)
+files:: $(FILES)
 
-$(CFGDIR) $(ESHLIB):
-	mkdir -p $@
+clean::
+	rm -f $(FILES)
 
-$(BIN)/% : %.esh
-	$(BIN)/efeuscript -e -c esh $< $@
+clean::
+	-rmdir -p $(CFGDIR)
+
+#	rmdir --ignore-fail-on-non-empty -p $(CFGDIR)
 
 $(ESHLIB)/% : %
+	@mkdir -p $(@D)
 	cp $< $@
 
 $(CFGDIR)/% : %
+	@mkdir -p $(@D)
 	cp $< $@
