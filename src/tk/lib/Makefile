@@ -16,7 +16,8 @@ include ../.build/tklib.mak
 
 TK_CONFIG= $(EFEU_INCLUDE)/tk_config.h
 
-LDFLAGS += -lefm -lreadline -lncurses
+LDFLAGS += -lefx -lefm -lreadline -lncurses
+TST_CFLAGS += -I $(TOP)/src/base/lib/efm
 
 files:: $(TK_CONFIG)
 
