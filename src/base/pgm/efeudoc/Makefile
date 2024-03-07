@@ -5,7 +5,7 @@ TOP=../../../..
 include $(TOP)/Setup.mak
 include $(CFG)/CC.mak
 
-EFEU_INCLUDE = $(INC)/efeudoc
+EFEU_INCLUDE = $(shell pwd)/include/efeudoc
 CPPFLAGS += -I$(EFEU_INCLUDE)
 
 include $(CFG)/EFEU.mak
