@@ -5,7 +5,7 @@ TOP=../..
 include $(TOP)/Setup.mak
 include $(CFG)/Config.mak
 
-Modules= scripts lib pgm
+Modules= scripts lib pgm efeudoc
 
 all test doc clean::
 	@for m in $(Modules); \

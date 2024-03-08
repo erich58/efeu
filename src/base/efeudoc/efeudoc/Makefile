@@ -6,7 +6,8 @@ include $(TOP)/Setup.mak
 include $(CFG)/CC.mak
 
 EFEU_INCLUDE = $(shell pwd)/include/efeudoc
-CPPFLAGS += -I$(EFEU_INCLUDE)
+#EFEU_INCLUDE = $(shell pwd)/include/efeudoc
+CPPFLAGS += -I ./include -I$(EFEU_INCLUDE)
 
 include $(CFG)/EFEU.mak
 include $(CFG)/ApplFiles.mak
@@ -14,7 +15,7 @@ include $(CFG)/Scripts.mak
 
 prereq::
 	make -C ../../scripts
-	make -C ../esh
+	make -C ../../pgm
 
 LDFLAGS += -lefmath -liorl -lmd -lefx -lefm -ldl -lm
 VPATH = $(shell find -L . -type d)

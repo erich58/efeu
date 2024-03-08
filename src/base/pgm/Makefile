@@ -2,7 +2,7 @@ TOP=../../..
 include $(TOP)/Setup.mak
 include $(CFG)/Config.mak
 
-Modules= esh types edb edbcnt efeudoc vimrc
+Modules= esh types edb edbcnt vimrc
 
 all test doc clean::
 	@for m in $(Modules); \
