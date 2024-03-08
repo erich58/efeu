@@ -6,7 +6,10 @@ _Library_mak_ = defined
 include $(CFG)/EFEU.mak
 include $(CFG)/ApplFiles.mak
 
+ifndef	StaticLibrary
 Library = $(LIB)/lib$(NAME).so
+endif
+
 _Library_hdr = $(shell find -L . -name '*.h' \
 	! -name '*.tst.h' ! -name '*.ext.h' -printf '%f\n')
 _Library_src = $(shell find -L . -name '*.c' \
@@ -16,7 +19,7 @@ _Library_files = $(patsubst %.h,$(EFEU_INCLUDE)/%.h,$(_Library_hdr))
 _Library_obj = $(patsubst %.c,$(BUILD)/%.o,$(_Library_src))
 _Library_dep = $(patsubst %.o,%.d,$(_Library_obj))
 
-all:: $(Library)
+all:: $(Library) $(StaticLibrary)
 
 files:: $(_Library_files)
 
@@ -28,6 +31,10 @@ $(Library): $(_Library_obj)
 	@mkdir -p $(@D)
 	$(CC) -shared -Wl,-soname,lib$(NAME).so -o $@ $(_Library_obj) $(LDFLAGS)
 
+$(StaticLibrary): $(_Library_obj)
+	@mkdir -p $(@D)
+	ar -r $@ $(_Library_obj)
+	
 $(EFEU_INCLUDE)/%.h : %.h
 	@mkdir -p $(@D)
 	cp $< $@
