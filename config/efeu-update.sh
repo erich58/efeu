@@ -50,6 +50,11 @@ usage ()
 	efeuman -- $0 $1 || printf "$msg1"
 }
 
+case "$1" in
+-\?|--help*)	usage $1; exit 0;;
+--version)	efeuman -- $0 $1 || grep 'Version[=]' $0; exit 0;;
+esac
+
 verbose=""
 
 while getopts "v" opt
@@ -61,11 +66,6 @@ do
 done
 
 shift `expr $OPTIND - 1`
-
-case "$1" in
--\?|--help*)	usage $1; exit 0;;
---version)	efeuman -- $0 $1 || grep 'Version[=]' $0; exit 0;;
-esac
 
 if	[ $# -lt 2 ]
 then	usage -?; exit 1
