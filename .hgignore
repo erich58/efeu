@@ -15,6 +15,7 @@
 \.gcov$
 \.out$
 \.pdf$
+\.a$
 nohup.out.*
 tags
 /include/

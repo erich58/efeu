@@ -5,68 +5,20 @@ TOP=../../../..
 include $(TOP)/Setup.mak
 include $(CFG)/CC.mak
 
-EFEU_INCLUDE = $(shell pwd)/include/efeudoc
-#EFEU_INCLUDE = $(shell pwd)/include/efeudoc
-CPPFLAGS += -I ./include -I$(EFEU_INCLUDE)
+EFEU_INCLUDE = ../include
+CPPFLAGS += -I$(EFEU_INCLUDE)
 
 include $(CFG)/EFEU.mak
 include $(CFG)/ApplFiles.mak
 include $(CFG)/Scripts.mak
 
 prereq::
-	make -C ../../scripts
-	make -C ../../pgm
+	make -C ../DocBuf
 
+LDFLAGS += -L ../lib -lDocBuf
 LDFLAGS += -lefmath -liorl -lmd -lefx -lefm -ldl -lm
-VPATH = $(shell find -L . -type d)
-HDR = $(wildcard *.h */*.h)
-HFILES = $(patsubst %,$(EFEU_INCLUDE)/%,$(notdir $(HDR)))
 
-DBUF_SRC = $(wildcard DocBuf/*.c)
-DBUF_OBJ = $(patsubst %.c,$(BUILD)/%.o,$(notdir $(DBUF_SRC)))
-
-EM_SRC = $(wildcard efeuman/*.c)
-EM_OBJ = $(patsubst %.c,$(BUILD)/%.o,$(notdir $(EM_SRC)))
-
-S2D_SRC = $(wildcard src2doc/*.c)
-S2D_OBJ = $(patsubst %.c,$(BUILD)/%.o,$(notdir $(S2D_SRC)))
-
-DOC_SRC = $(wildcard *.c sym/*.c tab/*.c term/*.c mroff/*.c latex/*.c html/*.c)
-DOC_OBJ = $(patsubst %.c,$(BUILD)/%.o,$(notdir $(DOC_SRC)))
-
-DEP = $(patsubst %.o,%.d,$(DBUF_OBJ) $(EM_OBJ) $(S2D_OBJ), $(DOC_OBJ))
-
--include $(DEP)
-
-PGM=	$(BIN)/efeuman $(BIN)/src2doc $(BIN)/efeudoc
-
-all:: $(PGM)
-
-clean::
-	rm -f $(PGM)
-	rm -rf $(BUILD)
-
-$(BIN)/efeuman: $(EM_OBJ) $(DBUF_OBJ)
-	$(CC) -o $@ $(EM_OBJ) $(DBUF_OBJ) $(LDFLAGS)
-
-$(BIN)/src2doc: $(S2D_OBJ) $(DBUF_OBJ)
-	$(CC) -o $@ $(S2D_OBJ) $(DBUF_OBJ) $(LDFLAGS)
-
-$(BIN)/efeudoc: $(DOC_OBJ)
-	$(CC) -o $@ $(DOC_OBJ) $(LDFLAGS)
-
-$(BUILD)/%.o : %.c
-	@mkdir -p $(BUILD)
-	$(CC) -o $@ -c -MMD $(CPPFLAGS) $(CFLAGS) $<
-
-files:: $(HFILES)
-
-clean::
-	rm -f $(HFILES)
-
-$(EFEU_INCLUDE)/% : %
-	@mkdir -p $(@D)
-	cp $< $@
+include $(CFG)/ComplexProgram.mak
 
 # Extra Files
 
@@ -86,9 +38,7 @@ clean::
 	rm -f $(FILES)
 
 clean::
-	-rmdir -p $(CFGDIR)
-
-#	rmdir --ignore-fail-on-non-empty -p $(CFGDIR)
+	rmdir --ignore-fail-on-non-empty -p $(ESHLIB) $(CFGDIR)
 
 $(ESHLIB)/% : %
 	@mkdir -p $(@D)

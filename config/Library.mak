@@ -24,7 +24,7 @@ all:: $(Library) $(StaticLibrary)
 files:: $(_Library_files)
 
 clean::
-	rm -f $(Library) $(_Library_files)
+	rm -f $(Library) $(StaticLibrary) $(_Library_files)
 	rm -rf $(BUILD)
 
 $(Library): $(_Library_obj)

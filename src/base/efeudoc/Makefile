@@ -2,7 +2,7 @@ TOP=../../..
 include $(TOP)/Setup.mak
 include $(CFG)/Config.mak
 
-Modules= efeudoc
+Modules= DocBuf efeuman src2doc efeudoc 
 
 all test doc clean::
 	@for m in $(Modules); \
