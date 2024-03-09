@@ -21,7 +21,7 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include <src2doc.h>
+#include "DocBuf.h"
 #include <EFEU/object.h>
 #include <EFEU/cmdsetup.h>
 #include <EFEU/MatchPar.h>

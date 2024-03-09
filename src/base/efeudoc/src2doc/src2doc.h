@@ -46,20 +46,6 @@ void s2d_doc (const char *name, IO *ein, IO *aus);
 void s2d_man (const char *name, IO *ein, IO *aus);
 void s2d_sh (const char *name, IO *ein, IO *aus);
 
-int skip_blank (IO *ein);
-int skip_space (IO *ein, StrBuf *buf);
-int test_key (IO *ein, const char *key);
-
-StrBuf *parse_open (void);
-char *parse_close (StrBuf *buf);
-
-char *parse_name (IO *io, int c);
-char *parse_block (IO *io, int beg, int end, int flag);
-
-void copy_block (IO *ein, IO *aus, int end, int flag);
-void copy_token (IO *ein, IO *aus, int c, int flag);
-void copy_str (IO *ein, IO *aus, int delim);
-void copy_ (IO *ein, IO *aus, int end, int flag);
 void ppcopy (IO *ein, StrBuf *val, StrBuf *com);
 
 /*	Sourcefileanalyse
@@ -111,13 +97,6 @@ typedef struct {
 int Decl_test (Decl *decl, const char *name);
 void Decl_print (Decl *decl, IO *io, const char *name);
 Decl *parse_decl (IO *io, int c);
-
-void MacDef_clean (void);
-void MacDef_add (IO *ein);
-char *MacDef_name (void);
-void MacDef_source (StrBuf *sb);
-void MacDef_synopsis (StrBuf *sb);
-void MacDef_list (StrBuf *sb);
 
 extern char *Secnum;
 extern char *IncFmt;

@@ -20,11 +20,12 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include "src2doc.h"
+#include "DocBuf.h"
 #include <EFEU/strbuf.h>
 #include <EFEU/efio.h>
+#include <ctype.h>
 
-void copy_str (IO *ein, IO *aus, int delim)
+static void copy_string (IO *ein, IO *aus, int delim)
 {
 	int c, flag;
 
@@ -51,7 +52,7 @@ void copy_token (IO *ein, IO *aus, int c, int flag)
 	switch (c)
 	{
 	case '"':
-	case '\'':	copy_str(ein, aus, c); break;
+	case '\'':	copy_string(ein, aus, c); break;
 	case '{':	copy_block(ein, aus, '}', 0); break;
 	case '(':	copy_block(ein, aus, ')', 1); break;
 	case '[':	copy_block(ein, aus, ']', 1); break;
@@ -76,4 +77,3 @@ void copy_block (IO *ein, IO *aus, int end, int flag)
 	io_putc(end, aus);
 	io_prompt(ein, prompt);
 }
-

@@ -21,7 +21,6 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include "DocBuf.h"
-#include "src2doc.h"
 #include <EFEU/parsub.h>
 #include <EFEU/mstring.h>
 #include <EFEU/efio.h>
@@ -30,7 +29,6 @@ If not, write to the Free Software Foundation, Inc.,
 #include <ctype.h>
 
 NameKeyTab *AliasTab = NULL;
-
 
 static int cmp (const char *name, const char *arg)
 {

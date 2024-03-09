@@ -7,6 +7,7 @@ prereq::
 
 EFEU_INCLUDE = ../include
 CPPFLAGS += -I$(EFEU_INCLUDE)
+TST_CFLAGS += -I$(TOP)/src/base/lib/efm
 
 LDFLAGS += -lefmath -liorl -lmd -lefx -lefm -ldl -lm
 

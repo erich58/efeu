@@ -37,13 +37,9 @@ static char *SecHead (int n)
 	case BUF_NOTE:	return "\\Notes\n";
 	case BUF_WARN:	return "\\Warnings\n";
 	case BUF_ERR:	return "\\Errors\n";
-/*
-	case BUF_CPR:	return "\\Copyright\nCopyright\n";
-*/
 	default:	return NULL;
 	}
 }
-
 
 void copy_protect (const char *str, IO *io)
 {

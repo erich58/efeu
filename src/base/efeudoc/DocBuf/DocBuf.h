@@ -39,11 +39,10 @@ If not, write to the Free Software Foundation, Inc.,
 #define	BUF_DIM		8
 
 #define	VAR_NAME	0
-#define	VAR_SEC		1
-#define	VAR_TITLE	2
-#define	VAR_HEAD	3
-#define	VAR_COPYRIGHT	4
-#define	VAR_DIM		5
+#define	VAR_TITLE	1
+#define	VAR_HEAD	2
+#define	VAR_COPYRIGHT	3
+#define	VAR_DIM		4
 
 typedef struct {
 	CmdPar *cmdpar;		/* Kommandoparameter */
@@ -57,8 +56,29 @@ void DocBuf_init (DocBuf *doc);
 void DocBuf_write (DocBuf *doc, IO *io);
 StrBuf *DocBuf_copy (DocBuf *doc, StrBuf *buf, StrBuf *def, const char *name);
 
+StrBuf *parse_open (void);
+char *parse_close (StrBuf *buf);
+char *parse_name (IO *io, int c);
+char *parse_block (IO *io, int beg, int end, int flag);
+
+int skip_blank (IO *ein);
+int skip_space (IO *ein, StrBuf *buf);
+int test_key (IO *ein, const char *key);
+
+void add_name (StrBuf *buf, IO *io, int c);
+void add_block (StrBuf *buf, IO *io, int c, int flag);
+
 void copy_protect (const char *str, IO *io);
+void copy_block (IO *ein, IO *aus, int end, int flag);
+void copy_token (IO *ein, IO *aus, int c, int flag);
 
 extern NameKeyTab *AliasTab;
+
+void MacDef_clean (void);
+void MacDef_add (IO *ein);
+char *MacDef_name (void);
+void MacDef_source (StrBuf *sb);
+void MacDef_synopsis (StrBuf *sb);
+void MacDef_list (StrBuf *sb);
 
 #endif	/* DocBuf.h */

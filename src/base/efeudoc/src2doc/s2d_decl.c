@@ -1,5 +1,5 @@
 /*
-Zerlegungshilfsfunktionen
+Deklarationsstruktur
 
 $Copyright (C) 2000 Erich Frühstück
 This file is part of EFEU.
@@ -21,65 +21,50 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include "src2doc.h"
+#include <EFEU/parsub.h>
 
-
-static STRBUF(parse_buf, 1024);
-
-StrBuf *parse_open (void)
+int Decl_test (Decl *decl, const char *name)
 {
-	sb_clear(&parse_buf);
-	return &parse_buf;
-}
+	int i;
 
-char *parse_close (StrBuf *buf)
+	for (i = decl->start; i < decl->end; i++, name++) 
+		if (*name != decl->def[i]) return 0;
+
+	return (*name == 0);
+}	
+
+void Decl_print (Decl *decl, IO *io, const char *name)
 {
-	if	(sb_getpos(buf))
+	io_xprintf(io, "\\index[%s]\n", name);
+
+	switch (decl->type)
 	{
-		sb_putc(0, buf);
-		return (char *) buf->data;
+	case DECL_FUNC:
+		io_puts("\\hang\n", io);
+		copy_protect(decl->def, io);
+		io_putc(' ', io);
+		copy_protect(decl->arg, io);
+		io_puts(";\n\\end\n\n", io);
+		break;
+	case DECL_TYPE:	
+	case DECL_VAR:
+		io_puts("\\hang\n", io);
+		copy_protect(decl->def, io);
+		io_puts(";\n\\end\n\n", io);
+		break;
+	case DECL_STRUCT:	
+		io_xprintf(io, "---- verbatim\n\n%s;\n----\n\n", decl->def);
+		break;
+	case DECL_LABEL:
+	case DECL_CALL:
+	default:
+		copy_protect(decl->def, io);
+		io_putc(' ', io);
+		copy_protect(decl->arg, io);
+		io_puts("\n\n", io);
+		break;
 	}
-	else	return NULL;
 }
-
-static void add_name (StrBuf *buf, IO *io, int c)
-{
-	while (isalnum(c) || c == '_')
-	{
-		sb_putc(c, buf);
-		c = io_mgetc(io, 1);
-	}
-
-	io_ungetc(c, io);
-}
-
-static void add_block (StrBuf *buf, IO *io, int c, int flag)
-{
-	IO *aus = io_strbuf(buf);
-	copy_block(io, aus, c, flag);
-	io_close(aus);
-}
-
-/*	Namen abfragen
-*/
-
-char *parse_name (IO *io, int c)
-{
-	StrBuf *buf = parse_open();
-	add_name(buf, io, c);
-	return parse_close(buf);
-}
-
-/*	Block abfragen
-*/
-
-char *parse_block (IO *io, int beg, int end, int flag)
-{
-	StrBuf *buf = parse_open();
-	sb_putc(beg, buf);
-	add_block(buf, io, end, flag);
-	return parse_close(buf);
-}
-
 
 /*	Deklaration parsen
 */
