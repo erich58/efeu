@@ -38,7 +38,7 @@ clean::
 	rm -f $(FILES)
 
 clean::
-	rmdir --ignore-fail-on-non-empty -p $(ESHLIB) $(CFGDIR)
+	-rmdir -p $(ESHLIB) $(CFGDIR)
 
 $(ESHLIB)/% : %
 	@mkdir -p $(@D)
