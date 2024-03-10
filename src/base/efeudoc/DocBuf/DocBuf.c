@@ -25,20 +25,23 @@ If not, write to the Free Software Foundation, Inc.,
 
 static char *syn_head = "\\Synopsis\n";
 
-static char *SecHead (int n)
+static const char *SecHead (int n)
 {
+	const char *head = NULL;
+
 	switch (n)
 	{
-	case BUF_SYN:	return syn_head;
-	case BUF_DESC:	return "\\Description\n";
-	case BUF_EX:	return "\\Examples\n";
-	case BUF_SEE:	return "\\SeeAlso\n";
-	case BUF_DIAG:	return "\\Diagnostics\n";
-	case BUF_NOTE:	return "\\Notes\n";
-	case BUF_WARN:	return "\\Warnings\n";
-	case BUF_ERR:	return "\\Errors\n";
-	default:	return NULL;
+	case BUF_SYN:	head = syn_head; break;
+	case BUF_DESC:	head = "\\Description\n"; break;
+	case BUF_EX:	head = "\\Examples\n"; break;
+	case BUF_SEE:	head = "\\SeeAlso\n"; break;
+	case BUF_DIAG:	head = "\\Diagnostics\n"; break;
+	case BUF_NOTE:	head = "\\Notes\n"; break;
+	case BUF_WARN:	head = "\\Warnings\n"; break;
+	case BUF_ERR:	head = "\\Errors\n"; break;
 	}
+
+	return head;
 }
 
 void copy_protect (const char *str, IO *io)

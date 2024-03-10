@@ -80,5 +80,3 @@ char *parse_block (IO *io, int beg, int end, int flag)
 	add_block(buf, io, end, flag);
 	return parse_close(buf);
 }
-
-

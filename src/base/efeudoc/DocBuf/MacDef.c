@@ -152,4 +152,3 @@ void MacDef_list (StrBuf *sb)
 	if	(flag)
 		sb_puts("\\endlist\n", sb);
 }
-
