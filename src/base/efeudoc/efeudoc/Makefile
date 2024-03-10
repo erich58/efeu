@@ -20,12 +20,21 @@ LDFLAGS += -lefmath -liorl -lmd -lefx -lefm -ldl -lm
 
 include $(CFG)/ComplexProgram.mak
 
+Header = $(shell find -L . -name '*.h' \
+	! -name '*.tst.h' -printf '%f\n')
+
+FILES = $(patsubst %.h,$(EFEU_INCLUDE)/%.h,$(Header))
+
+$(EFEU_INCLUDE)/%.h : %.h
+	@mkdir -p $(@D)
+	cp $< $@
+
 # Extra Files
 
 CFGDIR=$(LIB)/efeudoc
 ESHLIB=$(LIB)/esh
 
-FILES = $(patsubst %,$(ESHLIB)/%,$(notdir $(wildcard *.hdr */*.hdr)))
+FILES += $(patsubst %,$(ESHLIB)/%,$(notdir $(wildcard *.hdr */*.hdr)))
 FILES += $(patsubst %,$(CFGDIR)/%,$(notdir $(wildcard *.sym */*.sym)))
 FILES += $(patsubst %,$(CFGDIR)/%,$(notdir $(wildcard *.dmac */*.dmac)))
 FILES += $(patsubst %,$(CFGDIR)/%,$(notdir $(wildcard *.cfg */*.cfg)))
