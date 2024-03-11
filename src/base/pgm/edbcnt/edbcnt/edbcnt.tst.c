@@ -11,7 +11,7 @@ TEST_FORK { \
 	UnitTest_reopen(1, "stdout"); \
 	EXPECT(hidden_main(n + 1, main_args) == 0); \
 	TEST_EXIT; \
-} CHILD_EXIT(0);
+} CHILD_EXIT(0)
 
 TEST_DECL(setup)
 {
