@@ -106,8 +106,8 @@ size_t mstrsplit(const char *str, const char *delim, char ***ptr)
 */
 	if	(dim)
 	{
-		*ptr = (char **) memalloc(sb.pos + dim * sizeof(char *));
-		p = (char *) ((*ptr) + dim);
+		*ptr = memalloc(sb.pos + dim * sizeof(char *));
+		p = (void *) ((*ptr) + dim);
 		memcpy(p, sb.data, sb.pos);
 
 		for (i = 0; i < dim; i++, p++)

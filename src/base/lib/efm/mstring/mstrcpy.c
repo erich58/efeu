@@ -44,7 +44,7 @@ char *mstrncpy (const char *s, size_t len)
 	char *a;
 	size_t i;
 
-	a = (char *) memalloc(len + 1);
+	a = memalloc(len + 1);
 	i = 0;
 
 	if	(s != NULL)
