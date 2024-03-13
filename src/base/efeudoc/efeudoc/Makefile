@@ -15,7 +15,6 @@ include $(CFG)/Scripts.mak
 prereq::
 	make -C ../DocBuf
 
-LDFLAGS += -L ../lib -lDocBuf
 LDFLAGS += -lefmath -liorl -lmd -lefx -lefm -ldl -lm
 
 include $(CFG)/ComplexProgram.mak
