@@ -196,53 +196,12 @@ static void keyline (SrcData *data, int c)
 	memfree(name);
 }
 
-
-static char *get_title (StrBuf *buf)
-{
-	char *p;
-	size_t n;
-
-	sb_putc(0, buf);
-	p = (char *) buf->data;
-
-	for (n = 0; p[n] != 0; n++)
-	{
-		if	(strncmp("(c)", p + n, 3) == 0)
-		{
-			sb_setpos(buf, n);
-			break;
-		}
-	}
-
-	return sb_strcpy(buf);
-}
-
-void SrcData_title (SrcData *data, const char *name)
-{
-	if	(sb_getpos(&data->buf))
-	{
-		StrBuf *buf = sb_acquire();
-		SrcData_copy(data, buf, name);
-		memfree(data->doc.var[VAR_TITLE]);
-		data->doc.var[VAR_TITLE] = get_title(buf);
-		sb_release(buf);
-	}
-}
-
 void SrcData_eval (SrcData *data, const char *name)
 {
 	int c;
 
 	io_ungetc(skip_space(data->ein, &data->buf), data->ein);
-
-	if	(sb_getpos(&data->buf))
-	{
-		StrBuf *buf = sb_acquire();
-		SrcData_copy(data, buf, name);
-		memfree(data->doc.var[VAR_TITLE]);
-		data->doc.var[VAR_TITLE] = get_title(buf);
-		sb_release(buf);
-	}
+	DocBuf_title(&data->doc, &data->buf, name);
 
 	while ((c = skip_space(data->ein, &data->buf)) != EOF)
 	{

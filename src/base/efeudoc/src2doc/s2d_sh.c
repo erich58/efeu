@@ -140,7 +140,7 @@ static void sh_eval (SrcData *data, const char *name)
 		}
 		else if	(at_top)
 		{
-			SrcData_title(data, name);
+			DocBuf_title(&data->doc, &data->buf, name);
 			at_top = 0;
 		}
 		else if	(new_par)
@@ -191,6 +191,9 @@ static void sh_eval (SrcData *data, const char *name)
 	}
 
 	SrcData_copy(data, NULL, name);
+
+	if	(InsertCode)
+		insert_code(&data->doc);
 }
 
 void s2d_sh (const char *name, IO *ein, IO *aus)

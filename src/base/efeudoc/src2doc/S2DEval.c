@@ -24,13 +24,11 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/mstring.h>
 #include "src2doc.h"
 
-typedef struct {
+static  struct {
 	char *name;
 	S2DEval eval;
 	char *desc;
-} S2DMode;
-
-static S2DMode tab[] = {
+} mode_tab[] = {
 	{ "hdr", s2d_hdr, "Handbucheintrag für Headerfile"},
 	{ "xhdr", s2d_xhdr, "Erweiterter Handbucheintrag für Headerfile"},
 	{ "src", s2d_src, "Handbucheintrag für Sourcefile"},
@@ -46,12 +44,10 @@ static S2DMode tab[] = {
 	{ "doc", s2d_doc, "Direkteinbindung der Datei"},
 };
 
-typedef struct {
+static struct {
 	char *pat;
 	S2DEval eval;
-} S2DName;
-
-static S2DName ntab[] = {
+} name_tab[] = {
 	{ "*.h", s2d_hdr },
 	{ "*.pph", s2d_hdr },
 	{ "*.c", s2d_src },
@@ -66,41 +62,43 @@ static S2DName ntab[] = {
 	{ "*Config.make", s2d_script },
 };
 
-S2DEval S2DName_get (const char *name)
+S2DEval S2DEval_name (const char *name)
 {
 	int i;
 
-	for (i = 0; i < tabsize(ntab); i++)
-		if (patcmp(ntab[i].pat, name, NULL)) return ntab[i].eval;
+	for (i = 0; i < tabsize(name_tab); i++)
+		if (patcmp(name_tab[i].pat, name, NULL))
+			return name_tab[i].eval;
 
 	return NULL;
 }
 
 
-S2DEval S2DMode_get (const char *name)
+S2DEval S2DEval_mode (const char *name)
 {
 	int i;
 
-	for (i = 0; i < tabsize(tab); i++)
-		if (mstrcmp(name, tab[i].name) == 0) return tab[i].eval;
+	for (i = 0; i < tabsize(mode_tab); i++)
+		if (mstrcmp(name, mode_tab[i].name) == 0)
+			return mode_tab[i].eval;
 
 	return NULL;
 }
 
-void S2DMode_list (IO *io)
+void S2DEval_list (IO *io)
 {
 	int i, j, k;
 
-	for (i = 0; i < tabsize(tab); i++)
+	for (i = 0; i < tabsize(mode_tab); i++)
 	{
-		io_xprintf(io, "%s\t%s\n", tab[i].name, tab[i].desc);
+		io_xprintf(io, "%s\t%s\n", mode_tab[i].name, mode_tab[i].desc);
 
-		for (j = k = 0; j < tabsize(ntab); j++)
+		for (j = k = 0; j < tabsize(name_tab); j++)
 		{
-			if	(tab[i].eval == ntab[j].eval)
+			if	(mode_tab[i].eval == name_tab[j].eval)
 			{
 				io_puts(k ? ", " : "\t", io);
-				io_puts(ntab[j].pat, io);
+				io_puts(name_tab[j].pat, io);
 				k++;
 			}
 		}

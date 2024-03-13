@@ -47,7 +47,7 @@ EfiVarDef globvar[] = {
 
 static void f_list (EfiFunc *func, void *rval, void **arg)
 {
-	S2DMode_list(Val_io(arg[0]));
+	S2DEval_list(Val_io(arg[0]));
 }
 
 static EfiFuncDef fdef[] = {
@@ -89,7 +89,7 @@ int main (int narg, char **arg)
 	Mode = GetResource("Mode", NULL);
 	InsertCode = GetFlagResource("InsertCode");
 	ListAlias = GetFlagResource("ListAlias");
-	eval = Mode ? S2DMode_get(Mode) : S2DName_get(DocName);
+	eval = Mode ? S2DEval_mode(Mode) : S2DEval_name(DocName);
 
 	if	(eval == NULL)
 		log_error(NULL, "[1]", "s", Mode);

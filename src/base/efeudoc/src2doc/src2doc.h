@@ -29,9 +29,9 @@ If not, write to the Free Software Foundation, Inc.,
 
 typedef void (*S2DEval) (const char *name, IO *ein, IO *aus);
 
-S2DEval S2DName_get (const char *name);
-S2DEval S2DMode_get (const char *name);
-void S2DMode_list (IO *io);
+S2DEval S2DEval_name (const char *name);
+S2DEval S2DEval_mode (const char *name);
+void S2DEval_list (IO *io);
 
 void s2d_hdr (const char *name, IO *ein, IO *aus);
 void s2d_xhdr (const char *name, IO *ein, IO *aus);
@@ -65,14 +65,13 @@ struct SrcDataStruct {
 	StrBuf buf;	/* Stringbuffer */
 	DocBuf doc;	/* Dokumentbuffer */
 	SrcCmd *ppdef;	/* Preprozessordefinitionen */
-	size_t ppdim;	/* Zahl der Preprozessdefinitionen */
+	size_t ppdim;	/* Zahl der Preprozessordefinitionen */
 	unsigned mask;	/* Maske für SYNOPSIS-Deklarationen */
 	unsigned xmask;	/* Maske für beschriebene Deklarationen */
 };
 
 void SrcData_init (SrcData *data, IO *ein);
 void SrcData_head (SrcData *data, const char *name, int sec);
-void SrcData_title (SrcData *data, const char *name);
 void SrcData_eval (SrcData *data, const char *name);
 StrBuf *SrcData_copy (SrcData *data, StrBuf *buf, const char *name);
 void SrcData_write (SrcData *data, IO *io);
