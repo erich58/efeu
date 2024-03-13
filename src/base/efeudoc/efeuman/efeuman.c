@@ -165,36 +165,6 @@ static char *buf2var (StrBuf *buf)
 	return sb_cpyrelease(var);
 }
 
-static char *getpar (StrBuf *buf)
-{
-	int i, n, k;
-	char *p;
-
-	n = sb_size(buf);
-
-	for (i = 1; i < n; i++)
-	{
-		if	(buf->data[i-1] == '\n' && buf->data[i] == '\n')
-		{
-			buf->pos = i;
-			buf->nfree = buf->size - buf->pos;
-			p = buf2var(buf);
-
-			for (k = 0, i++; i < n; i++, k++)
-				buf->data[k] = buf->data[i];
-
-			buf->nfree = buf->size - k;
-			buf->pos = 0;
-			return p;
-		}
-	}
-
-	p = buf2var(buf);
-	sb_clear(buf);
-	return p;
-}
-
-
 static void addline (IO *io, StrBuf *buf)
 {
 	int32_t c;
@@ -256,7 +226,7 @@ static void addbuf(StrBuf *buf)
 {
 	if	(sb_getpos(buf) == 0)	return;
 
-	sb_setpos(buf, 0);
+	sb_begin(buf);
 
 	if	(buf->data[0] == '$')
 	{
@@ -270,8 +240,7 @@ static void addbuf(StrBuf *buf)
 	}
 	else if	(doc_buf.var[VAR_TITLE] == NULL)
 	{
-		doc_buf.var[VAR_TITLE] = getpar(buf);
-		DocBuf_copy(&doc_buf, buf, NULL, NULL);
+		DocBuf_title(&doc_buf, buf, NULL);
 	}
 
 	sb_clear(buf);
@@ -379,6 +348,7 @@ int main (int argc, char **argv)
 	memcpy(&par->var, &save, sizeof(VecBuf));
 	CmdParEval_add(&eval_manpage);
 	SetProgName(argv[0]);
+	CmdPar_setval(par, "Copyright", NULL);
 
 	DocBuf_init(&doc_buf);
 	doc_buf.var[VAR_NAME] = mstrcpy(par->name);
@@ -420,6 +390,7 @@ int main (int argc, char **argv)
 	else	log_error(NULL, E_CFG, NULL);
 
 	io_close(io);
+//	par = CmdPar_ptr(doc_buf.cmdpar);
 
 	if	(CmdPar_eval(par, &argc, argv, 0) <= 0)
 		exit(EXIT_FAILURE);
