@@ -13,7 +13,8 @@ include $(CFG)/ApplFiles.mak
 include $(CFG)/Scripts.mak
 
 prereq::
-	make -C ../DocBuf
+	make -C ../../scripts
+	make -C ../../lib
 
 LDFLAGS += -lefmath -liorl -lmd -lefx -lefm -ldl -lm
 
