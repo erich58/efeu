@@ -118,6 +118,7 @@ void UnitTest_exit(void);
 int UnitTest_wait(void);
 int UnitTest_childstat(const char *file, int line, int stat);
 int UnitTest_assert(int stat);
+int UnitTest_system(const char *cmd);
 
 void runUnitTest(int argc, char **argv);
 extern const char *UnitTest_name;

@@ -37,7 +37,7 @@ TEST_DECL(print)
 	edb_fout(edb, UnitTest_tmp("binary"), "md");
 	edb_copy(edb, 0);
 	rd_deref(edb);
-	system(UnitTest_tpl("od -c -w8 @/binary > @/dump"));
+	UnitTest_system("od -c -w8 @/binary > @/dump");
 
 	EXPECT_CONTENT("dump",
 		"0000000 357 323  \\0  \\0  \\b  \\0  \\0 004\n"

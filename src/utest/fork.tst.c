@@ -50,5 +50,8 @@ TEST_SUITE
 	}
 
 	CHILD_EXIT(1);
-
+	EXPECT_INT(UnitTest_system("true"), 0);
+	EXPECT_INT(UnitTest_system("false"), 1);
+	EXPECT_INT(UnitTest_system("exit 42"), 42);
+	EXPECT_INT(UnitTest_system("kill -15 $$"), -15);
 }

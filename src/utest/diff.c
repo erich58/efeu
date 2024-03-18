@@ -42,7 +42,7 @@ int UnitTest_diff(const char *file, int line,
 
 	UnitTest_mkfile(".actual",  s1 ? s1 : "");
 	UnitTest_mkfile(".desired",  s2 ? s2 : "");
-	system(UnitTest_tpl("diff -U1 @/.desired @/.actual > @/.diff"));
+	UnitTest_system("diff -U1 @/.desired @/.actual > @/.diff");
 	s1 = UnitTest_content(".diff");
 	UnitTest_mkfile(".actual", NULL);
 	UnitTest_mkfile(".desired", NULL);

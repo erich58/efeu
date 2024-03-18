@@ -24,7 +24,7 @@ TEST_DECL(setup)
 		"#!/bin/sh\n"
 		"cat > @/doc.out\n"
 	));
-	system(UnitTest_tpl("chmod a+x @/efeudoc"));
+	UnitTest_system("chmod a+x @/efeudoc");
 	const char *path = mstrpaste(":", UnitTest_tmp(NULL), getenv("PATH"));
 	setenv("PATH", path, 1);
 	PRINT_STR(path);

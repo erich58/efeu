@@ -34,7 +34,7 @@ TEST_SUITE
 	DatPool_create(d, UnitTest_tmp("data.tmp"));
 	rd_deref(d);
 
-	system(UnitTest_tpl("mv @/data.tmp @/data"));
+	UnitTest_system("mv @/data.tmp @/data");
 	const char *p = UnitTest_content("data");
 	EXPECT_STR(p, "DatPool");
 	EXPECT_STR(p + 8, "abc0123456789xyz");

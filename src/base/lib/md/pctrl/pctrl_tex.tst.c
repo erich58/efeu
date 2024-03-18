@@ -85,6 +85,6 @@ TEST_SUITE
 	{
 		char buf[1024];
 		snprintf(buf, sizeof buf, "cp @/output %s", UnitTest_argv[1]); 
-		system(UnitTest_tpl(buf));
+		UnitTest_system(buf);
 	}
 }

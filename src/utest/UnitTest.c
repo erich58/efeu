@@ -560,14 +560,8 @@ int main(int argc, char **argv)
 	return test_bad ? 1 : 0;
 }
 
-int UnitTest_wait(void)
+static int wstat(int status)
 {
-	int status;
-	pid_t pid = wait(&status);
-
-	if	(pid < 0)
-		return 0;
-
 	if	(WIFEXITED(status))
 		return WEXITSTATUS(status);
 
@@ -576,6 +570,19 @@ int UnitTest_wait(void)
 
 	return 0x100;
 }
+
+int UnitTest_wait(void)
+{
+	int status;
+	pid_t pid = wait(&status);
+	return pid < 0 ? 0 : wstat(status);
+}
+
+int UnitTest_system(const char *tpl)
+{
+	return wstat(system(UnitTest_tpl(tpl)));
+}
+
 
 int UnitTest_childstat(const char *file, int line, int stat)
 {

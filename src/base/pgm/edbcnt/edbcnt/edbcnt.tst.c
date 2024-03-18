@@ -146,11 +146,11 @@ TEST_DECL(record)
 		"\"2002\";\"TOTAL\";1;2.00;2.00;8;9;3;{3, 4.20}\n"
 	);
 
-//	system(UnitTest_tpl("cp @/a.edb a.edb"));
+//	UnitTest_system("cp @/a.edb a.edb");
 
 	RUN_EDBCNT(9, "@/a.edb -p2 -r2000..2002 -w2 -c count,wcount "
 		"-n2 x=total @/a.md");
-	system(UnitTest_tpl("mdprint -x- -p2 @/a.md @/out"));
+	UnitTest_system("mdprint -x- -p2 @/a.md @/out");
 	EXPECT_FILE("out",
 		"##MDMAT   2.0\n"
 		"##Title   edbcnt -e record -c count,wcount -r 2000..2002 x=total\n"
