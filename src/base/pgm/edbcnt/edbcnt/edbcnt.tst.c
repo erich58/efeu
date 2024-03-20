@@ -7,9 +7,9 @@ int hidden_main(int argc, char **arg);
 
 #define	RUN_EDBCNT(n, def)	\
 TEST_FORK { \
-	TEST_ARGV(main_args, n + 1, UnitTest_tpl(EDBCNT " " def)); \
+	TEST_MKARG(main_args, UnitTest_tpl(EDBCNT " " def)); \
 	UnitTest_reopen(1, "stdout"); \
-	EXPECT(hidden_main(n + 1, main_args) == 0); \
+	EXPECT(hidden_main(main_args->argc, main_args->argv) == 0); \
 	TEST_EXIT; \
 } CHILD_EXIT(0)
 

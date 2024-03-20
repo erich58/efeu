@@ -22,7 +22,6 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include "mdcount.h"
 #include <EFEU/stdtype.h>
-#include <EFEU/TimeRange.h>
 
 EfiType Type_cotab = REF_TYPE ("CountTab", MdCountPar *);
 EfiType Type_cltab = REF_TYPE ("ClassTab", MdCountPar *);

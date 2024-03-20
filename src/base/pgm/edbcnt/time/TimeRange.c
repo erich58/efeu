@@ -3,7 +3,7 @@
 	A-1090 Wien, Währinger Straße 64/6
 */
 
-#include <EFEU/TimeRange.h>
+#include "TimeRange.h"
 #include <EFEU/calendar.h>
 #include <EFEU/ioscan.h>
 #include <ctype.h>

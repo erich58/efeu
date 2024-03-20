@@ -22,8 +22,8 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef	EFEU_TimeRange_h
-#define	EFEU_TimeRange_h	1
+#ifndef	TimeRange_h
+#define	TimeRange_h	1
 
 #include <EFEU/vecbuf.h>
 #include <EFEU/mstring.h>
@@ -50,4 +50,4 @@ int PrintTimeRange (IO *io, TimeRange *rng, size_t n);
 extern char *TimeRange_fmt;
 extern EfiType Type_trange;
 
-#endif	/* EFEU/TimeRange.h */
+#endif	/* TimeRange.h */

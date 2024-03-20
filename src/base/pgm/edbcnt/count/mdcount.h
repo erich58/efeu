@@ -29,7 +29,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/vecbuf.h>
 #include <EFEU/label.h>
 #include <EFEU/Info.h>
-#include <EFEU/TimeRange.h>
+#include "TimeRange.h"
 
 /*	Zählerdefinition
 */

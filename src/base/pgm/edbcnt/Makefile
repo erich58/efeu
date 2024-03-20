@@ -11,7 +11,7 @@ prereq::
 	make -C ../../lib
 
 LDFLAGS += -lefmath -liorl -lmd -lefx -lefm -ldl -lm
-CFLAGS += -I count
+CFLAGS += -I time -I count
 TST_CFLAGS = '-DBIN="$(BIN)"'
 TST_CFLAGS += -I ../../lib/efm -I ../../lib/efx
 

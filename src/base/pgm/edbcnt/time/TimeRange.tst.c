@@ -1,5 +1,5 @@
 #include <EFEU/UnitTest.h>
-#include <EFEU/TimeRange.h>
+#include "TimeRange.h"
 #include <EFEU/locale.h>
 #include <utest/in.tst.h>
 #include <utest/out.tst.h>
