@@ -22,7 +22,7 @@ TEST_DECL(setup)
 TEST_DECL(create)
 {
 	TimeSeries *ts;
-	EXPECT(ts = ts_create("test", tindex_create(TS_INDEX, 0), 10));
+	EXPECT_PTR(ts = ts_create("test", tindex_create(TS_INDEX, 0), 10));
 	EXPECT_MSTR(rd_ident(ts), "test[10] #0 #9");
 	EXPECT_TS(ts,
 		"TimeSeries(\"test\", \"#0\",\n"
