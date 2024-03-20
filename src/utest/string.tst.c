@@ -67,6 +67,8 @@ TEST_DECL(string)
 	EXPECT_STR(UnitTest_next(ustr), "");
 	EXPECT_STR(UnitTest_next(ustr), "xyz");
 	EXPECT_STR(UnitTest_next(ustr), NULL);
+
+	EXPECT_STR(UnitTest_tprintf("%s %d", "test", 42), "test 42");
 }
 
 TEST_DECL(split)

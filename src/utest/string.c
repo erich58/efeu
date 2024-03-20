@@ -263,6 +263,17 @@ const char *UnitTest_qstr(const char *str)
 	return UnitTest_str(&buf);
 }
 
+const char *UnitTest_tprintf(const char *fmt, ...)
+{
+	static STRING_DECL(buf);
+	va_list list;
+	va_start(list, fmt);
+	UnitTest_clear(&buf);
+	UnitTest_vprintf(&buf, fmt, list);
+	va_end(list);
+	return UnitTest_str(&buf);
+}
+
 const char *UnitTest_qchar(int c)
 {
 	static STRING_DECL(buf);

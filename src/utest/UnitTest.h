@@ -35,6 +35,7 @@ void UnitTest_qputc(int c, int delim, UnitTestString *ustr);
 void UnitTest_qputs(const char *s, int delim, UnitTestString *ustr);
 void UnitTest_vprintf(UnitTestString *ustr, const char *fmt, va_list list);
 void UnitTest_printf(UnitTestString *ustr, const char *fmt, ...);
+const char *UnitTest_tprintf(const char *fmt, ...);
 
 size_t UnitTest_start(UnitTestString *ustr);
 const char *UnitTest_next(UnitTestString *ustr);
@@ -44,8 +45,13 @@ size_t UnitTest_lsplit(UnitTestString *ustr, const char *str);
 const char *UnitTest_str(UnitTestString *ustr);
 char *UnitTest_mstr(UnitTestString *ustr);
 
+UnitTestArgs *UnitTestArgs_ptr(UnitTestArgs *args);
 UnitTestArgs *UnitTestArgs_init(UnitTestArgs *args, const char *def);
-void UnitTestArgs_clear(UnitTestArgs *args);
+UnitTestArgs *UnitTestArgs_clear(UnitTestArgs *args);
+void UnitTestArgs_info(const char *file, int line, const char *name,
+	UnitTestArgs *args);
+UnitTestArgs *UnitTest_mkarg(const char *file, int line, const char *name,
+	const char *def);
 
 FILE *UnitTest_file(UnitTestIO *io);
 int UnitTest_fd(UnitTestIO *io);
@@ -93,8 +99,6 @@ int UnitTest_char(const char *file, int line,
 	int c1, int c2, const char *x1, const char *x2);
 int UnitTest_create(const char *file, int line, const char *name,
 	const char *content, const char *expr);
-char **UnitTest_mkarg(const char *file, int line, const char *name,
-	size_t n, const char *def, int delim);
 void UnitTest_summary(const char *issue);
 
 char *UnitTest_pgets(const char *cmd_, int delim);
@@ -253,11 +257,8 @@ UnitTest_childstat(__FILE__, __LINE__, n)
 #define	CHILD_SIGNALED(n)		\
 UnitTest_childstat(__FILE__, __LINE__, -n)
 
-#define	TEST_ARGV(name, n, def)	\
-	char **name = UnitTest_mkarg(__FILE__, __LINE__, # name, n, def, ' ')
-
-#define	TEST_ARGV2(name, n, def, delim)	\
-	char **name = UnitTest_mkarg(__FILE__, __LINE__, # name, n, def, delim)
-
+#define	TEST_MKARG(name, def)	\
+	UnitTestArgs *name = UnitTest_mkarg(__FILE__, __LINE__, \
+		# name "->argv", def)
 
 #endif

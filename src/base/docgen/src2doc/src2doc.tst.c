@@ -7,10 +7,10 @@ int hidden_main(int argc, char **argv);
 
 #define	RUN_SRC2DOC(n, def)	\
 TEST_FORK { \
-	TEST_ARGV(main_args, n + 1, UnitTest_tpl(SRC2DOC " " def)); \
+	TEST_MKARG(main_args, UnitTest_tpl(SRC2DOC " " def)); \
 	UnitTest_reopen(1, "stdout"); \
 	UnitTest_reopen(2, "stderr"); \
-	EXPECT(hidden_main(n + 1, main_args) == 0); \
+	EXPECT(hidden_main(main_args->argc, main_args->argv) == 0); \
 	TEST_EXIT; \
 } CHILD_EXIT(0)
 

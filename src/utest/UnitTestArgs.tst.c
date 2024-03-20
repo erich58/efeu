@@ -3,7 +3,7 @@
 
 TEST_SUITE
 {
-	UnitTestArgs *args = UnitTestArgs_init(NULL, " a \t@/b \\@ 'a \tb' \\");
+	TEST_MKARG(args, " a \t@/b \\@ 'a \tb' \\");
 	EXPECT_INT(args->argc, 5);
 	EXPECT_STR(args->argv[0], "a");
 	EXPECT_STR(args->argv[1], UnitTest_tmp("b"));
@@ -11,7 +11,12 @@ TEST_SUITE
 	EXPECT_STR(args->argv[3], "a \tb");
 	EXPECT_STR(args->argv[4], "");
 	EXPECT_STR(args->argv[5], NULL);
-	UnitTestArgs_init(NULL, NULL);
-	EXPECT_INT(args->argc, 0);
-	EXPECT_STR(args->argv, NULL);
+
+	TEST_MKARG(empty, NULL);
+	EXPECT_INT(empty->argc, 0);
+	EXPECT_STR(empty->argv[0], NULL);
+
+	UnitTestArgs_clear(empty);
+	EXPECT_INT(empty->argc, 0);
+	EXPECT(empty->argv == NULL);
 }

@@ -723,43 +723,6 @@ int UnitTest_dcmp(double a, double b)
 	return a == 0.;
 }
 
-char **UnitTest_mkarg(const char *file, int line, const char *name,
-	size_t dim, const char *data, int delim_)
-{
-	if	(!name)	name = "argv";
-	if	(!data)	data = "";
-
-	size_t slen = strlen(data) + 1;
-	char **v = malloc((dim + 1) * sizeof v[0] + slen);
-
-	if	(!v)
-		UnitTest_assert(UnitTest_result(file, line,
-			0, "UnitTest_mkarg()"));
-
-	char *p = memcpy(v + dim + 1, data, slen);
-
-	for (size_t i = 0; i < dim; ++i)
-	{
-		for (v[i] = p; *p; ++p)
-		{
-			if	(*p == delim_)
-			{
-				*p++ = 0;
-				break;
-			}
-		}
-	}
-
-	v[dim] = NULL;
-	UnitTest_info(file, line, "*GOOD", "%s[%zd + 1] = {", name, dim);
-
-	for (size_t i = 0; i <= dim; ++i)
-		UnitTest_info(file, line, "+", "\t%s,", UnitTest_qstr(v[i]));
-
-	UnitTest_info(file, line, "+", "}");
-	return v;
-}
-
 void UnitTest_cmdexec(const char *file, int line,
 	const char *cmd, const char *args)
 {
