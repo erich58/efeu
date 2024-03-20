@@ -190,13 +190,8 @@ auf Konsistenz. Sie wird nur für die Fehlersuche verwendet.
 
 void memcheck (void)
 {
-	int i;
-	void **ptr;
-
-	for (i = 0; i < tabsize(mem_tab); i++)
+	for (int i = 0; i < tabsize(mem_tab); i++)
 		check_data(mem_tab + i);
-
-	ptr = mem_large.data;
 }
 
 /*
