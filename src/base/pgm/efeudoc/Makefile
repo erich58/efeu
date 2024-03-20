@@ -17,6 +17,8 @@ prereq::
 	make -C ../../lib
 
 LDFLAGS += -lefmath -liorl -lmd -lefx -lefm -ldl -lm
+TST_CFLAGS += -D 'SRC="$(shell pwd)"'
+TST_CFLAGS += -D 'TOP="$(_TOP)"'
 
 include $(CFG)/ComplexProgram.mak
 

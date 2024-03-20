@@ -15,10 +15,16 @@ typedef struct {
 } UnitTestString;
 
 typedef struct {
+	int argc;
+	char **argv;
+} UnitTestArgs;
+
+typedef struct {
 	FILE *file;
 } UnitTestIO;
 
 #define	STRING_DECL(name)	UnitTestString name = { NULL, 0, 0, 0, }
+#define	TEST_ARGS_DECL(name)	UnitTestArgs name = { 0, NULL }
 #define	TEST_IO_DECL(name)	UnitTestIO name = { NULL }
 
 void UnitTest_clear(UnitTestString *ustr);
@@ -37,6 +43,9 @@ const char *UnitTest_qsplit(UnitTestString *ustr, const char *str);
 size_t UnitTest_lsplit(UnitTestString *ustr, const char *str);
 const char *UnitTest_str(UnitTestString *ustr);
 char *UnitTest_mstr(UnitTestString *ustr);
+
+UnitTestArgs *UnitTestArgs_init(UnitTestArgs *args, const char *def);
+void UnitTestArgs_clear(UnitTestArgs *args);
 
 FILE *UnitTest_file(UnitTestIO *io);
 int UnitTest_fd(UnitTestIO *io);

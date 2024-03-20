@@ -770,87 +770,19 @@ void UnitTest_cmdexec(const char *file, int line,
 		exit(1);
 	}
 
-	STRING_DECL(buf);
-	size_t n = 0;
-	int quote = 0;
-	const char *tmp = UnitTest_tmp(NULL);
-
-	while 	(*args == ' ' || *args == '\t')
-		++args;
-
-	while (*args != 0)
-	{
-		if	(*args == '\'')
-		{
-			quote = !quote;
-		}
-		else if	(*args == '\\')
-		{
-			args++;
-
-			if	(*args == 0)
-				break;
-
-			UnitTest_putc(*args, &buf);
-		}
-		else if	(*args == '@')
-		{
-			UnitTest_puts(tmp, &buf);
-		}
-		else if	(quote == 0 && (*args == ' ' || *args == '\t'))
-		{
-			UnitTest_putc(0, &buf);
-
-			while 	(args[1] == ' ' || args[1] == '\t')
-				++args;
-
-			n++;
-		}
-		else
-		{
-			UnitTest_putc(*args, &buf);
-		}
-
-		++args;
-	}
-
-	UnitTest_putc(0, &buf);
-	n++;
-
-	char **v = malloc((n + 1) * sizeof v[0]);
-
-	if	(!v)
-	{
-		UnitTest_info(file, line, "#ERROR",
-			"cmdexec: %s", "malloc failed");
-		exit(1);
-	}
-
-	size_t p = 0;
-
-	for (size_t i = 0; i < n; ++i)
-	{
-		v[i] = buf.data + p;
-
-		while (p < buf.size)
-		{
-			if	(buf.data[p++] == 0)
-				break;
-		}
-	}
-
-	v[n] = NULL;
+	TEST_ARGS_DECL(buf);
+	UnitTestArgs_init(&buf, args);
 
 	UnitTest_info(file, line, "INFO", "exec(%s, ", UnitTest_qstr(cmd));
 
-	for (size_t i = 0; i < n; ++i)
-		UnitTest_info(file, line, "+", "\t%s,", UnitTest_qstr(v[i]));
+	for (int i = 0; i < buf.argc; ++i)
+		UnitTest_info(file, line, "+", "\t%s,",
+			UnitTest_qstr(buf.argv[i]));
 
 	UnitTest_info(file, line, "+", "\tNULL)");
 
-	execv(cmd, v);
+	execv(cmd, buf.argv);
 	UnitTest_info(file, line, "#ERROR", "%s: %s", cmd, strerror(errno));
-	UnitTest_free(&buf);
-	free(v);
+	UnitTestArgs_clear(&buf);
 	exit(1);
 }
