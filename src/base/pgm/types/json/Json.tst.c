@@ -6,10 +6,10 @@
 
 static void tmpvar()
 {
-	static EfiParseDef pdef[] = { "TMP", PFunc_str, NULL };
+	static EfiParseDef pdef = { "TMP", PFunc_str, NULL };
 
-	pdef[0].data = mstrcpy(UnitTest_tmp("TMP"));
-	AddParseDef(pdef, 1);
+	pdef.data = mstrcpy(UnitTest_tmp("TMP"));
+	AddParseDef(&pdef, 1);
 }
 
 TEST_DECL(create)
@@ -69,4 +69,5 @@ TEST_SUITE
 	TEST_RUN(str2json);
 	TEST_RUN(io);
 	EXPECT(1);
+	CLEANUP_EVAL;
 }
