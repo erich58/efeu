@@ -1,7 +1,8 @@
 #include <EFEU/UnitTest.h>
 #include <stdlib.h>
 
-#define	ESH	BUILD "/esh"
+#define	ESH_BIN		BUILD "/esh"
+#define	ESH_NAME	TOP "/bin/esh"
 
 TEST_DECL(setup)
 {
@@ -17,7 +18,7 @@ TEST_DECL(synopsis)
 	{
 		UnitTest_mkcmd("efeudoc", "#!/bin/sh\ncat\n");
 		UnitTest_reopen(2, "stderr");
-		CMD_EXEC(ESH, "esh -?");
+		CMD_EXEC(ESH_BIN, ESH_NAME " -?");
 	}
 
 	CHILD_EXIT(0);

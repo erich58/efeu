@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #define	EDBDIFF	BUILD "/edbdiff"
+#define	RT_NAME	TOP "/bin/edbdiff"
 
 TEST_DECL(setup)
 {
@@ -17,7 +18,7 @@ TEST_DECL(synopsis)
 	{
 		UnitTest_mkcmd("efeudoc", "#!/bin/sh\ncat\n");
 		UnitTest_reopen(2, "stderr");
-		CMD_EXEC(EDBDIFF, "edbdiff");
+		CMD_EXEC(EDBDIFF, RT_NAME);
 	}
 
 	CHILD_EXIT(1);
@@ -50,7 +51,7 @@ TEST_DECL(method)
 	TEST_FORK
 	{
 		UnitTest_reopen(2, "stderr");
-		CMD_EXEC(EDBDIFF, "edbdiff int: int: -d?");
+		CMD_EXEC(EDBDIFF, RT_NAME " int: int: -d?");
 	}
 
 	CHILD_EXIT(0);
@@ -63,7 +64,7 @@ TEST_DECL(method)
 	TEST_FORK
 	{
 		UnitTest_reopen(2, "stderr");
-		CMD_EXEC(EDBDIFF, "edbdiff int: int: -d unknown");
+		CMD_EXEC(EDBDIFF, RT_NAME " int: int: -d unknown");
 	}
 
 	CHILD_EXIT(1);
@@ -73,7 +74,7 @@ TEST_DECL(method)
 }
 
 #define	RUN_EDBDIFF(args)	\
-TEST_FORK { CMD_EXEC(EDBDIFF, "edbdiff " args); } \
+TEST_FORK { CMD_EXEC(EDBDIFF, RT_NAME " " args); } \
 CHILD_EXIT(0);
 
 TEST_DECL(header)

@@ -2,8 +2,8 @@
 #include <EFEU/mstring.h>
 #include <stdlib.h>
 
-#define	RT_BIN	".build/efeuman"	// Binary version with coverage
-#define	RT_NAME	"./efeuman"	// Runtime name (defines ApplPath)
+#define	RT_BIN	BUILD "/efeuman"	// Binary version with coverage
+#define	RT_NAME	TOP "/bin/efeuman"	// Runtime name (defines ApplPath)
 
 #define	RUN_EFEUMAN(args)	\
 TEST_FORK { \
@@ -15,19 +15,11 @@ TEST_FORK { \
 TEST_DECL(setup)
 {
 	setenv("LANG", "C", 1);
+	UnitTest_newpath(TOP "/bin");
+	UnitTest_mkcmd("efeudoc", "#!/bin/sh\ncat\n");
 	PRINT_LABEL("Force separating UnitTest output from cmd output");
 	UnitTest_stderr("stderr");
 	UnitTest_stderr(NULL);
-
-	/* Fake efeudoc for usage */
-	TEST_FILE("efeudoc", UnitTest_tpl(
-		"#!/bin/sh\n"
-		"cat > @/doc.out\n"
-	));
-	UnitTest_system("chmod a+x @/efeudoc");
-	const char *path = mstrpaste(":", UnitTest_tmp(NULL), getenv("PATH"));
-	setenv("PATH", path, 1);
-	PRINT_STR(path);
 }
 
 TEST_DECL(hello)
@@ -48,7 +40,7 @@ TEST_DECL(hello)
 	);
 
 	RUN_EFEUMAN("-- @/hello.sh -?");
-	EXPECT_CONTENT("doc.out",
+	EXPECT_CONTENT("stderr",
 		"\\Synopsis\n"
 		"\\hang\n"
 		"|hello.sh|\n"
@@ -59,7 +51,7 @@ TEST_DECL(hello)
 	);
 
 	RUN_EFEUMAN("-- @/hello.sh --version");
-	EXPECT_CONTENT("doc.out",
+	EXPECT_CONTENT("stderr",
 		"hello.sh -- Hello World\n"
 		"\n"
 		"\n"
@@ -80,7 +72,7 @@ TEST_DECL(plain)
 	);
 
 	RUN_EFEUMAN("-- @/plain.sh -?");
-	EXPECT_CONTENT("doc.out",
+	EXPECT_CONTENT("stderr",
 		"\\Synopsis\n"
 		"\\hang\n"
 		"|plain.sh|\n"
@@ -90,7 +82,12 @@ TEST_DECL(plain)
 	);
 
 	RUN_EFEUMAN("-v Version=42 -- @/plain.sh --version");
-	PRINT_CONTENT("doc.out");
+	EXPECT_CONTENT("stderr",
+		"plain.sh -- plain.sh\n"
+		"\n"
+		"Version: 42\n"
+		"\n"
+	);
 }
 
 TEST_SUITE

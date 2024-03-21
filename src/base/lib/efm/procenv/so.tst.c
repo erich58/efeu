@@ -4,7 +4,7 @@
 
 TEST_SUITE
 {
-	IO *in = io_popen("efeu-config cc", "r");
+	IO *in = io_popen(TOP "/bin/efeu-config cc", "r");
 	char *cc = io_getline(in, NULL, EOF);
 	io_close(in);
 	setenv("CC", cc, 1);

@@ -3,7 +3,7 @@
 
 int hidden_main(int argc, char **argv);
 
-#define	SRC2DOC "./src2doc"
+#define	SRC2DOC TOP "/bin/src2doc"
 
 #define	RUN_SRC2DOC(n, def)	\
 TEST_FORK { \

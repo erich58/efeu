@@ -348,6 +348,7 @@ int main (int argc, char **argv)
 	memcpy(&par->var, &save, sizeof(VecBuf));
 	CmdParEval_add(&eval_manpage);
 	SetProgName(argv[0]);
+	CmdPar_setval(par, "Ident", NULL);
 	CmdPar_setval(par, "Copyright", NULL);
 
 	DocBuf_init(&doc_buf);

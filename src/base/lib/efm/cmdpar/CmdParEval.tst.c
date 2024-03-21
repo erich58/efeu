@@ -168,7 +168,8 @@ TEST_DECL(config)
 
 	TEST_FORK
 	{
-		freopen(UnitTest_tmp("config.err"), "w", stderr);
+		ApplPath = mstrcpy(".");
+		UnitTest_stderr("config.err");
 		pcmd("config", NULL, "{}", UnitTest_tmp("undefined.cnf"));
 		TEST_EXIT;
 	}

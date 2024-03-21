@@ -79,6 +79,8 @@ test::
 
 test:: all
 
+TST_CFLAGS += -D'TOP="$(_TOP)"'
+
 _Library_tst_src = $(shell find -L . -name '*.tst.c' -printf '%f\n')
 _Library_tst_obj = $(patsubst %.c,$(BUILD)/%.o,$(_Library_tst_src))
 _Library_tst_dep = $(patsubst %.o,%.d,$(_Library_tst_obj))

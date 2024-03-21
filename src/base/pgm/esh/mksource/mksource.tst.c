@@ -4,7 +4,7 @@
 #define	MS_SRC	SRC "/mksource"		// Source directory
 #define	MS_BIN	BUILD "/mksource"	// Binary version with coverage
 #define	MS_INC	" -I" MS_SRC "/files" 	// Include Files
-#define	MS_NAME	MS_SRC "/mksource"	// Runtime name (defines ApplPath)
+#define	MS_NAME	TOP "/bin/mksource"	// Runtime name (defines ApplPath)
 
 TEST_DECL(setup)
 {

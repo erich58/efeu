@@ -108,6 +108,7 @@ const char *UnitTest_mkpath(const char *name);
 const char *UnitTest_mkdir(const char *name);
 const char *UnitTest_mkfile(const char *name, const char *content);
 const char *UnitTest_mkcmd(const char *name, const char *content);
+void UnitTest_newpath(const char *path);
 const char *UnitTest_content(const char *name);
 void UnitTest_tmpclean(void);
 

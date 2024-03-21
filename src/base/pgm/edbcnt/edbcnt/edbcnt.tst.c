@@ -1,9 +1,10 @@
 #include <EFEU/UnitTest.h>
+#include <EFEU/mstring.h>
 #include <stdlib.h>
 
 int hidden_main(int argc, char **arg);
 
-#define	EDBCNT BIN "/edbcnt"
+#define	EDBCNT TOP "/bin/edbcnt"
 
 #define	RUN_EDBCNT(def)	\
 TEST_FORK { \
@@ -16,6 +17,8 @@ TEST_FORK { \
 TEST_DECL(setup)
 {
 	setenv("LANG", "C", 1);
+	char *path = mstrpaste(":", TOP "/bin", getenv("PATH"));
+	setenv("PATH", path, 1);
 	PRINT_LABEL("Force separating UnitTest output from cmd output");
 	UnitTest_stderr("stderr");
 	UnitTest_stderr(NULL);

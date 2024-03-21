@@ -159,6 +159,15 @@ const char *UnitTest_mkfile(const char *name, const char *content)
 	return path;
 }
 
+void UnitTest_newpath(const char *path)
+{
+	STRING_DECL(buf);
+	UnitTest_puts(path, &buf);
+	UnitTest_putc(':', &buf);
+	UnitTest_puts(getenv("PATH"), &buf);
+	setenv("PATH", UnitTest_mstr(&buf), 1);
+}
+
 const char *UnitTest_mkcmd(const char *name, const char *content)
 {
 	static STRING_DECL(buf);
@@ -166,11 +175,7 @@ const char *UnitTest_mkcmd(const char *name, const char *content)
 
 	if	(need_path)
 	{
-		UnitTest_clear(&buf);
-		UnitTest_puts(UnitTest_mkdir("bin"), &buf);
-		UnitTest_putc(':', &buf);
-		UnitTest_puts(getenv("PATH"), &buf);
-		setenv("PATH", UnitTest_str(&buf), 1);
+		UnitTest_newpath(UnitTest_mkdir("bin"));
 		need_path = 0;
 	}
 

@@ -21,6 +21,10 @@ endif
 CPPFLAGS += -D'EFEU_VERSION="$(VERSION)"' \
 	-D_XOPEN_SOURCE=600 -D_FILE_OFFSET_BITS=64
 
+ifndef	TST_CFLAGS
+TST_CFLAGS = -D'TOP="$(_TOP)"'
+endif
+
 EFEU_DIRS = $(INC) $(BIN) $(LIB) 
 
 files:: $(EFEU_DIRS)
