@@ -7,10 +7,10 @@ int hidden_main(int argc, char **argv);
 
 #define	RUN_SRC2DOC(n, def)	\
 TEST_FORK { \
-	TEST_MKARG(main_args, UnitTest_tpl(SRC2DOC " " def)); \
+	TEST_MKARG(rc, UnitTest_tpl(SRC2DOC " " def)); \
 	UnitTest_reopen(1, "stdout"); \
 	UnitTest_reopen(2, "stderr"); \
-	EXPECT(hidden_main(main_args->argc, main_args->argv) == 0); \
+	EXPECT(hidden_main(rc->argc, rc->argv) == 0); \
 	TEST_EXIT; \
 } CHILD_EXIT(0)
 
@@ -27,18 +27,37 @@ TEST_DECL(synopsis)
 {
 	TEST_FORK
 	{
-		setenv("TERM", "dumb", 1);
-		setenv("COLUMNS", "60", 1);
+		UnitTest_mkcmd("efeudoc", "#!/bin/sh\ncat\n");
 		UnitTest_reopen(2, "stderr");
-		char *args[] = { SRC2DOC, NULL };
-		EXPECT(hidden_main(1, args) == 1);
+		TEST_MKARG(rc, UnitTest_tpl(SRC2DOC)); \
+		EXPECT(hidden_main(rc->argc, rc->argv) == 1);
 		TEST_EXIT;
 	}
 
 	CHILD_EXIT(1);
-	LMATCH_CONTENT("stderr",
-		"SYNOPSIS\n"
-		"src2doc\n"
+	EXPECT_CONTENT("stderr",
+		"\\Synopsis\n"
+		"\\hang\n"
+		"|src2doc|\n"
+		"\\[~|--help|[|=|</type/>]~]\n"
+		"\\[~|--version|~]\n"
+		"\\[~|--info|[|=|</entry/>]~]\n"
+		"\\[~|--debug|[|=|</mode/>]~]\n"
+		"\\[~|--verbose|~]\n"
+		"\\[~|-t|~]\n"
+		"\\[~|--ps|~]\n"
+		"\\[~|-c|~]\n"
+		"\\[~|-n|~</name/>~]\n"
+		"\\[~|-m|~</mode/>~]\n"
+		"\\[~|-s|~</num/>~]\n"
+		"\\[~|-i|~</fmt/>~]\n"
+		"\\[~|-g|~]\n"
+		"\\[~|-L|~</lang/>~]\n"
+		"\\[~|-l|~]\n"
+		"\\[~|-a|~]\n"
+		"</src/>\n"
+		"\\[~</out/>~]\n"
+		"\\end\n"
 	);
 }
 

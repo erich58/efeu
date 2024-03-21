@@ -36,16 +36,46 @@ TEST_DECL(synopsis)
 {
 	TEST_FORK
 	{
-		setenv("TERM", "dumb", 1);
-		setenv("COLUMNS", "60", 1);
+		UnitTest_mkcmd("efeudoc", "#!/bin/sh\ncat\n");
 		UnitTest_reopen(2, "stderr");
 		CMD_EXEC(MS_BIN, MS_NAME " -?");
 	}
 
 	CHILD_EXIT(0);
-	LMATCH_CONTENT("stderr",
-		"SYNOPSIS\n"
-		"mksource\n"
+	EXPECT_CONTENT("stderr",
+		"\\Synopsis\n"
+		"\\hang\n"
+		"|mksource|\n"
+		"\\[~|--help|[|=|</type/>]~]\n"
+		"\\[~|--version|~]\n"
+		"\\[~|--info|[|=|</entry/>]~]\n"
+		"\\[~|--debug|[|=|</mode/>]~]\n"
+		"\\[~|--verbose|~]\n"
+		"\\[~|-I|~</dir/>~]\n"
+		"\\[~|-W|~</dir/>~]\n"
+		"\\[~|-s|~]\n"
+		"\\[~|-V|~]\n"
+		"\\[~|-v|~]\n"
+		"\\[~|-l|~]\n"
+		"\\[~|-L|~</name/>~]\n"
+		"\\[~|-r|~]\n"
+		"\\[~|-x|~]\n"
+		"\\[~|--all|~</name/>~]\n"
+		"\\[~|--clean|~</name/>~]\n"
+		"\\[~|--depend|~</name/>~]\n"
+		"\\[~|--lock|~]\n"
+		"\\[~|--unlock|~]\n"
+		"\\[~|-d|~]\n"
+		"\\[~|-D|~</name/>~]\n"
+		"\\[~|-n|~</name/>~]\n"
+		"\\[~|-h|~]\n"
+		"\\[~|-c|~]\n"
+		"\\[~|-H|~</hdr/>~]\n"
+		"\\[~|-C|~</src/>~]\n"
+		"\\[~|-t|~]\n"
+		"\\[~|-T|~</doc/>~]\n"
+		"</name/>\n"
+		"\\end\n"
 	);
 }
 

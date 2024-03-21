@@ -10,20 +10,20 @@ int hidden_main(int argc, char **argv);
 /*
 #define	RUN_EFEUDOC(n, def)	\
 TEST_FORK { \
-	UnitTestArgs *args = UnitTestArgs_init(NULL, EFEUDOC " " def); \
+	TEST_MKARG(rc, EFEUDOC " " def); \
 	UnitTest_reopen(1, "stdout"); \
 	UnitTest_reopen(2, "stderr"); \
-	EXPECT(hidden_main(args->argc, args->argv) == 0); \
+	EXPECT(hidden_main(rc->argc, rc->argv) == 0); \
 	TEST_EXIT; \
 } CHILD_EXIT(0)
 */
 
 #define	RUN_EFEUDOC(def)	\
 do { \
-	UnitTestArgs *args = UnitTestArgs_init(NULL, EFEUDOC " " def); \
+	TEST_MKARG(rc, EFEUDOC " " def); \
 	UnitTest_stdout("stdout"); \
 	UnitTest_stderr("stderr"); \
-	EXPECT(hidden_main(args->argc, args->argv) == 0); \
+	EXPECT(hidden_main(rc->argc, rc->argv) == 0); \
 	UnitTest_stdout(NULL); \
 	UnitTest_stderr(NULL); \
 } while(0)
@@ -44,8 +44,8 @@ TEST_DECL(synopsis)
 	{
 		UnitTest_mkcmd("efeudoc", "#!/bin/sh\ncat\n");
 		UnitTest_reopen(2, "stderr");
-		UnitTestArgs *args = UnitTestArgs_init(NULL, EFEUDOC);
-		EXPECT(hidden_main(args->argc, args->argv) == 1);
+		TEST_MKARG(rc, EFEUDOC);
+		EXPECT(hidden_main(rc->argc, rc->argv) == 1);
 		TEST_EXIT;
 	}
 

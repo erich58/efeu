@@ -15,14 +15,34 @@ TEST_DECL(synopsis)
 {
 	TEST_FORK
 	{
-		setenv("TERM", "dumb", 1);
-		setenv("COLUMNS", "60", 1);
+		UnitTest_mkcmd("efeudoc", "#!/bin/sh\ncat\n");
 		UnitTest_reopen(2, "stderr");
 		CMD_EXEC(EDBDIFF, "edbdiff");
 	}
 
 	CHILD_EXIT(1);
-	LMATCH_CONTENT("stderr", "SYNOPSIS\n");
+	EXPECT_CONTENT("stderr",
+		"\\Synopsis\n"
+		"\\hang\n"
+		"|edbdiff|\n"
+		"\\[~|--help|[|=|</type/>]~]\n"
+		"\\[~|--version|~]\n"
+		"\\[~|--info|[|=|</entry/>]~]\n"
+		"\\[~|--debug|[|=|</mode/>]~]\n"
+		"\\[~|--verbose|~]\n"
+		"\\[~|-a|~</def/>~]\n"
+		"\\[~|-b|~</def/>~]\n"
+		"\\[~|-f|~</def/>~]\n"
+		"\\[~|-p|~</mode/>~]\n"
+		"\\[~|-c|~</name/>~]\n"
+		"\\[~|-d|~</name/>~]\n"
+		"\\[~|-n|~</lim/>~]\n"
+		"\\[~|-e|~</lim/>~]\n"
+		"</db1/>\n"
+		"</db2/>\n"
+		"\\[~</out/>~]\n"
+		"\\end\n"
+	);
 }
 
 TEST_DECL(method)

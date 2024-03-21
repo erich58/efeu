@@ -15,14 +15,29 @@ TEST_DECL(synopsis)
 {
 	TEST_FORK
 	{
-		setenv("TERM", "dumb", 1);
-		setenv("COLUMNS", "60", 1);
+		UnitTest_mkcmd("efeudoc", "#!/bin/sh\ncat\n");
 		UnitTest_reopen(2, "stderr");
 		CMD_EXEC(ESH, "esh -?");
 	}
 
 	CHILD_EXIT(0);
-	LMATCH_CONTENT("stderr", "SYNOPSIS\n");
+	EXPECT_CONTENT("stderr",
+		"\\Synopsis\n"
+		"\\hang\n"
+		"|esh|\n"
+		"\\[~|--help|[|=|</type/>]~]\n"
+		"\\[~|--version|~]\n"
+		"\\[~|--info|[|=|</entry/>]~]\n"
+		"\\[~|--debug|[|=|</mode/>]~]\n"
+		"\\[~|--verbose|~]\n"
+		"\\[~|-I|~</dir/>~]\n"
+		"\\[~|-D|~</name|=|val/>~]\n"
+		"\\[~|-c|~</string/>~]\n"
+		"\\[~|-E|~]\n"
+		"\\[~</file/>~]\n"
+		"\\[~</arg(s)/>~]\n"
+		"\\end\n"
+	);
 }
 
 TEST_SUITE

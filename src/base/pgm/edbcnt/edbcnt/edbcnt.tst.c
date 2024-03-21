@@ -5,11 +5,11 @@ int hidden_main(int argc, char **arg);
 
 #define	EDBCNT BIN "/edbcnt"
 
-#define	RUN_EDBCNT(n, def)	\
+#define	RUN_EDBCNT(def)	\
 TEST_FORK { \
-	TEST_MKARG(main_args, UnitTest_tpl(EDBCNT " " def)); \
+	TEST_MKARG(rc, UnitTest_tpl(EDBCNT " " def)); \
 	UnitTest_reopen(1, "stdout"); \
-	EXPECT(hidden_main(main_args->argc, main_args->argv) == 0); \
+	EXPECT(hidden_main(rc->argc, rc->argv) == 0); \
 	TEST_EXIT; \
 } CHILD_EXIT(0)
 
@@ -25,21 +25,50 @@ TEST_DECL(synopsis)
 {
 	TEST_FORK
 	{
-		setenv("TERM", "dumb", 1);
-		setenv("COLUMNS", "60", 1);
+		UnitTest_mkcmd("efeudoc", "#!/bin/sh\ncat\n");
 		UnitTest_reopen(2, "stderr");
-		char *args[] = { EDBCNT, NULL };
-		EXPECT(hidden_main(1, args) == 1);
+		TEST_MKARG(rc, EDBCNT); \
+		EXPECT(hidden_main(rc->argc, rc->argv) == 1);
 		TEST_EXIT;
 	}
 
 	CHILD_EXIT(1);
-	LMATCH_CONTENT("stderr", "SYNOPSIS\n");
+	EXPECT_CONTENT("stderr",
+		"\\Synopsis\n"
+		"\\hang\n"
+		"|edbcnt|\n"
+		"\\[~|--help|[|=|</type/>]~]\n"
+		"\\[~|--version|~]\n"
+		"\\[~|--info|[|=|</entry/>]~]\n"
+		"\\[~|--debug|[|=|</mode/>]~]\n"
+		"\\[~|--verbose|~]\n"
+		"\\[~|-i|[</mode/>]~]\n"
+		"\\[~|-l|[</pat/>]~]\n"
+		"\\[~|-L|[</pat/>]~]\n"
+		"\\[~|-E|~</expr/>~]\n"
+		"\\[~|-F|~</file/>~]\n"
+		"\\[~|-x|~</list/>~]\n"
+		"\\[~|-p|~</prec/>~]\n"
+		"\\[~|-T|~</titel/>~]\n"
+		"\\[~|-f|~</def/>~]\n"
+		"\\[~|-e|~</eval/>~]\n"
+		"\\[~|-c|~</counter/>~]\n"
+		"\\[~|-r|~</range/>~]\n"
+		"\\[~|-w|~</weight/>~]\n"
+		"\\[~|-n|~</lim/>~]\n"
+		"\\[~|-R|[</mode/>]~]\n"
+		"\\[~|-d|~</delim/>~]\n"
+		"\\[~|-M|~</target/>~]\n"
+		"</in/>\n"
+		"\\{~<|<name>=<list>|>~}\n"
+		"\\[~</out/>~]\n"
+		"\\end\n"
+	);
 }
 
 TEST_DECL(info)
 {
-	RUN_EDBCNT(2, "int: -ixdump");
+	RUN_EDBCNT("int: -ixdump");
 	EXPECT_FILE("stdout",
 		"@: count definitions\n"
 		"@class: grouping classes\n"
@@ -52,7 +81,7 @@ TEST_DECL(info)
 		"double\n"
 	);
 
-	RUN_EDBCNT(2, "int: -l*");
+	RUN_EDBCNT("int: -l*");
 	EXPECT_CONTENT("stdout",
 		"total[1]\tTotality\n"
 		"\tTOTAL\tTotality\n"
@@ -61,7 +90,7 @@ TEST_DECL(info)
 
 TEST_DECL(counter)
 {
-	RUN_EDBCNT(2, "int: -c?");
+	RUN_EDBCNT("int: -c?");
 	EXPECT_CONTENT("stdout",
 		"count\tstandard counter\n"
 		"wcount\tweighted count\n"
@@ -70,8 +99,8 @@ TEST_DECL(counter)
 	TEST_FORK
 	{
 		UnitTest_reopen(2, "stderr");
-		char *args[] = { EDBCNT, "int:", "-c", "unknown", NULL };
-		EXPECT(hidden_main(4, args) == 1);
+		TEST_MKARG(rc, EDBCNT " int: -c unknown");
+		EXPECT(hidden_main(rc->argc, rc->argv) == 1);
 		TEST_EXIT;
 	}
 
@@ -94,7 +123,7 @@ TEST_DECL(record)
 		"3;4.2\n"
 	);
 
-	RUN_EDBCNT(3, "@/a.edb -Rplain -c?");
+	RUN_EDBCNT("@/a.edb -Rplain -c?");
 	EXPECT_FILE("stdout",
 		"count\tstandard counter\n"
 		"count.index\tcount index\n"
@@ -107,7 +136,7 @@ TEST_DECL(record)
 		"weight\tcount weight\n"
 	);
 
-	RUN_EDBCNT(9, "@/a.edb -Rlabel -p2 -r2000..2002 -w2 "
+	RUN_EDBCNT("@/a.edb -Rlabel -p2 -r2000..2002 -w2 "
 		"-c count,wcount,weight,count.index,event,recnum,data "
 		"x=total @/out");
 	EXPECT_FILE("out",
@@ -148,7 +177,7 @@ TEST_DECL(record)
 
 //	UnitTest_system("cp @/a.edb a.edb");
 
-	RUN_EDBCNT(9, "@/a.edb -p2 -r2000..2002 -w2 -c count,wcount "
+	RUN_EDBCNT("@/a.edb -p2 -r2000..2002 -w2 -c count,wcount "
 		"-n2 x=total @/a.md");
 	UnitTest_system("mdprint -x- -p2 @/a.md @/out");
 	EXPECT_FILE("out",
