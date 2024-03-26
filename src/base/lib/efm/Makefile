@@ -12,12 +12,12 @@ TST_LDFLAGS += -lutil
 include $(CFG)/hcfg.mak
 include $(CFG)/Library.mak
 
-EDOC=$(wildcard $(TOP)/bin/efeudoc)
+EDOC=$(BIN)/efeudoc
 
 ifneq ($(EDOC),)
 
 doc::
-	$(EDOC) --pdf -o intro.pdf intro.doc
+	PATH=$(BIN):$$PATH $(EDOC) --pdf -o intro.pdf intro.doc
 else
 
 doc::
