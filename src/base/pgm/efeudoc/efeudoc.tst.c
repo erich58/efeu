@@ -1,37 +1,26 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/mstring.h>
 #include <stdlib.h>
+#include <EFEU/procenv.h>
+#include <EFEU/mkpath.h>
 
 int hidden_main(int argc, char **argv);
 
-//#define	EFEUDOC SRC "/efeudoc"
 #define	EFEUDOC TOP "/bin/efeudoc"
 
-/*
-#define	RUN_EFEUDOC(n, def)	\
+#define	RUN_EFEUDOC(def)	\
 TEST_FORK { \
 	TEST_MKARG(rc, EFEUDOC " " def); \
 	UnitTest_reopen(1, "stdout"); \
-	UnitTest_reopen(2, "stderr"); \
 	EXPECT(hidden_main(rc->argc, rc->argv) == 0); \
 	TEST_EXIT; \
 } CHILD_EXIT(0)
-*/
-
-#define	RUN_EFEUDOC(def)	\
-do { \
-	TEST_MKARG(rc, EFEUDOC " " def); \
-	UnitTest_stdout("stdout"); \
-	UnitTest_stderr("stderr"); \
-	EXPECT(hidden_main(rc->argc, rc->argv) == 0); \
-	UnitTest_stdout(NULL); \
-	UnitTest_stderr(NULL); \
-} while(0)
 
 TEST_DECL(setup)
 {
 	setenv("LANG", "C", 1);
-	char *path = mstrpaste(":", TOP "/bin", getenv("PATH"));
+	char *path = mstrcat(TOP "/bin:", UnitTest_tpl("@/bin:"),
+		getenv("PATH"), NULL);
 	setenv("PATH", path, 1);
 	PRINT_LABEL("Force separating UnitTest output from cmd output");
 	UnitTest_stderr("stderr");
@@ -79,23 +68,50 @@ TEST_DECL(synopsis)
 	);
 }
 
-extern char *DocPath;
-extern char *CFGPath;
-extern char *ApplPath;
-
-TEST_DECL(null)
+TEST_DECL(simple)
 {
-	RUN_EFEUDOC("--debug=file.debug -T html -o x /dev/null");
-	PRINT_STR(UnitTest_tmp(NULL));
-	PRINT_STR(ApplPath);
-	PRINT_STR(CFGPath);
-	PRINT_STR(DocPath);
-	system("rm -rf x");
+	TEST_DIR("etc");
+	TEST_FILE("etc/efeudoc.rc", "\n");
+	TEST_FILE("doc.eds",
+		"\\chap Ultimate Question:\n"
+		"The answer is \\eval{6*7}.\n");
+	RUN_EFEUDOC("-H 'Headline' -o @/doc.out @/doc.eds");
+	EXPECT_CONTENT("doc.out",
+		"Headline\n"
+		"\n"
+		"Ultimate Question:\n"
+		"\n"
+		"The answer is 42.\n"
+	);
+}
+
+TEST_DECL(rules)
+{
+	RUN_EFEUDOC("-H Headline -Tterm -r target -o doc.out /dev/null");
+	LMATCH_CONTENT("stdout",
+		"target:: doc.out\n"
+		"\n"
+		"doc.out: \n"
+		"\tLANG=C .*/efeudoc -H \"Headline\" -T term -o doc.out /dev/null"
+	);
+}
+
+TEST_DECL(depend)
+{
+	RUN_EFEUDOC("-H 'Headline' -d -M @/depend -o doc.out /dev/null");
+	LMATCH_CONTENT("stdout",
+		"doc.out: \n"
+	);
+	LMATCH_CONTENT("depend",
+		"doc.out: \n"
+	);
 }
 
 TEST_SUITE
 {
 	TEST_RUN(setup);
 	TEST_RUN(synopsis);
-	TEST_RUN(null);
+	TEST_RUN(simple);
+	TEST_RUN(rules);
+	TEST_RUN(depend);
 }
