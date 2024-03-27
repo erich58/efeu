@@ -26,7 +26,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/ioctrl.h>
 #include <EFEU/patcmp.h>
 #include <DocCtrl.h>
-#include <LaTeX.h>
+#include <latex/LaTeX.h>
 #include <efeudoc.h>
 #include <ctype.h>
 

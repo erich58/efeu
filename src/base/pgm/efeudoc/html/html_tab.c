@@ -1,4 +1,4 @@
-#include <HTML.h>
+#include <html/HTML.h>
 
 char *HTML_colgrp (HTML *html)
 {

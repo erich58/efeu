@@ -34,7 +34,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <Math/mdmath.h>
 #include <EFEU/stdtype.h>
 #include <EFEU/cmdconfig.h>
-#include "LaTeX.h"
+#include "latex/LaTeX.h"
 #include "efeudoc.h"
 
 EfiType Type_Doc = REF_TYPE("Doc", Doc *);

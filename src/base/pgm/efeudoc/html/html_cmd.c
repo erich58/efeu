@@ -25,7 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/parsub.h>
 #include <EFEU/ioctrl.h>
 #include <DocCtrl.h>
-#include <HTML.h>
+#include <html/HTML.h>
 #include <efeudoc.h>
 
 static void pcmd_label (HTML *html, void *data)

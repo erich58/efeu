@@ -20,7 +20,7 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include <term.h>
+#include <term/term.h>
 #include <efeudoc.h>
 
 static ALLOCTAB(Stackab, "TermVar", 32, sizeof(TermVar));

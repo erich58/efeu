@@ -21,7 +21,7 @@ If not, write to the Free Software Foundation, Inc.,
 */
 
 #include <EFEU/preproc.h>
-#include <LaTeX.h>
+#include <latex/LaTeX.h>
 #include "efeudoc.h"
 
 #define	INFO_LABEL \

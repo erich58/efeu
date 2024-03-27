@@ -34,8 +34,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/pconfig.h>
 #include <EFEU/MakeDepend.h>
 #include <EFEU/mkpath.h>
-#include "LaTeX.h"
-#include "mroff.h"
+#include "latex/LaTeX.h"
+#include "mroff/mroff.h"
 
 #define	CFNAME	"efeudoc"
 #define	HNAME	"~/.doc_history"

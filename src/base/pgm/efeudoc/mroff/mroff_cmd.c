@@ -25,7 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/parsub.h>
 #include <EFEU/ioctrl.h>
 #include <DocCtrl.h>
-#include <mroff.h>
+#include <mroff/mroff.h>
 #include <efeudoc.h>
 
 static char *dochead = NULL;

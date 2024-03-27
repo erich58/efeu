@@ -123,8 +123,6 @@ static void SetupDocType (void)
 
 DocType *GetDocType (const char *name)
 {
-	DocType *type;
-
 	if	(!name)	return NULL;
 
 	SetupDocType();
@@ -135,7 +133,10 @@ DocType *GetDocType (const char *name)
 		exit(EXIT_SUCCESS);
 	}
 
-	if	(!(type = get_type(name)))
+	DocType *type = get_type(name);
+
+#if	0
+	if	(!type)
 	{
 		char *fname;
 
@@ -148,6 +149,7 @@ DocType *GetDocType (const char *name)
 			type = get_type(name);
 		}
 	}
+#endif
 
 	if	(!type)
 	{

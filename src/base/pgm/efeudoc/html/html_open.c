@@ -28,7 +28,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/pconfig.h>
 #include <EFEU/patcmp.h>
 #include <EFEU/LangDef.h>
-#include <HTML.h>
+#include <html/HTML.h>
 #include <DocCtrl.h>
 #include <ctype.h>
 
@@ -138,7 +138,7 @@ static void hpost_open (HPOST *hpost, const char *name, const char *title)
 
 	io_puts("<!DOCTYPE HTML PUBLIC ", hpost->io);
 	io_puts("\"-//W3C//DTD HTML 3.2 Final//EN\">\n", hpost->io);
-	io_puts("<HTML>\n<HEAD>\n<TITLE>", hpost->io);
+	io_puts("<html/HTML>\n<HEAD>\n<TITLE>", hpost->io);
 
 	if	(title || hpost->title)
 	{

@@ -23,7 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/preproc.h>
 #include <EFEU/printobj.h>
-#include <mroff.h>
+#include <mroff/mroff.h>
 #include "efeudoc.h"
 
 #define	NAME	"ManPar"

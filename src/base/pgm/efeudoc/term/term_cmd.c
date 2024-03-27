@@ -25,7 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/parsub.h>
 #include <EFEU/ioctrl.h>
 #include <DocCtrl.h>
-#include <term.h>
+#include <term/term.h>
 #include <efeudoc.h>
 
 int term_cmd (void *drv, va_list list)
