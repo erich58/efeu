@@ -191,6 +191,9 @@ IO *Doc_open (const char *path, const char *name, int flag)
 	char *dname;
 	char *ddir;
 	
+	if	(!path)
+		path = ".";
+
 	dname = fsearch(path, NULL, name, NULL);
 	ddir = NULL;
 
@@ -292,7 +295,7 @@ void Doc_include (Doc *doc, const char *opt, const char *name)
 	io = Doc_open(save_path, name, opt ? 0 : 1);
 	save = *doc;
 	doc->nl = 1;
-	Doc_rem(doc, "Eingabedatei: $1", "nm", rd_ident(io));
+	Doc_rem(doc, "include file: $1", "nm", rd_ident(io));
 	Doc_input(doc, opt, io);
 	doc->nl = save.nl;
 	memfree(DocName);

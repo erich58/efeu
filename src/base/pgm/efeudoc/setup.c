@@ -237,6 +237,7 @@ static void f_cmd (EfiFunc *func, void *rval, void **arg)
 		io_ctrl(doc->out, DOC_CMD, DOC_CMD_NPAGE);
 		doc->nl = 0;
 		Doc_newline(doc);
+		doc->nl = 0;
 		break;
 	case 'a':
 		io_ctrl(doc->out, DOC_CMD, DOC_CMD_APP, ListArg_str(list, 0));

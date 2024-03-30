@@ -29,8 +29,8 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/ioctrl.h>
 #include <EFEU/printobj.h>
 
-#define	UNDEF	"!\b!U\bUN\bND\bDE\bEF\bF!\b!"
-#define	ERROR	"!\b!E\bER\bRR\bRO\bOR\bR!\b!"
+#define	UNDEF	"*UNDEF*"
+#define	ERROR	"*ERROR*"
 
 #define	ENV_UNDEF	0xFF
 
@@ -48,6 +48,8 @@ static NAME cmd_tab[] = {
 	{ DOC_CMD_BREAK, "newline", NULL, 0 },
 	{ DOC_CMD_NPAGE, "newpage", NULL, 0 },
 	{ DOC_CMD_TOC, "toc", NULL, 0 },
+	{ DOC_CMD_LOF, "lof", NULL, 0 },
+	{ DOC_CMD_LOT, "lot", NULL, 0 },
 	{ DOC_CMD_ITEM, "item", NULL, 0 },
 	{ DOC_CMD_APP, "appendix", "%s", 0 },
 	{ DOC_CMD_IDX, "index", "%s %s", 0 },
@@ -61,9 +63,9 @@ static NAME cmd_tab[] = {
 	{ DOC_REF_MAN, "manref", "%s", 0 },
 
 	{ DOC_TAB_BEG, "tabbeg", NULL, 1 },
-	{ DOC_TAB_SEP, "tabseb", NULL, 1 },
-	{ DOC_TAB_END, "tabend", NULL, 0 },
-	{ DOC_TAB_HLINE, "hline", NULL, 0 },
+	{ DOC_TAB_SEP, "tabsep", NULL, 1 },
+	{ DOC_TAB_END, "tabend", NULL, 1 },
+	{ DOC_TAB_HLINE, "hline", NULL, 1 },
 	{ DOC_TAB_CLINE, "cline", NULL, 0 },
 };
 
@@ -214,32 +216,33 @@ static int test_ctrl (IO *io, int req, va_list list)
 		return io_vctrl(par->out, req, list);
 	}
 	
-	io_puts("<\b<", par->out);
+	io_puts("<", par->out);
 	lbreak = 0;
 
 	switch (req)
 	{
 	case DOC_HEAD:
-		io_puts("@\b@", par->out);
-		show_var(par->out, LocalVar);
+		io_puts("@head", par->out);
+//		show_var(par->out, LocalVar);
 		lbreak = 1;
 		break;
 	case DOC_REM:
-		io_puts("!\b!", par->out);
-		io_xputs(va_arg(list, char *), par->out, "<!>");
+		io_puts("#", par->out);
+		io_xputs(va_arg(list, char *), par->out, "<|>");
 		lbreak = 1;
 		break;
 	case DOC_SYM:
-		io_xprintf(par->out, "&\b&%s", va_arg(list, char *));
+		io_xprintf(par->out, "&%s", va_arg(list, char *));
 		break;
 	case DOC_CMD:
+		io_puts("!", par->out);
 		name = get_def(va_arg(list, int), cmd_tab, tabsize(cmd_tab));
 		io_puts(name->name, par->out);
 		show_par(par, name->fmt, list);
 		lbreak = name->lbreak;
 		break;
 	case DOC_BEG:
-		io_puts("+\b+", par->out);
+		io_puts("+", par->out);
 		name = get_def(va_arg(list, int), env_tab, tabsize(env_tab));
 		io_puts(name->name, par->out);
 		show_par(par, name->fmt, list);
@@ -247,7 +250,7 @@ static int test_ctrl (IO *io, int req, va_list list)
 		lbreak = name->lbreak;
 		break;
 	case DOC_END:
-		io_puts("-\b-", par->out);
+		io_puts("-", par->out);
 		name = get_def(va_arg(list, int), env_tab, tabsize(env_tab));
 		io_puts(name->name, par->out);
 		last = (int) (size_t) popstack(&par->env, (void *) 0xFF);
@@ -264,10 +267,10 @@ static int test_ctrl (IO *io, int req, va_list list)
 		break;
 	}
 
-	io_puts(">\b>", par->out);
+	io_puts(">", par->out);
 
 	if	(lbreak)
-		io_puts("\\\n", par->out);
+		io_puts("\n", par->out);
 	
 	return 0;
 }

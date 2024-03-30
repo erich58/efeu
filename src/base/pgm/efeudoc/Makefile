@@ -18,6 +18,7 @@ prereq::
 LDFLAGS += -lefmath -liorl -lmd -lefx -lefm -ldl -lm
 TST_CFLAGS += -D 'SRC="$(shell pwd)"'
 TST_CFLAGS += -I $(TOP)/src/base/lib/efm
+TST_CFLAGS += -I $(TOP)/src/base/lib/efx
 
 include $(CFG)/ComplexProgram.mak
 
