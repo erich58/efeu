@@ -213,7 +213,7 @@ $2 ~ /not/ { printf("%-23s\t%s %s\n", $1, $2, $3); next; }
 }
 END {
 	printf("TOTAL %3d %-13s\t%.0f\t%.0f\t%.2f%%\n",
-		n, "files", kn, cn, (100. * kn / cn));
+		n, "files", kn, cn, cn ? (100. * kn / cn) : 0.);
 }
 ' | tee gcov.out | awk -v verbose=$verbose '
 BEGIN { run = 0; c = 0.; n = 0; k = 0; unused = 0; other = 0; }
