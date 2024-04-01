@@ -15,14 +15,4 @@ include ../.build/tklib.mak
 
 LDFLAGS += -lETK -liorl -lmd -lefmath -lefx -lefm -ldl -lm
 
-SRC = $(wildcard *.c)
-PGM = $(patsubst %.c,$(BIN)/%,$(SRC))
-
-all:: $(PGM)
-
-clean::
-	rm -f $(PGM)
-
-$(BIN)/% : %.c
-	@mkdir -p $(@D)
-	$(CC) -o $@ $(CPPFLAGS) $(CFLAGS) $< $(LDFLAGS)
+include $(CFG)/SimplePrograms.mak
