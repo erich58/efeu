@@ -1,5 +1,5 @@
 /*
-Kopierhilfsfunktionen
+Wörtwörtliche Ausgabe
 
 $Copyright (C) 1999 Erich Frühstück
 This file is part of EFEU.
@@ -51,54 +51,3 @@ int DocVerb (IO *in, IO *out)
 	return n;
 }
 
-#if	0
-static void signum (IO *in, IO *out, int sig)
-{
-	if	(isdigit(io_peek(in)))
-	{
-		io_ctrl(out, DOC_BEG, DOC_ENV_FORMULA);
-		io_putc(sig, out);
-		io_ctrl(out, DOC_END, DOC_ENV_FORMULA);
-	}
-	else	io_putc(sig, out);
-}
-
-static void nbsp (IO *out)
-{
-	if	(io_ctrl(out, DOC_SYM, "nbsp") == EOF)
-		io_putc(' ', out);
-}
-
-
-void DocCopy (IO *in, IO *out)
-{
-	int c;
-	int key;
-	Stack *stack;
-
-	key = 0;
-	stack = NULL;
-
-	while ((c = io_getc(in)) != EOF)
-	{
-		if	(c == key && io_peek(in) == '>')
-			continue;
-
-		switch (c)
-		{
-		case '\\':	io_putc(io_getc(in), out); break;
-		case '<':	key = DocMark_beg(&stack, out, in); break;
-		case '>':	key = DocMark_end(&stack, out, key); break;
-		case '|':	DocVerb(in, out); break;
-		case '&':	DocSymbol(in, out); break;
-		case '~':	nbsp(out); break;
-		case '-':
-		case '+':	signum(in, out, c); break;
-		default:	io_putc(c, out); break;
-		}
-	}
-
-	while (stack)
-		key = DocMark_end(&stack, out, key);
-}
-#endif

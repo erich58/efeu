@@ -53,11 +53,8 @@ extern char *DocParseArg (IO *in, int beg, int end, int flag);
 extern char *DocParseBlock (IO *in, int mode, const char *beg,
 	const char *end, const char *toggle);
 
-extern void DocCopy (IO *in, IO *out);
-extern void DocExpand (IO *in, IO *out);
 extern int DocVerb (IO *in, IO *out);
 extern int DocSymbol (IO *in, IO *out);
-
 
 typedef struct DocStruct Doc;
 
