@@ -198,6 +198,7 @@ fi
 find . -maxdepth 1 -name '*.[ch].gcov' -exec mv -f '{}' $build \;
 
 sort gcov.tmp | awk -v not_run=$not_run '
+BEGIN { n = 0; cn = 0; kn = 0; }
 $2 ~ /not/ { printf("%-23s\t%s %s\n", $1, $2, $3); next; }
 {
 	k = 0.01 * $2 * $4;
@@ -205,11 +206,18 @@ $2 ~ /not/ { printf("%-23s\t%s %s\n", $1, $2, $3); next; }
 	if	(k > 0. || not_run == 1)
 		printf("%-23s\t%.0f\t%.0f\t%s\n", $1, k, $4, $2);
 
+	n++;
+	kn += k
+	cn += $4
 	next;
+}
+END {
+	printf("TOTAL %3d %-13s\t%.0f\t%.0f\t%.2f%%\n",
+		n, "files", kn, cn, (100. * kn / cn));
 }
 ' | tee gcov.out | awk -v verbose=$verbose '
 BEGIN { run = 0; c = 0.; n = 0; k = 0; unused = 0; other = 0; }
-/~TOTAL/ { next; }
+/^TOTAL/ { next; }
 verbose {
 	if	($2 > 0 || verbose > 1)
 		print;
