@@ -18,6 +18,7 @@ TK_CONFIG= $(EFEU_INCLUDE)/tk_config.h
 
 LDFLAGS += -lefx -lefm -lreadline -lncurses
 TST_CFLAGS += -I $(TOP)/src/base/lib/efm
+TST_CFLAGS += -I $(TOP)/src/base/lib/efx
 
 files:: $(TK_CONFIG)
 
