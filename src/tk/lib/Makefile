@@ -29,6 +29,8 @@ $(TK_CONFIG)::
 	@mkdir -p $(@D)
 	$(BIN)/efeu-config -t $(TOP) update tk_config.hcfg $@
 
+all:: sanity-check
+
 include $(CFG)/Library.mak
 
 ESH_HDR = $(wildcard *.hdr)
@@ -42,3 +44,16 @@ $(LIB)/esh/%.hdr : %.hdr
 
 clean::
 	rm -rf $(BUILD) $(FILES)
+
+# sanity-check
+
+sanity-check:: files
+
+sanity-check:: $(BUILD)/tcl.tst
+
+sanity-check::
+	$(BUILD)/tcl.tst 2> /dev/null
+
+$(BUILD)/tcl.tst : tcl.tst.c
+	@mkdir -p $(@D)
+	$(CC) -o $@ $(CPPFLAGS) $< $(LDFLAGS) -lutest

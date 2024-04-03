@@ -53,7 +53,6 @@ static EfiParseDef pdef[] = {
 #define	STR(x)	Tcl_NewStringObj(Val_str(x), -1)
 #define	INT(x)	Tcl_NewIntObj(Val_int(x))
 #define	DBL(x)	Tcl_NewDoubleObj(Val_double(x))
-#define	BOOL(x)	Tcl_NewBooleanObj(Val_bool(x))
 
 static void f_set (Tcl_Obj *obj)
 {
@@ -79,7 +78,6 @@ static char val_buf[64];
 #define	STR(x)	Val_str(x)
 #define	INT(x)	(sprintf(val_buf, "%d", Val_int(x)), val_buf)
 #define	DBL(x)	(sprintf(val_buf, "%.8g", Val_double(x)), val_buf)
-#define	BOOL(x)	(sprintf(val_buf, "%d", Val_bool(x)), val_buf)
 
 static void f_set (char *value)
 {
@@ -108,11 +106,6 @@ static void f_set_dbl (EfiFunc *func, void *rval, void **arg)
 	f_set(DBL(arg[0]));
 }
 
-static void f_set_bool (EfiFunc *func, void *rval, void **arg)
-{
-	f_set(BOOL(arg[0]));
-}
-
 static void f_var_str (EfiFunc *func, void *rval, void **arg)
 {
 	f_var_set(Val_str(arg[0]), STR(arg[1]));
@@ -126,11 +119,6 @@ static void f_var_int (EfiFunc *func, void *rval, void **arg)
 static void f_var_dbl (EfiFunc *func, void *rval, void **arg)
 {
 	f_var_set(Val_str(arg[0]), DBL(arg[1]));
-}
-
-static void f_var_bool (EfiFunc *func, void *rval, void **arg)
-{
-	f_var_set(Val_str(arg[0]), BOOL(arg[1]));
 }
 
 static void f_get (EfiFunc *func, void *rval, void **arg)
@@ -242,12 +230,9 @@ static void f_tclexpr (EfiFunc *func, void *rval, void **arg)
 
 static EfiFuncDef fdef[] = {
 	{ 0, &Type_obj, "tclget ()", f_get },
-	{ FUNC_VIRTUAL, &Type_void, "tclset (bool val)", f_set_bool },
 	{ FUNC_VIRTUAL, &Type_void, "tclset (int val)", f_set_int },
 	{ FUNC_VIRTUAL, &Type_void, "tclset (double val)", f_set_dbl },
 	{ FUNC_VIRTUAL, &Type_void, "tclset (str val = NULL)", f_set_str },
-	{ FUNC_VIRTUAL, &Type_void, "tclvar (str name, bool val)",
-		f_var_bool },
 	{ FUNC_VIRTUAL, &Type_void, "tclvar (str name, int val)",
 		f_var_int },
 	{ FUNC_VIRTUAL, &Type_void, "tclvar (str name, double val)",

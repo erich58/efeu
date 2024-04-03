@@ -72,8 +72,12 @@ Die Funktion |$1| erzeugt eine Schnittstelle zu einem Tcl/Tk-Interpreter.
 ETK *ETK_create (void)
 {
 #if	HAS_TCL
-	ETK *etk = memalloc(sizeof(ETK));
+	static ETK *etk = NULL;
+	
+	if	(etk)
+		return etk;
 
+	etk = memalloc(sizeof(ETK));
 	etk->interp = Tcl_CreateInterp();
 	etk->tkstat = 0;
 

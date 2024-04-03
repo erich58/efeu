@@ -48,12 +48,6 @@ EfiObj *ETK_obj (Tcl_Obj *obj)
 		Tcl_GetDoubleFromObj(NULL, obj, &val);
 		return NewObj(&Type_double, &val);
 	}
-	else if	(mstrcmp(type, "boolean") == 0)
-	{
-		int val = 0;
-		Tcl_GetBooleanFromObj(NULL, obj, &val);
-		return NewObj(&Type_int, &val);
-	}
 	else if	(obj)
 	{
 		return str2Obj(mstrcpy(Tcl_GetStringFromObj(obj, NULL)));

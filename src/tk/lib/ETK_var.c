@@ -176,14 +176,11 @@ static EfiObj *make_lval (ETK *etk, const char *name)
 	Tcl_Obj *obj = GetVar(etk->interp, idx);
 	const char *type = (obj && obj->typePtr) ? obj->typePtr->name : NULL;
 
-	if	(type == NULL)
-		return LvalObj(&Lval_tcl, &Type_str, etk, idx, obj_str);
 	if	(mstrcmp("int", type) == 0)
 		return LvalObj(&Lval_tcl, &Type_int, etk, idx, obj_int);
+
 	if	(mstrcmp("double", type) == 0)
 		return LvalObj(&Lval_tcl, &Type_double, etk, idx, obj_dbl);
-	if	(mstrcmp("bool", type) == 0)
-		return LvalObj(&Lval_tcl, &Type_bool, etk, idx, obj_bool);
 
 	return LvalObj(&Lval_tcl, &Type_str, etk, idx, obj_str);
 }

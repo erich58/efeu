@@ -92,11 +92,6 @@ static EfiObj *parse_body (IO *io)
 	return obj;
 }
 
-static void oclean (void *data)
-{
-	UnrefObj(data);
-}
-
 /*
 :*:The function |$1| reads a function definition from <io> and registers it
 as Tcl command.
@@ -134,7 +129,7 @@ void ETK_func (ETK *etk, IO *io)
 	if	(func)
 	{
 		func->par = parse_body(io);
-		func->clean = oclean;
+		func->clean = rd_clean;
 #if	HAS_TCL
 		CREATE(etk->interp, func->name, proc_func, func, rd_clean);
 #else
