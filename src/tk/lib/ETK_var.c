@@ -152,10 +152,6 @@ static Tcl_Obj *obj_dbl (void *data)
 	return Tcl_NewDoubleObj(Val_double(data));
 }
 
-static Tcl_Obj *obj_bool (void *data)
-{
-	return Tcl_NewBooleanObj(Val_bool(data));
-}
 #endif
 
 static EfiLval Lval_tcl = {

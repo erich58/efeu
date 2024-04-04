@@ -2,6 +2,8 @@
 #include <GUI/ETK.h>
 #include "utest/eval.tst.h"
 
+#if	HAS_TCL
+
 TEST_DECL(tkinit)
 {
 	EXPECT_EVAL("tkinit()", "true");
@@ -48,3 +50,10 @@ TEST_SUITE
 	TEST_RUN(tclset);
 	CLEANUP_EVAL;
 }
+
+#else
+TEST_SUITE
+{
+	PRINT_LABEL("Tcl/Tk not availabel");
+}
+#endif
