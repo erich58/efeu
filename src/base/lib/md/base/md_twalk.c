@@ -6,9 +6,9 @@
 #include <EFEU/mdmat.h>
 #include <EFEU/printobj.h>
 
-static int do_walk (void *par, mdmat *md, int mode, int lag,
+static int do_walk (mdmat *md, int mode, int lag,
 	mdaxis *x, char *data, char *base,
-	int (*visit)(void *par, EfiType *type, void *data, void *base))
+	MdVisit visit, void *par)
 {
 	char *ptr;
 	int flag;
@@ -21,10 +21,10 @@ static int do_walk (void *par, mdmat *md, int mode, int lag,
 	if	(x == NULL)
 	{
 		if	(mode)
-			return visit(par, md->type, data, base);
+			return visit(md->type, data, base, par);
 
-		return do_walk(par, md, MDXFLAG_MARK, lag,
-			md->axis, data, base, visit);
+		return do_walk(md, MDXFLAG_MARK, lag,
+			md->axis, data, base, visit, par);
 	}
 
 	flag = (x->flags & MDXFLAG_TIME);
@@ -50,8 +50,8 @@ static int do_walk (void *par, mdmat *md, int mode, int lag,
 		}
 		else	ptr = NULL;
 
-		stat = do_walk(par, md, mode, lag, x->next,
-			data + i * x->size, ptr, visit);
+		stat = do_walk(md, mode, lag, x->next,
+			data + i * x->size, ptr, visit, par);
 
 		if	(stat)	return stat;
 	}
@@ -59,15 +59,14 @@ static int do_walk (void *par, mdmat *md, int mode, int lag,
 	return 0;
 }
 
-int md_twalk (void *par, mdmat *md, const char *def, int lag,
-	int (*visit)(void *par, EfiType *type, void *data, void *base))
+int md_twalk (mdmat *md, const char *def, int lag, MdVisit visit, void *par)
 {
 	int stat;
 
 	if	(!md || !visit)	return 0;
 
 	md_setlock(md, def, 0, MDFLAG_TEMP);
-	stat = do_walk(par, md, 0, lag, md->axis, md->data, NULL, visit);
+	stat = do_walk(md, 0, lag, md->axis, md->data, NULL, visit, par);
 	md_clrflag(md, 0, MDFLAG_TEMP);
 	return stat;
 }

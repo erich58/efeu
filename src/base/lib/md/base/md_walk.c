@@ -6,9 +6,12 @@
 #include <EFEU/mdmat.h>
 #include <EFEU/printobj.h>
 
-static int do_walk (void *par, mdmat *md, int mode, mdaxis *x, char *data,
-	int (*visit)(void *par, EfiType *type, void *data))
+static int do_walk (mdmat *md, int mode,
+	mdaxis *x, char *data, char *base,
+	MdVisit visit, void *par)
 {
+	char *ptr;
+	int flag;
 	size_t i;
 	int stat;
 
@@ -18,18 +21,43 @@ static int do_walk (void *par, mdmat *md, int mode, mdaxis *x, char *data,
 	if	(x == NULL)
 	{
 		if	(mode)
-			return visit(par, md->type, data);
+			return visit(md->type, data, base, par);
 
-		return do_walk(par, md, MDXFLAG_MARK, md->axis, data, visit);
+		return do_walk(md, MDXFLAG_MARK,
+			md->axis, data, base, visit, par);
+	}
+
+	if	(base)
+	{
+		ptr = base;
+		flag = 1;
+	}
+	else
+	{
+		ptr = data;
+		flag = 0;
 	}
 
 	for (i = 0; i < x->dim; i++)
 	{
-		if	((x->idx[i].flags & (MDFLAG_LOCK|MDFLAG_TEMP)))
+		if	(x->idx[i].flags & MDFLAG_BASE)
+		{
+			base = ptr + i * x->size;
+			flag = 0;
+			break;
+		}
+	}
+
+	for (i = 0; i < x->dim; i++)
+	{
+		if	(x->idx[i].flags & (MDFLAG_LOCK|MDFLAG_TEMP))
 			continue;
 
-		stat = do_walk(par, md, mode, x->next,
-			data + i * x->size, visit);
+		if	(flag || (x->idx[i].flags & MDFLAG_BASE))
+			base = ptr + i * x->size;
+
+		stat = do_walk(md, mode, x->next,
+			data + i * x->size, base, visit, par);
 
 		if	(stat)	return stat;
 	}
@@ -37,15 +65,16 @@ static int do_walk (void *par, mdmat *md, int mode, mdaxis *x, char *data,
 	return 0;
 }
 
-int md_walk (void *par, mdmat *md, const char *def,
-	int (*visit)(void *par, EfiType *type, void *data))
+int md_walk (mdmat *md, const char *def, const char *base,
+	MdVisit visit, void *par)
 {
 	int stat;
 
 	if	(!md || !visit)	return 0;
 
 	md_setlock(md, def, 0, MDFLAG_TEMP);
-	stat = do_walk(par, md, 0, md->axis, md->data, visit);
+	md_base(md, base);
+	stat = do_walk(md, 0, md->axis, md->data, NULL, visit, par);
 	md_clrflag(md, 0, MDFLAG_TEMP);
 	return stat;
 }

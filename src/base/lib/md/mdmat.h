@@ -238,12 +238,11 @@ mdmat *md_gethdr (IO *io, int mode);
 int md_file (IO *out, const char *name, const char *mode);
 void md_info (IO *io, mdmat *md, const char *name, const char *mode);
 
-int md_walk (void *par, mdmat *md, const char *def,
-	int (*visit) (void *par, EfiType *type, void *data));
-int md_xwalk (void *par, mdmat *md, const char *def,
-	int (*visit) (void *par, EfiType *type, void *data, void *base));
-int md_twalk (void *par, mdmat *md, const char *def, int lag,
-	int (*visit) (void *par, EfiType *type, void *data, void *base));
+typedef int (*MdVisit) (EfiType *type, void *data, void *base, void *par);
+int md_walk (mdmat *md, const char *def, const char *base,
+	MdVisit visit, void *par);
+int md_twalk (mdmat *md, const char *def, int lag,
+	MdVisit visit, void *par);
 
 void md_puthdr (IO *io, mdmat *md, unsigned mask);
 void md_putdata (IO *io, const EfiType *type, mdaxis *axis,
