@@ -73,7 +73,7 @@ Achsenindizes sind nicht kompatibel.\n
 92	$!: Achsen $1 - $1 sind nicht kompatibel (andere Dimension).\n
 93	$!: mdterm: Funktion "$1" hat keinen Rückgabewert.\n
 94	$!: mdterm: Funktion "$1" ist nicht definiert.\n
-95	$!: Funktion $1 ist nicht zur Datenabfrage vom Type $2 geeignet.\n
+95	$!: Funktion "$1" mit $3 Parameter(n) vom Type $2 ist nicht verfügbar.\n
 
 101	$!: Datenmatrix hat keine Komponente "$1".\n
 102	$!: Type "$1" nicht in "$1" konvertierbar.\n

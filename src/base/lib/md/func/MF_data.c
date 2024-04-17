@@ -73,7 +73,7 @@ void MF_data(EfiFunc *func, void *rval, void **arg)
 		if	(par.func == NULL)
 		{
 			log_note(NULL, "[mdmat:95]",
-				"ss", ftab[0]->name, md->type->name);
+				"ssd", ftab[0]->name, md->type->name, dim);
 			return;
 		}
 	}

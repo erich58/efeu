@@ -73,7 +73,7 @@ index values not compatible.\n
 92	$!: incompatible axis $1 - $2 (differnd sizes).\n
 93	$!: mdterm: function "$1" has unspecified return value.\n
 94	$!: mdterm: function "$1" is not defined.\n
-95	$!: function $1 is not appropirate for queryng data of type $2.\n
+95	$!: function $1 with $3 parameter(s) of type $2 is not available.\n
 
 101	$!: data cube has no component "$1".\n
 102	$!: can not convert type "$1" into "$1".\n
