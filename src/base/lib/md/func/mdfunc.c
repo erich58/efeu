@@ -176,8 +176,6 @@ static void MF_show(EfiFunc *func, void *rval, void **arg)
 	md_show(Val_io(arg[1]), Val_mdmat(arg[0]));
 }
 
-extern void *md_DATA2(mdmat *md, unsigned mask, unsigned base, int lag);
-
 extern void MF_valsum(EfiFunc *func, void *rval, void **arg);
 extern void MF_leval(EfiFunc *func, void *rval, void **arg);
 extern void MF_xeval(EfiFunc *func, void *rval, void **arg);
