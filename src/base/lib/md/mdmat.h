@@ -303,7 +303,6 @@ mdmat *md_diag (mdmat *md, const char *str);
 mdmat *md_assign (const char *name, mdmat *m1, mdmat *m2);
 mdmat *md_term (EfiVirFunc *func, mdmat *m1, mdmat *m2);
 mdmat *md_cat (const char *name, mdmat **md, size_t dim);
-void md_korr (mdmat *md, int rflag);
 
 
 /*	Datenkonvertierung

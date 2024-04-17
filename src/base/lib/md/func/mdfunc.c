@@ -85,7 +85,6 @@ MDB_FUNC(MF_print, md_print(rd_refer(Val_io(arg[1])), MD(0), STR(2)))
 MDB_FUNC(MF_konv, md_konv(md, Val_type(arg[1])))
 MDB_FUNC(MF_round, md_round(md, Val_double(arg[1]), MDFLAG_LOCK))
 MDB_FUNC(MF_adjust, md_adjust(md, Val_double(arg[1]), MDFLAG_LOCK))
-MDB_FUNC(MF_korr, md_korr(md, Val_bool(arg[1])))
 
 MDB_FUNC(MF_reduce, md_reduce(md, STR(1)))
 MDB_FUNC(MF_permut, md_permut(md, STR(1)))
@@ -269,7 +268,6 @@ static EfiFuncDef fdef[] = {
 	{ 0, &Type_mdmat, "mdmat::konv (Type_t type)", MF_konv },
 	{ 0, &Type_mdmat, "mdmat::round (double factor = 1.)", MF_round },
 	{ 0, &Type_mdmat, "mdmat::adjust (double val = 0.)", MF_adjust },
-	{ 0, &Type_mdmat, "mdmat::korr (bool round = false)", MF_korr },
 	{ 0, &Type_mdmat, "mdmat::reduce (str list = NULL)", MF_reduce },
 	{ 0, &Type_mdmat, "mdmat::permut (str list)", MF_permut },
 	{ 0, &Type_mdmat, "mdmat::paste (str name, int pos, int n, str delim = \".\")",

@@ -17,7 +17,6 @@ TEST_SUITE
 	EXPECT_EVAL("mdexpr(operator\"++\", x)", "NULL");
 	EXPECT_EVAL("x.round()", "NULL");
 	EXPECT_EVAL("x.adjust()", "NULL");
-	EXPECT_EVAL("x.korr()", "NULL");
 	EXPECT_EVAL("x.reduce()", "NULL");
 	EXPECT_EVAL("(EDB) x", "NULL");
 	EXPECT_EVAL("x.mark()", "NULL");
