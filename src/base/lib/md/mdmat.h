@@ -316,7 +316,6 @@ void Md_setlong(EfiConv *konv, void *data, long int val);
 void Md_setdbl(EfiConv *konv, void *data, double val);
 
 void MF_valsum (EfiFunc *func, void *rval, void **arg);
-void MF_leval (EfiFunc *func, void *rval, void **arg);
 void MF_xeval (EfiFunc *func, void *rval, void **arg);
 void MF_data (EfiFunc *func, void *rval, void **arg);
 void MF_label (EfiFunc *func, void *rval, void **arg);

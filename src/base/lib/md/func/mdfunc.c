@@ -176,7 +176,6 @@ static void MF_show(EfiFunc *func, void *rval, void **arg)
 }
 
 extern void MF_valsum(EfiFunc *func, void *rval, void **arg);
-extern void MF_leval(EfiFunc *func, void *rval, void **arg);
 extern void MF_xeval(EfiFunc *func, void *rval, void **arg);
 
 static void mdx_select (EfiFunc *func, void *rval, void **arg)
@@ -284,8 +283,6 @@ int lag = 0)", MF_data },
 	{ 0, &Type_list, "mdmat::label (str def = NULL, bool flag = false)", MF_label },
 
 	{ FUNC_VIRTUAL, &Type_obj,  "sum (mdmat, str = NULL)", MF_valsum },
-	{ 0, &Type_mdmat, "mdmat::leval (VirFunc op, str def = NULL)",
-		MF_leval },
 	{ 0, &Type_mdmat, "mdmat::eval (str axis, Expr_t cmd)", MF_xeval },
 	{ 0, &Type_void, "mdmat::show (IO io = iostd)",
 		MF_show },
