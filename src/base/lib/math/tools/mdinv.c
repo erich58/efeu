@@ -43,7 +43,7 @@ mdmat *mdinv (mdmat *base)
 
 	if	(GetConv(&konv, base->type, &Type_double) == NULL)
 	{
-		log_note(NULL, "[mdmath:2]", "m", type2str(base->type));
+		log_note(NULL, "[mdmath:2]", "m", Type2str(base->type));
 		return NULL;
 	}
 
