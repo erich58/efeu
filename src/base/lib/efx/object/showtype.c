@@ -343,11 +343,7 @@ char *Type2str (const EfiType *type)
 
 	sb = sb_acquire();
 	io = io_strbuf(sb);
-
-	if	(type && type->name && type->name[0] != '_')
-		PrintType(io, type, 0);
-	else	PrintType(io, type, 1);
-
+	PrintType(io, type, 1);
 	io_close(io);
 	return sb_cpyrelease(sb);
 }
