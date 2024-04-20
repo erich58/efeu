@@ -38,7 +38,7 @@ void md_puthdr (IO *io, mdmat *md, unsigned mask)
 	put_compact(StrPool_add(sbuf, p), io);
 	memfree(p);
 
-	p = type2str(md->type);
+	p = Type2str(md->type);
 	put_compact(StrPool_add(sbuf, p), io);
 	memfree(p);
 
@@ -119,7 +119,7 @@ void md_save(IO *io, mdmat *md, unsigned mask)
 			md_putdata(io, md->type, md->axis, mask, md->data);
 			md_puteof(io);
 		}
-		else	log_note(NULL, "[mdmat:24]", "m", type2str(md->type));
+		else	log_note(NULL, "[mdmat:24]", "m", Type2str(md->type));
 	}
 }
 

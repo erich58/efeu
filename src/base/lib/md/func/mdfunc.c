@@ -82,7 +82,7 @@ static void MF_map (EfiFunc *func, void *rval, void **arg)
 
 MDB_FUNC(MF_print, md_print(rd_refer(Val_io(arg[1])), MD(0), STR(2)))
 
-MDB_FUNC(MF_konv, md_konv(md, Val_type(arg[1])))
+MDB_FUNC(MF_conv, md_conv(md, Val_type(arg[1])))
 MDB_FUNC(MF_round, md_round(md, Val_double(arg[1]), MDFLAG_LOCK))
 MDB_FUNC(MF_adjust, md_adjust(md, Val_double(arg[1]), MDFLAG_LOCK))
 
@@ -264,7 +264,7 @@ static EfiFuncDef fdef[] = {
 		MF_save },
 	{ 0, &Type_mdmat, "mdmat::print (IO io = iostd, str def = NULL)",
 		MF_print },
-	{ 0, &Type_mdmat, "mdmat::konv (Type_t type)", MF_konv },
+	{ 0, &Type_mdmat, "mdmat::conv (Type_t type)", MF_conv },
 	{ 0, &Type_mdmat, "mdmat::round (double factor = 1.)", MF_round },
 	{ 0, &Type_mdmat, "mdmat::adjust (double val = 0.)", MF_adjust },
 	{ 0, &Type_mdmat, "mdmat::reduce (str list = NULL)", MF_reduce },

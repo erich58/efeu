@@ -80,7 +80,7 @@ int md_putmap (mdmat *md, IO *out)
 	val[n++] = StrPool_add(sbuf, p);
 	memfree(p);
 
-	p = type2str(md->type);
+	p = Type2str(md->type);
 	val[n++] = StrPool_add(sbuf, p);
 	memfree(p);
 

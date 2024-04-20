@@ -53,7 +53,6 @@ extern LogControl *md_note;
 */
 
 EfiType *mdtype (const char *str);
-char *type2str (const EfiType *type);
 
 
 /*	Struktur für Achsenbezeichner
@@ -291,7 +290,7 @@ void MdRound(mdaxis *x, void *data, EfiConv *get, EfiConv *set, double val,
 void md_paste (mdmat *md, const char *name, const char *fmt, int pos, int n);
 void md_change (mdmat *md, const char *name1, const char *name2);
 
-int md_konv (mdmat *md, const EfiType *type);
+int md_conv (mdmat *md, const EfiType *type);
 void md_reduce (mdmat *md, const char *list);
 void md_permut (mdmat *md, const char *list);
 void md_round (mdmat *md, double factor, unsigned mask);

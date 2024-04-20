@@ -124,7 +124,7 @@ TEST_SUITE
 	);
 
 	PRINT_EVAL("x = mdmat(a)");
-	PRINT_EVAL("x.konv(double)");
+	PRINT_EVAL("x.conv(double)");
 	EXPECT_EVAL("x.mark(\"c\").print(cout, \"nohead\");",
 		"2 x y\n"
 		"a 1.00 2.00\n"

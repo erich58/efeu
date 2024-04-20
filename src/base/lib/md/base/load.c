@@ -227,7 +227,7 @@ mdmat *md_load (IO *io, const char *str, const char *odef)
 		if	(vsel_struct == NULL)
 		{
 			log_error(NULL, "[mdmat:15]", "ms",
-				type2str(md->type), odef);
+				Type2str(md->type), odef);
 			return NULL;
 		}
 

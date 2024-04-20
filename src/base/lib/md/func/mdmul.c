@@ -45,7 +45,7 @@ mdmat *md_mul (mdmat *md1, mdmat *md2, int flag)
 	if	(par.mul == NULL)
 	{
 		log_note(NULL, "[mdmat:64]", "mm",
-			type2str(md1->type), type2str(md2->type));
+			Type2str(md1->type), Type2str(md2->type));
 		return NULL;
 	}
 

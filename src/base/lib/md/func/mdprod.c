@@ -38,7 +38,7 @@ mdmat *md_prod (mdmat *base)
 	if	(par.mul == NULL)
 	{
 		log_note(NULL, "[mdmat:64]", "mm",
-			type2str(base->type), type2str(base->type));
+			Type2str(base->type), Type2str(base->type));
 		return NULL;
 	}
 

@@ -4,7 +4,7 @@
 
 #include <EFEU/mdmat.h>
 
-int md_konv(mdmat *md, const EfiType *type)
+int md_conv(mdmat *md, const EfiType *type)
 {
 	EfiConv def;
 	char *buf, *src, *tg;
@@ -15,11 +15,8 @@ int md_konv(mdmat *md, const EfiType *type)
 	if	(type == NULL)		return 0;
 	if	(md->type == type)	return 0;
 
-	if	(GetConv(&def, md->type, type) == NULL)
-	{
-		log_note(NULL, "[mdmat:102]", NULL);
+	if	(Md_ConvDef(&def, md->type, type) == NULL)
 		return EOF;
-	}
 
 	dim = md->size / md->type->size;
 	md->size = dim * type->size;

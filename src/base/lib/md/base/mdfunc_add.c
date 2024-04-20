@@ -23,7 +23,7 @@ EfiFunc *mdfunc_add (const EfiType *type)
 
 		if	(!func)
 		{
-			log_note(NULL, "[mdmat:16]", "m", type2str(type));
+			log_note(NULL, "[mdmat:16]", "m", Type2str(type));
 			return NULL;
 		}
 

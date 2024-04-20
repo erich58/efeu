@@ -50,27 +50,13 @@ EfiType *mdtype (const char *str)
 	return type;
 }
 
-
-char *type2str(const EfiType *type)
-{
-	StrBuf *sb;
-	IO *io;
-
-	sb = sb_acquire();
-	io = io_strbuf(sb);
-	ShowType(io, type);
-	io_close(io);
-	return sb_cpyrelease(sb);
-}
-
-
 EfiConv *Md_ConvDef(EfiConv *buf, const EfiType *type1, const EfiType *type2)
 {
 	EfiConv *konv = GetConv(buf, type1, type2);
 
 	if	(konv == NULL)
 		log_note(NULL, "[mdmat:102]",
-			"mm", type2str(type1), type2str(type2));
+			"mm", Type2str(type1), Type2str(type2));
 
 	return konv;
 }
