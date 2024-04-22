@@ -10,6 +10,7 @@
 
 #define	RVMD	Val_mdmat(rval)
 #define	STR(n)	Val_str(arg[n])
+#define	INT(n)	Val_int(arg[n])
 #define	MD(n)	Val_mdmat(arg[n])
 
 #define	REF(ptr)	(rd_refer(Val_mdmat(ptr)))
@@ -44,29 +45,7 @@ static void MF_file (EfiFunc *func, void *rval, void **arg)
 		Val_str(arg[1]), Val_str(arg[2]));
 }
 
-static void MF_paste (EfiFunc *func, void *rval, void **arg)
-{
-	register mdmat *md = Val_mdmat(arg[0]);
-
-	if	(md != NULL)
-	{
-		char *name, *delim;
-		int p, n, dim;
-
-		name = STR(1);
-		delim = STR(4);
-		dim = md_dim(md->axis);
-		p = Val_int(arg[2]);
-		n = Val_int(arg[3]);
-
-		if	(n <= 0 || p + n > dim)
-			n = dim - p;
-
-		md_paste(md, name, delim, p, n);
-	}
-
-	Val_mdmat(rval) = rd_refer(md);
-}
+MDB_FUNC(MF_paste, md_paste(MD(0), STR(1), STR(4), INT(2), INT(3)))
 
 MDC_FUNC(MF_mdmul, md_mul(MD(0), MD(1), Val_int(arg[2])))
 /*

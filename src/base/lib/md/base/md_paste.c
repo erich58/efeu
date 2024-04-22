@@ -47,25 +47,28 @@ static void mkindex (const char *delim, mdaxis *x, char *last, int n)
 }
 
 
-void md_paste(mdmat *md, const char *name, const char *delim, int pos, int n)
+int md_paste(mdmat *md, const char *name, const char *delim, int pos, int n)
 {
 	mdaxis *old, *new;
 	mdaxis **ptr;
-	int i;
 
-	if	(n == 0)	return;
+	if	(!md)
+		return 0;
 
-	if	(pos + n > md_dim(md->axis))
-	{
-		log_error(NULL, "[mdmat:41]", NULL);
-		return;
-	}
+	int k = md_dim(md->axis);
+	
+	if	(pos < -k)	pos = 0;
+	else if	(pos < 0)  	pos += k;
+	else if	(pos >= k)	pos = k - 1;
+
+	if	(n <= 0 || pos + n > k)
+		n = k - pos;
 
 /*	Achsen vor der Zusammenfassung
 */
 	ptr = &md->axis;
 
-	for (i = 0; i < pos; i++)
+	for (int i = 0; i < pos; i++)
 		ptr = &(*ptr)->next;
 
 	old = *ptr;
@@ -88,9 +91,10 @@ void md_paste(mdmat *md, const char *name, const char *delim, int pos, int n)
 	mkindex(delim, old, NULL, n);
 	*ptr = new;
 
-	for (; n > 0; n--)
+	for (int i = 0; i < n; i++)
 		old = old->next;
 
 	new->next = old;
 	assert(md->size == md_size(md, md->axis));
+	return n;
 }

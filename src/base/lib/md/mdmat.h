@@ -287,7 +287,7 @@ void MdRound(mdaxis *x, void *data, EfiConv *get, EfiConv *set, double val,
 /*	Matrixmanipulationen
 */
 
-void md_paste (mdmat *md, const char *name, const char *fmt, int pos, int n);
+int md_paste (mdmat *md, const char *name, const char *delim, int pos, int n);
 void md_change (mdmat *md, const char *name1, const char *name2);
 
 int md_conv (mdmat *md, const EfiType *type);
