@@ -200,6 +200,7 @@ find . -maxdepth 1 -name '*.[ch].gcov' -exec mv -f '{}' $build \;
 sort gcov.tmp | awk -v not_run=$not_run '
 BEGIN { n = 0; cn = 0; kn = 0; }
 $2 ~ /not/ { printf("%-23s\t%s %s\n", $1, $2, $3); next; }
+$1 ~ /TOTAL/ { next; }
 {
 	k = 0.01 * $2 * $4;
 
