@@ -81,7 +81,8 @@ static void show_data(IO *out, mdmat *md, StrBuf *buf, mdaxis *x, char *data)
 #define	F_HEAD	1
 #define	F_AXIS	2
 #define	F_FLAGS	4
-#define	F_DATA	8
+#define	F_SIZE	8
+#define	F_DATA	16
 
 void md_show (IO *out, mdmat *md, const char *mode)
 {
@@ -102,6 +103,7 @@ void md_show (IO *out, mdmat *md, const char *mode)
 			case 'h':	flags |= F_HEAD; break;
 			case 'f':	flags |= F_FLAGS; break;
 			case 'x':	flags |= F_AXIS; break;
+			case 's':	flags |= F_SIZE; break;
 			case 'd':	flags |= F_DATA; break;
 			default:	break;
 			}
@@ -166,6 +168,20 @@ void md_show (IO *out, mdmat *md, const char *mode)
 		}
 
 		io_puts(sb_cstr(&buf), out);
+	}
+
+	if	(flags & F_SIZE)
+	{
+		io_printf(out, "%-7s %7zd %7zd %7zd\n",
+			md->type->name, md->size,
+			md->size / md->type->size, md->type->size);
+
+		for (mdaxis *x = md->axis; x != NULL; x = x->next)
+		{
+			io_printf(out, "%-7s %7zd %7zd %7zd\n",
+				StrPool_get(x->sbuf, x->i_name),
+				x->dim * x->size, x->dim, x->size);
+		}
 	}
 
 	if	(flags & F_DATA)

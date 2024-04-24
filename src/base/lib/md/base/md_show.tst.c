@@ -30,6 +30,13 @@ TEST_SUITE
 		"c=c1,c2\n"
 	);
 
+	EXPECT_STR(mdtest_show(md, "s"),
+		"int          32       8       4\n"
+		"a            32       2      16\n"
+		"b            16       2       8\n"
+		"c             8       2       4\n"
+	);
+
 	EXPECT_STR(mdtest_show(md, "d"),
 		"a       b[m]    c           # int[8]\n"
 		"a1[B]   b1[L]   c1          0 111\n"
