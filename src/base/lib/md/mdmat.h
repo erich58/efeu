@@ -292,6 +292,7 @@ void md_change (mdmat *md, const char *name1, const char *name2);
 int md_conv (mdmat *md, const EfiType *type);
 void md_reduce (mdmat *md, const char *list);
 void md_permut (mdmat *md, const char *list);
+int md_serialize (mdmat *md);
 void md_round (mdmat *md, double factor, unsigned mask);
 void md_adjust (mdmat *md, double val, unsigned mask);
 mdmat *md_prod (mdmat *md);
