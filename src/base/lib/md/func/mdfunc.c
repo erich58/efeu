@@ -151,7 +151,7 @@ static void MF_md2edb(EfiFunc *func, void *rval, void **arg)
 
 static void MF_show(EfiFunc *func, void *rval, void **arg)
 {
-	md_show(Val_io(arg[1]), Val_mdmat(arg[0]));
+	md_show(Val_io(arg[1]), Val_mdmat(arg[0]), STR(2));
 }
 
 extern void MF_valsum(EfiFunc *func, void *rval, void **arg);
@@ -263,7 +263,7 @@ int lag = 0)", MF_data },
 
 	{ FUNC_VIRTUAL, &Type_obj,  "sum (mdmat, str = NULL)", MF_valsum },
 	{ 0, &Type_mdmat, "mdmat::eval (str axis, Expr_t cmd)", MF_xeval },
-	{ 0, &Type_void, "mdmat::show (IO io = iostd)",
+	{ 0, &Type_void, "mdmat::show (IO io = iostd, str mode = NULL)",
 		MF_show },
 	{ FUNC_VIRTUAL, &Type_mdaxis, "operator[] (mdaxis, str)",
 		mdx_select },

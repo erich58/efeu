@@ -7,7 +7,7 @@
 #include <EFEU/mdmat.h>
 
 mdmat *mdtest_create(const char *def);
-const char *mdtest_show(mdmat *md);
+const char *mdtest_show(mdmat *md, const char *mode);
 
 static void mdtest_set_value(mdaxis *axis, char *data, int value)
 {
@@ -35,15 +35,13 @@ mdmat *mdtest_create(const char *def)
 	return md;
 }
 
-const char *mdtest_show(mdmat *md)
+const char *mdtest_show(mdmat *md, const char *mode)
 {
 	if	(!md)	return NULL;
 
 	IO *out = io_fopen(UnitTest_tmp(".md"), "w");
-	md_mark(md, "#-1");
-	io_puts(md_showflag(md, 1), out);
-	md_print(out, md, "nohead");
-	md_mark(md, NULL);
+	md_show(out, md, mode);
+	io_close(out);
 	return UnitTest_content(".md");
 }
 

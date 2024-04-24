@@ -1,5 +1,12 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/mdmat.h>
+#include "utest/out.tst.h"
+
+static const char *showflag(mdmat *md)
+{
+	md_show(OUT(), md, "f");
+	return utest_out();
+}
 
 TEST_SUITE
 {
@@ -11,7 +18,7 @@ TEST_SUITE
 
 	EXPECT_PTR(md = md_create(&Type_int, "a=a1,a2 b=b1,b2 c=c1,c2"));
 	EXPECT_INT(md_paste(md, "x", ".", -2, 0), 2);
-	EXPECT_STR(md_showflag(md, 1),
+	EXPECT_STR(showflag(md),
 		"a=a1,a2\n"
 		"x=b1.c1,b1.c2,b2.c1,b2.c2\n"
 	); 
@@ -19,16 +26,17 @@ TEST_SUITE
 
 	EXPECT_PTR(md = md_create(&Type_int, "a=a1,a2 b=b1,b2 c=c1,c2"));
 	EXPECT_INT(md_paste(md, NULL, ".", 0, 1), 1);
-	EXPECT_STR(md_showflag(md, 1),
+	EXPECT_STR(showflag(md),
 		"0=a1,a2\n"
 		"b=b1,b2\n"
 		"c=c1,c2\n"
 	); 
 	EXPECT_INT(md_paste(md, "x", ".", 3, 1), 1);
-	EXPECT_STR(md_showflag(md, 1),
+	EXPECT_STR(showflag(md),
 		"0=a1,a2\n"
 		"b=b1,b2\n"
 		"x=c1,c2\n"
 	); 
 	rd_deref(md);
+	CLEANUP_OUT;
 }

@@ -203,7 +203,6 @@ extern void *(*md_alloc_hook) (size_t size);
 mdmat *md_setflag(mdmat *md, const char *def, unsigned mx, unsigned mi);
 mdmat *md_setlock(mdmat *md, const char *def, unsigned mx, unsigned mi);
 mdmat *md_clrflag(mdmat *md, unsigned mx, unsigned mi);
-const char *md_showflag(mdmat *md, int verbose);
 mdmat *md_transp (mdmat *md);
 
 #define	md_mark(md, def)	md_setflag(md, def, MDXFLAG_MARK, 0)
@@ -248,7 +247,7 @@ void md_putdata (IO *io, const EfiType *type, mdaxis *axis,
 	unsigned mask, void *data);
 void md_puteof (IO *io);
 
-void md_show (IO *io, mdmat *md);
+void md_show (IO *io, mdmat *md, const char *mode);
 void md_print (IO *io, mdmat *md, const char *par);
 void md_save (IO *io, mdmat *md, unsigned mask);
 void md_fsave (const char *name, mdmat *md, unsigned mask);

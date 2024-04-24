@@ -66,8 +66,8 @@ TEST_DECL(matrix)
 		"MD: name=\"Title\", type=int, dim=2, size=24");
 	EXPECT_EVAL("a.show(cout)",
 		"int[6=2*3] \"Title\"\n"
-		"r: a b\n"
-		"c: x y z\n"
+		"r=a,b\n"
+		"c=x,y,z\n"
 	);
 	EXPECT_EVAL("a.title", "\"Title\"");
 	EXPECT_EVAL("a.desc", "\"Description\"");

@@ -6,91 +6,185 @@
 #include <EFEU/mdmat.h>
 #include <EFEU/printobj.h>
 
+static void put_mdaxis(StrBuf *buf, mdaxis *x)
+{
+	sb_puts(StrPool_get(x->sbuf, x->i_name), buf);
 
-void md_show (IO *io, mdmat *md)
+	if	(x->flags)
+	{
+		sb_putc('[', buf);
+
+		if	(x->flags & MDXFLAG_MARK)
+			sb_putc('m', buf);
+		if	(x->flags & MDXFLAG_TIME)
+			sb_putc('t', buf);
+		if	(x->flags & MDXFLAG_HIDE)
+			sb_putc('h', buf);
+		if	(x->flags & MDXFLAG_TEMP)
+			sb_putc('+', buf);
+
+		sb_putc(']', buf);
+	}
+}
+
+static void put_mdindex(StrBuf *buf, mdaxis *x, size_t n)
+{
+	sb_puts(StrPool_get(x->sbuf, x->idx[n].i_name), buf);
+
+	if	(x->idx[n].flags)
+	{
+		sb_putc('[', buf);
+
+		if	(x->idx[n].flags & MDFLAG_BASE)
+			sb_putc('B', buf);
+		if	(x->idx[n].flags & MDFLAG_LOCK)
+			sb_putc('L', buf);
+		if	(x->idx[n].flags & MDFLAG_HIDE)
+			sb_putc('H', buf);
+		if	(x->idx[n].flags & MDFLAG_TEMP)
+			sb_putc('-', buf);
+
+		sb_putc(']', buf);
+	}
+}
+
+static void align(StrBuf *buf)
+{
+	sb_nputc(' ', buf, 8 - sb_getpos(buf) % 8);
+}
+
+static void show_data(IO *out, mdmat *md, StrBuf *buf, mdaxis *x, char *data)
+{
+	if	(x)
+	{
+		int k = sb_getpos(buf);
+
+		for (size_t n = 0; n < x->dim; n++)
+		{
+			sb_setpos(buf, k);
+			put_mdindex(buf, x, n);
+			align(buf);
+			show_data(out, md, buf, x->next, data);
+			data += x->size;
+		}
+	}
+	else
+	{
+		io_puts(sb_cstr(buf), out);
+		io_printf(out, "%5zd ",
+			(data - (char *) md->data) / md->type->size);
+		PrintData(out, md->type, data);
+		io_puts("\n", out);
+	}
+}
+
+#define	F_HEAD	1
+#define	F_AXIS	2
+#define	F_FLAGS	4
+#define	F_DATA	8
+
+void md_show (IO *out, mdmat *md, const char *mode)
 {
 	mdaxis *x;
-	char *delim;
-	int i, n;
-	int lock;
-	char *p;
+	const char *delim;
+	int flags = 0;
 
 	if	(!md)	return;
 
-	PrintType(io, md->type, 1);
-	io_xprintf(io, "[%d", md->size / md->type->size);
-	delim = "=";
+	STRBUF(buf, 32);
 
-	for (x = md->axis; x != NULL; x = x->next)
+	if	(mode)
 	{
-		io_xprintf(io, "%s%d", delim, x->dim);
-		delim = "*";
+		for (; *mode; ++mode)
+		{
+			switch(*mode)
+			{
+			case 'h':	flags |= F_HEAD; break;
+			case 'f':	flags |= F_FLAGS; break;
+			case 'x':	flags |= F_AXIS; break;
+			case 'd':	flags |= F_DATA; break;
+			default:	break;
+			}
+		}
+	}
+	else
+	{
+		flags = F_HEAD | F_FLAGS;
 	}
 
-	io_putc(']', io);
-
-	if	(md->i_name)
-		io_xprintf(io, " %#s\n", StrPool_get(md->sbuf, md->i_name));
-	else	io_putc('\n', io);
-
-	for (x = md->axis; x != NULL; x = x->next)
+	if	(flags & F_HEAD)
 	{
-		n = io_puts(StrPool_get(x->sbuf, x->i_name), io);
+		PrintType(out, md->type, 1);
+		io_xprintf(out, "[%d", md->size / md->type->size);
+		delim = "=";
 
-		if	(x->flags)
+		for (x = md->axis; x != NULL; x = x->next)
 		{
-			n += io_puts("[", io);
-
-			if	(x->flags & MDXFLAG_MARK)
-				n += io_puts("m", io);
-			if	(x->flags & MDXFLAG_TIME)
-				n += io_puts("t", io);
-			if	(x->flags & MDXFLAG_HIDE)
-				n += io_puts("h", io);
-			if	(x->flags & MDXFLAG_TEMP)
-				n += io_puts("x", io);
-
-			n += io_puts("]", io);
+			io_xprintf(out, "%s%d", delim, x->dim);
+			delim = "*";
 		}
 
-		n += io_puts(":", io);
-		lock = 0;
+		io_putc(']', out);
 
-		for (i = 0; i < x->dim; i++)
+		if	(md->i_name)
 		{
-			if	(lock && !(x->idx[i].flags & MDFLAG_LOCK))
-			{
-				n += io_puts(")", io);
-				lock = 0;
-			}
-
-			if	(n > 70)
-			{
-				io_puts("\n\t", io);
-				n = 8;
-			}
-			else	n += io_nputc(' ', io, 1);
-
-			if	(!lock && (x->idx[i].flags & MDFLAG_LOCK))
-			{
-				n += io_puts("(", io);
-				lock = 1;
-			}
-
-			p = StrPool_get(x->sbuf, x->idx[i].i_name);
-
-			if	(x->idx[i].flags & MDFLAG_BASE)
-			{
-				n += io_puts("[", io);
-				n += io_puts(p, io);
-				n += io_puts("]", io);
-			}
-			else	n += io_puts(p, io);
+			io_xprintf(out, " %#s",
+				StrPool_get(md->sbuf, md->i_name));
 		}
 
-		if	(lock)
-			io_putc(')', io);
-
-		io_putc('\n', io);
+		io_putc('\n', out);
 	}
+
+	if	(flags & (F_AXIS | F_FLAGS))
+	{
+		delim = "";
+		sb_clear(&buf);
+
+		for (x = md->axis; x != NULL; x = x->next)
+		{
+			sb_puts(delim, &buf);
+			put_mdaxis(&buf, x);
+
+			if	(flags & F_FLAGS)
+			{
+				delim = "=";
+
+				for (size_t n = 0; n < x->dim; n++)
+				{
+					sb_puts(delim, &buf);
+					delim = ",";
+					put_mdindex(&buf, x, n);
+				}
+
+				sb_putc('\n', &buf);
+				delim = "";
+			}
+			else
+			{
+				delim = " ";
+			}
+		}
+
+		io_puts(sb_cstr(&buf), out);
+	}
+
+	if	(flags & F_DATA)
+	{
+		sb_clear(&buf);
+
+		for (x = md->axis; x != NULL; x = x->next)
+		{
+			put_mdaxis(&buf, x);
+			align(&buf);
+		}
+
+		io_puts(sb_cstr(&buf), out);
+		io_printf(out, "%5s %s[%zd]\n", "#",
+			md->type->name, md->size / md->type->size);
+
+		sb_clear(&buf);
+		show_data(out, md, &buf, md->axis, md->data);
+	}
+
+	sb_free(&buf);
 }

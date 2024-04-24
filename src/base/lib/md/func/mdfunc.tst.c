@@ -46,8 +46,8 @@ TEST_SUITE
 		"MD: name=\"Data\", type=int, dim=2, size=16");
 	EXPECT_EVAL("a.show(cout)",
 		"int[4=2*2] \"Data\"\n"
-		"r: a b\n"
-		"c: x y\n"
+		"r=a,b\n"
+		"c=x,y\n"
 	);
 
 	PRINT_EVAL("a.save(tmp + \"/b\")");
