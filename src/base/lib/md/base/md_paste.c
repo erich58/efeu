@@ -60,7 +60,7 @@ static void mkindex (const char *delim, mdaxis *x, char *last, int n)
 	}
 }
 
-static char *mkname (StrBuf *buf, const char *delim, mdaxis *x, int n)
+static const char *mkname (StrBuf *buf, const char *delim, mdaxis *x, int n)
 {
 	sb_puts(StrPool_get(x->sbuf, x->i_name), buf);
 
