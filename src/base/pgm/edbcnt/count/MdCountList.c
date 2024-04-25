@@ -45,7 +45,7 @@ MdCountList *MdCountList_create (MdCount *cnt)
 	MdCountList *list;
 	EfiType *type;
 
-	type = mdtype(cnt->type);
+	type = str2Type(cnt->type);
 	list = memalloc(sizeof *list + type->size);
 	list->cnt = cnt;
 	list->type = type;

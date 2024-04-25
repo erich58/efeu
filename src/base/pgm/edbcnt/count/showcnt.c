@@ -50,7 +50,7 @@ static void print_count(IO *io, InfoNode *info)
 {
 	MdCount *cnt = info->par;
 	/*
-	ListType(io, mdtype(cnt->type));
+	ListType(io, str2Type(cnt->type));
 	*/
 	io_puts(cnt->type, io);
 	io_putc('\n', io);

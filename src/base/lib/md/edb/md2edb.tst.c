@@ -11,7 +11,7 @@ TEST_SUITE
 	const char *data = 
 		"##MDMAT   2.0\n"
 		"##Title    Data\n"
-		"##Type    int x\n"
+		"##Type    int\n"
 		"##Locale  C\n"
 		"##Rows    r\n"
 		"##Columns c\n"

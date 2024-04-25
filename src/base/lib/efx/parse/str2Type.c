@@ -1,7 +1,7 @@
 /*
-EDB-Datentype aus String bestimmen
+Datentype aus String bestimmen
 
-$Copyright (C) 2006 Erich Frühstück
+$Copyright (C) 1994 Erich Frühstück
 This file is part of EFEU.
 
 This library is free software; you can redistribute it and/or
@@ -20,22 +20,18 @@ If not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include <EFEU/EDB.h>
+#include <EFEU/object.h>
 #include <EFEU/preproc.h>
+#include <EFEU/parsedef.h>
 #include <ctype.h>
 
-EfiType *edb_type (const char *def)
+EfiType *str2Type (const char *def)
 {
- 	EfiType *type;
-	IO *io;
-	int c;
-
 	if	(!def)	return NULL;
 
-	io = io_cmdpreproc(io_cstr(def));
-	type = Parse_type(io, NULL);
-
-	c = io_eat(io, " \t");
+	IO *io = io_cstr(def);
+	EfiType *type = Parse_type(io, NULL);
+	int c = io_eat(io, " \t");
 
 	if	(isalpha(c) || c == '_')
 	{

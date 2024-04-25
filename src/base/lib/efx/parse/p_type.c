@@ -23,6 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 #include <EFEU/preproc.h>
 #include <EFEU/parsedef.h>
+#include <ctype.h>
 
 #define	INC_PFX	"types"
 
@@ -122,13 +123,5 @@ EfiType *Parse_type(IO *io, EfiType *type)
 		}
 	}
 
-	return type;
-}
-
-EfiType *str2Type (const char *def)
-{
-	IO *io = io_cstr(def);
-	EfiType *type = Parse_type(io, NULL);
-	io_close(io);
 	return type;
 }

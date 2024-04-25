@@ -165,7 +165,7 @@ EDB *edb_fopen (const char *path, const char *name)
 	if	((p = type_end(name)))
 	{
 		char *tname = mstrncpy(name, p - name);
-		EfiType *type = edb_type(tname);
+		EfiType *type = str2Type(tname);
 		memfree(tname);
 		return edb_import(type, path, p);
 	}

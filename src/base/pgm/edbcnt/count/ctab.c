@@ -142,7 +142,7 @@ void md_ctabinit (mdmat *tab, MdCountList *list)
 	}
 	else
 	{
-		tab->type = mdtype(list->cnt->type);
+		tab->type = str2Type(list->cnt->type);
 	}
 
 	tab->x_priv = list;

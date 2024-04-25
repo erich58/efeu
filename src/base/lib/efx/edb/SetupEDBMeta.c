@@ -20,7 +20,7 @@ static void meta_head (EDBMetaDef *def, EDBMeta *meta, const char *arg)
 
 void EDBMeta_type (EDBMetaDef *def, EDBMeta *meta, const char *arg)
 {
-	EfiType *type =	edb_type(EDBMeta_par(meta, 0));
+	EfiType *type =	str2Type(EDBMeta_par(meta, 0));
 
 	if	(type)
 	{

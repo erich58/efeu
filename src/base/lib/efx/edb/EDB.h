@@ -52,7 +52,6 @@ typedef struct {
 	size_t nwrite;	/* Zahl der geschriebenen Datensätze */
 } EDB;
 
-EfiType *edb_type (const char *def);
 EDB *edb_alloc (EfiObj *obj, char *desc);
 EDB *edb_create (const EfiType *type);
 EDB *edb_share (EDB *base);

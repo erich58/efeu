@@ -49,11 +49,6 @@ void SetupMdMat (void);
 extern LogControl *md_err;
 extern LogControl *md_note;
 
-/*	Typedefinition für multidimensionale Matrizen
-*/
-
-EfiType *mdtype (const char *str);
-
 
 /*	Struktur für Achsenbezeichner
 */

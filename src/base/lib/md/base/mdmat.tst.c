@@ -50,7 +50,7 @@ TEST_DECL(matrix)
 		"##MDMAT   2.0\n"
 		"##Title   Title\n"
 		"##Desc    Description\n"
-		"##Type    int x\n"
+		"##Type    int\n"
 		"##Locale  C\n"
 		"##Rows    r\n"
 		"##Columns c\n"

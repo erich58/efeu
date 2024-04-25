@@ -192,7 +192,7 @@ mdmat *md_map (MapFile *map)
 	md = new_mdmat();
 	md->map = rd_refer(map);
 	md->sbuf = sbuf;
-	md->type = edb_type(StrPool_get(sbuf, *(val++)));
+	md->type = str2Type(StrPool_get(sbuf, *(val++)));
 	md->i_name = *(val++);
 	md->i_desc = *(val++);
 	ptr = &md->axis;

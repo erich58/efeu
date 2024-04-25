@@ -77,7 +77,7 @@ static mdmat *hdr_v3 (IO *io)
 		io_close(cin);
 	}
 
-	md->type = edb_type(StrPool_get(md->sbuf, i_type));
+	md->type = str2Type(StrPool_get(md->sbuf, i_type));
 	md->size = md_size(md, md->axis);
 
 	for (x = md->axis; x; x = x->next)
@@ -163,7 +163,7 @@ mdmat *md_gethdr(IO *io, int flag)
 		io_close(cin);
 	}
 
-	md->type = mdtype(StrPool_get(md->sbuf, StrPool_next(md->sbuf)));
+	md->type = str2Type(StrPool_get(md->sbuf, StrPool_next(md->sbuf)));
 
 /*	Kompatiblitätsprüfung
 */
