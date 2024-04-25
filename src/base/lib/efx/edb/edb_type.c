@@ -24,8 +24,6 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/preproc.h>
 #include <ctype.h>
 
-#define MSG_XC	"[edb:xchar]$0: extra character in header ignored.\n"
-
 EfiType *edb_type (const char *def)
 {
  	EfiType *type;
@@ -48,19 +46,6 @@ EfiType *edb_type (const char *def)
 			var = GetStruct(var, io, EOF);
 			type = MakeStruct(NULL, NULL, var);
 		}
-	}
-	else
-	{
-		if	(c == '\n')
-			c = io_getc(io);
-	}
-
-	if	((c = io_eat(io, " \t\n")) != EOF)
-	{
-		io_note(io, MSG_XC, NULL);
-
-		do	c = io_getc(io);
-		while	(c != EOF);
 	}
 
 	io_close(io);

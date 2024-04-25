@@ -117,7 +117,7 @@ If not, write to the Free Software Foundation, Inc.,
 125	$!: undefined object $1 in argument list.\n
 126	$!: undefined default value in function call.\n
 127	$!: $0: type of function is missing.\n
-128	$!: $0: undefined data type$1.\n
+128	$!: $0: undefined data type $1.\n
 129	$!: $0: undefined object binding in prototype.\n
 
 221	$!: $0: destructor with return value $1.\n
