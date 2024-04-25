@@ -31,10 +31,10 @@ TEST_SUITE
 	);
 
 	EXPECT_STR(mdtest_show(md, "s"),
-		"int          32       8       4\n"
-		"a            32       2      16\n"
-		"b            16       2       8\n"
-		"c             8       2       4\n"
+		" 32   8   4 int[8=2*2*2] \"name\"\n"
+		" 32   2  16 a=a1[B],a2\n"
+		" 16   2   8 b[m]=b1[L],b2\n"
+		"  8   2   4 c=c1,c2\n"
 	);
 
 	EXPECT_STR(mdtest_show(md, "d"),
