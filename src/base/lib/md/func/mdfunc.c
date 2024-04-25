@@ -188,16 +188,6 @@ static void mdx_nselect (EfiFunc *func, void *rval, void **arg)
 	Val_mdaxis(rval) = x;
 }
 
-static void f_mdx_choice (EfiFunc *func, void *rval, void **arg)
-{
-	mdx_choice(Val_ptr(arg[0]), Val_str(arg[1]));
-}
-
-static void f_mdx_index (EfiFunc *func, void *rval, void **arg)
-{
-	mdx_index(Val_ptr(arg[0]), Val_int(arg[1]));
-}
-
 static EfiFuncDef fdef[] = {
 	{ FUNC_VIRTUAL, &Type_mdmat, "mdmat (.)", any_to_mdmat },
 	{ FUNC_VIRTUAL, &Type_mdmat, "mdmat (restricted mdmat md, str def = NULL)", MF_cpy },
@@ -269,8 +259,6 @@ int lag = 0)", MF_data },
 		mdx_select },
 	{ FUNC_VIRTUAL, &Type_mdaxis, "operator[] (mdaxis, int)",
 		mdx_nselect },
-	{ FUNC_VIRTUAL, &Type_void, "mdaxis::choice(str)", f_mdx_choice },
-	{ FUNC_VIRTUAL, &Type_void, "mdaxis::choice(int)", f_mdx_index },
 };
 
 

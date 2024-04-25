@@ -81,11 +81,6 @@ static EfiObj *x_desc (const EfiObj *base, void *data)
 	return x ? StrPoolObj(base, x->sbuf, &x->i_desc) : str2Obj(NULL);
 }
 
-static EfiObj *x_head (const EfiObj *base, void *data)
-{
-	return str2Obj(base ? mdx_head(Val_ptr(base->data)) : NULL);
-}
-
 static EfiObj *x_next (const EfiObj *base, void *data)
 {
 	mdaxis *x = base ? Val_ptr(base->data) : NULL;
@@ -133,7 +128,6 @@ static EfiObj *x_index (const EfiObj *base, void *data)
 static EfiMember var_mdaxis[] = {
 	{ "name", &Type_str, x_name, NULL },
 	{ "desc", &Type_str, x_desc, NULL },
-	{ "head", &Type_str, x_head, NULL },
 	{ "dim", &Type_int, x_dim, NULL },
 	{ "flags", &Type_int, x_flags, NULL },
 	{ "next", &Type_mdaxis, x_next, NULL },

@@ -70,15 +70,6 @@ typedef struct {
 
 typedef struct mdaxis_struct mdaxis;
 
-typedef struct {
-	REFVAR;		/* Referenzvariablen */
-	StrPool *sbuf;	/* Stringpool für Namen */
-	size_t idx;	/* Spaltenindex */
-	size_t cols;	/* Zahl der Spalten */
-	size_t dim;	/* Indexdimension */
-	size_t *tab;	/* Offset - Tabelle */
-} mdx_lbl;
-
 struct mdaxis_struct {
 	mdaxis *next;	/* Verweis auf nächstes Element */
 	StrPool *sbuf;	/* Stringpool für Namen */
@@ -88,7 +79,6 @@ struct mdaxis_struct {
 	size_t dim;	/* Zahl der Elemente */
 	mdindex *idx;	/* Indexvektor */
 	unsigned flags;	/* Steuerflags */
-	mdx_lbl *lbl;	/* Erweiterte Labels */
 	void *priv;	/* Private Referenzdaten */
 };
 
@@ -105,12 +95,6 @@ void del_axis (mdaxis *axis);
 #define	MDXFLAG_TIME	2	/* Zeitachse */
 #define	MDXFLAG_HIDE	4	/* Achsenlabel unterdrücken */
 #define	MDXFLAG_TEMP	8	/* Temporäre Markierung */
-
-void mdx_init (mdaxis *axis);
-void mdx_choice (mdaxis *axis, const char *def);
-void mdx_index (mdaxis *axis, int n);
-char *mdx_head (mdaxis *axis);
-char *mdx_label (mdaxis *axis, int n);
 
 /*	Achsenvergleich
 */

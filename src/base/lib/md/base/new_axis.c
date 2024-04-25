@@ -24,11 +24,9 @@ mdaxis *new_axis (StrPool *sbuf, size_t dim)
 	x->dim = dim;
 	x->idx = memalloc(dim * sizeof(mdindex));
 	x->priv = NULL;
-	x->lbl = NULL;
 	x->flags = 0;
 	return x;
 }
-
 
 /*	Achse freigeben
 */
@@ -39,7 +37,6 @@ void del_axis(mdaxis *axis)
 
 	del_axis(axis->next);
 	rd_deref(axis->sbuf);
-	rd_deref(axis->lbl);
 	memfree(axis->idx);
 	del_data(&atab, axis);
 }

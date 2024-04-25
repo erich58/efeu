@@ -20,7 +20,6 @@ TEST_DECL(null)
 	EXPECT_EVAL("n.size", "0");
 	EXPECT_EVAL("n.axis", "NULL");
 	EXPECT_EVAL("n.axis.next", "NULL");
-	EXPECT_EVAL("n.axis.head", "NULL");
 	EXPECT_EVAL("n.axis.name", "NULL");
 	EXPECT_EVAL("n.axis.desc", "NULL");
 	EXPECT_EVAL("n.axis.dim", "0");
@@ -38,7 +37,6 @@ TEST_DECL(skalar)
 	EXPECT_EVAL("s.size", "4");
 	EXPECT_EVAL("s.axis", "NULL");
 	EXPECT_EVAL("s.axis.next", "NULL");
-	EXPECT_EVAL("s.axis.head", "NULL");
 	EXPECT_EVAL("s.axis.name", "NULL");
 	EXPECT_EVAL("s.axis.desc", "NULL");
 	EXPECT_EVAL("s.axis.dim", "0");
