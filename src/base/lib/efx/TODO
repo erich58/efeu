@@ -1,1 +1,3 @@
 NewFunc: ./object/construct.c
+
+TypeHead versus Type2str
