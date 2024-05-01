@@ -4,7 +4,7 @@
 
 static const char *showflag(mdmat *md, int verbose)
 {
-	md_show(OUT(), md, verbose ? "f" : "x");
+	md_show(OUT(), md, verbose ? "x" : "X");
 	return utest_out();
 }
 

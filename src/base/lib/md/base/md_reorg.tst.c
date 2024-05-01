@@ -9,13 +9,13 @@ TEST_SUITE
 	SetupMdMat();
 	mdmat *md;
 	EXPECT_PTR(md = md_create(&Type_int, "name a=a1,a2 b=b1,b2"));
-	EXPECT_STR(mdtest_show(md, "hf"),
+	EXPECT_STR(mdtest_show(md, "hx"),
 		"int[4=2*2] \"name\"\n"
 		"a=a1,a2\n"
 		"b=b1,b2\n"
 	);
 	EXPECT_INT(md_paste(md, "x", "_", 0, 0), 2);
-	EXPECT_STR(mdtest_show(md, "hf"),
+	EXPECT_STR(mdtest_show(md, "hx"),
 		"int[4] \"name\"\n"
 		"x=a1_b1,a1_b2,a2_b1,a2_b2\n"
 	);
@@ -40,7 +40,7 @@ TEST_SUITE
 	);
 
 	TEST_EXPR(md_reorg_label(md));
-	EXPECT_STR(mdtest_show(md, "hf"),
+	EXPECT_STR(mdtest_show(md, "hx"),
 		"int[4] \"name\"\n"
 		"x=a1_b1,a1_b2,a2_b1,a2_b2\n"
 	);

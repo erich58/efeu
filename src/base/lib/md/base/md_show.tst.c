@@ -20,14 +20,20 @@ TEST_SUITE
 		"c=c1,c2\n"
 	);
 
+	EXPECT_STR(mdtest_show(md, "T"), "int[8]");
+	EXPECT_STR(mdtest_show(md, "t"), "int[8=2*2*2]");
 	EXPECT_STR(mdtest_show(md, "h"), "int[8=2*2*2] \"name\"\n");
 
-	EXPECT_STR(mdtest_show(md, "x"), "a b[m] c");
+	EXPECT_STR(mdtest_show(md, "X"), "a b[m] c");
 
-	EXPECT_STR(mdtest_show(md, "f"),
+	EXPECT_STR(mdtest_show(md, "x"),
 		"a=a1[B],a2\n"
 		"b[m]=b1[L],b2\n"
 		"c=c1,c2\n"
+	);
+
+	EXPECT_STR(mdtest_show(md, "S"),
+		"int[8] a[2] b[2] c[2]\n"
 	);
 
 	EXPECT_STR(mdtest_show(md, "s"),
@@ -49,12 +55,22 @@ TEST_SUITE
 		"a2      b2      c2          7 222\n"
 	);
 
-	EXPECT_STR(mdtest_show(md, "z"), "");
+	MATCH_LINES(mdtest_show(md, "z"),
+		"@fussy\n"
+		"T\tType with dimension\n"
+		"t\tType with dimension composition\n"
+		"h\tType and matrix name\n"
+		"X\tAxis names\n"
+		"x\tAxis structure with index list\n"
+		"S\tType and axis dimension\n"
+		"s\tAxis dimension and data size\n"
+		"d\tData with labels\n"
+	);
 
 	md_time(md, "a");
 	md_setflag(md, "c=c2", MDXFLAG_HIDE|MDXFLAG_TEMP,
 		MDFLAG_HIDE|MDFLAG_TEMP);
-	EXPECT_STR(mdtest_show(md, "f"),
+	EXPECT_STR(mdtest_show(md, "x"),
 		"a[t]=a1[B],a2\n"
 		"b[m]=b1[L],b2\n"
 		"c[h+]=c1,c2[H-]\n"

@@ -6,7 +6,7 @@ TEST_SUITE
 {
 	SetupMdMat();
 	mdmat *md = md_create(&Type_int, "name a=a1 b=b1,b2 c=c1 d=d1");
-	EXPECT_STR(mdtest_show(md, "hf"),
+	EXPECT_STR(mdtest_show(md, "hx"),
 		"int[2=1*2*1*1] \"name\"\n"
 		"a=a1\n"
 		"b=b1,b2\n"
@@ -15,7 +15,7 @@ TEST_SUITE
 	);
 
 	TEST_EXPR(md_reduce(md, "[bc]"));
-	EXPECT_STR(mdtest_show(md, "hf"),
+	EXPECT_STR(mdtest_show(md, "hx"),
 		"int[2=1*2*1] \"name\"\n"
 		"a=a1\n"
 		"b=b1,b2\n"
@@ -23,7 +23,7 @@ TEST_SUITE
 	);
 
 	TEST_EXPR(md_reduce(md, NULL));
-	EXPECT_STR(mdtest_show(md, "hf"),
+	EXPECT_STR(mdtest_show(md, "hx"),
 		"int[2] \"name\"\n"
 		"b=b1,b2\n"
 	);
