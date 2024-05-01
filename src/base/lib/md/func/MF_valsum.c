@@ -2,52 +2,47 @@
 	(c) 1995 Erich Frühstück
 */
 
-#include <EFEU/mdeval.h>
+#include <EFEU/mdmat.h>
 
 typedef struct {
 	EfiFunc *add;
-	EfiType *type;
-	void *data;
+	EfiObj *obj;
 } SUMPAR;
 
-static void *sum_init(void *xpar, EfiType *type)
+static void mainwalk(SUMPAR *sum, mdaxis *x, char *data)
 {
-	SUMPAR *par;
+	if	(x)
+	{
+		for (size_t i = 0; i < x->dim; ++i)
+		{
+			if	(x->idx[i].flags & (MDFLAG_LOCK|MDFLAG_TEMP))
+				continue;
 
-	par = memalloc(sizeof(SUMPAR) + type->size);
-	par->data = (par + 1);
-	memset(par->data, 0, type->size);
-	par->add = mdfunc_add(type);
-	par->type = type;
-	return par;
+			mainwalk(sum, x->next, data + i * x->size);
+		}
+	}
+	else
+	{
+		CallVoidFunc(sum->add, sum->obj->data, data);
+	}
 }
-
-static void *sum_end(void *par)
-{
-	EfiObj *obj;
-
-	obj = NewObj(((SUMPAR *) par)->type, ((SUMPAR *) par)->data);
-	memfree(par);
-	return obj;
-}
-
-static void sum_data(void *par, EfiType *type, void *ptr, void *base)
-{
-	CallVoidFunc(((SUMPAR *) par)->add, ((SUMPAR *) par)->data, ptr);
-}
-
-static MdEvalDef sum_eval = {
-	sum_init, sum_end,
-	NULL, NULL,
-	NULL, NULL,
-	sum_data,
-};
-
 
 void MF_valsum(EfiFunc *func, void *rval, void **arg)
 {
-	register mdmat *md = Val_mdmat(arg[0]);
-	md_setlock(md, Val_str(arg[1]), 0, MDFLAG_TEMP);
-	Val_ptr(rval) = md_eval(&sum_eval, NULL, md, MDFLAG_LOCK|MDFLAG_TEMP, 0, 0);
-	md_clrflag(md, 0, MDFLAG_TEMP);
+	mdmat *md = Val_mdmat(arg[0]);
+
+	if	(!md)	return;
+
+	SUMPAR data;
+	data.obj = NewObj(md->type, NULL);
+	data.add = mdfunc_add(md->type);
+
+	if	(data.add)
+	{
+		md_setlock(md, Val_str(arg[1]), 0, MDFLAG_TEMP);
+		mainwalk(&data, md->axis, md->data);
+		md_clrflag(md, 0, MDFLAG_TEMP);
+	}
+
+	Val_ptr(rval) = data.obj;
 }
