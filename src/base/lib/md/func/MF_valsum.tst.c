@@ -10,5 +10,6 @@ TEST_SUITE
 	PRINT_EVAL("float_prec = 2");
 
 	EXPECT_EVAL("sum(mdcat(NULL, 1.7, 3.4))", "5.10");
+
 	CLEANUP_EVAL;
 }
