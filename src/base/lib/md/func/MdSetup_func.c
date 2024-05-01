@@ -251,7 +251,7 @@ static EfiFuncDef fdef[] = {
 int lag = 0)", MF_data },
 	{ 0, &Type_list, "mdmat::label (str def = NULL, bool flag = false)", MF_label },
 
-	{ FUNC_VIRTUAL, &Type_obj,  "sum (mdmat, str = NULL)", MF_valsum },
+	{ 0, &Type_obj,  "mdmat::sum (str = NULL)", MF_valsum },
 	{ 0, &Type_mdmat, "mdmat::eval (str axis, Expr_t cmd)", MF_xeval },
 	{ 0, &Type_void, "mdmat::show (IO io = iostd, str mode = NULL)",
 		MF_show },
