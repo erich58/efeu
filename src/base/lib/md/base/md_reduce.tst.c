@@ -24,7 +24,7 @@ TEST_SUITE
 
 	TEST_EXPR(md_reduce(md, NULL));
 	EXPECT_STR(mdtest_show(md, "hf"),
-		"int[2=2] \"name\"\n"
+		"int[2] \"name\"\n"
 		"b=b1,b2\n"
 	);
 	rd_deref(md);

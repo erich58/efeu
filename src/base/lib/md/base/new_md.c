@@ -38,17 +38,9 @@ static void md_clean (void *data)
 
 static char *md_ident (const void *data)
 {
-	const mdmat *md;
-	StrBuf *sb;
-	IO *io;
-
-	md = data;
-	sb = sb_acquire();
-	io = io_strbuf(sb);
-	io_xprintf(io, "name=%#s, type=", StrPool_get(md->sbuf, md->i_name));
-	ShowType(io, md->type);
-	io_xprintf(io, ", dim=%d", md_dim(md->axis));
-	io_xprintf(io, ", size=%ld", md->size);
+	StrBuf *sb = sb_acquire();
+	IO *io = io_strbuf(sb);
+	md_show(io, data, "h");
 	io_close(io);
 	return sb_cpyrelease(sb);
 }

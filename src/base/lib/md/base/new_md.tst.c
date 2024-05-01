@@ -10,15 +10,15 @@ TEST_SUITE
 	EXPECT(md_scalar(NULL) == NULL);
 
 	EXPECT_PTR(md = new_mdmat());
-	EXPECT_MSTR(rd_ident(md), "name=NULL, type=., dim=0, size=0");
+	EXPECT_MSTR(rd_ident(md), ".\n");
 	rd_deref(md);
 
 	EXPECT_PTR(md = md_scalar(int2Obj(42)));
-	EXPECT_MSTR(rd_ident(md), "name=NULL, type=int, dim=0, size=4");
+	EXPECT_MSTR(rd_ident(md), "int\n");
 	rd_deref(md);
 
 	EXPECT_PTR(md = md_create(&Type_int, "title x=a,b,c"));
-	EXPECT_MSTR(rd_ident(md), "name=\"title\", type=int, dim=1, size=12");
+	EXPECT_MSTR(rd_ident(md), "int[3] \"title\"\n");
 	rd_deref(md);
 
 	CLEANUP_MSTR;

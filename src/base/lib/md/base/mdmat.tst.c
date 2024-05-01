@@ -29,8 +29,9 @@ TEST_DECL(null)
 
 TEST_DECL(skalar)
 {
-	EXPECT_EVAL("mdmat s = 1", "MD: name=NULL, type=int, dim=0, size=4");
+	EXPECT_EVAL("mdmat s = 1", "MD: int\n");
 	EXPECT_EVAL("s.title = \"Title\"", "\"Title\"");
+	EXPECT_EVAL("s", "MD: int \"Title\"\n");
 	EXPECT_EVAL("s.desc = \"Description\"", "\"Description\"");
 	EXPECT_EVAL("s.type", "int");
 	EXPECT_EVAL("s.dim", "0");
@@ -61,7 +62,7 @@ TEST_DECL(matrix)
 	EXPECT_EVAL(UnitTest_tpl("str tmp = \"@\""),
 		UnitTest_qstr(UnitTest_tmp(NULL)));
 	EXPECT_EVAL("mdmat a = mdread(findopen(tmp, \"a\"))",
-		"MD: name=\"Title\", type=int, dim=2, size=24");
+		"MD: int[6=2*3] \"Title\"\n");
 	EXPECT_EVAL("a.show(cout)",
 		"int[6=2*3] \"Title\"\n"
 		"r=a,b\n"

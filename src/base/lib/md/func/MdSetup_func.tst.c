@@ -43,7 +43,7 @@ TEST_SUITE
 	EXPECT_EVAL(UnitTest_tpl("str tmp = \"@\""),
 		UnitTest_qstr(UnitTest_tmp(NULL)));
 	EXPECT_EVAL("mdmat a = mdread(findopen(tmp, \"a\"))",
-		"MD: name=\"Data\", type=int, dim=2, size=16");
+		"MD: int[4=2*2] \"Data\"\n");
 	EXPECT_EVAL("a.show(cout)",
 		"int[4=2*2] \"Data\"\n"
 		"r=a,b\n"
@@ -58,14 +58,14 @@ TEST_SUITE
 		UnitTest_tpl("@/c: int[4=2*2] \"Data\"\n"));
 
 	EXPECT_EVAL("mdmat b = mdload(tmp + \"/b\")",
-		"MD: name=\"Data\", type=int, dim=2, size=16");
+		"MD: int[4=2*2] \"Data\"\n");
 	EXPECT_EVAL("b.mark(\"c\").print(cout, \"nohead\");",
 		"2 x y\n"
 		"a 1 2\n"
 		"b 3 0\n"
 	);
 	EXPECT_EVAL("mdmat c = reload(b, \"c=x\")",
-		"MD: name=\"Data\", type=int, dim=2, size=8");
+		"MD: int[2=2*1] \"Data\"\n");
 	EXPECT_EVAL("c.mark(\"c\").print(cout, \"nohead\");",
 		"1 x\n"
 		"a 1\n"
@@ -97,8 +97,7 @@ TEST_SUITE
 	PRINT_EVAL("x = NULL");
 	EXPECT_EVAL("x.paste(\"c\", 0, 0)", "NULL");
 	PRINT_EVAL("x = mdmat(a)");
-	EXPECT_EVAL("x.paste(\"z\", 0, 0, \"-\")",
-		"MD: name=NULL, type=int, dim=1, size=16");
+	EXPECT_EVAL("x.paste(\"z\", 0, 0, \"-\")", "MD: int[4]\n");
 	EXPECT_EVAL("x.print(cout, \"nohead\");",
 		"1 .\n"
 		"a-x 1\n"

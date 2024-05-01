@@ -67,19 +67,27 @@ static void align(StrBuf *buf)
 	sb_nputc(' ', buf, 8 - sb_getpos(buf) % 8);
 }
 
-static void mode_head(IO *out, mdmat *md)
+static void mode_head(IO *out, const mdmat *md)
 {
 	PrintType(out, md->type, 1);
-	io_xprintf(out, "[%d", md->size / md->type->size);
-	const char *delim = "=";
 
-	for (mdaxis *x = md->axis; x != NULL; x = x->next)
+	if	(md->type && md->axis)
 	{
-		io_xprintf(out, "%s%d", delim, x->dim);
-		delim = "*";
-	}
+		io_xprintf(out, "[%d", md->size / md->type->size);
 
-	io_putc(']', out);
+		if	(md->axis->next)
+		{
+			const char *delim = "=";
+
+			for (mdaxis *x = md->axis; x != NULL; x = x->next)
+			{
+				io_xprintf(out, "%s%d", delim, x->dim);
+				delim = "*";
+			}
+		}
+
+		io_putc(']', out);
+	}
 
 	if	(md->i_name)
 	{
@@ -90,7 +98,7 @@ static void mode_head(IO *out, mdmat *md)
 	io_putc('\n', out);
 }
 
-static void mode_label(IO *out, mdmat *md, StrBuf *buf, int verbose)
+static void mode_label(IO *out, const mdmat *md, StrBuf *buf, int verbose)
 {
 	const char *delim = "";
 	sb_clear(buf);
@@ -110,17 +118,20 @@ static void put_size(IO *out, int width, size_t size)
 	io_printf(out, "%*zd ", width, size);
 }
 
-static void mode_size(IO *out, mdmat *md, StrBuf *buf)
+static void mode_size(IO *out, const mdmat *md, StrBuf *buf)
 {
 	int width = 7;
 
 	if	(md->size < 1000)
 		width = 3;
 
-	put_size(out, width, md->size);
-	put_size(out, width, md->size / md->type->size);
-	put_size(out, width, md->type->size);
-	mode_head(out, md);
+	if	(md->type)
+	{
+		put_size(out, width, md->size);
+		put_size(out, width, md->size / md->type->size);
+		put_size(out, width, md->type->size);
+		mode_head(out, md);
+	}
 
 	for (mdaxis *x = md->axis; x != NULL; x = x->next)
 	{
@@ -133,7 +144,7 @@ static void mode_size(IO *out, mdmat *md, StrBuf *buf)
 	}
 }
 
-static void show_data(IO *out, mdmat *md, StrBuf *buf, mdaxis *x, char *data)
+static void show_data(IO *out, const mdmat *md, StrBuf *buf, mdaxis *x, char *data)
 {
 	if	(x)
 	{
@@ -158,7 +169,7 @@ static void show_data(IO *out, mdmat *md, StrBuf *buf, mdaxis *x, char *data)
 	}
 }
 
-static void mode_data(IO *out, mdmat *md, StrBuf *buf)
+static void mode_data(IO *out, const mdmat *md, StrBuf *buf)
 {
 	sb_clear(buf);
 
@@ -182,7 +193,7 @@ static void mode_data(IO *out, mdmat *md, StrBuf *buf)
 #define	F_SIZE	8
 #define	F_DATA	16
 
-void md_show (IO *out, mdmat *md, const char *mode)
+void md_show (IO *out, const mdmat *md, const char *mode)
 {
 	if	(!md)	return;
 

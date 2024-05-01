@@ -47,7 +47,7 @@ TEST_DECL(unnamed)
 	); 
 	EXPECT_INT(md_paste(md, NULL, ".", 0, 0), 2);
 	EXPECT_STR(mdtest_show(md, "sd"),
-		" 16   4   4 int[4=4]\n"
+		" 16   4   4 int[4]\n"
 		" 16   4   4 a.b=a1.b1,a1.b2,a2.b1,a2.b2\n"
 		"a.b         # int[4]\n"
 		"a1.b1       0 11\n"
