@@ -184,7 +184,7 @@ static void show_data(IO *out, const mdmat *md, StrBuf *buf, mdaxis *x, char *da
 		io_printf(out, "%5zd ",
 			(data - (char *) md->data) / md->type->size);
 		PrintData(out, md->type, data);
-		io_puts("\n", out);
+		io_putc('\n', out);
 	}
 }
 
@@ -192,19 +192,27 @@ static void mode_data(IO *out, const mdmat *md, StrBuf *buf, int par)
 {
 	sb_clear(buf);
 
-	for (mdaxis *x = md->axis; x != NULL; x = x->next)
+	if	(md->axis)
 	{
-		put_mdaxis(buf, x, 0);
-		align(buf);
+		for (mdaxis *x = md->axis; x != NULL; x = x->next)
+		{
+			put_mdaxis(buf, x, 0);
+			align(buf);
+		}
+
+		io_puts(sb_cstr(buf), out);
+		io_printf(out, "%5s ", "#");
+		mode_type(out, md, buf, 0);
+		io_putc('\n', out);
+
+		sb_clear(buf);
+		show_data(out, md, buf, md->axis, md->data);
 	}
-
-	io_puts(sb_cstr(buf), out);
-	io_printf(out, "%5s ", "#");
-	mode_type(out, md, buf, 0);
-	io_putc('\n', out);
-
-	sb_clear(buf);
-	show_data(out, md, buf, md->axis, md->data);
+	else
+	{
+		PrintData(out, md->type, md->data);
+		io_putc('\n', out);
+	}
 }
 
 static void mode_sep(IO *out, const mdmat *md, StrBuf *buf, int par)

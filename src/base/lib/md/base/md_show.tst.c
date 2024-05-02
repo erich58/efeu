@@ -7,6 +7,12 @@ TEST_SUITE
 	mdmat *md;
 	SetupMdMat();
 
+	EXPECT_PTR(md = md_scalar(int2Obj(42)));
+	EXPECT_STR(mdtest_show(md, "d"),
+		"42\n"
+	);
+	rd_deref(md);
+
 	EXPECT_PTR(md = mdtest_create("name a=a1,a2 b=b1,b2 c=c1,c2"));
 
 	md_mark(md, "b");
