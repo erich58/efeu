@@ -36,9 +36,6 @@ typedef struct MdAxisLabelStruct MdAxisLabel;
 struct MdAxisLabelStruct {
 	MdAxisLabel *next;
 	char *name;	/* Name der Achse */
-	size_t len;	/* Länge des Bezeichners */
-	size_t dim;	/* Zahl der Muster */
-	char **list;	/* Liste mit Muster */
 	VecBuf idxtab;	/* Tabelle mit Bezeichnern */
 };
 
