@@ -228,7 +228,6 @@ verbose {
 {
 	n += $3;
 	k += $2;
-	c += $3 * $4;
 
 	if	($2 == 0)
 	{
@@ -243,7 +242,7 @@ END {
 		printf("\n");
 
 	printf("Coverage: %.2f%% %d of %d lines in %d files\n",
-		n ? c / n : 0, k, n, run);
+		n ? 100. * k / n : 0, k, n, run);
 
 	if	(unused)
 		printf("Not used: %d files\n", unused);
