@@ -205,7 +205,7 @@ $1 ~ /TOTAL/ { next; }
 	k = 0.01 * $2 * $4;
 
 	if	(k > 0. || not_run == 1)
-		printf("%-23s\t%.0f\t%.0f\t%.0f\t%s\n", $1, k, $4, $4 - k, $2);
+		printf("%-23s\t%.0f\t%.0f\t%.0f\t%s\n", $1, k, $4 - k, $4, $2);
 
 	n++;
 	kn += k
@@ -214,7 +214,7 @@ $1 ~ /TOTAL/ { next; }
 }
 END {
 	printf("TOTAL %3d %-13s\t%.0f\t%.0f\t%.0f\t%.2f%%\n",
-		n, "files", kn, cn, cn - kn, cn ? (100. * kn / cn) : 0.);
+		n, "files", kn, cn - kn, cn, cn ? (100. * kn / cn) : 0.);
 }
 ' | tee gcov.out | awk -v verbose=$verbose '
 BEGIN { run = 0; c = 0.; n = 0; k = 0; unused = 0; other = 0; }
@@ -226,7 +226,7 @@ verbose {
 /not used/ { unused++; next; }
 /not run/ { other++; next; }
 {
-	n += $3;
+	n += $4;
 	k += $2;
 
 	if	($2 == 0)
