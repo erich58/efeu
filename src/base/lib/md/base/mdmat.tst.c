@@ -62,9 +62,9 @@ TEST_DECL(matrix)
 	EXPECT_EVAL(UnitTest_tpl("str tmp = \"@\""),
 		UnitTest_qstr(UnitTest_tmp(NULL)));
 	EXPECT_EVAL("mdmat a = mdread(findopen(tmp, \"a\"))",
-		"MD: int[6=2*3] \"Title\"\n");
+		"MD: int[6=2*3] \"Title\" /* Description */\n");
 	EXPECT_EVAL("a.show(cout)",
-		"int[6=2*3] \"Title\"\n"
+		"int[6=2*3] \"Title\" /* Description */\n"
 		"r=a,b\n"
 		"c=x,y,z\n"
 	);

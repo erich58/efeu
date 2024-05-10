@@ -197,6 +197,7 @@ mdmat *md_transp (mdmat *md);
 EfiFunc *get_iofunc(const EfiType *type, const char *name, int flag);
 
 mdmat *md_read (IO *io, const char *par);
+mdmat *md_fread (const char *name, const char *par);
 mdmat *md_load (IO *io, const char *def, const char *odef);
 mdmat *md_fload (const char *name, const char *def, const char *odef);
 mdmat *md_reload (mdmat *md, const char *def, const char *odef);

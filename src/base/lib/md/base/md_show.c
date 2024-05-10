@@ -100,6 +100,12 @@ static void mode_head(IO *out, const mdmat *md, StrBuf *buf, int par)
 			StrPool_get(md->sbuf, md->i_name));
 	}
 
+	if	(md->i_desc)
+	{
+		io_xprintf(out, " /* %s */",
+			StrPool_get(md->sbuf, md->i_desc));
+	}
+
 	io_putc('\n', out);
 }
 

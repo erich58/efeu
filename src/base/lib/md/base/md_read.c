@@ -75,10 +75,6 @@ static void set_par (const char *def)
 			YNames = mstrcpy(p);
 		else if	(patcmp("locale=", list[i], &p))
 			SetLocale(LOC_SCAN, p);
-		else if	(patcmp("de", list[i], NULL))
-			SetLocale(LOC_SCAN, "de");
-		else if	(patcmp("us", list[i], NULL))
-			SetLocale(LOC_SCAN, "us");
 		else if	(patcmp("magic", list[i], NULL))
 			need_magic = 1;
 		else if	(patcmp("nomagic", list[i], NULL))
@@ -112,13 +108,10 @@ static struct {
 	{ "MD*",	H_MAGIC },
 	{ "[Tt]it*",	H_TITLE },
 	{ "[Hh]ead*",	H_HEAD },
-	{ "[Oo]bj*",	H_TYPE },
 	{ "[Tt]yp*",	H_TYPE },
 	{ "[Ll]in*",	H_ROWS },
-	{ "[Zz]ei*",	H_ROWS },
 	{ "[Rr]ow*",	H_ROWS },
 	{ "[Cc]ol*",	H_COLUMNS },
-	{ "[Ss]pal*",	H_COLUMNS },
 	{ "[Ll]oc*",	H_LOCALE },
 	{ "[Dd]esc*",	H_DESC },
 };
@@ -262,7 +255,8 @@ static void do_scan (IO *io, StrBuf *sb)
 			case '\n':
 			case ':':
 			case ';':
-				break; default:
+				break;
+			default:
 				sb_putc('\\', sb);
 				break;
 			}
@@ -589,7 +583,7 @@ mdmat *md_read(IO *io, const char *def)
 	io_ungetc(m1, io);
 	m1 = (m1 << 8) + m2;
 
-	if	(m1 == MD_MAGIC1 || m1 == MD_MAGIC2)
+	if	(m1 == MD_MAGIC3)
 		return md_load(io, NULL, NULL);
 
 	PushLocale();
@@ -607,5 +601,13 @@ mdmat *md_read(IO *io, const char *def)
 
 	clr_par();
 	PopLocale();
+	return md;
+}
+
+mdmat *md_fread(const char *name, const char *def)
+{
+	IO *in = io_fileopen(name, "rdz");
+	mdmat *md = md_read(in, def);
+	io_close(in);
 	return md;
 }
