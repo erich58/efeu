@@ -69,7 +69,6 @@ TEST_DECL(extension)
 		"double",
 		"double counter",
 		NULL,
-		NULL,
 		add,
 	};
 
