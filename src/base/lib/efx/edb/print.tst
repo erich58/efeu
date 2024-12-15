@@ -112,6 +112,17 @@ TEST(label_enum)
 	buf.free();
 }
 
+TEST(print)
+{
+	int x = 42;
+	EDB edb = EDB(x);
+	edb.out(buf, "print");
+	edb.write();
+	edb = NULL;
+	EXPECT_STR(buf, "EDB\t1.0\nint\n@data print\n42\n");
+	buf.free();
+}
+
 TEST(fmt)
 {
 	struct { int a; int b; } x = { 3, 5 };

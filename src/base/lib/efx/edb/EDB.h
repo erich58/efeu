@@ -112,6 +112,8 @@ void EDBPrint_label (EDBPrintMode *mode, const EDBPrintDef *def,
 	const char *opt, const char *arg);
 void EDBPrint_data (EDBPrintMode *mode, const EDBPrintDef *def,
 	const char *opt, const char *arg);
+void EDBPrint_print (EDBPrintMode *mode, const EDBPrintDef *def,
+	const char *opt, const char *arg);
 void EDBPrint_fmt (EDBPrintMode *mode, const EDBPrintDef *def,
 	const char *opt, const char *arg);
 void EDBPrint_data_init (EDB *edb, EDBPrintMode *mode, IO *io);

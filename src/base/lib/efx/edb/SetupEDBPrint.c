@@ -144,6 +144,10 @@ static EDBPrintDef pdef[] = {
 		":*:label output"
 		":de:Textausgabe als Zeichenkette"
 	},
+	{ "print", NULL, EDBPrint_print, NULL,
+		":*:print output"
+		":de:Textausgabe mit Standardformatierung"
+	},
 	{ "data", "[opt]=def", EDBPrint_data, NULL,
 		":*:data without declarations"
 		":de:Nur Daten ohne Deklarationen ausgeben"
