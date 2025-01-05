@@ -104,6 +104,14 @@ int main (int narg, char **arg)
 
 	SetVersion(EFEU_VERSION);
 	SetProgName(arg[0]);
+
+	if	(ProgDir)
+	{
+		p = mstrpaste(":", ProgDir, getenv("PATH"));
+		setenv("PATH", p, 1);
+		memfree(p);
+	}
+
 	CFGPath = mkpath(".", NULL, DOCLIB, NULL);
 	SetupDoc();
 	SetupReadline();

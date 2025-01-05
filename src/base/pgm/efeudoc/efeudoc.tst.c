@@ -33,7 +33,7 @@ TEST_DECL(synopsis)
 	{
 		UnitTest_mkcmd("efeudoc", "#!/bin/sh\ncat\n");
 		UnitTest_reopen(2, "stderr");
-		TEST_MKARG(rc, EFEUDOC);
+		TEST_MKARG(rc, "efeudoc");
 		EXPECT(hidden_main(rc->argc, rc->argv) == 1);
 		TEST_EXIT;
 	}
