@@ -350,7 +350,7 @@ TEST_DECL(ts2md)
 		")\n"
 	);
 	EXPECT_EVAL("mdmat md = ts",
-		"MD: name=\"test\", type=double, dim=1, size=40"
+		"MD: double[5] \"test\"\n"
 	);
 }
 
