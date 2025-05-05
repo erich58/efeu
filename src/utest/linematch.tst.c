@@ -4,7 +4,7 @@
 #define	MATCH(data, pat) \
 do	{ const char *pattern = pat; \
 	PRINT_STR(pattern); \
-	MATCH_LINES(data, pattern); \
+	LMATCH_STR(data, pattern); \
 } while (0)
 
 TEST_DECL(special)

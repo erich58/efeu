@@ -227,7 +227,7 @@ TEST_DECL(trace)
 	del_data(&tab, new_data(&tab));
 	del_data(&unnamed, new_data(&unnamed));
 	PRINT_STR(UnitTest_content("trace.log"));
-	MATCH_LINES(UnitTest_content("trace.log"),
+	LMATCH_STR(UnitTest_content("trace.log"),
 		"alloctab.AllocTabTest.: Pointer [^ ]* allocated.\n"
 		"alloctab.AllocTabTest.: Pointer [^ ]* released.\n"
 		"alloctab.0x.*: Pointer [^ ]* allocated.\n"

@@ -39,7 +39,7 @@ TEST_DECL(tempopen)
 	TEST_FILE("debug", NULL);
 	EXPECT((file = tempopen()) != NULL);
 	fileclose(file);
-	MATCH_LINES(UnitTest_content("debug"),
+	LMATCH_STR(UnitTest_content("debug"),
 		"file: open.*<temp>.*\n"
 		"file: close.*<temp>.*\n"
 	);
@@ -60,7 +60,7 @@ TEST_DECL(filetab)
 	TEST_FILE("flog", NULL);
 	TEST_EXPR(filedebug(file, flog, "[test:1]", NULL));
 	MATCH_CONTENT("flog", "test-file: Message\n");
-	MATCH_LINES(UnitTest_content("debug"),
+	LMATCH_STR(UnitTest_content("debug"),
 		"file: open.*/test.msg.*\n"
 		"file: close.*/test.msg.*\n"
 	);

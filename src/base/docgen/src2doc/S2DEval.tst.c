@@ -9,7 +9,7 @@ TEST_SUITE
 	EXPECT(S2DEval_mode(NULL) == NULL);
 	EXPECT(S2DEval_mode("hdr") == s2d_hdr);
 	S2DEval_list(OUT());
-	MATCH_LINES(utest_out(),
+	LMATCH_STR(utest_out(),
 		"hdr\n"
 		"xhdr\n"
 		"src\n"

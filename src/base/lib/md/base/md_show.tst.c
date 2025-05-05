@@ -61,7 +61,7 @@ TEST_SUITE
 		"a2      b2      c2          7 222\n"
 	);
 
-	MATCH_LINES(mdtest_show(md, "z"),
+	LMATCH_STR(mdtest_show(md, "z"),
 		"@fussy\n"
 		"T\tType with dimension\n"
 		"t\tType with dimension composition\n"

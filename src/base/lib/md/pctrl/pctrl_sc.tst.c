@@ -60,7 +60,7 @@ TEST_SUITE
 	io_ctrl(io, PCTRL_EDATA);
 
 	io_close(io);
-	MATCH_LINES(UnitTest_content("output"),
+	LMATCH_STR(UnitTest_content("output"),
 		"leftstring A0 = \"label\"\n"
 		"rightstring B0 = \"column\"\n"
 		"leftstring A1 = \"line\"\n"

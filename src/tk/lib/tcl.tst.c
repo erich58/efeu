@@ -29,12 +29,12 @@ static const char *ObjType(Tcl_Obj *obj)
 TEST_SUITE
 {
 	interp = Tcl_CreateInterp();
-	MATCH_LINES(ObjType(Tcl_NewBooleanObj(1)), "int: 1\n");
-	MATCH_LINES(ObjType(Tcl_NewIntObj(~0u >> 1)), "int: \n");
-	MATCH_LINES(ObjType(Tcl_NewLongObj(~0ul >> 1)), "int: \n");
-	MATCH_LINES(ObjType(Tcl_NewDoubleObj(2.5)), "double: \n");
-	MATCH_LINES(ObjType(Tcl_NewStringObj("abc", -1)), ": abc\n");
-	MATCH_LINES(ObjType(Tcl_NewStringObj("abc", 2)), ": ab\n");
+	LMATCH_STR(ObjType(Tcl_NewBooleanObj(1)), "int: 1\n");
+	LMATCH_STR(ObjType(Tcl_NewIntObj(~0u >> 1)), "int: \n");
+	LMATCH_STR(ObjType(Tcl_NewLongObj(~0ul >> 1)), "int: \n");
+	LMATCH_STR(ObjType(Tcl_NewDoubleObj(2.5)), "double: \n");
+	LMATCH_STR(ObjType(Tcl_NewStringObj("abc", -1)), ": abc\n");
+	LMATCH_STR(ObjType(Tcl_NewStringObj("abc", 2)), ": ab\n");
 }
 
 #else

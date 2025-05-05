@@ -217,7 +217,7 @@ UnitTest_strcheck(__FILE__, __LINE__, # op, a, b, # a, # b)
 #define MATCH_STR(a, b)	\
 UnitTest_strcheck(__FILE__, __LINE__, "~", a, b, # a, # b)
 
-#define MATCH_LINES(a, b)	\
+#define LMATCH_STR(a, b)	\
 UnitTest_linematch(__FILE__, __LINE__, a, b, # a)
 
 #define	TEST_DIR(name)	\
