@@ -45,44 +45,6 @@ static void create_tmpdir()
 	atexit(UnitTest_tmpclean);
 }
 
-const char *UnitTest_tpl(const char *tpl)
-{
-	if	(tpl)
-	{
-		static STRING_DECL(buf);
-		buf.size = 0;
-
-		while (*tpl)
-		{
-			if	(*tpl == '\\')
-			{
-				++tpl;
-
-				if	(*tpl)
-					UnitTest_putc(*tpl, &buf);
-				else
-					break;
-			}
-			else if	(*tpl == '@')
-			{
-				create_tmpdir();
-				UnitTest_puts(tmpdir, &buf);
-			}
-			else
-			{
-				UnitTest_putc(*tpl, &buf);
-			}
-
-			++tpl;
-		}
-
-		UnitTest_putc(0, &buf);
-		return buf.data;
-	}
-
-	return NULL;
-}
-
 const char *UnitTest_tmp(const char *name)
 {
 	create_tmpdir();

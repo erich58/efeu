@@ -30,16 +30,6 @@ TEST_DECL(mktemp_error)
 	CHILD_EXIT(1);
 }
 
-TEST_DECL(tpl)
-{
-	EXPECT_STR(UnitTest_tpl(NULL), NULL);
-	EXPECT_STR(UnitTest_tpl("@"), UnitTest_tmp(NULL));
-	EXPECT_STR(UnitTest_tpl("@/x\\@bc"), UnitTest_tmp("x@bc"));
-	EXPECT_STR(UnitTest_tpl("abc"), "abc");
-	EXPECT_STR(UnitTest_tpl("abc\\"), "abc");
-	EXPECT_STR(UnitTest_tpl("abc\\x"), "abcx");
-}
-
 TEST_DECL(child_tmp)
 {
 	char *tmp = strdup(UnitTest_tmp(NULL));
@@ -73,7 +63,6 @@ TEST_SUITE
 	TEST_RUN(mktemp_error);
 	TEST_RUN(child_tmp);
 	TEST_RUN(fake_cmd);
-	TEST_RUN(tpl);
 
 	TEST_FILE(NULL, NULL);
 	TEST_FILE("x", "Test\n");

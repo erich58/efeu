@@ -102,6 +102,7 @@ int UnitTest_create(const char *file, int line, const char *name,
 void UnitTest_summary(const char *issue);
 
 char *UnitTest_pgets(const char *cmd_, int delim);
+void UnitTest_tplpar(const char *name, const char *par);
 const char *UnitTest_tpl(const char *tpl);
 const char *UnitTest_tmp(const char *name);
 const char *UnitTest_mkpath(const char *name);
