@@ -439,6 +439,47 @@ int UnitTest_double(const char *file, int line,
 	return r;
 }
 
+int UnitTest_range(const char *file, int line,
+	double d, double d0, double d1, const char *x, const char *fmt)
+{
+	static STRING_DECL(buf);
+	int r = 0;
+
+	UnitTest_clear(&buf);
+
+	if	(d < d0)
+	{
+		UnitTest_printf(&buf, fmt, d);
+		UnitTest_puts(" < [", &buf);
+		UnitTest_printf(&buf, fmt, d0);
+		UnitTest_puts(" ", &buf);
+		UnitTest_printf(&buf, fmt, d1);
+		UnitTest_puts("]", &buf);
+	}
+	else if	(d > d1)
+	{
+		UnitTest_puts("[", &buf);
+		UnitTest_printf(&buf, fmt, d0);
+		UnitTest_puts(" ", &buf);
+		UnitTest_printf(&buf, fmt, d1);
+		UnitTest_puts("] < ", &buf);
+		UnitTest_printf(&buf, fmt, d);
+	}
+	else
+	{
+		UnitTest_puts("[", &buf);
+		UnitTest_printf(&buf, fmt, d0);
+		UnitTest_puts(" <= ", &buf);
+		UnitTest_printf(&buf, fmt, d);
+		UnitTest_puts(" <= ", &buf);
+		UnitTest_printf(&buf, fmt, d1);
+		UnitTest_puts("]", &buf);
+		r = 1;
+	}
+
+	return UnitTest_result(file, line, r, "%s: %s", x, UnitTest_str(&buf));
+}
+
 
 int UnitTest_intmax(const char *file, int line,
 	intmax_t i1, intmax_t i2, const char *x1, const char *x2)

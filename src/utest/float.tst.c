@@ -23,4 +23,22 @@ TEST_SUITE
 	}
 
 	CHILD_EXIT(1);
+	
+	EXPECT_RANGE("%.2f", 1 / 2., 0, 1);
+
+	TEST_FORK
+	{
+		EXPECT_RANGE("%.2f", -1, 0, 1);
+		TEST_EXIT;
+	}
+
+	CHILD_EXIT(1);
+
+	TEST_FORK
+	{
+		EXPECT_RANGE("%.2f", 2, 0, 1);
+		TEST_EXIT;
+	}
+
+	CHILD_EXIT(1);
 }

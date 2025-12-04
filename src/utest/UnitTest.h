@@ -91,6 +91,8 @@ int UnitTest_diff(const char *file, int line,
 	const char *s1, const char *s2, const char *x1, const char *x2);
 int UnitTest_double(const char *file, int line,
 	double d1, double d2, const char *x1, const char *x2);
+int UnitTest_range(const char *file, int line,
+	double d, double d0, double d1, const char *x, const char *fmt);
 int UnitTest_intmax(const char *file, int line,
 	intmax_t i1, intmax_t i2, const char *x1, const char *x2);
 int UnitTest_uintmax(const char *file, int line,
@@ -196,6 +198,9 @@ UnitTest_result(__FILE__,__LINE__, (expr) != NULL, "%s", # expr)
 
 #define ASSERT_PTR(expr)	\
 UnitTest_assert(EXPECT_PTR(expr))
+
+#define EXPECT_RANGE(f, a, b, c)	\
+UnitTest_range(__FILE__, __LINE__, a, b, c, # a, f)
 
 #define EXPECT_DBL(a, b)	\
 UnitTest_double(__FILE__, __LINE__, a, b, # a, # b)
