@@ -1,6 +1,7 @@
 #include <EFEU/UnitTest.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 static const char *cmd = 0;
 static const char *arg = 0;

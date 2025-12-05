@@ -79,7 +79,7 @@ void UnitTest_tplpar(const char *name, const char *value)
 	}
 }
 
-const char *get_par(const char *name)
+static const char *get_par(const char *name)
 {
 	if	(*name == '?')
 	{
