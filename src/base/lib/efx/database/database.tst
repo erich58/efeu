@@ -49,7 +49,7 @@ EXPECT(db.index(9) == 0);
 /* Komplexe Datenstruktur */
 
 struct DATA { str name; int a; int v[1]; };
-virtual int cmp(DATA a, DATA b) return cmp(a.name, b.name);
+polymorph int cmp(DATA a, DATA b) return cmp(a.name, b.name);
 
 db = DataBase(DATA);
 

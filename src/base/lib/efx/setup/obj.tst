@@ -44,7 +44,7 @@ EXPECT(dim(5) == 1);
 	char c = 'a';
 	EXPECT((c += 1) == 'b');
 
-	virtual int cmp(Object a, Object b)
+	polymorph int cmp(Object a, Object b)
 		return cmp(a.data(), b.data());
 	Object & Object::operator"=" & (Object x) { this = x; }
 
@@ -67,8 +67,8 @@ EXPECT(dim(5) == 1);
 {
 }
 struct X { int a; };
-virtual X operator+ (X x, int i) { return { x.a + i}; }
-virtual X operator- (X x, int i) { return { x.a - i}; }
+polymorph X operator+ (X x, int i) { return { x.a + i}; }
+polymorph X operator- (X x, int i) { return { x.a - i}; }
 X & X::operator+= & (int i) { a += i; }
 X & X::operator-= & (int i) { a -= i; }
 

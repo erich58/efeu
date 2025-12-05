@@ -16,7 +16,7 @@ _Ptr_ -> str: 0x004 CONVERT
 str -> _Ptr_: -1 REJECT
 !);
 
-EXPECT_REPR(getconv(int, varint), "virtual promotion varint int ()");
+EXPECT_REPR(getconv(int, varint), "polymorph promotion varint int ()");
 
 UnitTest::stdout("stdout");
 objdump(42);

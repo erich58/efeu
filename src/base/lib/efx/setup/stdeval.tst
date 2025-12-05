@@ -28,7 +28,7 @@ EXPECT(int32_t.size == 4);
 EXPECT_REPR(Func.var, "Func = {\n\ttype\n}");
 
 EXPECT_REPR(int operator+ (int, int);,
-	"virtual int operator\"+\" (int, int)");
+	"polymorph int operator\"+\" (int, int)");
 
 str boolean_info = string !
 name = bool

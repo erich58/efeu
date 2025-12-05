@@ -35,7 +35,7 @@ EXPECT_STR(x, "{1, 2, 3, 4}");
 
 struct S { int a; str r };
 S[] s = { { 1, "I" }, { 2, "II" }, { 3, "III" }, { 4, "IV" }, { 5, "V" }};
-virtual int scmp(int k, S s) return cmp(k, s.a);
+polymorph int scmp(int k, S s) return cmp(k, s.a);
 EXPECT_STR(bsearch(s, 2, scmp), "{2, \"II\"}");
 EXPECT_STR(s.bsearch(3, scmp), "{3, \"III\"}");
 EXPECT_REPR(s.bsearch(10, scmp), "NULL");
