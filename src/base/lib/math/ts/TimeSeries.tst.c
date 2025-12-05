@@ -2,8 +2,8 @@
 #include <EFEU/object.h>
 #include <EFEU/calendar.h>
 #include <Math/TimeSeries.h>
-#include <utest/mstr.tst.h>
-#include <utest/out.tst.h>
+#include <EFEU/utest/mstr.tst.h>
+#include <EFEU/utest/out.tst.h>
 
 #define	EXPECT_TS(ts, str)	\
 	ts_print(OUT(), ts, "%.0f"), EXPECT_NOUT(ts, str)

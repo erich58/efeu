@@ -2,7 +2,7 @@
 #include <EFEU/object.h>
 #include <EFEU/calendar.h>
 #include <Math/TimeSeries.h>
-#include <utest/mstr.tst.h>
+#include <EFEU/utest/mstr.tst.h>
 
 TEST_DECL(setup)
 {
