@@ -52,7 +52,7 @@ typedef struct {
 	CmpDef *cmp;
 	unsigned flags;
 	int (*func) (EfiObj *tg, EfiObj *src);
-	int (*vfunc) (EDB *base, EfiVec *tg, EfiVec *src);
+	int (*pfunc) (EDB *base, EfiVec *tg, EfiVec *src);
 } TRANS;
 
 static void trans_clean (void *data)
@@ -290,7 +290,7 @@ static void set_func (TRANS *trans, IO *io, int delim)
 	}
 	else if	(trans->flags & TRANS_VEC)
 	{
-		trans->vfunc = ptr;
+		trans->pfunc = ptr;
 	}
 	else	trans->func = ptr;
 
@@ -507,9 +507,9 @@ static int vec_read (EfiType *type, void *data, void *par)
 
 		CmdEval_stat = 0;
 
-		if	(trans->vfunc)
+		if	(trans->pfunc)
 		{
-			CmdEval_stat = trans->vfunc(trans->base,
+			CmdEval_stat = trans->pfunc(trans->base,
 				trans->tg, trans->src);
 		}
 		else if	(trans->expr)

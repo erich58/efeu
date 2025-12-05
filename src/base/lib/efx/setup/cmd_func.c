@@ -147,7 +147,7 @@ static void f_func (EfiFunc *func, void *rval, void **arg)
 	Val_obj(rval) = EvalFunc(Val_func(arg[0]), Val_list(arg[1]));
 }
 
-static void f_vfunc (EfiFunc *func, void *rval, void **arg)
+static void f_pfunc (EfiFunc *func, void *rval, void **arg)
 {
 	Val_obj(rval) = EvalPolyFunc(Val_pfunc(arg[0]), Val_list(arg[1]));
 }
@@ -541,12 +541,12 @@ static void f_popcontext (EfiFunc *func, void *rval, void **arg)
 
 static EfiFuncDef fdef_func[] = {
 	{ FUNC_OVERLOAD, &Type_obj, "operator() (Func, List_t)", f_func },
-	{ FUNC_OVERLOAD, &Type_obj, "operator() (PolyFunc, List_t)", f_vfunc },
+	{ FUNC_OVERLOAD, &Type_obj, "operator() (PolyFunc, List_t)", f_pfunc },
 	{ FUNC_OVERLOAD, &Type_obj, "operator() (ObjFunc, List_t)", f_ofunc },
 	{ FUNC_OVERLOAD, &Type_obj, "operator() (Type_t, List_t)", f_tfunc },
 
 	{ FUNC_OVERLOAD, &Type_obj, "call (Func, ...)", f_func },
-	{ FUNC_OVERLOAD, &Type_obj, "call (PolyFunc, ...)", f_vfunc },
+	{ FUNC_OVERLOAD, &Type_obj, "call (PolyFunc, ...)", f_pfunc },
 	{ FUNC_OVERLOAD, &Type_obj, "call (ObjFunc, ...)", f_ofunc },
 	{ FUNC_OVERLOAD, &Type_obj, "call (Type_t, ...)", f_tfunc },
 

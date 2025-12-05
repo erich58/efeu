@@ -25,7 +25,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	VIRFUNC_BSIZE	16
 
-static ALLOCTAB(tab_virfunc, "EfiPolyFunc", 0, sizeof(EfiPolyFunc));
+static ALLOCTAB(tab_pfunc, "EfiPolyFunc", 0, sizeof(EfiPolyFunc));
 
 static void virfunc_clean (void *data)
 {
@@ -39,7 +39,7 @@ static void virfunc_clean (void *data)
 		rd_deref(func[i]);
 
 	vb_free(&tg->tab);
-	del_data(&tab_virfunc, tg);
+	del_data(&tab_pfunc, tg);
 }
 
 
@@ -66,7 +66,7 @@ EfiPolyFunc *PolyFunc (EfiFunc *func)
 	if	(IsPolyFunc(func))
 		return rd_refer(func);
 
-	vf = new_data(&tab_virfunc);
+	vf = new_data(&tab_pfunc);
 	vb_init(&vf->tab, VIRFUNC_BSIZE, sizeof(EfiFunc *));
 
 	if	(IsFunc(func))

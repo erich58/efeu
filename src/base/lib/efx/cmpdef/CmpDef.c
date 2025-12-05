@@ -202,7 +202,7 @@ static int do_cmp_sub (CmpDefEntry *entry, void *a, void *b)
 	return 0;
 }
 
-static EfiPolyFunc *get_vfunc (char *name)
+static EfiPolyFunc *get_pfunc (char *name)
 {
 	EfiPolyFunc *vcmp = GetGlobalFunc(name);
 
@@ -226,7 +226,7 @@ static void set_dim (CmpDefEntry *entry)
 static void set_cmp (CmpDefEntry *entry, EfiPolyFunc *vcmp)
 {
 	if	(!vcmp)
-		vcmp = get_vfunc("cmp");
+		vcmp = get_pfunc("cmp");
 		
 	if	(vcmp)
 	{
@@ -419,7 +419,7 @@ static CmpDefEntry *next_entry (EfiType *base, EfiPolyFunc *vcmp,
 
 			if	(*def == ':')
 			{
-				vcmp = get_vfunc(name);
+				vcmp = get_pfunc(name);
 				def++;
 				continue;
 			}

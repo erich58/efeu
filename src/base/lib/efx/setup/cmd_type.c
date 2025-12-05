@@ -292,7 +292,7 @@ static void info_type (IO *io, InfoNode *info)
 	io_putc('\n', io);
 }
 
-static void list_vfunc(IO *io, const VecBuf *tab)
+static void list_pfunc(IO *io, const VecBuf *tab)
 {
 	EfiFunc **ftab;
 	int i;
@@ -309,7 +309,7 @@ static void list_vfunc(IO *io, const VecBuf *tab)
 static void tinfo_conv (IO *io, InfoNode *info)
 {
 	EfiType *type = info->par;
-	list_vfunc(io, &type->conv);
+	list_pfunc(io, &type->conv);
 }
 
 static void tinfo_create (IO *io, InfoNode *info)
@@ -319,7 +319,7 @@ static void tinfo_create (IO *io, InfoNode *info)
 	size_t n, k;
 
 	if	(type->create)
-		list_vfunc(io, &type->create->tab);
+		list_pfunc(io, &type->create->tab);
 
 	io_putc('\n', io);
 

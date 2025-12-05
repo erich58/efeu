@@ -61,7 +61,7 @@ static int set_arg (EfiFunc *func, EfiFuncArg *arg, size_t narg, EfiObj *obj)
 /*	Test auf virtuelle Funktion
 */
 
-static int not_a_vfunc (EfiPolyFunc *vtab)
+static int not_a_pfunc (EfiPolyFunc *vtab)
 {
 	if	(vtab == NULL || vtab->tab.used == 0)
 		return 1;
@@ -254,7 +254,7 @@ EfiObj *EvalPolyFunc (EfiPolyFunc *vtab, const EfiObjList *list)
 	size_t argdim;
 	size_t maxdim;
 
-	if	(not_a_vfunc(vtab))
+	if	(not_a_pfunc(vtab))
 		return NULL;
 
 	argdim = ObjListLen(list);
@@ -281,7 +281,7 @@ int ShowData (IO *io, const EfiType *type, const void *data)
 
 	vtab = GetGlobalFunc("fprint");
 
-	if	(not_a_vfunc(vtab))
+	if	(not_a_pfunc(vtab))
 		return ShowAny(io, type, data);
 
 	maxdim = get_maxdim(vtab, 2);

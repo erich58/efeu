@@ -299,7 +299,7 @@ static void f_mkvirfunc (EfiFunc *func, void *rval, void **arg)
 	Val_pfunc(rval) = PolyFunc(rd_refer(Val_func(arg[0])));
 }
 
-static void f_ofunc2vfunc (EfiFunc *func, void *rval, void **arg)
+static void f_ofunc2pfunc (EfiFunc *func, void *rval, void **arg)
 {
 	EfiObjFunc *x = arg[0];
 	Val_pfunc(rval) = PolyFunc(rd_refer(x->func));
@@ -337,7 +337,7 @@ static EfiFuncDef func_base[] = {
 	{ 0, &Type_vtab, "VarTab (str name = NULL, int bs = 0)", f_vtab },
 	{ 0, &Type_void, "void (.)", f_any2void },
 	{ 0, &Type_pfunc, "Func ()", f_mkvirfunc },
-	{ 0, &Type_pfunc, "ObjFunc ()", f_ofunc2vfunc },
+	{ 0, &Type_pfunc, "ObjFunc ()", f_ofunc2pfunc },
 	{ FUNC_OVERLOAD|FUNC_RESTRICTED, &Type_bool, "operator!() (_Ptr_)", f_ptr_not },
 	{ FUNC_OVERLOAD|FUNC_RESTRICTED, &Type_bool, "operator== (_Ptr_, _Ptr_)", f_ptr_eq },
 	{ FUNC_OVERLOAD, &Type_bool, "operator!= (_Ptr_, _Ptr_)", f_ptr_ne },

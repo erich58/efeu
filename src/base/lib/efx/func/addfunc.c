@@ -34,7 +34,7 @@ static void del_func (EfiFunc **func)
 }
 
 
-static void set_virfunc (EfiPolyFunc *vf, EfiFunc *func)
+static void set_pfunc (EfiPolyFunc *vf, EfiFunc *func)
 {
 	if	(vf == NULL)
 	{
@@ -107,7 +107,7 @@ static EfiObj *get_func (const EfiObj *obj, void *data)
 	return NewObj(&Type_ofunc, &ofunc);
 }
 
-static EfiObj *get_vfunc (const EfiObj *obj, void *data)
+static EfiObj *get_pfunc (const EfiObj *obj, void *data)
 {
 	EfiObjFunc ofunc;
 
@@ -160,7 +160,7 @@ static void AddTypeFunc (EfiFunc *func)
 
 		if	(func->virfunc)
 		{
-			entry.get = get_vfunc;
+			entry.get = get_pfunc;
 			entry.data = PolyFunc(func);
 		}
 		else
@@ -171,9 +171,9 @@ static void AddTypeFunc (EfiFunc *func)
 
 		VarTab_add(type->vtab, &entry);
 	}
-	else if	(var->get == get_vfunc)
+	else if	(var->get == get_pfunc)
 	{
-		set_virfunc(var->data, func);
+		set_pfunc(var->data, func);
 	}
 	/*
 	else if	(var->type == &Type_func)
@@ -211,7 +211,7 @@ void AddFunc (EfiFunc *func)
 		}
 		else if	(type->create)
 		{
-			set_virfunc(type->create, func);
+			set_pfunc(type->create, func);
 		}
 		else	type->create = PolyFunc(func);
 	}
@@ -234,7 +234,7 @@ void AddFunc (EfiFunc *func)
 		}
 		else if	(var->obj && var->obj->type == &Type_pfunc)
 		{
-			set_virfunc(Val_ptr(var->obj->data), func);
+			set_pfunc(Val_ptr(var->obj->data), func);
 		}
 		else
 		{

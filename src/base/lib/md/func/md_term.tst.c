@@ -58,7 +58,7 @@ TEST_DECL(term)
 	mdmat *a = NULL;
 	mdmat *b = NULL;
 	mdmat *x = NULL;
-	EfiPolyFunc *vfunc = NULL;
+	EfiPolyFunc *pfunc = NULL;
 
 	EXPECT(md_term(NULL, NULL, NULL) == NULL);
 
@@ -70,31 +70,31 @@ TEST_DECL(term)
 	EXPECT_CONTENT("stderr",
 		"MSG ID: mdterm: function not defined.\n");
 
-	EXPECT_PTR(vfunc = GetGlobalFunc("obj_test_func"));
+	EXPECT_PTR(pfunc = GetGlobalFunc("obj_test_func"));
 	UnitTest_stderr("stderr");
-	EXPECT(md_term(vfunc, a, NULL) == a);
+	EXPECT(md_term(pfunc, a, NULL) == a);
 	UnitTest_stderr(NULL);
 	EXPECT_CONTENT("stderr",
 		"MSG ID: mdterm: function 'obj_test_func' has unspecified return value.\n");
-	rd_deref(vfunc);
+	rd_deref(pfunc);
 
-	EXPECT_PTR(vfunc = GetGlobalFunc("-()"));
-	EXPECT_PTR(x = md_term(vfunc, a, NULL));
+	EXPECT_PTR(pfunc = GetGlobalFunc("-()"));
+	EXPECT_PTR(x = md_term(pfunc, a, NULL));
 	EXPECT(((int *)a->data)[0] == 1);
 	EXPECT(((int *)x->data)[0] == -1);
 	rd_deref(x);
-	rd_deref(vfunc);
+	rd_deref(pfunc);
 
 	EXPECT_PTR(b = md_scalar(int2Obj(5)));
-	EXPECT_PTR(vfunc = GetGlobalFunc("+"));
-	EXPECT_PTR(x = md_term(vfunc, a, b));
+	EXPECT_PTR(pfunc = GetGlobalFunc("+"));
+	EXPECT_PTR(x = md_term(pfunc, a, b));
 	EXPECT(((int *)a->data)[0] == 1);
 	EXPECT(((int *)b->data)[0] == 5);
 	EXPECT(((int *)x->data)[0] == 6);
 	rd_deref(a);
 	rd_deref(b);
 	rd_deref(x);
-	rd_deref(vfunc);
+	rd_deref(pfunc);
 }
 
 TEST_DECL(mixed)
@@ -102,7 +102,7 @@ TEST_DECL(mixed)
 	mdmat *a = NULL;
 	mdmat *b = NULL;
 	mdmat *x = NULL;
-	EfiPolyFunc *vfunc = NULL;
+	EfiPolyFunc *pfunc = NULL;
 
 	EXPECT_PTR(a = md_create(&Type_int, "a=a1,a2,a3"));
 
@@ -131,10 +131,10 @@ TEST_DECL(mixed)
 		"b2.y 220\n"
 	);
 
-	EXPECT_PTR(vfunc = GetGlobalFunc("+"));
+	EXPECT_PTR(pfunc = GetGlobalFunc("+"));
 
 	UnitTest_stderr("stderr");
-	EXPECT_PTR(x = md_term(vfunc, a, b));
+	EXPECT_PTR(x = md_term(pfunc, a, b));
 	UnitTest_stderr(NULL);
 	EXPECT_CONTENT("stderr",
 		"MSG ID: mdterm: incompatible axis a - b (differnd sizes).\n");
@@ -165,7 +165,7 @@ TEST_DECL(mixed)
 		"a2 2\n"
 	);
 
-	EXPECT_PTR(x = md_term(vfunc, b, a));
+	EXPECT_PTR(x = md_term(pfunc, b, a));
 	md_print(io_refer(OUT()), x, "nohead");
 	EXPECT_NOUT(x,
 		"1 .\n"
@@ -177,7 +177,7 @@ TEST_DECL(mixed)
 	rd_deref(a);
 	rd_deref(b);
 	rd_deref(x);
-	rd_deref(vfunc);
+	rd_deref(pfunc);
 }
 
 TEST_SUITE
