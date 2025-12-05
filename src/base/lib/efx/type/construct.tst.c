@@ -34,7 +34,7 @@ TEST_DECL(func)
 
 	func = ConstructFunc("TestFunc", "int x = 42", NULL);
 	ListFunc(OUT(), func);
-	EXPECT_OUT("virtual TestFunc TestFunc ()");
+	EXPECT_OUT("polymorph TestFunc TestFunc ()");
 	nkt_delete(&TypeTab, "TestFunc");
 	EXPECT(rd_deref(func) == NULL);
 
@@ -57,7 +57,7 @@ TEST_DECL(func)
 
 	func = ConstructFunc("TestFunc", " { a; } ", tab);
 	ListFunc(OUT(), func);
-	EXPECT_OUT("virtual TestFunc TestFunc ()");
+	EXPECT_OUT("polymorph TestFunc TestFunc ()");
 	PrintType(OUT(), func->type, 1);
 	EXPECT_OUT("struct TestFunc { int a }");
 	EXPECT_STR(Obj2str(CallFuncObj(func, NULL)), "{0}");
@@ -69,7 +69,7 @@ TEST_DECL(func)
 
 	func = ConstructFunc("TestFunc", " { * } ", tab);
 	ListFunc(OUT(), func);
-	EXPECT_OUT("virtual TestFunc TestFunc ()");
+	EXPECT_OUT("polymorph TestFunc TestFunc ()");
 	PrintType(OUT(), func->type, 1);
 	EXPECT_OUT("struct TestFunc { int a }");
 	TEST_EXPR(a = 11);
@@ -114,21 +114,21 @@ TEST_DECL(objfunc)
 	CREATE_OF("OF1",
 		" int x = this.a; this.b ",
 		"DATA(1, 2)",
-		"virtual OF1 OF1 (DATA = {1, 2})",
+		"polymorph OF1 OF1 (DATA = {1, 2})",
 		"struct OF1 { int x, b }");
 	VERIFY_OF("DATA(47, 11)", "{47, 11}");
 
 	CREATE_OF("OF2",
 		" { x = this.a; str z = this.a + this.b; } ",
 		"DATA(1, 2)",
-		"virtual OF2 OF2 (DATA = {1, 2})",
+		"polymorph OF2 OF2 (DATA = {1, 2})",
 		"struct OF2 { int x; str z }");
 	VERIFY_OF("DATA(8, 20)", "{8, \"28\"}");
 
 	CREATE_OF("OF3",
 		" { *; x = this.a; this.b.c }",
 		"XDATA(1, 2)",
-		"virtual OF3 OF3 (XDATA = {1, {2}})",
+		"polymorph OF3 OF3 (XDATA = {1, {2}})",
 		"struct OF3 { int a; struct { int c } b; int x, c }");
 	VERIFY_OF("XDATA(7, 11)", "{1, {2}, 7, 11}");
 }

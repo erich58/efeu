@@ -82,13 +82,13 @@ EfiFunc *MakePrototype(IO *io, EfiType *type, EfiName *nptr, unsigned flags)
 	int rflag;	/* Rückgabe von L-Wert */
 	int lflag;	/* L-Wert funktion */
 	int weight;
-	int virfunc;
+	int overload;
 	int n;
 	int c;
 
 	lflag = 0;
 	rflag = (flags & FUNC_LRETVAL) ? 1 : 0;
-	virfunc = (flags & FUNC_OVERLOAD) ? 1 : 0;
+	overload = (flags & FUNC_OVERLOAD) ? 1 : 0;
 
 	if	(flags & FUNC_RESTRICTED)	weight = CONV_RESTRICTED;
 	else if	(flags & FUNC_PROMOTION)	weight = CONV_PROMOTION;
@@ -112,8 +112,8 @@ EfiFunc *MakePrototype(IO *io, EfiType *type, EfiName *nptr, unsigned flags)
 			weight = CONV_PROMOTION;
 		else if	(strcmp("restricted", tname) == 0)
 			weight = CONV_RESTRICTED;
-		else if	(strcmp("virtual", tname) == 0)
-			virfunc = 1;
+		else if	(strcmp("polymorph", tname) == 0)
+			overload = 1;
 		else if	(strcmp("inline", tname) == 0)
 			eval = Func_inline;
 		else if	((type = get_type(io, tname)) == NULL)
@@ -208,7 +208,7 @@ EfiFunc *MakePrototype(IO *io, EfiType *type, EfiName *nptr, unsigned flags)
 */
 	if	(name == NULL)
 	{
-		virfunc = 1;
+		overload = 1;
 
 		if	(c == ')')	;
 		else if	(otype == type)	otype = NULL; /* Konstruktor */
@@ -271,7 +271,7 @@ EfiFunc *MakePrototype(IO *io, EfiType *type, EfiName *nptr, unsigned flags)
 	func->lretval = rflag;
 	func->scope = vtab;
 	func->bound = (otype ? 1 : 0);
-	func->virfunc = virfunc;
+	func->overload = overload;
 	func->weight = weight;
 	func->eval = eval;
 

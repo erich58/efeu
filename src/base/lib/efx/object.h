@@ -661,7 +661,7 @@ struct EfiFuncStruct {
 	unsigned lretval : 1;	/* Flag für Rückgabe von L-Wert */
 	unsigned bound : 1;	/* Flag für Objektbindung */
 	unsigned vaarg : 1;	/* Flag für variable Argumentzahl */
-	unsigned virfunc : 1;	/* Virtuelle Funktion */
+	unsigned overload : 1;	/* Flag für überladbare Funktion */
 	unsigned weight : 4;	/* Konvertierungsgewicht */
 	void *par;		/* Funktionsparameter */
 	void (*clean) (void *ptr);		/* Aufräumfunktion */

@@ -41,7 +41,7 @@ static EfiObj *get_func(EfiFunc *func)
 	f = XGetFunc(func->type, vf, func->arg, func->dim);
 
 	if	(f && f->refcount == 1)
-		f->virfunc = func->virfunc;
+		f->overload = func->overload;
 
 	rd_deref(func);
 	return NewObj(&Type_func, &f);

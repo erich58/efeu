@@ -54,8 +54,8 @@ int ListFunc(IO *io, EfiFunc *func)
 
 	n = 0;
 
-	if	(func->virfunc)
-		n += io_puts("virtual ", io);
+	if	(func->overload)
+		n += io_puts("polymorph ", io);
 
 	switch (func->weight)
 	{

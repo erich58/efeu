@@ -291,7 +291,7 @@ static EfiFunc *cf_create (const EfiObj *obj)
 	func->scope = NULL;
 	func->name = NULL;
 	func->bound = 0;
-	func->virfunc = 1;
+	func->overload = 1;
 	func->weight = CONV_STANDARD;
 	func->eval = func_noarg;
 	func->par = NULL;

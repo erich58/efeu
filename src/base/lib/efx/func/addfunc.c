@@ -43,9 +43,9 @@ static void set_pfunc (EfiPolyFunc *vf, EfiFunc *func)
 		return;
 	}
 
-	if	(func->virfunc == 0)
+	if	(func->overload == 0)
 	{
-		func->virfunc = 1;
+		func->overload = 1;
 		log_note(NULL, "[efmain:205]", "s", func->name);
 	}
 
@@ -158,7 +158,7 @@ static void AddTypeFunc (EfiFunc *func)
 		entry.obj = NULL;
 		entry.entry_clean = func_clean;
 
-		if	(func->virfunc)
+		if	(func->overload)
 		{
 			entry.get = get_pfunc;
 			entry.data = PolyFunc(func);
@@ -223,7 +223,7 @@ void AddFunc (EfiFunc *func)
 		{
 			EfiObj *obj;
 
-			if	(func->virfunc)
+			if	(func->overload)
 			{
 				obj = NewPtrObj(&Type_pfunc, PolyFunc(func));
 			}

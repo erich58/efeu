@@ -118,7 +118,7 @@ static void cmp_clean (void *data)
 
 static RefType CmpDef_reftype = REFTYPE_INIT(ID, cmp_ident, cmp_clean);
 
-#define	FMT_GET	"CmpDef: virtual function $1() not found.\n"
+#define	FMT_GET	"CmpDef: polymorph function $1() not found.\n"
 #define	FMT_CMP	"CmpDef: function $1 not defined for type \"$2\".\n"
 #define	FMT_VAR	"CmpDef: $1: undefined member \"$2\".\n"
 #define	FMT_KEY	"CmpDef: unexpected character $1 in compare defination.\n"

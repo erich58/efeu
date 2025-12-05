@@ -27,7 +27,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 static ALLOCTAB(tab_pfunc, "EfiPolyFunc", 0, sizeof(EfiPolyFunc));
 
-static void virfunc_clean (void *data)
+static void pfunc_clean (void *data)
 {
 	EfiPolyFunc *tg = data;
 	int i;
@@ -43,7 +43,7 @@ static void virfunc_clean (void *data)
 }
 
 
-static char *virfunc_ident (const void *data)
+static char *pfunc_ident (const void *data)
 {
 	const EfiPolyFunc *func = data;
 	return func->tab.used ?
@@ -51,7 +51,7 @@ static char *virfunc_ident (const void *data)
 }
 
 static RefType PolyFuncRefType = REFTYPE_INIT("PolyFunc",
-	virfunc_ident, virfunc_clean);
+	pfunc_ident, pfunc_clean);
 
 int IsPolyFunc (void *ptr)
 {

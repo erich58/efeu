@@ -156,7 +156,7 @@ static struct {
 	{ "unsigned $1 ()", Enum_iconv },
 	{ "$1 $1 (str)", Enum_sconv },
 	{ "restricted str $1 ()", Enum_to_str },
-	{ "virtual int fprint (IO, $1)", Enum_fprint },
+	{ "polymorph int fprint (IO, $1)", Enum_fprint },
 };
 
 size_t Enum_read (const EfiType *type, void *data, IO *io)

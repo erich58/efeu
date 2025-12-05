@@ -24,7 +24,7 @@ TEST_DECL(func)
 	EXPECT_PTR(aggr = NewEDBAggregate(aggr, "+=", t, s->offset));
 
 	EDBAggregateFunc(aggr, "foo", tg, src);
-	EXPECT_EVAL("TG::foo", "(void) virtual TG & TG::foo (SRC)\n");
+	EXPECT_EVAL("TG::foo", "(void) polymorph TG & TG::foo (SRC)\n");
 	EXPECT_EVAL("SRC src", "{NULL, 0, 0.}");
 	EXPECT_EVAL("TG tg", "{0., 0}");
 	EXPECT_EVAL("src = { \"a\", 1, 5.}", "{\"a\", 1, 5.0000}");

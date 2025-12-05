@@ -106,7 +106,7 @@ EfiFunc *XGetFunc (EfiType *type, EfiPolyFunc *vtab,
 	func->dim = narg;
 	func->bound = def->func->bound;
 	func->weight = CONV_GENERATED;
-	func->virfunc = def->func->virfunc;
+	func->overload = def->func->overload;
 	func->vaarg = 0;
 	func->par = def;
 	func->clean = memfree;

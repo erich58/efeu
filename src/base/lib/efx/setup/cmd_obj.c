@@ -52,7 +52,7 @@ static void expr_class (EfiFunc *func, void *rval, void **arg)
 	Val_obj(rval) = EfiClassExpr(RefObj(Val_obj(arg[0])), Val_str(arg[1]));
 }
 
-CEXPR(f_str2virfunc, Val_pfunc(rval) = PolyFunc(GetGlobalFunc(Val_str(arg[0]))))
+CEXPR(f_str2pfunc, Val_pfunc(rval) = PolyFunc(GetGlobalFunc(Val_str(arg[0]))))
 CEXPR(f_xeval, Val_obj(rval) = EvalExpression(Val_obj(arg[0])))
 
 static void f_xeval2 (EfiFunc *func, void *rval, void **arg)
@@ -535,7 +535,7 @@ static EfiFuncDef fdef_obj[] = {
 		lval_class },
 	{ FUNC_OVERLOAD, &Type_expr, "classification (Expr_t, str def)",
 		expr_class },
-	{ FUNC_RESTRICTED, &Type_pfunc, "str ()", f_str2virfunc },
+	{ FUNC_RESTRICTED, &Type_pfunc, "str ()", f_str2pfunc },
 	{ FUNC_OVERLOAD, &Type_obj, "eval (Expr_t)", f_xeval },
 	{ FUNC_OVERLOAD, &Type_obj, "eval (Expr_t, VarTab)", f_xeval2 },
 
