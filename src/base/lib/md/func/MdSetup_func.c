@@ -83,7 +83,7 @@ MDB_FUNC(MF_assign, md_assign(func->name, MD(0), MD(1)))
 MDB_FUNC(MF_expr, md_assign(Val_str(arg[1]), md,
 	func->dim > 2 ? MD(2) : NULL))
 
-MDC_FUNC(MF_mdexpr, md_term(Val_vfunc(arg[0]), MD(1),
+MDC_FUNC(MF_mdexpr, md_term(Val_pfunc(arg[0]), MD(1),
 	func->dim > 2 ? MD(2) : NULL))
 
 MDC_FUNC(MF_term, md_term(GetGlobalFunc(func->name), MD(0), MD(1)))
@@ -207,9 +207,9 @@ static EfiFuncDef fdef[] = {
 	{ 0, &Type_mdmat, "mdprod (mdmat a)", MF_mdprod },
 	{ 0, &Type_mdmat, "sumaxis (mdmat md, str list)", MF_sumaxis },
 	{ 0, &Type_mdmat, "mddiag (mdmat md, str list)", MF_diag },
-	{ FUNC_OVERLOAD, &Type_mdmat, "mdexpr (VirFunc op, mdmat, mdmat)",
+	{ FUNC_OVERLOAD, &Type_mdmat, "mdexpr (PolyFunc op, mdmat, mdmat)",
 		MF_mdexpr },
-	{ FUNC_OVERLOAD, &Type_mdmat, "mdexpr (VirFunc op, mdmat)", MF_mdexpr },
+	{ FUNC_OVERLOAD, &Type_mdmat, "mdexpr (PolyFunc op, mdmat)", MF_mdexpr },
 	{ 0, &Type_mdmat, "mdcat (str def, ...)", MF_cat },
 
 	{ 0, &Type_mdmat, "mdmat::operator+= (mdmat)", MF_assign },
@@ -247,7 +247,7 @@ static EfiFuncDef fdef[] = {
 	{ 0, &Type_mdmat, "mdmat::transp ()", MF_transp },
 	{ 0, &Type_mdmat, "mdmat::time (str def = NULL)", MF_time },
 	{ 0, &Type_mdmat, "mdmat::hide (str def = NULL)", MF_hide },
-	{ 0, &Type_list, "mdmat::data (str def = NULL, VirFunc idx = NULL,\
+	{ 0, &Type_list, "mdmat::data (str def = NULL, PolyFunc idx = NULL,\
 int lag = 0)", MF_data },
 	{ 0, &Type_list, "mdmat::label (str def = NULL, bool flag = false)", MF_label },
 

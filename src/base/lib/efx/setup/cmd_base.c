@@ -231,7 +231,7 @@ EfiType Type_ref = PTR_TYPE("_Ref_", void *, &Type_ptr,
 	NULL, Clean_ref, Copy_ref);
 EfiType Type_efi = REF_TYPE ("Efi", Efi *);
 EfiType Type_func = REF_TYPE("Func", EfiFunc *);
-EfiType Type_vfunc = REF_TYPE("VirFunc", EfiPolyFunc *);
+EfiType Type_pfunc = REF_TYPE("PolyFunc", EfiPolyFunc *);
 EfiType Type_vtab = REF_TYPE("VarTab", EfiVarTab *);
 EfiType Type_io = REF_TYPE ("IO", IO *);
 
@@ -296,13 +296,13 @@ static void f_any2void (EfiFunc *func, void *rval, void **arg)
 
 static void f_mkvirfunc (EfiFunc *func, void *rval, void **arg)
 {
-	Val_vfunc(rval) = VirFunc(rd_refer(Val_func(arg[0])));
+	Val_pfunc(rval) = PolyFunc(rd_refer(Val_func(arg[0])));
 }
 
 static void f_ofunc2vfunc (EfiFunc *func, void *rval, void **arg)
 {
 	EfiObjFunc *x = arg[0];
-	Val_vfunc(rval) = VirFunc(rd_refer(x->func));
+	Val_pfunc(rval) = PolyFunc(rd_refer(x->func));
 }
 
 
@@ -336,8 +336,8 @@ static void f_vtab(EfiFunc *func, void *rval, void **arg)
 static EfiFuncDef func_base[] = {
 	{ 0, &Type_vtab, "VarTab (str name = NULL, int bs = 0)", f_vtab },
 	{ 0, &Type_void, "void (.)", f_any2void },
-	{ 0, &Type_vfunc, "Func ()", f_mkvirfunc },
-	{ 0, &Type_vfunc, "ObjFunc ()", f_ofunc2vfunc },
+	{ 0, &Type_pfunc, "Func ()", f_mkvirfunc },
+	{ 0, &Type_pfunc, "ObjFunc ()", f_ofunc2vfunc },
 	{ FUNC_OVERLOAD|FUNC_RESTRICTED, &Type_bool, "operator!() (_Ptr_)", f_ptr_not },
 	{ FUNC_OVERLOAD|FUNC_RESTRICTED, &Type_bool, "operator== (_Ptr_, _Ptr_)", f_ptr_eq },
 	{ FUNC_OVERLOAD, &Type_bool, "operator!= (_Ptr_, _Ptr_)", f_ptr_ne },
@@ -355,7 +355,7 @@ void CmdSetup_base(void)
 	AddType(&Type_type);
 	AddType(&Type_lval);
 	AddType(&Type_func);
-	AddType(&Type_vfunc);
+	AddType(&Type_pfunc);
 	AddType(&Type_ofunc);
 	AddType(&Type_expr);
 

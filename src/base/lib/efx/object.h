@@ -173,7 +173,7 @@ void AddTypeMember (EfiType *type, size_t offset, size_t dim,
 void AddMemberFunc (EfiType *type);
 void AddListConv (EfiType *type, EfiFuncCall l2d, EfiFuncCall d2l);
 
-/*	Virtuelle Funktionen
+/*	Polymorphe Funktionen
 */
 
 typedef struct {
@@ -181,8 +181,8 @@ typedef struct {
 	VecBuf tab;
 } EfiPolyFunc;
 
-EfiPolyFunc *VirFunc (EfiFunc *func);
-int IsVirFunc (void *data);
+EfiPolyFunc *PolyFunc (EfiFunc *func);
+int IsPolyFunc (void *data);
 
 
 /*	Objekttype
@@ -459,7 +459,7 @@ void *obj2func (EfiObj *obj);
 #define	Val_obj(x)	((EfiObj **) (x))[0]
 #define	Val_type(x)	((EfiType **) (x))[0]
 #define	Val_func(x)	((EfiFunc **) (x))[0]
-#define	Val_vfunc(x)	((EfiPolyFunc **) (x))[0]
+#define	Val_pfunc(x)	((EfiPolyFunc **) (x))[0]
 #define	Val_vtab(x)	((EfiVarTab **) (x))[0]
 
 #define	Obj2ptr(x)	Obj2Ptr((x), &Type_ptr)
@@ -581,7 +581,7 @@ typedef struct {
 extern EfiType Type_explist;
 extern EfiType Type_call;
 extern EfiType Type_func;
-extern EfiType Type_vfunc;
+extern EfiType Type_pfunc;
 extern EfiType Type_ofunc;
 
 EfiObj *Obj_call (EfiObj *(*func) (void *par, const EfiObjList *list),
@@ -736,7 +736,7 @@ void Func_inline (EfiFunc *func, void *rval, void **arg);
 void Func_func (EfiFunc *func, void *rval, void **arg);
 
 EfiObj *EvalFunc (EfiFunc *func, const EfiObjList *list);
-EfiObj *EvalVirFunc (EfiPolyFunc *func, const EfiObjList *list);
+EfiObj *EvalPolyFunc (EfiPolyFunc *func, const EfiObjList *list);
 
 EfiObj *MakeRetVal (EfiFunc *func, EfiObj *firstarg, void **arg);
 EfiObj *ConstRetVal (EfiFunc *func, void **arg);

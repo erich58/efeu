@@ -139,7 +139,7 @@ UnitTest::stdout();
 EXPECT(int.order > 0);
 EXPECT(int.dim == 0);
 EXPECT_STR(int.src, NULL);
-EXPECT(typeof int.create == VirFunc);
+EXPECT(typeof int.create == PolyFunc);
 EXPECT(typeof int.convlist == List_t);
 EXPECT(typeof int.convlist.obj == Func);
 

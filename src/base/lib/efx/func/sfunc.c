@@ -95,7 +95,7 @@ EfiFunc *SearchFunc (EfiPolyFunc *vtab, EfiFuncArg *arg,
 
 	if	(ptr)	*ptr = NULL;
 
-	if	(!IsVirFunc(vtab))
+	if	(!IsPolyFunc(vtab))
 	{
 		log_error(NULL, "[efmain:65]", NULL);
 		return NULL;

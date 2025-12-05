@@ -68,7 +68,7 @@ static void solve_bisection(EfiFunc *func, void *rval, void **arg)
 {
 	EfiFunc *f;
 
-	f = GetFunc(&Type_int, Val_vfunc(arg[0]), 1, &Type_double, 0);
+	f = GetFunc(&Type_int, Val_pfunc(arg[0]), 1, &Type_double, 0);
 	Val_double(rval) = bisection(solve_intval, f,
 		Val_double(arg[1]), Val_double(arg[2]));
 }
@@ -77,15 +77,15 @@ static void solve_regfalsi(EfiFunc *func, void *rval, void **arg)
 {
 	EfiFunc *f;
 
-	f = GetFunc(&Type_double, Val_vfunc(arg[0]), 1, &Type_double, 0);
+	f = GetFunc(&Type_double, Val_pfunc(arg[0]), 1, &Type_double, 0);
 	Val_double(rval) = regfalsi(solve_dblval, f,
 		Val_double(arg[1]), Val_double(arg[2]));
 }
 
 static EfiFuncDef solve_Func[] = {
-	{  0, &Type_double, "bisection(VirFunc func, double a, double b)",
+	{  0, &Type_double, "bisection(PolyFunc func, double a, double b)",
 		solve_bisection },
-	{ 0, &Type_double, "regfalsi(VirFunc func, double a, double b)",
+	{ 0, &Type_double, "regfalsi(PolyFunc func, double a, double b)",
 		solve_regfalsi },
 };
 

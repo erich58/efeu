@@ -83,7 +83,7 @@ static void f_db_create(EfiFunc *func, void *rval, void **arg)
 	db = DB_create(Val_type(arg[0]), Val_int(arg[2]));
 
 	if	(db)
-		db->cmp = GetFunc(&Type_int, Val_vfunc(arg[1]), 2, db->type, 0, db->type, 0);
+		db->cmp = GetFunc(&Type_int, Val_pfunc(arg[1]), 2, db->type, 0, db->type, 0);
 	DBRVAL = db;
 }
 
@@ -282,7 +282,7 @@ static void f_db_fsave(EfiFunc *func, void *rval, void **arg)
 	io = io_fileopen(Val_str(arg[1]), "w");
 	db = Ref_DB(arg[0]);
 	DB_save(io, db, Val_bool(arg[2]),
-		Val_vfunc(arg[3]), Val_str(arg[4]));
+		Val_pfunc(arg[3]), Val_str(arg[4]));
 	io_close(io);
 	DBRVAL = db;
 }
@@ -291,7 +291,7 @@ static void f_db_save(EfiFunc *func, void *rval, void **arg)
 {
 	register EfiDB *db = Ref_DB(arg[0]);
 	DB_save(Val_io(arg[1]), db, Val_bool(arg[2]),
-		Val_vfunc(arg[3]), Val_str(arg[4]));
+		Val_pfunc(arg[3]), Val_str(arg[4]));
 	DBRVAL = db;
 }
 
@@ -333,7 +333,7 @@ static void f_db_sort(EfiFunc *func, void *rval, void **arg)
 		return;
 
 	rd_deref(db->cmp);
-	db->cmp = GetFunc(&Type_int, Val_vfunc(arg[1]), 2, db->type, 0, db->type, 0);
+	db->cmp = GetFunc(&Type_int, Val_pfunc(arg[1]), 2, db->type, 0, db->type, 0);
 	DB_sort(db);
 	DBRVAL = db;
 }
@@ -381,16 +381,16 @@ static void DB2List (EfiFunc *func, void *rval, void **arg)
 
 static EfiFuncDef db_func[] = {
 	{ FUNC_RESTRICTED, &Type_list, "DataBase ()", DB2List },
-	{ 0, &Type_DB, "DataBase (Type_t, VirFunc cmp = NULL, int bs = 0)",
+	{ 0, &Type_DB, "DataBase (Type_t, PolyFunc cmp = NULL, int bs = 0)",
 		f_db_create },
 	{ 0, &Type_DB, "DataBase::load (IO io, Expr_t expr = NULL)",
 		f_db_load },
 	{ 0, &Type_DB, "DataBase::fload (str name, Expr_t expr = NULL)",
 		f_db_fload },
 	{ 0, &Type_DB, "DataBase::save (IO io, bool mode = false, "
-		"VirFunc test = NULL, str list = NULL)", f_db_save },
+		"PolyFunc test = NULL, str list = NULL)", f_db_save },
 	{ 0, &Type_DB, "DataBase::fsave (str name, bool = false, "
-		"VirFunc test = NULL, str list = NULL)", f_db_fsave },
+		"PolyFunc test = NULL, str list = NULL)", f_db_fsave },
 	{ 0, &Type_obj, "DataBase::operator+= (.)", f_db_replace },
 	{ 0, &Type_obj, "DataBase::operator-= (.)", f_db_remove },
 	{ 0, &Type_obj, "DataBase::find (.)", f_db_find },
@@ -407,7 +407,7 @@ static EfiFuncDef db_func[] = {
 	{ 0, &Type_DB, "DataBase::insert (int, int = 1)", f_db_insert },
 	{ 0, &Type_DB, "DataBase::delete (int, int = 1)", f_db_delete },
 	{ 0, &Type_DB, "DataBase::clean ()", f_db_clean },
-	{ 0, &Type_DB, "DataBase::sort (VirFunc func)", f_db_sort },
+	{ 0, &Type_DB, "DataBase::sort (PolyFunc func)", f_db_sort },
 	{ FUNC_OVERLOAD, &Type_int, "dim(DataBase)", f_db_dim },
 };
 

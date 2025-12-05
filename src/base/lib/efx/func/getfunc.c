@@ -54,7 +54,7 @@ EfiFunc *XGetFunc (EfiType *type, EfiPolyFunc *vtab,
 	if	(vtab == NULL)	return NULL;
 
 	konv = NULL;
-	func = SearchFunc(VirFunc((void *) vtab), arg, narg, &konv);
+	func = SearchFunc(PolyFunc((void *) vtab), arg, narg, &konv);
 	rd_deref(vtab);
 
 /*	Keine Konvertierung notwendig

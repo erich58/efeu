@@ -50,20 +50,20 @@ static char *virfunc_ident (const void *data)
 		rd_ident(((EfiFunc **) func->tab.data)[0]) : NULL;
 }
 
-static RefType VirFuncRefType = REFTYPE_INIT("VirFunc",
+static RefType PolyFuncRefType = REFTYPE_INIT("PolyFunc",
 	virfunc_ident, virfunc_clean);
 
-int IsVirFunc (void *ptr)
+int IsPolyFunc (void *ptr)
 {
 	EfiPolyFunc *func = ptr;
-	return (func && func->reftype == &VirFuncRefType);
+	return (func && func->reftype == &PolyFuncRefType);
 }
 
-EfiPolyFunc *VirFunc (EfiFunc *func)
+EfiPolyFunc *PolyFunc (EfiFunc *func)
 {
 	EfiPolyFunc *vf;
 
-	if	(IsVirFunc(func))
+	if	(IsPolyFunc(func))
 		return rd_refer(func);
 
 	vf = new_data(&tab_virfunc);
@@ -72,5 +72,5 @@ EfiPolyFunc *VirFunc (EfiFunc *func)
 	if	(IsFunc(func))
 		Val_func(vb_next(&vf->tab)) = func;
 
-	return rd_init(&VirFuncRefType, vf);
+	return rd_init(&PolyFuncRefType, vf);
 }

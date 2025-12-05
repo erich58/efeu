@@ -39,7 +39,7 @@ static int name_is_std (const char *str)
 static int var_is_func (EfiType *type)
 {
 	if	(type == &Type_func)	return 1;
-	if	(type == &Type_vfunc)	return 1;
+	if	(type == &Type_pfunc)	return 1;
 	if	(type == &Type_ofunc)	return 1;
 	return 0;
 }

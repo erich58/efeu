@@ -30,7 +30,7 @@ If not, write to the Free Software Foundation, Inc.,
 static void MakeGlobalFunc(char *p)
 {
 	VarTab_xadd(GlobalVar, p, NULL,
-		NewPtrObj(&Type_vfunc, VirFunc(NULL)));
+		NewPtrObj(&Type_pfunc, PolyFunc(NULL)));
 }
 
 static void f_prior (EfiFunc *func, void *rval, void **arg)

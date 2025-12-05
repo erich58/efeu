@@ -52,7 +52,7 @@ static void expr_class (EfiFunc *func, void *rval, void **arg)
 	Val_obj(rval) = EfiClassExpr(RefObj(Val_obj(arg[0])), Val_str(arg[1]));
 }
 
-CEXPR(f_str2virfunc, Val_vfunc(rval) = VirFunc(GetGlobalFunc(Val_str(arg[0]))))
+CEXPR(f_str2virfunc, Val_pfunc(rval) = PolyFunc(GetGlobalFunc(Val_str(arg[0]))))
 CEXPR(f_xeval, Val_obj(rval) = EvalExpression(Val_obj(arg[0])))
 
 static void f_xeval2 (EfiFunc *func, void *rval, void **arg)
@@ -396,7 +396,7 @@ static int list_qsort_cmp (const void *ap, const void *bp)
 	list[1].obj = *b;
 	list[1].next = NULL;
 
-	return Obj2int(EvalVirFunc(list_qsort_func, list));
+	return Obj2int(EvalPolyFunc(list_qsort_func, list));
 }
 
 static void list_qsort (EfiFunc *func, void *rval, void **arg)
@@ -411,14 +411,14 @@ static void list_qsort (EfiFunc *func, void *rval, void **arg)
 
 	if	(n < 1)	return;
 
-	if	(!Val_vfunc(arg[1]))
+	if	(!Val_pfunc(arg[1]))
 	{
 		log_note(NULL, "[efmain:nocmp]", NULL);
 		return;
 	}
 
 	save = list_qsort_func;
-	list_qsort_func = Val_vfunc(arg[1]);
+	list_qsort_func = Val_pfunc(arg[1]);
 
 	tab = lmalloc(n * sizeof *tab);
 
@@ -448,7 +448,7 @@ static void list_uniq (EfiFunc *func, void *rval, void **arg)
 
 	if	(n < 2)	return;
 
-	if	(!Val_vfunc(arg[1]))
+	if	(!Val_pfunc(arg[1]))
 	{
 		log_note(NULL, "[efmain:nocmp]", NULL);
 		return;
@@ -460,7 +460,7 @@ static void list_uniq (EfiFunc *func, void *rval, void **arg)
 		tab[n++] = p->obj;
 
 	save = list_qsort_func;
-	list_qsort_func = Val_vfunc(arg[1]);
+	list_qsort_func = Val_pfunc(arg[1]);
 	k = vuniq(tab, n, sizeof tab[0], list_qsort_cmp);
 	list_qsort_func = save;
 	
@@ -495,14 +495,14 @@ static void list_bsearch (EfiFunc *func, void *rval, void **arg)
 
 	if	(n < 2)	return;
 
-	if	(!Val_vfunc(arg[2]))
+	if	(!Val_pfunc(arg[2]))
 	{
 		log_note(NULL, "[efmain:nocmp]", NULL);
 		return;
 	}
 
 	save = list_qsort_func;
-	list_qsort_func = Val_vfunc(arg[2]);
+	list_qsort_func = Val_pfunc(arg[2]);
 
 	tab = lmalloc(n * sizeof *tab);
 
@@ -535,7 +535,7 @@ static EfiFuncDef fdef_obj[] = {
 		lval_class },
 	{ FUNC_OVERLOAD, &Type_expr, "classification (Expr_t, str def)",
 		expr_class },
-	{ FUNC_RESTRICTED, &Type_vfunc, "str ()", f_str2virfunc },
+	{ FUNC_RESTRICTED, &Type_pfunc, "str ()", f_str2virfunc },
 	{ FUNC_OVERLOAD, &Type_obj, "eval (Expr_t)", f_xeval },
 	{ FUNC_OVERLOAD, &Type_obj, "eval (Expr_t, VarTab)", f_xeval2 },
 
@@ -606,15 +606,15 @@ static EfiFuncDef fdef_obj[] = {
 	{ 0, &Type_void, "List_t::update ()", list_update },
 	{ 0, &Type_void, "Object::update ()", obj_update },
 	{ 0, &Type_obj, "Object::data (. def = NULL)", f_odata },
-	{ FUNC_OVERLOAD, &Type_void, "qsort (List_t list, VirFunc f)",
+	{ FUNC_OVERLOAD, &Type_void, "qsort (List_t list, PolyFunc f)",
 		list_qsort },
-	{ 0, &Type_void, "List_t::qsort (VirFunc f)", list_qsort },
-	{ FUNC_OVERLOAD, &Type_void, "uniq (List_t list, VirFunc f)",
+	{ 0, &Type_void, "List_t::qsort (PolyFunc f)", list_qsort },
+	{ FUNC_OVERLOAD, &Type_void, "uniq (List_t list, PolyFunc f)",
 		list_uniq },
-	{ 0, &Type_void, "List_t::uniq (VirFunc f)", list_uniq },
-	{ FUNC_OVERLOAD, &Type_obj, "bsearch (List_t list, . key, VirFunc f)",
+	{ 0, &Type_void, "List_t::uniq (PolyFunc f)", list_uniq },
+	{ FUNC_OVERLOAD, &Type_obj, "bsearch (List_t list, . key, PolyFunc f)",
 		list_bsearch },
-	{ 0, &Type_obj, "List_t::bsearch (. key, VirFunc f)", list_bsearch },
+	{ 0, &Type_obj, "List_t::bsearch (. key, PolyFunc f)", list_bsearch },
 	{ 0, &Type_void, "List_t::dump (IO *io = iostd)", f_dump },
 };
 

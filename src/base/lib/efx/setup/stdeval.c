@@ -63,7 +63,7 @@ static void var_info (IO *io, InfoNode *info)
 
 	for (; n-- > 0; p++)
 	{
-		if	(p->type == &Type_vfunc)	continue;
+		if	(p->type == &Type_pfunc)	continue;
 		if	(p->type == &Type_func)	continue;
 		if	(p->type == &Type_vtab)	continue;
 
@@ -82,7 +82,7 @@ static void func_info (IO *io, InfoNode *info)
 	{
 		if	(p->obj == NULL)	continue;
 
-		if	(p->obj->type == &Type_vfunc)
+		if	(p->obj->type == &Type_pfunc)
 		{
 			io_xprintf(io, "%s\n", p->name);
 			PrintData(io, p->obj->type, p->obj->data);
@@ -435,9 +435,9 @@ static void f_proto (CmdPar *par, IO *io, const char *arg)
 
 	if	(type)
 	{
-		tab = VirFunc(GetTypeFunc(GetType(type), name));
+		tab = PolyFunc(GetTypeFunc(GetType(type), name));
 	}
-	else	tab = VirFunc(GetGlobalFunc(name));
+	else	tab = PolyFunc(GetGlobalFunc(name));
 
 	if	(tab == NULL || tab->tab.used == 0)	return;
 

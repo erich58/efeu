@@ -161,7 +161,7 @@ static void AddTypeFunc (EfiFunc *func)
 		if	(func->virfunc)
 		{
 			entry.get = get_vfunc;
-			entry.data = VirFunc(func);
+			entry.data = PolyFunc(func);
 		}
 		else
 		{
@@ -213,7 +213,7 @@ void AddFunc (EfiFunc *func)
 		{
 			set_virfunc(type->create, func);
 		}
-		else	type->create = VirFunc(func);
+		else	type->create = PolyFunc(func);
 	}
 	else
 	{
@@ -225,14 +225,14 @@ void AddFunc (EfiFunc *func)
 
 			if	(func->virfunc)
 			{
-				obj = NewPtrObj(&Type_vfunc, VirFunc(func));
+				obj = NewPtrObj(&Type_pfunc, PolyFunc(func));
 			}
 			else	obj = NewPtrObj(&Type_func, func);
 
 			VarTab_xadd(func->scope, mstrcpy(func->name),
 				NULL, obj);
 		}
-		else if	(var->obj && var->obj->type == &Type_vfunc)
+		else if	(var->obj && var->obj->type == &Type_pfunc)
 		{
 			set_virfunc(Val_ptr(var->obj->data), func);
 		}
@@ -251,7 +251,7 @@ void *obj2func (EfiObj *obj)
 
 	if	(obj)
 	{
-		if	(obj->type == &Type_vfunc)
+		if	(obj->type == &Type_pfunc)
 		{
 			func = rd_refer(Val_ptr(obj->data));
 		}

@@ -250,13 +250,13 @@ static void f_rshift(EfiFunc *func, void *rval, void **arg)
 static void f_diff(EfiFunc *func, void *rval, void **arg)
 {
 	Val_TimeSeries(rval) = ts_diff(Val_TimeSeries(arg[0]),
-		Val_int(arg[1]), Val_vfunc(arg[2]));
+		Val_int(arg[1]), Val_pfunc(arg[2]));
 }
 
 static void f_cum(EfiFunc *func, void *rval, void **arg)
 {
 	ts_cumulate(Val_TimeSeries(arg[0]),
-		Val_TimeSeries(arg[1]), Val_vfunc(arg[2]));
+		Val_TimeSeries(arg[1]), Val_pfunc(arg[2]));
 }
 
 static void f_ma(EfiFunc *func, void *rval, void **arg)
@@ -436,7 +436,7 @@ static void f_index (EfiFunc *func, void *rval, void **arg)
 
 static void f_xfunc (EfiFunc *func, void *rval, void **arg)
 {
-	Val_TimeSeries(rval) = ts_func(Val_vfunc(arg[0]),
+	Val_TimeSeries(rval) = ts_func(Val_pfunc(arg[0]),
 		Val_TimeSeries(arg[1]));
 }
 
@@ -461,7 +461,7 @@ static void f_term (EfiFunc *func, void *rval, void **arg)
 
 static void f_xterm (EfiFunc *func, void *rval, void **arg)
 {
-	Val_TimeSeries(rval) = ts_term(Val_vfunc(arg[0]),
+	Val_TimeSeries(rval) = ts_term(Val_pfunc(arg[0]),
 		func->arg[1].type, arg[1], func->arg[2].type, arg[2]);
 }
 
@@ -562,9 +562,9 @@ TimeIndex a, TimeIndex b)", f_copy },
 		"TimeIndex, int offset = 0)", f_sync },
 
 	{ FUNC_OVERLOAD, &Type_TimeSeries,
-		"TimeSeries::diff(int lag, VirFunc = operator- )", f_diff },
+		"TimeSeries::diff(int lag, PolyFunc = operator- )", f_diff },
 	{ FUNC_OVERLOAD, &Type_void,
-		"TimeSeries::cum(TimeSeries base, VirFunc = operator+ )", f_cum },
+		"TimeSeries::cum(TimeSeries base, PolyFunc = operator+ )", f_cum },
 	{ FUNC_OVERLOAD, &Type_TimeSeries,
 		"TimeSeries::ma (int n)", f_ma },
 	{ FUNC_OVERLOAD, &Type_TimeSeries,
@@ -638,7 +638,7 @@ TimeIndex a, TimeIndex b)", f_copy },
 	{ FUNC_OVERLOAD, &Type_TimeSeries, "log (TimeSeries)", f_func },
 	{ FUNC_OVERLOAD, &Type_TimeSeries, "xlog (TimeSeries)", f_func },
 	{ FUNC_OVERLOAD, &Type_TimeSeries,
-		"call (VirFunc, TimeSeries)", f_xfunc },
+		"call (PolyFunc, TimeSeries)", f_xfunc },
 
 /*	Binäre Terme
 */
@@ -668,11 +668,11 @@ TimeIndex a, TimeIndex b)", f_copy },
 		"operator/ (double, TimeSeries)", f_term },
 
 	{ FUNC_OVERLOAD, &Type_TimeSeries,
-		"call (VirFunc, TimeSeries, TimeSeries)", f_xterm },
+		"call (PolyFunc, TimeSeries, TimeSeries)", f_xterm },
 	{ FUNC_OVERLOAD, &Type_TimeSeries,
-		"call (VirFunc, TimeSeries, double)", f_xterm },
+		"call (PolyFunc, TimeSeries, double)", f_xterm },
 	{ FUNC_OVERLOAD, &Type_TimeSeries,
-		"call (VirFunc, double, TimeSeries)", f_xterm },
+		"call (PolyFunc, double, TimeSeries)", f_xterm },
 };
 
 extern char *TimeSeries_fmt;

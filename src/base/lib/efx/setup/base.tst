@@ -45,5 +45,5 @@ MATCH_CONTENT("stdout", "3\n5\n");
 	free(o);
 }
 
-EXPECT_REPR((VirFunc) xdiv, "double xdiv (double, double)\n");
-EXPECT_REPR((VirFunc) int::operator"++", "int & int::operator\"++\" & ()\n");
+EXPECT_REPR((PolyFunc) xdiv, "double xdiv (double, double)\n");
+EXPECT_REPR((PolyFunc) int::operator"++", "int & int::operator\"++\" & ()\n");

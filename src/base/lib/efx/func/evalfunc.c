@@ -120,8 +120,8 @@ EfiObj *EvalFunc (EfiFunc *func, const EfiObjList *list)
 	if	(func == NULL)
 		return NULL;
 
-	if	(IsVirFunc(func))
-		return EvalVirFunc((void *) func, list);
+	if	(IsPolyFunc(func))
+		return EvalPolyFunc((void *) func, list);
 
 	if	(!IsFunc(func))
 	{

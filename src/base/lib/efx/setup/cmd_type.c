@@ -102,7 +102,7 @@ static EfiObj *type_desc (const EfiObj *obj, void *data)
 static EfiObj *type_create (const EfiObj *obj, void *data)
 {
 	EfiType *type = Val_type(obj->data);
-	return NewPtrObj(&Type_vfunc, type ? rd_refer(type->create) : NULL);
+	return NewPtrObj(&Type_pfunc, type ? rd_refer(type->create) : NULL);
 }
 
 static EfiObj *type_var (const EfiObj *obj, void *data)
@@ -163,7 +163,7 @@ static EfiMember type_member[] = {
 	{ "recl", &Type_int, type_recl, NULL },
 	{ "size", &Type_int, type_size, NULL },
 	{ "flags", &Type_uint, type_flags, NULL },
-	{ "create", &Type_vfunc, type_create, NULL },
+	{ "create", &Type_pfunc, type_create, NULL },
 	{ "var", &Type_vtab, type_var, NULL },
 	{ "convlist", &Type_list, type_clist, NULL },
 };

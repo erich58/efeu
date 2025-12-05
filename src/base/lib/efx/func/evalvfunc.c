@@ -66,7 +66,7 @@ static int not_a_vfunc (EfiPolyFunc *vtab)
 	if	(vtab == NULL || vtab->tab.used == 0)
 		return 1;
 
-	if	(IsVirFunc(vtab))	return 0;
+	if	(IsPolyFunc(vtab))	return 0;
 
 	log_error(NULL, "[efmain:65]", NULL);
 	return 1;
@@ -246,7 +246,7 @@ static EfiObj *eval_func (EfiFunc *func, EfiConv *fkonv,
 }
 
 
-EfiObj *EvalVirFunc (EfiPolyFunc *vtab, const EfiObjList *list)
+EfiObj *EvalPolyFunc (EfiPolyFunc *vtab, const EfiObjList *list)
 {
 	EfiConv *fkonv;
 	EfiFuncArg *arg;
@@ -298,7 +298,7 @@ int ShowData (IO *io, const EfiType *type, const void *data)
 
 EfiObj *Expr_polyfunc (void *par, const EfiObjList *list)
 {
-	return EvalVirFunc(par, list);
+	return EvalPolyFunc(par, list);
 }
 
 EfiObj *Expr_void (void *par, const EfiObjList *list)

@@ -55,8 +55,8 @@ EXPECT_POUT(xdiv, "double xdiv (double, double)");
 int a = 3;
 EXPECT_POUT(a.operator"++", "(3) int & int::operator\"++\" & ()\n");
 
-VirFunc vfunc;
-EXPECT_POUT(vfunc, "NULL");
+PolyFunc pfunc;
+EXPECT_POUT(pfunc, "NULL");
 ObjFunc ofunc;
 EXPECT_POUT(ofunc, "NULL");
 

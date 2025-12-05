@@ -238,7 +238,7 @@ static void fprint_vfunc(EfiFunc *func, void *rval, void **arg)
 	int i, n;
 
 	io = Val_io(arg[0]);
-	x = Val_vfunc(arg[1]);
+	x = Val_pfunc(arg[1]);
 
 	if	(x != NULL)
 	{
@@ -267,7 +267,7 @@ static void fprint_ofunc(EfiFunc *func, void *rval, void **arg)
 	ofunc = arg[1];
 	n = 0;
 
-	if	(ofunc && ofunc->func && (vfunc = VirFunc(ofunc->func)))
+	if	(ofunc && ofunc->func && (vfunc = PolyFunc(ofunc->func)))
 	{
 		EfiFunc **ftab = vfunc->tab.data;
 
@@ -436,7 +436,7 @@ static EfiFuncDef fdef_print[] = {
 	{ FUNC_OVERLOAD, &Type_int, "fprint (IO, List_t)", fprint_list },
 	{ FUNC_OVERLOAD, &Type_int, "fprint (IO, VarTab)", fprint_vtab },
 	{ FUNC_OVERLOAD, &Type_int, "fprint (IO, Func)", fprint_func },
-	{ FUNC_OVERLOAD, &Type_int, "fprint (IO, VirFunc)", fprint_vfunc },
+	{ FUNC_OVERLOAD, &Type_int, "fprint (IO, PolyFunc)", fprint_vfunc },
 	{ FUNC_OVERLOAD, &Type_int, "fprint (IO, ObjFunc)", fprint_ofunc },
 	{ FUNC_OVERLOAD, &Type_int, "fprint (IO, .)", fprint_any },
 	{ FUNC_OVERLOAD, &Type_int, "fprint (IO, ...)", fprint_va_list },

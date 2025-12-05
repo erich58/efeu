@@ -39,7 +39,7 @@ void MF_data(EfiFunc *func, void *rval, void **arg)
 
 /*	Auswertungsparameter bestimmen
 */
-	vtab = Val_vfunc(arg[2]);
+	vtab = Val_pfunc(arg[2]);
 	par.func = NULL;
 	par.lag = 0;
 	par.imode = 0;

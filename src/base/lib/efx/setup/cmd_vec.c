@@ -184,7 +184,7 @@ static void v_bsearch (EfiFunc *func, void *rval, void **arg)
 	if	(vec == NULL || obj == NULL)
 		return;
 
-	v_bsearch_func = GetFunc(&Type_int, Val_vfunc(arg[2]), 2,
+	v_bsearch_func = GetFunc(&Type_int, Val_pfunc(arg[2]), 2,
 		obj->type, 0, vec->type, 0);
 
 	if	(v_bsearch_func == NULL)
@@ -346,9 +346,9 @@ static EfiFuncDef fdef_vec[] = {
 	{ 0, &Type_void, "EfiVec::uniq (CmpDef cmp, bool sort = true)",
 		v_uniq },
 
-	{ FUNC_OVERLOAD, &Type_obj, "bsearch (EfiVec vec, . key, VirFunc f)",
+	{ FUNC_OVERLOAD, &Type_obj, "bsearch (EfiVec vec, . key, PolyFunc f)",
 		v_bsearch },
-	{ 0, &Type_obj, "EfiVec::bsearch (. key, VirFunc f)", v_bsearch },
+	{ 0, &Type_obj, "EfiVec::bsearch (. key, PolyFunc f)", v_bsearch },
 };
 
 /*	Initialisierung
