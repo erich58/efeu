@@ -1,6 +1,6 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/calculator.h>
-#include "utest/in.tst.h"
+#include <EFEU/utest/in.tst.h>
 
 #define	CALC_EVAL(in)	calc_eval(NULL, in, NULL)
 

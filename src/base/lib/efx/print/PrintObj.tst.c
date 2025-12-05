@@ -1,8 +1,8 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/object.h>
 #include <EFEU/printobj.h>
-#include "utest/out.tst.h"
-#include "utest/mstr.tst.h"
+#include <EFEU/utest/out.tst.h>
+#include <EFEU/utest/mstr.tst.h>
 
 #define	OBJ_PRINT(expr, value)	do { \
 EfiObj *obj = EvalObj(expr, NULL); \

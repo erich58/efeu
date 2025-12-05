@@ -1,7 +1,7 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/MakeDepend.h>
 #include "efeudoc.h"
-#include "utest/mstr.tst.h"
+#include <EFEU/utest/mstr.tst.h>
 
 extern char *CFGPath;
 

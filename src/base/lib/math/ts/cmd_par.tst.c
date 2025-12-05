@@ -2,7 +2,7 @@
 #include <EFEU/object.h>
 #include <EFEU/efutil.h>
 #include <Math/TimeSeries.h>
-#include "utest/eval.tst.h"
+#include <EFEU/utest/eval.tst.h>
 
 extern int PrintFloatPrec;
 

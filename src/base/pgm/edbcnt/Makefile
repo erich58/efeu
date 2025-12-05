@@ -12,6 +12,5 @@ prereq::
 
 LDFLAGS += -lefmath -liorl -lmd -lefx -lefm -ldl -lm
 CFLAGS += -I time -I count
-TST_CFLAGS += -I ../../lib/efm -I ../../lib/efx
 
 include $(CFG)/ComplexProgram.mak

@@ -1,7 +1,7 @@
 #include <EFEU/UnitTest.h>
 #include "efeudoc.h"
-#include "utest/eval.tst.h"
-#include "utest/mstr.tst.h"
+#include <EFEU/utest/eval.tst.h>
+#include <EFEU/utest/mstr.tst.h>
 
 static Doc *doc = NULL;
 

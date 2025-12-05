@@ -1,7 +1,7 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/EfiOutput.h>
 #include <EFEU/printobj.h>
-#include "utest/out.tst.h"
+#include <EFEU/utest/out.tst.h>
 
 static int test_write(IO *out, void *data, unsigned flag)
 {

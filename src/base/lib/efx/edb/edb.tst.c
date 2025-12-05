@@ -1,7 +1,7 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/object.h>
 #include <EFEU/EDB.h>
-#include "utest/eval.tst.h"
+#include <EFEU/utest/eval.tst.h>
 
 static void f_TMP (EfiFunc *func, void *rval, void **arg)
 {

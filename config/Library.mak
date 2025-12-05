@@ -82,9 +82,14 @@ test:: all
 TST_CFLAGS += -D'TOP="$(_TOP)"'
 
 _Library_tst_src = $(shell find -L . -name '*.tst.c' -printf '%f\n')
+_Library_tst_hdr = $(shell find -L . -name '*.tst.h' -printf '%f\n')
 _Library_tst_obj = $(patsubst %.c,$(BUILD)/%.o,$(_Library_tst_src))
 _Library_tst_dep = $(patsubst %.o,%.d,$(_Library_tst_obj))
 _Library_tst_bin = $(patsubst %.c,$(BUILD)/%,$(_Library_tst_src))
+
+_Library_tst_files = $(patsubst %.h,$(EFEU_TST_INCLUDE)/%.h,$(_Library_tst_hdr))
+
+files:: $(_Library_tst_files)
 
 ifneq ($(_Library_ext_src),)
 _Library_ext_gcov = $(patsubst %.ext.c,$(BUILD)/%.gcov.so,$(_Library_ext_src))

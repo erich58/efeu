@@ -2,7 +2,7 @@
 #include <EFEU/ioscan.h>
 #include <EFEU/locale.h>
 #include <EFEU/mstring.h>
-#include "utest/out.tst.h"
+#include <EFEU/utest/out.tst.h>
 
 static int testkey(const char *str, const char *key)
 {

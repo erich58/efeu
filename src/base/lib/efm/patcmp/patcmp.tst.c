@@ -4,7 +4,7 @@
 #include <EFEU/RegExp.h>
 #include <EFEU/MatchPar.h>
 
-#include "utest/mstr.tst.h"
+#include <EFEU/utest/mstr.tst.h>
 
 TEST_DECL(patcmp)
 {

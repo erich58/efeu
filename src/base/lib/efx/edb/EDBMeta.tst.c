@@ -3,8 +3,8 @@
 #include <EFEU/EDB.h>
 #include <EFEU/EDBMeta.h>
 #include <EFEU/EDBFilter.h>
-#include "utest/in.tst.h"
-#include "utest/out.tst.h"
+#include <EFEU/utest/in.tst.h>
+#include <EFEU/utest/out.tst.h>
 
 static void meta_test (EDBMetaDef *def, EDBMeta *meta, const char *arg)
 {

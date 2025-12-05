@@ -2,7 +2,7 @@
 #include "mdcount.h"
 #include "EfiCount.h"
 #include <EFEU/locale.h>
-#include "utest/out.tst.h"
+#include <EFEU/utest/out.tst.h>
 
 TEST_SUITE
 {

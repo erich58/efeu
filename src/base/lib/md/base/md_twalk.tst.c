@@ -1,7 +1,7 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/mdmat.h>
 #include <EFEU/printobj.h>
-#include "utest/out.tst.h"
+#include <EFEU/utest/out.tst.h>
 
 typedef struct {
 	int n;

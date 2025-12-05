@@ -1,7 +1,7 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/mstring.h>
 #include "DocBuf.h"
-#include "utest/in.tst.h"
+#include <EFEU/utest/in.tst.h>
 
 TEST_SUITE
 {

@@ -2,7 +2,7 @@
 #include <EFEU/ioctrl.h>
 #include <pty.h>
 
-#include "utest/mstr.tst.h"
+#include <EFEU/utest/mstr.tst.h>
 
 TEST_DECL(null)
 {

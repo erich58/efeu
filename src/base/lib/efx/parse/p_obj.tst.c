@@ -1,7 +1,7 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/parsedef.h>
 #include <EFEU/printobj.h>
-#include "utest/term.tst.h"
+#include <EFEU/utest/term.tst.h>
 
 #define	PARSE_OBJ(in)	obj_to_str(Parse_obj(in, SCAN_ANYTYPE))
 

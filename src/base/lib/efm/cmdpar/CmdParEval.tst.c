@@ -6,8 +6,8 @@
 #include <EFEU/mstring.h>
 #include <EFEU/io.h>
 #include <EFEU/procenv.h>
-#include "utest/out.tst.h"
-#include "utest/mstr.tst.h"
+#include <EFEU/utest/out.tst.h>
+#include <EFEU/utest/mstr.tst.h>
 
 static CmdPar par;
 

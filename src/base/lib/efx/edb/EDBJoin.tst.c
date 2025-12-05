@@ -3,7 +3,7 @@
 #include <EFEU/EDB.h>
 #include <EFEU/EDBMeta.h>
 #include <EFEU/EDBJoin.h>
-#include "utest/out.tst.h"
+#include <EFEU/utest/out.tst.h>
 
 static const char *copy_db(const char *in, const char *out)
 {

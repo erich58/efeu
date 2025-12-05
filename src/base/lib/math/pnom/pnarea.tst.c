@@ -1,6 +1,6 @@
 #include <EFEU/UnitTest.h>
 #include <Math/pnom.h>
-#include "utest/pnom.tst.h"
+#include <Math/utest/pnom.tst.h>
 
 TEST_SUITE
 {

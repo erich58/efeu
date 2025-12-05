@@ -3,8 +3,8 @@
 #include <EFEU/object.h>
 #include <EFEU/Resource.h>
 #include <stdtype.h>
-#include "utest/mstr.tst.h"
-#include "utest/out.tst.h"
+#include <EFEU/utest/mstr.tst.h>
+#include <EFEU/utest/out.tst.h>
 
 TEST_DECL(show)
 {

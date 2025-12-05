@@ -1,8 +1,8 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/object.h>
 #include <Math/pnom.h>
-#include "utest/eval.tst.h"
-#include "utest/pnom.tst.h"
+#include <EFEU/utest/eval.tst.h>
+#include <Math/utest/pnom.tst.h>
 
 extern int PrintFloatPrec;
 

@@ -1,6 +1,6 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/preproc.h>
-#include "utest/out.tst.h"
+#include <EFEU/utest/out.tst.h>
 
 static const char *do_macsub(const char *input)
 {

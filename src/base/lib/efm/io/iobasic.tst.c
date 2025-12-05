@@ -4,7 +4,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#include "utest/mstr.tst.h"
+#include <EFEU/utest/mstr.tst.h>
 
 TEST_DECL(string)
 {

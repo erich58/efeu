@@ -2,7 +2,7 @@
 #include <EFEU/object.h>
 #include <EFEU/parsedef.h>
 #include <EfiType/Json.h>
-#include "utest/eval.tst.h"
+#include <EFEU/utest/eval.tst.h>
 
 static void tmpvar()
 {

@@ -1,7 +1,7 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/EfiClass.h>
 #include <EFEU/printobj.h>
-#include "utest/out.tst.h"
+#include <EFEU/utest/out.tst.h>
 
 static EfiObj *OBJ(int value)
 {

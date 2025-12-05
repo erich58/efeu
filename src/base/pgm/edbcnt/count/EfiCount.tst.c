@@ -1,7 +1,7 @@
 #include <EFEU/UnitTest.h>
 #include "EfiCount.h"
 #include <EFEU/Info.h>
-#include "utest/out.tst.h"
+#include <EFEU/utest/out.tst.h>
 
 EfiCount test_count = EFI_COUNT(NULL,
 	"test_count", "[opt]=arg", NULL, "some parameter",

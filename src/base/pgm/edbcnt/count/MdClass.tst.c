@@ -1,7 +1,7 @@
 #include <EFEU/UnitTest.h>
 #include "mdcount.h"
 #include <EFEU/locale.h>
-#include "utest/out.tst.h"
+#include <EFEU/utest/out.tst.h>
 
 TEST_DECL(setup)
 {

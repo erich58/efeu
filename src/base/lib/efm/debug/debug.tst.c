@@ -6,8 +6,8 @@
 #include <EFEU/io.h>
 #include <ctype.h>
 
-#include "utest/out.tst.h"
-#include "utest/mstr.tst.h"
+#include <EFEU/utest/out.tst.h>
+#include <EFEU/utest/mstr.tst.h>
 
 #define	MATCH_LOG(log, data)	\
 UnitTest_linematch(__FILE__, __LINE__, \

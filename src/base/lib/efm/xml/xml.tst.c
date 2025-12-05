@@ -2,7 +2,7 @@
 #include <EFEU/strbuf.h>
 #include <EFEU/xml.h>
 
-#include "utest/in.tst.h"
+#include <EFEU/utest/in.tst.h>
 
 static STRBUF(buf_print, 64);
 static STRBUF(buf_compact, 64);

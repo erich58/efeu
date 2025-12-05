@@ -10,7 +10,5 @@ CPPFLAGS += -I../include
 LDFLAGS += -L../lib -lDocBuf
 LDFLAGS += -lefmath -liorl -lmd -lefx -lefm -ldl -lm
 
-TST_CFLAGS += -I$(TOP)/src/base/lib/efm
-
 include $(CFG)/ComplexProgram.mak
 

@@ -6,7 +6,7 @@
 
 #include <EFEU/UnitTest.h>
 #include <Math/pnom.h>
-#include "utest/out.tst.h"
+#include <EFEU/utest/out.tst.h>
 
 static Polynom *utest_pnom(const char *file, int line,
 	Polynom *pn, const char *s, const char *expr, const char *xs)

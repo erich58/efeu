@@ -1,7 +1,7 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/mdmat.h>
-#include "utest/md.tst.h"
-#include "utest/in.tst.h"
+#include <EFEU/utest/md.tst.h>
+#include <EFEU/utest/in.tst.h>
 
 #define	TEST_DATA(var, def)	\
 var = def, PRINT_STR(var)

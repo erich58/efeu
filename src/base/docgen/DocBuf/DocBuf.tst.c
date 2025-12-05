@@ -1,7 +1,7 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/mstring.h>
 #include "DocBuf.h"
-#include "utest/out.tst.h"
+#include <EFEU/utest/out.tst.h>
 
 TEST_DECL(protect)
 {

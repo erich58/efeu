@@ -1,6 +1,6 @@
 #include <EFEU/UnitTest.h>
 #include "efeudoc.h"
-#include "utest/in.tst.h"
+#include <EFEU/utest/in.tst.h>
 
 static DocType doc_test = { "test", NULL, &DocOut_test, NULL, NULL };
 

@@ -17,8 +17,8 @@ static void f_puts(IO *out, InfoNode *info)
 	io_puts(info->par, out);
 }
 
-#include "utest/out.tst.h"
-#include "utest/mstr.tst.h"
+#include <EFEU/utest/out.tst.h>
+#include <EFEU/utest/mstr.tst.h>
 
 static void show_info(IO *out, InfoNode *info)
 {

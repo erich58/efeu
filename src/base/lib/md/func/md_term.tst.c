@@ -1,6 +1,6 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/mdmat.h>
-#include "utest/out.tst.h"
+#include <EFEU/utest/out.tst.h>
 
 static void obj_test_func(EfiFunc *func, void *rval, void **arg)
 {

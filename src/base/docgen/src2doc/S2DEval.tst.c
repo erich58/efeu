@@ -1,6 +1,6 @@
 #include <EFEU/UnitTest.h>
 #include "src2doc.h"
-#include "utest/out.tst.h"
+#include <EFEU/utest/out.tst.h>
 
 TEST_SUITE
 {

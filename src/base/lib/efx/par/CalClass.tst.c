@@ -2,7 +2,7 @@
 #include <EFEU/EfiClass.h>
 #include <EFEU/printobj.h>
 #include <EFEU/calendar.h>
-#include "utest/out.tst.h"
+#include <EFEU/utest/out.tst.h>
 
 static EfiObj *DATE(int d, int m, int j)
 {

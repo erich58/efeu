@@ -1,8 +1,8 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/efio.h>
 #include <EFEU/ioctrl.h>
-#include "utest/in.tst.h"
-#include "utest/out.tst.h"
+#include <EFEU/utest/in.tst.h>
+#include <EFEU/utest/out.tst.h>
 
 TEST_DECL(io_skip)
 {

@@ -1,6 +1,6 @@
 #include <EFEU/UnitTest.h>
 #include <EfiType/Month.h>
-#include "utest/term.tst.h"
+#include <EFEU/utest/term.tst.h>
 
 TEST_DECL(conv)
 {

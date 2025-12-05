@@ -7,8 +7,8 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/object.h>
 #include <EFEU/memalloc.h>
-#include "utest/in.tst.h"
-#include "utest/out.tst.h"
+#include <EFEU/utest/in.tst.h>
+#include <EFEU/utest/out.tst.h>
 
 static const char *utest_eval(const char *def)
 {

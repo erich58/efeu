@@ -1,8 +1,8 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/io.h>
 
-#include "utest/in.tst.h"
-#include "utest/mstr.tst.h"
+#include <EFEU/utest/in.tst.h>
+#include <EFEU/utest/mstr.tst.h>
 
 #define	EXPECT_BUF(a, b) \
 	UnitTest_strcheck(__FILE__, __LINE__, "==", sb_nul(a), b, # a, # b)

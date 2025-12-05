@@ -1,6 +1,6 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/ioscan.h>
-#include "utest/in.tst.h"
+#include <EFEU/utest/in.tst.h>
 
 #define	IO_SCAN_STR(in)	io_scan_str(in, NULL)
 

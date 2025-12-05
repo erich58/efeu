@@ -5,7 +5,7 @@
 /* Tests erfolgen mit einem Integer-Vektor
 */
 
-#include "utest/out.tst.h"
+#include <EFEU/utest/out.tst.h>
 
 #define	IVAL(p)	((int *) p)[0]
 

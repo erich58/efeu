@@ -1,7 +1,7 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/parsearg.h>
-#include "utest/out.tst.h"
-#include "utest/mstr.tst.h"
+#include <EFEU/utest/out.tst.h>
+#include <EFEU/utest/mstr.tst.h>
 
 TEST_DECL(argval)
 {

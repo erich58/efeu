@@ -1,7 +1,7 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/parsedef.h>
 #include <EFEU/printobj.h>
-#include "utest/out.tst.h"
+#include <EFEU/utest/out.tst.h>
 
 TEST_SUITE
 {

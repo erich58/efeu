@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <signal.h>
 
-#include "utest/out.tst.h"
+#include <EFEU/utest/out.tst.h>
 
 static ALLOCTAB(tab, "AllocTabTest", 2, sizeof(int));
 static ALLOCTAB(unnamed, NULL, 0, 512);

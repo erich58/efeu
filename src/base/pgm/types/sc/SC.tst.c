@@ -2,8 +2,8 @@
 #include <EFEU/object.h>
 #include <EFEU/parsedef.h>
 #include <EfiType/SC.h>
-#include "utest/term.tst.h"
-#include "utest/eval.tst.h"
+#include <EFEU/utest/term.tst.h>
+#include <EFEU/utest/eval.tst.h>
 
 static void tmpvar()
 {

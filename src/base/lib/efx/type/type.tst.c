@@ -1,7 +1,7 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/mktype.h>
 #include <stdtype.h>
-#include "utest/mstr.tst.h"
+#include <EFEU/utest/mstr.tst.h>
 
 /* created with mksource <DataType.ms> */
 

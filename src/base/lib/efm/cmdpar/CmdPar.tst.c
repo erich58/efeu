@@ -2,8 +2,8 @@
 #include <EFEU/CmdPar.h>
 #include <EFEU/Debug.h>
 #include <EFEU/mstring.h>
-#include "utest/out.tst.h"
-#include "utest/mstr.tst.h"
+#include <EFEU/utest/out.tst.h>
+#include <EFEU/utest/mstr.tst.h>
 
 static CmdPar *par = NULL;
 

@@ -1,6 +1,6 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/ioscan.h>
-#include "utest/in.tst.h"
+#include <EFEU/utest/in.tst.h>
 
 TEST_SUITE
 {

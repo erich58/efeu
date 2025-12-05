@@ -4,7 +4,7 @@
 #include <EFEU/Readline.h>
 #include <EFEU/parsub.h>
 
-#include "utest/mstr.tst.h"
+#include <EFEU/utest/mstr.tst.h>
 #include <EFEU/rl_config.h>
 
 static int c_id(IO *in, IO *out, void *arg)

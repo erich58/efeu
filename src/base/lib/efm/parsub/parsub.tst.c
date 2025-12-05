@@ -4,8 +4,8 @@
 #include <EFEU/procenv.h>
 #include <errno.h>
 
-#include "utest/mstr.tst.h"
-#include "utest/in.tst.h"
+#include <EFEU/utest/mstr.tst.h>
+#include <EFEU/utest/in.tst.h>
 
 static STRBUF(sbuf, 64);
 static IO *io;

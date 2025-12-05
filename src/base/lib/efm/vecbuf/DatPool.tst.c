@@ -2,7 +2,7 @@
 #include <EFEU/DatPool.h>
 #include <EFEU/memalloc.h>
 
-#include "utest/mstr.tst.h"
+#include <EFEU/utest/mstr.tst.h>
 
 TEST_SUITE
 {

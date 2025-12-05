@@ -1,6 +1,6 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/EfiPar.h>
-#include "utest/out.tst.h"
+#include <EFEU/utest/out.tst.h>
 
 static EfiControl EfiControl_a = EPC_CONTROL(NULL, "a", "A-Desc", "A-Data");
 

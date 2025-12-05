@@ -2,7 +2,7 @@
 #include <EFEU/MapFile.h>
 #include <EFEU/procenv.h>
 
-#include "utest/mstr.tst.h"
+#include <EFEU/utest/mstr.tst.h>
 
 #define	TEST_DATA	"1234567890ABCDEFGHIJKLMNOPQRSTUVMXYZ\n"
 

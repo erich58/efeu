@@ -2,7 +2,7 @@
 #include <EFEU/object.h>
 #include <EFEU/mstring.h>
 #include "DocBuf.h"
-#include "utest/in.tst.h"
+#include <EFEU/utest/in.tst.h>
 
 static DocBuf doc;
 

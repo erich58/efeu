@@ -1,6 +1,6 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/unicode.h>
-#include "utest/out.tst.h"
+#include <EFEU/utest/out.tst.h>
 
 #define	DATA_UTF8 "-€ŠšŽžŒœŸ-"
 #define	DATA_LATIN9 "-\xa4\xa6\xa8\xb4\xb8\xbc\xbd\xbe-"

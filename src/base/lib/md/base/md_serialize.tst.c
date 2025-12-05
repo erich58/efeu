@@ -1,7 +1,7 @@
 
 #include <EFEU/UnitTest.h>
 #include <EFEU/mdmat.h>
-#include "utest/md.tst.h"
+#include <EFEU/utest/md.tst.h>
 
 TEST_SUITE
 {

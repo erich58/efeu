@@ -2,7 +2,7 @@
 #include <EFEU/object.h>
 #include <EFEU/EDB.h>
 #include <EFEU/EfiOutput.h>
-#include "utest/out.tst.h"
+#include <EFEU/utest/out.tst.h>
 
 TEST_DECL(psub)
 {

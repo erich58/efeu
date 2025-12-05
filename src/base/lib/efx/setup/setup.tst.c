@@ -4,8 +4,8 @@
 #include <EFEU/Resource.h>
 #include <EFEU/math.h>
 #include <EFEU/CmdPar.h>
-#include "utest/mstr.tst.h"
-#include "utest/out.tst.h"
+#include <EFEU/utest/mstr.tst.h>
+#include <EFEU/utest/out.tst.h>
 #include <math.h>
 
 TEST_DECL(name)

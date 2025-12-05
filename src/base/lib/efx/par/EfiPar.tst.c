@@ -1,6 +1,6 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/EfiPar.h>
-#include "utest/out.tst.h"
+#include <EFEU/utest/out.tst.h>
 
 EfiPar EfiPar_t1 = { "t1", "Test 1" };
 EfiPar EfiPar_t2 = { "t2", "Test 2" };

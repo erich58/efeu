@@ -1,8 +1,8 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/nkt.h>
 
-#include "utest/out.tst.h"
-#include "utest/mstr.tst.h"
+#include <EFEU/utest/out.tst.h>
+#include <EFEU/utest/mstr.tst.h>
 
 #define	IVAL(p)	((int *) (p))[0]
 

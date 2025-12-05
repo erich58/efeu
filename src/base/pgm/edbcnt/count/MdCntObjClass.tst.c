@@ -4,7 +4,7 @@
 #include "EfiCount.h"
 #include <EFEU/preproc.h>
 #include <EFEU/locale.h>
-#include "utest/out.tst.h"
+#include <EFEU/utest/out.tst.h>
 
 static EfiType *str_type(const char *def)
 {

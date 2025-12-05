@@ -1,6 +1,6 @@
 #include <EFEU/UnitTest.h>
 #include <Math/pnom.h>
-#include "utest/pnom.tst.h"
+#include <Math/utest/pnom.tst.h>
 
 static void tst_op(double x, double **c, size_t *deg, size_t n)
 {

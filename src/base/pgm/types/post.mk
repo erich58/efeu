@@ -58,8 +58,6 @@ $(tst_bin): $(GCOV_OBJ)
 test::
 	$(BIN)/efeu-test .
 
-TST_CFLAGS += -I $(TOP)/src/base/lib/efm
-TST_CFLAGS += -I $(TOP)/src/base/lib/efx
 TST_LDFLAGS += -lmd -lefx -lefm -lm -ldl
 
 $(BUILD)/%.gcov.o : %.c

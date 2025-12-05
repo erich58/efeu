@@ -1,7 +1,7 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/object.h>
 #include <Math/TimeSeries.h>
-#include "utest/eval.tst.h"
+#include <EFEU/utest/eval.tst.h>
 
 extern int PrintFloatPrec;
 

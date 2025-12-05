@@ -1,7 +1,7 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/EfiClass.h>
 #include <EfiType/AGE99.h>
-#include "utest/term.tst.h"
+#include <EFEU/utest/term.tst.h>
 
 TEST_DECL(conv)
 {

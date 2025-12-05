@@ -1,8 +1,8 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/preproc.h>
 #include <EFEU/ioctrl.h>
-#include "utest/in.tst.h"
-#include "utest/out.tst.h"
+#include <EFEU/utest/in.tst.h>
+#include <EFEU/utest/out.tst.h>
 
 static const char *pp(const char *input)
 {

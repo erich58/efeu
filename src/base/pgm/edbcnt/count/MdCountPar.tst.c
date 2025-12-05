@@ -3,8 +3,8 @@
 #include "mdcount.h"
 #include "EfiCount.h"
 #include <EFEU/locale.h>
-#include "utest/out.tst.h"
-#include "utest/mstr.tst.h"
+#include <EFEU/utest/out.tst.h>
+#include <EFEU/utest/mstr.tst.h>
 
 TEST_DECL(setup)
 {

@@ -4,7 +4,7 @@
 #include <EFEU/Debug.h>
 #include <EFEU/mstring.h>
 
-#include "utest/mstr.tst.h"
+#include <EFEU/utest/mstr.tst.h>
 
 TEST_DECL(logging)
 {

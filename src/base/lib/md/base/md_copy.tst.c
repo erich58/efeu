@@ -1,6 +1,6 @@
 #include <EFEU/UnitTest.h>
 #include <EFEU/mdmat.h>
-#include "utest/eval.tst.h"
+#include <EFEU/utest/eval.tst.h>
 
 static const char *utest_md(mdmat *md)
 {
