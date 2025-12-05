@@ -266,10 +266,10 @@ static void f_cdata (EfiFunc *func, void *rval, void **arg)
 }
 
 static EfiFuncDef fdef_xml[] = {
-	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, XML)", f_fprint },
-	{ FUNC_VIRTUAL, &Type_void,
+	{ FUNC_OVERLOAD, &Type_int, "fprint (IO, XML)", f_fprint },
+	{ FUNC_OVERLOAD, &Type_void,
 		"XML::open (IO out, str method = NULL)", f_open_io },
-	{ FUNC_VIRTUAL, &Type_void, "XML::expr (Expr_t expr)", f_expr },
+	{ FUNC_OVERLOAD, &Type_void, "XML::expr (Expr_t expr)", f_expr },
 	{ 0, &Type_void, "XML::close ()", f_close },
 	{ 0, &Type_void, "XML::parse (IO in)", f_parse },
 

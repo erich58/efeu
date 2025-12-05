@@ -123,25 +123,25 @@ static void f_texputc(EfiFunc *func, void *rval, void **arg)
 */
 
 static EfiFuncDef fdef[] = {
-	{ FUNC_VIRTUAL, &Type_int, "lexcmp (str, str)", cmp_lex },
-	{ FUNC_VIRTUAL, &Type_int, "alnumcmp (str, str)", cmp_alnum },
-	{ FUNC_VIRTUAL, &Type_int, "alphacmp (str, str)", cmp_alpha },
-	{ FUNC_VIRTUAL, &Type_int, "cmp (str, str)", cmp_str },
-	{ FUNC_VIRTUAL, &Type_int, "cmp (_Enum_, _Enum_)", cmp_int },
-	{ FUNC_VIRTUAL, &Type_int, "cmp (int, _Enum_)", cmp_int },
-	{ FUNC_VIRTUAL, &Type_int, "cmp (_Enum_, int)", cmp_int },
-	{ FUNC_VIRTUAL, &Type_int, "cmp (double, double)", cmp_double },
-	{ FUNC_VIRTUAL, &Type_int, "rcmp (str, str)", rcmp_str },
-	{ FUNC_VIRTUAL, &Type_int, "rcmp (_Enum_, _Enum_)", rcmp_int },
-	{ FUNC_VIRTUAL, &Type_int, "rcmp (int, _Enum_)", rcmp_int },
-	{ FUNC_VIRTUAL, &Type_int, "rcmp (_Enum_, int)", rcmp_int },
-	{ FUNC_VIRTUAL, &Type_int, "rcmp (double, double)", rcmp_double },
+	{ FUNC_OVERLOAD, &Type_int, "lexcmp (str, str)", cmp_lex },
+	{ FUNC_OVERLOAD, &Type_int, "alnumcmp (str, str)", cmp_alnum },
+	{ FUNC_OVERLOAD, &Type_int, "alphacmp (str, str)", cmp_alpha },
+	{ FUNC_OVERLOAD, &Type_int, "cmp (str, str)", cmp_str },
+	{ FUNC_OVERLOAD, &Type_int, "cmp (_Enum_, _Enum_)", cmp_int },
+	{ FUNC_OVERLOAD, &Type_int, "cmp (int, _Enum_)", cmp_int },
+	{ FUNC_OVERLOAD, &Type_int, "cmp (_Enum_, int)", cmp_int },
+	{ FUNC_OVERLOAD, &Type_int, "cmp (double, double)", cmp_double },
+	{ FUNC_OVERLOAD, &Type_int, "rcmp (str, str)", rcmp_str },
+	{ FUNC_OVERLOAD, &Type_int, "rcmp (_Enum_, _Enum_)", rcmp_int },
+	{ FUNC_OVERLOAD, &Type_int, "rcmp (int, _Enum_)", rcmp_int },
+	{ FUNC_OVERLOAD, &Type_int, "rcmp (_Enum_, int)", rcmp_int },
+	{ FUNC_OVERLOAD, &Type_int, "rcmp (double, double)", rcmp_double },
 
 	{ 0, &Type_str, "inquire (str p = \">>>\", str def = NULL)",
 		f_inquire },
 
-	{ FUNC_VIRTUAL, &Type_int, "TeXput (char c, IO io = iostd)", f_texputc },
-	{ FUNC_VIRTUAL, &Type_int, "TeXput (str s, IO io = iostd)", f_texputs },
+	{ FUNC_OVERLOAD, &Type_int, "TeXput (char c, IO io = iostd)", f_texputc },
+	{ FUNC_OVERLOAD, &Type_int, "TeXput (str s, IO io = iostd)", f_texputs },
 	{ 0, &Type_int, "TeXquote (str s, IO io = iostd)", f_texquote },
 };
 

@@ -206,8 +206,8 @@ static void print_mdidx (EfiFunc *func, void *rval, void **arg)
 }
 
 static EfiFuncDef pdef[] = {
-	{ FUNC_VIRTUAL, &Type_int, "fprint(IO, mdaxis)", print_mdaxis },
-	{ FUNC_VIRTUAL, &Type_int, "fprint(IO, mdidx)", print_mdidx },
+	{ FUNC_OVERLOAD, &Type_int, "fprint(IO, mdaxis)", print_mdaxis },
+	{ FUNC_OVERLOAD, &Type_int, "fprint(IO, mdidx)", print_mdidx },
 };
 
 void SetupMdMat(void)

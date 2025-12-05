@@ -101,7 +101,7 @@ void EDBAggregateFunc (EDBAggregate *aggr, const char *name,
 	io_puts(base->name, io);
 	io_puts(")", io);
 	io_rewind(io);
-	func = MakePrototype(io, tg, NULL, FUNC_LRETVAL|FUNC_VIRTUAL);
+	func = MakePrototype(io, tg, NULL, FUNC_LRETVAL|FUNC_OVERLOAD);
 	func->par = aggr;
 	func->eval = func_aggr;
 	func->clean = rd_clean;

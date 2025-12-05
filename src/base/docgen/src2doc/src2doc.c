@@ -51,7 +51,7 @@ static void f_list (EfiFunc *func, void *rval, void **arg)
 }
 
 static EfiFuncDef fdef[] = {
-	{ FUNC_VIRTUAL, &Type_void, "ListMode (IO io = iostd)", f_list },
+	{ FUNC_OVERLOAD, &Type_void, "ListMode (IO io = iostd)", f_list },
 };
 
 static int print_alias (const char *name, void *data, void *par)

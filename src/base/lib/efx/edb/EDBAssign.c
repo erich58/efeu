@@ -97,7 +97,7 @@ void EDBAssignFunc (EDBAssign *assign, EfiType *tg, EfiType *base)
 	io_puts(base->name, io);
 	io_puts(")", io);
 	io_rewind(io);
-	func = MakePrototype(io, tg, NULL, FUNC_LRETVAL|FUNC_VIRTUAL);
+	func = MakePrototype(io, tg, NULL, FUNC_LRETVAL|FUNC_OVERLOAD);
 	func->par = assign;
 	func->eval = func_assign;
 	func->clean = rd_clean;

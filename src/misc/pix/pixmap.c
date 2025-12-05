@@ -223,11 +223,11 @@ int height = 0, int color = 0)", PF_rule },
 	{ 0, &Type_OldPixMap, "Slice(OldPixMap, ...)", OldPixMap_Slice },
 	{ 0, &Type_OldPixMap, "Dither(OldPixMap)", OldPixMap_Dither },
 	{ 0, &Type_Color, "OldPixMap::get(Color)", PF_getcolor },
-	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, Color)", PF_cprint },
-	{ FUNC_VIRTUAL, &Type_OldPixMap, "operator+= (OldPixMap &, Color)", PF_newcolor },
-	{ FUNC_VIRTUAL, &Type_Color, "operator* (double, Color)", PF_skcolor },
-	{ FUNC_VIRTUAL, &Type_Color, "operator+ (Color, Color)", PF_addcolor },
-	{ FUNC_VIRTUAL, &Type_Color, "operator- (Color, Color)", PF_subcolor },
+	{ FUNC_OVERLOAD, &Type_int, "fprint (IO, Color)", PF_cprint },
+	{ FUNC_OVERLOAD, &Type_OldPixMap, "operator+= (OldPixMap &, Color)", PF_newcolor },
+	{ FUNC_OVERLOAD, &Type_Color, "operator* (double, Color)", PF_skcolor },
+	{ FUNC_OVERLOAD, &Type_Color, "operator+ (Color, Color)", PF_addcolor },
+	{ FUNC_OVERLOAD, &Type_Color, "operator- (Color, Color)", PF_subcolor },
 };
 
 

@@ -74,7 +74,7 @@ static EfiFuncDef fdef_timeval[] = {
 	{ 0, &Type_timeval, "timeval (void)", f_create },
 	{ 0, &Type_timeval, "timeval (double)", f_dbl2tv },
 	{ 0, &Type_double, "timeval ()", f_tv2dbl },
-	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, timeval)", f_print },
+	{ FUNC_OVERLOAD, &Type_int, "fprint (IO, timeval)", f_print },
 };
 
 /*	Initialisierung

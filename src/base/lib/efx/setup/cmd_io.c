@@ -408,7 +408,7 @@ str mode = \"r\")", f_findopen },
 	{ 0, &Type_io, "linemark (IO io, str pre = \"%4d\t\", \
 str post = NULL, bool flag = false)", f_lmark },
 	/*
-	{ FUNC_VIRTUAL, &Type_io, "ucs2latin9 (IO io)", f_ucs2latin9 },
+	{ FUNC_OVERLOAD, &Type_io, "ucs2latin9 (IO io)", f_ucs2latin9 },
 	{ 0, &Type_io, "in_utf8 (IO io)", f_in_utf8 },
 	*/
 	{ 0, &Type_io, "out_utf8 (IO io)", f_out_utf8 },
@@ -419,9 +419,9 @@ str post = NULL, bool flag = false)", f_lmark },
 	{ 0, &Type_io, "IO::divide (unsigned bsize = 0)", f_divide },
 	{ 0, &Type_int, "IO::newpart (str name, str repl = NULL)", f_newpart },
 	{ 0, &Type_int, "IO::endpart (void)", f_endpart },
-	{ FUNC_VIRTUAL, &Type_int, "close (IO & io)", f_close },
-	{ FUNC_VIRTUAL, &Type_int, "rewind (IO io)", f_rewind },
-	{ FUNC_VIRTUAL, &Type_int,
+	{ FUNC_OVERLOAD, &Type_int, "close (IO & io)", f_close },
+	{ FUNC_OVERLOAD, &Type_int, "rewind (IO io)", f_rewind },
+	{ FUNC_OVERLOAD, &Type_int,
 		"copy (promotion IO in, IO out)", f_copy },
 
 	{ 0, &Type_int, "IO::getc ()", f_getc },

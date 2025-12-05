@@ -112,7 +112,7 @@ static EfiFuncDef fdef[] = {
 	{ 0, &Type_TestDef, "TestEnum (str type, str arg)", par_enum },
 	{ 0, &Type_TestDef, "Test64 (str arg)", par_64 },
 	{ 0, &Type_TestDef, "TestDouble (str arg)", par_double },
-	{ FUNC_VIRTUAL, &Type_bool, "operator() (TestDef, List_t)", f_test },
+	{ FUNC_OVERLOAD, &Type_bool, "operator() (TestDef, List_t)", f_test },
 };
 
 void SetupTestDef (void)

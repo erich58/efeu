@@ -88,7 +88,7 @@ EfiFunc *MakePrototype(IO *io, EfiType *type, EfiName *nptr, unsigned flags)
 
 	lflag = 0;
 	rflag = (flags & FUNC_LRETVAL) ? 1 : 0;
-	virfunc = (flags & FUNC_VIRTUAL) ? 1 : 0;
+	virfunc = (flags & FUNC_OVERLOAD) ? 1 : 0;
 
 	if	(flags & FUNC_RESTRICTED)	weight = CONV_RESTRICTED;
 	else if	(flags & FUNC_PROMOTION)	weight = CONV_PROMOTION;

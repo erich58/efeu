@@ -142,9 +142,9 @@ static void f_sleep (EfiFunc *func, void *rval, void **arg)
 }
 
 static EfiFuncDef fdef_sig[] = {
-	{ FUNC_VIRTUAL, &Type_bool, "signal (int signum, int mode = SIG_DFL)",
+	{ FUNC_OVERLOAD, &Type_bool, "signal (int signum, int mode = SIG_DFL)",
 		f_sig_mode },
-	{ FUNC_VIRTUAL, &Type_bool, "signal (int signum, Expr_t expr)",
+	{ FUNC_OVERLOAD, &Type_bool, "signal (int signum, Expr_t expr)",
 		f_sig_expr },
 	{ 0, &Type_bool, "kill (int pid, int sig)", f_kill },
 	{ 0, &Type_bool, "raise (int sig)", f_raise },

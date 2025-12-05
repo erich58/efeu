@@ -229,10 +229,10 @@ static EfiFuncDef fdef[] = {
 	{ 0, &Type_cotab, "CountTab (void)", cot_create },
 	{ 0, &Type_void, "CountTab::list (IO io = iostd)", cot_list },
 
-	{ FUNC_VIRTUAL, &Type_int, "fprint(IO, MdCount)", co_print },
-	{ FUNC_VIRTUAL, &Type_cntobj, "operator[] (CountTab, int)",
+	{ FUNC_OVERLOAD, &Type_int, "fprint(IO, MdCount)", co_print },
+	{ FUNC_OVERLOAD, &Type_cntobj, "operator[] (CountTab, int)",
 		cot_index },
-	{ FUNC_VIRTUAL, &Type_cntobj, "operator[] (CountTab, str)",
+	{ FUNC_OVERLOAD, &Type_cntobj, "operator[] (CountTab, str)",
 		cot_search },
 
 	{ 0, &Type_cltab, "ClassTab (void)", clt_create },
@@ -243,19 +243,19 @@ static EfiFuncDef fdef[] = {
 
 	{ 0, &Type_cdef, "MdCntDef (Type_t type, str pfx = NULL)",
 		cdef_create },
-	{ FUNC_VIRTUAL, &Type_void, "MdCntDef::class (str name, str desc, "
+	{ FUNC_OVERLOAD, &Type_void, "MdCntDef::class (str name, str desc, "
 		"promotion Expr_t exp, promotion IO def", MdCntDef_expr },
-	{ FUNC_VIRTUAL, &Type_void, "MdCntDef::class (str name, str desc, "
+	{ FUNC_OVERLOAD, &Type_void, "MdCntDef::class (str name, str desc, "
 		"promotion Expr_t exp, int n, str name, str lbl = NULL",
 		MdCntDef_expr },
-	{ FUNC_VIRTUAL, &Type_void,
+	{ FUNC_OVERLOAD, &Type_void,
 		"MdCntDef::add (ClassTab cl)", MdCntDef_cadd },
-	{ FUNC_VIRTUAL, &Type_void,
+	{ FUNC_OVERLOAD, &Type_void,
 		"MdCntDef::add (ClassTab cl, str ext, . & obj)",
 		MdCntDef_cadd },
 
 	{ 0, &Type_int, "TimeRange[]::add (IO io = iostd)", trange_add },
-	{ FUNC_VIRTUAL, &Type_int, "fprint(IO, TimeRange)", print_trange },
+	{ FUNC_OVERLOAD, &Type_int, "fprint(IO, TimeRange)", print_trange },
 
 	{ 0, &Type_mdmat, "mdmat (restricted MdCount cobj, mdaxis x = NULL)",
 		m_create },

@@ -168,7 +168,7 @@ static EfiFuncDef fdef[] = {
 	{ 0, &Type_pnom, "Polynom (...)", PF_create },
 	{ 0, &Type_pnom, "pnload (str file)", PF_load },
 	{ 0, &Type_pnom, "Polynom::save (str file)", PF_save },
-	{ FUNC_VIRTUAL, &Type_double, "operator() (Polynom, List_t)", PF_eval },
+	{ FUNC_OVERLOAD, &Type_double, "operator() (Polynom, List_t)", PF_eval },
 	{ 0, &Type_int, "Polynom::print(IO = iostd, str fmt = \"%g\")",
 		PF_print },
 };

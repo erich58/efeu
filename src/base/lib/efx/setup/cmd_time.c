@@ -168,7 +168,7 @@ static EfiFuncDef fdef_time[] = {
 	{ 0, &Type_float, "time ()", c_float },
 	{ 0, &Type_double, "time ()", c_double },
 	{ 0, &Type_str, "str (time t, str fmt = NULL)", f_to_str },
-	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, time)", f_fprint },
+	{ FUNC_OVERLOAD, &Type_int, "fprint (IO, time)", f_fprint },
 //	{ 0, &Type_int, "time::print (IO out, str fmt = NULL)", f_time_print },
 };
 

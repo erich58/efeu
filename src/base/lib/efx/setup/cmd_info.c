@@ -156,7 +156,7 @@ Funktionstabelle
 
 static EfiFuncDef fdef_info[] = {
 	{ 0, &Type_inode, "InfoNode (str name)", f_inode },
-	{ FUNC_VIRTUAL, &Type_inode, "operator[] (InfoNode, int)", f_index },
+	{ FUNC_OVERLOAD, &Type_inode, "operator[] (InfoNode, int)", f_index },
 	{ 0, &Type_void, "Info (str name = NULL)", f_info },
 	{ 0, &Type_void, "ConsoleInfoBrowser (str name = NULL)", f_cinfo },
 	{ 0, &Type_void, "AddInfo (str name, str label = NULL, str txt = NULL)",

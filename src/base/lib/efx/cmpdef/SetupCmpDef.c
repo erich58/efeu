@@ -77,7 +77,7 @@ static void f_cmp (EfiFunc *func, void *rval, void **arg)
 static EfiFuncDef fdef[] = {
 	{ 0, &Type_CmpDef, "CmpDef (Type_t type)", f_create },
 	{ 0, &Type_CmpDef, "CmpDef (Type_t type, str def)", f_create },
-	{ FUNC_VIRTUAL, &Type_int, "operator() (CmpDef, List_t)", f_cmp },
+	{ FUNC_OVERLOAD, &Type_int, "operator() (CmpDef, List_t)", f_cmp },
 };
 
 void SetupCmpDef()

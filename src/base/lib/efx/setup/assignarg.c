@@ -134,7 +134,7 @@ static EfiFuncDef ftab[] = {
 		f_create },
 	{ 0, &Type_assignarg, "AssignArg (str & s, str delim = NULL)",
 		f_xcreate },
-	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, AssignArg)", f_fprint },
+	{ FUNC_OVERLOAD, &Type_int, "fprint (IO, AssignArg)", f_fprint },
 };
 
 void CmdSetup_assignarg(void)

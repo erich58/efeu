@@ -208,7 +208,7 @@ static EfiParseDef pdef[] = {
 
 	{ "operator", pf_operator, NULL },
 	{ "function", pf_func, NULL },
-	{ "virtual", pf_func, (void *) FUNC_VIRTUAL },
+	{ "virtual", pf_func, (void *) FUNC_OVERLOAD },
 	{ "promotion", pf_func, (void *) FUNC_PROMOTION },
 	{ "restricted", pf_func, (void *) FUNC_RESTRICTED },
 	{ "inline", pf_func, (void *) FUNC_INLINE },

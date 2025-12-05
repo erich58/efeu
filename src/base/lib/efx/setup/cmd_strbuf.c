@@ -238,7 +238,7 @@ static void f_printf (EfiFunc *func, void *rval, void **arg)
 }
 
 static EfiFuncDef fdef_strbuf[] = {
-	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, StrBuf)", f_fprint },
+	{ FUNC_OVERLOAD, &Type_int, "fprint (IO, StrBuf)", f_fprint },
 	{ 0, &Type_void, "StrBuf::free ()", f_free },
 	{ 0, &Type_bool, "StrBuf::read (int fd)", f_read },
 	{ 0, &Type_int, "StrBuf::seek (int n)", f_seek },
@@ -256,7 +256,7 @@ static EfiFuncDef fdef_strbuf[] = {
 	{ 0, &Type_io, "StrBuf ()", f_sb2io },
 	{ 0, &Type_str, "StrBuf ()", f_sb2str },
 	{ 0, &Type_strbuf, "str ()", f_str2sb },
-	{ FUNC_VIRTUAL, &Type_char, "operator[] (StrBuf, int)", f_index },
+	{ FUNC_OVERLOAD, &Type_char, "operator[] (StrBuf, int)", f_index },
 };
 
 void CmdSetup_strbuf(void)

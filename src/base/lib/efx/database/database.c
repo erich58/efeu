@@ -397,18 +397,18 @@ static EfiFuncDef db_func[] = {
 	{ 0, &Type_obj, "DataBase::get (.)", f_db_get },
 	{ 0, &Type_obj, "DataBase::replace (.)", f_db_replace },
 	{ 0, &Type_obj, "DataBase::remove (.)", f_db_remove },
-	{ FUNC_VIRTUAL, &Type_obj, "operator[] (restricted DataBase, "
+	{ FUNC_OVERLOAD, &Type_obj, "operator[] (restricted DataBase, "
 		"restricted int n)", f_db_index },
-	{ FUNC_VIRTUAL, &Type_obj,
+	{ FUNC_OVERLOAD, &Type_obj,
 		"operator[] (restricted DataBase, .)", f_db_find },
-	{ FUNC_VIRTUAL, &Type_obj, "operator() (restricted DataBase, .)",
+	{ FUNC_OVERLOAD, &Type_obj, "operator() (restricted DataBase, .)",
 		f_db_get },
 	{ 0, &Type_int, "DataBase::index (.)", f_db_getindex },
 	{ 0, &Type_DB, "DataBase::insert (int, int = 1)", f_db_insert },
 	{ 0, &Type_DB, "DataBase::delete (int, int = 1)", f_db_delete },
 	{ 0, &Type_DB, "DataBase::clean ()", f_db_clean },
 	{ 0, &Type_DB, "DataBase::sort (VirFunc func)", f_db_sort },
-	{ FUNC_VIRTUAL, &Type_int, "dim(DataBase)", f_db_dim },
+	{ FUNC_OVERLOAD, &Type_int, "dim(DataBase)", f_db_dim },
 };
 
 

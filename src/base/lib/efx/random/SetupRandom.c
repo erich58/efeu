@@ -90,7 +90,7 @@ static EfiFuncDef fdef[] = {
 	{ 0, &Type_double, "drand (Random rand = NULL)", f_uniform },
 	{ 0, &Type_double, "nrand (Random rand = NULL)", f_normal },
 
-	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, Random)", f_fprint },
+	{ FUNC_OVERLOAD, &Type_int, "fprint (IO, Random)", f_fprint },
 };
 
 

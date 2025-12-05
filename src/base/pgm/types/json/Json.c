@@ -388,7 +388,7 @@ static EfiFuncDef json_ftab[] = {
 	{ 0, &Type_obj, "Json::push_front (str name, Type_t type)",
 		func_push_front },
 	{ 0, &Type_obj, "Json::data (str name)", func_data },
-	{ FUNC_VIRTUAL, &Type_obj, "operator[] (Json *, str name)", func_data },
+	{ FUNC_OVERLOAD, &Type_obj, "operator[] (Json *, str name)", func_data },
 	{ 0, &Type_void, "Json::parse (IO io)", func_parse },
 	{ 0, &Type_Json, "str ()", func_str2json },
 	{ 0, &Type_void, "Json::clear ()", func_clear },

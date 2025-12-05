@@ -91,11 +91,11 @@ static void f_div (EfiFunc *func, void *rval, void **arg)
 
 static EfiFuncDef fdef_tms[] = {
 	{ 0, &Type_tms, "TMS (void)", f_create },
-	{ FUNC_VIRTUAL, &Type_tms, "operator+ (TMS a, TMS b);", f_add },
-	{ FUNC_VIRTUAL, &Type_tms, "operator- (TMS a, TMS b);", f_sub },
-	{ FUNC_VIRTUAL, &Type_tms, "operator* (TMS t, double f);", f_rmul },
-	{ FUNC_VIRTUAL, &Type_tms, "operator* (double f, TMS t);", f_lmul },
-	{ FUNC_VIRTUAL, &Type_tms, "operator/ (TMS t, double f);", f_div },
+	{ FUNC_OVERLOAD, &Type_tms, "operator+ (TMS a, TMS b);", f_add },
+	{ FUNC_OVERLOAD, &Type_tms, "operator- (TMS a, TMS b);", f_sub },
+	{ FUNC_OVERLOAD, &Type_tms, "operator* (TMS t, double f);", f_rmul },
+	{ FUNC_OVERLOAD, &Type_tms, "operator* (double f, TMS t);", f_lmul },
+	{ FUNC_OVERLOAD, &Type_tms, "operator/ (TMS t, double f);", f_div },
 };
 
 #endif

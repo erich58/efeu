@@ -297,10 +297,10 @@ static void v_xassign (EfiFunc *func, void *rval, void **arg)
 */
 
 static EfiFuncDef fdef_vec[] = {
-	{ FUNC_VIRTUAL, &Type_obj, "operator[] (EfiVec, int)", v_index },
-	{ FUNC_VIRTUAL, &Type_obj, "operator[] (EfiVec, _Enum_)", v_index },
-	{ FUNC_VIRTUAL, &Type_list, "operator[] (EfiVec, List_t)", v_list },
-	{ FUNC_VIRTUAL, &Type_list, "operator[] (EfiVec)", Vec2List },
+	{ FUNC_OVERLOAD, &Type_obj, "operator[] (EfiVec, int)", v_index },
+	{ FUNC_OVERLOAD, &Type_obj, "operator[] (EfiVec, _Enum_)", v_index },
+	{ FUNC_OVERLOAD, &Type_list, "operator[] (EfiVec, List_t)", v_list },
+	{ FUNC_OVERLOAD, &Type_list, "operator[] (EfiVec)", Vec2List },
 
 	{ 0, &Type_vec, "EfiVec::operator= (List_t)", v_assign },
 	{ 0, &Type_vec, "EfiVec::operator:= (List_t)", v_assign },
@@ -315,38 +315,38 @@ static EfiFuncDef fdef_vec[] = {
 	{ 0, &Type_vec, "EfiVec::operator^= (List_t)", v_xassign },
 	{ 0, &Type_vec, "EfiVec::operator|= (List_t)", v_xassign },
 
-	{ FUNC_VIRTUAL, &Type_int, "dim (EfiVec)", v_dim },
+	{ FUNC_OVERLOAD, &Type_int, "dim (EfiVec)", v_dim },
 	{ 0, &Type_void, "resize (EfiVec, int dim = 0)", v_resize },
 	{ 0, &Type_void, "EfiVec::resize (int dim = 0)", v_resize },
 	{ 0, &Type_void, "EfiVec::append (. obj)", v_append },
 	{ 0, &Type_void, "EfiVec::delete (int pos, int dim = 1)", v_delete },
 
-	{ FUNC_VIRTUAL, &Type_void, "qsort (EfiVec vec, str cmpdef)",
+	{ FUNC_OVERLOAD, &Type_void, "qsort (EfiVec vec, str cmpdef)",
 		v_qsort_def },
-	{ FUNC_VIRTUAL, &Type_void, "qsort (EfiVec vec, CmpDef cmp)",
+	{ FUNC_OVERLOAD, &Type_void, "qsort (EfiVec vec, CmpDef cmp)",
 		v_qsort },
 	{ 0, &Type_void, "EfiVec::qsort (CmpDef cmp)", v_qsort },
 
 #if	0
-	{ FUNC_VIRTUAL, &Type_bool, "test (EfiVec vec, str def)", v_test_def },
-	{ FUNC_VIRTUAL, &Type_bool, "test (EfiVec vec, TestDef tst)", v_test },
+	{ FUNC_OVERLOAD, &Type_bool, "test (EfiVec vec, str def)", v_test_def },
+	{ FUNC_OVERLOAD, &Type_bool, "test (EfiVec vec, TestDef tst)", v_test },
 	{ 0, &Type_bool, "EfiVec::test (TestDef tst)", v_test },
 
-	{ FUNC_VIRTUAL, &Type_int, "select (EfiVec vec, str def)", v_sel_def },
-	{ FUNC_VIRTUAL, &Type_int, "select (EfiVec vec, TestDef tst)", v_sel },
+	{ FUNC_OVERLOAD, &Type_int, "select (EfiVec vec, str def)", v_sel_def },
+	{ FUNC_OVERLOAD, &Type_int, "select (EfiVec vec, TestDef tst)", v_sel },
 	{ 0, &Type_int, "EfiVec::select (TestDef tst)", v_test },
 #endif
 
-	{ FUNC_VIRTUAL, &Type_void,
+	{ FUNC_OVERLOAD, &Type_void,
 		"uniq (EfiVec vec, str cmpdef, bool sort = true)",
 		v_uniq_def },
-	{ FUNC_VIRTUAL, &Type_void,
+	{ FUNC_OVERLOAD, &Type_void,
 		"uniq (EfiVec vec, CmpDef cmp, bool sort = true)",
 		v_uniq },
 	{ 0, &Type_void, "EfiVec::uniq (CmpDef cmp, bool sort = true)",
 		v_uniq },
 
-	{ FUNC_VIRTUAL, &Type_obj, "bsearch (EfiVec vec, . key, VirFunc f)",
+	{ FUNC_OVERLOAD, &Type_obj, "bsearch (EfiVec vec, . key, VirFunc f)",
 		v_bsearch },
 	{ 0, &Type_obj, "EfiVec::bsearch (. key, VirFunc f)", v_bsearch },
 };

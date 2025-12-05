@@ -338,10 +338,10 @@ static EfiFuncDef func_base[] = {
 	{ 0, &Type_void, "void (.)", f_any2void },
 	{ 0, &Type_vfunc, "Func ()", f_mkvirfunc },
 	{ 0, &Type_vfunc, "ObjFunc ()", f_ofunc2vfunc },
-	{ FUNC_VIRTUAL|FUNC_RESTRICTED, &Type_bool, "operator!() (_Ptr_)", f_ptr_not },
-	{ FUNC_VIRTUAL|FUNC_RESTRICTED, &Type_bool, "operator== (_Ptr_, _Ptr_)", f_ptr_eq },
-	{ FUNC_VIRTUAL, &Type_bool, "operator!= (_Ptr_, _Ptr_)", f_ptr_ne },
-	{ FUNC_VIRTUAL, &Type_void, "free (. &)", f_any_free },
+	{ FUNC_OVERLOAD|FUNC_RESTRICTED, &Type_bool, "operator!() (_Ptr_)", f_ptr_not },
+	{ FUNC_OVERLOAD|FUNC_RESTRICTED, &Type_bool, "operator== (_Ptr_, _Ptr_)", f_ptr_eq },
+	{ FUNC_OVERLOAD, &Type_bool, "operator!= (_Ptr_, _Ptr_)", f_ptr_ne },
+	{ FUNC_OVERLOAD, &Type_void, "free (. &)", f_any_free },
 };
 
 

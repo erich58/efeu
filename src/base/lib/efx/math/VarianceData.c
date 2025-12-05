@@ -160,23 +160,23 @@ static void assign_scale (EfiFunc *func, void *rval, void **arg)
 }
 
 static EfiFuncDef func[] = {
-	{ FUNC_VIRTUAL, &Type_VarianceData,
+	{ FUNC_OVERLOAD, &Type_VarianceData,
 		"VarianceData (double)", var_double },
-	{ FUNC_VIRTUAL, &Type_VarianceData,
+	{ FUNC_OVERLOAD, &Type_VarianceData,
 		"VarianceData (List_t)", var_list },
-	{ FUNC_VIRTUAL|FUNC_RESTRICTED, &Type_list,
+	{ FUNC_OVERLOAD|FUNC_RESTRICTED, &Type_list,
 		"VarianceData ()", var_to_list },
-	{ FUNC_VIRTUAL|FUNC_RESTRICTED, &Type_FrequencyData,
+	{ FUNC_OVERLOAD|FUNC_RESTRICTED, &Type_FrequencyData,
 		"VarianceData ()", var_to_freq },
-	{ FUNC_VIRTUAL, &Type_int,
+	{ FUNC_OVERLOAD, &Type_int,
 		"fprint (IO, VarianceData)", var_fprint },
-	{ FUNC_VIRTUAL, &Type_VarianceData, \
+	{ FUNC_OVERLOAD, &Type_VarianceData, \
 		"operator+ (VarianceData, VarianceData)", binary_add },
 	{ 0, &Type_VarianceData, \
 		"& VarianceData::operator+= & (VarianceData)", assign_add },
-	{ FUNC_VIRTUAL, &Type_VarianceData, \
+	{ FUNC_OVERLOAD, &Type_VarianceData, \
 		"operator* (VarianceData, double)", right_scale },
-	{ FUNC_VIRTUAL, &Type_VarianceData, \
+	{ FUNC_OVERLOAD, &Type_VarianceData, \
 		"operator* (double, VarianceData)", left_scale },
 	{ 0, &Type_VarianceData, \
 		"& VarianceData::operator*= & (double)", assign_scale },

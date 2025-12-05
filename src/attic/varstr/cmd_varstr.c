@@ -526,18 +526,18 @@ static EfiFuncDef func_varstr[] = {
 	{ 0, &Type_str, "str (Type_t, int verbosity = 1)", k_type2str },
 	{ 0, &Type_str, "str (_Ptr_)", k_ptr2str },
 
-	{ FUNC_VIRTUAL, &Type_char, "operator[] (str, int)", f_str_index },
-	{ FUNC_VIRTUAL, &Type_str, "operator+ (str, str)", f_str_add },
+	{ FUNC_OVERLOAD, &Type_char, "operator[] (str, int)", f_str_index },
+	{ FUNC_OVERLOAD, &Type_str, "operator+ (str, str)", f_str_add },
 #endif
-	{ FUNC_VIRTUAL, &Type_varstr, "operator* (int, varstr)", f_str_lmul },
-	{ FUNC_VIRTUAL, &Type_varstr, "operator* (varstr, int)", f_str_rmul },
+	{ FUNC_OVERLOAD, &Type_varstr, "operator* (int, varstr)", f_str_lmul },
+	{ FUNC_OVERLOAD, &Type_varstr, "operator* (varstr, int)", f_str_rmul },
 #if 0
-	{ FUNC_VIRTUAL, &Type_bool, "operator< (str, str)", b_str_lt },
-	{ FUNC_VIRTUAL, &Type_bool, "operator<= (str, str)", b_str_le },
-	{ FUNC_VIRTUAL, &Type_bool, "operator== (str, str)", b_str_eq },
-	{ FUNC_VIRTUAL, &Type_bool, "operator!= (str, str)", b_str_ne },
-	{ FUNC_VIRTUAL, &Type_bool, "operator>= (str, str)", b_str_ge },
-	{ FUNC_VIRTUAL, &Type_bool, "operator> (str, str)", b_str_gt },
+	{ FUNC_OVERLOAD, &Type_bool, "operator< (str, str)", b_str_lt },
+	{ FUNC_OVERLOAD, &Type_bool, "operator<= (str, str)", b_str_le },
+	{ FUNC_OVERLOAD, &Type_bool, "operator== (str, str)", b_str_eq },
+	{ FUNC_OVERLOAD, &Type_bool, "operator!= (str, str)", b_str_ne },
+	{ FUNC_OVERLOAD, &Type_bool, "operator>= (str, str)", b_str_ge },
+	{ FUNC_OVERLOAD, &Type_bool, "operator> (str, str)", b_str_gt },
 
 	{ 0, &Type_str, "substr (str s, int pos, int len = 0)", f_substr },
 	{ 0, &Type_str, "strcut (str & s, str delim, int mode = 1)",

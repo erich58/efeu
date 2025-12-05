@@ -23,7 +23,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 #include <EFEU/cmdsetup.h>
 
-#define	VLFUNC	FUNC_VIRTUAL, &Type_list
+#define	VLFUNC	FUNC_OVERLOAD, &Type_list
 
 static EfiFuncDef fdef_range[] = {
 	{ VLFUNC, "operator: (int a, int b)", RangeFunc },

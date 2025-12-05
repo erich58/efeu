@@ -124,21 +124,21 @@ static void assign_scale (EfiFunc *func, void *rval, void **arg)
 }
 
 static EfiFuncDef func[] = {
-	{ FUNC_VIRTUAL, &Type_FrequencyData,
+	{ FUNC_OVERLOAD, &Type_FrequencyData,
 		"FrequencyData (double)", freq_double },
-	{ FUNC_VIRTUAL, &Type_FrequencyData,
+	{ FUNC_OVERLOAD, &Type_FrequencyData,
 		"FrequencyData (List_t)", freq_list },
-	{ FUNC_VIRTUAL|FUNC_RESTRICTED, &Type_list,
+	{ FUNC_OVERLOAD|FUNC_RESTRICTED, &Type_list,
 		"FrequencyData ()", freq_to_list },
-	{ FUNC_VIRTUAL, &Type_int,
+	{ FUNC_OVERLOAD, &Type_int,
 		"fprint (IO, FrequencyData)", freq_fprint },
-	{ FUNC_VIRTUAL, &Type_FrequencyData, \
+	{ FUNC_OVERLOAD, &Type_FrequencyData, \
 		"operator+ (FrequencyData, FrequencyData)", binary_add },
 	{ 0, &Type_FrequencyData, \
 		"& FrequencyData::operator+= & (FrequencyData)", assign_add },
-	{ FUNC_VIRTUAL, &Type_FrequencyData, \
+	{ FUNC_OVERLOAD, &Type_FrequencyData, \
 		"operator* (FrequencyData, double)", right_scale },
-	{ FUNC_VIRTUAL, &Type_FrequencyData, \
+	{ FUNC_OVERLOAD, &Type_FrequencyData, \
 		"operator* (double, FrequencyData)", left_scale },
 	{ 0, &Type_FrequencyData, \
 		"& FrequencyData::operator*= & (double)", assign_scale },

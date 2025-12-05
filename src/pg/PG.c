@@ -253,7 +253,7 @@ static void f_close (EfiFunc *func, void *rval, void **arg)
 }
 
 static EfiFuncDef pg_func[] = {
-	{ FUNC_VIRTUAL, &Type_int, "fprint(IO, PG)", f_print },
+	{ FUNC_OVERLOAD, &Type_int, "fprint(IO, PG)", f_print },
 	{ 0, &Type_PG, "PG (str db)", f_conn },
 	{ 0, &Type_PG, "PG (str db, ...)", f_vconn },
 	{ 0, &Type_bool, "PG::exec (str cmd, ...)", f_exec },
@@ -265,9 +265,9 @@ static EfiFuncDef pg_func[] = {
 	{ 0, &Type_io, "PG::open (str name, str mode)", f_open },
 	{ 0, &Type_mdmat, "PG::mdmat (Type_t type, str val, str axis)",
 		f_mdmat },
-	{ FUNC_VIRTUAL, &Type_list, "operator[] (PG, int)", f_data },
+	{ FUNC_OVERLOAD, &Type_list, "operator[] (PG, int)", f_data },
 	{ 0, &Type_list, "PG ()", f_pg2list },
-	{ FUNC_VIRTUAL, &Type_void, "close (PG & pg)", f_close },
+	{ FUNC_OVERLOAD, &Type_void, "close (PG & pg)", f_close },
 };
 
 #endif

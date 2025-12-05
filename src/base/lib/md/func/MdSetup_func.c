@@ -189,9 +189,9 @@ static void mdx_nselect (EfiFunc *func, void *rval, void **arg)
 }
 
 static EfiFuncDef fdef[] = {
-	{ FUNC_VIRTUAL, &Type_mdmat, "mdmat (.)", any_to_mdmat },
-	{ FUNC_VIRTUAL, &Type_mdmat, "mdmat (restricted mdmat md, str def = NULL)", MF_cpy },
-	{ FUNC_VIRTUAL, &Type_mdmat, "mdmat (restricted Type_t type, str def = NULL",
+	{ FUNC_OVERLOAD, &Type_mdmat, "mdmat (.)", any_to_mdmat },
+	{ FUNC_OVERLOAD, &Type_mdmat, "mdmat (restricted mdmat md, str def = NULL)", MF_cpy },
+	{ FUNC_OVERLOAD, &Type_mdmat, "mdmat (restricted Type_t type, str def = NULL",
 		MF_create },
 	{ 0, &Type_mdmat, "mdload (str file, str sel = NULL, str vsel = NULL)",
 		MF_load },
@@ -207,9 +207,9 @@ static EfiFuncDef fdef[] = {
 	{ 0, &Type_mdmat, "mdprod (mdmat a)", MF_mdprod },
 	{ 0, &Type_mdmat, "sumaxis (mdmat md, str list)", MF_sumaxis },
 	{ 0, &Type_mdmat, "mddiag (mdmat md, str list)", MF_diag },
-	{ FUNC_VIRTUAL, &Type_mdmat, "mdexpr (VirFunc op, mdmat, mdmat)",
+	{ FUNC_OVERLOAD, &Type_mdmat, "mdexpr (VirFunc op, mdmat, mdmat)",
 		MF_mdexpr },
-	{ FUNC_VIRTUAL, &Type_mdmat, "mdexpr (VirFunc op, mdmat)", MF_mdexpr },
+	{ FUNC_OVERLOAD, &Type_mdmat, "mdexpr (VirFunc op, mdmat)", MF_mdexpr },
 	{ 0, &Type_mdmat, "mdcat (str def, ...)", MF_cat },
 
 	{ 0, &Type_mdmat, "mdmat::operator+= (mdmat)", MF_assign },
@@ -219,14 +219,14 @@ static EfiFuncDef fdef[] = {
 
 	{ FUNC_RESTRICTED, &Type_vec, "mdmat ()", MF_md2vec },
 	{ FUNC_RESTRICTED, &Type_EDB, "mdmat ()", MF_md2edb },
-	{ FUNC_VIRTUAL, &Type_obj, "operator[] (mdmat, int)", MF_index },
-	{ FUNC_VIRTUAL, &Type_mdmat, "operator+ (mdmat, mdmat)", MF_term },
-	{ FUNC_VIRTUAL, &Type_mdmat, "operator- (mdmat, mdmat)", MF_term },
-	{ FUNC_VIRTUAL, &Type_mdmat, "operator* (mdmat, mdmat)", MF_term },
-	{ FUNC_VIRTUAL, &Type_mdmat, "operator/ (mdmat, mdmat)", MF_term },
+	{ FUNC_OVERLOAD, &Type_obj, "operator[] (mdmat, int)", MF_index },
+	{ FUNC_OVERLOAD, &Type_mdmat, "operator+ (mdmat, mdmat)", MF_term },
+	{ FUNC_OVERLOAD, &Type_mdmat, "operator- (mdmat, mdmat)", MF_term },
+	{ FUNC_OVERLOAD, &Type_mdmat, "operator* (mdmat, mdmat)", MF_term },
+	{ FUNC_OVERLOAD, &Type_mdmat, "operator/ (mdmat, mdmat)", MF_term },
 
-	{ FUNC_VIRTUAL, &Type_mdmat, "mdmat::expr (str op, mdmat)", MF_expr },
-	{ FUNC_VIRTUAL, &Type_mdmat, "mdmat::expr (str op)", MF_expr },
+	{ FUNC_OVERLOAD, &Type_mdmat, "mdmat::expr (str op, mdmat)", MF_expr },
+	{ FUNC_OVERLOAD, &Type_mdmat, "mdmat::expr (str op)", MF_expr },
 
 	{ 0, &Type_bool, "mdmat::map (str path)", MF_map },
 	{ 0, &Type_mdmat, "mdmat::save (str file, bool select = true)",
@@ -255,9 +255,9 @@ int lag = 0)", MF_data },
 	{ 0, &Type_mdmat, "mdmat::eval (str axis, Expr_t cmd)", MF_xeval },
 	{ 0, &Type_void, "mdmat::show (IO io = iostd, str mode = NULL)",
 		MF_show },
-	{ FUNC_VIRTUAL, &Type_mdaxis, "operator[] (mdaxis, str)",
+	{ FUNC_OVERLOAD, &Type_mdaxis, "operator[] (mdaxis, str)",
 		mdx_select },
-	{ FUNC_VIRTUAL, &Type_mdaxis, "operator[] (mdaxis, int)",
+	{ FUNC_OVERLOAD, &Type_mdaxis, "operator[] (mdaxis, int)",
 		mdx_nselect },
 };
 

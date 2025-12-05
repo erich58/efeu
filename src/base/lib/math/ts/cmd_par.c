@@ -199,25 +199,25 @@ static void f_adjust (EfiFunc *func, void *rval, void **arg)
 */
 
 static EfiFuncDef func[] = {
-	{ FUNC_VIRTUAL, &Type_OLSPar, "OLS (TimeSeries y, ...)",
+	{ FUNC_OVERLOAD, &Type_OLSPar, "OLS (TimeSeries y, ...)",
 		Func_OLS },
-	{ FUNC_VIRTUAL, &Type_OLSPar, "OLS (TimeSeries y, List_t list)",
+	{ FUNC_OVERLOAD, &Type_OLSPar, "OLS (TimeSeries y, List_t list)",
 		Func_OLS },
 #if	0
-	{ FUNC_VIRTUAL, &Type_TimeSeries,
+	{ FUNC_OVERLOAD, &Type_TimeSeries,
 		"OLSPar::symres ()", f_symres },
-	{ FUNC_VIRTUAL, &Type_TimeSeries,
+	{ FUNC_OVERLOAD, &Type_TimeSeries,
 		"OLSPar::adjust (TimeIndex last)", f_adjust },
 #endif
-	{ FUNC_VIRTUAL, &Type_TimeSeries,
+	{ FUNC_OVERLOAD, &Type_TimeSeries,
 		"OLSPar::proj ()", Func_OLSProj },
-	{ FUNC_VIRTUAL, &Type_TimeSeries,
+	{ FUNC_OVERLOAD, &Type_TimeSeries,
 		"OLSPar::proj (TimeIndex)", Func_OLSProj },
-	{ FUNC_VIRTUAL, &Type_TimeSeries,
+	{ FUNC_OVERLOAD, &Type_TimeSeries,
 		"OLSPar::proj (TimeIndex, TimeIndex)", Func_OLSProj },
-	{ FUNC_VIRTUAL, &Type_TimeSeries,
+	{ FUNC_OVERLOAD, &Type_TimeSeries,
 		"OLSPar::proj (TimeIndex, int n)", Func_OLSProj },
-	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, OLSPar)", f_fprint },
+	{ FUNC_OVERLOAD, &Type_int, "fprint (IO, OLSPar)", f_fprint },
 };
 
 

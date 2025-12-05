@@ -95,7 +95,7 @@ static void f_fprint (EfiFunc *func, void *rval, void **arg)
 */
 
 static EfiFuncDef func[] = {
-	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, OLSCoeff)", f_fprint },
+	{ FUNC_OVERLOAD, &Type_int, "fprint (IO, OLSCoeff)", f_fprint },
 };
 
 

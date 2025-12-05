@@ -145,7 +145,7 @@ static EfiFuncDef fdef_StrPool[] = {
 	{ 0, &Type_void, "StrPool::dump (IO = iostd )", f_dump },
 	{ 0, &Type_void, "StrPool::cvar (IO out, str name)",
 		f_cvar },
-	{ FUNC_VIRTUAL, &Type_obj, "operator[] (restricted StrPool, varsize)", f_get },
+	{ FUNC_OVERLOAD, &Type_obj, "operator[] (restricted StrPool, varsize)", f_get },
 };
 
 void CmdSetup_StrPool(void)

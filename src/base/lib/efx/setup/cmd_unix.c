@@ -529,17 +529,17 @@ static void f_loadlib (EfiFunc *func, void *rval, void **arg)
 */
 
 static EfiFuncDef func_unix[] = {
-	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, mode_t)", fprint_mode },
+	{ FUNC_OVERLOAD, &Type_int, "fprint (IO, mode_t)", fprint_mode },
 	{ FUNC_RESTRICTED, &Type_str, "mode_t ()", f_mode2str },
 	{ FUNC_RESTRICTED, &Type_int, "mode_t ()", f_mode2int },
 	{ FUNC_PROMOTION, &Type_uint, "mode_t ()", CopyDataFunc },
 	{ 0, &Type_fstat, "FileStat (str path, bool link = false)", str2fstat },
-	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, FileStat)", fprint_fstat },
+	{ FUNC_OVERLOAD, &Type_int, "fprint (IO, FileStat)", fprint_fstat },
 	{ FUNC_RESTRICTED, &Type_bool, "FileStat ()", fstat2bool },
-	{ FUNC_VIRTUAL, &Type_pwd, "passwd (int uid)", f_pwd_int },
-	{ FUNC_VIRTUAL, &Type_pwd, "passwd (str name)", f_pwd_str },
-	{ FUNC_VIRTUAL, &Type_pwd, "passwd (void)", f_pwd_void },
-	{ FUNC_VIRTUAL, &Type_int, "fprint (IO, passwd)", fprint_pwd },
+	{ FUNC_OVERLOAD, &Type_pwd, "passwd (int uid)", f_pwd_int },
+	{ FUNC_OVERLOAD, &Type_pwd, "passwd (str name)", f_pwd_str },
+	{ FUNC_OVERLOAD, &Type_pwd, "passwd (void)", f_pwd_void },
+	{ FUNC_OVERLOAD, &Type_int, "fprint (IO, passwd)", fprint_pwd },
 	{ FUNC_RESTRICTED, &Type_bool, "passwd ()", pwd2bool },
 	{ 0, &Type_int, "getuid ()", f_getuid },
 	{ 0, &Type_int, "getgid ()", f_getgid },
