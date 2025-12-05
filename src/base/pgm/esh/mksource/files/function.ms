@@ -115,7 +115,7 @@ Der Prototyp wird bei externer Bindung nach hdr, ansonsten nach top
 ausgegeben.
 */
 
-virtual void Function::write (bool ext)
+polymorph void Function::write (bool ext)
 {
 	if	(!_name)	return;
 
@@ -156,7 +156,7 @@ Die Bindung wird über ein internes Flag gesteuert, dass beim
 einrichten der Deklarationsstruktur gesetzt wird.
 */
 
-virtual void Function::write ()
+polymorph void Function::write ()
 {
 	write(ext_linkage);
 }

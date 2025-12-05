@@ -5,7 +5,7 @@ structure as EFI-Datatype.
 zur Registrierung der Struktur als EFI-Datentyp.
 */
 
-virtual void TypeDef::setup (str fname, bool glob = true)
+polymorph void TypeDef::setup (str fname, bool glob = true)
 {
 	Function f;
 
@@ -218,12 +218,12 @@ virtual void TypeDef::setup (str fname, bool glob = true)
 	f.write(true);
 }
 
-virtual void TypeDef::setup (bool glob)
+polymorph void TypeDef::setup (bool glob)
 {
 	setup(t_name + "_setup", glob);
 }
 
-virtual void TypeDef::setup ()
+polymorph void TypeDef::setup ()
 {
 	setup(t_name + "_setup", glob_decl);
 }

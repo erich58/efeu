@@ -68,7 +68,7 @@ erhalten. Die Variable <type> gibt den Datentype des Datenpointers an.
 wird ein Nullstring übergeben, wird <"|const void *|"> verwendet.
 */
 
-virtual promotion inline CntDef CntDef (str type = NULL, bool cglob = true,
+polymorph promotion inline CntDef CntDef (str type = NULL, bool cglob = true,
 	str cpfx = NULL)
 {
 	glob = cglob;
@@ -90,7 +90,7 @@ Die Datenstruktur <name> wird mit mithilfe von |Struct|
 (Vergleiche dazu \mref{struct(7)}) aus <def> generiert.
 */
 
-virtual promotion inline CntDef CntDef (str name, int n, str def,
+polymorph promotion inline CntDef CntDef (str name, int n, str def,
 	str vname = NULL, bool cglob = true, str cpfx = NULL)
 {
 	name = psub(name);
@@ -448,13 +448,13 @@ zu einem Aufruf von |CntObj| mit der Definition
 	|add . \$1 = $2|
 */
 
-virtual void CntDef::cntvar(str name, str desc, Type_t type, str expr)
+polymorph void CntDef::cntvar(str name, str desc, Type_t type, str expr)
 {
 	add_cnt(name, desc);
 	CntObj(name, type, "set . $2 = " + expr + "\nadd . $1 = $2", cntarg);
 }
 
-virtual void CntDef::cntvar(str name, str desc, str type, str expr)
+polymorph void CntDef::cntvar(str name, str desc, str type, str expr)
 {
 	add_cnt(name, desc);
 	CntVar(name, type, expr, cntarg);
@@ -589,7 +589,7 @@ void CntDef::flag(str name, str desc, str expr, str fmt = NULL)
 	|switch|-Blocks.
 */
 
-virtual promotion void CntDef::switch(str name, str desc, str expr, str fmt, IO def)
+polymorph promotion void CntDef::switch(str name, str desc, str expr, str fmt, IO def)
 {
 	add_class(name, desc);
 	IndexFunc f = idxfunc(name);
@@ -600,7 +600,7 @@ virtual promotion void CntDef::switch(str name, str desc, str expr, str fmt, IO 
 	f.write(false);
 }
 
-virtual promotion void CntDef::switch(str name, str desc, str expr, IO def)
+polymorph promotion void CntDef::switch(str name, str desc, str expr, IO def)
 	this.switch(name, desc, expr, "$(key)", def);
 
 /*
@@ -609,7 +609,7 @@ virtual promotion void CntDef::switch(str name, str desc, str expr, IO def)
 	|if|-Anweisungen.
 */
 
-virtual promotion void CntDef::test(str name, str desc, str init, str fmt, IO def)
+polymorph promotion void CntDef::test(str name, str desc, str init, str fmt, IO def)
 {
 	add_class(name, desc);
 	IndexFunc f = idxfunc(name);
@@ -621,7 +621,7 @@ virtual promotion void CntDef::test(str name, str desc, str init, str fmt, IO de
 	f.write(false);
 }
 
-virtual promotion void CntDef::test(str name, str desc, str init, IO def)
+polymorph promotion void CntDef::test(str name, str desc, str init, IO def)
 	test(name, desc, init, "$(key)", def);
 
 /*

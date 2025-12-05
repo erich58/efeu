@@ -132,7 +132,7 @@ static void $1_$2_set (unsigned *data, void *ptr)
 		"$1", name, desc);
 }
 
-static virtual void Struct::efivar (str type, str name, str desc)
+static polymorph void Struct::efivar (str type, str name, str desc)
 {
 	int vdim = 0;
 

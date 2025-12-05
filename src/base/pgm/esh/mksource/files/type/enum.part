@@ -64,7 +64,7 @@ void TypeDef::enumdef (IO def, int recl = 4)
 	func("to_str", "restricted str $1 ()", string !
 Val_str(rval) = mstrcpy($1Label(Val_int(arg[0])));
 !);
-	func("fprint", "virtual int fprint (IO, $1)", string !
+	func("fprint", "polymorph int fprint (IO, $1)", string !
 IO *io = Val_ptr(arg[0]);
 unsigned n = Val_int(arg[1]);
 
@@ -113,7 +113,7 @@ int n = Val_int(arg[0]);
 char *p = $1Label(n);
 Val_str(rval) = p ? mstrcpy(p) : msprintf("%d", n);
 !);
-	func("fprint", "virtual int fprint (IO, $1)", string !
+	func("fprint", "polymorph int fprint (IO, $1)", string !
 IO *io = Val_ptr(arg[0]);
 int n = Val_int(arg[1]);
 char *p = $1Label(n);

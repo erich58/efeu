@@ -58,7 +58,7 @@ $1 *mon = arg[0];
 Val_str(rval) = mon->year ? msprintf("%4d-%02d", mon->year, mon->month) : NULL;
 !);
 
-def.func("tidx", "virtual Object operator[] ($1[], restricted Date t)", string !
+def.func("tidx", "polymorph Object operator[] ($1[], restricted Date t)", string !
 EfiVec *vec = Val_ptr(arg[0]);
 CalInfo *cal = Calendar(Val_Date(arg[1]), NULL);
 int n;

@@ -1,5 +1,5 @@
 
-virtual void TypeDef::join (str t1, str t2, str create, str read,
+polymorph void TypeDef::join (str t1, str t2, str create, str read,
 	str type = NULL, str par = NULL)
 {
 	s_setup += sprintf("AddEDBJoin(&%s);\n",

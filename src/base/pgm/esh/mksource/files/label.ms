@@ -55,7 +55,7 @@ Label Label (str lname, ...)
 Die Funktion |$1| liefert die akzuelle Zahl der Label-Einträge
 */
 
-virtual int dim (Label & x)
+polymorph int dim (Label & x)
 {
 	return dim(x.entry);
 }

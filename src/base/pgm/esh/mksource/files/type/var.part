@@ -26,7 +26,7 @@ static void TypeDef::st_member (str type, str name, str desc)
 		name, dim, type, name, desc);
 }
 
-static virtual void TypeDef::efivar (str type, str name, str desc)
+static polymorph void TypeDef::efivar (str type, str name, str desc)
 {
 	Type_t t = (Type_t) type;
 	bf_close();
@@ -52,7 +52,7 @@ static str TypeDef::cname (str type)
 	}
 }
 
-static virtual void TypeDef::extefivar (str type, str name, str desc)
+static polymorph void TypeDef::extefivar (str type, str name, str desc)
 {
 	bf_close();
 	addvar(cname(type), name, desc);
@@ -61,7 +61,7 @@ static virtual void TypeDef::extefivar (str type, str name, str desc)
 	flag_vrecl = true;
 }
 
-static virtual void TypeDef::ptrefivar (str type, str name, str desc)
+static polymorph void TypeDef::ptrefivar (str type, str name, str desc)
 {
 	bf_close();
 	addvar(type + " *", name, desc);
