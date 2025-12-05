@@ -34,7 +34,7 @@ static void del_func (EfiFunc **func)
 }
 
 
-static void set_virfunc (EfiVirFunc *vf, EfiFunc *func)
+static void set_virfunc (EfiPolyFunc *vf, EfiFunc *func)
 {
 	if	(vf == NULL)
 	{

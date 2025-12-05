@@ -29,7 +29,7 @@ void MF_data(EfiFunc *func, void *rval, void **arg)
 {
 	EVALPAR par;
 	EfiObjList *list;
-	EfiVirFunc *vtab;
+	EfiPolyFunc *vtab;
 	mdmat *md;
 
 	Val_list(rval) = NULL;

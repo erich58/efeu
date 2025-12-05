@@ -179,9 +179,9 @@ void AddListConv (EfiType *type, EfiFuncCall l2d, EfiFuncCall d2l);
 typedef struct {
 	REFVAR;
 	VecBuf tab;
-} EfiVirFunc;
+} EfiPolyFunc;
 
-EfiVirFunc *VirFunc (EfiFunc *func);
+EfiPolyFunc *VirFunc (EfiFunc *func);
 int IsVirFunc (void *data);
 
 
@@ -210,7 +210,7 @@ struct EfiTypeStruct {
 	EfiFunc *fcopy;		/* Kopierfunktion, nicht überladbar */
 	VecBuf conv;		/* Konvertierungen */
 	VecBuf par;		/* Parametertabelle */
-	EfiVirFunc *create;	/* Konstruktor, überladbar */
+	EfiPolyFunc *create;	/* Konstruktor, überladbar */
 	void *defval;		/* Vorgabewert */
 	EfiSrc *src;		/* Quelle */
 };
@@ -459,7 +459,7 @@ void *obj2func (EfiObj *obj);
 #define	Val_obj(x)	((EfiObj **) (x))[0]
 #define	Val_type(x)	((EfiType **) (x))[0]
 #define	Val_func(x)	((EfiFunc **) (x))[0]
-#define	Val_vfunc(x)	((EfiVirFunc **) (x))[0]
+#define	Val_vfunc(x)	((EfiPolyFunc **) (x))[0]
 #define	Val_vtab(x)	((EfiVarTab **) (x))[0]
 
 #define	Obj2ptr(x)	Obj2Ptr((x), &Type_ptr)
@@ -588,7 +588,7 @@ EfiObj *Obj_call (EfiObj *(*func) (void *par, const EfiObjList *list),
 	void *par, EfiObjList *l);
 
 EfiObj *Expr_func (void *par, const EfiObjList *list);
-EfiObj *Expr_virfunc (void *par, const EfiObjList *list);
+EfiObj *Expr_polyfunc (void *par, const EfiObjList *list);
 EfiObj *Expr_void (void *par, const EfiObjList *list);
 EfiObj *Expr_for (void *par, const EfiObjList *list);
 EfiObj *Expr_forin (void *par, const EfiObjList *list);
@@ -699,11 +699,11 @@ extern int FuncDebugLock;
 EfiFunc *ConstructFunc (const char *name, const char *def, EfiVarTab *tab);
 EfiFunc *ConstructObjFunc (const char *name, const char *def, EfiObj *obj);
 
-EfiFunc *GetFunc (EfiType *type, EfiVirFunc *tab,
+EfiFunc *GetFunc (EfiType *type, EfiPolyFunc *tab,
 	int narg, ...);
-EfiFunc *VaGetFunc (EfiType *type, EfiVirFunc *tab,
+EfiFunc *VaGetFunc (EfiType *type, EfiPolyFunc *tab,
 	int narg, va_list list);
-EfiFunc *XGetFunc (EfiType *type, EfiVirFunc *tab,
+EfiFunc *XGetFunc (EfiType *type, EfiPolyFunc *tab,
 	EfiFuncArg *arg, size_t narg);
 
 EfiFunc *NewFunc (EfiType *type, char *name);
@@ -736,7 +736,7 @@ void Func_inline (EfiFunc *func, void *rval, void **arg);
 void Func_func (EfiFunc *func, void *rval, void **arg);
 
 EfiObj *EvalFunc (EfiFunc *func, const EfiObjList *list);
-EfiObj *EvalVirFunc (EfiVirFunc *func, const EfiObjList *list);
+EfiObj *EvalVirFunc (EfiPolyFunc *func, const EfiObjList *list);
 
 EfiObj *MakeRetVal (EfiFunc *func, EfiObj *firstarg, void **arg);
 EfiObj *ConstRetVal (EfiFunc *func, void **arg);

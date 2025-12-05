@@ -202,9 +202,9 @@ static int do_cmp_sub (CmpDefEntry *entry, void *a, void *b)
 	return 0;
 }
 
-static EfiVirFunc *get_vfunc (char *name)
+static EfiPolyFunc *get_vfunc (char *name)
 {
-	EfiVirFunc *vcmp = GetGlobalFunc(name);
+	EfiPolyFunc *vcmp = GetGlobalFunc(name);
 
 	if	(!vcmp)
 		log_note(&cmp_note, FMT_GET, "s", name);
@@ -223,7 +223,7 @@ static void set_dim (CmpDefEntry *entry)
 	}
 }
 
-static void set_cmp (CmpDefEntry *entry, EfiVirFunc *vcmp)
+static void set_cmp (CmpDefEntry *entry, EfiPolyFunc *vcmp)
 {
 	if	(!vcmp)
 		vcmp = get_vfunc("cmp");
@@ -283,7 +283,7 @@ CmpDefEntry *cmp_member (EfiStruct *st, int inv)
 	return entry;
 }
 
-static CmpDefEntry *next_entry (EfiType *base, EfiVirFunc *vcmp,
+static CmpDefEntry *next_entry (EfiType *base, EfiPolyFunc *vcmp,
 	char *def, char **ptr);
 
 static int cdef_cmp (CmpDefEntry *entry, void *pa, void *pb)
@@ -319,7 +319,7 @@ static void cdef_clean (void *ptr)
 }
 
 static void set_vcmp (CmpDefEntry *entry, EfiStruct *st,
-	EfiVirFunc *vcmp, char *def, char **ptr)
+	EfiPolyFunc *vcmp, char *def, char **ptr)
 {
 	CDEF *cdef = memalloc(sizeof *cdef);
 
@@ -332,7 +332,7 @@ static void set_vcmp (CmpDefEntry *entry, EfiStruct *st,
 	entry->clean = cdef_clean;
 }
 
-static CmpDefEntry *next_entry (EfiType *base, EfiVirFunc *vcmp,
+static CmpDefEntry *next_entry (EfiType *base, EfiPolyFunc *vcmp,
 	char *def, char **ptr)
 {
 	CmpDefEntry *entry;

@@ -61,7 +61,7 @@ static int set_arg (EfiFunc *func, EfiFuncArg *arg, size_t narg, EfiObj *obj)
 /*	Test auf virtuelle Funktion
 */
 
-static int not_a_vfunc (EfiVirFunc *vtab)
+static int not_a_vfunc (EfiPolyFunc *vtab)
 {
 	if	(vtab == NULL || vtab->tab.used == 0)
 		return 1;
@@ -75,7 +75,7 @@ static int not_a_vfunc (EfiVirFunc *vtab)
 /*	Maximale Dimension bestimmen
 */
 
-static size_t get_maxdim (EfiVirFunc *vtab, size_t maxdim)
+static size_t get_maxdim (EfiPolyFunc *vtab, size_t maxdim)
 {
 	EfiFunc **func;
 	size_t n;
@@ -90,7 +90,7 @@ static size_t get_maxdim (EfiVirFunc *vtab, size_t maxdim)
 /*	Argumentliste aus Objektliste bestimmen
 */
 
-static EfiFuncArg *farg_list (EfiVirFunc *vtab,
+static EfiFuncArg *farg_list (EfiPolyFunc *vtab,
 	const EfiObjList *list, size_t dim)
 {
 	EfiFuncArg *arg;
@@ -115,7 +115,7 @@ static EfiFuncArg *farg_list (EfiVirFunc *vtab,
 /*	Funktion bestimmen
 */
 
-static EfiFunc *get_func (EfiVirFunc *vtab, EfiFuncArg *arg,
+static EfiFunc *get_func (EfiPolyFunc *vtab, EfiFuncArg *arg,
 	size_t narg, EfiConv **ptr)
 {
 	EfiFunc *func;
@@ -246,7 +246,7 @@ static EfiObj *eval_func (EfiFunc *func, EfiConv *fkonv,
 }
 
 
-EfiObj *EvalVirFunc (EfiVirFunc *vtab, const EfiObjList *list)
+EfiObj *EvalVirFunc (EfiPolyFunc *vtab, const EfiObjList *list)
 {
 	EfiConv *fkonv;
 	EfiFuncArg *arg;
@@ -273,7 +273,7 @@ EfiObj *EvalVirFunc (EfiVirFunc *vtab, const EfiObjList *list)
 
 int ShowData (IO *io, const EfiType *type, const void *data)
 {
-	EfiVirFunc *vtab;
+	EfiPolyFunc *vtab;
 	EfiFunc *func;
 	EfiConv *fkonv;
 	EfiFuncArg *arg;
@@ -296,7 +296,7 @@ int ShowData (IO *io, const EfiType *type, const void *data)
 	return ShowAny(io, type, data);
 }
 
-EfiObj *Expr_virfunc (void *par, const EfiObjList *list)
+EfiObj *Expr_polyfunc (void *par, const EfiObjList *list)
 {
 	return EvalVirFunc(par, list);
 }

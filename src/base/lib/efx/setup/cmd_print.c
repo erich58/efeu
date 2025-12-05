@@ -234,7 +234,7 @@ static void fprint_func(EfiFunc *func, void *rval, void **arg)
 static void fprint_vfunc(EfiFunc *func, void *rval, void **arg)
 {
 	IO *io;
-	EfiVirFunc *x;
+	EfiPolyFunc *x;
 	int i, n;
 
 	io = Val_io(arg[0]);
@@ -260,7 +260,7 @@ static void fprint_ofunc(EfiFunc *func, void *rval, void **arg)
 {
 	IO *io;
 	EfiObjFunc *ofunc;
-	EfiVirFunc *vfunc;
+	EfiPolyFunc *vfunc;
 	int i, n;
 
 	io = Val_io(arg[0]);

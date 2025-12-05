@@ -251,7 +251,7 @@ static void print_data (IO *io, int mode, char *data, EfiStruct **ptr, size_t di
 /*	Datenbankwerte ausgeben
 */
 
-void DB_save(IO *io, EfiDB *db, int mode, EfiVirFunc *test, char *list)
+void DB_save(IO *io, EfiDB *db, int mode, EfiPolyFunc *test, char *list)
 {
 	size_t dim;
 	EfiStruct **ptr;

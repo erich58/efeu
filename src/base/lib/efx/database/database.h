@@ -45,7 +45,7 @@ EfiDB *DB_create (EfiType *type, size_t blk);
 void DB_load (IO *io, EfiDB *db, EfiObj *expr);
 void DB_xload (IO *io, EfiDB *db, EfiObj *expr);
 
-void DB_save (IO *io, EfiDB *db, int mode, EfiVirFunc *test, char *list);
+void DB_save (IO *io, EfiDB *db, int mode, EfiPolyFunc *test, char *list);
 
 void *DB_search (EfiDB *db, void *data, int flag);
 void DB_sort (EfiDB *db);

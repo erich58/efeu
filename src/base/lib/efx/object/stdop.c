@@ -326,21 +326,21 @@ static EfiObj *bool_op(IO *io, EfiOp *op, EfiObj *left)
 static EfiObj *funcarg(IO *io, EfiOp *op, EfiObj *left)
 {
 	EfiObjList *list;
-	EfiVirFunc *virfunc;
+	EfiPolyFunc *polyfunc;
 
 	list = Parse_list(io, ')');
-	virfunc = NULL;
+	polyfunc = NULL;
 
 	if	(left->type == &Type_type)
 	{
 		EfiType *type = Val_type(left->data);
-		virfunc = type ? type->create : NULL;
+		polyfunc = type ? type->create : NULL;
 	}
 
-	if	(virfunc != NULL)
+	if	(polyfunc != NULL)
 	{
 		UnrefObj(left);
-		return Obj_call(Expr_virfunc, virfunc, list);
+		return Obj_call(Expr_polyfunc, polyfunc, list);
 	}
 	else	return BinaryTerm("()", left, Obj_list(list));
 }

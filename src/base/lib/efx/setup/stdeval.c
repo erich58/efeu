@@ -399,7 +399,7 @@ static void f_proto (CmdPar *par, IO *io, const char *arg)
 	char *ident;
 	char *name;
 	char *type;
-	EfiVirFunc *tab;
+	EfiPolyFunc *tab;
 	EfiFunc **ftab;
 	int i;
 

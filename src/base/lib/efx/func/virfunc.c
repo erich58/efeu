@@ -25,11 +25,11 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	VIRFUNC_BSIZE	16
 
-static ALLOCTAB(tab_virfunc, "EfiVirFunc", 0, sizeof(EfiVirFunc));
+static ALLOCTAB(tab_virfunc, "EfiPolyFunc", 0, sizeof(EfiPolyFunc));
 
 static void virfunc_clean (void *data)
 {
-	EfiVirFunc *tg = data;
+	EfiPolyFunc *tg = data;
 	int i;
 	EfiFunc **func;
 
@@ -45,7 +45,7 @@ static void virfunc_clean (void *data)
 
 static char *virfunc_ident (const void *data)
 {
-	const EfiVirFunc *func = data;
+	const EfiPolyFunc *func = data;
 	return func->tab.used ?
 		rd_ident(((EfiFunc **) func->tab.data)[0]) : NULL;
 }
@@ -55,13 +55,13 @@ static RefType VirFuncRefType = REFTYPE_INIT("VirFunc",
 
 int IsVirFunc (void *ptr)
 {
-	EfiVirFunc *func = ptr;
+	EfiPolyFunc *func = ptr;
 	return (func && func->reftype == &VirFuncRefType);
 }
 
-EfiVirFunc *VirFunc (EfiFunc *func)
+EfiPolyFunc *VirFunc (EfiFunc *func)
 {
-	EfiVirFunc *vf;
+	EfiPolyFunc *vf;
 
 	if	(IsVirFunc(func))
 		return rd_refer(func);

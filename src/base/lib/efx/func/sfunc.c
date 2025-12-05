@@ -82,7 +82,7 @@ static void show_dist(IO *io, EfiFunc *func, int dist,
 static int get_convdef(EfiFunc *func, size_t narg,
 	EfiFuncArg *arg, EfiConv *conv);
 
-EfiFunc *SearchFunc (EfiVirFunc *vtab, EfiFuncArg *arg,
+EfiFunc *SearchFunc (EfiPolyFunc *vtab, EfiFuncArg *arg,
 	size_t narg, EfiConv **ptr)
 {
 	EfiConv *x, *konv, *curkonv;

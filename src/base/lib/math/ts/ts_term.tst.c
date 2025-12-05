@@ -29,7 +29,7 @@ TEST_DECL(setup)
 
 TEST_DECL(func)
 {
-	EfiVirFunc *func = GetGlobalFunc("exp");
+	EfiPolyFunc *func = GetGlobalFunc("exp");
 	EXPECT(func != NULL);
 
 	TimeSeries *base = ts_create("base", tindex_create(TS_INDEX, 0), 0);	
@@ -56,7 +56,7 @@ TEST_DECL(func)
 
 TEST_DECL(assign)
 {
-	EfiVirFunc *func = GetTypeFunc(&Type_double, "+=");
+	EfiPolyFunc *func = GetTypeFunc(&Type_double, "+=");
 	EXPECT(func != NULL);
 	EfiObj *i1 = int2Obj(1);
 	EfiObj *d1 = double2Obj(1.);
@@ -118,7 +118,7 @@ TEST_DECL(assign)
 
 TEST_DECL(term)
 {
-	EfiVirFunc *func = GetGlobalFunc("+");
+	EfiPolyFunc *func = GetGlobalFunc("+");
 	EXPECT(func != NULL);
 	EfiObj *i1 = int2Obj(1);
 	EfiObj *d1 = double2Obj(1.);

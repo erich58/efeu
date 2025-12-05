@@ -280,7 +280,7 @@ mdmat *md_mul (mdmat *m1, mdmat *m2, int flag);
 mdmat *md_sum (mdmat *md, const char *str);
 mdmat *md_diag (mdmat *md, const char *str);
 mdmat *md_assign (const char *name, mdmat *m1, mdmat *m2);
-mdmat *md_term (EfiVirFunc *func, mdmat *m1, mdmat *m2);
+mdmat *md_term (EfiPolyFunc *func, mdmat *m1, mdmat *m2);
 mdmat *md_cat (const char *name, mdmat **md, size_t dim);
 
 

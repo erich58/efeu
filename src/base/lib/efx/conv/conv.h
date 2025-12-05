@@ -64,7 +64,7 @@ EfiConv *GetArgConv (EfiConv *buf, const EfiType *src, const EfiType *tg);
 EfiObj *ConvObj (const EfiObj *obj, EfiType *def);
 EfiObj *LvalCast (EfiObj *obj, EfiType *def);
 
-EfiFunc *SearchFunc (EfiVirFunc *tab, EfiFuncArg *arg,
+EfiFunc *SearchFunc (EfiPolyFunc *tab, EfiFuncArg *arg,
 	size_t narg, EfiConv **conv);
 
 EfiConv *GetConv (EfiConv *buf, const EfiType *otype, const EfiType *ntype);

@@ -160,7 +160,7 @@ static void f_tfunc (EfiFunc *func, void *rval, void **arg)
 
 	for (x = type; x != NULL; x = x->base)
 	{
-		EfiVirFunc *ftab = type->create;
+		EfiPolyFunc *ftab = type->create;
 
 		if	(ftab && ftab->tab.used)
 		{

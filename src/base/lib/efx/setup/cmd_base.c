@@ -231,7 +231,7 @@ EfiType Type_ref = PTR_TYPE("_Ref_", void *, &Type_ptr,
 	NULL, Clean_ref, Copy_ref);
 EfiType Type_efi = REF_TYPE ("Efi", Efi *);
 EfiType Type_func = REF_TYPE("Func", EfiFunc *);
-EfiType Type_vfunc = REF_TYPE("VirFunc", EfiVirFunc *);
+EfiType Type_vfunc = REF_TYPE("VirFunc", EfiPolyFunc *);
 EfiType Type_vtab = REF_TYPE("VarTab", EfiVarTab *);
 EfiType Type_io = REF_TYPE ("IO", IO *);
 

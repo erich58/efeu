@@ -27,7 +27,7 @@ If not, write to the Free Software Foundation, Inc.,
 #define	SetData(func, data, a, b, c)	\
 	CallFunc(&Type_double, (data) + (a), func, (data) + (b), (data) + (c))
 
-TimeSeries *ts_diff (TimeSeries *ts, int n, EfiVirFunc *fptr)
+TimeSeries *ts_diff (TimeSeries *ts, int n, EfiPolyFunc *fptr)
 {
 	EfiFunc *func;
 	TimeSeries *base;
@@ -79,7 +79,7 @@ TimeSeries *ts_diff (TimeSeries *ts, int n, EfiVirFunc *fptr)
 }
 
 
-void ts_cumulate (TimeSeries *ts, TimeSeries *base, EfiVirFunc *fptr)
+void ts_cumulate (TimeSeries *ts, TimeSeries *base, EfiPolyFunc *fptr)
 {
 	EfiFunc *func;
 	TimeIndex idx;

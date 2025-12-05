@@ -43,7 +43,7 @@ typedef struct {
 static void GetFuncEval (EfiFunc *func, void *rval, void **ptr);
 
 
-EfiFunc *XGetFunc (EfiType *type, EfiVirFunc *vtab,
+EfiFunc *XGetFunc (EfiType *type, EfiPolyFunc *vtab,
 	EfiFuncArg *arg, size_t narg)
 {
 	FUNCDEF *def;
@@ -162,7 +162,7 @@ EfiFuncArg *VaFuncArg (int narg, va_list list)
 }
 
 
-EfiFunc *GetFunc (EfiType *type, EfiVirFunc *tab, int narg, ...)
+EfiFunc *GetFunc (EfiType *type, EfiPolyFunc *tab, int narg, ...)
 {
 	EfiFunc *func;
 	EfiFuncArg *arg;
@@ -177,7 +177,7 @@ EfiFunc *GetFunc (EfiType *type, EfiVirFunc *tab, int narg, ...)
 }
 
 
-EfiFunc *VaGetFunc (EfiType *type, EfiVirFunc *tab, int narg, va_list list)
+EfiFunc *VaGetFunc (EfiType *type, EfiPolyFunc *tab, int narg, va_list list)
 {
 	EfiFunc *func;
 	EfiFuncArg *arg;

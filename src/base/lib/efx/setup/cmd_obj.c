@@ -383,7 +383,7 @@ static void f_odata (EfiFunc *func, void *rval, void **arg)
 /*	sorting and seraching
 */
 
-static EfiVirFunc *list_qsort_func = NULL;
+static EfiPolyFunc *list_qsort_func = NULL;
 
 static int list_qsort_cmp (const void *ap, const void *bp)
 {
@@ -403,7 +403,7 @@ static void list_qsort (EfiFunc *func, void *rval, void **arg)
 {
 	EfiObjList *list, *p;
 	EfiObj **tab;
-	EfiVirFunc *save;
+	EfiPolyFunc *save;
 	size_t n;
 	
 	list = Val_ptr(arg[0]);
@@ -438,7 +438,7 @@ static void list_uniq (EfiFunc *func, void *rval, void **arg)
 {
 	EfiObjList *list, *p;
 	EfiObj **tab;
-	EfiVirFunc *save;
+	EfiPolyFunc *save;
 	size_t n, k;
 	
 	list = Val_ptr(arg[0]);
@@ -485,7 +485,7 @@ static void list_bsearch (EfiFunc *func, void *rval, void **arg)
 {
 	EfiObjList *list, *p;
 	EfiObj *obj, **tab, **ptr;
-	EfiVirFunc *save;
+	EfiPolyFunc *save;
 	size_t n;
 	
 	list = Val_ptr(arg[0]);

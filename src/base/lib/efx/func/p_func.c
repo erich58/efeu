@@ -30,7 +30,7 @@ If not, write to the Free Software Foundation, Inc.,
 static EfiObj *get_func(EfiFunc *func)
 {
 	EfiFunc *f;
-	EfiVirFunc *vf;
+	EfiPolyFunc *vf;
 
 	if	(func->bound)
 		vf = GetTypeFunc(func->arg[0].type, func->name);

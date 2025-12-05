@@ -24,7 +24,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 #include <Math/TimeSeries.h>
 
-void ts_assign (EfiVirFunc *fptr, TimeSeries *t1,
+void ts_assign (EfiPolyFunc *fptr, TimeSeries *t1,
 	EfiType *type, void *data)
 {
 	EfiFunc *func;
@@ -97,7 +97,7 @@ void ts_assign (EfiVirFunc *fptr, TimeSeries *t1,
 }
 
 
-TimeSeries *ts_func (EfiVirFunc *fptr, TimeSeries *t1)
+TimeSeries *ts_func (EfiPolyFunc *fptr, TimeSeries *t1)
 {
 	TimeSeries *ts;
 	EfiFunc *func;
@@ -121,7 +121,7 @@ TimeSeries *ts_func (EfiVirFunc *fptr, TimeSeries *t1)
 	return ts;
 }
 
-TimeSeries *ts_term (EfiVirFunc *fptr,
+TimeSeries *ts_term (EfiPolyFunc *fptr,
 	EfiType *type1, void *arg1, EfiType *type2, void *arg2)
 {
 	EfiFunc *func;

@@ -95,8 +95,8 @@ TimeSeries *ts_read (IO *io);
 int ts_write (IO *io, const TimeSeries *ts);
 int ts_print (IO *io, const TimeSeries *ts, const char *fmt);
 
-TimeSeries *ts_diff (TimeSeries *ts, int lag, EfiVirFunc *func);
-void ts_cumulate (TimeSeries *ts, TimeSeries *base, EfiVirFunc *func);
+TimeSeries *ts_diff (TimeSeries *ts, int lag, EfiPolyFunc *func);
+void ts_cumulate (TimeSeries *ts, TimeSeries *base, EfiPolyFunc *func);
 
 void ts_ma (TimeSeries *ts, int n);
 void ts_cma (TimeSeries *ts, int n);
@@ -166,10 +166,10 @@ void CmdSetup_TimeSeries (void);
 void CmdSetup_OLSCoeff (void);
 void CmdSetup_OLSPar (void);
 
-void ts_assign (EfiVirFunc *fptr, TimeSeries *ts,
+void ts_assign (EfiPolyFunc *fptr, TimeSeries *ts,
 	EfiType *type2, void *arg2);
-TimeSeries *ts_func (EfiVirFunc *fptr, TimeSeries *ts);
-TimeSeries *ts_term (EfiVirFunc *fptr,
+TimeSeries *ts_func (EfiPolyFunc *fptr, TimeSeries *ts);
+TimeSeries *ts_term (EfiPolyFunc *fptr,
 	EfiType *type1, void *arg1,
 	EfiType *type2, void *arg2);
 

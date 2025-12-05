@@ -58,7 +58,7 @@ TEST_DECL(term)
 	mdmat *a = NULL;
 	mdmat *b = NULL;
 	mdmat *x = NULL;
-	EfiVirFunc *vfunc = NULL;
+	EfiPolyFunc *vfunc = NULL;
 
 	EXPECT(md_term(NULL, NULL, NULL) == NULL);
 
@@ -102,7 +102,7 @@ TEST_DECL(mixed)
 	mdmat *a = NULL;
 	mdmat *b = NULL;
 	mdmat *x = NULL;
-	EfiVirFunc *vfunc = NULL;
+	EfiPolyFunc *vfunc = NULL;
 
 	EXPECT_PTR(a = md_create(&Type_int, "a=a1,a2,a3"));
 

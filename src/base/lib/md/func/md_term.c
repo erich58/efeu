@@ -96,18 +96,18 @@ static void do_md_term (EfiFunc *func, mdaxis *x, char *p, mdaxis *x1,
 
 mdmat *md_assign (const char *name, mdmat *m1, mdmat *m2)
 {
-	EfiVirFunc *virfunc;
+	EfiPolyFunc *polyfunc;
 	EfiFunc *func;
 
 	if	(m1 == NULL)	return NULL;
 
-	virfunc = GetTypeFunc(m1->type, name);
+	polyfunc = GetTypeFunc(m1->type, name);
 
 	if	(m2)
 	{
-		func = GetFunc(NULL, virfunc, 2, m1->type, 1, m2->type, 0);
+		func = GetFunc(NULL, polyfunc, 2, m1->type, 1, m2->type, 0);
 	}
-	else	func = GetFunc(NULL, virfunc, 1, m1->type, 1);
+	else	func = GetFunc(NULL, polyfunc, 1, m1->type, 1);
 
 	if	(func == NULL)
 	{
@@ -123,7 +123,7 @@ mdmat *md_assign (const char *name, mdmat *m1, mdmat *m2)
 }
 
 
-mdmat *md_term (EfiVirFunc *virfunc, mdmat *m1, mdmat *m2)
+mdmat *md_term (EfiPolyFunc *polyfunc, mdmat *m1, mdmat *m2)
 {
 	EfiFunc *func;
 	mdmat *md;
@@ -134,9 +134,9 @@ mdmat *md_term (EfiVirFunc *virfunc, mdmat *m1, mdmat *m2)
 	}
 	else if	(m2 == NULL)
 	{
-		func = GetFunc(NULL, virfunc, 1, m1->type, 0);
+		func = GetFunc(NULL, polyfunc, 1, m1->type, 0);
 	}
-	else	func = GetFunc(NULL, virfunc, 2, m1->type, 0, m2->type, 0);
+	else	func = GetFunc(NULL, polyfunc, 2, m1->type, 0, m2->type, 0);
 
 	if	(func == NULL)
 	{
