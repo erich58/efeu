@@ -102,29 +102,29 @@ ASSIGN(a_add, T, +=, T)
 ASSIGN(a_sub, T, -=, T)
 
 static EfiFuncDef ftab[] = {
-	{ FUNC_VIRTUAL, NULL, S " abs (" S ")", f_abs },
-	{ FUNC_VIRTUAL, NULL, S " min (" S ", " S ")", f_min },
-	{ FUNC_VIRTUAL, NULL, S " max (" S ", " S ")", f_max },
+	{ FUNC_OVERLOAD, NULL, S " abs (" S ")", f_abs },
+	{ FUNC_OVERLOAD, NULL, S " min (" S ", " S ")", f_min },
+	{ FUNC_OVERLOAD, NULL, S " max (" S ", " S ")", f_max },
 
 	{ FUNC_RESTRICTED, &Type_bool, S " ()", to_bool },
-	{ FUNC_VIRTUAL, &Type_bool, "operator!() (" S ")", l_not },
-	{ FUNC_VIRTUAL, NULL, S " operator+() (" S ")", l_plus },
-	{ FUNC_VIRTUAL, NULL, S " operator-() (" S ")", l_minus },
+	{ FUNC_OVERLOAD, &Type_bool, "operator!() (" S ")", l_not },
+	{ FUNC_OVERLOAD, NULL, S " operator+() (" S ")", l_plus },
+	{ FUNC_OVERLOAD, NULL, S " operator-() (" S ")", l_minus },
 
-	{ FUNC_VIRTUAL, NULL, S " operator* (" S ", " S ")", b_mul },
-	{ FUNC_VIRTUAL, NULL, S " operator/ (" S ", " S ")", b_div },
-	{ FUNC_VIRTUAL, NULL, S " operator+ (" S ", " S ")", b_add },
-	{ FUNC_VIRTUAL, NULL, S " operator- (" S ", " S ")", b_sub },
+	{ FUNC_OVERLOAD, NULL, S " operator* (" S ", " S ")", b_mul },
+	{ FUNC_OVERLOAD, NULL, S " operator/ (" S ", " S ")", b_div },
+	{ FUNC_OVERLOAD, NULL, S " operator+ (" S ", " S ")", b_add },
+	{ FUNC_OVERLOAD, NULL, S " operator- (" S ", " S ")", b_sub },
 
-	{ FUNC_VIRTUAL, &Type_bool, "operator< (" S ", " S ")", b_lt },
-	{ FUNC_VIRTUAL, &Type_bool, "operator<= (" S ", " S ")", b_le },
-	{ FUNC_VIRTUAL, &Type_bool, "operator== (" S ", " S ")", b_eq },
-	{ FUNC_VIRTUAL, &Type_bool, "operator!= (" S ", " S ")", b_ne },
-	{ FUNC_VIRTUAL, &Type_bool, "operator>= (" S ", " S ")", b_ge },
-	{ FUNC_VIRTUAL, &Type_bool, "operator> (" S ", " S ")", b_gt },
+	{ FUNC_OVERLOAD, &Type_bool, "operator< (" S ", " S ")", b_lt },
+	{ FUNC_OVERLOAD, &Type_bool, "operator<= (" S ", " S ")", b_le },
+	{ FUNC_OVERLOAD, &Type_bool, "operator== (" S ", " S ")", b_eq },
+	{ FUNC_OVERLOAD, &Type_bool, "operator!= (" S ", " S ")", b_ne },
+	{ FUNC_OVERLOAD, &Type_bool, "operator>= (" S ", " S ")", b_ge },
+	{ FUNC_OVERLOAD, &Type_bool, "operator> (" S ", " S ")", b_gt },
 
-	{ FUNC_VIRTUAL, NULL, S " operator++ (" S " &)", r_inc },
-	{ FUNC_VIRTUAL, NULL, S " operator-- (" S " &)", r_dec },
+	{ FUNC_OVERLOAD, NULL, S " operator++ (" S " &)", r_inc },
+	{ FUNC_OVERLOAD, NULL, S " operator-- (" S " &)", r_dec },
 	
 	{ 0, NULL, S " & " S "::operator++ & ()", l_inc },
 	{ 0, NULL, S " & " S "::operator-- & ()", l_dec },

@@ -642,7 +642,6 @@ typedef struct {
 #define	FUNC_RESTRICTED	0x2	/* Eingeschränkte Konvertierung */
 #define	FUNC_LRETVAL	0x4	/* Rückgabe eines L-Wertes */
 #define	FUNC_XRETVAL	0x8	/* Rückgabe eines Objektpointers */
-#define	FUNC_VIRTUAL	0x10	/* Überladbare Funktion (veraltet) */
 #define	FUNC_OVERLOAD	0x10	/* Überladbare Funktion */
 #define	FUNC_BOUND	0x20	/* Typegebundene Funktion */
 #define	FUNC_VAARG	0x40	/* Variable Argumentzahl */
