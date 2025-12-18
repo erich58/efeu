@@ -153,6 +153,7 @@ IO *io_tmpfile (void);
 IO *io_popen (const char *name, const char *mode);
 IO *io_interact (const char *prompt, const char *hist);
 IO *io_batch (void);
+IO *io_fdout(int fd, size_t bsize);
 
 extern IO *(*_interact_open) (const char *prompt, const char *hist);
 extern IO *(*_interact_filter) (IO *io);
