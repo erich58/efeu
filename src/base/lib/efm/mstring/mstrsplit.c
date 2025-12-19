@@ -51,14 +51,20 @@ size_t mstrsplit(const char *str, const char *delim, char ***ptr)
 	if	(ptr == NULL)	return 0;
 	else			*ptr = NULL;
 
-	if	(str == NULL)	return 0;
+	if	(str == NULL)
+	{
+		*ptr = memalloc(sizeof **ptr);
+		(*ptr)[0] = NULL;
+		return 0;
+	}
 
 	sb_init(&sb, 0);
-	i = dim = 0;
+	i = 0;
+	dim = 1;	/* Wegen Nullabschluß */
 
 /*	String umkopieren
 */
-	for (; listcmp(delim, *str); str++)
+	for (; listcmp(delim, *str); ++str)
 	{
 		if	(!SPACE(*str))
 		{
@@ -99,21 +105,21 @@ size_t mstrsplit(const char *str, const char *delim, char ***ptr)
 	if	(i)
 	{
 		sb_putc(0, &sb);
-		dim++;
+		++dim;
 	}
 
 /*	Initialisieren der Teilstringstruktur
 */
-	if	(dim)
-	{
-		*ptr = memalloc(sb.pos + dim * sizeof(char *));
-		p = (void *) ((*ptr) + dim);
-		memcpy(p, sb.data, sb.pos);
+	*ptr = memalloc(sb.pos + dim * sizeof **ptr);
+	p = (void *) ((*ptr) + dim);
+	memcpy(p, sb.data, sb.pos);
 
-		for (i = 0; i < dim; i++, p++)
-			for ((*ptr)[i] = p; *p != 0; p++)
-				;
-	}
+	--dim;
+	(*ptr)[dim] = NULL;
+
+	for (i = 0; i < dim; ++i, ++p)
+		for ((*ptr)[i] = p; *p != 0; p++)
+			;
 
 	sb_free(&sb);
 	return dim;

@@ -132,6 +132,7 @@ TEST_DECL(mstrsplit)
 
 	char **tab;
 	EXPECT(mstrsplit(NULL, "%s,", &tab) == 0);
+	EXPECT_STR(tab[0], NULL);
 	EXPECT(mstrsplit("a b", "%s,", NULL) == 0);
 	EXPECT(mstrsplit(" , a b , , c", "%s,", &tab) == 5);
 	EXPECT_STR(tab[0], "");
@@ -139,6 +140,7 @@ TEST_DECL(mstrsplit)
 	EXPECT_STR(tab[2], "b");
 	EXPECT_STR(tab[3], "");
 	EXPECT_STR(tab[4], "c");
+	EXPECT_STR(tab[5], NULL);
 }
 
 TEST_DECL(msprintf)
