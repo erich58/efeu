@@ -121,6 +121,11 @@ TEST_DECL(lsplit)
 	EXPECT_STR(UnitTest_next(ustr), "xyz");
 	EXPECT_STR(UnitTest_next(ustr), NULL);
 
+	EXPECT(UnitTest_lsplit(ustr, "abc\rxyz\r") == 2);
+	EXPECT_STR(UnitTest_next(ustr), "abc\\r\\");
+	EXPECT_STR(UnitTest_next(ustr), "xyz\\r\\");
+	EXPECT_STR(UnitTest_next(ustr), NULL);
+
 	EXPECT(UnitTest_lsplit(ustr, "") == 1);
 	EXPECT_STR(UnitTest_next(ustr), "");
 	EXPECT_STR(UnitTest_next(ustr), NULL);

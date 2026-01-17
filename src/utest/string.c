@@ -345,7 +345,17 @@ size_t UnitTest_lsplit(UnitTestString *buf, const char *str)
 				break;
 
 			UnitTest_putc(0, buf);
-			n++;
+			++n;
+		}
+		else if	(*str == '\r')
+		{
+			UnitTest_puts("\\r\\", buf);
+
+			if	(!str[1])
+				break;
+
+			UnitTest_putc(0, buf);
+			++n;
 		}
 		else
 		{
@@ -354,7 +364,7 @@ size_t UnitTest_lsplit(UnitTestString *buf, const char *str)
 	}
 
 	UnitTest_putc(0, buf);
-	n++;
+	++n;
 	UnitTest_start(buf);
 	return n;
 }
