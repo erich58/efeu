@@ -30,25 +30,23 @@ static const char *utest_out(void)
 	return p;
 }
 
-#define	EXPECT_OUT(s)	UnitTest_strcheck(__FILE__, __LINE__, \
-	"==", utest_out(), s, "output()", # s)
-
-#define	MATCH_OUT(s)	UnitTest_strcheck(__FILE__, __LINE__, \
-	"~", utest_out(), s, "output()", # s)
-
-#define	PRINT_OUT()	UnitTest_strinfo(__FILE__, __LINE__, \
-	"INFO", utest_out(), "output()")
-
 #define	EXPECT_NOUT(n, s)	UnitTest_strcheck(__FILE__, __LINE__, \
 	"==", utest_out(), s, # n, # s)
 
 #define	MATCH_NOUT(n, s)	UnitTest_strcheck(__FILE__, __LINE__, \
 	"~", utest_out(), s, # n, # s)
 
+#define	LMATCH_NOUT(n, s)	UnitTest_linematch(__FILE__, __LINE__, \
+	utest_out(), s, # n)
+
 #define	PRINT_NOUT(n)	UnitTest_strinfo(__FILE__, __LINE__, \
 	"INFO", utest_out(), # n)
 
-#define	CLEANUP_OUT	utest_out_clean()
+#define	EXPECT_OUT(s)	EXPECT_NOUT(output(), s)
+#define	MATCH_OUT(s)	MATCH_NOUT(output(), s)
+#define	LMATCH_OUT(s)	LMATCH_NOUT(output(), s)
+#define	PRINT_OUT()	PRINT_NOUT(output())
 
+#define	CLEANUP_OUT	utest_out_clean()
 
 #endif
