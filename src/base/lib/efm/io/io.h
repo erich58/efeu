@@ -289,4 +289,9 @@ IO *diropen (const char *name, const char *base);
 int io_newpart (IO *io, const char *name, const char *repl);
 int io_endpart (IO *io);
 
+/*	Limitierte Datenausgabe
+*/
+
+IO *io_limit(IO *out, size_t size);
+
 #endif	/* EFEU/io.h */
