@@ -293,5 +293,6 @@ int io_endpart (IO *io);
 */
 
 IO *io_limit(IO *out, size_t size);
+IO *io_heredoc(IO *out, const char *delim);
 
 #endif	/* EFEU/io.h */

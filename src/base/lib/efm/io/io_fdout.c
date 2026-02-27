@@ -75,6 +75,7 @@ static int f_ctrl (IO *io, int req, va_list list)
 	case IO_CLOSE:
 
 		stat = close(out->fd.fd);
+		sb_free(&out->buf);
 		memfree(out);
 		return stat;
 
