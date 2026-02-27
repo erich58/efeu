@@ -16,7 +16,7 @@ IO *io_heredoc(IO *out, const char *delim)
 	HEREDOC *hdoc = memalloc(sizeof *hdoc);
 	sb_init(&hdoc->buf, 512);
 	hdoc->out = out;
-	hdoc->delim = mstrcpy(delim);
+	hdoc->delim = mstrcpy(delim ? delim : "");
 
 	IO *io = io_alloc();
 	io->put = f_put;
