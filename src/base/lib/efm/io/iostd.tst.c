@@ -43,7 +43,7 @@ TEST_DECL(iostd)
 	EXPECT(io_ctrl(iostd, IO_REWIND) == EOF);
 	EXPECT(io_ctrl(iostd, IO_FDIN) == 0);
 	EXPECT(io_ctrl(iostd, IO_FDOUT) == 1);
-	EXPECT(io_ctrl(iostd, IO_FLUSH) == 0);
+	EXPECT(io_flush(iostd) == 0);
 	EXPECT(io_ctrl(iostd, IO_CLOSE) == 0);
 }
 

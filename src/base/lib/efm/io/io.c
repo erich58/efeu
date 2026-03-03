@@ -67,6 +67,11 @@ int io_close (IO *io)
 	return io_close_stat;
 }
 
+int io_flush (IO *io)
+{
+	return io_ctrl(io, IO_FLUSH);
+}
+
 
 /*	Gepufferte Zeichen zurückschreiben
 */

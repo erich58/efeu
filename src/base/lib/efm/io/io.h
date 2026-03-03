@@ -103,6 +103,7 @@ int io_ungetc (int c, IO *io);
 int io_pushback (IO *io);
 int io_rewind (IO *io);
 int io_close (IO *io);
+int io_flush (IO *io);
 int io_err (IO *io);
 
 extern int io_close_stat;
