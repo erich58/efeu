@@ -13,9 +13,7 @@ IO *io_fdout(int fd, size_t blksize);
 
 static unsigned pending(IO *io)
 {
-	unsigned pos;
-	io_ctrl(io, IO_GETPOS, &pos);
-	return pos;
+	return io_ctrl(io, IO_PENDING);
 }
 
 TEST_DECL(file)
@@ -29,7 +27,7 @@ TEST_DECL(file)
 
 	io_puts("abc", io);
 	EXPECT_INT(pending(io), 3);
-	EXPECT_INT(io_ctrl(io, IO_FLUSH), 0);
+	EXPECT_INT(io_flush(io), 0);
 	EXPECT_INT(pending(io), 0);
 	io_puts("xyz\n", io);
 	EXPECT_INT(pending(io), 0);
@@ -56,22 +54,27 @@ TEST_DECL(pipe)
 	IO *io = io_fdout(fd[1], 8);
 
 	io_puts("1234567\n", io);
-	EXPECT_INT(io_ctrl(io, IO_FLUSH), 0);
+	EXPECT_INT(io_flush(io), 0);
 	io_puts("1234567\n", io);
-	EXPECT_INT(io_ctrl(io, IO_FLUSH), 8);
+	EXPECT_INT(io_flush(io), EOF);
+	EXPECT(errno == EAGAIN);
+	EXPECT_INT(pending(io), 8);
 
 	int n = 0;
 
 	while (n < psize)
 		n += io_puts("1234567\n", io);
 
-	EXPECT_INT(io_ctrl(io, IO_FLUSH), psize + 8);
+	EXPECT_INT(io_flush(io), EOF);
+	EXPECT(errno == EAGAIN);
+	EXPECT_INT(pending(io), psize + 8);
 
 	char *data = malloc(2 * psize);
 	EXPECT_INT(read(fd[0], data, 2 * psize), 8);
-	EXPECT_INT(io_ctrl(io, IO_FLUSH), 8);
+	EXPECT_INT(io_flush(io), EOF);
+	EXPECT(errno == EAGAIN);
 	EXPECT_INT(read(fd[0], data, 2 * psize), psize);
-	EXPECT_INT(io_ctrl(io, IO_FLUSH), 0);
+	EXPECT_INT(io_flush(io), 0);
 	EXPECT_INT(read(fd[0], data, 2 * psize), 8);
 
 	io_close(io);
@@ -90,10 +93,11 @@ TEST_DECL(socket)
 	int n = 0;
 	int k = 0;
 
-	while ((k = io_ctrl(io, IO_FLUSH)) == 0)
+	while (io_flush(io) == 0)
 		n += io_puts("1234567\n", io);
 
 	PRINT_INT(n);
+	k = pending(io);
 	PRINT_INT(k);
 
 	EXPECT_INT(read(socket[0], data, sizeof data), n - k);

@@ -58,6 +58,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 #define	IO_NEWPART		(IO_STDCTRL|0x31)
 #define	IO_ENDPART		(IO_STDCTRL|0x32)
+#define	IO_PENDING		(IO_STDCTRL|0x33)
 
 #define	IOPP_COMMENT		(IO_STDCTRL|0x41)
 #define	IOPP_EXPAND		(IO_STDCTRL|0x42)

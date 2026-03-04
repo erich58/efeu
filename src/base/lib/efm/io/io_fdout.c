@@ -2,6 +2,7 @@
 #include <EFEU/ioctrl.h>
 #include <EFEU/mstring.h>
 #include <poll.h>
+#include <errno.h>
 
 typedef struct {
 	StrBuf buf;
@@ -84,7 +85,13 @@ static int f_ctrl (IO *io, int req, va_list list)
 		if	(out->buf.pos)
 			fdout_flush(out);
 
-		return out->buf.pos;
+		if	(out->buf.pos)
+		{
+			errno = EAGAIN;
+			return EOF;
+		}
+
+		return 0;
 
 	case IO_IDENT:
 
@@ -98,6 +105,10 @@ static int f_ctrl (IO *io, int req, va_list list)
 	case IO_FDOUT:
 
 		return out->fd.fd;
+
+	case IO_PENDING:
+
+		return out->buf.pos;
 
 	default:
 
