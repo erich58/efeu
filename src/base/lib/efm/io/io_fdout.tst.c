@@ -9,8 +9,6 @@
 #include <sys/socket.h>
 #include <errno.h>
 
-IO *io_fdout(int fd, size_t blksize);
-
 static unsigned pending(IO *io)
 {
 	return io_ctrl(io, IO_PENDING);
@@ -19,7 +17,7 @@ static unsigned pending(IO *io)
 TEST_DECL(file)
 {
 	FILE *out = fopen(UnitTest_tmp("data"), "w");
-	IO *io = io_fdout(fileno(out), 8);
+	IO *io = io_fdout(fileno(out), 0, 8);
 
 	EXPECT(io_ctrl(io, IO_FDOUT) == fileno(out));
 	MATCH_STR(io_xident(io, NULL), "fdout\\([0-9]*)");
@@ -51,7 +49,7 @@ TEST_DECL(pipe)
 	PRINT_INT(fcntl(fd[0], F_SETPIPE_SZ, psize));
 	EXPECT_INT(fcntl(fd[0], F_GETPIPE_SZ), psize);
 	
-	IO *io = io_fdout(fd[1], 8);
+	IO *io = io_fdout(fd[1], 0, 8);
 
 	io_puts("1234567\n", io);
 	EXPECT_INT(io_flush(io), 0);
@@ -88,7 +86,7 @@ TEST_DECL(socket)
 	int socket[2];
 	ASSERT(socketpair(AF_UNIX, SOCK_STREAM|SOCK_NONBLOCK, 0, socket) == 0);
 
-	IO *io = io_fdout(socket[1], 0);
+	IO *io = io_fdout(socket[1], 0, 0);
 
 	int n = 0;
 	int k = 0;

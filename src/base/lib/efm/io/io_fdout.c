@@ -7,6 +7,7 @@
 typedef struct {
 	StrBuf buf;
 	struct pollfd fd;
+	int timeout;
 } FDOUT;
 
 static void fdout_flush(FDOUT *out);
@@ -14,12 +15,14 @@ static void fdout_flush(FDOUT *out);
 static int f_put (int c, IO *io);
 static int f_ctrl (IO *io, int req, va_list list);
 
-IO *io_fdout(int fd, size_t bsize)
+IO *io_fdout(int fd, int timeout, size_t bsize)
 {
 	FDOUT *fdout = memalloc(sizeof *fdout);
 	sb_init(&fdout->buf, bsize);
+	sb_expand(&fdout->buf, 1);
 	fdout->fd.fd = fd;
 	fdout->fd.events = POLLOUT;
+	fdout->timeout = timeout;
 
 	IO *io = io_alloc();
 	io->put = f_put;
@@ -34,6 +37,10 @@ IO *io_fdout(int fd, size_t bsize)
 static int f_put (int c, IO *io)
 {
 	FDOUT *out = io->data;
+
+	if	(out->buf.nfree == 0)
+		fdout_flush(out);
+
 	c = sb_putc(c, &out->buf);
 
 	if	(c == '\n' || out->buf.nfree == 0)
@@ -44,7 +51,7 @@ static int f_put (int c, IO *io)
 
 static void fdout_flush(FDOUT *out)
 {
-	if	(poll(&out->fd, 1, 0) <= 0)
+	if	(poll(&out->fd, 1, out->timeout) <= 0)
 		return;
 
 	ssize_t s = write(out->fd.fd, out->buf.data, out->buf.pos);
@@ -96,10 +103,6 @@ static int f_ctrl (IO *io, int req, va_list list)
 	case IO_IDENT:
 
 		*va_arg(list, char **) = msprintf("fdout(%d)", out->fd.fd);
-		return 0;
-
-	case IO_GETPOS:
-		*va_arg(list, unsigned *) = out->buf.pos;
 		return 0;
 
 	case IO_FDOUT:
