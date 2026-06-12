@@ -23,6 +23,7 @@ static int main_bad = 0;
 static int fork_depth = 0;
 static int force_color = 0;
 static int run_complete = 0;
+static int run_pid = 0;
 
 static int color_enabled(int fd_)
 {
@@ -563,9 +564,12 @@ static void check_complete(void)
 {
 	if	(run_complete)	return;
 
-	count_bad++;
-	UnitTest_info(NULL, 0, "!EXIT", "");
-	UnitTest_summary("!EXIT");
+	if	(run_pid == getpid())
+	{
+		count_bad++;
+		UnitTest_info(NULL, 0, "!EXIT", "");
+		UnitTest_summary("!EXIT");
+	}
 }
 
 int main(int argc, char **argv)
@@ -594,6 +598,7 @@ int main(int argc, char **argv)
 
 	fputc('\n', stderr);
 	run_complete = 0;
+	run_pid = getpid();
 	atexit(check_complete);
 	runUnitTest(argc, argv);
 	run_complete = 1;
