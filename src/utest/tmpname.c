@@ -17,17 +17,17 @@ static char *tmpdir = NULL;
 
 void UnitTest_tmpclean()
 {
-	if	(getpid() != cleanup_pid)
-		return;
+	if	(tmpdir && getpid() == cleanup_pid)
+	{
+		pid_t pid = fork();
 
-	pid_t pid = fork();
+		if	(pid == 0)
+			execl("/bin/rm", "rm", "-rf", tmpdir, (char*) NULL);
 
-	if	(pid == 0)
-		execl("/bin/rm", "rm", "-rf", tmpdir, (char*) NULL);
-	
-	wait(NULL);
-	free((void *) tmpdir);
-	tmpdir = NULL;
+		waitpid(pid, NULL, 0);
+		free((void *) tmpdir);
+		tmpdir = NULL;
+	}
 }
 
 static void create_tmpdir()
