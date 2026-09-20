@@ -37,7 +37,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/config.h>
 
 @eval success HAS_ISATTY 'isatty(0)'
-@eval -i sys/dir.h success HAS_GETPWNAM 'getpwnam(NULL)'
+@eval -i sys/types.h -i pwd.h success HAS_GETPWNAM 'getpwnam(NULL)'
 @eval -i sys/mman.h success HAS_MMAP 'mmap(NULL,0,0,0,0,0)'
 @eval -i sys/time.h success HAS_TIMEVAL 'struct timeval buf'
 @eval -i sys/time.h -i time.h success HAS_GETTIMEOFDAY 'gettimeofday(NULL,NULL)'
