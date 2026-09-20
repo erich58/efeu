@@ -3,7 +3,7 @@
 STARTER=~/bin/efeu
 
 usage::
-	@echo "usage: make base | all | doc | clean | stat"
+	@echo "usage: make basic | all | doc | clean | stat"
 	@echo
 	@echo "basic	create basic functionality"
 	@echo "all	create all tools"

@@ -15,7 +15,7 @@ The following packages are needed for documentation:
 The following packages are recommended:
 
 *	curses development (libncurses-dev)
-*	X11 development (libX11-dev)
+*	X11 development (libx11-dev)
 *	tcl/tk development (tk-dev)
 *	postgresql development (libpq-dev)
 
