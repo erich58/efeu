@@ -25,6 +25,8 @@ If not, write to the Free Software Foundation, Inc.,
 #ifndef	EFEU_efwin_h
 #define	EFEU_efwin_h	1
 
+#define	NCURSES_INTERNALS
+
 #include <EFEU/efmain.h>
 #include <EFEU/efio.h>
 #include <curses.h>
