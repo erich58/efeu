@@ -102,7 +102,7 @@ static int do_repl (PPMacro *mac, IO *out, int strflag)
 		{
 			flag = 1;
 		}
-		else if	(!quote && (isalpha(c) || c == '_'))
+		else if	(!quote && (isalnum(c) || c == '_'))
 		{
 			if	(flag)
 			{

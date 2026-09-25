@@ -54,12 +54,15 @@ TEST_DECL(noarg_op)
 	MACSUB(
 		"#define A	# X\n"
 		"#define B	X ## Y\n"
+		"#define C	1 ## 2\n"
 		"A\n"
 		"B\n"
+		"C\n"
 	);
 	EXPECT_OUT(
 		"# X\n"
 		"XY\n"
+		"12\n"
 	);
 }
 
