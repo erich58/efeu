@@ -118,6 +118,12 @@ static int id_macdef (PPMacro *mac, IO *out, char **arg, int narg)
 	return n;
 }
 
+static int line_macdef (PPMacro *mac, IO *out, char **arg, int narg)
+{
+	PPData *pp = mac->par;
+	return io_xprintf(out, "%d", io_ctrl(pp->input->io, IO_LINE));
+}
+
 /*	Preprozess - Filter: Anhand von IOPP_COMMENT wird geprüft,
 	ob er bereits vorgeschalten wurde.
 */
@@ -144,6 +150,11 @@ IO *io_ptrpreproc (IO *io, char **pptr, char **lptr)
 		mac = NewMacro();
 		mac->name = mstrcpy("__ID__");
 		mac->sub = id_macdef;
+		mac->par = pp;
+		nkt_insert(pp->mactab, mac->name, mac);
+		mac = NewMacro();
+		mac->name = mstrcpy("__LINE__");
+		mac->sub = line_macdef;
 		mac->par = pp;
 		nkt_insert(pp->mactab, mac->name, mac);
 		io = io_alloc();

@@ -37,6 +37,7 @@ TEST_DECL(pp_id)
 	TEST_FILE("input",
 		"start\n"
 		"__ID__ body\n"
+		"__LINE__ body\n"
 		"end\n"
 	);
 
@@ -49,6 +50,7 @@ TEST_DECL(pp_id)
 		EXPECT_OUT(
 			"start\n"
 			"\"input:2\" body\n"
+			"3 body\n"
 			"end\n"
 		);
 		TEST_EXIT;
