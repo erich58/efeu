@@ -36,8 +36,8 @@ TEST_DECL(pp_id)
 {
 	TEST_FILE("input",
 		"start\n"
-		"__ID__ body\n"
-		"__LINE__ body\n"
+		"__ID__ line 2\n"
+		"__FILE__ __LINE__ line 3\n"
 		"end\n"
 	);
 
@@ -49,8 +49,8 @@ TEST_DECL(pp_id)
 		io_close(in);
 		EXPECT_OUT(
 			"start\n"
-			"\"input:2\" body\n"
-			"3 body\n"
+			"\"input:2\" line 2\n"
+			"\"input\" 3 line 3\n"
 			"end\n"
 		);
 		TEST_EXIT;

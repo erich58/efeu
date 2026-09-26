@@ -42,7 +42,8 @@ If not, write to the Free Software Foundation, Inc.,
 #define	IO_FDIN			(IO_STDCTRL|0x0c)
 #define	IO_FDOUT		(IO_STDCTRL|0x0d)
 
-#define	IO_IDENT		(IO_STDCTRL|0x11)
+#define	IO_IDENT		(IO_STDCTRL|0x10)
+#define	IO_FILE			(IO_STDCTRL|0x11)
 #define	IO_LINE			(IO_STDCTRL|0x12)
 #define	IO_COL			(IO_STDCTRL|0x13)
 #define	IO_SUBMODE		(IO_STDCTRL|0x14)

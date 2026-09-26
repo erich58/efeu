@@ -27,6 +27,7 @@ If not, write to the Free Software Foundation, Inc.,
 #include <EFEU/object.h>
 #include <EFEU/preproc.h>
 #include <EFEU/ioctrl.h>
+#include <EFEU/mstring.h>
 #include <ctype.h>
 
 #define	INC_PFX		"include"
@@ -118,6 +119,25 @@ static int id_macdef (PPMacro *mac, IO *out, char **arg, int narg)
 	return n;
 }
 
+static int file_macdef (PPMacro *mac, IO *out, char **arg, int narg)
+{
+	PPData *pp = mac->par;
+	char *name;
+	int n;
+
+	if	(io_ctrl(pp->input->io, IO_FILE, &name) != EOF)
+	{
+		n = io_xprintf(out, "%#s", name);
+		memfree(name);
+	}
+	else
+	{
+		n = io_puts("\"<input>\"", out);
+	}
+
+	return n;
+}
+
 static int line_macdef (PPMacro *mac, IO *out, char **arg, int narg)
 {
 	PPData *pp = mac->par;
@@ -150,6 +170,11 @@ IO *io_ptrpreproc (IO *io, char **pptr, char **lptr)
 		mac = NewMacro();
 		mac->name = mstrcpy("__ID__");
 		mac->sub = id_macdef;
+		mac->par = pp;
+		nkt_insert(pp->mactab, mac->name, mac);
+		mac = NewMacro();
+		mac->name = mstrcpy("__FILE__");
+		mac->sub = file_macdef;
 		mac->par = pp;
 		nkt_insert(pp->mactab, mac->name, mac);
 		mac = NewMacro();

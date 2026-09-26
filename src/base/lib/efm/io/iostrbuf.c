@@ -55,6 +55,7 @@ static int sb_nctrl (IO *io, int req, va_list list)
 	switch (req)
 	{
 	case IO_CLOSE:	return 0;
+	case IO_FILE:
 	case IO_IDENT:	*va_arg(list, char **) = "<strbuf>"; return 0;
 	default:	return base_ctrl(sb, req, list);
 	}

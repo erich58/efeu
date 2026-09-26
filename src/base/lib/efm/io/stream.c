@@ -181,6 +181,7 @@ static int f_ctrl (IO *io, int req, va_list list)
 		return fstat(fileno(fio->file), va_arg(list, struct stat *));
 
 	case IO_IDENT:
+	case IO_FILE:
 
 		*va_arg(list, char **) = mstrcpy(fio->name ? fio->name :
 			fileident(fio->file));

@@ -57,6 +57,7 @@ static int std_ctrl (IO *io, int c, va_list list)
 	case IO_FDOUT:	return fileno(stdout);
 	case IO_FLUSH:	return fflush(stdout);
 	case IO_CLOSE:	return 0;
+	case IO_FILE:
 	case IO_IDENT:	*va_arg(list, char **) = io->data; return 0;
 	default:	return EOF;
 	}

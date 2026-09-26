@@ -101,6 +101,9 @@ static int str_ctrl (IO *io, int req, va_list list)
 			}
 			else	return EOF;
 		}
+	case IO_FILE:
+		*va_arg(list, char **) = mstrcpy("<string>");
+		return 0;
 	case IO_IDENT:
 		*va_arg(list, char **) = strio_ident(s);
 		return 0;

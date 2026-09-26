@@ -125,6 +125,12 @@ static int ia_ctrl (IO *io, int req, va_list list)
 
 		return mode_depth;
 
+	case IO_FILE:
+
+		*va_arg(list, char **) = msprintf("<interact>",
+			line ? line : 1);
+		return 0;
+
 	case IO_IDENT:
 
 		*va_arg(list, char **) = msprintf("<interact>:%d",
