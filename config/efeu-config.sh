@@ -422,6 +422,7 @@ file)
 # |file| [<name>]
 #	:*:inserts system specific parameters in file <name>
 #	:de:Fügt in Datei <name> systemspezifische Parameter ein
+	rm -rf $tmp
 	exec awk -v top="$top" -v cfg_eval="$eval" -v cwd="$cwd" '
 BEGIN { pipe = "" }
 /^#@/ { next }
