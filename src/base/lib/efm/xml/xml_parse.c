@@ -1,6 +1,7 @@
 #include <EFEU/xml.h>
-#include <ctype.h>
+#include <EFEU/mstring.h>
 #include <strings.h>
+#include <ctype.h>
 
 #define	BLANK(c)	((c) == ' ' || c == '\t')
 #define	SPACE(c)	(BLANK(c) || c == '\n' || c == '\r')
@@ -10,6 +11,16 @@
 #define E_CHAR  "unexpected character '%c'"
 #define E_XCHAR  "unexpected character %#x"
 #define E_SEQ	"unexpected character sequence '%s'"
+
+#define E_PARSE   "%s: '%s'"
+#define E_COMM   "EOF in comment"
+#define E_DECL   "EOF in declaration"
+#define E_SPEC   "undefined declaration"
+#define E_CDATA  "EOF in CDATA"
+#define E_DTD    "EOF in DOCTYPE"
+#define E_PI     "EOF in process instruction"
+#define E_TAG    "EOF in tag"
+#define E_ATT    "EOF in attribute"
 
 static void *err_char (XMLBuf *xml, unsigned c)
 {
@@ -22,6 +33,14 @@ static void *err_char (XMLBuf *xml, unsigned c)
 		return XMLBuf_err(xml, E_CHAR, c);
 	}
 	else	return XMLBuf_err(xml, E_XCHAR, c);
+}
+
+static void *parse_error(XMLBuf *xml, const char *pfx)
+{
+	char *p = mstrcpy(sb_nul(&xml->sbuf) + xml->data);
+	void *res = XMLBuf_err(xml, E_PARSE, pfx, p);
+	memfree(p);
+	return res;
 }
 
 static int parse_name (XMLBuf *xml, IO *in, int c)
@@ -69,7 +88,7 @@ Wird für Verarbeitungsanweisungen, Kommentare und CDATA benötigt.
 Das Flag <entity> bestimmt, ob Entitys interpretiert werden.
 */
 
-static void parse_markup (XMLBuf *xml, IO *in, int key, int lim, int entity)
+static int parse_markup (XMLBuf *xml, IO *in, int key, int lim, int entity)
 {
 	int cnt;
 	int32_t c;
@@ -82,7 +101,7 @@ static void parse_markup (XMLBuf *xml, IO *in, int key, int lim, int entity)
 		if	(cnt >= lim && c == '>')
 		{
 			xml->sbuf.pos -= cnt;
-			break;
+			return 1;
 		}
 
 		if	(c == '&' && entity)
@@ -97,6 +116,8 @@ static void parse_markup (XMLBuf *xml, IO *in, int key, int lim, int entity)
 		if	(c == key)	cnt++;
 		else			cnt = 0;
 	}
+
+	return 0;
 }
 
 static void *parse_instruction (XMLBuf *xml, IO *in)
@@ -110,12 +131,21 @@ static void *parse_instruction (XMLBuf *xml, IO *in)
 		c = io_getucs(in);
 
 	if	(c == EOF)
-		return XMLBuf_err(xml, E_EOF);
+		return parse_error(xml, E_PI);
 
        	last = XMLBuf_next(xml, 0);
 	io_ungetucs(c, in);
-	parse_markup(xml, in, '?', 1, 1);
-	return XMLBuf_action(xml, xml_pi, last);
+
+	if	(parse_markup(xml, in, '?', 1, 1))
+	{
+		return XMLBuf_action(xml, xml_pi, last);
+	}
+	else
+	{
+		void *res = parse_error(xml, E_PI);
+		XMLBuf_prev(xml, last);
+		return res;
+	}
 }
 
 static void *parse_dtd (XMLBuf *xml, IO *in)
@@ -125,8 +155,13 @@ static void *parse_dtd (XMLBuf *xml, IO *in)
 
 	XMLBuf_start(xml, NULL);
 
-	while ((c = io_getucs(in)) != EOF && c != '>')
+	while ((c = io_getucs(in)) && c != '>')
+	{
+		if	(c == EOF)
+			return parse_error(xml, E_DTD);
+
 		sb_putucs(c, &xml->sbuf);
+	}
 
 	last = XMLBuf_next(xml, 0);
 	return XMLBuf_action(xml, xml_dtd, last);
@@ -134,37 +169,47 @@ static void *parse_dtd (XMLBuf *xml, IO *in)
 
 static void *parse_comment (XMLBuf *xml, IO *in)
 {
-	parse_markup(xml, in, '-', 2, 1);
-	return XMLBuf_action(xml, xml_comm, -1);
+	if	(parse_markup(xml, in, '-', 2, 1))
+		return XMLBuf_action(xml, xml_comm, -1);
+	else
+		return parse_error(xml, E_COMM);
 }
 
 static void *parse_cdata (XMLBuf *xml, IO *in)
 {
-	parse_markup(xml, in, ']', 2, 0);
-	return XMLBuf_action(xml, xml_cdata, -1);
+	if	(parse_markup(xml, in, ']', 2, 0))
+		return XMLBuf_action(xml, xml_cdata, -1);
+	else
+		return parse_error(xml, E_CDATA);
 }
 
 static void *parse_special (XMLBuf *xml, IO *in)
 {
 	int32_t c = io_getucs(in);
 
+	if	(c == EOF)
+		return XMLBuf_err(xml, E_EOF);
+
 	if	(c == '-')
 	{
-		c = io_getucs(in);
+		int d = io_getucs(in);
 
-		if	(c == '-')
+		if	(d == '-')
 			return parse_comment(xml, in);
 
-		sb_putucs(c, &xml->sbuf);
-		c = '-';
+		io_ungetc(d, in);
 	}
 
 	XMLBuf_start(xml, NULL);
 	sb_putucs(c, &xml->sbuf);
 	
-	while ((c = io_getucs(in)) != EOF && c != '>')
+	while ((c = io_getucs(in)) != '>')
 	{
-		if	(SPACE(c))
+		if	(c == EOF)
+		{
+			return parse_error(xml, E_DECL);
+		}
+		else if	(SPACE(c))
 		{
 			char *p = sb_nul(&xml->sbuf) + xml->data;
 
@@ -185,7 +230,7 @@ static void *parse_special (XMLBuf *xml, IO *in)
 		else	sb_putucs(c, &xml->sbuf);
 	}
 
-	return XMLBuf_action(xml, xml_comm, -1);
+	return parse_error(xml, E_SPEC);
 }
 
 static void *parse_att (XMLBuf *xml, IO *in, int32_t c)
@@ -207,7 +252,7 @@ static void *parse_att (XMLBuf *xml, IO *in, int32_t c)
 	{
 		if	(c == EOF)
 		{
-			return XMLBuf_err(xml, E_EOF);
+			return err_char(xml, c);
 		}
 		else if	(c == '&')
 		{
@@ -230,7 +275,7 @@ static void *entry (XMLBuf *xml, int32_t c, IO *io)
 	XMLBuf_start(xml, NULL);
 
 	if	((c = parse_name(xml, io, c)) == EOF)
-		return XMLBuf_err(xml, E_EOF);
+		return parse_error(xml, E_TAG);
 
 	last = XMLBuf_next(xml, 1);
 

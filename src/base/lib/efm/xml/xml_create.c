@@ -68,7 +68,7 @@ int XMLBuf_next (XMLBuf *xml, int concat)
 	return last;
 }
 
-static void XMLBuf_prev (XMLBuf *xml, int last)
+void XMLBuf_prev (XMLBuf *xml, int last)
 {
 	xml->data = xml->tag;
 	xml->tag = last;
