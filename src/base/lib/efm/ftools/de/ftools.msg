@@ -28,6 +28,7 @@ If not, write to the Free Software Foundation, Inc.,
 6	$!: Datei $1 nicht gefunden.\n
 
 11	$!: Schließen einer nicht mit fileopen() göffneten Datei.\n
+12	$!: File $0, Modus $1 nicht geöffnet.\n"
 
 21	$!: File $0: Unerwartetes Fileende beim Lesen.\n
 22	$!: File $0: Daten konnten nicht ausgegeben werden.\n

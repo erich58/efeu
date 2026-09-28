@@ -28,6 +28,7 @@ If not, write to the Free Software Foundation, Inc.,
 6	$!: file $1 not found.\n
 
 11	$!: closing a file not registered by filenotice().\n
+12	$!: file $1, mode $1 not open.\n
 
 21	$!: file $0: unexpected EOF.\n
 22	$!: file $0: could not write data.\n

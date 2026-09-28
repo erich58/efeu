@@ -18,6 +18,7 @@ TEST_DECL(setup)
 		"4	pipe locked\n"
 		"6	file $1 not found\n"
 		"11	bad fileclose\n"
+		"12	file \"$1\" not open\n"
 		"21	unexpected EOF\n"
 		"22	write error\n"
 	);
@@ -100,6 +101,17 @@ TEST_DECL(filetab)
 	EXPECT(fileclose(stdin) == 0);
 	EXPECT(fileclose(stdout) == 0);
 	EXPECT(fileclose(stderr) == 0);
+
+	UnitTest_stderr("stderr");
+
+	TEST_FORK
+	{
+		TEST_EXPR(filenotice("null", "r", NULL, NULL));
+		TEST_EXIT;
+	}
+
+	CHILD_EXIT(1);
+	EXPECT_CONTENT("stderr", "ERR file \"null\" not open\n");
 }
 
 TEST_DECL(fileopen)

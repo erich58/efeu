@@ -31,6 +31,10 @@ If not, write to the Free Software Foundation, Inc.,
 #define FMT_11	"[ftools:11]" \
 "$!: closing a file not registered by filenotice().\n"
 
+#define FMT_12	"[ftools:12]" \
+"$!: file $1, mode $2 not open.\n"
+
+
 typedef struct {
 	FILE *file;
 	char *name;
@@ -113,14 +117,21 @@ void filenotice (const char *name, const char *mode,
 {
 	FileTab tab;
 
-	tab.name = mstrcpy(name);
-	tab.mode = mstrcpy(mode);
-	tab.file = file;
-	tab.close = close;
-	tab.refcount = 0;
-	file_debug("open", &tab);
-	vb_search(&filetab, &tab, file_cmp, VB_REPLACE);
-	setup_closeall();
+	if	(file)
+	{
+		tab.name = mstrcpy(name);
+		tab.mode = mstrcpy(mode);
+		tab.file = file;
+		tab.close = close;
+		tab.refcount = 0;
+		file_debug("open", &tab);
+		vb_search(&filetab, &tab, file_cmp, VB_REPLACE);
+		setup_closeall();
+	}
+	else
+	{
+		log_error(NULL, FMT_12, "ss", name, mode);
+	}
 }
 
 

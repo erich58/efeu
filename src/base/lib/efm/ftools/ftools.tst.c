@@ -2,11 +2,19 @@
 #include <EFEU/procenv.h>
 #include <EFEU/ftools.h>
 
+#define	READ_ERROR(expr, msg)	\
+UnitTest_stderr("stderr"); \
+TEST_FORK { FILE *file = fileopen("/dev/null", "r"); expr; exit(0); } \
+CHILD_EXIT(1); \
+EXPECT_CONTENT("stderr", msg)
+
 TEST_DECL(setup)
 {
 	SetProgName("ID");
 	SetApplPath(UnitTest_tmp(NULL));
 	TEST_FILE("ftools.msg",
+		"21	NOTE 21: arg0=$0\n"
+		"22	NOTE 22: arg0=$0\n"
 		"61	NOTE 61: arg1=$1.\n"
 		"write	$!: $0 $# $*\n"
 	);
@@ -48,6 +56,10 @@ TEST_DECL(newtemp)
 	UnitTest_stderr("stderr");
 	EXPECT(deltemp(f2) == 0);
 	MATCH_CONTENT("stderr", "/TMP_[0-9]*c: ");
+
+	setenv("TMPDIR", UnitTest_tmp("tmp"), 1);
+	PRINT_STR(f1 = newtemp(NULL, "TMP_"));
+	EXPECT(deltemp(f1) == 1);
 }
 
 TEST_DECL(rfread)
@@ -87,6 +99,11 @@ TEST_DECL(getbyte)
 	EXPECT(get4byte(file) == 0xD1D2D3D4);
 	fclose(file);
 	EXPECT_CONTENT("data", "\241\261\262\301\302\303\321\322\323\324");
+
+	READ_ERROR(get1byte(file), "getxbyte: Unerwartetes Fileende.\n");
+	READ_ERROR(get2byte(file), "getxbyte: Unerwartetes Fileende.\n");
+	READ_ERROR(get3byte(file), "getxbyte: Unerwartetes Fileende.\n");
+	READ_ERROR(get4byte(file), "getxbyte: Unerwartetes Fileende.\n");
 }
 
 TEST_DECL(savestr_error)
@@ -103,7 +120,6 @@ TEST_DECL(savestr_error)
 	}
 
 	CHILD_EXIT(1);
-	UnitTest_stderr(NULL);
 	EXPECT_CONTENT("stderr", "ERR ID: output 0 \n");
 }
 
@@ -122,6 +138,21 @@ TEST_DECL(loadstr)
 	EXPECT_STR(loadstr(file), "a");
 	EXPECT_STR(loadstr(file), "xy");
 	fclose(file);
+
+	READ_ERROR(loadstr(file), "getxbyte: Unerwartetes Fileende.\n");
+
+	UnitTest_stderr("stderr");
+
+	TEST_FORK
+	{
+		FILE *file = UnitTest_strin("\000\100", 2);
+		filenotice("input", "r", file, NULL);
+		loadstr(file);
+		TEST_EXIT;
+	}
+
+	CHILD_EXIT(1);
+	EXPECT_CONTENT("stderr", "loadstr: Unerwartetes Fileende.\n");
 }
 
 TEST_DECL(dbdata)
@@ -145,6 +176,26 @@ TEST_DECL(dbdata)
 	EXPECT(dbread(file, rd, sizeof rd[0], 4) == 4);
 	EXPECT(memcmp(wd, rd, sizeof wd) == 0);
 	fclose(file);
+
+	READ_ERROR(dbread(file, rd, sizeof rd[0], 4),
+		"ERR NOTE 21: arg0=/dev/null\n");
+}
+
+TEST_DECL(dbdata_error)
+{
+	UnitTest_stderr("stderr");
+
+	TEST_FORK
+	{
+		char buf[2];
+		FILE *file = UnitTest_strout(buf, sizeof buf);
+		filenotice("output", "w", file, NULL);
+		dbwrite(file, "data", 1, 4);
+		TEST_EXIT;
+	}
+
+	CHILD_EXIT(1);
+	EXPECT_CONTENT("stderr", "ERR NOTE 22: arg0=output\n");
 }
 
 TEST_DECL(fpeek)
@@ -168,5 +219,6 @@ TEST_SUITE
 	TEST_RUN(savestr_error);
 	TEST_RUN(loadstr);
 	TEST_RUN(dbdata);
+	TEST_RUN(dbdata_error);
 	TEST_RUN(fpeek);
 }

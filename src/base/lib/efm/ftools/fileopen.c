@@ -202,3 +202,10 @@ FILE *fileopen (const char *name, const char *mode)
 
 	return file;
 }
+
+FILE *tempopen (void)
+{
+	FILE *file = tmpfile();
+	filenotice("<temp>", "w+b", file, fclose);
+	return file;
+}
