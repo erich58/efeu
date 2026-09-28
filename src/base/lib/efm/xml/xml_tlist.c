@@ -25,13 +25,6 @@ void *xml_tlist (XMLBuf *xml, const char *name, const char *data, void *par)
 	case xml_beg:
 		out->put('+', out->par);
 		out_data(out, name);
-
-		if	(data && *data)
-		{
-			out->put(' ', out->par);
-			out_data(out, data);
-		}
-
 		out->put('\n', out->par);
 		break;
 	case xml_end:

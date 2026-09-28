@@ -58,6 +58,20 @@ static const char *parse(unsigned lim, const char *def)
 	return XMLBuf_parse(x, IN(def));
 }
 
+#define	CREATE(x)	\
+	UnitTest_info(__FILE__, __LINE__, "?CREATE", # x); \
+	x = xml_create(NULL, test_action, NULL)
+
+#define	XML_STD(expr)	\
+	test_limit = -1; \
+	UnitTest_strcheck(__FILE__, __LINE__, "==", expr, \
+		NULL, # expr, "NULL")
+
+#define	XML_LIM(lim, expr)	\
+	test_limit = lim; \
+	UnitTest_strcheck(__FILE__, __LINE__, "==", expr, \
+		"BREAK", "[" # lim "] " # expr, "break")
+
 #define	PARSE(def)	\
 	UnitTest_strinfo(__FILE__, __LINE__, "?PARSE", def, "input"); \
 	UnitTest_strcheck(__FILE__, __LINE__, "==", parse(-1, def), \
@@ -69,7 +83,7 @@ static const char *parse(unsigned lim, const char *def)
 		"BREAK", "parse(" # lim ", input)", "break")
 
 #define	EXPECT_BUF(a, b) \
-	UnitTest_strcheck(__FILE__, __LINE__, "==", buf_data(&a), b, # a, # b)
+	UnitTest_diff(__FILE__, __LINE__, buf_data(&a), b, # a, # b)
 
 #define	LMATCH_BUF(a, b) \
 	UnitTest_linematch(__FILE__, __LINE__, buf_data(&a), b, # a)
@@ -85,170 +99,180 @@ TEST_DECL(create)
 	EXPECT_PTR(x = xml_create(NULL, NULL, (void *) 0xf00));
 	EXPECT(XMLBuf_close(x) == (void *) 0xf00);
 
-	EXPECT_PTR(x = xml_create(NULL, test_action, NULL));
-	XMLBuf_dtd(x, "html public");
-	XMLBuf_pi(x, "xml", "version=\"1.0\" encoding=\"utf-8\"");
-	XMLBuf_pi(x, "extra", " ");
-	XMLBuf_close(x);
-	EXPECT_BUF(buf_print,
-		"<!DOCTYPE html public>\n"
-		"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
-		"<?extra?>\n"
-	);
-	EXPECT_BUF(buf_compact,
-		"<!DOCTYPE html public>\n"
-		"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
-		"<?extra?>\n"
-	);
-	EXPECT_BUF(buf_tlist, "");
+	EXPECT_PTR(x = xml_create(NULL, NULL, NULL));
+	xml_dump(x, "a\\ \n\t\"", NULL, &out_dump);
 	EXPECT_BUF(buf_dump,
+		"  0 0 path=\"\" name=\"a\\\\ \\n\\t\\\"\" data=NULL\n"
+	);
+
+	CREATE(x);
+	XML_STD(XMLBuf_pi(x, "xml", "version=\"1.0\" encoding=\"utf-8\""));
+	XML_STD(XMLBuf_dtd(x, "html public"));
+	XML_STD(XMLBuf_beg(x, "html"));
+	XML_STD(XMLBuf_data(x, xml_data, "<data>"));
+	XML_STD(XMLBuf_pi(x, "extra", " "));
+	XML_STD(XMLBuf_fmt(x, xml_data, "%d", 42));
+	XML_STD(XMLBuf_close(x));
+	EXPECT_BUF(buf_dump,
+		"pi     0 0 path=\"\" name=\"xml\" "
+			"data=\"version=\\\"1.0\\\" encoding=\\\"utf-8\\\"\"\n"
 		"dtd    0 0 path=\"\" name=\"html public\" data=\"\"\n"
-		"pi     0 0 path=\"\" name=\"xml\" data=\"version=\\\"1.0\\\" encoding=\\\"utf-8\\\"\"\n"
-		"pi     0 0 path=\"\" name=\"extra\" data=\"\"\n"
+		"beg    0 0 path=\"/html\" name=\"html\" data=\"\"\n"
+		"data   1 1 path=\"/html\" name=\"html\" data=\"<data>\"\n"
+		"pi     1 0 path=\"/html\" name=\"extra\" data=\"\"\n"
+		"data   1 0 path=\"/html\" name=\"html\" data=\"42\"\n"
+		"end    0 0 path=\"/html\" name=\"html\" data=\"\"\n"
 	);
-
-	EXPECT_PTR(x = xml_create(NULL, test_action, NULL));
-	XMLBuf_beg(x, "root");
-	XMLBuf_close(x);
-	EXPECT_BUF(buf_print, "<root/>\n");
-	EXPECT_BUF(buf_compact, "<root/>");
-	EXPECT_BUF(buf_tlist,
-		"+root\n"
-		"/root\n"
-	);
-	EXPECT_BUF(buf_dump,
-		"beg    0 0 path=\"/root\" name=\"root\" data=\"\"\n"
-		"end    0 1 path=\"/root\" name=\"root\" data=\"\"\n"
-	);
-
-	EXPECT_PTR(x = xml_create(NULL, test_action, NULL));
-	XMLBuf_beg(x, "root");
-	XMLBuf_entry(x, "tag", "value");
-	XMLBuf_err(x, "fmt %s", "arg");
-	XMLBuf_data(x, xml_comm, "comment");
-	XMLBuf_end(x);
-	XMLBuf_close(x);
 	EXPECT_BUF(buf_print,
-		"<root>\n"
-		"  <tag>\n"
-		"    value\n"
-		"  </tag>\n"
-		"  <!--\n"
-		"ERROR: fmt arg\n"
-		"  -->\n"
+		"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+		"<!DOCTYPE html public>\n"
+		"<html>\n"
+		"  &lt;data&gt;\n"
+		"  <?extra?>\n"
+		"  42\n"
+		"</html>\n"
+	);
+	EXPECT_BUF(buf_compact,
+		"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+		"<!DOCTYPE html public>\n"
+		"<html>&lt;data&gt;<?extra?>\n"
+		"42</html>"
+	);
+	EXPECT_BUF(buf_tlist,
+		"+html\n"
+		"	<data>\n"
+		"	42\n"
+		"/html\n"
+	);
+
+	CREATE(x);
+	XML_STD(XMLBuf_entry(x, "tag", "data"));
+	EXPECT_BUF(buf_dump,
+		"beg    0 0 path=\"/tag\" name=\"tag\" data=\"\"\n"
+		"data   1 1 path=\"/tag\" name=\"tag\" data=\"data\"\n"
+		"end    0 0 path=\"/tag\" name=\"tag\" data=\"\"\n"
+	);
+	EXPECT_BUF(buf_print,
+		"<tag>\n"
+		"  data\n"
+		"</tag>\n"
+	);
+	EXPECT_BUF(buf_compact,
+		"<tag>data</tag>"
+	);
+	EXPECT_BUF(buf_tlist,
+		"+tag\n"
+		"	data\n"
+		"/tag\n"
+	);
+
+	CREATE(x);
+	XML_LIM(1, XMLBuf_entry(x, "a", "A"));
+	XML_LIM(2, XMLBuf_entry(x, "b", "B"));
+	XML_LIM(3, XMLBuf_entry(x, "c", "C"));
+	XML_STD(XMLBuf_close(x));
+	EXPECT_BUF(buf_dump,
+		"beg    0 0 path=\"/a\" name=\"a\" data=\"\"\n"
+		"*BREAK*\n"
+		"beg    1 1 path=\"/a/b\" name=\"b\" data=\"\"\n"
+		"data   2 1 path=\"/a/b\" name=\"b\" data=\"B\"\n"
+		"*BREAK*\n"
+		"beg    2 0 path=\"/a/b/c\" name=\"c\" data=\"\"\n"
+		"data   3 1 path=\"/a/b/c\" name=\"c\" data=\"C\"\n"
+		"end    2 0 path=\"/a/b/c\" name=\"c\" data=\"\"\n"
+		"*BREAK*\n"
+		"end    1 0 path=\"/a/b\" name=\"b\" data=\"\"\n"
+		"end    0 0 path=\"/a\" name=\"a\" data=\"\"\n"
+	);
+	EXPECT_BUF(buf_print,
+		"<a>\n"
+		"  <b>\n"
+		"    B\n"
+		"    <c>\n"
+		"      C\n"
+		"    </c>\n"
+		"  </b>\n"
+		"</a>\n"
+	);
+	EXPECT_BUF(buf_compact,
+		"<a><b>B<c>C</c></b></a>"
+	);
+	EXPECT_BUF(buf_tlist,
+		"+a\n"
+		"+b\n"
+		"	B\n"
+		"+c\n"
+		"	C\n"
+		"/c\n"
+		"/b\n"
+		"/a\n"
+	);
+
+	CREATE(x);
+	XML_STD(XMLBuf_beg(x, "tag"));
+	XML_STD(XMLBuf_att(x, "name", "<data>\"&"));
+	XML_STD(XMLBuf_data(x, xml_comm, "comment"));
+	XML_STD(XMLBuf_att(x, "extra", "bad"));
+	XML_STD(XMLBuf_close(x));
+	EXPECT_BUF(buf_dump,
+		"beg    0 0 path=\"/tag\" name=\"tag\" data=\"\"\n"
+		"att    1 1 path=\"/tag\" name=\"name\" data=\"<data>\\\"&\"\n"
+		"comm   1 1 path=\"/tag\" name=\"tag\" data=\"comment\"\n"
+		"err    1 0 path=\"/tag\" name=\"tag\" "
+			"data=\"unexpected attribut: extra='bad'\"\n"
+		"end    0 0 path=\"/tag\" name=\"tag\" data=\"\"\n"
+	);
+	EXPECT_BUF(buf_print,
+		"<tag name=\"&lt;data&gt;&quot;&amp;\">\n"
 		"  <!--comment-->\n"
-		"</root>\n"
-	);
-	EXPECT_BUF(buf_compact, "<root><tag>value</tag></root>");
-	EXPECT_BUF(buf_tlist,
-		"+root\n"
-		"+tag\n"
-		"\tvalue\n"
-		"/tag\n"
-		"/root\n"
-	);
-	EXPECT_BUF(buf_dump,
-		"beg    0 0 path=\"/root\" name=\"root\" data=\"\"\n"
-		"beg    1 1 path=\"/root/tag\" name=\"tag\" data=\"\"\n"
-		"data   2 1 path=\"/root/tag\" name=\"tag\" data=\"value\"\n"
-		"end    1 0 path=\"/root/tag\" name=\"tag\" data=\"\"\n"
-		"err    1 0 path=\"/root\" name=\"root\" data=\"fmt arg\"\n"
-		"comm   1 0 path=\"/root\" name=\"root\" data=\"comment\"\n"
-		"end    0 0 path=\"/root\" name=\"root\" data=\"\"\n"
-	);
-
-	EXPECT_PTR(x = xml_create(NULL, test_action, NULL));
-	XMLBuf_beg(x, "root");
-	XMLBuf_beg(x, "tag");
-	XMLBuf_att(x, "opt", "x<&>\"");
-	XMLBuf_data(x, xml_data, "<&>");
-	XMLBuf_fmt(x, xml_data, "%d", 42);
-	XMLBuf_end(x);
-	XMLBuf_att(x, "bad", "option");
-	XMLBuf_close(x);
-	EXPECT_BUF(buf_print,
-		"<root>\n"
-		"  <tag opt=\"x&lt;&amp;&gt;&quot;\">\n"
-		"    &lt;&amp;&gt;\n"
-		"    42\n"
-		"  </tag>\n"
 		"  <!--\n"
-		"ERROR: unexpected attribut bad='option'\n"
+		"ERROR: unexpected attribut: extra='bad'\n"
 		"  -->\n"
-		"</root>\n"
+		"</tag>\n"
 	);
 	EXPECT_BUF(buf_compact,
-		"<root>"
-		"<tag opt=\"x&lt;&amp;&gt;&quot;\">"
-		"&lt;&amp;&gt;"
-		"42"
-		"</tag>"
-		"</root>"
+		"<tag name=\"&lt;data&gt;&quot;&amp;\"></tag>"
 	);
 	EXPECT_BUF(buf_tlist,
-		"+root\n"
 		"+tag\n"
-		"\t<&>\n"
-		"\t42\n"
 		"/tag\n"
-		"/root\n"
-	);
-	EXPECT_BUF(buf_dump,
-		"beg    0 0 path=\"/root\" name=\"root\" data=\"\"\n"
-		"beg    1 1 path=\"/root/tag\" name=\"tag\" data=\"\"\n"
-		"att    2 1 path=\"/root/tag\" name=\"opt\" data=\"x<&>\\\"\"\n"
-		"data   2 1 path=\"/root/tag\" name=\"tag\" data=\"<&>\"\n"
-		"data   2 0 path=\"/root/tag\" name=\"tag\" data=\"42\"\n"
-		"end    1 0 path=\"/root/tag\" name=\"tag\" data=\"\"\n"
-		"err    1 0 path=\"/root\" name=\"root\" data=\"unexpected attribut bad='option'\"\n"
-		"end    0 0 path=\"/root\" name=\"root\" data=\"\"\n"
 	);
 
-	EXPECT_PTR(x = xml_create(NULL, test_action, NULL));
-	XMLBuf_beg(x, "root");
-	XMLBuf_beg(x, "tag1");
-	XMLBuf_data(x, xml_data, NULL);
-	XMLBuf_end(x);
-	XMLBuf_beg(x, "tag2");
-	XMLBuf_data(x, xml_cdata, "a<&>b\t\n\\x");
-	XMLBuf_close(x);
+	CREATE(x);
+	XML_STD(XMLBuf_beg(x, "root"));
+	XML_STD(XMLBuf_beg(x, "a"));
+	XML_STD(XMLBuf_end(x));
+	XML_STD(XMLBuf_beg(x, "b"));
+	XML_STD(XMLBuf_data(x, xml_data, NULL));
+	XML_STD(XMLBuf_end(x));
+	XML_STD(XMLBuf_close(x));
+	EXPECT_BUF(buf_dump,
+		"beg    0 0 path=\"/root\" name=\"root\" data=\"\"\n"
+		"beg    1 1 path=\"/root/a\" name=\"a\" data=\"\"\n"
+		"end    1 1 path=\"/root/a\" name=\"a\" data=\"\"\n"
+		"beg    1 0 path=\"/root/b\" name=\"b\" data=\"\"\n"
+		"data   2 1 path=\"/root/b\" name=\"b\" data=\"\"\n"
+		"end    1 0 path=\"/root/b\" name=\"b\" data=\"\"\n"
+		"end    0 0 path=\"/root\" name=\"root\" data=\"\"\n"
+	);
 	EXPECT_BUF(buf_print,
 		"<root>\n"
-		"  <tag1>\n"
-		"  </tag1>\n"
-		"  <tag2>\n"
-		"    <![CDATA[a<&>b\t\n\\x]]>\n"
-		"  </tag2>\n"
+		"  <a/>\n"
+		"  <b>\n"
+		"  </b>\n"
 		"</root>\n"
 	);
 	EXPECT_BUF(buf_compact,
-		"<root>"
-		"<tag1>"
-		"</tag1>"
-		"<tag2>"
-		"<![CDATA[a<&>b\t\n\\x]]>"
-		"</tag2>"
-		"</root>"
+		"<root><a/><b></b></root>"
 	);
 	EXPECT_BUF(buf_tlist,
 		"+root\n"
-		"+tag1\n"
-		"\t\n"
-		"/tag1\n"
-		"+tag2\n"
-		"\ta<&>b\t\n\\x\n"
-		"/tag2\n"
+		"+a\n"
+		"/a\n"
+		"+b\n"
+		"	\n"
+		"/b\n"
 		"/root\n"
-	);
-	EXPECT_BUF(buf_dump,
-		"beg    0 0 path=\"/root\" name=\"root\" data=\"\"\n"
-		"beg    1 1 path=\"/root/tag1\" name=\"tag1\" data=\"\"\n"
-		"data   2 1 path=\"/root/tag1\" name=\"tag1\" data=\"\"\n"
-		"end    1 0 path=\"/root/tag1\" name=\"tag1\" data=\"\"\n"
-		"beg    1 0 path=\"/root/tag2\" name=\"tag2\" data=\"\"\n"
-		"cdata  2 1 path=\"/root/tag2\" name=\"tag2\" data=\"a<&>b\\t\\n\\\\x\"\n"
-		"end    1 0 path=\"/root/tag2\" name=\"tag2\" data=\"\"\n"
-		"end    0 0 path=\"/root\" name=\"root\" data=\"\"\n"
 	);
 }
 
@@ -789,7 +813,7 @@ TEST_DECL(att)
 
 TEST_SUITE
 {
-//	TEST_RUN(create);
+	TEST_RUN(create);
 	TEST_RUN(instruction);
 	TEST_RUN(special);
 	TEST_RUN(doc);

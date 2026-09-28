@@ -145,6 +145,7 @@ static void xml_init (XMLBuf *xml, XMLAction action, void *par)
 	xml->par = par;
 	xml->depth = 0;
 	xml->open_tag = 0;
+	xml->type = 0;
 
 	sb_trunc(&xml->sbuf);
 	xml->tag = xml->sbuf.pos;
@@ -252,7 +253,7 @@ static void *entry (XMLBuf *xml, XMLType type, int concat,
 void *XMLBuf_att (XMLBuf *xml, const char *name, const char *data)
 {
 	if	(!xml->open_tag)
-		return XMLBuf_err(xml, "unexpected attribut %s='%s'",
+		return XMLBuf_err(xml, "unexpected attribut: %s='%s'",
 			name, data);
 
 	return entry(xml, xml_att, 0, name, data);
