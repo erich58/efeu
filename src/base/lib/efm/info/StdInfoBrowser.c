@@ -26,7 +26,7 @@ If not, write to the Free Software Foundation, Inc.,
 
 static int Lines = 24;
 
-static char *getline (IO *io, StrBuf *buf)
+static char *get_line (IO *io, StrBuf *buf)
 {
 	int c;
 
@@ -81,7 +81,7 @@ void StdInfoBrowser (const char *name)
 
 		io_putc(']', io);
 
-		if	(!(p = getline(io, buf)))
+		if	(!(p = get_line(io, buf)))
 			break;
 		
 		rd_deref(info);
