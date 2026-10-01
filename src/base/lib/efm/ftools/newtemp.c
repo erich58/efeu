@@ -23,14 +23,9 @@ If not, write to the Free Software Foundation, Inc.,
 
 #include <EFEU/ftools.h>
 #include <EFEU/vecbuf.h>
-#include <EFEU/patcmp.h>
 #include <EFEU/procenv.h>
 #include <EFEU/Debug.h>
-#include <EFEU/CmdPar.h>
 #include <EFEU/mstring.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
 #include <unistd.h>
 
 int access (const char *path, int amode);
@@ -55,34 +50,15 @@ int access (const char *path, int amode);
 #define	TABSIZE	125
 
 typedef struct {
-	int (*open) (char *name);
 	int (*clean) (char *name);
 	char **tab;
 	size_t size;
 	size_t dim;
 } TMPTAB;
 
-static int file_open (char *name)
-{
-	int fd = open(name, TMP_FLAGS, TMP_MODE);
-
-	if	(fd >= 0)
-	{
-		close(fd);
-		return 1;
-	}
-
-	return 0;
-}
-
 static int file_clean (char *name)
 {
 	return (unlink(name) == 0);
-}
-
-static int dir_open (char *name)
-{
-	return (mkdir(name, DIR_MODE) == 0);
 }
 
 static int dir_clean (char *name)
@@ -93,10 +69,10 @@ static int dir_clean (char *name)
 	return 1;
 }
 
-static TMPTAB tmptab = { file_open, file_clean, NULL, 0, 0 };
-static TMPTAB dirtab = { dir_open, dir_clean, NULL, 0, 0 };
+static TMPTAB tmptab = { file_clean, NULL, 0, 0 };
+static TMPTAB dirtab = { dir_clean, NULL, 0, 0 };
 
-static void tab_add (TMPTAB *tab, char *path)
+static char *tab_add (TMPTAB *tab, char *path)
 {
 	if	(tab->size <= tab->dim)
 	{
@@ -104,7 +80,9 @@ static void tab_add (TMPTAB *tab, char *path)
 		tab->tab = lrealloc(tab->tab, tab->size * sizeof tab->tab[0]);
 	}
 
+	path = mstrcpy(path);
 	tab->tab[tab->dim++] = path;
+	return path;
 }
 
 void tempstat (void)
@@ -145,99 +123,47 @@ static void setup_temp (void)
 	cleanup_registered = 1;
 }
 
-static int check_dir (const char *path)
+static char *template (const char *dir, const char *pfx)
 {
-	struct stat buf;
+	static STRBUF(tbuf, 0);
 
-	if	(stat(path, &buf) != 0)
-		return 0;
+	if	(!dir)
+	{
+		if	(!(dir = getenv("TMPDIR")))
+			dir = "/tmp";
+	}
 
-	if	(!S_ISDIR(buf.st_mode))
-		return 0;
-
-	if	(access(path, ACC_MODE) != 0)
-		return 0;
-
-	return 1;
+	sb_trunc(&tbuf);
+	sb_printf(&tbuf, "%s/%sXXXXXX", dir, pfx ? pfx : "tmp");
+	return sb_nul(&tbuf);
 }
 
-static void putvalue (StrBuf *buf, int val, const char *digit, size_t mod)
+char *newtemp (const char *dir, const char *pfx)
 {
-	if	(val >= mod)
-		putvalue(buf, val / mod, digit, mod);
+	char *p = template(dir, pfx);
+	int fd = mkstemp (p);
 
-	sb_putc(digit[val % mod], buf);
+	if	(fd < 0)
+	{
+		fprintf(stderr, ERR2);
+		exit(EXIT_FAILURE);
+	}
+
+	close(fd);
+	return tab_add(&tmptab, p);
 }
 
-static char *dig_pid = "0123456789";
-static char *dig_num = "abcdefghijklmnopqrstuvwxyz";
-static STRBUF(tempbuf, 0);
-
-static char *maketemp (TMPTAB *tab, const char *dir, const char *pfx)
+char *newtempdir (const char *dir, const char *pfx)
 {
-	static unsigned num = 0;
-	unsigned long pid;
-	StrBuf *buf;
-	char *p;
-	int pos;
-	int i;
-	
-	setup_temp();
+	char *p = mkdtemp (template(dir, pfx));
 
-	p = getenv("TMPDIR");
-
-	if	(p && check_dir(p))
-		dir = p;
-	else if	(dir && check_dir(dir))
-		;
-	else if	((p = "/var/tmp") && check_dir(p))
-		dir = p;
-	else if	((p = "/tmp") && check_dir(p))
-		dir = p;
-	else
+	if	(!p)
 	{
 		fprintf(stderr, ERR1);
 		exit(EXIT_FAILURE);
 	}
 
-	pid = getpid();
-	buf = &tempbuf;
-	sb_clear(buf);
-	sb_puts(dir, buf);
-	sb_putc('/', buf);
-	sb_puts(pfx ? pfx : PFX, buf);
-	putvalue(buf, pid, dig_pid, strlen(dig_pid));
-	pos = sb_getpos(buf);
-
-	for (i = 0; i < MAX_TRY; i++)
-	{
-		putvalue(buf, num, dig_num, strlen(dig_num));
-		sb_putc(0, buf);
-		num++;
-
-		if	(tab->open((char *) buf->data))
-		{
-			p = sb_memcpy(buf);
-			tab_add(tab, p);
-			return p;
-		}
-
-		perror((char *) buf->data);
-		sb_setpos(buf, pos);
-	}
-
-	fprintf(stderr, ERR2);
-	exit(EXIT_FAILURE);
-}
-
-char *newtemp (const char *dir, const char *pfx)
-{
-	return maketemp (&tmptab, dir, pfx);
-}
-
-char *newtempdir (const char *dir, const char *pfx)
-{
-	return maketemp (&dirtab, dir, pfx);
+	return tab_add(&dirtab, p);
 }
 
 static int tab_del (TMPTAB *tab, char *path)

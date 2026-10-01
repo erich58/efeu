@@ -24,15 +24,25 @@ TEST_DECL(newtemp)
 {
 	char *tmp = mstrcpy(UnitTest_tmp(NULL));
 	char *f1, *f2, *d;
-	MATCH_STR((f1 = newtemp(tmp, "TMP_")), "/TMP_[0-9]*a");
-	MATCH_STR((d = newtempdir(tmp, "TMP_")), "/TMP_[0-9]*b");
-	MATCH_STR((f2 = newtemp(tmp, "TMP_")), "/TMP_[0-9]*c");
+
+	setenv("TMPDIR", tmp, 1);
+	f1 = newtemp(NULL, "TMP_");
+	LMATCH_STR(f1, UnitTest_tpl("@/TMP_"));
+	EXPECT(deltemp(f1) == 1);
+	unsetenv("TMPDIR");
+	f1 = newtemp(NULL, "TMP_");
+	LMATCH_STR(f1, "/tmp/TMP_");
+	EXPECT(deltemp(f1) == 1);
+
+	LMATCH_STR((f1 = newtemp(tmp, "TMP_a_")), "/TMP_");
+	LMATCH_STR((d = newtempdir(tmp, "TMP_b_")), "/TMP_");
+	LMATCH_STR((f2 = newtemp(tmp, "TMP_c_")), "/TMP_");
 	UnitTest_stderr("stderr");
 	TEST_EXPR(tempstat());
-	MATCH_CONTENT("stderr",
-		"0: dir .*/TMP_[0-9]*b\n"
-		"0: file .*/TMP_[0-9]*a\n"
-		"1: file .*/TMP_[0-9]*c\n"
+	LMATCH_CONTENT("stderr",
+		"0: dir .*/TMP_b_\n"
+		"0: file .*/TMP_a_\n"
+		"1: file .*/TMP_c_\n"
 	);
 
 	UnitTest_stderr("stderr");
@@ -44,22 +54,47 @@ TEST_DECL(newtemp)
 	EXPECT(deltemp(f1) == 1);
 	EXPECT(deltempdir(d) == 1);
 
+	/* Cleanup */
+
 	TEST_FORK
 	{
 		UnitTest_stderr("stderr");
-		exit(0);
+		TEST_EXIT;
 	}
 
 	CHILD_EXIT(0);
-	MATCH_CONTENT("stderr", "remove .*/TMP_[0-9]*c\n");
+	LMATCH_CONTENT("stderr", "remove .*/TMP_c_\n");
 
 	UnitTest_stderr("stderr");
 	EXPECT(deltemp(f2) == 0);
-	MATCH_CONTENT("stderr", "/TMP_[0-9]*c: ");
+	LMATCH_CONTENT("stderr", "/TMP_c.*: ");
 
-	setenv("TMPDIR", UnitTest_tmp("tmp"), 1);
-	PRINT_STR(f1 = newtemp(NULL, "TMP_"));
-	EXPECT(deltemp(f1) == 1);
+//	TEST_DIR("sub");
+//	UnitTest_system("chmod a-w @/sub");
+
+	TEST_FORK
+	{
+		UnitTest_stderr("stderr");
+		f1 = newtemp(UnitTest_tmp("sub"), "X_");
+		PRINT_STR(f1);
+		TEST_EXIT;
+	}
+
+	CHILD_EXIT(1);
+	LMATCH_CONTENT("stderr", NULL);
+
+	TEST_FORK
+	{
+		UnitTest_stderr("stderr");
+		f1 = newtempdir(UnitTest_tmp("sub"), "X_");
+		PRINT_STR(f1);
+		TEST_EXIT;
+	}
+
+	CHILD_EXIT(1);
+	LMATCH_CONTENT("stderr", NULL);
+
+//	UnitTest_system("chmod a+w @/sub");
 }
 
 TEST_DECL(rfread)
