@@ -4,7 +4,6 @@
 #include <EFEU/procenv.h>
 #include <EFEU/ftools.h>
 #include <EFEU/io.h>
-#include <ctype.h>
 
 #include <EFEU/utest/out.tst.h>
 #include <EFEU/utest/mstr.tst.h>
