@@ -71,6 +71,10 @@ static IO *fake_interact(const char *prompt, const char *hist)
 
 TEST_DECL(InfoPath)
 {
+	/* Forciere die Farbinitialisierung (benötigt tput!) vor der
+	 * Pfadänderung
+	 */
+	UnitTest_color(0);
 	char *path = mstrcpy(getenv("PATH")); /* Save PATH */
 	TEST_EXPR(setenv("PATH", "a/bin:b", 1));
 	SetInfoPath("x");
