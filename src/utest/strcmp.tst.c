@@ -24,4 +24,7 @@ TEST_SUITE
 	}
 
 	CHILD_EXIT(1);
+
+	/* Sonderfall */
+	UnitTest_strcheck(__FILE__, __LINE__, "==", "abc", "abc", "expr", NULL);
 }
